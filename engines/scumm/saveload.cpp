@@ -363,7 +363,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 			}
 		}
 
-		Graphics::skipThumbnailHeader(*in);
+		Graphics::skipThumbnail(*in);
 	}
 
 	// Since version 56 we save additional information about the creation of
@@ -720,7 +720,7 @@ bool ScummEngine::loadInfosFromSlot(const char *target, int slot, InfoStuff *stu
 		return false;
 	}
 
-	if (!Graphics::skipThumbnailHeader(*in)) {
+	if (!Graphics::skipThumbnail(*in)) {
 		delete in;
 		return false;
 	}

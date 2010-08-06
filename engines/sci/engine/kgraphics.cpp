@@ -29,6 +29,8 @@
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
 
+#include "gui/message.h"
+
 #include "sci/sci.h"
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/resource.h"
@@ -172,8 +174,8 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	}
+	case 9: // case for kq5cd, we are getting calling with 4 additional 900d parameters
 	case 5:
-	case 9:
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
 		// Fallthrough
 	case 3:
@@ -181,6 +183,18 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 			g_sci->_gfxCursor->kernelSetMacCursor(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
 		else
 			g_sci->_gfxCursor->kernelSetView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
+		break;
+	case 10:
+		// Freddy pharkas, when using the whiskey glass to read the prescription (bug #3034973)
+		// magnifier support, disabled using argc == 1, argv == -1
+		warning("kSetCursor: unsupported magnifier");
+		// we just set the view cursor currently
+		g_sci->_gfxCursor->kernelSetView(argv[5].toUint16(), argv[6].toUint16(), argv[7].toUint16(), hotspot);
+		// argv[0] -> 1, 2, 4 -> maybe magnification multiplier
+		// argv[1-4] -> rect for magnification
+		// argv[5, 6, 7] -> view resource for cursor
+		// argv[8] -> picture resource for mag
+		// argv[9] -> color for magnifier replacement
 		break;
 	default :
 		error("kSetCursor: Unhandled case: %d arguments given", argc);
@@ -739,8 +753,10 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-// Original top-left must stay on kControl rects, we adjust accordingly because sierra sci actually wont draw rects that
-//  are upside down (example: jones, when challenging jones - one button is a duplicate and also has lower-right which is 0, 0)
+// Original top-left must stay on kControl rects, we adjust accordingly because
+// sierra sci actually wont draw rects that are upside down (example: jones,
+// when challenging jones - one button is a duplicate and also has lower-right
+// which is 0, 0)
 Common::Rect kControlCreateRect(int16 x, int16 y, int16 x1, int16 y1) {
 	if (x > x1) x1 = x;
 	if (y > y1) y1 = y;
@@ -882,7 +898,8 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 
 	// Disable the "Change Directory" button, as we don't allow the game engine to
 	// change the directory where saved games are placed
-	if (objName == "changeDirI") {
+	// "changeDirItem" is used in the import windows of QFG2&3
+	if ((objName == "changeDirI") || (objName == "changeDirItem")) {
 		int state = readSelectorValue(s->_segMan, controlObject, SELECTOR(state));
 		writeSelectorValue(s->_segMan, controlObject, SELECTOR(state), (state | SCI_CONTROLS_STYLE_DISABLED) & ~SCI_CONTROLS_STYLE_ENABLED);
 	}
@@ -895,6 +912,24 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 				text.deleteChar(0);
 				text.deleteChar(0);
 				s->_segMan->strcpy(textReference, text.c_str());
+			}
+		}
+	}
+	if (objName == "savedHeros") {
+		// Import of QfG character files dialog is shown
+		// display additional popup information before letting user use it
+		reg_t changeDirButton = s->_segMan->findObjectByName("changeDirItem");
+		if (!changeDirButton.isNull()) {
+			// check if checkDirButton is still enabled, in that case we are called the first time during that room
+			if (!(readSelectorValue(s->_segMan, changeDirButton, SELECTOR(state)) & SCI_CONTROLS_STYLE_DISABLED)) {
+				GUI::MessageDialog dialog("Characters saved inside ScummVM are shown "
+						"automatically. Character files saved in the original "
+						"interpreter need to be put inside ScummVM's saved games "
+						"directory and a prefix needs to be added depending on which "
+						"game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
+						"for Quest for Glory 2. Example: 'qfg2-thief.sav'.",
+						"OK");
+				dialog.runModal();
 			}
 		}
 	}
@@ -1070,7 +1105,7 @@ reg_t kShakeScreen(EngineState *s, int argc, reg_t *argv) {
 	int16 shakeCount = (argc > 0) ? argv[0].toUint16() : 1;
 	int16 directions = (argc > 1) ? argv[1].toUint16() : 1;
 
-	g_sci->_gfxPaint->kernelShakeScreen(shakeCount, directions);
+	g_sci->_gfxScreen->kernelShakeScreen(shakeCount, directions);
 	return s->r_acc;
 }
 

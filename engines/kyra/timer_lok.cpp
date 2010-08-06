@@ -188,6 +188,9 @@ void KyraEngine_LoK::timerRedrawAmulet(int timerNum) {
 }
 
 void KyraEngine_LoK::setWalkspeed(uint8 newSpeed) {
+	if (!_timer)
+		return;
+
 	static const uint8 speeds[] = { 11, 9, 6, 5, 3 };
 
 	assert(newSpeed < ARRAYSIZE(speeds));

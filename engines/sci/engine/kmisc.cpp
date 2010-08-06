@@ -46,25 +46,37 @@ reg_t kRestartGame(EngineState *s, int argc, reg_t *argv) {
 ** Returns the restarting_flag in acc
 */
 reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
-	s->r_acc = make_reg(0, s->gameWasRestarted);
+	s->r_acc = make_reg(0, s->gameIsRestarting);
 
 	if (argc) { // Only happens during replay
 		if (!argv[0].toUint16()) // Set restarting flag
-			s->gameWasRestarted = false;
+			s->gameIsRestarting = GAMEISRESTARTING_NONE;
 	}
 
 	uint32 neededSleep = 30;
 
-	// WORKAROUND: LSL3 calculates a machinespeed variable during game startup
-	// (right after the filthy questions). This one would go through w/o
-	// throttling resulting in having to do 1000 pushups or something. Another
-	// way of handling this would be delaying incrementing of "machineSpeed"
-	// selector.
-	if (g_sci->getGameId() == GID_LSL3 && s->currentRoomNumber() == 290)
-		s->_throttleTrigger = true;
-	else if (g_sci->getGameId() == GID_ICEMAN && s->currentRoomNumber() == 27) {
-		s->_throttleTrigger = true;
-		neededSleep = 60;
+	// WORKAROUNDS:
+	switch (g_sci->getGameId()) {
+	case GID_LSL3:
+		// LSL3 calculates a machinespeed variable during game startup
+		// (right after the filthy questions). This one would go through w/o
+		// throttling resulting in having to do 1000 pushups or something. Another
+		// way of handling this would be delaying incrementing of "machineSpeed"
+		// selector.
+		if (s->currentRoomNumber() == 290)
+			s->_throttleTrigger = true;
+		break;
+	case GID_ICEMAN:
+		// In ICEMAN the submarine control room is not animating much, so it runs way too fast
+		//  we calm it down even more otherwise especially fighting against other submarines
+		//  is almost impossible
+		if (s->currentRoomNumber() == 27) {
+			s->_throttleTrigger = true;
+			neededSleep = 60;
+		}
+		break;
+	default:
+		break;
 	}
 
 	s->speedThrottler(neededSleep);
@@ -160,10 +172,10 @@ reg_t kSetDebug(EngineState *s, int argc, reg_t *argv) {
 }
 
 enum {
-	K_NEW_GETTIME_TICKS = 0,
-	K_NEW_GETTIME_TIME_12HOUR = 1,
-	K_NEW_GETTIME_TIME_24HOUR = 2,
-	K_NEW_GETTIME_DATE = 3
+	KGETTIME_TICKS = 0,
+	KGETTIME_TIME_12HOUR = 1,
+	KGETTIME_TIME_24HOUR = 2,
+	KGETTIME_DATE = 3
 };
 
 reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
@@ -180,19 +192,19 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 		error("kGetTime called in SCI0 with mode %d (expected 0 or 1)", mode);
 
 	switch (mode) {
-	case K_NEW_GETTIME_TICKS :
+	case KGETTIME_TICKS :
 		retval = elapsedTime * 60 / 1000;
 		debugC(2, kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		break;
-	case K_NEW_GETTIME_TIME_12HOUR :
+	case KGETTIME_TIME_12HOUR :
 		retval = ((loc_time.tm_hour % 12) << 12) | (loc_time.tm_min << 6) | (loc_time.tm_sec);
 		debugC(2, kDebugLevelTime, "GetTime(12h) returns %d", retval);
 		break;
-	case K_NEW_GETTIME_TIME_24HOUR :
+	case KGETTIME_TIME_24HOUR :
 		retval = (loc_time.tm_hour << 11) | (loc_time.tm_min << 5) | (loc_time.tm_sec >> 1);
 		debugC(2, kDebugLevelTime, "GetTime(24h) returns %d", retval);
 		break;
-	case K_NEW_GETTIME_DATE :
+	case KGETTIME_DATE :
 		retval = loc_time.tm_mday | ((loc_time.tm_mon + 1) << 5) | (((loc_time.tm_year + 1900) & 0x7f) << 9);
 		debugC(2, kDebugLevelTime, "GetTime(date) returns %d", retval);
 		break;
@@ -215,17 +227,32 @@ enum {
 
 reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
-	case K_MEMORY_ALLOCATE_CRITICAL :
-		if (!s->_segMan->allocDynmem(argv[1].toUint16(), "kMemory() critical", &s->r_acc)) {
+	case K_MEMORY_ALLOCATE_CRITICAL: {
+		int byteCount = argv[1].toUint16();
+		// WORKAROUND: pq3 (multilingual) when plotting crimes - allocates the
+		//  returned bytes from kStrLen on "W" and "E" and wants to put a
+		//  string in there, which doesn't fit of course. That's why we allocate
+		//  one byte more all the time inside that room
+		if (g_sci->getGameId() == GID_PQ3) {
+			if (s->currentRoomNumber() == 202)
+				byteCount++;
+		}
+		if (!s->_segMan->allocDynmem(byteCount, "kMemory() critical", &s->r_acc)) {
 			error("Critical heap allocation failed");
 		}
 		break;
-	case K_MEMORY_ALLOCATE_NONCRITICAL :
+	}
+	case K_MEMORY_ALLOCATE_NONCRITICAL:
 		s->_segMan->allocDynmem(argv[1].toUint16(), "kMemory() non-critical", &s->r_acc);
 		break;
 	case K_MEMORY_FREE :
-		if (s->_segMan->freeDynmem(argv[1])) {
-			error("Attempt to kMemory::free() non-dynmem pointer %04x:%04x", PRINT_REG(argv[1]));
+		if (!s->_segMan->freeDynmem(argv[1])) {
+			if (g_sci->getGameId() == GID_QFG1VGA) {
+				// Ignore script bug in QFG1VGA, when closing any conversation dialog with esc
+			} else {
+				// Usually, the result of a script bug. Non-critical
+				warning("Attempt to kMemory::free() non-dynmem pointer %04x:%04x", PRINT_REG(argv[1]));
+			}
 		}
 		break;
 	case K_MEMORY_MEMCPY : {

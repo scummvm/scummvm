@@ -1723,7 +1723,9 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_SID(this, _mixer);
 #endif
 	} else if (_game.platform == Common::kPlatformNES && _game.version == 1) {
+#ifndef DISABLE_NES_APU
 		_musicEngine = new Player_NES(this, _mixer);
+#endif
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version == 2) {
 		_musicEngine = new Player_V2A(this, _mixer);
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version == 3) {

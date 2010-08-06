@@ -27,6 +27,7 @@
 #define BACKENDS_AUDIOCD_ABSTRACT_H
 
 #include "common/noncopyable.h"
+#include "common/scummsys.h"
 
 /**
 * Abstract Audio CD manager class. Subclasses implement the actual
@@ -45,6 +46,8 @@ public:
 		int start;
 		int duration;
 		int numLoops;
+		int volume;
+		int balance;
 	};
 
 	/**
@@ -70,6 +73,16 @@ public:
 	 * @return true if CD or emulated audio is playing
 	 */
 	virtual bool isPlaying() const = 0;
+
+	/**
+	 * Set the audio volume
+	 */
+	virtual void setVolume(byte volume) = 0;
+
+	/**
+	 * Set the speakers balance
+	 */
+	virtual void setBalance(int8 balance) = 0;
 
 	/**
 	 * Stop CD or emulated audio playback.

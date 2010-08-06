@@ -161,19 +161,29 @@ foreach my $l (keys(%msgs))
 print "struct PoLangEntry {\n";
 print "\tconst char *lang;\n";
 print "\tconst char *charset;\n";
+print "\tconst char *langname;\n";
 print "\tconst PoMessageEntry *msgs;\n";
 print "};\n\n";
 print "const PoLangEntry _translations[] = {\n";
 
 foreach my $l (keys(%msgs))
 {
+	# charset
 	$header = $msgs{$l}->{""};
 	$header =~ /charset=([^\\]+)/;
 	$charset = $1;
-	print "\t{ \"" . $l . "\", \"" . $charset . "\", _translation_${l} },\n";
+	# user readable language name
+	$lang = "NULL";
+	$header = $msgs{$l}->{""};
+	$header =~ /Language:[\s]*([^\\]*)/;
+	unless ($1 eq "")
+	{
+		$lang = "\"" . $1 . "\"";
+	}
+	print "\t{ \"" . $l . "\", \"" . $charset . "\", " . $lang . ", _translation_${l} },\n";
 }
 
-print "\t{ NULL, NULL, NULL }\n};\n\n";
+print "\t{ NULL, NULL, NULL, NULL }\n};\n\n";
 
 print "// code\n";
 print << 'EOF';
@@ -253,6 +263,13 @@ int po2c_getnumlangs(void) {
 
 const char *po2c_getlang(const int num) {
 	assert(num < ARRAYSIZE(_translations));
+	return _translations[num].lang;
+}
+
+const char *po2c_getlangname(const int num) {
+	assert(num < ARRAYSIZE(_translations));
+	if (_translations[num].langname != NULL)
+		return _translations[num].langname;
 	return _translations[num].lang;
 }
 EOF

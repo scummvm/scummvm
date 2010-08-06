@@ -205,7 +205,6 @@ CXX     = arm-eabi-g++
 LD	= arm-eabi-g++
 
 CFLAGS	=	-Wno-multichar -Wall\
-		-Wno-multichar -mcpu=arm9tdmi -mtune=arm9tdmi \
 		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
 		-mthumb-interwork -DUSE_ARM_COSTUME_ASM=1 -DDISABLE_SID
 
@@ -281,7 +280,6 @@ PORT_OBJS := \
 	$(portdir)/source/blitters_arm.o \
 	$(portdir)/source/cdaudio.o \
 	$(portdir)/source/dsmain.o \
-	$(portdir)/../../../fs/ds/ds-fs.o \
 	$(portdir)/source/gbampsave.o \
 	$(portdir)/source/scummhelp.o \
 	$(portdir)/source/osystem_ds.o \
@@ -297,14 +295,14 @@ ifdef USE_PROFILER
 endif
 
 
-DATA_OBJS :=
+DATA_OBJS := \
 	$(portdir)/data/icons.o \
 	$(portdir)/data/keyboard.o \
 	$(portdir)/data/keyboard_pal.o \
 	$(portdir)/data/default_font.o \
 	$(portdir)/data/8x8font_tga.o
 
-FAT_OBJS :=
+FAT_OBJS := \
 	$(portdir)/source/fat/disc_io.o \
 	$(portdir)/source/fat/gba_nds_fat.o \
 	$(portdir)/source/fat/io_fcsr.o \

@@ -31,7 +31,9 @@
 
 #include "common/mutex.h"
 
-#include "sound/softsynth/ym2612.h"
+#include "sound/softsynth/fmtowns_pc98/towns_pc98_driver.h"
+#include "sound/softsynth/fmtowns_pc98/towns_euphony.h"
+
 #include "sound/softsynth/emumidi.h"
 #include "sound/midiparser.h"
 
@@ -99,10 +101,7 @@ private:
 	Common::Mutex _mutex;
 };
 
-class Towns_EuphonyDriver;
-class TownsPC98_OpnDriver;
-
-class SoundTowns : public MidiDriver, public Sound {
+class SoundTowns : public Sound {
 public:
 	SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer);
 	~SoundTowns();
@@ -119,43 +118,35 @@ public:
 	void haltTrack();
 
 	void playSoundEffect(uint8);
+	void stopAllSoundEffects();
 
 	void beginFadeOut();
 
-	//MidiDriver interface implementation
-	int open();
-	void close();
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length) {}
-
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo();
-
-	//Channel allocation functions
-	MidiChannel *allocateChannel()      { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
-
-	static float calculatePhaseStep(int8 semiTone, int8 semiToneRootkey,
-	    uint32 sampleRate, uint32 outputRate, int32 pitchWheel);
+	void updateVolumeSettings();
 
 private:
 	bool loadInstruments();
 	void playEuphonyTrack(uint32 offset, int loop);
 
-	static void onTimer(void *data);
+	void fadeOutSoundEffects();
 
 	int _lastTrack;
 	Audio::AudioStream *_currentSFX;
 	Audio::SoundHandle _sfxHandle;
 
+	uint8 *_musicTrackData;
+
 	uint _sfxFileIndex;
 	uint8 *_sfxFileData;
+	uint8 _sfxChannel;
 
-	Towns_EuphonyDriver * _driver;
-	MidiParser * _parser;
-
+	TownsEuphonyDriver *_driver;
+	
 	Common::Mutex _mutex;
 
+	bool _cdaPlaying;
+
+	const uint8 *_musicFadeTable;
 	const uint8 *_sfxBTTable;
 	const uint8 *_sfxWDTable;
 };
@@ -186,7 +177,7 @@ protected:
 	int _lastTrack;
 	uint8 *_musicTrackData;
 	uint8 *_sfxTrackData;
-	TownsPC98_OpnDriver *_driver;
+	TownsPC98_AudioDriver *_driver;
 };
 
 class SoundTownsPC98_v2 : public Sound {
@@ -218,7 +209,7 @@ protected:
 
 	uint8 *_musicTrackData;
 	uint8 *_sfxTrackData;
-	TownsPC98_OpnDriver *_driver;
+	TownsPC98_AudioDriver *_driver;
 };
 
 // PC Speaker MIDI driver

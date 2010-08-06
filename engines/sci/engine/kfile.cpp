@@ -282,6 +282,14 @@ enum {
 };
 
 reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getGameId() == GID_FANMADE && argc == 1) {
+		// WORKAROUND: The fan game script library calls kDeviceInfo with one parameter.
+		// According to the scripts, it wants to call CurDevice. However, it fails to
+		// provide the subop to the function.
+		s->_segMan->strcpy(argv[0], "/");
+		return s->r_acc;
+	}
+
 	int mode = argv[0].toUint16();
 
 	switch (mode) {
@@ -480,6 +488,10 @@ reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
+	// we allow 0 (happens in QfG2 when trying to restore from an empty saved game list) and return false in that case
+	if (virtualId == 0)
+		return NULL_REG;
+
 	// Find saved-game
 	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
 		error("kCheckSaveGame: called with invalid savegameId!");
@@ -494,7 +506,7 @@ reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 
 	// Otherwise we assume the savegame is OK
-	return make_reg(0, 1);
+	return TRUE_REG;
 }
 
 reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {

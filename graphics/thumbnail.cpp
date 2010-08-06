@@ -82,7 +82,7 @@ bool checkThumbnailHeader(Common::SeekableReadStream &in) {
 	return hasHeader;
 }
 
-bool skipThumbnailHeader(Common::SeekableReadStream &in) {
+bool skipThumbnail(Common::SeekableReadStream &in) {
 	uint32 position = in.pos();
 	ThumbnailHeader header;
 

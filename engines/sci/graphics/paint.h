@@ -38,10 +38,6 @@ public:
 	virtual void kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
 	virtual void kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle);
 	virtual void kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control);
-
-	virtual void kernelShakeScreen(uint16 shakeCount, uint16 directions);
-
-private:
 };
 
 } // End of namespace Sci

@@ -205,11 +205,15 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 
 		videoDecoder = new VMDDecoder(g_system->getMixer());
 
+		if (!videoDecoder->loadFile(fileName)) {
+			warning("Could not open VMD %s", fileName.c_str());
+			break;
+		}
+
 		if (reshowCursor)
 			g_sci->_gfxCursor->kernelHide();
 
-		if (videoDecoder && videoDecoder->loadFile(fileName))
-			playVideo(videoDecoder);
+		playVideo(videoDecoder);
 
 		if (reshowCursor)
 			g_sci->_gfxCursor->kernelShow();
@@ -280,8 +284,7 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		// Looks to be setting the video size and position. Called with 4 extra integer
 		// parameters (e.g. 86, 41, 235, 106)
 	default:
-		warningMsg = "PlayVMD - unsupported subop. Params: " +
-									Common::String::printf("%d", argc) + " (";
+		warningMsg = Common::String::printf("PlayVMD - unsupported subop %d. Params: %d (", operation, argc);
 
 		for (int i = 0; i < argc; i++) {
 			warningMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));

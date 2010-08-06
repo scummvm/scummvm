@@ -143,9 +143,6 @@ public:
 	}
 };
 
-
-struct IntMapper;
-
 enum {
 	SYS_STRINGS_MAX = 4,
 

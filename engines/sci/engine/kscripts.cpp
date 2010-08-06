@@ -95,6 +95,7 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 				++itr;
 			}
 
+			delete resources;
 		} else {
 			which = g_sci->getResMan()->findResource(id, 0);
 

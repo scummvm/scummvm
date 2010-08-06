@@ -74,6 +74,7 @@ public:
 	uint16 getCelCount(int16 loopNo) const;
 	Palette *getPalette();
 
+	bool isScaleable();
 	bool isSci2Hires();
 
 private:
@@ -100,6 +101,13 @@ private:
 	bool _isSci2Hires;
 
 	byte *_EGAmapping;
+
+	// this is set for sci0early to adjust for the getCelRect() change
+	int16 _adjustForSci0Early;
+
+	// this is not set for some views in laura bow 2 floppy and signals that the view shall never get scaled
+	//  even if scaleX/Y are set (inside kAnimate)
+	bool _isScaleable;
 };
 
 } // End of namespace Sci

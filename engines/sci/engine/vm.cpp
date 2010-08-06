@@ -135,9 +135,13 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
 		// The results of this are likely unpredictable... It most likely means that a kernel function is returning something wrong.
-		// If such an error occurs, we usually need to find the last kernel function called and check its return value. Check
-		// callKernelFunc() below
-		error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]. Address: %04x:%04x", reg.segment, PRINT_REG(reg));
+		// If such an error occurs, we usually need to find the last kernel function called and check its return value.
+		if (g_sci->getGameId() == GID_QFG2 && g_sci->getEngineState()->currentRoomNumber() == 200) {
+			// WORKAROUND: This happens in QFG2, room 200, when talking to the astrologer (bug #3039879) - script bug.
+			// Returning 0 in this case.
+		} else {
+			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]. Address: %04x:%04x", reg.segment, PRINT_REG(reg));
+		}
 		return 0;
 	}
 
@@ -231,7 +235,7 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 			case VAR_PARAM:
 				// Out-of-bounds read for a parameter that goes onto stack and hits an uninitialized temp
 				//  We return 0 currently in that case
-				warning("Read for a parameter goes out-of-bounds, onto the stack and gets uninitialized temp");
+				debugC(2, kDebugLevelVM, "[VM] Read for a parameter goes out-of-bounds, onto the stack and gets uninitialized temp");
 				return NULL_REG;
 			default:
 				break;
@@ -743,6 +747,11 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 
 		if (kernelCall.debugLogging)
 			logKernelCall(&kernelCall, NULL, s, argc, argv, s->r_acc);
+		if (kernelCall.debugBreakpoint) {
+			printf("Break on k%s\n", kernelCall.name);
+			g_sci->_debugState.debugging = true;
+			g_sci->_debugState.breakpointWasHit = true;
+		}
 	} else {
 		// Sub-functions available, check signature and call that one directly
 		if (argc < 1)
@@ -793,6 +802,11 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 
 		if (kernelSubCall.debugLogging)
 			logKernelCall(&kernelCall, &kernelSubCall, s, argc, argv, s->r_acc);
+		if (kernelSubCall.debugBreakpoint) {
+			printf("Break on k%s\n", kernelSubCall.name);
+			g_sci->_debugState.debugging = true;
+			g_sci->_debugState.breakpointWasHit = true;
+		}
 	}
 
 	// Remove callk stack frame again, if there's still an execution stack
@@ -923,11 +937,7 @@ void run_vm(EngineState *s) {
 			obj = s->_segMan->getObject(s->xs->objp);
 			local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
 			if (!local_script) {
-				// FIXME: Why does this happen? Is the script not loaded yet at this point?
-				warning("Could not find local script from segment %x", s->xs->local_segment);
-				local_script = NULL;
-				s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
-				s->variablesMax[VAR_LOCAL] = 0;
+				error("Could not find local script from segment %x", s->xs->local_segment);
 			} else {
 				s->variablesSegment[VAR_LOCAL] = local_script->_localsSegment;
 				if (local_script->_localsBlock)
@@ -1053,7 +1063,7 @@ void run_vm(EngineState *s) {
 			if (validate_signedInteger(s->r_acc, value1) && validate_signedInteger(r_temp, value2))
 				s->r_acc = make_reg(0, value1 * value2);
 			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeMulWorkarounds, s->r_acc, r_temp);
 			break;
 		}
 
@@ -1069,11 +1079,30 @@ void run_vm(EngineState *s) {
 
 		case op_mod: { // 0x05 (05)
 			r_temp = POP32();
-			int16 modulo, value;
-			if (validate_signedInteger(s->r_acc, modulo) && validate_signedInteger(r_temp, value))
-				s->r_acc = make_reg(0, (modulo != 0 ? value % modulo : 0));
-			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
+
+			if (getSciVersion() <= SCI_VERSION_0_LATE) {
+				uint16 modulo, value;
+				if (validate_unsignedInteger(s->r_acc, modulo) && validate_unsignedInteger(r_temp, value))
+					s->r_acc = make_reg(0, (modulo != 0 ? value % modulo : 0));
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
+			} else {
+				// In Iceman (and perhaps from SCI0 0.000.685 onwards in general),
+				// handling for negative numbers was added. Since Iceman doesn't
+				// seem to have issues with the older code, we exclude it for now
+				// for simplicity's sake and use the new code for SCI01 and newer
+				// games. Fixes the battlecruiser mini game in SQ5 (room 850),
+				// bug #3035755
+				int16 modulo, value, result;
+				if (validate_signedInteger(s->r_acc, modulo) && validate_signedInteger(r_temp, value)) {
+					modulo = ABS(modulo);
+					result = (modulo != 0 ? value % modulo : 0);
+					if (result < 0)
+						result += modulo;
+					s->r_acc = make_reg(0, result);
+				} else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
+			}
 			break;
 		}
 
@@ -1196,7 +1225,7 @@ void run_vm(EngineState *s) {
 				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
 					s->r_acc = make_reg(0, compare1 >= compare2);
 				else
-					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+					s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeGeWorkarounds, r_temp, s->r_acc);
 			}
 			break;
 

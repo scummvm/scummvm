@@ -182,7 +182,7 @@ ResourceType ResourceManager::convertResType(byte type) {
 }
 
 //-- Resource main functions --
-Resource::Resource(ResourceId id) : _id(id) {
+Resource::Resource(ResourceManager *resMan, ResourceId id) : _resMan(resMan), _id(id) {
 	data = NULL;
 	size = 0;
 	_fileOffset = 0;
@@ -665,6 +665,7 @@ int ResourceManager::addInternalSources() {
 		++itr;
 	}
 
+	delete resources;
 	return 1;
 }
 
@@ -704,6 +705,86 @@ void IntMapResourceSource::scanSource(ResourceManager *resMan) {
 	resMan->readAudioMapSCI11(this);
 }
 
+#ifdef ENABLE_SCI32
+
+// Chunk resources are resources that hold other resources. They are normally called
+// when using the kLoadChunk SCI2.1 kernel function. However, for example, the Lighthouse
+// SCI2.1 demo has a chunk but no scripts outside of the chunk.
+
+// A chunk resource is pretty straightforward in terms of layout
+// It begins with 11-byte entries in the header:
+// =========
+// b resType
+// w nEntry
+// dw offset
+// dw length
+
+ChunkResourceSource::ChunkResourceSource(const Common::String &name, uint16 number)
+	: ResourceSource(kSourceChunk, name) {
+
+	_number = 0;
+}
+
+void ChunkResourceSource::scanSource(ResourceManager *resMan) {
+	Resource *chunk = resMan->findResource(ResourceId(kResourceTypeChunk, _number), false);
+
+	if (!chunk)
+		error("Trying to load non-existent chunk");
+
+	byte *ptr = chunk->data;
+	uint32 firstOffset = 0;
+	
+	for (;;) {
+		ResourceType type = resMan->convertResType(*ptr);
+		uint16 number = READ_LE_UINT16(ptr + 1);
+		ResourceId id(type, number);
+
+		ResourceEntry entry;
+		entry.offset = READ_LE_UINT32(ptr + 3);
+		entry.length = READ_LE_UINT32(ptr + 7);
+
+		_resMap[id] = entry;
+		ptr += 11;
+
+		debugC(kDebugLevelResMan, 2, "Found %s in chunk %d", id.toString().c_str(), _number);
+
+		resMan->updateResource(id, this, entry.length);
+
+		// There's no end marker to the data table, but the first resource
+		// begins directly after the entry table. So, when we hit the first
+		// resource, we're at the end of the entry table.
+		
+		if (!firstOffset)
+			firstOffset = entry.offset;
+
+		if ((size_t)(ptr - chunk->data) >= firstOffset)
+			break;
+	}
+}
+
+void ChunkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
+	Resource *chunk = resMan->findResource(ResourceId(kResourceTypeChunk, _number), false);
+
+	if (!_resMap.contains(res->_id))
+		error("Trying to load non-existent resource from chunk %d: %s %d", _number, getResourceTypeName(res->_id.getType()), res->_id.getNumber());
+
+	ResourceEntry entry = _resMap[res->_id];
+	res->data = new byte[entry.length];
+	res->size = entry.length;
+	res->_header = 0;
+	res->_headerSize = 0;
+	res->_status = kResStatusAllocated;
+
+	// Copy the resource data over
+	memcpy(res->data, chunk->data + entry.offset, entry.length);
+}
+
+void ResourceManager::addResourcesFromChunk(uint16 id) {
+	addSource(new ChunkResourceSource(Common::String::printf("Chunk %d", id), id));
+	scanNewSources();
+}
+
+#endif
 
 void ResourceManager::freeResourceSources() {
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it)
@@ -769,6 +850,21 @@ void ResourceManager::init() {
 	default:
 		error("resMan: Couldn't determine view type");
 	}
+
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2_1) {
+		// If we have no scripts, but chunk 0 is present, open up the chunk
+		// to try to get to any scripts in there. The Lighthouse SCI2.1 demo
+		// does exactly this.
+
+		Common::List<ResourceId> *scriptList = listResources(kResourceTypeScript);
+
+		if (scriptList->empty() && testResource(ResourceId(kResourceTypeChunk, 0)))
+			addResourcesFromChunk(0);
+
+		delete scriptList;
+	}
+#endif
 }
 
 ResourceManager::~ResourceManager() {
@@ -1543,7 +1639,7 @@ void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
 void ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size) {
 	// Adding new resource only if it does not exist
 	if (_resMap.contains(resId) == false) {
-		Resource *res = new Resource(resId);
+		Resource *res = new Resource(this, resId);
 		_resMap.setVal(resId, res);
 		res->_source = src;
 		res->_fileOffset = offset;
@@ -1558,7 +1654,7 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 	if (_resMap.contains(resId)) {
 		res = _resMap.getVal(resId);
 	} else {
-		res = new Resource(resId);
+		res = new Resource(this, resId);
 		_resMap.setVal(resId, res);
 	}
 
@@ -1584,21 +1680,21 @@ int Resource::readResourceInfo(ResVersion volVersion, Common::SeekableReadStream
 	case kResVersionSci0Sci1Early:
 	case kResVersionSci1Middle:
 		w = file->readUint16LE();
-		type = (ResourceType)(w >> 11);
+		type = _resMan->convertResType(w >> 11);
 		number = w & 0x7FF;
 		szPacked = file->readUint16LE() - 4;
 		szUnpacked = file->readUint16LE();
 		wCompression = file->readUint16LE();
 		break;
 	case kResVersionSci1Late:
-		type = (ResourceType)(file->readByte() & 0x7F);
+		type = _resMan->convertResType(file->readByte());
 		number = file->readUint16LE();
 		szPacked = file->readUint16LE() - 4;
 		szUnpacked = file->readUint16LE();
 		wCompression = file->readUint16LE();
 		break;
 	case kResVersionSci11:
-		type = (ResourceType)(file->readByte() & 0x7F);
+		type = _resMan->convertResType(file->readByte());
 		number = file->readUint16LE();
 		szPacked = file->readUint16LE();
 		szUnpacked = file->readUint16LE();
@@ -1615,7 +1711,7 @@ int Resource::readResourceInfo(ResVersion volVersion, Common::SeekableReadStream
 		break;
 #ifdef ENABLE_SCI32
 	case kResVersionSci32:
-		type = (ResourceType)(file->readByte() & 0x7F);
+		type = _resMan->convertResType(file->readByte());
 		number = file->readUint16LE();
 		szPacked = file->readUint32LE();
 		szUnpacked = file->readUint32LE();
@@ -1907,18 +2003,18 @@ void ResourceManager::detectSciVersion() {
 			return;
 		}
 
+		if (hasSci0Voc999()) {
+			s_sciVersion = SCI_VERSION_0_LATE;
+			return;
+		}
+
 		if (oldDecompressors) {
 			// It's either SCI_VERSION_0_LATE or SCI_VERSION_01
 
 			// We first check for SCI1 vocab.999
 			if (testResource(ResourceId(kResourceTypeVocab, 999))) {
-				if (hasSci0Voc999()) {
-					s_sciVersion = SCI_VERSION_0_LATE;
-					return;
-				} else {
-					s_sciVersion = SCI_VERSION_01;
-					return;
-				}
+				s_sciVersion = SCI_VERSION_01;
+				return;
 			}
 
 			// If vocab.999 is missing, we try vocab.900
@@ -1938,15 +2034,10 @@ void ResourceManager::detectSciVersion() {
 			return;
 		}
 
-		// New decompressors. It's either SCI_VERSION_0_LATE, SCI_VERSION_1_EGA or SCI_VERSION_1_EARLY.
-		if (testResource(ResourceId(kResourceTypeVocab, 900))) {
-			if (hasSci1Voc900()) {
-				s_sciVersion = SCI_VERSION_1_EGA;
-				return;
-			} else {
-				s_sciVersion = SCI_VERSION_0_LATE;
-				return;
-			}
+		// New decompressors. It's either SCI_VERSION_1_EGA or SCI_VERSION_1_EARLY.
+		if (hasSci1Voc900()) {
+			s_sciVersion = SCI_VERSION_1_EGA;
+			return;
 		}
 
 		// SCI_VERSION_1_EARLY EGA versions lack the parser vocab

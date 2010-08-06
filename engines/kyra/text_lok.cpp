@@ -32,10 +32,9 @@
 
 namespace Kyra {
 
-void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const char *chatStr, uint8 charNum) {
+void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const char *chatStr, uint8 charNum, const bool printText) {
 	bool hasUpdatedNPCs = false;
 	bool runLoop = true;
-	bool drawText = textEnabled();
 	uint8 currPage;
 
 	uint32 timeToEnd = strlen(chatStr) * 8 * _tickLength + _system->getMillis();
@@ -92,7 +91,7 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 		_animator->preserveAnyChangedBackgrounds();
 		_animator->prepDrawAllObjects();
 
-		if (drawText) {
+		if (printText) {
 			currPage = _screen->_curPage;
 			_screen->_curPage = 2;
 			_text->printCharacterText(chatStr, charNum, _characterList[charNum].x1);
@@ -102,7 +101,7 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 		_animator->copyChangedObjectsForward(0);
 		updateTextFade();
 
-		if (((chatDuration < (int16)(_system->getMillis() - timeAtStart)) && chatDuration != -1 && drawText) || (!drawText && !snd_voiceIsPlaying()))
+		if (((chatDuration < (int16)(_system->getMillis() - timeAtStart)) && chatDuration != -1 && printText) || (!printText && !snd_voiceIsPlaying()))
 			break;
 
 		uint32 nextTime = loopStart + _tickLength;
@@ -293,7 +292,9 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 	_text->_talkMessageY = yPos;
 	_text->_talkMessageH = lineNum * 10;
 
-	if (textEnabled()) {
+	const bool printText = textEnabled();
+
+	if (printText) {
 		_animator->restoreAllObjectBackgrounds();
 
 		_screen->copyRegion(12, _text->_talkMessageY, 12, 136, 296, _text->_talkMessageH, 2, 2);
@@ -310,9 +311,9 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 
 	if (!speechEnabled())
 		vocFile = -1;
-	waitForChatToFinish(vocFile, chatTicks, chatStr, charNum);
+	waitForChatToFinish(vocFile, chatTicks, chatStr, charNum, printText);
 
-	if (textEnabled()) {
+	if (printText) {
 		_animator->restoreAllObjectBackgrounds();
 
 		_screen->copyRegion(12, 136, 12, _text->_talkMessageY, 296, _text->_talkMessageH, 2, 2);

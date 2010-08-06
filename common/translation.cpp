@@ -138,12 +138,12 @@ String TranslationManager::getTranslation(const String &message) {
 	return po2c_gettext(message.c_str());
 }
 
-const TLangArray TranslationManager::getSupportedLanguages() const {
+const TLangArray TranslationManager::getSupportedLanguageNames() const {
 	TLangArray languages;
 
 	int total = po2c_getnumlangs();
 	for (int i = 0; i < total; i++) {
-		TLanguage lng(po2c_getlang(i), i + 1);
+		TLanguage lng(po2c_getlangname(i), i + 1);
 		languages.push_back(lng);
 	}
 
@@ -208,7 +208,7 @@ String TranslationManager::getTranslation(const String &message) {
 	return message;
 }
 
-const TLangArray TranslationManager::getSupportedLanguages() const {
+const TLangArray TranslationManager::getSupportedLanguageNames() const {
 	return TLangArray();
 }
 

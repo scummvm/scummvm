@@ -67,7 +67,7 @@ bool g_debug_track_mouse_clicks = false;
 static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeValue);
 
 Console::Console(SciEngine *engine) : GUI::Debugger(),
-	_engine(engine), _debugState(engine->_debugState) {
+	_engine(engine), _debugState(engine->_debugState), _enterTime(0) {
 
 	// Variables
 	DVar_Register("sleeptime_factor",	&g_debug_sleeptime_factor, DVAR_INT, 0);
@@ -176,10 +176,12 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
 	DCmd_Register("bpdel",				WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
 	DCmd_Register("bc",					WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
-	DCmd_Register("bp_exec_method",		WRAP_METHOD(Console, cmdBreakpointExecMethod));
-	DCmd_Register("bpx",				WRAP_METHOD(Console, cmdBreakpointExecMethod));		// alias
-	DCmd_Register("bp_exec_function",	WRAP_METHOD(Console, cmdBreakpointExecFunction));
-	DCmd_Register("bpe",				WRAP_METHOD(Console, cmdBreakpointExecFunction));	// alias
+	DCmd_Register("bp_method",			WRAP_METHOD(Console, cmdBreakpointMethod));
+	DCmd_Register("bpx",				WRAP_METHOD(Console, cmdBreakpointMethod));			// alias
+	DCmd_Register("bp_kernel",			WRAP_METHOD(Console, cmdBreakpointKernel));
+	DCmd_Register("bpk",				WRAP_METHOD(Console, cmdBreakpointKernel));			// alias
+	DCmd_Register("bp_function",		WRAP_METHOD(Console, cmdBreakpointFunction));
+	DCmd_Register("bpe",				WRAP_METHOD(Console, cmdBreakpointFunction));		// alias
 	// VM
 	DCmd_Register("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
 	DCmd_Register("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
@@ -214,6 +216,7 @@ Console::~Console() {
 void Console::preEnter() {
 	if (g_sci && g_sci->_soundCmd)
 		g_sci->_soundCmd->pauseAll(true);
+	_enterTime = g_system->getMillis();
 }
 
 void Console::postEnter() {
@@ -272,6 +275,9 @@ void Console::postEnter() {
 		_videoFile.clear();
 		_videoFrameDelay = 0;
 	}
+
+	// Subtract the time we were running the debugger from the game running time
+	_engine->_gamestate->gameStartTime += g_system->getMillis() - _enterTime;
 }
 
 bool Console::cmdHelp(int argc, const char **argv) {
@@ -380,8 +386,9 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("Breakpoints:\n");
 	DebugPrintf(" bp_list / bplist / bl - Lists the current breakpoints\n");
 	DebugPrintf(" bp_del / bpdel / bc - Deletes a breakpoint with the specified index\n");
-	DebugPrintf(" bp_exec_method / bpx - Sets a breakpoint on the execution of the specified method\n");
-	DebugPrintf(" bp_exec_function / bpe - Sets a breakpoint on the execution of the specified exported function\n");
+	DebugPrintf(" bp_method / bpx - Sets a breakpoint on the execution or access of a specified method/selector\n");
+	DebugPrintf(" bp_kernel / bpk - Sets a breakpoint on execution of a kernel function\n");
+	DebugPrintf(" bp_function / bpe - Sets a breakpoint on the execution of the specified exported function\n");
 	DebugPrintf("\n");
 	DebugPrintf("VM:\n");
 	DebugPrintf(" script_steps - Shows the number of executed SCI operations\n");
@@ -840,6 +847,7 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 	}
 
 	DebugPrintf("SCI1.1-SCI2.1 script check finished\n");
+	delete resources;
 
 	return true;
 }
@@ -1002,6 +1010,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 		DebugPrintf("\n\n");
 	}
 
+	delete resources;
 	return true;
 }
 
@@ -1047,7 +1056,6 @@ bool Console::cmdList(int argc, const char **argv) {
 			++itr;
 		}
 		DebugPrintf("\n");
-
 		delete resources;
 	}
 
@@ -2711,7 +2719,7 @@ bool Console::cmdLogKernel(int argc, const char **argv) {
 		return true;
 	}
 
-	if (g_sci->getKernel()->debugSetFunctionLogging(argv[1], logging))
+	if (g_sci->getKernel()->debugSetFunction(argv[1], logging, -1))
 		DebugPrintf("Logging %s for k%s\n", logging ? "enabled" : "disabled", argv[1]);
 	else
 		DebugPrintf("Unknown kernel function %s\n", argv[1]);
@@ -2789,10 +2797,10 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdBreakpointExecMethod(int argc, const char **argv) {
+bool Console::cmdBreakpointMethod(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Sets a breakpoint on the execution of the specified method.\n");
-		DebugPrintf("Usage: %s <method name>\n", argv[0]);
+		DebugPrintf("Sets a breakpoint on execution/access of a specified method/selector.\n");
+		DebugPrintf("Usage: %s <name>\n", argv[0]);
 		DebugPrintf("Example: %s ego::doit\n", argv[0]);
 		DebugPrintf("May also be used to set a breakpoint that applies whenever an object\n");
 		DebugPrintf("of a specific type is touched: %s foo::\n", argv[0]);
@@ -2812,7 +2820,23 @@ bool Console::cmdBreakpointExecMethod(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdBreakpointExecFunction(int argc, const char **argv) {
+bool Console::cmdBreakpointKernel(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Sets a breakpoint on execution of a kernel function.\n");
+		DebugPrintf("Usage: %s <name>\n", argv[0]);
+		DebugPrintf("Example: %s DrawPic\n", argv[0]);
+		return true;
+	}
+
+	if (g_sci->getKernel()->debugSetFunction(argv[1], -1, true))
+		DebugPrintf("Breakpoint enabled for k%s\n", argv[1]);
+	else
+		DebugPrintf("Unknown kernel function %s\n", argv[1]);
+
+	return true;
+}
+
+bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 	// TODO/FIXME: Why does this accept 2 parameters (the high and the low part of the address)?"
 	if (argc != 3) {
 		DebugPrintf("Sets a breakpoint on the execution of the specified exported function.\n");

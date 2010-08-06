@@ -127,14 +127,14 @@ Common::MemoryReadStream *PreImd::getExtraData(const char *fileName) {
 	return 0;
 }
 
-bool PreImd::load(Common::SeekableReadStream &stream) {
+bool PreImd::load(Common::SeekableReadStream *stream) {
 	// Since PreIMDs don't have any width and height values stored,
 	// we need them to be specified in the constructor
 	assert((_forcedWidth > 0) && (_forcedHeight > 0));
 
 	unload();
 
-	_stream = &stream;
+	_stream = stream;
 
 	_stream->seek(0);
 
@@ -564,10 +564,10 @@ bool Imd::loadFrameTables(uint32 framesPosPos, uint32 framesCoordsPos) {
 	return true;
 }
 
-bool Imd::load(Common::SeekableReadStream &stream) {
+bool Imd::load(Common::SeekableReadStream *stream) {
 	unload();
 
-	_stream = &stream;
+	_stream = stream;
 
 	uint16 handle;
 
@@ -1656,10 +1656,10 @@ void Vmd::readExtraData() {
 	}
 }
 
-bool Vmd::load(Common::SeekableReadStream &stream) {
+bool Vmd::load(Common::SeekableReadStream *stream) {
 	unload();
 
-	_stream = &stream;
+	_stream = stream;
 
 	uint16 headerLength;
 	uint16 handle;

@@ -1127,7 +1127,7 @@ void KyraEngine_MR::updateWithText() {
 
 	restorePage3();
 	drawAnimObjects();
-	if (textEnabled() && _chatText) {
+	if (_chatTextEnabled && _chatText) {
 		int curPage = _screen->_curPage;
 		_screen->_curPage = 2;
 		objectChatPrintText(_chatText, _chatObject);
@@ -1490,7 +1490,7 @@ void KyraEngine_MR::writeSettings() {
 }
 
 void KyraEngine_MR::readSettings() {
-	KyraEngine_v1::readSettings();
+	KyraEngine_v2::readSettings();
 
 	_configStudio = ConfMan.getBool("studio_audience");
 	_configSkip = ConfMan.getBool("skip_support");

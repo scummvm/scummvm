@@ -55,10 +55,10 @@ SeqDecoder::~SeqDecoder() {
 	close();
 }
 
-bool SeqDecoder::load(Common::SeekableReadStream &stream) {
+bool SeqDecoder::load(Common::SeekableReadStream *stream) {
 	close();
 
-	_fileStream = &stream;
+	_fileStream = stream;
 	_surface = new Graphics::Surface();
 	_surface->create(SEQ_SCREEN_WIDTH, SEQ_SCREEN_HEIGHT, 1);
 
@@ -76,6 +76,7 @@ bool SeqDecoder::load(Common::SeekableReadStream &stream) {
 	uint16 palColorCount = READ_LE_UINT16(paletteData + 29);
 
 	int palOffset = 37;
+	memset(_palette, 0, 256 * 3);
 
 	for (uint16 colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
 		if (palFormat == kSeqPalVariable)

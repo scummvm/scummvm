@@ -33,6 +33,8 @@ DefaultAudioCDManager::DefaultAudioCDManager() {
 	_cd.start = 0;
 	_cd.duration = 0;
 	_cd.numLoops = 0;
+	_cd.volume = Audio::Mixer::kMaxChannelVolume;
+	_cd.balance = 0;
 	_mixer = g_system->getMixer();
 	_emulating = false;
 	assert(_mixer);
@@ -70,7 +72,7 @@ void DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int du
 			*/
 			_emulating = true;
 			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle,
-			                        Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops));
+			                        Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
 		} else {
 			_emulating = false;
 			if (!only_emulate)
@@ -97,6 +99,38 @@ bool DefaultAudioCDManager::isPlaying() const {
 	} else {
 		// Real Audio CD
 		return pollCD();
+	}
+}
+
+void DefaultAudioCDManager::setVolume(byte volume) {
+	_cd.volume = volume;
+	if (_emulating) {
+		// Audio CD emulation
+		if (_mixer->isSoundHandleActive(_handle))
+			_mixer->setChannelVolume(_handle, _cd.volume);
+	} else {
+		// Real Audio CD
+		
+		// Unfortunately I can't implement this atm
+		// since SDL doesn't seem to offer an interface method for this.
+
+		// g_system->setVolumeCD(_cd.volume);
+	}
+}
+
+void DefaultAudioCDManager::setBalance(int8 balance) {
+	_cd.balance = balance;
+	if (_emulating) {
+		// Audio CD emulation
+		if (isPlaying())
+			_mixer->setChannelBalance(_handle, _cd.balance);
+	} else {
+		// Real Audio CD
+		
+		// Unfortunately I can't implement this atm
+		// since SDL doesn't seem to offer an interface method for this.
+
+		// g_system->setBalanceCD(_cd.balance);
 	}
 }
 

@@ -73,7 +73,7 @@ bool VideoPlayer::Video::open(const char *fileName, Type which, int16 width, int
 		return false;
 	}
 
-	if (!_video->load(*_stream)) {
+	if (!_video->load(_stream)) {
 		warning("While loading video \"%s\"", fileName);
 		close();
 		return false;

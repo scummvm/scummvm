@@ -679,7 +679,7 @@ void KyraEngine_HoF::updateWithText() {
 	restorePage3();
 	drawAnimObjects();
 
-	if (textEnabled() && _chatText) {
+	if (_chatTextEnabled && _chatText) {
 		int pageBackUp = _screen->_curPage;
 		_screen->_curPage = 2;
 		objectChatPrintText(_chatText, _chatObject);
@@ -1996,9 +1996,10 @@ void KyraEngine_HoF::writeSettings() {
 }
 
 void KyraEngine_HoF::readSettings() {
+	KyraEngine_v2::readSettings();
+
 	int talkspeed = ConfMan.getInt("talkspeed");
 	_configTextspeed = (talkspeed*95)/255 + 2;
-	KyraEngine_v1::readSettings();
 }
 
 } // End of namespace Kyra

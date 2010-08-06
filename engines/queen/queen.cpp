@@ -422,7 +422,7 @@ void QueenEngine::makeGameStateName(int slot, char *buf) const {
 int QueenEngine::getGameStateSlot(const char *filename) const {
 	int i = -1;
 	const char *slot = strrchr(filename, '.');
-	if (slot && slot[1] == 's') {
+	if (slot && (slot[1] == 's' || slot[1] == 'S')) {
 		i = atoi(slot + 2);
 	}
 	return i;

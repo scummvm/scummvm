@@ -30,6 +30,7 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
 #include "sci/graphics/animate.h"
+#include "sci/graphics/screen.h"
 
 namespace Sci {
 
@@ -313,8 +314,15 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	                || ((y == desty) && (abs(dy) >= abs(dx))) /* Moving fast, reached? */
 				))) {
 		// Whew... in short: If we have reached or passed our target position
-		x = destx;
-		y = desty;
+
+		// Sanity check: make sure that destx, desty are inside the screen coordinates.
+		// They can go off screen in some cases, e.g. in SQ5 while scrubbing the floor (bug #3037351)
+		if (destx < g_sci->_gfxScreen->getWidth() && desty < g_sci->_gfxScreen->getHeight()) {
+			x = destx;
+			y = desty;
+		} else {
+			warning("kDoBresen: destination x, y would be off-screen(%d, %d)", destx, desty);
+		}
 		completed = 1;
 
 		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x", PRINT_REG(mover));
@@ -437,7 +445,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelBresen, "Movement (%d,%d), angle %d is %sblocked", dx, dy, angle, (s->r_acc.offset) ? " " : "not ");
 
 	if (s->r_acc.offset) { // isBlocked() returned non-zero
-		int rotation = (rand() & 1) ? 45 : (360 - 45); // Clockwise/counterclockwise
+		int rotation = (g_sci->getRNG().getRandomBit() == 1) ? 45 : (360 - 45); // Clockwise/counterclockwise
 		int oldx = readSelectorValue(segMan, client, SELECTOR(x));
 		int oldy = readSelectorValue(segMan, client, SELECTOR(y));
 		int xstep = readSelectorValue(segMan, client, SELECTOR(xStep));

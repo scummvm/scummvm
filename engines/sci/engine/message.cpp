@@ -166,6 +166,8 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 	}
 
 	if (!reader->init()) {
+		delete reader;
+
 		warning("Message: failed to read resource header");
 		return false;
 	}
@@ -180,6 +182,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 				continue;
 			}
 
+			delete reader;
 			return false;
 		}
 
@@ -193,6 +196,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			}
 		}
 
+		delete reader;
 		return true;
 	}
 }

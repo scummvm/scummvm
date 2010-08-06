@@ -93,13 +93,13 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	uint32 riffTag = file->readUint32BE();
 	if (riffTag == MKID_BE('RIFF')) {
 		_headerSize = 0;
-		size = file->readUint32LE();
+		size = file->readUint32LE() + 8;
 		file->seek(-8, SEEK_CUR);
 		return loadFromWaveFile(file);
 	}
 	file->seek(-4, SEEK_CUR);
 
-	ResourceType type = (ResourceType)(file->readByte() & 0x7f);
+	ResourceType type = _resMan->convertResType(file->readByte());
 	if (((getType() == kResourceTypeAudio || getType() == kResourceTypeAudio36) && (type != kResourceTypeAudio))
 		|| ((getType() == kResourceTypeSync || getType() == kResourceTypeSync36) && (type != kResourceTypeSync))) {
 		warning("Resource type mismatch loading %s", _id.toString().c_str());
@@ -235,6 +235,20 @@ void ResourceManager::removeAudioResource(ResourceId resId) {
 // w nEntry
 // tb offset (cumulative)
 
+// QFG3 Demo 0.MAP structure:
+// =========
+// 10-byte entries:
+// w nEntry
+// dw offset
+// dw size
+
+// LB2 Floppy/Mother Goose SCI1.1 0.MAP structure:
+// =========
+// 8-byte entries:
+// w nEntry
+// w 0xffff
+// dw offset
+
 // Early SCI1.1 MAP structure:
 // ===============
 // 10-byte entries:
@@ -315,6 +329,31 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 			ptr += 4;
 			uint32 size = READ_LE_UINT32(ptr);
 			ptr += 4;
+
+			addResource(ResourceId(kResourceTypeAudio, n), src, offset, size);
+		}
+	} else if (map->_volumeNumber == 0 && entrySize == 8 && READ_LE_UINT16(ptr + 2) == 0xffff) {
+		// LB2 Floppy/Mother Goose SCI1.1 format
+		Common::SeekableReadStream *stream = getVolumeFile(src);
+
+		while (ptr < mapRes->data + mapRes->size) {
+			uint16 n = READ_LE_UINT16(ptr);
+			ptr += 4;
+
+			if (n == 0xffff)
+				break;
+
+			offset = READ_LE_UINT32(ptr);
+			ptr += 4;
+
+			// The size is not stored in the map and the entries have no order.
+			// We need to dig into the audio resource in the volume to get the size.
+			stream->seek(offset + 1);
+			byte headerSize = stream->readByte();
+			assert(headerSize == 11 || headerSize == 12);
+			
+			stream->skip(5);
+			uint32 size = stream->readUint32LE() + headerSize + 2;
 
 			addResource(ResourceId(kResourceTypeAudio, n), src, offset, size);
 		}

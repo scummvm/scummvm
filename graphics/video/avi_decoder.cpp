@@ -211,10 +211,10 @@ void AviDecoder::handleStreamHeader() {
 	}
 }
 
-bool AviDecoder::load(Common::SeekableReadStream &stream) {
+bool AviDecoder::load(Common::SeekableReadStream *stream) {
 	close();
 
-	_fileStream = &stream;
+	_fileStream = stream;
 	_decodedHeader = false;
 
 	// Read chunks until we have decoded the header

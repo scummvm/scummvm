@@ -274,7 +274,7 @@ public:
 	 * Deallocates a piece of dynamic memory
 	 * @param[in] addr	Offset of the dynmem chunk to free
 	 */
-	int freeDynmem(reg_t addr);
+	bool freeDynmem(reg_t addr);
 
 
 	// Generic Operations on Segments and Addresses

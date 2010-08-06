@@ -26,11 +26,26 @@
 #ifndef PSP_THREAD_H
 #define PSP_THREAD_H
 
+#include <pspthreadman.h>
 #include "common/scummsys.h"
 
+// class to inherit for creating threads
+class PspThreadable {
+protected:
+	int _threadId;
+	virtual void threadFunction() = 0;	// this function will be called when the thread starts
+public:	
+	PspThreadable() : _threadId(-1) {}					// constructor
+	virtual ~PspThreadable() {}							// destructor
+	static int __threadCallback(SceSize, void *__this);	// used to get called by sceKernelStartThread() Don't override
+	bool threadCreateAndStart(const char *threadName, int priority, int stackSize, bool useVfpu = false);
+};
+
+// class for thread utils
 class PspThread {
-public:
-	static void delayMillis(uint32 ms);
+public:	
+	// static functions
+	static void delayMillis(uint32 ms);	// delay the current thread
 	static void delayMicros(uint32 us);
 };
 
@@ -85,6 +100,7 @@ enum ThreadPriority {
 };
 
 enum StackSizes {
+	STACK_DEFAULT = 4 * 1024,
 	STACK_AUDIO_THREAD = 16 * 1024,
 	STACK_TIMER_THREAD = 32 * 1024,
 	STACK_DISPLAY_THREAD = 2 * 1024,

@@ -53,41 +53,7 @@ namespace Sci {
 #define VER(x) Common::Serializer::Version(x)
 
 
-// OBSOLETE: This const is used for backward compatibility only.
-const uint32 INTMAPPER_MAGIC_KEY = 0xDEADBEEF;
-
-
 #pragma mark -
-
-// TODO: Many of the following sync_*() methods should be turned into member funcs
-// of the classes they are syncing.
-
-#define DEFROBNICATE_HANDLE(handle) (make_reg((handle >> 16) & 0xffff, handle & 0xffff))
-
-void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
-	soundObj.saveLoadWithSerializer(s);
-	s.syncAsSint16LE(resourceId);
-	s.syncAsSint16LE(dataInc);
-	s.syncAsSint16LE(ticker);
-	s.syncAsSint16LE(signal, VER(17));
-	s.syncAsByte(priority);
-	s.syncAsSint16LE(loop, VER(17));
-	s.syncAsByte(volume);
-	s.syncAsByte(hold, VER(17));
-	s.syncAsByte(fadeTo);
-	s.syncAsSint16LE(fadeStep);
-	s.syncAsSint32LE(fadeTicker);
-	s.syncAsSint32LE(fadeTickerStep);
-	s.syncAsByte(status);
-
-	// pMidiParser and pStreamAud will be initialized when the
-	// sound list is reconstructed in gamestate_restore()
-	if (s.isLoading()) {
-		soundRes = 0;
-		pMidiParser = 0;
-		pStreamAud = 0;
-	}
-}
 
 // Experimental hack: Use syncWithSerializer to sync. By default, this assume
 // the object to be synced is a subclass of Serializable and thus tries to invoke
@@ -148,7 +114,8 @@ void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
 
 template <>
 void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
-	obj.saveLoadWithSerializer(s);
+	s.syncAsUint16LE(obj.segment);
+	s.syncAsUint16LE(obj.offset);
 }
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
@@ -206,7 +173,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 template <>
 void syncWithSerializer(Common::Serializer &s, Class &obj) {
 	s.syncAsSint32LE(obj.script);
-	obj.reg.saveLoadWithSerializer(s);
+	syncWithSerializer(s, obj.reg);
 }
 
 static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) {
@@ -266,7 +233,7 @@ void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
 
 void Object::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_flags);
-	_pos.saveLoadWithSerializer(s);
+	syncWithSerializer(s, _pos);
 	s.syncAsSint32LE(_methodCount);		// that's actually a uint16
 
 	syncArray<reg_t>(s, _variables);
@@ -283,18 +250,18 @@ template <>
 void syncWithSerializer(Common::Serializer &s, Table<List>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
-	obj.first.saveLoadWithSerializer(s);
-	obj.last.saveLoadWithSerializer(s);
+	syncWithSerializer(s, obj.first);
+	syncWithSerializer(s, obj.last);
 }
 
 template <>
 void syncWithSerializer(Common::Serializer &s, Table<Node>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
-	obj.pred.saveLoadWithSerializer(s);
-	obj.succ.saveLoadWithSerializer(s);
-	obj.key.saveLoadWithSerializer(s);
-	obj.value.saveLoadWithSerializer(s);
+	syncWithSerializer(s, obj.pred);
+	syncWithSerializer(s, obj.succ);
+	syncWithSerializer(s, obj.key);
+	syncWithSerializer(s, obj.value);
 }
 
 #ifdef ENABLE_SCI32
@@ -328,7 +295,7 @@ void syncWithSerializer(Common::Serializer &s, Table<SciArray<reg_t> >::Entry &o
 		if (s.isSaving())
 			value = obj.getValue(i);
 
-		value.saveLoadWithSerializer(s);
+		syncWithSerializer(s, value);
 
 		if (s.isLoading())
 			obj.setValue(i, value);
@@ -414,14 +381,14 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 		_objects.clear();
 		Object tmp;
 		for (uint i = 0; i < numObjs; ++i) {
-			syncWithSerializer<Object>(s, tmp);
+			syncWithSerializer(s, tmp);
 			_objects[tmp.getPos().offset] = tmp;
 		}
 	} else {
 		ObjMap::iterator it;
 		const ObjMap::iterator end = _objects.end();
 		for (it = _objects.begin(); it != end; ++it) {
-			syncWithSerializer<Object>(s, it->_value);
+			syncWithSerializer(s, it->_value);
 		}
 	}
 
@@ -523,6 +490,31 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 		for (int i = 0; i < songcount; i++) {
 			_playList[i]->saveLoadWithSerializer(s);
 		}
+	}
+}
+
+void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
+	syncWithSerializer(s, soundObj);
+	s.syncAsSint16LE(resourceId);
+	s.syncAsSint16LE(dataInc);
+	s.syncAsSint16LE(ticker);
+	s.syncAsSint16LE(signal, VER(17));
+	s.syncAsByte(priority);
+	s.syncAsSint16LE(loop, VER(17));
+	s.syncAsByte(volume);
+	s.syncAsByte(hold, VER(17));
+	s.syncAsByte(fadeTo);
+	s.syncAsSint16LE(fadeStep);
+	s.syncAsSint32LE(fadeTicker);
+	s.syncAsSint32LE(fadeTickerStep);
+	s.syncAsByte(status);
+
+	// pMidiParser and pStreamAud will be initialized when the
+	// sound list is reconstructed in gamestate_restore()
+	if (s.isLoading()) {
+		soundRes = 0;
+		pMidiParser = 0;
+		pStreamAud = 0;
 	}
 }
 
@@ -748,11 +740,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 
 	// We don't need the thumbnail here, so just read it and discard it
-	Graphics::Surface *thumbnail = new Graphics::Surface();
-	assert(thumbnail);
-	Graphics::loadThumbnail(*fh, *thumbnail);
-	delete thumbnail;
-	thumbnail = 0;
+	Graphics::skipThumbnail(*fh);
 
 	s->reset(true);
 	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?
@@ -770,12 +758,19 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->gameStartTime = g_system->getMillis();
 	s->_screenUpdateTime = g_system->getMillis();
 
+	if (g_sci->_gfxPorts)
+		g_sci->_gfxPorts->reset();
+
 	g_sci->_soundCmd->reconstructPlayList(meta.savegame_version);
 
 	// Message state:
+	delete s->_msgState;
 	s->_msgState = new MessageState(s->_segMan);
 
 	s->abortScriptProcessing = kAbortLoadGame;
+
+	// signal restored game to game scripts
+	s->gameIsRestarting = GAMEISRESTARTING_RESTORE;
 }
 
 bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata *meta) {

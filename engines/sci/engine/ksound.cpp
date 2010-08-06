@@ -48,7 +48,7 @@ reg_t kDoSound(EngineState *s, int argc, reg_t *argv) {
 
 CREATE_DOSOUND_FORWARD(DoSoundInit)
 CREATE_DOSOUND_FORWARD(DoSoundPlay)
-CREATE_DOSOUND_FORWARD(DoSoundDummy)
+CREATE_DOSOUND_FORWARD(DoSoundRestore)
 CREATE_DOSOUND_FORWARD(DoSoundDispose)
 CREATE_DOSOUND_FORWARD(DoSoundMute)
 CREATE_DOSOUND_FORWARD(DoSoundStop)
@@ -63,6 +63,7 @@ CREATE_DOSOUND_FORWARD(DoSoundUpdateCues)
 CREATE_DOSOUND_FORWARD(DoSoundSendMidi)
 CREATE_DOSOUND_FORWARD(DoSoundReverb)
 CREATE_DOSOUND_FORWARD(DoSoundSetHold)
+CREATE_DOSOUND_FORWARD(DoSoundDummy)
 CREATE_DOSOUND_FORWARD(DoSoundGetAudioCapability)
 CREATE_DOSOUND_FORWARD(DoSoundSuspend)
 CREATE_DOSOUND_FORWARD(DoSoundSetVolume)
@@ -222,16 +223,17 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 
 		// 3 new subops in Pharkas. kDoAudio in Pharkas sits at seg026:038C
 	case 11:
+		// Not sure where this is used yet
 		warning("kDoAudio: Unhandled case 11, %d extra arguments passed", argc - 1);
 		break;
 	case 12:
-		// Seems to be audio sync, used in Pharkas. Silenced the warning due to
-		// the high level of spam it produces.
+		// Seems to be some sort of audio sync, used in Pharkas. Silenced the
+		// warning due to the high level of spam it produces. (takes no params)
 		//warning("kDoAudio: Unhandled case 12, %d extra arguments passed", argc - 1);
 		break;
 	case 13:
-		// Used in Pharkas whenever a speech sample starts
-		warning("kDoAudio: Unhandled case 13, %d extra arguments passed", argc - 1);
+		// Used in Pharkas whenever a speech sample starts (takes no params)
+		//warning("kDoAudio: Unhandled case 13, %d extra arguments passed", argc - 1);
 		break;
 	default:
 		warning("kDoAudio: Unhandled case %d, %d extra arguments passed", argv[0].toUint16(), argc - 1);

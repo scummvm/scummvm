@@ -69,12 +69,15 @@ struct SciWorkaroundEntry {
 };
 
 extern const SciWorkaroundEntry opcodeDivWorkarounds[];
-extern const SciWorkaroundEntry opcodeOrWorkarounds[];
 extern const SciWorkaroundEntry opcodeDptoaWorkarounds[];
+extern const SciWorkaroundEntry opcodeGeWorkarounds[];
+extern const SciWorkaroundEntry opcodeMulWorkarounds[];
+extern const SciWorkaroundEntry opcodeOrWorkarounds[];
 extern const SciWorkaroundEntry uninitializedReadWorkarounds[];
 extern const SciWorkaroundEntry kAbs_workarounds[];
 extern const SciWorkaroundEntry kCelHigh_workarounds[];
 extern const SciWorkaroundEntry kCelWide_workarounds[];
+extern const SciWorkaroundEntry kDeviceInfo_workarounds[];
 extern const SciWorkaroundEntry kDisplay_workarounds[];
 extern const SciWorkaroundEntry kDisposeScript_workarounds[];
 extern const SciWorkaroundEntry kDoSoundFade_workarounds[];
@@ -83,6 +86,7 @@ extern const SciWorkaroundEntry kGetAngle_workarounds[];
 extern const SciWorkaroundEntry kGraphDrawLine_workarounds[];
 extern const SciWorkaroundEntry kGraphSaveBox_workarounds[];
 extern const SciWorkaroundEntry kGraphRestoreBox_workarounds[];
+extern const SciWorkaroundEntry kGraphUpdateBox_workarounds[];
 extern const SciWorkaroundEntry kGraphFillBoxForeground_workarounds[];
 extern const SciWorkaroundEntry kGraphFillBoxAny_workarounds[];
 extern const SciWorkaroundEntry kGraphRedrawBox_workarounds[];
@@ -90,7 +94,9 @@ extern const SciWorkaroundEntry kIsObject_workarounds[];
 extern const SciWorkaroundEntry kMemory_workarounds[];
 extern const SciWorkaroundEntry kNewWindow_workarounds[];
 extern const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[];
+extern const SciWorkaroundEntry kSetCursor_workarounds[];
 extern const SciWorkaroundEntry kSetPort_workarounds[];
+extern const SciWorkaroundEntry kStrAt_workarounds[];
 extern const SciWorkaroundEntry kUnLoad_workarounds[];
 
 extern SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin);

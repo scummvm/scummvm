@@ -84,6 +84,10 @@ void GfxView::initData(GuiResourceId resourceId) {
 	_embeddedPal = false;
 	_EGAmapping = NULL;
 	_isSci2Hires = false;
+	_isScaleable = true;
+
+	// we adjust inside getCelRect for SCI0EARLY (that version didn't have the +1 when calculating bottom)
+	_adjustForSci0Early = getSciVersion() == SCI_VERSION_0_EARLY ? -1 : 0;
 
 	// If we find an SCI1/SCI1.1 view (not amiga), we switch to that type for
 	// EGA. This could get used to make view patches for EGA games, where the
@@ -189,15 +193,30 @@ void GfxView::initData(GuiResourceId resourceId) {
 		break;
 
 	case kViewVga11: // View-format SCI1.1+
-		// HeaderSize:WORD LoopCount:BYTE Unknown:BYTE Version:WORD Unknown:WORD PaletteOffset:WORD
+		// HeaderSize:WORD LoopCount:BYTE Flags:BYTE Version:WORD Unknown:WORD PaletteOffset:WORD
 		headerSize = READ_SCI11ENDIAN_UINT16(_resourceData + 0) + 2; // headerSize is not part of the header, so it's added
 		assert(headerSize >= 16);
 		_loopCount = _resourceData[2];
 		assert(_loopCount);
 		_isSci2Hires = _resourceData[5] == 1 ? true : false;
 		palOffset = READ_SCI11ENDIAN_UINT32(_resourceData + 8);
-		// FIXME: After LoopCount there is another byte and its set for view 50
-		// within Laura Bow 2 CD, check what it means.
+		// flags is actually a bit-mask
+		//  it seems it was only used for some early sci1.1 games (or even just laura bow 2)
+		//  later interpreters dont support it at all anymore
+		// we assume that if flags is 0h the view does not support flags and default to scaleable
+		// if it's 1h then we assume that the view is not to be scaled
+		// if it's 40h then we assume that the view is scaleable
+		switch (_resourceData[3]) {
+		case 1:
+			_isScaleable = false;
+			break;
+		case 0x40:
+		case 0:
+			break; // don't do anything, we already have _isScaleable set
+		default:
+			error("unsupported flags byte inside sci1.1 view");
+			break;
+		}
 
 		loopData = _resourceData + headerSize;
 		loopSize = _resourceData[12];
@@ -318,11 +337,15 @@ bool GfxView::isSci2Hires() {
 	return _isSci2Hires;
 }
 
+bool GfxView::isScaleable() {
+	return _isScaleable;
+}
+
 void GfxView::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect &outRect) const {
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	outRect.left = x + celInfo->displaceX - (celInfo->width >> 1);
 	outRect.right = outRect.left + celInfo->width;
-	outRect.bottom = y + celInfo->displaceY - z + 1;
+	outRect.bottom = y + celInfo->displaceY - z + 1 + _adjustForSci0Early;
 	outRect.top = outRect.bottom - celInfo->height;
 }
 
@@ -637,7 +660,7 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	uint16 scalingX[640];
 	uint16 scalingY[480];
 	int16 scaledWidth, scaledHeight;
-	int16 pixelNo, scaledPixel, scaledPixelNo, prevScaledPixelNo;
+	int pixelNo, scaledPixel, scaledPixelNo, prevScaledPixelNo;
 
 	if (_embeddedPal) {
 		// Merge view palette in...
@@ -650,8 +673,8 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	scaledHeight = CLIP<int16>(scaledHeight, 0, _screen->getHeight());
 
 	// Do we really need to do this?!
-	memset(scalingX, 0, sizeof(scalingX));
-	memset(scalingY, 0, sizeof(scalingY));
+	//memset(scalingX, 0, sizeof(scalingX));
+	//memset(scalingY, 0, sizeof(scalingY));
 
 	// Create height scaling table
 	pixelNo = 0;
@@ -659,16 +682,15 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	while (pixelNo < celHeight) {
 		scaledPixelNo = scaledPixel >> 7;
 		assert(scaledPixelNo < ARRAYSIZE(scalingY));
-		if (prevScaledPixelNo < scaledPixelNo)
-			memset(&scalingY[prevScaledPixelNo], pixelNo, scaledPixelNo - prevScaledPixelNo);
-		scalingY[scaledPixelNo] = pixelNo;
-		prevScaledPixelNo = scaledPixelNo + 1;
+		for (; prevScaledPixelNo <= scaledPixelNo; prevScaledPixelNo++)
+			scalingY[prevScaledPixelNo] = pixelNo;
 		pixelNo++;
 		scaledPixel += scaleY;
 	}
+	pixelNo--;
 	scaledPixelNo++;
-	if (scaledPixelNo < scaledHeight)
-		memset(&scalingY[scaledPixelNo], pixelNo - 1, scaledHeight - scaledPixelNo);
+	for (; scaledPixelNo < scaledHeight; scaledPixelNo++)
+		scalingY[scaledPixelNo] = pixelNo;
 
 	// Create width scaling table
 	pixelNo = 0;
@@ -676,16 +698,15 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	while (pixelNo < celWidth) {
 		scaledPixelNo = scaledPixel >> 7;
 		assert(scaledPixelNo < ARRAYSIZE(scalingX));
-		if (prevScaledPixelNo < scaledPixelNo)
-			memset(&scalingX[prevScaledPixelNo], pixelNo, scaledPixelNo - prevScaledPixelNo);
-		scalingX[scaledPixelNo] = pixelNo;
-		prevScaledPixelNo = scaledPixelNo + 1;
+		for (; prevScaledPixelNo <= scaledPixelNo; prevScaledPixelNo++)
+			scalingX[prevScaledPixelNo] = pixelNo;
 		pixelNo++;
 		scaledPixel += scaleX;
 	}
+	pixelNo--;
 	scaledPixelNo++;
-	if (scaledPixelNo < scaledWidth)
-		memset(&scalingX[scaledPixelNo], pixelNo - 1, scaledWidth - scaledPixelNo);
+	for (; scaledPixelNo < scaledWidth; scaledPixelNo++)
+		scalingX[scaledPixelNo] = pixelNo;
 
 	scaledWidth = MIN(clipRect.width(), scaledWidth);
 	scaledHeight = MIN(clipRect.height(), scaledHeight);

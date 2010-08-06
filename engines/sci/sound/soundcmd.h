@@ -82,7 +82,7 @@ public:
 
 	reg_t kDoSoundInit(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundPlay(int argc, reg_t *argv, reg_t acc);
-	reg_t kDoSoundDummy(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundRestore(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundMute(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundPause(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundResumeAfterRestore(int argc, reg_t *argv, reg_t acc);
@@ -97,6 +97,7 @@ public:
 	reg_t kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundReverb(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundSetHold(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundDummy(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundGetAudioCapability(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundSetVolume(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc);

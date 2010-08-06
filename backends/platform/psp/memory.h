@@ -52,7 +52,6 @@ private:
 	static void copy32Aligned(uint32 *dst32, const uint32 *src32, uint32 bytes);
 	static void swap32Aligned(uint32 *dst32, const uint32 *src32, uint32 bytes, PSPPixelFormat &format);
 	static void copy32Misaligned(uint32 *dst32, const byte *src, uint32 bytes, uint32 alignSrc);
-	static uint32 misaligned32Detail(uint32 *dst32, uint32 *src32, uint32 bytes, uint32 alignSrc, const uint32 shiftValue, const uint32 lastShiftValue);
 	static void swap32Misaligned(uint32 *dst32, const uint16 *src16, uint32 bytes, PSPPixelFormat &format);
 	static void copy16(uint16 *dst, const uint16 *src, uint32 bytes);
 

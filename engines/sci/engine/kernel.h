@@ -127,6 +127,7 @@ struct KernelSubFunction {
 	uint16 *signature;
 	const SciWorkaroundEntry *workarounds;
 	bool debugLogging;
+	bool debugBreakpoint;
 };
 
 struct KernelFunction {
@@ -137,6 +138,7 @@ struct KernelFunction {
 	KernelSubFunction *subFunctions;
 	uint16 subFunctionCount;
 	bool debugLogging;
+	bool debugBreakpoint;
 };
 
 class Kernel {
@@ -218,9 +220,9 @@ public:
 	void loadKernelNames(GameFeatures *features);
 
 	/**
-	 * Sets debugCalls flag for a kernel function
+	 * Sets debug flags for a kernel function
 	 */
-	bool debugSetFunctionLogging(const char *kernelName, bool debugCalls);
+	bool debugSetFunction(const char *kernelName, int logging, int breakpoint);
 
 private:
 	/**
@@ -467,7 +469,7 @@ reg_t kMoveToEnd(EngineState *s, int argc, reg_t *argv);
 
 reg_t kDoSoundInit(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundPlay(EngineState *s, int argc, reg_t *argv);
-reg_t kDoSoundDummy(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundRestore(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundDispose(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundMute(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundStop(EngineState *s, int argc, reg_t *argv);
@@ -482,6 +484,7 @@ reg_t kDoSoundUpdateCues(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSendMidi(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundReverb(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSetHold(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundDummy(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundGetAudioCapability(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSuspend(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSetVolume(EngineState *s, int argc, reg_t *argv);

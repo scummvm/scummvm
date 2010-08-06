@@ -459,8 +459,8 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 #define SCI_DISPLAY_WIDTH				106
 #define SCI_DISPLAY_SAVEUNDER			107
 #define SCI_DISPLAY_RESTOREUNDER		108
-#define SCI_DISPLAY_DUMMY1				114 // used in longbow-demo, not supported in sierra sci - no parameters
-#define SCI_DISPLAY_DUMMY2				115 // used in longbow-demo, not supported in sierra sci - has 1 parameter
+#define SCI_DISPLAY_DUMMY1				114 // used in longbow demo/qfg1 ega demo, not supported in sierra sci - no parameters
+#define SCI_DISPLAY_DUMMY2				115 // used in longbow demo, not supported in sierra sci - has 1 parameter
 #define SCI_DISPLAY_DONTSHOWBITS		121
 
 reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
@@ -531,15 +531,16 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 			break;
 
 		// 2 Dummy functions, longbow-demo is using those several times but sierra sci doesn't support them at all
+		// The Quest for Glory 1 EGA demo also calls kDisplay(114)
 		case SCI_DISPLAY_DUMMY1:
 		case SCI_DISPLAY_DUMMY2:
-			if (!((g_sci->getGameId() == GID_LONGBOW) && (g_sci->isDemo())))
-				error("Unknown kDisplay argument %X", displayArg.offset);
+			if (!g_sci->isDemo() || (g_sci->getGameId() != GID_LONGBOW && g_sci->getGameId() != GID_QFG1))
+				error("Unknown kDisplay argument %d", displayArg.offset);
 			if (displayArg.offset == SCI_DISPLAY_DUMMY2) {
 				if (argc) {
 					argc--; argv++;
 				} else {
-					error("No parameter left for kDisplay(0x73)");
+					error("No parameter left for kDisplay(115)");
 				}
 			}
 			break;
@@ -594,23 +595,6 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	currport->curTop = tTop;
 	currport->curLeft = tLeft;
 	return result;
-}
-
-// TODO: If this matches the sci32 implementation, we may put it into GfxScreen
-void GfxPaint16::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
-	while (shakeCount--) {
-		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
-			_screen->setVerticalShakePos(10);
-		// TODO: horizontal shakes
-		g_system->updateScreen();
-		g_sci->getEngineState()->wait(3);
-
-		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
-			_screen->setVerticalShakePos(0);
-
-		g_system->updateScreen();
-		g_sci->getEngineState()->wait(3);
-	}
 }
 
 reg_t GfxPaint16::kernelPortraitLoad(const Common::String &resourceName) {

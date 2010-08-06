@@ -299,7 +299,7 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 	if (sierraId == "fp" || sierraId == "gk" || sierraId == "pq4")
 		demoThreshold = 150;
 
-	Common::List<ResourceId> *resources = resMan->listResources(kResourceTypeScript, -1);
+	Common::ScopedPtr<Common::List<ResourceId> > resources(resMan->listResources(kResourceTypeScript, -1));
 	if (resources->size() < demoThreshold) {
 		*gameFlags |= ADGF_DEMO;
 
@@ -496,8 +496,8 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 			filename.contains("patch.005") || filename.contains("bank.001"))
 				s_fallbackDesc.platform = Common::kPlatformAmiga;
 
-		// The existence of 7.pat indicates a Mac game
-		if (filename.contains("7.pat"))
+		// The existence of 7.pat or patch.200 indicates a Mac game
+		if (filename.contains("7.pat") || filename.contains("patch.200"))
 			s_fallbackDesc.platform = Common::kPlatformMacintosh;
 
 		// The data files for Atari ST versions are the same as their DOS counterparts
@@ -627,7 +627,7 @@ bool SciMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool SciEngine::hasFeature(EngineFeature f) const {
 	return
-		//(f == kSupportsRTL) ||
+		(f == kSupportsRTL) ||
 		(f == kSupportsLoadingDuringRuntime); // ||
 		//(f == kSupportsSavingDuringRuntime);
 		// We can't allow saving through ScummVM menu, because

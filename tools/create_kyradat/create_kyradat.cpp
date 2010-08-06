@@ -45,7 +45,7 @@
 #include <map>
 
 enum {
-	kKyraDatVersion = 70
+	kKyraDatVersion = 71
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -163,6 +163,7 @@ const ExtractFilename extractFilenames[] = {
 	{ k1CreditsStrings, kTypeRawData, true },
 
 	// FM-TOWNS specific
+	{ k1TownsMusicFadeTable, k3TypeRaw16to8, false },
 	{ k1TownsSFXwdTable, kTypeTownsWDSfxTable, false },
 	{ k1TownsSFXbtTable, kTypeRawData, false },
 	{ k1TownsCDATable, kTypeRawData, false },
@@ -500,7 +501,7 @@ bool checkIndex(PAKFile &file) {
 
 void printHelp(const char *f) {
 	printf("Usage:\n");
-	printf("%s output inputfiles ...", f);
+	printf("%s output inputfiles ...\n", f);
 }
 
 bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size);
@@ -898,6 +899,8 @@ const char *getIdString(const int id) {
 		return "k1GUIStrings";
 	case k1ConfigStrings:
 		return "k1ConfigStrings";
+	case k1TownsMusicFadeTable:
+		return "k1TownsMusicFadeTable";
 	case k1TownsSFXwdTable:
 		return "k1TownsSFXwdTable";
 	case k1TownsSFXbtTable:

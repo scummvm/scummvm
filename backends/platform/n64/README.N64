@@ -13,6 +13,8 @@ Requirements
 
 Build cart images from sources
 ==============================
+You can download hkz-libn64 sources from here: http://hkzlab.ipv7.net/consoles.html
+hkz-libn64 is a library to control Nintendo64 hardware (es, video, audio, input, etc.).
 * TODO *
 
 Build cart images from binaries

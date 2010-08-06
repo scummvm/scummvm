@@ -147,6 +147,12 @@ void SoundCommandParser::processPlaySound(reg_t obj) {
 	_music->soundPlay(musicSlot);
 }
 
+reg_t SoundCommandParser::kDoSoundRestore(int argc, reg_t *argv, reg_t acc) {
+	// Called after loading, to restore the playlist
+	// We don't really use or need this
+	return acc;
+}
+
 reg_t SoundCommandParser::kDoSoundDummy(int argc, reg_t *argv, reg_t acc) {
 	warning("cmdDummy invoked");	// not supposed to occur
 	return acc;
@@ -246,7 +252,8 @@ reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
 	} else {	// pause a playlist slot
 		MusicEntry *musicSlot = _music->getSlot(obj);
 		if (!musicSlot) {
-			warning("kDoSound(pause): Slot not found (%04x:%04x)", PRINT_REG(obj));
+			// This happens quite frequently
+			debugC(2, kDebugLevelSound, "kDoSound(pause): Slot not found (%04x:%04x)", PRINT_REG(obj));
 			return acc;
 		}
 
@@ -263,12 +270,13 @@ reg_t SoundCommandParser::kDoSoundResumeAfterRestore(int argc, reg_t *argv, reg_
 }
 
 reg_t SoundCommandParser::kDoSoundMute(int argc, reg_t *argv, reg_t acc) {
+	uint16 previousState = _music->soundGetSoundOn();
 	if (argc > 0) {
 		debugC(2, kDebugLevelSound, "kDoSound(mute): %d", argv[0].toUint16());
 		_music->soundSetSoundOn(argv[0].toUint16());
 	}
 
-	return make_reg(0, _music->soundGetSoundOn());
+	return make_reg(0, previousState);
 }
 
 reg_t SoundCommandParser::kDoSoundMasterVolume(int argc, reg_t *argv, reg_t acc) {
@@ -316,7 +324,11 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 	case 4: // SCI01+
 	case 5: // SCI1+ (SCI1 late sound scheme), with fade and continue
 		musicSlot->fadeTo = CLIP<uint16>(argv[1].toUint16(), 0, MUSIC_VOLUME_MAX);
-		musicSlot->fadeStep = volume > argv[1].toUint16() ? -argv[3].toUint16() : argv[3].toUint16();
+		// sometimes we get objects in that position, fix it up (ffs. workarounds)
+		if (!argv[1].segment)
+			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -argv[3].toUint16() : argv[3].toUint16();
+		else
+			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -5 : 5;
 		musicSlot->fadeTickerStep = argv[2].toUint16() * 16667 / _music->soundGetTempo();
 		musicSlot->fadeTicker = 0;
 		musicSlot->stopAfterFading = (argc == 5) ? (argv[4].toUint16() != 0) : false;
@@ -557,7 +569,7 @@ reg_t SoundCommandParser::kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc) 
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("kDoSound(setPriority): Slot not found (%04x:%04x)", PRINT_REG(obj));
+		debugC(2, kDebugLevelSound, "kDoSound(setPriority): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return acc;
 	}
 

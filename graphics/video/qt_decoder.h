@@ -89,7 +89,7 @@ public:
 	 * Load a QuickTime video file from a SeekableReadStream
 	 * @param stream	the stream to load
 	 */
-	bool load(Common::SeekableReadStream &stream);
+	bool load(Common::SeekableReadStream *stream);
 
 	/**
 	 * Close a QuickTime encoded video file

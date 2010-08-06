@@ -177,6 +177,15 @@ void GfxAnimate::makeSortedList(List *list) {
 		curNode = _s->_segMan->lookupNode(curAddress);
 	}
 
+	// Possible TODO: As noted in the comment in sortHelper we actually
+	// require a stable sorting algorithm here. Since Common::sort is not stable
+	// at the time of writing this comment, we work around that in our ordering
+	// comparator. If that changes in the future or we want to use some
+	// stable sorting algorithm here, we should change that.
+	// In that case we should test such changes intensively. A good place to test stable sort
+	// is iceman, cupboard within the submarine. If sort isn't stable, the cupboard will be
+	// half-open, half-closed. Of course that's just one of many special cases.
+
 	// Now sort the list according y and z (descending)
 	Common::sort(_list.begin(), _list.end(), sortHelper);
 }
@@ -190,6 +199,7 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 
 	for (it = _list.begin(); it != end; ++it) {
 		curObject = it->object;
+		signal = it->signal;
 
 		// Get the corresponding view
 		view = _cache->getView(it->viewId);
@@ -233,18 +243,30 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 			}
 		}
 
+		if (!view->isScaleable()) {
+			// Laura Bow 2 (especially floppy) depends on this, some views are not supposed to be scaleable
+			//  this "feature" was removed in later versions of SCI1.1
+			it->scaleSignal = 0;
+			it->scaleY = it->scaleX = 128;
+		}
+
+		bool setNsRect = true;
+
 		// Create rect according to coordinates and given cel
 		if (it->scaleSignal & kScaleSignalDoScaling) {
 			view->getCelScaledRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->scaleX, it->scaleY, it->celRect);
+			// when being scaled, only set nsRect, if object will get drawn
+			if ((signal & kSignalHidden) && !(signal & kSignalAlwaysUpdate))
+				setNsRect = false;
 		} else {
 			view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
 		}
-		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), it->celRect.left);
-		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop), it->celRect.top);
-		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsRight), it->celRect.right);
-		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsBottom), it->celRect.bottom);
-
-		signal = it->signal;
+		if (setNsRect) {
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), it->celRect.left);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop), it->celRect.top);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsRight), it->celRect.right);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsBottom), it->celRect.bottom);
+		}
 
 		// Calculate current priority according to y-coordinate
 		if (!(signal & kSignalFixedPriority)) {
@@ -521,13 +543,21 @@ void GfxAnimate::addToPicDrawCels() {
 	}
 }
 
-void GfxAnimate::addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+void GfxAnimate::addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 x, int16 y, int16 priority, int16 control) {
 	GfxView *view = _cache->getView(viewId);
 	Common::Rect celRect;
 
+	if (priority == -1)
+		priority = _ports->kernelCoordinateToPriority(y);
+
 	// Create rect according to coordinates and given cel
-	view->getCelRect(loopNo, celNo, leftPos, topPos, priority, celRect);
+	view->getCelRect(loopNo, celNo, x, y, 0, celRect);
 	_paint16->drawCel(view, loopNo, celNo, celRect, priority, 0);
+
+	if (control != -1) {
+		celRect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(priority) - 1, celRect.top, celRect.bottom - 1);
+		_paint16->fillRect(celRect, GFX_SCREEN_MASK_CONTROL, 0, 0, control);
+	}
 }
 
 
@@ -595,14 +625,49 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 	updateScreen(old_picNotValid);
 	restoreAndDelete(argc, argv);
 
-	if (_lastCastData.size() > 1)
-		_s->_throttleTrigger = true;
-
 	// We update the screen here as well, some scenes like EQ1 credits run w/o calling kGetEvent thus we wouldn't update
 	//  screen at all
 	g_sci->getEventManager()->updateScreen();
 
 	_ports->setPort(oldPort);
+
+
+	// Now trigger speed throttler
+	switch (_lastCastData.size()) {
+	case 0:
+		// No entries drawn -> no speed throttler triggering
+		break;
+	case 1: {
+		
+		// One entry drawn -> check if that entry was a speed benchmark view, if not enable speed throttler
+		AnimateEntry *onlyCast = &_lastCastData[0];
+		if ((onlyCast->viewId == 0) && (onlyCast->loopNo == 13) && (onlyCast->celNo == 0)) {
+			// this one is used by jones talkie
+			if ((onlyCast->celRect.height() == 8) && (onlyCast->celRect.width() == 8))
+				return;
+		}
+		// first loop and first cel used?
+		if ((onlyCast->loopNo == 0) && (onlyCast->celNo == 0)) {
+			// and that cel has a known speed benchmark resolution
+			int16 onlyHeight = onlyCast->celRect.height();
+			int16 onlyWidth = onlyCast->celRect.width();
+			if (((onlyWidth == 12) && (onlyHeight == 35)) || // regular benchmark view ("fred", "Speedy", "ego")
+				((onlyWidth == 29) && (onlyHeight == 45)) || // King's Quest 5 french "fred"
+				((onlyWidth == 1) && (onlyHeight == 1))) { // Laura Bow 2 Talkie
+				// check further that there is only one cel in that view
+				GfxView *onlyView = _cache->getView(onlyCast->viewId);
+				if ((onlyView->getLoopCount() == 1) && (onlyView->getCelCount(0)))
+					return;
+			}
+		}
+		_s->_throttleTrigger = true;
+		break;
+	}
+	default:
+		// More than 1 entry drawn -> time for speed throttling
+		_s->_throttleTrigger = true;
+		break;
+	}
 }
 
 void GfxAnimate::addToPicSetPicNotValid() {
@@ -627,9 +692,9 @@ void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) 
 	addToPicSetPicNotValid();
 }
 
-void GfxAnimate::kernelAddToPicView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+void GfxAnimate::kernelAddToPicView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 x, int16 y, int16 priority, int16 control) {
 	_ports->setPort((Port *)_ports->_picWind);
-	addToPicDrawView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
+	addToPicDrawView(viewId, loopNo, celNo, x, y, priority, control);
 	addToPicSetPicNotValid();
 }
 

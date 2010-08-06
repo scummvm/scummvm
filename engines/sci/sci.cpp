@@ -26,6 +26,8 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/EventRecorder.h"
+#include "common/file.h"	// for Common::File::exists()
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -117,12 +119,15 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "actors");	// KQ6 hi-res portraits
 	SearchMan.addSubDirectoryMatching(gameDataDir, "aud");	// resource.aud and audio files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "audio");// resource.aud and audio files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "audiosfx");// resource.aud and audio files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "wav");	// speech files in WAV format
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx");	// music/sound files in WAV format
 	SearchMan.addSubDirectoryMatching(gameDataDir, "avi");	// AVI movie files for Windows versions
 	SearchMan.addSubDirectoryMatching(gameDataDir, "seq");	// SEQ movie files for DOS versions
 	SearchMan.addSubDirectoryMatching(gameDataDir, "robot");	// robot movie files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "robots");	// robot movie files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "movie");	// vmd movie files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");	// vmd movie files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "vmd");	// vmd movie files
 
@@ -169,6 +174,8 @@ SciEngine::~SciEngine() {
 }
 
 Common::Error SciEngine::run() {
+	g_eventRec.registerRandomSource(_rng, "sci");
+
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("undither", "true");
 	ConfMan.registerDefault("enable_fb01", "false");
@@ -232,11 +239,33 @@ Common::Error SciEngine::run() {
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
 
+	if (_gameDescription->flags & ADGF_ADDENGLISH) {
+		// if game is multilingual
+		Common::Language selectedLanguage = Common::parseLanguage(ConfMan.get("language"));
+		if (selectedLanguage == Common::EN_ANY) {
+			// and english was selected as language
+			if (SELECTOR(printLang) != -1) // set text language to english
+				writeSelectorValue(segMan, _gameObj, SELECTOR(printLang), 1);
+			if (SELECTOR(parseLang) != -1) // and set parser language to english as well
+				writeSelectorValue(segMan, _gameObj, SELECTOR(parseLang), 1);
+		}
+	}
+
 	// Check whether loading a savestate was requested
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) {
 		reg_t restoreArgv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special call (argv[0] is NULL)
 		kRestoreGame(_gamestate, 2, restoreArgv);
+
+		// TODO: The best way to do the following would be to invoke Game::init
+		// here and stop when the room is about to be changed, otherwise some
+		// game initialization won't take place
+
+		// Set audio language for KQ5CD (bug #3039477)
+		if (g_sci->getGameId() == GID_KQ5 && Common::File::exists("AUDIO001.002")) {
+			reg_t doAudioArgv[2] = { make_reg(0, 9), make_reg(0, 1) };
+			kDoAudio(_gamestate, 2, doAudioArgv);
+		}
 
 		// Initialize the game menu, if there is one.
 		// This is not done when loading, so we must do it manually.
@@ -287,7 +316,7 @@ bool SciEngine::initGame() {
 	_gamestate->_executionStackPosChanged = false;
 
 	_gamestate->abortScriptProcessing = kAbortNone;
-	_gamestate->gameWasRestarted = false;
+	_gamestate->gameIsRestarting = GAMEISRESTARTING_NONE;
 
 	_gamestate->stack_base = stack->_entries;
 	_gamestate->stack_top = stack->_entries + stack->_capacity;
@@ -303,8 +332,6 @@ bool SciEngine::initGame() {
 	}
 
 	_gamestate->gameStartTime = _gamestate->lastWaitTime = _gamestate->_screenUpdateTime = g_system->getMillis();
-
-	srand(g_system->getMillis()); // Initialize random number generator
 
 	// Load game language into printLang property of game object
 	setSciLanguage();
@@ -415,7 +442,7 @@ void SciEngine::runGame() {
 			_gamestate->_segMan->resetSegMan();
 			initGame();
 			initStackBaseWithSelector(SELECTOR(play));
-			_gamestate->gameWasRestarted = true;
+			_gamestate->gameIsRestarting = GAMEISRESTARTING_RESTART;
 			if (_gfxMenu)
 				_gfxMenu->reset();
 			_gamestate->abortScriptProcessing = kAbortNone;

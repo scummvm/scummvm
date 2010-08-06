@@ -968,6 +968,12 @@ const ExtractEntrySearchData k1ConfigStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
+const ExtractEntrySearchData k1TownsMusicFadeTableProvider[] = {
+	{ UNK_LANG, kPlatformFMTowns, { 0x00000B10, 0x000076DE, { { 0x9F, 0x08, 0x5B, 0xD6, 0x25, 0x7F, 0x11, 0x08, 0x87, 0x45, 0x92, 0xD3, 0xE5, 0xA8, 0x7C, 0x2F } } } },
+
+	EXTRACT_END_ENTRY
+};
+	
 const ExtractEntrySearchData k1TownsSFXwdTableProvider[] = {
 	{ UNK_LANG, kPlatformFMTowns, { 0x00012608, 0x006717A1, { { 0x34, 0xDD, 0x2D, 0xA5, 0x14, 0x05, 0xEE, 0x2F, 0x93, 0x7C, 0x78, 0x4D, 0xCA, 0x13, 0xED, 0x93 } } } },
 
@@ -1823,6 +1829,7 @@ const ExtractEntry extractProviders[] = {
 	{ k1SpecialPalette33, k1SpecialPalette33Provider },
 	{ k1GUIStrings, k1GUIStringsProvider },
 	{ k1ConfigStrings, k1ConfigStringsProvider },
+	{ k1TownsMusicFadeTable, k1TownsMusicFadeTableProvider },
 	{ k1TownsSFXwdTable, k1TownsSFXwdTableProvider },
 	{ k1TownsSFXbtTable, k1TownsSFXbtTableProvider },
 	{ k1TownsCDATable, k1TownsCDATableProvider },

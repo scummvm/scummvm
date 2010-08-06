@@ -68,6 +68,7 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 
 	newPlane.object = object;
 	newPlane.pictureId = 0xFFFF;
+	newPlane.priority = readSelectorValue(_segMan, object, SELECTOR(priority));
 	newPlane.lastPriority = 0xFFFF; // hidden
 	_planes.push_back(newPlane);
 
@@ -108,10 +109,12 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 			planeRect.bottom = readSelectorValue(_segMan, object, SELECTOR(bottom)) + 1;
 			planeRect.right = readSelectorValue(_segMan, object, SELECTOR(right)) + 1;
 
-			planeRect.top = (planeRect.top * _screen->getHeight()) / scriptsRunningHeight;
-			planeRect.left = (planeRect.left * _screen->getWidth()) / scriptsRunningWidth;
-			planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / scriptsRunningHeight;
-			planeRect.right = (planeRect.right * _screen->getWidth()) / scriptsRunningWidth;
+			Common::Rect screenRect(_screen->getWidth(), _screen->getHeight());
+			planeRect.top = (planeRect.top * screenRect.height()) / scriptsRunningHeight;
+			planeRect.left = (planeRect.left * screenRect.width()) / scriptsRunningWidth;
+			planeRect.bottom = (planeRect.bottom * screenRect.height()) / scriptsRunningHeight;
+			planeRect.right = (planeRect.right * screenRect.width()) / scriptsRunningWidth;
+			planeRect.clip(screenRect); // we need to do this, at least in gk1 on cemetary we get bottom right -> 201, 321
 			// Blackout removed plane rect
 			_paint32->fillRect(planeRect, 0);
 			return;
@@ -125,6 +128,7 @@ void GfxFrameout::addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 
 	newPicture.pictureId = pictureId;
 	newPicture.picture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, pictureId, false);
 	newPicture.startX = startX;
+	newPicture.pictureCels = 0;
 	_planePictures.push_back(newPicture);
 }
 
@@ -218,10 +222,11 @@ void GfxFrameout::kernelFrameout() {
 		// Update priority here, sq6 sets it w/o UpdatePlane
 		uint16 planePriority = it->priority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
 
-		planeRect.top = (planeRect.top * _screen->getHeight()) / scriptsRunningHeight;
-		planeRect.left = (planeRect.left * _screen->getWidth()) / scriptsRunningWidth;
-		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / scriptsRunningHeight;
-		planeRect.right = (planeRect.right * _screen->getWidth()) / scriptsRunningWidth;
+		Common::Rect screenRect(_screen->getWidth(), _screen->getHeight());
+		planeRect.top = (planeRect.top * screenRect.height()) / scriptsRunningHeight;
+		planeRect.left = (planeRect.left * screenRect.width()) / scriptsRunningWidth;
+		planeRect.bottom = (planeRect.bottom * screenRect.height()) / scriptsRunningHeight;
+		planeRect.right = (planeRect.right * screenRect.width()) / scriptsRunningWidth;
 
 		int16 planeOffsetX = 0;
 
@@ -364,7 +369,7 @@ void GfxFrameout::kernelFrameout() {
 
 				int16 pictureOffsetX = planeOffsetX;
 				int16 pictureX = itemEntry->x;
-				if (planeOffsetX) {
+				if ((planeOffsetX) || (itemEntry->picStartX)) {
 					if (planeOffsetX <= itemEntry->picStartX) {
 						pictureX += itemEntry->picStartX - planeOffsetX;
 						pictureOffsetX = 0;
@@ -480,7 +485,15 @@ void GfxFrameout::kernelFrameout() {
 				// This draws text the "SCI0-SCI11" way. In SCI2, text is prerendered in kCreateTextBitmap
 				// TODO: rewrite this the "SCI2" way (i.e. implement the text buffer to draw inside kCreateTextBitmap)
 				if (lookupSelector(_segMan, itemEntry->object, SELECTOR(text), NULL, NULL) == kSelectorVariable) {
-					Common::String text = _segMan->getString(readSelector(_segMan, itemEntry->object, SELECTOR(text)));
+					reg_t stringObject = readSelector(_segMan, itemEntry->object, SELECTOR(text));
+
+					// The object in the text selector of the item can be either a raw string
+					// or a Str object. In the latter case, we need to access the object's data
+					// selector to get the raw string.
+					if (_segMan->isHeapObject(stringObject))
+						stringObject = readSelector(_segMan, stringObject, SELECTOR(data));
+
+					Common::String text = _segMan->getString(stringObject);
 					GfxFont *font = _cache->getFont(readSelectorValue(_segMan, itemEntry->object, SELECTOR(font)));
 					bool dimmed = readSelectorValue(_segMan, itemEntry->object, SELECTOR(dimmed));
 					uint16 foreColor = readSelectorValue(_segMan, itemEntry->object, SELECTOR(fore));

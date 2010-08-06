@@ -709,7 +709,6 @@
 						width = '80'
 				/>
 			</layout>
-			<space size = '4' />
 			<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '1' center = 'true'>
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
@@ -729,7 +728,7 @@
 						  />
 				</layout>
 			</layout>
-			<space size = '4' />
+			<space size = '2' />
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'subSubtitleSpeedDesc'
 						type = 'OptionsLabel'
@@ -741,7 +740,7 @@
 						type = 'SmallLabel'
 				/>
 			</layout>
-			<space size = '20'/>
+			<space size = '16'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4'>
 				<widget name = 'Keys'
 						type = 'Button'

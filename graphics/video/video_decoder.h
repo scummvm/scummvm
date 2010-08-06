@@ -93,7 +93,7 @@ public:
 	 * Load a video file
 	 * @param stream  the stream to load
 	 */
-	virtual bool load(Common::SeekableReadStream &stream) = 0;
+	virtual bool load(Common::SeekableReadStream *stream) = 0;
 
 	/**
 	 * Close a video file

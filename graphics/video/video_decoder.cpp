@@ -42,7 +42,7 @@ bool VideoDecoder::loadFile(const Common::String &filename) {
 		return false;
 	}
 
-	return load(*file);
+	return load(file);
 }
 
 uint32 VideoDecoder::getElapsedTime() const {
@@ -81,9 +81,14 @@ bool VideoDecoder::endOfVideo() const {
 void VideoDecoder::pauseVideo(bool pause) {
 	if (pause) {
 		_pauseLevel++;
-	} else {
-		assert(_pauseLevel); // We can't go negative
+
+	// We can't go negative
+	} else if (_pauseLevel) {
 		_pauseLevel--;
+
+	// Do nothing
+	} else {
+		return;
 	}
 
 	if (_pauseLevel == 1 && pause) {
