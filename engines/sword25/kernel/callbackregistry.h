@@ -43,6 +43,7 @@
 #include "common/str.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
+#include "sword25/kernel/bs_stdint.h"
 #include "sword25/kernel/common.h"
 
 namespace Sword25 {
@@ -67,7 +68,17 @@ public:
 private:
 	typedef Common::HashMap<Common::String, CallbackPtr, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> NameToPtrMap;
 	NameToPtrMap m_NameToPtrMap;
-	typedef Common::HashMap<CallbackPtr, Common::String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> PtrToNameMap;
+
+	struct CallbackPtr_EqualTo {
+		bool operator()(CallbackPtr x, CallbackPtr y) const { return x == y; }
+	};
+	struct CallbackPtr_Hash {
+		uint operator()(CallbackPtr x) const { 
+			return static_cast<uint>((int64)x % ((int64)1 << sizeof(uint)));
+		}
+	};
+
+	typedef Common::HashMap<CallbackPtr, Common::String, CallbackPtr_Hash, CallbackPtr_EqualTo> PtrToNameMap;
 	PtrToNameMap m_PtrToNameMap;
 
 	CallbackPtr		FindPtrByName(const Common::String &Name) const;

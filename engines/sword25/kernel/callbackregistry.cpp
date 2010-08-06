@@ -117,7 +117,7 @@ CallbackPtr BS_CallbackRegistry::FindPtrByName(const Common::String &Name) const
 Common::String BS_CallbackRegistry::FindNameByPtr(CallbackPtr Ptr) const {
 	// Eintrag in der Map finden und den Namen zurückgeben.
 	PtrToNameMap::const_iterator It = m_PtrToNameMap.find(Ptr);
-	return It == m_PtrToNameMap.end() ? "" : It->second;
+	return It == m_PtrToNameMap.end() ? "" : It->_value;
 }
 
 // -----------------------------------------------------------------------------
