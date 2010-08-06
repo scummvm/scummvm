@@ -75,6 +75,10 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 		_desiredAspectRatio = kAspectRatio16_9;
 	else if (!scumm_stricmp(desiredAspectRatio.c_str(), "16/10"))
 		_desiredAspectRatio = kAspectRatio16_10;
+	else if (!scumm_stricmp(desiredAspectRatio.c_str(), "5/3"))
+		_desiredAspectRatio = kAspectRatio5_3;
+	else if (!scumm_stricmp(desiredAspectRatio.c_str(), "5/4"))
+		_desiredAspectRatio = kAspectRatio5_4;
 #endif
 }
 
@@ -1187,7 +1191,7 @@ void OpenGLGraphicsManager::setAspectRatioCorrection(int ratio) {
 		if (ratio == -1)
 			// If -1, switch to next mode
 #ifdef USE_ALL_ASR
-			_videoMode.aspectRatioCorrection = (_videoMode.aspectRatioCorrection + 1) % 5;
+			_videoMode.aspectRatioCorrection = (_videoMode.aspectRatioCorrection + 1) % 7;
 #else
 			if (_videoMode.aspectRatioCorrection == kAspectRatioNone)
 				_videoMode.aspectRatioCorrection = kAspectRatioConserve;
@@ -1214,8 +1218,13 @@ Common::String OpenGLGraphicsManager::getAspectRatioName() {
 		return "16/9";
 	case kAspectRatio16_10:
 		return "16/10";
+	case kAspectRatio5_3:
+		return "5/3";
+	case kAspectRatio5_4:
+		return "5/4";
+	default:
+		return "";
 	}
-	return "";
 }
 
 uint OpenGLGraphicsManager::getAspectRatio() {
@@ -1228,6 +1237,10 @@ uint OpenGLGraphicsManager::getAspectRatio() {
 		return 17777;
 	case kAspectRatio16_10:
 		return 16000;
+	case kAspectRatio5_3:
+		return 16666;
+	case kAspectRatio5_4:
+		return 12500;
 	default:
 		return _videoMode.hardwareWidth * 10000 / _videoMode.hardwareHeight;
 	}
@@ -1297,7 +1310,7 @@ bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	int width = _videoMode.hardwareWidth;
 	int height = _videoMode.hardwareHeight;
 	
-	// Allocate space for screenshot
+	// Allocate memory for screenshot
 	uint8 *pixels = new uint8[width * height * 3];
 
 	// Get pixel data from OpenGL buffer
@@ -1336,6 +1349,7 @@ bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	// Write pixel data to BMP
 	out.write(pixels, width * height * 3);
 
+	// Free allocated memory
 	delete[] pixels;
 
 	return true;

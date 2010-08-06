@@ -333,9 +333,9 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	
 		// Do not downscale dimensions, only enlarge them if needed
 		if (screenAspectRatio > desiredAspectRatio)
-			_videoMode.hardwareHeight = _videoMode.overlayWidth * 10000 / desiredAspectRatio;
+			_videoMode.hardwareHeight = (_videoMode.overlayWidth * 10000  + 5000) / desiredAspectRatio;
 		else if (screenAspectRatio < desiredAspectRatio)
-			_videoMode.hardwareWidth = _videoMode.overlayHeight * desiredAspectRatio / 10000;
+			_videoMode.hardwareWidth = (_videoMode.overlayHeight * desiredAspectRatio + 5000) / 10000;
 
 		// Only adjust the overlay height if it is bigger than original one. If
 		// the width is modified it can break the overlay.

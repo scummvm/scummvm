@@ -33,7 +33,8 @@
 // Uncomment this to enable the 'on screen display' code.
 #define USE_OSD	1
 
-// Uncomment this to enable all aspect ratio corrections (Will include 16/9 and 16/10)
+// Uncomment this to enable all aspect ratio corrections
+// (Will include 4/3, 16/9, 16/10, 5/3, 5/4)
 //#define USE_ALL_ASR 1
 
 namespace OpenGL {
@@ -149,7 +150,9 @@ protected:
 		kAspectRatioConserve,
 		kAspectRatio4_3,
 		kAspectRatio16_9,
-		kAspectRatio16_10
+		kAspectRatio16_10,
+		kAspectRatio5_3,
+		kAspectRatio5_4
 	};
 
 	struct VideoState {
