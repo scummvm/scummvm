@@ -108,8 +108,11 @@ void BS_RenderObjectManager::AttatchTimedRenderObject(BS_RenderObjectPtr<BS_Time
 // -----------------------------------------------------------------------------
 
 void BS_RenderObjectManager::DetatchTimedRenderObject(BS_RenderObjectPtr<BS_TimedRenderObject> RenderObjectPtr) {
-	RenderObjectList::iterator Iter = find(m_TimedRenderObjects.begin(), m_TimedRenderObjects.end(), RenderObjectPtr);
-	if (Iter != m_TimedRenderObjects.end()) m_TimedRenderObjects.erase(Iter);
+	for (uint i = 0; i < m_TimedRenderObjects.size(); i++)
+		if (m_TimedRenderObjects[i] == RenderObjectPtr) {
+			m_TimedRenderObjects.remove_at(i);
+			break;
+		}
 }
 
 // -----------------------------------------------------------------------------

@@ -57,13 +57,9 @@ class BS_RenderObject;
 template<class T>
 class BS_RenderObjectPtr {
 public:
-	BS_RenderObjectPtr() : m_Handle(0)
-	{}
+	BS_RenderObjectPtr() : m_Handle(0) {}
 
-	BS_RenderObjectPtr(unsigned int Handle) : m_Handle(Handle)
-	{}
-
-	BS_RenderObjectPtr(BS_RenderObject *RenderObjectPtr);
+	BS_RenderObjectPtr(unsigned int Handle) : m_Handle(Handle) {}
 
 	T *operator->() const {
 		return static_cast<T *>(BS_RenderObjectRegistry::GetInstance().ResolveHandle(m_Handle));

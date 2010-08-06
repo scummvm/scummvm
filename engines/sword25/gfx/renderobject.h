@@ -157,7 +157,7 @@ public:
 	            Falls der Cast nicht zulässig ist, wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
 	BS_RenderObjectPtr<BS_Bitmap> ToBitmap() {
-		if (m_Type == TYPE_STATICBITMAP || m_Type == TYPE_DYNAMICBITMAP) return BS_RenderObjectPtr<BS_Bitmap>(this);
+		if (m_Type == TYPE_STATICBITMAP || m_Type == TYPE_DYNAMICBITMAP) return BS_RenderObjectPtr<BS_Bitmap>(this->GetHandle());
 		else return BS_RenderObjectPtr<BS_Bitmap>();
 	}
 	/**
@@ -166,7 +166,7 @@ public:
 	            Falls der Cast nicht zulässig ist, wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
 	BS_RenderObjectPtr<BS_Animation> ToAnimation() {
-		if (m_Type == TYPE_ANIMATION) return BS_RenderObjectPtr<BS_Animation>(this);
+		if (m_Type == TYPE_ANIMATION) return BS_RenderObjectPtr<BS_Animation>(this->GetHandle());
 		else return BS_RenderObjectPtr<BS_Animation>();
 	}
 	/**
@@ -175,7 +175,7 @@ public:
 	            Falls der Cast nicht zulässig ist, wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
 	BS_RenderObjectPtr<BS_Panel> ToPanel() {
-		if (m_Type == TYPE_PANEL) return BS_RenderObjectPtr<BS_Panel>(this);
+		if (m_Type == TYPE_PANEL) return BS_RenderObjectPtr<BS_Panel>(this->GetHandle());
 		else return BS_RenderObjectPtr<BS_Panel>();
 	}
 	/**
@@ -184,7 +184,7 @@ public:
 	            Falls der Cast nicht zulässig ist, wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
 	BS_RenderObjectPtr<BS_Text> ToText() {
-		if (m_Type == TYPE_TEXT) return BS_RenderObjectPtr<BS_Text>(this);
+		if (m_Type == TYPE_TEXT) return BS_RenderObjectPtr<BS_Text>(this->GetHandle());
 		else return BS_RenderObjectPtr<BS_Text>();
 	}
 

@@ -82,10 +82,10 @@ bool BS_AnimationTemplateRegistry::Persist(BS_OutputPersistenceBlock &Writer) {
 	HANDLE2PTR_MAP::const_iterator Iter = m_Handle2PtrMap.begin();
 	while (Iter != m_Handle2PtrMap.end()) {
 		// Handle persistieren.
-		Writer.Write(Iter->first);
+		Writer.Write(Iter->_key);
 
 		// Objekt persistieren.
-		Result &= Iter->second->Persist(Writer);
+		Result &= Iter->_value->Persist(Writer);
 
 		++Iter;
 	}
@@ -102,7 +102,8 @@ bool BS_AnimationTemplateRegistry::Unpersist(BS_InputPersistenceBlock &Reader) {
 	Reader.Read(m_NextHandle);
 
 	// Alle vorhandenen BS_AnimationTemplates zerstören.
-	while (!m_Handle2PtrMap.empty()) delete m_Handle2PtrMap.begin()->second;
+	while (!m_Handle2PtrMap.empty())
+		delete m_Handle2PtrMap.begin()->_value;
 
 	// Anzahl an BS_AnimationTemplates einlesen.
 	unsigned int AnimationTemplateCount;

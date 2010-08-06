@@ -277,12 +277,11 @@ void BS_Animation::FrameNotification(int TimeElapsed) {
 		// Überläufe behandeln
 		if (TmpCurFrame < 0) {
 			// Loop-Point Callbacks
-			Common::Array<ANIMATION_CALLBACK_DATA>::iterator it = m_LoopPointCallbacks.begin();
-			while (it != m_LoopPointCallbacks.end()) {
-				if (((*it).Callback)((*it).Data) == false) {
-					it = m_LoopPointCallbacks.erase(it);
+			for (uint i = 0; i < m_LoopPointCallbacks.size();) {
+				if ((m_LoopPointCallbacks[i].Callback)(m_LoopPointCallbacks[i].Data) == false) {
+					m_LoopPointCallbacks.remove_at(i);
 				} else
-					it++;
+					i++;
 			}
 
 			// Ein Unterlauf darf nur auftreten, wenn der Animationstyp JOJO ist.
@@ -291,12 +290,11 @@ void BS_Animation::FrameNotification(int TimeElapsed) {
 			m_Direction = FORWARD;
 		} else if (static_cast<unsigned int>(TmpCurFrame) >= animationDescriptionPtr->GetFrameCount()) {
 			// Loop-Point Callbacks
-			Common::Array<ANIMATION_CALLBACK_DATA>::iterator it = m_LoopPointCallbacks.begin();
-			while (it != m_LoopPointCallbacks.end()) {
-				if (((*it).Callback)((*it).Data) == false)
-					it = m_LoopPointCallbacks.erase(it);
-				else
-					it++;
+			for (uint i = 0; i < m_LoopPointCallbacks.size();) {
+				if ((m_LoopPointCallbacks[i].Callback)(m_LoopPointCallbacks[i].Data) == false) {
+					m_LoopPointCallbacks.remove_at(i);
+				} else
+					i++;
 			}
 
 			switch (animationDescriptionPtr->GetAnimationType()) {
@@ -325,12 +323,11 @@ void BS_Animation::FrameNotification(int TimeElapsed) {
 
 			if (animationDescriptionPtr->GetFrame(m_CurrentFrame).Action != "") {
 				// Action Callbacks
-				Common::Array<ANIMATION_CALLBACK_DATA>::iterator it = m_ActionCallbacks.begin();
-				while (it != m_ActionCallbacks.end()) {
-					if (((*it).Callback)((*it).Data) == false)
-						it = m_ActionCallbacks.erase(it);
-					else
-						it++;
+				for (uint i = 0; i < m_ActionCallbacks.size();) {
+					if ((m_ActionCallbacks[i].Callback)(m_ActionCallbacks[i].Data) == false) {
+						m_ActionCallbacks.remove_at(i);
+					} else
+						i++;
 				}
 			}
 		}
@@ -679,7 +676,7 @@ void BS_Animation::PersistCallbackVector(BS_OutputPersistenceBlock &Writer, cons
 	// Alle Callbacks einzeln persistieren.
 	Common::Array<ANIMATION_CALLBACK_DATA>::const_iterator It = Vector.begin();
 	while (It != Vector.end()) {
-		Writer.Write(BS_CallbackRegistry::GetInstance().ResolveCallbackPointer(It->Callback));
+		Writer.Write(BS_CallbackRegistry::GetInstance().ResolveCallbackPointer((void (*)(int))It->Callback));
 		Writer.Write(It->Data);
 
 		++It;

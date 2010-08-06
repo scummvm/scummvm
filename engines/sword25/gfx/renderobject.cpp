@@ -84,7 +84,7 @@ BS_RenderObject::BS_RenderObject(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, 
 	// selben RenderObjektManager zuweisen.
 	if (m_ParentPtr.IsValid()) {
 		m_ManagerPtr = m_ParentPtr->GetManager();
-		m_ParentPtr->AddObject(this);
+		m_ParentPtr->AddObject(this->GetHandle());
 	} else {
 		if (GetType() != TYPE_ROOT) {
 			BS_LOG_ERRORLN("Tried to create a non-root render object and has no parent. All non-root render objects have to have a parent.");
@@ -99,7 +99,7 @@ BS_RenderObject::BS_RenderObject(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, 
 
 BS_RenderObject::~BS_RenderObject() {
 	// Objekt aus dem Elternobjekt entfernen.
-	if (m_ParentPtr.IsValid()) m_ParentPtr->DetatchChildren(this);
+	if (m_ParentPtr.IsValid()) m_ParentPtr->DetatchChildren(this->GetHandle());
 
 	DeleteAllChildren();
 
@@ -128,7 +128,8 @@ bool BS_RenderObject::Render() {
 	// Dann müssen die Kinder gezeichnet werden
 	RENDEROBJECT_ITER it = m_Children.begin();
 	for (; it != m_Children.end(); ++it)
-		if (!(*it)->Render()) return false;
+		if (!(*it)->Render())
+			return false;
 
 	return true;
 }
@@ -251,7 +252,7 @@ bool BS_RenderObject::DetatchChildren(BS_RenderObjectPtr<BS_RenderObject> pObjec
 }
 
 void BS_RenderObject::SortRenderObjects() {
-	std::sort(m_Children.begin(), m_Children.end(), Greater);
+	Common::sort(m_Children.begin(), m_Children.end(), Greater);
 }
 
 void BS_RenderObject::UpdateAbsolutePos() {
@@ -363,7 +364,7 @@ BS_RenderObjectPtr<BS_Panel> BS_RenderObject::AddPanel(int Width, int Height, un
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Text> BS_RenderObject::AddText(const Common::String &Font, const std::string &Text) {
+BS_RenderObjectPtr<BS_Text> BS_RenderObject::AddText(const Common::String &Font, const Common::String &Text) {
 	BS_RenderObjectPtr<BS_Text> TextPtr(new BS_Text(this));
 	if (TextPtr.IsValid() && TextPtr->GetInitSuccess() && TextPtr->SetFont(Font)) {
 		TextPtr->SetText(Text);

@@ -51,7 +51,7 @@ class BS_Kernel;
 class BS_RenderObjectManager;
 
 class BS_RootRenderObject : public BS_RenderObject {
-	friend BS_RenderObjectManager;
+	friend class BS_RenderObjectManager;
 
 private:
 	BS_RootRenderObject(BS_RenderObjectManager *ManagerPtr, int Width, int Height) :
