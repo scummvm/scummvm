@@ -255,7 +255,7 @@ public:
 	/**
 	 * Finds the pointer where a block of a specific type starts from
 	 */
-	byte *findBlock(int type);
+	byte *findBlock(int type, int skipBlockIndex = -1);
 
 private:
 	/**

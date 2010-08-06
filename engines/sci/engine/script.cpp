@@ -476,12 +476,25 @@ uint16 Script::validateExportFunc(int pubfunct) {
 	uint16 offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct);
 	VERIFY(offset < _bufSize, "invalid export function pointer");
 
+	if (offset == 0) {
+		// Check if the game has a second export table (e.g. script 912 in Camelot)
+		// Fixes bug #3039785
+		const uint16 *secondExportTable = (const uint16 *)findBlock(SCI_OBJ_EXPORTS, 0);
+
+		if (secondExportTable) {
+			secondExportTable += 3;	// skip header plus 2 bytes (secondExportTable is a uint16 pointer)
+			offset = READ_SCI11ENDIAN_UINT16(secondExportTable + pubfunct);
+			VERIFY(offset < _bufSize, "invalid export function pointer");
+		}
+	}
+
 	return offset;
 }
 
-byte *Script::findBlock(int type) {
+byte *Script::findBlock(int type, int skipBlockIndex) {
 	byte *buf = _buf;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
+	int blockIndex = 0;
 
 	if (oldScriptHeader)
 		buf += 2;
@@ -491,12 +504,13 @@ byte *Script::findBlock(int type) {
 
 		if (seekerType == 0)
 			break;
-		if (seekerType == type)
+		if (seekerType == type && blockIndex != skipBlockIndex)
 			return buf;
 
 		int seekerSize = READ_LE_UINT16(buf + 2);
 		assert(seekerSize > 0);
 		buf += seekerSize;
+		blockIndex++;
 	} while (1);
 
 	return NULL;
