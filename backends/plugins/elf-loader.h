@@ -59,7 +59,7 @@ protected:
 
     void seterror(const char *fmt, ...);
     void unload();
-    bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
+    virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
     bool load(Common::SeekableReadStream* DLFile);
 
     bool readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
@@ -69,7 +69,7 @@ protected:
     int loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
     bool loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *shdr);
     void relocateSymbols(Elf32_Addr offset);
-    bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
+    virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
 
 public:
     bool open(const char *path);
@@ -77,7 +77,7 @@ public:
     void *symbol(const char *name);
     void discard_symtab();
 
-    DLObject(char *errbuf = NULL) : _errbuf(_errbuf), _segment(NULL), _symtab(NULL),
+    DLObject(char *errbuf = NULL) : _errbuf(errbuf), _segment(NULL), _symtab(NULL),
             _strtab(NULL), _symbol_cnt(0), _symtab_sect(-1), _dtors_start(NULL), _dtors_end(NULL),
             _segmentSize(0) {
 #ifdef MIPS_TARGET

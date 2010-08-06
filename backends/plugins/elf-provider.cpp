@@ -31,7 +31,7 @@
 
 #if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
-void (* ELFPlugin::findSymbol(const char *symbol))() {
+DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
 	void *func;
 	bool handleNull;
 	if (_dlHandle == NULL) {
