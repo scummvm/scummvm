@@ -113,6 +113,103 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 	}
 }
 
+// signatures are built like this:
+//  - first a counter of the bytes that follow
+//  - then the actual bytes that need to get matched
+//  - then another counter of bytes (0 for EOS)
+//  - if not EOS, an adjust offset and the actual bytes
+//  - rinse and repeat
+const byte hoyle4SignaturePortFix[] = {
+	28,
+	0x39, 0x09,        // pushi 09
+	0x89, 0x0b,        // lsg 0b
+	0x39, 0x64,        // pushi 64
+	0x38, 0xc8, 0x00,  // pushi 00c8
+	0x38, 0x2c, 0x01,  // pushi 012c
+	0x38, 0x90, 0x01,  // pushi 0190
+	0x38, 0xf4, 0x01,  // pushi 01f4
+	0x38, 0x58, 0x02,  // pushi 0258
+	0x38, 0xbc, 0x02,  // pushi 02bc
+	0x38, 0x20, 0x03,  // pushi 0320
+	0x46,              // calle [xxxx] [xxxx] [xx]
+	13, +5,            // [skip 5 bytes]
+	0x30, 0x27, 0x00,  // bnt 0027 -> end of routine
+	0x87, 0x00,        // lap 00
+	0x30, 0x19, 0x00,  // bnt 0019 -> fade out
+	0x87, 0x01,        // lap 01
+	0x30, 0x14, 0x00,  // bnt 0014 -> fade out
+	// [...]
+	10, +20,           // [skip 20 bytes]
+	0x38, 0xaa, 0x00,  // pushi 00aa
+	0x76,              // push0
+	0x80, 0x29, 0x01,  // lag 0129
+	0x4a, 0x04,        // send 04
+	0x48,              // ret
+	0
+};
+
+const int16 hoyle4PatchPortFix[] = {
+	0
+};
+
+//    script, description,                                   magic DWORD,                adjust
+const SciScriptSignature hoyle4Signatures[] = {
+    {      0, "port fix when disponsing windows",            CONSTANT_LE_32(0x00C83864),    -5, hoyle4SignaturePortFix,   hoyle4PatchPortFix },
+    {      0, NULL,                                          0,                              0, NULL,                     NULL }
+};
+
+// will return -1 if no match was found, otherwise an offset to the start of the signature match
+int32 Script::findSignature(const SciScriptSignature *signature, const byte *scriptData, const uint32 scriptSize) {
+	if (scriptSize < 4) // we need to find a DWORD, so less than 4 bytes is not okay
+		return -1;
+
+	const uint32 magicDWord = signature->magicDWord; // is platform-specific BE/LE form, so that the later match will work
+	const uint32 searchLimit = scriptSize - 3;
+	uint32 DWordOffset = 0;
+	// first search for the magic DWORD
+	while (DWordOffset < searchLimit) {
+		if (magicDWord == *(uint32 *)(scriptData + DWordOffset)) {
+			// magic DWORD found, check if actual signature matches
+			uint32 offset = DWordOffset + signature->magicOffset;
+			uint32 byteOffset = offset;
+			const byte *signatureData = signature->data;
+			byte matchBytesCount = *signatureData++;
+			while (matchBytesCount) {
+				if ((byteOffset + matchBytesCount) > scriptSize) // Out-Of-Bounds?
+					break;
+				if (memcmp(signatureData, &scriptData[byteOffset], matchBytesCount)) // Byte-Mismatch?
+					break;
+				// those bytes matched, adjust offsets accordingly
+				signatureData += matchBytesCount;
+				byteOffset += matchBytesCount;
+				// get next byte count and offset
+				matchBytesCount = *signatureData++;
+				if (matchBytesCount)
+					byteOffset += *signatureData++;
+			}
+			if (!matchBytesCount) // all matches worked?
+				return offset;
+		}
+		DWordOffset++;
+	}
+	// nothing found
+	return -1;
+}
+
+void Script::matchSignatureAndPatch(uint16 scriptNr, const byte *scriptData, const uint32 scriptSize) {
+	if (g_sci->getGameId() == GID_HOYLE4) {
+		const SciScriptSignature *signatureTable = hoyle4Signatures;
+		while (signatureTable->data) {
+			uint32 foundOffset = findSignature(signatureTable, scriptData, scriptSize);
+			if (foundOffset != -1) {
+				// found, so apply the patch
+				warning("matched %s on script %d offset %d", signatureTable->description, scriptNr, foundOffset);
+			}
+			signatureTable++;
+		}
+	}
+}
+
 void Script::load(ResourceManager *resMan) {
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, _nr), 0);
 	assert(script != 0);
@@ -122,6 +219,9 @@ void Script::load(ResourceManager *resMan) {
 
 	assert(_bufSize >= script->size);
 	memcpy(_buf, script->data, script->size);
+
+	// Check scripts for matching signatures and patch those, if found
+	matchSignatureAndPatch(_nr, _buf, script->size);
 
 	if (getSciVersion() >= SCI_VERSION_1_1) {
 		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, _nr), 0);

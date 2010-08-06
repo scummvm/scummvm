@@ -31,6 +31,15 @@
 
 namespace Sci {
 
+struct SciScriptSignature {
+	uint16 scriptNr;
+	const char *description;
+	uint32 magicDWord;
+	int magicOffset;
+	const byte *data;
+	const int16 *patch;
+};
+
 struct EngineState;
 class ResourceManager;
 
@@ -99,6 +108,9 @@ public:
 	void freeScript();
 	void init(int script_nr, ResourceManager *resMan);
 	void load(ResourceManager *resMan);
+
+	void matchSignatureAndPatch(uint16 scriptNr, const byte *scriptData, const uint32 scriptSize);
+	int32 findSignature(const SciScriptSignature *signature, const byte *scriptData, const uint32 scriptSize);
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
