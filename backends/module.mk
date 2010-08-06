@@ -43,7 +43,6 @@ MODULE_OBJS := \
 	mixer/sdl/sdl-mixer.o \
 	mixer/symbiansdl/symbiansdl-mixer.o \
 	mutex/sdl/sdl-mutex.o \
-	plugins/dc/dc-provider.o \
 	plugins/posix/posix-provider.o \
 	plugins/sdl/sdl-provider.o \
 	plugins/win32/win32-provider.o \
