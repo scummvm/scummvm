@@ -168,7 +168,7 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 	uint32 DWordOffset = 0;
 	// first search for the magic DWORD
 	while (DWordOffset < searchLimit) {
-		if (magicDWord == *(uint32 *)(scriptData + DWordOffset)) {
+		if (magicDWord == *(const uint32 *)(scriptData + DWordOffset)) {
 			// magic DWORD found, check if actual signature matches
 			uint32 offset = DWordOffset + signature->magicOffset;
 			uint32 byteOffset = offset;
@@ -200,7 +200,7 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, const byte *scriptData, con
 	if (g_sci->getGameId() == GID_HOYLE4) {
 		const SciScriptSignature *signatureTable = hoyle4Signatures;
 		while (signatureTable->data) {
-			uint32 foundOffset = findSignature(signatureTable, scriptData, scriptSize);
+			int32 foundOffset = findSignature(signatureTable, scriptData, scriptSize);
 			if (foundOffset != -1) {
 				// found, so apply the patch
 				warning("matched %s on script %d offset %d", signatureTable->description, scriptNr, foundOffset);
