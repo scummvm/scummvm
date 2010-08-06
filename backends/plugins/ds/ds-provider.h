@@ -23,49 +23,13 @@
  *
  */
 
-#ifndef BACKENDS_PLUGINS_ELF_PROVIDER_H
-#define BACKENDS_PLUGINS_ELF_PROVIDER_H
-
-#include "base/plugins.h"
-#include "backends/plugins/dynamic-plugin.h"
-#include "common/fs.h"
-
-#include "backends/plugins/elf-loader.h"
+#include "backends/plugins/elf-provider.h"
 
 #if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
-class ELFPlugin : public DynamicPlugin {
-protected:
-	DLObject *_dlHandle;
-	Common::String _filename;
-
-	virtual VoidFunc findSymbol(const char *symbol);
-
-public:
-	ELFPlugin() {
-	}
-
-	ELFPlugin(const Common::String &filename)
-		: _dlHandle(0), _filename(filename) {}
-
-	~ELFPlugin() {
-		if (_dlHandle)
-			unloadPlugin();
-	}
-
-	bool loadPlugin();
-	virtual void unloadPlugin();
-
-};
-
-class ELFPluginProvider : public FilePluginProvider {
-protected:
-	virtual Plugin* createPlugin(const Common::FSNode &node) const;
-
-	bool isPluginFilename(const Common::FSNode &node) const;
-
+class DSPluginProvider : public ELFPluginProvider {
+	Plugin* createPlugin(const Common::FSNode &node) const;
 };
 
 #endif // defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
-#endif /* BACKENDS_PLUGINS_ELF_PROVIDER_H */

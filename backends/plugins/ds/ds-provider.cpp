@@ -23,49 +23,37 @@
  *
  */
 
-#ifndef BACKENDS_PLUGINS_ELF_PROVIDER_H
-#define BACKENDS_PLUGINS_ELF_PROVIDER_H
-
-#include "base/plugins.h"
+/*#include "base/plugins.h"
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/fs.h"
 
-#include "backends/plugins/elf-loader.h"
+#include "backends/plugins/elf-loader.h"*/
+#include "backends/plugins/elf-provider.h"
+#include "backends/plugins/ds/ds-provider.h"
 
-#if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
+#if defined(DYNAMIC_MODULES) && defined(__DS__)
 
-class ELFPlugin : public DynamicPlugin {
-protected:
-	DLObject *_dlHandle;
-	Common::String _filename;
-
-	virtual VoidFunc findSymbol(const char *symbol);
-
+class DSPlugin : public ELFPlugin {
 public:
-	ELFPlugin() {
+	DSPlugin(const Common::String &filename) {
+		_dlHandle = 0;
+		_filename = filename;
 	}
 
-	ELFPlugin(const Common::String &filename)
-		: _dlHandle(0), _filename(filename) {}
-
-	~ELFPlugin() {
+	~DSPlugin() {
 		if (_dlHandle)
 			unloadPlugin();
 	}
 
-	bool loadPlugin();
-	virtual void unloadPlugin();
-
 };
 
-class ELFPluginProvider : public FilePluginProvider {
-protected:
-	virtual Plugin* createPlugin(const Common::FSNode &node) const;
+/*bool DSPlugin::loadPlugin() {
 
-	bool isPluginFilename(const Common::FSNode &node) const;
+};*/
 
-};
+Plugin* DSPluginProvider::createPlugin(const Common::FSNode &node) const {
+	return new DSPlugin(node.getPath());
+}
 
 #endif // defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
-#endif /* BACKENDS_PLUGINS_ELF_PROVIDER_H */
