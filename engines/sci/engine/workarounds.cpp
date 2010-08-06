@@ -335,6 +335,7 @@ const SciWorkaroundEntry kSetCursor_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kSetPort_workarounds[] = {
 	{ GID_LSL6,          740,   740,  0,              "rm740", "drawPic",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // ending scene, is called with additional 3 (!) parameters
+	{ GID_QFG3,          830,   830,  0,        "portalOpens", "changeState",    -1,    0, { WORKAROUND_IGNORE,    0 } }, // when the portal appears during the end, bug #3040844
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
