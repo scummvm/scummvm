@@ -30,6 +30,11 @@
 
 namespace Sci {
 
+#define PATCH_END             0xFFFF
+#define PATCH_ADDTOOFFSET     0x8000
+#define PATCH_GETORIGINALBYTE 0x4000
+#define PATCH_MAGICDWORD(a, b, c, d) CONSTANT_LE_32(a | (b << 8) | (c << 16) | (d << 24))
+
 struct SciScriptSignature {
 	uint16 scriptNr;
 	const char *description;
@@ -89,10 +94,6 @@ const byte hoyle4SignaturePortFix[] = {
 	0
 };
 
-#define PATCH_END             0xFFFF
-#define PATCH_ADDTOOFFSET     0x8000
-#define PATCH_GETORIGINALBYTE 0x4000
-
 const uint16 hoyle4PatchPortFix[] = {
 	PATCH_ADDTOOFFSET | +33,
 	0x38, 0x31, 0x01,  // pushi 0131 (selector curEvent)
@@ -108,10 +109,10 @@ const uint16 hoyle4PatchPortFix[] = {
 	PATCH_END
 };
 
-//    script, description,                                   magic DWORD,                adjust
+//    script, description,                                   magic DWORD,                                 adjust
 const SciScriptSignature hoyle4Signatures[] = {
-    {      0, "port fix when disposing windows",             CONSTANT_LE_32(0x00C83864),    -5, hoyle4SignaturePortFix,   hoyle4PatchPortFix },
-    {      0, NULL,                                          0,                              0, NULL,                     NULL }
+    {      0, "port fix when disposing windows",             PATCH_MAGICDWORD(0x64, 0x38, 0xC8, 0x00),    -5, hoyle4SignaturePortFix,   hoyle4PatchPortFix },
+    {      0, NULL,                                          0,                                            0, NULL,                     NULL }
 };
 
 
@@ -159,10 +160,10 @@ const uint16 larry6PatchDeathDialog[] = {
 	PATCH_END
 };
 
-//    script, description,                                   magic DWORD,                adjust
+//    script, description,                                   magic DWORD,                                  adjust
 const SciScriptSignature larry6Signatures[] = {
-    {     82, "death dialog memory corruption",              CONSTANT_LE_32(0x3501333e),     0, larry6SignatureDeathDialog, larry6PatchDeathDialog },
-    {      0, NULL,                                          0,                              0, NULL,                       NULL }
+    {     82, "death dialog memory corruption",              PATCH_MAGICDWORD(0x3e, 0x33, 0x01, 0x35),     0, larry6SignatureDeathDialog, larry6PatchDeathDialog },
+    {      0, NULL,                                          0,                                            0, NULL,                       NULL }
 };
 
 // will actually patch previously found signature area
