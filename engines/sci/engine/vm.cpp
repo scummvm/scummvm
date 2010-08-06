@@ -136,12 +136,7 @@ static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
 		// The results of this are likely unpredictable... It most likely means that a kernel function is returning something wrong.
 		// If such an error occurs, we usually need to find the last kernel function called and check its return value.
-		if (g_sci->getGameId() == GID_QFG2 && g_sci->getEngineState()->currentRoomNumber() == 200) {
-			// WORKAROUND: This happens in QFG2, room 200, when talking to the astrologer (bug #3039879) - script bug.
-			// Returning 0 in this case.
-		} else {
-			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]. Address: %04x:%04x", reg.segment, PRINT_REG(reg));
-		}
+		error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]. Address: %04x:%04x", reg.segment, PRINT_REG(reg));
 		return 0;
 	}
 
@@ -1820,13 +1815,17 @@ void run_vm(EngineState *s) {
 		case op_lsgi: // 0x4c (76)
 		case op_lsli: // 0x4d (77)
 		case op_lsti: // 0x4e (78)
-		case op_lspi: // 0x4f (79)
+		case op_lspi: { // 0x4f (79)
 			// Load global, local, temp or param variable into the stack,
 			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
+			int16 value;
+			if (!validate_signedInteger(s->r_acc, value))
+				value = arithmetic_lookForWorkaround(opcode, opcodeLsiWorkarounds, s->r_acc, NULL_REG).offset;
+			var_number = opparams[0] + value;
 			PUSH32(READ_VAR(var_type, var_number));
 			break;
+		}
 
 		case op_sag: // 0x50 (80)
 		case op_sal: // 0x51 (81)
