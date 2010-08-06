@@ -184,7 +184,7 @@ const uint16 hoyle4PatchPortFix[] = {
 
 //    script, description,                                   magic DWORD,                adjust
 const SciScriptSignature hoyle4Signatures[] = {
-    {      0, "port fix when disponsing windows",            CONSTANT_LE_32(0x00C83864),    -5, hoyle4SignaturePortFix,   hoyle4PatchPortFix },
+    {      0, "port fix when disposing windows",             CONSTANT_LE_32(0x00C83864),    -5, hoyle4SignaturePortFix,   hoyle4PatchPortFix },
     {      0, NULL,                                          0,                              0, NULL,                     NULL }
 };
 
