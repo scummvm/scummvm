@@ -64,10 +64,7 @@ public:
 	BS_RenderObjectPtr(unsigned int Handle) : m_Handle(Handle)
 	{}
 
-	BS_RenderObjectPtr(BS_RenderObject * RenderObjectPtr)
-	{
-		m_Handle = RenderObjectPtr->GetHandle();
-	}
+	BS_RenderObjectPtr(BS_RenderObject * RenderObjectPtr);
 
 	T * operator->() const 
 	{

@@ -88,7 +88,7 @@ private:
 		// 1. The pattern starts with '*' -> TRUE
 		if (*Pattern == '*') {
 			// Use a copy of the pattern pointer so as not to destroy the current state
-			char *PatternCopy = (char *)Pattern;
+			const char *PatternCopy = Pattern;
 			while (*PatternCopy == '*') { PatternCopy++; }
 			if (!*PatternCopy) return true;
 		}

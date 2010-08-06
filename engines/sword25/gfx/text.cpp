@@ -84,7 +84,7 @@ BS_Text::BS_Text(BS_InputPersistenceBlock & Reader, BS_RenderObjectPtr<BS_Render
 
 // -----------------------------------------------------------------------------
 
-bool BS_Text::SetFont(const std::string & Font)
+bool BS_Text::SetFont(const Common::String & Font)
 {
 	// Font precachen.
 	if (GetResourceManager()->PrecacheResource(Font))
@@ -104,7 +104,7 @@ bool BS_Text::SetFont(const std::string & Font)
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::SetText(const std::string & Text)
+void BS_Text::SetText(const Common::String & Text)
 {
 	m_Text = Text;
 	UpdateFormat();
@@ -398,11 +398,11 @@ bool BS_Text::Unpersist(BS_InputPersistenceBlock & Reader)
 	// Beim Laden der anderen Member werden die Set-Methoden benutzt statt der tatsächlichen Member.
 	// So wird das Layout automatisch aktualisiert und auch alle anderen notwendigen Methoden ausgeführt.
 
-	std::string Font;
+	Common::String Font;
 	Reader.Read(Font);
 	SetFont(Font);
 
-	std::string Text;
+	Common::String Text;
 	Reader.Read(Text);
 	SetText(Text);
 

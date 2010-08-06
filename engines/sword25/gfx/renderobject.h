@@ -51,6 +51,8 @@
 #include "sword25/math/rect.h"
 #include "sword25/gfx/renderobjectptr.h"
 
+#include "common/list.h"
+
 namespace Sword25 {
 
 // -----------------------------------------------------------------------------
@@ -339,8 +341,8 @@ public:
 protected:
 	// Typen
 	// -----
-	typedef std::vector<BS_RenderObjectPtr<BS_RenderObject> >			RENDEROBJECT_LIST;
-	typedef std::vector<BS_RenderObjectPtr<BS_RenderObject> >::iterator	RENDEROBJECT_ITER;
+	typedef Common::List<BS_RenderObjectPtr<BS_RenderObject> >			RENDEROBJECT_LIST;
+	typedef Common::List<BS_RenderObjectPtr<BS_RenderObject> >::iterator	RENDEROBJECT_ITER;
 
 	int			m_X;			///< Die X-Position des Objektes relativ zum Eltern-Objekt
 	int			m_Y;			///< Die Y-Position des Objektes relativ zum Eltern-Objekt

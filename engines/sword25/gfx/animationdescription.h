@@ -69,8 +69,8 @@ public:
 		int			HotspotY;
 		bool		FlipV;
 		bool		FlipH;
-		std::string	FileName;
-		std::string	Action;
+		Common::String	FileName;
+		Common::String	Action;
 	};
 
 	// -----------------------------------------------------------------------------
