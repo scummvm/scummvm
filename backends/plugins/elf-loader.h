@@ -88,6 +88,4 @@ public:
 
 };
 
-extern void flushDataCache();
-
 #endif /* LOADER_H */

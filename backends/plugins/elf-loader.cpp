@@ -54,7 +54,7 @@
 /**
  * Flushes the data cache (Platform Specific).
  */
-void flushDataCache() {
+static void flushDataCache() {
 #ifdef __DS__
   DC_FlushAll();
 #endif
