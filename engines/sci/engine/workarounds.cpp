@@ -246,6 +246,8 @@ const SciWorkaroundEntry kFindKey_workarounds[] = {
 const SciWorkaroundEntry kGraphDrawLine_workarounds[] = {
 	{ GID_ISLANDBRAIN,   300,   300,  0,         "dudeViewer", "show",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when looking at the gene explanation chart, gets called with 1 extra parameter
 	{ GID_SQ1,            43,    43,  0,        "someoneDied", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when ordering beer, gets called with 1 extra parameter
+	{ GID_SQ1,            71,    71,  0,       "destroyXenon", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // during the Xenon destruction cutscene (which results in death), gets called with 1 extra parameter - bug #3040894
+	{ GID_SQ1,            53,    53,  0,           "blastEgo", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when Roger is found and zapped by the cleaning robot, gets called with 1 extra parameter - bug #3040905
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
