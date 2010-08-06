@@ -139,7 +139,7 @@ const byte hoyle4SignaturePortFix[] = {
 	0x38, 0xbc, 0x02,  // pushi 02bc
 	0x38, 0x20, 0x03,  // pushi 0320
 	0x46,              // calle [xxxx] [xxxx] [xx]
-	43, +5,            // [skip 5 bytes]
+	+5, 43,            // [skip 5 bytes]
 	0x30, 0x27, 0x00,  // bnt 0027 -> end of routine
 	0x87, 0x00,        // lap 00
 	0x30, 0x19, 0x00,  // bnt 0019 -> fade out
@@ -188,6 +188,57 @@ const SciScriptSignature hoyle4Signatures[] = {
     {      0, NULL,                                          0,                              0, NULL,                     NULL }
 };
 
+
+// this is called on every death dialog. Problem is at least the german
+//  version of lsl6 gets title text that is far too long for the
+//  available temp space resulting in temp space corruption
+//  This patch moves the title text around, so this overflow
+//  doesn't happen anymore. We would otherwise get a crash
+//  calling for invalid views (this happens of course also
+//  in sierra sci)
+const byte larry6SignatureDeathDialog[] = {
+	7,
+	0x3e, 0x33, 0x01,             // link 0133 (offset 0x20)
+	0x35, 0xff,                   // ldi ff
+	0xa3, 0x00,                   // sal 00
+	+255, 0,
+	+255, 0,
+	+170, 12,                     // [skip 680 bytes]
+	0x8f, 0x01,                   // lsp 01 (offset 0x2cf)
+	0x7a,                         // push2
+	0x5a, 0x04, 0x00, 0x0e, 0x01, // lea 0004 010e
+	0x36,                         // push
+	0x43, 0x7c, 0x0e,             // kMessage[7c] 0e
+	+90, 10,                      // [skip 90 bytes]
+	0x38, 0xd6, 0x00,             // pushi 00d6 (offset 0x335)
+	0x78,                         // push1
+	0x5a, 0x04, 0x00, 0x0e, 0x01, // lea 0004 010e
+	0x36,                         // push
+	+76, 11,                      // [skip 76 bytes]
+	0x38, 0xcd, 0x00,             // pushi 00cd (offset 0x38b)
+	0x39, 0x03,                   // pushi 03
+	0x5a, 0x04, 0x00, 0x0e, 0x01, // lea 0004 010e
+	0x36,
+	0
+};
+
+const uint16 larry6PatchDeathDialog[] = {
+	0x3e, 0x00, 0x02,             // link 0200
+	PATCH_ADDTOOFFSET | +687,
+	0x5a, 0x04, 0x00, 0x40, 0x01, // lea 0004 0140
+	PATCH_ADDTOOFFSET | +98,
+	0x5a, 0x04, 0x00, 0x40, 0x01, // lea 0004 0140
+	PATCH_ADDTOOFFSET | +82,
+	0x5a, 0x04, 0x00, 0x40, 0x01, // lea 0004 0140
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                adjust
+const SciScriptSignature larry6Signatures[] = {
+    {     82, "death dialog memory corruption",              CONSTANT_LE_32(0x3501333e),     0, larry6SignatureDeathDialog, larry6PatchDeathDialog },
+    {      0, NULL,                                          0,                              0, NULL,                       NULL }
+};
+
 // will actually patch previously found signature area
 void Script::applyPatch(const uint16 *patch, byte *scriptData, const uint32 scriptSize, int32 signatureOffset) {
 	int32 offset = signatureOffset;
@@ -222,8 +273,9 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 			uint32 offset = DWordOffset + signature->magicOffset;
 			uint32 byteOffset = offset;
 			const byte *signatureData = signature->data;
-			byte matchBytesCount = *signatureData++;
-			while (matchBytesCount) {
+			byte matchAdjust = 1;
+			while (matchAdjust) {
+				byte matchBytesCount = *signatureData++;
 				if ((byteOffset + matchBytesCount) > scriptSize) // Out-Of-Bounds?
 					break;
 				if (memcmp(signatureData, &scriptData[byteOffset], matchBytesCount)) // Byte-Mismatch?
@@ -231,12 +283,11 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 				// those bytes matched, adjust offsets accordingly
 				signatureData += matchBytesCount;
 				byteOffset += matchBytesCount;
-				// get next byte count and offset
-				matchBytesCount = *signatureData++;
-				if (matchBytesCount)
-					byteOffset += *signatureData++;
+				// get offset...
+				matchAdjust = *signatureData++;
+				byteOffset += matchAdjust;
 			}
-			if (!matchBytesCount) // all matches worked?
+			if (!matchAdjust) // all matches worked?
 				return offset;
 		}
 		DWordOffset++;
@@ -246,14 +297,21 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 }
 
 void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
-	if (g_sci->getGameId() == GID_HOYLE4) {
-		const SciScriptSignature *signatureTable = hoyle4Signatures;
+	const SciScriptSignature *signatureTable = NULL;
+	if (g_sci->getGameId() == GID_HOYLE4)
+		signatureTable = hoyle4Signatures;
+	if (g_sci->getGameId() == GID_LSL6)
+		signatureTable = larry6Signatures;
+
+	if (signatureTable) {
 		while (signatureTable->data) {
-			int32 foundOffset = findSignature(signatureTable, scriptData, scriptSize);
-			if (foundOffset != -1) {
-				// found, so apply the patch
-				warning("matched %s on script %d offset %d", signatureTable->description, scriptNr, foundOffset);
-				applyPatch(signatureTable->patch, scriptData, scriptSize, foundOffset);
+			if (scriptNr == signatureTable->scriptNr) {
+				int32 foundOffset = findSignature(signatureTable, scriptData, scriptSize);
+				if (foundOffset != -1) {
+					// found, so apply the patch
+					warning("matched %s on script %d offset %d", signatureTable->description, scriptNr, foundOffset);
+					applyPatch(signatureTable->patch, scriptData, scriptSize, foundOffset);
+				}
 			}
 			signatureTable++;
 		}
