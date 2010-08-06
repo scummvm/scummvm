@@ -45,11 +45,32 @@ public:
 			unloadPlugin();
 	}
 
+	bool loadPlugin();
 };
 
-/*bool DSPlugin::loadPlugin() {
+bool DSPlugin::loadPlugin() {
+		assert(!_dlHandle);
+		DLObject *obj = new DLObject(NULL);
+		if (obj->open(_filename.c_str())) {
+			_dlHandle = obj;
+		} else {
+			delete obj;
+			_dlHandle = NULL;
+		}
 
-};*/
+		if (!_dlHandle) {
+			warning("Failed loading plugin '%s'", _filename.c_str());
+			return false;
+		}
+
+		bool ret = DynamicPlugin::loadPlugin();
+
+		if (ret && _dlHandle) {
+			_dlHandle->discard_symtab();
+		}
+
+		return ret;
+};
 
 Plugin* DSPluginProvider::createPlugin(const Common::FSNode &node) const {
 	return new DSPlugin(node.getPath());

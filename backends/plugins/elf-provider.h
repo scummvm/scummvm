@@ -53,7 +53,7 @@ public:
 			unloadPlugin();
 	}
 
-	bool loadPlugin();
+	virtual bool loadPlugin();
 	virtual void unloadPlugin();
 
 };
