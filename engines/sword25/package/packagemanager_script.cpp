@@ -43,22 +43,24 @@
 
 #include "sword25/package/packagemanager.h"
 
+namespace Sword25 {
+
+using namespace Lua;
+
 // -----------------------------------------------------------------------------
 
-static BS_PackageManager * GetPM()
-{
+static BS_PackageManager *GetPM() {
 	BS_Kernel * pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_PackageManager * pPM = static_cast<BS_PackageManager *>(pKernel->GetService("package"));
+	BS_PackageManager *pPM = static_cast<BS_PackageManager *>(pKernel->GetService("package"));
 	BS_ASSERT(pPM);
 	return pPM;
 }
 
 // -----------------------------------------------------------------------------
 
-static int LoadPackage(lua_State * L)
-{
-	BS_PackageManager * pPM = GetPM();
+static int LoadPackage(lua_State *L) {
+	BS_PackageManager *pPM = GetPM();
 
 	lua_pushbooleancpp(L, pPM->LoadPackage(luaL_checkstring(L, 1), luaL_checkstring(L, 2)));
 
@@ -67,9 +69,8 @@ static int LoadPackage(lua_State * L)
 
 // -----------------------------------------------------------------------------
 
-static int LoadDirectoryAsPackage(lua_State * L)
-{
-	BS_PackageManager * pPM = GetPM();
+static int LoadDirectoryAsPackage(lua_State *L) {
+	BS_PackageManager *pPM = GetPM();
 
 	lua_pushbooleancpp(L, pPM->LoadDirectoryAsPackage(luaL_checkstring(L, 1), luaL_checkstring(L, 2)));
 
@@ -78,9 +79,8 @@ static int LoadDirectoryAsPackage(lua_State * L)
 
 // -----------------------------------------------------------------------------
 
-static int GetCurrentDirectory(lua_State * L)
-{
-	BS_PackageManager * pPM = GetPM();
+static int GetCurrentDirectory(lua_State *L) {
+	BS_PackageManager *pPM = GetPM();
 
 	lua_pushstring(L, pPM->GetCurrentDirectory().c_str());
 
@@ -89,9 +89,8 @@ static int GetCurrentDirectory(lua_State * L)
 
 // -----------------------------------------------------------------------------
 
-static int ChangeDirectory(lua_State * L)
-{
-	BS_PackageManager * pPM = GetPM();
+static int ChangeDirectory(lua_State *L) {
+	BS_PackageManager *pPM = GetPM();
 
 	lua_pushbooleancpp(L, pPM->ChangeDirectory(luaL_checkstring(L, 1)));
 
@@ -100,9 +99,8 @@ static int ChangeDirectory(lua_State * L)
 
 // -----------------------------------------------------------------------------
 
-static int GetAbsolutePath(lua_State * L)
-{
-	BS_PackageManager * pPM = GetPM();
+static int GetAbsolutePath(lua_State *L) {
+	BS_PackageManager *pPM = GetPM();
 
 	lua_pushstring(L, pPM->GetAbsolutePath(luaL_checkstring(L, 1)).c_str());
 
@@ -111,9 +109,8 @@ static int GetAbsolutePath(lua_State * L)
 
 // -----------------------------------------------------------------------------
 
-static int GetFileSize(lua_State * L)
-{
-	BS_PackageManager * pPM = GetPM();
+static int GetFileSize(lua_State *L) {
+	BS_PackageManager *pPM = GetPM();
 
 	lua_pushnumber(L, pPM->GetFileSize(luaL_checkstring(L, 1)));
 
@@ -122,9 +119,8 @@ static int GetFileSize(lua_State * L)
 
 // -----------------------------------------------------------------------------
 
-static int GetFileType(lua_State * L)
-{
-	BS_PackageManager * pPM = GetPM();
+static int GetFileType(lua_State *L) {
+	BS_PackageManager *pPM = GetPM();
 
 	lua_pushnumber(L, pPM->GetFileType(luaL_checkstring(L, 1)));
 
@@ -133,32 +129,31 @@ static int GetFileType(lua_State * L)
 
 // -----------------------------------------------------------------------------
 
-static void SplitSearchPath(const std::string & Path, std::string & Directory, std::string & Filter)
-{
-	std::string::size_type LastSlash = Path.rfind("/");
-	if (LastSlash == std::string::npos)
-	{
+static void SplitSearchPath(const Common::String &Path, Common::String &Directory, Common::String &Filter) {
+	// Scan backwards for a trailing slash
+	const char *sPath = Path.c_str();
+	const char *lastSlash = sPath + strlen(sPath) - 1;
+	while ((lastSlash >= sPath) && (*lastSlash != '/')) --lastSlash;
+
+	if (lastSlash >= sPath)	{
 		Directory = "";
 		Filter = Path;
-	}
-	else
-	{
-		Directory = Path.substr(0, LastSlash);
-		Filter = Path.substr(LastSlash + 1);
+	} else {
+		Directory = Common::String(sPath, lastSlash - sPath);
+		Filter = Common::String(lastSlash + 1);
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-static void DoSearch(lua_State * L, const std::string & Path, unsigned int Type)
-{
-	BS_PackageManager * pPM = GetPM();
+static void DoSearch(lua_State *L, const Common::String &Path, unsigned int Type) {
+	BS_PackageManager *pPM = GetPM();
 
 	// Der Packagemanager-Service muss den Suchstring und den Pfad getrennt übergeben bekommen.
 	// Um die Benutzbarkeit zu verbessern sollen Skriptprogrammierer dieses als ein Pfad übergeben können.
 	// Daher muss der übergebene Pfad am letzten Slash aufgesplittet werden.
-	std::string Directory;
-	std::string Filter;
+	Common::String Directory;
+	Common::String Filter;
 	SplitSearchPath(Path, Directory, Filter);
 
 	// Ergebnistable auf dem Lua-Stack erstellen
@@ -168,15 +163,13 @@ static void DoSearch(lua_State * L, const std::string & Path, unsigned int Type)
 	// Als Indizes werden fortlaufende Nummern verwandt.
 	unsigned int ResultNr = 1;
 	BS_PackageManager::FileSearch * pFS = pPM->CreateSearch(Filter, Directory, Type);
-	if (pFS)
-	{
-		do
-		{
+	if (pFS) {
+		do {
 			lua_pushnumber(L, ResultNr);
 			lua_pushstring(L, pFS->GetCurFileName().c_str());
 			lua_settable(L, -3);
 			ResultNr++;
-		} while(pFS->NextFile());
+		} while (pFS->NextFile());
 	}
 
 	delete(pFS);
@@ -184,43 +177,37 @@ static void DoSearch(lua_State * L, const std::string & Path, unsigned int Type)
 
 // -----------------------------------------------------------------------------
 
-static int FindFiles(lua_State * L)
-{
+static int FindFiles(lua_State *L) {
 	DoSearch(L, luaL_checkstring(L, 1), BS_PackageManager::FT_FILE);
 	return 1;
 }
 
 // -----------------------------------------------------------------------------
 
-static int FindDirectories(lua_State * L)
-{
+static int FindDirectories(lua_State *L) {
 	DoSearch(L, luaL_checkstring(L, 1), BS_PackageManager::FT_DIRECTORY);
 	return 1;
 }
 
 // -----------------------------------------------------------------------------
 
-static int GetFileAsString(lua_State * L)
-{
-	BS_PackageManager * pPM = GetPM();
+static int GetFileAsString(lua_State *L) {
+	BS_PackageManager *pPM = GetPM();
 
 	unsigned int FileSize;
 	void * FileData = pPM->GetFile(luaL_checkstring(L, 1), &FileSize);
-	if (FileData)
-	{
+	if (FileData) {
 		lua_pushlstring(L, static_cast<char *>(FileData), FileSize);
 		delete FileData;
 
 		return 1;
-	}
-	else
+	} else
 		return 0;
 }
 
 // -----------------------------------------------------------------------------
 
-static int FileExists(lua_State * L)
-{
+static int FileExists(lua_State *L) {
 	lua_pushbooleancpp(L, GetPM()->FileExists(luaL_checkstring(L, 1)));
 	return 1;
 }
@@ -229,8 +216,7 @@ static int FileExists(lua_State * L)
 
 static const char * PACKAGE_LIBRARY_NAME = "Package";
 
-static const luaL_reg PACKAGE_FUNCTIONS[] =
-{
+static const luaL_reg PACKAGE_FUNCTIONS[] = {
 	"LoadPackage", LoadPackage,
 	"LoadDirectoryAsPackage", LoadDirectoryAsPackage,
 	"GetCurrentDirectory", GetCurrentDirectory,
@@ -242,21 +228,22 @@ static const luaL_reg PACKAGE_FUNCTIONS[] =
 	"FindDirectories", FindDirectories,
 	"GetFileAsString", GetFileAsString,
 	"FileExists", FileExists,
-	0, 0,
+	0, 0
 };
 
 // -----------------------------------------------------------------------------
 
-bool BS_PackageManager::_RegisterScriptBindings()
-{
+bool BS_PackageManager::_RegisterScriptBindings() {
 	BS_Kernel * pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 	BS_ScriptEngine * pScript = static_cast<BS_ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);
-	lua_State * L = static_cast<lua_State *>(pScript->GetScriptObject());
+	lua_State *L = static_cast<lua_State *>(pScript->GetScriptObject());
 	BS_ASSERT(L);
 
 	if (!BS_LuaBindhelper::AddFunctionsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_FUNCTIONS)) return false;
 
 	return true;
 }
+
+} // End of namespace Sword25
