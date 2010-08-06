@@ -31,17 +31,9 @@
 
 namespace Sci {
 
-struct SciScriptSignature {
-	uint16 scriptNr;
-	const char *description;
-	uint32 magicDWord;
-	int magicOffset;
-	const byte *data;
-	const uint16 *patch;
-};
-
 struct EngineState;
 class ResourceManager;
+struct SciScriptSignature;
 
 enum ScriptObjectTypes {
 	SCI_OBJ_TERMINATOR,
