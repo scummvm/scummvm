@@ -229,39 +229,32 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 		if (viewId == 0xFFFF)	// invalid view
 			return;
 
-		// must be something wrong with this TODO check - currently it breaks qfg3 right after the intro
-		//uint16 scaleSignal = 0;
-		//if (getSciVersion() >= SCI_VERSION_1_1) {
-		//	scaleSignal = readSelectorValue(_segMan, object, SELECTOR(scaleSignal)) & kScaleSignalDoScaling;
-		//	if (scaleSignal) {
-		//		int16 scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
-		//		if (scaleY < 64)
-		//			scaleSignal = 0;
-		//	}
-		//}
+		uint16 scaleSignal = 0;
+		if (getSciVersion() >= SCI_VERSION_1_1) {
+			scaleSignal = readSelectorValue(_segMan, object, SELECTOR(scaleSignal));
+		}
 
 		Common::Rect celRect;
 
-		//if (!scaleSignal) {
-			GfxView *tmpView = _cache->getView(viewId);
-			if (tmpView->isSci2Hires())
-				_screen->adjustToUpscaledCoordinates(y, x);
+		GfxView *tmpView = _cache->getView(viewId);
+		if (tmpView->isSci2Hires())
+			_screen->adjustToUpscaledCoordinates(y, x);
 
+		if (scaleSignal & kScaleSignalDoScaling) {
+			int16 scaleX = readSelectorValue(_segMan, object, SELECTOR(scaleX));
+			int16 scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
+			tmpView->getCelScaledRect(loopNo, celNo, x, y, z, scaleX, scaleY, celRect);
+		} else {
 			tmpView->getCelRect(loopNo, celNo, x, y, z, celRect);
+		}
 
-			if (tmpView->isSci2Hires()) {
-				_screen->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
-				_screen->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
-			}
+		if (tmpView->isSci2Hires()) {
+			_screen->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
+			_screen->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
+		}
 
-			celRect.bottom = y + 1;
-			celRect.top = celRect.bottom - yStep;
-		//} else {
-		//	celRect.left = readSelectorValue(_segMan, object, SELECTOR(nsLeft));
-		//	celRect.right = readSelectorValue(_segMan, object, SELECTOR(nsRight));
-		//	celRect.top = readSelectorValue(_segMan, object, SELECTOR(nsTop));
-		//	celRect.bottom = readSelectorValue(_segMan, object, SELECTOR(nsBottom));
-		//}
+		celRect.bottom = y + 1;
+		celRect.top = celRect.bottom - yStep;
 
 		writeSelectorValue(_segMan, object, SELECTOR(brLeft), celRect.left);
 		writeSelectorValue(_segMan, object, SELECTOR(brRight), celRect.right);
