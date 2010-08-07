@@ -417,7 +417,9 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		printSendActions = g_sci->checkSelectorBreakpoint(send_obj, selector);
 
 #ifdef VM_DEBUG_SEND
-		printf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, g_sci->getKernel()->getSelectorName(selector).c_str());
+		printf("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj), 
+			s->_segMan->getObjectName(send_obj), selector, 
+			g_sci->getKernel()->getSelectorName(selector).c_str());
 #endif // VM_DEBUG_SEND
 
 		ObjVarRef varp;
@@ -445,7 +447,9 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			if (printSendActions && argc) {
 				reg_t oldReg = *varp.getPointer(s->_segMan);
 				reg_t newReg = argp[1];
-				debug("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
+				warning("[write to selector (%s:%s): change %04x:%04x to %04x:%04x]\n", 
+					s->_segMan->getObjectName(send_obj), g_sci->getKernel()->getSelectorName(selector).c_str(), 
+					PRINT_REG(oldReg), PRINT_REG(newReg));
 				printSendActions = false;
 			}
 
