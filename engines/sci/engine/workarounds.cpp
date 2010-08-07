@@ -53,6 +53,12 @@ const SciWorkaroundEntry opcodeGeWorkarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
+const SciWorkaroundEntry opcodeLeWorkarounds[] = {
+	{ GID_PEPPER,         370,   23,  0,    "eastExitFeature", "onMe",           -1,    0, { WORKAROUND_FAKE,   1 } }, // Pugh's office, when trying to use either the left or right exits, gets called on an integer and a pointer - bug #3040142
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
 const SciWorkaroundEntry opcodeLsiWorkarounds[] = {
 	{ GID_QFG2,           200,  200,  0,              "astro", "messages",       -1,    0, { WORKAROUND_FAKE,   0 } }, // when getting asked for your name by the astrologer bug #3039879
 	SCI_WORKAROUNDENTRY_TERMINATOR

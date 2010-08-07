@@ -71,6 +71,7 @@ struct SciWorkaroundEntry {
 extern const SciWorkaroundEntry opcodeDivWorkarounds[];
 extern const SciWorkaroundEntry opcodeDptoaWorkarounds[];
 extern const SciWorkaroundEntry opcodeGeWorkarounds[];
+extern const SciWorkaroundEntry opcodeLeWorkarounds[];
 extern const SciWorkaroundEntry opcodeLsiWorkarounds[];
 extern const SciWorkaroundEntry opcodeMulWorkarounds[];
 extern const SciWorkaroundEntry opcodeAndWorkarounds[];
