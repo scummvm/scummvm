@@ -149,21 +149,23 @@ bool FStests::testWriteFile() {
 
 
 FSTestSuite::FSTestSuite() {
-	addTest("ReadingFile", &FStests::testReadFile, false);
-	addTest("WritingFile", &FStests::testWriteFile, false);
-}
-
-void FSTestSuite::enable(bool flag) {
+	// FS tests depend on Game Data files.
+	// If those are not found. Disable this testsuite.
 	const Common::String &path = ConfMan.get("path");
 	Common::FSNode gameRoot(path);
 
 	Common::FSNode gameIdentificationFile = gameRoot.getChild("TESTBED");
 	if (!gameIdentificationFile.exists()) {
 		logPrintf("WARNING! : Game Data not found. Skipping FS tests\n");
+		_isGameDataFound = false;
 		Testsuite::enable(false);
-		return;
 	}
-	Testsuite::enable(flag);
+	addTest("ReadingFile", &FStests::testReadFile, false);
+	addTest("WritingFile", &FStests::testWriteFile, false);
+}
+
+void FSTestSuite::enable(bool flag) {
+	Testsuite::enable(_isGameDataFound & flag);
 }
 
 } // End of namespace Testbed

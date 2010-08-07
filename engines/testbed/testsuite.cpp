@@ -93,6 +93,7 @@ void Testsuite::logPrintf(const char *fmt, ...) {
 
 	if (_ws) {
 		_ws->writeString(buffer);
+		_ws->flush();
 		debugCN(kTestbedLogOutput, "%s", buffer);
 	} else {
 		debugCN(kTestbedLogOutput, "%s", buffer);
@@ -110,6 +111,7 @@ void Testsuite::logDetailedPrintf(const char *fmt, ...) {
 
 	if (_ws) {
 		_ws->writeString(buffer);
+		_ws->flush();
 		debugCN(1, kTestbedLogOutput, "%s", buffer);
 	} else {
 		debugCN(1, kTestbedLogOutput, "%s", buffer);

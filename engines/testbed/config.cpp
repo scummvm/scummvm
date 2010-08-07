@@ -78,12 +78,18 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 	case GUI::kListItemDoubleClickedCmd:
 		ts  = _testSuiteArray[_testListDisplay->getSelected()];
 		if (ts) {
+			// Toggle status
 			if (ts->isEnabled()) {
 				ts->enable(false);
-				_testListDisplay->markAsDeselected(_testListDisplay->getSelected());
 			} else {
 				ts->enable(true);
+			}
+
+			// Now render status
+			if (ts->isEnabled()) {
 				_testListDisplay->markAsSelected(_testListDisplay->getSelected());
+			} else {
+				_testListDisplay->markAsDeselected(_testListDisplay->getSelected());
 			}
 		}
 		break;
@@ -181,7 +187,6 @@ void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {
 		}
 	}
 	_configFileInterface.saveToStream(*ws);
-	_configFileInterface.clear();
 	ws->flush();
 }
 
@@ -287,6 +292,9 @@ void TestbedConfigManager::selectTestsuites() {
 		TestbedOptionsDialog tbd(_testsuiteList, this);
 		tbd.runModal();
 	}
+
+	// Clear it to remove entries before next rerun
+	_configFileInterface.clear();
 }
 
 }	// End of namespace Testbed
