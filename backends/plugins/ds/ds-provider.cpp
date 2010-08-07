@@ -32,41 +32,9 @@
 
 class DSPlugin : public ELFPlugin {
 public:
-	DSPlugin(const Common::String &filename) {
-		_dlHandle = 0;
-		_filename = filename;
-	}
+	DSPlugin(const Common::String &filename) : ELFPlugin(filename) {}
 
-	~DSPlugin() {
-		if (_dlHandle)
-			unloadPlugin();
-	}
-
-	bool loadPlugin();
-};
-
-bool DSPlugin::loadPlugin() {
-		assert(!_dlHandle);
-		DLObject *obj = new ARMDLObject();
-		if (obj->open(_filename.c_str())) {
-			_dlHandle = obj;
-		} else {
-			delete obj;
-			_dlHandle = NULL;
-		}
-
-		if (!_dlHandle) {
-			warning("Failed loading plugin '%s'", _filename.c_str());
-			return false;
-		}
-
-		bool ret = DynamicPlugin::loadPlugin();
-
-		if (ret && _dlHandle) {
-			_dlHandle->discard_symtab();
-		}
-
-		return ret;
+	DLObject *makeDLObject() { return new ARMDLObject(); }
 };
 
 Plugin* DSPluginProvider::createPlugin(const Common::FSNode &node) const {

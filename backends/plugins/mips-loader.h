@@ -39,15 +39,7 @@ protected:
     void unload();
 
 public:
-    MIPSDLObject() {
-    	_segment = NULL;
-    	_symtab = NULL;
-    	_strtab = NULL;
-    	_symbol_cnt = 0;
-    	_symtab_sect = -1;
-    	_dtors_start = NULL;
-    	_dtors_end = NULL;
-    	_segmentSize = 0;
+    MIPSDLObject() : DLObject() {
 		_shortsSegment = NULL;
 		_gpVal = 0;
     }

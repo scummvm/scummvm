@@ -58,6 +58,30 @@ DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
 	return tmp;
 }
 
+bool ELFPlugin::loadPlugin() {
+		assert(!_dlHandle);
+		DLObject *obj = makeDLObject();
+		if (obj->open(_filename.c_str())) {
+			_dlHandle = obj;
+		} else {
+			delete obj;
+			_dlHandle = NULL;
+		}
+
+		if (!_dlHandle) {
+			warning("Failed loading plugin '%s'", _filename.c_str());
+			return false;
+		}
+
+		bool ret = DynamicPlugin::loadPlugin();
+
+		if (ret && _dlHandle) {
+			_dlHandle->discard_symtab();
+		}
+
+		return ret;
+};
+
 void ELFPlugin::unloadPlugin() {
 	DynamicPlugin::unloadPlugin();
 	if (_dlHandle) {

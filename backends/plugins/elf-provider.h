@@ -42,9 +42,6 @@ protected:
 	virtual VoidFunc findSymbol(const char *symbol);
 
 public:
-	ELFPlugin() {
-	}
-
 	ELFPlugin(const Common::String &filename)
 		: _dlHandle(0), _filename(filename) {}
 
@@ -53,7 +50,9 @@ public:
 			unloadPlugin();
 	}
 
-	virtual bool loadPlugin() = 0;
+	virtual DLObject *makeDLObject() = 0;
+
+	bool loadPlugin();
 	void unloadPlugin();
 
 };

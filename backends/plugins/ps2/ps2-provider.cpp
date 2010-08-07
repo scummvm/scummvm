@@ -32,41 +32,9 @@
 
 class PS2Plugin : public ELFPlugin {
 public:
-	PS2Plugin(const Common::String &filename) {
-		_dlHandle = 0;
-		_filename = filename;
-	}
+	PS2Plugin(const Common::String &filename) : ELFPlugin(filename) {}
 
-	~PS2Plugin() {
-		if (_dlHandle)
-			unloadPlugin();
-	}
-
-	bool loadPlugin();
-};
-
-bool PS2Plugin::loadPlugin() {
-		assert(!_dlHandle);
-		DLObject *obj = new MIPSDLObject();
-		if (obj->open(_filename.c_str())) {
-			_dlHandle = obj;
-		} else {
-			delete obj;
-			_dlHandle = NULL;
-		}
-
-		if (!_dlHandle) {
-			warning("Failed loading plugin '%s'", _filename.c_str());
-			return false;
-		}
-
-		bool ret = DynamicPlugin::loadPlugin();
-
-		if (ret && _dlHandle) {
-			_dlHandle->discard_symtab();
-		}
-
-		return ret;
+	DLObject *makeDLObject() { return new MIPSDLObject(); }
 };
 
 Plugin* PS2PluginProvider::createPlugin(const Common::FSNode &node) const {

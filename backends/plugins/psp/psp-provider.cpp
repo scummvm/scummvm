@@ -32,41 +32,9 @@
 
 class PSPPlugin : public ELFPlugin {
 public:
-	PSPPlugin(const Common::String &filename) {
-		_dlHandle = 0;
-		_filename = filename;
-	}
+	PSPPlugin(const Common::String &filename) : ELFPlugin(filename) {}
 
-	~PSPPlugin() {
-		if (_dlHandle)
-			unloadPlugin();
-	}
-
-	bool loadPlugin();
-};
-
-bool PSPPlugin::loadPlugin() {
-		assert(!_dlHandle);
-		DLObject *obj = new MIPSDLObject();
-		if (obj->open(_filename.c_str())) {
-			_dlHandle = obj;
-		} else {
-			delete obj;
-			_dlHandle = NULL;
-		}
-
-		if (!_dlHandle) {
-			warning("Failed loading plugin '%s'", _filename.c_str());
-			return false;
-		}
-
-		bool ret = DynamicPlugin::loadPlugin();
-
-		if (ret && _dlHandle) {
-			_dlHandle->discard_symtab();
-		}
-
-		return ret;
+	DLObject *makeDLObject() { return new MIPSDLObject(); }
 };
 
 Plugin* PSPPluginProvider::createPlugin(const Common::FSNode &node) const {
