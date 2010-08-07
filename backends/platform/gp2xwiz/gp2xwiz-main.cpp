@@ -41,7 +41,6 @@
 #include "common/file.h"
 #include "base/main.h"
 
-#include "backends/plugins/gp2xwiz/gp2xwiz-provider.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer_intern.h"
@@ -54,9 +53,6 @@
 #include <sys/stat.h>
 #include <time.h>	// for getTimeAndDate()
 
-//comment this out to use POSIX plugins
-#define ELF_LOADER
-
 /* Dump console info to files. */
 // #define DUMP_STDOUT
 
@@ -66,13 +62,7 @@ int main(int argc, char *argv[]) {
 	assert(g_system);
 
 #ifdef DYNAMIC_MODULES
-
-#ifdef ELF_LOADER
-	PluginManager::instance().addPluginProvider(new GP2XWIZPluginProvider());
-#else
 	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
-#endif /* ELF_LOADER */
-	
 #endif /* DYNAMIC_MODULES */
 
 	// Invoke the actual ScummVM main entry point:
