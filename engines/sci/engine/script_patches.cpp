@@ -166,6 +166,47 @@ const SciScriptSignature larry6Signatures[] = {
     {      0, NULL,                                          0,                                            0, NULL,                       NULL }
 };
 
+const byte sq5SignatureScrubbing[] = {
+	19,
+	0x18,             // not
+	0x31, 0x37,       // bnt 37
+	0x78,             // push1 (selector x)
+	0x76,             // push0
+	0x39, 0x38,       // pushi 38 (selector mover)
+	0x76,             // push0
+	0x81, 0x00,       // lag 00
+	0x4a, 0x04,       // send 04 (read ego::mover)
+	0x4a, 0x04,       // send 04 (read ego::mover::x)
+	0x36,             // push
+	0x34, 0xa0, 0x00, // ldi 00a0
+	0x1c,             // ne?
+	0
+};
+
+const uint16 sq5PatchScrubbing[] = {
+	0x18,             // not
+	0x31, 0x37,       // bnt 37
+//	0x2f, 0x38,       // bt 37 (would save another byte, isn't needed
+	0x39, 0x38,       // pushi 38 (selector mover)
+	0x76,             // push0
+	0x81, 0x00,       // lag 00
+	0x4a, 0x04,       // send 04 (read ego::mover)
+	0x31, 0x2e,       // bnt 2e (jump if ego::mover is 0)
+	0x78,             // push1 (selector x)
+	0x76,             // push0
+	0x4a, 0x04,       // send 04 (read ego::mover::x)
+	0x39, 0xa0,       // pushi a0 (saving 2 bytes)
+	0x1c,             // ne?
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                  adjust
+const SciScriptSignature sq5Signatures[] = {
+    {    119, "scrubbing send crash",                        PATCH_MAGICDWORD(0x18, 0x31, 0x37, 0x78),     0, sq5SignatureScrubbing, sq5PatchScrubbing },
+    {      0, NULL,                                          0,                                            0, NULL,                  NULL }
+};
+
+
 // will actually patch previously found signature area
 void Script::applyPatch(const uint16 *patch, byte *scriptData, const uint32 scriptSize, int32 signatureOffset) {
 	int32 offset = signatureOffset;
@@ -229,6 +270,8 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		signatureTable = hoyle4Signatures;
 	if (g_sci->getGameId() == GID_LSL6)
 		signatureTable = larry6Signatures;
+	if (g_sci->getGameId() == GID_SQ5)
+		signatureTable = sq5Signatures;
 
 	if (signatureTable) {
 		while (signatureTable->data) {
