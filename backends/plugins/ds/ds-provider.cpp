@@ -25,15 +25,9 @@
 
 #if defined(DYNAMIC_MODULES) && defined(__DS__)
 
-/*#include "base/plugins.h"
-#include "backends/plugins/dynamic-plugin.h"
-#include "common/fs.h"
-
-#include "backends/plugins/elf-loader.h"*/
 #include "backends/plugins/arm-loader.h"
 #include "backends/plugins/elf-provider.h"
 #include "backends/plugins/ds/ds-provider.h"
-
 
 
 class DSPlugin : public ELFPlugin {

@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(ARM)
+#if defined(DYNAMIC_MODULES)
 
 #include "backends/fs/ds/ds-fs.h"
 #include "elf-loader.h"
@@ -146,7 +146,7 @@ bool ARMDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *e
 		Elf32_Shdr *curShdr = &(shdr[i]);
 
 		if ((curShdr->sh_type == SHT_REL || curShdr->sh_type == SHT_RELA) &&		// Check for a relocation section
-		        curShdr->sh_entsize == sizeof(Elf32_Rel) &&		// Check for proper relocation size
+		        curShdr->sh_entsize == sizeof(Elf32_Rel) &&			// Check for proper relocation size
 		        (int)curShdr->sh_link == _symtab_sect &&			// Check that the sh_link connects to our symbol table
 		        curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
 		        (shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {  	// Check if relocated section resides in memory
@@ -166,4 +166,4 @@ bool ARMDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *e
 	return true;
 }
 
-#endif /* defined(DYNAMIC_MODULES) && defined(ARM) */
+#endif /* defined(DYNAMIC_MODULES) */

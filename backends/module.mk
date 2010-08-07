@@ -37,6 +37,7 @@ MODULE_OBJS := \
 	plugins/sdl/sdl-provider.o \
 	plugins/win32/win32-provider.o \
 	plugins/psp/psp-provider.o \
+	plugins/ps2/ps2-provider.o \
 	plugins/gp2xwiz/gp2xwiz-provider.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \

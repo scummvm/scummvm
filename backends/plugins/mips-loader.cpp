@@ -23,7 +23,9 @@
  *
  */
 
-#include "elf-loader.h"
+#if defined(DYNAMIC_MODULES)
+
+#include "mips-loader.h"
 
 #define __DEBUG_PLUGINS__
 
@@ -44,7 +46,7 @@
  * @param relSegment Base address of relocated segment in memory (memory offset)
  *
  */
-bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
+bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
 	Elf32_Rel *rel = NULL;	// relocation entry
 
 	// Allocate memory for relocation table
@@ -228,7 +230,7 @@ bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset
 	return true;
 }
 
-bool DLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
+bool MIPSDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 
 	// Loop over sections, finding relocation sections
 	for (int i = 0; i < ehdr->e_shnum; i++) {
@@ -257,3 +259,4 @@ bool DLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr
 	return true;
 }
 
+#endif /* defined(DYNAMIC_MODULES) */
