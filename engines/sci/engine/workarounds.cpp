@@ -141,6 +141,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_MOTHERGOOSE,    18,   992,  0,             "AIPath", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // DEMO: Called when walking north from mother goose's house two screens
 	{ GID_MOTHERGOOSEHIRES,-1,64950,  1,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // right when clicking on a child at the start and probably also later
 	{ GID_MOTHERGOOSEHIRES,-1,64950,  1,               "View", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // see above
+	{ GID_PEPPER,         -1,   894,  0,            "Package", "doVerb",         -1,    3, { WORKAROUND_FAKE,   0 } }, // using the hand on the book in the inventory - bug #3040012
 	{ GID_QFG1,           -1,   210,  0,          "Encounter", "init",        0xbd0,    0, { WORKAROUND_FAKE,   0 } }, // hq1: going to the brigands hideout
 	{ GID_QFG1,           -1,   210,  0,          "Encounter", "init",        0xbe4,    0, { WORKAROUND_FAKE,   0 } }, // qfg1: going to the brigands hideout
 	{ GID_QFG2,           -1,    71,  0,        "theInvSheet", "doit",           -1,    1, { WORKAROUND_FAKE,   0 } }, // accessing the inventory
