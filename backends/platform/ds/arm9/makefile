@@ -238,7 +238,7 @@ CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor -Wno-unknown-pragmas -Wno-reorder  \
 
 
 ASFLAGS = -mcpu=arm9tdmi -mthumb-interwork
-DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555 -DDISABLE_DOSBOX_OPL -DDISABLE_DEFAULT_SAVEFILEMANAGER -DELF_LOADER_TARGET -DARM#-DNEW_PLUGIN_DESIGN_FIRST_REFINEMENT
+DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555 -DDISABLE_DOSBOX_OPL -DDISABLE_DEFAULT_SAVEFILEMANAGER -DELF_LOADER_TARGET -DARM -DARM_TARGET#-DNEW_PLUGIN_DESIGN_FIRST_REFINEMENT
 ifdef USE_MAD
 	DEFINES += -DUSE_MAD
 endif
@@ -291,9 +291,7 @@ PORT_OBJS :=	$(portdir)/source/blitters_arm.o $(portdir)/source/cdaudio.o $(port
 		$(portdir)/source/osystem_ds.o $(portdir)/source/ramsave.o\
 		$(portdir)/source/touchkeyboard.o $(portdir)/source/zipreader.o\
 		$(portdir)/source/dsoptions.o $(portdir)/source/keys.o $(portdir)/source/wordcompletion.o\
-		$(portdir)/source/interrupt.o\
-		$(srcdir)/backends/plugins/elf-loader.o\
-		$(srcdir)/backends/plugins/arm-loader.o
+		$(portdir)/source/interrupt.o
 
 ifdef USE_PROFILER
 	PORT_OBJS += $(portdir)/source/profiler/cyg-profile.o

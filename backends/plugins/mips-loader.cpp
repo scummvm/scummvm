@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES)
+#if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
 
 #include "mips-loader.h"
 
@@ -259,4 +259,4 @@ bool MIPSDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *
 	return true;
 }
 
-#endif /* defined(DYNAMIC_MODULES) */
+#endif /* defined(DYNAMIC_MODULES) && defined(MIPS_TARGET) */

@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES)
+#if defined(DYNAMIC_MODULES) && defined(ARM_TARGET)
 
 #include "backends/fs/ds/ds-fs.h"
 #include "elf-loader.h"
@@ -166,4 +166,4 @@ bool ARMDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *e
 	return true;
 }
 
-#endif /* defined(DYNAMIC_MODULES) */
+#endif /* defined(DYNAMIC_MODULES) && defined(ARM_TARGET) */

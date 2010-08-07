@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) //TODO: && defined (MIPS target)
+#if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
 
 #include "shorts-segment-manager.h"
 
@@ -86,4 +86,4 @@ void ShortSegmentManager::deleteSegment(ShortSegmentManager::Segment *seg) {
 	delete seg;
 }
 
-#endif /* DYNAMIC_MODULES */
+#endif /* DYNAMIC_MODULES && MIPS_TARGET */

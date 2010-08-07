@@ -30,13 +30,8 @@
 #include "common/stream.h"
 #include "backends/plugins/dynamic-plugin.h"
 
-#if defined(__PLAYSTATION2__) || defined(__PSP__)
-#define MIPS_TARGET
+#if defined(MIPS_TARGET)
 #include "shorts-segment-manager.h"
-#endif
-
-#if defined(__DS__)
-#define ARM_TARGET
 #endif
 
 class DLObject {

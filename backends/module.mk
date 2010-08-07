@@ -30,6 +30,10 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	midi/dmedia.o \
 	midi/windows.o \
+	plugins/elf-loader.o \
+	plugins/mips-loader.o \
+	plugins/shorts-segment-manager.o \
+	plugins/arm-loader.o \
 	plugins/elf-provider.o \
 	plugins/dc/dc-provider.o \
 	plugins/ds/ds-provider.o \
