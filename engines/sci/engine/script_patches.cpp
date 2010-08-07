@@ -166,6 +166,13 @@ const SciScriptSignature larry6Signatures[] = {
     {      0, NULL,                                          0,                                            0, NULL,                       NULL }
 };
 
+// It seems to scripts warp ego outside the screen somehow (or maybe kDoBresen?)
+//  ego::mover is set to 0 and rm119::doit will crash in that case. This here
+//  fixes part of the problem and actually checks ego::mover to be 0 and skips
+//  TODO: this should get further investigated by waltervn and maybe properly
+//   patched. For now ego will shortly disappear and reappear a bit after
+//   this isn't good, but sierra sci also "crashed" (endless looped) so this
+//   is at least better than the original code
 const byte sq5SignatureScrubbing[] = {
 	19,
 	0x18,             // not
