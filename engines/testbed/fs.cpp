@@ -68,8 +68,8 @@ bool FStests::testReadFile() {
 	Common::FSDirectory gameRoot(path);
 	int numFailed = 0;
 
-	if (!gameRoot.getFSNode().isDirectory()) {
-		Testsuite::logDetailedPrintf("game Path should be a directory");
+	if (!gameRoot.getFSNode().exists() || !gameRoot.getFSNode().isDirectory()) {
+		Testsuite::logDetailedPrintf("game Path should be an existing directory");
 		return false;
 	}
 
@@ -81,6 +81,11 @@ bool FStests::testReadFile() {
 		Common::String fileName = file[i];
 		Common::FSDirectory *directory = gameRoot.getSubDirectory(dirName);
 
+		if (!directory) {
+			Testsuite::logDetailedPrintf("Failed to open directory %s during FS tests\n", dirName.c_str());
+			return false;
+		}
+
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
 			numFailed++;
@@ -90,7 +95,12 @@ bool FStests::testReadFile() {
 		fileName.toLowercase();
 		delete directory;
 		directory = gameRoot.getSubDirectory(dirName);
-
+		
+		if (!directory) {
+			Testsuite::logDetailedPrintf("Failed to open directory %s during FS tests\n", dirName.c_str());
+			return false;
+		}
+		
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
 			numFailed++;
@@ -100,7 +110,12 @@ bool FStests::testReadFile() {
 		fileName.toUppercase();
 		delete directory;
 		directory = gameRoot.getSubDirectory(dirName);
-
+		
+		if (!directory) {
+			Testsuite::logDetailedPrintf("Failed to open directory %s during FS tests\n", dirName.c_str());
+			return false;
+		}
+		
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
 			numFailed++;
@@ -119,6 +134,10 @@ bool FStests::testReadFile() {
 bool FStests::testWriteFile() {
 	const Common::String &path = ConfMan.get("path");
 	Common::FSNode gameRoot(path);
+	if (!gameRoot.exists()) {
+		Testsuite::logPrintf("Couldn't open the game data directory %s", path.c_str());
+		return false;
+	}
 
 	Common::FSNode fileToWrite = gameRoot.getChild("testbed.out");
 
@@ -134,6 +153,10 @@ bool FStests::testWriteFile() {
 	delete ws;
 
 	Common::SeekableReadStream *rs = fileToWrite.createReadStream();
+	if (!rs) {
+		Testsuite::logDetailedPrintf("Can't open recently written file testbed.out in game data dir\n");
+		return false;
+	}
 	Common::String readFromFile = rs->readLine();
 	delete rs;
 
@@ -159,6 +182,9 @@ FSTestSuite::FSTestSuite() {
 		logPrintf("WARNING! : Game Data not found. Skipping FS tests\n");
 		_isGameDataFound = false;
 		Testsuite::enable(false);
+	} else {
+		_isGameDataFound = true;
+		Testsuite::enable(true);
 	}
 	addTest("ReadingFile", &FStests::testReadFile, false);
 	addTest("WritingFile", &FStests::testWriteFile, false);
