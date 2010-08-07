@@ -659,8 +659,10 @@ void SegManager::reconstructClones() {
 				CloneTable::Entry &seeker = ct->_table[j];
 				const Object *baseObj = getObject(seeker.getSpeciesSelector());
 				seeker.cloneFromObject(baseObj);
-				if (!baseObj)
-					error("Clone entry without a base class: %d", j);
+				if (!baseObj) {
+					// Can happen when loading some KQ6 savegames
+					warning("Clone entry without a base class: %d", j);
+				}
 			}	// end for
 		}	// end if
 	}	// end for
