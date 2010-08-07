@@ -183,7 +183,7 @@ bool BS_Text::DoRender() {
 		int CurX = m_AbsoluteX + (*Iter).BBox.left;
 		int CurY = m_AbsoluteY + (*Iter).BBox.top;
 		for (unsigned int i = 0; i < (*Iter).Text.size(); ++i) {
-			BS_Rect CurRect = FontPtr->GetCharacterRect((unsigned char)(*Iter).Text.at(i));
+			BS_Rect CurRect = FontPtr->GetCharacterRect((unsigned char)(*Iter).Text[i]);
 
 			BS_Rect RenderRect(CurX, CurY, CurX + CurRect.GetWidth(), CurY + CurRect.GetHeight());
 			int RenderX = CurX + (RenderRect.left - RenderRect.left);
@@ -322,7 +322,7 @@ void BS_Text::UpdateMetrics(BS_FontResource &FontResource) {
 	m_Height = 0;
 
 	for (unsigned int i = 0; i < m_Text.size(); ++i) {
-		const BS_Rect &CurRect = FontResource.GetCharacterRect((unsigned char)m_Text.at(i));
+		const BS_Rect &CurRect = FontResource.GetCharacterRect((unsigned char)m_Text[i]);
 		m_Width += CurRect.GetWidth();
 		if (i != m_Text.size() - 1) m_Width += FontResource.GetGapWidth();
 		if (m_Height < CurRect.GetHeight()) m_Height = CurRect.GetHeight();

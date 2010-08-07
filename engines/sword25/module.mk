@@ -31,13 +31,8 @@ MODULE_OBJS := \
 	gfx/image/pngloader.o \
 	gfx/image/vectorimage.o \
 	gfx/image/vectorimagerenderer.o \
-	gfx/opengl/glimage.o \
-	gfx/opengl/glvectorimageblit.o \
-	gfx/opengl/openglgfx.o \
-	gfx/opengl/swimage.o \
 	input/inputengine.o \
 	input/inputengine_script.o \
-	input/stdwininput.o \
 	kernel/callbackregistry.o \
 	kernel/filesystemutil.o \
 	kernel/inputpersistenceblock.o \

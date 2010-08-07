@@ -199,7 +199,7 @@ public:
 	 * @param Height    Returns the height of the frame buffer
 	 * @param Data      Returns the raw data of the frame buffer as an array of 32-bit colour values.
 	*/
-	virtual bool GetScreenshot(unsigned int &Width, unsigned int &Height, Common::Array<unsigned int> &Data) = 0;
+	virtual bool GetScreenshot(unsigned int &Width, unsigned int &Height, byte **Data) = 0;
 
 
 	virtual BS_RenderObjectPtr<BS_Panel> GetMainPanel() = 0;

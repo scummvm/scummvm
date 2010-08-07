@@ -45,12 +45,12 @@ namespace Sword25 {
 BS_TimedRenderObject::BS_TimedRenderObject(BS_RenderObjectPtr<BS_RenderObject> pParent, TYPES Type, unsigned int Handle) :
 	BS_RenderObject(pParent, Type, Handle) {
 	BS_ASSERT(GetManager());
-	GetManager()->AttatchTimedRenderObject(this);
+	GetManager()->AttatchTimedRenderObject(this->GetHandle());
 }
 
 BS_TimedRenderObject::~BS_TimedRenderObject() {
 	BS_ASSERT(GetManager());
-	GetManager()->DetatchTimedRenderObject(this);
+	GetManager()->DetatchTimedRenderObject(this->GetHandle());
 }
 
 } // End of namespace Sword25

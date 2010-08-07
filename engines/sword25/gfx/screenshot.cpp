@@ -59,7 +59,8 @@ struct RGB_PIXEL {
 	unsigned char Blue;
 };
 
-bool BS_Screenshot::SaveToFile(unsigned int Width, unsigned int Height, const vector<unsigned int> & Data, const string &Filename) {
+bool BS_Screenshot::SaveToFile(unsigned int Width, unsigned int Height, const byte *Data, const Common::String &Filename) {
+#if 0
 	BS_ASSERT(Data.size() == Width * Height);
 
 	// Buffer für Bildschirminhalt in RGB reservieren
@@ -146,13 +147,17 @@ bool BS_Screenshot::SaveToFile(unsigned int Width, unsigned int Height, const ve
 		BS_LOG_ERRORLN("Could not create screenshot (\"%s\").", Filename.c_str());
 		return false;
 	}
+#else
+	warning("STUB: BS_Screenshot::SaveToFile(%d, %d, .., %s)", Width, Height, Filename.c_str());
+#endif
 
 	return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_Screenshot::SaveThumbnailToFile(unsigned int Width, unsigned int Height, const vector<unsigned int> & Data, const string &Filename) {
+bool BS_Screenshot::SaveThumbnailToFile(unsigned int Width, unsigned int Height, const byte *Data, const Common::String &Filename) {
+#if 0
 	//
 	// Diese Methode nimmt ein Screenshot mit den Maßen von 800x600 und erzeugt einen Screenshot mit den Maßen von 200x125.
 	// Dabei werden je 50 Pixel oben und unten abgeschnitten (die Interface-Leisten im Spiel). Das verbleibende Bild von 800x500 wird auf
@@ -199,6 +204,11 @@ bool BS_Screenshot::SaveThumbnailToFile(unsigned int Width, unsigned int Height,
 
 	// Bild als PNG Speichern.
 	return SaveToFile(200, 125, ThumbnailData, Filename);
+#else
+	warning("STUB: BS_Screenshot::SaveThumbnailToFile(%d, %d, .., %s)", Width, Height, Filename.c_str());
+
+	return true;
+#endif
 }
 
 } // End of namespace Sword25

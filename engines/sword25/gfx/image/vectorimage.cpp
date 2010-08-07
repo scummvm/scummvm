@@ -76,7 +76,7 @@ public:
 
 	inline u32 GetBits(unsigned int BitCount) {
 		if (BitCount == 0 || BitCount > 32) {
-			throw(runtime_error("SWFBitStream::GetBits() must read at least 1 and at most 32 bits at a time"));
+			error("SWFBitStream::GetBits() must read at least 1 and at most 32 bits at a time");
 		}
 
 		u32 value = 0;
@@ -132,7 +132,7 @@ public:
 	inline void FlushByte() {
 		if (m_WordMask != 128) {
 			if (m_Pos >= m_End) {
-				throw(runtime_error("Attempted to read past end of file"));
+				error("Attempted to read past end of file");
 			} else {
 				m_Word = *m_Pos++;
 				m_WordMask = 128;
@@ -143,7 +143,7 @@ public:
 	inline void SkipBytes(unsigned int SkipLength) {
 		FlushByte();
 		if (m_Pos + SkipLength >= m_End) {
-			throw(runtime_error("Attempted to read past end of file"));
+			error("Attempted to read past end of file");
 		} else {
 			m_Pos += SkipLength;
 			m_Word = *(m_Pos - 1);
@@ -237,77 +237,69 @@ BS_VectorImage::BS_VectorImage(const unsigned char *pFileData, unsigned int File
 	// Im Folgenden werden die Dateidaten aus diesem ausgelesen.
 	SWFBitStream bs(pFileData, FileSize);
 
-	try {
-		// SWF-Signatur überprüfen
-		u32 Signature[3];
-		Signature[0] = bs.GetU8();
-		Signature[1] = bs.GetU8();
-		Signature[2] = bs.GetU8();
-		if (Signature[0] != 'F' ||
-		        Signature[1] != 'W' ||
-		        Signature[2] != 'S') {
-			BS_LOG_ERRORLN("File is not a valid SWF-file");
-			return;
-		}
-
-		// Versionsangabe überprüfen
-		u32 Version = bs.GetU8();
-		if (Version > MAX_ACCEPTED_FLASH_VERSION) {
-			BS_LOG_ERRORLN("File is of version %d. Highest accepted version is %d.", Version, MAX_ACCEPTED_FLASH_VERSION);
-			return;
-		}
-
-		// Dateigröße auslesen und mit der tatsächlichen Größe vergleichen
-		u32 StoredFileSize = bs.GetU32();
-		if (StoredFileSize != FileSize) {
-			BS_LOG_ERRORLN("File is not a valid SWF-file");
-			return;
-		}
-
-		// SWF-Maße auslesen
-		BS_Rect MovieRect = FlashRectToBSRect(bs);
-
-		// Framerate und Frameanzahl auslesen
-		u32 FrameRate = bs.GetU16();
-		u32 FrameCount = bs.GetU16();
-
-		// Tags parsen
-		// Da wir uns nur für das erste DefineShape-Tag interessieren
-		bool KeepParsing = true;
-		while (KeepParsing) {
-			// Tags beginnen immer an Bytegrenzen
-			bs.FlushByte();
-
-			// Tagtyp und Länge auslesen
-			u16 TagTypeAndLength = bs.GetU16();
-			u32 TagType = TagTypeAndLength >> 6;
-			u32 TagLength = TagTypeAndLength & 0x3f;
-			if (TagLength == 0x3f) TagLength = bs.GetU32();
-
-			switch (TagType) {
-			case 2:
-				// DefineShape
-				Success = ParseDefineShape(2, bs);
-				return;
-			case 22:
-				// DefineShape2
-				Success = ParseDefineShape(2, bs);
-				return;
-			case 32:
-				Success = ParseDefineShape(3, bs);
-				return;
-			default:
-				// Unbekannte Tags ignorieren
-				bs.SkipBytes(TagLength);
-			}
-		}
+	// SWF-Signatur überprüfen
+	u32 Signature[3];
+	Signature[0] = bs.GetU8();
+	Signature[1] = bs.GetU8();
+	Signature[2] = bs.GetU8();
+	if (Signature[0] != 'F' ||
+		Signature[1] != 'W' ||
+		Signature[2] != 'S') {
+		BS_LOG_ERRORLN("File is not a valid SWF-file");
+		return;
 	}
 
-	catch (runtime_error &e) {
-		// Fehler loggen und Funktion verlassen
-		// Success ist somit "false" und signalisiert dem Programmierer, dass die Konstruktion fehlgeschlagen ist.
-		BS_LOG_ERRORLN("The following exception occured while parsing a SWF-file: %s", e.what());
+	// Versionsangabe überprüfen
+	u32 Version = bs.GetU8();
+	if (Version > MAX_ACCEPTED_FLASH_VERSION) {
+		BS_LOG_ERRORLN("File is of version %d. Highest accepted version is %d.", Version, MAX_ACCEPTED_FLASH_VERSION);
 		return;
+	}
+
+	// Dateigröße auslesen und mit der tatsächlichen Größe vergleichen
+	u32 StoredFileSize = bs.GetU32();
+	if (StoredFileSize != FileSize) {
+		BS_LOG_ERRORLN("File is not a valid SWF-file");
+		return;
+	}
+
+	// SWF-Maße auslesen
+	BS_Rect MovieRect = FlashRectToBSRect(bs);
+
+	// Framerate und Frameanzahl auslesen
+	u32 FrameRate = bs.GetU16();
+	u32 FrameCount = bs.GetU16();
+
+	// Tags parsen
+	// Da wir uns nur für das erste DefineShape-Tag interessieren
+	bool KeepParsing = true;
+	while (KeepParsing) {
+		// Tags beginnen immer an Bytegrenzen
+		bs.FlushByte();
+
+		// Tagtyp und Länge auslesen
+		u16 TagTypeAndLength = bs.GetU16();
+		u32 TagType = TagTypeAndLength >> 6;
+		u32 TagLength = TagTypeAndLength & 0x3f;
+		if (TagLength == 0x3f)
+			TagLength = bs.GetU32();
+
+		switch (TagType) {
+		case 2:
+			// DefineShape
+			Success = ParseDefineShape(2, bs);
+			return;
+		case 22:
+			// DefineShape2
+			Success = ParseDefineShape(2, bs);
+			return;
+		case 32:
+			Success = ParseDefineShape(3, bs);
+			return;
+		default:
+			// Unbekannte Tags ignorieren
+			bs.SkipBytes(TagLength);
+		}
 	}
 
 	// Die Ausführung darf nicht an dieser Stelle ankommen: Entweder es wird ein Shape gefunden, dann wird die Funktion mit vorher verlassen, oder
@@ -329,7 +321,8 @@ bool BS_VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) 
 	// Styles einlesen
 	unsigned int NumFillBits;
 	unsigned int NumLineBits;
-	if (!ParseStyles(ShapeType, bs, NumFillBits, NumLineBits)) return false;
+	if (!ParseStyles(ShapeType, bs, NumFillBits, NumLineBits))
+		return false;
 
 	unsigned int LineStyle = 0;
 	unsigned int FillStyle0 = 0;
@@ -409,9 +402,8 @@ bool BS_VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) 
 						m_Elements.back().m_Paths.move_to(LastX, LastY);
 				}
 			}
-		}
-		// Edge Record
-		else {
+		} else {
+			// Edge Record
 			u32 EdgeFlag = bs.GetBits(1);
 			u32 NumBits = bs.GetBits(4) + 2;
 
@@ -427,9 +419,8 @@ bool BS_VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) 
 				double AnchorX = ControlX + AnchorDeltaX;
 				double AnchorY = ControlY + AnchorDeltaY;
 				m_Elements.back().m_Paths.curve3(ControlX, ControlY, AnchorX, AnchorY);
-			}
-			// Staight edge
-			else {
+			} else {
+				// Staight edge
 				s32 DeltaX = 0;
 				s32 DeltaY = 0;
 

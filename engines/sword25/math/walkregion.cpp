@@ -46,7 +46,7 @@ namespace Sword25 {
 // Constants
 // -----------------------------------------------------------------------------
 
-static const int infinity = INT_MAX;
+static const int infinity = (~(-1));
 
 // -----------------------------------------------------------------------------
 // Constructor / Destructor

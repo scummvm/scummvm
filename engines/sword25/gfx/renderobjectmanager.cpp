@@ -59,7 +59,7 @@ namespace Sword25 {
 BS_RenderObjectManager::BS_RenderObjectManager(int Width, int Height, int FramebufferCount) :
 	m_FrameStarted(false) {
 	// Wurzel des BS_RenderObject-Baumes erzeugen.
-	m_RootPtr = new BS_RootRenderObject(this, Width, Height);
+	m_RootPtr = (new BS_RootRenderObject(this, Width, Height))->GetHandle();
 }
 
 // -----------------------------------------------------------------------------

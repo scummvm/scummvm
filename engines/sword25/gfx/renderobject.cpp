@@ -304,7 +304,7 @@ void BS_RenderObject::SetVisible(bool Visible) {
 // -----------------------------------------------------------------------------
 
 BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const Common::String &Filename) {
-	BS_RenderObjectPtr<BS_Animation> AniPtr(new BS_Animation(this, Filename));
+	BS_RenderObjectPtr<BS_Animation> AniPtr((new BS_Animation(this->GetHandle(), Filename))->GetHandle());
 	if (AniPtr.IsValid() && AniPtr->GetInitSuccess())
 		return AniPtr;
 	else {
@@ -317,9 +317,9 @@ BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const Common::Str
 // -----------------------------------------------------------------------------
 
 BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const BS_AnimationTemplate &AnimationTemplate) {
-	BS_Animation *AniPtr = new BS_Animation(this, AnimationTemplate);
+	BS_Animation *AniPtr = new BS_Animation(this->GetHandle(), AnimationTemplate);
 	if (AniPtr && AniPtr->GetInitSuccess())
-		return AniPtr;
+		return AniPtr->GetHandle();
 	else {
 		delete AniPtr;
 		return BS_RenderObjectPtr<BS_Animation>();
@@ -329,7 +329,7 @@ BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const BS_Animatio
 // -----------------------------------------------------------------------------
 
 BS_RenderObjectPtr<BS_Bitmap> BS_RenderObject::AddBitmap(const Common::String &Filename) {
-	BS_RenderObjectPtr<BS_Bitmap> BitmapPtr(new BS_StaticBitmap(this, Filename));
+	BS_RenderObjectPtr<BS_Bitmap> BitmapPtr((new BS_StaticBitmap(this->GetHandle(), Filename))->GetHandle());
 	if (BitmapPtr.IsValid() && BitmapPtr->GetInitSuccess())
 		return BS_RenderObjectPtr<BS_Bitmap>(BitmapPtr);
 	else {
@@ -341,7 +341,7 @@ BS_RenderObjectPtr<BS_Bitmap> BS_RenderObject::AddBitmap(const Common::String &F
 // -----------------------------------------------------------------------------
 
 BS_RenderObjectPtr<BS_Bitmap> BS_RenderObject::AddDynamicBitmap(unsigned int Width, unsigned int Height) {
-	BS_RenderObjectPtr<BS_Bitmap> BitmapPtr(new BS_DynamicBitmap(this, Width, Height));
+	BS_RenderObjectPtr<BS_Bitmap> BitmapPtr((new BS_DynamicBitmap(this->GetHandle(), Width, Height))->GetHandle());
 	if (BitmapPtr.IsValid() && BitmapPtr->GetInitSuccess())
 		return BitmapPtr;
 	else {
@@ -353,7 +353,7 @@ BS_RenderObjectPtr<BS_Bitmap> BS_RenderObject::AddDynamicBitmap(unsigned int Wid
 // -----------------------------------------------------------------------------
 
 BS_RenderObjectPtr<BS_Panel> BS_RenderObject::AddPanel(int Width, int Height, unsigned int Color) {
-	BS_RenderObjectPtr<BS_Panel> PanelPtr(new BS_Panel(this, Width, Height, Color));
+	BS_RenderObjectPtr<BS_Panel> PanelPtr((new BS_Panel(this->GetHandle(), Width, Height, Color))->GetHandle());
 	if (PanelPtr.IsValid() && PanelPtr->GetInitSuccess())
 		return PanelPtr;
 	else {
@@ -365,7 +365,7 @@ BS_RenderObjectPtr<BS_Panel> BS_RenderObject::AddPanel(int Width, int Height, un
 // -----------------------------------------------------------------------------
 
 BS_RenderObjectPtr<BS_Text> BS_RenderObject::AddText(const Common::String &Font, const Common::String &Text) {
-	BS_RenderObjectPtr<BS_Text> TextPtr(new BS_Text(this));
+	BS_RenderObjectPtr<BS_Text> TextPtr((new BS_Text(this->GetHandle()))->GetHandle());
 	if (TextPtr.IsValid() && TextPtr->GetInitSuccess() && TextPtr->SetFont(Font)) {
 		TextPtr->SetText(Text);
 		return TextPtr;
@@ -499,23 +499,23 @@ BS_RenderObjectPtr<BS_RenderObject> BS_RenderObject::RecreatePersistedRenderObje
 
 	switch (Type) {
 	case TYPE_PANEL:
-		Result = new BS_Panel(Reader, this, Handle);
+		Result = (new BS_Panel(Reader, this->GetHandle(), Handle))->GetHandle();
 		break;
 
 	case TYPE_STATICBITMAP:
-		Result = new BS_StaticBitmap(Reader, this, Handle);
+		Result = (new BS_StaticBitmap(Reader, this->GetHandle(), Handle))->GetHandle();
 		break;
 
 	case TYPE_DYNAMICBITMAP:
-		Result = new BS_DynamicBitmap(Reader, this, Handle);
+		Result = (new BS_DynamicBitmap(Reader, this->GetHandle(), Handle))->GetHandle();
 		break;
 
 	case TYPE_TEXT:
-		Result = new BS_Text(Reader, this, Handle);
+		Result = (new BS_Text(Reader, this->GetHandle(), Handle))->GetHandle();
 		break;
 
 	case TYPE_ANIMATION:
-		Result = new BS_Animation(Reader, this, Handle);
+		Result = (new BS_Animation(Reader, this->GetHandle(), Handle))->GetHandle();
 		break;
 
 	default:

@@ -108,13 +108,11 @@ namespace {
 bool DoSaveScreenshot(BS_GraphicEngine &GraphicEngine, const Common::String &Filename, bool Thumbnail) {
 	unsigned int Width;
 	unsigned int Height;
-	Common::Array<unsigned int> Data;
-	if (!GraphicEngine.GetScreenshot(Width, Height, Data)) {
+	byte *Data;
+	if (!GraphicEngine.GetScreenshot(Width, Height, &Data)) {
 		BS_LOG_ERRORLN("Call to GetScreenshot() failed. Cannot save screenshot.");
 		return false;
 	}
-
-	unsigned int test = Data.size();
 
 	if (Thumbnail)
 		return BS_Screenshot::SaveThumbnailToFile(Width, Height, Data, Filename);
