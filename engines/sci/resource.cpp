@@ -989,7 +989,7 @@ void ResourceManager::unlockResource(Resource *res) {
 	assert(res);
 
 	if (res->_status != kResStatusLocked) {
-		warning("[resMan] Attempt to unlock unlocked resource %s", res->_id.toString().c_str());
+		debugC(kDebugLevelResMan, 2, "[resMan] Attempt to unlock unlocked resource %s", res->_id.toString().c_str());
 		return;
 	}
 
