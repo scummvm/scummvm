@@ -259,4 +259,93 @@ bool MIPSDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *
 	return true;
 }
 
+void MIPSDLObject::relocateSymbols(Elf32_Addr offset) {
+
+	int mainCount = 0;
+	int shortsCount= 0;
+
+	// Loop over symbols, add relocation offset
+	Elf32_Sym *s = (Elf32_Sym *)_symtab;
+	for (int c = _symbol_cnt; c--; s++) {
+
+		// Make sure we don't relocate special valued symbols
+		if (s->st_shndx < SHN_LOPROC) {
+			if (!ShortsMan.inGeneralSegment((char *)s->st_value)) {
+				mainCount++;
+				s->st_value += offset;
+				if (s->st_value < (Elf32_Addr)_segment || s->st_value > (Elf32_Addr)_segment + _segmentSize)
+					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
+			} else {	// shorts section
+				shortsCount++;
+				s->st_value += _shortsSegment->getOffset();
+				if (!_shortsSegment->inSegment((char *)s->st_value))
+					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
+			}
+
+		}
+	}
+}
+
+bool MIPSDLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr) {
+
+	char *baseAddress = 0;
+
+	// We need to take account of non-allocated segment for shorts
+	if (phdr->p_flags & PF_X) {	// This is a relocated segment
+
+		// Attempt to allocate memory for segment
+		int extra = phdr->p_vaddr % phdr->p_align;	// Get extra length TODO: check logic here
+		DBG("extra mem is %x\n", extra);
+
+		if (phdr->p_align < 0x10000) phdr->p_align = 0x10000;	// Fix for wrong alignment on e.g. AGI
+
+		if (!(_segment = (char *)memalign(phdr->p_align, phdr->p_memsz + extra))) {
+			seterror("Out of memory.\n");
+			return false;
+		}
+		DBG("allocated segment @ %p\n", _segment);
+
+		// Get offset to load segment into
+		baseAddress = (char *)_segment + phdr->p_vaddr;
+		_segmentSize = phdr->p_memsz + extra;
+	} else {						// This is a shorts section.
+		_shortsSegment = ShortsMan.newSegment(phdr->p_memsz, (char *)phdr->p_vaddr);
+
+		baseAddress = _shortsSegment->getStart();
+		DBG("shorts segment @ %p to %p. Segment wants to be at %x. Offset=%x\n",
+		    _shortsSegment->getStart(), _shortsSegment->getEnd(), phdr->p_vaddr, _shortsSegment->getOffset());
+	}
+
+	// Set bss segment to 0 if necessary (assumes bss is at the end)
+	if (phdr->p_memsz > phdr->p_filesz) {
+		DBG("Setting %p to %p to 0 for bss\n", baseAddress + phdr->p_filesz, baseAddress + phdr->p_memsz);
+		memset(baseAddress + phdr->p_filesz, 0, phdr->p_memsz - phdr->p_filesz);
+	}
+
+	DBG("Reading the segment into memory\n");
+
+	// Read the segment into memory
+	if (DLFile->seek(phdr->p_offset, SEEK_SET) < 0 ||
+	        DLFile->read(baseAddress, phdr->p_filesz) != (ssize_t)phdr->p_filesz) {
+		seterror("Segment load failed.");
+		return false;
+	}
+
+	DBG("Segment has been read into memory\n");
+
+	return true;
+}
+
+// Unload all objects from memory
+void MIPSDLObject::unload() {
+	discard_symtab();
+	free(_segment);
+	_segment = NULL;
+
+	if (_shortsSegment) {
+		ShortsMan.deleteSegment(_shortsSegment);
+		_shortsSegment = NULL;
+	}
+}
+
 #endif /* defined(DYNAMIC_MODULES) && defined(MIPS_TARGET) */

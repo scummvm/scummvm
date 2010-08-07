@@ -30,10 +30,6 @@
 #include "common/stream.h"
 #include "backends/plugins/dynamic-plugin.h"
 
-#if defined(MIPS_TARGET)
-#include "shorts-segment-manager.h"
-#endif
-
 class DLObject {
 protected:
     void *_segment, *_symtab;
@@ -44,23 +40,18 @@ protected:
 
     int _segmentSize;
 
-#ifdef MIPS_TARGET
-	ShortSegmentManager::Segment *_shortsSegment;			// For assigning shorts ranges
-	unsigned int _gpVal;									// Value of Global Pointer
-#endif
-
     //void seterror(const char *fmt, ...);
-    void unload();
+    virtual void unload();
     virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) = 0;
     bool load(Common::SeekableReadStream* DLFile);
 
     bool readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
     bool readProgramHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num);
-    bool loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr);
+    virtual bool loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr);
     Elf32_Shdr *loadSectionHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
     int loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
     bool loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *shdr);
-    void relocateSymbols(Elf32_Addr offset);
+    virtual void relocateSymbols(Elf32_Addr offset);
     virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) = 0;
 
 public:

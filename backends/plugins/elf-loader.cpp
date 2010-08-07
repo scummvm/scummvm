@@ -37,6 +37,11 @@
 #include "common/fs.h"
 #include "elf-loader.h"
 
+#ifdef __PSP__
+#include "backends/platform/psp/powerman.h"
+#include "psputils.h"
+#endif
+
 #ifdef __DS__
 #include <nds.h>
 #endif
@@ -62,6 +67,9 @@ static void flushDataCache() {
   FlushCache(0);
   FlushCache(2);
 #endif
+#ifdef __PSP__
+  sceKernelDcacheWritebackAll();
+#endif
 }
 
 // Expel the symbol table from memory
@@ -78,13 +86,6 @@ void DLObject::unload() {
 	discard_symtab();
 	free(_segment);
 	_segment = NULL;
-
-#ifdef MIPS_TARGET
-	if (_shortsSegment) {
-		ShortsMan.deleteSegment(_shortsSegment);
-		_shortsSegment = NULL;
-	}
-#endif
 }
 
 bool DLObject::readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr) {
@@ -97,7 +98,7 @@ bool DLObject::readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehd
 	        ehdr->e_machine != EM_ARM ||						// Check for ARM machine type
 #endif
 #ifdef MIPS_TARGET
-	        ehdr->e_machine != EM_MIPS ||
+	        ehdr->e_machine != EM_MIPS ||						// Check for MIPS machine type
 #endif
 	        ehdr->e_phentsize < sizeof(Elf32_Phdr)	 ||			// Check for size of program header
 	        ehdr->e_shentsize != sizeof(Elf32_Shdr)) {			// Check for size of section header
@@ -137,33 +138,6 @@ bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr)
 
 	char *baseAddress = 0;
 
-#ifdef MIPS_TARGET
-	// We need to take account of non-allocated segment for shorts
-	if (phdr->p_flags & PF_X) {	// This is a relocated segment
-
-		// Attempt to allocate memory for segment
-		int extra = phdr->p_vaddr % phdr->p_align;	// Get extra length TODO: check logic here
-		DBG("extra mem is %x\n", extra);
-
-		if (phdr->p_align < 0x10000) phdr->p_align = 0x10000;	// Fix for wrong alignment on e.g. AGI
-
-		if (!(_segment = (char *)memalign(phdr->p_align, phdr->p_memsz + extra))) {
-			seterror("Out of memory.\n");
-			return false;
-		}
-		DBG("allocated segment @ %p\n", _segment);
-
-		// Get offset to load segment into
-		baseAddress = (char *)_segment + phdr->p_vaddr;
-		_segmentSize = phdr->p_memsz + extra;
-	} else {						// This is a shorts section.
-		_shortsSegment = ShortsMan.newSegment(phdr->p_memsz, (char *)phdr->p_vaddr);
-
-		baseAddress = _shortsSegment->getStart();
-		DBG("shorts segment @ %p to %p. Segment wants to be at %x. Offset=%x\n",
-		    _shortsSegment->getStart(), _shortsSegment->getEnd(), phdr->p_vaddr, _shortsSegment->getOffset());
-	}
-#else
 	// Attempt to allocate memory for segment
 	int extra = phdr->p_vaddr % phdr->p_align;	// Get extra length TODO: check logic here
 	DBG("extra mem is %x\n", extra);
@@ -178,7 +152,6 @@ bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr)
 	// Get offset to load segment into
 	baseAddress = (char *)_segment + phdr->p_vaddr;
 	_segmentSize = phdr->p_memsz + extra;
-#endif
 
 	// Set bss segment to 0 if necessary (assumes bss is at the end)
 	if (phdr->p_memsz > phdr->p_filesz) {
@@ -294,33 +267,13 @@ void DLObject::relocateSymbols(Elf32_Addr offset) {
 	Elf32_Sym *s = (Elf32_Sym *)_symtab;
 	for (int c = _symbol_cnt; c--; s++) {
 
-#ifdef MIPS_TARGET
-		// Make sure we don't relocate special valued symbols
-		if (s->st_shndx < SHN_LOPROC) {
-			if (!ShortsMan.inGeneralSegment((char *)s->st_value)) {
-				mainCount++;
-				s->st_value += offset;
-				if (s->st_value < (Elf32_Addr)_segment || s->st_value > (Elf32_Addr)_segment + _segmentSize)
-					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
-			} else {	// shorts section
-				shortsCount++;
-				s->st_value += _shortsSegment->getOffset();
-				if (!_shortsSegment->inSegment((char *)s->st_value))
-					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
-			}
-
-		}
-#else
 		// Make sure we don't relocate special valued symbols
 		if (s->st_shndx < SHN_LOPROC) {
 				mainCount++;
 				s->st_value += offset;
 				if (s->st_value < (Elf32_Addr)_segment || s->st_value > (Elf32_Addr)_segment + _segmentSize)
 					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
-
 		}
-#endif
-
 	}
 }
 
@@ -371,6 +324,10 @@ bool DLObject::open(const char *path) {
 	Common::SeekableReadStream* DLFile;
 	void *ctors_start, *ctors_end;
 
+#ifdef __PSP__
+	PowerMan.beginCriticalSection();
+#endif
+
 	DBG("open(\"%s\")\n", path);
 
 	Common::FSNode file(path);
@@ -389,6 +346,10 @@ bool DLObject::open(const char *path) {
 	}
 
 	DBG("loaded!/n");
+
+#ifdef __PSP__
+	PowerMan.endCriticalSection();
+#endif
 
 	flushDataCache();
 
