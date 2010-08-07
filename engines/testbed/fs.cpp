@@ -160,6 +160,7 @@ void FSTestSuite::enable(bool flag) {
 	Common::FSNode gameIdentificationFile = gameRoot.getChild("TESTBED");
 	if (!gameIdentificationFile.exists()) {
 		logPrintf("WARNING! : Game Data not found. Skipping FS tests\n");
+		Testsuite::enable(false);
 		return;
 	}
 	Testsuite::enable(flag);
