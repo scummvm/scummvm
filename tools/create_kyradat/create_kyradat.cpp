@@ -45,7 +45,7 @@
 #include <map>
 
 enum {
-	kKyraDatVersion = 71
+	kKyraDatVersion = 72
 };
 
 const ExtractFilename extractFilenames[] = {
