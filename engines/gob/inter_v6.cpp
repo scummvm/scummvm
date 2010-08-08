@@ -221,8 +221,11 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 		uint16 start = _vm->_game->_script->readUint16();
 		int8 index = _vm->_game->_script->readInt8();
 
-		int vmdSlot = _vm->_vidPlayer->slotOpen(file);
+		VideoPlayer::Properties props;
 
+		props.sprite = -1;
+
+		int vmdSlot = _vm->_vidPlayer->openVideo(false, file, props);
 		if (vmdSlot == -1) {
 			warning("Can't open video \"%s\" as cursor", file);
 			return false;
@@ -231,14 +234,17 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 		int16 framesCount = _vm->_vidPlayer->getFrameCount(vmdSlot);
 
 		for (int i = 0; i < framesCount; i++) {
-			_vm->_vidPlayer->slotPlay(vmdSlot);
-			_vm->_vidPlayer->slotCopyFrame(vmdSlot, _vm->_draw->_cursorSprites->getVidMem(),
+			props.startFrame = i;
+			props.lastFrame  = i;
+
+			_vm->_vidPlayer->play(vmdSlot, props);
+			_vm->_vidPlayer->copyFrame(vmdSlot, _vm->_draw->_cursorSprites->getVidMem(),
 					0, 0, _vm->_draw->_cursorWidth, _vm->_draw->_cursorWidth,
 					(start + i) * _vm->_draw->_cursorWidth, 0,
 					_vm->_draw->_cursorSprites->getWidth());
 		}
 
-		_vm->_vidPlayer->slotClose(vmdSlot);
+		_vm->_vidPlayer->closeVideo(vmdSlot);
 
 		_vm->_draw->_cursorAnimLow[index] = start;
 		_vm->_draw->_cursorAnimHigh[index] = framesCount + start - 1;
