@@ -539,14 +539,14 @@ bool PreIMDDecoder::seek(int32 frame, int whence, bool restart) {
 	return true;
 }
 
-bool PreIMDDecoder::load(Common::SeekableReadStream &stream) {
+bool PreIMDDecoder::load(Common::SeekableReadStream *stream) {
 	// Since PreIMDs don't have any width and height values stored,
 	// we need them to be specified in the constructor
 	assert((_width > 0) && (_height > 0));
 
 	close();
 
-	_stream = &stream;
+	_stream = stream;
 
 	_stream->seek(0);
 
@@ -791,10 +791,10 @@ void IMDDecoder::setXY(uint16 x, uint16 y) {
 		_y = y;
 }
 
-bool IMDDecoder::load(Common::SeekableReadStream &stream) {
+bool IMDDecoder::load(Common::SeekableReadStream *stream) {
 	close();
 
-	_stream = &stream;
+	_stream = stream;
 
 	uint16 handle;
 
@@ -1410,10 +1410,10 @@ bool VMDDecoder::seek(int32 frame, int whence, bool restart) {
 	return true;
 }
 
-bool VMDDecoder::load(Common::SeekableReadStream &stream) {
+bool VMDDecoder::load(Common::SeekableReadStream *stream) {
 	close();
 
-	_stream = &stream;
+	_stream = stream;
 
 	_stream->seek(0);
 

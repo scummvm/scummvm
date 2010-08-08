@@ -690,7 +690,7 @@ Graphics::CoktelDecoder *VideoPlayer::openVideo(const Common::String &file, Prop
 		return 0;
 	}
 
-	if (!video->load(*stream)) {
+	if (!video->load(stream)) {
 		delete video;
 		return 0;
 	}
