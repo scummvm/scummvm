@@ -513,6 +513,66 @@ void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 v
 	}
 }
 
+bool VideoPlayer::copyFrame(int slot, byte *dest,
+		uint16 left, uint16 top, uint16 width, uint16 height,
+		uint16 x, uint16 y, uint16 pitch, int16 transp) const {
+
+	const Video *video = getVideoBySlot(slot);
+	if (!video)
+		return false;
+
+	const Graphics::Surface *surface = video->decoder->getSurface();
+	if (!surface)
+		return false;
+
+	int32 w = MIN<int32>(width , surface->w);
+	int32 h = MIN<int32>(height, surface->h);
+
+	const byte *src = (byte*)surface->pixels + (top * surface->pitch) + left;
+	      byte *dst =                  dest + (y   * pitch)         + x;
+
+	if (transp < 0) {
+		// No transparency
+
+		if ((x == 0) && (left == 0) && (pitch == surface->pitch) && (width == surface->w)) {
+			// Dimensions fit, we can copy everything at once
+
+			memcpy(dst, src, w * h);
+			return true;
+		}
+
+		// Copy row-by-row
+
+		while (h-- > 0) {
+			const byte *srcRow = src;
+						byte *dstRow = dst;
+
+			memcpy(dst, src, w);
+
+			srcRow += surface->pitch;
+			dstRow +=         pitch;
+		}
+
+		return true;
+	}
+
+	// Copy pixel-by-pixel
+
+	while (h-- > 0) {
+		const byte *srcRow = src;
+		      byte *dstRow = dst;
+
+		for (int32 i = 0; i < w; i++, srcRow++, dstRow++)
+			if (*srcRow != transp)
+				*dstRow = *srcRow;
+
+		srcRow += surface->pitch;
+		dstRow +=         pitch;
+	}
+
+	return true;
+}
+
 const VideoPlayer::Video *VideoPlayer::getVideoBySlot(int slot) const {
 	if ((slot < 0) || (slot >= kVideoSlotCount))
 		return 0;

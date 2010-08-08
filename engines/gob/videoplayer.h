@@ -124,6 +124,9 @@ public:
 	void writeVideoInfo(const Common::String &file, int16 varX, int16 varY,
 			int16 varFrames, int16 varWidth, int16 varHeight);
 
+	bool copyFrame(int slot, byte *dest,
+			uint16 left, uint16 top, uint16 width, uint16 height,
+			uint16 x, uint16 y, uint16 pitch, int16 transp = -1) const;
 
 
 	// Obsolete, to be deleted
