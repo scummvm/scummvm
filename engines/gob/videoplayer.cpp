@@ -136,19 +136,17 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		if (!_vm->_draw->_spritesArray[properties.sprite]) {
 			properties.sprite = -1;
 			video->surface.reset();
-			// video->decoder->setVideoMemory();
+			video->decoder->setSurfaceMemory();
 		} else {
 			video->surface = _vm->_draw->_spritesArray[properties.sprite];
-			/*
-			video->decoder->setVideoMemory(video->surface->getVidMem(),
-					video->surface->getWidth(), video->surface->getHeight());
-			*/
+			video->decoder->setSurfaceMemory(video->surface->getVidMem(),
+					video->surface->getWidth(), video->surface->getHeight(), 1);
 		}
 
 	} else {
 		properties.sprite = -1;
 		video->surface.reset();
-		// video->decoder->setVideoMemory();
+		video->decoder->setSurfaceMemory();
 	}
 
 	if (primary)
@@ -270,7 +268,7 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 
 	WRITE_VAR(11, video->decoder->getCurFrame());
 
-	blitFrame(video->surface, *surface);
+	// blitFrame(video->surface, *surface);
 
 	if (_woodruffCohCottWorkaround && (properties.startFrame == 31)) {
 		// WORKAROUND: This frame mistakenly masks Coh Cott, making her vanish

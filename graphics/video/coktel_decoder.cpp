@@ -34,12 +34,66 @@ CoktelDecoder::State::State() : left(0), top(0), right(0), bottom(0), flags(0), 
 
 
 CoktelDecoder::CoktelDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType) :
-	_mixer(&mixer), _soundType(soundType), _width(0), _height(0), _frameCount(0), _paletteDirty(false) {
+	_mixer(&mixer), _soundType(soundType), _width(0), _height(0), _frameCount(0),
+	_paletteDirty(false), _ownSurface(true) {
 
 	memset(_palette, 0, 768);
 }
 
 CoktelDecoder::~CoktelDecoder() {
+}
+
+void CoktelDecoder::setSurfaceMemory(void *mem, uint16 width, uint16 height, uint8 bpp) {
+	freeSurface();
+
+	assert((width > 0) && (height > 0));
+	assert(bpp == getPixelFormat().bytesPerPixel);
+
+	_surface.w             = width;
+	_surface.h             = height;
+	_surface.pitch         = width * bpp;
+	_surface.pixels        = mem;
+	_surface.bytesPerPixel = bpp;
+
+	_ownSurface = false;
+}
+
+void CoktelDecoder::setSurfaceMemory() {
+	freeSurface();
+	createSurface();
+
+	_ownSurface = true;
+}
+
+bool CoktelDecoder::hasSurface() {
+	return _surface.pixels != 0;
+}
+
+void CoktelDecoder::createSurface() {
+	if (hasSurface())
+		return;
+
+	if ((_width > 0) && (_height > 0))
+		_surface.create(_width, _height, getPixelFormat().bytesPerPixel);
+
+	_ownSurface = true;
+}
+
+void CoktelDecoder::freeSurface() {
+	if (!_ownSurface) {
+		_surface.w             = 0;
+		_surface.h             = 0;
+		_surface.pitch         = 0;
+		_surface.pixels        = 0;
+		_surface.bytesPerPixel = 0;
+	} else
+		_surface.free();
+
+	_ownSurface = true;
+}
+
+void CoktelDecoder::close() {
+	freeSurface();
 }
 
 uint16 CoktelDecoder::getWidth() const {
@@ -129,8 +183,6 @@ bool PreIMDDecoder::load(Common::SeekableReadStream &stream) {
 
 	_frameCount = _stream->readUint16LE();
 
-	_surface.create(_width, _height, 1);
-
 	_videoBufferSize = _width * _height;
 	_videoBuffer     = new byte[_videoBufferSize];
 
@@ -142,7 +194,7 @@ bool PreIMDDecoder::load(Common::SeekableReadStream &stream) {
 void PreIMDDecoder::close() {
 	reset();
 
-	_surface.free();
+	CoktelDecoder::close();
 
 	delete _stream;
 
@@ -161,6 +213,8 @@ bool PreIMDDecoder::isVideoLoaded() const {
 Surface *PreIMDDecoder::decodeNextFrame() {
 	if (!isVideoLoaded() || endOfVideo())
 		return 0;
+
+	createSurface();
 
 	processFrame();
 	renderFrame();

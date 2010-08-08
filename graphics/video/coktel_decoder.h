@@ -64,7 +64,14 @@ public:
 
 	virtual bool seek(int32 frame, int whence = SEEK_SET, bool restart = false) = 0;
 
+	/** Draw directly onto the specified video memory. */
+	void setSurfaceMemory(void *mem, uint16 width, uint16 height, uint8 bpp);
+	/** Reset the video memory. */
+	void setSurfaceMemory();
+
 	// VideoDecoder interface
+
+	void close();
 
 	uint16 getWidth()  const;
 	uint16 getHeight() const;
@@ -86,7 +93,14 @@ protected:
 	byte _palette[768];
 	bool _paletteDirty;
 
+	bool    _ownSurface;
+	Surface _surface;
+
 	Common::Rational _frameRate;
+
+	bool hasSurface();
+	void createSurface();
+	void freeSurface();
 
 	// FixedRateVideoDecoder interface
 	Common::Rational getFrameRate() const;
@@ -116,8 +130,6 @@ private:
 
 	byte  *_videoBuffer;
 	uint32 _videoBufferSize;
-
-	Surface _surface;
 
 	void processFrame();
 	void renderFrame();
