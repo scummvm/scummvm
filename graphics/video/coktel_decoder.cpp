@@ -916,7 +916,8 @@ bool IMDDecoder::load(Common::SeekableReadStream *stream) {
 	_features |= kFeaturesPalette;
 
 	// Palette
-	_stream->read((byte *)_palette, 768);
+	for (int i = 0; i < 768; i++)
+		_palette[i] = _stream->readByte() << 2;
 
 	_paletteDirty = true;
 
@@ -1194,7 +1195,9 @@ void IMDDecoder::processFrame() {
 
 			_paletteDirty = true;
 
-			_stream->read(_palette, 768);
+			for (int i = 0; i < 768; i++)
+				_palette[i] = _stream->readByte() << 2;
+
 			cmd = _stream->readUint16LE();
 		}
 
@@ -1307,8 +1310,10 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 
 		// One byte index
 		int index = *dataPtr++;
-		// 16 entries with each 3 bytes (RGB)
-		memcpy(_palette + index * 3, dataPtr, MIN((255 - index) * 3, 48));
+
+		int count = MIN((255 - index) * 3, 48);
+		for (int i = 0; i < count; i++)
+			_palette[index * 3 + i] = dataPtr[i] << 2;
 
 		dataPtr += 48;
 		type ^= 0x10;
@@ -1605,7 +1610,8 @@ bool VMDDecoder::load(Common::SeekableReadStream *stream) {
 	_videoCodec = _stream->readUint32BE();
 
 	if (_features & kFeaturesPalette) {
-		_stream->read((byte *)_palette, 768);
+		for (int i = 0; i < 768; i++)
+			_palette[i] = _stream->readByte() << 2;
 
 		_paletteDirty = true;
 	}
@@ -2011,7 +2017,9 @@ void VMDDecoder::processFrame() {
 				uint8 index = _stream->readByte();
 				uint8 count = _stream->readByte();
 
-				_stream->read(_palette + index * 3, (count + 1) * 3);
+				for (int j = 0; j < ((count + 1) * 3); j++)
+					_palette[index * 3 + j] = _stream->readByte() << 2;
+
 				_stream->skip((255 - count) * 3);
 
 				_paletteDirty = true;

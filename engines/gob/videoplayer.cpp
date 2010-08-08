@@ -749,8 +749,11 @@ void VideoPlayer::copyPalette(const Video &video, int16 palStart, int16 palEnd) 
 	if (palEnd < 0)
 		palEnd = 255;
 
-	memcpy(((char *)(_vm->_global->_pPaletteDesc->vgaPal)) + palStart * 3,
-			video.decoder->getPalette() + palStart * 3, (palEnd - palStart + 1) * 3);
+	palStart =  palStart      * 3;
+	palEnd   = (palEnd   + 1) * 3;
+
+	for (int i = palStart; i <= palEnd; i++)
+		((char *)(_vm->_global->_pPaletteDesc->vgaPal))[i] = video.decoder->getPalette()[i] >> 2;
 }
 
 } // End of namespace Gob
