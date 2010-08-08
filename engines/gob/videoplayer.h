@@ -123,6 +123,8 @@ public:
 	bool                      hasEmbeddedFile(const Common::String &fileName, int slot = 0) const;
 	Common::MemoryReadStream *getEmbeddedFile(const Common::String &fileName, int slot = 0);
 
+	int32 getSubtitleIndex(int slot = 0) const;
+
 	void writeVideoInfo(const Common::String &file, int16 varX, int16 varY,
 			int16 varFrames, int16 varWidth, int16 varHeight);
 

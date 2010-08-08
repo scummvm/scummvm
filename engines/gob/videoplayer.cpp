@@ -380,11 +380,9 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 			// Only retrace if we're playing the frame we actually want to play
 			_vm->_video->retrace();
 
-		/*
-		// Subtitle
-		if (state.flags & Graphics::CoktelDecoder::kStateSpeech)
-			_vm->_draw->printTotText(state.speechId);
-		*/
+		int32 subtitle = video->decoder->getSubtitleIndex();
+		if (subtitle != -1)
+			_vm->_draw->printTotText(subtitle);
 
 		if (modifiedPal && ((properties.palCmd == 2) || (properties.palCmd == 4)))
 			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
@@ -508,6 +506,14 @@ Common::MemoryReadStream *VideoPlayer::getEmbeddedFile(const Common::String &fil
 		return 0;
 
 	return video->decoder->getEmbeddedFile(fileName);
+}
+
+int32 VideoPlayer::getSubtitleIndex(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+	if (!video)
+		return -1;
+
+	return video->decoder->getSubtitleIndex();
 }
 
 void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 varY,
