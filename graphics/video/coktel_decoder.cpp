@@ -713,6 +713,9 @@ bool IMDDecoder::seek(int32 frame, int whence, bool restart) {
 
 	} else if (restart && (_soundStage == kSoundNone)) {
 
+		_curFrame = 0;
+		_stream->seek(_firstFramePos);
+
 		for (int i = ((frame > _curFrame) ? _curFrame : 0); i <= frame; i++)
 			processFrame();
 
