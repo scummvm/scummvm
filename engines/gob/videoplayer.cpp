@@ -521,10 +521,10 @@ void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 v
 
 		int16 x = -1, y = -1, width = -1, height = -1;
 
-		x     = video.decoder->getDefaultX();
-		y     = video.decoder->getDefaultY();
-		width = video.decoder->getWidth();
-		width = video.decoder->getHeight();
+		x      = video.decoder->getDefaultX();
+		y      = video.decoder->getDefaultY();
+		width  = video.decoder->getWidth();
+		height = video.decoder->getHeight();
 
 		if (VAR_OFFSET(varX) == 0xFFFFFFFF)
 			video.decoder->getFrameCoords(1, x, y, width, height);
@@ -534,6 +534,8 @@ void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 v
 		WRITE_VAR_OFFSET(varFrames, video.decoder->getFrameCount());
 		WRITE_VAR_OFFSET(varWidth , width);
 		WRITE_VAR_OFFSET(varHeight, height);
+
+		closeVideo(slot);
 
 	} else {
 		WRITE_VAR_OFFSET(varX     , (uint32) -1);
@@ -560,7 +562,7 @@ bool VideoPlayer::copyFrame(int slot, byte *dest,
 	int32 h = MIN<int32>(height, surface->h);
 
 	const byte *src = (byte*)surface->pixels + (top * surface->pitch) + left;
-	      byte *dst =                  dest + (y   * pitch)         + x;
+	      byte *dst =                   dest + (y   * pitch)          + x;
 
 	if (transp < 0) {
 		// No transparency
@@ -578,10 +580,10 @@ bool VideoPlayer::copyFrame(int slot, byte *dest,
 			const byte *srcRow = src;
 						byte *dstRow = dst;
 
-			memcpy(dst, src, w);
+			memcpy(dstRow, srcRow, w);
 
-			srcRow += surface->pitch;
-			dstRow +=         pitch;
+			src += surface->pitch;
+			dst +=          pitch;
 		}
 
 		return true;
@@ -597,8 +599,8 @@ bool VideoPlayer::copyFrame(int slot, byte *dest,
 			if (*srcRow != transp)
 				*dstRow = *srcRow;
 
-		srcRow += surface->pitch;
-		dstRow +=         pitch;
+		src += surface->pitch;
+		dst +=          pitch;
 	}
 
 	return true;

@@ -619,23 +619,19 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 		if (frame >= (int32)_vm->_vidPlayer->getFrameCount(obj.videoSlot - 1))
 			frame = _vm->_vidPlayer->getFrameCount(obj.videoSlot - 1) - 1;
 
-		// Seek to frame
-		if (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < 255) {
+		if (frame != (int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1)) {
+			// Seek to frame
+
 			VideoPlayer::Properties props;
 
+			props.forceSeek    = true;
 			props.waitEndFrame = false;
 			props.lastFrame    = frame;
-			_vm->_vidPlayer->play(obj.videoSlot - 1, props);
 
-		} else {
-			int16 curFrame  = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) + 1;
-			uint8 frameWrap = curFrame / 256;
-			frame = (frame + 1) % 256;
-
-			VideoPlayer::Properties props;
-
-			props.waitEndFrame = false;
-			props.lastFrame    = frameWrap * 256 + frame;
+			if ((int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < frame)
+				props.startFrame = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) + 1;
+			else
+				props.startFrame = 0;
 
 			_vm->_vidPlayer->play(obj.videoSlot - 1, props);
 		}
@@ -736,13 +732,12 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 			_vm->_draw->invalidateRect(_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY,
 					_vm->_draw->_destSpriteX + _vm->_draw->_spriteRight  - 1,
 					_vm->_draw->_destSpriteY + _vm->_draw->_spriteBottom - 1);
-
 		}
 
 		if (!(flags & 4)) {
-			_animLeft   = _toRedrawLeft = left;
-			_animTop    = _toRedrawTop = top;
-			_animRight  = _toRedrawRight = right;
+			_animLeft   = _toRedrawLeft   = left;
+			_animTop    = _toRedrawTop    = top;
+			_animRight  = _toRedrawRight  = right;
 			_animBottom = _toRedrawBottom = bottom;
 		}
 
