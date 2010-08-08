@@ -181,7 +181,6 @@ private:
 	Graphics::CoktelDecoder *openVideo(const Common::String &file, Properties &properties);
 
 	bool playFrame(int slot, Properties &properties);
-	void blitFrame(SurfaceDescPtr dst, const Graphics::Surface &src);
 
 	void checkAbort(Video &video, Properties &properties);
 	void evalBgShading(Video &video);

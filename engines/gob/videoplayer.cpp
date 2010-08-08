@@ -289,8 +289,6 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 
 	WRITE_VAR(11, video->decoder->getCurFrame());
 
-	// blitFrame(video->surface, *surface);
-
 	if (_woodruffCohCottWorkaround && (properties.startFrame == 31)) {
 		// WORKAROUND: This frame mistakenly masks Coh Cott, making her vanish
 		// To prevent that, we'll never draw that part
@@ -384,24 +382,6 @@ void VideoPlayer::checkAbort(Video &video, Properties &properties) {
 	}
 }
 
-void VideoPlayer::blitFrame(SurfaceDescPtr dst, const Graphics::Surface &src) {
-	if (!dst || !src.pixels)
-		return;
-
-	uint32 w = MIN<uint32>(dst->getWidth() , src.w);
-	uint32 h = MIN<uint32>(dst->getHeight(), src.h);
-
-	byte       *d = dst->getVidMem();
-	const byte *s = (const byte *) src.pixels;
-
-	while (h-- > 0) {
-		memcpy(d, s, w);
-
-		d += dst->getWidth();
-		s += src.pitch;
-	}
-}
-
 bool VideoPlayer::slotIsOpen(int slot) const {
 	return getVideoBySlot(slot) != 0;
 }
@@ -489,8 +469,8 @@ void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 v
 
 		int16 x = -1, y = -1, width = -1, height = -1;
 
-		// x     = video.decoder->getX();
-		// y     = video.decoder->getY();
+		x     = video.decoder->getDefaultX();
+		y     = video.decoder->getDefaultY();
 		width = video.decoder->getWidth();
 		width = video.decoder->getHeight();
 
