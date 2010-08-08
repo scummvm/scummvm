@@ -98,6 +98,9 @@ public:
 	void enableSound();
 	void disableSound();
 
+	/** Return whether that video has any embedded files. */
+	virtual bool hasEmbeddedFiles() const;
+
 	/** Return whether that embedded file exists. */
 	virtual bool hasEmbeddedFile(const Common::String &fileName) const;
 
@@ -335,6 +338,10 @@ public:
 	~VMDDecoder();
 
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
+
+	bool hasEmbeddedFiles() const;
+	bool hasEmbeddedFile(const Common::String &fileName) const;
+	Common::MemoryReadStream *getEmbeddedFile(const Common::String &fileName) const;
 
 
 	// VideoDecoder interface

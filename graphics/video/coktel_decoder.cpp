@@ -204,6 +204,10 @@ void CoktelDecoder::disableSound() {
 	_audioStream  = 0;
 }
 
+bool CoktelDecoder::hasEmbeddedFiles() const {
+	return false;
+}
+
 bool CoktelDecoder::hasEmbeddedFile(const Common::String &fileName) const {
 	return false;
 }
@@ -1812,6 +1816,55 @@ void VMDDecoder::renderFrame() {
 
 PixelFormat VMDDecoder::getPixelFormat() const {
 	return PixelFormat::createFormatCLUT8();
+}
+
+bool VMDDecoder::hasEmbeddedFiles() const {
+	return !_files.empty();
+}
+
+bool VMDDecoder::hasEmbeddedFile(const Common::String &fileName) const {
+	for (Common::Array<File>::const_iterator file = _files.begin(); file != _files.end(); ++file)
+		if (!file->name.compareToIgnoreCase(fileName))
+			return true;
+
+	return false;
+}
+
+Common::MemoryReadStream *VMDDecoder::getEmbeddedFile(const Common::String &fileName) const {
+	const File *file = 0;
+
+	for (Common::Array<File>::const_iterator it = _files.begin(); it != _files.end(); ++it)
+		if (!it->name.compareToIgnoreCase(fileName)) {
+			file = &*it;
+			break;
+		}
+
+	if (!file)
+		return 0;
+
+	if ((file->size - 20) != file->realSize) {
+		warning("VMDDecoder::getEmbeddedFile(): Sizes for \"%s\" differ! (%d, %d)",
+				fileName.c_str(), (file->size - 20), file->realSize);
+		return 0;
+	}
+
+	if (!_stream->seek(file->offset)) {
+		warning("VMDDecoder::getEmbeddedFile(): Can't seek to offset %d to (file \"%s\")",
+				file->offset, fileName.c_str());
+		return 0;
+	}
+
+	byte *data = (byte *) malloc(file->realSize);
+	if (_stream->read(data, file->realSize) != file->realSize) {
+		free(data);
+		warning("VMDDecoder::getEmbeddedFile(): Couldn't read %d bytes (file \"%s\")",
+				file->realSize, fileName.c_str());
+	}
+
+	Common::MemoryReadStream *stream =
+		new Common::MemoryReadStream(data, file->realSize, DisposeAfterUse::YES);
+
+	return stream;
 }
 
 } // End of namespace Graphics
