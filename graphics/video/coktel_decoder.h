@@ -110,6 +110,9 @@ public:
 	/** Return that embedded file. */
 	virtual Common::MemoryReadStream *getEmbeddedFile(const Common::String &fileName) const;
 
+	/** Return the current subtitle index. */
+	virtual int32 getSubtitleIndex() const;
+
 
 	// VideoDecoder interface
 
@@ -351,6 +354,8 @@ public:
 	bool hasEmbeddedFile(const Common::String &fileName) const;
 	Common::MemoryReadStream *getEmbeddedFile(const Common::String &fileName) const;
 
+	int32 getSubtitleIndex() const;
+
 
 	// VideoDecoder interface
 
@@ -458,6 +463,8 @@ private:
 
 	bool _externalCodec;
 	Codec *_codec;
+
+	int32 _subtitle;
 
 	// Loading helper functions
 	bool assessVideoProperties();

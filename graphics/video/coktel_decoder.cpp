@@ -221,6 +221,10 @@ Common::MemoryReadStream *CoktelDecoder::getEmbeddedFile(const Common::String &f
 	return 0;
 }
 
+int32 CoktelDecoder::getSubtitleIndex() const {
+	return -1;
+}
+
 void CoktelDecoder::close() {
 	disableSound();
 	freeSurface();
@@ -1473,7 +1477,8 @@ VMDDecoder::VMDDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType) :
 	_audioFormat(kAudioFormat8bitRaw), _hasVideo(false), _videoCodec(0),
 	_blitMode(0), _bytesPerPixel(0), _firstFramePos(0),
 	_frameData(0), _frameDataSize(0), _frameDataLen(0),
-	_videoBuffer(0), _videoBufferSize(0), _externalCodec(false), _codec(0) {
+	_videoBuffer(0), _videoBufferSize(0), _externalCodec(false), _codec(0),
+	_subtitle(-1) {
 
 }
 
@@ -1498,6 +1503,8 @@ bool VMDDecoder::seek(int32 frame, int whence, bool restart) {
 	// Seek
 	_stream->seek(_frames[frame + 1].offset);
 	_curFrame = frame;
+
+	_subtitle = -1;
 
 	return true;
 }
@@ -1927,6 +1934,7 @@ void VMDDecoder::processFrame() {
 	_dirtyRects.clear();
 
 	_paletteDirty = false;
+	_subtitle     = -1;
 
 	bool startSound = false;
 
@@ -2029,9 +2037,7 @@ void VMDDecoder::processFrame() {
 
 		} else if (part.type == kPartTypeSubtitle) {
 
-			// TODO:
-			// state.speechId = part.id;
-			// Always triggers when speech starts
+			_subtitle = part.id;
 			_stream->skip(part.size);
 
 		} else {
@@ -2441,6 +2447,10 @@ Common::MemoryReadStream *VMDDecoder::getEmbeddedFile(const Common::String &file
 		new Common::MemoryReadStream(data, file->realSize, DisposeAfterUse::YES);
 
 	return stream;
+}
+
+int32 VMDDecoder::getSubtitleIndex() const {
+	return _subtitle;
 }
 
 } // End of namespace Graphics
