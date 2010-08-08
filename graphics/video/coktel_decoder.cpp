@@ -35,7 +35,7 @@ CoktelDecoder::State::State() : flags(0), speechId(0) {
 
 CoktelDecoder::CoktelDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType) :
 	_mixer(&mixer), _soundType(soundType), _width(0), _height(0), _x(0), _y(0), _frameCount(0),
-	_paletteDirty(false), _ownSurface(true) {
+	_paletteDirty(false), _ownSurface(true), _frameRate(12) {
 
 	memset(_palette, 0, 768);
 }
@@ -95,6 +95,10 @@ void CoktelDecoder::freeSurface() {
 void CoktelDecoder::setXY(uint16 x, uint16 y) {
 	_x = x;
 	_y = y;
+}
+
+void CoktelDecoder::setFrameRate(Common::Rational frameRate) {
+	_frameRate = frameRate;
 }
 
 const Common::List<Common::Rect> &CoktelDecoder::getDirtyRects() const {
@@ -234,6 +238,9 @@ Surface *PreIMDDecoder::decodeNextFrame() {
 	renderFrame();
 
 	_curFrame++;
+
+	if (_curFrame == 0)
+		_startTime = g_system->getMillis();
 
 	return &_surface;
 }

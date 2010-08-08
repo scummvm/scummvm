@@ -67,6 +67,9 @@ public:
 	/** Draw the video starting at this position within the video memory. */
 	void setXY(uint16 x, uint16 y);
 
+	/** Override the video's frame rate. */
+	void setFrameRate(Common::Rational frameRate);
+
 	/** Return a list of rectangles that changed in the last frame. */
 	const Common::List<Common::Rect> &getDirtyRects() const;
 
