@@ -68,6 +68,8 @@ public:
 	/** Reset the video memory. */
 	void setSurfaceMemory();
 
+	const Surface *getSurface() const;
+
 	/** Draw the video starting at this position within the video memory. */
 	virtual void setXY(uint16 x, uint16 y);
 	/** Draw the video at the default position. */

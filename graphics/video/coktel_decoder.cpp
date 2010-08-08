@@ -71,6 +71,13 @@ void CoktelDecoder::setSurfaceMemory() {
 	_ownSurface = true;
 }
 
+const Surface *CoktelDecoder::getSurface() const {
+	if (!isVideoLoaded())
+		return 0;
+
+	return &_surface;
+}
+
 bool CoktelDecoder::hasSurface() {
 	return _surface.pixels != 0;
 }
