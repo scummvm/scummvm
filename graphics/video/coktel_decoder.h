@@ -99,7 +99,7 @@ public:
 	void disableSound();
 
 	/** Return the coordinates of the specified frame. */
-	bool getFrameCoords(int16 frame, int16 &x, int16 &y, int16 &width, int16 &height);
+	virtual bool getFrameCoords(int16 frame, int16 &x, int16 &y, int16 &width, int16 &height);
 
 	/** Return whether that video has any embedded files. */
 	virtual bool hasEmbeddedFiles() const;
