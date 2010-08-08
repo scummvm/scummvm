@@ -206,6 +206,10 @@ Common::Rational CoktelDecoder::getFrameRate() const {
 	return _frameRate;
 }
 
+inline void CoktelDecoder::unsignedToSigned(byte *buffer, int length) {
+	while (length-- > 0) *buffer++ ^= 0x80;
+}
+
 
 PreIMDDecoder::PreIMDDecoder(uint16 width, uint16 height,
 	Audio::Mixer &mixer, Audio::Mixer::SoundType soundType) : CoktelDecoder(mixer, soundType),
@@ -638,8 +642,9 @@ bool IMDDecoder::assessAudioProperties() {
 
 		_frameRate = Common::Rational(_soundFreq) / _soundSliceSize;
 
-		_hasSound   = true;
-		_soundStage = kSoundLoaded;
+		_hasSound     = true;
+		_soundEnabled = true;
+		_soundStage   = kSoundLoaded;
 
 		_audioStream = Audio::makeQueuingAudioStream(_soundFreq, false);
 	}
@@ -737,18 +742,170 @@ Surface *IMDDecoder::decodeNextFrame() {
 }
 
 void IMDDecoder::processFrame() {
-
-	// TODO
-
 	_curFrame++;
+
+	_dirtyRects.clear();
+
+	_paletteDirty = false;
+
+	uint32 cmd = 0;
+	bool hasNextCmd = false;
+	bool startSound = false;
+
+	do {
+		calcFrameCoords(_curFrame);
+
+		cmd = _stream->readUint16LE();
+
+		if ((cmd & kCommandBreakMask) == kCommandBreak) {
+			// Flow control
+
+			if (cmd == kCommandBreak) {
+				_stream->skip(2);
+				cmd = _stream->readUint16LE();
+			}
+
+			// Break
+			if (cmd == kCommandBreakSkip0) {
+				continue;
+			} else if (cmd == kCommandBreakSkip16) {
+				cmd = _stream->readUint16LE();
+				_stream->skip(cmd);
+				continue;
+			} else if (cmd == kCommandBreakSkip32) {
+				cmd = _stream->readUint32LE();
+				_stream->skip(cmd);
+				continue;
+			}
+		}
+
+		// Audio
+		if (_soundStage != kSoundNone) {
+			if (cmd == kCommandNextSound) {
+
+				nextSoundSlice(hasNextCmd);
+				cmd = _stream->readUint16LE();
+
+			} else if (cmd == kCommandStartSound) {
+
+				startSound = initialSoundSlice(hasNextCmd);
+				cmd = _stream->readUint16LE();
+
+			} else
+				emptySoundSlice(hasNextCmd);
+		}
+
+		// Set palette
+		if (cmd == kCommandPalette) {
+			_stream->skip(2);
+
+			_paletteDirty = true;
+
+			_stream->read(_palette, 768);
+			cmd = _stream->readUint16LE();
+		}
+
+		hasNextCmd = false;
+
+		if (cmd == kCommandJump) {
+			// Jump to frame
+
+			int16 frame = _stream->readSint16LE();
+			if (_framePos) {
+				_curFrame = frame - 1;
+				_stream->seek(_framePos[frame]);
+
+				hasNextCmd = true;
+			}
+
+		} else if (cmd == kCommandVideoData) {
+			videoData(_stream->readUint32LE() + 2);
+
+		} else if (cmd != 0)
+			videoData(cmd + 2);
+		else
+			_dirtyRects.pop_back();
+
+	} while (hasNextCmd);
+
+	if (startSound && _soundEnabled) {
+		_mixer->playStream(_soundType, &_audioHandle, _audioStream);
+		_soundStage = kSoundPlaying;
+	}
+
+	if ((_curFrame >= (int32)(_frameCount - 1)) && (_soundStage == kSoundPlaying)) {
+		_audioStream->finish();
+		_mixer->stopHandle(_audioHandle);
+		_audioStream = 0;
+		_soundStage  = kSoundNone;
+	}
+
+}
+
+void IMDDecoder::calcFrameCoords(uint32 frame) {
+	if (frame == 0)
+		_dirtyRects.push_back(Common::Rect(_x, _y, _x + _width, _y + _height));
+	else if (_frameCoords && ((_frameCoords[frame].left != -1)))
+		_dirtyRects.push_back(Common::Rect(_frameCoords[frame].left     , _frameCoords[frame].top,
+		                                   _frameCoords[frame].right + 1, _frameCoords[frame].bottom + 1));
+	else if (_stdX != -1)
+		_dirtyRects.push_back(Common::Rect(_stdX, _stdY, _stdX + _stdWidth, _stdY + _stdHeight));
+	else
+		_dirtyRects.push_back(Common::Rect(_x, _y, _x + _width, _y + _height));
+}
+
+void IMDDecoder::videoData(uint32 size) {
+	_stream->read(_frameData, size);
+	_frameDataLen = size;
+
+	renderFrame();
 }
 
 void IMDDecoder::renderFrame() {
-	_dirtyRects.clear();
-
 	// TODO
+}
 
-	_dirtyRects.push_back(Common::Rect(_x, _y, _x + _width, _y + _height));
+void IMDDecoder::nextSoundSlice(bool hasNextCmd) {
+	if (hasNextCmd || !_soundEnabled) {
+		_stream->skip(_soundSliceSize);
+		return;
+	}
+
+	byte *soundBuf = (byte *)malloc(_soundSliceSize);
+
+	_stream->read(soundBuf, _soundSliceSize);
+	unsignedToSigned(soundBuf, _soundSliceSize);
+
+	_audioStream->queueBuffer(soundBuf, _soundSliceSize, DisposeAfterUse::YES, 0);
+}
+
+bool IMDDecoder::initialSoundSlice(bool hasNextCmd) {
+	int dataLength = _soundSliceSize * _soundSlicesCount;
+
+	if (hasNextCmd || !_soundEnabled) {
+		_stream->skip(dataLength);
+		return false;
+	}
+
+	byte *soundBuf = (byte *)malloc(dataLength);
+
+	_stream->read(soundBuf, dataLength);
+	unsignedToSigned(soundBuf, dataLength);
+
+	_audioStream->queueBuffer(soundBuf, dataLength, DisposeAfterUse::YES, 0);
+
+	return _soundStage == kSoundLoaded;
+}
+
+void IMDDecoder::emptySoundSlice(bool hasNextCmd) {
+	if (hasNextCmd || !_soundEnabled)
+		return;
+
+	byte *soundBuf = (byte *)malloc(_soundSliceSize);
+
+	memset(soundBuf, 0, _soundSliceSize);
+
+	_audioStream->queueBuffer(soundBuf, _soundSliceSize, DisposeAfterUse::YES, 0);
 }
 
 PixelFormat IMDDecoder::getPixelFormat() const {

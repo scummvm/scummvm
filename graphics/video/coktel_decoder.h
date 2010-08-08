@@ -159,6 +159,8 @@ protected:
 	void createSurface();
 	void freeSurface();
 
+	inline void unsignedToSigned(byte *buffer, int length);
+
 	// FixedRateVideoDecoder interface
 	Common::Rational getFrameRate() const;
 };
@@ -273,7 +275,15 @@ private:
 	bool loadFrameTables(uint32 framePosPos, uint32 frameCoordsPos);
 
 	void processFrame();
+
+	void calcFrameCoords(uint32 frame);
+
+	void videoData(uint32 size);
 	void renderFrame();
+
+	void nextSoundSlice(bool hasNextCmd);
+	bool initialSoundSlice(bool hasNextCmd);
+	void emptySoundSlice(bool hasNextCmd);
 };
 
 } // End of namespace Graphics

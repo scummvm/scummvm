@@ -365,7 +365,7 @@ void VideoPlayer::checkAbort(Video &video, Properties &properties) {
 	_vm->_util->processInput();
 
 	if (_vm->shouldQuit()) {
-		// video.decoder->disableSound();
+		video.decoder->disableSound();
 
 		properties.canceled = true;
 		return;
@@ -377,7 +377,7 @@ void VideoPlayer::checkAbort(Video &video, Properties &properties) {
 
 		_vm->_inter->storeKey(_vm->_util->checkKey());
 		if (VAR(0) == (unsigned) properties.breakKey) {
-			// video.decoder->disableSound();
+			video.decoder->disableSound();
 
 			// Seek to the last frame. Some scripts depend on that.
 			video.decoder->seek(properties.endFrame + 1, SEEK_SET, true);
@@ -571,12 +571,10 @@ int VideoPlayer::getNextFreeSlot() {
 }
 
 void VideoPlayer::evalBgShading(Video &video) {
-	/*
-	if (video.isSoundPlaying())
+	if (video.decoder->isSoundPlaying())
 		_vm->_sound->bgShade();
 	else
 		_vm->_sound->bgUnshade();
-	*/
 }
 
 Common::String VideoPlayer::findFile(const Common::String &file, Properties &properties) {
