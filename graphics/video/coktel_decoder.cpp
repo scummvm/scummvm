@@ -1502,6 +1502,30 @@ bool VMDDecoder::seek(int32 frame, int whence, bool restart) {
 	return true;
 }
 
+void VMDDecoder::setXY(uint16 x, uint16 y) {
+	for (uint32 i = 0; i < _frameCount; i++) {
+		for (int j = 0; j < _partsPerFrame; j++) {
+
+			if (_frames[i].parts[j].type == kPartTypeVideo) {
+				if (x != 0xFFFF) {
+					_frames[i].parts[j].left  = _frames[i].parts[j].left  - _x + x;
+					_frames[i].parts[j].right = _frames[i].parts[j].right - _x + x;
+				}
+				if (y != 0xFFFF) {
+					_frames[i].parts[j].top    = _frames[i].parts[j].top    - _y + y;
+					_frames[i].parts[j].bottom = _frames[i].parts[j].bottom - _y + y;
+				}
+			}
+
+		}
+	}
+
+	if (x != 0xFFFF)
+		_x = x;
+	if (y != 0xFFFF)
+		_y = y;
+}
+
 bool VMDDecoder::load(Common::SeekableReadStream *stream) {
 	close();
 
@@ -2047,11 +2071,13 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 
 	if (_externalCodec) {
 		// TODO
+		warning("_external codec");
 		return false;
 	}
 
 	if (_blitMode > 0) {
 		// TODO
+		warning("_blitMode == %d", _blitMode);
 		return false;
 	}
 

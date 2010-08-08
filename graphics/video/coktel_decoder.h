@@ -343,6 +343,8 @@ public:
 
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
 
+	void setXY(uint16 x, uint16 y);
+
 	bool getFrameCoords(int16 frame, int16 &x, int16 &y, int16 &width, int16 &height);
 
 	bool hasEmbeddedFiles() const;
