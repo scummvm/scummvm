@@ -41,24 +41,82 @@ class DataStream;
 class VideoPlayer {
 public:
 	enum Flags {
-		kFlagNone = 0,
-		kFlagUseBackSurfaceContent = 0x40,
-		kFlagFrontSurface = 0x80,
-		kFlagNoVideo = 0x100,
-		kFlagOtherSurface = 0x800,
-		kFlagScreenSurface = 0x400000
+		kFlagNone                  = 0x000000,
+		kFlagUseBackSurfaceContent = 0x000040, ///< Use the back surface as a video "base".
+		kFlagFrontSurface          = 0x000080, ///< Draw directly into the front surface.
+		kFlagNoVideo               = 0x000100, ///< Only sound.
+		kFlagOtherSurface          = 0x000800, ///< Draw into a specific sprite.
+		kFlagScreenSurface         = 0x400000  ///< Draw into a newly created sprite of screen dimensions.
 	};
 
+	/** Video format. */
 	enum Type {
-		kVideoTypeTry = -1,
-		kVideoTypeIMD = 0,
-		kVideoTypePreIMD = 1,
-		kVideoTypeVMD = 2,
-		kVideoTypeRMD = 3
+		kVideoTypeTry    = -1, ///< Try any format.
+		kVideoTypeIMD    =  0,
+		kVideoTypePreIMD =  1, ///< Early IMD format found in Fascination.
+		kVideoTypeVMD    =  2,
+		kVideoTypeRMD    =  3  ///< VMD containing "reversed" video.
+	};
+
+	struct Properties {
+		Type type; ///< Type of the video to open.
+
+		int sprite; ///< The sprite onto which to draw the video.
+
+		int32 x;      ///< X coordinate of the video.
+		int32 y;      ///< Y coordinate of the video.
+		int32 width;  ///< Width of the video.
+		int32 height; ///< Height of the video.
+
+		uint32 flags; ///< Video flags.
+
+		int16 startFrame; ///< Frame to start playback from.
+		int16 lastFrame;  ///< Frame to stop playback at.
+
+		int16 breakKey; ///< Keycode of the break/abort key.
+
+		uint16 palCmd;   ///< Palette command.
+		uint16 palStart; ///< Palette entry to start with.
+		uint16 palEnd;   ///< Palette entry to end at.
+		 int16 palFrame; ///< Frame to apply the palette command at.
+
+		bool fade; ///< Fade in?
+
+		Properties();
 	};
 
 	VideoPlayer(GobEngine *vm);
 	~VideoPlayer();
+
+	int  openVideo(bool primary, const Common::String &file, Properties &properties);
+	bool closeVideo(int slot);
+
+	bool play(int slot, const Properties &properties);
+
+	bool slotIsOpen(int slot = 0) const;
+
+	Common::String getFileName(int slot = 0) const;
+
+	uint16 getFlags       (int slot = 0) const;
+	uint32 getFrameCount  (int slot = 0) const;
+	uint32 getCurrentFrame(int slot = 0) const;
+	uint16 getWidth       (int slot = 0) const;
+	uint16 getHeight      (int slot = 0) const;
+	uint16 getDefaultX    (int slot = 0) const;
+	uint16 getDefaultY    (int slot = 0) const;
+	uint32 getFeatures    (int slot = 0) const;
+
+	void getState(int slot = 0) const;
+
+	bool                      hasExtraData(const Common::String &fileName, int slot = 0) const;
+	Common::MemoryReadStream *getExtraData(const Common::String &fileName, int slot = 0);
+
+	void writeVideoInfo(const Common::String &file, int16 varX, int16 varY,
+			int16 varFrames, int16 varWidth, int16 varHeight);
+
+
+
+	// Obsolete, to be deleted
 
 	bool primaryOpen(const char *videoFile, int16 x = -1, int16 y = -1,
 			int32 flags = kFlagFrontSurface, Type which = kVideoTypeTry,
@@ -86,37 +144,26 @@ public:
 
 	void slotSetDoubleMode(int slot, bool doubleMode);
 
-	bool slotIsOpen(int slot) const;
-
-	const Common::String &getPrimaryFileName() const;
-	uint16 getFlags(int slot = -1) const;
-	int16 getFrameCount(int slot = -1) const;
-	int16 getCurrentFrame(int slot = -1) const;
-	int16 getWidth(int slot = -1) const;
-	int16 getHeight(int slot = -1) const;
-	int16 getDefaultX(int slot = -1) const;
-	int16 getDefaultY(int slot = -1) const;
-
-	void getState(int slot = -1) const;
-	uint32 getFeatures(int slot = -1) const;
-
-	bool hasExtraData(const char *fileName, int slot = -1) const;
-	Common::MemoryReadStream *getExtraData(const char *fileName, int slot = -1);
-
-	void writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
-			int16 varFrames, int16 varWidth, int16 varHeight);
 
 private:
+	struct Video {
+		Graphics::CoktelDecoder *decoder;
+		Common::String fileName;
+
+		Video();
+
+		bool isEmpty() const;
+		void close();
+	};
+
 	static const int kVideoSlotCount = 32;
 
 	static const char *_extensions[];
 
 	GobEngine *_vm;
 
-	Graphics::CoktelDecoder *_primaryVideo;
-	Graphics::CoktelDecoder *_videoSlots[kVideoSlotCount];
-
-	Common::String _primaryFileName;
+	// _videoSlots[0] is reserved for the "primary" video
+	Video _videoSlots[kVideoSlotCount];
 
 	bool _ownSurf;
 	bool _backSurf;
@@ -125,20 +172,24 @@ private:
 
 	bool _woodruffCohCottWorkaround;
 
-	bool findFile(char *fileName, Type &which);
-
-	const Graphics::CoktelDecoder *getVideoBySlot(int slot = -1) const;
-	Graphics::CoktelDecoder *getVideoBySlot(int slot = -1);
+	const Video *getVideoBySlot(int slot) const;
+	Video *getVideoBySlot(int slot);
 
 	int getNextFreeSlot();
+
+	Common::String findFile(const Common::String &file, Properties &properties);
+
+	Graphics::CoktelDecoder *openVideo(const Common::String &file, Properties &properties);
+
+
+
+	// Obsolete, to be deleted
 
 	void copyPalette(Graphics::CoktelDecoder &video, int16 palStart = -1, int16 palEnd = -1);
 	bool doPlay(int16 frame, int16 breakKey,
 			uint16 palCmd, int16 palStart, int16 palEnd,
 			int16 palFrame, int16 endFrame, bool noRetrace = false);
 	void evalBgShading(Graphics::CoktelDecoder &video);
-
-	Graphics::CoktelDecoder *openVideo(const char *fileName, Type which, uint16 width, uint16 height);
 };
 
 } // End of namespace Gob

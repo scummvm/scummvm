@@ -215,7 +215,7 @@ void DemoPlayer::playVideoNormal() {
 }
 
 void DemoPlayer::playVideoDoubled() {
-	Common::String fileNameOpened = _vm->_vidPlayer->getPrimaryFileName();
+	Common::String fileNameOpened = _vm->_vidPlayer->getFileName();
 	_vm->_vidPlayer->primaryClose();
 
 	int16 x = _rebase0 ? 0 : -1;
@@ -223,7 +223,7 @@ void DemoPlayer::playVideoDoubled() {
 	if (_vm->_vidPlayer->primaryOpen(fileNameOpened.c_str(), x, y,
 				VideoPlayer::kFlagScreenSurface)) {
 
-		for (int i = 0; i < _vm->_vidPlayer->getFrameCount(); i++) {
+		for (uint i = 0; i < _vm->_vidPlayer->getFrameCount(); i++) {
 			_vm->_vidPlayer->playFrame(i);
 
 			Graphics::CoktelDecoder::State state;// = _vm->_vidPlayer->getState();
