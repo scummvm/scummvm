@@ -32,6 +32,7 @@
 #include "graphics/video/coktel_decoder.h"
 
 #include "gob/util.h"
+#include "gob/draw.h"
 
 namespace Gob {
 
@@ -149,6 +150,8 @@ private:
 	struct Video {
 		Graphics::CoktelDecoder *decoder;
 		Common::String fileName;
+
+		SurfaceDescPtr surface;
 
 		Video();
 

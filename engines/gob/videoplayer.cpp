@@ -29,7 +29,6 @@
 #include "gob/global.h"
 #include "gob/dataio.h"
 #include "gob/video.h"
-#include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/palanim.h"
 #include "gob/inter.h"
@@ -58,6 +57,7 @@ void VideoPlayer::Video::close() {
 
 	decoder = 0;
 	fileName.clear();
+	surface.reset();
 }
 
 
@@ -100,11 +100,65 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 
 		// Set the filename
 		video->fileName = file;
+
+		// WORKAROUND: In some rare cases, the cursor should still be
+		// displayed while a video is playing.
+		_noCursorSwitch = false;
+		if (primary && (_vm->getGameType() == kGameTypeLostInTime)) {
+			if (!file.compareToIgnoreCase("PORTA03.IMD") ||
+			    !file.compareToIgnoreCase("PORTA03A.IMD") ||
+			    !file.compareToIgnoreCase("CALE1.IMD") ||
+			    !file.compareToIgnoreCase("AMIL2.IMD") ||
+			    !file.compareToIgnoreCase("AMIL3B.IMD") ||
+			    !file.compareToIgnoreCase("DELB.IMD"))
+				_noCursorSwitch = true;
+		}
+
+		// WORKAROUND: In Woodruff, Coh Cott vanished in one video on her party.
+		// This is a bug in video, so we work around it.
+		_woodruffCohCottWorkaround = false;
+		if (primary && (_vm->getGameType() == kGameTypeWoodruff)) {
+			if (!file.compareToIgnoreCase("SQ32-03.VMD"))
+				_woodruffCohCottWorkaround = true;
+		}
 	}
 
-	// TODO
+	if (!(properties.flags & kFlagNoVideo) && (properties.sprite >= 0)) {
+		bool ownSurf    = (properties.sprite != Draw::kFrontSurface) || (properties.sprite != Draw::kBackSurface);
+		bool screenSize = properties.flags & kFlagScreenSurface;
 
-	return -1; // slot
+		if (ownSurf) {
+			_vm->_draw->_spritesArray[properties.sprite] =
+				_vm->_video->initSurfDesc(_vm->_global->_videoMode,
+				                          screenSize ? _vm->_width  : video->decoder->getWidth(),
+				                          screenSize ? _vm->_height : video->decoder->getHeight(), 0);
+		}
+
+		if (!_vm->_draw->_spritesArray[properties.sprite]) {
+			video->surface.reset();
+			// video->decoder->setVideoMemory();
+		} else {
+			video->surface = _vm->_draw->_spritesArray[properties.sprite];
+			/*
+			video->decoder->setVideoMemory(video->surface->getVidMem(),
+					video->surface->getWidth(), video->surface->getHeight());
+			*/
+		}
+
+	} else {
+		video->surface.reset();
+		// video->decoder->setVideoMemory();
+	}
+
+	if (primary)
+		_needBlit = (properties.flags & kFlagUseBackSurfaceContent) && (properties.sprite == Draw::kFrontSurface);
+
+	// video->decoder->setFrameRate(_vm->_util->getFrameRate());
+	// video->decoder->setXY(x, y);
+
+	WRITE_VAR(7, video->decoder->getFrameCount());
+
+	return slot;
 }
 
 bool VideoPlayer::closeVideo(int slot) {
@@ -356,94 +410,6 @@ bool VideoPlayer::primaryOpen(const char *videoFile, int16 x, int16 y,
 		int32 flags, Type which, int16 width, int16 height) {
 
 	return false;
-
-#if 0
-	char fileName[256];
-
-	strncpy0(fileName, videoFile, 250);
-
-	if (!findFile(fileName, which))
-		return false;
-
-	if (scumm_strnicmp(_primaryFileName.c_str(), fileName, strlen(fileName))) {
-		primaryClose();
-
-		if (!(_primaryVideo = openVideo(fileName, which, (uint16) width, (uint16) height)))
-			return false;
-
-		_primaryFileName = fileName;
-
-		// WORKAROUND: In some rare cases, the cursor should still be
-		// displayed while a video is playing.
-		_noCursorSwitch = false;
-		if (_vm->getGameType() == kGameTypeLostInTime) {
-			if (!scumm_stricmp(fileName, "PORTA03.IMD") ||
-			    !scumm_stricmp(fileName, "PORTA03A.IMD") ||
-			    !scumm_stricmp(fileName, "CALE1.IMD") ||
-			    !scumm_stricmp(fileName, "AMIL2.IMD") ||
-			    !scumm_stricmp(fileName, "AMIL3B.IMD") ||
-			    !scumm_stricmp(fileName, "DELB.IMD"))
-				_noCursorSwitch = true;
-		}
-
-		// WORKAROUND: In Woodruff, Coh Cott vanished in one video on her party.
-		// This is a bug in video, so we work around it.
-		_woodruffCohCottWorkaround = false;
-		if (_vm->getGameType() == kGameTypeWoodruff) {
-			if (!scumm_stricmp(fileName, "SQ32-03.VMD"))
-				_woodruffCohCottWorkaround = true;
-		}
-
-		_ownSurf = false;
-
-		if (!(flags & kFlagNoVideo)) {
-			SurfaceDescPtr surf;
-
-			if (flags & kFlagOtherSurface) {
-				_ownSurf = true;
-				_backSurf = false;
-
-				surf = _vm->_video->initSurfDesc(_vm->_global->_videoMode,
-						_primaryVideo->getWidth(),
-						_primaryVideo->getHeight(), 0);
-				_vm->_draw->_spritesArray[x] = surf;
-
-				x = 0;
-			} else if (flags & kFlagScreenSurface) {
-				_ownSurf = true;
-				_backSurf = false;
-
-				surf = _vm->_video->initSurfDesc(_vm->_global->_videoMode,
-						_vm->_width, _vm->_height, 0);
-				_vm->_draw->_spritesArray[0] = surf;
-			} else {
-				_backSurf = ((flags & kFlagFrontSurface) == 0);
-				surf = _vm->_draw->_spritesArray[_backSurf ? Draw::kBackSurface : Draw::kFrontSurface];
-			}
-
-			/*
-			_primaryVideo->getVideo()->setVideoMemory(surf->getVidMem(),
-					surf->getWidth(), surf->getHeight());
-			*/
-
-		} else
-			;//_primaryVideo->getVideo()->setVideoMemory();
-
-		_needBlit = ((flags & kFlagUseBackSurfaceContent) != 0) && ((flags & kFlagFrontSurface) != 0);
-	}
-
-	if (!_primaryVideo)
-		return false;
-
-	//_primaryVideo->getVideo()->setFrameRate(_vm->_util->getFrameRate());
-	//_primaryVideo->getVideo()->setXY(x, y);
-
-	WRITE_VAR(7, _primaryVideo->getFrameCount());
-
-	return true;
-
-#endif
-
 }
 
 bool VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
@@ -535,44 +501,10 @@ bool VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 }
 
 void VideoPlayer::primaryClose() {
-#if 0
-	delete _primaryVideo;
-	_primaryVideo = 0;
-
-	_primaryFileName.clear();
-#endif
 }
 
 int VideoPlayer::slotOpen(const char *videoFile, Type which, int16 width, int16 height) {
 	return -1;
-
-#if 0
-
-	int slot = getNextFreeSlot();
-	if (slot == -1)
-		return -1;
-
-	Graphics::CoktelDecoder *&video = _videoSlots[slot];
-
-	char fileName[256];
-
-	strncpy0(fileName, videoFile, 250);
-
-	if (!findFile(fileName, which)) {
-		delete video;
-		return -1;
-	}
-
-	if (!(video = openVideo(fileName, which, width, height)))
-		return -1;
-
-	//video->getVideo()->setVideoMemory();
-	//video->getVideo()->enableSound(*_vm->_mixer);
-
-	WRITE_VAR(7, video->getFrameCount());
-
-	return slot;
-#endif
 }
 
 void VideoPlayer::slotPlay(int slot, int16 frame) {
@@ -599,13 +531,6 @@ void VideoPlayer::slotPlay(int slot, int16 frame) {
 }
 
 void VideoPlayer::slotClose(int slot) {
-#if 0
-	if ((slot < 0) || (slot >= kVideoSlotCount) || !_videoSlots[slot])
-		return;
-
-	delete _videoSlots[slot];
-	_videoSlots[slot] = 0;
-#endif
 }
 
 void VideoPlayer::slotCopyFrame(int slot, byte *dest,
