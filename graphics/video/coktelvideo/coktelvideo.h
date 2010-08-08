@@ -41,9 +41,7 @@ namespace Audio {
 
 namespace Graphics {
 
-#ifdef USE_INDEO3
-class Indeo3;
-#endif
+class Codec;
 
 /** Common interface for handling Coktel Vision videos and derivated formats. */
 class CoktelVideo {
@@ -530,7 +528,6 @@ protected:
 	AudioFormat _audioFormat;
 
 	// Video properties
-	bool _externalCodec;
 	byte _blitMode;
 	byte _bytesPerPixel;
 	byte _preScaleX;
@@ -542,9 +539,8 @@ protected:
 
 	Graphics::PaletteLUT *_palLUT;
 
-#ifdef USE_INDEO3
-	Indeo3 *_codecIndeo3;
-#endif
+	bool _externalCodec;
+	Codec *_codec;
 
 	void clear();
 	void zeroData();

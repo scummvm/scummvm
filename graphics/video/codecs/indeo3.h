@@ -34,36 +34,28 @@
  * written, produced, and directed by Alan Smithee
  */
 
-#ifndef GRAPHICS_VIDEO_INDEO3_H
-#define GRAPHICS_VIDEO_INDEO3_H
+#ifndef GRAPHICS_INDEO3_H
+#define GRAPHICS_INDEO3_H
 
-#include "common/stream.h"
-
-namespace Graphics {
-	class PaletteLUT;
-	class SierraLight;
-}
+#include "graphics/video/codecs/codec.h"
 
 namespace Graphics {
 
-class Indeo3 {
+class Indeo3Decoder : public Codec {
 public:
-	enum DitherAlgorithm {
-		kDitherNone = 0,
-		kDitherSierraLight
-	};
+	Indeo3Decoder(uint16 width, uint16 height);
+	~Indeo3Decoder();
 
-	Indeo3(int16 width, int16 height, Graphics::PaletteLUT *palLUT);
-	~Indeo3();
+	Surface *decodeImage(Common::SeekableReadStream *stream);
+	PixelFormat getPixelFormat() const;
 
 	static bool isIndeo3(byte *data, uint32 dataLen);
 
-	void setDither(DitherAlgorithm dither);
-
-	bool decompressFrame(byte *inData, uint32 dataLen,
-			byte *outData, uint16 width, uint16 height);
-
 private:
+	Surface *_surface;
+
+	PixelFormat _pixelFormat;
+
 	static const int _corrector_type_0[24];
 	static const int _corrector_type_2[8];
 	static const uint32 correction[];
@@ -80,8 +72,6 @@ private:
 		uint16 uv_w, uv_h;
 	};
 
-	int16 _width;
-	int16 _height;
 	YUVBufs _iv_frame[2];
 	YUVBufs *_cur_frame;
 	YUVBufs *_ref_frame;
@@ -89,38 +79,16 @@ private:
 	byte *_ModPred;
 	uint16 *_corrector_type;
 
-	Graphics::PaletteLUT *_palLUT;
-
-	DitherAlgorithm _dither;
-	Graphics::SierraLight *_ditherSL;
-
-	struct BlitState {
-		uint32 curX, curY;
-		uint16 widthY,  widthUV;
-		uint16 heightY, heightUV;
-		uint16 uwidthUV,  uwidthOut;
-		uint16 uheightUV, uheightOut;
-		uint16 scaleWYUV, scaleWYOut;
-		uint16 scaleHYUV, scaleHYOut;
-		uint16 lineWidthOut, lineHeightOut;
-		byte *bufY, *bufU, *bufV, *bufOut;
-	};
-
 	void buildModPred();
 	void allocFrames();
 
 	void decodeChunk(byte *cur, byte *ref, int width, int height,
 			const byte *buf1, uint32 fflags2, const byte *hdr,
 			const byte *buf2, int min_width_160);
-
-	void blitFrame(BlitState &s);
-
-	void blitLine(BlitState &s);
-	void blitLineDither(BlitState &s);
 };
 
 } // End of namespace Graphics
 
-#endif // GRAPHICS_VIDEO_INDEO3_H
+#endif // GRAPHICS_INDEO3_H
 
 #endif // USE_INDEO3

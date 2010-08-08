@@ -31,10 +31,12 @@
 #include "common/system.h"
 
 #include "graphics/dither.h"
-#include "graphics/video/coktelvideo/indeo3.h"
+#include "graphics/video/codecs/indeo3.h"
 
 #include "sound/audiostream.h"
 #include "sound/decoders/raw.h"
+
+static const uint32 kVideoCodecIndeo3 = MKID_BE('iv32');
 
 namespace Graphics {
 
@@ -1439,11 +1441,11 @@ bool Vmd::assessVideoProperties() {
 		_externalCodec = false;
 
 	if (_externalCodec) {
-		if (_videoCodec == MKID_BE('iv32')) {
+		if (_videoCodec == kVideoCodecIndeo3) {
 #ifdef USE_INDEO3
 			_features &= ~kFeaturesPalette;
 			_features |=  kFeaturesFullColor;
-			_codecIndeo3 = new Indeo3(_width, _height, _palLUT);
+			_codec     =  new Indeo3Decoder(_width, _height);
 #else
 			warning("Vmd::assessVideoProperties(): Indeo3 decoder not compiled in");
 #endif
@@ -1502,11 +1504,6 @@ bool Vmd::assessVideoProperties() {
 			memset(_vidMemBuffer, 0, _bytesPerPixel * (_width * _height + 1000));
 		}
 	}
-
-#ifdef USE_INDEO3
-	if (_externalCodec && _codecIndeo3)
-		_features |= kFeaturesSupportsDouble;
-#endif
 
 	return true;
 }
@@ -1816,15 +1813,6 @@ void Vmd::setDoubleMode(bool doubleMode) {
 
 	}
 
-#ifdef USE_INDEO3
-	if (_codecIndeo3) {
-		delete _codecIndeo3;
-
-		_codecIndeo3 = new Indeo3(_width * (doubleMode ? 2 : 1),
-				_height * (doubleMode ? 2 : 1), _palLUT);
-	}
-#endif
-
 	_doubleMode = doubleMode;
 }
 
@@ -1870,10 +1858,6 @@ void Vmd::zeroData() {
 	_hasVideo   = true;
 	_videoCodec = 0;
 
-#ifdef USE_INDEO3
-	_codecIndeo3 = 0;
-#endif
-
 	_partsPerFrame = 0;
 	_frames = 0;
 
@@ -1886,6 +1870,8 @@ void Vmd::zeroData() {
 	_audioFormat         = kAudioFormat8bitDirect;
 
 	_externalCodec  = false;
+	_codec          = 0;
+
 	_doubleMode     = false;
 	_blitMode       = 0;
 	_bytesPerPixel  = 1;
@@ -1898,11 +1884,10 @@ void Vmd::zeroData() {
 void Vmd::deleteData() {
 	Imd::deleteData();
 
-#ifdef USE_INDEO3
-		delete _codecIndeo3;
-#endif
-		delete[] _frames;
-		delete[] _vidMemBuffer;
+	delete _codec;
+
+	delete[] _frames;
+	delete[] _vidMemBuffer;
 }
 
 void Vmd::clear() {
@@ -2158,38 +2143,39 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 	uint8 type;
 	byte *dest = imdVidMem;
 
-#ifdef USE_INDEO3
-	uint32 dataLen = _frameDataLen;
-
-	if (Indeo3::isIndeo3(dataPtr, dataLen)) {
-		if (!_codecIndeo3)
+	if (_externalCodec) {
+		if (!_codec)
 			return 0;
 
-		if (!_codecIndeo3->decompressFrame(dataPtr, dataLen, _vidBuffer,
-					width * (_doubleMode ? 2 : 1), height * (_doubleMode ? 2 : 1)))
+		if (_videoCodec == kVideoCodecIndeo3) {
+#ifndef USE_INDEO3
 			return 0;
+#else
+			if (!Indeo3Decoder::isIndeo3(dataPtr, _frameDataLen)) {
+				warning("Indeo3 data not indeo3");
+				return 0;
+			}
+#endif
+		}
 
+		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(dataPtr, _frameDataLen);
+		_codec->decodeImage(dataStream);
+
+		// TODO
+
+		/*
 		type   = 2;
 		srcPtr = _vidBuffer;
 		width  = _width  * (_doubleMode ? 2 : 1);
 		height = _height * (_doubleMode ? 2 : 1);
 		right  = left + width  - 1;
 		bottom = top  + height - 1;
+		*/
 
-	} else {
-
-		if (_externalCodec) {
-			warning("Unknown external codec");
-			return 0;
-		}
-
-#else
-
-	if (_externalCodec) {
 		return 0;
-	} else {
+	}
 
-#endif
+	if (!_externalCodec) {
 
 		type   = *dataPtr++;
 		srcPtr =  dataPtr;

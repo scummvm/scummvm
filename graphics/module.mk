@@ -37,7 +37,7 @@ MODULE_OBJS := \
 	video/codecs/qtrle.o \
 	video/codecs/rpza.o \
 	video/codecs/smc.o \
-	video/coktelvideo/indeo3.o \
+	video/codecs/indeo3.o \
 	video/coktelvideo/coktelvideo.o
 
 ifdef USE_SCALERS
