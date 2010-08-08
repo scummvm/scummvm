@@ -338,6 +338,105 @@ PixelFormat PreIMDDecoder::getPixelFormat() const {
 	return PixelFormat::createFormatCLUT8();
 }
 
+
+IMDDecoder::IMDDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType) : CoktelDecoder(mixer, soundType),
+	_stream(0), _videoBuffer(0), _videoBufferSize(0) {
+}
+
+IMDDecoder::~IMDDecoder() {
+	close();
+}
+
+bool IMDDecoder::seek(int32 frame, int whence, bool restart) {
+	if (!isVideoLoaded())
+		// Nothing to do
+		return false;
+
+	// Find the frame to which to seek
+	if      (whence == SEEK_CUR)
+		frame += _curFrame;
+	else if (whence == SEEK_END)
+		frame = _frameCount - frame - 1;
+	else if (whence == SEEK_SET)
+		frame--;
+	else
+		return false;
+
+	if ((frame < -1) || (((uint32) frame) >= _frameCount))
+		// Out of range
+		return false;
+
+	if (frame == _curFrame)
+		// Nothing to do
+		return true;
+
+	// TODO
+
+	return true;
+}
+
+bool IMDDecoder::load(Common::SeekableReadStream &stream) {
+	close();
+
+	_stream = &stream;
+
+	warning("IMDDecoder::load()");
+
+	// TODO
+
+	return false;
+}
+
+void IMDDecoder::close() {
+	reset();
+
+	CoktelDecoder::close();
+
+	delete _stream;
+
+	delete[] _videoBuffer;
+
+	_stream = 0;
+
+	_videoBuffer     = 0;
+	_videoBufferSize = 0;
+}
+
+bool IMDDecoder::isVideoLoaded() const {
+	return _stream != 0;
+}
+
+Surface *IMDDecoder::decodeNextFrame() {
+	if (!isVideoLoaded() || endOfVideo())
+		return 0;
+
+	createSurface();
+
+	processFrame();
+	renderFrame();
+
+	_curFrame++;
+
+	if (_curFrame == 0)
+		_startTime = g_system->getMillis();
+
+	return &_surface;
+}
+
+void IMDDecoder::processFrame() {
+	// TODO
+}
+
+void IMDDecoder::renderFrame() {
+	_dirtyRects.clear();
+
+	// TODO
+}
+
+PixelFormat IMDDecoder::getPixelFormat() const {
+	return PixelFormat::createFormatCLUT8();
+}
+
 } // End of namespace Graphics
 
 #endif // GRAPHICS_VIDEO_COKTELDECODER_H

@@ -144,6 +144,34 @@ private:
 	void renderFrame();
 };
 
+class IMDDecoder : public CoktelDecoder {
+public:
+	IMDDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	~IMDDecoder();
+
+	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
+
+	// VideoDecoder interface
+
+	bool load(Common::SeekableReadStream &stream);
+	void close();
+
+	bool isVideoLoaded() const;
+
+	Surface *decodeNextFrame();
+
+	PixelFormat getPixelFormat() const;
+
+private:
+	Common::SeekableReadStream *_stream;
+
+	byte  *_videoBuffer;
+	uint32 _videoBufferSize;
+
+	void processFrame();
+	void renderFrame();
+};
+
 } // End of namespace Graphics
 
 #endif // GRAPHICS_VIDEO_COKTELDECODER_H
