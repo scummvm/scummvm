@@ -117,12 +117,12 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		// displayed while a video is playing.
 		_noCursorSwitch = false;
 		if (primary && (_vm->getGameType() == kGameTypeLostInTime)) {
-			if (!file.compareToIgnoreCase("PORTA03.IMD") ||
-			    !file.compareToIgnoreCase("PORTA03A.IMD") ||
-			    !file.compareToIgnoreCase("CALE1.IMD") ||
-			    !file.compareToIgnoreCase("AMIL2.IMD") ||
-			    !file.compareToIgnoreCase("AMIL3B.IMD") ||
-			    !file.compareToIgnoreCase("DELB.IMD"))
+			if (!file.compareToIgnoreCase("PORTA03") ||
+			    !file.compareToIgnoreCase("PORTA03A") ||
+			    !file.compareToIgnoreCase("CALE1") ||
+			    !file.compareToIgnoreCase("AMIL2") ||
+			    !file.compareToIgnoreCase("AMIL3B") ||
+			    !file.compareToIgnoreCase("DELB"))
 				_noCursorSwitch = true;
 		}
 
@@ -130,7 +130,7 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		// This is a bug in video, so we work around it.
 		_woodruffCohCottWorkaround = false;
 		if (primary && (_vm->getGameType() == kGameTypeWoodruff)) {
-			if (!file.compareToIgnoreCase("SQ32-03.VMD"))
+			if (!file.compareToIgnoreCase("SQ32-03"))
 				_woodruffCohCottWorkaround = true;
 		}
 
