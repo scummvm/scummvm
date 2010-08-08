@@ -171,6 +171,8 @@ protected:
 	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;
 
+	bool evaluateSeekFrame(int32 &frame, int whence) const;
+
 	// Surface management
 	bool hasSurface();
 	void createSurface();

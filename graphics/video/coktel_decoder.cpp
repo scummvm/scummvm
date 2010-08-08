@@ -47,6 +47,28 @@ CoktelDecoder::CoktelDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundT
 CoktelDecoder::~CoktelDecoder() {
 }
 
+bool CoktelDecoder::evaluateSeekFrame(int32 &frame, int whence) const {
+	if (!isVideoLoaded())
+		// Nothing to do
+		return false;
+
+	// Find the frame to which to seek
+	if      (whence == SEEK_CUR)
+		frame += _curFrame;
+	else if (whence == SEEK_END)
+		frame = _frameCount - frame - 1;
+	else if (whence == SEEK_SET)
+		frame--;
+	else
+		return false;
+
+	if ((frame < -1) || (frame >= ((int32) _frameCount)))
+		// Out of range
+		return false;
+
+	return true;
+}
+
 void CoktelDecoder::setSurfaceMemory(void *mem, uint16 width, uint16 height, uint8 bpp) {
 	freeSurface();
 
@@ -488,22 +510,7 @@ PreIMDDecoder::~PreIMDDecoder() {
 }
 
 bool PreIMDDecoder::seek(int32 frame, int whence, bool restart) {
-	if (!isVideoLoaded())
-		// Nothing to do
-		return false;
-
-	// Find the frame to which to seek
-	if      (whence == SEEK_CUR)
-		frame += _curFrame;
-	else if (whence == SEEK_END)
-		frame = _frameCount - frame - 1;
-	else if (whence == SEEK_SET)
-		frame--;
-	else
-		return false;
-
-	if ((frame < -1) || (((uint32) frame) >= _frameCount))
-		// Out of range
+	if (!evaluateSeekFrame(frame, whence))
 		return false;
 
 	if (frame == _curFrame)
@@ -693,22 +700,7 @@ IMDDecoder::~IMDDecoder() {
 }
 
 bool IMDDecoder::seek(int32 frame, int whence, bool restart) {
-	if (!isVideoLoaded())
-		// Nothing to do
-		return false;
-
-	// Find the frame to which to seek
-	if      (whence == SEEK_CUR)
-		frame += _curFrame;
-	else if (whence == SEEK_END)
-		frame = _frameCount - frame - 1;
-	else if (whence == SEEK_SET)
-		frame--;
-	else
-		return false;
-
-	if ((frame < -1) || (frame >= ((int32) _frameCount)))
-		// Out of range
+	if (!evaluateSeekFrame(frame, whence))
 		return false;
 
 	if (frame == _curFrame)
@@ -1325,22 +1317,7 @@ VMDDecoder::~VMDDecoder() {
 }
 
 bool VMDDecoder::seek(int32 frame, int whence, bool restart) {
-	if (!isVideoLoaded())
-		// Nothing to do
-		return false;
-
-	// Find the frame to which to seek
-	if      (whence == SEEK_CUR)
-		frame += _curFrame;
-	else if (whence == SEEK_END)
-		frame = _frameCount - frame - 1;
-	else if (whence == SEEK_SET)
-		frame--;
-	else
-		return false;
-
-	if ((frame < -1) || (((uint32) frame) >= _frameCount))
-		// Out of range
+	if (!evaluateSeekFrame(frame, whence))
 		return false;
 
 	if (frame == _curFrame)
