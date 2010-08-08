@@ -1604,8 +1604,11 @@ bool VMDDecoder::load(Common::SeekableReadStream *stream) {
 
 	_videoCodec = _stream->readUint32BE();
 
-	if (_features & kFeaturesPalette)
+	if (_features & kFeaturesPalette) {
 		_stream->read((byte *)_palette, 768);
+
+		_paletteDirty = true;
+	}
 
 	_frameDataSize   = _stream->readUint32LE();
 	_videoBufferSize = _stream->readUint32LE();
