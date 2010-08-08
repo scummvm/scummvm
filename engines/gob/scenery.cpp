@@ -631,7 +631,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 			if ((int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < frame)
 				props.startFrame = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) + 1;
 			else
-				props.startFrame = 0;
+				props.startFrame = frame;
 
 			_vm->_vidPlayer->play(obj.videoSlot - 1, props);
 		}
