@@ -494,10 +494,8 @@ void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 v
 		width = video.decoder->getWidth();
 		width = video.decoder->getHeight();
 
-		/*
 		if (VAR_OFFSET(varX) == 0xFFFFFFFF)
 			video.decoder->getFrameCoords(1, x, y, width, height);
-		*/
 
 		WRITE_VAR_OFFSET(varX     , x);
 		WRITE_VAR_OFFSET(varY     , y);

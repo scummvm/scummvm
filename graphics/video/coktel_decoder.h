@@ -98,6 +98,9 @@ public:
 	void enableSound();
 	void disableSound();
 
+	/** Return the coordinates of the specified frame. */
+	bool getFrameCoords(int16 frame, int16 &x, int16 &y, int16 &width, int16 &height);
+
 	/** Return whether that video has any embedded files. */
 	virtual bool hasEmbeddedFiles() const;
 
@@ -340,6 +343,8 @@ public:
 
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
 
+	bool getFrameCoords(int16 frame, int16 &x, int16 &y, int16 &width, int16 &height);
+
 	bool hasEmbeddedFiles() const;
 	bool hasEmbeddedFile(const Common::String &fileName) const;
 	Common::MemoryReadStream *getEmbeddedFile(const Common::String &fileName) const;
@@ -480,6 +485,8 @@ private:
 	// Sound decompression
 	byte *deDPCM (const byte *data, uint32 &size, int32 init[2]);
 	byte *deADPCM(const byte *data, uint32 &size, int32 init, int32 index);
+
+	bool getPartCoords(int16 frame, PartType type, int16 &x, int16 &y, int16 &width, int16 &height);
 };
 
 } // End of namespace Graphics

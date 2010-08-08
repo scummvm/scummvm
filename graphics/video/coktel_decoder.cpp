@@ -205,6 +205,10 @@ void CoktelDecoder::disableSound() {
 	_audioStream  = 0;
 }
 
+bool CoktelDecoder::getFrameCoords(int16 frame, int16 &x, int16 &y, int16 &width, int16 &height) {
+	return false;
+}
+
 bool CoktelDecoder::hasEmbeddedFiles() const {
 	return false;
 }
@@ -2330,6 +2334,38 @@ byte *VMDDecoder::deADPCM(const byte *data, uint32 &size, int32 init, int32 inde
 
 PixelFormat VMDDecoder::getPixelFormat() const {
 	return PixelFormat::createFormatCLUT8();
+}
+
+bool VMDDecoder::getPartCoords(int16 frame, PartType type, int16 &x, int16 &y, int16 &width, int16 &height) {
+	if (frame >= ((int32) _frameCount))
+		return false;
+
+	Frame &f = _frames[frame];
+
+	// Look for a part matching the requested type, stopping at a separator
+	Part *part = 0;
+	for (int i = 0; i < _partsPerFrame; i++) {
+		Part &p = f.parts[i];
+
+		if ((p.type == kPartTypeSeparator) || (p.type == type)) {
+			part = &p;
+			break;
+		}
+	}
+
+	if (!part)
+		return false;
+
+	x      = part->left;
+	y      = part->top;
+	width  = part->right  - part->left + 1;
+	height = part->bottom - part->top  + 1;
+
+	return true;
+}
+
+bool VMDDecoder::getFrameCoords(int16 frame, int16 &x, int16 &y, int16 &width, int16 &height) {
+	return getPartCoords(frame, kPartTypeVideo, x, y, width, height);
 }
 
 bool VMDDecoder::hasEmbeddedFiles() const {
