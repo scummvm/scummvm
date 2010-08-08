@@ -107,7 +107,7 @@ void Inter_Bargon::oBargon_intro1(OpGobParams &params) {
 	_vm->_vidPlayer->play(slot, props);
 
 	props.startFrame = -1;
-	props.lastFrame  = 23;
+	props.lastFrame  = _vm->_vidPlayer->getFrameCount(slot) - 23;
 	props.fade       = false;
 
 	_vm->_vidPlayer->play(slot, props);
