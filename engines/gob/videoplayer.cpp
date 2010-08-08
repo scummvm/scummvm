@@ -714,13 +714,13 @@ Graphics::CoktelDecoder *VideoPlayer::openVideo(const Common::String &file, Prop
 
 	Graphics::CoktelDecoder *video = 0;
 	if (properties.type == kVideoTypeIMD)
-		video = new Graphics::IMDDecoder(*_vm->_mixer, Audio::Mixer::kSFXSoundType);
+		video = new Graphics::IMDDecoder(_vm->_mixer, Audio::Mixer::kSFXSoundType);
 	else if (properties.type == kVideoTypePreIMD)
-		video = new Graphics::PreIMDDecoder(properties.width, properties.height, *_vm->_mixer, Audio::Mixer::kSFXSoundType);
+		video = new Graphics::PreIMDDecoder(properties.width, properties.height, _vm->_mixer, Audio::Mixer::kSFXSoundType);
 	else if (properties.type == kVideoTypeVMD)
-		video = new Graphics::VMDDecoder(*_vm->_mixer, Audio::Mixer::kSFXSoundType);
+		video = new Graphics::VMDDecoder(_vm->_mixer, Audio::Mixer::kSFXSoundType);
 	else if (properties.type == kVideoTypeRMD)
-		video = new Graphics::VMDDecoder(*_vm->_mixer, Audio::Mixer::kSFXSoundType);
+		video = new Graphics::VMDDecoder(_vm->_mixer, Audio::Mixer::kSFXSoundType);
 	else
 		warning("Couldn't open video \"%s\": Invalid video Type", fileName.c_str());
 

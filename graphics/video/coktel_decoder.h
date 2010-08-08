@@ -60,7 +60,7 @@ public:
 		State();
 	};
 
-	CoktelDecoder(Audio::Mixer &mixer,
+	CoktelDecoder(Audio::Mixer *mixer,
 			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~CoktelDecoder();
 
@@ -213,7 +213,7 @@ protected:
 
 class PreIMDDecoder : public CoktelDecoder {
 public:
-	PreIMDDecoder(uint16 width, uint16 height, Audio::Mixer &mixer,
+	PreIMDDecoder(uint16 width, uint16 height, Audio::Mixer *mixer,
 			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~PreIMDDecoder();
 
@@ -245,7 +245,7 @@ private:
 
 class IMDDecoder : public CoktelDecoder {
 public:
-	IMDDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	IMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~IMDDecoder();
 
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
@@ -341,7 +341,7 @@ private:
 
 class VMDDecoder : public CoktelDecoder {
 public:
-	VMDDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	VMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~VMDDecoder();
 
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);

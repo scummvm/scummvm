@@ -40,11 +40,13 @@ CoktelDecoder::State::State() : flags(0), speechId(0) {
 }
 
 
-CoktelDecoder::CoktelDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType) :
-	_mixer(&mixer), _soundType(soundType), _width(0), _height(0), _x(0), _y(0),
+CoktelDecoder::CoktelDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
+	_mixer(mixer), _soundType(soundType), _width(0), _height(0), _x(0), _y(0),
 	_defaultX(0), _defaultY(0), _features(0), _frameCount(0), _paletteDirty(false),
 	_ownSurface(true), _frameRate(12), _hasSound(false), _soundEnabled(false),
 	_soundStage(kSoundNone), _audioStream(0) {
+
+	assert(_mixer);
 
 	memset(_palette, 0, 768);
 }
@@ -593,7 +595,7 @@ inline void CoktelDecoder::unsignedToSigned(byte *buffer, int length) {
 
 
 PreIMDDecoder::PreIMDDecoder(uint16 width, uint16 height,
-	Audio::Mixer &mixer, Audio::Mixer::SoundType soundType) : CoktelDecoder(mixer, soundType),
+	Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : CoktelDecoder(mixer, soundType),
 	_stream(0), _videoBuffer(0), _videoBufferSize(0) {
 
 	_width  = width;
@@ -781,7 +783,7 @@ PixelFormat PreIMDDecoder::getPixelFormat() const {
 }
 
 
-IMDDecoder::IMDDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType) : CoktelDecoder(mixer, soundType),
+IMDDecoder::IMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : CoktelDecoder(mixer, soundType),
 	_stream(0), _version(0), _stdX(-1), _stdY(-1), _stdWidth(-1), _stdHeight(-1),
 	_flags(0), _firstFramePos(0), _framePos(0), _frameCoords(0),
 	_frameData(0), _frameDataSize(0), _frameDataLen(0),
@@ -1470,7 +1472,7 @@ const int32 VMDDecoder::_tableADPCMStep[] = {
 	-1, -1, -1, -1, 2,  4,  6,  8
 };
 
-VMDDecoder::VMDDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType) : CoktelDecoder(mixer, soundType),
+VMDDecoder::VMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : CoktelDecoder(mixer, soundType),
 	_stream(0), _version(0), _flags(0), _frameInfoOffset(0), _partsPerFrame(0), _frames(0),
 	_soundFlags(0), _soundFreq(0), _soundSliceSize(0), _soundSlicesCount(0),
 	_soundBytesPerSample(0), _soundStereo(0), _soundHeaderSize(0), _soundDataSize(0),
