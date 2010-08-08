@@ -96,7 +96,7 @@ public:
 	void evaluateFlags(Properties &properties);
 
 	int  openVideo(bool primary, const Common::String &file, Properties &properties);
-	bool closeVideo(int slot);
+	bool closeVideo(int slot = 0);
 
 	bool play(int slot, Properties &properties);
 
@@ -104,16 +104,12 @@ public:
 
 	Common::String getFileName(int slot = 0) const;
 
-	uint16 getFlags       (int slot = 0) const;
 	uint32 getFrameCount  (int slot = 0) const;
 	uint32 getCurrentFrame(int slot = 0) const;
 	uint16 getWidth       (int slot = 0) const;
 	uint16 getHeight      (int slot = 0) const;
 	uint16 getDefaultX    (int slot = 0) const;
 	uint16 getDefaultY    (int slot = 0) const;
-	uint32 getFeatures    (int slot = 0) const;
-
-	void getState(int slot = 0) const;
 
 	bool                      hasExtraData(const Common::String &fileName, int slot = 0) const;
 	Common::MemoryReadStream *getExtraData(const Common::String &fileName, int slot = 0);
@@ -190,10 +186,7 @@ private:
 	void checkAbort(Video &video, Properties &properties);
 	void evalBgShading(Video &video);
 
-	// Obsolete, to be deleted
-
-	void copyPalette(Graphics::CoktelDecoder &video, int16 palStart = -1, int16 palEnd = -1);
-	void evalBgShading(Graphics::CoktelDecoder &video);
+	void copyPalette(const Video &video, int16 palStart, int16 palEnd);
 };
 
 } // End of namespace Gob

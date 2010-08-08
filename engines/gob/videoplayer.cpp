@@ -133,43 +133,44 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 			if (!file.compareToIgnoreCase("SQ32-03.VMD"))
 				_woodruffCohCottWorkaround = true;
 		}
-	}
 
-	if (!(properties.flags & kFlagNoVideo) && (properties.sprite >= 0)) {
-		bool ownSurf    = (properties.sprite != Draw::kFrontSurface) && (properties.sprite != Draw::kBackSurface);
-		bool screenSize = properties.flags & kFlagScreenSurface;
+		if (!(properties.flags & kFlagNoVideo) && (properties.sprite >= 0)) {
+			bool ownSurf    = (properties.sprite != Draw::kFrontSurface) && (properties.sprite != Draw::kBackSurface);
+			bool screenSize = properties.flags & kFlagScreenSurface;
 
-		if (ownSurf) {
-			_vm->_draw->_spritesArray[properties.sprite] =
-				_vm->_video->initSurfDesc(_vm->_global->_videoMode,
-				                          screenSize ? _vm->_width  : video->decoder->getWidth(),
-				                          screenSize ? _vm->_height : video->decoder->getHeight(), 0);
-		}
+			if (ownSurf) {
+				_vm->_draw->_spritesArray[properties.sprite] =
+					_vm->_video->initSurfDesc(_vm->_global->_videoMode,
+					                          screenSize ? _vm->_width  : video->decoder->getWidth(),
+					                          screenSize ? _vm->_height : video->decoder->getHeight(), 0);
+			}
 
-		if (!_vm->_draw->_spritesArray[properties.sprite]) {
+			if (!_vm->_draw->_spritesArray[properties.sprite]) {
+				properties.sprite = -1;
+				video->surface.reset();
+				video->decoder->setSurfaceMemory();
+				video->decoder->setXY(0, 0);
+			} else {
+				video->surface = _vm->_draw->_spritesArray[properties.sprite];
+				video->decoder->setSurfaceMemory(video->surface->getVidMem(),
+						video->surface->getWidth(), video->surface->getHeight(), 1);
+
+				if (!ownSurf || (ownSurf && screenSize)) {
+					if ((properties.x >= 0) || (properties.y >= 0))
+						video->decoder->setXY((properties.x < 0) ? 0xFFFF : properties.x,
+						                      (properties.y < 0) ? 0xFFFF : properties.y);
+					else
+						video->decoder->setXY();
+				} else
+					video->decoder->setXY(0, 0);
+			}
+
+		} else {
 			properties.sprite = -1;
 			video->surface.reset();
 			video->decoder->setSurfaceMemory();
 			video->decoder->setXY(0, 0);
-		} else {
-			video->surface = _vm->_draw->_spritesArray[properties.sprite];
-			video->decoder->setSurfaceMemory(video->surface->getVidMem(),
-					video->surface->getWidth(), video->surface->getHeight(), 1);
-
-			if (!ownSurf || (ownSurf && screenSize)) {
-				if ((properties.x >= 0) && (properties.y >= 0))
-					video->decoder->setXY(properties.x, properties.y);
-				else
-					video->decoder->setXY();
-			} else
-				video->decoder->setXY(0, 0);
 		}
-
-	} else {
-		properties.sprite = -1;
-		video->surface.reset();
-		video->decoder->setSurfaceMemory();
-		video->decoder->setXY(0, 0);
 	}
 
 	if (primary)
@@ -205,18 +206,15 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 	if (properties.startFrame < 0)
 		properties.startFrame = video->decoder->getCurFrame() + 1;
 	if (properties.lastFrame  < 0)
-		properties.lastFrame  = video->decoder->getFrameCount();
+		properties.lastFrame  = video->decoder->getFrameCount() - 1;
 	if (properties.endFrame   < 0)
 		properties.endFrame   = properties.lastFrame;
 	if (properties.palFrame   < 0)
 		properties.palFrame   = properties.startFrame;
 
 	properties.startFrame--;
-	properties.lastFrame--;
 	properties.endFrame--;
 	properties.palFrame--;
-
-	properties.palCmd &= 0x3F;
 
 	if (primary) {
 		_vm->_draw->_showCursor = _noCursorSwitch ? 3 : 0;
@@ -229,9 +227,10 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 
 	properties.canceled = false;
 
-	while ((properties.startFrame != properties.lastFrame) && !properties.canceled) {
-		if (!playFrame(slot, properties))
-			return false;
+	while (properties.startFrame != properties.lastFrame) {
+		playFrame(slot, properties);
+		if (properties.canceled)
+			break;
 
 		properties.startFrame += backwards ? -1 : 1;
 
@@ -273,7 +272,7 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 			_vm->_draw->_applyPal = true;
 
 			if (properties.palCmd >= 4)
-				; // copyPalette(video, palStart, palEnd);
+				copyPalette(*video, properties.palStart, properties.palEnd);
 		}
 
 		if (modifiedPal && (properties.palCmd == 8) && (properties.sprite != Draw::kBackSurface))
@@ -312,16 +311,14 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 			_vm->_video->dirtyRectsAll();
 		}
 
-		/*
-		if ((state.flags & Graphics::CoktelDecoder::kStatePalette) && (palCmd > 1)) {
-			copyPalette(video, palStart, palEnd);
+		if (video->decoder->hasPalette() && (properties.palCmd > 1)) {
+			copyPalette(*video, properties.palStart, properties.palEnd);
 
-			if (!_backSurf)
+			if (properties.sprite != Draw::kBackSurface)
 				_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 			else
 				_vm->_draw->_applyPal = true;
 		}
-		*/
 
 		const Common::List<Common::Rect> &dirtyRects = video->decoder->getDirtyRects();
 
@@ -417,14 +414,6 @@ Common::String VideoPlayer::getFileName(int slot) const {
 	return video->fileName;
 }
 
-uint16 VideoPlayer::getFlags(int slot) const {
-	const Video *video = getVideoBySlot(slot);
-	if (!video)
-		return 0;
-
-	return 0; // video->decoder->getFlags();
-}
-
 uint32 VideoPlayer::getFrameCount(int slot) const {
 	const Video *video = getVideoBySlot(slot);
 	if (!video)
@@ -462,7 +451,7 @@ uint16 VideoPlayer::getDefaultX(int slot) const {
 	if (!video)
 		return 0;
 
-	return 0; // video->decoder->getDefaultX();
+	return video->decoder->getDefaultX();
 }
 
 uint16 VideoPlayer::getDefaultY(int slot) const {
@@ -470,23 +459,7 @@ uint16 VideoPlayer::getDefaultY(int slot) const {
 	if (!video)
 		return 0;
 
-	return 0; // video->decoder->getDefaultY();
-}
-
-uint32 VideoPlayer::getFeatures(int slot) const {
-	const Video *video = getVideoBySlot(slot);
-	if (!video)
-		return 0;
-
-	return 0; // video->decoder->getFeatures();
-}
-
-void VideoPlayer::getState(int slot) const {
-	const Video *video = getVideoBySlot(slot);
-	if (!video)
-		return;
-
-	return; // video->decoder->getState();
+	return video->decoder->getDefaultY();
 }
 
 bool VideoPlayer::hasExtraData(const Common::String &fileName, int slot) const {
@@ -715,12 +688,6 @@ void VideoPlayer::slotCopyFrame(int slot, byte *dest,
 }
 
 void VideoPlayer::slotCopyPalette(int slot, int16 palStart, int16 palEnd) {
-#if 0
-	if ((slot < 0) || (slot >= kVideoSlotCount) || !_videoSlots[slot])
-		return;
-
-	//copyPalette(*(_videoSlots[slot]->getVideo()), palStart, palEnd);
-#endif
 }
 
 void VideoPlayer::slotWaitEndFrame(int slot, bool onlySound) {
@@ -741,31 +708,17 @@ void VideoPlayer::slotWaitEndFrame(int slot, bool onlySound) {
 void VideoPlayer::slotSetDoubleMode(int slot, bool doubleMode) {
 }
 
-void VideoPlayer::copyPalette(Graphics::CoktelDecoder &video, int16 palStart, int16 palEnd) {
-	/*
-	if (!(video.getFeatures() & Graphics::CoktelDecoder::kFeaturesPalette))
+void VideoPlayer::copyPalette(const Video &video, int16 palStart, int16 palEnd) {
+	if (!video.decoder->hasPalette())
 		return;
-	*/
 
 	if (palStart < 0)
 		palStart = 0;
 	if (palEnd < 0)
 		palEnd = 255;
 
-	/*
 	memcpy(((char *)(_vm->_global->_pPaletteDesc->vgaPal)) + palStart * 3,
-			video.getPalette() + palStart * 3,
-			(palEnd - palStart + 1) * 3);
-	*/
-}
-
-void VideoPlayer::evalBgShading(Graphics::CoktelDecoder &video) {
-	/*
-	if (video.isSoundPlaying())
-		_vm->_sound->bgShade();
-	else
-		_vm->_sound->bgUnshade();
-	*/
+			video.decoder->getPalette() + palStart * 3, (palEnd - palStart + 1) * 3);
 }
 
 } // End of namespace Gob

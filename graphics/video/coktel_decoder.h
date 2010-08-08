@@ -84,6 +84,8 @@ public:
 	/** Return a list of rectangles that changed in the last frame. */
 	const Common::List<Common::Rect> &getDirtyRects() const;
 
+	bool hasPalette() const;
+
 	bool hasSound()       const;
 	bool isSoundEnabled() const;
 	bool isSoundPlaying() const;
@@ -159,8 +161,17 @@ protected:
 	void createSurface();
 	void freeSurface();
 
+	void deLZ77(byte *dest, byte *src);
+
+	void renderBlockWhole   (const byte *src);
+	void renderBlockWhole4X (const byte *src);
+	void renderBlockWhole2Y (const byte *src);
+	void renderBlockSparse  (const byte *src);
+	void renderBlockSparse2Y(const byte *src);
+
 	inline void unsignedToSigned(byte *buffer, int length);
 
+public:
 	// FixedRateVideoDecoder interface
 	Common::Rational getFrameRate() const;
 };
@@ -201,6 +212,8 @@ public:
 	~IMDDecoder();
 
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
+
+	void setXY(uint16 x, uint16 y);
 
 	// VideoDecoder interface
 
