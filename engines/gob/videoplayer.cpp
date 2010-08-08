@@ -159,7 +159,7 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 	if (primary)
 		_needBlit = (properties.flags & kFlagUseBackSurfaceContent) && (properties.sprite == Draw::kFrontSurface);
 
-	// video->decoder->setFrameRate(_vm->_util->getFrameRate());
+	video->decoder->setFrameRate(_vm->_util->getFrameRate());
 
 	WRITE_VAR(7, video->decoder->getFrameCount());
 
@@ -225,9 +225,8 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 			properties.fade = false;
 		}
 
-		_vm->_util->longDelay(100);
-		/*if (!_noCursorSwitch)
-			video.waitEndFrame();*/
+		if (!_noCursorSwitch)
+			_vm->_util->delay(video->decoder->getTimeToNextFrame());
 	}
 
 	evalBgShading(*video);
