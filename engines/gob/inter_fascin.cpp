@@ -160,7 +160,7 @@ void Inter_Fascination::oFascin_playTira(OpGobParams &params) {
 	vidProps.width  = 128;
 	vidProps.height =  80;
 
-	int vidSlot = _vm->_vidPlayer->openVideo(true, "tirb", vidProps);
+	int vidSlot = _vm->_vidPlayer->openVideo(true, "tira", vidProps);
 	if (vidSlot < 0)
 		return;
 
