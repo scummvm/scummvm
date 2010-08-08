@@ -72,17 +72,47 @@ void Inter_Bargon::setupOpcodesGob() {
 }
 
 void Inter_Bargon::oBargon_intro0(OpGobParams &params) {
-	if (_vm->_vidPlayer->primaryOpen("scaa", 0, 160)) {
-		_vm->_vidPlayer->primaryPlay(0, 92, 27, 0, 0, 0);
-		_vm->_vidPlayer->primaryClose();
-	}
+	VideoPlayer::Properties props;
+
+	props.x          = 0;
+	props.y          = 160;
+	props.startFrame = 0;
+	props.lastFrame  = 92;
+	props.palCmd     = 0;
+	props.palStart   = 0;
+	props.palEnd     = 0;
+
+	int slot;
+	if ((slot = _vm->_vidPlayer->openVideo(true, "scaa", props)) < 0)
+		return;
+
+	_vm->_vidPlayer->play(slot, props);
+	_vm->_vidPlayer->closeVideo(slot);
 }
 
 void Inter_Bargon::oBargon_intro1(OpGobParams &params) {
-	if (_vm->_vidPlayer->primaryOpen("scaa", 0, 160)) {
-		_vm->_vidPlayer->primaryPlay(0, -1, 27, 0, 0, 0, 0, 0, true, 23);
-		_vm->_vidPlayer->primaryClose();
-	}
+	VideoPlayer::Properties props;
+
+	props.x        = 0;
+	props.y        = 160;
+	props.palCmd   = 0;
+	props.palStart = 0;
+	props.palEnd   = 0;
+	props.fade     = true;
+
+	int slot;
+	if ((slot = _vm->_vidPlayer->openVideo(true, "scaa", props)) < 0)
+		return;
+
+	_vm->_vidPlayer->play(slot, props);
+
+	props.startFrame = -1;
+	props.lastFrame  = 23;
+	props.fade       = false;
+
+	_vm->_vidPlayer->play(slot, props);
+
+	_vm->_vidPlayer->closeVideo(slot);
 }
 
 void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
@@ -178,45 +208,106 @@ void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 }
 
 void Inter_Bargon::oBargon_intro4(OpGobParams &params) {
-	if (_vm->_vidPlayer->primaryOpen("scba", 191, 54)) {
-		_vm->_vidPlayer->primaryPlay(0, -1, 27, 0, 0, 0, 0, 0, true);
-		_vm->_vidPlayer->primaryClose();
-	}
+	VideoPlayer::Properties props;
+
+	props.x        = 191;
+	props.y        = 54;
+	props.palCmd   = 0;
+	props.palStart = 0;
+	props.palEnd   = 0;
+	props.fade     = true;
+
+	int slot;
+	if ((slot = _vm->_vidPlayer->openVideo(true, "scba", props)) < 0)
+		return;
+
+	_vm->_vidPlayer->play(slot, props);
+	_vm->_vidPlayer->closeVideo(slot);
 }
 
 void Inter_Bargon::oBargon_intro5(OpGobParams &params) {
-	if (_vm->_vidPlayer->primaryOpen("scbb", 191, 54)) {
-		_vm->_vidPlayer->primaryPlay(0, -1, 27, 0, 0, 0);
-		_vm->_vidPlayer->primaryClose();
-	}
+	VideoPlayer::Properties props;
+
+	props.x        = 191;
+	props.y        = 54;
+	props.palCmd   = 0;
+	props.palStart = 0;
+	props.palEnd   = 0;
+
+	int slot;
+	if ((slot = _vm->_vidPlayer->openVideo(true, "scbb", props)) < 0)
+		return;
+
+	_vm->_vidPlayer->play(slot, props);
+	_vm->_vidPlayer->closeVideo(slot);
 }
 
 void Inter_Bargon::oBargon_intro6(OpGobParams &params) {
-	if (_vm->_vidPlayer->primaryOpen("scbc", 191, 54)) {
-		_vm->_vidPlayer->primaryPlay(0, -1, 27, 0, 0, 0);
-		_vm->_vidPlayer->primaryClose();
-	}
+	VideoPlayer::Properties props;
+
+	props.x        = 191;
+	props.y        = 54;
+	props.palCmd   = 0;
+	props.palStart = 0;
+	props.palEnd   = 0;
+
+	int slot;
+	if ((slot = _vm->_vidPlayer->openVideo(true, "scbc", props)) < 0)
+		return;
+
+	_vm->_vidPlayer->play(slot, props);
+	_vm->_vidPlayer->closeVideo(slot);
 }
 
 void Inter_Bargon::oBargon_intro7(OpGobParams &params) {
-	if (_vm->_vidPlayer->primaryOpen("scbf", 191, 54)) {
-		_vm->_vidPlayer->primaryPlay(0, -1, 27, 0, 0, 0);
-		_vm->_vidPlayer->primaryClose();
-	}
+	VideoPlayer::Properties props;
+
+	props.x        = 191;
+	props.y        = 54;
+	props.palCmd   = 0;
+	props.palStart = 0;
+	props.palEnd   = 0;
+
+	int slot;
+	if ((slot = _vm->_vidPlayer->openVideo(true, "scbf", props)) < 0)
+		return;
+
+	_vm->_vidPlayer->play(slot, props);
+	_vm->_vidPlayer->closeVideo(slot);
 }
 
 void Inter_Bargon::oBargon_intro8(OpGobParams &params) {
-	if (_vm->_vidPlayer->primaryOpen("scbc", 191, 54)) {
-		_vm->_vidPlayer->primaryPlay(0, -1, 27, 0, 0, 0);
-		_vm->_vidPlayer->primaryClose();
-	}
+	VideoPlayer::Properties props;
+
+	props.x        = 191;
+	props.y        = 54;
+	props.palCmd   = 0;
+	props.palStart = 0;
+	props.palEnd   = 0;
+
+	int slot;
+	if ((slot = _vm->_vidPlayer->openVideo(true, "scbc", props)) < 0)
+		return;
+
+	_vm->_vidPlayer->play(slot, props);
+	_vm->_vidPlayer->closeVideo(slot);
 }
 
 void Inter_Bargon::oBargon_intro9(OpGobParams &params) {
-	if (_vm->_vidPlayer->primaryOpen("scbd", 191, 54)) {
-		_vm->_vidPlayer->primaryPlay(0, -1, 27, 0, 0, 0);
-		_vm->_vidPlayer->primaryClose();
-	}
+	VideoPlayer::Properties props;
+
+	props.x        = 191;
+	props.y        = 54;
+	props.palCmd   = 0;
+	props.palStart = 0;
+	props.palEnd   = 0;
+
+	int slot;
+	if ((slot = _vm->_vidPlayer->openVideo(true, "scbd", props)) < 0)
+		return;
+
+	_vm->_vidPlayer->play(slot, props);
+	_vm->_vidPlayer->closeVideo(slot);
 }
 
 } // End of namespace Gob
