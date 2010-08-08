@@ -1314,6 +1314,102 @@ PixelFormat IMDDecoder::getPixelFormat() const {
 	return PixelFormat::createFormatCLUT8();
 }
 
+
+VMDDecoder::VMDDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType) : CoktelDecoder(mixer, soundType),
+	_stream(0), _videoBuffer(0), _videoBufferSize(0) {
+
+}
+
+VMDDecoder::~VMDDecoder() {
+	close();
+}
+
+bool VMDDecoder::seek(int32 frame, int whence, bool restart) {
+	if (!isVideoLoaded())
+		// Nothing to do
+		return false;
+
+	// Find the frame to which to seek
+	if      (whence == SEEK_CUR)
+		frame += _curFrame;
+	else if (whence == SEEK_END)
+		frame = _frameCount - frame - 1;
+	else if (whence == SEEK_SET)
+		frame--;
+	else
+		return false;
+
+	if ((frame < -1) || (((uint32) frame) >= _frameCount))
+		// Out of range
+		return false;
+
+	if (frame == _curFrame)
+		// Nothing to do
+		return true;
+
+	// TODO
+
+	return true;
+}
+
+bool VMDDecoder::load(Common::SeekableReadStream &stream) {
+	close();
+
+	_stream = &stream;
+
+	_stream->seek(0);
+
+	warning("TODO: VMDDecoder::load()");
+
+	return false;
+}
+
+void VMDDecoder::close() {
+	reset();
+
+	CoktelDecoder::close();
+
+	delete _stream;
+
+	delete[] _videoBuffer;
+
+	_stream = 0;
+
+	_videoBuffer     = 0;
+	_videoBufferSize = 0;
+}
+
+bool VMDDecoder::isVideoLoaded() const {
+	return _stream != 0;
+}
+
+Surface *VMDDecoder::decodeNextFrame() {
+	if (!isVideoLoaded() || endOfVideo())
+		return 0;
+
+	createSurface();
+
+	processFrame();
+	renderFrame();
+
+	if (_curFrame == 0)
+		_startTime = g_system->getMillis();
+
+	return &_surface;
+}
+
+void VMDDecoder::processFrame() {
+	_curFrame++;
+}
+
+// Just a simple blit
+void VMDDecoder::renderFrame() {
+}
+
+PixelFormat VMDDecoder::getPixelFormat() const {
+	return PixelFormat::createFormatCLUT8();
+}
+
 } // End of namespace Graphics
 
 #endif // GRAPHICS_VIDEO_COKTELDECODER_H
