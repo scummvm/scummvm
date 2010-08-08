@@ -40,6 +40,10 @@
 
 #include "sound/mixer.h"
 
+namespace Audio {
+	class QueuingAudioStream;
+}
+
 namespace Graphics {
 
 class CoktelDecoder : public FixedRateVideoDecoder {
@@ -65,13 +69,27 @@ public:
 	void setSurfaceMemory();
 
 	/** Draw the video starting at this position within the video memory. */
-	void setXY(uint16 x, uint16 y);
+	virtual void setXY(uint16 x, uint16 y);
+	/** Draw the video at the default position. */
+	void setXY();
 
 	/** Override the video's frame rate. */
 	void setFrameRate(Common::Rational frameRate);
 
+	/** Get the video's default X position. */
+	uint16 getDefaultX() const;
+	/** Get the video's default Y position. */
+	uint16 getDefaultY() const;
+
 	/** Return a list of rectangles that changed in the last frame. */
 	const Common::List<Common::Rect> &getDirtyRects() const;
+
+	bool hasSound()       const;
+	bool isSoundEnabled() const;
+	bool isSoundPlaying() const;
+
+	void enableSound();
+	void disableSound();
 
 	// VideoDecoder interface
 
@@ -86,6 +104,23 @@ public:
 	bool  hasDirtyPalette() const;
 
 protected:
+	enum SoundStage {
+		kSoundNone    = 0, ///< No sound.
+		kSoundLoaded  = 1, ///< Sound loaded.
+		kSoundPlaying = 2  ///< Sound is playing.
+	};
+
+	enum Features {
+		kFeaturesNone        = 0x0000,
+		kFeaturesPalette     = 0x0008, ///< Has an own palette.
+		kFeaturesDataSize    = 0x0020, ///< Suggests a data size.
+		kFeaturesSound       = 0x0040, ///< Has sound.
+		kFeaturesFrameCoords = 0x0080, ///< Has specific frame coordinates.
+		kFeaturesStdCoords   = 0x0100, ///< Has general standard coordinates.
+		kFeaturesFramePos    = 0x0200, ///< Has a frame positions table.
+		kFeaturesVideo       = 0x0400  ///< Has video.
+	};
+
 	Audio::Mixer *_mixer;
 	Audio::Mixer::SoundType _soundType;
 
@@ -94,6 +129,11 @@ protected:
 
 	uint16 _x;
 	uint16 _y;
+
+	uint16 _defaultX;
+	uint16 _defaultY;
+
+	uint32 _features;
 
 	uint32 _frameCount;
 
@@ -106,6 +146,14 @@ protected:
 	Common::List<Common::Rect> _dirtyRects;
 
 	Common::Rational _frameRate;
+
+	// Current sound state
+	bool       _hasSound;
+	bool       _soundEnabled;
+	SoundStage _soundStage;
+
+	Audio::QueuingAudioStream *_audioStream;
+	Audio::SoundHandle _audioHandle;
 
 	bool hasSurface();
 	void createSurface();
@@ -137,6 +185,7 @@ public:
 private:
 	Common::SeekableReadStream *_stream;
 
+	// Buffer for processed frame data
 	byte  *_videoBuffer;
 	uint32 _videoBufferSize;
 
@@ -163,10 +212,65 @@ public:
 	PixelFormat getPixelFormat() const;
 
 private:
+	enum Command {
+		kCommandNextSound   = 0xFF00,
+		kCommandStartSound  = 0xFF01,
+
+		kCommandBreak       = 0xFFF0,
+		kCommandBreakSkip0  = 0xFFF1,
+		kCommandBreakSkip16 = 0xFFF2,
+		kCommandBreakSkip32 = 0xFFF3,
+		kCommandBreakMask   = 0xFFF8,
+
+		kCommandPalette     = 0xFFF4,
+		kCommandVideoData   = 0xFFFC,
+
+		kCommandJump        = 0xFFFD
+	};
+
+	struct Coord {
+		int16 left;
+		int16 top;
+		int16 right;
+		int16 bottom;
+	};
+
 	Common::SeekableReadStream *_stream;
 
+	byte _version;
+
+	// Standard coordinates gives by the header
+	int16 _stdX;
+	int16 _stdY;
+	int16 _stdWidth;
+	int16 _stdHeight;
+
+	uint32 _flags;
+
+	uint32  _firstFramePos; ///< Position of the first frame's data within the stream.
+	uint32 *_framePos;      ///< Positions of all frames.
+	Coord  *_frameCoords;   ///< Coordinates of all frames.
+
+	// Buffer for raw frame data
+	byte  *_frameData;
+	uint32 _frameDataSize;
+	uint32 _frameDataLen;
+
+	// Buffer for processed frame data
 	byte  *_videoBuffer;
 	uint32 _videoBufferSize;
+
+	// Sound properties
+	uint16 _soundFlags;
+	 int16 _soundFreq;
+	 int16 _soundSliceSize;
+	 int16 _soundSlicesCount;
+
+	bool loadCoordinates();
+	bool loadFrameTableOffsets(uint32 &framePosPos, uint32 &frameCoordsPos);
+	bool assessVideoProperties();
+	bool assessAudioProperties();
+	bool loadFrameTables(uint32 framePosPos, uint32 frameCoordsPos);
 
 	void processFrame();
 	void renderFrame();

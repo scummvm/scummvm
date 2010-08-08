@@ -27,6 +27,8 @@
 
 #ifdef GRAPHICS_VIDEO_COKTELDECODER_H
 
+#include "sound/audiostream.h"
+
 namespace Graphics {
 
 CoktelDecoder::State::State() : flags(0), speechId(0) {
@@ -34,8 +36,10 @@ CoktelDecoder::State::State() : flags(0), speechId(0) {
 
 
 CoktelDecoder::CoktelDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType) :
-	_mixer(&mixer), _soundType(soundType), _width(0), _height(0), _x(0), _y(0), _frameCount(0),
-	_paletteDirty(false), _ownSurface(true), _frameRate(12) {
+	_mixer(&mixer), _soundType(soundType), _width(0), _height(0), _x(0), _y(0),
+	_defaultX(0), _defaultY(0), _features(0), _frameCount(0), _paletteDirty(false),
+	_ownSurface(true), _frameRate(12), _hasSound(false), _soundEnabled(false),
+	_soundStage(kSoundNone), _audioStream(0) {
 
 	memset(_palette, 0, 768);
 }
@@ -97,21 +101,85 @@ void CoktelDecoder::setXY(uint16 x, uint16 y) {
 	_y = y;
 }
 
+void CoktelDecoder::setXY() {
+	setXY(_defaultX, _defaultY);
+}
+
 void CoktelDecoder::setFrameRate(Common::Rational frameRate) {
 	_frameRate = frameRate;
+}
+
+uint16 CoktelDecoder::getDefaultX() const {
+	return _defaultX;
+}
+
+uint16 CoktelDecoder::getDefaultY() const {
+	return _defaultY;
 }
 
 const Common::List<Common::Rect> &CoktelDecoder::getDirtyRects() const {
 	return _dirtyRects;
 }
 
+bool CoktelDecoder::hasSound() const {
+	return _hasSound;
+}
+
+bool CoktelDecoder::isSoundEnabled() const {
+	return _soundEnabled;
+}
+
+bool CoktelDecoder::isSoundPlaying() const {
+	return _audioStream && _mixer->isSoundHandleActive(_audioHandle);
+}
+
+void CoktelDecoder::enableSound() {
+	if (!hasSound() || isSoundEnabled())
+		return;
+
+	// Sanity check
+	if (_mixer->getOutputRate() == 0)
+		return;
+
+	// Only possible on the first frame
+	if (_curFrame > -1)
+		return;
+
+	_soundEnabled = true;
+}
+
+void CoktelDecoder::disableSound() {
+	if (_audioStream) {
+
+		if (_soundStage == kSoundPlaying) {
+			_audioStream->finish();
+			_mixer->stopHandle(_audioHandle);
+		} else
+			delete _audioStream;
+
+	}
+
+	_soundEnabled = false;
+	_soundStage   = kSoundNone;
+
+	_audioStream  = 0;
+}
+
 void CoktelDecoder::close() {
+	disableSound();
 	freeSurface();
 
 	_x = 0;
 	_y = 0;
 
+	_defaultX = 0;
+	_defaultY = 0;
+
+	_features = 0;
+
 	_frameCount = 0;
+
+	_hasSound = false;
 }
 
 uint16 CoktelDecoder::getWidth() const {
@@ -131,7 +199,7 @@ byte *CoktelDecoder::getPalette() {
 }
 
 bool CoktelDecoder::hasDirtyPalette() const {
-	return _paletteDirty;
+	return (_features & kFeaturesPalette) && _paletteDirty;
 }
 
 Common::Rational CoktelDecoder::getFrameRate() const {
@@ -237,8 +305,6 @@ Surface *PreIMDDecoder::decodeNextFrame() {
 	processFrame();
 	renderFrame();
 
-	_curFrame++;
-
 	if (_curFrame == 0)
 		_startTime = g_system->getMillis();
 
@@ -307,6 +373,8 @@ void PreIMDDecoder::processFrame() {
 	}
 
 	_stream->seek(nextFramePos);
+
+	_curFrame++;
 }
 
 void PreIMDDecoder::renderFrame() {
@@ -340,7 +408,12 @@ PixelFormat PreIMDDecoder::getPixelFormat() const {
 
 
 IMDDecoder::IMDDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType) : CoktelDecoder(mixer, soundType),
-	_stream(0), _videoBuffer(0), _videoBufferSize(0) {
+	_stream(0), _version(0), _stdX(-1), _stdY(-1), _stdWidth(-1), _stdHeight(-1),
+	_flags(0), _firstFramePos(0), _framePos(0), _frameCoords(0),
+	_frameData(0), _frameDataSize(0), _frameDataLen(0),
+	_videoBuffer(0), _videoBufferSize(0),
+	_soundFlags(0), _soundFreq(0), _soundSliceSize(0), _soundSlicesCount(0) {
+
 }
 
 IMDDecoder::~IMDDecoder() {
@@ -370,7 +443,37 @@ bool IMDDecoder::seek(int32 frame, int whence, bool restart) {
 		// Nothing to do
 		return true;
 
-	// TODO
+	// Try every possible way to find a file offset to that frame
+	uint32 framePos = 0;
+	if (frame == -1) {
+
+		framePos = _firstFramePos;
+
+	} else if (frame == 0) {
+
+		framePos = _firstFramePos;
+		_stream->seek(framePos);
+		framePos += _stream->readUint16LE() + 4;
+
+	} else if (_framePos) {
+
+		framePos = _framePos[frame + 1];
+
+	} else if (restart && (_soundStage == kSoundNone)) {
+
+		for (int i = ((frame > _curFrame) ? _curFrame : 0); i <= frame; i++)
+			processFrame();
+
+		return true;
+
+	} else {
+		warning("Imd::seek(): Frame %d is not directly accessible", frame + 1);
+		return false;
+	}
+
+	// Seek
+	_stream->seek(framePos);
+	_curFrame = frame;
 
 	return true;
 }
@@ -380,11 +483,192 @@ bool IMDDecoder::load(Common::SeekableReadStream &stream) {
 
 	_stream = &stream;
 
-	warning("IMDDecoder::load()");
+	uint16 handle;
 
-	// TODO
+	handle   = _stream->readUint16LE();
+	_version = _stream->readByte();
 
-	return false;
+	// Version checking
+	if ((handle != 0) || (_version < 2)) {
+		warning("IMDDecoder::load(): Version incorrect (%d, 0x%X)", handle, _version);
+		close();
+		return false;
+	}
+
+	// Rest header
+	_features      = _stream->readByte();
+	_frameCount    = _stream->readUint16LE();
+	_defaultX      = _stream->readSint16LE();
+	_defaultY      = _stream->readSint16LE();
+	_width         = _stream->readSint16LE();
+	_height        = _stream->readSint16LE();
+	_flags         = _stream->readUint16LE();
+	_firstFramePos = _stream->readUint16LE();
+
+	_x = _defaultX;
+	_y = _defaultY;
+
+	// IMDs always have video
+	_features |= kFeaturesVideo;
+	// IMDs always have palettes
+	_features |= kFeaturesPalette;
+
+	// Palette
+	_stream->read((byte *) _palette, 768);
+
+	_paletteDirty = true;
+
+	if (!loadCoordinates()) {
+		close();
+		return false;
+	}
+
+	uint32 framePosPos, frameCoordsPos;
+	if (!loadFrameTableOffsets(framePosPos, frameCoordsPos)) {
+		close();
+		return false;
+	}
+
+	if (!assessAudioProperties()) {
+		close();
+		return false;
+	}
+
+	if (!assessVideoProperties()) {
+		close();
+		return false;
+	}
+
+	if (!loadFrameTables(framePosPos, frameCoordsPos)) {
+		close();
+		return false;
+	}
+
+	// Seek to the first frame
+	_stream->seek(_firstFramePos);
+
+	return true;
+}
+
+bool IMDDecoder::loadCoordinates() {
+	// Standard coordinates
+	if (_version >= 3) {
+		uint16 count = _stream->readUint16LE();
+		if (count > 1) {
+			warning("IMD: More than one standard coordinate quad found (%d)", count );
+			return false;
+		}
+
+		if (count != 0) {
+			_stdX      = _stream->readSint16LE();
+			_stdY      = _stream->readSint16LE();
+			_stdWidth  = _stream->readSint16LE();
+			_stdHeight = _stream->readSint16LE();
+			_features |= kFeaturesStdCoords;
+		} else
+			_stdX = _stdY = _stdWidth = _stdHeight = -1;
+
+	} else
+		_stdX = _stdY = _stdWidth = _stdHeight = -1;
+
+	return true;
+}
+
+bool IMDDecoder::loadFrameTableOffsets(uint32 &framePosPos, uint32 &frameCoordsPos) {
+	framePosPos    = 0;
+	frameCoordsPos = 0;
+
+	// Frame positions
+	if (_version >= 4) {
+		framePosPos = _stream->readUint32LE();
+		if (framePosPos != 0) {
+			_framePos  = new uint32[_frameCount];
+			_features |= kFeaturesFramePos;
+		}
+	}
+
+	// Frame coordinates
+	if (_features & kFeaturesFrameCoords)
+		frameCoordsPos = _stream->readUint32LE();
+
+	return true;
+}
+
+bool IMDDecoder::assessVideoProperties() {
+	// Sizes of the frame data and extra video buffer
+	if (_features & kFeaturesDataSize) {
+		_frameDataSize = _stream->readUint16LE();
+		if (_frameDataSize == 0) {
+			_frameDataSize   = _stream->readUint32LE();
+			_videoBufferSize = _stream->readUint32LE();
+		} else
+			_videoBufferSize = _stream->readUint16LE();
+	} else {
+		_frameDataSize = _width * _height + 500;
+		if (!(_flags & 0x100) || (_flags & 0x1000))
+			_videoBufferSize = _frameDataSize;
+	}
+
+	// Allocating working memory
+	_frameData = new byte[_frameDataSize + 500];
+	memset(_frameData, 0, _frameDataSize + 500);
+
+	_videoBuffer = new byte[_videoBufferSize + 500];
+	memset(_videoBuffer, 0, _videoBufferSize + 500);
+
+	return true;
+}
+
+bool IMDDecoder::assessAudioProperties() {
+	if (_features & kFeaturesSound) {
+		_soundFreq        = _stream->readSint16LE();
+		_soundSliceSize   = _stream->readSint16LE();
+		_soundSlicesCount = _stream->readSint16LE();
+
+		if (_soundFreq < 0)
+			_soundFreq = -_soundFreq;
+
+		if (_soundSlicesCount < 0)
+			_soundSlicesCount = -_soundSlicesCount - 1;
+
+		if (_soundSlicesCount > 40) {
+			warning("IMDDecoder::assessAudioProperties(): More than 40 sound slices found (%d)", _soundSlicesCount);
+			return false;
+		}
+
+		_frameRate = Common::Rational(_soundFreq) / _soundSliceSize;
+
+		_hasSound   = true;
+		_soundStage = kSoundLoaded;
+
+		_audioStream = Audio::makeQueuingAudioStream(_soundFreq, false);
+	}
+
+	return true;
+}
+
+bool IMDDecoder::loadFrameTables(uint32 framePosPos, uint32 frameCoordsPos) {
+	// Positions table
+	if (_framePos) {
+		_stream->seek(framePosPos);
+		for (uint32 i = 0; i < _frameCount; i++)
+			_framePos[i] = _stream->readUint32LE();
+	}
+
+	// Coordinates table
+	if (_features & kFeaturesFrameCoords) {
+		_stream->seek(frameCoordsPos);
+		_frameCoords = new Coord[_frameCount];
+		assert(_frameCoords);
+		for (uint32 i = 0; i < _frameCount; i++) {
+			_frameCoords[i].left   = _stream->readSint16LE();
+			_frameCoords[i].top    = _stream->readSint16LE();
+			_frameCoords[i].right  = _stream->readSint16LE();
+			_frameCoords[i].bottom = _stream->readSint16LE();
+		}
+	}
+
+	return true;
 }
 
 void IMDDecoder::close() {
@@ -394,12 +678,43 @@ void IMDDecoder::close() {
 
 	delete _stream;
 
+	delete[] _framePos;
+	delete[] _frameCoords;
+
+	delete[] _frameData;
+
 	delete[] _videoBuffer;
 
 	_stream = 0;
 
+	_version = 0;
+
+	_stdX      = -1;
+	_stdY      = -1;
+	_stdWidth  = -1;
+	_stdHeight = -1;
+
+	_flags         = 0;
+
+	_firstFramePos = 0;
+	_framePos      = 0;
+	_frameCoords   = 0;
+
+	_frameData     = 0;
+	_frameDataSize = 0;
+	_frameDataLen  = 0;
+
 	_videoBuffer     = 0;
 	_videoBufferSize = 0;
+
+	_soundFlags       = 0;
+	_soundFreq        = 0;
+	_soundSliceSize   = 0;
+	_soundSlicesCount = 0;
+
+	_hasSound     = false;
+	_soundEnabled = false;
+	_soundStage   = kSoundNone;
 }
 
 bool IMDDecoder::isVideoLoaded() const {
@@ -415,8 +730,6 @@ Surface *IMDDecoder::decodeNextFrame() {
 	processFrame();
 	renderFrame();
 
-	_curFrame++;
-
 	if (_curFrame == 0)
 		_startTime = g_system->getMillis();
 
@@ -424,13 +737,18 @@ Surface *IMDDecoder::decodeNextFrame() {
 }
 
 void IMDDecoder::processFrame() {
+
 	// TODO
+
+	_curFrame++;
 }
 
 void IMDDecoder::renderFrame() {
 	_dirtyRects.clear();
 
 	// TODO
+
+	_dirtyRects.push_back(Common::Rect(_x, _y, _x + _width, _y + _height));
 }
 
 PixelFormat IMDDecoder::getPixelFormat() const {

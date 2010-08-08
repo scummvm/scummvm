@@ -156,9 +156,12 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 			video->decoder->setSurfaceMemory(video->surface->getVidMem(),
 					video->surface->getWidth(), video->surface->getHeight(), 1);
 
-			if (!ownSurf || (ownSurf && screenSize))
-				video->decoder->setXY(properties.x, properties.y);
-			else
+			if (!ownSurf || (ownSurf && screenSize)) {
+				if ((properties.x >= 0) && (properties.y >= 0))
+					video->decoder->setXY(properties.x, properties.y);
+				else
+					video->decoder->setXY();
+			} else
 				video->decoder->setXY(0, 0);
 		}
 
@@ -172,7 +175,8 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 	if (primary)
 		_needBlit = (properties.flags & kFlagUseBackSurfaceContent) && (properties.sprite == Draw::kFrontSurface);
 
-	video->decoder->setFrameRate(_vm->_util->getFrameRate());
+	if (!video->decoder->hasSound())
+		video->decoder->setFrameRate(_vm->_util->getFrameRate());
 
 	WRITE_VAR(7, video->decoder->getFrameCount());
 
