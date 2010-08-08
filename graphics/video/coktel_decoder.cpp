@@ -439,6 +439,13 @@ Common::Rational CoktelDecoder::getFrameRate() const {
 	return _frameRate;
 }
 
+uint32 CoktelDecoder::getTimeToNextFrame() const {
+	if (hasSound())
+		return FixedRateVideoDecoder::getTimeToNextFrame();
+
+	return (Common::Rational(1000) / _frameRate).toInt();
+}
+
 inline void CoktelDecoder::unsignedToSigned(byte *buffer, int length) {
 	while (length-- > 0) *buffer++ ^= 0x80;
 }

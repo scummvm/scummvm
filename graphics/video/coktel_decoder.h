@@ -174,6 +174,8 @@ protected:
 public:
 	// FixedRateVideoDecoder interface
 	Common::Rational getFrameRate() const;
+
+	uint32 getTimeToNextFrame() const;
 };
 
 class PreIMDDecoder : public CoktelDecoder {
