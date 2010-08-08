@@ -34,7 +34,7 @@ CoktelDecoder::State::State() : left(0), top(0), right(0), bottom(0), flags(0), 
 
 
 CoktelDecoder::CoktelDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType) :
-	_mixer(&mixer), _soundType(soundType), _width(0), _height(0), _frameCount(0),
+	_mixer(&mixer), _soundType(soundType), _width(0), _height(0), _x(0), _y(0), _frameCount(0),
 	_paletteDirty(false), _ownSurface(true) {
 
 	memset(_palette, 0, 768);
@@ -92,8 +92,18 @@ void CoktelDecoder::freeSurface() {
 	_ownSurface = true;
 }
 
+void CoktelDecoder::setXY(uint16 x, uint16 y) {
+	_x = x;
+	_y = y;
+}
+
 void CoktelDecoder::close() {
 	freeSurface();
+
+	_x = 0;
+	_y = 0;
+
+	_frameCount = 0;
 }
 
 uint16 CoktelDecoder::getWidth() const {
@@ -289,11 +299,11 @@ void PreIMDDecoder::processFrame() {
 }
 
 void PreIMDDecoder::renderFrame() {
-	uint16 w = MIN<uint16>(_surface.w, _width);
-	uint16 h = MIN<uint16>(_surface.h, _height);
+	uint16 w = CLIP<int32>(_surface.w - _x, 0, _width);
+	uint16 h = CLIP<int32>(_surface.h - _y, 0, _height);
 
 	const byte *src = _videoBuffer;
-	      byte *dst = (byte *) _surface.pixels; // + x/y
+	      byte *dst = (byte *) _surface.pixels + (_y * _surface.pitch) + _x;
 
 	uint32 frameDataSize = _videoBufferSize;
 

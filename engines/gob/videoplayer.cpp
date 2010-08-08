@@ -137,23 +137,29 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 			properties.sprite = -1;
 			video->surface.reset();
 			video->decoder->setSurfaceMemory();
+			video->decoder->setXY(0, 0);
 		} else {
 			video->surface = _vm->_draw->_spritesArray[properties.sprite];
 			video->decoder->setSurfaceMemory(video->surface->getVidMem(),
 					video->surface->getWidth(), video->surface->getHeight(), 1);
+
+			if (!ownSurf || (ownSurf && screenSize))
+				video->decoder->setXY(properties.x, properties.y);
+			else
+				video->decoder->setXY(0, 0);
 		}
 
 	} else {
 		properties.sprite = -1;
 		video->surface.reset();
 		video->decoder->setSurfaceMemory();
+		video->decoder->setXY(0, 0);
 	}
 
 	if (primary)
 		_needBlit = (properties.flags & kFlagUseBackSurfaceContent) && (properties.sprite == Draw::kFrontSurface);
 
 	// video->decoder->setFrameRate(_vm->_util->getFrameRate());
-	// video->decoder->setXY(x, y);
 
 	WRITE_VAR(7, video->decoder->getFrameCount());
 
@@ -306,14 +312,18 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 
 		if (properties.sprite == Draw::kBackSurface) {
 
-			_vm->_draw->invalidateRect(0, 0, video->decoder->getWidth(), video->decoder->getHeight());
+			_vm->_draw->invalidateRect(properties.x, properties.y,
+					properties.x + video->decoder->getWidth(),
+					properties.y + video->decoder->getHeight());
 			_vm->_draw->blitInvalidated();
 
 			// if (!noRetrace)
 				_vm->_video->retrace();
 
 		} else if (properties.sprite == Draw::kFrontSurface) {
-			_vm->_video->dirtyRectsAdd(0, 0, video->decoder->getWidth(), video->decoder->getHeight());
+			_vm->_video->dirtyRectsAdd(properties.x, properties.y,
+					properties.x + video->decoder->getWidth(),
+					properties.y + video->decoder->getHeight());
 
 			// if (!noRetrace)
 				_vm->_video->retrace();

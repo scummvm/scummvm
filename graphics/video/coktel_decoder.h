@@ -69,6 +69,9 @@ public:
 	/** Reset the video memory. */
 	void setSurfaceMemory();
 
+	/** Draw the video starting at this position within the video memory. */
+	void setXY(uint16 x, uint16 y);
+
 	// VideoDecoder interface
 
 	void close();
@@ -87,6 +90,9 @@ protected:
 
 	uint16 _width;
 	uint16 _height;
+
+	uint16 _x;
+	uint16 _y;
 
 	uint32 _frameCount;
 
