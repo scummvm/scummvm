@@ -30,6 +30,7 @@
 #ifdef GRAPHICS_VIDEO_COKTELDECODER_H
 
 #include "sound/audiostream.h"
+#include "sound/decoders/raw.h"
 
 static const uint32 kVideoCodecIndeo3 = MKID_BE('iv32');
 
@@ -1866,11 +1867,11 @@ void VMDDecoder::processFrame() {
 
 				_stream->skip(part.size);
 			} else if (part.flags == 4) {
-				warning("Vmd::processFrame(): TODO: Addy 5 sound type 4 (%d)", part.size);
+				warning("VMDDecoder::processFrame(): TODO: Addy 5 sound type 4 (%d)", part.size);
 				disableSound();
 				_stream->skip(part.size);
 			} else {
-				warning("Vmd::processFrame(): Unknown sound type %d", part.flags);
+				warning("VMDDecoder::processFrame(): Unknown sound type %d", part.flags);
 				_stream->skip(part.size);
 			}
 
@@ -1878,7 +1879,7 @@ void VMDDecoder::processFrame() {
 
 		} else if ((part.type == kPartTypeVideo) && !_hasVideo) {
 
-			warning("Vmd::processFrame(): Header claims there's no video, but video found (%d)", part.size);
+			warning("VMDDecoder::processFrame(): Header claims there's no video, but video found (%d)", part.size);
 			_stream->skip(part.size);
 
 		} else if ((part.type == kPartTypeVideo) && _hasVideo) {
@@ -1928,7 +1929,7 @@ void VMDDecoder::processFrame() {
 
 		} else {
 
-			warning("Vmd::processFrame(): Unknown frame part type %d, size %d (%d of %d)",
+			warning("VMDDecoder::processFrame(): Unknown frame part type %d, size %d (%d of %d)",
 					part.type, part.size, i + 1, _partsPerFrame);
 
 		}
@@ -1957,12 +1958,243 @@ bool VMDDecoder::renderFrame(int16 &left, int16 &top, int16 &right, int16 &botto
 }
 
 void VMDDecoder::emptySoundSlice(uint32 size) {
+	byte *sound = soundEmpty(size);
+
+	if (sound) {
+		uint32 flags = 0;
+		flags |= (_soundBytesPerSample == 2) ? Audio::FLAG_16BITS : 0;
+		flags |= (_soundStereo > 0) ? Audio::FLAG_STEREO : 0;
+
+		_audioStream->queueBuffer(sound, size, DisposeAfterUse::YES, flags);
+	}
 }
 
 void VMDDecoder::filledSoundSlice(uint32 size) {
+	byte *sound = 0;
+	if (_audioFormat == kAudioFormat8bitRaw)
+		sound = sound8bitRaw(size);
+	else if (_audioFormat == kAudioFormat16bitDPCM)
+		sound = sound16bitDPCM(size);
+	else if (_audioFormat == kAudioFormat16bitADPCM)
+		sound = sound16bitADPCM(size);
+
+	if (sound) {
+		uint32 flags = 0;
+		flags |= (_soundBytesPerSample == 2) ? Audio::FLAG_16BITS : 0;
+		flags |= (_soundStereo > 0) ? Audio::FLAG_STEREO : 0;
+
+		_audioStream->queueBuffer(sound, size, DisposeAfterUse::YES, flags);
+	}
 }
 
 void VMDDecoder::filledSoundSlices(uint32 size, uint32 mask) {
+	bool fillInfo[32];
+
+	uint8 max;
+	uint8 n = evaluateMask(mask, fillInfo, max);
+
+	int32 extraSize;
+
+	extraSize = size - n * _soundDataSize;
+
+	if (_soundSlicesCount > 32)
+		extraSize -= (_soundSlicesCount - 32) * _soundDataSize;
+
+	if (n > 0)
+		extraSize /= n;
+
+	for (uint8 i = 0; i < max; i++)
+		if (fillInfo[i])
+			filledSoundSlice(_soundDataSize + extraSize);
+		else
+			emptySoundSlice(_soundDataSize * _soundBytesPerSample);
+
+	if (_soundSlicesCount > 32)
+		filledSoundSlice((_soundSlicesCount - 32) * _soundDataSize + _soundHeaderSize);
+}
+
+uint8 VMDDecoder::evaluateMask(uint32 mask, bool *fillInfo, uint8 &max) {
+	max = MIN<int>(_soundSlicesCount - 1, 31);
+
+	uint8 n = 0;
+	for (int i = 0; i < max; i++) {
+
+		if (!(mask & 1)) {
+			n++;
+			*fillInfo++ = true;
+		} else
+			*fillInfo++ = false;
+
+		mask >>= 1;
+	}
+
+	return n;
+}
+
+byte *VMDDecoder::soundEmpty(uint32 &size) {
+	if (!_audioStream)
+		return 0;
+
+	byte *soundBuf = (byte *)malloc(size);
+	memset(soundBuf, 0, size);
+
+	return soundBuf;
+}
+
+byte *VMDDecoder::sound8bitRaw(uint32 &size) {
+	if (!_audioStream) {
+		_stream->skip(size);
+		return 0;
+	}
+
+	byte *soundBuf = (byte *)malloc(size);
+	_stream->read(soundBuf, size);
+	unsignedToSigned(soundBuf, size);
+
+	return soundBuf;
+}
+
+byte *VMDDecoder::sound16bitDPCM(uint32 &size) {
+	if (!_audioStream) {
+		_stream->skip(size);
+		return 0;
+	}
+
+	int32 init[2];
+
+	init[0] = _stream->readSint16LE();
+	size -= 2;
+
+	if (_soundStereo > 0) {
+		init[1] = _stream->readSint16LE();
+		size -= 2;
+	}
+
+	byte *data  = new byte[size];
+	byte *sound = 0;
+
+	if (_stream->read(data, size) == size)
+		sound = deDPCM(data, size, init);
+
+	delete[] data;
+
+	return sound;
+}
+
+byte *VMDDecoder::sound16bitADPCM(uint32 &size) {
+	if (!_audioStream) {
+		_stream->skip(size);
+		return 0;
+	}
+
+	int32 init = _stream->readSint16LE();
+	size -= 2;
+
+	int32 index = _stream->readByte();
+	size--;
+
+	byte *data  = new byte[size];
+	byte *sound = 0;
+
+	if (_stream->read(data, size) == size)
+		sound = deADPCM(data, size, init, index);
+
+	delete[] data;
+
+	return sound;
+}
+
+byte *VMDDecoder::deDPCM(const byte *data, uint32 &size, int32 init[2]) {
+	if (!data || (size == 0))
+		return 0;
+
+	int channels = (_soundStereo > 0) ? 2 : 1;
+
+	uint32 inSize  = size;
+	uint32 outSize = size + channels;
+
+	int16 *out   = (int16 *)malloc(outSize * 2);
+	byte  *sound = (byte *) out;
+
+	int channel = 0;
+
+	for (int i = 0; i < channels; i++) {
+		*out++        = TO_BE_16(init[channel]);
+
+		channel = (channel + 1) % channels;
+	}
+
+	while (inSize-- > 0) {
+		if (*data & 0x80)
+			init[channel] -= _tableDPCM[*data++ & 0x7F];
+		else
+			init[channel] += _tableDPCM[*data++];
+
+		init[channel] = CLIP<int32>(init[channel], -32768, 32767);
+		*out++        = TO_BE_16(init[channel]);
+
+		channel = (channel + 1) % channels;
+	}
+
+	size = outSize * 2;
+	return sound;
+}
+
+// Yet another IMA ADPCM variant
+byte *VMDDecoder::deADPCM(const byte *data, uint32 &size, int32 init, int32 index) {
+	if (!data || (size == 0))
+		return 0;
+
+	uint32 outSize = size * 2;
+
+	int16 *out   = (int16 *)malloc(outSize * 2);
+	byte  *sound = (byte *) out;
+
+	index = CLIP<int32>(index, 0, 88);
+
+	int32 predictor = _tableADPCM[index];
+
+	uint32 dataByte = 0;
+	bool newByte = true;
+
+	size *= 2;
+	while (size -- > 0) {
+		byte code = 0;
+
+		if (newByte) {
+			dataByte = *data++;
+			code = (dataByte >> 4) & 0xF;
+		} else
+			code = dataByte & 0xF;
+
+		newByte = !newByte;
+
+		index += _tableADPCMStep[code];
+		index  = CLIP<int32>(index, 0, 88);
+
+		int32 value = predictor / 8;
+
+		if (code & 4)
+			value += predictor;
+		if (code & 2)
+			value += predictor / 2;
+		if (code & 1)
+			value += predictor / 4;
+
+		if (code & 8)
+			init -= value;
+		else
+			init += value;
+
+		init = CLIP<int32>(init, -32768, 32767);
+
+		predictor = _tableADPCM[index];
+
+		*out++ = TO_BE_16(init);
+	}
+
+	size = outSize * 2;
+	return sound;
 }
 
 PixelFormat VMDDecoder::getPixelFormat() const {

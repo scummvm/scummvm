@@ -464,10 +464,21 @@ private:
 	bool renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom);
 
 	// Sound
-	void emptySoundSlice(uint32 size);
-	void filledSoundSlice(uint32 size);
+	void emptySoundSlice  (uint32 size);
+	void filledSoundSlice (uint32 size);
 	void filledSoundSlices(uint32 size, uint32 mask);
 
+	uint8 evaluateMask(uint32 mask, bool *fillInfo, uint8 &max);
+
+	// Generating sound slices
+	byte *soundEmpty     (uint32 &size);
+	byte *sound8bitRaw   (uint32 &size);
+	byte *sound16bitDPCM (uint32 &size);
+	byte *sound16bitADPCM(uint32 &size);
+
+	// Sound decompression
+	byte *deDPCM (const byte *data, uint32 &size, int32 init[2]);
+	byte *deADPCM(const byte *data, uint32 &size, int32 init, int32 index);
 };
 
 } // End of namespace Graphics
