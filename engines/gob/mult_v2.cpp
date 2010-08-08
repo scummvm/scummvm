@@ -736,7 +736,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 
 	if (animData.animation < 0) {
 		if ((animObj.videoSlot > 0) &&
-		    (_vm->_vidPlayer->getCurrentFrame(animObj.videoSlot - 1) <
+		    ((_vm->_vidPlayer->getCurrentFrame(animObj.videoSlot - 1) + 1) <
 		      _vm->_vidPlayer->getFrameCount(animObj.videoSlot - 1))) {
 			animData.newCycle = 0;
 			return;

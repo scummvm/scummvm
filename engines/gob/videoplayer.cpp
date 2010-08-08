@@ -230,7 +230,9 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 
 	properties.canceled = false;
 
-	while (properties.startFrame != properties.lastFrame) {
+	while ((properties.startFrame != properties.lastFrame) &&
+	       (properties.startFrame < (int32)(video->decoder->getFrameCount() - 1))) {
+
 		playFrame(slot, properties);
 		if (properties.canceled)
 			break;
