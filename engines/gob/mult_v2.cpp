@@ -1129,6 +1129,8 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 				return;
 			}
 
+	_vm->_vidPlayer->evaluateFlags(props);
+
 	int slot;
 	if ((slot = _vm->_vidPlayer->openVideo(true, imdFile, props)) < 0)
 		return;
@@ -1141,13 +1143,16 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 
 	uint32 baseFrame = startFrame % (props.lastFrame - props.palFrame + 1);
 
+	props.endFrame   = props.lastFrame;
 	props.startFrame = baseFrame + props.palFrame;
 	props.lastFrame  = baseFrame + props.palFrame;
 
+	props.flags &= 0x7F;
+
 	debugC(2, kDebugVideo, "Playing mult video \"%s\" @ %d+%d, frame %d, "
-			"paletteCmd %d (%d - %d), flags %X", imdFile,
+			"paletteCmd %d (%d - %d; %d), flags %X", imdFile,
 			props.x, props.y, props.startFrame,
-			props.palCmd, props.palStart, props.palEnd, props.flags);
+			props.palCmd, props.palStart, props.palEnd, props.endFrame, props.flags);
 
 	_vm->_vidPlayer->play(slot, props);
 }
