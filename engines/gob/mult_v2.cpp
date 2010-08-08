@@ -1100,50 +1100,56 @@ void Mult_v2::animate() {
 
 void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 		int16 startFrame) {
-	int16 x, y;
-	int16 palStart, palEnd;
-	int16 baseFrame, palFrame, lastFrame;
-	uint16 flags;
+
+	VideoPlayer::Properties props;
 
 	if (_vm->_draw->_renderFlags & 0x100) {
-		x = VAR(55);
-		y = VAR(56);
-	} else
-		x = y = -1;
+		props.x = VAR(55);
+		props.y = VAR(56);
+	}
 
 	if (key.imdFile == -1) {
-		_vm->_vidPlayer->primaryClose();
+		_vm->_vidPlayer->closeVideo();
 		return;
 	}
 
-	flags = (key.flags >> 8) & 0xFF;
-	if (flags & 0x20)
-		flags = (flags & 0x9F) | 0x80;
+	props.flags = (key.flags >> 8) & 0xFF;
+	if (props.flags & 0x20)
+		props.flags = (props.flags & 0x9F) | 0x80;
 
-	palStart = key.palStart;
-	palEnd = key.palEnd;
-	palFrame = key.palFrame;
-	lastFrame = key.lastFrame;
+	props.palStart  = key.palStart;
+	props.palEnd    = key.palEnd;
+	props.palFrame  = key.palFrame;
+	props.lastFrame = key.lastFrame;
 
-	if ((palFrame != -1) && (lastFrame != -1))
-		if ((lastFrame - palFrame) < startFrame)
+	if ((props.palFrame != -1) && (props.lastFrame != -1))
+		if ((props.lastFrame - props.palFrame) < props.startFrame)
 			if (!(key.flags & 0x4000)) {
-				_vm->_vidPlayer->primaryClose();
+				_vm->_vidPlayer->closeVideo();
 				return;
 			}
 
-	if (!_vm->_vidPlayer->primaryOpen(imdFile, x, y, flags))
+	int slot;
+	if ((slot = _vm->_vidPlayer->openVideo(true, imdFile, props)) < 0)
 		return;
 
-	if (palFrame == -1)
-		palFrame = 0;
+	if (props.palFrame == -1)
+		props.palFrame = 0;
 
-	if (lastFrame == -1)
-		lastFrame = _vm->_vidPlayer->getFrameCount() - 1;
+	if (props.lastFrame == -1)
+		props.lastFrame = _vm->_vidPlayer->getFrameCount() - 1;
 
-	baseFrame = startFrame % (lastFrame - palFrame + 1);
-	_vm->_vidPlayer->primaryPlay(baseFrame + palFrame, baseFrame + palFrame, 0,
-			flags & 0x7F, palStart, palEnd, palFrame, lastFrame);
+	uint32 baseFrame = startFrame % (props.lastFrame - props.palFrame + 1);
+
+	props.startFrame = baseFrame + props.palFrame;
+	props.lastFrame  = baseFrame + props.palFrame;
+
+	debugC(2, kDebugVideo, "Playing mult video \"%s\" @ %d+%d, frame %d, "
+			"paletteCmd %d (%d - %d), flags %X", imdFile,
+			props.x, props.y, props.startFrame,
+			props.palCmd, props.palStart, props.palEnd, props.flags);
+
+	_vm->_vidPlayer->play(slot, props);
 }
 
 void Mult_v2::advanceObjects(int16 index) {
