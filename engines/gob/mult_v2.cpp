@@ -579,11 +579,11 @@ void Mult_v2::playMultInit() {
 		width = _animWidth;
 		height = _animHeight;
 		_vm->_draw->adjustCoords(0, &width, &height);
-		_vm->_draw->initSpriteSurf(22, width, height, 0);
-		_animSurf = _vm->_draw->_spritesArray[22];
+		_vm->_draw->initSpriteSurf(Draw::kAnimSurface, width, height, 0);
+		_animSurf = _vm->_draw->_spritesArray[Draw::kAnimSurface];
 
-		_vm->_video->drawSprite(*_vm->_draw->_spritesArray[21],
-				*_vm->_draw->_spritesArray[22], 0, 0,
+		_vm->_video->drawSprite(*_vm->_draw->_spritesArray[Draw::kBackSurface],
+				*_vm->_draw->_spritesArray[Draw::kAnimSurface], 0, 0,
 				_vm->_video->_surfWidth, _vm->_video->_surfHeight, 0, 0, 0);
 
 		for (_counter = 0; _counter < _objCount; _counter++)
@@ -633,14 +633,14 @@ void Mult_v2::drawStatics(bool &stop) {
 				READ_LE_UINT16(_multData->execPtr + layer * 2);
 			_vm->_draw->_destSpriteX = 0;
 			_vm->_draw->_destSpriteY = 0;
-			_vm->_draw->_destSurface = 21;
+			_vm->_draw->_destSurface = Draw::kBackSurface;
 			_vm->_draw->_transparency = 0;
 			_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 			_vm->_scenery->_curStatic = -1;
 		}
 
-		_vm->_video->drawSprite(*_vm->_draw->_spritesArray[21],
-				*_vm->_draw->_spritesArray[22], 0, 0,
+		_vm->_video->drawSprite(*_vm->_draw->_spritesArray[Draw::kBackSurface],
+				*_vm->_draw->_spritesArray[Draw::kAnimSurface], 0, 0,
 				_vm->_video->_surfWidth, _vm->_video->_surfHeight, 0, 0, 0);
 	}
 }
@@ -937,8 +937,8 @@ void Mult_v2::animate() {
 		if ((right <= 0) || (bottom <= 0))
 			continue;
 
-		_vm->_draw->_sourceSurface = 22;
-		_vm->_draw->_destSurface = 21;
+		_vm->_draw->_sourceSurface = Draw::kAnimSurface;
+		_vm->_draw->_destSurface = Draw::kBackSurface;
 		_vm->_draw->_spriteLeft = maxleft - _animLeft;
 		_vm->_draw->_spriteTop = maxtop - _animTop;
 		_vm->_draw->_spriteRight = right;

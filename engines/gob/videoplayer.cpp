@@ -38,7 +38,7 @@
 
 namespace Gob {
 
-VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(20),
+VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFrontSurface),
 	x(-1), y(-1), width(-1), height(-1), flags(kFlagFrontSurface),
 	startFrame(-1), lastFrame(-1), breakKey(kShortKeyEscape),
 	palCmd(8), palStart(0), palEnd(255), palFrame(-1), fade(false) {
@@ -418,7 +418,7 @@ bool VideoPlayer::primaryOpen(const char *videoFile, int16 x, int16 y,
 				_vm->_draw->_spritesArray[0] = surf;
 			} else {
 				_backSurf = ((flags & kFlagFrontSurface) == 0);
-				surf = _vm->_draw->_spritesArray[_backSurf ? 21 : 20];
+				surf = _vm->_draw->_spritesArray[_backSurf ? Draw::kBackSurface : Draw::kFrontSurface];
 			}
 
 			/*

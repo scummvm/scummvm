@@ -261,10 +261,10 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 
 	_vm->_draw->_spriteLeft = layerPtr->backResId;
 	if (_vm->_draw->_spriteLeft != -1) {
-		_vm->_draw->_destSpriteX  =  0;
-		_vm->_draw->_destSpriteY  =  0;
-		_vm->_draw->_destSurface  = 21;
-		_vm->_draw->_transparency =  0;
+		_vm->_draw->_destSpriteX  = 0;
+		_vm->_draw->_destSpriteY  = 0;
+		_vm->_draw->_destSurface  = Draw::kBackSurface;
+		_vm->_draw->_transparency = 0;
 		_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 	}
 
@@ -295,7 +295,7 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 
 			_vm->_draw->_sourceSurface =
 			    _staticPictToSprite[scenery * 7 + pictIndex];
-			_vm->_draw->_destSurface   = 21;
+			_vm->_draw->_destSurface   = Draw::kBackSurface;
 			_vm->_draw->_spriteLeft    = left;
 			_vm->_draw->_spriteTop     = top;
 			_vm->_draw->_spriteRight   = right - left + 1;
@@ -392,7 +392,7 @@ void Scenery::updateStatic(int16 orderFrom, byte index, byte layer) {
 
 			_vm->_draw->_sourceSurface =
 			    _staticPictToSprite[index * 7 + pictIndex];
-			_vm->_draw->_destSurface   = 21;
+			_vm->_draw->_destSurface   = Draw::kBackSurface;
 			_vm->_draw->_transparency  = planePtr->transp ? 3 : 0;
 			_vm->_draw->spriteOperation(DRAW_BLITSURF);
 		}
@@ -880,7 +880,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 		if (doDraw) {
 			_vm->_draw->_sourceSurface =
 			    _animPictToSprite[animation * 7 + pictIndex];
-			_vm->_draw->_destSurface   = 21;
+			_vm->_draw->_destSurface   = Draw::kBackSurface;
 
 			_vm->_draw->_spriteLeft   = left;
 			_vm->_draw->_spriteTop    = top;

@@ -146,7 +146,7 @@ void Mult::freeMult() {
 	_orderArray = 0;
 
 	_animSurf.reset();
-	_vm->_draw->freeSprite(22);
+	_vm->_draw->freeSprite(Draw::kAnimSurface);
 }
 
 void Mult::checkFreeMult() {
@@ -238,7 +238,7 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_orderArray = 0;
 
 			_animSurf.reset();
-			_vm->_draw->freeSprite(22);
+			_vm->_draw->freeSprite(Draw::kAnimSurface);
 
 			_animDataAllocated = false;
 		}

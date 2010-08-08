@@ -360,24 +360,24 @@ void Inter_v2::o2_initMult() {
 	if (_vm->_mult->_animSurf &&
 	    ((oldAnimWidth != _vm->_mult->_animWidth) ||
 			 (oldAnimHeight != _vm->_mult->_animHeight))) {
-		_vm->_draw->freeSprite(22);
+		_vm->_draw->freeSprite(Draw::kAnimSurface);
 		_vm->_mult->_animSurf.reset();
 	}
 
 	_vm->_draw->adjustCoords(0,
 			&_vm->_mult->_animWidth, &_vm->_mult->_animHeight);
 	if (!_vm->_mult->_animSurf) {
-		_vm->_draw->initSpriteSurf(22, _vm->_mult->_animWidth,
+		_vm->_draw->initSpriteSurf(Draw::kAnimSurface, _vm->_mult->_animWidth,
 				_vm->_mult->_animHeight, 0);
-		_vm->_mult->_animSurf = _vm->_draw->_spritesArray[22];
+		_vm->_mult->_animSurf = _vm->_draw->_spritesArray[Draw::kAnimSurface];
 		if (_terminate)
 			return;
 	}
 
 	_vm->_draw->adjustCoords(1,
 			&_vm->_mult->_animWidth, &_vm->_mult->_animHeight);
-	_vm->_draw->_sourceSurface = 21;
-	_vm->_draw->_destSurface = 22;
+	_vm->_draw->_sourceSurface = Draw::kBackSurface;
+	_vm->_draw->_destSurface = Draw::kAnimSurface;
 	_vm->_draw->_spriteLeft = _vm->_mult->_animLeft;
 	_vm->_draw->_spriteTop = _vm->_mult->_animTop;
 	_vm->_draw->_spriteRight = _vm->_mult->_animWidth;
@@ -1106,7 +1106,7 @@ bool Inter_v2::o2_printText(OpFuncParams &params) {
 	_vm->_draw->_backColor = _vm->_game->_script->readValExpr();
 	_vm->_draw->_frontColor = _vm->_game->_script->readValExpr();
 	_vm->_draw->_fontIndex = _vm->_game->_script->readValExpr();
-	_vm->_draw->_destSurface = 21;
+	_vm->_draw->_destSurface = Draw::kBackSurface;
 	_vm->_draw->_textToPrint = buf;
 	_vm->_draw->_transparency = 0;
 
