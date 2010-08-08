@@ -34,6 +34,7 @@
 #define GRAPHICS_VIDEO_COKTELDECODER_H
 
 #include "common/list.h"
+#include "common/array.h"
 #include "common/rect.h"
 
 #include "graphics/video/video_decoder.h"
@@ -45,6 +46,8 @@ namespace Audio {
 }
 
 namespace Graphics {
+
+class Codec;
 
 class CoktelDecoder : public FixedRateVideoDecoder {
 public:
@@ -346,11 +349,106 @@ public:
 	PixelFormat getPixelFormat() const;
 
 private:
+	enum PartType {
+		kPartTypeSeparator = 0,
+		kPartTypeAudio     = 1,
+		kPartTypeVideo     = 2,
+		kPartTypeFile      = 3,
+		kPartType4         = 4,
+		kPartTypeSpeech    = 5
+	};
+
+	enum AudioFormat {
+		kAudioFormat8bitRaw    = 0,
+		kAudioFormat16bitDPCM  = 1,
+		kAudioFormat16bitADPCM = 2
+	};
+
+	struct File {
+		Common::String name;
+
+		uint32 offset;
+		uint32 size;
+		uint32 realSize;
+
+		File();
+	};
+
+	struct Part {
+		PartType type;
+		byte     field_1;
+		byte     field_E;
+		uint32   size;
+		int16    left;
+		int16    top;
+		int16    right;
+		int16    bottom;
+		uint16   id;
+		byte     flags;
+
+		Part();
+	};
+
+	struct Frame {
+		uint32 offset;
+		Part  *parts;
+
+		Frame();
+		~Frame();
+	};
+
+	// Tables for the audio decompressors
+	static const uint16 _tableDPCM[128];
+	static const int32  _tableADPCM[];
+	static const int32  _tableADPCMStep[];
+
 	Common::SeekableReadStream *_stream;
+
+	byte   _version;
+	uint32 _flags;
+
+	uint32 _frameInfoOffset;
+	uint16 _partsPerFrame;
+	Frame *_frames;
+
+	Common::Array<File> _files;
+
+	// Sound properties
+	uint16 _soundFlags;
+	int16  _soundFreq;
+	int16  _soundSliceSize;
+	int16  _soundSlicesCount;
+	byte   _soundBytesPerSample;
+	byte   _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
+	uint32 _soundHeaderSize;
+	uint32 _soundDataSize;
+	AudioFormat _audioFormat;
+
+	// Video properties
+	bool   _hasVideo;
+	uint32 _videoCodec;
+	byte   _blitMode;
+	byte   _bytesPerPixel;
+
+	uint32  _firstFramePos; ///< Position of the first frame's data within the stream.
+
+	// Buffer for raw frame data
+	byte  *_frameData;
+	uint32 _frameDataSize;
+	uint32 _frameDataLen;
 
 	// Buffer for processed frame data
 	byte  *_videoBuffer;
 	uint32 _videoBufferSize;
+
+	bool _externalCodec;
+	Codec *_codec;
+
+	// Loading helper functions
+	bool assessVideoProperties();
+	bool assessAudioProperties();
+	bool readFrameTable(int &numFiles);
+	bool readFiles();
 
 	// Frame decoding
 	void processFrame();

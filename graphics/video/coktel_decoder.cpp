@@ -24,10 +24,14 @@
  */
 
 #include "graphics/video/coktel_decoder.h"
+#include "graphics/video/codecs/codec.h"
+#include "graphics/video/codecs/indeo3.h"
 
 #ifdef GRAPHICS_VIDEO_COKTELDECODER_H
 
 #include "sound/audiostream.h"
+
+static const uint32 kVideoCodecIndeo3 = MKID_BE('iv32');
 
 namespace Graphics {
 
@@ -1307,8 +1311,81 @@ PixelFormat IMDDecoder::getPixelFormat() const {
 }
 
 
+VMDDecoder::File::File() {
+	offset   = 0;
+	size     = 0;
+	realSize = 0;
+}
+
+
+VMDDecoder::Part::Part() {
+	type    = kPartTypeSeparator;
+	field_1 = 0;
+	field_E = 0;
+	size    = 0;
+	left    = 0;
+	top     = 0;
+	right   = 0;
+	bottom  = 0;
+	id      = 0;
+	flags   = 0;
+}
+
+
+VMDDecoder::Frame::Frame() {
+	parts  = 0;
+	offset = 0;
+}
+
+VMDDecoder::Frame::~Frame() {
+	delete[] parts;
+}
+
+
+const uint16 VMDDecoder::_tableDPCM[128] = {
+	0x0000, 0x0008, 0x0010, 0x0020, 0x0030, 0x0040, 0x0050, 0x0060, 0x0070, 0x0080,
+	0x0090, 0x00A0, 0x00B0, 0x00C0, 0x00D0, 0x00E0, 0x00F0, 0x0100, 0x0110, 0x0120,
+	0x0130, 0x0140, 0x0150, 0x0160, 0x0170, 0x0180, 0x0190, 0x01A0, 0x01B0, 0x01C0,
+	0x01D0, 0x01E0, 0x01F0, 0x0200, 0x0208, 0x0210, 0x0218, 0x0220, 0x0228, 0x0230,
+	0x0238, 0x0240, 0x0248, 0x0250, 0x0258, 0x0260, 0x0268, 0x0270, 0x0278, 0x0280,
+	0x0288, 0x0290, 0x0298, 0x02A0, 0x02A8, 0x02B0, 0x02B8, 0x02C0, 0x02C8, 0x02D0,
+	0x02D8, 0x02E0, 0x02E8, 0x02F0, 0x02F8, 0x0300, 0x0308, 0x0310, 0x0318, 0x0320,
+	0x0328, 0x0330, 0x0338, 0x0340, 0x0348, 0x0350, 0x0358, 0x0360, 0x0368, 0x0370,
+	0x0378, 0x0380, 0x0388, 0x0390, 0x0398, 0x03A0, 0x03A8, 0x03B0, 0x03B8, 0x03C0,
+	0x03C8, 0x03D0, 0x03D8, 0x03E0, 0x03E8, 0x03F0, 0x03F8, 0x0400, 0x0440, 0x0480,
+	0x04C0, 0x0500, 0x0540, 0x0580, 0x05C0, 0x0600, 0x0640, 0x0680, 0x06C0, 0x0700,
+	0x0740, 0x0780, 0x07C0, 0x0800, 0x0900, 0x0A00, 0x0B00, 0x0C00, 0x0D00, 0x0E00,
+	0x0F00, 0x1000, 0x1400, 0x1800, 0x1C00, 0x2000, 0x3000, 0x4000
+};
+
+const int32 VMDDecoder::_tableADPCM[] = {
+			7,     8,     9,    10,    11,    12,    13,    14,
+		 16,    17,    19,    21,    23,    25,    28,    31,
+		 34,    37,    41,    45,    50,    55,    60,    66,
+		 73,    80,    88,    97,   107,   118,   130,   143,
+		157,   173,   190,   209,   230,   253,   279,   307,
+		337,   371,   408,   449,   494,   544,   598,   658,
+		724,   796,   876,   963,  1060,  1166,  1282,  1411,
+	 1552,  1707,  1878,  2066,  2272,  2499,  2749,  3024,
+	 3327,  3660,  4026,  4428,  4871,  5358,  5894,  6484,
+	 7132,  7845,  8630,  9493, 10442, 11487, 12635, 13899,
+	15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794,
+	32767,     0
+};
+
+const int32 VMDDecoder::_tableADPCMStep[] = {
+	-1, -1, -1, -1, 2,  4,  6,  8,
+	-1, -1, -1, -1, 2,  4,  6,  8
+};
+
 VMDDecoder::VMDDecoder(Audio::Mixer &mixer, Audio::Mixer::SoundType soundType) : CoktelDecoder(mixer, soundType),
-	_stream(0), _videoBuffer(0), _videoBufferSize(0) {
+	_stream(0), _version(0), _flags(0), _frameInfoOffset(0), _partsPerFrame(0), _frames(0),
+	_soundFlags(0), _soundFreq(0), _soundSliceSize(0), _soundSlicesCount(0),
+	_soundBytesPerSample(0), _soundStereo(0), _soundHeaderSize(0), _soundDataSize(0),
+	_audioFormat(kAudioFormat8bitRaw), _hasVideo(false), _videoCodec(0),
+	_blitMode(0), _bytesPerPixel(0), _firstFramePos(0),
+	_frameData(0), _frameDataSize(0), _frameDataLen(0),
+	_videoBuffer(0), _videoBufferSize(0), _externalCodec(false), _codec(0) {
 
 }
 
@@ -1336,9 +1413,320 @@ bool VMDDecoder::load(Common::SeekableReadStream &stream) {
 
 	_stream->seek(0);
 
-	warning("TODO: VMDDecoder::load()");
+	uint16 headerLength;
+	uint16 handle;
 
-	return false;
+	headerLength = _stream->readUint16LE();
+	handle       = _stream->readUint16LE();
+	_version     = _stream->readUint16LE();
+
+	// Version checking
+	if (headerLength == 50) {
+		// Newer version, used in Addy 5 upwards
+		warning("VMDDecoder::load(): TODO: Addy 5 videos");
+	} else if (headerLength == 814) {
+		// Old version
+		_features |= kFeaturesPalette;
+	} else {
+		warning("VMDDecoder::load(): Version incorrect (%d, %d, %d)", headerLength, handle, _version);
+		close();
+		return false;
+	}
+
+	_frameCount = _stream->readUint16LE();
+
+	_defaultX = _stream->readSint16LE();
+	_defaultY = _stream->readSint16LE();
+	_width    = _stream->readSint16LE();
+	_height   = _stream->readSint16LE();
+
+	_x = _defaultX;
+	_y = _defaultY;
+
+	if ((_width != 0) && (_height != 0)) {
+
+		_hasVideo = true;
+		_features |= kFeaturesVideo;
+
+	} else
+		_hasVideo = false;
+
+	_bytesPerPixel = 1;
+	if (_version & 4)
+		_bytesPerPixel = handle + 1;
+
+	if (_bytesPerPixel != 1) {
+		warning("TODO: _bytesPerPixel = %d", _bytesPerPixel);
+		close();
+		return false;
+	}
+
+	if (_bytesPerPixel > 3) {
+		warning("VMDDecoder::load(): Requested %d bytes per pixel (%d, %d, %d)",
+				_bytesPerPixel, headerLength, handle, _version);
+		close();
+		return false;
+	}
+
+	_flags = _stream->readUint16LE();
+
+	_partsPerFrame = _stream->readUint16LE();
+	_firstFramePos = _stream->readUint32LE();
+
+	_videoCodec = _stream->readUint32BE();
+
+	if (_features & kFeaturesPalette)
+		_stream->read((byte *)_palette, 768);
+
+	_frameDataSize   = _stream->readUint32LE();
+	_videoBufferSize = _stream->readUint32LE();
+
+	if (_hasVideo) {
+		if (!assessVideoProperties()) {
+			close();
+			return false;
+		}
+	}
+
+	_soundFreq        = _stream->readSint16LE();
+	_soundSliceSize   = _stream->readSint16LE();
+	_soundSlicesCount = _stream->readSint16LE();
+	_soundFlags       = _stream->readUint16LE();
+
+	_hasSound = (_soundFreq != 0);
+
+	if (_hasSound) {
+		if (!assessAudioProperties()) {
+			close();
+			return false;
+		}
+	} else
+		_frameRate = 12;
+
+	_frameInfoOffset = _stream->readUint32LE();
+
+	int numFiles;
+	if (!readFrameTable(numFiles)) {
+		close();
+		return false;
+	}
+
+	_stream->seek(_firstFramePos);
+
+	if (numFiles == 0)
+		return true;
+
+	_files.reserve(numFiles);
+	if (!readFiles()) {
+		close();
+		return false;
+	}
+
+	_stream->seek(_firstFramePos);
+	return true;
+}
+
+bool VMDDecoder::assessVideoProperties() {
+	if ((_version & 2) && !(_version & 8)) {
+		_externalCodec = true;
+		_frameDataSize = _videoBufferSize = 0;
+	} else
+		_externalCodec = false;
+
+	if (_externalCodec) {
+		if (_videoCodec == kVideoCodecIndeo3) {
+#ifdef USE_INDEO3
+			_codec = new Indeo3Decoder(_width, _height);
+#else
+			warning("VMDDecoder::assessVideoProperties(): Indeo3 decoder not compiled in");
+#endif
+		} else {
+			char *fourcc = (char *) &_videoCodec;
+
+			warning("VMDDecoder::assessVideoProperties(): Unknow video codec FourCC \'%c%c%c%c\'",
+					fourcc[3], fourcc[2], fourcc[1], fourcc[0]);
+			return false;
+		}
+	}
+
+	if (_externalCodec)
+		_blitMode = 0;
+	else if (_bytesPerPixel == 1)
+		_blitMode = 0;
+	else if ((_bytesPerPixel == 2) || (_bytesPerPixel == 3)) {
+		int n = (_flags & 0x80) ? 2 : 3;
+
+		_blitMode      = n - 1;
+		_bytesPerPixel = n;
+	}
+
+	if (_hasVideo) {
+		if ((_frameDataSize == 0) || (_frameDataSize > 1048576))
+			_frameDataSize = _width * _height + 1000;
+		if ((_videoBufferSize == 0) || (_videoBufferSize > 1048576))
+			_videoBufferSize = _frameDataSize;
+
+		_frameData = new byte[_frameDataSize];
+		memset(_frameData, 0, _frameDataSize);
+
+		_videoBuffer = new byte[_videoBufferSize];
+		memset(_videoBuffer, 0, _videoBufferSize);
+	}
+
+	return true;
+}
+
+bool VMDDecoder::assessAudioProperties() {
+	bool supportedFormat = true;
+
+	_features |= kFeaturesSound;
+
+	_soundStereo = (_soundFlags & 0x8000) ? 1 : ((_soundFlags & 0x200) ? 2 : 0);
+
+	if (_soundSliceSize < 0) {
+		_soundBytesPerSample = 2;
+		_soundSliceSize      = -_soundSliceSize;
+
+		if (_soundFlags & 0x10) {
+			_audioFormat     = kAudioFormat16bitADPCM;
+			_soundHeaderSize = 3;
+			_soundDataSize   = _soundSliceSize >> 1;
+
+			if (_soundStereo > 0)
+				supportedFormat = false;
+
+		} else {
+			_audioFormat     = kAudioFormat16bitDPCM;
+			_soundHeaderSize = 1;
+			_soundDataSize   = _soundSliceSize;
+
+			if (_soundStereo == 1) {
+				supportedFormat = false;
+			} else if (_soundStereo == 2) {
+				_soundDataSize = 2 * _soundDataSize + 2;
+				_soundHeaderSize = 4;
+			}
+
+		}
+	} else {
+		_soundBytesPerSample = 1;
+		_audioFormat         = kAudioFormat8bitRaw;
+		_soundHeaderSize     = 0;
+		_soundDataSize       = _soundSliceSize;
+
+		if (_soundStereo > 0)
+			supportedFormat = false;
+	}
+
+	if (!supportedFormat) {
+		warning("VMDDecoder::assessAudioProperties(): Unsupported audio format: %d bits, encoding %d, stereo %d",
+				_soundBytesPerSample * 8, _audioFormat, _soundStereo);
+		return false;
+	}
+
+	_frameRate = Common::Rational(_soundFreq) / _soundSliceSize;
+
+	_hasSound     = true;
+	_soundEnabled = true;
+	_soundStage   = kSoundLoaded;
+
+	_audioStream = Audio::makeQueuingAudioStream(_soundFreq, _soundStereo != 0);
+
+	return true;
+}
+
+bool VMDDecoder::readFrameTable(int &numFiles) {
+	numFiles = 0;
+
+	_stream->seek(_frameInfoOffset);
+	_frames = new Frame[_frameCount];
+	for (uint16 i = 0; i < _frameCount; i++) {
+		_frames[i].parts = new Part[_partsPerFrame];
+		_stream->skip(2); // Unknown
+		_frames[i].offset = _stream->readUint32LE();
+	}
+
+	for (uint16 i = 0; i < _frameCount; i++) {
+		bool separator = false;
+
+		for (uint16 j = 0; j < _partsPerFrame; j++) {
+
+			_frames[i].parts[j].type    = (PartType) _stream->readByte();
+			_frames[i].parts[j].field_1 = _stream->readByte();
+			_frames[i].parts[j].size    = _stream->readUint32LE();
+
+			if (_frames[i].parts[j].type == kPartTypeAudio) {
+
+				_frames[i].parts[j].flags = _stream->readByte();
+				_stream->skip(9); // Unknown
+
+			} else if (_frames[i].parts[j].type == kPartTypeVideo) {
+
+				_frames[i].parts[j].left    = _stream->readUint16LE();
+				_frames[i].parts[j].top     = _stream->readUint16LE();
+				_frames[i].parts[j].right   = _stream->readUint16LE();
+				_frames[i].parts[j].bottom  = _stream->readUint16LE();
+				_frames[i].parts[j].field_E = _stream->readByte();
+				_frames[i].parts[j].flags   = _stream->readByte();
+
+			} else if (_frames[i].parts[j].type == kPartTypeSpeech) {
+				_frames[i].parts[j].id = _stream->readUint16LE();
+				// Speech text file name
+				_stream->skip(8);
+			} else if (_frames[i].parts[j].type == kPartTypeFile) {
+				if (!separator)
+					numFiles++;
+				_stream->skip(10);
+			} else if (_frames[i].parts[j].type == kPartTypeSeparator) {
+				separator = true;
+				_stream->skip(10);
+			} else {
+				// Unknow type
+				_stream->skip(10);
+			}
+
+		}
+	}
+
+	return true;
+}
+
+bool VMDDecoder::readFiles() {
+	uint32 ssize = _stream->size();
+	for (uint16 i = 0; i < _frameCount; i++) {
+		_stream->seek(_frames[i].offset);
+
+		for (uint16 j = 0; j < _partsPerFrame; j++) {
+			if (_frames[i].parts[j].type == kPartTypeSeparator)
+				break;
+
+			if (_frames[i].parts[j].type == kPartTypeFile) {
+				File file;;
+
+				file.offset   = _stream->pos() + 20;
+				file.size     = _frames[i].parts[j].size;
+				file.realSize = _stream->readUint32LE();
+
+				char name[16];
+
+				_stream->read(name, 16);
+				name[15] = '\0';
+
+				file.name = name;
+
+				_stream->skip(_frames[i].parts[j].size - 20);
+
+				if ((((uint32) file.realSize) >= ssize) || (file.name[0] == 0))
+					continue;
+
+				_files.push_back(file);
+
+			} else
+				_stream->skip(_frames[i].parts[j].size);
+		}
+	}
+
+	return true;
 }
 
 void VMDDecoder::close() {
@@ -1348,12 +1736,51 @@ void VMDDecoder::close() {
 
 	delete _stream;
 
+	delete[] _frames;
+
+	delete[] _frameData;
 	delete[] _videoBuffer;
+
+	delete _codec;
+
+	_files.clear();
+
 
 	_stream = 0;
 
+	_version = 0;
+	_flags   = 0;
+
+	_frameInfoOffset = 0;
+	_partsPerFrame   = 0;
+	_frames          = 0;
+
+	_soundFlags          = 0;
+	_soundFreq           = 0;
+	_soundSliceSize      = 0;
+	_soundSlicesCount    = 0;
+	_soundBytesPerSample = 0;
+	_soundStereo         = 0;
+	_soundHeaderSize     = 0;
+	_soundDataSize       = 0;
+	_audioFormat         = kAudioFormat8bitRaw;
+
+	_hasVideo      = false;
+	_videoCodec    = 0;
+	_blitMode      = 0;
+	_bytesPerPixel = 0;
+
+	_firstFramePos = 0;
+
+	_frameData     = 0;
+	_frameDataSize = 0;
+	_frameDataLen  = 0;
+
 	_videoBuffer     = 0;
 	_videoBufferSize = 0;
+
+	_externalCodec = false;
+	_codec         = 0;
 }
 
 bool VMDDecoder::isVideoLoaded() const {
