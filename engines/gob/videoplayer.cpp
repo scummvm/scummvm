@@ -278,7 +278,7 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 				copyPalette(*video, properties.palStart, properties.palEnd);
 		}
 
-		if (modifiedPal && (properties.palCmd == 8) && (properties.sprite != Draw::kBackSurface))
+		if (modifiedPal && (properties.palCmd == 8) && (video->surface != _vm->_draw->_backSurface))
 			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 
 		if (_needBlit)
@@ -305,7 +305,7 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 			_vm->_draw->forceBlit(true);
 
 		if (modifiedPal && (properties.palCmd == 16)) {
-			if (properties.sprite == Draw::kBackSurface)
+			if (video->surface == _vm->_draw->_backSurface)
 				_vm->_draw->forceBlit();
 			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
 			_vm->_draw->_noInvalidated = true;
@@ -315,7 +315,7 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 		if (video->decoder->hasPalette() && (properties.palCmd > 1)) {
 			copyPalette(*video, properties.palStart, properties.palEnd);
 
-			if (properties.sprite != Draw::kBackSurface)
+			if (video->surface != _vm->_draw->_backSurface)
 				_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 			else
 				_vm->_draw->_applyPal = true;
@@ -323,10 +323,10 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 
 		const Common::List<Common::Rect> &dirtyRects = video->decoder->getDirtyRects();
 
-		if (modifiedPal && (properties.palCmd == 8) && (properties.sprite == Draw::kBackSurface))
+		if (modifiedPal && (properties.palCmd == 8) && (video->surface == _vm->_draw->_backSurface))
 			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 
-		if (properties.sprite == Draw::kBackSurface) {
+		if (video->surface == _vm->_draw->_backSurface) {
 
 			for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect)
 				_vm->_draw->invalidateRect(rect->left, rect->top, rect->right - 1, rect->bottom - 1);
@@ -335,7 +335,7 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 			// if (!noRetrace)
 				_vm->_video->retrace();
 
-		} else if (properties.sprite == Draw::kFrontSurface) {
+		} else if (video->surface == _vm->_draw->_frontSurface) {
 			for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect)
 				_vm->_video->dirtyRectsAdd(rect->left, rect->top, rect->right - 1, rect->bottom - 1);
 
