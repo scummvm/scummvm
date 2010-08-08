@@ -62,7 +62,7 @@ public:
 			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~CoktelDecoder();
 
-	virtual bool seek(uint32 frame, int whence = SEEK_SET, bool restart = false) = 0;
+	virtual bool seek(int32 frame, int whence = SEEK_SET, bool restart = false) = 0;
 
 	// VideoDecoder interface
 
@@ -98,7 +98,7 @@ public:
 			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~PreIMDDecoder();
 
-	bool seek(uint32 frame, int whence = SEEK_SET, bool restart = false);
+	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
 
 	// VideoDecoder interface
 
@@ -110,6 +110,17 @@ public:
 	Surface *decodeNextFrame();
 
 	PixelFormat getPixelFormat() const;
+
+private:
+	Common::SeekableReadStream *_stream;
+
+	byte  *_videoBuffer;
+	uint32 _videoBufferSize;
+
+	Surface _surface;
+
+	void processFrame();
+	void renderFrame();
 };
 
 } // End of namespace Graphics
