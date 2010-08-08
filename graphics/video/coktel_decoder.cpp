@@ -29,7 +29,7 @@
 
 namespace Graphics {
 
-CoktelDecoder::State::State() : left(0), top(0), right(0), bottom(0), flags(0), speechId(0) {
+CoktelDecoder::State::State() : flags(0), speechId(0) {
 }
 
 
@@ -95,6 +95,10 @@ void CoktelDecoder::freeSurface() {
 void CoktelDecoder::setXY(uint16 x, uint16 y) {
 	_x = x;
 	_y = y;
+}
+
+const Common::List<Common::Rect> &CoktelDecoder::getDirtyRects() const {
+	return _dirtyRects;
 }
 
 void CoktelDecoder::close() {
@@ -299,6 +303,8 @@ void PreIMDDecoder::processFrame() {
 }
 
 void PreIMDDecoder::renderFrame() {
+	_dirtyRects.clear();
+
 	uint16 w = CLIP<int32>(_surface.w - _x, 0, _width);
 	uint16 h = CLIP<int32>(_surface.h - _y, 0, _height);
 
@@ -317,6 +323,8 @@ void PreIMDDecoder::renderFrame() {
 
 		frameDataSize -= n;
 	}
+
+	_dirtyRects.push_back(Common::Rect(_x, _y, _x + _width, _y + _height));
 }
 
 PixelFormat PreIMDDecoder::getPixelFormat() const {

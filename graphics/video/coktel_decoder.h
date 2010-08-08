@@ -33,6 +33,9 @@
 #ifndef GRAPHICS_VIDEO_COKTELDECODER_H
 #define GRAPHICS_VIDEO_COKTELDECODER_H
 
+#include "common/list.h"
+#include "common/rect.h"
+
 #include "graphics/video/video_decoder.h"
 
 #include "sound/mixer.h"
@@ -42,14 +45,6 @@ namespace Graphics {
 class CoktelDecoder : public FixedRateVideoDecoder {
 public:
 	struct State {
-		/** Left-most value of the updated rectangle. */
-		int16 left;
-		/** Top-most value of the updated rectangle. */
-		int16 top;
-		/** Right-most value of the updated rectangle. */
-		int16 right;
-		/** Bottom-most value of the updated rectangle. */
-		int16 bottom;
 		/** Set accordingly to what was done. */
 		uint32 flags;
 		/** The id of the spoken words. */
@@ -71,6 +66,9 @@ public:
 
 	/** Draw the video starting at this position within the video memory. */
 	void setXY(uint16 x, uint16 y);
+
+	/** Return a list of rectangles that changed in the last frame. */
+	const Common::List<Common::Rect> &getDirtyRects() const;
 
 	// VideoDecoder interface
 
@@ -101,6 +99,8 @@ protected:
 
 	bool    _ownSurface;
 	Surface _surface;
+
+	Common::List<Common::Rect> _dirtyRects;
 
 	Common::Rational _frameRate;
 

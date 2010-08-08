@@ -226,6 +226,7 @@ void DemoPlayer::playVideoDoubled() {
 		for (uint i = 0; i < _vm->_vidPlayer->getFrameCount(); i++) {
 			// _vm->_vidPlayer->playFrame(i);
 
+			/*
 			Graphics::CoktelDecoder::State state;// = _vm->_vidPlayer->getState();
 
 			int16 w = state.right - state.left + 1;
@@ -237,6 +238,7 @@ void DemoPlayer::playVideoDoubled() {
 					state.left, state.top, state.right, state.bottom, state.left, state.top, 0);
 			_vm->_draw->dirtiedRect(_vm->_draw->_frontSurface,
 					state.left * 2, state.top * 2, wD, hD);
+			*/
 			_vm->_video->retrace();
 
 			_vm->_util->processInput();

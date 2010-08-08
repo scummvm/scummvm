@@ -307,23 +307,23 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 		}
 		*/
 
+		const Common::List<Common::Rect> &dirtyRects = video->decoder->getDirtyRects();
+
 		if (modifiedPal && (properties.palCmd == 8) && (properties.sprite == Draw::kBackSurface))
 			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 
 		if (properties.sprite == Draw::kBackSurface) {
 
-			_vm->_draw->invalidateRect(properties.x, properties.y,
-					properties.x + video->decoder->getWidth(),
-					properties.y + video->decoder->getHeight());
+			for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect)
+				_vm->_draw->invalidateRect(rect->left, rect->top, rect->right - 1, rect->bottom - 1);
 			_vm->_draw->blitInvalidated();
 
 			// if (!noRetrace)
 				_vm->_video->retrace();
 
 		} else if (properties.sprite == Draw::kFrontSurface) {
-			_vm->_video->dirtyRectsAdd(properties.x, properties.y,
-					properties.x + video->decoder->getWidth(),
-					properties.y + video->decoder->getHeight());
+			for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect)
+				_vm->_video->dirtyRectsAdd(rect->left, rect->top, rect->right - 1, rect->bottom - 1);
 
 			// if (!noRetrace)
 				_vm->_video->retrace();
