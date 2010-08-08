@@ -93,6 +93,7 @@ public:
 	void enableSound();
 	void disableSound();
 
+
 	// VideoDecoder interface
 
 	void close();
@@ -104,6 +105,11 @@ public:
 
 	byte *getPalette();
 	bool  hasDirtyPalette() const;
+
+
+	// FixedRateVideoDecoder interface
+
+	uint32 getTimeToNextFrame() const;
 
 protected:
 	enum SoundStage {
@@ -171,11 +177,10 @@ protected:
 
 	inline void unsignedToSigned(byte *buffer, int length);
 
-public:
-	// FixedRateVideoDecoder interface
-	Common::Rational getFrameRate() const;
 
-	uint32 getTimeToNextFrame() const;
+	// FixedRateVideoDecoder interface
+
+	Common::Rational getFrameRate() const;
 };
 
 class PreIMDDecoder : public CoktelDecoder {
@@ -185,6 +190,7 @@ public:
 	~PreIMDDecoder();
 
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
+
 
 	// VideoDecoder interface
 
@@ -216,6 +222,7 @@ public:
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
 
 	void setXY(uint16 x, uint16 y);
+
 
 	// VideoDecoder interface
 
