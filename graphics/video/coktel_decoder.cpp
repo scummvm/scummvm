@@ -1679,10 +1679,8 @@ bool VMDDecoder::assessVideoProperties() {
 			warning("VMDDecoder::assessVideoProperties(): Indeo3 decoder not compiled in");
 #endif
 		} else {
-			char *fourcc = (char *) &_videoCodec;
-
-			warning("VMDDecoder::assessVideoProperties(): Unknown video codec FourCC \'%c%c%c%c\'",
-					fourcc[3], fourcc[2], fourcc[1], fourcc[0]);
+			warning("VMDDecoder::assessVideoProperties(): Unknown video codec FourCC \"%s\"",
+					tag2str(_videoCodec));
 			return false;
 		}
 	}
