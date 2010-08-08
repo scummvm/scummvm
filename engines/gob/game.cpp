@@ -299,7 +299,7 @@ void Game::playTot(int16 skipPlay) {
 				break;
 
 			if (skipPlay == -2) {
-				_vm->_vidPlayer->primaryClose();
+				_vm->_vidPlayer->closeVideo();
 				skipPlay = 0;
 			}
 
