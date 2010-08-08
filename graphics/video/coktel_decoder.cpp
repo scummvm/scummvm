@@ -581,7 +581,7 @@ uint32 CoktelDecoder::getTimeToNextFrame() const {
 	// the middle of a long video.
 
 	if (!hasSound())
-		return (Common::Rational(1000) / _frameRate).toInt();
+		return Common::Rational(1000, _frameRate).toInt();
 
 	// If there /is/ audio, we do need to keep video and audio
 	// in sync, though.
@@ -1039,7 +1039,7 @@ bool IMDDecoder::assessAudioProperties() {
 			return false;
 		}
 
-		_frameRate = Common::Rational(_soundFreq) / _soundSliceSize;
+		_frameRate = Common::Rational(_soundFreq, _soundSliceSize);
 
 		_hasSound     = true;
 		_soundEnabled = true;
@@ -1760,7 +1760,7 @@ bool VMDDecoder::assessAudioProperties() {
 		return false;
 	}
 
-	_frameRate = Common::Rational(_soundFreq) / _soundSliceSize;
+	_frameRate = Common::Rational(_soundFreq, _soundSliceSize);
 
 	_hasSound     = true;
 	_soundEnabled = true;
