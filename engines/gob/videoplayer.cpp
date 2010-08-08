@@ -442,20 +442,20 @@ uint16 VideoPlayer::getDefaultY(int slot) const {
 	return video->decoder->getDefaultY();
 }
 
-bool VideoPlayer::hasExtraData(const Common::String &fileName, int slot) const {
+bool VideoPlayer::hasEmbeddedFile(const Common::String &fileName, int slot) const {
 	const Video *video = getVideoBySlot(slot);
 	if (!video)
 		return false;
 
-	return false; // video->decoder->hasExtraData(fileName);
+	return video->decoder->hasEmbeddedFile(fileName);
 }
 
-Common::MemoryReadStream *VideoPlayer::getExtraData(const Common::String &fileName, int slot) {
+Common::MemoryReadStream *VideoPlayer::getEmbeddedFile(const Common::String &fileName, int slot) {
 	const Video *video = getVideoBySlot(slot);
 	if (!video)
 		return 0;
 
-	return 0; // video->decoder->getExtraData(fileName);
+	return video->decoder->getEmbeddedFile(fileName);
 }
 
 void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 varY,

@@ -169,6 +169,14 @@ void CoktelDecoder::disableSound() {
 	_audioStream  = 0;
 }
 
+bool CoktelDecoder::hasEmbeddedFile(const Common::String &fileName) const {
+	return false;
+}
+
+Common::MemoryReadStream *CoktelDecoder::getEmbeddedFile(const Common::String &fileName) const {
+	return 0;
+}
+
 void CoktelDecoder::close() {
 	disableSound();
 	freeSurface();

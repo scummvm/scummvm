@@ -111,8 +111,8 @@ public:
 	uint16 getDefaultX    (int slot = 0) const;
 	uint16 getDefaultY    (int slot = 0) const;
 
-	bool                      hasExtraData(const Common::String &fileName, int slot = 0) const;
-	Common::MemoryReadStream *getExtraData(const Common::String &fileName, int slot = 0);
+	bool                      hasEmbeddedFile(const Common::String &fileName, int slot = 0) const;
+	Common::MemoryReadStream *getEmbeddedFile(const Common::String &fileName, int slot = 0);
 
 	void writeVideoInfo(const Common::String &file, int16 varX, int16 varY,
 			int16 varFrames, int16 varWidth, int16 varHeight);

@@ -49,7 +49,7 @@ bool TOTFile::load(const Common::String &fileName) {
 
 	if (!_stream)
 		// Trying to open from video
-		_stream = _vm->_vidPlayer->getExtraData(fileName.c_str());
+		_stream = _vm->_vidPlayer->getEmbeddedFile(fileName.c_str());
 
 	if (!_stream)
 		return false;
