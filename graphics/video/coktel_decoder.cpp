@@ -716,6 +716,8 @@ bool IMDDecoder::seek(int32 frame, int whence, bool restart) {
 		for (int i = ((frame > _curFrame) ? _curFrame : 0); i <= frame; i++)
 			processFrame();
 
+		return true;
+
 	} else {
 		warning("IMDDecoder::seek(): Frame %d is not directly accessible", frame + 1);
 		return false;
