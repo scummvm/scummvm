@@ -1681,7 +1681,7 @@ bool VMDDecoder::readFrameTable(int &numFiles) {
 				_frames[i].parts[j].field_E = _stream->readByte();
 				_frames[i].parts[j].flags   = _stream->readByte();
 
-			} else if (_frames[i].parts[j].type == kPartTypeSpeech) {
+			} else if (_frames[i].parts[j].type == kPartTypeSubtitle) {
 				_frames[i].parts[j].id = _stream->readUint16LE();
 				// Speech text file name
 				_stream->skip(8);
@@ -1806,7 +1806,6 @@ Surface *VMDDecoder::decodeNextFrame() {
 	createSurface();
 
 	processFrame();
-	renderFrame();
 
 	if (_curFrame == 0)
 		_startTime = g_system->getMillis();
@@ -1816,10 +1815,154 @@ Surface *VMDDecoder::decodeNextFrame() {
 
 void VMDDecoder::processFrame() {
 	_curFrame++;
+
+	_dirtyRects.clear();
+
+	_paletteDirty = false;
+
+	bool startSound = false;
+
+	for (uint16 i = 0; i < _partsPerFrame; i++) {
+		uint32 pos = _stream->pos();
+
+		Part &part = _frames[_curFrame].parts[i];
+
+		if (part.type == kPartTypeAudio) {
+
+			if (part.flags == 1) {
+				// Next sound slice data
+
+				if (_soundEnabled) {
+					filledSoundSlice(part.size);
+
+					if (_soundStage == kSoundLoaded)
+						startSound = true;
+
+				} else
+					_stream->skip(part.size);
+
+			} else if (part.flags == 2) {
+				// Initial sound data (all slices)
+
+				if (_soundEnabled) {
+					uint32 mask = _stream->readUint32LE();
+					filledSoundSlices(part.size - 4, mask);
+
+					if (_soundStage == kSoundLoaded)
+						startSound = true;
+
+				} else
+					_stream->skip(part.size);
+
+			} else if (part.flags == 3) {
+				// Empty sound slice
+
+				if (_soundEnabled) {
+					emptySoundSlice(_soundDataSize * _soundBytesPerSample);
+
+					if (_soundStage == kSoundLoaded)
+						startSound = true;
+				}
+
+				_stream->skip(part.size);
+			} else if (part.flags == 4) {
+				warning("Vmd::processFrame(): TODO: Addy 5 sound type 4 (%d)", part.size);
+				disableSound();
+				_stream->skip(part.size);
+			} else {
+				warning("Vmd::processFrame(): Unknown sound type %d", part.flags);
+				_stream->skip(part.size);
+			}
+
+			_stream->seek(pos + part.size);
+
+		} else if ((part.type == kPartTypeVideo) && !_hasVideo) {
+
+			warning("Vmd::processFrame(): Header claims there's no video, but video found (%d)", part.size);
+			_stream->skip(part.size);
+
+		} else if ((part.type == kPartTypeVideo) && _hasVideo) {
+
+			uint32 size = part.size;
+
+			// New palette
+			if (part.flags & 2) {
+				uint8 index = _stream->readByte();
+				uint8 count = _stream->readByte();
+
+				_stream->read(_palette + index * 3, (count + 1) * 3);
+				_stream->skip((255 - count) * 3);
+
+				_paletteDirty = true;
+
+				size -= (768 + 2);
+			}
+
+			_stream->read(_frameData, size);
+			_frameDataLen = size;
+
+			int16 l = part.left, t = part.top, r = part.right, b = part.bottom;
+			if (renderFrame(l, t, r, b))
+				_dirtyRects.push_back(Common::Rect(l, t, r + 1, b + 1));
+
+		} else if (part.type == kPartTypeSeparator) {
+
+			// Ignore
+
+		} else if (part.type == kPartTypeFile) {
+
+			// Ignore
+			_stream->skip(part.size);
+
+		} else if (part.type == kPartType4) {
+
+			// Unknown, ignore
+			_stream->skip(part.size);
+
+		} else if (part.type == kPartTypeSubtitle) {
+
+			// TODO:
+			// state.speechId = part.id;
+			// Always triggers when speech starts
+			_stream->skip(part.size);
+
+		} else {
+
+			warning("Vmd::processFrame(): Unknown frame part type %d, size %d (%d of %d)",
+					part.type, part.size, i + 1, _partsPerFrame);
+
+		}
+	}
+
+	if (startSound && _soundEnabled) {
+		if (_hasSound && _audioStream) {
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioHandle, _audioStream);
+			_soundStage = kSoundPlaying;
+		} else
+			_soundStage = kSoundNone;
+	}
+
+	if (((uint32)_curFrame == (_frameCount - 1)) && (_soundStage == 2)) {
+		_audioStream->finish();
+		_mixer->stopHandle(_audioHandle);
+		_audioStream = 0;
+		_soundStage  = kSoundNone;
+	}
 }
 
-// Just a simple blit
-void VMDDecoder::renderFrame() {
+bool VMDDecoder::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
+	// TODO
+
+	return false;
+}
+
+void VMDDecoder::emptySoundSlice(uint32 size) {
+}
+
+void VMDDecoder::filledSoundSlice(uint32 size) {
+}
+
+void VMDDecoder::filledSoundSlices(uint32 size, uint32 mask) {
 }
 
 PixelFormat VMDDecoder::getPixelFormat() const {

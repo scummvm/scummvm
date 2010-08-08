@@ -362,7 +362,7 @@ private:
 		kPartTypeVideo     = 2,
 		kPartTypeFile      = 3,
 		kPartType4         = 4,
-		kPartTypeSpeech    = 5
+		kPartTypeSubtitle  = 5
 	};
 
 	enum AudioFormat {
@@ -459,7 +459,15 @@ private:
 
 	// Frame decoding
 	void processFrame();
-	void renderFrame();
+
+	// Video
+	bool renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom);
+
+	// Sound
+	void emptySoundSlice(uint32 size);
+	void filledSoundSlice(uint32 size);
+	void filledSoundSlices(uint32 size, uint32 mask);
+
 };
 
 } // End of namespace Graphics
