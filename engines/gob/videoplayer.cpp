@@ -81,6 +81,8 @@ void VideoPlayer::evaluateFlags(Properties &properties) {
 		properties.x      = 0;
 	} else if (properties.flags & kFlagScreenSurface) {
 		properties.sprite = 0;
+	} else if (properties.flags & kFlagNoVideo) {
+		properties.sprite = 0;
 	} else {
 		properties.sprite = Draw::kBackSurface;
 	}
@@ -341,16 +343,13 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 				_vm->_draw->invalidateRect(rect->left, rect->top, rect->right - 1, rect->bottom - 1);
 			_vm->_draw->blitInvalidated();
 
-			// if (!noRetrace)
-				_vm->_video->retrace();
-
 		} else if (video->surface == _vm->_draw->_frontSurface) {
 			for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect)
 				_vm->_video->dirtyRectsAdd(rect->left, rect->top, rect->right - 1, rect->bottom - 1);
 
-			// if (!noRetrace)
-				_vm->_video->retrace();
 		}
+
+		_vm->_video->retrace();
 
 		/*
 		// Subtitle
