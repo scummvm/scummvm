@@ -193,6 +193,7 @@ protected:
 	void renderBlockWhole2Y (const byte *src, Common::Rect &rect);
 	void renderBlockSparse  (const byte *src, Common::Rect &rect);
 	void renderBlockSparse2Y(const byte *src, Common::Rect &rect);
+	void renderBlockRLE     (const byte *src, Common::Rect &rect);
 
 	// Sound helper functions
 	inline void unsignedToSigned(byte *buffer, int length);

@@ -476,6 +476,12 @@ void CoktelDecoder::renderBlockSparse2Y(const byte *src, Common::Rect &rect) {
 	}
 }
 
+void CoktelDecoder::renderBlockRLE(const byte *src, Common::Rect &rect) {
+	warning("renderBlockRLE");
+
+	// TODO
+}
+
 Common::Rational CoktelDecoder::getFrameRate() const {
 	return _frameRate;
 }
@@ -1948,9 +1954,61 @@ void VMDDecoder::processFrame() {
 }
 
 bool VMDDecoder::renderFrame(Common::Rect &rect) {
-	// TODO
+	if (!rect.isValidRect())
+		// Invalid rendering area
+		return false;
 
-	return false;
+	// Clip the rendering area to the video's visible area
+	rect.clip(Common::Rect(_x, _y, _x + _width, _y + _height));
+	if (!rect.isValidRect() || rect.isEmpty())
+		// Result is empty => nothing to do
+		return false;
+
+	if (_externalCodec) {
+		// TODO
+		return false;
+	}
+
+	if (_blitMode > 0) {
+		// TODO
+		return false;
+	}
+
+	byte *dataPtr = _frameData;
+
+	uint8 type = *dataPtr++;
+
+	if (type & 0x80) {
+		// Frame data is compressed
+
+		type &= 0x7F;
+
+		if ((type == 2) && (rect.width() == _surface.w) && (_x == 0)) {
+			// Directly uncompress onto the video surface
+			deLZ77((byte *)_surface.pixels + (_y * _surface.pitch), dataPtr);
+			return true;
+		}
+
+		deLZ77(_videoBuffer, dataPtr);
+
+		dataPtr = _videoBuffer;
+	}
+
+	// Evaluate the block type
+	if      (type == 0x01)
+		renderBlockSparse  (dataPtr, rect);
+	else if (type == 0x02)
+		renderBlockWhole   (dataPtr, rect);
+	else if (type == 0x03)
+		renderBlockRLE     (dataPtr, rect);
+	else if (type == 0x42)
+		renderBlockWhole4X (dataPtr, rect);
+	else if ((type & 0x0F) == 0x02)
+		renderBlockWhole2Y (dataPtr, rect);
+	else
+		renderBlockSparse2Y(dataPtr, rect);
+
+	return true;
 }
 
 void VMDDecoder::emptySoundSlice(uint32 size) {
