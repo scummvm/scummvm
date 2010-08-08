@@ -341,6 +341,48 @@ void CoktelDecoder::deLZ77(byte *dest, byte *src) {
 	}
 }
 
+void CoktelDecoder::deRLE(byte *&destPtr, const byte *&srcPtr, int16 destLen, int16 srcLen) {
+	srcPtr++;
+
+	if (srcLen & 1) {
+		byte data = *srcPtr++;
+
+		if (destLen > 0) {
+			*destPtr++ = data;
+			destLen--;
+		}
+	}
+
+	srcLen >>= 1;
+
+	while (srcLen > 0) {
+		uint8 tmp = *srcPtr++;
+		if (tmp & 0x80) { // Verbatim copy
+			tmp &= 0x7F;
+
+			int16 copyCount = MAX<int16>(0, MIN<int16>(destLen, tmp * 2));
+
+			memcpy(destPtr, srcPtr, copyCount);
+
+			srcPtr  += tmp * 2;
+			destPtr += copyCount;
+			destLen -= copyCount;
+		} else { // 2 bytes tmp times
+			for (int i = 0; (i < tmp) && (destLen > 0); i++) {
+				for (int j = 0; j < 2; j++) {
+					if (destLen <= 0)
+						break;
+
+					*destPtr++ = srcPtr[j];
+					destLen--;
+				}
+			}
+			srcPtr += 2;
+		}
+		srcLen -= tmp;
+	}
+}
+
 // A whole, completely filled block
 void CoktelDecoder::renderBlockWhole(const byte *src, Common::Rect &rect) {
 	Common::Rect srcRect = rect;
@@ -477,9 +519,44 @@ void CoktelDecoder::renderBlockSparse2Y(const byte *src, Common::Rect &rect) {
 }
 
 void CoktelDecoder::renderBlockRLE(const byte *src, Common::Rect &rect) {
-	warning("renderBlockRLE");
+	Common::Rect srcRect = rect;
 
-	// TODO
+	rect.clip(_surface.w, _surface.h);
+
+	byte *dst = (byte *)_surface.pixels + (rect.top * _surface.pitch) + rect.left;
+	for (int i = 0; i < rect.height(); i++) {
+		byte *dstRow = dst;
+		int16 pixWritten = 0;
+
+		while (pixWritten < srcRect.width()) {
+			int16 pixCount = *src++;
+
+			if (pixCount & 0x80) {
+				int16 copyCount;
+
+				pixCount  = MIN((pixCount & 0x7F) + 1, srcRect.width() - pixWritten);
+				copyCount = CLIP<int16>(rect.width() - pixWritten, 0, pixCount);
+
+				if (*src != 0xFF) { // Normal copy
+
+					memcpy(dstRow, src, copyCount);
+					dstRow += copyCount;
+					src    += pixCount;
+				} else
+					deRLE(dstRow, src, copyCount, pixCount);
+
+				pixWritten += pixCount;
+			} else { // "Hole"
+				int16 copyCount = CLIP<int16>(rect.width() - pixWritten, 0, pixCount + 1);
+
+				dstRow     += copyCount;
+				pixWritten += pixCount + 1;
+			}
+
+		}
+
+		dst += _surface.pitch;
+	}
 }
 
 Common::Rational CoktelDecoder::getFrameRate() const {

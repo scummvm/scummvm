@@ -186,6 +186,7 @@ protected:
 
 	// Decompression
 	void deLZ77(byte *dest, byte *src);
+	void deRLE(byte *&destPtr, const byte *&srcPtr, int16 destLen, int16 srcLen);
 
 	// Block rendering
 	void renderBlockWhole   (const byte *src, Common::Rect &rect);
