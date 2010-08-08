@@ -330,10 +330,11 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 
 	WRITE_VAR(11, video->decoder->getCurFrame());
 
+	uint32 ignoreBorder = 0;
 	if (_woodruffCohCottWorkaround && (properties.startFrame == 31)) {
 		// WORKAROUND: This frame mistakenly masks Coh Cott, making her vanish
 		// To prevent that, we'll never draw that part
-		// state.left += 50;
+		ignoreBorder = 50;
 	}
 
 	if (surface && primary) {
@@ -367,12 +368,12 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 		if (video->surface == _vm->_draw->_backSurface) {
 
 			for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect)
-				_vm->_draw->invalidateRect(rect->left, rect->top, rect->right - 1, rect->bottom - 1);
+				_vm->_draw->invalidateRect(rect->left + ignoreBorder, rect->top, rect->right - 1, rect->bottom - 1);
 			_vm->_draw->blitInvalidated();
 
 		} else if (video->surface == _vm->_draw->_frontSurface) {
 			for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect)
-				_vm->_video->dirtyRectsAdd(rect->left, rect->top, rect->right - 1, rect->bottom - 1);
+				_vm->_video->dirtyRectsAdd(rect->left + ignoreBorder, rect->top, rect->right - 1, rect->bottom - 1);
 
 		}
 
