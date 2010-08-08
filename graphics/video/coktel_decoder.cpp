@@ -1226,9 +1226,9 @@ void IMDDecoder::renderFrame() {
 
 		type &= 0x7F;
 
-		if ((type == 2) && (rect.width() == _surface.w)) {
+		if ((type == 2) && (rect.width() == _surface.w) && (_x == 0)) {
 			// Directly uncompress onto the video surface
-			deLZ77((byte *)_surface.pixels, dataPtr);
+			deLZ77((byte *)_surface.pixels + (_y * _surface.pitch), dataPtr);
 			return;
 		}
 
