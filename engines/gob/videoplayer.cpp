@@ -39,8 +39,8 @@ namespace Gob {
 
 VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFrontSurface),
 	x(-1), y(-1), width(-1), height(-1), flags(kFlagFrontSurface),
-	startFrame(-1), lastFrame(-1), breakKey(kShortKeyEscape),
-	palCmd(8), palStart(0), palEnd(255), palFrame(-1), fade(false) {
+	startFrame(-1), lastFrame(-1), endFrame(-1), breakKey(kShortKeyEscape),
+	palCmd(8), palStart(0), palEnd(255), palFrame(-1), fade(false), canceled(false) {
 
 }
 
@@ -63,8 +63,7 @@ void VideoPlayer::Video::close() {
 
 const char *VideoPlayer::_extensions[] = { "IMD", "IMD", "VMD", "RMD", "SMD" };
 
-VideoPlayer::VideoPlayer(GobEngine *vm) : _vm(vm),
-	_ownSurf(false), _backSurf(false), _needBlit(false),
+VideoPlayer::VideoPlayer(GobEngine *vm) : _vm(vm), _needBlit(false),
 	_noCursorSwitch(false), _woodruffCohCottWorkaround(false) {
 }
 
@@ -124,7 +123,7 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 	}
 
 	if (!(properties.flags & kFlagNoVideo) && (properties.sprite >= 0)) {
-		bool ownSurf    = (properties.sprite != Draw::kFrontSurface) || (properties.sprite != Draw::kBackSurface);
+		bool ownSurf    = (properties.sprite != Draw::kFrontSurface) && (properties.sprite != Draw::kBackSurface);
 		bool screenSize = properties.flags & kFlagScreenSurface;
 
 		if (ownSurf) {
@@ -135,6 +134,7 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		}
 
 		if (!_vm->_draw->_spritesArray[properties.sprite]) {
+			properties.sprite = -1;
 			video->surface.reset();
 			// video->decoder->setVideoMemory();
 		} else {
@@ -146,6 +146,7 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		}
 
 	} else {
+		properties.sprite = -1;
 		video->surface.reset();
 		// video->decoder->setVideoMemory();
 	}
@@ -170,14 +171,214 @@ bool VideoPlayer::closeVideo(int slot) {
 	return true;
 }
 
-bool VideoPlayer::play(int slot, const Properties &properties) {
+bool VideoPlayer::play(int slot, Properties &properties) {
 	Video *video = getVideoBySlot(slot);
 	if (!video)
 		return false;
 
-	// TODO
+	bool primary = slot == 0;
 
-	return false;
+	// NOTE: For testing (and comfort?) purposes, we enable aborting of all videos)
+	properties.breakKey = kShortKeyEscape;
+
+	if (properties.startFrame < 0)
+		properties.startFrame = video->decoder->getCurFrame() + 1;
+	if (properties.lastFrame  < 0)
+		properties.lastFrame  = video->decoder->getFrameCount();
+	if (properties.endFrame   < 0)
+		properties.endFrame   = properties.lastFrame;
+	if (properties.palFrame   < 0)
+		properties.palFrame   = properties.startFrame;
+
+	properties.startFrame--;
+	properties.lastFrame--;
+	properties.endFrame--;
+	properties.palFrame--;
+
+	properties.palCmd &= 0x3F;
+
+	if (primary) {
+		_vm->_draw->_showCursor = _noCursorSwitch ? 3 : 0;
+
+		if (properties.fade)
+			_vm->_palAnim->fade(0, -2, 0);
+	}
+
+	bool backwards = properties.startFrame > properties.lastFrame;
+
+	properties.canceled = false;
+
+	while ((properties.startFrame != properties.lastFrame) && !properties.canceled) {
+		if (!playFrame(slot, properties))
+			return false;
+
+		properties.startFrame += backwards ? -1 : 1;
+
+		evalBgShading(*video);
+
+		if (primary && properties.fade) {
+			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
+			properties.fade = false;
+		}
+
+		_vm->_util->longDelay(100);
+		/*if (!_noCursorSwitch)
+			video.waitEndFrame();*/
+	}
+
+	evalBgShading(*video);
+
+	return true;
+}
+
+bool VideoPlayer::playFrame(int slot, Properties &properties) {
+	Video *video = getVideoBySlot(slot);
+	if (!video)
+		return false;
+
+	bool primary = slot == 0;
+
+	if (video->decoder->getCurFrame() != properties.startFrame);
+		video->decoder->seek(properties.startFrame + 1);
+
+	bool modifiedPal = false;
+
+	if (primary) {
+		// Pre-decoding palette and blitting, only for primary videos
+
+		if ((properties.startFrame == properties.palFrame) ||
+		    ((properties.startFrame == properties.endFrame) && (properties.palCmd == 8))) {
+
+			modifiedPal = true;
+			_vm->_draw->_applyPal = true;
+
+			if (properties.palCmd >= 4)
+				; // copyPalette(video, palStart, palEnd);
+		}
+
+		if (modifiedPal && (properties.palCmd == 8) && (properties.sprite != Draw::kBackSurface))
+			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+
+		if (_needBlit)
+			_vm->_draw->forceBlit();
+	}
+
+
+	Graphics::Surface *surface = video->decoder->decodeNextFrame();
+	if (!surface)
+		return false;
+
+	WRITE_VAR(11, video->decoder->getCurFrame());
+
+	blitFrame(video->surface, *surface);
+
+	if (_woodruffCohCottWorkaround && (properties.startFrame == 31)) {
+		// WORKAROUND: This frame mistakenly masks Coh Cott, making her vanish
+		// To prevent that, we'll never draw that part
+		// state.left += 50;
+	}
+
+	if (primary) {
+		// Post-decoding palette and blitting, only for primary videos
+
+		if (_needBlit)
+			_vm->_draw->forceBlit(true);
+
+		if (modifiedPal && (properties.palCmd == 16)) {
+			if (properties.sprite == Draw::kBackSurface)
+				_vm->_draw->forceBlit();
+			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
+			_vm->_draw->_noInvalidated = true;
+			_vm->_video->dirtyRectsAll();
+		}
+
+		/*
+		if ((state.flags & Graphics::CoktelDecoder::kStatePalette) && (palCmd > 1)) {
+			copyPalette(video, palStart, palEnd);
+
+			if (!_backSurf)
+				_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+			else
+				_vm->_draw->_applyPal = true;
+		}
+		*/
+
+		if (modifiedPal && (properties.palCmd == 8) && (properties.sprite == Draw::kBackSurface))
+			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+
+		if (properties.sprite == Draw::kBackSurface) {
+
+			_vm->_draw->invalidateRect(0, 0, video->decoder->getWidth(), video->decoder->getHeight());
+			_vm->_draw->blitInvalidated();
+
+			// if (!noRetrace)
+				_vm->_video->retrace();
+
+		} else if (properties.sprite == Draw::kFrontSurface) {
+			_vm->_video->dirtyRectsAdd(0, 0, video->decoder->getWidth(), video->decoder->getHeight());
+
+			// if (!noRetrace)
+				_vm->_video->retrace();
+		}
+
+		/*
+		// Subtitle
+		if (state.flags & Graphics::CoktelDecoder::kStateSpeech)
+			_vm->_draw->printTotText(state.speechId);
+		*/
+
+		if (modifiedPal && ((properties.palCmd == 2) || (properties.palCmd == 4)))
+			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
+	}
+
+	if (primary)
+		checkAbort(*video, properties);
+
+	return true;
+}
+
+void VideoPlayer::checkAbort(Video &video, Properties &properties) {
+	_vm->_util->processInput();
+
+	if (_vm->shouldQuit()) {
+		// video.decoder->disableSound();
+
+		properties.canceled = true;
+		return;
+	}
+
+	if (properties.breakKey != 0) {
+		_vm->_util->getMouseState(&_vm->_global->_inter_mouseX,
+				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons);
+
+		_vm->_inter->storeKey(_vm->_util->checkKey());
+		if (VAR(0) == (unsigned) properties.breakKey) {
+			// video.decoder->disableSound();
+
+			// Seek to the last frame. Some scripts depend on that.
+			video.decoder->seek(properties.endFrame + 1, SEEK_SET, true);
+
+			properties.canceled = true;
+		}
+	}
+}
+
+void VideoPlayer::blitFrame(SurfaceDescPtr dst, const Graphics::Surface &src) {
+	if (!dst || !src.pixels)
+		return;
+
+	uint32 w = MIN<uint32>(dst->getWidth() , src.w);
+	uint32 h = MIN<uint32>(dst->getHeight(), src.h);
+
+	byte       *d = dst->getVidMem();
+	const byte *s = (const byte *) src.pixels;
+
+	while (h-- > 0) {
+		memcpy(d, s, w);
+
+		d += dst->getWidth();
+		s += src.pitch;
+	}
 }
 
 bool VideoPlayer::slotIsOpen(int slot) const {
@@ -280,6 +481,42 @@ Common::MemoryReadStream *VideoPlayer::getExtraData(const Common::String &fileNa
 	return 0; // video->decoder->getExtraData(fileName);
 }
 
+void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 varY,
+		int16 varFrames, int16 varWidth, int16 varHeight) {
+
+	Properties properties;
+
+	int slot = openVideo(false, file, properties);
+	if (slot >= 0) {
+		Video &video = _videoSlots[slot];
+
+		int16 x = -1, y = -1, width = -1, height = -1;
+
+		// x     = video.decoder->getX();
+		// y     = video.decoder->getY();
+		width = video.decoder->getWidth();
+		width = video.decoder->getHeight();
+
+		/*
+		if (VAR_OFFSET(varX) == 0xFFFFFFFF)
+			video.decoder->getFrameCoords(1, x, y, width, height);
+		*/
+
+		WRITE_VAR_OFFSET(varX     , x);
+		WRITE_VAR_OFFSET(varY     , y);
+		WRITE_VAR_OFFSET(varFrames, video.decoder->getFrameCount());
+		WRITE_VAR_OFFSET(varWidth , width);
+		WRITE_VAR_OFFSET(varHeight, height);
+
+	} else {
+		WRITE_VAR_OFFSET(varX     , (uint32) -1);
+		WRITE_VAR_OFFSET(varY     , (uint32) -1);
+		WRITE_VAR_OFFSET(varFrames, (uint32) -1);
+		WRITE_VAR_OFFSET(varWidth , (uint32) -1);
+		WRITE_VAR_OFFSET(varHeight, (uint32) -1);
+	}
+}
+
 const VideoPlayer::Video *VideoPlayer::getVideoBySlot(int slot) const {
 	if ((slot < 0) || (slot >= kVideoSlotCount))
 		return 0;
@@ -307,6 +544,15 @@ int VideoPlayer::getNextFreeSlot() {
 			return i;
 
 	return -1;
+}
+
+void VideoPlayer::evalBgShading(Video &video) {
+	/*
+	if (video.isSoundPlaying())
+		_vm->_sound->bgShade();
+	else
+		_vm->_sound->bgUnshade();
+	*/
 }
 
 Common::String VideoPlayer::findFile(const Common::String &file, Properties &properties) {
@@ -417,87 +663,6 @@ bool VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 		int16 palFrame, int16 endFrame, bool fade, int16 reverseTo, bool forceSeek) {
 
 	return false;
-
-#if 0
-
-	if (!_primaryVideo)
-		return false;
-
-	Graphics::CoktelDecoder &video = *_primaryVideo;
-
-	breakKey = 27;
-	if (startFrame < 0)
-		startFrame = video.getCurFrame();
-	if (lastFrame < 0)
-		lastFrame = video.getFrameCount() - 1;
-	if (palFrame < 0)
-		palFrame = startFrame;
-	if (endFrame < 0)
-		endFrame = lastFrame;
-	palCmd &= 0x3F;
-
-	int16 realStartFrame = startFrame;
-	/*
-	if (video.getCurFrame() != startFrame) {
-		if (!forceSeek && (video.getFeatures() & Graphics::CoktelDecoder::kFeaturesSound))
-			startFrame = video.getCurFrame();
-		else
-			video.seek(startFrame);
-	}
-	*/ video.seek(startFrame);
-
-	_vm->_draw->_showCursor = _noCursorSwitch ? 3 : 0;
-
-	if (fade)
-		_vm->_palAnim->fade(0, -2, 0);
-
-	bool canceled = false;
-
-	while (startFrame <= lastFrame) {
-		if (doPlay(startFrame, breakKey,
-					palCmd, palStart, palEnd, palFrame, endFrame, startFrame < realStartFrame)) {
-
-			canceled = true;
-			break;
-		}
-
-		evalBgShading(video);
-
-		if (fade) {
-			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
-			fade = false;
-		}
-
-		/*if (!_noCursorSwitch)
-			video.waitEndFrame();*/
-		startFrame++;
-	}
-
-	evalBgShading(video);
-
-	if (reverseTo >= 0) {
-		int16 toFrame = video.getFrameCount() - reverseTo;
-		for (int i = video.getCurFrame(); i >= toFrame; i--) {
-			video.seek(i, SEEK_SET, true);
-
-			bool b = doPlay(i, breakKey, 0, 0, 0, 0, 0);
-			evalBgShading(video);
-
-			if (b) {
-				_vm->_palAnim->fade(0, -2, 0);
-				memset((char *)_vm->_draw->_vgaPalette, 0, 768);
-			}
-
-			/*if (!_noCursorSwitch)
-				video.waitEndFrame();*/
-		}
-	}
-
-	evalBgShading(video);
-
-	return canceled;
-
-#endif
 }
 
 void VideoPlayer::primaryClose() {
@@ -508,26 +673,6 @@ int VideoPlayer::slotOpen(const char *videoFile, Type which, int16 width, int16 
 }
 
 void VideoPlayer::slotPlay(int slot, int16 frame) {
-#if 0
-	if ((slot < 0) || (slot >= kVideoSlotCount) || !_videoSlots[slot])
-		return;
-
-	Graphics::CoktelDecoder &video = *_videoSlots[slot];
-
-	if (frame < 0)
-		frame = video.getCurFrame();
-
-	if (((uint16) frame) >= video.getFrameCount())
-		return;
-
-	if (video.getCurFrame() != frame)
-		video.seek(frame);
-
-	//_videoSlots[slot]->nextFrame();
-	WRITE_VAR(11, frame);
-
-	evalBgShading(video);
-#endif
 }
 
 void VideoPlayer::slotClose(int slot) {
@@ -573,135 +718,6 @@ void VideoPlayer::slotWaitEndFrame(int slot, bool onlySound) {
 void VideoPlayer::slotSetDoubleMode(int slot, bool doubleMode) {
 }
 
-
-
-
-void VideoPlayer::playFrame(int16 frame, int16 breakKey,
-		uint16 palCmd, int16 palStart, int16 palEnd,
-		int16 palFrame, int16 endFrame, bool noRetrace) {
-
-#if 0
-	if (!_primaryVideo)
-		return;
-
-	Graphics::CoktelDecoder &video = *_primaryVideo;
-
-	if (video.getCurFrame() != frame)
-		video.seek(frame);
-	if (palFrame < 0)
-		palFrame = 0;
-	if (endFrame < 0)
-		endFrame = video.getFrameCount() - 1;
-
-
-	bool modifiedPal = false;
-
-	if ((frame == palFrame) || ((frame == endFrame) && (palCmd == 8))) {
-		modifiedPal = true;
-		_vm->_draw->_applyPal = true;
-
-		if (palCmd >= 4)
-			copyPalette(video, palStart, palEnd);
-	}
-
-	if (modifiedPal && (palCmd == 8) && !_backSurf)
-		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
-
-
-	if (_needBlit)
-		_vm->_draw->forceBlit();
-
-	Graphics::CoktelDecoder::State state;// = video.nextFrame();
-	WRITE_VAR(11, frame);
-
-	if (_woodruffCohCottWorkaround && (frame == 32)) {
-		// WORKAROUND: This frame mistakenly masks Coh Cott, making her vanish
-		// To prevent that, we'll never draw that part
-		state.left += 50;
-	}
-
-	if (_needBlit)
-		_vm->_draw->forceBlit(true);
-
-
-	if (modifiedPal && (palCmd == 16)) {
-		if (_backSurf)
-			_vm->_draw->forceBlit();
-		_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
-		_vm->_draw->_noInvalidated = true;
-		_vm->_video->dirtyRectsAll();
-	}
-
-	/*
-	if ((state.flags & Graphics::CoktelDecoder::kStatePalette) && (palCmd > 1)) {
-		copyPalette(video, palStart, palEnd);
-
-		if (!_backSurf)
-			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
-		else
-			_vm->_draw->_applyPal = true;
-	}
-	*/
-
-	if (modifiedPal && (palCmd == 8) && _backSurf)
-		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
-
-
-	if (!_ownSurf) {
-		if (_backSurf) {
-			_vm->_draw->invalidateRect(state.left, state.top, state.right, state.bottom);
-			_vm->_draw->blitInvalidated();
-		} else
-			_vm->_video->dirtyRectsAdd(state.left, state.top, state.right, state.bottom);
-
-		if (!noRetrace)
-			_vm->_video->retrace();
-	}
-
-	/*
-	// Subtitle
-	if (state.flags & Graphics::CoktelDecoder::kStateSpeech)
-		_vm->_draw->printTotText(state.speechId);
-	*/
-
-	if (modifiedPal && ((palCmd == 2) || (palCmd == 4)))
-		_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
-#endif
-}
-
-bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
-		uint16 palCmd, int16 palStart, int16 palEnd,
-		int16 palFrame, int16 endFrame, bool noRetrace) {
-
-	return false;
-#if 0
-
-	playFrame(frame, breakKey, palCmd, palStart, palEnd, palFrame, endFrame, noRetrace);
-
-	_vm->_util->processInput();
-
-	if (_vm->shouldQuit()) {
-		//_primaryVideo->getVideo()->disableSound();
-		return true;
-	}
-
-	if (breakKey != 0) {
-		_vm->_util->getMouseState(&_vm->_global->_inter_mouseX,
-				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons);
-
-		_vm->_inter->storeKey(_vm->_util->checkKey());
-		if (VAR(0) == (unsigned) breakKey) {
-			//_primaryVideo->getVideo()->disableSound();
-			// Seek to the last frame. Some scripts depend on that.
-			_primaryVideo->seek(endFrame, SEEK_SET, true);
-			return true;
-		}
-	}
-
-	return false;
-#endif
-}
-
 void VideoPlayer::copyPalette(Graphics::CoktelDecoder &video, int16 palStart, int16 palEnd) {
 	/*
 	if (!(video.getFeatures() & Graphics::CoktelDecoder::kFeaturesPalette))
@@ -718,42 +734,6 @@ void VideoPlayer::copyPalette(Graphics::CoktelDecoder &video, int16 palStart, in
 			video.getPalette() + palStart * 3,
 			(palEnd - palStart + 1) * 3);
 	*/
-}
-
-void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 varY,
-		int16 varFrames, int16 varWidth, int16 varHeight) {
-
-	Properties properties;
-
-	int slot = openVideo(false, file, properties);
-	if (slot >= 0) {
-		Video &video = _videoSlots[slot];
-
-		int16 x = -1, y = -1, width = -1, height = -1;
-
-		// x     = video.decoder->getX();
-		// y     = video.decoder->getY();
-		width = video.decoder->getWidth();
-		width = video.decoder->getHeight();
-
-		/*
-		if (VAR_OFFSET(varX) == 0xFFFFFFFF)
-			video.decoder->getFrameCoords(1, x, y, width, height);
-		*/
-
-		WRITE_VAR_OFFSET(varX     , x);
-		WRITE_VAR_OFFSET(varY     , y);
-		WRITE_VAR_OFFSET(varFrames, video.decoder->getFrameCount());
-		WRITE_VAR_OFFSET(varWidth , width);
-		WRITE_VAR_OFFSET(varHeight, height);
-
-	} else {
-		WRITE_VAR_OFFSET(varX     , (uint32) -1);
-		WRITE_VAR_OFFSET(varY     , (uint32) -1);
-		WRITE_VAR_OFFSET(varFrames, (uint32) -1);
-		WRITE_VAR_OFFSET(varWidth , (uint32) -1);
-		WRITE_VAR_OFFSET(varHeight, (uint32) -1);
-	}
 }
 
 void VideoPlayer::evalBgShading(Graphics::CoktelDecoder &video) {

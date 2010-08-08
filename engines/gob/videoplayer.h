@@ -29,6 +29,7 @@
 #include "common/array.h"
 #include "common/str.h"
 
+#include "graphics/surface.h"
 #include "graphics/video/coktel_decoder.h"
 
 #include "gob/util.h"
@@ -71,17 +72,20 @@ public:
 
 		uint32 flags; ///< Video flags.
 
-		int16 startFrame; ///< Frame to start playback from.
-		int16 lastFrame;  ///< Frame to stop playback at.
+		int32 startFrame; ///< Frame to start playback from.
+		int32 lastFrame;  ///< Frame to stop playback at.
+		int32 endFrame;   ///< Last frame of this playback cycle.
 
 		int16 breakKey; ///< Keycode of the break/abort key.
 
-		uint16 palCmd;   ///< Palette command.
-		uint16 palStart; ///< Palette entry to start with.
-		uint16 palEnd;   ///< Palette entry to end at.
-		 int16 palFrame; ///< Frame to apply the palette command at.
+		uint16 palCmd;      ///< Palette command.
+		uint16 palStart;    ///< Palette entry to start with.
+		uint16 palEnd;      ///< Palette entry to end at.
+		 int32 palFrame;    ///< Frame to apply the palette command at.
 
 		bool fade; ///< Fade in?
+
+		bool canceled; ///< Was the video canceled?
 
 		Properties();
 	};
@@ -92,7 +96,7 @@ public:
 	int  openVideo(bool primary, const Common::String &file, Properties &properties);
 	bool closeVideo(int slot);
 
-	bool play(int slot, const Properties &properties);
+	bool play(int slot, Properties &properties);
 
 	bool slotIsOpen(int slot = 0) const;
 
@@ -129,10 +133,6 @@ public:
 			int16 reverseTo = -1, bool forceSeek = false);
 	void primaryClose();
 
-	void playFrame(int16 frame, int16 breakKey = kShortKeyEscape,
-			uint16 palCmd = 8, int16 palStart = 0, int16 palEnd = 255,
-			int16 palFrame = -1 , int16 endFrame = -1, bool noRetrace = false);
-
 	int slotOpen(const char *videoFile, Type which = kVideoTypeTry,
 			int16 width = -1, int16 height = -1);
 	void slotPlay(int slot, int16 frame = -1);
@@ -168,11 +168,9 @@ private:
 	// _videoSlots[0] is reserved for the "primary" video
 	Video _videoSlots[kVideoSlotCount];
 
-	bool _ownSurf;
-	bool _backSurf;
 	bool _needBlit;
-	bool _noCursorSwitch;
 
+	bool _noCursorSwitch;
 	bool _woodruffCohCottWorkaround;
 
 	const Video *getVideoBySlot(int slot) const;
@@ -184,14 +182,15 @@ private:
 
 	Graphics::CoktelDecoder *openVideo(const Common::String &file, Properties &properties);
 
+	bool playFrame(int slot, Properties &properties);
+	void blitFrame(SurfaceDescPtr dst, const Graphics::Surface &src);
 
+	void checkAbort(Video &video, Properties &properties);
+	void evalBgShading(Video &video);
 
 	// Obsolete, to be deleted
 
 	void copyPalette(Graphics::CoktelDecoder &video, int16 palStart = -1, int16 palEnd = -1);
-	bool doPlay(int16 frame, int16 breakKey,
-			uint16 palCmd, int16 palStart, int16 palEnd,
-			int16 palFrame, int16 endFrame, bool noRetrace = false);
 	void evalBgShading(Graphics::CoktelDecoder &video);
 };
 

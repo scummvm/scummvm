@@ -224,7 +224,7 @@ void DemoPlayer::playVideoDoubled() {
 				VideoPlayer::kFlagScreenSurface)) {
 
 		for (uint i = 0; i < _vm->_vidPlayer->getFrameCount(); i++) {
-			_vm->_vidPlayer->playFrame(i);
+			// _vm->_vidPlayer->playFrame(i);
 
 			Graphics::CoktelDecoder::State state;// = _vm->_vidPlayer->getState();
 
