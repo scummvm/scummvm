@@ -118,6 +118,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 	props.palStart   = _vm->_game->_script->readValExpr();
 	props.palEnd     = _vm->_game->_script->readValExpr();
 	props.palCmd     = 1 << (props.flags & 0x3F);
+	props.forceSeek  = true;
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
 			"paletteCmd %d (%d - %d), flags %X", fileName,

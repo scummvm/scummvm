@@ -78,6 +78,8 @@ public:
 		int32 lastFrame;  ///< Frame to stop playback at.
 		int32 endFrame;   ///< Last frame of this playback cycle.
 
+		bool forceSeek; ///< Force the seeking to the start frame.
+
 		int16 breakKey; ///< Keycode of the break/abort key.
 
 		uint16 palCmd;      ///< Palette command.

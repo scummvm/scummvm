@@ -39,8 +39,8 @@ namespace Gob {
 
 VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFrontSurface),
 	x(-1), y(-1), width(-1), height(-1), flags(kFlagFrontSurface),
-	startFrame(-1), lastFrame(-1), endFrame(-1), breakKey(kShortKeyEscape),
-	palCmd(8), palStart(0), palEnd(255), palFrame(-1),
+	startFrame(-1), lastFrame(-1), endFrame(-1), forceSeek(false),
+	breakKey(kShortKeyEscape), palCmd(8), palStart(0), palEnd(255), palFrame(-1),
 	fade(false), waitEndFrame(true), canceled(false) {
 
 }
@@ -270,10 +270,37 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 	bool primary = slot == 0;
 
 	if (video->decoder->getCurFrame() != properties.startFrame) {
-		video->decoder->disableSound();
-		video->decoder->seek(properties.startFrame + 1, SEEK_SET, true);
-		video->decoder->enableSound();
+
+		if (properties.startFrame != -1) {
+			// Seek into the middle of the video
+
+			if (video->decoder->hasSound()) {
+				// But there's sound
+
+				if (properties.forceSeek) {
+					// And we force seeking => Seek
+
+					video->decoder->disableSound();
+					video->decoder->seek(properties.startFrame + 1, SEEK_SET, true);
+				}
+
+			} else
+				// No sound => We can safely seek
+				video->decoder->seek(properties.startFrame + 1, SEEK_SET, true);
+
+		} else {
+			// Seek to the start => We can safely seek
+
+			video->decoder->disableSound();
+			video->decoder->seek(0, SEEK_SET, true);
+			video->decoder->enableSound();
+		}
+
 	}
+
+	if (video->decoder->getCurFrame() > properties.startFrame)
+		// If the video is already beyond the wanted frame, skip
+		return true;
 
 	bool modifiedPal = false;
 
@@ -297,10 +324,7 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 			_vm->_draw->forceBlit();
 	}
 
-
 	Graphics::Surface *surface = video->decoder->decodeNextFrame();
-	if (!surface)
-		return false;
 
 	WRITE_VAR(11, video->decoder->getCurFrame());
 
@@ -310,7 +334,7 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 		// state.left += 50;
 	}
 
-	if (primary) {
+	if (surface && primary) {
 		// Post-decoding palette and blitting, only for primary videos
 
 		if (_needBlit)
@@ -350,7 +374,9 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 
 		}
 
-		_vm->_video->retrace();
+		if ((video->decoder->getCurFrame() - 1) == properties.startFrame)
+			// Only retrace if we're playing the frame we actually want to play
+			_vm->_video->retrace();
 
 		/*
 		// Subtitle
@@ -364,6 +390,10 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 
 	if (primary && properties.waitEndFrame)
 		checkAbort(*video, properties);
+
+	if ((video->decoder->getCurFrame() - 1) < properties.startFrame)
+		// The video played a frame we actually didn't want, so we have to adjust
+		properties.startFrame--;
 
 	return true;
 }
