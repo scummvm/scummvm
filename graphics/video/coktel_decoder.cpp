@@ -342,34 +342,32 @@ void CoktelDecoder::deLZ77(byte *dest, byte *src) {
 }
 
 // A whole, completely filled block
-void CoktelDecoder::renderBlockWhole(const byte *src) {
-	Common::Rect &rect     = _dirtyRects.back();
-	Common::Rect  drawRect = rect;
+void CoktelDecoder::renderBlockWhole(const byte *src, Common::Rect &rect) {
+	Common::Rect srcRect = rect;
 
-	drawRect.clip(_surface.w, _surface.h);
+	rect.clip(_surface.w, _surface.h);
 
-	byte *dst = (byte *)_surface.pixels + (drawRect.top * _surface.pitch) + drawRect.left;
-	for (int i = 0; i < drawRect.height(); i++) {
-		memcpy(dst, src, drawRect.width());
+	byte *dst = (byte *)_surface.pixels + (rect.top * _surface.pitch) + rect.left;
+	for (int i = 0; i < rect.height(); i++) {
+		memcpy(dst, src, rect.width());
 
-		src += rect.width();
+		src += srcRect.width();
 		dst += _surface.pitch;
 	}
 }
 
 // A quarter-wide whole, completely filled block
-void CoktelDecoder::renderBlockWhole4X(const byte *src) {
-	Common::Rect &rect     = _dirtyRects.back();
-	Common::Rect  drawRect = rect;
+void CoktelDecoder::renderBlockWhole4X(const byte *src, Common::Rect &rect) {
+	Common::Rect srcRect = rect;
 
-	drawRect.clip(_surface.w, _surface.h);
+	rect.clip(_surface.w, _surface.h);
 
-	byte *dst = (byte *)_surface.pixels + (drawRect.top * _surface.pitch) + drawRect.left;
-	for (int i = 0; i < drawRect.height(); i++) {
+	byte *dst = (byte *)_surface.pixels + (rect.top * _surface.pitch) + rect.left;
+	for (int i = 0; i < rect.height(); i++) {
 		      byte *dstRow = dst;
 		const byte *srcRow = src;
 
-		int16 count = drawRect.width();
+		int16 count = rect.width();
 		while (count >= 0) {
 			memset(dstRow, *srcRow, MIN<int16>(count, 4));
 
@@ -378,54 +376,52 @@ void CoktelDecoder::renderBlockWhole4X(const byte *src) {
 			srcRow += 1;
 		}
 
-		src += rect.width() / 4;
+		src += srcRect.width() / 4;
 		dst += _surface.pitch;
 	}
 }
 
 // A half-high whole, completely filled block
-void CoktelDecoder::renderBlockWhole2Y(const byte *src) {
-	Common::Rect &rect     = _dirtyRects.back();
-	Common::Rect  drawRect = rect;
+void CoktelDecoder::renderBlockWhole2Y(const byte *src, Common::Rect &rect) {
+	Common::Rect srcRect = rect;
 
-	drawRect.clip(_surface.w, _surface.h);
+	rect.clip(_surface.w, _surface.h);
 
-	int16 height = drawRect.height();
+	int16 height = rect.height();
 
-	byte *dst = (byte *)_surface.pixels + (drawRect.top * _surface.pitch) + drawRect.left;
+	byte *dst = (byte *)_surface.pixels + (rect.top * _surface.pitch) + rect.left;
 	while (height > 1) {
-		memcpy(dst                 , src, drawRect.width());
-		memcpy(dst + _surface.pitch, src, drawRect.width());
+		memcpy(dst                 , src, rect.width());
+		memcpy(dst + _surface.pitch, src, rect.width());
 
 		height -= 2;
-		src    += rect.width();
+		src    += srcRect.width();
 		dst    += 2 * _surface.pitch;
 	}
 
 	if (height == 1)
-		memcpy(dst, src, drawRect.width());
+		memcpy(dst, src, rect.width());
 }
 
 // A sparse block
-void CoktelDecoder::renderBlockSparse(const byte *src) {
-	Common::Rect &rect     = _dirtyRects.back();
-	Common::Rect  drawRect = rect;
+void CoktelDecoder::renderBlockSparse(const byte *src, Common::Rect &rect) {
+	Common::Rect srcRect = rect;
 
-	drawRect.clip(_surface.w, _surface.h);
+	rect.clip(_surface.w, _surface.h);
 
-	byte *dst = (byte *)_surface.pixels + (drawRect.top * _surface.pitch) + drawRect.left;
-	for (int i = 0; i < drawRect.height(); i++) {
+	byte *dst = (byte *)_surface.pixels + (rect.top * _surface.pitch) + rect.left;
+	for (int i = 0; i < rect.height(); i++) {
 		byte *dstRow = dst;
 		int16 pixWritten = 0;
 
-		while (pixWritten < rect.width()) {
+		while (pixWritten < srcRect.width()) {
 			int16 pixCount = *src++;
 
 			if (pixCount & 0x80) { // Data
 				int16 copyCount;
 
-				pixCount  = MIN((pixCount & 0x7F) + 1, rect.width() - pixWritten);
-				copyCount = CLIP<int16>(drawRect.width() - pixWritten, 0, pixCount);
+				pixCount  = MIN((pixCount & 0x7F) + 1, srcRect.width() - pixWritten);
+				copyCount = CLIP<int16>(rect.width() - pixWritten, 0, pixCount);
 				memcpy(dstRow, src, copyCount);
 
 				pixWritten += pixCount;
@@ -443,27 +439,26 @@ void CoktelDecoder::renderBlockSparse(const byte *src) {
 }
 
 // A half-high sparse block
-void CoktelDecoder::renderBlockSparse2Y(const byte *src) {
+void CoktelDecoder::renderBlockSparse2Y(const byte *src, Common::Rect &rect) {
 	warning("renderBlockSparse2Y");
 
-	Common::Rect &rect     = _dirtyRects.back();
-	Common::Rect  drawRect = rect;
+	Common::Rect srcRect = rect;
 
-	drawRect.clip(_surface.w, _surface.h);
+	rect.clip(_surface.w, _surface.h);
 
-	byte *dst = (byte *)_surface.pixels + (drawRect.top * _surface.pitch) + drawRect.left;
-	for (int i = 0; i < drawRect.height(); i += 2) {
+	byte *dst = (byte *)_surface.pixels + (rect.top * _surface.pitch) + rect.left;
+	for (int i = 0; i < rect.height(); i += 2) {
 		byte *dstRow = dst;
 		int16 pixWritten = 0;
 
-		while (pixWritten < rect.width()) {
+		while (pixWritten < srcRect.width()) {
 			int16 pixCount = *src++;
 
 			if (pixCount & 0x80) { // Data
 				int16 copyCount;
 
-				pixCount  = MIN((pixCount & 0x7F) + 1, rect.width() - pixWritten);
-				copyCount = CLIP<int16>(drawRect.width() - pixWritten, 0, pixCount);
+				pixCount  = MIN((pixCount & 0x7F) + 1, srcRect.width() - pixWritten);
+				copyCount = CLIP<int16>(rect.width() - pixWritten, 0, pixCount);
 				memcpy(dstRow                 , src, pixCount);
 				memcpy(dstRow + _surface.pitch, src, pixCount);
 
@@ -1124,14 +1119,25 @@ void IMDDecoder::processFrame() {
 			}
 
 		} else if (cmd == kCommandVideoData) {
-			calcFrameCoords(_curFrame);
 
-			videoData(_stream->readUint32LE() + 2);
+			_frameDataLen = _stream->readUint32LE() + 2;
+			_stream->read(_frameData, _frameDataLen);
+
+			Common::Rect rect = calcFrameCoords(_curFrame);
+
+			if (renderFrame(rect))
+				_dirtyRects.push_back(rect);
 
 		} else if (cmd != 0) {
-			calcFrameCoords(_curFrame);
 
-			videoData(cmd + 2);
+			_frameDataLen = cmd + 2;
+			_stream->read(_frameData, _frameDataLen);
+
+			Common::Rect rect = calcFrameCoords(_curFrame);
+
+			if (renderFrame(rect))
+				_dirtyRects.push_back(rect);
+
 		}
 
 	} while (hasNextCmd);
@@ -1152,64 +1158,52 @@ void IMDDecoder::processFrame() {
 
 }
 
-void IMDDecoder::calcFrameCoords(uint32 frame) {
-	int16 left, top, right, bottom;
+Common::Rect IMDDecoder::calcFrameCoords(uint32 frame) {
+	Common::Rect rect;
 
 	if (frame == 0) {
 		// First frame is always a full "keyframe"
 
-		left   = _x;
-		top    = _y;
-		right  = _x + _width;
-		bottom = _y + _height;
+		rect.left   = _x;
+		rect.top    = _y;
+		rect.right  = _x + _width;
+		rect.bottom = _y + _height;
 	} else if (_frameCoords && ((_frameCoords[frame].left != -1))) {
 		// We have frame coordinates for that frame
 
-		left   = _frameCoords[frame].left;
-		top    = _frameCoords[frame].top;
-		right  = _frameCoords[frame].right  + 1;
-		bottom = _frameCoords[frame].bottom + 1;
+		rect.left   = _frameCoords[frame].left;
+		rect.top    = _frameCoords[frame].top;
+		rect.right  = _frameCoords[frame].right  + 1;
+		rect.bottom = _frameCoords[frame].bottom + 1;
 	} else if (_stdX != -1) {
 		// We have standard coordinates
 
-		left   = _stdX;
-		top    = _stdY;
-		right  = _stdX + _stdWidth;
-		bottom = _stdY + _stdHeight;
+		rect.left   = _stdX;
+		rect.top    = _stdY;
+		rect.right  = _stdX + _stdWidth;
+		rect.bottom = _stdY + _stdHeight;
 	} else {
 		// Otherwise, it must be a full "keyframe"
 
-		left   = _x;
-		top    = _y;
-		right  = _x + _width;
-		bottom = _y + _height;
+		rect.left   = _x;
+		rect.top    = _y;
+		rect.right  = _x + _width;
+		rect.bottom = _y + _height;
 	}
 
-	_dirtyRects.push_back(Common::Rect(left, top, right, bottom));
+	return rect;
 }
 
-void IMDDecoder::videoData(uint32 size) {
-	_stream->read(_frameData, size);
-	_frameDataLen = size;
+bool IMDDecoder::renderFrame(Common::Rect &rect) {
+	if (!rect.isValidRect())
+		// Invalid rendering area
+		return false;
 
-	renderFrame();
-}
-
-void IMDDecoder::renderFrame() {
-	if (_dirtyRects.empty())
-		// Nothing to do
-		return;
-
-	// The area for the frame
-	Common::Rect &rect = _dirtyRects.back();
-
-	// Clip it by the video's visible area
+	// Clip the rendering area to the video's visible area
 	rect.clip(Common::Rect(_x, _y, _x + _width, _y + _height));
-	if (!rect.isValidRect() || rect.isEmpty()) {
+	if (!rect.isValidRect() || rect.isEmpty())
 		// Result is empty => nothing to do
-		_dirtyRects.pop_back();
-		return;
-	}
+		return false;
 
 	byte *dataPtr = _frameData;
 
@@ -1237,7 +1231,7 @@ void IMDDecoder::renderFrame() {
 		if ((type == 2) && (rect.width() == _surface.w) && (_x == 0)) {
 			// Directly uncompress onto the video surface
 			deLZ77((byte *)_surface.pixels + (_y * _surface.pitch), dataPtr);
-			return;
+			return true;
 		}
 
 		deLZ77(_videoBuffer, dataPtr);
@@ -1247,15 +1241,17 @@ void IMDDecoder::renderFrame() {
 
 	// Evaluate the block type
 	if      (type == 0x01)
-		renderBlockSparse  (dataPtr);
+		renderBlockSparse  (dataPtr, rect);
 	else if (type == 0x02)
-		renderBlockWhole   (dataPtr);
+		renderBlockWhole   (dataPtr, rect);
 	else if (type == 0x42)
-		renderBlockWhole4X (dataPtr);
+		renderBlockWhole4X (dataPtr, rect);
 	else if ((type & 0x0F) == 0x02)
-		renderBlockWhole2Y (dataPtr);
+		renderBlockWhole2Y (dataPtr, rect);
 	else
-		renderBlockSparse2Y(dataPtr);
+		renderBlockSparse2Y(dataPtr, rect);
+
+	return true;
 }
 
 void IMDDecoder::nextSoundSlice(bool hasNextCmd) {
@@ -1902,9 +1898,9 @@ void VMDDecoder::processFrame() {
 			_stream->read(_frameData, size);
 			_frameDataLen = size;
 
-			int16 l = part.left, t = part.top, r = part.right, b = part.bottom;
-			if (renderFrame(l, t, r, b))
-				_dirtyRects.push_back(Common::Rect(l, t, r + 1, b + 1));
+			Common::Rect rect(part.left, part.top, part.right + 1, part.bottom + 1);
+			if (renderFrame(rect))
+				_dirtyRects.push_back(rect);
 
 		} else if (part.type == kPartTypeSeparator) {
 
@@ -1951,7 +1947,7 @@ void VMDDecoder::processFrame() {
 	}
 }
 
-bool VMDDecoder::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
+bool VMDDecoder::renderFrame(Common::Rect &rect) {
 	// TODO
 
 	return false;

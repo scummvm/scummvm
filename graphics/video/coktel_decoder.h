@@ -188,11 +188,11 @@ protected:
 	void deLZ77(byte *dest, byte *src);
 
 	// Block rendering
-	void renderBlockWhole   (const byte *src);
-	void renderBlockWhole4X (const byte *src);
-	void renderBlockWhole2Y (const byte *src);
-	void renderBlockSparse  (const byte *src);
-	void renderBlockSparse2Y(const byte *src);
+	void renderBlockWhole   (const byte *src, Common::Rect &rect);
+	void renderBlockWhole4X (const byte *src, Common::Rect &rect);
+	void renderBlockWhole2Y (const byte *src, Common::Rect &rect);
+	void renderBlockSparse  (const byte *src, Common::Rect &rect);
+	void renderBlockSparse2Y(const byte *src, Common::Rect &rect);
 
 	// Sound helper functions
 	inline void unsignedToSigned(byte *buffer, int length);
@@ -320,11 +320,10 @@ private:
 
 	// Frame decoding
 	void processFrame();
-	void calcFrameCoords(uint32 frame);
+	Common::Rect calcFrameCoords(uint32 frame);
 
 	// Video
-	void videoData(uint32 size);
-	void renderFrame();
+	bool renderFrame(Common::Rect &rect);
 
 	// Sound
 	void nextSoundSlice(bool hasNextCmd);
@@ -461,7 +460,7 @@ private:
 	void processFrame();
 
 	// Video
-	bool renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom);
+	bool renderFrame(Common::Rect &rect);
 
 	// Sound
 	void emptySoundSlice  (uint32 size);
