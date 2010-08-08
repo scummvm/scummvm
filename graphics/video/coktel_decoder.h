@@ -99,6 +99,7 @@ public:
 	/** Return that embedded file. */
 	virtual Common::MemoryReadStream *getEmbeddedFile(const Common::String &fileName) const;
 
+
 	// VideoDecoder interface
 
 	void close();
@@ -168,18 +169,22 @@ protected:
 	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;
 
+	// Surface management
 	bool hasSurface();
 	void createSurface();
 	void freeSurface();
 
+	// Decompression
 	void deLZ77(byte *dest, byte *src);
 
+	// Block rendering
 	void renderBlockWhole   (const byte *src);
 	void renderBlockWhole4X (const byte *src);
 	void renderBlockWhole2Y (const byte *src);
 	void renderBlockSparse  (const byte *src);
 	void renderBlockSparse2Y(const byte *src);
 
+	// Sound helper functions
 	inline void unsignedToSigned(byte *buffer, int length);
 
 
@@ -215,6 +220,7 @@ private:
 	byte  *_videoBuffer;
 	uint32 _videoBufferSize;
 
+	// Frame decoding
 	void processFrame();
 	void renderFrame();
 };
@@ -295,19 +301,22 @@ private:
 	 int16 _soundSliceSize;
 	 int16 _soundSlicesCount;
 
+	// Loading helper functions
 	bool loadCoordinates();
 	bool loadFrameTableOffsets(uint32 &framePosPos, uint32 &frameCoordsPos);
 	bool assessVideoProperties();
 	bool assessAudioProperties();
 	bool loadFrameTables(uint32 framePosPos, uint32 frameCoordsPos);
 
+	// Frame decoding
 	void processFrame();
-
 	void calcFrameCoords(uint32 frame);
 
+	// Video
 	void videoData(uint32 size);
 	void renderFrame();
 
+	// Sound
 	void nextSoundSlice(bool hasNextCmd);
 	bool initialSoundSlice(bool hasNextCmd);
 	void emptySoundSlice(bool hasNextCmd);

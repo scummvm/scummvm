@@ -50,9 +50,11 @@ CoktelDecoder::~CoktelDecoder() {
 void CoktelDecoder::setSurfaceMemory(void *mem, uint16 width, uint16 height, uint8 bpp) {
 	freeSurface();
 
+	// Sanity checks
 	assert((width > 0) && (height > 0));
 	assert(bpp == getPixelFormat().bytesPerPixel);
 
+	// Create a surface over this memory
 	_surface.w             = width;
 	_surface.h             = height;
 	_surface.pitch         = width * bpp;
@@ -308,7 +310,7 @@ void CoktelDecoder::renderBlockWhole(const byte *src) {
 
 	drawRect.clip(_surface.w, _surface.h);
 
-	byte *dst = ((byte *) _surface.pixels) + (drawRect.top * _surface.pitch) + drawRect.left;
+	byte *dst = (byte *)_surface.pixels + (drawRect.top * _surface.pitch) + drawRect.left;
 	for (int i = 0; i < drawRect.height(); i++) {
 		memcpy(dst, src, drawRect.width());
 
@@ -324,7 +326,7 @@ void CoktelDecoder::renderBlockWhole4X(const byte *src) {
 
 	drawRect.clip(_surface.w, _surface.h);
 
-	byte *dst = ((byte *) _surface.pixels) + (drawRect.top * _surface.pitch) + drawRect.left;
+	byte *dst = (byte *)_surface.pixels + (drawRect.top * _surface.pitch) + drawRect.left;
 	for (int i = 0; i < drawRect.height(); i++) {
 		      byte *dstRow = dst;
 		const byte *srcRow = src;
@@ -352,7 +354,7 @@ void CoktelDecoder::renderBlockWhole2Y(const byte *src) {
 
 	int16 height = drawRect.height();
 
-	byte *dst = ((byte *) _surface.pixels) + (drawRect.top * _surface.pitch) + drawRect.left;
+	byte *dst = (byte *)_surface.pixels + (drawRect.top * _surface.pitch) + drawRect.left;
 	while (height > 1) {
 		memcpy(dst                 , src, drawRect.width());
 		memcpy(dst + _surface.pitch, src, drawRect.width());
@@ -373,7 +375,7 @@ void CoktelDecoder::renderBlockSparse(const byte *src) {
 
 	drawRect.clip(_surface.w, _surface.h);
 
-	byte *dst = ((byte *) _surface.pixels) + (drawRect.top * _surface.pitch) + drawRect.left;
+	byte *dst = (byte *)_surface.pixels + (drawRect.top * _surface.pitch) + drawRect.left;
 	for (int i = 0; i < drawRect.height(); i++) {
 		byte *dstRow = dst;
 		int16 pixWritten = 0;
@@ -411,7 +413,7 @@ void CoktelDecoder::renderBlockSparse2Y(const byte *src) {
 
 	drawRect.clip(_surface.w, _surface.h);
 
-	byte *dst = ((byte *) _surface.pixels) + (drawRect.top * _surface.pitch) + drawRect.left;
+	byte *dst = (byte *)_surface.pixels + (drawRect.top * _surface.pitch) + drawRect.left;
 	for (int i = 0; i < drawRect.height(); i += 2) {
 		byte *dstRow = dst;
 		int16 pixWritten = 0;
@@ -446,10 +448,19 @@ Common::Rational CoktelDecoder::getFrameRate() const {
 }
 
 uint32 CoktelDecoder::getTimeToNextFrame() const {
-	if (hasSound())
-		return FixedRateVideoDecoder::getTimeToNextFrame();
+	// If there is no audio, just return the static time between
+	// frames without any elaborate sync calculation. This is
+	// needed for the gob engine, since it has a lot of control
+	// between the videos and often plays just few frames out of
+	// the middle of a long video.
 
-	return (Common::Rational(1000) / _frameRate).toInt();
+	if (!hasSound())
+		return (Common::Rational(1000) / _frameRate).toInt();
+
+	// If there /is/ audio, we do need to keep video and audio
+	// in sync, though.
+
+	return FixedRateVideoDecoder::getTimeToNextFrame();
 }
 
 inline void CoktelDecoder::unsignedToSigned(byte *buffer, int length) {
@@ -572,7 +583,10 @@ void PreIMDDecoder::processFrame() {
 	frameSize--;
 
 	if (cmd == 0) {
-		// Palette. Ignored by Fascination, though
+		// Palette. Ignored by Fascination, though.
+
+		// NOTE: If we ever find another game using this format,
+		//       palettes may need to be evaluated.
 
 		_stream->skip(768);
 
@@ -627,6 +641,7 @@ void PreIMDDecoder::processFrame() {
 	_curFrame++;
 }
 
+// Just a simple blit
 void PreIMDDecoder::renderFrame() {
 	_dirtyRects.clear();
 
@@ -634,7 +649,7 @@ void PreIMDDecoder::renderFrame() {
 	uint16 h = CLIP<int32>(_surface.h - _y, 0, _height);
 
 	const byte *src = _videoBuffer;
-	      byte *dst = (byte *) _surface.pixels + (_y * _surface.pitch) + _x;
+	      byte *dst = (byte *)_surface.pixels + (_y * _surface.pitch) + _x;
 
 	uint32 frameDataSize = _videoBufferSize;
 
@@ -696,20 +711,25 @@ bool IMDDecoder::seek(int32 frame, int whence, bool restart) {
 	// Try every possible way to find a file offset to that frame
 	uint32 framePos = 0;
 	if (frame == -1) {
+		// First frame, we know that position
 
 		framePos = _firstFramePos;
 
 	} else if (frame == 0) {
+		// Second frame, can be calculated from the first frame's position
 
 		framePos = _firstFramePos;
 		_stream->seek(framePos);
 		framePos += _stream->readUint16LE() + 4;
 
 	} else if (_framePos) {
+		// If we have an array of frame positions, use that
 
 		framePos = _framePos[frame + 1];
 
 	} else if (restart && (_soundStage == kSoundNone)) {
+		// If we are asked to restart the video if necessary and have no
+		// audio to worry about, restart the video and run through the frames
 
 		_curFrame = 0;
 		_stream->seek(_firstFramePos);
@@ -720,6 +740,8 @@ bool IMDDecoder::seek(int32 frame, int whence, bool restart) {
 		return true;
 
 	} else {
+		// Not possible
+
 		warning("IMDDecoder::seek(): Frame %d is not directly accessible", frame + 1);
 		return false;
 	}
@@ -798,7 +820,7 @@ bool IMDDecoder::load(Common::SeekableReadStream &stream) {
 	_features |= kFeaturesPalette;
 
 	// Palette
-	_stream->read((byte *) _palette, 768);
+	_stream->read((byte *)_palette, 768);
 
 	_paletteDirty = true;
 
@@ -1106,11 +1128,13 @@ void IMDDecoder::processFrame() {
 
 	} while (hasNextCmd);
 
+	// Start the audio stream if necessary
 	if (startSound && _soundEnabled) {
 		_mixer->playStream(_soundType, &_audioHandle, _audioStream);
 		_soundStage = kSoundPlaying;
 	}
 
+	// End the audio stream if necessary
 	if ((_curFrame >= (int32)(_frameCount - 1)) && (_soundStage == kSoundPlaying)) {
 		_audioStream->finish();
 		_mixer->stopHandle(_audioHandle);
@@ -1121,15 +1145,39 @@ void IMDDecoder::processFrame() {
 }
 
 void IMDDecoder::calcFrameCoords(uint32 frame) {
-	if (frame == 0)
-		_dirtyRects.push_back(Common::Rect(_x, _y, _x + _width, _y + _height));
-	else if (_frameCoords && ((_frameCoords[frame].left != -1)))
-		_dirtyRects.push_back(Common::Rect(_frameCoords[frame].left     , _frameCoords[frame].top,
-		                                   _frameCoords[frame].right + 1, _frameCoords[frame].bottom + 1));
-	else if (_stdX != -1)
-		_dirtyRects.push_back(Common::Rect(_stdX, _stdY, _stdX + _stdWidth, _stdY + _stdHeight));
-	else
-		_dirtyRects.push_back(Common::Rect(_x, _y, _x + _width, _y + _height));
+	int16 left, top, right, bottom;
+
+	if (frame == 0) {
+		// First frame is always a full "keyframe"
+
+		left   = _x;
+		top    = _y;
+		right  = _x + _width;
+		bottom = _y + _height;
+	} else if (_frameCoords && ((_frameCoords[frame].left != -1))) {
+		// We have frame coordinates for that frame
+
+		left   = _frameCoords[frame].left;
+		top    = _frameCoords[frame].top;
+		right  = _frameCoords[frame].right  + 1;
+		bottom = _frameCoords[frame].bottom + 1;
+	} else if (_stdX != -1) {
+		// We have standard coordinates
+
+		left   = _stdX;
+		top    = _stdY;
+		right  = _stdX + _stdWidth;
+		bottom = _stdY + _stdHeight;
+	} else {
+		// Otherwise, it must be a full "keyframe"
+
+		left   = _x;
+		top    = _y;
+		right  = _x + _width;
+		bottom = _y + _height;
+	}
+
+	_dirtyRects.push_back(Common::Rect(left, top, right, bottom));
 }
 
 void IMDDecoder::videoData(uint32 size) {
@@ -1141,12 +1189,16 @@ void IMDDecoder::videoData(uint32 size) {
 
 void IMDDecoder::renderFrame() {
 	if (_dirtyRects.empty())
+		// Nothing to do
 		return;
 
+	// The area for the frame
 	Common::Rect &rect = _dirtyRects.back();
 
+	// Clip it by the video's visible area
 	rect.clip(Common::Rect(_x, _y, _x + _width, _y + _height));
 	if (!rect.isValidRect() || rect.isEmpty()) {
+		// Result is empty => nothing to do
 		_dirtyRects.pop_back();
 		return;
 	}
@@ -1155,7 +1207,9 @@ void IMDDecoder::renderFrame() {
 
 	uint8 type = *dataPtr++;
 
-	if (type & 0x10) { // Palette data
+	if (type & 0x10) {
+		// Palette data
+
 		// One byte index
 		int index = *dataPtr++;
 		// 16 entries with each 3 bytes (RGB)
@@ -1174,7 +1228,7 @@ void IMDDecoder::renderFrame() {
 
 		if ((type == 2) && (rect.width() == _surface.w)) {
 			// Directly uncompress onto the video surface
-			deLZ77((byte *) _surface.pixels, dataPtr);
+			deLZ77((byte *)_surface.pixels, dataPtr);
 			return;
 		}
 
@@ -1198,9 +1252,13 @@ void IMDDecoder::renderFrame() {
 
 void IMDDecoder::nextSoundSlice(bool hasNextCmd) {
 	if (hasNextCmd || !_soundEnabled) {
+		// Skip sound
+
 		_stream->skip(_soundSliceSize);
 		return;
 	}
+
+	// Read, convert, queue
 
 	byte *soundBuf = (byte *)malloc(_soundSliceSize);
 
@@ -1214,9 +1272,13 @@ bool IMDDecoder::initialSoundSlice(bool hasNextCmd) {
 	int dataLength = _soundSliceSize * _soundSlicesCount;
 
 	if (hasNextCmd || !_soundEnabled) {
+		// Skip sound
+
 		_stream->skip(dataLength);
 		return false;
 	}
+
+	// Read, convert, queue
 
 	byte *soundBuf = (byte *)malloc(dataLength);
 
@@ -1231,6 +1293,8 @@ bool IMDDecoder::initialSoundSlice(bool hasNextCmd) {
 void IMDDecoder::emptySoundSlice(bool hasNextCmd) {
 	if (hasNextCmd || !_soundEnabled)
 		return;
+
+	// Create an empty sound buffer and queue it
 
 	byte *soundBuf = (byte *)malloc(_soundSliceSize);
 
