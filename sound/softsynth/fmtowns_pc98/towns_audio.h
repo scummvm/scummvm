@@ -50,7 +50,7 @@ public:
 	void setSoundEffectVolume(int volume);
 	// Defines the channels used as sound effect channels for the purpose of ScummVM GUI volume control.
 	// The first 6 bits are the 6 fm channels. The next 8 bits are pcm channels.
-	void setSoundEffectChanMask(uint32 mask);
+	void setSoundEffectChanMask(int mask);
 
 private:
 	void nextTickEx(int32 *buffer, uint32 bufferSize);
@@ -92,8 +92,9 @@ private:
 	int intf_fmSetPitch(va_list &args);
 	int intf_fmSetLevel(va_list &args);
 	int intf_fmReset(va_list &args);
-	int intf_cdaSetVolume(va_list &args);
-	int intf_cdaReset(va_list &args);
+	int intf_setOutputVolume(va_list &args);
+	int intf_resetOutputVolume(va_list &args);
+	int intf_updateOutputVolume(va_list &args);
 	int intf_pcmUpdateEnvelopeGenerator(va_list &args);
 
 	int intf_notImpl(va_list &args);
@@ -148,9 +149,10 @@ private:
 
 	void pcmCalcPhaseStep(TownsAudio_PcmChannel *p, TownsAudio_WaveTable *w);
 
-	void cdaReset();
-	
-	uint8 _cdaVolFlags;
+	void updateOutputVolume();
+	uint8 _outputVolumeFlags;
+	uint8 _outputLevel[16];
+	uint8 _outputMuteFlags;
 
 	const float _baserate;
 	uint32 _timerBase;
@@ -159,7 +161,7 @@ private:
 
 	uint16 _musicVolume;
 	uint16 _sfxVolume;
-	uint32 _pcmSfxChanMask;
+	int _pcmSfxChanMask;
 
 	TownsAudioInterfacePluginDriver *_drv;
 	bool _ready;

@@ -66,7 +66,9 @@ bool SoundTowns::init() {
 	if (!loadInstruments())
 		return false;
 
-	_driver->cdaSetVolume(1, 118, 118);
+	_driver->intf()->callback(68);
+	_driver->intf()->callback(70, 0x33);
+	_driver->setOutputVolume(1, 118, 118);
 
 	return true;
 }
@@ -92,7 +94,7 @@ void SoundTowns::playTrack(uint8 track) {
 	beginFadeOut();
 
 	if (_musicEnabled == 2 && trackNum != -1) {
-		_driver->cdaSetVolume(1, 118, 118);
+		_driver->setOutputVolume(1, 118, 118);
 		AudioCD.play(trackNum+1, loop ? -1 : 1, 0, 0);
 		AudioCD.updateCD();
 		_cdaPlaying = true;
@@ -230,24 +232,24 @@ void SoundTowns::stopAllSoundEffects() {
 void SoundTowns::beginFadeOut() {
 	if (_cdaPlaying) {
 		for (int i = 118; i > 103; i--) {
-			_driver->cdaSetVolume(1, i, i);
+			_driver->setOutputVolume(1, i, i);
 			_vm->delay(2 * _vm->tickLength());
 		}
 
 		for (int i = 103; i > 83; i -= 2) {
-			_driver->cdaSetVolume(1, i, i);
+			_driver->setOutputVolume(1, i, i);
 			_vm->delay(2 * _vm->tickLength());
 		}
 
 		for (int i = 83; i > 58; i -= 2) {
-			_driver->cdaSetVolume(1, i, i);
+			_driver->setOutputVolume(1, i, i);
 			_vm->delay(_vm->tickLength());
 		}
 
 		for (int i = 58; i > 0; i--)
-			_driver->cdaSetVolume(1, i, i);
+			_driver->setOutputVolume(1, i, i);
 
-		_driver->cdaSetVolume(1, 0, 0);
+		_driver->setOutputVolume(1, 0, 0);
 
 	} else {
 		if (_lastTrack == -1)
@@ -336,9 +338,9 @@ void SoundTowns::playEuphonyTrack(uint32 offset, int loop) {
 	for (int i = 0; i < 32; i++)
 		_driver->chanOrdr(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->chanLevel(i, *src++);
+		_driver->chanVolumeShift(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->chanTranspose(i, *src++);
+		_driver->chanNoteShift(i, *src++);
 
 	src = _musicTrackData + 1748;
 	for (int i = 0; i < 6; i++)

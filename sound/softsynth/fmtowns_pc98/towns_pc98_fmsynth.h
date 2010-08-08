@@ -160,6 +160,7 @@ private:
 
 	const float _baserate;
 	uint32 _timerbase;
+	uint32 _rtt;
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;

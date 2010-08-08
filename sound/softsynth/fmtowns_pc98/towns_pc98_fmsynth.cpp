@@ -28,7 +28,7 @@
 
 class TownsPC98_FmSynthOperator {
 public:
-	TownsPC98_FmSynthOperator(const uint32 timerbase, const uint8 *rateTable,
+	TownsPC98_FmSynthOperator(const uint32 timerbase, const uint32 rtt, const uint8 *rateTable,
 	                          const uint8 *shiftTable, const uint8 *attackDecayTable, const uint32 *frqTable,
 	                          const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable);
 	~TownsPC98_FmSynthOperator() {}
@@ -108,6 +108,7 @@ protected:
 
 	const uint32 _tickLength;
 	uint32 _timer;
+	const uint32 _rtt;
 	int32 _currentLevel;
 
 	struct EvpState {
@@ -116,10 +117,10 @@ protected:
 	} fs_a, fs_d, fs_s, fs_r;
 };
 
-TownsPC98_FmSynthOperator::TownsPC98_FmSynthOperator(const uint32 timerbase, const uint8 *rateTable,
-        const uint8 *shiftTable, const uint8 *attackDecayTable, const uint32 *frqTable,
-        const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable) :
-	_rateTbl(rateTable), _rshiftTbl(shiftTable), _adTbl(attackDecayTable), _fTbl(frqTable),
+TownsPC98_FmSynthOperator::TownsPC98_FmSynthOperator(const uint32 timerbase, const uint32 rtt,
+		const uint8 *rateTable, const uint8 *shiftTable, const uint8 *attackDecayTable,
+		const uint32 *frqTable, const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable) :
+	_rtt(rtt), _rateTbl(rateTable), _rshiftTbl(shiftTable), _adTbl(attackDecayTable), _fTbl(frqTable),
 	_sinTbl(sineTable), _tLvlTbl(tlevelOut), _detnTbl(detuneTable), _tickLength(timerbase * 2),
 	_specifiedAttackRate(0), _specifiedDecayRate(0), _specifiedReleaseRate(0), _specifiedSustainRate(0),
 	_phase(0), _state(kEnvReady), _playing(false), _timer(0), _keyScale1(0),
@@ -190,8 +191,8 @@ void TownsPC98_FmSynthOperator::generateOutput(int32 phasebuf, int32 *feed, int3
 		return;
 
 	_timer += _tickLength;
-	while (_timer > 0x5B8D80) {
-		_timer -= 0x5B8D80;
+	while (_timer > _rtt) {
+		_timer -= _rtt;
 		++_tickCount;
 
 		int32 levelIncrement = 0;
@@ -308,7 +309,7 @@ bool TownsPC98_FmSynthOperator::scaleRate(uint8 value) {
 
 class TownsPC98_FmSynthSquareSineSource {
 public:
-	TownsPC98_FmSynthSquareSineSource(const uint32 timerbase);
+	TownsPC98_FmSynthSquareSineSource(const uint32 timerbase, const uint32 rtt);
 	~TownsPC98_FmSynthSquareSineSource();
 
 	void init(const int *rsTable, const int *rseTable);
@@ -351,6 +352,7 @@ private:
 
 	const uint32 _tickLength;
 	uint32 _timer;
+	const uint32 _rtt;
 
 	struct Channel {
 		int tick;
@@ -377,7 +379,7 @@ private:
 
 class TownsPC98_FmSynthPercussionSource {
 public:
-	TownsPC98_FmSynthPercussionSource(const uint32 timerbase);
+	TownsPC98_FmSynthPercussionSource(const uint32 timerbase, const uint32 rtt);
 	~TownsPC98_FmSynthPercussionSource() {
 		delete[] _reg;
 	}
@@ -429,6 +431,7 @@ private:
 
 	const uint32 _tickLength;
 	uint32 _timer;
+	const uint32 _rtt;
 
 	uint8 **_reg;
 
@@ -440,8 +443,8 @@ private:
 	bool _ready;
 };
 
-TownsPC98_FmSynthSquareSineSource::TownsPC98_FmSynthSquareSineSource(const uint32 timerbase) : _tlTable(0),
-	_tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _ready(0), _reg(0), _rand(1), _outN(1),
+TownsPC98_FmSynthSquareSineSource::TownsPC98_FmSynthSquareSineSource(const uint32 timerbase, const uint32 rtt) : _tlTable(0),
+	_rtt(rtt), _tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _ready(0), _reg(0), _rand(1), _outN(1),
 	_nTick(0), _evpUpdateCnt(0), _evpTimer(0x1f), _pReslt(0x1f), _attack(0), _cont(false), _evpUpdate(true),
 	_timer(0), _noiseGenerator(0), _chanEnable(0),
 	_volMaskA(0), _volMaskB(0), _volumeA(Audio::Mixer::kMaxMixerVolume), _volumeB(Audio::Mixer::kMaxMixerVolume) {
@@ -558,8 +561,8 @@ void TownsPC98_FmSynthSquareSineSource::nextTick(int32 *buffer, uint32 bufferSiz
 
 	for (uint32 i = 0; i < bufferSize; i++) {
 		_timer += _tickLength;
-		while (_timer > 0x5B8D80) {
-			_timer -= 0x5B8D80;
+		while (_timer > _rtt) {
+			_timer -= _rtt;
 
 			if (++_nTick >= (_noiseGenerator & 0x1f)) {
 				if ((_rand + 1) & 2)
@@ -597,7 +600,7 @@ void TownsPC98_FmSynthSquareSineSource::nextTick(int32 *buffer, uint32 bufferSiz
 
 		int32 finOut = 0;
 		for (int ii = 0; ii < 3; ii++) {
-int32 finOutTemp = ((_channels[ii].vol >> 4) & 1) ? _tleTable[_channels[ii].out ? _pReslt : 0] : _tlTable[_channels[ii].out ? (_channels[ii].vol & 0x0f) : 0];
+			int32 finOutTemp = ((_channels[ii].vol >> 4) & 1) ? _tleTable[_channels[ii].out ? _pReslt : 0] : _tlTable[_channels[ii].out ? (_channels[ii].vol & 0x0f) : 0];
 
 			if ((1 << ii) & _volMaskA)
 				finOutTemp = (finOutTemp * _volumeA) / Audio::Mixer::kMaxMixerVolume;
@@ -624,8 +627,8 @@ void TownsPC98_FmSynthSquareSineSource::updateRegs() {
 	_updateRequest = -1;
 }
 
-TownsPC98_FmSynthPercussionSource::TownsPC98_FmSynthPercussionSource(const uint32 timerbase) :
-	_tickLength(timerbase * 2), _timer(0), _ready(false), _volMaskA(0), _volMaskB(0), _volumeA(Audio::Mixer::kMaxMixerVolume), _volumeB(Audio::Mixer::kMaxMixerVolume) {
+TownsPC98_FmSynthPercussionSource::TownsPC98_FmSynthPercussionSource(const uint32 timerbase, const uint32 rtt) :
+	_rtt(rtt), _tickLength(timerbase * 2), _timer(0), _ready(false), _volMaskA(0), _volMaskB(0), _volumeA(Audio::Mixer::kMaxMixerVolume), _volumeB(Audio::Mixer::kMaxMixerVolume) {
 
 	memset(_rhChan, 0, sizeof(RhtChannel) * 6);
 	_reg = new uint8 *[40];
@@ -758,8 +761,8 @@ void TownsPC98_FmSynthPercussionSource::nextTick(int32 *buffer, uint32 bufferSiz
 
 	for (uint32 i = 0; i < bufferSize; i++) {
 		_timer += _tickLength;
-		while (_timer > 0x5B8D80) {
-			_timer -= 0x5B8D80;
+		while (_timer > _rtt) {
+			_timer -= _rtt;
 
 			for (int ii = 0; ii < 6; ii++) {
 				RhtChannel *s = &_rhChan[ii];
@@ -826,7 +829,7 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 	_chanInternal(0), _ssg(0), _prc(0),
 	_numChan(type == kType26 ? 3 : 6), _numSSG(type == kTypeTowns ? 0 : 3), _hasPercussion(type == kType86 ? true : false),
 	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0), _oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0),
-	_baserate(55125.0f / (float)mixer->getOutputRate()),
+	 _rtt(type == kTypeTowns ? 0x514767 : 0x5B8D80), _baserate(55125.0f / (float)mixer->getOutputRate()),
 	_volMaskA(0), _volMaskB(0), _volumeA(255), _volumeB(255),
 	_regProtectionFlag(false), _ready(false) {
 
@@ -834,7 +837,7 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 	memset(&_timers[1], 0, sizeof(ChipTimer));
 	_timers[0].cb = &TownsPC98_FmSynth::timerCallbackA;
 	_timers[1].cb = &TownsPC98_FmSynth::timerCallbackB;
-	_timerbase = (uint32)(_baserate * 1000000.0f);
+	_timerbase = (uint32)(_baserate * 1000000.0f);	
 }
 
 TownsPC98_FmSynth::~TownsPC98_FmSynth() {
@@ -865,16 +868,16 @@ bool TownsPC98_FmSynth::init() {
 	for (int i = 0; i < _numChan; i++) {
 		memset(&_chanInternal[i], 0, sizeof(ChanInternal));
 		for (int j = 0; j < 4; ++j)
-			_chanInternal[i].opr[j] = new TownsPC98_FmSynthOperator(_timerbase, _oprRates, _oprRateshift, _oprAttackDecay, _oprFrq, _oprSinTbl, _oprLevelOut, _oprDetune);
+			_chanInternal[i].opr[j] = new TownsPC98_FmSynthOperator(_timerbase, _rtt, _oprRates, _oprRateshift, _oprAttackDecay, _oprFrq, _oprSinTbl, _oprLevelOut, _oprDetune);
 	}
 
 	if (_numSSG) {
-		_ssg = new TownsPC98_FmSynthSquareSineSource(_timerbase);
+		_ssg = new TownsPC98_FmSynthSquareSineSource(_timerbase, _rtt);
 		_ssg->init(&_ssgTables[0], &_ssgTables[16]);
 	}
 
 	if (_hasPercussion) {
-		_prc = new TownsPC98_FmSynthPercussionSource(_timerbase);
+		_prc = new TownsPC98_FmSynthPercussionSource(_timerbase, _rtt);
 		_prc->init(_percussionData);
 	}
 
