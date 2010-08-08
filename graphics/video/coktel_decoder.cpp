@@ -1405,7 +1405,15 @@ bool VMDDecoder::seek(int32 frame, int whence, bool restart) {
 		// Nothing to do
 		return true;
 
-	// TODO
+	// Restart sound
+	if (_hasSound && (frame == 0) && (_soundStage == kSoundNone) && !_audioStream) {
+		_soundStage  = kSoundLoaded;
+		_audioStream = Audio::makeQueuingAudioStream(_soundFreq, _soundStereo != 0);
+	}
+
+	// Seek
+	_stream->seek(_frames[frame].offset);
+	_curFrame = frame;
 
 	return true;
 }
