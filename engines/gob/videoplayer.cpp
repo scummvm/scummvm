@@ -627,12 +627,10 @@ Graphics::CoktelDecoder *VideoPlayer::openVideo(const Common::String &file, Prop
 
 	Graphics::CoktelDecoder *video = 0;
 	if (properties.type == kVideoTypeIMD)
-		warning("TODO: IMD");
-		//_video = new Graphics::Imd();
-	else if (properties.type == kVideoTypePreIMD) {
-		warning("PreIMDDecoder \"%s\" %dx%d", fileName.c_str(), properties.width, properties.height);
+		video = new Graphics::IMDDecoder(*_vm->_mixer, Audio::Mixer::kSFXSoundType);
+	else if (properties.type == kVideoTypePreIMD)
 		video = new Graphics::PreIMDDecoder(properties.width, properties.height, *_vm->_mixer, Audio::Mixer::kSFXSoundType);
-	} else if (properties.type == kVideoTypeVMD)
+	else if (properties.type == kVideoTypeVMD)
 		warning("TODO: VMD");
 		//_video = new Graphics::Vmd(_vm->_video->_palLUT);
 	else if (properties.type == kVideoTypeRMD)
@@ -650,6 +648,9 @@ Graphics::CoktelDecoder *VideoPlayer::openVideo(const Common::String &file, Prop
 		delete video;
 		return 0;
 	}
+
+	properties.width  = video->getWidth();
+	properties.height = video->getHeight();
 
 	return video;
 }
