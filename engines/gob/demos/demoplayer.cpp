@@ -155,8 +155,8 @@ void DemoPlayer::playVideo(const char *fileName) {
 	int16 x = _rebase0 ? 0 : -1;
 	int16 y = _rebase0 ? 0 : -1;
 	if (_vm->_vidPlayer->primaryOpen(file, x, y)) {
-		bool videoSupportsDouble =
-			((_vm->_vidPlayer->getFeatures() & Graphics::CoktelVideo::kFeaturesSupportsDouble) != 0);
+		bool videoSupportsDouble = false;
+			//((_vm->_vidPlayer->getFeatures() & Graphics::CoktelDecoder::kFeaturesSupportsDouble) != 0);
 
 		if (_autoDouble) {
 			int16 defX = _rebase0 ? 0 : _vm->_vidPlayer->getDefaultX();
@@ -215,7 +215,7 @@ void DemoPlayer::playVideoNormal() {
 }
 
 void DemoPlayer::playVideoDoubled() {
-	Common::String fileNameOpened = _vm->_vidPlayer->getFileName();
+	Common::String fileNameOpened = _vm->_vidPlayer->getPrimaryFileName();
 	_vm->_vidPlayer->primaryClose();
 
 	int16 x = _rebase0 ? 0 : -1;
@@ -223,10 +223,10 @@ void DemoPlayer::playVideoDoubled() {
 	if (_vm->_vidPlayer->primaryOpen(fileNameOpened.c_str(), x, y,
 				VideoPlayer::kFlagScreenSurface)) {
 
-		for (int i = 0; i < _vm->_vidPlayer->getFramesCount(); i++) {
+		for (int i = 0; i < _vm->_vidPlayer->getFrameCount(); i++) {
 			_vm->_vidPlayer->playFrame(i);
 
-			Graphics::CoktelVideo::State state = _vm->_vidPlayer->getState();
+			Graphics::CoktelDecoder::State state;// = _vm->_vidPlayer->getState();
 
 			int16 w = state.right - state.left + 1;
 			int16 h = state.bottom - state.top + 1;

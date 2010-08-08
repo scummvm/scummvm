@@ -616,8 +616,8 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 			return;
 		}
 
-		if (frame >= _vm->_vidPlayer->getFramesCount(obj.videoSlot - 1))
-			frame = _vm->_vidPlayer->getFramesCount(obj.videoSlot - 1) - 1;
+		if (frame >= _vm->_vidPlayer->getFrameCount(obj.videoSlot - 1))
+			frame = _vm->_vidPlayer->getFrameCount(obj.videoSlot - 1) - 1;
 
 		// Seek to frame
 		if (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < 256) {
@@ -632,10 +632,12 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 				_vm->_vidPlayer->slotPlay(obj.videoSlot - 1);
 		}
 
+		/*
 		// Subtitle
 		Graphics::CoktelVideo::State state = _vm->_vidPlayer->getState(obj.videoSlot - 1);
 		if (state.flags & Graphics::CoktelVideo::kStateSpeech)
 			_vm->_draw->printTotText(state.speechId);
+		*/
 
 		destX  = 0;
 		destY  = 0;

@@ -29,7 +29,7 @@
 #include "common/array.h"
 #include "common/str.h"
 
-#include "graphics/video/coktelvideo/coktelvideo.h"
+#include "graphics/video/coktel_decoder.h"
 
 #include "gob/util.h"
 
@@ -88,16 +88,16 @@ public:
 
 	bool slotIsOpen(int slot) const;
 
-	const char *getFileName(int slot = -1) const;
+	const Common::String &getPrimaryFileName() const;
 	uint16 getFlags(int slot = -1) const;
-	int16 getFramesCount(int slot = -1) const;
+	int16 getFrameCount(int slot = -1) const;
 	int16 getCurrentFrame(int slot = -1) const;
 	int16 getWidth(int slot = -1) const;
 	int16 getHeight(int slot = -1) const;
 	int16 getDefaultX(int slot = -1) const;
 	int16 getDefaultY(int slot = -1) const;
 
-	Graphics::CoktelVideo::State getState(int slot = -1) const;
+	void getState(int slot = -1) const;
 	uint32 getFeatures(int slot = -1) const;
 
 	bool hasExtraData(const char *fileName, int slot = -1) const;
@@ -107,47 +107,17 @@ public:
 			int16 varFrames, int16 varWidth, int16 varHeight);
 
 private:
-	class Video {
-		public:
-			Video(GobEngine *vm);
-			~Video();
-
-			bool open(const char *fileName, Type which, int16 width, int16 height);
-			void close();
-
-			bool isOpen() const;
-
-			const char *getFileName() const;
-			Graphics::CoktelVideo *getVideo();
-			const Graphics::CoktelVideo *getVideo() const;
-
-			Graphics::CoktelVideo::State getState() const;
-			uint32 getFeatures() const;
-
-			int16 getDefaultX() const;
-			int16 getDefaultY() const;
-
-			bool hasExtraData(const char *fileName) const;
-			Common::MemoryReadStream *getExtraData(const char *fileName);
-
-			Graphics::CoktelVideo::State nextFrame();
-
-		private:
-			GobEngine *_vm;
-
-			Common::String _fileName;
-			DataStream *_stream;
-			Graphics::CoktelVideo *_video;
-			Graphics::CoktelVideo::State _state;
-			int16 _defaultX, _defaultY;
-	};
+	static const int kVideoSlotCount = 32;
 
 	static const char *_extensions[];
 
 	GobEngine *_vm;
 
-	Common::Array<Video *> _videoSlots;
-	Video *_primaryVideo;
+	Graphics::CoktelDecoder *_primaryVideo;
+	Graphics::CoktelDecoder *_videoSlots[kVideoSlotCount];
+
+	Common::String _primaryFileName;
+
 	bool _ownSurf;
 	bool _backSurf;
 	bool _needBlit;
@@ -157,16 +127,18 @@ private:
 
 	bool findFile(char *fileName, Type &which);
 
-	const Video *getVideoBySlot(int slot = -1) const;
-	Video *getVideoBySlot(int slot = -1);
+	const Graphics::CoktelDecoder *getVideoBySlot(int slot = -1) const;
+	Graphics::CoktelDecoder *getVideoBySlot(int slot = -1);
 
 	int getNextFreeSlot();
 
-	void copyPalette(Graphics::CoktelVideo &video, int16 palStart = -1, int16 palEnd = -1);
+	void copyPalette(Graphics::CoktelDecoder &video, int16 palStart = -1, int16 palEnd = -1);
 	bool doPlay(int16 frame, int16 breakKey,
 			uint16 palCmd, int16 palStart, int16 palEnd,
 			int16 palFrame, int16 endFrame, bool noRetrace = false);
-	void evalBgShading(Graphics::CoktelVideo &video);
+	void evalBgShading(Graphics::CoktelDecoder &video);
+
+	Graphics::CoktelDecoder *openVideo(const char *fileName, Type which, uint16 width, uint16 height);
 };
 
 } // End of namespace Gob

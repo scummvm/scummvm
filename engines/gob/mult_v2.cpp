@@ -737,7 +737,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 	if (animData.animation < 0) {
 		if ((animObj.videoSlot > 0) &&
 		    (_vm->_vidPlayer->getCurrentFrame(animObj.videoSlot - 1) <
-		      _vm->_vidPlayer->getFramesCount(animObj.videoSlot - 1))) {
+		      _vm->_vidPlayer->getFrameCount(animObj.videoSlot - 1))) {
 			animData.newCycle = 0;
 			return;
 		}
@@ -1139,7 +1139,7 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 		palFrame = 0;
 
 	if (lastFrame == -1)
-		lastFrame = _vm->_vidPlayer->getFramesCount() - 1;
+		lastFrame = _vm->_vidPlayer->getFrameCount() - 1;
 
 	baseFrame = startFrame % (lastFrame - palFrame + 1);
 	_vm->_vidPlayer->primaryPlay(baseFrame + palFrame, baseFrame + palFrame, 0,

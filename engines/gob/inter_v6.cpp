@@ -231,7 +231,7 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 			return false;
 		}
 
-		int16 framesCount = _vm->_vidPlayer->getFramesCount(vmdSlot);
+		int16 framesCount = _vm->_vidPlayer->getFrameCount(vmdSlot);
 
 		for (int i = 0; i < framesCount; i++) {
 			_vm->_vidPlayer->slotPlay(vmdSlot);

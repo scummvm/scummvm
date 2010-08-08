@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
 	video/avi_decoder.o \
+	video/coktel_decoder.o \
 	video/dxa_decoder.o \
 	video/flic_decoder.o \
 	video/mpeg_player.o \
