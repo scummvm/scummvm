@@ -959,50 +959,49 @@ void Inter_v2::o2_setScrollOffset() {
 
 void Inter_v2::o2_playImd() {
 	char imd[128];
-	int16 x, y;
-	int16 startFrame;
-	int16 lastFrame;
-	int16 breakKey;
-	int16 flags;
-	int16 palStart;
-	int16 palEnd;
-	uint16 palCmd;
 	bool close;
 
 	_vm->_game->_script->evalExpr(0);
 	_vm->_game->_script->getResultStr()[8] = 0;
 	strncpy0(imd, _vm->_game->_script->getResultStr(), 127);
 
-	x = _vm->_game->_script->readValExpr();
-	y = _vm->_game->_script->readValExpr();
-	startFrame = _vm->_game->_script->readValExpr();
-	lastFrame = _vm->_game->_script->readValExpr();
-	breakKey = _vm->_game->_script->readValExpr();
-	flags = _vm->_game->_script->readValExpr();
-	palStart = _vm->_game->_script->readValExpr();
-	palEnd = _vm->_game->_script->readValExpr();
-	palCmd = 1 << (flags & 0x3F);
+	VideoPlayer::Properties props;
+
+	props.x          = _vm->_game->_script->readValExpr();
+	props.y          = _vm->_game->_script->readValExpr();
+	props.startFrame = _vm->_game->_script->readValExpr();
+	props.lastFrame  = _vm->_game->_script->readValExpr();
+	props.breakKey   = _vm->_game->_script->readValExpr();
+	props.flags      = _vm->_game->_script->readValExpr();
+	props.palStart   = _vm->_game->_script->readValExpr();
+	props.palEnd     = _vm->_game->_script->readValExpr();
+	props.palCmd     = 1 << (props.flags & 0x3F);
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
-			"paletteCmd %d (%d - %d), flags %X", _vm->_game->_script->getResultStr(), x, y,
-			startFrame, lastFrame, palCmd, palStart, palEnd, flags);
+			"paletteCmd %d (%d - %d), flags %X", imd,
+			props.x, props.y, props.startFrame, props.lastFrame,
+			props.palCmd, props.palStart, props.palEnd, props.flags);
 
-	if ((imd[0] != 0) && !_vm->_vidPlayer->primaryOpen(imd, x, y, flags)) {
+	_vm->_vidPlayer->evaluateFlags(props);
+
+	int slot;
+	if ((imd[0] != 0) && ((slot = _vm->_vidPlayer->openVideo(true, imd, props)) < 0)) {
 		WRITE_VAR(11, (uint32) -1);
 		return;
 	}
 
-	close = (lastFrame == -1);
-	if (startFrame == -2) {
-		startFrame = lastFrame = 0;
+	close = (props.lastFrame == -1);
+	if (props.startFrame == -2) {
+		props.startFrame = 0;
+		props.lastFrame  = 0;
 		close = false;
 	}
 
-	if (startFrame >= 0)
-		_vm->_vidPlayer->primaryPlay(startFrame, lastFrame, breakKey, palCmd, palStart, palEnd, 0);
+	if (props.startFrame >= 0)
+		_vm->_vidPlayer->play(slot, props);
 
 	if (close)
-		_vm->_vidPlayer->primaryClose();
+		_vm->_vidPlayer->closeVideo(slot);
 }
 
 void Inter_v2::o2_getImdInfo() {
@@ -1011,10 +1010,10 @@ void Inter_v2::o2_getImdInfo() {
 	int16 varWidth, varHeight;
 
 	_vm->_game->_script->evalExpr(0);
-	varX = _vm->_game->_script->readVarIndex();
-	varY = _vm->_game->_script->readVarIndex();
+	varX      = _vm->_game->_script->readVarIndex();
+	varY      = _vm->_game->_script->readVarIndex();
 	varFrames = _vm->_game->_script->readVarIndex();
-	varWidth = _vm->_game->_script->readVarIndex();
+	varWidth  = _vm->_game->_script->readVarIndex();
 	varHeight = _vm->_game->_script->readVarIndex();
 
 	// WORKAROUND: The nut rolling animation in the administration center

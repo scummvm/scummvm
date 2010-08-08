@@ -72,6 +72,19 @@ VideoPlayer::~VideoPlayer() {
 		_videoSlots[i].close();
 }
 
+void VideoPlayer::evaluateFlags(Properties &properties) {
+	if        (properties.flags & kFlagFrontSurface) {
+		properties.sprite = Draw::kFrontSurface;
+	} else if (properties.flags & kFlagOtherSurface) {
+		properties.sprite = properties.x;
+		properties.x      = 0;
+	} else if (properties.flags & kFlagScreenSurface) {
+		properties.sprite = 0;
+	} else {
+		properties.sprite = Draw::kBackSurface;
+	}
+}
+
 int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties &properties) {
 	int slot = 0;
 

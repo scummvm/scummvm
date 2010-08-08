@@ -93,6 +93,8 @@ public:
 	VideoPlayer(GobEngine *vm);
 	~VideoPlayer();
 
+	void evaluateFlags(Properties &properties);
+
 	int  openVideo(bool primary, const Common::String &file, Properties &properties);
 	bool closeVideo(int slot);
 
