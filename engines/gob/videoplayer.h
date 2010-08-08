@@ -27,6 +27,8 @@
 #define GOB_VIDEOPLAYER_H
 
 #include "common/array.h"
+#include "common/list.h"
+#include "common/rect.h"
 #include "common/str.h"
 
 #include "graphics/surface.h"
@@ -85,6 +87,8 @@ public:
 
 		bool fade; ///< Fade in?
 
+		bool waitEndFrame; ///< Wait for the frame's time to run out?
+
 		bool canceled; ///< Was the video canceled?
 
 		Properties();
@@ -99,6 +103,7 @@ public:
 	bool closeVideo(int slot = 0);
 
 	bool play(int slot, Properties &properties);
+	void waitEndFrame(int slot);
 
 	bool slotIsOpen(int slot = 0) const;
 
@@ -110,6 +115,8 @@ public:
 	uint16 getHeight      (int slot = 0) const;
 	uint16 getDefaultX    (int slot = 0) const;
 	uint16 getDefaultY    (int slot = 0) const;
+
+	const Common::List<Common::Rect> *getDirtyRects(int slot = 0) const;
 
 	bool                      hasEmbeddedFile(const Common::String &fileName, int slot = 0) const;
 	Common::MemoryReadStream *getEmbeddedFile(const Common::String &fileName, int slot = 0);

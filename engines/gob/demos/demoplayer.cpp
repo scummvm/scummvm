@@ -152,12 +152,13 @@ void DemoPlayer::playVideo(const char *fileName) {
 
 	debugC(1, kDebugDemo, "Playing video \"%s\"", file);
 
-	int16 x = _rebase0 ? 0 : -1;
-	int16 y = _rebase0 ? 0 : -1;
-	if (_vm->_vidPlayer->primaryOpen(file, x, y)) {
-		bool videoSupportsDouble = false;
-			//((_vm->_vidPlayer->getFeatures() & Graphics::CoktelDecoder::kFeaturesSupportsDouble) != 0);
+	VideoPlayer::Properties props;
 
+	props.x = _rebase0 ? 0 : -1;
+	props.y = _rebase0 ? 0 : -1;
+
+	int slot;
+	if ((slot = _vm->_vidPlayer->openVideo(true, file, props)) >= 0) {
 		if (_autoDouble) {
 			int16 defX = _rebase0 ? 0 : _vm->_vidPlayer->getDefaultX();
 			int16 defY = _rebase0 ? 0 : _vm->_vidPlayer->getDefaultY();
@@ -167,16 +168,12 @@ void DemoPlayer::playVideo(const char *fileName) {
 			_doubleMode = ((right < 320) && (bottom < 200));
 		}
 
-		if (_doubleMode) {
-			if (videoSupportsDouble) {
-				_vm->_vidPlayer->slotSetDoubleMode(-1, true);
-				playVideoNormal();
-			} else
-				playVideoDoubled();
-		} else
-			playVideoNormal();
+		if (_doubleMode)
+			playVideoDoubled(slot);
+		else
+			playVideoNormal(slot);
 
-		_vm->_vidPlayer->primaryClose();
+		_vm->_vidPlayer->closeVideo(slot);
 
 		if (waitTime > 0)
 			_vm->_util->longDelay(waitTime);
@@ -210,53 +207,67 @@ void DemoPlayer::playADL(const char *params) {
 	playADL(fileName, waitEsc, repeat);
 }
 
-void DemoPlayer::playVideoNormal() {
-	_vm->_vidPlayer->primaryPlay();
+void DemoPlayer::playVideoNormal(int slot) {
+	VideoPlayer::Properties props;
+
+	_vm->_vidPlayer->play(slot, props);
 }
 
-void DemoPlayer::playVideoDoubled() {
-	Common::String fileNameOpened = _vm->_vidPlayer->getFileName();
-	_vm->_vidPlayer->primaryClose();
+void DemoPlayer::playVideoDoubled(int slot) {
+	Common::String fileNameOpened = _vm->_vidPlayer->getFileName(slot);
+	_vm->_vidPlayer->closeVideo(slot);
 
-	int16 x = _rebase0 ? 0 : -1;
-	int16 y = _rebase0 ? 0 : -1;
-	if (_vm->_vidPlayer->primaryOpen(fileNameOpened.c_str(), x, y,
-				VideoPlayer::kFlagScreenSurface)) {
+	VideoPlayer::Properties props;
 
-		for (uint i = 0; i < _vm->_vidPlayer->getFrameCount(); i++) {
-			// _vm->_vidPlayer->playFrame(i);
+	props.x            = _rebase0 ? 0 : -1;
+	props.y            = _rebase0 ? 0 : -1;
+	props.flags        = VideoPlayer::kFlagScreenSurface;
+	props.waitEndFrame = false;
 
-			/*
-			Graphics::CoktelDecoder::State state;// = _vm->_vidPlayer->getState();
+	_vm->_vidPlayer->evaluateFlags(props);
 
-			int16 w = state.right - state.left + 1;
-			int16 h = state.bottom - state.top + 1;
-			int16 wD = (state.left * 2) + (w * 2);
-			int16 hD = (state.top * 2) + (h * 2);
+	slot = _vm->_vidPlayer->openVideo(true, fileNameOpened, props);
+	if (slot < 0)
+		return;
+
+	for (uint i = 0; i < _vm->_vidPlayer->getFrameCount(slot); i++) {
+		props.startFrame = _vm->_vidPlayer->getCurrentFrame(slot) + 1;
+		props.lastFrame  = _vm->_vidPlayer->getCurrentFrame(slot) + 1;
+
+		_vm->_vidPlayer->play(slot, props);
+
+		const Common::List<Common::Rect> *rects = _vm->_vidPlayer->getDirtyRects(slot);
+		if (rects) {
+			for (Common::List<Common::Rect>::const_iterator rect = rects->begin(); rect != rects->end(); ++rect) {
+				int16 w  = rect->right  - rect->left;
+				int16 h  = rect->bottom - rect->top;
+				int16 wD = (rect->left * 2) + (w * 2);
+				int16 hD = (rect->top  * 2) + (h * 2);
 
 			_vm->_video->drawSpriteDouble(*_vm->_draw->_spritesArray[0], *_vm->_draw->_frontSurface,
-					state.left, state.top, state.right, state.bottom, state.left, state.top, 0);
+					rect->left, rect->top, rect->right - 1, rect->bottom - 1, rect->left, rect->top, 0);
 			_vm->_draw->dirtiedRect(_vm->_draw->_frontSurface,
-					state.left * 2, state.top * 2, wD, hD);
-			*/
-			_vm->_video->retrace();
-
-			_vm->_util->processInput();
-			if (_vm->shouldQuit())
-				break;
-
-			int16 key;
-			bool end = false;
-			while (_vm->_util->checkKey(key))
-				if (key == kKeyEscape)
-					end = true;
-			if (end)
-				break;
-
-			_vm->_vidPlayer->slotWaitEndFrame();
-
+					rect->left * 2, rect->top * 2, wD, hD);
+			}
 		}
+
+		_vm->_video->retrace();
+
+		_vm->_util->processInput();
+		if (_vm->shouldQuit())
+			break;
+
+		int16 key;
+		bool end = false;
+		while (_vm->_util->checkKey(key))
+			if (key == kKeyEscape)
+				end = true;
+		if (end)
+			break;
+
+		_vm->_vidPlayer->waitEndFrame(slot);
 	}
+
 }
 
 void DemoPlayer::playADL(const Common::String &fileName, bool waitEsc, int32 repeat) {

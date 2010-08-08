@@ -40,7 +40,8 @@ namespace Gob {
 VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFrontSurface),
 	x(-1), y(-1), width(-1), height(-1), flags(kFlagFrontSurface),
 	startFrame(-1), lastFrame(-1), endFrame(-1), breakKey(kShortKeyEscape),
-	palCmd(8), palStart(0), palEnd(255), palFrame(-1), fade(false), canceled(false) {
+	palCmd(8), palStart(0), palEnd(255), palFrame(-1),
+	fade(false), waitEndFrame(true), canceled(false) {
 
 }
 
@@ -241,13 +242,21 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 			properties.fade = false;
 		}
 
-		if (!_noCursorSwitch)
-			_vm->_util->delay(video->decoder->getTimeToNextFrame());
+		if (!_noCursorSwitch && properties.waitEndFrame)
+			waitEndFrame(slot);
 	}
 
 	evalBgShading(*video);
 
 	return true;
+}
+
+void VideoPlayer::waitEndFrame(int slot) {
+	Video *video = getVideoBySlot(slot);
+	if (!video)
+		return;
+
+	_vm->_util->delay(video->decoder->getTimeToNextFrame());
 }
 
 bool VideoPlayer::playFrame(int slot, Properties &properties) {
@@ -353,7 +362,7 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
 	}
 
-	if (primary)
+	if (primary && properties.waitEndFrame)
 		checkAbort(*video, properties);
 
 	return true;
@@ -443,6 +452,14 @@ uint16 VideoPlayer::getDefaultY(int slot) const {
 		return 0;
 
 	return video->decoder->getDefaultY();
+}
+
+const Common::List<Common::Rect> *VideoPlayer::getDirtyRects(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+	if (!video)
+		return 0;
+
+	return &video->decoder->getDirtyRects();
 }
 
 bool VideoPlayer::hasEmbeddedFile(const Common::String &fileName, int slot) const {
