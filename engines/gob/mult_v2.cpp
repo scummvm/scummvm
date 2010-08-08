@@ -710,7 +710,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 	} else {
 		if (animObj.videoSlot > 0) {
 			_vm->_video->retrace();
-			_vm->_vidPlayer->slotWaitEndFrame(animObj.videoSlot - 1, true);
+			_vm->_vidPlayer->waitEndFrame(animObj.videoSlot - 1, true);
 		}
 	}
 
@@ -775,7 +775,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		animData.isStatic = 1;
 		animData.frame = 0;
 		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
-			_vm->_vidPlayer->slotClose(animObj.videoSlot - 1);
+			_vm->_vidPlayer->closeVideo(animObj.videoSlot - 1);
 			animObj.videoSlot = 0;
 		}
 
@@ -788,7 +788,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 /*
 		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
 			if (_vm->_vidPlayer->getFlags(animObj.videoSlot - 1) & 0x1000) {
-				_vm->_vidPlayer->slotClose(animObj.videoSlot - 1);
+				_vm->_vidPlayer->closeVideo(animObj.videoSlot - 1);
 				animObj.videoSlot = 0;
 			}
 		}

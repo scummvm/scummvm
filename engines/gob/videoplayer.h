@@ -103,7 +103,7 @@ public:
 	bool closeVideo(int slot = 0);
 
 	bool play(int slot, Properties &properties);
-	void waitEndFrame(int slot);
+	void waitEndFrame(int slot, bool onlySound = false);
 
 	bool slotIsOpen(int slot = 0) const;
 
@@ -127,32 +127,6 @@ public:
 	bool copyFrame(int slot, byte *dest,
 			uint16 left, uint16 top, uint16 width, uint16 height,
 			uint16 x, uint16 y, uint16 pitch, int16 transp = -1) const;
-
-
-	// Obsolete, to be deleted
-
-	bool primaryOpen(const char *videoFile, int16 x = -1, int16 y = -1,
-			int32 flags = kFlagFrontSurface, Type which = kVideoTypeTry,
-			int16 width = -1, int16 height = -1);
-	bool primaryPlay(int16 startFrame = -1, int16 lastFrame = -1,
-			int16 breakKey = kShortKeyEscape,
-			uint16 palCmd = 8, int16 palStart = 0, int16 palEnd = 255,
-			int16 palFrame = -1, int16 endFrame = -1, bool fade = false,
-			int16 reverseTo = -1, bool forceSeek = false);
-	void primaryClose();
-
-	int slotOpen(const char *videoFile, Type which = kVideoTypeTry,
-			int16 width = -1, int16 height = -1);
-	void slotPlay(int slot, int16 frame = -1);
-	void slotClose(int slot);
-	void slotCopyFrame(int slot, byte *dest,
-			uint16 left, uint16 top, uint16 width, uint16 height,
-			uint16 x, uint16 y, uint16 pitch, int16 transp = -1);
-	void slotCopyPalette(int slot, int16 palStart = -1, int16 palEnd = -1);
-	void slotWaitEndFrame(int slot = -1, bool onlySound = false);
-
-	void slotSetDoubleMode(int slot, bool doubleMode);
-
 
 private:
 	struct Video {

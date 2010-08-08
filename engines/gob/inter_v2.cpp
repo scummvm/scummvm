@@ -481,7 +481,7 @@ void Inter_v2::o2_loadMultObject() {
 		if ((((int32) *(obj.pPosX)) == -1234) && (((int32) *(obj.pPosY)) == -4321)) {
 
 			if (obj.videoSlot > 0)
-				_vm->_vidPlayer->slotClose(obj.videoSlot - 1);
+				_vm->_vidPlayer->closeVideo(obj.videoSlot - 1);
 
 			obj.videoSlot = 0;
 			obj.lastLeft = -1;

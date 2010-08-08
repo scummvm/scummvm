@@ -621,15 +621,21 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 
 		// Seek to frame
 		if (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < 256) {
-			while (((int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1)) <= frame)
-				_vm->_vidPlayer->slotPlay(obj.videoSlot - 1);
+			VideoPlayer::Properties props;
+
+			props.lastFrame = frame + 1;
+			_vm->_vidPlayer->play(obj.videoSlot - 1, props);
+
 		} else {
-			int16 curFrame  = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1);
+			int16 curFrame  = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) + 1;
 			uint8 frameWrap = curFrame / 256;
 			frame = (frame + 1) % 256;
 
-			while (((int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1)) < (frameWrap * 256 + frame))
-				_vm->_vidPlayer->slotPlay(obj.videoSlot - 1);
+			VideoPlayer::Properties props;
+
+			props.lastFrame = frameWrap * 256 + frame;
+
+			_vm->_vidPlayer->play(obj.videoSlot - 1, props);
 		}
 
 		/*
@@ -718,7 +724,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 				_vm->_draw->_spriteLeft = _vm->_vidPlayer->getWidth(obj.videoSlot - 1)  -
 					(destX + _vm->_draw->_spriteRight);
 
-			_vm->_vidPlayer->slotCopyFrame(obj.videoSlot - 1, _vm->_draw->_backSurface->getVidMem(),
+			_vm->_vidPlayer->copyFrame(obj.videoSlot - 1, _vm->_draw->_backSurface->getVidMem(),
 					_vm->_draw->_spriteLeft,  _vm->_draw->_spriteTop,
 					_vm->_draw->_spriteRight, _vm->_draw->_spriteBottom,
 					_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY,

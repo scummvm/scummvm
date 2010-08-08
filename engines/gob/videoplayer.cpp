@@ -253,12 +253,13 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 	return true;
 }
 
-void VideoPlayer::waitEndFrame(int slot) {
+void VideoPlayer::waitEndFrame(int slot, bool onlySound) {
 	Video *video = getVideoBySlot(slot);
 	if (!video)
 		return;
 
-	_vm->_util->delay(video->decoder->getTimeToNextFrame());
+	if (!onlySound || video->decoder->hasSound())
+		_vm->_util->delay(video->decoder->getTimeToNextFrame());
 }
 
 bool VideoPlayer::playFrame(int slot, Properties &properties) {
@@ -700,71 +701,6 @@ Graphics::CoktelDecoder *VideoPlayer::openVideo(const Common::String &file, Prop
 	properties.height = video->getHeight();
 
 	return video;
-}
-
-
-
-
-// Obsolete, to be deleted
-
-bool VideoPlayer::primaryOpen(const char *videoFile, int16 x, int16 y,
-		int32 flags, Type which, int16 width, int16 height) {
-
-	return false;
-}
-
-bool VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
-		uint16 palCmd, int16 palStart, int16 palEnd,
-		int16 palFrame, int16 endFrame, bool fade, int16 reverseTo, bool forceSeek) {
-
-	return false;
-}
-
-void VideoPlayer::primaryClose() {
-}
-
-int VideoPlayer::slotOpen(const char *videoFile, Type which, int16 width, int16 height) {
-	return -1;
-}
-
-void VideoPlayer::slotPlay(int slot, int16 frame) {
-}
-
-void VideoPlayer::slotClose(int slot) {
-}
-
-void VideoPlayer::slotCopyFrame(int slot, byte *dest,
-		uint16 left, uint16 top, uint16 width, uint16 height,
-		uint16 x, uint16 y, uint16 pitch, int16 transp) {
-
-#if 0
-	if ((slot < 0) || (slot >= kVideoSlotCount) || !_videoSlots[slot])
-		return;
-
-	/*_videoSlots[slot]->getVideo()->copyCurrentFrame(dest,
-			left, top, width, height, x, y, pitch, transp);*/
-#endif
-}
-
-void VideoPlayer::slotCopyPalette(int slot, int16 palStart, int16 palEnd) {
-}
-
-void VideoPlayer::slotWaitEndFrame(int slot, bool onlySound) {
-#if 0
-	Graphics::CoktelDecoder *video = getVideoBySlot(slot);
-
-	if (video) {
-		/*
-		Graphics::CoktelDecoder &cVideo = *video->getVideo();
-
-		if (!onlySound || (cVideo.getFeatures() & Graphics::CoktelDecoder::kFeaturesSound))
-			cVideo.waitEndFrame();
-		*/
-	}
-#endif
-}
-
-void VideoPlayer::slotSetDoubleMode(int slot, bool doubleMode) {
 }
 
 void VideoPlayer::copyPalette(const Video &video, int16 palStart, int16 palEnd) {
