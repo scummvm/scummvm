@@ -257,8 +257,11 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 
 	bool primary = slot == 0;
 
-	if (video->decoder->getCurFrame() != properties.startFrame);
-		video->decoder->seek(properties.startFrame + 1);
+	if (video->decoder->getCurFrame() != properties.startFrame) {
+		video->decoder->disableSound();
+		video->decoder->seek(properties.startFrame + 1, SEEK_SET, true);
+		video->decoder->enableSound();
+	}
 
 	bool modifiedPal = false;
 

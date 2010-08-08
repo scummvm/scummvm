@@ -982,12 +982,13 @@ void Inter_v2::o2_playImd() {
 			props.x, props.y, props.startFrame, props.lastFrame,
 			props.palCmd, props.palStart, props.palEnd, props.flags);
 
-	_vm->_vidPlayer->evaluateFlags(props);
-
-	int slot;
-	if ((imd[0] != 0) && ((slot = _vm->_vidPlayer->openVideo(true, imd, props)) < 0)) {
-		WRITE_VAR(11, (uint32) -1);
-		return;
+	int slot = 0;
+	if (imd[0] != 0) {
+		_vm->_vidPlayer->evaluateFlags(props);
+		if ((slot = _vm->_vidPlayer->openVideo(true, imd, props)) < 0) {
+			WRITE_VAR(11, (uint32) -1);
+			return;
+		}
 	}
 
 	close = (props.lastFrame == -1);
