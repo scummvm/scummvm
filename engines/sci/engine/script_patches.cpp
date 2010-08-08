@@ -273,8 +273,9 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 
 void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
 	const SciScriptSignature *signatureTable = NULL;
-	if (g_sci->getGameId() == GID_HOYLE4)
-		signatureTable = hoyle4Signatures;
+// hoyle4 now works due workaround inside GfxPorts
+//	if (g_sci->getGameId() == GID_HOYLE4)
+//		signatureTable = hoyle4Signatures;
 	if (g_sci->getGameId() == GID_LSL6)
 		signatureTable = larry6Signatures;
 	if (g_sci->getGameId() == GID_SQ5)

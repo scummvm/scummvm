@@ -66,6 +66,8 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	_paint16 = paint16;
 	_text16 = text16;
 
+	_freeCounter = 0;
+
 	// _menuPort has actually hardcoded id 0xFFFF. Its not meant to be known to windowmanager according to sierra sci
 	_menuPort = new Port(0xFFFF);
 	openPort(_menuPort);
@@ -155,25 +157,37 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 //  but in some games there are still windows active when restoring. Leaving those windows open
 //  would create all sorts of issues, that's why we remove them
 void GfxPorts::reset() {
-	PortList::iterator it = _windowList.begin();
-	const PortList::iterator end = _windowList.end();
-
 	setPort(_picWind);
 
-	while (it != end) {
-		Port *pPort = *it;
-		if (pPort->id > 2) {
-			// found a window beyond _picWind
-			freeWindow((Window *)pPort);
-		}
-		it++;
+	// free everything after _picWind
+	for (uint id = PORTS_FIRSTSCRIPTWINDOWID; id < _windowsById.size(); id++) {
+		Window *window = (Window *)_windowsById[id];
+		if (window)
+			freeWindow(window);
 	}
+	_freeCounter = 0;
 	_windowList.clear();
 	_windowList.push_front(_wmgrPort);
 	_windowList.push_back(_picWind);
 }
 
 void GfxPorts::kernelSetActive(uint16 portId) {
+	if (_freeCounter) {
+		// Windows waiting to get freed
+		for (uint id = PORTS_FIRSTSCRIPTWINDOWID; id < _windowsById.size(); id++) {
+			Window *window = (Window *)_windowsById[id];
+			if (window) {
+				if (window->counterTillFree) {
+					window->counterTillFree--;
+					if (!window->counterTillFree) {
+						freeWindow(window);
+						_freeCounter--;
+					}
+				}
+			}
+		}
+	}
+
 	switch (portId) {
 	case 0:
 		setPort(_wmgrPort);
@@ -225,35 +239,14 @@ reg_t GfxPorts::kernelNewWindow(Common::Rect dims, Common::Rect restoreRect, uin
 
 void GfxPorts::kernelDisposeWindow(uint16 windowId, bool reanimate) {
 	Window *wnd = (Window *)getPortById(windowId);
-	if (wnd)
-		removeWindow(wnd, reanimate);
-	else
-		error("GfxPorts::kernelDisposeWindow: Request to dispose invalid port id %d", windowId);
-
-	if ((g_sci->getGameId() == GID_HOYLE4) && (!g_sci->isDemo())) {
-		// WORKAROUND: hoyle 4 has a broken User::handleEvent implementation
-		//  first of all iconbar is always set and always gets called with
-		//  events checking if event got claimed got removed inside that code
-		//  and it will call handleEvent on gameObj afterwards. Iconbar windows
-		//  are handled inside iconbar as well including disposing
-		//  e.g. iconOK::doit, script 14) and claimed isn't even set. gameObj
-		//  handleEvent calling will result in coordinate adjust with a now
-		//  invalid port.
-		//  We fix this by adjusting the port variable to be global
-		//  again when hoyle4 is disposing windows.
-		//  This worked because sierra sci leaves old port data, so the pointer
-		//  was still valid for a short period of time
-		// TODO: maybe this could get implemented as script patch somehow
-		//  although this could get quite tricky to implement (script 996)
-		//  IconBar::handleEvent (script 937)
-		//  maybe inside export 8 of script 0, which is called by iconOK
-		//  and iconReplay
-		//  or inside GameControls::hide (script 978) which is called to
-		//  actually remove the window
-		//reg_t eventObject = _segMan->findObjectByName("uEvt");
-		//if (!eventObject.isNull()) {
-		//	writeSelectorValue(_segMan, eventObject, SELECTOR(port), 0);
-		//}
+	if (wnd) {
+		if (!wnd->counterTillFree) {
+			removeWindow(wnd, reanimate);
+		} else {
+			error("kDisposeWindow: used already disposed window id %d", windowId);
+		}
+	} else {
+		error("kDisposeWindow: used unknown window id %d", windowId);
 	}
 }
 
@@ -293,7 +286,7 @@ void GfxPorts::endUpdate(Window *wnd) {
 
 Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw) {
 	// Find an unused window/port id
-	uint id = 1;
+	uint id = PORTS_FIRSTWINDOWID;
 	while (id < _windowsById.size() && _windowsById[id]) {
 		++id;
 	}
@@ -444,15 +437,24 @@ void GfxPorts::drawWindow(Window *pWnd) {
 void GfxPorts::removeWindow(Window *pWnd, bool reanimate) {
 	setPort(_wmgrPort);
 	_paint16->bitsRestore(pWnd->hSaved1);
+	pWnd->hSaved1 = NULL_REG;
 	_paint16->bitsRestore(pWnd->hSaved2);
+	pWnd->hSaved2 = NULL_REG;
 	if (!reanimate)
 		_paint16->bitsShow(pWnd->restoreRect);
 	else
 		_paint16->kernelGraphRedrawBox(pWnd->restoreRect);
 	_windowList.remove(pWnd);
 	setPort(_windowList.back());
-	_windowsById[pWnd->id] = NULL;
-	delete pWnd;
+	// We will actually free this window after 10 kSetPort-calls
+	// Sierra sci freed the pointer immediately, but pointer to that port
+	//  still worked till the memory got overwritten. Some games depend
+	//  on this (dispose a window and then kSetPort to it again for once)
+	//  Those are actually script bugs, but patching all of those out
+	//  would be quite a hassle and this just keeps compatibility
+	//  (examples: hoyle 4 game menu and sq4cd inventory)
+	pWnd->counterTillFree = 10;
+	_freeCounter++;
 }
 
 void GfxPorts::freeWindow(Window *pWnd) {
@@ -460,7 +462,7 @@ void GfxPorts::freeWindow(Window *pWnd) {
 		_segMan->freeHunkEntry(pWnd->hSaved1);
 	if (!pWnd->hSaved2.isNull())
 		_segMan->freeHunkEntry(pWnd->hSaved1);
-	_windowsById[pWnd->id] = 0;
+	_windowsById[pWnd->id] = NULL;
 	delete pWnd;
 }
 

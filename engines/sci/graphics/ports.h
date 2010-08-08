@@ -36,6 +36,9 @@ class GfxPaint16;
 class GfxScreen;
 class GfxText16;
 
+#define PORTS_FIRSTWINDOWID 2
+#define PORTS_FIRSTSCRIPTWINDOWID 3
+
 /**
  * Ports class, includes all port managment for SCI0->SCI1.1 games. Ports are some sort of windows in SCI
  *  this class also handles adjusting coordinates to a specific port
@@ -110,6 +113,9 @@ private:
 	bool _usesOldGfxFunctions;
 
 	uint16 _styleUser;
+
+	// counts windows that got disposed but are not freed yet
+	uint16 _freeCounter;
 
 	/** The list of open 'windows' (and ports), in visual order. */
 	PortList _windowList;
