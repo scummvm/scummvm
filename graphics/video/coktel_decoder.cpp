@@ -345,8 +345,6 @@ void CoktelDecoder::renderBlockWhole4X(const byte *src) {
 
 // A half-high whole, completely filled block
 void CoktelDecoder::renderBlockWhole2Y(const byte *src) {
-	warning("renderBlockWhole2Y");
-
 	Common::Rect &rect     = _dirtyRects.back();
 	Common::Rect  drawRect = rect;
 
