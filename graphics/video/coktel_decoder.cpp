@@ -1681,7 +1681,7 @@ bool VMDDecoder::assessVideoProperties() {
 		} else {
 			char *fourcc = (char *) &_videoCodec;
 
-			warning("VMDDecoder::assessVideoProperties(): Unknow video codec FourCC \'%c%c%c%c\'",
+			warning("VMDDecoder::assessVideoProperties(): Unknown video codec FourCC \'%c%c%c%c\'",
 					fourcc[3], fourcc[2], fourcc[1], fourcc[0]);
 			return false;
 		}
@@ -1819,7 +1819,7 @@ bool VMDDecoder::readFrameTable(int &numFiles) {
 				separator = true;
 				_stream->skip(10);
 			} else {
-				// Unknow type
+				// Unknown type
 				_stream->skip(10);
 			}
 
