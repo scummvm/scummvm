@@ -1057,20 +1057,18 @@ void IMDDecoder::processFrame() {
 		}
 
 		// Audio
-		if (_soundStage != kSoundNone) {
-			if (cmd == kCommandNextSound) {
+		if (cmd == kCommandNextSound) {
 
-				nextSoundSlice(hasNextCmd);
-				cmd = _stream->readUint16LE();
+			nextSoundSlice(hasNextCmd);
+			cmd = _stream->readUint16LE();
 
-			} else if (cmd == kCommandStartSound) {
+		} else if (cmd == kCommandStartSound) {
 
-				startSound = initialSoundSlice(hasNextCmd);
-				cmd = _stream->readUint16LE();
+			startSound = initialSoundSlice(hasNextCmd);
+			cmd = _stream->readUint16LE();
 
-			} else
-				emptySoundSlice(hasNextCmd);
-		}
+		} else
+			emptySoundSlice(hasNextCmd);
 
 		// Set palette
 		if (cmd == kCommandPalette) {
