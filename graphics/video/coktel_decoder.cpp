@@ -1808,7 +1808,7 @@ bool VMDDecoder::readFiles() {
 
 				_stream->skip(_frames[i].parts[j].size - 20);
 
-				if ((((uint32) file.realSize) >= ssize) || (file.name[0] == 0))
+				if ((((uint32) file.realSize) >= ssize) || (file.name == ""))
 					continue;
 
 				_files.push_back(file);
