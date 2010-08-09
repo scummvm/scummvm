@@ -41,9 +41,9 @@ namespace FStests {
 bool readDataFromFile(Common::FSDirectory *directory, const char *file);
 
 // will contain function declarations for FS tests
-bool testReadFile();
-bool testWriteFile();
-bool testOpeningSaveFile();
+TestExitStatus testReadFile();
+TestExitStatus testWriteFile();
+TestExitStatus testOpeningSaveFile();
 // add more here
 
 } // End of namespace FStests

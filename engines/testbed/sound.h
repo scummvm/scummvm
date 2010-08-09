@@ -46,10 +46,10 @@ namespace SoundSubsystem {
 // Helper functions for SoundSubsystem tests
 
 // will contain function declarations for SoundSubsystem tests
-bool playBeeps();
-bool mixSounds();
-bool audiocdOutput();
-bool sampleRates();
+TestExitStatus playBeeps();
+TestExitStatus mixSounds();
+TestExitStatus audiocdOutput();
+TestExitStatus sampleRates();
 }
 
 class SoundSubsystemTestSuite : public Testsuite {

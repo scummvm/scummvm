@@ -35,11 +35,11 @@ namespace SaveGametests {
 bool writeDataToFile(const char *fileName, const char *msg);
 bool readAndVerifyData(const char *fileName, const char *expected);
 // will contain function declarations for SaveGame tests
-bool testSaveLoadState();
-bool testRemovingSavefile();
-bool testRenamingSavefile();
-bool testListingSavefile();
-bool testErrorMessages();
+TestExitStatus testSaveLoadState();
+TestExitStatus testRemovingSavefile();
+TestExitStatus testRenamingSavefile();
+TestExitStatus testListingSavefile();
+TestExitStatus testErrorMessages();
 // add more here
 
 } // End of namespace SaveGametests

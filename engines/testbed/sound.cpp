@@ -110,15 +110,15 @@ void SoundSubsystemDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 	}
 }
 
-bool SoundSubsystem::playBeeps() {
+TestExitStatus SoundSubsystem::playBeeps() {
 	Testsuite::clearScreen();
-	bool passed = true; 
+	TestExitStatus passed = kTestPassed; 
 	Common::String info = "Testing Sound Output by generating beeps\n"
 	"You should hear a left beep followed by a right beep\n";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Play Beeps\n");
-		return true;
+		return kTestSkipped;
 	}
 	
 	Audio::PCSpeaker *speaker = new Audio::PCSpeaker();
@@ -135,7 +135,7 @@ bool SoundSubsystem::playBeeps() {
 	
 	if (Testsuite::handleInteractiveInput("Were you able to hear the left beep?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! Left Beep couldn't be detected : Error with Mixer::setChannelBalance()\n");
-		passed = false;
+		passed = kTestFailed;
 	}
 	
 	// Right Beep
@@ -147,41 +147,41 @@ bool SoundSubsystem::playBeeps() {
 	
 	if (Testsuite::handleInteractiveInput("Were you able to hear the right beep?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! Right Beep couldn't be detected : Error with Mixer::setChannelBalance()\n");
-		passed = false;
+		passed = kTestFailed;
 	}
 	return passed;
 }
 
-bool SoundSubsystem::mixSounds() {
+TestExitStatus SoundSubsystem::mixSounds() {
 	Testsuite::clearScreen();
-	bool passed = true; 
+	TestExitStatus passed = kTestPassed; 
 	Common::String info = "Testing Mixer Output by generating multichannel sound output using PC speaker emulator.\n"
 	"The mixer should be able to play them simultaneously\n";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Mix Sounds\n");
-		return true;
+		return kTestSkipped;
 	}
 
 	SoundSubsystemDialog sDialog;
 	sDialog.runModal();
 	if (Testsuite::handleInteractiveInput("Was the mixer able to simultaneously play multiple channels?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! Multiple channels couldn't be played : Error with Mixer Class\n");
-		passed = false;
+		passed = kTestFailed;
 	}
 	return passed;
 }
 
-bool SoundSubsystem::audiocdOutput() {
+TestExitStatus SoundSubsystem::audiocdOutput() {
 	Testsuite::clearScreen();
-	bool passed = true; 
+	TestExitStatus passed = kTestPassed; 
 	Common::String info = "Testing AudioCD API implementation.\n"
 	"Here we have four tracks, we play them in order i.e 1-2-3-last.\n"
 	"The user should verify if the tracks were run in correct order or not.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : AudioCD API\n");
-		return true;
+		return kTestSkipped;
 	}
 	
 	Common::Point pt(0, 100);
@@ -204,14 +204,23 @@ bool SoundSubsystem::audiocdOutput() {
 	Testsuite::clearScreen();
 	if (Testsuite::handleInteractiveInput("Were all the tracks played in order i.e 1-2-3-last ?", "Yes", "No", kOptionRight)) {
 		Testsuite::logPrintf("Error! Error in AudioCD.play() or probably sound files were not detected, try -d1 (debuglevel 1)\n");
-		passed = false;
+		passed = kTestFailed;
 	}
 	
 	return passed;
 }
 
-bool SoundSubsystem::sampleRates() {
-	bool passed = true;
+TestExitStatus SoundSubsystem::sampleRates() {
+	
+	Common::String info = "Testing Multiple Sample Rates.\n"
+						  "Here we try to play sounds at three different sample rates.";
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : Sample Rates\n");
+		return kTestSkipped;
+	}
+	
+	TestExitStatus passed = kTestPassed;
 	Audio::Mixer *mixer = g_system->getMixer();
 
 	Audio::PCSpeaker *s1 = new Audio::PCSpeaker();
@@ -248,7 +257,7 @@ bool SoundSubsystem::sampleRates() {
 	Testsuite::clearScreen();
 	if (Testsuite::handleInteractiveInput("Was the mixer able to play beeps with variable sample rates?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! Error with variable sample rates\n");
-		passed = false;
+		passed = kTestFailed;
 	}
 
 	return passed;

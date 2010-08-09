@@ -38,33 +38,43 @@
 
 namespace Testbed {
 
+// Initialize static member for TestbedExitDialog
+bool TestbedExitDialog::_rerun = false;
+
 void TestbedExitDialog::init() {
 	_xOffset = 25;
 	_yOffset = 0;
 	Common::String text = "Thank you for using ScummVM testbed! Here are yor summarized results:";
 	addText(450, 20, text, Graphics::kTextAlignCenter, _xOffset, 15);
 	Common::Array<Common::String> strArray;
+	GUI::ListWidget::ColorList colors;
 	
 	for (Common::Array<Testsuite *>::const_iterator i = _testsuiteList.begin(); i != _testsuiteList.end(); ++i) {
-		strArray.push_back(Common::String::printf("%s    (%d/%d tests failed)", (*i)->getName(), (*i)->getNumTestsFailed(), 
-		(*i)->getNumTestsEnabled()));
+		strArray.push_back(Common::String::printf("%s :", (*i)->getDescription()));
+		colors.push_back(GUI::ThemeEngine::kFontColorNormal);
+		if ((*i)->isEnabled()) {
+			strArray.push_back(Common::String::printf("Passed: %d  Failed: %d Skipped: %d", (*i)->getNumTestsPassed(), (*i)->getNumTestsFailed(), (*i)->getNumTestsSkipped()));
+		} else {
+			strArray.push_back("Skipped");
+		}
+		colors.push_back(GUI::ThemeEngine::kFontColorAlternate);
 	}
 	
-	addList(0, _yOffset, 500, 200, strArray);
+	addList(0, _yOffset, 500, 200, strArray, &colors);
 	text = "More Details can be viewed in the Log file : " + Testsuite::getLogFile();
 	addText(450, 20, text, Graphics::kTextAlignLeft, 0, 0);
 	text = "Directory : " + Testsuite::getLogDir();
 	addText(500, 20, text, Graphics::kTextAlignLeft, 0, 0);
 	_yOffset += 5;
-	addButtonXY(_xOffset + 80, _yOffset, 120, 20, "Rerun Tests", kCmdRerunTestbed);
-	addButtonXY(_xOffset + 240, _yOffset, 60, 20, "Close", GUI::kCloseCmd);
+	addButtonXY(_xOffset + 80, _yOffset, 120, 24, "Rerun test suite", kCmdRerunTestbed);
+	addButtonXY(_xOffset + 240, _yOffset, 60, 24, "Close", GUI::kCloseCmd);
 }
 
 void TestbedExitDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kCmdRerunTestbed :
 		_rerun = true;
-		GUI::Dialog::close();
+		cmd = GUI::kCloseCmd;
 	default:
 		GUI::Dialog::handleCommand(sender, cmd, data);
 	}
@@ -144,8 +154,7 @@ Common::Error TestbedEngine::run() {
 
 	TestbedConfigManager cfMan(_testsuiteList, "testbed.config");
 	
-	// Keep running if rerun requested 
-	TestbedExitDialog tbDialog(_testsuiteList);
+	// Keep running if rerun requested
 
 	do {
 		Testsuite::clearEntireScreen();
@@ -158,10 +167,11 @@ Common::Error TestbedEngine::run() {
 		}
 		
 		invokeTestsuites(cfMan);
+		TestbedExitDialog tbDialog(_testsuiteList);
 		tbDialog.init();
 		tbDialog.run();
 
-	} while (tbDialog.rerunRequired());
+	} while (TestbedExitDialog::rerunRequired());
 	
 	return Common::kNoError;
 }

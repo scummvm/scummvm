@@ -67,29 +67,29 @@ bool SaveGametests::readAndVerifyData(const char *fileName, const char *expected
 	return false;
 }
 
-bool SaveGametests::testSaveLoadState() {
+TestExitStatus SaveGametests::testSaveLoadState() {
 	// create a savefile with "ScummVM Rocks!" written on it
 	if (!writeDataToFile("tBedSavefile.0", "ScummVM Rocks!")) {
 		Testsuite::logDetailedPrintf("Writing data to savefile failed\n");
-		return false;
+		return kTestFailed;
 	}
 
 	// Verify if it contains the same data
 	if (!readAndVerifyData("tBedSavefile.0", "ScummVM Rocks!")) {
 		Testsuite::logDetailedPrintf("Reading data from savefile failed\n");
-		return false;
+		return kTestFailed;
 	}
 
-	return true;
+	return kTestPassed;
 }
 
-bool SaveGametests::testRemovingSavefile() {
+TestExitStatus SaveGametests::testRemovingSavefile() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 
 	// Create a dummy savefile
 	if (!writeDataToFile("tBedSavefileToRemove.0", "Dummy Savefile!")) {
 		Testsuite::logDetailedPrintf("Writing data to savefile failed\n");
-		return false;
+		return kTestFailed;
 	}
 
 	// Remove it
@@ -100,18 +100,18 @@ bool SaveGametests::testRemovingSavefile() {
 	if (loadFile) {
 		// Removing failed
 		Testsuite::logDetailedPrintf("Removing savefile failed\n");
-		return false;
+		return kTestFailed;
 	}
 
-	return true;
+	return kTestPassed;
 }
 
-bool SaveGametests::testRenamingSavefile() {
+TestExitStatus SaveGametests::testRenamingSavefile() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	// Open a file for renaming
 	if (!writeDataToFile("tBedSomeWeirdName.0", "Rename me!")) {
 		Testsuite::logDetailedPrintf("Writing data to savefile failed\n");
-		return false;
+		return kTestFailed;
 	}
 
 	// Rename it
@@ -120,13 +120,13 @@ bool SaveGametests::testRenamingSavefile() {
 	// Verify if it contains the same data
 	if (!readAndVerifyData("tBedSomeCoolName.0", "Rename me!")) {
 		Testsuite::logDetailedPrintf("Renaming savefile failed\n");
-		return false;
+		return kTestFailed;
 	}
 
-	return true;
+	return kTestPassed;
 }
 
-bool SaveGametests::testListingSavefile() {
+TestExitStatus SaveGametests::testListingSavefile() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	saveFileMan->clearError();
 
@@ -141,7 +141,7 @@ bool SaveGametests::testListingSavefile() {
 	if (error != Common::kNoError) {
 		// Abort. Some Error in writing files
 		Testsuite::logDetailedPrintf("Error while creating savefiles: %s\n", Common::errorToString(error));
-		return false;
+		return kTestFailed;
 	}
 
 	Common::StringArray savefileList = saveFileMan->listSavefiles("tBedSavefileToList.?");
@@ -156,20 +156,20 @@ bool SaveGametests::testListingSavefile() {
 				if (savefileList.size() == j) {
 					// A match for this name not found
 					Testsuite::logDetailedPrintf("Listed Names don't match\n");
-					return false;
+					return kTestFailed;
 				}
 			}
 		}
-		return true;
+		return kTestPassed;
 	} else {
 		Testsuite::logDetailedPrintf("listing Savefiles failed!\n");
-		return false;
+		return kTestFailed;
 	}
 
-	return false;
+	return kTestFailed;
 }
 
-bool SaveGametests::testErrorMessages() {
+TestExitStatus SaveGametests::testErrorMessages() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	saveFileMan->clearError();
 
@@ -180,12 +180,12 @@ bool SaveGametests::testErrorMessages() {
 	if (error == Common::kNoError) {
 		// blunder! how come?
 		Testsuite::logDetailedPrintf("SaveFileMan.getError() failed\n");
-		return false;
+		return kTestFailed;
 	}
 	// Can't actually predict whether which error, kInvalidPath or kPathDoesNotExist or some other?
-	// So just return true if some error
+	// So just return kTestPassed if some error
 	Testsuite::logDetailedPrintf("getError returned : %s\n", saveFileMan->getErrorDesc().c_str());
-	return true;
+	return kTestPassed;
 }
 
 SaveGameTestSuite::SaveGameTestSuite() {

@@ -121,6 +121,7 @@ void Testsuite::logDetailedPrintf(const char *fmt, ...) {
 Testsuite::Testsuite() {
 	_numTestsPassed = 0;
 	_numTestsExecuted = 0;
+	_numTestsSkipped = 0;
 	// Initially all testsuites are enabled, disable them by calling enableTestSuite(name, false)
 	_isTsEnabled = true;
 	// Set custom color for progress bar
@@ -148,6 +149,7 @@ void Testsuite::genReport() const {
 	logPrintf("Subsystem: %s ", getName());
 	logPrintf("(Tests Executed: %d)\n", _numTestsExecuted);
 	logPrintf("Passed: %d ", _numTestsPassed);
+	logPrintf("Skipped: %d ", _numTestsSkipped);
 	logPrintf("Failed: %d\n", getNumTestsFailed());
 	logPrintf("\n");
 }
@@ -333,29 +335,33 @@ void Testsuite::execute() {
 	for (Common::Array<Test *>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
 		if (!(*i)->enabled) {
 			logPrintf("Info! Skipping Test: %s, Skipped by configuration.\n", ((*i)->featureName).c_str());
+			_numTestsSkipped++;
 			continue;	
-		}
-
-		if (toQuit == kSkipNext) {
-			logPrintf("Info! Skipping Test: %s, Skipped by user.\n", ((*i)->featureName).c_str());
-			toQuit = kLoopNormal;
-			continue;
 		}
 
 		if((*i)->isInteractive && !isSessionInteractive) {
 			logPrintf("Info! Skipping Test: %s, non-interactive environment is selected\n", ((*i)->featureName).c_str());
+			_numTestsSkipped++;
 			continue;
 		}
 
 		logPrintf("Info! Executing Test: %s\n", ((*i)->featureName).c_str());
 		updateStats("Test", ((*i)->featureName).c_str(), count++, numEnabledTests, pt);
-		_numTestsExecuted++;
-		if ((*i)->driver()) {
+
+		// Run the test and capture exit status.
+		TestExitStatus eStatus = (*i)->driver();
+		if (kTestPassed == eStatus) {
 			logPrintf("Result: Passed\n");
+			_numTestsExecuted++;
 			_numTestsPassed++;
+		} else if (kTestSkipped == eStatus){
+			logPrintf("Result: Skipped\n");
+			_numTestsSkipped++;
 		} else {
+			_numTestsExecuted++;
 			logPrintf("Result: Failed\n");
 		}
+
 		updateStats("Test", ((*i)->featureName).c_str(), count, numEnabledTests, pt);
 		// TODO: Display a screen here to user with details of upcoming test, he can skip it or Quit or RTL
 		// Check if user wants to quit/RTL/Skip next test by parsing events.

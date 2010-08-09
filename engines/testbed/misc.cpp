@@ -66,12 +66,12 @@ void MiscTests::criticalSection(void *arg) {
 	g_system->getTimerManager()->removeTimerProc(criticalSection);
 }
 
-bool MiscTests::testDateTime() {
+TestExitStatus MiscTests::testDateTime() {
 	
 	if (Testsuite::isSessionInteractive) {
 		if (Testsuite::handleInteractiveInput("Testing the date time API implementation", "Continue", "Skip", kOptionRight)) {
 			Testsuite::logPrintf("Info! Date time tests skipped by the user.\n");
-			return true;
+			return kTestSkipped;
 		}
 		
 		Testsuite::writeOnScreen("Verifying Date-Time...", Common::Point(0, 100));
@@ -87,7 +87,7 @@ bool MiscTests::testDateTime() {
 		// Directly verify date
 		dateTimeNow = "We expect the current date time to be " + dateTimeNow;
 		if (Testsuite::handleInteractiveInput(dateTimeNow, "Correct!", "Wrong", kOptionRight)) {
-			return false;
+			return kTestFailed;
 		}
 	}
 
@@ -105,32 +105,32 @@ bool MiscTests::testDateTime() {
 		if (t1.tm_mon == t2.tm_mon && t1.tm_year == t2.tm_year) {
 			// Ignore lag due to processing time
 			if (t1.tm_sec + 2 == t2.tm_sec) {
-				return true;
+				return kTestPassed;
 			}
 		}
 	}
-	return false;
+	return kTestFailed;
 }
 
-bool MiscTests::testTimers() {
+TestExitStatus MiscTests::testTimers() {
 	static int valToModify = 0;
 	if (g_system->getTimerManager()->installTimerProc(timerCallback, 100000, &valToModify)) {
 		g_system->delayMillis(150);
 		g_system->getTimerManager()->removeTimerProc(timerCallback);
 
 		if (999 == valToModify) {
-			return true;
+			return kTestPassed;
 		}
 	}
-	return false;
+	return kTestFailed;
 }
 
-bool MiscTests::testMutexes() {
+TestExitStatus MiscTests::testMutexes() {
 	
 	if (Testsuite::isSessionInteractive) {
 		if (Testsuite::handleInteractiveInput("Testing the Mutual Exclusion API implementation", "Continue", "Skip", kOptionRight)) {
 			Testsuite::logPrintf("Info! Mutex tests skipped by the user.\n");
-			return true;
+			return kTestSkipped;
 		}
 		Testsuite::writeOnScreen("Installing mutex", Common::Point(0, 100));
 	}
@@ -157,10 +157,10 @@ bool MiscTests::testMutexes() {
 	g_system->deleteMutex(sv.mutex);
 
 	if (sv.resultSoFar && 6 == sv.second) {
-		return true;
+		return kTestPassed;
 	}
 
-	return false;
+	return kTestFailed;
 }
 
 MiscTestSuite::MiscTestSuite() {

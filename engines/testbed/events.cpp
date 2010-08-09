@@ -116,7 +116,7 @@ Common::Rect EventTests::drawFinishZone() {
 	return Common::Rect(right - width, 0, right, height);
 }
 
-bool EventTests::mouseEvents() {
+TestExitStatus EventTests::mouseEvents() {
 	
 	Testsuite::clearScreen();
 	Common::String info = "Testing Mouse events.\n "
@@ -125,7 +125,7 @@ bool EventTests::mouseEvents() {
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : keyboard events\n");
-		return true;
+		return kTestSkipped;
 	}
 	
 	Common::EventManager *eventMan = g_system->getEventManager();
@@ -140,7 +140,7 @@ bool EventTests::mouseEvents() {
 	Common::Rect finishZone = drawFinishZone();
 
 	bool quitLoop = false;
-	bool passed = true;
+	TestExitStatus passed = kTestPassed;
 	// handle all mouse events
 	Common::Event event;
 	while (!quitLoop) {
@@ -211,17 +211,17 @@ bool EventTests::mouseEvents() {
 	// Verify results now!
 	if (Testsuite::handleInteractiveInput("Were mouse clicks L/R/M buttons identfied?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Mouse clicks (L/R/M buttons) failed");
-		passed = false;
+		passed = kTestFailed;
 	}
 	if (Testsuite::handleInteractiveInput("Were mouse wheel movements identified?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Mouse wheel movements failed");
-		passed = false;
+		passed = kTestFailed;
 	}
 
 	return passed;
 }
 
-bool EventTests::kbdEvents() {
+TestExitStatus EventTests::kbdEvents() {
 	
 	Testsuite::clearScreen();
 	Common::String info = "Testing keyboard events.\n "
@@ -230,7 +230,7 @@ bool EventTests::kbdEvents() {
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : keyboard events\n");
-		return true;
+		return kTestSkipped;
 	}
 
 
@@ -248,18 +248,18 @@ bool EventTests::kbdEvents() {
 		rect = Testsuite::writeOnScreen(text, pt);
 	}
 
-	bool passed = true;
+	TestExitStatus passed = kTestPassed;
 
 	if (Testsuite::handleInteractiveInput("Was the word you entered same as that displayed on screen?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Keyboard Events failed");
-		passed = false;
+		passed = kTestFailed;
 	}
 
 	Testsuite::clearScreen();
 	return passed;
 }
 
-bool EventTests::showMainMenu() {
+TestExitStatus EventTests::showMainMenu() {
 	
 	Testsuite::clearScreen();
 	Common::String info = "Testing Main Menu events.\n "
@@ -268,18 +268,18 @@ bool EventTests::showMainMenu() {
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Main Menu\n");
-		return true;
+		return kTestSkipped;
 	}
 	Common::EventManager *eventMan = g_system->getEventManager();
 	Common::Event mainMenuEvent;
 	mainMenuEvent.type = Common::EVENT_MAINMENU;
 	eventMan->pushEvent(mainMenuEvent);
 
-	bool passed = true;
+	TestExitStatus passed = kTestPassed;
 
 	if (Testsuite::handleInteractiveInput("Were you able to see a main menu widget?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Event MAINMENU failed");
-		passed = false;
+		passed = kTestFailed;
 	}
 
 	return passed;

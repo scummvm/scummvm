@@ -48,9 +48,9 @@ void timerCallback(void *arg);
 void criticalSection(void *arg);
 
 // will contain function declarations for Misc tests
-bool testDateTime();
-bool testTimers();
-bool testMutexes();
+TestExitStatus testDateTime();
+TestExitStatus testTimers();
+TestExitStatus testMutexes();
 // add more here
 
 } // End of namespace MiscTests

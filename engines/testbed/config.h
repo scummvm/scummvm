@@ -122,7 +122,7 @@ public:
 	void addButton(uint w, uint h, const Common::String name, uint32 cmd, uint xOffset = 0, uint yPadding = 8);
 	void addButtonXY(uint x, uint y, uint w, uint h, const Common::String name, uint32 cmd);
 	void addText(uint w, uint h, const Common::String text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding = 8);
-	void addList(uint x, uint y, uint w, uint h, Common::Array<Common::String> &strArray, uint yPadding = 8);
+	void addList(uint x, uint y, uint w, uint h, Common::Array<Common::String> &strArray, GUI::ListWidget::ColorList *colors = 0, uint yPadding = 8);
 protected:
 	Common::Array<GUI::ButtonWidget *> _buttonArray;
 	uint _xOffset;

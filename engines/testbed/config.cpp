@@ -151,12 +151,12 @@ void TestbedInteractionDialog::addButton(uint w, uint h, const Common::String na
 	_yOffset += h;
 }
 
-void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, Common::Array<Common::String> &strArray, uint yPadding) {
+void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, Common::Array<Common::String> &strArray, GUI::ListWidget::ColorList *colors, uint yPadding) {
 	_yOffset += yPadding;
 	GUI::ListWidget *list = new GUI::ListWidget(this, x, y, w, h);
 	list->setEditable(false);
 	list->setNumberingMode(GUI::kListNumberingOff);
-	list->setList(strArray);
+	list->setList(strArray, colors);
 	_yOffset += h;
 }
 

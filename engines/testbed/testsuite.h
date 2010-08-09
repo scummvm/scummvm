@@ -53,7 +53,13 @@ enum {
 	kEventHandlingTime = 50
 };
 
-typedef bool (*InvokingFunction)();
+enum TestExitStatus {
+	kTestPassed = 0,
+	kTestSkipped,
+	kTestFailed
+};
+
+typedef TestExitStatus (*InvokingFunction)();
 
 /**
  * This represents a feature to be tested
@@ -85,6 +91,7 @@ public:
 	virtual ~Testsuite();
 	int getNumTests() const { return _testsToExecute.size(); }
 	int getNumTestsPassed() const { return _numTestsPassed; }
+	int getNumTestsSkipped() const { return _numTestsSkipped; }
 	int getNumTestsFailed() const { return _numTestsExecuted - _numTestsPassed; }
 	void genReport() const;
 	bool isEnabled() const { return _isTsEnabled; }
@@ -180,6 +187,7 @@ protected:
 	Common::Array<Test *> _testsToExecute;			///< List of tests to be executed
 	int		    _numTestsPassed;					///< Number of tests passed
 	int			_numTestsExecuted;					///< Number of tests executed
+	int			_numTestsSkipped;
 	bool		_isTsEnabled;
 
 public:
