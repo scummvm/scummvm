@@ -32,10 +32,8 @@
 
 namespace Cine {
 
-Common::Array<PartBuffer> partBuffer;
-
 void loadPart(const char *partName) {
-	partBuffer.clear();
+	g_cine->_partBuffer.clear();
 
 	g_cine->_partFileHandle.close();
 
@@ -47,17 +45,17 @@ void loadPart(const char *partName) {
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
 	uint16 numElementInPart = g_cine->_partFileHandle.readUint16BE();
-	partBuffer.resize(numElementInPart);
+	g_cine->_partBuffer.resize(numElementInPart);
 	g_cine->_partFileHandle.readUint16BE(); // entry size
 
 	if (currentPartName != partName)
 		strcpy(currentPartName, partName);
 
-	for (uint16 i = 0; i < partBuffer.size(); i++) {
-		g_cine->_partFileHandle.read(partBuffer[i].partName, 14);
-		partBuffer[i].offset = g_cine->_partFileHandle.readUint32BE();
-		partBuffer[i].packedSize = g_cine->_partFileHandle.readUint32BE();
-		partBuffer[i].unpackedSize = g_cine->_partFileHandle.readUint32BE();
+	for (uint16 i = 0; i < g_cine->_partBuffer.size(); i++) {
+		g_cine->_partFileHandle.read(g_cine->_partBuffer[i].partName, 14);
+		g_cine->_partBuffer[i].offset = g_cine->_partFileHandle.readUint32BE();
+		g_cine->_partBuffer[i].packedSize = g_cine->_partFileHandle.readUint32BE();
+		g_cine->_partBuffer[i].unpackedSize = g_cine->_partFileHandle.readUint32BE();
 		g_cine->_partFileHandle.readUint32BE(); // unused
 	}
 
@@ -189,8 +187,8 @@ void CineEngine::readVolCnf() {
 int16 findFileInBundle(const char *fileName) {
 	if (g_cine->getGameType() == Cine::GType_OS) {
 		// look first in currently loaded resource file
-		for (uint i = 0; i < partBuffer.size(); i++) {
-			if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
+		for (uint i = 0; i < g_cine->_partBuffer.size(); i++) {
+			if (!scumm_stricmp(fileName, g_cine->_partBuffer[i].partName)) {
 				return i;
 			}
 		}
@@ -203,8 +201,8 @@ int16 findFileInBundle(const char *fileName) {
 		const char *part = (*it)._value;
 		loadPart(part);
 	}
-	for (uint i = 0; i < partBuffer.size(); i++) {
-		if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
+	for (uint i = 0; i < g_cine->_partBuffer.size(); i++) {
+		if (!scumm_stricmp(fileName, g_cine->_partBuffer[i].partName)) {
 			return i;
 		}
 	}
@@ -212,31 +210,31 @@ int16 findFileInBundle(const char *fileName) {
 }
 
 void readFromPart(int16 idx, byte *dataPtr, uint32 maxSize) {
-	assert(maxSize >= partBuffer[idx].packedSize);
+	assert(maxSize >= g_cine->_partBuffer[idx].packedSize);
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
-	g_cine->_partFileHandle.seek(partBuffer[idx].offset, SEEK_SET);
-	g_cine->_partFileHandle.read(dataPtr, partBuffer[idx].packedSize);
+	g_cine->_partFileHandle.seek(g_cine->_partBuffer[idx].offset, SEEK_SET);
+	g_cine->_partFileHandle.read(dataPtr, g_cine->_partBuffer[idx].packedSize);
 }
 
 byte *readBundleFile(int16 foundFileIdx, uint32 *size) {
-	assert(foundFileIdx >= 0 && foundFileIdx < (int32)partBuffer.size());
+	assert(foundFileIdx >= 0 && foundFileIdx < (int32)g_cine->_partBuffer.size());
 	bool error = false;
-	byte *dataPtr = (byte *)calloc(partBuffer[foundFileIdx].unpackedSize, 1);
-	byte *packedData = (byte *)calloc(partBuffer[foundFileIdx].packedSize, 1);
+	byte *dataPtr = (byte *)calloc(g_cine->_partBuffer[foundFileIdx].unpackedSize, 1);
+	byte *packedData = (byte *)calloc(g_cine->_partBuffer[foundFileIdx].packedSize, 1);
 	assert(dataPtr && packedData);
-	readFromPart(foundFileIdx, packedData, partBuffer[foundFileIdx].packedSize);
+	readFromPart(foundFileIdx, packedData, g_cine->_partBuffer[foundFileIdx].packedSize);
 	CineUnpacker cineUnpacker;
-	error = !cineUnpacker.unpack(packedData, partBuffer[foundFileIdx].packedSize, dataPtr, partBuffer[foundFileIdx].unpackedSize);
+	error = !cineUnpacker.unpack(packedData, g_cine->_partBuffer[foundFileIdx].packedSize, dataPtr, g_cine->_partBuffer[foundFileIdx].unpackedSize);
 	free(packedData);
 
 	if (error) {
-		warning("Error unpacking '%s' from bundle file '%s'", partBuffer[foundFileIdx].partName, currentPartName);
+		warning("Error unpacking '%s' from bundle file '%s'", g_cine->_partBuffer[foundFileIdx].partName, currentPartName);
 	}
 
 	// Set the size variable if a pointer to it has been given
 	if (size != NULL) {
-		*size = partBuffer[foundFileIdx].unpackedSize;
+		*size = g_cine->_partBuffer[foundFileIdx].unpackedSize;
 	}
 
 	return dataPtr;
@@ -255,7 +253,7 @@ byte *readBundleSoundFile(const char *entryName, uint32 *size) {
 	if (index != -1) {
 		data = readBundleFile(index);
 		if (size) {
-			*size = partBuffer[index].unpackedSize;
+			*size = g_cine->_partBuffer[index].unpackedSize;
 		}
 	}
 	if (g_cine->getGameType() == Cine::GType_FW) {
@@ -305,14 +303,14 @@ void dumpBundle(const char *fileName) {
 	strcpy(tmpPart, currentPartName);
 
 	loadPart(fileName);
-	for (uint i = 0; i < partBuffer.size(); i++) {
+	for (uint i = 0; i < g_cine->_partBuffer.size(); i++) {
 		byte *data = readBundleFile(i);
 
-		debug(0, "%s", partBuffer[i].partName);
+		debug(0, "%s", g_cine->_partBuffer[i].partName);
 
 		Common::DumpFile out;
-		if (out.open(Common::String("dumps/") + partBuffer[i].partName)) {
-			out.write(data, partBuffer[i].unpackedSize);
+		if (out.open(Common::String("dumps/") + g_cine->_partBuffer[i].partName)) {
+			out.write(data, g_cine->_partBuffer[i].unpackedSize);
 			out.close();
 		}
 

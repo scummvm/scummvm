@@ -123,24 +123,26 @@ int CineEngine::modifyGameSpeed(int speedChange) {
 }
 
 void CineEngine::initialize() {
+	_globalVars.reinit(NUM_MAX_VAR + 1);
+
 	// Initialize all savegames' descriptions to empty strings
 	memset(currentSaveName, 0, sizeof(currentSaveName));
 
 	// Resize object table to its correct size and reset all its elements
-	objectTable.resize(NUM_MAX_OBJECT);
+	g_cine->_objectTable.resize(NUM_MAX_OBJECT);
 	resetObjectTable();
 
 	// Resize animation data table to its correct size and reset all its elements
-	animDataTable.resize(NUM_MAX_ANIMDATA);
+	g_cine->_animDataTable.resize(NUM_MAX_ANIMDATA);
 	freeAnimDataTable();
 
 	// Resize zone data table to its correct size and reset all its elements
-	zoneData.resize(NUM_MAX_ZONE);
-	Common::set_to(zoneData.begin(), zoneData.end(), 0);
+	g_cine->_zoneData.resize(NUM_MAX_ZONE);
+	Common::set_to(g_cine->_zoneData.begin(), g_cine->_zoneData.end(), 0);
 
 	// Resize zone query table to its correct size and reset all its elements
-	zoneQuery.resize(NUM_MAX_ZONE);
-	Common::set_to(zoneQuery.begin(), zoneQuery.end(), 0);
+	g_cine->_zoneQuery.resize(NUM_MAX_ZONE);
+	Common::set_to(g_cine->_zoneQuery.begin(), g_cine->_zoneQuery.end(), 0);
 
 	_timerDelayMultiplier = 12; // Set default speed
 	setupOpcodes();
@@ -159,7 +161,7 @@ void CineEngine::initialize() {
 
 	// Clear part buffer as there's nothing loaded into it yet.
 	// Its size will change when loading data into it with the loadPart function.
-	partBuffer.clear();
+	g_cine->_partBuffer.clear();
 
 	if (getGameType() == Cine::GType_OS) {
 		readVolCnf();
@@ -173,14 +175,14 @@ void CineEngine::initialize() {
 	}
 
 	// in case ScummVM engines can be restarted in the future
-	scriptTable.clear();
-	relTable.clear();
-	objectScripts.clear();
-	globalScripts.clear();
-	bgIncrustList.clear();
+	g_cine->_scriptTable.clear();
+	g_cine->_relTable.clear();
+	g_cine->_objectScripts.clear();
+	g_cine->_globalScripts.clear();
+	g_cine->_bgIncrustList.clear();
 	freeAnimDataTable();
-	overlayList.clear();
-	messageTable.clear();
+	g_cine->_overlayList.clear();
+	g_cine->_messageTable.clear();
 	resetObjectTable();
 
 	var8 = 0;

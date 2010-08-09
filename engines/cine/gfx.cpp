@@ -160,13 +160,13 @@ void FWRenderer::clear() {
  * @param fillColor Sprite color
  */
 void FWRenderer::fillSprite(const ObjectStruct &obj, uint8 color) {
-	const byte *data = animDataTable[obj.frame].data();
+	const byte *data = g_cine->_animDataTable[obj.frame].data();
 	int x, y, width, height;
 
 	x = obj.x;
 	y = obj.y;
-	width = animDataTable[obj.frame]._realWidth;
-	height = animDataTable[obj.frame]._height;
+	width = g_cine->_animDataTable[obj.frame]._realWidth;
+	height = g_cine->_animDataTable[obj.frame]._height;
 
 	gfxFillSprite(data, width, height, _backBuffer, x, y, color);
 }
@@ -177,13 +177,13 @@ void FWRenderer::fillSprite(const ObjectStruct &obj, uint8 color) {
  * @param fillColor Sprite color
  */
 void FWRenderer::incrustMask(const ObjectStruct &obj, uint8 color) {
-	const byte *data = animDataTable[obj.frame].data();
+	const byte *data = g_cine->_animDataTable[obj.frame].data();
 	int x, y, width, height;
 
 	x = obj.x;
 	y = obj.y;
-	width = animDataTable[obj.frame]._realWidth;
-	height = animDataTable[obj.frame]._height;
+	width = g_cine->_animDataTable[obj.frame]._realWidth;
+	height = g_cine->_animDataTable[obj.frame]._height;
 
 	gfxFillSprite(data, width, height, _background, x, y, color);
 }
@@ -194,13 +194,13 @@ void FWRenderer::incrustMask(const ObjectStruct &obj, uint8 color) {
  * @param mask External mask
  */
 void FWRenderer::drawMaskedSprite(const ObjectStruct &obj, const byte *mask) {
-	const byte *data = animDataTable[obj.frame].data();
+	const byte *data = g_cine->_animDataTable[obj.frame].data();
 	int x, y, width, height;
 
 	x = obj.x;
 	y = obj.y;
-	width = animDataTable[obj.frame]._realWidth;
-	height = animDataTable[obj.frame]._height;
+	width = g_cine->_animDataTable[obj.frame]._realWidth;
+	height = g_cine->_animDataTable[obj.frame]._height;
 
 	assert(mask);
 
@@ -212,7 +212,7 @@ void FWRenderer::drawMaskedSprite(const ObjectStruct &obj, const byte *mask) {
  * @param obj Object info
  */
 void FWRenderer::drawSprite(const ObjectStruct &obj) {
-	const byte *mask = animDataTable[obj.frame].mask();
+	const byte *mask = g_cine->_animDataTable[obj.frame].mask();
 	drawMaskedSprite(obj, mask);
 }
 
@@ -221,14 +221,14 @@ void FWRenderer::drawSprite(const ObjectStruct &obj) {
  * @param obj Object info
  */
 void FWRenderer::incrustSprite(const ObjectStruct &obj) {
-	const byte *data = animDataTable[obj.frame].data();
-	const byte *mask = animDataTable[obj.frame].mask();
+	const byte *data = g_cine->_animDataTable[obj.frame].data();
+	const byte *mask = g_cine->_animDataTable[obj.frame].mask();
 	int x, y, width, height;
 
 	x = obj.x;
 	y = obj.y;
-	width = animDataTable[obj.frame]._realWidth;
-	height = animDataTable[obj.frame]._height;
+	width = g_cine->_animDataTable[obj.frame]._realWidth;
+	height = g_cine->_animDataTable[obj.frame]._height;
 
 	// There was an assert(mask) here before but it made savegame loading
 	// in Future Wars sometimes fail the assertion (e.g. see bug #2055912).
@@ -502,27 +502,27 @@ void FWRenderer::drawLine(int x, int y, int width, int height, byte color) {
  * @param it Overlay info from overlayList
  */
 void FWRenderer::remaskSprite(byte *mask, Common::List<overlay>::iterator it) {
-	AnimData &sprite = animDataTable[objectTable[it->objIdx].frame];
+	AnimData &sprite = g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
 	int x, y, width, height, idx;
 	int mx, my, mw, mh;
 
-	x = objectTable[it->objIdx].x;
-	y = objectTable[it->objIdx].y;
+	x = g_cine->_objectTable[it->objIdx].x;
+	y = g_cine->_objectTable[it->objIdx].y;
 	width = sprite._realWidth;
 	height = sprite._height;
 
-	for (++it; it != overlayList.end(); ++it) {
+	for (++it; it != g_cine->_overlayList.end(); ++it) {
 		if (it->type != 5) {
 			continue;
 		}
 
-		idx = ABS(objectTable[it->objIdx].frame);
-		mx = objectTable[it->objIdx].x;
-		my = objectTable[it->objIdx].y;
-		mw = animDataTable[idx]._realWidth;
-		mh = animDataTable[idx]._height;
+		idx = ABS(g_cine->_objectTable[it->objIdx].frame);
+		mx = g_cine->_objectTable[it->objIdx].x;
+		my = g_cine->_objectTable[it->objIdx].y;
+		mw = g_cine->_animDataTable[idx]._realWidth;
+		mh = g_cine->_animDataTable[idx]._height;
 
-		gfxUpdateSpriteMask(mask, x, y, width, height, animDataTable[idx].data(), mx, my, mw, mh);
+		gfxUpdateSpriteMask(mask, x, y, width, height, g_cine->_animDataTable[idx].data(), mx, my, mw, mh);
 	}
 }
 
@@ -547,26 +547,26 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	switch (it->type) {
 	// color sprite
 	case 0:
-		if (objectTable[it->objIdx].frame < 0) {
+		if (g_cine->_objectTable[it->objIdx].frame < 0) {
 			return;
 		}
-		sprite = &animDataTable[objectTable[it->objIdx].frame];
+		sprite = &g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
 		len = sprite->_realWidth * sprite->_height;
 		mask = new byte[len];
 		memcpy(mask, sprite->mask(), len);
 		remaskSprite(mask, it);
-		drawMaskedSprite(objectTable[it->objIdx], mask);
+		drawMaskedSprite(g_cine->_objectTable[it->objIdx], mask);
 		delete[] mask;
 		break;
 
 	// game message
 	case 2:
-		if (it->objIdx >= messageTable.size()) {
+		if (it->objIdx >= g_cine->_messageTable.size()) {
 			return;
 		}
 
-		_messageLen += messageTable[it->objIdx].size();
-		drawMessage(messageTable[it->objIdx].c_str(), it->x, it->y, it->width, it->color);
+		_messageLen += g_cine->_messageTable[it->objIdx].size();
+		drawMessage(g_cine->_messageTable[it->objIdx].c_str(), it->x, it->y, it->width, it->color);
 		waitForPlayerClick = 1;
 		break;
 
@@ -585,13 +585,13 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	// bitmap
 	case 4:
 		assert(it->objIdx < NUM_MAX_OBJECT);
-		obj = &objectTable[it->objIdx];
+		obj = &g_cine->_objectTable[it->objIdx];
 
 		if (obj->frame < 0) {
 			return;
 		}
 
-		if (!animDataTable[obj->frame].data()) {
+		if (!g_cine->_animDataTable[obj->frame].data()) {
 			return;
 		}
 
@@ -606,7 +606,7 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 void FWRenderer::drawOverlays() {
 	Common::List<overlay>::iterator it;
 
-	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
+	for (it = g_cine->_overlayList.begin(); it != g_cine->_overlayList.end(); ++it) {
 		renderOverlay(it);
 	}
 }
@@ -1122,13 +1122,13 @@ void OSRenderer::clear() {
  * @param fillColor Sprite color
  */
 void OSRenderer::incrustMask(const ObjectStruct &obj, uint8 color) {
-	const byte *data = animDataTable[obj.frame].data();
+	const byte *data = g_cine->_animDataTable[obj.frame].data();
 	int x, y, width, height;
 
 	x = obj.x;
 	y = obj.y;
-	width = animDataTable[obj.frame]._realWidth;
-	height = animDataTable[obj.frame]._height;
+	width = g_cine->_animDataTable[obj.frame]._realWidth;
+	height = g_cine->_animDataTable[obj.frame]._height;
 
 	if (_bgTable[_currentBg].bg) {
 		gfxFillSprite(data, width, height, _bgTable[_currentBg].bg, x, y, color);
@@ -1140,14 +1140,14 @@ void OSRenderer::incrustMask(const ObjectStruct &obj, uint8 color) {
  * @param obj Object info
  */
 void OSRenderer::drawSprite(const ObjectStruct &obj) {
-	const byte *data = animDataTable[obj.frame].data();
+	const byte *data = g_cine->_animDataTable[obj.frame].data();
 	int x, y, width, height, transColor;
 
 	x = obj.x;
 	y = obj.y;
 	transColor = obj.part;
-	width = animDataTable[obj.frame]._realWidth;
-	height = animDataTable[obj.frame]._height;
+	width = g_cine->_animDataTable[obj.frame]._realWidth;
+	height = g_cine->_animDataTable[obj.frame]._height;
 
 	drawSpriteRaw2(data, transColor, width, height, _backBuffer, x, y);
 }
@@ -1157,14 +1157,14 @@ void OSRenderer::drawSprite(const ObjectStruct &obj) {
  * @param obj Object info
  */
 void OSRenderer::incrustSprite(const ObjectStruct &obj) {
-	const byte *data = animDataTable[obj.frame].data();
+	const byte *data = g_cine->_animDataTable[obj.frame].data();
 	int x, y, width, height, transColor;
 
 	x = obj.x;
 	y = obj.y;
 	transColor = obj.part;
-	width = animDataTable[obj.frame]._realWidth;
-	height = animDataTable[obj.frame]._height;
+	width = g_cine->_animDataTable[obj.frame]._realWidth;
+	height = g_cine->_animDataTable[obj.frame]._height;
 
 	if (_bgTable[_currentBg].bg) {
 		drawSpriteRaw2(data, transColor, width, height, _bgTable[_currentBg].bg, x, y);
@@ -1233,26 +1233,26 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	switch (it->type) {
 	// color sprite
 	case 0:
-		if (objectTable[it->objIdx].frame < 0) {
+		if (g_cine->_objectTable[it->objIdx].frame < 0) {
 			break;
 		}
-		sprite = &animDataTable[objectTable[it->objIdx].frame];
+		sprite = &g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
 		len = sprite->_realWidth * sprite->_height;
 		mask = new byte[len];
-		generateMask(sprite->data(), mask, len, objectTable[it->objIdx].part);
+		generateMask(sprite->data(), mask, len, g_cine->_objectTable[it->objIdx].part);
 		remaskSprite(mask, it);
-		drawMaskedSprite(objectTable[it->objIdx], mask);
+		drawMaskedSprite(g_cine->_objectTable[it->objIdx], mask);
 		delete[] mask;
 		break;
 
 	// game message
 	case 2:
-		if (it->objIdx >= messageTable.size()) {
+		if (it->objIdx >= g_cine->_messageTable.size()) {
 			return;
 		}
 
-		_messageLen += messageTable[it->objIdx].size();
-		drawMessage(messageTable[it->objIdx].c_str(), it->x, it->y, it->width, it->color);
+		_messageLen += g_cine->_messageTable[it->objIdx].size();
+		drawMessage(g_cine->_messageTable[it->objIdx].c_str(), it->x, it->y, it->width, it->color);
 		if (it->color >= 0) { // This test isn't in Future Wars's implementation
 			waitForPlayerClick = 1;
 		}
@@ -1273,7 +1273,7 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 
 	// bitmap
 	case 4:
-		if (objectTable[it->objIdx].frame >= 0) {
+		if (g_cine->_objectTable[it->objIdx].frame >= 0) {
 			FWRenderer::renderOverlay(it);
 		}
 		break;
@@ -1282,8 +1282,8 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	case 20:
 		assert(it->objIdx < NUM_MAX_OBJECT);
 		var5 = it->x; // A global variable updated here!
-		obj = &objectTable[it->objIdx];
-		sprite = &animDataTable[obj->frame];
+		obj = &g_cine->_objectTable[it->objIdx];
+		sprite = &g_cine->_animDataTable[obj->frame];
 
 		if (obj->frame < 0 || it->x < 0 || it->x > 8 || !_bgTable[it->x].bg || sprite->_bpp != 1) {
 			break;
@@ -1303,7 +1303,7 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	case 22:
 		// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing).
 		assert(it->objIdx < NUM_MAX_OBJECT);
-		obj = &objectTable[it->objIdx];
+		obj = &g_cine->_objectTable[it->objIdx];
 		color = obj->part & 0x0F;
 		width = obj->frame;
 		height = obj->costume;
@@ -1797,17 +1797,17 @@ void maskBgOverlay(const byte *bgPtr, const byte *maskPtr, int16 width, int16 he
 	maskPtr = backup;
 
 	// incrust pass
-	for (it = bgIncrustList.begin(); it != bgIncrustList.end(); ++it) {
-		tmpWidth = animDataTable[it->frame]._realWidth;
-		tmpHeight = animDataTable[it->frame]._height;
+	for (it = g_cine->_bgIncrustList.begin(); it != g_cine->_bgIncrustList.end(); ++it) {
+		tmpWidth = g_cine->_animDataTable[it->frame]._realWidth;
+		tmpHeight = g_cine->_animDataTable[it->frame]._height;
 		mask = (byte*)malloc(tmpWidth * tmpHeight);
 
 		if (it->param == 0) {
-			generateMask(animDataTable[it->frame].data(), mask, tmpWidth * tmpHeight, it->part);
+			generateMask(g_cine->_animDataTable[it->frame].data(), mask, tmpWidth * tmpHeight, it->part);
 			gfxUpdateIncrustMask(mask, it->x, it->y, tmpWidth, tmpHeight, maskPtr, x, y, width, height);
-			gfxDrawMaskedSprite(animDataTable[it->frame].data(), mask, tmpWidth, tmpHeight, page, it->x, it->y);
+			gfxDrawMaskedSprite(g_cine->_animDataTable[it->frame].data(), mask, tmpWidth, tmpHeight, page, it->x, it->y);
 		} else {
-			memcpy(mask, animDataTable[it->frame].data(), tmpWidth * tmpHeight);
+			memcpy(mask, g_cine->_animDataTable[it->frame].data(), tmpWidth * tmpHeight);
 			gfxUpdateIncrustMask(mask, it->x, it->y, tmpWidth, tmpHeight, maskPtr, x, y, width, height);
 			gfxFillSprite(mask, tmpWidth, tmpHeight, page, it->x, it->y);
 		}

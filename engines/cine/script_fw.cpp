@@ -38,14 +38,6 @@
 
 namespace Cine {
 
-/**
- * Global variables.
- * 255 of these are saved, but there's one more that's used for bypassing the copy protection.
- * In CineEngine::mainLoop(int bootScriptIdx) there's this code: globalVars[VAR_BYPASS_PROTECTION] = 0;
- * And as VAR_BYPASS_PROTECTION is 255 that's why we're allocating one more than we otherwise would.
- */
-ScriptVars globalVars(NUM_MAX_VAR + 1);
-
 uint16 compareVars(int16 a, int16 b);
 
 
@@ -216,7 +208,6 @@ void FWScript::setupTable() {
 }
 
 FWScriptInfo *scriptInfo; ///< Script factory
-RawScriptArray scriptTable; ///< Table of script bytecode
 
 /**
  * @todo replace with script subsystem
@@ -255,6 +246,14 @@ ScriptVars::ScriptVars(Common::SeekableReadStream &fHandle, unsigned int len)
 	assert(_vars);
 
 	load(fHandle);
+}
+
+void ScriptVars::reinit(unsigned int len) {
+	delete _vars;
+
+	_size = len;
+	_vars = new int16[len];
+	reset();
 }
 
 /**
@@ -606,7 +605,7 @@ RawObjectScript::RawObjectScript(const FWScriptInfo &info, const byte *data,
 FWScript::FWScript(const RawScript &script, int16 idx) : _script(script),
 	_pos(0), _line(0), _compare(0), _index(idx),
 	_labels(script.labels()), _localVars(LOCAL_VARS_SIZE),
-	_globalVars(globalVars), _info(new FWScriptInfo) { }
+	_globalVars(g_cine->_globalVars), _info(new FWScriptInfo) { }
 
 /**
  * Copy constructor
@@ -624,7 +623,7 @@ FWScript::FWScript(const FWScript &src) : _script(src._script), _pos(src._pos),
 FWScript::FWScript(const RawScript &script, int16 idx, FWScriptInfo *info) :
 	_script(script), _pos(0), _line(0), _compare(0), _index(idx),
 	_labels(script.labels()), _localVars(LOCAL_VARS_SIZE),
-	_globalVars(globalVars), _info(info) { }
+	_globalVars(g_cine->_globalVars), _info(info) { }
 
 /**
  * Constructor for object scripts in derived classes
@@ -634,7 +633,7 @@ FWScript::FWScript(const RawScript &script, int16 idx, FWScriptInfo *info) :
 FWScript::FWScript(RawObjectScript &script, int16 idx, FWScriptInfo *info) :
 	_script(script), _pos(0), _line(0), _compare(0), _index(idx),
 	_labels(script.labels()), _localVars(LOCAL_VARS_SIZE),
-	_globalVars(globalVars), _info(info) {
+	_globalVars(g_cine->_globalVars), _info(info) {
 
 	_localVars[0] = script.run();
 }
@@ -964,11 +963,11 @@ int FWScript::o1_loadVar() {
 			break;
 		case 8:
 			debugC(5, kCineDebugScript, "Line: %d: var[%d] = file[%d].packedSize", _line, varIdx, dataIdx);
-			_localVars[varIdx] = partBuffer[dataIdx].packedSize;
+			_localVars[varIdx] = g_cine->_partBuffer[dataIdx].packedSize;
 			break;
 		case 9:
 			debugC(5, kCineDebugScript, "Line: %d: var[%d] = file[%d].unpackedSize", _line, varIdx, dataIdx);
-			_localVars[varIdx] = partBuffer[dataIdx].unpackedSize;
+			_localVars[varIdx] = g_cine->_partBuffer[dataIdx].unpackedSize;
 			break;
 		default:
 			error("executeScript: o1_loadVar: Unknown variable type %d", varType);
@@ -1196,7 +1195,7 @@ int FWScript::o1_addSpriteFilledToBgList() {
 
 int FWScript::o1_op1B() {
 	debugC(5, kCineDebugScript, "Line: %d: freeBgIncrustList", _line);
-	bgIncrustList.clear();
+	g_cine->_bgIncrustList.clear();
 	return 0;
 }
 
@@ -1343,9 +1342,9 @@ int FWScript::o1_endGlobalScript() {
 
 	debugC(5, kCineDebugScript, "Line: %d: stopGlobalScript(%d)", _line, scriptIdx);
 
-	ScriptList::iterator it = globalScripts.begin();
+	ScriptList::iterator it = g_cine->_globalScripts.begin();
 
-	for (; it != globalScripts.end(); ++it) {
+	for (; it != g_cine->_globalScripts.end(); ++it) {
 		if ((*it)->_index == scriptIdx) {
 			(*it)->_index = -1;
 		}
@@ -1369,7 +1368,7 @@ int FWScript::o1_loadBg() {
 	debugC(5, kCineDebugScript, "Line: %d: loadBg(\"%s\")", _line, param);
 
 	loadBg(param);
-	bgIncrustList.clear();
+	g_cine->_bgIncrustList.clear();
 	bgVar0 = 0;
 	return 0;
 }
@@ -1627,7 +1626,7 @@ int FWScript::o1_freePartRange() {
 
 int FWScript::o1_unloadAllMasks() {
 	debugC(5, kCineDebugScript, "Line: %d: unloadAllMasks()", _line);
-	overlayList.clear();
+	g_cine->_overlayList.clear();
 	return 0;
 }
 
@@ -1656,7 +1655,7 @@ int FWScript::o1_initializeZoneData() {
 	debugC(5, kCineDebugScript, "Line: %d: initializeZoneData()", _line);
 
 	for (int i = 0; i < NUM_MAX_ZONE; i++) {
-		zoneData[i] = i;
+		g_cine->_zoneData[i] = i;
 	}
 	return 0;
 }
@@ -1666,7 +1665,7 @@ int FWScript::o1_setZoneDataEntry() {
 	uint16 var = getNextWord();
 
 	debugC(5, kCineDebugScript, "Line: %d: setZone[%d] = %d", _line, zoneIdx, var);
-	zoneData[zoneIdx] = var;
+	g_cine->_zoneData[zoneIdx] = var;
 	return 0;
 }
 
@@ -1674,7 +1673,7 @@ int FWScript::o1_getZoneDataEntry() {
 	byte zoneIdx = getNextByte();
 	byte var = getNextByte();
 
-	_localVars[var] = zoneData[zoneIdx];
+	_localVars[var] = g_cine->_zoneData[zoneIdx];
 	return 0;
 }
 
@@ -1796,7 +1795,7 @@ int FWScript::o1_playSample() {
 	int16 volume = getNextWord();
 	uint16 size = getNextWord();
 
-	const byte *data = animDataTable[anim].data();
+	const byte *data = g_cine->_animDataTable[anim].data();
 
 	if (!data) {
 		return 0;
@@ -1804,7 +1803,7 @@ int FWScript::o1_playSample() {
 
 	if (g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) {
 		if (size == 0xFFFF) {
-			size = animDataTable[anim]._width * animDataTable[anim]._height;
+			size = g_cine->_animDataTable[anim]._width * g_cine->_animDataTable[anim]._height;
 		}
 		if (channel < 10) { // || _currentOpcode == 0x78
 			int channel1, channel2;
@@ -1874,9 +1873,9 @@ int FWScript::o1_unloadMask5() {
 //-----------------------------------------------------------------------
 
 void addScriptToGlobalScripts(uint16 idx) {
-	ScriptPtr tmp(scriptInfo->create(*scriptTable[idx], idx));
+	ScriptPtr tmp(scriptInfo->create(*g_cine->_scriptTable[idx], idx));
 	assert(tmp);
-	globalScripts.push_back(tmp);
+	g_cine->_globalScripts.push_back(tmp);
 }
 
 int16 getZoneFromPosition(byte *page, int16 x, int16 y, int16 width) {
@@ -1916,8 +1915,8 @@ int16 getZoneFromPositionRaw(byte *page, int16 x, int16 y, int16 width) {
 }
 
 int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx) {
-	int16 lx = objectTable[objIdx].x + x;
-	int16 ly = objectTable[objIdx].y + y;
+	int16 lx = g_cine->_objectTable[objIdx].x + x;
+	int16 ly = g_cine->_objectTable[objIdx].y + y;
 	int16 idx;
 	int16 result = 0;
 
@@ -1935,12 +1934,12 @@ int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneI
 
 		// The zoneQuery table is updated here only in Operation Stealth
 		if (g_cine->getGameType() == Cine::GType_OS) {
-			if (zoneData[idx] < NUM_MAX_ZONE) {
-				zoneQuery[zoneData[idx]]++;
+			if (g_cine->_zoneData[idx] < NUM_MAX_ZONE) {
+				g_cine->_zoneQuery[g_cine->_zoneData[idx]]++;
 			}
 		}
 
-		if (zoneData[idx] == zoneIdx) {
+		if (g_cine->_zoneData[idx] == zoneIdx) {
 			result = 1;
 			// Future Wars breaks out early on the first match, but
 			// Operation Stealth doesn't because it needs to update
@@ -1969,10 +1968,10 @@ uint16 compareVars(int16 a, int16 b) {
 }
 
 void executeObjectScripts() {
-	ScriptList::iterator it = objectScripts.begin();
-	for (; it != objectScripts.end();) {
+	ScriptList::iterator it = g_cine->_objectScripts.begin();
+	for (; it != g_cine->_objectScripts.end();) {
 		if ((*it)->_index < 0 || (*it)->execute() < 0) {
-			it = objectScripts.erase(it);
+			it = g_cine->_objectScripts.erase(it);
 		} else {
 			++it;
 		}
@@ -1980,10 +1979,10 @@ void executeObjectScripts() {
 }
 
 void executeGlobalScripts() {
-	ScriptList::iterator it = globalScripts.begin();
-	for (; it != globalScripts.end();) {
+	ScriptList::iterator it = g_cine->_globalScripts.begin();
+	for (; it != g_cine->_globalScripts.end();) {
 		if ((*it)->_index < 0 || (*it)->execute() < 0) {
-			it = globalScripts.erase(it);
+			it = g_cine->_globalScripts.erase(it);
 		} else {
 			++it;
 		}

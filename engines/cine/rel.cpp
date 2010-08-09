@@ -31,8 +31,6 @@
 
 namespace Cine {
 
-RawObjectScriptArray relTable; ///< Object script bytecode table
-
 /**
  * @todo Is script size of 0 valid?
  * @todo Fix script dump code
@@ -45,8 +43,8 @@ void loadRel(char *pRelName) {
 
 	checkDataDisk(-1);
 
-	objectScripts.clear();
-	relTable.clear();
+	g_cine->_objectScripts.clear();
+	g_cine->_relTable.clear();
 
 	ptr = dataPtr = readBundleFile(findFileInBundle(pRelName));
 
@@ -61,14 +59,14 @@ void loadRel(char *pRelName) {
 		p3 = READ_BE_UINT16(ptr); ptr += 2;
 		RawObjectScriptPtr tmp(new RawObjectScript(size, p1, p2, p3));
 		assert(tmp);
-		relTable.push_back(tmp);
+		g_cine->_relTable.push_back(tmp);
 	}
 
 	for (i = 0; i < numEntry; i++) {
-		size = relTable[i]->_size;
+		size = g_cine->_relTable[i]->_size;
 		// TODO: delete the test?
 		if (size) {
-			relTable[i]->setData(*scriptInfo, ptr);
+			g_cine->_relTable[i]->setData(*scriptInfo, ptr);
 			ptr += size;
 		}
 	}
@@ -82,10 +80,10 @@ void loadRel(char *pRelName) {
 		char buffer[256];
 
 		for (s = 0; s < numEntry; s++) {
-			if (relTable[s]->_size) {
+			if (g_cine->_relTable[s]->_size) {
 				sprintf(buffer, "%s_%03d.txt", pRelName, s);
 
-				decompileScript((const byte *)relTable[s]->getString(0), relTable[s]->_size, s);
+				decompileScript((const byte *)g_cine->_relTable[s]->getString(0), g_cine->_relTable[s]->_size, s);
 				dumpScript(buffer);
 			}
 		}

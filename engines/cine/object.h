@@ -63,9 +63,6 @@ struct overlay {
 #define NUM_MAX_OBJECT 255
 #define NUM_MAX_VAR 255
 
-extern Common::Array<ObjectStruct> objectTable;
-extern Common::List<overlay> overlayList;
-
 void resetObjectTable();
 void loadObject(char *pObjectName);
 void setupObject(byte objIdx, uint16 param1, uint16 param2, uint16 param3, uint16 param4);

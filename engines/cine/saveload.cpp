@@ -200,13 +200,13 @@ void loadScriptFromSave(Common::SeekableReadStream &fHandle, bool isGlobal) {
 	// original code loaded everything into globalScripts, this should be
 	// the correct behavior
 	if (isGlobal) {
-		ScriptPtr tmp(scriptInfo->create(*scriptTable[idx], idx, labels, localVars, compare, pos));
+		ScriptPtr tmp(scriptInfo->create(*g_cine->_scriptTable[idx], idx, labels, localVars, compare, pos));
 		assert(tmp);
-		globalScripts.push_back(tmp);
+		g_cine->_globalScripts.push_back(tmp);
 	} else {
-		ScriptPtr tmp(scriptInfo->create(*relTable[idx], idx, labels, localVars, compare, pos));
+		ScriptPtr tmp(scriptInfo->create(*g_cine->_relTable[idx], idx, labels, localVars, compare, pos));
 		assert(tmp);
-		objectScripts.push_back(tmp);
+		g_cine->_objectScripts.push_back(tmp);
 	}
 }
 
@@ -227,7 +227,7 @@ void loadOverlayFromSave(Common::SeekableReadStream &fHandle) {
 	tmp.width = fHandle.readSint16BE();
 	tmp.color = fHandle.readSint16BE();
 
-	overlayList.push_back(tmp);
+	g_cine->_overlayList.push_back(tmp);
 }
 
 bool loadObjectTable(Common::SeekableReadStream &in) {
@@ -235,20 +235,20 @@ bool loadObjectTable(Common::SeekableReadStream &in) {
 	in.readUint16BE(); // Entry size
 
 	for (int i = 0; i < NUM_MAX_OBJECT; i++) {
-		objectTable[i].x = in.readSint16BE();
-		objectTable[i].y = in.readSint16BE();
-		objectTable[i].mask = in.readUint16BE();
-		objectTable[i].frame = in.readSint16BE();
-		objectTable[i].costume = in.readSint16BE();
-		in.read(objectTable[i].name, 20);
-		objectTable[i].part = in.readUint16BE();
+		g_cine->_objectTable[i].x = in.readSint16BE();
+		g_cine->_objectTable[i].y = in.readSint16BE();
+		g_cine->_objectTable[i].mask = in.readUint16BE();
+		g_cine->_objectTable[i].frame = in.readSint16BE();
+		g_cine->_objectTable[i].costume = in.readSint16BE();
+		in.read(g_cine->_objectTable[i].name, 20);
+		g_cine->_objectTable[i].part = in.readUint16BE();
 	}
 	return !(in.eos() || in.err());
 }
 
 bool loadZoneData(Common::SeekableReadStream &in) {
 	for (int i = 0; i < 16; i++) {
-		zoneData[i] = in.readUint16BE();
+		g_cine->_zoneData[i] = in.readUint16BE();
 	}
 	return !(in.eos() || in.err());
 }
@@ -313,14 +313,14 @@ bool loadSeqList(Common::SeekableReadStream &in) {
 		tmp.var1A  = in.readSint16BE();
 		tmp.var1C  = in.readSint16BE();
 		tmp.var1E  = in.readSint16BE();
-		seqList.push_back(tmp);
+		g_cine->_seqList.push_back(tmp);
 	}
 	return !(in.eos() || in.err());
 }
 
 bool loadZoneQuery(Common::SeekableReadStream &in) {
 	for (int i = 0; i < 16; i++) {
-		zoneQuery[i] = in.readUint16BE();
+		g_cine->_zoneQuery[i] = in.readUint16BE();
 	}
 	return !(in.eos() || in.err());
 }
@@ -330,19 +330,19 @@ void saveObjectTable(Common::OutSaveFile &out) {
 	out.writeUint16BE(0x20); // Entry size
 
 	for (int i = 0; i < NUM_MAX_OBJECT; i++) {
-		out.writeUint16BE(objectTable[i].x);
-		out.writeUint16BE(objectTable[i].y);
-		out.writeUint16BE(objectTable[i].mask);
-		out.writeUint16BE(objectTable[i].frame);
-		out.writeUint16BE(objectTable[i].costume);
-		out.write(objectTable[i].name, 20);
-		out.writeUint16BE(objectTable[i].part);
+		out.writeUint16BE(g_cine->_objectTable[i].x);
+		out.writeUint16BE(g_cine->_objectTable[i].y);
+		out.writeUint16BE(g_cine->_objectTable[i].mask);
+		out.writeUint16BE(g_cine->_objectTable[i].frame);
+		out.writeUint16BE(g_cine->_objectTable[i].costume);
+		out.write(g_cine->_objectTable[i].name, 20);
+		out.writeUint16BE(g_cine->_objectTable[i].part);
 	}
 }
 
 void saveZoneData(Common::OutSaveFile &out) {
 	for (int i = 0; i < 16; i++) {
-		out.writeUint16BE(zoneData[i]);
+		out.writeUint16BE(g_cine->_zoneData[i]);
 	}
 }
 
@@ -356,8 +356,8 @@ void saveCommandVariables(Common::OutSaveFile &out) {
 void saveCommandBuffer(Common::OutSaveFile &out) {
 	// Let's make sure there's space for the trailing zero
 	// (That's why we subtract one from the maximum command buffer size here).
-	uint32 size = MIN<uint32>(commandBuffer.size(), kMaxCommandBufferSize - 1);
-	out.write(commandBuffer.c_str(), size);
+	uint32 size = MIN<uint32>(g_cine->_commandBuffer.size(), kMaxCommandBufferSize - 1);
+	out.write(g_cine->_commandBuffer.c_str(), size);
 	// Write the rest as zeroes (Here we also write the string's trailing zero)
 	for (uint i = 0; i < kMaxCommandBufferSize - size; i++) {
 		out.writeByte(0);
@@ -369,7 +369,7 @@ void saveAnimDataTable(Common::OutSaveFile &out) {
 	out.writeUint16BE(0x1E); // Entry size
 
 	for (int i = 0; i < NUM_MAX_ANIMDATA; i++) {
-		animDataTable[i].save(out);
+		g_cine->_animDataTable[i].save(out);
 	}
 }
 
@@ -385,16 +385,16 @@ void saveScreenParams(Common::OutSaveFile &out) {
 
 void saveGlobalScripts(Common::OutSaveFile &out) {
 	ScriptList::const_iterator it;
-	out.writeUint16BE(globalScripts.size());
-	for (it = globalScripts.begin(); it != globalScripts.end(); ++it) {
+	out.writeUint16BE(g_cine->_globalScripts.size());
+	for (it = g_cine->_globalScripts.begin(); it != g_cine->_globalScripts.end(); ++it) {
 		(*it)->save(out);
 	}
 }
 
 void saveObjectScripts(Common::OutSaveFile &out) {
 	ScriptList::const_iterator it;
-	out.writeUint16BE(objectScripts.size());
-	for (it = objectScripts.begin(); it != objectScripts.end(); ++it) {
+	out.writeUint16BE(g_cine->_objectScripts.size());
+	for (it = g_cine->_objectScripts.begin(); it != g_cine->_objectScripts.end(); ++it) {
 		(*it)->save(out);
 	}
 }
@@ -402,9 +402,9 @@ void saveObjectScripts(Common::OutSaveFile &out) {
 void saveOverlayList(Common::OutSaveFile &out) {
 	Common::List<overlay>::const_iterator it;
 
-	out.writeUint16BE(overlayList.size());
+	out.writeUint16BE(g_cine->_overlayList.size());
 
-	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
+	for (it = g_cine->_overlayList.begin(); it != g_cine->_overlayList.end(); ++it) {
 		out.writeUint32BE(0); // next
 		out.writeUint32BE(0); // previous?
 		out.writeUint16BE(it->objIdx);
@@ -418,9 +418,9 @@ void saveOverlayList(Common::OutSaveFile &out) {
 
 void saveBgIncrustList(Common::OutSaveFile &out) {
 	Common::List<BGIncrust>::const_iterator it;
-	out.writeUint16BE(bgIncrustList.size());
+	out.writeUint16BE(g_cine->_bgIncrustList.size());
 
-	for (it = bgIncrustList.begin(); it != bgIncrustList.end(); ++it) {
+	for (it = g_cine->_bgIncrustList.begin(); it != g_cine->_bgIncrustList.end(); ++it) {
 		out.writeUint32BE(0); // next
 		out.writeUint32BE(0); // previous?
 		out.writeUint16BE(it->objIdx);
@@ -434,15 +434,15 @@ void saveBgIncrustList(Common::OutSaveFile &out) {
 
 void saveZoneQuery(Common::OutSaveFile &out) {
 	for (int i = 0; i < 16; i++) {
-		out.writeUint16BE(zoneQuery[i]);
+		out.writeUint16BE(g_cine->_zoneQuery[i]);
 	}
 }
 
 void saveSeqList(Common::OutSaveFile &out) {
 	Common::List<SeqListElement>::const_iterator it;
-	out.writeUint16BE(seqList.size());
+	out.writeUint16BE(g_cine->_seqList.size());
 
-	for (it = seqList.begin(); it != seqList.end(); ++it) {
+	for (it = g_cine->_seqList.begin(); it != g_cine->_seqList.end(); ++it) {
 		out.writeSint16BE(it->var4);
 		out.writeUint16BE(it->objIdx);
 		out.writeSint16BE(it->var8);
@@ -567,13 +567,13 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 
 	loadObjectTable(in);
 	renderer->restorePalette(in, hdr.version);
-	globalVars.load(in, NUM_MAX_VAR);
+	g_cine->_globalVars.load(in, NUM_MAX_VAR);
 	loadZoneData(in);
 	loadCommandVariables(in);
 	char tempCommandBuffer[kMaxCommandBufferSize];
 	in.read(tempCommandBuffer, kMaxCommandBufferSize);
-	commandBuffer = tempCommandBuffer;
-	renderer->setCommand(commandBuffer);
+	g_cine->_commandBuffer = tempCommandBuffer;
+	renderer->setCommand(g_cine->_commandBuffer);
 	loadZoneQuery(in);
 
 	// TODO: Use the loaded string (Current music name (String, 13 bytes)).
@@ -701,7 +701,7 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	renderer->restorePalette(in, 0);
 
 	// At 0x2083 (i.e. 0x2043 + 16 * 2 * 2):
-	globalVars.load(in, NUM_MAX_VAR);
+	g_cine->_globalVars.load(in, NUM_MAX_VAR);
 
 	// At 0x2281 (i.e. 0x2083 + 255 * 2):
 	loadZoneData(in);
@@ -712,8 +712,8 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	// At 0x22A9 (i.e. 0x22A1 + 4 * 2):
 	char tempCommandBuffer[kMaxCommandBufferSize];
 	in.read(tempCommandBuffer, kMaxCommandBufferSize);
-	commandBuffer = tempCommandBuffer;
-	renderer->setCommand(commandBuffer);
+	g_cine->_commandBuffer = tempCommandBuffer;
+	renderer->setCommand(g_cine->_commandBuffer);
 
 	// At 0x22F9 (i.e. 0x22A9 + 0x50):
 	renderer->_cmdY = in.readUint16BE();
@@ -855,7 +855,7 @@ void CineEngine::makeSaveFW(Common::OutSaveFile &out) {
 
 	saveObjectTable(out);
 	renderer->savePalette(out);
-	globalVars.save(out, NUM_MAX_VAR);
+	g_cine->_globalVars.save(out, NUM_MAX_VAR);
 	saveZoneData(out);
 	saveCommandVariables(out);
 	saveCommandBuffer(out);
@@ -912,7 +912,7 @@ void CineEngine::makeSaveOS(Common::OutSaveFile &out) {
 
 	saveObjectTable(out);
 	renderer->savePalette(out);
-	globalVars.save(out, NUM_MAX_VAR);
+	g_cine->_globalVars.save(out, NUM_MAX_VAR);
 	saveZoneData(out);
 	saveCommandVariables(out);
 	saveCommandBuffer(out);
@@ -1045,7 +1045,7 @@ void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGam
 			loadPart(name);
 		}
 
-		animName = partBuffer[foundFileIdx].partName;
+		animName = g_cine->_partBuffer[foundFileIdx].partName;
 		loadRelatedPalette(animName); // Is this for Future Wars only?
 		const int16 prevAnim = currentAnim;
 		currentAnim = loadResource(animName, currentAnim);

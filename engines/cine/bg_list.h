@@ -42,7 +42,6 @@ struct BGIncrust {
 	int16 part;
 };
 
-extern Common::List<BGIncrust> bgIncrustList;
 extern uint32 var8;
 
 void addToBGList(int16 objIdx);

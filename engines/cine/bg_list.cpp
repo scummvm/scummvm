@@ -36,14 +36,13 @@
 namespace Cine {
 
 uint32 var8;
-Common::List<BGIncrust> bgIncrustList;
 
 /**
  * Add masked sprite to the background
  * @param objIdx Sprite description
  */
 void addToBGList(int16 objIdx) {
-	renderer->incrustSprite(objectTable[objIdx]);
+	renderer->incrustSprite(g_cine->_objectTable[objIdx]);
 
 	createBgIncrustListElement(objIdx, 0);
 }
@@ -53,7 +52,7 @@ void addToBGList(int16 objIdx) {
  * @param objIdx Sprite description
  */
 void addSpriteFilledToBGList(int16 objIdx) {
-	renderer->incrustMask(objectTable[objIdx]);
+	renderer->incrustMask(g_cine->_objectTable[objIdx]);
 
 	createBgIncrustListElement(objIdx, 1);
 }
@@ -69,12 +68,12 @@ void createBgIncrustListElement(int16 objIdx, int16 param) {
 	tmp.unkPtr = 0;
 	tmp.objIdx = objIdx;
 	tmp.param = param;
-	tmp.x = objectTable[objIdx].x;
-	tmp.y = objectTable[objIdx].y;
-	tmp.frame = objectTable[objIdx].frame;
-	tmp.part = objectTable[objIdx].part;
+	tmp.x = g_cine->_objectTable[objIdx].x;
+	tmp.y = g_cine->_objectTable[objIdx].y;
+	tmp.frame = g_cine->_objectTable[objIdx].frame;
+	tmp.part = g_cine->_objectTable[objIdx].part;
 
-	bgIncrustList.push_back(tmp);
+	g_cine->_bgIncrustList.push_back(tmp);
 }
 
 /**
@@ -104,12 +103,12 @@ void loadBgIncrustFromSave(Common::SeekableReadStream &fHandle) {
 		tmp.frame = fHandle.readUint16BE();
 		tmp.part = fHandle.readUint16BE();
 
-		bgIncrustList.push_back(tmp);
+		g_cine->_bgIncrustList.push_back(tmp);
 
 		if (tmp.param == 0) {
-			renderer->incrustSprite(objectTable[tmp.objIdx]);
+			renderer->incrustSprite(g_cine->_objectTable[tmp.objIdx]);
 		} else {
-			renderer->incrustMask(objectTable[tmp.objIdx]);
+			renderer->incrustMask(g_cine->_objectTable[tmp.objIdx]);
 		}
 	}
 }
