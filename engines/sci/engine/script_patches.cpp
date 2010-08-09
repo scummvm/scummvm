@@ -52,6 +52,58 @@ struct SciScriptSignature {
 //  - rinse and repeat
 
 
+// daySixBeignet::changeState is called when the cop goes out and sets cycles to 220.
+//  this is not enough time to get to the door, so we patch that to 23 seconds
+const byte gk1SignatureDay6PoliceBeignet[] = {
+	4,
+	0x35, 0x04,        // ldi 04
+	0x1a,              // eq?
+	0x30,              // bnt [next state check]
+	+2, 5,             // [skip 2 bytes, offset of bnt]
+	0x38, 0x93, 0x00,  // pushi 93 (selector dispose)
+	0x76,              // push0
+	0x72,              // lofsa deskSarg
+	+2, 9,             // [skip 2 bytes, offset of lofsa]
+	0x4a, 0x04, 0x00,  // send 04
+	0x34, 0xdc, 0x00,  // ldi 220
+	0x65, 0x1a,        // aTop cycles
+	0x32,              // jmp [end]
+	0
+};
+
+const uint16 gk1PatchDay6PoliceBeignet[] = {
+	PATCH_ADDTOOFFSET | +16,
+	0x34, 0x17, 0x00,  // ldi 23
+	0x65, 0x1c,        // aTop seconds
+	PATCH_END
+};
+
+const byte gk1SignatureDay6PoliceSleep[] = {
+	4,
+	0x35, 0x08,        // ldi 08
+	0x1a,              // eq?
+	0x31,              // bnt [next state check]
+	+1, 5,             // [skip 1 byte, offset of bnt]
+	0x34, 0xdc, 0x00,  // ldi 220
+	0x65, 0x1a,        // aTop cycles
+	0x32,              // jmp [end]
+	0
+};
+
+const uint16 gk1PatchDay6PoliceSleep[] = {
+	PATCH_ADDTOOFFSET | +5,
+	0x34, 0x2a, 0x00,  // ldi 42
+	0x65, 0x1c,        // aTop seconds
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                 adjust
+const SciScriptSignature gk1Signatures[] = {
+    {    230, "day 6 police beignet timer issue",            PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),   -16, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
+    {    230, "day 6 police sleep timer issue",              PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),    -5, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },
+    {      0, NULL,                                          0,                                            0, NULL,                          NULL }
+};
+
 // this here gets called on entry and when going out of game windows
 //  uEvt::port will not get changed after kDisposeWindow but a bit later, so
 //  we would get an invalid port handle to a kSetPort call. We just patch in
@@ -273,6 +325,8 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 
 void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
 	const SciScriptSignature *signatureTable = NULL;
+	if (g_sci->getGameId() == GID_GK1)
+		signatureTable = gk1Signatures;
 // hoyle4 now works due workaround inside GfxPorts
 //	if (g_sci->getGameId() == GID_HOYLE4)
 //		signatureTable = hoyle4Signatures;
