@@ -85,7 +85,7 @@ const byte gk1SignatureDay6PoliceSleep[] = {
 	0x35, 0x08,        // ldi 08
 	0x1a,              // eq?
 	0x31,              // bnt [next state check]
-	+1, 5,             // [skip 1 byte, offset of bnt]
+	+1, 6,             // [skip 1 byte, offset of bnt]
 	0x34, 0xdc, 0x00,  // ldi 220
 	0x65, 0x1a,        // aTop cycles
 	0x32,              // jmp [end]
