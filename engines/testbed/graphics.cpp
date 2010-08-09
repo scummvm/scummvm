@@ -584,7 +584,7 @@ TestExitStatus GFXtests::palettizedCursors() {
 		passed = kTestFailed;
 	}
 
-	if (!Testsuite::handleInteractiveInput("Did test run as was described?")) {
+	if (!Testsuite::handleInteractiveInput("     Did test run as was described?     ")) {
 		passed = kTestFailed;
 	}
 
@@ -635,7 +635,7 @@ TestExitStatus GFXtests::mouseMovements() {
 	g_system->delayMillis(1500);
 	CursorMan.showMouse(false);
 
-	if (Testsuite::handleInteractiveInput("Was the cursor symmetrically contained in the rectangle at (100, 100)?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("Was the cursor centred in the rectangle at (100, 100)?", "Yes", "No", kOptionRight)) {
 		return kTestFailed;
 	}
 
@@ -670,7 +670,7 @@ TestExitStatus GFXtests::copyRectToScreen() {
 	g_system->updateScreen();
 	g_system->delayMillis(1000);
 
-	if (Testsuite::handleInteractiveInput("Did you see yellow rectangle?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("      Did you see yellow rectangle ?       ", "Yes", "No", kOptionRight)) {
 		return kTestFailed;
 	}
 
@@ -718,7 +718,7 @@ TestExitStatus GFXtests::iconifyWindow() {
 		Testsuite::displayMessage("feature not supported");
 	}
 
-	if (Testsuite::handleInteractiveInput("Did you see window minimized?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("  Did you see the window minimized?  ", "Yes", "No", kOptionRight)) {
 		return kTestFailed;
 	}
 
@@ -733,7 +733,7 @@ TestExitStatus GFXtests::scaledCursors() {
 	Testsuite::clearScreen();
 	Common::String info = "Testing : Scaled cursors\n"
 		"Here every graphics mode is tried with a cursorTargetScale of 1, 2 and 3.\n"
-		"The expected cursor size is drawn as a rectangle, the cursor should entirely cover that rectangle.\n"
+		"The expected cursor size is drawn as a rectangle.\n The cursor should approximately match that rectangle.\n"
 		"This may take time, You may skip the later scalers and just examine the first three i.e 1x, 2x and 3x";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
@@ -909,7 +909,8 @@ TestExitStatus GFXtests::paletteRotation() {
 	
 	Common::String info = "Palette rotation. Here we draw a full 256 colored rainbow and then rotate it.\n"
 						"Note that the screen graphics change without having to draw anything.\n"
-						"The palette should appear to rotate, Click the mouse button to exit.";
+						"The palette should appear to rotate, as a result, the background will change its color too.\n"
+						"Click the mouse button to exit.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : palette Rotation\n");
@@ -980,7 +981,7 @@ TestExitStatus GFXtests::paletteRotation() {
 	GFXTestSuite::setCustomColor(255, 0, 0);
 	Testsuite::clearScreen();
 
-	if(Testsuite::handleInteractiveInput("Did you saw a rotation in colors of rectangles displayed on screen?", "Yes", "No", kOptionRight)) {
+	if(Testsuite::handleInteractiveInput("Did you see a rotation in colors of rectangles displayed on screen?", "Yes", "No", kOptionRight)) {
 		return kTestFailed;
 	}
 

@@ -130,10 +130,19 @@ TestExitStatus EventTests::mouseEvents() {
 	
 	Common::EventManager *eventMan = g_system->getEventManager();
 
-	Common::Point pt(0, 100);
-	Common::Rect rect = Testsuite::writeOnScreen("Generate mouse events make L/R/M button clicks", pt);
-	pt.y = 120;
-	Testsuite::writeOnScreen("Testbed should be able to detect them, Press X to exit", pt);
+	Common::Point pt(0, 30);
+	Common::Rect rectInfo = Testsuite::writeOnScreen("Generate mouse events make L/R/M button clicks, move wheel", pt);
+	pt.y += 15;
+	Testsuite::writeOnScreen("Press X to exit", pt);
+	pt.y = 70;
+	Common::Rect rectLB = Testsuite::writeOnScreen("Left-button click : Not tested", pt);
+	pt.y += 15;
+	Common::Rect rectRB = Testsuite::writeOnScreen("Right-button click : Not tested", pt);
+	pt.y += 15;
+	Common::Rect rectMB = Testsuite::writeOnScreen("Middle-button click : Not tested", pt);
+	pt.y += 15;
+	Common::Rect rectWheel = Testsuite::writeOnScreen("Wheel Movements : Not tested", pt);
+
 
 	// Init Mouse Palette
 	GFXtests::initMousePalette();
@@ -158,44 +167,49 @@ TestExitStatus EventTests::mouseEvents() {
 				// Movements havee already been tested in GFX
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				Testsuite::clearScreen(rect);
-				Testsuite::writeOnScreen("Mouse left-button pressed", pt);
+				Testsuite::clearScreen(rectInfo);
+				Testsuite::writeOnScreen("Mouse left-button pressed", Common::Point(rectInfo.left, rectInfo.top));
 				break;
 			case Common::EVENT_RBUTTONDOWN:
-				Testsuite::clearScreen(rect);
-				Testsuite::writeOnScreen("Mouse right-button pressed", pt);
+				Testsuite::clearScreen(rectInfo);
+				Testsuite::writeOnScreen("Mouse right-button pressed", Common::Point(rectInfo.left, rectInfo.top));
 				break;
 			case Common::EVENT_WHEELDOWN:
-				Testsuite::clearScreen(rect);
-				Testsuite::writeOnScreen("Mouse wheel moved down", pt);
+				Testsuite::clearScreen(rectInfo);
+				Testsuite::writeOnScreen("Mouse wheel moved down", Common::Point(rectInfo.left, rectInfo.top));
+				Testsuite::writeOnScreen("Wheel Movements : Done!", Common::Point(rectWheel.left, rectWheel.top));
 				break;
 			case Common::EVENT_MBUTTONDOWN:
-				Testsuite::clearScreen(rect);
-				Testsuite::writeOnScreen("Mouse middle-button pressed ", pt);
+				Testsuite::clearScreen(rectInfo);
+				Testsuite::writeOnScreen("Mouse middle-button pressed ", Common::Point(rectInfo.left, rectInfo.top));
 				break;
 			case Common::EVENT_LBUTTONUP:
-				Testsuite::clearScreen(rect);
+				Testsuite::clearScreen(rectInfo);
 				if (finishZone.contains(eventMan->getMousePos())) {
 					quitLoop = true;
 				}
-				Testsuite::writeOnScreen("Mouse left-button released", pt);
+				Testsuite::writeOnScreen("Mouse left-button released", Common::Point(rectInfo.left, rectInfo.top));
+				Testsuite::writeOnScreen("Left-button clicks : Done!", Common::Point(rectLB.left, rectLB.top));
 				break;
 			case Common::EVENT_RBUTTONUP:
-				Testsuite::clearScreen(rect);
-				Testsuite::writeOnScreen("Mouse right-button released", pt);
+				Testsuite::clearScreen(rectInfo);
+				Testsuite::writeOnScreen("Mouse right-button released", Common::Point(rectInfo.left, rectInfo.top));
+				Testsuite::writeOnScreen("Right-button clicks : Done!", Common::Point(rectRB.left, rectRB.top));
 				break;
 			case Common::EVENT_WHEELUP:
-				Testsuite::clearScreen(rect);
-				Testsuite::writeOnScreen("Mouse wheel moved up", pt);
+				Testsuite::clearScreen(rectInfo);
+				Testsuite::writeOnScreen("Mouse wheel moved up", Common::Point(rectInfo.left, rectInfo.top));
+				Testsuite::writeOnScreen("Wheel Movements : Done!", Common::Point(rectWheel.left, rectWheel.top));
 				break;
 			case Common::EVENT_MBUTTONUP:
-				Testsuite::clearScreen(rect);
-				Testsuite::writeOnScreen("Mouse middle-button released ", pt);
+				Testsuite::clearScreen(rectInfo);
+				Testsuite::writeOnScreen("Mouse middle-button released ", Common::Point(rectInfo.left, rectInfo.top));
+				Testsuite::writeOnScreen("Middle-button clicks : Done!", Common::Point(rectMB.left, rectMB.top));
 				break;
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_x) {
-					Testsuite::clearScreen(rect);
-					Testsuite::writeOnScreen("Exit requested", pt);
+					Testsuite::clearScreen(rectInfo);
+					Testsuite::writeOnScreen("Exit requested", Common::Point(rectInfo.left, rectInfo.top));
 					quitLoop = true;
 				}
 				break;
@@ -209,15 +223,11 @@ TestExitStatus EventTests::mouseEvents() {
 	CursorMan.showMouse(false);
 
 	// Verify results now!
-	if (Testsuite::handleInteractiveInput("Were mouse clicks L/R/M buttons identfied?", "Yes", "No", kOptionRight)) {
-		Testsuite::logDetailedPrintf("Mouse clicks (L/R/M buttons) failed");
+	if (Testsuite::handleInteractiveInput("Were mouse clicks (L/R/M buttons) and wheel movements identfied ?", "Yes", "No", kOptionRight)) {
+		Testsuite::logDetailedPrintf("Mouse clicks (L/R/M buttons) and wheel movements failed");
 		passed = kTestFailed;
 	}
-	if (Testsuite::handleInteractiveInput("Were mouse wheel movements identified?", "Yes", "No", kOptionRight)) {
-		Testsuite::logDetailedPrintf("Mouse wheel movements failed");
-		passed = kTestFailed;
-	}
-
+	
 	return passed;
 }
 
@@ -264,7 +274,7 @@ TestExitStatus EventTests::showMainMenu() {
 	Testsuite::clearScreen();
 	Common::String info = "Testing Main Menu events.\n "
 	"Main Menu event is normally trigerred by user pressing (Ctrl + f5).\n"
-	"Click 'resume' to continue testbed.";
+	"Click 'resume'(the topmost button) to continue testbed.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Main Menu\n");

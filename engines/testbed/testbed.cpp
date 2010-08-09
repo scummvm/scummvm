@@ -63,7 +63,11 @@ void TestbedExitDialog::init() {
 	addList(0, _yOffset, 500, 200, strArray, &colors);
 	text = "More Details can be viewed in the Log file : " + Testsuite::getLogFile();
 	addText(450, 20, text, Graphics::kTextAlignLeft, 0, 0);
-	text = "Directory : " + Testsuite::getLogDir();
+	if (Testsuite::getLogDir().size()) {
+		text = "Directory : " + Testsuite::getLogDir();
+	} else {
+		text = "Directory : .";
+	}
 	addText(500, 20, text, Graphics::kTextAlignLeft, 0, 0);
 	_yOffset += 5;
 	addButtonXY(_xOffset + 80, _yOffset, 120, 24, "Rerun test suite", kCmdRerunTestbed);
