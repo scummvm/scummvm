@@ -52,7 +52,7 @@ struct SciScriptSignature {
 //  - rinse and repeat
 
 
-// daySixBeignet::changeState is called when the cop goes out and sets cycles to 220.
+// daySixBeignet::changeState (4) is called when the cop goes out and sets cycles to 220.
 //  this is not enough time to get to the door, so we patch that to 23 seconds
 const byte gk1SignatureDay6PoliceBeignet[] = {
 	4,
@@ -78,6 +78,8 @@ const uint16 gk1PatchDay6PoliceBeignet[] = {
 	PATCH_END
 };
 
+// sargSleeping::changeState (8) is called when the cop falls asleep and sets cycles to 220.
+//  this is not enough time to get to the door, so we patch it to 42 seconds
 const byte gk1SignatureDay6PoliceSleep[] = {
 	4,
 	0x35, 0x08,        // ldi 08
@@ -97,8 +99,27 @@ const uint16 gk1PatchDay6PoliceSleep[] = {
 	PATCH_END
 };
 
+// startOfDay5::changeState (20h) - when gabriel goes to the phone the script will hang
+const byte gk1SignatureDay5PhoneFreeze[] = {
+	5,
+	0x35, 0x03,        // ldi 03
+	0x65, 0x1a,        // aTop cycles
+	0x32,              // jmp [end]
+	+2, 3,             // [skip 2 bytes, offset of jmp]
+	0x3c,              // dup
+	0x35, 0x21,        // ldi 21
+	0
+};
+
+const uint16 gk1PatchDay5PhoneFreeze[] = {
+	0x35, 0x06,        // ldi 06
+	0x65, 0x20,        // aTop ticks
+	PATCH_END
+};
+
 //    script, description,                                   magic DWORD,                                 adjust
 const SciScriptSignature gk1Signatures[] = {
+    {    212, "day 5 phone freeze",                          PATCH_MAGICDWORD(0x35, 0x03, 0x65, 0x1a),     0, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
     {    230, "day 6 police beignet timer issue",            PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),   -16, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
     {    230, "day 6 police sleep timer issue",              PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),    -5, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },
     {      0, NULL,                                          0,                                            0, NULL,                          NULL }
