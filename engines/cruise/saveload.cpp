@@ -579,10 +579,10 @@ static void syncPerso(Common::Serializer &s, persoStruct &p) {
 }
 
 static void syncCT(Common::Serializer &s) {
-	int v = (polyStruct) ? 1 : 0;
+	int v = (_vm->_polyStruct) ? 1 : 0;
 	s.syncAsSint32LE(v);
 	if (s.isLoading())
-		polyStruct = (v != 0) ? &polyStructNorm : NULL;
+		_vm->_polyStruct = (v != 0) ? &_vm->_polyStructNorm : NULL;
 
 	if (v == 0)
 		// There is no further data to load or save
