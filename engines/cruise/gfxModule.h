@@ -28,14 +28,14 @@
 
 namespace Cruise {
 
-struct gfxModuleDataStruct {
+/*struct gfxModuleDataStruct {
 	int useTandy;
 	int useEGA;
 	int useVGA;
 
 	uint8 *pPage00;
 	uint8 *pPage10;
-};
+};*/
 
 struct palEntry {
 	uint8 R;
@@ -44,7 +44,7 @@ struct palEntry {
 	uint8 A;
 };
 
-extern gfxModuleDataStruct gfxModuleData;
+//extern gfxModuleDataStruct gfxModuleData;
 
 void gfxModuleData_gfxClearFrameBuffer(uint8 *ptr);
 void gfxModuleData_setDirtyColors(int min, int max);

@@ -27,8 +27,15 @@
 #define CRUISE_VARS_H
 
 #include "common/file.h"
+#include "common/list.h"
+#include "common/singleton.h"
+#include "common/endian.h"
+#include "common/util.h"
+#include "gfxModule.h"
 
 namespace Cruise {
+
+typedef Common::List<Common::Rect> RectList;
 
 #define NBCOLORS 256
 #define NBSCREENS 8
@@ -54,13 +61,50 @@ struct menuElementStruct {
 typedef int32(*opcodeTypeFunction)();
 typedef int16(*opcodeFunction)();
 
-extern uint8 *_systemFNT;
 extern int16 fontFileIndex;
 
-extern uint8 itemColor;
-extern uint8 selectColor;
-extern uint8 titleColor;
-extern uint8 subColor;
+class CruiseVars : public Common::Singleton<CruiseVars> {
+public:
+	uint8 *_systemFNT;
+
+	uint8 itemColor;
+	uint8 selectColor;
+	uint8 titleColor;
+	uint8 subColor;
+
+	gfxEntryStruct* linkedMsgList;
+
+	Common::List<byte *> memList;
+
+	uint8 *ctpVar17;
+
+	Common::Array<CtStruct> polyStructNorm;
+	Common::Array<CtStruct> polyStructExp;
+
+	uint8 page00[320 * 200];
+	uint8 page10[320 * 200];
+	char screen[320 * 200];
+
+	palEntry lpalette[256];
+
+	int palDirtyMin;
+	int palDirtyMax;
+
+	RectList _dirtyRects;
+	RectList _priorFrameRects;
+	bool _dirtyRectScreen;
+
+	int useTandy;
+	int useEGA;
+	int useVGA;
+
+	uint8 *pPage00;
+	uint8 *pPage10;
+
+	~CruiseVars();
+	CruiseVars();
+
+};
 
 extern int16 lowMemory;
 extern int16 scroll;
@@ -300,5 +344,7 @@ extern uint8 globalScreen[320 * 200];
 //extern OSystem *osystem;
 
 } // End of namespace Cruise
+
+#define CVars (::Cruise::CruiseVars::instance())
 
 #endif

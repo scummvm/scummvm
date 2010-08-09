@@ -137,8 +137,8 @@ void CruiseEngine::initialize() {
 }
 
 void CruiseEngine::deinitialise() {
-	polyStructNorm.clear();
-	polyStructExp.clear();
+	CVars.polyStructNorm.clear();
+	CVars.polyStructExp.clear();
 
 	// Clear any backgrounds
 	for (int i = 0; i < 8; ++i) {
@@ -205,7 +205,7 @@ void CruiseEngine::pauseEngine(bool pause) {
 	if (pause) {
 		// Draw the 'Paused' message
 		drawSolidBox(64, 100, 256, 117, 0);
-		drawString(10, 100, langString(ID_PAUSED), gfxModuleData.pPage00, itemColor, 300);
+		drawString(10, 100, langString(ID_PAUSED), CVars.pPage00, CVars.itemColor, 300);
 		gfxModuleData_flipScreen();
 
 		_savedCursor = currentCursor;

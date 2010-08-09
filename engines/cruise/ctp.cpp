@@ -29,10 +29,6 @@
 
 namespace Cruise {
 
-uint8 *ctpVar17;
-
-Common::Array<CtStruct> polyStructNorm;
-Common::Array<CtStruct> polyStructExp;
 Common::Array<CtStruct> *polyStructs = NULL;
 Common::Array<CtStruct> *polyStruct = NULL;
 
@@ -324,16 +320,16 @@ int initCt(const char *ctpName) {
 	// Load the polyStructNorm list
 
 	for (int i = numberOfWalkboxes - 1; i >= 0; i--) {
-		makeCtStruct(polyStructNorm, ctp_walkboxTable, i, 0);
+		makeCtStruct(CVars.polyStructNorm, ctp_walkboxTable, i, 0);
 	}
 
 	// Load the polyStructExp list
 
 	for (int i = numberOfWalkboxes - 1; i >= 0; i--) {
-		makeCtStruct(polyStructExp, ctp_walkboxTable, i, walkboxZoom[i] * 20);
+		makeCtStruct(CVars.polyStructExp, ctp_walkboxTable, i, walkboxZoom[i] * 20);
 	}
 
-	polyStruct = polyStructs = &polyStructNorm;
+	polyStruct = polyStructs = &CVars.polyStructNorm;
 
 	return (1);
 }

@@ -24,15 +24,36 @@
  */
 
 #include "cruise/cruise_main.h"
+#include "cruise/vars.h"
+
+DECLARE_SINGLETON(Cruise::CruiseVars)
 
 namespace Cruise {
 
-uint8 *_systemFNT = NULL;
+CruiseVars::CruiseVars() {
+	_systemFNT = NULL;
 
-uint8 itemColor = 1;
-uint8 selectColor = 3;
-uint8 titleColor = 2;
-uint8 subColor = 5;
+	itemColor = 1;
+	selectColor = 3;
+	titleColor = 2;
+	subColor = 5;
+
+	linkedMsgList = NULL;
+
+	palDirtyMin = 256;
+	palDirtyMax = -1;
+
+	_dirtyRectScreen = false;
+
+	useTandy = 0;
+	useEGA = 0;
+	useVGA = 1;
+
+	pPage00 = page00;
+	pPage10 = page10;
+}
+
+CruiseVars::~CruiseVars() {}
 
 int16 lowMemory;
 int16 scroll;

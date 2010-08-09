@@ -27,7 +27,9 @@
 
 namespace Cruise {
 
+#if !defined(__DS__)
 Common::File PAL_file;
+#endif
 uint8 *PAL_ptr = NULL;
 
 int16 numLoadedPal;
@@ -57,6 +59,7 @@ void loadPal(volumeDataStruct *entry) {
 }
 
 void closePal() {
+#if !defined(__DS__)
 	if (PAL_file.isOpen()) {
 		PAL_file.close();
 
@@ -66,6 +69,7 @@ void closePal() {
 		numLoadedPal = 0;
 		fileData2 = 0;
 	}
+#endif
 }
 
 int closeBase() {
@@ -76,11 +80,11 @@ int closeBase() {
 
 		strcpy(currentBaseName, "");
 	}
-
+#if !defined(__DS__)
 	if (PAL_file.isOpen()) {
 		closePal();
 	}
-
+#endif
 	return 0;
 }
 

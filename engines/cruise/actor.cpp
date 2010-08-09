@@ -293,7 +293,7 @@ int point_proche(int16 table[][2]) {
 	int x1, y1, i, x, y, p;
 	int d1 = 1000;
 
-	polyStructs = &polyStructNorm;
+	polyStructs = &CVars.polyStructNorm;
 
 	if (nclick_noeud == 1) {
 		x = x_mouse;
@@ -301,19 +301,19 @@ int point_proche(int16 table[][2]) {
 		x1 = table_ptselect[0][0];
 		y1 = table_ptselect[0][1];
 
-		polyStructs = &polyStructExp;
+		polyStructs = &CVars.polyStructExp;
 
 		getPixel(x, y);
 
 		if (!flag_obstacle) {
-			polyStructs = &polyStructNorm;
+			polyStructs = &CVars.polyStructNorm;
 
 			getPixel(x, y);
 
 			if (flag_obstacle) {
 				polydroite(x1, y1, x, y);
 			}
-			polyStructs = &polyStructExp;
+			polyStructs = &CVars.polyStructExp;
 		}
 		if (!flag_obstacle) {	/* dans flag_obstacle --> couleur du point */
 			x1 = table_ptselect[0][0];
@@ -325,7 +325,7 @@ int point_proche(int16 table[][2]) {
 			y_mouse = Y;
 		}
 	}
-	polyStructs = &polyStructNorm;
+	polyStructs = &CVars.polyStructNorm;
 
 	p = -1;
 	for (i = 0; i < ctp_routeCoordCount; i++) {
@@ -453,7 +453,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 	table_ptselect[*nclick][0] = x_mouse;
 	table_ptselect[*nclick][1] = y_mouse;
 	(*nclick)++;
-	polyStructs = &polyStructNorm;
+	polyStructs = &CVars.polyStructNorm;
 
 	if (*nclick == 2) {	// second point
 		x1 = table_ptselect[0][0];
@@ -464,7 +464,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 			return;
 		}
 		flag_aff_chemin = 1;
-		polyStructs = &polyStructExp;
+		polyStructs = &CVars.polyStructExp;
 
 		// can we go there directly ?
 		polydroite(x1, y1, x2, y2);
@@ -472,7 +472,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 		if (!flag_obstacle) {
 			solution0[0][0] = x1;
 			solution0[0][1] = y1;
-			polyStructs = &polyStructExp;
+			polyStructs = &CVars.polyStructExp;
 
 			poly2(x2, y2, ctp_routeCoords[select_noeud[1]][0],
 			      ctp_routeCoords[select_noeud[1]][1]);
@@ -516,7 +516,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 					solution0[++i][1] =
 					    ctp_routeCoords[p1][1];
 				}
-				polyStructs = &polyStructExp;
+				polyStructs = &CVars.polyStructExp;
 				poly2(x2, y2,
 				      ctp_routeCoords[select_noeud[1]][0],
 				      ctp_routeCoords[select_noeud[1]][1]);
@@ -541,7 +541,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 					while (flag_obstacle && i != d) {
 						x2 = solution0[i][0];
 						y2 = solution0[i][1];
-						polyStructs = &polyStructExp;
+						polyStructs = &CVars.polyStructExp;
 						polydroite(x1, y1, x2, y2);
 						i--;
 					}
@@ -621,7 +621,7 @@ int16 computePathfinding(MovementEntry &moveInfo, int16 x, int16 y, int16 destX,
 	}
 
 	nclick_noeud = 0;
-	polyStructs = &polyStructNorm;
+	polyStructs = &CVars.polyStructNorm;
 	flag_aff_chemin = 0;
 
 	if (x == destX && y == destY) {

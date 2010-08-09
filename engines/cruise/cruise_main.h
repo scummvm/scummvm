@@ -81,7 +81,7 @@ enum ResType {
 	OBJ_TYPE_EXIT = 9
 };
 
-extern gfxEntryStruct* linkedMsgList;
+//extern gfxEntryStruct* linkedMsgList;
 
 extern int buttonDown;
 extern int selectDown;

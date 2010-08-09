@@ -38,17 +38,15 @@ namespace Cruise {
 enum RelationType {RT_REL = 30, RT_MSG = 50};
 
 static int playerDontAskQuit;
-unsigned int timer = 0;
-
-gfxEntryStruct* linkedMsgList = NULL;
-
-Common::List<byte *> memList;
+#if !defined(__DS__)
+//unsigned int timer = 0;
+#endif
 
 void MemoryList() {
-	if (!memList.empty()) {
+	if (!CVars.memList.empty()) {
 		printf("Current list of un-freed memory blocks:\n");
 		Common::List<byte *>::iterator i;
-		for (i = memList.begin(); i != memList.end(); ++i) {
+		for (i = CVars.memList.begin(); i != CVars.memList.end(); ++i) {
 			byte *v = *i;
 			printf("%s - %d\n", (const char *)(v - 68), *((int32 *)(v - 72)));
 		}
@@ -73,7 +71,7 @@ void *MemoryAlloc(uint32 size, bool clearFlag, int32 lineNum, const char *fname)
 
 		// Add the block to the memory list
 		result = v + 64 + 8;
-		memList.push_back(result);
+		CVars.memList.push_back(result);
 	} else
 		result = (byte *)malloc(size);
 
@@ -91,7 +89,7 @@ void MemoryFree(void *v) {
 		byte *p = (byte *)v;
 		assert(*((uint32 *) (p - 4)) == 0x41424344);
 
-		memList.remove(p);
+		CVars.memList.remove(p);
 		free(p - 8 - 64);
 	} else
 		free(v);
@@ -953,7 +951,7 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 									int color;
 
 									if (objectState2 == -2)
-										color = subColor;
+										color = CVars.subColor;
 									else
 										color = -1;
 
@@ -1390,12 +1388,12 @@ void closeAllMenu() {
 		freeMenu(menuTable[1]);
 		menuTable[1] = NULL;
 	}
-	if (linkedMsgList) {
+	if (CVars.linkedMsgList) {
 		ASSERT(0);
-//					freeMsgList(linkedMsgList);
+//					freeMsgList(CVars.linkedMsgList);
 	}
 
-	linkedMsgList = NULL;
+	CVars.linkedMsgList = NULL;
 	linkedRelation = NULL;
 }
 
@@ -1545,12 +1543,12 @@ int CruiseEngine::processInput() {
 					freeMenu(menuTable[0]);
 					menuTable[0] = NULL;
 
-					if (linkedMsgList) {
+					if (CVars.linkedMsgList) {
 						ASSERT(0);
-						//					freeMsgList(linkedMsgList);
+						//					freeMsgList(CVars.linkedMsgList);
 					}
 
-					linkedMsgList = NULL;
+					CVars.linkedMsgList = NULL;
 					linkedRelation = NULL;
 
 					changeCursor(CURSOR_NORMAL);
@@ -1582,10 +1580,10 @@ int CruiseEngine::processInput() {
 					menuTable[0] = NULL;
 				}
 
-				if (linkedMsgList) {
-//					freeMsgList(linkedMsgList);
+				if (CVars.linkedMsgList) {
+//					freeMsgList(CVars.linkedMsgList);
 				}
-				linkedMsgList = NULL;
+				CVars.linkedMsgList = NULL;
 				linkedRelation = NULL;
 				changeCursor(CURSOR_NORMAL);
 			} else { // call sub relation when clicking in inventory
@@ -1655,7 +1653,7 @@ int CruiseEngine::processInput() {
 							strcpy(text, menuTable[0]->stringPtr);
 							strcat(text, ":");
 							strcat(text, currentMenuElement->string);
-							linkedMsgList = renderText(320, (const char *)text);
+							CVars.linkedMsgList = renderText(320, (const char *)text);
 							changeCursor(CURSOR_CROSS);
 						}
 					}

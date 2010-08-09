@@ -113,10 +113,10 @@ static void syncBasicInfo(Common::Serializer &s) {
 	s.syncAsSint16LE(isMessage);
 	s.syncAsSint16LE(fadeFlag);
 	s.syncAsSint16LE(automaticMode);
-	s.syncAsSint16LE(titleColor);
-	s.syncAsSint16LE(itemColor);
-	s.syncAsSint16LE(selectColor);
-	s.syncAsSint16LE(subColor);
+	s.syncAsSint16LE(CVars.titleColor);
+	s.syncAsSint16LE(CVars.itemColor);
+	s.syncAsSint16LE(CVars.selectColor);
+	s.syncAsSint16LE(CVars.subColor);
 	s.syncAsSint16LE(narratorOvl);
 	s.syncAsSint16LE(narratorIdx);
 	s.syncAsSint16LE(aniX);
@@ -582,7 +582,7 @@ static void syncCT(Common::Serializer &s) {
 	int v = (polyStruct) ? 1 : 0;
 	s.syncAsSint32LE(v);
 	if (s.isLoading())
-		polyStruct = (v != 0) ? &polyStructNorm : NULL;
+		polyStruct = (v != 0) ? &CVars.polyStructNorm : NULL;
 
 	if (v == 0)
 		// There is no further data to load or save
@@ -762,10 +762,10 @@ void initVars() {
 
 	// video param (vga and mcga mode)
 
-	titleColor = 2;
-	itemColor = 1;
-	selectColor = 3;
-	subColor = 5;
+	CVars.titleColor = 2;
+	CVars.itemColor = 1;
+	CVars.selectColor = 3;
+	CVars.subColor = 5;
 
 	//
 

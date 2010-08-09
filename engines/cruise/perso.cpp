@@ -46,12 +46,12 @@ void freeCTP() {
 	}
 
 	if (polyStruct) {
-		polyStructNorm.clear();
-		polyStructExp.clear();
+		CVars.polyStructNorm.clear();
+		CVars.polyStructExp.clear();
 		polyStruct = NULL;
 	}
 
-	ctpVar17 = NULL;
+	CVars.ctpVar17 = NULL;
 	polyStruct = NULL;
 
 	strcpy((char *)currentCtpName, "");

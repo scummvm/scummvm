@@ -34,29 +34,16 @@
 
 namespace Cruise {
 
-uint8 page00[320 * 200];
-uint8 page10[320 * 200];
-
-char screen[320 * 200];
-palEntry lpalette[256];
-
-int palDirtyMin = 256;
-int palDirtyMax = -1;
-
 typedef Common::List<Common::Rect> RectList;
-RectList _dirtyRects;
-RectList _priorFrameRects;
 
-bool _dirtyRectScreen = false;
-
-gfxModuleDataStruct gfxModuleData = {
+/*gfxModuleDataStruct gfxModuleData = {
 	0,			// use Tandy
 	0,			// use EGA
 	1,			// use VGA
 
-	page00,			// pPage00
-	page10,			// pPage10
-};
+	CVars.page00,			// pPage00
+	CVars.page10,			// pPage10
+};*/
 
 void gfxModuleData_gfxClearFrameBuffer(uint8 *ptr) {
 	memset(ptr, 0, 64000);
@@ -112,16 +99,16 @@ void convertGfxFromMode5(const uint8 *sourcePtr, int width, int height, uint8 *d
 }
 
 void gfxModuleData_setDirtyColors(int min, int max) {
-	if (min < palDirtyMin)
-		palDirtyMin = min;
-	if (max > palDirtyMax)
-		palDirtyMax = max;
+	if (min < CVars.palDirtyMin)
+		CVars.palDirtyMin = min;
+	if (max > CVars.palDirtyMax)
+		CVars.palDirtyMax = max;
 }
 
 void gfxModuleData_setPalColor(int idx, int r, int g, int b) {
-	lpalette[idx].R = r;
-	lpalette[idx].G = g;
-	lpalette[idx].B = b;
+	CVars.lpalette[idx].R = r;
+	CVars.lpalette[idx].G = g;
+	CVars.lpalette[idx].B = b;
 	gfxModuleData_setDirtyColors(idx, idx);
 }
 
@@ -133,10 +120,10 @@ void gfxModuleData_setPalEntries(const byte *ptr, int start, int num) {
 		G = *(ptr++);
 		B = *(ptr++);
 
-		lpalette[i].R = R;
-		lpalette[i].G = G;
-		lpalette[i].B = B;
-		lpalette[i].A = 255;
+		CVars.lpalette[i].R = R;
+		CVars.lpalette[i].G = G;
+		CVars.lpalette[i].B = B;
+		CVars.lpalette[i].A = 255;
 	}
 
 	gfxModuleData_setDirtyColors(start, start + num - 1);
@@ -169,10 +156,10 @@ void gfxModuleData_setPal256(const byte *ptr) {
 		if (B > 0xFF)
 			B = 0xFF;
 
-		lpalette[i].R = R;
-		lpalette[i].G = G;
-		lpalette[i].B = B;
-		lpalette[i].A = 255;
+		CVars.lpalette[i].R = R;
+		CVars.lpalette[i].G = G;
+		CVars.lpalette[i].B = B;
+		CVars.lpalette[i].A = 255;
 	}
 
 	gfxModuleData_setDirtyColors(0, 16);
@@ -227,18 +214,18 @@ void gfxCopyRect(const uint8 *sourceBuffer, int width, int height, byte *dest, i
 
 void gfxModuleData_Init() {
 	memset(globalScreen, 0, 320 * 200);
-	memset(page00, 0, 320 * 200);
-	memset(page10, 0, 320 * 200);
+	memset(CVars.page00, 0, 320 * 200);
+	memset(CVars.page10, 0, 320 * 200);
 }
 
 void gfxModuleData_flipScreen() {
-	memcpy(globalScreen, gfxModuleData.pPage00, 320 * 200);
+	memcpy(globalScreen, CVars.pPage00, 320 * 200);
 
 	flip();
 }
 
 void gfxModuleData_addDirtyRect(const Common::Rect &r) {
-	_dirtyRects.push_back(Common::Rect(	MAX(r.left, (int16)0), MAX(r.top, (int16)0),
+	CVars._dirtyRects.push_back(Common::Rect(	MAX(r.left, (int16)0), MAX(r.top, (int16)0),
 		MIN(r.right, (int16)320), MIN(r.bottom, (int16)200)));
 }
 
@@ -257,9 +244,9 @@ static bool unionRectangle(Common::Rect &pDest, const Common::Rect &pSrc1, const
 static void mergeClipRects() {
 	RectList::iterator rOuter, rInner;
 
-	for (rOuter = _dirtyRects.begin(); rOuter != _dirtyRects.end(); ++rOuter) {
+	for (rOuter = CVars._dirtyRects.begin(); rOuter != CVars._dirtyRects.end(); ++rOuter) {
 		rInner = rOuter;
-		while (++rInner != _dirtyRects.end()) {
+		while (++rInner != CVars._dirtyRects.end()) {
 
 			if ((*rOuter).intersects(*rInner)) {
 				// these two rectangles overlap, so translate it to a bigger rectangle
@@ -267,7 +254,7 @@ static void mergeClipRects() {
 				unionRectangle(*rOuter, *rOuter, *rInner);
 
 				// remove the inner rect from the list
-				_dirtyRects.erase(rInner);
+				CVars._dirtyRects.erase(rInner);
 
 				// move back to beginning of list
 				rInner = rOuter;
@@ -279,16 +266,16 @@ static void mergeClipRects() {
 void gfxModuleData_updatePalette() {
 	byte paletteRGBA[256 * 4];
 
-	if (palDirtyMax != -1) {
-		for (int i = palDirtyMin; i <= palDirtyMax; i++) {
-			paletteRGBA[i * 4 + 0] = lpalette[i].R;
-			paletteRGBA[i * 4 + 1] = lpalette[i].G;
-			paletteRGBA[i * 4 + 2] = lpalette[i].B;
+	if (CVars.palDirtyMax != -1) {
+		for (int i = CVars.palDirtyMin; i <= CVars.palDirtyMax; i++) {
+			paletteRGBA[i * 4 + 0] = CVars.lpalette[i].R;
+			paletteRGBA[i * 4 + 1] = CVars.lpalette[i].G;
+			paletteRGBA[i * 4 + 2] = CVars.lpalette[i].B;
 			paletteRGBA[i * 4 + 3] = 0xFF;
 		}
-		g_system->setPalette(paletteRGBA + palDirtyMin*4, palDirtyMin, palDirtyMax - palDirtyMin + 1);
-		palDirtyMin = 256;
-		palDirtyMax = -1;
+		g_system->setPalette(paletteRGBA + CVars.palDirtyMin*4, CVars.palDirtyMin, CVars.palDirtyMax - CVars.palDirtyMin + 1);
+		CVars.palDirtyMin = 256;
+		CVars.palDirtyMax = -1;
 	}
 }
 
@@ -304,26 +291,26 @@ void flip() {
 	gfxModuleData_updatePalette();
 
 	// Make a copy of the prior frame's dirty rects, and then backup the current frame's rects
-	RectList tempList = _priorFrameRects;
-	_priorFrameRects = _dirtyRects;
+	RectList tempList = CVars._priorFrameRects;
+	CVars._priorFrameRects = CVars._dirtyRects;
 
 	// Merge the prior frame's dirty rects into the current frame's list
 	for (dr = tempList.begin(); dr != tempList.end(); ++dr) {
 		Common::Rect &r = *dr;
-		_dirtyRects.push_back(Common::Rect(r.left, r.top, r.right, r.bottom));
+		CVars._dirtyRects.push_back(Common::Rect(r.left, r.top, r.right, r.bottom));
 	}
 
 	// Merge any overlapping rects to simplify the drawing process
 	mergeClipRects();
 
 	// Copy any modified areas
-	for (dr = _dirtyRects.begin(); dr != _dirtyRects.end(); ++dr) {
+	for (dr = CVars._dirtyRects.begin(); dr != CVars._dirtyRects.end(); ++dr) {
 		Common::Rect &r = *dr;
 		g_system->copyRectToScreen(globalScreen + 320 * r.top + r.left, 320,
 			r.left, r.top, r.width(), r.height());
 	}
 
-	_dirtyRects.clear();
+	CVars._dirtyRects.clear();
 
 	// Allow the screen to update
 	g_system->updateScreen();
@@ -331,7 +318,7 @@ void flip() {
 
 void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 colour) {
 	for (int y = y1; y < y2; ++y) {
-		byte *p = &gfxModuleData.pPage00[y * 320 + x1];
+		byte *p = &CVars.pPage00[y * 320 + x1];
 		Common::set_to(p, p + (x2 - x1), colour);
 	}
 }
@@ -345,7 +332,7 @@ void resetBitmap(uint8 *dataPtr, int32 dataSize) {
  * to figure out rectangles of changed areas for dirty rectangles
  */
 void switchBackground(const byte *newBg) {
-	const byte *bg = gfxModuleData.pPage00;
+	const byte *bg = CVars.pPage00;
 	int sliceXStart, sliceXEnd;
 
 	// If both the upper corners are different, presume it's a full screen change
