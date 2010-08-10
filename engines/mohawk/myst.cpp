@@ -33,7 +33,7 @@
 #include "mohawk/dialogs.h"
 #include "mohawk/resource.h"
 #include "mohawk/resource_cache.h"
-#include "mohawk/video/video.h"
+#include "mohawk/video.h"
 
 namespace Mohawk {
 

@@ -38,8 +38,9 @@
 #include "backends/platform/psp/pspkeyboard.h"
 #include "backends/platform/psp/display_manager.h"
 #include "backends/platform/psp/input.h"
-
-#include <SDL.h>
+#include "backends/platform/psp/audio.h"
+#include "backends/timer/psp/timer.h"
+#include "backends/platform/psp/thread.h"
 
 class OSystem_PSP : public BaseBackend {
 private:
@@ -47,6 +48,8 @@ private:
 	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
 	Common::TimerManager *_timer;
+	bool _pendingUpdate;  			// save an update we couldn't perform
+	uint32 _pendingUpdateCounter;	// prevent checking for pending update too often, in a cheap way
 
 	// All needed sub-members
 	Screen _screen;
@@ -55,11 +58,11 @@ private:
 	DisplayManager _displayManager;
 	PSPKeyboard _keyboard;
 	InputHandler _inputHandler;
-
-	void initSDL();
+	PspAudio _audio;
+	PspTimer _pspTimer;
 
 public:
-	OSystem_PSP() : _savefile(0), _mixer(0), _timer(0) {}
+	OSystem_PSP() : _savefile(0), _mixer(0), _timer(0), _pendingUpdate(false), _pendingUpdateCounter(0) {}
 	~OSystem_PSP();
 
 	static OSystem *instance();
@@ -79,7 +82,7 @@ public:
 	int getGraphicsMode() const;
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const;
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 
 	// Screen size

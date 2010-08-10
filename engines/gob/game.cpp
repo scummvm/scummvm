@@ -286,8 +286,8 @@ void Game::playTot(int16 skipPlay) {
 				_vm->_mult->initAll();
 				_vm->_mult->zeroMultData();
 
-				_vm->_draw->_spritesArray[20] = _vm->_draw->_frontSurface;
-				_vm->_draw->_spritesArray[21] = _vm->_draw->_backSurface;
+				_vm->_draw->_spritesArray[Draw::kFrontSurface] = _vm->_draw->_frontSurface;
+				_vm->_draw->_spritesArray[Draw::kBackSurface ] = _vm->_draw->_backSurface;
 				_vm->_draw->_cursorSpritesBack = _vm->_draw->_cursorSprites;
 			} else
 				_vm->_inter->initControlVars(0);
@@ -299,7 +299,7 @@ void Game::playTot(int16 skipPlay) {
 				break;
 
 			if (skipPlay == -2) {
-				_vm->_vidPlayer->primaryClose();
+				_vm->_vidPlayer->closeVideo();
 				skipPlay = 0;
 			}
 
@@ -397,10 +397,10 @@ void Game::capturePush(int16 left, int16 top, int16 width, int16 height) {
 	left &= 0xFFF0;
 	right |= 0xF;
 
-	_vm->_draw->initSpriteSurf(30 + _captureCount, right - left + 1, height, 0);
+	_vm->_draw->initSpriteSurf(Draw::kCaptureSurface + _captureCount, right - left + 1, height, 0);
 
-	_vm->_draw->_sourceSurface = 21;
-	_vm->_draw->_destSurface = 30 + _captureCount;
+	_vm->_draw->_sourceSurface = Draw::kBackSurface;
+	_vm->_draw->_destSurface = Draw::kCaptureSurface + _captureCount;
 
 	_vm->_draw->_spriteLeft = left;
 	_vm->_draw->_spriteRight = right - left + 1;
@@ -425,13 +425,13 @@ void Game::capturePop(char doDraw) {
 		    _captureStack[_captureCount].height();
 
 		_vm->_draw->_transparency = 0;
-		_vm->_draw->_sourceSurface = 30 + _captureCount;
-		_vm->_draw->_destSurface = 21;
+		_vm->_draw->_sourceSurface = Draw::kCaptureSurface + _captureCount;
+		_vm->_draw->_destSurface = Draw::kBackSurface;
 		_vm->_draw->_spriteLeft = _vm->_draw->_destSpriteX & 0xF;
 		_vm->_draw->_spriteTop = 0;
 		_vm->_draw->spriteOperation(0);
 	}
-	_vm->_draw->freeSprite(30 + _captureCount);
+	_vm->_draw->freeSprite(Draw::kCaptureSurface + _captureCount);
 }
 
 void Game::freeSoundSlot(int16 slot) {

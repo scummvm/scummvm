@@ -23,11 +23,11 @@
  *
  */
 
-#include "common/savefile.h"
-
 #include "groovie/groovie.h"
 #include "groovie/detection.h"
 #include "groovie/saveload.h"
+
+#include "common/system.h"
 
 namespace Groovie {
 
@@ -176,7 +176,11 @@ static const ADParams detectionParams = {
 	// Flags
 	kADFlagUseExtraAsHint,
 	// Additional GUI options (for every game}
-	Common::GUIO_NOSUBTITLES | Common::GUIO_NOSFX
+	Common::GUIO_NOSUBTITLES | Common::GUIO_NOSFX,
+	// Maximum directory depth
+	1,
+	// List of directory globs
+	0
 };
 
 

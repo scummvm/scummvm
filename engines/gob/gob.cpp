@@ -126,8 +126,13 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	_pauseStart = 0;
 
 	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	bool muteSFX   = ConfMan.getBool("mute") || ConfMan.getBool("sfx_mute");
+	bool muteMusic = ConfMan.getBool("mute") || ConfMan.getBool("music_mute");
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
+			muteSFX   ? 0 : ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
+			muteMusic ? 0 : ConfMan.getInt("music_volume"));
 
 	_copyProtection = ConfMan.getBool("copy_protection");
 
@@ -345,8 +350,8 @@ void GobEngine::pauseGame() {
 }
 
 bool GobEngine::initGameParts() {
-	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;
-
+	// just detect some devices some of which will be always there if the music is not disabled
+	_noMusic = MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB)) == MT_NULL ? true : false;
 	_saveLoad = 0;
 
 	_global    = new Global(this);

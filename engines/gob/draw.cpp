@@ -914,7 +914,7 @@ void Draw::winDraw(int16 fct) {
 	int table[10];
 	SurfaceDescPtr tempSrf;
 
-	if (_destSurface == 21) {
+	if (_destSurface == kBackSurface) {
 
 		if (_vm->_global->_curWinId) {
 			if (_fascinWin[_vm->_global->_curWinId].id == -1)
@@ -1032,7 +1032,7 @@ void Draw::winDraw(int16 fct) {
 					table[_fascinWin[i].id] = i;
 				}
 
-	if ((_sourceSurface == 21) && (fct == 0)) {
+	if ((_sourceSurface == kBackSurface) && (fct == 0)) {
 		_vm->_video->drawSprite(*_spritesArray[_sourceSurface], *_spritesArray[_destSurface],
 								_spriteLeft, _spriteTop, _spriteLeft + _spriteRight - 1,
 								_spriteTop + _spriteBottom - 1, _destSpriteX, _destSpriteY, _transparency);
@@ -1267,11 +1267,11 @@ void Draw::winDraw(int16 fct) {
 	}
 
 	if (_renderFlags & 16) {
-		if (_sourceSurface == 21) {
+		if (_sourceSurface == kBackSurface) {
 			_spriteLeft -= _backDeltaX;
 			_spriteTop -= _backDeltaY;
 		}
-		if (_destSurface == 21) {
+		if (_destSurface == kBackSurface) {
 			_destSpriteX -= _backDeltaX;
 			_destSpriteY -= _backDeltaY;
 		}
@@ -1323,9 +1323,9 @@ void Draw::forceBlit(bool backwards) {
 		return;
 	if (_frontSurface == _backSurface)
 		return;
-	if (_spritesArray[20] != _frontSurface)
+	if (_spritesArray[kFrontSurface] != _frontSurface)
 		return;
-	if (_spritesArray[21] != _backSurface)
+	if (_spritesArray[kBackSurface] != _backSurface)
 		return;
 
 	if (!backwards) {

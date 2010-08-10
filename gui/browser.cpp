@@ -30,6 +30,8 @@
 #include "common/system.h"
 #include "common/algorithm.h"
 
+#include "common/translation.h"
+
 namespace GUI {
 
 enum {
@@ -64,9 +66,9 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	// Buttons
-	new ButtonWidget(this, "Browser.Up", "Go up", kGoUpCmd, 0);
-	new ButtonWidget(this, "Browser.Cancel", "Cancel", kCloseCmd, 0);
-	new ButtonWidget(this, "Browser.Choose", "Choose", kChooseCmd, 0);
+	new ButtonWidget(this, "Browser.Up", _("Go up"), _("Go to previous directory level"), kGoUpCmd);
+	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), 0, kCloseCmd);
+	new ButtonWidget(this, "Browser.Choose", _("Choose"), 0, kChooseCmd);
 }
 
 void BrowserDialog::open() {

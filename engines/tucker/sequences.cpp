@@ -491,7 +491,6 @@ AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *
 	_offscreenBuffer = (uint8 *)malloc(kScreenWidth * kScreenHeight);
 	_updateScreenWidth = 0;
 	_updateScreenPicture = false;
-	_updateScreenOffset = 0;
 	_picBufPtr = _pic2BufPtr = 0;
 }
 
@@ -537,9 +536,9 @@ void AnimationSequencePlayer::mainLoop() {
 			}
 			// budttle2.flc is shorter in french version ; start the background music
 			// earlier and skip any sounds effects
-			if (_seqNum == 19 && _flicPlayer[0].getFrameCount() == 127) {
+			if (_seqNum == 19 && _flicPlayer[0].getFrameCount() == 126) {
 				_soundSeqDataIndex = 6;
-				_frameCounter = 79;
+				_frameCounter = 80;
 			}
 		}
 		(this->*(_updateFunc[_updateFuncIndex].play))();
@@ -765,10 +764,10 @@ void AnimationSequencePlayer::openAnimation(int index, const char *fileName) {
 	}
 }
 
-bool AnimationSequencePlayer::decodeNextAnimationFrame(int index) {
+bool AnimationSequencePlayer::decodeNextAnimationFrame(int index, bool copyDirtyRects) {
 	::Graphics::Surface *surface = _flicPlayer[index].decodeNextFrame();
 
-	if (_seqNum == 19) {
+	if (!copyDirtyRects) {
 		for (uint16 y = 0; (y < surface->h) && (y < kScreenHeight); y++)
 			memcpy(_offscreenBuffer + y * kScreenWidth, (byte *)surface->pixels + y * surface->pitch, surface->w);
 	} else {
@@ -807,13 +806,13 @@ void AnimationSequencePlayer::playIntroSeq19_20() {
 	// cogs, and is being replayed when an intro credit appears
 	::Graphics::Surface *surface = 0;
 
-	if (_flicPlayer[0].getCurFrame() >= 117) {
+	if (_flicPlayer[0].getCurFrame() >= 115) {
 		surface = _flicPlayer[1].decodeNextFrame();
 		if (_flicPlayer[1].endOfVideo())
 			_flicPlayer[1].reset();
 	}
 
-	bool framesLeft = decodeNextAnimationFrame(0);
+	bool framesLeft = decodeNextAnimationFrame(0, false);
 
 	if (surface)
 		for (int i = 0; i < kScreenWidth * kScreenHeight; ++i)
@@ -841,19 +840,28 @@ void AnimationSequencePlayer::displayLoadingScreen() {
 void AnimationSequencePlayer::initPicPart4() {
 	_updateScreenWidth = 320;
 	_updateScreenPicture = true;
-	_updateScreenOffset = 0;
+	_updateScreenCounter = 0;
+	_updateScreenIndex = -1;
 }
 
 void AnimationSequencePlayer::drawPicPart4() {
-	static const uint8 offsetsTable[77] = {
-		1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4,
-		5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-		6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-		6, 6, 6, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3,
-		3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1
-	};
-	_updateScreenWidth = _updateScreenWidth - offsetsTable[_updateScreenOffset];
-	++_updateScreenOffset;
+	static const uint8 offsets[] = { 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
+	if (_updateScreenIndex == -1) {
+		for (int i = 0; i < 256; ++i) {
+			if (memcmp(_animationPalette + i * 4, _picBufPtr + 32 + i * 3, 3) != 0) {
+				memcpy(_animationPalette + i * 4, _picBufPtr + 32 + i * 3, 3);
+				_animationPalette[i * 4 + 3] = 0;
+			}
+		}
+	}
+	if (_updateScreenCounter == 0) {
+		static const uint8 counter[] = { 1, 2, 3, 4, 5, 35, 5, 4, 3, 2, 1 };
+		++_updateScreenIndex;
+		assert(_updateScreenIndex < ARRAYSIZE(counter));
+		_updateScreenCounter = counter[_updateScreenIndex];
+	}
+	--_updateScreenCounter;
+	_updateScreenWidth -= offsets[_updateScreenIndex];
 	for (int y = 0; y < 200; ++y) {
 		memcpy(_offscreenBuffer + y * 320, _picBufPtr + 800 + y * 640 + _updateScreenWidth, 320);
 	}
@@ -875,7 +883,7 @@ void AnimationSequencePlayer::loadIntroSeq3_4() {
 void AnimationSequencePlayer::playIntroSeq3_4() {
 	if (!_updateScreenPicture) {
 		bool framesLeft = decodeNextAnimationFrame(0);
-		if (_flicPlayer[0].getCurFrame() == 707) {
+		if (_flicPlayer[0].getCurFrame() == 705) {
 			initPicPart4();
 		}
 		if (!framesLeft) {
@@ -914,17 +922,10 @@ void AnimationSequencePlayer::drawPic2Part10() {
 }
 
 void AnimationSequencePlayer::drawPic1Part10() {
-	::Graphics::Surface *surface = _flicPlayer[0].decodeNextFrame();
-	_flicPlayer[0].copyDirtyRectsToBuffer(_offscreenBuffer, kScreenWidth);
-	++_frameCounter;
-
-	if (_flicPlayer[0].hasDirtyPalette())
-		getRGBPalette(0);
-
 	int offset = 0;
 	for (int y = 0; y < kScreenHeight; ++y) {
 		for (int x = 0; x < kScreenWidth; ++x) {
-			byte color = *((byte *)surface->pixels + offset);
+			byte color = _offscreenBuffer[offset];
 
 			if (color == 0)
 				color = _picBufPtr[800 + y * 640 + _updateScreenWidth + x];
@@ -943,22 +944,24 @@ void AnimationSequencePlayer::loadIntroSeq9_10() {
 }
 
 void AnimationSequencePlayer::playIntroSeq9_10() {
-	if (_flicPlayer[0].getCurFrame() >= 265 && _flicPlayer[0].getCurFrame() <= 296) {
+	const int nextFrame = _flicPlayer[0].getCurFrame() + 1;
+	if (nextFrame >= 263 && nextFrame <= 294) {
+		decodeNextAnimationFrame(0, false);
 		drawPic1Part10();
 		_updateScreenWidth += 6;
-	} else if (_flicPlayer[0].getCurFrame() == 985) {
+	} else if (nextFrame == 983) {
 		decodeNextAnimationFrame(0);
 		drawPic2Part10();
-	} else if (_flicPlayer[0].getCurFrame() >= 989 && _flicPlayer[0].getCurFrame() <= 997) {
+	} else if (nextFrame >= 987 && nextFrame <= 995) {
+		decodeNextAnimationFrame(0, false);
 		drawPic1Part10();
 		_updateScreenWidth -= 25;
 		if (_updateScreenWidth < 0) {
 			_updateScreenWidth = 0;
 		}
-	}
-
-	if (_flicPlayer[0].endOfVideo())
+	} else if (!decodeNextAnimationFrame(0)) {
 		_changeToNextSequence = true;
+	}
 }
 
 void AnimationSequencePlayer::loadIntroSeq21_22() {

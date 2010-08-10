@@ -1,0 +1,91 @@
+Building the ScummVM Android port
+=================================
+
+You will need these things to build:
+1. Android SDK
+2. An arm-oe-linux-androideabi GCC toolchain(*)
+
+In the example commands, we are going to build against the Android 1.5
+native ABI (but using the Android 1.6 SDK tools).  Other version
+combinations might/should be possible with a bit of tweaking.
+
+(*) Any other sane Android toolchain should be easy to use, but this
+is the toolchain prefix that is used by default.  You can trivially
+find and modify the single location where it appears in ./configure if
+you have some other prefix variation.
+
+
+In detail:
+
+1. Android SDK
+
+Download the SDK from http://developer.android.com/ and install
+somewhere.  You will need both the API level 8 (aka Android 2.2) and
+API level 3 (aka Android 1.5) platforms.
+
+2. arm-*-linux-androideabi GCC toolchain
+
+You have several choices for toolchains:
+
+ - Use Google arm-eabi prebuilt toolchain.
+
+This is shipped with both the Android source release and Android NDK.
+The problem is that "arm-eabi-gcc" can't actually link anything
+successfully without extra command line flags.  To use this with the
+ScummVM configure/build environment you will need to create a family
+of shell wrapper scripts that convert "arm-oe-linux-androideabi-foo" to
+"arm-eabi-foo -mandroid".
+
+For example, I use this script:
+ #!/bin/sh
+ exec arm-eabi-${0##*-} -mandroid -DANDROID "$@"
+
+... and create a family of symlinks/hardlinks pointing to it called
+arm-oe-android-linuxeabi-gcc, arm-oe-android-linuxeabi-g++, etc.  For
+tools that don't take a "-mandroid" argument - like arm-eabi-strip - I
+bypass the shell wrapper and just create an arm-oe-android-linuxeabi-strip
+symlink to the tool directly.
+
+In practice you will probably need significant linker command line
+massaging in order to get the crtbegin/end and libraries all linked in
+the right way.  It's not hard to do manually, but it is annoying to
+script in a general purpose way.
+
+ - Build your own arm-*-linux-androideabi toolchain from GCC source.
+
+This is lots of fun, but will become significantly easier once gcc-4.6
+is released.  In the interim, I suggest using my precompiled Android
+openembedded-based toolchain:
+ wget http://commondatastorage.googleapis.com/anr/sdk/android-2.2-i686-linux-armv5te-linux-androideabi-toolchain-android.tar.bz2
+ sudo tar jxf android-2.2-i686-linux-armv5te-linux-androideabi-toolchain-android.tar.bz2 -C /
+ . /usr/local/android/arm/environment-setup
+
+Alternatively, do a websearch - there are several other cross-compile
+toolchains around.
+
+
+Building ScummVM
+================
+
+(Optionally) compress scummmodern.zip:
+(ScummVM usually ships it uncompressed, but Android can read it more
+efficiently if it is compressed *before* adding it to the apk)
+
+ ( cd gui/themes/scummmodern && zip -f ../scummmodern.zip )
+
+Then build ScummVM:
+
+ export ANDROID_SDK=<root of Android SDK>
+
+ PATH=$ANDROID_SDK/platforms/android-1.6/tools:$ANDROID_SDK/tools:$PATH
+ # You also want to ensure your arm-oe-linux-androideabi toolchain is in $PATH
+
+ export ANDROID_TOP=<root of built Android source>
+
+ ./configure --backend=android --host=android --enable-zlib #and any other flags
+ make scummvm.apk
+
+This will build a "monolithic" ScummVM package, with the engines
+statically linked in.  If you want to build separate engine packages,
+like on the market, add "--enable-plugins --default-dynamic" to
+configure and also make scummvm-engine-scumm.apk, etc.

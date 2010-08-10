@@ -40,7 +40,7 @@ public:
 	void checkedPageUpdate(int srcPage, int dstPage);
 
 	// palette handling
-	uint8 *generateOverlay(const Palette &pal, uint8 *buffer, int color, uint16 factor);
+	uint8 *generateOverlay(const Palette &pal, uint8 *buffer, int color, uint weight, int maxColor = -1);
 	void applyOverlay(int x, int y, int w, int h, int pageNum, const uint8 *overlay);
 	int findLeastDifferentColor(const uint8 *paletteEntry, const Palette &pal, uint8 firstColor, uint16 numColors, bool skipSpecialColors = false);
 

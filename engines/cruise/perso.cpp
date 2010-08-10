@@ -23,6 +23,7 @@
  *
  */
 
+#include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
 #include "common/util.h"
 
@@ -45,14 +46,14 @@ void freeCTP() {
 		freePerso(i);
 	}
 
-	if (polyStruct) {
-		CVars.polyStructNorm.clear();
-		CVars.polyStructExp.clear();
-		polyStruct = NULL;
+	if (_vm->_polyStruct) {
+		_vm->_polyStructNorm.clear();
+		_vm->_polyStructExp.clear();
+		_vm->_polyStruct = NULL;
 	}
 
-	CVars.ctpVar17 = NULL;
-	polyStruct = NULL;
+	ctpVar17 = NULL;
+	_vm->_polyStruct = NULL;
 
 	strcpy((char *)currentCtpName, "");
 }

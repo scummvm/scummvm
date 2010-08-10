@@ -23,7 +23,7 @@
  - $Id$
  -
  -->
-<layout_info resolution = "320xY, 256x240, Xx272">
+<layout_info resolution = "320xY, 256x240, Xx272, Xx350">
 	<globals>
 		<def var = 'Line.Height' value = '12' />
 		<def var = 'Font.Height' value = '10' />
@@ -48,6 +48,10 @@
 		<def var = 'KeyMapper.LabelWidth' value = '80'/>
 		<def var = 'KeyMapper.ButtonWidth' value = '60'/>
 
+		<def var = 'Tooltip.MaxWidth' value = '70'/>
+		<def var = 'Tooltip.XDelta' value = '9'/> <!-- basically cursor size -->
+		<def var = 'Tooltip.YDelta' value = '18'/>
+
 		<widget name = 'OptionsLabel'
 				size = '100, Globals.Line.Height'
 				textalign = 'right'
@@ -59,6 +63,9 @@
 				size = '-1, 15'
 		/>
 		<widget name = 'Checkbox'
+				size = '-1, Globals.Line.Height'
+		/>
+		<widget name = 'Radiobutton'
 				size = '-1, Globals.Line.Height'
 		/>
 		<widget name = 'ListWidget'
@@ -80,18 +87,21 @@
 				size = '45, 16'
 				padding = '0, 0, 2, 0'
 		/>
+		<widget name = 'TabWidget.Body'
+				padding = '0, 0, 0, -8'
+		/>
 		<widget name = 'TabWidget.NavButton'
 				size = '32, 18'
-				padding = '0, 3, 4, 0'
+				padding = '0, 0, 2, 0'
 		/>
 	</globals>
 
 	<dialog name = 'Launcher' overlays = 'screen'>
-		<layout type = 'vertical' center = 'true' padding = '8, 8, 8, 4' spacing = '8'>
+		<layout type = 'vertical' center = 'true' padding = '4, 4, 2, 2' spacing = '2'>
 			<widget name = 'Version'
 					height = 'Globals.Line.Height'
 			/>
-			<layout type = 'horizontal' spacing = '5' padding = '10, 0, 0, 0'>
+			<layout type = 'horizontal' spacing = '5' padding = '0, 0, 2, 2'>
 				<widget name = 'SearchDesc'
 						width = '50'
 						height = 'Globals.Line.Height'
@@ -108,7 +118,7 @@
 				<space />
 			</layout>
 			<widget name = 'GameList'/>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6'>
+			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
 				<widget name = 'LoadGameButton'
 						height = 'Globals.Button.Height'
 				/>
@@ -122,7 +132,7 @@
 						height = 'Globals.Button.Height'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '2'>
 				<widget name = 'QuitButton'
 						height = 'Globals.Button.Height'
 				/>
@@ -233,13 +243,18 @@
 						type = 'PopUp'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '3' center = 'true'>
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
 				/>
-				<widget name = 'subToggleButton'
-						width = '128'
-						height = 'Globals.Slider.Height'
+				<widget name = 'subToggleSpeechOnly'
+						type = 'Radiobutton'
+				/>
+				<widget name = 'subToggleSubOnly'
+						type = 'Radiobutton'
+				/>
+				<widget name = 'subToggleSubBoth'
+						type = 'Radiobutton'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
@@ -302,6 +317,14 @@
 
 	<dialog name = 'GlobalOptions_MIDI' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				<widget name = 'auPrefGmPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'auPrefGmPopup'
+						type = 'PopUp'
+				/>
+			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16' center = 'true'>
 				<widget name = 'mcFontButton'
 						type = 'Button'
@@ -317,12 +340,6 @@
 			<widget name = 'mcMixedCheckbox'
 					type = 'Checkbox'
 			/>
-			<widget name = 'mcMt32Checkbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'mcGSCheckbox'
-					type = 'Checkbox'
-			/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'  center = 'true'>
 				<widget name = 'mcMidiGainText'
 						type = 'OptionsLabel'
@@ -335,6 +352,25 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalOptions_MT32' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				<widget name = 'auPrefMt32PopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'auPrefMt32Popup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<widget name = 'mcMt32Checkbox'
+					type = 'Checkbox'
+			/>
+			<widget name = 'mcGSCheckbox'
+					type = 'Checkbox'
+			/>
 		</layout>
 	</dialog>
 
@@ -389,6 +425,7 @@
 				<widget name = 'RendererPopupDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
+						textalign = 'right'
 				/>
 				<widget name = 'RendererPopup'
 						type = 'PopUp'
@@ -398,8 +435,19 @@
 				<widget name = 'AutosavePeriodPopupDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
+						textalign = 'right'
 				/>
 				<widget name = 'AutosavePeriodPopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				<widget name = 'GuiLanguagePopupDesc'
+						width = '80'
+						height = 'Globals.Line.Height'
+						textalign = 'right'
+				/>
+				<widget name = 'GuiLanguagePopup'
 						type = 'PopUp'
 				/>
 			</layout>
@@ -473,6 +521,15 @@
 					type = 'Checkbox'
 			/>
 			<import layout = 'Dialog.GlobalOptions_MIDI' />
+		</layout>
+	</dialog>
+
+	<dialog name = 'GameOptions_MT32' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
+			<widget name = 'EnableTabCheckbox'
+					type = 'Checkbox'
+			/>
+			<import layout = 'Dialog.GlobalOptions_MT32' />
 		</layout>
 	</dialog>
 
@@ -676,15 +733,26 @@
 				/>
 			</layout>
 			<space size = '4' />
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+			<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
 				/>
-				<widget name = 'subToggleButton'
-						width = '128'
-						height = 'Globals.Slider.Height'
-				/>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				  <widget name = 'subToggleSpeechOnly'
+						  type = 'Radiobutton'
+						  width = '90'
+					/>
+				  <widget name = 'subToggleSubOnly'
+						  type = 'Radiobutton'
+						  width = '90'
+						  />
+				  <widget name = 'subToggleSubBoth'
+						  type = 'Radiobutton'
+						  width = '90'
+						  />
+				</layout>
 			</layout>
+			<space size = '4' />
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'subSubtitleSpeedDesc'
 						type = 'OptionsLabel'

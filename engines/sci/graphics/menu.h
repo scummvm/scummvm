@@ -83,7 +83,7 @@ typedef Common::List<GuiMenuItemEntry *> GuiMenuItemList;
  */
 class GfxMenu {
 public:
-	GfxMenu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, GfxCursor *cursor);
+	GfxMenu(EventManager *event, SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, GfxCursor *cursor);
 	~GfxMenu();
 
 	void reset();
@@ -92,7 +92,7 @@ public:
 	reg_t kernelGetAttribute(uint16 menuId, uint16 itemId, uint16 attributeId);
 
 	void drawBar();
-	reg_t kernelSelect(reg_t eventObject);
+	reg_t kernelSelect(reg_t eventObject, bool pauseSound);
 
 	void kernelDrawStatus(const char *text, int16 colorPen, int16 colorBack);
 	void kernelDrawMenuBar(bool clear);
@@ -103,17 +103,16 @@ private:
 	void calculateMenuAndItemWidth();
 	void drawMenu(uint16 oldMenuId, uint16 newMenuId);
 	void invertMenuSelection(uint16 itemId);
-	void interactiveShowMouse();
-	void interactiveRestoreMouse();
+	void interactiveStart(bool pauseSound);
+	void interactiveEnd(bool pauseSound);
 	GuiMenuItemEntry *interactiveWithKeyboard();
 	GuiMenuItemEntry *interactiveWithMouse();
 	uint16 mouseFindMenuSelection(Common::Point mousePosition);
 	uint16 mouseFindMenuItemSelection(Common::Point mousePosition, uint16 menuId);
 	GuiMenuItemEntry *interactiveGetItem(uint16 menuId, uint16 itemId, bool menuChanged);
 
-	SciEvent *_event;
+	EventManager *_event;
 	SegManager *_segMan;
-	SciGui *_gui;
 	GfxPorts *_ports;
 	GfxPaint16 *_paint16;
 	GfxText16 *_text16;

@@ -135,8 +135,8 @@ void AgiEngine::blitTextbox(const char *p, int y, int x, int len) {
 	if (x == 0 && y == 0 && len == 0)
 		x = y = -1;
 
-	if (len <= 0 || len >= 40)
-		len = 32;
+	if (len <= 0)
+		len = 30;
 
 	xoff = x * CHAR_COLS;
 	yoff = y * CHAR_LINES;
@@ -214,6 +214,7 @@ void AgiEngine::printTextConsole(const char *msg, int x, int y, int len, int fg,
 	x *= CHAR_COLS;
 	y *= 10;
 
+	debugC(4, kDebugLevelText, "printTextConsole(): %s, %d, %d, %d, %d, %d", msg, x, y, len, fg, bg);
 	printText2(1, msg, 0, x, y, len, fg, bg);
 }
 
@@ -488,7 +489,7 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 			_game.keypress = 0;
 			break;
 		}
-	} while (_game.msgBoxTicks > 0);
+	} while (_game.msgBoxTicks > 0 && !(shouldQuit() || _restartGame));
 
 	setvar(vWindowReset, 0);
 
@@ -655,11 +656,8 @@ void AgiEngine::writePrompt() {
 	int l, fg, bg, pos;
 	int promptLength = strlen(agiSprintf(_game.strings[0]));
 
-	if (!_game.inputEnabled || _game.inputMode != INPUT_NORMAL) {
-		clearPrompt();
-
+	if (!_game.inputEnabled || _game.inputMode != INPUT_NORMAL)
 		return;
-	}
 
 	l = _game.lineUserInput;
 	fg = _game.colorFg;
@@ -698,6 +696,8 @@ void AgiEngine::clearLines(int l1, int l2, int c) {
 	// do we need to adjust for +8 on topline?
 	// inc for endline so it matches the correct num
 	// ie, from 22 to 24 is 3 lines, not 2 lines.
+
+	debugC(4, kDebugLevelText, "clearLines(%d, %d, %d)", l1, l2, c);
 
 	l1 *= CHAR_LINES;
 	l2 *= CHAR_LINES;

@@ -8,18 +8,15 @@ PORT_OBJS := \
 	arm9/source/blitters_arm.o \
 	arm9/source/cdaudio.o \
 	arm9/source/dsmain.o \
-	../../fs/ds/ds-fs.o \
 	arm9/source/gbampsave.o \
 	arm9/source/scummhelp.o \
 	arm9/source/osystem_ds.o \
-	arm9/source/ramsave.o \
 	arm9/source/touchkeyboard.o \
 	arm9/source/zipreader.o \
 	arm9/source/dsoptions.o \
 	arm9/source/keys.o \
 	arm9/source/wordcompletion.o \
-	arm9/source/interrupt.o \
-	arm9/source/dsloader.o
+	arm9/source/interrupt.o
 
 DATA_OBJS := \
 	arm9/data/icons.o \
@@ -28,9 +25,9 @@ DATA_OBJS := \
 	arm9/data/default_font.o \
 	arm9/data/8x8font_tga.o
 
-COMPRESSOR_OBJS := #arm9/source/compressor/lz.o
-
-FAT_OBJS :=  arm9/source/fat/disc_io.o arm9/source/fat/gba_nds_fat.o\
+FAT_OBJS := \
+	arm9/source/fat/disc_io.o \
+	arm9/source/fat/gba_nds_fat.o \
 	arm9/source/fat/io_fcsr.o \
 	arm9/source/fat/io_m3cf.o \
 	arm9/source/fat/io_mpcf.o \
@@ -47,16 +44,7 @@ FAT_OBJS :=  arm9/source/fat/disc_io.o arm9/source/fat/gba_nds_fat.o\
 	arm9/source/fat/m3sd.o
 
 
-#	arm9/source/fat/io_cf_common.o arm9/source/fat/io_m3_common.o\
-#	arm9/source/fat/io_sd_common.o arm9/source/fat/io_scsd_s.o \
-#	arm9/source/fat/io_sc_common.o arm9/source/fat/io_sd_common.o
-
-LIBCARTRESET_OBJS := \
-#	arm9/source/libcartreset/cartreset.o
-
-
-#MODULE_OBJS := $(PORT_OBJS) $(DATA_OBJS) $(FAT_OBJS)
-MODULE_OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS)
+MODULE_OBJS := $(DATA_OBJS) $(PORT_OBJS) $(FAT_OBJS)
 
 
 #---------------------------------------------------------------------------------
@@ -110,12 +98,10 @@ $(MODULE)/arm9/source/touchkeyboard.o: \
 
 
 MODULE_DIRS += \
-	backends/platform/ds/ \
 	backends/platform/ds/arm7/source/ \
 	backends/platform/ds/arm7/source/libcartreset/ \
-	backends/platform/ds/arm9/source/ \
-	backends/platform/ds/arm9/source/fat/ \
-	backends/platform/ds/arm9/source/libcartreset/
 
-# We don't use the rules.mk here on purpose
-OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS)) $(OBJS)
+# We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
+MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))
+OBJS := $(MODULE_OBJS) $(OBJS)
+MODULE_DIRS += $(sort $(dir $(MODULE_OBJS)))

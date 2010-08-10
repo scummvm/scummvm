@@ -56,8 +56,6 @@ int Router::doAnimate(byte *ob_logic, byte *ob_graph, int32 animRes, bool revers
 	ObjectGraphic obGraph(ob_graph);
 
 	if (obLogic.getLooping() == 0) {
-		byte *ptr;
-
 		// This is the start of the anim - set up the first frame
 
 		// For testing all anims!
@@ -75,20 +73,14 @@ int Router::doAnimate(byte *ob_logic, byte *ob_graph, int32 animRes, bool revers
 				return IR_STOP;
 			}
 
-			ptr = _vm->_resman->openResource(animRes);
-
 			// if it's not an animation file
 			if (_vm->_resman->fetchType(animRes) != ANIMATION_FILE) {
-				_vm->_resman->closeResource(animRes);
-
 				// switch off the sprite
 				// don't animate - just continue
 				// script next cycle
 				setSpriteStatus(ob_graph, NO_SPRITE);
 				return IR_STOP;
 			}
-
-			_vm->_resman->closeResource(animRes);
 
 			// switch on the sprite
 			setSpriteStatus(ob_graph, SORT_SPRITE);

@@ -28,6 +28,7 @@ MODULES += \
 	engines \
 	graphics \
 	common \
+	po
 
 ifdef USE_MT32EMU
 MODULES += sound/softsynth/mt32
@@ -223,7 +224,7 @@ dist-src: \
 	@#DEB-src?
 
 # Common files
-DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.LGPL COPYRIGHT NEWS README)
+DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYRIGHT NEWS README)
 
 # Themes files
 DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,scummmodern.zip)

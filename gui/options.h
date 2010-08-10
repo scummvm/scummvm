@@ -28,6 +28,7 @@
 #include "gui/dialog.h"
 #include "gui/TabWidget.h"
 #include "common/str.h"
+#include "sound/musicplugin.h"
 
 #ifdef SMALL_SCREEN_DEVICE
 #include "gui/KeysDialog.h"
@@ -67,6 +68,7 @@ protected:
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
 	void addAudioControls(GuiObject *boss, const Common::String &prefix);
 	void addMIDIControls(GuiObject *boss, const Common::String &prefix);
+	void addMT32Controls(GuiObject *boss, const Common::String &prefix);
 	void addVolumeControls(GuiObject *boss, const Common::String &prefix);
 	// The default value is the launcher's non-scaled talkspeed value. When SCUMM uses the widget,
 	// it uses its own scale
@@ -75,8 +77,12 @@ protected:
 	void setGraphicSettingsState(bool enabled);
 	void setAudioSettingsState(bool enabled);
 	void setMIDISettingsState(bool enabled);
+	void setMT32SettingsState(bool enabled);
 	void setVolumeSettingsState(bool enabled);
 	void setSubtitleSettingsState(bool enabled);
+
+	bool loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType = MT_AUTO);
+	void saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting);
 
 	TabWidget *_tabWidget;
 	int _graphicsTabId;
@@ -104,16 +110,28 @@ private:
 	StaticTextWidget *_outputRatePopUpDesc;
 	PopUpWidget *_outputRatePopUp;
 
+	StaticTextWidget *_mt32DevicePopUpDesc;
+	PopUpWidget *_mt32DevicePopUp;
+	StaticTextWidget *_gmDevicePopUpDesc;
+	PopUpWidget *_gmDevicePopUp;
+
+
+
 	//
 	// MIDI controls
 	//
 	bool _enableMIDISettings;
 	CheckboxWidget *_multiMidiCheckbox;
-	CheckboxWidget *_mt32Checkbox;
-	CheckboxWidget *_enableGSCheckbox;
 	StaticTextWidget *_midiGainDesc;
 	SliderWidget *_midiGainSlider;
 	StaticTextWidget *_midiGainLabel;
+
+	//
+	// MT-32 controls
+	//
+	bool _enableMT32Settings;
+	CheckboxWidget *_mt32Checkbox;
+	CheckboxWidget *_enableGSCheckbox;
 
 	//
 	// Subtitle controls
@@ -121,8 +139,10 @@ private:
 	int getSubtitleMode(bool subtitles, bool speech_mute);
 	bool _enableSubtitleSettings;
 	StaticTextWidget *_subToggleDesc;
-	ButtonWidget *_subToggleButton;
-	int _subMode;
+	RadiobuttonGroup *_subToggleGroup;
+	RadiobuttonWidget *_subToggleSubOnly;
+	RadiobuttonWidget *_subToggleSpeechOnly;
+	RadiobuttonWidget *_subToggleSubBoth;
 	static const char *_subModeDesc[];
 	static const char *_lowresSubModeDesc[];
 	StaticTextWidget *_subSpeedDesc;
@@ -153,6 +173,7 @@ protected:
 	// Game GUI options
 	//
 	uint32 _guioptions;
+	Common::String _guioptionsString;
 };
 
 
@@ -184,6 +205,8 @@ protected:
 	PopUpWidget *_rendererPopUp;
 	StaticTextWidget *_autosavePeriodPopUpDesc;
 	PopUpWidget *_autosavePeriodPopUp;
+	StaticTextWidget *_guiLanguagePopUpDesc;
+	PopUpWidget *_guiLanguagePopUp;
 };
 
 } // End of namespace GUI

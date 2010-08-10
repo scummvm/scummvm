@@ -52,10 +52,6 @@ CruiseEngine *_vm;
 
 CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
-#ifdef PALMOS_MODE
-	_currentVolumeFile = new Common::File();
-#endif
-
 	DebugMan.addDebugChannel(kCruiseDebugScript, "scripts", "Scripts debug level");
 	DebugMan.addDebugChannel(kCruiseDebugSound, "sound", "Sound debug level");
 
@@ -137,8 +133,8 @@ void CruiseEngine::initialize() {
 }
 
 void CruiseEngine::deinitialise() {
-	CVars.polyStructNorm.clear();
-	CVars.polyStructExp.clear();
+	_vm->_polyStructNorm.clear();
+	_vm->_polyStructExp.clear();
 
 	// Clear any backgrounds
 	for (int i = 0; i < 8; ++i) {
@@ -205,7 +201,7 @@ void CruiseEngine::pauseEngine(bool pause) {
 	if (pause) {
 		// Draw the 'Paused' message
 		drawSolidBox(64, 100, 256, 117, 0);
-		drawString(10, 100, langString(ID_PAUSED), CVars.pPage00, CVars.itemColor, 300);
+		drawString(10, 100, langString(ID_PAUSED), gfxModuleData.pPage00, itemColor, 300);
 		gfxModuleData_flipScreen();
 
 		_savedCursor = currentCursor;

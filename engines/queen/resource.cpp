@@ -96,18 +96,7 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 	entryName.toUppercase();
 
 	ResourceEntry *re = NULL;
-#ifndef PALMOS_MODE
 	re = (ResourceEntry *)bsearch(entryName.c_str(), _resourceTable, _resourceEntries, sizeof(ResourceEntry), compareResourceEntry);
-#else
-	// PALMOS FIXME (?) : still doesn't work for me (????) use this instead
-	uint32 cur = 0;
-	do {
-		if (!strcmp(entryName.c_str(), _resourceTable[cur].filename)) {
-			re = &_resourceTable[cur];
-			break;
-		}
-	} while (++cur < _resourceEntries);
-#endif
 	return re;
 }
 

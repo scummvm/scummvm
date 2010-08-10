@@ -38,12 +38,12 @@
 #include <time.h>
 
 int READ_UINT16(void *addr) {
-	unsigned char *buf = addr;
+	unsigned char *buf = (unsigned char *)addr;
 	return (buf[0] << 8) | buf[1];
 }
 
 void WRITE_UINT16(void *addr, int value) {
-	unsigned char *buf = addr;
+	unsigned char *buf = (unsigned char *)addr;
 	buf[0] = (value >> 8) & 0xFF;
 	buf[1] = value & 0xFF;
 }
@@ -611,7 +611,7 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf) {
 	/* determine whether font doesn't require encode table*/
 	l = 0;
 	for (i = 0; i < pf->size; ++i) {
-		if (pf->offset[i] != l) {
+		if (pf->offset[i] != (unsigned long)l) {
 			encodetable = 1;
 			break;
 		}
@@ -648,7 +648,7 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf) {
 
 	/* reallocate bits array to actual bits used*/
 	if (ofs < pf->bits_size) {
-		pf->bits = realloc(pf->bits, ofs * sizeof(bitmap_t));
+		pf->bits = (bitmap_t *)realloc(pf->bits, ofs * sizeof(bitmap_t));
 		pf->bits_size = ofs;
 	}
 	else {
@@ -919,7 +919,7 @@ int gen_c_source(struct font* pf, char *path) {
 			bbuf,
 			pf->defaultchar);
 
-	fprintf(ofp, "\n" "#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))\n");
+	fprintf(ofp, "\n" "#if !(defined(__GP32__))\n");
 	fprintf(ofp, "extern const NewFont g_sysfont(desc);\n");
 	fprintf(ofp, "#else\n");
 	fprintf(ofp, "DEFINE_FONT(g_sysfont)\n");

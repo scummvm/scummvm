@@ -39,14 +39,14 @@ namespace Graphics {
 bool checkThumbnailHeader(Common::SeekableReadStream &in);
 
 /**
- * Skips a thumbnail header, if present.
+ * Skips a thumbnail, if present.
  *
  * @param in	stream to process
  */
-bool skipThumbnailHeader(Common::SeekableReadStream &in);
+bool skipThumbnail(Common::SeekableReadStream &in);
 
 /**
- * Lodas a thumbnail from the given input stream.
+ * Loads a thumbnail from the given input stream.
  * The loaded thumbnail will be automatically converted to the
  * current overlay pixelformat.
  */

@@ -79,11 +79,9 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 
 	musicUpdate(0);
 	uint32 waitUntilTimer = 0;
-	bool newSoundFile = false;
 	if (_lastMusicCommand != _sceneList[sceneId].sound) {
 		fadeOutMusic(60);
 		waitUntilTimer = _system->getMillis() + 60 * _tickLength;
-		newSoundFile = true;
 	}
 
 	_chatAltFlag = false;

@@ -26,7 +26,6 @@
 #ifndef SCI_GRAPHICS_PAINT32_H
 #define SCI_GRAPHICS_PAINT32_H
 
-#include "sci/graphics/gui.h"
 #include "sci/graphics/paint.h"
 
 #include "common/hashmap.h"
@@ -48,6 +47,8 @@ public:
 	void kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
 	void kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle);
 	void kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control);
+
+	void debugDrawRobot(GuiResourceId robotId);
 
 private:
 	ResourceManager *_resMan;

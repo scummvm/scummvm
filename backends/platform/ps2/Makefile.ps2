@@ -92,6 +92,11 @@ PLUGIN_EXTRA_DEPS = $(srcdir)/backends/plugins/plugin.syms elf/scummvm.elf
 PLUGIN_LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o
 PLUGIN_LDFLAGS += -nostartfiles -Wl,-q,--just-symbols,elf/scummvm.elf,-T$(srcdir)/backends/plugins/ps2/plugin.ld,--retain-symbols-file,$(srcdir)/backends/plugins/plugin.syms -lstdc++ -lc
 
+
+BACKEND := ps2
+
+include $(srcdir)/Makefile.common
+
 LDFLAGS = -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T $(srcdir)/backends/plugins/ps2/main_prog.ld
 LDFLAGS += -L $(PS2SDK)/ee/lib -L .
 LDFLAGS += $(addprefix -L$(PS2_EXTRA),$(PS2_EXTRA_LIBS))

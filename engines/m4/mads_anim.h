@@ -28,23 +28,11 @@
 
 #include "m4/viewmgr.h"
 #include "m4/compression.h"
+#include "m4/animation.h"
 
 #include "common/str-array.h"
 
 namespace M4 {
-
-enum SceneTransition {
-	kTransitionNone = 0,
-	kTransitionFadeIn = 1,
-	kTransitionFadeIn2 = 2,
-	kTransitionBoxInBottomLeft = 3,
-	kTransitionBoxInBottomRight = 4,
-	kTransitionBoxInTopLeft = 5,
-	kTransitionBoxInTopRight = 6,
-	kTransitionPanLeftToRight = 7,
-	kTransitionPanRightToLeft = 8,
-	kTransitionCircleIn = 9
-};
 
 typedef void (*TextviewCallback)(MadsM4Engine *vm);
 
@@ -89,36 +77,22 @@ public:
 
 typedef void (*AnimviewCallback)(MadsM4Engine *vm);
 
-class AAFile : public MadsPack {
-public:
-	AAFile(const char *resourceName, MadsM4Engine* vm);
-
-	uint16 seriesCount;
-	uint16 frameCount;
-	uint16 frameEntryCount;
-	uint8 flags;
-	uint16 roomNumber;
-	uint16 frameTicks;
-	Common::StringArray filenames;
-	Common::String lbmFilename;
-	Common::String spritesFilename;
-	Common::String soundName;
-	Common::String fontResource;
-};
-
-enum AAFlags {AA_HAS_FONT = 0x20, AA_HAS_SOUND = 0x8000};
-
-class AnimviewView : public View {
+class AnimviewView : public View, MadsView {
 private:
 	char _resourceName[80];
 	Common::SeekableReadStream *_script;
+	bool _scriptDone;
 	uint32 _previousUpdate;
 	char _currentLine[80];
-	M4Surface _bgSurface;
+	M4Surface _backgroundSurface;
+	M4Surface _codeSurface;
 	AnimviewCallback _callback;
 	bool _soundDriverLoaded;
 	RGBList *_palData;
 	int _transition;
+	MadsAnimation *_activeAnimation;
+	bool _bgLoadFlag;
+	int _startFrame;
 
 	void reset();
 	void readNextCommand();

@@ -23,13 +23,11 @@
  *
  */
 
+#include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
 
 namespace Cruise {
 
-#if !defined(__DS__)
-Common::File PAL_file;
-#endif
 uint8 *PAL_ptr = NULL;
 
 int16 numLoadedPal;
@@ -42,26 +40,25 @@ void loadPal(volumeDataStruct *entry) {
 #if 0
 	char name[20];
 
-	if (PAL_file.isOpen())
-		PAL_file.close();
+	if (_vm->_PAL_file.isOpen())
+		_vm->_PAL_file.close();
 
 	removeExtention(entry->ident, name);
 	strcat(name, ".PAL");
 
-	if (!PAL_file.open(name))
+	if (!_vm->_PAL_file.open(name))
 		return;
 
-	numLoadedPal = PAL_file.readSint16BE();
-	fileData2 = PAL_file.readSint16BE();
+	numLoadedPal = _vm->_PAL_file.readSint16BE();
+	fileData2 = _vm->_PAL_file.readSint16BE();
 
 	PAL_ptr = (uint8 *)MemAlloc(numLoadedPal * fileData2);
 #endif
 }
 
 void closePal() {
-#if !defined(__DS__)
-	if (PAL_file.isOpen()) {
-		PAL_file.close();
+	if (_vm->_PAL_file.isOpen()) {
+		_vm->_PAL_file.close();
 
 		MemFree(PAL_ptr);
 		PAL_ptr = NULL;
@@ -69,22 +66,21 @@ void closePal() {
 		numLoadedPal = 0;
 		fileData2 = 0;
 	}
-#endif
 }
 
 int closeBase() {
-	if (currentVolumeFile.isOpen()) {
-		currentVolumeFile.close();
+	if (_vm->_currentVolumeFile.isOpen()) {
+		_vm->_currentVolumeFile.close();
 
 		MemFree(volumePtrToFileDescriptor);
 
 		strcpy(currentBaseName, "");
 	}
-#if !defined(__DS__)
-	if (PAL_file.isOpen()) {
+
+	if (_vm->_PAL_file.isOpen()) {
 		closePal();
 	}
-#endif
+
 	return 0;
 }
 
@@ -95,7 +91,7 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 	volumeNumEntry = 0;
 	volumeNumberOfEntry = 0;
 
-	if (currentVolumeFile.isOpen()) {
+	if (_vm->_currentVolumeFile.isOpen()) {
 		freeDisk();
 	}
 
@@ -103,16 +99,16 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 
 	strcpy(buffer, entry->ident);
 
-	currentVolumeFile.open(buffer);
+	_vm->_currentVolumeFile.open(buffer);
 
-	if (!currentVolumeFile.isOpen()) {
+	if (!_vm->_currentVolumeFile.isOpen()) {
 		return (-14);
 	}
 
 	changeCursor(CURSOR_DISK);
 
-	volumeNumberOfEntry = currentVolumeFile.readSint16BE();
-	volumeSizeOfEntry = currentVolumeFile.readSint16BE();
+	volumeNumberOfEntry = _vm->_currentVolumeFile.readSint16BE();
+	volumeSizeOfEntry = _vm->_currentVolumeFile.readSint16BE();
 
 	volumeNumEntry = volumeNumberOfEntry;
 
@@ -129,11 +125,11 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 	}
 
 	for (i = 0; i < volumeNumEntry; i++) {
-		currentVolumeFile.read(&volumePtrToFileDescriptor[i].name, 14);
-		volumePtrToFileDescriptor[i].offset = currentVolumeFile.readSint32BE();
-		volumePtrToFileDescriptor[i].size = currentVolumeFile.readSint32BE();
-		volumePtrToFileDescriptor[i].extSize = currentVolumeFile.readSint32BE();
-		volumePtrToFileDescriptor[i].unk3 = currentVolumeFile.readSint32BE();
+		_vm->_currentVolumeFile.read(&volumePtrToFileDescriptor[i].name, 14);
+		volumePtrToFileDescriptor[i].offset = _vm->_currentVolumeFile.readSint32BE();
+		volumePtrToFileDescriptor[i].size = _vm->_currentVolumeFile.readSint32BE();
+		volumePtrToFileDescriptor[i].extSize = _vm->_currentVolumeFile.readSint32BE();
+		volumePtrToFileDescriptor[i].unk3 = _vm->_currentVolumeFile.readSint32BE();
 	}
 
 	strcpy(currentBaseName, entry->ident);
@@ -182,8 +178,8 @@ int32 findFileInDisksSub1(const char *fileName) {
 }
 
 void freeDisk() {
-	if (currentVolumeFile.isOpen()) {
-		currentVolumeFile.close();
+	if (_vm->_currentVolumeFile.isOpen()) {
+		_vm->_currentVolumeFile.close();
 		MemFree(volumePtrToFileDescriptor);
 	}
 
@@ -198,7 +194,7 @@ void freeDisk() {
 int16 findFileInList(char *fileName) {
 	int i;
 
-	if (!currentVolumeFile.isOpen()) {
+	if (!_vm->_currentVolumeFile.isOpen()) {
 		return (-1);
 	}
 
@@ -252,7 +248,7 @@ int16 findFileInDisks(const char *name) {
 
 	if (!volumeDataLoaded) {
 		debug(1, "CNF wasn't loaded, reading now...");
-		if (currentVolumeFile.isOpen()) {
+		if (_vm->_currentVolumeFile.isOpen()) {
 			askDisk(-1);
 			freeDisk();
 		}
@@ -261,7 +257,7 @@ int16 findFileInDisks(const char *name) {
 		readVolCnf();
 	}
 
-	if (currentVolumeFile.isOpen()) {
+	if (_vm->_currentVolumeFile.isOpen()) {
 		askDisk(-1);
 	}
 
@@ -278,7 +274,7 @@ int16 findFileInDisks(const char *name) {
 
 		debug(1, "File found on disk %d", disk);
 
-		if (currentVolumeFile.isOpen()) {
+		if (_vm->_currentVolumeFile.isOpen()) {
 			askDisk(-1);
 		}
 

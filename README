@@ -81,9 +81,10 @@ You can find a thorough list with details on which games are supported
 and how well on the compatibility page. ScummVM is continually
 improving, so check back often.
 
-Among the systems on which you can play those games are Windows, Linux,
-Mac OS X, Dreamcast, PocketPC, PalmOS, AmigaOS, BeOS, OS/2, PSP, PS2,
-SymbianOS/EPOC, iPhone and many more.
+Among the systems on which you can play those games are regular desktop
+computers (running Windows, Linux, Mac OS X, ...), game consoles
+(Dreamcast, Nintendo DS & Wii, PS2, PSP, ...), smartphones (Android,
+iPhone, PocketPC, Symbian ...) and more.
 
 At this time ScummVM should be considered beta software, and is still
 under heavy development. Be aware that whilst we attempt to make sure
@@ -843,28 +844,30 @@ contact us!
 
 Supported platforms include (but are not limited to):
 
-        UNIX            (Linux, Solaris, IRIX, *BSD)
+        UNIX            (Linux, Solaris, IRIX, *BSD, ...)
         Windows
         Windows CE and Windows Mobile  (including Smartphones and PocketPCs)
         Mac OS X
         AmigaOS
+        Android
         BeOS
         Dreamcast
-        iPhone          (also includes the iPod Touch)
+        GP2x
+        iPhone          (also includes iPod Touch and iPad)
+        Maemo           (Nokia Internet tablets 770, N800, N810, N900)
+        Nintendo 64
         Nintendo DS
-        PalmOS
+        Nintendo Wii
+        OS/2
         PlayStation 2
         PlayStation Portable
-        RISC OS
         Symbian
-        Maemo (Nokia Internet tablets 770, N800, N810, N900)
 
 The Dreamcast port does not support The Curse of Monkey Island, nor The
-Dig. The PalmOS port does not support The Curse of Monkey Island,
-Beneath a Steel Sky, nor either Simon the Sorcerer 1 or 2. The Dig will
-only work on some Palm devices (those with a large dynamic heap). The
-Nintendo DS port does not support Full Throttle, The Dig, or The Curse
-of Monkey Island.
+Dig. The Nintendo DS port does not support Full Throttle, The Dig, or
+The Curse of Monkey Island.
+For more platform specific limitations, please refer to our Wiki:
+  http://wiki.scummvm.org/index.php/Platforms
 
 In the Macintosh port, the right mouse button is emulated via Cmd-Click
 (that is, you click the mouse button while holding the

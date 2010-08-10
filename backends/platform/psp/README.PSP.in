@@ -99,8 +99,6 @@ To build ScummVM for PSP you need:
 		Note: This usually gets installed by the PSP toolchain,
 		so you don't have to do it manually.
 
-- SDL		(svn co svn://svn.pspdev.org/psp/trunk/SDL)
-
 - zlib		(svn co svn://svn.pspdev.org/psp/trunk/zlib)
 
 - libPNG	(svn co svn://svn.pspdev.org/psp/trunk/libpng)

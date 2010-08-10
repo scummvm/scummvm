@@ -122,7 +122,7 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 				header.thumbnail = 0;
 			}
 		} else {
-			Graphics::skipThumbnailHeader(*in);
+			Graphics::skipThumbnail(*in);
 		}
 	}
 

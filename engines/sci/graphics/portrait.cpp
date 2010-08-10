@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/archive.h"
 #include "common/util.h"
 #include "common/stack.h"
 #include "graphics/primitives.h"
@@ -30,7 +31,6 @@
 #include "sci/sci.h"
 #include "sci/event.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/portrait.h"
@@ -38,8 +38,8 @@
 
 namespace Sci {
 
-Portrait::Portrait(ResourceManager *resMan, SciEvent *event, SciGui *gui, GfxScreen *screen, GfxPalette *palette, AudioPlayer *audio, Common::String resourceName)
-	: _resMan(resMan), _event(event), _gui(gui), _screen(screen), _palette(palette), _audio(audio), _resourceName(resourceName) {
+Portrait::Portrait(ResourceManager *resMan, EventManager *event, GfxScreen *screen, GfxPalette *palette, AudioPlayer *audio, Common::String resourceName)
+	: _resMan(resMan), _event(event), _screen(screen), _palette(palette), _audio(audio), _resourceName(resourceName) {
 	init();
 }
 
@@ -166,7 +166,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	// Do animation depending on sync resource till audio is done playing
 	uint16 syncCue;
 	int timerPosition, curPosition;
-	sciEvent curEvent;
+	SciEvent curEvent;
 	bool userAbort = false;
 
 	while ((syncOffset < syncResource->size - 2) && (!userAbort)) {
@@ -181,8 +181,8 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 
 		// Wait till syncTime passed, then show specific animation bitmap
 		do {
-			_gui->wait(1);
-			curEvent = _event->get(SCI_EVENT_ANY);
+			g_sci->getEngineState()->wait(1);
+			curEvent = _event->getSciEvent(SCI_EVENT_ANY);
 			if (curEvent.type == SCI_EVENT_MOUSE_PRESS ||
 				(curEvent.type == SCI_EVENT_KEYBOARD && curEvent.data == SCI_KEY_ESC) ||
 				g_engine->shouldQuit())

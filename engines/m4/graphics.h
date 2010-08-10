@@ -35,6 +35,13 @@
 
 namespace M4 {
 
+#define MADS_SURFACE_WIDTH 320
+#define MADS_SURFACE_HEIGHT 156
+#define MADS_SCREEN_HEIGHT 200
+#define MADS_Y_OFFSET ((MADS_SCREEN_HEIGHT - MADS_SURFACE_HEIGHT) / 2)
+
+#define TRANSPARENT_COLOUR_INDEX 0xFF
+
 struct BGR8 {
 	uint8 b, g, r;
 };
@@ -68,6 +75,7 @@ public:
 	int size() { return _size; }
 	RGB8 &operator[](int idx) { return _data[idx]; }
 	void setRange(int start, int count, const RGB8 *src);
+	RGBList *clone() const;
 };
 
 // M4Surface
@@ -89,19 +97,36 @@ class M4Surface : protected Graphics::Surface {
 private:
 	byte _color;
 	bool _isScreen;
+	RGBList *_rgbList;
+	bool _ownsData;
 
 	void rexLoadBackground(Common::SeekableReadStream *source, RGBList **palData = NULL);
 	void madsLoadBackground(int roomNumber, RGBList **palData = NULL);
 	void m4LoadBackground(Common::SeekableReadStream *source);
 public:
 	M4Surface(bool isScreen = false) {
-		create(g_system->getWidth(), g_system->getHeight(), 1);
+		create(g_system->getWidth(), isScreen ? g_system->getHeight() : MADS_SURFACE_HEIGHT, 1);
 		_isScreen = isScreen;
+		_rgbList = NULL;
+		_ownsData = true;
 	}
 	M4Surface(int width_, int height_) {
 		create(width_, height_, 1);
 		_isScreen = false;
+		_rgbList = NULL;
+		_ownsData = true;
 	}
+	M4Surface(int width_, int height_, byte *srcPixels, int pitch_) {
+		bytesPerPixel = 1;
+		w = width_;
+		h = height_;
+		pitch = pitch_;
+		pixels = srcPixels;
+		_rgbList = NULL;
+		_ownsData = false;
+	}
+
+	virtual ~M4Surface();
 
 	// loads a .COD file into the M4Surface
 	// TODO: maybe move this to the rail system? check where it makes sense
@@ -112,7 +137,8 @@ public:
 	// loads the specified background
 	void loadBackground(int sceneNumber, RGBList **palData = NULL);
 	void loadBackgroundRiddle(const char *sceneName);
-	void madsloadInterface(int index, RGBList **palData);
+	void madsLoadInterface(int index, RGBList **palData = NULL);
+	void madsLoadInterface(const Common::String &filename);
 
 	void setColor(byte value) { _color = value; }
 	void setColour(byte value) { _color = value; }
@@ -131,6 +157,7 @@ public:
 	inline Common::Rect bounds() const { return Common::Rect(0, 0, width(), height()); }
 	inline int width() const { return w; }
 	inline int height() const { return h; }
+	inline int getPitch() const { return pitch; }
 	void setSize(int sizeX, int sizeY) { create(sizeX, sizeY, 1); }
 	inline byte *getBasePtr() {
 		return (byte *)pixels;
@@ -143,10 +170,12 @@ public:
 	}
 	void freeData();
 	void clear();
+	void reset();
 	void frameRect(const Common::Rect &r, uint8 color);
 	void fillRect(const Common::Rect &r, uint8 color);
-	void copyFrom(M4Surface *src, const Common::Rect &srcBounds, int destX, int destY,
-		int transparentColor = -1);
+	void copyFrom(M4Surface *src, const Common::Rect &srcBounds, int destX, int destY, int transparentColour = -1);
+	void copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surface *depthSurface, 
+			int scale, int transparentColour = -1);
 
 	void update() {
 		if (_isScreen) {
@@ -156,18 +185,26 @@ public:
 	}
 
 	// copyTo methods
-	inline void copyTo(M4Surface *dest, int transparentColor = -1) {
-		dest->copyFrom(this, Common::Rect(width(), height()), 0, 0, transparentColor);
+	inline void copyTo(M4Surface *dest, int transparentColour = -1) {
+		dest->copyFrom(this, Common::Rect(width(), height()), 0, 0, transparentColour);
 	}
-	inline void copyTo(M4Surface *dest, int x, int y, int transparentColor = -1) {
-		dest->copyFrom(this, Common::Rect(width(), height()), x, y, transparentColor);
+	inline void copyTo(M4Surface *dest, int x, int y, int transparentColour = -1) {
+		dest->copyFrom(this, Common::Rect(width(), height()), x, y, transparentColour);
 	}
 	inline void copyTo(M4Surface *dest, const Common::Rect &srcBounds, int destX, int destY,
-				int transparentColor = -1) {
-		dest->copyFrom(this, srcBounds, destX, destY, transparentColor);
+				int transparentColour = -1) {
+		dest->copyFrom(this, srcBounds, destX, destY, transparentColour);
+	}
+	inline void copyTo(M4Surface *dest, int destX, int destY, int depth, M4Surface *depthsSurface, int scale,
+				int transparentColour = -1) {
+		dest->copyFrom(this, destX, destY, depth, depthsSurface, scale, transparentColour);
 	}
 
+	void scrollX(int xAmount);
+	void scrollY(int yAmount);
+
 	void translate(RGBList *list, bool isTransparent = false);
+	M4Surface *flipHorizontal() const;
 };
 
 enum FadeType {FT_TO_GREY, FT_TO_COLOR, FT_TO_BLOCK};

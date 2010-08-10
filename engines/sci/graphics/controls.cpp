@@ -30,6 +30,7 @@
 
 #include "sci/sci.h"
 #include "sci/event.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/graphics/ports.h"
@@ -74,7 +75,9 @@ void GfxControls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, 
 	// draw UP/DOWN arrows
 	//  we draw UP arrow one pixel lower than sierra did, because it looks nicer. Also the DOWN arrow has one pixel
 	//  line inbetween as well
-	workerRect.top++;
+	// They "fixed" this in SQ4 by having the arrow character start one pixel line later, we don't adjust there
+	if (g_sci->getGameId() != GID_SQ4)
+		workerRect.top++;
 	_text16->Box(controlListUpArrow, 0, workerRect, SCI_TEXT16_ALIGNMENT_CENTER, 0);
 	workerRect.top = workerRect.bottom - 10;
 	_text16->Box(controlListDownArrow, 0, workerRect, SCI_TEXT16_ALIGNMENT_CENTER, 0);
@@ -88,7 +91,7 @@ void GfxControls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, 
 	_text16->SetFont(fontId);
 	fontSize = _ports->_curPort->fontHeight;
 	_ports->penColor(_ports->_curPort->penClr); _ports->backColor(_ports->_curPort->backClr);
-	workerRect.bottom = workerRect.top + 9;
+	workerRect.bottom = workerRect.top + fontSize;
 	lastYpos = rect.bottom - fontSize;
 
 	// Write actual text
@@ -143,9 +146,9 @@ void GfxControls::texteditSetBlinkTime() {
 }
 
 void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
-	uint16 cursorPos = GET_SEL32V(_segMan, controlObject, SELECTOR(cursor));
-	uint16 maxChars = GET_SEL32V(_segMan, controlObject, SELECTOR(max));
-	reg_t textReference = GET_SEL32(_segMan, controlObject, SELECTOR(text));
+	uint16 cursorPos = readSelectorValue(_segMan, controlObject, SELECTOR(cursor));
+	uint16 maxChars = readSelectorValue(_segMan, controlObject, SELECTOR(max));
+	reg_t textReference = readSelector(_segMan, controlObject, SELECTOR(text));
 	Common::String text;
 	uint16 textSize, eventType, eventKey = 0;
 	bool textChanged = false;
@@ -158,14 +161,14 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 
 	if (!eventObject.isNull()) {
 		textSize = text.size();
-		eventType = GET_SEL32V(_segMan, eventObject, SELECTOR(type));
+		eventType = readSelectorValue(_segMan, eventObject, SELECTOR(type));
 
 		switch (eventType) {
 		case SCI_EVENT_MOUSE_PRESS:
 			// TODO: Implement mouse support for cursor change
 			break;
 		case SCI_EVENT_KEYBOARD:
-			eventKey = GET_SEL32V(_segMan, eventObject, SELECTOR(message));
+			eventKey = readSelectorValue(_segMan, eventObject, SELECTOR(message));
 			switch (eventKey) {
 			case SCI_KEY_BACKSPACE:
 				if (cursorPos > 0) {
@@ -207,9 +210,9 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 
 	if (textChanged) {
 		GuiResourceId oldFontId = _text16->GetFontId();
-		GuiResourceId fontId = GET_SEL32V(_segMan, controlObject, SELECTOR(font));
-		rect = Common::Rect(GET_SEL32V(_segMan, controlObject, SELECTOR(nsLeft)), GET_SEL32V(_segMan, controlObject, SELECTOR(nsTop)),
-							  GET_SEL32V(_segMan, controlObject, SELECTOR(nsRight)), GET_SEL32V(_segMan, controlObject, SELECTOR(nsBottom)));
+		GuiResourceId fontId = readSelectorValue(_segMan, controlObject, SELECTOR(font));
+		rect = Common::Rect(readSelectorValue(_segMan, controlObject, SELECTOR(nsLeft)), readSelectorValue(_segMan, controlObject, SELECTOR(nsTop)),
+							  readSelectorValue(_segMan, controlObject, SELECTOR(nsRight)), readSelectorValue(_segMan, controlObject, SELECTOR(nsBottom)));
 		_text16->SetFont(fontId);
 		if (textAddChar) {
 			// We check, if we are really able to add the new char
@@ -241,7 +244,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 		}
 	}
 
-	PUT_SEL32V(_segMan, controlObject, SELECTOR(cursor), cursorPos);
+	writeSelectorValue(_segMan, controlObject, SELECTOR(cursor), cursorPos);
 }
 
 int GfxControls::getPicNotValid() {

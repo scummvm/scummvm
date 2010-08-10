@@ -31,7 +31,7 @@
 #include "common/rect.h"
 #include "common/str-array.h"
 
-#include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
+#include "sci/engine/selector.h"
 #include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/engine/vm.h"
 
@@ -39,6 +39,8 @@ namespace Sci {
 
 struct Node;	// from segment.h
 struct List;	// from segment.h
+struct SelectorCache;	// from selector.h
+struct SciWorkaroundEntry;	// from workarounds.h
 
 /**
  * @defgroup VocabularyResources	Vocabulary resources in SCI
@@ -92,82 +94,69 @@ struct List;	// from segment.h
 //@{
 
 //#define DEBUG_PARSER	// enable for parser debugging
-//#define DISABLE_VALIDATIONS	// enable to stop validation checks
 
 // ---- Kernel signatures -----------------------------------------------------
-#define KSIG_TERMINATOR 0
 
-// Uncompiled signatures
-#define KSIG_SPEC_ARITMETIC 'i'
-#define KSIG_SPEC_LIST 'l'
-#define KSIG_SPEC_NODE 'n'
-#define KSIG_SPEC_OBJECT 'o'
-#define KSIG_SPEC_REF 'r' // Said Specs and strings
-#define KSIG_SPEC_ARITHMETIC 'i'
-#define KSIG_SPEC_NULL 'z'
-#define KSIG_SPEC_ANY '.'
-#define KSIG_SPEC_ELLIPSIS '*' // Arbitrarily more TYPED arguments
+// internal kernel signature data
+enum {
+	SIG_TYPE_NULL          =  0x01, // may be 0:0       [0]
+	SIG_TYPE_INTEGER       =  0x02, // may be 0:*       [i], automatically also allows null
+	SIG_TYPE_UNINITIALIZED =  0x04, // may be FFFF:*    -> not allowable, only used for comparison
+	SIG_TYPE_OBJECT        =  0x08, // may be object    [o]
+	SIG_TYPE_REFERENCE     =  0x10, // may be reference [r]
+	SIG_TYPE_LIST          =  0x20, // may be list      [l]
+	SIG_TYPE_NODE          =  0x40, // may be node      [n]
+	SIG_TYPE_ERROR         =  0x80, // happens, when there is a identification error - only used for comparison
+	SIG_IS_INVALID         = 0x100, // ptr is invalid   [!] -> invalid offset
+	SIG_IS_OPTIONAL        = 0x200, // is optional
+	SIG_NEEDS_MORE         = 0x400, // needs at least one additional parameter following
+	SIG_MORE_MAY_FOLLOW    = 0x800  // may have more parameters of the same type following
+};
 
-#define KSIG_SPEC_SUM_DONE ('a' - 'A') // Use small letters to indicate end of sum type
-/* Use capital letters for sum types, e.g.
-** "LNoLr" for a function which takes two arguments:
-** (1) list, node or object
-** (2) list or ref
-*/
+// this does not include SIG_TYPE_UNINITIALIZED, because we can not allow uninitialized values anywhere
+#define SIG_MAYBE_ANY    (SIG_TYPE_NULL | SIG_TYPE_INTEGER | SIG_TYPE_OBJECT | SIG_TYPE_REFERENCE | SIG_TYPE_LIST | SIG_TYPE_NODE)
 
-// Compiled signatures
-#define KSIG_LIST	0x01
-#define KSIG_NODE	0x02
-#define KSIG_OBJECT	0x04
-#define KSIG_REF	0x08
-#define KSIG_ARITHMETIC 0x10
-
-#define KSIG_NULL	0x40
-#define KSIG_ANY	0x5f
-#define KSIG_ELLIPSIS	0x80
 // ----------------------------------------------------------------------------
 
 /* Generic description: */
-typedef reg_t KernelFunc(EngineState *s, int argc, reg_t *argv);
+typedef reg_t KernelFunctionCall(EngineState *s, int argc, reg_t *argv);
 
-struct KernelFuncWithSignature {
-	KernelFunc *fun; /**< The actual function */
-	const char *signature;  /**< KernelFunc signature */
-	Common::String orig_name; /**< Original name, in case we couldn't map it */
-	bool isDummy;
+struct KernelSubFunction {
+	KernelFunctionCall *function;
+	const char *name;
+	uint16 *signature;
+	const SciWorkaroundEntry *workarounds;
+	bool debugLogging;
+	bool debugBreakpoint;
 };
 
-enum AutoDetectedFeatures {
-	kFeatureOldScriptHeader = 1 << 0
+struct KernelFunction {
+	KernelFunctionCall *function;
+	const char *name;
+	uint16 *signature;
+	const SciWorkaroundEntry *workarounds;
+	KernelSubFunction *subFunctions;
+	uint16 subFunctionCount;
+	bool debugLogging;
+	bool debugBreakpoint;
 };
 
 class Kernel {
 public:
 	/**
-	 * Initializes the SCI kernel
+	 * Initializes the SCI kernel.
 	 */
 	Kernel(ResourceManager *resMan, SegManager *segMan);
 	~Kernel();
 
 	uint getSelectorNamesSize() const;
-	const Common::String &getSelectorName(uint selector) const;
+	const Common::String &getSelectorName(uint selector);
 
 	uint getKernelNamesSize() const;
 	const Common::String &getKernelName(uint number) const;
 
 	/**
-	 * Loads the kernel function names.
-	 *
-	 * This function reads the kernel function name table from resource_map,
-	 * and fills the _kernelNames array with them.
-	 * The resulting list has the same format regardless of the format of the
-	 * name table of the resource (the format changed between version 0 and 1).
-	 * @return true on success, false on failure
-	 */
-	bool loadKernelNames(Common::String gameId);
-
-	/**
-	 * Determines the selector ID of a selector by its name
+	 * Determines the selector ID of a selector by its name.
 	 * @param selectorName Name of the selector to look up
 	 * @return The appropriate selector ID, or -1 on error
 	 */
@@ -178,22 +167,24 @@ public:
 	void dumpScriptObject(char *data, int seeker, int objsize);
 	void dumpScriptClass(char *data, int seeker, int objsize);
 
-	SelectorCache _selectorCache; /**< Shortcut list for important selectors */
-	typedef Common::Array<KernelFuncWithSignature> KernelFuncsContainer;
-	KernelFuncsContainer _kernelFuncs; /**< Table of kernel functions */
+	SelectorCache _selectorCache; /**< Shortcut list for important selectors. */
+	typedef Common::Array<KernelFunction> KernelFunctionArray;
+	KernelFunctionArray _kernelFuncs; /**< Table of kernel functions. */
 
 	/**
 	 * Determines whether a list of registers matches a given signature.
 	 * If no signature is given (i.e., if sig is NULL), this is always
 	 * treated as a match.
 	 *
-	 * @param segMan pointer to the segment manager
 	 * @param sig	 signature to test against
 	 * @param argc	 number of arguments to test
 	 * @param argv	 argument list
 	 * @return true if the signature was matched, false otherwise
 	 */
-	bool signatureMatch(const char *sig, int argc, const reg_t *argv);
+	bool signatureMatch(const uint16 *sig, int argc, const reg_t *argv);
+
+	// Prints out debug information in case a signature check fails
+	void signatureDebug(const uint16 *sig, int argc, const reg_t *argv);
 
 	/**
 	 * Determines the type of the object indicated by reg.
@@ -202,15 +193,15 @@ public:
 	 *	       KSIG_INVALID set if the type of reg can be determined, but is invalid.
 	 *	       0 on error.
 	 */
-	int findRegType(reg_t reg);
+	uint16 findRegType(reg_t reg);
 
 	/******************** Text functionality ********************/
 	/**
-	 * Looks up text referenced by scripts
-	 * SCI uses two values to reference to text: An address, and an index. The address
-	 * determines whether the text should be read from a resource file, or from the heap,
-	 * while the index either refers to the number of the string in the specified source,
-	 * or to a relative position inside the text.
+	 * Looks up text referenced by scripts.
+	 * SCI uses two values to reference to text: An address, and an index. The
+	 * address determines whether the text should be read from a resource file,
+	 * or from the heap, while the index either refers to the number of the
+	 * string in the specified source, or to a relative position inside the text.
 	 *
 	 * @param address The address to look up
 	 * @param index The relative index
@@ -218,22 +209,37 @@ public:
 	 */
 	Common::String lookupText(reg_t address, int index);
 
+	/**
+	 * Loads the kernel function names.
+	 *
+	 * This function reads the kernel function name table from resource_map,
+	 * and fills the _kernelNames array with them.
+	 * The resulting list has the same format regardless of the format of the
+	 * name table of the resource (the format changed between version 0 and 1).
+	 */
+	void loadKernelNames(GameFeatures *features);
+
+	/**
+	 * Sets debug flags for a kernel function
+	 */
+	bool debugSetFunction(const char *kernelName, int logging, int breakpoint);
+
 private:
 	/**
-	 * Sets the default kernel function names, based on the SCI version used
+	 * Sets the default kernel function names, based on the SCI version used.
 	 */
-	void setDefaultKernelNames(Common::String gameId);
+	void setDefaultKernelNames(GameFeatures *features);
 
 #ifdef ENABLE_SCI32
 	/**
-	 * Sets the default kernel function names to the SCI2 kernel functions
+	 * Sets the default kernel function names to the SCI2 kernel functions.
 	 */
 	void setKernelNamesSci2();
 
 	/**
-	 * Sets the default kernel function names to the SCI2.1 kernel functions
+	 * Sets the default kernel function names to the SCI2.1 kernel functions.
 	 */
-	void setKernelNamesSci21();
+	void setKernelNamesSci21(GameFeatures *features);
 #endif
 
 	/**
@@ -248,36 +254,26 @@ private:
 	Common::StringArray checkStaticSelectorNames();
 
 	/**
-	 * Maps special selectors
+	 * Maps special selectors.
 	 */
 	void mapSelectors();
 
 	/**
-	 * Maps kernel functions
+	 * Maps kernel functions.
 	 */
 	void mapFunctions();
 
 	ResourceManager *_resMan;
 	SegManager *_segMan;
-	uint32 features;
 
 	// Kernel-related lists
 	Common::StringArray _selectorNames;
 	Common::StringArray _kernelNames;
+	
+	const Common::String _invalid;
 };
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-/******************** Misc functions ********************/
-
-/**
- * Get all sound events, apply their changes to the heap
- */
-void process_sound_events(EngineState *s);
-
-/******************** Constants ********************/
-#endif
-
-/* Maximum length of a savegame name (including terminator character) */
+/* Maximum length of a savegame name (including terminator character). */
 #define SCI_MAX_SAVENAME_LENGTH 0x24
 
 /******************** Kernel functions ********************/
@@ -414,6 +410,7 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSync(EngineState *s, int argc, reg_t *argv);
 reg_t kMemorySegment(EngineState *s, int argc, reg_t *argv);
 reg_t kIntersections(EngineState *s, int argc, reg_t *argv);
+reg_t kMergePoly(EngineState *s, int argc, reg_t *argv);
 reg_t kResCheck(EngineState *s, int argc, reg_t *argv);
 reg_t kSetQuitStr(EngineState *s, int argc, reg_t *argv);
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv);
@@ -422,6 +419,10 @@ reg_t kStrSplit(EngineState *s, int argc, reg_t *argv);
 reg_t kPlatform(EngineState *s, int argc, reg_t *argv);
 reg_t kTextColors(EngineState *s, int argc, reg_t *argv);
 reg_t kTextFonts(EngineState *s, int argc, reg_t *argv);
+reg_t kDummy(EngineState *s, int argc, reg_t *argv);
+reg_t kEmpty(EngineState *s, int argc, reg_t *argv);
+reg_t kStub(EngineState *s, int argc, reg_t *argv);
+reg_t kStubNull(EngineState *s, int argc, reg_t *argv);
 
 #ifdef ENABLE_SCI32
 // SCI2 Kernel Functions
@@ -429,6 +430,8 @@ reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
 reg_t kArray(EngineState *s, int argc, reg_t *argv);
 reg_t kListAt(EngineState *s, int argc, reg_t *argv);
 reg_t kString(EngineState *s, int argc, reg_t *argv);
+reg_t kMulDiv(EngineState *s, int argc, reg_t *argv);
+reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv);
 // "Screen items" in SCI32 are views
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv);
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv);
@@ -450,10 +453,91 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv);
 reg_t kInPolygon(EngineState *s, int argc, reg_t *argv);
 
 // SCI2.1 Kernel Functions
+reg_t kText(EngineState *s, int argc, reg_t *argv);
 reg_t kSave(EngineState *s, int argc, reg_t *argv);
 reg_t kList(EngineState *s, int argc, reg_t *argv);
 reg_t kRobot(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv);
+reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv);
+reg_t kCD(EngineState *s, int argc, reg_t *argv);
+reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv);
 
+reg_t kAddBefore(EngineState *s, int argc, reg_t *argv);
+reg_t kMoveToFront(EngineState *s, int argc, reg_t *argv);
+reg_t kMoveToEnd(EngineState *s, int argc, reg_t *argv);
+#endif
+
+reg_t kDoSoundInit(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundPlay(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundRestore(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundDispose(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundMute(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundStop(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundStopAll(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundPause(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundResumeAfterRestore(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundMasterVolume(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundUpdate(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundFade(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundGetPolyphony(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundUpdateCues(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundSendMidi(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundReverb(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundSetHold(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundDummy(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundGetAudioCapability(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundSuspend(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundSetVolume(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundSetPriority(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundSetLoop(EngineState *s, int argc, reg_t *argv);
+
+reg_t kGraphGetColorCount(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphSaveBox(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphRestoreBox(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphFillBoxBackground(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphFillBoxForeground(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphFillBoxAny(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphUpdateBox(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphRedrawBox(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphAdjustPriority(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphSaveUpscaledHiresBox(EngineState *s, int argc, reg_t *argv);
+
+reg_t kPalVaryInit(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryReverse(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryGetCurrentStep(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryDeinit(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryChangeTarget(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryChangeTicks(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryPauseResume(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv);
+
+reg_t kPaletteSetFromResource(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteSetFlag(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteUnsetFlag(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteSetIntensity(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteFindColor(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteSave(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteRestore(EngineState *s, int argc, reg_t *argv);
+
+reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOFindFirst(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOFindNext(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIORename(EngineState *s, int argc, reg_t *argv);
+#ifdef ENABLE_SCI32
+reg_t kFileIOReadByte(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOWriteByte(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOReadWord(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv);
 #endif
 
 //@}

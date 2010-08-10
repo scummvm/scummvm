@@ -29,41 +29,100 @@
 #include "m4/m4.h"
 #include "m4/graphics.h"
 #include "m4/assets.h"
+#include "m4/mads_views.h"
+#include "common/array.h"
 
 namespace M4 {
 
-struct AnimationFrame {
-    uint16 animFrameIndex;
-    byte u;
-    byte seriesIndex;
-    uint16 seriesFrameIndex;
-    uint16 x, y;
-    byte v, w;
+class MadsView;
+class SpriteSlotSubset;
+
+class AnimMessage {
+public:
+	int16 soundId;
+	char msg[64];
+	Common::Point pos;
+	RGB8 rgb1, rgb2;
+	uint16 flags;
+	int startFrame, endFrame;
+	int kernelMsgIndex;
 };
 
-class Animation {
-    public:
-		Animation(MadsM4Engine *vm);
-        ~Animation();
+class AnimFrameEntry {
+public:
+	int frameNumber;
+	int seqIndex;
+	SpriteSlotSubset spriteSlot;
+};
 
-        void load(const char *filename);
-		void loadFullScreen(const char *filename);
-        void start();
-        bool updateAnim();
-        void stop();
+class AnimMiscEntry {
+public:
+	int soundNum;
+	int msgIndex;
+	int numTicks;
+	Common::Point posAdjust;
+};
 
-    private:
-		bool _playing;
-		MadsM4Engine *_vm;
-        int _seriesCount;
-        int _frameCount;
-        int _frameEntryCount;
-        AnimationFrame *_frameEntries;
-        Common::String *_spriteSeriesNames;
-        SpriteAsset *_spriteSeries;
-        int _curFrame, _curFrameEntry;
+#define ANIM_SPRITE_SET_SIZE 50
+
+enum MadsAnimationFlags {ANIM_CUSTOM_FONT = 0x20, ANIM_HAS_SOUND = 0x8000};
+
+class MadsAnimation: public Animation {
+private:
+	MadsView *_view;
+
+	int _spriteListCount;
+	Common::Array<AnimMessage> _messages;
+	Common::Array<AnimFrameEntry> _frameEntries;
+	Common::Array<AnimMiscEntry> _miscEntries;
+	Font *_font;
+
+	uint8 _flags;
+	int _animMode;
+	int _roomNumber;
+	bool _field12;
+	int _spriteListIndex;
+	int _scrollX;
+	int _scrollY;
+	int _scrollTicks;
+	Common::String _interfaceFile;
+	Common::String _spriteSetNames[10];
+	Common::String _lbmFilename;
+	Common::String _spritesFilename;
+	Common::String _soundName;
+	Common::String _dsrName;
+	Common::Array<int> _spriteListIndexes;
+
+	int _currentFrame, _oldFrameEntry;
+	bool _resetFlag;
+	bool _freeFlag;
+	bool _skipLoad;
+	int _unkIndex;
+	Common::Point _unkList[2];
+	uint32 _nextFrameTimer;
+	uint32 _nextScrollTimer;
+	int _messageCtr;
+	int _abortTimers;
+	AbortTimerMode _abortMode;
+	ActionDetails _actionNouns;
+
+	void load1(int frameNumber);
+	bool proc1(SpriteAsset &spriteSet, const Common::Point &pt, int frameNumber);
+	void loadInterface(M4Surface *&interfaceSurface, M4Surface *&depthSurface);
+	bool hasScroll() const { return (_scrollX != 0) || (_scrollY != 0); }
+public:
+	MadsAnimation(MadsM4Engine *vm, MadsView *view);
+	virtual ~MadsAnimation();
+
+	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface);
+	virtual void load(const Common::String &filename, int abortTimers);
+	virtual void update();
+	virtual void setCurrentFrame(int frameNumber);
+	virtual int getCurrentFrame();
 
 	bool freeFlag() const { return _freeFlag; }
+	bool getAnimMode() const { return _animMode; }
+	int roomNumber() const { return _roomNumber; }
 };
 
 } // End of namespace M4

@@ -23,6 +23,7 @@
  *
  */
 
+#ifndef DISABLE_NES_APU
 
 #include "engines/engine.h"
 #include "scumm/player_nes.h"
@@ -1065,3 +1066,5 @@ byte Player_NES::APU_readStatus() {
 }
 
 } // End of namespace Scumm
+
+#endif // DISABLE_NES_APU

@@ -256,7 +256,7 @@ struct LevelTempData {
 struct MapLegendData {
 	uint8 shapeIndex;
 	bool enable;
-	int8 x;
+	int8 y;
 	uint16 stringId;
 };
 

@@ -37,8 +37,6 @@ struct PartBuffer {
 
 #define NUM_MAX_PARTDATA 255
 
-extern Common::Array<PartBuffer> partBuffer;
-
 void loadPart(const char *partName);
 void closePart();
 

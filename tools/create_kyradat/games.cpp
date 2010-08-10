@@ -99,6 +99,7 @@ const Game lolGames[] = {
 	{ kLol, { EN_ANY, -1, -1 }, kPlatformPC, kDemoVersion, { "30bb5af87d38adb47d3e6ce06b1cb042", 0 } },
 
 	// DOS floppy (no language specifc strings)
+	{ kLol, { EN_ANY, -1, -1 }, kPlatformPC, kNoSpecial, { "0cc764a204f7ba8cefe1a5f14c479619", 0 } },
 	{ kLol, { DE_DEU, -1, -1 }, kPlatformPC, kNoSpecial, { "6b843869772c1b779e1386be868c15dd", 0 } },
 
 	// PC98 (no language specifc strings)
@@ -411,6 +412,8 @@ const int kyra1TownsNeed[] = {
 	k1NewGameString,
 	k1ConfigStrings,
 
+	k1TownsMusicFadeTable,
+	k1TownsMusicFadeTable,
 	k1TownsSFXwdTable,
 	k1TownsSFXbtTable,
 	k1TownsCDATable,

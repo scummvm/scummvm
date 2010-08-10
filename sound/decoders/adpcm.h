@@ -71,7 +71,7 @@ enum typesADPCM {
  * @param rate              the sampling rate
  * @param channels          the number of channels
  * @param blockAlign        block alignment ???
- * @return   a new RewindableAudioStream, or NULL, if an error occured
+ * @return   a new RewindableAudioStream, or NULL, if an error occurred
  */
 RewindableAudioStream *makeADPCMStream(
     Common::SeekableReadStream *stream,

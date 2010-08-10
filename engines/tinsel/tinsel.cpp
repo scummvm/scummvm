@@ -856,11 +856,11 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	if (cd_num >= 0)
 		_system->openCD(cd_num);
 
-	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-	//bool adlib = (midiDriver == MD_ADLIB);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	bool native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
+	//bool adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
 
-	_driver = MidiDriver::createMidi(midiDriver);
+	_driver = MidiDriver::createMidi(dev);
 	if (native_mt32)
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
@@ -1001,8 +1001,7 @@ Common::Error TinselEngine::run() {
 	uint32 timerVal = 0;
 	while (!shouldQuit()) {
 		assert(_console);
-		if (_console->isAttached())
-			_console->onFrame();
+		_console->onFrame();
 
 		// Check for time to do next game cycle
 		if ((g_system->getMillis() > timerVal + GAME_FRAME_DELAY)) {

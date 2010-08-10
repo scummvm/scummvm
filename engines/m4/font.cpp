@@ -29,23 +29,48 @@
 
 namespace M4 {
 
-Font::Font(MadsM4Engine *vm) : _vm(vm) {
+FontManager::~FontManager() {
+	for (uint i = 0; i < _entries.size(); ++i)
+		delete _entries[i];
+	_entries.clear();
+}
+
+Font *FontManager::getFont(const char *filename) {
+	// Append an extension if the filename doesn't already have one
+	char buffer[20];
+	strncpy(buffer, filename, 19);
+	if (!strchr(buffer, '.'))
+		strcat(buffer, ".ff");
+
+	// Check if the font is already loaded
+	for (uint i = 0; i < _entries.size(); ++i) {
+		if (!strcmp(_entries[i]->_filename, buffer))
+			return _entries[i];
+	}
+
+	Font *f = new Font(_vm, buffer);
+	_entries.push_back(f);
+	return f;
+}
+
+void FontManager::setFont(const char *filename) {
+	_currentFont = getFont(filename);
+}
+
+//--------------------------------------------------------------------------
+
+Font::Font(MadsM4Engine *vm, const char *filename) : _vm(vm) {
 	_sysFont = true;
-	_filename = NULL;
+	strncpy(_filename, filename, 19);
+	_filename[19] = '\0';
+
 	//TODO: System font
 	_fontColors[0] = _vm->_palette->BLACK;
 	_fontColors[1] = _vm->_palette->WHITE;
 	_fontColors[2] = _vm->_palette->BLACK;
 	_fontColors[3] = _vm->_palette->DARK_GRAY;
-}
-
-void Font::setFont(const char *filename) {
-	if ((_filename != NULL) && (strcmp(filename, _filename) == 0))
-		// Already using specified font, so don't bother reloading
-		return;
 
 	_sysFont = false;
-	_filename = filename;
 
 	if (_vm->isM4())
 		setFontM4(filename);
@@ -134,20 +159,21 @@ Font::~Font() {
 	}
 }
 
-void Font::setColor(uint8 color) {
+void Font::setColour(uint8 colour) {
 	if (_sysFont)
-		_fontColors[1] = color;
+		_fontColors[1] = colour;
 	else
-		_fontColors[3] = color;
+		_fontColors[3] = colour;
 }
 
-void Font::setColors(uint8 alt1, uint8 alt2, uint8 foreground) {
+void Font::setColours(uint8 col1, uint8 col2, uint8 col3) {
 	if (_sysFont)
-		_fontColors[1] = foreground;
+		_fontColors[1] = col3;
 	else {
-		_fontColors[1] = alt1;
-		_fontColors[2] = alt2;
-		_fontColors[3] = foreground;
+		_fontColors[0] = 0xFF;
+		_fontColors[1] = col1;
+		_fontColors[2] = col2;
+		_fontColors[3] = col3;
 	}
 }
 

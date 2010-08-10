@@ -105,7 +105,7 @@ public:
 	bool isMusic() {return _isMusic; }
 };
 
-class SoundManager: public Common::Singleton<SoundManager> {
+class SoundManager : public Common::Singleton<SoundManager> {
 private:
 	// Outer sound interface properties
 	MemoryBlock *_descs;
@@ -128,11 +128,15 @@ private:
 	Common::MutexRef _soundMutex;
 	bool _paused;
 
+	uint _musicVolume;
+	uint _sfxVolume;
+
 	// Internal support methods
 	void bellsBodge();
 	void musicInterface_TidySounds();
 	static void onTimer(void *data);
 	void doTimer();
+
 public:
 	SoundManager();
 	~SoundManager();
@@ -156,9 +160,11 @@ public:
 	void fadeOut();
 	void pause() { _paused = true; }
 	void resume() { _paused = false; }
-	bool getPaused() { return _paused; }
-	bool hasNativeMT32() { return _nativeMT32; }
-	bool isRoland() { return _isRoland; }
+	bool getPaused() const { return _paused; }
+	bool hasNativeMT32() const { return _nativeMT32; }
+	bool isRoland() const { return _isRoland; }
+	uint musicVolume() const { return _musicVolume; }
+	uint sfxVolume() const { return _sfxVolume; }
 
 	// The following methods implement the external sound player module
 	void musicInterface_Initialise();

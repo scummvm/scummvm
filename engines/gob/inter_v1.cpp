@@ -328,7 +328,7 @@ void Inter_v1::o1_initCursor() {
 			(height != _vm->_draw->_cursorHeight) ||
 	    (_vm->_draw->_cursorSprites->getWidth() != (width * count))) {
 
-		_vm->_draw->freeSprite(23);
+		_vm->_draw->freeSprite(Draw::kCursorSurface);
 		_vm->_draw->_cursorSprites.reset();
 		_vm->_draw->_cursorSpritesBack.reset();
 		_vm->_draw->_scummvmCursor.reset();
@@ -344,9 +344,9 @@ void Inter_v1::o1_initCursor() {
 		if (count > 0x80)
 			count -= 0x80;
 
-		_vm->_draw->initSpriteSurf(23, _vm->_draw->_cursorWidth * count,
+		_vm->_draw->initSpriteSurf(Draw::kCursorSurface, _vm->_draw->_cursorWidth * count,
 				_vm->_draw->_cursorHeight, 2);
-		_vm->_draw->_cursorSpritesBack = _vm->_draw->_spritesArray[23];
+		_vm->_draw->_cursorSpritesBack = _vm->_draw->_spritesArray[Draw::kCursorSurface];
 		_vm->_draw->_cursorSprites = _vm->_draw->_cursorSpritesBack;
 
 		_vm->_draw->_scummvmCursor =
@@ -482,14 +482,14 @@ void Inter_v1::o1_initMult() {
 	if (_vm->_mult->_animSurf &&
 	    ((oldAnimWidth != _vm->_mult->_animWidth) ||
 			 (oldAnimHeight != _vm->_mult->_animHeight))) {
-		_vm->_draw->freeSprite(22);
+		_vm->_draw->freeSprite(Draw::kAnimSurface);
 		_vm->_mult->_animSurf.reset();
 	}
 
 	if (!_vm->_mult->_animSurf) {
-		_vm->_draw->initSpriteSurf(22, _vm->_mult->_animWidth,
+		_vm->_draw->initSpriteSurf(Draw::kAnimSurface, _vm->_mult->_animWidth,
 				_vm->_mult->_animHeight, 0);
-		_vm->_mult->_animSurf = _vm->_draw->_spritesArray[22];
+		_vm->_mult->_animSurf = _vm->_draw->_spritesArray[Draw::kAnimSurface];
 	}
 
 	_vm->_video->drawSprite(*_vm->_draw->_backSurface, *_vm->_mult->_animSurf,
@@ -813,6 +813,14 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 	byte cmd;
 	bool boolRes;
 
+	// WORKAROUND: Windows Gob1 OUTODDV reload goblin stuck bug present in original
+	if ((_vm->getGameType() == kGameTypeGob1) && (_vm->_game->_script->pos() == 11294) &&
+			!scumm_stricmp(_vm->_game->_curTotFile, "avt00.tot") && VAR(59) == 1) {
+		warning("Workaround for Win Gob1 OUTODDV Reload Goblin Stuck Bug...");
+		WRITE_VAR(285, 0);
+		WRITE_VAR(59, 0);
+	}
+
 	boolRes = _vm->_game->_script->evalBoolResult();
 	if (boolRes) {
 		if ((params.counter == params.cmdCount) && (params.retFlag == 2))
@@ -914,7 +922,7 @@ bool Inter_v1::o1_printText(OpFuncParams &params) {
 	_vm->_draw->_backColor = _vm->_game->_script->readValExpr();
 	_vm->_draw->_frontColor = _vm->_game->_script->readValExpr();
 	_vm->_draw->_fontIndex = _vm->_game->_script->readValExpr();
-	_vm->_draw->_destSurface = 21;
+	_vm->_draw->_destSurface = Draw::kBackSurface;
 	_vm->_draw->_textToPrint = buf;
 	_vm->_draw->_transparency = 0;
 
@@ -1331,7 +1339,8 @@ bool Inter_v1::o1_goblinFunc(OpFuncParams &params) {
 	gobParams.retVarPtr.set(*_variables, 236);
 
 	cmd = _vm->_game->_script->readInt16();
-	_vm->_game->_script->skip(2);
+	gobParams.paramCount = _vm->_game->_script->readInt16();
+
 	if ((cmd > 0) && (cmd < 17)) {
 		objDescSet = true;
 		gobParams.extraData = _vm->_game->_script->readInt16();

@@ -40,7 +40,7 @@ enum ViewSignals {
 	kSignalAlwaysUpdate  = 0x0020,
 	kSignalForceUpdate   = 0x0040,
 	kSignalRemoveView    = 0x0080,
-	kSignalFrozen        = 0x0100,
+	kSignalFrozen        = 0x0100, // I got frozen today!!
 	kSignalExtraActor	 = 0x0200, // unused by us, defines all actors that may be included into the background if speed is too slow
 	kSignalHitObstacle	 = 0x0400, // used in the actor movement code by kDoBresen()
 	kSignalDoesntTurn	 = 0x0800, // used by _k_dirloop() to determine if an actor can turn or not
@@ -51,12 +51,13 @@ enum ViewSignals {
 };
 
 enum ViewScaleSignals {
-	kScaleSignalDoScaling	= 0x0001, // enables scaling when drawing that cel (involves scaleX and scaleY)
-	kScaleSignalUnknown1	= 0x0002, // seems to do something with globalvar 2, sets scaleX/scaleY
-	kScaleSignalUnknown2	= 0x0004 // really unknown
+	kScaleSignalDoScaling		= 0x0001, // enables scaling when drawing that cel (involves scaleX and scaleY)
+	kScaleSignalGlobalScaling	= 0x0002, // means that global scaling shall get applied on that cel (sets scaleX/scaleY)
+	kScaleSignalUnknown2		= 0x0004 // really unknown
 };
 
 struct AnimateEntry {
+	int16 givenOrderNo;
 	reg_t object;
 	GuiResourceId viewId;
 	int16 loopNo;
@@ -72,7 +73,8 @@ struct AnimateEntry {
 	bool showBitsFlag;
 	reg_t castHandle;
 };
-typedef Common::List<AnimateEntry *> AnimateList;
+typedef Common::List<AnimateEntry> AnimateList;
+typedef Common::Array<AnimateEntry> AnimateArray;
 
 class GfxCache;
 class GfxCursor;
@@ -89,9 +91,6 @@ public:
 	GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions);
 	virtual ~GfxAnimate();
 
-	// FIXME: Don't store EngineState
-	void resetEngineState(EngineState *newState) { _s = newState; }
-
 	void disposeLastCast();
 	bool invoke(List *list, int argc, reg_t *argv);
 	void makeSortedList(List *list);
@@ -103,8 +102,6 @@ public:
 	void reAnimate(Common::Rect rect);
 	void addToPicDrawCels();
 	void addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
-
-	uint16 getLastCastCount() { return _lastCastCount; }
 
 	virtual void kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t *argv);
 	virtual void kernelAddToPicList(reg_t listReference, int argc, reg_t *argv);
@@ -125,12 +122,8 @@ private:
 	GfxCursor *_cursor;
 	GfxTransitions *_transitions;
 
-	uint16 _listCount;
-	AnimateEntry *_listData;
 	AnimateList _list;
-
-	uint16 _lastCastCount;
-	AnimateEntry *_lastCastData;
+	AnimateArray _lastCastData;
 
 	bool _ignoreFastCast;
 };

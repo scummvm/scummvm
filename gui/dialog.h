@@ -44,6 +44,7 @@ enum {
 
 class Dialog : public GuiObject {
 	friend class GuiManager;
+	friend class Tooltip;
 protected:
 	Widget	*_mouseWidget;
 	Widget  *_focusedWidget;

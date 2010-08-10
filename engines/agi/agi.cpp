@@ -272,20 +272,18 @@ void AgiEngine::processEvents() {
 }
 
 void AgiEngine::pollTimer() {
-	static uint32 m = 0;
 	uint32 dm;
 
-	if (_tickTimer < m)
-		m = 0;
+	if (_tickTimer < _lastTickTimer)
+		_lastTickTimer = 0;
 
-	while ((dm = _tickTimer - m) < 5) {
+	while ((dm = _tickTimer - _lastTickTimer) < 5) {
 		processEvents();
-		if (_console->isAttached())
-			_console->onFrame();
+		_console->onFrame();
 		_system->delayMillis(10);
 		_system->updateScreen();
 	}
-	m = _tickTimer;
+	_lastTickTimer = _tickTimer;
 }
 
 void AgiEngine::agiTimerFunctionLow(void *refCon) {
@@ -345,7 +343,7 @@ int AgiEngine::agiInit() {
 
 	// clear view table
 	for (i = 0; i < MAX_VIEWTABLE; i++)
-		memset(&_game.viewTable[i], 0, sizeof(VtEntry));
+		memset(&_game.viewTable[i], 0, sizeof(struct VtEntry));
 
 	initWords();
 
@@ -506,13 +504,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	const GameSettings *g;
-
-	const char *gameid = ConfMan.get("gameid").c_str();
-	for (g = agiSettings; g->gameid; ++g)
-		if (!scumm_stricmp(g->gameid, gameid))
-			_gameId = g->id;
-
 	parseFeatures();
 
 	_rnd = new Common::RandomSource();
@@ -543,6 +534,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_allowSynthetic = false;
 
 	_tickTimer = 0;
+	_lastTickTimer = 0;
 
 	_intobj = NULL;
 
@@ -556,7 +548,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	_restartGame = false;
 
-	_oldMode = -1;
+	_oldMode = INPUT_NONE;
 
 	_predictiveDialogRunning = false;
 	_predictiveDictText = NULL;
@@ -569,6 +561,10 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_game.lastController = 0;
 	for (int i = 0; i < MAX_DIRS; i++)
 		_game.controllerOccured[i] = false;
+
+	setupOpcodes();
+	_curLogic = NULL;
+	_timerHack = 0;
 }
 
 void AgiEngine::initialize() {
@@ -583,12 +579,18 @@ void AgiEngine::initialize() {
 	} else if (getPlatform() == Common::kPlatformCoCo3) {
 		_soundemu = SOUND_EMU_COCO3;
 	} else {
-		switch (MidiDriver::detectMusicDriver(MDT_PCSPK)) {
-		case MD_PCSPK:
+		switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK|MDT_ADLIB|MDT_PCJR|MDT_MIDI))) {
+		case MT_PCSPK:
 			_soundemu = SOUND_EMU_PC;
 			break;
-		default:
+		case MT_PCJR:
+			_soundemu = SOUND_EMU_PCJR;
+			break;
+		case MT_ADLIB:
 			_soundemu = SOUND_EMU_NONE;
+			break;
+		default:
+			_soundemu = SOUND_EMU_MIDI;
 			break;
 		}
 	}
@@ -607,6 +609,8 @@ void AgiEngine::initialize() {
 			_renderMode = Common::kRenderEGA;
 			break;
 		}
+	} else {
+		_renderMode = Common::kRenderDefault;
 	}
 
 	_buttonStyle = AgiButtonStyle(_renderMode);

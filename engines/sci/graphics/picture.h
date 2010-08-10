@@ -32,6 +32,12 @@ namespace Sci {
 #define SCI_PATTERN_CODE_USE_TEXTURE 0x20
 #define SCI_PATTERN_CODE_PENSIZE 0x07
 
+enum {
+	SCI_PICTURE_TYPE_REGULAR		= 0,
+	SCI_PICTURE_TYPE_SCI11		= 1,
+	SCI_PICTURE_TYPE_SCI32		= 2
+};
+
 class GfxPorts;
 class GfxScreen;
 class GfxPalette;
@@ -50,14 +56,18 @@ public:
 
 #ifdef ENABLE_SCI32
 	int16 getSci32celCount();
-	void drawSci32Vga(int16 celNo = -1);
+	int16 getSci32celY(int16 celNo);
+	int16 getSci32celX(int16 celNo);
+	int16 getSci32celWidth(int16 celNo);
+	int16 getSci32celPriority(int16 celNo);
+	void drawSci32Vga(int16 celNo, int16 callerX, int16 callerY, int16 pictureX, bool mirrored);
 #endif
 
 private:
 	void initData(GuiResourceId resourceId);
 	void reset();
 	void drawSci11Vga();
-	void drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY, bool hasSci32Header);
+	void drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX);
 	void drawVectorData(byte *data, int size);
 	bool vectorIsNonOpcode(byte pixel);
 	void vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 &y);
@@ -80,6 +90,7 @@ private:
 
 	int16 _resourceId;
 	Resource *_resource;
+	int _resourceType;
 
 	int16 _animationNr;
 	bool _mirroredFlag;

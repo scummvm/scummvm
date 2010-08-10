@@ -71,7 +71,7 @@ const char *dubbingPath = "CD.SAM";
 const char *musicPathMask = "HUDBA%d.MID";
 
 const uint kSoundsFrequency = 13000;
-const uint kDubbingFrequency = 22000;
+const uint kDubbingFrequency = 22050;
 
 DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
  : Engine(syst) {
@@ -105,6 +105,39 @@ bool DraciEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
+static SoundArchive* openAnyPossibleDubbing() {
+	debugC(1, kDraciGeneralDebugLevel, "Trying to find original dubbing");
+	LegacySoundArchive *legacy = new LegacySoundArchive(dubbingPath, kDubbingFrequency);
+	if (legacy->isOpen() && legacy->size()) {
+		debugC(1, kDraciGeneralDebugLevel, "Found original dubbing");
+		return legacy;
+	}
+	delete legacy;
+
+	// The original uncompressed dubbing cannot be found.  Try to open the
+	// newer compressed version.
+	debugC(1, kDraciGeneralDebugLevel, "Trying to find compressed dubbing");
+	ZipSoundArchive *zip = new ZipSoundArchive();
+
+	zip->openArchive("dub-raw.zzz", "buf", RAW80, kDubbingFrequency);
+	if (zip->isOpen() && zip->size()) return zip;
+#ifdef USE_FLAC
+	zip->openArchive("dub-flac.zzz", "flac", FLAC);
+	if (zip->isOpen() && zip->size()) return zip;
+#endif
+#ifdef USE_VORBIS
+	zip->openArchive("dub-ogg.zzz", "ogg", OGG);
+	if (zip->isOpen() && zip->size()) return zip;
+#endif
+#ifdef USE_MAD
+	zip->openArchive("dub-mp3.zzz", "mp3", MP3);
+	if (zip->isOpen() && zip->size()) return zip;
+#endif
+
+	// Return an empty (but initialized) archive anyway.
+	return zip;
+}
+
 int DraciEngine::init() {
 	// Initialize graphics using following:
 	initGraphics(kScreenWidth, kScreenHeight, false);
@@ -123,15 +156,15 @@ int DraciEngine::init() {
 	_itemImagesArchive = new BArchive(itemImagesPath);
 	_stringsArchive = new BArchive(stringsPath);
 
-	_soundsArchive = new SoundArchive(soundsPath, kSoundsFrequency);
-	_dubbingArchive = new SoundArchive(dubbingPath, kDubbingFrequency);
+	_soundsArchive = new LegacySoundArchive(soundsPath, kSoundsFrequency);
+	_dubbingArchive = openAnyPossibleDubbing();
 	_sound = new Sound(_mixer);
 
-	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-	//bool adlib = (midiDriver == MD_ADLIB);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	bool native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
+	//bool adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
 
-	_midiDriver = MidiDriver::createMidi(midiDriver);
+	_midiDriver = MidiDriver::createMidi(dev);
 	if (native_mt32)
 		_midiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
@@ -253,19 +286,20 @@ void DraciEngine::handleEvents() {
 				if (escRoom >= 0) {
 
 					// Schedule room change
-					// TODO: gate 0 (always present) is not
-					// always best for returning from the
-					// map, e.g. in the starting location.
-					// also, after loading the game, we
-					// shouldn't run any gate program, but
-					// rather restore the state of all
-					// objects.
+					// TODO: gate 0 (always present) is not always best for
+					// returning from the map, e.g. in the starting location.
+					// also, after loading the game, we shouldn't run any gate
+					// program, but rather restore the state of all objects.
 					_game->scheduleEnteringRoomUsingGate(escRoom, 0);
 
-					// Immediately cancel any running animation or dubbing.
+					// Immediately cancel any running animation or dubbing and
+					// end any currently running GPL programs.  In the intro it
+					// works as intended---skipping the rest of it.
+					//
+					// In the map, this causes that animation on newly
+					// discovered locations will be re-run next time and
+					// cut-scenes won't be played.
 					_game->setExitLoop(true);
-
-					// End any currently running GPL programs
 					_script->endCurrentProgram(true);
 				}
 				break;
@@ -299,6 +333,16 @@ void DraciEngine::handleEvents() {
 			case Common::KEYCODE_F5:
 				if (event.kbd.hasFlags(0)) {
 					openMainMenuDialog();
+				}
+				break;
+			case Common::KEYCODE_COMMA:
+			case Common::KEYCODE_PERIOD:
+			case Common::KEYCODE_SLASH:
+				if ((_game->getLoopStatus() == kStatusOrdinary ||
+				    _game->getLoopStatus() == kStatusInventory) &&
+				   _game->getLoopSubstatus() == kOuterLoop &&
+				   _game->getRoomNum() != _game->getMapRoom()) {
+					_game->inventorySwitch(event.kbd.keycode);
 				}
 				break;
 			default:

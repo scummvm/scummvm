@@ -33,96 +33,81 @@
 namespace M4 {
 
 #define INTERFACE_HEIGHT 106
+class MadsInterfaceView;
 
-struct SpriteSlot {
-	int16 spriteId;
-	int16 scale;
-	uint16 spriteListIndex;
-};
+#define DEPTH_BANDS_SIZE 15
+#define MAX_ROUTE_NODES 22
 
-struct DirtyArea {
+enum ScreenCategory {CAT_NONE = 0, CAT_ACTION = 1, CAT_INV_LIST = 2, CAT_INV_VOCAB, CAT_HOTSPOT = 4,
+	CAT_INV_ANIM = 6, CAT_6, CAT_INV_SCROLLER = 7, CAT_12 = 12};
+
+class SceneNode {
+public:
+	Common::Point pt;
+	int indexes[MAX_ROUTE_NODES];
+
 	bool active;
-	bool active2;
-	Common::Rect bounds;
+
+	SceneNode() {
+		active = false;
+	}
+
+	void load(Common::SeekableReadStream *stream);
 };
 
+typedef Common::Array<SceneNode> SceneNodeList;
 
 class MadsSceneResources: public SceneResources {
-public:
-	int sceneId;
-	int artFileNum;
-	int field_4;
-	int width;
-	int height;
-
-	int objectCount;
-	MadsObject objects[32];
-	
-	int walkSize;
-	byte *walkData;
-
-	MadsSceneResources() { walkSize = 0; walkData = NULL; }
-	~MadsSceneResources() { delete walkData; }
-	void load(int sceneId);	
-};
-
-enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
-enum MAdsActionMode2 {ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_5 = 5};
-
-class MadsAction {
 private:
-	char _statusText[100];
-
-	void appendVocab(int vocabId, bool capitalise = false);
+	int getRouteFlags(const Common::Point &src, const Common::Point &dest, M4Surface *depthSurface);
 public:
-	int _currentHotspot;
-	int _objectNameId;
-	int _objectDescId;
-	int _currentAction;
-	int8 _flags1, _flags2;
-	MadsActionMode _actionMode;
-	MAdsActionMode2 _actionMode2;
-	int _articleNumber;
-	bool _lookFlag;
-	int _selectedRow;
-	// Unknown fields
-	int16 _word_86F3A;
-	int16 _word_86F42;
-	int16 _word_86F4E;
-	int16 _word_86F4A;
-	int16 _word_83334;
-	int16 _word_86F4C;
+	int _sceneId;
+	int _artFileNum;
+	int _depthStyle;
+	int _width;
+	int _height;
+	SceneNodeList _nodes;
+	Common::Array<Common::String> _setNames;
+	int _yBandsStart, _yBandsEnd;
+	int _maxScale, _minScale;
+	int _depthBands[DEPTH_BANDS_SIZE];
 
-public:
-	MadsAction();
-
-	void clear();
-	void set();
-	const char *statusText() const { return _statusText; }
+	MadsSceneResources() {}
+	~MadsSceneResources() {}
+	void load(int sceneId, const char *resName, int v0, M4Surface *depthSurface, M4Surface *surface);
+	int bandsRange() const { return _yBandsEnd - _yBandsStart; }
+	int scaleRange() const { return _maxScale - _minScale; }
+	void setRouteNode(int nodeIndex, const Common::Point &pt, M4Surface *depthSurface);
 };
-
-#define DIRTY_AREA_SIZE 90
 
 class MadsScene : public Scene, public MadsView {
 private:
 	MadsEngine *_vm;
 	MadsSceneResources _sceneResources;
-	MadsAction _action;
+	Animation *_activeAnimation;
 
 	MadsSceneLogic _sceneLogic;
 	SpriteAsset *_playerSprites;
-	DirtyArea _dirtyAreas[DIRTY_AREA_SIZE];
+	int _mouseMsgIndex;
+	int _highlightedHotspot;
 
 	void drawElements();
-	void loadScene2(const char *aaName);
+	void loadScene2(const char *aaName, int sceneNumber);
 	void loadSceneTemporary();
 	void loadSceneHotspots(int sceneNumber);
 	void clearAction();
 	void appendActionVocab(int vocabId, bool capitalise);
 	void setAction();
+	void checkStartWalk();
+	void doPreactions();
+	void doSceneStep();
+	void doAction();
 public:
 	char _aaName[100];
-	uint16 actionNouns[3];
+	bool _showMousePos;
+	Common::Point _destPos;
+	int _destFacing;
+	Common::Point _customDest;
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene();
@@ -132,7 +117,7 @@ public:
 	virtual void leaveScene();
 	virtual void loadSceneCodes(int sceneNumber, int index = 0);
 	virtual void show();
-	virtual void checkHotspotAtMousePos(int x, int y);
+	virtual void mouseMove(int x, int y);
 	virtual void leftClick(int x, int y);
 	virtual void rightClick(int x, int y);
 	virtual void setAction(int action, int objectId = -1);
@@ -141,13 +126,65 @@ public:
 	virtual void updateState();
 
 	int loadSceneSpriteSet(const char *setName);
-	void loadPlayerSprites(const char *prefix);
 	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
+	void loadAnimation(const Common::String &animName, int abortTimers);
+	Animation *activeAnimation() const { return _activeAnimation; }
+	void freeAnimation();
 
 	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; }
 	MadsSceneResources &getSceneResources() { return _sceneResources; }
-	MadsAction &getAction() { return _action; }
-	void setStatusText(const char *text) {}//***DEPRECATED***
+	bool getDepthHighBit(const Common::Point &pt);
+	bool getDepthHighBits(const Common::Point &pt);
+};
+
+#define CHEAT_SEQUENCE_MAX 8
+
+class IntegerList : public Common::Array<int> {
+public:
+	int indexOf(int v) {
+		for (uint i = 0; i < size(); ++i)
+			if (operator [](i) == v)
+				return i;
+		return -1;
+	}
+};
+
+enum InterfaceFontMode {ITEM_NORMAL, ITEM_HIGHLIGHTED, ITEM_SELECTED};
+
+enum InterfaceObjects {ACTIONS_START = 0, SCROLL_UP = 10, SCROLL_SCROLLER = 11, SCROLL_DOWN = 12,
+		INVLIST_START = 13, VOCAB_START = 18};
+
+class MadsInterfaceView : public GameInterfaceView {
+private:
+	IntegerList _inventoryList;
+	RectList _screenObjects;
+	int _highlightedElement;
+	int _topIndex;
+	uint32 _nextScrollerTicks;
+	int _cheatKeyCtr;
+
+	// Object display fields
+	int _selectedObject;
+	SpriteAsset *_objectSprites;
+	RGBList *_objectPalData;
+	int _objectFrameNumber;
+
+	void setFontMode(InterfaceFontMode newMode);
+	bool handleCheatKey(int32 keycode);
+	bool handleKeypress(int32 keycode);
+	void leaveScene();
+public:
+	MadsInterfaceView(MadsM4Engine *vm);
+	~MadsInterfaceView();
+
+	virtual void initialise();
+	virtual void setSelectedObject(int objectNumber);
+	virtual void addObjectToInventory(int objectNumber);
+	int getSelectedObject() { return _selectedObject; }
+	int getInventoryObject(int objectIndex) { return _inventoryList[objectIndex]; }
+
+	void onRefresh(RectList *rects, M4Surface *destSurface);
+	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 };
 
 } // End of namespace M4

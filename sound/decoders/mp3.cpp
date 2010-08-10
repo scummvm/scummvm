@@ -36,7 +36,9 @@
 
 #include <mad.h>
 
-
+#if defined(__PSP__)
+	#include "backends/platform/psp/mp3.h"
+#endif
 namespace Audio {
 
 
@@ -347,7 +349,18 @@ int MP3Stream::readBuffer(int16 *buffer, const int numSamples) {
 SeekableAudioStream *makeMP3Stream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse) {
+
+#if defined(__PSP__)
+	SeekableAudioStream *s = 0;
+
+	if (Mp3PspStream::isOkToCreateStream())
+		s = new Mp3PspStream(stream, disposeAfterUse);
+
+	if (!s)	// go to regular MAD mp3 stream if ME fails
+		s = new MP3Stream(stream, disposeAfterUse);
+#else
 	SeekableAudioStream *s = new MP3Stream(stream, disposeAfterUse);
+#endif
 	if (s && s->endOfData()) {
 		delete s;
 		return 0;

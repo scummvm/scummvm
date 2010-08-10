@@ -54,6 +54,7 @@ void DrasculaEngine::allocMemory() {
 	assert(crosshairCursor);
 	mouseCursor = (byte *)malloc(OBJWIDTH * OBJHEIGHT);
 	assert(mouseCursor);
+	cursorSurface = (byte *)malloc(64000);
 }
 
 void DrasculaEngine::freeMemory() {
@@ -67,6 +68,7 @@ void DrasculaEngine::freeMemory() {
 	free(frontSurface);
 	free(crosshairCursor);
 	free(mouseCursor);
+	free(cursorSurface);
 }
 
 void DrasculaEngine::moveCursor() {
@@ -90,6 +92,8 @@ void DrasculaEngine::moveCursor() {
 }
 
 void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int colorCount) {
+	debug(5, "loadPic(%s)", NamePcc);
+
 	uint dataSize = 0;
 	byte *pcxData;
 
@@ -147,8 +151,7 @@ void DrasculaEngine::showFrame(Common::SeekableReadStream *stream, bool firstFra
 	free(prevFrame);
 }
 
-void DrasculaEngine::copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
-								  int height, byte *src, byte *dest) {
+void DrasculaEngine::copyBackground(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *src, byte *dest) {
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
 	/* Unoptimized code
@@ -190,16 +193,20 @@ void DrasculaEngine::copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
 
-	for (y = 0; y < height; y++)
-		for (x = 0; x < width; x++)
-			if (src[x + y * 320] != 255)
-				dest[x + y * 320] = src[x + y * 320];
+	int ptr = 0;
+	for (y = 0; y < height; y++) {
+		for (x = 0; x < width; x++) {
+			if (src[ptr] != 255)
+				dest[ptr] = src[ptr];
+			ptr++;
+		}
+		ptr += 320 - width;
+	}
+		
 }
 
 void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer) {
-	byte *screenBuffer = (byte *)_system->lockScreen()->pixels;
-	copyBackground(xorg, yorg, xdes, ydes, width, height, buffer, screenBuffer);
-	_system->unlockScreen();
+	_system->copyRectToScreen(buffer + xorg + yorg * 320, 320, xdes, ydes, width, height);
 	_system->updateScreen();
 }
 

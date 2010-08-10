@@ -41,16 +41,20 @@ namespace Common {
 
 #include "sci/parser/vocabulary.h"
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-#include "sci/sound/iterator/core.h"
-#endif
 #include "sci/sound/soundcmd.h"
 
 namespace Sci {
 
-class SciEvent;
+class EventManager;
 class MessageState;
 class SoundCommandParser;
+
+enum AbortGameState {
+	kAbortNone = 0,
+	kAbortLoadGame = 1,
+	kAbortRestartGame = 2,
+	kAbortQuitGame = 3
+};
 
 class DirSeeker {
 protected:
@@ -72,12 +76,21 @@ enum {
 	MAX_SAVE_DIR_SIZE = MAXPATHLEN
 };
 
-/** values for EngineState.restarting_flag */
 enum {
-	SCI_GAME_IS_NOT_RESTARTING = 0,
-	SCI_GAME_WAS_RESTARTED = 1,
-	SCI_GAME_IS_RESTARTING_NOW = 2,
-	SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE = 4
+	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
+};
+
+// We assume that scripts give us savegameId 0->999 for creating a new save slot
+//  and savegameId 1000->1999 for existing save slots ffs. kfile.cpp
+enum {
+	SAVEGAMEID_OFFICIALRANGE_START = 1000,
+	SAVEGAMEID_OFFICIALRANGE_END = 1999
+};
+
+enum {
+	GAMEISRESTARTING_NONE = 0,
+	GAMEISRESTARTING_RESTART = 1,
+	GAMEISRESTARTING_RESTORE = 2
 };
 
 class FileHandle {
@@ -96,32 +109,21 @@ public:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(Vocabulary *voc, SegManager *segMan);
+	EngineState(SegManager *segMan);
 	virtual ~EngineState();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 public:
 	SegManager *_segMan; /**< The segment manager */
-	Vocabulary *_voc;
-
-	Common::String _gameId; /**< Designation of the primary object (which inherits from Game) */
 
 	/* Non-VM information */
 
-	SciEvent *_event; // Event handling
+	uint32 gameStartTime; /**< The time at which the interpreter was started */
+	uint32 lastWaitTime; /**< The last time the game invoked Wait() */
+	uint32 _screenUpdateTime;	/**< The last time the game updated the screen */
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	SfxState _sound; /**< sound subsystem */
-	int sfx_init_flags; /**< flags the sfx subsystem was initialised with */
-#endif
-	SoundCommandParser *_soundCmd;
-
-	byte restarting_flags; /**< Flags used for restarting */
-
-	uint32 game_start_time; /**< The time at which the interpreter was started */
-	uint32 last_wait_time; /**< The last time the game invoked Wait() */
-
+	void speedThrottler(uint32 neededSleep);
 	void wait(int16 ticks);
 
 	uint32 _throttleCounter; /**< total times kAnimate was invoked */
@@ -134,6 +136,9 @@ public:
 
 	DirSeeker _dirseeker;
 
+	uint _lastSaveVirtualId; // last virtual id fed to kSaveGame, if no kGetSaveFiles was called inbetween
+	uint _lastSaveNewId;    // last newly created filename-id by kSaveGame
+
 public:
 	/* VM Information */
 
@@ -142,28 +147,44 @@ public:
 	 * When called from kernel functions, the vm is re-started recursively on
 	 * the same stack. This variable contains the stack base for the current vm.
 	 */
-	int execution_stack_base;
+	int executionStackBase;
 	bool _executionStackPosChanged;   /**< Set to true if the execution stack position should be re-evaluated by the vm */
 
 	reg_t r_acc; /**< Accumulator */
-	int16 restAdjust; /**< &rest register (only used for save games) */
+	int16 restAdjust; /**< current &rest register */
 	reg_t r_prev; /**< previous comparison result */
 
 	StackPtr stack_base; /**< Pointer to the least stack element */
 	StackPtr stack_top; /**< First invalid stack element */
 
-	Script *script_000;  /**< script 000, e.g. for globals */
+	// Script state
+	ExecStack *xs;
+	reg_t *variables[4];		///< global, local, temp, param, as immediate pointers
+	reg_t *variablesBase[4];	///< Used for referencing VM ops
+	SegmentId variablesSegment[4];	///< Same as above, contains segment IDs
+	int variablesMax[4];		///< Max. values for all variables
+
+	AbortGameState abortScriptProcessing;
+	int16 gameIsRestarting; // is set when restarting (=1) or restoring the game (=2)
+
+	int scriptStepCounter; // Counts the number of steps executed
+	int scriptGCInterval; // Number of steps in between gcs
 
 	uint16 currentRoomNumber() const;
 	void setRoomNumber(uint16 roomNumber);
 
-	/* System strings */
-	SegmentId sys_strings_segment;
-	SystemStrings *sys_strings;
+	/**
+	 * Sets global variables from script 0
+	 */
+	void initGlobals();
 
-	reg_t _gameObj; /**< Pointer to the game object */
+	/**
+	 * Shrink execution stack to size.
+	 * Contains an assert if it is not already smaller.
+	 */
+	void shrinkStackToBase();
 
-	int gc_countdown; /**< Number of kernel calls until next gc */
+	int gcCountDown; /**< Number of kernel calls until next gc */
 
 public:
 	MessageState *_msgState;
@@ -176,7 +197,10 @@ public:
 	uint _memorySegmentSize;
 	byte _memorySegment[kMemorySegmentMax];
 
-	EngineState *successor; /**< Successor of this state: Used for restoring */
+	/**
+	 * Resets the engine state.
+	 */
+	void reset(bool isRestoring);
 };
 
 } // End of namespace Sci

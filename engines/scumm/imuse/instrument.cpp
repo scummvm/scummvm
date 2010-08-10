@@ -421,11 +421,11 @@ Instrument_Roland::Instrument_Roland(Serializer *s) {
 		memset(&_instrument, 0, sizeof(_instrument));
 }
 
-void Instrument_Roland::saveOrLoad (Serializer *s) {
+void Instrument_Roland::saveOrLoad(Serializer *s) {
 	if (s->isSaving()) {
-		s->saveBytes (&_instrument, sizeof(_instrument));
+		s->saveBytes(&_instrument, sizeof(_instrument));
 	} else {
-		s->loadBytes (&_instrument, sizeof(_instrument));
+		s->loadBytes(&_instrument, sizeof(_instrument));
 		memcpy(&_instrument_name, &_instrument.common.name, sizeof(_instrument.common.name));
 		_instrument_name[10] = '\0';
 		if (!_native_mt32 && getEquivalentGM() >= 128) {

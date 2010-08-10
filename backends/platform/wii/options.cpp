@@ -28,6 +28,8 @@
 #include "gui/dialog.h"
 #include "backends/fs/wii/wii-fs-factory.h"
 
+#include "common/translation.h"
+
 #include "options.h"
 
 WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
@@ -42,84 +44,84 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 		_strUnderscanY = "wii_video_default_underscan_y";
 	}
 
-	new ButtonWidget(this, _w - 108 - 16, _h - 24 - 16, 108, 24, "Ok", 'k');
-	new ButtonWidget(this, _w - 216 - 32, _h - 24 - 16, 108, 24, "Cancel", 'c');
+	new ButtonWidget(this, _w - 108 - 16, _h - 24 - 16, 108, 24, _("OK"), 0, 'k');
+	new ButtonWidget(this, _w - 216 - 32, _h - 24 - 16, 108, 24, _("Cancel"), 0, 'c');
 	_tab = new TabWidget(this, 0, 0, _w, _h - 54);
 
-	_tabVideo = _tab->addTab("Video");
+	_tabVideo = _tab->addTab(_("Video"));
 
 	new StaticTextWidget(_tab, 16, 16, 128, 16,
-							"Current video mode:", Graphics::kTextAlignRight);
+						 _("Current video mode:"), Graphics::kTextAlignRight);
 	new StaticTextWidget(_tab, 160, 16, 128, 16,
-							_doubleStrike ? "Double-strike" : "Default",
+						 _doubleStrike ? _("Double-strike") : _("Default"),
 							Graphics::kTextAlignLeft);
 
 	new StaticTextWidget(_tab, 16, 48, 128, 16,
-							"Horizontal underscan:", Graphics::kTextAlignRight);
-	_sliderUnderscanX = new SliderWidget(_tab, 160, 47, 128, 18, 'x');
+						 _("Horizontal underscan:"), Graphics::kTextAlignRight);
+	_sliderUnderscanX = new SliderWidget(_tab, 160, 47, 128, 18, 0, 'x');
 	_sliderUnderscanX->setMinValue(0);
 	_sliderUnderscanX->setMaxValue(32);
 
 	new StaticTextWidget(_tab, 16, 80, 128, 16,
-							"Vertical underscan:", Graphics::kTextAlignRight);
-	_sliderUnderscanY = new SliderWidget(_tab, 160, 79, 128, 18, 'y');
+						 _("Vertical underscan:"), Graphics::kTextAlignRight);
+	_sliderUnderscanY = new SliderWidget(_tab, 160, 79, 128, 18, 0, 'y');
 	_sliderUnderscanY->setMinValue(0);
 	_sliderUnderscanY->setMaxValue(32);
 
-	_tabInput = _tab->addTab("Input");
+	_tabInput = _tab->addTab(_("Input"));
 
 	new StaticTextWidget(_tab, 16, 16, 128, 16,
-							"GC Pad sensitivity:", Graphics::kTextAlignRight);
-	_sliderPadSensitivity = new SliderWidget(_tab, 160, 15, 128, 18, 'x');
+						 _("GC Pad sensitivity:"), Graphics::kTextAlignRight);
+	_sliderPadSensitivity = new SliderWidget(_tab, 160, 15, 128, 18, 0, 'x');
 	_sliderPadSensitivity->setMinValue(0);
 	_sliderPadSensitivity->setMaxValue(64);
 
 	new StaticTextWidget(_tab, 16, 44, 128, 16,
-							"GC Pad acceleration:", Graphics::kTextAlignRight);
-	_sliderPadAcceleration = new SliderWidget(_tab, 160, 43, 128, 18, 'y');
+						 _("GC Pad acceleration:"), Graphics::kTextAlignRight);
+	_sliderPadAcceleration = new SliderWidget(_tab, 160, 43, 128, 18, 0, 'y');
 	_sliderPadAcceleration->setMinValue(0);
 	_sliderPadAcceleration->setMaxValue(8);
 
 #ifdef USE_WII_DI
-	_tabDVD = _tab->addTab("DVD");
+	_tabDVD = _tab->addTab(_("DVD"));
 
 	new StaticTextWidget(_tab, 16, 16, 64, 16,
-							"Status:", Graphics::kTextAlignRight);
-	_textDVDStatus = new StaticTextWidget(_tab, 96, 16, 272, 16, "Unknown",
+						 _("Status:"), Graphics::kTextAlignRight);
+	_textDVDStatus = new StaticTextWidget(_tab, 96, 16, 272, 16, _("Unknown"),
 											Graphics::kTextAlignLeft);
 
-	new ButtonWidget(_tab, 16, 48, 108, 24, "Mount DVD", 'mdvd');
-	new ButtonWidget(_tab, 140, 48, 108, 24, "Unmount DVD", 'udvd');
+	new ButtonWidget(_tab, 16, 48, 108, 24, _("Mount DVD"), 0, 'mdvd');
+	new ButtonWidget(_tab, 140, 48, 108, 24, _("Unmount DVD"), 0, 'udvd');
 #endif
 
 #ifdef USE_WII_SMB
-	_tabSMB = _tab->addTab("SMB");
+	_tabSMB = _tab->addTab(_("SMB"));
 
 	new StaticTextWidget(_tab, 16, 16, 64, 16,
-							"Status:", Graphics::kTextAlignRight);
-	_textSMBStatus = new StaticTextWidget(_tab, 96, 16, 272, 16, "Unknown",
+						 _("Status:"), Graphics::kTextAlignRight);
+	_textSMBStatus = new StaticTextWidget(_tab, 96, 16, 272, 16, _("Unknown"),
 											Graphics::kTextAlignLeft);
 
 	new StaticTextWidget(_tab, 16, 52, 64, 16,
-							"Server:", Graphics::kTextAlignRight);
+						 _("Server:"), Graphics::kTextAlignRight);
 	_editSMBServer = new EditTextWidget(_tab, 96, 48, _w - 96 - 32, 24, "");
 
 	new StaticTextWidget(_tab, 16, 92, 64, 16,
-							"Share:", Graphics::kTextAlignRight);
+						 _("Share:"), Graphics::kTextAlignRight);
 	_editSMBShare = new EditTextWidget(_tab, 96, 88, _w - 96 - 32, 24, "");
 
 	new StaticTextWidget(_tab, 16, 132, 64, 16,
-							"Username:", Graphics::kTextAlignRight);
+						 _("Username:"), Graphics::kTextAlignRight);
 	_editSMBUsername = new EditTextWidget(_tab, 96, 128, _w - 96 - 32, 24, "");
 
 	new StaticTextWidget(_tab, 16, 172, 64, 16,
-							"Password:", Graphics::kTextAlignRight);
+						 _("Password:"), Graphics::kTextAlignRight);
 	_editSMBPassword = new EditTextWidget(_tab, 96, 168, _w - 96 - 32, 24, "");
 
-	new ButtonWidget(_tab, 16, 208, 108, 24, "Init network", 'net');
+	new ButtonWidget(_tab, 16, 208, 108, 24, _("Init network"), 0, 'net');
 
-	new ButtonWidget(_tab, 140, 208, 108, 24, "Mount SMB", 'msmb');
-	new ButtonWidget(_tab, 264, 208, 108, 24, "Unmount SMB", 'usmb');
+	new ButtonWidget(_tab, 140, 208, 108, 24, _("Mount SMB"), 0, 'msmb');
+	new ButtonWidget(_tab, 264, 208, 108, 24, _("Unmount SMB"), 0, 'usmb');
 #endif
 
 	_tab->setActiveTab(_tabVideo);
@@ -140,12 +142,12 @@ void WiiOptionsDialog::handleTickle() {
 #ifdef USE_WII_DI
 	if (tab == _tabDVD) {
 		if (fsf.isMounted(WiiFilesystemFactory::kDVD)) {
-			_textDVDStatus->setLabel("DVD Mounted successfully");
+			_textDVDStatus->setLabel(_("DVD Mounted successfully"));
 		} else {
 			if (fsf.failedToMount(WiiFilesystemFactory::kDVD))
-				_textDVDStatus->setLabel("Error while mounting the DVD");
+				_textDVDStatus->setLabel(_("Error while mounting the DVD"));
 			else
-				_textDVDStatus->setLabel("DVD not mounted");
+				_textDVDStatus->setLabel(_("DVD not mounted"));
 		}
 	}
 #endif
@@ -158,32 +160,32 @@ void WiiOptionsDialog::handleTickle() {
 		switch (status) {
 		case 0:
 			if (fsf.isMounted(WiiFilesystemFactory::kSMB)) {
-				label = "Network up, share mounted";
+				label = _("Network up, share mounted");
 			} else {
-				label = "Network up";
+				label = _("Network up");
 
 				if (fsf.failedToMount(WiiFilesystemFactory::kSMB))
-					label += ", error while mounting the share";
+					label += _(", error while mounting the share");
 				else
-					label += ", share not mounted";
+					label += _(", share not mounted");
 			}
 
 			break;
 
 		case -ENETDOWN:
-			label = "Network down";
+			label = _("Network down");
 			break;
 
 		case -EBUSY:
-			label = "Initialising network";
+			label = _("Initialising network");
 			break;
 
 		case -ETIMEDOUT:
-			label = "Timeout while initialising network";
+			label = _("Timeout while initialising network");
 			break;
 
 		default:
-			label = String::printf("Network not initialsed (%d)", status);
+			label = String::printf(_("Network not initialsed (%d)"), status);
 			break;
 		}
 

@@ -148,6 +148,7 @@ static const byte fragment12[] = {OP_JMPTRUE | OPSIZE16, FRAGMENT_WORD(1491),
 		OP_ONE, OP_LIBCALL | OPSIZE8, 14,									// Re-show the cursor
 		OP_IMM | OPSIZE16, FRAGMENT_WORD(322), OP_LIBCALL | OPSIZE8, 46,	// Give back the whistle
 		OP_JUMP | OPSIZE16, FRAGMENT_WORD(1568)};
+static const byte fragment13[] = {OP_ZERO, OP_GSTORE | OPSIZE16, FRAGMENT_WORD(306)};
 
 #undef FRAGMENT_WORD
 
@@ -207,6 +208,12 @@ const WorkaroundEntry workaroundList[] = {
 	// See bug report #2934211.
 	{TINSEL_V1, true, 352601285, 1569, sizeof(fragment11), fragment11},
 	{TINSEL_V1, false, 352602304, 1488, sizeof(fragment12), fragment12},
+	
+	// DW2: Corrects a bug with global 306 not being cleared if you leave
+	// the marketplace scene whilst D'Blah is talking (even if it's not
+	// actually audible); returning to the scene and clicking on him multiple 
+	// times would cause the game to crash
+	{TINSEL_V2, true, 1109294728, 0, sizeof(fragment13), fragment13},
 
 	{TINSEL_V0, false, 0, 0, 0, NULL}
 };

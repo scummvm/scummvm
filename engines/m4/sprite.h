@@ -115,19 +115,7 @@ public:
 	void loadDeltaRle(Common::SeekableReadStream* rleData, int destX, int destY);
 	void loadMadsSprite(Common::SeekableReadStream* source);
 
-	void draw1(M4Surface *destSurface, int scale, int depth, int xp, int yp) {
-		// TODO: Properly implement drawing
-		copyTo(destSurface, xp, yp, 0);
-	}
-	void draw2(M4Surface *destSurface, int depth, int xp, int yp) {
-		// TODO: Properly implement drawing
-		copyTo(destSurface, xp, yp, 0);
-	}
-	void draw3(M4Surface *destSurface, int xp, int yp) {
-		// TODO: Properly implement drawing
-		copyTo(destSurface, xp, yp, 0);
-	}
-	byte getTransparentColor() const;
+	byte getTransparencyIndex() const;
 protected:
 };
 

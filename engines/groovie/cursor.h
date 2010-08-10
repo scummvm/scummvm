@@ -26,9 +26,8 @@
 #ifndef GROOVIE_CURSOR_H
 #define GROOVIE_CURSOR_H
 
-#include "common/system.h"
 #include "common/array.h"
-#include "common/file.h"
+#include "common/system.h"
 
 namespace Common {
 	class MacResManager;

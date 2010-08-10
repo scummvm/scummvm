@@ -23,6 +23,7 @@
  *
  */
 
+#include "mohawk/resource.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_saveload.h"
 
@@ -31,11 +32,9 @@
 namespace Mohawk {
 
 RivenSaveLoad::RivenSaveLoad(MohawkEngine_Riven *vm, Common::SaveFileManager *saveFileMan) : _vm(vm), _saveFileMan(saveFileMan) {
-	_loadFile = new MohawkArchive();
 }
 
 RivenSaveLoad::~RivenSaveLoad() {
-	delete _loadFile;
 }
 
 Common::StringArray RivenSaveLoad::generateSaveGameList() {
@@ -63,7 +62,8 @@ static uint16 mapOldStackIDToNew(uint16 oldID) {
 	case 8:
 		return aspit;
 	}
-	error ("Unknown old stack ID %d", oldID);
+
+	error("Unknown old stack ID %d", oldID);
 	return 0;
 }
 
@@ -86,7 +86,8 @@ static uint16 mapNewStackIDToOld(uint16 newID) {
 	case tspit:
 		return 4;
 	}
-	error ("Unknown new stack ID %d", newID);
+
+	error("Unknown new stack ID %d", newID);
 	return 0;
 }
 
@@ -94,26 +95,28 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 	if (_vm->getFeatures() & GF_DEMO) // Don't load games in the demo
 		return false;
 
-	Common::InSaveFile *loadFile;
-	if (!(loadFile = _saveFileMan->openForLoading(filename.c_str())))
+	Common::InSaveFile *loadFile =  _saveFileMan->openForLoading(filename);
+	if (!loadFile)
 		return false;
-	debug (0, "Loading game from \'%s\'", filename.c_str());
 
-	_loadFile->open(loadFile);
+	debug(0, "Loading game from \'%s\'", filename.c_str());
+
+	MohawkArchive *mhk = new MohawkArchive();
+	mhk->open(loadFile);
 
 	// First, let's make sure we're using a saved game file from this version of Riven by checking the VERS resource
-	Common::SeekableReadStream *vers = _loadFile->getRawData(ID_VERS, 1);
+	Common::SeekableReadStream *vers = mhk->getRawData(ID_VERS, 1);
 	uint32 saveGameVersion = vers->readUint32BE();
 	delete vers;
 	if ((saveGameVersion == kCDSaveGameVersion && (_vm->getFeatures() & GF_DVD))
 		|| (saveGameVersion == kDVDSaveGameVersion && !(_vm->getFeatures() & GF_DVD))) {
-		warning ("Incompatible saved game versions. No support for this yet.");
-		delete _loadFile;
+		warning("Incompatible saved game versions. No support for this yet.");
+		delete mhk;
 		return false;
 	}
 
 	// Now, we'll read in the variable values.
-	Common::SeekableReadStream *vars = _loadFile->getRawData(ID_VARS, 1);
+	Common::SeekableReadStream *vars = mhk->getRawData(ID_VARS, 1);
 	Common::Array<uint32> rawVariables;
 
 	while (!vars->eos()) {
@@ -126,7 +129,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 
 	// Next, we set the variables based on the name found by the index in the VARS resource.
 	// TODO: Merge with code in mohawk.cpp for loading names?
-	Common::SeekableReadStream *names = _loadFile->getRawData(ID_NAME, 1);
+	Common::SeekableReadStream *names = mhk->getRawData(ID_NAME, 1);
 
 	uint16 namesCount = names->readUint16BE();
 	uint16 *stringOffsets = new uint16[namesCount];
@@ -151,9 +154,10 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 			c = (char)names->readByte();
 		}
 
-		// WORKAROUND: Some versions have two extra variables. However, the saves are
-		// still compatible with other saves of the same version. Are these used in the
-		// original interpreter anywhere? (They come from DVD v1.1)
+		// TODO: Some versions have two extra variables. However, the saves are
+		// still compatible with other saves of the same version (they come from DVD v1.1).
+		// There are used in the whark number puzzle. I thought jleftpos and jrightpos were
+		// for this purpose.
 		if (name == "dropLeftStart" || name == "dropRightStart")
 			continue;
 
@@ -161,11 +165,11 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 
 		*var = rawVariables[i];
 
-		if (!scumm_stricmp(name.c_str(), "CurrentStackID"))
+		if (name.equalsIgnoreCase("CurrentStackID"))
 			stackID = mapOldStackIDToNew(rawVariables[i]);
-		else if (!scumm_stricmp(name.c_str(), "CurrentCardID"))
+		else if (name.equalsIgnoreCase("CurrentCardID"))
 			cardID = rawVariables[i];
-		else if (!scumm_stricmp(name.c_str(), "ReturnStackID"))
+		else if (name.equalsIgnoreCase("ReturnStackID"))
 			*var = mapOldStackIDToNew(rawVariables[i]);
 	}
 
@@ -179,7 +183,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 	_vm->_zipModeData.clear();
 
 	// Finally, we load in zip mode data.
-	Common::SeekableReadStream *zips = _loadFile->getRawData(ID_ZIPS, 1);
+	Common::SeekableReadStream *zips = mhk->getRawData(ID_ZIPS, 1);
 	uint16 zipsRecordCount = zips->readUint16BE();
 	for (uint16 i = 0; i < zipsRecordCount; i++) {
 		ZipMode zip;
@@ -189,10 +193,10 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 		zip.id = zips->readUint16BE();
 		_vm->_zipModeData.push_back(zip);
 	}
-	delete zips;
 
-	delete _loadFile;
-	_loadFile = NULL;
+	delete zips;
+	delete mhk;
+
 	return true;
 }
 
@@ -211,7 +215,14 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVARSSection() {
 	for (uint32 i = 0; i < _vm->getVarCount(); i++) {
 		stream->writeUint32BE(0); // Unknown
 		stream->writeUint32BE(0); // Unknown
-		stream->writeUint32BE(_vm->getGlobalVar(i));
+
+		// Remap returnstackid here because we don't actually want to change
+		// our internal returnstackid.
+		uint32 variable = _vm->getGlobalVar(i);
+		if (_vm->getGlobalVarName(i) == "returnstackid")
+			variable = mapNewStackIDToOld(variable);
+
+		stream->writeUint32BE(variable);
 	}
 
 	return stream;
@@ -257,17 +268,17 @@ bool RivenSaveLoad::saveGame(Common::String filename) {
 	// Note, this code is still WIP. It works quite well for now.
 
 	// Make sure we have the right extension
-	if (!filename.hasSuffix(".rvn") && !filename.hasSuffix(".RVN"))
+	if (!filename.matchString("*.rvn", true))
 		filename += ".rvn";
 
 	// Convert class variables to variable numbers
 	*_vm->matchVarToString("currentstackid") = mapNewStackIDToOld(_vm->getCurStack());
 	*_vm->matchVarToString("currentcardid") = _vm->getCurCard();
-	*_vm->matchVarToString("returnstackid") = mapNewStackIDToOld(*_vm->matchVarToString("returnstackid"));
 
-	Common::OutSaveFile *saveFile;
-	if (!(saveFile = _saveFileMan->openForSaving(filename.c_str())))
+	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(filename);
+	if (!saveFile)
 		return false;
+
 	debug (0, "Saving game to \'%s\'", filename.c_str());
 
 	Common::MemoryWriteStreamDynamic *versSection = genVERSSection();
@@ -392,7 +403,7 @@ bool RivenSaveLoad::saveGame(Common::String filename) {
 
 void RivenSaveLoad::deleteSave(Common::String saveName) {
 	debug (0, "Deleting save file \'%s\'", saveName.c_str());
-	_saveFileMan->removeSavefile(saveName.c_str());
+	_saveFileMan->removeSavefile(saveName);
 }
 
 } // End of namespace Mohawk

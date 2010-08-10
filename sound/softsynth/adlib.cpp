@@ -27,6 +27,7 @@
 #include "common/util.h"
 #include "sound/fmopl.h"
 #include "sound/musicplugin.h"
+#include "common/translation.h"
 
 #ifdef DEBUG_ADLIB
 static int tick;
@@ -1586,7 +1587,7 @@ void MidiDriver_ADLIB::adlib_note_on(int chan, byte note, int mod) {
 class AdLibEmuMusicPlugin : public MusicPluginObject {
 public:
 	const char *getName() const {
-		return "AdLib Emulator";
+		return _s("AdLib Emulator");
 	}
 
 	const char *getId() const {
@@ -1594,7 +1595,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
 };
 
 MusicDevices AdLibEmuMusicPlugin::getDevices() const {
@@ -1603,19 +1604,10 @@ MusicDevices AdLibEmuMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error AdLibEmuMusicPlugin::createInstance(MidiDriver **mididriver) const {
+Common::Error AdLibEmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
 	*mididriver = new MidiDriver_ADLIB(g_system->getMixer());
 
 	return Common::kNoError;
-}
-
-MidiDriver *MidiDriver_ADLIB_create() {
-	MidiDriver *mididriver;
-
-	AdLibEmuMusicPlugin p;
-	p.createInstance(&mididriver);
-
-	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(ADLIB)

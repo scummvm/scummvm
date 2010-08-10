@@ -26,8 +26,8 @@
 #include "common/archive.h"
 #include "common/macresman.h"
 
-#include "groovie/groovie.h"
 #include "groovie/resource.h"
+#include "groovie/groovie.h"
 
 namespace Groovie {
 

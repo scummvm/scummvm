@@ -18,18 +18,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/backends/platform/psp/osys_psp.cpp $
- * $Id: osys_psp.cpp 47541 2010-01-25 01:39:44Z lordhoto $
+ * $URL$
+ * $Id$
  *
  */
 
 #ifndef PSP_DISPLAY_MAN_H
 #define PSP_DISPLAY_MAN_H
 
+#include "backends/platform/psp/thread.h"
+
 /**
  *	Class used only by DisplayManager to start/stop GU rendering
  */
-class MasterGuRenderer {
+class MasterGuRenderer : public PspThreadable {
 public:
 	MasterGuRenderer() : _lastRenderTime(0), _renderFinished(true), _callbackId(-1) {}
 	void guInit();
@@ -37,15 +39,15 @@ public:
 	void guPostRender();
 	void guShutDown();
 	bool isRenderFinished() { return _renderFinished; }
-	void setupCallbackThread();
+	void setupCallbackThread();	
 private:
+	virtual void threadFunction();			// for the display callback thread
 	static uint32 _displayList[];
-	uint32 _lastRenderTime;					// For measuring rendering
+	uint32 _lastRenderTime;					// For measuring rendering time
 	void guProgramDisplayBufferSizes();
-	static int guCallbackThread(SceSize, void *);	// for the graphics callbacks
-	static int guCallback(int, int, void *__this);
-	bool _renderFinished;
-	int _callbackId;
+	static int guCallback(int, int, void *__this);	// for the display callback
+	bool _renderFinished;					// for sync with render callback
+	int _callbackId;						// to keep track of render callback	
 };
 
 class Screen;
@@ -68,7 +70,7 @@ public:
 	~DisplayManager();
 
 	void init();
-	void renderAll();
+	bool renderAll();	// return true if rendered or nothing dirty. False otherwise
 	bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);
 	int getGraphicsMode() const { return _graphicsMode; }
@@ -83,12 +85,12 @@ public:
 	void setSizeAndPixelFormat(uint width, uint height, const Graphics::PixelFormat *format);
 
 	// Getters
-	float getScaleX() { return _displayParams.scaleX; }
-	float getScaleY() { return _displayParams.scaleY; }
-	uint32 getOutputWidth() { return _displayParams.screenOutput.width; }
-	uint32 getOutputHeight() { return _displayParams.screenOutput.height; }
-	uint32 getOutputBitsPerPixel() { return _displayParams.outputBitsPerPixel; }
-	Common::List<Graphics::PixelFormat> getSupportedPixelFormats();
+	float getScaleX() const { return _displayParams.scaleX; }
+	float getScaleY() const { return _displayParams.scaleY; }
+	uint32 getOutputWidth() const { return _displayParams.screenOutput.width; }
+	uint32 getOutputHeight() const { return _displayParams.screenOutput.height; }
+	uint32 getOutputBitsPerPixel() const { return _displayParams.outputBitsPerPixel; }
+	Common::List<Graphics::PixelFormat> getSupportedPixelFormats() const;
 
 private:
 	struct GlobalDisplayParams {

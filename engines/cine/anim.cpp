@@ -49,8 +49,6 @@ struct AnimHeader2Struct {
 	uint16 field_E;
 };
 
-Common::Array<AnimData> animDataTable;
-
 static const AnimDataEntry transparencyData[] = {
 	{"ALPHA", 0xF},
 	{"TITRE2", 0xF},
@@ -400,7 +398,7 @@ void AnimData::save(Common::OutSaveFile &fHandle) const {
  */
 void freeAnimDataRange(byte startIdx, byte numIdx) {
 	for (byte i = 0; i < numIdx; i++) {
-		animDataTable[startIdx + i].clear();
+		g_cine->_animDataTable[startIdx + i].clear();
 	}
 }
 
@@ -514,7 +512,7 @@ void loadAnimHeader(AnimHeaderStruct &animHeader, Common::MemoryReadStream readS
  */
 int emptyAnimSpace(int start = 0) {
 	for (; start < NUM_MAX_ANIMDATA; start++) {
-		if (!animDataTable[start].data()) {
+		if (!g_cine->_animDataTable[start].data()) {
 			return start;
 		}
 	}
@@ -540,7 +538,7 @@ int loadSpl(const char *resourceName, int16 idx) {
 
 	entry = idx < 0 ? emptyAnimSpace() : idx;
 	assert(entry >= 0);
-	animDataTable[entry].load(dataPtr, ANIM_RAW, partBuffer[foundFileIdx].unpackedSize, 1, foundFileIdx, 0, currentPartName);
+	g_cine->_animDataTable[entry].load(dataPtr, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize, 1, foundFileIdx, 0, currentPartName);
 
 	free(dataPtr);
 	return entry + 1;
@@ -570,7 +568,7 @@ int loadMsk(const char *resourceName, int16 idx) {
 	entry = idx < 0 ? emptyAnimSpace() : idx;
 	assert(entry >= 0);
 	for (int16 i = 0; i < animHeader.numFrames; i++, entry++) {
-		animDataTable[entry].load(ptr, ANIM_MASK, animHeader.frameWidth, animHeader.frameHeight, foundFileIdx, i, currentPartName);
+		g_cine->_animDataTable[entry].load(ptr, ANIM_MASK, animHeader.frameWidth, animHeader.frameHeight, foundFileIdx, i, currentPartName);
 		ptr += animHeader.frameWidth * animHeader.frameHeight;
 	}
 
@@ -621,7 +619,7 @@ int loadAni(const char *resourceName, int16 idx) {
 			transparentColor = i < 1 ? 0xE : 0;
 		}
 
-		animDataTable[entry].load(ptr, ANIM_MASKSPRITE, animHeader.frameWidth, animHeader.frameHeight, foundFileIdx, i, currentPartName, transparentColor);
+		g_cine->_animDataTable[entry].load(ptr, ANIM_MASKSPRITE, animHeader.frameWidth, animHeader.frameHeight, foundFileIdx, i, currentPartName, transparentColor);
 		ptr += animHeader.frameWidth * animHeader.frameHeight;
 	}
 
@@ -737,7 +735,7 @@ int loadSet(const char *resourceName, int16 idx) {
 			type = ANIM_FULLSPRITE;
 		}
 
-		animDataTable[entry].load(dataPtr, type, header2.width, header2.height, foundFileIdx, i, currentPartName);
+		g_cine->_animDataTable[entry].load(dataPtr, type, header2.width, header2.height, foundFileIdx, i, currentPartName);
 	}
 
 	free(origDataPtr);
@@ -759,7 +757,7 @@ int loadSeq(const char *resourceName, int16 idx) {
 	byte *dataPtr = readBundleFile(foundFileIdx);
 	int entry = idx < 0 ? emptyAnimSpace() : idx;
 
-	animDataTable[entry].load(dataPtr+0x16, ANIM_RAW, partBuffer[foundFileIdx].unpackedSize-0x16, 1, foundFileIdx, 0, currentPartName);
+	g_cine->_animDataTable[entry].load(dataPtr+0x16, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize-0x16, 1, foundFileIdx, 0, currentPartName);
 	free(dataPtr);
 	return entry + 1;
 }

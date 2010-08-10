@@ -38,15 +38,15 @@ namespace Cruise {
 enum RelationType {RT_REL = 30, RT_MSG = 50};
 
 static int playerDontAskQuit;
-#if !defined(__DS__)
-//unsigned int timer = 0;
-#endif
+unsigned int timer = 0;
+
+gfxEntryStruct* linkedMsgList = NULL;
 
 void MemoryList() {
-	if (!CVars.memList.empty()) {
+	if (!_vm->_memList.empty()) {
 		printf("Current list of un-freed memory blocks:\n");
 		Common::List<byte *>::iterator i;
-		for (i = CVars.memList.begin(); i != CVars.memList.end(); ++i) {
+		for (i = _vm->_memList.begin(); i != _vm->_memList.end(); ++i) {
 			byte *v = *i;
 			printf("%s - %d\n", (const char *)(v - 68), *((int32 *)(v - 72)));
 		}
@@ -71,7 +71,7 @@ void *MemoryAlloc(uint32 size, bool clearFlag, int32 lineNum, const char *fname)
 
 		// Add the block to the memory list
 		result = v + 64 + 8;
-		CVars.memList.push_back(result);
+		_vm->_memList.push_back(result);
 	} else
 		result = (byte *)malloc(size);
 
@@ -89,7 +89,7 @@ void MemoryFree(void *v) {
 		byte *p = (byte *)v;
 		assert(*((uint32 *) (p - 4)) == 0x41424344);
 
-		CVars.memList.remove(p);
+		_vm->_memList.remove(p);
 		free(p - 8 - 64);
 	} else
 		free(v);
@@ -103,8 +103,8 @@ void drawBlackSolidBoxSmall() {
 void loadPackedFileToMem(int fileIdx, uint8 *buffer) {
 	changeCursor(CURSOR_DISK);
 
-	currentVolumeFile.seek(volumePtrToFileDescriptor[fileIdx].offset, SEEK_SET);
-	currentVolumeFile.read(buffer, volumePtrToFileDescriptor[fileIdx].size);
+	_vm->_currentVolumeFile.seek(volumePtrToFileDescriptor[fileIdx].offset, SEEK_SET);
+	_vm->_currentVolumeFile.read(buffer, volumePtrToFileDescriptor[fileIdx].size);
 }
 
 int getNumObjectsByClass(int scriptIdx, int param) {
@@ -951,7 +951,7 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 									int color;
 
 									if (objectState2 == -2)
-										color = CVars.subColor;
+										color = subColor;
 									else
 										color = -1;
 
@@ -1388,12 +1388,12 @@ void closeAllMenu() {
 		freeMenu(menuTable[1]);
 		menuTable[1] = NULL;
 	}
-	if (CVars.linkedMsgList) {
+	if (linkedMsgList) {
 		ASSERT(0);
-//					freeMsgList(CVars.linkedMsgList);
+//					freeMsgList(linkedMsgList);
 	}
 
-	CVars.linkedMsgList = NULL;
+	linkedMsgList = NULL;
 	linkedRelation = NULL;
 }
 
@@ -1543,12 +1543,12 @@ int CruiseEngine::processInput() {
 					freeMenu(menuTable[0]);
 					menuTable[0] = NULL;
 
-					if (CVars.linkedMsgList) {
+					if (linkedMsgList) {
 						ASSERT(0);
-						//					freeMsgList(CVars.linkedMsgList);
+						//					freeMsgList(linkedMsgList);
 					}
 
-					CVars.linkedMsgList = NULL;
+					linkedMsgList = NULL;
 					linkedRelation = NULL;
 
 					changeCursor(CURSOR_NORMAL);
@@ -1580,10 +1580,10 @@ int CruiseEngine::processInput() {
 					menuTable[0] = NULL;
 				}
 
-				if (CVars.linkedMsgList) {
-//					freeMsgList(CVars.linkedMsgList);
+				if (linkedMsgList) {
+//					freeMsgList(linkedMsgList);
 				}
-				CVars.linkedMsgList = NULL;
+				linkedMsgList = NULL;
 				linkedRelation = NULL;
 				changeCursor(CURSOR_NORMAL);
 			} else { // call sub relation when clicking in inventory
@@ -1653,7 +1653,7 @@ int CruiseEngine::processInput() {
 							strcpy(text, menuTable[0]->stringPtr);
 							strcat(text, ":");
 							strcat(text, currentMenuElement->string);
-							CVars.linkedMsgList = renderText(320, (const char *)text);
+							linkedMsgList = renderText(320, (const char *)text);
 							changeCursor(CURSOR_CROSS);
 						}
 					}
@@ -1831,19 +1831,17 @@ void CruiseEngine::mainLoop() {
 				if (!skipEvents)
 					skipEvents = manageEvents();
 
-				if (playerDontAskQuit) break;
+				if (playerDontAskQuit)
+					break;
 
-				if (_vm->getDebugger()->isAttached())
-					_vm->getDebugger()->onFrame();
+				_vm->getDebugger()->onFrame();
 			} while (currentTick < lastTick + _gameSpeed);
 		} else {
 			manageEvents();
 
 			if (currentTick >= (lastTickDebug + 10)) {
 				lastTickDebug = currentTick;
-
-				if (_vm->getDebugger()->isAttached())
-					_vm->getDebugger()->onFrame();
+				_vm->getDebugger()->onFrame();
 			}
 		}
 		if (playerDontAskQuit)

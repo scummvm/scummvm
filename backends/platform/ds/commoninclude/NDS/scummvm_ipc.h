@@ -33,34 +33,32 @@
 //////////////////////////////////////////////////////////////////////
 
 
-typedef struct sTransferSoundData {
-//---------------------------------------------------------------------------------
-        const void *data;
-        u32 len;
-        u32 rate;
-        u8 vol;
-        u8 pan;
-        u8 format;
-        u8 PADDING;
-} TransferSoundData, * pTransferSoundData;
+typedef struct {
+	const void *data;
+	u32 len;
+	u32 rate;
+	u8 vol;
+	u8 pan;
+	u8 format;
+	u8 PADDING;
+} TransferSoundData;
 
 
 
 
 //---------------------------------------------------------------------------------
-typedef struct sTransferSound {
-//---------------------------------------------------------------------------------
-  TransferSoundData data[16];
-  u8 count;
-  u8 PADDING[3];
-} TransferSound, * pTransferSound;
+typedef struct {
+	TransferSoundData data[16];
+	u8 count;
+	u8 PADDING[3];
+} TransferSound;
 
 
 
-typedef struct _adpcmBuffer {
-	u8* buffer[8];
+typedef struct {
+	u8 *buffer[8];
 	bool filled[8];
-	u8* arm7Buffer[8];
+	u8 *arm7Buffer[8];
 	bool arm7Dirty[8];
 	bool semaphore;
 } adpcmBuffer;
@@ -82,22 +80,22 @@ typedef struct scummvmTransferRegion {
     uint8 curtime[8];        // current time response from RTC
 
     struct {
-      u8 rtc_command;
-      u8 rtc_year;           //add 2000 to get 4 digit year
-      u8 rtc_month;          //1 to 12
-      u8 rtc_day;            //1 to (days in month)
+      u8 command;
+      u8 year;           //add 2000 to get 4 digit year
+      u8 month;          //1 to 12
+      u8 day;            //1 to (days in month)
 
-      u8 rtc_incr;
-      u8 rtc_hours;          //0 to 11 for AM, 52 to 63 for PM
-      u8 rtc_minutes;        //0 to 59
-      u8 rtc_seconds;        //0 to 59
-    };
+      u8 incr;
+      u8 hours;          //0 to 11 for AM, 52 to 63 for PM
+      u8 minutes;        //0 to 59
+      u8 seconds;        //0 to 59
+    } rtc;
   };
 
   uint16 battery;            // battery life ??  hopefully.  :)
   uint16 aux;                // i have no idea...
 
-  pTransferSound soundData;
+  TransferSound *soundData;
 
   adpcmBuffer adpcm;
 
@@ -127,7 +125,7 @@ typedef struct scummvmTransferRegion {
   // Streaming sound
   bool streamFillNeeded[4];
   int streamPlayingSection;
-} scummTransferRegion, * pscummTransferRegion;
+} scummTransferRegion;
 
 //////////////////////////////////////////////////////////////////////
 

@@ -28,6 +28,9 @@
 
 #include "engines/engine.h"
 #include "common/util.h"
+#include "common/random.h"
+#include "sci/engine/vm_types.h"	// for Selector
+#include "sci/debug.h"	// for DebugState
 
 struct ADGameDescription;
 
@@ -41,9 +44,6 @@ struct ADGameDescription;
  */
 namespace Sci {
 
-// Uncomment this to use old music functions
-//#define USE_OLD_MUSIC_FUNCTIONS
-
 struct EngineState;
 class Vocabulary;
 class ResourceManager;
@@ -51,6 +51,8 @@ class Kernel;
 class GameFeatures;
 class Console;
 class AudioPlayer;
+class SoundCommandParser;
+class EventManager;
 
 class GfxAnimate;
 class GfxCache;
@@ -58,14 +60,16 @@ class GfxCompare;
 class GfxControls;
 class GfxCoordAdjuster;
 class GfxCursor;
+class GfxMacIconBar;
 class GfxMenu;
 class GfxPaint;
 class GfxPaint16;
+class GfxPaint32;
 class GfxPalette;
 class GfxPorts;
 class GfxScreen;
-class SciGui;
-
+class GfxText16;
+class GfxTransitions;
 
 #ifdef ENABLE_SCI32
 class SciGui32;
@@ -82,22 +86,91 @@ enum kDebugLevels {
 	kDebugLevelFuncCheck  = 1 << 5,
 	kDebugLevelBresen     = 1 << 6,
 	kDebugLevelSound      = 1 << 7,
-	kDebugLevelGfxDriver  = 1 << 8,
-	kDebugLevelBaseSetter = 1 << 9,
-	kDebugLevelParser     = 1 << 10,
-	kDebugLevelMenu       = 1 << 11,
-	kDebugLevelSaid       = 1 << 12,
-	kDebugLevelFile       = 1 << 13,
-	kDebugLevelTime       = 1 << 14,
-	kDebugLevelRoom       = 1 << 15,
-	kDebugLevelAvoidPath  = 1 << 16,
-	kDebugLevelDclInflate = 1 << 17,
-	kDebugLevelVM         = 1 << 18,
-	kDebugLevelScripts    = 1 << 19,
-	kDebugLevelGC         = 1 << 20,
-	kDebugLevelSci0Pic    = 1 << 21,
-	kDebugLevelResMan     = 1 << 22,
-	kDebugLevelOnStartup  = 1 << 23
+	kDebugLevelBaseSetter = 1 << 8,
+	kDebugLevelParser     = 1 << 9,
+	kDebugLevelSaid       = 1 << 10,
+	kDebugLevelFile       = 1 << 11,
+	kDebugLevelTime       = 1 << 12,
+	kDebugLevelRoom       = 1 << 13,
+	kDebugLevelAvoidPath  = 1 << 14,
+	kDebugLevelDclInflate = 1 << 15,
+	kDebugLevelVM         = 1 << 16,
+	kDebugLevelScripts    = 1 << 17,
+	kDebugLevelGC         = 1 << 18,
+	kDebugLevelResMan     = 1 << 19,
+	kDebugLevelOnStartup  = 1 << 20
+};
+
+enum SciGameId {
+	GID_ASTROCHICKEN,
+	GID_CAMELOT,
+	GID_CASTLEBRAIN,
+	GID_CHRISTMAS1988,
+	GID_CHRISTMAS1990,
+	GID_CHRISTMAS1992,
+	GID_CNICK_KQ,
+	GID_CNICK_LAURABOW,
+	GID_CNICK_LONGBOW,
+	GID_CNICK_LSL,
+	GID_CNICK_SQ,
+	GID_ECOQUEST,
+	GID_ECOQUEST2,
+	GID_FAIRYTALES,
+	GID_FREDDYPHARKAS,
+	GID_FUNSEEKER,
+	GID_GK1,
+	GID_GK2,
+	GID_HOYLE1,
+	GID_HOYLE2,
+	GID_HOYLE3,
+	GID_HOYLE4,
+	GID_ICEMAN,
+	GID_ISLANDBRAIN,
+	GID_JONES,
+	GID_KQ1,
+	GID_KQ4,
+	GID_KQ5,
+	GID_KQ6,
+	GID_KQ7,
+	GID_LAURABOW,
+	GID_LAURABOW2,
+	GID_LIGHTHOUSE,
+	GID_LONGBOW,
+	GID_LSL1,
+	GID_LSL2,
+	GID_LSL3,
+	GID_LSL5,
+	GID_LSL6,
+	GID_LSL6HIRES, // We have a separate ID for LSL6 SCI32, because it's actually a completely different game
+	GID_LSL7,
+	GID_MOTHERGOOSE,
+	GID_MOTHERGOOSEHIRES, // We have a separate ID for Mother Goose SCI32, because it's actually a completely different game
+	GID_MSASTROCHICKEN,
+	GID_PEPPER,
+	GID_PHANTASMAGORIA,
+	GID_PHANTASMAGORIA2,
+	GID_PQ1,
+	GID_PQ2,
+	GID_PQ3,
+	GID_PQ4,
+	GID_PQSWAT,
+	GID_QFG1,
+	GID_QFG1VGA,
+	GID_QFG2,
+	GID_QFG3,
+	GID_QFG4,
+	GID_RAMA,
+	GID_SHIVERS,
+	GID_SHIVERS2,
+	GID_SLATER,
+	GID_SQ1,
+	GID_SQ3,
+	GID_SQ4,
+	GID_SQ5,
+	GID_SQ6,
+	GID_TORIN,
+
+	GID_FANMADE	// FIXME: Do we really need/want this?
 };
 
 /** SCI versions */
@@ -116,12 +189,6 @@ enum SciVersion {
 	SCI_VERSION_3 // LSL7, RAMA, Lighthouse
 };
 
-enum MoveCountType {
-	kMoveCountUninitialized,
-	kIgnoreMoveCount,
-	kIncrementMoveCount
-};
-
 /** Supported languages */
 enum kLanguage {
 	K_LANG_NONE = 0,
@@ -138,7 +205,7 @@ enum kLanguage {
 class SciEngine : public Engine {
 	friend class Console;
 public:
-	SciEngine(OSystem *syst, const ADGameDescription *desc);
+	SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gameId);
 	~SciEngine();
 
 	// Engine APIs
@@ -153,17 +220,21 @@ public:
 	bool canSaveGameStateCurrently();
 	void syncSoundSettings();
 
-	const char* getGameID() const;
+	const SciGameId &getGameId() const { return _gameId; }
+	const char *getGameIdStr() const;
 	int getResourceVersion() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
-	uint32 getFlags() const;
 	bool isDemo() const;
 
 	inline ResourceManager *getResMan() const { return _resMan; }
 	inline Kernel *getKernel() const { return _kernel; }
 	inline EngineState *getEngineState() const { return _gamestate; }
 	inline Vocabulary *getVocabulary() const { return _vocabulary; }
+	inline EventManager *getEventManager() const { return _eventMan; }
+	inline reg_t getGameObject() const { return _gameObj; }
+
+	Common::RandomSource &getRNG() { return _rng; }
 
 	Common::String getSavegameName(int nr) const;
 	Common::String getSavegamePattern() const;
@@ -175,6 +246,12 @@ public:
 
 	/** Remove the 'TARGET-' prefix of the given filename, if present. */
 	Common::String unwrapFilename(const Common::String &name) const;
+
+	void sleep(uint32 msecs);
+
+	void scriptDebug();
+	bool checkExportBreakpoint(uint16 script, uint16 pubfunct);
+	bool checkSelectorBreakpoint(reg_t send_obj, int selector);
 
 public:
 
@@ -189,8 +266,16 @@ public:
 	Common::String strSplit(const char *str, const char *sep = "\r----------\r");
 
 	kLanguage getSciLanguage();
+	void setSciLanguage(kLanguage lang);
+	void setSciLanguage();
 
 	Common::String getSciLanguageString(const char *str, kLanguage lang, kLanguage *lang2 = NULL) const;
+
+	// Check if vocabulary needs to get switched (in multilingual parser games)
+	void checkVocabularySwitch();
+
+	// Initializes ports and paint16 for non-sci32 games, also sets default palette
+	void initGraphics();
 
 public:
 	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx
@@ -203,26 +288,62 @@ public:
 	GfxPalette *_gfxPalette;
 	GfxPaint *_gfxPaint;
 	GfxPaint16 *_gfxPaint16; // Painting in 16-bit gfx
+	GfxPaint32 *_gfxPaint32; // Painting in 32-bit gfx
 	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx
 	GfxScreen *_gfxScreen;
-	SciGui *_gui; /* Currently active Gui */
+	GfxText16 *_gfxText16;
+	GfxTransitions *_gfxTransitions; // transitions between screens for 16-bit gfx
+	GfxMacIconBar *_gfxMacIconBar; // Mac Icon Bar manager
 
 #ifdef ENABLE_SCI32
-	SciGui32 *_gui32; // GUI for SCI32 games
 	GfxFrameout *_gfxFrameout; // kFrameout and the like for 32-bit gfx
 #endif
 
 	AudioPlayer *_audio;
+	SoundCommandParser *_soundCmd;
 	GameFeatures *_features;
 
+	DebugState _debugState;
+
 private:
+	/**
+	 * Initializes a SCI game
+	 * This function must be run before script_run() is executed. Graphics data
+	 * is initialized iff s->gfx_state != NULL.
+	 * @param[in] s	The state to operate on
+	 * @return		true on success, false if an error occurred.
+	 */
+	bool initGame();
+
+	/**
+	 * Runs a SCI game
+	 * This is the main function for SCI games. It takes a valid state, loads
+	 * script 0 to it, finds the game object, allocates a stack, and runs the
+	 * init method of the game object. In layman's terms, this runs a SCI game.
+	 * @param[in] s	Pointer to the pointer of the state to operate on
+	  */
+	void runGame();
+
+	/**
+	 * Uninitializes an initialized SCI game
+	 * This function should be run after each script_run() call.
+	 * @param[in] s	The state to operate on
+	 */
+	void exitGame();
+
+	void initStackBaseWithSelector(Selector selector);
+
 	const ADGameDescription *_gameDescription;
+	const SciGameId _gameId;
 	ResourceManager *_resMan; /**< The resource manager */
 	EngineState *_gamestate;
 	Kernel *_kernel;
 	Vocabulary *_vocabulary;
+	int16 _vocabularyLanguage;
+	EventManager *_eventMan;
+	reg_t _gameObj; /**< Pointer to the game object */
 	Console *_console;
-	OSystem *_system;
+	Common::RandomSource _rng;
 };
 
 

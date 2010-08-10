@@ -370,12 +370,15 @@ void Script::sfStopBgdAnim(SCRIPTFUNC_PARAMS) {
 // reenabled.
 // Param1: boolean
 void Script::sfLockUser(SCRIPTFUNC_PARAMS) {
-	if (thread->pop()) {
+	int16 param = thread->pop();
+
+	if (param != 0) {
 		_vm->_interface->deactivate();
 	} else {
 		_vm->_interface->activate();
 	}
 
+	debug(1, "sfLockUser(%d)", param);
 }
 
 // Script function #12 (0x0C)
@@ -1153,18 +1156,6 @@ void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 	_vm->_scene->clearPlacard();
 }
 
-void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
-	thread->wait(kWaitTypePlacard);
-
-	_vm->_scene->showPsychicProfile(thread->_strings->getString(thread->pop()));
-}
-
-void Script::sfPsychicProfileOff(SCRIPTFUNC_PARAMS) {
-	// This is called a while after the psychic profile is
-	// opened, to close it automatically
-	_vm->_scene->clearPsychicProfile();
-}
-
 // Script function #50 (0x32)
 void Script::sfSetProtagState(SCRIPTFUNC_PARAMS) {
 	_vm->_actor->setProtagState(thread->pop());
@@ -1473,6 +1464,8 @@ void Script::sfPlayLoopedSound(SCRIPTFUNC_PARAMS) {
 	} else {
 		_vm->_sound->stopSound();
 	}
+
+	debug(1, "sfPlayLoopedSound(%d)", param);
 }
 
 // Script function #72 (0x48)

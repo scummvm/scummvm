@@ -8,17 +8,19 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header: /cvsroot/scummvm/scummvm/backends/fs/fs.cpp,v 1.3.2.1 2004/12/18 02:33:52 fingolfin Exp $
+ * $URL$
+ * $Id$
+ *
  */
 
 //////////////////////////////////////////////////////////////////////
@@ -58,10 +60,10 @@ s32 TOUCH_HEIGHT = TOUCH_CAL_Y2 - TOUCH_CAL_Y1;
 s32 TOUCH_OFFSET_X = ( ((SCREEN_WIDTH -60) * TOUCH_CAL_X1) / TOUCH_WIDTH  ) - 28;
 s32 TOUCH_OFFSET_Y = ( ((SCREEN_HEIGHT-60) * TOUCH_CAL_Y1) / TOUCH_HEIGHT ) - 28;
 
-vu8* soundData;
+vu8 *soundData;
 
-vu8* soundBuffer;
-vu8* arm9Buffer;
+vu8 *soundBuffer;
+vu8 *arm9Buffer;
 bool soundFilled[4];
 
 int playingSection;
@@ -81,7 +83,7 @@ int adpcmBufferNum = 0;
 //////////////////////////////////////////////////////////////////////
 
 /*
-void startSound(int sampleRate, const void* data, uint32 bytes, u8 channel=0, u8 vol=0x7F,  u8 pan=63, u8 format=0) {
+void startSound(int sampleRate, const void *data, uint32 bytes, u8 channel=0, u8 vol=0x7F,  u8 pan=63, u8 format=0) {
   SCHANNEL_TIMER(channel)  = SOUND_FREQ(sampleRate);
   SCHANNEL_SOURCE(channel) = (uint32)data;
   SCHANNEL_LENGTH(channel) = bytes;
@@ -106,7 +108,7 @@ s8 getFreeSoundChannel() {
   return -1;
 }
 
-void startSound(int sampleRate, const void* data, uint32 bytes, u8 channel=0, u8 vol=0x7F,  u8 pan=63, u8 format=0) {
+void startSound(int sampleRate, const void *data, uint32 bytes, u8 channel=0, u8 vol=0x7F,  u8 pan=63, u8 format=0) {
 //  REG_IME = IME_DISABLE;
 
   channel = getFreeSoundChannel();
@@ -177,7 +179,7 @@ void startSound(int sampleRate, const void* data, uint32 bytes, u8 channel=0, u8
 
 
 
-  soundData = (vu8* ) data;
+  soundData = (vu8 *) data;
 
   SCHANNEL_CR(channel)     = flags;
   SCHANNEL_CR(channel + 2)     = flags;
@@ -386,7 +388,7 @@ void InterruptTimer1() {
 		//if ((!soundFilled[r]) && (!IPC->fillNeeded[playingSection])) {
 			memcpy((void *) (soundBuffer + (r * 1024)), (void *) (arm9Buffer + (r * 1024)), 1024);
 
-			vu16* p = (vu16 *) (soundBuffer);
+			vu16 *p = (vu16 *) (soundBuffer);
 			//for (int t = 0; t < 2048; t++) {
 		//		*(p + t) = (t & 1)? 0xF000: 0x0000;
 			//}

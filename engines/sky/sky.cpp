@@ -185,8 +185,7 @@ Common::Error SkyEngine::go() {
 
 	uint32 delayCount = _system->getMillis();
 	while (!shouldQuit()) {
-		if (_debugger->isAttached())
-			_debugger->onFrame();
+		_debugger->onFrame();
 
 		if (shouldPerformAutoSave(_lastSaveTime)) {
 			if (_skyControl->loadSaveAllowed()) {
@@ -259,16 +258,16 @@ Common::Error SkyEngine::init() {
 
 	_systemVars.gameVersion = _skyDisk->determineGameVersion();
 
-	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_MIDI | MDT_PREFER_MIDI);
-	if (midiDriver == MD_ADLIB) {
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
+	if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
 		_systemVars.systemFlags |= SF_SBLASTER;
 		_skyMusic = new AdLibMusic(_mixer, _skyDisk);
 	} else {
 		_systemVars.systemFlags |= SF_ROLAND;
-		if ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"))
-			_skyMusic = new MT32Music(MidiDriver::createMidi(midiDriver), _skyDisk);
+		if ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"))
+			_skyMusic = new MT32Music(MidiDriver::createMidi(dev), _skyDisk);
 		else
-			_skyMusic = new GmMusic(MidiDriver::createMidi(midiDriver), _skyDisk);
+			_skyMusic = new GmMusic(MidiDriver::createMidi(dev), _skyDisk);
 	}
 
 	if (isCDVersion()) {

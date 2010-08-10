@@ -67,6 +67,7 @@ public:
 	ScriptVars(const ScriptVars &src);
 	~ScriptVars();
 
+	void reinit(unsigned int len);
 	ScriptVars &operator=(const ScriptVars &src);
 	int16 &operator[](unsigned int idx);
 	int16 operator[](unsigned int idx) const;
@@ -368,9 +369,7 @@ typedef Common::Array<RawObjectScriptPtr> RawObjectScriptArray;
 
 #define NUM_MAX_SCRIPT 50
 
-extern RawScriptArray scriptTable;
 extern FWScriptInfo *scriptInfo;
-extern ScriptVars globalVars;
 
 void setupOpcodes();
 

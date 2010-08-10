@@ -50,10 +50,9 @@ PictureResource::~PictureResource() {
 		delete _picture;
 		_picture = 0;
 	}
-	if (_picturePalette) {
-		delete[] _picturePalette;
-		_picturePalette = 0;
-	}
+
+	delete[] _picturePalette;
+	_picturePalette = 0;
 }
 
 void PictureResource::load(byte *source, int size) {

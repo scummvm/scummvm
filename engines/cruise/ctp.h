@@ -62,8 +62,7 @@ public:
 	Common::Array<CtEntry> slices;
 };
 
-extern Common::Array<CtStruct> *polyStructs;
-extern Common::Array<CtStruct> *polyStruct;
+extern uint8 *ctpVar17;
 
 int initCt(const char * ctpName);
 int computeDistance(int varX, int varY, int paramX, int paramY);

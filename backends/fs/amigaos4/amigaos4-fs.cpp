@@ -368,7 +368,7 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		}
 
 		if (ERROR_NO_MORE_ENTRIES != IDOS->IoErr() ) {
-			debug(6, "An error occured during ExamineDir");
+			debug(6, "An error occurred during ExamineDir");
 			ret = false;
 		} else {
 			ret = true;

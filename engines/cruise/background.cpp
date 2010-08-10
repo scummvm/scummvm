@@ -47,10 +47,10 @@ int loadMEN(uint8 **ptr) {
 	if (!strcmp(localPtr, "MEN")) {
 		localPtr += 4;
 
-		CVars.titleColor = *(localPtr++);
-		CVars.selectColor = *(localPtr++);
-		CVars.itemColor = *(localPtr++);
-		CVars.subColor = *(localPtr++);
+		titleColor = *(localPtr++);
+		selectColor = *(localPtr++);
+		itemColor = *(localPtr++);
+		subColor = *(localPtr++);
 
 		*ptr = (uint8 *) localPtr;
 
@@ -104,9 +104,9 @@ int loadBackground(const char *name, int idx) {
 
 	backgroundChanged[idx] = true;
 
-	ptrToFree = CVars.pPage10;
+	ptrToFree = gfxModuleData.pPage10;
 	if (loadFileSub1(&ptrToFree, name, NULL) < 0) {
-		if (ptrToFree != CVars.pPage10)
+		if (ptrToFree != gfxModuleData.pPage10)
 			MemFree(ptrToFree);
 
 		return (-18);

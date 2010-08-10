@@ -29,9 +29,9 @@
 
 #include "sci/sci.h"
 #include "sci/event.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
-#include "sci/graphics/gui.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/animate.h"
@@ -43,8 +43,8 @@
 
 namespace Sci {
 
-GfxMenu::GfxMenu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, GfxCursor *cursor)
-	: _event(event), _segMan(segMan), _gui(gui), _ports(ports), _paint16(paint16), _text16(text16), _screen(screen), _cursor(cursor) {
+GfxMenu::GfxMenu(EventManager *event, SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, GfxCursor *cursor)
+	: _event(event), _segMan(segMan), _ports(ports), _paint16(paint16), _text16(text16), _screen(screen), _cursor(cursor) {
 
 	_menuSaveHandle = NULL_REG;
 	_barSaveHandle = NULL_REG;
@@ -63,8 +63,9 @@ void GfxMenu::reset() {
 	_itemList.clear();
 	_listCount = 0;
 
-	// We actually set active item in here and remember last selection of the user
-	//  sierra sci always defaulted to first item every time menu was called via ESC, we dont follow that logic
+	// We actually set active item in here and remember last selection of the
+	// user. Sierra SCI always defaulted to first item every time menu was
+	// called via ESC, we don't follow that logic.
 	_curMenuId = 1;
 	_curItemId = 1;
 }
@@ -92,15 +93,16 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 
 		beginPos = curPos;
 
-		// Now go through the content till we find end-marker and collect data about it
-		// ':' is an end-marker for each item
+		// Now go through the content till we find end-marker and collect data about it.
+		// ':' is an end-marker for each item.
 		tagPos = 0; rightAlignedPos = 0;
 		controlPos = 0; altPos = 0; functionPos = 0;
 		while ((curPos < contentSize) && (content[curPos] != ':')) {
 			switch (content[curPos]) {
 			case '=': // Set tag
-				// Special case for normal animation speed - they use right aligned "=" for that one, so we ignore it
-				//  as being recognized as tag marker
+				// Special case for normal animation speed - they use right
+				// aligned "=" for that one, so we ignore it as being recognized
+				// as tag marker.
 				if (rightAlignedPos == curPos - 1)
 					break;
 				if (tagPos)
@@ -199,8 +201,9 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 		if (separatorCount == tempPos - beginPos) {
 			itemEntry->separatorLine = true;
 		} else {
-			// we don't strSplit here, because multilingual SCI01 support language switching on the fly, so we have to do
-			//  this everytime the menu is called
+			// We don't strSplit here, because multilingual SCI01 support
+			// language switching on the fly, so we have to do this everytime
+			// the menu is called.
 			itemEntry->text = Common::String(content.c_str() + beginPos, tempPos - beginPos);
 
 			// LSL6 uses "Ctrl-" prefix string instead of ^ like all the other games do
@@ -222,10 +225,12 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 			if (tagPos && tagPos >= rightAlignedPos)
 				tempPos = tagPos;
 			itemEntry->textRightAligned = Common::String(content.c_str() + rightAlignedPos, tempPos - rightAlignedPos);
-			// Remove ending space, if there is one. Strangely sometimes there are lone spaces at the end in some games
+			// Remove ending space, if there is one. Strangely sometimes there
+			// are lone spaces at the end in some games
 			if (itemEntry->textRightAligned.hasSuffix(" "))
 				itemEntry->textRightAligned.deleteLastChar();
-			// - and + are used sometimes for volume control/animation speed, = sometimes for animation speed
+			// - and + are used sometimes for volume control/animation speed,
+			// = sometimes for animation speed
 			if (itemEntry->textRightAligned == "-") {
 				itemEntry->keyPress = '-';
 			} else if (itemEntry->textRightAligned == "+") {
@@ -266,8 +271,15 @@ GuiMenuItemEntry *GfxMenu::findItem(uint16 menuId, uint16 itemId) {
 
 void GfxMenu::kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {
 	GuiMenuItemEntry *itemEntry = findItem(menuId, itemId);
-	if (!itemEntry)
-		error("Tried to setAttribute() on non-existant menu-item %d:%d", menuId, itemId);
+
+	if (!itemEntry) {
+		// PQ2 demo calls this, for example, but has no menus (bug report #3034507). Some SCI
+		// fan games (Al Pond 2, Aquarius) call this too on non-existent menu items. The
+		// original interpreter ignored these as well.
+		debugC(2, kDebugLevelGraphics, "Tried to setAttribute() on non-existent menu-item %d:%d", menuId, itemId);
+		return;
+	}
+
 	switch (attributeId) {
 	case SCI_MENU_ATTRIBUTE_ENABLED:
 		itemEntry->enabled = value.isNull() ? false : true;
@@ -377,8 +389,8 @@ void GfxMenu::calculateMenuAndItemWidth() {
 	}
 }
 
-reg_t GfxMenu::kernelSelect(reg_t eventObject) {
-	int16 eventType = GET_SEL32V(_segMan, eventObject, SELECTOR(type));
+reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
+	int16 eventType = readSelectorValue(_segMan, eventObject, SELECTOR(type));
 	int16 keyPress, keyModifier;
 	Common::Point mousePosition;
 	GuiMenuItemList::iterator itemIterator = _itemList.begin();
@@ -386,13 +398,13 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 	GuiMenuItemEntry *itemEntry = NULL;
 	bool forceClaimed = false;
 	EngineState *s;
-	byte saidSpec[64];
 
 	switch (eventType) {
 	case SCI_EVENT_KEYBOARD:
-		keyPress = GET_SEL32V(_segMan, eventObject, SELECTOR(message));
-		keyModifier = GET_SEL32V(_segMan, eventObject, SELECTOR(modifiers));
-		// If tab got pressed, handle it here as if it was Ctrl-I - at least sci0 also did it that way
+		keyPress = readSelectorValue(_segMan, eventObject, SELECTOR(message));
+		keyModifier = readSelectorValue(_segMan, eventObject, SELECTOR(modifiers));
+		// If tab got pressed, handle it here as if it was Ctrl-I - at least
+		// sci0 also did it that way
 		if (keyPress == SCI_KEY_TAB) {
 			keyModifier = SCI_KEYMOD_CTRL;
 			keyPress = 'i';
@@ -401,9 +413,9 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 		case 0:
 			break;
 		case SCI_KEY_ESC:
-			interactiveShowMouse();
+			interactiveStart(pauseSound);
 			itemEntry = interactiveWithKeyboard();
-			interactiveRestoreMouse();
+			interactiveEnd(pauseSound);
 			forceClaimed = true;
 			break;
 		default:
@@ -425,8 +437,13 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 			itemEntry = *itemIterator;
 
 			if (!itemEntry->saidVmPtr.isNull()) {
-				// TODO: get a pointer to saidVmPtr or make said() work on VmPtrs
-				_segMan->memcpy(saidSpec, itemEntry->saidVmPtr, 64);
+				byte *saidSpec = _segMan->derefBulkPtr(itemEntry->saidVmPtr, 0);
+
+				if (!saidSpec) {
+					warning("Could not dereference saidSpec");
+					continue;
+				}
+
 				if (said(s, saidSpec, 0) != SAID_NO_MATCH)
 					break;
 			}
@@ -439,9 +456,9 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 	case SCI_EVENT_MOUSE_PRESS:
 		mousePosition = _cursor->getPosition();
 		if (mousePosition.y < 10) {
-			interactiveShowMouse();
+			interactiveStart(pauseSound);
 			itemEntry = interactiveWithMouse();
-			interactiveRestoreMouse();
+			interactiveEnd(pauseSound);
 			forceClaimed = true;
 		}
 		break;
@@ -461,11 +478,13 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 		_paint16->bitsShow(_ports->_menuRect);
 		_barSaveHandle = NULL_REG;
 	}
-	if (_oldPort)
+	if (_oldPort) {
 		_ports->setPort(_oldPort);
+		_oldPort = NULL;
+	}
 
 	if ((itemEntry) || (forceClaimed))
-		PUT_SEL32(_segMan, eventObject, SELECTOR(claimed), make_reg(0, 1));
+		writeSelector(_segMan, eventObject, SELECTOR(claimed), make_reg(0, 1));
 	if (itemEntry)
 		return make_reg(0, (itemEntry->menuId << 8) | (itemEntry->id));
 	return NULL_REG;
@@ -562,7 +581,8 @@ void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	if (!maxTextRightAlignedWidth)
 		_menuRect.right -= 5;
 
-	// if part of menu window is outside the screen, move it into the screen (this happens in multilingual sq3 and lsl3)
+	// If part of menu window is outside the screen, move it into the screen
+	// (this happens in multilingual sq3 and lsl3).
 	if (_menuRect.right > _screen->getWidth()) {
 		_menuRect.translate(-(_menuRect.right - _screen->getWidth()), 0);
 	}
@@ -625,12 +645,16 @@ void GfxMenu::invertMenuSelection(uint16 itemId) {
 	_paint16->bitsShow(itemRect);
 }
 
-void GfxMenu::interactiveShowMouse() {
+void GfxMenu::interactiveStart(bool pauseSound) {
 	_mouseOldState = _cursor->isVisible();
 	_cursor->kernelShow();
+	if (pauseSound)
+		g_sci->_soundCmd->pauseAll(true);
 }
 
-void GfxMenu::interactiveRestoreMouse() {
+void GfxMenu::interactiveEnd(bool pauseSound) {
+	if (pauseSound)
+		g_sci->_soundCmd->pauseAll(false);
 	if (!_mouseOldState)
 		_cursor->kernelHide();
 }
@@ -682,18 +706,19 @@ uint16 GfxMenu::mouseFindMenuItemSelection(Common::Point mousePosition, uint16 m
 }
 
 GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
-	sciEvent curEvent;
+	SciEvent curEvent;
 	uint16 newMenuId = _curMenuId;
 	uint16 newItemId = _curItemId;
 	GuiMenuItemEntry *curItemEntry = findItem(_curMenuId, _curItemId);
 	GuiMenuItemEntry *newItemEntry = curItemEntry;
 	Common::Point mousePosition;
 
-	// We don't 100% follow sierra here: we select last item instead of selecting first item of first menu everytime
-	//  Also sierra sci didnt allow mouse interaction, when menu was activated via keyboard
+	// We don't 100% follow Sierra here: we select last item instead of
+	// selecting first item of first menu every time. Also sierra sci didn't
+	// allow mouse interaction, when menu was activated via keyboard.
 
-	calculateMenuAndItemWidth();
 	_oldPort = _ports->setPort(_ports->_menuPort);
+	calculateMenuAndItemWidth();
 	_barSaveHandle = _paint16->bitsSave(_ports->_menuRect, GFX_SCREEN_MASK_VISUAL);
 
 	_ports->penColor(0);
@@ -706,12 +731,13 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 	_paint16->bitsShow(_menuRect);
 
 	while (true) {
-		curEvent = _event->get(SCI_EVENT_ANY);
+		curEvent = _event->getSciEvent(SCI_EVENT_ANY);
 
 		switch (curEvent.type) {
 		case SCI_EVENT_KEYBOARD:
-			// We don't 100% follow sierra here: - sierra didn't wrap around when changing item id
-			//									 - sierra allowed item id to be 0, which didnt make any sense
+			// We don't 100% follow sierra here:
+			// - sierra didn't wrap around when changing item id
+			// - sierra allowed item id to be 0, which didn't make any sense
 			do {
 				switch (curEvent.data) {
 				case SCI_KEY_ESC:
@@ -796,25 +822,26 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 			}
 			break;
 		case SCI_EVENT_NONE:
-			_event->sleep(2500 / 1000);
+			g_sci->sleep(2500 / 1000);
 			break;
 		}
 	}
 }
 
-// Mouse button is currently pressed - we are now interpreting mouse coordinates till mouse button is released
-//  The menu item that is selected at that time is chosen. If no menu item is selected we cancel
-//  No keyboard interaction is allowed, cause that wouldnt make any sense at all
+// Mouse button is currently pressed - we are now interpreting mouse coordinates
+// till mouse button is released. The menu item that is selected at that time is
+// chosen. If no menu item is selected we cancel. No keyboard interaction is
+// allowed, cause that wouldnt make any sense at all.
 GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
-	sciEvent curEvent;
+	SciEvent curEvent;
 	uint16 newMenuId = 0, newItemId = 0;
 	uint16 curMenuId = 0, curItemId = 0;
 	Common::Point mousePosition = _cursor->getPosition();
 	bool firstMenuChange = true;
 	GuiMenuItemEntry *curItemEntry = NULL;
 
-	calculateMenuAndItemWidth();
 	_oldPort = _ports->setPort(_ports->_menuPort);
+	calculateMenuAndItemWidth();
 	_barSaveHandle = _paint16->bitsSave(_ports->_menuRect, GFX_SCREEN_MASK_VISUAL);
 
 	_ports->penColor(0);
@@ -824,7 +851,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 	_paint16->bitsShow(_ports->_menuRect);
 
 	while (true) {
-		curEvent = _event->get(SCI_EVENT_ANY);
+		curEvent = _event->getSciEvent(SCI_EVENT_ANY);
 
 		switch (curEvent.type) {
 		case SCI_EVENT_MOUSE_RELEASE:
@@ -835,7 +862,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 			return curItemEntry;
 
 		case SCI_EVENT_NONE:
-			_event->sleep(2500 / 1000);
+			g_sci->sleep(2500 / 1000);
 			break;
 		}
 

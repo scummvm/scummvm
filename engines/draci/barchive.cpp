@@ -283,8 +283,7 @@ BAFile *BArchive::loadFileBAR(uint i) {
 		tmp ^= _files[i]._data[j];
 	}
 
-	debugC(3, kDraciArchiverDebugLevel, "Cached file %d from archive %s",
-		i, _path.c_str());
+	debugC(2, kDraciArchiverDebugLevel, "Read %d bytes", _files[i]._length);
 	assert(tmp == _files[i]._crc && "CRC checksum mismatch");
 
 	return _files + i;
@@ -385,7 +384,7 @@ const BAFile *BArchive::getFile(uint i) {
 
 	// Check if file has already been opened and return that
 	if (_files[i]._data) {
-		debugC(2, kDraciArchiverDebugLevel, "Success");
+		debugC(2, kDraciArchiverDebugLevel, "Cached");
 		return _files + i;
 	}
 

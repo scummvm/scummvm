@@ -2,13 +2,52 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.svn.sourceforge.net/viewvc/scummvm/?view=log
 
 1.2.0 (????-??-??)
+ New Ports:
+   - Added Android port.
+
+ General:
+   - Removed the outdated PalmOS port.
+   - Switched to the "fast" DOSBox OPL emulator.
+   - Fixed a crash in the rjp1 player code affecting the FOTAQ Amiga version.
+   - Added support for more original media layouts.
+   - Added support for GUI localization.
+   - Improved GUI by adding tooltips and radiobuttons.
+   - Improved GUI usability by hiding more irrelevant options not supported by
+     specific games.
+
+ AGI:
+   - Fixed number of GFX glitches.
+   - Made PIC drawing code picture perfect.
+   - Added support of MIDI devices.
+   - Added support for accurate Tandy sound emulation. Switched to it as default.
+
+ Drascula:
+   - Fixed number of GFX glitches.
+   - Made many cutscenes smoother.
+   - Changed behavior of items menu. Now it shows up on mouse up.
+
+ Groovie:
+   - Added support for the Macintosh version of The 7th Guest.
+   - Added support for custom MT-32 instruments.
+
+ KYRA:
+   - Fixed some minor graphical glitches.
+   - Implemented formerly missing recreation of some in game items.
+
+ Parallaction:
+   - Made part one of The Big Red Adventure completable.
+
+ SAGA:
+   - Fixed graphics glitches in several scenes.
+
+ SCUMM:
+   - Several improvements in Maniac Mansion NES.
+
  PSP port:
    - Switched to new backend design which fixes minor graphical issues,
      speeds things up, and provides 16-bit support.
-
- General:
-   - Switched to the "fast" DOSBox OPL emulator.
-   - Fixed a crash in the rjp1 player code affecting the FOTAQ Amiga version.
+   - Enabled playback of MP3 files using the hardware decoder (ME). This means that
+     the port is now optimized for MP3 playback (as opposed to OGG).
 
 1.1.2 (????-??-??)
   Broken Sword 2
@@ -18,7 +57,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
 1.1.1 (2010-05-02)
  New Ports:
-   - Added Nintendo 64 Port. (Actually added in 1.1.0, but forgot to mention it. oops)
+   - Added Nintendo 64 port. (Actually added in 1.1.0, but forgot to mention it. oops)
 
  General:
    - Fixed several minor bugs here and there.

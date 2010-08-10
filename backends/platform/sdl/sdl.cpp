@@ -24,6 +24,7 @@
  */
 
 #if defined(WIN32)
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
 #undef ARRAYSIZE
@@ -95,11 +96,11 @@ AspectRatio::AspectRatio(int w, int h) {
 }
 
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
-static const size_t AR_COUNT = 4;
-static const char*       desiredAspectRatioAsStrings[AR_COUNT] = {            "auto",            "4/3",            "16/9",            "16/10" };
-static const AspectRatio desiredAspectRatios[AR_COUNT]         = { AspectRatio(0, 0), AspectRatio(4,3), AspectRatio(16,9), AspectRatio(16,10) };
-
 static AspectRatio getDesiredAspectRatio() {
+	const size_t AR_COUNT = 4;
+	const char*       desiredAspectRatioAsStrings[AR_COUNT] = {            "auto",            "4/3",            "16/9",            "16/10" };
+	const AspectRatio desiredAspectRatios[AR_COUNT]         = { AspectRatio(0, 0), AspectRatio(4,3), AspectRatio(16,9), AspectRatio(16,10) };
+
 	//TODO : We could parse an arbitrary string, if we code enough proper validation
 	Common::String desiredAspectRatio = ConfMan.get("desired_screen_aspect_ratio");
 

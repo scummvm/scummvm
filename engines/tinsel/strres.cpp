@@ -88,11 +88,9 @@ void ChangeLanguage(LANGUAGE newLang) {
 	textLanguage = newLang;
 	sampleLanguage = newLang;
 
-	if (textBuffer) {
-		// free the previous buffer
-		free(textBuffer);
-		textBuffer = NULL;
-	}
+	// free the previous buffer
+	free(textBuffer);
+	textBuffer = NULL;
 
 	// Try and open the specified language file. If it fails, and the language
 	// isn't English, try falling back on opening 'english.txt' - some foreign
@@ -355,10 +353,8 @@ int SubStringCount(int id) {
 
 
 void FreeTextBuffer() {
-	if (textBuffer) {
-		free(textBuffer);
-		textBuffer = NULL;
-	}
+	free(textBuffer);
+	textBuffer = NULL;
 }
 
 /**

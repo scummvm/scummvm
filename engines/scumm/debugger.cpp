@@ -62,8 +62,6 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	_vm = s;
 
 	// Register variables
-	DVar_Register("debug_countdown", &_frame_countdown, DVAR_INT, 0);
-
 	DVar_Register("scumm_speed", &_vm->_fastMode, DVAR_BYTE, 0);
 	DVar_Register("scumm_room", &_vm->_currentRoom, DVAR_BYTE, 0);
 	DVar_Register("scumm_roomresource", &_vm->_roomResource, DVAR_INT, 0);
@@ -128,7 +126,7 @@ void ScummDebugger::postEnter() {
 bool ScummDebugger::Cmd_Restart(int argc, const char **argv) {
 	_vm->restart();
 
-	_detach_now = true;
+	detach();
 	return false;
 }
 
@@ -202,7 +200,7 @@ bool ScummDebugger::Cmd_LoadGame(int argc, const char **argv) {
 
 		_vm->requestLoad(slot);
 
-		_detach_now = true;
+		detach();
 		return false;
 	}
 
@@ -867,7 +865,7 @@ bool ScummDebugger::Cmd_Passcode(int argc, const char **argv) {
 		}
 
 		_vm->_bootParam = 0;
-		_detach_now = true;
+		detach();
 
 	} else {
 		DebugPrintf("Use 'passcode <SEGA CD Passcode>'\n");
@@ -878,9 +876,7 @@ bool ScummDebugger::Cmd_Passcode(int argc, const char **argv) {
 
 bool ScummDebugger::Cmd_ResetCursors(int argc, const char **argv) {
 	_vm->resetCursors();
-
-	_detach_now = true;
-
+	detach();
 	return false;
 }
 

@@ -65,7 +65,7 @@ class Screen;
  */
 class GfxTransitions {
 public:
-	GfxTransitions(SciGui *gui, GfxScreen *screen, GfxPalette *palette, bool isVGA);
+	GfxTransitions(GfxScreen *screen, GfxPalette *palette, bool isVGA);
 	~GfxTransitions();
 
 	void setup(int16 number, bool blackoutFlag);
@@ -83,6 +83,7 @@ private:
 	void pixelation(bool blackoutFlag);
 	void blocks(bool blackoutFlag);
 	void straight(int16 number, bool blackoutFlag);
+	void scrollCopyOldToScreen(Common::Rect screenRect, int16 x, int16 y);
 	void scroll(int16 number);
 	void verticalRollFromCenter(bool blackoutFlag);
 	void verticalRollToCenter(bool blackoutFlag);
@@ -92,7 +93,6 @@ private:
 	void diagonalRollToCenter(bool blackoutFlag);
 	void updateScreenAndWait(int msec);
 
-	SciGui *_gui;
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 

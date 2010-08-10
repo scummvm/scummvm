@@ -32,6 +32,7 @@
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/engine/workarounds.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/ports.h"
@@ -42,13 +43,14 @@
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/portrait.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/transitions.h"
 
 namespace Sci {
 
-GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, SciGui *gui, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions)
-	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _gui(gui), _cache(cache), _ports(ports), _coordAdjuster(coordAdjuster), _screen(screen), _palette(palette), _transitions(transitions) {
+GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio)
+	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _cache(cache), _ports(ports), _coordAdjuster(coordAdjuster), _screen(screen), _palette(palette), _transitions(transitions), _audio(audio) {
 }
 
 GfxPaint16::~GfxPaint16() {
@@ -61,7 +63,7 @@ void GfxPaint16::init(GfxAnimate *animate, GfxText16 *text16) {
 	_EGAdrawingVisualize = false;
 }
 
-void GfxPaint16::setEGAdrawingVisualize(bool state) {
+void GfxPaint16::debugSetEGAdrawingVisualize(bool state) {
 	_EGAdrawingVisualize = state;
 }
 
@@ -74,6 +76,11 @@ void GfxPaint16::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mi
 
 	picture->draw(animationNr, mirroredFlag, addToFlag, paletteId);
 	delete picture;
+
+	// We make a call to SciPalette here, for increasing sys timestamp and also loading targetpalette, if palvary active
+	//  (SCI1.1 only)
+	if (getSciVersion() == SCI_VERSION_1_1)
+		_palette->drewPicture(pictureId);
 }
 
 // This one is the only one that updates screen!
@@ -101,12 +108,12 @@ void GfxPaint16::drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo,
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void GfxPaint16::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
+void GfxPaint16::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
 	drawCel(_cache->getView(viewId), loopNo, celNo, celRect, priority, paletteNo, scaleX, scaleY);
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
+void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
 	Common::Rect clipRect = celRect;
 	clipRect.clip(_ports->_curPort->rect);
 	if (clipRect.isEmpty()) // nothing to draw
@@ -121,8 +128,8 @@ void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, Common::Rect 
 	}
 }
 
-// This is used as replacement for drawCelAndShow() when hires-cels are drawn to screen
-//  Hires-cels are available only SCI 1.1+
+// This is used as replacement for drawCelAndShow() when hires-cels are drawn to
+// screen. Hires-cels are available only SCI 1.1+.
 void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, reg_t upscaledHiresHandle, uint16 scaleX, uint16 scaleY) {
 	GfxView *view = _cache->getView(viewId);
 	Common::Rect celRect, curPortRect, clipRect, clipRectTranslated;
@@ -131,9 +138,10 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 
 	if (view) {
 		if ((leftPos == 0) && (topPos == 0)) {
-			// HACK: in kq6, we get leftPos&topPos == 0 SOMETIMES, that's why we need to get coordinates from upscaledHiresHandle
-			//  I'm not sure if this is what we are supposed to do or if there is some other bug that actually makes
-			//  coordinates to be 0 in the first place
+			// HACK: in kq6, we get leftPos&topPos == 0 SOMETIMES, that's why we
+			// need to get coordinates from upscaledHiresHandle. I'm not sure if
+			// this is what we are supposed to do or if there is some other bug
+			// that actually makes coordinates to be 0 in the first place.
 			byte *memoryPtr = NULL;
 			memoryPtr = _segMan->getHunkPointer(upscaledHiresHandle);
 			if (memoryPtr) {
@@ -310,11 +318,12 @@ reg_t GfxPaint16::bitsSave(const Common::Rect &rect, byte screenMask) {
 		return NULL_REG;
 
 	if (screenMask == GFX_SCREEN_MASK_DISPLAY) {
+		// The coordinates we are given are actually up-to-including right/bottom - we extend accordingly
+		workerRect.bottom++;
+		workerRect.right++;
 		// Adjust rect to upscaled hires, but dont adjust according to port
 		_screen->adjustToUpscaledCoordinates(workerRect.top, workerRect.left);
 		_screen->adjustToUpscaledCoordinates(workerRect.bottom, workerRect.right);
-		workerRect.bottom++;
-		workerRect.right++;
 	} else {
 		_ports->offsetRect(workerRect);
 	}
@@ -324,7 +333,8 @@ reg_t GfxPaint16::bitsSave(const Common::Rect &rect, byte screenMask) {
 
 	memoryId = _segMan->allocateHunkEntry("SaveBits()", size);
 	memoryPtr = _segMan->getHunkPointer(memoryId);
-	_screen->bitsSave(workerRect, screenMask, memoryPtr);
+	if (memoryPtr)
+		_screen->bitsSave(workerRect, screenMask, memoryPtr);
 	return memoryId;
 }
 
@@ -354,7 +364,8 @@ void GfxPaint16::bitsRestore(reg_t memoryHandle) {
 }
 
 void GfxPaint16::bitsFree(reg_t memoryHandle) {
-	_segMan->freeHunkEntry(memoryHandle);
+	if (!memoryHandle.isNull())	// happens in KQ5CD
+		_segMan->freeHunkEntry(memoryHandle);
 }
 
 void GfxPaint16::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
@@ -372,28 +383,29 @@ void GfxPaint16::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, b
 	_ports->setPort(oldPort);
 }
 
-void GfxPaint16::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle) {
-	// some calls are hiresMode even under kq6 DOS, that's why we check for upscaled hires here
+void GfxPaint16::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, bool hiresMode, reg_t upscaledHiresHandle) {
+	// some calls are hiresMode even under kq6 DOS, that's why we check for
+	// upscaled hires here
 	if ((!hiresMode) || (!_screen->getUpscaledHires())) {
-		drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
+		drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, scaleX, scaleY);
 	} else {
 		drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, upscaledHiresHandle);
 	}
 }
 
-void GfxPaint16::kernelGraphFillBoxForeground(Common::Rect rect) {
+void GfxPaint16::kernelGraphFillBoxForeground(const Common::Rect &rect) {
 	paintRect(rect);
 }
 
-void GfxPaint16::kernelGraphFillBoxBackground(Common::Rect rect) {
+void GfxPaint16::kernelGraphFillBoxBackground(const Common::Rect &rect) {
 	eraseRect(rect);
 }
 
-void GfxPaint16::kernelGraphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
+void GfxPaint16::kernelGraphFillBox(const Common::Rect &rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
 	fillRect(rect, colorMask, color, priority, control);
 }
 
-void GfxPaint16::kernelGraphFrameBox(Common::Rect rect, int16 color) {
+void GfxPaint16::kernelGraphFrameBox(const Common::Rect &rect, int16 color) {
 	int16 oldColor = _ports->getPort()->penClr;
 	_ports->penColor(color);
 	frameRect(rect);
@@ -405,11 +417,11 @@ void GfxPaint16::kernelGraphDrawLine(Common::Point startPoint, Common::Point end
 	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
 }
 
-reg_t GfxPaint16::kernelGraphSaveBox(Common::Rect rect, uint16 screenMask) {
+reg_t GfxPaint16::kernelGraphSaveBox(const Common::Rect &rect, uint16 screenMask) {
 	return bitsSave(rect, screenMask);
 }
 
-reg_t GfxPaint16::kernelGraphSaveUpscaledHiresBox(Common::Rect rect) {
+reg_t GfxPaint16::kernelGraphSaveUpscaledHiresBox(const Common::Rect &rect) {
 	return bitsSave(rect, GFX_SCREEN_MASK_DISPLAY);
 }
 
@@ -417,8 +429,9 @@ void GfxPaint16::kernelGraphRestoreBox(reg_t handle) {
 	bitsRestore(handle);
 }
 
-void GfxPaint16::kernelGraphUpdateBox(Common::Rect rect, bool hiresMode) {
-	// some calls are hiresMode even under kq6 DOS, that's why we check for upscaled hires here
+void GfxPaint16::kernelGraphUpdateBox(const Common::Rect &rect, bool hiresMode) {
+	// some calls are hiresMode even under kq6 DOS, that's why we check for
+	// upscaled hires here
 	if ((!hiresMode) || (!_screen->getUpscaledHires()))
 		bitsShow(rect);
 	else
@@ -446,17 +459,20 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 #define SCI_DISPLAY_WIDTH				106
 #define SCI_DISPLAY_SAVEUNDER			107
 #define SCI_DISPLAY_RESTOREUNDER		108
+#define SCI_DISPLAY_DUMMY1				114 // used in longbow demo/qfg1 ega demo, not supported in sierra sci - no parameters
+#define SCI_DISPLAY_DUMMY2				115 // used in longbow demo, not supported in sierra sci - has 1 parameter
 #define SCI_DISPLAY_DONTSHOWBITS		121
 
 reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
-	int displayArg;
+	reg_t displayArg;
 	TextAlignment alignment = SCI_TEXT16_ALIGNMENT_LEFT;
 	int16 colorPen = -1, colorBack = -1, width = -1, bRedraw = 1;
 	bool doSaveUnder = false;
 	Common::Rect rect;
 	reg_t result = NULL_REG;
 
-	// Make a "backup" of the port settings (required for some SCI0LATE and SCI01+ only)
+	// Make a "backup" of the port settings (required for some SCI0LATE and
+	// SCI01+ only)
 	Port oldPort = *_ports->getPort();
 
 	// setting defaults
@@ -465,9 +481,11 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	_ports->textGreyedOutput(false);
 	// processing codes in argv
 	while (argc > 0) {
-		displayArg = argv[0].toUint16();
+		displayArg = argv[0];
+		if (displayArg.segment)
+			displayArg.offset = 0xFFFF;
 		argc--; argv++;
-		switch (displayArg) {
+		switch (displayArg.offset) {
 		case SCI_DISPLAY_MOVEPEN:
 			_ports->moveTo(argv[0].toUint16(), argv[1].toUint16());
 			argc -= 2; argv += 2;
@@ -511,8 +529,27 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 		case SCI_DISPLAY_DONTSHOWBITS:
 			bRedraw = 0;
 			break;
+
+		// 2 Dummy functions, longbow-demo is using those several times but sierra sci doesn't support them at all
+		// The Quest for Glory 1 EGA demo also calls kDisplay(114)
+		case SCI_DISPLAY_DUMMY1:
+		case SCI_DISPLAY_DUMMY2:
+			if (!g_sci->isDemo() || (g_sci->getGameId() != GID_LONGBOW && g_sci->getGameId() != GID_QFG1))
+				error("Unknown kDisplay argument %d", displayArg.offset);
+			if (displayArg.offset == SCI_DISPLAY_DUMMY2) {
+				if (argc) {
+					argc--; argv++;
+				} else {
+					error("No parameter left for kDisplay(115)");
+				}
+			}
+			break;
 		default:
-			warning("Unknown kDisplay argument %X", displayArg);
+			SciTrackOriginReply originReply;
+			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kDisplay_workarounds, &originReply);
+			if (solution.type == WORKAROUND_NONE)
+				error("Unknown kDisplay argument (%04x:%04x) from method %s::%s (script %d, localCall %x)", PRINT_REG(displayArg), originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+			assert(solution.type == WORKAROUND_IGNORE);
 			break;
 		}
 	}
@@ -539,14 +576,20 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	uint16 tTop = currport->curTop;
 	uint16 tLeft = currport->curLeft;
 	if (!g_sci->_features->usesOldGfxFunctions()) {
-		// Restore port settings for some SCI0LATE and SCI01+ only
-		// the change actually happened inbetween .530 (hoyle1) and .566 (heros quest). We don't have any detection for
-		//  that currently, so we are using oldGfxFunctions (.502). The only games that could get regressions because of
-		//  this are hoyle1, kq4 and funseeker. If there are regressions, we should use interpreter version (which would
-		//  require exe version detection)
-		// If we restore the port for whole SCI0LATE, at least sq3old will get an issue - font 0 will get used when
-		//  scanning for planets instead of font 600 - a setfont parameter is missing in one of the kDisplay calls in
-		//  script 19. I assume this is a script bug, because it was added in sq3new.
+		// Restore port settings for some SCI0LATE and SCI01+ only.
+		//
+		// The change actually happened inbetween .530 (hoyle1) and .566 (heros
+		// quest). We don't have any detection for that currently, so we are
+		// using oldGfxFunctions (.502). The only games that could get
+		// regressions because of this are hoyle1, kq4 and funseeker. If there
+		// are regressions, we should use interpreter version (which would
+		// require exe version detection).
+		//
+		// If we restore the port for whole SCI0LATE, at least sq3old will get
+		// an issue - font 0 will get used when scanning for planets instead of
+		// font 600 - a setfont parameter is missing in one of the kDisplay
+		// calls in script 19. I assume this is a script bug, because it was
+		// added in sq3new.
 		*currport = oldPort;
 	}
 	currport->curTop = tTop;
@@ -554,19 +597,23 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	return result;
 }
 
-// TODO: If this matches the sci32 implementation, we may put it into GfxScreen
-void GfxPaint16::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
-	while (shakeCount--) {
-		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
-			_screen->setVerticalShakePos(10);
-		// TODO: horizontal shakes
-		g_system->updateScreen();
-		_gui->wait(3);
-		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
-			_screen->setVerticalShakePos(0);
-		g_system->updateScreen();
-		_gui->wait(3);
-	}
+reg_t GfxPaint16::kernelPortraitLoad(const Common::String &resourceName) {
+	//Portrait *myPortrait = new Portrait(g_sci->getResMan(), _screen, _palette, resourceName);
+	return NULL_REG;
+}
+
+void GfxPaint16::kernelPortraitShow(const Common::String &resourceName, Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
+	Portrait *myPortrait = new Portrait(g_sci->getResMan(), g_sci->getEventManager(), _screen, _palette, _audio, resourceName);
+	// TODO: cache portraits
+	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates
+	//  on kDrawCel, yeah this whole stuff makes sense)
+	position.x += _ports->getPort()->left; position.y += _ports->getPort()->top;
+	_screen->adjustToUpscaledCoordinates(position.y, position.x);
+	myPortrait->doit(position, resourceId, noun, verb, cond, seq);
+	delete myPortrait;
+}
+
+void GfxPaint16::kernelPortraitUnload(uint16 portraitId) {
 }
 
 } // End of namespace Sci

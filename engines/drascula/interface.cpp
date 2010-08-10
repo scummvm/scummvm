@@ -65,6 +65,8 @@ void DrasculaEngine::selectVerbFromBar() {
 }
 
 void DrasculaEngine::selectVerb(int verb) {
+	debug(4, "selectVerb(%d)", verb);
+
 	int c = _menuScreen ? 0 : 171;
 
 	if (currentChapter == 5) {
@@ -76,7 +78,7 @@ void DrasculaEngine::selectVerb(int verb) {
 	}
 
 	for (int i = 0; i < OBJHEIGHT; i++)
-		memcpy(mouseCursor + i * OBJWIDTH, backSurface + OBJWIDTH * verb + (c + i) * 320, OBJWIDTH);
+		memcpy(mouseCursor + i * OBJWIDTH, cursorSurface + OBJWIDTH * verb + (c + i) * 320, OBJWIDTH);
 	setCursor(kCursorCurrentItem);
 
 	if (verb > 0) {
@@ -126,7 +128,7 @@ void DrasculaEngine::showMenu() {
 							OBJWIDTH, OBJHEIGHT, srcSurface, screenSurface);
 		}
 		copyRect(_x1d_menu[h], _y1d_menu[h], _itemLocations[n].x, _itemLocations[n].y,
-				OBJWIDTH, OBJHEIGHT, backSurface, screenSurface);
+				OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
 	}
 
 	if (x < 7)
@@ -140,7 +142,7 @@ void DrasculaEngine::clearMenu() {
 		if (mouseX > _verbBarX[n] && mouseX < _verbBarX[n + 1])
 			verbActivated = 0;
 		copyRect(OBJWIDTH * n, OBJHEIGHT * verbActivated, _verbBarX[n], 2,
-						OBJWIDTH, OBJHEIGHT, backSurface, screenSurface);
+						OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
 		verbActivated = 1;
 	}
 }

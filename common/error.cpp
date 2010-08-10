@@ -26,6 +26,8 @@
 #include "common/error.h"
 #include "common/util.h"
 
+#include "common/translation.h"
+
 namespace Common {
 
 /**
@@ -38,24 +40,24 @@ struct ErrorMessage {
 };
 
 static const ErrorMessage _errMsgTable[] = {
-	{ kInvalidPathError, "Invalid Path" },
-	{ kNoGameDataFoundError, "Game Data not found" },
-	{ kUnsupportedGameidError, "Game Id not supported" },
-	{ kUnsupportedColorMode, "Unsupported Color Mode" },
+	{ kInvalidPathError, _s("Invalid Path") },
+	{ kNoGameDataFoundError, _s("Game Data not found") },
+	{ kUnsupportedGameidError, _s("Game Id not supported") },
+	{ kUnsupportedColorMode, _s("Unsupported Color Mode") },
 
-	{ kReadPermissionDenied, "Read permission denied" },
-	{ kWritePermissionDenied, "Write permission denied" },
+	{ kReadPermissionDenied, _s("Read permission denied") },
+	{ kWritePermissionDenied, _s("Write permission denied") },
 
 	// The following three overlap a bit with kInvalidPathError and each other. Which to keep?
-	{ kPathDoesNotExist, "Path not exists" },
-	{ kPathNotDirectory, "Path not a directory" },
-	{ kPathNotFile, "Path not a file" },
+	{ kPathDoesNotExist, _s("Path not exists") },
+	{ kPathNotDirectory, _s("Path not a directory") },
+	{ kPathNotFile, _s("Path not a file") },
 
-	{ kCreatingFileFailed, "Cannot create file" },
-	{ kReadingFailed, "Reading failed" },
-	{ kWritingFailed, "Writing data failed" },
+	{ kCreatingFileFailed, _s("Cannot create file") },
+	{ kReadingFailed, _s("Reading failed") },
+	{ kWritingFailed, _s("Writing data failed") },
 
-	{ kUnknownError, "Unknown Error" }
+	{ kUnknownError, _s("Unknown Error") }
 };
 
 const char *errorToString(Error error) {
@@ -66,7 +68,7 @@ const char *errorToString(Error error) {
 		}
 	}
 
-	return "Unknown Error";
+	return _("Unknown Error");
 }
 
 } // End of namespace Common

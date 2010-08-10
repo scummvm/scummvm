@@ -93,6 +93,8 @@ private:
 	bool isLineWalkable(int x0, int y0, int x1, int y1);
 };
 
+long SqrtF16(long n);
+
 } // End of namespace M4
 
 #endif

@@ -1,3 +1,28 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
 #include "wordcompletion.h"
 #include "osystem_ds.h"
 #include "engines/agi/agi.h"	// Caution for #define for NUM_CHANNELS, causes problems in mixer_intern.h
@@ -14,7 +39,7 @@ namespace DS {
 char wordBuffer[WORD_BUFFER_SIZE];
 int wordBufferPos = 0;
 
-char* wordBufferPtr[MAX_WORD_COUNT];
+char *wordBufferPtr[MAX_WORD_COUNT];
 int wordBufferPtrPos = 0;
 
 void addAutoCompleteLine(const char *line) {
@@ -53,7 +78,7 @@ void addAutoCompleteLine(const char *line) {
 	}
 }
 
-int stringCompare(const void* a, const void* b) {
+int stringCompare(const void *a, const void *b) {
 	const char** as = (const char **) a;
 	const char** bs = (const char **) b;
 
@@ -71,7 +96,7 @@ void sortAutoCompleteWordList() {
 }
 
 // Sends the current available words to the virtual keyboard code for display
-bool findWordCompletions(const char* input) {
+bool findWordCompletions(const char *input) {
 	int min = 0;
 	int max = wordBufferPtrPos - 1;
 	char *word;
@@ -82,7 +107,7 @@ bool findWordCompletions(const char* input) {
 	if (wordBufferPtrPos == 0)
 		return false;
 
-	OSystem_DS* system = (OSystem_DS *) g_system;
+	OSystem_DS *system = (OSystem_DS *) g_system;
 	system->clearAutoComplete();
 
 	int start = 0;
@@ -176,5 +201,6 @@ bool findWordCompletions(const char* input) {
 
 }
 
-}
+}	// End of namespace DS
+
 #endif

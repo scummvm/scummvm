@@ -37,15 +37,17 @@
 
 namespace Sci {
 
-// When defined, volume fading immediately sets the final sound volume
-#define DISABLE_VOLUME_FADING
-
 SciMusic::SciMusic(SciVersion soundVersion)
 	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(0) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations
 	_playList.reserve(10);
+
+	for (int i = 0; i < 16; i++)
+		_usedChannel[i] = 0;
+
+	_queuedCommands.reserve(1000);
 }
 
 SciMusic::~SciMusic() {
@@ -61,31 +63,22 @@ void SciMusic::init() {
 	// SCI sound init
 	_dwTempo = 0;
 
-	MidiDriverType midiType;
-
-	// Default to MIDI in SCI32 games, as many don't have AdLib support.
-	// WORKAROUND: Default to MIDI in Amiga SCI1_EGA+ games as we don't support those patches yet.
-	// We also don't yet support the 7.pat file of SCI1+ Mac games or SCI0 Mac patches, so we
-	// default to MIDI in those games to let them run.
+	// Default to MIDI in SCI2.1+ games, as many don't have AdLib support.
 	Common::Platform platform = g_sci->getPlatform();
+	uint32 dev = MidiDriver::detectDevice((getSciVersion() >= SCI_VERSION_2_1) ? (MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM) : (MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI));
 
-	if (getSciVersion() >= SCI_VERSION_2 || platform == Common::kPlatformMacintosh || (platform == Common::kPlatformAmiga && getSciVersion() >= SCI_VERSION_1_EGA))
-		midiType = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MIDI);
-	else
-		midiType = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB | MDT_MIDI);
-
-	switch (midiType) {
-	case MD_ADLIB:
+	switch (MidiDriver::getMusicType(dev)) {
+	case MT_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
-		if (g_sci->getPlatform() == Common::kPlatformAmiga)
-			_pMidiDrv = MidiPlayer_Amiga_create(_soundVersion);
+		if (g_sci->getPlatform() == Common::kPlatformAmiga || platform == Common::kPlatformMacintosh)
+			_pMidiDrv = MidiPlayer_AmigaMac_create(_soundVersion);
 		else
 			_pMidiDrv = MidiPlayer_AdLib_create(_soundVersion);
 		break;
-	case MD_PCJR:
+	case MT_PCJR:
 		_pMidiDrv = MidiPlayer_PCJr_create(_soundVersion);
 		break;
-	case MD_PCSPK:
+	case MT_PCSPK:
 		_pMidiDrv = MidiPlayer_PCSpeaker_create(_soundVersion);
 		break;
 	default:
@@ -103,6 +96,49 @@ void SciMusic::init() {
 	}
 
 	_bMultiMidi = ConfMan.getBool("multi_midi");
+
+	// Find out what the first possible channel is (used, when doing channel
+	// remapping).
+	_driverFirstChannel = _pMidiDrv->getFirstChannel();
+}
+
+void SciMusic::miditimerCallback(void *p) {
+	SciMusic *sciMusic = (SciMusic *)p;
+
+	Common::StackLock lock(sciMusic->_mutex);
+	sciMusic->onTimer();
+}
+
+void SciMusic::onTimer() {
+	const MusicList::iterator end = _playList.end();
+	// sending out queued commands that were "sent" via main thread
+	sendMidiCommandsFromQueue();
+
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i)
+		(*i)->onTimer();
+}
+
+void SciMusic::putMidiCommandInQueue(byte status, byte firstOp, byte secondOp) {
+	putMidiCommandInQueue(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
+}
+
+void SciMusic::putMidiCommandInQueue(uint32 midi) {
+	_queuedCommands.push_back(midi);
+}
+
+// This sends the stored commands from queue to driver (is supposed to get
+// called only during onTimer()). At least mt32 emulation doesn't like getting
+// note-on commands from main thread (if we directly send, we would get a crash
+// during piano scene in lsl5).
+void SciMusic::sendMidiCommandsFromQueue() {
+	uint curCommand = 0;
+	uint commandCount = _queuedCommands.size();
+
+	while (curCommand < commandCount) {
+		_pMidiDrv->send(_queuedCommands[curCommand]);
+		curCommand++;
+	}
+	_queuedCommands.clear();
 }
 
 void SciMusic::clearPlayList() {
@@ -115,8 +151,6 @@ void SciMusic::clearPlayList() {
 }
 
 void SciMusic::pauseAll(bool pause) {
-	Common::StackLock lock(_mutex);
-
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		soundToggle(*i, pause);
@@ -124,20 +158,10 @@ void SciMusic::pauseAll(bool pause) {
 }
 
 void SciMusic::stopAll() {
-	Common::StackLock lock(_mutex);
-
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		soundStop(*i);
 	}
-}
-
-
-void SciMusic::miditimerCallback(void *p) {
-	SciMusic *aud = (SciMusic *)p;
-
-	Common::StackLock lock(aud->_mutex);
-	aud->onTimer();
 }
 
 void SciMusic::soundSetSoundOn(bool soundOnFlag) {
@@ -165,27 +189,46 @@ MusicEntry *SciMusic::getSlot(reg_t obj) {
 	return NULL;
 }
 
+// We return the currently active music slot for SCI0
+MusicEntry *SciMusic::getActiveSci0MusicSlot() {
+	const MusicList::iterator end = _playList.end();
+	MusicEntry *highestPrioritySlot = NULL;
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+		MusicEntry *playSlot = *i;
+		if (playSlot->pMidiParser) {
+			if (playSlot->status == kSoundPlaying)
+				return playSlot;
+			if (playSlot->status == kSoundPaused) {
+				if ((!highestPrioritySlot) || (highestPrioritySlot->priority < playSlot->priority))
+					highestPrioritySlot = playSlot;
+			}
+		}
+	}
+	return highestPrioritySlot;
+}
+
 void SciMusic::setReverb(byte reverb) {
 	Common::StackLock lock(_mutex);
 	_pMidiDrv->setReverb(reverb);
 }
 
-static int f_compare(const void *arg1, const void *arg2) {
-	return ((const MusicEntry *)arg2)->priority - ((const MusicEntry *)arg1)->priority;
+static bool musicEntryCompare(const MusicEntry *l, const MusicEntry *r) {
+	return (l->priority > r->priority);
 }
 
 void SciMusic::sortPlayList() {
-	MusicEntry ** pData = _playList.begin();
-	qsort(pData, _playList.size(), sizeof(MusicEntry *), &f_compare);
+	// Sort the play list in descending priority order
+	Common::sort(_playList.begin(), _playList.end(), musicEntryCompare);
 }
+
 void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	int channelFilterMask = 0;
 	SoundResource::Track *track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId());
 
-	// If MIDI device is selected but there is no digital track in sound resource
-	// try to use adlib's digital sample if possible
-	// Also, if the track couldn't be found, load the digital track, as some games
-	// depend on this (e.g. the Longbow demo)
+	// If MIDI device is selected but there is no digital track in sound
+	// resource try to use adlib's digital sample if possible. Also, if the
+	// track couldn't be found, load the digital track, as some games depend on
+	// this (e.g. the Longbow demo).
 	if (!track || (_bMultiMidi && track->digitalChannelNr == -1)) {
 		SoundResource::Track *digital = pSnd->soundRes->getDigitalTrack();
 		if (digital)
@@ -214,7 +257,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			_mutex.lock();
 			pSnd->soundType = Audio::Mixer::kMusicSoundType;
 			if (pSnd->pMidiParser == NULL) {
-				pSnd->pMidiParser = new MidiParser_SCI(_soundVersion);
+				pSnd->pMidiParser = new MidiParser_SCI(_soundVersion, this);
 				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
 				pSnd->pMidiParser->setTimerRate(_dwTempo);
 			}
@@ -223,19 +266,47 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 
 			// Find out what channels to filter for SCI0
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
-			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
 
-			// Fast forward to the last position and perform associated events when loading
-			pSnd->pMidiParser->jumpToTick(pSnd->ticker, true);
+			pSnd->pMidiParser->mainThreadBegin();
+			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
+			pSnd->pMidiParser->mainThreadEnd();
 			_mutex.unlock();
 		}
 	}
 }
 
-void SciMusic::onTimer() {
-	const MusicList::iterator end = _playList.end();
-	for (MusicList::iterator i = _playList.begin(); i != end; ++i)
-		(*i)->onTimer();
+// This one checks, if requested channel is available -> in that case give
+// caller that channel. Otherwise look for an unused one
+int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
+	// Don't even try this for SCI0
+	if (_soundVersion <= SCI_VERSION_0_LATE)
+		return bestChannel;
+	if (!_usedChannel[bestChannel]) {
+		// currently unused, so give it to caller directly
+		_usedChannel[bestChannel] = caller;
+		return bestChannel;
+	}
+	// otherwise look for unused channel
+	for (int channelNr = _driverFirstChannel; channelNr < 15; channelNr++) {
+		if (!_usedChannel[channelNr]) {
+			_usedChannel[channelNr] = caller;
+			return channelNr;
+		}
+	}
+	// nothing found, don't map channel at all
+	//  sierra did this as well, although i'm not sure if we act exactly the same way
+	//  maybe they removed channels from previous playing music
+	return -1;
+}
+
+void SciMusic::freeChannels(MusicEntry *caller) {
+	// Remove used channels
+	for (int i = 0; i < 15; i++) {
+		if (_usedChannel[i] == caller)
+			_usedChannel[i] = 0;
+	}
+	// Also tell midiparser, that he lost ownership
+	caller->pMidiParser->lostChannels();
 }
 
 void SciMusic::soundPlay(MusicEntry *pSnd) {
@@ -243,14 +314,14 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 
 	uint playListCount = _playList.size();
 	uint playListNo = playListCount;
-	bool alreadyPlaying = false;
+	MusicEntry *alreadyPlaying = NULL;
 
 	// searching if sound is already in _playList
 	for (uint i = 0; i < playListCount; i++) {
 		if (_playList[i] == pSnd)
 			playListNo = i;
 		if ((_playList[i]->status == kSoundPlaying) && (_playList[i]->pMidiParser))
-			alreadyPlaying = true;
+			alreadyPlaying = _playList[i];
 	}
 	if (playListNo == playListCount) { // not found
 		_playList.push_back(pSnd);
@@ -261,13 +332,20 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 
 	if (pSnd->pMidiParser) {
 		if ((_soundVersion <= SCI_VERSION_0_LATE) && (alreadyPlaying)) {
-			// if any music is already playing, SCI0 queues music and plays it after the current music has finished
-			//  done by SoundCommandParser::updateSci0Cues()
-			// Example of such case: iceman room 14
-			// FIXME: this code is supposed to also take a look at priority and pause currently playing sound accordingly
-			pSnd->isQueued = true;
-			pSnd->status = kSoundPaused;
-			return;
+			// Music already playing in SCI0?
+			if (pSnd->priority > alreadyPlaying->priority) {
+				// And new priority higher? pause previous music and play new one immediately.
+				// Example of such case: lsl3, when getting points (jingle is played then)
+				soundPause(alreadyPlaying);
+				alreadyPlaying->isQueued = true;
+			} else {
+				// And new priority equal or lower? queue up music and play it afterwards done by
+				//  SoundCommandParser::updateSci0Cues()
+				// Example of such case: iceman room 14
+				pSnd->isQueued = true;
+				pSnd->status = kSoundPaused;
+				return;
+			}
 		}
 	}
 
@@ -279,32 +357,56 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			                         pSnd->pLoopStream, -1, pSnd->volume, 0,
 			                         DisposeAfterUse::NO);
 		} else {
+			// Rewind in case we play the same sample multiple times
+			// (non-looped) like in pharkas right at the start
+			pSnd->pStreamAud->rewind();
 			_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
 			                         pSnd->pStreamAud, -1, pSnd->volume, 0,
 			                         DisposeAfterUse::NO);
 		}
 	} else {
-		_mutex.lock();
 		if (pSnd->pMidiParser) {
-			pSnd->pMidiParser->setVolume(pSnd->volume);
+			_mutex.lock();
+			pSnd->pMidiParser->mainThreadBegin();
+			pSnd->pMidiParser->tryToOwnChannels();
 			if (pSnd->status == kSoundStopped)
+				pSnd->pMidiParser->sendInitCommands();
+			pSnd->pMidiParser->setVolume(pSnd->volume);
+			if (pSnd->status == kSoundStopped) {
 				pSnd->pMidiParser->jumpToTick(0);
+			} else {
+				// Fast forward to the last position and perform associated events when loading
+				pSnd->pMidiParser->jumpToTick(pSnd->ticker, true);
+			}
+			pSnd->pMidiParser->mainThreadEnd();
+			_mutex.unlock();
 		}
-		_mutex.unlock();
 	}
 
 	pSnd->status = kSoundPlaying;
 }
 
 void SciMusic::soundStop(MusicEntry *pSnd) {
+	SoundStatus previousStatus = pSnd->status;
 	pSnd->status = kSoundStopped;
+	if (_soundVersion <= SCI_VERSION_0_LATE)
+		pSnd->isQueued = false;
 	if (pSnd->pStreamAud)
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 
-	_mutex.lock();
-	if (pSnd->pMidiParser)
-		pSnd->pMidiParser->stop();
-	_mutex.unlock();
+	if (pSnd->pMidiParser) {
+		_mutex.lock();
+		pSnd->pMidiParser->mainThreadBegin();
+		// We shouldn't call stop in case it's paused, otherwise we would send
+		// allNotesOff() again
+		if (previousStatus == kSoundPlaying)
+			pSnd->pMidiParser->stop();
+		freeChannels(pSnd);
+		pSnd->pMidiParser->mainThreadEnd();
+		_mutex.unlock();
+	}
+
+	pSnd->fadeStep = 0; // end fading, if fading was in progress
 }
 
 void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
@@ -313,7 +415,9 @@ void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 		_pMixer->setChannelVolume(pSnd->hCurrentAud, volume * 2); // Mixer is 0-255, SCI is 0-127
 	} else if (pSnd->pMidiParser) {
 		_mutex.lock();
+		pSnd->pMidiParser->mainThreadBegin();
 		pSnd->pMidiParser->setVolume(volume);
+		pSnd->pMidiParser->mainThreadEnd();
 		_mutex.unlock();
 	}
 }
@@ -328,13 +432,15 @@ void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 void SciMusic::soundKill(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
 
-	_mutex.lock();
 	if (pSnd->pMidiParser) {
+		_mutex.lock();
+		pSnd->pMidiParser->mainThreadBegin();
 		pSnd->pMidiParser->unloadMusic();
+		pSnd->pMidiParser->mainThreadEnd();
 		delete pSnd->pMidiParser;
 		pSnd->pMidiParser = NULL;
+		_mutex.unlock();
 	}
-	_mutex.unlock();
 
 	if (pSnd->pStreamAud) {
 		_pMixer->stopHandle(pSnd->hCurrentAud);
@@ -366,10 +472,14 @@ void SciMusic::soundPause(MusicEntry *pSnd) {
 	if (pSnd->pStreamAud) {
 		_pMixer->pauseHandle(pSnd->hCurrentAud, true);
 	} else {
-		_mutex.lock();
-		if (pSnd->pMidiParser)
+		if (pSnd->pMidiParser) {
+			_mutex.lock();
+			pSnd->pMidiParser->mainThreadBegin();
 			pSnd->pMidiParser->pause();
-		_mutex.unlock();
+			freeChannels(pSnd);
+			pSnd->pMidiParser->mainThreadEnd();
+			_mutex.unlock();
+		}
 	}
 }
 
@@ -380,7 +490,12 @@ void SciMusic::soundResume(MusicEntry *pSnd) {
 		return;
 	if (pSnd->status != kSoundPaused)
 		return;
-	soundPlay(pSnd);
+	if (pSnd->pStreamAud) {
+		_pMixer->pauseHandle(pSnd->hCurrentAud, false);
+		pSnd->status = kSoundPlaying;
+	} else {
+		soundPlay(pSnd);
+	}
 }
 
 void SciMusic::soundToggle(MusicEntry *pSnd, bool pause) {
@@ -401,6 +516,21 @@ void SciMusic::soundSetMasterVolume(uint16 vol) {
 
 	if (_pMidiDrv)
 		_pMidiDrv->setVolume(vol);
+}
+
+void SciMusic::sendMidiCommand(uint32 cmd) {
+	Common::StackLock lock(_mutex);
+	_pMidiDrv->send(cmd);
+}
+
+void SciMusic::sendMidiCommand(MusicEntry *pSnd, uint32 cmd) {
+	Common::StackLock lock(_mutex);
+	if (!pSnd->pMidiParser)
+		error("tried to cmdSendMidi on non midi slot (%04x:%04x)", PRINT_REG(pSnd->soundObj));
+
+	pSnd->pMidiParser->mainThreadBegin();
+	pSnd->pMidiParser->sendFromScriptToDriver(cmd);
+	pSnd->pMidiParser->mainThreadEnd();
 }
 
 void SciMusic::printPlayList(Console *con) {
@@ -471,7 +601,7 @@ MusicEntry::MusicEntry() {
 	priority = 0;
 	loop = 0;
 	volume = MUSIC_VOLUME_DEFAULT;
-	hold = 0;
+	hold = -1;
 
 	pauseCounter = 0;
 	sampleLoopCounter = 0;
@@ -525,12 +655,6 @@ void MusicEntry::doFade() {
 
 		// Only process MIDI streams in this thread, not digital sound effects
 		if (pMidiParser) {
-#ifdef DISABLE_VOLUME_FADING
-			// Signal fading to stop...
-			volume = fadeTo;
-			fadeStep = 0;
-			fadeCompleted = true;
-#endif
 			pMidiParser->setVolume(volume);
 		}
 

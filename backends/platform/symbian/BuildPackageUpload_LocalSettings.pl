@@ -42,12 +42,12 @@
 		'zlib'		=> 'zlib.lib', 
 		'mad'		=> 'libmad.lib', 
 		'tremor'	=> 'libtremor.lib',
-		'mpeg2'		=> 'libmpeg2.lib'
+		'flac'		=> 'libflac.lib'
 	);
 	
 	# these are normally enabled for each variation
 	#$DefaultFeatures = qw(zlib,mad);
-	$DefaultFeatures = qw(zlib,mad,tremor);		
+	$DefaultFeatures = qw(zlib,mad,tremor,flac);		
 													
 ##################################################################################################################
 	##
@@ -229,6 +229,45 @@
 		# now you can add $VariationSets only built on this PC below this line :)
 
 	}
+	elsif ($ENV{'COMPUTERNAME'} eq "EMBEDDEV_VAIO1") #################################################################
+	{
+		$Producer = "AnotherGuest";
+		$RedirectSTDERR = 1;
+		$HaltOnError = 0;
+		$SkipExistingPackages = 1;
+		$ReallyQuiet = 1;
+
+		#$FTP_Host = "host.com";
+		#$FTP_User = "ag@host.com";
+		#$FTP_Pass = "password";
+		#$FTP_Dir  = "cvsbuilds";
+
+		#$SDK_RootDirs{'UIQ2'}= "D:\\UIQ2";
+		$SDK_RootDirs{'UIQ3'}= "G:\\UIQ3";
+		#$SDK_RootDirs{'S60v1'}= "D:\\S60v1";
+		#$SDK_RootDirs{'S60v2'}= "D:\\S60v2";
+		$SDK_RootDirs{'S60v3'}= "G:\\S60v3";
+		#$SDK_RootDirs{'S80'}= "D:\\S80";
+		#$SDK_RootDirs{'S90'}= "D:\\S90";
+		$ECompXL_BinDir= "D:\\ECompXL\\";
+		if (0) # so we can turn them on/off easily
+		{
+#			$SDK_LibraryDirs{'ALL'}{'zlib.lib'}		= "C:\\S\\zlib-1.2.2\\epoc";
+#			$SDK_LibraryDirs{'ALL'}{'libmad.lib'}	= "C:\\S\\libmad-0.15.1b\\group";
+#			$SDK_LibraryDirs{'ALL'}{'libtremor.lib'}= "C:\\tremor\\epoc";
+			$SDK_LibraryDirs{'UIQ2'}{'esdl.lib'} = "E:\\WICKED\\ESDL\\epoc\\UIQ";
+			$SDK_LibraryDirs{'S60v1'}{'esdl.lib'}	= $SDK_LibraryDirs{'S60v2'}{'esdl.lib'} = "E:\\WICKED\\ESDL\\epoc\\S60";
+			$SDK_LibraryDirs{'S80'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\S80";
+			$SDK_LibraryDirs{'S90'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\S90";
+			$SDK_LibraryDirs{'S60v3'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\S60\\S60V3";
+			$SDK_LibraryDirs{'UIQ3'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\UIQ\\UIQ3";
+			#$SDK_LibraryDirs{'ALL'}{'libmpeg2.lib'} = "C:\\S\\mpeg2dec-0.4.0\\epoc";
+		}
+
+		# now you can add $VariationSets only built on this PC below this line :)
+
+	}
+
 	else #########################################################################################################
 	{
 		print "ERROR: Computer name ".$ENV{'COMPUTERNAME'}." not recognized! Plz edit _LocalSettings.pl!";

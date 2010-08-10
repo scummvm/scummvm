@@ -184,7 +184,7 @@ void Draw_v1::printTotText(int16 id) {
 	_destSpriteY = destY;
 	_spriteRight = spriteRight;
 	_spriteBottom = spriteBottom;
-	_destSurface = 21;
+	_destSurface = kBackSurface;
 
 	_backColor = *ptr++;
 	_transparency = 1;
@@ -326,12 +326,12 @@ void Draw_v1::spriteOperation(int16 operation) {
 		_destSurface -= 80;
 
 	if (_renderFlags & RENDERFLAG_USEDELTAS) {
-		if (_sourceSurface == 21) {
+		if (_sourceSurface == kBackSurface) {
 			_spriteLeft += _backDeltaX;
 			_spriteTop += _backDeltaY;
 		}
 
-		if (_destSurface == 21) {
+		if (_destSurface == kBackSurface) {
 			_destSpriteX += _backDeltaX;
 			_destSpriteY += _backDeltaY;
 			if ((operation == DRAW_DRAWLINE) ||
@@ -508,12 +508,12 @@ void Draw_v1::spriteOperation(int16 operation) {
 	}
 
 	if (_renderFlags & RENDERFLAG_USEDELTAS) {
-		if (_sourceSurface == 21) {
+		if (_sourceSurface == kBackSurface) {
 			_spriteLeft -= _backDeltaX;
 			_spriteTop -= _backDeltaY;
 		}
 
-		if (_destSurface == 21) {
+		if (_destSurface == kBackSurface) {
 			_destSpriteX -= _backDeltaX;
 			_destSpriteY -= _backDeltaY;
 		}

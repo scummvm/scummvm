@@ -265,7 +265,8 @@ struct PathfindingState {
 static Common::Point read_point(SegManager *segMan, reg_t list, int offset) {
 	SegmentRef list_r = segMan->dereference(list);
 	if (!list_r.isValid() || list_r.skipByte) {
-		warning("read_point(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(list));
+		// If this happens, then the code below will probably go OOB and crash
+		error("read_point(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(list));
 	}
 	Common::Point point;
 
@@ -337,15 +338,15 @@ static void draw_point(EngineState *s, Common::Point p, int start, int width, in
 
 static void draw_polygon(EngineState *s, reg_t polygon, int width, int height) {
 	SegManager *segMan = s->_segMan;
-	reg_t points = GET_SEL32(segMan, polygon, SELECTOR(points));
+	reg_t points = readSelector(segMan, polygon, SELECTOR(points));
 
 #ifdef ENABLE_SCI32
 	if (segMan->isHeapObject(points))
-		points = GET_SEL32(segMan, points, SELECTOR(data));
+		points = readSelector(segMan, points, SELECTOR(data));
 #endif
 
-	int size = GET_SEL32V(segMan, polygon, SELECTOR(size));
-	int type = GET_SEL32V(segMan, polygon, SELECTOR(type));
+	int size = readSelectorValue(segMan, polygon, SELECTOR(size));
+	int type = readSelectorValue(segMan, polygon, SELECTOR(type));
 	Common::Point first, prev;
 	int i;
 
@@ -386,15 +387,15 @@ static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Com
 }
 
 static void print_polygon(SegManager *segMan, reg_t polygon) {
-	reg_t points = GET_SEL32(segMan, polygon, SELECTOR(points));
+	reg_t points = readSelector(segMan, polygon, SELECTOR(points));
 
 #ifdef ENABLE_SCI32
 	if (segMan->isHeapObject(points))
-		points = GET_SEL32(segMan, points, SELECTOR(data));
+		points = readSelector(segMan, points, SELECTOR(data));
 #endif
 
-	int size = GET_SEL32V(segMan, polygon, SELECTOR(size));
-	int type = GET_SEL32V(segMan, polygon, SELECTOR(type));
+	int size = readSelectorValue(segMan, polygon, SELECTOR(size));
+	int type = readSelectorValue(segMan, polygon, SELECTOR(type));
 	int i;
 	Common::Point point;
 
@@ -436,33 +437,41 @@ static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Co
 	}
 }
 
+/**
+ * Computes the area of a triangle
+ * Parameters: (const Common::Point &) a, b, c: The points of the triangle
+ * Returns   : (int) The area multiplied by two
+ */
 static int area(const Common::Point &a, const Common::Point &b, const Common::Point &c) {
-	// Computes the area of a triangle
-	// Parameters: (const Common::Point &) a, b, c: The points of the triangle
-	// Returns   : (int) The area multiplied by two
 	return (b.x - a.x) * (a.y - c.y) - (c.x - a.x) * (a.y - b.y);
 }
 
+/**
+ * Determines whether or not a point is to the left of a directed line
+ * Parameters: (const Common::Point &) a, b: The directed line (a, b)
+ *             (const Common::Point &) c: The query point
+ * Returns   : (int) true if c is to the left of (a, b), false otherwise
+ */
 static bool left(const Common::Point &a, const Common::Point &b, const Common::Point &c) {
-	// Determines whether or not a point is to the left of a directed line
-	// Parameters: (const Common::Point &) a, b: The directed line (a, b)
-	//             (const Common::Point &) c: The query point
-	// Returns   : (int) true if c is to the left of (a, b), false otherwise
 	return area(a, b, c) > 0;
 }
 
+/**
+ * Determines whether or not three points are collinear
+ * Parameters: (const Common::Point &) a, b, c: The three points
+ * Returns   : (int) true if a, b, and c are collinear, false otherwise
+ */
 static bool collinear(const Common::Point &a, const Common::Point &b, const Common::Point &c) {
-	// Determines whether or not three points are collinear
-	// Parameters: (const Common::Point &) a, b, c: The three points
-	// Returns   : (int) true if a, b, and c are collinear, false otherwise
 	return area(a, b, c) == 0;
 }
 
+/**
+ * Determines whether or not a point lies on a line segment
+ * Parameters: (const Common::Point &) a, b: The line segment (a, b)
+ *             (const Common::Point &) c: The query point
+ * Returns   : (int) true if c lies on (a, b), false otherwise
+ */
 static bool between(const Common::Point &a, const Common::Point &b, const Common::Point &c) {
-	// Determines whether or not a point lies on a line segment
-	// Parameters: (const Common::Point &) a, b: The line segment (a, b)
-	//             (const Common::Point &) c: The query point
-	// Returns   : (int) true if c lies on (a, b), false otherwise
 	if (!collinear(a, b, c))
 		return false;
 
@@ -473,25 +482,29 @@ static bool between(const Common::Point &a, const Common::Point &b, const Common
 		return ((a.y <= c.y) && (c.y <= b.y)) || ((a.y >= c.y) && (c.y >= b.y));
 }
 
+/**
+ * Determines whether or not two line segments properly intersect
+ * Parameters: (const Common::Point &) a, b: The line segment (a, b)
+ *             (const Common::Point &) c, d: The line segment (c, d)
+ * Returns   : (int) true if (a, b) properly intersects (c, d), false otherwise
+ */
 static bool intersect_proper(const Common::Point &a, const Common::Point &b, const Common::Point &c, const Common::Point &d) {
-	// Determines whether or not two line segments properly intersect
-	// Parameters: (const Common::Point &) a, b: The line segment (a, b)
-	//             (const Common::Point &) c, d: The line segment (c, d)
-	// Returns   : (int) true if (a, b) properly intersects (c, d), false otherwise
 	int ab = (left(a, b, c) && left(b, a, d)) || (left(a, b, d) && left(b, a, c));
 	int cd = (left(c, d, a) && left(d, c, b)) || (left(c, d, b) && left(d, c, a));
 
 	return ab && cd;
 }
 
+/**
+ * Polygon containment test
+ * Parameters: (const Common::Point &) p: The point
+ *             (Polygon *) polygon: The polygon
+ * Returns   : (int) CONT_INSIDE if p is strictly contained in polygon,
+ *                   CONT_ON_EDGE if p lies on an edge of polygon,
+ *                   CONT_OUTSIDE otherwise
+ * Number of ray crossing left and right
+ */
 static int contained(const Common::Point &p, Polygon *polygon) {
-	// Polygon containment test
-	// Parameters: (const Common::Point &) p: The point
-	//             (Polygon *) polygon: The polygon
-	// Returns   : (int) CONT_INSIDE if p is strictly contained in polygon,
-	//                   CONT_ON_EDGE if p lies on an edge of polygon,
-	//                   CONT_OUTSIDE otherwise
-	// Number of ray crossing left and right
 	int lcross = 0, rcross = 0;
 	Vertex *vertex;
 
@@ -549,10 +562,12 @@ static int contained(const Common::Point &p, Polygon *polygon) {
 	return CONT_OUTSIDE;
 }
 
+/**
+ * Computes polygon area
+ * Parameters: (Polygon *) polygon: The polygon
+ * Returns   : (int) The area multiplied by two
+ */
 static int polygon_area(Polygon *polygon) {
-	// Computes polygon area
-	// Parameters: (Polygon *) polygon: The polygon
-	// Returns   : (int) The area multiplied by two
 	Vertex *first = polygon->vertices.first();
 	Vertex *v;
 	int size = 0;
@@ -567,11 +582,13 @@ static int polygon_area(Polygon *polygon) {
 	return size;
 }
 
+/**
+ * Fixes the vertex order of a polygon if incorrect. Contained access
+ * polygons should have their vertices ordered clockwise, all other types
+ * anti-clockwise
+ * Parameters: (Polygon *) polygon: The polygon
+ */
 static void fix_vertex_order(Polygon *polygon) {
-	// Fixes the vertex order of a polygon if incorrect. Contained access
-	// polygons should have their vertices ordered clockwise, all other types
-	// anti-clockwise
-	// Parameters: (Polygon *) polygon: The polygon
 	int area = polygon_area(polygon);
 
 	// When the polygon area is positive the vertices are ordered
@@ -584,13 +601,15 @@ static void fix_vertex_order(Polygon *polygon) {
 	}
 }
 
+/**
+ * Determines whether or not a line from a point to a vertex intersects the
+ * interior of the polygon, locally at that vertex
+ * Parameters: (Common::Point) p: The point
+ *             (Vertex *) vertex: The vertex
+ * Returns   : (int) 1 if the line (p, vertex->v) intersects the interior of
+ *                   the polygon, locally at the vertex. 0 otherwise
+ */
 static int inside(const Common::Point &p, Vertex *vertex) {
-	// Determines whether or not a line from a point to a vertex intersects the
-	// interior of the polygon, locally at that vertex
-	// Parameters: (Common::Point) p: The point
-	//             (Vertex *) vertex: The vertex
-	// Returns   : (int) 1 if the line (p, vertex->v) intersects the interior of
-	//                   the polygon, locally at the vertex. 0 otherwise
 	// Check that it's not a single-vertex polygon
 	if (VERTEX_HAS_EDGES(vertex)) {
 		const Common::Point &prev = CLIST_PREV(vertex)->v;
@@ -655,28 +674,34 @@ static VertexList *visible_vertices(PathfindingState *s, Vertex *vertex_cur) {
 	return visVerts;
 }
 
+/**
+ * Determines if a point lies on the screen border
+ * Parameters: (const Common::Point &) p: The point
+ * Returns   : (int) true if p lies on the screen border, false otherwise
+ */
 bool PathfindingState::pointOnScreenBorder(const Common::Point &p) {
-	// Determines if a point lies on the screen border
-	// Parameters: (const Common::Point &) p: The point
-	// Returns   : (int) true if p lies on the screen border, false otherwise
 	return (p.x == 0) || (p.x == _width - 1) || (p.y == 0) || (p.y == _height - 1);
 }
 
+/**
+ * Determines if an edge lies on the screen border
+ * Parameters: (const Common::Point &) p, q: The edge (p, q)
+ * Returns   : (int) true if (p, q) lies on the screen border, false otherwise
+ */
 bool PathfindingState::edgeOnScreenBorder(const Common::Point &p, const Common::Point &q) {
-	// Determines if an edge lies on the screen border
-	// Parameters: (const Common::Point &) p, q: The edge (p, q)
-	// Returns   : (int) true if (p, q) lies on the screen border, false otherwise
 	return ((p.x == 0 && q.x == 0) || (p.y == 0 && q.y == 0)
 			|| ((p.x == _width - 1) && (q.x == _width - 1))
 			|| ((p.y == _height - 1) && (q.y == _height - 1)));
 }
 
+/**
+ * Searches for a nearby point that is not contained in a polygon
+ * Parameters: (FloatPoint) f: The pointf to search nearby
+ *             (Polygon *) polygon: The polygon
+ * Returns   : (int) PF_OK on success, PF_FATAL otherwise
+ *             (Common::Point) *ret: The non-contained point on success
+ */
 static int find_free_point(FloatPoint f, Polygon *polygon, Common::Point *ret) {
-	// Searches for a nearby point that is not contained in a polygon
-	// Parameters: (FloatPoint) f: The pointf to search nearby
-	//             (Polygon *) polygon: The polygon
-	// Returns   : (int) PF_OK on success, PF_FATAL otherwise
-	//             (Common::Point) *ret: The non-contained point on success
 	Common::Point p;
 
 	// Try nearest point first
@@ -706,12 +731,14 @@ static int find_free_point(FloatPoint f, Polygon *polygon, Common::Point *ret) {
 	return PF_OK;
 }
 
+/**
+ * Computes the near point of a point contained in a polygon
+ * Parameters: (const Common::Point &) p: The point
+ *             (Polygon *) polygon: The polygon
+ * Returns   : (int) PF_OK on success, PF_FATAL otherwise
+ *             (Common::Point) *ret: The near point of p in polygon on success
+ */
 int PathfindingState::findNearPoint(const Common::Point &p, Polygon *polygon, Common::Point *ret) {
-	// Computes the near point of a point contained in a polygon
-	// Parameters: (const Common::Point &) p: The point
-	//             (Polygon *) polygon: The polygon
-	// Returns   : (int) PF_OK on success, PF_FATAL otherwise
-	//             (Common::Point) *ret: The near point of p in polygon on success
 	Vertex *vertex;
 	FloatPoint near_p;
 	uint32 dist = HUGE_DISTANCE;
@@ -751,13 +778,15 @@ int PathfindingState::findNearPoint(const Common::Point &p, Polygon *polygon, Co
 	return find_free_point(near_p, polygon, ret);
 }
 
+/**
+ * Computes the intersection point of a line segment and an edge (not
+ * including the vertices themselves)
+ * Parameters: (const Common::Point &) a, b: The line segment (a, b)
+ *             (Vertex *) vertex: The first vertex of the edge
+ * Returns   : (int) FP_OK on success, PF_ERROR otherwise
+ *             (FloatPoint) *ret: The intersection point
+ */
 static int intersection(const Common::Point &a, const Common::Point &b, Vertex *vertex, FloatPoint *ret) {
-	// Computes the intersection point of a line segment and an edge (not
-	// including the vertices themselves)
-	// Parameters: (const Common::Point &) a, b: The line segment (a, b)
-	//             (Vertex *) vertex: The first vertex of the edge
-	// Returns   : (int) FP_OK on success, PF_ERROR otherwise
-	//             (FloatPoint) *ret: The intersection point
 	// Parameters of parametric equations
 	float s, t;
 	// Numerator and denominator of equations
@@ -790,16 +819,18 @@ static int intersection(const Common::Point &a, const Common::Point &b, Vertex *
 	return PF_ERROR;
 }
 
+/**
+ * Computes the nearest intersection point of a line segment and the polygon
+ * set. Intersection points that are reached from the inside of a polygon
+ * are ignored as are improper intersections which do not obstruct
+ * visibility
+ * Parameters: (PathfindingState *) s: The pathfinding state
+ *             (const Common::Point &) p, q: The line segment (p, q)
+ * Returns   : (int) PF_OK on success, PF_ERROR when no intersections were
+ *                   found, PF_FATAL otherwise
+ *             (Common::Point) *ret: On success, the closest intersection point
+ */
 static int nearest_intersection(PathfindingState *s, const Common::Point &p, const Common::Point &q, Common::Point *ret) {
-	// Computes the nearest intersection point of a line segment and the polygon
-	// set. Intersection points that are reached from the inside of a polygon
-	// are ignored as are improper intersections which do not obstruct
-	// visibility
-	// Parameters: (PathfindingState *) s: The pathfinding state
-	//             (const Common::Point &) p, q: The line segment (p, q)
-	// Returns   : (int) PF_OK on success, PF_ERROR when no intersections were
-	//                   found, PF_FATAL otherwise
-	//             (Common::Point) *ret: On success, the closest intersection point
 	Polygon *polygon = 0;
 	FloatPoint isec;
 	Polygon *ipolygon = 0;
@@ -903,9 +934,11 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 		case POLY_NEAREST_ACCESS:
 			if (cont == CONT_INSIDE) {
 				if (s->_prependPoint != NULL) {
-					// We shouldn't get here twice
+					// We shouldn't get here twice.
+					// We need to break in this case, otherwise we'll end in an infinite
+					// loop.
 					warning("AvoidPath: start point is contained in multiple polygons");
-					continue;
+					break;
 				}
 
 				if (s->findNearPoint(start, (*it), new_start) != PF_OK) {
@@ -914,7 +947,7 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 				}
 
 				if ((type == POLY_BARRED_ACCESS) || (type == POLY_CONTAINED_ACCESS))
-					warning("AvoidPath: start position at unreachable location");
+					debugC(2, kDebugLevelAvoidPath, "AvoidPath: start position at unreachable location");
 
 				// The original start position is in an invalid location, so we
 				// use the moved point and add the original one to the final path
@@ -957,9 +990,14 @@ static Common::Point *fixup_end_point(PathfindingState *s, const Common::Point &
 		case POLY_NEAREST_ACCESS:
 			if (cont != CONT_OUTSIDE) {
 				if (s->_appendPoint != NULL) {
-					// We shouldn't get here twice
+					// We shouldn't get here twice.
+					// Happens in LB2CD, inside the speakeasy when walking from the
+					// speakeasy (room 310) into the bathroom (room 320), after having
+					// consulted the notebook (bug #3036299).
+					// We need to break in this case, otherwise we'll end in an infinite
+					// loop.
 					warning("AvoidPath: end point is contained in multiple polygons");
-					continue;
+					break;
 				}
 
 				// The original end position is in an invalid location, so we move the point
@@ -981,14 +1019,16 @@ static Common::Point *fixup_end_point(PathfindingState *s, const Common::Point &
 	return new_end;
 }
 
+/**
+ * Merges a point into the polygon set. A new vertex is allocated for this
+ * point, unless a matching vertex already exists. If the point is on an
+ * already existing edge that edge is split up into two edges connected by
+ * the new vertex
+ * Parameters: (PathfindingState *) s: The pathfinding state
+ *             (const Common::Point &) v: The point to merge
+ * Returns   : (Vertex *) The vertex corresponding to v
+ */
 static Vertex *merge_point(PathfindingState *s, const Common::Point &v) {
-	// Merges a point into the polygon set. A new vertex is allocated for this
-	// point, unless a matching vertex already exists. If the point is on an
-	// already existing edge that edge is split up into two edges connected by
-	// the new vertex
-	// Parameters: (PathfindingState *) s: The pathfinding state
-	//             (const Common::Point &) v: The point to merge
-	// Returns   : (Vertex *) The vertex corresponding to v
 	Vertex *vertex;
 	Vertex *v_new;
 	Polygon *polygon;
@@ -1029,20 +1069,22 @@ static Vertex *merge_point(PathfindingState *s, const Common::Point &v) {
 	return v_new;
 }
 
+/**
+ * Converts an SCI polygon into a Polygon
+ * Parameters: (EngineState *) s: The game state
+ *             (reg_t) polygon: The SCI polygon to convert
+ * Returns   : (Polygon *) The converted polygon, or NULL on error
+ */
 static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
-	// Converts an SCI polygon into a Polygon
-	// Parameters: (EngineState *) s: The game state
-	//             (reg_t) polygon: The SCI polygon to convert
-	// Returns   : (Polygon *) The converted polygon, or NULL on error
 	SegManager *segMan = s->_segMan;
 	int i;
-	reg_t points = GET_SEL32(segMan, polygon, SELECTOR(points));
-	int size = GET_SEL32V(segMan, polygon, SELECTOR(size));
+	reg_t points = readSelector(segMan, polygon, SELECTOR(points));
+	int size = readSelectorValue(segMan, polygon, SELECTOR(size));
 
 #ifdef ENABLE_SCI32
 	// SCI32 stores the actual points in the data property of points (in a new array)
 	if (segMan->isHeapObject(points))
-		points = GET_SEL32(segMan, points, SELECTOR(data));
+		points = readSelector(segMan, points, SELECTOR(data));
 #endif
 
 	if (size == 0) {
@@ -1050,13 +1092,13 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 		return NULL;
 	}
 
-	Polygon *poly = new Polygon(GET_SEL32V(segMan, polygon, SELECTOR(type)));
+	Polygon *poly = new Polygon(readSelectorValue(segMan, polygon, SELECTOR(type)));
 
 	int skip = 0;
 
 	// WORKAROUND: broken polygon in lsl1sci, room 350, after opening elevator
 	// Polygon has 17 points but size is set to 19
-	if ((size == 19) && (s->_gameId == "lsl1sci")) {
+	if ((size == 19) && g_sci->getGameId() == GID_LSL1) {
 		if ((s->currentRoomNumber() == 350)
 		&& (read_point(segMan, points, 18) == Common::Point(108, 137))) {
 			debug(1, "Applying fix for broken polygon in lsl1sci, room 350");
@@ -1074,11 +1116,13 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	return poly;
 }
 
+/**
+ * Changes the polygon list for optimization level 0 (used for keyboard
+ * support). Totally accessible polygons are removed and near-point
+ * accessible polygons are changed into totally accessible polygons.
+ * Parameters: (PathfindingState *) s: The pathfinding state
+ */
 static void change_polygons_opt_0(PathfindingState *s) {
-	// Changes the polygon list for optimization level 0 (used for keyboard
-	// support). Totally accessible polygons are removed and near-point
-	// accessible polygons are changed into totally accessible polygons.
-	// Parameters: (PathfindingState *) s: The pathfinding state
 
 	PolygonList::iterator it = s->polygons.begin();
 	while (it != s->polygons.end()) {
@@ -1096,15 +1140,17 @@ static void change_polygons_opt_0(PathfindingState *s) {
 	}
 }
 
+/**
+ * Converts the SCI input data for pathfinding
+ * Parameters: (EngineState *) s: The game state
+ *             (reg_t) poly_list: Polygon list
+ *             (Common::Point) start: The start point
+ *             (Common::Point) end: The end point
+ *             (int) opt: Optimization level (0, 1 or 2)
+ * Returns   : (PathfindingState *) On success a newly allocated pathfinding state,
+ *                            NULL otherwise
+ */
 static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int width, int height, int opt) {
-	// Converts the SCI input data for pathfinding
-	// Parameters: (EngineState *) s: The game state
-	//             (reg_t) poly_list: Polygon list
-	//             (Common::Point) start: The start point
-	//             (Common::Point) end: The end point
-	//             (int) opt: Optimization level (0, 1 or 2)
-	// Returns   : (PathfindingState *) On success a newly allocated pathfinding state,
-	//                            NULL otherwise
 	SegManager *segMan = s->_segMan;
 	Polygon *polygon;
 	int err;
@@ -1121,7 +1167,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 			if (polygon) {
 				pf_s->polygons.push_back(polygon);
-				count += GET_SEL32V(segMan, node->value, SELECTOR(size));
+				count += readSelectorValue(segMan, node->value, SELECTOR(size));
 			}
 
 			node = s->_segMan->lookupNode(node->succ);
@@ -1174,7 +1220,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 		// WORKAROUND LSL5 room 660. Priority glitch due to us choosing a different path
 		// than SSCI. Happens when Patti walks to the control room.
-		if ((s->_gameId == "lsl5") && (s->currentRoomNumber() == 660) && (Common::Point(67, 131) == *new_start) && (Common::Point(229, 101) == *new_end)) {
+		if (g_sci->getGameId() == GID_LSL5 && (s->currentRoomNumber() == 660) && (Common::Point(67, 131) == *new_start) && (Common::Point(229, 101) == *new_end)) {
 			debug(1, "[avoidpath] Applying fix for priority problem in LSL5, room 660");
 			pf_s->_prependPoint = new_start;
 			new_start = new Common::Point(77, 107);
@@ -1277,7 +1323,7 @@ static void AStar(PathfindingState *s) {
 	}
 
 	if (openSet.empty())
-		warning("[avoidpath] End point (%i, %i) is unreachable", s->vertex_end->v.x, s->vertex_end->v.y);
+		debugC(2, kDebugLevelAvoidPath, "AvoidPath: End point (%i, %i) is unreachable", s->vertex_end->v.x, s->vertex_end->v.y);
 }
 
 static reg_t allocateOutputArray(SegManager *segMan, int size) {
@@ -1297,11 +1343,13 @@ static reg_t allocateOutputArray(SegManager *segMan, int size) {
 	return addr;
 }
 
+/**
+ * Stores the final path in newly allocated dynmem
+ * Parameters: (PathfindingState *) p: The pathfinding state
+ *             (EngineState *) s: The game state
+ * Returns   : (reg_t) Pointer to dynmem containing path
+ */
 static reg_t output_path(PathfindingState *p, EngineState *s) {
-	// Stores the final path in newly allocated dynmem
-	// Parameters: (PathfindingState *) p: The pathfinding state
-	//             (EngineState *) s: The game state
-	// Returns   : (reg_t) Pointer to dynmem containing path
 	int path_len = 0;
 	reg_t output;
 	Vertex *vertex = p->vertex_end;
@@ -1394,7 +1442,7 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			if (argc < 7)
 				error("[avoidpath] Not enough arguments");
 
-			poly_list = (!argv[4].isNull() ? GET_SEL32(s->_segMan, argv[4], SELECTOR(elements)) : NULL_REG);
+			poly_list = (!argv[4].isNull() ? readSelector(s->_segMan, argv[4], SELECTOR(elements)) : NULL_REG);
 			width = argv[5].toUint16();
 			height = argv[6].toUint16();
 			if (argc > 7)
@@ -1693,5 +1741,50 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 		pSourceY = pDestY;
 	}
 }
+
+/**
+ * This is a quite rare kernel function. An example of when it's called
+ * is in QFG1VGA, after killing any monster.
+ */
+reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
+#if 0
+	// 3 parameters: raw polygon data, polygon list, list size
+	reg_t polygonData = argv[0];
+	List *list = s->_segMan->lookupList(argv[1]);
+	Node *node = s->_segMan->lookupNode(list->first);
+	// List size is not needed
+
+	Polygon *polygon;
+	int count = 0;
+
+	while (node) {
+		polygon = convert_polygon(s, node->value);
+
+		if (polygon) {
+			count += readSelectorValue(s->_segMan, node->value, SELECTOR(size));
+		}
+
+		node = s->_segMan->lookupNode(node->succ);
+	}
+#endif
+
+	// TODO: actually merge the polygon. We return an empty polygon for now.
+	// In QFG1VGA, you can walk over enemy bodies after killing them, since
+	// this is a stub.
+	reg_t output = allocateOutputArray(s->_segMan, 1);
+	SegmentRef arrayRef = s->_segMan->dereference(output);
+	writePoint(arrayRef, 0, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
+	warning("Stub: kMergePoly");
+	return output;
+}
+
+#ifdef ENABLE_SCI32
+
+reg_t kInPolygon(EngineState *s, int argc, reg_t *argv) {
+	// kAvoidPath already implements this
+	return kAvoidPath(s, argc, argv);
+}
+
+#endif
 
 } // End of namespace Sci

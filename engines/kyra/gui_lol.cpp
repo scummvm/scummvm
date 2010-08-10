@@ -2611,7 +2611,7 @@ void GUI_LoL::updateSavegameList() {
 	if (_savegameListSize) {
 		Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Greater<int>());
 
-		KyraEngine_v1::SaveHeader header;
+		LoLEngine::SaveHeader header;
 		Common::InSaveFile *in;
 
 		_savegameList = new char *[_savegameListSize];
@@ -2658,7 +2658,7 @@ int GUI_LoL::getInput() {
 	if (_currentMenu == &_savenameMenu) {
 		_vm->updateInput();
 
-		for (Common::List<KyraEngine_v1::Event>::const_iterator evt = _vm->_eventList.begin(); evt != _vm->_eventList.end(); ++evt) {
+		for (Common::List<LoLEngine::Event>::const_iterator evt = _vm->_eventList.begin(); evt != _vm->_eventList.end(); ++evt) {
 			if (evt->event.type == Common::EVENT_KEYDOWN)
 				_keyPressed = evt->event.kbd;
 		}

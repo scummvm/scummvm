@@ -2082,7 +2082,7 @@ void Hotspots::getTextCursorPos(const Font &font, const char *str,
 }
 
 void Hotspots::fillRect(uint16 x, uint16 y, uint16 width, uint16 height, uint16 color) const {
-	_vm->_draw->_destSurface  = 21;
+	_vm->_draw->_destSurface  = Draw::kBackSurface;
 	_vm->_draw->_destSpriteX  = x;
 	_vm->_draw->_destSpriteY  = y;
 	_vm->_draw->_spriteRight  = width;

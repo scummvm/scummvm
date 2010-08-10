@@ -452,7 +452,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	if (_isSaveMenu && _savegameOffset == 0)
 		startSlot = 1;
 
-	KyraEngine_v1::SaveHeader header;
+	KyraEngine_v2::SaveHeader header;
 	Common::InSaveFile *in;
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); ++i) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header)) != 0) {

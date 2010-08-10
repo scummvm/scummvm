@@ -107,7 +107,7 @@ bool Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 	_vm->_draw->_backColor = _vm->_game->_script->readValExpr();
 	_vm->_draw->_frontColor = _vm->_game->_script->readValExpr();
 	_vm->_draw->_fontIndex = _vm->_game->_script->readValExpr();
-	_vm->_draw->_destSurface = 21;
+	_vm->_draw->_destSurface = Draw::kBackSurface;
 	_vm->_draw->_textToPrint = buf;
 	_vm->_draw->_transparency = 0;
 
@@ -362,7 +362,6 @@ void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
 	int16 objIndex;
 	uint16 readVar[4];
 	uint8 i;
-	bool break_fl;
 	Mult::Mult_AnimData animData;
 
 	_vm->_game->_script->evalExpr(&objIndex);
@@ -375,7 +374,6 @@ void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
 		return;
 	}
 	if (objIndex == -2) {
-		break_fl = false;
 		warning("oPlaytoons_getObjAnimSize case -2 not implemented");
 		return;
 	}

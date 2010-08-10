@@ -34,6 +34,7 @@
 
 #include "sound/midiparser.h"
 
+
 namespace Queen {
 
 extern MidiDriver *C_Player_CreateAdLibMidiDriver(Audio::Mixer *);
@@ -45,9 +46,9 @@ MidiMusic::MidiMusic(QueenEngine *vm)
 	_queuePos = _lastSong = _currentSong = 0;
 	queueClear();
 
-	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	_adlib = (midiDriver == MD_ADLIB);
-	_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+	_adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
+	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 
 	const char *musicDataFile;
 	if (vm->resource()->isDemo()) {
@@ -72,7 +73,7 @@ MidiMusic::MidiMusic(QueenEngine *vm)
 //		}
 		_driver = C_Player_CreateAdLibMidiDriver(vm->_mixer);
 	} else {
-		_driver = MidiDriver::createMidi(midiDriver);
+		_driver = MidiDriver::createMidi(dev);
 		if (_nativeMT32) {
 			_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		}

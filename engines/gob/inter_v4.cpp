@@ -142,14 +142,6 @@ void Inter_v4::o4_initScreen() {
 
 void Inter_v4::o4_playVmdOrMusic() {
 	char fileName[128];
-	int16 x, y;
-	int16 startFrame;
-	int16 lastFrame;
-	int16 breakKey;
-	int16 flags;
-	int16 palStart;
-	int16 palEnd;
-	uint16 palCmd;
 	bool close;
 
 	_vm->_game->_script->evalExpr(0);
@@ -161,83 +153,92 @@ void Inter_v4::o4_playVmdOrMusic() {
 			(!scumm_stricmp(fileName, "noixroule")))
 		strcpy(fileName, "noixroul");
 
-	x = _vm->_game->_script->readValExpr();
-	y = _vm->_game->_script->readValExpr();
-	startFrame = _vm->_game->_script->readValExpr();
-	lastFrame = _vm->_game->_script->readValExpr();
-	breakKey = _vm->_game->_script->readValExpr();
-	flags = _vm->_game->_script->readValExpr();
-	palStart = _vm->_game->_script->readValExpr();
-	palEnd = _vm->_game->_script->readValExpr();
-	palCmd = 1 << (flags & 0x3F);
+	VideoPlayer::Properties props;
+
+	props.x          = _vm->_game->_script->readValExpr();
+	props.y          = _vm->_game->_script->readValExpr();
+	props.startFrame = _vm->_game->_script->readValExpr();
+	props.lastFrame  = _vm->_game->_script->readValExpr();
+	props.breakKey   = _vm->_game->_script->readValExpr();
+	props.flags      = _vm->_game->_script->readValExpr();
+	props.palStart   = _vm->_game->_script->readValExpr();
+	props.palEnd     = _vm->_game->_script->readValExpr();
+	props.palCmd     = 1 << (props.flags & 0x3F);
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
-			"paletteCmd %d (%d - %d), flags %X", fileName, x, y, startFrame, lastFrame,
-			palCmd, palStart, palEnd, flags);
+			"paletteCmd %d (%d - %d), flags %X", fileName,
+			props.x, props.y, props.startFrame, props.lastFrame,
+			props.palCmd, props.palStart, props.palEnd, props.flags);
 
 	close = false;
-	if (lastFrame == -1) {
+	if (props.lastFrame == -1) {
 		close = true;
-	} else if (lastFrame == -2) {
-	} else if (lastFrame == -3) {
+	} else if (props.lastFrame == -2) {
+	} else if (props.lastFrame == -3) {
 
-		_vm->_mult->_objects[startFrame].pAnimData->animation = -startFrame - 1;
+		props.flags  = VideoPlayer::kFlagOtherSurface;
+		props.sprite = -1;
 
-		if (_vm->_mult->_objects[startFrame].videoSlot > 0)
-			_vm->_vidPlayer->slotClose(_vm->_mult->_objects[startFrame].videoSlot - 1);
+		_vm->_mult->_objects[props.startFrame].pAnimData->animation = -props.startFrame - 1;
 
-		int slot = _vm->_vidPlayer->slotOpen(fileName);
+		if (_vm->_mult->_objects[props.startFrame].videoSlot > 0)
+			_vm->_vidPlayer->closeVideo(_vm->_mult->_objects[props.startFrame].videoSlot - 1);
 
-		_vm->_mult->_objects[startFrame].videoSlot = slot + 1;
+		int slot = _vm->_vidPlayer->openVideo(false, fileName, props);
 
-		if (x == -1) {
-			*_vm->_mult->_objects[startFrame].pPosX = _vm->_vidPlayer->getDefaultX(slot);
-			*_vm->_mult->_objects[startFrame].pPosY = _vm->_vidPlayer->getDefaultY(slot);
+		_vm->_mult->_objects[props.startFrame].videoSlot = slot + 1;
+
+		if (props.x == -1) {
+			*_vm->_mult->_objects[props.startFrame].pPosX = _vm->_vidPlayer->getDefaultX(slot);
+			*_vm->_mult->_objects[props.startFrame].pPosY = _vm->_vidPlayer->getDefaultY(slot);
 		} else {
-			*_vm->_mult->_objects[startFrame].pPosX = x;
-			*_vm->_mult->_objects[startFrame].pPosY = y;
+			*_vm->_mult->_objects[props.startFrame].pPosX = props.x;
+			*_vm->_mult->_objects[props.startFrame].pPosY = props.y;
 		}
 
 		return;
-	} else if (lastFrame == -4) {
+	} else if (props.lastFrame == -4) {
 		warning("Woodruff Stub: Video/Music command -4: Play background video %s", fileName);
 		return;
-	} else if (lastFrame == -5) {
+	} else if (props.lastFrame == -5) {
 		_vm->_sound->bgStop();
 		return;
-	} else if (lastFrame == -6) {
+	} else if (props.lastFrame == -6) {
 		return;
-	} else if (lastFrame == -7) {
+	} else if (props.lastFrame == -7) {
 		return;
-	} else if (lastFrame == -8) {
+	} else if (props.lastFrame == -8) {
 		warning("Woodruff Stub: Video/Music command -8: Play background video %s", fileName);
 		return;
-	} else if (lastFrame == -9) {
+	} else if (props.lastFrame == -9) {
 		_vm->_sound->bgStop();
 		_vm->_sound->bgSetPlayMode(BackgroundAtmosphere::kPlayModeRandom);
-		_vm->_sound->bgPlay(fileName, "SND", SOUND_SND, palStart);
+		_vm->_sound->bgPlay(fileName, "SND", SOUND_SND, props.palStart);
 		return;
-	} else if (lastFrame < 0) {
-		warning("Unknown Video/Music command: %d, %s", lastFrame, fileName);
+	} else if (props.lastFrame < 0) {
+		warning("Unknown Video/Music command: %d, %s", props.lastFrame, fileName);
 		return;
 	}
 
-	if (startFrame == -2) {
-		startFrame = 0;
-		lastFrame = -1;
+	if (props.startFrame == -2) {
+		props.startFrame = 0;
+		props.lastFrame = -1;
 		close = false;
 	}
 
-	if ((fileName[0] != 0) && !_vm->_vidPlayer->primaryOpen(fileName, x, y, flags)) {
+	_vm->_vidPlayer->evaluateFlags(props);
+
+	int slot;
+	if ((fileName[0] != 0) && ((slot = _vm->_vidPlayer->openVideo(true, fileName, props)) < 0)) {
 		WRITE_VAR(11, (uint32) -1);
 		return;
 	}
 
-	if (startFrame >= 0)
-		_vm->_vidPlayer->primaryPlay(startFrame, lastFrame, breakKey, palCmd, palStart, palEnd, 0);
+	if (props.startFrame >= 0)
+		_vm->_vidPlayer->play(slot, props);
 
 	if (close)
-		_vm->_vidPlayer->primaryClose();
+		_vm->_vidPlayer->closeVideo(slot);
 }
 
 } // End of namespace Gob

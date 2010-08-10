@@ -61,8 +61,9 @@ iphonebundle: iphone
 	ldid -S scummvm
 	chmod 755 scummvm
 	cp scummvm $(bundle_name)/ScummVM
-	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/icon.png
-	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/Default.png
+	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/
+	cp $(srcdir)/dists/iphone/icon-72.png $(bundle_name)/	
+	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/
 
 # Location of static libs for the iPhone
 ifneq ($(BACKEND), iphone)
@@ -97,6 +98,10 @@ ifdef USE_ZLIB
 OSX_ZLIB ?= -lz
 endif
 
+ifdef USE_TERMCONV
+OSX_ICONV ?= -liconv
+endif
+
 # Special target to create a static linked binary for Mac OS X.
 # We use -force_cpusubtype_ALL to ensure the binary runs on every
 # PowerPC machine.
@@ -105,6 +110,7 @@ scummvm-static: $(OBJS)
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
 		$(OSX_ZLIB) \
+		$(OSX_ICONV) \
 		-lSystemStubs
 
 # Special target to create a static linked binary for the iPhone

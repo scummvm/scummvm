@@ -66,10 +66,10 @@ DXADecoder::~DXADecoder() {
 	close();
 }
 
-bool DXADecoder::load(Common::SeekableReadStream &stream) {
+bool DXADecoder::load(Common::SeekableReadStream *stream) {
 	close();
 
-	_fileStream = &stream;
+	_fileStream = stream;
 
 	uint32 tag = _fileStream->readUint32BE();
 	assert(tag == MKID_BE('DEXA'));

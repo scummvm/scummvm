@@ -26,8 +26,7 @@
 #ifndef POWERMAN_H
 #define POWERMAN_H
 
-#include <SDL/SDL_thread.h>
-#include <SDL/SDL_mutex.h>
+#include "backends/platform/psp/thread.h"
 #include "common/singleton.h"
 #include "common/list.h"
 
@@ -53,12 +52,12 @@ class PowerManager: public Common::Singleton<PowerManager> {
 
 public:
 	int blockOnSuspend();								/* block if suspending */
-	int beginCriticalSection(bool justBlock = false);	/* Use a critical section to block (if suspend was already pressed) */
-	int endCriticalSection();							/* and to prevent the PSP from suspending in a particular section */
-	int registerSuspend(Suspendable *item);			/* register to be called to suspend/resume */
-	int unregisterSuspend(Suspendable *item);		/* remove from suspend/resume list */
-	int suspend();									/* callback to have all items in list suspend */
-	int resume();									/* callback to have all items in list resume */
+	bool beginCriticalSection();	/* Use a critical section to block (if suspend was already pressed) */
+	void endCriticalSection();							/* and to prevent the PSP from suspending in a particular section */
+	bool registerForSuspend(Suspendable *item);			/* register to be called to suspend/resume */
+	bool unregisterForSuspend(Suspendable *item);		/* remove from suspend/resume list */
+	void suspend();									/* callback to have all items in list suspend */
+	void resume();									/* callback to have all items in list resume */
 	// Functions for pausing the engine
 	void pollPauseEngine();							/* Poll whether the engine should be paused */
 
@@ -69,11 +68,9 @@ public:
 	};
 
 	enum PauseState {
-		Unpaused = 0,
-		PauseEvent,
-		UnpauseEvent,
-		Pausing,
-		Paused
+		UNPAUSED = 0,
+		PAUSING,
+		PAUSED
 	};
 
 private:
@@ -81,34 +78,38 @@ private:
 	PowerManager();
 	~PowerManager();
 
-	Common::List<Suspendable *> _suspendList;		/* list to register in */
+	Common::List<Suspendable *> _suspendList;		// list to register in
 
-	volatile bool _pauseFlag;						/* For pausing, which is before suspending */
-	volatile bool _pauseFlagOld;					/* Save the last state of the flag while polling */
-	volatile int _pauseClientState;					/* Pause state of the target */
+	volatile bool _pauseFlag;						// For pausing, which is before suspending
+	volatile bool _pauseFlagOld;					// Save the last state of the flag while polling
+	volatile PauseState _pauseClientState;			// Pause state of the target
 
-	volatile bool _suspendFlag;						/* protected variable */
-	SDL_mutex *_flagMutex;							/* mutex to access access flag */
-	SDL_mutex *_listMutex;							/* mutex to access Suspendable list */
-	SDL_cond *_condSuspendable;						/* signal to synchronize accessing threads */
-	SDL_cond *_condPM;								/* signal to wake up the PM from a critical section */
-	volatile int _criticalCounter;					/* Counter of how many threads are in a critical section */
-	int _error;										/* error code - PM can't talk to us. For debugging */
+	volatile bool _suspendFlag;						// protected variable
+	PspMutex _flagMutex;							// mutex to access access flag
+	PspMutex _listMutex;							// mutex to access Suspendable list
+	PspCondition _threadSleep;						// signal to synchronize accessing threads
+	PspCondition _pmSleep;							// signal to wake up the PM from a critical section
+	volatile int _criticalCounter;					// Counter of how many threads are in a critical section
+	int _error;										// error code - PM can't talk to us. For debugging
+	volatile int _PMStatus;							// What the PM is doing. for debugging
 
 	// States for PM to be in (used for debugging)
 	enum PMState {
-		kInitDone = 1 ,
-		kDestroyPM,
-		kWaitForClientPause,
-		kWaitForClientToFinishPausing,
-		kGettingFlagMutexSuspend,
-		kGotFlagMutexSuspend,
-		kWaitCritSectionSuspend,
-		kDoneWaitingCritSectionSuspend,
-		kGettingListMutexSuspend,
-		kIteratingListSuspend,
-		kDoneIteratingListSuspend,
-		kDoneSuspend,
+		kInitDone = 1,
+		kDestroyPM = 2,
+		kWaitForClientPause = 3,
+		kWaitForClientToFinishPausing = 4,
+		kGettingFlagMutexSuspend = 5,
+		kGotFlagMutexSuspend = 6,
+		kWaitCritSectionSuspend = 7,
+		kDoneWaitingCritSectionSuspend = 8,
+		kGettingListMutexSuspend = 9,
+		kIteratingListSuspend = 10,
+		kDoneIteratingListSuspend = 11,
+		kDoneSuspend = 12,
+		kDonePowerUnlock,
+		kBeginResume,
+		kCheckingPauseFlag,
 		kGettingListMutexResume,
 		kIteratingListResume,
 		kDoneIteratingListResume,
@@ -122,8 +123,6 @@ private:
 	volatile int _listCounter;						/* How many people are in the list - just for debugging */
 
 	void debugPM();									/* print info about the PM */
-	void PMStatusSet(PMState s) { _PMStatus = s; }
-	volatile int _PMStatus;							/* What the PM is doing */
 
 public:
 	int getPMStatus() const { return _PMStatus; }

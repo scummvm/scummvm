@@ -86,6 +86,10 @@ const char *gScummVMFeatures = ""
 	"ALSA "
 #endif
 
+#ifdef USE_SEQ_MIDI
+	"SEQ "
+#endif
+
 #ifdef USE_RGB_COLOR
 	"RGB "
 #endif

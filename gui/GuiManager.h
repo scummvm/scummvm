@@ -33,6 +33,7 @@
 #include "graphics/font.h"
 
 #include "gui/widget.h"
+#include "gui/Tooltip.h"
 #include "gui/ThemeEngine.h"
 
 class OSystem;
@@ -60,6 +61,7 @@ typedef Common::FixedStack<Dialog *> DialogStack;
  */
 class GuiManager : public Common::Singleton<GuiManager> {
 	friend class Dialog;
+	friend class Tooltip;
 	friend class Common::Singleton<SingletonBaseType>;
 	GuiManager();
 	~GuiManager();
@@ -71,7 +73,7 @@ public:
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 
-	bool loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx = ThemeEngine::kGfxDisabled);
+	bool loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx = ThemeEngine::kGfxDisabled, bool force = false);
 	ThemeEngine *theme() { return _theme; }
 
 	ThemeEval *xmlEval() { return _theme->getEvaluator(); }
@@ -91,6 +93,7 @@ public:
 	 * @return true if the a screen change indeed occurred, false otherwise
 	 */
 	bool checkScreenChange();
+
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
@@ -114,12 +117,15 @@ protected:
 
 	bool		_useStdCursor;
 
+	Tooltip *_tooltip;
+	bool _tooltipCheck;
+
 	// position and time of last mouse click (used to detect double clicks)
 	struct {
-		int16 x, y;	// Position of mouse when the click occured
+		int16 x, y;	// Position of mouse when the click occurred
 		uint32 time;	// Time
 		int count;	// How often was it already pressed?
-	} _lastClick;
+	} _lastClick, _lastMousePosition;
 
 	// mouse cursor state
 	int		_cursorAnimateCounter;

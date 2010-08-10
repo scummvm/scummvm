@@ -23,14 +23,14 @@
  *
  */
 
+#include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
 #include "common/endian.h"
 #include "common/util.h"
 
 namespace Cruise {
 
-Common::Array<CtStruct> *polyStructs = NULL;
-Common::Array<CtStruct> *polyStruct = NULL;
+uint8 *ctpVar17;
 
 int currentWalkBoxCenterX;
 int currentWalkBoxCenterY;
@@ -320,16 +320,16 @@ int initCt(const char *ctpName) {
 	// Load the polyStructNorm list
 
 	for (int i = numberOfWalkboxes - 1; i >= 0; i--) {
-		makeCtStruct(CVars.polyStructNorm, ctp_walkboxTable, i, 0);
+		makeCtStruct(_vm->_polyStructNorm, ctp_walkboxTable, i, 0);
 	}
 
 	// Load the polyStructExp list
 
 	for (int i = numberOfWalkboxes - 1; i >= 0; i--) {
-		makeCtStruct(CVars.polyStructExp, ctp_walkboxTable, i, walkboxZoom[i] * 20);
+		makeCtStruct(_vm->_polyStructExp, ctp_walkboxTable, i, walkboxZoom[i] * 20);
 	}
 
-	polyStruct = polyStructs = &CVars.polyStructNorm;
+	_vm->_polyStruct = _vm->_polyStructs = &_vm->_polyStructNorm;
 
 	return (1);
 }

@@ -810,8 +810,8 @@ void LoLEngine::startup() {
 		pal.fill(0, 1, 0x3F);
 		pal.fill(2, 126, 0x3F);
 		pal.fill(192, 4, 0x3F);
-		_screen->generateOverlay(pal, _screen->_paletteOverlay1, 1, 96);
-		_screen->generateOverlay(pal, _screen->_paletteOverlay2, 144, 65);
+		_screen->generateOverlay(pal, _screen->_paletteOverlay1, 1, 96, 254);
+		_screen->generateOverlay(pal, _screen->_paletteOverlay2, 144, 65, 254);
 		_screen->copyPalette(0, 1);
 	}
 
@@ -4291,7 +4291,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 			if (!_defaultLegendData[ii].enable)
 				continue;
 			_screen->copyBlockAndApplyOverlay(_screen->_curPage, 235, (tY << 3) + 21 + yOffset, _screen->_curPage, 235 + xOffset, (tY << 3) + 21 + yOffset, 7, 6, 0, _mapOverlay);
-			_screen->drawShape(_screen->_curPage, _automapShapes[_defaultLegendData[ii].shapeIndex << 2], 232 + xOffset, (tY << 3) + 18 + yOffset + _defaultLegendData[ii].x, 0, 0);
+			_screen->drawShape(_screen->_curPage, _automapShapes[_defaultLegendData[ii].shapeIndex << 2], 232 + xOffset, (tY << 3) + 18 + yOffset + _defaultLegendData[ii].y, 0, 0);
 			printMapText(_defaultLegendData[ii].stringId, 244 + xOffset, (tY << 3) + 22 + yOffset);
 			tY++;
 		}

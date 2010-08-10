@@ -90,7 +90,6 @@ bool VirtualKeyboard::openPack(const String &packName, const FSNode &node) {
 		return true;
 	}
 
-#ifdef USE_ZLIB
 	if (node.getChild(packName + ".zip").exists()) {
 		// compressed keyboard pack
 		_fileArchive = makeZipArchive(node.getChild(packName + ".zip"));
@@ -109,7 +108,6 @@ bool VirtualKeyboard::openPack(const String &packName, const FSNode &node) {
 
 		return true;
 	}
-#endif
 
 	return false;
 }

@@ -230,10 +230,8 @@ bool MidiParser_SMF::loadMusic(byte *data, uint32 size) {
 
 	// If this is a Type 1 MIDI, we need to now compress
 	// our tracks down into a single Type 0 track.
-	if (_buffer) {
-		free(_buffer);
-		_buffer = 0;
-	}
+	free(_buffer);
+	_buffer = 0;
 
 	if (midi_type == 1) {
 		// FIXME: Doubled the buffer size to prevent crashes with the

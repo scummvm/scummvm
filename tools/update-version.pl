@@ -40,6 +40,7 @@ my @subs_files = qw(
 	dists/iphone/Info.plist
 	dists/irix/scummvm.spec
 	dists/wii/meta.xml
+	dists/android/AndroidManifest.xml
 	backends/platform/psp/README.PSP
 	);
 

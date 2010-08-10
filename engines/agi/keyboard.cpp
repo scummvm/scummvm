@@ -104,10 +104,10 @@ int AgiEngine::handleController(int key) {
 	VtEntry *v = &_game.viewTable[0];
 	int i;
 
-	// AGI 3.149 games and The Black Cauldron need KEY_ESCAPE to use menus
+	// AGI 3.149 games, The Black Cauldron and King's Quest 4 need KEY_ESCAPE to use menus
 	// Games with the GF_ESCPAUSE flag need KEY_ESCAPE to pause the game
 	if (key == 0 ||
-		(key == KEY_ESCAPE && getVersion() != 0x3149 && getGameID() != GID_BC && !(getFeatures() & GF_ESCPAUSE)) )
+		(key == KEY_ESCAPE && getVersion() != 0x3149 && getGameID() != GID_BC && getGameID() != GID_KQ4 && !(getFeatures() & GF_ESCPAUSE)) )
 		return false;
 
 	if ((getGameID() == GID_MH1 || getGameID() == GID_MH2) && (key == KEY_ENTER) &&
@@ -121,7 +121,7 @@ int AgiEngine::handleController(int key) {
 		if (_game.controllers[i].keycode == key) {
 			debugC(3, kDebugLevelInput, "event %d: key press", _game.controllers[i].controller);
 			_game.controllerOccured[_game.controllers[i].controller] = true;
-			report("event AC:%i occured\n", _game.controllers[i].controller);
+			report("event AC:%i occurred\n", _game.controllers[i].controller);
 			return true;
 		}
 	}
@@ -191,9 +191,8 @@ int AgiEngine::handleController(int key) {
 			}
 		}
 
-		v->flags &= ~ADJ_EGO_XY;
-
 		if (d || key == KEY_STATIONARY) {
+			v->flags &= ~ADJ_EGO_XY;
 			v->direction = v->direction == d ? 0 : d;
 			return true;
 		}
@@ -320,7 +319,7 @@ void AgiEngine::handleKeys(int key) {
 		// Clear to start a new line
 		_game.hasPrompt = 0;
 		_game.inputBuffer[_game.cursorPos = 0] = 0;
-		debugC(3, kDebugLevelInput, "clear lines");
+		debugC(3, kDebugLevelInput | kDebugLevelText, "clear lines");
 		clearLines(l, l + 1, bg);
 		flushLines(l, l + 1);
 #ifdef __DS__

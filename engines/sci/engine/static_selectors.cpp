@@ -38,75 +38,86 @@ struct SelectorRemap {
 };
 
 static const char * const sci0Selectors[] = {
-              "y",          "x",         "view",      "loop",        "cel", //  0 -  4
-      "underBits",      "nsTop",       "nsLeft",  "nsBottom",    "nsRight", //  5 -  9
-          "lsTop",     "lsLeft",     "lsBottom",   "lsRight",     "signal", // 10 - 14
-    "illegalBits",      "brTop",       "brLeft",  "brBottom",    "brRight", // 15 - 19
-           "name",        "key",         "time",      "text",   "elements", // 20 - 25
-          "color",       "back",         "mode",     "style",      "state", // 25 - 29
-           "font",       "type",       "window",    "cursor",        "max", // 30 - 34
-           "mark",        "who",      "message",      "edit",       "play", // 35 - 39
-         "number",     "handle",       "client",        "dx",         "dy", // 40 - 44
-      "b-moveCnt",       "b-i1",         "b-i2",      "b-di",    "b-xAxis", // 45 - 49
-         "b-incr",      "xStep",        "yStep", "moveSpeed",  "canBeHere", // 50 - 54
-        "heading",      "mover",         "doit", "isBlocked",     "looper", // 55 - 59
-       "priority",  "modifiers",       "replay",    "setPri",         "at", // 60 - 64
-           "next",       "done",        "width",  "wordFail", "syntaxFail", // 65 - 69
-   "semanticFail", "pragmaFail",         "said",   "claimed",      "value", // 70 - 74
-           "save",    "restore",        "title",    "button",       "icon", // 75 - 79
-           "draw",     "delete",            "z"                             // 80 - 82
+	           "y",          "x",         "view",      "loop",        "cel", //  0 -  4
+	   "underBits",      "nsTop",       "nsLeft",  "nsBottom",    "nsRight", //  5 -  9
+	       "lsTop",     "lsLeft",     "lsBottom",   "lsRight",     "signal", // 10 - 14
+	 "illegalBits",      "brTop",       "brLeft",  "brBottom",    "brRight", // 15 - 19
+	        "name",        "key",         "time",      "text",   "elements", // 20 - 25
+	       "color",       "back",         "mode",     "style",      "state", // 25 - 29
+	        "font",       "type",       "window",    "cursor",        "max", // 30 - 34
+	        "mark",        "who",      "message",      "edit",       "play", // 35 - 39
+	      "number",     "handle",       "client",        "dx",         "dy", // 40 - 44
+	   "b-moveCnt",       "b-i1",         "b-i2",      "b-di",    "b-xAxis", // 45 - 49
+	      "b-incr",      "xStep",        "yStep", "moveSpeed",  "canBeHere", // 50 - 54
+	     "heading",      "mover",         "doit", "isBlocked",     "looper", // 55 - 59
+	    "priority",  "modifiers",       "replay",    "setPri",         "at", // 60 - 64
+	        "next",       "done",        "width",  "wordFail", "syntaxFail", // 65 - 69
+	"semanticFail", "pragmaFail",         "said",   "claimed",      "value", // 70 - 74
+	        "save",    "restore",        "title",    "button",       "icon", // 75 - 79
+	        "draw",     "delete",            "z"                             // 80 - 82
 };
 
 static const char * const sci1Selectors[] = {
-      "parseLang",  "printLang", "subtitleLang",       "size",    "points", // 83 - 87
-        "palette",    "dataInc",       "handle",        "min",       "sec", // 88 - 92
-          "frame",        "vol",          "pri",    "perform",  "moveDone"  // 93 - 97
+	  "parseLang",  "printLang", "subtitleLang",       "size",    "points", // 83 - 87
+	    "palette",    "dataInc",       "handle",        "min",       "sec", // 88 - 92
+	      "frame",        "vol",          "pri",    "perform",  "moveDone"  // 93 - 97
 };
 
 #ifdef ENABLE_SCI32
 static const char * const sci2Selectors[] = {
-        "plane",           "x",           "y",            "z",     "scaleX", //  0 -  4
-       "scaleY",    "maxScale",    "priority",  "fixPriority",     "inLeft", //  5 -  9
-        "inTop",     "inRight",    "inBottom", "useInsetRect",       "view", // 10 - 14
-         "loop",         "cel",      "bitmap",       "nsLeft",      "nsTop", // 15 - 19
-      "nsRight",    "nsBottom",      "lsLeft",        "lsTop",    "lsRight", // 20 - 25
-     "lsBottom",      "signal", "illegalBits",       "brLeft",      "brTop", // 25 - 29
-      "brRight",    "brBottom",        "name",          "key",       "time", // 30 - 34
-         "text",    "elements",        "fore",         "back",       "mode", // 35 - 39
-        "style",       "state",        "font",         "type",     "window", // 40 - 44
-       "cursor",         "max",        "mark",          "who",    "message", // 45 - 49
-         "edit",        "play",      "number",      "nodePtr",     "client", // 50 - 54
-           "dx",          "dy",   "b-moveCnt",         "b-i1",       "b-i2", // 55 - 59
-         "b-di",     "b-xAxis",      "b-incr",        "xStep",      "yStep", // 60 - 64
-    "moveSpeed",  "cantBeHere",     "heading",        "mover",       "doit", // 65 - 69
-    "isBlocked",      "looper",   "modifiers",       "replay",     "setPri", // 70 - 74
-           "at",        "next",        "done",        "width", "pragmaFail", // 75 - 79
-      "claimed",       "value",        "save",      "restore",      "title", // 80 - 84
-       "button",        "icon",        "draw",       "delete",  "printLang", // 85 - 89
-         "size",      "points",     "palette",      "dataInc",     "handle", // 90 - 94
-          "min",         "sec",       "frame",          "vol",    "perform", // 95 - 99
-     "moveDone",   "topString",       "flags",     "quitGame",    "restart", // 100 - 104
-         "hide", "scaleSignal",  "vanishingX",   "vanishingY",    "picture", // 105 - 109
-         "resX",        "resY",   "coordType",         "data",       "skip", // 110 - 104
-       "center",         "all",        "show",     "textLeft",    "textTop", // 115 - 119
-    "textRight",  "textBottom", "borderColor",    "titleFore",  "titleBack", // 120 - 124
-    "titleFont",      "dimmed",    "frameOut",      "lastKey",  "magnifier", // 125 - 129
-     "magPower",    "mirrored",       "pitch",         "roll",        "yaw", // 130 - 134 
-         "left",       "right",         "top",       "bottom",   "numLines"  // 135 - 139
+	    "plane",           "x",           "y",            "z",     "scaleX", //  0 -  4
+	   "scaleY",    "maxScale",    "priority",  "fixPriority",     "inLeft", //  5 -  9
+	    "inTop",     "inRight",    "inBottom", "useInsetRect",       "view", // 10 - 14
+	     "loop",         "cel",      "bitmap",       "nsLeft",      "nsTop", // 15 - 19
+	  "nsRight",    "nsBottom",      "lsLeft",        "lsTop",    "lsRight", // 20 - 25
+	 "lsBottom",      "signal", "illegalBits",       "brLeft",      "brTop", // 25 - 29
+	  "brRight",    "brBottom",        "name",          "key",       "time", // 30 - 34
+	     "text",    "elements",        "fore",         "back",       "mode", // 35 - 39
+	    "style",       "state",        "font",         "type",     "window", // 40 - 44
+	   "cursor",         "max",        "mark",          "who",    "message", // 45 - 49
+	     "edit",        "play",      "number",      "nodePtr",     "client", // 50 - 54
+	       "dx",          "dy",   "b-moveCnt",         "b-i1",       "b-i2", // 55 - 59
+	     "b-di",     "b-xAxis",      "b-incr",        "xStep",      "yStep", // 60 - 64
+	"moveSpeed",  "cantBeHere",     "heading",        "mover",       "doit", // 65 - 69
+	"isBlocked",      "looper",   "modifiers",       "replay",     "setPri", // 70 - 74
+	       "at",        "next",        "done",        "width", "pragmaFail", // 75 - 79
+	  "claimed",       "value",        "save",      "restore",      "title", // 80 - 84
+	   "button",        "icon",        "draw",       "delete",  "printLang", // 85 - 89
+	     "size",      "points",     "palette",      "dataInc",     "handle", // 90 - 94
+	      "min",         "sec",       "frame",          "vol",    "perform", // 95 - 99
+	 "moveDone",   "topString",       "flags",     "quitGame",    "restart", // 100 - 104
+	     "hide", "scaleSignal",  "vanishingX",   "vanishingY",    "picture", // 105 - 109
+	     "resX",        "resY",   "coordType",         "data",       "skip", // 110 - 104
+	   "center",         "all",        "show",     "textLeft",    "textTop", // 115 - 119
+	"textRight",  "textBottom", "borderColor",    "titleFore",  "titleBack", // 120 - 124
+	"titleFont",      "dimmed",    "frameOut",      "lastKey",  "magnifier", // 125 - 129
+	 "magPower",    "mirrored",       "pitch",         "roll",        "yaw", // 130 - 134 
+	     "left",       "right",         "top",       "bottom",   "numLines"  // 135 - 139
 };
 #endif
 
 static const SelectorRemap sciSelectorRemap[] = {
-    {    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,   "moveDone", 170 },
+	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,   "moveDone", 170 },
 	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,     "points", 316 },
 	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,      "flags", 368 },
-	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,    "nodePtr",  44 },
-	{     SCI_VERSION_1_LATE,        SCI_VERSION_1_1, "cantBeHere",  57 },
-	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,  "topString", 101 },
-	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,      "flags", 102 },
+	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,    "nodePtr",  44 },
+	{     SCI_VERSION_1_LATE,     SCI_VERSION_1_LATE, "cantBeHere",  57 },
+	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,  "topString", 101 },
+	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,      "flags", 102 },
+	// SCI1.1
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,    "nodePtr",  41 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "cantBeHere",  54 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,  "topString",  98 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,      "flags",  99 },
+	// quitGame
+	// restart
+	// hide
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,"scaleSignal", 103 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,     "scaleX", 104 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,     "scaleY", 105 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,   "maxScale", 106 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "vanishingX", 107 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "vanishingY", 108 },
 	{ SCI_VERSION_NONE,             SCI_VERSION_NONE,            0,   0 }
 };
 
@@ -139,16 +150,41 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 		}
 
 		for (const SelectorRemap *selectorRemap = sciSelectorRemap; selectorRemap->slot; ++selectorRemap) {
-			uint32 slot = selectorRemap->slot;
-			if (selectorRemap->slot >= names.size())
-				names.resize(selectorRemap->slot + 1);
 			if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
-				// The SCI1 selectors we use exist in SCI1.1 too, offset by 3
-				if (selectorRemap->minVersion >= SCI_VERSION_1_EARLY && getSciVersion() == SCI_VERSION_1_1)
-					slot -= 3;
+				const uint32 slot = selectorRemap->slot;
+				if (slot >= names.size())
+					names.resize(slot + 1);
 				names[slot] = selectorRemap->name;
 			}
 		}
+
+		if (g_sci->getGameId() == GID_HOYLE4) {
+			// The demo of Hoyle 4 is one of the few demos with lip syncing and no selector vocabulary.
+			// This needs two selectors, "syncTime" and "syncCue", which keep changing positions in each
+			// game. Usually, games with speech and lip sync have a selector vocabulary, so we don't need
+			// to set these two selectors, but we need for Hoyle...
+			if (names.size() < 276)
+				names.resize(276);
+
+			names[274] = "syncTime";
+			names[275] = "syncCue";
+		} else if (g_sci->getGameId() == GID_ISLANDBRAIN) {
+			// The demo of Island of Dr. Brain needs the init selector set to match up with the full
+			// game's workaround - bug #3035033
+			if (names.size() < 111)
+				names.resize(111);
+
+			names[110] = "init";
+		} else if (g_sci->getGameId() == GID_LAURABOW2) {
+			// The floppy of version needs the open and changeState selectors set to match up with the
+			// CD version's workarounds - bugs #3035694 and #3036291
+			if (names.size() < 190)
+				names.resize(190);
+
+			names[144] = "changeState";
+			names[189] = "open";
+		}
+
 #ifdef ENABLE_SCI32
 	} else {
 		// SCI2+

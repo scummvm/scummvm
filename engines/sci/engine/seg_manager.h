@@ -28,7 +28,9 @@
 
 #include "common/scummsys.h"
 #include "common/serializer.h"
+#include "sci/engine/script.h"
 #include "sci/engine/vm.h"
+#include "sci/engine/vm_types.h"
 #include "sci/engine/segment.h"
 
 namespace Sci {
@@ -42,8 +44,6 @@ namespace Sci {
 		error("%s, line, %d, %s", __FILE__, __LINE__, msg); \
 	}
 
-
-
 /**
  * Parameters for getScriptSegment().
  */
@@ -53,6 +53,7 @@ enum ScriptLoadType {
 	SCRIPT_GET_LOCK = 3 /**< Load, if neccessary, and lock */
 };
 
+class Script;
 
 class SegManager : public Common::Serializable {
 	friend class Console;
@@ -96,6 +97,11 @@ public:
 	void reconstructScripts(EngineState *s);
 
 	/**
+	 * Reconstructs the stack. Used when restoring saved games
+	 */
+	void reconstructStack(EngineState *s);
+
+	/**
 	 * Determines the segment occupied by a certain script, if any.
 	 * @param script_nr		Number of the script to look up
 	 * @return				The script's segment ID, or 0 on failure
@@ -111,12 +117,30 @@ public:
 	 */
 	SegmentId getScriptSegment(int script_nr, ScriptLoadType load);
 
-	// TODO: document this
-	reg_t lookupScriptExport(int script_nr, int export_index) {
-		SegmentId seg = getScriptSegment(script_nr, SCRIPT_GET_DONT_LOAD);
-		return make_reg(seg, getScript(seg)->validateExportFunc(export_index));
-	}
+	/**
+	 * Makes sure that a script and its superclasses get loaded to the heap.
+	 * If the script already has been loaded, only the number of lockers is
+	 * increased. All scripts containing superclasses of this script are loaded
+	 * recursively as well, unless 'recursive' is set to zero. The
+	 * complementary function is "uninstantiateScript()" below.
+	 * @param[in] script_nr		The script number to load
+	 * @return					The script's segment ID or 0 if out of heap
+	 */
+	int instantiateScript(int script_nr);
 
+	/**
+	 * Decreases the numer of lockers of a script and unloads it if that number
+	 * reaches zero.
+	 * This function will recursively unload scripts containing its
+	 * superclasses, if those aren't locked by other scripts as well.
+	 * @param[in] script_nr	The script number that is requestet to be unloaded
+	 */
+	void uninstantiateScript(int script_nr);
+
+private:
+	void uninstantiateScriptSci0(int script_nr);
+
+public:
 	// TODO: document this
 	reg_t getClassAddress(int classnr, ScriptLoadType lock, reg_t caller);
 
@@ -137,28 +161,7 @@ public:
 	 * @param seg	ID of the script segment to check for
 	 * @return		A pointer to the Script object, or NULL
 	 */
-	Script *getScriptIfLoaded(SegmentId seg);
-
-
-	// 1b. Script Initialisation
-
-	// The set of functions below are intended
-	// to be used during script instantiation,
-	// i.e. loading and linking.
-
-	/**
-	 * Initializes a script's local variable block
-	 * All variables are initialized to zero.
-	 * @param seg	Segment containing the script to initialize
-	 * @param nr	Number of local variables to allocate
-	 */
-	void scriptInitialiseLocalsZero(SegmentId seg, int nr);
-
-	/**
-	 * Initializes a script's local variable block according to a prototype
-	 * @param location	Location to initialize from
-	 */
-	void scriptInitialiseLocals(reg_t location);
+	Script *getScriptIfLoaded(SegmentId seg) const;
 
 	// 2. Clones
 
@@ -188,15 +191,10 @@ public:
 	// 5. System Strings
 
 	/**
-	 * Allocates a system string table
-	 * See also sys_string_acquire();
-	 * @param[in] segid	Segment ID of the stack
-	 * @returns			The physical stack
+	 * Initializes the system string table.
 	 */
-	SystemStrings *allocateSysStrings(SegmentId *segid);
+	void initSysStrings();
 
-
-	// 5. System Strings
 
 	// 6, 7. Lists and Nodes
 
@@ -215,6 +213,14 @@ public:
 	Node *allocateNode(reg_t *addr);
 
 	/**
+	 * Allocate and initialize a new list node.
+	 * @param[in] value		The value to set the node to
+	 * @param[in] key		The key to set
+	 * @return				Pointer to the newly initialized list node
+	 */
+	reg_t newNode(reg_t value, reg_t key);
+
+	/**
 	 * Resolves a list pointer to a list.
 	 * @param addr The address to resolve
 	 * @return The list referenced, or NULL on error
@@ -226,7 +232,7 @@ public:
 	 * @param addr The address to resolve
 	 * @return The list node referenced, or NULL on error
 	 */
-	Node *lookupNode(reg_t addr);
+	Node *lookupNode(reg_t addr, bool stopOnDiscarded = true);
 
 
 	// 8. Hunk Memory
@@ -268,7 +274,7 @@ public:
 	 * Deallocates a piece of dynamic memory
 	 * @param[in] addr	Offset of the dynmem chunk to free
 	 */
-	int freeDynmem(reg_t addr);
+	bool freeDynmem(reg_t addr);
 
 
 	// Generic Operations on Segments and Addresses
@@ -381,39 +387,39 @@ public:
 	 * @param type	The type of the segment to find
 	 * @return		The segment number, or -1 if the segment wasn't found
 	 */
-	SegmentId findSegmentByType(int type);
+	SegmentId findSegmentByType(int type) const;
 
 	// TODO: document this
-	SegmentObj *getSegmentObj(SegmentId seg);
+	SegmentObj *getSegmentObj(SegmentId seg) const;
 
 	// TODO: document this
-	SegmentType getSegmentType(SegmentId seg);
+	SegmentType getSegmentType(SegmentId seg) const;
 
 	// TODO: document this
-	SegmentObj *getSegment(SegmentId seg, SegmentType type);
+	SegmentObj *getSegment(SegmentId seg, SegmentType type) const;
 
 	/**
 	 * Retrieves an object from the specified location
 	 * @param[in] offset	Location (segment, offset) of the object
 	 * @return				The object in question, or NULL if there is none
 	 */
-	Object *getObject(reg_t pos);
+	Object *getObject(reg_t pos) const;
 
 	/**
 	 * Checks whether a heap address contains an object
 	 * @parm obj The address to check
 	 * @return True if it is an object, false otherwise
 	 */
-	bool isObject(reg_t obj) { return getObject(obj) != NULL; }
+	bool isObject(reg_t obj) const { return getObject(obj) != NULL; }
 
 	// TODO: document this
-	bool isHeapObject(reg_t pos);
+	bool isHeapObject(reg_t pos) const;
 
 	/**
 	 * Determines the name of an object
 	 * @param[in] pos	Location (segment, offset) of the object
 	 * @return			A name for that object, or a string describing an error
-	 * 					that occured while looking it up. The string is stored
+	 * 					that occurred while looking it up. The string is stored
 	 * 					in a static buffer and need not be freed (neither may
 	 * 					it be modified).
 	 */
@@ -432,12 +438,27 @@ public:
 	 */
 	reg_t findObjectByName(const Common::String &name, int index = -1);
 
-	void scriptRelocateExportsSci11(SegmentId seg);
-	void scriptInitialiseObjectsSci11(SegmentId seg);
+	uint32 classTableSize() const { return _classTable.size(); }
+	Class getClass(int index) const { return _classTable[index]; }
+	void setClassOffset(int index, reg_t offset) { _classTable[index].reg = offset;	}
+	void resizeClassTable(uint32 size) { _classTable.resize(size); }
 
-public: // TODO: make private
-	Common::Array<SegmentObj *> _heap;
-	Common::Array<Class> _classtable; /**< Table of all classes */
+	/**
+	 * Obtains the system strings segment ID
+	 */
+	SegmentId getSysStringsSegment() { return _sysStringsSegId; }
+
+	/**
+	 * Get a pointer to the system string with the specified index,
+	 * or NULL if that index is invalid.
+	 *
+	 * This method is currently only used by kString().
+	 */
+	SystemString *getSystemString(uint idx) const {
+		if (idx >= SYS_STRINGS_MAX)
+			return NULL;
+		return &_sysStrings->_strings[idx];
+	}
 
 #ifdef ENABLE_SCI32
 	SciArray<reg_t> *allocateArray(reg_t *addr);
@@ -446,28 +467,35 @@ public: // TODO: make private
 	SciString *allocateString(reg_t *addr);
 	SciString *lookupString(reg_t addr);
 	void freeString(reg_t addr);
-	SegmentId getStringSegmentId() { return String_seg_id; }
+	SegmentId getStringSegmentId() { return _stringSegId; }
 #endif
 
+	const Common::Array<SegmentObj *> &getSegments() const { return _heap; }
+
 private:
+	Common::Array<SegmentObj *> _heap;
+	Common::Array<Class> _classTable; /**< Table of all classes */
 	/** Map script ids to segment ids. */
 	Common::HashMap<int, SegmentId> _scriptSegMap;
 
 	ResourceManager *_resMan;
 
-	SegmentId Clones_seg_id; ///< ID of the (a) clones segment
-	SegmentId Lists_seg_id; ///< ID of the (a) list segment
-	SegmentId Nodes_seg_id; ///< ID of the (a) node segment
-	SegmentId Hunks_seg_id; ///< ID of the (a) hunk segment
+	SegmentId _clonesSegId; ///< ID of the (a) clones segment
+	SegmentId _listsSegId; ///< ID of the (a) list segment
+	SegmentId _nodesSegId; ///< ID of the (a) node segment
+	SegmentId _hunksSegId; ///< ID of the (a) hunk segment
+
+	/* System strings */
+	SegmentId _sysStringsSegId;
+	SystemStrings *_sysStrings;
 
 #ifdef ENABLE_SCI32
-	SegmentId Arrays_seg_id;
-	SegmentId String_seg_id;
+	SegmentId _arraysSegId;
+	SegmentId _stringSegId;
 #endif
 
 private:
 	SegmentObj *allocSegment(SegmentObj *mem, SegmentId *segid);
-	LocalVariables *allocLocalsSegment(Script *scr, int count);
 	int deallocate(SegmentId seg, bool recursive);
 	void createClassTable();
 
@@ -480,6 +508,9 @@ private:
 	 * 					'seg' is a valid segment
 	 */
 	bool check(SegmentId seg);
+
+public:
+	LocalVariables *allocLocalsSegment(Script *scr);
 };
 
 } // End of namespace Sci

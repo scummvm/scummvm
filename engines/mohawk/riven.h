@@ -68,10 +68,12 @@ enum {
 
 // Rects for the inventory object positions (initialized in
 // MohawkEngine_Riven's constructor).
-extern Common::Rect *g_atrusJournalRectSolo;
-extern Common::Rect *g_atrusJournalRect;
-extern Common::Rect *g_cathJournalRect;
-extern Common::Rect *g_trapBookRect;
+extern Common::Rect *g_atrusJournalRect1;
+extern Common::Rect *g_atrusJournalRect2;
+extern Common::Rect *g_cathJournalRect2;
+extern Common::Rect *g_atrusJournalRect3;
+extern Common::Rect *g_cathJournalRect3;
+extern Common::Rect *g_trapBookRect3;
 
 struct RivenHotspot {
 	uint16 blstID;
@@ -111,9 +113,9 @@ public:
 	RivenGraphics *_gfx;
 	RivenExternal *_externalScriptHandler;
 	Common::RandomSource *_rnd;
+	RivenScriptManager *_scriptMan;
 
 	Card _cardData;
-	bool _gameOver;
 
 	GUI::Debugger *getDebugger();
 
@@ -127,7 +129,6 @@ private:
 	MohawkArchive *_extrasFile; // We need a separate handle for the extra data
 	RivenConsole *_console;
 	RivenSaveLoad *_saveLoad;
-	GUI::SaveLoadChooser *_loadDialog;
 	RivenOptionsDialog *_optionsDialog;
 
 	// Stack/Card-related functions and variables
@@ -146,6 +147,10 @@ private:
 	// Variables
 	uint32 *_vars;
 	uint32 _varCount;
+
+	// Miscellaneous
+	bool _gameOver;
+	bool _ignoreNextMouseUp;
 
 public:
 	Common::SeekableReadStream *getExtrasResource(uint32 tag, uint16 id);
@@ -180,6 +185,9 @@ public:
 	uint32 *getLocalVar(uint32 index);
 	uint32 *matchVarToString(Common::String varName);
 	uint32 *matchVarToString(const char *varName);
+
+	void setGameOver() { _gameOver = true; }
+	void ignoreNextMouseUp() { _ignoreNextMouseUp = true; }
 };
 
 } // End of namespace Mohawk

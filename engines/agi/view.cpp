@@ -157,8 +157,7 @@ int AgiEngine::decodeView(int n) {
 		return errNoLoopsInView;
 
 	// allocate memory for all views
-	_game.views[n].loop = (ViewLoop *)
-			calloc(_game.views[n].numLoops, sizeof(ViewLoop));
+	_game.views[n].loop = (ViewLoop *)calloc(_game.views[n].numLoops, sizeof(ViewLoop));
 
 	if (_game.views[n].loop == NULL)
 		return errNotEnoughMemory;
@@ -294,37 +293,10 @@ void AgiEngine::setLoop(VtEntry *v, int n) {
  * @param n number of AGI view resource
  */
 void AgiEngine::setView(VtEntry *v, int n) {
-
-	uint16 viewFlags = 0;
-
-	// When setting a view to the view table, if there's already another view set in that
-	// view table entry and it's still drawn, erase the existing view before setting the new one
-	// Fixes bug #1658643: AGI: SQ1 (2.2 DOS ENG) Graphic error, ego leaves behind copy
-	// Update: Apparently, this makes ego dissapear at times, e.g. when textboxes are shown
-	// Therefore, it's limited to view 118 in SQ1 (Roger climbing the ladder)
-	// Fixes bug #1715284: Roger sometimes disappears
-	if (v->viewData != NULL) {
-		if (v->currentView == 118 && v->flags & DRAWN && getGameID() == GID_SQ1) {
-			viewFlags = v->flags;			// Store the flags for the view
-			_sprites->eraseUpdSprites();
-
-			if (v->flags & UPDATE) {
-				v->flags &= ~DRAWN;
-			} else {
-				_sprites->eraseNonupdSprites();
-				v->flags &= ~DRAWN;
-				_sprites->blitNonupdSprites();
-			}
-			_sprites->blitUpdSprites();
-
-			_sprites->commitBlock(v->xPos, v->yPos - v->ySize + 1, v->xPos + v->xSize - 1, v->yPos);
-			v->flags = viewFlags;			// Restore the view's flags
-		}
-	}
-
 	v->viewData = &_game.views[n];
 	v->currentView = n;
 	v->numLoops = v->viewData->numLoops;
+	v->viewReplaced = true;
 	setLoop(v, v->currentLoop >= v->numLoops ? 0 : v->currentLoop);
 }
 
@@ -338,6 +310,7 @@ void AgiEngine::startUpdate(VtEntry *v) {
 
 		v->flags |= UPDATE;
 		_sprites->blitBoth();
+		_sprites->commitBoth();
 	}
 }
 
@@ -351,6 +324,7 @@ void AgiEngine::stopUpdate(VtEntry *v) {
 
 		v->flags &= ~UPDATE;
 		_sprites->blitBoth();
+		_sprites->commitBoth();
 	}
 }
 
@@ -393,7 +367,7 @@ void AgiEngine::updateViewtable() {
 				break;
 			default:
 				// for KQ4
-				if (getVersion() == 0x3086)
+				if (getVersion() == 0x3086 || getGameID() == GID_KQ4)
 					loop = loopTable4[v->direction];
 				break;
 			}

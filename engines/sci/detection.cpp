@@ -36,12 +36,11 @@
 #include "sci/engine/script.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
-#include "sci/engine/vm.h"		// for convertSierraGameId
 
 namespace Sci {
 
 // Titles of the games
-static const PlainGameDescriptor SciGameTitles[] = {
+static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"sci",             "Sierra SCI Game"},
 	{"sci-fanmade",     "Fanmade SCI Game"},
 	// === SCI0 games =========================================================
@@ -57,7 +56,7 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"lsl2",            "Leisure Suit Larry 2: Goes Looking for Love (in Several Wrong Places)"},
 	{"lsl3",            "Leisure Suit Larry 3: Passionate Patti in Pursuit of the Pulsating Pectorals"},
 	{"pq2",             "Police Quest II: The Vengeance"},
-	{"qfg1",            "Quest for Glory I: So You Want to Be a Hero"},	// EGA is SCI0, VGA SCI1.1
+	{"qfg1",            "Quest for Glory I: So You Want to Be a Hero"},
 	{"sq3",             "Space Quest III: The Pirates of Pestulon"},
 	// === SCI01 games ========================================================
 	{"qfg2",            "Quest for Glory II: Trial by Fire"},
@@ -90,11 +89,12 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"hoyle4",          "Hoyle Classic Card Games"},
 	{"kq6",             "King's Quest VI: Heir Today, Gone Tomorrow"},
 	{"laurabow2",       "Laura Bow 2: The Dagger of Amon Ra"},
+	{"qfg1vga",         "Quest for Glory I: So You Want to Be a Hero"},
 	{"qfg3",            "Quest for Glory III: Wages of War"},
 	{"sq5",             "Space Quest V: The Next Mutation"},
 	{"islandbrain",     "The Island of Dr. Brain"},
 	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
-	{"mothergoose",     "Mixed-Up Mother Goose"},	// floppy is SCI1.1, CD SCI2.1
+	{"mothergoose",     "Mixed-Up Mother Goose"},
 	{"pepper",          "Pepper's Adventure in Time"},
 	{"slater",          "Slater & Charlie Go Camping"},
 	// === SCI2 games =========================================================
@@ -106,6 +106,8 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	// TODO: Inside The Chest/Behind the Developer's Shield
 	{"kq7",             "King's Quest VII: The Princeless Bride"},
 	// TODO: King's Questions
+	{"lsl6hires",       "Leisure Suit Larry 6: Shape Up or Slip Out!"},
+	{"mothergoosehires","Mixed-Up Mother Goose"},
 	{"phantasmagoria",  "Phantasmagoria"},
 	{"pqswat",          "Police Quest: SWAT"},
 	{"shivers",         "Shivers"},
@@ -119,6 +121,237 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"rama",            "RAMA"},
 	{0, 0}
 };
+
+struct GameIdStrToEnum {
+	const char *gameidStr;
+	SciGameId gameidEnum;
+};
+
+static const GameIdStrToEnum s_gameIdStrToEnum[] = {
+	{ "astrochicken",    GID_ASTROCHICKEN },
+	{ "camelot",         GID_CAMELOT },
+	{ "castlebrain",     GID_CASTLEBRAIN },
+	{ "christmas1988",   GID_CHRISTMAS1988 },
+	{ "christmas1990",   GID_CHRISTMAS1990 },
+	{ "christmas1992",   GID_CHRISTMAS1992 },
+	{ "cnick-kq",        GID_CNICK_KQ },
+	{ "cnick-laurabow",  GID_CNICK_LAURABOW },
+	{ "cnick-longbow",   GID_CNICK_LONGBOW },
+	{ "cnick-lsl",       GID_CNICK_LSL },
+	{ "cnick-sq",        GID_CNICK_SQ },
+	{ "ecoquest",        GID_ECOQUEST },
+	{ "ecoquest2",       GID_ECOQUEST2 },
+	{ "fairytales",      GID_FAIRYTALES },
+	{ "freddypharkas",   GID_FREDDYPHARKAS },
+	{ "funseeker",       GID_FUNSEEKER },
+	{ "gk1",             GID_GK1 },
+	{ "gk2",             GID_GK2 },
+	{ "hoyle1",          GID_HOYLE1 },
+	{ "hoyle2",          GID_HOYLE2 },
+	{ "hoyle3",          GID_HOYLE3 },
+	{ "hoyle4",          GID_HOYLE4 },
+	{ "iceman",          GID_ICEMAN },
+	{ "islandbrain",     GID_ISLANDBRAIN },
+	{ "jones",           GID_JONES },
+	{ "kq1sci",          GID_KQ1 },
+	{ "kq4sci",          GID_KQ4 },
+	{ "kq5",             GID_KQ5 },
+	{ "kq6",             GID_KQ6 },
+	{ "kq7",             GID_KQ7 },
+	{ "laurabow",        GID_LAURABOW },
+	{ "laurabow2",       GID_LAURABOW2 },
+	{ "lighthouse",      GID_LIGHTHOUSE },
+	{ "longbow",         GID_LONGBOW },
+	{ "lsl1sci",         GID_LSL1 },
+	{ "lsl2",            GID_LSL2 },
+	{ "lsl3",            GID_LSL3 },
+	{ "lsl5",            GID_LSL5 },
+	{ "lsl6",            GID_LSL6 },
+	{ "lsl6hires",       GID_LSL6HIRES },
+	{ "lsl7",            GID_LSL7 },
+	{ "mothergoose",     GID_MOTHERGOOSE },
+	{ "mothergoosehires",GID_MOTHERGOOSEHIRES },
+	{ "msastrochicken",  GID_MSASTROCHICKEN },
+	{ "pepper",          GID_PEPPER },
+	{ "phantasmagoria",  GID_PHANTASMAGORIA },
+	{ "phantasmagoria2", GID_PHANTASMAGORIA2 },
+	{ "pq1sci",          GID_PQ1 },
+	{ "pq2",             GID_PQ2 },
+	{ "pq3",             GID_PQ3 },
+	{ "pq4",             GID_PQ4 },
+	{ "pqswat",          GID_PQSWAT },
+	{ "qfg1",            GID_QFG1 },
+	{ "qfg1vga",         GID_QFG1VGA },
+	{ "qfg2",            GID_QFG2 },
+	{ "qfg3",            GID_QFG3 },
+	{ "qfg4",            GID_QFG4 },
+	{ "rama",            GID_RAMA },
+	{ "sci-fanmade",     GID_FANMADE },	// FIXME: Do we really need/want this?
+	{ "shivers",         GID_SHIVERS },
+	{ "shivers2",        GID_SHIVERS2 },
+	{ "slater",          GID_SLATER },
+	{ "sq1sci",          GID_SQ1 },
+	{ "sq3",             GID_SQ3 },
+	{ "sq4",             GID_SQ4 },
+	{ "sq5",             GID_SQ5 },
+	{ "sq6",             GID_SQ6 },
+	{ "torin",           GID_TORIN },
+	{ NULL, (SciGameId)-1 }
+};
+
+struct OldNewIdTableEntry {
+	const char *oldId;
+	const char *newId;
+	SciVersion version;
+};
+
+static const OldNewIdTableEntry s_oldNewTable[] = {
+	{ "arthur",		"camelot",			SCI_VERSION_NONE     },
+	{ "brain",      "castlebrain",      SCI_VERSION_1_MIDDLE },	// Amiga
+	{ "brain",      "castlebrain",      SCI_VERSION_1_LATE   },
+	{ "demo",		"christmas1988",	SCI_VERSION_NONE     },
+	{ "card",       "christmas1990",    SCI_VERSION_1_EARLY, },
+	{ "card",       "christmas1992",    SCI_VERSION_1_1      },
+	{ "RH Budget",	"cnick-longbow",	SCI_VERSION_NONE     },
+	// iceman is the same
+	{ "icedemo",	"iceman",			SCI_VERSION_NONE     },
+	// longbow is the same
+	{ "eco",		"ecoquest",			SCI_VERSION_NONE     },
+	{ "eco2",		"ecoquest2",		SCI_VERSION_NONE     },	// EcoQuest 2 demo
+	{ "rain",		"ecoquest2",		SCI_VERSION_NONE     },	// EcoQuest 2 full
+	{ "tales",		"fairytales",		SCI_VERSION_NONE     },
+	{ "fp",			"freddypharkas",	SCI_VERSION_NONE     },
+	{ "emc",		"funseeker",		SCI_VERSION_NONE     },
+	{ "gk",			"gk1",				SCI_VERSION_NONE     },
+	// gk2 is the same
+	{ "hoyledemo",	"hoyle1",			SCI_VERSION_NONE     },
+	{ "cardgames",	"hoyle1",			SCI_VERSION_NONE     },
+	{ "solitare",	"hoyle2",			SCI_VERSION_NONE     },
+	// hoyle3 is the same
+	// hoyle4 is the same
+	{ "brain",      "islandbrain",      SCI_VERSION_1_1      },
+	{ "demo000",	"kq1sci",			SCI_VERSION_NONE     },
+	{ "kq1",		"kq1sci",			SCI_VERSION_NONE     },
+	{ "kq4",		"kq4sci",			SCI_VERSION_NONE     },
+	// kq5 is the same
+	// kq6 is the same
+	// kq7 is the same
+	{ "mm1",		"laurabow",			SCI_VERSION_NONE     },
+	{ "cb1",		"laurabow",			SCI_VERSION_NONE     },
+	{ "lb2",		"laurabow2",		SCI_VERSION_NONE     },
+	{ "rh",			"longbow",			SCI_VERSION_NONE     },
+	{ "ll1",		"lsl1sci",			SCI_VERSION_NONE     },
+	{ "lsl1",		"lsl1sci",			SCI_VERSION_NONE     },
+	// lsl2 is the same
+	{ "lsl3",		"lsl3",				SCI_VERSION_NONE     },
+	{ "ll5",		"lsl5",				SCI_VERSION_NONE     },
+	// lsl5 is the same
+	// lsl6 is the same
+	{ "mg",			"mothergoose",		SCI_VERSION_NONE     },
+	{ "twisty",		"pepper",			SCI_VERSION_NONE     },
+	{ "scary",      "phantasmagoria",   SCI_VERSION_NONE     },
+	// TODO: distinguish the full version of Phantasmagoria from the demo
+	{ "pq1",		"pq1sci",			SCI_VERSION_NONE     },
+	{ "pq",			"pq2",				SCI_VERSION_NONE     },
+	// pq3 is the same
+	// pq4 is the same
+	{ "hq",			"qfg1",				SCI_VERSION_NONE     },	// QFG1 SCI0/EGA
+	{ "glory",      "qfg1",             SCI_VERSION_0_LATE   },	// QFG1 SCI0/EGA
+	{ "trial",		"qfg2",				SCI_VERSION_NONE     },
+	{ "hq2demo",	"qfg2",				SCI_VERSION_NONE     },
+	// rama is the same
+	// TODO: distinguish the full version of rama from the demo
+	{ "thegame",	"slater",			SCI_VERSION_NONE     },
+	{ "sq1demo",	"sq1sci",			SCI_VERSION_NONE     },
+	{ "sq1",		"sq1sci",			SCI_VERSION_NONE     },
+	// sq3 is the same
+	// sq4 is the same
+	// sq5 is the same
+	// sq6 is the same
+	// TODO: distinguish the full version of SQ6 from the demo
+	// torin is the same
+
+
+	// TODO: SCI3 IDs
+
+	{ "", "", SCI_VERSION_NONE }
+};
+
+/**
+ * Converts the builtin Sierra game IDs to the ones we use in ScummVM
+ * @param[in] gameId		The internal game ID
+ * @param[in] gameFlags     The game's flags, which are adjusted accordingly for demos
+ * @return					The equivalent ScummVM game id
+ */
+Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, ResourceManager *resMan) {
+	// Convert the id to lower case, so that we match all upper/lower case variants.
+	sierraId.toLowercase();
+
+	// If the game has less than the expected scripts, it's a demo
+	uint32 demoThreshold = 100;
+	// ...but there are some exceptions
+	if (sierraId == "brain" || sierraId == "lsl1" ||
+		sierraId == "mg" || sierraId == "pq" ||
+		sierraId == "jones" ||
+		sierraId == "cardgames" || sierraId == "solitare" ||
+		sierraId == "hoyle3" || sierraId == "hoyle4")
+		demoThreshold = 40;
+	if (sierraId == "fp" || sierraId == "gk" || sierraId == "pq4")
+		demoThreshold = 150;
+
+	Common::ScopedPtr<Common::List<ResourceId> > resources(resMan->listResources(kResourceTypeScript, -1));
+	if (resources->size() < demoThreshold) {
+		*gameFlags |= ADGF_DEMO;
+
+		// Crazy Nick's Picks
+		if (sierraId == "lsl1" && resources->size() == 34)
+			return "cnick-lsl";
+		if (sierraId == "sq4" && resources->size() == 34)
+			return "cnick-sq";
+
+		// TODO: cnick-kq, cnick-laurabow and cnick-longbow (their resources can't be read)
+
+		// Handle Astrochicken 1 (SQ3) and 2 (SQ4)
+		if (sierraId == "sq3" && resources->size() == 20)
+			return "astrochicken";
+		if (sierraId == "sq4")
+			return "msastrochicken";
+	}
+
+	if (sierraId == "torin" && resources->size() == 226)	// Torin's Passage demo
+		*gameFlags |= ADGF_DEMO;
+
+	for (const OldNewIdTableEntry *cur = s_oldNewTable; cur->oldId[0]; ++cur) {
+		if (sierraId == cur->oldId) {
+			// Distinguish same IDs from the SCI version
+			if (cur->version != SCI_VERSION_NONE && cur->version != getSciVersion())
+				continue;
+
+			return cur->newId;
+		}
+	}
+
+	if (sierraId == "glory") {
+		// This could either be qfg1 VGA, qfg3 or qfg4 demo (all SCI1.1),
+		// or qfg4 full (SCI2)
+		// qfg1 VGA doesn't have view 1
+		if (!resMan->testResource(ResourceId(kResourceTypeView, 1)))
+			return "qfg1vga";
+
+		// qfg4 full is SCI2
+		if (getSciVersion() == SCI_VERSION_2)
+			return "qfg4";
+
+		// qfg4 demo has less than 50 scripts
+		if (resources->size() < 50)
+			return "qfg4";
+
+		// Otherwise it's qfg3
+		return "qfg3";
+	}
+
+	return sierraId;
+}
 
 #include "sci/detection_tables.h"
 
@@ -147,7 +380,7 @@ static const ADParams detectionParams = {
 	// Number of bytes to compute MD5 sum for
 	5000,
 	// List of all engine targets
-	SciGameTitles,
+	s_sciGameTitles,
 	// Structure for autoupgrading obsolete targets
 	0,
 	// Name of single gameid (optional)
@@ -157,7 +390,11 @@ static const ADParams detectionParams = {
 	// Flags
 	0,
 	// Additional GUI options (for every game}
-	Common::GUIO_NONE
+	Common::GUIO_NONE,
+	// Maximum directory depth
+	1,
+	// List of directory globs
+	0
 };
 
 class SciMetaEngine : public AdvancedMetaEngine {
@@ -205,50 +442,6 @@ Common::Language charToScummVMLanguage(const char c) {
 	}
 }
 
-#define READ_UINT16(buf) (!resMan->isSci11Mac() ? READ_LE_UINT16(buf) : READ_BE_UINT16(buf))
-
-// Finds the internal ID of the current game from script 0
-Common::String getSierraGameId(ResourceManager *resMan) {
-	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, 0), false);
-	Script *script000 = new Script();
-	script000->init(0, resMan);
-	script000->mcpyInOut(0, script->data, script->size);
-	uint16 curOffset = (getSciVersion() == SCI_VERSION_0_EARLY) ? 2 : 0;
-	uint16 objLength = 0;
-	int objType = 0;
-	int16 exportsOffset = 0;
-	Common::String sierraId;
-
-	// Now find the export table of the script
-	do {
-		objType = READ_UINT16(script000->_buf + curOffset);
-		if (!objType)
-			break;
-	
-		objLength = READ_UINT16(script000->_buf + curOffset + 2);
-		curOffset += 4;		// skip header
-
-		if (objType == SCI_OBJ_EXPORTS) {
-			exportsOffset = READ_UINT16(script000->_buf + curOffset + 2);
-			break;
-		}
-		curOffset += objLength - 4;
-	} while (objType != 0 && curOffset < script->size - 2);
-
-	// The game object is the first export. Script 0 is always at segment 1
-	reg_t gameObj = make_reg(1, exportsOffset);
-
-	// TODO: stop using the segment manager and read the object name here
-	SegManager *segMan = new SegManager(resMan);
-	script_instantiate(resMan, segMan, 0);
-	sierraId = segMan->getObjectName(gameObj);
-	delete segMan;
-
-	delete script000;
-
-	return sierraId;
-}
-
 const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
 	bool foundResMap = false;
 	bool foundRes000 = false;
@@ -269,19 +462,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		filename.toLowercase();
 
 		if (filename.contains("resource.map") || filename.contains("resmap.00") || filename.contains("Data1")) {
-			// HACK: resource.map is located in the same directory as the other resource files,
-			// therefore add the directory here, so that the game files can be opened later on
-			// We now add the parent directory temporary to our SearchMan so the engine code
-			// used in the detection can access all files via Common::File without any problems.
-			// In all branches returning from this function, we need to have a call to
-			// SearchMan.remove to remove it from the default directory pool again.
-			//
-			// A proper solution to remove this hack would be to have the code, which is needed
-			// for detection, to operate on Stream objects, so they can be easily called from
-			// the detection code. This might be easily to achieve through refactoring the
-			// code needed for detection.
-			assert(!SearchMan.hasArchive("SCI_detection"));
-			SearchMan.addDirectory("SCI_detection", file->getParent());
 			foundResMap = true;
 		}
 
@@ -316,8 +496,8 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 			filename.contains("patch.005") || filename.contains("bank.001"))
 				s_fallbackDesc.platform = Common::kPlatformAmiga;
 
-		// The existence of 7.pat indicates a Mac game
-		if (filename.contains("7.pat"))
+		// The existence of 7.pat or patch.200 indicates a Mac game
+		if (filename.contains("7.pat") || filename.contains("patch.200"))
 			s_fallbackDesc.platform = Common::kPlatformMacintosh;
 
 		// The data files for Atari ST versions are the same as their DOS counterparts
@@ -325,19 +505,22 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 
 	// If these files aren't found, it can't be SCI
 	if (!foundResMap && !foundRes000) {
-		SearchMan.remove("SCI_detection");
 		return 0;
 	}
 
-	ResourceManager *resMan = new ResourceManager(fslist);
+	ResourceManager *resMan = new ResourceManager();
+	assert(resMan);
+	resMan->addAppropriateSources(fslist);
+	resMan->init();
+	// TODO: Add error handling.
+
 	ViewType gameViews = resMan->getViewType();
 
 	// Have we identified the game views? If not, stop here
+	// Can't be SCI (or unsupported SCI views). Pinball Creep by sierra also uses resource.map/resource.000 files
+	//  but doesnt share sci format at all, if we dont return 0 here we will detect this game as SCI
 	if (gameViews == kViewUnknown) {
-		SearchMan.remove("SCI_detection");
 		delete resMan;
-		// Can't be SCI (or unsupported SCI views). Pinball Creep by sierra also uses resource.map/resource.000 files
-		//  but doesnt share sci format at all, if we dont return 0 here we will detect this game as SCI
 		return 0;
 	}
 
@@ -345,7 +528,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	// Is SCI32 compiled in? If not, and this is a SCI32 game,
 	// stop here
 	if (getSciVersion() >= SCI_VERSION_2) {
-		SearchMan.remove("SCI_detection");
 		delete resMan;
 		return (const ADGameDescription *)&s_fallbackDesc;
 	}
@@ -360,7 +542,15 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		s_fallbackDesc.platform = Common::kPlatformAmiga;
 
 	// Determine the game id
-	Common::String gameId = convertSierraGameId(getSierraGameId(resMan).c_str(), &s_fallbackDesc.flags, resMan);
+	Common::String sierraGameId = resMan->findSierraGameId();
+
+	// If we don't have a game id, the game is not SCI
+	if (sierraGameId.empty()) {
+		delete resMan;
+		return 0;
+	}
+
+	Common::String gameId = convertSierraGameId(sierraGameId, &s_fallbackDesc.flags, resMan);
 	strncpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
 	s_fallbackGameIdBuf[sizeof(s_fallbackGameIdBuf) - 1] = 0;	// Make sure string is NULL terminated
 	s_fallbackDesc.gameid = s_fallbackGameIdBuf;
@@ -394,7 +584,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		}
 	}
 
-	delete resMan;
 
 	// Fill in extras field
 	if (!strcmp(s_fallbackDesc.gameid, "lsl1sci") ||
@@ -402,24 +591,28 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		!strcmp(s_fallbackDesc.gameid, "sq1sci"))
 		s_fallbackDesc.extra = "VGA Remake";
 
-	if (!strcmp(s_fallbackDesc.gameid, "qfg1") && !Common::File::exists("resource.001"))
+	if (!strcmp(s_fallbackDesc.gameid, "qfg1vga") && getSciVersion() == SCI_VERSION_1_1)
 		s_fallbackDesc.extra = "VGA Remake";
 
 	// Add "demo" to the description for demos
 	if (s_fallbackDesc.flags & ADGF_DEMO)
 		s_fallbackDesc.extra = "demo";
 
-	SearchMan.remove("SCI_detection");
+	delete resMan;
 
 	return (const ADGameDescription *)&s_fallbackDesc;
 }
 
-bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	const ADGameDescription *desc = (const ADGameDescription *)gd;
+bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	const GameIdStrToEnum *g = s_gameIdStrToEnum;
+	for (; g->gameidStr; ++g) {
+		if (0 == strcmp(desc->gameid, g->gameidStr)) {
+			*engine = new SciEngine(syst, desc, g->gameidEnum);
+			return true;
+		}
+	}
 
-	*engine = new SciEngine(syst, desc);
-
-	return true;
+	return false;
 }
 
 bool SciMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -434,9 +627,16 @@ bool SciMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool SciEngine::hasFeature(EngineFeature f) const {
 	return
-		//(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime);
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime); // ||
 		//(f == kSupportsSavingDuringRuntime);
+		// We can't allow saving through ScummVM menu, because
+		//  a) lots of games don't like saving everywhere (e.g. castle of dr. brain)
+		//  b) some games even dont allow saving in certain rooms (e.g. lsl6)
+		//  c) somehow some games even get mad when doing this (execstackbase was 1 all of a sudden in lsl3)
+		//  d) for sci0/sci01 games we should at least wait till status bar got drawn, although this may not be enough
+		// we can't make sure that the scripts are fine with us saving at a specific location, doing so may work sometimes
+		//  and some other times it won't work.
 }
 
 SaveStateList SciMetaEngine::listSaves(const char *target) const {
@@ -557,7 +757,7 @@ Common::Error SciEngine::saveGameState(int slot, const char *desc) {
 		return Common::kWritingFailed;
 	}
 
-	if (gamestate_save(_gamestate, out, desc, version)) {
+	if (!gamestate_save(_gamestate, out, desc, version)) {
 		warning("Saving the game state to '%s' failed", fileName.c_str());
 		return Common::kWritingFailed;
 	} else {
@@ -573,11 +773,11 @@ Common::Error SciEngine::saveGameState(int slot, const char *desc) {
 }
 
 bool SciEngine::canLoadGameStateCurrently() {
-	return !_gamestate->execution_stack_base;
+	return !_gamestate->executionStackBase;
 }
 
 bool SciEngine::canSaveGameStateCurrently() {
-	return !_gamestate->execution_stack_base;
+	return !_gamestate->executionStackBase;
 }
 
 } // End of namespace Sci

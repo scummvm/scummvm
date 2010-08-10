@@ -40,10 +40,10 @@
 /**
  * This is the namespace of the Cruise engine.
  *
- * Status of this engine: ???
+ * Status of this engine: Game is completable, engine needs objectifying
  *
  * Supported games:
- * - ???
+ * - Cruise for a Corpse
  */
 namespace Cruise {
 
@@ -112,6 +112,22 @@ public:
 	void initAllData();
 
 	Common::RandomSource _rnd;
+
+	Common::List<byte *> _memList;
+
+	typedef Common::List<Common::Rect> RectList;
+
+	RectList _dirtyRects;
+	RectList _priorFrameRects;
+
+	Common::File _currentVolumeFile;
+
+	Common::Array<CtStruct> _polyStructNorm;
+	Common::Array<CtStruct> _polyStructExp;
+	Common::Array<CtStruct> *_polyStructs;
+	Common::Array<CtStruct> *_polyStruct;
+
+	Common::File _PAL_file;
 };
 
 extern CruiseEngine *_vm;

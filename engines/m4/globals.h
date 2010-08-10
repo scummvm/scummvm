@@ -28,6 +28,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/hashmap.h"
 #include "common/rect.h"
 #include "common/file.h"
 #include "common/list.h"
@@ -149,7 +150,7 @@ public:
 	void pauseGame(bool value);
 };
 
-#define TOTAL_NUM_VARIABLES 256
+#define TOTAL_NUM_VARIABLES 210
 
 #define PLAYER_INVENTORY 2
 
@@ -223,6 +224,13 @@ struct MadsConfigData {
 	int screenFades;
 };
 
+#define GET_GLOBAL(x) (_madsVm->globals()->_globals[x])
+#define GET_GLOBAL32(x) (((uint32)_madsVm->globals()->_globals[x + 1] << 16) | _madsVm->globals()->_globals[x])
+#define SET_GLOBAL(x,y) _madsVm->globals()->_globals[x] = y
+#define SET_GLOBAL32(x,y) { _madsVm->globals()->_globals[x] = (y) & 0xffff; _madsVm->globals()->_globals[(x) + 1] = (y) >> 16; }
+
+typedef Common::HashMap<uint16, uint16> IntStorage;
+
 class MadsGlobals : public Globals {
 private:
 	struct MessageItem {
@@ -235,7 +243,7 @@ private:
 	MadsEngine *_vm;
 	Common::Array<char* > _madsVocab;
 	Common::Array<char* > _madsQuotes;
-	Common::Array<MessageItem* > _madsMessages;
+	Common::Array<MessageItem> _madsMessages;
 	MadsObjectArray _madsObjects;
 	Common::List<int> _visitedScenes;
 public:
@@ -243,12 +251,16 @@ public:
 	~MadsGlobals();
 
 	// MADS variables
-	int _globals[TOTAL_NUM_VARIABLES];
+	uint16 _globals[TOTAL_NUM_VARIABLES];
 	MadsConfigData _config;
 	bool playerSpriteChanged;
 	MadsDialogType dialogType;
 	int sceneNumber;
 	int previousScene;
+	int16 _nextSceneId;
+	uint16 actionNouns[3];
+	IntStorage _dataMap;
+	int _difficultyLevel;
 
 	void loadMadsVocab();
 	uint32 getVocabSize() { return _madsVocab.size(); }

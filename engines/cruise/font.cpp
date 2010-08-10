@@ -30,7 +30,6 @@
 #include "cruise/cruise_main.h"
 #include "cruise/mouse.h"
 #include "cruise/staticres.h"
-#include "cruise/vars.h"
 
 namespace Cruise {
 
@@ -99,7 +98,7 @@ int32 getTextLineCount(int32 rightBorder_X, int16 wordSpacingWidth,
 void loadFNT(const char *fileName) {
 	uint8 header[4];
 
-	CVars._systemFNT = NULL;
+	_systemFNT = NULL;
 
 	Common::File fontFileHandle;
 
@@ -113,20 +112,20 @@ void loadFNT(const char *fileName) {
 	if (strcmp((char*)header, "FNT") == 0) {
 		uint32 fontSize = fontFileHandle.readUint32BE();
 
-		CVars._systemFNT = (uint8 *)mallocAndZero(fontSize);
+		_systemFNT = (uint8 *)mallocAndZero(fontSize);
 
-		if (CVars._systemFNT != NULL) {
+		if (_systemFNT != NULL) {
 			fontFileHandle.seek(4);
-			fontFileHandle.read(CVars._systemFNT, fontSize);
+			fontFileHandle.read(_systemFNT, fontSize);
 
 			// Flip structure values from BE to LE for font files - this is for consistency
 			// with font resources, which are in LE formatt
-			FontInfo *f = (FontInfo *)CVars._systemFNT;
+			FontInfo *f = (FontInfo *)_systemFNT;
 			bigEndianLongToNative(&f->offset);
 			bigEndianLongToNative(&f->size);
 			flipGen(&f->numChars, 6);	// numChars, hSpacing, and vSpacing
 
-			FontEntry *fe = (FontEntry *)(CVars._systemFNT + sizeof(FontInfo));
+			FontEntry *fe = (FontEntry *)(_systemFNT + sizeof(FontInfo));
 
 			for (int i = 0; i < f->numChars; ++i, ++fe) {
 				bigEndianLongToNative(&fe->offset);	// Flip 32-bit offset field
@@ -141,10 +140,10 @@ void loadFNT(const char *fileName) {
 void initSystem() {
 	int32 i;
 
-	CVars.itemColor = 15;
-	CVars.titleColor = 9;
-	CVars.selectColor = 13;
-	CVars.subColor = 10;
+	itemColor = 15;
+	titleColor = 9;
+	selectColor = 13;
+	subColor = 10;
 
 	for (i = 0; i < 64; i++) {
 		strcpy(preloadData[i].name, "");
@@ -170,7 +169,7 @@ void initSystem() {
 }
 
 void freeSystem() {
-	MemFree(CVars._systemFNT);
+	MemFree(_systemFNT);
 }
 
 void bigEndianShortToNative(void *var) {
@@ -310,10 +309,10 @@ gfxEntryStruct *renderText(int inRightBorder_X, const char *string) {
 		fontPtr = (const FontInfo *)filesDatabase[fontFileIndex].subData.ptr;
 
 		if (!fontPtr) {
-			fontPtr = (const FontInfo *)CVars._systemFNT;
+			fontPtr = (const FontInfo *)_systemFNT;
 		}
 	} else {
-		fontPtr = (const FontInfo *)CVars._systemFNT;
+		fontPtr = (const FontInfo *)_systemFNT;
 	}
 
 	if (!fontPtr) {

@@ -78,9 +78,8 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : _vm(vm) {
 		error("Myst requires greater than 256 colors to run");
 
 	if (_vm->getFeatures() & GF_ME) {
-		// We want to delete our own JPEG surfaces, so don't free after use.
-		_jpegDecoder = new JPEGDecoder(false);
-		_pictDecoder = new MystPICT(_jpegDecoder);
+		_jpegDecoder = new Graphics::JPEGDecoder();
+		_pictDecoder = new Graphics::PictDecoder(_pixelFormat);
 	} else {
 		_jpegDecoder = NULL;
 		_pictDecoder = NULL;
@@ -152,9 +151,10 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	if (_vm->getFeatures() & GF_ME && _vm->getPlatform() == Common::kPlatformMacintosh && _pictureFile.picFile.isOpen()) {
 		for (uint32 i = 0; i < _pictureFile.pictureCount; i++)
 			if (_pictureFile.entries[i].id == image) {
-				if (_pictureFile.entries[i].type == 0)
-					surface = _jpegDecoder->decodeImage(new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size));
-				else if (_pictureFile.entries[i].type == 1)
+				if (_pictureFile.entries[i].type == 0) {
+					Graphics::Surface *jpegSurface = _jpegDecoder->decodeImage(new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size));
+					surface->copyFrom(*jpegSurface);
+				} else if (_pictureFile.entries[i].type == 1)
 					surface = _pictDecoder->decodeImage(new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size));
 				else
 					error ("Unknown Picture File type %d", _pictureFile.entries[i].type);
@@ -466,27 +466,22 @@ void RivenGraphics::runScheduledTransition() {
 	// transitions were found by hacking scripts.
 
 	switch (_scheduledTransition) {
+	case 0:  // Swipe Left
+	case 1:  // Swipe Right
+	case 2:  // Swipe Up
+	case 3:  // Swipe Down
 	case 12: // Pan Left
-		warning ("STUB: Pan left");
-		break;
 	case 13: // Pan Right
-		warning ("STUB: Pan right");
-		break;
 	case 14: // Pan Up
-		warning ("STUB: Pan up");
-		break;
 	case 15: // Pan Down
-		warning ("STUB: Pan down");
-		break;
 	case 16: // Dissolve
 	case 17: // Dissolve (tspit CARD 155)
-		warning ("STUB: Dissolve");
 		break;
 	default:
-		if (_scheduledTransition < 12)
-			error ("Found unused transition %d", _scheduledTransition);
+		if (_scheduledTransition >= 4 && _scheduledTransition <= 11)
+			error("Found unused transition %d", _scheduledTransition);
 		else
-			error ("Found unknown transition %d", _scheduledTransition);
+			error("Found unknown transition %d", _scheduledTransition);
 	}
 
 	// For now, just copy the image to screen without doing any transition.
@@ -607,19 +602,23 @@ void RivenGraphics::showInventory() {
 	if (_vm->getFeatures() & GF_DEMO || _vm->getCurStack() == aspit)
 		return;
 
-	// There are three books and three vars. However, there's only
-	// a possible two combinations. Either you have only Atrus'
-	// journal or you have all three books.
-	// bool hasAtrusBook = *_vm->matchVarToString("aatrusbook") != 0;
+	// There are three books and three vars. We have three different
+	// combinations. At the start you have just Atrus' journal. Later,
+	// you get Catherine's journal and the trap book. Near the end,
+	// you lose the trap book and have just the two journals.
+
 	bool hasCathBook = *_vm->matchVarToString("acathbook") != 0;
-	// bool hasTrapBook = *_vm->matchVarToString("atrapbook") != 0;
+	bool hasTrapBook = *_vm->matchVarToString("atrapbook") != 0;
 
 	if (!hasCathBook) {
-		drawInventoryImage(101, g_atrusJournalRectSolo);
+		drawInventoryImage(101, g_atrusJournalRect1);
+	} else if (!hasTrapBook) {
+		drawInventoryImage(101, g_atrusJournalRect2);
+		drawInventoryImage(102, g_cathJournalRect2);
 	} else {
-		drawInventoryImage(101, g_atrusJournalRect);
-		drawInventoryImage(102, g_cathJournalRect);
-		drawInventoryImage(100, g_trapBookRect);
+		drawInventoryImage(101, g_atrusJournalRect3);
+		drawInventoryImage(102, g_cathJournalRect3);
+		drawInventoryImage(100, g_trapBookRect3);
 	}
 
 	_vm->_system->updateScreen();

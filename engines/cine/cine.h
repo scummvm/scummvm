@@ -47,6 +47,8 @@
 #include "cine/pal.h"
 #include "cine/gfx.h"
 #include "cine/anim.h"
+#include "cine/bg_list.h"
+#include "cine/various.h"
 
 //#define DUMP_SCRIPTS
 
@@ -93,6 +95,7 @@ enum CineGameFeatures {
 };
 
 struct CINEGameDescription;
+struct SeqListElement;
 
 typedef Common::HashMap<Common::String, const char *> StringPtrHashMap;
 
@@ -150,6 +153,36 @@ private:
 
 	bool _preLoad;
 	int _timerDelayMultiplier;
+
+ public:
+	// TODO: These are pseudo-global vars
+	// They better belong to appropriate classes
+	Common::Array<AnimData> _animDataTable;
+	Common::List<BGIncrust> _bgIncrustList;
+	Common::StringArray _messageTable;
+	Common::Array<ObjectStruct> _objectTable;
+	Common::List<overlay> _overlayList;
+	Common::Array<PalEntry> _palArray;
+	Common::Array<PartBuffer> _partBuffer;
+	ScriptList _globalScripts;
+	ScriptList _objectScripts;
+	RawObjectScriptArray _relTable; ///< Object script bytecode table
+
+	/**
+	 * Global variables.
+	 * 255 of these are saved, but there's one more that's used for bypassing the copy protection.
+	 * In CineEngine::mainLoop(int bootScriptIdx) there's this code: globalVars[VAR_BYPASS_PROTECTION] = 0;
+	 * And as VAR_BYPASS_PROTECTION is 255 that's why we're allocating one more than we otherwise would.
+	 */
+	ScriptVars _globalVars;
+	RawScriptArray _scriptTable; ///< Table of script bytecode
+
+	Common::Array<uint16> _zoneData;
+	Common::Array<uint16> _zoneQuery; ///< Only exists in Operation Stealth
+
+	Common::List<SeqListElement> _seqList;
+
+	Common::String _commandBuffer;
 };
 
 extern CineEngine *g_cine;
@@ -189,8 +222,6 @@ enum {
 	kCmpLT = (1 << 2)
 };
 
-
-extern Common::SaveFileManager *g_saveFileMan; // TEMP
 
 } // End of namespace Cine
 

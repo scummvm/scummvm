@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/backends/platform/psp/osys_psp.cpp $
- * $Id: osys_psp.cpp 46126 2009-11-24 14:18:46Z fingolfin $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -340,11 +340,17 @@ void Buffer::copyFromRect(const byte *buf, uint32 pitch, int destX, int destY, u
 
 	if (pitch == realWidthInBytes && pitch == recWidthInBytes) {
 		//memcpy(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth));
-		Copier::copy(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth), &_pixelFormat);
+		if (_pixelFormat.swapRB)
+			PspMemory::fastSwap(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth), _pixelFormat);
+		else
+			PspMemory::fastCopy(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth));
 	} else {
 		do {
 			//memcpy(dst, buf, recWidthInBytes);
-			Copier::copy(dst, buf, recWidthInBytes, &_pixelFormat);
+			if (_pixelFormat.swapRB)
+				PspMemory::fastSwap(dst, buf, recWidthInBytes, _pixelFormat);
+			else
+				PspMemory::fastCopy(dst, buf, recWidthInBytes);
 			buf += pitch;
 			dst += realWidthInBytes;
 		} while (--recHeight);
@@ -363,7 +369,10 @@ void Buffer::copyToArray(byte *dst, int pitch) {
 
 	do {
 		//memcpy(dst, src, sourceWidthInBytes);
-		Copier::copy(dst, src, sourceWidthInBytes, &_pixelFormat);
+		if (_pixelFormat.swapRB)
+			PspMemory::fastSwap(dst, src, sourceWidthInBytes, _pixelFormat);
+		else
+			PspMemory::fastCopy(dst, src, sourceWidthInBytes);
 		src += realWidthInBytes;
 		dst += pitch;
 	} while (--h);
@@ -686,17 +695,18 @@ void GuRenderer::fillVertices(Vertex *vertices) {
 	uint32 gapX = _useGlobalScaler ? (PSP_SCREEN_WIDTH - outputWidth) >> 1 : 0;
 	uint32 gapY = _useGlobalScaler ? (PSP_SCREEN_HEIGHT - outputHeight) >> 1 : 0;
 
+	// Save scaled offset on screen
+	float scaledOffsetOnScreenX = scaleSourceToOutputX(_offsetOnScreen.x);
+	float scaledOffsetOnScreenY = scaleSourceToOutputY(_offsetOnScreen.y);
+	
 	float imageStartX, imageStartY, imageEndX, imageEndY;
 
-	imageStartX = gapX + (scaleSourceToOutputX(_maxTextureOffset.x));
-	imageStartY = gapY;
-
-	imageStartX += scaleSourceToOutputX(_offsetOnScreen.x);
-	imageStartY += scaleSourceToOutputY(_offsetOnScreen.y);
+	imageStartX = gapX + scaledOffsetOnScreenX + (scaleSourceToOutputX(_maxTextureOffset.x));
+	imageStartY = gapY + scaledOffsetOnScreenY;
 
 	if (_fullScreen) { // shortcut
-		imageEndX = PSP_SCREEN_WIDTH - gapX;
-		imageEndY = PSP_SCREEN_HEIGHT - gapY;
+		imageEndX = PSP_SCREEN_WIDTH - gapX + scaledOffsetOnScreenX; 
+		imageEndY = PSP_SCREEN_HEIGHT - gapY + scaledOffsetOnScreenY; // needed for screen shake
 	} else { /* !fullScreen */
 		imageEndX = imageStartX + scaleSourceToOutputX(_drawSize.width);
 		imageEndY = imageStartY + scaleSourceToOutputY(_drawSize.height);

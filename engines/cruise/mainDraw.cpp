@@ -135,7 +135,7 @@ void flipScreen() {
 		gfxModuleData_setPal256(workpal);
 	}
 
-	SWAP(CVars.pPage00, CVars.pPage10);
+	SWAP(gfxModuleData.pPage00, gfxModuleData.pPage10);
 
 	gfxModuleData_flipScreen();
 
@@ -1330,7 +1330,7 @@ void drawMenu(menuStruct *pMenu) {
 	int wx = x + (nbcol - 1) * (160 / 2);
 
 	if (wx <= 320 - 160) {
-		drawMessage(pMenu->gfx, wx, y - hline, 160, CVars.titleColor, CVars.pPage10);
+		drawMessage(pMenu->gfx, wx, y - hline, 160, titleColor, gfxModuleData.pPage10);
 	}
 
 	wx = x;
@@ -1348,17 +1348,17 @@ void drawMenu(menuStruct *pMenu) {
 		int color;
 
 		if (p1->selected) {
-			color = CVars.selectColor;
+			color = selectColor;
 		} else {
 			if (p1->color != 255) {
 				color = p1->color;
 			} else {
-				color = CVars.itemColor;
+				color = itemColor;
 			}
 		}
 
 		if (wx <= (320 - 160)) {
-			drawMessage(p2, wx, wy, 160, color, CVars.pPage10);
+			drawMessage(p2, wx, wy, 160, color, gfxModuleData.pPage10);
 		}
 
 		wy += hline;
@@ -1418,7 +1418,7 @@ void mainDraw(int16 param) {
 	bgPtr = backgroundScreens[masterScreen];
 
 	if (bgPtr) {
-		gfxModuleData_gfxCopyScreen(bgPtr, CVars.pPage10);
+		gfxModuleData_gfxCopyScreen(bgPtr, gfxModuleData.pPage10);
 		if (backgroundChanged[masterScreen]) {
 			backgroundChanged[masterScreen] = false;
 			switchBackground(bgPtr);
@@ -1469,7 +1469,7 @@ void mainDraw(int16 param) {
 
 			if ((params.state >= 0) && (objZ2 >= 0) && filesDatabase[objZ2].subData.ptr) {
 				if (filesDatabase[objZ2].subData.resourceType == 8) {	// Poly
-					mainDrawPolygons(objZ2, currentObjPtr, objX2, params.scale, objY2, (char *)CVars.pPage10, (char *)filesDatabase[objZ2].subData.ptr);	// poly
+					mainDrawPolygons(objZ2, currentObjPtr, objX2, params.scale, objY2, (char *)gfxModuleData.pPage10, (char *)filesDatabase[objZ2].subData.ptr);	// poly
 				} else if (filesDatabase[objZ2].subData.resourceType == OBJ_TYPE_SOUND) {
 				} else if (filesDatabase[objZ2].resType == OBJ_TYPE_MASK) {
 				} else if (filesDatabase[objZ2].subData.resourceType == OBJ_TYPE_SPRITE) {
@@ -1477,7 +1477,7 @@ void mainDraw(int16 param) {
 					spriteHeight = filesDatabase[objZ2].height;	// height
 
 					if (filesDatabase[objZ2].subData.ptr) {
-						drawSprite(objX1, spriteHeight, currentObjPtr, filesDatabase[objZ2].subData.ptr, objY2, objX2, CVars.pPage10, filesDatabase[objZ2].subData.ptrMask);
+						drawSprite(objX1, spriteHeight, currentObjPtr, filesDatabase[objZ2].subData.ptr, objY2, objX2, gfxModuleData.pPage10, filesDatabase[objZ2].subData.ptrMask);
 					}
 				}
 			}
@@ -1573,7 +1573,7 @@ void mainDraw(int16 param) {
 
 	while (currentObjPtr) {
 		if (currentObjPtr->type == OBJ_TYPE_MESSAGE && currentObjPtr->freeze == 0) {
-			drawMessage(currentObjPtr->gfxPtr, currentObjPtr->x, currentObjPtr->field_C, currentObjPtr->spriteIdx, currentObjPtr->color, CVars.pPage10);
+			drawMessage(currentObjPtr->gfxPtr, currentObjPtr->x, currentObjPtr->field_C, currentObjPtr->spriteIdx, currentObjPtr->color, gfxModuleData.pPage10);
 			isMessage = 1;
 		}
 		currentObjPtr = currentObjPtr->next;
@@ -1586,16 +1586,16 @@ void mainDraw(int16 param) {
 			drawMenu(menuTable[currentActiveMenu]);
 			return;
 		}
-	} else if ((linkedRelation) && (CVars.linkedMsgList)) {
+	} else if ((linkedRelation) && (linkedMsgList)) {
 		int16 mouseX;
 		int16 mouseY;
 		int16 button;
 		getMouseStatus(&main10, &mouseX, &button, &mouseY);
 
-		if (mouseY > (CVars.linkedMsgList->height)*2)
-			drawMessage(CVars.linkedMsgList, 0, 0, 320, findHighColor(), CVars.pPage10);
+		if (mouseY > (linkedMsgList->height)*2)
+			drawMessage(linkedMsgList, 0, 0, 320, findHighColor(), gfxModuleData.pPage10);
 		else
-			drawMessage(CVars.linkedMsgList, 0, 200, 320, findHighColor(), CVars.pPage10);
+			drawMessage(linkedMsgList, 0, 200, 320, findHighColor(), gfxModuleData.pPage10);
 	}
 }
 

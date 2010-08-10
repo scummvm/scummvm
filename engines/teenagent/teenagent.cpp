@@ -618,9 +618,7 @@ Common::Error TeenAgentEngine::run() {
 
 		_system->updateScreen();
 
-		if (console->isAttached()) {
-			console->onFrame();
-		}
+		console->onFrame();
 
 		uint32 next_tick = MIN(game_timer, mark_timer);
 		if (next_tick > 0) {

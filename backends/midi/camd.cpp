@@ -177,7 +177,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
 };
 
 MusicDevices CamdMusicPlugin::getDevices() const {
@@ -188,19 +188,10 @@ MusicDevices CamdMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error CamdMusicPlugin::createInstance(MidiDriver **mididriver) const {
+Common::Error CamdMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
 	*mididriver = new MidiDriver_CAMD();
 
 	return Common::kNoError;
-}
-
-MidiDriver *MidiDriver_CAMD_create() {
-	MidiDriver *mididriver;
-
-	CamdMusicPlugin p;
-	p.createInstance(&mididriver);
-
-	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(CAMD)

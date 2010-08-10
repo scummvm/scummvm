@@ -44,12 +44,14 @@ namespace M4 {
 #define CELS__PAL MKID_BE(' PAL')	//' PAL'
 #define CELS___SS MKID_BE('  SS')	//'  SS'
 
+#define SPRITE_SET_CHAR_INFO 4
+
 class MadsM4Engine;
 class Palette;
 
 class BaseAsset {
 public:
-	BaseAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name);
+	BaseAsset(MadsM4Engine *vm);
 	~BaseAsset();
 	const Common::String getName() const { return _name; }
 protected:
@@ -100,12 +102,28 @@ struct SpriteAssetFrame {
 	M4Sprite *frame;
 };
 
+class MadsSpriteSetCharInfo {
+public:
+	MadsSpriteSetCharInfo(Common::SeekableReadStream *s);
+
+	int _totalFrames;
+	int _numEntries;
+	int _frameList2[16];
+	int _frameList[16];
+	int _ticksList[16];
+	int _unk1;
+	int _ticksAmount;
+	int _yScale;
+};
+
 class SpriteAsset : public BaseAsset {
 public:
-	SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name, bool asStream = false);
+	SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name, 
+		bool asStream = false, int flags = 0);
+	SpriteAsset(MadsM4Engine *vm, const char *name);
 	~SpriteAsset();
 	void loadM4SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, bool asStream);
-	void loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream);
+	void loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int flags);
 	int32 getCount() { return _frameCount; }
 	int32 getFrameRate() const { return _frameRate; }
 	int32 getPixelSpeed() const { return _pixelSpeed; }
@@ -113,6 +131,7 @@ public:
 	int32 getFrameHeight(int index);
 	int32 getMaxFrameWidth() const { return _maxWidth; }
 	int32 getMaxFrameHeight() const { return _maxHeight; }
+	bool isBackground() const { return _isBackground; }
 	M4Sprite *getFrame(int frameIndex);
 	void loadStreamingFrame(M4Sprite *frame, int frameIndex, int destX, int destY);
 	RGB8* getPalette() { return _palette; }
@@ -122,7 +141,10 @@ public:
 	void translate(Palette *palette);
 	int32 getFrameSize(int index);
 	M4Sprite *operator[](int index) { return getFrame(index); }
+public:
+	MadsSpriteSetCharInfo *_charInfo;
 protected:
+	Common::SeekableReadStream *_stream;
 	RGB8 _palette[256];
 	uint32 _colorCount;
 	uint32 _srcSize;
@@ -132,7 +154,11 @@ protected:
 	Common::Array<uint32> _frameOffsets;
 	Common::Array<SpriteAssetFrame> _frames;
 	uint32 _frameStartOffset;
-	Common::SeekableReadStream *_stream;
+	
+	// MADS sprite set fields
+	uint8 _mode;
+	bool _isBackground;
+
 	int32 parseSprite(bool isBigEndian = false);
 	void loadFrameHeader(SpriteAssetFrame &frameHeader, bool isBigEndian = false);
 private:

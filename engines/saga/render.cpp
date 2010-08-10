@@ -110,6 +110,12 @@ void Render::drawScene() {
 					_vm->_actor->drawActors();
 			}
 
+			// WORKAROUND
+			// Bug #2886130: "ITE: Graphic Glitches during Cat Tribe Celebration"
+			if (_vm->_scene->currentSceneNumber() == 274) {
+				_vm->_interface->drawStatusBar();
+			}
+
 #ifdef SAGA_DEBUG
 			if (getFlags() & RF_OBJECTMAP_TEST) {
 				if (_vm->_scene->_objectMap)

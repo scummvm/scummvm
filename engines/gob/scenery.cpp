@@ -261,10 +261,10 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 
 	_vm->_draw->_spriteLeft = layerPtr->backResId;
 	if (_vm->_draw->_spriteLeft != -1) {
-		_vm->_draw->_destSpriteX  =  0;
-		_vm->_draw->_destSpriteY  =  0;
-		_vm->_draw->_destSurface  = 21;
-		_vm->_draw->_transparency =  0;
+		_vm->_draw->_destSpriteX  = 0;
+		_vm->_draw->_destSpriteY  = 0;
+		_vm->_draw->_destSurface  = Draw::kBackSurface;
+		_vm->_draw->_transparency = 0;
 		_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 	}
 
@@ -295,7 +295,7 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 
 			_vm->_draw->_sourceSurface =
 			    _staticPictToSprite[scenery * 7 + pictIndex];
-			_vm->_draw->_destSurface   = 21;
+			_vm->_draw->_destSurface   = Draw::kBackSurface;
 			_vm->_draw->_spriteLeft    = left;
 			_vm->_draw->_spriteTop     = top;
 			_vm->_draw->_spriteRight   = right - left + 1;
@@ -392,7 +392,7 @@ void Scenery::updateStatic(int16 orderFrom, byte index, byte layer) {
 
 			_vm->_draw->_sourceSurface =
 			    _staticPictToSprite[index * 7 + pictIndex];
-			_vm->_draw->_destSurface   = 21;
+			_vm->_draw->_destSurface   = Draw::kBackSurface;
 			_vm->_draw->_transparency  = planePtr->transp ? 3 : 0;
 			_vm->_draw->spriteOperation(DRAW_BLITSURF);
 		}
@@ -616,26 +616,29 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 			return;
 		}
 
-		if (frame >= _vm->_vidPlayer->getFramesCount(obj.videoSlot - 1))
-			frame = _vm->_vidPlayer->getFramesCount(obj.videoSlot - 1) - 1;
+		if (frame >= (int32)_vm->_vidPlayer->getFrameCount(obj.videoSlot - 1))
+			frame = _vm->_vidPlayer->getFrameCount(obj.videoSlot - 1) - 1;
 
-		// Seek to frame
-		if (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < 256) {
-			while (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) <= frame)
-				_vm->_vidPlayer->slotPlay(obj.videoSlot - 1);
-		} else {
-			int16 curFrame  = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1);
-			uint8 frameWrap = curFrame / 256;
-			frame = (frame + 1) % 256;
+		if (frame != (int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1)) {
+			// Seek to frame
 
-			while (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < (frameWrap * 256 + frame))
-				_vm->_vidPlayer->slotPlay(obj.videoSlot - 1);
+			VideoPlayer::Properties props;
+
+			props.forceSeek    = true;
+			props.waitEndFrame = false;
+			props.lastFrame    = frame;
+
+			if ((int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < frame)
+				props.startFrame = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) + 1;
+			else
+				props.startFrame = frame;
+
+			_vm->_vidPlayer->play(obj.videoSlot - 1, props);
 		}
 
-		// Subtitle
-		Graphics::CoktelVideo::State state = _vm->_vidPlayer->getState(obj.videoSlot - 1);
-		if (state.flags & Graphics::CoktelVideo::kStateSpeech)
-			_vm->_draw->printTotText(state.speechId);
+		int32 subtitle = _vm->_vidPlayer->getSubtitleIndex(obj.videoSlot - 1);
+		if (subtitle != -1)
+			_vm->_draw->printTotText(subtitle);
 
 		destX  = 0;
 		destY  = 0;
@@ -716,7 +719,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 				_vm->_draw->_spriteLeft = _vm->_vidPlayer->getWidth(obj.videoSlot - 1)  -
 					(destX + _vm->_draw->_spriteRight);
 
-			_vm->_vidPlayer->slotCopyFrame(obj.videoSlot - 1, _vm->_draw->_backSurface->getVidMem(),
+			_vm->_vidPlayer->copyFrame(obj.videoSlot - 1, _vm->_draw->_backSurface->getVidMem(),
 					_vm->_draw->_spriteLeft,  _vm->_draw->_spriteTop,
 					_vm->_draw->_spriteRight, _vm->_draw->_spriteBottom,
 					_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY,
@@ -726,13 +729,12 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 			_vm->_draw->invalidateRect(_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY,
 					_vm->_draw->_destSpriteX + _vm->_draw->_spriteRight  - 1,
 					_vm->_draw->_destSpriteY + _vm->_draw->_spriteBottom - 1);
-
 		}
 
 		if (!(flags & 4)) {
-			_animLeft   = _toRedrawLeft = left;
-			_animTop    = _toRedrawTop = top;
-			_animRight  = _toRedrawRight = right;
+			_animLeft   = _toRedrawLeft   = left;
+			_animTop    = _toRedrawTop    = top;
+			_animRight  = _toRedrawRight  = right;
 			_animBottom = _toRedrawBottom = bottom;
 		}
 
@@ -878,7 +880,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 		if (doDraw) {
 			_vm->_draw->_sourceSurface =
 			    _animPictToSprite[animation * 7 + pictIndex];
-			_vm->_draw->_destSurface   = 21;
+			_vm->_draw->_destSurface   = Draw::kBackSurface;
 
 			_vm->_draw->_spriteLeft   = left;
 			_vm->_draw->_spriteTop    = top;

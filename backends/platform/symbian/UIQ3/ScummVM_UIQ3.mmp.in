@@ -110,13 +110,13 @@ SOURCEPATH ..\..\..\..\base
 
 //STOP_AUTO_OBJECTS_BASE_//
 
-SOURCEPATH ..\..\..\..\
+SOURCEPATH ..\..\..\..
 
 // backend EPOC/SDL/ESDL specific includes
 SOURCE backends\platform\sdl\events.cpp
 SOURCE backends\platform\sdl\graphics.cpp
-SOURCE backends\platform\sdl\sdl.cpp
 SOURCE backends\platform\sdl\hardwarekeys.cpp
+SOURCE backends\platform\sdl\sdl.cpp
 SOURCE backends\fs\symbian\symbian-fs-factory.cpp
 SOURCE backends\platform\symbian\src\SymbianOS.cpp
 SOURCE backends\platform\symbian\src\SymbianActions.cpp
@@ -126,6 +126,9 @@ SOURCE gui\Key.cpp
 SOURCE gui\KeysDialog.cpp
 SOURCE gui\Actions.cpp
 SOURCE gui\Dialog.cpp
+
+// Common error 
+source common\error.cpp
 
 // Special for graphics
 source graphics\iff.cpp

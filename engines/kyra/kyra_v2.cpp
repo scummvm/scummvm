@@ -63,6 +63,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 	_chatVocLow = -1;
 	_chatText = 0;
 	_chatObject = -1;
+	_chatTextEnabled = false;
 
 	memset(_hiddenItems, -1, sizeof(_hiddenItems));
 

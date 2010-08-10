@@ -265,7 +265,8 @@ void KyraEngine_MR::objectChatInit(const char *str, int object, int vocHigh, int
 
 	_screen->hideMouse();
 
-	if (textEnabled()) {
+	_chatTextEnabled = textEnabled();
+	if (_chatTextEnabled) {
 		objectChatPrintText(str, object);
 		_chatEndTime = _system->getMillis() + chatCalcDuration(str) * _tickLength;
 	} else {

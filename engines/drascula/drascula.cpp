@@ -38,6 +38,7 @@
 #include "sound/mixer.h"
 
 #include "drascula/drascula.h"
+#include "drascula/console.h"
 
 namespace Drascula {
 
@@ -114,6 +115,8 @@ DrasculaEngine::~DrasculaEngine() {
 
 	freeRoomsTable();
 
+	delete _console;
+
 	free(_charMap);
 	free(_itemLocations);
 	free(_polX);
@@ -171,6 +174,8 @@ Common::Error DrasculaEngine::run() {
 		warning("Unknown game language. Falling back to English");
 		_lang = kEnglish;
 	}
+
+	_console = new Console(this);
 
 	if (!loadDrasculaDat())
 		return Common::kUnknownError;
@@ -240,6 +245,8 @@ Common::Error DrasculaEngine::run() {
 		if (currentChapter != 3)
 			loadPic(96, frontSurface, COMPLETE_PAL);
 
+		loadPic(99, cursorSurface);
+
 		if (currentChapter == 1) {
 		} else if (currentChapter == 2) {
 			loadPic("pts.alg", drawSurface2);
@@ -271,6 +278,7 @@ Common::Error DrasculaEngine::run() {
 			loadPic(974, tableSurface);
 
 		if (currentChapter != 2) {
+			loadPic(99, cursorSurface);
 			loadPic(99, backSurface);
 			loadPic(97, extraSurface);
 		}
@@ -498,11 +506,15 @@ bool DrasculaEngine::runCurrentChapter() {
 #else
 		if (rightMouseButton == 1 && _menuScreen) {
 #endif
+			rightMouseButton = 0;
 			delay(100);
-			if (currentChapter == 2)
+			if (currentChapter == 2) {
+				loadPic(menuBackground, cursorSurface);
 				loadPic(menuBackground, backSurface);
-			else
+			} else {
+				loadPic(99, cursorSurface);
 				loadPic(99, backSurface);
+			}
 			setPalette((byte *)&gamePalette);
 			_menuScreen = false;
 #ifndef _WIN32_WCE
@@ -523,18 +535,24 @@ bool DrasculaEngine::runCurrentChapter() {
 		if (rightMouseButton == 1 && !_menuScreen &&
 			!(currentChapter == 5 && pickedObject == 16)) {
 #endif
+			rightMouseButton = 0;
 			delay(100);
 			characterMoved = 0;
 			if (trackProtagonist == 2)
 				trackProtagonist = 1;
-			if (currentChapter == 4)
+			if (currentChapter == 4) {
 				loadPic("icons2.alg", backSurface);
-			else if (currentChapter == 5)
+				loadPic("icons2.alg", cursorSurface);
+			} else if (currentChapter == 5) {
 				loadPic("icons3.alg", backSurface);
-			else if (currentChapter == 6)
+				loadPic("icons3.alg", cursorSurface);
+			} else if (currentChapter == 6) {
 				loadPic("iconsp.alg", backSurface);
-			else
+				loadPic("iconsp.alg", cursorSurface);
+			} else {
 				loadPic("icons.alg", backSurface);
+				loadPic("icons.alg", cursorSurface);
+			}
 			_menuScreen = true;
 #ifndef _WIN32_WCE
 			updateEvents();
@@ -593,6 +611,9 @@ bool DrasculaEngine::runCurrentChapter() {
 		} else if (key == Common::KEYCODE_ESCAPE) {
 			if (!confirmExit())
 				return false;
+		} else if (key == Common::KEYCODE_TILDE || key == Common::KEYCODE_BACKQUOTE) {
+			_console->attach();
+			_console->onFrame();
 		} else if (currentChapter == 6 && key == Common::KEYCODE_0 && roomNumber == 61) {
 			loadPic("alcbar.alg", bgSurface, 255);
 		}
@@ -740,10 +761,10 @@ void DrasculaEngine::updateEvents() {
 			leftMouseButton = 0;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			rightMouseButton = 1;
+			// We changed semantic and react only on button up event
 			break;
 		case Common::EVENT_RBUTTONUP:
-			rightMouseButton = 0;
+			rightMouseButton = 1;
 			break;
 		case Common::EVENT_QUIT:
 			// TODO
@@ -757,11 +778,17 @@ void DrasculaEngine::updateEvents() {
 }
 
 void DrasculaEngine::delay(int ms) {
-	_system->delayMillis(ms * 2); // originally was 1
+	uint32 end = _system->getMillis() + ms * 2; // originally was 1
+
+	do {
+		_system->delayMillis(10);
+		updateEvents();
+		_system->updateScreen();
+	} while (_system->getMillis() < end);
 }
 
 void DrasculaEngine::pause(int duration) {
-	_system->delayMillis(duration * 30); // was originally 2
+	delay(duration * 15);
 }
 
 int DrasculaEngine::getTime() {

@@ -446,8 +446,8 @@ int16 Op_KillMenu() {
 	}
 
 	// Free the message list
-//	if (CVars.linkedMsgList) freeMsgList(CVars.linkedMsgList);
-	CVars.linkedMsgList = NULL;
+//	if (linkedMsgList) freeMsgList(linkedMsgList);
+	linkedMsgList = NULL;
 	linkedRelation = NULL;
 
 	return 0;
@@ -1268,10 +1268,10 @@ int16 Op_regenerateBackgroundIncrust() {
 int16 Op_SetStringColors() {
 	// TODO: here ignore if low color mode
 
-	CVars.subColor = (uint8) popVar();
-	CVars.itemColor = (uint8) popVar();
-	CVars.selectColor = (uint8) popVar();
-	CVars.titleColor = (uint8) popVar();
+	subColor = (uint8) popVar();
+	itemColor = (uint8) popVar();
+	selectColor = (uint8) popVar();
+	titleColor = (uint8) popVar();
 
 	return 0;
 }

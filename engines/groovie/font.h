@@ -27,24 +27,38 @@
 #define GROOVIE_FONT_H
 
 #include "common/stream.h"
-#include "common/system.h"
+#include "graphics/font.h"
 
 namespace Groovie {
 
-class Font {
+class T7GFont : public Graphics::Font {
 public:
-	Font(OSystem *syst);
-	~Font();
-	void printstring(const char *messagein);
+	T7GFont();
+	~T7GFont();
+
+	bool load(Common::SeekableReadStream &stream);
+
+	int getFontHeight() const { return _maxHeight; }
+	int getMaxCharWidth() const { return _maxWidth; }
+	int getCharWidth(byte chr) const { return getGlyph(chr)->width; }
+	void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const;
 
 private:
-	OSystem *_syst;
-	Common::MemoryReadStream *_sphinxfnt;
+	int _maxHeight, _maxWidth;
 
-	uint16 letteroffset(char letter);
-	uint8 letterwidth(char letter);
-	uint8 letterheight(char letter);
-	uint8 printletter(char letter, uint16 xoffset);
+	struct Glyph {
+		Glyph() : pixels(0) {}
+		~Glyph() { delete[] pixels; }
+
+		byte width;
+		byte height;
+		byte julia;
+		byte *pixels;
+	};
+
+	byte _mapChar2Glyph[128];
+	Glyph *_glyphs;
+	const Glyph *getGlyph(byte chr) const;
 };
 
 } // End of Groovie namespace

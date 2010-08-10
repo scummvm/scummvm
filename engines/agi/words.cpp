@@ -76,10 +76,8 @@ int AgiEngine::loadWords(const char *fname) {
 }
 
 void AgiEngine::unloadWords() {
-	if (words != NULL) {
-		free(words);
-		words = NULL;
-	}
+	free(words);
+	words = NULL;
 }
 
 /**

@@ -43,27 +43,39 @@ enum SciMidiCommands {
 
 //  MidiParser_SCI
 //
-MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion) :
+MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 	MidiParser() {
 	_soundVersion = soundVersion;
+	_music = music;
 	_mixedData = NULL;
 	// mididata contains delta in 1/60th second
 	// values of ppqn and tempo are found experimentally and may be wrong
 	_ppqn = 1;
 	setTempo(16667);
 
-	_volume = 0;
+	_volume = 127;
 
 	_signalSet = false;
 	_signalToSet = 0;
 	_dataincAdd = false;
 	_dataincToAdd = 0;
 	_resetOnPause = false;
-	_channelsUsed = 0;
+	_pSnd = 0;
 }
 
 MidiParser_SCI::~MidiParser_SCI() {
 	unloadMusic();
+	// we do this, so that MidiParser won't be able to call his own ::allNotesOff()
+	//  this one would affect all channels and we can't let that happen
+	_driver = 0;
+}
+
+void MidiParser_SCI::mainThreadBegin() {
+	_mainThreadCalled = true;
+}
+
+void MidiParser_SCI::mainThreadEnd() {
+	_mainThreadCalled = false;
 }
 
 bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, int channelFilterMask, SciVersion soundVersion) {
@@ -72,7 +84,14 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	_pSnd = psnd;
 	_soundVersion = soundVersion;
 
-	setVolume(psnd->volume);
+	for (int i = 0; i < 16; i++) {
+		_channelUsed[i] = false;
+		_channelRemap[i] = -1;
+		_channelMuted[i] = false;
+		_channelVolume[i] = 127;
+	}
+	_channelRemap[9] = 9; // never map channel 9, because that's used for percussion
+	_channelRemap[15] = 15; // never map channel 15, because thats used by sierra internally
 
 	if (channelFilterMask) {
 		// SCI0 only has 1 data stream, but we need to filter out channels depending on music hardware selection
@@ -83,31 +102,272 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 
 	_num_tracks = 1;
 	_tracks[0] = _mixedData;
-	setTrack(0);
+	if (_pSnd)
+		setTrack(0);
 	_loopTick = 0;
-	_channelsUsed = 0;
-
-	if (_soundVersion <= SCI_VERSION_0_LATE) {
-		// Set initial voice count
-		for (int i = 0; i < 16; ++i) {
-			byte voiceCount = 0;
-			if (channelFilterMask & (1 << i))
-				voiceCount = psnd->soundRes->getInitialVoiceCount(i);
-			_driver->send(0xB0 | i, 0x4B, voiceCount);
-		}
-	}
-
-	// Send a velocity off signal to all channels
-	for (int i = 0; i < 16; ++i) {
-		_driver->send(0xB0 | i, 0x4E, 0);	// Reset velocity
-	}
 
 	return true;
 }
 
+byte MidiParser_SCI::midiGetNextChannel(long ticker) {
+	byte curr = 0xFF;
+	long closest = ticker + 1000000, next = 0;
+
+	for (int i = 0; i < _track->channelCount; i++) {
+		if (_track->channels[i].time == -1) // channel ended
+			continue;
+		SoundResource::Channel *curChannel = &_track->channels[i];
+		if (curChannel->curPos >= curChannel->size)
+			continue;
+		next = curChannel->data[curChannel->curPos]; // when the next event should occur
+		if (next == 0xF8) // 0xF8 means 240 ticks delay
+			next = 240;
+		next += _track->channels[i].time;
+		if (next < closest) {
+			curr = i;
+			closest = next;
+		}
+	}
+
+	return curr;
+}
+
+byte *MidiParser_SCI::midiMixChannels() {
+	int totalSize = 0;
+
+	for (int i = 0; i < _track->channelCount; i++) {
+		_track->channels[i].time = 0;
+		_track->channels[i].prev = 0;
+		_track->channels[i].curPos = 0;
+		totalSize += _track->channels[i].size;
+	}
+
+	byte *outData = new byte[totalSize * 2]; // FIXME: creates overhead and still may be not enough to hold all data
+	_mixedData = outData;
+	long ticker = 0;
+	byte channelNr, curDelta;
+	byte midiCommand = 0, midiParam, global_prev = 0;
+	long newDelta;
+	SoundResource::Channel *channel;
+
+	while ((channelNr = midiGetNextChannel(ticker)) != 0xFF) { // there is still an active channel
+		channel = &_track->channels[channelNr];
+		curDelta = channel->data[channel->curPos++];
+		channel->time += (curDelta == 0xF8 ? 240 : curDelta); // when the command is supposed to occur
+		if (curDelta == 0xF8)
+			continue;
+		newDelta = channel->time - ticker;
+		ticker += newDelta;
+
+		midiCommand = channel->data[channel->curPos++];
+		if (midiCommand != kEndOfTrack) {
+			// Write delta
+			while (newDelta > 240) {
+				*outData++ = 0xF8;
+				newDelta -= 240;
+			}
+			*outData++ = (byte)newDelta;
+		}
+		// Write command
+		switch (midiCommand) {
+		case 0xF0: // sysEx
+			*outData++ = midiCommand;
+			do {
+				midiParam = channel->data[channel->curPos++];
+				*outData++ = midiParam;
+			} while (midiParam != 0xF7);
+			break;
+		case kEndOfTrack: // end of channel
+			channel->time = -1;
+			break;
+		default: // MIDI command
+			if (midiCommand & 0x80) {
+				midiParam = channel->data[channel->curPos++];
+			} else {// running status
+				midiParam = midiCommand;
+				midiCommand = channel->prev;
+			}
+
+			// remember which channel got used for channel remapping
+			byte midiChannel = midiCommand & 0xF;
+			_channelUsed[midiChannel] = true;
+
+			if (midiCommand != global_prev)
+				*outData++ = midiCommand;
+			*outData++ = midiParam;
+			if (nMidiParams[(midiCommand >> 4) - 8] == 2)
+				*outData++ = channel->data[channel->curPos++];
+			channel->prev = midiCommand;
+			global_prev = midiCommand;
+		}
+	}
+
+	// Insert stop event
+	*outData++ = 0;    // Delta
+	*outData++ = 0xFF; // Meta event
+	*outData++ = 0x2F; // End of track (EOT)
+	*outData++ = 0x00;
+	*outData++ = 0x00;
+	return _mixedData;
+}
+
+// This is used for SCI0 sound-data. SCI0 only has one stream that may
+// contain several channels and according to output device we remove
+// certain channels from that data.
+byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
+	SoundResource::Channel *channel = &_track->channels[0];
+	byte *channelData = channel->data;
+	byte *channelDataEnd = channel->data + channel->size;
+	byte *outData = new byte[channel->size + 5];
+	byte curChannel = 15, curByte, curDelta;
+	byte command = 0, lastCommand = 0;
+	int delta = 0;
+	int midiParamCount = 0;
+
+	_mixedData = outData;
+
+	while (channelData < channelDataEnd) {
+		curDelta = *channelData++;
+		if (curDelta == 0xF8) {
+			delta += 240;
+			continue;
+		}
+		delta += curDelta;
+		curByte = *channelData++;
+
+		switch (curByte) {
+		case 0xF0: // sysEx
+		case kEndOfTrack: // end of channel
+			command = curByte;
+			curChannel = 15;
+			break;
+		default:
+			if (curByte & 0x80) {
+				command = curByte;
+				curChannel = command & 0x0F;
+				midiParamCount = nMidiParams[(command >> 4) - 8];
+			}
+		}
+		if ((1 << curChannel) & channelMask) {
+			if (command != kEndOfTrack) {
+				// Write delta
+				while (delta > 240) {
+					*outData++ = 0xF8;
+					delta -= 240;
+				}
+				*outData++ = (byte)delta;
+				delta = 0;
+			}
+			// Write command
+			switch (command) {
+			case 0xF0: // sysEx
+				*outData++ = command;
+				do {
+					curByte = *channelData++;
+					*outData++ = curByte; // out
+				} while (curByte != 0xF7);
+				lastCommand = command;
+				break;
+
+			case kEndOfTrack: // end of channel
+				break;
+
+			default: // MIDI command
+				// remember which channel got used for channel remapping
+				byte midiChannel = command & 0xF;
+				_channelUsed[midiChannel] = true;
+
+				if (lastCommand != command) {
+					*outData++ = command;
+					lastCommand = command;
+				}
+				if (midiParamCount > 0) {
+					if (curByte & 0x80)
+						*outData++ = *channelData++;
+					else
+						*outData++ = curByte;
+				}
+				if (midiParamCount > 1) {
+					*outData++ = *channelData++;
+				}
+			}
+		} else {
+			if (curByte & 0x80)
+				channelData += midiParamCount;
+			else
+				channelData += midiParamCount - 1;
+		}
+	}
+
+	// Insert stop event
+	*outData++ = 0;    // Delta
+	*outData++ = 0xFF; // Meta event
+	*outData++ = 0x2F; // End of track (EOT)
+	*outData++ = 0x00;
+	*outData++ = 0x00;
+
+	return _mixedData;
+}
+
+// This will get called right before actual playing and will try to own the used channels
+void MidiParser_SCI::tryToOwnChannels() {
+	// We don't have SciMusic in case debug command show_instruments is used
+	if (!_music)
+		return;
+	for (int curChannel = 0; curChannel < 15; curChannel++) {
+		if (_channelUsed[curChannel]) {
+			if (_channelRemap[curChannel] == -1) {
+				_channelRemap[curChannel] = _music->tryToOwnChannel(_pSnd, curChannel);
+			}
+		}
+	}
+}
+
+void MidiParser_SCI::lostChannels() {
+	for (int curChannel = 0; curChannel < 15; curChannel++)
+		if ((_channelUsed[curChannel]) && (curChannel != 9))
+			_channelRemap[curChannel] = -1;
+}
+
+void MidiParser_SCI::sendInitCommands() {
+	// reset our "global" volume and channel volumes
+	_volume = 127;
+	for (int i = 0; i < 16; i++)
+		_channelVolume[i] = 127;
+
+	// Set initial voice count
+	if (_pSnd) {
+		if (_soundVersion <= SCI_VERSION_0_LATE) {
+			for (int i = 0; i < 15; ++i) {
+				byte voiceCount = 0;
+				if (_channelUsed[i]) {
+					voiceCount = _pSnd->soundRes->getInitialVoiceCount(i);
+					sendToDriver(0xB0 | i, 0x4B, voiceCount);
+				}
+			}
+		}
+	}
+
+	// Send a velocity off signal to all channels
+	for (int i = 0; i < 15; ++i) {
+		if (_channelUsed[i])
+			sendToDriver(0xB0 | i, 0x4E, 0);	// Reset velocity
+	}
+
+	// Center the pitch wheels and hold pedal in preparation for the next piece of music
+	for (int i = 0; i < 16; ++i) {
+		if (_channelUsed[i]) {
+			sendToDriver(0xE0 | i, 0, 0x40);	// Reset pitch wheel
+			sendToDriver(0xB0 | i, 0x40, 0);	// Reset hold pedal
+		}
+	}
+}
+
 void MidiParser_SCI::unloadMusic() {
-	resetTracking();
-	allNotesOff();
+	if (_pSnd) {
+		resetTracking();
+		allNotesOff();
+	}
 	_num_tracks = 0;
 	_active_track = 255;
 	_resetOnPause = false;
@@ -116,33 +376,77 @@ void MidiParser_SCI::unloadMusic() {
 		delete[] _mixedData;
 		_mixedData = NULL;
 	}
+}
 
-	// Center the pitch wheels and hold pedal in preparation for the next piece of music
-	if (_driver) {
-		for (int i = 0; i < 16; ++i) {
-			if (_channelsUsed & (1 << i)) {
-				_driver->send(0xE0 | i, 0, 0x40);	// Reset pitch wheel
-				_driver->send(0xB0 | i, 0x40, 0);	// Reset hold pedal
-			}
+// this is used for scripts sending midi commands to us. we verify in that case that the channel is actually
+//  used, so that channel remapping will work as well and then send them on
+void MidiParser_SCI::sendFromScriptToDriver(uint32 midi) {
+	byte midiChannel = midi & 0xf;
+
+	if (!_channelUsed[midiChannel]) {
+		// trying to send to an unused channel
+		//  this happens for cmdSendMidi at least in sq1vga right at the start, it's a script issue
+		return;
+	}
+	if (_channelRemap[midiChannel] == -1) {
+		// trying to send to an unmapped channel
+		//  this happens for cmdSendMidi at least in sq1vga right at the start, scripts are pausing the sound
+		//  and then sending manually. it's a script issue
+		return;
+	}
+	sendToDriver(midi);
+}
+
+void MidiParser_SCI::sendToDriver(uint32 midi) {
+	byte midiChannel = midi & 0xf;
+
+	if ((midi & 0xFFF0) == 0x4EB0) {
+		// this is channel mute only for sci1
+		// it's velocity control for sci0
+		if (_soundVersion >= SCI_VERSION_1_EARLY) {
+			_channelMuted[midiChannel] = midi & 0xFF0000 ? true : false;
+			return; // don't send this to driver at all
 		}
 	}
+
+	// Is channel muted? if so, don't send command
+	if (_channelMuted[midiChannel])
+		return;
+
+	if ((midi & 0xFFF0) == 0x07B0) {
+		// someone trying to set channel volume?
+		int channelVolume = (midi >> 16) & 0xFF;
+		// Remember, if we need to set it ourselves
+		_channelVolume[midiChannel] = channelVolume;
+		// Adjust volume accordingly to current "global" volume
+		channelVolume = channelVolume * _volume / 127;
+		midi = (midi & 0xFFF0) | ((channelVolume & 0xFF) << 16);
+	}
+
+	// Channel remapping
+	int16 realChannel = _channelRemap[midiChannel];
+	if (realChannel == -1)
+		return;
+
+	midi = (midi & 0xFFFFFFF0) | realChannel;
+	if (_mainThreadCalled)
+		_music->putMidiCommandInQueue(midi);
+	else
+		_driver->send(midi);
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
-	// Monitor which channels are used by this song
-	_channelsUsed |= (1 << info.channel());
-
 	// Set signal AFTER waiting for delta, otherwise we would set signal too soon resulting in all sorts of bugs
 	if (_dataincAdd) {
 		_dataincAdd = false;
 		_pSnd->dataInc += _dataincToAdd;
 		_pSnd->signal = 0x7f + _pSnd->dataInc;
-		debugC(2, kDebugLevelSound, "datainc %04x", _dataincToAdd);
+		debugC(4, kDebugLevelSound, "datainc %04x", _dataincToAdd);
 	}
 	if (_signalSet) {
 		_signalSet = false;
 		_pSnd->signal = _signalToSet;
-		debugC(2, kDebugLevelSound, "signal %04x", _signalToSet);
+		debugC(4, kDebugLevelSound, "signal %04x", _signalToSet);
 	}
 
 	info.start = _position._play_pos;
@@ -168,10 +472,16 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		info.basic.param2 = 0;
 		if (info.channel() == 0xF) {// SCI special case
 			if (info.basic.param1 != kSetSignalLoop) {
-				_signalSet = true;
-				_signalToSet = info.basic.param1;
+				// at least in kq5/french&mac the first scene in the intro has a song that sets signal to 4 immediately
+				//  on tick 0. Signal isn't set at that point by sierra sci and it would cause the castle daventry text to
+				//  get immediately removed, so we currently filter it.
+				// Sierra SCI ignores them as well at that time
+				if ((_position._play_tick) || (info.delta)) {
+					_signalSet = true;
+					_signalToSet = info.basic.param1;
+				}
 			} else {
-				_loopTick = _position._play_tick;
+				_loopTick = _position._play_tick + info.delta;
 			}
 		}
 		break;
@@ -207,10 +517,11 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					break;
 				case SCI_VERSION_1_EARLY:
 				case SCI_VERSION_1_LATE:
+				case SCI_VERSION_2_1:
 					_dataincToAdd = 1;
 					break;
 				default:
-					break;
+					error("unsupported _soundVersion");
 				}
 				break;
 			case kResetOnPause:
@@ -230,7 +541,6 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			case 0x0A:	// pan
 			case 0x0B:	// expression
 			case 0x40:	// sustain
-			case 0x4E:	// velocity control
 			case 0x79:	// reset all
 			case 0x7B:	// notes off
 				// These are all handled by the music driver, so ignore them
@@ -244,8 +554,6 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				break;
 			}
 		}
-		if (info.basic.param1 == 7) // channel volume change -scale it
-			info.basic.param2 = info.basic.param2 * _volume / MUSIC_VOLUME_MAX;
 		info.length = 0;
 		break;
 
@@ -302,7 +610,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					_pSnd->status = kSoundStopped;
 					_pSnd->signal = SIGNAL_OFFSET;
 
-					debugC(2, kDebugLevelSound, "signal EOT");
+					debugC(4, kDebugLevelSound, "signal EOT");
 				}
 			}
 			break;
@@ -314,245 +622,67 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	}// switch (info.command())
 }
 
+void MidiParser_SCI::allNotesOff() {
+	if (!_driver)
+		return;
 
-byte MidiParser_SCI::midiGetNextChannel(long ticker) {
-	byte curr = 0xFF;
-	long closest = ticker + 1000000, next = 0;
+	int i, j;
 
-	for (int i = 0; i < _track->channelCount; i++) {
-		if (_track->channels[i].time == -1) // channel ended
-			continue;
-		next = *_track->channels[i].data; // when the next event shoudl occur
-		if (next == 0xF8) // 0xF8 means 240 ticks delay
-			next = 240;
-		next += _track->channels[i].time;
-		if (next < closest) {
-			curr = i;
-			closest = next;
-		}
-	}
-
-	return curr;
-}
-
-byte *MidiParser_SCI::midiMixChannels() {
-	int totalSize = 0;
-	byte **dataPtr = new byte *[_track->channelCount];
-
-	for (int i = 0; i < _track->channelCount; i++) {
-		dataPtr[i] = _track->channels[i].data;
-		_track->channels[i].time = 0;
-		_track->channels[i].prev = 0;
-		totalSize += _track->channels[i].size;
-	}
-
-	byte *outData = new byte[totalSize * 2]; // FIXME: creates overhead and still may be not enough to hold all data
-	_mixedData = outData;
-	long ticker = 0;
-	byte curr, curDelta;
-	byte command = 0, par1, global_prev = 0;
-	long new_delta;
-	SoundResource::Channel *channel;
-
-	while ((curr = midiGetNextChannel(ticker)) != 0xFF) { // there is still active channel
-		channel = &_track->channels[curr];
-		curDelta = *channel->data++;
-		channel->time += (curDelta == 0xF8 ? 240 : curDelta); // when the comamnd is supposed to occur
-		if (curDelta == 0xF8)
-			continue;
-		new_delta = channel->time - ticker;
-		ticker += new_delta;
-
-		command = *channel->data++;
-		if (command != kEndOfTrack) {
-			debugC(2, kDebugLevelSound, "\nDELTA ");
-			// Write delta
-			while (new_delta > 240) {
-				*outData++ = 0xF8;
-				debugC(2, kDebugLevelSound, "F8 ");
-				new_delta -= 240;
-			}
-			*outData++ = (byte)new_delta;
-			debugC(2, kDebugLevelSound, "%02X ", (uint32)new_delta);
-		}
-		// Write command
-		switch (command) {
-		case 0xF0: // sysEx
-			*outData++ = command;
-			debugC(2, kDebugLevelSound, "%02X ", command);
-			do {
-				par1 = *channel->data++;
-				*outData++ = par1; // out
-			} while (par1 != 0xF7);
-			break;
-		case kEndOfTrack: // end of channel
-			channel->time = -1; // FIXME
-			break;
-		default: // MIDI command
-			if (command & 0x80)
-				par1 = *channel->data++;
-			else {// running status
-				par1 = command;
-				command = channel->prev;
-			}
-			if (command != global_prev)
-				*outData++ = command; // out command
-			*outData++ = par1;// pout par1
-			if (nMidiParams[(command >> 4) - 8] == 2)
-				*outData++ = *channel->data++; // out par2
-			channel->prev = command;
-			global_prev = command;
-		}// switch(command)
-	}// while (curr)
-
-	// Insert stop event
-	*outData++ = 0;    // Delta
-	*outData++ = 0xFF; // Meta event
-	*outData++ = 0x2F; // End of track (EOT)
-	*outData++ = 0x00;
-	*outData++ = 0x00;
-
-	for (int channelNr = 0; channelNr < _track->channelCount; channelNr++)
-		_track->channels[channelNr].data = dataPtr[channelNr];
-
-	delete[] dataPtr;
-	return _mixedData;
-}
-
-// This is used for SCI0 sound-data. SCI0 only has one stream that may
-// contain several channels and according to output device we remove
-// certain channels from that data.
-byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
-	SoundResource::Channel *channel = &_track->channels[0];
-	byte *channelData = channel->data;
-	byte *channelDataEnd = channel->data + channel->size;
-	byte *outData = new byte[channel->size + 5];
-	byte curChannel = 15, curByte, curDelta;
-	byte command = 0, lastCommand = 0;
-	int delta = 0;
-	int midiParamCount = 0;
-
-	_mixedData = outData;
-
-	while (channelData < channelDataEnd) {
-		curDelta = *channelData++;
-		if (curDelta == 0xF8) {
-			delta += 240;
-			continue;
-		}
-		delta += curDelta;
-		curByte = *channelData++;
-
-		switch (curByte) {
-		case 0xF0: // sysEx
-		case kEndOfTrack: // end of channel
-			command = curByte;
-			curChannel = 15;
-			break;
-		default:
-			if (curByte & 0x80) {
-				command = curByte;
-				curChannel = command & 0x0F;
-				midiParamCount = nMidiParams[(command >> 4) - 8];
-			}
-		}
-		if ((1 << curChannel) & channelMask) {
-			if (command != kEndOfTrack) {
-				debugC(2, kDebugLevelSound, "\nDELTA ");
-				// Write delta
-				while (delta > 240) {
-					*outData++ = 0xF8;
-					debugC(2, kDebugLevelSound, "F8 ");
-					delta -= 240;
-				}
-				*outData++ = (byte)delta;
-				debugC(2, kDebugLevelSound, "%02X ", delta);
-				delta = 0;
-			}
-			// Write command
-			switch (command) {
-			case 0xF0: // sysEx
-				*outData++ = command;
-				debugC(2, kDebugLevelSound, "%02X ", command);
-				do {
-					curByte = *channelData++;
-					*outData++ = curByte; // out
-				} while (curByte != 0xF7);
-				lastCommand = command;
-				break;
-
-			case kEndOfTrack: // end of channel
-				break;
-
-			default: // MIDI command
-				if (lastCommand != command) {
-					*outData++ = command;
-					debugC(2, kDebugLevelSound, "%02X ", command);
-					lastCommand = command;
-				}
-				if (midiParamCount > 0) {
-					if (curByte & 0x80) {
-						debugC(2, kDebugLevelSound, "%02X ", *channelData);
-						*outData++ = *channelData++;
-					} else {
-						debugC(2, kDebugLevelSound, "%02X ", curByte);
-						*outData++ = curByte;
-					}
-				}
-				if (midiParamCount > 1) {
-					debugC(2, kDebugLevelSound, "%02X ", *channelData);
-					*outData++ = *channelData++;
-				}
-			}
-		} else {
-			if (curByte & 0x80) {
-				channelData += midiParamCount;
-			} else {
-				channelData += midiParamCount - 1;
+	// Turn off all active notes
+	for (i = 0; i < 128; ++i) {
+		for (j = 0; j < 16; ++j) {
+			if ((_active_notes[i] & (1 << j)) && (_channelRemap[j] != -1)){
+				sendToDriver(0x80 | j, i, 0);
 			}
 		}
 	}
 
-	// Insert stop event
-	*outData++ = 0;    // Delta
-	*outData++ = 0xFF; // Meta event
-	*outData++ = 0x2F; // End of track (EOT)
-	*outData++ = 0x00;
-	*outData++ = 0x00;
+	// Turn off all hanging notes
+	for (i = 0; i < ARRAYSIZE(_hanging_notes); i++) {
+		byte midiChannel = _hanging_notes[i].channel;
+		if ((_hanging_notes[i].time_left) && (_channelRemap[midiChannel] != -1)) {
+			sendToDriver(0x80 | midiChannel, _hanging_notes[i].note, 0);
+			_hanging_notes[i].time_left = 0;
+		}
+	}
+	_hanging_notes_count = 0;
 
-	return _mixedData;
+	// To be sure, send an "All Note Off" event (but not all MIDI devices
+	// support this...).
+
+	for (i = 0; i < 16; ++i) {
+		if (_channelRemap[i] != -1)
+			sendToDriver(0xB0 | i, 0x7b, 0); // All notes off
+	}
+
+	memset(_active_notes, 0, sizeof(_active_notes));
 }
 
 void MidiParser_SCI::setVolume(byte volume) {
-	// FIXME: This receives values > 127... throw a warning for now and clip the variable
-	if (volume > MUSIC_VOLUME_MAX) {
-		warning("attempted to set an invalid volume(%d)", volume);
-		volume = MUSIC_VOLUME_MAX;	// reset
+	assert(volume <= MUSIC_VOLUME_MAX);
+	_volume = volume;
+
+	switch (_soundVersion) {
+	case SCI_VERSION_0_EARLY:
+	case SCI_VERSION_0_LATE: {
+		// SCI0 adlib driver doesn't support channel volumes, so we need to go this way
+		// TODO: this should take the actual master volume into account
+		int16 globalVolume = _volume * 15 / 127;
+		((MidiPlayer *)_driver)->setVolume(globalVolume);
+		break;
 	}
 
-	assert(volume <= MUSIC_VOLUME_MAX);
-	if (_volume != volume) {
-		_volume = volume;
+	case SCI_VERSION_1_EARLY:
+	case SCI_VERSION_1_LATE:
+	case SCI_VERSION_2_1:
+		// Send previous channel volumes again to actually update the volume
+		for (int i = 0; i < 15; i++)
+			if (_channelRemap[i] != -1)
+				sendToDriver(0xB0 + i, 7, _channelVolume[i]);
+		break;
 
-		switch (_soundVersion) {
-		case SCI_VERSION_0_EARLY:
-		case SCI_VERSION_0_LATE: {
-			int16 globalVolume = _volume * 15 / 127;
-			((MidiPlayer *)_driver)->setVolume(globalVolume);
-			break;
-		}
-
-		case SCI_VERSION_1_EARLY:
-		case SCI_VERSION_1_LATE:
-			// sending volume change to all active channels
-			for (int i = 0; i < _track->channelCount; i++)
-				if (_track->channels[i].number <= 0xF)
-					_driver->send(0xB0 + _track->channels[i].number, 7, _volume);
-			break;
-
-		default:
-			error("MidiParser_SCI::setVolume: Unsupported soundVersion");
-		}
+	default:
+		error("MidiParser_SCI::setVolume: Unsupported soundVersion");
 	}
 }
 

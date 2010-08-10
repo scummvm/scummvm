@@ -51,7 +51,7 @@ public:
 	 * Load a video file
 	 * @param stream  the stream to load
 	 */
-	bool load(Common::SeekableReadStream &stream);
+	bool load(Common::SeekableReadStream *stream);
 	void close();
 
 	/**
@@ -72,7 +72,7 @@ public:
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 
 	byte *getPalette() { _paletteChanged = false; return _palette; }
-	bool hasDirtyPalette() { return _paletteChanged; }
+	bool hasDirtyPalette() const { return _paletteChanged; }
 	void reset();
 
 protected:
@@ -91,7 +91,7 @@ private:
 	Common::SeekableReadStream *_fileStream;
 	Surface *_surface;
 	uint32 _frameCount;
-	uint32 _frameRate;
+	Common::Rational _frameRate;
 
 	Common::List<Common::Rect> _dirtyRects;
 };

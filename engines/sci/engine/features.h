@@ -31,6 +31,12 @@
 
 namespace Sci {
 
+enum MoveCountType {
+	kMoveCountUninitialized,
+	kIgnoreMoveCount,
+	kIncrementMoveCount
+};
+
 class GameFeatures {
 public:
 	GameFeatures(SegManager *segMan, Kernel *kernel);
@@ -60,6 +66,12 @@ public:
 	 * @return Graphics functions type, SCI_VERSION_0_EARLY / SCI_VERSION_0_LATE
 	 */
 	SciVersion detectGfxFunctionsType();
+
+	/**
+	 * Autodetects the message function used
+	 * @return Message function type, SCI_VERSION_1_LATE / SCI_VERSION_1_1
+	 */
+	SciVersion detectMessageFunctionType();
 	
 #ifdef ENABLE_SCI32
 	/**
@@ -91,7 +103,7 @@ public:
 private:
 	reg_t getDetectionAddr(const Common::String &objName, Selector slc, int methodNum = -1);
 
-	bool autoDetectLofsType(int methodNum);
+	bool autoDetectLofsType(Common::String gameSuperClassName, int methodNum);
 	bool autoDetectGfxFunctionsType(int methodNum = -1);
 	bool autoDetectSoundType();
 	bool autoDetectMoveCountType();
@@ -99,7 +111,7 @@ private:
 	bool autoDetectSci21KernelType();
 #endif
 
-	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType;
+	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType, _messageFunctionType;
 #ifdef ENABLE_SCI32
 	SciVersion _sci21KernelType;
 #endif

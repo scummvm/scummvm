@@ -131,21 +131,41 @@ bool Inter_Fascination::oFascin_copySprite(OpFuncParams &params) {
 void Inter_Fascination::oFascin_playTirb(OpGobParams &params) {
 	warning("funcPlayImd with parameter : 'tirb.imd'");
 
-	if (_vm->_vidPlayer->primaryOpen("tirb", 150, 88, VideoPlayer::kFlagFrontSurface,
-				VideoPlayer::kVideoTypePreIMD, 128, 80)) {
-		_vm->_vidPlayer->primaryPlay();
-		_vm->_vidPlayer->primaryClose();
-	}
+	VideoPlayer::Properties vidProps;
+
+	vidProps.type   = VideoPlayer::kVideoTypePreIMD;
+	vidProps.sprite = Draw::kFrontSurface;
+	vidProps.x      = 150;
+	vidProps.y      =  88;
+	vidProps.width  = 128;
+	vidProps.height =  80;
+
+	int vidSlot = _vm->_vidPlayer->openVideo(true, "tirb", vidProps);
+	if (vidSlot < 0)
+		return;
+
+	_vm->_vidPlayer->play(vidSlot, vidProps);
+	_vm->_vidPlayer->closeVideo(vidSlot);
 }
 
 void Inter_Fascination::oFascin_playTira(OpGobParams &params) {
 	warning("funcPlayImd with parameter : 'tira.imd'");
 
-	if (_vm->_vidPlayer->primaryOpen("tira", 88, 66, VideoPlayer::kFlagFrontSurface,
-				VideoPlayer::kVideoTypePreIMD, 128, 80)) {
-		_vm->_vidPlayer->primaryPlay();
-		_vm->_vidPlayer->primaryClose();
-	}
+	VideoPlayer::Properties vidProps;
+
+	vidProps.type   = VideoPlayer::kVideoTypePreIMD;
+	vidProps.sprite = Draw::kFrontSurface;
+	vidProps.x      =  88;
+	vidProps.y      =  66;
+	vidProps.width  = 128;
+	vidProps.height =  80;
+
+	int vidSlot = _vm->_vidPlayer->openVideo(true, "tira", vidProps);
+	if (vidSlot < 0)
+		return;
+
+	_vm->_vidPlayer->play(vidSlot, vidProps);
+	_vm->_vidPlayer->closeVideo(vidSlot);
 }
 
 void Inter_Fascination::oFascin_loadExtasy(OpGobParams &params) {

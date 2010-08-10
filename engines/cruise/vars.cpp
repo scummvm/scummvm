@@ -24,36 +24,15 @@
  */
 
 #include "cruise/cruise_main.h"
-#include "cruise/vars.h"
-
-DECLARE_SINGLETON(Cruise::CruiseVars)
 
 namespace Cruise {
 
-CruiseVars::CruiseVars() {
-	_systemFNT = NULL;
+uint8 *_systemFNT = NULL;
 
-	itemColor = 1;
-	selectColor = 3;
-	titleColor = 2;
-	subColor = 5;
-
-	linkedMsgList = NULL;
-
-	palDirtyMin = 256;
-	palDirtyMax = -1;
-
-	_dirtyRectScreen = false;
-
-	useTandy = 0;
-	useEGA = 0;
-	useVGA = 1;
-
-	pPage00 = page00;
-	pPage10 = page10;
-}
-
-CruiseVars::~CruiseVars() {}
+uint8 itemColor = 1;
+uint8 selectColor = 3;
+uint8 titleColor = 2;
+uint8 subColor = 5;
 
 int16 lowMemory;
 int16 scroll;
@@ -84,12 +63,6 @@ int16 userWait;
 int16 autoTrack;
 
 int16 currentDiskNumber = 1;
-
-#ifdef PALMOS_MODE
-Common::File *_currentVolumeFile;
-#else
-Common::File currentVolumeFile;
-#endif
 
 int16 volumeNumEntry;
 fileEntry *volumePtrToFileDescriptor = NULL;

@@ -450,7 +450,7 @@ void PathWalker_BR::buildPath(State &s, uint16 x, uint16 y) {
 	Common::Point foot;
 	s._a->getFoot(foot);
 
-	debugC(1, kDebugWalk, "buildPath: from (%i, %i) to (%i, %i)", foot.x, foot.y, x, y);
+	debugC(1, kDebugWalk, "buildPath: try to build path from (%i, %i) to (%i, %i)", foot.x, foot.y, x, y);
 	s._walkPath.clear();
 
 	// look for easy path first
@@ -465,13 +465,13 @@ void PathWalker_BR::buildPath(State &s, uint16 x, uint16 y) {
 	ZonePtr z0 = _vm->hitZone(kZonePath, x, y);
 	if (!z0) {
 		s._walkPath.push_back(dest);
-		debugC(3, kDebugWalk, "buildPath: corner case 0");
+		debugC(3, kDebugWalk, "buildPath: corner case 0 (%i nodes)", s._walkPath.size());
 		return;
 	}
 	ZonePtr z1 = _vm->hitZone(kZonePath, foot.x, foot.y);
 	if (!z1 || z1 == z0) {
 		s._walkPath.push_back(dest);
-		debugC(3, kDebugWalk, "buildPath: corner case 1");
+		debugC(3, kDebugWalk, "buildPath: corner case 1 (%i nodes)", s._walkPath.size());
 		return;
 	}
 
@@ -480,7 +480,7 @@ void PathWalker_BR::buildPath(State &s, uint16 x, uint16 y) {
 
 	if (z1->u._pathLists[id].empty()) {
 		s._walkPath.clear();
-		debugC(3, kDebugWalk, "buildPath: no path");
+		debugC(3, kDebugWalk, "buildPath: no path found");
 		return;
 	}
 
@@ -490,7 +490,7 @@ void PathWalker_BR::buildPath(State &s, uint16 x, uint16 y) {
 		s._walkPath.push_front(*b);
 	}
 	s._walkPath.push_back(dest);
-	debugC(3, kDebugWalk, "buildPath: complex path");
+	debugC(3, kDebugWalk, "buildPath: complex path (%i nodes)", s._walkPath.size());
 }
 
 
@@ -541,8 +541,6 @@ void PathWalker_BR::walk() {
 		return;
 	}
 
-	debugC(3, kDebugWalk, "PathWalker_BR::walk()");
-
 	doWalk(_character);
 	doWalk(_follower);
 
@@ -566,8 +564,6 @@ void PathWalker_BR::walk() {
 	}
 
 	_vm->_gfx->initiateScroll(dx, dy);
-
-	debugC(3, kDebugWalk, "PathWalker_BR::walk() -> done");
 }
 
 void PathWalker_BR::checkTrap(const Common::Point &p) {
@@ -601,8 +597,6 @@ void PathWalker_BR::doWalk(State &s) {
 		return;
 	}
 
-	debugC(3, kDebugWalk, "PathWalker_BR::doWalk(%s)", s._a->_name);
-
 	if (s._walkDelay > 0) {
 		s._walkDelay--;
 		if (s._walkDelay == 0 && s._a->_scriptName) {
@@ -619,10 +613,10 @@ void PathWalker_BR::doWalk(State &s) {
 
 		if (s._walkPath.empty()) {
 			finalizeWalk(s);
-			debugC(3, kDebugWalk, "PathWalker_BR::doWalk, case 0");
+			debugC(3, kDebugWalk, "PathWalker_BR::doWalk, walk completed (no more nodes)");
 			return;
 		} else {
-			debugC(3, kDebugWalk, "PathWalker_BR::doWalk, moving to next node");
+			debugC(3, kDebugWalk, "PathWalker_BR::doWalk, reached a walkpath node, %i left", s._walkPath.size());
 		}
 	}
 
@@ -631,6 +625,19 @@ void PathWalker_BR::doWalk(State &s) {
 	uint scale = _vm->_location.getScale(s._startFoot.y);
 	int xStep = (scale * 16) / 100 + 1;
 	int yStep = (scale * 10) / 100 + 1;
+
+
+	/* WORKAROUND: in the balloon scene, the position of the balloon (which is implemented as a 
+	Character) is controlled by the user (for movement, via this walking code) and by the scripts
+	(to simulate the balloon floating in the air, in a neverending loop that alters the position
+	coordinates).
+	When the two step sizes are equal in magnitude and opposite in direction, then the walk code
+	enters an infinite loop without giving control back to the user (this happens quite frequently
+	when navigating the balloon near the borders of the screen, where the calculated step is 
+	forcibly small because of clipping). Since the "floating" script (part1/scripts/mongolo.scr) 
+	uses increments of 3 for both x and y, we tweak the calculated steps accordingly here. */
+	if (xStep == 3) xStep--;
+	if (yStep == 3) yStep--;
 
 	debugC(9, kDebugWalk, "calculated step: (%i, %i)", xStep, yStep);
 
@@ -714,7 +721,7 @@ void PathWalker_BR::doWalk(State &s) {
 		Common::Point p2;
 		s._a->getFoot(p2);
 		checkTrap(p2);
-		debugC(3, kDebugWalk, "PathWalker_BR::doWalk, case 1");
+		debugC(3, kDebugWalk, "PathWalker_BR::doWalk, stepped to (%i, %i)", p2.x, p2.y);
 		return;
 	}
 

@@ -24,6 +24,7 @@
  */
 
 #include "sci/sci.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 
@@ -103,6 +104,8 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR2(b_incr, "b-incr");
 	FIND_SELECTOR(xStep);
 	FIND_SELECTOR(yStep);
+	FIND_SELECTOR(xLast);
+	FIND_SELECTOR(yLast);
 	FIND_SELECTOR(moveSpeed);
 	FIND_SELECTOR(canBeHere);	// cantBeHere
 	FIND_SELECTOR(heading);
@@ -153,11 +156,15 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(subtitleLang);
 	FIND_SELECTOR(parseLang);
 	FIND_SELECTOR(overlay);
-	FIND_SELECTOR(setCursor);
 	FIND_SELECTOR(topString);
 	FIND_SELECTOR(scaleSignal);
 	FIND_SELECTOR(scaleX);
 	FIND_SELECTOR(scaleY);
+	FIND_SELECTOR(maxScale);
+	FIND_SELECTOR(vanishingX);
+	FIND_SELECTOR(vanishingY);
+	FIND_SELECTOR(iconIndex);
+	FIND_SELECTOR(port);
 
 #ifdef ENABLE_SCI32
 	FIND_SELECTOR(data);
@@ -172,58 +179,60 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(dimmed);
 	FIND_SELECTOR(fore);
 	FIND_SELECTOR(back);
+	FIND_SELECTOR(fixPriority);
+	FIND_SELECTOR(mirrored);
+	FIND_SELECTOR(useInsetRect);
+	FIND_SELECTOR(inTop);
+	FIND_SELECTOR(inLeft);
+	FIND_SELECTOR(inBottom);
+	FIND_SELECTOR(inRight);
 #endif
 }
 
-reg_t read_selector(SegManager *segMan, reg_t object, Selector selector_id) {
+reg_t readSelector(SegManager *segMan, reg_t object, Selector selectorId) {
 	ObjVarRef address;
 
-	if (lookup_selector(segMan, object, selector_id, &address, NULL) != kSelectorVariable)
+	if (lookupSelector(segMan, object, selectorId, &address, NULL) != kSelectorVariable)
 		return NULL_REG;
 	else
 		return *address.getPointer(segMan);
 }
 
-void write_selector(SegManager *segMan, reg_t object, Selector selector_id, reg_t value) {
+void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t value) {
 	ObjVarRef address;
 
-	if ((selector_id < 0) || (selector_id > (int)g_sci->getKernel()->getSelectorNamesSize())) {
-		warning("Attempt to write to invalid selector %d of"
-		         " object at %04x:%04x.", selector_id, PRINT_REG(object));
+	if ((selectorId < 0) || (selectorId > (int)g_sci->getKernel()->getSelectorNamesSize())) {
+		error("Attempt to write to invalid selector %d of"
+		         " object at %04x:%04x.", selectorId, PRINT_REG(object));
 		return;
 	}
 
-	if (lookup_selector(segMan, object, selector_id, &address, NULL) != kSelectorVariable)
-		warning("Selector '%s' of object at %04x:%04x could not be"
-		         " written to", g_sci->getKernel()->getSelectorName(selector_id).c_str(), PRINT_REG(object));
+	if (lookupSelector(segMan, object, selectorId, &address, NULL) != kSelectorVariable)
+		error("Selector '%s' of object at %04x:%04x could not be"
+		         " written to", g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
 	else
 		*address.getPointer(segMan) = value;
 }
 
-int invoke_selector_argv(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid,
+void invokeSelector(EngineState *s, reg_t object, int selectorId, 
 	int k_argc, StackPtr k_argp, int argc, const reg_t *argv) {
 	int i;
 	int framesize = 2 + 1 * argc;
-	reg_t address;
 	int slc_type;
 	StackPtr stackframe = k_argp + k_argc;
 
-	stackframe[0] = make_reg(0, selector_id);  // The selector we want to call
+	stackframe[0] = make_reg(0, selectorId);  // The selector we want to call
 	stackframe[1] = make_reg(0, argc); // Argument count
 
-	slc_type = lookup_selector(s->_segMan, object, selector_id, NULL, &address);
+	slc_type = lookupSelector(s->_segMan, object, selectorId, NULL, NULL);
 
 	if (slc_type == kSelectorNone) {
-		warning("Selector '%s' of object at %04x:%04x could not be invoked",
-		         g_sci->getKernel()->getSelectorName(selector_id).c_str(), PRINT_REG(object));
-		if (noinvalid == kStopOnInvalidSelector)
-			error("[Kernel] Not recoverable: VM was halted");
-		return 1;
+		error("Selector '%s' of object at %04x:%04x could not be invoked",
+		         g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
 	}
 	if (slc_type == kSelectorVariable) {
-		warning("Attempting to invoke variable selector %s of object %04x:%04x",
-			g_sci->getKernel()->getSelectorName(selector_id).c_str(), PRINT_REG(object));
-		return 0;
+		error("Attempting to invoke variable selector %s of object %04x:%04x",
+			g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
 	}
 
 	for (i = 0; i < argc; i++)
@@ -237,43 +246,25 @@ int invoke_selector_argv(EngineState *s, reg_t object, int selector_id, Selector
 	xstack->sp += argc + 2;
 	xstack->fp += argc + 2;
 
-	run_vm(s, false); // Start a new vm
-
-	return 0;
+	run_vm(s); // Start a new vm
 }
 
-int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid,
-	int k_argc, StackPtr k_argp, int argc, ...) {
-	va_list argp;
-	reg_t *args = new reg_t[argc];
-
-	va_start(argp, argc);
-	for (int i = 0; i < argc; i++)
-		args[i] = va_arg(argp, reg_t);
-	va_end(argp);
-
-	int retval = invoke_selector_argv(s, object, selector_id, noinvalid, k_argc, k_argp, argc, args);
-
-	delete[] args;
-	return retval;
-}
-
-SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector selector_id, ObjVarRef *varp, reg_t *fptr) {
-	Object *obj = segMan->getObject(obj_location);
+SelectorType lookupSelector(SegManager *segMan, reg_t obj_location, Selector selectorId, ObjVarRef *varp, reg_t *fptr) {
+	const Object *obj = segMan->getObject(obj_location);
 	int index;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	// Early SCI versions used the LSB in the selector ID as a read/write
 	// toggle, meaning that we must remove it for selector lookup.
 	if (oldScriptHeader)
-		selector_id &= ~1;
+		selectorId &= ~1;
 
 	if (!obj) {
-		error("lookup_selector(): Attempt to send to non-object or invalid script. Address was %04x:%04x",
+		error("lookupSelector(): Attempt to send to non-object or invalid script. Address was %04x:%04x",
 				PRINT_REG(obj_location));
 	}
 
-	index = obj->locateVarSelector(segMan, selector_id);
+	index = obj->locateVarSelector(segMan, selectorId);
 
 	if (index >= 0) {
 		// Found it as a variable
@@ -285,7 +276,7 @@ SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector se
 	} else {
 		// Check if it's a method, with recursive lookup in superclasses
 		while (obj) {
-			index = obj->funcSelectorPosition(selector_id);
+			index = obj->funcSelectorPosition(selectorId);
 			if (index >= 0) {
 				if (fptr)
 					*fptr = obj->getFunction(index);
@@ -300,7 +291,7 @@ SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector se
 	}
 
 
-//	return _lookup_selector_function(segMan, obj, selector_id, fptr);
+//	return _lookupSelector_function(segMan, obj, selectorId, fptr);
 }
 
 } // End of namespace Sci

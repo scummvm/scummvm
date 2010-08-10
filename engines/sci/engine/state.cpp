@@ -29,6 +29,7 @@
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/event.h"
 
+#include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/vm.h"
@@ -69,70 +70,102 @@ static const uint16 s_halfWidthSJISMap[256] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-EngineState::EngineState(Vocabulary *voc, SegManager *segMan)
-: _voc(voc), _segMan(segMan), _dirseeker() {
+EngineState::EngineState(SegManager *segMan)
+: _segMan(segMan), _dirseeker() {
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	sfx_init_flags = 0;
-#endif
-
-	restarting_flags = 0;
-
-	last_wait_time = 0;
-
-	_fileHandles.resize(5);
-
-	execution_stack_base = 0;
-	_executionStackPosChanged = false;
-
-	r_acc = NULL_REG;
-	restAdjust = 0;
-	r_prev = NULL_REG;
-
-	stack_base = 0;
-	stack_top = 0;
-
-	script_000 = 0;
-
-	sys_strings_segment = 0;
-	sys_strings = 0;
-
-	_gameObj = NULL_REG;
-
-	gc_countdown = 0;
-
-	successor = 0;
-
-	_throttleCounter = 0;
-	_throttleLastTime = 0;
-	_throttleTrigger = false;
-
-	_memorySegmentSize = 0;
-
-	_soundCmd = 0;
+	reset(false);
 }
 
 EngineState::~EngineState() {
 	delete _msgState;
 }
 
-void EngineState::wait(int16 ticks) {
-	uint32 time;
+void EngineState::reset(bool isRestoring) {
+	if (!isRestoring) {
+		_memorySegmentSize = 0;
 
-	time = g_system->getMillis();
-	r_acc = make_reg(0, ((long)time - (long)last_wait_time) * 60 / 1000);
-	last_wait_time = time;
+		_fileHandles.resize(5);
+
+		abortScriptProcessing = kAbortNone;
+	}
+
+	executionStackBase = 0;
+	_executionStackPosChanged = false;
+	stack_base = 0;
+	stack_top = 0;
+
+	restAdjust = 0;
+
+	r_acc = NULL_REG;
+	r_prev = NULL_REG;
+
+	lastWaitTime = 0;
+
+	gcCountDown = 0;
+
+	_throttleCounter = 0;
+	_throttleLastTime = 0;
+	_throttleTrigger = false;
+
+	_lastSaveVirtualId = SAVEGAMEID_OFFICIALRANGE_START;
+	_lastSaveNewId = 0;
+
+	scriptStepCounter = 0;
+	scriptGCInterval = GC_INTERVAL;
+}
+
+void EngineState::speedThrottler(uint32 neededSleep) {
+	if (_throttleTrigger) {
+		uint32 curTime = g_system->getMillis();
+		uint32 duration = curTime - _throttleLastTime;
+
+		if (duration < neededSleep) {
+			g_sci->sleep(neededSleep - duration);
+			_throttleLastTime = g_system->getMillis();
+		} else {
+			_throttleLastTime = curTime;
+		}
+		_throttleTrigger = false;
+	}
+}
+
+void EngineState::wait(int16 ticks) {
+	uint32 time = g_system->getMillis();
+	r_acc = make_reg(0, ((long)time - (long)lastWaitTime) * 60 / 1000);
+	lastWaitTime = time;
 
 	ticks *= g_debug_sleeptime_factor;
-	_event->sleep(ticks * 1000 / 60);
+	g_sci->sleep(ticks * 1000 / 60);
+}
+
+void EngineState::initGlobals() {
+	Script *script_000 = _segMan->getScript(1);
+	
+	if (!script_000->_localsBlock)
+		error("Script 0 has no locals block");
+
+	variablesSegment[VAR_GLOBAL] = script_000->_localsSegment;
+	variablesBase[VAR_GLOBAL] = variables[VAR_GLOBAL] = script_000->_localsBlock->_locals.begin();
+	variablesMax[VAR_GLOBAL] = script_000->_localsBlock->_locals.size();
 }
 
 uint16 EngineState::currentRoomNumber() const {
-	return script_000->_localsBlock->_locals[13].toUint16();
+	return variables[VAR_GLOBAL][13].toUint16();
 }
 
 void EngineState::setRoomNumber(uint16 roomNumber) {
-	script_000->_localsBlock->_locals[13] = make_reg(0, roomNumber);
+	variables[VAR_GLOBAL][13] = make_reg(0, roomNumber);
+}
+
+void EngineState::shrinkStackToBase() {
+	if (_executionStack.size() > 0) {
+		uint size = executionStackBase + 1;
+		assert(_executionStack.size() >= size);
+		Common::List<ExecStack>::iterator iter = _executionStack.begin();
+		for (uint i = 0; i < size; ++i)
+			++iter;
+		_executionStack.erase(iter, _executionStack.end());
+	}
 }
 
 static kLanguage charToLanguage(const char c) {
@@ -190,7 +223,7 @@ Common::String SciEngine::getSciLanguageString(const char *str, kLanguage lang, 
 					// Copy double-byte character
 					char c2 = *(++seeker);
 					if (!c2) {
-						warning("SJIS character %02X is missing second byte", c);
+						error("SJIS character %02X is missing second byte", c);
 						break;
 					}
 					fullWidth += c;
@@ -217,8 +250,8 @@ kLanguage SciEngine::getSciLanguage() {
 
 	lang = K_LANG_ENGLISH;
 
-	if (_kernel->_selectorCache.printLang != -1) {
-		lang = (kLanguage)GET_SEL32V(_gamestate->_segMan, _gamestate->_gameObj, SELECTOR(printLang));
+	if (SELECTOR(printLang) != -1) {
+		lang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(printLang));
 
 		if ((getSciVersion() >= SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
 			// If language is set to none, we use the language from the game detector.
@@ -251,21 +284,27 @@ kLanguage SciEngine::getSciLanguage() {
 			default:
 				lang = K_LANG_ENGLISH;
 			}
-
-			// Store language in printLang selector
-			PUT_SEL32V(_gamestate->_segMan, _gamestate->_gameObj, SELECTOR(printLang), lang);
 		}
 	}
 
 	return lang;
 }
 
+void SciEngine::setSciLanguage(kLanguage lang) {
+	if (SELECTOR(printLang) != -1)
+		writeSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(printLang), lang);
+}
+
+void SciEngine::setSciLanguage() {
+	setSciLanguage(getSciLanguage());
+}
+
 Common::String SciEngine::strSplit(const char *str, const char *sep) {
 	kLanguage lang = getSciLanguage();
 	kLanguage subLang = K_LANG_NONE;
 
-	if (_kernel->_selectorCache.subtitleLang != -1) {
-		subLang = (kLanguage)GET_SEL32V(_gamestate->_segMan, _gamestate->_gameObj, SELECTOR(subtitleLang));
+	if (SELECTOR(subtitleLang) != -1) {
+		subLang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(subtitleLang));
 	}
 
 	kLanguage secondLang;
@@ -283,6 +322,19 @@ Common::String SciEngine::strSplit(const char *str, const char *sep) {
 	}
 
 	return retval;
+}
+
+void SciEngine::checkVocabularySwitch() {
+	uint16 parserLanguage = 1;
+	if (SELECTOR(parseLang) != -1)
+		parserLanguage = readSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(parseLang));
+		
+	if (parserLanguage != _vocabularyLanguage) {
+		delete _vocabulary;
+		_vocabulary = new Vocabulary(_resMan, parserLanguage > 1 ? true : false);
+		_vocabulary->reset();
+		_vocabularyLanguage = parserLanguage;
+	}
 }
 
 } // End of namespace Sci

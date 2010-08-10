@@ -443,6 +443,12 @@ static void t2WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 	int numBytes;
 	int clipAmount;
 
+	// WORKAROUND: One of the mortician frames has several corrupt bytes in the Russian version
+	if ((pObj->hBits == 2517583660UL) && (_vm->getLanguage() == Common::RU_RUS)) {
+		uint8 correctBytes[5] = {0xA3, 0x00, 0x89, 0xC0, 0xA6};
+		Common::copy(&correctBytes[0], &correctBytes[5], srcP);
+	}
+
 	for (int y = 0; y < pObj->height; ++y) {
 		// Get the position to start writing out from
 		uint8 *tempP = !horizFlipped ? destP :
@@ -595,6 +601,23 @@ static void PackedWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP,
 	int xOffset = 0;
 	int numBytes, colour;
 	int v;
+
+	if (_vm->getLanguage() == Common::RU_RUS) {
+		// WORKAROUND: One of the mortician frames has several corrupt bytes in the Russian version
+		if (pObj->hBits == 2517583393UL) {
+			uint8 correctBytes[5] = {0x00, 0x00, 0x17, 0x01, 0x00};
+			Common::copy(&correctBytes[0], &correctBytes[5], srcP + 267);
+		}
+		// WORKAROUND: One of Dibbler's frames in the end sequence has corrupt bytes in the Russian version
+		if (pObj->hBits == 33651742) {
+			uint8 correctBytes[40] = {
+				0x06, 0xc0, 0xd6, 0xc1, 0x09, 0xce, 0x0d, 0x24, 0x02, 0x12, 0x01, 0x00, 0x00, 0x23, 0x21, 0x32,
+				0x12, 0x00, 0x00, 0x20, 0x01, 0x11, 0x32, 0x12, 0x01, 0x00, 0x00, 0x1b, 0x02, 0x11, 0x34, 0x11,
+				0x00, 0x00, 0x18, 0x01, 0x11, 0x35, 0x21, 0x01
+			};
+			Common::copy(&correctBytes[0], &correctBytes[40], srcP);
+		}
+	}
 
 	if (applyClipping) {
 		pObj->height -= pObj->botClip;

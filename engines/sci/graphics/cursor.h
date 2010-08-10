@@ -45,7 +45,7 @@ public:
 	GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen);
 	~GfxCursor();
 
-	void init(GfxCoordAdjuster *coordAdjuster, SciEvent *event);
+	void init(GfxCoordAdjuster *coordAdjuster, EventManager *event);
 
 	void kernelShow();
 	void kernelHide();
@@ -56,6 +56,11 @@ public:
 	void setPosition(Common::Point pos);
 	Common::Point getPosition();
 	void refreshPosition();
+
+	/**
+	 * Removes limit for mouse movement
+	 */
+	void kernelResetMoveZone();
 
 	/**
 	 * Limits the mouse movement to a given rectangle.
@@ -74,10 +79,11 @@ private:
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 	GfxCoordAdjuster *_coordAdjuster;
-	SciEvent *_event;
+	EventManager *_event;
 
 	int _upscaledHires;
 
+	bool _moveZoneActive;
 	Common::Rect _moveZone; // Rectangle in which the pointer can move
 
 	CursorCache _cachedCursors;

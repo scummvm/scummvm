@@ -86,6 +86,7 @@ public:
 
 	virtual byte getPlayId() = 0;
 	virtual int getPolyphony() const = 0;
+	virtual int getFirstChannel() { return 0; }
 
 	virtual void setVolume(byte volume) {
 		if(_driver)
@@ -112,7 +113,7 @@ protected:
 };
 
 extern MidiPlayer *MidiPlayer_AdLib_create(SciVersion version);
-extern MidiPlayer *MidiPlayer_Amiga_create(SciVersion version);
+extern MidiPlayer *MidiPlayer_AmigaMac_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_PCJr_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_PCSpeaker_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_Midi_create(SciVersion version);

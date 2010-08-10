@@ -579,11 +579,11 @@ void Mult_v2::playMultInit() {
 		width = _animWidth;
 		height = _animHeight;
 		_vm->_draw->adjustCoords(0, &width, &height);
-		_vm->_draw->initSpriteSurf(22, width, height, 0);
-		_animSurf = _vm->_draw->_spritesArray[22];
+		_vm->_draw->initSpriteSurf(Draw::kAnimSurface, width, height, 0);
+		_animSurf = _vm->_draw->_spritesArray[Draw::kAnimSurface];
 
-		_vm->_video->drawSprite(*_vm->_draw->_spritesArray[21],
-				*_vm->_draw->_spritesArray[22], 0, 0,
+		_vm->_video->drawSprite(*_vm->_draw->_spritesArray[Draw::kBackSurface],
+				*_vm->_draw->_spritesArray[Draw::kAnimSurface], 0, 0,
 				_vm->_video->_surfWidth, _vm->_video->_surfHeight, 0, 0, 0);
 
 		for (_counter = 0; _counter < _objCount; _counter++)
@@ -633,14 +633,14 @@ void Mult_v2::drawStatics(bool &stop) {
 				READ_LE_UINT16(_multData->execPtr + layer * 2);
 			_vm->_draw->_destSpriteX = 0;
 			_vm->_draw->_destSpriteY = 0;
-			_vm->_draw->_destSurface = 21;
+			_vm->_draw->_destSurface = Draw::kBackSurface;
 			_vm->_draw->_transparency = 0;
 			_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 			_vm->_scenery->_curStatic = -1;
 		}
 
-		_vm->_video->drawSprite(*_vm->_draw->_spritesArray[21],
-				*_vm->_draw->_spritesArray[22], 0, 0,
+		_vm->_video->drawSprite(*_vm->_draw->_spritesArray[Draw::kBackSurface],
+				*_vm->_draw->_spritesArray[Draw::kAnimSurface], 0, 0,
 				_vm->_video->_surfWidth, _vm->_video->_surfHeight, 0, 0, 0);
 	}
 }
@@ -710,7 +710,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 	} else {
 		if (animObj.videoSlot > 0) {
 			_vm->_video->retrace();
-			_vm->_vidPlayer->slotWaitEndFrame(animObj.videoSlot - 1, true);
+			_vm->_vidPlayer->waitEndFrame(animObj.videoSlot - 1, true);
 		}
 	}
 
@@ -736,8 +736,8 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 
 	if (animData.animation < 0) {
 		if ((animObj.videoSlot > 0) &&
-		    (_vm->_vidPlayer->getCurrentFrame(animObj.videoSlot - 1) <
-		      _vm->_vidPlayer->getFramesCount(animObj.videoSlot - 1))) {
+		    ((_vm->_vidPlayer->getCurrentFrame(animObj.videoSlot - 1) + 1) <
+		      _vm->_vidPlayer->getFrameCount(animObj.videoSlot - 1))) {
 			animData.newCycle = 0;
 			return;
 		}
@@ -775,7 +775,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		animData.isStatic = 1;
 		animData.frame = 0;
 		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
-			_vm->_vidPlayer->slotClose(animObj.videoSlot - 1);
+			_vm->_vidPlayer->closeVideo(animObj.videoSlot - 1);
 			animObj.videoSlot = 0;
 		}
 
@@ -788,7 +788,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 /*
 		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
 			if (_vm->_vidPlayer->getFlags(animObj.videoSlot - 1) & 0x1000) {
-				_vm->_vidPlayer->slotClose(animObj.videoSlot - 1);
+				_vm->_vidPlayer->closeVideo(animObj.videoSlot - 1);
 				animObj.videoSlot = 0;
 			}
 		}
@@ -937,8 +937,8 @@ void Mult_v2::animate() {
 		if ((right <= 0) || (bottom <= 0))
 			continue;
 
-		_vm->_draw->_sourceSurface = 22;
-		_vm->_draw->_destSurface = 21;
+		_vm->_draw->_sourceSurface = Draw::kAnimSurface;
+		_vm->_draw->_destSurface = Draw::kBackSurface;
 		_vm->_draw->_spriteLeft = maxleft - _animLeft;
 		_vm->_draw->_spriteTop = maxtop - _animTop;
 		_vm->_draw->_spriteRight = right;
@@ -1100,56 +1100,66 @@ void Mult_v2::animate() {
 
 void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 		int16 startFrame) {
-	int16 x, y;
-	int16 palStart, palEnd;
-	int16 baseFrame, palFrame, lastFrame;
-	uint16 flags;
+
+	VideoPlayer::Properties props;
 
 	if (_vm->_draw->_renderFlags & 0x100) {
-		x = VAR(55);
-		y = VAR(56);
-	} else
-		x = y = -1;
+		props.x = VAR(55);
+		props.y = VAR(56);
+	}
 
 	if (key.imdFile == -1) {
-		_vm->_vidPlayer->primaryClose();
+		_vm->_vidPlayer->closeVideo();
 		return;
 	}
 
-	flags = (key.flags >> 8) & 0xFF;
-	if (flags & 0x20)
-		flags = (flags & 0x9F) | 0x80;
+	props.flags = (key.flags >> 8) & 0xFF;
+	if (props.flags & 0x20)
+		props.flags = (props.flags & 0x9F) | 0x80;
 
-	palStart = key.palStart;
-	palEnd = key.palEnd;
-	palFrame = key.palFrame;
-	lastFrame = key.lastFrame;
+	props.palStart  = key.palStart;
+	props.palEnd    = key.palEnd;
+	props.palFrame  = key.palFrame;
+	props.lastFrame = key.lastFrame;
 
-	if ((palFrame != -1) && (lastFrame != -1))
-		if ((lastFrame - palFrame) < startFrame)
+	if ((props.palFrame != -1) && (props.lastFrame != -1))
+		if ((props.lastFrame - props.palFrame) < props.startFrame)
 			if (!(key.flags & 0x4000)) {
-				_vm->_vidPlayer->primaryClose();
+				_vm->_vidPlayer->closeVideo();
 				return;
 			}
 
-	if (!_vm->_vidPlayer->primaryOpen(imdFile, x, y, flags))
+	_vm->_vidPlayer->evaluateFlags(props);
+
+	int slot;
+	if ((slot = _vm->_vidPlayer->openVideo(true, imdFile, props)) < 0)
 		return;
 
-	if (palFrame == -1)
-		palFrame = 0;
+	if (props.palFrame == -1)
+		props.palFrame = 0;
 
-	if (lastFrame == -1)
-		lastFrame = _vm->_vidPlayer->getFramesCount() - 1;
+	if (props.lastFrame == -1)
+		props.lastFrame = _vm->_vidPlayer->getFrameCount() - 1;
 
-	baseFrame = startFrame % (lastFrame - palFrame + 1);
-	_vm->_vidPlayer->primaryPlay(baseFrame + palFrame, baseFrame + palFrame, 0,
-			flags & 0x7F, palStart, palEnd, palFrame, lastFrame);
+	uint32 baseFrame = startFrame % (props.lastFrame - props.palFrame + 1);
+
+	props.endFrame   = props.lastFrame;
+	props.startFrame = baseFrame + props.palFrame;
+	props.lastFrame  = baseFrame + props.palFrame;
+
+	props.flags &= 0x7F;
+
+	debugC(2, kDebugVideo, "Playing mult video \"%s\" @ %d+%d, frame %d, "
+			"paletteCmd %d (%d - %d; %d), flags %X", imdFile,
+			props.x, props.y, props.startFrame,
+			props.palCmd, props.palStart, props.palEnd, props.endFrame, props.flags);
+
+	_vm->_vidPlayer->play(slot, props);
 }
 
 void Mult_v2::advanceObjects(int16 index) {
 	int16 frame;
 	bool stop = false;
-	bool hasImds = false;
 
 	frame = _multData->animKeysFrames[index];
 	if (frame == -1)
@@ -1254,7 +1264,6 @@ void Mult_v2::advanceObjects(int16 index) {
 			if ((dir != 1) && (--startFrame < 0))
 				startFrame = 0;
 
-			hasImds = true;
 			playImd(imdFile, key, dir, startFrame);
 		}
 	}

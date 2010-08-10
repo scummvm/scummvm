@@ -34,18 +34,87 @@
 
 namespace M4 {
 
-#define MADS_SURFACE_HEIGHT 156
-#define MADS_SCREEN_HEIGHT 200
-#define MADS_Y_OFFSET ((MADS_SCREEN_HEIGHT - MADS_SURFACE_HEIGHT) / 2)
-
 class MadsView;
+
+enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
+enum MAdsActionMode2 {ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_4 = 4, ACTMODE2_5 = 5};
+
+struct ActionDetails {
+	int verbId;
+	int objectNameId;
+	int indirectObjectId;
+};
+
+struct MadsActionSavedFields {
+	int articleNumber;
+	int actionMode;
+	int actionMode2;
+	bool lookFlag;
+	int selectedRow;
+};
+
+class MadsAction {
+private:
+	MadsView &_owner;
+	char _statusText[100];
+	char _dialogTitle[100];
+
+	void appendVocab(int vocabId, bool capitalise = false);
+public:
+	ActionDetails _action, _activeAction;
+	int _currentAction;
+	int8 _flags1, _flags2;
+	MadsActionMode _actionMode;
+	MAdsActionMode2 _actionMode2;
+	int _articleNumber;
+	bool _lookFlag;
+	int _selectedRow;
+	bool _textChanged;
+	int _selectedAction;
+	bool _startWalkFlag;
+	int _statusTextIndex;
+	int _hotspotId;
+	MadsActionSavedFields _savedFields;
+	bool _walkFlag;
+
+	// Unknown fields
+	int16 _v86F3A;
+	int16 _v86F42;
+	int16 _v86F4E;
+	bool _v86F4A;
+	int16 _v86F4C;
+	int _v83338;
+	bool _inProgress;
+	bool _v8453A;
+
+public:
+	MadsAction(MadsView &owner);
+
+	void clear();
+	void set();
+	const char *statusText() const { return _statusText; }
+	void refresh();
+	void startAction();
+	void checkAction();
+	bool isAction(int verbId, int objectNameId = 0, int indirectObjectId = 0);
+};
 
 enum AbortTimerMode {ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2};
 
+class SpriteSlotSubset {
+public:
+	int spriteListIndex;
+	int frameNumber;
+	int xp;
+	int yp;
+	int depth;
+	int scale;
+};
+
 class MadsSpriteSlot {
 public:
-	int spriteId;
-	int timerIndex;
+	int spriteType;
+	int seqIndex;
 	int spriteListIndex;
 	int frameNumber;
 	int xp;
@@ -54,20 +123,27 @@ public:
 	int scale;
 
 	MadsSpriteSlot() { }
+
+	bool operator==(const SpriteSlotSubset &other) const;
+	void copy(const SpriteSlotSubset &other);
 };
 
 #define SPRITE_SLOTS_SIZE 50
 
-typedef Common::Array<Common::SharedPtr<SpriteAsset> > SpriteList;
+enum SpriteIdSpecial {
+	BACKGROUND_SPRITE = -4, FULL_SCREEN_REFRESH = -2, EXPIRED_SPRITE = -1, SPRITE_ZERO = 0, FOREGROUND_SPRITE = 1
+};
 
 class MadsSpriteSlots {
 private:
+	MadsView &_owner;
 	Common::Array<MadsSpriteSlot> _entries;
-	SpriteList _sprites;
+	Common::Array<SpriteAsset *> _sprites;
 public:
 	int startIndex;
 
-	MadsSpriteSlots();
+	MadsSpriteSlots(MadsView &owner);
+	~MadsSpriteSlots();
 
 	MadsSpriteSlot &operator[](int idx) {
 		assert(idx < SPRITE_SLOTS_SIZE);
@@ -75,18 +151,20 @@ public:
 	}
 	SpriteAsset &getSprite(int idx) {
 		assert(idx < (int)_sprites.size());
-		return *_sprites[idx].get();
+		return *_sprites[idx];
 	}
 
 	int getIndex();
-	int addSprites(const char *resName);
-	void clear() {
-		startIndex = 0;
-		_sprites.clear();
-	}
-	void deleteTimer(int timerIndex);
+	int addSprites(const char *resName, bool suppressErrors = false, int flags = 0);
+	int addSprites(SpriteAsset *spriteSet);
+	void deleteSprites(int listIndex);
+	void clear();
+	void deleteTimer(int seqIndex);
 
-	void draw(View *view);
+	void drawBackground();
+	void drawForeground(M4Surface *viewport);
+	void setDirtyAreas();
+	void fullRefresh();
 	void cleanUp();
 };
 
@@ -108,9 +186,10 @@ public:
 
 class MadsTextDisplay {
 private:
+	MadsView &_owner;
 	Common::Array<MadsTextDisplayEntry> _entries;
 public:
-	MadsTextDisplay();
+	MadsTextDisplay(MadsView &owner);
 
 	MadsTextDisplayEntry &operator[](int idx) {
 		assert(idx < TEXT_DISPLAY_SIZE);
@@ -124,16 +203,19 @@ public:
 
 	int add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font);
 	void clear();
-	void draw(View *view);
+	void draw(M4Surface *view);
+	void setDirtyAreas();
+	void setDirtyAreas2();
 	void cleanUp();
 };
 
 #define TIMED_TEXT_SIZE 10
-#define TEXT_4A_SIZE 30
+#define INDEFINITE_TIMEOUT 9999999
 
-enum KernelMessageFlags {KMSG_1 = 1, KMSG_2 = 2, KMSG_4 = 4, KMSG_8 = 8, KMSG_20 = 0x20, KMSG_40 = 0x40, KMSG_ACTIVE = 0x80};
+enum KernelMessageFlags {KMSG_QUOTED = 1, KMSG_PLAYER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8, KMSG_RIGHT_ALIGN = 0x10, 
+	KMSG_CENTER_ALIGN = 0x20, KMSG_EXPIRE = 0x40, KMSG_ACTIVE = 0x80};
 
-class MadsKernelMessageListEntry {
+class MadsKernelMessageEntry {
 public:
 	uint8 flags;
 	int sequenceIndex;
@@ -144,31 +226,39 @@ public:
 	Common::Point position;
 	int textDisplayIndex;
 	int msgOffset;
-	int field_E;
+	int numTicks;
 	uint32 frameTimer2;
 	uint32 frameTimer;
 	uint32 timeout;
-	bool field_1C;
+	int abortTimers;
 	AbortTimerMode abortMode;
 	uint16 actionNouns[3];
-	const char *msg;
+	char msg[100];
+
+	MadsKernelMessageEntry() {
+		flags = 0;
+	}
 };
 
 class MadsKernelMessageList {
 private:
 	MadsView &_owner;
-	Common::Array<MadsKernelMessageListEntry> _entries;
+	Common::Array<MadsKernelMessageEntry> _entries;
 	Font *_talkFont;
+public:
+	int word_8469E;
 public:
 	MadsKernelMessageList(MadsView &owner);
 
 	void clear();
-	int add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 v2, uint32 timeout, const char *msg);
-	int addQuote(int quoteId, int v2, uint32 timeout);
-	void unk1(int msgIndex, int v1, int v2);
+	int add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 abortTimers, uint32 timeout, const char *msg);
+	int addQuote(int quoteId, int abortTimers, uint32 timeout);
+	void scrollMessage(int msgIndex, int numTicks, bool quoted);
 	void setSeqIndex(int msgIndex, int seqIndex);
 	void remove(int msgIndex);
 	void reset();
+	void update();
+	void processText(int msgIndex);
 };
 
 class ScreenObjectEntry {
@@ -184,10 +274,20 @@ public:
 
 class ScreenObjects {
 private:
+	MadsView &_owner;
 	Common::Array<ScreenObjectEntry> _entries;
 public:
-	ScreenObjects() {}
+	int _v832EC;
+	int _v7FECA;
+	int _v7FED6;
+	int _v8332A;
+	int _yp;
+	int _v8333C;
+	int _selectedObject;
+	int _category;
+	int _objectIndex;
 
+	ScreenObjects(MadsView &owner);
 	ScreenObjectEntry &operator[](uint idx) {
 		assert(idx <= _entries.size());
 		return _entries[idx - 1];
@@ -199,12 +299,13 @@ public:
 	int scan(int xp, int yp, int layer);
 	int scanBackwards(int xp, int yp, int layer);
 	void setActive(int category, int idx, bool active);
+	void check(bool scanFlag, bool mouseClick);
 };
 
 class DynamicHotspot {
 public:
 	bool active;
-	int timerIndex;
+	int seqIndex;
 	Common::Rect bounds;
 	Common::Point pos;
 	int facing;
@@ -224,16 +325,54 @@ private:
 	Common::Array<DynamicHotspot> _entries;
 	int _count;
 public:
-	bool _flag;
+	bool _changed;
 public:
 	MadsDynamicHotspots(MadsView &owner);
 
 	DynamicHotspot &operator[](uint idx) { return _entries[idx]; }
-	int add(int descId, int field14, int timerIndex, const Common::Rect &bounds);
+	int add(int descId, int field14, int seqIndex, const Common::Rect &bounds);
 	int setPosition(int index, int xp, int yp, int facing);
 	int set17(int index, int v);
 	void remove(int index);
 	void reset();
+	void refresh() {
+		// TODO
+	}
+};
+
+class MadsDirtyArea {
+public:
+	Common::Rect bounds;
+	Common::Rect bounds2;
+	bool textActive;
+	bool active;
+
+	MadsDirtyArea() { active = false; }
+	void setArea(int width, int height, int maxWidth, int maxHeight);
+};
+
+#define DIRTY_AREAS_SIZE 90
+#define DIRTY_AREAS_TEXT_DISPLAY_IDX 50
+
+class MadsDirtyAreas {
+private:
+	MadsView &_owner;
+	Common::Array<MadsDirtyArea> _entries;
+public:
+	MadsDirtyAreas(MadsView &owner);
+
+	MadsDirtyArea &operator[](uint idx) {
+		assert(idx < _entries.size());
+		return _entries[idx];
+	}
+
+	void setSpriteSlot(int dirtyIdx, const MadsSpriteSlot &spriteSlot);
+	void setTextDisplay(int dirtyIdx, const MadsTextDisplayEntry &textDisplay);
+	void merge(int startIndex, int count);
+	bool intersects(int idx1, int idx2);
+	void mergeAreas(int idx1, int idx2);
+	void copy(M4Surface *dest, M4Surface *src, const Common::Point &posAdjust);
+	void clear();
 };
 
 enum SpriteAnimType {ANIMTYPE_CYCLED = 1, ANIMTYPE_REVERSIBLE = 2};
@@ -252,8 +391,7 @@ struct MadsSequenceSubEntries {
 struct MadsSequenceEntry {
 	int8 active;
 	int8 spriteListIndex;
-	
-	int field_2;
+	bool flipped;
 	
 	int frameIndex;
 	int frameStart;
@@ -266,12 +404,10 @@ struct MadsSequenceEntry {
 	int scale;
 	int dynamicHotspotIndex;
 
-	int field_12;
+	bool nonFixed;
 	int field_13;
 	
-	int width;
-	int height;
-	
+	Common::Point msgPos;
 	int triggerCountdown;
 	bool doneFlag;
 	MadsSequenceSubEntries entries;
@@ -295,88 +431,66 @@ public:
 	MadsSequenceEntry &operator[](int index) { return _entries[index]; }	
 	void clear();
 	bool addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal);
-	int add(int spriteListIndex, int v0, int v1, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
-		int height, int width, char field_12, char scale, uint8 depth, int frameInc, SpriteAnimType animType, 
-		int numSprites, int frameStart);
-	void remove(int timerIndex);
-	void setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot);
-	bool loadSprites(int timerIndex);
+	int add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks, 
+		int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, char scale, uint8 depth,
+		int frameInc, SpriteAnimType animType, int numSprites, int frameStart);
+	void remove(int seqIndex);
+	void setSpriteSlot(int seqIndex, MadsSpriteSlot &spriteSlot);
+	bool loadSprites(int seqIndex);
 	void tick();
 	void delay(uint32 v1, uint32 v2);
+	void setAnimRange(int seqIndex, int startVal, int endVal);
+	void scan();
+	void setDepth(int seqIndex, int depth);
 };
+
+class Animation {
+protected:
+	MadsM4Engine *_vm;
+public:
+	Animation(MadsM4Engine *vm);
+	virtual ~Animation();
+	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface) = 0;
+	virtual void load(const Common::String &filename, int v0) = 0;
+	virtual void update() = 0;
+	virtual void setCurrentFrame(int frameNumber) = 0;
+	virtual int getCurrentFrame() = 0;
+};
+	
 
 class MadsView {
 private:
 	View *_view;
 public:
+	Animation *_sceneAnimation;
 	MadsSpriteSlots _spriteSlots;
 	MadsTextDisplay _textDisplay;
 	MadsKernelMessageList _kernelMessages;
 	ScreenObjects _screenObjects;
 	MadsDynamicHotspots _dynamicHotspots;
 	MadsSequenceList _sequenceList;
+	MadsDirtyAreas _dirtyAreas;
+	MadsAction _action;
 
 	int _textSpacing;
-	int _ticksAmount;
 	uint32 _newTimeout;
 	int _abortTimers;
 	int8 _abortTimers2;
 	AbortTimerMode _abortTimersMode;
 	AbortTimerMode _abortTimersMode2;
+	Common::Point _posAdjust;
+
+	M4Surface *_depthSurface;
+	M4Surface *_bgSurface;
+	M4Surface *_viewport;
 public:
 	MadsView(View *view);
+	~MadsView();
 
 	void refresh();
-};
-
-#define CHEAT_SEQUENCE_MAX 8
-
-class IntegerList : public Common::Array<int> {
-public:
-	int indexOf(int v) {
-		for (uint i = 0; i < size(); ++i)
-			if (operator [](i) == v)
-				return i;
-		return -1;
-	}
-};
-
-enum InterfaceFontMode {ITEM_NORMAL, ITEM_HIGHLIGHTED, ITEM_SELECTED};
-
-enum InterfaceObjects {ACTIONS_START = 0, SCROLL_UP = 10, SCROLL_SCROLLER = 11, SCROLL_DOWN = 12,
-		INVLIST_START = 13, VOCAB_START = 18};
-
-class MadsInterfaceView : public GameInterfaceView {
-private:
-	IntegerList _inventoryList;
-	RectList _screenObjects;
-	int _highlightedElement;
-	int _topIndex;
-	uint32 _nextScrollerTicks;
-	int _cheatKeyCtr;
-
-	// Object display fields
-	int _selectedObject;
-	SpriteAsset *_objectSprites;
-	RGBList *_objectPalData;
-	int _objectFrameNumber;
-
-	void setFontMode(InterfaceFontMode newMode);
-	bool handleCheatKey(int32 keycode);
-	bool handleKeypress(int32 keycode);
-	void leaveScene();
-public:
-	MadsInterfaceView(MadsM4Engine *vm);
-	~MadsInterfaceView();
-
-	virtual void initialise();
-	virtual void setSelectedObject(int objectNumber);
-	virtual void addObjectToInventory(int objectNumber);
-	int getSelectedObject() { return _selectedObject; }
-	int getInventoryObject(int objectIndex) { return _inventoryList[objectIndex]; }
-
-	void onRefresh(RectList *rects, M4Surface *destSurface);
-	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
+	void update();
+	void clearLists();
+	void setViewport(const Common::Rect &bounds);
 };
 
 }

@@ -148,8 +148,8 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 		Graphics::Surface newscreen;
 		newscreen.create(width, in.h, in.bytesPerPixel);
 
-		uint8 *dst = (uint8*)newscreen.getBasePtr((320 - in.w) / 2, 0);
-		const uint8 *src = (uint8*)in.getBasePtr(0, 0);
+		uint8 *dst = (uint8 *)newscreen.getBasePtr((320 - in.w) / 2, 0);
+		const uint8 *src = (const uint8 *)in.getBasePtr(0, 0);
 		uint16 height = in.h;
 
 		while (height--) {
@@ -173,14 +173,26 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 		Graphics::Surface newscreen;
 		newscreen.create(width, 400, in.bytesPerPixel);
 
-		uint8 *dst = (uint8*)in.getBasePtr(0, (400 - 240) / 2);
-		const uint8 *src = (uint8*)in.getBasePtr(41, 28);
+		uint8 *dst = (uint8 *)newscreen.getBasePtr(0, (400 - 240) / 2);
+		const uint8 *src = (const uint8 *)in.getBasePtr(41, 28);
 
 		for (int y = 0; y < 240; ++y) {
 			memcpy(dst, src, 640 * in.bytesPerPixel);
 			dst += newscreen.pitch;
 			src += in.pitch;
 		}
+
+		in.free();
+		in = newscreen;
+	} else if (width == 640 && inHeight == 440) {
+		// Special case to handle KQ6 Windows: resize the screen to 640x480,
+		// adding a black band in the bottom.
+		inHeight = 480;
+
+		Graphics::Surface newscreen;
+		newscreen.create(width, 480, in.bytesPerPixel);
+
+		memcpy(newscreen.getBasePtr(0, 0), in.getBasePtr(0, 0), width * 440 * in.bytesPerPixel);
 
 		in.free();
 		in = newscreen;

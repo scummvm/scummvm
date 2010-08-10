@@ -760,8 +760,6 @@ int decompFunction() {
 		char *var1;
 		char *objIdxStr;
 		char *ovlStr;
-		char varName[256];
-		int i;
 
 		var1 = popDecomp();
 		objIdxStr = popDecomp();

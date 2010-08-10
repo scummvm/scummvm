@@ -515,12 +515,10 @@ void MacResManager::convertCrsrCursor(byte *data, int datasize, byte **cursor, i
 	int i, b;
 	byte imageByte;
 	byte *iconData;
-	int numBytes;
 	int pixelsPerByte, bpp;
 	int ctSize;
 	byte bitmask;
 	int iconRowBytes, iconBounds[4];
-	int ignored;
 	int iconDataSize;
 
 	dis.readUint16BE(); // type
@@ -606,20 +604,18 @@ void MacResManager::convertCrsrCursor(byte *data, int datasize, byte **cursor, i
 		dis.readUint16BE(); // colorID[c]
 
 		palette[0][c * 4 + 0] = dis.readByte();
-		ignored = dis.readByte();
+		dis.readByte();
 
 		palette[0][c * 4 + 1] = dis.readByte();
-		ignored = dis.readByte();
+		dis.readByte();
 
 		palette[0][c * 4 + 2] = dis.readByte();
-		ignored = dis.readByte();
+		dis.readByte();
 
 		palette[0][c * 4 + 3] = 0;
 	}
 
 	*palSize = ctSize;
-
-	numBytes = (iconBounds[2] - iconBounds[0]) * (iconBounds[3] - iconBounds[1]);
 
 	pixelsPerByte = (iconBounds[2] - iconBounds[0]) / iconRowBytes;
 	bpp           = 8 / pixelsPerByte;

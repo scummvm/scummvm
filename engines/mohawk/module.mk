@@ -6,11 +6,9 @@ MODULE_OBJS = \
 	detection.o \
 	dialogs.o \
 	graphics.o \
-	jpeg.o \
 	livingbooks.o \
 	mohawk.o \
 	myst.o \
-	myst_pict.o \
 	myst_vars.o \
 	myst_saveload.o \
 	myst_scripts.o \
@@ -22,13 +20,7 @@ MODULE_OBJS = \
 	riven_scripts.o \
 	riven_vars.o \
 	sound.o \
-	video/cinepak.o \
-	video/qdm2.o \
-	video/qtrle.o \
-	video/qt_player.o \
-	video/rpza.o \
-	video/smc.o \
-	video/video.o
+	video.o
 
 
 # This module can be built as a plugin

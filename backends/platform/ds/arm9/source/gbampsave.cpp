@@ -8,15 +8,18 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
  *
  */
 
@@ -29,7 +32,7 @@
 // GBAMP Save File
 /////////////////////////
 
-GBAMPSaveFile::GBAMPSaveFile(char* name, bool saveOrLoad) {
+GBAMPSaveFile::GBAMPSaveFile(char *name, bool saveOrLoad) {
 	handle = DS::std_fopen(name, saveOrLoad? "w": "r");
 //	consolePrintf("%s handle is %d\n", name, handle);
 //	consolePrintf("Created %s\n", name);
@@ -44,10 +47,10 @@ GBAMPSaveFile::~GBAMPSaveFile() {
 //	consolePrintf("Closed file\n");
 }
 
-uint32 GBAMPSaveFile::read(void *buf, uint32 size) {
-	saveSize += size;
-//	consolePrintf("Read %d %d ", size, saveSize);
-	return DS::std_fread(buf, 1, size, handle);
+uint32 GBAMPSaveFile::read(void *buf, uint32 length) {
+	saveSize += length;
+//	consolePrintf("Read %d %d ", length, saveSize);
+	return DS::std_fread(buf, 1, length, handle);
 }
 
 bool GBAMPSaveFile::eos() const {
@@ -74,27 +77,27 @@ int32 GBAMPSaveFile::pos() const {
 int32 GBAMPSaveFile::size() const {
 	int position = pos();
 	DS::std_fseek(handle, 0, SEEK_END);
-	int size = DS::std_ftell(handle);
+	int length = DS::std_ftell(handle);
 	DS::std_fseek(handle, position, SEEK_SET);
-	return size;
+	return length;
 }
 
-bool GBAMPSaveFile::seek(int32 pos, int whence) {
-	return DS::std_fseek(handle, pos, whence) == 0;
+bool GBAMPSaveFile::seek(int32 newPos, int whence) {
+	return DS::std_fseek(handle, newPos, whence) == 0;
 }
 
 
-uint32 GBAMPSaveFile::write(const void *buf, uint32 size) {
-	if (bufferPos + size > SAVE_BUFFER_SIZE) {
+uint32 GBAMPSaveFile::write(const void *buf, uint32 length) {
+	if (bufferPos + length > SAVE_BUFFER_SIZE) {
 		flushSaveBuffer();
-		saveSize += size;
-//		consolePrintf("Writing %d bytes from %x", size, buf);
-//		DS::std_fwrite(buf, 1, size, handle);
+		saveSize += length;
+//		consolePrintf("Writing %d bytes from %x", length, buf);
+//		DS::std_fwrite(buf, 1, length, handle);
 
-		memcpy(buffer + bufferPos, buf, size);
-		bufferPos += size;
+		memcpy(buffer + bufferPos, buf, length);
+		bufferPos += length;
 
-		saveSize += size;
+		saveSize += length;
 
 
 /*		int pos = 0;
@@ -104,31 +107,31 @@ uint32 GBAMPSaveFile::write(const void *buf, uint32 size) {
 		bufferPos = 512;
 		pos += rest;
 		flushSaveBuffer();
-		size -= rest;
+		length -= rest;
 //		consolePrintf("First section: %d\n", rest);
 
-		while (size >= 512) {
+		while (length >= 512) {
 			DS::std_fwrite(((char *) (buf)) + pos, 1, 512, handle);
-			size -= 512;
+			length -= 512;
 			pos += 512;
-//			consolePrintf("Full chunk, %d left ", size);
+//			consolePrintf("Full chunk, %d left ", length);
 		}
 
 		bufferPos = 0;
-		memcpy(buffer + bufferPos, ((char *) (buf)) + pos, size);
-		bufferPos += size;
+		memcpy(buffer + bufferPos, ((char *) (buf)) + pos, length);
+		bufferPos += length;
 //		consolePrintf("%d left in buffer ", bufferPos);*/
 
 	} else {
 
-		memcpy(buffer + bufferPos, buf, size);
-		bufferPos += size;
+		memcpy(buffer + bufferPos, buf, length);
+		bufferPos += length;
 
-		saveSize += size;
+		saveSize += length;
 	}
 
-//	if ((size > 100) || (size <= 0)) consolePrintf("Write %d bytes\n", size);
-	return size;
+//	if ((length > 100) || (length <= 0)) consolePrintf("Write %d bytes\n", length);
+	return length;
 }
 
 
@@ -196,7 +199,7 @@ Common::StringArray GBAMPSaveFileManager::listSavefiles(const Common::String &pa
 
 	//	consolePrintf("Real cwd:%d\n", realName);
 
-		char* p = realName;
+		char *p = realName;
 		while (*p) {
 			if (*p == '\\') *p = '/';
 			p++;

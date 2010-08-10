@@ -45,13 +45,6 @@ inline static void RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v) {
 	v = CLIP<int>( ((r * 512) >> 10) - ((g * 429) >> 10) - ((b *  83) >> 10) + 128, 0, 255);
 }
 
-/** Converting a color from YUV to RGB colorspace, Cinepak style. */
-inline static void CPYUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) {
-	r = CLIP<int>(y + 2 * (v - 128), 0, 255);
-	g = CLIP<int>(y - (u - 128) / 2 - (v - 128), 0, 255);
-	b = CLIP<int>(y + 2 * (u - 128), 0, 255);
-}
-
 // TODO: generic YUV to RGB blit
 
 /**

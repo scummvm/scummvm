@@ -738,7 +738,7 @@ ArjArchive::ArjArchive(const String &filename) : _arjFilename(filename) {
 		warning("ArjArchive::ArjArchive(): Could not find the archive file");
 		return;
 	}
-	
+
 	int32 firstHeaderOffset = findHeader(arjFile);
 
 	if (firstHeaderOffset < 0) {
@@ -828,7 +828,7 @@ SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) co
 		delete decoder;
 	}
 
-	return new Common::MemoryReadStream(uncompressedData, hdr->origSize, DisposeAfterUse::YES);	
+	return new Common::MemoryReadStream(uncompressedData, hdr->origSize, DisposeAfterUse::YES);
 }
 
 Archive *makeArjArchive(const String &name) {

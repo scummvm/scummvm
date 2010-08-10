@@ -37,6 +37,14 @@
 
 #include "gui/debugger.h"
 
+// AGI resources
+#include "agi/console.h"
+#include "agi/view.h"
+#include "agi/picture.h"
+#include "agi/logic.h"
+#include "agi/sound.h"
+
+
 namespace Common { class RandomSource; }
 
 /**
@@ -110,22 +118,12 @@ enum AgiGameID {
 	GID_SQ2,
 	GID_XMASCARD,
 	GID_FANMADE,
-	GID_GETOUTTASQ,
+	GID_GETOUTTASQ,	// Fanmade
+	GID_SQ0,				// Fanmade
 	GID_MICKEY,			// PreAGI
 	GID_WINNIE,			// PreAGI
-	GID_TROLL			// PreAGI
+	GID_TROLL				// PreAGI
 };
-
-} // End of namespace Agi
-
-// AGI resources
-#include "agi/console.h"
-#include "agi/view.h"
-#include "agi/picture.h"
-#include "agi/logic.h"
-#include "agi/sound.h"
-
-namespace Agi {
 
 enum AgiGameType {
 	GType_PreAGI = 0,
@@ -151,7 +149,8 @@ enum AgiGameFeatures {
 	GF_MENUS =		 (1 << 7),
 	GF_ESCPAUSE =	 (1 << 8),
 	GF_OLDAMIGAV20 = (1 << 9),
-	GF_CLIPCOORDS  = (1 << 10)
+	GF_CLIPCOORDS  = (1 << 10),
+	GF_2GSOLDSOUND = (1 << 11)
 };
 
 struct AGIGameDescription;
@@ -314,6 +313,12 @@ enum AgiComputerType {
 	kAgiComputerAmiga = 5, // Newer Amiga AGI interpreters' value (Commonly used)
 	kAgiComputerApple2GS = 7,
 	kAgiComputerAmigaOld = 20 // Older Amiga AGI interpreters' value (Seldom used)
+};
+
+enum AgiSoundType {
+	kAgiSoundPC = 1,
+	kAgiSoundTandy = 3, // Tandy (This value is also used by the Amiga AGI and Apple IIGS AGI)
+	kAgiSound2GSOld = 8 // Apple IIGS's Gold Rush! (Version 1.0M 1989-02-28 (CE), AGI 3.003) uses value 8
 };
 
 /**
@@ -497,10 +502,32 @@ struct ScriptPos {
 	int curIP;
 };
 
-#define EGO_VIEW_TABLE	0
-#define	HORIZON		36
-#define _WIDTH		160
-#define _HEIGHT		168
+enum {
+	EGO_VIEW_TABLE	= 0,
+	HORIZON			= 36,
+	_WIDTH			= 160,
+	_HEIGHT			= 168
+};
+
+enum InputMode {
+	INPUT_NORMAL	= 0x01,
+	INPUT_GETSTRING	= 0x02,
+	INPUT_MENU		= 0x03,
+	INPUT_NONE		= 0x04
+};
+
+enum State {
+	STATE_INIT		= 0x00,
+	STATE_LOADED	= 0x01,
+	STATE_RUNNING	= 0x02
+};
+
+enum {
+	SBUF16_OFFSET = 0,
+	SBUF256_OFFSET = ((_WIDTH) * (_HEIGHT)),
+	FROM_SBUF16_TO_SBUF256_OFFSET = ((SBUF256_OFFSET) - (SBUF16_OFFSET)),
+	FROM_SBUF256_TO_SBUF16_OFFSET = ((SBUF16_OFFSET) - (SBUF256_OFFSET))
+};
 
 /**
  * AGI game structure.
@@ -508,10 +535,7 @@ struct ScriptPos {
  * by the interpreter.
  */
 struct AgiGame {
-#define STATE_INIT	0x00
-#define STATE_LOADED	0x01
-#define STATE_RUNNING	0x02
-	int state;		/**< state of the interpreter */
+	State state;		/**< state of the interpreter */
 
 	// TODO: Check whether adjMouseX and adjMouseY must be saved and loaded when using savegames.
 	//       If they must be then loading and saving is partially broken at the moment.
@@ -535,12 +559,9 @@ struct AgiGame {
 	uint8 inputBuffer[40]; /**< buffer for user input */
 	uint8 echoBuffer[40];	/**< buffer for echo.line */
 	int keypress;
-#define INPUT_NORMAL	0x01
-#define INPUT_GETSTRING	0x02
-#define INPUT_MENU	0x03
-#define INPUT_NONE	0x04
-	int inputMode;			/**< keyboard input mode */
-	int inputEnabled;		/**< keyboard input enabled */
+
+	InputMode inputMode;			/**< keyboard input mode */
+	bool inputEnabled;		/**< keyboard input enabled */
 	int lognum;				/**< current logic number */
 	Common::Array<ScriptPos> execStack;
 
@@ -568,10 +589,7 @@ struct AgiGame {
 	char cursorChar;
 	unsigned int colorFg;
 	unsigned int colorBg;
-#define SBUF16_OFFSET 0
-#define SBUF256_OFFSET ((_WIDTH) * (_HEIGHT))
-#define FROM_SBUF16_TO_SBUF256_OFFSET ((SBUF256_OFFSET) - (SBUF16_OFFSET))
-#define FROM_SBUF256_TO_SBUF16_OFFSET ((SBUF16_OFFSET) - (SBUF256_OFFSET))
+
 	uint8 *sbufOrig;		/**< Pointer to the 160x336 AGI screen buffer that contains vertically two 160x168 screens (16 color and 256 color). */
 	uint8 *sbuf16c;			/**< 160x168 16 color (+control line & priority information) AGI screen buffer. Points at sbufOrig + SBUF16_OFFSET. */
 	uint8 *sbuf256c;		/**< 160x168 256 color AGI screen buffer (For AGI256 and AGI256-2 support). Points at sbufOrig + SBUF256_OFFSET. */
@@ -774,8 +792,6 @@ public:
 };
 
 class AgiEngine : public AgiBase {
-	int _gameId;
-
 protected:
 	// Engine APIs
 	virtual Common::Error go();
@@ -788,9 +804,6 @@ protected:
 public:
 	AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	virtual ~AgiEngine();
-	int getGameId() {
-		return _gameId;
-	}
 
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const char *desc);
@@ -798,6 +811,7 @@ public:
 private:
 
 	uint32 _tickTimer;
+	uint32 _lastTickTimer;
 
 	int _keyQueue[KEY_QUEUE_SIZE];
 	int _keyQueueStart;
@@ -829,7 +843,7 @@ public:
 	int loadGameSimple();
 
 	uint8 *_intobj;
-	int _oldMode;
+	InputMode _oldMode;
 	bool _restartGame;
 
 	Menu* _menu;
@@ -871,7 +885,7 @@ public:
 	static void agiTimerFunctionLow(void *refCon);
 	void initPriTable();
 
-	void newInputMode(int);
+	void newInputMode(InputMode mode);
 	void oldInputMode();
 
 	int getvar(int);
@@ -919,6 +933,17 @@ public:
 	void debugConsole(int, int, const char *);
 	int testIfCode(int);
 	void executeAgiCommand(uint8, uint8 *);
+
+private:
+	// Some submethods of testIfCode
+	uint8 testObjRight(uint8, uint8, uint8, uint8, uint8);
+	uint8 testObjCentre(uint8, uint8, uint8, uint8, uint8);
+	uint8 testObjInBox(uint8, uint8, uint8, uint8, uint8);
+	uint8 testPosn(uint8, uint8, uint8, uint8, uint8);
+	uint8 testSaid(uint8, uint8 *);
+	uint8 testController(uint8);
+	uint8 testKeypressed();
+	uint8 testCompareStrings(uint8, uint8);
 
 	// View
 private:
@@ -1024,6 +1049,198 @@ private:
 	bool _predictiveDialogRunning;
 public:
 	char _predictiveResult[40];
+
+private:
+	typedef void (AgiEngine::*AgiCommand)(uint8 *);
+
+	AgiCommand _agiCommands[183];
+	AgiLogic *_curLogic;
+	int _timerHack;			// Workaround for timer loop in MH1 logic 153
+
+	void setupOpcodes();
+
+	void cmd_increment(uint8 *p);
+	void cmd_decrement(uint8 *p);
+	void cmd_assignn(uint8 *p);
+	void cmd_assignv(uint8 *p);
+	void cmd_addn(uint8 *p);
+	void cmd_addv(uint8 *p);
+	void cmd_subn(uint8 *p);
+	void cmd_subv(uint8 *p);	// 0x08
+	void cmd_lindirectv(uint8 *p);
+	void cmd_rindirect(uint8 *p);
+	void cmd_lindirectn(uint8 *p);
+	void cmd_set(uint8 *p);
+	void cmd_reset(uint8 *p);
+	void cmd_toggle(uint8 *p);
+	void cmd_set_v(uint8 *p);
+	void cmd_reset_v(uint8 *p);	// 0x10
+	void cmd_toggle_v(uint8 *p);
+	void cmd_new_room(uint8 *p);
+	void cmd_new_room_f(uint8 *p);
+	void cmd_load_logic(uint8 *p);
+	void cmd_load_logic_f(uint8 *p);
+	void cmd_call(uint8 *p);
+	void cmd_call_f(uint8 *p);
+	void cmd_load_pic(uint8 *p);	// 0x18
+	void cmd_draw_pic(uint8 *p);
+	void cmd_show_pic(uint8 *p);
+	void cmd_discard_pic(uint8 *p);
+	void cmd_overlay_pic(uint8 *p);
+	void cmd_show_pri_screen(uint8 *p);
+	void cmd_load_view(uint8 *p);
+	void cmd_load_view_f(uint8 *p);
+	void cmd_discard_view(uint8 *p);	// 0x20
+	void cmd_animate_obj(uint8 *p);
+	void cmd_unanimate_all(uint8 *p);
+	void cmd_draw(uint8 *p);
+	void cmd_erase(uint8 *p);
+	void cmd_position(uint8 *p);
+	void cmd_position_f(uint8 *p);
+	void cmd_get_posn(uint8 *p);
+	void cmd_reposition(uint8 *p);	// 0x28
+	void cmd_set_view(uint8 *p);
+	void cmd_set_view_f(uint8 *p);
+	void cmd_set_loop(uint8 *p);
+	void cmd_set_loop_f(uint8 *p);
+	void cmd_fix_loop(uint8 *p);
+	void cmd_release_loop(uint8 *p);
+	void cmd_set_cel(uint8 *p);
+	void cmd_set_cel_f(uint8 *p);	// 0x30
+	void cmd_last_cel(uint8 *p);
+	void cmd_current_cel(uint8 *p);
+	void cmd_current_loop(uint8 *p);
+	void cmd_current_view(uint8 *p);
+	void cmd_number_of_loops(uint8 *p);
+	void cmd_set_priority(uint8 *p);
+	void cmd_set_priority_f(uint8 *p);
+	void cmd_release_priority(uint8 *p);	// 0x38
+	void cmd_get_priority(uint8 *p);
+	void cmd_stop_update(uint8 *p);
+	void cmd_start_update(uint8 *p);
+	void cmd_force_update(uint8 *p);
+	void cmd_ignore_horizon(uint8 *p);
+	void cmd_observe_horizon(uint8 *p);
+	void cmd_set_horizon(uint8 *p);
+	void cmd_object_on_water(uint8 *p);	// 0x40
+	void cmd_object_on_land(uint8 *p);
+	void cmd_object_on_anything(uint8 *p);
+	void cmd_ignore_objs(uint8 *p);
+	void cmd_observe_objs(uint8 *p);
+	void cmd_distance(uint8 *p);
+	void cmd_stop_cycling(uint8 *p);
+	void cmd_start_cycling(uint8 *p);
+	void cmd_normal_cycle(uint8 *p);	// 0x48
+	void cmd_end_of_loop(uint8 *p);
+	void cmd_reverse_cycle(uint8 *p);
+	void cmd_reverse_loop(uint8 *p);
+	void cmd_cycle_time(uint8 *p);
+	void cmd_stop_motion(uint8 *p);
+	void cmd_start_motion(uint8 *p);
+	void cmd_step_size(uint8 *p);
+	void cmd_step_time(uint8 *p);	// 0x50
+	void cmd_move_obj(uint8 *p);
+	void cmd_move_obj_f(uint8 *p);
+	void cmd_follow_ego(uint8 *p);
+	void cmd_wander(uint8 *p);
+	void cmd_normal_motion(uint8 *p);
+	void cmd_set_dir(uint8 *p);
+	void cmd_get_dir(uint8 *p);
+	void cmd_ignore_blocks(uint8 *p);	// 0x58
+	void cmd_observe_blocks(uint8 *p);
+	void cmd_block(uint8 *p);
+	void cmd_unblock(uint8 *p);
+	void cmd_get(uint8 *p);
+	void cmd_get_f(uint8 *p);
+	void cmd_drop(uint8 *p);
+	void cmd_put(uint8 *p);
+	void cmd_put_f(uint8 *p);	// 0x60
+	void cmd_get_room_f(uint8 *p);
+	void cmd_load_sound(uint8 *p);
+	void cmd_sound(uint8 *p);
+	void cmd_stop_sound(uint8 *p);
+	void cmd_print(uint8 *p);
+	void cmd_print_f(uint8 *p);
+	void cmd_display(uint8 *p);
+	void cmd_display_f(uint8 *p);	// 0x68
+	void cmd_clear_lines(uint8 *p);
+	void cmd_text_screen(uint8 *p);
+	void cmd_graphics(uint8 *p);
+	void cmd_set_cursor_char(uint8 *p);
+	void cmd_set_text_attribute(uint8 *p);
+	void cmd_shake_screen(uint8 *p);
+	void cmd_configure_screen(uint8 *p);
+	void cmd_status_line_on(uint8 *p);	// 0x70
+	void cmd_status_line_off(uint8 *p);
+	void cmd_set_string(uint8 *p);
+	void cmd_get_string(uint8 *p);
+	void cmd_word_to_string(uint8 *p);
+	void cmd_parse(uint8 *p);
+	void cmd_get_num(uint8 *p);
+	void cmd_prevent_input(uint8 *p);
+	void cmd_accept_input(uint8 *p);	// 0x78
+	void cmd_set_key(uint8 *p);
+	void cmd_add_to_pic(uint8 *p);
+	void cmd_add_to_pic_f(uint8 *p);
+	void cmd_status(uint8 *p);
+	void cmd_save_game(uint8 *p);
+	void cmd_load_game(uint8 *p);
+	void cmd_init_disk(uint8 *p);
+	void cmd_restart_game(uint8 *p);	// 0x80
+	void cmd_show_obj(uint8 *p);
+	void cmd_random(uint8 *p);
+	void cmd_program_control(uint8 *p);
+	void cmd_player_control(uint8 *p);
+	void cmd_obj_status_f(uint8 *p);
+	void cmd_quit(uint8 *p);
+	void cmd_show_mem(uint8 *p);
+	void cmd_pause(uint8 *p);	// 0x88
+	void cmd_echo_line(uint8 *p);
+	void cmd_cancel_line(uint8 *p);
+	void cmd_init_joy(uint8 *p);
+	void cmd_toggle_monitor(uint8 *p);
+	void cmd_version(uint8 *p);
+	void cmd_script_size(uint8 *p);
+	void cmd_set_game_id(uint8 *p);
+	void cmd_log(uint8 *p);	// 0x90
+	void cmd_set_scan_start(uint8 *p);
+	void cmd_reset_scan_start(uint8 *p);
+	void cmd_reposition_to(uint8 *p);
+	void cmd_reposition_to_f(uint8 *p);
+	void cmd_trace_on(uint8 *p);
+	void cmd_trace_info(uint8 *p);
+	void cmd_print_at(uint8 *p);
+	void cmd_print_at_v(uint8 *p);	// 0x98
+	//void cmd_discard_view(uint8 *p);	// Opcode repeated from 0x20 ?
+	void cmd_clear_text_rect(uint8 *p);
+	void cmd_set_upper_left(uint8 *p);
+	void cmd_set_menu(uint8 *p);
+	void cmd_set_menu_item(uint8 *p);
+	void cmd_submit_menu(uint8 *p);
+	void cmd_enable_item(uint8 *p);
+	void cmd_disable_item(uint8 *p);	// 0xa0
+	void cmd_menu_input(uint8 *p);
+	void cmd_show_obj_v(uint8 *p);
+	void cmd_open_dialogue(uint8 *p);
+	void cmd_close_dialogue(uint8 *p);
+	void cmd_mul_n(uint8 *p);
+	void cmd_mul_v(uint8 *p);
+	void cmd_div_n(uint8 *p);
+	void cmd_div_v(uint8 *p);	// 0xa8
+	void cmd_close_window(uint8 *p);
+	void cmd_set_simple(uint8 *p);
+	void cmd_push_script(uint8 *p);
+	void cmd_pop_script(uint8 *p);
+	void cmd_hold_key(uint8 *p);
+	void cmd_set_pri_base(uint8 *p);
+	void cmd_discard_sound(uint8 *p);
+	void cmd_hide_mouse(uint8 *p);	// 0xb0
+	void cmd_allow_menu(uint8 *p);
+	void cmd_show_mouse(uint8 *p);
+	void cmd_fence_mouse(uint8 *p);
+	void cmd_mouse_posn(uint8 *p);
+	void cmd_release_key(uint8 *p);
+	void cmd_adj_ego_move_to_x_y(uint8 *p);
 };
 
 } // End of namespace Agi

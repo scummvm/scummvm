@@ -5557,7 +5557,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case WALKED: {
 		// Common to both DW1 & DW2
 		pp -= 3;			// 4 parameters
-		bool tmp;
+		bool tmp = false;
 		Walked(coroParam, pp[0], pp[1], pp[2], pp[3], pic->escOn, pic->myEscape, tmp);
 		if (!coroParam) {
 			// Only write the result to the stack if walked actually completed running.

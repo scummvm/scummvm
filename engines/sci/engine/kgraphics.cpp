@@ -23,20 +23,21 @@
  *
  */
 
+#include "common/system.h"
+
+#include "engines/util.h"
 #include "graphics/cursorman.h"
-#include "graphics/video/avi_decoder.h"
 #include "graphics/surface.h"
+
+#include "gui/message.h"
 
 #include "sci/sci.h"
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/resource.h"
-#include "sci/video/seq_decoder.h"
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
-#include "sci/graphics/gui.h"
-#include "sci/graphics/gui32.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
@@ -44,15 +45,21 @@
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/paint16.h"
+#include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
+#include "sci/graphics/robot.h"
 #include "sci/graphics/screen.h"
+#include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
+#ifdef ENABLE_SCI32
+#include "sci/graphics/frameout.h"
+#endif
 
 namespace Sci {
 
 void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, SELECTOR(view));
-	uint16 signal = GET_SEL32V(s->_segMan, object, SELECTOR(signal));
+	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
+	uint16 signal = readSelectorValue(s->_segMan, object, SELECTOR(signal));
 	int16 loopNo;
 	int16 maxLoops;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
@@ -91,7 +98,7 @@ void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *arg
 	if ((loopNo > 1) && (maxLoops < 4))
 		return;
 
-	PUT_SEL32V(s->_segMan, object, SELECTOR(loop), loopNo);
+	writeSelectorValue(s->_segMan, object, SELECTOR(loop), loopNo);
 }
 
 static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
@@ -125,9 +132,10 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 			break;
 		case -1:
 			// TODO: Special case at least in kq6, check disassembly
+			//  Does something with magCursor, which is set on argc = 10, which we don't support
 			break;
 		case -2:
-			// TODO: Special case at least in kq6, check disassembly
+			g_sci->_gfxCursor->kernelResetMoveZone();
 			break;
 		default:
 			g_sci->_gfxCursor->kernelShow();
@@ -141,10 +149,22 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		g_sci->_gfxCursor->kernelSetPos(pos);
 		break;
 	case 4: {
-		int16 top = argv[0].toSint16();
-		int16 left = argv[1].toSint16();
-		int16 bottom = argv[2].toSint16();
-		int16 right = argv[3].toSint16();
+		int16 top, left, bottom, right;
+
+		if (getSciVersion() >= SCI_VERSION_2) {
+			top = argv[1].toSint16();
+			left = argv[0].toSint16();
+			bottom = argv[3].toSint16();
+			right = argv[2].toSint16();
+		} else {
+			top = argv[0].toSint16();
+			left = argv[1].toSint16();
+			bottom = argv[2].toSint16();
+			right = argv[3].toSint16();
+		}
+		// bottom/right needs to be included into our movezone, because we compare it like any regular Common::Rect
+		bottom++;
+		right++;
 
 		if ((right >= left) && (bottom >= top)) {
 			Common::Rect rect = Common::Rect(left, top, right, bottom);
@@ -154,8 +174,8 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	}
+	case 9: // case for kq5cd, we are getting calling with 4 additional 900d parameters
 	case 5:
-	case 9:
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
 		// Fallthrough
 	case 3:
@@ -164,8 +184,20 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		else
 			g_sci->_gfxCursor->kernelSetView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
 		break;
+	case 10:
+		// Freddy pharkas, when using the whiskey glass to read the prescription (bug #3034973)
+		// magnifier support, disabled using argc == 1, argv == -1
+		warning("kSetCursor: unsupported magnifier");
+		// we just set the view cursor currently
+		g_sci->_gfxCursor->kernelSetView(argv[5].toUint16(), argv[6].toUint16(), argv[7].toUint16(), hotspot);
+		// argv[0] -> 1, 2, 4 -> maybe magnification multiplier
+		// argv[1-4] -> rect for magnification
+		// argv[5, 6, 7] -> view resource for cursor
+		// argv[8] -> picture resource for mag
+		// argv[9] -> color for magnifier replacement
+		break;
 	default :
-		warning("kSetCursor: Unhandled case: %d arguments given", argc);
+		error("kSetCursor: Unhandled case: %d arguments given", argc);
 		break;
 	}
 	return s->r_acc;
@@ -178,7 +210,7 @@ reg_t kSetCursor(EngineState *s, int argc, reg_t *argv) {
 	case SCI_VERSION_1_1:
 		return kSetCursorSci11(s, argc, argv);
 	default:
-		warning("Unknown SetCursor type");
+		error("Unknown SetCursor type");
 		return NULL_REG;
 	}
 }
@@ -199,119 +231,106 @@ reg_t kPicNotValid(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, g_sci->_gfxScreen->kernelPicNotValid(newPicNotValid));
 }
 
-Common::Rect kGraphCreateRect(int16 x, int16 y, int16 x1, int16 y1) {
+static Common::Rect getGraphRect(reg_t *argv) {
+	int16 x = argv[1].toSint16();
+	int16 y = argv[0].toSint16();
+	int16 x1 = argv[3].toSint16();
+	int16 y1 = argv[2].toSint16();
 	if (x > x1) SWAP(x, x1);
 	if (y > y1) SWAP(y, y1);
 	return Common::Rect(x, y, x1, y1);
 }
 
-// Graph subfunctions
-enum {
-	K_GRAPH_GET_COLORS_NR = 2,
-	// 3 - SET PALETTE VIA RESOURCE
-	K_GRAPH_DRAW_LINE = 4,
-	// 5 - NOP
-	// 6 - DRAW PATTERN
-	K_GRAPH_SAVE_BOX = 7,
-	K_GRAPH_RESTORE_BOX = 8,
-	K_GRAPH_FILL_BOX_BACKGROUND = 9,
-	K_GRAPH_FILL_BOX_FOREGROUND = 10,
-	K_GRAPH_FILL_BOX_ANY = 11,
-	K_GRAPH_UPDATE_BOX = 12,
-	K_GRAPH_REDRAW_BOX = 13,
-	K_GRAPH_ADJUST_PRIORITY = 14,
-	K_GRAPH_SAVE_UPSCALEDHIRES_BOX = 15	// KQ6CD Windows version
-};
+static Common::Point getGraphPoint(reg_t *argv) {
+	int16 x = argv[1].toSint16();
+	int16 y = argv[0].toSint16();
+	return Common::Point(x, y);
+}
 
 reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
-	int16 x = 0, y = 0, x1 = 0, y1 = 0;
-	uint16 screenMask;
-	int16 priority, control, color, colorMask;
-	Common::Rect rect;
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	if (argc >= 5) {
-		x = argv[2].toSint16();
-		y = argv[1].toSint16();
-		x1 = argv[4].toSint16();
-		y1 = argv[3].toSint16();
-	}
+reg_t kGraphGetColorCount(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isAmiga32color())
+		return make_reg(0, 32);
+	return make_reg(0, !g_sci->getResMan()->isVGA() ? 16 : 256);
+}
 
-	switch (argv[0].toSint16()) {
-	case K_GRAPH_GET_COLORS_NR:
-		if (g_sci->getResMan()->isAmiga32color())
-			return make_reg(0, 32);
-		return make_reg(0, !g_sci->getResMan()->isVGA() ? 16 : 256);
+reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv) {
+	int16 color = argv[4].toSint16();
+	int16 priority = (argc > 5) ? argv[5].toSint16() : -1;
+	int16 control = (argc > 6) ? argv[6].toSint16() : -1;
 
-	case K_GRAPH_DRAW_LINE:
-		priority = (argc > 6) ? argv[6].toSint16() : -1;
-		control = (argc > 7) ? argv[7].toSint16() : -1;
-		color = argv[5].toSint16();
+	// TODO: Find out why we get >15 for color in EGA
+	if (!g_sci->getResMan()->isVGA() && !g_sci->getResMan()->isAmiga32color())
+		color &= 0x0F;
 
-		// TODO: Find out why we get >15 for color in EGA
-		if (!g_sci->getResMan()->isVGA() && !g_sci->getResMan()->isAmiga32color())
-			color &= 0x0F;
-
-		g_sci->_gfxPaint16->kernelGraphDrawLine(Common::Point(x, y), Common::Point(x1, y1), color, priority, control);
-		break;
-
-	case K_GRAPH_SAVE_BOX:
-		rect = kGraphCreateRect(x, y, x1, y1);
-		screenMask = (argc > 5) ? argv[5].toUint16() : 0;
-		return g_sci->_gfxPaint16->kernelGraphSaveBox(rect, screenMask);
-
-	case K_GRAPH_RESTORE_BOX:
-		// This may be called with a memoryhandle from SAVE_BOX or SAVE_UPSCALEDHIRES_BOX
-		g_sci->_gfxPaint16->kernelGraphRestoreBox(argv[1]);
-		break;
-
-	case K_GRAPH_FILL_BOX_BACKGROUND:
-		rect = kGraphCreateRect(x, y, x1, y1);
-		g_sci->_gfxPaint16->kernelGraphFillBoxBackground(rect);
-		break;
-
-	case K_GRAPH_FILL_BOX_FOREGROUND:
-		rect = kGraphCreateRect(x, y, x1, y1);
-		g_sci->_gfxPaint16->kernelGraphFillBoxForeground(rect);
-		break;
-
-	case K_GRAPH_FILL_BOX_ANY:
-		priority = (argc > 7) ? argv[7].toSint16() : -1;
-		control = (argc > 8) ? argv[8].toSint16() : -1;
-		color = argv[6].toSint16();
-		colorMask = argv[5].toUint16();
-
-		rect = kGraphCreateRect(x, y, x1, y1);
-		g_sci->_gfxPaint16->kernelGraphFillBox(rect, colorMask, color, priority, control);
-		break;
-
-	case K_GRAPH_UPDATE_BOX: {
-		rect = kGraphCreateRect(x, y, x1, y1);
-		bool hiresMode = (argc > 6) ? true : false;
-		// argc == 7 on upscaled hires
-		g_sci->_gfxPaint16->kernelGraphUpdateBox(rect, hiresMode);
-		break;
-	}
-
-	case K_GRAPH_REDRAW_BOX:
-		rect = kGraphCreateRect(x, y, x1, y1);
-		g_sci->_gfxPaint16->kernelGraphRedrawBox(rect);
-		break;
-
-	case K_GRAPH_ADJUST_PRIORITY:
-		// Seems to be only implemented for SCI0/SCI01 games
-		debugC(2, kDebugLevelGraphics, "adjust_priority(%d, %d)", argv[1].toUint16(), argv[2].toUint16());
-		g_sci->_gfxPorts->kernelGraphAdjustPriority(argv[1].toUint16(), argv[2].toUint16());
-		break;
-
-	case K_GRAPH_SAVE_UPSCALEDHIRES_BOX:
-		rect = kGraphCreateRect(x, y, x1, y1);
-		return g_sci->_gfxPaint16->kernelGraphSaveUpscaledHiresBox(rect);
-
-	default:
-		warning("Unsupported kGraph() operation %04x", argv[0].toSint16());
-	}
-
+	g_sci->_gfxPaint16->kernelGraphDrawLine(getGraphPoint(argv), getGraphPoint(argv + 2), color, priority, control);
 	return s->r_acc;
+}
+
+reg_t kGraphSaveBox(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect rect = getGraphRect(argv);
+	uint16 screenMask = argv[4].toUint16() & GFX_SCREEN_MASK_ALL;
+	return g_sci->_gfxPaint16->kernelGraphSaveBox(rect, screenMask);
+}
+
+reg_t kGraphRestoreBox(EngineState *s, int argc, reg_t *argv) {
+	// This may be called with a memoryhandle from SAVE_BOX or SAVE_UPSCALEDHIRES_BOX
+	g_sci->_gfxPaint16->kernelGraphRestoreBox(argv[0]);
+	return s->r_acc;
+}
+
+reg_t kGraphFillBoxBackground(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect rect = getGraphRect(argv);
+	g_sci->_gfxPaint16->kernelGraphFillBoxBackground(rect);
+	return s->r_acc;
+}
+
+reg_t kGraphFillBoxForeground(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect rect = getGraphRect(argv);
+	g_sci->_gfxPaint16->kernelGraphFillBoxForeground(rect);
+	return s->r_acc;
+}
+
+reg_t kGraphFillBoxAny(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect rect = getGraphRect(argv);
+	int16 colorMask = argv[4].toUint16();
+	int16 color = argv[5].toSint16();
+	int16 priority = (argc > 6) ? argv[6].toSint16() : -1;
+	int16 control = (argc > 7) ? argv[7].toSint16() : -1;
+
+	g_sci->_gfxPaint16->kernelGraphFillBox(rect, colorMask, color, priority, control);
+	return s->r_acc;
+}
+
+reg_t kGraphUpdateBox(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect rect = getGraphRect(argv);
+	// argv[4] is the map (1 for visual, etc.)
+	// argc == 6 on upscaled hires
+	bool hiresMode = (argc > 5) ? true : false;
+	g_sci->_gfxPaint16->kernelGraphUpdateBox(rect, hiresMode);
+	return s->r_acc;
+}
+
+reg_t kGraphRedrawBox(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect rect = getGraphRect(argv);
+	g_sci->_gfxPaint16->kernelGraphRedrawBox(rect);
+	return s->r_acc;
+}
+
+// Seems to be only implemented for SCI0/SCI01 games
+reg_t kGraphAdjustPriority(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxPorts->kernelGraphAdjustPriority(argv[0].toUint16(), argv[1].toUint16());
+	return s->r_acc;
+}
+
+reg_t kGraphSaveUpscaledHiresBox(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect rect = getGraphRect(argv);
+	return g_sci->_gfxPaint16->kernelGraphSaveUpscaledHiresBox(rect);
 }
 
 reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
@@ -337,13 +356,14 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	textWidth = dest[3].toUint16(); textHeight = dest[2].toUint16();
-	
+
 #ifdef ENABLE_SCI32
-	if (g_sci->_gui32)
-		g_sci->_gui32->textSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
-	else
+	if (!g_sci->_gfxText16) {
+		// TODO: Implement this
+		textWidth = 0; textHeight = 0;
+	} else
 #endif
-		g_sci->_gui->textSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
+		g_sci->_gfxText16->kernelTextSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
 	
 	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d", text.c_str(), textWidth, textHeight);
 	dest[2] = make_reg(0, textHeight);
@@ -386,17 +406,16 @@ reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
 
-	bool canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
-	return make_reg(0, canBeHere);
+	reg_t canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
+	return make_reg(0, canBeHere.isNull() ? 1 : 0);
 }
 
-// kCantBeHere does the same thing as kCanBeHere, except that it returns the opposite result.
 reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
 	
-	bool canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
-	return make_reg(0, !canBeHere);
+	reg_t canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
+	return canBeHere;
 }
 
 reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
@@ -437,7 +456,7 @@ reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
-	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, SELECTOR(view));
+	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
 	int16 loopCount;
 
 	loopCount = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
@@ -449,8 +468,8 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
-	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, SELECTOR(view));
-	int16 loopNo = GET_SEL32V(s->_segMan, object, SELECTOR(loop));
+	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
+	int16 loopNo = readSelectorValue(s->_segMan, object, SELECTOR(loop));
 	int16 celCount;
 
 	celCount = g_sci->_gfxCache->kernelViewGetCelCount(viewId, loopNo);
@@ -522,14 +541,6 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
 	g_sci->_gfxCompare->kernelBaseSetter(object);
-
-	// WORKAROUND for a problem in LSL1VGA. This allows the casino door to be opened,
-	// till the actual problem is found
-	if (s->_gameId == "lsl1sci" && s->currentRoomNumber() == 300) {
-		int top = GET_SEL32V(s->_segMan, object, SELECTOR(brTop));
-		PUT_SEL32V(s->_segMan, object, SELECTOR(brTop), top + 2);
-	}
-
 	return s->r_acc;
 }
 
@@ -539,64 +550,72 @@ reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// we are called on EGA/amiga games as well, this doesnt make sense.
+//  doing this would actually break the system EGA/amiga palette
 reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
-	// we are called on EGA/amiga games as well, this doesnt make sense.
-	//  doing this would actually break the system EGA/amiga palette
-	if (!g_sci->getResMan()->isVGA())
-		return s->r_acc;
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	switch (argv[0].toUint16()) {
-	case 1: // Set resource palette
-		if (argc==3) {
-			GuiResourceId resourceId = argv[1].toUint16();
-			bool force = argv[2].toUint16() == 2 ? true : false;
-			g_sci->_gfxPalette->kernelSetFromResource(resourceId, force);
-		} else {
-			warning("kPalette(1) called with %d parameters", argc);
-		}
-		break;
-	case 2: { // Set palette-flag(s)
-		uint16 fromColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
-		uint16 toColor = CLIP<uint16>(argv[2].toUint16(), 1, 255);
-		uint16 flags = argv[3].toUint16();
+reg_t kPaletteSetFromResource(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
+		GuiResourceId resourceId = argv[0].toUint16();
+		bool force = false;
+		if (argc == 2)
+			force = argv[1].toUint16() == 2 ? true : false;
+		g_sci->_gfxPalette->kernelSetFromResource(resourceId, force);
+	}
+	return s->r_acc;
+}
+
+reg_t kPaletteSetFlag(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
+		uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
+		uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+		uint16 flags = argv[2].toUint16();
 		g_sci->_gfxPalette->kernelSetFlag(fromColor, toColor, flags);
-		break;
 	}
-	case 3:	{ // Remove palette-flag(s)
-		uint16 fromColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
-		uint16 toColor = CLIP<uint16>(argv[2].toUint16(), 1, 255);
-		uint16 flags = argv[3].toUint16();
+	return s->r_acc;
+}
+
+reg_t kPaletteUnsetFlag(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
+		uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
+		uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+		uint16 flags = argv[2].toUint16();
 		g_sci->_gfxPalette->kernelUnsetFlag(fromColor, toColor, flags);
-		break;
 	}
-	case 4:	{ // Set palette intensity
-		switch (argc) {
-		case 4:
-		case 5: {
-			uint16 fromColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
-			uint16 toColor = CLIP<uint16>(argv[2].toUint16(), 1, 255);
-			uint16 intensity = argv[3].toUint16();
-			bool setPalette = (argc < 5) ? true : (argv[4].isNull()) ? true : false;
+	return s->r_acc;
+}
 
-			g_sci->_gfxPalette->kernelSetIntensity(fromColor, toColor, intensity, setPalette);
-			break;
-		}
-		default:
-			warning("kPalette(4) called with %d parameters", argc);
-		}
-		break;
+reg_t kPaletteSetIntensity(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
+		uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
+		uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+		uint16 intensity = argv[2].toUint16();
+		bool setPalette = (argc < 4) ? true : (argv[3].isNull()) ? true : false;
+
+		g_sci->_gfxPalette->kernelSetIntensity(fromColor, toColor, intensity, setPalette);
 	}
-	case 5: { // Find closest color
-		uint16 r = argv[1].toUint16();
-		uint16 g = argv[2].toUint16();
-		uint16 b = argv[3].toUint16();
+	return s->r_acc;
+}
 
+reg_t kPaletteFindColor(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
+		uint16 r = argv[0].toUint16();
+		uint16 g = argv[1].toUint16();
+		uint16 b = argv[2].toUint16();
 		return make_reg(0, g_sci->_gfxPalette->kernelFindColor(r, g, b));
 	}
-	case 6: { // Animate
+	return NULL_REG;
+}
+
+reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
 		int16 argNr;
 		bool paletteChanged = false;
-		for (argNr = 1; argNr < argc; argNr += 3) {
+		for (argNr = 0; argNr < argc; argNr += 3) {
 			uint16 fromColor = argv[argNr].toUint16();
 			uint16 toColor = argv[argNr + 1].toUint16();
 			int16 speed = argv[argNr + 2].toSint16();
@@ -605,80 +624,82 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		}
 		if (paletteChanged)
 			g_sci->_gfxPalette->kernelAnimateSet();
-		break;
 	}
-	case 7: { // Save palette to heap
-		warning("kPalette(7), save palette to heap STUB");
-		break;
-	}
-	case 8: { // Restore palette from heap
-		warning("kPalette(8), set stored palette STUB");
-		break;
-	}
-	default:
-		warning("kPalette(%d), not implemented", argv[0].toUint16());
-	}
-
 	return s->r_acc;
 }
 
-// This here is needed to make Pharkas work
-reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
-	uint16 operation = argv[0].toUint16();
-
-	if (!g_sci->_gui)
-		return s->r_acc;
-
-	switch (operation) {
-	case 0: { // Init
-		GuiResourceId paletteId;
-		uint16 time;
-		if (argc == 3) {
-			paletteId = argv[1].toUint16();
-			time = argv[2].toUint16();
-			g_sci->_gfxPalette->startPalVary(paletteId, time);
-			warning("kPalVary(init) called with paletteId = %d, time = %d", paletteId, time);
-		} else {
-			warning("kPalVary(init) called with unsupported argc %d", argc);
-		}
-		break;
-	}
-	case 1: { // Unknown
-		warning("kPalVary(1) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
-		break;
-	}
-	case 3: { // DeInit
-		if (argc == 1) {
-			g_sci->_gfxPalette->stopPalVary();
-			warning("kPalVary(deinit)");
-		} else {
-			warning("kPalVary(deinit) called with unsupported argc %d", argc);
-		}
-		break;
-	}
-	case 4: { // Unknown
-		warning("kPalVary(4) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
-		break;
-	}
-	case 6: { // Pause
-		bool pauseState;
-		if (argc == 2) {
-			pauseState = argv[1].isNull() ? false : true;
-			g_sci->_gfxPalette->togglePalVary(pauseState);
-			warning("kPalVary(pause) called with state = %d", pauseState);
-		} else {
-			warning("kPalVary(pause) called with unsupported argc %d", argc);
-		}
-		break;
-	}
-	default:
-		warning("kPalVary(%d), not implemented (argc = %d)", operation, argc);
+reg_t kPaletteSave(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
+		return g_sci->_gfxPalette->kernelSave();
 	}
 	return NULL_REG;
 }
 
+reg_t kPaletteRestore(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
+		g_sci->_gfxPalette->kernelRestore(argv[0]);
+	}
+	return argv[0];
+}
+
+reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
+
+reg_t kPalVaryInit(EngineState *s, int argc, reg_t *argv) {
+	GuiResourceId paletteId = argv[0].toUint16();
+	uint16 ticks = argv[1].toUint16();
+	uint16 stepStop = argc >= 3 ? argv[2].toUint16() : 64;
+	uint16 direction = argc >= 4 ? argv[3].toUint16() : 1;
+	if (g_sci->_gfxPalette->kernelPalVaryInit(paletteId, ticks, stepStop, direction))
+		return SIGNAL_REG;
+	return NULL_REG;
+}
+
+reg_t kPalVaryReverse(EngineState *s, int argc, reg_t *argv) {
+	int16 ticks = argc >= 1 ? argv[0].toUint16() : -1;
+	int16 stepStop = argc >= 2 ? argv[1].toUint16() : 0;
+	int16 direction = argc >= 3 ? argv[2].toSint16() : -1;
+
+	return make_reg(0, g_sci->_gfxPalette->kernelPalVaryReverse(ticks, stepStop, direction));
+}
+
+reg_t kPalVaryGetCurrentStep(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_gfxPalette->kernelPalVaryGetCurrentStep());
+}
+
+reg_t kPalVaryDeinit(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxPalette->kernelPalVaryDeinit();
+	return NULL_REG;
+}
+
+reg_t kPalVaryChangeTarget(EngineState *s, int argc, reg_t *argv) {
+	GuiResourceId paletteId = argv[0].toUint16();
+	int16 currentStep = g_sci->_gfxPalette->kernelPalVaryChangeTarget(paletteId);
+	return make_reg(0, currentStep);
+}
+
+reg_t kPalVaryChangeTicks(EngineState *s, int argc, reg_t *argv) {
+	uint16 ticks = argv[0].toUint16();
+	g_sci->_gfxPalette->kernelPalVaryChangeTicks(ticks);
+	return NULL_REG;
+}
+
+reg_t kPalVaryPauseResume(EngineState *s, int argc, reg_t *argv) {
+	bool pauseState = !argv[0].isNull();
+	g_sci->_gfxPalette->kernelPalVaryPause(pauseState);
+	return NULL_REG;
+}
+
+reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv) {
+	// Unknown (seems to be SCI32 exclusive)
+	return NULL_REG;
+}
+
 reg_t kAssertPalette(EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId paletteId = argv[1].toUint16();
+	GuiResourceId paletteId = argv[0].toUint16();
 
 	g_sci->_gfxPalette->kernelAssertPalette(paletteId);
 	return s->r_acc;
@@ -692,9 +713,9 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 	case 0: { // load
 		if (argc == 2) {
 			Common::String resourceName = s->_segMan->getString(argv[1]);
-			s->r_acc = g_sci->_gui->portraitLoad(resourceName);
+			s->r_acc = g_sci->_gfxPaint16->kernelPortraitLoad(resourceName);
 		} else {
-			warning("kPortrait(loadResource) called with unsupported argc %d", argc);
+			error("kPortrait(loadResource) called with unsupported argc %d", argc);
 		}
 		break;
 	}
@@ -709,31 +730,33 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 			uint seq = argv[8].toUint16() & 0xff;
 			// argv[9] is usually 0??!!
 
-			g_sci->_gui->portraitShow(resourceName, position, resourceNum, noun, verb, cond, seq);
+			g_sci->_gfxPaint16->kernelPortraitShow(resourceName, position, resourceNum, noun, verb, cond, seq);
 			return SIGNAL_REG;
 		} else {
-			warning("kPortrait(show) called with unsupported argc %d", argc);
+			error("kPortrait(show) called with unsupported argc %d", argc);
 		}
 		break;
 	}
 	case 2: { // unload
 		if (argc == 2) {
 			uint16 portraitId = argv[1].toUint16();
-			g_sci->_gui->portraitUnload(portraitId);
+			g_sci->_gfxPaint16->kernelPortraitUnload(portraitId);
 		} else {
-			warning("kPortrait(unload) called with unsupported argc %d", argc);
+			error("kPortrait(unload) called with unsupported argc %d", argc);
 		}
 		break;
 	}
 	default:
-		warning("kPortrait(%d), not implemented (argc = %d)", operation, argc);
+		error("kPortrait(%d), not implemented (argc = %d)", operation, argc);
 	}
 
 	return s->r_acc;
 }
 
-// Original top-left must stay on kControl rects, we adjust accordingly because sierra sci actually wont draw rects that
-//  are upside down (example: jones, when challenging jones - one button is a duplicate and also has lower-right which is 0, 0)
+// Original top-left must stay on kControl rects, we adjust accordingly because
+// sierra sci actually wont draw rects that are upside down (example: jones,
+// when challenging jones - one button is a duplicate and also has lower-right
+// which is 0, 0)
 Common::Rect kControlCreateRect(int16 x, int16 y, int16 x1, int16 y1) {
 	if (x > x1) x1 = x;
 	if (y > y1) y1 = y;
@@ -741,12 +764,12 @@ Common::Rect kControlCreateRect(int16 x, int16 y, int16 x1, int16 y1) {
 }
 
 void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
-	int16 type = GET_SEL32V(s->_segMan, controlObject, SELECTOR(type));
-	int16 style = GET_SEL32V(s->_segMan, controlObject, SELECTOR(state));
-	int16 x = GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsLeft));
-	int16 y = GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsTop));
-	GuiResourceId fontId = GET_SEL32V(s->_segMan, controlObject, SELECTOR(font));
-	reg_t textReference = GET_SEL32(s->_segMan, controlObject, SELECTOR(text));
+	int16 type = readSelectorValue(s->_segMan, controlObject, SELECTOR(type));
+	int16 style = readSelectorValue(s->_segMan, controlObject, SELECTOR(state));
+	int16 x = readSelectorValue(s->_segMan, controlObject, SELECTOR(nsLeft));
+	int16 y = readSelectorValue(s->_segMan, controlObject, SELECTOR(nsTop));
+	GuiResourceId fontId = readSelectorValue(s->_segMan, controlObject, SELECTOR(font));
+	reg_t textReference = readSelector(s->_segMan, controlObject, SELECTOR(text));
 	Common::String text;
 	Common::Rect rect;
 	TextAlignment alignment;
@@ -762,8 +785,8 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	bool isAlias = false;
 
 	rect = kControlCreateRect(x, y,
-				GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsRight)),
-				GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsBottom)));
+				readSelectorValue(s->_segMan, controlObject, SELECTOR(nsRight)),
+				readSelectorValue(s->_segMan, controlObject, SELECTOR(nsBottom)));
 
 	if (!textReference.isNull())
 		text = s->_segMan->getString(textReference);
@@ -775,32 +798,34 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXT:
-		alignment = GET_SEL32V(s->_segMan, controlObject, SELECTOR(mode));
+		alignment = readSelectorValue(s->_segMan, controlObject, SELECTOR(mode));
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
 		g_sci->_gfxControls->kernelDrawText(rect, controlObject, g_sci->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXTEDIT:
-		mode = GET_SEL32V(s->_segMan, controlObject, SELECTOR(mode));
-		maxChars = GET_SEL32V(s->_segMan, controlObject, SELECTOR(max));
-		cursorPos = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cursor));
+		mode = readSelectorValue(s->_segMan, controlObject, SELECTOR(mode));
+		maxChars = readSelectorValue(s->_segMan, controlObject, SELECTOR(max));
+		cursorPos = readSelectorValue(s->_segMan, controlObject, SELECTOR(cursor));
+		if (cursorPos > (int)text.size()) {
+			// if cursor is outside of text, adjust accordingly
+			cursorPos = text.size();
+			writeSelectorValue(s->_segMan, controlObject, SELECTOR(cursor), cursorPos);
+		}
 		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d", PRINT_REG(controlObject), PRINT_REG(textReference), text.c_str(), x, y);
 		g_sci->_gfxControls->kernelDrawTextEdit(rect, controlObject, g_sci->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_ICON:
-		viewId = GET_SEL32V(s->_segMan, controlObject, SELECTOR(view));
+		viewId = readSelectorValue(s->_segMan, controlObject, SELECTOR(view));
 		{
-			int l = GET_SEL32V(s->_segMan, controlObject, SELECTOR(loop));
+			int l = readSelectorValue(s->_segMan, controlObject, SELECTOR(loop));
 			loopNo = (l & 0x80) ? l - 256 : l;
-			int c = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cel));
+			int c = readSelectorValue(s->_segMan, controlObject, SELECTOR(cel));
 			celNo = (c & 0x80) ? c - 256 : c;
-			// Game-specific: *ONLY* the jones EGA/VGA sierra interpreter contain code using priority selector
-			//  ALL other games use a hardcoded -1 (madness!)
-			// We are detecting jones/talkie as "jones" as well, but the sierra interpreter of talkie doesnt have this
-			//  "hack". Hopefully it wont cause regressions (the code causes regressions if used against kq5/floppy)
-			if (s->_gameId == "jones")
-				priority = GET_SEL32V(s->_segMan, controlObject, SELECTOR(priority));
+			// Check if the control object specifies a priority selector (like in Jones)
+			if (lookupSelector(s->_segMan, controlObject, SELECTOR(priority), NULL, NULL) == kSelectorVariable)
+				priority = readSelectorValue(s->_segMan, controlObject, SELECTOR(priority));
 			else
 				priority = -1;
 		}
@@ -813,17 +838,17 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		if (type == SCI_CONTROLS_TYPE_LIST_ALIAS)
 			isAlias = true;
 
-		maxChars = GET_SEL32V(s->_segMan, controlObject, SELECTOR(x)); // max chars per entry
-		cursorOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cursor));
-		if (g_sci->getKernel()->_selectorCache.topString != -1) {
+		maxChars = readSelectorValue(s->_segMan, controlObject, SELECTOR(x)); // max chars per entry
+		cursorOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(cursor));
+		if (SELECTOR(topString) != -1) {
 			// Games from early SCI1 onwards use topString
-			upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(topString));
+			upperOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(topString));
 		} else {
 			// Earlier games use lsTop or brTop
-			if (lookup_selector(s->_segMan, controlObject, g_sci->getKernel()->_selectorCache.brTop, NULL, NULL) == kSelectorVariable)
-				upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(brTop));
+			if (lookupSelector(s->_segMan, controlObject, SELECTOR(brTop), NULL, NULL) == kSelectorVariable)
+				upperOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(brTop));
 			else
-				upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(lsTop));
+				upperOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(lsTop));
 		}
 
 		// Count string entries in NULL terminated string list
@@ -873,9 +898,40 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 
 	// Disable the "Change Directory" button, as we don't allow the game engine to
 	// change the directory where saved games are placed
-	if (objName == "changeDirI") {
-		int state = GET_SEL32V(s->_segMan, controlObject, SELECTOR(state));
-		PUT_SEL32V(s->_segMan, controlObject, SELECTOR(state), (state | SCI_CONTROLS_STYLE_DISABLED) & ~SCI_CONTROLS_STYLE_ENABLED);
+	// "changeDirItem" is used in the import windows of QFG2&3
+	if ((objName == "changeDirI") || (objName == "changeDirItem")) {
+		int state = readSelectorValue(s->_segMan, controlObject, SELECTOR(state));
+		writeSelectorValue(s->_segMan, controlObject, SELECTOR(state), (state | SCI_CONTROLS_STYLE_DISABLED) & ~SCI_CONTROLS_STYLE_ENABLED);
+	}
+	if (objName == "DEdit") {
+		reg_t textReference = readSelector(s->_segMan, controlObject, SELECTOR(text));
+		if (!textReference.isNull()) {
+			Common::String text = s->_segMan->getString(textReference);
+			if ((text == "a:hq1_hero.sav") || (text == "a:glory1.sav") || (text == "a:glory2.sav") || (text == "a:glory3.sav")) {
+				// Remove "a:" from hero quest / quest for glory export default filenames
+				text.deleteChar(0);
+				text.deleteChar(0);
+				s->_segMan->strcpy(textReference, text.c_str());
+			}
+		}
+	}
+	if (objName == "savedHeros") {
+		// Import of QfG character files dialog is shown
+		// display additional popup information before letting user use it
+		reg_t changeDirButton = s->_segMan->findObjectByName("changeDirItem");
+		if (!changeDirButton.isNull()) {
+			// check if checkDirButton is still enabled, in that case we are called the first time during that room
+			if (!(readSelectorValue(s->_segMan, changeDirButton, SELECTOR(state)) & SCI_CONTROLS_STYLE_DISABLED)) {
+				GUI::MessageDialog dialog("Characters saved inside ScummVM are shown "
+						"automatically. Character files saved in the original "
+						"interpreter need to be put inside ScummVM's saved games "
+						"directory and a prefix needs to be added depending on which "
+						"game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
+						"for Quest for Glory 2. Example: 'qfg2-thief.sav'.",
+						"OK");
+				dialog.runModal();
+			}
+		}
 	}
 
 	_k_GenericDrawControl(s, controlObject, false);
@@ -894,7 +950,7 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t eventObject = argv[1];
 
 	if (!controlObject.isNull()) {
-		int16 controlType = GET_SEL32V(s->_segMan, controlObject, SELECTOR(type));
+		int16 controlType = readSelectorValue(s->_segMan, controlObject, SELECTOR(type));
 
 		switch (controlType) {
 		case SCI_CONTROLS_TYPE_TEXTEDIT:
@@ -954,14 +1010,13 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 
 	case 7:
 		initPriorityBandsFlag = true;
-	case 4:
 	case 6:
 		picRect.top = argv[0].toSint16();
 		picRect.left = argv[1].toSint16();
 		picRect.bottom = argv[2].toSint16();
 		picRect.right = argv[3].toSint16();
-		picTop = (argc >= 6) ? argv[4].toSint16() : 0;
-		picLeft = (argc >= 6) ? argv[5].toSint16() : 0;
+		picTop = argv[4].toSint16();
+		picLeft = argv[5].toSint16();
 		g_sci->_gfxPorts->kernelSetPicWindow(picRect, picTop, picLeft, initPriorityBandsFlag);
 		break;
 
@@ -980,28 +1035,26 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	uint16 y = argv[4].toUint16();
 	int16 priority = (argc > 5) ? argv[5].toSint16() : -1;
 	uint16 paletteNo = (argc > 6) ? argv[6].toUint16() : 0;
-	bool hiresMode = (argc > 7) ? true : false;
-	reg_t upscaledHiresHandle = (argc > 7) ? argv[7] : NULL_REG;
+	bool hiresMode = false;
+	reg_t upscaledHiresHandle = NULL_REG;
+	uint16 scaleX = 128;
+	uint16 scaleY = 128;
 
-	if ((s->_gameId == "freddypharkas") || (s->_gameId == "freddypharkas-demo")) {
-		// WORKAROUND
-		// Script 24 contains code that draws the game menu on screen. It uses a temp variable for setting priority that
-		//  is not set. in Sierra sci this happens to be 8250h. In our sci temporary variables are initialized thus we would
-		//  get 0 here resulting in broken menus.
-		if ((viewId == 995) && (loopNo == 0) && (celNo == 0) && (priority == 0)) // game menu
-			priority = 15;
-		if ((viewId == 992) && (loopNo == 0) && (celNo == 0) && (priority == 0)) // quit game
-			priority = 15;
+	if (argc > 7) {
+		// this is either kq6 hires or scaling
+		if (paletteNo > 0) {
+			// it's scaling
+			scaleX = argv[6].toUint16();
+			scaleY = argv[7].toUint16();
+			paletteNo = 0;
+		} else {
+			// KQ6 hires
+			hiresMode = true;
+			upscaledHiresHandle = argv[7];
+		}
 	}
 
-	if (s->_gameId == "laurabow2") {
-		// WORKAROUND
-		// see the one above
-		if ((viewId == 995) && (priority == 0))
-			priority = 15;
-	}
-
-	g_sci->_gfxPaint16->kernelDrawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, hiresMode, upscaledHiresHandle);
+	g_sci->_gfxPaint16->kernelDrawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, scaleX, scaleY, hiresMode, upscaledHiresHandle);
 
 	return s->r_acc;
 }
@@ -1043,10 +1096,6 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	reg_t castListReference = (argc > 0) ? argv[0] : NULL_REG;
 	bool cycle = (argc > 1) ? ((argv[1].toUint16()) ? true : false) : false;
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	// Take care of incoming events (kAnimate is called semi-regularly)
-	process_sound_events(s);
-#endif
 	g_sci->_gfxAnimate->kernelAnimate(castListReference, cycle, argc, argv);
 
 	return s->r_acc;
@@ -1056,7 +1105,7 @@ reg_t kShakeScreen(EngineState *s, int argc, reg_t *argv) {
 	int16 shakeCount = (argc > 0) ? argv[0].toUint16() : 1;
 	int16 directions = (argc > 1) ? argv[1].toUint16() : 1;
 
-	g_sci->_gfxPaint->kernelShakeScreen(shakeCount, directions);
+	g_sci->_gfxScreen->kernelShakeScreen(shakeCount, directions);
 	return s->r_acc;
 }
 
@@ -1077,105 +1126,264 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 	return g_sci->_gfxPaint16->kernelDisplay(g_sci->strSplit(text.c_str()).c_str(), argc, argv);
 }
 
-reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
-	// Hide the cursor if it's showing and then show it again if it was
-	// previously visible.
-	bool reshowCursor;
-	
-	reshowCursor = g_sci->_gfxCursor->isVisible();
-	if (reshowCursor)
-		g_sci->_gfxCursor->kernelHide();
-		
-	Graphics::VideoDecoder *videoDecoder = 0;
+reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
+	// This call is used for KQ6's intro. It has one parameter, which is 1 when
+	// the intro begins, and 0 when it ends. It is suspected that this is
+	// actually a flag to enable video planar memory access, as the video
+	// decoder in KQ6 is specifically written for the planar memory model.
+	// Planar memory mode access was used for VGA "Mode X" (320x240 resolution,
+	// although the intro in KQ6 is 320x200).
+	// Refer to http://en.wikipedia.org/wiki/Mode_X
 
-	if (argv[0].segment != 0) {
-		Common::String filename = s->_segMan->getString(argv[0]);
+	//warning("STUB: SetVideoMode %d", argv[0].toUint16());
+	return s->r_acc;
+}
 
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
-			// Mac QuickTime
-			// The only argument is the string for the video
-			warning("TODO: Play QuickTime movie '%s'", filename.c_str());
-			return s->r_acc;
-		} else {
-			// DOS SEQ
-			// SEQ's are called with no subops, just the string and delay
-			SeqDecoder *seqDecoder = new SeqDecoder();
-			seqDecoder->setFrameDelay(argv[1].toUint16()); // Time between frames in ticks
-			videoDecoder = seqDecoder;
+// New calls for SCI11. Using those is only needed when using text-codes so that
+// one is able to change font and/or color multiple times during kDisplay and
+// kDrawControl
+reg_t kTextFonts(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxText16->kernelTextFonts(argc, argv);
+	return s->r_acc;
+}
 
-			if (!videoDecoder->loadFile(filename)) {
-				warning("Failed to open movie file %s", filename.c_str());
-				delete videoDecoder;
-				videoDecoder = 0;
-			}
-		}
-	} else {
-		// Windows AVI (Macintosh QuickTime? Need to check KQ6 Macintosh)
-		// TODO: This appears to be some sort of subop. case 0 contains the string
-		// for the video, so we'll just play it from there for now.
-
-#ifdef ENABLE_SCI32
-		if (getSciVersion() >= SCI_VERSION_2_1) {
-			// SCI2.1 always has argv[0] as 1, the rest of the arguments seem to
-			// follow SCI1.1/2.
-			if (argv[0].toUint16() != 1)
-				error("SCI2.1 kShowMovie argv[0] not 1");
-			argv++;
-			argc--;
-		}
-#endif
-		switch (argv[0].toUint16()) {
-		case 0: {
-			Common::String filename = s->_segMan->getString(argv[1]);
-			videoDecoder = new Graphics::AviDecoder(g_system->getMixer());
-
-			if (!videoDecoder->loadFile(filename.c_str())) {
-				warning("Failed to open movie file %s", filename.c_str());
-				delete videoDecoder;
-				videoDecoder = 0;
-			}
-			break;
-		}
-		default:
-			warning("Unhandled SCI kShowMovie subop %d", argv[1].toUint16());
-		}
-	}
-
-	if (videoDecoder) {
-		uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
-		uint16 y = (g_system->getHeight() - videoDecoder->getHeight()) / 2;
-
-		while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo()) {			
-			if (videoDecoder->needsUpdate()) {
-				Graphics::Surface *frame = videoDecoder->decodeNextFrame();
-				if (frame) {
-					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
-
-					if (videoDecoder->hasDirtyPalette())
-						videoDecoder->setSystemPalette();
-
-					g_system->updateScreen();
-				}
-			}
-
-			Common::Event event;
-			while (g_system->getEventManager()->pollEvent(event))
-				;
-
-			g_system->delayMillis(10);
-		}
-		
-		delete videoDecoder;
-		g_sci->_gfxScreen->kernelSyncWithFramebuffer();
-	}
-
-	if (reshowCursor)
-		g_sci->_gfxCursor->kernelShow();
-
+reg_t kTextColors(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxText16->kernelTextColors(argc, argv);
 	return s->r_acc;
 }
 
 #ifdef ENABLE_SCI32
+
+reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
+	// Returns 0 if the screen width or height is less than 640 or 400,
+	// respectively.
+	if (g_system->getWidth() < 640 || g_system->getHeight() < 400)
+		return make_reg(0, 0);
+
+	return make_reg(0, 1);
+}
+
+// SCI32 variant, can't work like sci16 variants
+reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv) {
+//	reg_t curObject = argv[0];
+//	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
+	
+	return NULL_REG;
+}
+
+reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
+	reg_t viewObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelAddScreenItem(viewObj);
+	return NULL_REG;
+}
+
+reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
+	//reg_t viewObj = argv[0];
+
+	//warning("kUpdateScreenItem, object %04x:%04x, view %d, loop %d, cel %d, pri %d", PRINT_REG(viewObj), viewId, loopNo, celNo, priority);
+	return NULL_REG;
+}
+
+reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
+	reg_t viewObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelDeleteScreenItem(viewObj);
+
+	/*
+	reg_t viewObj = argv[0];
+	uint16 viewId = readSelectorValue(s->_segMan, viewObj, SELECTOR(view));
+	int16 loopNo = readSelectorValue(s->_segMan, viewObj, SELECTOR(loop));
+	int16 celNo = readSelectorValue(s->_segMan, viewObj, SELECTOR(cel));
+	//int16 leftPos = 0;
+	//int16 topPos = 0;
+	int16 priority = readSelectorValue(s->_segMan, viewObj, SELECTOR(priority));
+	//int16 control = 0;
+	*/
+
+	// TODO
+
+	//warning("kDeleteScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
+	return NULL_REG;
+}
+
+reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t planeObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelAddPlane(planeObj);
+	return NULL_REG;
+}
+
+reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t planeObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelDeletePlane(planeObj);
+	return NULL_REG;
+}
+
+reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t planeObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelUpdatePlane(planeObj);
+	return s->r_acc;
+}
+
+reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t picObj = argv[0];
+
+	// TODO
+
+	warning("kRepaintPlane object %04x:%04x", PRINT_REG(picObj));
+	return NULL_REG;
+}
+
+reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv) {
+	reg_t planeObj = argv[0];
+	GuiResourceId pictureId = argv[1].toUint16();
+	int16 forWidth = argv[2].toSint16();
+	// argv[3] seems to be 0 most of the time
+
+	g_sci->_gfxFrameout->kernelAddPicAt(planeObj, forWidth, pictureId);
+	return s->r_acc;
+}
+
+reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_gfxFrameout->kernelGetHighPlanePri());
+}
+
+reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
+	// This kernel call likely seems to be doing the screen updates,
+	// as its called right after a view is updated
+
+	// TODO
+	g_sci->_gfxFrameout->kernelFrameout();
+
+	return NULL_REG;
+}
+
+reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
+	// Tests if the cursor is on the passed object
+
+	uint16 x = argv[0].toUint16();
+	uint16 y = argv[1].toUint16();
+	reg_t targetObject = argv[2];
+	uint16 illegalBits = argv[3].offset;
+	Common::Rect nsRect;
+
+	// we assume that x, y are local coordinates
+
+	// Get the bounding rectangle of the object
+	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
+	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
+	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
+	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
+
+	// nsRect top/left may be negative, adjust accordingly
+	Common::Rect checkRect = nsRect;
+	if (checkRect.top < 0)
+		checkRect.top = 0;
+	if (checkRect.left < 0)
+		checkRect.left = 0;
+
+	bool contained = checkRect.contains(x, y);
+	if (contained && illegalBits) {
+		// If illegalbits are set, we check the color of the pixel that got clicked on
+		//  for now, we return false if the pixel is transparent
+		//  although illegalBits may get differently set, don't know yet how this really works out
+		uint16 viewId = readSelectorValue(s->_segMan, targetObject, SELECTOR(view));
+		int16 loopNo = readSelectorValue(s->_segMan, targetObject, SELECTOR(loop));
+		int16 celNo = readSelectorValue(s->_segMan, targetObject, SELECTOR(cel));
+		if (g_sci->_gfxCompare->kernelIsItSkip(viewId, loopNo, celNo, Common::Point(x - nsRect.left, y - nsRect.top)))
+			contained = false;
+	}
+// these hacks shouldn't be needed anymore
+//	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+//	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
+
+	// If top and left are negative, we need to adjust coordinates by
+	// the item's x and y (e.g. happens in GK1, day 1, with detective
+	// Mosely's hotspot in his office)
+
+//	if (nsRect.left < 0)
+//		nsRect.translate(itemX, 0);
+//	
+//	if (nsRect.top < 0)
+//		nsRect.translate(0, itemY);
+
+//	// HACK: nsLeft and nsTop can be invalid, so try and fix them here
+//	// using x and y (e.g. with the inventory screen in GK1)
+//	if (nsRect.left == itemY && nsRect.top == itemX) {
+//		// Swap the values, as they're inversed (eh???)
+//		nsRect.left = itemX;
+//		nsRect.top = itemY;
+//	}
+
+	return make_reg(0, contained);
+}
+
+reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
+	// Tests if the cursor is on the passed object, after adjusting the
+	// coordinates of the object according to the object's plane
+
+	uint16 x = argv[0].toUint16();
+	uint16 y = argv[1].toUint16();
+	reg_t targetObject = argv[2];
+	// TODO: argv[3] - it's usually 0
+	Common::Rect nsRect;
+
+	// Get the bounding rectangle of the object
+	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
+	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
+	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
+	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
+
+	// Get the object's plane
+#if 0
+	reg_t planeObject = readSelector(s->_segMan, targetObject, SELECTOR(plane));
+	if (!planeObject.isNull()) {
+		//uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+		//uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
+		uint16 planeResY = readSelectorValue(s->_segMan, planeObject, SELECTOR(resY));
+		uint16 planeResX = readSelectorValue(s->_segMan, planeObject, SELECTOR(resX));
+		uint16 planeTop = readSelectorValue(s->_segMan, planeObject, SELECTOR(top));
+		uint16 planeLeft = readSelectorValue(s->_segMan, planeObject, SELECTOR(left));
+		planeTop = (planeTop * g_sci->_gfxScreen->getHeight()) / planeResY;
+		planeLeft = (planeLeft * g_sci->_gfxScreen->getWidth()) / planeResX;
+
+		// Adjust the bounding rectangle of the object by the object's
+		// actual X, Y coordinates
+		nsRect.top = ((nsRect.top * g_sci->_gfxScreen->getHeight()) / planeResY);
+		nsRect.left = ((nsRect.left * g_sci->_gfxScreen->getWidth()) / planeResX);
+		nsRect.bottom = ((nsRect.bottom * g_sci->_gfxScreen->getHeight()) / planeResY);
+		nsRect.right = ((nsRect.right * g_sci->_gfxScreen->getWidth()) / planeResX);
+
+		nsRect.translate(planeLeft, planeTop);
+	}
+#endif
+	//warning("kIsOnMe: (%d, %d) on object %04x:%04x, parameter %d", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), argv[3].toUint16());
+
+	return make_reg(0, nsRect.contains(x, y));
+}
+
+reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
+	// TODO: argument 0 is usually 0, and arguments 1 and 2 are usually 1
+	switch (argv[0].toUint16()) {
+	case 0: {
+		if (argc != 4) {
+			warning("kCreateTextBitmap(0): expected 4 arguments, got %i", argc);
+			return NULL_REG;
+		}
+		reg_t object = argv[3];
+		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
+		break;
+	}
+	default:
+		warning("CreateTextBitmap(%d)", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
+
 reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 
 	int16 subop = argv[0].toUint16();
@@ -1188,8 +1396,15 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 			int16 x = argv[4].toUint16();
 			int16 y = argv[5].toUint16();
 			warning("kRobot(init), id %d, obj %04x:%04x, flag %d, x=%d, y=%d", id, PRINT_REG(obj), flag, x, y);
+			GfxRobot *test = new GfxRobot(g_sci->getResMan(), g_sci->_gfxScreen, id);
+			test->draw();
+			delete test;
+
 			}
 			break;
+		case 1:	// LSL6 hires (startup)
+			// TODO
+			return NULL_REG;	// an integer is expected
 		case 4: {	// start
 				int id = argv[1].toUint16();
 				warning("kRobot(start), id %d", id);
@@ -1205,31 +1420,7 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
+
 #endif
-
-reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
-	// This call is used for KQ6's intro. It has one parameter, which is
-	// 1 when the intro begins, and 0 when it ends. It is suspected that
-	// this is actually a flag to enable video planar memory access, as
-	// the video decoder in KQ6 is specifically written for the planar
-	// memory model. Planar memory mode access was used for VGA "Mode X"
-	// (320x240 resolution, although the intro in KQ6 is 320x200).
-	// Refer to http://en.wikipedia.org/wiki/Mode_X
-
-	//warning("STUB: SetVideoMode %d", argv[0].toUint16());
-	return s->r_acc;
-}
-
-// New calls for SCI11. Using those is only needed when using text-codes so that one is able to change
-//  font and/or color multiple times during kDisplay and kDrawControl
-reg_t kTextFonts(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gui->textFonts(argc, argv);
-	return s->r_acc;
-}
-
-reg_t kTextColors(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gui->textColors(argc, argv);
-	return s->r_acc;
-}
 
 } // End of namespace Sci

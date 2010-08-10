@@ -193,8 +193,10 @@ void CommandExec::runSuspended() {
 		debugC(3, kDebugExec, "CommandExec::runSuspended()");
 
 		_execZone = _suspendedCtxt._zone;
-		runList(_suspendedCtxt._first, _suspendedCtxt._last);
+		CommandList::iterator first = _suspendedCtxt._first;
+		CommandList::iterator last = _suspendedCtxt._last;
 		cleanSuspendedList();
+		runList(first, last);
 	}
 }
 

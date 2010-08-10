@@ -64,7 +64,6 @@ ifeq ($(PSPSDK),)
 $(error $$(PSPSDK) cannot be obtained.)
 endif
 
-
 # Variables for common Scummvm makefile
 CXX      = psp-g++
 CXXFLAGS = -O3 -Wall -Wno-multichar -fno-exceptions -fno-rtti
@@ -124,16 +123,12 @@ CXXFLAGS += -pg -g
 LDFLAGS += -pg
 endif
 
-# SDL Libs and Flags
-SDLFLAGS := $(shell $(PSPBIN)/sdl-config --cflags)
-SDLLIBS  := $(shell $(PSPBIN)/sdl-config --libs)
 # PSP LIBS
 PSPLIBS =  -lpspprof -lpspvfpu -lpspdebug -lpspgu -lpspge -lpspdisplay -lpspctrl -lpspsdk \
 	-lpsputility -lpspuser -lpsppower -lpsphprm -lpspsdk -lpsprtc -lpspaudio -lpspkernel
 
 # Add in PSPSDK includes and libraries.
-CXXFLAGS += $(SDLFLAGS)
-LIBS     += -lpng -lSDL -lz $(findstring -lGL,$(SDLLIBS)) -lstdc++ -lc -lm $(filter -L%,$(SDLLIBS)) $(PSPLIBS)
+LIBS     += -lpng -lz -lstdc++ -lc -lm $(PSPLIBS)
 
 OBJS := powerman.o \
 	psp_main.o \
@@ -147,8 +142,15 @@ OBJS := powerman.o \
 	cursor.o \
 	trace.o \
 	psploader.o \
-	pspkeyboard.o
+	pspkeyboard.o \
+	audio.o \
+	thread.o \
+	rtc.o \
+	mp3.o \
+	tests.o
 
+
+BACKEND := psp
 
 # Include common Scummvm makefile
 include $(srcdir)/Makefile.common

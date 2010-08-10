@@ -49,8 +49,6 @@ struct PalEntry {
 	byte pal2[16];
 };
 
-extern Common::Array<PalEntry> palArray;
-
 void loadPal(const char *fileName);
 
 void loadRelatedPalette(const char *fileName);

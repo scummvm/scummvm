@@ -314,7 +314,7 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 			case 449787:	// 64f3fe479d45b52902cf88145c41d172
 				return Common::ES_ESP;
 			}
-		} else {
+		} else { // The DIG
 			switch (size) {
 			case 248627:	// 1fd585ac849d57305878c77b2f6c74ff
 				return Common::DE_DEU;
@@ -328,6 +328,8 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 				return Common::ES_ESP;
 			case 223107:	// 64f3fe479d45b52902cf88145c41d172
 				return Common::JA_JPN;
+			case 180730:	// 424fdd60822722cdc75356d921dad9bf
+				return Common::ZH_TWN;
 			}
 		}
 	}
@@ -381,10 +383,12 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 	}
 }
 
-static void detectGames(const Common::FSList &fslist, Common::List<DetectorResult> &results, const char *gameid) {
-	DescMap fileMD5Map;
-	DetectorResult dr;
-	char md5str[32+1];
+static void composeFileHashMap(const Common::FSList &fslist, DescMap &fileMD5Map, int depth, const char **globs) {
+	if (depth <= 0)
+		return;
+
+	if (fslist.empty())
+		return;
 
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
@@ -392,8 +396,36 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			d.node = *file;
 			d.md5Entry = 0;
 			fileMD5Map[file->getName()] = d;
+		} else {
+			if (!globs)
+				continue;
+
+			bool matched = false;
+			for (const char *glob = *globs; *glob; glob++)
+				if (file->getName().matchString(glob, true)) {
+					matched = true;
+					break;
+				}
+					
+			if (!matched)
+				continue;
+
+			Common::FSList files;
+
+			if (file->getChildren(files, Common::FSNode::kListAll)) {
+				composeFileHashMap(files, fileMD5Map, depth - 1, globs);
+			}
 		}
 	}
+}
+
+static void detectGames(const Common::FSList &fslist, Common::List<DetectorResult> &results, const char *gameid) {
+	DescMap fileMD5Map;
+	DetectorResult dr;
+	char md5str[32+1];
+
+	// Dive one level down since mac indy3/loom has its files split into directories. See Bug #1438631
+	composeFileHashMap(fslist, fileMD5Map, 2, directoryGlobs);
 
 	// Iterate over all filename patterns.
 	for (const GameFilenamePattern *gfp = gameFilenamesTable; gfp->gameid; ++gfp) {
@@ -457,6 +489,12 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 				if (d.md5Entry) {
 					// Exact match found. Compute the precise game settings.
 					computeGameSettingsFromMD5(fslist, gfp, d.md5Entry, dr);
+
+					// Print some debug info
+					int filesize = tmp->size();
+					if (d.md5Entry->filesize != filesize)
+					debug(1, "SCUMM detector found matching file '%s' with MD5 %s, size %d\n",
+						file.c_str(), md5str, filesize);
 
 					// Sanity check: We *should* have found a matching gameid / variant at this point.
 					// If not, then there's a bug in our data tables...
@@ -866,7 +904,8 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 			}
 		}
 
-		dg.setGUIOptions(x->game.guioptions);
+		dg.setGUIOptions(x->game.guioptions | MidiDriver::musicType2GUIO(x->game.midi));
+		dg.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
 
 		detectedGames.push_back(dg);
 	}
@@ -966,6 +1005,10 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		debug(1, "Using MD5 '%s'", res.md5.c_str());
 	}
 
+	// If the GUI options were updated, we catch this here and update them in the users config
+	// file transparently.
+	Common::updateGameGUIOptions(res.game.guioptions, getGameGUIOptionsDescriptionLanguage(res.language));
+
 	// Check for a user override of the platform. We allow the user to override
 	// the platform, to make it possible to add games which are not yet in
 	// our MD5 database but require a specific platform setting.
@@ -982,11 +1025,6 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// TODO: Maybe allow the null driver, too?
 	if (res.game.platform == Common::kPlatformFMTowns && res.game.version == 3)
 		res.game.midi = MDT_TOWNS;
-
-	// If the GUI options were updated, we catch this here and update them in the users config
-	// file transparently.
-	Common::updateGameGUIOptions(res.game.guioptions);
-
 	// Finally, we have massaged the GameDescriptor to our satisfaction, and can
 	// instantiate the appropriate game engine. Hooray!
 	switch (res.game.version) {

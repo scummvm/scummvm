@@ -76,7 +76,6 @@ using Common::GUIO_NONE;
 using Common::GUIO_NOSPEECH;
 
 static const MadeGameDescription gameDescriptions[] = {
-
 	{
 		// NOTE: Return to Zork entries with *.dat are used to detect the game via rtzcd.dat,
 		// which is packed inside rtzcd.red. Entries with *.red refer to the packed file
@@ -329,6 +328,60 @@ static const MadeGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Return to Zork - Japanese DOS
+		// This is the RTZCD.DAT in the base directory of the FM-Towns CD
+		{
+			"rtz",
+			"",
+			AD_ENTRY1("rtzcd.dat", "c4fccf67ad247f09b94c3c808b138576"),
+			Common::JA_JPN,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GID_RTZ,
+		0,
+		GF_CD,
+		3,
+	},
+
+	{
+		// Return to Zork - Japanese FM-Towns
+		// This is in the RTZFM folder of the FM-Towns CD
+		{
+			"rtz",
+			"",
+			AD_ENTRY1("rtzcd.dat", "e949a6a42d82daabfa7d4dc0a87a9843"),
+			Common::JA_JPN,
+			Common::kPlatformFMTowns,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GID_RTZ,
+		0,
+		GF_CD,
+		3,
+	},
+
+	{
+		// Return to Zork - Japanese PC-98
+		// This is in the RTZ9821 folder of the FM-Towns CD
+		{
+			"rtz",
+			"",
+			AD_ENTRY1("rtzcd.dat", "0c0117e98530c736a141c2aad6834dc5"),
+			Common::JA_JPN,
+			Common::kPlatformPC98,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GID_RTZ,
+		0,
+		GF_CD,
+		3,
+	},
+
+	{
 		// The Manhole: New and Enhanced
 		{
 			"manhole",
@@ -493,7 +546,11 @@ static const ADParams detectionParams = {
 	// Flags
 	0,
 	// Additional GUI options (for every game}
-	Common::GUIO_NONE
+	Common::GUIO_NONE,
+	// Maximum directory depth
+	1,
+	// List of directory globs
+	0
 };
 
 class MadeMetaEngine : public AdvancedMetaEngine {

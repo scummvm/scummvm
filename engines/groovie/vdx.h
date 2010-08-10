@@ -28,6 +28,10 @@
 
 #include "groovie/player.h"
 
+namespace Common {
+	class ReadStream;
+}
+
 namespace Groovie {
 
 class VDXPlayer : public VideoPlayer {

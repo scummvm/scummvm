@@ -93,6 +93,7 @@ void KyraEngine_LoK::seq_intro() {
 		_res->loadPakFile("INTRO.VRM");
 
 	static const IntroProc introProcTable[] = {
+		&KyraEngine_LoK::seq_introPublisherLogos,
 		&KyraEngine_LoK::seq_introLogos,
 		&KyraEngine_LoK::seq_introStory,
 		&KyraEngine_LoK::seq_introMalcolmTree,
@@ -114,8 +115,13 @@ void KyraEngine_LoK::seq_intro() {
 		snd_playTheme(0, 2);
 	_text->setTalkCoords(144);
 
-	for (int i = 0; i < ARRAYSIZE(introProcTable) && !seq_skipSequence(); ++i)
-		(this->*introProcTable[i])();
+	for (int i = 0; i < ARRAYSIZE(introProcTable) && !seq_skipSequence(); ++i) {
+		if ((this->*introProcTable[i])() && !shouldQuit()) {
+			resetSkipFlag();
+			_screen->fadeToBlack();
+			_screen->clearPage(0);
+		}
+	}
 
 	_text->setTalkCoords(136);
 	delay(30 * _tickLength);
@@ -127,18 +133,32 @@ void KyraEngine_LoK::seq_intro() {
 		_res->unloadPakFile("INTRO.VRM");
 }
 
-void KyraEngine_LoK::seq_introLogos() {
+bool KyraEngine_LoK::seq_introPublisherLogos() {
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		_screen->loadBitmap("LOGO.CPS", 3, 3, &_screen->getPalette(0));
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 		_screen->updateScreen();
 		_screen->fadeFromBlack();
 		delay(90 * _tickLength);
-		_screen->fadeToBlack();
-		if (!_abortIntroFlag)
+		if (!_abortIntroFlag) {
+			_screen->fadeToBlack();
 			snd_playWanderScoreViaMap(_flags.platform == Common::kPlatformFMTowns ? 57 : 2, 0);
+		}
+	} else if (_flags.platform == Common::kPlatformMacintosh && _res->exists("MP_GOLD.CPS")) {
+		_screen->loadPalette("MP_GOLD.COL", _screen->getPalette(0));
+		_screen->loadBitmap("MP_GOLD.CPS", 3, 3, 0);
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+		_screen->updateScreen();
+		_screen->fadeFromBlack();
+		delay(120 * _tickLength);
+		if (!_abortIntroFlag)
+			_screen->fadeToBlack();
 	}
 
+	return _abortIntroFlag;
+}
+
+bool KyraEngine_LoK::seq_introLogos() {
 	_screen->clearPage(0);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
@@ -159,11 +179,8 @@ void KyraEngine_LoK::seq_introLogos() {
 	_screen->updateScreen();
 	_screen->fadeFromBlack();
 
-	if (_seq->playSequence(_seq_WestwoodLogo, skipFlag()) || shouldQuit()) {
-		_screen->fadeToBlack();
-		_screen->clearPage(0);
-		return;
-	}
+	if (_seq->playSequence(_seq_WestwoodLogo, skipFlag()) || shouldQuit())
+		return true;
 
 	delay(60 * _tickLength);
 
@@ -174,16 +191,14 @@ void KyraEngine_LoK::seq_introLogos() {
 
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 
-	if ((_seq->playSequence(_seq_KyrandiaLogo, skipFlag()) && !seq_skipSequence()) || shouldQuit()) {
-		_screen->fadeToBlack();
-		_screen->clearPage(0);
-		return;
-	}
+	if (_seq->playSequence(_seq_KyrandiaLogo, skipFlag()) || shouldQuit())
+		return true;
+
 	_screen->setFont(of);
 	_screen->fillRect(0, 179, 319, 199, 0);
 
 	if (shouldQuit())
-		return;
+		return false;
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		_screen->copyPalette(0, 2);
@@ -225,20 +240,20 @@ void KyraEngine_LoK::seq_introLogos() {
 		} while (!doneFlag && !shouldQuit() && !_abortIntroFlag);
 	}
 
-	if (shouldQuit())
-		return;
+	if (_abortIntroFlag || shouldQuit())
+		return true;
 
-	_seq->playSequence(_seq_Forest, true);
+	return _seq->playSequence(_seq_Forest, true);
 }
 
-void KyraEngine_LoK::seq_introStory() {
+bool KyraEngine_LoK::seq_introStory() {
 	_screen->clearPage(3);
 	_screen->clearPage(0);
 
 	// HACK: The Italian fan translation uses an special text screen here
 	// so we show it even when text is disabled
 	if (!textEnabled() && speechEnabled() && _flags.lang != Common::IT_ITA)
-		return;
+		return false;
 
 	if ((_flags.lang == Common::EN_ANY && !_flags.isTalkie && _flags.platform == Common::kPlatformPC) || _flags.platform == Common::kPlatformAmiga)
 		_screen->loadBitmap("TEXT.CPS", 3, 3, &_screen->getPalette(0));
@@ -292,25 +307,30 @@ void KyraEngine_LoK::seq_introStory() {
 
 	_screen->updateScreen();
 	delay(360 * _tickLength);
+
+	return _abortIntroFlag;
 }
 
-void KyraEngine_LoK::seq_introMalcolmTree() {
+bool KyraEngine_LoK::seq_introMalcolmTree() {
 	_screen->_curPage = 0;
 	_screen->clearPage(3);
-	_seq->playSequence(_seq_MalcolmTree, true);
+	return _seq->playSequence(_seq_MalcolmTree, true);
 }
 
-void KyraEngine_LoK::seq_introKallakWriting() {
+bool KyraEngine_LoK::seq_introKallakWriting() {
 	_seq->makeHandShapes();
 	_screen->setAnimBlockPtr(5060);
 	_screen->_charWidth = -2;
 	_screen->clearPage(3);
-	_seq->playSequence(_seq_KallakWriting, true);
+	const bool skipped = _seq->playSequence(_seq_KallakWriting, true);
+	_seq->freeHandShapes();
+
+	return skipped;
 }
 
-void KyraEngine_LoK::seq_introKallakMalcolm() {
+bool KyraEngine_LoK::seq_introKallakMalcolm() {
 	_screen->clearPage(3);
-	_seq->playSequence(_seq_KallakMalcolm, true);
+	return _seq->playSequence(_seq_KallakMalcolm, true);
 }
 
 void KyraEngine_LoK::seq_createAmuletJewel(int jewel, int page, int noSound, int drawOnly) {

@@ -28,7 +28,9 @@
  *    both the QuickTime support and (vkeybd http://www.alsa-project.org/~iwai/alsa.html)
  */
 
-#if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__) && !defined(__MINT__)
+#include "common/scummsys.h"
+
+#if defined(USE_SEQ_MIDI)
 
 #include "common/util.h"
 #include "sound/musicplugin.h"
@@ -184,7 +186,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
 };
 
 MusicDevices SeqMusicPlugin::getDevices() const {
@@ -195,19 +197,10 @@ MusicDevices SeqMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error SeqMusicPlugin::createInstance(MidiDriver **mididriver) const {
+Common::Error SeqMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
 	*mididriver = new MidiDriver_SEQ();
 
 	return Common::kNoError;
-}
-
-MidiDriver *MidiDriver_SEQ_create() {
-	MidiDriver *mididriver;
-
-	SeqMusicPlugin p;
-	p.createInstance(&mididriver);
-
-	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(SEQ)

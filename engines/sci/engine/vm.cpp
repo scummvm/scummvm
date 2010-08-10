@@ -30,28 +30,22 @@
 
 #include "sci/sci.h"
 #include "sci/console.h"
-#include "sci/debug.h"	// for g_debugState
 #include "sci/resource.h"
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/seg_manager.h"
 #include "sci/engine/script.h"
+#include "sci/engine/seg_manager.h"
+#include "sci/engine/selector.h"	// for SELECTOR
 #include "sci/engine/gc.h"
+#include "sci/engine/workarounds.h"
 
 namespace Sci {
 
 const reg_t NULL_REG = {0, 0};
 const reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
-
+const reg_t TRUE_REG = {0, 1};
 //#define VM_DEBUG_SEND
-
-ScriptState scriptState;	// FIXME: Avoid non-const global vars
-int g_loadFromLauncher;	// FIXME: Avoid non-const global vars
-
-int script_abort_flag = 0; // Set to 1 to abort execution. Set to 2 to force a replay afterwards	// FIXME: Avoid non-const global vars
-int script_step_counter = 0; // Counts the number of steps executed	// FIXME: Avoid non-const global vars
-int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs	// FIXME: Avoid non-const global vars
 
 #define SCI_XS_CALLEE_LOCALS ((SegmentId)-1)
 
@@ -66,6 +60,8 @@ int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs	// FIXME
  * @param[in] argp			Heap pointer to the first parameter
  * @param[in] selector		The selector by which it was called or
  *							NULL_SELECTOR if n.a. For debugging.
+ * @param[in] exportId		The exportId by which it was called or
+ *							-1 if n.a. For debugging.
  * @param[in] sendp			Pointer to the object which the message was
  * 							sent to. Equal to objp for anything but super.
  * @param[in] origin		Number of the execution stack element this
@@ -76,9 +72,8 @@ int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs	// FIXME
  * @return 					A pointer to the new exec stack TOS entry
  */
 static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t pc, StackPtr sp,
-		reg_t objp, int argc, StackPtr argp, Selector selector,
+		reg_t objp, int argc, StackPtr argp, Selector selector, int exportId, int localCallOffset,
 		reg_t sendp, int origin, SegmentId local_segment);
-
 
 /**
  * Adds one varselector access to the execution stack.
@@ -97,11 +92,7 @@ static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack,
 		int origin);
 
 
-
-
 // validation functionality
-
-#ifndef DISABLE_VALIDATIONS
 
 static reg_t &validate_property(Object *obj, int index) {
 	// A static dummy reg_t, which we return if obj or index turn out to be
@@ -109,18 +100,20 @@ static reg_t &validate_property(Object *obj, int index) {
 	// may modify the value of the returned reg_t.
 	static reg_t dummyReg = NULL_REG;
 
-	if (!obj) {
-		debugC(2, kDebugLevelVM, "[VM] Sending to disposed object!");
-		return dummyReg;
-	}
+	// If this occurs, it means there's probably something wrong with the garbage
+	// collector, so don't hide it with fake return values
+	if (!obj)
+		error("validate_property: Sending to disposed object");
 
 	if (index < 0 || (uint)index >= obj->getVarCount()) {
+		// This is same way sierra does it and there are some games, that contain such scripts like
+		//  iceman script 998 (fred::canBeHere, executed right at the start)
 		debugC(2, kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!",
 			index, obj->getVarCount());
 		return dummyReg;
 	}
 
-	return obj->_variables[index];
+	return obj->getVariableRef(index);
 }
 
 static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
@@ -134,7 +127,9 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 
 static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
-		warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
+		// The results of this are likely unpredictable... It most likely means that a kernel function is returning something wrong.
+		// If such an error occurs, we usually need to find the last kernel function called and check its return value.
+		error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]. Address: %04x:%04x", reg.segment, PRINT_REG(reg));
 		return 0;
 	}
 
@@ -142,15 +137,10 @@ static int validate_arithmetic(reg_t reg) {
 }
 
 static int signed_validate_arithmetic(reg_t reg) {
-	if (reg.segment) {
-		warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
-		return 0;
-	}
-
-	return (int16)reg.offset;
+	return (int16)validate_arithmetic(reg);
 }
 
-static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int index, int line) {
+static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int index) {
 	const char *names[4] = {"global", "local", "temp", "param"};
 
 	if (index < 0 || index >= max) {
@@ -165,8 +155,8 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 		if (type == VAR_PARAM || type == VAR_TEMP) {
 			int total_offset = r - stack_base;
 			if (total_offset < 0 || total_offset >= VM_STACK_SIZE) {
-				warning("%s", txt.c_str());
-				warning("[VM] Access would be outside even of the stack (%d); access denied", total_offset);
+				// Fatal, as the game is trying to do an OOB access
+				error("%s. [VM] Access would be outside even of the stack (%d); access denied", txt.c_str(), total_offset);
 				return false;
 			} else {
 				debugC(2, kDebugLevelVM, "%s", txt.c_str());
@@ -180,15 +170,67 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 	return true;
 }
 
-static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
-	if (validate_variable(r, stack_base, type, max, index, line))
+static bool validate_unsignedInteger(reg_t reg, uint16 &integer) {
+	if (reg.segment)
+		return false;
+	integer = reg.offset;
+	return true;
+}
+
+static bool validate_signedInteger(reg_t reg, int16 &integer) {
+	if (reg.segment)
+		return false;
+	integer = (int16)reg.offset;
+	return true;
+}
+
+extern const char *opcodeNames[]; // from scriptdebug.cpp
+
+static reg_t arithmetic_lookForWorkaround(const byte opcode, const SciWorkaroundEntry *workaroundList, reg_t value1, reg_t value2) {
+	SciTrackOriginReply originReply;
+	SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, workaroundList, &originReply);
+	if (solution.type == WORKAROUND_NONE)
+		error("%s on non-integer (%04x:%04x, %04x:%04x) from method %s::%s (script %d, room %d, localCall %x)", 
+		opcodeNames[opcode], PRINT_REG(value1), PRINT_REG(value2), originReply.objectName.c_str(), 
+		originReply.methodName.c_str(), originReply.scriptNr, g_sci->getEngineState()->currentRoomNumber(),
+		originReply.localCallOffset);
+	assert(solution.type == WORKAROUND_FAKE);
+	return make_reg(0, solution.value);
+}
+
+static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, reg_t default_value) {
+	if (validate_variable(r, stack_base, type, max, index)) {
+		if (r[index].segment == 0xffff) {
+			switch (type) {
+			case VAR_TEMP: {
+				// Uninitialized read on a temp
+				//  We need to find correct replacements for each situation manually
+				SciTrackOriginReply originReply;
+				SciWorkaroundSolution solution = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, &originReply);
+				if (solution.type == WORKAROUND_NONE)
+					error("Uninitialized read for temp %d from method %s::%s (script %d, room %d, localCall %x)", 
+					index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, 
+					g_sci->getEngineState()->currentRoomNumber(), originReply.localCallOffset);
+				assert(solution.type == WORKAROUND_FAKE);
+				r[index] = make_reg(0, solution.value);
+				break;
+			}
+			case VAR_PARAM:
+				// Out-of-bounds read for a parameter that goes onto stack and hits an uninitialized temp
+				//  We return 0 currently in that case
+				debugC(2, kDebugLevelVM, "[VM] Read for a parameter goes out-of-bounds, onto the stack and gets uninitialized temp");
+				return NULL_REG;
+			default:
+				break;
+			}
+		}
 		return r[index];
-	else
+	} else
 		return default_value;
 }
 
-static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t value, SegManager *segMan, Kernel *kernel) {
-	if (validate_variable(r, stack_base, type, max, index, line)) {
+static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, int index, reg_t value, SegManager *segMan, Kernel *kernel) {
+	if (validate_variable(r, stack_base, type, max, index)) {
 
 		// WORKAROUND: This code is needed to work around a probable script bug, or a
 		// limitation of the original SCI engine, which can be observed in LSL5.
@@ -207,59 +249,66 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		// stopGroop object, which points to ego, to the new ego object. If this is not
 		// done, ego's movement will not be updated properly, so the result is
 		// unpredictable (for example in LSL5, Patti spins around instead of walking).
-		if (index == 0 && type == VAR_GLOBAL) {	// global 0 is ego
+		if (index == 0 && type == VAR_GLOBAL && getSciVersion() > SCI_VERSION_0_EARLY) {	// global 0 is ego
 			reg_t stopGroopPos = segMan->findObjectByName("stopGroop");
 			if (!stopGroopPos.isNull()) {	// does the game have a stopGroop object?
 				// Find the "client" member variable of the stopGroop object, and update it
 				ObjVarRef varp;
-				if (lookup_selector(segMan, stopGroopPos, kernel->_selectorCache.client, &varp, NULL) == kSelectorVariable) {
+				if (lookupSelector(segMan, stopGroopPos, SELECTOR(client), &varp, NULL) == kSelectorVariable) {
 					reg_t *clientVar = varp.getPointer(segMan);
 					*clientVar = value;
 				}
 			}
 		}
 
+		// If we are writing an uninitialized value into a temp, we remove the uninitialized segment
+		//  this happens at least in sq1/room 44 (slot-machine), because a send is missing parameters, then
+		//  those parameters are taken from uninitialized stack and afterwards they are copied back into temps
+		//  if we don't remove the segment, we would get false-positive uninitialized reads later
+		if (type == VAR_TEMP && value.segment == 0xffff)
+			value.segment = 0;
+
 		r[index] = value;
 	}
 }
 
-#else
-// Non-validating alternatives
-
-#  define validate_stack_addr(s, sp) sp
-#  define validate_arithmetic(r) ((r).offset)
-#  define signed_validate_arithmetic(r) ((int16)(r).offset)
-#  define validate_variable(r, sb, t, m, i, l)
-#  define validate_read_var(r, sb, t, m, i, l, dv) ((r)[i])
-#  define validate_write_var(r, sb, t, m, i, l, v, sm, k) ((r)[i] = (v))
-#  define validate_property(o, p) ((o)->_variables[p])
-
-#endif
-
-#define READ_VAR(type, index, def) validate_read_var(scriptState.variables[type], s->stack_base, type, scriptState.variables_max[type], index, __LINE__, def)
-#define WRITE_VAR(type, index, value) validate_write_var(scriptState.variables[type], s->stack_base, type, scriptState.variables_max[type], index, __LINE__, value, s->_segMan, g_sci->getKernel())
+#define READ_VAR(type, index) validate_read_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, s->r_acc)
+#define WRITE_VAR(type, index, value) validate_write_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, value, s->_segMan, g_sci->getKernel())
 #define WRITE_VAR16(type, index, value) WRITE_VAR(type, index, make_reg(0, value));
-
-#define ACC_ARITHMETIC_L(op) make_reg(0, (op validate_arithmetic(s->r_acc)))
-#define ACC_AUX_LOAD() aux_acc = signed_validate_arithmetic(s->r_acc)
-#define ACC_AUX_STORE() s->r_acc = make_reg(0, aux_acc)
-
-#define OBJ_PROPERTY(o, p) (validate_property(o, p))
 
 // Operating on the stack
 // 16 bit:
 #define PUSH(v) PUSH32(make_reg(0, v))
-#define POP() (validate_arithmetic(POP32()))
 // 32 bit:
-#define PUSH32(a) (*(validate_stack_addr(s, (scriptState.xs->sp)++)) = (a))
-#define POP32() (*(validate_stack_addr(s, --(scriptState.xs->sp))))
+#define PUSH32(a) (*(validate_stack_addr(s, (s->xs->sp)++)) = (a))
+#define POP32() (*(validate_stack_addr(s, --(s->xs->sp))))
+
+bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
+	if (_debugState._activeBreakpointTypes & BREAK_EXPORT) {
+		uint32 bpaddress;
+
+		bpaddress = (script << 16 | pubfunct);
+
+		Common::List<Breakpoint>::const_iterator bp;
+		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
+				_console->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
+				_debugState.debugging = true;
+				_debugState.breakpointWasHit = true;
+				return true;;
+			}
+		}
+	}
+
+	return false;
+}
 
 ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp) {
 	int seg = s->_segMan->getScriptSegment(script);
 	Script *scr = s->_segMan->getScriptIfLoaded(seg);
 
 	if (!scr || scr->isMarkedAsDeleted()) { // Script not present yet?
-		seg = script_instantiate(g_sci->getResMan(), s->_segMan, script);
+		seg = s->_segMan->instantiateScript(script);
 		scr = s->_segMan->getScript(seg);
 	}
 
@@ -277,24 +326,9 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	}
 
 	// Check if a breakpoint is set on this method
-	if (g_debugState._activeBreakpointTypes & BREAK_EXPORT) {
-		uint32 bpaddress;
+	g_sci->checkExportBreakpoint(script, pubfunct);
 
-		bpaddress = (script << 16 | pubfunct);
-
-		Common::List<Breakpoint>::const_iterator bp;
-		for (bp = g_debugState._breakpoints.begin(); bp != g_debugState._breakpoints.end(); ++bp) {
-			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
-				Console *con = g_sci->getSciDebugger();
-				con->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
-				g_debugState.debugging = true;
-				g_debugState.breakpointWasHit = true;
-				break;
-			}
-		}
-	}
-
-	return add_exec_stack_entry(s->_executionStack, make_reg(seg, temp), sp, calling_obj, argc, argp, -1, calling_obj, s->_executionStack.size()-1, seg);
+	return add_exec_stack_entry(s->_executionStack, make_reg(seg, temp), sp, calling_obj, argc, argp, -1, pubfunct, -1, calling_obj, s->_executionStack.size()-1, seg);
 }
 
 
@@ -304,7 +338,7 @@ static void _exec_varselectors(EngineState *s) {
 		ExecStack &xs = s->_executionStack.back();
 		reg_t *var = xs.getVarPointer(s->_segMan);
 		if (!var) {
-			warning("Invalid varselector exec stack entry");
+			error("Invalid varselector exec stack entry");
 		} else {
 			// varselector access?
 			if (xs.argc) { // write?
@@ -332,6 +366,30 @@ struct CallsStruct {
 	int type; /**< Same as ExecStack.type */
 };
 
+bool SciEngine::checkSelectorBreakpoint(reg_t send_obj, int selector) {
+	if (_debugState._activeBreakpointTypes & BREAK_SELECTOR) {
+		char method_name[256];
+
+		sprintf(method_name, "%s::%s", _gamestate->_segMan->getObjectName(send_obj), getKernel()->getSelectorName(selector).c_str());
+
+		Common::List<Breakpoint>::const_iterator bp;
+		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+			int cmplen = bp->name.size();
+			if (bp->name.lastChar() != ':')
+				cmplen = 256;
+
+			if (bp->type == BREAK_SELECTOR && !strncmp(bp->name.c_str(), method_name, cmplen)) {
+				_console->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
+				_debugState.debugging = true;
+				_debugState.breakpointWasHit = true;
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPtr sp, int framesize, StackPtr argp) {
 // send_obj and work_obj are equal for anything but 'super'
 // Returns a pointer to the TOS exec_stack element
@@ -341,7 +399,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	int selector;
 	int argc;
 	int origin = s->_executionStack.size()-1; // Origin: Used for debugging
-	int print_send_action = 0;
+	bool printSendActions = false;
 	// We return a pointer to the new active ExecStack
 
 	// The selector calls we catch are stored below:
@@ -356,34 +414,16 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		}
 
 		// Check if a breakpoint is set on this method
-		if (g_debugState._activeBreakpointTypes & BREAK_SELECTOR) {
-			char method_name[256];
-
-			sprintf(method_name, "%s::%s", s->_segMan->getObjectName(send_obj), g_sci->getKernel()->getSelectorName(selector).c_str());
-
-			Common::List<Breakpoint>::const_iterator bp;
-			for (bp = g_debugState._breakpoints.begin(); bp != g_debugState._breakpoints.end(); ++bp) {
-				int cmplen = bp->name.size();
-				if (bp->name.lastChar() != ':')
-					cmplen = 256;
-
-				if (bp->type == BREAK_SELECTOR && !strncmp(bp->name.c_str(), method_name, cmplen)) {
-					Console *con = g_sci->getSciDebugger();
-					con->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
-					print_send_action = 1;
-					g_debugState.debugging = true;
-					g_debugState.breakpointWasHit = true;
-					break;
-				}
-			}
-		}
+		printSendActions = g_sci->checkSelectorBreakpoint(send_obj, selector);
 
 #ifdef VM_DEBUG_SEND
-		printf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, g_sci->getKernel()->getSelectorName(selector).c_str());
+		printf("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj), 
+			s->_segMan->getObjectName(send_obj), selector, 
+			g_sci->getKernel()->getSelectorName(selector).c_str());
 #endif // VM_DEBUG_SEND
 
 		ObjVarRef varp;
-		switch (lookup_selector(s->_segMan, send_obj, selector, &varp, &funcp)) {
+		switch (lookupSelector(s->_segMan, send_obj, selector, &varp, &funcp)) {
 		case kSelectorNone:
 			error("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
 			break;
@@ -398,22 +438,35 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 #endif // VM_DEBUG_SEND
 
 			// argc == 0: read selector
-			// argc == 1: write selector
-			// argc > 1: write selector?
-			if (print_send_action && argc ==  0) {	// read selector
-				printf("[read selector]\n");
-				print_send_action = 0;
+			// argc != 0: write selector
+			if (printSendActions && !argc) {	// read selector
+				debug("[read selector]\n");
+				printSendActions = false;
 			}
 
-			if (print_send_action && argc > 0) {
+			if (printSendActions && argc) {
 				reg_t oldReg = *varp.getPointer(s->_segMan);
 				reg_t newReg = argp[1];
-				printf("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
-				print_send_action = 0;
+				warning("[write to selector (%s:%s): change %04x:%04x to %04x:%04x]\n", 
+					s->_segMan->getObjectName(send_obj), g_sci->getKernel()->getSelectorName(selector).c_str(), 
+					PRINT_REG(oldReg), PRINT_REG(newReg));
+				printSendActions = false;
 			}
 
-			if (argc > 1)
-				warning("send_selector(): more than 1 parameter (%d) while modifying a variable selector", argc);
+			if (argc > 1) {
+				// argc can indeed be bigger than 1 in some cases, and it's usually the
+				// result of a script bug. Usually these aren't fatal.
+
+				const char *objectName = s->_segMan->getObjectName(send_obj);
+
+				reg_t oldReg = *varp.getPointer(s->_segMan);
+				reg_t newReg = argp[1];
+				const char *selectorName = g_sci->getKernel()->getSelectorName(selector).c_str();
+				debug(2, "send_selector(): argc = %d while modifying variable selector "
+						"%x (%s) of object %04x:%04x (%s) from %04x:%04x to %04x:%04x",
+						argc, selector, selectorName, PRINT_REG(send_obj),
+						objectName, PRINT_REG(oldReg), PRINT_REG(newReg));
+			}
 
 			{
 				CallsStruct call;
@@ -438,9 +491,30 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			}
 			printf(") at %04x:%04x\n", PRINT_REG(funcp));
 #endif // VM_DEBUG_SEND
-			if (print_send_action) {
-				printf("[invoke selector]\n");
-				print_send_action = 0;
+			if (printSendActions) {
+				printf("[invoke selector]");
+#ifndef VM_DEBUG_SEND
+				int displaySize = 0;
+				for (int argNr = 1; argNr <= argc; argNr++) {
+					if (argNr == 1)
+						printf(" - ");
+					reg_t curParam = argp[argNr];
+					if (curParam.segment) {
+						printf("[%04x:%04x] ", PRINT_REG(curParam));
+						displaySize += 12;
+					} else {
+						printf("[%04x] ", curParam.offset);
+						displaySize += 7;
+					}
+					if (displaySize > 50) {
+						if (argNr < argc)
+							printf("...");
+						break;
+					}
+				}
+#endif
+				printf("\n");
+				printSendActions = false;
 			}
 
 			{
@@ -456,7 +530,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			}
 
 			break;
-		} // switch (lookup_selector())
+		} // switch (lookupSelector())
 
 		framesize -= (2 + argc);
 		argp += argc + 1;
@@ -472,18 +546,16 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		else
 			add_exec_stack_entry(s->_executionStack, call.address.func, call.sp, work_obj,
 			                         call.argc, call.argp,
-			                         call.selector, send_obj, origin, SCI_XS_CALLEE_LOCALS);
+			                         call.selector, -1, -1, send_obj, origin, SCI_XS_CALLEE_LOCALS);
 	}
 
 	_exec_varselectors(s);
 
-	if (s->_executionStack.empty())
-		return NULL;
-	return &(s->_executionStack.back());
+	return s->_executionStack.empty() ? NULL : &(s->_executionStack.back());
 }
 
 static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack, reg_t objp, int argc, StackPtr argp, Selector selector, const ObjVarRef& address, int origin) {
-	ExecStack *xstack = add_exec_stack_entry(execStack, NULL_REG, 0, objp, argc, argp, selector, objp, origin, SCI_XS_CALLEE_LOCALS);
+	ExecStack *xstack = add_exec_stack_entry(execStack, NULL_REG, 0, objp, argc, argp, selector, -1, -1, objp, origin, SCI_XS_CALLEE_LOCALS);
 	// Store selector address in sp
 
 	xstack->addr.varp = address;
@@ -493,7 +565,7 @@ static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack,
 }
 
 static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t pc, StackPtr sp, reg_t objp, int argc,
-								   StackPtr argp, Selector selector, reg_t sendp, int origin, SegmentId _localsSegment) {
+								   StackPtr argp, Selector selector, int exportId, int localCallOffset, reg_t sendp, int origin, SegmentId _localsSegment) {
 	// Returns new TOS element for the execution stack
 	// _localsSegment may be -1 if derived from the called object
 
@@ -517,18 +589,16 @@ static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t
 	*argp = make_reg(0, argc);  // SCI code relies on the zeroeth argument to equal argc
 
 	// Additional debug information
-	xstack.selector = selector;
-	xstack.origin = origin;
+	xstack.debugSelector = selector;
+	xstack.debugExportId = exportId;
+	xstack.debugLocalCallOffset = localCallOffset;
+	xstack.debugOrigin = origin;
 
 	xstack.type = EXEC_STACK_TYPE_CALL; // Normal call
 
 	execStack.push_back(xstack);
 	return &(execStack.back());
 }
-
-#ifdef DISABLE_VALIDATIONS
-#  define kernel_matches_signature(a, b, c, d) 1
-#endif
 
 static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	SegmentObj *mobj = s->_segMan->getSegmentObj(base.segment);
@@ -557,76 +627,186 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	}
 }
 
-static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
-
-	if (kernelFuncNum >= (int)g_sci->getKernel()->_kernelFuncs.size())
-		error("Invalid kernel function 0x%x requested", kernelFuncNum);
-
-	const KernelFuncWithSignature &kernelFunc = g_sci->getKernel()->_kernelFuncs[kernelFuncNum];
-
-	if (kernelFunc.signature
-			&& !g_sci->getKernel()->signatureMatch(kernelFunc.signature, argc, scriptState.xs->sp + 1)) {
-		error("[VM] Invalid arguments to kernel call %x", kernelFuncNum);
-	}
-
-	reg_t *argv = scriptState.xs->sp + 1;
-
-	if (!kernelFunc.isDummy) {
-		// Add stack frame to indicate we're executing a callk.
-		// This is useful in debugger backtraces if this
-		// kernel function calls a script itself.
-		ExecStack *xstack;
-		xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, NULL_REG,
-				  s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
-		xstack->selector = kernelFuncNum;
-		xstack->type = EXEC_STACK_TYPE_KERNEL;
-
-		//warning("callk %s", kernelFunc.orig_name.c_str());
-
-		// TODO: SCI2/SCI2.1+ equivalent, once saving/loading works in SCI2/SCI2.1+
-		if (g_loadFromLauncher >= 0 && kernelFuncNum == 0x8) {
-			// A game is being loaded from the launcher, and kDisplay is called, all initialization has taken
-			// place (i.e. menus have been constructed etc). Therefore, inject a kRestoreGame call
-			// here, instead of the requested function.
-			int saveSlot = g_loadFromLauncher;
-			g_loadFromLauncher = -1;	// invalidate slot, so that we don't load again
-
-			if (saveSlot < 0)
-				error("Requested to load invalid save slot");	// should never happen, really
-
-			reg_t restoreArgv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special call (argv[0] is NULL)
-			kRestoreGame(s, 2, restoreArgv);
-		} else {
-			// Call kernel function
-			s->r_acc = kernelFunc.fun(s, argc, argv);
-		}
-
-		// Remove callk stack frame again
-		s->_executionStack.pop_back();
-	} else {
-		Common::String warningMsg = "Dummy function " + kernelFunc.orig_name +
-									Common::String::printf("[0x%x]", kernelFuncNum) +
-									" invoked - ignoring. Params: " +
-									Common::String::printf("%d", argc) + " (";
-
-		for (int i = 0; i < argc; i++) {
-			warningMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
-			warningMsg += (i == argc - 1 ? ")" : ", ");
-		}
-
-		warning("%s", warningMsg.c_str());
-	}
+static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int argc, reg_t *argv) {
+	// Add stack frame to indicate we're executing a callk.
+	// This is useful in debugger backtraces if this
+	// kernel function calls a script itself.
+	ExecStack *xstack;
+	xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, -1, -1, NULL_REG,
+			  s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
+	xstack->debugSelector = kernelCallNr;
+	xstack->type = EXEC_STACK_TYPE_KERNEL;
 }
 
-static void gc_countdown(EngineState *s) {
-	if (s->gc_countdown-- <= 0) {
-		s->gc_countdown = script_gc_interval;
+static void	logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
+	Kernel *kernel = g_sci->getKernel();
+	if (!kernelSubCall) {
+		printf("k%s: ", kernelCall->name);
+	} else {
+		int callNameLen = strlen(kernelCall->name);
+		if (strncmp(kernelCall->name, kernelSubCall->name, callNameLen) == 0) {
+			const char *subCallName = kernelSubCall->name + callNameLen;
+			printf("k%s(%s): ", kernelCall->name, subCallName);
+		} else {
+			printf("k%s(%s): ", kernelCall->name, kernelSubCall->name);
+		}
+	}
+	for (int parmNr = 0; parmNr < argc; parmNr++) {
+		if (parmNr)
+			printf(", ");
+		uint16 regType = kernel->findRegType(argv[parmNr]);
+		if (regType & SIG_TYPE_NULL)
+			printf("0");
+		else if (regType & SIG_TYPE_UNINITIALIZED)
+			printf("UNINIT");
+		else if (regType & SIG_IS_INVALID)
+			printf("INVALID");
+		else if (regType & SIG_TYPE_INTEGER)
+			printf("%d", argv[parmNr].offset);
+		else {
+			printf("%04x:%04x", PRINT_REG(argv[parmNr]));
+			switch (regType) {
+			case SIG_TYPE_OBJECT:
+				printf(" (%s)", s->_segMan->getObjectName(argv[parmNr]));
+				break;
+			case SIG_TYPE_REFERENCE:
+				if (kernelCall->function == kSaid) {
+					SegmentRef saidSpec = s->_segMan->dereference(argv[parmNr]);
+					if (saidSpec.isRaw) {
+						printf(" ('");
+						g_sci->getVocabulary()->debugDecipherSaidBlock(saidSpec.raw);
+						printf("')");
+					} else {
+						printf(" (non-raw said-spec)");
+					}
+				} else {
+					printf(" ('%s')", s->_segMan->getString(argv[parmNr]).c_str());
+				}
+			default:
+				break;
+			}
+		}
+	}
+	if (result.segment)
+		printf(" = %04x:%04x\n", PRINT_REG(result));
+	else
+		printf(" = %d\n", result.offset);
+}
+
+static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
+	Kernel *kernel = g_sci->getKernel();
+
+	if (kernelCallNr >= (int)kernel->_kernelFuncs.size())
+		error("Invalid kernel function 0x%x requested", kernelCallNr);
+
+	const KernelFunction &kernelCall = kernel->_kernelFuncs[kernelCallNr];
+	reg_t *argv = s->xs->sp + 1;
+
+	if (kernelCall.signature
+			&& !kernel->signatureMatch(kernelCall.signature, argc, argv)) {
+		// signature mismatch, check if a workaround is available
+		SciTrackOriginReply originReply;
+		SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kernelCall.workarounds, &originReply);
+		switch (solution.type) {
+		case WORKAROUND_NONE:
+			kernel->signatureDebug(kernelCall.signature, argc, argv);
+			error("[VM] k%s[%x]: signature mismatch via method %s::%s (script %d, room %d, localCall 0x%x)", 
+				kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(), 
+				originReply.scriptNr, s->currentRoomNumber(), originReply.localCallOffset);
+			break;
+		case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
+			return;
+		case WORKAROUND_STILLCALL: // call kernel anyway
+			break;
+		case WORKAROUND_FAKE: // don't do kernel call, fake acc
+			s->r_acc = make_reg(0, solution.value);
+			return;
+		default:
+			error("unknown workaround type");
+		}
+	}
+
+
+	// Call kernel function
+	if (!kernelCall.subFunctionCount) {
+		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
+		s->r_acc = kernelCall.function(s, argc, argv);
+
+		if (kernelCall.debugLogging)
+			logKernelCall(&kernelCall, NULL, s, argc, argv, s->r_acc);
+		if (kernelCall.debugBreakpoint) {
+			printf("Break on k%s\n", kernelCall.name);
+			g_sci->_debugState.debugging = true;
+			g_sci->_debugState.breakpointWasHit = true;
+		}
+	} else {
+		// Sub-functions available, check signature and call that one directly
+		if (argc < 1)
+			error("[VM] k%s[%x]: no subfunction-id parameter given", kernelCall.name, kernelCallNr);
+		if (argv[0].segment)
+			error("[VM] k%s[%x]: given subfunction-id is actually a pointer", kernelCall.name, kernelCallNr);
+		const uint16 subId = argv[0].toUint16();
+		// Skip over subfunction-id
+		argc--;
+		argv++;
+		if (subId >= kernelCall.subFunctionCount)
+			error("[VM] k%s: subfunction-id %d requested, but not available", kernelCall.name, subId);
+		const KernelSubFunction &kernelSubCall = kernelCall.subFunctions[subId];
+		if (kernelSubCall.signature && !kernel->signatureMatch(kernelSubCall.signature, argc, argv)) {
+			// Signature mismatch
+			SciTrackOriginReply originReply;
+			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kernelSubCall.workarounds, &originReply);
+			switch (solution.type) {
+			case WORKAROUND_NONE: {
+				kernel->signatureDebug(kernelSubCall.signature, argc, argv);
+				int callNameLen = strlen(kernelCall.name);
+				if (strncmp(kernelCall.name, kernelSubCall.name, callNameLen) == 0) {
+					const char *subCallName = kernelSubCall.name + callNameLen;
+					error("[VM] k%s(%s): signature mismatch via method %s::%s (script %d, room %d, localCall %x)", 
+						kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(), 
+						originReply.scriptNr, s->currentRoomNumber(), originReply.localCallOffset);
+				}
+				error("[VM] k%s: signature mismatch via method %s::%s (script %d, room %d, localCall %x)", 
+					kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(), 
+					originReply.scriptNr, s->currentRoomNumber(), originReply.localCallOffset);
+				break;
+			}
+			case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
+				return;
+			case WORKAROUND_STILLCALL: // call kernel anyway
+				break;
+			case WORKAROUND_FAKE: // don't do kernel call, fake acc
+				s->r_acc = make_reg(0, solution.value);
+				return;
+			default:
+				error("unknown workaround type");
+			}
+		}
+		if (!kernelSubCall.function)
+			error("[VM] k%s: subfunction-id %d requested, but not available", kernelCall.name, subId);
+		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
+		s->r_acc = kernelSubCall.function(s, argc, argv);
+
+		if (kernelSubCall.debugLogging)
+			logKernelCall(&kernelCall, &kernelSubCall, s, argc, argv, s->r_acc);
+		if (kernelSubCall.debugBreakpoint) {
+			printf("Break on k%s\n", kernelSubCall.name);
+			g_sci->_debugState.debugging = true;
+			g_sci->_debugState.breakpointWasHit = true;
+		}
+	}
+
+	// Remove callk stack frame again, if there's still an execution stack
+	if (s->_executionStack.begin() != s->_executionStack.end())
+		s->_executionStack.pop_back();
+}
+
+static void gcCountDown(EngineState *s) {
+	if (s->gcCountDown-- <= 0) {
+		s->gcCountDown = s->scriptGCInterval;
 		run_gc(s);
 	}
 }
-
-static const byte _fake_return_buffer[2] = {op_ret << 1, op_ret << 1};
-
 
 int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4]) {
 	uint offset = 0;
@@ -696,53 +876,31 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 	return offset;
 }
 
-void run_vm(EngineState *s, bool restoring) {
+void run_vm(EngineState *s) {
 	assert(s);
 
-#ifndef DISABLE_VALIDATIONS
-	unsigned int code_buf_size = 0 ; // (Avoid spurious warning)
-#endif
 	int temp;
-	int16 aux_acc; // Auxiliary 16 bit accumulator
 	reg_t r_temp; // Temporary register
 	StackPtr s_temp; // Temporary stack pointer
 	int16 opparams[4]; // opcode parameters
 
-	scriptState.restAdjust = s->restAdjust;
-	// &rest adjusts the parameter count by this value
+	s->restAdjust = 0;	// &rest adjusts the parameter count by this value
 	// Current execution data:
-	scriptState.xs = &(s->_executionStack.back());
+	s->xs = &(s->_executionStack.back());
 	ExecStack *xs_new = NULL;
-	Object *obj = s->_segMan->getObject(scriptState.xs->objp);
-	Script *local_script = s->_segMan->getScriptIfLoaded(scriptState.xs->local_segment);
-	int old_execution_stack_base = s->execution_stack_base;
+	Object *obj = s->_segMan->getObject(s->xs->objp);
+	Script *scr = 0;
+	Script *local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
+	int old_executionStackBase = s->executionStackBase;
 	// Used to detect the stack bottom, for "physical" returns
-	const byte *code_buf = NULL; // (Avoid spurious warning)
 
-	if (!local_script) {
+	if (!local_script)
 		error("run_vm(): program counter gone astray (local_script pointer is null)");
-	}
 
-	if (!restoring)
-		s->execution_stack_base = s->_executionStack.size()-1;
+	s->executionStackBase = s->_executionStack.size() - 1;
 
-#ifndef DISABLE_VALIDATIONS
-	// Initialize maximum variable count
-	if (s->script_000->_localsBlock)
-		scriptState.variables_max[VAR_GLOBAL] = s->script_000->_localsBlock->_locals.size();
-	else
-		scriptState.variables_max[VAR_GLOBAL] = 0;
-#endif
-
-	scriptState.variables_seg[VAR_GLOBAL] = s->script_000->_localsSegment;
-	scriptState.variables_seg[VAR_TEMP] = scriptState.variables_seg[VAR_PARAM] = s->_segMan->findSegmentByType(SEG_TYPE_STACK);
-	scriptState.variables_base[VAR_TEMP] = scriptState.variables_base[VAR_PARAM] = s->stack_base;
-
-	// SCI code reads the zeroth argument to determine argc
-	if (s->script_000->_localsBlock)
-		scriptState.variables_base[VAR_GLOBAL] = scriptState.variables[VAR_GLOBAL] = s->script_000->_localsBlock->_locals.begin();
-	else
-		scriptState.variables_base[VAR_GLOBAL] = scriptState.variables[VAR_GLOBAL] = NULL;
+	s->variablesSegment[VAR_TEMP] = s->variablesSegment[VAR_PARAM] = s->_segMan->findSegmentByType(SEG_TYPE_STACK);
+	s->variablesBase[VAR_TEMP] = s->variablesBase[VAR_PARAM] = s->stack_base;
 
 	s->_executionStackPosChanged = true; // Force initialization
 
@@ -750,99 +908,89 @@ void run_vm(EngineState *s, bool restoring) {
 		int var_type; // See description below
 		int var_number;
 
-		g_debugState.old_pc_offset = scriptState.xs->addr.pc.offset;
-		g_debugState.old_sp = scriptState.xs->sp;
+		g_sci->_debugState.old_pc_offset = s->xs->addr.pc.offset;
+		g_sci->_debugState.old_sp = s->xs->sp;
+
+		if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+			return; // Stop processing
 
 		if (s->_executionStackPosChanged) {
-			Script *scr;
-			scriptState.xs = &(s->_executionStack.back());
+			scr = s->_segMan->getScriptIfLoaded(s->xs->addr.pc.segment);
+			if (!scr)
+				error("No script in segment %d",  s->xs->addr.pc.segment);
+			s->xs = &(s->_executionStack.back());
 			s->_executionStackPosChanged = false;
 
-			scr = s->_segMan->getScriptIfLoaded(scriptState.xs->addr.pc.segment);
-			if (!scr) {
-				// No script? Implicit return via fake instruction buffer
-				warning("Running on non-existant script in segment %x", scriptState.xs->addr.pc.segment);
-				code_buf = _fake_return_buffer;
-#ifndef DISABLE_VALIDATIONS
-				code_buf_size = 2;
-#endif
-				scriptState.xs->addr.pc.offset = 1;
-
-				scr = NULL;
-				obj = NULL;
+			obj = s->_segMan->getObject(s->xs->objp);
+			local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
+			if (!local_script) {
+				error("Could not find local script from segment %x", s->xs->local_segment);
 			} else {
-				obj = s->_segMan->getObject(scriptState.xs->objp);
-				code_buf = scr->_buf;
-#ifndef DISABLE_VALIDATIONS
-				code_buf_size = scr->_bufSize;
-#endif
-				local_script = s->_segMan->getScriptIfLoaded(scriptState.xs->local_segment);
-				if (!local_script) {
-					warning("Could not find local script from segment %x", scriptState.xs->local_segment);
-					local_script = NULL;
-					scriptState.variables_base[VAR_LOCAL] = scriptState.variables[VAR_LOCAL] = NULL;
-#ifndef DISABLE_VALIDATIONS
-					scriptState.variables_max[VAR_LOCAL] = 0;
-#endif
-				} else {
-
-					scriptState.variables_seg[VAR_LOCAL] = local_script->_localsSegment;
-					if (local_script->_localsBlock)
-						scriptState.variables_base[VAR_LOCAL] = scriptState.variables[VAR_LOCAL] = local_script->_localsBlock->_locals.begin();
-					else
-						scriptState.variables_base[VAR_LOCAL] = scriptState.variables[VAR_LOCAL] = NULL;
-#ifndef DISABLE_VALIDATIONS
-					if (local_script->_localsBlock)
-						scriptState.variables_max[VAR_LOCAL] = local_script->_localsBlock->_locals.size();
-					else
-						scriptState.variables_max[VAR_LOCAL] = 0;
-					scriptState.variables_max[VAR_TEMP] = scriptState.xs->sp - scriptState.xs->fp;
-					scriptState.variables_max[VAR_PARAM] = scriptState.xs->argc + 1;
-#endif
-				}
-				scriptState.variables[VAR_TEMP] = scriptState.xs->fp;
-				scriptState.variables[VAR_PARAM] = scriptState.xs->variables_argp;
+				s->variablesSegment[VAR_LOCAL] = local_script->_localsSegment;
+				if (local_script->_localsBlock)
+					s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = local_script->_localsBlock->_locals.begin();
+				else
+					s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
+				if (local_script->_localsBlock)
+					s->variablesMax[VAR_LOCAL] = local_script->_localsBlock->_locals.size();
+				else
+					s->variablesMax[VAR_LOCAL] = 0;
+				s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
+				s->variablesMax[VAR_PARAM] = s->xs->argc + 1;
 			}
-
+			s->variables[VAR_TEMP] = s->xs->fp;
+			s->variables[VAR_PARAM] = s->xs->variables_argp;
 		}
 
-		if (script_abort_flag || g_engine->shouldQuit())
-			return; // Emergency
+		if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+			return; // Stop processing
 
 		// Debug if this has been requested:
 		// TODO: re-implement sci_debug_flags
-		if (g_debugState.debugging /* sci_debug_flags*/) {
-			script_debug(s);
-			g_debugState.breakpointWasHit = false;
+		if (g_sci->_debugState.debugging /* sci_debug_flags*/) {
+			g_sci->scriptDebug();
+			g_sci->_debugState.breakpointWasHit = false;
 		}
 		Console *con = g_sci->getSciDebugger();
-		if (con->isAttached()) {
-			con->onFrame();
-		}
+		con->onFrame();
 
-#ifndef DISABLE_VALIDATIONS
-		if (scriptState.xs->sp < scriptState.xs->fp)
-			error("run_vm(): stack underflow");
+		if (s->xs->sp < s->xs->fp)
+			error("run_vm(): stack underflow, sp: %04x:%04x, fp: %04x:%04x",
+			PRINT_REG(*s->xs->sp), PRINT_REG(*s->xs->fp));
 
-		scriptState.variables_max[VAR_TEMP] = scriptState.xs->sp - scriptState.xs->fp;
+		s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
 
-		if (scriptState.xs->addr.pc.offset >= code_buf_size)
-			error("run_vm(): program counter gone astray");
-#endif
+		if (s->xs->addr.pc.offset >= scr->getBufSize())
+			error("run_vm(): program counter gone astray, addr: %d, code buffer size: %d",
+			s->xs->addr.pc.offset, scr->getBufSize());
 
 		// Get opcode
 		byte extOpcode;
-		scriptState.xs->addr.pc.offset += readPMachineInstruction(code_buf + scriptState.xs->addr.pc.offset, extOpcode, opparams);
+		s->xs->addr.pc.offset += readPMachineInstruction(scr->getBuf() + s->xs->addr.pc.offset, extOpcode, opparams);
 		const byte opcode = extOpcode >> 1;
 
 		switch (opcode) {
 
-		case op_bnot: // 0x00 (00)
-			s->r_acc = ACC_ARITHMETIC_L(0xffff ^ /*acc*/);
+		case op_bnot: { // 0x00 (00)
+			// Binary not
+			int16 value;
+			if (validate_signedInteger(s->r_acc, value))
+				s->r_acc = make_reg(0, 0xffff ^ value);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, NULL_REG);
 			break;
+		}
 
 		case op_add: // 0x01 (01)
 			r_temp = POP32();
+
+			 // Happens in SQ1, room 28, when throwing the water at Orat
+			 if (s->r_acc.segment == 0xFFFF) {
+				// WORKAROUND: init uninitialized variable to 0
+				warning("op_add: attempt to write to uninitialized variable");
+				s->r_acc = NULL_REG;
+			 }
+
 			if (r_temp.segment || s->r_acc.segment) {
 				reg_t r_ptr = NULL_REG;
 				int offset;
@@ -896,45 +1044,115 @@ void run_vm(EngineState *s, bool restoring) {
 			}
 			break;
 
-		case op_mul: // 0x03 (03)
-			s->r_acc = ACC_ARITHMETIC_L(((int16)POP()) * (int16)/*acc*/);
+		case op_mul: { // 0x03 (03)
+			r_temp = POP32();
+			int16 value1, value2;
+			if (validate_signedInteger(s->r_acc, value1) && validate_signedInteger(r_temp, value2))
+				s->r_acc = make_reg(0, value1 * value2);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeMulWorkarounds, s->r_acc, r_temp);
 			break;
+		}
 
-		case op_div: // 0x04 (04)
-			ACC_AUX_LOAD();
-			aux_acc = aux_acc != 0 ? ((int16)POP()) / aux_acc : 0;
-			ACC_AUX_STORE();
+		case op_div: { // 0x04 (04)
+			r_temp = POP32();
+			int16 divisor, dividend;
+			if (validate_signedInteger(s->r_acc, divisor) && validate_signedInteger(r_temp, dividend))
+				s->r_acc = make_reg(0, (divisor != 0 ? dividend / divisor : 0));
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeDivWorkarounds, s->r_acc, r_temp);
 			break;
+		}
 
-		case op_mod: // 0x05 (05)
-			ACC_AUX_LOAD();
-			aux_acc = aux_acc != 0 ? ((int16)POP()) % aux_acc : 0;
-			ACC_AUX_STORE();
-			break;
+		case op_mod: { // 0x05 (05)
+			r_temp = POP32();
 
-		case op_shr: // 0x06 (06)
-			s->r_acc = ACC_ARITHMETIC_L(((uint16)POP()) >> /*acc*/);
+			if (getSciVersion() <= SCI_VERSION_0_LATE) {
+				uint16 modulo, value;
+				if (validate_unsignedInteger(s->r_acc, modulo) && validate_unsignedInteger(r_temp, value))
+					s->r_acc = make_reg(0, (modulo != 0 ? value % modulo : 0));
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
+			} else {
+				// In Iceman (and perhaps from SCI0 0.000.685 onwards in general),
+				// handling for negative numbers was added. Since Iceman doesn't
+				// seem to have issues with the older code, we exclude it for now
+				// for simplicity's sake and use the new code for SCI01 and newer
+				// games. Fixes the battlecruiser mini game in SQ5 (room 850),
+				// bug #3035755
+				int16 modulo, value, result;
+				if (validate_signedInteger(s->r_acc, modulo) && validate_signedInteger(r_temp, value)) {
+					modulo = ABS(modulo);
+					result = (modulo != 0 ? value % modulo : 0);
+					if (result < 0)
+						result += modulo;
+					s->r_acc = make_reg(0, result);
+				} else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
+			}
 			break;
+		}
 
-		case op_shl: // 0x07 (07)
-			s->r_acc = ACC_ARITHMETIC_L(((uint16)POP()) << /*acc*/);
+		case op_shr: { // 0x06 (06)
+			// Shift right logical
+			r_temp = POP32();
+			uint16 value, shiftCount;
+			if (validate_unsignedInteger(r_temp, value) && validate_unsignedInteger(s->r_acc, shiftCount))
+				s->r_acc = make_reg(0, value >> shiftCount);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
 			break;
+		}
 
-		case op_xor: // 0x08 (08)
-			s->r_acc = ACC_ARITHMETIC_L(POP() ^ /*acc*/);
+		case op_shl: { // 0x07 (07)
+			// Shift left logical
+			r_temp = POP32();
+			uint16 value, shiftCount;
+			if (validate_unsignedInteger(r_temp, value) && validate_unsignedInteger(s->r_acc, shiftCount))
+				s->r_acc = make_reg(0, value << shiftCount);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
 			break;
+		}
 
-		case op_and: // 0x09 (09)
-			s->r_acc = ACC_ARITHMETIC_L(POP() & /*acc*/);
+		case op_xor: { // 0x08 (08)
+			r_temp = POP32();
+			uint16 value1, value2;
+			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
+				s->r_acc = make_reg(0, value1 ^ value2);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
 			break;
+		}
 
-		case op_or: // 0x0a (10)
-			s->r_acc = ACC_ARITHMETIC_L(POP() | /*acc*/);
+		case op_and: { // 0x09 (09)
+			r_temp = POP32();
+			uint16 value1, value2;
+			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
+				s->r_acc = make_reg(0, value1 & value2);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeAndWorkarounds, r_temp, s->r_acc);
 			break;
+		}
 
-		case op_neg: // 0x0b (11)
-			s->r_acc = ACC_ARITHMETIC_L(-/*acc*/);
+		case op_or: { // 0x0a (10)
+			r_temp = POP32();
+			uint16 value1, value2;
+			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
+				s->r_acc = make_reg(0, value1 | value2);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeOrWorkarounds, r_temp, s->r_acc);
 			break;
+		}
+
+		case op_neg: { // 0x0b (11)
+			int16 value;
+			if (validate_signedInteger(s->r_acc, value))
+				s->r_acc = make_reg(0, -value);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, NULL_REG);
+			break;
+		}
 
 		case op_not: // 0x0c (12)
 			s->r_acc = make_reg(0, !(s->r_acc.offset || s->r_acc.segment));
@@ -942,6 +1160,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_eq_: // 0x0d (13)
+			// ==
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			s->r_acc = make_reg(0, r_temp == s->r_acc);
@@ -949,6 +1168,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_ne_: // 0x0e (14)
+			// !=
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			s->r_acc = make_reg(0, r_temp != s->r_acc);
@@ -956,6 +1176,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_gt_: // 0x0f (15)
+			// >
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			if (r_temp.segment && s->r_acc.segment) {
@@ -963,44 +1184,80 @@ void run_vm(EngineState *s, bool restoring) {
 				if (r_temp.segment != s->r_acc.segment)
 					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
-			} else
-				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) > (int16)/*acc*/);
+			} else if (r_temp.segment && !s->r_acc.segment) {
+				if (s->r_acc.offset >= 1000)
+					error("[VM] op_gt: comparison between a pointer and number");
+				// Pseudo-WORKAROUND: Sierra allows any pointer <-> value comparison
+				// Happens in SQ1, room 28, when throwing the water at Orat
+				s->r_acc = make_reg(0, 1);
+			} else {
+				int16 compare1, compare2;
+				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 > compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_ge_: // 0x10 (16)
+			// >=
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			if (r_temp.segment && s->r_acc.segment) {
 				if (r_temp.segment != s->r_acc.segment)
 					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
-			} else
-				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) >= (int16)/*acc*/);
+			} else {
+				int16 compare1, compare2;
+				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 >= compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeGeWorkarounds, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_lt_: // 0x11 (17)
+			// <
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			if (r_temp.segment && s->r_acc.segment) {
 				if (r_temp.segment != s->r_acc.segment)
 					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
-			} else
-				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) < (int16)/*acc*/);
+			} else if (r_temp.segment && !s->r_acc.segment) {
+				if (s->r_acc.offset >= 1000)
+					error("[VM] op_lt: comparison between a pointer and number");
+				// Pseudo-WORKAROUND: Sierra allows any pointer <-> value comparison
+				// Happens in SQ1, room 58, when giving id-card to robot
+				s->r_acc = make_reg(0, 1);
+			} else {
+				int16 compare1, compare2;
+				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 < compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_le_: // 0x12 (18)
+			// <=
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			if (r_temp.segment && s->r_acc.segment) {
 				if (r_temp.segment != s->r_acc.segment)
 					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
-			} else
-				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) <= (int16)/*acc*/);
+			} else {
+				int16 compare1, compare2;
+				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 <= compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeLeWorkarounds, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_ugt_: // 0x13 (19)
+			// > (unsigned)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 
@@ -1012,17 +1269,23 @@ void run_vm(EngineState *s, bool restoring) {
 			// (Print "foo") // Pointer to a string
 			// (Print 420 5) // Reference to the fifth message in text resource 420
 
-			// It works because in those games, the maximum resource number is 999, 
-			// so any parameter value above that threshold must be a pointer. 
+			// It works because in those games, the maximum resource number is 999,
+			// so any parameter value above that threshold must be a pointer.
 			if (r_temp.segment && (s->r_acc == make_reg(0, 1000)))
 				s->r_acc = make_reg(0, 1);
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) > /*acc*/);
+			else {
+				uint16 compare1, compare2;
+				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 > compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_uge_: // 0x14 (20)
+			// >= (unsigned)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 
@@ -1031,24 +1294,37 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = make_reg(0, 1);
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) >= /*acc*/);
+			else {
+				uint16 compare1, compare2;
+				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 >= compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_ult_: // 0x15 (21)
+			// < (unsigned)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 
 			// See above
-			if (r_temp.segment && (s->r_acc == make_reg(0, 1000)))
+			// PQ2 japanese compares pointers to 2000 to find out if its a pointer or a resourceid
+			if (r_temp.segment && (s->r_acc == make_reg(0, 1000) || (s->r_acc == make_reg(0, 2000))))
 				s->r_acc = NULL_REG;
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) < /*acc*/);
+			else {
+				uint16 compare1, compare2;
+				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 < compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_ule_: // 0x16 (22)
+			// <= (unsigned)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 
@@ -1057,139 +1333,163 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = NULL_REG;
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) <= /*acc*/);
+			else {
+				uint16 compare1, compare2;
+				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 <= compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_bt: // 0x17 (23)
+			// Branch relative if true
 			if (s->r_acc.offset || s->r_acc.segment)
-				scriptState.xs->addr.pc.offset += opparams[0];
+				s->xs->addr.pc.offset += opparams[0];
 			break;
 
 		case op_bnt: // 0x18 (24)
+			// Branch relative if not true
 			if (!(s->r_acc.offset || s->r_acc.segment))
-				scriptState.xs->addr.pc.offset += opparams[0];
+				s->xs->addr.pc.offset += opparams[0];
 			break;
 
 		case op_jmp: // 0x19 (25)
-			scriptState.xs->addr.pc.offset += opparams[0];
+			s->xs->addr.pc.offset += opparams[0];
 			break;
 
 		case op_ldi: // 0x1a (26)
+			// Load data immediate
 			s->r_acc = make_reg(0, opparams[0]);
 			break;
 
 		case op_push: // 0x1b (27)
+			// Push to stack
 			PUSH32(s->r_acc);
 			break;
 
 		case op_pushi: // 0x1c (28)
+			// Push immediate
 			PUSH(opparams[0]);
 			break;
 
 		case op_toss: // 0x1d (29)
-			scriptState.xs->sp--;
+			// TOS (Top Of Stack) subtract
+			s->xs->sp--;
 			break;
 
 		case op_dup: // 0x1e (30)
-			r_temp = scriptState.xs->sp[-1];
+			// Duplicate TOD (Top Of Stack) element
+			r_temp = s->xs->sp[-1];
 			PUSH32(r_temp);
 			break;
 
 		case op_link: // 0x1f (31)
+			// We shouldn't initialize temp variables at all
+			//  We put special segment 0xFFFF in there, so that uninitialized reads can get detected
 			for (int i = 0; i < opparams[0]; i++)
-				scriptState.xs->sp[i] = NULL_REG;
-			scriptState.xs->sp += opparams[0];
+				s->xs->sp[i] = make_reg(0xffff, 0);
+
+			s->xs->sp += opparams[0];
 			break;
 
 		case op_call: { // 0x20 (32)
+			// Call a script subroutine
 			int argc = (opparams[1] >> 1) // Given as offset, but we need count
-			           + 1 + scriptState.restAdjust;
-			StackPtr call_base = scriptState.xs->sp - argc;
-			scriptState.xs->sp[1].offset += scriptState.restAdjust;
+			           + 1 + s->restAdjust;
+			StackPtr call_base = s->xs->sp - argc;
+			s->xs->sp[1].offset += s->restAdjust;
 
-			xs_new = add_exec_stack_entry(s->_executionStack, make_reg(scriptState.xs->addr.pc.segment,
-											scriptState.xs->addr.pc.offset + opparams[0]),
-											scriptState.xs->sp, scriptState.xs->objp,
-											(validate_arithmetic(*call_base)) + scriptState.restAdjust,
-											call_base, NULL_SELECTOR, scriptState.xs->objp,
-											s->_executionStack.size()-1, scriptState.xs->local_segment);
-			scriptState.restAdjust = 0; // Used up the &rest adjustment
-			scriptState.xs->sp = call_base;
+			uint16 localCallOffset = s->xs->addr.pc.offset + opparams[0];
+
+			xs_new = add_exec_stack_entry(s->_executionStack, make_reg(s->xs->addr.pc.segment,
+											localCallOffset),
+											s->xs->sp, s->xs->objp,
+											(validate_arithmetic(*call_base)) + s->restAdjust,
+											call_base, NULL_SELECTOR, -1, localCallOffset, s->xs->objp,
+											s->_executionStack.size()-1, s->xs->local_segment);
+			s->restAdjust = 0; // Used up the &rest adjustment
+			s->xs->sp = call_base;
 
 			s->_executionStackPosChanged = true;
 			break;
 		}
 
 		case op_callk: { // 0x21 (33)
-			gc_countdown(s);
+			// Call kernel function
+			gcCountDown(s);
 
-			scriptState.xs->sp -= (opparams[1] >> 1) + 1;
+			s->xs->sp -= (opparams[1] >> 1) + 1;
 
 			bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-			if (!oldScriptHeader) {
-				scriptState.xs->sp -= scriptState.restAdjust;
-				s->restAdjust = 0; // We just used up the scriptState.restAdjust, remember?
-			}
+			if (!oldScriptHeader)
+				s->xs->sp -= s->restAdjust;
 
-			int argc = validate_arithmetic(scriptState.xs->sp[0]);
+			int argc = validate_arithmetic(s->xs->sp[0]);
 
 			if (!oldScriptHeader)
-				argc += scriptState.restAdjust;
+				argc += s->restAdjust;
 
 			callKernelFunc(s, opparams[0], argc);
 
 			if (!oldScriptHeader)
-				scriptState.restAdjust = s->restAdjust;
+				s->restAdjust = 0;
 
 			// Calculate xs again: The kernel function might
 			// have spawned a new VM
 
 			xs_new = &(s->_executionStack.back());
 			s->_executionStackPosChanged = true;
+
+			// If a game is being loaded, stop processing
+			if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+				return; // Stop processing
+
 			break;
 		}
 
 		case op_callb: // 0x22 (34)
-			temp = ((opparams[1] >> 1) + scriptState.restAdjust + 1);
-			s_temp = scriptState.xs->sp;
-			scriptState.xs->sp -= temp;
+			// Call base script
+			temp = ((opparams[1] >> 1) + s->restAdjust + 1);
+			s_temp = s->xs->sp;
+			s->xs->sp -= temp;
 
-			scriptState.xs->sp[0].offset += scriptState.restAdjust;
-			xs_new = execute_method(s, 0, opparams[0], s_temp, scriptState.xs->objp,
-									scriptState.xs->sp[0].offset, scriptState.xs->sp);
-			scriptState.restAdjust = 0; // Used up the &rest adjustment
+			s->xs->sp[0].offset += s->restAdjust;
+			xs_new = execute_method(s, 0, opparams[0], s_temp, s->xs->objp,
+									s->xs->sp[0].offset, s->xs->sp);
+			s->restAdjust = 0; // Used up the &rest adjustment
 			if (xs_new)    // in case of error, keep old stack
 				s->_executionStackPosChanged = true;
 			break;
 
 		case op_calle: // 0x23 (35)
-			temp = ((opparams[2] >> 1) + scriptState.restAdjust + 1);
-			s_temp = scriptState.xs->sp;
-			scriptState.xs->sp -= temp;
+			// Call external script
+			temp = ((opparams[2] >> 1) + s->restAdjust + 1);
+			s_temp = s->xs->sp;
+			s->xs->sp -= temp;
 
-			scriptState.xs->sp[0].offset += scriptState.restAdjust;
-			xs_new = execute_method(s, opparams[0], opparams[1], s_temp, scriptState.xs->objp,
-									scriptState.xs->sp[0].offset, scriptState.xs->sp);
-			scriptState.restAdjust = 0; // Used up the &rest adjustment
+			s->xs->sp[0].offset += s->restAdjust;
+			xs_new = execute_method(s, opparams[0], opparams[1], s_temp, s->xs->objp,
+									s->xs->sp[0].offset, s->xs->sp);
+			s->restAdjust = 0; // Used up the &rest adjustment
 
 			if (xs_new)  // in case of error, keep old stack
 				s->_executionStackPosChanged = true;
 			break;
 
 		case op_ret: // 0x24 (36)
+			// Return from an execution loop started by call, calle, callb, send, self or super
 			do {
-				StackPtr old_sp2 = scriptState.xs->sp;
-				StackPtr old_fp = scriptState.xs->fp;
+				StackPtr old_sp2 = s->xs->sp;
+				StackPtr old_fp = s->xs->fp;
 				ExecStack *old_xs = &(s->_executionStack.back());
 
-				if ((int)s->_executionStack.size()-1 == s->execution_stack_base) { // Have we reached the base?
-					s->execution_stack_base = old_execution_stack_base; // Restore stack base
+				if ((int)s->_executionStack.size() - 1 == s->executionStackBase) { // Have we reached the base?
+					s->executionStackBase = old_executionStackBase; // Restore stack base
 
 					s->_executionStack.pop_back();
 
 					s->_executionStackPosChanged = true;
-					s->restAdjust = scriptState.restAdjust; // Update &rest
 					return; // "Hard" return
 				}
 
@@ -1205,33 +1505,34 @@ void run_vm(EngineState *s, bool restoring) {
 				// Not reached the base, so let's do a soft return
 				s->_executionStack.pop_back();
 				s->_executionStackPosChanged = true;
-				scriptState.xs = &(s->_executionStack.back());
+				s->xs = &(s->_executionStack.back());
 
-				if (scriptState.xs->sp == CALL_SP_CARRY // Used in sends to 'carry' the stack pointer
-				        || scriptState.xs->type != EXEC_STACK_TYPE_CALL) {
-					scriptState.xs->sp = old_sp2;
-					scriptState.xs->fp = old_fp;
+				if (s->xs->sp == CALL_SP_CARRY // Used in sends to 'carry' the stack pointer
+				        || s->xs->type != EXEC_STACK_TYPE_CALL) {
+					s->xs->sp = old_sp2;
+					s->xs->fp = old_fp;
 				}
 
-			} while (scriptState.xs->type == EXEC_STACK_TYPE_VARSELECTOR);
+			} while (s->xs->type == EXEC_STACK_TYPE_VARSELECTOR);
 			// Iterate over all varselector accesses
 			s->_executionStackPosChanged = true;
-			xs_new = scriptState.xs;
+			xs_new = s->xs;
 
 			break;
 
 		case op_send: // 0x25 (37)
-			s_temp = scriptState.xs->sp;
-			scriptState.xs->sp -= ((opparams[0] >> 1) + scriptState.restAdjust); // Adjust stack
+			// Send for one or more selectors
+			s_temp = s->xs->sp;
+			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjust); // Adjust stack
 
-			scriptState.xs->sp[1].offset += scriptState.restAdjust;
+			s->xs->sp[1].offset += s->restAdjust;
 			xs_new = send_selector(s, s->r_acc, s->r_acc, s_temp,
-									(int)(opparams[0] >> 1) + (uint16)scriptState.restAdjust, scriptState.xs->sp);
+									(int)(opparams[0] >> 1) + (uint16)s->restAdjust, s->xs->sp);
 
-			if (xs_new && xs_new != scriptState.xs)
+			if (xs_new && xs_new != s->xs)
 				s->_executionStackPosChanged = true;
 
-			scriptState.restAdjust = 0;
+			s->restAdjust = 0;
 
 			break;
 
@@ -1241,8 +1542,9 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_class: // 0x28 (40)
+			// Get class address
 			s->r_acc = s->_segMan->getClassAddress((unsigned)opparams[0], SCRIPT_GET_LOCK,
-											scriptState.xs->addr.pc);
+											s->xs->addr.pc);
 			break;
 
 		case 0x29: // (41)
@@ -1250,58 +1552,62 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_self: // 0x2a (42)
-			s_temp = scriptState.xs->sp;
-			scriptState.xs->sp -= ((opparams[0] >> 1) + scriptState.restAdjust); // Adjust stack
+			// Send to self
+			s_temp = s->xs->sp;
+			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjust); // Adjust stack
 
-			scriptState.xs->sp[1].offset += scriptState.restAdjust;
-			xs_new = send_selector(s, scriptState.xs->objp, scriptState.xs->objp,
-									s_temp, (int)(opparams[0] >> 1) + (uint16)scriptState.restAdjust,
-									scriptState.xs->sp);
+			s->xs->sp[1].offset += s->restAdjust;
+			xs_new = send_selector(s, s->xs->objp, s->xs->objp,
+									s_temp, (int)(opparams[0] >> 1) + (uint16)s->restAdjust,
+									s->xs->sp);
 
-			if (xs_new && xs_new != scriptState.xs)
+			if (xs_new && xs_new != s->xs)
 				s->_executionStackPosChanged = true;
 
-			scriptState.restAdjust = 0;
+			s->restAdjust = 0;
 			break;
 
 		case op_super: // 0x2b (43)
-			r_temp = s->_segMan->getClassAddress(opparams[0], SCRIPT_GET_LOAD, scriptState.xs->addr.pc);
+			// Send to any class
+			r_temp = s->_segMan->getClassAddress(opparams[0], SCRIPT_GET_LOAD, s->xs->addr.pc);
 
 			if (!r_temp.segment)
 				error("[VM]: Invalid superclass in object");
 			else {
-				s_temp = scriptState.xs->sp;
-				scriptState.xs->sp -= ((opparams[1] >> 1) + scriptState.restAdjust); // Adjust stack
+				s_temp = s->xs->sp;
+				s->xs->sp -= ((opparams[1] >> 1) + s->restAdjust); // Adjust stack
 
-				scriptState.xs->sp[1].offset += scriptState.restAdjust;
-				xs_new = send_selector(s, r_temp, scriptState.xs->objp, s_temp,
-										(int)(opparams[1] >> 1) + (uint16)scriptState.restAdjust,
-										scriptState.xs->sp);
+				s->xs->sp[1].offset += s->restAdjust;
+				xs_new = send_selector(s, r_temp, s->xs->objp, s_temp,
+										(int)(opparams[1] >> 1) + (uint16)s->restAdjust,
+										s->xs->sp);
 
-				if (xs_new && xs_new != scriptState.xs)
+				if (xs_new && xs_new != s->xs)
 					s->_executionStackPosChanged = true;
 
-				scriptState.restAdjust = 0;
+				s->restAdjust = 0;
 			}
 
 			break;
 
 		case op_rest: // 0x2c (44)
+			// Pushes all or part of the parameter variable list on the stack
 			temp = (uint16) opparams[0]; // First argument
-			scriptState.restAdjust = MAX<int16>(scriptState.xs->argc - temp + 1, 0); // +1 because temp counts the paramcount while argc doesn't
+			s->restAdjust = MAX<int16>(s->xs->argc - temp + 1, 0); // +1 because temp counts the paramcount while argc doesn't
 
-			for (; temp <= scriptState.xs->argc; temp++)
-				PUSH32(scriptState.xs->variables_argp[temp]);
+			for (; temp <= s->xs->argc; temp++)
+				PUSH32(s->xs->variables_argp[temp]);
 
 			break;
 
 		case op_lea: // 0x2d (45)
+			// Load Effective Address
 			temp = (uint16) opparams[0] >> 1;
 			var_number = temp & 0x03; // Get variable type
 
 			// Get variable block offset
-			r_temp.segment = scriptState.variables_seg[var_number];
-			r_temp.offset = scriptState.variables[var_number] - scriptState.variables_base[var_number];
+			r_temp.segment = s->variablesSegment[var_number];
+			r_temp.offset = s->variables[var_number] - s->variablesBase[var_number];
 
 			if (temp & 0x08)  // Add accumulator offset if requested
 				r_temp.offset += signed_validate_arithmetic(s->r_acc);
@@ -1314,7 +1620,8 @@ void run_vm(EngineState *s, bool restoring) {
 
 
 		case op_selfID: // 0x2e (46)
-			s->r_acc = scriptState.xs->objp;
+			// Get 'self' identity
+			s->r_acc = s->xs->objp;
 			break;
 
 		case 0x2f: // (47)
@@ -1322,107 +1629,121 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_pprev: // 0x30 (48)
+			// Pushes the value of the prev register, set by the last comparison
+			// bytecode (eq?, lt?, etc.), on the stack
 			PUSH32(s->r_prev);
 			break;
 
 		case op_pToa: // 0x31 (49)
-			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1));
+			// Property To Accumulator
+			s->r_acc = validate_property(obj, (opparams[0] >> 1));
 			break;
 
 		case op_aTop: // 0x32 (50)
-			OBJ_PROPERTY(obj, (opparams[0] >> 1)) = s->r_acc;
+			// Accumulator To Property
+			validate_property(obj, (opparams[0] >> 1)) = s->r_acc;
 			break;
 
 		case op_pTos: // 0x33 (51)
-			PUSH32(OBJ_PROPERTY(obj, opparams[0] >> 1));
+			// Property To Stack
+			PUSH32(validate_property(obj, opparams[0] >> 1));
 			break;
 
 		case op_sTop: // 0x34 (52)
-			OBJ_PROPERTY(obj, (opparams[0] >> 1)) = POP32();
+			// Stack To Property
+			validate_property(obj, (opparams[0] >> 1)) = POP32();
 			break;
 
-		case op_ipToa: // 0x35 (53)
-			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1));
-			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(1 + /*acc*/);
-			break;
-
-		case op_dpToa: { // 0x36 (54)
-			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1));
-#if 0
-			// Speed throttling is possible here as well
-			// although this opens other issues like mud wrestling in lsl5 uses another local variable for delays
-			Object *var_container = obj;
-			if (!(obj->getInfoSelector().offset & SCRIPT_INFO_CLASS))
-				var_container = s->_segMan->getObject(obj->getSuperClassSelector());
-			uint16 varSelector = var_container->getVarSelector(opparams[0] >> 1);
-//			printf("%X\n", varSelector);
-//			printf("%s\n", g_sci->getKernel()->getSelectorName(varSelector).c_str());
-			if ((varSelector == 0x84) || (varSelector == 0x92))) {
-				// selectors cycles, cycleCnt from lsl5 hardcoded
-				uint32 curTime = g_system->getMillis();
-				if (s->_lastAnimateTime + 30 > curTime)
-					break;
-				s->_lastAnimateTime = curTime;
-			}
-#endif
-			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(-1 + /*acc*/);
+		case op_ipToa: { // 0x35 (53)
+			// Increment Property and copy To Accumulator
+			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			uint16 valueProperty;
+			if (validate_unsignedInteger(opProperty, valueProperty))
+				s->r_acc = make_reg(0, valueProperty + 1);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG);
+			opProperty = s->r_acc;
 			break;
 		}
 
-		case op_ipTos: // 0x37 (55)
-			validate_arithmetic(OBJ_PROPERTY(obj, (opparams[0] >> 1)));
-			temp = ++OBJ_PROPERTY(obj, (opparams[0] >> 1)).offset;
-			PUSH(temp);
+		case op_dpToa: { // 0x36 (54)
+			// Decrement Property and copy To Accumulator
+			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			uint16 valueProperty;
+			if (validate_unsignedInteger(opProperty, valueProperty))
+				s->r_acc = make_reg(0, valueProperty - 1);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeDptoaWorkarounds, opProperty, NULL_REG);
+			opProperty = s->r_acc;
 			break;
+		}
 
-		case op_dpTos: // 0x38 (56)
-			validate_arithmetic(OBJ_PROPERTY(obj, (opparams[0] >> 1)));
-			temp = --OBJ_PROPERTY(obj, (opparams[0] >> 1)).offset;
-			PUSH(temp);
+		case op_ipTos: { // 0x37 (55)
+			// Increment Property and push to Stack
+			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			uint16 valueProperty;
+			if (validate_unsignedInteger(opProperty, valueProperty))
+				valueProperty++;
+			else
+				valueProperty = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG).offset;
+			opProperty = make_reg(0, valueProperty);
+			PUSH(valueProperty);
 			break;
+		}
+
+		case op_dpTos: { // 0x38 (56)
+			// Decrement Property and push to Stack
+			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			uint16 valueProperty;
+			if (validate_unsignedInteger(opProperty, valueProperty))
+				valueProperty--;
+			else
+				valueProperty = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG).offset;
+			opProperty = make_reg(0, valueProperty);
+			PUSH(valueProperty);
+			break;
+		}
 
 		case op_lofsa: // 0x39 (57)
-			s->r_acc.segment = scriptState.xs->addr.pc.segment;
+			// Load Offset to Accumulator
+			s->r_acc.segment = s->xs->addr.pc.segment;
 
 			switch (g_sci->_features->detectLofsType()) {
 			case SCI_VERSION_1_1:
-				s->r_acc.offset = opparams[0] + local_script->_scriptSize;
+				s->r_acc.offset = opparams[0] + local_script->getScriptSize();
 				break;
 			case SCI_VERSION_1_MIDDLE:
 				s->r_acc.offset = opparams[0];
 				break;
 			default:
-				s->r_acc.offset = scriptState.xs->addr.pc.offset + opparams[0];
+				s->r_acc.offset = s->xs->addr.pc.offset + opparams[0];
 			}
 
-#ifndef DISABLE_VALIDATIONS
-			if (s->r_acc.offset >= code_buf_size) {
+			if (s->r_acc.offset >= scr->getBufSize()) {
 				error("VM: lofsa operation overflowed: %04x:%04x beyond end"
-				          " of script (at %04x)\n", PRINT_REG(s->r_acc), code_buf_size);
+				          " of script (at %04x)\n", PRINT_REG(s->r_acc), scr->getBufSize());
 			}
-#endif
 			break;
 
 		case op_lofss: // 0x3a (58)
-			r_temp.segment = scriptState.xs->addr.pc.segment;
+			// Load Offset to Stack
+			r_temp.segment = s->xs->addr.pc.segment;
 
 			switch (g_sci->_features->detectLofsType()) {
 			case SCI_VERSION_1_1:
-				r_temp.offset = opparams[0] + local_script->_scriptSize;
+				r_temp.offset = opparams[0] + local_script->getScriptSize();
 				break;
 			case SCI_VERSION_1_MIDDLE:
 				r_temp.offset = opparams[0];
 				break;
 			default:
-				r_temp.offset = scriptState.xs->addr.pc.offset + opparams[0];
+				r_temp.offset = s->xs->addr.pc.offset + opparams[0];
 			}
 
-#ifndef DISABLE_VALIDATIONS
-			if (r_temp.offset >= code_buf_size) {
+			if (r_temp.offset >= scr->getBufSize()) {
 				error("VM: lofss operation overflowed: %04x:%04x beyond end"
-				          " of script (at %04x)", PRINT_REG(r_temp), code_buf_size);
+				          " of script (at %04x)", PRINT_REG(r_temp), scr->getBufSize());
 			}
-#endif
 			PUSH32(r_temp);
 			break;
 
@@ -1440,10 +1761,11 @@ void run_vm(EngineState *s, bool restoring) {
 
 		case op_pushSelf: // 0x3e (62)
 			if (!(extOpcode & 1)) {
-				PUSH32(scriptState.xs->objp);
+				PUSH32(s->xs->objp);
 			} else {
 				// Debug opcode op_file, skip null-terminated string (file name)
-				while (code_buf[scriptState.xs->addr.pc.offset++]) ;
+				const byte *code_buf = scr->getBuf();
+				while (code_buf[s->xs->addr.pc.offset++]) ;
 			}
 			break;
 
@@ -1455,42 +1777,53 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lal: // 0x41 (65)
 		case op_lat: // 0x42 (66)
 		case op_lap: // 0x43 (67)
+			// Load global, local, temp or param variable into the accumulator
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			s->r_acc = READ_VAR(var_type, var_number, s->r_acc);
+			s->r_acc = READ_VAR(var_type, var_number);
 			break;
 
 		case op_lsg: // 0x44 (68)
 		case op_lsl: // 0x45 (69)
 		case op_lst: // 0x46 (70)
 		case op_lsp: // 0x47 (71)
+			// Load global, local, temp or param variable into the stack
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			PUSH32(READ_VAR(var_type, var_number, s->r_acc));
+			PUSH32(READ_VAR(var_type, var_number));
 			break;
 
 		case op_lagi: // 0x48 (72)
 		case op_lali: // 0x49 (73)
 		case op_lati: // 0x4a (74)
 		case op_lapi: // 0x4b (75)
+			// Load global, local, temp or param variable into the accumulator,
+			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			s->r_acc = READ_VAR(var_type, var_number, s->r_acc);
+			s->r_acc = READ_VAR(var_type, var_number);
 			break;
 
 		case op_lsgi: // 0x4c (76)
 		case op_lsli: // 0x4d (77)
 		case op_lsti: // 0x4e (78)
-		case op_lspi: // 0x4f (79)
+		case op_lspi: { // 0x4f (79)
+			// Load global, local, temp or param variable into the stack,
+			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			PUSH32(READ_VAR(var_type, var_number, s->r_acc));
+			int16 value;
+			if (!validate_signedInteger(s->r_acc, value))
+				value = arithmetic_lookForWorkaround(opcode, opcodeLsiWorkarounds, s->r_acc, NULL_REG).offset;
+			var_number = opparams[0] + value;
+			PUSH32(READ_VAR(var_type, var_number));
 			break;
+		}
 
 		case op_sag: // 0x50 (80)
 		case op_sal: // 0x51 (81)
 		case op_sat: // 0x52 (82)
 		case op_sap: // 0x53 (83)
+			// Save the accumulator into the global, local, temp or param variable
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			WRITE_VAR(var_type, var_number, s->r_acc);
@@ -1500,6 +1833,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_ssl: // 0x55 (85)
 		case op_sst: // 0x56 (86)
 		case op_ssp: // 0x57 (87)
+			// Save the stack into the global, local, temp or param variable
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			WRITE_VAR(var_type, var_number, POP32());
@@ -1509,6 +1843,9 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_sali: // 0x59 (89)
 		case op_sati: // 0x5a (90)
 		case op_sapi: // 0x5b (91)
+			// Save the accumulator into the global, local, temp or param variable,
+			// using the accumulator as an additional index
+
 			// Special semantics because it wouldn't really make a whole lot
 			// of sense otherwise, with acc being used for two things
 			// simultaneously...
@@ -1522,6 +1859,8 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_ssli: // 0x5d (93)
 		case op_ssti: // 0x5e (94)
 		case op_sspi: // 0x5f (95)
+			// Save the stack into the global, local, temp or param variable,
+			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			WRITE_VAR(var_type, var_number, POP32());
@@ -1531,9 +1870,11 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plusal: // 0x61 (97)
 		case op_plusat: // 0x62 (98)
 		case op_plusap: // 0x63 (99)
+			// Increment the global, local, temp or param variable and save it
+			// to the accumulator
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				s->r_acc = pointer_add(s, r_temp, 1);
@@ -1546,9 +1887,11 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plussl: // 0x65 (101)
 		case op_plusst: // 0x66 (102)
 		case op_plussp: // 0x67 (103)
+			// Increment the global, local, temp or param variable and save it
+			// to the stack
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				r_temp = pointer_add(s, r_temp, 1);
@@ -1562,9 +1905,11 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plusali: // 0x69 (105)
 		case op_plusati: // 0x6a (106)
 		case op_plusapi: // 0x6b (107)
+			// Increment the global, local, temp or param variable and save it
+			// to the accumulator, using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				s->r_acc = pointer_add(s, r_temp, 1);
@@ -1577,9 +1922,11 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plussli: // 0x6d (109)
 		case op_plussti: // 0x6e (110)
 		case op_plusspi: // 0x6f (111)
+			// Increment the global, local, temp or param variable and save it
+			// to the stack, using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				r_temp = pointer_add(s, r_temp, 1);
@@ -1593,9 +1940,11 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minusal: // 0x71 (113)
 		case op_minusat: // 0x72 (114)
 		case op_minusap: // 0x73 (115)
+			// Decrement the global, local, temp or param variable and save it
+			// to the accumulator
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				s->r_acc = pointer_add(s, r_temp, -1);
@@ -1608,9 +1957,11 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minussl: // 0x75 (117)
 		case op_minusst: // 0x76 (118)
 		case op_minussp: // 0x77 (119)
+			// Decrement the global, local, temp or param variable and save it
+			// to the stack
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				r_temp = pointer_add(s, r_temp, -1);
@@ -1624,9 +1975,11 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minusali: // 0x79 (121)
 		case op_minusati: // 0x7a (122)
 		case op_minusapi: // 0x7b (123)
+			// Decrement the global, local, temp or param variable and save it
+			// to the accumulator, using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				s->r_acc = pointer_add(s, r_temp, -1);
@@ -1639,9 +1992,11 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minussli: // 0x7d (125)
 		case op_minussti: // 0x7e (126)
 		case op_minusspi: // 0x7f (127)
+			// Decrement the global, local, temp or param variable and save it
+			// to the stack, using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				r_temp = pointer_add(s, r_temp, -1);
@@ -1657,121 +2012,23 @@ void run_vm(EngineState *s, bool restoring) {
 		} // switch (opcode)
 
 		if (s->_executionStackPosChanged) // Force initialization
-			scriptState.xs = xs_new;
+			s->xs = xs_new;
 
-//#ifndef DISABLE_VALIDATIONS
-		if (scriptState.xs != &(s->_executionStack.back())) {
-			warning("xs is stale (%p vs %p); last command was %02x",
-					(void *)scriptState.xs, (void *)&(s->_executionStack.back()),
+		if (s->xs != &(s->_executionStack.back())) {
+			error("xs is stale (%p vs %p); last command was %02x",
+					(void *)s->xs, (void *)&(s->_executionStack.back()),
 					opcode);
 		}
-//#endif
-		++script_step_counter;
+		++s->scriptStepCounter;
 	}
 }
 
-static void _init_stack_base_with_selector(EngineState *s, Selector selector) {
-	s->stack_base[0] = make_reg(0, (uint16)selector);
-	s->stack_base[1] = NULL_REG;
-}
-
-static EngineState *_game_run(EngineState *&s) {
-	EngineState *successor = NULL;
-	int game_is_finished = 0;
-
-	if (DebugMan.isDebugChannelEnabled(kDebugLevelOnStartup))
-		g_sci->getSciDebugger()->attach();
-
-	do {
-		s->_executionStackPosChanged = false;
-		run_vm(s, successor ? true : false);
-		if (s->restarting_flags & SCI_GAME_IS_RESTARTING_NOW) { // Restart was requested?
-			successor = NULL;
-			s->_executionStack.clear();
-			s->_executionStackPosChanged = false;
-
-			game_exit(s);
-			script_init_engine(s);
-			game_init(s);
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-			s->_sound.sfx_reset_player();
-#endif
-			_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.play);
-
-			send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
-
-			script_abort_flag = 0;
-			s->restarting_flags = SCI_GAME_WAS_RESTARTED | SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
-
-		} else {
-			successor = s->successor;
-			if (successor) {
-				game_exit(s);
-				delete s;
-				s = successor;
-
-				if (script_abort_flag == 2) {
-					debugC(2, kDebugLevelVM, "Restarting with replay()");
-					s->_executionStack.clear(); // Restart with replay
-
-					_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.replay);
-
-					send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
-				}
-
-				script_abort_flag = 0;
-
-			} else
-				game_is_finished = 1;
-		}
-	} while (!game_is_finished);
-
-	return s;
-}
-
-int game_run(EngineState **_s) {
-	EngineState *s = *_s;
-
-	debugC(2, kDebugLevelVM, "Calling %s::play()", s->_gameId.c_str());
-	_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.play); // Call the play selector
-
-	// Now: Register the first element on the execution stack-
-	if (!send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base)) {
-		Console *con = g_sci->getSciDebugger();
-		con->printObject(s->_gameObj);
-		warning("Failed to run the game! Aborting...");
-		return 1;
-	}
-	// and ENGAGE!
-	_game_run(*_s);
-
-	debugC(2, kDebugLevelVM, "Game::play() finished.");
-
-	return 0;
-}
-
-void quit_vm() {
-	script_abort_flag = 1; // Terminate VM
-	g_debugState.seeking = kDebugSeekNothing;
-	g_debugState.runningStep = 0;
-}
-
-void shrink_execution_stack(EngineState *s, uint size) {
-	assert(s->_executionStack.size() >= size);
-	Common::List<ExecStack>::iterator iter;
-	iter = s->_executionStack.begin();
-	for (uint i = 0; i < size; ++i)
-		++iter;
-	s->_executionStack.erase(iter, s->_executionStack.end());
-}
-
-reg_t* ObjVarRef::getPointer(SegManager *segMan) const {
+reg_t *ObjVarRef::getPointer(SegManager *segMan) const {
 	Object *o = segMan->getObject(obj);
-	if (!o) return 0;
-	return &(o->_variables[varindex]);
+	return o ? &o->getVariableRef(varindex) : 0;
 }
 
-reg_t* ExecStack::getVarPointer(SegManager *segMan) const {
+reg_t *ExecStack::getVarPointer(SegManager *segMan) const {
 	assert(type == EXEC_STACK_TYPE_VARSELECTOR);
 	return addr.varp.getPointer(segMan);
 }

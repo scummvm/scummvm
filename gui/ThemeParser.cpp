@@ -42,7 +42,8 @@ struct TextDataInfo {
 static const TextDataInfo kTextDataDefaults[] = {
 	{ kTextDataDefault,			"text_default" },
 	{ kTextDataButton,			"text_button" },
-	{ kTextDataNormalFont,		"text_normal" }
+	{ kTextDataNormalFont,		"text_normal" },
+	{ kTextDataTooltip,			"tooltip_normal" }
 };
 
 
@@ -364,10 +365,8 @@ bool ThemeParser::parserCallback_drawdata(ParserNode *node) {
 	if (_theme->addDrawData(node->values["id"], cached) == false)
 		return parserError("Error adding Draw Data set: Invalid DrawData name.");
 
-	if (_defaultStepLocal) {
-		delete _defaultStepLocal;
-		_defaultStepLocal = 0;
-	}
+	delete _defaultStepLocal;
+	_defaultStepLocal = 0;
 
 	return true;
 }

@@ -282,6 +282,9 @@ MadsGlobals::MadsGlobals(MadsEngine *vm): Globals(vm) {
 	playerSpriteChanged = false;
 	dialogType = DIALOG_NONE;
 	sceneNumber = -1;
+	for (int i = 0; i < 3; ++i)
+		actionNouns[i] = 0;
+	_difficultyLevel = 0;
 }
 
 MadsGlobals::~MadsGlobals() {
@@ -351,16 +354,16 @@ void MadsGlobals::loadMadsMessagesInfo() {
 	//printf("%i messages\n", count);
 
 	for (int i = 0; i < count; i++) {
-		MessageItem *curMessage = new MessageItem();
-		curMessage->id = messageS->readUint32LE();
-		curMessage->offset = messageS->readUint32LE();
-		curMessage->uncompSize = messageS->readUint16LE();
+		MessageItem curMessage;
+		curMessage.id = messageS->readUint32LE();
+		curMessage.offset = messageS->readUint32LE();
+		curMessage.uncompSize = messageS->readUint16LE();
 
 		if (i > 0)
-			_madsMessages[i - 1]->compSize = curMessage->offset - _madsMessages[i - 1]->offset;
+			_madsMessages[i - 1].compSize = curMessage.offset - _madsMessages[i - 1].offset;
 
 		if (i == count - 1)
-			curMessage->compSize = messageS->size() - curMessage->offset;
+			curMessage.compSize = messageS->size() - curMessage.offset;
 
 		//printf("id: %i, offset: %i, uncomp size: %i\n", curMessage->id, curMessage->offset, curMessage->uncompSize);
 		_madsMessages.push_back(curMessage);
@@ -382,7 +385,7 @@ void MadsGlobals::loadMadsObjects() {
 int MadsGlobals::messageIndexOf(uint32 messageId) {
 	for (uint i = 0; i < _madsMessages.size(); ++i)
 	{
-		if (_madsMessages[i]->id == messageId)
+		if (_madsMessages[i].id == messageId)
 			return i;
 	}
 	return -1;
@@ -395,15 +398,15 @@ const char *MadsGlobals::loadMessage(uint index) {
 	}
 
 	FabDecompressor fab;
-	byte *compData = new byte[_madsMessages[index]->compSize];
-	byte *buffer = new byte[_madsMessages[index]->uncompSize];
+	byte *compData = new byte[_madsMessages[index].compSize];
+	byte *buffer = new byte[_madsMessages[index].uncompSize];
 
 	Common::SeekableReadStream *messageS = _vm->res()->get("messages.dat");
-	messageS->seek(_madsMessages[index]->offset, SEEK_SET);
-	messageS->read(compData, _madsMessages[index]->compSize);
-	fab.decompress(compData, _madsMessages[index]->compSize, buffer, _madsMessages[index]->uncompSize);
+	messageS->seek(_madsMessages[index].offset, SEEK_SET);
+	messageS->read(compData, _madsMessages[index].compSize);
+	fab.decompress(compData, _madsMessages[index].compSize, buffer, _madsMessages[index].uncompSize);
 
-	for (int i = 0; i < _madsMessages[index]->uncompSize - 1; i++)
+	for (int i = 0; i < _madsMessages[index].uncompSize - 1; i++)
 		if (buffer[i] == '\0') buffer[i] = '\n';
 
 	_vm->res()->toss("messages.dat");
@@ -526,7 +529,9 @@ void MadsObject::load(Common::SeekableReadStream *stream) {
 	roomNumber = READ_LE_UINT16(&obj[2]);
 	article = (MADSArticles)obj[4];
 	vocabCount = obj[5] & 0x7f;
-	assert(vocabCount <= 3);
+	// Phantom / Dragon
+	if (vocabCount > 3)
+		warning("MadsObject::load(), vocab cound > 3 (it's %d)", vocabCount);
 
 	for (int i = 0; i < vocabCount; ++i) {
 		vocabList[i].flags1 = obj[6 + i * 4];

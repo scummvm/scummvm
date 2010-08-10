@@ -240,7 +240,7 @@ bool Debugger_LoK::cmd_enterRoom(int argc, const char **argv) {
 		while (!_vm->_screen->isMouseVisible())
 			_vm->_screen->showMouse();
 
-		_detach_now = true;
+		detach();
 		return false;
 	}
 
@@ -327,7 +327,7 @@ bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
 		while (!_vm->screen_v2()->isMouseVisible())
 			_vm->screen_v2()->showMouse();
 
-		_detach_now = true;
+		detach();
 		return false;
 	}
 

@@ -38,6 +38,7 @@ public:
 	~RivenExternal();
 
 	void runCommand(uint16 argc, uint16 *argv);
+	uint16 getComboDigit(uint32 correctCombo, uint32 digit);
 
 private:
 	MohawkEngine_Riven *_vm;
@@ -57,6 +58,8 @@ private:
 	int jspitElevatorLoop();
 	void runDemoBoundaryDialog();
 	void runEndGame(uint16 video);
+	void runDomeCheck();
+	void runDomeButtonMovie();
 
 	// -----------------------------------------------------
 	// aspit (Main Menu, Books, Setup) external commands

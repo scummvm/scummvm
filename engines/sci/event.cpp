@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "common/file.h"
 
 #include "sci/sci.h"
 #include "sci/event.h"
@@ -34,33 +35,51 @@
 
 namespace Sci {
 
-#define SCANCODE_ROWS_NR 3
+EventManager::EventManager(bool fontIsExtended) : _fontIsExtended(fontIsExtended), _modifierStates(0) {
 
-SciEvent::SciEvent(ResourceManager *resMan) {
-	// Check, if font of current game includes extended chars
-	_fontIsExtended = resMan->detectFontExtended();
+	if (getSciVersion() >= SCI_VERSION_1_MIDDLE) {
+		_usesNewKeyboardDirectionType = true;
+	} else if (getSciVersion() <= SCI_VERSION_01) {
+		_usesNewKeyboardDirectionType = false;
+	} else {
+		// they changed this somewhere inbetween SCI1EGA/EARLY
+		_usesNewKeyboardDirectionType = false;
+
+		// We are looking if script 933 exists, that one has the PseudoMouse class in it that handles it
+		//  The good thing is that PseudoMouse seems to only exists in games that use the new method
+		if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 933)))
+			_usesNewKeyboardDirectionType = true;
+		// Checking the keyboard driver size in here would also be a valid method, but the driver is only available
+		//  in PC versions of the game
+	}
 }
 
-SciEvent::~SciEvent() {
+EventManager::~EventManager() {
 }
 
-struct scancode_row {
+bool EventManager::getUsesNewKeyboardDirectionType() {
+	return _usesNewKeyboardDirectionType;
+}
+
+struct ScancodeRow {
 	int offset;
 	const char *keys;
-} scancode_rows[SCANCODE_ROWS_NR] = {
+};
+
+static const ScancodeRow s_scancodeRows[] = {
 	{0x10, "QWERTYUIOP[]"},
 	{0x1e, "ASDFGHJKL;'\\"},
 	{0x2c, "ZXCVBNM,./"}
 };
 
-int SciEvent::altify (int ch) {
+static int altify(int ch) {
 	// Calculates a PC keyboard scancode from a character */
 	int row;
 	int c = toupper((char)ch);
 
-	for (row = 0; row < SCANCODE_ROWS_NR; row++) {
-		const char *keys = scancode_rows[row].keys;
-		int offset = scancode_rows[row].offset;
+	for (row = 0; row < ARRAYSIZE(s_scancodeRows); row++) {
+		const char *keys = s_scancodeRows[row].keys;
+		int offset = s_scancodeRows[row].offset;
 
 		while (*keys) {
 			if (*keys == c)
@@ -74,7 +93,8 @@ int SciEvent::altify (int ch) {
 	return ch;
 }
 
-int SciEvent::numlockify (int c) {
+/*
+static int numlockify(int c) {
 	switch (c) {
 	case SCI_KEY_DELETE:
 		return '.';
@@ -102,6 +122,7 @@ int SciEvent::numlockify (int c) {
 		return c; // Unchanged
 	}
 }
+*/
 
 static const byte codepagemap_88591toDOS[0x80] = {
 	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x8x
@@ -114,9 +135,8 @@ static const byte codepagemap_88591toDOS[0x80] = {
 	 '?', 0xa4, 0x95, 0xa2, 0x93,  '?', 0x94,  '?',  '?', 0x97, 0xa3, 0x96, 0x81,  '?',  '?', 0x98  // 0xFx
 };
 
-sciEvent SciEvent::getFromScummVM() {
-	static int _modifierStates = 0;	// FIXME: Avoid non-const global vars
-	sciEvent input = { SCI_EVENT_NONE, 0, 0, 0 };
+SciEvent EventManager::getScummVMEvent() {
+	SciEvent input = { SCI_EVENT_NONE, 0, 0, 0 };
 
 	Common::EventManager *em = g_system->getEventManager();
 	Common::Event ev;
@@ -293,6 +313,10 @@ sciEvent SciEvent::getFromScummVM() {
 			input.type = SCI_EVENT_MOUSE_PRESS;
 			input.data = 2;
 			break;
+		case Common::EVENT_MBUTTONDOWN:
+			input.type = SCI_EVENT_MOUSE_PRESS;
+			input.data = 3;
+			break;
 		case Common::EVENT_LBUTTONUP:
 			input.type = SCI_EVENT_MOUSE_RELEASE;
 			input.data = 1;
@@ -300,6 +324,10 @@ sciEvent SciEvent::getFromScummVM() {
 		case Common::EVENT_RBUTTONUP:
 			input.type = SCI_EVENT_MOUSE_RELEASE;
 			input.data = 2;
+			break;
+		case Common::EVENT_MBUTTONUP:
+			input.type = SCI_EVENT_MOUSE_RELEASE;
+			input.data = 3;
 			break;
 
 			// Misc events
@@ -315,24 +343,30 @@ sciEvent SciEvent::getFromScummVM() {
 	return input;
 }
 
-sciEvent SciEvent::get(unsigned int mask) {
+void EventManager::updateScreen() {
+	// Update the screen here, since it's called very often.
+	// Throttle the screen update rate to 60fps.
+	if (g_system->getMillis() - g_sci->getEngineState()->_screenUpdateTime >= 1000 / 60) {
+		g_system->updateScreen();
+		g_sci->getEngineState()->_screenUpdateTime = g_system->getMillis();
+	}
+}
+
+SciEvent EventManager::getSciEvent(unsigned int mask) {
 	//sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
-	sciEvent event = { 0, 0, 0, 0 };
+	SciEvent event = { 0, 0, 0, 0 };
 
-	// TODO: we need to call Cursor::refreshPosition() before each screen update to limit the mouse cursor position
-
-	// Update the screen here, since it's called very often
-	g_system->updateScreen();
+	EventManager::updateScreen();
 
 	// Get all queued events from graphics driver
 	do {
-		event = getFromScummVM();
+		event = getScummVMEvent();
 		if (event.type != SCI_EVENT_NONE)
 			_events.push_back(event);
 	} while (event.type != SCI_EVENT_NONE);
 
 	// Search for matching event in queue
-	Common::List<sciEvent>::iterator iter = _events.begin();
+	Common::List<SciEvent>::iterator iter = _events.begin();
 	while (iter != _events.end() && !((*iter).type & mask))
 		++iter;
 
@@ -382,14 +416,13 @@ sciEvent SciEvent::get(unsigned int mask) {
 	return event;
 }
 
-void SciEvent::sleep(uint32 msecs) {
+void SciEngine::sleep(uint32 msecs) {
 	uint32 time;
 	const uint32 wakeup_time = g_system->getMillis() + msecs;
 
 	while (true) {
 		// let backend process events and update the screen
-		get(SCI_EVENT_PEEK);
-		// TODO: we need to call Cursor::refreshPosition() before each screen update to limit the mouse cursor position
+		_eventMan->getSciEvent(SCI_EVENT_PEEK);
 		time = g_system->getMillis();
 		if (time + 10 < wakeup_time) {
 			g_system->delayMillis(10);

@@ -65,6 +65,7 @@ private:
 	bool cmdSentenceFragments(int argc, const char **argv);
 	bool cmdParse(int argc, const char **argv);
 	bool cmdSetParseNodes(int argc, const char **argv);
+	bool cmdSaid(int argc, const char **argv);
 	// Resources
 	bool cmdDiskDump(int argc, const char **argv);
 	bool cmdHexDump(int argc, const char **argv);
@@ -73,6 +74,8 @@ private:
 	bool cmdResourceTypes(int argc, const char **argv);
 	bool cmdList(int argc, const char **argv);
 	bool cmdHexgrep(int argc, const char **argv);
+	bool cmdVerifyScripts(int argc, const char **argv);
+	bool cmdShowInstruments(int argc, const char **argv);
 	// Game
 	bool cmdSaveGame(int argc, const char **argv);
 	bool cmdRestoreGame(int argc, const char **argv);
@@ -116,9 +119,9 @@ private:
 	bool cmdAddresses(int argc, const char **argv);
 	bool cmdRegisters(int argc, const char **argv);
 	bool cmdDissectScript(int argc, const char **argv);
-	bool cmdSetAccumulator(int argc, const char **argv);
 	bool cmdBacktrace(int argc, const char **argv);
-	bool cmdStep(int argc, const char **argv);
+	bool cmdTrace(int argc, const char **argv);
+	bool cmdStepOver(int argc, const char **argv);
 	bool cmdStepEvent(int argc, const char **argv);
 	bool cmdStepRet(int argc, const char **argv);
 	bool cmdStepGlobal(int argc, const char **argv);
@@ -127,11 +130,13 @@ private:
 	bool cmdDisassembleAddress(int argc, const char **argv);
 	bool cmdSend(int argc, const char **argv);
 	bool cmdGo(int argc, const char **argv);
+	bool cmdLogKernel(int argc, const char **argv);
 	// Breakpoints
 	bool cmdBreakpointList(int argc, const char **argv);
 	bool cmdBreakpointDelete(int argc, const char **argv);
-	bool cmdBreakpointExecMethod(int argc, const char **argv);
-	bool cmdBreakpointExecFunction(int argc, const char **argv);
+	bool cmdBreakpointMethod(int argc, const char **argv);
+	bool cmdBreakpointKernel(int argc, const char **argv);
+	bool cmdBreakpointFunction(int argc, const char **argv);
 	// VM
 	bool cmdScriptSteps(int argc, const char **argv);
 	bool cmdVMVarlist(int argc, const char **argv);
@@ -144,15 +149,22 @@ private:
 	bool cmdViewActiveObject(int argc, const char **argv);
 	bool cmdViewAccumulatorObject(int argc, const char **argv);
 
+	bool parseInteger(const char *argument, int &result);
+
+	void printBasicVarInfo(reg_t variable);
+
 	bool segmentInfo(int nr);
-	void printList(List *l);
+	void printList(List *list);
 	int printNode(reg_t addr);
+	void hexDumpReg(const reg_t *data, int len, int regsPerLine = 4, int startOffset = 0, bool isArray = false);
 
 private:
 	SciEngine *_engine;
+	DebugState &_debugState;
 	bool _mouseVisible;
 	Common::String _videoFile;
 	int _videoFrameDelay;
+	uint32 _enterTime;
 };
 
 } // End of namespace Sci
