@@ -118,7 +118,7 @@ bool BS_SWImage::Fill(const BS_Rect *pFillRect, unsigned int Color) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_SWImage::SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride) {
+	bool BS_SWImage::SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) {
 	BS_LOG_ERRORLN("SetContent() is not supported.");
 	return false;
 }

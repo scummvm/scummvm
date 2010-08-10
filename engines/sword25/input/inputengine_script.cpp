@@ -298,28 +298,28 @@ static int UnregisterCommandCallback(lua_State *L) {
 static const char *PACKAGE_LIBRARY_NAME = "Input";
 
 static const luaL_reg PACKAGE_FUNCTIONS[] = {
-	"Init", Init,
-	"Update", Update,
-	"IsLeftMouseDown", IsLeftMouseDown,
-	"IsRightMouseDown", IsRightMouseDown,
-	"WasLeftMouseDown", WasLeftMouseDown,
-	"WasRightMouseDown", WasRightMouseDown,
-	"IsLeftDoubleClick", IsLeftDoubleClick,
-	"GetMouseX", GetMouseX,
-	"GetMouseY", GetMouseY,
-	"SetMouseX", SetMouseX,
-	"SetMouseY", SetMouseY,
-	"IsKeyDown", IsKeyDown,
-	"WasKeyDown", WasKeyDown,
-	"RegisterCharacterCallback", RegisterCharacterCallback,
-	"UnregisterCharacterCallback", UnregisterCharacterCallback,
-	"RegisterCommandCallback", RegisterCommandCallback,
-	"UnregisterCommandCallback", UnregisterCommandCallback,
-	0, 0,
+	{"Init", Init},
+	{"Update", Update},
+	{"IsLeftMouseDown", IsLeftMouseDown},
+	{"IsRightMouseDown", IsRightMouseDown},
+	{"WasLeftMouseDown", WasLeftMouseDown},
+	{"WasRightMouseDown", WasRightMouseDown},
+	{"IsLeftDoubleClick", IsLeftDoubleClick},
+	{"GetMouseX", GetMouseX},
+	{"GetMouseY", GetMouseY},
+	{"SetMouseX", SetMouseX},
+	{"SetMouseY", SetMouseY},
+	{"IsKeyDown", IsKeyDown},
+	{"WasKeyDown", WasKeyDown},
+	{"RegisterCharacterCallback", RegisterCharacterCallback},
+	{"UnregisterCharacterCallback", UnregisterCharacterCallback},
+	{"RegisterCommandCallback", RegisterCommandCallback},
+	{"UnregisterCommandCallback", UnregisterCommandCallback},
+	{0, 0}
 };
 
-#define X(k) "KEY_" #k, BS_InputEngine::KEY_##k
-#define Y(k) "KEY_COMMAND_" #k, BS_InputEngine::KEY_COMMAND_##k
+#define X(k) {"KEY_" #k, BS_InputEngine::KEY_##k}
+#define Y(k) {"KEY_COMMAND_" #k, BS_InputEngine::KEY_COMMAND_##k}
 static const lua_constant_reg PACKAGE_CONSTANTS[] = {
 	X(BACKSPACE), X(TAB), X(CLEAR), X(RETURN), X(PAUSE), X(CAPSLOCK), X(ESCAPE), X(SPACE), X(PAGEUP), X(PAGEDOWN), X(END), X(HOME), X(LEFT),
 	X(UP), X(RIGHT), X(DOWN), X(PRINTSCREEN), X(INSERT), X(DELETE), X(0), X(1), X(2), X(3), X(4), X(5), X(6), X(7), X(8), X(9), X(A), X(B),

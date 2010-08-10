@@ -40,8 +40,8 @@
 // -----------------------------------------------------------------------------
 
 #include "sword25/kernel/common.h"
-#include <vector>
 
+#if 0 // TODO
 #include "agg_rendering_buffer.h"
 #include "agg_pixfmt_rgba.h"
 #include "agg_renderer_scanline.h"
@@ -51,6 +51,7 @@
 #include "agg_scanline_bin.h"
 #include "agg_trans_affine.h"
 #include "agg_span_allocator.h"
+#endif
 
 namespace Sword25 {
 
@@ -68,11 +69,12 @@ public:
 	bool Render(const BS_VectorImage &VectorImage,
 	            float ScaleFactorX, float ScaleFactorY,
 	            unsigned int &Width, unsigned int &Height,
-	            Common::Array<char> & ImageData,
+	            byte *ImageData,
 	            float LineScaleFactor = 1.0f,
 	            bool NoAlphaShapes = false);
 
 private:
+#if 0
 	typedef agg::pixfmt_rgba32_pre PixelFormatType;
 	typedef agg::renderer_base<PixelFormatType> BaseRendererType;
 	typedef agg::renderer_scanline_aa_solid<BaseRendererType> ScanlineRendererType;
@@ -87,6 +89,7 @@ private:
 	agg::scanline_bin ScanlineBin;
 	agg::trans_affine Scale;
 	agg::span_allocator<agg::rgba8> Alloc;
+#endif
 };
 
 } // End of namespace Sword25

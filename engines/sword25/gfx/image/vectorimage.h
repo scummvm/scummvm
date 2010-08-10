@@ -43,10 +43,10 @@
 #include "sword25/gfx/image/image.h"
 #include "sword25/math/rect.h"
 
+#if 0
 #include <vector>
 #include "agg_path_storage.h"
-#include "agg_color_rgba.h"
-
+#endif
 
 namespace Sword25 {
 
@@ -62,7 +62,11 @@ class BS_VectorImage;
 class BS_VectorPathInfo {
 public:
 	BS_VectorPathInfo(unsigned int ID, unsigned int LineStyle, unsigned int FillStyle0, unsigned int FillStyle1) :
-		m_ID(ID), m_LineStyle(LineStyle), m_FillStyle0(FillStyle0), m_FillStyle1(FillStyle1) {};
+		m_ID(ID), m_LineStyle(LineStyle), m_FillStyle0(FillStyle0), m_FillStyle1(FillStyle1) {}
+
+	BS_VectorPathInfo() {
+		m_ID = m_LineStyle = m_FillStyle0 = m_FillStyle1 = 0;
+	}
 
 	unsigned int GetID() const {
 		return m_ID;
@@ -90,15 +94,18 @@ private:
            Werden alle Elemente eines Vektorbildes übereinandergelegt, ergibt sich das komplette Bild.
 */
 class BS_VectorImageElement {
-	friend BS_VectorImage;
+	friend class BS_VectorImage;
 public:
-	const agg::path_storage    &GetPaths() const {
+#if 0 // TODO
+	const agg::path_storage &GetPaths() const {
 		return m_Paths;
 	}
-	unsigned int                GetPathCount() const {
+#endif
+
+	unsigned int GetPathCount() const {
 		return m_PathInfos.size();
 	}
-	const BS_VectorPathInfo    &GetPathInfo(unsigned int PathNr) const {
+	const BS_VectorPathInfo &GetPathInfo(unsigned int PathNr) const {
 		BS_ASSERT(PathNr < GetPathCount());
 		return m_PathInfos[PathNr];
 	}
@@ -112,7 +119,7 @@ public:
 		return m_LineStyles.size();
 	}
 
-	const agg::rgba8 &GetLineStyleColor(unsigned int LineStyle) const {
+	uint32 GetLineStyleColor(unsigned int LineStyle) const {
 		BS_ASSERT(LineStyle < m_LineStyles.size());
 		return m_LineStyles[LineStyle].Color;
 	}
@@ -121,7 +128,7 @@ public:
 		return m_FillStyles.size();
 	}
 
-	const agg::rgba8 &GetFillStyleColor(unsigned int FillStyle) const {
+	uint32 GetFillStyleColor(unsigned int FillStyle) const {
 		BS_ASSERT(FillStyle < m_FillStyles.size());
 		return m_FillStyles[FillStyle];
 	}
@@ -132,16 +139,19 @@ public:
 
 private:
 	struct LineStyleType {
-		LineStyleType(double Width_, const agg::rgba8 &Color_) : Width(Width_), Color(Color_) {};
-		double      Width;
-		agg::rgba8  Color;
+		LineStyleType(double Width_, uint32 Color_) : Width(Width_), Color(Color_) {}
+		LineStyleType() { Width = 0; Color = 0; }
+		double Width;
+		uint32 Color;
 	};
 
-	agg::path_storage               m_Paths;
-	Common::Array<BS_VectorPathInfo>    m_PathInfos;
-	Common::Array<LineStyleType>        m_LineStyles;
-	Common::Array<agg::rgba8>           m_FillStyles;
-	BS_Rect                         m_BoundingBox;
+#if 0 // TODO
+	agg::path_storage m_Paths;
+#endif
+	Common::Array<BS_VectorPathInfo> m_PathInfos;
+	Common::Array<LineStyleType> m_LineStyles;
+	Common::Array<uint32>  m_FillStyles;
+	BS_Rect m_BoundingBox;
 };
 
 
@@ -201,7 +211,7 @@ public:
 	virtual bool IsSetContentAllowed() const {
 		return false;
 	}
-	virtual bool SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride);
+	virtual bool SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride);
 	virtual bool Blit(int PosX = 0, int PosY = 0,
 	                  int Flipping = FLIP_NONE,
 	                  BS_Rect *pPartRect = NULL,

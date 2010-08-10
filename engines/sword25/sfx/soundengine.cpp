@@ -34,13 +34,9 @@
 
 #define BS_LOG_PREFIX "SOUNDENGINE"
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/sfx/soundengine.h"
 
-// -----------------------------------------------------------------------------
+namespace Sword25 {
 
 BS_SoundEngine::BS_SoundEngine(BS_Kernel *pKernel) : BS_ResourceService(pKernel) {
 	if (!_RegisterScriptBindings())
@@ -48,3 +44,5 @@ BS_SoundEngine::BS_SoundEngine(BS_Kernel *pKernel) : BS_ResourceService(pKernel)
 	else
 		BS_LOGLN("Script bindings registered.");
 }
+
+} // End of namespace Sword25

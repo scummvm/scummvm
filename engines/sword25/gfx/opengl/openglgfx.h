@@ -84,7 +84,7 @@ public:
 	virtual bool        GetVsync() const;
 
 	virtual bool        Fill(const BS_Rect *FillRectPtr = 0, unsigned int Color = BS_RGB(0, 0, 0));
-	virtual bool        GetScreenshot(unsigned int &Width, unsigned int &Height, Common::Array<unsigned int> & Data);
+	virtual bool        GetScreenshot(unsigned int &Width, unsigned int &Height, byte **Data);
 
 	// Resource-Managing Methoden
 	// --------------------------
@@ -112,7 +112,8 @@ private:
 		DebugLine(const BS_Vertex &_Start, const BS_Vertex &_End, unsigned int _Color) :
 			Start(_Start),
 			End(_End),
-			Color(_Color) {};
+			Color(_Color) {}
+		DebugLine() {}
 
 		BS_Vertex       Start;
 		BS_Vertex       End;
@@ -121,9 +122,9 @@ private:
 
 	Common::Array<DebugLine> m_DebugLines;
 
-	static bool ReadFramebufferContents(unsigned int Width, unsigned int Height, Common::Array<unsigned int> & Data);
-	static void ReverseRGBAComponentOrder(Common::Array<unsigned int> & Data);
-	static void FlipImagedataVertical(unsigned int Width, unsigned int Height, Common::Array<unsigned int> & Data);
+	static bool ReadFramebufferContents(unsigned int Width, unsigned int Height, byte **Data);
+	static void ReverseRGBAComponentOrder(byte *Data, uint size);
+	static void FlipImagedataVertical(unsigned int Width, unsigned int Height, byte *Data);
 };
 
 } // End of namespace Sword25

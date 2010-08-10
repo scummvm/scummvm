@@ -38,13 +38,16 @@
 
 #include "sword25/gfx/image/vectorimagerenderer.h"
 #include "sword25/gfx/image/vectorimage.h"
+
+#if 0 // TODO
 #include "agg_conv_curve.h"
 #include "agg_path_storage.h"
 #include "agg_conv_stroke.h"
-
+#endif
 
 namespace Sword25 {
 
+#if 0 // TODO
 // -----------------------------------------------------------------------------
 // CompoundShape
 // -----------------------------------------------------------------------------
@@ -109,23 +112,16 @@ private:
 	const BS_VectorImageElement &m_ImageElement;
 };
 
-
-// -----------------------------------------------------------------------------
-// Konstruktion
-// -----------------------------------------------------------------------------
-
 BS_VectorImageRenderer::BS_VectorImageRenderer() :
 	PixelFormat(rbuf) {
 
 }
 
 
-// -----------------------------------------------------------------------------
-
 bool BS_VectorImageRenderer::Render(const BS_VectorImage &VectorImage,
                                     float ScaleFactorX, float ScaleFactorY,
                                     unsigned int &Width, unsigned int &Height,
-                                    Common::Array<char> & ImageData,
+                                    byte *ImageData,
                                     float LineScaleFactor,
                                     bool NoAlphaShapes) {
 	Width = static_cast<unsigned int>(VectorImage.GetWidth() * ScaleFactorX);
@@ -199,5 +195,19 @@ bool BS_VectorImageRenderer::Render(const BS_VectorImage &VectorImage,
 
 	return true;
 }
+
+#else
+
+BS_VectorImageRenderer::BS_VectorImageRenderer() {}
+
+bool BS_VectorImageRenderer::Render(const BS_VectorImage &VectorImage,
+                                    float ScaleFactorX, float ScaleFactorY,
+                                    unsigned int &Width, unsigned int &Height,
+                                    byte *ImageData,
+                                    float LineScaleFactor,
+                                    bool NoAlphaShapes) {
+	return true;
+}
+#endif
 
 } // End of namespace Sword25

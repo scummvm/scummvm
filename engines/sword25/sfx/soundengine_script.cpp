@@ -43,6 +43,7 @@
 
 #include "sword25/sfx/soundengine.h"
 
+namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 static int Init(lua_State *L) {
@@ -155,7 +156,7 @@ static int ResumeLayer(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static void ProcessPlayParams(lua_State *L, std::string &FileName, BS_SoundEngine::SOUND_TYPES &Type, float &Volume, float &Pan, bool &Loop, int &LoopStart, int &LoopEnd, unsigned int &Layer) {
+static void ProcessPlayParams(lua_State *L, Common::String &FileName, BS_SoundEngine::SOUND_TYPES &Type, float &Volume, float &Pan, bool &Loop, int &LoopStart, int &LoopEnd, unsigned int &Layer) {
 	FileName = luaL_checkstring(L, 1);
 
 	Type = static_cast<BS_SoundEngine::SOUND_TYPES>(static_cast<unsigned int>(luaL_checknumber(L, 2)));
@@ -185,7 +186,7 @@ static int PlaySound(lua_State *L) {
 	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
-	std::string FileName;
+	Common::String FileName;
 	BS_SoundEngine::SOUND_TYPES Type;
 	float Volume;
 	float Pan;
@@ -206,7 +207,7 @@ static int PlaySoundEx(lua_State *L) {
 	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
-	std::string FileName;
+	Common::String FileName;
 	BS_SoundEngine::SOUND_TYPES Type;
 	float Volume;
 	float Pan;
@@ -343,33 +344,33 @@ static int GetSoundPanning(lua_State *L) {
 static const char *SFX_LIBRARY_NAME = "Sfx";
 
 static const luaL_reg SFX_FUNCTIONS[] = {
-	"Init", Init,
-	"Update", Update,
-	"__SetVolume", SetVolume,
-	"__GetVolume", GetVolume,
-	"PauseAll", PauseAll,
-	"ResumeAll", ResumeAll,
-	"PauseLayer", PauseLayer,
-	"ResumeLayer", ResumeLayer,
-	"__PlaySound", PlaySound,
-	"__PlaySoundEx", PlaySoundEx,
-	"__SetSoundVolume", SetSoundVolume,
-	"__SetSoundPanning", SetSoundPanning,
-	"__PauseSound", PauseSound,
-	"__ResumeSound", ResumeSound,
-	"__StopSound", StopSound,
-	"__IsSoundPaused", IsSoundPaused,
-	"__IsSoundPlaying", IsSoundPlaying,
-	"__GetSoundVolume", GetSoundVolume,
-	"__GetSoundPanning", GetSoundPanning,
-	0, 0,
+	{"Init", Init},
+	{"Update", Update},
+	{"__SetVolume", SetVolume},
+	{"__GetVolume", GetVolume},
+	{"PauseAll", PauseAll},
+	{"ResumeAll", ResumeAll},
+	{"PauseLayer", PauseLayer},
+	{"ResumeLayer", ResumeLayer},
+	{"__PlaySound", PlaySound},
+	{"__PlaySoundEx", PlaySoundEx},
+	{"__SetSoundVolume", SetSoundVolume},
+	{"__SetSoundPanning", SetSoundPanning},
+	{"__PauseSound", PauseSound},
+	{"__ResumeSound", ResumeSound},
+	{"__StopSound", StopSound},
+	{"__IsSoundPaused", IsSoundPaused},
+	{"__IsSoundPlaying", IsSoundPlaying},
+	{"__GetSoundVolume", GetSoundVolume},
+	{"__GetSoundPanning", GetSoundPanning},
+	{0, 0}
 };
 
 static const lua_constant_reg SFX_CONSTANTS[] = {
-	"MUSIC", BS_SoundEngine::MUSIC,
-	"SPEECH", BS_SoundEngine::SPEECH,
-	"SFX", BS_SoundEngine::SFX,
-	0, 0,
+	{"MUSIC", BS_SoundEngine::MUSIC},
+	{"SPEECH", BS_SoundEngine::SPEECH},
+	{"SFX", BS_SoundEngine::SFX},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------
@@ -387,3 +388,5 @@ bool BS_SoundEngine::_RegisterScriptBindings() {
 
 	return true;
 }
+
+} // End of namespace Sword25

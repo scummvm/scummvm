@@ -38,12 +38,8 @@
 
 #include "sword25/kernel/bs_stdint.h"
 #include "sword25/gfx/image/vectorimage.h"
-#include <vector>
-#include <stdexcept>
 
-#include "agg_bounding_rect.h"
-
-using namespace std;
+#include "graphics/colormasks.h"
 
 namespace Sword25 {
 
@@ -195,9 +191,9 @@ BS_Rect FlashRectToBSRect(BS_VectorImage::SWFBitStream &bs) {
 // Konvertiert SWF-Farben in AntiGrain Farben
 // -----------------------------------------------------------------------------
 
-agg::rgba8 FlashColorToAGGRGBA8(unsigned int FlashColor) {
-	agg::rgba8 ResultColor((FlashColor >> 16) & 0xff, (FlashColor >> 8) & 0xff, FlashColor & 0xff, FlashColor >> 24);
-	ResultColor.premultiply();
+uint32 FlashColorToAGGRGBA8(unsigned int FlashColor) {
+	uint32 ResultColor = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(FlashColor >> 24, (FlashColor >> 16) & 0xff, (FlashColor >> 8) & 0xff, FlashColor & 0xff);
+
 	return ResultColor;
 }
 
@@ -215,12 +211,16 @@ struct CBBGetId {
 };
 
 BS_Rect CalculateBoundingBox(const BS_VectorImageElement &VectorImageElement) {
+#if 0 // TODO
 	agg::path_storage Path = VectorImageElement.GetPaths();
 	CBBGetId IdSource(VectorImageElement);
 
 	double x1, x2, y1, y2;
 	agg::bounding_rect(Path, IdSource, 0, VectorImageElement.GetPathCount(), &x1, &y1, &x2, &y2);
-
+#else
+	double x1, x2, y1, y2;
+	x1 = x2 = y1 = y2 = 0;
+#endif
 	return BS_Rect(static_cast<int>(x1), static_cast<int>(y1), static_cast<int>(x2) + 1, static_cast<int>(y2) + 1);
 }
 }
@@ -388,6 +388,7 @@ bool BS_VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) 
 				// Ein neuen Pfad erzeugen, es sei denn, es wurden nur neue Styles definiert
 				if (StateLineStyle || StateFillStyle0 || StateFillStyle1 || StateMoveTo) {
 					// Letzte Zeichenposition merken, beim Aufruf von start_new_path() wird die Zeichenpostionen auf 0, 0 zurückgesetzt
+#if 0 // TODO
 					double LastX = m_Elements.back().m_Paths.last_x();
 					double LastY = m_Elements.back().m_Paths.last_y();
 
@@ -400,6 +401,7 @@ bool BS_VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) 
 						m_Elements.back().m_Paths.move_to(MoveDeltaX, MoveDeltaY);
 					else
 						m_Elements.back().m_Paths.move_to(LastX, LastY);
+#endif
 				}
 			}
 		} else {
@@ -414,11 +416,13 @@ bool BS_VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) 
 				s32 AnchorDeltaX = bs.GetSignedBits(NumBits);
 				s32 AnchorDeltaY = bs.GetSignedBits(NumBits);
 
+#if 0 // TODO
 				double ControlX = m_Elements.back().m_Paths.last_x() + ControlDeltaX;
 				double ControlY = m_Elements.back().m_Paths.last_y() + ControlDeltaY;
 				double AnchorX = ControlX + AnchorDeltaX;
 				double AnchorY = ControlY + AnchorDeltaY;
 				m_Elements.back().m_Paths.curve3(ControlX, ControlY, AnchorX, AnchorY);
+#endif
 			} else {
 				// Staight edge
 				s32 DeltaX = 0;
@@ -436,13 +440,15 @@ bool BS_VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) 
 						DeltaX = bs.GetSignedBits(NumBits);
 				}
 
+#if 0 // TODO
 				m_Elements.back().m_Paths.line_rel(DeltaX, DeltaY);
+#endif
 			}
 		}
 	}
 
 	// Bounding-Boxes der einzelnen Elemente berechnen
-	vector<BS_VectorImageElement>::iterator it = m_Elements.begin();
+	Common::Array<BS_VectorImageElement>::iterator it = m_Elements.begin();
 	for (; it != m_Elements.end(); ++it) it->m_BoundingBox = CalculateBoundingBox(*it);
 
 	return true;
@@ -481,7 +487,8 @@ bool BS_VectorImage::ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsig
 
 	// Anzahl an Linestyles bestimmen
 	unsigned int LineStyleCount = bs.GetU8();
-	if (LineStyleCount == 0xff) LineStyleCount = bs.GetU16();
+	if (LineStyleCount == 0xff)
+		LineStyleCount = bs.GetU16();
 
 	// Alle Linestyles einlesen
 	m_Elements.back().m_LineStyles.reserve(LineStyleCount);
@@ -521,7 +528,7 @@ unsigned int BS_VectorImage::GetPixel(int X, int Y) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_VectorImage::SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride) {
+bool BS_VectorImage::SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) {
 	BS_LOG_ERRORLN("SetContent() is not supported.");
 	return 0;
 }

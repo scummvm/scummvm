@@ -36,7 +36,6 @@
 // INCLUDES
 // -----------------------------------------------------------------------------
 
-#include "sword25/util/glsprites/glsprites.h"
 #include "sword25/package/packagemanager.h"
 #include "sword25/gfx/image/imageloader.h"
 #include "sword25/gfx/opengl/openglgfx.h"
@@ -139,9 +138,9 @@ bool BS_GLImage::Fill(const BS_Rect *pFillRect, unsigned int Color) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_GLImage::SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride) {
+bool BS_GLImage::SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) {
 	// Überprüfen, ob PixelData ausreichend viele Pixel enthält um ein Bild der Größe Width * Height zu erzeugen
-	if (Pixeldata.size() < static_cast<unsigned int>(m_Width * m_Height * 4)) {
+	if (size < static_cast<unsigned int>(m_Width * m_Height * 4)) {
 		BS_LOG_ERRORLN("PixelData vector is too small to define a 32 bit %dx%d image.", m_Width, m_Height);
 		return false;
 	}

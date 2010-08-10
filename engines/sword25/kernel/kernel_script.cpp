@@ -234,26 +234,26 @@ static int GetUsedMemory(lua_State *L) {
 static const char *KERNEL_LIBRARY_NAME = "Kernel";
 
 static const luaL_reg KERNEL_FUNCTIONS[] = {
-	"DisconnectService", DisconnectService,
-	"GetActiveServiceIdentifier", GetActiveServiceIdentifier,
-	"GetSuperclassCount", GetSuperclassCount,
-	"GetSuperclassIdentifier", GetSuperclassIdentifier,
-	"GetServiceCount", GetServiceCount,
-	"GetServiceIdentifier", GetServiceIdentifier,
-	"GetMilliTicks", GetMilliTicks,
-	"GetTimer", GetTimer,
-	"StartService", StartService,
-	"Sleep", Sleep,
-	"Crash", Crash,
-	"ExecuteFile", ExecuteFile,
-	"GetUserdataDirectory", GetUserdataDirectory,
-	"GetPathSeparator", GetPathSeparator,
-	"FileExists", FileExists,
-	"CreateDirectory", CreateDirectory,
-	"GetWinCode", GetWinCode,
-	"GetSubversionRevision", GetSubversionRevision,
-	"GetUsedMemory", GetUsedMemory,
-	0, 0,
+	{"DisconnectService", DisconnectService},
+	{"GetActiveServiceIdentifier", GetActiveServiceIdentifier},
+	{"GetSuperclassCount", GetSuperclassCount},
+	{"GetSuperclassIdentifier", GetSuperclassIdentifier},
+	{"GetServiceCount", GetServiceCount},
+	{"GetServiceIdentifier", GetServiceIdentifier},
+	{"GetMilliTicks", GetMilliTicks},
+	{"GetTimer", GetTimer},
+	{"StartService", StartService},
+	{"Sleep", Sleep},
+	{"Crash", Crash},
+	{"ExecuteFile", ExecuteFile},
+	{"GetUserdataDirectory", GetUserdataDirectory},
+	{"GetPathSeparator", GetPathSeparator},
+	{"FileExists", FileExists},
+	{"CreateDirectory", CreateDirectory},
+	{"GetWinCode", GetWinCode},
+	{"GetSubversionRevision", GetSubversionRevision},
+	{"GetUsedMemory", GetUsedMemory},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------
@@ -495,25 +495,25 @@ static int HasFocus(lua_State *L) {
 static const char *WINDOW_LIBRARY_NAME = "Window";
 
 static const luaL_reg WINDOW_FUNCTIONS[] = {
-	"IsVisible", IsVisible,
-	"SetVisible", SetVisible,
-	"GetX", GetX,
-	"SetX", SetX,
-	"GetY", GetY,
-	"SetY", SetY,
-	"GetClientX", GetClientX,
-	"GetClientY", GetClientY,
-	"GetWidth", GetWidth,
-	"GetHeight", GetHeight,
-	"SetWidth", SetWidth,
-	"SetHeight", SetHeight,
-	"GetTitle", GetTitle,
-	"SetTitle", SetTitle,
-	"ProcessMessages", ProcessMessages,
-	"CloseWanted", CloseWanted,
-	"WaitForFocus", WaitForFocus,
-	"HasFocus", HasFocus,
-	0, 0,
+	{"IsVisible", IsVisible},
+	{"SetVisible", SetVisible},
+	{"GetX", GetX},
+	{"SetX", SetX},
+	{"GetY", GetY},
+	{"SetY", SetY},
+	{"GetClientX", GetClientX},
+	{"GetClientY", GetClientY},
+	{"GetWidth", GetWidth},
+	{"GetHeight", GetHeight},
+	{"SetWidth", SetWidth},
+	{"SetHeight", SetHeight},
+	{"GetTitle", GetTitle},
+	{"SetTitle", SetTitle},
+	{"ProcessMessages", ProcessMessages},
+	{"CloseWanted", CloseWanted},
+	{"WaitForFocus", WaitForFocus},
+	{"HasFocus", HasFocus},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------
@@ -625,15 +625,15 @@ static int DumpLockedResources(lua_State *L) {
 static const char *RESOURCE_LIBRARY_NAME = "Resource";
 
 static const luaL_reg RESOURCE_FUNCTIONS[] = {
-	"PrecacheResource", PrecacheResource,
-	"ForcePrecacheResource", ForcePrecacheResource,
-	"GetMaxMemoryUsage", GetMaxMemoryUsage,
-	"SetMaxMemoryUsage", SetMaxMemoryUsage,
-	"EmptyCache", EmptyCache,
-	"IsLogCacheMiss", IsLogCacheMiss,
-	"SetLogCacheMiss", SetLogCacheMiss,
-	"DumpLockedResources", DumpLockedResources,
-	0, 0,
+	{"PrecacheResource", PrecacheResource},
+	{"ForcePrecacheResource", ForcePrecacheResource},
+	{"GetMaxMemoryUsage", GetMaxMemoryUsage},
+	{"SetMaxMemoryUsage", SetMaxMemoryUsage},
+	{"EmptyCache", EmptyCache},
+	{"IsLogCacheMiss", IsLogCacheMiss},
+	{"SetLogCacheMiss", SetLogCacheMiss},
+	{"DumpLockedResources", DumpLockedResources},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------
@@ -708,16 +708,16 @@ static int SaveGame(lua_State *L) {
 static const char *PERSISTENCE_LIBRARY_NAME = "Persistence";
 
 static const luaL_reg PERSISTENCE_FUNCTIONS[] = {
-	"ReloadSlots", ReloadSlots,
-	"GetSlotCount", GetSlotCount,
-	"IsSlotOccupied", IsSlotOccupied,
-	"GetSavegameDirectory", GetSavegameDirectory,
-	"IsSavegameCompatible", IsSavegameCompatible,
-	"GetSavegameDescription", GetSavegameDescription,
-	"GetSavegameFilename", GetSavegameFilename,
-	"LoadGame", LoadGame,
-	"SaveGame", SaveGame,
-	0, 0,
+	{"ReloadSlots", ReloadSlots},
+	{"GetSlotCount", GetSlotCount},
+	{"IsSlotOccupied", IsSlotOccupied},
+	{"GetSavegameDirectory", GetSavegameDirectory},
+	{"IsSavegameCompatible", IsSavegameCompatible},
+	{"GetSavegameDescription", GetSavegameDescription},
+	{"GetSavegameFilename", GetSavegameFilename},
+	{"LoadGame", LoadGame},
+	{"SaveGame", SaveGame},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------

@@ -55,11 +55,7 @@
 #include "sword25/gfx/opengl/glimage.h"
 #include "sword25/gfx/opengl/swimage.h"
 
-#include <algorithm>
-
 namespace Sword25 {
-
-using namespace std;
 
 #define BS_LOG_PREFIX "OPENGLGFX"
 
@@ -266,48 +262,50 @@ bool BS_OpenGLGfx::Fill(const BS_Rect *FillRectPtr, unsigned int Color) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_OpenGLGfx::GetScreenshot(unsigned int &Width, unsigned int &Height, vector<unsigned int> & Data) {
-	if (!ReadFramebufferContents(m_Width, m_Height, Data)) return false;
+bool BS_OpenGLGfx::GetScreenshot(unsigned int &Width, unsigned int &Height, byte **Data) {
+	if (!ReadFramebufferContents(m_Width, m_Height, Data))
+		return false;
 
 	// Die Größe des Framebuffers zurückgeben.
 	Width = m_Width;
 	Height = m_Height;
 
 	// Bilddaten vom OpenGL-Format in unser eigenes Format umwandeln.
-	ReverseRGBAComponentOrder(Data);
-	FlipImagedataVertical(Width, Height, Data);
+	ReverseRGBAComponentOrder(*Data, Width * Height);
+	FlipImagedataVertical(Width, Height, *Data);
 
 	return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_OpenGLGfx::ReadFramebufferContents(unsigned int Width, unsigned int Height, Common::Array<unsigned int> & Data) {
-	Data.resize(Width * Height);
-	glReadPixels(0, 0, Width, Height, GL_RGBA, GL_UNSIGNED_BYTE, &Data[0]);
+bool BS_OpenGLGfx::ReadFramebufferContents(unsigned int Width, unsigned int Height, byte **Data) {
+    *Data = (byte *)malloc(Width * Height * 4);
+	glReadPixels(0, 0, Width, Height, GL_RGBA, GL_UNSIGNED_BYTE, *Data);
 
 	if (glGetError() == 0)
 		return true;
 	else {
-		Data.clear();
 		return false;
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_OpenGLGfx::ReverseRGBAComponentOrder(vector<unsigned int> & Data) {
-	vector<unsigned int>::iterator It = Data.begin();
-	while (It != Data.end()) {
-		unsigned int Pixel = *It;
-		*It = (Pixel & 0xff00ff00) | ((Pixel >> 16) & 0xff) | ((Pixel & 0xff) << 16);
-		++It;
+void BS_OpenGLGfx::ReverseRGBAComponentOrder(byte *Data, uint size) {
+	uint32 *ptr = (uint32 *)Data;
+
+	for (uint i = 0; i < size; i++) {
+		unsigned int Pixel = *ptr;
+		*ptr = (Pixel & 0xff00ff00) | ((Pixel >> 16) & 0xff) | ((Pixel & 0xff) << 16);
+		++ptr;
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_OpenGLGfx::FlipImagedataVertical(unsigned int Width, unsigned int Height, vector<unsigned int> & Data) {
+void BS_OpenGLGfx::FlipImagedataVertical(unsigned int Width, unsigned int Height, byte *Data) {
+#if 0 // TODO
 	vector<unsigned int> LineBuffer(Width);
 
 	for (unsigned int Y = 0; Y < Height / 2; ++Y) {
@@ -317,26 +315,18 @@ void BS_OpenGLGfx::FlipImagedataVertical(unsigned int Width, unsigned int Height
 		copy(Line2It, Line2It + Width, Line1It);
 		copy(LineBuffer.begin(), LineBuffer.end(), Line2It);
 	}
+#endif
 }
 
 // -----------------------------------------------------------------------------
 // RESOURCE MANAGING
 // -----------------------------------------------------------------------------
 
-static bool DoesStringEndWith(const Common::String &String, const std::string &OtherString) {
-	Common::String::size_type StringPos = String.rfind(OtherString);
-	if (StringPos == Common::String::npos) return false;
-
-	return StringPos + OtherString.size() == String.size();
-}
-
-// -----------------------------------------------------------------------------
-
 BS_Resource *BS_OpenGLGfx::LoadResource(const Common::String &FileName) {
 	BS_ASSERT(CanLoadResource(FileName));
 
 	// Bild für den Softwarebuffer laden
-	if (DoesStringEndWith(FileName, PNG_S_EXTENSION)) {
+	if (FileName.hasSuffix(PNG_S_EXTENSION)) {
 		bool Result;
 		BS_SWImage *pImage = new BS_SWImage(FileName, Result);
 		if (!Result) {
@@ -354,7 +344,7 @@ BS_Resource *BS_OpenGLGfx::LoadResource(const Common::String &FileName) {
 	}
 
 	// Sprite-Bild laden
-	if (DoesStringEndWith(FileName, PNG_EXTENSION) || DoesStringEndWith(FileName, B25S_EXTENSION)) {
+	if (FileName.hasSuffix(PNG_EXTENSION) || FileName.hasSuffix(B25S_EXTENSION)) {
 		bool Result;
 		BS_GLImage *pImage = new BS_GLImage(FileName, Result);
 		if (!Result) {
@@ -373,7 +363,7 @@ BS_Resource *BS_OpenGLGfx::LoadResource(const Common::String &FileName) {
 
 
 	// Vectorgraphik laden
-	if (DoesStringEndWith(FileName, SWF_EXTENSION)) {
+	if (FileName.hasSuffix(SWF_EXTENSION)) {
 		// Pointer auf Package-Manager holen
 		BS_PackageManager *pPackage = BS_Kernel::GetInstance()->GetPackage();
 		BS_ASSERT(pPackage);
@@ -406,7 +396,7 @@ BS_Resource *BS_OpenGLGfx::LoadResource(const Common::String &FileName) {
 	}
 
 	// Animation laden
-	if (DoesStringEndWith(FileName, ANI_EXTENSION)) {
+	if (FileName.hasSuffix(ANI_EXTENSION)) {
 		BS_AnimationResource *pResource = new BS_AnimationResource(FileName);
 		if (pResource->IsValid())
 			return pResource;
@@ -417,7 +407,7 @@ BS_Resource *BS_OpenGLGfx::LoadResource(const Common::String &FileName) {
 	}
 
 	// Font laden
-	if (DoesStringEndWith(FileName, FNT_EXTENSION)) {
+	if (FileName.hasSuffix(FNT_EXTENSION)) {
 		BS_FontResource *pResource = new BS_FontResource(BS_Kernel::GetInstance(), FileName);
 		if (pResource->IsValid())
 			return pResource;
@@ -434,11 +424,11 @@ BS_Resource *BS_OpenGLGfx::LoadResource(const Common::String &FileName) {
 // -----------------------------------------------------------------------------
 
 bool BS_OpenGLGfx::CanLoadResource(const Common::String &FileName) {
-	return DoesStringEndWith(FileName, PNG_EXTENSION) ||
-	       DoesStringEndWith(FileName, ANI_EXTENSION) ||
-	       DoesStringEndWith(FileName, FNT_EXTENSION) ||
-	       DoesStringEndWith(FileName, SWF_EXTENSION) ||
-	       DoesStringEndWith(FileName, B25S_EXTENSION);
+	return FileName.hasSuffix(PNG_EXTENSION) ||
+		FileName.hasSuffix(ANI_EXTENSION) ||
+		FileName.hasSuffix(FNT_EXTENSION) ||
+		FileName.hasSuffix(SWF_EXTENSION) ||
+		FileName.hasSuffix(B25S_EXTENSION);
 }
 
 

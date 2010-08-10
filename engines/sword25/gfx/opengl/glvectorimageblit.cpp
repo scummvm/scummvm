@@ -62,7 +62,7 @@ bool BS_VectorImage::Blit(int PosX, int PosY,
                           unsigned int Color,
                           int Width, int Height) {
 	static BS_VectorImageRenderer VectorImageRenderer;
-	static vector<char> PixelData;
+	static byte *PixelData;
 	static GLS_Sprite Sprite = 0;
 	static BS_VectorImage *OldThis = 0;
 	static int              OldWidth;
@@ -98,7 +98,7 @@ bool BS_VectorImage::Blit(int PosX, int PosY,
 			return true;
 		}
 
-		GLS_Result Result = GLS_SetSpriteData(Sprite, RenderedWidth, RenderedHeight, &PixelData[0], 0);
+		GLS_Result Result = GLS_SetSpriteData(Sprite, RenderedWidth, RenderedHeight, PixelData, 0);
 		if (Result != GLS_OK) {
 			BS_LOG_ERRORLN("Call to GLS_SetSpriteData() failed. Reason: %s", GLS_ResultString(Result));
 			return false;

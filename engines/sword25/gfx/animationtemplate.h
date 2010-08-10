@@ -123,7 +123,7 @@ public:
 	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 private:
-	Common::Array<const Frame>  m_Frames;
+	Common::Array<Frame>  m_Frames;
 	BS_AnimationResource       *m_SourceAnimationPtr;
 	bool                        m_Valid;
 

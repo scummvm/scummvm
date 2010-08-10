@@ -63,7 +63,7 @@ public:
 
 	virtual unsigned int GetPixel(int X, int Y) const;
 
-	virtual bool    SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride);
+	virtual bool    SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride);
 
 	virtual bool    IsScalingAllowed() const;
 	virtual bool    IsAlphaAllowed() const;

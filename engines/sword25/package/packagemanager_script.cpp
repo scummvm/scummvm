@@ -217,18 +217,18 @@ static int FileExists(lua_State *L) {
 static const char *PACKAGE_LIBRARY_NAME = "Package";
 
 static const luaL_reg PACKAGE_FUNCTIONS[] = {
-	"LoadPackage", LoadPackage,
-	"LoadDirectoryAsPackage", LoadDirectoryAsPackage,
-	"GetCurrentDirectory", GetCurrentDirectory,
-	"ChangeDirectory", ChangeDirectory,
-	"GetAbsolutePath", GetAbsolutePath,
-	"GetFileSize", GetFileSize,
-	"GetFileType", GetFileType,
-	"FindFiles", FindFiles,
-	"FindDirectories", FindDirectories,
-	"GetFileAsString", GetFileAsString,
-	"FileExists", FileExists,
-	0, 0
+	{"LoadPackage", LoadPackage},
+	{"LoadDirectoryAsPackage", LoadDirectoryAsPackage},
+	{"GetCurrentDirectory", GetCurrentDirectory},
+	{"ChangeDirectory", ChangeDirectory},
+	{"GetAbsolutePath", GetAbsolutePath},
+	{"GetFileSize", GetFileSize},
+	{"GetFileType", GetFileType},
+	{"FindFiles", FindFiles},
+	{"FindDirectories", FindDirectories},
+	{"GetFileAsString", GetFileAsString},
+	{"FileExists", FileExists},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------

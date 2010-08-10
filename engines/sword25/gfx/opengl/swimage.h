@@ -71,7 +71,7 @@ public:
 	                  unsigned int Color = BS_ARGB(255, 255, 255, 255),
 	                  int Width = -1, int Height = -1);
 	virtual bool Fill(const BS_Rect *FillRectPtr, unsigned int Color);
-	virtual bool SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride);
+	virtual bool SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride);
 	virtual unsigned int GetPixel(int X, int Y);
 
 	virtual bool IsBlitSource() const               {

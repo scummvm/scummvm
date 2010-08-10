@@ -123,8 +123,8 @@ bool BS_DynamicBitmap::DoRender() {
 
 // -----------------------------------------------------------------------------
 
-bool BS_DynamicBitmap::SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride) {
-	return m_Image->SetContent(Pixeldata, Offset, Stride);
+bool BS_DynamicBitmap::SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) {
+	return m_Image->SetContent(Pixeldata, size, Offset, Stride);
 }
 
 // -----------------------------------------------------------------------------
@@ -184,7 +184,7 @@ bool BS_DynamicBitmap::Unpersist(BS_InputPersistenceBlock &Reader) {
 
 	// Bild mit durchsichtigen Bilddaten initialisieren.
 	byte *TransparentImageData = (byte *)calloc(m_Width * m_Height * 4, 1);
-	m_Image->SetContent(TransparentImageData);
+	m_Image->SetContent(TransparentImageData, m_Width * m_Height);
 	free(TransparentImageData);
 
 	Result &= BS_RenderObject::UnpersistChildren(Reader);

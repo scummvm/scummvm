@@ -165,7 +165,7 @@ public:
 	    @return Gibt false zurück, falls der Aufruf fehlgeschlagen ist.
 	    @remark Ein Aufruf dieser Methode ist nur erlaubt, wenn IsSetContentAllowed() true zurückgibt.
 	*/
-	virtual bool SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride) = 0;
+	virtual bool SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) = 0;
 
 	/**
 	    @brief Liest einen Pixel des Bildes.

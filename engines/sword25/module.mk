@@ -31,6 +31,10 @@ MODULE_OBJS := \
 	gfx/image/pngloader.o \
 	gfx/image/vectorimage.o \
 	gfx/image/vectorimagerenderer.o \
+	gfx/opengl/glimage.o \
+	gfx/opengl/glvectorimageblit.o \
+	gfx/opengl/openglgfx.o \
+	gfx/opengl/swimage.o \
 	input/inputengine.o \
 	input/inputengine_script.o \
 	kernel/callbackregistry.o \
@@ -60,53 +64,47 @@ MODULE_OBJS := \
 	script/luacallback.o \
 	script/luascript.o \
 	script/lua_extensions.o \
-	sfx/fmodexchannel.o \
-	sfx/fmodexresource.o \
-	sfx/fmodexsound.o \
 	sfx/soundengine.o \
 	sfx/soundengine_script.o \
-	util/glsprites/internal/core.o \
-	util/glsprites/internal/glswindow.o \
-	util/glsprites/internal/sprite.o \
-	util/glsprites/internal/sprite_pow2.o \
-	util/glsprites/internal/sprite_rectangle.o \
-	util/glsprites/internal/sprite_tiled.o \
-	util/glsprites/internal/util.o \
-	util/lua/src/lapi.o \
-	util/lua/src/lauxlib.o \
-	util/lua/src/lbaselib.o \
-	util/lua/src/lcode.o \
-	util/lua/src/ldblib.o \
-	util/lua/src/ldebug.o \
-	util/lua/src/ldo.o \
-	util/lua/src/ldump.o \
-	util/lua/src/lfunc.o \
-	util/lua/src/lgc.o \
-	util/lua/src/linit.o \
-	util/lua/src/liolib.o \
-	util/lua/src/llex.o \
-	util/lua/src/lmathlib.o \
-	util/lua/src/lmem.o \
-	util/lua/src/loadlib.o \
-	util/lua/src/lobject.o \
-	util/lua/src/lopcodes.o \
-	util/lua/src/loslib.o \
-	util/lua/src/lparser.o \
-	util/lua/src/lstate.o \
-	util/lua/src/lstring.o \
-	util/lua/src/lstrlib.o \
-	util/lua/src/ltable.o \
-	util/lua/src/ltablib.o \
-	util/lua/src/ltm.o \
-	util/lua/src/lua.o \
-	util/lua/src/luac.o \
-	util/lua/src/lundump.o \
-	util/lua/src/lvm.o \
-	util/lua/src/lzio.o \
-	util/lua/src/print.o \
+	util/lua/lapi.o \
+	util/lua/lauxlib.o \
+	util/lua/lbaselib.o \
+	util/lua/lcode.o \
+	util/lua/ldblib.o \
+	util/lua/ldebug.o \
+	util/lua/ldo.o \
+	util/lua/ldump.o \
+	util/lua/lfunc.o \
+	util/lua/lgc.o \
+	util/lua/linit.o \
+	util/lua/liolib.o \
+	util/lua/llex.o \
+	util/lua/lmathlib.o \
+	util/lua/lmem.o \
+	util/lua/loadlib.o \
+	util/lua/lobject.o \
+	util/lua/lopcodes.o \
+	util/lua/loslib.o \
+	util/lua/lparser.o \
+	util/lua/lstate.o \
+	util/lua/lstring.o \
+	util/lua/lstrlib.o \
+	util/lua/ltable.o \
+	util/lua/ltablib.o \
+	util/lua/ltm.o \
+	util/lua/lua.o \
+	util/lua/luac.o \
+	util/lua/lundump.o \
+	util/lua/lvm.o \
+	util/lua/lzio.o \
+	util/lua/print.o \
 	util/pluto/pdep.o \
 	util/pluto/pluto.o \
 	util/pluto/plzio.o
+
+%.o: %.c
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SWORD25), DYNAMIC_PLUGIN)
