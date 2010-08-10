@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	events.o \
 	fs.o \
 	graphics.o \
+	midi.o \
 	misc.o \
 	savegame.o \
 	sound.o \

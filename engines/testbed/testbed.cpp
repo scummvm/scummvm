@@ -31,6 +31,7 @@
 #include "testbed/events.h"
 #include "testbed/fs.h"
 #include "testbed/graphics.h"
+#include "testbed/midi.h"
 #include "testbed/misc.h"
 #include "testbed/savegame.h"
 #include "testbed/sound.h"
@@ -120,6 +121,9 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	_testsuiteList.push_back(ts);
 	// Sound
 	ts = new SoundSubsystemTestSuite();
+	_testsuiteList.push_back(ts);
+	// Midi
+	ts = new MidiTestSuite();
 	_testsuiteList.push_back(ts);
 }
 
