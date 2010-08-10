@@ -533,11 +533,8 @@ void GfxAnimate::addToPicDrawCels() {
 		// Get the corresponding view
 		view = _cache->getView(it->viewId);
 
-		// Create rect according to coordinates and given cel
-		view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
-
 		// draw corresponding cel
-		_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo);
+		_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
 		if ((it->signal & kSignalIgnoreActor) == 0) {
 			it->celRect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(it->priority) - 1, it->celRect.top, it->celRect.bottom - 1);
 			_paint16->fillRect(it->celRect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
@@ -681,6 +678,7 @@ void GfxAnimate::addToPicSetPicNotValid() {
 
 void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) {
 	List *list;
+	byte tempPicNotValid = 0;
 
 	_ports->setPort((Port *)_ports->_picWind);
 
@@ -689,6 +687,7 @@ void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) 
 		error("kAddToPic called with non-list as parameter");
 
 	makeSortedList(list);
+	fill(tempPicNotValid);
 	addToPicDrawCels();
 
 	addToPicSetPicNotValid();
