@@ -770,7 +770,7 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 		_mt32DevicePopUp->setEnabled(false);
 	}
 
-	_enableMIDISettings = true;
+	_enableMT32Settings = true;
 }
 
 // The function has an extra slider range parameter, since both the launcher and SCUMM engine
