@@ -243,6 +243,8 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 			}
 		}
 
+		//warning("%s", _s->_segMan->getObjectName(curObject));
+
 		if (!view->isScaleable()) {
 			// Laura Bow 2 (especially floppy) depends on this, some views are not supposed to be scaleable
 			//  this "feature" was removed in later versions of SCI1.1
