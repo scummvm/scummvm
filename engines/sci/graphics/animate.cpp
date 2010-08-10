@@ -518,6 +518,19 @@ void GfxAnimate::reAnimate(Common::Rect rect) {
 	}
 }
 
+void GfxAnimate::preprocessAddToPicList() {
+	AnimateList::iterator it;
+	const AnimateList::iterator end = _list.end();
+
+	for (it = _list.begin(); it != end; ++it) {
+		if (it->priority == -1)
+			it->priority = _ports->kernelCoordinateToPriority(it->y);
+
+		// Do not allow priority to get changed by fill()
+		it->signal |= kSignalFixedPriority;
+	}
+}
+
 void GfxAnimate::addToPicDrawCels() {
 	reg_t curObject;
 	GfxView *view = NULL;
@@ -526,9 +539,6 @@ void GfxAnimate::addToPicDrawCels() {
 
 	for (it = _list.begin(); it != end; ++it) {
 		curObject = it->object;
-
-		if (it->priority == -1)
-			it->priority = _ports->kernelCoordinateToPriority(it->y);
 
 		// Get the corresponding view
 		view = _cache->getView(it->viewId);
@@ -687,6 +697,7 @@ void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) 
 		error("kAddToPic called with non-list as parameter");
 
 	makeSortedList(list);
+	preprocessAddToPicList();
 	fill(tempPicNotValid);
 	addToPicDrawCels();
 
