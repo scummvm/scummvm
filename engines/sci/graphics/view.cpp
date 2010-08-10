@@ -256,6 +256,8 @@ void GfxView::initData(GuiResourceId resourceId) {
 				cel->scriptHeight = cel->height = READ_SCI11ENDIAN_UINT16(celData + 2);
 				cel->displaceX = READ_SCI11ENDIAN_UINT16(celData + 4);
 				cel->displaceY = READ_SCI11ENDIAN_UINT16(celData + 6);
+				if (cel->displaceY < 0)
+					cel->displaceY += 255; // sierra did this adjust in their getCelRect()
 
 				assert(cel->width && cel->height);
 
