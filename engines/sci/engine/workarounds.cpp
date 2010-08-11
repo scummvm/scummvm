@@ -113,7 +113,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_JONES,           1,   255,  0,                   "", "export 0",       -1,   14, { WORKAROUND_FAKE,   0 } }, // jones/cd only - called when a game ends
 	{ GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   13, { WORKAROUND_FAKE,   0 } }, // jones/ega&vga only - called when the game starts
 	{ GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   14, { WORKAROUND_FAKE,   0 } }, // jones/ega&vga only - called when the game starts
-	{ GID_KQ5,            -1,     0,  0,                   "", "export 29",      -1,    3, { WORKAROUND_FAKE,   0xf } }, // called when playing harp for the harpies or when aborting dialog in toy shop, is used for kDoAudio - bug #3034700
+	//{ GID_KQ5,            -1,     0,  0,                   "", "export 29",      -1,    3, { WORKAROUND_FAKE,   0xf } }, // called when playing harp for the harpies or when aborting dialog in toy shop, is used for kDoAudio - bug #3034700
+    // ^^ shouldn't be needed anymore, we got a script patch instead (kq5PatchCdHarpyVolume)
 	{ GID_KQ5,            25,    25,  0,              "rm025", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // inside witch forest, when going to the room where the walking rock is
     { GID_KQ5,            55,    55,  0,         "helpScript", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // when giving the tambourine to the monster in the labyrinth (only happens at one of the locations) - bug #3041262
 	{ GID_KQ6,            -1,    30,  0,               "rats", "changeState",    -1,   -1, { WORKAROUND_FAKE,   0 } }, // rats in the catacombs (temps 1 - 5) - bugs #3034597, #3035495, #3035824

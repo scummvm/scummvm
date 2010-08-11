@@ -51,6 +51,7 @@ struct SciScriptSignature {
 //  - if not EOS, an adjust offset and the actual bytes
 //  - rinse and repeat
 
+// ===========================================================================
 // stayAndHelp::changeState (0) is called when ego swims to the left or right
 //  boundaries of room 660. Normally a textbox is supposed to get on screen
 //  but the call is wrong, so not only do we get an error message the script
@@ -189,6 +190,7 @@ const SciScriptSignature gk1Signatures[] = {
     {      0, NULL,                                          0,                                            0, NULL,                          NULL }
 };
 
+// ===========================================================================
 // this here gets called on entry and when going out of game windows
 //  uEvt::port will not get changed after kDisposeWindow but a bit later, so
 //  we would get an invalid port handle to a kSetPort call. We just patch in
@@ -252,7 +254,63 @@ const SciScriptSignature hoyle4Signatures[] = {
     {      0, NULL,                                          0,                                            0, NULL,                     NULL }
 };
 
+// ===========================================================================
+// at least during harpy scene export 29 of script 0 is called in kq5cd and
+//  has an issue for those calls, where temp 3 won't get inititialized, but
+//  is later used to set master volume. This issue makes sierra sci set
+//  the volume to max. We fix the export, so volume won't get modified in
+//  those cases.
+const byte kq5SignatureCdHarpyVolume[] = {
+	34,
+	0x80, 0x91, 0x01,  // lag global[191h]
+	0x18,              // not
+	0x30, 0x2c, 0x00,  // bnt [jump further] (jumping, if global 191h is 1)
+	0x35, 0x01,        // ldi 01
+	0xa0, 0x91, 0x01,  // sag global[191h] (setting global 191h to 1)
+	0x38, 0x7b, 0x01,  // pushi 017b
+	0x76,              // push0
+	0x81, 0x01,        // lag global[1]
+	0x4a, 0x04,        // send 04 (getting KQ5::masterVolume)
+	0xa5, 0x03,        // sat temp[3] (store volume in temp 3)
+	0x38, 0x7b, 0x01,  // pushi 017b
+	0x76,              // push0
+	0x81, 0x01,        // lag global[1]
+	0x4a, 0x04,        // send 04 (getting KQ5::masterVolume)
+	0x36,              // push
+	0x35, 0x04,        // ldi 04
+	0x20,              // ge? (followed by bnt)
+	0
+};
 
+const uint16 kq5PatchCdHarpyVolume[] = {
+	0x38, 0x2f, 0x02,  // pushi 022f (selector theVol) (3 new bytes)
+	0x76,              // push0 (1 new byte)
+	0x51, 0x88,        // class SpeakTimer (2 new bytes)
+	0x4a, 0x04,        // send 04 (2 new bytes) -> read SpeakTimer::theVol
+	0xa5, 0x03,        // sat temp[3] (2 new bytes) -> write to temp 3
+	0x80, 0x91, 0x01,  // lag global[191h]
+	// saving 1 byte due optimization
+	0x2e, 0x23, 0x00,  // bt [jump further] (jumping, if global 191h is 1)
+	0x35, 0x01,        // ldi 01
+	0xa0, 0x91, 0x01,  // sag global[191h] (setting global 191h to 1)
+	0x38, 0x7b, 0x01,  // pushi 017b
+	0x76,              // push0
+	0x81, 0x01,        // lag global[1]
+	0x4a, 0x04,        // send 04 (getting KQ5::masterVolume)
+	0xa5, 0x03,        // sat temp[3] (store volume in temp 3)
+	// saving 8 bytes due removing of duplicate code
+	0x39, 0x04,        // pushi 04 (saving 1 byte due swapping)
+	0x22,              // lt? (because we switched values)
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                 adjust
+const SciScriptSignature kq5Signatures[] = {
+    {      0, "CD: harpy volume change",                     PATCH_MAGICDWORD(0x80, 0x91, 0x01, 0x18),     0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
+    {      0, NULL,                                          0,                                            0, NULL,                      NULL }
+};
+
+// ===========================================================================
 // this is called on every death dialog. Problem is at least the german
 //  version of lsl6 gets title text that is far too long for the
 //  available temp space resulting in temp space corruption
@@ -303,6 +361,7 @@ const SciScriptSignature larry6Signatures[] = {
     {      0, NULL,                                          0,                                            0, NULL,                       NULL }
 };
 
+// ===========================================================================
 // It seems to scripts warp ego outside the screen somehow (or maybe kDoBresen?)
 //  ego::mover is set to 0 and rm119::doit will crash in that case. This here
 //  fixes part of the problem and actually checks ego::mover to be 0 and skips
@@ -417,6 +476,8 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 // hoyle4 now works due workaround inside GfxPorts
 //	if (g_sci->getGameId() == GID_HOYLE4)
 //		signatureTable = hoyle4Signatures;
+	if (g_sci->getGameId() == GID_KQ5)
+		signatureTable = kq5Signatures;
 	if (g_sci->getGameId() == GID_LSL6)
 		signatureTable = larry6Signatures;
 	if (g_sci->getGameId() == GID_SQ5)
