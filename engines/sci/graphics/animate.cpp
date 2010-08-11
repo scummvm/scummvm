@@ -204,15 +204,13 @@ void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 		// Get the corresponding view
 		view = _cache->getView(it->viewId);
 
-		uint16 viewLoopCount = view->getLoopCount();
 		// adjust loop and cel, if any of those is invalid
-		if (it->loopNo >= viewLoopCount) {
-			it->loopNo = viewLoopCount - 1;
+		if (it->loopNo >= view->getLoopCount()) {
+			it->loopNo = 0;
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(loop), it->loopNo);
 		}
-		uint16 viewCelCount = view->getCelCount(it->loopNo);
-		if (it->celNo >= viewCelCount) {
-			it->celNo = viewCelCount - 1;
+		if (it->celNo >= view->getCelCount(it->loopNo)) {
+			it->celNo = 0;
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(cel), it->celNo);
 		}
 
