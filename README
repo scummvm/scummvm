@@ -1653,7 +1653,8 @@ First, you need to start a daemon:
 
 Now you can start scummvm and try selection TiMidity music output.  By
 default, it will connect to localhost:7777, but you can change host/port
-by defining "TIMIDITY_HOST" environment variable.
+via the "TIMIDITY_HOST" environment variable. You can also specify
+a "device number" using the "SCUMMVM_MIDIPORT" environment variable.
 
 
 7.8) Using compressed audio files
