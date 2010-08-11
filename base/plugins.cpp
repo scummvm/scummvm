@@ -200,10 +200,10 @@ public:
 		LINK_PLUGIN(ADLIB)
 		LINK_PLUGIN(PCSPK)
 		LINK_PLUGIN(PCJR)
-        #ifndef DISABLE_SID
-        LINK_PLUGIN(C64)
-        #endif
-        LINK_PLUGIN(AMIGA)
+		#ifndef DISABLE_SID
+		LINK_PLUGIN(C64)
+		#endif
+		LINK_PLUGIN(AMIGA)
 		LINK_PLUGIN(APPLEIIGS)
 		LINK_PLUGIN(TOWNS)
 		#if defined (UNIX)
