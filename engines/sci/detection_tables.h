@@ -2554,17 +2554,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-#endif
-
-	// Slater & Charlie Go Camping - English DOS/Windows
-	{"slater", "", {
-		{"resource.000", 0, "1846b57fe84774be72f7c50ab3c90df0", 2256126},
-		{"resource.map", 0, "21f85414124dc23e54544a5536dc35cd", 4044},
-		{"resource.msg", 0, "c44f51fb955eae266fecf360ebcd5ad2", 1132},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
-
-#ifdef ENABLE_SCI32
 	// RAMA - English DOS/Windows Demo
 	// Executable scanning reports "2.100.002", VERSION file reports "000.000.008"
 	{"rama", "Demo", {
@@ -2659,6 +2648,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "8e10d4f05c1fd9f883384fa38a898489", 377394},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
+
+	// Slater & Charlie Go Camping - English DOS/Windows
+	{"slater", "", {
+		{"resource.000", 0, "1846b57fe84774be72f7c50ab3c90df0", 2256126},
+		{"resource.map", 0, "21f85414124dc23e54544a5536dc35cd", 4044},
+		{"resource.msg", 0, "c44f51fb955eae266fecf360ebcd5ad2", 1132},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
 	// Space Quest 1 VGA Remake - English Amiga (from www.back2roots.org)
 	// SCI interpreter version 1.000.510 (just a guess)
