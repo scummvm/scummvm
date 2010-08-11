@@ -214,7 +214,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_opcode = 0;
 	vm.numNestedScripts = 0;
 	_lastCodePtr = NULL;
-	_resultVarNumber = 0;
 	_scummStackPos = 0;
 	memset(_vmStack, 0, sizeof(_vmStack));
 	_fileOffset = 0;
@@ -631,6 +630,10 @@ ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
 	_flashlight.xStrips = 7;
 	_flashlight.yStrips = 7;
 	_flashlight.buffer = NULL;
+
+	memset(_saveLoadVarsFilename, 0, sizeof(_saveLoadVarsFilename));
+
+	_resultVarNumber = 0;
 }
 
 ScummEngine_v4::ScummEngine_v4(OSystem *syst, const DetectorResult &dr)

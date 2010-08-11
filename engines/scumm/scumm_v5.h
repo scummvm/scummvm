@@ -50,6 +50,8 @@ protected:
 		PARAM_3 = 0x20
 	};
 
+	int _resultVarNumber;
+
 public:
 	ScummEngine_v5(OSystem *syst, const DetectorResult &dr);
 
@@ -76,6 +78,9 @@ protected:
 	virtual int getVar();
 	virtual int getVarOrDirectByte(byte mask);
 	virtual int getVarOrDirectWord(byte mask);
+
+	virtual void getResultPos();
+	void setResult(int result);
 
 	virtual void animateCursor();
 
