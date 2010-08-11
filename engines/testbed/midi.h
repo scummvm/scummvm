@@ -25,6 +25,8 @@
 #ifndef TESTBED_MIDI_H
 #define TESTBED_MIDI_H
 
+#include "common/stream.h"
+#include "sound/midiparser.h"
 #include "testbed/testsuite.h"
 
 // This file can be used as template for header files of other newer testsuites.
@@ -34,6 +36,8 @@ namespace Testbed {
 namespace MidiTests {
 
 // Helper functions for MIDI tests
+bool loadMusicInMemory(Common::MemoryWriteStreamDynamic *ws);
+void waitForMusicToPlay(MidiParser *parser);
 
 // will contain function declarations for MIDI tests
 // add more here
