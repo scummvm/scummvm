@@ -190,7 +190,7 @@ void GfxAnimate::makeSortedList(List *list) {
 	Common::sort(_list.begin(), _list.end(), sortHelper);
 }
 
-void GfxAnimate::fill(byte &old_picNotValid) {
+void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 	reg_t curObject;
 	uint16 signal;
 	GfxView *view = NULL;
@@ -254,7 +254,7 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 			it->scaleY = it->scaleX = 128;
 		}
 
-		bool setNsRect = true;
+		bool setNsRect = maySetNsRect;
 
 		// Create rect according to coordinates and given cel
 		if (it->scaleSignal & kScaleSignalDoScaling) {
@@ -615,7 +615,7 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 	disposeLastCast();
 
 	makeSortedList(list);
-	fill(old_picNotValid);
+	fill(old_picNotValid, true);
 
 	if (old_picNotValid) {
 		// beginUpdate()/endUpdate() were introduced SCI1.
@@ -700,7 +700,7 @@ void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) 
 
 	makeSortedList(list);
 	preprocessAddToPicList();
-	fill(tempPicNotValid);
+	fill(tempPicNotValid, getSciVersion() >= SCI_VERSION_1_1 ? true : false);
 	addToPicDrawCels();
 
 	addToPicSetPicNotValid();
