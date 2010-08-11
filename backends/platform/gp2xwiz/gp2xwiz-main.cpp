@@ -30,7 +30,6 @@
 #include "backends/platform/gp2xwiz/gp2xwiz-hw.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "base/main.h"
-#include "base/internal_version.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
