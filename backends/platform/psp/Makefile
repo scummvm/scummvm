@@ -125,7 +125,9 @@ endif
 
 # PSP LIBS
 PSPLIBS =  -lpspprof -lpspvfpu -lpspdebug -lpspgu -lpspge -lpspdisplay -lpspctrl -lpspsdk \
-	-lpsputility -lpspuser -lpsppower -lpsphprm -lpspsdk -lpsprtc -lpspaudio -lpspkernel
+	-lpsputility -lpspuser -lpsppower -lpsphprm -lpspsdk -lpsprtc -lpspaudio -lpspaudiocodec \
+	-lpspkernel
+
 
 # Add in PSPSDK includes and libraries.
 LIBS     += -lpng -lz -lstdc++ -lc -lm $(PSPLIBS)

@@ -354,9 +354,6 @@ OBJS := $(DATA_OBJS) $(PORT_OBJS) $(FAT_OBJS)
 
 MODULE_DIRS += .
 
-#ndsall: plugins
-#	make -f makefile scummvm.nds
-
 ndsall: plugins
 	make -f makefile scummvm.nds scummvm.ds.gba
 

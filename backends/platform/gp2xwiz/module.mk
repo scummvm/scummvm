@@ -4,8 +4,7 @@ MODULE_OBJS := \
 	gp2xwiz-events.o \
 	gp2xwiz-graphics.o \
 	gp2xwiz-hw.o \
-	gp2xwiz-main.o \
-	gp2xwiz-loader.o
+	gp2xwiz-main.o
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))

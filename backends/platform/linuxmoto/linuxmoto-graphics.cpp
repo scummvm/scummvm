@@ -168,7 +168,6 @@ void OSystem_LINUXMOTO::drawMouse() {
 
 	SDL_Rect dst;
 	int scale;
-	int width, height;
 	int hotX, hotY;
 
 	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
@@ -181,16 +180,12 @@ void OSystem_LINUXMOTO::drawMouse() {
 
 	if (!_overlayVisible) {
 		scale = _videoMode.scaleFactor;
-		width = _videoMode.screenWidth;
-		height = _videoMode.screenHeight;
 		dst.w = _mouseCurState.vW;
 		dst.h = _mouseCurState.vH;
 		hotX = _mouseCurState.vHotX;
 		hotY = _mouseCurState.vHotY;
 	} else {
 		scale = 1;
-		width = _videoMode.overlayWidth;
-		height = _videoMode.overlayHeight;
 		dst.w = _mouseCurState.rW;
 		dst.h = _mouseCurState.rH;
 		hotX = _mouseCurState.rHotX;

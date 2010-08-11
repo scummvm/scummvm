@@ -42,6 +42,7 @@
 #include "base/main.h"
 
 #include "backends/saves/default/default-saves.h"
+
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer_intern.h"
 
@@ -63,7 +64,7 @@ int main(int argc, char *argv[]) {
 
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
-#endif /* DYNAMIC_MODULES */
+#endif
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
