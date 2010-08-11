@@ -88,9 +88,9 @@ enum ZoneFlags {
 	kFlagsNoWalk		= 0x800,			// Zone: character doesn't need to walk towards object to interact
 
 	// BRA specific
-	kFlagsYourself		= 0x1000,
+	kFlagsYourself		= 0x1000,			// BRA: marks zones used by the character on him/herself
 	kFlagsScaled		= 0x2000,
-	kFlagsSelfuse		= 0x4000,
+	kFlagsSelfuse		= 0x4000,			// BRA: marks zones to be preserved across location changes (see Parallaction::freeZones)
 	kFlagsIsAnimation	= 0x1000000,		// BRA: used in walk code (trap check), to tell is a Zone is an Animation
 	kFlagsAnimLinked	= 0x2000000
 };

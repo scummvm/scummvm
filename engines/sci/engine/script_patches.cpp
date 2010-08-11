@@ -51,8 +51,72 @@ struct SciScriptSignature {
 //  - if not EOS, an adjust offset and the actual bytes
 //  - rinse and repeat
 
+// stayAndHelp::changeState (0) is called when ego swims to the left or right
+//  boundaries of room 660. Normally a textbox is supposed to get on screen
+//  but the call is wrong, so not only do we get an error message the script
+//  is also hanging because the cue won't get sent out
+//  This also happens in sierra sci - ffs. bug #3038387
+const byte ecoquest1SignatureStayAndHelp[] = {
+	40,
+	0x3f, 0x01,        // link 01
+	0x87, 0x01,        // lap param[1]
+	0x65, 0x14,        // aTop state
+	0x36,              // push
+	0x3c,              // dup
+	0x35, 0x00,        // ldi 00
+	0x1a,              // eq?
+	0x31, 0x1c,        // bnt [next state]
+	0x76,              // push0
+	0x45, 0x01, 0x00,  // callb export1 from script 0 (switching control off)
+	0x38, 0x22, 0x01,  // pushi 0122
+	0x78,              // push1
+	0x76,              // push0
+	0x81, 0x00,        // lag global[0]
+	0x4a, 0x06,        // send 06 - ego::setMotion(0)
+	0x39, 0x6e,        // pushi 6e (selector init)
+	0x39, 0x04,        // pushi 04
+	0x76,              // push0
+	0x76,              // push0
+	0x39, 0x17,        // pushi 17
+	0x7c,              // pushSelf
+	0x51, 0x82,        // class EcoNarrator
+	0x4a, 0x0c,        // send 0c - EcoNarrator::init(0, 0, 23, self) (BADLY BROKEN!)
+	0x33,              // jmp [end]
+	0
+};
 
-// daySixBeignet::changeState is called when the cop goes out and sets cycles to 220.
+const uint16 ecoquest1PatchStayAndHelp[] = {
+	0x87, 0x01,        // lap param[1]
+	0x65, 0x14,        // aTop state
+	0x36,              // push
+	0x2f, 0x22,        // bt [next state] (this optimization saves 6 bytes)
+	0x39, 0x00,        // pushi 0 (wasting 1 byte here)
+	0x45, 0x01, 0x00,  // callb export1 from script 0 (switching control off)
+	0x38, 0x22, 0x01,  // pushi 0122
+	0x78,              // push1
+	0x76,              // push0
+	0x81, 0x00,        // lag global[0]
+	0x4a, 0x06,        // send 06 - ego::setMotion(0)
+	0x39, 0x6e,        // pushi 6e (selector init)
+	0x39, 0x06,        // pushi 06
+	0x39, 0x02,        // pushi 02 (additional 2 bytes)
+	0x76,              // push0
+	0x76,              // push0
+	0x39, 0x17,        // pushi 17
+	0x7c,              // pushSelf
+	0x38, 0x80, 0x02,  // pushi 280 (additional 3 bytes)
+	0x51, 0x82,        // class EcoNarrator
+	0x4a, 0x10,        // send 10 - EcoNarrator::init(2, 0, 0, 23, self, 640)
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                 adjust
+const SciScriptSignature ecoquest1Signatures[] = {
+    {    660, "CD: bad messagebox and freeze",               PATCH_MAGICDWORD(0x38, 0x22, 0x01, 0x78),   -17, ecoquest1SignatureStayAndHelp, ecoquest1PatchStayAndHelp },
+    {      0, NULL,                                          0,                                            0, NULL,                          NULL }
+};
+
+// daySixBeignet::changeState (4) is called when the cop goes out and sets cycles to 220.
 //  this is not enough time to get to the door, so we patch that to 23 seconds
 const byte gk1SignatureDay6PoliceBeignet[] = {
 	4,
@@ -78,12 +142,14 @@ const uint16 gk1PatchDay6PoliceBeignet[] = {
 	PATCH_END
 };
 
+// sargSleeping::changeState (8) is called when the cop falls asleep and sets cycles to 220.
+//  this is not enough time to get to the door, so we patch it to 42 seconds
 const byte gk1SignatureDay6PoliceSleep[] = {
 	4,
 	0x35, 0x08,        // ldi 08
 	0x1a,              // eq?
 	0x31,              // bnt [next state check]
-	+1, 5,             // [skip 1 byte, offset of bnt]
+	+1, 6,             // [skip 1 byte, offset of bnt]
 	0x34, 0xdc, 0x00,  // ldi 220
 	0x65, 0x1a,        // aTop cycles
 	0x32,              // jmp [end]
@@ -97,8 +163,27 @@ const uint16 gk1PatchDay6PoliceSleep[] = {
 	PATCH_END
 };
 
+// startOfDay5::changeState (20h) - when gabriel goes to the phone the script will hang
+const byte gk1SignatureDay5PhoneFreeze[] = {
+	5,
+	0x35, 0x03,        // ldi 03
+	0x65, 0x1a,        // aTop cycles
+	0x32,              // jmp [end]
+	+2, 3,             // [skip 2 bytes, offset of jmp]
+	0x3c,              // dup
+	0x35, 0x21,        // ldi 21
+	0
+};
+
+const uint16 gk1PatchDay5PhoneFreeze[] = {
+	0x35, 0x06,        // ldi 06
+	0x65, 0x20,        // aTop ticks
+	PATCH_END
+};
+
 //    script, description,                                   magic DWORD,                                 adjust
 const SciScriptSignature gk1Signatures[] = {
+    {    212, "day 5 phone freeze",                          PATCH_MAGICDWORD(0x35, 0x03, 0x65, 0x1a),     0, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
     {    230, "day 6 police beignet timer issue",            PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),   -16, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
     {    230, "day 6 police sleep timer issue",              PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),    -5, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },
     {      0, NULL,                                          0,                                            0, NULL,                          NULL }
@@ -325,6 +410,8 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 
 void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
 	const SciScriptSignature *signatureTable = NULL;
+	if (g_sci->getGameId() == GID_ECOQUEST)
+		signatureTable = ecoquest1Signatures;
 	if (g_sci->getGameId() == GID_GK1)
 		signatureTable = gk1Signatures;
 // hoyle4 now works due workaround inside GfxPorts
@@ -341,7 +428,7 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 				int32 foundOffset = findSignature(signatureTable, scriptData, scriptSize);
 				if (foundOffset != -1) {
 					// found, so apply the patch
-					warning("matched %s on script %d offset %d", signatureTable->description, scriptNr, foundOffset);
+					warning("matched and patched %s on script %d offset %d", signatureTable->description, scriptNr, foundOffset);
 					applyPatch(signatureTable->patch, scriptData, scriptSize, foundOffset);
 				}
 			}

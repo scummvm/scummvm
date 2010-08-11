@@ -203,13 +203,13 @@ int Input::updateGameInput() {
 		return event;
 	}
 
-	if (_vm->getGameType() == GType_Nippon) {
+	if (_gameType == GType_Nippon) {
 		if (_hasKeyPressEvent && (_vm->getFeatures() & GF_DEMO) == 0) {
 			if (_keyPressed.keycode == Common::KEYCODE_l) event = kEvLoadGame;
 			if (_keyPressed.keycode == Common::KEYCODE_s) event = kEvSaveGame;
 		}
 	} else
-	if (_vm->getGameType() == GType_BRA) {
+	if (_gameType == GType_BRA) {
 		if (_hasKeyPressEvent && (_vm->getFeatures() & GF_DEMO) == 0) {
 			if (_keyPressed.keycode == Common::KEYCODE_F5) event = kEvIngameMenu;
 		}
@@ -325,8 +325,13 @@ bool Input::translateGameInput() {
 
 	if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || (ACTIONTYPE(z) == kZoneCommand))) {
 
-		if (z->_flags & kFlagsNoWalk) {
-			// character doesn't need to walk to take specified action
+		bool noWalk = z->_flags & kFlagsNoWalk;	// check the explicit no-walk flag
+		if (_gameType == GType_BRA) {
+			// action performed on object marked for self-use do not need walk in BRA
+			noWalk |= ((z->_flags & kFlagsYourself) != 0);
+		}
+
+		if (noWalk) {
 			takeAction(z);
 		} else {
 			// action delayed: if Zone defined a moveto position the character is programmed to move there,
@@ -351,7 +356,7 @@ bool Input::translateGameInput() {
 
 void Input::enterInventoryMode() {
 	Common::Point mousePos;
-	getCursorPos(mousePos);
+	getAbsoluteCursorPos(mousePos);
 	bool hitCharacter = _vm->hitZone(kZoneYou, mousePos.x, mousePos.y);
 
 	if (hitCharacter) {

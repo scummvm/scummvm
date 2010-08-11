@@ -1695,7 +1695,7 @@ void DrasculaEngine::animation_9_6() {
 	// We set the room number to -1 for the same purpose.
 	// Also check animation_2_1(), where the same hack was used
 	// by the original
-	roomNumber = -1;
+	roomNumber = -2;
 	loadPic("nota2.alg", bgSurface, HALF_PAL);
 	black();
 	trackProtagonist = 1;

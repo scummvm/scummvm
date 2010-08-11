@@ -234,19 +234,6 @@ protected:
 
 #endif
 
-class ConfigDialog : public GUI::OptionsDialog {
-protected:
-#ifdef SMALL_SCREEN_DEVICE
-	GUI::Dialog		*_keysDialog;
-#endif
-
-public:
-	ConfigDialog();
-	~ConfigDialog();
-
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-};
-
 #pragma mark -
 
 ScummDialog::ScummDialog(int x, int y, int w, int h) : GUI::Dialog(x, y, w, h) {
@@ -259,219 +246,27 @@ ScummDialog::ScummDialog(String name) : GUI::Dialog(name) {
 
 #pragma mark -
 
-enum {
-	kSaveCmd = 'SAVE',
-	kLoadCmd = 'LOAD',
-	kPlayCmd = 'PLAY',
-	kOptionsCmd = 'OPTN',
-	kHelpCmd = 'HELP',
-	kAboutCmd = 'ABOU',
-	kQuitCmd = 'QUIT',
-	kChooseCmd = 'CHOS'
-};
+#ifndef DISABLE_HELP
 
 ScummMenuDialog::ScummMenuDialog(ScummEngine *scumm)
-	: ScummDialog("ScummMain"), _vm(scumm) {
-
-	new GUI::ButtonWidget(this, "ScummMain.Resume", "Resume", kPlayCmd, 'P');
-
-	_loadButton = new GUI::ButtonWidget(this, "ScummMain.Load", "Load", kLoadCmd, 'L');
-	_saveButton = new GUI::ButtonWidget(this, "ScummMain.Save", "Save", kSaveCmd, 'S');
-
-	new GUI::ButtonWidget(this, "ScummMain.Options", "Options", kOptionsCmd, 'O');
-#ifndef DISABLE_HELP
-	new GUI::ButtonWidget(this, "ScummMain.Help", "Help", kHelpCmd, 'H');
-#endif
-	new GUI::ButtonWidget(this, "ScummMain.About", "About", kAboutCmd, 'A');
-
-	new GUI::ButtonWidget(this, "ScummMain.Quit", "Quit", kQuitCmd, 'Q');
-
-	//
-	// Create the sub dialog(s)
-	//
-	_aboutDialog = new GUI::AboutDialog();
-	_optionsDialog = new ConfigDialog();
-#ifndef DISABLE_HELP
+	: MainMenuDialog(scumm) {
 	_helpDialog = new HelpDialog(scumm->_game);
-#endif
-	_saveDialog = new GUI::SaveLoadChooser("Save game:", "Save");
-	_saveDialog->setSaveMode(true);
-	_loadDialog = new GUI::SaveLoadChooser("Load game:", "Load");
-	_loadDialog->setSaveMode(false);
+	_helpButton->setEnabled(true);
 }
 
 ScummMenuDialog::~ScummMenuDialog() {
-	delete _aboutDialog;
-	delete _optionsDialog;
-#ifndef DISABLE_HELP
 	delete _helpDialog;
-#endif
-	delete _saveDialog;
-	delete _loadDialog;
-}
-
-int ScummMenuDialog::runModal() {
-	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
-	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
-	return ScummDialog::runModal();
-}
-
-void ScummMenuDialog::reflowLayout() {
-	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
-	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
-	Dialog::reflowLayout();
 }
 
 void ScummMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kSaveCmd:
-		save();
-		break;
-	case kLoadCmd:
-		load();
-		break;
-	case kPlayCmd:
-		close();
-		break;
-	case kOptionsCmd:
-		_optionsDialog->runModal();
-		break;
-	case kAboutCmd:
-		_aboutDialog->runModal();
-		break;
-#ifndef DISABLE_HELP
 	case kHelpCmd:
 		_helpDialog->runModal();
 		break;
-#endif
-	case kQuitCmd:
-		_vm->quitGame();
-		close();
-		break;
 	default:
-		ScummDialog::handleCommand(sender, cmd, data);
+		MainMenuDialog::handleCommand(sender, cmd, data);
 	}
 }
-
-void ScummMenuDialog::save() {
-	Common::String gameId = ConfMan.get("gameid");
-
-	const EnginePlugin *plugin = 0;
-	EngineMan.findGame(gameId, &plugin);
-
-	int idx = _saveDialog->runModal(plugin, ConfMan.getActiveDomainName());
-	if (idx >= 0) {
-		String result(_saveDialog->getResultString());
-		char buffer[20];
-		const char *str;
-		if (result.empty()) {
-			// If the user was lazy and entered no save name, come up with a default name.
-			sprintf(buffer, "Save %d", idx);
-			str = buffer;
-		} else
-			str = result.c_str();
-		_vm->requestSave(idx, str);
-		close();
-	}
-}
-
-void ScummMenuDialog::load() {
-	Common::String gameId = ConfMan.get("gameid");
-
-	const EnginePlugin *plugin = 0;
-	EngineMan.findGame(gameId, &plugin);
-
-	int idx = _loadDialog->runModal(plugin, ConfMan.getActiveDomainName());
-	if (idx >= 0) {
-		_vm->requestLoad(idx);
-		close();
-	}
-}
-
-#pragma mark -
-
-enum {
-	kKeysCmd = 'KEYS'
-};
-
-// FIXME: We use the empty string as domain name here. This tells the
-// ConfigManager to use the 'default' domain for all its actions. We do that
-// to get as close as possible to editing the 'active' settings.
-//
-// However, that requires bad & evil hacks in the ConfigManager code,
-// and even then still doesn't work quite correctly.
-// For example, if the transient domain contains 'false' for the 'fullscreen'
-// flag, but the user used a hotkey to switch to windowed mode, then the dialog
-// will display the wrong value anyway.
-//
-// Proposed solution consisting of multiple steps:
-// 1) Add special code to the open() code that reads out everything stored
-//    in the transient domain that is controlled by this dialog, and updates
-//    the dialog accordingly.
-// 2) Even more code is added to query the backend for current settings, like
-//    the fullscreen mode flag etc., and also updates the dialog accordingly.
-// 3) The domain being edited is set to the active game domain.
-// 4) If the dialog is closed with the "OK" button, then we remove everything
-//    stored in the transient domain (or at least everything corresponding to
-//    switches in this dialog.
-//    If OTOH the dialog is closed with "Cancel" we do no such thing.
-//
-// These changes will achieve two things at once: Allow us to get rid of using
-//  "" as value for the domain, and in fact provide a somewhat better user
-// experience at the same time.
-ConfigDialog::ConfigDialog()
-	: GUI::OptionsDialog("", "ScummConfig") {
-
-	//
-	// Sound controllers
-	//
-
-	addVolumeControls(this, "ScummConfig.");
-
-	//
-	// Some misc options
-	//
-
-	// SCUMM has a talkspeed range of 0-9
-	addSubtitleControls(this, "ScummConfig.", 9);
-
-	//
-	// Add the buttons
-	//
-
-	new GUI::ButtonWidget(this, "ScummConfig.Ok", "OK", GUI::kOKCmd, 'O');
-	new GUI::ButtonWidget(this, "ScummConfig.Cancel", "Cancel", GUI::kCloseCmd, 'C');
-#ifdef SMALL_SCREEN_DEVICE
-	new GUI::ButtonWidget(this, "ScummConfig.Keys", "Keys", kKeysCmd, 'K');
-	_keysDialog = NULL;
-#endif
-}
-
-ConfigDialog::~ConfigDialog() {
-#ifdef SMALL_SCREEN_DEVICE
-	delete _keysDialog;
-#endif
-}
-
-void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	switch (cmd) {
-	case kKeysCmd:
-#ifdef SMALL_SCREEN_DEVICE
-		//
-		// Create the sub dialog(s)
-		//
-		_keysDialog = new GUI::KeysDialog();
-		_keysDialog->runModal();
-		delete _keysDialog;
-		_keysDialog = NULL;
-#endif
-		break;
-	default:
-		GUI::OptionsDialog::handleCommand (sender, cmd, data);
-	}
-}
-
-#ifndef DISABLE_HELP
 
 #pragma mark -
 

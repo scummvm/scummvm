@@ -290,26 +290,26 @@ void MenuButton::onRefresh() {
 	case OBJTYPE_SL_TEXT:
 		switch (_objectState) {
 		case OS_MOUSEOVER:
-			_vm->_font->setColors(TEXT_COLOR_MOUSEOVER_SHADOW, TEXT_COLOR_MOUSEOVER_FOREGROUND,
+			_vm->_font->current()->setColours(TEXT_COLOR_MOUSEOVER_SHADOW, TEXT_COLOR_MOUSEOVER_FOREGROUND,
 				TEXT_COLOR_MOUSEOVER_HILIGHT);
 			sprite = sprites[SL_LINE_MOUSEOVER];
 			break;
 
 		case OS_PRESSED:
-			_vm->_font->setColors(TEXT_COLOR_PRESSED_SHADOW, TEXT_COLOR_PRESSED_FOREGROUND,
+			_vm->_font->current()->setColours(TEXT_COLOR_PRESSED_SHADOW, TEXT_COLOR_PRESSED_FOREGROUND,
 				TEXT_COLOR_PRESSED_HILIGHT);
 			sprite = sprites[SL_LINE_PRESSED];
 			break;
 
 		case OS_GREYED:
-			_vm->_font->setColors(TEXT_COLOR_GREYED_SHADOW, TEXT_COLOR_GREYED_FOREGROUND,
+			_vm->_font->current()->setColours(TEXT_COLOR_GREYED_SHADOW, TEXT_COLOR_GREYED_FOREGROUND,
 				TEXT_COLOR_GREYED_HILIGHT);
 			sprite = sprites[SL_LINE_NORMAL];
 			break;
 
 		default:
 		case OS_NORMAL:
-			_vm->_font->setColors(TEXT_COLOR_NORMAL_SHADOW, TEXT_COLOR_NORMAL_FOREGROUND,
+			_vm->_font->current()->setColours(TEXT_COLOR_NORMAL_SHADOW, TEXT_COLOR_NORMAL_FOREGROUND,
 				TEXT_COLOR_NORMAL_HILIGHT);
 			sprite = sprites[SL_LINE_NORMAL];
 			break;
@@ -849,11 +849,11 @@ void MenuSaveLoadText::onRefresh() {
 		if (_displayValue != 0) {
 			char tempBuffer[5];
 			sprintf(tempBuffer, "%02d", _displayValue);
-			_vm->_font->writeString(_parent, tempBuffer, xp, _bounds.top + 1, 0, -1);
+			_vm->_font->current()->writeString(_parent, tempBuffer, xp, _bounds.top + 1, 0, -1);
 			xp = _bounds.left + 26;
 		}
 
-		_vm->_font->writeString(_parent, _displayText, xp, _bounds.top + 1, 0, -1);
+		_vm->_font->current()->writeString(_parent, _displayText, xp, _bounds.top + 1, 0, -1);
 	}
 }
 
@@ -955,18 +955,18 @@ void MenuTextField::onRefresh() {
 	// Draw the text
 
 	_vm->_font->setFont(FONT_MENU);
-	_vm->_font->setColors(TEXT_COLOR_NORMAL_SHADOW, TEXT_COLOR_NORMAL_FOREGROUND,
+	_vm->_font->current()->setColours(TEXT_COLOR_NORMAL_SHADOW, TEXT_COLOR_NORMAL_FOREGROUND,
 		TEXT_COLOR_NORMAL_HILIGHT);
 	int xp = _bounds.left + 4;
 
 	if (_displayValue != 0) {
 		char tempBuffer[5];
 		sprintf(tempBuffer, "%02d", _displayValue);
-		_vm->_font->writeString(_parent, tempBuffer, xp, _bounds.top + 1, 0, -1);
+		_vm->_font->current()->writeString(_parent, tempBuffer, xp, _bounds.top + 1, 0, -1);
 		xp = _bounds.left + 26;
 	}
 
-	_vm->_font->writeString(_parent, _displayText, xp, _bounds.top + 1, 0, -1);
+	_vm->_font->current()->writeString(_parent, _displayText, xp, _bounds.top + 1, 0, -1);
 
 	if (focused) {
 		// Draw in the cursor
@@ -975,7 +975,7 @@ void MenuTextField::onRefresh() {
 			// Get the width of the string up to the cursor position
 			char tempCh = *_cursor;
 			*_cursor = '\0';
-			int stringWidth = _vm->_font->getWidth(_displayText);
+			int stringWidth = _vm->_font->current()->getWidth(_displayText);
 			*_cursor = tempCh;
 
 			parent()->setColor(TEXT_COLOR_MOUSEOVER_FOREGROUND);
@@ -1015,10 +1015,10 @@ bool MenuTextField::onEvent(M4EventType event, int32 param, int x, int y, MenuOb
 					tempP = &tempStr[tempLen];
 					_vm->_font->setFont(FONT_MENU);
 
-					tempLen = _vm->_font->getWidth(tempStr);
+					tempLen = _vm->_font->current()->getWidth(tempStr);
 					while ((tempP != &tempStr[0]) && (tempLen > x - _bounds.left - 26)) {
 						*--tempP = '\0';
-						tempLen = _vm->_font->getWidth(tempStr);
+						tempLen = _vm->_font->current()->getWidth(tempStr);
 					}
 
 					_cursor = &_displayText[tempP - &tempStr[0]];
@@ -1098,7 +1098,7 @@ bool MenuTextField::onEvent(M4EventType event, int32 param, int x, int y, MenuOb
 			parent()->_deleteSaveDesc = false;
 			_vm->_font->setFont(FONT_MENU);
 
-			tempLen = _vm->_font->getWidth(_displayText);
+			tempLen = _vm->_font->current()->getWidth(_displayText);
 			if ((strlen(_displayText) < MAX_SAVEGAME_NAME - 1) &&
 				(tempLen < _pixelWidth - 12) && (param >= 32) && (param <= 127)) {
 
@@ -1140,9 +1140,9 @@ GUITextField::GUITextField(View *owner, const Common::Rect &bounds): GUIRect(own
 
 void GUITextField::onRefresh() {
 	_parent->fillRect(_bounds, _vm->_palette->BLACK);
-	_vm->_font->setColors(3, 3, 3);
+	_vm->_font->current()->setColours(3, 3, 3);
 	_vm->_font->setFont(FONT_INTERFACE);
-	_vm->_font->writeString(_parent, _text.c_str(), _bounds.left, _bounds.top, 0, 1);
+	_vm->_font->current()->writeString(_parent, _text.c_str(), _bounds.left, _bounds.top, 0, 1);
 }
 
 //--------------------------------------------------------------------------

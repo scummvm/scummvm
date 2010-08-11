@@ -286,6 +286,7 @@ void LocationParser_ns::parseAnimation(AnimationList &list, char *name) {
 	debugC(5, kDebugParser, "parseAnimation(name: %s)", name);
 
 	if (_vm->_location.findAnimation(name)) {
+		_zoneProg++;
 		_script->skip("endanimation");
 		return;
 	}
@@ -1305,6 +1306,7 @@ void LocationParser_ns::parseZone(ZoneList &list, char *name) {
 	debugC(5, kDebugParser, "parseZone(name: %s)", name);
 
 	if (_vm->_location.findZone(name)) {
+		_zoneProg++;
 		_script->skip("endzone");
 		return;
 	}

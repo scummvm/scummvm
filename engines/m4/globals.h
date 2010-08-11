@@ -276,6 +276,7 @@ public:
 	// DEPRECATED: ScummVM re-implementation keeps all the quotes loaded, so the methods below are stubs
 	void clearQuotes() {}
 	void loadQuoteRange(int startNum, int endNum) {}
+	void loadQuoteSet(...) {}
 	void loadQuote(int quoteNum) {}
 
 	void loadMadsMessagesInfo();

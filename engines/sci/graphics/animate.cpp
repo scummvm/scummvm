@@ -243,6 +243,8 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 			}
 		}
 
+		//warning("%s", _s->_segMan->getObjectName(curObject));
+
 		if (!view->isScaleable()) {
 			// Laura Bow 2 (especially floppy) depends on this, some views are not supposed to be scaleable
 			//  this "feature" was removed in later versions of SCI1.1
@@ -516,6 +518,19 @@ void GfxAnimate::reAnimate(Common::Rect rect) {
 	}
 }
 
+void GfxAnimate::preprocessAddToPicList() {
+	AnimateList::iterator it;
+	const AnimateList::iterator end = _list.end();
+
+	for (it = _list.begin(); it != end; ++it) {
+		if (it->priority == -1)
+			it->priority = _ports->kernelCoordinateToPriority(it->y);
+
+		// Do not allow priority to get changed by fill()
+		it->signal |= kSignalFixedPriority;
+	}
+}
+
 void GfxAnimate::addToPicDrawCels() {
 	reg_t curObject;
 	GfxView *view = NULL;
@@ -525,17 +540,11 @@ void GfxAnimate::addToPicDrawCels() {
 	for (it = _list.begin(); it != end; ++it) {
 		curObject = it->object;
 
-		if (it->priority == -1)
-			it->priority = _ports->kernelCoordinateToPriority(it->y);
-
 		// Get the corresponding view
 		view = _cache->getView(it->viewId);
 
-		// Create rect according to coordinates and given cel
-		view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
-
 		// draw corresponding cel
-		_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo);
+		_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
 		if ((it->signal & kSignalIgnoreActor) == 0) {
 			it->celRect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(it->priority) - 1, it->celRect.top, it->celRect.bottom - 1);
 			_paint16->fillRect(it->celRect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
@@ -679,6 +688,7 @@ void GfxAnimate::addToPicSetPicNotValid() {
 
 void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) {
 	List *list;
+	byte tempPicNotValid = 0;
 
 	_ports->setPort((Port *)_ports->_picWind);
 
@@ -687,6 +697,8 @@ void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) 
 		error("kAddToPic called with non-list as parameter");
 
 	makeSortedList(list);
+	preprocessAddToPicList();
+	fill(tempPicNotValid);
 	addToPicDrawCels();
 
 	addToPicSetPicNotValid();

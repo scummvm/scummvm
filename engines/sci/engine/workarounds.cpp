@@ -114,6 +114,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   14, { WORKAROUND_FAKE,   0 } }, // jones/ega&vga only - called when the game starts
 	{ GID_KQ5,            -1,     0,  0,                   "", "export 29",      -1,    3, { WORKAROUND_FAKE,   0 } }, // called when playing harp for the harpies or when aborting dialog in toy shop, is used for kDoAudio - bug #3034700
 	{ GID_KQ5,            25,    25,  0,              "rm025", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // inside witch forest, when going to the room where the walking rock is
+    { GID_KQ5,            55,    55,  0,         "helpScript", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // when giving the tambourine to the monster in the labyrinth (only happens at one of the locations) - bug #3041262
 	{ GID_KQ6,            -1,    30,  0,               "rats", "changeState",    -1,   -1, { WORKAROUND_FAKE,   0 } }, // rats in the catacombs (temps 1 - 5) - bugs #3034597, #3035495, #3035824
 	{ GID_KQ6,           210,   210,  0,              "rm210", "scriptCheck",    -1,    0, { WORKAROUND_FAKE,   1 } }, // using inventory in that room - bug #3034565
 	{ GID_KQ6,           500,   500,  0,              "rm500", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // going to island of the beast
@@ -124,8 +125,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LAURABOW,       -1,   967,  0,             "myIcon", "cycle",          -1,    1, { WORKAROUND_FAKE,   0 } }, // having any portrait conversation coming up (initial bug #3034985)
 	{ GID_LAURABOW2,      -1,    24,  0,              "gcWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_LAURABOW2,      -1,    21,  0,      "dropCluesCode", "doit",           -1,    1, { WORKAROUND_FAKE, 0x7fff } }, // when asking some questions (e.g. the reporter about the burglary, or the policeman about Ziggy). Must be big, as the game scripts perform lt on it and start deleting journal entries - bugs #3035068, #3036274
-	{ GID_LAURABOW2,      -1,    90,  0,               "aTut", "init",           -1,    6, { WORKAROUND_FAKE,   0 } }, // Random actors in museum (bug #3041257)
-	{ GID_LAURABOW2,      -1,    90,  0,             "aZiggy", "init",           -1,    6, { WORKAROUND_FAKE,   0 } }, // Random actors in museum (bug #3041257)
+	{ GID_LAURABOW2,      -1,    90,  1,        "MuseumActor", "init",           -1,    6, { WORKAROUND_FAKE,   0 } }, // Random actors in museum (bug #3041257)
 	{ GID_LAURABOW2,     240,   240,  0,     "sSteveAnimates", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // Steve Dorian's idle animation at the docks - bug #3036291
 	{ GID_LONGBOW,        -1,   213,  0,              "clear", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // When giving an answer using the druid hand sign code in any room
 	{ GID_LONGBOW,        -1,   213,  0,             "letter", "handleEvent",  0xa8,    1, { WORKAROUND_FAKE,   0 } }, // When using the druid hand sign code in any room - bug #3036601
@@ -155,6 +155,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG3,          330,   330, -1,             "Teller", "doChild",        -1,   -1, { WORKAROUND_FAKE,   0 } }, // when talking to King Rajah about "Rajah" (bug #3036390, temp 1) or "Tarna" (temp 0), or when clicking on yourself and saying "Greet" (bug #3039774, temp 1)
 	{ GID_QFG3,          700,   700, -1,      "monsterIsDead", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // in the jungle, after winning any fight, bug #3040624
 	{ GID_QFG3,          470,   470, -1,              "rm470", "notify",         -1,    0, { WORKAROUND_FAKE,   0 } }, // closing the character screen in the Simbani village in the room with the bridge, bug #3040565
+	{ GID_QFG3,          490,   490, -1,      "computersMove", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // when finishing awari game, bug #3040579
 	{ GID_QFG4,           -1,    15, -1,     "charInitScreen", "dispatchEvent",  -1,    5, { WORKAROUND_FAKE,   0 } }, // floppy version, when viewing the character screen
 	{ GID_QFG4,           -1, 64917, -1,       "controlPlane", "setBitmap",      -1,    3, { WORKAROUND_FAKE,   0 } }, // floppy version, when entering the game menu
 	{ GID_QFG4,           -1, 64917, -1,              "Plane", "setBitmap",      -1,    3, { WORKAROUND_FAKE,   0 } }, // floppy version, happen sometimes in fights

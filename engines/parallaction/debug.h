@@ -28,6 +28,7 @@ protected:
 	bool Cmd_Animations(int argc, const char **argv);
 	bool Cmd_LocalFlags(int argc, const char **argv);
 	bool Cmd_GlobalFlags(int argc, const char **argv);
+	bool Cmd_ToggleGlobalFlag(int argc, const char **argv);
 	bool Cmd_Locations(int argc, const char **argv);
 	bool Cmd_GfxObjects(int argc, const char **argv);
 	bool Cmd_Programs(int argc, const char** argv);
