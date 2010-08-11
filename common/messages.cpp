@@ -2315,7 +2315,7 @@ static const PoMessageEntry _translation_es_ES[] = {
 };
 
 static const PoMessageEntry _translation_de_DE[] = {
-	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-08-11 22:12+0100\nPO-Revision-Date: 2010-08-11 13:22+0100\nLast-Translator: Simon Sawatzki\nLanguage-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki <SimSaw@gmx.de>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Deutsch\nPlural-Forms: nplurals=2; plural=n != 1;\n" },
+	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-08-11 22:12+0100\nPO-Revision-Date: 2010-08-12 00:56+0100\nLast-Translator: Simon Sawatzki\nLanguage-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki <SimSaw@gmx.de>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Deutsch\nPlural-Forms: nplurals=2; plural=n != 1;\n" },
 	{ 1, "   M\366chten Sie wirklich beenden?    " },
 	{ 2, " (Aktiv)" },
 	{ 3, " (Spiel)" },
@@ -2335,7 +2335,7 @@ static const PoMessageEntry _translation_de_DE[] = {
 	{ 17, "AdLib-Emulator" },
 	{ 18, "AdLib wird f\374r die Musik in vielen Spielen verwendet." },
 	{ 19, "Spiel hinzuf\374gen" },
-	{ 20, "AdLib-Emulator" },
+	{ 20, "Amiga-Audio-Emulator" },
 	{ 21, "Kantengl\344ttung (16bpp)" },
 	{ 23, "Seitenverh\344ltnis korrigieren" },
 	{ 24, "Zugewiesene Taste: %s" },
@@ -2347,7 +2347,7 @@ static const PoMessageEntry _translation_de_DE[] = {
 	{ 30, "Tasten zuweisen" },
 	{ 31, "Beides" },
 	{ 32, "Helligkeit:" },
-	{ 33, "AdLib-Emulator" },
+	{ 33, "C64-Audio-Emulator" },
 	{ 34, "Abbrechen" },
 	{ 35, "Kann Datei nicht erstellen." },
 	{ 36, "Spieloptionen \344ndern" },

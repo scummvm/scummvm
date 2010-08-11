@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2010-08-11 22:12+0100\n"
-"PO-Revision-Date: 2010-08-11 13:22+0100\n"
+"PO-Revision-Date: 2010-08-12 00:56+0100\n"
 "Last-Translator: Simon Sawatzki\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
 "<SimSaw@gmx.de>\n"
@@ -953,9 +953,8 @@ msgid "No music"
 msgstr "Keine Musik"
 
 #: sound/mods/paula.cpp:192
-#, fuzzy
 msgid "Amiga Audio Emulator"
-msgstr "AdLib-Emulator"
+msgstr "Amiga-Audio-Emulator"
 
 #: sound/softsynth/adlib.cpp:1590
 msgid "AdLib Emulator"
@@ -966,9 +965,8 @@ msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
 msgstr ""
 
 #: sound/softsynth/sid.cpp:1434
-#, fuzzy
 msgid "C64 Audio Emulator"
-msgstr "AdLib-Emulator"
+msgstr "C64-Audio-Emulator"
 
 #: sound/softsynth/mt32.cpp:327
 msgid "Initialising MT-32 Emulator"
