@@ -221,7 +221,7 @@ void GfxPaint16::paintRect(const Common::Rect &rect) {
 	fillRect(rect, GFX_SCREEN_MASK_VISUAL, _ports->_curPort->penClr);
 }
 
-void GfxPaint16::fillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen, byte clrBack, byte bControl) {
+void GfxPaint16::fillRect(const Common::Rect &rect, int16 drawFlags, byte color, byte priority, byte control) {
 	Common::Rect r = rect;
 	r.clip(_ports->_curPort->rect);
 	if (r.isEmpty()) // nothing to fill
@@ -238,17 +238,17 @@ void GfxPaint16::fillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen
 			for (y = r.top; y < r.bottom; y++) {
 				for (x = r.left; x < r.right; x++) {
 					curVisual = _screen->getVisual(x, y);
-					if (curVisual == clrPen) {
-						_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, clrBack, 0, 0);
-					} else if (curVisual == clrBack) {
-						_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, clrPen, 0, 0);
+					if (curVisual == color) {
+						_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, priority, 0, 0);
+					} else if (curVisual == priority) {
+						_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, color, 0, 0);
 					}
 				}
 			}
-		} else { // just fill rect with ClrPen
+		} else { // just fill rect with color
 			for (y = r.top; y < r.bottom; y++) {
 				for (x = r.left; x < r.right; x++) {
-					_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, clrPen, 0, 0);
+					_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, color, 0, 0);
 				}
 			}
 		}
@@ -258,10 +258,14 @@ void GfxPaint16::fillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen
 		return;
 	drawFlags &= GFX_SCREEN_MASK_PRIORITY|GFX_SCREEN_MASK_CONTROL;
 
+	// we need to isolate the bits, sierra sci saved priority and control inside one byte, we don't
+	priority &= 0x0f;
+	control &= 0x0f;
+
 	if (oldPenMode != 2) {
 		for (y = r.top; y < r.bottom; y++) {
 			for (x = r.left; x < r.right; x++) {
-				_screen->putPixel(x, y, drawFlags, 0, clrBack, bControl);
+				_screen->putPixel(x, y, drawFlags, 0, priority, control);
 			}
 		}
 	} else {
