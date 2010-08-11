@@ -360,7 +360,6 @@ void TownsAudioInterface::timerCallbackB() {
 }
 
 int TownsAudioInterface::intf_reset(va_list &args) {
-	Common::StackLock lock(_mutex);
 	fmReset();
 	pcmReset();
 	callback(68);
@@ -1393,12 +1392,9 @@ void TownsAudioInterface::updateOutputVolume() {
 	// balance values for our -128 to 127 volume range
 	
 	// CD-AUDIO
-	int vl = (int)(((float)_outputLevel[12] * 127.0f) / 63.0f);
-	int vr = (int)(((float)_outputLevel[13] * 127.0f) / 63.0f);
-	int8 balance = vr - vl;
-	vl = (int)(((float)_outputLevel[12] * 255.0f) / 63.0f);
-	vr = (int)(((float)_outputLevel[13] * 255.0f) / 63.0f);
-	AudioCD.setVolume((vl + vr) >> 1);
+	int volume = (int)(((float)MAX(_outputLevel[12], _outputLevel[13]) * 255.0f) / 63.0f);
+	int balance = (int)((float)((_outputLevel[13] - _outputLevel[12]) * 127.0f) / (float)MAX(_outputLevel[12], _outputLevel[13]));
+	AudioCD.setVolume(volume);
 	AudioCD.setBalance(balance);
 }
 
