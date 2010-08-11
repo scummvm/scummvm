@@ -172,11 +172,10 @@ SVNROOT := https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/
 endif
 
 # Define the Subversion revision if available, either autodetected or
-# specified by the user
+# specified by the user, but only for base/version.cpp.
 ifneq ($(origin VER_SVNREV), undefined)
-CXXFLAGS+= -DSCUMMVM_SVN_REVISION=\"$(VER_SVNREV)\"
+base/version.o: CXXFLAGS:=$(CXXFLAGS) -DSCUMMVM_SVN_REVISION=\"$(VER_SVNREV)\"
 endif
-
 
 ######################################################################
 # Distribution settings
