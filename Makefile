@@ -27,8 +27,6 @@ ifeq "$(HAVE_GCC)" "1"
 	# Enable even more warnings...
 	CXXFLAGS+= -Wpointer-arith -Wcast-qual
 	CXXFLAGS+= -Wshadow -Wimplicit -Wnon-virtual-dtor -Wwrite-strings
-	# Warn if global constructors are used.
-	CXXFLAGS+= -Wglobal-constructors
 
 	# Currently we disable this gcc flag, since it will also warn in cases,
 	# where using GCC_PRINTF (means: __attribute__((format(printf, x, y))))
@@ -43,6 +41,10 @@ endif
 ifeq "$(HAVE_CLANG)" "1"
 	CXXFLAGS+= -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants
 endif
+
+# Warn if global constructors are used. Only available in GCC with LLVM backend
+# (and maybe clang?), hence off by default.
+#CXXFLAGS+= -Wglobal-constructors
 
 #######################################################################
 # Default commands - put the necessary replacements in config.mk      #
