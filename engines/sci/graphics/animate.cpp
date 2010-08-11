@@ -205,13 +205,28 @@ void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 		view = _cache->getView(it->viewId);
 
 		// adjust loop and cel, if any of those is invalid
-		if (it->loopNo >= view->getLoopCount()) {
+		//  this seems to be completely crazy code
+		//  sierra sci checked signed int16 to be above or equal the counts and reseted to 0 in those cases
+		//  later during view processing those are compared unsigned again and then set to maximum count - 1
+		//  Games rely on this behaviour. For example laura bow 1 has a knight standing around in room 37
+		//   which has cel set to 3. This cel does not exist and the actual knight is 0
+		//   In kq5 on the other hand during the intro, when the trunk is opened, cel is set to some real
+		//   high number, which is negative when considered signed. This actually requires to get fixed to
+		//   maximum cel, otherwise the trunk would be closed.
+		int16 viewLoopCount = view->getLoopCount();
+		if (it->loopNo >= viewLoopCount) {
 			it->loopNo = 0;
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(loop), it->loopNo);
+		} else if (it->loopNo < 0) {
+			it->loopNo = viewLoopCount - 1;
+			// not setting selector is right, sierra sci didn't do it during view processing as well
 		}
-		if (it->celNo >= view->getCelCount(it->loopNo)) {
+		int16 viewCelCount = view->getCelCount(it->loopNo);
+		if (it->celNo >= viewCelCount) {
 			it->celNo = 0;
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(cel), it->celNo);
+		} else if (it->celNo < 0) {
+			it->celNo = viewCelCount - 1;
 		}
 
 		// Process global scaling, if needed
