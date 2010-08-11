@@ -332,8 +332,10 @@ uint16 Script::validateExportFunc(int pubfunct) {
 	if (offset == 0) {
 		// Check if the game has a second export table (e.g. script 912 in Camelot)
 		// Fixes bug #3039785
-		if (g_sci->getGameId() == GID_ECOQUEST) // cheap fix in here for eco quest 1, [md5] plz look into this TODO FIXME
+		if (g_sci->getGameId() != GID_CAMELOT) // cheap fix
 			return offset;
+		// we are getting assert()s in eco quest 1 (right on startup) and kq6 and maybe more
+		// [md5] plz look into this TODO FIXME
 		const uint16 *secondExportTable = (const uint16 *)findBlock(SCI_OBJ_EXPORTS, 0);
 
 		if (secondExportTable) {
