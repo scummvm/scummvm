@@ -232,12 +232,12 @@ static const GameSettings gameVariantsTable[] = {
 	{"loom", "FM-TOWNS",     0, GID_LOOM, 3, 0, MDT_TOWNS,                        GF_AUDIOTRACKS | GF_OLD256, Common::kPlatformFMTowns, GUIO_NOSPEECH | GUIO_NOMIDI},
 	{"loom", "VGA",      "vga", GID_LOOM, 4, 0, MDT_NONE,                         GF_AUDIOTRACKS,             Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
 
-	{"pass", 0, 0, GID_PASS, 4, 0, MDT_PCSPK | MDT_ADLIB, GF_16COLOR, Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
+	{"pass", 0, 0, GID_PASS, 4, 0, MDT_PCSPK | MDT_PCJR | MDT_ADLIB, GF_16COLOR, Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
 
-	{"monkey", "VGA",      "vga", GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO_NOSPEECH},
-	{"monkey", "EGA",      "ega", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_CMS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, GF_16COLOR,     Common::kPlatformPC, GUIO_NOSPEECH},
-	{"monkey", "No AdLib", "ega", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,                        GF_16COLOR,     Common::kPlatformAtariST, GUIO_NOSPEECH | GUIO_NOMIDI},
-	{"monkey", "Demo",     "ega", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB,            GF_16COLOR,     Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
+	{"monkey", "VGA",      "vga", GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO_NOSPEECH},
+	{"monkey", "EGA",      "ega", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_PCJR | MDT_CMS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, GF_16COLOR,     Common::kPlatformPC, GUIO_NOSPEECH},
+	{"monkey", "No AdLib", "ega", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_PCJR,                        GF_16COLOR,     Common::kPlatformAtariST, GUIO_NOSPEECH | GUIO_NOMIDI},
+	{"monkey", "Demo",     "ega", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_PCJR | MDT_ADLIB,            GF_16COLOR,     Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
 	{"monkey", "CD",           0, GID_MONKEY,     5, 0, MDT_ADLIB,                        GF_AUDIOTRACKS, UNK, GUIO_NOSPEECH | GUIO_NOMIDI},
 	{"monkey", "FM-TOWNS",     0, GID_MONKEY,     5, 0, MDT_ADLIB,                        GF_AUDIOTRACKS, Common::kPlatformFMTowns, GUIO_NOSPEECH | GUIO_NOMIDI},
 	{"monkey", "SEGA",         0, GID_MONKEY,     5, 0, MDT_NONE,                         GF_AUDIOTRACKS, Common::kPlatformSegaCD, GUIO_NOSPEECH | GUIO_NOMIDI},
