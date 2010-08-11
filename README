@@ -1541,12 +1541,12 @@ order to combine MIDI music with AdLib sound effects.
 
 7.6) Playing sound with Sequencer MIDI:                          [UNIX ONLY]
 ---- ----------------------------------
-If your soundcard driver supports a sequencer, you may set the environment
-variable "SCUMMVM_MIDI" to your sequencer device -- for example, to
-/dev/sequencer
+If your soundcard driver supports a sequencer, you may set the
+environment variable "SCUMMVM_MIDI" to your sequencer device -- for
+example, to /dev/sequencer
 
-If you have problems with not hearing audio in this configuration, it is
-possible you will need to set the "SCUMMVM_MIDIPORT" variable to 1 or 2.
+If you have problems with not hearing audio in this configuration, you
+may need to set the environment variable "SCUMMVM_MIDIPORT" to 1 or 2.
 This selects the port on the selected sequencer to use. Then start
 scummvm with the -eseq parameter. This should work on several cards, and
 may offer better performance and quality than AdLib emulation. However,
@@ -1556,13 +1556,13 @@ fall back on AdLib emulation.
 
 7.6.1) Playing sound with ALSA sequencer:                        [UNIX ONLY]
 ------ ----------------------------------
-If you have installed the ALSA driver with the sequencer support, then
-set the environment variable SCUMMVM_PORT or the config file parameter
-alsa_port to your sequencer port. The default is to try both "65:0" and
-"17:0".
+If you have installed the ALSA driver with sequencer support, then you
+may set the environment variable "SCUMMVM_PORT" or the config file
+variable "alsa_port" to specify your sequencer port. If neither is set,
+the default behavior is to try both "65:0" and "17:0".
 
-Here is a little howto on how to use the ALSA sequencer with your
-soundcard. In all cases, to have a list of all the sequencer ports you
+Here is a brief guide on how to use the ALSA sequencer with your
+soundcard. In all cases, to obtain a list of all the sequencer ports you
 have, try the command "aconnect -o -l". This should give output similar
 to:
 
@@ -1619,12 +1619,13 @@ command as described earlier in this section.
 
 7.6.2) Playing sound with IRIX dmedia sequencer:                 [UNIX ONLY]
 ---- ------------------------------------------
-If you are using IRIX,  driver with the sequencer support, you can
-set the environment variable SCUMMVM_PORT or the config file parameter
-dmedia_port to your sequencer port. The default is to use the first port.
+If you are using IRIX and the dmedia driver with sequencer support, you
+can set the environment variable "SCUMMVM_MIDIPORT" or the config file
+variable "dmedia_port" to specify your sequencer port. The default is to
+use the first port.
 
-To get a list of configured midi interfaces on your system, run startmidi
-without parameters. Example output:
+To get a list of configured midi interfaces on your system, run
+"startmidi" without parameters. Example output:
 
   2 MIDI interfaces configured:
           Serial Port 2
@@ -1642,9 +1643,9 @@ SCUMMVM_PORT=Software Synth in your environment.
 7.7) Using TiMidity++ MIDI server:
 ---- -----------------------------
 If you system lacks any MIDI sequencer, but you still want better MIDI
-quality than default AdLib emulation can offer, you can try TiMidity++
-MIDI server. See http://timidity.sourceforge.net/ for download and
-install instructions.
+quality than default AdLib emulation can offer, you can try the
+TiMidity++ MIDI server. See http://timidity.sourceforge.net/ for
+download and install instructions.
 
 First, you need to start a daemon:
 
