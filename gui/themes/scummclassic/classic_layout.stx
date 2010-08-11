@@ -635,6 +635,10 @@
 					width = '150'
 					height = 'Globals.Button.Height'
 			/>
+			<widget name = 'Help'
+					width = '150'
+					height = 'Globals.Button.Height'
+			/>
 			<widget name = 'About'
 					width = '150'
 					height = 'Globals.Button.Height'
@@ -651,36 +655,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'ScummMain' overlays = 'screen_center'>
-		<layout type = 'vertical' padding = '8, 8, 8, 8'>
-			<widget name = 'Resume'
-					type = 'Button'
-			/>
-			<space size = '15'/>
-			<widget name = 'Load'
-					type = 'Button'
-			/>
-			<widget name = 'Save'
-					type = 'Button'
-			/>
-			<space size = '15'/>
-			<widget name = 'Options'
-					type = 'Button'
-			/>
-			<widget name = 'Help'
-					type = 'Button'
-			/>
-			<widget name = 'About'
-					type = 'Button'
-			/>
-			<space size = '15'/>
-			<widget name = 'Quit'
-					type = 'Button'
-			/>
-		</layout>
-	</dialog>
-
-	<dialog name = 'ScummConfig' overlays = 'screen_center'>
+	<dialog name = 'GlobalConfig' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<layout type = 'vertical' padding = '0, 0, 0, 0' center = 'true'>

@@ -724,6 +724,10 @@ int16 Ima_ADPCMStream::decodeIMA(byte code, int channel) {
 }
 
 RewindableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign) {
+	// If size is 0, report the entire size of the stream
+	if (!size)
+		size = stream->size();
+
 	switch (type) {
 	case kADPCMOki:
 		return new Oki_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);

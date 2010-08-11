@@ -422,7 +422,7 @@ void Rjp1::setupNote(Rjp1Channel *channel, int16 period) {
 		channel->envelopeMode = 4;
 		channel->data = channel->waveData;
 		channel->pos = READ_BE_UINT16(note + 16);
-		channel->len = READ_BE_UINT16(note + 18);
+		channel->len = channel->pos + READ_BE_UINT16(note + 18);
 		channel->setupNewNote = true;
 	}
 }

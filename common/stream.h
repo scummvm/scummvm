@@ -156,7 +156,7 @@ public:
 class ReadStream : virtual public Stream {
 public:
 	/**
-	 * Returns true if a read failed because the stream has been reached.
+	 * Returns true if a read failed because the stream end has been reached.
 	 * This flag is cleared by clearErr().
 	 * For a SeekableReadStream, it is also cleared by a successful seek.
 	 */

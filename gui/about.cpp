@@ -82,30 +82,9 @@ AboutDialog::AboutDialog()
 	: Dialog(10, 20, 300, 174),
 	_scrollPos(0), _scrollTime(0), _willClose(false) {
 
+	reflowLayout();
+
 	int i;
-
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
-	_xOff = g_gui.xmlEval()->getVar("Globals.About.XOffset", 5);
-	_yOff = g_gui.xmlEval()->getVar("Globals.About.YOffset", 5);
-	int outerBorder = g_gui.xmlEval()->getVar("Globals.About.OuterBorder");
-
-	_w = screenW - 2 * outerBorder;
-	_h = screenH - 2 * outerBorder;
-
-	_lineHeight = g_gui.getFontHeight() + 3;
-
-	// Heuristic to compute 'optimal' dialog width
-	int maxW = _w - 2*_xOff;
-	_w = 0;
-	for (i = 0; i < ARRAYSIZE(credits); i++) {
-		int tmp = g_gui.getStringWidth(credits[i] + 5);
-		if (_w < tmp && tmp <= maxW) {
-			_w = tmp;
-		}
-	}
-	_w += 2*_xOff;
 
 	for (i = 0; i < 1; i++)
 		_lines.push_back("");
@@ -155,10 +134,6 @@ AboutDialog::AboutDialog()
 
 	for (i = 0; i < ARRAYSIZE(credits); i++)
 		addLine(credits[i]);
-
-	// Center the dialog
-	_x = (screenW - _w) / 2;
-	_y = (screenH - _h) / 2;
 }
 
 void AboutDialog::addLine(const char *str) {
@@ -298,6 +273,7 @@ void AboutDialog::handleKeyUp(Common::KeyState state) {
 
 void AboutDialog::reflowLayout() {
 	Dialog::reflowLayout();
+	int i;
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
@@ -313,7 +289,7 @@ void AboutDialog::reflowLayout() {
 	// Heuristic to compute 'optimal' dialog width
 	int maxW = _w - 2*_xOff;
 	_w = 0;
-	for (int i = 0; i < ARRAYSIZE(credits); i++) {
+	for (i = 0; i < ARRAYSIZE(credits); i++) {
 		int tmp = g_gui.getStringWidth(credits[i] + 5);
 		if (_w < tmp && tmp <= maxW) {
 			_w = tmp;
@@ -321,8 +297,7 @@ void AboutDialog::reflowLayout() {
 	}
 	_w += 2*_xOff;
 
-	_lineHeight = g_gui.getFontHeight() + 3;
-
+	// Center the dialog
 	_x = (screenW - _w) / 2;
 	_y = (screenH - _h) / 2;
 }

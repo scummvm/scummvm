@@ -59,10 +59,16 @@ enum Error {
 	kPathNotDirectory,			///< The specified path does not point to a directory
 	kPathNotFile,				///< The specified path does not point to a file
 
-	kCreatingFileFailed,
-	kReadingFailed,				///< Failed creating a (savestate) file
+	kCreatingFileFailed,		///< Failed creating a (savestate) file
+	kReadingFailed,				///< Failed to read a file (permission denied?)
 	kWritingFailed,				///< Failure to write data -- disk full?
 
+	// The following are used by --list-saves
+	kPluginNotFound,			///< Failed to find plugin to handle tager
+	kPluginNotSupportSaves,		///< Failed if plugin does not support saves
+	kNoSavesError,				///< There are no saves to show
+
+	kArgumentNotProcessed,		///< Used in command line parsing
 	kUnknownError				///< Catch-all error, used if no other error code matches
 };
 

@@ -109,9 +109,9 @@ static const EnginePlugin *detectPlugin() {
 #if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES)
 	GameDescriptor game = EngineMan.findGameOnePlugAtATime(gameid, &plugin);
 #else
-	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
+ 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 #endif
-	
+
 	if (plugin == 0) {
 		printf("failed\n");
 		warning("%s is an invalid gameid. Use the --list-games option to list supported gameid", gameid.c_str());
@@ -347,8 +347,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES) //note: I'm going to refactor this name later :P
 	// Don't load the plugins initially in this case.
 #else
-	// Load the plugins.
-	PluginManager::instance().loadPlugins();
+ 	// Load the plugins.
+ 	PluginManager::instance().loadPlugins();
 #endif
 
 	// If we received an invalid music parameter via command line we check this here.
@@ -363,8 +363,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	// Process the remaining command line settings. Must be done after the
 	// config file and the plugins have been loaded.
-	if (!Base::processSettings(command, settings))
-		return 0;
+	Common::Error res;
+
+	if ((res = Base::processSettings(command, settings)) != Common::kArgumentNotProcessed)
+		return res;
 
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.
@@ -390,7 +392,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain())
 		launcherDialog();
-		
+
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
 	// cleanly, so this is now enabled to encourage people to fix bits :)

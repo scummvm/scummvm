@@ -1628,6 +1628,10 @@ if test -n "$_host"; then
 			_ar="$_host-ar cru"
 			_ranlib=$_host-ranlib
 			;;
+		mips-sgi*)
+			_endian=big
+			_need_memalign=yes
+			;;
 		motoezx)
 			DEFINES="$DEFINES -DMOTOEZX"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
@@ -1990,23 +1994,6 @@ CXXFLAGS			+= -DDYNAMIC_MODULES
 PLUGIN_LDFLAGS		:= -Wl,--enable-auto-import -shared ./libscummvm.a
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
-'
-		;;
-		ps2)
-_def_plugin='
-#define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".plg"
-'
-_mak_plugins='
-DYNAMIC_MODULES		:= 1
-PLUGIN_PREFIX		:=
-PLUGIN_SUFFIX		:= .plg
-PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-CXXFLAGS		+= -DDYNAMIC_MODULES
-LDFLAGS			+= -Wl,-T$(srcdir)/backends/platform/ps2/main_prog.ld
-PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/ps2/plugin.syms,-T$(srcdir)/backends/platform/ps2/plugin.ld -lstdc++ -lc -lm -Wl,-Map,mapfile.txt
-PRE_OBJS_FLAGS		:= -Wl,--whole-archive
-POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
 		;;
 	psp)
