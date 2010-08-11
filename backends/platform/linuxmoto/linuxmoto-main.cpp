@@ -31,7 +31,6 @@
 
 #include "backends/platform/linuxmoto/linuxmoto-sdl.h"
 #include "base/main.h"
-#include "base/internal_version.h"
 
 int main(int argc, char *argv[]) {
 	g_system = new OSystem_LINUXMOTO();
