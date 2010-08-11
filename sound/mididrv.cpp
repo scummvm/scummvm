@@ -61,8 +61,12 @@ static const uint32 GUIOMapping[] = {
 	/*MDT_CMS,		Common::GUIO_MIDICMS,*/
 	MT_PCJR,		Common::GUIO_MIDIPCJR,
 	MT_ADLIB,		Common::GUIO_MIDIADLIB,
-	MT_TOWNS,		Common::GUIO_MIDITOWNS,
-	MT_GM,			Common::GUIO_MIDIGM,
+    MT_C64,		    Common::GUIO_MIDIC64,
+    MT_AMIGA,	    Common::GUIO_MIDIAMIGA,
+	MT_APPLEIIGS,	Common::GUIO_MIDIAPPLEIIGS,
+    MT_TOWNS,		Common::GUIO_MIDITOWNS,
+    MT_PC98,		Common::GUIO_MIDIPC98,
+    MT_GM,			Common::GUIO_MIDIGM,
 	MT_MT32,		Common::GUIO_MIDIMT32,
 	0,		0
 };
@@ -150,6 +154,21 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			return hdl;
 		break;
 
+    case MT_C64:
+		if (flags & MDT_C64)
+			return hdl;
+		break;
+
+    case MT_AMIGA:
+		if (flags & MDT_AMIGA)
+			return hdl;
+		break;        
+
+    case MT_APPLEIIGS:
+		if (flags & MDT_APPLEIIGS)
+			return hdl;
+		break;
+
 	case MT_TOWNS:
 		if (flags & MDT_TOWNS)
 			return hdl;
@@ -224,11 +243,21 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		MusicType tp = MT_AUTO;
 		if (flags & MDT_TOWNS)
 			tp = MT_TOWNS;
+        else if (flags & MDT_PC98)
+			tp = MT_PC98;
 		else if (flags & MDT_ADLIB)
 			tp = MT_ADLIB;
 		else if (flags & MDT_PCSPK)
 			tp = MT_PCSPK;
-		else if (l == 0)
+        else if (flags & MDT_PCJR)
+			tp = MT_PCJR;
+        else if (flags & MDT_C64)
+			tp = MT_C64;
+        else if (flags & MDT_AMIGA)
+			tp = MT_AMIGA;
+        else if (flags & MDT_APPLEIIGS)
+			tp = MT_APPLEIIGS;
+        else if (l == 0)
 			// if we haven't tried to find a MIDI device yet we do this now.
 			continue;
 		else

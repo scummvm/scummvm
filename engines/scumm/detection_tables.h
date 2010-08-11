@@ -207,8 +207,8 @@ using Common::GUIO_NOSPEECH;
 // only a single unique variant. This is used to help the detector quickly
 // decide whether it has to worry about distinguishing multiple variants or not.
 static const GameSettings gameVariantsTable[] = {
-	{"maniac", "Apple II",   0, GID_MANIAC, 0, 0, MDT_PCSPK, 0, Common::kPlatformApple2GS, GUIO_NOSPEECH | GUIO_NOMIDI},
-	{"maniac", "C64",        0, GID_MANIAC, 0, 0, MDT_PCSPK, 0, Common::kPlatformC64, GUIO_NOSPEECH | GUIO_NOMIDI},
+	{"maniac", "Apple II",   0, GID_MANIAC, 0, 0, MDT_APPLEIIGS, 0, Common::kPlatformApple2GS, GUIO_NOSPEECH | GUIO_NOMIDI},
+	{"maniac", "C64",        0, GID_MANIAC, 0, 0, MDT_C64, 0, Common::kPlatformC64, GUIO_NOSPEECH | GUIO_NOMIDI},
 	{"maniac", "V1",      "v1", GID_MANIAC, 1, 0, MDT_PCSPK | MDT_PCJR, 0, Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
 	{"maniac", "V1 Demo", "v1", GID_MANIAC, 1, 0, MDT_PCSPK | MDT_PCJR, GF_DEMO, Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
 	{"maniac", "NES",        0, GID_MANIAC, 1, 0, MDT_NONE,  0, Common::kPlatformNES, GUIO_NOSPEECH | GUIO_NOMIDI},

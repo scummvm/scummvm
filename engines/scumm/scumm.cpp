@@ -1663,6 +1663,12 @@ void ScummEngine::setupMusic(int midi) {
 	case MT_ADLIB:
 		_musicType = MDT_ADLIB;
 		break;
+	case MT_C64:
+		_musicType = MDT_C64;
+		break;
+	case MT_APPLEIIGS:
+		_musicType = MDT_APPLEIIGS;
+		break;
 	default:
 		_musicType = MDT_MIDI;
 		break;
