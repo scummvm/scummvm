@@ -219,9 +219,9 @@ static const GameSettings gameVariantsTable[] = {
 	{"zak", "V2",       "v2", GID_ZAK, 2, 0, MDT_PCSPK | MDT_PCJR, 0, UNK, GUIO_NOSPEECH | GUIO_NOMIDI},
 	{"zak", "FM-TOWNS",    0, GID_ZAK, 3, 0, MDT_TOWNS, GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, GUIO_NOSPEECH | GUIO_NOMIDI},
 
-	{"indy3", "EGA",      "ega", GID_INDY3, 3, 0, MDT_PCSPK | MDT_CMS | MDT_ADLIB, 0, UNK, GUIO_NOSPEECH | GUIO_NOMIDI},
-	{"indy3", "No AdLib", "ega", GID_INDY3, 3, 0, MDT_PCSPK,             0, UNK, GUIO_NOSPEECH | GUIO_NOMIDI},
-	{"indy3", "VGA",      "vga", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB, GF_OLD256 | GF_FEW_LOCALS,                  Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
+	{"indy3", "EGA",      "ega", GID_INDY3, 3, 0, MDT_PCSPK | MDT_PCJR | MDT_CMS | MDT_ADLIB, 0, UNK, GUIO_NOSPEECH | GUIO_NOMIDI},
+	{"indy3", "No AdLib", "ega", GID_INDY3, 3, 0, MDT_PCSPK | MDT_PCJR,             0, UNK, GUIO_NOSPEECH | GUIO_NOMIDI},
+	{"indy3", "VGA",      "vga", GID_INDY3, 3, 0, MDT_PCSPK | MDT_PCJR | MDT_ADLIB, GF_OLD256 | GF_FEW_LOCALS,                  Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
 	{"indy3", "FM-TOWNS",     0, GID_INDY3, 3, 0, MDT_TOWNS,             GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns, GUIO_NOSPEECH | GUIO_NOMIDI},
 
 	{"loom", "EGA",      "ega", GID_LOOM, 3, 0, MDT_PCSPK | MDT_CMS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO_NOSPEECH},

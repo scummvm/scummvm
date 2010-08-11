@@ -1745,7 +1745,7 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V1(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if (_game.version <= 2) {
 		_musicEngine = new Player_V2(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
-	} else if ((_musicType == MDT_PCSPK) && (_game.version > 2 && _game.version <= 4)) {
+	} else if ((_musicType == MDT_PCSPK || _musicType == MDT_PCJR) && (_game.version > 2 && _game.version <= 4)) {
 		_musicEngine = new Player_V2(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if (_musicType == MDT_CMS) {
 		_musicEngine = new Player_V2CMS(this, _mixer);
