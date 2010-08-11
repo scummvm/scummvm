@@ -36,15 +36,15 @@ clean-tools:
 
 tools/convbdf$(EXEEXT): $(srcdir)/tools/convbdf.c
 	$(QUIET)$(MKDIR) tools/$(DEPDIR)
-	$(QUIET_LINK)$(CC) $(CFLAGS) -Wall -o $@ $<
+	$(QUIET_LINK)$(LD) $(CFLAGS) -Wall -o $@ $<
 
 tools/md5table$(EXEEXT): $(srcdir)/tools/md5table.c
 	$(QUIET)$(MKDIR) tools/$(DEPDIR)
-	$(QUIET_LINK)$(CC) $(CFLAGS) -Wall -o $@ $<
+	$(QUIET_LINK)$(LD) $(CFLAGS) -Wall -o $@ $<
 
 tools/make-scumm-fontdata$(EXEEXT): $(srcdir)/tools/make-scumm-fontdata.c
 	$(QUIET)$(MKDIR) tools/$(DEPDIR)
-	$(QUIET_LINK)$(CC) $(CFLAGS) -Wall -o $@ $<
+	$(QUIET_LINK)$(LD) $(CFLAGS) -Wall -o $@ $<
 
 #
 # Rules to explicitly rebuild the credits / MD5 tables.

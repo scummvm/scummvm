@@ -591,6 +591,7 @@ catalog	Humongous Interactive Catalog
 airport	Let's Explore the Airport with Buzzy
 	d6334a5a9b61afe18c368540fdf522ca	-1	en	Mac	-	-	-	Joachim Eberhard
 	07433205acdca3bc553d0e731588b35f	-1	en	Windows	-	-	-	Kirben
+	3e861421f494711bc6f619d4aba60285	93231	ru	Windows	-	-	-	sev
 
 	7ea2da67ebabea4ac20cee9f4f9d2934	-1	en	Mac	-	Demo	-	khalek
 	8ffd618a776a4c0d8922bb28b09f8ce8	-1	en	Windows	-	Demo	-	khalek
@@ -602,6 +603,7 @@ farm	Let's Explore the Farm with Buzzy
 	a5c5388da9bf0e6662fdca8813a79d13	86962	en	Windows	-	-	-	George Kormendi
 	a85856675429fe88051744f755b72f93	-1	en	Windows	-	-	-	Kirben
 	a2386da005672cbd5136f4f27a626c5f	87061	nl	Windows	-	-	-	George Kormendi
+	5dda73606533d66a4c3f4f9ea6e842af	87061	ru	Windows	-	-	-	sev
 
 	39fd6db10d0222d817025c4d3346e3b4	-1	en	Mac	-	Demo	-	Joachim Eberhard
 	bf8b52fdd9a69c67f34e8e9fec72661c	-1	en	Windows	HE 71	Demo	-	khalek, sev
@@ -713,6 +715,7 @@ puttmoon	Putt-Putt Goes to the Moon
 	697c9b7c55a05d8199c48b48e379d2c8	-1	he	DOS	-	-	-	sev
 	9dc02577bf50d4cfaf3de3fbac06fbe2	-1	en	Mac	-	-	-	khalek
 	9c92eeaf517a31b7221ec2546ab669fd	-1	en	Windows	HE 70	-	-	khalek
+	3c4c471342bd95505a42334367d8f127	12161	ru	Windows	HE 70	-	-	sev
 
 	aa6a91b7f6f119d1b7b1f2a4c9e24d59	6233	en	DOS	-	Demo	-	
 	4af4a6b248103c1fe9edef619677f540	-1	en	Mac	-	Demo	-	khalek
