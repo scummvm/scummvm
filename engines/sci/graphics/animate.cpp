@@ -204,13 +204,15 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 		// Get the corresponding view
 		view = _cache->getView(it->viewId);
 
+		uint16 viewLoopCount = view->getLoopCount();
 		// adjust loop and cel, if any of those is invalid
-		if (it->loopNo >= view->getLoopCount()) {
-			it->loopNo = 0;
+		if (it->loopNo >= viewLoopCount) {
+			it->loopNo = viewLoopCount - 1;
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(loop), it->loopNo);
 		}
-		if (it->celNo >= view->getCelCount(it->loopNo)) {
-			it->celNo = 0;
+		uint16 viewCelCount = view->getCelCount(it->loopNo);
+		if (it->celNo >= viewCelCount) {
+			it->celNo = viewCelCount - 1;
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(cel), it->celNo);
 		}
 
@@ -243,7 +245,7 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 			}
 		}
 
-		//warning("%s", _s->_segMan->getObjectName(curObject));
+		//warning("%s view %d, loop %d, cel %d", _s->_segMan->getObjectName(curObject), it->viewId, it->loopNo, it->celNo);
 
 		if (!view->isScaleable()) {
 			// Laura Bow 2 (especially floppy) depends on this, some views are not supposed to be scaleable

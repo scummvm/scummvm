@@ -60,8 +60,8 @@ struct AnimateEntry {
 	int16 givenOrderNo;
 	reg_t object;
 	GuiResourceId viewId;
-	int16 loopNo;
-	int16 celNo;
+	uint16 loopNo;
+	uint16 celNo;
 	int16 paletteNo;
 	int16 x, y, z;
 	int16 priority;
