@@ -1645,8 +1645,9 @@ void ScummEngine::setupMusic(int midi) {
 		_musicType = MDT_NONE;
 		break;
 	case MT_PCSPK:
-	case MT_PCJR:
 		_musicType = MDT_PCSPK;
+	case MT_PCJR:
+		_musicType = MDT_PCJR;
 		break;
 	//case MT_CMS:
 #if 1

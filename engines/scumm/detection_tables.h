@@ -209,14 +209,14 @@ using Common::GUIO_NOSPEECH;
 static const GameSettings gameVariantsTable[] = {
 	{"maniac", "Apple II",   0, GID_MANIAC, 0, 0, MDT_PCSPK, 0, Common::kPlatformApple2GS, GUIO_NOSPEECH | GUIO_NOMIDI},
 	{"maniac", "C64",        0, GID_MANIAC, 0, 0, MDT_PCSPK, 0, Common::kPlatformC64, GUIO_NOSPEECH | GUIO_NOMIDI},
-	{"maniac", "V1",      "v1", GID_MANIAC, 1, 0, MDT_PCSPK, 0, Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
-	{"maniac", "V1 Demo", "v1", GID_MANIAC, 1, 0, MDT_PCSPK, GF_DEMO, Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
+	{"maniac", "V1",      "v1", GID_MANIAC, 1, 0, MDT_PCSPK | MDT_PCJR, 0, Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
+	{"maniac", "V1 Demo", "v1", GID_MANIAC, 1, 0, MDT_PCSPK | MDT_PCJR, GF_DEMO, Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
 	{"maniac", "NES",        0, GID_MANIAC, 1, 0, MDT_NONE,  0, Common::kPlatformNES, GUIO_NOSPEECH | GUIO_NOMIDI},
-	{"maniac", "V2",      "v2", GID_MANIAC, 2, 0, MDT_PCSPK, 0, UNK, GUIO_NOSPEECH | GUIO_NOMIDI},
-	{"maniac", "V2 Demo", "v2", GID_MANIAC, 2, 0, MDT_PCSPK, GF_DEMO, Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
+	{"maniac", "V2",      "v2", GID_MANIAC, 2, 0, MDT_PCSPK | MDT_PCJR, 0, UNK, GUIO_NOSPEECH | GUIO_NOMIDI},
+	{"maniac", "V2 Demo", "v2", GID_MANIAC, 2, 0, MDT_PCSPK | MDT_PCJR, GF_DEMO, Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
 
-	{"zak", "V1",       "v1", GID_ZAK, 1, 0, MDT_PCSPK, 0, UNK, GUIO_NOSPEECH | GUIO_NOMIDI},
-	{"zak", "V2",       "v2", GID_ZAK, 2, 0, MDT_PCSPK, 0, UNK, GUIO_NOSPEECH | GUIO_NOMIDI},
+	{"zak", "V1",       "v1", GID_ZAK, 1, 0, MDT_PCSPK | MDT_PCJR, 0, UNK, GUIO_NOSPEECH | GUIO_NOMIDI},
+	{"zak", "V2",       "v2", GID_ZAK, 2, 0, MDT_PCSPK | MDT_PCJR, 0, UNK, GUIO_NOSPEECH | GUIO_NOMIDI},
 	{"zak", "FM-TOWNS",    0, GID_ZAK, 3, 0, MDT_TOWNS, GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, GUIO_NOSPEECH | GUIO_NOMIDI},
 
 	{"indy3", "EGA",      "ega", GID_INDY3, 3, 0, MDT_PCSPK | MDT_CMS | MDT_ADLIB, 0, UNK, GUIO_NOSPEECH | GUIO_NOMIDI},
