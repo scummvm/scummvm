@@ -398,7 +398,7 @@ const SciScriptSignature laurabow2Signatures[] = {
 //   adds it to nest::x. The problem is that the script also checks if x exceeds
 //   we never reach that of course, so the pterodactyl-flight will go endlessly
 //   we could either calculate property count differently somehow fixing this
-//   but I think just patching it out is cleaner
+//   but I think just patching it out is cleaner (ffs. bug #3037938)
 const byte sq4FloppySignatureEndlessFlight[] = {
 	8,
 	0x39, 0x04,       // pushi 04 (selector x)
