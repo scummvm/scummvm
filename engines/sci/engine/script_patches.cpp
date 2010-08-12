@@ -393,6 +393,35 @@ const SciScriptSignature laurabow2Signatures[] = {
 };
 
 // ===========================================================================
+//  script 298 of sq4/floppy has an issue. object "nest" uses another property
+//   which isn't included in property count. We return 0 in that case, the game
+//   adds it to nest::x. The problem is that the script also checks if x exceeds
+//   we never reach that of course, so the pterodactyl-flight will go endlessly
+//   we could either calculate property count differently somehow fixing this
+//   but I think just patching it out is cleaner
+const byte sq4FloppySignatureEndlessFlight[] = {
+	8,
+	0x39, 0x04,       // pushi 04 (selector x)
+	0x78,             // push1
+	0x67, 0x08,       // pTos 08 (property x)
+	0x63, 0x44,       // pToa 44 (invalid property)
+	0x02,             // add
+	0
+};
+
+const uint16 sq4FloppyPatchEndlessFlight[] = {
+	PATCH_ADDTOOFFSET | +5,
+	0x35, 0x03,       // ldi 03 (which would be the content of the property)
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                  adjust
+const SciScriptSignature sq4Signatures[] = {
+    {    298, "Floppy: endless flight",                      PATCH_MAGICDWORD(0x67, 0x08, 0x63, 0x44),    -3, sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
+    {      0, NULL,                                          0,                                            0, NULL,                            NULL }
+};
+
+// ===========================================================================
 // It seems to scripts warp ego outside the screen somehow (or maybe kDoBresen?)
 //  ego::mover is set to 0 and rm119::doit will crash in that case. This here
 //  fixes part of the problem and actually checks ego::mover to be 0 and skips
@@ -513,6 +542,8 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		signatureTable = laurabow2Signatures;
 	if (g_sci->getGameId() == GID_LSL6)
 		signatureTable = larry6Signatures;
+	if (g_sci->getGameId() == GID_SQ4)
+		signatureTable = sq4Signatures;
 	if (g_sci->getGameId() == GID_SQ5)
 		signatureTable = sq5Signatures;
 
