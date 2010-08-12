@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(WIN32) || defined(UNIX) || defined(MACOSX) || defined(__SYMBIAN32__)
+#if defined(SDL_BACKEND)
 
 #include "backends/mutex/sdl/sdl-mutex.h"
 
