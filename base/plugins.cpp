@@ -395,7 +395,6 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 		// The plugin is valid, see if it provides the same module as an
 		// already loaded one and should replace it.
 		bool found = false;
-		printf("Plugin loaded is %s\n", plugin->getName());
 		PluginList::iterator pl = _plugins[plugin->getType()].begin();
 		while (!found && pl != _plugins[plugin->getType()].end()) {
 			if (!strcmp(plugin->getName(), (*pl)->getName())) {
