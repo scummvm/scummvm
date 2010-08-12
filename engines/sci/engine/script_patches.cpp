@@ -364,7 +364,7 @@ const SciScriptSignature larry6Signatures[] = {
 // ===========================================================================
 // rm560::doit was supposed to close the painting, when heimlich enters the
 //  room. The code is buggy, so it actually closes the painting, when heimlich
-//  is not in the room. We fix that.
+//  is not in the room. We fix that. (only happens in laura bow 2 cd)
 const byte laurabow2SignaturePaintingClosing[] = {
 	19,
 	0x4a, 0x04,       // send 04 (gets aHeimlich::room)
@@ -388,7 +388,7 @@ const uint16 laurabow2PatchPaintingClosing[] = {
 
 //    script, description,                                   magic DWORD,                                  adjust
 const SciScriptSignature laurabow2Signatures[] = {
-    {    560, "painting closing immediately",                PATCH_MAGICDWORD(0x36, 0x81, 0x0b, 0x1c),    -2, laurabow2SignaturePaintingClosing, laurabow2PatchPaintingClosing },
+    {    560, "CD: painting closing immediately",            PATCH_MAGICDWORD(0x36, 0x81, 0x0b, 0x1c),    -2, laurabow2SignaturePaintingClosing, laurabow2PatchPaintingClosing },
     {      0, NULL,                                          0,                                            0, NULL,                              NULL }
 };
 
