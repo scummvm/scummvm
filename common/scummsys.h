@@ -323,6 +323,13 @@
 	#define	SCUMM_BIG_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
 
+#ifdef KEYCODE_LESS
+	#undef KEYCODE_LESS
+#endif
+#ifdef KEYCODE_GREATER
+	#undef KEYCODE_GREATER
+#endif
+
 #elif defined (__DS__)
 
 	#define scumm_stricmp stricmp
