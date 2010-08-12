@@ -187,10 +187,7 @@ TestExitStatus SoundSubsystem::audiocdOutput() {
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Playing the tracks of testCD in order i.e 1-2-3-last", pt);
 
-	// Make audio-files discoverable
-	Common::FSNode gameRoot(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameRoot, "audiocd-files");
-
+	
 	// Play all tracks
 	for (int i = 1; i < 5; i++) { 
 		AudioCD.play(i, 1, 0, 0);
@@ -266,7 +263,17 @@ TestExitStatus SoundSubsystem::sampleRates() {
 SoundSubsystemTestSuite::SoundSubsystemTestSuite() {
 	addTest("SimpleBeeps", &SoundSubsystem::playBeeps, true);
 	addTest("MixSounds", &SoundSubsystem::mixSounds, true);
-	addTest("AudiocdOutput", &SoundSubsystem::audiocdOutput, true);
+	
+	// Make audio-files discoverable
+	Common::FSNode gameRoot(ConfMan.get("path"));
+	if (gameRoot.exists()) {
+		SearchMan.addSubDirectoryMatching(gameRoot, "audiocd-files");
+		if (SearchMan.hasFile("track01.mp3") && SearchMan.hasFile("track02.mp3") && SearchMan.hasFile("track03.mp3") && SearchMan.hasFile("track04.mp3")) {
+			addTest("AudiocdOutput", &SoundSubsystem::audiocdOutput, true);
+		} else {
+			Testsuite::logPrintf("Warning! Skipping test AudioCD: Required data files missing, check game-dir/audiocd-files\n");
+		}
+	}
 	addTest("SampleRates", &SoundSubsystem::sampleRates, true);
 }
 

@@ -128,6 +128,7 @@ TestExitStatus MidiTests::playMidiMusic() {
 	driver->setTimerCallback(NULL, NULL);
 	driver->close();
 	delete smfParser;
+	delete driver;
 	
 	if (Testsuite::handleInteractiveInput("Were you able to hear the music as described?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! Midi: Can't play Music\n");
@@ -137,7 +138,18 @@ TestExitStatus MidiTests::playMidiMusic() {
 }
 
 MidiTestSuite::MidiTestSuite() {
-	addTest("MidiTests", &MidiTests::playMidiMusic);
+	if (SearchMan.hasFile("music.mid")) {
+		addTest("MidiTests", &MidiTests::playMidiMusic);
+	} else {
+		// add some fallback test if filesystem loading failed
+		Testsuite::logPrintf("Warning! Midi: Sound data file music.mid not found\n");
+		_isMidiDataFound = false;
+		enable(false);
+	}
+}
+
+void MidiTestSuite::enable(bool flag) {
+	Testsuite::enable(_isMidiDataFound & flag);
 }
 
 }

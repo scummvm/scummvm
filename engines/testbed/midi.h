@@ -64,6 +64,11 @@ public:
 	const char *getDescription() const {
 		return "Midi Music";
 	}
+	
+	void enable(bool flag);
+
+private:
+	bool _isMidiDataFound;
 
 };
 

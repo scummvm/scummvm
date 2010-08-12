@@ -73,6 +73,9 @@ public:
 		return "Sound Subsystem";
 	}
 
+private:
+	bool _isTestDataFound;
+
 };
 
 } // End of namespace Testbed
