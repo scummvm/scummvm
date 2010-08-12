@@ -638,6 +638,14 @@ MusicEntry::~MusicEntry() {
 }
 
 void MusicEntry::onTimer() {
+	if (!signal) {
+		if (!signalQueue.empty()) {
+			// no signal set, but signal in queue, set that one
+			signal = signalQueue[0];
+			signalQueue.remove_at(0);
+		}
+	}
+
 	if (status != kSoundPlaying)
 		return;
 
