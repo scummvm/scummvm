@@ -1,7 +1,7 @@
 srcdir      ?= .
 DEPDIR      := .deps
 
-VERBOSE_BUILD = 1
+VERBOSE_BUILD = 0
 DYNAMIC_MODULES = 1
 libndsdir = $(DEVKITPRO)/libnds
 #libndsdir = /home/neil/devkitpror21/libnds
@@ -237,7 +237,7 @@ CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor -Wno-unknown-pragmas -Wno-reorder  \
 
 
 ASFLAGS = -mcpu=arm9tdmi -mthumb-interwork
-DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555 -DDISABLE_DOSBOX_OPL -DDISABLE_DEFAULT_SAVEFILEMANAGER -DELF_LOADER_TARGET -DARM -DARM_TARGET#-DNEW_PLUGIN_DESIGN_FIRST_REFINEMENT
+DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555 -DDISABLE_DOSBOX_OPL -DDISABLE_DEFAULT_SAVEFILEMANAGER -DELF_LOADER_TARGET -DARM -DARM_TARGET -DNEW_PLUGIN_DESIGN_FIRST_REFINEMENT
 ifdef USE_MAD
 	DEFINES += -DUSE_MAD
 endif
@@ -364,7 +364,7 @@ semiclean:
 
 clean:
 	$(RM) $(OBJS) $(EXECUTABLE)
-	rm -rf *.h engines plugins scummvm.nds scummvm.ds.gba
+	rm -rf *.h engines plugins graphics gui common sound backends base map.txt scummvm.nds scummvm.ds.gba
 
 dist : SCUMMVM.BIN plugins plugin_dist
 
