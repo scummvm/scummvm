@@ -362,6 +362,37 @@ const SciScriptSignature larry6Signatures[] = {
 };
 
 // ===========================================================================
+// rm560::doit was supposed to close the painting, when heimlich enters the
+//  room. The code is buggy, so it actually closes the painting, when heimlich
+//  is not in the room. We fix that.
+const byte laurabow2SignaturePaintingClosing[] = {
+	19,
+	0x4a, 0x04,       // send 04 (gets aHeimlich::room)
+	0x36,             // push
+	0x81, 0x0b,       // lag global[11d] -> current room
+	0x1c,             // ne?
+	0x31, 0x0e,       // bnt [don't close]
+	0x35, 0x00,       // ldi 00
+	0xa3, 0x00,       // sal local[0]
+	0x38, 0x92, 0x00, // pushi 0092
+	0x78,             // push1
+	0x72, 0xee, 0x0a, // lofsa sDumpSafe
+	0
+};
+
+const uint16 laurabow2PatchPaintingClosing[] = {
+	PATCH_ADDTOOFFSET | +6,
+	0x2f, 0x0e,       // bt [don't close]
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                  adjust
+const SciScriptSignature laurabow2Signatures[] = {
+    {    560, "painting closing immediately",                PATCH_MAGICDWORD(0x36, 0x81, 0x0b, 0x1c),    -2, laurabow2SignaturePaintingClosing, laurabow2PatchPaintingClosing },
+    {      0, NULL,                                          0,                                            0, NULL,                              NULL }
+};
+
+// ===========================================================================
 // It seems to scripts warp ego outside the screen somehow (or maybe kDoBresen?)
 //  ego::mover is set to 0 and rm119::doit will crash in that case. This here
 //  fixes part of the problem and actually checks ego::mover to be 0 and skips
@@ -478,6 +509,8 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 //		signatureTable = hoyle4Signatures;
 	if (g_sci->getGameId() == GID_KQ5)
 		signatureTable = kq5Signatures;
+	if (g_sci->getGameId() == GID_LAURABOW2)
+		signatureTable = laurabow2Signatures;
 	if (g_sci->getGameId() == GID_LSL6)
 		signatureTable = larry6Signatures;
 	if (g_sci->getGameId() == GID_SQ5)
