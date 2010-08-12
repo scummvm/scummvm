@@ -284,6 +284,7 @@ DECLARE_SINGLETON(PluginManager)
 PluginManager::PluginManager() {
 	// Always add the static plugin provider.
 	addPluginProvider(new StaticPluginProvider());
+	nonEnginePlugs = -1;
 }
 
 PluginManager::~PluginManager() {
@@ -302,29 +303,59 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 	_providers.push_back(pp);
 }
 
-bool PluginManager::loadFirstPlugin() { //TODO: only deal with engine plugins here, and have a separate "loadNonEnginePlugins" function.
-	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL);
-	PluginList plugs;
+void PluginManager::loadFirstPlugin() { //TODO: rename? It's not quite clear that this loads all non-engine plugins and first engine plugin.
+	_allPlugs.clear();
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
 	                            ++pp) {
 		PluginList pl((*pp)->getPlugins());
 		for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
-			plugs.push_back(*p);
+			_allPlugs.push_back(*p);
 		}
 	}
-	_pluginsEnd = plugs.end();
-	_currentPlugin = plugs.begin();
-	if (plugs.empty()) return false; //return false if there are no plugins to load.
-	return tryLoadPlugin(*_currentPlugin);
+
+	_currentPlugin = _allPlugs.begin();
+
+	bool updateNonEnginePlugs;
+	if (nonEnginePlugs == -1) { //TODO: All of this assumes engine plugins will always be last in "plugs". Is this the case?
+		nonEnginePlugs = 0;
+		updateNonEnginePlugs = true;
+	} else {
+		for (int i=0; i<nonEnginePlugs; i++) {
+			++_currentPlugin;
+		}
+		updateNonEnginePlugs = false;
+	}
+
+	if (_allPlugs.empty()) { //TODO: this case is untested.
+		return; //return here if somehow there are no plugins to load.
+	}
+
+	//this loop is for loading all non-engine plugins and the first engine plugin.
+	while (true) {
+		assert(tryLoadPlugin(*_currentPlugin));
+		if ((*_currentPlugin)->getType() == PLUGIN_TYPE_ENGINE) {
+			break;
+		}
+		if (updateNonEnginePlugs) nonEnginePlugs++;
+		++_currentPlugin;
+		if (_currentPlugin == _allPlugs.end()) {
+			break; //break if there were no engine plugins to load.
+		}
+	}
+	return;
 }
 
 bool PluginManager::loadNextPlugin() {
-	// To ensure only one engine plugin is loaded at a time, we unload all engine plugins before loading a new one.
+	//To ensure only one engine plugin is loaded at a time, we unload all engine plugins before trying to load a new one.
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL);
 	++_currentPlugin;
-	if (_currentPlugin == _pluginsEnd) return false; //return false if already reached the end of list of plugins.
-	return tryLoadPlugin(*_currentPlugin); 
+	if (_currentPlugin == _allPlugs.end()) {
+		loadFirstPlugin(); //load first engine plugin again at this point.
+		return false;
+	}
+	assert(tryLoadPlugin(*_currentPlugin));
+	return true;
 }
 
 void PluginManager::loadPlugins() {
@@ -398,7 +429,7 @@ DECLARE_SINGLETON(EngineManager)
 
 GameDescriptor EngineManager::findGameOnePlugAtATime(const Common::String &gameName, const EnginePlugin **plugin) const {
 	GameDescriptor result;
-	PluginManager::instance().loadFirstPlugin();
+	//PluginManager::instance().loadFirstPlugin();
 	do {
 		result = findGame(gameName, plugin); 
 		if (!result.gameid().empty()) {
@@ -434,7 +465,6 @@ GameList EngineManager::detectGames(const Common::FSList &fslist) const {
 	EnginePlugin::List plugins;
 	EnginePlugin::List::const_iterator iter;
 #if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES)
-	PluginManager::instance().loadFirstPlugin();
 	do {
 #endif
 		plugins = getPlugins();

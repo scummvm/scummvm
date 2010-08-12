@@ -345,7 +345,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	}
 
 #if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES) //note: I'm going to refactor this name later :P
-	// Don't load the plugins initially in this case.
+	// Only load non-engine plugins and first engine plugin initially in this case.
+	PluginManager::instance().loadFirstPlugin(); //This should be the only call to loadFirstPlugin external to the PluginManager class.
 #else
  	// Load the plugins.
  	PluginManager::instance().loadPlugins();
