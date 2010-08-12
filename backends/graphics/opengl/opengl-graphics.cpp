@@ -43,7 +43,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	_desiredAspectRatio(kAspectRatio4_3),
 #endif
 	_gameTexture(0), _overlayTexture(0), _cursorTexture(0),
-	_screenChangeCount(0), _screenNeedsRedraw(false),
+	_screenChangeCount(1 << (sizeof(int) * 8 - 2)), _screenNeedsRedraw(false),
 	_shakePos(0),
 	_overlayVisible(false), _overlayNeedsRedraw(false),
 	_transactionMode(kTransactionNone),
