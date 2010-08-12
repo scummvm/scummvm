@@ -22,11 +22,13 @@
  * $Id$
  */
 
-#include "common/fs.h"
 #include "common/stream.h"
 #include "common/config-manager.h"
+
 #include "engines/engine.h"
+
 #include "testbed/config.h"
+#include "testbed/fs.h"
 
 namespace Testbed {
 
@@ -283,7 +285,14 @@ void TestbedConfigManager::selectTestsuites() {
 	// Testsuite::isSessionInteractive = false;
 	Common::String prompt("Welcome to the ScummVM testbed!\n"
 						"It is a framework to test the various ScummVM subsystems namely GFX, Sound, FS, events etc.\n"
-						"If you see this, it means interactive tests would run on this system :)");
+						"If you see this, it means interactive tests would run on this system :)\n");
+	
+	if (!FSTestSuite::isGameDataFound()) {
+		prompt += "\nSeems like Game data files are not configured properly.\n"
+		"Create Game data files using script ./create-testbed-data.sh in dists/engine-data\n"
+		"Next, Configure the game path in launcher / command-line.\n"
+		"Currently a few testsuites namely FS/AudioCD/MIDI would be disabled\n";
+	}
 
 	Testsuite::logPrintf("Info! : Interactive tests are also being executed.\n");
 	

@@ -67,9 +67,10 @@ public:
 		return "File system tests (Navigation, Read/Write)";
 	}
 	void enable(bool flag);
+	static bool isGameDataFound() { return _isGameDataFound; }
 
 private:
-	bool _isGameDataFound;
+	static bool _isGameDataFound;
 };
 
 } // End of namespace Testbed

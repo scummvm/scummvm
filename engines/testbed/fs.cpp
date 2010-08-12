@@ -30,6 +30,7 @@
 
 namespace Testbed {
 
+bool FSTestSuite::_isGameDataFound = true;
 /**
  * This test does the following:
  * 1) acquires the game-data path
@@ -186,9 +187,6 @@ FSTestSuite::FSTestSuite() {
 		logPrintf("WARNING! : Game Data not found. Skipping FS tests\n");
 		_isGameDataFound = false;
 		Testsuite::enable(false);
-	} else {
-		_isGameDataFound = true;
-		Testsuite::enable(true);
 	}
 	addTest("ReadingFile", &FStests::testReadFile, false);
 	addTest("WritingFile", &FStests::testWriteFile, false);
