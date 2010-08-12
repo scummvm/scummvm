@@ -489,6 +489,9 @@ int main(int argc, char *argv[]) {
 	// Add WIN32 define
 	setup.defines.push_back("WIN32");
 
+	// Add SDL_BACKEND define
+	setup.defines.push_back("SDL_BACKEND");
+
 	setup.libraries = getFeatureLibraries(setup.features);
 
 	setup.libraries.push_back("winmm.lib");
