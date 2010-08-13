@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-08-11 22:12+0100\n"
+"Report-Msgid-Bugs-To: scummvm-devel@li\n"
+"POT-Creation-Date: 2010-08-13 12:49+0300\n"
 "PO-Revision-Date: 2010-06-13 20:55+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -945,9 +945,8 @@ msgid "No music"
 msgstr "Без музыки"
 
 #: sound/mods/paula.cpp:192
-#, fuzzy
 msgid "Amiga Audio Emulator"
-msgstr "Эмулятор AdLib"
+msgstr "Эмулятор звука Amiga"
 
 #: sound/softsynth/adlib.cpp:1590
 msgid "AdLib Emulator"
@@ -955,12 +954,11 @@ msgstr "Эмулятор AdLib"
 
 #: sound/softsynth/appleiigs.cpp:36
 msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
-msgstr ""
+msgstr "Эмулятор Apple II GS (отсутствует)"
 
 #: sound/softsynth/sid.cpp:1434
-#, fuzzy
 msgid "C64 Audio Emulator"
-msgstr "Эмулятор AdLib"
+msgstr "Эмулятор звука C64"
 
 #: sound/softsynth/mt32.cpp:327
 msgid "Initialising MT-32 Emulator"
