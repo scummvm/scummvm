@@ -464,7 +464,7 @@ GameList EngineManager::detectGames(const Common::FSList &fslist) const {
 	GameList candidates;
 	EnginePlugin::List plugins;
 	EnginePlugin::List::const_iterator iter;
-#if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES)
+#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
 	do {
 #endif
 		plugins = getPlugins();
@@ -473,7 +473,7 @@ GameList EngineManager::detectGames(const Common::FSList &fslist) const {
 		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 			candidates.push_back((**iter)->detectGames(fslist));
 		}
-#if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES)
+#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
 	} while (PluginManager::instance().loadNextPlugin());
 #endif
 	return candidates;

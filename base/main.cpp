@@ -106,7 +106,7 @@ static const EnginePlugin *detectPlugin() {
 	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
 	printf("%s", "  Looking for a plugin supporting this gameid... ");
 
-#if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES)
+#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
 	GameDescriptor game = EngineMan.findGameOnePlugAtATime(gameid, &plugin);
 #else
  	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
@@ -344,7 +344,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		settings.erase("debugflags");
 	}
 
-#if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES) //note: I'm going to refactor this name later :P
+#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
 	// Only load non-engine plugins and first engine plugin initially in this case.
 	PluginManager::instance().loadFirstPlugin(); //This should be the only call to loadFirstPlugin external to the PluginManager class.
 #else

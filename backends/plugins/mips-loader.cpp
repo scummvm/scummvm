@@ -27,7 +27,7 @@
 
 #include "mips-loader.h"
 
-#define __DEBUG_PLUGINS__
+//#define __DEBUG_PLUGINS__
 
 #ifdef __DEBUG_PLUGINS__
 #define DBG(x,...) printf(x, ## __VA_ARGS__)

@@ -30,7 +30,7 @@
 #include "dsmain.h"
 #include "arm-loader.h"
 
-#define __DEBUG_PLUGINS__
+//#define __DEBUG_PLUGINS__
 
 #ifdef __DEBUG_PLUGINS__
 #define DBG(x,...) consolePrintf(x, ## __VA_ARGS__)

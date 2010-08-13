@@ -875,7 +875,7 @@ void LauncherDialog::loadGame(int item) {
 
 	const EnginePlugin *plugin = 0;
 	
-#if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES)
+#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
 	EngineMan.findGameOnePlugAtATime(gameId, &plugin);
 #else
 	EngineMan.findGame(gameId, &plugin);
