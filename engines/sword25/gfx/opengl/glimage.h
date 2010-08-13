@@ -113,7 +113,7 @@ public:
 		return true;
 	}
 private:
-	GLS_Sprite  m_Sprite;
+	byte *_data;
 	int         m_Width;
 	int         m_Height;
 };

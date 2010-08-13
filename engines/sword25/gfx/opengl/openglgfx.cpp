@@ -32,15 +32,6 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// INCLUDES
-// -----------------------------------------------------------------------------
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <GL/GL.h>
-
-#include "sword25/util/glsprites/glsprites.h"
 #include "sword25/gfx/bitmapresource.h"
 #include "sword25/gfx/animationresource.h"
 #include "sword25/gfx/fontresource.h"
@@ -125,13 +116,7 @@ bool BS_OpenGLGfx::Init(int Width, int Height, int BitDepth, int BackbufferCount
 	m_ScreenRect.right = m_Width;
 	m_ScreenRect.bottom = m_Height;
 
-	// GLsprites initialisieren
-	HWND hwnd = reinterpret_cast<HWND>(BS_Kernel::GetInstance()->GetWindow()->GetWindowHandle());
-	GLS_Result Result = GLS_InitExternalWindow(Width, Height, Windowed ? GLS_False : GLS_True, hwnd);
-	if (Result != GLS_OK) {
-		BS_LOG_ERRORLN("Could not initialize GLsprites. Reason: %s", GLS_ResultString(Result));
-		return false;
-	}
+	// We already iniitalized gfx after the engine creation
 	m_GLspritesInitialized = true;
 
 	// Standardmäßig ist Vsync an.
@@ -158,13 +143,6 @@ bool BS_OpenGLGfx::StartFrame(bool UpdateAll) {
 	// Den Layer-Manager auf den nächsten Frame vorbereiten
 	m_RenderObjectManagerPtr->StartFrame();
 
-	// GLsprites bescheidgeben
-	GLS_Result Result = GLS_StartFrame();
-	if (Result != GLS_OK) {
-		BS_LOG_ERRORLN("Call to GLS_StartFrame() failed. Reason: %s", GLS_ResultString(Result));
-		return false;
-	}
-
 	return true;
 }
 
@@ -174,8 +152,11 @@ bool BS_OpenGLGfx::EndFrame() {
 	// Scene zeichnen
 	m_RenderObjectManagerPtr->Render();
 
+	g_system->updateScreen();
+
 	// Debug-Lines zeichnen
 	if (!m_DebugLines.empty()) {
+#if 0
 		glEnable(GL_LINE_SMOOTH);
 		glBegin(GL_LINES);
 
@@ -192,15 +173,11 @@ bool BS_OpenGLGfx::EndFrame() {
 
 		glEnd();
 		glDisable(GL_LINE_SMOOTH);
+#endif
+
+		warning("STUB: Drawing debug lines");
 
 		m_DebugLines.clear();
-	}
-
-	// Flippen
-	GLS_Result Result = GLS_EndFrame();
-	if (Result != GLS_OK) {
-		BS_LOG_ERRORLN("Call to GLS_EndFrame() failed. Reason: %s", GLS_ResultString(Result));
-		return false;
 	}
 
 	// Framecounter aktualisieren
@@ -218,21 +195,15 @@ BS_RenderObjectPtr<BS_Panel> BS_OpenGLGfx::GetMainPanel() {
 // -----------------------------------------------------------------------------
 
 void BS_OpenGLGfx::SetVsync(bool Vsync) {
-	GLS_Result Result = GLS_SetVSync(Vsync ? GLS_True : GLS_False);
-	if (Result != GLS_OK) BS_LOG_WARNINGLN("Could not set vsync status. Reason: %s", GLS_ResultString(Result));
+	warning("STUB: SetVsync(%d)", Vsync);
 }
 
 // -----------------------------------------------------------------------------
 
 bool BS_OpenGLGfx::GetVsync() const {
-	GLS_Bool Status;
-	GLS_Result Result = GLS_IsVsync(&Status);
-	if (Result != GLS_OK) {
-		BS_LOG_WARNINGLN("Could not get vsync status. Returning false. Reason: %s", GLS_ResultString(Result));
-		return false;
-	}
+	warning("STUB: GetVsync()");
 
-	return Status == GLS_True ? true : false;
+	return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -248,16 +219,9 @@ bool BS_OpenGLGfx::Fill(const BS_Rect *FillRectPtr, unsigned int Color) {
 		FillRectPtr = &Rect;
 	}
 
-	glBegin(GL_QUADS);
-	glColor4ub((Color >> 16) & 0xff, (Color >> 8) & 0xff, Color & 0xff, Color >> 24);
+	warning("STUB: Fill()");
 
-	glVertex2i(FillRectPtr->left, FillRectPtr->top);
-	glVertex2i(FillRectPtr->right, FillRectPtr->top);
-	glVertex2i(FillRectPtr->right, FillRectPtr->bottom);
-	glVertex2i(FillRectPtr->left, FillRectPtr->bottom);
-	glEnd();
-
-	return glGetError() == 0;
+	return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -281,13 +245,8 @@ bool BS_OpenGLGfx::GetScreenshot(unsigned int &Width, unsigned int &Height, byte
 
 bool BS_OpenGLGfx::ReadFramebufferContents(unsigned int Width, unsigned int Height, byte **Data) {
     *Data = (byte *)malloc(Width * Height * 4);
-	glReadPixels(0, 0, Width, Height, GL_RGBA, GL_UNSIGNED_BYTE, *Data);
-
-	if (glGetError() == 0)
-		return true;
-	else {
-		return false;
-	}
+	
+	return true;
 }
 
 // -----------------------------------------------------------------------------

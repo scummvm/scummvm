@@ -62,7 +62,7 @@ static void png_user_read_data(png_structp png_ptr, png_bytep data, png_size_t l
 
 // -----------------------------------------------------------------------------
 
-bool BS_PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,  BS_GraphicEngine::COLOR_FORMATS ColorFormat, char * & UncompressedDataPtr,
+bool BS_PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,  BS_GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
                                  int &Width, int &Height, int &Pitch) {
 	png_structp png_ptr = NULL;
 	png_infop   info_ptr = NULL;
@@ -115,7 +115,7 @@ bool BS_PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,
 
 	// Speicher für die endgültigen Bilddaten reservieren
 	// Dieses geschieht vor dem reservieren von Speicher für temporäre Bilddaten um die Fragmentierung des Speichers gering zu halten
-	UncompressedDataPtr = new char[Pitch * Height];
+	UncompressedDataPtr = new byte[Pitch * Height];
 	if (!UncompressedDataPtr) {
 		error("Could not allocate memory for output image.");
 	}
@@ -256,7 +256,7 @@ bool BS_PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,
 
 // -----------------------------------------------------------------------------
 
-bool BS_PNGLoader::DecodeImage(const char *FileDataPtr, unsigned int FileSize,  BS_GraphicEngine::COLOR_FORMATS ColorFormat, char * & UncompressedDataPtr,
+bool BS_PNGLoader::DecodeImage(const char *FileDataPtr, unsigned int FileSize,  BS_GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
                                int &Width, int &Height, int &Pitch) {
 	return DoDecodeImage(FileDataPtr, FileSize, ColorFormat, UncompressedDataPtr, Width, Height, Pitch);
 }

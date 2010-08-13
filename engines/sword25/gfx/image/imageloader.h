@@ -106,7 +106,7 @@ public:
 	*/
 	static bool LoadImage(const char *pFileData, unsigned int FileSize,
 	                      BS_GraphicEngine::COLOR_FORMATS ColorFormat,
-	                      char*& pUncompressedData,
+	                      byte *&pUncompressedData,
 	                      int &Width, int &Height,
 	                      int &Pitch);
 
@@ -175,7 +175,7 @@ protected:
 	*/
 	virtual bool DecodeImage(const char *pFileData, unsigned int FileSize,
 	                         BS_GraphicEngine::COLOR_FORMATS ColorFormat,
-	                         char*& pUncompressedData,
+	                         byte *&pUncompressedData,
 	                         int &Width, int &Height,
 	                         int &Pitch) = 0;
 

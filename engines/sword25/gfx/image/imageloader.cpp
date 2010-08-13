@@ -48,7 +48,7 @@ bool BS_ImageLoader::_ImageLoaderListInitialized = false;
 
 bool BS_ImageLoader::LoadImage(const char *pFileData, unsigned int FileSize,
                                BS_GraphicEngine::COLOR_FORMATS ColorFormat,
-                               char*& pUncompressedData,
+                               byte *&pUncompressedData,
                                int &Width, int &Height,
                                int &Pitch) {
 	// Falls die Liste der BS_ImageLoader noch nicht initialisiert wurde, wird dies getan.

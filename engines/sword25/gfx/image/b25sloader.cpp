@@ -85,7 +85,7 @@ bool BS_B25SLoader::IsCorrectImageFormat(const char *FileDataPtr, unsigned int F
 
 // -----------------------------------------------------------------------------
 
-bool BS_B25SLoader::DecodeImage(const char *FileDataPtr, unsigned int FileSize, BS_GraphicEngine::COLOR_FORMATS ColorFormat, char * & UncompressedDataPtr,
+bool BS_B25SLoader::DecodeImage(const char *FileDataPtr, unsigned int FileSize, BS_GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
                                 int &Width, int &Height, int &Pitch) {
 	// PNG innerhalb des Spielstandes finden und den Methodenaufruf zu BS_PNGLoader weiterreichen.
 	unsigned int PNGOffset = FindEmbeddedPNG(FileDataPtr, FileSize);

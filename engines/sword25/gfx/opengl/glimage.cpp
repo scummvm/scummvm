@@ -75,27 +75,13 @@ BS_GLImage::BS_GLImage(const Common::String &Filename, bool &Result) :
 	}
 
 	// Das Bild dekomprimieren
-	char *pUncompressedData;
-	if (!BS_ImageLoader::LoadImage(pFileData, FileSize, BS_GraphicEngine::CF_ABGR32, pUncompressedData, m_Width, m_Height, Pitch)) {
+	if (!BS_ImageLoader::LoadImage(pFileData, FileSize, BS_GraphicEngine::CF_ABGR32, _data, m_Width, m_Height, Pitch)) {
 		BS_LOG_ERRORLN("Could not decode image.");
 		return;
 	}
 
 	// Dateidaten freigeben
 	delete[] pFileData;
-
-	// GLS-Sprite mit den Bilddaten erstellen
-	GLS_Result GLSResult = GLS_NewSprite(m_Width, m_Height,
-	                                     (ColorFormat == BS_GraphicEngine::CF_ARGB32) ? GLS_True : GLS_False,
-	                                     pUncompressedData,
-	                                     &m_Sprite);
-	if (Result != GLS_OK) {
-		BS_LOG_ERRORLN("Could not create GLS_Sprite. Reason: %s", GLS_ResultString(GLSResult));
-		return;
-	}
-
-	// Bilddaten freigeben
-	delete[] pUncompressedData;
 
 	Result = true;
 	return;
@@ -104,20 +90,11 @@ BS_GLImage::BS_GLImage(const Common::String &Filename, bool &Result) :
 // -----------------------------------------------------------------------------
 
 BS_GLImage::BS_GLImage(unsigned int Width, unsigned int Height, bool &Result) :
-	m_Sprite(0),
 	m_Width(Width),
 	m_Height(Height) {
 	Result = false;
 
-	// GLS-Sprite mit den Bilddaten erstellen
-	GLS_Result GLSResult = GLS_NewSprite(m_Width, m_Height,
-	                                     GLS_True,
-	                                     0,
-	                                     &m_Sprite);
-	if (GLSResult != GLS_OK) {
-		BS_LOG_ERRORLN("Could not create GLS_Sprite. Reason: %s", GLS_ResultString(GLSResult));
-		return;
-	}
+	_data = new byte[Width * Height * 4];
 
 	Result = true;
 	return;
@@ -126,7 +103,7 @@ BS_GLImage::BS_GLImage(unsigned int Width, unsigned int Height, bool &Result) :
 // -----------------------------------------------------------------------------
 
 BS_GLImage::~BS_GLImage() {
-	if (m_Sprite) GLS_DeleteSprite(m_Sprite);
+	delete[] _data;
 }
 
 // -----------------------------------------------------------------------------
