@@ -31,12 +31,10 @@
 // BS25
 // Aufruf der BS25 Log-Funktion
 // -----------------------------------------------------------------------------
-void BS_Log_C(const char* Message);
 static int luaB_print (lua_State *L) {
   int n = lua_gettop(L);  /* number of arguments */
   int i;
   lua_getglobal(L, "tostring");
-  BS_Log_C("LUA: ");
   for (i=1; i<=n; i++) {
     const char *s;
     lua_pushvalue(L, -1);  /* function to be called */
@@ -46,11 +44,8 @@ static int luaB_print (lua_State *L) {
     if (s == NULL)
       return luaL_error(L, LUA_QL("tostring") " must return a string to "
                            LUA_QL("print"));
-    if (i>1) BS_Log_C("\t");
-    BS_Log_C(s);
     lua_pop(L, 1);  /* pop result */
   }
-  BS_Log_C("\n");
   return 0;
 }
 

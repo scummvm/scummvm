@@ -102,9 +102,12 @@ MODULE_OBJS := \
 	util/pluto/pluto.o \
 	util/pluto/plzio.o
 
+# HACK. Use proper CC compiler here
 %.o: %.c
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
-	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	$(QUIET_CXX)gcc  $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+
+LIBS += -lpng
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SWORD25), DYNAMIC_PLUGIN)
