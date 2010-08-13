@@ -1399,6 +1399,9 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer -mthumb-interwork"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fno-strict-aliasing"
 		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt"
+		if test "$_dynamic_modules" = no ; then
+  			LDFLAGS="$LDFLAGS -Wl,--gc-sections"
+ 		fi
 		LDFLAGS="$LDFLAGS -L$DEVKITPRO/libnds/lib"
 		LIBS="$LIBS -lnds9"
 		;;
@@ -1929,12 +1932,12 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
 		;;
 	ds)
+DEFINES="$DEFINES -DELF_LOADER_TARGET -DONE_PLUGIN_AT_A_TIME"
 _def_plugin='
 #define PLUGIN_PREFIX	""
 #define PLUGIN_SUFFIX	".plg"
 '
 _mak_plugins='
-DEFINES				= "$DEFINES -DELF_LOADER_TARGET -DONE_PLUGIN_AT_A_TIME"
 DYNAMIC_MODULES		:= 1
 PLUGIN_PREFIX		:=
 PLUGIN_SUFFIX		:= .plg
