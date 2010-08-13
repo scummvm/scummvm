@@ -2051,6 +2051,15 @@ void ResourceManager::detectSciVersion() {
 			s_sciVersion = SCI_VERSION_1_1;
 			return;
 		}
+		// FIXME: this is really difficult, lsl1 spanish has map/vol sci1late
+		//  and the only current detection difference is movecounttype which
+		//  is increment here, but ignore for all the regular sci1late games
+		//  the problem is, we dont have access to that detection till later
+		//  so maybe (part of?) that detection should get moved in here
+		if ((g_sci->getGameId() == GID_LSL1) && (g_sci->getLanguage() == Common::ES_ESP)) {
+			s_sciVersion = SCI_VERSION_1_MIDDLE;
+			return;
+		}
 		s_sciVersion = SCI_VERSION_1_LATE;
 		return;
 	case kResVersionSci11:
