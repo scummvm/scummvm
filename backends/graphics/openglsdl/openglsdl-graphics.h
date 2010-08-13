@@ -90,7 +90,6 @@ protected:
 	int _lastFullscreenModeHeight;
 	int _desktopWidth;
 	int _desktopHeight;
-	uint _desktopAspectRatio;
 
 	// Hardware screen
 	SDL_Surface *_hwscreen;
