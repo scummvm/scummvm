@@ -202,7 +202,6 @@ void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
 			scaledX *= _videoMode.scaleFactor;
 			scaledY *= _videoMode.scaleFactor;
 		}
-
 	} else {
 		if (_overlayVisible) {
 			if (_aspectWidth != _videoMode.overlayWidth)
@@ -486,7 +485,7 @@ void OpenGLSdlGraphicsManager::setFullscreenMode(bool enable) {
 
 	if (_transactionMode == kTransactionActive) {
 		_videoMode.fullscreen = enable;
-		_transactionDetails.needHotswap = true;
+		_transactionDetails.needRefresh = true;
 	}
 }
 

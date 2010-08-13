@@ -33,10 +33,6 @@
 // Uncomment this to enable the 'on screen display' code.
 #define USE_OSD	1
 
-// Uncomment this to enable all aspect ratio corrections
-// (Will include 4/3, 16/9, 16/10, 5/3, 5/4)
-//#define USE_ALL_ASR 1
-
 namespace OpenGL {
 // The OpenGL GFX modes. They have to be inside the OpenGL namespace so they
 // do not clash with the SDL GFX modes.
@@ -135,7 +131,7 @@ protected:
 
 	struct TransactionDetails {
 		bool sizeChanged;
-		bool needHotswap;
+		bool needRefresh;
 		bool needUpdatescreen;
 		bool filterChanged;
 #ifdef USE_RGB_COLOR
@@ -148,11 +144,7 @@ protected:
 	enum {
 		kAspectRatioNone,
 		kAspectRatioConserve,
-		kAspectRatio4_3,
-		kAspectRatio16_9,
-		kAspectRatio16_10,
-		kAspectRatio5_3,
-		kAspectRatio5_4
+		kAspectRatioOriginal
 	};
 
 	struct VideoState {
@@ -191,10 +183,6 @@ protected:
 	int _aspectY;
 	int _aspectWidth;
 	int _aspectHeight;
-
-#ifndef USE_ALL_ASR
-	int _desiredAspectRatio;
-#endif
 
 	/**
 	 * Sets the aspect ratio mode.
