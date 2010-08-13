@@ -446,14 +446,15 @@ void GfxPorts::removeWindow(Window *pWnd, bool reanimate) {
 		_paint16->kernelGraphRedrawBox(pWnd->restoreRect);
 	_windowList.remove(pWnd);
 	setPort(_windowList.back());
-	// We will actually free this window after 10 kSetPort-calls
+	// We will actually free this window after 15 kSetPort-calls
 	// Sierra sci freed the pointer immediately, but pointer to that port
 	//  still worked till the memory got overwritten. Some games depend
 	//  on this (dispose a window and then kSetPort to it again for once)
 	//  Those are actually script bugs, but patching all of those out
 	//  would be quite a hassle and this just keeps compatibility
 	//  (examples: hoyle 4 game menu and sq4cd inventory)
-	pWnd->counterTillFree = 10;
+	//  sq4cd gum wrapper requires more than 10
+	pWnd->counterTillFree = 15;
 	_freeCounter++;
 }
 
