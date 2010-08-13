@@ -433,6 +433,13 @@ bool OpenGLSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		int factor = _videoMode.scaleFactor;
 		factor += (sdlKey == SDLK_MINUS || sdlKey == SDLK_KP_MINUS) ? -1 : +1;
 		if (0 < factor && factor < 4) {
+			// Check if the desktop resolution has been detected
+			if (_desktopWidth > 0 && _desktopHeight > 0)
+				// If the new scale factor is too big, do not scale
+				if (_videoMode.screenWidth * factor > _desktopWidth || 
+					_videoMode.screenHeight * factor > _desktopHeight)
+					return false;
+
 			beginGFXTransaction();
 				setScale(factor);
 			endGFXTransaction();
