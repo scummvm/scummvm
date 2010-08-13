@@ -23,17 +23,17 @@
  *
  */
 
+#if defined(DYNAMIC_MODULES) && defined(__PSP__)
+
 #ifndef BACKENDS_PLUGINS_PSP_PSP_PROVIDER_H
 #define BACKENDS_PLUGINS_PSP_PSP_PROVIDER_H
 
 #include "backends/plugins/elf-provider.h"
 
-#if defined(DYNAMIC_MODULES) && defined(__PSP__)
-
 class PSPPluginProvider : public ELFPluginProvider {
 	Plugin* createPlugin(const Common::FSNode &node) const;
 };
 
-#endif // defined(DYNAMIC_MODULES) && defined(__PSP__)
-
 #endif /* BACKENDS_PLUGINS_PSP_PSP_PROVIDER_H */
+
+#endif // defined(DYNAMIC_MODULES) && defined(__PSP__)

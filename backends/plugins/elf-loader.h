@@ -23,6 +23,8 @@
  *
  */
 
+#if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
+
 #ifndef ELF_LOADER_H
 #define ELF_LOADER_H
 
@@ -65,3 +67,5 @@ public:
 };
 
 #endif /* ELF_LOADER_H */
+
+#endif /* defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET) */

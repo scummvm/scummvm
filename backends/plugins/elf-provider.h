@@ -23,6 +23,8 @@
  *
  */
 
+#if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
+
 #ifndef BACKENDS_PLUGINS_ELF_PROVIDER_H
 #define BACKENDS_PLUGINS_ELF_PROVIDER_H
 
@@ -31,8 +33,6 @@
 #include "common/fs.h"
 
 #include "backends/plugins/elf-loader.h"
-
-#if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
 class ELFPlugin : public DynamicPlugin {
 protected:
@@ -65,6 +65,6 @@ protected:
 
 };
 
-#endif // defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
-
 #endif /* BACKENDS_PLUGINS_ELF_PROVIDER_H */
+
+#endif // defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)

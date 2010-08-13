@@ -23,6 +23,8 @@
  *
  */
 
+#if defined(DYNAMIC_MODULES) && defined(ARM_TARGET)
+
 #include "backends/fs/ds/ds-fs.h"
 #include "elf-loader.h"
 #include "dsmain.h"
@@ -35,3 +37,5 @@ protected:
 public:
     ARMDLObject() : DLObject() {}
 };
+
+#endif /* defined(DYNAMIC_MODULES) && defined(ARM_TARGET) */

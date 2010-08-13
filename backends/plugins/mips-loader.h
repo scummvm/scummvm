@@ -24,6 +24,8 @@
  *
  */
 
+#if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
+
 #include "elf-loader.h"
 #include "shorts-segment-manager.h"
 
@@ -44,3 +46,5 @@ public:
 		_gpVal = 0;
     }
 };
+
+#endif /* defined(DYNAMIC_MODULES) && defined(MIPS_TARGET) */

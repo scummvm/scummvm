@@ -23,6 +23,8 @@
  *
  */
 
+#if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
+
 #ifndef SHORTS_SEGMENT_MANAGER_H
 #define SHORTS_SEGMENT_MANAGER_H
 
@@ -87,3 +89,5 @@ private:
 };
 
 #endif /* SHORTS_SEGMENT_MANAGER_H */
+
+#endif /* defined(DYNAMIC_MODULES) && defined(MIPS_TARGET) */
