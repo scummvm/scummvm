@@ -356,10 +356,15 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 			// Failed setuping a fullscreen mode
 			return false;
 
+	uint32 flags = SDL_OPENGL;
+
+	if (_videoMode.fullscreen)
+		flags |= SDL_FULLSCREEN;
+	else if (_videoMode.aspectRatioCorrection == kAspectRatioNone)
+		flags |= SDL_RESIZABLE;
+
 	// Create our window
-	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32,
-		_videoMode.fullscreen ? (SDL_FULLSCREEN | SDL_OPENGL) : (SDL_OPENGL | SDL_RESIZABLE)
-	);
+	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32, flags);
 #ifdef USE_RGB_COLOR
 	detectSupportedFormats();
 #endif
