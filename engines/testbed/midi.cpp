@@ -138,9 +138,9 @@ TestExitStatus MidiTests::playMidiMusic() {
 }
 
 MidiTestSuite::MidiTestSuite() {
-	if (SearchMan.hasFile("music.mid")) {
-		addTest("MidiTests", &MidiTests::playMidiMusic);
-	} else {
+	addTest("MidiTests", &MidiTests::playMidiMusic);
+	_isMidiDataFound = true;
+	if (!SearchMan.hasFile("music.mid")) {
 		// add some fallback test if filesystem loading failed
 		Testsuite::logPrintf("Warning! Midi: Sound data file music.mid not found\n");
 		_isMidiDataFound = false;

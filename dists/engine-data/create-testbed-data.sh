@@ -48,5 +48,5 @@ cd ..
 
 # move the audiocd data to newly created directory
 cp -r testbed-audiocd-files testbed/audiocd-files
-
+mv testbed/audiocd-files/music.mid testbed/
 echo "Game data created"

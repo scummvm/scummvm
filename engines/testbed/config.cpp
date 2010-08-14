@@ -193,10 +193,8 @@ void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {
 }
 
 Common::SeekableReadStream *TestbedConfigManager::getConfigReadStream() {
-	// Look for config file in game-path
-	const Common::String &path = ConfMan.get("path");
-	Common::FSDirectory gameRoot(path);
-	Common::SeekableReadStream *rs = gameRoot.createReadStreamForMember(_configFileName);
+	// Look for config file using SearchMan	
+	Common::SeekableReadStream *rs = SearchMan.createReadStreamForMember(_configFileName);
 	return rs;
 }
 
@@ -231,6 +229,7 @@ void TestbedConfigManager::parseConfigFile() {
 			Common::ConfigFile::SectionKeyList kList = i->getKeys();
 			if (!currTS) {
 				Testsuite::logPrintf("Warning! Error in config: Testsuite %s not found\n", i->name.c_str());
+				continue;
 			}
 
 			for (Common::ConfigFile::SectionKeyList::const_iterator j = kList.begin(); j != kList.end(); j++) {
@@ -295,8 +294,11 @@ void TestbedConfigManager::selectTestsuites() {
 	}
 
 	Testsuite::logPrintf("Info! : Interactive tests are also being executed.\n");
-	
+
 	if (Testsuite::handleInteractiveInput(prompt, "Proceed?", "Customize", kOptionRight)) {
+		if (Engine::shouldQuit()) {
+			return;
+		}		
 		// Select testsuites using checkboxes
 		TestbedOptionsDialog tbd(_testsuiteList, this);
 		tbd.runModal();

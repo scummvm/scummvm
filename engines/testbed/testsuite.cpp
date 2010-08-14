@@ -322,11 +322,6 @@ bool Testsuite::enableTest(const Common::String &testName, bool toEnable) {
 void Testsuite::execute() {
 	// Main Loop for a testsuite
 
-	// Do nothing if meant to exit
-	if (toQuit == kEngineQuit) {
-		return;
-	}
-
 	uint count = 0;
 	Common::Point pt = getDisplayRegionCoordinates();
 	pt.y += getLineSeparation();
