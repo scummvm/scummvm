@@ -51,7 +51,7 @@ const char *const MOUNT_DIR_PARAMETER = "-mount-dir";
 
 
 void LogToStdout(const char *Message) {
-	warning(Message);
+	debugN(0, Message);
 }
 
 Sword25Engine::Sword25Engine(OSystem *syst, const Sword25GameDescription *gameDesc):
