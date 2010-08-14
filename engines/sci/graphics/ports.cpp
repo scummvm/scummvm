@@ -288,6 +288,16 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	// Find an unused window/port id
 	uint id = PORTS_FIRSTWINDOWID;
 	while (id < _windowsById.size() && _windowsById[id]) {
+		if (_windowsById[id]->counterTillFree) {
+			// port that is already disposed, but not freed yet
+			freeWindow((Window *)_windowsById[id]);
+			_freeCounter--;
+			break; // reuse the handle
+			// we do this especially for sq4cd. it creates and disposes the
+			//  inventory window all the time, but reuses old handles as well
+			//  this worked somewhat under the original interpreter, because
+			//  it put the new window where the old was.
+		}
 		++id;
 	}
 	if (id == _windowsById.size())
