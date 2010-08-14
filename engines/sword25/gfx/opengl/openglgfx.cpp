@@ -32,6 +32,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "sword25/gfx/bitmapresource.h"
 #include "sword25/gfx/animationresource.h"
 #include "sword25/gfx/fontresource.h"
@@ -56,8 +58,8 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 namespace {
-const unsigned int BIT_DEPTH = 32;
-const unsigned int BACKBUFFER_COUNT = 1;
+const int BIT_DEPTH = 32;
+const int BACKBUFFER_COUNT = 1;
 const Common::String PNG_EXTENSION(".png");
 const Common::String PNG_S_EXTENSION("_s.png");
 const Common::String ANI_EXTENSION("_ani.xml");
@@ -79,7 +81,7 @@ BS_OpenGLGfx::BS_OpenGLGfx(BS_Kernel *pKernel) :
 // -----------------------------------------------------------------------------
 
 BS_OpenGLGfx::~BS_OpenGLGfx() {
-	if (m_GLspritesInitialized) GLS_Quit();
+	_backSurface.free();
 }
 
 // -----------------------------------------------------------------------------
@@ -115,6 +117,8 @@ bool BS_OpenGLGfx::Init(int Width, int Height, int BitDepth, int BackbufferCount
 	m_ScreenRect.top = 0;
 	m_ScreenRect.right = m_Width;
 	m_ScreenRect.bottom = m_Height;
+
+	_backSurface.create(Width, Height, 4);
 
 	// We already iniitalized gfx after the engine creation
 	m_GLspritesInitialized = true;

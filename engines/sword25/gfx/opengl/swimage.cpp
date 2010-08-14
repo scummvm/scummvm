@@ -76,7 +76,7 @@ BS_SWImage::BS_SWImage(const Common::String &Filename, bool &Result) :
 	}
 
 	// Das Bild dekomprimieren
-	char *pUncompressedData;
+	byte *pUncompressedData;
 	if (!BS_ImageLoader::LoadImage(pFileData, FileSize, BS_GraphicEngine::CF_ABGR32, pUncompressedData, m_Width, m_Height, Pitch)) {
 		BS_LOG_ERRORLN("Could not decode image.");
 		return;

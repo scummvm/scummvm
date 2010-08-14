@@ -43,8 +43,6 @@
 #include "sword25/gfx/image/image.h"
 #include "sword25/gfx/graphicengine.h"
 
-#include <vector>
-
 namespace Sword25 {
 
 // -----------------------------------------------------------------------------
@@ -116,6 +114,8 @@ private:
 	byte *_data;
 	int         m_Width;
 	int         m_Height;
+
+	Graphics::Surface *_backSurface;
 };
 
 } // End of namespace Sword25

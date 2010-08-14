@@ -61,6 +61,7 @@ bool BS_VectorImage::Blit(int PosX, int PosY,
                           BS_Rect *pPartRect,
                           unsigned int Color,
                           int Width, int Height) {
+#if 0
 	static BS_VectorImageRenderer VectorImageRenderer;
 	static byte *PixelData;
 	static GLS_Sprite Sprite = 0;
@@ -138,8 +139,13 @@ bool BS_VectorImage::Blit(int PosX, int PosY,
 	                             (Flipping & BS_Image::FLIP_H) ? GLS_True : GLS_False,
 	                             1.0f, 1.0f);
 	if (Result != GLS_OK) BS_LOG_ERRORLN("GLS_Blit() failed. Reason: %s", GLS_ResultString(Result));
+#else
+	warning("STUB: BS_VectorImage::Blit()");
 
-	return Result == GLS_OK;
+	return true;
+#endif
+
+	return true;
 }
 
 } // End of namespace Sword25

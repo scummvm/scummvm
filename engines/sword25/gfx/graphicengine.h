@@ -46,6 +46,7 @@
 // Includes
 #include "common/array.h"
 #include "common/str.h"
+#include "graphics/surface.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/bs_stdint.h"
 #include "sword25/kernel/resservice.h"
@@ -299,6 +300,9 @@ public:
 	int GetRepaintedPixels() const {
 		return m_RepaintedPixels;
 	}
+
+	Graphics::Surface _backSurface;
+	Graphics::Surface *getSurface() { return &_backSurface; }
 
 	// Access methods
 

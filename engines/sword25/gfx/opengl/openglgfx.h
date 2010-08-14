@@ -39,15 +39,9 @@
 // INCLUDES
 // -----------------------------------------------------------------------------
 
-#include "sword25/kernel/memlog_off.h"
-#include <memory>
-#include <vector>
-#include "sword25/kernel/memlog_on.h"
-
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/graphicengine.h"
 #include "sword25/gfx/renderobjectptr.h"
-#include "sword25/util/glsprites/glsprites.h"
 
 namespace Sword25 {
 
@@ -94,7 +88,6 @@ public:
 	// Debugging Methoden
 	// ------------------
 	virtual void DrawDebugLine(const BS_Vertex &Start, const BS_Vertex &End, unsigned int Color);
-	static const char *GetGLSResultString(GLS_Result Result);
 
 	// Persistenz Methoden
 	// -------------------
@@ -103,6 +96,7 @@ public:
 
 private:
 	bool                m_GLspritesInitialized;
+	byte *_backBuffer;
 
 	BS_RenderObjectPtr<BS_Panel> m_MainPanelPtr;
 

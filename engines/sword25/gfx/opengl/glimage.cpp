@@ -50,13 +50,15 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 BS_GLImage::BS_GLImage(const Common::String &Filename, bool &Result) :
-	m_Sprite(0),
+	_data(0),
 	m_Width(0),
 	m_Height(0) {
 	Result = false;
 
 	BS_PackageManager *pPackage = static_cast<BS_PackageManager *>(BS_Kernel::GetInstance()->GetService("package"));
 	BS_ASSERT(pPackage);
+
+	_backSurface = (static_cast<BS_GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx")))->getSurface();
 
 	// Datei laden
 	char *pFileData;
@@ -122,11 +124,13 @@ bool BS_GLImage::SetContent(const byte *Pixeldata, uint size, unsigned int Offse
 		return false;
 	}
 
-	// GLS-Sprite mit den Bilddaten füllen
-	GLS_Result GLSResult = GLS_SetSpriteData(m_Sprite, m_Width, m_Height, &Pixeldata[Offset], Stride / 4);
-	if (GLSResult != GLS_OK) {
-		BS_LOG_ERRORLN("CGLS_SetSpriteData() failed. Reason: %s", GLS_ResultString(GLSResult));
-		return false;
+	const byte *in = &Pixeldata[Offset];
+	byte *out = _data;
+
+	for (int i = 0; i < m_Height; i++) {
+		memcpy(out, in, m_Width * 4);
+		out += m_Width * 4;
+		in += Stride;
 	}
 
 	return true;
@@ -146,43 +150,78 @@ bool BS_GLImage::Blit(int PosX, int PosY,
                       BS_Rect *pPartRect,
                       unsigned int Color,
                       int Width, int Height) {
-	// BS_Rect nach GLS_Rect konvertieren
-	GLS_Rect SubImage;
+	int x1 = 0, y1 = 0;
+	int w = m_Width, h = m_Height;
 	if (pPartRect) {
-		SubImage.x1 = pPartRect->left;
-		SubImage.y1 = pPartRect->top;
-		SubImage.x2 = pPartRect->right;
-		SubImage.y2 = pPartRect->bottom;
+		x1 = pPartRect->left;
+		y1 = pPartRect->top;
+		w = pPartRect->right - pPartRect->left;
+		h = pPartRect->bottom - pPartRect->top;
 	}
 
-	// Farbe nach GLS_Color konvertieren
-	GLS_Color GLSColor;
-	GLSColor.a = Color >> 24;
-	GLSColor.r = (Color >> 16) & 0xff;
-	GLSColor.g = (Color >> 8) & 0xff;
-	GLSColor.b = Color & 0xff;
-
 	// Skalierungen berechnen
-	GLS_Float ScaleX, ScaleY;
-	if (Width == -1) Width = m_Width;
-	ScaleX = (GLS_Float) Width / (GLS_Float) m_Width;
+	float ScaleX, ScaleY;
+	if (Width == -1)
+		Width = m_Width;
+	ScaleX = (float) Width / (float) m_Width;
 
-	if (Height == -1) Height = m_Height;
-	ScaleY = (GLS_Float) Height / (GLS_Float) m_Height;
+	if (Height == -1)
+		Height = m_Height;
+	ScaleY = (float) Height / (float) m_Height;
+
+	if (Color != 0xffffffff) {
+		warning("STUB: Image bg color: %x", Color);
+	}
+
+	if (ScaleX != 1.0 || ScaleY != 1.0) {
+		warning("STUB: Sprite scaling (%f x %f)", ScaleX, ScaleY);
+	}
+
+	if (Flipping & (BS_Image::FLIP_V | BS_Image::FLIP_H)) {
+		warning("STUB: Sprite flipping");
+	}
+
+	w = CLIP(x1 + w, 0, (int)_backSurface->w);
+	h = CLIP(y1 + h, 0, (int)_backSurface->h);
 
 	// Rendern
 	// TODO:
 	// Die Bedeutung von FLIP_V und FLIP_H ist vertauscht. Allerdings glaubt der Rest der Engine auch daran, daher war es einfacher diesen Fehler
 	// weiterzuführen. Bei Gelegenheit ist dieses aber zu ändern.
-	GLS_Result Result = GLS_Blit(m_Sprite,
-	                             PosX, PosY,
-	                             pPartRect ? &SubImage : 0, &GLSColor,
-	                             (Flipping & BS_Image::FLIP_V) ? GLS_True : GLS_False,
-	                             (Flipping & BS_Image::FLIP_H) ? GLS_True : GLS_False,
-	                             ScaleX, ScaleY);
-	if (Result != GLS_OK) BS_LOG_ERRORLN("GLS_Blit() failed. Reason: %s", GLS_ResultString(Result));
 
-	return Result == GLS_OK;
+	// TODO: scaling
+	// TODO: Flipping
+	byte *ino = &_data[y1 * m_Width * 4 + x1 * 4];
+	byte *outo = (byte *)_backSurface->getBasePtr(PosX, PosY);
+	byte *in, *out;
+	bool alphawarn = false;
+
+	for (int i = 0; i < h; i++) {
+		out = outo;
+		in = ino;
+		for (int j = 0; j < w; j++) {
+			if (*in == 0) {
+				in += 4;
+				out += 4;
+				continue;
+			}
+
+			if (*in != 255)
+				alphawarn = true;
+
+			*in++ = *out++; // TODO: alpha blending
+			*in++ = *out++;
+			*in++ = *out++;
+			*in++ = *out++;
+		}
+		outo += _backSurface->pitch;
+		ino += m_Width * 4;
+	}
+
+	if (alphawarn)
+		warning("STUB: alpha image");
+
+	return true;
 }
 
 } // End of namespace Sword25
