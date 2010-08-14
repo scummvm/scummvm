@@ -1796,7 +1796,7 @@ void run_vm(EngineState *s) {
 		case op_lagi: // 0x48 (72)
 		case op_lali: // 0x49 (73)
 		case op_lati: // 0x4a (74)
-		case op_lapi: // 0x4b (75)
+		case op_lapi: { // 0x4b (75)
 			// Load global, local, temp or param variable into the accumulator,
 			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
@@ -1806,6 +1806,7 @@ void run_vm(EngineState *s) {
 			var_number = opparams[0] + value;
 			s->r_acc = READ_VAR(var_type, var_number);
 			break;
+		}
 
 		case op_lsgi: // 0x4c (76)
 		case op_lsli: // 0x4d (77)
