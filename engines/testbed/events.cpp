@@ -64,6 +64,16 @@ struct keycodeToChar {
 	{Common::KEYCODE_x, 'x'},
 	{Common::KEYCODE_y, 'y'},
 	{Common::KEYCODE_z, 'z'},
+	{Common::KEYCODE_0, '0'},
+	{Common::KEYCODE_1, '1'},
+	{Common::KEYCODE_2, '2'},
+	{Common::KEYCODE_3, '3'},
+	{Common::KEYCODE_4, '4'},
+	{Common::KEYCODE_5, '5'},
+	{Common::KEYCODE_6, '6'},
+	{Common::KEYCODE_7, '7'},
+	{Common::KEYCODE_8, '8'},
+	{Common::KEYCODE_9, '9'},
 	{Common::KEYCODE_SPACE, ' '}
 };
 
