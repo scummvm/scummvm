@@ -1410,9 +1410,9 @@ case $_host_os in
 	gamecube)
 		CXXFLAGS="$CXXFLAGS -Os -mogc -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
-		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include -I$DEVKITPRO/cube/include"
+		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
 		# libogc is required to link the cc tests (includes _start())
-		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube -L$DEVKITPRO/cube/lib -logc"
+		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube -logc"
 		;;
 	haiku*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1470,9 +1470,9 @@ case $_host_os in
 	wii)
 		CXXFLAGS="$CXXFLAGS -Os -mrvl -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
-		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include -I$DEVKITPRO/wii/include"
+		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
 		# libogc is required to link the cc tests (includes _start())
-		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii -L$DEVKITPRO/wii/lib -logc"
+		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii -logc"
 		;;
 	wince)
 		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale"
@@ -1565,6 +1565,7 @@ if test -n "$_host"; then
 			add_line_to_config_h "/* #define DEBUG_WII_USBGECKO */"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
+			add_line_to_config_h "#define USE_WII_DI"
 			;;
 		gp2x)
 			DEFINES="$DEFINES -DGP2X -DNDEBUG"
@@ -2583,10 +2584,10 @@ case $_backend in
 		DEFINES="$DEFINES -D__WII__ -DGEKKO"
 		case $_host_os in
 		gamecube)
-			LIBS="$LIBS -lgxflux -lfat -logc -ldb"
+			LIBS="$LIBS -lgxflux -liso9660 -lfat -logc -ldb"
 			;;
 		*)
-			LIBS="$LIBS -lgxflux -ldi -ltinysmb -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
+			LIBS="$LIBS -lgxflux -ldi -liso9660 -ltinysmb -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
 			;;
 		esac
 		;;

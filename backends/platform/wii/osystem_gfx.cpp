@@ -21,8 +21,7 @@
 
 #include <malloc.h>
 
-#include <gfx/gfx.h>
-#include <gfx/gfx_con.h>
+#include <gxflux/gfx_con.h>
 
 #include "common/config-manager.h"
 #include "graphics/conversion.h"

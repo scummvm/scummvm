@@ -29,6 +29,7 @@
 
 #ifdef USE_WII_DI
 #include <di/di.h>
+#include <iso9660.h>
 #endif
 
 #ifdef USE_WII_SMB
@@ -125,24 +126,11 @@ void WiiFilesystemFactory::mount(FileSystemType type) {
 			break;
 
 		printf("mount dvd\n");
-		DI_Mount();
-
-		while (DI_GetStatus() & DVD_INIT)
-			usleep(20 * 1000);
-
-		if (!(DI_GetStatus() & DVD_READY)) {
-			DI_StopMotor();
-			printf("error mounting dvd\n");
-			break;
-		}
-
-		printf("mount ISO9660\n");
 		if (ISO9660_Mount()) {
 			_dvdMounted = true;
 			_dvdError = false;
 			printf("ISO9660 mounted\n");
 		} else {
-			DI_StopMotor();
 			_dvdError = true;
 			printf("ISO9660 mount failed\n");
 		}
@@ -185,7 +173,6 @@ void WiiFilesystemFactory::umount(FileSystemType type) {
 		printf("umount dvd\n");
 
 		ISO9660_Unmount();
-		DI_StopMotor();
 
 		_dvdMounted = false;
 		_dvdError = false;
@@ -199,10 +186,7 @@ void WiiFilesystemFactory::umount(FileSystemType type) {
 
 		printf("umount smb\n");
 
-		if (smbClose("smb:"))
-			printf("smb umounted\n");
-		else
-			printf("error umounting smb\n");
+		smbClose("smb:");
 
 		_smbMounted = false;
 		_smbError = false;

@@ -25,7 +25,8 @@
 
 #define SFX_THREAD_STACKSIZE (1024 * 128)
 #define SFX_THREAD_PRIO 80
-#define SFX_THREAD_FRAG_SIZE 4096
+#define SFX_THREAD_FRAG_SIZE 2048
+#define SFX_BUFFERS 3
 
 static lwpq_t sfx_queue;
 static lwp_t sfx_thread;
@@ -33,20 +34,18 @@ static u8 *sfx_stack;
 static bool sfx_thread_running = false;
 static bool sfx_thread_quit = false;
 
-static u8 sb = 0;
-static u8 *sound_buffer[2];
+static u32 sb_hw;
+static u8 *sound_buffer[SFX_BUFFERS];
 
 static void audio_switch_buffers() {
-	AUDIO_StopDMA();
-	AUDIO_InitDMA((u32) sound_buffer[sb], SFX_THREAD_FRAG_SIZE);
-	AUDIO_StartDMA();
-
+	sb_hw = (sb_hw + 1) % SFX_BUFFERS;
+	AUDIO_InitDMA((u32) sound_buffer[sb_hw], SFX_THREAD_FRAG_SIZE);
 	LWP_ThreadSignal(sfx_queue);
 }
 
 static void * sfx_thread_func(void *arg) {
 	Audio::MixerImpl *mixer = (Audio::MixerImpl *) arg;
-	u8 next_sb;
+	u8 sb_sw;
 
 	while (true) {
 		LWP_ThreadSleep(sfx_queue);
@@ -54,11 +53,15 @@ static void * sfx_thread_func(void *arg) {
 		if (sfx_thread_quit)
 			break;
 
-		next_sb = sb ^ 1;
-		mixer->mixCallback(sound_buffer[next_sb], SFX_THREAD_FRAG_SIZE);
-		DCFlushRange(sound_buffer[next_sb], SFX_THREAD_FRAG_SIZE);
-
-		sb = next_sb;
+		// the hardware uses two buffers: a front and a back buffer
+		// we use 3 buffers here: two are beeing pushed to the DSP,
+		// and the free one is where our mixer writes to
+		// thus the latency of our steam is:
+		// 2048 [frag size] / 48000 / 2 [16bit] / 2 [stereo] * 2 [hw buffers]
+		// -> 21.3ms
+		sb_sw = (sb_hw + 1) % SFX_BUFFERS;
+		mixer->mixCallback(sound_buffer[sb_sw], SFX_THREAD_FRAG_SIZE);
+		DCFlushRange(sound_buffer[sb_sw], SFX_THREAD_FRAG_SIZE);
 	}
 
 	return NULL;
@@ -89,21 +92,20 @@ void OSystem_Wii::initSfx() {
 		sfx_thread_running = true;
 	}
 
-	sound_buffer[0] = (u8 *) memalign(32, SFX_THREAD_FRAG_SIZE);
-	sound_buffer[1] = (u8 *) memalign(32, SFX_THREAD_FRAG_SIZE);
-
-	memset(sound_buffer[0], 0, SFX_THREAD_FRAG_SIZE);
-	memset(sound_buffer[1], 0, SFX_THREAD_FRAG_SIZE);
-
-	DCFlushRange(sound_buffer[0], SFX_THREAD_FRAG_SIZE);
-	DCFlushRange(sound_buffer[1], SFX_THREAD_FRAG_SIZE);
+	for (u32 i = 0; i < SFX_BUFFERS; ++i) {
+		sound_buffer[i] = (u8 *) memalign(32, SFX_THREAD_FRAG_SIZE);
+		memset(sound_buffer[i], 0, SFX_THREAD_FRAG_SIZE);
+		DCFlushRange(sound_buffer[i], SFX_THREAD_FRAG_SIZE);
+	}
 
 	_mixer->setReady(true);
 
+	sb_hw = 0;
+
 	AUDIO_SetDSPSampleRate(AI_SAMPLERATE_48KHZ);
 	AUDIO_RegisterDMACallback(audio_switch_buffers);
-
-	audio_switch_buffers();
+	AUDIO_InitDMA((u32) sound_buffer[sb_hw], SFX_THREAD_FRAG_SIZE);
+	AUDIO_StartDMA();
 }
 
 void OSystem_Wii::deinitSfx() {
@@ -123,8 +125,8 @@ void OSystem_Wii::deinitSfx() {
 		free(sfx_stack);
 		sfx_thread_running = false;
 
-		free(sound_buffer[0]);
-		free(sound_buffer[1]);
+		for (u32 i = 0; i < SFX_BUFFERS; ++i)
+			free(sound_buffer[i]);
 	}
 }
 
