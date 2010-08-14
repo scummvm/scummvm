@@ -46,10 +46,6 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "sword25/sfx/fmodexexception.h"
-#include "sword25/sfx/fmodexchannel.h"
-#include "sword25/sfx/fmodexresource.h"
-#include "sword25/kernel/string.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/package/packagemanager.h"
@@ -59,7 +55,7 @@
 // Konstanten und lokale Funktionen
 // -----------------------------------------------------------------------------
 
-namespace {
+namespace Sword25 {
 const float         DEFAULT_MUSIC_VOLUME = 1.0f;
 const float         DEFAULT_SPEECH_VOLUME = 1.0f;
 const float         DEFAULT_SFX_VOLUME = 1.0f;
@@ -68,6 +64,7 @@ const unsigned int  INVALID_SOUND_HANDLE = 0xffffffff;
 
 // -------------------------------------------------------------------------
 
+#if 0
 inline float NormalizePanning(float Panning) {
 	bool Corrected = false;
 	float Result = Panning;
@@ -120,25 +117,25 @@ inline FMOD_SOUND_FORMAT BitsPerSampleToFMODExSoundFormat(unsigned int BitsPerSa
 		return FMOD_SOUND_FORMAT_NONE;
 	}
 }
-}
 
-// -----------------------------------------------------------------------------
-// Konstruktion / Destruktion
-// -----------------------------------------------------------------------------
+#endif
 
 BS_FMODExSound::BS_FMODExSound(BS_Kernel *pKernel) :
-	BS_SoundEngine(pKernel),
-	m_FMOD(0),
-	m_NextHandle(1) {
+	BS_SoundEngine(pKernel)
+	/*	m_FMOD(0), 
+		m_NextHandle(1) */ {
 	// Lautstärkeneinstellungen auf die Standardwerte setzen
+#if 0
 	m_Volumes[MUSIC] = DEFAULT_MUSIC_VOLUME;
 	m_Volumes[SPEECH] = DEFAULT_SPEECH_VOLUME;
 	m_Volumes[SFX] = DEFAULT_SFX_VOLUME;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
 BS_FMODExSound::~BS_FMODExSound() {
+#if 0
 	// Alle noch spielenden Sounds stoppen und die Ressourcen freigeben
 	for (PSM_ITER it = m_PlayingSoundsMap.begin(); it != m_PlayingSoundsMap.end(); ++it) {
 		if (it->second.ChannelPtr) delete it->second.ChannelPtr;
@@ -147,6 +144,7 @@ BS_FMODExSound::~BS_FMODExSound() {
 
 	// FMOD Ex deinitialisieren
 	if (m_FMOD) FMOD_System_Release(m_FMOD);
+#endif
 }
 
 // -----------------------------------------------------------------------------
@@ -158,6 +156,7 @@ BS_Service *BS_FMODExSound_CreateObject(BS_Kernel *pKernel) {
 // -----------------------------------------------------------------------------
 
 bool BS_FMODExSound::Init(unsigned int SampleRate, unsigned int Channels) {
+#if 0
 	// Eine Warnung ausgeben, wenn dieser Service schon initialisiert wurde.
 	// Allerdings wird trotzdem true zurückgegeben, weil kein Fehler aufgetreten ist, der Service ist noch benutzbar.
 	if (m_FMOD) {
@@ -191,47 +190,61 @@ bool BS_FMODExSound::Init(unsigned int SampleRate, unsigned int Channels) {
 		BS_LOGLN("FMOD Ex initialized. Sample rate: %d / Channels: %d", SampleRate, Channels);
 		return true;
 	}
+#else
+	return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
 void BS_FMODExSound::Update() {
+#if 0
 	BS_ASSERT(m_FMOD);
 
 	FMOD_RESULT Result = FMOD_System_Update(m_FMOD);
 	if (Result != FMOD_OK) BS_FMODExException("FMOD_System_Update()", Result).Log();
 
 	RemoveInactiveSounds();
+#endif
 }
 
 // -----------------------------------------------------------------------------
 // Sounds abspielen
 // -----------------------------------------------------------------------------
 
-bool BS_FMODExSound::PlaySound(const std::string &FileName,
+bool BS_FMODExSound::PlaySound(const Common::String &FileName,
                                SOUND_TYPES Type,
                                float Volume,
                                float Pan,
                                bool Loop,
                                int LoopStart, int LoopEnd,
                                unsigned int Layer) {
+#if 0
 	return PlaySoundInternal(FileName, Type, Volume, Pan, Loop, LoopStart, LoopEnd, Layer, 0, 0) != 0;
+#else
+	return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_FMODExSound::PlaySoundEx(const std::string &FileName,
+unsigned int BS_FMODExSound::PlaySoundEx(const Common::String &FileName,
         SOUND_TYPES Type,
         float Volume,
         float Pan,
         bool Loop,
         int LoopStart, int LoopEnd,
         unsigned int Layer) {
+#if 0
 	return PlaySoundInternal(FileName, Type, Volume, Pan, Loop, LoopStart, LoopEnd, Layer, 0, 0);
+#else
+	return true;
+#endif
 }
 
 // -------------------------------------------------------------------------
 
+#if 0
 FMOD_RESULT F_CALLBACK BS_FMODExSound::FMODExDynamicSoundSetPosCallback(FMOD_SOUND *sound, int subsound, unsigned int position, FMOD_TIMEUNIT postype) {
 	// In dynamischen Sounds wird nicht gesprungen, daher tut dieses Funktion nichts.
 	return FMOD_OK;
@@ -257,7 +270,7 @@ FMOD_RESULT F_CALLBACK BS_FMODExSound::FMODExDynamicSoundReadCallback(FMOD_SOUND
 
 	return FMOD_OK;
 }
-
+#endif
 // -----------------------------------------------------------------------------
 
 unsigned int BS_FMODExSound::PlayDynamicSoundEx(DynamicSoundReadCallback ReadCallback,
@@ -269,6 +282,7 @@ unsigned int BS_FMODExSound::PlayDynamicSoundEx(DynamicSoundReadCallback ReadCal
         float Volume,
         float Pan,
         unsigned int Layer) {
+#if 0
 	// Parameter überprüfen
 	if (BitsPerSampleToFMODExSoundFormat(BitsPerSample) == FMOD_SOUND_FORMAT_NONE) {
 		BS_LOG_ERRORLN("Cannot create a dynamic sound with %d bits per sample.", BitsPerSample);
@@ -329,11 +343,15 @@ unsigned int BS_FMODExSound::PlayDynamicSoundEx(DynamicSoundReadCallback ReadCal
 	if (PSD) PSD->ChannelPtr = ChannelPtr;
 
 	return Handle;
+#else
+	return 0;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_FMODExSound::PlaySoundInternal(const std::string &FileName,
+#if 0
+unsigned int BS_FMODExSound::PlaySoundInternal(const Common::String &FileName,
         SOUND_TYPES Type,
         float Volume,
         float Pan,
@@ -423,12 +441,13 @@ unsigned int BS_FMODExSound::PlaySoundInternal(const std::string &FileName,
 		return 0;
 	}
 }
-
+#endif
 // -----------------------------------------------------------------------------
 // Sonstige Methoden
 // -----------------------------------------------------------------------------
 
 void BS_FMODExSound::SetVolume(float Volume, SOUND_TYPES Type) {
+#if 0
 	BS_ASSERT(m_FMOD);
 	BS_ASSERT(Type < SOUNDTYPE_COUNT);
 	m_Volumes[Type] = NormalizeVolume(Volume);
@@ -441,19 +460,25 @@ void BS_FMODExSound::SetVolume(float Volume, SOUND_TYPES Type) {
 
 		++it;
 	}
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
 float BS_FMODExSound::GetVolume(SOUND_TYPES Type) {
+#if 0
 	BS_ASSERT(m_FMOD);
 	BS_ASSERT(Type < SOUNDTYPE_COUNT);
 	return m_Volumes[Type];
+#else
+	return 0;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
 void BS_FMODExSound::PauseAll() {
+#if 0
 	BS_ASSERT(m_FMOD);
 
 	// Alle Sounds durchgehen und alle pausieren.
@@ -468,11 +493,13 @@ void BS_FMODExSound::PauseAll() {
 
 		++it;
 	}
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
 void BS_FMODExSound::ResumeAll() {
+#if 0
 	BS_ASSERT(m_FMOD);
 
 	// Alle Sounds durchgehen, die gloable Pause aufheben und diejenigen fortsetzen,
@@ -488,11 +515,13 @@ void BS_FMODExSound::ResumeAll() {
 
 		++it;
 	}
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
 void BS_FMODExSound::PauseLayer(unsigned int Layer) {
+#if 0
 	BS_ASSERT(m_FMOD);
 
 	// Alle Sounds durchgehen und alle pausieren, die sich auf den angegebenen Layer befinden.
@@ -509,11 +538,13 @@ void BS_FMODExSound::PauseLayer(unsigned int Layer) {
 
 		++it;
 	}
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
 void BS_FMODExSound::ResumeLayer(unsigned int Layer) {
+#if 0
 	BS_ASSERT(m_FMOD);
 
 	// Alle Sounds durchgehen, die Layer-Pause aufheben und diejenigen fortsetzen,
@@ -529,6 +560,7 @@ void BS_FMODExSound::ResumeLayer(unsigned int Layer) {
 
 		++it;
 	}
+#endif
 }
 
 // -----------------------------------------------------------------------------
@@ -536,47 +568,57 @@ void BS_FMODExSound::ResumeLayer(unsigned int Layer) {
 // -----------------------------------------------------------------------------
 
 void BS_FMODExSound::SetSoundVolume(unsigned int Handle, float Volume) {
+#if 0
 	BS_ASSERT(m_FMOD);
 	PlayingSoundData *PSDPtr = GetPlayingSoundDataByHandle(Handle);
 	if (PSDPtr) if (PSDPtr->ChannelPtr && PSDPtr->ChannelPtr->SetVolume(NormalizeVolume(Volume) * m_Volumes[PSDPtr->Type])) PSDPtr->Volume = Volume;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
 void BS_FMODExSound::SetSoundPanning(unsigned int Handle, float Pan) {
+#if 0
 	BS_ASSERT(m_FMOD);
 	PlayingSoundData *PSDPtr = GetPlayingSoundDataByHandle(Handle);
 	if (PSDPtr && PSDPtr->ChannelPtr) PSDPtr->ChannelPtr->SetPanning(NormalizePanning(Pan));
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
 void BS_FMODExSound::PauseSound(unsigned int Handle) {
+#if 0
 	BS_ASSERT(m_FMOD);
 	PlayingSoundData *PSDPtr = GetPlayingSoundDataByHandle(Handle);
 	if (PSDPtr) {
 		PSDPtr->Paused = true;
 		if (PSDPtr->ChannelPtr) PSDPtr->ChannelPtr->SetPaused(true);
 	}
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
 void BS_FMODExSound::ResumeSound(unsigned int Handle) {
+#if 0
 	BS_ASSERT(m_FMOD);
 	PlayingSoundData *PSDPtr = GetPlayingSoundDataByHandle(Handle);
 	if (PSDPtr) {
 		PSDPtr->Paused = false;
 		if (PSDPtr->ChannelPtr && !PSDPtr->PausedGlobal && !PSDPtr->PausedLayer) PSDPtr->ChannelPtr->SetPaused(false);
 	}
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
 void BS_FMODExSound::StopSound(unsigned int Handle) {
+#if 0
 	BS_ASSERT(m_FMOD);
 	PlayingSoundData *PSDPtr = GetPlayingSoundDataByHandle(Handle);
 	if (PSDPtr && PSDPtr->ChannelPtr) PSDPtr->ChannelPtr->Stop();
+#endif
 }
 
 // -----------------------------------------------------------------------------
@@ -584,52 +626,59 @@ void BS_FMODExSound::StopSound(unsigned int Handle) {
 // -----------------------------------------------------------------------------
 
 bool BS_FMODExSound::IsSoundPaused(unsigned int Handle) {
+#if 0
 	BS_ASSERT(m_FMOD);
 	PlayingSoundData *PSDPtr = GetPlayingSoundDataByHandle(Handle);
 	if (PSDPtr && PSDPtr->ChannelPtr) return PSDPtr->ChannelPtr->IsPaused();
+#endif
 	return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool BS_FMODExSound::IsSoundPlaying(unsigned int Handle) {
+#if 0
 	BS_ASSERT(m_FMOD);
 	PlayingSoundData *PSDPtr = GetPlayingSoundDataByHandle(Handle);
 	if (PSDPtr && PSDPtr->ChannelPtr) return PSDPtr->ChannelPtr->IsPlaying();
+#endif
 	return false;
 }
 
 // -----------------------------------------------------------------------------
 
 float BS_FMODExSound::GetSoundVolume(unsigned int Handle) {
+#if 0
 	BS_ASSERT(m_FMOD);
 	PlayingSoundData *PSDPtr = GetPlayingSoundDataByHandle(Handle);
 	if (PSDPtr) return PSDPtr->Volume;
+#endif
 	return 0;
 }
 
 // -----------------------------------------------------------------------------
 
 float BS_FMODExSound::GetSoundPanning(unsigned int Handle) {
+#if 0
 	BS_ASSERT(m_FMOD);
 	PlayingSoundData *PSDPtr = GetPlayingSoundDataByHandle(Handle);
 	if (PSDPtr && PSDPtr->ChannelPtr) return PSDPtr->ChannelPtr->GetPanning();
+#endif
 	return 0;
 }
 
 // -----------------------------------------------------------------------------
 
 float BS_FMODExSound::GetSoundTime(unsigned int Handle) {
+#if 0
 	BS_ASSERT(m_FMOD);
 	PlayingSoundData *PSDPtr = GetPlayingSoundDataByHandle(Handle);
 	if (PSDPtr && PSDPtr->ChannelPtr) return static_cast<float>(PSDPtr->ChannelPtr->GetTime()) / 1000.0f;
+#endif
 	return 0;
 }
 
-// -----------------------------------------------------------------------------
-// Hilfsmethoden
-// -----------------------------------------------------------------------------
-
+#if 0
 void BS_FMODExSound::RemoveInactiveSounds() {
 	PSM_ITER it = m_PlayingSoundsMap.begin();
 	while (it != m_PlayingSoundsMap.end()) {
@@ -672,12 +721,14 @@ unsigned int BS_FMODExSound::CountPlayingDynamicSounds() {
 
 	return Result;
 }
+#endif
 
 // -----------------------------------------------------------------------------
 // Ressourcen-Verwaltung
 // -----------------------------------------------------------------------------
 
-BS_Resource *BS_FMODExSound::LoadResource(const std::string &FileName) {
+BS_Resource *BS_FMODExSound::LoadResource(const Common::String &FileName) {
+#if 0
 	BS_ASSERT(m_FMOD);
 	BS_ASSERT(CanLoadResource(FileName));
 
@@ -689,10 +740,14 @@ BS_Resource *BS_FMODExSound::LoadResource(const std::string &FileName) {
 		delete ResourcePtr;
 		return 0;
 	}
+#else
+	return 0;
+#endif
 }
-bool BS_FMODExSound::CanLoadResource(const std::string &FileName) {
+bool BS_FMODExSound::CanLoadResource(const Common::String &FileName) {
+#if 0
 	if (FileName.size() >= 4) {
-		std::string Extension(FileName.end() - 4, FileName.end());
+		Common::String Extension(FileName.end() - 4, FileName.end());
 		BS_String::ToLower(Extension);
 
 		return  Extension == ".wav" ||
@@ -700,6 +755,9 @@ bool BS_FMODExSound::CanLoadResource(const std::string &FileName) {
 		        Extension == ".mp3";
 	} else
 		return false;
+#else
+	return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
@@ -707,6 +765,7 @@ bool BS_FMODExSound::CanLoadResource(const std::string &FileName) {
 // -----------------------------------------------------------------------------
 
 bool BS_FMODExSound::Persist(BS_OutputPersistenceBlock &Writer) {
+#if 0
 	BS_ASSERT(m_FMOD);
 
 	// Alle inaktiven Sounds entfernen, damit kein unnötiger Ballast gespeichert wird
@@ -750,12 +809,14 @@ bool BS_FMODExSound::Persist(BS_OutputPersistenceBlock &Writer) {
 		++it;
 	}
 
+#endif
 	return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool BS_FMODExSound::Unpersist(BS_InputPersistenceBlock &Reader) {
+#if 0
 	BS_ASSERT(m_FMOD);
 
 	// Alle Sounds stoppen
@@ -780,7 +841,7 @@ bool BS_FMODExSound::Unpersist(BS_InputPersistenceBlock &Reader) {
 	// Informationen über jeden spielenden Sound einlesen und ihn mit den Parametern abspielen
 	for (unsigned int i = 0; i < SoundCount; ++i) {
 		unsigned int    Handle;
-		std::string     FileName;
+		Common::String     FileName;
 		unsigned int    Type;
 		unsigned int    Layer;
 
@@ -817,4 +878,9 @@ bool BS_FMODExSound::Unpersist(BS_InputPersistenceBlock &Reader) {
 	}
 
 	return Reader.IsGood();
+#else
+	return true;
+#endif
 }
+
+} // End of namespace Sword25

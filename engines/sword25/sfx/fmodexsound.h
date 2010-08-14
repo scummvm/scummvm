@@ -35,30 +35,9 @@
 #ifndef SWORD25_FMODEXSOUND_H
 #define SWORD25_FMODEXSOUND_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
-#include "sword25/kernel/memlog_off.h"
-#include <vector>
-#include <map>
-#include "sword25/kernel/memlog_on.h"
-
-#include "sword25/kernel/common.h"
-#include "sword25/kernel/hashmap.h"
 #include "sword25/sfx/soundengine.h"
 
-// -----------------------------------------------------------------------------
-// Forward Declarations
-// -----------------------------------------------------------------------------
-
-class BS_FMODExChannel;
-struct FMOD_SYSTEM;
-struct FMOD_CHANNEL;
-
-// -----------------------------------------------------------------------------
-// Klassendefinition
-// -----------------------------------------------------------------------------
+namespace Sword25 {
 
 class BS_FMODExSound : public BS_SoundEngine {
 public:
@@ -77,8 +56,8 @@ public:
 	void            ResumeAll();
 	void            PauseLayer(unsigned int Layer);
 	void            ResumeLayer(unsigned int Layer);
-	bool            PlaySound(const std::string &FileName, SOUND_TYPES Type, float Volume, float Pan, bool Loop, int LoopStart, int LoopEnd, unsigned int Layer);
-	unsigned int    PlaySoundEx(const std::string &FileName, SOUND_TYPES Type, float Volume, float Pan, bool Loop, int LoopStart, int LoopEnd, unsigned int Layer);
+	bool            PlaySound(const Common::String &FileName, SOUND_TYPES Type, float Volume, float Pan, bool Loop, int LoopStart, int LoopEnd, unsigned int Layer);
+	unsigned int    PlaySoundEx(const Common::String &FileName, SOUND_TYPES Type, float Volume, float Pan, bool Loop, int LoopStart, int LoopEnd, unsigned int Layer);
 	unsigned int    PlayDynamicSoundEx(DynamicSoundReadCallback ReadCallback, void *UserData, SOUND_TYPES Type, unsigned int SampleRate, unsigned int BitsPerSample, unsigned int Channels, float Volume = 1.0f, float Pan = 0.0f, unsigned int Layer = 0);
 
 	void    SetSoundVolume(unsigned int Handle, float Volume);
@@ -92,8 +71,8 @@ public:
 	float   GetSoundPanning(unsigned int Handle);
 	float   GetSoundTime(unsigned int Handle);
 
-	BS_Resource    *LoadResource(const std::string &FileName);
-	bool            CanLoadResource(const std::string &FileName);
+	BS_Resource    *LoadResource(const Common::String &FileName);
+	bool            CanLoadResource(const Common::String &FileName);
 
 	// -----------------------------------------------------------------------------
 	// Persistenz
@@ -102,6 +81,7 @@ public:
 	bool Persist(BS_OutputPersistenceBlock &Writer);
 	bool Unpersist(BS_InputPersistenceBlock &Reader);
 
+#if 0
 private:
 	struct PlayingSoundData {
 		PlayingSoundData() {};
@@ -142,12 +122,15 @@ private:
 
 	void                RemoveInactiveSounds();
 	PlayingSoundData   *GetPlayingSoundDataByHandle(unsigned int Handle);
-	unsigned int        PlaySoundInternal(const std::string &FileName, SOUND_TYPES Type, float Volume, float Pan, bool Loop, int LoopStart, int LoopEnd, unsigned int Layer, unsigned int Handle, unsigned int Position);
+	unsigned int        PlaySoundInternal(const Common::String &FileName, SOUND_TYPES Type, float Volume, float Pan, bool Loop, int LoopStart, int LoopEnd, unsigned int Layer, unsigned int Handle, unsigned int Position);
 	unsigned int        CountPlayingDynamicSounds();
 
 	static FMOD_RESULT F_CALLBACK FMODExDynamicSoundSetPosCallback(FMOD_SOUND *sound, int subsound, unsigned int position, FMOD_TIMEUNIT postype);
 	static FMOD_RESULT F_CALLBACK FMODExDynamicSoundReadCallback(FMOD_SOUND *sound, void *data, unsigned int datalen);
 	static FMOD_RESULT F_CALLBACK DSPReadCallback(FMOD_DSP_STATE *dsp_state, float *inbuffer, float *outbuffer, unsigned int length, int inchannels, int outchannels);
+#endif
 };
+
+} // End of namespace Sword25
 
 #endif
