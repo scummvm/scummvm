@@ -60,11 +60,11 @@ public:
 	const char *getName() const {
 		return "MIDI";
 	}
-	
+
 	const char *getDescription() const {
 		return "Midi Music";
 	}
-	
+
 	void enable(bool flag);
 
 private:

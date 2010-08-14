@@ -203,7 +203,7 @@ void Testsuite::clearScreen(const Common::Rect &rect) {
 void Testsuite::clearScreen() {
 	int numBytesPerLine = g_system->getWidth() * g_system->getScreenFormat().bytesPerPixel;
 	int height = getDisplayRegionCoordinates().y;
-	
+
 	// Don't clear test info display region
 	int size =  height * numBytesPerLine;
 	byte *buffer = new byte[size];
@@ -278,7 +278,7 @@ uint Testsuite::parseEvents() {
 void Testsuite::updateStats(const char *prefix, const char *info, uint testNum, uint numTests, Common::Point pt) {
 	Common::String text = Common::String::printf(" Running %s: %s (%d of %d) ", prefix, info, testNum, numTests);
 	writeOnScreen(text, pt);
-	uint barColor = kColorSpecial; 
+	uint barColor = kColorSpecial;
 	// below the text a rectangle denoting the progress in the testsuite can be drawn.
 	int separation = getLineSeparation();
 	pt.y += separation;
@@ -293,7 +293,7 @@ void Testsuite::updateStats(const char *prefix, const char *info, uint testNum, 
 	// draw the boundary
 	memset(buffer, barColor, sizeof(byte) * wRect);
 	memset(buffer + (wRect * (lRect - 1)) , barColor, sizeof(byte) * wRect);
-	
+
 	for (int i = 0; i < lRect; i++) {
 		for (int j = 0; j < wRect; j++) {
 			if (j < wShaded) {
@@ -331,7 +331,7 @@ void Testsuite::execute() {
 		if (!(*i)->enabled) {
 			logPrintf("Info! Skipping Test: %s, Skipped by configuration.\n", ((*i)->featureName).c_str());
 			_numTestsSkipped++;
-			continue;	
+			continue;
 		}
 
 		if((*i)->isInteractive && !isSessionInteractive) {

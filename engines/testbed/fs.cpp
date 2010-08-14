@@ -96,12 +96,12 @@ TestExitStatus FStests::testReadFile() {
 		fileName.toLowercase();
 		delete directory;
 		directory = gameRoot.getSubDirectory(dirName);
-		
+
 		if (!directory) {
 			Testsuite::logDetailedPrintf("Failed to open directory %s during FS tests\n", dirName.c_str());
 			 return kTestFailed;
 		}
-		
+
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
 			numFailed++;
@@ -111,12 +111,12 @@ TestExitStatus FStests::testReadFile() {
 		fileName.toUppercase();
 		delete directory;
 		directory = gameRoot.getSubDirectory(dirName);
-		
+
 		if (!directory) {
 			Testsuite::logDetailedPrintf("Failed to open directory %s during FS tests\n", dirName.c_str());
 			 return kTestFailed;
 		}
-		
+
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
 			numFailed++;

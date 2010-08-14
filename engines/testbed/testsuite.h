@@ -100,7 +100,7 @@ public:
 	}
 	bool enableTest(const Common::String &testName, bool enable);
 	void reset();
-	
+
 	/**
 	 * Prompts for User Input in form of "Yes" or "No" for interactive tests
 	 * e.g: "Is this like you expect?" "Yes" or "No"
@@ -156,7 +156,7 @@ public:
 	static void deleteWriteStream();
 
 	// Progress bar (Information Display) related methods.
-	/** 
+	/**
 	 * Display region is in the bottom. Probably 1/4th of the game screen.
 	 * It contains:
 	 * 1) Information about executing testsuite.

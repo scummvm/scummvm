@@ -68,7 +68,7 @@ void MidiTests::waitForMusicToPlay(MidiParser *parser) {
 				if (!parser->isPlaying()) {
 					quitLoop = true;
 				}
-			}		
+			}
 		}
 	}
 	CursorMan.showMouse(false);
@@ -100,7 +100,7 @@ TestExitStatus MidiTests::playMidiMusic() {
 		Testsuite::logPrintf("Error! %s", errMsg.c_str());
 		return kTestFailed;
 	}
-	
+
 	Testsuite::logDetailedPrintf("Info! Midi: Succesfully opened the driver\n");
 
 	Common::MemoryWriteStreamDynamic ws(DisposeAfterUse::YES);
@@ -129,7 +129,7 @@ TestExitStatus MidiTests::playMidiMusic() {
 	driver->close();
 	delete smfParser;
 	delete driver;
-	
+
 	if (Testsuite::handleInteractiveInput("Were you able to hear the music as described?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! Midi: Can't play Music\n");
 		return kTestFailed;

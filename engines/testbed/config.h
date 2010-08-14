@@ -80,7 +80,7 @@ public:
 		_listColors[i] = GUI::ThemeEngine::kFontColorNormal;
 		draw();
 	}
-	
+
 	void markAsDeselected(int i) {
 		if (_list[i].contains("selected")) {
 			_list[i] = _testSuiteArray[i]->getDescription();
@@ -88,7 +88,7 @@ public:
 		_listColors[i] = GUI::ThemeEngine::kFontColorAlternate;
 		draw();
 	}
-	
+
 	void setColor(uint32 indx, GUI::ThemeEngine::FontColor color) {
 		assert(indx < _listColors.size());
 		_listColors[indx] = color;

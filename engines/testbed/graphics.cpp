@@ -82,7 +82,7 @@ void GFXTestSuite::setCustomColor(uint r, uint g, uint b) {
 	_palette[8] = r;
 	_palette[9] = g;
 	_palette[10] = b;
-	
+
 	// Set colorNum kColorSpecial with a special color.
 	int absIndx = kColorSpecial * 4;
 	_palette[absIndx + 1] = 173;
@@ -270,7 +270,7 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
 		if (!gfxScalarMode.equals("")) {
 			info = "The cursor size (yellow) should match the red rectangle.";
 		}
-		
+
 		Testsuite::writeOnScreen(info, pt);
 
 		info = "GFX Mode";
@@ -346,7 +346,7 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
  * Used by aspectRatio()
  */
 void GFXtests::drawEllipse(int cx, int cy, int a, int b) {
-	
+
 	// Take a buffer of screen size
 	int width = g_system->getWidth();
 	int height = Testsuite::getDisplayRegionCoordinates().y;
@@ -404,7 +404,7 @@ TestExitStatus GFXtests::fullScreenMode() {
 
 	Common::Point pt(0, 100);
 	Common::Rect rect = Testsuite::writeOnScreen("Testing fullscreen mode", pt);
-	
+
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : FullScreenMode\n");
 		return kTestSkipped;
@@ -482,7 +482,7 @@ TestExitStatus GFXtests::fullScreenMode() {
  * Tests the aspect ratio correction by: drawing an ellipse, when corrected the ellipse should render to a circle
  */
 TestExitStatus GFXtests::aspectRatio() {
-	
+
 	Testsuite::clearScreen();
 	Common::String info = "Aspect Ratio Correction test. If aspect ratio correction is enabled you should expect a circle on screen,"
 	" an ellipse otherwise.";
@@ -564,12 +564,12 @@ TestExitStatus GFXtests::palettizedCursors() {
 		Testsuite::logPrintf("Info! Skipping test : Palettized Cursors\n");
 		return kTestSkipped;
 	}
-	
+
 	TestExitStatus passed = kTestPassed;
 
 	// Testing with cursor Palette
 	setupMouseLoop();
-	
+
 	if (Testsuite::handleInteractiveInput("Which color did the cursor appeared to you?", "Yellow", "Any other", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Couldn't use cursor palette for rendering cursor\n");
 		passed = kTestFailed;
@@ -603,7 +603,7 @@ TestExitStatus GFXtests::mouseMovements() {
 	Testsuite::clearScreen();
 	// Make mouse visible
 	CursorMan.showMouse(true);
-	
+
 	Common::String info = "Testing Automated Mouse movements.\n"
 						"You should expect cursor hotspot(top-left corner) to automatically move from (0, 0) to (100, 100).\n"
 						"There we have a rectangle drawn, finally the cursor would lie centred in that rectangle.";
@@ -612,7 +612,7 @@ TestExitStatus GFXtests::mouseMovements() {
 		Testsuite::logPrintf("Info! Skipping test : Mouse Movements\n");
 		return kTestSkipped;
 	}
-	
+
 	// Draw Rectangle
 	Graphics::Surface *screen = g_system->lockScreen();
 	screen->fillRect(Common::Rect::center(106, 106, 14, 14), 2);
@@ -649,7 +649,7 @@ TestExitStatus GFXtests::mouseMovements() {
  *
  */
 TestExitStatus GFXtests::copyRectToScreen() {
-	
+
 	Testsuite::clearScreen();
 	Common::String info = "Testing Blitting a Bitmap to screen.\n"
 		"You should expect to see a 20x40 yellow horizontal rectangle centred at the screen.";
@@ -658,7 +658,7 @@ TestExitStatus GFXtests::copyRectToScreen() {
 		Testsuite::logPrintf("Info! Skipping test : Blitting Bitmap\n");
 		return kTestSkipped;
 	}
-	
+
 	GFXTestSuite::setCustomColor(255, 255, 0);
 	byte buffer[20 * 40];
 	memset(buffer, 2, 20 * 40);
@@ -682,7 +682,7 @@ TestExitStatus GFXtests::copyRectToScreen() {
  * It is expected the screen minimizes when this feature is enabled
  */
 TestExitStatus GFXtests::iconifyWindow() {
-	
+
 	Testsuite::clearScreen();
 	Common::String info = "Testing Iconify Window mode.\n If the feature is supported by the backend, "
 		"you should expect the window to be minimized.\n However you would manually need to de-iconify.";
@@ -691,7 +691,7 @@ TestExitStatus GFXtests::iconifyWindow() {
 		Testsuite::logPrintf("Info! Skipping test : Iconifying window\n");
 		return kTestSkipped;
 	}
-	
+
 	Common::Point pt(0, 100);
 	Common::Rect rect = Testsuite::writeOnScreen("Testing Iconifying window", pt);
 
@@ -794,7 +794,7 @@ TestExitStatus GFXtests::scaledCursors() {
 }
 
 TestExitStatus GFXtests::shakingEffect() {
-	
+
 	Testsuite::clearScreen();
 	Common::String info = "Shaking test. You should expect the graphics(text/bars etc) drawn on the screen to shake!";
 
@@ -822,7 +822,7 @@ TestExitStatus GFXtests::shakingEffect() {
 }
 
 TestExitStatus GFXtests::focusRectangle() {
-	
+
 	Testsuite::clearScreen();
 	Common::String info = "Testing : Setting and hiding Focus \n"
 		"If this feature is implemented, the focus should be toggled between the two rectangles on the corners";
@@ -831,7 +831,7 @@ TestExitStatus GFXtests::focusRectangle() {
 		Testsuite::logPrintf("Info! Skipping test : focus Rectangle\n");
 		return kTestSkipped;
 	}
-	
+
 	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont));
 
 	Graphics::Surface *screen = g_system->lockScreen();
@@ -878,7 +878,7 @@ TestExitStatus GFXtests::overlayGraphics() {
 		Testsuite::logPrintf("Info! Skipping test : Overlay Graphics\n");
 		return kTestSkipped;
 	}
-	
+
 	Graphics::PixelFormat pf = g_system->getOverlayFormat();
 
 	OverlayColor buffer[50 * 100];
@@ -906,7 +906,7 @@ TestExitStatus GFXtests::overlayGraphics() {
 }
 
 TestExitStatus GFXtests::paletteRotation() {
-	
+
 	Common::String info = "Palette rotation. Here we draw a full 256 colored rainbow and then rotate it.\n"
 						"Note that the screen graphics change without having to draw anything.\n"
 						"The palette should appear to rotate, as a result, the background will change its color too.\n"
@@ -953,7 +953,7 @@ TestExitStatus GFXtests::paletteRotation() {
 	}
 
 	g_system->copyRectToScreen(buffer, 256, 22, 50, 256, 30);
-	
+
 	// Show mouse
 	CursorMan.showMouse(true);
 	g_system->updateScreen();
@@ -961,7 +961,7 @@ TestExitStatus GFXtests::paletteRotation() {
 
 	bool toRotate = true;
 	Common::Event event;
-	
+
 	while (toRotate) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {

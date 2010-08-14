@@ -38,7 +38,7 @@ class TestbedConfigManager;
 
 enum {
 	kTestbedLogOutput = 1 << 0,
-	kTestbedEngineDebug = 1 << 2, 
+	kTestbedEngineDebug = 1 << 2,
 	kCmdRerunTestbed = 'crtb'
 };
 
@@ -55,7 +55,7 @@ public:
 	void invokeTestsuites(TestbedConfigManager &cfMan);
 
 	bool hasFeature(EngineFeature f) const;
-	
+
 private:
 	Common::Array<Testsuite *> _testsuiteList;
 };

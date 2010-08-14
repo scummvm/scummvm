@@ -67,16 +67,16 @@ void MiscTests::criticalSection(void *arg) {
 }
 
 TestExitStatus MiscTests::testDateTime() {
-	
+
 	if (Testsuite::isSessionInteractive) {
 		if (Testsuite::handleInteractiveInput("Testing the date time API implementation", "Continue", "Skip", kOptionRight)) {
 			Testsuite::logPrintf("Info! Date time tests skipped by the user.\n");
 			return kTestSkipped;
 		}
-		
+
 		Testsuite::writeOnScreen("Verifying Date-Time...", Common::Point(0, 100));
 	}
-	
+
 	TimeDate t1, t2;
 	g_system->getTimeAndDate(t1);
 	Testsuite::logDetailedPrintf("Current Time and Date: ");
@@ -126,7 +126,7 @@ TestExitStatus MiscTests::testTimers() {
 }
 
 TestExitStatus MiscTests::testMutexes() {
-	
+
 	if (Testsuite::isSessionInteractive) {
 		if (Testsuite::handleInteractiveInput("Testing the Mutual Exclusion API implementation", "Continue", "Skip", kOptionRight)) {
 			Testsuite::logPrintf("Info! Mutex tests skipped by the user.\n");

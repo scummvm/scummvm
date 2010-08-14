@@ -64,11 +64,11 @@ public:
 	 */
 	SoundSubsystemTestSuite();
 	~SoundSubsystemTestSuite() {}
-	
+
 	const char *getName() const {
 		return "SoundSubsystem";
 	}
-	
+
 	const char *getDescription() const {
 		return "Sound Subsystem";
 	}
