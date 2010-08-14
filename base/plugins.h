@@ -212,6 +212,11 @@ public:
 	 * @return a list of Plugin instances
 	 */
 	virtual PluginList getPlugins() = 0;
+
+	/**
+	 * @return whether or not object is a FilePluginProvider.
+	 */
+	virtual bool isFilePluginProvider() { return false; }
 };
 
 #ifdef DYNAMIC_MODULES
@@ -233,6 +238,11 @@ public:
 	 * @return a list of Plugin instances
 	 */
 	virtual PluginList getPlugins();
+
+	/**
+	 * @return whether or not object is a FilePluginProvider.
+	 */
+	bool isFilePluginProvider() { return true; }
 
 protected:
 	/**
@@ -279,8 +289,10 @@ private:
 	PluginList _allPlugs;
 	PluginList::iterator _currentPlugin;
 
-	int nonEnginePlugs;
-	
+	bool _skipStaticPlugs;
+
+	int _nonEnginePlugs;
+
 	bool tryLoadPlugin(Plugin *plugin);
 	
 	friend class Common::Singleton<SingletonBaseType>;

@@ -346,7 +346,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 #if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
 	// Only load non-engine plugins and first engine plugin initially in this case.
-	PluginManager::instance().loadFirstPlugin(); //This should be the only call to loadFirstPlugin external to the PluginManager class.
+	PluginManager::instance().loadFirstPlugin();
 #else
  	// Load the plugins.
  	PluginManager::instance().loadPlugins();
@@ -433,7 +433,12 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			ConfMan.setActiveDomain("");
 
 			// PluginManager::instance().unloadPlugins();
+
+#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
+			PluginManager::instance().loadFirstPlugin();
+#else
 			PluginManager::instance().loadPlugins();
+#endif
 		} else {
 			// A dialog would be nicer, but we don't have any
 			// screen to draw on yet.

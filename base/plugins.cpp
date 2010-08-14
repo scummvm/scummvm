@@ -284,7 +284,7 @@ DECLARE_SINGLETON(PluginManager)
 PluginManager::PluginManager() {
 	// Always add the static plugin provider.
 	addPluginProvider(new StaticPluginProvider());
-	nonEnginePlugs = -1;
+	_skipStaticPlugs = false;
 }
 
 PluginManager::~PluginManager() {
@@ -304,30 +304,25 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 }
 
 void PluginManager::loadFirstPlugin() { //TODO: rename? It's not quite clear that this loads all non-engine plugins and first engine plugin.
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL);
 	_allPlugs.clear();
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
 	                            ++pp) {
-		PluginList pl((*pp)->getPlugins());
-		for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
-			_allPlugs.push_back(*p);
+		if ((_skipStaticPlugs && (*pp)->isFilePluginProvider()) || !_skipStaticPlugs) {
+			PluginList pl((*pp)->getPlugins());
+			for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
+				_allPlugs.push_back(*p);
+			}
 		}
 	}
+
+	_nonEnginePlugs = 0;
+	_skipStaticPlugs = true; //Only need to load static plugins once.
 
 	_currentPlugin = _allPlugs.begin();
 
-	bool updateNonEnginePlugs;
-	if (nonEnginePlugs == -1) { //TODO: All of this assumes engine plugins will always be last in "plugs". Is this the case?
-		nonEnginePlugs = 0;
-		updateNonEnginePlugs = true;
-	} else {
-		for (int i=0; i<nonEnginePlugs; i++) {
-			++_currentPlugin;
-		}
-		updateNonEnginePlugs = false;
-	}
-
-	if (_allPlugs.empty()) { //TODO: this case is untested.
+	if (_allPlugs.empty()) {
 		return; //return here if somehow there are no plugins to load.
 	}
 
@@ -337,7 +332,7 @@ void PluginManager::loadFirstPlugin() { //TODO: rename? It's not quite clear tha
 		if ((*_currentPlugin)->getType() == PLUGIN_TYPE_ENGINE) {
 			break;
 		}
-		if (updateNonEnginePlugs) nonEnginePlugs++;
+		_nonEnginePlugs++;
 		++_currentPlugin;
 		if (_currentPlugin == _allPlugs.end()) {
 			break; //break if there were no engine plugins to load.
@@ -347,7 +342,7 @@ void PluginManager::loadFirstPlugin() { //TODO: rename? It's not quite clear tha
 }
 
 bool PluginManager::loadNextPlugin() {
-	if (nonEnginePlugs == _allPlugs.size()) return false; //There are no Engine Plugins in this case.
+	if (_nonEnginePlugs == _allPlugs.size()) return false; //There are no Engine Plugins in this case.
 	//To ensure only one engine plugin is loaded at a time, we unload all engine plugins before trying to load a new one.
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL);
 	++_currentPlugin;
