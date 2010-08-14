@@ -45,7 +45,7 @@ class BS_Kernel;
 class BS_Geometry : public BS_Service {
 public:
 	BS_Geometry(BS_Kernel *pKernel);
-	virtual ~BS_Geometry();
+	virtual ~BS_Geometry() {}
 
 private:
 	bool _RegisterScriptBindings();

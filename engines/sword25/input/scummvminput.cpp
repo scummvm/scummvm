@@ -188,8 +188,8 @@ void ScummVMInput::TestForLeftDoubleClick() {
 
 // -----------------------------------------------------------------------------
 
-void AlterKeyboardState(int keycode, byte newState) {
-
+void ScummVMInput::AlterKeyboardState(int keycode, byte newState) {
+	m_KeyboardState[m_CurrentState][keycode] = newState;
 }
 
 // -----------------------------------------------------------------------------
