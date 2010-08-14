@@ -325,7 +325,7 @@ bool BS_LuaBindhelper::GetMetatable(lua_State *L, const Common::String &TableNam
 bool BS_LuaBindhelper::_CreateTable(lua_State *L, const Common::String &TableName) {
 	const char *PartBegin = TableName.c_str();
 
-	while (PartBegin) {
+	while (*PartBegin) {
 		const char *PartEnd = strchr(PartBegin, '.');
 		if (!PartEnd)
 			PartEnd = PartBegin + strlen(PartBegin);
@@ -338,7 +338,7 @@ bool BS_LuaBindhelper::_CreateTable(lua_State *L, const Common::String &TableNam
 		// Verify that the table with the name already exists
 		// The first round will be searched in the global namespace, with later passages
 		// in the corresponding parent table in the stack
-		if (PartBegin == 0) {
+		if (PartBegin == TableName.c_str()) {
 			lua_pushstring(L, SubTableName.c_str());
 			lua_gettable(L, LUA_GLOBALSINDEX);
 		} else {
@@ -357,7 +357,7 @@ bool BS_LuaBindhelper::_CreateTable(lua_State *L, const Common::String &TableNam
 			lua_newtable(L);
 			lua_pushstring(L, SubTableName.c_str());
 			lua_pushvalue(L, -2);
-			if (PartBegin == 0)
+			if (PartBegin == TableName.c_str())
 				lua_settable(L, LUA_GLOBALSINDEX);
 			else {
 				lua_settable(L, -4);
