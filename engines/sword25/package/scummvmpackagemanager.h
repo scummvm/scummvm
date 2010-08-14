@@ -85,7 +85,7 @@ private:
 
 	Common::String _currentDirectory;
 	Common::FSNode _rootFolder;
-	Common::List<ArchiveEntry> _archiveList;
+	Common::List<ArchiveEntry *> _archiveList;
 
 	Common::FSNode GetFSNode(const Common::String &FileName);
 public:

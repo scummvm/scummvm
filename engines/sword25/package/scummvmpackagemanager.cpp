@@ -166,25 +166,25 @@ Common::FSNode BS_ScummVMPackageManager::GetFSNode(const Common::String &FileNam
 	PathElementArray pathElements = SeparatePath(FileName, _currentDirectory);
 
 	// Loop through checking each archive
-	Common::List<ArchiveEntry>::iterator i;
+	Common::List<ArchiveEntry *>::iterator i;
 	for (i = _archiveList.begin(); i != _archiveList.end(); ++i) {
-		if (i->MountPath.size() > pathElements.size())
+		if ((*i)->MountPath.size() > pathElements.size())
 			// The mount path has more subfolder depth than the search entry, so skip it
 			continue;
 
 		// Check the path against that of the archive
 		PathElementArray::iterator iPath = pathElements.begin();
-		PathElementArray::iterator iEntry = i->MountPath.begin();
+		PathElementArray::iterator iEntry = (*i)->MountPath.begin();
 
-		for (; iEntry != i->MountPath.end(); ++iEntry, ++iPath) {
+		for (; iEntry != (*i)->MountPath.end(); ++iEntry, ++iPath) {
 			if (Common::String(iPath->GetBegin(), iPath->GetEnd()) ==
 			        Common::String(iEntry->GetBegin(), iEntry->GetEnd()))
 				break;
 		}
 
-		if (iEntry == i->MountPath.end()) {
+		if (iEntry == (*i)->MountPath.end()) {
 			// Look into the archive for the desired file
-			Common::Archive *archiveFolder = i->Archive;
+			Common::Archive *archiveFolder = (*i)->Archive;
 
 			if (archiveFolder->hasFile(FileName)) {
 			}
@@ -211,9 +211,9 @@ bool BS_ScummVMPackageManager::LoadPackage(const Common::String &FileName, const
 		BS_LOGLN("Package '%s' mounted as '%s'.", FileName.c_str(), MountPosition.c_str());
 		Common::ArchiveMemberList files;
 		zipFile->listMembers(files);
-		debugC(0, "Capacity %d", files.size());
+		debug(0, "Capacity %d", files.size());
 
-		_archiveList.push_back(ArchiveEntry(zipFile, pathElements));
+		_archiveList.push_back(new ArchiveEntry(zipFile, pathElements));
 
 		return true;
 	}
@@ -232,7 +232,7 @@ bool BS_ScummVMPackageManager::LoadDirectoryAsPackage(const Common::String &Dire
 		return false;
 	} else {
 		BS_LOGLN("Directory '%s' mounted as '%s'.", DirectoryName.c_str(), MountPosition.c_str());
-		_archiveList.push_front(ArchiveEntry(folderArchive, pathElements));
+		_archiveList.push_front(new ArchiveEntry(folderArchive, pathElements));
 		return true;
 	}
 }
