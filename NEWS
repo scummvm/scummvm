@@ -50,7 +50,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      the port is now optimized for MP3 playback (as opposed to OGG).
 
  Wii port:
-   - Added support for USB2 mass storage devices (requires The Hombrew Channel
+   - Added support for USB2 mass storage devices (requires The Homebrew Channel
      >= v1.0.8 with IOS58).
 
  GameCube port:
