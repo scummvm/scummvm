@@ -184,11 +184,9 @@ Common::FSNode BS_ScummVMPackageManager::GetFSNode(const Common::String &FileNam
 
 		if (iEntry == i->MountPath.end()) {
 			// Look into the archive for the desired file
-//			Common::Archive *archiveFolder = i->Archive;
+			Common::Archive *archiveFolder = i->Archive;
 
-			// TODO: Loop through any folders in the archive
-			for (; iPath != pathElements.end(); ++iPath) {
-
+			if (archiveFolder->hasFile(FileName)) {
 			}
 
 			// Return the found node
@@ -211,7 +209,12 @@ bool BS_ScummVMPackageManager::LoadPackage(const Common::String &FileName, const
 		return false;
 	} else {
 		BS_LOGLN("Package '%s' mounted as '%s'.", FileName.c_str(), MountPosition.c_str());
+		Common::ArchiveMemberList files;
+		zipFile->listMembers(files);
+		debugC(0, "Capacity %d", files.size());
+
 		_archiveList.push_back(ArchiveEntry(zipFile, pathElements));
+
 		return true;
 	}
 }
