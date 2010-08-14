@@ -643,6 +643,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformWindows, 0, GUIO_NONE	},
 
+	// Gabriel Knight - English Macintosh
+	{"gk1", "", {
+		{"Data1", 0, "7a89c96365a4da5d3b3efdc3a94bab3e", 5831362},
+		{"Data2", 0, "db70638e972c3706e4dc9e01ef3a30ea", 6696048},
+		{"Data3", 0, "d740126293aea176c4f8a6c71634cff4", 3683997},
+		{"Data4", 0, "f6cbf2605f618ce035bed162d66b2b8a", 3233086},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_NONE },
+
 	// Gabriel Knight 2 - English Windows Non-Interactive Demo
 	// Executable scanning reports "2.100.002"
 	{"gk2", "Demo", {
