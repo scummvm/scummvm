@@ -49,6 +49,13 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Enabled playback of MP3 files using the hardware decoder (ME). This means that
      the port is now optimized for MP3 playback (as opposed to OGG).
 
+ Wii port:
+   - Added support for USB2 mass storage devices (requires The Hombrew Channel
+     >= v1.0.8 with IOS58).
+
+ GameCube port:
+   - Added support for DVDs with the ISO9660 file system.
+
 1.1.2 (????-??-??)
   Broken Sword 2
    - Fixed missing speech in some cutscenes.
