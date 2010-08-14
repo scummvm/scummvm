@@ -72,7 +72,9 @@ void WiiFilesystemFactory::asyncInit() {
 void WiiFilesystemFactory::asyncDeinit() {
 #ifdef USE_WII_DI
 	umount(kDVD);
+#ifndef GAMECUBE
 	DI_Close();
+#endif
 #endif
 #ifdef USE_WII_SMB
 	umount(kSMB);
