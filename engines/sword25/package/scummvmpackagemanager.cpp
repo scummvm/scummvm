@@ -223,7 +223,7 @@ bool BS_ScummVMPackageManager::LoadDirectoryAsPackage(const Common::String &Dire
 void *BS_ScummVMPackageManager::GetFile(const Common::String &FileName, unsigned int *FileSizePtr) {
 	Common::SeekableReadStream *in;
 	Common::ArchiveMemberPtr fileNode = GetArchiveMember(FileName);
-	if (fileNode->getName().empty())
+	if (!fileNode)
 		return 0;
 	if (!(in = fileNode->createReadStream()))
 		return 0;
@@ -267,7 +267,7 @@ Common::String BS_ScummVMPackageManager::GetAbsolutePath(const Common::String &F
 unsigned int BS_ScummVMPackageManager::GetFileSize(const Common::String &FileName) {
 	Common::SeekableReadStream *in;
 	Common::ArchiveMemberPtr fileNode = GetArchiveMember(FileName);
-	if (fileNode->getName().empty())
+	if (!fileNode)
 		return 0;
 	if (!(in = fileNode->createReadStream()))
 		return 0;
@@ -290,7 +290,7 @@ unsigned int BS_ScummVMPackageManager::GetFileType(const Common::String &FileNam
 
 bool BS_ScummVMPackageManager::FileExists(const Common::String &FileName) {
 	Common::ArchiveMemberPtr fileNode = GetArchiveMember(FileName);
-	return !fileNode->getName().empty();
+	return fileNode;
 }
 
 // -----------------------------------------------------------------------------

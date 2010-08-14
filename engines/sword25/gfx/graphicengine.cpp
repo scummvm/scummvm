@@ -71,8 +71,7 @@ BS_GraphicEngine::BS_GraphicEngine(BS_Kernel *pKernel) :
 	m_FrameTimeSampleSlot(0),
 	m_RepaintedPixels(0),
 	BS_ResourceService(pKernel) {
-	for (int i = 0; i < FRAMETIME_SAMPLE_COUNT; i++)
-		m_FrameTimeSamples[i] = 0;
+	m_FrameTimeSamples.resize(FRAMETIME_SAMPLE_COUNT);
 
 	if (!RegisterScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
