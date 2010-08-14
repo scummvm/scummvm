@@ -46,9 +46,7 @@
 #define SWORD25_COMMON_H
 
 // Global constants
-#if _DEBUG && !DEBUG
 #define DEBUG
-#endif
 
 #define BS_ACTIVATE_LOGGING // When defined, logging is activated
 
