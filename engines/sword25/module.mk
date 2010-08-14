@@ -37,6 +37,7 @@ MODULE_OBJS := \
 	gfx/opengl/swimage.o \
 	input/inputengine.o \
 	input/inputengine_script.o \
+	input/scummvminput.o \
 	kernel/callbackregistry.o \
 	kernel/filesystemutil.o \
 	kernel/inputpersistenceblock.o \
