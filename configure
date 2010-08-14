@@ -2017,7 +2017,27 @@ PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
 '
 		;;
+	ps2)
+DEFINES = "$DEFINES -DELF_LOADER_TARGET -DMIPS_TARGET"
+_def_plugin='
+#define PLUGIN_PREFIX	""
+#define PLUGIN_SUFFIX	".plg"
+'
+_mak_plugins='
+DYNAMIC_MODULES		:= 1
+PLUGIN_PREFIX		:=
+PLUGIN_SUFFIX		:= .plg
+PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
+CXXFLAGS		+= -DDYNAMIC_MODULES
+LDFLAGS			+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T$(srcdir)/backends/plugins/ps2/main_prog.ld
+PLUGIN_LDFLAGS 	+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o
+PLUGIN_LDFLAGS 	+= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),-T$(srcdir)/backends/plugins/ps2/plugin.ld,--retain-symbols-file,$(srcdir)/backends/plugins/plugin.syms -lstdc++ -lc
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+'
+		;;
 	psp)
+DEFINES = "$DEFINES -DELF_LOADER_TARGET -DMIPS_TARGET"
 _def_plugin='
 #define PLUGIN_PREFIX	""
 #define PLUGIN_SUFFIX	".plg"
@@ -2577,7 +2597,9 @@ case $_backend in
 		# TODO ps2
 		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
 		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
-		LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
+		if test "$_dynamic_modules" = no ; then
+  			LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
+ 		fi
 		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib -L$PS2SDK/ports/lib"
 		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
 		;;

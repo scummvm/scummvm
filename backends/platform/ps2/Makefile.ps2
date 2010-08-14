@@ -6,7 +6,7 @@ PS2_EXTRA_INCS = /zlib/include /libmad/ee/include /SjPcm/ee/src /tremor
 PS2_EXTRA_LIBS = /zlib/lib /libmad/ee/lib /SjPcm/ee/lib /tremor/tremor
 
 # Set to 1 to enable, 0 to disable dynamic modules
-DYNAMIC_MODULES = 1
+DYNAMIC_MODULES = 0
 # Set to 1 to enable, 0 to disable more detailed printing of gcc commands
 VERBOSE_BUILD=0
 
