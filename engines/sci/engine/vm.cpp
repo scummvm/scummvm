@@ -1800,7 +1800,10 @@ void run_vm(EngineState *s) {
 			// Load global, local, temp or param variable into the accumulator,
 			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
+			int16 value;
+			if (!validate_signedInteger(s->r_acc, value))
+				value = arithmetic_lookForWorkaround(opcode, opcodeLaiWorkarounds, s->r_acc, NULL_REG).offset;
+			var_number = opparams[0] + value;
 			s->r_acc = READ_VAR(var_type, var_number);
 			break;
 

@@ -417,6 +417,7 @@ void GfxPaint16::kernelGraphFrameBox(const Common::Rect &rect, int16 color) {
 }
 
 void GfxPaint16::kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
+	_ports->clipLine(startPoint, endPoint);
 	_ports->offsetLine(startPoint, endPoint);
 	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
 }

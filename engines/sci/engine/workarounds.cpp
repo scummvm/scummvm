@@ -59,6 +59,12 @@ const SciWorkaroundEntry opcodeLeWorkarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
+const SciWorkaroundEntry opcodeLaiWorkarounds[] = {
+	{ GID_CAMELOT,         92,   92,  0,     "endingCartoon2", "changeState", 0x20d,    0, { WORKAROUND_FAKE,   0 } }, // during the ending, sub gets called with no parameters, uses parameter 1 which is theGrail in this case - bug #3044734
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
 const SciWorkaroundEntry opcodeLsiWorkarounds[] = {
 	{ GID_QFG2,           200,  200,  0,              "astro", "messages",       -1,    0, { WORKAROUND_FAKE,   0 } }, // when getting asked for your name by the astrologer bug #3039879
 	SCI_WORKAROUNDENTRY_TERMINATOR

@@ -566,6 +566,13 @@ void GfxPorts::offsetLine(Common::Point &start, Common::Point &end) {
 	end.y += _curPort->top;
 }
 
+void GfxPorts::clipLine(Common::Point &start, Common::Point &end) {
+	start.y = CLIP<int16>(start.y, _curPort->rect.top, _curPort->rect.bottom - 1);
+	start.x = CLIP<int16>(start.x, _curPort->rect.left, _curPort->rect.right - 1);
+	end.y = CLIP<int16>(end.y, _curPort->rect.top, _curPort->rect.bottom - 1);
+	end.x = CLIP<int16>(end.x, _curPort->rect.left, _curPort->rect.right - 1);
+}
+
 void GfxPorts::priorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 	int16 y;
 	int32 bandSize;
