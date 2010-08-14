@@ -38,13 +38,8 @@
 
 #include "sword25/gfx/image/vectorimage.h"
 #include "sword25/gfx/image/vectorimagerenderer.h"
-#include "sword25/util/glsprites/glsprites.h"
-
-#include <vector>
 
 namespace Sword25 {
-
-using namespace std;
 
 #define BS_LOG_PREFIX "GLVECTORIMAGEBLIT"
 
