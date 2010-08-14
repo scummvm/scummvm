@@ -54,6 +54,8 @@
 #include "sword25/kernel/memleaks.h"
 #include "sword25/kernel/log.h"
 
+#include "common/debug.h"
+
 #define BS_ASSERT(EXP) assert(EXP)
 
 #endif

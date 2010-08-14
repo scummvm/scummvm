@@ -110,9 +110,7 @@ bool BS_LuaBindhelper::AddFunctionsToLib(lua_State *L, const Common::String &Lib
 			lua_gettable(L, LUA_GLOBALSINDEX);
 			RegisterPermanent(L, Functions->name);
 		}
-	}
-	// If the table name is not empty, the functions are added to the given table
-	else {
+	} else { // If the table name is not empty, the functions are added to the given table
 		// Ensure that the library table exists
 		if (!_CreateTable(L, LibName)) return false;
 
@@ -329,11 +327,13 @@ bool BS_LuaBindhelper::_CreateTable(lua_State *L, const Common::String &TableNam
 
 	while (PartBegin) {
 		const char *PartEnd = strchr(PartBegin, '.');
-		if (!PartEnd) PartEnd = PartBegin + strlen(PartBegin);
+		if (!PartEnd)
+			PartEnd = PartBegin + strlen(PartBegin);
 		Common::String SubTableName(PartBegin, PartEnd - PartBegin);
 
 		// Tables with an empty string as the name are not allowed
-		if (SubTableName.size() == 0) return false;
+		if (SubTableName.size() == 0)
+			return false;
 
 		// Verify that the table with the name already exists
 		// The first round will be searched in the global namespace, with later passages
@@ -344,7 +344,8 @@ bool BS_LuaBindhelper::_CreateTable(lua_State *L, const Common::String &TableNam
 		} else {
 			lua_pushstring(L, SubTableName.c_str());
 			lua_gettable(L, -2);
-			if (!lua_isnil(L, -1)) lua_remove(L, -2);
+			if (!lua_isnil(L, -1))
+				lua_remove(L, -2);
 		}
 
 		// If it doesn't exist, create table

@@ -90,7 +90,7 @@ Common::Error Sword25Engine::AppStart(const Common::StringArray &CommandParamete
 	if (format != g_system->getScreenFormat())
 		return Common::kUnsupportedColorMode;
 
-	// Kernel initialisation
+	// Kernel initialization
 	if (!BS_Kernel::GetInstance()->GetInitSuccess()) {
 		BS_LOG_ERRORLN("Kernel initialization failed.");
 		return Common::kUnknownError;
@@ -105,15 +105,17 @@ Common::Error Sword25Engine::AppStart(const Common::StringArray &CommandParamete
 
 	// Packages laden oder das aktuelle Verzeichnis mounten, wenn das über Kommandozeile angefordert wurde.
 	if (find(CommandParameters.begin(), CommandParameters.end(), MOUNT_DIR_PARAMETER) != CommandParameters.end()) {
-		if (!PackageManagerPtr->LoadDirectoryAsPackage(".", "/")) return Common::kUnknownError;
+		if (!PackageManagerPtr->LoadDirectoryAsPackage(".", "/"))
+			return Common::kUnknownError;
 	} else {
-		if (!LoadPackages()) return Common::kUnknownError;
+		if (!LoadPackages())
+			return Common::kUnknownError;
 	}
 
 	// Einen Pointer auf den Skript-Engine holen.
 	BS_ScriptEngine *ScriptPtr = static_cast<BS_ScriptEngine *>(BS_Kernel::GetInstance()->GetService("script"));
 	if (!ScriptPtr) {
-		BS_LOG_ERRORLN("Skript intialization failed.");
+		BS_LOG_ERRORLN("Script intialization failed.");
 		return Common::kUnknownError;
 	}
 

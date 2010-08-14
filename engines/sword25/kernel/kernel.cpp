@@ -180,12 +180,12 @@ BS_Service *BS_Kernel::Superclass::NewService(const Common::String &ServiceIdent
 	for (unsigned int i = 0; i < BS_SERVICE_COUNT; i++)
 		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier &&
 		        BS_SERVICE_TABLE[i].ServiceIdentifier == ServiceIdentifier) {
-			BS_Service *NewService = BS_SERVICE_TABLE[i].CreateMethod(_pKernel);
+			BS_Service *NewService_ = BS_SERVICE_TABLE[i].CreateMethod(_pKernel);
 
-			if (NewService) {
+			if (NewService_) {
 				DisconnectService();
 				BS_LOGLN("Service '%s' created from superclass '%s'.", ServiceIdentifier.c_str(), _Identifier.c_str());
-				_ActiveService = NewService;
+				_ActiveService = NewService_;
 				_ActiveServiceName = BS_SERVICE_TABLE[i].ServiceIdentifier;
 				return _ActiveService;
 			} else {

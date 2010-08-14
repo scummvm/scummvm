@@ -195,9 +195,9 @@ static int GetFileAsString(lua_State *L) {
 	BS_PackageManager *pPM = GetPM();
 
 	unsigned int FileSize;
-	void *FileData = pPM->GetFile(luaL_checkstring(L, 1), &FileSize);
+	char *FileData = (char *)pPM->GetFile(luaL_checkstring(L, 1), &FileSize);
 	if (FileData) {
-		lua_pushlstring(L, static_cast<char *>(FileData), FileSize);
+		lua_pushlstring(L, FileData, FileSize);
 		delete FileData;
 
 		return 1;
