@@ -66,17 +66,17 @@ private:
 	Common::String::const_iterator m_End;
 };
 
-typedef Common::Array<PathElement> PathElementArray;
+typedef Common::Array<PathElement *> PathElementArray;
 
 class BS_ScummVMPackageManager : public BS_PackageManager {
 private:
 	class ArchiveEntry {
 	public:
 		Common::Archive *Archive;
-		PathElementArray MountPath;
+		Common::String _mountPath;
 
-		ArchiveEntry(Common::Archive *Archive_, const PathElementArray &MountPath_):
-			Archive(Archive_), MountPath(MountPath_) {
+		ArchiveEntry(Common::Archive *Archive_, const Common::String &MountPath_):
+			Archive(Archive_), _mountPath(MountPath_) {
 		}
 		~ArchiveEntry() {
 			delete Archive;
@@ -87,7 +87,7 @@ private:
 	Common::FSNode _rootFolder;
 	Common::List<ArchiveEntry *> _archiveList;
 
-	Common::FSNode GetFSNode(const Common::String &FileName);
+	Common::ArchiveMemberPtr GetArchiveMember(const Common::String &FileName);
 public:
 	BS_ScummVMPackageManager(BS_Kernel *KernelPtr);
 	virtual ~BS_ScummVMPackageManager();
