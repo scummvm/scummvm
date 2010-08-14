@@ -60,7 +60,7 @@ static const Sword25GameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1s("data.b25c", "f8b6e03ada2d2f6cf27fbc11ad1572e9", 654310588),
 			Common::EN_ANY,
-			Common::kPlatformWindows,
+			Common::kPlatformUnknown,
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
