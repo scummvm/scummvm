@@ -41,7 +41,7 @@
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/string.h"
 #include "sword25/package/packagemanager.h"
-#include <tinyxml.h>
+#include "sword25/util/tinyxml/tinyxml.h"
 #include "sword25/gfx/bitmapresource.h"
 
 namespace Sword25 {
