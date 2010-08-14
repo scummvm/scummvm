@@ -365,8 +365,6 @@ Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *sourc
 	return NULL;
 }
 
-static uint32 resTypeToMacTag(ResourceType type);
-
 void ResourceManager::loadResource(Resource *res) {
 	res->_source->loadResource(this, res);
 }
@@ -382,8 +380,14 @@ void PatchResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	}
 }
 
+static Common::Array<uint32> resTypeToMacTags(ResourceType type);
+
 void MacResourceForkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
-	Common::SeekableReadStream *stream = _macResMan->getResource(resTypeToMacTag(res->getType()), res->getNumber());
+	Common::SeekableReadStream *stream = 0;
+	Common::Array<uint32> tagArray = resTypeToMacTags(res->getType());
+
+	for (uint32 i = 0; i < tagArray.size() && !stream; i++)
+		stream = _macResMan->getResource(tagArray[i], res->getNumber());
 
 	if (!stream)
 		error("Could not get Mac resource fork resource: %s %d", getResourceTypeName(res->getType()), res->getNumber());
@@ -1588,12 +1592,14 @@ struct {
 	{ MKID_BE('SYN '), kResourceTypeSync }
 };
 
-static uint32 resTypeToMacTag(ResourceType type) {
+static Common::Array<uint32> resTypeToMacTags(ResourceType type) {
+	Common::Array<uint32> tags;
+
 	for (uint32 i = 0; i < ARRAYSIZE(macResTagMap); i++)
 		if (macResTagMap[i].type == type)
-			return macResTagMap[i].tag;
+			tags.push_back(macResTagMap[i].tag);
 
-	return 0;
+	return tags;
 }
 
 void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {

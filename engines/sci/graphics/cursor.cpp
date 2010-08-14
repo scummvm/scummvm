@@ -23,10 +23,11 @@
  *
  */
 
-#include "graphics/cursorman.h"
-#include "common/util.h"
 #include "common/events.h"
+#include "common/macresman.h"
 #include "common/system.h"
+#include "common/util.h"
+#include "graphics/cursorman.h"
 
 #include "sci/sci.h"
 #include "sci/event.h"
@@ -206,7 +207,7 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 	// See http://developer.apple.com/legacy/mac/library/documentation/mac/QuickDraw/QuickDraw-402.html
 	// for more information.
 
-	// View 998 seems to be a fake resource used to call for the Mac CURS resources.
+	// View 998 seems to be a fake resource used to call for Mac cursor resources.
 	// For other resources, they're still in the views, so use them.
 	if (viewNum != 998) {
 		kernelSetView(viewNum, loopNum, celNum, hotspot);
@@ -214,43 +215,53 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 	}
 
 	// TODO: What about the 2000 resources? Inventory items? How to handle?
-	// TODO: What games does this work for? At least it does for KQ6.
-	// TODO: Stop asking rhetorical questions.
-	// TODO: It was fred all along!
+	// TODO: 1000 + celNum won't work for GK1
 
 	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeCursor, 1000 + celNum), false);
 
 	if (!resource) {
-		warning("CURS %d not found", 1000 + celNum);
+		warning("Mac cursor %d not found", 1000 + celNum);
 		return;
 	}
 
 	assert(resource);
 
-	byte *cursorBitmap = new byte[16 * 16];
-	byte *data = resource->data;
+	if (resource->size == 32 * 2 + 4) {
+		// Mac CURS cursor
+		byte *cursorBitmap = new byte[16 * 16];
+		byte *data = resource->data;
 
-	// Get B&W data
-	for (byte i = 0; i < 32; i++) {
-		byte imageByte = *data++;
-		for (byte b = 0; b < 8; b++)
-			cursorBitmap[i * 8 + b] = (byte)((imageByte & (0x80 >> b)) > 0 ? 0x00 : 0xFF);
+		// Get B&W data
+		for (byte i = 0; i < 32; i++) {
+			byte imageByte = *data++;
+			for (byte b = 0; b < 8; b++)
+				cursorBitmap[i * 8 + b] = (byte)((imageByte & (0x80 >> b)) > 0 ? 0x00 : 0xFF);
+		}
+
+		// Apply mask data
+		for (byte i = 0; i < 32; i++) {
+			byte imageByte = *data++;
+			for (byte b = 0; b < 8; b++)
+				if ((imageByte & (0x80 >> b)) == 0)
+					cursorBitmap[i * 8 + b] = SCI_CURSOR_SCI0_TRANSPARENCYCOLOR; // Doesn't matter, just is transparent
+		}
+
+		uint16 hotspotX = READ_BE_UINT16(data);
+		uint16 hotspotY = READ_BE_UINT16(data + 2);
+
+		CursorMan.replaceCursor(cursorBitmap, 16, 16, hotspotX, hotspotY, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
+
+		delete[] cursorBitmap;
+	} else {
+		// Mac crsr cursor
+		byte *cursorBitmap, *palette;
+		int width, height, hotspotX, hotspotY, palSize, keycolor;
+		Common::MacResManager::convertCrsrCursor(resource->data, resource->size, &cursorBitmap, &width, &height, &hotspotX, &hotspotY, &keycolor, true, &palette, &palSize);
+		CursorMan.replaceCursor(cursorBitmap, width, height, hotspotX, hotspotY, keycolor);
+		CursorMan.replaceCursorPalette(palette, 0, palSize);
+		free(cursorBitmap);
+		free(palette);
 	}
-
-	// Apply mask data
-	for (byte i = 0; i < 32; i++) {
-		byte imageByte = *data++;
-		for (byte b = 0; b < 8; b++)
-			if ((imageByte & (0x80 >> b)) == 0)
-				cursorBitmap[i * 8 + b] = SCI_CURSOR_SCI0_TRANSPARENCYCOLOR; // Doesn't matter, just is transparent
-	}
-
-	uint16 hotspotX = READ_BE_UINT16(data);
-	uint16 hotspotY = READ_BE_UINT16(data + 2);
-
-	CursorMan.replaceCursor(cursorBitmap, 16, 16, hotspotX, hotspotY, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
-
-	delete[] cursorBitmap;
 
 	kernelShow();
 }
