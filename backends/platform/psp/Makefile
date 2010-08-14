@@ -143,7 +143,6 @@ OBJS := powerman.o \
 	input.o \
 	cursor.o \
 	trace.o \
-	psploader.o \
 	pspkeyboard.o \
 	audio.o \
 	thread.o \
