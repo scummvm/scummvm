@@ -85,7 +85,7 @@ void BS_Log::Log(const char *Format, ...) {
 	// Create the message
 	va_list ArgList;
 	va_start(ArgList, Format);
-	_vsnprintf(Message, sizeof(Message), Format, ArgList);
+	vsnprintf(Message, sizeof(Message), Format, ArgList);
 
 	// Log the message
 	_WriteLog(Message);
@@ -100,19 +100,19 @@ void BS_Log::LogPrefix(const char *Prefix, const char *Format, ...) {
 	// If the issue has ceased at the beginning of a new line, the new issue to begin with the prefix
 	ExtFormat[0] = 0;
 	if (_LineBegin) {
-		_snprintf(ExtFormat, sizeof(ExtFormat), "%s%s: ", ExtFormat, Prefix);
+		snprintf(ExtFormat, sizeof(ExtFormat), "%s%s: ", ExtFormat, Prefix);
 		_LineBegin = false;
 	}
 	// Format String pass line by line and each line with the initial prefix
 	for (;;) {
 		const char *NextLine = strstr(Format, "\n");
 		if (!NextLine || *(NextLine + strlen("\n")) == 0) {
-			_snprintf(ExtFormat, sizeof(ExtFormat), "%s%s", ExtFormat, Format);
+			snprintf(ExtFormat, sizeof(ExtFormat), "%s%s", ExtFormat, Format);
 			if (NextLine) _LineBegin = true;
 			break;
 		} else {
 			strncat(ExtFormat, Format, (NextLine - Format) + strlen("\n"));
-			_snprintf(ExtFormat, sizeof(ExtFormat), "%s%s: ", ExtFormat, Prefix);
+			snprintf(ExtFormat, sizeof(ExtFormat), "%s%s: ", ExtFormat, Prefix);
 		}
 
 		Format = NextLine + strlen("\n");
@@ -121,7 +121,7 @@ void BS_Log::LogPrefix(const char *Prefix, const char *Format, ...) {
 	// Create message
 	va_list ArgList;
 	va_start(ArgList, Format);
-	_vsnprintf(Message, sizeof(Message), ExtFormat, ArgList);
+	vsnprintf(Message, sizeof(Message), ExtFormat, ArgList);
 
 	// Log the message
 	_WriteLog(Message);
@@ -134,12 +134,12 @@ void BS_Log::LogDecorated(const char *Format, ...) {
 	char Message[LOG_BUFFERSIZE];
 	va_list ArgList;
 	va_start(ArgList, Format);
-	_vsnprintf(Message, sizeof(Message), Format, ArgList);
+	vsnprintf(Message, sizeof(Message), Format, ArgList);
 
 	// Zweiten Prefix erzeugen, falls gewünscht
 	char SecondaryPrefix[1024];
 	if (_File && _Line)
-		_snprintf(SecondaryPrefix, sizeof(SecondaryPrefix), "(file: %s, line: %d) - ", _File, _Line);
+		snprintf(SecondaryPrefix, sizeof(SecondaryPrefix), "(file: %s, line: %d) - ", _File, _Line);
 
 	// Nachricht zeilenweise ausgeben und an jeden Zeilenanfang das Präfix setzen
 	char *MessageWalker = Message;

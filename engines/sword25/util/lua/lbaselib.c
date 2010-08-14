@@ -27,10 +27,6 @@
 ** model but changing `fputs' to put the strings at a proper place
 ** (a console window or a log file, for instance).
 */
-// -----------------------------------------------------------------------------
-// BS25
-// Aufruf der BS25 Log-Funktion
-// -----------------------------------------------------------------------------
 static int luaB_print (lua_State *L) {
   int n = lua_gettop(L);  /* number of arguments */
   int i;

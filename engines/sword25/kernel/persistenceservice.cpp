@@ -339,10 +339,10 @@ bool BS_PersistenceService::SaveGame(unsigned int SlotID, const Common::String &
 
 	// Länge der komprimierten Daten und der unkomprimierten Daten in die Datei schreiben.
 	char sBuffer[10];
-	ltoa(CompressedLength, sBuffer, 10);
+	snprintf(sBuffer, 10, "%ld", CompressedLength);
 	File->writeString(sBuffer);
 	File->writeByte(' ');
-	ltoa(Writer.GetDataSize(), sBuffer, 10);
+	snprintf(sBuffer, 10, "%uld", Writer.GetDataSize());
 	File->writeString(sBuffer);
 	File->writeByte(' ');
 
