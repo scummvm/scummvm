@@ -325,11 +325,11 @@ bool BS_LuaBindhelper::GetMetatable(lua_State *L, const Common::String &TableNam
 bool BS_LuaBindhelper::_CreateTable(lua_State *L, const Common::String &TableName) {
 	const char *PartBegin = TableName.c_str();
 
-	while (*PartBegin) {
+	while (PartBegin - TableName.c_str() < (int)TableName.size()) {
 		const char *PartEnd = strchr(PartBegin, '.');
 		if (!PartEnd)
 			PartEnd = PartBegin + strlen(PartBegin);
-		Common::String SubTableName(PartBegin, PartEnd - PartBegin);
+		Common::String SubTableName(PartBegin, PartEnd);
 
 		// Tables with an empty string as the name are not allowed
 		if (SubTableName.size() == 0)
