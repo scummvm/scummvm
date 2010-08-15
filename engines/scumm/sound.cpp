@@ -170,7 +170,18 @@ void Sound::playSound(int soundID) {
 			static const char tracks[20] = {3, 4, 5, 7, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 21, 19, 20, 21};
 
 			_currentCDSound = soundID;
-			playCDTrack(tracks[soundID - 13], 1, 0, 0);
+
+			// The original game had hard-coded lengths for all
+			// tracks, but this one track is the only one (as far
+			// as we know) where this actually matters. See bug
+			// #3024173 - LOOM-PCE: Music stops prematurely.
+
+			int track = tracks[soundID - 13];
+			if (track == 6) {
+				playCDTrack(track, 1, 0, 260);
+			} else {
+				playCDTrack(track, 1, 0, 0);
+			}
 		} else {
 			if (_vm->_musicEngine) {
 				_vm->_musicEngine->startSound(soundID);
