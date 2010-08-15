@@ -45,41 +45,18 @@ namespace Sword25 {
 
 class BS_Kernel;
 
-// -----------------------------------------------------------------------------
-// Class definitions
-// -----------------------------------------------------------------------------
-
-struct PathElement {
-public:
-	PathElement() { }
-	PathElement(Common::String::const_iterator Begin, Common::String::const_iterator End) : m_Begin(Begin), m_End(End) {}
-
-	Common::String::const_iterator GetBegin() const {
-		return m_Begin;
-	}
-	Common::String::const_iterator GetEnd() const {
-		return m_End;
-	}
-
-private:
-	Common::String::const_iterator m_Begin;
-	Common::String::const_iterator m_End;
-};
-
-typedef Common::Array<PathElement *> PathElementArray;
-
 class BS_ScummVMPackageManager : public BS_PackageManager {
 private:
 	class ArchiveEntry {
 	public:
-		Common::Archive *Archive;
+		Common::Archive *archive;
 		Common::String _mountPath;
 
-		ArchiveEntry(Common::Archive *Archive_, const Common::String &MountPath_):
-			Archive(Archive_), _mountPath(MountPath_) {
+		ArchiveEntry(Common::Archive *archive_, const Common::String &mountPath_):
+			archive(archive_), _mountPath(mountPath_) {
 		}
 		~ArchiveEntry() {
-			delete Archive;
+			delete archive;
 		}
 	};
 
@@ -87,21 +64,22 @@ private:
 	Common::FSNode _rootFolder;
 	Common::List<ArchiveEntry *> _archiveList;
 
-	Common::ArchiveMemberPtr GetArchiveMember(const Common::String &FileName);
+	Common::ArchiveMemberPtr GetArchiveMember(const Common::String &fileName);
+
 public:
-	BS_ScummVMPackageManager(BS_Kernel *KernelPtr);
+	BS_ScummVMPackageManager(BS_Kernel *kernelPtr);
 	virtual ~BS_ScummVMPackageManager();
 
-	virtual bool LoadPackage(const Common::String &FileName, const Common::String &MountPosition);
-	virtual bool LoadDirectoryAsPackage(const Common::String &DirectoryName, const Common::String &MountPosition);
-	virtual void *GetFile(const Common::String &FileName, unsigned int *FileSizePtr = 0);
+	virtual bool LoadPackage(const Common::String &fileName, const Common::String &mountPosition);
+	virtual bool LoadDirectoryAsPackage(const Common::String &directoryName, const Common::String &mountPosition);
+	virtual void *GetFile(const Common::String &fileName, unsigned int *fileSizePtr = 0);
 	virtual Common::String GetCurrentDirectory();
-	virtual bool ChangeDirectory(const Common::String &Directory);
-	virtual Common::String GetAbsolutePath(const Common::String &FileName);
-	virtual FileSearch *CreateSearch(const Common::String &Filter, const Common::String &Path, unsigned int TypeFilter = FT_DIRECTORY | FT_FILE);
-	virtual unsigned int GetFileSize(const Common::String &FileName);
-	virtual unsigned int GetFileType(const Common::String &FileName);
-	virtual bool FileExists(const Common::String &FileName);
+	virtual bool ChangeDirectory(const Common::String &directory);
+	virtual Common::String GetAbsolutePath(const Common::String &fileName);
+	virtual FileSearch *CreateSearch(const Common::String &filter, const Common::String &path, unsigned int typeFilter = FT_DIRECTORY | FT_FILE);
+	virtual unsigned int GetFileSize(const Common::String &fileName);
+	virtual unsigned int GetFileType(const Common::String &fileName);
+	virtual bool FileExists(const Common::String &fileName);
 };
 
 } // End of namespace Sword25

@@ -146,29 +146,29 @@ static void SplitSearchPath(const Common::String &Path, Common::String &Director
 
 // -----------------------------------------------------------------------------
 
-static void DoSearch(lua_State *L, const Common::String &Path, unsigned int Type) {
+static void DoSearch(lua_State *L, const Common::String &path, unsigned int type) {
 	BS_PackageManager *pPM = GetPM();
 
 	// Der Packagemanager-Service muss den Suchstring und den Pfad getrennt übergeben bekommen.
 	// Um die Benutzbarkeit zu verbessern sollen Skriptprogrammierer dieses als ein Pfad übergeben können.
 	// Daher muss der übergebene Pfad am letzten Slash aufgesplittet werden.
-	Common::String Directory;
-	Common::String Filter;
-	SplitSearchPath(Path, Directory, Filter);
+	Common::String directory;
+	Common::String filter;
+	SplitSearchPath(path, directory, filter);
 
 	// Ergebnistable auf dem Lua-Stack erstellen
 	lua_newtable(L);
 
 	// Suche durchführen und die Namen aller gefundenen Dateien in die Ergebnistabelle einfügen.
 	// Als Indizes werden fortlaufende Nummern verwandt.
-	unsigned int ResultNr = 1;
-	BS_PackageManager::FileSearch *pFS = pPM->CreateSearch(Filter, Directory, Type);
+	uint resultNr = 1;
+	BS_PackageManager::FileSearch *pFS = pPM->CreateSearch(filter, directory, type);
 	if (pFS) {
 		do {
-			lua_pushnumber(L, ResultNr);
+			lua_pushnumber(L, resultNr);
 			lua_pushstring(L, pFS->GetCurFileName().c_str());
 			lua_settable(L, -3);
-			ResultNr++;
+			resultNr++;
 		} while (pFS->NextFile());
 	}
 
