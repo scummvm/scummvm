@@ -213,7 +213,6 @@ int Mp3PspStream::initStream() {
 
 bool Mp3PspStream::initStreamME() {
 	// The following will eventually go into the thread
-	sceAudiocodecReleaseEDRAM(_codecParams);	// do we need this?
 
 	memset(_codecParams, 0, sizeof(_codecParams));
 	
