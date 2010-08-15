@@ -1401,7 +1401,9 @@ case $_host_os in
 		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt"
 		if test "$_dynamic_modules" = no ; then
   			LDFLAGS="$LDFLAGS -Wl,--gc-sections"
- 		fi
+ 		else
+		        LDFLAGS="$LDFLAGS -Wl,--retain-symbols-file,ds.syms"
+		fi
 		LDFLAGS="$LDFLAGS -L$DEVKITPRO/libnds/lib"
 		LIBS="$LIBS -lnds9"
 		;;
@@ -1943,7 +1945,7 @@ PLUGIN_PREFIX		:=
 PLUGIN_SUFFIX		:= .plg
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
 CXXFLAGS		+= -DDYNAMIC_MODULES
-PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--target1-abs,--just-symbols,$(EXECUTABLE),-T$(srcdir)/backends/plugins/ds/plugin.ld,--retain-symbols-file,$(srcdir)/backends/plugins/plugin.syms -lstdc++ -lc -mthumb-interwork -mno-fpu
+PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),-T$(srcdir)/backends/plugins/ds/plugin.ld -lstdc++ -lc -mthumb-interwork -mno-fpu -Wl,--retain-symbols-file,$(srcdir)/backends/plugins/plugin.syms
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
