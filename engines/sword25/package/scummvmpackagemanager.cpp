@@ -40,104 +40,17 @@
 namespace Sword25 {
 
 const char PATH_SEPARATOR = '/';
-const char NAVIGATION_CHARACTER = '.';
 
-// -----------------------------------------------------------------------------
-// Support functions and classes
-// -----------------------------------------------------------------------------
+static Common::String normalizePath(const Common::String &path, const Common::String &currentDirectory) {
+	Common::String wholePath = (path.size() >= 1 && path[0] == PATH_SEPARATOR) ? path : currentDirectory + PATH_SEPARATOR + path;
 
-static Common::String RemoveRedundantPathSeparators(const Common::String &Path) {
-	Common::String Result;
-
-	// Iterate over all the chracters of the input path
-	Common::String::const_iterator It = Path.begin();
-	while (It != Path.end()) {
-		if (*It == PATH_SEPARATOR) {
-			// Directory separater found
-
-			// Skip over directory separator(s)
-			while (It != Path.end() && *It == PATH_SEPARATOR) ++It;
-
-			// Unless it's the end of the path, add the separator
-			if (It != Path.end()) Result += PATH_SEPARATOR;
-		} else {
-			// Normal characters are copied over unchanged
-			Result += *It;
-			++It;
-		}
-	}
-
-	return Result;
-}
-
-// ---------------------------------------------------------------------
-
-static PathElementArray SeparatePath(const Common::String &Path, const Common::String &CurrentDirectory) {
-	// Determine whether the path is absolute (begins with /) or relative, in which case it's added
-	// to the current directory
-	Common::String wholePath = (Path.size() >= 1 && Path[0] == PATH_SEPARATOR) ? "" : CurrentDirectory + PATH_SEPARATOR;
-
-	// Add in the provided path
-	wholePath += RemoveRedundantPathSeparators(Path);
-
-	// Parse the path and divide into it's components. This ensures that occurences of ".." and "."
-	// are handled correctly.
-	PathElementArray pathElements;
-	size_t separatorPos = 0;
-	while (separatorPos < wholePath.size()) {
-		// Find next directory separator
-		const char *p = strchr(wholePath.c_str() + separatorPos + 1, PATH_SEPARATOR);
-		size_t nextseparatorPos = (p == NULL) ? wholePath.size() : p - wholePath.c_str();
-
-		// Calculate the beginning and end of the path element
-		Common::String::const_iterator elementBegin = wholePath.begin() + separatorPos + 1;
-		Common::String::const_iterator elementEnd = wholePath.begin() + nextseparatorPos;
-
-		if (elementEnd - elementBegin == 2 &&
-		        elementBegin[0] == NAVIGATION_CHARACTER &&
-		        elementBegin[1] == NAVIGATION_CHARACTER) {
-			// element is "..", therefore the previous path element should be removed
-			if (pathElements.size()) pathElements.pop_back();
-		} else if (elementEnd - elementBegin == 1 &&
-		           elementBegin[0] == NAVIGATION_CHARACTER) {
-			// element is ".", so we do nothing
-		} else {
-			// Normal elements get added to the list
-			pathElements.push_back(new PathElement(wholePath.begin() + separatorPos + 1, wholePath.begin() + nextseparatorPos));
-		}
-
-		separatorPos = nextseparatorPos;
-	}
-
-	return pathElements;
-}
-
-static Common::String NormalizePath(const Common::String &Path, const Common::String &CurrentDirectory) {
-	// Get the path elements for the file
-	PathElementArray pathElements = SeparatePath(Path, CurrentDirectory);
-
-	if (pathElements.size()) {
-		// The individual path elements are fitted together, separated by a directory
-		// separator. The resulting string is returned as a result
-		Common::String Result;
-
-		PathElementArray::const_iterator It = pathElements.begin();
-		while (It != pathElements.end()) {
-			Result += PATH_SEPARATOR;
-			Result += Common::String((*It)->GetBegin(), (*It)->GetEnd());
-			++It;
-		}
-
-		return Result;
-	} else {
+	if (wholePath.size() == 0) {
 		// The path list has no elements, therefore the root directory is returned
 		return Common::String(PATH_SEPARATOR);
 	}
-}
 
-// -----------------------------------------------------------------------------
-// Constructor / Destructor
-// -----------------------------------------------------------------------------
+	return Common::normalizePath(wholePath, PATH_SEPARATOR);
+}
 
 BS_ScummVMPackageManager::BS_ScummVMPackageManager(BS_Kernel *KernelPtr) :
 	BS_PackageManager(KernelPtr),
@@ -222,7 +135,7 @@ bool BS_ScummVMPackageManager::LoadDirectoryAsPackage(const Common::String &Dire
 
 void *BS_ScummVMPackageManager::GetFile(const Common::String &FileName, unsigned int *FileSizePtr) {
 	Common::SeekableReadStream *in;
-	Common::ArchiveMemberPtr fileNode = GetArchiveMember(FileName);
+	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(FileName, _currentDirectory));
 	if (!fileNode)
 		return 0;
 	if (!(in = fileNode->createReadStream()))
@@ -250,23 +163,23 @@ Common::String BS_ScummVMPackageManager::GetCurrentDirectory() {
 
 // -----------------------------------------------------------------------------
 
-bool BS_ScummVMPackageManager::ChangeDirectory(const Common::String &Directory) {
+bool BS_ScummVMPackageManager::ChangeDirectory(const Common::String &directory) {
 	// Get the path elements for the file
-	_currentDirectory = NormalizePath(Directory, _currentDirectory);
+	_currentDirectory = normalizePath(directory, _currentDirectory);
 	return true;
 }
 
 // -----------------------------------------------------------------------------
 
 Common::String BS_ScummVMPackageManager::GetAbsolutePath(const Common::String &FileName) {
-	return NormalizePath(FileName, _currentDirectory);
+	return normalizePath(FileName, _currentDirectory);
 }
 
 // -----------------------------------------------------------------------------
 
 unsigned int BS_ScummVMPackageManager::GetFileSize(const Common::String &FileName) {
 	Common::SeekableReadStream *in;
-	Common::ArchiveMemberPtr fileNode = GetArchiveMember(FileName);
+	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(FileName, _currentDirectory));
 	if (!fileNode)
 		return 0;
 	if (!(in = fileNode->createReadStream()))
@@ -289,7 +202,7 @@ unsigned int BS_ScummVMPackageManager::GetFileType(const Common::String &FileNam
 // -----------------------------------------------------------------------------
 
 bool BS_ScummVMPackageManager::FileExists(const Common::String &FileName) {
-	Common::ArchiveMemberPtr fileNode = GetArchiveMember(FileName);
+	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(FileName, _currentDirectory));
 	return fileNode;
 }
 
@@ -333,7 +246,7 @@ public:
 BS_PackageManager::FileSearch *BS_ScummVMPackageManager::CreateSearch(
     const Common::String &Filter, const Common::String &Path, unsigned int TypeFilter) {
 #if 0
-	Common::String NormalizedPath = NormalizePath(Path, _currentDirectory);
+	Common::String NormalizedPath = normalizePath(Path, _currentDirectory);
 
 	Common::FSNode folderNode = GetFSNode(Path);
 	if (!folderNode.exists() || !folderNode.isDirectory()) return NULL;
