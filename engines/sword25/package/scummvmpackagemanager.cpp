@@ -110,6 +110,9 @@ bool BS_ScummVMPackageManager::LoadPackage(const Common::String &fileName, const
 		zipFile->listMembers(files);
 		debug(0, "Capacity %d", files.size());
 
+		for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); ++it)
+			debug(3, "%s", (*it)->getName().c_str());
+
 		_archiveList.push_back(new ArchiveEntry(zipFile, mountPosition));
 
 		return true;
@@ -206,45 +209,7 @@ bool BS_ScummVMPackageManager::FileExists(const Common::String &fileName) {
 	return fileNode;
 }
 
-// -----------------------------------------------------------------------------
-// File find
-// -----------------------------------------------------------------------------
-
-class ArchiveFileSearch : public BS_PackageManager::FileSearch {
-public:
-	// Path must be normalised
-	ArchiveFileSearch(BS_PackageManager &packageManager, const Common::StringArray &foundFiles) :
-		_packageManager(packageManager),
-		_foundFiles(foundFiles),
-		_foundFilesIt(_foundFiles.begin()) {
-	}
-
-	virtual Common::String GetCurFileName() {
-		return *_foundFilesIt;
-	}
-
-	virtual unsigned int GetCurFileType() {
-		return _packageManager.GetFileType(*_foundFilesIt);
-	}
-
-	virtual unsigned int GetCurFileSize() {
-		return _packageManager.GetFileSize(*_foundFilesIt);
-	}
-
-	virtual bool NextFile() {
-		++_foundFilesIt;
-		return _foundFilesIt != _foundFiles.end();
-	}
-
-	BS_PackageManager                  &_packageManager;
-	Common::StringArray                 _foundFiles;
-	Common::StringArray::const_iterator _foundFilesIt;
-};
-
-// -----------------------------------------------------------------------------
-
-BS_PackageManager::FileSearch *BS_ScummVMPackageManager::CreateSearch(
-    const Common::String &filter, const Common::String &path, unsigned int typeFilter) {
+int BS_ScummVMPackageManager::doSearch(Common::ArchiveMemberList &list, const Common::String &filter, const Common::String &path, unsigned int typeFilter) {
 #if 0
 	Common::String normalizedPath = normalizePath(path, _currentDirectory);
 
@@ -267,8 +232,7 @@ BS_PackageManager::FileSearch *BS_ScummVMPackageManager::CreateSearch(
 	return new ArchiveFileSearch(*this, nameList);
 #else
 	warning("STUB: BS_ScummVMPackageManager::CreateSearch(%s, %s, %d)", filter.c_str(), path.c_str(), typeFilter);
-	Common::StringArray nameList;
-	return new ArchiveFileSearch(*this, nameList);
+	return 0;
 #endif
 }
 

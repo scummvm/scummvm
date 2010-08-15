@@ -50,10 +50,11 @@
 #ifndef SWORD25_PACKAGE_MANAGER_H
 #define SWORD25_PACKAGE_MANAGER_H
 
-// Includes
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/service.h"
+
+#include "common/archive.h"
 
 namespace Sword25 {
 
@@ -76,41 +77,6 @@ public:
 	enum FILE_TYPES {
 		FT_DIRECTORY    = (1 << 0),
 		FT_FILE         = (1 << 1)
-	};
-
-	/**
-	 * File search class
-	 *
-	 * These objects are created with BS_PackageManager::CreateSearch
-	 */
-	class FileSearch {
-	public:
-		virtual ~FileSearch() {};
-
-		/**
-		 * Returns the filename of the current file
-		 * @return          Returns the filename of the current file
-		 */
-		virtual Common::String GetCurFileName() = 0;
-		/**
-		 * Returns the type of the current file
-		 * @return          Returns the type of the current file
-		 * This is either BS_PackageManager::FT_FILE or BS_PackageManager::FT_DIRECTORY.
-		 */
-		virtual unsigned int GetCurFileType() = 0;
-		/**
-		 * Returns the size of the current file
-		 * @return          Returns the size of the current file
-		 * For directories, this value is always 0
-		 */
-		virtual unsigned int GetCurFileSize() = 0;
-		// Finds the next file
-		// Returns false if no more files are found.
-		/**
-		 * Finds the next file.
-		 * @return          Returns false if no other file fulfills the search criteria
-		*/
-		virtual bool NextFile() = 0;
 	};
 
 	/**
@@ -167,7 +133,7 @@ public:
 	 * @return              Specifies a pointer to a BS_PackageManager::FileSearch object, or NULL if no file was found.
 	 * @remark              Do not forget to delete the object after use.
 	*/
-	virtual FileSearch *CreateSearch(const Common::String &Filter, const Common::String &Path, unsigned int TypeFilter = FT_DIRECTORY | FT_FILE) = 0;
+	virtual int doSearch(Common::ArchiveMemberList &list, const Common::String &Filter, const Common::String &Path, unsigned int TypeFilter = FT_DIRECTORY | FT_FILE) = 0;
 
 	/**
 	 * Returns a file's size

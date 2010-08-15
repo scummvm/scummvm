@@ -76,7 +76,7 @@ public:
 	virtual Common::String GetCurrentDirectory();
 	virtual bool ChangeDirectory(const Common::String &directory);
 	virtual Common::String GetAbsolutePath(const Common::String &fileName);
-	virtual FileSearch *CreateSearch(const Common::String &filter, const Common::String &path, unsigned int typeFilter = FT_DIRECTORY | FT_FILE);
+	virtual int doSearch(Common::ArchiveMemberList &list, const Common::String &filter, const Common::String &path, unsigned int typeFilter = FT_DIRECTORY | FT_FILE);
 	virtual unsigned int GetFileSize(const Common::String &fileName);
 	virtual unsigned int GetFileType(const Common::String &fileName);
 	virtual bool FileExists(const Common::String &fileName);

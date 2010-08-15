@@ -162,17 +162,18 @@ static void DoSearch(lua_State *L, const Common::String &path, unsigned int type
 	// Suche durchführen und die Namen aller gefundenen Dateien in die Ergebnistabelle einfügen.
 	// Als Indizes werden fortlaufende Nummern verwandt.
 	uint resultNr = 1;
-	BS_PackageManager::FileSearch *pFS = pPM->CreateSearch(filter, directory, type);
-	if (pFS) {
-		do {
+	Common::ArchiveMemberList list;
+	int numMatches;
+
+	numMatches = pPM->doSearch(list, filter, directory, type);
+	if (numMatches) {
+		for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
 			lua_pushnumber(L, resultNr);
-			lua_pushstring(L, pFS->GetCurFileName().c_str());
+			lua_pushstring(L, (*it)->getName().c_str());
 			lua_settable(L, -3);
 			resultNr++;
-		} while (pFS->NextFile());
+		}
 	}
-
-	delete(pFS);
 }
 
 // -----------------------------------------------------------------------------
