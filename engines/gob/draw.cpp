@@ -538,8 +538,6 @@ void Draw::activeWin(int16 id) {
 	SurfaceDescPtr tempSrf;
 	SurfaceDescPtr oldSrf[10];
 
-	warning ("activeWindow %d", id);
-
 	if (_fascinWin[id].id == -1)
 		return;
 
@@ -682,9 +680,8 @@ int16 Draw::openWin(int16 id) {
 	_fascinWin[id].top    = VAR((_winVarArrayTop    / 4) + id);
 	_fascinWin[id].width  = VAR((_winVarArrayWidth  / 4) + id);
 	_fascinWin[id].height = VAR((_winVarArrayHeight / 4) + id);
-	_fascinWin[id].savedSurface = _vm->_video->initSurfDesc(_vm->_global->_videoMode, _winMaxWidth + 7, _winMaxHeight, 0);
 
-	warning("Draw::openWin id %d- left %d top %d l %d h%d", id, _fascinWin[id].left, _fascinWin[id].top, _fascinWin[id].width, _fascinWin[id].height);
+	_fascinWin[id].savedSurface = _vm->_video->initSurfDesc(_vm->_global->_videoMode, _winMaxWidth + 7, _winMaxHeight, 0);
 
 	saveWin(id);
 	WRITE_VAR((_winVarArrayStatus / 4) + id, VAR((_winVarArrayStatus / 4) + id) & 0xFFFFFFFE);
@@ -693,7 +690,6 @@ int16 Draw::openWin(int16 id) {
 }
 
 void Draw::restoreWin(int16 i) {
-	warning("restoreWin");
 	_vm->_video->drawSprite(*_fascinWin[i].savedSurface, *_backSurface,
 							 _fascinWin[i].left & 7, 0,
 							(_fascinWin[i].left & 7) + _fascinWin[i].width - 1, _fascinWin[i].height - 1,
@@ -704,7 +700,6 @@ void Draw::restoreWin(int16 i) {
 }
 
 void Draw::saveWin(int16 id) {
-	warning("saveWin");
 	_vm->_video->drawSprite(*_backSurface, *_fascinWin[id].savedSurface,
 							_fascinWin[id].left,  _fascinWin[id].top,
 							_fascinWin[id].left + _fascinWin[id].width  - 1,
@@ -765,7 +760,6 @@ void Draw::handleWinBorder(int16 id) {
 	int16 maxX = 320;
 	int16 minY = 0;
 	int16 maxY = 200;
-	warning("handleWinBorder %d", id);
 
 	if (VAR((_winVarArrayStatus / 4) + id) & 8)
 		minX = (int16)(VAR((_winVarArrayLimitsX / 4) + id) >> 16L);
@@ -884,8 +878,6 @@ int16 Draw::handleCurWin() {
 }
 
 void Draw::winDecomp(int16 x, int16 y, SurfaceDescPtr destPtr) {
-	warning("winDecomp %d %d - getResource %d %d %d", x, y, _spriteLeft, _spriteRight, _spriteBottom);
-
 	Resource *resource;
 	resource = _vm->_game->_resources->getResource((uint16) _spriteLeft,
 	                                               &_spriteRight, &_spriteBottom);
@@ -905,8 +897,6 @@ void Draw::winDraw(int16 fct) {
 	int16 top;
 	int16 width;
 	int16 height;
-
-	warning("winDraw %d", fct);
 
 	bool found = false;
 	int len;
