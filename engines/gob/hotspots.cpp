@@ -257,7 +257,7 @@ uint16 Hotspots::add(const Hotspot &hotspot) {
 		// Remember the current script
 		spot.script = _vm->_game->_script;
 
-		debugC(1, kDebugHotspots, "Adding hotspot %03d: %3d+%3d+%3d+%3d - %04X, %04X, %04X - %5d, %5d, %5d",
+		debugC(1, kDebugHotspots, "Adding hotspot %03d: Coord:%3d+%3d+%3d+%3d - id:%04X, key:%04X, flag:%04X - fcts:%5d, %5d, %5d",
 				i, spot.left, spot.top, spot.right, spot.bottom,
 				spot.id, spot.key, spot.flags, spot.funcEnter, spot.funcLeave, spot.funcPos);
 
@@ -537,10 +537,12 @@ int16 Hotspots::curWindow(int16 &dx, int16 &dy) const {
 					if (_vm->_global->_inter_mouseX < _vm->_draw->_fascinWin[i].left + 12 &&
 						_vm->_global->_inter_mouseY < _vm->_draw->_fascinWin[i].top  + 12 &&
 						(VAR((_vm->_draw->_winVarArrayStatus / 4) + i) & 2))
+						// Cursor on 'Close Window'
 						return(5);
 					if (_vm->_global->_inter_mouseX >= _vm->_draw->_fascinWin[i].left + _vm->_draw->_fascinWin[i].width - 12 &&
 						_vm->_global->_inter_mouseY < _vm->_draw->_fascinWin[i].top + 12 &&
 						(VAR((_vm->_draw->_winVarArrayStatus / 4) + i) & 4))
+						// Cursor on 'Move Window'
 						return(6);
 					return(-i);
 				}
@@ -637,7 +639,6 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 			return kKeyEscape;
 
 		return 0;
-
 	}
 
 	return 0;
@@ -798,11 +799,11 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 					if (isValid(_currentKey, _currentId, _currentIndex))
 						enter(_currentIndex);
 				} else {
-					WRITE_VAR(16, (int32) i);
+					WRITE_VAR(16, (int32)i);
 					if (id)
-						id=0;
+						id = 0;
 					if (index)
-						index=0;
+						index = 0;
 					return(0);
 				}
 			} else
@@ -1104,7 +1105,6 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 				// Add character
 				_vm->_util->insertStr(tempStr, str, pos - 1);
 			}
-
 		}
 	}
 }
@@ -1204,13 +1204,13 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 
 	// Type and window
 	byte type = _vm->_game->_script->readByte();
-	byte window = 0;
+	byte windowNum = 0;
 
 	if ((type & 0x40) != 0) {
 		// Got a window ID
 
 		type  -= 0x40;
-		window = _vm->_game->_script->readByte();
+		windowNum = _vm->_game->_script->readByte();
 	}
 
 	// Coordinates
@@ -1238,21 +1238,21 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		_vm->_draw->_invalidatedRights[0] = 319;
 		_vm->_draw->_invalidatedBottoms[0] = 199;
 		_vm->_draw->_invalidatedCount = 1;
-		if (window == 0) {
+		if (windowNum == 0) {
 			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left + width - 1, top, left + width - 1, top + height - 1, 0);
 			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left, top + height - 1, 0);
 			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left + width - 1, top, 0);
 			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top + height - 1, left + width - 1, top + height - 1, 0);
 		} else
-			if ((_vm->_draw->_fascinWin[window].id != -1) && (_vm->_draw->_fascinWin[window].id == _vm->_draw->_winCount - 1)) {
-				left += _vm->_draw->_fascinWin[window].left;
-				top  += _vm->_draw->_fascinWin[window].top;
+			if ((_vm->_draw->_fascinWin[windowNum].id != -1) && (_vm->_draw->_fascinWin[windowNum].id == _vm->_draw->_winCount - 1)) {
+				left += _vm->_draw->_fascinWin[windowNum].left;
+				top  += _vm->_draw->_fascinWin[windowNum].top;
 				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left + width - 1, top, left + width - 1, top + height - 1, 0);
 				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left, top + height - 1, 0);
 				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left + width - 1, top, 0);
 				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top + height - 1, left + width - 1, top + height - 1, 0);
-				left -= _vm->_draw->_fascinWin[window].left;
-				top  -= _vm->_draw->_fascinWin[window].top;
+				left -= _vm->_draw->_fascinWin[windowNum].left;
+				top  -= _vm->_draw->_fascinWin[windowNum].top;
 			}
 	}
 	type &= 0x7F;
@@ -1296,6 +1296,9 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 	Font *font = 0;
 	uint32 funcEnter = 0, funcLeave = 0;
 
+	if ((windowNum != 0) && (type != 0) && (type != 2))
+		warning("evaluateNew - type %d, win %d\n",type, windowNum);
+
 	// Evaluate parameters for the new hotspot
 	switch (type) {
 	case kTypeNone:
@@ -1308,7 +1311,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		_vm->_game->_script->skipBlock();
 
 		key   = i + ((kStateFilled | kStateType2) << 12);
-		flags = type + (window << 8);
+		flags = type + (windowNum << 8);
 		break;
 
 	case kTypeMove:
@@ -1325,7 +1328,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		if (key == 0)
 			key = i + ((kStateFilled | kStateType2) << 12);
 
-		flags = type + (window << 8) + (flags << 4);
+		flags = type + (windowNum << 8) + (flags << 4);
 		break;
 
 	case kTypeInput1NoLeave:
@@ -1390,12 +1393,15 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		ids[i] = _vm->_game->_script->readInt16();
 		flags  = _vm->_game->_script->readInt16();
 
+		if (flags > 3) 
+			warning("evaluateNew: Warning, use of type 2 or 20. flags = %d, should be %d\n", flags, flags&3);
+		
 		funcEnter = 0;
 
 		funcLeave = _vm->_game->_script->pos();
 		_vm->_game->_script->skipBlock();
 
-		flags = ((uint16) kTypeClick) + (window << 8) + (flags << 4);
+		flags = ((uint16) kTypeClick) + (windowNum << 8) + (flags << 4);
 		break;
 
 	case kTypeClickEnter:
@@ -1408,7 +1414,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 
 		funcLeave = 0;
 
-		flags = ((uint16) kTypeClick) + (window << 8) + (flags << 4);
+		flags = ((uint16) kTypeClick) + (windowNum << 8) + (flags << 4);
 		break;
 	}
 
@@ -1418,8 +1424,10 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 }
 
 bool Hotspots::evaluateFind(uint16 key, int16 timeVal, const uint16 *ids,
-		uint16 hotspotIndex1, uint16 hotspotIndex2, uint16 endIndex,
-		int16 &duration, uint16 &id, uint16 &index, bool &finished) {
+		uint16 leaveWindowIndex, uint16 hotspotIndex1, uint16 hotspotIndex2, 
+		uint16 endIndex, int16 &duration, uint16 &id, uint16 &index, bool &finished) {
+
+	bool fascinCheck = false;
 
 	if (id != 0)
 		// We already found a hotspot, nothing to do
@@ -1442,8 +1450,10 @@ bool Hotspots::evaluateFind(uint16 key, int16 timeVal, const uint16 *ids,
 
 		return false;
 	}
+	if ((_vm->getGameType() == kGameTypeFascination) && (getCurrentHotspot()))
+		fascinCheck = true;
 
-	if (duration != 0) {
+	if ((duration != 0) && (!fascinCheck)) {
 		// We've got a time duration
 
 		if        (hotspotIndex1 != 0) {
@@ -1473,6 +1483,12 @@ bool Hotspots::evaluateFind(uint16 key, int16 timeVal, const uint16 *ids,
 			return true;
 
 		return false;
+	} else {
+		if (leaveWindowIndex != 0)
+			findNthPlain(leaveWindowIndex, endIndex, id, index);
+
+		if (id != 0)
+			return true;
 	}
 
 	return false;
@@ -1500,6 +1516,11 @@ void Hotspots::evaluate() {
 	// Parameters of this block
 	_vm->_game->_handleMouse = _vm->_game->_script->peekByte(0);
 	int16 duration           = _vm->_game->_script->peekByte(1);
+
+	byte leaveWindowIndex = 0;
+	if ( _vm->getGameType() == kGameTypeFascination )
+		leaveWindowIndex = _vm->_game->_script->peekByte(2);
+
 	byte hotspotIndex1       = _vm->_game->_script->peekByte(3);
 	byte hotspotIndex2       = _vm->_game->_script->peekByte(4);
 	bool needRecalculation   = _vm->_game->_script->peekByte(5) != 0;
@@ -1562,7 +1583,7 @@ void Hotspots::evaluate() {
 		key = convertSpecialKey(key);
 
 		// Try to find a fitting hotspot
-		Hotspots::evaluateFind(key, timeVal, ids, hotspotIndex1, hotspotIndex2, endIndex,
+		evaluateFind(key, timeVal, ids, leaveWindowIndex, hotspotIndex1, hotspotIndex2, endIndex,
 				duration, id, index, finishedDuration);
 
 		if (finishedDuration)
@@ -1623,9 +1644,9 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 	int16 deltax = 0;
 	int16 deltay = 0;
 
-	if ( _vm->getGameType() == kGameTypeFascination ) {
+	if ( _vm->getGameType() == kGameTypeFascination )
 		cursor = curWindow(deltax, deltay);
-	}
+
 	if (cursor == 0) {
 		for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 			const Hotspot &spot = _hotspots[i];
