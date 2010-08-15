@@ -63,11 +63,11 @@ reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAbs(EngineState *s, int argc, reg_t *argv) {
-	return make_reg(0, abs(argv[0].toSint16()));
+	return make_reg(0, ABS(argv[0].toSint16()));
 }
 
 reg_t kSqrt(EngineState *s, int argc, reg_t *argv) {
-	return make_reg(0, (int16) sqrt((float) abs(argv[0].toSint16())));
+	return make_reg(0, (int16) sqrt((float) ABS(argv[0].toSint16())));
 }
 
 reg_t kGetAngle(EngineState *s, int argc, reg_t *argv) {

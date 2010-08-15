@@ -86,7 +86,7 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	int vy = 0;  // y velocity
 
 	int dxWasNegative = (dx < 0);
-	dx = abs(dx);
+	dx = ABS(dx);
 
 	assert(gy >= 0);
 
@@ -104,8 +104,8 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 		// we ensure vx will be less than sqrt(gy * dx)).
 		if (dx + dy < 0) {
 			// dy is negative and |dy| > |dx|
-			c = (2 * abs(dy)) / dx;
-			//tmp = abs(dy);  // ALMOST the resulting value, except for obvious rounding issues
+			c = (2 * ABS(dy)) / dx;
+			//tmp = ABS(dy);  // ALMOST the resulting value, except for obvious rounding issues
 		} else {
 			// dy is either positive, or |dy| <= |dx|
 			c = (dx * 3 / 2 - dy) / dx;
@@ -122,8 +122,8 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	}
 	// POST: c >= 1
 	tmp = c * dx + dy;
-	// POST: (dx != 0)  ==>  abs(tmp) > abs(dx)
-	// POST: (dx != 0)  ==>  abs(tmp) ~>=~ abs(dy)
+	// POST: (dx != 0)  ==>  ABS(tmp) > ABS(dx)
+	// POST: (dx != 0)  ==>  ABS(tmp) ~>=~ ABS(dy)
 
 	debugC(2, kDebugLevelBresen, "c: %d, tmp: %d", c, tmp);
 
@@ -145,7 +145,7 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 
 		// FIXME: This choice of vy makes t roughly (2+sqrt(2))/gy * sqrt(dy);
 		// so if gy==3, then t is roughly sqrt(dy)...
-		vy = (int)sqrt((double)gy * abs(2 * dy)) + 1;
+		vy = (int)sqrt((double)gy * ABS(2 * dy)) + 1;
 	} else {
 		// As stated above, the vertical direction is correlated to the horizontal by the
 		// (non-zero) factor c.
@@ -155,7 +155,7 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	// Always force vy to be upwards
-	vy = -abs(vy);
+	vy = -ABS(vy);
 
 	debugC(2, kDebugLevelBresen, "SetJump for object at %04x:%04x", PRINT_REG(object));
 	debugC(2, kDebugLevelBresen, "xStep: %d, yStep: %d", vx, vy);
@@ -173,8 +173,8 @@ static void initialize_bresen(SegManager *segMan, int argc, reg_t *argv, reg_t m
 	reg_t client = readSelector(segMan, mover, SELECTOR(client));
 	int stepx = (int16)readSelectorValue(segMan, client, SELECTOR(xStep)) * step_factor;
 	int stepy = (int16)readSelectorValue(segMan, client, SELECTOR(yStep)) * step_factor;
-	int numsteps_x = stepx ? (abs(deltax) + stepx - 1) / stepx : 0;
-	int numsteps_y = stepy ? (abs(deltay) + stepy - 1) / stepy : 0;
+	int numsteps_x = stepx ? (ABS(deltax) + stepx - 1) / stepx : 0;
+	int numsteps_y = stepy ? (ABS(deltay) + stepy - 1) / stepy : 0;
 	int bdi, i1;
 	int numsteps;
 	int deltax_step;
@@ -190,22 +190,22 @@ static void initialize_bresen(SegManager *segMan, int argc, reg_t *argv, reg_t m
 		deltax_step = numsteps ? deltax / numsteps : deltax;
 	}
 
-/*	if (abs(deltax) > abs(deltay)) {*/ // Bresenham on y
+/*	if (ABS(deltax) > ABS(deltay)) {*/ // Bresenham on y
 	if (numsteps_y < numsteps_x) {
 
 		writeSelectorValue(segMan, mover, SELECTOR(b_xAxis), _K_BRESEN_AXIS_Y);
 		writeSelectorValue(segMan, mover, SELECTOR(b_incr), (deltay < 0) ? -1 : 1);
-		//i1 = 2 * (abs(deltay) - abs(deltay_step * numsteps)) * abs(deltax_step);
-		//bdi = -abs(deltax);
-		i1 = 2 * (abs(deltay) - abs(deltay_step * (numsteps - 1))) * abs(deltax_step);
-		bdi = -abs(deltax);
+		//i1 = 2 * (ABS(deltay) - ABS(deltay_step * numsteps)) * ABS(deltax_step);
+		//bdi = -ABS(deltax);
+		i1 = 2 * (ABS(deltay) - ABS(deltay_step * (numsteps - 1))) * ABS(deltax_step);
+		bdi = -ABS(deltax);
 	} else { // Bresenham on x
 		writeSelectorValue(segMan, mover, SELECTOR(b_xAxis), _K_BRESEN_AXIS_X);
 		writeSelectorValue(segMan, mover, SELECTOR(b_incr), (deltax < 0) ? -1 : 1);
-		//i1= 2 * (abs(deltax) - abs(deltax_step * numsteps)) * abs(deltay_step);
-		//bdi = -abs(deltay);
-		i1 = 2 * (abs(deltax) - abs(deltax_step * (numsteps - 1))) * abs(deltay_step);
-		bdi = -abs(deltay);
+		//i1= 2 * (ABS(deltax) - ABS(deltax_step * numsteps)) * ABS(deltay_step);
+		//bdi = -ABS(deltay);
+		i1 = 2 * (ABS(deltax) - ABS(deltax_step * (numsteps - 1))) * ABS(deltay_step);
+		bdi = -ABS(deltay);
 
 	}
 
@@ -306,12 +306,12 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 	if ((MOVING_ON_X && (((x < destx) && (oldx >= destx)) // Moving left, exceeded?
 	            || ((x > destx) && (oldx <= destx)) // Moving right, exceeded?
-	            || ((x == destx) && (abs(dx) > abs(dy))) // Moving fast, reached?
+	            || ((x == destx) && (ABS(dx) > ABS(dy))) // Moving fast, reached?
 	            // Treat this last case specially- when doing sub-pixel movements
 	            // on the other axis, we could still be far away from the destination
 				)) || (MOVING_ON_Y && (((y < desty) && (oldy >= desty)) /* Moving upwards, exceeded? */
 	                || ((y > desty) && (oldy <= desty)) /* Moving downwards, exceeded? */
-	                || ((y == desty) && (abs(dy) >= abs(dx))) /* Moving fast, reached? */
+	                || ((y == desty) && (ABS(dy) >= ABS(dx))) /* Moving fast, reached? */
 				))) {
 		// Whew... in short: If we have reached or passed our target position
 
