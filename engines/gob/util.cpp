@@ -435,7 +435,7 @@ void Util::cleanupStr(char *str) {
 		cutFromStr(str, 0, 1);
 
 	// Trim spaces right
-	while ((strlen(str) > 0) && (str[strlen(str) - 1] == ' '))
+	while ((*str != '\0') && (str[strlen(str) - 1] == ' '))
 		cutFromStr(str, strlen(str) - 1, 1);
 
 	// Merge double spaces
