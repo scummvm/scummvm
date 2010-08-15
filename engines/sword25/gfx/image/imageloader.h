@@ -141,6 +141,8 @@ protected:
 		_ImageLoaderList.push_front(this);
 	}
 
+	virtual ~BS_ImageLoader() {}
+
 	//@{
 	/** @name Abstrakte Methoden */
 

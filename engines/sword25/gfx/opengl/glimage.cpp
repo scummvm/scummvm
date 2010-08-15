@@ -41,6 +41,8 @@
 #include "sword25/gfx/opengl/openglgfx.h"
 #include "sword25/gfx/opengl/glimage.h"
 
+#include "common/system.h"
+
 namespace Sword25 {
 
 #define BS_LOG_PREFIX "GLIMAGE"
@@ -220,6 +222,8 @@ bool BS_GLImage::Blit(int PosX, int PosY,
 
 	if (alphawarn)
 		warning("STUB: alpha image");
+
+	g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(PosX, PosY), _backSurface->pitch, PosX, PosY, w, h);
 
 	return true;
 }
