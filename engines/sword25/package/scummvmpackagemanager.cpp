@@ -58,18 +58,12 @@ BS_ScummVMPackageManager::BS_ScummVMPackageManager(BS_Kernel *kernelPtr) :
 	_rootFolder(ConfMan.get("path")) {
 }
 
-// -----------------------------------------------------------------------------
-
 BS_ScummVMPackageManager::~BS_ScummVMPackageManager() {
 }
-
-// -----------------------------------------------------------------------------
 
 BS_Service *BS_ScummVMPackageManager_CreateObject(BS_Kernel *kernelPtr) {
 	return new BS_ScummVMPackageManager(kernelPtr);
 }
-
-// -----------------------------------------------------------------------------
 
 /**
  * Scans through the archive list for a specified file
@@ -79,7 +73,7 @@ Common::ArchiveMemberPtr BS_ScummVMPackageManager::GetArchiveMember(const Common
 	Common::List<ArchiveEntry *>::iterator i;
 	for (i = _archiveList.begin(); i != _archiveList.end(); ++i) {
 		if (!fileName.hasPrefix((*i)->_mountPath)) {
-			// The mount path has more subfolder depth than the search entry, so skip it
+			// The mount path is in different subtree. Skipping
 			continue;
 		}
 
@@ -96,8 +90,6 @@ Common::ArchiveMemberPtr BS_ScummVMPackageManager::GetArchiveMember(const Common
 
 	return Common::ArchiveMemberPtr();
 }
-
-// -----------------------------------------------------------------------------
 
 bool BS_ScummVMPackageManager::LoadPackage(const Common::String &fileName, const Common::String &mountPosition) {
 	Common::Archive *zipFile = Common::makeZipArchive(fileName);
@@ -119,8 +111,6 @@ bool BS_ScummVMPackageManager::LoadPackage(const Common::String &fileName, const
 	}
 }
 
-// -----------------------------------------------------------------------------
-
 bool BS_ScummVMPackageManager::LoadDirectoryAsPackage(const Common::String &directoryName, const Common::String &mountPosition) {
 	Common::FSNode directory(directoryName);
 	Common::Archive *folderArchive = new Common::FSDirectory(directory);
@@ -133,8 +123,6 @@ bool BS_ScummVMPackageManager::LoadDirectoryAsPackage(const Common::String &dire
 		return true;
 	}
 }
-
-// -----------------------------------------------------------------------------
 
 void *BS_ScummVMPackageManager::GetFile(const Common::String &fileName, unsigned int *fileSizePtr) {
 	Common::SeekableReadStream *in;
@@ -158,13 +146,9 @@ void *BS_ScummVMPackageManager::GetFile(const Common::String &fileName, unsigned
 	return buffer;
 }
 
-// -----------------------------------------------------------------------------
-
 Common::String BS_ScummVMPackageManager::GetCurrentDirectory() {
 	return _currentDirectory;
 }
-
-// -----------------------------------------------------------------------------
 
 bool BS_ScummVMPackageManager::ChangeDirectory(const Common::String &directory) {
 	// Get the path elements for the file
@@ -172,13 +156,9 @@ bool BS_ScummVMPackageManager::ChangeDirectory(const Common::String &directory) 
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
 Common::String BS_ScummVMPackageManager::GetAbsolutePath(const Common::String &fileName) {
 	return normalizePath(fileName, _currentDirectory);
 }
-
-// -----------------------------------------------------------------------------
 
 unsigned int BS_ScummVMPackageManager::GetFileSize(const Common::String &fileName) {
 	Common::SeekableReadStream *in;
@@ -193,8 +173,6 @@ unsigned int BS_ScummVMPackageManager::GetFileSize(const Common::String &fileNam
 	return fileSize;
 }
 
-// -----------------------------------------------------------------------------
-
 unsigned int BS_ScummVMPackageManager::GetFileType(const Common::String &fileName) {
 	warning("STUB: BS_ScummVMPackageManager::GetFileType(%s)", fileName.c_str());
 
@@ -202,38 +180,45 @@ unsigned int BS_ScummVMPackageManager::GetFileType(const Common::String &fileNam
 	return BS_PackageManager::FT_FILE;
 }
 
-// -----------------------------------------------------------------------------
-
 bool BS_ScummVMPackageManager::FileExists(const Common::String &fileName) {
 	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(fileName, _currentDirectory));
 	return fileNode;
 }
 
 int BS_ScummVMPackageManager::doSearch(Common::ArchiveMemberList &list, const Common::String &filter, const Common::String &path, unsigned int typeFilter) {
-#if 0
-	Common::String normalizedPath = normalizePath(path, _currentDirectory);
+	Common::String normalizedFilter = normalizePath(filter, _currentDirectory);
+	int num = 0;
 
-	Common::FSNode folderNode = GetFSNode(path);
-	if (!folderNode.exists() || !folderNode.isDirectory()) return NULL;
+	if (path.size() > 0)
+		warning("STUB: BS_ScummVMPackageManager::doSearch(<%s>, <%s>, %d)", filter.c_str(), path.c_str(), typeFilter);
 
-	Common::Archive *folder = new Common::FSDirectory(folderNode);
-	Common::ArchiveMemberList memberList;
+	// Loop through checking each archive
+	Common::List<ArchiveEntry *>::iterator i;
+	for (i = _archiveList.begin(); i != _archiveList.end(); ++i) {
+		Common::ArchiveMemberList memberList;
 
-	if (folder->listMatchingMembers(memberList, Filter) == 0)
-		return NULL;
+		if (!normalizedFilter.hasPrefix((*i)->_mountPath)) {
+			// The mount path is in different subtree. Skipping
+			continue;
+		}
 
-	// Create a list of the matching names
-	Common::StringArray nameList;
-	for (Common::ArchiveMemberList::iterator i = memberList.begin(); i != memberList.end(); ++i) {
-		nameList.push_back((*i)->getName());
+		// Construct relative path
+		Common::String resFilter(&normalizedFilter.c_str()[(*i)->_mountPath.size()]);
+
+		if ((*i)->archive->listMatchingMembers(memberList, resFilter) == 0)
+			continue;
+
+		// Create a list of the matching names
+		for (Common::ArchiveMemberList::iterator it = memberList.begin(); it != memberList.end(); ++it) {
+			if (((typeFilter &  BS_PackageManager::FT_DIRECTORY) && (*it)->getName().hasSuffix("/")) ||
+				((typeFilter & BS_PackageManager::FT_FILE) && !(*it)->getName().hasSuffix("/"))) {
+				list.push_back(*it);
+				num++;
+			}
+		}
 	}
 
-	// Return a ArchiveFileSearch object that encapsulates the name list
-	return new ArchiveFileSearch(*this, nameList);
-#else
-	warning("STUB: BS_ScummVMPackageManager::CreateSearch(%s, %s, %d)", filter.c_str(), path.c_str(), typeFilter);
-	return 0;
-#endif
+	return num;
 }
 
 } // End of namespace Sword25
