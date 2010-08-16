@@ -946,7 +946,7 @@ void Mult_v2::animate() {
 		_vm->_draw->_destSpriteX = maxleft;
 		_vm->_draw->_destSpriteY = maxtop;
 		_vm->_draw->_transparency = 0;
-		_vm->_draw->spriteOperation(DRAW_DRAWLETTER);
+		_vm->_draw->spriteOperation(DRAW_BLITSURF);
 	}
 
 	// Figure out the correct drawing order
