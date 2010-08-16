@@ -62,7 +62,7 @@ GFXTestSuite::GFXTestSuite() {
 	// Mouse Layer tests (Palettes and movements)
 	addTest("PalettizedCursors", &GFXtests::palettizedCursors);
 	addTest("MouseMovements", &GFXtests::mouseMovements);
-	// FIXME: Scaled cursor crsh with odd dimmensions
+	// FIXME: Scaled cursor crash with odd dimmensions
 	addTest("ScaledCursors", &GFXtests::scaledCursors);
 
 	// Effects
@@ -746,6 +746,14 @@ TestExitStatus GFXtests::scaledCursors() {
 		maxLimit = 3;
 	}
 
+	bool isAspectRatioCorrected = g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection);
+
+	if (isAspectRatioCorrected) {	
+		g_system->beginGFXTransaction();
+		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, false);
+		g_system->endGFXTransaction();
+	}
+
 	const int currGFXMode = g_system->getGraphicsMode();
 	const OSystem::GraphicsMode *gfxMode = g_system->getSupportedGraphicsModes();
 
@@ -753,6 +761,20 @@ TestExitStatus GFXtests::scaledCursors() {
 		// for every graphics mode display cursors for cursorTargetScale 1, 2 and 3
 		// Switch Graphics mode
 		// FIXME: Crashes with "3x" mode now.:
+		
+		info = Common::String::printf("Testing : Scaled cursors with GFX Mode %s\n", gfxMode->name);
+		if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+			Testsuite::logPrintf("\tInfo! Skipping sub-test : Scaled Cursors :: GFX Mode %s\n", gfxMode->name);
+			gfxMode++;
+			maxLimit--;
+			continue;
+		}
+		if (Engine::shouldQuit()) {
+			// Explicit exit requested
+			Testsuite::logPrintf("Info! Explicit exit requested during scaling test, this test may be incomplete\n");
+			return kTestSkipped;
+		}
+		
 		g_system->beginGFXTransaction();
 
 		bool isGFXModeSet = g_system->setGraphicsMode(gfxMode->id);
@@ -775,12 +797,29 @@ TestExitStatus GFXtests::scaledCursors() {
 		}
 		gfxMode++;
 		maxLimit--;
+
+		info = "Did the expected cursor size and the actual cursor size matched?";
+		if (Testsuite::handleInteractiveInput(info, "Yes", "No", kOptionRight)) {
+			Testsuite::logPrintf("\tInfo! Failed sub-test : Scaled Cursors :: GFX Mode %s\n", gfxMode->name);
+		}
+		
+		if (Engine::shouldQuit()) {
+			// Explicit exit requested
+			Testsuite::logPrintf("Info! Explicit exit requested during scaling test, this test may be incomplete\n");
+			return kTestSkipped;
+		}
+
 	}
 
 	// Restore Original State
 	g_system->beginGFXTransaction();
 	bool isGFXModeSet = g_system->setGraphicsMode(currGFXMode);
 	g_system->initSize(320, 200);
+
+	if (isAspectRatioCorrected) {
+		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, true);
+	}
+	
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 	if (gfxError != OSystem::kTransactionSuccess || !isGFXModeSet) {
@@ -805,11 +844,13 @@ TestExitStatus GFXtests::shakingEffect() {
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("If Shaking Effect works, this should shake!", pt);
-	int times = 35;
+	int times = 15;
 	while (times--) {
 		g_system->setShakePos(25);
+		g_system->delayMillis(50);
 		g_system->updateScreen();
 		g_system->setShakePos(0);
+		g_system->delayMillis(50);
 		g_system->updateScreen();
 	}
 	g_system->delayMillis(1500);
