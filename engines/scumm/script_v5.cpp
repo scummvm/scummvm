@@ -377,6 +377,25 @@ int ScummEngine_v5::getVarOrDirectWord(byte mask) {
 	return fetchScriptWordSigned();
 }
 
+void ScummEngine_v5::getResultPos() {
+	int a;
+
+	_resultVarNumber = fetchScriptWord();
+	if (_resultVarNumber & 0x2000) {
+		a = fetchScriptWord();
+		if (a & 0x2000) {
+			_resultVarNumber += readVar(a & ~0x2000);
+		} else {
+			_resultVarNumber += a & 0xFFF;
+		}
+		_resultVarNumber &= ~0x2000;
+	}
+}
+
+void ScummEngine_v5::setResult(int value) {
+	writeVar(_resultVarNumber, value);
+}
+
 void ScummEngine_v5::jumpRelative(bool cond) {
 	// We explicitly call ScummEngine::fetchScriptWord()
 	// to make this method work also in v0, which overloads
