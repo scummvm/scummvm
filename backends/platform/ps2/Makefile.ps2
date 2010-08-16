@@ -119,8 +119,6 @@ OBJS := $(srcdir)/backends/platform/ps2/DmaPipe.o \
 	$(srcdir)/backends/platform/ps2/ps2time.o \
 	$(srcdir)/backends/platform/ps2/ps2debug.o
 
-include $(srcdir)/Makefile.common
-
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
