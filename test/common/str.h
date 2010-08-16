@@ -266,6 +266,8 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(Common::lastPathComponent("foo/./bar", '/'), "bar");
 		TS_ASSERT_EQUALS(Common::lastPathComponent("foo//./bar//", '/'), "bar");
 		TS_ASSERT_EQUALS(Common::lastPathComponent("foo//.bar//", '/'), ".bar");
+
+		TS_ASSERT_EQUALS(Common::lastPathComponent("foo", '/'), "foo");
 	}
 
 	void test_normalizePath() {
