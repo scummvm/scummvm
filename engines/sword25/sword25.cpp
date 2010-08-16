@@ -47,14 +47,12 @@ namespace Sword25 {
 
 const char *const PACKAGE_MANAGER = "archiveFS";
 const char *const DEFAULT_SCRIPT_FILE = "/system/boot.lua";
-const char *const MOUNT_DIR_PARAMETER = "-mount-dir";
-
 
 void LogToStdout(const char *Message) {
 	debugN(0, Message);
 }
 
-Sword25Engine::Sword25Engine(OSystem *syst, const Sword25GameDescription *gameDesc):
+Sword25Engine::Sword25Engine(OSystem *syst, const ADGameDescription *gameDesc):
 	Engine(syst),
 	_gameDescription(gameDesc) {
 }
@@ -104,8 +102,8 @@ Common::Error Sword25Engine::AppStart(const Common::StringArray &CommandParamete
 	}
 
 	// Packages laden oder das aktuelle Verzeichnis mounten, wenn das über Kommandozeile angefordert wurde.
-	if (find(CommandParameters.begin(), CommandParameters.end(), MOUNT_DIR_PARAMETER) != CommandParameters.end()) {
-		if (!PackageManagerPtr->LoadDirectoryAsPackage(".", "/"))
+	if (getGameFlags() & GF_EXTRACTED) {
+		if (!PackageManagerPtr->LoadDirectoryAsPackage(ConfMan.get("path"), "/"))
 			return Common::kUnknownError;
 	} else {
 		if (!LoadPackages())

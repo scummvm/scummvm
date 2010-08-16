@@ -120,6 +120,11 @@ bool BS_ScummVMPackageManager::LoadDirectoryAsPackage(const Common::String &dire
 	} else {
 		BS_LOGLN("Directory '%s' mounted as '%s'.", directoryName.c_str(), mountPosition.c_str());
 		_archiveList.push_front(new ArchiveEntry(folderArchive, mountPosition));
+
+		Common::ArchiveMemberList files;
+		folderArchive->listMembers(files);
+		debug(0, "Capacity %d", files.size());
+
 		return true;
 	}
 }

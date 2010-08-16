@@ -33,6 +33,8 @@
 
 #include "sword25/kernel/log.h"
 
+struct ADGameDescription;
+
 namespace Sword25 {
 
 enum {
@@ -43,11 +45,13 @@ enum {
 	kDebugScript = 1 << 0
 };
 
+enum GameFlags {
+	GF_EXTRACTED = 1 << 0
+};
+
 #define MESSAGE_BASIC 1
 #define MESSAGE_INTERMEDIATE 2
 #define MESSAGE_DETAILED 3
-
-struct Sword25GameDescription;
 
 class Sword25Engine : public Engine {
 private:
@@ -61,15 +65,12 @@ protected:
 	void shutdown();
 
 public:
-	Sword25Engine(OSystem *syst, const Sword25GameDescription *gameDesc);
+	Sword25Engine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~Sword25Engine();
 
-	int getGameType() const;
-	uint32 getFeatures() const;
-	Common::Language getLanguage() const;
-	Common::Platform getPlatform() const;
+	uint32 getGameFlags() const;
 
-	const Sword25GameDescription *_gameDescription;
+	const ADGameDescription *_gameDescription;
 };
 
 } // End of namespace Sword25

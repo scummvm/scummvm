@@ -30,17 +30,7 @@
 #include "sword25/sword25.h"
 
 namespace Sword25 {
-
-struct Sword25GameDescription {
-	ADGameDescription desc;
-
-	uint32 features;
-};
-
-uint32 Sword25Engine::getFeatures() const { return _gameDescription->features; }
-Common::Language Sword25Engine::getLanguage() const { return _gameDescription->desc.language; }
-Common::Platform Sword25Engine::getPlatform() const { return _gameDescription->desc.platform; }
-
+uint32 Sword25Engine::getGameFlags() const { return _gameDescription->flags; }
 }
 
 static const PlainGameDescriptor Sword25Game[] = {
@@ -53,29 +43,43 @@ namespace Sword25 {
 // TODO: Need to decide whether we're going to implement code to detect all the various languages allowed,
 // both by the core data package, as well as the extra languages added by the patch file; also, I don't
 // think that all the languages supported by the game currently have constants in ScummVM
-static const Sword25GameDescription gameDescriptions[] = {
+static const ADGameDescription gameDescriptions[] = {
 	{
-		{
-			"sword25",
-			"",
-			AD_ENTRY1s("data.b25c", "f8b6e03ada2d2f6cf27fbc11ad1572e9", 654310588),
-			Common::EN_ANY,
-			Common::kPlatformUnknown,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
-		},
-		0
+		"sword25",
+		"",
+		AD_ENTRY1s("data.b25c", "f8b6e03ada2d2f6cf27fbc11ad1572e9", 654310588),
+		Common::EN_ANY,
+		Common::kPlatformUnknown,
+		ADGF_NO_FLAGS,
+		Common::GUIO_NONE
 	},
-	{ AD_TABLE_END_MARKER, 0 }
+	{
+		"sword25",
+		"Extracted",
+		{{"_includes.lua", 0, 0, -1},
+		 {"boot.lua", 0, 0, -1},
+		 {"kernel.lua", 0, 0, -1},
+		 AD_LISTEND},
+		Common::EN_ANY,
+		Common::kPlatformUnknown,
+		GF_EXTRACTED,
+		Common::GUIO_NONE
+	},
+	AD_TABLE_END_MARKER
 };
 
 } // end of namespace Sword25
+
+static const char *directoryGlobs[] = {
+	"system", // Used by extracted dats
+	0
+};
 
 static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Sword25::gameDescriptions,
 	// Size of that superset structure
-	sizeof(Sword25::Sword25GameDescription),
+	sizeof(ADGameDescription),
 	// Number of bytes to compute MD5 sum for
 	5000,
 	// List of all engine targets
@@ -91,9 +95,9 @@ static const ADParams detectionParams = {
 	// Additional GUI options (for every game}
 	Common::GUIO_NOMIDI,
 	// Maximum directory depth
-	1,
+	2,
 	// List of directory globs
-	0
+	directoryGlobs
 };
 
 class Sword25MetaEngine : public AdvancedMetaEngine {
@@ -112,11 +116,10 @@ public:
 };
 
 bool Sword25MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Sword25::Sword25GameDescription *gd = (const Sword25::Sword25GameDescription *)desc;
-	if (gd) {
-		*engine = new Sword25::Sword25Engine(syst, gd);
+	if (desc) {
+		*engine = new Sword25::Sword25Engine(syst, desc);
 	}
-	return gd != 0;
+	return desc != 0;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD25)
