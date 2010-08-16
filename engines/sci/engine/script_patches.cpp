@@ -117,6 +117,68 @@ const SciScriptSignature ecoquest1Signatures[] = {
     {      0, NULL,                                          0,                                            0, NULL,                          NULL }
 };
 
+// ===========================================================================
+// doMyThing::changeState (2) is supposed to remove the initial text on the
+//  ecorder. This is done by reusing temp-space, that was filled on state 1.
+//  this worked in sierra sci just by accident. In our sci, the temp space
+//  is resetted every time, which means the previous text isn't available
+//  anymore. We have to patch the code because of that ffs. bug #3035386
+const byte ecoquest2SignatureEcorder[] = {
+	35,
+	0x31, 0x22,        // bnt [next state]
+	0x39, 0x0a,        // pushi 0a
+	0x5b, 0x04, 0x1e,  // lea temp[1e]
+	0x36,              // push
+	0x39, 0x64,        // pushi 64
+	0x39, 0x7d,        // pushi 7d
+	0x39, 0x32,        // pushi 32
+	0x39, 0x66,        // pushi 66
+	0x39, 0x17,        // pushi 17
+	0x39, 0x69,        // pushi 69
+	0x38, 0x31, 0x26,  // pushi 2631
+	0x39, 0x6a,        // pushi 6a
+	0x39, 0x64,        // pushi 64
+	0x43, 0x1b, 0x14,  // call kDisplay
+	0x35, 0x0a,        // ldi 0a
+	0x65, 0x20,        // aTop ticks
+	0x33,              // jmp [end]
+	+1, 5,             // [skip 1 byte]
+	0x3c,              // dup
+	0x35, 0x03,        // ldi 03
+	0x1a,              // eq?
+	0x31,              // bnt [end]
+	0
+};
+
+const uint16 ecoquest2PatchEcorder[] = {
+	0x2f, 0x02,        // bt [to pushi 07]
+	0x3a,              // toss
+	0x48,              // ret
+	0x38, 0x07, 0x00,  // pushi 07 (parameter count) (waste 1 byte)
+	0x39, 0x0b,        // push (FillBoxAny)
+	0x39, 0x1d,        // pushi 29d
+	0x39, 0x73,        // pushi 115d
+	0x39, 0x5e,        // pushi 94d
+	0x38, 0xd7, 0x00,  // pushi 215d
+	0x78,              // push1 (visual screen)
+	0x38, 0x17, 0x00,  // pushi 17 (color) (waste 1 byte)
+	0x43, 0x6c, 0x0e,  // call kGraph
+	0x38, 0x05, 0x00,  // pushi 05 (parameter count) (waste 1 byte)
+	0x39, 0x0c,        // pushi 12d (UpdateBox)
+	0x39, 0x1d,        // pushi 29d
+	0x39, 0x73,        // pushi 115d
+	0x39, 0x5e,        // pushi 94d
+	0x38, 0xd7, 0x00,  // pushi 215d
+	0x43, 0x6c, 0x0a,  // call kGraph
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                 adjust
+const SciScriptSignature ecoquest2Signatures[] = {
+    {     50, "initial text not removed on ecorder",         PATCH_MAGICDWORD(0x39, 0x64, 0x39, 0x7d),    -8, ecoquest2SignatureEcorder, ecoquest2PatchEcorder },
+    {      0, NULL,                                          0,                                            0, NULL,                          NULL }
+};
+
 // daySixBeignet::changeState (4) is called when the cop goes out and sets cycles to 220.
 //  this is not enough time to get to the door, so we patch that to 23 seconds
 const byte gk1SignatureDay6PoliceBeignet[] = {
@@ -531,6 +593,8 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 	const SciScriptSignature *signatureTable = NULL;
 	if (g_sci->getGameId() == GID_ECOQUEST)
 		signatureTable = ecoquest1Signatures;
+	if (g_sci->getGameId() == GID_ECOQUEST2)
+		signatureTable = ecoquest2Signatures;
 	if (g_sci->getGameId() == GID_GK1)
 		signatureTable = gk1Signatures;
 // hoyle4 now works due workaround inside GfxPorts
