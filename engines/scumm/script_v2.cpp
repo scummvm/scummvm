@@ -640,7 +640,6 @@ void ScummEngine_v2::o2_waitForActor() {
 }
 
 void ScummEngine_v2::o2_waitForMessage() {
-
 	if (VAR(VAR_HAVE_MSG)) {
 		_scriptPointer--;
 		o5_breakHere();

@@ -50,6 +50,8 @@ protected:
 
 	/* Version 3 script opcodes */
 	void o3_setBoxFlags();
+	void o3_waitForActor();
+	void o3_waitForSentence();
 };
 
 /**

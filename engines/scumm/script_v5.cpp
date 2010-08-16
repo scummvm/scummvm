@@ -999,17 +999,6 @@ void ScummEngine_v5::o5_getActorRoom() {
 void ScummEngine_v5::o5_getActorScale() {
 	Actor *a;
 
-	// INDY3 uses this opcode for waitForActor
-	if (_game.id == GID_INDY3) {
-		const byte *oldaddr = _scriptPointer - 1;
-		a = derefActor(getVarOrDirectByte(PARAM_1), "o5_getActorScale (wait)");
-		if (a->_moving) {
-			_scriptPointer = oldaddr;
-			o5_breakHere();
-		}
-		return;
-	}
-
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	a = derefActor(act, "o5_getActorScale");
@@ -2044,19 +2033,6 @@ void ScummEngine_v5::o5_isSoundRunning() {
 
 void ScummEngine_v5::o5_soundKludge() {
 	int items[16];
-
-	if (_game.features & GF_SMALL_HEADER) {	// Is WaitForSentence in SCUMM V3
-		if (_sentenceNum) {
-			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
-				return;
-		} else if (!isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
-			return;
-
-		_scriptPointer--;
-		o5_breakHere();
-		return;
-	}
-
 	int num = getWordVararg(items);
 	_sound->soundKludge(items, num);
 }
