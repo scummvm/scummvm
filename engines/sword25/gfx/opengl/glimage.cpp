@@ -147,11 +147,7 @@ unsigned int BS_GLImage::GetPixel(int X, int Y) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_GLImage::Blit(int PosX, int PosY,
-                      int Flipping,
-                      BS_Rect *pPartRect,
-                      unsigned int Color,
-                      int Width, int Height) {
+bool BS_GLImage::Blit(int PosX, int PosY, int Flipping, BS_Rect *pPartRect, unsigned int Color, int Width, int Height) {
 	int x1 = 0, y1 = 0;
 	int w = m_Width, h = m_Height;
 	if (pPartRect) {
@@ -160,6 +156,8 @@ bool BS_GLImage::Blit(int PosX, int PosY,
 		w = pPartRect->right - pPartRect->left;
 		h = pPartRect->bottom - pPartRect->top;
 	}
+
+	debug(0, "Blit(%d, %d, %d, [%d, %d, %d, %d], %d, %d, %d)", PosX, PosY, Flipping, x1, y1, w, h, Color, Width, Height);
 
 	// Skalierungen berechnen
 	float ScaleX, ScaleY;
