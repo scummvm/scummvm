@@ -71,6 +71,8 @@ BS_RenderObject::BS_RenderObject(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, 
 	m_InitSuccess(false),
 	m_RefreshForced(true),
 	m_Handle(0) {
+	m_OldBBox = BS_Rect(0, 0);
+
 	// Renderobject registrieren, abhängig vom Handle-Parameter entweder mit beliebigem oder vorgegebenen Handle.
 	if (Handle == 0)
 		m_Handle = BS_RenderObjectRegistry::GetInstance().RegisterObject(this);

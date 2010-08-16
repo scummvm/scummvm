@@ -237,6 +237,9 @@ bool BS_PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,
 			for (i = 0; i < Height; i++)
 				memcpy(&UncompressedDataPtr[i * Pitch], &RawDataBuffer[i * png_get_rowbytes(png_ptr, info_ptr)], Pitch);
 			break;
+		default:
+			error("Unhandled case in DoDecodeImage");
+			break;
 		}
 	}
 	

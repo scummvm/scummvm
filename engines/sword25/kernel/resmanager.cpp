@@ -162,7 +162,7 @@ BS_Resource *BS_ResourceManager::RequestResource(const Common::String &FileName)
 	if (m_LogCacheMiss) BS_LOG_WARNINGLN("\"%s\" was not precached.", UniqueFileName.c_str());
 
 	BS_Resource *pResource;
-	if (pResource = LoadResource(UniqueFileName)) {
+	if ((pResource = LoadResource(UniqueFileName))) {
 		pResource->AddReference();
 		return pResource;
 	}

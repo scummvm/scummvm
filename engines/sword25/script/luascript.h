@@ -124,7 +124,7 @@ private:
 
 	bool RegisterStandardLibs();
 	bool RegisterStandardLibExtensions();
-	bool ExecuteBuffer(const char *Data, unsigned int Size, const Common::String &Name) const;
+	bool ExecuteBuffer(const byte *Data, unsigned int Size, const Common::String &Name) const;
 };
 
 } // End of namespace Sword25

@@ -247,8 +247,6 @@ void BS_Animation::FrameNotification(int TimeElapsed) {
 
 	// Nur wenn die Animation läuft wird sie auch weiterbewegt
 	if (m_Running) {
-		int OldFrame = m_CurrentFrame;
-
 		// Gesamte vergangene Zeit bestimmen (inkl. Restzeit des aktuellen Frames)
 		m_CurrentFrameTime += TimeElapsed;
 
@@ -317,7 +315,7 @@ void BS_Animation::FrameNotification(int TimeElapsed) {
 			}
 		}
 
-		if (m_CurrentFrame != TmpCurFrame) {
+		if ((int)m_CurrentFrame != TmpCurFrame) {
 			ForceRefresh();
 
 			if (animationDescriptionPtr->GetFrame(m_CurrentFrame).Action != "") {

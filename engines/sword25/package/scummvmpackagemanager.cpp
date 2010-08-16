@@ -130,7 +130,7 @@ bool BS_ScummVMPackageManager::LoadDirectoryAsPackage(const Common::String &dire
 	}
 }
 
-void *BS_ScummVMPackageManager::GetFile(const Common::String &fileName, unsigned int *fileSizePtr) {
+byte *BS_ScummVMPackageManager::GetFile(const Common::String &fileName, unsigned int *fileSizePtr) {
 	Common::SeekableReadStream *in;
 	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(fileName, _currentDirectory));
 	if (!fileNode)

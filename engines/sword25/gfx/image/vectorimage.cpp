@@ -267,8 +267,8 @@ BS_VectorImage::BS_VectorImage(const unsigned char *pFileData, unsigned int File
 	BS_Rect MovieRect = FlashRectToBSRect(bs);
 
 	// Framerate und Frameanzahl auslesen
-	u32 FrameRate = bs.GetU16();
-	u32 FrameCount = bs.GetU16();
+	/* u32 FrameRate = */bs.GetU16();
+	/* u32 FrameCount = */bs.GetU16();
 
 	// Tags parsen
 	// Da wir uns nur für das erste DefineShape-Tag interessieren
@@ -310,7 +310,7 @@ BS_VectorImage::BS_VectorImage(const unsigned char *pFileData, unsigned int File
 // -----------------------------------------------------------------------------
 
 bool BS_VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) {
-	u32 ShapeID = bs.GetU16();
+	/*u32 ShapeID = */bs.GetU16();
 
 	// Bounding Box auslesen
 	m_BoundingBox = FlashRectToBSRect(bs);
@@ -411,10 +411,10 @@ bool BS_VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) 
 
 			// Curved edge
 			if (EdgeFlag == 0) {
-				s32 ControlDeltaX = bs.GetSignedBits(NumBits);
-				s32 ControlDeltaY = bs.GetSignedBits(NumBits);
-				s32 AnchorDeltaX = bs.GetSignedBits(NumBits);
-				s32 AnchorDeltaY = bs.GetSignedBits(NumBits);
+				/* s32 ControlDeltaX = */bs.GetSignedBits(NumBits);
+				/* s32 ControlDeltaY = */bs.GetSignedBits(NumBits);
+				/* s32 AnchorDeltaX = */bs.GetSignedBits(NumBits);
+				/* s32 AnchorDeltaY = */bs.GetSignedBits(NumBits);
 
 #if 0 // TODO
 				double ControlX = m_Elements.back().m_Paths.last_x() + ControlDeltaX;

@@ -72,7 +72,7 @@ public:
 
 	virtual bool LoadPackage(const Common::String &fileName, const Common::String &mountPosition);
 	virtual bool LoadDirectoryAsPackage(const Common::String &directoryName, const Common::String &mountPosition);
-	virtual void *GetFile(const Common::String &fileName, unsigned int *fileSizePtr = 0);
+	virtual byte *GetFile(const Common::String &fileName, unsigned int *fileSizePtr = 0);
 	virtual Common::String GetCurrentDirectory();
 	virtual bool ChangeDirectory(const Common::String &directory);
 	virtual Common::String GetAbsolutePath(const Common::String &fileName);

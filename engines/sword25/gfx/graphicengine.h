@@ -323,9 +323,9 @@ public:
 
 		case BS_GraphicEngine::CF_ARGB32:
 			return 4;
+		default:
+			return -1;
 		}
-
-		return -1;
 	}
 
 	/**

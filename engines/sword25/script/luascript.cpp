@@ -158,7 +158,7 @@ bool BS_LuaScriptEngine::ExecuteFile(const Common::String &FileName) {
 
 	// File read
 	unsigned int FileSize;
-	char *FileData = static_cast<char *>(pPackage->GetFile(FileName, &FileSize));
+	byte *FileData = pPackage->GetFile(FileName, &FileSize);
 	if (!FileData) {
 		BS_LOG_ERRORLN("Couldn't read \"%s\".", FileName.c_str());
 #ifdef DEBUG
@@ -190,7 +190,7 @@ bool BS_LuaScriptEngine::ExecuteFile(const Common::String &FileName) {
 // -----------------------------------------------------------------------------
 
 bool BS_LuaScriptEngine::ExecuteString(const Common::String &Code) {
-	return ExecuteBuffer(Code.c_str(), Code.size(), "???");
+	return ExecuteBuffer((byte *)Code.c_str(), Code.size(), "???");
 }
 
 // -----------------------------------------------------------------------------
@@ -220,9 +220,9 @@ bool BS_LuaScriptEngine::RegisterStandardLibs() {
 
 // -----------------------------------------------------------------------------
 
-bool BS_LuaScriptEngine::ExecuteBuffer(const char *Data, unsigned int Size, const Common::String &Name) const {
+bool BS_LuaScriptEngine::ExecuteBuffer(const byte *Data, unsigned int Size, const Common::String &Name) const {
 	// Compile buffer
-	if (luaL_loadbuffer(m_State, Data, Size, Name.c_str()) != 0) {
+	if (luaL_loadbuffer(m_State, (const char *)Data, Size, Name.c_str()) != 0) {
 		BS_LOG_ERRORLN("Couldn't compile \"%s\":\n%s", Name.c_str(), lua_tostring(m_State, -1));
 		lua_pop(m_State, 1);
 

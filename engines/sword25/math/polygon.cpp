@@ -50,8 +50,8 @@ namespace Sword25 {
 BS_Polygon::BS_Polygon() : VertexCount(0), Vertecies(NULL) {
 }
 
-BS_Polygon::BS_Polygon(int VertexCount, const BS_Vertex *Vertecies) : VertexCount(0), Vertecies(NULL) {
-	Init(VertexCount, Vertecies);
+BS_Polygon::BS_Polygon(int VertexCount_, const BS_Vertex *Vertecies_) : VertexCount(0), Vertecies(NULL) {
+	Init(VertexCount_, Vertecies_);
 }
 
 BS_Polygon::BS_Polygon(const BS_Polygon &Other) : VertexCount(0), Vertecies(NULL) {
@@ -69,20 +69,20 @@ BS_Polygon::~BS_Polygon() {
 // Initialisation
 // ---------------
 
-bool BS_Polygon::Init(int VertexCount, const BS_Vertex *Vertecies) {
+bool BS_Polygon::Init(int VertexCount_, const BS_Vertex *Vertecies_) {
 	// Rember the old obstate to restore it if an error occurs whilst initialising it with the new data
 	int OldVertexCount = this->VertexCount;
 	BS_Vertex *OldVertecies = this->Vertecies;
 
-	this->VertexCount = VertexCount;
-	this->Vertecies = new BS_Vertex[VertexCount + 1];
-	memcpy(this->Vertecies, Vertecies, sizeof(BS_Vertex) * VertexCount);
+	this->VertexCount = VertexCount_;
+	this->Vertecies = new BS_Vertex[VertexCount_ + 1];
+	memcpy(this->Vertecies, Vertecies_, sizeof(BS_Vertex) * VertexCount_);
 	// TODO:
 	// Duplicate and remove redundant vertecies (Superflous = 3 co-linear verts)
 	// _WeedRepeatedVertecies();
 	// The first vertex is repeated at the end of the vertex array; this simplifies
 	// some algorithms, running through the edges and thus can save the overflow control.
-	this->Vertecies[VertexCount] = this->Vertecies[0];
+	this->Vertecies[VertexCount_] = this->Vertecies[0];
 
 	// If the polygon is self-intersecting, the object state is restore, and an error signalled
 	if (CheckForSelfIntersection()) {

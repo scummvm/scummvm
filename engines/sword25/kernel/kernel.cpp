@@ -157,11 +157,12 @@ Common::String BS_Kernel::Superclass::GetServiceIdentifier(unsigned int Number) 
 
 	unsigned int CurServiceOrd = 0;
 	for (unsigned int i = 0; i < BS_SERVICE_COUNT; i++) {
-		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier)
+		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier) {
 			if (Number == CurServiceOrd)
 				return BS_SERVICE_TABLE[i].ServiceIdentifier;
 			else
 				CurServiceOrd++;
+		}
 	}
 
 	return Common::String("");

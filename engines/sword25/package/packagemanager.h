@@ -100,7 +100,7 @@ public:
 	 * @return              Specifies a pointer to the loaded data of the file
 	 * @remark              The client must not forget to release the data of the file using BE_DELETE_A.
 	 */
-	virtual void *GetFile(const Common::String &FileName, unsigned int *pFileSize = NULL) = 0;
+	virtual byte *GetFile(const Common::String &FileName, unsigned int *pFileSize = NULL) = 0;
 	/**
 	 * Returns the path to the current directory.
 	 * @return              Returns a string containing the path to the current directory.

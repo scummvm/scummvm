@@ -754,14 +754,6 @@ static int RO_AddAnimation(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static int RO_Remove(lua_State *L) {
-	BS_RenderObjectPtr<BS_RenderObject> ROPtr = CheckRenderObject(L);
-	ROPtr.Erase();
-	return 0;
-}
-
-// -----------------------------------------------------------------------------
-
 static const luaL_reg RENDEROBJECT_METHODS[] = {
 	{"AddAnimation", RO_AddAnimation},
 	{"AddText", RO_AddText},

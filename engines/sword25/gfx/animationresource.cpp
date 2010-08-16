@@ -169,7 +169,7 @@ BS_AnimationResource::BS_AnimationResource(const Common::String &FileName) :
 bool BS_AnimationResource::ParseAnimationTag(TiXmlElement &AnimationTag, int &FPS, BS_Animation::ANIMATION_TYPES &AnimationType) {
 	// FPS einlesen
 	const char *FPSString;
-	if (FPSString = AnimationTag.Attribute("fps")) {
+	if ((FPSString = AnimationTag.Attribute("fps"))) {
 		int TempFPS;
 		if (!BS_String::ToInt(Common::String(FPSString), TempFPS) || TempFPS < MIN_FPS || TempFPS > MAX_FPS) {
 			BS_LOG_WARNINGLN("Illegal fps value (\"%s\") in <animation> tag in \"%s\". Assuming default (\"%d\"). "
@@ -181,7 +181,7 @@ bool BS_AnimationResource::ParseAnimationTag(TiXmlElement &AnimationTag, int &FP
 
 	// Loop-Typ einlesen
 	const char *LoopTypeString;
-	if (LoopTypeString = AnimationTag.Attribute("type")) {
+	if ((LoopTypeString = AnimationTag.Attribute("type"))) {
 		if (strcmp(LoopTypeString, "oneshot") == 0)
 			AnimationType = BS_Animation::AT_ONESHOT;
 		else if (strcmp(LoopTypeString, "loop") == 0)

@@ -328,7 +328,7 @@ static const lua_constant_reg PACKAGE_CONSTANTS[] = {
 	X(ADD), X(SEPARATOR), X(SUBTRACT), X(DECIMAL), X(DIVIDE), X(F1), X(F2), X(F3), X(F4), X(F5), X(F6),  X(F7), X(F8), X(F9), X(F10), X(F11),
 	X(F12), X(NUMLOCK), X(SCROLL), X(LSHIFT), X(RSHIFT), X(LCONTROL), X(RCONTROL),
 	Y(ENTER), Y(LEFT), Y(RIGHT), Y(HOME), Y(END), Y(BACKSPACE), Y(TAB), Y(INSERT), Y(DELETE),
-	0, 0,
+	{0, 0}
 };
 #undef X
 #undef Y
