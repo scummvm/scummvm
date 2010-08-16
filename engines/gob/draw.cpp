@@ -869,7 +869,6 @@ int16 Draw::handleCurWin() {
 			}
 		}
 	if (bestMatch != -1) {
-		warning("handleCurWin - activeWin %d", matchNum);
 		blitCursor();
 		activeWin(matchNum);
 	}
@@ -1007,9 +1006,9 @@ void Draw::winDraw(int16 fct) {
 		break;
 
 	default:
-		width  = 0;
-		height = 0;
-		warning("Unexpected fct value %d", fct);
+//		width  = 0;
+//		height = 0;
+		error("winDraw - Unexpected fct value %d", fct);
 		break;
 	}
 
@@ -1132,7 +1131,7 @@ void Draw::winDraw(int16 fct) {
 			break;
 
 		default:
-			warning("Unexpected fct value");
+			error("winDraw - Unexpected fct value %d", fct);
 			break;
 		}
 
@@ -1251,7 +1250,7 @@ void Draw::winDraw(int16 fct) {
 			break;
 
 		default:
-			warning("Unexpected fct value");
+			error("winDraw - Unexpected fct value");
 			break;
 		}
 	}
