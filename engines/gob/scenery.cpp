@@ -80,6 +80,10 @@ Scenery::~Scenery() {
 
 void Scenery::init() {
 	for (int i = 0; i < 10; i++) {
+		if (_vm->getGameType() == kGameTypeFascination) {
+			freeAnim(i);
+			freeStatic(i);
+		}
 		_animPictCount[i]   =  0;
 		_staticPictCount[i] = -1;
 	}
