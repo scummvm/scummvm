@@ -95,8 +95,6 @@ PLUGIN_LDFLAGS += -nostartfiles -Wl,-q,--just-symbols,elf/scummvm.elf,-T$(srcdir
 
 BACKEND := ps2
 
-include $(srcdir)/Makefile.common
-
 LDFLAGS = -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T $(srcdir)/backends/plugins/ps2/main_prog.ld
 LDFLAGS += -L $(PS2SDK)/ee/lib -L .
 LDFLAGS += $(addprefix -L$(PS2_EXTRA),$(PS2_EXTRA_LIBS))
@@ -118,6 +116,8 @@ OBJS := $(srcdir)/backends/platform/ps2/DmaPipe.o \
 	$(srcdir)/backends/platform/ps2/ps2mutex.o \
 	$(srcdir)/backends/platform/ps2/ps2time.o \
 	$(srcdir)/backends/platform/ps2/ps2debug.o
+
+include $(srcdir)/Makefile.common
 
 all: $(TARGET)
 
