@@ -32,6 +32,13 @@
 #include "common/stream.h"
 #include "backends/plugins/dynamic-plugin.h"
 
+/**
+ * DLObject
+ *
+ * Class that most directly handles operations on a plugin file
+ * (opening it for reading, loading/unloading it in memory, finding a specific symbol in the file, etc.)
+ * Subclasses have the same functionality, but implementations specific to different processors/platforms.
+ */
 class DLObject {
 protected:
     void *_segment, *_symtab;

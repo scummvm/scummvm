@@ -34,6 +34,15 @@
 
 #include "backends/plugins/elf-loader.h"
 
+/**
+ * ELFPlugin
+ *
+ * Objects of this class are returned when the PluginManager calls
+ * getPlugins() on an ELFPluginProvider. An intermediary class for
+ * dealing with plugin files, ELFPlugin is responsible for creating/destroying
+ * a DLObject that handles the opening/loading/unloading of the plugin file whose
+ * path in the target backend's file system is "_filename".
+ */
 class ELFPlugin : public DynamicPlugin {
 protected:
 	DLObject *_dlHandle;

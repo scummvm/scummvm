@@ -35,10 +35,19 @@
 #define ShortsMan ShortSegmentManager::instance()
 
 /**
- * Manages the segments of small data put in the gp-relative area for MIPS processors,
- * and lets these segments be handled differently in the ELF loader.
+ * ShortSegmentManager
+ *
+ * Since MIPS is limited to 32 bits per instruction, loading data that's further away than 16 bits
+ * takes several instructions. Thus, small global data (which is likely to be accessed a lot from
+ * multiple locations) is often put into a GP-relative area (GP standing for the global pointer register)
+ * in MIPS processors. This class manages these segments of small global data, and is used by the
+ * member functions of MIPSDLObject, which query in information from this manager in order to deal with
+ * this segment during the loading/unloading of plugins.
+ *
  * Since there's no true dynamic linker to change the GP register between plugins and the main engine,
- * custom linker scripts ensure the GP-area is in the same place for both.
+ * custom ld linker scripts for both the main executable and the plugins ensure the GP-area is in the
+ * same place for both. The ShortSegmentManager accesses this place via the symbols __plugin_hole_start
+ * and __plugin_hole_end, which are defined in those custom ld linker scripts.
  */
 class ShortSegmentManager : public Common::Singleton<ShortSegmentManager> {
 private:
