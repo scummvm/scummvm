@@ -174,9 +174,11 @@ void Init::initGame() {
 
 			_vm->_util->longDelay(200); // Letting everything settle
 
-			if (_vm->_vidPlayer->primaryOpen("coktel.imd")) {
-				_vm->_vidPlayer->primaryPlay();
-				_vm->_vidPlayer->primaryClose();
+			VideoPlayer::Properties props;
+			int slot;
+			if ((slot = _vm->_vidPlayer->openVideo(true, "coktel.imd", props)) >= 0) {
+				_vm->_vidPlayer->play(slot, props);
+				_vm->_vidPlayer->closeVideo(slot);
 			}
 
 			_vm->_draw->closeScreen();

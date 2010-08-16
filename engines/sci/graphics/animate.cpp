@@ -190,7 +190,7 @@ void GfxAnimate::makeSortedList(List *list) {
 	Common::sort(_list.begin(), _list.end(), sortHelper);
 }
 
-void GfxAnimate::fill(byte &old_picNotValid) {
+void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 	reg_t curObject;
 	uint16 signal;
 	GfxView *view = NULL;
@@ -205,13 +205,28 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 		view = _cache->getView(it->viewId);
 
 		// adjust loop and cel, if any of those is invalid
-		if (it->loopNo >= view->getLoopCount()) {
+		//  this seems to be completely crazy code
+		//  sierra sci checked signed int16 to be above or equal the counts and reseted to 0 in those cases
+		//  later during view processing those are compared unsigned again and then set to maximum count - 1
+		//  Games rely on this behaviour. For example laura bow 1 has a knight standing around in room 37
+		//   which has cel set to 3. This cel does not exist and the actual knight is 0
+		//   In kq5 on the other hand during the intro, when the trunk is opened, cel is set to some real
+		//   high number, which is negative when considered signed. This actually requires to get fixed to
+		//   maximum cel, otherwise the trunk would be closed.
+		int16 viewLoopCount = view->getLoopCount();
+		if (it->loopNo >= viewLoopCount) {
 			it->loopNo = 0;
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(loop), it->loopNo);
+		} else if (it->loopNo < 0) {
+			it->loopNo = viewLoopCount - 1;
+			// not setting selector is right, sierra sci didn't do it during view processing as well
 		}
-		if (it->celNo >= view->getCelCount(it->loopNo)) {
+		int16 viewCelCount = view->getCelCount(it->loopNo);
+		if (it->celNo >= viewCelCount) {
 			it->celNo = 0;
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(cel), it->celNo);
+		} else if (it->celNo < 0) {
+			it->celNo = viewCelCount - 1;
 		}
 
 		// Process global scaling, if needed
@@ -243,6 +258,8 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 			}
 		}
 
+		//warning("%s view %d, loop %d, cel %d", _s->_segMan->getObjectName(curObject), it->viewId, it->loopNo, it->celNo);
+
 		if (!view->isScaleable()) {
 			// Laura Bow 2 (especially floppy) depends on this, some views are not supposed to be scaleable
 			//  this "feature" was removed in later versions of SCI1.1
@@ -250,7 +267,7 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 			it->scaleY = it->scaleX = 128;
 		}
 
-		bool setNsRect = true;
+		bool setNsRect = maySetNsRect;
 
 		// Create rect according to coordinates and given cel
 		if (it->scaleSignal & kScaleSignalDoScaling) {
@@ -516,6 +533,19 @@ void GfxAnimate::reAnimate(Common::Rect rect) {
 	}
 }
 
+void GfxAnimate::preprocessAddToPicList() {
+	AnimateList::iterator it;
+	const AnimateList::iterator end = _list.end();
+
+	for (it = _list.begin(); it != end; ++it) {
+		if (it->priority == -1)
+			it->priority = _ports->kernelCoordinateToPriority(it->y);
+
+		// Do not allow priority to get changed by fill()
+		it->signal |= kSignalFixedPriority;
+	}
+}
+
 void GfxAnimate::addToPicDrawCels() {
 	reg_t curObject;
 	GfxView *view = NULL;
@@ -525,17 +555,11 @@ void GfxAnimate::addToPicDrawCels() {
 	for (it = _list.begin(); it != end; ++it) {
 		curObject = it->object;
 
-		if (it->priority == -1)
-			it->priority = _ports->kernelCoordinateToPriority(it->y);
-
 		// Get the corresponding view
 		view = _cache->getView(it->viewId);
 
-		// Create rect according to coordinates and given cel
-		view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
-
 		// draw corresponding cel
-		_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo);
+		_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
 		if ((it->signal & kSignalIgnoreActor) == 0) {
 			it->celRect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(it->priority) - 1, it->celRect.top, it->celRect.bottom - 1);
 			_paint16->fillRect(it->celRect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
@@ -604,7 +628,7 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 	disposeLastCast();
 
 	makeSortedList(list);
-	fill(old_picNotValid);
+	fill(old_picNotValid, true);
 
 	if (old_picNotValid) {
 		// beginUpdate()/endUpdate() were introduced SCI1.
@@ -679,6 +703,7 @@ void GfxAnimate::addToPicSetPicNotValid() {
 
 void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) {
 	List *list;
+	byte tempPicNotValid = 0;
 
 	_ports->setPort((Port *)_ports->_picWind);
 
@@ -687,6 +712,8 @@ void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) 
 		error("kAddToPic called with non-list as parameter");
 
 	makeSortedList(list);
+	preprocessAddToPicList();
+	fill(tempPicNotValid, getSciVersion() >= SCI_VERSION_1_1 ? true : false);
 	addToPicDrawCels();
 
 	addToPicSetPicNotValid();

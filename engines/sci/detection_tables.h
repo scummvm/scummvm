@@ -643,6 +643,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformWindows, 0, GUIO_NONE	},
 
+	// Gabriel Knight - English Macintosh
+	{"gk1", "", {
+		{"Data1", 0, "7a89c96365a4da5d3b3efdc3a94bab3e", 5831362},
+		{"Data2", 0, "db70638e972c3706e4dc9e01ef3a30ea", 6696048},
+		{"Data3", 0, "d740126293aea176c4f8a6c71634cff4", 3683997},
+		{"Data4", 0, "f6cbf2605f618ce035bed162d66b2b8a", 3233086},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_NONE },
+
 	// Gabriel Knight 2 - English Windows Non-Interactive Demo
 	// Executable scanning reports "2.100.002"
 	{"gk2", "Demo", {
@@ -2554,17 +2563,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-#endif
-
-	// Slater & Charlie go camping
-	{"slater", "", {
-		{"resource.000", 0, "1846b57fe84774be72f7c50ab3c90df0", 2256126},
-		{"resource.map", 0, "21f85414124dc23e54544a5536dc35cd", 4044},
-		{"resource.msg", 0, "c44f51fb955eae266fecf360ebcd5ad2", 1132},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NOSPEECH	},
-
-#ifdef ENABLE_SCI32
 	// RAMA - English DOS/Windows Demo
 	// Executable scanning reports "2.100.002", VERSION file reports "000.000.008"
 	{"rama", "Demo", {
@@ -2659,6 +2657,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "8e10d4f05c1fd9f883384fa38a898489", 377394},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
+
+	// Slater & Charlie Go Camping - English DOS/Windows
+	{"slater", "", {
+		{"resource.000", 0, "1846b57fe84774be72f7c50ab3c90df0", 2256126},
+		{"resource.map", 0, "21f85414124dc23e54544a5536dc35cd", 4044},
+		{"resource.msg", 0, "c44f51fb955eae266fecf360ebcd5ad2", 1132},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
 	// Space Quest 1 VGA Remake - English Amiga (from www.back2roots.org)
 	// SCI interpreter version 1.000.510 (just a guess)
@@ -3010,13 +3016,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-	// Space Quest 5 - English DOS
+#if 0
+	// Space Quest 5 - English DOS - THIS IS THE UNOFFICIAL BETA VERSION, WHICH IS OBVIOUSLY PIRATED AND CONTAINS MANY BUGS
+	//  ffs. http://www.akril15.com/sr/sq5alt/sq5alt.html =DO NOT RE-ADD=
 	// SCI interpreter version 1.001.067
 	{"sq5", "", {
 		{"resource.map", 0, "8bde0a9adb9a3e9aaa861826874c9834", 6473},
 		{"resource.000", 0, "f4a48705764544d7cc64a7bb22a610df", 6025184},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+#endif
 
 	// Space Quest 5 v1.04 - German DOS (from Tobis87, updated information by markcool from bug reports #2723935 and #2724762)
 	// SCI interpreter version 1.001.068

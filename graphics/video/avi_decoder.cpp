@@ -38,6 +38,7 @@
 #include "graphics/video/codecs/cinepak.h"
 #include "graphics/video/codecs/msvideo1.h"
 #include "graphics/video/codecs/msrle.h"
+#include "graphics/video/codecs/indeo3.h"
 
 namespace Graphics {
 
@@ -387,10 +388,14 @@ Codec *AviDecoder::createCodec() {
 		case ID_MSVC:
 		case ID_WHAM:
 			return new MSVideo1Decoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
-		case ID_RLE :
+		case ID_RLE:
 			return new MSRLEDecoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
 		case ID_CVID:
 			return new CinepakDecoder();
+#ifdef USE_INDEO3
+		case ID_IV32:
+			return new Indeo3Decoder(_bmInfo.width, _bmInfo.height);
+#endif
 		default:
 			warning ("Unknown/Unhandled compression format \'%s\'", tag2str(_vidsHeader.streamHandler));
 	}

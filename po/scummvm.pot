@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-07-30 22:14+0100\n"
+"POT-Creation-Date: 2010-08-11 22:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,7 +38,7 @@ msgid "Go to previous directory level"
 msgstr ""
 
 #: gui/browser.cpp:70 gui/chooser.cpp:49 gui/KeysDialog.cpp:46
-#: gui/launcher.cpp:280 gui/massadd.cpp:95 gui/options.cpp:1029
+#: gui/launcher.cpp:280 gui/massadd.cpp:95 gui/options.cpp:1030
 #: gui/saveload.cpp:65 gui/saveload.cpp:157 gui/themebrowser.cpp:56
 #: backends/platform/wii/options.cpp:48
 msgid "Cancel"
@@ -69,7 +69,7 @@ msgid "Map"
 msgstr ""
 
 #: gui/KeysDialog.cpp:45 gui/launcher.cpp:281 gui/launcher.cpp:893
-#: gui/launcher.cpp:897 gui/massadd.cpp:92 gui/options.cpp:1030
+#: gui/launcher.cpp:897 gui/massadd.cpp:92 gui/options.cpp:1031
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "OK"
@@ -134,7 +134,7 @@ msgid ""
 msgstr ""
 
 #: gui/launcher.cpp:185 gui/launcher.cpp:196 gui/options.cpp:80
-#: gui/options.cpp:635 gui/options.cpp:645 gui/options.cpp:1000
+#: gui/options.cpp:635 gui/options.cpp:645 gui/options.cpp:1001
 #: sound/null.cpp:42
 msgid "<default>"
 msgstr ""
@@ -147,11 +147,11 @@ msgstr ""
 msgid "Platform the game was originally designed for"
 msgstr ""
 
-#: gui/launcher.cpp:206 gui/options.cpp:898 gui/options.cpp:915
+#: gui/launcher.cpp:206 gui/options.cpp:899 gui/options.cpp:916
 msgid "Graphics"
 msgstr ""
 
-#: gui/launcher.cpp:206 gui/options.cpp:898 gui/options.cpp:915
+#: gui/launcher.cpp:206 gui/options.cpp:899 gui/options.cpp:916
 msgid "GFX"
 msgstr ""
 
@@ -159,7 +159,7 @@ msgstr ""
 msgid "Override global graphic settings"
 msgstr ""
 
-#: gui/launcher.cpp:215 gui/options.cpp:921
+#: gui/launcher.cpp:215 gui/options.cpp:922
 msgid "Audio"
 msgstr ""
 
@@ -167,7 +167,7 @@ msgstr ""
 msgid "Override global audio settings"
 msgstr ""
 
-#: gui/launcher.cpp:225 gui/options.cpp:925
+#: gui/launcher.cpp:225 gui/options.cpp:926
 msgid "Volume"
 msgstr ""
 
@@ -175,7 +175,7 @@ msgstr ""
 msgid "Override global volume settings"
 msgstr ""
 
-#: gui/launcher.cpp:234 gui/options.cpp:933
+#: gui/launcher.cpp:234 gui/options.cpp:934
 msgid "MIDI"
 msgstr ""
 
@@ -183,7 +183,7 @@ msgstr ""
 msgid "Override global MIDI settings"
 msgstr ""
 
-#: gui/launcher.cpp:246 gui/options.cpp:939
+#: gui/launcher.cpp:246 gui/options.cpp:940
 msgid "MT-32"
 msgstr ""
 
@@ -191,7 +191,7 @@ msgstr ""
 msgid "Override global MT-32 settings"
 msgstr ""
 
-#: gui/launcher.cpp:258 gui/options.cpp:945
+#: gui/launcher.cpp:258 gui/options.cpp:946
 msgid "Paths"
 msgstr ""
 
@@ -199,7 +199,7 @@ msgstr ""
 msgid "Game Path:"
 msgstr ""
 
-#: gui/launcher.cpp:268 gui/options.cpp:958
+#: gui/launcher.cpp:268 gui/options.cpp:959
 msgid "Extra Path:"
 msgstr ""
 
@@ -211,18 +211,18 @@ msgstr ""
 msgid "Save Path:"
 msgstr ""
 
-#: gui/launcher.cpp:272 gui/launcher.cpp:273 gui/options.cpp:952
-#: gui/options.cpp:953
+#: gui/launcher.cpp:272 gui/launcher.cpp:273 gui/options.cpp:953
+#: gui/options.cpp:954
 msgid "Specifies where your savegames are put"
 msgstr ""
 
 #: gui/launcher.cpp:289 gui/launcher.cpp:369 gui/launcher.cpp:418
 #: gui/options.cpp:230 gui/options.cpp:399 gui/options.cpp:497
-#: gui/options.cpp:555 gui/options.cpp:732 gui/options.cpp:956
-#: gui/options.cpp:959 gui/options.cpp:963 gui/options.cpp:1053
-#: gui/options.cpp:1059 gui/options.cpp:1065 gui/options.cpp:1073
-#: gui/options.cpp:1097 gui/options.cpp:1101 gui/options.cpp:1107
-#: gui/options.cpp:1114 gui/options.cpp:1213
+#: gui/options.cpp:555 gui/options.cpp:733 gui/options.cpp:957
+#: gui/options.cpp:960 gui/options.cpp:964 gui/options.cpp:1054
+#: gui/options.cpp:1060 gui/options.cpp:1066 gui/options.cpp:1074
+#: gui/options.cpp:1098 gui/options.cpp:1102 gui/options.cpp:1108
+#: gui/options.cpp:1115 gui/options.cpp:1214
 msgid "None"
 msgstr ""
 
@@ -231,7 +231,7 @@ msgstr ""
 msgid "Default"
 msgstr ""
 
-#: gui/launcher.cpp:411 gui/options.cpp:1207
+#: gui/launcher.cpp:411 gui/options.cpp:1208
 msgid "Select SoundFont"
 msgstr ""
 
@@ -323,7 +323,7 @@ msgstr ""
 msgid "Search:"
 msgstr ""
 
-#: gui/launcher.cpp:549 gui/options.cpp:733
+#: gui/launcher.cpp:549 gui/options.cpp:734
 msgid "Clear value"
 msgstr ""
 
@@ -494,199 +494,199 @@ msgstr ""
 msgid "Specifies output sound device or sound card emulator"
 msgstr ""
 
-#: gui/options.cpp:688
+#: gui/options.cpp:689
 msgid "AdLib emulator:"
 msgstr ""
 
-#: gui/options.cpp:688 gui/options.cpp:689
+#: gui/options.cpp:689 gui/options.cpp:690
 msgid "AdLib is used for music in many games"
 msgstr ""
 
-#: gui/options.cpp:699
+#: gui/options.cpp:700
 msgid "Output rate:"
 msgstr ""
 
-#: gui/options.cpp:699 gui/options.cpp:700
+#: gui/options.cpp:700 gui/options.cpp:701
 msgid ""
 "Higher value specifies better sound quality but may be not supported by your "
 "soundcard"
 msgstr ""
 
-#: gui/options.cpp:710
+#: gui/options.cpp:711
 msgid "GM Device:"
 msgstr ""
 
-#: gui/options.cpp:710
+#: gui/options.cpp:711
 msgid "Specifies default sound device for General MIDI output"
 msgstr ""
 
-#: gui/options.cpp:731
+#: gui/options.cpp:732
 msgid "SoundFont:"
 msgstr ""
 
-#: gui/options.cpp:731 gui/options.cpp:732
+#: gui/options.cpp:732 gui/options.cpp:733
 msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
 msgstr ""
 
-#: gui/options.cpp:736
+#: gui/options.cpp:737
 msgid "Mixed AdLib/MIDI mode"
 msgstr ""
 
-#: gui/options.cpp:736
+#: gui/options.cpp:737
 msgid "Use both MIDI and AdLib sound generation"
 msgstr ""
 
-#: gui/options.cpp:739
+#: gui/options.cpp:740
 msgid "MIDI gain:"
 msgstr ""
 
-#: gui/options.cpp:749
+#: gui/options.cpp:750
 msgid "MT-32 Device:"
 msgstr ""
 
-#: gui/options.cpp:749
+#: gui/options.cpp:750
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
 
-#: gui/options.cpp:753
+#: gui/options.cpp:754
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr ""
 
-#: gui/options.cpp:753
+#: gui/options.cpp:754
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
 
-#: gui/options.cpp:756
+#: gui/options.cpp:757
 msgid "Enable Roland GS Mode"
 msgstr ""
 
-#: gui/options.cpp:756
+#: gui/options.cpp:757
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
 msgstr ""
 
-#: gui/options.cpp:780
+#: gui/options.cpp:781
 msgid "Text and Speech:"
 msgstr ""
 
-#: gui/options.cpp:785 gui/options.cpp:791
+#: gui/options.cpp:786 gui/options.cpp:792
 msgid "Speech"
 msgstr ""
 
-#: gui/options.cpp:786 gui/options.cpp:792
+#: gui/options.cpp:787 gui/options.cpp:793
 msgid "Subtitles"
 msgstr ""
 
-#: gui/options.cpp:787 gui/options.cpp:793
+#: gui/options.cpp:788 gui/options.cpp:794
 msgid "Both"
 msgstr ""
 
-#: gui/options.cpp:791
+#: gui/options.cpp:792
 msgid "Spch"
 msgstr ""
 
-#: gui/options.cpp:792
+#: gui/options.cpp:793
 msgid "Subs"
 msgstr ""
 
-#: gui/options.cpp:793
+#: gui/options.cpp:794
 msgid "Show subtitles and play speech"
 msgstr ""
 
-#: gui/options.cpp:797
+#: gui/options.cpp:798
 msgid "Subtitle speed:"
 msgstr ""
 
-#: gui/options.cpp:809
+#: gui/options.cpp:810
 msgid "Music volume:"
 msgstr ""
 
-#: gui/options.cpp:816
+#: gui/options.cpp:817
 msgid "Mute All"
 msgstr ""
 
-#: gui/options.cpp:819
+#: gui/options.cpp:820
 msgid "SFX volume:"
 msgstr ""
 
-#: gui/options.cpp:819 gui/options.cpp:820
+#: gui/options.cpp:820 gui/options.cpp:821
 msgid "Special sound effects volume"
 msgstr ""
 
-#: gui/options.cpp:826
+#: gui/options.cpp:827
 msgid "Speech volume:"
 msgstr ""
 
-#: gui/options.cpp:952
+#: gui/options.cpp:953
 msgid "Save Path: "
 msgstr ""
 
-#: gui/options.cpp:955
+#: gui/options.cpp:956
 msgid "Theme Path:"
 msgstr ""
 
-#: gui/options.cpp:958 gui/options.cpp:959
+#: gui/options.cpp:959 gui/options.cpp:960
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
 
-#: gui/options.cpp:962
+#: gui/options.cpp:963
 msgid "Plugins Path:"
 msgstr ""
 
-#: gui/options.cpp:970
+#: gui/options.cpp:971
 msgid "Misc"
 msgstr ""
 
-#: gui/options.cpp:972
+#: gui/options.cpp:973
 msgid "Theme:"
 msgstr ""
 
-#: gui/options.cpp:976
+#: gui/options.cpp:977
 msgid "GUI Renderer:"
 msgstr ""
 
-#: gui/options.cpp:982
+#: gui/options.cpp:983
 msgid "Autosave:"
 msgstr ""
 
-#: gui/options.cpp:990
+#: gui/options.cpp:991
 msgid "Keys"
 msgstr ""
 
-#: gui/options.cpp:997
+#: gui/options.cpp:998
 msgid "GUI Language:"
 msgstr ""
 
-#: gui/options.cpp:997
+#: gui/options.cpp:998
 msgid "Language of ScummVM GUI"
 msgstr ""
 
-#: gui/options.cpp:1002
+#: gui/options.cpp:1003
 msgid "English"
 msgstr ""
 
-#: gui/options.cpp:1146
+#: gui/options.cpp:1147
 msgid "You have to restart ScummVM to take the effect."
 msgstr ""
 
-#: gui/options.cpp:1159
+#: gui/options.cpp:1160
 msgid "Select directory for savegames"
 msgstr ""
 
-#: gui/options.cpp:1166
+#: gui/options.cpp:1167
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 
-#: gui/options.cpp:1175
+#: gui/options.cpp:1176
 msgid "Select directory for GUI themes"
 msgstr ""
 
-#: gui/options.cpp:1185
+#: gui/options.cpp:1186
 msgid "Select directory for extra files"
 msgstr ""
 
-#: gui/options.cpp:1196
+#: gui/options.cpp:1197
 msgid "Select directory for plugins"
 msgstr ""
 
@@ -925,8 +925,20 @@ msgstr ""
 msgid "No music"
 msgstr ""
 
+#: sound/mods/paula.cpp:192
+msgid "Amiga Audio Emulator"
+msgstr ""
+
 #: sound/softsynth/adlib.cpp:1590
 msgid "AdLib Emulator"
+msgstr ""
+
+#: sound/softsynth/appleiigs.cpp:36
+msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
+msgstr ""
+
+#: sound/softsynth/sid.cpp:1434
+msgid "C64 Audio Emulator"
 msgstr ""
 
 #: sound/softsynth/mt32.cpp:327

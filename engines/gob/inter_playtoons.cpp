@@ -107,7 +107,7 @@ bool Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 	_vm->_draw->_backColor = _vm->_game->_script->readValExpr();
 	_vm->_draw->_frontColor = _vm->_game->_script->readValExpr();
 	_vm->_draw->_fontIndex = _vm->_game->_script->readValExpr();
-	_vm->_draw->_destSurface = 21;
+	_vm->_draw->_destSurface = Draw::kBackSurface;
 	_vm->_draw->_textToPrint = buf;
 	_vm->_draw->_transparency = 0;
 

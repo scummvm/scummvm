@@ -465,6 +465,17 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 }
 
 void SciMusic::soundPause(MusicEntry *pSnd) {
+	// SCI seems not to be pausing samples played back by kDoSound at all
+	//  It only stops looping samples (actually doesn't loop them again before they are unpaused)
+	//  Examples: Space Quest 1 death by acid drops (pause is called even specifically for the sample, see bug #3038048)
+	//             Eco Quest 1 during the intro when going to the abort-menu
+	//             In both cases sierra sci keeps playing
+	//            Leisure Suit Larry 1 doll scene - it seems that pausing here actually just stops
+	//             further looping from happening
+	//  This is a somewhat bigger change, I'm leaving in the old code in here just in case
+	//  I'm currently pausing looped sounds directly, non-looped sounds won't get paused
+	if ((pSnd->pStreamAud) && (!pSnd->pLoopStream))
+		return;
 	pSnd->pauseCounter++;
 	if (pSnd->status != kSoundPlaying)
 		return;
@@ -627,6 +638,14 @@ MusicEntry::~MusicEntry() {
 }
 
 void MusicEntry::onTimer() {
+	if (!signal) {
+		if (!signalQueue.empty()) {
+			// no signal set, but signal in queue, set that one
+			signal = signalQueue[0];
+			signalQueue.remove_at(0);
+		}
+	}
+
 	if (status != kSoundPlaying)
 		return;
 

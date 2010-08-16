@@ -672,15 +672,16 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 			const uint32 deviceGuiOption = MidiDriver::musicType2GUIO(d->getMusicType());
 
-			if ((_domain == Common::ConfigManager::kApplicationDomain && d->getMusicType() != MT_TOWNS) // global dialog - skip useless FM-Towns option there
-			    || (_domain != Common::ConfigManager::kApplicationDomain && !(_guioptions & allFlags)) // No flags are specified
-			    || (_guioptions & deviceGuiOption) // flag is present
-			    // HACK/FIXME: For now we have to show GM devices, even when the game only has GUIO_MIDIMT32 set,
-			    // else we would not show for example external devices connected via ALSA, since they are always
-			    // marked as General MIDI device.
-			    || (deviceGuiOption == Common::GUIO_MIDIGM && (_guioptions & Common::GUIO_MIDIMT32))
-			    || d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null") // always add default and null device
-					_midiPopUp->appendEntry(d->getCompleteName(), d->getHandle());
+			if ((_domain == Common::ConfigManager::kApplicationDomain && d->getMusicType() != MT_TOWNS  // global dialog - skip useless FM-Towns, C64, Amiga, AppleIIGS options there
+				 && d->getMusicType() != MT_C64 && d->getMusicType() != MT_AMIGA && d->getMusicType() != MT_APPLEIIGS)
+				|| (_domain != Common::ConfigManager::kApplicationDomain && !(_guioptions & allFlags)) // No flags are specified
+				|| (_guioptions & deviceGuiOption) // flag is present
+				// HACK/FIXME: For now we have to show GM devices, even when the game only has GUIO_MIDIMT32 set,
+				// else we would not show for example external devices connected via ALSA, since they are always
+				// marked as General MIDI device.
+				|| (deviceGuiOption == Common::GUIO_MIDIGM && (_guioptions & Common::GUIO_MIDIMT32))
+				|| d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null") // always add default and null device
+				_midiPopUp->appendEntry(d->getCompleteName(), d->getHandle());
 		}
 	}
 
@@ -770,7 +771,7 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 		_mt32DevicePopUp->setEnabled(false);
 	}
 
-	_enableMIDISettings = true;
+	_enableMT32Settings = true;
 }
 
 // The function has an extra slider range parameter, since both the launcher and SCUMM engine

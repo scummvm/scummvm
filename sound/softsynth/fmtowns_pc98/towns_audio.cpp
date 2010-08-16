@@ -103,7 +103,7 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 	_fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
 	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver),
 	_pcmSfxChanMask(0),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
-	_cdaVolFlags(0), _ready(false) {
+	_outputVolumeFlags(0), _outputMuteFlags(0), _ready(false) {
 
 #define INTCB(x) &TownsAudioInterface::intf_##x
 	static const TownsAudioIntfCallback intfCb[] = {
@@ -191,11 +191,11 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 		INTCB(notImpl),
 		INTCB(notImpl),
 		INTCB(notImpl),
-		INTCB(cdaSetVolume),
+		INTCB(setOutputVolume),
 		// 68
-		INTCB(cdaReset),
+		INTCB(resetOutputVolume),
 		INTCB(notImpl),
-		INTCB(notImpl),
+		INTCB(updateOutputVolume),
 		INTCB(notImpl),
 		// 72
 		INTCB(notImpl),
@@ -217,6 +217,8 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 	_intfOpcodes = intfCb;
 
 	memset(_fmSaveReg, 0, sizeof(_fmSaveReg));
+	memset(_outputLevel, 0, sizeof(_outputLevel));
+
 	_timerBase = (uint32)(_baserate * 1000000.0f);
 	_tickLength = 2 * _timerBase;
 }
@@ -285,7 +287,7 @@ void TownsAudioInterface::setSoundEffectVolume(int volume) {
 	setVolumeIntern(_musicVolume, _sfxVolume);
 }
 
-void TownsAudioInterface::setSoundEffectChanMask(uint32 mask) {
+void TownsAudioInterface::setSoundEffectChanMask(int mask) {
 	_pcmSfxChanMask = mask >> 6;
 	mask &= 0x3f;
 	setVolumeChannelMasks(~mask, mask);
@@ -297,8 +299,8 @@ void TownsAudioInterface::nextTickEx(int32 *buffer, uint32 bufferSize) {
 
 	for (uint32 i = 0; i < bufferSize; i++) {
 		_timer += _tickLength;
-		while (_timer > 0x5B8D80) {
-			_timer -= 0x5B8D80;
+		while (_timer > 0x514767) {
+			_timer -= 0x514767;
 
 			for (int ii = 0; ii < 8; ii++) {
 				if ((_pcmChanKeyPlaying & _chanFlags[ii]) || (_pcmChanEffectPlaying & _chanFlags[ii])) {
@@ -357,10 +359,9 @@ void TownsAudioInterface::timerCallbackB() {
 }
 
 int TownsAudioInterface::intf_reset(va_list &args) {
-	Common::StackLock lock(_mutex);
 	fmReset();
 	pcmReset();
-	cdaReset();
+	callback(68);
 	return 0;
 }
 
@@ -707,56 +708,59 @@ int TownsAudioInterface::intf_fmReset(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterface::intf_cdaReset(va_list &args) {
-	cdaReset();
-	return 0;
-}
-
-int TownsAudioInterface::intf_pcmUpdateEnvelopeGenerator(va_list &args) {
-	for (int i = 0; i < 8; i++)
-		pcmUpdateEnvelopeGenerator(i);
-	return 0;
-}
-
-int TownsAudioInterface::intf_cdaSetVolume(va_list &args) {
-	int mode = va_arg(args, int);
+int TownsAudioInterface::intf_setOutputVolume(va_list &args) {
+	int chanType = va_arg(args, int);
 	int left = va_arg(args, int);
 	int right = va_arg(args, int);
-
-	// calculate mixer balance value
-	int8 balance = right - left;
 
 	if (left & 0xff80 || right & 0xff80)
 		return 3;
 
 	static const uint8 flags[] = { 0x0C, 0x30, 0x40, 0x80 };
 
-	//int a = (mode & 0x40) ? 4 : 0;
-	int b = mode & 3;
+	uint8 chan = (chanType & 0x40) ? 8 : 12;
+	
+	chanType &= 3;
 	left = (left & 0x7e) >> 1;
 	right = (right & 0x7e) >> 1;
 	
-	if (mode & 0x40)
-		_cdaVolFlags |= flags[b];
+	if (chan)
+		_outputVolumeFlags |= flags[chanType];
 	else
-		_cdaVolFlags &= ~flags[b];
+		_outputVolumeFlags &= ~flags[chanType];
 
-	if (mode > 1) {
-		// Unknown purpose / TODO
-
-	} else if (mode == 1) {
-		// FM Towns seems to support volumes of 0 - 63 for each channel.
-		// We recalculate sane values for out 0 to 255 volume range.
-
-		int vl = (int)(((float)left * 255.0f) / 63.0f);
-		int vr = (int)(((float)right * 255.0f) / 63.0f);
-		g_system->getAudioCDManager()->setVolume((vl + vr) >> 1);
-		g_system->getAudioCDManager()->setBalance(balance);
-
+	if (chanType > 1) {
+		_outputLevel[chan + chanType] = left;
 	} else {
-		// Unknown purpose / TODO
+		if (chanType == 0)
+			chan -= 8;
+		_outputLevel[chan] = left;
+		_outputLevel[chan + 1] = right;
 	}
 
+	updateOutputVolume();
+
+	return 0;
+}
+
+int TownsAudioInterface::intf_resetOutputVolume(va_list &args) {
+	memset(_outputLevel, 0, sizeof(_outputLevel));
+	_outputMuteFlags = 0;
+	_outputVolumeFlags = 0;
+	updateOutputVolume();
+	return 0;
+}
+
+int TownsAudioInterface::intf_updateOutputVolume(va_list &args) {
+	int flags = va_arg(args, int);
+	_outputMuteFlags = flags & 3;
+	updateOutputVolume();
+	return 0;
+}
+
+int TownsAudioInterface::intf_pcmUpdateEnvelopeGenerator(va_list &args) {
+	for (int i = 0; i < 8; i++)
+		pcmUpdateEnvelopeGenerator(i);
 	return 0;
 }
 
@@ -1381,8 +1385,16 @@ void TownsAudioInterface::pcmCalcPhaseStep(TownsAudio_PcmChannel *p, TownsAudio_
 	p->step = (s * p->stepPitch) >> 14;
 }
 
-void TownsAudioInterface::cdaReset() {
-
+void TownsAudioInterface::updateOutputVolume() {
+	// FM Towns seems to support volumes of 0 - 63 for each channel.
+	// We recalculate sane values for our 0 to 255 volume range and
+	// balance values for our -128 to 127 volume range
+	
+	// CD-AUDIO
+	int volume = (int)(((float)MAX(_outputLevel[12], _outputLevel[13]) * 255.0f) / 63.0f);
+	int balance = (int)((float)((_outputLevel[13] - _outputLevel[12]) * 127.0f) / (float)MAX(_outputLevel[12], _outputLevel[13]));
+	g_system->getAudioCDManager()->setVolume(volume);
+	g_system->getAudioCDManager()->setBalance(balance);
 }
 
 const uint8 TownsAudioInterface::_chanFlags[] = {
@@ -1456,7 +1468,7 @@ void TownsAudio_PcmChannel::clear() {
 	stepNote = 0x4000;
 	stepPitch = 0x4000;
 
-	panLeft = panRight = 0;
+	panLeft = panRight = 7;
 
 	envTotalLevel = envAttackRate = envDecayRate = envSustainLevel = envSustainRate = envReleaseRate = 0;
 	envStep = envCurrentLevel = 0;

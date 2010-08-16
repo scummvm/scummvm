@@ -66,8 +66,6 @@ struct SeqListElement {
 	int16 var1E;
 };
 
-extern Common::List<SeqListElement> seqList;
-
 extern uint16 var2;
 extern uint16 var3;
 extern uint16 var4;
@@ -94,8 +92,6 @@ extern bool _paletteNeedUpdate;
 extern uint16 _messageLen;
 
 extern int16 playerCommand;
-
-extern Common::String commandBuffer;
 
 extern char currentPrcName[20];
 extern char currentRelName[20];
@@ -137,8 +133,6 @@ struct SelectedObjStruct {
 };
 
 #define NUM_MAX_ZONE 16
-extern Common::Array<uint16> zoneData;
-extern Common::Array<uint16> zoneQuery;
 
 void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 param5);
 

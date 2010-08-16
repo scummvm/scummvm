@@ -109,9 +109,10 @@ SOURCEPATH ..\..\..\..\base
 
 //STOP_AUTO_OBJECTS_BASE_//
 
-SOURCEPATH ..\..\..\..\
+SOURCEPATH ..\..\..\..
 
 // backend EPOC/SDL/ESDL specific includes
+SOURCE backends\platform\sdl\hardwarekeys.cpp
 SOURCE backends\platform\sdl\hardwarekeys.cpp
 SOURCE backends\platform\sdl\sdl.cpp
 SOURCE backends\fs\symbian\symbian-fs-factory.cpp

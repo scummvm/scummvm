@@ -708,7 +708,7 @@ void ScummEngine::writeVar(uint var, int value) {
 	error("Illegal varbits (w)");
 }
 
-void ScummEngine::getResultPos() {
+void ScummEngine_v5::getResultPos() {
 	int a;
 
 	_resultVarNumber = fetchScriptWord();
@@ -723,7 +723,7 @@ void ScummEngine::getResultPos() {
 	}
 }
 
-void ScummEngine::setResult(int value) {
+void ScummEngine_v5::setResult(int value) {
 	writeVar(_resultVarNumber, value);
 }
 

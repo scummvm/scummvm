@@ -420,16 +420,16 @@ int FWScript::o2_playSampleAlt() {
 	uint16 size = getNextWord();
 
 	if (size == 0xFFFF) {
-		size = animDataTable[num]._width * animDataTable[num]._height;
+		size = g_cine->_animDataTable[num]._width * g_cine->_animDataTable[num]._height;
 	}
-	if (animDataTable[num].data()) {
+	if (g_cine->_animDataTable[num].data()) {
 		if (g_cine->getPlatform() == Common::kPlatformPC) {
 			// if speaker output is available, play sound on it
 			// if it's another device, don't play anything
 			// TODO: implement this, it's used in the introduction for example
 			// on each letter displayed
 		} else {
-			g_sound->playSound(channel, frequency, animDataTable[num].data(), size, 0, 0, 63, 0);
+			g_sound->playSound(channel, frequency, g_cine->_animDataTable[num].data(), size, 0, 0, 63, 0);
 		}
 	}
 	return 0;
@@ -611,9 +611,9 @@ int FWScript::o2_stopObjectScript() {
 	byte param = getNextByte();
 
 	debugC(5, kCineDebugScript, "Line: %d: stopObjectScript(%d)", _line, param);
-	ScriptList::iterator it = objectScripts.begin();
+	ScriptList::iterator it = g_cine->_objectScripts.begin();
 
-	for (; it != objectScripts.end(); ++it) {
+	for (; it != g_cine->_objectScripts.end(); ++it) {
 		if ((*it)->_index == param) {
 			(*it)->_index = -1;
 		}
@@ -699,7 +699,7 @@ int FWScript::o2_loadBg() {
 
 int FWScript::o2_wasZoneChecked() {
 	byte param = getNextByte();
-	_compare = (param < NUM_MAX_ZONE && zoneQuery[param]) ? 1 : 0;
+	_compare = (param < NUM_MAX_ZONE && g_cine->_zoneQuery[param]) ? 1 : 0;
 	debugC(5, kCineDebugScript, "Line: %d: o2_wasZoneChecked(%d)", _line, param);
 	return 0;
 }

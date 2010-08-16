@@ -42,13 +42,11 @@ unsigned int timer = 0;
 
 gfxEntryStruct* linkedMsgList = NULL;
 
-Common::List<byte *> memList;
-
 void MemoryList() {
-	if (!memList.empty()) {
+	if (!_vm->_memList.empty()) {
 		printf("Current list of un-freed memory blocks:\n");
 		Common::List<byte *>::iterator i;
-		for (i = memList.begin(); i != memList.end(); ++i) {
+		for (i = _vm->_memList.begin(); i != _vm->_memList.end(); ++i) {
 			byte *v = *i;
 			printf("%s - %d\n", (const char *)(v - 68), *((int32 *)(v - 72)));
 		}
@@ -73,7 +71,7 @@ void *MemoryAlloc(uint32 size, bool clearFlag, int32 lineNum, const char *fname)
 
 		// Add the block to the memory list
 		result = v + 64 + 8;
-		memList.push_back(result);
+		_vm->_memList.push_back(result);
 	} else
 		result = (byte *)malloc(size);
 
@@ -91,7 +89,7 @@ void MemoryFree(void *v) {
 		byte *p = (byte *)v;
 		assert(*((uint32 *) (p - 4)) == 0x41424344);
 
-		memList.remove(p);
+		_vm->_memList.remove(p);
 		free(p - 8 - 64);
 	} else
 		free(v);
@@ -105,8 +103,8 @@ void drawBlackSolidBoxSmall() {
 void loadPackedFileToMem(int fileIdx, uint8 *buffer) {
 	changeCursor(CURSOR_DISK);
 
-	currentVolumeFile.seek(volumePtrToFileDescriptor[fileIdx].offset, SEEK_SET);
-	currentVolumeFile.read(buffer, volumePtrToFileDescriptor[fileIdx].size);
+	_vm->_currentVolumeFile.seek(volumePtrToFileDescriptor[fileIdx].offset, SEEK_SET);
+	_vm->_currentVolumeFile.read(buffer, volumePtrToFileDescriptor[fileIdx].size);
 }
 
 int getNumObjectsByClass(int scriptIdx, int param) {

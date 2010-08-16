@@ -169,7 +169,18 @@ void Sound::playSound(int soundID) {
 			static const char tracks[20] = {3, 4, 5, 7, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 21, 19, 20, 21};
 
 			_currentCDSound = soundID;
-			playCDTrack(tracks[soundID - 13], 1, 0, 0);
+
+			// The original game had hard-coded lengths for all
+			// tracks, but this one track is the only one (as far
+			// as we know) where this actually matters. See bug
+			// #3024173 - LOOM-PCE: Music stops prematurely.
+
+			int track = tracks[soundID - 13];
+			if (track == 6) {
+				playCDTrack(track, 1, 0, 260);
+			} else {
+				playCDTrack(track, 1, 0, 0);
+			}
 		} else {
 			if (_vm->_musicEngine) {
 				_vm->_musicEngine->startSound(soundID);
@@ -1133,7 +1144,7 @@ int ScummEngine::readSoundResource(int idx) {
 	switch (basetag) {
 	case MKID_BE('MIDI'):
 	case MKID_BE('iMUS'):
-		if (_musicType != MDT_PCSPK) {
+		if (_musicType != MDT_PCSPK && _musicType != MDT_PCJR) {
 			_fileHandle->seek(-8, SEEK_CUR);
 			_fileHandle->read(_res->createResource(rtSound, idx, total_size + 8), total_size + 8);
 			return 1;
@@ -1176,12 +1187,12 @@ int ScummEngine::readSoundResource(int idx) {
 				break;
 			case MKID_BE('SPK '):
 				pri = -1;
-//				if (_musicType == MDT_PCSPK)
+//				if (_musicType == MDT_PCSPK || _musicType == MDT_PCJR)
 //					pri = 11;
 				break;
 			}
 
-			if ((_musicType == MDT_PCSPK || _musicType == MDT_CMS) && pri != 11)
+			if ((_musicType == MDT_PCSPK || _musicType == MDT_PCJR || _musicType == MDT_CMS) && pri != 11)
 				pri = -1;
 
 			debugC(DEBUG_RESOURCE, "    tag: %s, total_size=%d, pri=%d", tag2str(tag), size, pri);
@@ -2113,7 +2124,7 @@ int ScummEngine::readSoundResourceSmallHeader(int idx) {
 		}
 	}
 
-	if ((_musicType == MDT_PCSPK) && wa_offs != 0) {
+	if ((_musicType == MDT_PCSPK || _musicType == MDT_PCJR) && wa_offs != 0) {
 		if (_game.features & GF_OLD_BUNDLE) {
 			_fileHandle->seek(wa_offs, SEEK_SET);
 			_fileHandle->read(_res->createResource(rtSound, idx, wa_size), wa_size);

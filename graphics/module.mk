@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
 	video/avi_decoder.o \
+	video/coktel_decoder.o \
 	video/dxa_decoder.o \
 	video/flic_decoder.o \
 	video/mpeg_player.o \
@@ -37,8 +38,7 @@ MODULE_OBJS := \
 	video/codecs/qtrle.o \
 	video/codecs/rpza.o \
 	video/codecs/smc.o \
-	video/coktelvideo/indeo3.o \
-	video/coktelvideo/coktelvideo.o
+	video/codecs/indeo3.o
 
 ifdef USE_SCALERS
 MODULE_OBJS += \

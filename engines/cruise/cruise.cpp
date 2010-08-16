@@ -133,8 +133,8 @@ void CruiseEngine::initialize() {
 }
 
 void CruiseEngine::deinitialise() {
-	polyStructNorm.clear();
-	polyStructExp.clear();
+	_vm->_polyStructNorm.clear();
+	_vm->_polyStructExp.clear();
 
 	// Clear any backgrounds
 	for (int i = 0; i < 8; ++i) {

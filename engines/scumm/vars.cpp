@@ -727,6 +727,9 @@ void ScummEngine::resetScummVars() {
 		case MDT_PCSPK:
 			VAR(VAR_SOUNDCARD) = 0;
 			break;
+		case MDT_PCJR:
+			VAR(VAR_SOUNDCARD) = 1;
+			break;
 		case MDT_CMS:
 			VAR(VAR_SOUNDCARD) = 2;
 			break;

@@ -94,12 +94,13 @@ public:
 	void disposeLastCast();
 	bool invoke(List *list, int argc, reg_t *argv);
 	void makeSortedList(List *list);
-	void fill(byte &oldPicNotValid);
+	void fill(byte &oldPicNotValid, bool maySetNsRect);
 	void update();
 	void drawCels();
 	void updateScreen(byte oldPicNotValid);
 	void restoreAndDelete(int argc, reg_t *argv);
 	void reAnimate(Common::Rect rect);
+	void preprocessAddToPicList();
 	void addToPicDrawCels();
 	void addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 

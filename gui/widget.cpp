@@ -274,7 +274,7 @@ void StaticTextWidget::drawWidget() {
 
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, x, y, w, h, cleanupHotkey(label), Graphics::kTextAlignCenter, tooltip), CommandSender(boss),
-	  _cmd(cmd) {
+	  _cmd(cmd), _hotkey(hotkey) {
 
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);

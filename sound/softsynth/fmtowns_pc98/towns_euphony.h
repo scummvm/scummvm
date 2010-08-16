@@ -45,6 +45,8 @@ public:
 	int startMusicTrack(const uint8 *data, int trackSize, int startTick);
 	void setMusicLoop(bool loop);
 	void stopParser();
+	bool parserIsPlaying() {return _playing; }
+	void continueParsing();
 
 	void playSoundEffect(int chan, int note, int velo, const uint8 *data);
 	void stopSoundEffect(int chan);
@@ -54,13 +56,13 @@ public:
 	void chanPitch(int chan, int pitch);
 	void chanVolume(int chan, int vol);
 
-	void cdaSetVolume(int mode, int volLeft, int volRight);
+	void setOutputVolume(int chanType, int volLeft, int volRight);
 
 	int chanEnable(int tableEntry, int val);
 	int chanMode(int tableEntry, int val);
 	int chanOrdr(int tableEntry, int val);
-	int chanLevel(int tableEntry, int val);
-	int chanTranspose(int tableEntry, int val);
+	int chanVolumeShift(int tableEntry, int val);
+	int chanNoteShift(int tableEntry, int val);
 
 	int assignChannel(int chan, int tableEntry);
 
@@ -112,8 +114,8 @@ private:
 		return false;
 	}
 
-	uint8 prepTranspose(uint8 in);
-	uint8 prepVelo(uint8 in);
+	uint8 applyNoteShift(uint8 in);
+	uint8 applyVolumeShift(uint8 in);
 
 	void sendNoteOff();
 	void sendNoteOn();

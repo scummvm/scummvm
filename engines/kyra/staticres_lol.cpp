@@ -372,31 +372,32 @@ void LoLEngine::initStaticResource() {
 
 	_autoMapStrings = _staticres->loadRawDataBe16(kLolMapStringId, _autoMapStringsSize);
 
-	int tmpSize = 0;
-	const uint8 *tmp = _staticres->loadRawData(kLolLegendData, tmpSize);
-	tmpSize /= 5;
-	if (tmp) {
-		_defaultLegendData = new MapLegendData[tmpSize];
-		for (int i = 0; i < tmpSize; i++) {
+	int tempSize;
+	const uint8 *tmp = _staticres->loadRawData(kLolLegendData, tempSize);
+	uint8 entrySize = tempSize / 12;
+	tempSize /= entrySize;
+	if (tempSize) {
+		_defaultLegendData = new MapLegendData[tempSize];
+		for (int i = 0; i < tempSize; i++) {
 			_defaultLegendData[i].shapeIndex = *tmp++;
 			_defaultLegendData[i].enable = *tmp++ ? true : false;
-			_defaultLegendData[i].x = (int8)*tmp++;
+			_defaultLegendData[i].y = (entrySize == 5) ? (int8)*tmp++ : (i == 10 ? -5 : 0);
 			_defaultLegendData[i].stringId = READ_LE_UINT16(tmp);
 			tmp += 2;
 		}
 		_staticres->unloadId(kLolLegendData);
 	}
 
-	tmp = _staticres->loadRawData(kLolMapCursorOvl, tmpSize);
-	_mapCursorOverlay = new uint8[tmpSize];
-	memcpy(_mapCursorOverlay, tmp, tmpSize);
+	tmp = _staticres->loadRawData(kLolMapCursorOvl, tempSize);
+	_mapCursorOverlay = new uint8[tempSize];
+	memcpy(_mapCursorOverlay, tmp, tempSize);
 	_staticres->unloadId(kLolMapCursorOvl);
 
 	_updateSpellBookCoords = _staticres->loadRawData(kLolSpellbookCoords, _updateSpellBookCoordsSize);
 	_updateSpellBookAnimData = _staticres->loadRawData(kLolSpellbookAnim, _updateSpellBookAnimDataSize);
 	_healShapeFrames = _staticres->loadRawData(kLolHealShapeFrames, _healShapeFramesSize);
 
-	tmp = _staticres->loadRawData(kLolLightningDefs, tmpSize);
+	tmp = _staticres->loadRawData(kLolLightningDefs, tempSize);
 	if (tmp) {
 		_lightningProps = new LightningProperty[5];
 		for (int i = 0; i < 5; i++) {

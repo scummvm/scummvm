@@ -33,6 +33,7 @@ namespace Sci {
 
 struct EngineState;
 class ResourceManager;
+struct SciScriptSignature;
 
 enum ScriptObjectTypes {
 	SCI_OBJ_TERMINATOR,
@@ -99,6 +100,10 @@ public:
 	void freeScript();
 	void init(int script_nr, ResourceManager *resMan);
 	void load(ResourceManager *resMan);
+
+	void matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize);
+	int32 findSignature(const SciScriptSignature *signature, const byte *scriptData, const uint32 scriptSize);
+	void applyPatch(const uint16 *patch, byte *scriptData, const uint32 scriptSize, int32 signatureOffset);
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
@@ -242,7 +247,7 @@ public:
 	/**
 	 * Finds the pointer where a block of a specific type starts from
 	 */
-	byte *findBlock(int type);
+	byte *findBlock(int type, int skipBlockIndex = -1);
 
 private:
 	/**

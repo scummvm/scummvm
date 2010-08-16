@@ -34,7 +34,7 @@
 #include "graphics/video/qt_decoder.h"
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
-#include "sci/video/vmd_decoder.h"
+#include "graphics/video/coktel_decoder.h"
 #endif
 
 namespace Sci {
@@ -59,6 +59,9 @@ void playVideo(Graphics::VideoDecoder *videoDecoder) {
 	uint16 x = (screenWidth - width) / 2;
 	uint16 y = (screenHeight - height) / 2;
 	bool skipVideo = false;
+
+	if (videoDecoder->hasDirtyPalette())
+		videoDecoder->setSystemPalette();
 
 	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
@@ -203,7 +206,7 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		if (argv[2] != NULL_REG)
 			warning("kPlayVMD: third parameter isn't 0 (it's %04x:%04x - %s)", PRINT_REG(argv[2]), s->_segMan->getObjectName(argv[2]));
 
-		videoDecoder = new VMDDecoder(g_system->getMixer());
+		videoDecoder = new Graphics::VMDDecoder(g_system->getMixer());
 
 		if (!videoDecoder->loadFile(fileName)) {
 			warning("Could not open VMD %s", fileName.c_str());

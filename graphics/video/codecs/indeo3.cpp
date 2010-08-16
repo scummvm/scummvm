@@ -38,33 +38,38 @@
 #include "common/frac.h"
 #include "common/file.h"
 
-#include "graphics/dither.h"
-#include "graphics/video/coktelvideo/indeo3.h"
+#include "graphics/conversion.h"
+
+#include "graphics/video/codecs/indeo3.h"
 
 namespace Graphics {
 
-Indeo3::Indeo3(int16 width, int16 height, Graphics::PaletteLUT *palLUT) {
-	assert((width > 0) && (height > 0));
+Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height) : _ModPred(0), _corrector_type(0) {
+	_iv_frame[0].the_buf = 0;
+	_iv_frame[1].the_buf = 0;
 
-	_width = width;
-	_height = height;
-	_palLUT = palLUT;
+	_pixelFormat = g_system->getScreenFormat();
 
-	_ditherSL = 0;
-	setDither(kDitherSierraLight);
+	_surface = new Surface;
+	_surface->create(width, height, _pixelFormat.bytesPerPixel);
 
 	buildModPred();
 	allocFrames();
 }
 
-Indeo3::~Indeo3() {
+Indeo3Decoder::~Indeo3Decoder() {
+	delete _surface;
+
 	delete[] _iv_frame[0].the_buf;
 	delete[] _ModPred;
 	delete[] _corrector_type;
-	delete _ditherSL;
 }
 
-bool Indeo3::isIndeo3(byte *data, uint32 dataLen) {
+PixelFormat Indeo3Decoder::getPixelFormat() const {
+	return _pixelFormat;
+}
+
+bool Indeo3Decoder::isIndeo3(byte *data, uint32 dataLen) {
 	// No data, no Indeo 3
 	if (!data)
 		return false;
@@ -90,23 +95,7 @@ bool Indeo3::isIndeo3(byte *data, uint32 dataLen) {
 	return true;
 }
 
-void Indeo3::setDither(DitherAlgorithm dither) {
-	delete _ditherSL;
-	_ditherSL = 0;
-
-	_dither = dither;
-
-	switch (dither) {
-	case kDitherSierraLight:
-		_ditherSL = new Graphics::SierraLight(_width, _palLUT);
-		break;
-
-	default:
-		return;
-	}
-}
-
-void Indeo3::buildModPred() {
+void Indeo3Decoder::buildModPred() {
 	_ModPred = new byte[8 * 128];
 
 	for (int i = 0; i < 128; i++) {
@@ -133,12 +122,12 @@ void Indeo3::buildModPred() {
 	}
 }
 
-void Indeo3::allocFrames() {
-	int32 luma_width   = (_width  + 3) & (~3);
-	int32 luma_height  = (_height + 3) & (~3);
+void Indeo3Decoder::allocFrames() {
+	int32 luma_width   = (_surface->w + 3) & (~3);
+	int32 luma_height  = (_surface->h + 3) & (~3);
 
-	int32 chroma_width  = ((luma_width >> 2) + 3) & (~3);
-	int32 chroma_height = ((luma_height>> 2) + 3) & (~3);
+	int32 chroma_width  = ((luma_width  >> 2) + 3) & (~3);
+	int32 chroma_height = ((luma_height >> 2) + 3) & (~3);
 
 	int32 luma_pixels = luma_width * luma_height;
 	int32 chroma_pixels = chroma_width * chroma_height;
@@ -184,21 +173,23 @@ void Indeo3::allocFrames() {
 	}
 }
 
-bool Indeo3::decompressFrame(byte *inData, uint32 dataLen,
-		byte *outData, uint16 width, uint16 height) {
+Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *stream) {
+	uint32 dataLen = stream->size();
+
+	byte *inData = new byte[dataLen];
+
+	if (stream->read(inData, dataLen) != dataLen)
+		return 0;
 
 	// Not Indeo 3? Fail
 	if (!isIndeo3(inData, dataLen))
-		return false;
-
-	assert(outData);
-	assert(_palLUT);
+		return 0;
 
 	uint32 frameDataLen = READ_LE_UINT32(inData + 12);
 
 	// Less data than the frame should have? Fail
 	if (dataLen < (frameDataLen - 16))
-		return false;
+		return 0;
 
 	Common::MemoryReadStream frame(inData, dataLen);
 
@@ -219,7 +210,7 @@ bool Indeo3::decompressFrame(byte *inData, uint32 dataLen,
 	}
 
 	if (flags3 == 0x80)
-		return true;
+		return _surface;
 
 	frame.skip(3);
 
@@ -262,85 +253,40 @@ bool Indeo3::decompressFrame(byte *inData, uint32 dataLen,
 	decodeChunk(_cur_frame->Ubuf, _ref_frame->Ubuf, chromaWidth, chromaHeight,
 			buf_pos + offs * 2, flags2, hdr_pos, buf_pos, MIN<int>(chromaWidth, 40));
 
-	BlitState blitState;
+	// Blit the frame onto the surface
+	const byte *srcY = _cur_frame->Ybuf;
+	const byte *srcU = _cur_frame->Ubuf;
+	const byte *srcV = _cur_frame->Vbuf;
+	byte *dest = (byte *)_surface->pixels;
+	for (uint32 y = 0; y < fHeight; y++) {
+		byte *rowDest = dest;
 
-	blitState.widthY        = _cur_frame->y_w;
-	blitState.widthUV       = _cur_frame->uv_w;
-	blitState.uwidthUV      = chromaWidth;
-	blitState.uwidthOut     = fWidth;
-	blitState.heightY       = _cur_frame->y_h;
-	blitState.heightUV      = _cur_frame->uv_h;
-	blitState.uheightUV     = chromaHeight;
-	blitState.uheightOut    = fHeight;
-	blitState.scaleWYUV     = blitState.widthY  / blitState.widthUV;
-	blitState.scaleHYUV     = blitState.heightY / blitState.heightUV;
-	blitState.scaleWYOut    = blitState.widthY  / blitState.uwidthOut;
-	blitState.scaleHYOut    = blitState.heightY / blitState.uheightOut;
-	blitState.lineWidthOut  = blitState.scaleWYOut * blitState.uwidthOut;
-	blitState.lineHeightOut = blitState.scaleHYOut * blitState.uheightOut;
-	blitState.bufY          = _cur_frame->Ybuf;
-	blitState.bufU          = _cur_frame->Ubuf;
-	blitState.bufV          = _cur_frame->Vbuf;
-	blitState.bufOut        = outData;
+		for (uint32 x = 0; x < fWidth; x++, rowDest += _surface->bytesPerPixel) {
+			const byte cY = srcY[x];
+			const byte cU = srcU[x >> 2];
+			const byte cV = srcV[x >> 2];
 
-	blitFrame(blitState);
+			byte r = 0, g = 0, b = 0;
+			YUV2RGB(cY, cU, cV, r, g, b);
 
-	return true;
-}
+			const uint32 color = _pixelFormat.RGBToColor(r, g, b);
 
-void Indeo3::blitFrame(BlitState &s) {
-	if (_ditherSL)
-		_ditherSL->newFrame();
-
-	for (s.curY = 0; s.curY < s.uheightOut; s.curY++) {
-		if (_dither == kDitherNone)
-			blitLine(s);
-		else
-			blitLineDither(s);
-	}
-}
-
-void Indeo3::blitLine(BlitState &s) {
-	byte *lineU = s.bufU + (s.curY >> 2) * s.uwidthUV;
-	byte *lineV = s.bufV + (s.curY >> 2) * s.uwidthUV;
-
-	for (s.curX = 0; s.curX < s.uwidthOut; s.curX++) {
-		byte dataY = *s.bufY++;
-		byte dataU = lineU[s.curX >> 2];
-		byte dataV = lineV[s.curX >> 2];
-
-		for (int n = 0; n < s.scaleWYOut; n++)
-			*s.bufOut++ = _palLUT->findNearest(dataY, dataU, dataV);
-	}
-
-	byte *lineDest = s.bufOut - s.lineWidthOut;
-	for (int n = 1; n < s.scaleHYOut; n++) {
-		memcpy(s.bufOut, lineDest, s.lineWidthOut);
-		s.bufOut += s.lineWidthOut;
-	}
-}
-
-void Indeo3::blitLineDither(BlitState &s) {
-	byte *lineU = s.bufU + (s.curY >> 2) * s.uwidthUV;
-	byte *lineV = s.bufV + (s.curY >> 2) * s.uwidthUV;
-
-	for (uint16 i = 0; i < s.scaleHYOut; i++) {
-		byte *bufY = s.bufY;
-
-		for (s.curX = 0; s.curX < s.uwidthOut; s.curX++) {
-			byte dataY = *bufY++;
-			byte dataU = lineU[s.curX >> 2];
-			byte dataV = lineV[s.curX >> 2];
-
-			for (int n = 0; n < s.scaleWYOut; n++)
-				*s.bufOut++ = _ditherSL->dither(dataY, dataU, dataV, s.curX * s.scaleWYOut + n);
-
+			if      (_surface->bytesPerPixel == 1)
+				*((uint8 *)rowDest) = (uint8)color;
+			else if (_surface->bytesPerPixel == 2)
+				*((uint16 *)rowDest) = (uint16)color;
 		}
 
-		_ditherSL->nextLine();
+		dest += _surface->pitch;
+		srcY += fWidth;
+
+		if ((y & 3) == 3) {
+			srcU += fWidth >> 2;
+			srcV += fWidth >> 2;
+		}
 	}
 
-	s.bufY += s.uwidthOut;
+	return _surface;
 }
 
 typedef struct {
@@ -397,7 +343,7 @@ typedef struct {
 	}                     \
 	lp2 = 4;
 
-void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
+void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 		const byte *buf1, uint32 fflags2, const byte *hdr,
 		const byte *buf2, int min_width_160) {
 
@@ -729,7 +675,7 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 										break;
 
 									case 9:
-										warning("Indeo3::decodeChunk: Untested (1)");
+										warning("Indeo3Decoder::decodeChunk: Untested (1)");
 										lv1 = *buf1++;
 										lv = (lv1 & 0x7F) << 1;
 										lv += (lv << 8);
@@ -906,7 +852,7 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 											break;
 
 										case 9:
-											warning("Indeo3::decodeChunk: Untested (2)");
+											warning("Indeo3Decoder::decodeChunk: Untested (2)");
 											lv1 = *buf1;
 											lv = (lv1 & 0x7F) << 1;
 											lv += (lv << 8);
@@ -1002,7 +948,7 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 											break;
 
 										case 9:
-											warning("Indeo3::decodeChunk: Untested (3)");
+											warning("Indeo3Decoder::decodeChunk: Untested (3)");
 											lv1 = *buf1;
 											lv = (lv1 & 0x7F) << 1;
 											lv += (lv << 8);
@@ -1099,7 +1045,7 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 										break;
 
 									case 9:
-										warning("Indeo3::decodeChunk: Untested (4)");
+										warning("Indeo3Decoder::decodeChunk: Untested (4)");
 										lv1 = *buf1++;
 										lv = (lv1 & 0x7F) << 1;
 										lv += (lv << 8);
@@ -1127,7 +1073,7 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 					// FIXME: I've seen case 13 happen in Urban
 					// Runner. Perhaps it uses a more recent form of
 					// Indeo 3? There appears to have been several.
-					warning("Indeo3::decodeChunk: Unknown case %d", k);
+					warning("Indeo3Decoder::decodeChunk: Unknown case %d", k);
 					return;
 			}
 		}
@@ -1157,15 +1103,15 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 
 // static data
 
-const int Indeo3::_corrector_type_0[24] = {
+const int Indeo3Decoder::_corrector_type_0[24] = {
 	195, 159, 133, 115, 101,  93,  87,  77,
 	195, 159, 133, 115, 101,  93,  87,  77,
 	128,  79,  79,  79,  79,  79,  79,  79
 };
 
-const int Indeo3::_corrector_type_2[8] = { 9, 7, 6, 8, 5, 4, 3, 2 };
+const int Indeo3Decoder::_corrector_type_2[8] = { 9, 7, 6, 8, 5, 4, 3, 2 };
 
-const uint32 Indeo3::correction[] = {
+const uint32 Indeo3Decoder::correction[] = {
 	0x00000000, 0x00000202, 0xfffffdfe, 0x000002ff, 0xfffffd01, 0xffffff03, 0x000000fd, 0x00000404,
 	0xfffffbfc, 0x00000501, 0xfffffaff, 0x00000105, 0xfffffefb, 0x000003fc, 0xfffffc04, 0x000005fe,
 	0xfffffa02, 0xfffffe06, 0x000001fa, 0x00000904, 0xfffff6fc, 0x00000409, 0xfffffbf7, 0x00000909,
@@ -1937,7 +1883,7 @@ const uint32 Indeo3::correction[] = {
 };
 
 
-const uint32 Indeo3::correctionloworder[] = {
+const uint32 Indeo3Decoder::correctionloworder[] = {
 	0x00000000, 0x02020202, 0xfdfdfdfe, 0x0302feff, 0xfcfd0101, 0xfeff0303, 0x0100fcfd, 0x04040404,
 	0xfbfbfbfc, 0x05050101, 0xfafafeff, 0x01010505, 0xfefefafb, 0x0403fbfc, 0xfbfc0404, 0x0605fdfe,
 	0xf9fa0202, 0xfdfe0606, 0x0201f9fa, 0x09090404, 0xf6f6fbfc, 0x04040909, 0xfbfbf6f7, 0x09090909,
@@ -2709,7 +2655,7 @@ const uint32 Indeo3::correctionloworder[] = {
 };
 
 
-const uint32 Indeo3::correctionhighorder[] = {
+const uint32 Indeo3Decoder::correctionhighorder[] = {
 	0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef,
 	0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef,
 	0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef,

@@ -51,30 +51,30 @@ void Draw_v2::initScreen() {
 	_scrollOffsetX = 0;
 	_scrollOffsetY = 0;
 
-	initSpriteSurf(21, _vm->_video->_surfWidth, _vm->_video->_surfHeight, 0);
-	_backSurface = _spritesArray[21];
+	initSpriteSurf(kBackSurface, _vm->_video->_surfWidth, _vm->_video->_surfHeight, 0);
+	_backSurface = _spritesArray[kBackSurface];
 	_vm->_video->clearSurf(*_backSurface);
 
-	if (!_spritesArray[23]) {
-		initSpriteSurf(23, 32, 16, 2);
-		_cursorSpritesBack = _spritesArray[23];
+	if (!_spritesArray[kCursorSurface]) {
+		initSpriteSurf(kCursorSurface, 32, 16, 2);
+		_cursorSpritesBack = _spritesArray[kCursorSurface];
 		_cursorSprites = _cursorSpritesBack;
 		_scummvmCursor =
 			_vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, SCUMMVM_CURSOR);
 	}
 
-	_spritesArray[20] = _frontSurface;
-	_spritesArray[21] = _backSurface;
+	_spritesArray[kFrontSurface] = _frontSurface;
+	_spritesArray[kBackSurface ] = _backSurface;
 
 	_vm->_video->dirtyRectsAll();
 }
 
 void Draw_v2::closeScreen() {
-	//freeSprite(23);
+	//freeSprite(kCursorSurface);
 	//_cursorSprites = 0;
 	//_cursorSpritesBack = 0;
 	//_scummvmCursor = 0;
-	freeSprite(21);
+	freeSprite(kBackSurface);
 }
 
 void Draw_v2::blitCursor() {
@@ -273,7 +273,7 @@ void Draw_v2::printTotText(int16 id) {
 	_destSpriteY = destY;
 	_spriteRight = spriteRight;
 	_spriteBottom = spriteBottom;
-	_destSurface = 21;
+	_destSurface = kBackSurface;
 
 	_backColor = *ptr++;
 	_transparency = 1;
@@ -629,12 +629,12 @@ void Draw_v2::spriteOperation(int16 operation) {
 		_destSurface -= 80;
 
 	if ((_renderFlags & RENDERFLAG_USEDELTAS) && !deltaVeto) {
-		if ((_sourceSurface == 21) && (operation != DRAW_LOADSPRITE)) {
+		if ((_sourceSurface == kBackSurface) && (operation != DRAW_LOADSPRITE)) {
 			_spriteLeft += _backDeltaX;
 			_spriteTop += _backDeltaY;
 		}
 
-		if (_destSurface == 21) {
+		if (_destSurface == kBackSurface) {
 			_destSpriteX += _backDeltaX;
 			_destSpriteY += _backDeltaY;
 			if ((operation == DRAW_DRAWLINE) ||
@@ -654,7 +654,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 	int16 destSurface = _destSurface;
 	int16 sourceSurface = _sourceSurface;
 
-	if (_vm->_video->_splitSurf && ((_destSurface == 20) || (_destSurface == 21))) {
+	if (_vm->_video->_splitSurf && ((_destSurface == kFrontSurface) || (_destSurface == kBackSurface))) {
 		if ((_destSpriteY >= _vm->_video->_splitStart)) {
 			_destSpriteY -= _vm->_video->_splitStart;
 			if ((operation == DRAW_DRAWLINE) ||
@@ -908,12 +908,12 @@ void Draw_v2::spriteOperation(int16 operation) {
 	}
 
 	if ((_renderFlags & RENDERFLAG_USEDELTAS) && !deltaVeto) {
-		if (_sourceSurface == 21) {
+		if (_sourceSurface == kBackSurface) {
 			_spriteLeft -= _backDeltaX;
 			_spriteTop -= _backDeltaY;
 		}
 
-		if (_destSurface == 21) {
+		if (_destSurface == kBackSurface) {
 			_destSpriteX -= _backDeltaX;
 			_destSpriteY -= _backDeltaY;
 		}

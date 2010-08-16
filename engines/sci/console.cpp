@@ -51,7 +51,7 @@
 #include "graphics/video/avi_decoder.h"
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
-#include "sci/video/vmd_decoder.h"
+#include "graphics/video/coktel_decoder.h"
 #endif
 
 #include "common/file.h"
@@ -234,7 +234,7 @@ void Console::postEnter() {
 			videoDecoder = seqDecoder;
 #ifdef ENABLE_SCI32
 		} else if (_videoFile.hasSuffix(".vmd")) {
-			videoDecoder = new VMDDecoder(g_system->getMixer());
+			videoDecoder = new Graphics::VMDDecoder(g_system->getMixer());
 #endif
 		} else if (_videoFile.hasSuffix(".avi")) {
 			videoDecoder = new Graphics::AviDecoder(g_system->getMixer());
@@ -244,6 +244,9 @@ void Console::postEnter() {
 			uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
 			uint16 y = (g_system->getHeight() - videoDecoder->getHeight()) / 2;
 			bool skipVideo = false;
+
+			if (videoDecoder->hasDirtyPalette())
+				videoDecoder->setSystemPalette();
 
 			while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 				if (videoDecoder->needsUpdate()) {
@@ -443,6 +446,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	DebugPrintf("Resource volume version: %s\n", g_sci->getResMan()->getVolVersionDesc());
 	DebugPrintf("Resource map version: %s\n", g_sci->getResMan()->getMapVersionDesc());
 	DebugPrintf("Contains selector vocabulary (vocab.997): %s\n", hasVocab997 ? "yes" : "no");
+	DebugPrintf("Has CantBeHere selector: %s\n", g_sci->getKernel()->_selectorCache.cantBeHere != -1 ? "yes" : "no");
 	DebugPrintf("Game version (VERSION file): %s\n", gameVersion.c_str());
 	DebugPrintf("\n");
 

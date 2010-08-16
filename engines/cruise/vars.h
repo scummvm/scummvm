@@ -167,8 +167,6 @@ extern int16 autoTrack;
 
 extern int16 currentDiskNumber;
 
-extern Common::File currentVolumeFile;
-
 extern int16 volumeNumEntry;
 extern fileEntry *volumePtrToFileDescriptor;
 

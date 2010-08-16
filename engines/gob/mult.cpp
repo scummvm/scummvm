@@ -146,7 +146,7 @@ void Mult::freeMult() {
 	_orderArray = 0;
 
 	_animSurf.reset();
-	_vm->_draw->freeSprite(22);
+	_vm->_draw->freeSprite(Draw::kAnimSurface);
 }
 
 void Mult::checkFreeMult() {
@@ -238,7 +238,7 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_orderArray = 0;
 
 			_animSurf.reset();
-			_vm->_draw->freeSprite(22);
+			_vm->_draw->freeSprite(Draw::kAnimSurface);
 
 			_animDataAllocated = false;
 		}
@@ -452,7 +452,7 @@ void Mult::clearObjectVideos() {
 
 	for (int i = 0; i < _objCount; i++)
 		if (_objects[i].videoSlot > 0)
-			_vm->_vidPlayer->slotClose(_objects[i].videoSlot - 1);
+			_vm->_vidPlayer->closeVideo(_objects[i].videoSlot - 1);
 }
 
 } // End of namespace Gob

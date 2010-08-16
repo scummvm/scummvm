@@ -29,8 +29,6 @@
 #include "cine/script.h"
 namespace Cine {
 
-extern RawObjectScriptArray relTable;
-
 void loadRel(char *pRelName);
 
 } // End of namespace Cine

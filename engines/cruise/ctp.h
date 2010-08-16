@@ -64,11 +64,6 @@ public:
 
 extern uint8 *ctpVar17;
 
-extern Common::Array<CtStruct> polyStructNorm;
-extern Common::Array<CtStruct> polyStructExp;
-extern Common::Array<CtStruct> *polyStructs;
-extern Common::Array<CtStruct> *polyStruct;
-
 int initCt(const char * ctpName);
 int computeDistance(int varX, int varY, int paramX, int paramY);
 

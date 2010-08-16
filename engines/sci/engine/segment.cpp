@@ -414,7 +414,7 @@ int Object::locateVarSelector(SegManager *segMan, Selector slc) const {
 	} else {
 		const Object *obj = getClass(segMan);
 		varnum = obj->getVariable(1).toUint16();
-		buf = (byte *)obj->_baseVars;
+		buf = (const byte *)obj->_baseVars;
 	}
 
 	for (uint i = 0; i < varnum; i++)

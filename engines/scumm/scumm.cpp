@@ -214,7 +214,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_opcode = 0;
 	vm.numNestedScripts = 0;
 	_lastCodePtr = NULL;
-	_resultVarNumber = 0;
 	_scummStackPos = 0;
 	memset(_vmStack, 0, sizeof(_vmStack));
 	_fileOffset = 0;
@@ -631,6 +630,10 @@ ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
 	_flashlight.xStrips = 7;
 	_flashlight.yStrips = 7;
 	_flashlight.buffer = NULL;
+
+	memset(_saveLoadVarsFilename, 0, sizeof(_saveLoadVarsFilename));
+
+	_resultVarNumber = 0;
 }
 
 ScummEngine_v4::ScummEngine_v4(OSystem *syst, const DetectorResult &dr)
@@ -1642,8 +1645,10 @@ void ScummEngine::setupMusic(int midi) {
 		_musicType = MDT_NONE;
 		break;
 	case MT_PCSPK:
-	case MT_PCJR:
 		_musicType = MDT_PCSPK;
+		break;
+	case MT_PCJR:
+		_musicType = MDT_PCJR;
 		break;
 	//case MT_CMS:
 #if 1
@@ -1657,6 +1662,12 @@ void ScummEngine::setupMusic(int midi) {
 		break;
 	case MT_ADLIB:
 		_musicType = MDT_ADLIB;
+		break;
+	case MT_C64:
+		_musicType = MDT_C64;
+		break;
+	case MT_APPLEIIGS:
+		_musicType = MDT_APPLEIIGS;
 		break;
 	default:
 		_musicType = MDT_MIDI;
@@ -1706,7 +1717,7 @@ void ScummEngine::setupMusic(int midi) {
 	 * automatically when samples need to be generated */
 	if (!_mixer->isReady()) {
 		warning("Sound mixer initialization failed");
-		if (_musicType == MDT_ADLIB || _musicType == MDT_PCSPK || _musicType == MDT_CMS)	{
+		if (_musicType == MDT_ADLIB || _musicType == MDT_PCSPK || _musicType == MDT_PCJR || _musicType == MDT_CMS) {
 			dev = 0;
 			_musicType = MDT_NONE;
 			warning("MIDI driver depends on sound mixer, switching to null MIDI driver");
@@ -1740,7 +1751,7 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V1(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if (_game.version <= 2) {
 		_musicEngine = new Player_V2(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
-	} else if ((_musicType == MDT_PCSPK) && (_game.version > 2 && _game.version <= 4)) {
+	} else if ((_musicType == MDT_PCSPK || _musicType == MDT_PCJR) && (_game.version > 2 && _game.version <= 4)) {
 		_musicEngine = new Player_V2(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if (_musicType == MDT_CMS) {
 		_musicEngine = new Player_V2CMS(this, _mixer);

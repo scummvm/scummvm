@@ -53,12 +53,12 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		_destSurface -= 80;
 
 	if ((_renderFlags & RENDERFLAG_USEDELTAS) && !deltaVeto) {
-		if ((_sourceSurface == 21) && (operation != DRAW_LOADSPRITE)) {
+		if ((_sourceSurface == kBackSurface) && (operation != DRAW_LOADSPRITE)) {
 			_spriteLeft += _backDeltaX;
 			_spriteTop += _backDeltaY;
 		}
 
-		if (_destSurface == 21) {
+		if (_destSurface == kBackSurface) {
 			_destSpriteX += _backDeltaX;
 			_destSpriteY += _backDeltaY;
 			if ((operation == DRAW_DRAWLINE) ||
@@ -78,7 +78,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 	int16 destSurface = _destSurface;
 	int16 sourceSurface = _sourceSurface;
 
-	if (_vm->_video->_splitSurf && ((_destSurface == 20) || (_destSurface == 21))) {
+	if (_vm->_video->_splitSurf && ((_destSurface == kFrontSurface) || (_destSurface == kBackSurface))) {
 		if ((_destSpriteY >= _vm->_video->_splitStart)) {
 			_destSpriteY -= _vm->_video->_splitStart;
 			if ((operation == DRAW_DRAWLINE) ||
@@ -409,12 +409,12 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 	}
 
 	if ((_renderFlags & RENDERFLAG_USEDELTAS) && !deltaVeto) {
-		if (_sourceSurface == 21) {
+		if (_sourceSurface == kBackSurface) {
 			_spriteLeft -= _backDeltaX;
 			_spriteTop -= _backDeltaY;
 		}
 
-		if (_destSurface == 21) {
+		if (_destSurface == kBackSurface) {
 			_destSpriteX -= _backDeltaX;
 			_destSpriteY -= _backDeltaY;
 		}

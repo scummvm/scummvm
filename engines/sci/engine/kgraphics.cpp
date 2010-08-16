@@ -300,8 +300,8 @@ reg_t kGraphFillBoxAny(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect rect = getGraphRect(argv);
 	int16 colorMask = argv[4].toUint16();
 	int16 color = argv[5].toSint16();
-	int16 priority = (argc > 6) ? argv[6].toSint16() : -1;
-	int16 control = (argc > 7) ? argv[7].toSint16() : -1;
+	int16 priority = argv[6].toSint16(); // yes, we may read from stack sometimes here
+	int16 control = argv[7].toSint16(); // sierra did the same
 
 	g_sci->_gfxPaint16->kernelGraphFillBox(rect, colorMask, color, priority, control);
 	return s->r_acc;

@@ -94,7 +94,7 @@ public:
 	 *                The memory will be malloc()'ed
 	 * @param palSize Pointer to integer where the palette size will be stored.
 	 */
-	void convertCrsrCursor(byte *data, int datasize, byte **cursor, int *w, int *h,
+	static void convertCrsrCursor(byte *data, int datasize, byte **cursor, int *w, int *h,
 					  int *hotspot_x, int *hotspot_y, int *keycolor, bool colored, byte **palette, int *palSize);
 
 	/**

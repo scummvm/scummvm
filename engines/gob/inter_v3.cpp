@@ -253,8 +253,8 @@ bool Inter_v3::o3_copySprite(OpFuncParams &params) {
 	o1_copySprite(params);
 
 	// For the close-up "fading" in the CD version
-	if (_vm->_draw->_destSurface == 20)
-		_vm->_video->sparseRetrace(20);
+	if (_vm->_draw->_destSurface == Draw::kFrontSurface)
+		_vm->_video->sparseRetrace(Draw::kFrontSurface);
 	return false;
 }
 

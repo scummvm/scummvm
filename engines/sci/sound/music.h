@@ -51,6 +51,8 @@ enum SoundStatus {
 class MidiParser_SCI;
 class SegManager;
 
+typedef Common::Array<uint16> SignalQueue;
+
 class MusicEntry : public Common::Serializable {
 public:
 	// Do not get these directly for the sound objects!
@@ -89,6 +91,11 @@ public:
 	Audio::Mixer::SoundType soundType;
 
 	MidiParser_SCI *pMidiParser;
+
+	// this is used for storing signals, when the current signal is not yet
+	//  sent to the scripts. We shouldn't need to save it, this normally only
+	//  happens in rare situations like lb1, knocking on the door in the attic
+	SignalQueue signalQueue;
 
 	// TODO: We need to revise how we store the different
 	// audio stream objects we require.

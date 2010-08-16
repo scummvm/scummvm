@@ -4291,7 +4291,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 			if (!_defaultLegendData[ii].enable)
 				continue;
 			_screen->copyBlockAndApplyOverlay(_screen->_curPage, 235, (tY << 3) + 21 + yOffset, _screen->_curPage, 235 + xOffset, (tY << 3) + 21 + yOffset, 7, 6, 0, _mapOverlay);
-			_screen->drawShape(_screen->_curPage, _automapShapes[_defaultLegendData[ii].shapeIndex << 2], 232 + xOffset, (tY << 3) + 18 + yOffset + _defaultLegendData[ii].x, 0, 0);
+			_screen->drawShape(_screen->_curPage, _automapShapes[_defaultLegendData[ii].shapeIndex << 2], 232 + xOffset, (tY << 3) + 18 + yOffset + _defaultLegendData[ii].y, 0, 0);
 			printMapText(_defaultLegendData[ii].stringId, 244 + xOffset, (tY << 3) + 22 + yOffset);
 			tY++;
 		}

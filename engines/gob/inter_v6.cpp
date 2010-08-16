@@ -102,88 +102,86 @@ void Inter_v6::o6_totSub() {
 
 void Inter_v6::o6_playVmdOrMusic() {
 	char fileName[128];
-	int16 x, y;
-	int16 startFrame;
-	int16 lastFrame;
-	int16 breakKey;
-	int16 flags;
-	int16 palStart;
-	int16 palEnd;
-	uint16 palCmd;
 	bool close;
 
 	_vm->_game->_script->evalExpr(0);
 	strncpy0(fileName, _vm->_game->_script->getResultStr(), 127);
 
-	x = _vm->_game->_script->readValExpr();
-	y = _vm->_game->_script->readValExpr();
-	startFrame = _vm->_game->_script->readValExpr();
-	lastFrame = _vm->_game->_script->readValExpr();
-	breakKey = _vm->_game->_script->readValExpr();
-	flags = _vm->_game->_script->readValExpr();
-	palStart = _vm->_game->_script->readValExpr();
-	palEnd = _vm->_game->_script->readValExpr();
-	palCmd = 1 << (flags & 0x3F);
+	VideoPlayer::Properties props;
+
+	props.x          = _vm->_game->_script->readValExpr();
+	props.y          = _vm->_game->_script->readValExpr();
+	props.startFrame = _vm->_game->_script->readValExpr();
+	props.lastFrame  = _vm->_game->_script->readValExpr();
+	props.breakKey   = _vm->_game->_script->readValExpr();
+	props.flags      = _vm->_game->_script->readValExpr();
+	props.palStart   = _vm->_game->_script->readValExpr();
+	props.palEnd     = _vm->_game->_script->readValExpr();
+	props.palCmd     = 1 << (props.flags & 0x3F);
+	props.forceSeek  = true;
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
-			"paletteCmd %d (%d - %d), flags %X", fileName, x, y, startFrame, lastFrame,
-			palCmd, palStart, palEnd, flags);
+			"paletteCmd %d (%d - %d), flags %X", fileName,
+			props.x, props.y, props.startFrame, props.lastFrame,
+			props.palCmd, props.palStart, props.palEnd, props.flags);
 
 	close = false;
-	if (lastFrame == -1) {
+	if (props.lastFrame == -1) {
 		close = true;
-	} else if (lastFrame == -5) {
+	} else if (props.lastFrame == -5) {
 //		warning("Urban/Playtoons Stub: Stop without delay");
 		_vm->_sound->bgStop();
 		return;
-	} else if (lastFrame == -6) {
+	} else if (props.lastFrame == -6) {
 //		warning("Urban/Playtoons Stub: Video/Music command -6 (cache video)");
 		return;
-	} else if (lastFrame == -7) {
+	} else if (props.lastFrame == -7) {
 //		warning("Urban/Playtoons Stub: Video/Music command -6 (flush cache)");
 		return;
-	} else if ((lastFrame == -8) || (lastFrame == -9)) {
+	} else if ((props.lastFrame == -8) || (props.lastFrame == -9)) {
 		if (!strchr(fileName, '.'))
 			strcat(fileName, ".WA8");
 
 		probe16bitMusic(fileName);
 
-		if (lastFrame == -9) {
+		if (props.lastFrame == -9) {
 			warning("Urban/Playtoons Stub: delayed stop not implemented");
 		}
 		_vm->_sound->bgStop();
 		_vm->_sound->bgPlay(fileName, SOUND_WAV);
 		return;
-	} else if (lastFrame <= -10) {
-		_vm->_vidPlayer->primaryClose();
-		warning("Urban/Playtoons Stub: Video/Music command %d (close video?), %s", lastFrame, fileName);
-		if (lastFrame <= -100)
-			lastFrame += 100;
+	} else if (props.lastFrame <= -10) {
+		_vm->_vidPlayer->closeVideo();
+		warning("Urban/Playtoons Stub: Video/Music command %d (close video?), %s", props.lastFrame, fileName);
+		if (props.lastFrame <= -100)
+			props.lastFrame += 100;
 
-		if (((-lastFrame) % 10 == 3) && (lastFrame <= -20))
+		if (((-props.lastFrame) % 10 == 3) && (props.lastFrame <= -20))
 			_vm->_sound->bgPlay(fileName, SOUND_WAV);
-	} else if (lastFrame < 0) {
-		warning("Urban/Playtoons Stub: Unknown Video/Music command: %d, %s", lastFrame, fileName);
+	} else if (props.lastFrame < 0) {
+		warning("Urban/Playtoons Stub: Unknown Video/Music command: %d, %s", props.lastFrame, fileName);
 		return;
 	}
 
-	if (startFrame == -2) {
-		startFrame = 0;
-		lastFrame = -1;
+	if (props.startFrame == -2) {
+		props.startFrame = 0;
+		props.lastFrame = -1;
 		close = false;
 	}
 
-	if ((fileName[0] != 0) && !_vm->_vidPlayer->primaryOpen(fileName, x, y, flags)) {
+	_vm->_vidPlayer->evaluateFlags(props);
+
+	int slot;
+	if ((fileName[0] != 0) && ((slot = _vm->_vidPlayer->openVideo(true, fileName, props)) < 0)) {
 		WRITE_VAR(11, (uint32) -1);
 		return;
 	}
 
-	if (startFrame >= 0)
-		_vm->_vidPlayer->primaryPlay(startFrame, lastFrame, breakKey,
-				palCmd, palStart, palEnd, 0, -1, false, -1, true);
+	if (props.startFrame >= 0)
+		_vm->_vidPlayer->play(slot, props);
 
 	if (close)
-		_vm->_vidPlayer->primaryClose();
+		_vm->_vidPlayer->closeVideo(slot);
 }
 
 void Inter_v6::o6_openItk() {
@@ -224,24 +222,30 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 		uint16 start = _vm->_game->_script->readUint16();
 		int8 index = _vm->_game->_script->readInt8();
 
-		int vmdSlot = _vm->_vidPlayer->slotOpen(file);
+		VideoPlayer::Properties props;
 
+		props.sprite = -1;
+
+		int vmdSlot = _vm->_vidPlayer->openVideo(false, file, props);
 		if (vmdSlot == -1) {
 			warning("Can't open video \"%s\" as cursor", file);
 			return false;
 		}
 
-		int16 framesCount = _vm->_vidPlayer->getFramesCount(vmdSlot);
+		int16 framesCount = _vm->_vidPlayer->getFrameCount(vmdSlot);
 
 		for (int i = 0; i < framesCount; i++) {
-			_vm->_vidPlayer->slotPlay(vmdSlot);
-			_vm->_vidPlayer->slotCopyFrame(vmdSlot, _vm->_draw->_cursorSprites->getVidMem(),
+			props.startFrame = i;
+			props.lastFrame  = i;
+
+			_vm->_vidPlayer->play(vmdSlot, props);
+			_vm->_vidPlayer->copyFrame(vmdSlot, _vm->_draw->_cursorSprites->getVidMem(),
 					0, 0, _vm->_draw->_cursorWidth, _vm->_draw->_cursorWidth,
 					(start + i) * _vm->_draw->_cursorWidth, 0,
 					_vm->_draw->_cursorSprites->getWidth());
 		}
 
-		_vm->_vidPlayer->slotClose(vmdSlot);
+		_vm->_vidPlayer->closeVideo(vmdSlot);
 
 		_vm->_draw->_cursorAnimLow[index] = start;
 		_vm->_draw->_cursorAnimHigh[index] = framesCount + start - 1;

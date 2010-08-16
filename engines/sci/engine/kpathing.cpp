@@ -265,7 +265,8 @@ struct PathfindingState {
 static Common::Point read_point(SegManager *segMan, reg_t list, int offset) {
 	SegmentRef list_r = segMan->dereference(list);
 	if (!list_r.isValid() || list_r.skipByte) {
-		warning("read_point(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(list));
+		// If this happens, then the code below will probably go OOB and crash
+		error("read_point(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(list));
 	}
 	Common::Point point;
 

@@ -211,6 +211,10 @@ String TranslationManager::getTranslation(const String &message) {
 const TLangArray TranslationManager::getSupportedLanguageNames() const {
 	return TLangArray();
 }
+	
+const char *TranslationManager::getCurrentCharset() {
+	return "ASCII";
+}
 
 #endif // USE_TRANSLATION
 

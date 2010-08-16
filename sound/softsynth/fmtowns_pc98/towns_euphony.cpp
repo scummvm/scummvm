@@ -180,6 +180,10 @@ void TownsEuphonyDriver::stopParser() {
 	}
 }
 
+void TownsEuphonyDriver::continueParsing() {
+	_suspendParsing = false;
+}
+
 void TownsEuphonyDriver::playSoundEffect(int chan, int note, int velo, const uint8 *data) {
 	_intf->callback(37, chan, note, velo, data);
 }
@@ -204,7 +208,7 @@ void TownsEuphonyDriver::chanVolume(int chan, int vol) {
 	_intf->callback(8, chan, vol);
 }
 
-void TownsEuphonyDriver::cdaSetVolume(int mode, int volLeft, int volRight) {
+void TownsEuphonyDriver::setOutputVolume(int mode, int volLeft, int volRight) {
 	_intf->callback(67, mode, volLeft, volRight);
 }
 
@@ -230,7 +234,7 @@ int TownsEuphonyDriver::chanOrdr(int tableEntry, int val) {
 	return 0;
 }
 
-int TownsEuphonyDriver::chanLevel(int tableEntry, int val) {
+int TownsEuphonyDriver::chanVolumeShift(int tableEntry, int val) {
 	if (tableEntry > 31)
 		return 3;
 	if (val <= 40)
@@ -238,7 +242,7 @@ int TownsEuphonyDriver::chanLevel(int tableEntry, int val) {
 	return 0;
 }
 
-int TownsEuphonyDriver::chanTranspose(int tableEntry, int val) {
+int TownsEuphonyDriver::chanNoteShift(int tableEntry, int val) {
 	if (tableEntry > 31)
 		return 3;
 	if (val <= 40)
@@ -660,8 +664,8 @@ bool TownsEuphonyDriver::evtSetupNote() {
 	uint8 velo = _musicPos[5];
 
 	sendEvent(mode, evt);
-	sendEvent(mode, prepTranspose(note));
-	sendEvent(mode, prepVelo(velo));
+	sendEvent(mode, applyNoteShift(note));
+	sendEvent(mode, applyVolumeShift(velo));
 
 	jumpNextLoop();
 	if (_musicPos[0] == 0xfe || _musicPos[0] == 0xfd)
@@ -700,7 +704,7 @@ bool TownsEuphonyDriver::evtPolyphonicAftertouch() {
 	uint8 mode = _tMode[_musicPos[1]];
 
 	sendEvent(mode, evt);
-	sendEvent(mode, prepTranspose(_musicPos[4]));
+	sendEvent(mode, applyNoteShift(_musicPos[4]));
 	sendEvent(mode, _musicPos[5]);
 
 	return false;
@@ -768,7 +772,7 @@ bool TownsEuphonyDriver::evtModeOrdrChange() {
 	return false;
 }
 
-uint8 TownsEuphonyDriver::prepTranspose(uint8 in) {
+uint8 TownsEuphonyDriver::applyNoteShift(uint8 in) {
 	int out = _tTranspose[_musicPos[1]];
 	if (!out)
 		return in;
@@ -783,7 +787,7 @@ uint8 TownsEuphonyDriver::prepTranspose(uint8 in) {
 	return out & 0xff;
 }
 
-uint8 TownsEuphonyDriver::prepVelo(uint8 in) {
+uint8 TownsEuphonyDriver::applyVolumeShift(uint8 in) {
 	int out = _tLevel[_musicPos[1]];
 	out += (in & 0x7f);
 	out = CLIP(out, 1, 127);

@@ -194,7 +194,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NOSPEECH
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIAMIGA
 		},
 		KYRA1_AMIGA_FLAGS
 	},
@@ -211,7 +211,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NOSPEECH
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIAMIGA
 		},
 		KYRA1_AMIGA_FLAGS
 	},
@@ -1098,6 +1098,23 @@ const KYRAGameDescription adGameDescs[] = {
 			{
 				{ "GENERAL.PAK", 0, "2aaa30e120c08af87196820e9dd4bf73", -1 },
 				{ "CHAPTER7.PAK", 0, "eb92bf7ebb4e890add1233a6b0c810ff", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_FLOPPY_FLAGS
+	},
+
+	{
+		{
+			"lol",
+			"Extracted",
+			{
+				{ "GENERAL.PAK", 0, "0f1fabc1f67b772a30d8e05ece720ac5", -1 },
+				{ "CHAPTER7.PAK", 0, "482308aba1c40ee32449b91b0c63b990", -1 },
 				{ 0, 0, 0, 0 }
 			},
 			Common::EN_ANY,

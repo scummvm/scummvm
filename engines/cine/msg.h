@@ -32,8 +32,6 @@ namespace Cine {
 
 #define NUM_MAX_MESSAGE 255
 
-extern Common::StringArray messageTable;
-
 void loadMsg(char *pMsgName);
 
 } // End of namespace Cine

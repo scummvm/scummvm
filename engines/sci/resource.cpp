@@ -365,8 +365,6 @@ Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *sourc
 	return NULL;
 }
 
-static uint32 resTypeToMacTag(ResourceType type);
-
 void ResourceManager::loadResource(Resource *res) {
 	res->_source->loadResource(this, res);
 }
@@ -382,8 +380,14 @@ void PatchResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	}
 }
 
+static Common::Array<uint32> resTypeToMacTags(ResourceType type);
+
 void MacResourceForkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
-	Common::SeekableReadStream *stream = _macResMan->getResource(resTypeToMacTag(res->getType()), res->getNumber());
+	Common::SeekableReadStream *stream = 0;
+	Common::Array<uint32> tagArray = resTypeToMacTags(res->getType());
+
+	for (uint32 i = 0; i < tagArray.size() && !stream; i++)
+		stream = _macResMan->getResource(tagArray[i], res->getNumber());
 
 	if (!stream)
 		error("Could not get Mac resource fork resource: %s %d", getResourceTypeName(res->getType()), res->getNumber());
@@ -989,7 +993,7 @@ void ResourceManager::unlockResource(Resource *res) {
 	assert(res);
 
 	if (res->_status != kResStatusLocked) {
-		warning("[resMan] Attempt to unlock unlocked resource %s", res->_id.toString().c_str());
+		debugC(kDebugLevelResMan, 2, "[resMan] Attempt to unlock unlocked resource %s", res->_id.toString().c_str());
 		return;
 	}
 
@@ -1588,12 +1592,14 @@ struct {
 	{ MKID_BE('SYN '), kResourceTypeSync }
 };
 
-static uint32 resTypeToMacTag(ResourceType type) {
+static Common::Array<uint32> resTypeToMacTags(ResourceType type) {
+	Common::Array<uint32> tags;
+
 	for (uint32 i = 0; i < ARRAYSIZE(macResTagMap); i++)
 		if (macResTagMap[i].type == type)
-			return macResTagMap[i].tag;
+			tags.push_back(macResTagMap[i].tag);
 
-	return 0;
+	return tags;
 }
 
 void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
@@ -2049,6 +2055,15 @@ void ResourceManager::detectSciVersion() {
 	case kResVersionSci1Late:
 		if (_volVersion == kResVersionSci11) {
 			s_sciVersion = SCI_VERSION_1_1;
+			return;
+		}
+		// FIXME: this is really difficult, lsl1 spanish has map/vol sci1late
+		//  and the only current detection difference is movecounttype which
+		//  is increment here, but ignore for all the regular sci1late games
+		//  the problem is, we dont have access to that detection till later
+		//  so maybe (part of?) that detection should get moved in here
+		if ((g_sci->getGameId() == GID_LSL1) && (g_sci->getLanguage() == Common::ES_ESP)) {
+			s_sciVersion = SCI_VERSION_1_MIDDLE;
 			return;
 		}
 		s_sciVersion = SCI_VERSION_1_LATE;

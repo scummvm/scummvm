@@ -75,7 +75,6 @@ static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t
 		reg_t objp, int argc, StackPtr argp, Selector selector, int exportId, int localCallOffset,
 		reg_t sendp, int origin, SegmentId local_segment);
 
-
 /**
  * Adds one varselector access to the execution stack.
  * This function is called from send_selector only.
@@ -93,8 +92,6 @@ static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack,
 		int origin);
 
 
-
-
 // validation functionality
 
 static reg_t &validate_property(Object *obj, int index) {
@@ -103,14 +100,10 @@ static reg_t &validate_property(Object *obj, int index) {
 	// may modify the value of the returned reg_t.
 	static reg_t dummyReg = NULL_REG;
 
-	// FIXME/TODO: Where does this occur? Returning a dummy reg here could lead
-	// to all sorts of issues! Turned it into an error for now...
 	// If this occurs, it means there's probably something wrong with the garbage
 	// collector, so don't hide it with fake return values
-	if (!obj) {
+	if (!obj)
 		error("validate_property: Sending to disposed object");
-		//return dummyReg;
-	}
 
 	if (index < 0 || (uint)index >= obj->getVarCount()) {
 		// This is same way sierra does it and there are some games, that contain such scripts like
@@ -136,12 +129,7 @@ static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
 		// The results of this are likely unpredictable... It most likely means that a kernel function is returning something wrong.
 		// If such an error occurs, we usually need to find the last kernel function called and check its return value.
-		if (g_sci->getGameId() == GID_QFG2 && g_sci->getEngineState()->currentRoomNumber() == 200) {
-			// WORKAROUND: This happens in QFG2, room 200, when talking to the astrologer (bug #3039879) - script bug.
-			// Returning 0 in this case.
-		} else {
-			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]. Address: %04x:%04x", reg.segment, PRINT_REG(reg));
-		}
+		error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]. Address: %04x:%04x", reg.segment, PRINT_REG(reg));
 		return 0;
 	}
 
@@ -171,11 +159,6 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 				error("%s. [VM] Access would be outside even of the stack (%d); access denied", txt.c_str(), total_offset);
 				return false;
 			} else {
-				// WORKAROUND: Mixed-Up Mother Goose tries to use an invalid parameter in Event::new().
-				// Just skip around it here so we don't error out in validate_arithmetic.
-				if (g_sci->getGameId() == GID_MOTHERGOOSE && type == VAR_PARAM && index == 1)
-					return false;
-
 				debugC(2, kDebugLevelVM, "%s", txt.c_str());
 				debugC(2, kDebugLevelVM, "[VM] Access within stack boundaries; access granted.");
 				return true;
@@ -434,7 +417,9 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		printSendActions = g_sci->checkSelectorBreakpoint(send_obj, selector);
 
 #ifdef VM_DEBUG_SEND
-		printf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, g_sci->getKernel()->getSelectorName(selector).c_str());
+		printf("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj), 
+			s->_segMan->getObjectName(send_obj), selector, 
+			g_sci->getKernel()->getSelectorName(selector).c_str());
 #endif // VM_DEBUG_SEND
 
 		ObjVarRef varp;
@@ -462,7 +447,9 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			if (printSendActions && argc) {
 				reg_t oldReg = *varp.getPointer(s->_segMan);
 				reg_t newReg = argp[1];
-				debug("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
+				warning("[write to selector (%s:%s): change %04x:%04x to %04x:%04x]\n", 
+					s->_segMan->getObjectName(send_obj), g_sci->getKernel()->getSelectorName(selector).c_str(), 
+					PRINT_REG(oldReg), PRINT_REG(newReg));
 				printSendActions = false;
 			}
 
@@ -1144,7 +1131,7 @@ void run_vm(EngineState *s) {
 			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
 				s->r_acc = make_reg(0, value1 & value2);
 			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeAndWorkarounds, r_temp, s->r_acc);
 			break;
 		}
 
@@ -1265,7 +1252,7 @@ void run_vm(EngineState *s) {
 				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
 					s->r_acc = make_reg(0, compare1 <= compare2);
 				else
-					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+					s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeLeWorkarounds, r_temp, s->r_acc);
 			}
 			break;
 
@@ -1809,24 +1796,32 @@ void run_vm(EngineState *s) {
 		case op_lagi: // 0x48 (72)
 		case op_lali: // 0x49 (73)
 		case op_lati: // 0x4a (74)
-		case op_lapi: // 0x4b (75)
+		case op_lapi: { // 0x4b (75)
 			// Load global, local, temp or param variable into the accumulator,
 			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
+			int16 value;
+			if (!validate_signedInteger(s->r_acc, value))
+				value = arithmetic_lookForWorkaround(opcode, opcodeLaiWorkarounds, s->r_acc, NULL_REG).offset;
+			var_number = opparams[0] + value;
 			s->r_acc = READ_VAR(var_type, var_number);
 			break;
+		}
 
 		case op_lsgi: // 0x4c (76)
 		case op_lsli: // 0x4d (77)
 		case op_lsti: // 0x4e (78)
-		case op_lspi: // 0x4f (79)
+		case op_lspi: { // 0x4f (79)
 			// Load global, local, temp or param variable into the stack,
 			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
+			int16 value;
+			if (!validate_signedInteger(s->r_acc, value))
+				value = arithmetic_lookForWorkaround(opcode, opcodeLsiWorkarounds, s->r_acc, NULL_REG).offset;
+			var_number = opparams[0] + value;
 			PUSH32(READ_VAR(var_type, var_number));
 			break;
+		}
 
 		case op_sag: // 0x50 (80)
 		case op_sal: // 0x51 (81)

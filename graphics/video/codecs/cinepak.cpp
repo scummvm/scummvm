@@ -73,14 +73,12 @@ Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *stream) {
 
 	debug (4, "Cinepak Frame: Width = %d, Height = %d, Strip Count = %d", _curFrame.width, _curFrame.height, _curFrame.stripCount);
 
-#if 0
 	// Borrowed from FFMPEG. This should cut out the extra data Cinepak for Sega has (which is useless).
 	// The theory behind this is that this is here to confuse standard Cinepak decoders. But, we won't let that happen! ;)
 	if (_curFrame.length != (uint32)stream->size()) {
 		if (stream->readUint16BE() == 0xFE00)
 			stream->readUint32BE();
 	}
-#endif
 
 	if (!_curFrame.surface) {
 		_curFrame.surface = new Surface();
@@ -104,8 +102,6 @@ Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *stream) {
 		_curFrame.strips[i].rect.left = 0; stream->readUint16BE(); // Ignore, substitute with our own
 		_curFrame.strips[i].rect.bottom = _y + stream->readUint16BE();
 		_curFrame.strips[i].rect.right = _curFrame.width; stream->readUint16BE(); // Ignore, substitute with our own
-
-		//printf ("Left = %d, Top = %d, Right = %d, Bottom = %d\n", _curFrame.strips[i].rect.left, _curFrame.strips[i].rect.top, _curFrame.strips[i].rect.right, _curFrame.strips[i].rect.bottom);
 
 		// Sanity check. Because Cinepak is based on 4x4 blocks, the width and height of each strip needs to be divisible by 4.
 		assert(!(_curFrame.strips[i].rect.width() % 4) && !(_curFrame.strips[i].rect.height() % 4));
@@ -184,10 +180,9 @@ void CinepakDecoder::loadCodebook(Common::SeekableReadStream *stream, uint16 str
 				codebook[i].u  = stream->readByte() + 128;
 				codebook[i].v  = stream->readByte() + 128;
 			} else {
-				/* this codebook type indicates either greyscale or
-				 * palettized video; if palettized, U & V components will
-				 * not be used so it is safe to set them to 128 for the
-				 * benefit of greyscale rendering in YUV420P */
+				// This codebook type indicates either greyscale or
+				// palettized video. We don't handle palettized video
+				// currently.
 				codebook[i].u  = 128;
 				codebook[i].v  = 128;
 			}

@@ -445,7 +445,12 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	}
 	if (_signalSet) {
 		_signalSet = false;
-		_pSnd->signal = _signalToSet;
+		if (!_pSnd->signal) {
+			_pSnd->signal = _signalToSet;
+		} else {
+			// signal already set and waiting for getting to scripts, queue new one
+			_pSnd->signalQueue.push_back(_signalToSet);
+		}
 		debugC(4, kDebugLevelSound, "signal %04x", _signalToSet);
 	}
 
@@ -608,7 +613,12 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					jumpToTick(_loopTick);
 				} else {
 					_pSnd->status = kSoundStopped;
-					_pSnd->signal = SIGNAL_OFFSET;
+					if (!_pSnd->signal) {
+						_pSnd->signal = SIGNAL_OFFSET;
+					} else {
+						// signal already set and waiting for getting to scripts, queue new one
+						_pSnd->signalQueue.push_back(SIGNAL_OFFSET);
+					}
 
 					debugC(4, kDebugLevelSound, "signal EOT");
 				}
