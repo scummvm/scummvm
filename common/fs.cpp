@@ -314,7 +314,11 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 	NodeCache::iterator it = _fileCache.begin();
 	for ( ; it != _fileCache.end(); ++it) {
 		if (it->_key.matchString(lowercasePattern, false, true)) {
-			list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
+			if (_flat)
+				list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
+			else
+				list.push_back(ArchiveMemberPtr(new FSNode(it->_key)));
+
 			matches++;
 		}
 	}
@@ -330,7 +334,11 @@ int FSDirectory::listMembers(ArchiveMemberList &list) {
 
 	int files = 0;
 	for (NodeCache::iterator it = _fileCache.begin(); it != _fileCache.end(); ++it) {
-		list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
+		if (_flat)
+			list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
+		else
+			list.push_back(ArchiveMemberPtr(new FSNode(it->_key)));
+
 		++files;
 	}
 
