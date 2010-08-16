@@ -138,6 +138,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LAURABOW2,      -1,    21,  0,      "dropCluesCode", "doit",           -1,    1, { WORKAROUND_FAKE, 0x7fff } }, // when asking some questions (e.g. the reporter about the burglary, or the policeman about Ziggy). Must be big, as the game scripts perform lt on it and start deleting journal entries - bugs #3035068, #3036274
 	{ GID_LAURABOW2,      -1,    90,  1,        "MuseumActor", "init",           -1,    6, { WORKAROUND_FAKE,   0 } }, // Random actors in museum (bug #3041257)
 	{ GID_LAURABOW2,     240,   240,  0,     "sSteveAnimates", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // Steve Dorian's idle animation at the docks - bug #3036291
+	{ GID_LONGBOW,        -1,     0,  0,            "Longbow", "restart",        -1,    0, { WORKAROUND_FAKE,   0 } }, // When canceling a restart game - bug #3046200
 	{ GID_LONGBOW,        -1,   213,  0,              "clear", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // When giving an answer using the druid hand sign code in any room
 	{ GID_LONGBOW,        -1,   213,  0,             "letter", "handleEvent",  0xa8,    1, { WORKAROUND_FAKE,   0 } }, // When using the druid hand sign code in any room - bug #3036601
 	{ GID_LSL1,          250,   250,  0,           "increase", "handleEvent",    -1,    2, { WORKAROUND_FAKE,   0 } }, // casino, playing game, increasing bet
