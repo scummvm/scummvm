@@ -6,7 +6,7 @@ PS2_EXTRA_INCS = /zlib/include /libmad/ee/include /SjPcm/ee/src /tremor
 PS2_EXTRA_LIBS = /zlib/lib /libmad/ee/lib /SjPcm/ee/lib /tremor/tremor
 
 # Set to 1 to enable, 0 to disable dynamic modules
-DYNAMIC_MODULES = 0
+DYNAMIC_MODULES = 1
 # Set to 1 to enable, 0 to disable more detailed printing of gcc commands
 VERBOSE_BUILD=0
 
@@ -78,7 +78,7 @@ DEPDIR = .deps
 TARGET = elf/scummvm.elf
 
 DEFINES += -DUSE_VORBIS -DUSE_TREMOR -DUSE_MAD -DUSE_ZLIB -DFORCE_RTL -DDISABLE_SAVEGAME_SORTING -D_EE -D__PLAYSTATION2__ -G2 -O2 -Wall -Wno-multichar -fno-rtti -fno-exceptions -DNO_ADAPTOR
-DEFINES += -DELF_LOADER_TARGET -DMIPS_TARGET#-DONE_PLUGIN_AT_A_TIME
+DEFINES += -DELF_LOADER_TARGET -DMIPS_TARGET -DONE_PLUGIN_AT_A_TIME
 
 INCLUDES  = $(addprefix -I$(PS2_EXTRA),$(PS2_EXTRA_INCS)) 
 INCLUDES += -I $(PS2SDK)/ee/include -I $(PS2SDK)/common/include -I ./common -I . -I $(srcdir) -I $(srcdir)/engines
