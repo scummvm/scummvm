@@ -322,6 +322,19 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 			matches++;
 		}
 	}
+
+	// If non-flat directory was created, include directories in the match too
+	if (!_flat) {
+		it = _subDirCache.begin();
+		for ( ; it != _subDirCache.end(); ++it) {
+			if (it->_key.matchString(lowercasePattern, false, true)) {
+				list.push_back(ArchiveMemberPtr(new FSNode(it->_key + "/")));
+
+				matches++;
+			}
+		}
+	}
+
 	return matches;
 }
 
@@ -340,6 +353,15 @@ int FSDirectory::listMembers(ArchiveMemberList &list) {
 			list.push_back(ArchiveMemberPtr(new FSNode(it->_key)));
 
 		++files;
+	}
+
+	// If non-flat directory was created, include directories in the list too
+	if (!_flat) {
+		for (NodeCache::iterator it = _subDirCache.begin(); it != _subDirCache.end(); ++it) {
+			list.push_back(ArchiveMemberPtr(new FSNode(it->_key + "/")));
+
+			++files;
+		}
 	}
 
 	return files;
