@@ -113,17 +113,18 @@ bool BS_ScummVMPackageManager::LoadPackage(const Common::String &fileName, const
 
 bool BS_ScummVMPackageManager::LoadDirectoryAsPackage(const Common::String &directoryName, const Common::String &mountPosition) {
 	Common::FSNode directory(directoryName);
-	Common::Archive *folderArchive = new Common::FSDirectory(directory);
+	Common::Archive *folderArchive = new Common::FSDirectory(directory, 6);
 	if (!directory.exists() || (folderArchive == NULL)) {
 		BS_LOG_ERRORLN("Unable to mount directory \"%s\" to \"%s\".", directoryName.c_str(), mountPosition.c_str());
 		return false;
 	} else {
 		BS_LOGLN("Directory '%s' mounted as '%s'.", directoryName.c_str(), mountPosition.c_str());
-		_archiveList.push_front(new ArchiveEntry(folderArchive, mountPosition));
 
 		Common::ArchiveMemberList files;
 		folderArchive->listMembers(files);
 		debug(0, "Capacity %d", files.size());
+
+		_archiveList.push_front(new ArchiveEntry(folderArchive, mountPosition));
 
 		return true;
 	}

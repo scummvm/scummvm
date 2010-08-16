@@ -150,7 +150,7 @@ bool BS_LuaScriptEngine::ExecuteFile(const Common::String &FileName) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(m_State);
 #endif
-	debug(0, "ExecuteFile(%s)", FileName.c_str());
+	debug(2, "ExecuteFile(%s)", FileName.c_str());
 
 	// Get a pointer to the package manager
 	BS_PackageManager *pPackage = static_cast<BS_PackageManager *>(BS_Kernel::GetInstance()->GetService("package"));
@@ -221,8 +221,6 @@ bool BS_LuaScriptEngine::RegisterStandardLibs() {
 // -----------------------------------------------------------------------------
 
 bool BS_LuaScriptEngine::ExecuteBuffer(const char *Data, unsigned int Size, const Common::String &Name) const {
-	debug(0, "ExecuteBuffer()");
-
 	// Compile buffer
 	if (luaL_loadbuffer(m_State, Data, Size, Name.c_str()) != 0) {
 		BS_LOG_ERRORLN("Couldn't compile \"%s\":\n%s", Name.c_str(), lua_tostring(m_State, -1));
