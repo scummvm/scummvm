@@ -26,10 +26,21 @@
 #if defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 
 #include "backends/plugins/elf-provider.h"
+#include "backends/plugins/mips-loader.h"
 
 class PS2PluginProvider : public ELFPluginProvider {
-	Plugin* createPlugin(const Common::FSNode &node) const;
+	class PS2Plugin : public ELFPlugin {
+	public:
+		PS2Plugin(const Common::String &filename) : ELFPlugin(filename) {}
+
+		DLObject *makeDLObject() { return new MIPSDLObject(); }
+	};
+
+public:
+	Plugin* PS2PluginProvider::createPlugin(const Common::FSNode &node) const {
+		return new PS2Plugin(node.getPath());
+	}
 };
 
-#endif // defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
+#endif // defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 

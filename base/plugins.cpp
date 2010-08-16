@@ -329,7 +329,7 @@ void PluginManager::loadFirstPlugin() { //TODO: rename? It's not quite clear tha
 	//this loop is for loading all non-engine plugins and the first engine plugin.
 	while (true) {
 		assert(tryLoadPlugin(*_currentPlugin));
-		if ((*_currentPlugin)->getType() == PLUGIN_TYPE_ENGINE) {
+		if ((*_currentPlugin)->getType() == PLUGIN_TYPE_ENGINE) { //TODO: This assumes all non-engine plugins will precede the first engine plugin!
 			break;
 		}
 		_nonEnginePlugs++;

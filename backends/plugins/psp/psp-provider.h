@@ -29,9 +29,21 @@
 #define BACKENDS_PLUGINS_PSP_PSP_PROVIDER_H
 
 #include "backends/plugins/elf-provider.h"
+#include "backends/plugins/mips-loader.h"
 
 class PSPPluginProvider : public ELFPluginProvider {
-	Plugin* createPlugin(const Common::FSNode &node) const;
+	class PSPPlugin : public ELFPlugin {
+	public:
+		PSPPlugin(const Common::String &filename) : ELFPlugin(filename) {}
+
+		DLObject *makeDLObject() { return new MIPSDLObject(); }
+	};
+
+public:
+	Plugin* PSPPluginProvider::createPlugin(const Common::FSNode &node) const {
+		return new PSPPlugin(node.getPath());
+	}
+}
 };
 
 #endif /* BACKENDS_PLUGINS_PSP_PSP_PROVIDER_H */

@@ -26,7 +26,11 @@
 #ifndef BACKENDS_ELF_H
 #define BACKENDS_ELF_H
 
-/* ELF stuff */
+/**
+ *  ELF stuff:
+ *  The contents of this file were gathered mainly from the SYSTEM V APPLICATION BINARY INTERFACE.
+ *  Processor-specific things were garnered from processor-specific supplements to the abi.
+ */
 
 typedef unsigned short Elf32_Half, Elf32_Section;
 typedef unsigned int Elf32_Word, Elf32_Addr, Elf32_Off;

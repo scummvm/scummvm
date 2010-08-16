@@ -26,9 +26,20 @@
 #if defined(DYNAMIC_MODULES) && defined(__DS__)
 
 #include "backends/plugins/elf-provider.h"
+#include "backends/plugins/arm-loader.h"
 
 class DSPluginProvider : public ELFPluginProvider {
-	Plugin* createPlugin(const Common::FSNode &node) const;
+	class DSPlugin : public ELFPlugin {
+	public:
+		DSPlugin(const Common::String &filename) : ELFPlugin(filename) {}
+
+		DLObject *makeDLObject() { return new ARMDLObject(); }
+	};
+
+public:
+	Plugin* createPlugin(const Common::FSNode &node) const {
+		return new DSPlugin(node.getPath());
+	}
 };
 
-#endif // defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
+#endif // defined(DYNAMIC_MODULES) && defined(__DS__)
