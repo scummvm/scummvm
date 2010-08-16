@@ -601,7 +601,7 @@ TestExitStatus GFXtests::palettizedCursors() {
 
 TestExitStatus GFXtests::mouseMovements() {
 	Testsuite::clearScreen();
-	// Make mouse visible
+	// Ensure that the cursor is visible
 	CursorMan.showMouse(true);
 
 	Common::String info = "Testing Automated Mouse movements.\n"
@@ -615,6 +615,8 @@ TestExitStatus GFXtests::mouseMovements() {
 
 	// Draw Rectangle
 	Graphics::Surface *screen = g_system->lockScreen();
+	// Ensure that 2 represents red in current palette
+	GFXTestSuite::setCustomColor(255, 0, 0);
 	screen->fillRect(Common::Rect::center(106, 106, 14, 14), 2);
 	g_system->unlockScreen();
 
@@ -736,6 +738,12 @@ TestExitStatus GFXtests::scaledCursors() {
 		"The expected cursor size is drawn as a rectangle.\n The cursor should approximately match that rectangle.\n"
 		"This may take time, You may skip the later scalers and just examine the first three i.e 1x, 2x and 3x";
 
+	bool isAspectRatioCorrected = g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection);
+
+	if (isAspectRatioCorrected) {
+		info += "\nDisabling Aspect ratio correction, for letting cusors match exactly, will be restored after this test.";
+	}
+	
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Scaled Cursors\n");
 		return kTestSkipped;
@@ -746,7 +754,6 @@ TestExitStatus GFXtests::scaledCursors() {
 		maxLimit = 3;
 	}
 
-	bool isAspectRatioCorrected = g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection);
 
 	if (isAspectRatioCorrected) {	
 		g_system->beginGFXTransaction();

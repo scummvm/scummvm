@@ -1,0 +1,36 @@
+
+Testbed is a framework to test backend code.
+
+It implements a game-engine which invokes the backend code using the OSystem Interface, verifies
+the behavior by interacting with the user, and then produce results.
+
+Each distinct interface defined in the OSystem API is referred as a Subsystem, namely:
+* Graphics
+* Audio
+* Midi
+* FileSyatem
+* Savegames
+* Events
+* Timer/Mutexes
+
+There are testsuites for each one of these subsystems.
+
+
+Adding a New Test
+-----------------
+If you are willing to add a test relating to one of these subsystems say 'Foo', then :
+1). Modify the file 'foo.h' to include the declaration of your test-invoking function.
+2). Define that function in 'foo.cpp' (similar to other tests).
+3). Add the test to the subsystem testsuite by using addTest() method in the constructor.
+
+
+Adding a New Testsuite
+-----------------------
+If you are willing to add a new Testsuite, create a copy of template.h. call it as say 'your_suite.h'.
+Your Testsuite will be a subclass of Testsuite class deined in 'testsuite.h'.
+Now write test-invoking functions for every test you want to include.
+Add those tests to your_suite using the call to : 'addTest(name, InvokingFunction)'.
+
+Implement the required functions in 'your_test.cpp'
+Add that file to module.mk. Re-Compile and run.
+
