@@ -30,11 +30,6 @@
 
 #include <stdarg.h>
 
-#if !defined(__SYMBIAN32__)
-#include <new>
-#endif
-
-
 namespace Common {
 
 MemoryPool *g_refCountPool = 0; // FIXME: This is never freed right now
