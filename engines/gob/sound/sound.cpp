@@ -613,7 +613,6 @@ void Sound::cdPlay(const char *trackName) {
 
 	debugC(1, kDebugSound, "CDROM: Playing track \"%s\"", trackName);
 	if ((_vm->getGameType() == kGameTypeFascination) && !scumm_stricmp(trackName, "boscle")) {
-		warning("Using bosscle instead of boscle");
 		_cdrom->startTrack("bosscle");
 	} else
 		_cdrom->startTrack(trackName);
