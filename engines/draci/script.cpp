@@ -967,7 +967,7 @@ int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
 			func = _functionList[value-1];
 
 			// If not yet implemented
-			if (func._handler == NULL) {
+			if (func._handler == 0) {
 				stk.pop();
 
 				// Pushing dummy value
@@ -1170,7 +1170,7 @@ void Script::run(const GPL2Program &program, uint16 offset) {
 
 		GPLHandler handler = cmd->_handler;
 
-		if (handler != NULL) {
+		if (handler != 0) {
 			// Call the handler for the current command
 			(this->*(cmd->_handler))(params);
 		}
