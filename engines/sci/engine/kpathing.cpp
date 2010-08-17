@@ -1106,6 +1106,12 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 		}
 	}
 
+	// Check if the target polygon is still valid. It may have been released
+	// in the meantime (e.g. in LSL6, room 700, when using the elevator).
+	// Refer to bug #3034501.
+	if (segMan->getSegmentType(points.segment) != SEG_TYPE_DYNMEM)
+		return NULL;
+
 	for (i = skip; i < size; i++) {
 		Vertex *vertex = new Vertex(read_point(segMan, points, i));
 		poly->vertices.insertHead(vertex);
