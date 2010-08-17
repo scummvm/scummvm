@@ -659,13 +659,14 @@ void Scheduler::swapImages(int objNumb1, int objNumb2) {
 // the assumption for now that the first obj is always the HERO) to the object
 // number of the swapped image
 	seqList_t tmpSeqList[MAX_SEQUENCES];
+	int seqListSize = sizeof(seqList_t) * MAX_SEQUENCES;
 
 	debugC(1, kDebugSchedule, "swapImages(%d, %d)", objNumb1, objNumb2);
 
 	_vm.file().saveSeq(&_vm._objects[objNumb1]);
-	memcpy(tmpSeqList, _vm._objects[objNumb1].seqList, sizeof(seqList_t));
-	memcpy(_vm._objects[objNumb1].seqList, _vm._objects[objNumb2].seqList, sizeof(seqList_t));
-	memcpy(_vm._objects[objNumb2].seqList, tmpSeqList, sizeof(seqList_t));
+	memcpy(tmpSeqList, _vm._objects[objNumb1].seqList, seqListSize);
+	memcpy(_vm._objects[objNumb1].seqList, _vm._objects[objNumb2].seqList, seqListSize);
+	memcpy(_vm._objects[objNumb2].seqList, tmpSeqList, seqListSize);
 	_vm.file().restoreSeq(&_vm._objects[objNumb1]);
 	_vm._objects[objNumb2].currImagePtr = _vm._objects[objNumb2].seqList[0].seqPtr;
 	_vm._heroImage = (_vm._heroImage == HERO) ? objNumb2 : HERO;
