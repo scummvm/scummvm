@@ -1109,7 +1109,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	// Check if the target polygon is still valid. It may have been released
 	// in the meantime (e.g. in LSL6, room 700, when using the elevator).
 	// Refer to bug #3034501.
-	if (segMan->getSegmentType(points.segment) != SEG_TYPE_DYNMEM)
+	if (segMan->getSegmentType(points.segment) == SEG_TYPE_INVALID)
 		return NULL;
 
 	for (i = skip; i < size; i++) {
