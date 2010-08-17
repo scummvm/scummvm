@@ -129,8 +129,6 @@ bool Inter_Fascination::oFascin_copySprite(OpFuncParams &params) {
 }
 
 void Inter_Fascination::oFascin_playTirb(OpGobParams &params) {
-	warning("funcPlayImd with parameter : 'tirb.imd'");
-
 	VideoPlayer::Properties vidProps;
 
 	vidProps.type   = VideoPlayer::kVideoTypePreIMD;
@@ -149,8 +147,6 @@ void Inter_Fascination::oFascin_playTirb(OpGobParams &params) {
 }
 
 void Inter_Fascination::oFascin_playTira(OpGobParams &params) {
-	warning("funcPlayImd with parameter : 'tira.imd'");
-
 	VideoPlayer::Properties vidProps;
 
 	vidProps.type   = VideoPlayer::kVideoTypePreIMD;

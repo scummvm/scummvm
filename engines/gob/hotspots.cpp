@@ -1232,7 +1232,6 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		height  = _vm->_game->_script->readUint16();
 	}
 	if (_vm->_draw->_renderFlags & 64) {
-		warning("_renderFlags check added for Fascination");
 		_vm->_draw->_invalidatedTops[0] = 0;
 		_vm->_draw->_invalidatedLefts[0] = 0;
 		_vm->_draw->_invalidatedRights[0] = 319;
