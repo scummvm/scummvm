@@ -351,6 +351,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	      {"resource.006", 0, "8c767b3939add63d11274065e46aad04", 713158},
 	      AD_LISTEND}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Conquests of the Longbow DOS 1.0 EGA (4 x 5.25" disks)
+	// Provided by ssburnout in bug report #3046802
+	{"longbow", "EGA", {
+	      {"resource.map", 0, "0517ca368ec844df0cb21a05020fae01", 6021},
+	      {"resource.000", 0, "36e8fda5d0b8c49e587c8a9617959f72", 934643},
+	      {"resource.001", 0, "76c729e563809170e6cc8b2f3f6cf0a4", 1196133},
+	      {"resource.002", 0, "8c767b3939add63d11274065e46aad04", 1152478},
+	      {"resource.003", 0, "7025b87e735b1df3f0e9488a621f4333", 1171439},
+	      AD_LISTEND}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Conquests of the Longbow - English DOS Non-Interactive Demo
 	// SCI interpreter version 1.000.510
 	{"longbow", "Demo", {
