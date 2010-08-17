@@ -1717,6 +1717,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::IT_ITA, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Larry 5 1.0 EGA DOS (8 x 3.5" disks)
+	// Provided by burnout in bug report #3046806
+	{"lsl5", "", {
+		{"resource.map", 0, "1370ae356fdda2e7f9ea56dda3ff9a57", 6597},
+		{"resource.000", 0, "f2537473213d70e7f4fc82e988ab90ca", 248416},
+		{"resource.001", 0, "bb642b0b0f879aca98addd62d901387e", 445841},
+		{"resource.002", 0, "c2cb2dec12e26f6243bc1b78e4e84940", 617030},
+		{"resource.003", 0, "f8e876302a3aba5bcaab5c51db6b6532", 682911},
+		{"resource.004", 0, "16f4d8fb1b526125edaca4fc6cbb7530", 530230},
+		{"resource.005", 0, "6043b2cc23d663e6a01b25bd0e4de55e", 576442},
+		{"resource.006", 0, "f6046a8445422f17d40b1b10ab21ebf3", 568551},
+		{"resource.007", 0, "640ee65595d40372ef95462f2c1ae28a", 593429},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Larry 6 - English DOS (from spookypeanut)
 	// SCI interpreter version 1.001.113
 	{"lsl6", "", {
