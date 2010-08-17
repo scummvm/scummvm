@@ -261,13 +261,7 @@ struct PathfindingState {
 	int findNearPoint(const Common::Point &p, Polygon *polygon, Common::Point *ret);
 };
 
-
-static Common::Point read_point(SegManager *segMan, reg_t list, int offset) {
-	SegmentRef list_r = segMan->dereference(list);
-	if (!list_r.isValid() || list_r.skipByte) {
-		// If this happens, then the code below will probably go OOB and crash
-		error("read_point(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(list));
-	}
+static Common::Point readPoint(SegmentRef list_r, int offset) {
 	Common::Point point;
 
 	if (list_r.isRaw) {
@@ -350,10 +344,16 @@ static void draw_polygon(EngineState *s, reg_t polygon, int width, int height) {
 	Common::Point first, prev;
 	int i;
 
-	prev = first = read_point(segMan, points, 0);
+	SegmentRef pointList = segMan->dereference(points);
+	if (!pointList.isValid() || pointList.skipByte) {
+		warning("draw_polygon: Polygon data pointer is invalid, skipping polygon");
+		return;
+	}
+
+	prev = first = readPoint(pointList, 0);
 
 	for (i = 1; i < size; i++) {
-		Common::Point point = read_point(segMan, points, i);
+		Common::Point point = readPoint(pointList, i);
 		draw_line(s, prev, point, type, width, height);
 		prev = point;
 	}
@@ -401,12 +401,18 @@ static void print_polygon(SegManager *segMan, reg_t polygon) {
 
 	debugN(-1, "%i:", type);
 
+	SegmentRef pointList = segMan->dereference(points);
+	if (!pointList.isValid() || pointList.skipByte) {
+		warning("print_polygon: Polygon data pointer is invalid, skipping polygon");
+		return;
+	}
+
 	for (i = 0; i < size; i++) {
-		point = read_point(segMan, points, i);
+		point = readPoint(pointList, i);
 		debugN(-1, " (%i, %i)", point.x, point.y);
 	}
 
-	point = read_point(segMan, points, 0);
+	point = readPoint(pointList, 0);
 	debug(" (%i, %i);", point.x, point.y);
 }
 
@@ -1094,26 +1100,37 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 
 	Polygon *poly = new Polygon(readSelectorValue(segMan, polygon, SELECTOR(type)));
 
+	SegmentRef pointList = segMan->dereference(points);
+	// Check if the target polygon is still valid. It may have been released
+	// in the meantime (e.g. in LSL6, room 700, when using the elevator).
+	// Refer to bug #3034501.
+	if (!pointList.isValid() || pointList.skipByte) {
+		warning("convert_polygon: Polygon data pointer is invalid, skipping polygon");
+		return NULL;
+	}
+
+	// Make sure that we have enough points
+	if (pointList.maxSize < size * POLY_POINT_SIZE) {
+		warning("convert_polygon: Not enough memory allocated for polygon points. "
+				"Expected %d, got %d. Skipping polygon", 
+				size * POLY_POINT_SIZE, pointList.maxSize);
+		return NULL;
+	}
+
 	int skip = 0;
 
 	// WORKAROUND: broken polygon in lsl1sci, room 350, after opening elevator
 	// Polygon has 17 points but size is set to 19
 	if ((size == 19) && g_sci->getGameId() == GID_LSL1) {
 		if ((s->currentRoomNumber() == 350)
-		&& (read_point(segMan, points, 18) == Common::Point(108, 137))) {
+		&& (readPoint(pointList, 18) == Common::Point(108, 137))) {
 			debug(1, "Applying fix for broken polygon in lsl1sci, room 350");
 			size = 17;
 		}
 	}
 
-	// Check if the target polygon is still valid. It may have been released
-	// in the meantime (e.g. in LSL6, room 700, when using the elevator).
-	// Refer to bug #3034501.
-	if (segMan->getSegmentType(points.segment) == SEG_TYPE_INVALID)
-		return NULL;
-
 	for (i = skip; i < size; i++) {
-		Vertex *vertex = new Vertex(read_point(segMan, points, i));
+		Vertex *vertex = new Vertex(readPoint(pointList, i));
 		poly->vertices.insertHead(vertex);
 	}
 
@@ -1408,8 +1425,15 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 
 	if (DebugMan.isDebugChannelEnabled(kDebugLevelAvoidPath)) {
 		debug("\nReturning path:");
+
+		SegmentRef outputList = s->_segMan->dereference(output);
+		if (!outputList.isValid() || outputList.skipByte) {
+			warning("output_path: Polygon data pointer is invalid, skipping polygon");
+			return output;
+		}
+
 		for (int i = 0; i < offset; i++) {
-			Common::Point pt = read_point(s->_segMan, output, i);
+			Common::Point pt = readPoint(outputList, i);
 			debugN(-1, " (%i, %i)", pt.x, pt.y);
 		}
 		debug(";\n");
