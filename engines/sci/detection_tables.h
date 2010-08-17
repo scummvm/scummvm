@@ -1630,6 +1630,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO_NOSPEECH	},
 
+	// Larry 3 1.050 Fr/En (9 x 5.25" disks)
+	// Provided by ssburnout in bug report #3046779
+	{"lsl3", "", {
+		{"resource.map", 0, "527277cee7b31dd603229443b48e70c4", 8910},
+		{"resource.001", 0, "65f1bdaa20f6d0470e9d969f22473873", 162132},
+		{"resource.002", 0, "65f1bdaa20f6d0470e9d969f22473873", 309705},
+		{"resource.003", 0, "65f1bdaa20f6d0470e9d969f22473873", 346507},
+		{"resource.004", 0, "65f1bdaa20f6d0470e9d969f22473873", 331947},
+		{"resource.005", 0, "65f1bdaa20f6d0470e9d969f22473873", 347136},
+		{"resource.006", 0, "65f1bdaa20f6d0470e9d969f22473873", 325292},
+		{"resource.007", 0, "65f1bdaa20f6d0470e9d969f22473873", 308982},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO_NOSPEECH	},
+
 	// Larry 5 - English Amiga
 	// Executable scanning reports "1.004.023"
 	// SCI interpreter version 1.000.784
