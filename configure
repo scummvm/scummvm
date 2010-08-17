@@ -136,6 +136,7 @@ _build_hq_scalers=yes
 _indeo3=auto
 _enable_prof=no
 _unix=no
+_global_constructors=no
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -1264,6 +1265,17 @@ if test "$cxx_verc_fail" = yes ; then
 	exit 1
 fi
 
+echocheck "whether -Wglobal-constructors work"
+cat > $TMPC << EOF
+int main() { return 0; }
+EOF
+cc_check -Wglobal-constructors && _global_constructors=yes
+
+if test "$_global_constructors" = yes; then
+	CXXFLAGS="$CXXFLAGS -Wglobal-constructors"
+fi
+echo $_global_constructors
+
 #
 # Check for endianness
 #
@@ -1386,7 +1398,6 @@ case $_host_os in
 		;;
 	darwin*)
 		DEFINES="$DEFINES -DMACOSX"
-		CXXFLAGS="$CXXFLAGS -Wglobal-constructors"
 		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		add_line_to_config_mk 'MACOSX = 1'
 		_unix=yes
