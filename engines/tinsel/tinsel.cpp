@@ -283,7 +283,7 @@ static void SingleLeftProcess(CORO_PARAM, const void *param) {
 	} while (DwGetCurrentTime() < _ctx->endTicks);
 
 	if (GetProvNotProcessed()) {
-		Common::Point clickPos = *(Common::Point *)param;
+		const Common::Point clickPos = *(const Common::Point *)param;
 		PlayerEvent(PLR_WALKTO, clickPos);
 	}
 
