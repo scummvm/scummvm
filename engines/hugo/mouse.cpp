@@ -131,11 +131,12 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 			_vm.useObject(objId);                   // Pick up or use object
 			break;
 		default:                                    // Walk to view point if possible
-			if (!_vm.route().startRoute(GO_GET, objId, obj->viewx, obj->viewy))
+			if (!_vm.route().startRoute(GO_GET, objId, obj->viewx, obj->viewy)) {
 				if (_vm._hero->cycling == INVISIBLE)    // If invisible do
 					_vm.useObject(objId);           // immediate use
 				else
 					Utils::Box(BOX_ANY, _vm._textMouse[kMsNoWayText]);      // Can't get there
+			}
 			break;
 		}
 	}
@@ -213,11 +214,12 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 				_vm.lookObject(obj);
 				break;
 			default:                                // Walk to view point if possible
-				if (!_vm.route().startRoute(GO_LOOK, objId, obj->viewx, obj->viewy))
+				if (!_vm.route().startRoute(GO_LOOK, objId, obj->viewx, obj->viewy)) {
 					if (_vm._hero->cycling == INVISIBLE)    // If invisible do
 						_vm.lookObject(obj);            // immediate decription
 					else
 						Utils::Box(BOX_ANY, _vm._textMouse[kMsNoWayText]);  // Can't get there
+				}
 				break;
 			}
 		}

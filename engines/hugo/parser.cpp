@@ -437,7 +437,7 @@ bool Parser::isNear(object_t *obj, char *verb, char *comment) {
 		return(false);
 	}
 
-	if (obj->cycling == INVISIBLE)
+	if (obj->cycling == INVISIBLE) {
 		if (obj->seqNumb) {
 			// There is an image
 			strcpy(comment, _vm._textParser[kCmtAny3]);
@@ -456,6 +456,7 @@ bool Parser::isNear(object_t *obj, char *verb, char *comment) {
 					strcpy(comment, _vm._textParser[kCmtClose]);
 				return(false);
 			}
+	}
 
 	if ((obj->radius < 0) ||
 	        ((abs(obj->x - _vm._hero->x) <= obj->radius) &&

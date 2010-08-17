@@ -152,7 +152,7 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 // Read object file of PCC images into object supplied
 	byte       x, y, j, k;
 	uint16     x2;                                  // Limit on x in image data
-	seq_t     *seqPtr;                              // Ptr to sequence structure
+	seq_t     *seqPtr = 0;                          // Ptr to sequence structure
 	image_pt   dibPtr;                              // Ptr to DIB data
 	objBlock_t objBlock;                            // Info on file within database
 	bool       firstFl = true;                      // Initializes pcx read function
@@ -335,7 +335,7 @@ bool FileManager::fileExists(char *filename) {
 
 void FileManager::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
 // Open and read in an overlay file, close file
-	uint32       i;
+	uint32       i = 0;
 	int16        j, k;
 	int8         data;                              // Must be 8 bits signed
 	image_pt     tmpImage = image;                  // temp ptr to overlay file

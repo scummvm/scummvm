@@ -136,7 +136,7 @@ int16 InventoryHandler::processInventory(invact_t action, ...) {
 		cursory -= DIBOFF_Y;                        // Icon bar is at true zero
 		if (cursory > 0 && cursory < INV_DY) {      // Within icon bar?
 			i = cursorx / INV_DX;                   // Compute icon index
-			if (scrollFl)                           // Scroll buttons displayed
+			if (scrollFl) {                          // Scroll buttons displayed
 				if (i == 0)                         // Left scroll button
 					objId = LEFT_ARROW;
 				else {
@@ -145,6 +145,7 @@ int16 InventoryHandler::processInventory(invact_t action, ...) {
 					else                            // Adjust for scroll
 						i += firstIconId - 1;       // i is icon index
 				}
+			}
 
 			// If not an arrow, find object id - limit to valid range
 			if (objId == -1 && i < displayNumb)
