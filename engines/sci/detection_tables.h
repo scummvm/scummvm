@@ -2960,6 +2960,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Space Quest IV DOS 1.060 EGA (6 x 3.5" disks)
+	// Supplied by ssburnout in bug report #3046781
+	{"sq4", "EGA", {
+		{"resource.map", 0, "4f59814d23a3721f251140fdcfebe35d", 5556},
+		{"resource.000", 0, "e1f46832cd2458796028e054a0466031", 385479},
+		{"resource.001", 0, "590b996f85333dba50cfdd1489de2be2", 617504},
+		{"resource.002", 0, "ea8c49b84c6e641e7600cbca90a81741", 632814},
+		{"resource.003", 0, "33c396eb78bafaec38480bcdd9024843", 627369},
+		{"resource.004", 0, "9a673e33c3f6dd560b993ffed77eeb49", 534994},
+		{"resource.005", 0, "3c4841d0a3ebba4404af588c93620c22", 595465},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Space Quest 4 - German DOS (from Tobis87, also includes english language)
 	// SCI interpreter version 1.000.200 (just a guess)
 	{"sq4", "", {
