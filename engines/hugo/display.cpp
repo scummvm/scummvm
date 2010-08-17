@@ -396,7 +396,7 @@ int16 Screen::stringLength(char *s) {
 	debugC(2, kDebugDisplay, "stringLength(%s)", s);
 
 	for (sum = 0; *s; s++)
-		sum += *(fontArr[*s] + 1) + 1;
+		sum += *(fontArr[(uint)*s] + 1) + 1;
 
 	return(sum);
 }
@@ -419,8 +419,8 @@ void Screen::writeStr(int16 sx, int16 sy, char *s, byte color) {
 		sx = center(s);
 
 	for (; *s; s++) {
-		writeChr(sx, sy, color, (char *)font[*s]);
-		sx += *(font[*s] + 1) + 1;
+		writeChr(sx, sy, color, (char *)font[(uint)*s]);
+		sx += *(font[(uint)*s] + 1) + 1;
 	}
 }
 

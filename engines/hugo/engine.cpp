@@ -272,24 +272,27 @@ void HugoEngine::moveObjects() {
 				switch (obj->seqNumb) {
 				case 4:
 					if (!obj->vx) {                 // Got 4 directions
-						if (obj->vx != obj->oldvx)  // vx just stopped
+						if (obj->vx != obj->oldvx)  { // vx just stopped
 							if (dy >= 0)
 								obj->currImagePtr = obj->seqList[DOWN].seqPtr;
 							else
 								obj->currImagePtr = obj->seqList[_UP].seqPtr;
-					} else if (obj->vx != obj->oldvx)
+						}
+					} else if (obj->vx != obj->oldvx) {
 						if (dx > 0)
 							obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
 						else
 							obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+					}
 					break;
 				case 3:
 				case 2:
-					if (obj->vx != obj->oldvx)      // vx just stopped
+					if (obj->vx != obj->oldvx) {     // vx just stopped
 						if (dx > 0)                 // Left & right only
 							obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
 						else
 							obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+					}
 					break;
 				}
 
@@ -312,16 +315,18 @@ void HugoEngine::moveObjects() {
 					// Set first image in sequence (if multi-seq object)
 					if (obj->seqNumb > 1) {
 						if (!obj->vx && (obj->seqNumb >= 4)) {
-							if (obj->vx != obj->oldvx)  // vx just stopped
+							if (obj->vx != obj->oldvx)  { // vx just stopped
 								if (obj->vy > 0)
 									obj->currImagePtr = obj->seqList[DOWN].seqPtr;
 								else
 									obj->currImagePtr = obj->seqList[_UP].seqPtr;
-						} else if (obj->vx != obj->oldvx)
+							}
+						} else if (obj->vx != obj->oldvx) {
 							if (obj->vx > 0)
 								obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
 							else
 								obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+						}
 					}
 					obj->oldvx = obj->vx;
 					obj->oldvy = obj->vy;
