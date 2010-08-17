@@ -45,6 +45,10 @@ namespace Sword25 {
 
 #define AUDIOFD_FRAGSIZE 10240
 
+static double rint(double v) {
+	return floor(v + 0.5);
+}
+
 TheoraDecoder::TheoraDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : _mixer(mixer) {
 	_fileStream = 0;
 	_surface = 0;
