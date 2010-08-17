@@ -1079,6 +1079,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// King's Quest V DOS 0.000.062 EGA (5 x 5.25" disks)
+	// Supplied by ssburnout in bug report #3046780
+	{"kq5", "EGA", {
+		{"resource.map", 0, "ef4fdc72ca7aef62054e8b075d7960d8", 7596},
+		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 413648},
+		{"resource.001", 0, "c1eef048fa9fe76298c2d4705ef9549f", 1162806},
+		{"resource.002", 0, "4d74e8094ff57cea6ee92faf63dbd0af", 1194799},
+		{"resource.003", 0, "3cca5b2dae8afe94532edfdc98d7edbe", 1092325},
+		{"resource.004", 0, "8e5c1bc4d738cf7316ff506f59d265e2", 1187803},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// King's Quest 5 - German DOS Floppy (supplied by markcoolio in bug report #2727101, also includes english language)
 	// SCI interpreter version 1.000.060
 	{"kq5", "", {
