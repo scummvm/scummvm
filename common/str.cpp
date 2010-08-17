@@ -416,7 +416,7 @@ void String::trim() {
 
 	// Trim leading whitespace
 	char *t = _str;
-	while (isspace(*t))
+	while (isspace((unsigned char)*t))
 		t++;
 
 	if (t != _str) {
