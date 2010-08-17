@@ -157,12 +157,12 @@ int32 Machine::execInstruction() {
 	_code->loadInstruction(instruction);
 
 	if (instruction.instr >= 64) {
-		if (machineConditionalsTable[instruction.instr - 64] != NULL)
+		if (machineConditionalsTable[instruction.instr - 64] != 0)
 			(this->*machineConditionalsTable[instruction.instr - 64])(instruction);
 		/* The next line is to yield on unimplemented opcodes */
 		else { fflush(stdout); g_system->delayMillis(5000); }
 	} else if (instruction.instr > 0) {
-		if (machineCommandsTable[instruction.instr] != NULL)
+		if (machineCommandsTable[instruction.instr] != 0)
 			done = !(this->*machineCommandsTable[instruction.instr])(instruction);
 		/* The next line is to yield on unimplemented opcodes */
 		else { fflush(stdout); g_system->delayMillis(5000); }
