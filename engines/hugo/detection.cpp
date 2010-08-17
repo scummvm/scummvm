@@ -231,4 +231,4 @@ void HugoEngine::initGamePart(const HugoGameDescription *gd) {
 		break;
 	}
 }
-} // End of namespace Gob
+} // End of namespace Hugo
