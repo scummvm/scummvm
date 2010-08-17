@@ -45,8 +45,6 @@
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
 
-#include "gui/message.h"
-
 namespace Sci {
 
 
@@ -701,6 +699,8 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savenam
 	return true;
 }
 
+extern void showScummVMDialog(const Common::String &message);
+
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	SavegameMetadata meta;
 
@@ -721,8 +721,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 			warning("Savegame version is %d, maximum supported is %0d", meta.savegame_version, CURRENT_SAVEGAME_VERSION);
 		*/
 
-		GUI::MessageDialog dialog("The format of this saved game is obsolete, unable to load it", "OK");
-		dialog.runModal();
+		showScummVMDialog("The format of this saved game is obsolete, unable to load it");
 
 		s->r_acc = make_reg(0, 1);	// signal failure
 		return;
@@ -733,8 +732,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		if (script0->size != meta.script0_size || g_sci->getGameObject().offset != meta.game_object_offset) {
 			//warning("This saved game was created with a different version of the game, unable to load it");
 
-			GUI::MessageDialog dialog("This saved game was created with a different version of the game, unable to load it", "OK");
-			dialog.runModal();
+			showScummVMDialog("This saved game was created with a different version of the game, unable to load it");
 
 			s->r_acc = make_reg(0, 1);	// signal failure
 			return;

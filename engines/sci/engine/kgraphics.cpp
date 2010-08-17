@@ -57,6 +57,11 @@
 
 namespace Sci {
 
+void showScummVMDialog(const Common::String &message) {
+	GUI::MessageDialog dialog(message, "OK");
+	dialog.runModal();
+}
+
 void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
 	uint16 signal = readSelectorValue(s->_segMan, object, SELECTOR(signal));
@@ -922,14 +927,12 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 		if (!changeDirButton.isNull()) {
 			// check if checkDirButton is still enabled, in that case we are called the first time during that room
 			if (!(readSelectorValue(s->_segMan, changeDirButton, SELECTOR(state)) & SCI_CONTROLS_STYLE_DISABLED)) {
-				GUI::MessageDialog dialog("Characters saved inside ScummVM are shown "
+				showScummVMDialog("Characters saved inside ScummVM are shown "
 						"automatically. Character files saved in the original "
 						"interpreter need to be put inside ScummVM's saved games "
 						"directory and a prefix needs to be added depending on which "
 						"game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
-						"for Quest for Glory 2. Example: 'qfg2-thief.sav'.",
-						"OK");
-				dialog.runModal();
+						"for Quest for Glory 2. Example: 'qfg2-thief.sav'.");
 			}
 		}
 	}
