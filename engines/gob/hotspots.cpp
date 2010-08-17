@@ -1393,9 +1393,9 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		ids[i] = _vm->_game->_script->readInt16();
 		flags  = _vm->_game->_script->readInt16();
 
-		if (flags > 3) 
+		if (flags > 3)
 			warning("evaluateNew: Warning, use of type 2 or 20. flags = %d, should be %d\n", flags, flags&3);
-		
+
 		funcEnter = 0;
 
 		funcLeave = _vm->_game->_script->pos();
@@ -1424,7 +1424,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 }
 
 bool Hotspots::evaluateFind(uint16 key, int16 timeVal, const uint16 *ids,
-		uint16 leaveWindowIndex, uint16 hotspotIndex1, uint16 hotspotIndex2, 
+		uint16 leaveWindowIndex, uint16 hotspotIndex1, uint16 hotspotIndex2,
 		uint16 endIndex, int16 &duration, uint16 &id, uint16 &index, bool &finished) {
 
 	bool fascinCheck = false;
@@ -1678,7 +1678,7 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 			cursor = 0;
 			for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 				const Hotspot &spot = _hotspots[i];
-				// this check is /really/ Fascination specific. 
+				// this check is /really/ Fascination specific.
 				// It's illogical, so if it's to be reused in Adi games... Be careful!
 				if ((spot.flags & 0xFF00) == curType)
 					if (spot.isIn(x - deltax, y - deltay)) {

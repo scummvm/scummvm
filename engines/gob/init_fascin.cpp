@@ -41,8 +41,8 @@ Init_Fascination::~Init_Fascination() {
 void Init_Fascination::updateConfig() {
 // In Fascination, some empty texts are present and used to clean up the text area.
 // Using _doSubtitles does the trick.
-// The first obvious example is in the hotel hall: 'Use ...' is displayed at the same 
-// place than the character dialogs. 
+// The first obvious example is in the hotel hall: 'Use ...' is displayed at the same
+// place than the character dialogs.
 	_vm->_global->_doSubtitles = true;
 }
 
