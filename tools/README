@@ -30,7 +30,7 @@ convbdf
    where SIZE is replaced by the desired font height.
 
 
-create_drascula
+create_drascula (sev)
 ---------------
     Stores a lot of hardcoded data of Drascula in a data file, based on
     the game's original source code. This includes the game's character
@@ -39,6 +39,10 @@ create_drascula
     (mostly the dialog subtitles) in English, Spanish, German, French
     and Italian. This tool is used to create the drascula.dat file.
 
+create_hugo (Strangerke)
+-----------
+	Creates hugo.dat file which contains all kinds of static data contained
+    in original game executable.
 
 create_kyradat (LordHoto, athrxx)
 --------------
