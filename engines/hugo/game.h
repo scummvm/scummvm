@@ -361,7 +361,7 @@ struct act10 {                                      // Type 10 - Initialise an o
 	int      timer;                                 // Time to set off the action
 	int      objNumb;                               // The object number
 	int      newPathType;                           // New path type
-	char     vxPath, vyPath;                        // Max delta velocities e.g. for CHASE
+	int8     vxPath, vyPath;                        // Max delta velocities e.g. for CHASE
 };
 
 struct act11 {                                      // Type 11 - Conditional on object's state
@@ -400,7 +400,7 @@ struct act15 {                                      // Type 15 - Home in on an o
 	int      timer;                                 // Time to set off the action
 	int      obj1;                                  // The object number homing in
 	int      obj2;                                  // The object number to home in on
-	char     dx, dy;                                // Max delta velocities
+	int8     dx, dy;                                // Max delta velocities
 };
 // Note: Don't set a sequence at time 0 of a new screen, it causes
 // problems clearing the boundary bits of the object!  timer > 0 is safe
@@ -734,11 +734,11 @@ struct object_t {
 	byte       cycleNumb;                           // No. of times to cycle
 	byte       frameInterval;                       // Interval (in ticks) between frames
 	byte       frameTimer;                          // Decrementing timer for above
-	char       radius;                              // Defines sphere of influence by hero
+	int8       radius;                              // Defines sphere of influence by hero
 	byte       screenIndex;                         // Screen in which object resides
 	int        x, y;                                // Current coordinates of object
 	int        oldx, oldy;                          // Previous coordinates of object
-	char       vx, vy;                              // Velocity
+	int8       vx, vy;                              // Velocity
 	byte       objValue;                            // Value of object
 	int        genericCmd;                          // Bit mask of 'generic' commands for object
 	uint16     cmdIndex;                            // ptr to list of cmd structures for verbs
@@ -750,8 +750,8 @@ struct object_t {
 	int16      direction;                           // Direction to view object from
 	byte       curSeqNum;                           // Save which seq number currently in use
 	byte       curImageNum;                         // Save which image of sequence currently in use
-	char       oldvx;                               // Previous vx (used in wandering)
-	char       oldvy;                               // Previous vy
+	int8       oldvx;                               // Previous vx (used in wandering)
+	int8       oldvy;                               // Previous vy
 };
 
 // Following is structure of verbs and nouns for 'background' objects

@@ -51,7 +51,7 @@ byte *FileManager::convertPCC(byte *p, uint16 y, uint16 bpl, image_pt dataPtr) {
 // Convert 4 planes (RGBI) data to 8-bit DIB format
 // Return original plane data ptr
 	uint16 r, g, b, i;                              // Byte index within each plane
-	char   bit;                                     // Bit index within a byte
+	int8   bit;                                     // Bit index within a byte
 
 	debugC(2, kDebugFile, "convertPCC(byte *p, %d, %d, image_pt data_p)", y, bpl);
 
@@ -337,7 +337,7 @@ void FileManager::readOverlay(int screenNum, image_pt image, ovl_t overlayType) 
 // Open and read in an overlay file, close file
 	uint32       i;
 	int16        j, k;
-	char         data;                              // Must be 8 bits signed
+	int8         data;                              // Must be 8 bits signed
 	image_pt     tmpImage = image;                  // temp ptr to overlay file
 	sceneBlock_t sceneBlock;                        // Database header entry
 

@@ -235,7 +235,7 @@ void HugoEngine::moveObjects() {
 	seq_t    *currImage;
 	int       x1, x2, y1, y2;                       // object coordinates
 	int       dx, dy;                               // Allowable motion wrt boundary
-	char      radius;                               // Radius for chase (8 bit signed)
+	int8      radius;                               // Radius for chase (8 bit signed)
 
 	debugC(4, kDebugEngine, "moveObjects");
 
@@ -465,7 +465,7 @@ int HugoEngine::deltaY(int x1, int x2, int vy, int y) {
 	inc = (vy > 0 ? 1 : -1);
 	for (j = y + inc; j != (y + vy + inc); j += inc) //Search by byte
 		for (i = x1 >> 3; i <= x2 >> 3; i++)
-			if (b = _boundary[j * XBYTES + i] | _objBound[j * XBYTES + i]) {    // Any bit set
+			if ((b = _boundary[j * XBYTES + i] | _objBound[j * XBYTES + i]) != 0) {    // Any bit set
 				// Make sure boundary bits fall on line segment
 				if (i == (x2 >> 3))                 // Adjust right end
 					b &= 0xff << ((i << 3) + 7 - x2);
@@ -921,7 +921,7 @@ void HugoEngine::setNewScreen(int screenNum) {
 // An object has collided with a boundary.  See if any actions are required
 void HugoEngine::boundaryCollision(object_t *obj) {
 	int         x, y, dx, dy;
-	char        radius;                             // 8 bits signed
+	int8        radius;                             // 8 bits signed
 	hotspot_t   *hotspot;
 
 	debugC(1, kDebugEngine, "boundaryCollision");
