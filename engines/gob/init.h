@@ -96,7 +96,7 @@ public:
 	Init_Fascination(GobEngine *vm);
 	~Init_Fascination();
 
-	void initGame();
+	void updateConfig();
 };
 } // End of namespace Gob
 

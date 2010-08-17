@@ -230,7 +230,10 @@ void Draw_v2::printTotText(int16 id) {
 		destX = (READ_LE_UINT16(ptr) & 0x7FFF) * 2;
 		spriteRight = READ_LE_UINT16(ptr + 4) * 2 + 1;
 	} else {
-		destX = READ_LE_UINT16(ptr) & 0x7FFF;
+// No mask used for Fascination
+		destX = READ_LE_UINT16(ptr);
+		if (_vm->getGameType() != kGameTypeFascination)
+			destX &= 0x7FFF;
 		spriteRight = READ_LE_UINT16(ptr + 4);
 	}
 

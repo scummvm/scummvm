@@ -376,7 +376,7 @@ bool GobEngine::initGameParts() {
 		break;
 
 	case kGameTypeFascination:
-		_init     = new Init_v2(this);
+		_init     = new Init_Fascination(this);
 		_video    = new Video_v2(this);
 		_inter    = new Inter_Fascination(this);
 		_mult     = new Mult_v2(this);
