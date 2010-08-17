@@ -53,10 +53,9 @@
 uint32 __attribute__((aligned(16))) MasterGuRenderer::_displayList[2048];
 
 const OSystem::GraphicsMode DisplayManager::_supportedModes[] = {
-	{ "320x200 (centered)", "320x200 16-bit centered", CENTERED_320X200 },
-	{ "435x272 (best-fit, centered)", "435x272 16-bit centered", CENTERED_435X272 },
-	{ "480x272 (full screen)", "480x272 16-bit stretched", STRETCHED_480X272 },
-	{ "362x272 (4:3, centered)", "362x272 16-bit centered", CENTERED_362X272 },
+	{ "Original Resolution", "Original Resolution", ORIGINAL_RESOLUTION },
+	{ "Keep Aspect Ratio", "Keep Aspect Ratio", KEEP_ASPECT_RATIO },
+	{ "Full Screen", "Full Screen", STRETCHED_FULL_SCREEN },
 	{0, 0, 0}
 };
 
@@ -263,38 +262,50 @@ bool DisplayManager::setGraphicsMode(int mode) {
 
 	_graphicsMode = mode;
 
-	switch (_graphicsMode) {
-	case CENTERED_320X200:
-		_displayParams.screenOutput.width = 320;
-		_displayParams.screenOutput.height = 200;
-		break;
-	case CENTERED_435X272:
-		_displayParams.screenOutput.width = 435;
-		_displayParams.screenOutput.height = 272;
-		break;
-	case STRETCHED_480X272:
-		_displayParams.screenOutput.width = 480;
-		_displayParams.screenOutput.height = 272;
-		break;
-	case CENTERED_362X272:
-		_displayParams.screenOutput.width = 362;
-		_displayParams.screenOutput.height = 272;
-		break;
-	default:
-		PSP_ERROR("Unsupported graphics mode[%d].\n", _graphicsMode);
-	}
-
 	calculateScaleParams();
 
 	return true;
 }
 
 void DisplayManager::calculateScaleParams() {
-	if (_displayParams.screenOutput.width && _displayParams.screenSource.width &&
-	        _displayParams.screenOutput.height && _displayParams.screenSource.height) {
-		_displayParams.scaleX = ((float)_displayParams.screenOutput.width) / _displayParams.screenSource.width;
-		_displayParams.scaleY = ((float)_displayParams.screenOutput.height) / _displayParams.screenSource.height;
+
+	if (!_displayParams.screenSource.width || !_displayParams.screenSource.height)
+		return; // we can't calculate anything without these
+
+	switch (_graphicsMode) {
+	case ORIGINAL_RESOLUTION:
+		// check if we can fit the original resolution inside the screen
+		if ((_displayParams.screenSource.width < PSP_SCREEN_WIDTH) &&
+			(_displayParams.screenSource.height < PSP_SCREEN_HEIGHT)) {
+			_displayParams.screenOutput.width =  _displayParams.screenSource.width;
+			_displayParams.screenOutput.height =  _displayParams.screenSource.height;
+		} else { // revert to stretch to fit
+			_displayParams.screenOutput.width = PSP_SCREEN_WIDTH;
+			_displayParams.screenOutput.height = PSP_SCREEN_HEIGHT;
+		}
+		break;
+	case KEEP_ASPECT_RATIO:	{ // maximize the height while keeping aspect ratio
+			float aspectRatio = (float)_displayParams.screenSource.width / (float)_displayParams.screenSource.height;
+			
+			_displayParams.screenOutput.height = PSP_SCREEN_HEIGHT;	// always full height
+			_displayParams.screenOutput.width = (uint32)(PSP_SCREEN_HEIGHT * aspectRatio);
+			
+			if (_displayParams.screenOutput.width > PSP_SCREEN_WIDTH) // we can't have wider than the screen
+				_displayParams.screenOutput.width = PSP_SCREEN_WIDTH;
+		}
+		break;
+	case STRETCHED_FULL_SCREEN:	// we simply stretch to the whole screen
+		_displayParams.screenOutput.width = PSP_SCREEN_WIDTH;
+		_displayParams.screenOutput.height = PSP_SCREEN_HEIGHT;
+		break;
+	default:
+		PSP_ERROR("Unsupported graphics mode[%d].\n", _graphicsMode);
 	}
+	
+	// calculate scale factors for X and Y
+	_displayParams.scaleX = ((float)_displayParams.screenOutput.width) / _displayParams.screenSource.width;
+	_displayParams.scaleY = ((float)_displayParams.screenOutput.height) / _displayParams.screenSource.height;
+
 }
 
 // return true if we really rendered or no dirty. False otherwise
