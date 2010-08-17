@@ -1718,8 +1718,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::IT_ITA, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
 	// Larry 5 1.0 EGA DOS (8 x 3.5" disks)
-	// Provided by burnout in bug report #3046806
-	{"lsl5", "", {
+	// Provided by ssburnout in bug report #3046806
+	{"lsl5", "EGA", {
 		{"resource.map", 0, "1370ae356fdda2e7f9ea56dda3ff9a57", 6597},
 		{"resource.000", 0, "f2537473213d70e7f4fc82e988ab90ca", 248416},
 		{"resource.001", 0, "bb642b0b0f879aca98addd62d901387e", 445841},
@@ -2739,6 +2739,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "7d4ebcb745c0bf8fc42e4013f52ecd49", 1101812},
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// Space Quest I 2.0 EGA DOS (6 x 3.5" disks)
+	// Provided by ssburnout in bug report #3046805
+	{"sq1sci", "EGA Remake", {
+		{"resource.map", 0, "dc1bb935bf32da652b2e687617f50cd4", 6003},
+		{"resource.000", 0, "e9d866534f8c84de82e25f2631ff258c", 409145},
+		{"resource.001", 0, "a89b7b52064c75b1985b289edc2f5c69", 647747},
+		{"resource.002", 0, "f43d4f08547336c9fd28c23a7da79c41", 697438},
+		{"resource.003", 0, "4164edf21495b9114f9a514e401b4d95", 669070},
+		{"resource.004", 0, "975c6e81194ae6b65e960a248129ecaa", 684119},
+		{"resource.005", 0, "13d96f7905637552c0647175ff816145", 695589},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
 	// Space Quest 3 - English Amiga (from www.back2roots.org)
 	// SCI interpreter version 0.000.453 (just a guess)
