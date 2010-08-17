@@ -2264,6 +2264,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO_NOSPEECH	},
 
+	// Police Quest 3 EGA
+	// Reported by musiclyinspired in bug report #3046573
+	{"pq3", "", {
+		{"resource.map", 0, "1341f7c9643947414a8e238b88f68d82", 5901},
+		{"resource.000", 0, "7659713720d61d9465a59091b7ee63ea", 402208},
+		{"resource.001", 0, "0284ca44341fbc3cb7a047e49d230234", 703373},
+		{"resource.002", 0, "fc9452f962bd7a9bbf6e78e9e52a8e18", 692676},
+		{"resource.003", 0, "31c226bf01b69c8182b8ca0e8760b0a7", 527848},
+		{"resource.004", 0, "b96a86ab681769e4cbb439670d967ca6", 449682},
+		{"resource.005", 0, "9e6c53a0e7eef53694d260fade8b1fc7", 724000},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Police Quest 4 - English DOS Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.001.096
 	{"pq4", "Demo", {
