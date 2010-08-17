@@ -309,7 +309,7 @@ void Parser::lineHandler() {
 		return;
 	}
 
-	if (!strcmp("restore", _line) && gameStatus.viewState == V_PLAY || gameStatus.viewState == V_IDLE) {
+	if (!strcmp("restore", _line) && (gameStatus.viewState == V_PLAY || gameStatus.viewState == V_IDLE)) {
 		_vm.file().restoreGame(gameStatus.saveSlot);
 		_vm.scheduler().restoreScreen(*_vm._screen_p);
 		gameStatus.viewState = V_PLAY;
