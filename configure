@@ -1386,6 +1386,7 @@ case $_host_os in
 		;;
 	darwin*)
 		DEFINES="$DEFINES -DMACOSX"
+		CXXFLAGS="$CXXFLAGS -Wglobal-constructors"
 		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		add_line_to_config_mk 'MACOSX = 1'
 		_unix=yes
