@@ -91,9 +91,9 @@ std::auto_ptr<ActionCallback> ActionCallbackPtr;
 
 struct CallbackfunctionRegisterer {
 	CallbackfunctionRegisterer() {
-		BS_CallbackRegistry::GetInstance().RegisterCallbackFunction("LuaLoopPointCB", (void ( *)(int))AnimationLoopPointCallback);
-		BS_CallbackRegistry::GetInstance().RegisterCallbackFunction("LuaActionCB", (void ( *)(int))AnimationActionCallback);
-		BS_CallbackRegistry::GetInstance().RegisterCallbackFunction("LuaDeleteCB", (void ( *)(int))AnimationDeleteCallback);
+		CallbackRegistry::getInstance().registerCallbackFunction("LuaLoopPointCB", (void ( *)(int))AnimationLoopPointCallback);
+		CallbackRegistry::getInstance().registerCallbackFunction("LuaActionCB", (void ( *)(int))AnimationActionCallback);
+		CallbackRegistry::getInstance().registerCallbackFunction("LuaDeleteCB", (void ( *)(int))AnimationDeleteCallback);
 	}
 };
 static CallbackfunctionRegisterer Instance;

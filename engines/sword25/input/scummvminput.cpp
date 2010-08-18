@@ -343,7 +343,7 @@ bool ScummVMInput::Persist(BS_OutputPersistenceBlock &Writer) {
 	{
 		Common::List<CommandCallback>::const_iterator It = m_CommandCallbacks.begin();
 		while (It != m_CommandCallbacks.end()) {
-			Writer.Write(BS_CallbackRegistry::GetInstance().ResolveCallbackPointer(*It));
+			Writer.Write(CallbackRegistry::getInstance().resolveCallbackPointer(*It));
 			++It;
 		}
 	}
@@ -355,7 +355,7 @@ bool ScummVMInput::Persist(BS_OutputPersistenceBlock &Writer) {
 	{
 		Common::List<CharacterCallback>::const_iterator It = m_CharacterCallbacks.begin();
 		while (It != m_CharacterCallbacks.end()) {
-			Writer.Write(BS_CallbackRegistry::GetInstance().ResolveCallbackPointer(*It));
+			Writer.Write(CallbackRegistry::getInstance().resolveCallbackPointer(*It));
 			++It;
 		}
 	}
@@ -379,7 +379,7 @@ bool ScummVMInput::Unpersist(BS_InputPersistenceBlock &Reader) {
 		Reader.Read(CallbackFunctionName);
 
 		m_CommandCallbacks.push_back(reinterpret_cast<CommandCallback>(
-		                                 BS_CallbackRegistry::GetInstance().ResolveCallbackFunction(CallbackFunctionName)));
+		                                 CallbackRegistry::getInstance().resolveCallbackFunction(CallbackFunctionName)));
 	}
 
 	// Character-Callbackliste leeren.
@@ -394,7 +394,7 @@ bool ScummVMInput::Unpersist(BS_InputPersistenceBlock &Reader) {
 		Common::String CallbackFunctionName;
 		Reader.Read(CallbackFunctionName);
 
-		m_CharacterCallbacks.push_back(reinterpret_cast<CharacterCallback>(BS_CallbackRegistry::GetInstance().ResolveCallbackFunction(CallbackFunctionName)));
+		m_CharacterCallbacks.push_back(reinterpret_cast<CharacterCallback>(CallbackRegistry::getInstance().resolveCallbackFunction(CallbackFunctionName)));
 	}
 
 	return Reader.IsGood();

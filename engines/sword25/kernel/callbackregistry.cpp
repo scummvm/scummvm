@@ -60,72 +60,72 @@ namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 
-bool BS_CallbackRegistry::RegisterCallbackFunction(const Common::String &Name, CallbackPtr Ptr) {
-	if (Name == "") {
+bool CallbackRegistry::registerCallbackFunction(const Common::String &name, CallbackPtr ptr) {
+	if (name == "") {
 		BS_LOG_ERRORLN("The empty string is not allowed as a callback function name.");
 		return false;
 	}
 
-	if (FindPtrByName(Name) != 0) {
-		BS_LOG_ERRORLN("There is already a callback function with the name \"%s\".", Name.c_str());
+	if (findPtrByName(name) != 0) {
+		BS_LOG_ERRORLN("There is already a callback function with the name \"%s\".", name.c_str());
 		return false;
 	}
-	if (FindNameByPtr(Ptr) != "") {
-		BS_LOG_ERRORLN("There is already a callback function with the pointer 0x%x.", Ptr);
+	if (findNameByPtr(ptr) != "") {
+		BS_LOG_ERRORLN("There is already a callback function with the pointer 0x%x.", ptr);
 		return false;
 	}
 
-	StoreCallbackFunction(Name, Ptr);
+	storeCallbackFunction(name, ptr);
 
 	return true;
 }
 
 // -----------------------------------------------------------------------------
 
-CallbackPtr BS_CallbackRegistry::ResolveCallbackFunction(const Common::String &Name) const {
-	CallbackPtr Result = FindPtrByName(Name);
+CallbackPtr CallbackRegistry::resolveCallbackFunction(const Common::String &name) const {
+	CallbackPtr result = findPtrByName(name);
 
-	if (!Result) {
-		BS_LOG_ERRORLN("There is no callback function with the name \"%s\".", Name.c_str());
+	if (!result) {
+		BS_LOG_ERRORLN("There is no callback function with the name \"%s\".", name.c_str());
 	}
 
-	return Result;
+	return result;
 }
 
 // -----------------------------------------------------------------------------
 
-Common::String BS_CallbackRegistry::ResolveCallbackPointer(CallbackPtr Ptr) const {
-	const Common::String &Result = FindNameByPtr(Ptr);
+Common::String CallbackRegistry::resolveCallbackPointer(CallbackPtr ptr) const {
+	const Common::String &result = findNameByPtr(ptr);
 
-	if (Result == "") {
-		BS_LOG_ERRORLN("There is no callback function with the pointer 0x%x.", Ptr);
+	if (result == "") {
+		BS_LOG_ERRORLN("There is no callback function with the pointer 0x%x.", ptr);
 	}
 
-	return Result;
+	return result;
 }
 
 // -----------------------------------------------------------------------------
 
-CallbackPtr BS_CallbackRegistry::FindPtrByName(const Common::String &Name) const {
+CallbackPtr CallbackRegistry::findPtrByName(const Common::String &name) const {
 	// Eintrag in der Map finden und den Pointer zurückgeben.
-	NameToPtrMap::const_iterator It = m_NameToPtrMap.find(Name);
-	return It == m_NameToPtrMap.end() ? 0 : It->_value;
+	NameToPtrMap::const_iterator it = _nameToPtrMap.find(name);
+	return it == _nameToPtrMap.end() ? 0 : it->_value;
 }
 
 // -----------------------------------------------------------------------------
 
-Common::String BS_CallbackRegistry::FindNameByPtr(CallbackPtr Ptr) const {
+Common::String CallbackRegistry::findNameByPtr(CallbackPtr ptr) const {
 	// Eintrag in der Map finden und den Namen zurückgeben.
-	PtrToNameMap::const_iterator It = m_PtrToNameMap.find(Ptr);
-	return It == m_PtrToNameMap.end() ? "" : It->_value;
+	PtrToNameMap::const_iterator it = _ptrToNameMap.find(ptr);
+	return it == _ptrToNameMap.end() ? "" : it->_value;
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_CallbackRegistry::StoreCallbackFunction(const Common::String &Name, CallbackPtr Ptr) {
+void CallbackRegistry::storeCallbackFunction(const Common::String &name, CallbackPtr ptr) {
 	// Callback-Funktion in beide Maps eintragen.
-	m_NameToPtrMap[Name] = Ptr;
-	m_PtrToNameMap[Ptr] = Name;
+	_nameToPtrMap[name] = ptr;
+	_ptrToNameMap[ptr] = name;
 }
 
 } // End of namespace Sword25

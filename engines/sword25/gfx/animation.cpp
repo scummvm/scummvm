@@ -673,7 +673,7 @@ void BS_Animation::PersistCallbackVector(BS_OutputPersistenceBlock &Writer, cons
 	// Alle Callbacks einzeln persistieren.
 	Common::Array<ANIMATION_CALLBACK_DATA>::const_iterator It = Vector.begin();
 	while (It != Vector.end()) {
-		Writer.Write(BS_CallbackRegistry::GetInstance().ResolveCallbackPointer((void (*)(int))It->Callback));
+		Writer.Write(CallbackRegistry::getInstance().resolveCallbackPointer((void (*)(int))It->Callback));
 		Writer.Write(It->Data);
 
 		++It;
@@ -696,7 +696,7 @@ void BS_Animation::UnpersistCallbackVector(BS_InputPersistenceBlock &Reader, Com
 
 		Common::String CallbackFunctionName;
 		Reader.Read(CallbackFunctionName);
-		CallbackData.Callback = reinterpret_cast<ANIMATION_CALLBACK>(BS_CallbackRegistry::GetInstance().ResolveCallbackFunction(CallbackFunctionName));
+		CallbackData.Callback = reinterpret_cast<ANIMATION_CALLBACK>(CallbackRegistry::getInstance().resolveCallbackFunction(CallbackFunctionName));
 
 		Reader.Read(CallbackData.Data);
 
