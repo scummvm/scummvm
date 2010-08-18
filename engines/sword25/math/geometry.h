@@ -40,11 +40,11 @@
 
 namespace Sword25 {
 
-class BS_Kernel;
+class Kernel;
 
-class Geometry : public BS_Service {
+class Geometry : public Service {
 public:
-	Geometry(BS_Kernel *pKernel);
+	Geometry(Kernel *pKernel);
 	virtual ~Geometry() {}
 
 private:

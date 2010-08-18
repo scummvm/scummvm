@@ -92,7 +92,7 @@ Animation::Animation(RenderObjectPtr<RenderObject> ParentPtr, const AnimationTem
 
 // -----------------------------------------------------------------------------
 
-Animation::Animation(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle) :
+Animation::Animation(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle) :
 	TimedRenderObject(ParentPtr, RenderObject::TYPE_ANIMATION, Handle) {
 	// Das BS_RenderObject konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
 	if (!m_InitSuccess) return;
@@ -107,8 +107,8 @@ Animation::Animation(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObj
 
 void Animation::InitializeAnimationResource(const Common::String &FileName) {
 	// Die Resource wird für die gesamte Lebensdauer des Animations-Objektes gelockt.
-	BS_Resource *ResourcePtr = BS_Kernel::GetInstance()->GetResourceManager()->RequestResource(FileName);
-	if (ResourcePtr && ResourcePtr->GetType() == BS_Resource::TYPE_ANIMATION)
+	Resource *ResourcePtr = Kernel::GetInstance()->GetResourceManager()->RequestResource(FileName);
+	if (ResourcePtr && ResourcePtr->GetType() == Resource::TYPE_ANIMATION)
 		m_AnimationResourcePtr = static_cast<AnimationResource *>(ResourcePtr);
 	else {
 		BS_LOG_ERRORLN("The resource \"%s\" could not be requested. The Animation can't be created.", FileName.c_str());
@@ -207,13 +207,13 @@ bool Animation::DoRender() {
 	BS_ASSERT(m_CurrentFrame < animationDescriptionPtr->GetFrameCount());
 
 	// Bitmap des aktuellen Frames holen
-	BS_Resource *pResource = BS_Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->GetFrame(m_CurrentFrame).FileName);
+	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->GetFrame(m_CurrentFrame).FileName);
 	BS_ASSERT(pResource);
-	BS_ASSERT(pResource->GetType() == BS_Resource::TYPE_BITMAP);
+	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmapResource = static_cast<BitmapResource *>(pResource);
 
 	// Framebufferobjekt holen
-	GraphicEngine *pGfx = static_cast<GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx"));
+	GraphicEngine *pGfx = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
 	BS_ASSERT(pGfx);
 
 	// Bitmap zeichnen
@@ -346,9 +346,9 @@ void Animation::ComputeCurrentCharacteristics() {
 	BS_ASSERT(animationDescriptionPtr);
 	const AnimationResource::Frame &CurFrame = animationDescriptionPtr->GetFrame(m_CurrentFrame);
 
-	BS_Resource *pResource = BS_Kernel::GetInstance()->GetResourceManager()->RequestResource(CurFrame.FileName);
+	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(CurFrame.FileName);
 	BS_ASSERT(pResource);
-	BS_ASSERT(pResource->GetType() == BS_Resource::TYPE_BITMAP);
+	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
 	// Größe des Bitmaps auf die Animation übertragen
@@ -371,7 +371,7 @@ bool Animation::LockAllFrames() {
 		AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 		BS_ASSERT(animationDescriptionPtr);
 		for (unsigned int i = 0; i < animationDescriptionPtr->GetFrameCount(); ++i) {
-			if (!BS_Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->GetFrame(i).FileName)) {
+			if (!Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->GetFrame(i).FileName)) {
 				BS_LOG_ERRORLN("Could not lock all animation frames.");
 				return false;
 			}
@@ -390,8 +390,8 @@ bool Animation::UnlockAllFrames() {
 		AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 		BS_ASSERT(animationDescriptionPtr);
 		for (unsigned int i = 0; i < animationDescriptionPtr->GetFrameCount(); ++i) {
-			BS_Resource *pResource;
-			if (!(pResource = BS_Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->GetFrame(i).FileName))) {
+			Resource *pResource;
+			if (!(pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->GetFrame(i).FileName))) {
 				BS_LOG_ERRORLN("Could not unlock all animation frames.");
 				return false;
 			}
@@ -602,9 +602,9 @@ int Animation::ComputeXModifier() const {
 	BS_ASSERT(animationDescriptionPtr);
 	const AnimationResource::Frame &CurFrame = animationDescriptionPtr->GetFrame(m_CurrentFrame);
 
-	BS_Resource *pResource = BS_Kernel::GetInstance()->GetResourceManager()->RequestResource(CurFrame.FileName);
+	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(CurFrame.FileName);
 	BS_ASSERT(pResource);
-	BS_ASSERT(pResource->GetType() == BS_Resource::TYPE_BITMAP);
+	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
 	int Result = CurFrame.FlipV ? - static_cast<int>((pBitmap->GetWidth() - 1 - CurFrame.HotspotX) * m_ScaleFactorX) :
@@ -622,9 +622,9 @@ int Animation::ComputeYModifier() const {
 	BS_ASSERT(animationDescriptionPtr);
 	const AnimationResource::Frame &CurFrame = animationDescriptionPtr->GetFrame(m_CurrentFrame);
 
-	BS_Resource *pResource = BS_Kernel::GetInstance()->GetResourceManager()->RequestResource(CurFrame.FileName);
+	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(CurFrame.FileName);
 	BS_ASSERT(pResource);
-	BS_ASSERT(pResource->GetType() == BS_Resource::TYPE_BITMAP);
+	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
 	int Result = CurFrame.FlipH ? - static_cast<int>((pBitmap->GetHeight() - 1 - CurFrame.HotspotY) * m_ScaleFactorY) :
@@ -666,7 +666,7 @@ void Animation::RegisterDeleteCallback(ANIMATION_CALLBACK Callback, unsigned int
 // Persistenz
 // -----------------------------------------------------------------------------
 
-void Animation::PersistCallbackVector(BS_OutputPersistenceBlock &Writer, const Common::Array<ANIMATION_CALLBACK_DATA> & Vector) {
+void Animation::PersistCallbackVector(OutputPersistenceBlock &Writer, const Common::Array<ANIMATION_CALLBACK_DATA> & Vector) {
 	// Anzahl an Callbacks persistieren.
 	Writer.Write(Vector.size());
 
@@ -682,7 +682,7 @@ void Animation::PersistCallbackVector(BS_OutputPersistenceBlock &Writer, const C
 
 // -----------------------------------------------------------------------------
 
-void Animation::UnpersistCallbackVector(BS_InputPersistenceBlock &Reader, Common::Array<ANIMATION_CALLBACK_DATA> & Vector) {
+void Animation::UnpersistCallbackVector(InputPersistenceBlock &Reader, Common::Array<ANIMATION_CALLBACK_DATA> & Vector) {
 	// Callbackvector leeren.
 	Vector.resize(0);
 
@@ -706,7 +706,7 @@ void Animation::UnpersistCallbackVector(BS_InputPersistenceBlock &Reader, Common
 
 // -----------------------------------------------------------------------------
 
-bool Animation::Persist(BS_OutputPersistenceBlock &Writer) {
+bool Animation::Persist(OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	Result &= RenderObject::Persist(Writer);
@@ -749,7 +749,7 @@ bool Animation::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool Animation::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool Animation::Unpersist(InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	Result &= RenderObject::Unpersist(Reader);

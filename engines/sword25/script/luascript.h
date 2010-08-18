@@ -58,7 +58,7 @@ using namespace Lua;
 
 namespace Sword25 {
 
-class BS_Kernel;
+class Kernel;
 
 // -----------------------------------------------------------------------------
 // Class declaration
@@ -70,7 +70,7 @@ public:
 	// Constructor / Destructor
 	// -----------------------------------------------------------------------------
 
-	LuaScriptEngine(BS_Kernel *KernelPtr);
+	LuaScriptEngine(Kernel *KernelPtr);
 	virtual ~LuaScriptEngine();
 
 	/**
@@ -112,11 +112,11 @@ public:
 	/**
 	 * @remark              The Lua stack is cleared by this method
 	 */
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
+	virtual bool Persist(OutputPersistenceBlock &Writer);
 	/**
 	 * @remark              The Lua stack is cleared by this method
 	 */
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool Unpersist(InputPersistenceBlock &Reader);
 
 private:
 	lua_State *m_State;

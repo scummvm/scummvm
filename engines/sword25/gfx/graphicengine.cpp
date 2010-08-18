@@ -60,7 +60,7 @@ using namespace Lua;
 
 static const unsigned int FRAMETIME_SAMPLE_COUNT = 5;       // Anzahl der Framezeiten über die, die Framezeit gemittelt wird
 
-GraphicEngine::GraphicEngine(BS_Kernel *pKernel) :
+GraphicEngine::GraphicEngine(Kernel *pKernel) :
 	m_Width(0),
 	m_Height(0),
 	m_BitDepth(0),
@@ -70,7 +70,7 @@ GraphicEngine::GraphicEngine(BS_Kernel *pKernel) :
 	m_TimerActive(true),
 	m_FrameTimeSampleSlot(0),
 	m_RepaintedPixels(0),
-	BS_ResourceService(pKernel) {
+	ResourceService(pKernel) {
 	m_FrameTimeSamples.resize(FRAMETIME_SAMPLE_COUNT);
 
 	if (!RegisterScriptBindings())
@@ -83,7 +83,7 @@ GraphicEngine::GraphicEngine(BS_Kernel *pKernel) :
 
 void  GraphicEngine::UpdateLastFrameDuration() {
 	// Aktuelle Zeit holen
-	uint64_t CurrentTime = BS_Kernel::GetInstance()->GetMicroTicks();
+	uint64_t CurrentTime = Kernel::GetInstance()->GetMicroTicks();
 
 	// Verstrichene Zeit seit letztem Frame berechnen und zu große Zeitsprünge ( > 250 msek.) unterbinden
 	// (kann vorkommen bei geladenen Spielständen, während des Debuggings oder Hardwareungenauigkeiten)
@@ -201,14 +201,14 @@ unsigned int GraphicEngine::LuaColorToARGBColor(lua_State *L, int StackIndex) {
 
 // -----------------------------------------------------------------------------
 
-bool GraphicEngine::Persist(BS_OutputPersistenceBlock &Writer) {
+bool GraphicEngine::Persist(OutputPersistenceBlock &Writer) {
 	Writer.Write(m_TimerActive);
 	return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool GraphicEngine::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool GraphicEngine::Unpersist(InputPersistenceBlock &Reader) {
 	Reader.Read(m_TimerActive);
 	return Reader.IsGood();
 }

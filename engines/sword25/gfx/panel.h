@@ -53,7 +53,7 @@ class Panel : public RenderObject {
 
 private:
 	Panel(RenderObjectPtr<RenderObject> ParentPtr, int Width, int Height, unsigned int Color);
-	Panel(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
+	Panel(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
 
 public:
 	virtual ~Panel();
@@ -66,8 +66,8 @@ public:
 		ForceRefresh();
 	}
 
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool Persist(OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(InputPersistenceBlock &Reader);
 
 protected:
 	virtual bool DoRender();

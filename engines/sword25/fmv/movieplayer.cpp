@@ -38,11 +38,11 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "MOVIEPLAYER"
 
-BS_Service *OggTheora_CreateObject(BS_Kernel *pKernel) {
+Service *OggTheora_CreateObject(Kernel *pKernel) {
 	return new MoviePlayer(pKernel);
 }
 
-MoviePlayer::MoviePlayer(BS_Kernel *pKernel) : BS_Service(pKernel) {
+MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel) {
 	if (!_RegisterScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else

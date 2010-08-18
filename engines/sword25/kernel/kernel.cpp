@@ -47,9 +47,9 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "KERNEL"
 
-BS_Kernel *BS_Kernel::_Instance = 0;
+Kernel *Kernel::_Instance = 0;
 
-BS_Kernel::BS_Kernel() :
+Kernel::Kernel() :
 	_pWindow(NULL),
 	_Running(false),
 	_pResourceManager(NULL),
@@ -75,14 +75,14 @@ BS_Kernel::BS_Kernel() :
 	}
 
 	// Create window object
-	_pWindow = BS_Window::CreateBSWindow(0, 0, 0, 0, false);
+	_pWindow = Window::CreateBSWindow(0, 0, 0, 0, false);
 	if (!_pWindow) {
 		BS_LOG_ERRORLN("Failed to create the window.");
 	} else
 		BS_LOGLN("Window created.");
 
 	// Create the resource manager
-	_pResourceManager = new BS_ResourceManager(this);
+	_pResourceManager = new ResourceManager(this);
 
 	// Initialise the script engine
 	ScriptEngine *pScript = static_cast<ScriptEngine *>(NewService("script", "lua"));
@@ -102,7 +102,7 @@ BS_Kernel::BS_Kernel() :
 	_InitSuccess = true;
 }
 
-BS_Kernel::~BS_Kernel() {
+Kernel::~Kernel() {
 	// Services are de-registered in reverse order of creation
 	while (!_ServiceCreationOrder.empty()) {
 		Superclass *superclass = GetSuperclassByIdentifier(_ServiceCreationOrder.top());
@@ -129,7 +129,7 @@ BS_Kernel::~BS_Kernel() {
 // Service Methoden
 // ----------------
 
-BS_Kernel::Superclass::Superclass(BS_Kernel *pKernel, const Common::String &Identifier) :
+Kernel::Superclass::Superclass(Kernel *pKernel, const Common::String &Identifier) :
 	_pKernel(pKernel),
 	_Identifier(Identifier),
 	_ServiceCount(0),
@@ -139,7 +139,7 @@ BS_Kernel::Superclass::Superclass(BS_Kernel *pKernel, const Common::String &Iden
 			_ServiceCount++;
 }
 
-BS_Kernel::Superclass::~Superclass() {
+Kernel::Superclass::~Superclass() {
 	DisconnectService();
 }
 
@@ -152,7 +152,7 @@ BS_Kernel::Superclass::~Superclass() {
  *         Hierbei ist zu beachten, dass der erste Service die Nummer 0 erhält. Number muss also eine Zahl zwischen
  *         0 und GetServiceCount() - 1 sein.
  */
-Common::String BS_Kernel::Superclass::GetServiceIdentifier(unsigned int Number) {
+Common::String Kernel::Superclass::GetServiceIdentifier(unsigned int Number) {
 	if (Number > _ServiceCount) return NULL;
 
 	unsigned int CurServiceOrd = 0;
@@ -177,11 +177,11 @@ Common::String BS_Kernel::Superclass::GetServiceIdentifier(unsigned int Number) 
  * @param ServiceIdentifier         The name of the service
  *         For the superclass "sfx" an example could be "Fmod" or "directsound"
  */
-BS_Service *BS_Kernel::Superclass::NewService(const Common::String &ServiceIdentifier) {
+Service *Kernel::Superclass::NewService(const Common::String &ServiceIdentifier) {
 	for (unsigned int i = 0; i < BS_SERVICE_COUNT; i++)
 		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier &&
 		        BS_SERVICE_TABLE[i].ServiceIdentifier == ServiceIdentifier) {
-			BS_Service *NewService_ = BS_SERVICE_TABLE[i].CreateMethod(_pKernel);
+			Service *NewService_ = BS_SERVICE_TABLE[i].CreateMethod(_pKernel);
 
 			if (NewService_) {
 				DisconnectService();
@@ -205,7 +205,7 @@ BS_Service *BS_Kernel::Superclass::NewService(const Common::String &ServiceIdent
  * @param SuperclassIdentfier       The name of the superclass which is to be disconnected
  *         z.B: "sfx", "gfx", "package" ...
  */
-bool BS_Kernel::Superclass::DisconnectService() {
+bool Kernel::Superclass::DisconnectService() {
 	if (_ActiveService) {
 		delete _ActiveService;
 		_ActiveService = 0;
@@ -216,7 +216,7 @@ bool BS_Kernel::Superclass::DisconnectService() {
 	return false;
 }
 
-BS_Kernel::Superclass *BS_Kernel::GetSuperclassByIdentifier(const Common::String &Identifier) {
+Kernel::Superclass *Kernel::GetSuperclassByIdentifier(const Common::String &Identifier) {
 	Common::Array<Superclass *>::iterator Iter;
 	for (Iter = _SuperclassList.begin(); Iter != _SuperclassList.end(); ++Iter) {
 		if ((*Iter)->GetIdentifier() == Identifier)
@@ -230,7 +230,7 @@ BS_Kernel::Superclass *BS_Kernel::GetSuperclassByIdentifier(const Common::String
 /**
  * Returns the number of register superclasses
  */
-unsigned int BS_Kernel::GetSuperclassCount() {
+unsigned int Kernel::GetSuperclassCount() {
 	return _SuperclassList.size();
 }
 
@@ -240,7 +240,7 @@ unsigned int BS_Kernel::GetSuperclassCount() {
  * @param Number        The number of the superclass to return the identifier for.
  * It should be noted that the number should be between 0 und GetSuperclassCount() - 1.
  */
-Common::String BS_Kernel::GetSuperclassIdentifier(unsigned int Number) {
+Common::String Kernel::GetSuperclassIdentifier(unsigned int Number) {
 	if (Number > _SuperclassList.size()) return NULL;
 
 	unsigned int CurSuperclassOrd = 0;
@@ -260,7 +260,7 @@ Common::String BS_Kernel::GetSuperclassIdentifier(unsigned int Number) {
  * @param SuperclassIdentifier      The name of the superclass
  *         z.B: "sfx", "gfx", "package" ...
  */
-unsigned int BS_Kernel::GetServiceCount(const Common::String &SuperclassIdentifier) {
+unsigned int Kernel::GetServiceCount(const Common::String &SuperclassIdentifier) {
 	Superclass *pSuperclass;
 	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier)))
 		return 0;
@@ -278,7 +278,7 @@ unsigned int BS_Kernel::GetServiceCount(const Common::String &SuperclassIdentifi
  *         Hierbei ist zu beachten, dass der erste Service die Nummer 0 erhält. Number muss also eine Zahl zwischen
  *         0 und GetServiceCount() - 1 sein.
  */
-Common::String BS_Kernel::GetServiceIdentifier(const Common::String &SuperclassIdentifier, unsigned int Number) {
+Common::String Kernel::GetServiceIdentifier(const Common::String &SuperclassIdentifier, unsigned int Number) {
 	Superclass *pSuperclass;
 	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) return NULL;
 
@@ -294,7 +294,7 @@ Common::String BS_Kernel::GetServiceIdentifier(const Common::String &SuperclassI
  * @param ServiceIdentifier         The name of the service
  *         For the superclass "sfx" an example could be "Fmod" or "directsound"
  */
-BS_Service *BS_Kernel::NewService(const Common::String &SuperclassIdentifier, const Common::String &ServiceIdentifier) {
+Service *Kernel::NewService(const Common::String &SuperclassIdentifier, const Common::String &ServiceIdentifier) {
 	Superclass *pSuperclass;
 	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) return NULL;
 
@@ -310,7 +310,7 @@ BS_Service *BS_Kernel::NewService(const Common::String &SuperclassIdentifier, co
  * @param SuperclassIdentfier       The name of the superclass which is to be disconnected
  *         z.B: "sfx", "gfx", "package" ...
  */
-bool BS_Kernel::DisconnectService(const Common::String &SuperclassIdentifier) {
+bool Kernel::DisconnectService(const Common::String &SuperclassIdentifier) {
 	Superclass *pSuperclass;
 	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) return false;
 
@@ -322,7 +322,7 @@ bool BS_Kernel::DisconnectService(const Common::String &SuperclassIdentifier) {
  * @param SuperclassIdentfier       The name of the superclass
  *         z.B: "sfx", "gfx", "package" ...
  */
-BS_Service *BS_Kernel::GetService(const Common::String &SuperclassIdentifier) {
+Service *Kernel::GetService(const Common::String &SuperclassIdentifier) {
 	Superclass *pSuperclass;
 	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) return NULL;
 
@@ -335,7 +335,7 @@ BS_Service *BS_Kernel::GetService(const Common::String &SuperclassIdentifier) {
  * @param SuperclassIdentfier       The name of the superclass
  *         z.B: "sfx", "gfx", "package" ...
  */
-Common::String BS_Kernel::GetActiveServiceIdentifier(const Common::String &SuperclassIdentifier) {
+Common::String Kernel::GetActiveServiceIdentifier(const Common::String &SuperclassIdentifier) {
 	Superclass *pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier);
 	if (!pSuperclass) return Common::String("");
 
@@ -349,7 +349,7 @@ Common::String BS_Kernel::GetActiveServiceIdentifier(const Common::String &Super
  * @param Min       The minimum allowed value
  * @param Max       The maximum allowed value
  */
-int BS_Kernel::GetRandomNumber(int Min, int Max) {
+int Kernel::GetRandomNumber(int Min, int Max) {
 	BS_ASSERT(Min <= Max);
 
 	return Min + _rnd.getRandomNumber(Max - Min + 1);
@@ -358,7 +358,7 @@ int BS_Kernel::GetRandomNumber(int Min, int Max) {
 /**
  * Returns the elapsed time since startup in milliseconds
  */
-unsigned int BS_Kernel::GetMilliTicks() {
+unsigned int Kernel::GetMilliTicks() {
 	return g_system->getMillis();
 }
 
@@ -366,7 +366,7 @@ unsigned int BS_Kernel::GetMilliTicks() {
  * Returns the elapsed time since the system start in microseconds.
  * This method should be used only if GetMilliTick() for the desired application is inaccurate.
  */
-uint64 BS_Kernel::GetMicroTicks() {
+uint64 Kernel::GetMicroTicks() {
 	return g_system->getMillis() * 1000;
 }
 
@@ -376,7 +376,7 @@ uint64 BS_Kernel::GetMicroTicks() {
 /**
  * Returns how much memory is being used
  */
-size_t BS_Kernel::GetUsedMemory() {
+size_t Kernel::GetUsedMemory() {
 	return 0;
 
 #ifdef SCUMMVM_DISABLED_CODE
@@ -396,7 +396,7 @@ size_t BS_Kernel::GetUsedMemory() {
 /**
  * Returns a pointer to the active Gfx Service, or NULL if no Gfx service is active
  */
-GraphicEngine *BS_Kernel::GetGfx() {
+GraphicEngine *Kernel::GetGfx() {
 	return static_cast<GraphicEngine *>(GetService("gfx"));
 }
 
@@ -405,7 +405,7 @@ GraphicEngine *BS_Kernel::GetGfx() {
 /**
  * Returns a pointer to the active Sfx Service, or NULL if no Sfx service is active
  */
-SoundEngine *BS_Kernel::GetSfx() {
+SoundEngine *Kernel::GetSfx() {
 	return static_cast<SoundEngine *>(GetService("sfx"));
 }
 
@@ -414,7 +414,7 @@ SoundEngine *BS_Kernel::GetSfx() {
 /**
  * Returns a pointer to the active input service, or NULL if no input service is active
  */
-InputEngine *BS_Kernel::GetInput() {
+InputEngine *Kernel::GetInput() {
 	return static_cast<InputEngine *>(GetService("input"));
 }
 
@@ -423,7 +423,7 @@ InputEngine *BS_Kernel::GetInput() {
 /**
  * Returns a pointer to the active package manager, or NULL if no manager is active
  */
-PackageManager *BS_Kernel::GetPackage() {
+PackageManager *Kernel::GetPackage() {
 	return static_cast<PackageManager *>(GetService("package"));
 }
 
@@ -432,7 +432,7 @@ PackageManager *BS_Kernel::GetPackage() {
 /**
  * Returns a pointer to the script engine, or NULL if it is not active
  */
-ScriptEngine *BS_Kernel::GetScript() {
+ScriptEngine *Kernel::GetScript() {
 	return static_cast<ScriptEngine *>(GetService("script"));
 }
 
@@ -441,13 +441,13 @@ ScriptEngine *BS_Kernel::GetScript() {
 /**
  * Returns a pointer to the movie player, or NULL if it is not active
  */
-MoviePlayer *BS_Kernel::GetFMV() {
+MoviePlayer *Kernel::GetFMV() {
 	return static_cast<MoviePlayer *>(GetService("fmv"));
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_Kernel::Sleep(unsigned int Msecs) const {
+void Kernel::Sleep(unsigned int Msecs) const {
 	g_system->delayMillis(Msecs);
 }
 

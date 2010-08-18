@@ -60,10 +60,10 @@ namespace Sword25 {
 // Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_FileSystemUtil {
+class FileSystemUtil {
 public:
-	static BS_FileSystemUtil &GetInstance();
-	virtual ~BS_FileSystemUtil() {};
+	static FileSystemUtil &GetInstance();
+	virtual ~FileSystemUtil() {};
 
 	/**
 	 * This function returns the name of the directory in which all user data is to be stored.

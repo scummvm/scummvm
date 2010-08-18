@@ -107,7 +107,7 @@ static CallbackfunctionRegisterer Instance;
 // -----------------------------------------------------------------------------
 
 static InputEngine *GetIE() {
-	BS_Kernel *pKernel = BS_Kernel::GetInstance();
+	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 	InputEngine *pIE = static_cast<InputEngine *>(pKernel->GetService("input"));
 	BS_ASSERT(pIE);
@@ -245,7 +245,7 @@ static int SetMouseY(lua_State *L) {
 
 static void TheCharacterCallback(int Character) {
 	CharacterCallbackPtr->Character = static_cast<unsigned char>(Character);
-	lua_State *L = static_cast<lua_State *>(BS_Kernel::GetInstance()->GetScript()->GetScriptObject());
+	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->GetScriptObject());
 	CharacterCallbackPtr->InvokeCallbackFunctions(L, 1);
 }
 
@@ -271,7 +271,7 @@ static int UnregisterCharacterCallback(lua_State *L) {
 
 static void TheCommandCallback(int Command) {
 	CommandCallbackPtr->Command = static_cast<InputEngine::KEY_COMMANDS>(Command);
-	lua_State *L = static_cast<lua_State *>(BS_Kernel::GetInstance()->GetScript()->GetScriptObject());
+	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->GetScriptObject());
 	CommandCallbackPtr->InvokeCallbackFunctions(L, 1);
 }
 
@@ -336,7 +336,7 @@ static const lua_constant_reg PACKAGE_CONSTANTS[] = {
 // -----------------------------------------------------------------------------
 
 bool InputEngine::_RegisterScriptBindings() {
-	BS_Kernel *pKernel = BS_Kernel::GetInstance();
+	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);

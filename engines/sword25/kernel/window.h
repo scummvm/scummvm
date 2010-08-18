@@ -57,13 +57,13 @@ namespace Sword25 {
  * Windows are exclusively created by BS_Window::CreateBSWindow().
  * BS_Windows selects the correct class for the environment.
  */
-class BS_Window {
+class Window {
 protected:
 	bool _InitSuccess;
 	bool _CloseWanted;
 
 public:
-	virtual ~BS_Window() {};
+	virtual ~Window() {};
 
 	/**
 	 * Returns the visibility of the window.
@@ -169,7 +169,7 @@ public:
 	 * @param Height    The height of the window without the frame
 	 * @param Visible   Specifies whether window should be visible
 	 */
-	static BS_Window *CreateBSWindow(int X, int Y, int Width, int Height, bool Visible);
+	static Window *CreateBSWindow(int X, int Y, int Width, int Height, bool Visible);
 };
 
 } // End of namespace Sword25

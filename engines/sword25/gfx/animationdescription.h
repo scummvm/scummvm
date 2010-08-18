@@ -49,7 +49,7 @@ namespace Sword25 {
 // Klassendefinition
 // -----------------------------------------------------------------------------
 
-class AnimationDescription : public BS_Persistable {
+class AnimationDescription : public Persistable {
 protected:
 	AnimationDescription() :
 		m_AnimationType(Animation::AT_LOOP),
@@ -102,8 +102,8 @@ public:
 		return m_ColorModulationAllowed;
 	}
 
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool Persist(OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(InputPersistenceBlock &Reader);
 
 protected:
 	Animation::ANIMATION_TYPES   m_AnimationType;

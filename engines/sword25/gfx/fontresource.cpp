@@ -60,10 +60,10 @@ static const unsigned int DEFAULT_GAPWIDTH = 1;
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-FontResource::FontResource(BS_Kernel *pKernel, const Common::String &FileName) :
+FontResource::FontResource(Kernel *pKernel, const Common::String &FileName) :
 	_pKernel(pKernel),
 	_Valid(false),
-	BS_Resource(FileName, BS_Resource::TYPE_FONT) {
+	Resource(FileName, Resource::TYPE_FONT) {
 	// XML Fontdatei parsen
 	TiXmlDocument Doc;
 	if (!_ParseXMLDocument(FileName, Doc)) {

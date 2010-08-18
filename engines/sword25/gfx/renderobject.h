@@ -59,7 +59,7 @@ namespace Sword25 {
 // Forward Declarations
 // -----------------------------------------------------------------------------
 
-class BS_Kernel;
+class Kernel;
 class RenderObjectManager;
 class Bitmap;
 class Animation;
@@ -354,13 +354,13 @@ public:
 
 	// Persistenz-Methoden
 	// -------------------
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool Persist(OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(InputPersistenceBlock &Reader);
 	// TODO: Evtl. protected
-	bool PersistChildren(BS_OutputPersistenceBlock &Writer);
-	bool UnpersistChildren(BS_InputPersistenceBlock &Reader);
+	bool PersistChildren(OutputPersistenceBlock &Writer);
+	bool UnpersistChildren(InputPersistenceBlock &Reader);
 	// TODO: Evtl. private
-	RenderObjectPtr<RenderObject> RecreatePersistedRenderObject(BS_InputPersistenceBlock &Reader);
+	RenderObjectPtr<RenderObject> RecreatePersistedRenderObject(InputPersistenceBlock &Reader);
 
 protected:
 	// Typen

@@ -89,13 +89,13 @@ Common::Error Sword25Engine::AppStart(const Common::StringArray &CommandParamete
 		return Common::kUnsupportedColorMode;
 
 	// Kernel initialization
-	if (!BS_Kernel::GetInstance()->GetInitSuccess()) {
+	if (!Kernel::GetInstance()->GetInitSuccess()) {
 		BS_LOG_ERRORLN("Kernel initialization failed.");
 		return Common::kUnknownError;
 	}
 
 	// Package-Manager starten, damit die Packfiles geladen werden können.
-	PackageManager *PackageManagerPtr = static_cast<PackageManager *>(BS_Kernel::GetInstance()->NewService("package", PACKAGE_MANAGER));
+	PackageManager *PackageManagerPtr = static_cast<PackageManager *>(Kernel::GetInstance()->NewService("package", PACKAGE_MANAGER));
 	if (!PackageManagerPtr) {
 		BS_LOG_ERRORLN("Packagemanager initialization failed.");
 		return Common::kUnknownError;
@@ -111,7 +111,7 @@ Common::Error Sword25Engine::AppStart(const Common::StringArray &CommandParamete
 	}
 
 	// Einen Pointer auf den Skript-Engine holen.
-	ScriptEngine *ScriptPtr = static_cast<ScriptEngine *>(BS_Kernel::GetInstance()->GetService("script"));
+	ScriptEngine *ScriptPtr = static_cast<ScriptEngine *>(Kernel::GetInstance()->GetService("script"));
 	if (!ScriptPtr) {
 		BS_LOG_ERRORLN("Script intialization failed.");
 		return Common::kUnknownError;
@@ -125,7 +125,7 @@ Common::Error Sword25Engine::AppStart(const Common::StringArray &CommandParamete
 
 bool Sword25Engine::AppMain() {
 	// The main script start. This script loads all the other scripts and starts the actual game.
-	ScriptEngine *ScriptPtr = static_cast<ScriptEngine *>(BS_Kernel::GetInstance()->GetService("script"));
+	ScriptEngine *ScriptPtr = static_cast<ScriptEngine *>(Kernel::GetInstance()->GetService("script"));
 	BS_ASSERT(ScriptPtr);
 	ScriptPtr->ExecuteFile(DEFAULT_SCRIPT_FILE);
 
@@ -134,7 +134,7 @@ bool Sword25Engine::AppMain() {
 
 bool Sword25Engine::AppEnd() {
 	// The kernel is shutdown, and un-initialises all subsystems
-	BS_Kernel::DeleteInstance();
+	Kernel::DeleteInstance();
 
 	// Free the log file if it was used
 	BS_Log::_CloseLog();
@@ -143,14 +143,14 @@ bool Sword25Engine::AppEnd() {
 }
 
 bool Sword25Engine::LoadPackages() {
-	PackageManager *PackageManagerPtr = reinterpret_cast<PackageManager *>(BS_Kernel::GetInstance()->GetService("package"));
+	PackageManager *PackageManagerPtr = reinterpret_cast<PackageManager *>(Kernel::GetInstance()->GetService("package"));
 	BS_ASSERT(PackageManagerPtr);
 
 	// Load the main package
 	if (!PackageManagerPtr->LoadPackage("data.b25c", "/")) return false;
 
 	// Get the contents of the main program directory and sort them alphabetically
-	Common::StringArray Filenames = BS_FileSystemUtil::GetInstance().GetFilesInDirectory(".");
+	Common::StringArray Filenames = FileSystemUtil::GetInstance().GetFilesInDirectory(".");
 	Common::sort(Filenames.begin(), Filenames.end());
 
 	// Identity all patch packages

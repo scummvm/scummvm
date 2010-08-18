@@ -47,7 +47,7 @@ namespace Sword25 {
 // Class definition
 // -----------------------------------------------------------------------------
 
-class BS_PersistenceBlock {
+class PersistenceBlock {
 public:
 	static unsigned int GetSInt32Size() {
 		return sizeof(signed int) + sizeof(unsigned char);

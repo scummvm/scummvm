@@ -45,7 +45,7 @@ public:
 	// Konstruktion / Destruktion
 	// -----------------------------------------------------------------------------
 
-	FMODExSound(BS_Kernel *pKernel);
+	FMODExSound(Kernel *pKernel);
 	virtual ~FMODExSound();
 
 	bool            Init(unsigned int SampleRate, unsigned int Channels = 32);
@@ -71,15 +71,15 @@ public:
 	float   GetSoundPanning(unsigned int Handle);
 	float   GetSoundTime(unsigned int Handle);
 
-	BS_Resource    *LoadResource(const Common::String &FileName);
+	Resource    *LoadResource(const Common::String &FileName);
 	bool            CanLoadResource(const Common::String &FileName);
 
 	// -----------------------------------------------------------------------------
 	// Persistenz
 	// -----------------------------------------------------------------------------
 
-	bool Persist(BS_OutputPersistenceBlock &Writer);
-	bool Unpersist(BS_InputPersistenceBlock &Reader);
+	bool Persist(OutputPersistenceBlock &Writer);
+	bool Unpersist(InputPersistenceBlock &Reader);
 
 #if 0
 private:

@@ -69,7 +69,7 @@ void RegionRegistry::LogWarningLn(const char *Message) const {
 
 // -----------------------------------------------------------------------------
 
-bool RegionRegistry::Persist(BS_OutputPersistenceBlock &Writer) {
+bool RegionRegistry::Persist(OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Write out the next handle
@@ -95,7 +95,7 @@ bool RegionRegistry::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool RegionRegistry::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool RegionRegistry::Unpersist(InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// Read in the next handle

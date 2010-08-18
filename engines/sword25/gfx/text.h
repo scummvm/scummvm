@@ -53,9 +53,9 @@ namespace Sword25 {
 // Forward Declarations
 // -----------------------------------------------------------------------------
 
-class BS_Kernel;
+class Kernel;
 class FontResource;
-class BS_ResourceManager;
+class ResourceManager;
 
 // -----------------------------------------------------------------------------
 // Klassendefinition
@@ -151,15 +151,15 @@ public:
 		return m_AutoWrapThreshold;
 	}
 
-	virtual bool    Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool    Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool    Persist(OutputPersistenceBlock &Writer);
+	virtual bool    Unpersist(InputPersistenceBlock &Reader);
 
 protected:
 	virtual bool DoRender();
 
 private:
 	Text(RenderObjectPtr<RenderObject> ParentPtr);
-	Text(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
+	Text(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
 
 	unsigned int    m_ModulationColor;
 	Common::String      m_Font;
@@ -176,7 +176,7 @@ private:
 
 	void UpdateFormat();
 	void UpdateMetrics(FontResource &FontResource);
-	BS_ResourceManager *GetResourceManager();
+	ResourceManager *GetResourceManager();
 	FontResource *LockFontResource();
 };
 

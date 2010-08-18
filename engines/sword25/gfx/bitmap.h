@@ -179,8 +179,8 @@ public:
 	virtual bool    IsColorModulationAllowed() const = 0;
 	virtual bool    IsSetContentAllowed() const = 0;
 
-	virtual bool    Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool    Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool    Persist(OutputPersistenceBlock &Writer);
+	virtual bool    Unpersist(InputPersistenceBlock &Reader);
 
 protected:
 	bool            m_FlipH;

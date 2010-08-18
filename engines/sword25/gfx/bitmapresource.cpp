@@ -50,7 +50,7 @@ namespace Sword25 {
 BitmapResource::BitmapResource(const Common::String &Filename, Image *pImage) :
 	m_Valid(false),
 	m_pImage(pImage),
-	BS_Resource(Filename, BS_Resource::TYPE_BITMAP) {
+	Resource(Filename, Resource::TYPE_BITMAP) {
 	m_Valid = m_pImage != 0;
 }
 

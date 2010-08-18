@@ -79,7 +79,7 @@ unsigned int AnimationTemplate::Create(const AnimationTemplate &Other) {
 
 // -----------------------------------------------------------------------------
 
-unsigned int AnimationTemplate::Create(BS_InputPersistenceBlock &Reader, unsigned int Handle) {
+unsigned int AnimationTemplate::Create(InputPersistenceBlock &Reader, unsigned int Handle) {
 	AnimationTemplate *AnimationTemplatePtr = new AnimationTemplate(Reader, Handle);
 
 	if (AnimationTemplatePtr->IsValid()) {
@@ -133,7 +133,7 @@ AnimationTemplate::AnimationTemplate(const AnimationTemplate &Other) {
 
 // -----------------------------------------------------------------------------
 
-AnimationTemplate::AnimationTemplate(BS_InputPersistenceBlock &Reader, unsigned int Handle) {
+AnimationTemplate::AnimationTemplate(InputPersistenceBlock &Reader, unsigned int Handle) {
 	// Objekt registrieren.
 	AnimationTemplateRegistry::GetInstance().RegisterObject(this, Handle);
 
@@ -144,9 +144,9 @@ AnimationTemplate::AnimationTemplate(BS_InputPersistenceBlock &Reader, unsigned 
 // -----------------------------------------------------------------------------
 
 AnimationResource *AnimationTemplate::RequestSourceAnimation(const Common::String &SourceAnimation) const {
-	BS_ResourceManager *RMPtr = BS_Kernel::GetInstance()->GetResourceManager();
-	BS_Resource *ResourcePtr;
-	if (NULL == (ResourcePtr = RMPtr->RequestResource(SourceAnimation)) || ResourcePtr->GetType() != BS_Resource::TYPE_ANIMATION) {
+	ResourceManager *RMPtr = Kernel::GetInstance()->GetResourceManager();
+	Resource *ResourcePtr;
+	if (NULL == (ResourcePtr = RMPtr->RequestResource(SourceAnimation)) || ResourcePtr->GetType() != Resource::TYPE_ANIMATION) {
 		BS_LOG_ERRORLN("The resource \"%s\" could not be requested or is has an invalid type. The animation template can't be created.", SourceAnimation.c_str());
 		return 0;
 	}
@@ -212,7 +212,7 @@ void AnimationTemplate::SetFPS(int FPS) {
 
 // -----------------------------------------------------------------------------
 
-bool AnimationTemplate::Persist(BS_OutputPersistenceBlock &Writer) {
+bool AnimationTemplate::Persist(OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Parent persistieren.
@@ -242,7 +242,7 @@ bool AnimationTemplate::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool AnimationTemplate::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool AnimationTemplate::Unpersist(InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// Parent wieder herstellen.

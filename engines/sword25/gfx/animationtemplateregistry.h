@@ -59,15 +59,15 @@ class AnimationTemplate;
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-class AnimationTemplateRegistry : public BS_ObjectRegistry<AnimationTemplate>, public BS_Persistable {
+class AnimationTemplateRegistry : public ObjectRegistry<AnimationTemplate>, public Persistable {
 public:
 	static AnimationTemplateRegistry &GetInstance() {
 		if (!m_InstancePtr.get()) m_InstancePtr.reset(new AnimationTemplateRegistry);
 		return *m_InstancePtr.get();
 	}
 
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool Persist(OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(InputPersistenceBlock &Reader);
 
 private:
 	virtual void LogErrorLn(const char *Message) const;

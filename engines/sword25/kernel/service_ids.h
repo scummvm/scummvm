@@ -49,13 +49,13 @@
 
 namespace Sword25 {
 
-BS_Service *OpenGLGfx_CreateObject(BS_Kernel *pKernel);
-BS_Service *ScummVMPackageManager_CreateObject(BS_Kernel *pKernel);
-BS_Service *ScummVMInput_CreateObject(BS_Kernel *pKernel);
-BS_Service *FMODExSound_CreateObject(BS_Kernel *pKernel);
-BS_Service *LuaScriptEngine_CreateObject(BS_Kernel *pKernel);
-BS_Service *Geometry_CreateObject(BS_Kernel *pKernel);
-BS_Service *OggTheora_CreateObject(BS_Kernel *pKernel);
+Service *OpenGLGfx_CreateObject(Kernel *pKernel);
+Service *ScummVMPackageManager_CreateObject(Kernel *pKernel);
+Service *ScummVMInput_CreateObject(Kernel *pKernel);
+Service *FMODExSound_CreateObject(Kernel *pKernel);
+Service *LuaScriptEngine_CreateObject(Kernel *pKernel);
+Service *Geometry_CreateObject(Kernel *pKernel);
+Service *OggTheora_CreateObject(Kernel *pKernel);
 
 // Services are recorded in this table
 const BS_ServiceInfo BS_SERVICE_TABLE[] = {

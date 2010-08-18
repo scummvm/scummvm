@@ -174,7 +174,7 @@ void Bitmap::SetFlipV(bool FlipV) {
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool Bitmap::Persist(BS_OutputPersistenceBlock &Writer) {
+bool Bitmap::Persist(OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	Result &= RenderObject::Persist(Writer);
@@ -191,7 +191,7 @@ bool Bitmap::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool Bitmap::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool Bitmap::Unpersist(InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	Result &= RenderObject::Unpersist(Reader);

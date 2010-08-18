@@ -52,7 +52,7 @@ Region::Region() : m_Valid(false), m_Type(RT_REGION) {
 
 // -----------------------------------------------------------------------------
 
-Region::Region(BS_InputPersistenceBlock &Reader, unsigned int Handle) : m_Valid(false), m_Type(RT_REGION) {
+Region::Region(InputPersistenceBlock &Reader, unsigned int Handle) : m_Valid(false), m_Type(RT_REGION) {
 	RegionRegistry::GetInstance().RegisterObject(this, Handle);
 	Unpersist(Reader);
 }
@@ -79,7 +79,7 @@ unsigned int Region::Create(REGION_TYPE Type) {
 
 // -----------------------------------------------------------------------------
 
-unsigned int Region::Create(BS_InputPersistenceBlock &Reader, unsigned int Handle) {
+unsigned int Region::Create(InputPersistenceBlock &Reader, unsigned int Handle) {
 	// Read type
 	unsigned int Type;
 	Reader.Read(Type);
@@ -334,7 +334,7 @@ bool Region::IsLineOfSight(const Vertex &a, const Vertex &b) const {
 // Persistence
 // -----------------------------------------------------------------------------
 
-bool Region::Persist(BS_OutputPersistenceBlock &Writer) {
+bool Region::Persist(OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	Writer.Write(static_cast<unsigned int>(m_Type));
@@ -359,7 +359,7 @@ bool Region::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool Region::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool Region::Unpersist(InputPersistenceBlock &Reader) {
 	Reader.Read(m_Valid);
 	Reader.Read(m_Position.X);
 	Reader.Read(m_Position.Y);

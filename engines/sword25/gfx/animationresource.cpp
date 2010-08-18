@@ -65,10 +65,10 @@ const int   MAX_FPS     = 200;
 // -----------------------------------------------------------------------------
 
 AnimationResource::AnimationResource(const Common::String &FileName) :
-	BS_Resource(FileName, BS_Resource::TYPE_ANIMATION),
+	Resource(FileName, Resource::TYPE_ANIMATION),
 	m_Valid(false) {
 	// Pointer auf den Package-Manager bekommen
-	PackageManager *PackagePtr = BS_Kernel::GetInstance()->GetPackage();
+	PackageManager *PackagePtr = Kernel::GetInstance()->GetPackage();
 	BS_ASSERT(PackagePtr);
 
 	// Animations-XML laden
@@ -266,7 +266,7 @@ AnimationResource::~AnimationResource() {
 bool AnimationResource::PrecacheAllFrames() const {
 	Common::Array<Frame>::const_iterator Iter = m_Frames.begin();
 	for (; Iter != m_Frames.end(); ++Iter) {
-		if (!BS_Kernel::GetInstance()->GetResourceManager()->PrecacheResource((*Iter).FileName)) {
+		if (!Kernel::GetInstance()->GetResourceManager()->PrecacheResource((*Iter).FileName)) {
 			BS_LOG_ERRORLN("Could not precache \"%s\".", (*Iter).FileName.c_str());
 			return false;
 		}
@@ -289,7 +289,7 @@ bool AnimationResource::ComputeFeatures() {
 	Common::Array<Frame>::const_iterator Iter = m_Frames.begin();
 	for (; Iter != m_Frames.end(); ++Iter) {
 		BitmapResource *pBitmap;
-		if (!(pBitmap = static_cast<BitmapResource *>(BS_Kernel::GetInstance()->GetResourceManager()->RequestResource((*Iter).FileName)))) {
+		if (!(pBitmap = static_cast<BitmapResource *>(Kernel::GetInstance()->GetResourceManager()->RequestResource((*Iter).FileName)))) {
 			BS_LOG_ERRORLN("Could not request \"%s\".", (*Iter).FileName.c_str());
 			return false;
 		}

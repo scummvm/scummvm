@@ -45,7 +45,7 @@ namespace Sword25 {
 // Forward Declarations
 // -----------------------------------------------------------------------------
 
-class BS_Kernel;
+class Kernel;
 
 // Klassendefinition
 class RenderObjectManager;

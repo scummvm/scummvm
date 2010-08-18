@@ -74,7 +74,7 @@ Text::Text(RenderObjectPtr<RenderObject> ParentPtr) :
 
 // -----------------------------------------------------------------------------
 
-Text::Text(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle) :
+Text::Text(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle) :
 	RenderObject(ParentPtr, TYPE_TEXT, Handle) {
 	m_InitSuccess = Unpersist(Reader);
 }
@@ -152,15 +152,15 @@ bool Text::DoRender() {
 	if (!FontPtr) return false;
 
 	// Charactermap-Resource locken.
-	BS_ResourceManager *RMPtr = GetResourceManager();
+	ResourceManager *RMPtr = GetResourceManager();
 	BitmapResource *CharMapPtr;
 	{
-		BS_Resource *pResource = RMPtr->RequestResource(FontPtr->GetCharactermapFileName());
+		Resource *pResource = RMPtr->RequestResource(FontPtr->GetCharactermapFileName());
 		if (!pResource) {
 			BS_LOG_ERRORLN("Could not request resource \"%s\".", FontPtr->GetCharactermapFileName().c_str());
 			return false;
 		}
-		if (pResource->GetType() != BS_Resource::TYPE_BITMAP) {
+		if (pResource->GetType() != Resource::TYPE_BITMAP) {
 			BS_LOG_ERRORLN("Requested resource \"%s\" is not a bitmap.", FontPtr->GetCharactermapFileName().c_str());
 			return false;
 		}
@@ -169,7 +169,7 @@ bool Text::DoRender() {
 	}
 
 	// Framebufferobjekt holen.
-	GraphicEngine *GfxPtr = static_cast<GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx"));
+	GraphicEngine *GfxPtr = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
 	BS_ASSERT(GfxPtr);
 
 	bool Result = true;
@@ -207,25 +207,25 @@ bool Text::DoRender() {
 
 // -----------------------------------------------------------------------------
 
-BS_ResourceManager *Text::GetResourceManager() {
+ResourceManager *Text::GetResourceManager() {
 	// Pointer auf den Resource-Manager holen.
-	return BS_Kernel::GetInstance()->GetResourceManager();
+	return Kernel::GetInstance()->GetResourceManager();
 }
 
 // -----------------------------------------------------------------------------
 
 FontResource *Text::LockFontResource() {
-	BS_ResourceManager *RMPtr = GetResourceManager();
+	ResourceManager *RMPtr = GetResourceManager();
 
 	// Font-Resource locken.
 	FontResource *FontPtr;
 	{
-		BS_Resource *ResourcePtr = RMPtr->RequestResource(m_Font);
+		Resource *ResourcePtr = RMPtr->RequestResource(m_Font);
 		if (!ResourcePtr) {
 			BS_LOG_ERRORLN("Could not request resource \"%s\".", m_Font.c_str());
 			return NULL;
 		}
-		if (ResourcePtr->GetType() != BS_Resource::TYPE_FONT) {
+		if (ResourcePtr->GetType() != Resource::TYPE_FONT) {
 			BS_LOG_ERRORLN("Requested resource \"%s\" is not a font.", m_Font.c_str());
 			return NULL;
 		}
@@ -333,7 +333,7 @@ void Text::UpdateMetrics(FontResource &FontResource) {
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool Text::Persist(BS_OutputPersistenceBlock &Writer) {
+bool Text::Persist(OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	Result &= RenderObject::Persist(Writer);
@@ -349,7 +349,7 @@ bool Text::Persist(BS_OutputPersistenceBlock &Writer) {
 	return Result;
 }
 
-bool Text::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool Text::Unpersist(InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	Result &= RenderObject::Unpersist(Reader);

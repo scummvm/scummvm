@@ -78,8 +78,8 @@ Common::String GenerateSavegameFilename(unsigned int SlotID) {
 
 Common::String GenerateSavegamePath(unsigned int SlotID) {
 	Common::String oss;
-	oss = BS_PersistenceService::GetSavegameDirectory();
-	oss += BS_FileSystemUtil::GetInstance().GetPathSeparator();
+	oss = PersistenceService::GetSavegameDirectory();
+	oss += FileSystemUtil::GetInstance().GetPathSeparator();
 	oss += GenerateSavegameFilename(SlotID);
 	return oss;
 }
@@ -145,7 +145,7 @@ struct SavegameInformation {
 	}
 };
 
-struct BS_PersistenceService::Impl {
+struct PersistenceService::Impl {
 	SavegameInformation m_SavegameInformations[SLOT_COUNT];
 
 	// -----------------------------------------------------------------------------
@@ -172,7 +172,7 @@ struct BS_PersistenceService::Impl {
 		Common::String Filename = GenerateSavegamePath(SlotID);
 
 		// Feststellen, ob eine Spielstanddatei dieses Namens existiert.
-		if (BS_FileSystemUtil::GetInstance().FileExists(Filename)) {
+		if (FileSystemUtil::GetInstance().FileExists(Filename)) {
 			// Read in the game
 			Common::SaveFileManager *sfm = g_system->getSavefileManager();
 			Common::InSaveFile *File = sfm->openForLoading(Filename);
@@ -193,7 +193,7 @@ struct BS_PersistenceService::Impl {
 					// Dateinamen des Spielstandes speichern.
 					CurSavegameInfo.Filename = GenerateSavegameFilename(SlotID);
 					// Die Beschreibung des Spielstandes besteht aus einer textuellen Darstellung des Änderungsdatums der Spielstanddatei.
-					CurSavegameInfo.Description = FormatTimestamp(BS_FileSystemUtil::GetInstance().GetFileTime(Filename));
+					CurSavegameInfo.Description = FormatTimestamp(FileSystemUtil::GetInstance().GetFileTime(Filename));
 					// Den Offset zu den gespeicherten Spieldaten innerhalb der Datei speichern.
 					// Dieses entspricht der aktuellen Position + 1, da nach der letzten Headerinformation noch ein Leerzeichen als trenner folgt.
 					CurSavegameInfo.GamedataOffset = static_cast<unsigned int>(File->pos()) + 1;
@@ -209,19 +209,19 @@ struct BS_PersistenceService::Impl {
 // Construction / Destruction
 // -----------------------------------------------------------------------------
 
-BS_PersistenceService &BS_PersistenceService::GetInstance() {
-	static BS_PersistenceService Instance;
+PersistenceService &PersistenceService::GetInstance() {
+	static PersistenceService Instance;
 	return Instance;
 }
 
 // -----------------------------------------------------------------------------
 
-BS_PersistenceService::BS_PersistenceService() : m_impl(new Impl) {
+PersistenceService::PersistenceService() : m_impl(new Impl) {
 }
 
 // -----------------------------------------------------------------------------
 
-BS_PersistenceService::~BS_PersistenceService() {
+PersistenceService::~PersistenceService() {
 	delete m_impl;
 }
 
@@ -229,20 +229,20 @@ BS_PersistenceService::~BS_PersistenceService() {
 // Implementation
 // -----------------------------------------------------------------------------
 
-void BS_PersistenceService::ReloadSlots() {
+void PersistenceService::ReloadSlots() {
 	m_impl->ReloadSlots();
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_PersistenceService::GetSlotCount() {
+unsigned int PersistenceService::GetSlotCount() {
 	return SLOT_COUNT;
 }
 
 // -----------------------------------------------------------------------------
 
-Common::String BS_PersistenceService::GetSavegameDirectory() {
-	return BS_FileSystemUtil::GetInstance().GetUserdataDirectory() + BS_FileSystemUtil::GetInstance().GetPathSeparator() + SAVEGAME_DIRECTORY;
+Common::String PersistenceService::GetSavegameDirectory() {
+	return FileSystemUtil::GetInstance().GetUserdataDirectory() + FileSystemUtil::GetInstance().GetPathSeparator() + SAVEGAME_DIRECTORY;
 }
 
 // -----------------------------------------------------------------------------
@@ -261,21 +261,21 @@ bool CheckSlotID(unsigned int SlotID) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_PersistenceService::IsSlotOccupied(unsigned int SlotID) {
+bool PersistenceService::IsSlotOccupied(unsigned int SlotID) {
 	if (!CheckSlotID(SlotID)) return false;
 	return m_impl->m_SavegameInformations[SlotID].IsOccupied;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_PersistenceService::IsSavegameCompatible(unsigned int SlotID) {
+bool PersistenceService::IsSavegameCompatible(unsigned int SlotID) {
 	if (!CheckSlotID(SlotID)) return false;
 	return m_impl->m_SavegameInformations[SlotID].IsCompatible;
 }
 
 // -----------------------------------------------------------------------------
 
-Common::String &BS_PersistenceService::GetSavegameDescription(unsigned int SlotID) {
+Common::String &PersistenceService::GetSavegameDescription(unsigned int SlotID) {
 	static Common::String EmptyString;
 	if (!CheckSlotID(SlotID)) return EmptyString;
 	return m_impl->m_SavegameInformations[SlotID].Description;
@@ -283,7 +283,7 @@ Common::String &BS_PersistenceService::GetSavegameDescription(unsigned int SlotI
 
 // -----------------------------------------------------------------------------
 
-Common::String &BS_PersistenceService::GetSavegameFilename(unsigned int SlotID) {
+Common::String &PersistenceService::GetSavegameFilename(unsigned int SlotID) {
 	static Common::String EmptyString;
 	if (!CheckSlotID(SlotID)) return EmptyString;
 	return m_impl->m_SavegameInformations[SlotID].Filename;
@@ -291,7 +291,7 @@ Common::String &BS_PersistenceService::GetSavegameFilename(unsigned int SlotID) 
 
 // -----------------------------------------------------------------------------
 
-bool BS_PersistenceService::SaveGame(unsigned int SlotID, const Common::String &ScreenshotFilename) {
+bool PersistenceService::SaveGame(unsigned int SlotID, const Common::String &ScreenshotFilename) {
 	// Überprüfen, ob die Slot-ID zulässig ist.
 	if (SlotID >= SLOT_COUNT) {
 		BS_LOG_ERRORLN("Tried to save to an invalid slot (%d). Only slot ids form 0 to %d are allowed.", SlotID, SLOT_COUNT - 1);
@@ -302,7 +302,7 @@ bool BS_PersistenceService::SaveGame(unsigned int SlotID, const Common::String &
 	Common::String Filename = GenerateSavegamePath(SlotID).c_str();
 
 	// Sicherstellen, dass das Verzeichnis für die Spielstanddateien existiert.
-	BS_FileSystemUtil::GetInstance().CreateDirectory(GetSavegameDirectory());
+	FileSystemUtil::GetInstance().CreateDirectory(GetSavegameDirectory());
 
 	// Spielstanddatei öffnen und die Headerdaten schreiben.
 	Common::SaveFileManager *sfm = g_system->getSavefileManager();
@@ -318,13 +318,13 @@ bool BS_PersistenceService::SaveGame(unsigned int SlotID, const Common::String &
 	}
 
 	// Alle notwendigen Module persistieren.
-	BS_OutputPersistenceBlock Writer;
+	OutputPersistenceBlock Writer;
 	bool Success = true;
-	Success &= BS_Kernel::GetInstance()->GetScript()->Persist(Writer);
+	Success &= Kernel::GetInstance()->GetScript()->Persist(Writer);
 	Success &= RegionRegistry::GetInstance().Persist(Writer);
-	Success &= BS_Kernel::GetInstance()->GetGfx()->Persist(Writer);
-	Success &= BS_Kernel::GetInstance()->GetSfx()->Persist(Writer);
-	Success &= BS_Kernel::GetInstance()->GetInput()->Persist(Writer);
+	Success &= Kernel::GetInstance()->GetGfx()->Persist(Writer);
+	Success &= Kernel::GetInstance()->GetSfx()->Persist(Writer);
+	Success &= Kernel::GetInstance()->GetInput()->Persist(Writer);
 	if (!Success) {
 		error("Unable to persist modules for savegame file \"%s\".", Filename.c_str());
 	}
@@ -353,7 +353,7 @@ bool BS_PersistenceService::SaveGame(unsigned int SlotID, const Common::String &
 	}
 
 	// Screenshotdatei an die Datei anfügen.
-	if (BS_FileSystemUtil::GetInstance().FileExists(ScreenshotFilename)) {
+	if (FileSystemUtil::GetInstance().FileExists(ScreenshotFilename)) {
 		Common::File ScreenshotFile;
 		if (!ScreenshotFile.open(ScreenshotFilename.c_str()))
 			error("Unable to load screenshot file");
@@ -378,7 +378,7 @@ bool BS_PersistenceService::SaveGame(unsigned int SlotID, const Common::String &
 
 // -----------------------------------------------------------------------------
 
-bool BS_PersistenceService::LoadGame(unsigned int SlotID) {
+bool PersistenceService::LoadGame(unsigned int SlotID) {
 	Common::SaveFileManager *sfm = g_system->getSavefileManager();
 	Common::InSaveFile *File;
 
@@ -431,16 +431,16 @@ bool BS_PersistenceService::LoadGame(unsigned int SlotID) {
 		return false;
 	}
 
-	BS_InputPersistenceBlock Reader(&UncompressedDataBuffer[0], CurSavegameInfo.GamedataUncompressedLength);
+	InputPersistenceBlock Reader(&UncompressedDataBuffer[0], CurSavegameInfo.GamedataUncompressedLength);
 
 	// Einzelne Engine-Module depersistieren.
 	bool Success = true;
-	Success &= BS_Kernel::GetInstance()->GetScript()->Unpersist(Reader);
+	Success &= Kernel::GetInstance()->GetScript()->Unpersist(Reader);
 	// Muss unbedingt nach Script passieren. Da sonst die bereits wiederhergestellten Regions per Garbage-Collection gekillt werden.
 	Success &= RegionRegistry::GetInstance().Unpersist(Reader);
-	Success &= BS_Kernel::GetInstance()->GetGfx()->Unpersist(Reader);
-	Success &= BS_Kernel::GetInstance()->GetSfx()->Unpersist(Reader);
-	Success &= BS_Kernel::GetInstance()->GetInput()->Unpersist(Reader);
+	Success &= Kernel::GetInstance()->GetGfx()->Unpersist(Reader);
+	Success &= Kernel::GetInstance()->GetSfx()->Unpersist(Reader);
+	Success &= Kernel::GetInstance()->GetInput()->Unpersist(Reader);
 
 	delete[] CompressedDataBuffer;
 	delete[] UncompressedDataBuffer;

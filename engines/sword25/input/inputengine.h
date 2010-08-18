@@ -55,9 +55,9 @@ namespace Sword25 {
 
 /// Class definitions
 
-class InputEngine : public BS_Service, public BS_Persistable {
+class InputEngine : public Service, public Persistable {
 public:
-	InputEngine(BS_Kernel *pKernel);
+	InputEngine(Kernel *pKernel);
 	virtual ~InputEngine() {};
 
 	// NOTE: These codes are registered in inputengine_script.cpp

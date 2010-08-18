@@ -53,21 +53,21 @@
 namespace Sword25 {
 
 // Klassendefinition
-class BS_Kernel;
+class Kernel;
 
-class BS_Service {
+class Service {
 private:
-	BS_Kernel  *_pKernel;
+	Kernel  *_pKernel;
 
 protected:
-	BS_Service(BS_Kernel *pKernel) : _pKernel(pKernel) {};
+	Service(Kernel *pKernel) : _pKernel(pKernel) {};
 
-	BS_Kernel *GetKernel() const {
+	Kernel *GetKernel() const {
 		return _pKernel;
 	}
 
 public:
-	virtual ~BS_Service() {};
+	virtual ~Service() {};
 };
 
 } // End of namespace Sword25

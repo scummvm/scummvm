@@ -65,7 +65,7 @@ DynamicBitmap::DynamicBitmap(RenderObjectPtr<RenderObject> ParentPtr, unsigned i
 
 // -----------------------------------------------------------------------------
 
-DynamicBitmap::DynamicBitmap(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle) :
+DynamicBitmap::DynamicBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle) :
 	Bitmap(ParentPtr, TYPE_DYNAMICBITMAP, Handle) {
 	m_InitSuccess = Unpersist(Reader);
 }
@@ -101,7 +101,7 @@ unsigned int DynamicBitmap::GetPixel(int X, int Y) const {
 
 bool DynamicBitmap::DoRender() {
 	// Framebufferobjekt holen
-	GraphicEngine *pGfx = static_cast<GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx"));
+	GraphicEngine *pGfx = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
 	BS_ASSERT(pGfx);
 
 	// Bitmap zeichnen
@@ -157,7 +157,7 @@ bool DynamicBitmap::IsSetContentAllowed() const {
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool DynamicBitmap::Persist(BS_OutputPersistenceBlock &Writer) {
+bool DynamicBitmap::Persist(OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	Result &= Bitmap::Persist(Writer);
@@ -171,7 +171,7 @@ bool DynamicBitmap::Persist(BS_OutputPersistenceBlock &Writer) {
 	return Result;
 }
 
-bool DynamicBitmap::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool DynamicBitmap::Unpersist(InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	Result &= Bitmap::Unpersist(Reader);

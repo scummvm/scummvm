@@ -44,7 +44,7 @@
 
 namespace Sword25 {
 
-InputEngine::InputEngine(BS_Kernel *pKernel) : BS_Service(pKernel) {
+InputEngine::InputEngine(Kernel *pKernel) : Service(pKernel) {
 	if (!_RegisterScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else

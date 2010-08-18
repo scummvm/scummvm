@@ -51,10 +51,10 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 template<typename T>
-class BS_ObjectRegistry {
+class ObjectRegistry {
 public:
-	BS_ObjectRegistry() : m_NextHandle(1) {}
-	virtual ~BS_ObjectRegistry() {}
+	ObjectRegistry() : m_NextHandle(1) {}
+	virtual ~ObjectRegistry() {}
 
 	// -------------------------------------------------------------------------
 

@@ -77,7 +77,7 @@ void RenderObjectManager::StartFrame() {
 	m_FrameStarted = true;
 
 	// Verstrichene Zeit bestimmen
-	int TimeElapsed = BS_Kernel::GetInstance()->GetGfx()->GetLastFrameDurationMicro();
+	int TimeElapsed = Kernel::GetInstance()->GetGfx()->GetLastFrameDurationMicro();
 
 	// Alle BS_TimedRenderObject Objekte über den Framestart und die verstrichene Zeit in Kenntnis setzen
 	RenderObjectList::iterator Iter = m_TimedRenderObjects.begin();
@@ -119,7 +119,7 @@ void RenderObjectManager::DetatchTimedRenderObject(RenderObjectPtr<TimedRenderOb
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool RenderObjectManager::Persist(BS_OutputPersistenceBlock &Writer) {
+bool RenderObjectManager::Persist(OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Alle Kinder des Wurzelknotens speichern. Dadurch werden alle BS_RenderObjects gespeichert rekursiv gespeichert.
@@ -143,7 +143,7 @@ bool RenderObjectManager::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool RenderObjectManager::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool RenderObjectManager::Unpersist(InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// Alle Kinder des Wurzelknotens löschen. Damit werden alle BS_RenderObjects gelöscht.

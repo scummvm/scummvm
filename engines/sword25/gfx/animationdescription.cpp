@@ -46,7 +46,7 @@ namespace Sword25 {
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool AnimationDescription::Persist(BS_OutputPersistenceBlock &Writer) {
+bool AnimationDescription::Persist(OutputPersistenceBlock &Writer) {
 	Writer.Write(static_cast<unsigned int>(m_AnimationType));
 	Writer.Write(m_FPS);
 	Writer.Write(m_MillisPerFrame);
@@ -59,7 +59,7 @@ bool AnimationDescription::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool AnimationDescription::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool AnimationDescription::Unpersist(InputPersistenceBlock &Reader) {
 	unsigned int AnimationType;
 	Reader.Read(AnimationType);
 	m_AnimationType = static_cast<Animation::ANIMATION_TYPES>(AnimationType);

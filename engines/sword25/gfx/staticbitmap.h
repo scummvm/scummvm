@@ -56,7 +56,7 @@ private:
 	    @remark Filename muss absoluter Pfad sein
 	*/
 	StaticBitmap(RenderObjectPtr<RenderObject> ParentPtr, const Common::String &Filename);
-	StaticBitmap(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
+	StaticBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
 
 public:
 	virtual ~StaticBitmap();
@@ -72,8 +72,8 @@ public:
 		return false;
 	}
 
-	virtual bool    Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool    Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool    Persist(OutputPersistenceBlock &Writer);
+	virtual bool    Unpersist(InputPersistenceBlock &Reader);
 
 protected:
 	virtual bool    DoRender();

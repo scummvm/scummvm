@@ -52,7 +52,7 @@ namespace Sword25 {
  * arranged in a clockwise direction, so that the polygon working algorithms will
  * work properly.
  */
-class Region : public BS_Persistable {
+class Region : public Persistable {
 protected:
 	/**
 	 * Creates a new BS_Region object
@@ -62,7 +62,7 @@ protected:
 	 */
 	Region();
 
-	Region(BS_InputPersistenceBlock &Reader, unsigned int Handle);
+	Region(InputPersistenceBlock &Reader, unsigned int Handle);
 
 public:
 	enum REGION_TYPE {
@@ -71,7 +71,7 @@ public:
 	};
 
 	static unsigned int Create(REGION_TYPE Type);
-	static unsigned int Create(BS_InputPersistenceBlock &Reader, unsigned int Handle = 0);
+	static unsigned int Create(InputPersistenceBlock &Reader, unsigned int Handle = 0);
 
 	virtual ~Region();
 
@@ -200,8 +200,8 @@ public:
 	// Manipulation Methods
 	//
 
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool Persist(OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(InputPersistenceBlock &Reader);
 
 protected:
 	/// This specifies the type of object

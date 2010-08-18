@@ -252,7 +252,7 @@ static const luaL_reg ANIMATION_TEMPLATE_METHODS[] = {
 // -----------------------------------------------------------------------------
 
 static GraphicEngine *GetGE() {
-	BS_Kernel *pKernel = BS_Kernel::GetInstance();
+	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 	GraphicEngine *pGE = static_cast<GraphicEngine *>(pKernel->GetService("gfx"));
 	BS_ASSERT(pGE);
@@ -1249,7 +1249,7 @@ static int A_IsPlaying(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static bool AnimationLoopPointCallback(unsigned int Handle) {
-	lua_State *L = static_cast<lua_State *>(BS_Kernel::GetInstance()->GetScript()->GetScriptObject());
+	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->GetScriptObject());
 	LoopPointCallbackPtr->InvokeCallbackFunctions(L, Handle);
 
 	return true;
@@ -1287,7 +1287,7 @@ static bool AnimationActionCallback(unsigned int Handle) {
 	RenderObjectPtr<Animation> AnimationPtr(Handle);
 	if (AnimationPtr.IsValid()) {
 		ActionCallbackPtr->Action = AnimationPtr->GetCurrentAction();
-		lua_State *L = static_cast<lua_State *>(BS_Kernel::GetInstance()->GetScript()->GetScriptObject());
+		lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->GetScriptObject());
 		ActionCallbackPtr->InvokeCallbackFunctions(L, AnimationPtr->GetHandle());
 	}
 
@@ -1323,7 +1323,7 @@ static int A_UnregisterActionCallback(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static bool AnimationDeleteCallback(unsigned int Handle) {
-	lua_State *L = static_cast<lua_State *>(BS_Kernel::GetInstance()->GetScript()->GetScriptObject());
+	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->GetScriptObject());
 	LoopPointCallbackPtr->RemoveAllObjectCallbacks(L, Handle);
 
 	return true;
@@ -1526,7 +1526,7 @@ static const luaL_reg TEXT_METHODS[] = {
 // -----------------------------------------------------------------------------
 
 bool GraphicEngine::RegisterScriptBindings() {
-	BS_Kernel *pKernel = BS_Kernel::GetInstance();
+	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);

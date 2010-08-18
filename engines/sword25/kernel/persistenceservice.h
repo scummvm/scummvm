@@ -47,16 +47,16 @@ namespace Sword25 {
 // Class declaration
 // -----------------------------------------------------------------------------
 
-class BS_PersistenceService {
+class PersistenceService {
 public:
-	BS_PersistenceService();
-	virtual ~BS_PersistenceService();
+	PersistenceService();
+	virtual ~PersistenceService();
 
 	// -----------------------------------------------------------------------------
 	// Singleton Method
 	// -----------------------------------------------------------------------------
 
-	static BS_PersistenceService &GetInstance();
+	static PersistenceService &GetInstance();
 
 	// -----------------------------------------------------------------------------
 	// Interface

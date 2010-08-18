@@ -48,7 +48,7 @@ namespace Sword25 {
 
 class BS_Rect;
 
-class BitmapResource : public BS_Resource {
+class BitmapResource : public Resource {
 public:
 	/**
 	    @brief Die möglichen Flippingparameter für die Blit-Methode.

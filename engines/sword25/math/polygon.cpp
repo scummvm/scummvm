@@ -58,7 +58,7 @@ Polygon::Polygon(const Polygon &Other) : VertexCount(0), Vertecies(NULL) {
 	Init(Other.VertexCount, Other.Vertecies);
 }
 
-Polygon::Polygon(BS_InputPersistenceBlock &Reader) : VertexCount(0), Vertecies(NULL) {
+Polygon::Polygon(InputPersistenceBlock &Reader) : VertexCount(0), Vertecies(NULL) {
 	Unpersist(Reader);
 }
 
@@ -414,7 +414,7 @@ bool Polygon::IsPointInPolygon(const Vertex &Point, bool EdgesBelongToPolygon) c
 	else return false;
 }
 
-bool Polygon::Persist(BS_OutputPersistenceBlock &Writer) {
+bool Polygon::Persist(OutputPersistenceBlock &Writer) {
 	Writer.Write(VertexCount);
 	for (int i = 0; i < VertexCount; ++i) {
 		Writer.Write(Vertecies[i].X);
@@ -424,7 +424,7 @@ bool Polygon::Persist(BS_OutputPersistenceBlock &Writer) {
 	return true;
 }
 
-bool Polygon::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool Polygon::Unpersist(InputPersistenceBlock &Reader) {
 	int StoredVertexCount;
 	Reader.Read(StoredVertexCount);
 

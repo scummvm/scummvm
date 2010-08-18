@@ -76,7 +76,7 @@ Panel::Panel(RenderObjectPtr<RenderObject> ParentPtr, int Width, int Height, uns
 
 // -----------------------------------------------------------------------------
 
-Panel::Panel(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle) :
+Panel::Panel(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle) :
 	RenderObject(ParentPtr, RenderObject::TYPE_PANEL, Handle) {
 	m_InitSuccess = Unpersist(Reader);
 }
@@ -94,7 +94,7 @@ bool Panel::DoRender() {
 	// Falls der Alphawert 0 ist, ist das Panel komplett durchsichtig und es muss nichts gezeichnet werden.
 	if (m_Color >> 24 == 0) return true;
 
-	GraphicEngine *GfxPtr = static_cast<GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx"));
+	GraphicEngine *GfxPtr = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
 	BS_ASSERT(GfxPtr);
 
 	return GfxPtr->Fill(&m_BBox, m_Color);
@@ -104,7 +104,7 @@ bool Panel::DoRender() {
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool Panel::Persist(BS_OutputPersistenceBlock &Writer) {
+bool Panel::Persist(OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	Result &= RenderObject::Persist(Writer);
@@ -117,7 +117,7 @@ bool Panel::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool Panel::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool Panel::Unpersist(InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	Result &= RenderObject::Unpersist(Reader);

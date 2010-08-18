@@ -52,13 +52,13 @@ namespace Sword25 {
 // Forward declarations
 // -----------------------------------------------------------------------------
 
-class BS_Kernel;
+class Kernel;
 
 // -----------------------------------------------------------------------------
 // Klassendefinition
 // -----------------------------------------------------------------------------
 
-class FontResource : public BS_Resource {
+class FontResource : public Resource {
 public:
 	/**
 	    @brief Erzeugt eine neues Exemplar von BS_FontResource
@@ -66,7 +66,7 @@ public:
 	    @param FileName der Dateiname der zu ladenen Resource
 	    @remark Wenn der Konstruktor erfolgreich ausgeführt werden konnte gibt die Methode IsValid true zurück.
 	*/
-	FontResource(BS_Kernel *pKernel, const Common::String &FileName);
+	FontResource(Kernel *pKernel, const Common::String &FileName);
 
 	/**
 	    @brief Gibt true zurück, wenn das Objekt korrekt initialisiert wurde.
@@ -113,7 +113,7 @@ public:
 	}
 
 private:
-	BS_Kernel *_pKernel;
+	Kernel *_pKernel;
 	bool        _Valid;
 	Common::String  _BitmapFileName;
 	int         _LineHeight;

@@ -49,7 +49,7 @@ namespace Sword25 {
 // Class declaration
 // -----------------------------------------------------------------------------
 
-class BS_InputPersistenceBlock : public BS_PersistenceBlock {
+class InputPersistenceBlock : public PersistenceBlock {
 public:
 	enum ErrorState {
 		NONE,
@@ -57,8 +57,8 @@ public:
 		OUT_OF_SYNC
 	};
 
-	BS_InputPersistenceBlock(const void *Data, unsigned int DataLength);
-	virtual ~BS_InputPersistenceBlock();
+	InputPersistenceBlock(const void *Data, unsigned int DataLength);
+	virtual ~InputPersistenceBlock();
 
 	void Read(int16 &Value);
 	void Read(signed int &Value);

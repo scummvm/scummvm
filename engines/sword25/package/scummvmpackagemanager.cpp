@@ -52,7 +52,7 @@ static Common::String normalizePath(const Common::String &path, const Common::St
 	return Common::normalizePath(wholePath, PATH_SEPARATOR);
 }
 
-ScummVMPackageManager::ScummVMPackageManager(BS_Kernel *kernelPtr) :
+ScummVMPackageManager::ScummVMPackageManager(Kernel *kernelPtr) :
 	PackageManager(kernelPtr),
 	_currentDirectory(PATH_SEPARATOR),
 	_rootFolder(ConfMan.get("path")) {
@@ -61,7 +61,7 @@ ScummVMPackageManager::ScummVMPackageManager(BS_Kernel *kernelPtr) :
 ScummVMPackageManager::~ScummVMPackageManager() {
 }
 
-BS_Service *ScummVMPackageManager_CreateObject(BS_Kernel *kernelPtr) {
+Service *ScummVMPackageManager_CreateObject(Kernel *kernelPtr) {
 	return new ScummVMPackageManager(kernelPtr);
 }
 

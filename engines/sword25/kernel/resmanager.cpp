@@ -43,12 +43,12 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "RESOURCEMANAGER"
 
-BS_ResourceManager::~BS_ResourceManager() {
+ResourceManager::~ResourceManager() {
 	// Clear all unlocked resources
 	EmptyCache();
 
 	// All remaining resources are not released, so print warnings and release
-	Common::List<BS_Resource *>::iterator Iter = m_Resources.begin();
+	Common::List<Resource *>::iterator Iter = m_Resources.begin();
 	for (; Iter != m_Resources.end(); ++Iter) {
 		BS_LOG_WARNINGLN("Resource \"%s\" was not released.", (*Iter)->GetFileName().c_str());
 
@@ -67,7 +67,7 @@ BS_ResourceManager::~BS_ResourceManager() {
  * Note: This method is not optimised for speed and should be used only for debugging purposes
  * @param Ord       Ordinal number of the resource. Must be between 0 and GetResourceCount() - 1.
  */
-BS_Resource *BS_ResourceManager::GetResourceByOrdinal(int Ord) const {
+Resource *ResourceManager::GetResourceByOrdinal(int Ord) const {
 	// Überprüfen ob der Index Ord innerhald der Listengrenzen liegt.
 	if (Ord < 0 || Ord >= GetResourceCount()) {
 		BS_LOG_ERRORLN("Resource ordinal (%d) out of bounds (0 - %d).", Ord, GetResourceCount() - 1);
@@ -76,7 +76,7 @@ BS_Resource *BS_ResourceManager::GetResourceByOrdinal(int Ord) const {
 
 	// Liste durchlaufen und die Resource mit dem gewünschten Index zurückgeben.
 	int CurOrd = 0;
-	Common::List<BS_Resource *>::const_iterator Iter = m_Resources.begin();
+	Common::List<Resource *>::const_iterator Iter = m_Resources.begin();
 	for (; Iter != m_Resources.end(); ++Iter, ++CurOrd) {
 		if (CurOrd == Ord)
 			return (*Iter);
@@ -92,7 +92,7 @@ BS_Resource *BS_ResourceManager::GetResourceByOrdinal(int Ord) const {
  * BS_ResourceService, and thus helps all resource services in the ResourceManager list
  * @param pService      Which service
  */
-bool BS_ResourceManager::RegisterResourceService(BS_ResourceService *pService) {
+bool ResourceManager::RegisterResourceService(ResourceService *pService) {
 	if (!pService) {
 		BS_LOG_ERRORLN("Can't register NULL resource service.");
 		return false;
@@ -106,14 +106,14 @@ bool BS_ResourceManager::RegisterResourceService(BS_ResourceService *pService) {
 /**
  * Deletes resources as necessary until the specified memory limit is not being exceeded.
  */
-void BS_ResourceManager::DeleteResourcesIfNecessary() {
+void ResourceManager::DeleteResourcesIfNecessary() {
 	// If enough memory is available, or no resources are loaded, then the function can immediately end
 	if (m_KernelPtr->GetUsedMemory() < m_MaxMemoryUsage || m_Resources.empty()) return;
 
 	// Keep deleting resources until the memory usage of the process falls below the set maximum limit.
 	// The list is processed backwards in order to first release those resources who have been
 	// not been accessed for the longest
-	Common::List<BS_Resource *>::iterator Iter = m_Resources.end();
+	Common::List<Resource *>::iterator Iter = m_Resources.end();
 	do {
 		--Iter;
 
@@ -125,9 +125,9 @@ void BS_ResourceManager::DeleteResourcesIfNecessary() {
 /**
  * Releases all resources that are not locked.
  **/
-void BS_ResourceManager::EmptyCache() {
+void ResourceManager::EmptyCache() {
 	// Scan through the resource list
-	Common::List<BS_Resource *>::iterator Iter = m_Resources.begin();
+	Common::List<Resource *>::iterator Iter = m_Resources.begin();
 	while (Iter != m_Resources.end()) {
 		if ((*Iter)->GetLockCount() == 0) {
 			// Delete the resource
@@ -141,7 +141,7 @@ void BS_ResourceManager::EmptyCache() {
  * Returns a requested resource. If any error occurs, returns NULL
  * @param FileName      Filename of resource
  */
-BS_Resource *BS_ResourceManager::RequestResource(const Common::String &FileName) {
+Resource *ResourceManager::RequestResource(const Common::String &FileName) {
 	// Get the absolute path to the file
 	Common::String UniqueFileName = GetUniqueFileName(FileName);
 	if (UniqueFileName == "")
@@ -150,7 +150,7 @@ BS_Resource *BS_ResourceManager::RequestResource(const Common::String &FileName)
 	// Determine whether the resource is already loaded
 	// If the resource is found, it will be placed at the head of the resource list and returned
 	{
-		BS_Resource *pResource = GetResource(UniqueFileName);
+		Resource *pResource = GetResource(UniqueFileName);
 		if (pResource) {
 			MoveToFront(pResource);
 			(pResource)->AddReference();
@@ -161,7 +161,7 @@ BS_Resource *BS_ResourceManager::RequestResource(const Common::String &FileName)
 	// The resource was not found, therefore, must not be loaded yet
 	if (m_LogCacheMiss) BS_LOG_WARNINGLN("\"%s\" was not precached.", UniqueFileName.c_str());
 
-	BS_Resource *pResource;
+	Resource *pResource;
 	if ((pResource = LoadResource(UniqueFileName))) {
 		pResource->AddReference();
 		return pResource;
@@ -176,13 +176,13 @@ BS_Resource *BS_ResourceManager::RequestResource(const Common::String &FileName)
  * @param ForceReload   Indicates whether the file should be reloaded if it's already in the cache.
  * This is useful for files that may have changed in the interim
  */
-bool BS_ResourceManager::PrecacheResource(const Common::String &FileName, bool ForceReload) {
+bool ResourceManager::PrecacheResource(const Common::String &FileName, bool ForceReload) {
 	// Get the absolute path to the file
 	Common::String UniqueFileName = GetUniqueFileName(FileName);
 	if (UniqueFileName == "")
 		return false;
 
-	BS_Resource *ResourcePtr = GetResource(UniqueFileName);
+	Resource *ResourcePtr = GetResource(UniqueFileName);
 
 	if (ForceReload && ResourcePtr) {
 		if (ResourcePtr->GetLockCount()) {
@@ -206,7 +206,7 @@ bool BS_ResourceManager::PrecacheResource(const Common::String &FileName, bool F
  * Moves a resource to the top of the resource list
  * @param pResource     The resource
  */
-void BS_ResourceManager::MoveToFront(BS_Resource *pResource) {
+void ResourceManager::MoveToFront(Resource *pResource) {
 	// Erase the resource from it's current position
 	m_Resources.erase(pResource->_Iterator);
 	// Re-add the resource at the front of the list
@@ -221,7 +221,7 @@ void BS_ResourceManager::MoveToFront(BS_Resource *pResource) {
  * The resource must not already be loaded
  * @param FileName      The unique filename of the resource to be loaded
  */
-BS_Resource *BS_ResourceManager::LoadResource(const Common::String &FileName) {
+Resource *ResourceManager::LoadResource(const Common::String &FileName) {
 	// ResourceService finden, der die Resource laden kann.
 	for (unsigned int i = 0; i < m_ResourceServices.size(); ++i) {
 		if (m_ResourceServices[i]->CanLoadResource(FileName)) {
@@ -229,7 +229,7 @@ BS_Resource *BS_ResourceManager::LoadResource(const Common::String &FileName) {
 			DeleteResourcesIfNecessary();
 
 			// Load the resource
-			BS_Resource *pResource;
+			Resource *pResource;
 			if (!(pResource = m_ResourceServices[i]->LoadResource(FileName))) {
 				BS_LOG_ERRORLN("Responsible service could not load resource \"%s\".", FileName.c_str());
 				return NULL;
@@ -254,7 +254,7 @@ BS_Resource *BS_ResourceManager::LoadResource(const Common::String &FileName) {
  * Returns the full path of a given resource filename.
  * It will return an empty string if a path could not be created.
 */
-Common::String BS_ResourceManager::GetUniqueFileName(const Common::String &FileName) const {
+Common::String ResourceManager::GetUniqueFileName(const Common::String &FileName) const {
 	// Get a pointer to the package manager
 	PackageManager *pPackage = (PackageManager *)m_KernelPtr->GetService("package");
 	if (!pPackage) {
@@ -273,14 +273,14 @@ Common::String BS_ResourceManager::GetUniqueFileName(const Common::String &FileN
 /**
  * Deletes a resource, removes it from the lists, and updates m_UsedMemory
  */
-Common::List<BS_Resource *>::iterator BS_ResourceManager::DeleteResource(BS_Resource *pResource) {
+Common::List<Resource *>::iterator ResourceManager::DeleteResource(Resource *pResource) {
 	// Remove the resource from the hash table
 	m_ResourceHashTable[pResource->GetFileNameHash() % HASH_TABLE_BUCKETS].remove(pResource);
 
-	BS_Resource *pDummy = pResource;
+	Resource *pDummy = pResource;
 
 	// Delete the resource from the resource list
-	Common::List<BS_Resource *>::iterator Result = m_Resources.erase(pResource->_Iterator);
+	Common::List<Resource *>::iterator Result = m_Resources.erase(pResource->_Iterator);
 
 	// Delete the resource
 	delete(pDummy);
@@ -294,12 +294,12 @@ Common::List<BS_Resource *>::iterator BS_ResourceManager::DeleteResource(BS_Reso
  * @param UniqueFileName        The absolute path and filename
  * Gibt einen Pointer auf die angeforderte Resource zurück, oder NULL, wenn die Resourcen nicht geladen ist.
  */
-BS_Resource *BS_ResourceManager::GetResource(const Common::String &UniqueFileName) const {
+Resource *ResourceManager::GetResource(const Common::String &UniqueFileName) const {
 	// Determine whether the resource is already loaded
-	const Common::List<BS_Resource *>& HashBucket = m_ResourceHashTable[
+	const Common::List<Resource *>& HashBucket = m_ResourceHashTable[
 	            BS_String::GetHash(UniqueFileName) % HASH_TABLE_BUCKETS];
 	{
-		Common::List<BS_Resource *>::const_iterator Iter = HashBucket.begin();
+		Common::List<Resource *>::const_iterator Iter = HashBucket.begin();
 		for (; Iter != HashBucket.end(); ++Iter) {
 			// Wenn die Resource gefunden wurde wird sie zurückgegeben.
 			if ((*Iter)->GetFileName() == UniqueFileName)
@@ -314,8 +314,8 @@ BS_Resource *BS_ResourceManager::GetResource(const Common::String &UniqueFileNam
 /**
  * Writes the names of all currently locked resources to the log file
  */
-void BS_ResourceManager::DumpLockedResources() {
-	for (Common::List<BS_Resource *>::iterator Iter = m_Resources.begin(); Iter != m_Resources.end(); ++Iter) {
+void ResourceManager::DumpLockedResources() {
+	for (Common::List<Resource *>::iterator Iter = m_Resources.begin(); Iter != m_Resources.end(); ++Iter) {
 		if ((*Iter)->GetLockCount() > 0) {
 			BS_LOGLN("%s", (*Iter)->GetFileName().c_str());
 		}
@@ -328,7 +328,7 @@ void BS_ResourceManager::DumpLockedResources() {
  * as a guideline, and not as a fixed boundary. It is not guaranteed not to be exceeded;
  * the whole game engine may still use more memory than any amount specified.
  */
-void BS_ResourceManager::SetMaxMemoryUsage(unsigned int MaxMemoryUsage) {
+void ResourceManager::SetMaxMemoryUsage(unsigned int MaxMemoryUsage) {
 	m_MaxMemoryUsage = MaxMemoryUsage;
 	DeleteResourcesIfNecessary();
 }

@@ -59,7 +59,7 @@ class WalkRegion : public Region {
 
 protected:
 	WalkRegion();
-	WalkRegion(BS_InputPersistenceBlock &Reader, unsigned int Handle);
+	WalkRegion(InputPersistenceBlock &Reader, unsigned int Handle);
 
 public:
 	virtual ~WalkRegion();
@@ -103,8 +103,8 @@ public:
 		return m_VisibilityMatrix;
 	}
 
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool Persist(OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(InputPersistenceBlock &Reader);
 
 private:
 	Common::Array<Vertex> m_Nodes;

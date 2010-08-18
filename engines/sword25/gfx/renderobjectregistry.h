@@ -58,7 +58,7 @@ class RenderObject;
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-class RenderObjectRegistry : public BS_ObjectRegistry<RenderObject> {
+class RenderObjectRegistry : public ObjectRegistry<RenderObject> {
 public:
 	static RenderObjectRegistry &GetInstance() {
 		if (!m_InstancePtr.get()) m_InstancePtr.reset(new RenderObjectRegistry);

@@ -57,7 +57,7 @@
 
 namespace Sword25 {
 
-class BS_Kernel;
+class Kernel;
 class Image;
 class Panel;
 class Screenshot;
@@ -77,7 +77,7 @@ typedef unsigned int BS_COLOR;
     Die bisher einzige Implementation ist BS_DDrawGfx.
 */
 
-class GraphicEngine : public BS_ResourceService, public BS_Persistable {
+class GraphicEngine : public ResourceService, public Persistable {
 public:
 	// Enums
 	// -----
@@ -358,8 +358,8 @@ public:
 
 	// Persistence Methods
 	// -------------------
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool Persist(OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(InputPersistenceBlock &Reader);
 
 	static void ARGBColorToLuaColor(lua_State *L, unsigned int Color);
 	static unsigned int LuaColorToARGBColor(lua_State *L, int StackIndex);
@@ -367,7 +367,7 @@ public:
 protected:
 	// Constructor
 	// -----------
-	GraphicEngine(BS_Kernel *pKernel);
+	GraphicEngine(Kernel *pKernel);
 
 	// Display Variables
 	// -----------------

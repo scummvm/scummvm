@@ -51,21 +51,21 @@ namespace Sword25 {
 // Forward declarations
 // -----------------------------------------------------------------------------
 
-class BS_Kernel;
-class BS_OutputPersistenceBlock;
+class Kernel;
+class OutputPersistenceBlock;
 class BS_InputPersistenceBlock;
 
 // -----------------------------------------------------------------------------
 // Class declaration
 // -----------------------------------------------------------------------------
 
-class ScriptEngine : public BS_Service, public BS_Persistable {
+class ScriptEngine : public Service, public Persistable {
 public:
 	// -----------------------------------------------------------------------------
 	// Constructor / destructor
 	// -----------------------------------------------------------------------------
 
-	ScriptEngine(BS_Kernel *KernelPtr) : BS_Service(KernelPtr) {};
+	ScriptEngine(Kernel *KernelPtr) : Service(KernelPtr) {};
 	virtual ~ScriptEngine() {};
 
 	// -----------------------------------------------------------------------------
@@ -103,8 +103,8 @@ public:
 	*/
 	virtual void SetCommandLine(const Common::Array<Common::String> &CommandLineParameters) = 0;
 
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer) = 0;
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader) = 0;
+	virtual bool Persist(OutputPersistenceBlock &Writer) = 0;
+	virtual bool Unpersist(InputPersistenceBlock &Reader) = 0;
 };
 
 } // End of namespace Sword25

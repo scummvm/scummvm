@@ -56,14 +56,14 @@ namespace Sword25 {
 // Forward Declarations
 // -----------------------------------------------------------------------------
 
-class BS_Kernel;
+class Kernel;
 class PackageManager;
 
 // -----------------------------------------------------------------------------
 // Class Definition
 // -----------------------------------------------------------------------------
 
-class AnimationResource : public BS_Resource, public AnimationDescription {
+class AnimationResource : public Resource, public AnimationDescription {
 public:
 	AnimationResource(const Common::String &FileName);
 	virtual ~AnimationResource();

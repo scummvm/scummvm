@@ -38,7 +38,7 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "GEOMETRY"
 
-Geometry::Geometry(BS_Kernel *pKernel) : BS_Service(pKernel) {
+Geometry::Geometry(Kernel *pKernel) : Service(pKernel) {
 	if (!_RegisterScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else
@@ -46,7 +46,7 @@ Geometry::Geometry(BS_Kernel *pKernel) : BS_Service(pKernel) {
 }
 
 
-BS_Service *Geometry_CreateObject(BS_Kernel *pKernel) {
+Service *Geometry_CreateObject(Kernel *pKernel) {
 	return new Geometry(pKernel);
 }
 

@@ -120,7 +120,7 @@ inline FMOD_SOUND_FORMAT BitsPerSampleToFMODExSoundFormat(unsigned int BitsPerSa
 
 #endif
 
-FMODExSound::FMODExSound(BS_Kernel *pKernel) :
+FMODExSound::FMODExSound(Kernel *pKernel) :
 	SoundEngine(pKernel)
 	/*	m_FMOD(0), 
 		m_NextHandle(1) */ {
@@ -149,7 +149,7 @@ FMODExSound::~FMODExSound() {
 
 // -----------------------------------------------------------------------------
 
-BS_Service *FMODExSound_CreateObject(BS_Kernel *pKernel) {
+Service *FMODExSound_CreateObject(Kernel *pKernel) {
 	return new FMODExSound(pKernel);
 }
 
@@ -727,7 +727,7 @@ unsigned int BS_FMODExSound::CountPlayingDynamicSounds() {
 // Ressourcen-Verwaltung
 // -----------------------------------------------------------------------------
 
-BS_Resource *FMODExSound::LoadResource(const Common::String &FileName) {
+Resource *FMODExSound::LoadResource(const Common::String &FileName) {
 #if 0
 	BS_ASSERT(m_FMOD);
 	BS_ASSERT(CanLoadResource(FileName));
@@ -764,7 +764,7 @@ bool FMODExSound::CanLoadResource(const Common::String &FileName) {
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool FMODExSound::Persist(BS_OutputPersistenceBlock &Writer) {
+bool FMODExSound::Persist(OutputPersistenceBlock &Writer) {
 #if 0
 	BS_ASSERT(m_FMOD);
 
@@ -815,7 +815,7 @@ bool FMODExSound::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool FMODExSound::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool FMODExSound::Unpersist(InputPersistenceBlock &Reader) {
 #if 0
 	BS_ASSERT(m_FMOD);
 

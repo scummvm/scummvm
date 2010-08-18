@@ -51,7 +51,7 @@ class Vertex;
 /**
     @brief Eine Polygonklasse.
 */
-class Polygon : public BS_Persistable {
+class Polygon : public Persistable {
 public:
 	/**
 	 * Creates an object of type #BS_Polygon, containing 0 Vertecies.
@@ -68,7 +68,7 @@ public:
 	/**
 	 * Creates a polygon using persisted data
 	 */
-	Polygon(BS_InputPersistenceBlock &Reader);
+	Polygon(InputPersistenceBlock &Reader);
 
 	/**
 	 * Creaes an object of type #BS_Polygon, and assigns Vertices to it
@@ -194,8 +194,8 @@ public:
 	/// COntains the Vertecies of the polygon
 	Vertex *Vertecies;
 
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool Persist(OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(InputPersistenceBlock &Reader);
 
 private:
 	bool m_IsCW;

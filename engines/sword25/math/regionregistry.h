@@ -56,15 +56,15 @@ class Region;
 // Class definitions
 // -----------------------------------------------------------------------------
 
-class RegionRegistry : public BS_ObjectRegistry<Region>, public BS_Persistable {
+class RegionRegistry : public ObjectRegistry<Region>, public Persistable {
 public:
 	static RegionRegistry &GetInstance() {
 		if (!m_InstancePtr.get()) m_InstancePtr = Common::SharedPtr<RegionRegistry>(new RegionRegistry());
 		return *m_InstancePtr.get();
 	}
 
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool Persist(OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(InputPersistenceBlock &Reader);
 
 private:
 	virtual void LogErrorLn(const char *Message) const;

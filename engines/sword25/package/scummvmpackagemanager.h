@@ -43,7 +43,7 @@ namespace Sword25 {
 // Forward declarations
 // -----------------------------------------------------------------------------
 
-class BS_Kernel;
+class Kernel;
 
 class ScummVMPackageManager : public PackageManager {
 private:
@@ -67,7 +67,7 @@ private:
 	Common::ArchiveMemberPtr GetArchiveMember(const Common::String &fileName);
 
 public:
-	ScummVMPackageManager(BS_Kernel *kernelPtr);
+	ScummVMPackageManager(Kernel *kernelPtr);
 	virtual ~ScummVMPackageManager();
 
 	virtual bool LoadPackage(const Common::String &fileName, const Common::String &mountPosition);

@@ -46,12 +46,12 @@
 namespace Sword25 {
 
 // Forward declarations
-class BS_Kernel;
+class Kernel;
 class BS_PackageManager;
 class AnimationResource;
 class AnimationTemplate;
 class AnimationDescription;
-class BS_InputPersistenceBlock;
+class InputPersistenceBlock;
 
 class Animation : public TimedRenderObject {
 	friend class RenderObject;
@@ -59,7 +59,7 @@ class Animation : public TimedRenderObject {
 private:
 	Animation(RenderObjectPtr<RenderObject> ParentPtr, const Common::String &FileName);
 	Animation(RenderObjectPtr<RenderObject> ParentPtr, const AnimationTemplate &Template);
-	Animation(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
+	Animation(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
 
 public:
 	enum ANIMATION_TYPES {
@@ -135,8 +135,8 @@ public:
 		return m_ScaleFactorY;
 	}
 
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool Persist(OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(InputPersistenceBlock &Reader);
 
 	virtual void FrameNotification(int TimeElapsed);
 
@@ -221,8 +221,8 @@ private:
 	int ComputeYModifier() const;
 
 	void InitMembers();
-	void PersistCallbackVector(BS_OutputPersistenceBlock &Writer, const Common::Array<ANIMATION_CALLBACK_DATA> & Vector);
-	void UnpersistCallbackVector(BS_InputPersistenceBlock &Reader, Common::Array<ANIMATION_CALLBACK_DATA> & Vector);
+	void PersistCallbackVector(OutputPersistenceBlock &Writer, const Common::Array<ANIMATION_CALLBACK_DATA> & Vector);
+	void UnpersistCallbackVector(InputPersistenceBlock &Reader, Common::Array<ANIMATION_CALLBACK_DATA> & Vector);
 	AnimationDescription *GetAnimationDescription() const;
 	void InitializeAnimationResource(const Common::String &FileName);
 };

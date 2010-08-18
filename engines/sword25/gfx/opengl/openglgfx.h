@@ -49,9 +49,9 @@ namespace Sword25 {
 // FORWARD DECLARATIONS
 // -----------------------------------------------------------------------------
 
-class BS_Kernel;
-class BS_Service;
-class BS_Resource;
+class Kernel;
+class Service;
+class Resource;
 class Panel;
 class BS_Image;
 class RenderObjectManager;
@@ -63,7 +63,7 @@ class RenderObjectManager;
 
 class OpenGLGfx : public GraphicEngine {
 public:
-	OpenGLGfx(BS_Kernel *pKernel);
+	OpenGLGfx(Kernel *pKernel);
 	virtual ~OpenGLGfx();
 
 	// Interface
@@ -82,7 +82,7 @@ public:
 
 	// Resource-Managing Methoden
 	// --------------------------
-	virtual BS_Resource    *LoadResource(const Common::String &FileName);
+	virtual Resource    *LoadResource(const Common::String &FileName);
 	virtual bool            CanLoadResource(const Common::String &FileName);
 
 	// Debugging Methoden
@@ -91,8 +91,8 @@ public:
 
 	// Persistenz Methoden
 	// -------------------
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool Persist(OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(InputPersistenceBlock &Reader);
 
 private:
 	bool                m_GLspritesInitialized;

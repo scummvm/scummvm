@@ -43,23 +43,23 @@
 
 namespace Sword25 {
 
-class BS_Resource;
+class Resource;
 
-class BS_ResourceService : public BS_Service {
+class ResourceService : public Service {
 public:
-	BS_ResourceService(BS_Kernel *pKernel) : BS_Service(pKernel) {
-		BS_ResourceManager *pResource = pKernel->GetResourceManager();
+	ResourceService(Kernel *pKernel) : Service(pKernel) {
+		ResourceManager *pResource = pKernel->GetResourceManager();
 		pResource->RegisterResourceService(this);
 	}
 
-	virtual ~BS_ResourceService() {}
+	virtual ~ResourceService() {}
 
 
 	/**
 	 * Loads a resource
 	 * @return      Returns the resource if successful, otherwise NULL
 	 */
-	virtual BS_Resource *LoadResource(const Common::String &FileName) = 0;
+	virtual Resource *LoadResource(const Common::String &FileName) = 0;
 
 	/**
 	 * Checks whether the given name can be loaded by the resource service

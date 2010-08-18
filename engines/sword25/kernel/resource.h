@@ -41,11 +41,11 @@
 
 namespace Sword25 {
 
-class BS_Kernel;
-class BS_ResourceManager;
+class Kernel;
+class ResourceManager;
 
-class BS_Resource {
-	friend class BS_ResourceManager;
+class Resource {
+	friend class ResourceManager;
 
 public:
 	enum RESOURCE_TYPES {
@@ -56,7 +56,7 @@ public:
 		TYPE_FONT
 	};
 
-	BS_Resource(const Common::String &UniqueFileName, RESOURCE_TYPES Type);
+	Resource(const Common::String &UniqueFileName, RESOURCE_TYPES Type);
 
 	/**
 	 * Prevents the resource from being released.
@@ -103,14 +103,14 @@ public:
 	}
 
 protected:
-	virtual ~BS_Resource() {};
+	virtual ~Resource() {};
 
 private:
 	Common::String                      _FileName;          ///< The absolute filename
 	unsigned int                        _FileNameHash;      ///< The hash value of the filename
 	unsigned int                        _RefCount;          ///< The number of locks
 	unsigned int                        _Type;              ///< The type of the resource
-	Common::List<BS_Resource *>::iterator _Iterator;        ///< Points to the resource position in the LRU list
+	Common::List<Resource *>::iterator _Iterator;        ///< Points to the resource position in the LRU list
 };
 
 } // End of namespace Sword25

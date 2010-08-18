@@ -408,7 +408,7 @@ static int R_SetY(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static void DrawPolygon(const Polygon &Polygon, unsigned int Color, const Vertex &Offset) {
-	GraphicEngine *pGE = static_cast<GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx"));
+	GraphicEngine *pGE = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
 	BS_ASSERT(pGE);
 
 	for (int i = 0; i < Polygon.VertexCount - 1; i++)
@@ -536,7 +536,7 @@ static const luaL_reg WALKREGION_METHODS[] = {
 // -----------------------------------------------------------------------------
 
 bool Geometry::_RegisterScriptBindings() {
-	BS_Kernel *pKernel = BS_Kernel::GetInstance();
+	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);

@@ -46,7 +46,7 @@ namespace Sword25 {
 // Constructor / Destructor
 // -----------------------------------------------------------------------------
 
-BS_InputPersistenceBlock::BS_InputPersistenceBlock(const void *Data, unsigned int DataLength) :
+InputPersistenceBlock::InputPersistenceBlock(const void *Data, unsigned int DataLength) :
 	m_Data(static_cast<const unsigned char *>(Data), DataLength),
 	m_ErrorState(NONE) {
 	m_Iter = m_Data.begin();
@@ -54,7 +54,7 @@ BS_InputPersistenceBlock::BS_InputPersistenceBlock(const void *Data, unsigned in
 
 // -----------------------------------------------------------------------------
 
-BS_InputPersistenceBlock::~BS_InputPersistenceBlock() {
+InputPersistenceBlock::~InputPersistenceBlock() {
 	if (m_Iter != m_Data.end()) BS_LOG_WARNINGLN("Persistence block was not read to the end.");
 }
 
@@ -62,7 +62,7 @@ BS_InputPersistenceBlock::~BS_InputPersistenceBlock() {
 // Reading
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::Read(int16 &Value) {
+void InputPersistenceBlock::Read(int16 &Value) {
 	signed int v;
 	Read(v);
 	Value = static_cast<int16>(v);
@@ -70,7 +70,7 @@ void BS_InputPersistenceBlock::Read(int16 &Value) {
 
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::Read(signed int &Value) {
+void InputPersistenceBlock::Read(signed int &Value) {
 	if (CheckMarker(SINT_MARKER)) {
 		RawRead(&Value, sizeof(signed int));
 		Value = ConvertEndianessFromStorageToSystem(Value);
@@ -81,7 +81,7 @@ void BS_InputPersistenceBlock::Read(signed int &Value) {
 
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::Read(unsigned int &Value) {
+void InputPersistenceBlock::Read(unsigned int &Value) {
 	if (CheckMarker(UINT_MARKER)) {
 		RawRead(&Value, sizeof(unsigned int));
 		Value = ConvertEndianessFromStorageToSystem(Value);
@@ -92,7 +92,7 @@ void BS_InputPersistenceBlock::Read(unsigned int &Value) {
 
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::Read(float &Value) {
+void InputPersistenceBlock::Read(float &Value) {
 	if (CheckMarker(FLOAT_MARKER)) {
 		RawRead(&Value, sizeof(float));
 		Value = ConvertEndianessFromStorageToSystem(Value);
@@ -103,7 +103,7 @@ void BS_InputPersistenceBlock::Read(float &Value) {
 
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::Read(bool &Value) {
+void InputPersistenceBlock::Read(bool &Value) {
 	if (CheckMarker(BOOL_MARKER)) {
 		unsigned int UIntBool;
 		RawRead(&UIntBool, sizeof(float));
@@ -116,7 +116,7 @@ void BS_InputPersistenceBlock::Read(bool &Value) {
 
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::Read(Common::String &Value) {
+void InputPersistenceBlock::Read(Common::String &Value) {
 	Value = "";
 
 	if (CheckMarker(STRING_MARKER)) {
@@ -132,7 +132,7 @@ void BS_InputPersistenceBlock::Read(Common::String &Value) {
 
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::Read(Common::Array<unsigned char> &Value) {
+void InputPersistenceBlock::Read(Common::Array<unsigned char> &Value) {
 	if (CheckMarker(BLOCK_MARKER)) {
 		unsigned int Size;
 		Read(Size);
@@ -146,7 +146,7 @@ void BS_InputPersistenceBlock::Read(Common::Array<unsigned char> &Value) {
 
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::RawRead(void *DestPtr, size_t Size) {
+void InputPersistenceBlock::RawRead(void *DestPtr, size_t Size) {
 	if (CheckBlockSize(Size)) {
 		memcpy(DestPtr, &*m_Iter, Size);
 		m_Iter += Size;
@@ -155,7 +155,7 @@ void BS_InputPersistenceBlock::RawRead(void *DestPtr, size_t Size) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_InputPersistenceBlock::CheckBlockSize(int Size) {
+bool InputPersistenceBlock::CheckBlockSize(int Size) {
 	if (m_Data.end() - m_Iter >= Size) {
 		return true;
 	} else {
@@ -167,7 +167,7 @@ bool BS_InputPersistenceBlock::CheckBlockSize(int Size) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_InputPersistenceBlock::CheckMarker(unsigned char Marker) {
+bool InputPersistenceBlock::CheckMarker(unsigned char Marker) {
 	if (!IsGood() || !CheckBlockSize(1)) return false;
 
 	if (*m_Iter++ == Marker) {

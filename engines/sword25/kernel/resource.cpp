@@ -41,16 +41,16 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "RESOURCE"
 
-BS_Resource::BS_Resource(const Common::String &FileName, RESOURCE_TYPES Type) :
+Resource::Resource(const Common::String &FileName, RESOURCE_TYPES Type) :
 	_Type(Type),
 	_RefCount(0) {
-	BS_ASSERT(BS_Kernel::GetInstance()->GetService("package"));
+	BS_ASSERT(Kernel::GetInstance()->GetService("package"));
 
-	_FileName = static_cast<PackageManager *>(BS_Kernel::GetInstance()->GetService("package"))->GetAbsolutePath(FileName);
+	_FileName = static_cast<PackageManager *>(Kernel::GetInstance()->GetService("package"))->GetAbsolutePath(FileName);
 	_FileNameHash = BS_String::GetHash(FileName);
 }
 
-void BS_Resource::Release() {
+void Resource::Release() {
 	if (_RefCount) {
 		--_RefCount;
 	} else

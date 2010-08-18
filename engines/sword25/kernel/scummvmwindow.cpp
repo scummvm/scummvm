@@ -43,11 +43,11 @@
 
 namespace Sword25 {
 
-bool BS_ScummVMWindow::_ClassRegistered = false;
+bool ScummVMWindow::_ClassRegistered = false;
 
 // Constructor / Destructor
 // ------------------------
-BS_ScummVMWindow::BS_ScummVMWindow(int X, int Y, int Width, int Height, bool Visible) {
+ScummVMWindow::ScummVMWindow(int X, int Y, int Width, int Height, bool Visible) {
 	// Presume that init will fail
 	_InitSuccess = false;
 
@@ -70,53 +70,53 @@ BS_ScummVMWindow::BS_ScummVMWindow(int X, int Y, int Width, int Height, bool Vis
 	_CloseWanted = false;
 }
 
-BS_ScummVMWindow::~BS_ScummVMWindow() {
+ScummVMWindow::~ScummVMWindow() {
 }
 
 // Get Methods
 // ------------
-int BS_ScummVMWindow::GetX() {
+int ScummVMWindow::GetX() {
 	return 0;
 }
 
-int BS_ScummVMWindow::GetY() {
+int ScummVMWindow::GetY() {
 	return 0;
 }
 
-int BS_ScummVMWindow::GetClientX() {
+int ScummVMWindow::GetClientX() {
 	return 0;
 }
 
-int BS_ScummVMWindow::GetClientY() {
+int ScummVMWindow::GetClientY() {
 	return 0;
 }
 
-int BS_ScummVMWindow::GetWidth() {
+int ScummVMWindow::GetWidth() {
 	return g_system->getWidth();
 }
 
-int BS_ScummVMWindow::GetHeight() {
+int ScummVMWindow::GetHeight() {
 	return g_system->getHeight();
 }
 
-Common::String BS_ScummVMWindow::GetTitle() {
+Common::String ScummVMWindow::GetTitle() {
 	return Common::String("");
 }
 
-bool BS_ScummVMWindow::IsVisible() {
+bool ScummVMWindow::IsVisible() {
 	return true;
 }
 
-bool BS_ScummVMWindow::HasFocus() {
+bool ScummVMWindow::HasFocus() {
 	// FIXME: Is there a way to tell if ScummVM has the focus in Windowed mode?
 	return true;
 }
 
-uint BS_ScummVMWindow::GetWindowHandle() {
+uint ScummVMWindow::GetWindowHandle() {
 	return 0;
 }
 
-void BS_ScummVMWindow::SetWindowAlive(bool v) {
+void ScummVMWindow::SetWindowAlive(bool v) {
 	_WindowAlive = v;
 }
 
@@ -124,36 +124,36 @@ void BS_ScummVMWindow::SetWindowAlive(bool v) {
 // Set Methods
 // ------------
 
-void BS_ScummVMWindow::SetX(int X) {
+void ScummVMWindow::SetX(int X) {
 	// No implementation
 }
 
-void BS_ScummVMWindow::SetY(int Y) {
+void ScummVMWindow::SetY(int Y) {
 	// No implementation
 }
 
-void BS_ScummVMWindow::SetWidth(int Width) {
+void ScummVMWindow::SetWidth(int Width) {
 	// No implementation
 }
 
-void BS_ScummVMWindow::SetHeight(int Height) {
+void ScummVMWindow::SetHeight(int Height) {
 	// No implementation
 }
 
-void BS_ScummVMWindow::SetVisible(bool Visible) {
+void ScummVMWindow::SetVisible(bool Visible) {
 	// No implementation
 }
 
-void BS_ScummVMWindow::SetTitle(const Common::String &Title) {
+void ScummVMWindow::SetTitle(const Common::String &Title) {
 	// No implementation
 }
 
-bool BS_ScummVMWindow::ProcessMessages() {
+bool ScummVMWindow::ProcessMessages() {
 	// No implementation
 	return false;
 }
 
-bool BS_ScummVMWindow::WaitForFocus() {
+bool ScummVMWindow::WaitForFocus() {
 	// No implementation
 	return true;
 }

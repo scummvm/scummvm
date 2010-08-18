@@ -63,13 +63,13 @@ class AnimationTemplate : public AnimationDescription {
 public:
 	static unsigned int Create(const Common::String &SourceAnimation);
 	static unsigned int Create(const AnimationTemplate &Other);
-	static unsigned int Create(BS_InputPersistenceBlock &Reader, unsigned int Handle);
+	static unsigned int Create(InputPersistenceBlock &Reader, unsigned int Handle);
 	AnimationTemplate *ResolveHandle(unsigned int Handle) const;
 
 private:
 	AnimationTemplate(const Common::String &SourceAnimation);
 	AnimationTemplate(const AnimationTemplate &Other);
-	AnimationTemplate(BS_InputPersistenceBlock &Reader, unsigned int Handle);
+	AnimationTemplate(InputPersistenceBlock &Reader, unsigned int Handle);
 
 public:
 	~AnimationTemplate();
@@ -119,8 +119,8 @@ public:
 	*/
 	void SetFPS(int FPS);
 
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool Persist(OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(InputPersistenceBlock &Reader);
 
 private:
 	Common::Array<Frame>  m_Frames;

@@ -383,7 +383,7 @@ RenderObjectPtr<Text> RenderObject::AddText(const Common::String &Font, const Co
 // Persistenz-Methoden
 // -------------------
 
-bool RenderObject::Persist(BS_OutputPersistenceBlock &Writer) {
+bool RenderObject::Persist(OutputPersistenceBlock &Writer) {
 	// Typ und Handle werden als erstes gespeichert, damit beim Laden ein Objekt vom richtigen Typ mit dem richtigen Handle erzeugt werden kann.
 	Writer.Write(static_cast<unsigned int>(m_Type));
 	Writer.Write(m_Handle);
@@ -419,7 +419,7 @@ bool RenderObject::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool RenderObject::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool RenderObject::Unpersist(InputPersistenceBlock &Reader) {
 	// Typ und Handle wurden schon von RecreatePersistedRenderObject() ausgelesen. Jetzt werden die restlichen Objekteigenschaften ausgelesen.
 	Reader.Read(m_X);
 	Reader.Read(m_Y);
@@ -456,7 +456,7 @@ bool RenderObject::Unpersist(BS_InputPersistenceBlock &Reader) {
 
 // -----------------------------------------------------------------------------
 
-bool RenderObject::PersistChildren(BS_OutputPersistenceBlock &Writer) {
+bool RenderObject::PersistChildren(OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Kinderanzahl speichern.
@@ -474,7 +474,7 @@ bool RenderObject::PersistChildren(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool RenderObject::UnpersistChildren(BS_InputPersistenceBlock &Reader) {
+bool RenderObject::UnpersistChildren(InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// Kinderanzahl einlesen.
@@ -492,7 +492,7 @@ bool RenderObject::UnpersistChildren(BS_InputPersistenceBlock &Reader) {
 
 // -----------------------------------------------------------------------------
 
-RenderObjectPtr<RenderObject> RenderObject::RecreatePersistedRenderObject(BS_InputPersistenceBlock &Reader) {
+RenderObjectPtr<RenderObject> RenderObject::RecreatePersistedRenderObject(InputPersistenceBlock &Reader) {
 	RenderObjectPtr<RenderObject> Result;
 
 	// Typ und Handle auslesen.

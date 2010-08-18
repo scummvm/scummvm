@@ -44,12 +44,12 @@
 namespace Sword25 {
 
 /// Forward class definitions
-class BS_Kernel;
+class Kernel;
 
 /// Class definitions
 class ScummVMInput : public InputEngine {
 public:
-	ScummVMInput(BS_Kernel *pKernel);
+	ScummVMInput(Kernel *pKernel);
 	virtual ~ScummVMInput();
 
 	virtual bool Init();
@@ -72,8 +72,8 @@ public:
 	virtual void ReportCharacter(unsigned char Character);
 	virtual void ReportCommand(KEY_COMMANDS Command);
 
-	bool Persist(BS_OutputPersistenceBlock &Writer);
-	bool Unpersist(BS_InputPersistenceBlock &Reader);
+	bool Persist(OutputPersistenceBlock &Writer);
+	bool Unpersist(InputPersistenceBlock &Reader);
 
 private:
 	void TestForLeftDoubleClick();

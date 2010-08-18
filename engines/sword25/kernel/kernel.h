@@ -60,7 +60,7 @@
 namespace Sword25 {
 
 // Class definitions
-class BS_Service;
+class Service;
 class GraphicEngine;
 class ScriptEngine;
 class SoundEngine;
@@ -74,7 +74,7 @@ class MoviePlayer;
  * This class creates and manages all other engine components such as sound engine, graphics engine ...
  * It is not necessary to release all the items individually, this is performed by the Kernel class.
 */
-class BS_Kernel {
+class Kernel {
 public:
 	// Window methods
 	// ----------------
@@ -82,7 +82,7 @@ public:
 	/**
 	 * Returns a pointer to the window object
 	 */
-	BS_Window *GetWindow() {
+	Window *GetWindow() {
 		return _pWindow;
 	}
 
@@ -98,7 +98,7 @@ public:
 	 * @param ServiceIdentifier         The name of the service
 	 *         For the superclass "sfx" an example could be "Fmod" or "directsound"
 	 */
-	BS_Service *NewService(const Common::String &SuperclassIdentifier, const Common::String &ServiceIdentifier);
+	Service *NewService(const Common::String &SuperclassIdentifier, const Common::String &ServiceIdentifier);
 
 	/**
 	 * Ends the current service of a superclass. Returns true on success, and false if the superclass
@@ -113,7 +113,7 @@ public:
 	 * @param SuperclassIdentfier       The name of the superclass
 	 *         z.B: "sfx", "gfx", "package" ...
 	 */
-	BS_Service *GetService(const Common::String &SuperclassIdentifier);
+	Service *GetService(const Common::String &SuperclassIdentifier);
 
 	/**
 	 * Returns the name of the currentl active service object of a superclass.
@@ -174,7 +174,7 @@ public:
 	/**
 	 * Returns a pointer to the BS_ResourceManager
 	 */
-	BS_ResourceManager *GetResourceManager() {
+	ResourceManager *GetResourceManager() {
 		return _pResourceManager;
 	}
 	/**
@@ -221,8 +221,8 @@ public:
 	/**
 	 * Returns the singleton instance for the kernel
 	 */
-	static BS_Kernel *GetInstance() {
-		if (!_Instance) _Instance = new BS_Kernel();
+	static Kernel *GetInstance() {
+		if (!_Instance) _Instance = new Kernel();
 		return _Instance;
 	}
 
@@ -251,26 +251,26 @@ private:
 	// Private singleton methods
 	// -----------------------------------------------------------------------------
 
-	BS_Kernel();
-	virtual ~BS_Kernel();
+	Kernel();
+	virtual ~Kernel();
 
 	// -----------------------------------------------------------------------------
 	// Singleton instance
 	// -----------------------------------------------------------------------------
-	static BS_Kernel *_Instance;
+	static Kernel *_Instance;
 
 	// Superclass class
 	// ----------------
 	class Superclass {
 	private:
-		BS_Kernel *_pKernel;
+		Kernel *_pKernel;
 		unsigned int _ServiceCount;
 		Common::String _Identifier;
-		BS_Service *_ActiveService;
+		Service *_ActiveService;
 		Common::String _ActiveServiceName;
 
 	public:
-		Superclass(BS_Kernel *pKernel, const Common::String &Identifier);
+		Superclass(Kernel *pKernel, const Common::String &Identifier);
 		~Superclass();
 
 		unsigned int GetServiceCount() const {
@@ -279,14 +279,14 @@ private:
 		Common::String GetIdentifier() const {
 			return _Identifier;
 		}
-		BS_Service *GetActiveService() const {
+		Service *GetActiveService() const {
 			return _ActiveService;
 		}
 		Common::String GetActiveServiceName() const {
 			return _ActiveServiceName;
 		}
 		Common::String GetServiceIdentifier(unsigned int Number);
-		BS_Service *NewService(const Common::String &ServiceIdentifier);
+		Service *NewService(const Common::String &ServiceIdentifier);
 		bool DisconnectService();
 	};
 
@@ -299,7 +299,7 @@ private:
 
 	// Active window
 	// -------------
-	BS_Window *_pWindow;
+	Window *_pWindow;
 
 	// Random number generator
 	// -----------------------
@@ -330,7 +330,7 @@ private:
 
 	// Resourcemanager
 	// ---------------
-	BS_ResourceManager *_pResourceManager;
+	ResourceManager *_pResourceManager;
 
 	bool _RegisterScriptBindings();
 };
@@ -342,7 +342,7 @@ private:
 class BS_ServiceInfo {
 public:
 	BS_ServiceInfo(const Common::String &SuperclassIdentifier_, const Common::String &ServiceIdentifier_,
-	               BS_Service*(*CreateMethod_)(BS_Kernel *)) {
+	               Service*(*CreateMethod_)(Kernel *)) {
 		this->SuperclassIdentifier = SuperclassIdentifier_;
 		this->ServiceIdentifier = ServiceIdentifier_;
 		this->CreateMethod = CreateMethod_;
@@ -350,7 +350,7 @@ public:
 
 	Common::String  SuperclassIdentifier;
 	Common::String  ServiceIdentifier;
-	BS_Service*(*CreateMethod)(BS_Kernel *);
+	Service*(*CreateMethod)(Kernel *);
 };
 
 template<class T>

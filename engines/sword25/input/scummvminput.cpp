@@ -53,7 +53,7 @@ namespace Sword25 {
 // Constructor / Destructor
 // -----------------------------------------------------------------------------
 
-ScummVMInput::ScummVMInput(BS_Kernel *pKernel) :
+ScummVMInput::ScummVMInput(Kernel *pKernel) :
 	m_CurrentState(0),
 	m_LeftMouseDown(false),
 	m_RightMouseDown(false),
@@ -80,7 +80,7 @@ ScummVMInput::~ScummVMInput() {
 
 // -----------------------------------------------------------------------------
 
-BS_Service *ScummVMInput_CreateObject(BS_Kernel *pKernel) {
+Service *ScummVMInput_CreateObject(Kernel *pKernel) {
 	return new ScummVMInput(pKernel);
 }
 
@@ -127,7 +127,7 @@ void ScummVMInput::Update() {
 			break;
 
 		case Common::EVENT_QUIT:
-			BS_Kernel::GetInstance()->GetWindow()->SetWindowAlive(false);
+			Kernel::GetInstance()->GetWindow()->SetWindowAlive(false);
 			break;
 
 		default:
@@ -161,7 +161,7 @@ void ScummVMInput::TestForLeftDoubleClick() {
 	// Only bother checking for a double click if the left mouse button was clicked
 	if (WasLeftMouseDown()) {
 		// Get the time now
-		unsigned int Now = BS_Kernel::GetInstance()->GetMilliTicks();
+		unsigned int Now = Kernel::GetInstance()->GetMilliTicks();
 
 		// A double click is signalled if
 		// 1. The two clicks are close enough together
@@ -335,7 +335,7 @@ void ScummVMInput::ReportCommand(KEY_COMMANDS Command) {
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool ScummVMInput::Persist(BS_OutputPersistenceBlock &Writer) {
+bool ScummVMInput::Persist(OutputPersistenceBlock &Writer) {
 	// Anzahl an Command-Callbacks persistieren.
 	Writer.Write(m_CommandCallbacks.size());
 
@@ -365,7 +365,7 @@ bool ScummVMInput::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool ScummVMInput::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool ScummVMInput::Unpersist(InputPersistenceBlock &Reader) {
 	// Command-Callbackliste leeren.
 	m_CommandCallbacks.clear();
 

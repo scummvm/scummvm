@@ -37,15 +37,15 @@
 
 namespace Sword25 {
 
-class BS_OutputPersistenceBlock;
-class BS_InputPersistenceBlock;
+class OutputPersistenceBlock;
+class InputPersistenceBlock;
 
-class BS_Persistable {
+class Persistable {
 public:
-	virtual ~BS_Persistable() {};
+	virtual ~Persistable() {};
 
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer) = 0;
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader) = 0;
+	virtual bool Persist(OutputPersistenceBlock &Writer) = 0;
+	virtual bool Unpersist(InputPersistenceBlock &Reader) = 0;
 };
 
 } // End of namespace Sword25

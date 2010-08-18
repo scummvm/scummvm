@@ -65,7 +65,7 @@ using namespace Lua;
 // Constructor / Destructor
 // -----------------------------------------------------------------------------
 
-LuaScriptEngine::LuaScriptEngine(BS_Kernel *KernelPtr) :
+LuaScriptEngine::LuaScriptEngine(Kernel *KernelPtr) :
 	ScriptEngine(KernelPtr),
 	m_State(0),
 	m_PcallErrorhandlerRegistryIndex(0) {
@@ -81,7 +81,7 @@ LuaScriptEngine::~LuaScriptEngine() {
 
 // -----------------------------------------------------------------------------
 
-BS_Service *LuaScriptEngine_CreateObject(BS_Kernel *KernelPtr) {
+Service *LuaScriptEngine_CreateObject(Kernel *KernelPtr) {
 	return new LuaScriptEngine(KernelPtr);
 }
 
@@ -153,7 +153,7 @@ bool LuaScriptEngine::ExecuteFile(const Common::String &FileName) {
 	debug(2, "ExecuteFile(%s)", FileName.c_str());
 
 	// Get a pointer to the package manager
-	PackageManager *pPackage = static_cast<PackageManager *>(BS_Kernel::GetInstance()->GetService("package"));
+	PackageManager *pPackage = static_cast<PackageManager *>(Kernel::GetInstance()->GetService("package"));
 	BS_ASSERT(pPackage);
 
 	// File read
@@ -424,7 +424,7 @@ int Chunkwriter(lua_State *L, const void *p, size_t sz, void *ud) {
 }
 }
 
-bool LuaScriptEngine::Persist(BS_OutputPersistenceBlock &Writer) {
+bool LuaScriptEngine::Persist(OutputPersistenceBlock &Writer) {
 	// Empty the Lua stack. pluto_persist() xepects that the stack is empty except for its parameters
 	lua_settop(m_State, 0);
 
@@ -516,7 +516,7 @@ void ClearGlobalTable(lua_State *L, const char **Exceptions) {
 
 // -----------------------------------------------------------------------------
 
-bool LuaScriptEngine::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool LuaScriptEngine::Unpersist(InputPersistenceBlock &Reader) {
 	// Empty the Lua stack. pluto_persist() xepects that the stack is empty except for its parameters
 	lua_settop(m_State, 0);
 

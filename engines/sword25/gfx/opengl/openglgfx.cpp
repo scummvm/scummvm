@@ -73,7 +73,7 @@ const Common::String B25S_EXTENSION(".b25s");
 // CONSTRUCTION / DESTRUCTION
 // -----------------------------------------------------------------------------
 
-OpenGLGfx::OpenGLGfx(BS_Kernel *pKernel) :
+OpenGLGfx::OpenGLGfx(Kernel *pKernel) :
 	GraphicEngine(pKernel),
 	m_GLspritesInitialized(false) {
 }
@@ -86,7 +86,7 @@ OpenGLGfx::~OpenGLGfx() {
 
 // -----------------------------------------------------------------------------
 
-BS_Service *OpenGLGfx_CreateObject(BS_Kernel *pKernel) {
+Service *OpenGLGfx_CreateObject(Kernel *pKernel) {
 	return new OpenGLGfx(pKernel);
 }
 
@@ -285,7 +285,7 @@ void OpenGLGfx::FlipImagedataVertical(unsigned int Width, unsigned int Height, b
 // RESOURCE MANAGING
 // -----------------------------------------------------------------------------
 
-BS_Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
+Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
 	BS_ASSERT(CanLoadResource(FileName));
 
 	// Bild für den Softwarebuffer laden
@@ -328,7 +328,7 @@ BS_Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
 	// Vectorgraphik laden
 	if (FileName.hasSuffix(SWF_EXTENSION)) {
 		// Pointer auf Package-Manager holen
-		PackageManager *pPackage = BS_Kernel::GetInstance()->GetPackage();
+		PackageManager *pPackage = Kernel::GetInstance()->GetPackage();
 		BS_ASSERT(pPackage);
 
 		// Datei laden
@@ -371,7 +371,7 @@ BS_Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
 
 	// Font laden
 	if (FileName.hasSuffix(FNT_EXTENSION)) {
-		FontResource *pResource = new FontResource(BS_Kernel::GetInstance(), FileName);
+		FontResource *pResource = new FontResource(Kernel::GetInstance(), FileName);
 		if (pResource->IsValid())
 			return pResource;
 		else {
@@ -407,7 +407,7 @@ void OpenGLGfx::DrawDebugLine(const Vertex &Start, const Vertex &End, unsigned i
 // PERSISTENZ
 // -----------------------------------------------------------------------------
 
-bool OpenGLGfx::Persist(BS_OutputPersistenceBlock &Writer) {
+bool OpenGLGfx::Persist(OutputPersistenceBlock &Writer) {
 	bool result = true;
 
 	result &= GraphicEngine::Persist(Writer);
@@ -418,7 +418,7 @@ bool OpenGLGfx::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool OpenGLGfx::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool OpenGLGfx::Unpersist(InputPersistenceBlock &Reader) {
 	bool result = true;
 
 	result &= GraphicEngine::Unpersist(Reader);

@@ -43,19 +43,19 @@
 namespace Sword25 {
 
 // Class definitions
-class BS_ResourceService;
-class BS_Resource;
-class BS_Kernel;
+class ResourceService;
+class Resource;
+class Kernel;
 
-class BS_ResourceManager {
-	friend class BS_Kernel;
+class ResourceManager {
+	friend class Kernel;
 
 public:
 	/**
 	 * Returns a requested resource. If any error occurs, returns NULL
 	 * @param FileName      Filename of resource
 	 */
-	BS_Resource *RequestResource(const Common::String &FileName);
+	Resource *RequestResource(const Common::String &FileName);
 
 	/**
 	 * Loads a resource into the cache
@@ -77,14 +77,14 @@ public:
 	 * Note: This method is not optimised for speed and should be used only for debugging purposes
 	 * @param Ord       Ordinal number of the resource. Must be between 0 and GetResourceCount() - 1.
 	*/
-	BS_Resource *GetResourceByOrdinal(int Ord) const;
+	Resource *GetResourceByOrdinal(int Ord) const;
 
 	/**
 	 * Registers a RegisterResourceService. This method is the constructor of
 	 * BS_ResourceService, and thus helps all resource services in the ResourceManager list
 	 * @param pService      Which service
 	 */
-	bool RegisterResourceService(BS_ResourceService *pService);
+	bool RegisterResourceService(ResourceService *pService);
 
 	/**
 	 * Releases all resources that are not locked.
@@ -132,12 +132,12 @@ private:
 	 * Creates a new resource manager
 	 * Only the BS_Kernel class can generate copies this class. Thus, the constructor is private
 	 */
-	BS_ResourceManager(BS_Kernel *pKernel) :
+	ResourceManager(Kernel *pKernel) :
 		m_KernelPtr(pKernel),
 		m_MaxMemoryUsage(100000000),
 		m_LogCacheMiss(false)
 	{};
-	virtual ~BS_ResourceManager();
+	virtual ~ResourceManager();
 
 	enum {
 		HASH_TABLE_BUCKETS = 256
@@ -147,7 +147,7 @@ private:
 	 * Moves a resource to the top of the resource list
 	 * @param pResource     The resource
 	 */
-	void MoveToFront(BS_Resource *pResource);
+	void MoveToFront(Resource *pResource);
 
 	/**
 	 * Loads a resource and updates the m_UsedMemory total
@@ -155,7 +155,7 @@ private:
 	 * The resource must not already be loaded
 	 * @param FileName      The unique filename of the resource to be loaded
 	 */
-	BS_Resource *LoadResource(const Common::String &FileName);
+	Resource *LoadResource(const Common::String &FileName);
 
 	/**
 	 * Returns the full path of a given resource filename.
@@ -166,25 +166,25 @@ private:
 	/**
 	 * Deletes a resource, removes it from the lists, and updates m_UsedMemory
 	 */
-	Common::List<BS_Resource *>::iterator DeleteResource(BS_Resource *pResource);
+	Common::List<Resource *>::iterator DeleteResource(Resource *pResource);
 
 	/**
 	 * Returns a pointer to a loaded resource. If any error occurs, NULL will be returned.
 	 * @param UniqueFileName        The absolute path and filename
 	 * Gibt einen Pointer auf die angeforderte Resource zurück, oder NULL, wenn die Resourcen nicht geladen ist.
 	 */
-	BS_Resource *GetResource(const Common::String &UniqueFileName) const;
+	Resource *GetResource(const Common::String &UniqueFileName) const;
 
 	/**
 	 * Deletes resources as necessary until the specified memory limit is not being exceeded.
 	 */
 	void DeleteResourcesIfNecessary();
 
-	BS_Kernel                          *m_KernelPtr;
+	Kernel                          *m_KernelPtr;
 	unsigned int                        m_MaxMemoryUsage;
-	Common::Array<BS_ResourceService *> m_ResourceServices;
-	Common::List<BS_Resource *>         m_Resources;
-	Common::List<BS_Resource *>         m_ResourceHashTable[HASH_TABLE_BUCKETS];
+	Common::Array<ResourceService *> m_ResourceServices;
+	Common::List<Resource *>         m_Resources;
+	Common::List<Resource *>         m_ResourceHashTable[HASH_TABLE_BUCKETS];
 	bool                                m_LogCacheMiss;
 };
 

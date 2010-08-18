@@ -58,7 +58,7 @@ WalkRegion::WalkRegion() {
 
 // -----------------------------------------------------------------------------
 
-WalkRegion::WalkRegion(BS_InputPersistenceBlock &Reader, unsigned int Handle) :
+WalkRegion::WalkRegion(InputPersistenceBlock &Reader, unsigned int Handle) :
 	Region(Reader, Handle) {
 	m_Type = RT_WALKREGION;
 	Unpersist(Reader);
@@ -340,7 +340,7 @@ void WalkRegion::SetPos(int X, int Y) {
 
 // -----------------------------------------------------------------------------
 
-bool WalkRegion::Persist(BS_OutputPersistenceBlock &Writer) {
+bool WalkRegion::Persist(OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Persist the parent region
@@ -374,7 +374,7 @@ bool WalkRegion::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool WalkRegion::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool WalkRegion::Unpersist(InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// The parent object was already loaded in the constructor of BS_Region, so at

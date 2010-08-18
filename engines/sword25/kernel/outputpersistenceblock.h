@@ -48,9 +48,9 @@ namespace Sword25 {
 // Class declaration
 // -----------------------------------------------------------------------------
 
-class BS_OutputPersistenceBlock : public BS_PersistenceBlock {
+class OutputPersistenceBlock : public PersistenceBlock {
 public:
-	BS_OutputPersistenceBlock();
+	OutputPersistenceBlock();
 
 	void Write(signed int Value);
 	void Write(unsigned int Value);

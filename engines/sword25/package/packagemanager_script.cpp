@@ -50,7 +50,7 @@ using namespace Lua;
 // -----------------------------------------------------------------------------
 
 static PackageManager *GetPM() {
-	BS_Kernel *pKernel = BS_Kernel::GetInstance();
+	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 	PackageManager *pPM = static_cast<PackageManager *>(pKernel->GetService("package"));
 	BS_ASSERT(pPM);
@@ -235,7 +235,7 @@ static const luaL_reg PACKAGE_FUNCTIONS[] = {
 // -----------------------------------------------------------------------------
 
 bool PackageManager::_RegisterScriptBindings() {
-	BS_Kernel *pKernel = BS_Kernel::GetInstance();
+	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);

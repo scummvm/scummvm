@@ -69,15 +69,15 @@ public:
 	virtual bool    IsColorModulationAllowed() const;
 	virtual bool    IsSetContentAllowed() const;
 
-	virtual bool    Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool    Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool    Persist(OutputPersistenceBlock &Writer);
+	virtual bool    Unpersist(InputPersistenceBlock &Reader);
 
 protected:
 	virtual bool    DoRender();
 
 private:
 	DynamicBitmap(RenderObjectPtr<RenderObject> ParentPtr, unsigned int Width, unsigned int Height);
-	DynamicBitmap(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
+	DynamicBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
 
 	bool CreateGLImage(unsigned int Width, unsigned int Height);
 

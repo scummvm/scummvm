@@ -57,7 +57,7 @@
 namespace Sword25 {
 
 // Klassendefinition
-class BS_Kernel;
+class Kernel;
 class BS_Rect;
 class RenderObject;
 class TimedRenderObject;
@@ -68,7 +68,7 @@ class TimedRenderObject;
     Sie sorgt dafür, dass die BS_RenderObjects in der richtigen Reihenfolge gerendert werden und ermöglicht den Zugriff auf die
     BS_RenderObjects über einen String.
 */
-class RenderObjectManager : public BS_Persistable {
+class RenderObjectManager : public Persistable {
 public:
 	/**
 	    @brief Erzeugt ein neues BS_RenderObjectManager-Objekt.
@@ -115,8 +115,8 @@ public:
 	*/
 	void DetatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> pRenderObject);
 
-	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
+	virtual bool Persist(OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(InputPersistenceBlock &Reader);
 
 private:
 	bool m_FrameStarted;

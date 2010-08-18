@@ -68,7 +68,7 @@ Common::String GetAbsolutePath(const Common::String &Path) {
 // Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_FileSystemUtilScummVM : public BS_FileSystemUtil {
+class BS_FileSystemUtilScummVM : public FileSystemUtil {
 public:
 	virtual Common::String GetUserdataDirectory() {
 		Common::String path = ConfMan.get("savepath");
@@ -134,7 +134,7 @@ public:
 // Singleton method of parent class
 // -----------------------------------------------------------------------------
 
-BS_FileSystemUtil &BS_FileSystemUtil::GetInstance() {
+FileSystemUtil &FileSystemUtil::GetInstance() {
 	static BS_FileSystemUtilScummVM Instance;
 	return Instance;
 }

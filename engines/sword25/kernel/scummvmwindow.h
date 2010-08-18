@@ -48,10 +48,10 @@
 namespace Sword25 {
 
 // Class definition
-class BS_ScummVMWindow : public BS_Window {
+class ScummVMWindow : public Window {
 public:
-	BS_ScummVMWindow(int X, int Y, int Width, int Height, bool Visible);
-	virtual ~BS_ScummVMWindow();
+	ScummVMWindow(int X, int Y, int Width, int Height, bool Visible);
+	virtual ~ScummVMWindow();
 
 	bool IsVisible();
 	void SetVisible(bool Visible);

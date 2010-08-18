@@ -69,9 +69,9 @@ namespace Sword25 {
  * 3. LoadDirectoryAsPackage should only be used for testing. The final release will be
  *    have all files in packages.
  */
-class PackageManager : public BS_Service {
+class PackageManager : public Service {
 public:
-	PackageManager(BS_Kernel *pKernel);
+	PackageManager(Kernel *pKernel);
 	virtual ~PackageManager() {};
 
 	enum FILE_TYPES {

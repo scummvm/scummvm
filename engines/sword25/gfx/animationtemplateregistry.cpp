@@ -69,7 +69,7 @@ void AnimationTemplateRegistry::LogWarningLn(const char *Message) const {
 
 // -----------------------------------------------------------------------------
 
-bool AnimationTemplateRegistry::Persist(BS_OutputPersistenceBlock &Writer) {
+bool AnimationTemplateRegistry::Persist(OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Das nächste zu vergebene Handle schreiben.
@@ -95,7 +95,7 @@ bool AnimationTemplateRegistry::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool AnimationTemplateRegistry::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool AnimationTemplateRegistry::Unpersist(InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// Das nächste zu vergebene Handle wieder herstellen.
