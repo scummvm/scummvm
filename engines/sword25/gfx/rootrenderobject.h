@@ -48,14 +48,14 @@ namespace Sword25 {
 class BS_Kernel;
 
 // Klassendefinition
-class BS_RenderObjectManager;
+class RenderObjectManager;
 
-class BS_RootRenderObject : public BS_RenderObject {
-	friend class BS_RenderObjectManager;
+class RootRenderObject : public RenderObject {
+	friend class RenderObjectManager;
 
 private:
-	BS_RootRenderObject(BS_RenderObjectManager *ManagerPtr, int Width, int Height) :
-		BS_RenderObject(BS_RenderObjectPtr<BS_RenderObject>(), TYPE_ROOT) {
+	RootRenderObject(RenderObjectManager *ManagerPtr, int Width, int Height) :
+		RenderObject(RenderObjectPtr<RenderObject>(), TYPE_ROOT) {
 		m_ManagerPtr = ManagerPtr;
 		m_Width = Width;
 		m_Height = Height;

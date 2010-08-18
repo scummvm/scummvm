@@ -52,8 +52,8 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-BS_Bitmap::BS_Bitmap(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, TYPES Type, unsigned int Handle) :
-	BS_RenderObject(ParentPtr, Type, Handle),
+Bitmap::Bitmap(RenderObjectPtr<RenderObject> ParentPtr, TYPES Type, unsigned int Handle) :
+	RenderObject(ParentPtr, Type, Handle),
 	m_ModulationColor(0xffffffff),
 	m_ScaleFactorX(1.0f),
 	m_ScaleFactorY(1.0f),
@@ -63,14 +63,14 @@ BS_Bitmap::BS_Bitmap(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, TYPES Type, 
 
 // -----------------------------------------------------------------------------
 
-BS_Bitmap::~BS_Bitmap() {
+Bitmap::~Bitmap() {
 }
 
 // -----------------------------------------------------------------------------
 // Darstellungsart festlegen
 // -----------------------------------------------------------------------------
 
-void BS_Bitmap::SetAlpha(int Alpha) {
+void Bitmap::SetAlpha(int Alpha) {
 	if (!IsAlphaAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set alpha value on a bitmap that does not support alpha blending. Call was ignored.");
 		return;
@@ -94,7 +94,7 @@ void BS_Bitmap::SetAlpha(int Alpha) {
 
 // -----------------------------------------------------------------------------
 
-void BS_Bitmap::SetModulationColor(unsigned int ModulationColor) {
+void Bitmap::SetModulationColor(unsigned int ModulationColor) {
 	if (!IsColorModulationAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set modulation color of a bitmap that does not support color modulation. Call was ignored.");
 		return;
@@ -109,14 +109,14 @@ void BS_Bitmap::SetModulationColor(unsigned int ModulationColor) {
 
 // -----------------------------------------------------------------------------
 
-void BS_Bitmap::SetScaleFactor(float ScaleFactor) {
+void Bitmap::SetScaleFactor(float ScaleFactor) {
 	SetScaleFactorX(ScaleFactor);
 	SetScaleFactorY(ScaleFactor);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_Bitmap::SetScaleFactorX(float ScaleFactorX) {
+void Bitmap::SetScaleFactorX(float ScaleFactorX) {
 	if (!IsScalingAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set scale factor of a bitmap that does not support scaling. Call was ignored.");
 		return;
@@ -137,7 +137,7 @@ void BS_Bitmap::SetScaleFactorX(float ScaleFactorX) {
 
 // -----------------------------------------------------------------------------
 
-void BS_Bitmap::SetScaleFactorY(float ScaleFactorY) {
+void Bitmap::SetScaleFactorY(float ScaleFactorY) {
 	if (!IsScalingAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set scale factor of a bitmap that does not support scaling. Call was ignored.");
 		return;
@@ -158,14 +158,14 @@ void BS_Bitmap::SetScaleFactorY(float ScaleFactorY) {
 
 // -----------------------------------------------------------------------------
 
-void BS_Bitmap::SetFlipH(bool FlipH) {
+void Bitmap::SetFlipH(bool FlipH) {
 	m_FlipH = FlipH;
 	ForceRefresh();
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_Bitmap::SetFlipV(bool FlipV) {
+void Bitmap::SetFlipV(bool FlipV) {
 	m_FlipV = FlipV;
 	ForceRefresh();
 }
@@ -174,10 +174,10 @@ void BS_Bitmap::SetFlipV(bool FlipV) {
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool BS_Bitmap::Persist(BS_OutputPersistenceBlock &Writer) {
+bool Bitmap::Persist(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
-	Result &= BS_RenderObject::Persist(Writer);
+	Result &= RenderObject::Persist(Writer);
 	Writer.Write(m_FlipH);
 	Writer.Write(m_FlipV);
 	Writer.Write(m_ScaleFactorX);
@@ -191,10 +191,10 @@ bool BS_Bitmap::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_Bitmap::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool Bitmap::Unpersist(BS_InputPersistenceBlock &Reader) {
 	bool Result = true;
 
-	Result &= BS_RenderObject::Unpersist(Reader);
+	Result &= RenderObject::Unpersist(Reader);
 	Reader.Read(m_FlipH);
 	Reader.Read(m_FlipV);
 	Reader.Read(m_ScaleFactorX);

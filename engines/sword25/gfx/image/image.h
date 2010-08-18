@@ -52,9 +52,9 @@
 
 namespace Sword25 {
 
-class BS_Image {
+class Image {
 public:
-	virtual ~BS_Image() {};
+	virtual ~Image() {};
 
 	// Enums
 	/**
@@ -89,7 +89,7 @@ public:
 	/**
 	    @brief Gibt das Farbformat des Bildes zurück
 	*/
-	virtual BS_GraphicEngine::COLOR_FORMATS GetColorFormat() const = 0;
+	virtual GraphicEngine::COLOR_FORMATS GetColorFormat() const = 0;
 
 	//@}
 

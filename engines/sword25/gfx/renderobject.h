@@ -60,12 +60,12 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 class BS_Kernel;
-class BS_RenderObjectManager;
-class BS_Bitmap;
-class BS_Animation;
-class BS_AnimationTemplate;
-class BS_Panel;
-class BS_Text;
+class RenderObjectManager;
+class Bitmap;
+class Animation;
+class AnimationTemplate;
+class Panel;
+class Text;
 
 // Klassendefinition
 /**
@@ -75,7 +75,7 @@ class BS_Text;
     Diese Klasse erledigt Aufgaben wie: minimales Neuzeichnen, Renderreihenfolge, Objekthierachie.
     Alle BS_RenderObject Instanzen werden von einem BS_RenderObjektManager in einem Baum verwaltet.
  */
-class BS_RenderObject {
+class RenderObject {
 public:
 	// Konstanten
 	// ----------
@@ -104,7 +104,7 @@ public:
 	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurück.<br>
 	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
-	BS_RenderObjectPtr<BS_Bitmap> AddBitmap(const Common::String &FileName);
+	RenderObjectPtr<Bitmap> AddBitmap(const Common::String &FileName);
 	/**
 	    @brief Erzeugt ein veränderbares Bitmap als Kinderobjekt des Renderobjektes.
 	    @param Width die Breite des Bitmaps
@@ -112,14 +112,14 @@ public:
 	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurück.<br>
 	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
-	BS_RenderObjectPtr<BS_Bitmap> AddDynamicBitmap(unsigned int Width, unsigned int Height);
+	RenderObjectPtr<Bitmap> AddDynamicBitmap(unsigned int Width, unsigned int Height);
 	/**
 	    @brief Erzeugt eine Animation auf Basis einer Animationsdatei als Kinderobjekt des Renderobjektes.
 	    @param FileName der Dateiname der Quelldatei
 	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurück.<br>
 	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
-	BS_RenderObjectPtr<BS_Animation> AddAnimation(const Common::String &FileName);
+	RenderObjectPtr<Animation> AddAnimation(const Common::String &FileName);
 	/**
 	    @brief Erzeugt eine Animation auf Basis eines Animationstemplate als Kinderobjekt des Renderobjektes.
 	    @param pAnimationTemplate ein Pointer auf das Animationstemplate
@@ -127,7 +127,7 @@ public:
 	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	    @remark Das Renderobjekt übernimmt die Verwaltung des Animationstemplate.
 	*/
-	BS_RenderObjectPtr<BS_Animation> AddAnimation(const BS_AnimationTemplate &AnimationTemplate);
+	RenderObjectPtr<Animation> AddAnimation(const AnimationTemplate &AnimationTemplate);
 	/**
 	    @brief Erzeugt ein neues Farbpanel als Kinderobjekt des Renderobjektes.
 	    @param Width die Breite des Panels
@@ -138,7 +138,7 @@ public:
 	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
 
-	BS_RenderObjectPtr<BS_Panel> AddPanel(int Width, int Height, unsigned int Color = 0xff000000);
+	RenderObjectPtr<Panel> AddPanel(int Width, int Height, unsigned int Color = 0xff000000);
 	/**
 	    @brief Erzeugt ein Textobjekt als Kinderobjekt des Renderobjektes.
 	    @param Font der Dateiname des zu verwendenen Fonts
@@ -147,7 +147,7 @@ public:
 	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurück.<br>
 	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
-	BS_RenderObjectPtr<BS_Text> AddText(const Common::String &Font, const Common::String &Text = "");
+	RenderObjectPtr<Text> AddText(const Common::String &Font, const Common::String &text = "");
 
 	// Cast-Methoden
 	// -------------
@@ -156,36 +156,36 @@ public:
 	    @return Gibt einen BS_RenderObjectPtr auf das Objekt zurück.<br>
 	            Falls der Cast nicht zulässig ist, wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
-	BS_RenderObjectPtr<BS_Bitmap> ToBitmap() {
-		if (m_Type == TYPE_STATICBITMAP || m_Type == TYPE_DYNAMICBITMAP) return BS_RenderObjectPtr<BS_Bitmap>(this->GetHandle());
-		else return BS_RenderObjectPtr<BS_Bitmap>();
+	RenderObjectPtr<Bitmap> ToBitmap() {
+		if (m_Type == TYPE_STATICBITMAP || m_Type == TYPE_DYNAMICBITMAP) return RenderObjectPtr<Bitmap>(this->GetHandle());
+		else return RenderObjectPtr<Bitmap>();
 	}
 	/**
 	    @brief Castet das Objekt zu einem BS_Animation-Objekt wenn zulässig.
 	    @return Gibt einen BS_RenderObjectPtr auf das Objekt zurück.<br>
 	            Falls der Cast nicht zulässig ist, wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
-	BS_RenderObjectPtr<BS_Animation> ToAnimation() {
-		if (m_Type == TYPE_ANIMATION) return BS_RenderObjectPtr<BS_Animation>(this->GetHandle());
-		else return BS_RenderObjectPtr<BS_Animation>();
+	RenderObjectPtr<Animation> ToAnimation() {
+		if (m_Type == TYPE_ANIMATION) return RenderObjectPtr<Animation>(this->GetHandle());
+		else return RenderObjectPtr<Animation>();
 	}
 	/**
 	    @brief Castet das Objekt zu einem BS_Panel-Objekt wenn zulässig.
 	    @return Gibt einen BS_RenderObjectPtr auf das Objekt zurück.<br>
 	            Falls der Cast nicht zulässig ist, wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
-	BS_RenderObjectPtr<BS_Panel> ToPanel() {
-		if (m_Type == TYPE_PANEL) return BS_RenderObjectPtr<BS_Panel>(this->GetHandle());
-		else return BS_RenderObjectPtr<BS_Panel>();
+	RenderObjectPtr<Panel> ToPanel() {
+		if (m_Type == TYPE_PANEL) return RenderObjectPtr<Panel>(this->GetHandle());
+		else return RenderObjectPtr<Panel>();
 	}
 	/**
 	    @brief Castet das Object zu einem BS_Text-Objekt wenn zulässig.
 	    @return Gibt einen BS_RenderObjectPtr auf das Objekt zurück.<br>
 	            Falls der Cast nicht zulässig ist, wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
-	BS_RenderObjectPtr<BS_Text> ToText() {
-		if (m_Type == TYPE_TEXT) return BS_RenderObjectPtr<BS_Text>(this->GetHandle());
-		else return BS_RenderObjectPtr<BS_Text>();
+	RenderObjectPtr<Text> ToText() {
+		if (m_Type == TYPE_TEXT) return RenderObjectPtr<Text>(this->GetHandle());
+		else return RenderObjectPtr<Text>();
 	}
 
 	// Konstruktor / Desktruktor
@@ -206,8 +206,8 @@ public:
 	            Es ist nicht notwendig alle BS_RenderObject Instanzen einzeln zu löschen. Dieses geschiet automatisch beim Löschen eines
 	            Vorfahren oder beim Löschen des zuständigen BS_RenderObjectManager.
 	 */
-	BS_RenderObject(BS_RenderObjectPtr<BS_RenderObject> pParent, TYPES Type, unsigned int Handle = 0);
-	virtual ~BS_RenderObject();
+	RenderObject(RenderObjectPtr<RenderObject> pParent, TYPES Type, unsigned int Handle = 0);
+	virtual ~RenderObject();
 
 	// Interface
 	// ---------
@@ -360,13 +360,13 @@ public:
 	bool PersistChildren(BS_OutputPersistenceBlock &Writer);
 	bool UnpersistChildren(BS_InputPersistenceBlock &Reader);
 	// TODO: Evtl. private
-	BS_RenderObjectPtr<BS_RenderObject> RecreatePersistedRenderObject(BS_InputPersistenceBlock &Reader);
+	RenderObjectPtr<RenderObject> RecreatePersistedRenderObject(BS_InputPersistenceBlock &Reader);
 
 protected:
 	// Typen
 	// -----
-	typedef Common::List<BS_RenderObjectPtr<BS_RenderObject> >          RENDEROBJECT_LIST;
-	typedef Common::List<BS_RenderObjectPtr<BS_RenderObject> >::iterator    RENDEROBJECT_ITER;
+	typedef Common::List<RenderObjectPtr<RenderObject> >          RENDEROBJECT_LIST;
+	typedef Common::List<RenderObjectPtr<RenderObject> >::iterator    RENDEROBJECT_ITER;
 
 	int         m_X;            ///< Die X-Position des Objektes relativ zum Eltern-Objekt
 	int         m_Y;            ///< Die Y-Position des Objektes relativ zum Eltern-Objekt
@@ -389,7 +389,7 @@ protected:
 	bool        m_OldVisible;
 
 	/// Ein Pointer auf den BS_RenderObjektManager, der das Objekt verwaltet.
-	BS_RenderObjectManager *m_ManagerPtr;
+	RenderObjectManager *m_ManagerPtr;
 
 	// Render-Methode
 	// --------------
@@ -426,14 +426,14 @@ protected:
 	// Wenn der Hintergrund bewegt wird (Scrolling), bewegen sich auch die darauf befindlichen Gegenstände und Personen.
 
 	/// Ein Pointer auf das Elternobjekt.
-	BS_RenderObjectPtr<BS_RenderObject> m_ParentPtr;
+	RenderObjectPtr<RenderObject> m_ParentPtr;
 	/// Die Liste der Kinderobjekte nach der Renderreihenfolge geordnet
 	RENDEROBJECT_LIST           m_Children;
 
 	/**
 	    @brief Gibt einen Pointer auf den BS_RenderObjektManager zurück, der das Objekt verwaltet.
 	 */
-	BS_RenderObjectManager *GetManager() const {
+	RenderObjectManager *GetManager() const {
 		return m_ManagerPtr;
 	}
 	/**
@@ -441,7 +441,7 @@ protected:
 	    @param pObject ein Pointer auf das einzufügende Objekt
 	    @return Gibt false zurück, falls das Objekt nicht eingefügt werden konnte.
 	*/
-	bool AddObject(BS_RenderObjectPtr<BS_RenderObject> pObject);
+	bool AddObject(RenderObjectPtr<RenderObject> pObject);
 
 private:
 	/// Ist true, wenn das Objekt in nächsten Frame neu gezeichnet werden soll
@@ -454,7 +454,7 @@ private:
 	    @param pObject ein Pointer auf das zu entfernende Objekt
 	    @return Gibt false zurück, falls das zu entfernende Objekt nicht in der Liste gefunden werden konnte.
 	 */
-	bool    DetatchChildren(BS_RenderObjectPtr<BS_RenderObject> pObject);
+	bool    DetatchChildren(RenderObjectPtr<RenderObject> pObject);
 	/**
 	    @brief Berechnet die Bounding-Box und registriert das Dirty-Rect beim BS_RenderObjectManager.
 	 */
@@ -509,12 +509,12 @@ private:
 	    @param Result das Ergebnisrechteck
 	    @return Gibt false zurück, falls sich die Objekte gar nicht schneiden.
 	 */
-	bool    GetObjectIntersection(BS_RenderObjectPtr<BS_RenderObject> pObject, BS_Rect &Result);
+	bool    GetObjectIntersection(RenderObjectPtr<RenderObject> pObject, BS_Rect &Result);
 	/**
 	    @brief Vergleichsoperator der auf Objektpointern basiert statt auf Objekten.
 	    @remark Diese Methode wird fürs Sortieren der Kinderliste nach der Rendereihenfolge benutzt.
 	*/
-	static bool Greater(const BS_RenderObjectPtr<BS_RenderObject> lhs, const BS_RenderObjectPtr<BS_RenderObject> rhs);
+	static bool Greater(const RenderObjectPtr<RenderObject> lhs, const RenderObjectPtr<RenderObject> rhs);
 };
 
 } // End of namespace Sword25

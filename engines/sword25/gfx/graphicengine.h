@@ -58,9 +58,9 @@
 namespace Sword25 {
 
 class BS_Kernel;
-class BS_Image;
-class BS_Panel;
-class BS_Screenshot;
+class Image;
+class Panel;
+class Screenshot;
 
 // Typen
 typedef unsigned int BS_COLOR;
@@ -77,7 +77,7 @@ typedef unsigned int BS_COLOR;
     Die bisher einzige Implementation ist BS_DDrawGfx.
 */
 
-class BS_GraphicEngine : public BS_ResourceService, public BS_Persistable {
+class GraphicEngine : public BS_ResourceService, public BS_Persistable {
 public:
 	// Enums
 	// -----
@@ -203,7 +203,7 @@ public:
 	virtual bool GetScreenshot(unsigned int &Width, unsigned int &Height, byte **Data) = 0;
 
 
-	virtual BS_RenderObjectPtr<BS_Panel> GetMainPanel() = 0;
+	virtual RenderObjectPtr<Panel> GetMainPanel() = 0;
 
 	/**
 	 * Specifies the time (in microseconds) since the last frame has passed
@@ -311,17 +311,17 @@ public:
 	 * @param ColorFormat   The desired colour format. The parameter must be of type COLOR_FORMATS
 	 * @return              Returns the size of a pixel in bytes. If the colour format is unknown, -1 is returned.
 	 */
-	static int GetPixelSize(BS_GraphicEngine::COLOR_FORMATS ColorFormat) {
+	static int GetPixelSize(GraphicEngine::COLOR_FORMATS ColorFormat) {
 		switch (ColorFormat) {
-		case BS_GraphicEngine::CF_RGB16:
-		case BS_GraphicEngine::CF_RGB15:
+		case GraphicEngine::CF_RGB16:
+		case GraphicEngine::CF_RGB15:
 			return 2;
 
-		case BS_GraphicEngine::CF_RGB16_INTERLEAVED:
-		case BS_GraphicEngine::CF_RGB15_INTERLEAVED:
+		case GraphicEngine::CF_RGB16_INTERLEAVED:
+		case GraphicEngine::CF_RGB15_INTERLEAVED:
 			return 3;
 
-		case BS_GraphicEngine::CF_ARGB32:
+		case GraphicEngine::CF_ARGB32:
 			return 4;
 		default:
 			return -1;
@@ -335,18 +335,18 @@ public:
 	 * @return              Reflects the length of the line in bytes. If the colour format is
 	 * unknown, -1 is returned
 	 */
-	static int CalcPitch(BS_GraphicEngine::COLOR_FORMATS ColorFormat, int Width) {
+	static int CalcPitch(GraphicEngine::COLOR_FORMATS ColorFormat, int Width) {
 		switch (ColorFormat) {
-		case BS_GraphicEngine::CF_RGB16:
-		case BS_GraphicEngine::CF_RGB15:
+		case GraphicEngine::CF_RGB16:
+		case GraphicEngine::CF_RGB15:
 			return Width * 2;
 
-		case BS_GraphicEngine::CF_RGB16_INTERLEAVED:
-		case BS_GraphicEngine::CF_RGB15_INTERLEAVED:
+		case GraphicEngine::CF_RGB16_INTERLEAVED:
+		case GraphicEngine::CF_RGB15_INTERLEAVED:
 			return (Width + 3) / 4 * 12;
 
-		case BS_GraphicEngine::CF_ARGB32:
-		case BS_GraphicEngine::CF_ABGR32:
+		case GraphicEngine::CF_ARGB32:
+		case GraphicEngine::CF_ABGR32:
 			return Width * 4;
 
 		default:
@@ -367,7 +367,7 @@ public:
 protected:
 	// Constructor
 	// -----------
-	BS_GraphicEngine(BS_Kernel *pKernel);
+	GraphicEngine(BS_Kernel *pKernel);
 
 	// Display Variables
 	// -----------------
@@ -379,7 +379,7 @@ protected:
 
 	// Debugging Variables
 	// -------------------
-	BS_Framecounter m_FPSCounter;
+	Framecounter m_FPSCounter;
 
 	unsigned int    m_RepaintedPixels;
 

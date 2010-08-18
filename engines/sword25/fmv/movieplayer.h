@@ -48,14 +48,14 @@ namespace Sword25 {
 // Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_MoviePlayer : public BS_Service {
+class MoviePlayer : public BS_Service {
 public:
 	// -----------------------------------------------------------------------------
 	// Constructor / Destructor
 	// -----------------------------------------------------------------------------
 
-	BS_MoviePlayer(BS_Kernel *pKernel);
-	~BS_MoviePlayer() {};
+	MoviePlayer(BS_Kernel *pKernel);
+	~MoviePlayer() {};
 
 	// -----------------------------------------------------------------------------
 	// Abstract interface must be implemented by each Movie Player

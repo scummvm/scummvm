@@ -42,13 +42,13 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-BS_TimedRenderObject::BS_TimedRenderObject(BS_RenderObjectPtr<BS_RenderObject> pParent, TYPES Type, unsigned int Handle) :
-	BS_RenderObject(pParent, Type, Handle) {
+TimedRenderObject::TimedRenderObject(RenderObjectPtr<RenderObject> pParent, TYPES Type, unsigned int Handle) :
+	RenderObject(pParent, Type, Handle) {
 	BS_ASSERT(GetManager());
 	GetManager()->AttatchTimedRenderObject(this->GetHandle());
 }
 
-BS_TimedRenderObject::~BS_TimedRenderObject() {
+TimedRenderObject::~TimedRenderObject() {
 	BS_ASSERT(GetManager());
 	GetManager()->DetatchTimedRenderObject(this->GetHandle());
 }

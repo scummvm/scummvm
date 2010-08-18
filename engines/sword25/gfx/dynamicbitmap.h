@@ -54,11 +54,11 @@ namespace Sword25 {
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-class BS_DynamicBitmap : public BS_Bitmap {
-	friend class BS_RenderObject;
+class DynamicBitmap : public Bitmap {
+	friend class RenderObject;
 
 public:
-	virtual ~BS_DynamicBitmap();
+	virtual ~DynamicBitmap();
 
 	virtual unsigned int GetPixel(int X, int Y) const;
 
@@ -76,12 +76,12 @@ protected:
 	virtual bool    DoRender();
 
 private:
-	BS_DynamicBitmap(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Width, unsigned int Height);
-	BS_DynamicBitmap(BS_InputPersistenceBlock &Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle);
+	DynamicBitmap(RenderObjectPtr<RenderObject> ParentPtr, unsigned int Width, unsigned int Height);
+	DynamicBitmap(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
 
 	bool CreateGLImage(unsigned int Width, unsigned int Height);
 
-	std::auto_ptr<BS_GLImage> m_Image;
+	std::auto_ptr<GLImage> m_Image;
 };
 
 } // End of namespace Sword25

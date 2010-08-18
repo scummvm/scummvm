@@ -44,7 +44,7 @@ namespace Sword25 {
 /**
  * A simple class that implements a frame counter
  */
-class BS_Framecounter {
+class Framecounter {
 private:
 	enum {
 		DEFAULT_UPDATE_FREQUENCY = 10
@@ -56,7 +56,7 @@ public:
 	 * @param UpdateFrequency   Specifies how often the frame counter should be updated in a sceond.
 	 * The default value is 10.
 	 */
-	BS_Framecounter(int UpdateFrequency = DEFAULT_UPDATE_FREQUENCY);
+	Framecounter(int UpdateFrequency = DEFAULT_UPDATE_FREQUENCY);
 
 	/**
 	 * Determines how often the frame counter should be updated in a second.
@@ -84,7 +84,7 @@ private:
 };
 
 // Inlines
-void BS_Framecounter::SetUpdateFrequency(int UpdateFrequency) {
+void Framecounter::SetUpdateFrequency(int UpdateFrequency) {
 	// Frequency in time (converted to microseconds)
 	m_UpdateDelay = 1000000 / UpdateFrequency;
 }

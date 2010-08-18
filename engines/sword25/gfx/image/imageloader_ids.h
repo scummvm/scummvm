@@ -51,10 +51,10 @@ namespace Sword25 {
 
 // Die Tabelle enthält Pointer auf statische Member-Funktionen innerhalb der Klassen, die eine Instanz der Klasse
 // erzeugen
-typedef BS_ImageLoader*(*BS_IMAGELOADER_NEW)();
+typedef ImageLoader*(*BS_IMAGELOADER_NEW)();
 const BS_IMAGELOADER_NEW BS_IMAGELOADER_IDS[] = {
-	BS_PNGLoader::CreateInstance,
-	BS_B25SLoader::CreateInstance,
+	PNGLoader::CreateInstance,
+	B25SLoader::CreateInstance,
 };
 const int BS_IMAGELOADER_COUNT = sizeof(BS_IMAGELOADER_IDS) / sizeof(BS_IMAGELOADER_NEW);
 

@@ -64,7 +64,7 @@ const int   MAX_FPS     = 200;
 // Construction / Destruction
 // -----------------------------------------------------------------------------
 
-BS_AnimationResource::BS_AnimationResource(const Common::String &FileName) :
+AnimationResource::AnimationResource(const Common::String &FileName) :
 	BS_Resource(FileName, BS_Resource::TYPE_ANIMATION),
 	m_Valid(false) {
 	// Pointer auf den Package-Manager bekommen
@@ -166,7 +166,7 @@ BS_AnimationResource::BS_AnimationResource(const Common::String &FileName) :
 // Dokument-Parsermethoden
 // -----------------------------------------------------------------------------
 
-bool BS_AnimationResource::ParseAnimationTag(TiXmlElement &AnimationTag, int &FPS, BS_Animation::ANIMATION_TYPES &AnimationType) {
+bool AnimationResource::ParseAnimationTag(TiXmlElement &AnimationTag, int &FPS, Animation::ANIMATION_TYPES &AnimationType) {
 	// FPS einlesen
 	const char *FPSString;
 	if ((FPSString = AnimationTag.Attribute("fps"))) {
@@ -183,11 +183,11 @@ bool BS_AnimationResource::ParseAnimationTag(TiXmlElement &AnimationTag, int &FP
 	const char *LoopTypeString;
 	if ((LoopTypeString = AnimationTag.Attribute("type"))) {
 		if (strcmp(LoopTypeString, "oneshot") == 0)
-			AnimationType = BS_Animation::AT_ONESHOT;
+			AnimationType = Animation::AT_ONESHOT;
 		else if (strcmp(LoopTypeString, "loop") == 0)
-			AnimationType = BS_Animation::AT_LOOP;
+			AnimationType = Animation::AT_LOOP;
 		else if (strcmp(LoopTypeString, "jojo") == 0)
-			AnimationType = BS_Animation::AT_JOJO;
+			AnimationType = Animation::AT_JOJO;
 		else
 			BS_LOG_WARNINGLN("Illegal type value (\"%s\") in <animation> tag in \"%s\". Assuming default (\"loop\").",
 			                 LoopTypeString, GetFileName().c_str());
@@ -198,7 +198,7 @@ bool BS_AnimationResource::ParseAnimationTag(TiXmlElement &AnimationTag, int &FP
 
 // -----------------------------------------------------------------------------
 
-bool BS_AnimationResource::ParseFrameTag(TiXmlElement &FrameTag, Frame &Frame_, BS_PackageManager &PackageManager) {
+bool AnimationResource::ParseFrameTag(TiXmlElement &FrameTag, Frame &Frame_, BS_PackageManager &PackageManager) {
 	const char *FileString = FrameTag.Attribute("file");
 	if (!FileString) {
 		BS_LOG_ERRORLN("<frame> tag without file attribute occurred in \"%s\".", GetFileName().c_str());
@@ -258,12 +258,12 @@ bool BS_AnimationResource::ParseFrameTag(TiXmlElement &FrameTag, Frame &Frame_, 
 
 // -----------------------------------------------------------------------------
 
-BS_AnimationResource::~BS_AnimationResource() {
+AnimationResource::~AnimationResource() {
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_AnimationResource::PrecacheAllFrames() const {
+bool AnimationResource::PrecacheAllFrames() const {
 	Common::Array<Frame>::const_iterator Iter = m_Frames.begin();
 	for (; Iter != m_Frames.end(); ++Iter) {
 		if (!BS_Kernel::GetInstance()->GetResourceManager()->PrecacheResource((*Iter).FileName)) {
@@ -277,7 +277,7 @@ bool BS_AnimationResource::PrecacheAllFrames() const {
 
 // -----------------------------------------------------------------------------
 
-bool BS_AnimationResource::ComputeFeatures() {
+bool AnimationResource::ComputeFeatures() {
 	BS_ASSERT(m_Frames.size());
 
 	// Alle Features werden als vorhanden angenommen
@@ -288,8 +288,8 @@ bool BS_AnimationResource::ComputeFeatures() {
 	// Alle Frame durchgehen und alle Features deaktivieren, die auch nur von einem Frame nicht unterstützt werden.
 	Common::Array<Frame>::const_iterator Iter = m_Frames.begin();
 	for (; Iter != m_Frames.end(); ++Iter) {
-		BS_BitmapResource *pBitmap;
-		if (!(pBitmap = static_cast<BS_BitmapResource *>(BS_Kernel::GetInstance()->GetResourceManager()->RequestResource((*Iter).FileName)))) {
+		BitmapResource *pBitmap;
+		if (!(pBitmap = static_cast<BitmapResource *>(BS_Kernel::GetInstance()->GetResourceManager()->RequestResource((*Iter).FileName)))) {
 			BS_LOG_ERRORLN("Could not request \"%s\".", (*Iter).FileName.c_str());
 			return false;
 		}

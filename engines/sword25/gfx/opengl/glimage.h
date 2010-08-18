@@ -55,9 +55,9 @@ typedef void *GLS_Sprite;
 // CLASS DEFINITION
 // -----------------------------------------------------------------------------
 
-class BS_GLImage : public BS_Image {
+class GLImage : public Image {
 public:
-	BS_GLImage(const Common::String &Filename, bool &Result);
+	GLImage(const Common::String &Filename, bool &Result);
 
 	/**
 	    @brief Erzeugt ein leeres BS_GLImage
@@ -67,8 +67,8 @@ public:
 	    @param Result gibt dem Aufrufer bekannt, ob der Konstruktor erfolgreich ausgeführt wurde. Wenn es nach dem Aufruf false enthalten sollte,
 	                  dürfen keine Methoden am Objekt aufgerufen werden und das Objekt ist sofort zu zerstören.
 	*/
-	BS_GLImage(unsigned int Width, unsigned int Height, bool &Result);
-	virtual ~BS_GLImage();
+	GLImage(unsigned int Width, unsigned int Height, bool &Result);
+	virtual ~GLImage();
 
 	virtual int GetWidth() const {
 		return m_Width;
@@ -76,12 +76,12 @@ public:
 	virtual int GetHeight() const {
 		return m_Height;
 	}
-	virtual BS_GraphicEngine::COLOR_FORMATS GetColorFormat() const {
-		return BS_GraphicEngine::CF_ARGB32;
+	virtual GraphicEngine::COLOR_FORMATS GetColorFormat() const {
+		return GraphicEngine::CF_ARGB32;
 	}
 
 	virtual bool Blit(int PosX = 0, int PosY = 0,
-	                  int Flipping = BS_Image::FLIP_NONE,
+	                  int Flipping = Image::FLIP_NONE,
 	                  BS_Rect *pPartRect = NULL,
 	                  unsigned int Color = BS_ARGB(255, 255, 255, 255),
 	                  int Width = -1, int Height = -1);

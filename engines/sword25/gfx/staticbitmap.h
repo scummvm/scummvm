@@ -48,18 +48,18 @@ namespace Sword25 {
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-class BS_StaticBitmap : public BS_Bitmap {
-	friend class BS_RenderObject;
+class StaticBitmap : public Bitmap {
+	friend class RenderObject;
 
 private:
 	/**
 	    @remark Filename muss absoluter Pfad sein
 	*/
-	BS_StaticBitmap(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const Common::String &Filename);
-	BS_StaticBitmap(BS_InputPersistenceBlock &Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle);
+	StaticBitmap(RenderObjectPtr<RenderObject> ParentPtr, const Common::String &Filename);
+	StaticBitmap(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
 
 public:
-	virtual ~BS_StaticBitmap();
+	virtual ~StaticBitmap();
 
 	virtual unsigned int GetPixel(int X, int Y) const;
 

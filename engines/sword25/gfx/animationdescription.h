@@ -49,10 +49,10 @@ namespace Sword25 {
 // Klassendefinition
 // -----------------------------------------------------------------------------
 
-class BS_AnimationDescription : public BS_Persistable {
+class AnimationDescription : public BS_Persistable {
 protected:
-	BS_AnimationDescription() :
-		m_AnimationType(BS_Animation::AT_LOOP),
+	AnimationDescription() :
+		m_AnimationType(Animation::AT_LOOP),
 		m_FPS(10),
 		m_MillisPerFrame(0),
 		m_ScalingAllowed(true),
@@ -83,7 +83,7 @@ public:
 	// Getter Methoden
 	// -----------------------------------------------------------------------------
 
-	BS_Animation::ANIMATION_TYPES   GetAnimationType() const {
+	Animation::ANIMATION_TYPES   GetAnimationType() const {
 		return m_AnimationType;
 	}
 	int                             GetFPS() const {
@@ -106,7 +106,7 @@ public:
 	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 protected:
-	BS_Animation::ANIMATION_TYPES   m_AnimationType;
+	Animation::ANIMATION_TYPES   m_AnimationType;
 	int                             m_FPS;
 	int                             m_MillisPerFrame;
 	bool                            m_ScalingAllowed;

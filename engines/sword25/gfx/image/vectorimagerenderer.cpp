@@ -198,9 +198,9 @@ bool BS_VectorImageRenderer::Render(const BS_VectorImage &VectorImage,
 
 #else
 
-BS_VectorImageRenderer::BS_VectorImageRenderer() {}
+VectorImageRenderer::VectorImageRenderer() {}
 
-bool BS_VectorImageRenderer::Render(const BS_VectorImage &VectorImage,
+bool VectorImageRenderer::Render(const VectorImage &VectorImage,
                                     float ScaleFactorX, float ScaleFactorY,
                                     unsigned int &Width, unsigned int &Height,
                                     byte *ImageData,

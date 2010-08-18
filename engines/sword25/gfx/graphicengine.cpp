@@ -60,7 +60,7 @@ using namespace Lua;
 
 static const unsigned int FRAMETIME_SAMPLE_COUNT = 5;       // Anzahl der Framezeiten über die, die Framezeit gemittelt wird
 
-BS_GraphicEngine::BS_GraphicEngine(BS_Kernel *pKernel) :
+GraphicEngine::GraphicEngine(BS_Kernel *pKernel) :
 	m_Width(0),
 	m_Height(0),
 	m_BitDepth(0),
@@ -81,7 +81,7 @@ BS_GraphicEngine::BS_GraphicEngine(BS_Kernel *pKernel) :
 
 // -----------------------------------------------------------------------------
 
-void  BS_GraphicEngine::UpdateLastFrameDuration() {
+void  GraphicEngine::UpdateLastFrameDuration() {
 	// Aktuelle Zeit holen
 	uint64_t CurrentTime = BS_Kernel::GetInstance()->GetMicroTicks();
 
@@ -104,7 +104,7 @@ void  BS_GraphicEngine::UpdateLastFrameDuration() {
 // -----------------------------------------------------------------------------
 
 namespace {
-bool DoSaveScreenshot(BS_GraphicEngine &GraphicEngine, const Common::String &Filename, bool Thumbnail) {
+bool DoSaveScreenshot(GraphicEngine &GraphicEngine, const Common::String &Filename, bool Thumbnail) {
 	unsigned int Width;
 	unsigned int Height;
 	byte *Data;
@@ -114,27 +114,27 @@ bool DoSaveScreenshot(BS_GraphicEngine &GraphicEngine, const Common::String &Fil
 	}
 
 	if (Thumbnail)
-		return BS_Screenshot::SaveThumbnailToFile(Width, Height, Data, Filename);
+		return Screenshot::SaveThumbnailToFile(Width, Height, Data, Filename);
 	else
-		return BS_Screenshot::SaveToFile(Width, Height, Data, Filename);
+		return Screenshot::SaveToFile(Width, Height, Data, Filename);
 }
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_GraphicEngine::SaveScreenshot(const Common::String &Filename) {
+bool GraphicEngine::SaveScreenshot(const Common::String &Filename) {
 	return DoSaveScreenshot(*this, Filename, false);
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_GraphicEngine::SaveThumbnailScreenshot(const Common::String &Filename) {
+bool GraphicEngine::SaveThumbnailScreenshot(const Common::String &Filename) {
 	return DoSaveScreenshot(*this, Filename, true);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_GraphicEngine::ARGBColorToLuaColor(lua_State *L, unsigned int Color) {
+void GraphicEngine::ARGBColorToLuaColor(lua_State *L, unsigned int Color) {
 	lua_Number Components[4] = {
 		(Color >> 16) & 0xff,   // Rot
 		(Color >> 8) & 0xff,    // Grün
@@ -153,7 +153,7 @@ void BS_GraphicEngine::ARGBColorToLuaColor(lua_State *L, unsigned int Color) {
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_GraphicEngine::LuaColorToARGBColor(lua_State *L, int StackIndex) {
+unsigned int GraphicEngine::LuaColorToARGBColor(lua_State *L, int StackIndex) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
@@ -201,14 +201,14 @@ unsigned int BS_GraphicEngine::LuaColorToARGBColor(lua_State *L, int StackIndex)
 
 // -----------------------------------------------------------------------------
 
-bool BS_GraphicEngine::Persist(BS_OutputPersistenceBlock &Writer) {
+bool GraphicEngine::Persist(BS_OutputPersistenceBlock &Writer) {
 	Writer.Write(m_TimerActive);
 	return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_GraphicEngine::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool GraphicEngine::Unpersist(BS_InputPersistenceBlock &Reader) {
 	Reader.Read(m_TimerActive);
 	return Reader.IsGood();
 }

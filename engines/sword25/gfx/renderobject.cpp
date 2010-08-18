@@ -57,7 +57,7 @@ namespace Sword25 {
 
 // Konstruktion / Destruktion
 // --------------------------
-BS_RenderObject::BS_RenderObject(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, TYPES Type, unsigned int Handle) :
+RenderObject::RenderObject(RenderObjectPtr<RenderObject> ParentPtr, TYPES Type, unsigned int Handle) :
 	m_ManagerPtr(0),
 	m_ParentPtr(ParentPtr),
 	m_X(0),
@@ -78,9 +78,9 @@ BS_RenderObject::BS_RenderObject(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, 
 
 	// Renderobject registrieren, abhängig vom Handle-Parameter entweder mit beliebigem oder vorgegebenen Handle.
 	if (Handle == 0)
-		m_Handle = BS_RenderObjectRegistry::GetInstance().RegisterObject(this);
+		m_Handle = RenderObjectRegistry::GetInstance().RegisterObject(this);
 	else
-		m_Handle = BS_RenderObjectRegistry::GetInstance().RegisterObject(this, Handle);
+		m_Handle = RenderObjectRegistry::GetInstance().RegisterObject(this, Handle);
 	if (m_Handle == 0) return;
 
 	UpdateAbsolutePos();
@@ -102,19 +102,19 @@ BS_RenderObject::BS_RenderObject(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, 
 	m_InitSuccess = true;
 }
 
-BS_RenderObject::~BS_RenderObject() {
+RenderObject::~RenderObject() {
 	// Objekt aus dem Elternobjekt entfernen.
 	if (m_ParentPtr.IsValid()) m_ParentPtr->DetatchChildren(this->GetHandle());
 
 	DeleteAllChildren();
 
 	// Objekt deregistrieren.
-	BS_RenderObjectRegistry::GetInstance().DeregisterObject(this);
+	RenderObjectRegistry::GetInstance().DeregisterObject(this);
 }
 
 // Rendern
 // -------
-bool BS_RenderObject::Render() {
+bool RenderObject::Render() {
 	// Objektänderungen validieren
 	ValidateObject();
 
@@ -142,7 +142,7 @@ bool BS_RenderObject::Render() {
 // Objektverwaltung
 // ----------------
 
-void BS_RenderObject::ValidateObject() {
+void RenderObject::ValidateObject() {
 	// Die Veränderungen in den Objektvariablen aufheben
 	m_OldBBox = m_BBox;
 	m_OldVisible = m_Visible;
@@ -152,7 +152,7 @@ void BS_RenderObject::ValidateObject() {
 	m_RefreshForced = false;
 }
 
-bool BS_RenderObject::UpdateObjectState() {
+bool RenderObject::UpdateObjectState() {
 	// Falls sich das Objekt verändert hat, muss der interne Zustand neu berechnet werden und evtl. Update-Regions für den nächsten Frame
 	// registriert werden.
 	if ((CalcBoundingBox() != m_OldBBox) ||
@@ -179,12 +179,12 @@ bool BS_RenderObject::UpdateObjectState() {
 	return true;
 }
 
-void BS_RenderObject::UpdateBoxes() {
+void RenderObject::UpdateBoxes() {
 	// Bounding-Box aktualisieren
 	m_BBox = CalcBoundingBox();
 }
 
-BS_Rect BS_RenderObject::CalcBoundingBox() const {
+BS_Rect RenderObject::CalcBoundingBox() const {
 	// Die Bounding-Box mit der Objektgröße initialisieren.
 	BS_Rect BBox(0, 0, m_Width, m_Height);
 
@@ -197,19 +197,19 @@ BS_Rect BS_RenderObject::CalcBoundingBox() const {
 	return BBox;
 }
 
-void BS_RenderObject::CalcAbsolutePos(int &X, int &Y) const {
+void RenderObject::CalcAbsolutePos(int &X, int &Y) const {
 	X = CalcAbsoluteX();
 	Y = CalcAbsoluteY();
 }
 
-int BS_RenderObject::CalcAbsoluteX() const {
+int RenderObject::CalcAbsoluteX() const {
 	if (m_ParentPtr.IsValid())
 		return m_ParentPtr->GetAbsoluteX() + m_X;
 	else
 		return m_X;
 }
 
-int BS_RenderObject::CalcAbsoluteY() const {
+int RenderObject::CalcAbsoluteY() const {
 	if (m_ParentPtr.IsValid())
 		return m_ParentPtr->GetAbsoluteY() + m_Y;
 	else
@@ -219,16 +219,16 @@ int BS_RenderObject::CalcAbsoluteY() const {
 // Baumverwaltung
 // --------------
 
-void BS_RenderObject::DeleteAllChildren() {
+void RenderObject::DeleteAllChildren() {
 	// Es ist nicht notwendig die Liste zu iterieren, da jedes Kind für sich DetatchChildren an diesem Objekt aufruft und sich somit
 	// selber entfernt. Daher muss immer nur ein beliebiges Element (hier das letzte) gelöscht werden, bis die Liste leer ist.
 	while (!m_Children.empty()) {
-		BS_RenderObjectPtr<BS_RenderObject> CurPtr = m_Children.back();
+		RenderObjectPtr<RenderObject> CurPtr = m_Children.back();
 		CurPtr.Erase();
 	}
 }
 
-bool BS_RenderObject::AddObject(BS_RenderObjectPtr<BS_RenderObject> pObject) {
+bool RenderObject::AddObject(RenderObjectPtr<RenderObject> pObject) {
 	if (!pObject.IsValid()) {
 		BS_LOG_ERRORLN("Tried to add a null object to a renderobject.");
 		return false;
@@ -243,7 +243,7 @@ bool BS_RenderObject::AddObject(BS_RenderObjectPtr<BS_RenderObject> pObject) {
 	return true;
 }
 
-bool BS_RenderObject::DetatchChildren(BS_RenderObjectPtr<BS_RenderObject> pObject) {
+bool RenderObject::DetatchChildren(RenderObjectPtr<RenderObject> pObject) {
 	// Kinderliste durchgehen und Objekt entfernen falls vorhanden
 	RENDEROBJECT_ITER it = m_Children.begin();
 	for (; it != m_Children.end(); ++it)
@@ -256,11 +256,11 @@ bool BS_RenderObject::DetatchChildren(BS_RenderObjectPtr<BS_RenderObject> pObjec
 	return false;
 }
 
-void BS_RenderObject::SortRenderObjects() {
+void RenderObject::SortRenderObjects() {
 	Common::sort(m_Children.begin(), m_Children.end(), Greater);
 }
 
-void BS_RenderObject::UpdateAbsolutePos() {
+void RenderObject::UpdateAbsolutePos() {
 	CalcAbsolutePos(m_AbsoluteX, m_AbsoluteY);
 
 	RENDEROBJECT_ITER it = m_Children.begin();
@@ -271,36 +271,36 @@ void BS_RenderObject::UpdateAbsolutePos() {
 // Get-Methoden
 // ------------
 
-bool BS_RenderObject::GetObjectIntersection(BS_RenderObjectPtr<BS_RenderObject> pObject, BS_Rect &Result) {
+bool RenderObject::GetObjectIntersection(RenderObjectPtr<RenderObject> pObject, BS_Rect &Result) {
 	return m_BBox.Intersect(pObject->GetBBox(), Result);
 }
 
 // Set-Methoden
 // ------------
-void BS_RenderObject::SetPos(int X, int Y) {
+void RenderObject::SetPos(int X, int Y) {
 	m_X = X;
 	m_Y = Y;
 	UpdateAbsolutePos();
 }
 
-void BS_RenderObject::SetX(int X) {
+void RenderObject::SetX(int X) {
 	m_X = X;
 	UpdateAbsolutePos();
 }
 
-void BS_RenderObject::SetY(int Y) {
+void RenderObject::SetY(int Y) {
 	m_Y = Y;
 	UpdateAbsolutePos();
 }
 
-void BS_RenderObject::SetZ(int Z) {
+void RenderObject::SetZ(int Z) {
 	if (Z < 0)
 		BS_LOG_ERRORLN("Tried to set a negative Z value (%d).", Z);
 	else
 		m_Z = Z;
 }
 
-void BS_RenderObject::SetVisible(bool Visible) {
+void RenderObject::SetVisible(bool Visible) {
 	m_Visible = Visible;
 }
 
@@ -308,82 +308,82 @@ void BS_RenderObject::SetVisible(bool Visible) {
 // Objekterzeuger
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const Common::String &Filename) {
-	BS_RenderObjectPtr<BS_Animation> AniPtr((new BS_Animation(this->GetHandle(), Filename))->GetHandle());
+RenderObjectPtr<Animation> RenderObject::AddAnimation(const Common::String &Filename) {
+	RenderObjectPtr<Animation> AniPtr((new Animation(this->GetHandle(), Filename))->GetHandle());
 	if (AniPtr.IsValid() && AniPtr->GetInitSuccess())
 		return AniPtr;
 	else {
 		if (AniPtr.IsValid()) AniPtr.Erase();
-		return BS_RenderObjectPtr<BS_Animation>();
+		return RenderObjectPtr<Animation>();
 	}
 }
 
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const BS_AnimationTemplate &AnimationTemplate) {
-	BS_Animation *AniPtr = new BS_Animation(this->GetHandle(), AnimationTemplate);
+RenderObjectPtr<Animation> RenderObject::AddAnimation(const AnimationTemplate &AnimationTemplate) {
+	Animation *AniPtr = new Animation(this->GetHandle(), AnimationTemplate);
 	if (AniPtr && AniPtr->GetInitSuccess())
 		return AniPtr->GetHandle();
 	else {
 		delete AniPtr;
-		return BS_RenderObjectPtr<BS_Animation>();
+		return RenderObjectPtr<Animation>();
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Bitmap> BS_RenderObject::AddBitmap(const Common::String &Filename) {
-	BS_RenderObjectPtr<BS_Bitmap> BitmapPtr((new BS_StaticBitmap(this->GetHandle(), Filename))->GetHandle());
+RenderObjectPtr<Bitmap> RenderObject::AddBitmap(const Common::String &Filename) {
+	RenderObjectPtr<Bitmap> BitmapPtr((new StaticBitmap(this->GetHandle(), Filename))->GetHandle());
 	if (BitmapPtr.IsValid() && BitmapPtr->GetInitSuccess())
-		return BS_RenderObjectPtr<BS_Bitmap>(BitmapPtr);
+		return RenderObjectPtr<Bitmap>(BitmapPtr);
 	else {
 		if (BitmapPtr.IsValid()) BitmapPtr.Erase();
-		return BS_RenderObjectPtr<BS_Bitmap>();
+		return RenderObjectPtr<Bitmap>();
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Bitmap> BS_RenderObject::AddDynamicBitmap(unsigned int Width, unsigned int Height) {
-	BS_RenderObjectPtr<BS_Bitmap> BitmapPtr((new BS_DynamicBitmap(this->GetHandle(), Width, Height))->GetHandle());
+RenderObjectPtr<Bitmap> RenderObject::AddDynamicBitmap(unsigned int Width, unsigned int Height) {
+	RenderObjectPtr<Bitmap> BitmapPtr((new DynamicBitmap(this->GetHandle(), Width, Height))->GetHandle());
 	if (BitmapPtr.IsValid() && BitmapPtr->GetInitSuccess())
 		return BitmapPtr;
 	else {
 		if (BitmapPtr.IsValid()) BitmapPtr.Erase();
-		return BS_RenderObjectPtr<BS_Bitmap>();
+		return RenderObjectPtr<Bitmap>();
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Panel> BS_RenderObject::AddPanel(int Width, int Height, unsigned int Color) {
-	BS_RenderObjectPtr<BS_Panel> PanelPtr((new BS_Panel(this->GetHandle(), Width, Height, Color))->GetHandle());
+RenderObjectPtr<Panel> RenderObject::AddPanel(int Width, int Height, unsigned int Color) {
+	RenderObjectPtr<Panel> PanelPtr((new Panel(this->GetHandle(), Width, Height, Color))->GetHandle());
 	if (PanelPtr.IsValid() && PanelPtr->GetInitSuccess())
 		return PanelPtr;
 	else {
 		if (PanelPtr.IsValid()) PanelPtr.Erase();
-		return BS_RenderObjectPtr<BS_Panel>();
+		return RenderObjectPtr<Panel>();
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Text> BS_RenderObject::AddText(const Common::String &Font, const Common::String &Text) {
-	BS_RenderObjectPtr<BS_Text> TextPtr((new BS_Text(this->GetHandle()))->GetHandle());
+RenderObjectPtr<Text> RenderObject::AddText(const Common::String &Font, const Common::String &text) {
+	RenderObjectPtr<Text> TextPtr((new Text(this->GetHandle()))->GetHandle());
 	if (TextPtr.IsValid() && TextPtr->GetInitSuccess() && TextPtr->SetFont(Font)) {
-		TextPtr->SetText(Text);
+		TextPtr->SetText(text);
 		return TextPtr;
 	} else {
 		if (TextPtr.IsValid()) TextPtr.Erase();
-		return BS_RenderObjectPtr<BS_Text>();
+		return RenderObjectPtr<Text>();
 	}
 }
 
 // Persistenz-Methoden
 // -------------------
 
-bool BS_RenderObject::Persist(BS_OutputPersistenceBlock &Writer) {
+bool RenderObject::Persist(BS_OutputPersistenceBlock &Writer) {
 	// Typ und Handle werden als erstes gespeichert, damit beim Laden ein Objekt vom richtigen Typ mit dem richtigen Handle erzeugt werden kann.
 	Writer.Write(static_cast<unsigned int>(m_Type));
 	Writer.Write(m_Handle);
@@ -419,7 +419,7 @@ bool BS_RenderObject::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_RenderObject::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool RenderObject::Unpersist(BS_InputPersistenceBlock &Reader) {
 	// Typ und Handle wurden schon von RecreatePersistedRenderObject() ausgelesen. Jetzt werden die restlichen Objekteigenschaften ausgelesen.
 	Reader.Read(m_X);
 	Reader.Read(m_Y);
@@ -445,7 +445,7 @@ bool BS_RenderObject::Unpersist(BS_InputPersistenceBlock &Reader) {
 	Reader.Read(m_OldVisible);
 	unsigned int ParentHandle;
 	Reader.Read(ParentHandle);
-	m_ParentPtr = BS_RenderObjectPtr<BS_RenderObject>(ParentHandle);
+	m_ParentPtr = RenderObjectPtr<RenderObject>(ParentHandle);
 	Reader.Read(m_RefreshForced);
 
 	UpdateAbsolutePos();
@@ -456,7 +456,7 @@ bool BS_RenderObject::Unpersist(BS_InputPersistenceBlock &Reader) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_RenderObject::PersistChildren(BS_OutputPersistenceBlock &Writer) {
+bool RenderObject::PersistChildren(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Kinderanzahl speichern.
@@ -474,7 +474,7 @@ bool BS_RenderObject::PersistChildren(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_RenderObject::UnpersistChildren(BS_InputPersistenceBlock &Reader) {
+bool RenderObject::UnpersistChildren(BS_InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// Kinderanzahl einlesen.
@@ -492,8 +492,8 @@ bool BS_RenderObject::UnpersistChildren(BS_InputPersistenceBlock &Reader) {
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_RenderObject> BS_RenderObject::RecreatePersistedRenderObject(BS_InputPersistenceBlock &Reader) {
-	BS_RenderObjectPtr<BS_RenderObject> Result;
+RenderObjectPtr<RenderObject> RenderObject::RecreatePersistedRenderObject(BS_InputPersistenceBlock &Reader) {
+	RenderObjectPtr<RenderObject> Result;
 
 	// Typ und Handle auslesen.
 	unsigned int Type;
@@ -504,23 +504,23 @@ BS_RenderObjectPtr<BS_RenderObject> BS_RenderObject::RecreatePersistedRenderObje
 
 	switch (Type) {
 	case TYPE_PANEL:
-		Result = (new BS_Panel(Reader, this->GetHandle(), Handle))->GetHandle();
+		Result = (new Panel(Reader, this->GetHandle(), Handle))->GetHandle();
 		break;
 
 	case TYPE_STATICBITMAP:
-		Result = (new BS_StaticBitmap(Reader, this->GetHandle(), Handle))->GetHandle();
+		Result = (new StaticBitmap(Reader, this->GetHandle(), Handle))->GetHandle();
 		break;
 
 	case TYPE_DYNAMICBITMAP:
-		Result = (new BS_DynamicBitmap(Reader, this->GetHandle(), Handle))->GetHandle();
+		Result = (new DynamicBitmap(Reader, this->GetHandle(), Handle))->GetHandle();
 		break;
 
 	case TYPE_TEXT:
-		Result = (new BS_Text(Reader, this->GetHandle(), Handle))->GetHandle();
+		Result = (new Text(Reader, this->GetHandle(), Handle))->GetHandle();
 		break;
 
 	case TYPE_ANIMATION:
-		Result = (new BS_Animation(Reader, this->GetHandle(), Handle))->GetHandle();
+		Result = (new Animation(Reader, this->GetHandle(), Handle))->GetHandle();
 		break;
 
 	default:
@@ -532,7 +532,7 @@ BS_RenderObjectPtr<BS_RenderObject> BS_RenderObject::RecreatePersistedRenderObje
 
 // Hilfs-Methoden
 // --------------
-bool BS_RenderObject::Greater(const BS_RenderObjectPtr<BS_RenderObject> lhs, const BS_RenderObjectPtr<BS_RenderObject> rhs) {
+bool RenderObject::Greater(const RenderObjectPtr<RenderObject> lhs, const RenderObjectPtr<RenderObject> rhs) {
 	// Das Objekt mit dem kleinem Z-Wert müssen zuerst gerendert werden.
 	if (lhs->m_Z != rhs->m_Z)
 		return lhs->m_Z < rhs->m_Z;

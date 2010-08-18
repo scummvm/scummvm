@@ -56,15 +56,15 @@ namespace Sword25 {
 // Konstruktion / Desktruktion
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectManager::BS_RenderObjectManager(int Width, int Height, int FramebufferCount) :
+RenderObjectManager::RenderObjectManager(int Width, int Height, int FramebufferCount) :
 	m_FrameStarted(false) {
 	// Wurzel des BS_RenderObject-Baumes erzeugen.
-	m_RootPtr = (new BS_RootRenderObject(this, Width, Height))->GetHandle();
+	m_RootPtr = (new RootRenderObject(this, Width, Height))->GetHandle();
 }
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectManager::~BS_RenderObjectManager() {
+RenderObjectManager::~RenderObjectManager() {
 	// Die Wurzel des Baumes löschen, damit werden alle BS_RenderObjects mitgelöscht.
 	m_RootPtr.Erase();
 }
@@ -73,7 +73,7 @@ BS_RenderObjectManager::~BS_RenderObjectManager() {
 // Interface
 // -----------------------------------------------------------------------------
 
-void BS_RenderObjectManager::StartFrame() {
+void RenderObjectManager::StartFrame() {
 	m_FrameStarted = true;
 
 	// Verstrichene Zeit bestimmen
@@ -87,7 +87,7 @@ void BS_RenderObjectManager::StartFrame() {
 
 // -----------------------------------------------------------------------------
 
-bool BS_RenderObjectManager::Render() {
+bool RenderObjectManager::Render() {
 	// Den Objekt-Status des Wurzelobjektes aktualisieren. Dadurch werden rekursiv alle Baumelemente aktualisiert.
 	// Beim aktualisieren des Objekt-Status werden auch die Update-Rects gefunden, so dass feststeht, was neu gezeichnet
 	// werden muss.
@@ -101,13 +101,13 @@ bool BS_RenderObjectManager::Render() {
 
 // -----------------------------------------------------------------------------
 
-void BS_RenderObjectManager::AttatchTimedRenderObject(BS_RenderObjectPtr<BS_TimedRenderObject> RenderObjectPtr) {
+void RenderObjectManager::AttatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> RenderObjectPtr) {
 	m_TimedRenderObjects.push_back(RenderObjectPtr);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_RenderObjectManager::DetatchTimedRenderObject(BS_RenderObjectPtr<BS_TimedRenderObject> RenderObjectPtr) {
+void RenderObjectManager::DetatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> RenderObjectPtr) {
 	for (uint i = 0; i < m_TimedRenderObjects.size(); i++)
 		if (m_TimedRenderObjects[i] == RenderObjectPtr) {
 			m_TimedRenderObjects.remove_at(i);
@@ -119,7 +119,7 @@ void BS_RenderObjectManager::DetatchTimedRenderObject(BS_RenderObjectPtr<BS_Time
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool BS_RenderObjectManager::Persist(BS_OutputPersistenceBlock &Writer) {
+bool RenderObjectManager::Persist(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Alle Kinder des Wurzelknotens speichern. Dadurch werden alle BS_RenderObjects gespeichert rekursiv gespeichert.
@@ -136,14 +136,14 @@ bool BS_RenderObjectManager::Persist(BS_OutputPersistenceBlock &Writer) {
 	}
 
 	// Alle BS_AnimationTemplates persistieren.
-	Result &= BS_AnimationTemplateRegistry::GetInstance().Persist(Writer);
+	Result &= AnimationTemplateRegistry::GetInstance().Persist(Writer);
 
 	return Result;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_RenderObjectManager::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool RenderObjectManager::Unpersist(BS_InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// Alle Kinder des Wurzelknotens löschen. Damit werden alle BS_RenderObjects gelöscht.
@@ -167,7 +167,7 @@ bool BS_RenderObjectManager::Unpersist(BS_InputPersistenceBlock &Reader) {
 	}
 
 	// Alle BS_AnimationTemplates wieder herstellen.
-	Result &= BS_AnimationTemplateRegistry::GetInstance().Unpersist(Reader);
+	Result &= AnimationTemplateRegistry::GetInstance().Unpersist(Reader);
 
 	return Result;
 }

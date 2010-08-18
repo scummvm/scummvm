@@ -57,10 +57,10 @@ namespace Sword25 {
     @brief
 */
 
-class BS_TimedRenderObject : public BS_RenderObject {
+class TimedRenderObject : public RenderObject {
 public:
-	BS_TimedRenderObject(BS_RenderObjectPtr<BS_RenderObject> pParent, TYPES Type, unsigned int Handle = 0);
-	~BS_TimedRenderObject();
+	TimedRenderObject(RenderObjectPtr<RenderObject> pParent, TYPES Type, unsigned int Handle = 0);
+	~TimedRenderObject();
 
 	/**
 	    @brief Teilt dem Objekt mit, dass ein neuer Frame begonnen wird.

@@ -52,19 +52,19 @@ namespace Sword25 {
 class BS_Kernel;
 class BS_Service;
 class BS_Resource;
-class BS_Panel;
+class Panel;
 class BS_Image;
-class BS_RenderObjectManager;
+class RenderObjectManager;
 
 
 // -----------------------------------------------------------------------------
 // CLASS DECLARATION
 // -----------------------------------------------------------------------------
 
-class BS_OpenGLGfx : public BS_GraphicEngine {
+class OpenGLGfx : public GraphicEngine {
 public:
-	BS_OpenGLGfx(BS_Kernel *pKernel);
-	virtual ~BS_OpenGLGfx();
+	OpenGLGfx(BS_Kernel *pKernel);
+	virtual ~OpenGLGfx();
 
 	// Interface
 	// ---------
@@ -72,7 +72,7 @@ public:
 	virtual bool        StartFrame(bool UpdateAll);
 	virtual bool        EndFrame();
 
-	virtual BS_RenderObjectPtr<BS_Panel> GetMainPanel();
+	virtual RenderObjectPtr<Panel> GetMainPanel();
 
 	virtual void        SetVsync(bool Vsync);
 	virtual bool        GetVsync() const;
@@ -98,9 +98,9 @@ private:
 	bool                m_GLspritesInitialized;
 	byte *_backBuffer;
 
-	BS_RenderObjectPtr<BS_Panel> m_MainPanelPtr;
+	RenderObjectPtr<Panel> m_MainPanelPtr;
 
-	std::auto_ptr<BS_RenderObjectManager>   m_RenderObjectManagerPtr;
+	std::auto_ptr<RenderObjectManager>   m_RenderObjectManagerPtr;
 
 	struct DebugLine {
 		DebugLine(const BS_Vertex &_Start, const BS_Vertex &_End, unsigned int _Color) :

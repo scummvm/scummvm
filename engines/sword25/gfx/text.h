@@ -54,15 +54,15 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 class BS_Kernel;
-class BS_FontResource;
+class FontResource;
 class BS_ResourceManager;
 
 // -----------------------------------------------------------------------------
 // Klassendefinition
 // -----------------------------------------------------------------------------
 
-class BS_Text : public BS_RenderObject {
-	friend class BS_RenderObject;
+class Text : public RenderObject {
+	friend class RenderObject;
 
 public:
 	/**
@@ -76,7 +76,7 @@ public:
 	    @brief Setzt den darzustellenden Text.
 	    @param Text der darzustellende Text
 	*/
-	void SetText(const Common::String &Text);
+	void SetText(const Common::String &text);
 
 	/**
 	    @brief Setzt den Alphawert des Textes.
@@ -158,8 +158,8 @@ protected:
 	virtual bool DoRender();
 
 private:
-	BS_Text(BS_RenderObjectPtr<BS_RenderObject> ParentPtr);
-	BS_Text(BS_InputPersistenceBlock &Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle);
+	Text(RenderObjectPtr<RenderObject> ParentPtr);
+	Text(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
 
 	unsigned int    m_ModulationColor;
 	Common::String      m_Font;
@@ -175,9 +175,9 @@ private:
 	Common::Array<LINE> m_Lines;
 
 	void UpdateFormat();
-	void UpdateMetrics(BS_FontResource &FontResource);
+	void UpdateMetrics(FontResource &FontResource);
 	BS_ResourceManager *GetResourceManager();
-	BS_FontResource *LockFontResource();
+	FontResource *LockFontResource();
 };
 
 } // End of namespace Sword25

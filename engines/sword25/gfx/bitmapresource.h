@@ -48,7 +48,7 @@ namespace Sword25 {
 
 class BS_Rect;
 
-class BS_BitmapResource : public BS_Resource {
+class BitmapResource : public BS_Resource {
 public:
 	/**
 	    @brief Die möglichen Flippingparameter für die Blit-Methode.
@@ -66,8 +66,8 @@ public:
 		FLIP_VH = FLIP_H | FLIP_V
 	};
 
-	BS_BitmapResource(const Common::String &Filename, BS_Image *pImage);
-	virtual ~BS_BitmapResource();
+	BitmapResource(const Common::String &Filename, Image *pImage);
+	virtual ~BitmapResource();
 
 	/**
 	    @brief Gibt zurück, ob das Objekt einen gültigen Zustand hat.
@@ -210,7 +210,7 @@ public:
 	}
 
 private:
-	BS_Image   *m_pImage;
+	Image   *m_pImage;
 	bool        m_Valid;
 };
 

@@ -48,13 +48,13 @@ namespace Sword25 {
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-class BS_Bitmap : public BS_RenderObject {
+class Bitmap : public RenderObject {
 protected:
-	BS_Bitmap(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, TYPES Type, unsigned int Handle = 0);
+	Bitmap(RenderObjectPtr<RenderObject> ParentPtr, TYPES Type, unsigned int Handle = 0);
 
 public:
 
-	virtual ~BS_Bitmap();
+	virtual ~Bitmap();
 
 	/**
 	    @brief Setzt den Alphawert des Bitmaps.

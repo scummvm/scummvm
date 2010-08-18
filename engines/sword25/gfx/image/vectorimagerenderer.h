@@ -55,18 +55,18 @@
 
 namespace Sword25 {
 
-class BS_VectorImage;
+class VectorImage;
 
 
 /**
     @brief Rendert BS_VectorImage Objekte
 */
 
-class BS_VectorImageRenderer {
+class VectorImageRenderer {
 public:
-	BS_VectorImageRenderer();
+	VectorImageRenderer();
 
-	bool Render(const BS_VectorImage &VectorImage,
+	bool Render(const VectorImage &VectorImage,
 	            float ScaleFactorX, float ScaleFactorY,
 	            unsigned int &Width, unsigned int &Height,
 	            byte *ImageData,

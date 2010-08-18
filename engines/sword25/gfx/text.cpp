@@ -64,8 +64,8 @@ const unsigned int AUTO_WRAP_THRESHOLD_DEFAULT = 300;
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-BS_Text::BS_Text(BS_RenderObjectPtr<BS_RenderObject> ParentPtr) :
-	BS_RenderObject(ParentPtr, BS_RenderObject::TYPE_TEXT),
+Text::Text(RenderObjectPtr<RenderObject> ParentPtr) :
+	RenderObject(ParentPtr, RenderObject::TYPE_TEXT),
 	m_ModulationColor(0xffffffff),
 	m_AutoWrap(false),
 	m_AutoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {
@@ -74,14 +74,14 @@ BS_Text::BS_Text(BS_RenderObjectPtr<BS_RenderObject> ParentPtr) :
 
 // -----------------------------------------------------------------------------
 
-BS_Text::BS_Text(BS_InputPersistenceBlock &Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle) :
-	BS_RenderObject(ParentPtr, TYPE_TEXT, Handle) {
+Text::Text(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle) :
+	RenderObject(ParentPtr, TYPE_TEXT, Handle) {
 	m_InitSuccess = Unpersist(Reader);
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_Text::SetFont(const Common::String &Font) {
+bool Text::SetFont(const Common::String &Font) {
 	// Font precachen.
 	if (GetResourceManager()->PrecacheResource(Font)) {
 		m_Font = Font;
@@ -97,15 +97,15 @@ bool BS_Text::SetFont(const Common::String &Font) {
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::SetText(const Common::String &Text) {
-	m_Text = Text;
+void Text::SetText(const Common::String &text) {
+	m_Text = text;
 	UpdateFormat();
 	ForceRefresh();
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::SetColor(unsigned int ModulationColor) {
+void Text::SetColor(unsigned int ModulationColor) {
 	unsigned int NewModulationColor = (ModulationColor & 0x00ffffff) | (m_ModulationColor & 0xff000000);
 	if (NewModulationColor != m_ModulationColor) {
 		m_ModulationColor = NewModulationColor;
@@ -115,7 +115,7 @@ void BS_Text::SetColor(unsigned int ModulationColor) {
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::SetAlpha(int Alpha) {
+void Text::SetAlpha(int Alpha) {
 	BS_ASSERT(Alpha >= 0 && Alpha < 256);
 	unsigned int NewModulationColor = (m_ModulationColor & 0x00ffffff) | Alpha << 24;
 	if (NewModulationColor != m_ModulationColor) {
@@ -126,7 +126,7 @@ void BS_Text::SetAlpha(int Alpha) {
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::SetAutoWrap(bool AutoWrap) {
+void Text::SetAutoWrap(bool AutoWrap) {
 	if (AutoWrap != m_AutoWrap) {
 		m_AutoWrap = AutoWrap;
 		UpdateFormat();
@@ -136,7 +136,7 @@ void BS_Text::SetAutoWrap(bool AutoWrap) {
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::SetAutoWrapThreshold(unsigned int AutoWrapThreshold) {
+void Text::SetAutoWrapThreshold(unsigned int AutoWrapThreshold) {
 	if (AutoWrapThreshold != m_AutoWrapThreshold) {
 		m_AutoWrapThreshold = AutoWrapThreshold;
 		UpdateFormat();
@@ -146,14 +146,14 @@ void BS_Text::SetAutoWrapThreshold(unsigned int AutoWrapThreshold) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_Text::DoRender() {
+bool Text::DoRender() {
 	// Font-Resource locken.
-	BS_FontResource *FontPtr = LockFontResource();
+	FontResource *FontPtr = LockFontResource();
 	if (!FontPtr) return false;
 
 	// Charactermap-Resource locken.
 	BS_ResourceManager *RMPtr = GetResourceManager();
-	BS_BitmapResource *CharMapPtr;
+	BitmapResource *CharMapPtr;
 	{
 		BS_Resource *pResource = RMPtr->RequestResource(FontPtr->GetCharactermapFileName());
 		if (!pResource) {
@@ -165,11 +165,11 @@ bool BS_Text::DoRender() {
 			return false;
 		}
 
-		CharMapPtr = static_cast<BS_BitmapResource *>(pResource);
+		CharMapPtr = static_cast<BitmapResource *>(pResource);
 	}
 
 	// Framebufferobjekt holen.
-	BS_GraphicEngine *GfxPtr = static_cast<BS_GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx"));
+	GraphicEngine *GfxPtr = static_cast<GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx"));
 	BS_ASSERT(GfxPtr);
 
 	bool Result = true;
@@ -189,7 +189,7 @@ bool BS_Text::DoRender() {
 			int RenderX = CurX + (RenderRect.left - RenderRect.left);
 			int RenderY = CurY + (RenderRect.top - RenderRect.top);
 			RenderRect.Move(CurRect.left - CurX, CurRect.top - CurY);
-			Result = CharMapPtr->Blit(RenderX, RenderY, BS_Image::FLIP_NONE, &RenderRect, m_ModulationColor);
+			Result = CharMapPtr->Blit(RenderX, RenderY, Image::FLIP_NONE, &RenderRect, m_ModulationColor);
 			if (!Result) break;
 
 			CurX += CurRect.GetWidth() + FontPtr->GetGapWidth();
@@ -207,18 +207,18 @@ bool BS_Text::DoRender() {
 
 // -----------------------------------------------------------------------------
 
-BS_ResourceManager *BS_Text::GetResourceManager() {
+BS_ResourceManager *Text::GetResourceManager() {
 	// Pointer auf den Resource-Manager holen.
 	return BS_Kernel::GetInstance()->GetResourceManager();
 }
 
 // -----------------------------------------------------------------------------
 
-BS_FontResource *BS_Text::LockFontResource() {
+FontResource *Text::LockFontResource() {
 	BS_ResourceManager *RMPtr = GetResourceManager();
 
 	// Font-Resource locken.
-	BS_FontResource *FontPtr;
+	FontResource *FontPtr;
 	{
 		BS_Resource *ResourcePtr = RMPtr->RequestResource(m_Font);
 		if (!ResourcePtr) {
@@ -230,7 +230,7 @@ BS_FontResource *BS_Text::LockFontResource() {
 			return NULL;
 		}
 
-		FontPtr = static_cast<BS_FontResource *>(ResourcePtr);
+		FontPtr = static_cast<FontResource *>(ResourcePtr);
 	}
 
 	return FontPtr;
@@ -238,8 +238,8 @@ BS_FontResource *BS_Text::LockFontResource() {
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::UpdateFormat() {
-	BS_FontResource *FontPtr = LockFontResource();
+void Text::UpdateFormat() {
+	FontResource *FontPtr = LockFontResource();
 	BS_ASSERT(FontPtr);
 
 	UpdateMetrics(*FontPtr);
@@ -317,7 +317,7 @@ void BS_Text::UpdateFormat() {
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::UpdateMetrics(BS_FontResource &FontResource) {
+void Text::UpdateMetrics(FontResource &FontResource) {
 	m_Width = 0;
 	m_Height = 0;
 
@@ -333,10 +333,10 @@ void BS_Text::UpdateMetrics(BS_FontResource &FontResource) {
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool BS_Text::Persist(BS_OutputPersistenceBlock &Writer) {
+bool Text::Persist(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
-	Result &= BS_RenderObject::Persist(Writer);
+	Result &= RenderObject::Persist(Writer);
 
 	Writer.Write(m_ModulationColor);
 	Writer.Write(m_Font);
@@ -344,15 +344,15 @@ bool BS_Text::Persist(BS_OutputPersistenceBlock &Writer) {
 	Writer.Write(m_AutoWrap);
 	Writer.Write(m_AutoWrapThreshold);
 
-	Result &= BS_RenderObject::PersistChildren(Writer);
+	Result &= RenderObject::PersistChildren(Writer);
 
 	return Result;
 }
 
-bool BS_Text::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool Text::Unpersist(BS_InputPersistenceBlock &Reader) {
 	bool Result = true;
 
-	Result &= BS_RenderObject::Unpersist(Reader);
+	Result &= RenderObject::Unpersist(Reader);
 
 	// Farbe und Alpha einlesen.
 	Reader.Read(m_ModulationColor);
@@ -364,9 +364,9 @@ bool BS_Text::Unpersist(BS_InputPersistenceBlock &Reader) {
 	Reader.Read(Font);
 	SetFont(Font);
 
-	Common::String Text;
-	Reader.Read(Text);
-	SetText(Text);
+	Common::String text;
+	Reader.Read(text);
+	SetText(text);
 
 	bool AutoWrap;
 	Reader.Read(AutoWrap);
@@ -376,7 +376,7 @@ bool BS_Text::Unpersist(BS_InputPersistenceBlock &Reader) {
 	Reader.Read(AutoWrapThreshold);
 	SetAutoWrapThreshold(AutoWrapThreshold);
 
-	Result &= BS_RenderObject::UnpersistChildren(Reader);
+	Result &= RenderObject::UnpersistChildren(Reader);
 
 	return Reader.IsGood() && Result;
 }

@@ -50,30 +50,30 @@
 namespace Sword25 {
 
 // Klassendefinition
-class BS_PNGLoader : public BS_ImageLoader {
+class PNGLoader : public ImageLoader {
 public:
-	static BS_ImageLoader *CreateInstance() {
+	static ImageLoader *CreateInstance() {
 #include "sword25/kernel/memlog_off.h"
-		return (BS_ImageLoader *) new BS_PNGLoader();
+		return (ImageLoader *) new PNGLoader();
 #include "sword25/kernel/memlog_on.h"
 	}
 
 	// Alle virtuellen Methoden von BS_ImageLoader sind hier als static-Methode implementiert, damit sie von BS_B25SLoader aufgerufen werden können.
 	// Die virtuellen Methoden rufen diese Methoden auf.
 	static bool DoIsCorrectImageFormat(const char *FileDataPtr, unsigned int FileSize);
-	static bool DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,  BS_GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
+	static bool DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
 	                          int &Width, int &Height, int &Pitch);
-	static bool DoImageProperties(const char *FileDataPtr, unsigned int FileSize, BS_GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height);
+	static bool DoImageProperties(const char *FileDataPtr, unsigned int FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height);
 
 protected:
-	BS_PNGLoader();
+	PNGLoader();
 	bool DecodeImage(const char *pFileData, unsigned int FileSize,
-	                 BS_GraphicEngine::COLOR_FORMATS ColorFormat,
+	                 GraphicEngine::COLOR_FORMATS ColorFormat,
 	                 byte *&pUncompressedData,
 	                 int &Width, int &Height,
 	                 int &Pitch);
 	bool IsCorrectImageFormat(const char *FileDataPtr, unsigned int FileSize);
-	bool ImageProperties(const char *FileDatePtr, unsigned int FileSize, BS_GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height);
+	bool ImageProperties(const char *FileDatePtr, unsigned int FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height);
 };
 
 } // End of namespace Sword25

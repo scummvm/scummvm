@@ -408,7 +408,7 @@ static int R_SetY(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static void DrawPolygon(const BS_Polygon &Polygon, unsigned int Color, const BS_Vertex &Offset) {
-	BS_GraphicEngine *pGE = static_cast<BS_GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx"));
+	GraphicEngine *pGE = static_cast<GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx"));
 	BS_ASSERT(pGE);
 
 	for (int i = 0; i < Polygon.VertexCount - 1; i++)
@@ -435,12 +435,12 @@ static int R_Draw(lua_State *L) {
 	case 3: {
 		BS_Vertex Offset;
 		BS_Vertex::LuaVertexToVertex(L, 3, Offset);
-		DrawRegion(*pR, BS_GraphicEngine::LuaColorToARGBColor(L, 2), Offset);
+		DrawRegion(*pR, GraphicEngine::LuaColorToARGBColor(L, 2), Offset);
 	}
 	break;
 
 	case 2:
-		DrawRegion(*pR, BS_GraphicEngine::LuaColorToARGBColor(L, 2), BS_Vertex(0, 0));
+		DrawRegion(*pR, GraphicEngine::LuaColorToARGBColor(L, 2), BS_Vertex(0, 0));
 		break;
 
 	default:

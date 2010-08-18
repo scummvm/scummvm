@@ -50,17 +50,17 @@ namespace Sword25 {
 // Implementation
 // -----------------------------------------------------------------------------
 
-std::auto_ptr<BS_RenderObjectRegistry> BS_RenderObjectRegistry::m_InstancePtr;
+std::auto_ptr<RenderObjectRegistry> RenderObjectRegistry::m_InstancePtr;
 
 // -----------------------------------------------------------------------------
 
-void BS_RenderObjectRegistry::LogErrorLn(const char *Message) const {
+void RenderObjectRegistry::LogErrorLn(const char *Message) const {
 	BS_LOG_ERRORLN(Message);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_RenderObjectRegistry::LogWarningLn(const char *Message) const {
+void RenderObjectRegistry::LogWarningLn(const char *Message) const {
 	BS_LOG_WARNINGLN(Message);
 }
 

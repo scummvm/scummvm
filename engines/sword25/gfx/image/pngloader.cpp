@@ -48,7 +48,7 @@ namespace Sword25 {
 // Konstruktor / Destruktor
 // -----------------------------------------------------------------------------
 
-BS_PNGLoader::BS_PNGLoader() {
+PNGLoader::PNGLoader() {
 }
 
 // -----------------------------------------------------------------------------
@@ -62,7 +62,7 @@ static void png_user_read_data(png_structp png_ptr, png_bytep data, png_size_t l
 
 // -----------------------------------------------------------------------------
 
-bool BS_PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,  BS_GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
+bool PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
                                  int &Width, int &Height, int &Pitch) {
 	png_structp png_ptr = NULL;
 	png_infop   info_ptr = NULL;
@@ -75,12 +75,12 @@ bool BS_PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,
 	int         i;
 
 	// Zielfarbformat überprüfen
-	if (ColorFormat != BS_GraphicEngine::CF_RGB16 &&
-	        ColorFormat != BS_GraphicEngine::CF_RGB15 &&
-	        ColorFormat != BS_GraphicEngine::CF_RGB16_INTERLEAVED &&
-	        ColorFormat != BS_GraphicEngine::CF_RGB15_INTERLEAVED &&
-	        ColorFormat != BS_GraphicEngine::CF_ARGB32 &&
-	        ColorFormat != BS_GraphicEngine::CF_ABGR32) {
+	if (ColorFormat != GraphicEngine::CF_RGB16 &&
+	        ColorFormat != GraphicEngine::CF_RGB15 &&
+	        ColorFormat != GraphicEngine::CF_RGB16_INTERLEAVED &&
+	        ColorFormat != GraphicEngine::CF_RGB15_INTERLEAVED &&
+	        ColorFormat != GraphicEngine::CF_ARGB32 &&
+	        ColorFormat != GraphicEngine::CF_ABGR32) {
 		BS_LOG_ERRORLN("Illegal or unsupported color format.");
 		return false;
 	}
@@ -111,7 +111,7 @@ bool BS_PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,
 	png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&Width, (png_uint_32 *)&Height, &BitDepth, &ColorType, &InterlaceType, NULL, NULL);
 
 	// Pitch des Ausgabebildes berechnen
-	Pitch = BS_GraphicEngine::CalcPitch(ColorFormat, Width);
+	Pitch = GraphicEngine::CalcPitch(ColorFormat, Width);
 
 	// Speicher für die endgültigen Bilddaten reservieren
 	// Dieses geschieht vor dem reservieren von Speicher für temporäre Bilddaten um die Fragmentierung des Speichers gering zu halten
@@ -157,28 +157,28 @@ bool BS_PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,
 
 			// Zeile konvertieren
 			switch (ColorFormat) {
-			case BS_GraphicEngine::CF_RGB16:
+			case GraphicEngine::CF_RGB16:
 				RowARGB32ToRGB16((byte *)RawDataBuffer, (byte *)&UncompressedDataPtr[i * Pitch], Width);
 				break;
 
-			case BS_GraphicEngine::CF_RGB15:
+			case GraphicEngine::CF_RGB15:
 				RowARGB32ToRGB15((byte *)RawDataBuffer, (byte *)&UncompressedDataPtr[i * Pitch], Width);
 				break;
 
-			case BS_GraphicEngine::CF_RGB16_INTERLEAVED:
+			case GraphicEngine::CF_RGB16_INTERLEAVED:
 				RowARGB32ToRGB16_INTERLEAVED((byte *)RawDataBuffer, (byte *)&UncompressedDataPtr[i * Pitch], Width);
 				break;
 
-			case BS_GraphicEngine::CF_RGB15_INTERLEAVED:
+			case GraphicEngine::CF_RGB15_INTERLEAVED:
 				RowARGB32ToRGB15_INTERLEAVED((byte *)RawDataBuffer,
 											 (byte *)&UncompressedDataPtr[i * Pitch], Width);
 				break;
 
-			case BS_GraphicEngine::CF_ARGB32:
+			case GraphicEngine::CF_ARGB32:
 				memcpy(&UncompressedDataPtr[i * Pitch], RawDataBuffer, Pitch);
 				break;
 
-			case BS_GraphicEngine::CF_ABGR32:
+			case GraphicEngine::CF_ABGR32:
 				RowARGB32ToABGR32((byte *)RawDataBuffer, (byte *)&UncompressedDataPtr[i * Pitch], Width);
 				break;
 
@@ -209,31 +209,31 @@ bool BS_PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,
 
 		// Bilddaten zeilenweise in das gewünschte Ausgabeformat konvertieren
 		switch (ColorFormat) {
-		case BS_GraphicEngine::CF_RGB16:
+		case GraphicEngine::CF_RGB16:
 			for (i = 0; i < Height; i++)
 				RowARGB32ToRGB16((byte *)(&RawDataBuffer[i * png_get_rowbytes(png_ptr, info_ptr)]),
 								 (byte *)&UncompressedDataPtr[i * Pitch], Width);
 			break;
 
-		case BS_GraphicEngine::CF_RGB15:
+		case GraphicEngine::CF_RGB15:
 			for (i = 0; i < Height; i++)
 				RowARGB32ToRGB15((byte *)(&RawDataBuffer[i * png_get_rowbytes(png_ptr, info_ptr)]),
 								 (byte *)&UncompressedDataPtr[i * Pitch], Width);
 			break;
 
-		case BS_GraphicEngine::CF_RGB16_INTERLEAVED:
+		case GraphicEngine::CF_RGB16_INTERLEAVED:
 			for (i = 0; i < Height; i++)
 				RowARGB32ToRGB16_INTERLEAVED((byte *)(&RawDataBuffer[i * png_get_rowbytes(png_ptr, info_ptr)]),
 											 (byte *)&UncompressedDataPtr[i * Pitch], Width);
 			break;
 
-		case BS_GraphicEngine::CF_RGB15_INTERLEAVED:
+		case GraphicEngine::CF_RGB15_INTERLEAVED:
 			for (i = 0; i < Height; i++)
 				RowARGB32ToRGB15_INTERLEAVED((byte *)(&RawDataBuffer[i * png_get_rowbytes(png_ptr, info_ptr)]),
 											 (byte *)&UncompressedDataPtr[i * Pitch], Width);
 			break;
 
-		case BS_GraphicEngine::CF_ARGB32:
+		case GraphicEngine::CF_ARGB32:
 			for (i = 0; i < Height; i++)
 				memcpy(&UncompressedDataPtr[i * Pitch], &RawDataBuffer[i * png_get_rowbytes(png_ptr, info_ptr)], Pitch);
 			break;
@@ -259,14 +259,14 @@ bool BS_PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,
 
 // -----------------------------------------------------------------------------
 
-bool BS_PNGLoader::DecodeImage(const char *FileDataPtr, unsigned int FileSize,  BS_GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
+bool PNGLoader::DecodeImage(const char *FileDataPtr, unsigned int FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
                                int &Width, int &Height, int &Pitch) {
 	return DoDecodeImage(FileDataPtr, FileSize, ColorFormat, UncompressedDataPtr, Width, Height, Pitch);
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_PNGLoader::DoImageProperties(const char *FileDataPtr, unsigned int FileSize, BS_GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height) {
+bool PNGLoader::DoImageProperties(const char *FileDataPtr, unsigned int FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height) {
 	// PNG Signatur überprüfen
 	if (!DoIsCorrectImageFormat(FileDataPtr, FileSize)) return false;
 
@@ -297,9 +297,9 @@ bool BS_PNGLoader::DoImageProperties(const char *FileDataPtr, unsigned int FileS
 
 	// PNG-ColorType in BS ColorFormat konvertieren.
 	if (ColorType & PNG_COLOR_MASK_ALPHA || png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
-		ColorFormat = BS_GraphicEngine::CF_ARGB32;
+		ColorFormat = GraphicEngine::CF_ARGB32;
 	else
-		ColorFormat = BS_GraphicEngine::CF_RGB24;
+		ColorFormat = GraphicEngine::CF_RGB24;
 
 	// Die Strukturen freigeben
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
@@ -310,7 +310,7 @@ bool BS_PNGLoader::DoImageProperties(const char *FileDataPtr, unsigned int FileS
 
 // -----------------------------------------------------------------------------
 
-bool BS_PNGLoader::ImageProperties(const char *FileDataPtr, unsigned int FileSize,  BS_GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height) {
+bool PNGLoader::ImageProperties(const char *FileDataPtr, unsigned int FileSize,  GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height) {
 	return DoImageProperties(FileDataPtr, FileSize, ColorFormat, Width, Height);
 }
 
@@ -318,7 +318,7 @@ bool BS_PNGLoader::ImageProperties(const char *FileDataPtr, unsigned int FileSiz
 // Header überprüfen
 // -----------------------------------------------------------------------------
 
-bool BS_PNGLoader::DoIsCorrectImageFormat(const char *FileDataPtr, unsigned int FileSize) {
+bool PNGLoader::DoIsCorrectImageFormat(const char *FileDataPtr, unsigned int FileSize) {
 	if (FileSize > 8)
 		return png_check_sig((byte *)FileDataPtr, 8) ? true : false;
 	else
@@ -327,7 +327,7 @@ bool BS_PNGLoader::DoIsCorrectImageFormat(const char *FileDataPtr, unsigned int 
 
 // -----------------------------------------------------------------------------
 
-bool BS_PNGLoader::IsCorrectImageFormat(const char *FileDataPtr, unsigned int FileSize) {
+bool PNGLoader::IsCorrectImageFormat(const char *FileDataPtr, unsigned int FileSize) {
 	return DoIsCorrectImageFormat(FileDataPtr, FileSize);
 }
 

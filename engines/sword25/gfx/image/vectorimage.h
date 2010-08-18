@@ -50,7 +50,7 @@
 
 namespace Sword25 {
 
-class BS_VectorImage;
+class VectorImage;
 
 /**
     @brief Pfadinformationen zu BS_VectorImageElement Objekten
@@ -59,12 +59,12 @@ class BS_VectorImage;
     gespeichert werden.
 */
 
-class BS_VectorPathInfo {
+class VectorPathInfo {
 public:
-	BS_VectorPathInfo(unsigned int ID, unsigned int LineStyle, unsigned int FillStyle0, unsigned int FillStyle1) :
+	VectorPathInfo(unsigned int ID, unsigned int LineStyle, unsigned int FillStyle0, unsigned int FillStyle1) :
 		m_ID(ID), m_LineStyle(LineStyle), m_FillStyle0(FillStyle0), m_FillStyle1(FillStyle1) {}
 
-	BS_VectorPathInfo() {
+	VectorPathInfo() {
 		m_ID = m_LineStyle = m_FillStyle0 = m_FillStyle1 = 0;
 	}
 
@@ -93,8 +93,8 @@ private:
     @brief Ein Element eines Vektorbild. Ein BS_VectorImage besteht aus diesen Elementen, die jeweils einen Teil der Graphik definieren.
            Werden alle Elemente eines Vektorbildes übereinandergelegt, ergibt sich das komplette Bild.
 */
-class BS_VectorImageElement {
-	friend class BS_VectorImage;
+class VectorImageElement {
+	friend class VectorImage;
 public:
 #if 0 // TODO
 	const agg::path_storage &GetPaths() const {
@@ -105,7 +105,7 @@ public:
 	unsigned int GetPathCount() const {
 		return m_PathInfos.size();
 	}
-	const BS_VectorPathInfo &GetPathInfo(unsigned int PathNr) const {
+	const VectorPathInfo &GetPathInfo(unsigned int PathNr) const {
 		BS_ASSERT(PathNr < GetPathCount());
 		return m_PathInfos[PathNr];
 	}
@@ -148,7 +148,7 @@ private:
 #if 0 // TODO
 	agg::path_storage m_Paths;
 #endif
-	Common::Array<BS_VectorPathInfo> m_PathInfos;
+	Common::Array<VectorPathInfo> m_PathInfos;
 	Common::Array<LineStyleType> m_LineStyles;
 	Common::Array<uint32>  m_FillStyles;
 	BS_Rect m_BoundingBox;
@@ -161,14 +161,14 @@ private:
     Objekte dieser Klasse enthalten die Informationen eines SWF-Shapes.
 */
 
-class BS_VectorImage : public BS_Image {
+class VectorImage : public Image {
 public:
-	BS_VectorImage(const unsigned char *pFileData, unsigned int FileSize, bool &Success);
+	VectorImage(const unsigned char *pFileData, unsigned int FileSize, bool &Success);
 
 	unsigned int GetElementCount() const {
 		return m_Elements.size();
 	}
-	const BS_VectorImageElement &GetElement(unsigned int ElementNr) const {
+	const VectorImageElement &GetElement(unsigned int ElementNr) const {
 		BS_ASSERT(ElementNr < m_Elements.size());
 		return m_Elements[ElementNr];
 	}
@@ -185,8 +185,8 @@ public:
 	virtual int GetHeight() const {
 		return m_BoundingBox.GetHeight();
 	}
-	virtual BS_GraphicEngine::COLOR_FORMATS GetColorFormat() const {
-		return BS_GraphicEngine::CF_ARGB32;
+	virtual GraphicEngine::COLOR_FORMATS GetColorFormat() const {
+		return GraphicEngine::CF_ARGB32;
 	}
 	virtual bool Fill(const BS_Rect *pFillRect = 0, unsigned int Color = BS_RGB(0, 0, 0));
 	virtual unsigned int GetPixel(int X, int Y);
@@ -224,7 +224,7 @@ private:
 	bool ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs);
 	bool ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsigned int &NumFillBits, unsigned int &NumLineBits);
 
-	Common::Array<BS_VectorImageElement>    m_Elements;
+	Common::Array<VectorImageElement>    m_Elements;
 	BS_Rect                             m_BoundingBox;
 };
 

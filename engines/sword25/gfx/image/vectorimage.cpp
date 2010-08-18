@@ -64,7 +64,7 @@ typedef int16_t s32;
 // Diese Klasse ist speziell dafür ausgestattet.
 // -----------------------------------------------------------------------------
 
-class BS_VectorImage::SWFBitStream {
+class VectorImage::SWFBitStream {
 public:
 	SWFBitStream(const unsigned char *pData, unsigned int DataSize) :
 		m_Pos(pData), m_End(pData + DataSize), m_WordMask(0)
@@ -171,7 +171,7 @@ const u32 MAX_ACCEPTED_FLASH_VERSION = 3;   // Die höchste Flash-Dateiversion, d
 // Konvertiert SWF-Rechteckdaten in einem Bitstrom in BS_Rect-Objekte
 // -----------------------------------------------------------------------------
 
-BS_Rect FlashRectToBSRect(BS_VectorImage::SWFBitStream &bs) {
+BS_Rect FlashRectToBSRect(VectorImage::SWFBitStream &bs) {
 	bs.FlushByte();
 
 	// Feststellen mit wie vielen Bits die einzelnen Komponenten kodiert sind
@@ -203,20 +203,20 @@ uint32 FlashColorToAGGRGBA8(unsigned int FlashColor) {
 // -----------------------------------------------------------------------------
 
 struct CBBGetId {
-	CBBGetId(const BS_VectorImageElement &VectorImageElement_) : VectorImageElement(VectorImageElement_) {}
+	CBBGetId(const VectorImageElement &vectorImageElement_) : vectorImageElement(vectorImageElement_) {}
 	unsigned operator [](unsigned i) const {
-		return VectorImageElement.GetPathInfo(i).GetID();
+		return vectorImageElement.GetPathInfo(i).GetID();
 	}
-	const BS_VectorImageElement &VectorImageElement;
+	const VectorImageElement &vectorImageElement;
 };
 
-BS_Rect CalculateBoundingBox(const BS_VectorImageElement &VectorImageElement) {
+BS_Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) {
 #if 0 // TODO
-	agg::path_storage Path = VectorImageElement.GetPaths();
-	CBBGetId IdSource(VectorImageElement);
+	agg::path_storage Path = vectorImageElement.GetPaths();
+	CBBGetId IdSource(vectorImageElement);
 
 	double x1, x2, y1, y2;
-	agg::bounding_rect(Path, IdSource, 0, VectorImageElement.GetPathCount(), &x1, &y1, &x2, &y2);
+	agg::bounding_rect(Path, IdSource, 0, vectorImageElement.GetPathCount(), &x1, &y1, &x2, &y2);
 #else
 	double x1, x2, y1, y2;
 	x1 = x2 = y1 = y2 = 0;
@@ -230,7 +230,7 @@ BS_Rect CalculateBoundingBox(const BS_VectorImageElement &VectorImageElement) {
 // Konstruktion
 // -----------------------------------------------------------------------------
 
-BS_VectorImage::BS_VectorImage(const unsigned char *pFileData, unsigned int FileSize, bool &Success) {
+VectorImage::VectorImage(const unsigned char *pFileData, unsigned int FileSize, bool &Success) {
 	Success = false;
 
 	// Bitstream-Objekt erzeugen
@@ -309,7 +309,7 @@ BS_VectorImage::BS_VectorImage(const unsigned char *pFileData, unsigned int File
 
 // -----------------------------------------------------------------------------
 
-bool BS_VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) {
+bool VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) {
 	/*u32 ShapeID = */bs.GetU16();
 
 	// Bounding Box auslesen
@@ -448,7 +448,7 @@ bool BS_VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) 
 	}
 
 	// Bounding-Boxes der einzelnen Elemente berechnen
-	Common::Array<BS_VectorImageElement>::iterator it = m_Elements.begin();
+	Common::Array<VectorImageElement>::iterator it = m_Elements.begin();
 	for (; it != m_Elements.end(); ++it) it->m_BoundingBox = CalculateBoundingBox(*it);
 
 	return true;
@@ -457,7 +457,7 @@ bool BS_VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) 
 
 // -----------------------------------------------------------------------------
 
-bool BS_VectorImage::ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsigned int &NumFillBits, unsigned int &NumLineBits) {
+bool VectorImage::ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsigned int &NumFillBits, unsigned int &NumLineBits) {
 	bs.FlushByte();
 
 	// Fillstyles parsen
@@ -500,7 +500,7 @@ bool BS_VectorImage::ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsig
 		else
 			Color = bs.GetBits(24) | (0xff << 24);
 
-		m_Elements.back().m_LineStyles.push_back(BS_VectorImageElement::LineStyleType(Width, FlashColorToAGGRGBA8(Color)));
+		m_Elements.back().m_LineStyles.push_back(VectorImageElement::LineStyleType(Width, FlashColorToAGGRGBA8(Color)));
 	}
 
 	// Bitbreite für die folgenden Styleindizes auslesen
@@ -513,7 +513,7 @@ bool BS_VectorImage::ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsig
 
 // -----------------------------------------------------------------------------
 
-bool BS_VectorImage::Fill(const BS_Rect *pFillRect, unsigned int Color) {
+bool VectorImage::Fill(const BS_Rect *pFillRect, unsigned int Color) {
 	BS_LOG_ERRORLN("Fill() is not supported.");
 	return false;
 }
@@ -521,14 +521,14 @@ bool BS_VectorImage::Fill(const BS_Rect *pFillRect, unsigned int Color) {
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_VectorImage::GetPixel(int X, int Y) {
+unsigned int VectorImage::GetPixel(int X, int Y) {
 	BS_LOG_ERRORLN("GetPixel() is not supported. Returning black.");
 	return 0;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_VectorImage::SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) {
+bool VectorImage::SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) {
 	BS_LOG_ERRORLN("SetContent() is not supported.");
 	return 0;
 }

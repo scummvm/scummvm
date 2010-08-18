@@ -48,33 +48,33 @@ namespace Sword25 {
 // Forward Declarations
 // -----------------------------------------------------------------------------
 
-class BS_RenderObject;
+class RenderObject;
 
 // -----------------------------------------------------------------------------
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
 template<class T>
-class BS_RenderObjectPtr {
+class RenderObjectPtr {
 public:
-	BS_RenderObjectPtr() : m_Handle(0) {}
+	RenderObjectPtr() : m_Handle(0) {}
 
-	BS_RenderObjectPtr(unsigned int Handle) : m_Handle(Handle) {}
+	RenderObjectPtr(unsigned int Handle) : m_Handle(Handle) {}
 
 	T *operator->() const {
-		return static_cast<T *>(BS_RenderObjectRegistry::GetInstance().ResolveHandle(m_Handle));
+		return static_cast<T *>(RenderObjectRegistry::GetInstance().ResolveHandle(m_Handle));
 	}
 
-	bool operator==(const BS_RenderObjectPtr<T> & other) {
+	bool operator==(const RenderObjectPtr<T> & other) {
 		return m_Handle == other.m_Handle;
 	}
 
 	bool IsValid() const {
-		return BS_RenderObjectRegistry::GetInstance().ResolveHandle(m_Handle) != 0;
+		return RenderObjectRegistry::GetInstance().ResolveHandle(m_Handle) != 0;
 	}
 
 	void Erase() {
-		delete static_cast<T *>(BS_RenderObjectRegistry::GetInstance().ResolveHandle(m_Handle));
+		delete static_cast<T *>(RenderObjectRegistry::GetInstance().ResolveHandle(m_Handle));
 		m_Handle = 0;
 	}
 

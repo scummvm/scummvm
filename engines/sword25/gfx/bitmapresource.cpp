@@ -47,20 +47,20 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // --------------------------
 
-BS_BitmapResource::BS_BitmapResource(const Common::String &Filename, BS_Image *pImage) :
+BitmapResource::BitmapResource(const Common::String &Filename, Image *pImage) :
 	m_Valid(false),
 	m_pImage(pImage),
 	BS_Resource(Filename, BS_Resource::TYPE_BITMAP) {
 	m_Valid = m_pImage != 0;
 }
 
-BS_BitmapResource::~BS_BitmapResource() {
+BitmapResource::~BitmapResource() {
 	delete m_pImage;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_BitmapResource::GetPixel(int X, int Y) const {
+unsigned int BitmapResource::GetPixel(int X, int Y) const {
 	BS_ASSERT(X >= 0 && X < m_pImage->GetWidth());
 	BS_ASSERT(Y >= 0 && Y < m_pImage->GetHeight());
 

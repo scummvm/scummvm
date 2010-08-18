@@ -53,26 +53,26 @@ namespace Sword25 {
 // Forward declarations
 // -----------------------------------------------------------------------------
 
-class BS_AnimationResource;
+class AnimationResource;
 
 // -----------------------------------------------------------------------------
 // Klassendefinition
 // -----------------------------------------------------------------------------
 
-class BS_AnimationTemplate : public BS_AnimationDescription {
+class AnimationTemplate : public AnimationDescription {
 public:
 	static unsigned int Create(const Common::String &SourceAnimation);
-	static unsigned int Create(const BS_AnimationTemplate &Other);
+	static unsigned int Create(const AnimationTemplate &Other);
 	static unsigned int Create(BS_InputPersistenceBlock &Reader, unsigned int Handle);
-	BS_AnimationTemplate *ResolveHandle(unsigned int Handle) const;
+	AnimationTemplate *ResolveHandle(unsigned int Handle) const;
 
 private:
-	BS_AnimationTemplate(const Common::String &SourceAnimation);
-	BS_AnimationTemplate(const BS_AnimationTemplate &Other);
-	BS_AnimationTemplate(BS_InputPersistenceBlock &Reader, unsigned int Handle);
+	AnimationTemplate(const Common::String &SourceAnimation);
+	AnimationTemplate(const AnimationTemplate &Other);
+	AnimationTemplate(BS_InputPersistenceBlock &Reader, unsigned int Handle);
 
 public:
-	~BS_AnimationTemplate();
+	~AnimationTemplate();
 
 	virtual const Frame    &GetFrame(unsigned int Index) const {
 		BS_ASSERT(Index < m_Frames.size());
@@ -109,7 +109,7 @@ public:
 	    @brief Setzt den Animationstyp.
 	    @param Type der Typ der Animation. Muss aus den enum BS_Animation::ANIMATION_TYPES sein.
 	*/
-	void SetAnimationType(BS_Animation::ANIMATION_TYPES Type) {
+	void SetAnimationType(Animation::ANIMATION_TYPES Type) {
 		m_AnimationType = Type;
 	}
 
@@ -124,10 +124,10 @@ public:
 
 private:
 	Common::Array<Frame>  m_Frames;
-	BS_AnimationResource       *m_SourceAnimationPtr;
+	AnimationResource       *m_SourceAnimationPtr;
 	bool                        m_Valid;
 
-	BS_AnimationResource *RequestSourceAnimation(const Common::String &SourceAnimation) const;
+	AnimationResource *RequestSourceAnimation(const Common::String &SourceAnimation) const;
 	bool ValidateSourceIndex(unsigned int Index) const;
 	bool ValidateDestIndex(unsigned int Index) const;
 };

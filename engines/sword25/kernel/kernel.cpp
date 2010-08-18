@@ -396,8 +396,8 @@ size_t BS_Kernel::GetUsedMemory() {
 /**
  * Returns a pointer to the active Gfx Service, or NULL if no Gfx service is active
  */
-BS_GraphicEngine *BS_Kernel::GetGfx() {
-	return static_cast<BS_GraphicEngine *>(GetService("gfx"));
+GraphicEngine *BS_Kernel::GetGfx() {
+	return static_cast<GraphicEngine *>(GetService("gfx"));
 }
 
 // -----------------------------------------------------------------------------
@@ -441,8 +441,8 @@ BS_ScriptEngine *BS_Kernel::GetScript() {
 /**
  * Returns a pointer to the movie player, or NULL if it is not active
  */
-BS_MoviePlayer *BS_Kernel::GetFMV() {
-	return static_cast<BS_MoviePlayer *>(GetService("fmv"));
+MoviePlayer *BS_Kernel::GetFMV() {
+	return static_cast<MoviePlayer *>(GetService("fmv"));
 }
 
 // -----------------------------------------------------------------------------

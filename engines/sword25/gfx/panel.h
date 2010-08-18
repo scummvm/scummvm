@@ -48,15 +48,15 @@ namespace Sword25 {
 // Class Definition
 // -----------------------------------------------------------------------------
 
-class BS_Panel : public BS_RenderObject {
-	friend class BS_RenderObject;
+class Panel : public RenderObject {
+	friend class RenderObject;
 
 private:
-	BS_Panel(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, int Width, int Height, unsigned int Color);
-	BS_Panel(BS_InputPersistenceBlock &Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle);
+	Panel(RenderObjectPtr<RenderObject> ParentPtr, int Width, int Height, unsigned int Color);
+	Panel(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
 
 public:
-	virtual ~BS_Panel();
+	virtual ~Panel();
 
 	unsigned int    GetColor() const {
 		return m_Color;

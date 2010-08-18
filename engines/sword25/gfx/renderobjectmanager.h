@@ -59,8 +59,8 @@ namespace Sword25 {
 // Klassendefinition
 class BS_Kernel;
 class BS_Rect;
-class BS_RenderObject;
-class BS_TimedRenderObject;
+class RenderObject;
+class TimedRenderObject;
 
 /**
     @brief Diese Klasse ist für die Verwaltung von BS_RenderObjects zuständig.
@@ -68,7 +68,7 @@ class BS_TimedRenderObject;
     Sie sorgt dafür, dass die BS_RenderObjects in der richtigen Reihenfolge gerendert werden und ermöglicht den Zugriff auf die
     BS_RenderObjects über einen String.
 */
-class BS_RenderObjectManager : public BS_Persistable {
+class RenderObjectManager : public BS_Persistable {
 public:
 	/**
 	    @brief Erzeugt ein neues BS_RenderObjectManager-Objekt.
@@ -76,8 +76,8 @@ public:
 	    @param Height die vertikale Bildschirmauflösung in Pixeln
 	    @param Die Anzahl an Framebuffern, die eingesetzt wird (Backbuffer + Primary).
 	*/
-	BS_RenderObjectManager(int Width, int Height, int FramebufferCount);
-	virtual ~BS_RenderObjectManager();
+	RenderObjectManager(int Width, int Height, int FramebufferCount);
+	virtual ~RenderObjectManager();
 
 	// Interface
 	// ---------
@@ -98,7 +98,7 @@ public:
 	/**
 	    @brief Gibt einen Pointer auf die Wurzel des Objektbaumes zurück.
 	 */
-	BS_RenderObjectPtr<BS_RenderObject> GetTreeRoot() {
+	RenderObjectPtr<RenderObject> GetTreeRoot() {
 		return m_RootPtr;
 	}
 	/**
@@ -109,25 +109,25 @@ public:
 
 	    @param RenderObject das einzufügende BS_TimedRenderObject
 	*/
-	void AttatchTimedRenderObject(BS_RenderObjectPtr<BS_TimedRenderObject> pRenderObject);
+	void AttatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> pRenderObject);
 	/**
 	    @brief Entfernt ein BS_TimedRenderObject aus der Liste für zeitabhängige Render-Objekte.
 	*/
-	void DetatchTimedRenderObject(BS_RenderObjectPtr<BS_TimedRenderObject> pRenderObject);
+	void DetatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> pRenderObject);
 
 	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
 	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 private:
 	bool m_FrameStarted;
-	typedef Common::Array<BS_RenderObjectPtr<BS_TimedRenderObject> > RenderObjectList;
+	typedef Common::Array<RenderObjectPtr<TimedRenderObject> > RenderObjectList;
 	RenderObjectList m_TimedRenderObjects;
 
 	// RenderObject-Tree Variablen
 	// ---------------------------
 	// Der Baum legt die hierachische Ordnung der BS_RenderObjects fest.
 	// Zu weiteren Informationen siehe: "renderobject.h"
-	BS_RenderObjectPtr<BS_RenderObject>     m_RootPtr;      // Die Wurzel der Baumes
+	RenderObjectPtr<RenderObject>     m_RootPtr;      // Die Wurzel der Baumes
 };
 
 } // End of namespace Sword25

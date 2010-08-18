@@ -51,7 +51,7 @@ namespace Sword25 {
 // Class declaration
 // -----------------------------------------------------------------------------
 
-class BS_Screenshot {
+class Screenshot {
 public:
 	static bool SaveToFile(unsigned int Width, unsigned int Height, const byte *Data, const Common::String &Filename);
 	static bool SaveThumbnailToFile(unsigned int Width, unsigned int Height, const byte *Data, const Common::String &Filename);

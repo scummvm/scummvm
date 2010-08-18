@@ -59,7 +59,7 @@ struct RGB_PIXEL {
 	unsigned char Blue;
 };
 
-bool BS_Screenshot::SaveToFile(unsigned int Width, unsigned int Height, const byte *Data, const Common::String &Filename) {
+bool Screenshot::SaveToFile(unsigned int Width, unsigned int Height, const byte *Data, const Common::String &Filename) {
 #if 0
 	BS_ASSERT(Data.size() == Width * Height);
 
@@ -156,7 +156,7 @@ bool BS_Screenshot::SaveToFile(unsigned int Width, unsigned int Height, const by
 
 // -----------------------------------------------------------------------------
 
-bool BS_Screenshot::SaveThumbnailToFile(unsigned int Width, unsigned int Height, const byte *Data, const Common::String &Filename) {
+bool Screenshot::SaveThumbnailToFile(unsigned int Width, unsigned int Height, const byte *Data, const Common::String &Filename) {
 #if 0
 	//
 	// Diese Methode nimmt ein Screenshot mit den Maﬂen von 800x600 und erzeugt einen Screenshot mit den Maﬂen von 200x125.

@@ -46,7 +46,7 @@
 namespace Sword25 {
 
 int LoadMovie(lua_State *L) {
-	BS_MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
+	MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->LoadMovie(luaL_checkstring(L, 1), lua_gettop(L) == 2 ? static_cast<unsigned int>(luaL_checknumber(L, 2)) : 10));
@@ -57,7 +57,7 @@ int LoadMovie(lua_State *L) {
 // -------------------------------------------------------------------------
 
 int UnloadMovie(lua_State *L) {
-	BS_MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
+	MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->UnloadMovie());
@@ -68,7 +68,7 @@ int UnloadMovie(lua_State *L) {
 // -------------------------------------------------------------------------
 
 int Play(lua_State *L) {
-	BS_MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
+	MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->Play());
@@ -79,7 +79,7 @@ int Play(lua_State *L) {
 // -------------------------------------------------------------------------
 
 int Pause(lua_State *L) {
-	BS_MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
+	MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->Pause());
@@ -90,7 +90,7 @@ int Pause(lua_State *L) {
 // -------------------------------------------------------------------------
 
 int Update(lua_State *L) {
-	BS_MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
+	MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	FMVPtr->Update();
@@ -101,7 +101,7 @@ int Update(lua_State *L) {
 // -------------------------------------------------------------------------
 
 int IsMovieLoaded(lua_State *L) {
-	BS_MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
+	MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->IsMovieLoaded());
@@ -112,7 +112,7 @@ int IsMovieLoaded(lua_State *L) {
 // -------------------------------------------------------------------------
 
 int IsPaused(lua_State *L) {
-	BS_MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
+	MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->IsPaused());
@@ -123,7 +123,7 @@ int IsPaused(lua_State *L) {
 // -------------------------------------------------------------------------
 
 int GetScaleFactor(lua_State *L) {
-	BS_MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
+	MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushnumber(L, FMVPtr->GetScaleFactor());
@@ -134,7 +134,7 @@ int GetScaleFactor(lua_State *L) {
 // -------------------------------------------------------------------------
 
 int SetScaleFactor(lua_State *L) {
-	BS_MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
+	MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	FMVPtr->SetScaleFactor(static_cast<float>(luaL_checknumber(L, 1)));
@@ -145,7 +145,7 @@ int SetScaleFactor(lua_State *L) {
 // -------------------------------------------------------------------------
 
 int GetTime(lua_State *L) {
-	BS_MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
+	MoviePlayer *FMVPtr = BS_Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushnumber(L, FMVPtr->GetTime());
@@ -171,7 +171,7 @@ const luaL_reg LIBRARY_FUNCTIONS[] = {
 	{ 0, 0 }
 };
 
-bool BS_MoviePlayer::_RegisterScriptBindings() {
+bool MoviePlayer::_RegisterScriptBindings() {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 	BS_ScriptEngine *pScript = static_cast<BS_ScriptEngine *>(pKernel->GetService("script"));

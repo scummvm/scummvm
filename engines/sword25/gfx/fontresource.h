@@ -58,7 +58,7 @@ class BS_Kernel;
 // Klassendefinition
 // -----------------------------------------------------------------------------
 
-class BS_FontResource : public BS_Resource {
+class FontResource : public BS_Resource {
 public:
 	/**
 	    @brief Erzeugt eine neues Exemplar von BS_FontResource
@@ -66,7 +66,7 @@ public:
 	    @param FileName der Dateiname der zu ladenen Resource
 	    @remark Wenn der Konstruktor erfolgreich ausgeführt werden konnte gibt die Methode IsValid true zurück.
 	*/
-	BS_FontResource(BS_Kernel *pKernel, const Common::String &FileName);
+	FontResource(BS_Kernel *pKernel, const Common::String &FileName);
 
 	/**
 	    @brief Gibt true zurück, wenn das Objekt korrekt initialisiert wurde.

@@ -60,7 +60,7 @@ static const unsigned int DEFAULT_GAPWIDTH = 1;
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-BS_FontResource::BS_FontResource(BS_Kernel *pKernel, const Common::String &FileName) :
+FontResource::FontResource(BS_Kernel *pKernel, const Common::String &FileName) :
 	_pKernel(pKernel),
 	_Valid(false),
 	BS_Resource(FileName, BS_Resource::TYPE_FONT) {
@@ -139,7 +139,7 @@ BS_FontResource::BS_FontResource(BS_Kernel *pKernel, const Common::String &FileN
 
 // -----------------------------------------------------------------------------
 
-bool BS_FontResource::_ParseXMLDocument(const Common::String &FileName, TiXmlDocument &Doc) const {
+bool FontResource::_ParseXMLDocument(const Common::String &FileName, TiXmlDocument &Doc) const {
 	// Pointer auf den Package-Manager bekommen
 	BS_ASSERT(_pKernel);
 	BS_PackageManager *pPackage = static_cast<BS_PackageManager *>(_pKernel->GetService("package"));
@@ -171,7 +171,7 @@ bool BS_FontResource::_ParseXMLDocument(const Common::String &FileName, TiXmlDoc
 
 // -----------------------------------------------------------------------------
 
-bool BS_FontResource::_ParseFontTag(TiXmlElement &Tag, Common::String &BitmapFileName, int &Lineheight, int &GapWidth) const {
+bool FontResource::_ParseFontTag(TiXmlElement &Tag, Common::String &BitmapFileName, int &Lineheight, int &GapWidth) const {
 	// Bitmap Attribut auslesen
 	const char *BitmapString = Tag.Attribute("bitmap");
 	if (!BitmapString) {
@@ -202,7 +202,7 @@ bool BS_FontResource::_ParseFontTag(TiXmlElement &Tag, Common::String &BitmapFil
 
 // -----------------------------------------------------------------------------
 
-bool BS_FontResource::_ParseCharacterTag(TiXmlElement &Tag, int &Code, BS_Rect &Rect) const {
+bool FontResource::_ParseCharacterTag(TiXmlElement &Tag, int &Code, BS_Rect &Rect) const {
 	// Code Attribut auslesen
 	const char *CodeString = Tag.Attribute("code");
 	if (!CodeString || !BS_String::ToInt(Common::String(CodeString), Code) || Code < 0 || Code >= 256) {

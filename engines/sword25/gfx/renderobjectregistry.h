@@ -52,26 +52,26 @@ namespace Sword25 {
 // Forward Deklarationen
 // -----------------------------------------------------------------------------
 
-class BS_RenderObject;
+class RenderObject;
 
 // -----------------------------------------------------------------------------
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-class BS_RenderObjectRegistry : public BS_ObjectRegistry<BS_RenderObject> {
+class RenderObjectRegistry : public BS_ObjectRegistry<RenderObject> {
 public:
-	static BS_RenderObjectRegistry &GetInstance() {
-		if (!m_InstancePtr.get()) m_InstancePtr.reset(new BS_RenderObjectRegistry);
+	static RenderObjectRegistry &GetInstance() {
+		if (!m_InstancePtr.get()) m_InstancePtr.reset(new RenderObjectRegistry);
 		return *m_InstancePtr.get();
 	}
 
-	virtual ~BS_RenderObjectRegistry() {}
+	virtual ~RenderObjectRegistry() {}
 
 private:
 	virtual void LogErrorLn(const char *Message) const;
 	virtual void LogWarningLn(const char *Message) const;
 
-	static std::auto_ptr<BS_RenderObjectRegistry> m_InstancePtr;
+	static std::auto_ptr<RenderObjectRegistry> m_InstancePtr;
 };
 
 } // End of namespace Sword25

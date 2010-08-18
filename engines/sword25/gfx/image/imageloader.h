@@ -74,7 +74,7 @@ namespace Sword25 {
     - Zum Konvertieren der Bilddaten können die Hilfsmethoden dieser Klasse benutzt werden, die ARGB Bilddaten in alle benötigten
       Farbformate konvertieren.
 */
-class BS_ImageLoader {
+class ImageLoader {
 public:
 
 	//@{
@@ -105,7 +105,7 @@ public:
 	    @remark Es darf nicht vergessen werden, die Ausgabedaten nach erfolgter Benutzung mit delete freizugeben.
 	*/
 	static bool LoadImage(const char *pFileData, unsigned int FileSize,
-	                      BS_GraphicEngine::COLOR_FORMATS ColorFormat,
+	                      GraphicEngine::COLOR_FORMATS ColorFormat,
 	                      byte *&pUncompressedData,
 	                      int &Width, int &Height,
 	                      int &Pitch);
@@ -122,7 +122,7 @@ public:
 	    @remark Es darf nicht vergessen werden, die Ausgabedaten nach erfolgter Benutzung mit delete freizugeben.
 	*/
 	static bool ExtractImageProperties(const char *pFileData, unsigned int FileSize,
-	                                   BS_GraphicEngine::COLOR_FORMATS &ColorFormat,
+	                                   GraphicEngine::COLOR_FORMATS &ColorFormat,
 	                                   int &Width, int &Height);
 	//@}
 
@@ -136,12 +136,12 @@ protected:
 	    Diese Liste enthält jeweils eine Instanz jedes #BS_ImageLoader und wird benutzt um beliebige Bilddateien einem Loader zuzuordnen.
 	    @remark Dieser Konstruktor ist protected damit nur #BS_ImageLoader-Objekte diese Klasse instanziieren können.
 	*/
-	BS_ImageLoader() {
+	ImageLoader() {
 		// Klasse registrieren
 		_ImageLoaderList.push_front(this);
 	}
 
-	virtual ~BS_ImageLoader() {}
+	virtual ~ImageLoader() {}
 
 	//@{
 	/** @name Abstrakte Methoden */
@@ -176,7 +176,7 @@ protected:
 	    @remark Diese Methode muss von allen BS_ImageLoader Klassen implementiert werden.
 	*/
 	virtual bool DecodeImage(const char *pFileData, unsigned int FileSize,
-	                         BS_GraphicEngine::COLOR_FORMATS ColorFormat,
+	                         GraphicEngine::COLOR_FORMATS ColorFormat,
 	                         byte *&pUncompressedData,
 	                         int &Width, int &Height,
 	                         int &Pitch) = 0;
@@ -193,7 +193,7 @@ protected:
 	    @remark Diese Methode muss von allen BS_ImageLoader Klassen implementiert werden.
 	*/
 	virtual bool ImageProperties(const char *pFileData, unsigned int FileSize,
-	                             BS_GraphicEngine::COLOR_FORMATS &ColorFormat,
+	                             GraphicEngine::COLOR_FORMATS &ColorFormat,
 	                             int &Width, int &Height) = 0;
 
 	//@}
@@ -354,9 +354,9 @@ private:
 	    @brief Sucht zu Bilddaten ein BS_ImageLoader Objekt, dass die Bilddaten dekodieren kann.
 	    @return Gibt einen Pointer auf ein passendes BS_ImageLoader Objekt zurück, oder NULL, wenn kein passendes Objekt gefunden wurde.
 	*/
-	static BS_ImageLoader *_FindSuitableImageLoader(const char *pFileData, unsigned int FileSize);
+	static ImageLoader *_FindSuitableImageLoader(const char *pFileData, unsigned int FileSize);
 
-	static std::list<BS_ImageLoader *>   _ImageLoaderList;              // Die Liste aller BS_ImageLoader-Objekte
+	static std::list<ImageLoader *>   _ImageLoaderList;              // Die Liste aller BS_ImageLoader-Objekte
 	static bool                         _ImageLoaderListInitialized;    // Gibt an, ob die Liste schon intialisiert wurde
 };
 

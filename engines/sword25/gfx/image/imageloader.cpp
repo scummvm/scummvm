@@ -40,14 +40,14 @@ namespace Sword25 {
 #define BS_LOG_PREFIX "IMAGELOADER"
 
 // Statische Elemente der Klasse BS_ImageLoader intialisieren.
-std::list<BS_ImageLoader *> BS_ImageLoader::_ImageLoaderList;
-bool BS_ImageLoader::_ImageLoaderListInitialized = false;
+std::list<ImageLoader *> ImageLoader::_ImageLoaderList;
+bool ImageLoader::_ImageLoaderListInitialized = false;
 
 // Lade Methode
 // ------------
 
-bool BS_ImageLoader::LoadImage(const char *pFileData, unsigned int FileSize,
-                               BS_GraphicEngine::COLOR_FORMATS ColorFormat,
+bool ImageLoader::LoadImage(const char *pFileData, unsigned int FileSize,
+                               GraphicEngine::COLOR_FORMATS ColorFormat,
                                byte *&pUncompressedData,
                                int &Width, int &Height,
                                int &Pitch) {
@@ -56,7 +56,7 @@ bool BS_ImageLoader::LoadImage(const char *pFileData, unsigned int FileSize,
 		_InitializeLoaderList();
 
 	// Passenden BS_ImageLoader finden und Bild dekodieren
-	BS_ImageLoader *pLoader = _FindSuitableImageLoader(pFileData, FileSize);
+	ImageLoader *pLoader = _FindSuitableImageLoader(pFileData, FileSize);
 	if (pLoader) {
 		return pLoader->DecodeImage(pFileData, FileSize,
 		                            ColorFormat,
@@ -71,15 +71,15 @@ bool BS_ImageLoader::LoadImage(const char *pFileData, unsigned int FileSize,
 // Info Methode
 // ------------
 
-bool BS_ImageLoader::ExtractImageProperties(const char *pFileData, unsigned int FileSize,
-        BS_GraphicEngine::COLOR_FORMATS &ColorFormat,
+bool ImageLoader::ExtractImageProperties(const char *pFileData, unsigned int FileSize,
+        GraphicEngine::COLOR_FORMATS &ColorFormat,
         int &Width, int &Height) {
 	// Falls die Liste der BS_ImageLoader noch nicht initialisiert wurde, wird dies getan.
 	if (!_ImageLoaderListInitialized)
 		_InitializeLoaderList();
 
 	// Passenden BS_ImageLoader finden und Bildeigenschaften auslesen.
-	BS_ImageLoader *pLoader = _FindSuitableImageLoader(pFileData, FileSize);
+	ImageLoader *pLoader = _FindSuitableImageLoader(pFileData, FileSize);
 	if (pLoader) {
 		return pLoader->ImageProperties(pFileData, FileSize,
 		                                ColorFormat,
@@ -92,7 +92,7 @@ bool BS_ImageLoader::ExtractImageProperties(const char *pFileData, unsigned int 
 // Verwaltungs Methoden
 // --------------------
 
-void BS_ImageLoader::_InitializeLoaderList() {
+void ImageLoader::_InitializeLoaderList() {
 	// Von jedem BS_ImageLoader wird eine Instanz erzeugt, diese fügen sich selbständig in die BS_ImageLoader-Liste ein.
 	for (int i = 0; i < BS_IMAGELOADER_COUNT; i++)
 		BS_IMAGELOADER_IDS[i]();
@@ -101,19 +101,19 @@ void BS_ImageLoader::_InitializeLoaderList() {
 	_ImageLoaderListInitialized = true;
 
 	// Sicherstellen, dass beim Beenden alle BS_ImageLoader Instanzen zerstört werden.
-	atexit(BS_ImageLoader::_DeinitializeLoaderList);
+	atexit(ImageLoader::_DeinitializeLoaderList);
 }
 
-void BS_ImageLoader::_DeinitializeLoaderList() {
+void ImageLoader::_DeinitializeLoaderList() {
 	while (!_ImageLoaderList.empty()) {
 		delete _ImageLoaderList.back();
 		_ImageLoaderList.pop_back();
 	}
 }
 
-BS_ImageLoader *BS_ImageLoader::_FindSuitableImageLoader(const char *pFileData, unsigned int FileSize) {
+ImageLoader *ImageLoader::_FindSuitableImageLoader(const char *pFileData, unsigned int FileSize) {
 	// Alle BS_ImageLoader-Objekte durchgehen, bis eins gefunden wurde, dass das Bild laden kann
-	std::list<BS_ImageLoader *>::iterator Iter = _ImageLoaderList.begin();
+	std::list<ImageLoader *>::iterator Iter = _ImageLoaderList.begin();
 	for (; Iter != _ImageLoaderList.end(); ++Iter) {
 		// Falls ein geeigneter BS-ImageLoader gefunden wurde, wird er zurückgegeben.
 		if ((*Iter)->IsCorrectImageFormat(pFileData, FileSize)) {

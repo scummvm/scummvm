@@ -53,16 +53,16 @@ namespace Sword25 {
 // Forward Deklarationen
 // -----------------------------------------------------------------------------
 
-class BS_AnimationTemplate;
+class AnimationTemplate;
 
 // -----------------------------------------------------------------------------
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-class BS_AnimationTemplateRegistry : public BS_ObjectRegistry<BS_AnimationTemplate>, public BS_Persistable {
+class AnimationTemplateRegistry : public BS_ObjectRegistry<AnimationTemplate>, public BS_Persistable {
 public:
-	static BS_AnimationTemplateRegistry &GetInstance() {
-		if (!m_InstancePtr.get()) m_InstancePtr.reset(new BS_AnimationTemplateRegistry);
+	static AnimationTemplateRegistry &GetInstance() {
+		if (!m_InstancePtr.get()) m_InstancePtr.reset(new AnimationTemplateRegistry);
 		return *m_InstancePtr.get();
 	}
 
@@ -73,7 +73,7 @@ private:
 	virtual void LogErrorLn(const char *Message) const;
 	virtual void LogWarningLn(const char *Message) const;
 
-	static std::auto_ptr<BS_AnimationTemplateRegistry> m_InstancePtr;
+	static std::auto_ptr<AnimationTemplateRegistry> m_InstancePtr;
 };
 
 } // End of namespace Sword25

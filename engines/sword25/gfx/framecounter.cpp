@@ -37,14 +37,14 @@
 
 namespace Sword25 {
 
-BS_Framecounter::BS_Framecounter(int UpdateFrequency) :
+Framecounter::Framecounter(int UpdateFrequency) :
 	m_FPS(0),
 	m_FPSCount(0),
 	m_LastUpdateTime(-1) {
 	SetUpdateFrequency(UpdateFrequency);
 }
 
-void BS_Framecounter::Update() {
+void Framecounter::Update() {
 	// Aktuellen Systemtimerstand auslesen
 	uint64_t Timer = g_system->getMillis() * 1000;
 

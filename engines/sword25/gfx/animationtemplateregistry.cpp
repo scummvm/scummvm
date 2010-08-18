@@ -53,23 +53,23 @@ namespace Sword25 {
 // Implementation
 // -----------------------------------------------------------------------------
 
-std::auto_ptr<BS_AnimationTemplateRegistry> BS_AnimationTemplateRegistry::m_InstancePtr;
+std::auto_ptr<AnimationTemplateRegistry> AnimationTemplateRegistry::m_InstancePtr;
 
 // -----------------------------------------------------------------------------
 
-void BS_AnimationTemplateRegistry::LogErrorLn(const char *Message) const {
+void AnimationTemplateRegistry::LogErrorLn(const char *Message) const {
 	BS_LOG_ERRORLN(Message);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_AnimationTemplateRegistry::LogWarningLn(const char *Message) const {
+void AnimationTemplateRegistry::LogWarningLn(const char *Message) const {
 	BS_LOG_WARNINGLN(Message);
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_AnimationTemplateRegistry::Persist(BS_OutputPersistenceBlock &Writer) {
+bool AnimationTemplateRegistry::Persist(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Das nächste zu vergebene Handle schreiben.
@@ -95,7 +95,7 @@ bool BS_AnimationTemplateRegistry::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_AnimationTemplateRegistry::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool AnimationTemplateRegistry::Unpersist(BS_InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// Das nächste zu vergebene Handle wieder herstellen.
@@ -116,7 +116,7 @@ bool BS_AnimationTemplateRegistry::Unpersist(BS_InputPersistenceBlock &Reader) {
 		Reader.Read(Handle);
 
 		// BS_AnimationTemplate wieder herstellen.
-		Result &= (BS_AnimationTemplate::Create(Reader, Handle) != 0);
+		Result &= (AnimationTemplate::Create(Reader, Handle) != 0);
 	}
 
 	return Reader.IsGood() && Result;

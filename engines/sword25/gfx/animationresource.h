@@ -63,10 +63,10 @@ class BS_PackageManager;
 // Class Definition
 // -----------------------------------------------------------------------------
 
-class BS_AnimationResource : public BS_Resource, public BS_AnimationDescription {
+class AnimationResource : public BS_Resource, public AnimationDescription {
 public:
-	BS_AnimationResource(const Common::String &FileName);
-	virtual ~BS_AnimationResource();
+	AnimationResource(const Common::String &FileName);
+	virtual ~AnimationResource();
 
 	virtual const Frame    &GetFrame(unsigned int Index) const {
 		BS_ASSERT(Index < m_Frames.size());
@@ -79,7 +79,7 @@ public:
 		Release();
 	}
 
-	BS_Animation::ANIMATION_TYPES   GetAnimationType() const {
+	Animation::ANIMATION_TYPES   GetAnimationType() const {
 		return m_AnimationType;
 	}
 	int                             GetFPS() const {
@@ -109,7 +109,7 @@ private:
 	//@{
 	/** @name Dokument-Parser Methoden */
 
-	bool ParseAnimationTag(TiXmlElement &AnimationTag, int &FPS, BS_Animation::ANIMATION_TYPES &AnimationType);
+	bool ParseAnimationTag(TiXmlElement &AnimationTag, int &FPS, Animation::ANIMATION_TYPES &AnimationType);
 	bool ParseFrameTag(TiXmlElement &FrameTag, Frame &Frame, BS_PackageManager &PackageManager);
 
 	//@}

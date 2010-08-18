@@ -39,51 +39,51 @@ namespace Sword25 {
 #define BS_LOG_PREFIX "MOVIEPLAYER"
 
 BS_Service *BS_OggTheora_CreateObject(BS_Kernel *pKernel) {
-	return new BS_MoviePlayer(pKernel);
+	return new MoviePlayer(pKernel);
 }
 
-BS_MoviePlayer::BS_MoviePlayer(BS_Kernel *pKernel) : BS_Service(pKernel) {
+MoviePlayer::MoviePlayer(BS_Kernel *pKernel) : BS_Service(pKernel) {
 	if (!_RegisterScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else
 		BS_LOGLN("Script bindings registered.");
 }
 
-bool BS_MoviePlayer::LoadMovie(const Common::String &Filename, unsigned int Z) {
+bool MoviePlayer::LoadMovie(const Common::String &Filename, unsigned int Z) {
 	return true;
 }
 
-bool BS_MoviePlayer::UnloadMovie() {
+bool MoviePlayer::UnloadMovie() {
 	return true;
 }
 
-bool BS_MoviePlayer::Play() {
+bool MoviePlayer::Play() {
 	return true;
 }
 
-bool BS_MoviePlayer::Pause() {
+bool MoviePlayer::Pause() {
 	return true;
 }
 
-void BS_MoviePlayer::Update() {
+void MoviePlayer::Update() {
 }
 
-bool BS_MoviePlayer::IsMovieLoaded() {
+bool MoviePlayer::IsMovieLoaded() {
 	return true;
 }
 
-bool BS_MoviePlayer::IsPaused() {
+bool MoviePlayer::IsPaused() {
 	return true;
 }
 
-float BS_MoviePlayer::GetScaleFactor() {
+float MoviePlayer::GetScaleFactor() {
 	return 1.0f;
 }
 
-void BS_MoviePlayer::SetScaleFactor(float ScaleFactor) {
+void MoviePlayer::SetScaleFactor(float ScaleFactor) {
 }
 
-double BS_MoviePlayer::GetTime() {
+double MoviePlayer::GetTime() {
 	return 1.0;
 }
 

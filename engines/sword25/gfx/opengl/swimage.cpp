@@ -50,7 +50,7 @@ namespace Sword25 {
 // CONSTRUCTION / DESTRUCTION
 // -----------------------------------------------------------------------------
 
-BS_SWImage::BS_SWImage(const Common::String &Filename, bool &Result) :
+SWImage::SWImage(const Common::String &Filename, bool &Result) :
 	_ImageDataPtr(0),
 	m_Width(0),
 	m_Height(0) {
@@ -68,16 +68,16 @@ BS_SWImage::BS_SWImage(const Common::String &Filename, bool &Result) :
 	}
 
 	// Bildeigenschaften bestimmen
-	BS_GraphicEngine::COLOR_FORMATS ColorFormat;
+	GraphicEngine::COLOR_FORMATS ColorFormat;
 	int Pitch;
-	if (!BS_ImageLoader::ExtractImageProperties(pFileData, FileSize, ColorFormat, m_Width, m_Height)) {
+	if (!ImageLoader::ExtractImageProperties(pFileData, FileSize, ColorFormat, m_Width, m_Height)) {
 		BS_LOG_ERRORLN("Could not read image properties.");
 		return;
 	}
 
 	// Das Bild dekomprimieren
 	byte *pUncompressedData;
-	if (!BS_ImageLoader::LoadImage(pFileData, FileSize, BS_GraphicEngine::CF_ABGR32, pUncompressedData, m_Width, m_Height, Pitch)) {
+	if (!ImageLoader::LoadImage(pFileData, FileSize, GraphicEngine::CF_ABGR32, pUncompressedData, m_Width, m_Height, Pitch)) {
 		BS_LOG_ERRORLN("Could not decode image.");
 		return;
 	}
@@ -93,14 +93,14 @@ BS_SWImage::BS_SWImage(const Common::String &Filename, bool &Result) :
 
 // -----------------------------------------------------------------------------
 
-BS_SWImage::~BS_SWImage() {
+SWImage::~SWImage() {
 	delete [] _ImageDataPtr;
 }
 
 
 // -----------------------------------------------------------------------------
 
-bool BS_SWImage::Blit(int PosX, int PosY,
+bool SWImage::Blit(int PosX, int PosY,
                       int Flipping,
                       BS_Rect *pPartRect,
                       unsigned int Color,
@@ -111,21 +111,21 @@ bool BS_SWImage::Blit(int PosX, int PosY,
 
 // -----------------------------------------------------------------------------
 
-bool BS_SWImage::Fill(const BS_Rect *pFillRect, unsigned int Color) {
+bool SWImage::Fill(const BS_Rect *pFillRect, unsigned int Color) {
 	BS_LOG_ERRORLN("Fill() is not supported.");
 	return false;
 }
 
 // -----------------------------------------------------------------------------
 
-	bool BS_SWImage::SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) {
+	bool SWImage::SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) {
 	BS_LOG_ERRORLN("SetContent() is not supported.");
 	return false;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_SWImage::GetPixel(int X, int Y) {
+unsigned int SWImage::GetPixel(int X, int Y) {
 	BS_ASSERT(X >= 0 && X < m_Width);
 	BS_ASSERT(Y >= 0 && Y < m_Height);
 

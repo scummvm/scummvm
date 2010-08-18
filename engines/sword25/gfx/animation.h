@@ -48,18 +48,18 @@ namespace Sword25 {
 // Forward declarations
 class BS_Kernel;
 class BS_PackageManager;
-class BS_AnimationResource;
-class BS_AnimationTemplate;
-class BS_AnimationDescription;
+class AnimationResource;
+class AnimationTemplate;
+class AnimationDescription;
 class BS_InputPersistenceBlock;
 
-class BS_Animation : public BS_TimedRenderObject {
-	friend class BS_RenderObject;
+class Animation : public TimedRenderObject {
+	friend class RenderObject;
 
 private:
-	BS_Animation(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const Common::String &FileName);
-	BS_Animation(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const BS_AnimationTemplate &Template);
-	BS_Animation(BS_InputPersistenceBlock &Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle);
+	Animation(RenderObjectPtr<RenderObject> ParentPtr, const Common::String &FileName);
+	Animation(RenderObjectPtr<RenderObject> ParentPtr, const AnimationTemplate &Template);
+	Animation(BS_InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
 
 public:
 	enum ANIMATION_TYPES {
@@ -68,7 +68,7 @@ public:
 		AT_JOJO
 	};
 
-	virtual ~BS_Animation();
+	virtual ~Animation();
 
 	void Play();
 	void Pause();
@@ -179,7 +179,7 @@ private:
 	bool                        m_Running;
 	bool                        m_Finished;
 	DIRECTION                   m_Direction;
-	BS_AnimationResource       *m_AnimationResourcePtr;
+	AnimationResource       *m_AnimationResourcePtr;
 	unsigned int                m_AnimationTemplateHandle;
 	bool                        m_FramesLocked;
 
@@ -223,7 +223,7 @@ private:
 	void InitMembers();
 	void PersistCallbackVector(BS_OutputPersistenceBlock &Writer, const Common::Array<ANIMATION_CALLBACK_DATA> & Vector);
 	void UnpersistCallbackVector(BS_InputPersistenceBlock &Reader, Common::Array<ANIMATION_CALLBACK_DATA> & Vector);
-	BS_AnimationDescription *GetAnimationDescription() const;
+	AnimationDescription *GetAnimationDescription() const;
 	void InitializeAnimationResource(const Common::String &FileName);
 };
 
