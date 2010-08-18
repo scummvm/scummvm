@@ -36,10 +36,6 @@
 
 #include "sword25/gfx/image/image.h"
 #include "sword25/gfx/screenshot.h"
-#include "sword25/kernel/memlog_off.h"
-#include <memory>
-#include <vector>
-#include "sword25/kernel/memlog_on.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/gfx/graphicengine.h"

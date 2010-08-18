@@ -40,7 +40,7 @@ namespace Sword25 {
 #define BS_LOG_PREFIX "IMAGELOADER"
 
 // Statische Elemente der Klasse BS_ImageLoader intialisieren.
-std::list<ImageLoader *> ImageLoader::_ImageLoaderList;
+Common::List<ImageLoader *> ImageLoader::_ImageLoaderList;
 bool ImageLoader::_ImageLoaderListInitialized = false;
 
 // Lade Methode
@@ -113,7 +113,7 @@ void ImageLoader::_DeinitializeLoaderList() {
 
 ImageLoader *ImageLoader::_FindSuitableImageLoader(const char *pFileData, unsigned int FileSize) {
 	// Alle BS_ImageLoader-Objekte durchgehen, bis eins gefunden wurde, dass das Bild laden kann
-	std::list<ImageLoader *>::iterator Iter = _ImageLoaderList.begin();
+	Common::List<ImageLoader *>::iterator Iter = _ImageLoaderList.begin();
 	for (; Iter != _ImageLoaderList.end(); ++Iter) {
 		// Falls ein geeigneter BS-ImageLoader gefunden wurde, wird er zurückgegeben.
 		if ((*Iter)->IsCorrectImageFormat(pFileData, FileSize)) {

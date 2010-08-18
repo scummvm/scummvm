@@ -36,9 +36,6 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include <algorithm>
-#include <string>
-
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/callbackregistry.h"
@@ -84,8 +81,8 @@ protected:
 	}
 };
 
-std::auto_ptr<LuaCallback> LoopPointCallbackPtr;
-std::auto_ptr<ActionCallback> ActionCallbackPtr;
+Common::ScopedPtr<LuaCallback> LoopPointCallbackPtr;
+Common::ScopedPtr<ActionCallback> ActionCallbackPtr;
 
 // -------------------------------------------------------------------------
 

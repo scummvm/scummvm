@@ -46,10 +46,6 @@
 #define SWORD25_RENDEROBJECTMANAGER_H
 
 // Includes
-#include "sword25/kernel/memlog_off.h"
-#include <vector>
-#include "sword25/kernel/memlog_on.h"
-
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobjectptr.h"
 #include "sword25/kernel/persistable.h"

@@ -41,8 +41,6 @@
 #include "sword25/package/packagemanager.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 
-#include <vector>
-
 namespace Sword25 {
 
 // -----------------------------------------------------------------------------

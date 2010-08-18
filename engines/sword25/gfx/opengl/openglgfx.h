@@ -100,7 +100,7 @@ private:
 
 	RenderObjectPtr<Panel> m_MainPanelPtr;
 
-	std::auto_ptr<RenderObjectManager>   m_RenderObjectManagerPtr;
+	Common::ScopedPtr<RenderObjectManager>   m_RenderObjectManagerPtr;
 
 	struct DebugLine {
 		DebugLine(const Vertex &_Start, const Vertex &_End, unsigned int _Color) :

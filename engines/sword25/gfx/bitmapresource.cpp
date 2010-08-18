@@ -32,8 +32,6 @@
  *
  */
 
-#include <memory>
-
 #include "sword25/gfx/bitmapresource.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/gfx/graphicengine.h"

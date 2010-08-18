@@ -43,10 +43,6 @@
 #include "sword25/math/rect.h"
 #include "sword25/gfx/renderobject.h"
 
-#include "sword25/kernel/memlog_off.h"
-#include <vector>
-#include "sword25/kernel/memlog_on.h"
-
 namespace Sword25 {
 
 // -----------------------------------------------------------------------------

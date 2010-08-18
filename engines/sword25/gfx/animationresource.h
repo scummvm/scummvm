@@ -44,10 +44,6 @@
 #include "sword25/gfx/animationdescription.h"
 #include "sword25/gfx/animation.h"
 
-#include "sword25/kernel/memlog_off.h"
-#include <vector>
-#include "sword25/kernel/memlog_on.h"
-
 class TiXmlElement;
 
 namespace Sword25 {

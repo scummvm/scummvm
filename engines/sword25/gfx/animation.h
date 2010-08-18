@@ -39,10 +39,6 @@
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/timedrenderobject.h"
 
-#include "sword25/kernel/memlog_off.h"
-#include <vector>
-#include "sword25/kernel/memlog_on.h"
-
 namespace Sword25 {
 
 // Forward declarations

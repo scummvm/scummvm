@@ -34,8 +34,6 @@
 
 #include "sword25/gfx/renderobject.h"
 
-#include <algorithm>
-
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 

@@ -42,9 +42,7 @@
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/objectregistry.h"
 
-#include "sword25/kernel/memlog_off.h"
-#include <memory>
-#include "sword25/kernel/memlog_on.h"
+#include "common/ptr.h"
 
 namespace Sword25 {
 
@@ -71,7 +69,7 @@ private:
 	virtual void LogErrorLn(const char *Message) const;
 	virtual void LogWarningLn(const char *Message) const;
 
-	static std::auto_ptr<RenderObjectRegistry> m_InstancePtr;
+	static Common::ScopedPtr<RenderObjectRegistry> m_InstancePtr;
 };
 
 } // End of namespace Sword25

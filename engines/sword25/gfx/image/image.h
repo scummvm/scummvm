@@ -43,9 +43,6 @@
 #define SWORD25_IMAGE_H
 
 // Includes
-#include "sword25/kernel/memlog_off.h"
-#include <vector>
-#include "sword25/kernel/memlog_on.h"
 #include "sword25/kernel/common.h"
 #include "sword25/math/rect.h"
 #include "sword25/gfx/graphicengine.h"

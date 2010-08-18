@@ -36,11 +36,6 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include <string>
-#include <sstream>
-#include <algorithm>
-using namespace std;
-
 #include "sword25/gfx/image/b25sloader.h"
 #include "sword25/gfx/image/pngloader.h"
 
@@ -52,6 +47,7 @@ namespace Sword25 {
 
 namespace {
 unsigned int FindEmbeddedPNG(const char *FileDataPtr, unsigned int FileSize) {
+#if 0
 	// Einen Stringstream mit dem Anfang der Datei intialisieren. 512 Byte sollten hierfür genügen.
 	istringstream StringStream(string(FileDataPtr, FileDataPtr + min(static_cast<unsigned int>(512), FileSize)));
 
@@ -66,6 +62,9 @@ unsigned int FindEmbeddedPNG(const char *FileDataPtr, unsigned int FileSize) {
 		// Offset zum PNG innerhalb des Spielstandes berechnen und zurückgeben.
 		return static_cast<unsigned int>(StringStream.tellg()) + CompressedGamedataSize + 1;
 	}
+#else
+	warning("STUB:FindEmbeddedPNG()");
+#endif
 
 	return 0;
 }

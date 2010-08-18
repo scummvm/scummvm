@@ -49,13 +49,7 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Implementation
-// -----------------------------------------------------------------------------
-
-std::auto_ptr<AnimationTemplateRegistry> AnimationTemplateRegistry::m_InstancePtr;
-
-// -----------------------------------------------------------------------------
+Common::ScopedPtr<AnimationTemplateRegistry> AnimationTemplateRegistry::m_InstancePtr;
 
 void AnimationTemplateRegistry::LogErrorLn(const char *Message) const {
 	BS_LOG_ERRORLN(Message);

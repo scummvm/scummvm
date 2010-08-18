@@ -38,6 +38,8 @@
 
 #include "sword25/gfx/renderobjectregistry.h"
 
+#include "common/ptr.h"
+
 namespace Sword25 {
 
 // -----------------------------------------------------------------------------
@@ -46,13 +48,7 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "RENDEROBJECTREGISTRY"
 
-// -----------------------------------------------------------------------------
-// Implementation
-// -----------------------------------------------------------------------------
-
-std::auto_ptr<RenderObjectRegistry> RenderObjectRegistry::m_InstancePtr;
-
-// -----------------------------------------------------------------------------
+Common::ScopedPtr<RenderObjectRegistry> RenderObjectRegistry::m_InstancePtr;
 
 void RenderObjectRegistry::LogErrorLn(const char *Message) const {
 	BS_LOG_ERRORLN(Message);

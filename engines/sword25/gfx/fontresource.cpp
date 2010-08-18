@@ -38,8 +38,6 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include <memory>
-
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/string.h"
 #include "sword25/package/packagemanager.h"

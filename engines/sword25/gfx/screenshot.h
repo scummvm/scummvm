@@ -40,10 +40,6 @@
 // -----------------------------------------------------------------------------
 
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/memlog_off.h"
-#include <string>
-#include <vector>
-#include "sword25/kernel/memlog_on.h"
 
 namespace Sword25 {
 

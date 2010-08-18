@@ -32,8 +32,6 @@
  *
  */
 
-#include <memory>
-
 #include "sword25/gfx/animation.h"
 
 #include "sword25/kernel/kernel.h"

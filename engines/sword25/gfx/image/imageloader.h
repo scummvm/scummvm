@@ -47,11 +47,6 @@
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/graphicengine.h"
 
-// Die folgenden Header vertragen sich nicht mit der Memoryleak-Detection, daher wird sie kurzzeitig deaktiviert
-#include "sword25/kernel/memlog_off.h"
-#include <list>
-#include "sword25/kernel/memlog_on.h"
-
 namespace Sword25 {
 
 /**
@@ -356,7 +351,7 @@ private:
 	*/
 	static ImageLoader *_FindSuitableImageLoader(const char *pFileData, unsigned int FileSize);
 
-	static std::list<ImageLoader *>   _ImageLoaderList;              // Die Liste aller BS_ImageLoader-Objekte
+	static Common::List<ImageLoader *>   _ImageLoaderList;              // Die Liste aller BS_ImageLoader-Objekte
 	static bool                         _ImageLoaderListInitialized;    // Gibt an, ob die Liste schon intialisiert wurde
 };
 

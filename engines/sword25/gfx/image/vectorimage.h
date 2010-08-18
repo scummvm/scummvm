@@ -44,7 +44,6 @@
 #include "sword25/math/rect.h"
 
 #if 0
-#include <vector>
 #include "agg_path_storage.h"
 #endif
 

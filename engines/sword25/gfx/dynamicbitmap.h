@@ -40,13 +40,11 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "sword25/kernel/memlog_off.h"
-#include <memory>
-#include "sword25/kernel/memlog_on.h"
-
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/bitmap.h"
 #include "sword25/gfx/opengl/glimage.h"
+
+#include "common/ptr.h"
 
 namespace Sword25 {
 
@@ -81,7 +79,7 @@ private:
 
 	bool CreateGLImage(unsigned int Width, unsigned int Height);
 
-	std::auto_ptr<GLImage> m_Image;
+	Common::ScopedPtr<GLImage> m_Image;
 };
 
 } // End of namespace Sword25
