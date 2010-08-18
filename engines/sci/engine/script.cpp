@@ -329,13 +329,11 @@ uint16 Script::validateExportFunc(int pubfunct) {
 	uint16 offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct);
 	VERIFY(offset < _bufSize, "invalid export function pointer");
 
-	if (offset == 0) {
-		// Check if the game has a second export table (e.g. script 912 in Camelot)
+	if (offset == 0 && getSciVersion() <= SCI_VERSION_1_LATE) {
+		// Check if the game has a second export table (e.g. script 912 in Camelot).
+		// This only makes sense for SCI0-SCI1, as the export table in SCI1.1+ games
+		// is located at a specific address, thus findBlock() won't work.
 		// Fixes bug #3039785
-		if (g_sci->getGameId() != GID_CAMELOT) // cheap fix
-			return offset;
-		// we are getting assert()s in eco quest 1 (right on startup) and kq6 and maybe more
-		// [md5] plz look into this TODO FIXME
 		const uint16 *secondExportTable = (const uint16 *)findBlock(SCI_OBJ_EXPORTS, 0);
 
 		if (secondExportTable) {
