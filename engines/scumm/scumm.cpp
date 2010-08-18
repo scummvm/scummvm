@@ -48,6 +48,7 @@
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/smush_player.h"
+#include "scumm/player_towns.h"
 #include "scumm/insane/insane.h"
 #include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
@@ -146,6 +147,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_imuse = NULL;
 	_imuseDigital = NULL;
 	_musicEngine = NULL;
+	_townsPlayer = NULL;
 	_verbs = NULL;
 	_objs = NULL;
 	_sound = NULL;
@@ -1757,6 +1759,10 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V2CMS(this, _mixer);
 	} else if (_game.platform == Common::kPlatform3DO && _game.heversion <= 62) {
 		// 3DO versions use digital music and sound samples.
+	} else if (_game.platform == Common::kPlatformFMTowns && (_game.version == 3 || _game.id == GID_MONKEY)) {
+		_musicEngine = _townsPlayer = new Player_Towns(this, _mixer);
+		if (!_townsPlayer->init())
+			error("Failed to initialize FM-Towns audio driver.");
 	} else if (_game.version >= 3 && _game.heversion <= 62) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
@@ -1804,6 +1810,10 @@ void ScummEngine::syncSoundSettings() {
 
 	if (_musicEngine) {
 		_musicEngine->setMusicVolume(soundVolumeMusic);
+	}
+
+	if (_townsPlayer) {
+		_townsPlayer->setSfxVolume(soundVolumeSfx);
 	}
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSfx);

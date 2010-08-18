@@ -200,7 +200,7 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 		INTCB(notImpl),
 		// 72
 		INTCB(notImpl),
-		INTCB(notImpl),
+		INTCB(cdaToggle),
 		INTCB(notImpl),
 		INTCB(notImpl),
 		// 76
@@ -222,9 +222,19 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 
 	_timerBase = (uint32)(_baserate * 1000000.0f);
 	_tickLength = 2 * _timerBase;
+
+	setTimerCallbackA((ChipTimerProc)&TownsAudioInterface::timerCallbackA);
+	setTimerCallbackB((ChipTimerProc)&TownsAudioInterface::timerCallbackB);
 }
 
 TownsAudioInterface::~TownsAudioInterface() {
+	Common::StackLock lock(_mutex);
+	reset();
+	_ready = false;
+
+	setTimerCallbackA();
+	setTimerCallbackB();
+
 	delete[] _fmSaveReg[0];
 	delete[] _fmSaveReg[1];
 	delete[] _fmInstruments;
@@ -756,6 +766,12 @@ int TownsAudioInterface::intf_updateOutputVolume(va_list &args) {
 	int flags = va_arg(args, int);
 	_outputMuteFlags = flags & 3;
 	updateOutputVolume();
+	return 0;
+}
+
+int TownsAudioInterface::intf_cdaToggle(va_list &args) {
+	//int mode = va_arg(args, int);
+	//_unkMask = mode ? 0x7f : 0x3f;
 	return 0;
 }
 

@@ -835,6 +835,7 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 
 	memset(&_timers[0], 0, sizeof(ChipTimer));
 	memset(&_timers[1], 0, sizeof(ChipTimer));
+
 	_timers[0].cb = &TownsPC98_FmSynth::timerCallbackA;
 	_timers[1].cb = &TownsPC98_FmSynth::timerCallbackB;
 	_timerbase = (uint32)(_baserate * 1000000.0f);	
@@ -842,6 +843,9 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 
 TownsPC98_FmSynth::~TownsPC98_FmSynth() {
 	Common::StackLock lock(_mutex);
+	
+	_ready = false;
+
 	_mixer->stopHandle(_soundHandle);
 	delete _ssg;
 	delete _prc;
@@ -1152,6 +1156,14 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 
 	delete[] tmpStart;
 	return numSamples;
+}
+
+void TownsPC98_FmSynth::setTimerCallbackA(ChipTimerProc proc) {
+	_timers[0].cb = proc;
+}
+
+void TownsPC98_FmSynth::setTimerCallbackB(ChipTimerProc proc) {
+	_timers[1].cb = proc;
 }
 
 uint8 TownsPC98_FmSynth::readSSGStatus() {

@@ -70,6 +70,7 @@ class CharsetRenderer;
 class IMuse;
 class IMuseDigital;
 class MusicEngine;
+class Player_Towns;
 class ScummEngine;
 class ScummDebugger;
 class Serializer;
@@ -426,6 +427,7 @@ public:
 	IMuse *_imuse;
 	IMuseDigital *_imuseDigital;
 	MusicEngine *_musicEngine;
+	Player_Towns *_townsPlayer;
 	Sound *_sound;
 
 	VerbSlot *_verbs;

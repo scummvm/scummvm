@@ -1037,10 +1037,20 @@ TownsPC98_AudioDriver::TownsPC98_AudioDriver(Audio::Mixer *mixer, EmuType type) 
 	_musicPlaying(false), _sfxPlaying(false), _fading(false), _looping(0), _ready(false) {
 
 	_sfxOffsets[0] = _sfxOffsets[1] = 0;
+
+	setTimerCallbackA((ChipTimerProc)&TownsPC98_AudioDriver::timerCallbackA);
+	setTimerCallbackB((ChipTimerProc)&TownsPC98_AudioDriver::timerCallbackB);
 }
 
 TownsPC98_AudioDriver::~TownsPC98_AudioDriver() {
+	Common::StackLock lock(_mutex);
+
 	reset();
+
+	_ready = false;
+
+	setTimerCallbackA();
+	setTimerCallbackB();
 
 	if (_channels) {
 		for (int i = 0; i < _numChan; i++)

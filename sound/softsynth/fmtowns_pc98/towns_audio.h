@@ -95,6 +95,7 @@ private:
 	int intf_setOutputVolume(va_list &args);
 	int intf_resetOutputVolume(va_list &args);
 	int intf_updateOutputVolume(va_list &args);
+	int intf_cdaToggle(va_list &args);
 	int intf_pcmUpdateEnvelopeGenerator(va_list &args);
 
 	int intf_notImpl(va_list &args);

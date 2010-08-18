@@ -29,7 +29,6 @@ MODULE_OBJS := \
 	imuse/sysex_samnmax.o \
 	imuse/sysex_scumm.o \
 	input.o \
-	midiparser_eup.o \
 	midiparser_ro.o \
 	object.o \
 	palette.o \
@@ -37,6 +36,7 @@ MODULE_OBJS := \
 	player_nes.o \
 	player_pce.o \
 	player_sid.o \
+	player_towns.o \
 	player_v1.o \
 	player_v2.o \
 	player_v2a.o \
