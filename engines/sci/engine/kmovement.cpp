@@ -169,8 +169,14 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 #define _K_BRESEN_AXIS_X 0
 #define _K_BRESEN_AXIS_Y 1
 
-static void initialize_bresen(SegManager *segMan, int argc, reg_t *argv, reg_t mover, int step_factor, int deltax, int deltay) {
+reg_t kInitBresen(EngineState *s, int argc, reg_t *argv) {
+	SegManager *segMan = s->_segMan;
+	reg_t mover = argv[0];
 	reg_t client = readSelector(segMan, mover, SELECTOR(client));
+
+	int deltax = (int16)readSelectorValue(segMan, mover, SELECTOR(x)) - (int16)readSelectorValue(segMan, client, SELECTOR(x));
+	int deltay = (int16)readSelectorValue(segMan, mover, SELECTOR(y)) - (int16)readSelectorValue(segMan, client, SELECTOR(y));
+	int step_factor = (argc < 1) ? argv[1].toUint16() : 1;
 	int stepx = (int16)readSelectorValue(segMan, client, SELECTOR(xStep)) * step_factor;
 	int stepy = (int16)readSelectorValue(segMan, client, SELECTOR(yStep)) * step_factor;
 	int numsteps_x = stepx ? (ABS(deltax) + stepx - 1) / stepx : 0;
@@ -220,18 +226,6 @@ static void initialize_bresen(SegManager *segMan, int argc, reg_t *argv, reg_t m
 	writeSelectorValue(segMan, mover, SELECTOR(b_di), bdi);
 	writeSelectorValue(segMan, mover, SELECTOR(b_i1), i1);
 	writeSelectorValue(segMan, mover, SELECTOR(b_i2), bdi * 2);
-}
-
-reg_t kInitBresen(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->_segMan;
-	reg_t mover = argv[0];
-	reg_t client = readSelector(segMan, mover, SELECTOR(client));
-
-	int deltax = (int16)readSelectorValue(segMan, mover, SELECTOR(x)) - (int16)readSelectorValue(segMan, client, SELECTOR(x));
-	int deltay = (int16)readSelectorValue(segMan, mover, SELECTOR(y)) - (int16)readSelectorValue(segMan, client, SELECTOR(y));
-	int step_factor = (argc < 1) ? argv[1].toUint16() : 1;
-
-	initialize_bresen(s->_segMan, argc, argv, mover, step_factor, deltax, deltay);
 
 	return s->r_acc;
 }
@@ -486,9 +480,8 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 		s->r_acc = make_reg(0, angle);
 
-		reg_t params[2] = { make_reg(0, angle), client };
-
 		if (looper.segment) {
+			reg_t params[2] = { make_reg(0, angle), client };
 			invokeSelector(s, looper, SELECTOR(doit), argc, argv, 2, params);
 			return s->r_acc;
 		} else {
