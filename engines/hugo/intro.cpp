@@ -48,7 +48,7 @@ IntroHandler::IntroHandler(HugoEngine &vm) : _vm(vm) {
 IntroHandler::~IntroHandler() {
 }
 
-intro_1w::intro_1w(HugoEngine &vm) : IntroHandler(_vm) {
+intro_1w::intro_1w(HugoEngine &vm) : IntroHandler(vm) {
 }
 
 intro_1w::~intro_1w() {
@@ -67,7 +67,7 @@ bool intro_1w::introPlay() {
 	return true;
 }
 
-intro_2w::intro_2w(HugoEngine &vm) : IntroHandler(_vm) {
+intro_2w::intro_2w(HugoEngine &vm) : IntroHandler(vm) {
 }
 
 intro_2w::~intro_2w() {
@@ -83,7 +83,7 @@ bool intro_2w::introPlay() {
 	return true;
 }
 
-intro_3w::intro_3w(HugoEngine &vm) : IntroHandler(_vm) {
+intro_3w::intro_3w(HugoEngine &vm) : IntroHandler(vm) {
 }
 
 intro_3w::~intro_3w() {
