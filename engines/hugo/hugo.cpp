@@ -67,15 +67,6 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	DebugMan.addDebugChannel(kDebugFile, "File", "File IO debug level");
 	DebugMan.addDebugChannel(kDebugRoute, "Route", "Route debug level");
 	DebugMan.addDebugChannel(kDebugInventory, "Inventory", "Inventory debug level");
-
-	_fileManager = new FileManager(*this);
-	_scheduler = new Scheduler(*this);
-	_screen = new Screen(*this);
-	_mouseHandler = new MouseHandler(*this);
-	_inventoryHandler = new InventoryHandler(*this);
-	_parser = new Parser(*this);
-	_route = new Route(*this);
-	_soundHandler = new SoundHandler(*this);
 }
 
 HugoEngine::~HugoEngine() {
@@ -148,6 +139,15 @@ bool HugoEngine::isPacked() const {
 Common::Error HugoEngine::run() {
 	s_Engine = this;
 	initGraphics(320, 200, false);
+
+	_fileManager = new FileManager(*this);
+	_scheduler = new Scheduler(*this);
+	_screen = new Screen(*this);
+	_mouseHandler = new MouseHandler(*this);
+	_inventoryHandler = new InventoryHandler(*this);
+	_parser = new Parser(*this);
+	_route = new Route(*this);
+	_soundHandler = new SoundHandler(*this);
 
 	if (!loadHugoDat())
 		return Common::kUnknownError;
