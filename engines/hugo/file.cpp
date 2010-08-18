@@ -908,25 +908,27 @@ void FileManager::readUIFItem(int16 id, byte *buf) {
 void FileManager::instructions() {
 // Simple instructions given when F1 pressed twice in a row
 // Only in DOS versions
-#define HELPFILE "help.dat"
-#define EOP '#' /* Marks end of a page in help file */
 
 	Common::File f;
 	char line[1024], *wrkLine;
 	char readBuf[2];
 
 	wrkLine = line;
-	if (!f.open(UIF_FILE))
-		Utils::Error(FILE_ERR, HELPFILE);
+	if (!f.open(HELPFILE)) {
+		warning("help.dat not found");
+		return;
+	}
 
 	while (f.read(readBuf, 1)) {
 		wrkLine[0] = readBuf[0];
+		wrkLine++;
 		do {
 			f.read(wrkLine, 1);
 		} while (*wrkLine++ != EOP);
 		wrkLine[-2] = '\0';      /* Remove EOP and previous CR */
 		Utils::Box(BOX_ANY, line);
-		f.read(wrkLine, 1);    /* Remove CR after EOP */
+		wrkLine = line;
+		f.read(readBuf, 2);    /* Remove CRLF after EOP */
 	}
 	f.close();
 }

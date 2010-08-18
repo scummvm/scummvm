@@ -33,6 +33,10 @@
 #ifndef HUGO_FILE_H
 #define HUGO_FILE_H
 
+// TODO get rid of those defines
+#define HELPFILE "help.dat"
+#define EOP '#' /* Marks end of a page in help file */
+
 namespace Hugo {
 
 class FileManager {

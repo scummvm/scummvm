@@ -54,6 +54,7 @@ namespace Hugo {
 
 Parser::Parser(HugoEngine &vm) :
 	_vm(vm), _putIndex(0), _getIndex(0) {
+		_checkDoubleF1Fl = false;
 }
 
 void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
@@ -81,11 +82,12 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 		}
 		break;
 	case Common::KEYCODE_F1:                        // User Help (DOS)
-		if (repeatedFl) {
+		if (_checkDoubleF1Fl) {
 			_vm.file().instructions();
-			nChar = '\0';
+			_checkDoubleF1Fl = false;
 		} else
 			_vm.screen().userHelp();
+			_checkDoubleF1Fl = true;
 		break;
 	case Common::KEYCODE_F2:                        // Toggle sound
 	case Common::KEYCODE_F3:                        // Repeat last line
@@ -110,6 +112,8 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 		}
 		break;
 	}
+	if 	((_checkDoubleF1Fl) && (nChar != Common::KEYCODE_F1))
+		_checkDoubleF1Fl = false;
 }
 
 // Add any new chars to line buffer and display them.
@@ -124,10 +128,6 @@ void Parser::charHandler() {
 // Strangerke : Useless ?
 //	bool          updateFl = (_getIndex != _putIndex);  // TRUE if any chars processed
 //	command_t    status_line;                     // Includes prompt, cursor
-
-//Strangerke : Useless ?
-//	bool          updateFl = (_getIndex != _putIndex);	// TRUE if any chars processed
-	//command_t    status_line;						// Includes prompt, cursor
 
 	debugC(4, kDebugParser, "charHandler");
 

@@ -71,6 +71,7 @@ private:
 	char   _ringBuffer[32];                         // Ring buffer
 	uint16 _putIndex;
 	uint16 _getIndex;                               // Index into ring buffer
+	bool   _checkDoubleF1Fl;                        // Flag used to display user help or instructions
 
 	command_t _statusLine;
 	command_t _scoreLine;
