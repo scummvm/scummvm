@@ -60,6 +60,21 @@ bool Mp3PspStream::_decoderFail = true;		// pretend the decoder failed
 bool Mp3PspStream::_decoderFail = false;	// has the decoder failed to load
 #endif
 
+// Arranged in groups of 3 (layers), starting with MPEG-1 and ending with MPEG 2.5
+static uint32 mp3SamplesPerFrame[9] = {384, 1152, 1152, 384, 1152, 576, 384, 1152, 576};
+
+// The numbering below doesn't correspond to the way they are in the header
+enum {
+	MPEG_VER1 = 0,
+	MPEG_VER1_HEADER = 0x3,
+	MPEG_VER2 = 1,
+	MPEG_VER2_HEADER = 0x2,
+	MPEG_VER2_5 = 2,
+	MPEG_VER2_5_HEADER = 0x0
+};
+
+#define HEADER_GET_MPEG_VERSION(x) ((((x)[1])>>3) & 0x3)
+
 bool Mp3PspStream::initDecoder() {
 	DEBUG_ENTER_FUNC();
 	
@@ -104,7 +119,7 @@ bool Mp3PspStream::stopDecoder() {
 		return true;
 		
 	// Based on PSP firmware version, we need to do different things to do Media Engine processing
-    if (sceKernelDevkitVersion() == 0x01050001){
+    if (sceKernelDevkitVersion() == 0x01050001){  // TODO: how do we unload?
 /*      if (!unloadAudioModule("flash0:/kd/me_for_vsh.prx", PSP_MEMORY_PARTITION_KERNEL) ||
 			!unloadAudioModule("flash0:/kd/audiocodec.prx", PSP_MEMORY_PARTITION_KERNEL) {
 			PSP_ERROR("failed to unload audio module\n");
@@ -172,17 +187,16 @@ Mp3PspStream::Mp3PspStream(Common::SeekableReadStream *inStream, DisposeAfterUse
 	
 	initStream();	// init needed stuff for the stream
 
+	findValidHeader();	// get a first header so we can read basic stuff
+	
+	_sampleRate = _header.samplerate;	// copy it before it gets destroyed
+		
 	while (_state != MP3_STATE_EOS)
 		findValidHeader();	// get a first header so we can read basic stuff
 	
-	_sampleRate = _header.samplerate;	// copy it before it gets destroyed
-	
 	_length = Timestamp(mad_timer_count(_totalTime, MAD_UNITS_MILLISECONDS), getRate());
 	
-	//initStreamME();		// init the stuff needed for the ME to work
-	
 	deinitStream();
-	//releaseStreamME();
 
 	_state = MP3_STATE_INIT;
 }
@@ -284,27 +298,23 @@ void Mp3PspStream::decodeMP3Data() {
 			
 		findValidHeader();	// seach for next valid header
 
-		while (_state == MP3_STATE_READY) {
+		while (_state == MP3_STATE_READY) {	// not a real 'while'. Just for easy flow
 			_stream.error = MAD_ERROR_NONE;
 
 			uint32 frame_size = _stream.next_frame - _stream.this_frame;
-			uint32 samplesPerFrame = _header.layer == MAD_LAYER_III ? 576 : 1152; 	// Varies by layer
-			// calculate frame size -- try
-			//uint32 calc_frame_size = ((144 * _header.bitrate) / 22050) + (_header.flags & MAD_FLAG_PADDING ? 1 : 0);
 			
-			// Get stereo/mono
-			uint32 multFactor = 1;
-			if (_header.mode != MAD_MODE_SINGLE_CHANNEL)	// mono	- x2 for 16bit
-				multFactor *= 2;							// stereo - x4 for 16bit
-			
-			PSP_DEBUG_PRINT("MP3 frame size[%d]. Samples[%d]. Multfactor[%d] pad[%d]\n", frame_size, samplesPerFrame, multFactor, _header.flags & MAD_FLAG_PADDING);
+			updatePcmLength(); // Retrieve the number of PCM samples. 
+							   // We seem to change this, so it needs to be dynamic
+						
+			PSP_DEBUG_PRINT("MP3 frame size[%d]. pcmLength[%d]\n", frame_size, _pcmLength);
+
 			memcpy(_codecInBuffer, _stream.this_frame, frame_size);	// we need it aligned
 
 			// set up parameters for ME
 			_codecParams[6] = (unsigned long)_codecInBuffer;
 			_codecParams[8] = (unsigned long)_pcmSamples;
 			_codecParams[7] = frame_size;
-			_codecParams[9] = samplesPerFrame * multFactor;	// x2 for stereo
+			_codecParams[9] = _pcmLength * 2;	// x2 for stereo, though this one's not so important
 			
 			// debug
 #ifdef PRINT_BUFFERS
@@ -319,7 +329,6 @@ void Mp3PspStream::decodeMP3Data() {
 			int ret = sceAudiocodecDecode(_codecParams, 0x1002);
 			if (ret < 0) {
 				PSP_INFO_PRINT("failed to decode MP3 data in ME. sceAudiocodecDecode returned 0x%x\n", ret);
-				// handle error here
 			}
 
 #ifdef PRINT_BUFFERS
@@ -329,7 +338,6 @@ void Mp3PspStream::decodeMP3Data() {
 			}
 			PSP_DEBUG_PRINT("\n");
 #endif
-			_pcmLength = samplesPerFrame;
 			_posInFrame = 0;
 			break;
 		}
@@ -337,6 +345,27 @@ void Mp3PspStream::decodeMP3Data() {
 
 	if (_stream.error != MAD_ERROR_NONE)	// catch EOS
 		_state = MP3_STATE_EOS;
+}
+
+inline void Mp3PspStream::updatePcmLength() {
+	uint32 mpegVer = HEADER_GET_MPEG_VERSION(_stream.this_frame);	// sadly, MAD can't do this for us
+	PSP_DEBUG_PRINT("mpeg ver[%x]\n", mpegVer);
+	switch (mpegVer) {
+		case MPEG_VER1_HEADER:
+			mpegVer = MPEG_VER1;
+			break;
+		case MPEG_VER2_HEADER:
+			mpegVer = MPEG_VER2;
+			break;
+		case MPEG_VER2_5_HEADER:
+			mpegVer = MPEG_VER2_5;
+			break;
+		default:
+			PSP_ERROR("Unknown MPEG version %x\n", mpegVer);
+			break;
+	}
+	PSP_DEBUG_PRINT("layer[%d]\n", _header.layer);
+	_pcmLength = mp3SamplesPerFrame[(mpegVer * 3) + _header.layer - 1];
 }
 
 void Mp3PspStream::readMP3DataIntoBuffer() {
@@ -391,10 +420,6 @@ bool Mp3PspStream::seek(const Timestamp &where) {
 		initStream();
 		initStreamME();
 	}
-
-	// The ME will need clear data no matter what once we seek?
-	//if (mad_timer_compare(destination, _totalTime) > 0 && _state != MP3_STATE_EOS)
-	//	initStreamME();
 
 	// Skip ahead
 	while (mad_timer_compare(destination, _totalTime) > 0 && _state != MP3_STATE_EOS)
@@ -462,9 +487,6 @@ int Mp3PspStream::readBuffer(int16 *buffer, const int numSamples) {
 			_posInFrame++;	// always skip an extra sample since ME always outputs stereo
 		}
 		
-		//memcpy(buffer, &_pcmSamples[_posInFrame], len << 1);	   // 16 bits
-		//_posInFrame += len;		// next time we start from the middle
-
 		if (_posInFrame >= _pcmLength) {
 			// We used up all PCM data in the current frame -- read & decode more
 			decodeMP3Data();
@@ -482,5 +504,3 @@ int Mp3PspStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 } // End of namespace Audio
-
-
