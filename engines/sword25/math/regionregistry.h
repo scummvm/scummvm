@@ -50,16 +50,16 @@ namespace Sword25 {
 // Forward Declarations
 // -----------------------------------------------------------------------------
 
-class BS_Region;
+class Region;
 
 // -----------------------------------------------------------------------------
 // Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_RegionRegistry : public BS_ObjectRegistry<BS_Region>, public BS_Persistable {
+class RegionRegistry : public BS_ObjectRegistry<Region>, public BS_Persistable {
 public:
-	static BS_RegionRegistry &GetInstance() {
-		if (!m_InstancePtr.get()) m_InstancePtr = Common::SharedPtr<BS_RegionRegistry>(new BS_RegionRegistry());
+	static RegionRegistry &GetInstance() {
+		if (!m_InstancePtr.get()) m_InstancePtr = Common::SharedPtr<RegionRegistry>(new RegionRegistry());
 		return *m_InstancePtr.get();
 	}
 
@@ -70,7 +70,7 @@ private:
 	virtual void LogErrorLn(const char *Message) const;
 	virtual void LogWarningLn(const char *Message) const;
 
-	static Common::SharedPtr<BS_RegionRegistry> m_InstancePtr;
+	static Common::SharedPtr<RegionRegistry> m_InstancePtr;
 };
 
 } // End of namespace Sword25

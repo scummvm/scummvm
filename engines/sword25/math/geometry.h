@@ -42,10 +42,10 @@ namespace Sword25 {
 
 class BS_Kernel;
 
-class BS_Geometry : public BS_Service {
+class Geometry : public BS_Service {
 public:
-	BS_Geometry(BS_Kernel *pKernel);
-	virtual ~BS_Geometry() {}
+	Geometry(BS_Kernel *pKernel);
+	virtual ~Geometry() {}
 
 private:
 	bool _RegisterScriptBindings();

@@ -59,7 +59,7 @@ struct lua_constant_reg {
 	lua_Number      Value;
 };
 
-class BS_LuaBindhelper {
+class LuaBindhelper {
 public:
 	/**
 	 * Registers a set of functions into a Lua library.

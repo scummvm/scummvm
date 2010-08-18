@@ -39,14 +39,14 @@
 
 namespace Sword25 {
 
-class BS_FMODExSound : public BS_SoundEngine {
+class FMODExSound : public SoundEngine {
 public:
 	// -----------------------------------------------------------------------------
 	// Konstruktion / Destruktion
 	// -----------------------------------------------------------------------------
 
-	BS_FMODExSound(BS_Kernel *pKernel);
-	virtual ~BS_FMODExSound();
+	FMODExSound(BS_Kernel *pKernel);
+	virtual ~FMODExSound();
 
 	bool            Init(unsigned int SampleRate, unsigned int Channels = 32);
 	void            Update();

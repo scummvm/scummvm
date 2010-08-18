@@ -62,7 +62,7 @@ namespace Sword25 {
 // Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_SoundEngine : public BS_ResourceService, public BS_Persistable {
+class SoundEngine : public BS_ResourceService, public BS_Persistable {
 public:
 	// -----------------------------------------------------------------------------
 	// Enums and Types
@@ -86,8 +86,8 @@ public:
 	// Constructor / destructor
 	// -----------------------------------------------------------------------------
 
-	BS_SoundEngine(BS_Kernel *pKernel);
-	virtual ~BS_SoundEngine() {};
+	SoundEngine(BS_Kernel *pKernel);
+	virtual ~SoundEngine() {};
 
 	// --------------------------------------------------------------
 	// THIS METHOD MUST BE IMPLEMENTED BY THE SOUND ENGINE

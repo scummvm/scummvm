@@ -60,10 +60,10 @@ namespace Sword25 {
 /**
  * Defines a 2-D Vertex
  */
-class BS_Vertex {
+class Vertex {
 public:
-	BS_Vertex() : X(0), Y(0) {};
-	BS_Vertex(int X_, int Y_) {
+	Vertex() : X(0), Y(0) {};
+	Vertex(int X_, int Y_) {
 		this->X = X_;
 		this->Y = Y_;
 	}
@@ -74,21 +74,21 @@ public:
 	/**
 	 * Compares two Vertecies.
 	 */
-	inline bool operator==(const BS_Vertex &rhs) const {
+	inline bool operator==(const Vertex &rhs) const {
 		if (X == rhs.X && Y == rhs.Y) return true;
 		return false;
 	}
 	/**
 	 * Compares two Vertecies.
 	 */
-	inline bool operator!=(const BS_Vertex &rhs) const {
+	inline bool operator!=(const Vertex &rhs) const {
 		if (X != rhs.X || Y != rhs.Y) return true;
 		return false;
 	}
 	/**
 	 * Adds a vertex to vertex
 	 */
-	inline void operator+=(const BS_Vertex &Delta) {
+	inline void operator+=(const Vertex &Delta) {
 		X += Delta.X;
 		Y += Delta.Y;
 	}
@@ -96,7 +96,7 @@ public:
 	/**
 	 * Subtracts a vertex from a vertex
 	 */
-	inline void operator-=(const BS_Vertex &Delta) {
+	inline void operator-=(const Vertex &Delta) {
 		X -= Delta.X;
 		Y -= Delta.Y;
 	}
@@ -104,15 +104,15 @@ public:
 	/**
 	 * Adds two vertecies
 	 */
-	inline BS_Vertex operator+(const BS_Vertex &Delta) const {
-		return BS_Vertex(X + Delta.X, Y + Delta.Y);
+	inline Vertex operator+(const Vertex &Delta) const {
+		return Vertex(X + Delta.X, Y + Delta.Y);
 	}
 
 	/**
 	 * Subtracts two vertecies
 	 */
-	inline BS_Vertex operator-(const BS_Vertex &Delta) const {
-		return BS_Vertex(X - Delta.X, Y - Delta.Y);
+	inline Vertex operator-(const Vertex &Delta) const {
+		return Vertex(X - Delta.X, Y - Delta.Y);
 	}
 
 	/**
@@ -122,8 +122,8 @@ public:
 	 * @remark              If only distances should be compared, this method should be used because
 	 * it is faster than Distance()
 	 */
-	inline int Distance2(const BS_Vertex &Vertex) const {
-		return (X - Vertex.X) * (X - Vertex.X) + (Y - Vertex.Y) * (Y - Vertex.Y);
+	inline int Distance2(const Vertex &vertex) const {
+		return (X - vertex.X) * (X - vertex.X) + (Y - vertex.Y) * (Y - vertex.Y);
 	}
 
 	/**
@@ -132,8 +132,8 @@ public:
 	 * @return              Returns the square of the distance between itself and the passed vertex
 	 * @remark              If only distances should be compared, Distance2() should be used, since it is faster.
 	 */
-	inline int Distance(const BS_Vertex &Vertex) const {
-		return (int)(sqrtf(static_cast<float>(Distance2(Vertex))) + 0.5);
+	inline int Distance(const Vertex &vertex) const {
+		return (int)(sqrtf(static_cast<float>(Distance2(vertex))) + 0.5);
 	}
 
 	/**
@@ -142,8 +142,8 @@ public:
 	 * @param Vertex        The second vertex
 	 * @return              Returns the cross product of this vertex and the passed vertex.
 	 */
-	inline int ComputeCrossProduct(const BS_Vertex &Vertex) const {
-		return X * Vertex.Y - Vertex.X * Y;
+	inline int ComputeCrossProduct(const Vertex &vertex) const {
+		return X * vertex.Y - vertex.X * Y;
 	}
 
 	/**
@@ -151,8 +151,8 @@ public:
 	 * @param Vertex        The second vertex
 	 * @return              Returns the dot product of this vertex and the passed vertex.
 	 */
-	inline int ComputeDotProduct(const BS_Vertex &Vertex) const {
-		return X * Vertex.X + Y * Vertex.Y;
+	inline int ComputeDotProduct(const Vertex &vertex) const {
+		return X * vertex.X + Y * vertex.Y;
 	}
 
 	/**
@@ -160,8 +160,8 @@ public:
 	 * @param Vertex        The second vertex
 	 * @return              Returns the angle between this vertex and the passed vertex in radians.
 	 */
-	inline float ComputeAngle(const BS_Vertex &Vertex) const {
-		return atan2f(static_cast<float>(ComputeCrossProduct(Vertex)), static_cast<float>(ComputeDotProduct(Vertex)));
+	inline float ComputeAngle(const Vertex &vertex) const {
+		return atan2f(static_cast<float>(ComputeCrossProduct(vertex)), static_cast<float>(ComputeDotProduct(vertex)));
 	}
 
 	/**
@@ -171,8 +171,8 @@ public:
 		return sqrtf(static_cast<float>(X * X + Y * Y));
 	}
 
-	static BS_Vertex &LuaVertexToVertex(lua_State *L, int StackIndex, BS_Vertex &Vertex);
-	static void VertexToLuaVertex(lua_State *L, const BS_Vertex &Vertex);
+	static Vertex &LuaVertexToVertex(lua_State *L, int StackIndex, Vertex &vertex);
+	static void VertexToLuaVertex(lua_State *L, const Vertex &vertex);
 };
 
 } // End of namespace Sword25

@@ -52,7 +52,7 @@ namespace Sword25 {
  * arranged in a clockwise direction, so that the polygon working algorithms will
  * work properly.
  */
-class BS_Region : public BS_Persistable {
+class Region : public BS_Persistable {
 protected:
 	/**
 	 * Creates a new BS_Region object
@@ -60,9 +60,9 @@ protected:
 	 * After creation the object is invaild (IsValid() return false), but a call can
 	 * be made later on to Init() to set up the region into a valid state.
 	 */
-	BS_Region();
+	Region();
 
-	BS_Region(BS_InputPersistenceBlock &Reader, unsigned int Handle);
+	Region(BS_InputPersistenceBlock &Reader, unsigned int Handle);
 
 public:
 	enum REGION_TYPE {
@@ -73,7 +73,7 @@ public:
 	static unsigned int Create(REGION_TYPE Type);
 	static unsigned int Create(BS_InputPersistenceBlock &Reader, unsigned int Handle = 0);
 
-	virtual ~BS_Region();
+	virtual ~Region();
 
 	/**
 	 * Initialises a BS_Region object
@@ -83,7 +83,7 @@ public:
 	 * @return              Returns true if the initialisation was successful, otherwise false.
 	 * @remark              If the region was already initialised, the old state will be deleted.
 	 */
-	virtual bool Init(const BS_Polygon &Contour, const Common::Array<BS_Polygon> *pHoles = NULL);
+	virtual bool Init(const Polygon &Contour, const Common::Array<Polygon> *pHoles = NULL);
 
 	//
 	// Exploratory Methods
@@ -101,7 +101,7 @@ public:
 	/**
 	 * Returns the position of the region
 	 */
-	const BS_Vertex &GetPosition() const {
+	const Vertex &GetPosition() const {
 		return m_Position;
 	}
 
@@ -124,7 +124,7 @@ public:
 	 * @param Vertex        A verex with the co-ordinates of the test point
 	 * @return              Returns true if the point is within the region, otherwise false.
 	 */
-	bool IsPointInRegion(const BS_Vertex &Vertex) const;
+	bool IsPointInRegion(const Vertex &Vertex) const;
 
 	/**
 	 * Indicates whether a point is inside the region
@@ -137,7 +137,7 @@ public:
 	/**
 	 * Returns the countour of the region
 	 */
-	const BS_Polygon &GetContour() const {
+	const Polygon &GetContour() const {
 		return m_Polygons[0];
 	}
 
@@ -154,7 +154,7 @@ public:
 	 * The index must be between 0 and GetHoleCount() - 1.
 	 * @return              Returns the desired hole polygon
 	 */
-	inline const BS_Polygon &GetHole(unsigned int i) const;
+	inline const Polygon &GetHole(unsigned int i) const;
 
 	/**
 	 * For a point outside the region, finds the closest point inside the region
@@ -164,14 +164,14 @@ public:
 	 * One should not therefore rely on the fact that there is really no point in
 	 * the region which is closer to the given point.
 	 */
-	BS_Vertex FindClosestRegionPoint(const BS_Vertex &Point) const;
+	Vertex FindClosestRegionPoint(const Vertex &Point) const;
 
 	/**
 	 * Returns the centroid for the region
 	 */
-	BS_Vertex GetCentroid() const;
+	Vertex GetCentroid() const;
 
-	bool IsLineOfSight(const BS_Vertex &a, const BS_Vertex &b) const;
+	bool IsLineOfSight(const Vertex &a, const Vertex &b) const;
 
 	//
 	// Manipulation Methods
@@ -209,10 +209,10 @@ protected:
 	/// This variable indicates whether the current object state is valid
 	bool m_Valid;
 	/// This vertex is the position of the region
-	BS_Vertex m_Position;
+	Vertex m_Position;
 	/// This array contains all the polygons that define the region. The first element of
 	// the array is the contour, all others are the holes
-	Common::Array<BS_Polygon> m_Polygons;
+	Common::Array<Polygon> m_Polygons;
 	/// The bounding box for the region
 	BS_Rect m_BoundingBox;
 
@@ -228,7 +228,7 @@ protected:
 	 * @param Point         The point to be compared against
 	 * @return              Returns the point on the line which is cloest to the passed point.
 	 */
-	BS_Vertex FindClosestPointOnLine(const BS_Vertex &LineStart, const BS_Vertex &LineEnd, const BS_Vertex Point) const;
+	Vertex FindClosestPointOnLine(const Vertex &LineStart, const Vertex &LineEnd, const Vertex Point) const;
 };
 
 
@@ -236,7 +236,7 @@ protected:
 // Inlines
 // -----------------------------------------------------------------------------
 
-inline const BS_Polygon &BS_Region::GetHole(unsigned int i) const {
+inline const Polygon &Region::GetHole(unsigned int i) const {
 	BS_ASSERT(i < m_Polygons.size() - 1);
 	return m_Polygons[i + 1];
 }

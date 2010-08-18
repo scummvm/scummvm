@@ -57,7 +57,7 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 class BS_Kernel;
-class BS_PackageManager;
+class PackageManager;
 
 // -----------------------------------------------------------------------------
 // Class Definition
@@ -110,7 +110,7 @@ private:
 	/** @name Dokument-Parser Methoden */
 
 	bool ParseAnimationTag(TiXmlElement &AnimationTag, int &FPS, Animation::ANIMATION_TYPES &AnimationType);
-	bool ParseFrameTag(TiXmlElement &FrameTag, Frame &Frame, BS_PackageManager &PackageManager);
+	bool ParseFrameTag(TiXmlElement &FrameTag, Frame &Frame, PackageManager &PackageManager);
 
 	//@}
 

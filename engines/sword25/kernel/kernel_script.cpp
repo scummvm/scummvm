@@ -171,7 +171,7 @@ static int Crash(lua_State *L) {
 static int ExecuteFile(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_ScriptEngine *pSE = static_cast<BS_ScriptEngine *>(pKernel->GetService("script"));
+	ScriptEngine *pSE = static_cast<ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pSE);
 
 	lua_pushbooleancpp(L, pSE->ExecuteFile(luaL_checkstring(L, 1)));
@@ -723,15 +723,15 @@ static const luaL_reg PERSISTENCE_FUNCTIONS[] = {
 // -----------------------------------------------------------------------------
 
 bool BS_Kernel::_RegisterScriptBindings() {
-	BS_ScriptEngine *pScript = static_cast<BS_ScriptEngine *>(GetService("script"));
+	ScriptEngine *pScript = static_cast<ScriptEngine *>(GetService("script"));
 	BS_ASSERT(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->GetScriptObject());
 	BS_ASSERT(L);
 
-	if (!BS_LuaBindhelper::AddFunctionsToLib(L, KERNEL_LIBRARY_NAME, KERNEL_FUNCTIONS)) return false;
-	if (!BS_LuaBindhelper::AddFunctionsToLib(L, WINDOW_LIBRARY_NAME, WINDOW_FUNCTIONS)) return false;
-	if (!BS_LuaBindhelper::AddFunctionsToLib(L, RESOURCE_LIBRARY_NAME, RESOURCE_FUNCTIONS)) return false;
-	if (!BS_LuaBindhelper::AddFunctionsToLib(L, PERSISTENCE_LIBRARY_NAME, PERSISTENCE_FUNCTIONS)) return false;
+	if (!LuaBindhelper::AddFunctionsToLib(L, KERNEL_LIBRARY_NAME, KERNEL_FUNCTIONS)) return false;
+	if (!LuaBindhelper::AddFunctionsToLib(L, WINDOW_LIBRARY_NAME, WINDOW_FUNCTIONS)) return false;
+	if (!LuaBindhelper::AddFunctionsToLib(L, RESOURCE_LIBRARY_NAME, RESOURCE_FUNCTIONS)) return false;
+	if (!LuaBindhelper::AddFunctionsToLib(L, PERSISTENCE_LIBRARY_NAME, PERSISTENCE_FUNCTIONS)) return false;
 
 	return true;
 }

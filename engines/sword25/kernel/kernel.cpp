@@ -85,7 +85,7 @@ BS_Kernel::BS_Kernel() :
 	_pResourceManager = new BS_ResourceManager(this);
 
 	// Initialise the script engine
-	BS_ScriptEngine *pScript = static_cast<BS_ScriptEngine *>(NewService("script", "lua"));
+	ScriptEngine *pScript = static_cast<ScriptEngine *>(NewService("script", "lua"));
 	if (!pScript || !pScript->Init()) {
 		_InitSuccess = false;
 		return;
@@ -405,8 +405,8 @@ GraphicEngine *BS_Kernel::GetGfx() {
 /**
  * Returns a pointer to the active Sfx Service, or NULL if no Sfx service is active
  */
-BS_SoundEngine *BS_Kernel::GetSfx() {
-	return static_cast<BS_SoundEngine *>(GetService("sfx"));
+SoundEngine *BS_Kernel::GetSfx() {
+	return static_cast<SoundEngine *>(GetService("sfx"));
 }
 
 // -----------------------------------------------------------------------------
@@ -414,8 +414,8 @@ BS_SoundEngine *BS_Kernel::GetSfx() {
 /**
  * Returns a pointer to the active input service, or NULL if no input service is active
  */
-BS_InputEngine *BS_Kernel::GetInput() {
-	return static_cast<BS_InputEngine *>(GetService("input"));
+InputEngine *BS_Kernel::GetInput() {
+	return static_cast<InputEngine *>(GetService("input"));
 }
 
 // -----------------------------------------------------------------------------
@@ -423,8 +423,8 @@ BS_InputEngine *BS_Kernel::GetInput() {
 /**
  * Returns a pointer to the active package manager, or NULL if no manager is active
  */
-BS_PackageManager *BS_Kernel::GetPackage() {
-	return static_cast<BS_PackageManager *>(GetService("package"));
+PackageManager *BS_Kernel::GetPackage() {
+	return static_cast<PackageManager *>(GetService("package"));
 }
 
 // -----------------------------------------------------------------------------
@@ -432,8 +432,8 @@ BS_PackageManager *BS_Kernel::GetPackage() {
 /**
  * Returns a pointer to the script engine, or NULL if it is not active
  */
-BS_ScriptEngine *BS_Kernel::GetScript() {
-	return static_cast<BS_ScriptEngine *>(GetService("script"));
+ScriptEngine *BS_Kernel::GetScript() {
+	return static_cast<ScriptEngine *>(GetService("script"));
 }
 
 // -----------------------------------------------------------------------------

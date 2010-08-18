@@ -174,12 +174,12 @@ const luaL_reg LIBRARY_FUNCTIONS[] = {
 bool MoviePlayer::_RegisterScriptBindings() {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_ScriptEngine *pScript = static_cast<BS_ScriptEngine *>(pKernel->GetService("script"));
+	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->GetScriptObject());
 	BS_ASSERT(L);
 
-	if (!BS_LuaBindhelper::AddFunctionsToLib(L, LIBRARY_NAME, LIBRARY_FUNCTIONS)) return false;
+	if (!LuaBindhelper::AddFunctionsToLib(L, LIBRARY_NAME, LIBRARY_FUNCTIONS)) return false;
 
 	return true;
 }

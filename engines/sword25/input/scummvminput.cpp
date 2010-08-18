@@ -66,7 +66,7 @@ ScummVMInput::ScummVMInput(BS_Kernel *pKernel) :
 	m_LastLeftClickTime(0),
 	m_LastLeftClickMouseX(0),
 	m_LastLeftClickMouseY(0),
-	BS_InputEngine(pKernel) {
+	InputEngine(pKernel) {
 	memset(m_KeyboardState[0], 0, sizeof(m_KeyboardState[0]));
 	memset(m_KeyboardState[1], 0, sizeof(m_KeyboardState[1]));
 	m_LeftMouseState[0] = false;

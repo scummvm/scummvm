@@ -52,23 +52,23 @@ static Common::String normalizePath(const Common::String &path, const Common::St
 	return Common::normalizePath(wholePath, PATH_SEPARATOR);
 }
 
-BS_ScummVMPackageManager::BS_ScummVMPackageManager(BS_Kernel *kernelPtr) :
-	BS_PackageManager(kernelPtr),
+ScummVMPackageManager::ScummVMPackageManager(BS_Kernel *kernelPtr) :
+	PackageManager(kernelPtr),
 	_currentDirectory(PATH_SEPARATOR),
 	_rootFolder(ConfMan.get("path")) {
 }
 
-BS_ScummVMPackageManager::~BS_ScummVMPackageManager() {
+ScummVMPackageManager::~ScummVMPackageManager() {
 }
 
-BS_Service *BS_ScummVMPackageManager_CreateObject(BS_Kernel *kernelPtr) {
-	return new BS_ScummVMPackageManager(kernelPtr);
+BS_Service *ScummVMPackageManager_CreateObject(BS_Kernel *kernelPtr) {
+	return new ScummVMPackageManager(kernelPtr);
 }
 
 /**
  * Scans through the archive list for a specified file
  */
-Common::ArchiveMemberPtr BS_ScummVMPackageManager::GetArchiveMember(const Common::String &fileName) {
+Common::ArchiveMemberPtr ScummVMPackageManager::GetArchiveMember(const Common::String &fileName) {
 	// Loop through checking each archive
 	Common::List<ArchiveEntry *>::iterator i;
 	for (i = _archiveList.begin(); i != _archiveList.end(); ++i) {
@@ -91,7 +91,7 @@ Common::ArchiveMemberPtr BS_ScummVMPackageManager::GetArchiveMember(const Common
 	return Common::ArchiveMemberPtr();
 }
 
-bool BS_ScummVMPackageManager::LoadPackage(const Common::String &fileName, const Common::String &mountPosition) {
+bool ScummVMPackageManager::LoadPackage(const Common::String &fileName, const Common::String &mountPosition) {
 	Common::Archive *zipFile = Common::makeZipArchive(fileName);
 	if (zipFile == NULL) {
 		BS_LOG_ERRORLN("Unable to mount file \"%s\" to \"%s\"", fileName.c_str(), mountPosition.c_str());
@@ -111,7 +111,7 @@ bool BS_ScummVMPackageManager::LoadPackage(const Common::String &fileName, const
 	}
 }
 
-bool BS_ScummVMPackageManager::LoadDirectoryAsPackage(const Common::String &directoryName, const Common::String &mountPosition) {
+bool ScummVMPackageManager::LoadDirectoryAsPackage(const Common::String &directoryName, const Common::String &mountPosition) {
 	Common::FSNode directory(directoryName);
 	Common::Archive *folderArchive = new Common::FSDirectory(directory, 6);
 	if (!directory.exists() || (folderArchive == NULL)) {
@@ -130,7 +130,7 @@ bool BS_ScummVMPackageManager::LoadDirectoryAsPackage(const Common::String &dire
 	}
 }
 
-byte *BS_ScummVMPackageManager::GetFile(const Common::String &fileName, unsigned int *fileSizePtr) {
+byte *ScummVMPackageManager::GetFile(const Common::String &fileName, unsigned int *fileSizePtr) {
 	Common::SeekableReadStream *in;
 	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(fileName, _currentDirectory));
 	if (!fileNode)
@@ -152,21 +152,21 @@ byte *BS_ScummVMPackageManager::GetFile(const Common::String &fileName, unsigned
 	return buffer;
 }
 
-Common::String BS_ScummVMPackageManager::GetCurrentDirectory() {
+Common::String ScummVMPackageManager::GetCurrentDirectory() {
 	return _currentDirectory;
 }
 
-bool BS_ScummVMPackageManager::ChangeDirectory(const Common::String &directory) {
+bool ScummVMPackageManager::ChangeDirectory(const Common::String &directory) {
 	// Get the path elements for the file
 	_currentDirectory = normalizePath(directory, _currentDirectory);
 	return true;
 }
 
-Common::String BS_ScummVMPackageManager::GetAbsolutePath(const Common::String &fileName) {
+Common::String ScummVMPackageManager::GetAbsolutePath(const Common::String &fileName) {
 	return normalizePath(fileName, _currentDirectory);
 }
 
-unsigned int BS_ScummVMPackageManager::GetFileSize(const Common::String &fileName) {
+unsigned int ScummVMPackageManager::GetFileSize(const Common::String &fileName) {
 	Common::SeekableReadStream *in;
 	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(fileName, _currentDirectory));
 	if (!fileNode)
@@ -179,19 +179,19 @@ unsigned int BS_ScummVMPackageManager::GetFileSize(const Common::String &fileNam
 	return fileSize;
 }
 
-unsigned int BS_ScummVMPackageManager::GetFileType(const Common::String &fileName) {
+unsigned int ScummVMPackageManager::GetFileType(const Common::String &fileName) {
 	warning("STUB: BS_ScummVMPackageManager::GetFileType(%s)", fileName.c_str());
 
 	//return fileNode.isDirectory() ? BS_PackageManager::FT_DIRECTORY : BS_PackageManager::FT_FILE;
-	return BS_PackageManager::FT_FILE;
+	return PackageManager::FT_FILE;
 }
 
-bool BS_ScummVMPackageManager::FileExists(const Common::String &fileName) {
+bool ScummVMPackageManager::FileExists(const Common::String &fileName) {
 	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(fileName, _currentDirectory));
 	return fileNode;
 }
 
-int BS_ScummVMPackageManager::doSearch(Common::ArchiveMemberList &list, const Common::String &filter, const Common::String &path, unsigned int typeFilter) {
+int ScummVMPackageManager::doSearch(Common::ArchiveMemberList &list, const Common::String &filter, const Common::String &path, unsigned int typeFilter) {
 	Common::String normalizedFilter = normalizePath(filter, _currentDirectory);
 	int num = 0;
 
@@ -216,8 +216,8 @@ int BS_ScummVMPackageManager::doSearch(Common::ArchiveMemberList &list, const Co
 
 		// Create a list of the matching names
 		for (Common::ArchiveMemberList::iterator it = memberList.begin(); it != memberList.end(); ++it) {
-			if (((typeFilter &  BS_PackageManager::FT_DIRECTORY) && (*it)->getName().hasSuffix("/")) ||
-				((typeFilter & BS_PackageManager::FT_FILE) && !(*it)->getName().hasSuffix("/"))) {
+			if (((typeFilter & PackageManager::FT_DIRECTORY) && (*it)->getName().hasSuffix("/")) ||
+				((typeFilter & PackageManager::FT_FILE) && !(*it)->getName().hasSuffix("/"))) {
 				list.push_back(*it);
 				num++;
 			}

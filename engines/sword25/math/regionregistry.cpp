@@ -53,23 +53,23 @@ namespace Sword25 {
 // Implementation
 // -----------------------------------------------------------------------------
 
-Common::SharedPtr<BS_RegionRegistry> BS_RegionRegistry::m_InstancePtr;
+Common::SharedPtr<RegionRegistry> RegionRegistry::m_InstancePtr;
 
 // -----------------------------------------------------------------------------
 
-void BS_RegionRegistry::LogErrorLn(const char *Message) const {
+void RegionRegistry::LogErrorLn(const char *Message) const {
 	BS_LOG_ERRORLN(Message);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_RegionRegistry::LogWarningLn(const char *Message) const {
+void RegionRegistry::LogWarningLn(const char *Message) const {
 	BS_LOG_WARNINGLN(Message);
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_RegionRegistry::Persist(BS_OutputPersistenceBlock &Writer) {
+bool RegionRegistry::Persist(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Write out the next handle
@@ -95,7 +95,7 @@ bool BS_RegionRegistry::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_RegionRegistry::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool RegionRegistry::Unpersist(BS_InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// Read in the next handle
@@ -116,7 +116,7 @@ bool BS_RegionRegistry::Unpersist(BS_InputPersistenceBlock &Reader) {
 		Reader.Read(Handle);
 
 		// BS_Region restore
-		Result &= BS_Region::Create(Reader, Handle) != 0;
+		Result &= Region::Create(Reader, Handle) != 0;
 	}
 
 	return Reader.IsGood() && Result;

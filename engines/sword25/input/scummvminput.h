@@ -47,7 +47,7 @@ namespace Sword25 {
 class BS_Kernel;
 
 /// Class definitions
-class ScummVMInput : public BS_InputEngine {
+class ScummVMInput : public InputEngine {
 public:
 	ScummVMInput(BS_Kernel *pKernel);
 	virtual ~ScummVMInput();

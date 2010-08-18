@@ -46,7 +46,7 @@ BS_Resource::BS_Resource(const Common::String &FileName, RESOURCE_TYPES Type) :
 	_RefCount(0) {
 	BS_ASSERT(BS_Kernel::GetInstance()->GetService("package"));
 
-	_FileName = static_cast<BS_PackageManager *>(BS_Kernel::GetInstance()->GetService("package"))->GetAbsolutePath(FileName);
+	_FileName = static_cast<PackageManager *>(BS_Kernel::GetInstance()->GetService("package"))->GetAbsolutePath(FileName);
 	_FileNameHash = BS_String::GetHash(FileName);
 }
 

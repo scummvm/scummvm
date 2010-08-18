@@ -89,7 +89,7 @@ FontResource::FontResource(BS_Kernel *pKernel, const Common::String &FileName) :
 	{
 		// Pointer auf den Package-Manager bekommen
 		BS_ASSERT(_pKernel);
-		BS_PackageManager *pPackage = static_cast<BS_PackageManager *>(_pKernel->GetService("package"));
+		PackageManager *pPackage = static_cast<PackageManager *>(_pKernel->GetService("package"));
 		BS_ASSERT(pPackage);
 
 		// Absoluten, eindeutigen Pfad bestimmen
@@ -142,7 +142,7 @@ FontResource::FontResource(BS_Kernel *pKernel, const Common::String &FileName) :
 bool FontResource::_ParseXMLDocument(const Common::String &FileName, TiXmlDocument &Doc) const {
 	// Pointer auf den Package-Manager bekommen
 	BS_ASSERT(_pKernel);
-	BS_PackageManager *pPackage = static_cast<BS_PackageManager *>(_pKernel->GetService("package"));
+	PackageManager *pPackage = static_cast<PackageManager *>(_pKernel->GetService("package"));
 	BS_ASSERT(pPackage);
 
 	// Die Daten werden zunächst über den Package-Manager gelesen und dann in einen um ein Byte größeren Buffer kopiert

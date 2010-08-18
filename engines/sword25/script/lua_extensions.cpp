@@ -72,11 +72,11 @@ static const luaL_reg GLOBAL_FUNCTIONS[] = {
 
 // -----------------------------------------------------------------------------
 
-bool BS_LuaScriptEngine::RegisterStandardLibExtensions() {
+bool LuaScriptEngine::RegisterStandardLibExtensions() {
 	lua_State *L = m_State;
 	BS_ASSERT(m_State);
 
-	if (!BS_LuaBindhelper::AddFunctionsToLib(L, "", GLOBAL_FUNCTIONS)) return false;
+	if (!LuaBindhelper::AddFunctionsToLib(L, "", GLOBAL_FUNCTIONS)) return false;
 
 	return true;
 }

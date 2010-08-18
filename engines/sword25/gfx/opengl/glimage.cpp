@@ -57,7 +57,7 @@ GLImage::GLImage(const Common::String &Filename, bool &Result) :
 	m_Height(0) {
 	Result = false;
 
-	BS_PackageManager *pPackage = static_cast<BS_PackageManager *>(BS_Kernel::GetInstance()->GetService("package"));
+	PackageManager *pPackage = static_cast<PackageManager *>(BS_Kernel::GetInstance()->GetService("package"));
 	BS_ASSERT(pPackage);
 
 	_backSurface = (static_cast<GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx")))->getSurface();

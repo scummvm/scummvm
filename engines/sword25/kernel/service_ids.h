@@ -49,13 +49,13 @@
 
 namespace Sword25 {
 
-BS_Service *BS_OpenGLGfx_CreateObject(BS_Kernel *pKernel);
-BS_Service *BS_ScummVMPackageManager_CreateObject(BS_Kernel *pKernel);
+BS_Service *OpenGLGfx_CreateObject(BS_Kernel *pKernel);
+BS_Service *ScummVMPackageManager_CreateObject(BS_Kernel *pKernel);
 BS_Service *ScummVMInput_CreateObject(BS_Kernel *pKernel);
-BS_Service *BS_FMODExSound_CreateObject(BS_Kernel *pKernel);
-BS_Service *BS_LuaScriptEngine_CreateObject(BS_Kernel *pKernel);
-BS_Service *BS_Geometry_CreateObject(BS_Kernel *pKernel);
-BS_Service *BS_OggTheora_CreateObject(BS_Kernel *pKernel);
+BS_Service *FMODExSound_CreateObject(BS_Kernel *pKernel);
+BS_Service *LuaScriptEngine_CreateObject(BS_Kernel *pKernel);
+BS_Service *Geometry_CreateObject(BS_Kernel *pKernel);
+BS_Service *OggTheora_CreateObject(BS_Kernel *pKernel);
 
 // Services are recorded in this table
 const BS_ServiceInfo BS_SERVICE_TABLE[] = {
@@ -64,13 +64,13 @@ const BS_ServiceInfo BS_SERVICE_TABLE[] = {
 	// of the class and returns it
 	// Example:
 	// BS_ServiceInfo("Superclass", "Service", CreateMethod)
-	BS_ServiceInfo("gfx", "opengl", BS_OpenGLGfx_CreateObject),
-	BS_ServiceInfo("package", "archiveFS", BS_ScummVMPackageManager_CreateObject),
+	BS_ServiceInfo("gfx", "opengl", OpenGLGfx_CreateObject),
+	BS_ServiceInfo("package", "archiveFS", ScummVMPackageManager_CreateObject),
 	BS_ServiceInfo("input", "winapi", ScummVMInput_CreateObject),
-	BS_ServiceInfo("sfx", "fmodex", BS_FMODExSound_CreateObject),
-	BS_ServiceInfo("script", "lua", BS_LuaScriptEngine_CreateObject),
-	BS_ServiceInfo("geometry", "std", BS_Geometry_CreateObject),
-	BS_ServiceInfo("fmv", "oggtheora", BS_OggTheora_CreateObject),
+	BS_ServiceInfo("sfx", "fmodex", FMODExSound_CreateObject),
+	BS_ServiceInfo("script", "lua", LuaScriptEngine_CreateObject),
+	BS_ServiceInfo("geometry", "std", Geometry_CreateObject),
+	BS_ServiceInfo("fmv", "oggtheora", OggTheora_CreateObject),
 };
 
 const unsigned int BS_SERVICE_COUNT = sizeof(BS_SERVICE_TABLE) / sizeof(BS_ServiceInfo);

@@ -65,15 +65,15 @@ using namespace Lua;
 // Constructor / Destructor
 // -----------------------------------------------------------------------------
 
-BS_LuaScriptEngine::BS_LuaScriptEngine(BS_Kernel *KernelPtr) :
-	BS_ScriptEngine(KernelPtr),
+LuaScriptEngine::LuaScriptEngine(BS_Kernel *KernelPtr) :
+	ScriptEngine(KernelPtr),
 	m_State(0),
 	m_PcallErrorhandlerRegistryIndex(0) {
 }
 
 // -----------------------------------------------------------------------------
 
-BS_LuaScriptEngine::~BS_LuaScriptEngine() {
+LuaScriptEngine::~LuaScriptEngine() {
 	// Lua de-initialisation
 	if (m_State)
 		lua_close(m_State);
@@ -81,8 +81,8 @@ BS_LuaScriptEngine::~BS_LuaScriptEngine() {
 
 // -----------------------------------------------------------------------------
 
-BS_Service *BS_LuaScriptEngine_CreateObject(BS_Kernel *KernelPtr) {
-	return new BS_LuaScriptEngine(KernelPtr);
+BS_Service *LuaScriptEngine_CreateObject(BS_Kernel *KernelPtr) {
+	return new LuaScriptEngine(KernelPtr);
 }
 
 // -----------------------------------------------------------------------------
@@ -96,7 +96,7 @@ int PanicCB(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_LuaScriptEngine::Init() {
+bool LuaScriptEngine::Init() {
 	// Lua-State initialisation, as well as standard libaries initialisation
 	m_State = luaL_newstate();
 	if (!m_State || ! RegisterStandardLibs() || !RegisterStandardLibExtensions()) {
@@ -146,14 +146,14 @@ bool BS_LuaScriptEngine::Init() {
 
 // -----------------------------------------------------------------------------
 
-bool BS_LuaScriptEngine::ExecuteFile(const Common::String &FileName) {
+bool LuaScriptEngine::ExecuteFile(const Common::String &FileName) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(m_State);
 #endif
 	debug(2, "ExecuteFile(%s)", FileName.c_str());
 
 	// Get a pointer to the package manager
-	BS_PackageManager *pPackage = static_cast<BS_PackageManager *>(BS_Kernel::GetInstance()->GetService("package"));
+	PackageManager *pPackage = static_cast<PackageManager *>(BS_Kernel::GetInstance()->GetService("package"));
 	BS_ASSERT(pPackage);
 
 	// File read
@@ -189,7 +189,7 @@ bool BS_LuaScriptEngine::ExecuteFile(const Common::String &FileName) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_LuaScriptEngine::ExecuteString(const Common::String &Code) {
+bool LuaScriptEngine::ExecuteString(const Common::String &Code) {
 	return ExecuteBuffer((byte *)Code.c_str(), Code.size(), "???");
 }
 
@@ -212,7 +212,7 @@ void RemoveForbiddenFunctions(lua_State *L) {
 }
 }
 
-bool BS_LuaScriptEngine::RegisterStandardLibs() {
+bool LuaScriptEngine::RegisterStandardLibs() {
 	luaL_openlibs(m_State);
 	RemoveForbiddenFunctions(m_State);
 	return true;
@@ -220,7 +220,7 @@ bool BS_LuaScriptEngine::RegisterStandardLibs() {
 
 // -----------------------------------------------------------------------------
 
-bool BS_LuaScriptEngine::ExecuteBuffer(const byte *Data, unsigned int Size, const Common::String &Name) const {
+bool LuaScriptEngine::ExecuteBuffer(const byte *Data, unsigned int Size, const Common::String &Name) const {
 	// Compile buffer
 	if (luaL_loadbuffer(m_State, (const char *)Data, Size, Name.c_str()) != 0) {
 		BS_LOG_ERRORLN("Couldn't compile \"%s\":\n%s", Name.c_str(), lua_tostring(m_State, -1));
@@ -251,7 +251,7 @@ bool BS_LuaScriptEngine::ExecuteBuffer(const byte *Data, unsigned int Size, cons
 
 // -----------------------------------------------------------------------------
 
-void BS_LuaScriptEngine::SetCommandLine(const Common::StringArray &CommandLineParameters) {
+void LuaScriptEngine::SetCommandLine(const Common::StringArray &CommandLineParameters) {
 	debug(0, "SetCommandLine()");
 
 	lua_newtable(m_State);
@@ -424,7 +424,7 @@ int Chunkwriter(lua_State *L, const void *p, size_t sz, void *ud) {
 }
 }
 
-bool BS_LuaScriptEngine::Persist(BS_OutputPersistenceBlock &Writer) {
+bool LuaScriptEngine::Persist(BS_OutputPersistenceBlock &Writer) {
 	// Empty the Lua stack. pluto_persist() xepects that the stack is empty except for its parameters
 	lua_settop(m_State, 0);
 
@@ -516,7 +516,7 @@ void ClearGlobalTable(lua_State *L, const char **Exceptions) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_LuaScriptEngine::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool LuaScriptEngine::Unpersist(BS_InputPersistenceBlock &Reader) {
 	// Empty the Lua stack. pluto_persist() xepects that the stack is empty except for its parameters
 	lua_settop(m_State, 0);
 

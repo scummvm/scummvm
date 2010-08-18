@@ -46,69 +46,69 @@ namespace Sword25 {
 // Constructor / Destructor
 // ------------------------
 
-BS_Region::BS_Region() : m_Valid(false), m_Type(RT_REGION) {
-	BS_RegionRegistry::GetInstance().RegisterObject(this);
+Region::Region() : m_Valid(false), m_Type(RT_REGION) {
+	RegionRegistry::GetInstance().RegisterObject(this);
 }
 
 // -----------------------------------------------------------------------------
 
-BS_Region::BS_Region(BS_InputPersistenceBlock &Reader, unsigned int Handle) : m_Valid(false), m_Type(RT_REGION) {
-	BS_RegionRegistry::GetInstance().RegisterObject(this, Handle);
+Region::Region(BS_InputPersistenceBlock &Reader, unsigned int Handle) : m_Valid(false), m_Type(RT_REGION) {
+	RegionRegistry::GetInstance().RegisterObject(this, Handle);
 	Unpersist(Reader);
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_Region::Create(REGION_TYPE Type) {
-	BS_Region *RegionPtr = NULL;
+unsigned int Region::Create(REGION_TYPE Type) {
+	Region *RegionPtr = NULL;
 	switch (Type) {
 	case RT_REGION:
-		RegionPtr = new BS_Region();
+		RegionPtr = new Region();
 		break;
 
 	case RT_WALKREGION:
-		RegionPtr = new BS_WalkRegion();
+		RegionPtr = new WalkRegion();
 		break;
 
 	default:
 		BS_ASSERT(true);
 	}
 
-	return BS_RegionRegistry::GetInstance().ResolvePtr(RegionPtr);
+	return RegionRegistry::GetInstance().ResolvePtr(RegionPtr);
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_Region::Create(BS_InputPersistenceBlock &Reader, unsigned int Handle) {
+unsigned int Region::Create(BS_InputPersistenceBlock &Reader, unsigned int Handle) {
 	// Read type
 	unsigned int Type;
 	Reader.Read(Type);
 
 	// Depending on the type, create a new BS_Region or BS_WalkRegion object
-	BS_Region *RegionPtr = NULL;
+	Region *RegionPtr = NULL;
 	if (Type == RT_REGION) {
-		RegionPtr = new BS_Region(Reader, Handle);
+		RegionPtr = new Region(Reader, Handle);
 	} else if (Type == RT_WALKREGION) {
-		RegionPtr = new BS_WalkRegion(Reader, Handle);
+		RegionPtr = new WalkRegion(Reader, Handle);
 	} else {
 		BS_ASSERT(false);
 	}
 
-	return BS_RegionRegistry::GetInstance().ResolvePtr(RegionPtr);
+	return RegionRegistry::GetInstance().ResolvePtr(RegionPtr);
 }
 
 // -----------------------------------------------------------------------------
 
-BS_Region::~BS_Region() {
-	BS_RegionRegistry::GetInstance().DeregisterObject(this);
+Region::~Region() {
+	RegionRegistry::GetInstance().DeregisterObject(this);
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_Region::Init(const BS_Polygon &Contour, const Common::Array<BS_Polygon> *pHoles) {
+bool Region::Init(const Polygon &Contour, const Common::Array<Polygon> *pHoles) {
 	// Reset object state
 	m_Valid = false;
-	m_Position = BS_Vertex(0, 0);
+	m_Position = Vertex(0, 0);
 	m_Polygons.clear();
 
 	// Reserve sufficient  space for countour and holes in the polygon list
@@ -118,7 +118,7 @@ bool BS_Region::Init(const BS_Polygon &Contour, const Common::Array<BS_Polygon> 
 		m_Polygons.reserve(1);
 
 	// The first polygon will be the contour
-	m_Polygons.push_back(BS_Polygon());
+	m_Polygons.push_back(Polygon());
 	m_Polygons[0].Init(Contour.VertexCount, Contour.Vertecies);
 	// Make sure that the Vertecies in the Contour are arranged in a clockwise direction
 	m_Polygons[0].EnsureCWOrder();
@@ -126,7 +126,7 @@ bool BS_Region::Init(const BS_Polygon &Contour, const Common::Array<BS_Polygon> 
 	// Place the hole polygons in the following positions
 	if (pHoles) {
 		for (unsigned int i = 0; i < pHoles->size(); ++i) {
-			m_Polygons.push_back(BS_Polygon());
+			m_Polygons.push_back(Polygon());
 			m_Polygons[i + 1].Init((*pHoles)[i].VertexCount, (*pHoles)[i].Vertecies);
 			m_Polygons[i + 1].EnsureCWOrder();
 		}
@@ -142,7 +142,7 @@ bool BS_Region::Init(const BS_Polygon &Contour, const Common::Array<BS_Polygon> 
 
 // -----------------------------------------------------------------------------
 
-void BS_Region::UpdateBoundingBox() {
+void Region::UpdateBoundingBox() {
 	if (m_Polygons[0].VertexCount) {
 		int MinX = m_Polygons[0].Vertecies[0].X;
 		int MaxX = m_Polygons[0].Vertecies[0].X;
@@ -163,12 +163,12 @@ void BS_Region::UpdateBoundingBox() {
 // Position Changes
 // ----------------
 
-void BS_Region::SetPos(int X, int Y) {
+void Region::SetPos(int X, int Y) {
 	// Calculate the difference between the old and new position
-	BS_Vertex Delta(X - m_Position.X, Y - m_Position.Y);
+	Vertex Delta(X - m_Position.X, Y - m_Position.Y);
 
 	// Save the new position
-	m_Position = BS_Vertex(X, Y);
+	m_Position = Vertex(X, Y);
 
 	// Move all the vertecies
 	for (unsigned int i = 0; i < m_Polygons.size(); ++i) {
@@ -181,20 +181,20 @@ void BS_Region::SetPos(int X, int Y) {
 
 // -----------------------------------------------------------------------------
 
-void BS_Region::SetPosX(int X) {
+void Region::SetPosX(int X) {
 	SetPos(X, m_Position.Y);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_Region::SetPosY(int Y) {
+void Region::SetPosY(int Y) {
 	SetPos(m_Position.X, Y);
 }
 
 // Point-Region Tests
 // ------------------
 
-bool BS_Region::IsPointInRegion(int X, int Y) const {
+bool Region::IsPointInRegion(int X, int Y) const {
 	// Test whether the point is in the bounding box
 	if (m_BoundingBox.IsPointInRect(X, Y)) {
 		// Test whether the point is in the contour
@@ -214,13 +214,13 @@ bool BS_Region::IsPointInRegion(int X, int Y) const {
 
 // -----------------------------------------------------------------------------
 
-bool BS_Region::IsPointInRegion(const BS_Vertex &Vertex) const {
+bool Region::IsPointInRegion(const Vertex &Vertex) const {
 	return IsPointInRegion(Vertex.X, Vertex.Y);
 }
 
 // -----------------------------------------------------------------------------
 
-BS_Vertex BS_Region::FindClosestRegionPoint(const BS_Vertex &Point) const {
+Vertex Region::FindClosestRegionPoint(const Vertex &Point) const {
 	// Determine whether the point is inside a hole. If that is the case, the closest
 	// point on the edge of the hole is determined
 	int PolygonIdx = 0;
@@ -233,18 +233,18 @@ BS_Vertex BS_Region::FindClosestRegionPoint(const BS_Vertex &Point) const {
 		}
 	}
 
-	const BS_Polygon &Polygon = m_Polygons[PolygonIdx];
+	const Polygon &Polygon = m_Polygons[PolygonIdx];
 
 	BS_ASSERT(Polygon.VertexCount > 1);
 
 	// For each line of the polygon, calculate the point that is cloest to the given point
 	// The point of this set with the smallest distance to the given point is the result.
-	BS_Vertex ClosestVertex = FindClosestPointOnLine(Polygon.Vertecies[0], Polygon.Vertecies[1], Point);
+	Vertex ClosestVertex = FindClosestPointOnLine(Polygon.Vertecies[0], Polygon.Vertecies[1], Point);
 	int ClosestVertexDistance2 = ClosestVertex.Distance(Point);
 	for (int i = 1; i < Polygon.VertexCount; ++i) {
 		int j = (i + 1) % Polygon.VertexCount;
 
-		BS_Vertex CurVertex = FindClosestPointOnLine(Polygon.Vertecies[i], Polygon.Vertecies[j], Point);
+		Vertex CurVertex = FindClosestPointOnLine(Polygon.Vertecies[i], Polygon.Vertecies[j], Point);
 		if (CurVertex.Distance(Point) < ClosestVertexDistance2) {
 			ClosestVertex = CurVertex;
 			ClosestVertexDistance2 = CurVertex.Distance(Point);
@@ -258,22 +258,22 @@ BS_Vertex BS_Region::FindClosestRegionPoint(const BS_Vertex &Point) const {
 	else {
 		// Try to construct a point within the region - 8 points are tested in the immediate vacinity
 		// of the point
-		if (IsPointInRegion(ClosestVertex + BS_Vertex(-2, -2)))
-			return ClosestVertex + BS_Vertex(-2, -2);
-		else if (IsPointInRegion(ClosestVertex + BS_Vertex(0, -2)))
-			return ClosestVertex + BS_Vertex(0, -2);
-		else if (IsPointInRegion(ClosestVertex + BS_Vertex(2, -2)))
-			return ClosestVertex + BS_Vertex(2, -2);
-		else if (IsPointInRegion(ClosestVertex + BS_Vertex(-2, 0)))
-			return ClosestVertex + BS_Vertex(-2, 0);
-		else if (IsPointInRegion(ClosestVertex + BS_Vertex(0, 2)))
-			return ClosestVertex + BS_Vertex(0, 2);
-		else if (IsPointInRegion(ClosestVertex + BS_Vertex(-2, 2)))
-			return ClosestVertex + BS_Vertex(-2, 2);
-		else if (IsPointInRegion(ClosestVertex + BS_Vertex(-2, 0)))
-			return ClosestVertex + BS_Vertex(2, 2);
-		else if (IsPointInRegion(ClosestVertex + BS_Vertex(2, 2)))
-			return ClosestVertex + BS_Vertex(2, 2);
+		if (IsPointInRegion(ClosestVertex + Vertex(-2, -2)))
+			return ClosestVertex + Vertex(-2, -2);
+		else if (IsPointInRegion(ClosestVertex + Vertex(0, -2)))
+			return ClosestVertex + Vertex(0, -2);
+		else if (IsPointInRegion(ClosestVertex + Vertex(2, -2)))
+			return ClosestVertex + Vertex(2, -2);
+		else if (IsPointInRegion(ClosestVertex + Vertex(-2, 0)))
+			return ClosestVertex + Vertex(-2, 0);
+		else if (IsPointInRegion(ClosestVertex + Vertex(0, 2)))
+			return ClosestVertex + Vertex(0, 2);
+		else if (IsPointInRegion(ClosestVertex + Vertex(-2, 2)))
+			return ClosestVertex + Vertex(-2, 2);
+		else if (IsPointInRegion(ClosestVertex + Vertex(-2, 0)))
+			return ClosestVertex + Vertex(2, 2);
+		else if (IsPointInRegion(ClosestVertex + Vertex(2, 2)))
+			return ClosestVertex + Vertex(2, 2);
 
 		// If no point could be found that way that lies within the region, find the next point
 		ClosestVertex = Polygon.Vertecies[0];
@@ -295,7 +295,7 @@ BS_Vertex BS_Region::FindClosestRegionPoint(const BS_Vertex &Point) const {
 
 // -----------------------------------------------------------------------------
 
-BS_Vertex BS_Region::FindClosestPointOnLine(const BS_Vertex &LineStart, const BS_Vertex &LineEnd, const BS_Vertex Point) const {
+Vertex Region::FindClosestPointOnLine(const Vertex &LineStart, const Vertex &LineEnd, const Vertex Point) const {
 	float Vector1X = static_cast<float>(Point.X - LineStart.X);
 	float Vector1Y = static_cast<float>(Point.Y - LineStart.Y);
 	float Vector2X = static_cast<float>(LineEnd.X - LineStart.X);
@@ -310,7 +310,7 @@ BS_Vertex BS_Region::FindClosestPointOnLine(const BS_Vertex &LineStart, const BS
 	if (Dot <= 0) return LineStart;
 	if (Dot >= Distance) return LineEnd;
 
-	BS_Vertex Vector3(static_cast<int>(Vector2X * Dot + 0.5f), static_cast<int>(Vector2Y * Dot + 0.5f));
+	Vertex Vector3(static_cast<int>(Vector2X * Dot + 0.5f), static_cast<int>(Vector2Y * Dot + 0.5f));
 	return LineStart + Vector3;
 }
 
@@ -318,11 +318,11 @@ BS_Vertex BS_Region::FindClosestPointOnLine(const BS_Vertex &LineStart, const BS
 // Line of Sight
 // -----------------------------------------------------------------------------
 
-bool BS_Region::IsLineOfSight(const BS_Vertex &a, const BS_Vertex &b) const {
+bool Region::IsLineOfSight(const Vertex &a, const Vertex &b) const {
 	BS_ASSERT(m_Polygons.size());
 
 	// The line must be within the contour polygon, and outside of any hole polygons
-	Common::Array<BS_Polygon>::const_iterator iter = m_Polygons.begin();
+	Common::Array<Polygon>::const_iterator iter = m_Polygons.begin();
 	if (!(*iter).IsLineInterior(a, b)) return false;
 	for (iter++; iter != m_Polygons.end(); iter++)
 		if (!(*iter).IsLineExterior(a, b)) return false;
@@ -334,7 +334,7 @@ bool BS_Region::IsLineOfSight(const BS_Vertex &a, const BS_Vertex &b) const {
 // Persistence
 // -----------------------------------------------------------------------------
 
-bool BS_Region::Persist(BS_OutputPersistenceBlock &Writer) {
+bool Region::Persist(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	Writer.Write(static_cast<unsigned int>(m_Type));
@@ -343,7 +343,7 @@ bool BS_Region::Persist(BS_OutputPersistenceBlock &Writer) {
 	Writer.Write(m_Position.Y);
 
 	Writer.Write(m_Polygons.size());
-	Common::Array<BS_Polygon>::iterator It = m_Polygons.begin();
+	Common::Array<Polygon>::iterator It = m_Polygons.begin();
 	while (It != m_Polygons.end()) {
 		Result &= It->Persist(Writer);
 		++It;
@@ -359,7 +359,7 @@ bool BS_Region::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_Region::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool Region::Unpersist(BS_InputPersistenceBlock &Reader) {
 	Reader.Read(m_Valid);
 	Reader.Read(m_Position.X);
 	Reader.Read(m_Position.Y);
@@ -368,7 +368,7 @@ bool BS_Region::Unpersist(BS_InputPersistenceBlock &Reader) {
 	unsigned int PolygonCount;
 	Reader.Read(PolygonCount);
 	for (unsigned int i = 0; i < PolygonCount; ++i) {
-		m_Polygons.push_back(BS_Polygon(Reader));
+		m_Polygons.push_back(Polygon(Reader));
 	}
 
 	Reader.Read(m_BoundingBox.left);
@@ -381,11 +381,11 @@ bool BS_Region::Unpersist(BS_InputPersistenceBlock &Reader) {
 
 // -----------------------------------------------------------------------------
 
-BS_Vertex BS_Region::GetCentroid() const {
+Vertex Region::GetCentroid() const {
 	if (m_Polygons.size() > 0)
 		return m_Polygons[0].GetCentroid();
 	return
-	    BS_Vertex();
+	    Vertex();
 }
 
 } // End of namespace Sword25

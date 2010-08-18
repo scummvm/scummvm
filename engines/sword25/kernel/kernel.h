@@ -62,10 +62,10 @@ namespace Sword25 {
 // Class definitions
 class BS_Service;
 class GraphicEngine;
-class BS_ScriptEngine;
-class BS_SoundEngine;
-class BS_InputEngine;
-class BS_PackageManager;
+class ScriptEngine;
+class SoundEngine;
+class InputEngine;
+class PackageManager;
 class MoviePlayer;
 
 /**
@@ -194,19 +194,19 @@ public:
 	/**
 	 * Returns a pointer to the active Sfx Service, or NULL if no Sfx service is active
 	 */
-	BS_SoundEngine *GetSfx();
+	SoundEngine *GetSfx();
 	/**
 	 * Returns a pointer to the active input service, or NULL if no input service is active
 	 */
-	BS_InputEngine *GetInput();
+	InputEngine *GetInput();
 	/**
 	 * Returns a pointer to the active package manager, or NULL if no manager is active
 	 */
-	BS_PackageManager *GetPackage();
+	PackageManager *GetPackage();
 	/**
 	 * Returns a pointer to the script engine, or NULL if it is not active
 	 */
-	BS_ScriptEngine *GetScript();
+	ScriptEngine *GetScript();
 	/**
 	 * Returns a pointer to the movie player, or NULL if it is not active
 	 */

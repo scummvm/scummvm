@@ -57,7 +57,7 @@
 
 namespace Sword25 {
 
-class BS_Line {
+class Line {
 public:
 	/**
 	 * Determines whether a piont is left of a line
@@ -67,11 +67,11 @@ public:
 	 * @return          Returns true if the point is to the left of the line.
 	 * If the point is to the right of the line or on the line, false is returned.
 	 */
-	static bool IsVertexLeft(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
+	static bool IsVertexLeft(const Vertex &a, const Vertex &b, const Vertex &c) {
 		return _TriangleArea2(a, b, c) > 0;
 	}
 
-	static bool IsVertexLeftOn(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
+	static bool IsVertexLeftOn(const Vertex &a, const Vertex &b, const Vertex &c) {
 		return _TriangleArea2(a, b, c) >= 0;
 	}
 
@@ -83,11 +83,11 @@ public:
 	 * @return          Returns true if the point is to the right of the line.
 	 * If the point is to the right of the line or on the line, false is returned.
 	 */
-	static bool IsVertexRight(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
+	static bool IsVertexRight(const Vertex &a, const Vertex &b, const Vertex &c) {
 		return _TriangleArea2(a, b, c) < 0;
 	}
 
-	static bool IsVertexRightOn(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
+	static bool IsVertexRightOn(const Vertex &a, const Vertex &b, const Vertex &c) {
 		return _TriangleArea2(a, b, c) <= 0;
 	}
 
@@ -98,7 +98,7 @@ public:
 	 * @param c         The test point
 	 * @return          Returns true if the point is on the line, false otherwise.
 	 */
-	static bool IsVertexOn(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
+	static bool IsVertexOn(const Vertex &a, const Vertex &b, const Vertex &c) {
 		return _TriangleArea2(a, b, c) == 0;
 	}
 
@@ -117,7 +117,7 @@ public:
 	 * RIGHT is returned if the point is to the right of the line.
 	 * ON is returned if the point is on the line.
 	 */
-	static VERTEX_CLASSIFICATION ClassifyVertexToLine(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
+	static VERTEX_CLASSIFICATION ClassifyVertexToLine(const Vertex &a, const Vertex &b, const Vertex &c) {
 		int Area = _TriangleArea2(a, b, c);
 		if (Area > 0) return LEFT;
 		if (Area < 0) return RIGHT;
@@ -132,7 +132,7 @@ public:
 	 * @param d         The end point of the second line
 	 * @remark          In cases where a line only touches the other, false is returned (improper intersection)
 	 */
-	static bool DoesIntersectProperly(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c, const BS_Vertex &d) {
+	static bool DoesIntersectProperly(const Vertex &a, const Vertex &b, const Vertex &c, const Vertex &d) {
 		VERTEX_CLASSIFICATION Class1 = ClassifyVertexToLine(a, b, c);
 		VERTEX_CLASSIFICATION Class2 = ClassifyVertexToLine(a, b, d);
 		VERTEX_CLASSIFICATION Class3 = ClassifyVertexToLine(c, d, a);
@@ -149,7 +149,7 @@ public:
 	 * @param b         The end point of a line
 	 * @param c         The test point
 	 */
-	static bool IsOnLine(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
+	static bool IsOnLine(const Vertex &a, const Vertex &b, const Vertex &c) {
 		// The items must all be Collinear, otherwise don't bothering testing the point
 		if (_TriangleArea2(a, b, c) != 0) return false;
 
@@ -167,7 +167,7 @@ public:
 		}
 	}
 
-	static bool IsOnLineStrict(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
+	static bool IsOnLineStrict(const Vertex &a, const Vertex &b, const Vertex &c) {
 		// The items must all be Collinear, otherwise don't bothering testing the point
 		if (_TriangleArea2(a, b, c) != 0) return false;
 
@@ -192,7 +192,7 @@ private:
 	 * The result is positive if the points are arrange counterclockwise,
 	 * and negative if they are arranged counter-clockwise.
 	 */
-	static int _TriangleArea2(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
+	static int _TriangleArea2(const Vertex &a, const Vertex &b, const Vertex &c) {
 		return a.X * b.Y - a.Y * b.X +
 		       a.Y * c.X - a.X * c.Y +
 		       b.X * c.Y - c.X * b.Y;

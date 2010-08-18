@@ -59,14 +59,14 @@ class BS_InputPersistenceBlock;
 // Class declaration
 // -----------------------------------------------------------------------------
 
-class BS_ScriptEngine : public BS_Service, public BS_Persistable {
+class ScriptEngine : public BS_Service, public BS_Persistable {
 public:
 	// -----------------------------------------------------------------------------
 	// Constructor / destructor
 	// -----------------------------------------------------------------------------
 
-	BS_ScriptEngine(BS_Kernel *KernelPtr) : BS_Service(KernelPtr) {};
-	virtual ~BS_ScriptEngine() {};
+	ScriptEngine(BS_Kernel *KernelPtr) : BS_Service(KernelPtr) {};
+	virtual ~ScriptEngine() {};
 
 	// -----------------------------------------------------------------------------
 	// This method must be implemented by the script engine

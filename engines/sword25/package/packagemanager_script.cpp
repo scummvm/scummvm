@@ -49,10 +49,10 @@ using namespace Lua;
 
 // -----------------------------------------------------------------------------
 
-static BS_PackageManager *GetPM() {
+static PackageManager *GetPM() {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_PackageManager *pPM = static_cast<BS_PackageManager *>(pKernel->GetService("package"));
+	PackageManager *pPM = static_cast<PackageManager *>(pKernel->GetService("package"));
 	BS_ASSERT(pPM);
 	return pPM;
 }
@@ -60,7 +60,7 @@ static BS_PackageManager *GetPM() {
 // -----------------------------------------------------------------------------
 
 static int LoadPackage(lua_State *L) {
-	BS_PackageManager *pPM = GetPM();
+	PackageManager *pPM = GetPM();
 
 	lua_pushbooleancpp(L, pPM->LoadPackage(luaL_checkstring(L, 1), luaL_checkstring(L, 2)));
 
@@ -70,7 +70,7 @@ static int LoadPackage(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int LoadDirectoryAsPackage(lua_State *L) {
-	BS_PackageManager *pPM = GetPM();
+	PackageManager *pPM = GetPM();
 
 	lua_pushbooleancpp(L, pPM->LoadDirectoryAsPackage(luaL_checkstring(L, 1), luaL_checkstring(L, 2)));
 
@@ -80,7 +80,7 @@ static int LoadDirectoryAsPackage(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int GetCurrentDirectory(lua_State *L) {
-	BS_PackageManager *pPM = GetPM();
+	PackageManager *pPM = GetPM();
 
 	lua_pushstring(L, pPM->GetCurrentDirectory().c_str());
 
@@ -90,7 +90,7 @@ static int GetCurrentDirectory(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int ChangeDirectory(lua_State *L) {
-	BS_PackageManager *pPM = GetPM();
+	PackageManager *pPM = GetPM();
 
 	lua_pushbooleancpp(L, pPM->ChangeDirectory(luaL_checkstring(L, 1)));
 
@@ -100,7 +100,7 @@ static int ChangeDirectory(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int GetAbsolutePath(lua_State *L) {
-	BS_PackageManager *pPM = GetPM();
+	PackageManager *pPM = GetPM();
 
 	lua_pushstring(L, pPM->GetAbsolutePath(luaL_checkstring(L, 1)).c_str());
 
@@ -110,7 +110,7 @@ static int GetAbsolutePath(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int GetFileSize(lua_State *L) {
-	BS_PackageManager *pPM = GetPM();
+	PackageManager *pPM = GetPM();
 
 	lua_pushnumber(L, pPM->GetFileSize(luaL_checkstring(L, 1)));
 
@@ -120,7 +120,7 @@ static int GetFileSize(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int GetFileType(lua_State *L) {
-	BS_PackageManager *pPM = GetPM();
+	PackageManager *pPM = GetPM();
 
 	lua_pushnumber(L, pPM->GetFileType(luaL_checkstring(L, 1)));
 
@@ -147,7 +147,7 @@ static void SplitSearchPath(const Common::String &Path, Common::String &Director
 // -----------------------------------------------------------------------------
 
 static void DoSearch(lua_State *L, const Common::String &path, unsigned int type) {
-	BS_PackageManager *pPM = GetPM();
+	PackageManager *pPM = GetPM();
 
 	// Der Packagemanager-Service muss den Suchstring und den Pfad getrennt übergeben bekommen.
 	// Um die Benutzbarkeit zu verbessern sollen Skriptprogrammierer dieses als ein Pfad übergeben können.
@@ -179,21 +179,21 @@ static void DoSearch(lua_State *L, const Common::String &path, unsigned int type
 // -----------------------------------------------------------------------------
 
 static int FindFiles(lua_State *L) {
-	DoSearch(L, luaL_checkstring(L, 1), BS_PackageManager::FT_FILE);
+	DoSearch(L, luaL_checkstring(L, 1), PackageManager::FT_FILE);
 	return 1;
 }
 
 // -----------------------------------------------------------------------------
 
 static int FindDirectories(lua_State *L) {
-	DoSearch(L, luaL_checkstring(L, 1), BS_PackageManager::FT_DIRECTORY);
+	DoSearch(L, luaL_checkstring(L, 1), PackageManager::FT_DIRECTORY);
 	return 1;
 }
 
 // -----------------------------------------------------------------------------
 
 static int GetFileAsString(lua_State *L) {
-	BS_PackageManager *pPM = GetPM();
+	PackageManager *pPM = GetPM();
 
 	unsigned int FileSize;
 	char *FileData = (char *)pPM->GetFile(luaL_checkstring(L, 1), &FileSize);
@@ -234,15 +234,15 @@ static const luaL_reg PACKAGE_FUNCTIONS[] = {
 
 // -----------------------------------------------------------------------------
 
-bool BS_PackageManager::_RegisterScriptBindings() {
+bool PackageManager::_RegisterScriptBindings() {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_ScriptEngine *pScript = static_cast<BS_ScriptEngine *>(pKernel->GetService("script"));
+	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->GetScriptObject());
 	BS_ASSERT(L);
 
-	if (!BS_LuaBindhelper::AddFunctionsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_FUNCTIONS)) return false;
+	if (!LuaBindhelper::AddFunctionsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_FUNCTIONS)) return false;
 
 	return true;
 }

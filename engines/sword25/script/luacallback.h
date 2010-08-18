@@ -59,10 +59,10 @@ namespace Sword25 {
 // Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_LuaCallback {
+class LuaCallback {
 public:
-	BS_LuaCallback(lua_State *L);
-	virtual ~BS_LuaCallback();
+	LuaCallback(lua_State *L);
+	virtual ~LuaCallback();
 
 	// Funktion muss auf dem Lua-Stack liegen.
 	void RegisterCallbackFunction(lua_State *L, unsigned int ObjectHandle);

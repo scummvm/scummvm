@@ -71,9 +71,9 @@ static bool AnimationLoopPointCallback(unsigned int Data);
 namespace {
 // -------------------------------------------------------------------------
 
-class ActionCallback : public BS_LuaCallback {
+class ActionCallback : public LuaCallback {
 public:
-	ActionCallback(lua_State *L) : BS_LuaCallback(L) {};
+	ActionCallback(lua_State *L) : LuaCallback(L) {};
 
 	Common::String Action;
 
@@ -84,7 +84,7 @@ protected:
 	}
 };
 
-std::auto_ptr<BS_LuaCallback> LoopPointCallbackPtr;
+std::auto_ptr<LuaCallback> LoopPointCallbackPtr;
 std::auto_ptr<ActionCallback> ActionCallbackPtr;
 
 // -------------------------------------------------------------------------
@@ -122,7 +122,7 @@ static void *my_checkudata(lua_State *L, int ud, const char *tname) {
 	if (p != NULL) { /* value is a userdata? */
 		if (lua_getmetatable(L, ud)) { /* does it have a metatable? */
 			// lua_getfield(L, LUA_REGISTRYINDEX, tname);  /* get correct metatable */
-			BS_LuaBindhelper::GetMetatable(L, tname);
+			LuaBindhelper::GetMetatable(L, tname);
 			if (lua_rawequal(L, -1, -2)) { /* does it have the correct mt? */
 				lua_settop(L, top);
 				return p;
@@ -166,7 +166,7 @@ static int NewAnimationTemplate(lua_State *L) {
 	if (AnimationTemplatePtr && AnimationTemplatePtr->IsValid()) {
 		NewUintUserData(L, AnimationTemplateHandle);
 		//luaL_getmetatable(L, ANIMATION_TEMPLATE_CLASS_NAME);
-		BS_LuaBindhelper::GetMetatable(L, ANIMATION_TEMPLATE_CLASS_NAME);
+		LuaBindhelper::GetMetatable(L, ANIMATION_TEMPLATE_CLASS_NAME);
 		BS_ASSERT(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 	} else {
@@ -304,7 +304,7 @@ static int Init(lua_State *L) {
 	NewUintUserData(L, MainPanelPtr->GetHandle());
 	BS_ASSERT(!lua_isnil(L, -1));
 	// luaL_getmetatable(L, PANEL_CLASS_NAME);
-	BS_LuaBindhelper::GetMetatable(L, PANEL_CLASS_NAME);
+	LuaBindhelper::GetMetatable(L, PANEL_CLASS_NAME);
 	BS_ASSERT(!lua_isnil(L, -1));
 	lua_setmetatable(L, -2);
 
@@ -349,10 +349,10 @@ static int EndFrame(lua_State *L) {
 static int DrawDebugLine(lua_State *L) {
 	GraphicEngine *pGE = GetGE();
 
-	BS_Vertex Start;
-	BS_Vertex End;
-	BS_Vertex::LuaVertexToVertex(L, 1, Start);
-	BS_Vertex::LuaVertexToVertex(L, 2, End);
+	Vertex Start;
+	Vertex End;
+	Vertex::LuaVertexToVertex(L, 1, Start);
+	Vertex::LuaVertexToVertex(L, 2, End);
 	pGE->DrawDebugLine(Start, End, GraphicEngine::LuaColorToARGBColor(L, 3));
 
 	return 0;
@@ -541,8 +541,8 @@ static RenderObjectPtr<RenderObject> CheckRenderObject(lua_State *L, bool ErrorI
 static int RO_SetPos(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
 	BS_ASSERT(ROPtr.IsValid());
-	BS_Vertex Pos;
-	BS_Vertex::LuaVertexToVertex(L, 2, Pos);
+	Vertex Pos;
+	Vertex::LuaVertexToVertex(L, 2, Pos);
 	ROPtr->SetPos(Pos.X, Pos.Y);
 	return 0;
 }
@@ -674,7 +674,7 @@ static int RO_AddPanel(lua_State *L) {
 	if (PanelPtr.IsValid()) {
 		NewUintUserData(L, PanelPtr->GetHandle());
 		// luaL_getmetatable(L, PANEL_CLASS_NAME);
-		BS_LuaBindhelper::GetMetatable(L, PANEL_CLASS_NAME);
+		LuaBindhelper::GetMetatable(L, PANEL_CLASS_NAME);
 		BS_ASSERT(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 	} else
@@ -692,7 +692,7 @@ static int RO_AddBitmap(lua_State *L) {
 	if (BitmaPtr.IsValid()) {
 		NewUintUserData(L, BitmaPtr->GetHandle());
 		// luaL_getmetatable(L, BITMAP_CLASS_NAME);
-		BS_LuaBindhelper::GetMetatable(L, BITMAP_CLASS_NAME);
+		LuaBindhelper::GetMetatable(L, BITMAP_CLASS_NAME);
 		BS_ASSERT(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 	} else
@@ -714,7 +714,7 @@ static int RO_AddText(lua_State *L) {
 	if (TextPtr.IsValid()) {
 		NewUintUserData(L, TextPtr->GetHandle());
 		// luaL_getmetatable(L, TEXT_CLASS_NAME);
-		BS_LuaBindhelper::GetMetatable(L, TEXT_CLASS_NAME);
+		LuaBindhelper::GetMetatable(L, TEXT_CLASS_NAME);
 		BS_ASSERT(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 	} else
@@ -738,7 +738,7 @@ static int RO_AddAnimation(lua_State *L) {
 	if (AnimationPtr.IsValid()) {
 		NewUintUserData(L, AnimationPtr->GetHandle());
 		// luaL_getmetatable(L, ANIMATION_CLASS_NAME);
-		BS_LuaBindhelper::GetMetatable(L, ANIMATION_CLASS_NAME);
+		LuaBindhelper::GetMetatable(L, ANIMATION_CLASS_NAME);
 		BS_ASSERT(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 
@@ -970,8 +970,8 @@ static int B_IsFlipV(lua_State *L) {
 static int B_GetPixel(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
 	BS_ASSERT(BitmapPtr.IsValid());
-	BS_Vertex Pos;
-	BS_Vertex::LuaVertexToVertex(L, 2, Pos);
+	Vertex Pos;
+	Vertex::LuaVertexToVertex(L, 2, Pos);
 	GraphicEngine::ARGBColorToLuaColor(L, BitmapPtr->GetPixel(Pos.X, Pos.Y));
 	return 1;
 }
@@ -1528,26 +1528,26 @@ static const luaL_reg TEXT_METHODS[] = {
 bool GraphicEngine::RegisterScriptBindings() {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_ScriptEngine *pScript = static_cast<BS_ScriptEngine *>(pKernel->GetService("script"));
+	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->GetScriptObject());
 	BS_ASSERT(L);
 
-	if (!BS_LuaBindhelper::AddMethodsToClass(L, BITMAP_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
-	if (!BS_LuaBindhelper::AddMethodsToClass(L, ANIMATION_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
-	if (!BS_LuaBindhelper::AddMethodsToClass(L, PANEL_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
-	if (!BS_LuaBindhelper::AddMethodsToClass(L, TEXT_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
+	if (!LuaBindhelper::AddMethodsToClass(L, BITMAP_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
+	if (!LuaBindhelper::AddMethodsToClass(L, ANIMATION_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
+	if (!LuaBindhelper::AddMethodsToClass(L, PANEL_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
+	if (!LuaBindhelper::AddMethodsToClass(L, TEXT_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
 
-	if (!BS_LuaBindhelper::AddMethodsToClass(L, PANEL_CLASS_NAME, PANEL_METHODS)) return false;
-	if (!BS_LuaBindhelper::AddMethodsToClass(L, BITMAP_CLASS_NAME, BITMAP_METHODS)) return false;
-	if (!BS_LuaBindhelper::AddMethodsToClass(L, TEXT_CLASS_NAME, TEXT_METHODS)) return false;
-	if (!BS_LuaBindhelper::AddMethodsToClass(L, ANIMATION_CLASS_NAME, ANIMATION_METHODS)) return false;
+	if (!LuaBindhelper::AddMethodsToClass(L, PANEL_CLASS_NAME, PANEL_METHODS)) return false;
+	if (!LuaBindhelper::AddMethodsToClass(L, BITMAP_CLASS_NAME, BITMAP_METHODS)) return false;
+	if (!LuaBindhelper::AddMethodsToClass(L, TEXT_CLASS_NAME, TEXT_METHODS)) return false;
+	if (!LuaBindhelper::AddMethodsToClass(L, ANIMATION_CLASS_NAME, ANIMATION_METHODS)) return false;
 
-	if (!BS_LuaBindhelper::AddMethodsToClass(L, ANIMATION_TEMPLATE_CLASS_NAME, ANIMATION_TEMPLATE_METHODS)) return false;
+	if (!LuaBindhelper::AddMethodsToClass(L, ANIMATION_TEMPLATE_CLASS_NAME, ANIMATION_TEMPLATE_METHODS)) return false;
 
-	if (!BS_LuaBindhelper::AddFunctionsToLib(L, GFX_LIBRARY_NAME, GFX_FUNCTIONS)) return false;
+	if (!LuaBindhelper::AddFunctionsToLib(L, GFX_LIBRARY_NAME, GFX_FUNCTIONS)) return false;
 
-	LoopPointCallbackPtr.reset(new BS_LuaCallback(L));
+	LoopPointCallbackPtr.reset(new LuaCallback(L));
 	ActionCallbackPtr.reset(new ActionCallback(L));
 
 	return true;

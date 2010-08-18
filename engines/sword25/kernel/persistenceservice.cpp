@@ -321,7 +321,7 @@ bool BS_PersistenceService::SaveGame(unsigned int SlotID, const Common::String &
 	BS_OutputPersistenceBlock Writer;
 	bool Success = true;
 	Success &= BS_Kernel::GetInstance()->GetScript()->Persist(Writer);
-	Success &= BS_RegionRegistry::GetInstance().Persist(Writer);
+	Success &= RegionRegistry::GetInstance().Persist(Writer);
 	Success &= BS_Kernel::GetInstance()->GetGfx()->Persist(Writer);
 	Success &= BS_Kernel::GetInstance()->GetSfx()->Persist(Writer);
 	Success &= BS_Kernel::GetInstance()->GetInput()->Persist(Writer);
@@ -437,7 +437,7 @@ bool BS_PersistenceService::LoadGame(unsigned int SlotID) {
 	bool Success = true;
 	Success &= BS_Kernel::GetInstance()->GetScript()->Unpersist(Reader);
 	// Muss unbedingt nach Script passieren. Da sonst die bereits wiederhergestellten Regions per Garbage-Collection gekillt werden.
-	Success &= BS_RegionRegistry::GetInstance().Unpersist(Reader);
+	Success &= RegionRegistry::GetInstance().Unpersist(Reader);
 	Success &= BS_Kernel::GetInstance()->GetGfx()->Unpersist(Reader);
 	Success &= BS_Kernel::GetInstance()->GetSfx()->Unpersist(Reader);
 	Success &= BS_Kernel::GetInstance()->GetInput()->Unpersist(Reader);

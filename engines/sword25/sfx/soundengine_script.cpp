@@ -49,7 +49,7 @@ namespace Sword25 {
 static int Init(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	if (lua_gettop(L) == 0)
@@ -67,7 +67,7 @@ static int Init(lua_State *L) {
 static int Update(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	pSfx->Update();
@@ -80,11 +80,11 @@ static int Update(lua_State *L) {
 static int SetVolume(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	pSfx->SetVolume(static_cast<float>(luaL_checknumber(L, 1)),
-	                static_cast<BS_SoundEngine::SOUND_TYPES>(static_cast<unsigned int>(luaL_checknumber(L, 2))));
+	                static_cast<SoundEngine::SOUND_TYPES>(static_cast<unsigned int>(luaL_checknumber(L, 2))));
 
 	return 0;
 }
@@ -94,10 +94,10 @@ static int SetVolume(lua_State *L) {
 static int GetVolume(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
-	lua_pushnumber(L, pSfx->GetVolume(static_cast<BS_SoundEngine::SOUND_TYPES>(static_cast<unsigned int>(luaL_checknumber(L, 1)))));
+	lua_pushnumber(L, pSfx->GetVolume(static_cast<SoundEngine::SOUND_TYPES>(static_cast<unsigned int>(luaL_checknumber(L, 1)))));
 
 	return 1;
 }
@@ -107,7 +107,7 @@ static int GetVolume(lua_State *L) {
 static int PauseAll(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	pSfx->PauseAll();
@@ -120,7 +120,7 @@ static int PauseAll(lua_State *L) {
 static int ResumeAll(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	pSfx->ResumeAll();
@@ -133,7 +133,7 @@ static int ResumeAll(lua_State *L) {
 static int PauseLayer(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	pSfx->PauseLayer(static_cast<int>(luaL_checknumber(L, 1)));
@@ -146,7 +146,7 @@ static int PauseLayer(lua_State *L) {
 static int ResumeLayer(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	pSfx->ResumeLayer(static_cast<int>(luaL_checknumber(L, 1)));
@@ -156,10 +156,10 @@ static int ResumeLayer(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static void ProcessPlayParams(lua_State *L, Common::String &FileName, BS_SoundEngine::SOUND_TYPES &Type, float &Volume, float &Pan, bool &Loop, int &LoopStart, int &LoopEnd, unsigned int &Layer) {
+static void ProcessPlayParams(lua_State *L, Common::String &FileName, SoundEngine::SOUND_TYPES &Type, float &Volume, float &Pan, bool &Loop, int &LoopStart, int &LoopEnd, unsigned int &Layer) {
 	FileName = luaL_checkstring(L, 1);
 
-	Type = static_cast<BS_SoundEngine::SOUND_TYPES>(static_cast<unsigned int>(luaL_checknumber(L, 2)));
+	Type = static_cast<SoundEngine::SOUND_TYPES>(static_cast<unsigned int>(luaL_checknumber(L, 2)));
 
 	if (lua_gettop(L) < 3 || lua_isnil(L, 3)) Volume = 1.0f;
 	else Volume = static_cast<float>(luaL_checknumber(L, 3));
@@ -183,11 +183,11 @@ static void ProcessPlayParams(lua_State *L, Common::String &FileName, BS_SoundEn
 static int PlaySound(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	Common::String FileName;
-	BS_SoundEngine::SOUND_TYPES Type;
+	SoundEngine::SOUND_TYPES Type;
 	float Volume;
 	float Pan;
 	bool Loop;
@@ -204,11 +204,11 @@ static int PlaySound(lua_State *L) {
 static int PlaySoundEx(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	Common::String FileName;
-	BS_SoundEngine::SOUND_TYPES Type;
+	SoundEngine::SOUND_TYPES Type;
 	float Volume;
 	float Pan;
 	bool Loop;
@@ -227,7 +227,7 @@ static int PlaySoundEx(lua_State *L) {
 static int SetSoundVolume(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	pSfx->SetSoundVolume(static_cast<unsigned int>(luaL_checknumber(L, 1)), static_cast<float>(luaL_checknumber(L, 2)));
@@ -240,7 +240,7 @@ static int SetSoundVolume(lua_State *L) {
 static int SetSoundPanning(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	pSfx->SetSoundPanning(static_cast<unsigned int>(luaL_checknumber(L, 1)), static_cast<float>(luaL_checknumber(L, 2)));
@@ -253,7 +253,7 @@ static int SetSoundPanning(lua_State *L) {
 static int PauseSound(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	pSfx->PauseSound(static_cast<unsigned int>(luaL_checknumber(L, 1)));
@@ -266,7 +266,7 @@ static int PauseSound(lua_State *L) {
 static int ResumeSound(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	pSfx->ResumeSound(static_cast<unsigned int>(luaL_checknumber(L, 1)));
@@ -279,7 +279,7 @@ static int ResumeSound(lua_State *L) {
 static int StopSound(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	pSfx->StopSound(static_cast<unsigned int>(luaL_checknumber(L, 1)));
@@ -292,7 +292,7 @@ static int StopSound(lua_State *L) {
 static int IsSoundPaused(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	lua_pushbooleancpp(L, pSfx->IsSoundPaused(static_cast<unsigned int>(luaL_checknumber(L, 1))));
@@ -305,7 +305,7 @@ static int IsSoundPaused(lua_State *L) {
 static int IsSoundPlaying(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	lua_pushbooleancpp(L, pSfx->IsSoundPlaying(static_cast<unsigned int>(luaL_checknumber(L, 1))));
@@ -318,7 +318,7 @@ static int IsSoundPlaying(lua_State *L) {
 static int GetSoundVolume(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	lua_pushnumber(L, pSfx->GetSoundVolume(static_cast<unsigned int>(luaL_checknumber(L, 1))));
@@ -331,7 +331,7 @@ static int GetSoundVolume(lua_State *L) {
 static int GetSoundPanning(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_SoundEngine *pSfx = static_cast<BS_SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
+	SoundEngine *pSfx = static_cast<SoundEngine *>(BS_Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
 	lua_pushnumber(L, pSfx->GetSoundPanning(static_cast<unsigned int>(luaL_checknumber(L, 1))));
@@ -367,24 +367,24 @@ static const luaL_reg SFX_FUNCTIONS[] = {
 };
 
 static const lua_constant_reg SFX_CONSTANTS[] = {
-	{"MUSIC", BS_SoundEngine::MUSIC},
-	{"SPEECH", BS_SoundEngine::SPEECH},
-	{"SFX", BS_SoundEngine::SFX},
+	{"MUSIC", SoundEngine::MUSIC},
+	{"SPEECH", SoundEngine::SPEECH},
+	{"SFX", SoundEngine::SFX},
 	{0, 0}
 };
 
 // -----------------------------------------------------------------------------
 
-bool BS_SoundEngine::_RegisterScriptBindings() {
+bool SoundEngine::_RegisterScriptBindings() {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_ScriptEngine *pScript = static_cast<BS_ScriptEngine *>(pKernel->GetService("script"));
+	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->GetScriptObject());
 	BS_ASSERT(L);
 
-	if (!BS_LuaBindhelper::AddFunctionsToLib(L, SFX_LIBRARY_NAME, SFX_FUNCTIONS)) return false;
-	if (!BS_LuaBindhelper::AddConstantsToLib(L, SFX_LIBRARY_NAME, SFX_CONSTANTS)) return false;
+	if (!LuaBindhelper::AddFunctionsToLib(L, SFX_LIBRARY_NAME, SFX_FUNCTIONS)) return false;
+	if (!LuaBindhelper::AddConstantsToLib(L, SFX_LIBRARY_NAME, SFX_CONSTANTS)) return false;
 
 	return true;
 }

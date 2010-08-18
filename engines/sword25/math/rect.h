@@ -98,7 +98,7 @@ public:
 		return isValidRect();
 	}
 
-	bool IsPointInRect(const BS_Vertex &Vertex) const {
+	bool IsPointInRect(const Vertex &Vertex) const {
 		return contains(Vertex.X, Vertex.Y);
 	}
 

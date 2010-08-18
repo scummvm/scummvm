@@ -52,28 +52,28 @@ static const int infinity = (~(-1));
 // Constructor / Destructor
 // -----------------------------------------------------------------------------
 
-BS_WalkRegion::BS_WalkRegion() {
+WalkRegion::WalkRegion() {
 	m_Type = RT_WALKREGION;
 }
 
 // -----------------------------------------------------------------------------
 
-BS_WalkRegion::BS_WalkRegion(BS_InputPersistenceBlock &Reader, unsigned int Handle) :
-	BS_Region(Reader, Handle) {
+WalkRegion::WalkRegion(BS_InputPersistenceBlock &Reader, unsigned int Handle) :
+	Region(Reader, Handle) {
 	m_Type = RT_WALKREGION;
 	Unpersist(Reader);
 }
 
 // -----------------------------------------------------------------------------
 
-BS_WalkRegion::~BS_WalkRegion() {
+WalkRegion::~WalkRegion() {
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_WalkRegion::Init(const BS_Polygon &Contour, const Common::Array<BS_Polygon> *pHoles) {
+bool WalkRegion::Init(const Polygon &Contour, const Common::Array<Polygon> *pHoles) {
 	// Default initialisation of the region
-	if (!BS_Region::Init(Contour, pHoles)) return false;
+	if (!Region::Init(Contour, pHoles)) return false;
 
 	// Prepare structures for pathfinding
 	InitNodeVector();
@@ -85,7 +85,7 @@ bool BS_WalkRegion::Init(const BS_Polygon &Contour, const Common::Array<BS_Polyg
 
 // -----------------------------------------------------------------------------
 
-bool BS_WalkRegion::QueryPath(BS_Vertex StartPoint, BS_Vertex EndPoint, BS_Path &Path) {
+bool WalkRegion::QueryPath(Vertex StartPoint, Vertex EndPoint, BS_Path &Path) {
 	BS_ASSERT(Path.empty());
 
 	// If the start and finish are identical, no path can be found trivially
@@ -118,14 +118,14 @@ struct DijkstraNode {
 	bool        Chosen;
 };
 
-static void InitDijkstraNodes(DijkstraNode::Container &DijkstraNodes, const BS_Region &Region,
-                              const BS_Vertex &Start, const Common::Array<BS_Vertex> &Nodes) {
+static void InitDijkstraNodes(DijkstraNode::Container &DijkstraNodes, const Region &Region,
+                              const Vertex &Start, const Common::Array<Vertex> &Nodes) {
 	// Allocate sufficient space in the array
 	DijkstraNodes.resize(Nodes.size());
 
 	// Initialise all the nodes which are visible from the starting node
 	DijkstraNode::Iter DijkstraIter = DijkstraNodes.begin();
-	for (Common::Array<BS_Vertex>::const_iterator NodesIter = Nodes.begin();
+	for (Common::Array<Vertex>::const_iterator NodesIter = Nodes.begin();
 	        NodesIter != Nodes.end(); NodesIter++, DijkstraIter++) {
 		(*DijkstraIter).ParentIter = DijkstraNodes.end();
 		if (Region.IsLineOfSight(*NodesIter, Start))(*DijkstraIter).Cost = (*NodesIter).Distance(Start);
@@ -167,11 +167,11 @@ static void RelaxNodes(DijkstraNode::Container &Nodes,
 	}
 }
 
-static void RelaxEndPoint(const BS_Vertex &CurNodePos,
+static void RelaxEndPoint(const Vertex &CurNodePos,
                           const DijkstraNode::ConstIter &CurNodeIter,
-                          const BS_Vertex &EndPointPos,
+                          const Vertex &EndPointPos,
                           DijkstraNode &EndPoint,
-                          const BS_Region &Region) {
+                          const Region &Region) {
 	if (Region.IsLineOfSight(CurNodePos, EndPointPos)) {
 		int TotalCost = (*CurNodeIter).Cost + CurNodePos.Distance(EndPointPos);
 		if (TotalCost < EndPoint.Cost) {
@@ -181,7 +181,7 @@ static void RelaxEndPoint(const BS_Vertex &CurNodePos,
 	}
 }
 
-bool BS_WalkRegion::FindPath(const BS_Vertex &Start, const BS_Vertex &End, BS_Path &Path) const {
+bool WalkRegion::FindPath(const Vertex &Start, const Vertex &End, BS_Path &Path) const {
 	// This is an implementation of Dijkstra's algorithm
 
 	// Initialise edge node list
@@ -221,7 +221,7 @@ bool BS_WalkRegion::FindPath(const BS_Vertex &Start, const BS_Vertex &End, BS_Pa
 
 			// The nodes of the path must be untwisted, as they were extracted in reverse order.
 			// This step could be saved if the path from end to the beginning was desired
-			ReverseArray<BS_Vertex>(Path);
+			ReverseArray<Vertex>(Path);
 
 			return true;
 		}
@@ -238,7 +238,7 @@ bool BS_WalkRegion::FindPath(const BS_Vertex &Start, const BS_Vertex &End, BS_Pa
 
 // -----------------------------------------------------------------------------
 
-void BS_WalkRegion::InitNodeVector() {
+void WalkRegion::InitNodeVector() {
 	// Empty the Node list
 	m_Nodes.clear();
 
@@ -260,7 +260,7 @@ void BS_WalkRegion::InitNodeVector() {
 
 // -----------------------------------------------------------------------------
 
-void BS_WalkRegion::ComputeVisibilityMatrix() {
+void WalkRegion::ComputeVisibilityMatrix() {
 	// Initialise visibility matrix
 	m_VisibilityMatrix = Common::Array< Common::Array <int> >();
 	for (uint idx = 0; idx < m_Nodes.size(); ++idx) {
@@ -290,9 +290,9 @@ void BS_WalkRegion::ComputeVisibilityMatrix() {
 
 // -----------------------------------------------------------------------------
 
-bool BS_WalkRegion::CheckAndPrepareStartAndEnd(BS_Vertex &Start, BS_Vertex &End) const {
+bool WalkRegion::CheckAndPrepareStartAndEnd(Vertex &Start, Vertex &End) const {
 	if (!IsPointInRegion(Start)) {
-		BS_Vertex NewStart = FindClosestRegionPoint(Start);
+		Vertex NewStart = FindClosestRegionPoint(Start);
 
 		// Check to make sure the point is really in the region. If not, stop with an error
 		if (!IsPointInRegion(NewStart)) {
@@ -308,7 +308,7 @@ bool BS_WalkRegion::CheckAndPrepareStartAndEnd(BS_Vertex &Start, BS_Vertex &End)
 	// If the destination is outside the region, a point is determined that is within the region,
 	// and that is used as an endpoint instead
 	if (!IsPointInRegion(End)) {
-		BS_Vertex NewEnd = FindClosestRegionPoint(End);
+		Vertex NewEnd = FindClosestRegionPoint(End);
 
 		// Make sure that the determined point is really within the region
 		if (!IsPointInRegion(NewEnd)) {
@@ -327,28 +327,28 @@ bool BS_WalkRegion::CheckAndPrepareStartAndEnd(BS_Vertex &Start, BS_Vertex &End)
 
 // -----------------------------------------------------------------------------
 
-void BS_WalkRegion::SetPos(int X, int Y) {
+void WalkRegion::SetPos(int X, int Y) {
 	// Calculate the difference between old and new position
-	BS_Vertex Delta(X - m_Position.X, Y - m_Position.Y);
+	Vertex Delta(X - m_Position.X, Y - m_Position.Y);
 
 	// Move all the nodes
 	for (unsigned int i = 0; i < m_Nodes.size(); i++) m_Nodes[i] += Delta;
 
 	// Move regions
-	BS_Region::SetPos(X, Y);
+	Region::SetPos(X, Y);
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_WalkRegion::Persist(BS_OutputPersistenceBlock &Writer) {
+bool WalkRegion::Persist(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Persist the parent region
-	Result &= BS_Region::Persist(Writer);
+	Result &= Region::Persist(Writer);
 
 	// Persist the nodes
 	Writer.Write(m_Nodes.size());
-	Common::Array<BS_Vertex>::const_iterator It = m_Nodes.begin();
+	Common::Array<Vertex>::const_iterator It = m_Nodes.begin();
 	while (It != m_Nodes.end()) {
 		Writer.Write(It->X);
 		Writer.Write(It->Y);
@@ -374,7 +374,7 @@ bool BS_WalkRegion::Persist(BS_OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_WalkRegion::Unpersist(BS_InputPersistenceBlock &Reader) {
+bool WalkRegion::Unpersist(BS_InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// The parent object was already loaded in the constructor of BS_Region, so at
@@ -385,7 +385,7 @@ bool BS_WalkRegion::Unpersist(BS_InputPersistenceBlock &Reader) {
 	Reader.Read(NodeCount);
 	m_Nodes.clear();
 	m_Nodes.resize(NodeCount);
-	Common::Array<BS_Vertex>::iterator It = m_Nodes.begin();
+	Common::Array<Vertex>::iterator It = m_Nodes.begin();
 	while (It != m_Nodes.end()) {
 		Reader.Read(It->X);
 		Reader.Read(It->Y);

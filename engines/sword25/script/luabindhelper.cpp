@@ -93,7 +93,7 @@ namespace Sword25 {
  * The array must be terminated with the enry (0, 0)
  * @return              Returns true if successful, otherwise false.
  */
-bool BS_LuaBindhelper::AddFunctionsToLib(lua_State *L, const Common::String &LibName, const luaL_reg *Functions) {
+bool LuaBindhelper::AddFunctionsToLib(lua_State *L, const Common::String &LibName, const luaL_reg *Functions) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
@@ -149,7 +149,7 @@ bool BS_LuaBindhelper::AddFunctionsToLib(lua_State *L, const Common::String &Lib
  * The array must be terminated with the enry (0, 0)
  * @return              Returns true if successful, otherwise false.
  */
-bool BS_LuaBindhelper::AddConstantsToLib(lua_State *L, const Common::String &LibName, const lua_constant_reg *Constants) {
+bool LuaBindhelper::AddConstantsToLib(lua_State *L, const Common::String &LibName, const lua_constant_reg *Constants) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
@@ -196,7 +196,7 @@ bool BS_LuaBindhelper::AddConstantsToLib(lua_State *L, const Common::String &Lib
  * The array must be terminated with the enry (0, 0)
  * @return              Returns true if successful, otherwise false.
  */
-bool BS_LuaBindhelper::AddMethodsToClass(lua_State *L, const Common::String &ClassName, const luaL_reg *Methods) {
+bool LuaBindhelper::AddMethodsToClass(lua_State *L, const Common::String &ClassName, const luaL_reg *Methods) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
@@ -236,7 +236,7 @@ bool BS_LuaBindhelper::AddMethodsToClass(lua_State *L, const Common::String &Cla
  * @param GCHandler     A function pointer
  * @return              Returns true if successful, otherwise false.
  */
-bool BS_LuaBindhelper::SetClassGCHandler(lua_State *L, const Common::String &ClassName, lua_CFunction GCHandler) {
+bool LuaBindhelper::SetClassGCHandler(lua_State *L, const Common::String &ClassName, lua_CFunction GCHandler) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
@@ -288,7 +288,7 @@ void PushMetatableTable(lua_State *L) {
 
 namespace Sword25 {
 
-bool BS_LuaBindhelper::GetMetatable(lua_State *L, const Common::String &TableName) {
+bool LuaBindhelper::GetMetatable(lua_State *L, const Common::String &TableName) {
 	// Push the Metatable table onto the stack
 	PushMetatableTable(L);
 
@@ -322,7 +322,7 @@ bool BS_LuaBindhelper::GetMetatable(lua_State *L, const Common::String &TableNam
 
 // -----------------------------------------------------------------------------
 
-bool BS_LuaBindhelper::_CreateTable(lua_State *L, const Common::String &TableName) {
+bool LuaBindhelper::_CreateTable(lua_State *L, const Common::String &TableName) {
 	const char *PartBegin = TableName.c_str();
 
 	while (PartBegin - TableName.c_str() < (int)TableName.size()) {
@@ -406,7 +406,7 @@ Common::String GetLuaValueInfo(lua_State *L, int StackIndex) {
 
 namespace Sword25 {
 
-Common::String BS_LuaBindhelper::StackDump(lua_State *L) {
+Common::String LuaBindhelper::StackDump(lua_State *L) {
 	Common::String oss;
 
 	int i = lua_gettop(L);
@@ -422,7 +422,7 @@ Common::String BS_LuaBindhelper::StackDump(lua_State *L) {
 	return oss;
 }
 
-Common::String BS_LuaBindhelper::TableDump(lua_State *L) {
+Common::String LuaBindhelper::TableDump(lua_State *L) {
 	Common::String oss;
 
 	oss += "------------------- Table Dump -------------------\n";

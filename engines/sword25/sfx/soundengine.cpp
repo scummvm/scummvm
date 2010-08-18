@@ -38,7 +38,7 @@
 
 namespace Sword25 {
 
-BS_SoundEngine::BS_SoundEngine(BS_Kernel *pKernel) : BS_ResourceService(pKernel) {
+SoundEngine::SoundEngine(BS_Kernel *pKernel) : BS_ResourceService(pKernel) {
 	if (!_RegisterScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else

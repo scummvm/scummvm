@@ -44,7 +44,7 @@
 
 namespace Sword25 {
 
-BS_PackageManager::BS_PackageManager(BS_Kernel *pKernel) : BS_Service(pKernel) {
+PackageManager::PackageManager(BS_Kernel *pKernel) : BS_Service(pKernel) {
 	if (!_RegisterScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else

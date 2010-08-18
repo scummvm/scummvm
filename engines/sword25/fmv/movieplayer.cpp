@@ -38,7 +38,7 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "MOVIEPLAYER"
 
-BS_Service *BS_OggTheora_CreateObject(BS_Kernel *pKernel) {
+BS_Service *OggTheora_CreateObject(BS_Kernel *pKernel) {
 	return new MoviePlayer(pKernel);
 }
 

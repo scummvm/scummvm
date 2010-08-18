@@ -46,29 +46,29 @@ namespace Sword25 {
 // Forward Declarations
 // -----------------------------------------------------------------------------
 
-class BS_Vertex;
+class Vertex;
 
 /**
     @brief Eine Polygonklasse.
 */
-class BS_Polygon : public BS_Persistable {
+class Polygon : public BS_Persistable {
 public:
 	/**
 	 * Creates an object of type #BS_Polygon, containing 0 Vertecies.
 	 *
 	 * With the method Init(), Vertices can be added in later
 	 */
-	BS_Polygon();
+	Polygon();
 
 	/**
 	 * Copy constructor
 	 */
-	BS_Polygon(const BS_Polygon &Other);
+	Polygon(const Polygon &Other);
 
 	/**
 	 * Creates a polygon using persisted data
 	 */
-	BS_Polygon(BS_InputPersistenceBlock &Reader);
+	Polygon(BS_InputPersistenceBlock &Reader);
 
 	/**
 	 * Creaes an object of type #BS_Polygon, and assigns Vertices to it
@@ -77,12 +77,12 @@ public:
 	 * @remark                  The Vertecies that define a polygon must not have any self-intersections.
 	 * If the polygon does have self-intersections, then an empty polygon object is created.
 	 */
-	BS_Polygon(int VertexCount, const BS_Vertex *Vertecies);
+	Polygon(int VertexCount, const Vertex *Vertecies);
 
 	/**
 	 * Deletes the BS_Polygon object
 	 */
-	virtual ~BS_Polygon();
+	virtual ~Polygon();
 
 	/**
 	 * Initialises the BS_Polygon with a list of Vertecies.
@@ -95,7 +95,7 @@ public:
 	 * @return                  Returns false if the Vertecies have self-intersections. In this case,
 	 * the object is not initialised.
 	 */
-	bool Init(int VertexCount, const BS_Vertex *Vertecies);
+	bool Init(int VertexCount, const Vertex *Vertecies);
 
 	//
 	// ** Exploratory methods **
@@ -137,7 +137,7 @@ public:
 	 * @param BorderBelongsToPolygon    Specifies whether the edge of the polygon should be considered
 	 * @return                  Returns true if the point is inside the polygon, false if it is outside.
 	 */
-	bool IsPointInPolygon(const BS_Vertex &Vertex, bool BorderBelongsToPolygon = true) const;
+	bool IsPointInPolygon(const Vertex &Vertex, bool BorderBelongsToPolygon = true) const;
 
 	/**
 	 * Checks whether a point is inside the polygon
@@ -151,14 +151,14 @@ public:
 	/**
 	 * Returns the focus/centroid of the polygon
 	 */
-	BS_Vertex GetCentroid() const;
+	Vertex GetCentroid() const;
 
 	// Edge belongs to the polygon
 	// Polygon must be CW
-	bool IsLineInterior(const BS_Vertex &a, const BS_Vertex &b) const;
+	bool IsLineInterior(const Vertex &a, const Vertex &b) const;
 	// Edge does not belong to the polygon
 	// Polygon must be CW
-	bool IsLineExterior(const BS_Vertex &a, const BS_Vertex &b) const;
+	bool IsLineExterior(const Vertex &a, const Vertex &b) const;
 
 	//
 	// Manipulation methods
@@ -183,7 +183,7 @@ public:
 	 * Moves the polygon.
 	 * @param Delta             The vertex around the polygon to be moved.
 	 */
-	void operator+=(const BS_Vertex &Delta);
+	void operator+=(const Vertex &Delta);
 
 	//
 	//------------------
@@ -192,7 +192,7 @@ public:
 	/// Specifies the number of Vertecies in the Vertecies array.
 	int VertexCount;
 	/// COntains the Vertecies of the polygon
-	BS_Vertex *Vertecies;
+	Vertex *Vertecies;
 
 	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
 	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
@@ -200,12 +200,12 @@ public:
 private:
 	bool m_IsCW;
 	bool m_IsConvex;
-	BS_Vertex m_Centroid;
+	Vertex m_Centroid;
 
 	/**
 	 * Computes the centroid of the polygon.
 	 */
-	BS_Vertex ComputeCentroid() const;
+	Vertex ComputeCentroid() const;
 
 	/**
 	 * Determines how the Vertecies of the polygon are arranged.
@@ -228,7 +228,7 @@ private:
 	 * @return                  Returns the cross-product of the three vertecies
 	 * @todo                    This method would be better as a method of the BS_Vertex class
 	 */
-	int CrossProduct(const BS_Vertex &V1, const BS_Vertex &V2, const BS_Vertex &V3) const;
+	int CrossProduct(const Vertex &V1, const Vertex &V2, const Vertex &V3) const;
 
 	/**
 	 * Computes the scalar product of two vectors spanning three vertecies
@@ -241,7 +241,7 @@ private:
 	 * @return                  Returns the dot product of the three Vertecies.
 	 * @todo                    This method would be better as a method of the BS_Vertex class
 	 */
-	int DotProduct(const BS_Vertex &V1, const BS_Vertex &V2, const BS_Vertex &V3) const;
+	int DotProduct(const Vertex &V1, const Vertex &V2, const Vertex &V3) const;
 
 	/**
 	 * Checks whether the polygon is self-intersecting
@@ -258,7 +258,7 @@ private:
 	 */
 	int FindLRVertexIndex() const;
 
-	bool IsLineInCone(int StartVertexIndex, const BS_Vertex &EndVertex, bool IncludeEdges) const;
+	bool IsLineInCone(int StartVertexIndex, const Vertex &EndVertex, bool IncludeEdges) const;
 };
 
 } // End of namespace Sword25

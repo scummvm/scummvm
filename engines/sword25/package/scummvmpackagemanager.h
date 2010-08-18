@@ -45,7 +45,7 @@ namespace Sword25 {
 
 class BS_Kernel;
 
-class BS_ScummVMPackageManager : public BS_PackageManager {
+class ScummVMPackageManager : public PackageManager {
 private:
 	class ArchiveEntry {
 	public:
@@ -67,8 +67,8 @@ private:
 	Common::ArchiveMemberPtr GetArchiveMember(const Common::String &fileName);
 
 public:
-	BS_ScummVMPackageManager(BS_Kernel *kernelPtr);
-	virtual ~BS_ScummVMPackageManager();
+	ScummVMPackageManager(BS_Kernel *kernelPtr);
+	virtual ~ScummVMPackageManager();
 
 	virtual bool LoadPackage(const Common::String &fileName, const Common::String &mountPosition);
 	virtual bool LoadDirectoryAsPackage(const Common::String &directoryName, const Common::String &mountPosition);

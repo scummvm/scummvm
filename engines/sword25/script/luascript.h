@@ -64,14 +64,14 @@ class BS_Kernel;
 // Class declaration
 // -----------------------------------------------------------------------------
 
-class BS_LuaScriptEngine : public BS_ScriptEngine {
+class LuaScriptEngine : public ScriptEngine {
 public:
 	// -----------------------------------------------------------------------------
 	// Constructor / Destructor
 	// -----------------------------------------------------------------------------
 
-	BS_LuaScriptEngine(BS_Kernel *KernelPtr);
-	virtual ~BS_LuaScriptEngine();
+	LuaScriptEngine(BS_Kernel *KernelPtr);
+	virtual ~LuaScriptEngine();
 
 	/**
 	 * Initialises the scripting engine

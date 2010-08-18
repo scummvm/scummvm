@@ -86,7 +86,7 @@ OpenGLGfx::~OpenGLGfx() {
 
 // -----------------------------------------------------------------------------
 
-BS_Service *BS_OpenGLGfx_CreateObject(BS_Kernel *pKernel) {
+BS_Service *OpenGLGfx_CreateObject(BS_Kernel *pKernel) {
 	return new OpenGLGfx(pKernel);
 }
 
@@ -328,7 +328,7 @@ BS_Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
 	// Vectorgraphik laden
 	if (FileName.hasSuffix(SWF_EXTENSION)) {
 		// Pointer auf Package-Manager holen
-		BS_PackageManager *pPackage = BS_Kernel::GetInstance()->GetPackage();
+		PackageManager *pPackage = BS_Kernel::GetInstance()->GetPackage();
 		BS_ASSERT(pPackage);
 
 		// Datei laden
@@ -399,7 +399,7 @@ bool OpenGLGfx::CanLoadResource(const Common::String &FileName) {
 // DEBUGGING
 // -----------------------------------------------------------------------------
 
-void OpenGLGfx::DrawDebugLine(const BS_Vertex &Start, const BS_Vertex &End, unsigned int Color) {
+void OpenGLGfx::DrawDebugLine(const Vertex &Start, const Vertex &End, unsigned int Color) {
 	m_DebugLines.push_back(DebugLine(Start, End, Color));
 }
 

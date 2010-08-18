@@ -68,7 +68,7 @@ AnimationResource::AnimationResource(const Common::String &FileName) :
 	BS_Resource(FileName, BS_Resource::TYPE_ANIMATION),
 	m_Valid(false) {
 	// Pointer auf den Package-Manager bekommen
-	BS_PackageManager *PackagePtr = BS_Kernel::GetInstance()->GetPackage();
+	PackageManager *PackagePtr = BS_Kernel::GetInstance()->GetPackage();
 	BS_ASSERT(PackagePtr);
 
 	// Animations-XML laden
@@ -198,13 +198,13 @@ bool AnimationResource::ParseAnimationTag(TiXmlElement &AnimationTag, int &FPS, 
 
 // -----------------------------------------------------------------------------
 
-bool AnimationResource::ParseFrameTag(TiXmlElement &FrameTag, Frame &Frame_, BS_PackageManager &PackageManager) {
+bool AnimationResource::ParseFrameTag(TiXmlElement &FrameTag, Frame &Frame_, PackageManager &packageManager) {
 	const char *FileString = FrameTag.Attribute("file");
 	if (!FileString) {
 		BS_LOG_ERRORLN("<frame> tag without file attribute occurred in \"%s\".", GetFileName().c_str());
 		return false;
 	}
-	Frame_.FileName = PackageManager.GetAbsolutePath(FileString);
+	Frame_.FileName = packageManager.GetAbsolutePath(FileString);
 	if (Frame_.FileName == "") {
 		BS_LOG_ERRORLN("Could not create absolute path for file specified in <frame> tag in \"%s\": \"%s\".", GetFileName().c_str(), FileString);
 		return false;

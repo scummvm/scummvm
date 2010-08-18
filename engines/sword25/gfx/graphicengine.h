@@ -173,7 +173,7 @@ public:
 	* @param End        The ending point of the line
 	* @param Color      The colour of the line. The default is BS_RGB (255,255,255) (White)
 	*/
-	virtual void        DrawDebugLine(const BS_Vertex &Start, const BS_Vertex &End, unsigned int Color = BS_RGB(255, 255, 255)) = 0;
+	virtual void        DrawDebugLine(const Vertex &Start, const Vertex &End, unsigned int Color = BS_RGB(255, 255, 255)) = 0;
 
 	/**
 	 * Creates a screenshot of the current frame buffer and writes it to a graphic file in PNG format.

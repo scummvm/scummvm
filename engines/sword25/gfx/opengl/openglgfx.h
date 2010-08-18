@@ -87,7 +87,7 @@ public:
 
 	// Debugging Methoden
 	// ------------------
-	virtual void DrawDebugLine(const BS_Vertex &Start, const BS_Vertex &End, unsigned int Color);
+	virtual void DrawDebugLine(const Vertex &Start, const Vertex &End, unsigned int Color);
 
 	// Persistenz Methoden
 	// -------------------
@@ -103,14 +103,14 @@ private:
 	std::auto_ptr<RenderObjectManager>   m_RenderObjectManagerPtr;
 
 	struct DebugLine {
-		DebugLine(const BS_Vertex &_Start, const BS_Vertex &_End, unsigned int _Color) :
+		DebugLine(const Vertex &_Start, const Vertex &_End, unsigned int _Color) :
 			Start(_Start),
 			End(_End),
 			Color(_Color) {}
 		DebugLine() {}
 
-		BS_Vertex       Start;
-		BS_Vertex       End;
+		Vertex       Start;
+		Vertex       End;
 		unsigned int    Color;
 	};
 
