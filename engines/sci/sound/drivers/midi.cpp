@@ -139,6 +139,10 @@ MidiPlayer_Midi::~MidiPlayer_Midi() {
 void MidiPlayer_Midi::noteOn(int channel, int note, int velocity) {
 	uint8 patch = _channels[channel].mappedPatch;
 
+	assert(channel <= 15);
+	assert(note <= 127);
+	assert(velocity <= 127);
+
 	if (channel == MIDI_RHYTHM_CHANNEL) {
 		if (_percussionMap[note] == MIDI_UNMAPPED) {
 			debugC(kDebugLevelSound, "[Midi] Percussion instrument %i is unmapped", note);
@@ -175,6 +179,7 @@ void MidiPlayer_Midi::noteOn(int channel, int note, int velocity) {
 
 		// We assume that velocity 0 maps to 0 (for note off)
 		int mapIndex = _channels[channel].velocityMapIdx;
+		assert(velocity <= 127);
 		velocity = _velocityMap[mapIndex][velocity];
 	}
 
@@ -183,6 +188,8 @@ void MidiPlayer_Midi::noteOn(int channel, int note, int velocity) {
 }
 
 void MidiPlayer_Midi::controlChange(int channel, int control, int value) {
+	assert(channel <= 15);
+
 	switch (control) {
 	case 0x07:
 		_channels[channel].volume = value;
@@ -231,6 +238,8 @@ void MidiPlayer_Midi::controlChange(int channel, int control, int value) {
 
 void MidiPlayer_Midi::setPatch(int channel, int patch) {
 	bool resetVol = false;
+
+	assert(channel <= 15);
 
 	if ((channel == MIDI_RHYTHM_CHANNEL) || (_channels[channel].patch == patch))
 		return;
@@ -772,6 +781,9 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		_percussionMap[i] = i;
 		_patchMap[i] = i;
 		_velocityMap[0][i] = i;
+		_velocityMap[1][i] = i;
+		_velocityMap[2][i] = i;
+		_velocityMap[3][i] = i;
 		_keyShift[i] = 0;
 		_volAdjust[i] = 0;
 		_velocityMapIdx[i] = 0;
@@ -817,8 +829,12 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 			warning("Game has no native support for General MIDI, applying auto-mapping");
 
 			// Modify velocity map to make low velocity notes a little louder
-			for (uint i = 1; i < 0x40; i++)
+			for (uint i = 1; i < 0x40; i++) {
 				_velocityMap[0][i] = 0x20 + (i - 1) / 2;
+				_velocityMap[1][i] = 0x20 + (i - 1) / 2;
+				_velocityMap[2][i] = 0x20 + (i - 1) / 2;
+				_velocityMap[3][i] = 0x20 + (i - 1) / 2;
+			}
 
 			res = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
 
