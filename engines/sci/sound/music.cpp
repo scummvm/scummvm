@@ -30,6 +30,7 @@
 #include "sci/sci.h"
 #include "sci/console.h"
 #include "sci/resource.h"
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/sound/midiparser_sci.h"
@@ -678,6 +679,25 @@ void MusicEntry::doFade() {
 		}
 
 		fadeSetVolume = true; // set flag so that SoundCommandParser::cmdUpdateCues will set the volume of the stream
+	}
+}
+
+void MusicEntry::setSignal(int newSignal) {
+	// For SCI0, we cache the signals to set, as some songs might
+	// update their signal faster than kGetEvent is called (which is where
+	// we manually invoke kDoSoundUpdateCues for SCI0 games). SCI01 and
+	// newer handle signalling inside kDoSoundUpdateCues. Refer to bug #3042981
+	if (g_sci->_features->detectDoSoundType() <= SCI_VERSION_0_LATE) {
+		if (!signal) {
+			signal = newSignal;
+		} else {
+			// signal already set and waiting for getting to scripts, queue new one
+			signalQueue.push_back(newSignal);
+		}
+	} else {
+		// Set the signal directly for newer games, otherwise the sound
+		// object might be deleted already later on (refer to bug #3045913)
+		signal = newSignal;
 	}
 }
 

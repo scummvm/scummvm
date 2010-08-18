@@ -109,6 +109,7 @@ public:
 
 	void doFade();
 	void onTimer();
+	void setSignal(int signal);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
