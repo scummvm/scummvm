@@ -434,7 +434,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(Sort),              SIG_EVERYWHERE,           "ooo",                   NULL,            NULL },
     { MAP_CALL(Sqrt),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
     { MAP_CALL(StrAt),             SIG_EVERYWHERE,           "ri(i)",                 NULL,            kStrAt_workarounds },
-    { MAP_CALL(StrCat),            SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
+    { MAP_CALL(StrCat),            SIG_EVERYWHERE,           "rr",                    NULL,            kStrCat_workarounds },
     { MAP_CALL(StrCmp),            SIG_EVERYWHERE,           "rr(i)",                 NULL,            NULL },
     { MAP_CALL(StrCpy),            SIG_EVERYWHERE,           "r[r0](i)",              NULL,            NULL },
     { MAP_CALL(StrEnd),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
