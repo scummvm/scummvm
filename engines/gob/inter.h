@@ -452,6 +452,7 @@ protected:
 	void oFascin_closeWin();
 	void oFascin_activeWin();
 	void oFascin_openWin();
+	void oFascin_initCursorAnim();
 	void oFascin_setRenderFlags();
 	void oFascin_setWinFlags();
 };

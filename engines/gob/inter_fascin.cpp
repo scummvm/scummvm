@@ -57,6 +57,8 @@ void Inter_Fascination::setupOpcodesDraw() {
 	OPCODEDRAW(0x05, oFascin_activeWin);
 	OPCODEDRAW(0x06, oFascin_openWin);
 
+	OPCODEDRAW(0x08, oFascin_initCursorAnim);
+
 	OPCODEDRAW(0x0A, oFascin_setRenderFlags);
 	OPCODEDRAW(0x0B, oFascin_setWinFlags);
 
@@ -249,6 +251,13 @@ void Inter_Fascination::oFascin_openWin() {
 	_vm->_game->_script->evalExpr(&id);
 	retVal = _vm->_game->_script->readVarIndex();
 	WRITE_VAR((retVal / 4), (int32) _vm->_draw->openWin(id));
+}
+
+void Inter_Fascination::oFascin_initCursorAnim() {
+	int16 ind = _vm->_game->_script->readValExpr();
+	_vm->_draw->_cursorAnimLow[ind] = _vm->_game->_script->readInt16();
+	_vm->_draw->_cursorAnimHigh[ind] = _vm->_game->_script->readInt16();
+	_vm->_draw->_cursorAnimDelays[ind] = _vm->_game->_script->readInt16();
 }
 
 void Inter_Fascination::oFascin_setRenderFlags() {
