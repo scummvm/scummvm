@@ -34,16 +34,6 @@
 #define INTRO_H
 
 namespace Hugo {
-// TODO : Remove this enum. Only used in Hugo 3w intro.
-// Enumerate picture files.  All screens must have an entry here, in order
-enum screenid_3w {
-	CRASH,   WEB,       BRIDGE_3w,  BRIDGE2,   CLIFFTOP, WFALL,
-	WFALL_B, WBASE,     STREAM_3w,  STREAM2,   PATH_UL,  VILLAGE,
-	HUT_OUT, HUT_IN,    GARDEN_3w,  OLDMAN_3w, CLIFF,    SLOPE,
-	CAMP,    SUNSET,    TURN,       PLANE,     MAP,      PATH,
-	CAVE,    FINTRO,    NUM_PICS
-};
-#define INTRO_2_FILE  MAP
 
 enum seqTextIntro {
 	kIntro1 = 0,

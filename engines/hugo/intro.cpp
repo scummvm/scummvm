@@ -95,7 +95,7 @@ void intro_3w::preNewGame() {
 void intro_3w::introInit() {
 // Hugo 3 - show map and set up for introPlay()
 //#if STORY
-	_vm.file().readBackground(INTRO_2_FILE);
+	_vm.file().readBackground(22); // display screen MAP_3w
 	_vm.screen().displayBackground();
 	introTicks = 0;
 //#endif
