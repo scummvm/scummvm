@@ -745,13 +745,14 @@ void FileManager::printBootText() {
 
 	debugC(1, kDebugFile, "printBootText");
 
-	if (!ofp.open(BOOTFILE))
+	if (!ofp.open(BOOTFILE)) {
 		if (_vm._gameVariant == 3) {
 			//TODO initialize properly _boot structure
 			warning("printBootText - Skipping as H1 Dos may be a freeware");
 			return;
 		} else
 			Utils::Error(FILE_ERR, BOOTFILE);
+	}
 
 	// Allocate space for the text and print it
 	buf = (char *)malloc(_boot.exit_len + 1);
@@ -785,13 +786,14 @@ void FileManager::readBootFile() {
 
 	debugC(1, kDebugFile, "readBootFile");
 
-	if (!ofp.open(BOOTFILE))
+	if (!ofp.open(BOOTFILE)) {
 		if (_vm._gameVariant == 3) {
 			//TODO initialize properly _boot structure
 			warning("readBootFile - Skipping as H1 Dos may be a freeware");
 			return;
 		} else
 			Utils::Error(FILE_ERR, BOOTFILE);
+	}
 
 	if (ofp.size() < (int32)sizeof(_boot))
 		Utils::Error(FILE_ERR, BOOTFILE);

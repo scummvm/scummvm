@@ -678,9 +678,9 @@ bool Parser::isObjectVerb(object_t *obj, char *line, char *comment) {
 
 void Parser::showDosInventory() {
 // Show user all objects being carried in a variable width 2 column format
-static char *intro  = "You are carrying:";
-static char *outro  = "\nPress ESCAPE to continue";
-static char *blanks = "                                        ";
+static const char *intro  = "You are carrying:";
+static const char *outro  = "\nPress ESCAPE to continue";
+static const char *blanks = "                                        ";
 uint16 index, len, len1 = 0, len2 = 0;
 char buffer[XBYTES * NUM_ROWS] = "\0";
 
@@ -701,12 +701,14 @@ char buffer[XBYTES * NUM_ROWS] = "\0";
 	strncat (buffer, blanks, (len1 + len2 - strlen(intro)) / 2);
 	strcat (strcat (buffer, intro), "\n");
 	index = 0;
-	for (int i = 0; i < _vm._numObj; i++)     /* Assign strings */
-		if (_vm._objects[i].carriedFl)
+	for (int i = 0; i < _vm._numObj; i++) {     /* Assign strings */
+		if (_vm._objects[i].carriedFl) {
 			if (index++ & 1)
 				strcat (strcat (buffer, _vm._arrayNouns[_vm._objects[i].nounIndex][1]), "\n");
 			else
 				strncat (strcat (buffer, _vm._arrayNouns[_vm._objects[i].nounIndex][1]), blanks, len1 - strlen(_vm._arrayNouns[_vm._objects[i].nounIndex][1]));
+		}
+	}
 	if (index & 1) strcat (buffer, "\n");
 	strcat (buffer, outro);
 
