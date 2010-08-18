@@ -1186,7 +1186,9 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 		Node *node = s->_segMan->lookupNode(list->first);
 
 		while (node) {
-			polygon = convert_polygon(s, node->value);
+			// The node value might be null, in which case there's no polygon to parse.
+			// Happens in LB2 floppy - refer to bug #3041232
+			polygon = !node->value.isNull() ? convert_polygon(s, node->value) : NULL;
 
 			if (polygon) {
 				pf_s->polygons.push_back(polygon);
