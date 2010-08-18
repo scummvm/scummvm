@@ -89,11 +89,13 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 			_vm.screen().userHelp();
 			_checkDoubleF1Fl = true;
 		break;
+	case Common::KEYCODE_F6:                        // Inventory
+		showDosInventory();
+		break;
 	case Common::KEYCODE_F2:                        // Toggle sound
 	case Common::KEYCODE_F3:                        // Repeat last line
 	case Common::KEYCODE_F4:                        // Save game
 	case Common::KEYCODE_F5:                        // Restore game
-	case Common::KEYCODE_F6:                        // Inventory
 	case Common::KEYCODE_F8:                        // Turbo mode
 	case Common::KEYCODE_F9:                        // Boss button
 		warning("STUB: KeyHandler() - F2-F9 (DOS)");
@@ -673,5 +675,43 @@ bool Parser::isObjectVerb(object_t *obj, char *line, char *comment) {
 		isGenericVerb(obj, line, comment);
 	return true;
 }
+
+void Parser::showDosInventory() {
+// Show user all objects being carried in a variable width 2 column format
+static char *intro  = "You are carrying:";
+static char *outro  = "\nPress ESCAPE to continue";
+static char *blanks = "                                        ";
+uint16 index, len, len1 = 0, len2 = 0;
+char buffer[XBYTES * NUM_ROWS] = "\0";
+
+	index = 0;
+	for (int i = 0; i < _vm._numObj; i++)     /* Find widths of 2 columns */
+		if (_vm._objects[i].carriedFl) {
+			len = strlen(_vm._arrayNouns[_vm._objects[i].nounIndex][1]);
+			if (index++ & 1)                    /* Right hand column */
+				len2 = len > len2 ? len : len2;
+			else
+				len1 = len > len1 ? len : len1;
+		}
+	len1 += 1;                                  /* For gap between columns */
+
+	if (len1 + len2 < (uint16)strlen(outro))
+		len1 = strlen(outro);
+
+	strncat (buffer, blanks, (len1 + len2 - strlen(intro)) / 2);
+	strcat (strcat (buffer, intro), "\n");
+	index = 0;
+	for (int i = 0; i < _vm._numObj; i++)     /* Assign strings */
+		if (_vm._objects[i].carriedFl)
+			if (index++ & 1)
+				strcat (strcat (buffer, _vm._arrayNouns[_vm._objects[i].nounIndex][1]), "\n");
+			else
+				strncat (strcat (buffer, _vm._arrayNouns[_vm._objects[i].nounIndex][1]), blanks, len1 - strlen(_vm._arrayNouns[_vm._objects[i].nounIndex][1]));
+	if (index & 1) strcat (buffer, "\n");
+	strcat (buffer, outro);
+
+	Utils::Box(BOX_ANY, buffer);
+}
+
 
 } // end of namespace Hugo

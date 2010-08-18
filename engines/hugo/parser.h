@@ -88,6 +88,7 @@ private:
 	char *strlwr(char *buffer);
 
 	void  dropObject(object_t *obj);
+	void  showDosInventory();
 	void  showTakeables();
 	void  takeObject(object_t *obj);
 };
