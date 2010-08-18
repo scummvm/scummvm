@@ -48,6 +48,7 @@ const SciWorkaroundEntry opcodeDptoaWorkarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
 const SciWorkaroundEntry opcodeGeWorkarounds[] = {
+	{ GID_HOYLE1,           5,  213,  0,                   "", "export 0",       -1,    0, { WORKAROUND_FAKE,   1 } }, // happens sometimes during cribbage - bug #3038433
 	{ GID_PQ3,             31,   31,  0,              "rm031", "init",           -1,    0, { WORKAROUND_FAKE,   1 } }, // pq3 english: when exiting the car, while morales is making phonecalls - bug #3037565
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
