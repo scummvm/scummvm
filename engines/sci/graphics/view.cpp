@@ -128,8 +128,11 @@ void GfxView::initData(GuiResourceId resourceId) {
 				_palette->createFromData(&_resourceData[palOffset], _resourceSize - palOffset, &_viewPalette);
 				_embeddedPal = true;
 			} else {
-				// Only use the EGA-mapping, when being SCI1
-				if (getSciVersion() >= SCI_VERSION_1_EGA) {
+				// Only use the EGA-mapping, when being SCI1 EGA
+				//  SCI1 VGA conversion games (which will get detected as SCI1EARLY/MIDDLE/LATE) have some views
+				//  with broken mapping tables. I guess those games won't use the mapping, so I rather disable it
+				//  for them
+				if (getSciVersion() == SCI_VERSION_1_EGA) {
 					_EGAmapping = &_resourceData[palOffset];
 					for (EGAmapNr = 0; EGAmapNr < SCI_VIEW_EGAMAPPING_COUNT; EGAmapNr++) {
 						if (memcmp(_EGAmapping, EGAmappingStraight, SCI_VIEW_EGAMAPPING_SIZE) != 0)
