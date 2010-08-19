@@ -139,7 +139,7 @@ bool Sword25Engine::AppEnd() {
 	// Free the log file if it was used
 	BS_Log::_CloseLog();
 
-	return false;
+	return true;
 }
 
 bool Sword25Engine::LoadPackages() {
