@@ -291,7 +291,7 @@ private:
 
 	bool _skipStaticPlugs;
 
-	int _nonEnginePlugs;
+	uint _nonEnginePlugs;
 
 	bool tryLoadPlugin(Plugin *plugin);
 	

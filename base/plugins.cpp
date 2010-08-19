@@ -342,7 +342,8 @@ void PluginManager::loadFirstPlugin() { //TODO: rename? It's not quite clear tha
 }
 
 bool PluginManager::loadNextPlugin() {
-	if (_nonEnginePlugs == _allPlugs.size()) return false; //There are no Engine Plugins in this case.
+	if (_nonEnginePlugs == _allPlugs.size())
+		return false; //There are no Engine Plugins in this case.
 	//To ensure only one engine plugin is loaded at a time, we unload all engine plugins before trying to load a new one.
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL);
 	++_currentPlugin;
