@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-08-11 22:12+0100\n"
+"POT-Creation-Date: 2010-08-19 13:30+0300\n"
 "PO-Revision-Date: 2010-07-30 22:19+0100\n"
 "Last-Translator: Lubomyr Lisen\n"
 "Language-Team: Ukrainian\n"
@@ -1255,47 +1255,47 @@ msgstr "Підключити SMB"
 msgid "Unmount SMB"
 msgstr "Відключти SMB"
 
-#: backends/platform/wii/options.cpp:145
+#: backends/platform/wii/options.cpp:143
 msgid "DVD Mounted successfully"
 msgstr "DVD підключений успішно"
 
-#: backends/platform/wii/options.cpp:148
+#: backends/platform/wii/options.cpp:146
 msgid "Error while mounting the DVD"
 msgstr "Помилка під час підключення DVD"
 
-#: backends/platform/wii/options.cpp:150
+#: backends/platform/wii/options.cpp:148
 msgid "DVD not mounted"
 msgstr "DVD не підключений"
 
-#: backends/platform/wii/options.cpp:163
+#: backends/platform/wii/options.cpp:161
 msgid "Network up, share mounted"
 msgstr "Мережа працює, папка підключена"
 
-#: backends/platform/wii/options.cpp:165
+#: backends/platform/wii/options.cpp:163
 msgid "Network up"
 msgstr "Мережа працює"
 
-#: backends/platform/wii/options.cpp:168
+#: backends/platform/wii/options.cpp:166
 msgid ", error while mounting the share"
 msgstr ", помилка під час підключення папки"
 
-#: backends/platform/wii/options.cpp:170
+#: backends/platform/wii/options.cpp:168
 msgid ", share not mounted"
 msgstr ", папка не підключена"
 
-#: backends/platform/wii/options.cpp:176
+#: backends/platform/wii/options.cpp:174
 msgid "Network down"
 msgstr "Мережа вимкнена"
 
-#: backends/platform/wii/options.cpp:180
+#: backends/platform/wii/options.cpp:178
 msgid "Initialising network"
 msgstr "Налаштовую мережу"
 
-#: backends/platform/wii/options.cpp:184
+#: backends/platform/wii/options.cpp:182
 msgid "Timeout while initialising network"
 msgstr "Час підключення до мережі витік"
 
-#: backends/platform/wii/options.cpp:188
+#: backends/platform/wii/options.cpp:186
 #, c-format
 msgid "Network not initialsed (%d)"
 msgstr "Мережа не налагоджена (%d)"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-08-11 22:12+0100\n"
+"POT-Creation-Date: 2010-08-19 13:30+0300\n"
 "PO-Revision-Date: 2010-08-12 00:56+0100\n"
 "Last-Translator: Simon Sawatzki\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
@@ -1258,47 +1258,47 @@ msgstr "SMB einbinden"
 msgid "Unmount SMB"
 msgstr "SMB aushängen"
 
-#: backends/platform/wii/options.cpp:145
+#: backends/platform/wii/options.cpp:143
 msgid "DVD Mounted successfully"
 msgstr "DVD erfolgreich eingebunden"
 
-#: backends/platform/wii/options.cpp:148
+#: backends/platform/wii/options.cpp:146
 msgid "Error while mounting the DVD"
 msgstr "Fehler beim Einbinden der DVD"
 
-#: backends/platform/wii/options.cpp:150
+#: backends/platform/wii/options.cpp:148
 msgid "DVD not mounted"
 msgstr "DVD nicht eingebunden"
 
-#: backends/platform/wii/options.cpp:163
+#: backends/platform/wii/options.cpp:161
 msgid "Network up, share mounted"
 msgstr "Netzwerk gestartet, öffentliches Verzeichnis eingebunden"
 
-#: backends/platform/wii/options.cpp:165
+#: backends/platform/wii/options.cpp:163
 msgid "Network up"
 msgstr "Netzwerk gestartet"
 
-#: backends/platform/wii/options.cpp:168
+#: backends/platform/wii/options.cpp:166
 msgid ", error while mounting the share"
 msgstr ", Fehler beim Einbinden des öffentlichen Verzeichnisses"
 
-#: backends/platform/wii/options.cpp:170
+#: backends/platform/wii/options.cpp:168
 msgid ", share not mounted"
 msgstr ", öffentliches Verzeichnis nicht eingebunden"
 
-#: backends/platform/wii/options.cpp:176
+#: backends/platform/wii/options.cpp:174
 msgid "Network down"
 msgstr "Netzwerk ist aus."
 
-#: backends/platform/wii/options.cpp:180
+#: backends/platform/wii/options.cpp:178
 msgid "Initialising network"
 msgstr "Netzwerk wird gestartet..."
 
-#: backends/platform/wii/options.cpp:184
+#: backends/platform/wii/options.cpp:182
 msgid "Timeout while initialising network"
 msgstr "Zeitüberschreitung beim Starten des Netzwerks"
 
-#: backends/platform/wii/options.cpp:188
+#: backends/platform/wii/options.cpp:186
 #, c-format
 msgid "Network not initialsed (%d)"
 msgstr "Netzwerk nicht gestartet (%d)"

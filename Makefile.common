@@ -226,7 +226,11 @@ dist-src: \
 DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYRIGHT NEWS README)
 
 # Themes files
-DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,scummmodern.zip)
+DIST_FILES_THEMES=scummmodern.zip
+ifdef USE_TRANSLATION
+DIST_FILES_THEMES+=translations.dat
+endif
+DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,$(DIST_FILES_THEMES))
 
 # Engine data files
 DIST_FILES_ENGINEDATA=

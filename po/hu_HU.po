@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-08-11 22:12+0100\n"
+"POT-Creation-Date: 2010-08-19 13:30+0300\n"
 "PO-Revision-Date: 2009-11-25 07:42-0500\n"
 "Last-Translator: Alex Bevilacqua <alexbevi@gmail.com>\n"
 "Language-Team: Hungarian\n"
@@ -1253,47 +1253,47 @@ msgstr ""
 msgid "Unmount SMB"
 msgstr ""
 
-#: backends/platform/wii/options.cpp:145
+#: backends/platform/wii/options.cpp:143
 msgid "DVD Mounted successfully"
 msgstr ""
 
-#: backends/platform/wii/options.cpp:148
+#: backends/platform/wii/options.cpp:146
 msgid "Error while mounting the DVD"
 msgstr ""
 
-#: backends/platform/wii/options.cpp:150
+#: backends/platform/wii/options.cpp:148
 msgid "DVD not mounted"
 msgstr ""
 
-#: backends/platform/wii/options.cpp:163
+#: backends/platform/wii/options.cpp:161
 msgid "Network up, share mounted"
 msgstr ""
 
-#: backends/platform/wii/options.cpp:165
+#: backends/platform/wii/options.cpp:163
 msgid "Network up"
 msgstr ""
 
-#: backends/platform/wii/options.cpp:168
+#: backends/platform/wii/options.cpp:166
 msgid ", error while mounting the share"
 msgstr ""
 
-#: backends/platform/wii/options.cpp:170
+#: backends/platform/wii/options.cpp:168
 msgid ", share not mounted"
 msgstr ""
 
-#: backends/platform/wii/options.cpp:176
+#: backends/platform/wii/options.cpp:174
 msgid "Network down"
 msgstr ""
 
-#: backends/platform/wii/options.cpp:180
+#: backends/platform/wii/options.cpp:178
 msgid "Initialising network"
 msgstr ""
 
-#: backends/platform/wii/options.cpp:184
+#: backends/platform/wii/options.cpp:182
 msgid "Timeout while initialising network"
 msgstr ""
 
-#: backends/platform/wii/options.cpp:188
+#: backends/platform/wii/options.cpp:186
 #, c-format
 msgid "Network not initialsed (%d)"
 msgstr ""

@@ -70,6 +70,12 @@ create_msvc (LordHoto, Littleboy (contributor))
     for further help.
 
 
+create_translations (criezy)
+-------------------
+    Creates the translations.dat file from po files given as arguments.
+    The generated files is used by ScummVM to propose a translated GUI.
+
+
 credits.pl
 ----------
    This perl script contains credits to the many people who helped with

@@ -27,6 +27,7 @@
 
 #include "common/singleton.h"
 #include "common/str-array.h"
+#include "common/file.h"
 
 namespace Common {
 
@@ -52,6 +53,11 @@ struct TLanguage {
 
 typedef Array<TLanguage> TLangArray;
 
+struct PoMessageEntry {
+	int msgid;
+	String msgstr;
+};
+	
 /**
  * Message translation manager.
  */
@@ -127,7 +133,31 @@ public:
 	const char *getCurrentCharset();
 
 private:
-	Common::String _syslang;
+#ifdef USE_TRANSLATION
+	/**
+	 * Load the list of languages from the translations.dat file
+	 */
+	void loadTranslationsInfoDat();
+	/**
+	 * Load the translation for the given language from the translations.dat file
+	 *
+	 * @param index of the language in the list of languages
+	 */
+	void loadLanguageDat(int);
+	/**
+	 * Check the header of the given file to make sure it is a valid translations data file.
+	 */
+	bool checkHeader(File&);
+	
+	String _syslang;
+	StringArray _langs;
+	StringArray _langNames;
+	
+	StringArray _messageIds;
+	Array<PoMessageEntry> _currentTranslationMessages;
+	String _currentCharset;
+	int _currentLang;
+#endif
 };
 
 } // End of namespace Common

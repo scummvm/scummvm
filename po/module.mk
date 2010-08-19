@@ -35,9 +35,16 @@ updatepot:
 #$(srcdir)/common/messages.cpp: $(POFILES)
 #	perl $(srcdir)/tools/po2c $^ > $(srcdir)/common/messages.cpp
 
+translations-dat:
+	perl $(srcdir)/tools/create_translations/po2c $(POFILES) > $(srcdir)/tools/create_translations/messages.h
+	make tools/create_translations
+	tools/create_translations/create_translations
+	mv translations.dat gui/themes/
+ 
+update-translations: updatepot $(POFILES) translations-dat
+
 update-translations: updatepot $(POFILES)
 	@$(foreach file, $(POFILES), echo -n $(notdir $(basename $(file)))": ";msgfmt --statistic $(file);)
 	@rm -f messages.mo
-	perl $(srcdir)/tools/po2c $(POFILES) > $(srcdir)/common/messages.cpp
 
-.PHONY: updatepot update-translations
+.PHONY: updatepot translations-dat update-translations
