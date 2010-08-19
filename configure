@@ -1552,6 +1552,8 @@ if test -n "$_host"; then
 			_vkeybd=yes
 			_build_hq_scalers=no
 			_keymapper=no
+			# Force disable vorbis on dingux, it has terrible performance compared to tremor
+			_vorbis=no
 			;;
 		dreamcast)
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
