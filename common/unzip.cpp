@@ -107,6 +107,9 @@ typedef struct {
 #include "common/unzip.h"
 #include "common/file.h"
 
+#include "common/hashmap.h"
+#include "common/hash-str.h"
+
 #if defined(STRICTUNZIP) || defined(STRICTZIPUNZIP)
 /* like the STRICT of WIN32, we define a pointer that cannot be converted
     from (void*) without cast */
@@ -362,6 +365,16 @@ typedef struct {
 	uLong byte_before_the_zipfile;/* byte before the zipfile, (>0 for sfx)*/
 } file_in_zip_read_info_s;
 
+typedef struct {
+	uLong num_file;					/* number of the current file in the zipfile*/
+	uLong pos_in_central_dir;		/* pos of the current file in the central dir*/
+	uLong current_file_ok;			/* flag about the usability of the current file*/
+	unz_file_info cur_file_info;					/* public info about the current file in zip*/
+	unz_file_info_internal cur_file_info_internal;	/* private info about it*/
+} cached_file_in_zip;
+
+typedef Common::HashMap<Common::String, cached_file_in_zip, Common::IgnoreCase_Hash, 
+	Common::IgnoreCase_EqualTo> ZipHash;
 
 /* unz_s contain internal information about the zipfile
 */
@@ -382,6 +395,7 @@ typedef struct {
 	unz_file_info_internal cur_file_info_internal;	/* private info about it*/
 	file_in_zip_read_info_s* pfile_in_zip_read;		/* structure about the current
 													file if we are decompressing it */
+	ZipHash _hash;
 } unz_s;
 
 /* ===========================================================================
@@ -589,7 +603,27 @@ unzFile unzOpen(Common::SeekableReadStream *stream) {
 	us->central_pos = central_pos;
 	us->pfile_in_zip_read = NULL;
 
-	unzGoToFirstFile((unzFile)us);
+	err = unzGoToFirstFile((unzFile)us);
+
+	while (err == UNZ_OK) {
+		// Get the file details
+		char szCurrentFileName[UNZ_MAXFILENAMEINZIP+1];
+		unzGetCurrentFileInfo(us, NULL, szCurrentFileName, sizeof(szCurrentFileName) - 1,
+							NULL, 0, NULL, 0);
+
+		// Save details into the hash
+		cached_file_in_zip fe;
+		fe.num_file = us->num_file;
+		fe.pos_in_central_dir = us->pos_in_central_dir;
+		fe.current_file_ok = us->current_file_ok;
+		fe.cur_file_info = us->cur_file_info;
+		fe.cur_file_info_internal = us->cur_file_info_internal;
+
+		us->_hash[Common::String(szCurrentFileName)] = fe;
+
+		// Move to the next file
+		err = unzGoToNextFile((unzFile)us);
+	}
 	return (unzFile)us;
 }
 
@@ -870,7 +904,6 @@ int unzGoToNextFile(unzFile file) {
 	return err;
 }
 
-
 /*
   Try locate the file szFileName in the zipfile.
   For the iCaseSensitivity signification, see unzipStringFileNameCompare
@@ -881,12 +914,6 @@ int unzGoToNextFile(unzFile file) {
 */
 int unzLocateFile(unzFile file, const char *szFileName, int iCaseSensitivity) {
 	unz_s* s;
-	int err;
-
-
-	uLong num_fileSaved;
-	uLong pos_in_central_dirSaved;
-
 
 	if (file==NULL)
 		return UNZ_PARAMERROR;
@@ -898,25 +925,20 @@ int unzLocateFile(unzFile file, const char *szFileName, int iCaseSensitivity) {
 	if (!s->current_file_ok)
 		return UNZ_END_OF_LIST_OF_FILE;
 
-	num_fileSaved = s->num_file;
-	pos_in_central_dirSaved = s->pos_in_central_dir;
+	// Check to see if the entry exists
+	ZipHash::iterator i = s->_hash.find(Common::String(szFileName));
+	if (i == s->_hash.end())
+		return UNZ_END_OF_LIST_OF_FILE;
 
-	err = unzGoToFirstFile(file);
+	// Found it, so reset the details in the main structure
+	cached_file_in_zip &fe = i->_value;
+	s->num_file = fe.num_file;
+	s->pos_in_central_dir = fe.pos_in_central_dir;
+	s->current_file_ok = fe.current_file_ok;
+	s->cur_file_info = fe.cur_file_info;
+	s->cur_file_info_internal = fe.cur_file_info_internal;
 
-	while (err == UNZ_OK) {
-		char szCurrentFileName[UNZ_MAXFILENAMEINZIP+1];
-		unzGetCurrentFileInfo(file,NULL,
-								szCurrentFileName,sizeof(szCurrentFileName)-1,
-								NULL,0,NULL,0);
-		if (unzStringFileNameCompare(szCurrentFileName,
-										szFileName,iCaseSensitivity)==0)
-			return UNZ_OK;
-		err = unzGoToNextFile(file);
-	}
-
-	s->num_file = num_fileSaved ;
-	s->pos_in_central_dir = pos_in_central_dirSaved ;
-	return err;
+	return UNZ_OK;
 }
 
 
