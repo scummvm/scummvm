@@ -519,6 +519,35 @@ int ResourceManager::getAudioLanguage() const {
 	return (_audioMapSCI1 ? _audioMapSCI1->_volumeNumber : 0);
 }
 
+bool ResourceManager::isGMTrackIncluded() {
+	// This check only makes sense for SCI1 and newer games
+	if (getSciVersion() < SCI_VERSION_1_EARLY)
+		return false;
+
+	// SCI2 and newer games always have GM tracks
+	if (getSciVersion() >= SCI_VERSION_2)
+		return true;
+
+	// For the leftover games, we can safely use SCI_VERSION_1_EARLY for the soundVersion
+	const SciVersion soundVersion = SCI_VERSION_1_EARLY;
+
+	// Read song 1 and check if it has a GM track
+	bool result = false;
+	SoundResource *song1 = new SoundResource(1, this, soundVersion);
+	if (!song1) {
+		warning("ResourceManager::isGMTrackIncluded: track 1 not found");
+		return false;
+	}
+
+	SoundResource::Track *gmTrack = song1->getTrackByType(0x07);
+	if (gmTrack)
+		result = true;
+
+	delete song1;
+
+	return result;
+}
+
 SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVersion soundVersion) : _resMan(resMan), _soundVersion(soundVersion) {
 	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeSound, resourceNr), true);
 	int trackNr, channelNr;

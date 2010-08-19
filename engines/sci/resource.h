@@ -315,6 +315,7 @@ public:
 
 	void setAudioLanguage(int language);
 	int getAudioLanguage() const;
+	bool isGMTrackIncluded();
 	bool isVGA() const { return (_viewType == kViewVga) || (_viewType == kViewVga11); }
 	bool isAmiga32color() const { return _viewType == kViewAmiga; }
 	bool isSci11Mac() const { return _volVersion == kResVersionSci11Mac; }
