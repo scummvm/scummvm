@@ -71,6 +71,7 @@ public:
 
 	DLObject() : _segment(NULL), _symtab(NULL), _strtab(NULL), _symbol_cnt(0),
 				 _symtab_sect(-1), _dtors_start(NULL), _dtors_end(NULL), _segmentSize(0) {}
+	virtual ~DLObject() { unload(); }
 };
 
 #endif /* ELF_LOADER_H */
