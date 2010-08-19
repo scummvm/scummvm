@@ -92,7 +92,8 @@ const SciWorkaroundEntry opcodeAndWorkarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
 const SciWorkaroundEntry opcodeOrWorkarounds[] = {
-	{ GID_ECOQUEST2,        100,    0,  0,              "Rain", "points",      0xcc6,    0, { WORKAROUND_FAKE,   0 } }, // when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #3034464
+	{ GID_ECOQUEST2,      100,    0,  0,                "Rain", "points",     0xcc6,     0, { WORKAROUND_FAKE,   0 } }, // when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #3034464
+	{ GID_MOTHERGOOSE,     -1,    4,  0,               "rm004", "doit",          -1,     0, { WORKAROUND_FAKE,   0 } }, // when going north and reaching the castle (rooms 4 and 37) - bug #3038228
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
