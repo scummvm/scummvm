@@ -43,8 +43,6 @@
 
 namespace Sword25 {
 
-using namespace std;
-
 // -----------------------------------------------------------------------------
 
 struct RGB_PIXEL {

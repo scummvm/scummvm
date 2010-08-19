@@ -51,7 +51,6 @@ extern "C"
 
 namespace Sword25 {
 
-using namespace std;
 using namespace Lua;
 
 static const unsigned int FRAMETIME_SAMPLE_COUNT = 5;       // Anzahl der Framezeiten über die, die Framezeit gemittelt wird

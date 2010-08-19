@@ -49,8 +49,6 @@
 #include "sword25/script/script.h"
 #include <zlib.h>
 
-using namespace std;
-
 #define BS_LOG_PREFIX "PERSISTENCESERVICE"
 
 // -----------------------------------------------------------------------------
