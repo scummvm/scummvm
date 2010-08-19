@@ -129,7 +129,7 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 
 	// Compute x step
 	if (tmp != 0)
-		vx = (int)(dx * sqrt(gy / (2.0 * tmp)));
+		vx = (int16)((float)(dx * sqrt(gy / (2.0 * tmp))));
 	else
 		vx = 0;
 
@@ -145,7 +145,7 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 
 		// FIXME: This choice of vy makes t roughly (2+sqrt(2))/gy * sqrt(dy);
 		// so if gy==3, then t is roughly sqrt(dy)...
-		vy = (int)sqrt((double)gy * ABS(2 * dy)) + 1;
+		vy = (int)sqrt((float)gy * ABS(2 * dy)) + 1;
 	} else {
 		// As stated above, the vertical direction is correlated to the horizontal by the
 		// (non-zero) factor c.
