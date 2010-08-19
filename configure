@@ -2020,7 +2020,7 @@ POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-im
 '
 		;;
 	ps2)
-DEFINES = "$DEFINES -DELF_LOADER_TARGET -DMIPS_TARGET"
+DEFINES="$DEFINES -DELF_LOADER_TARGET -DMIPS_TARGET"
 _def_plugin='
 #define PLUGIN_PREFIX	""
 #define PLUGIN_SUFFIX	".plg"
@@ -2039,7 +2039,7 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
 		;;
 	psp)
-DEFINES = "$DEFINES -DELF_LOADER_TARGET -DMIPS_TARGET"
+DEFINES="$DEFINES -DELF_LOADER_TARGET -DMIPS_TARGET"
 _def_plugin='
 #define PLUGIN_PREFIX	""
 #define PLUGIN_SUFFIX	".plg"
