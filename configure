@@ -932,6 +932,11 @@ arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
 	;;
+dingux)
+	_host_os=linux
+	_host_cpu=mipsel
+	_host_alias=mipsel-linux
+	;;
 dreamcast)
 	_host_os=dreamcast
 	_host_cpu=sh
@@ -1537,6 +1542,17 @@ if test -n "$_host"; then
 			_ranlib=$_host-ranlib
 			_strip=$_host-strip
 			;;
+		dingux)
+			DEFINES="$DEFINES -DUNIX -DDINGUX -DDISABLE_DOSBOX_OPL"
+			ASFLAGS="$ASFLAGS"
+			CXXFLAGS="$CXXFLAGS -msoft-float -mips32"
+			_need_memalign=yes
+			_backend="dingux"
+			_mt32emu=no
+			_vkeybd=yes
+			_build_hq_scalers=no
+			_keymapper=no
+			;;
 		dreamcast)
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
 			CXXFLAGS="$CXXFLAGS -O3 -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks"
@@ -1852,7 +1868,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	dreamcast | samsungtv | sdl | wii | psp)
+	dreamcast | dingux | samsungtv | sdl | wii | psp)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -2543,6 +2559,14 @@ case $_backend in
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
 		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
 		LIBS="$LIBS -lronin -lm"
+		;;
+	dingux)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DDINGUX"
+		LDFLAGS="$LDFLAGS "
+		MODULES="$MODULES backends/platform/sdl"
 		;;
 	ds)
 		# TODO ds
