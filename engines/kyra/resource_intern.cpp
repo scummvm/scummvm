@@ -142,6 +142,30 @@ bool ResLoaderPak::checkFilename(Common::String filename) const {
 	return (filename.hasSuffix(".PAK") || filename.hasSuffix(".APK") || filename.hasSuffix(".VRM") || filename.hasSuffix(".CMP") || filename.hasSuffix(".TLK") || filename.equalsIgnoreCase(StaticResource::staticDataFilename()));
 }
 
+namespace {
+
+Common::String readString(Common::SeekableReadStream &stream) {
+	Common::String result;
+	char c = 0;
+
+	while ((c = stream.readByte()) != 0)
+		result += c;
+
+	return result;
+}
+
+struct PlainArchiveListSearch {
+	PlainArchiveListSearch(const Common::String &search) : _search(search) {}
+
+	bool operator()(const PlainArchive::InputEntry &entry) {
+		return _search.equalsIgnoreCase(entry.name);
+	}
+
+	const Common::String _search;
+};
+
+} // end of anonymous namespace
+
 bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
 	int32 filesize = stream.size();
 	if (filesize < 0)
@@ -163,12 +187,7 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 		if (offset < stream.pos() || offset > filesize || offset < 0)
 			return false;
 
-		byte c = 0;
-
-		file.clear();
-
-		while (!stream.eos() && (c = stream.readByte()) != 0)
-			file += c;
+		file = readString(stream);
 
 		if (stream.eos())
 			return false;
@@ -190,29 +209,6 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 
 	return true;
 }
-
-namespace {
-
-Common::String readString(Common::SeekableReadStream &stream) {
-	Common::String result;
-	char c = 0;
-
-	while ((c = stream.readByte()) != 0)
-			result += c;
-
-	return result;
-}
-
-struct PlainArchiveListSearch {
-	PlainArchiveListSearch(const Common::String &search) : _search(search) {}
-
-	bool operator()(const PlainArchive::InputEntry &entry) {
-		return _search.equalsIgnoreCase(entry.name);
-	}
-	Common::String _search;
-};
-
-} // end of anonymous namespace
 
 Common::Archive *ResLoaderPak::load(Common::SharedPtr<Common::ArchiveMember> memberFile, Common::SeekableReadStream &stream) const {
 	int32 filesize = stream.size();
@@ -239,11 +235,7 @@ Common::Archive *ResLoaderPak::load(Common::SharedPtr<Common::ArchiveMember> mem
 			return 0;
 		}
 
-		file.clear();
-		byte c = 0;
-
-		while (!stream.eos() && (c = stream.readByte()) != 0)
-			file += c;
+		file = readString(stream);
 
 		if (stream.eos()) {
 			warning("PAK file '%s' is corrupted", memberFile->getDisplayName().c_str());
@@ -423,10 +415,7 @@ Common::Archive *ResLoaderTlk::load(Common::SharedPtr<Common::ArchiveMember> fil
 		uint32 resOffset = stream.readUint32LE();
 
 		entry.offset = resOffset+4;
-
-		char realFilename[20];
-		snprintf(realFilename, 20, "%.08u.AUD", resFilename);
-		entry.name = realFilename;
+		entry.name = Common::String::printf("%.08u.AUD", resFilename);
 
 		uint32 curOffset = stream.pos();
 		stream.seek(resOffset, SEEK_SET);
