@@ -458,9 +458,28 @@ void RivenExternal::xblabopenbook(uint16 argc, uint16 *argv) {
 	// Draw the image of the page based on the blabbook variable
 	_vm->_gfx->drawPLST(page);
 
-	// TODO: Draw the dome combo
 	if (page == 14) {
-		warning ("Need to draw dome combo");
+		// Draw the dome combination
+		// The images for the numbers are tBMP's 364 through 368
+		// The start point is at (240, 82)
+		uint32 domeCombo = *_vm->matchVarToString("adomecombo");
+		static const uint16 kNumberWidth = 32;
+		static const uint16 kNumberHeight = 24;
+		static const uint16 kDstX = 240;
+		static const uint16 kDstY = 82;
+		byte numCount = 0;
+
+		for (int bitPos = 24; bitPos >= 0; bitPos--) {
+			if (domeCombo & (1 << bitPos)) {
+				uint16 offset = (24 - bitPos) * kNumberWidth;
+				Common::Rect srcRect = Common::Rect(offset, 0, offset + kNumberWidth, kNumberHeight);
+				Common::Rect dstRect = Common::Rect(numCount * kNumberWidth + kDstX, kDstY, (numCount + 1) * kNumberWidth + kDstX, kDstY + kNumberHeight);
+				_vm->_gfx->drawImageRect(numCount + 364, srcRect, dstRect);
+				numCount++;
+			}
+		}
+
+		assert(numCount == 5); // Sanity check
 	}
 }
 
