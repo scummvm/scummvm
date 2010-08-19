@@ -60,6 +60,12 @@ const SciWorkaroundEntry opcodeLeWorkarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
+const SciWorkaroundEntry opcodeUltWorkarounds[] = {
+	{ GID_HOYLE3,         400,   0,  1,           "Character", "say",           -1,    0, { WORKAROUND_FAKE,   0 } }, // While playing Pachisi, when any character starts to talk - bug #3038837
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
 const SciWorkaroundEntry opcodeLaiWorkarounds[] = {
 	{ GID_CAMELOT,         92,   92,  0,     "endingCartoon2", "changeState", 0x20d,    0, { WORKAROUND_FAKE,   0 } }, // during the ending, sub gets called with no parameters, uses parameter 1 which is theGrail in this case - bug #3044734
 	SCI_WORKAROUNDENTRY_TERMINATOR
