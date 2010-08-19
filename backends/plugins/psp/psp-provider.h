@@ -40,10 +40,9 @@ class PSPPluginProvider : public ELFPluginProvider {
 	};
 
 public:
-	Plugin* PSPPluginProvider::createPlugin(const Common::FSNode &node) const {
+	Plugin* createPlugin(const Common::FSNode &node) const {
 		return new PSPPlugin(node.getPath());
 	}
-}
 };
 
 #endif /* BACKENDS_PLUGINS_PSP_PSP_PROVIDER_H */

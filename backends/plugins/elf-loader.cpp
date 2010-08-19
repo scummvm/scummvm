@@ -324,10 +324,6 @@ bool DLObject::open(const char *path) {
 	Common::SeekableReadStream* DLFile;
 	void *ctors_start, *ctors_end;
 
-#ifdef __PSP__
-	PowerMan.beginCriticalSection();
-#endif
-
 	DBG("open(\"%s\")\n", path);
 
 	Common::FSNode file(path);
@@ -346,10 +342,6 @@ bool DLObject::open(const char *path) {
 	}
 
 	DBG("loaded!/n");
-
-#ifdef __PSP__
-	PowerMan.endCriticalSection();
-#endif
 
 	flushDataCache();
 
