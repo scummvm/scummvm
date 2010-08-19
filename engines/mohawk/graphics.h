@@ -117,7 +117,7 @@ private:
 			uint16 type;
 			uint16 width;
 			uint16 height;
-			} *entries;
+		} *entries;
 
 		Common::File picFile;
 	} _pictureFile;
@@ -147,6 +147,7 @@ public:
 	Common::Array<uint16> _activatedPLSTs;
 	void drawPLST(uint16 x);
 	void drawRect(Common::Rect rect, bool active);
+	void drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect dstRect);
 
 	// Water Effect
 	void scheduleWaterEffect(uint16);
@@ -181,7 +182,6 @@ private:
 	Graphics::Surface *_mainScreen;
 	bool _dirtyScreen;
 	Graphics::PixelFormat _pixelFormat;
-	byte findBlackIndex();
 };
 
 class LBGraphics {

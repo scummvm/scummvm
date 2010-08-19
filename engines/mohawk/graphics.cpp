@@ -672,6 +672,21 @@ void RivenGraphics::drawRect(Common::Rect rect, bool active) {
 	_vm->_system->unlockScreen();
 }
 
+void RivenGraphics::drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect dstRect) {
+	// Draw tBMP id from srcRect to dstRect
+	ImageData *imageData = _bitmapDecoder->decodeImage(_vm->getRawData(ID_TBMP, id));
+	Graphics::Surface *surface = imageData->getSurface();
+	delete imageData;
+
+	assert(srcRect.width() == dstRect.width() && srcRect.height() == dstRect.height());
+
+	for (uint16 i = 0; i < srcRect.height(); i++)
+		memcpy(_mainScreen->getBasePtr(dstRect.left, i + dstRect.top), surface->getBasePtr(srcRect.left, i + srcRect.top), srcRect.width() * surface->bytesPerPixel);
+
+	surface->free();
+	delete surface;
+}
+
 LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm) : _vm(vm) {
 	_bmpDecoder = (_vm->getGameType() == GType_LIVINGBOOKSV1) ? new OldMohawkBitmap() : new MohawkBitmap();
 	_palette = new byte[256 * 4];
@@ -707,7 +722,7 @@ void LBGraphics::copyImageToScreen(uint16 image, uint16 left, uint16 right) {
 }
 
 void LBGraphics::setPalette(uint16 id) {
-	// Old Living Books gamnes use the old CTBL-style palette format while newer
+	// Old Living Books games use the old CTBL-style palette format while newer
 	// games use the better tPAL format which can store partial palettes.
 
 	if (_vm->getGameType() == GType_LIVINGBOOKSV1) {

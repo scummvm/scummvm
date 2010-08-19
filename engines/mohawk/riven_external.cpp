@@ -340,7 +340,21 @@ void RivenExternal::xacathopenbook(uint16 argc, uint16 *argv) {
 		_vm->_gfx->drawPLST(51);
 
 	if (page == 28) {
-		// TODO: Draw telescope combination
+		// Draw the telescope combination
+		// The images for the numbers are tBMP's 13 through 17.
+		// The start point is at (156, 247)
+		uint32 teleCombo = *_vm->matchVarToString("tcorrectorder");
+		static const uint16 kNumberWidth = 32;
+		static const uint16 kNumberHeight = 25;
+		static const uint16 kDstX = 156;
+		static const uint16 kDstY = 247;
+
+		for (byte i = 0; i < 5; i++) {
+			uint16 offset = (getComboDigit(teleCombo, i) - 1) * kNumberWidth;
+			Common::Rect srcRect = Common::Rect(offset, 0, offset + kNumberWidth, kNumberHeight);
+			Common::Rect dstRect = Common::Rect(i * kNumberWidth + kDstX, kDstY, (i + 1) * kNumberWidth + kDstX, kDstY + kNumberHeight);
+			_vm->_gfx->drawImageRect(i + 13, srcRect, dstRect);
+		}
 	}
 }
 
