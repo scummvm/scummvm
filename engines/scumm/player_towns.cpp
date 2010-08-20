@@ -104,7 +104,7 @@ void Player_Towns::startSound(int sound) {
 }
 
 void Player_Towns::stopSound(int sound) {
-	if (sound != 0 && sound == _cdaCurrentSound) {
+	if (sound == 0 || sound == _cdaCurrentSound) {
 		_cdaCurrentSound = 0;
 		_vm->_sound->stopCD();
 		_vm->_sound->stopCDTimer();
@@ -124,10 +124,9 @@ void Player_Towns::stopAllSounds() {
 	_vm->_sound->stopCD();
 	_vm->_sound->stopCDTimer();
 
-	// Loom disasm seems to stop only CD audio and PCM sounds here
-	/*_eupCurrentSound = 0;
+	_eupCurrentSound = 0;
 	_eupLooping = false;
-	_driver->stopParser();*/
+	_driver->stopParser();
 
 	stopPcmTrack(0);
 }
