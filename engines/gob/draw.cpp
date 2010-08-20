@@ -733,26 +733,24 @@ void Draw::winMove(int16 id) {
 }
 
 void Draw::winTrace(int16 left, int16 top, int16 width, int16 height) {
-	// TODO: Implement proper behavior for the trace of the Window. In short,
-	//  - drawline currently use the wrong surface, to be fixed
-	//  - dirtiedRect should be put after the 4 drawlines when the surface is fixed <- Not in 256 col version
-	//  - drawline should be replaced by a drawline with palette inversion
-	//  - Shift skipped as always set to zero (?)
-
-	int16 right, bottom;
-
-	right  = left + width  - 1;
-	bottom = top  + height - 1;
-
-// To be fixed : either wrong surface, or anything else, but crappy look.
-//	_vm->_video->drawLine(*_frontSurface, left,  top,    right, top,    0);
-//	_vm->_video->drawLine(*_frontSurface, left,  top,    left,  bottom, 0);
-//	_vm->_video->drawLine(*_frontSurface, left,  bottom, right, bottom, 0);
-//	_vm->_video->drawLine(*_frontSurface, right, top,    right, bottom, 0);
-
-// Not in 256 col version
-	_vm->_video->dirtyRectsAll();
-
+  int16 right, bottom;
+ 
+  right  = left + width  - 1;
+  bottom = top  + height - 1;
+ 
+ 
+  for(int32 x = left; x < right; x++ ) {
+    _frontSurface->getVidMem()[_frontSurface->getWidth() * top + x] = (128 + _frontSurface->getVidMem()[_frontSurface->getWidth() * top + x]) & 0xff;
+    _frontSurface->getVidMem()[_frontSurface->getWidth() * bottom + x] = (128 + _frontSurface->getVidMem()[_frontSurface->getWidth() * bottom + x]) & 0xff;
+  }
+ 
+  for(int32 y = top; y < bottom; y++ ) {
+    _frontSurface->getVidMem()[_frontSurface->getWidth() * y + left] = (128 + _frontSurface->getVidMem()[_frontSurface->getWidth() * y + left]) & 0xff;
+    _frontSurface->getVidMem()[_frontSurface->getWidth() * y + right] = (128 + _frontSurface->getVidMem()[_frontSurface->getWidth() * y + right]) & 0xff;
+  }
+ 
+  _vm->_video->dirtyRectsAll();
+  _vm->_video->retrace(true);
 }
 
 void Draw::handleWinBorder(int16 id) {
