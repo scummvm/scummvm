@@ -531,9 +531,15 @@ bool ResourceManager::isGMTrackIncluded() {
 	// For the leftover games, we can safely use SCI_VERSION_1_EARLY for the soundVersion
 	const SciVersion soundVersion = SCI_VERSION_1_EARLY;
 
-	// Read song 1 and check if it has a GM track
+	// Read the first song and check if it has a GM track
 	bool result = false;
-	SoundResource *song1 = new SoundResource(1, this, soundVersion);
+	Common::List<ResourceId> *resources = listResources(kResourceTypeSound, -1);
+	Common::sort(resources->begin(), resources->end());
+	Common::List<ResourceId>::iterator itr = resources->begin();
+	int firstSongId = itr->getNumber();
+	delete resources;
+
+	SoundResource *song1 = new SoundResource(firstSongId, this, soundVersion);
 	if (!song1) {
 		warning("ResourceManager::isGMTrackIncluded: track 1 not found");
 		return false;

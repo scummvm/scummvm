@@ -542,6 +542,7 @@ void Script::applyPatch(const uint16 *patch, byte *scriptData, const uint32 scri
 			offset += patchWord & ~PATCH_ADDTOOFFSET;
 		} else if (patchWord & PATCH_GETORIGINALBYTE) {
 			// TODO: implement this
+			// Can be used to patch in some bytes from the original script into another location
 		} else {
 			scriptData[offset] = patchWord & 0xFF;
 			offset++;
