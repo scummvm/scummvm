@@ -82,26 +82,27 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 		}
 		break;
 	case Common::KEYCODE_F1:                        // User Help (DOS)
-		if (_checkDoubleF1Fl) {
+		if (_checkDoubleF1Fl)
 			_vm.file().instructions();
-			_checkDoubleF1Fl = false;
-		} else {
+		else
 			_vm.screen().userHelp();
-			_checkDoubleF1Fl = true;
-		}
+		_checkDoubleF1Fl = !_checkDoubleF1Fl;
 		break;
 	case Common::KEYCODE_F6:                        // Inventory
 		showDosInventory();
 		break;
 	case Common::KEYCODE_F8:                        // Turbo mode
-		_config.turboFl ^= 1;
+		_config.turboFl = !_config.turboFl;
 		break;
 	case Common::KEYCODE_F2:                        // Toggle sound
+		_vm.sound().toggleSound();
+		_vm.sound().toggleMusic();
+		break;
 	case Common::KEYCODE_F3:                        // Repeat last line
 	case Common::KEYCODE_F4:                        // Save game
 	case Common::KEYCODE_F5:                        // Restore game
 	case Common::KEYCODE_F9:                        // Boss button
-		warning("STUB: KeyHandler() - F2-F9 (DOS)");
+		warning("STUB: KeyHandler() - F3-F9 (DOS)");
 		break;
 	default:                                        // Any other key
 		if (!gameStatus.storyModeFl) {              // Keyboard disabled
@@ -173,7 +174,7 @@ void Parser::charHandler() {
 	if ((tick++ % (TPS / BLINKS)) == 0) {
 // Strangerke : Useless ?
 //		updateFl = true;                            // Force an update
-		cursor = cursor == '_' ? ' ' : '_';
+		cursor = (cursor == '_') ? ' ' : '_';
 	}
 
 	// See if recall button pressed
@@ -185,7 +186,7 @@ void Parser::charHandler() {
 	}
 
 	sprintf(_statusLine, ">%s%c", cmdLine, cursor);
-	sprintf(_scoreLine, "F1-Help  %s  Score: %d of %d", (_config.turboFl) ? "T" : " ", _vm.getScore(), _vm.getMaxScore());
+	sprintf(_scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_config.turboFl) ? "T" : " ", _vm.getScore(), _vm.getMaxScore(), (_config.soundFl) ? "On" : "Off");
 
 	// See if "look" button pressed
 	if (gameStatus.lookFl) {
@@ -690,9 +691,9 @@ char buffer[XBYTES * NUM_ROWS] = "\0";
 		if (_vm._objects[i].carriedFl) {
 			len = strlen(_vm._arrayNouns[_vm._objects[i].nounIndex][1]);
 			if (index++ & 1)                    /* Right hand column */
-				len2 = len > len2 ? len : len2;
+				len2 = (len > len2) ? len : len2;
 			else
-				len1 = len > len1 ? len : len1;
+				len1 = (len > len1) ? len : len1;
 		}
 	len1 += 1;                                  /* For gap between columns */
 
