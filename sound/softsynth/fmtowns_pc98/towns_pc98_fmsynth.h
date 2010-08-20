@@ -71,9 +71,7 @@ public:
 	}
 
 protected:
-	typedef void (TownsPC98_FmSynth::*ChipTimerProc)();
-	void setTimerCallbackA(ChipTimerProc proc = &TownsPC98_FmSynth::timerCallbackA);
-	void setTimerCallbackB(ChipTimerProc proc = &TownsPC98_FmSynth::timerCallbackB);
+	void deinit();
 
 	// Implement this in your inherited class if your driver generates
 	// additional output that has to be inserted into the buffer.
@@ -84,8 +82,8 @@ protected:
 	}
 	uint8 readSSGStatus();
 
-	virtual void timerCallbackA() {}
-	virtual void timerCallbackB() {}
+	virtual void timerCallbackA() = 0;
+	virtual void timerCallbackB() = 0;
 
 	// The audio driver can store and apply two different audio settings
 	// (usually for music and sound effects). The channel mask will determine
@@ -142,6 +140,9 @@ private:
 	int32 *_oprDetune;
 
 	bool _regProtectionFlag;
+
+	typedef void (TownsPC98_FmSynth::*ChipTimerProc)();
+	void idleTimerCallback() {};
 
 	struct ChipTimer {
 		bool enabled;

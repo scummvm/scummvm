@@ -1978,7 +1978,6 @@ void ScummEngine_v5::o5_startMusic() {
 			result = _sound->getCurrentCDSound();
 			break;
 		case 0xFF:
-			// TODO: Might return current CD volume in FM-TOWNS Loom. See also bug #805691.
 			result = _townsPlayer->getCurrentCdaVolume();
 			break;
 		default:

@@ -48,6 +48,7 @@ SoundTowns::SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 SoundTowns::~SoundTowns() {
 	AudioCD.stop();
 	haltTrack();
+	delete _driver;
 	delete[] _musicTrackData;
 	delete[] _sfxFileData;
 }

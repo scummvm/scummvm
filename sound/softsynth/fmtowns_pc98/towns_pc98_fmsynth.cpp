@@ -842,11 +842,9 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 }
 
 TownsPC98_FmSynth::~TownsPC98_FmSynth() {
-	Common::StackLock lock(_mutex);
-	
-	_ready = false;
+	if (_ready)
+		deinit();
 
-	_mixer->stopHandle(_soundHandle);
 	delete _ssg;
 	delete _prc;
 	delete[] _chanInternal;
@@ -884,6 +882,9 @@ bool TownsPC98_FmSynth::init() {
 		_prc = new TownsPC98_FmSynthPercussionSource(_timerbase, _rtt);
 		_prc->init(_percussionData);
 	}
+
+	_timers[0].cb = &TownsPC98_FmSynth::timerCallbackA;
+	_timers[1].cb = &TownsPC98_FmSynth::timerCallbackB;
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType,
 	                   &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
@@ -1158,12 +1159,11 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 	return numSamples;
 }
 
-void TownsPC98_FmSynth::setTimerCallbackA(ChipTimerProc proc) {
-	_timers[0].cb = proc;
-}
-
-void TownsPC98_FmSynth::setTimerCallbackB(ChipTimerProc proc) {
-	_timers[1].cb = proc;
+void TownsPC98_FmSynth::deinit() {
+	_mixer->stopHandle(_soundHandle);
+	_timers[0].cb = &TownsPC98_FmSynth::idleTimerCallback;
+	_timers[1].cb = &TownsPC98_FmSynth::idleTimerCallback;
+	_ready = false;
 }
 
 uint8 TownsPC98_FmSynth::readSSGStatus() {

@@ -222,18 +222,13 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 
 	_timerBase = (uint32)(_baserate * 1000000.0f);
 	_tickLength = 2 * _timerBase;
-
-	setTimerCallbackA((ChipTimerProc)&TownsAudioInterface::timerCallbackA);
-	setTimerCallbackB((ChipTimerProc)&TownsAudioInterface::timerCallbackB);
 }
 
 TownsAudioInterface::~TownsAudioInterface() {
 	Common::StackLock lock(_mutex);
 	reset();
+	deinit();
 	_ready = false;
-
-	setTimerCallbackA();
-	setTimerCallbackB();
 
 	delete[] _fmSaveReg[0];
 	delete[] _fmSaveReg[1];
