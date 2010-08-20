@@ -510,7 +510,8 @@ void GfxPorts::setOrigin(int16 left, int16 top) {
 	// This looks fishy, but it's exactly what sierra did. They removed last bit of left in their interpreter
 	//  It seems sierra did it for EGA byte alignment (EGA uses 1 byte for 2 pixels) and left it in their interpreter even
 	//  when going VGA.
-	_curPort->left = left & 0x7FFE;
+	// Fan made games do not compensate for this - fixes bug #3041153.
+	_curPort->left = (g_sci->getGameId() != GID_FANMADE) ? left & 0x7FFE : left;
 	_curPort->top = top;
 }
 
