@@ -44,6 +44,8 @@ reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 		// calculating range is exactly how sierra sci did it and is required for hoyle 4
 		//  where we get called with kRandom(0, -1) and we are supposed to give back values from 0 to 0
 		//  the returned value will be used as displace-offset for a background cel
+		//  note: i assume that the hoyle4 code is actually buggy and it was never fixed because of
+		//         the way sierra sci handled it - "it just worked". It should have called kRandom(0, 0)
 		if (range)
 			range--; // the range value was never returned, our random generator gets 0->range, so fix it
 
