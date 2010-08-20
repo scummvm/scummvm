@@ -36,7 +36,8 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	_lastFullscreenModeWidth(0),
 	_lastFullscreenModeHeight(0),
 	_desktopWidth(0),
-	_desktopHeight(0) {
+	_desktopHeight(0),
+	_ignoreResizeFrames(0) {
 
 	// Initialize SDL video subsystem
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
@@ -222,6 +223,12 @@ void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
 	setMousePos(scaledX, scaledY);
 }
 
+void OpenGLSdlGraphicsManager::updateScreen() {
+	if (_ignoreResizeFrames)
+		_ignoreResizeFrames -= 1;
+
+	OpenGLGraphicsManager::updateScreen();
+}
 
 //
 // Intern
@@ -500,6 +507,10 @@ void OpenGLSdlGraphicsManager::toggleFullScreen(bool loop) {
 			setFullscreenMode(!_videoMode.fullscreen);
 		}
 	endGFXTransaction();
+
+	// Ignore resize events for the next 10 frames
+	_ignoreResizeFrames = 10;
+
 #ifdef USE_OSD
 	char buffer[128];
 	if (_videoMode.fullscreen)
@@ -564,14 +575,17 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		break;*/
 	// HACK: Handle special SDL event
 	case OSystem_SDL::kSdlEventResize:
-		beginGFXTransaction();
-			// Set the new screen size. It is saved on the mouse event as part of HACK,
-			// there is no common resize event
-			_videoMode.hardwareWidth = event.mouse.x;
-			_videoMode.hardwareHeight = event.mouse.y;
-			_screenResized = true;
-			_transactionDetails.sizeChanged = true;
-		endGFXTransaction();
+		// Do not resize if ignoring resize events.
+		if (!_ignoreResizeFrames) {
+			beginGFXTransaction();
+				// Set the new screen size. It is saved on the mouse event as part of HACK,
+				// there is no common resize event
+				_videoMode.hardwareWidth = event.mouse.x;
+				_videoMode.hardwareHeight = event.mouse.y;
+				_screenResized = true;
+				_transactionDetails.sizeChanged = true;
+			endGFXTransaction();
+		}
 		return true;
 
 	default:

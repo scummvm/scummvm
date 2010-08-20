@@ -53,6 +53,8 @@ public:
 
 	virtual bool notifyEvent(const Common::Event &event);
 
+	virtual void updateScreen();
+
 protected:
 	virtual void internUpdateScreen();
 
@@ -96,6 +98,12 @@ protected:
 
 	// If screen was resized by the user
 	bool _screenResized;
+
+	// Ignore resize events for the number of updateScreen() calls.
+	// Normaly resize events are user generated when resizing the window
+	// from its borders, but in some cases a resize event can be generated
+	// after a fullscreen change.
+	int _ignoreResizeFrames;
 };
 
 #endif
