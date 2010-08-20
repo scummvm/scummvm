@@ -35,41 +35,19 @@ reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 
 	case 2: { // get random number
-		// These are unsigned (e.g. in LSL5, this is used for the 5-digit
-		// door access code with Patty at k rap)
-		int fromNumber = argv[0].toUint16();
-		int toNumber = argv[1].toUint16();
+		// numbers are definitely unsigned, for example lsl5 door code in k rap radio is random
+		//  and 5-digit - we get called kRandom(10000, 65000)
+		//  some codes in sq4 are also random and 5 digit (if i remember correctly)
+		const uint16 fromNumber = argv[0].toUint16();
+		const uint16 toNumber = argv[1].toUint16();
+		uint16 range = toNumber - fromNumber + 1;
+		// calculating range is exactly how sierra sci did it and is required for hoyle 4
+		//  where we get called with kRandom(0, -1) and we are supposed to give back values from 0 to 0
+		//  the returned value will be used as displace-offset for a background cel
+		if (range)
+			range--; // the range value was never returned, our random generator gets 0->range, so fix it
 
-		// HACK: Hoyle 4 calls this with (0x0, 0xFFFF) in some dialogs for x,
-		// then it calls it with (0x0, 0x40) and puts x plus the result in y
-		// to displace view 924 in kDrawCel right afterwards and create a
-		// semi-random background in those dialogs. With the current code,
-		// this case isn't handled properly, and the dialog background is
-		// drawn off-screen. -1 seems to be incorrect here (probably a newly
-		// added special case), so we just return a 0 for now, till we
-		// figure out how to handle this.
-		if (fromNumber == 0 && toNumber == 0xFFFF) {
-			if (g_sci->getGameId() == GID_HOYLE4) {
-				warning("HACK: Special case for Hoyle 4 dialogs in kRandom");
-				return NULL_REG;
-			} else {
-				// Just throw a warning in other games for now, but don't modify
-				// the result...
-				warning("kRandom(0x0, 0xFFFF) called - special case?");
-			}
-			
-		}
-
-		// TODO/CHECKME: It is probably not required to check whether
-		// toNumber is greater than fromNumber, at least not when one
-		// goes by their names, but let us be on the safe side and
-		// allow toNumber to be smaller than fromNumber too.
-		if (fromNumber > toNumber)
-			SWAP(fromNumber, toNumber);
-
-		const uint diff = (uint)(toNumber - fromNumber);
-
-		const int randomNumber = fromNumber + (int)g_sci->getRNG().getRandomNumber(diff);
+		const int randomNumber = fromNumber + (int)g_sci->getRNG().getRandomNumber(range);
 		return make_reg(0, randomNumber);
 	}
 
