@@ -92,11 +92,13 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 	case Common::KEYCODE_F6:                        // Inventory
 		showDosInventory();
 		break;
+	case Common::KEYCODE_F8:                        // Turbo mode
+		_config.turboFl ^= 1;
+		break;
 	case Common::KEYCODE_F2:                        // Toggle sound
 	case Common::KEYCODE_F3:                        // Repeat last line
 	case Common::KEYCODE_F4:                        // Save game
 	case Common::KEYCODE_F5:                        // Restore game
-	case Common::KEYCODE_F8:                        // Turbo mode
 	case Common::KEYCODE_F9:                        // Boss button
 		warning("STUB: KeyHandler() - F2-F9 (DOS)");
 		break;
@@ -182,7 +184,7 @@ void Parser::charHandler() {
 	}
 
 	sprintf(_statusLine, ">%s%c", cmdLine, cursor);
-	sprintf(_scoreLine, "Score: %d of %d", _vm.getScore(), _vm.getMaxScore());
+	sprintf(_scoreLine, "F1-Help  %s  Score: %d of %d", (_config.turboFl) ? "T" : " ", _vm.getScore(), _vm.getMaxScore());
 
 	// See if "look" button pressed
 	if (gameStatus.lookFl) {
