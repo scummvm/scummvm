@@ -85,9 +85,10 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 		if (_checkDoubleF1Fl) {
 			_vm.file().instructions();
 			_checkDoubleF1Fl = false;
-		} else
+		} else {
 			_vm.screen().userHelp();
 			_checkDoubleF1Fl = true;
+		}
 		break;
 	case Common::KEYCODE_F6:                        // Inventory
 		showDosInventory();
