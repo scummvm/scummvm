@@ -104,7 +104,8 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 	_fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
 	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver),
 	_pcmSfxChanMask(0),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
-	_outputVolumeFlags(0), _outputMuteFlags(0), _ready(false) {
+	_outputVolumeFlags(0), _outputMuteFlags(0), _pcmChanOut(0), _pcmChanReserved(0), _pcmChanKeyPressed(0),
+	_pcmChanEffectPlaying(0), _pcmChanKeyPlaying(0), _ready(false) {
 
 #define INTCB(x) &TownsAudioInterface::intf_##x
 	static const TownsAudioIntfCallback intfCb[] = {
