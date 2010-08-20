@@ -100,8 +100,7 @@ const SciWorkaroundEntry opcodeOrWorkarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,  workaround
 const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CASTLEBRAIN,   280,   280,  0,         "programmer", "dispatchEvent",  -1,    0, { WORKAROUND_FAKE, 0xf } }, // pressing 'q' on the computer screen in the robot room, and closing the help dialog that pops up (bug #3039656). Moves the cursor to the view with the ID returned (in this case, the robot hand)
-	{ GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname446>",    -1,  504, { WORKAROUND_FAKE,   0 } }, // checkers, like in hoyle 3
-	{ GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname446>",    -1,  505, { WORKAROUND_FAKE,   0 } }, // checkers, like in hoyle 3
+	{ GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname446>",    -1,   -1, { WORKAROUND_FAKE,   0 } }, // checkers, like in hoyle 3 - temps 504 and 505
 	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "<noname183>",    -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu, like in hoyle 3
 	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "<noname110>",    -1,    1, { WORKAROUND_FAKE,   0 } }, // when starting the game
 	{ GID_ECOQUEST,       -1,    -1,  0,                 NULL, "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // almost clicking anywhere triggers this in almost all rooms
@@ -115,8 +114,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_GK2,            -1,    11,  0,                   "", "export 10",      -1,    4, { WORKAROUND_FAKE,   0 } }, // called during the game
 	{ GID_HOYLE1,          4,   104,  0,   "GinRummyCardList", "calcRuns",       -1,    4, { WORKAROUND_FAKE,   0 } }, // Gin Rummy / right when the game starts
 	{ GID_HOYLE1,          5,   204,  0,            "tableau", "checkRuns",      -1,    2, { WORKAROUND_FAKE,   0 } }, // Cribbage / during the game
-	{ GID_HOYLE3,         -1,     0,  1,          "Character", "say",            -1,  504, { WORKAROUND_FAKE,   0 } }, // when starting checkers or dominoes, first time a character says something
-	{ GID_HOYLE3,         -1,     0,  1,          "Character", "say",            -1,  505, { WORKAROUND_FAKE,   0 } }, // when starting checkers or dominoes, first time a character says something
+	{ GID_HOYLE3,         -1,     0,  1,          "Character", "say",            -1,   -1, { WORKAROUND_FAKE,   0 } }, // when starting checkers or dominoes, first time a character says something - temps 504 and 505
 	{ GID_HOYLE3,         -1,   700,  0,           "gcWindow", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu
 	{ GID_HOYLE3,        100,   100,  0,        "dominoHand2", "cue",            -1,    1, { WORKAROUND_FAKE,   0 } }, // while playing domino - bug #3036918
 	{ GID_HOYLE4,         -1,     0,  0,           "gcWindow", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when selecting "Control" from the menu (temp vars 0-3) - bug #3039294
@@ -126,10 +124,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",           -1,    3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   200,   268,  0,          "anElement", "select",         -1,    0, { WORKAROUND_FAKE,   0 } }, // elements puzzle, gets used before super TextIcon
 	{ GID_JONES,           1,   232,  0,        "weekendText", "draw",        0x3d3,    0, { WORKAROUND_FAKE,   0 } }, // jones/cd only - gets called during the game
-	{ GID_JONES,           1,   255,  0,                   "", "export 0",       -1,   13, { WORKAROUND_FAKE,   0 } }, // jones/cd only - called when a game ends
-	{ GID_JONES,           1,   255,  0,                   "", "export 0",       -1,   14, { WORKAROUND_FAKE,   0 } }, // jones/cd only - called when a game ends
-	{ GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   13, { WORKAROUND_FAKE,   0 } }, // jones/ega&vga only - called when the game starts
-	{ GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   14, { WORKAROUND_FAKE,   0 } }, // jones/ega&vga only - called when the game starts
+	{ GID_JONES,           1,   255,  0,                   "", "export 0",       -1,   -1, { WORKAROUND_FAKE,   0 } }, // jones/cd only - called when a game ends, temps 13 and 14
+	{ GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   -1, { WORKAROUND_FAKE,   0 } }, // jones/ega&vga only - called when the game starts, temps 13 and 14
 	//{ GID_KQ5,            -1,     0,  0,                   "", "export 29",      -1,    3, { WORKAROUND_FAKE,   0xf } }, // called when playing harp for the harpies or when aborting dialog in toy shop, is used for kDoAudio - bug #3034700
     // ^^ shouldn't be needed anymore, we got a script patch instead (kq5PatchCdHarpyVolume)
 	{ GID_KQ5,            25,    25,  0,              "rm025", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // inside witch forest, when going to the room where the walking rock is
@@ -161,7 +157,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LSL6HIRES,      -1, 64950,  1,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // at least when entering swimming pool area
 	{ GID_LSL6HIRES,      -1, 64964,  0,              "DPath", "init",           -1,    1, { WORKAROUND_FAKE,   0 } }, // during the game
 	{ GID_MOTHERGOOSE,    -1,     0,  0,                 "MG", "doit",           -1,    5, { WORKAROUND_FAKE,   0 } }, // SCI1.1: When moving the cursor all the way to the left during the game (bug #3043955)
-	{ GID_MOTHERGOOSE,    18,   992,  0,             "AIPath", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // DEMO: Called when walking north from mother goose's house two screens
+	{ GID_MOTHERGOOSE,    -1,   992,  0,             "AIPath", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // Happens in the demo and full version. In the demo, it happens when walking two screens from mother goose's house to the north. In the full version, it happens in rooms 7 and 23 - bug #3049146
 	{ GID_MOTHERGOOSEHIRES,-1,64950,  1,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // right when clicking on a child at the start and probably also later
 	{ GID_MOTHERGOOSEHIRES,-1,64950,  1,               "View", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // see above
 	{ GID_PEPPER,         -1,   894,  0,            "Package", "doVerb",         -1,    3, { WORKAROUND_FAKE,   0 } }, // using the hand on the book in the inventory - bug #3040012
