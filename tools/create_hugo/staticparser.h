@@ -33,7 +33,7 @@
 #ifndef STATICPARSER_H
 #define STATICPARSER_H
 
-#define NUM_PARSER_TEXT 16
+#define NUM_PARSER_TEXT 18
 const char *textParser[NUM_PARSER_TEXT] = {
 	"You should press ALT+F4 or click on Game/Exit.",
 	"You are in a maze of\ntwisty little paths,\nwhich are all alike!",
@@ -50,7 +50,9 @@ const char *textParser[NUM_PARSER_TEXT] = {
 	"You don't have any!",
 	"There aren't any!",
 	"I don't see any here!",
-	"You're not close enough!"
+	"You're not close enough!",
+	"You are carrying:",
+	"\nPress ESCAPE to continue"
 };
 
 #endif //STATICPARSER_H

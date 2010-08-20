@@ -35,22 +35,10 @@
 namespace Hugo {
 
 enum seqTextParser {
-	kTBExit     = 0,
-	kTBMaze     = 1,
-	kTBNoPoint  = 2,
-	kTBNoun     = 3,
-	kTBVerb     = 4,
-	kTBEh       = 5,
-	kTBUnusual  = 6,
-	kTBHave     = 7,
-	kTBNoUse    = 8,
-	kTBDontHave = 9,
-	kTBNeed     = 10,
-	kTBOk       = 11,
-	kCmtAny1    = 12,
-	kCmtAny2    = 13,
-	kCmtAny3    = 14,
-	kCmtClose   = 15
+	kTBExit  = 0, kTBMaze,    kTBNoPoint, kTBNoun,  kTBVerb,
+	kTBEh,        kTBUnusual, kTBHave,    kTBNoUse, kTBDontHave,
+	kTBNeed,      kTBOk,      kCmtAny1,   kCmtAny2, kCmtAny3,
+	kCmtClose,    kTBIntro,   kTBOutro
 };
 
 class Parser {

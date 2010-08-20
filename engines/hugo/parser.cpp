@@ -678,8 +678,6 @@ bool Parser::isObjectVerb(object_t *obj, char *line, char *comment) {
 
 void Parser::showDosInventory() {
 // Show user all objects being carried in a variable width 2 column format
-static const char *intro  = "You are carrying:";
-static const char *outro  = "\nPress ESCAPE to continue";
 static const char *blanks = "                                        ";
 uint16 index, len, len1 = 0, len2 = 0;
 char buffer[XBYTES * NUM_ROWS] = "\0";
@@ -695,11 +693,11 @@ char buffer[XBYTES * NUM_ROWS] = "\0";
 		}
 	len1 += 1;                                  /* For gap between columns */
 
-	if (len1 + len2 < (uint16)strlen(outro))
-		len1 = strlen(outro);
+	if (len1 + len2 < (uint16)strlen(_vm._textParser[kTBOutro]))
+		len1 = strlen(_vm._textParser[kTBOutro]);
 
-	strncat (buffer, blanks, (len1 + len2 - strlen(intro)) / 2);
-	strcat (strcat (buffer, intro), "\n");
+	strncat (buffer, blanks, (len1 + len2 - strlen(_vm._textParser[kTBIntro])) / 2);
+	strcat (strcat (buffer, _vm._textParser[kTBIntro]), "\n");
 	index = 0;
 	for (int i = 0; i < _vm._numObj; i++) {     /* Assign strings */
 		if (_vm._objects[i].carriedFl) {
@@ -710,7 +708,7 @@ char buffer[XBYTES * NUM_ROWS] = "\0";
 		}
 	}
 	if (index & 1) strcat (buffer, "\n");
-	strcat (buffer, outro);
+	strcat (buffer, _vm._textParser[kTBOutro]);
 
 	Utils::Box(BOX_ANY, buffer);
 }
