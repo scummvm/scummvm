@@ -744,7 +744,8 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (name.empty()) {
-		warning("Attempted to open a file with an empty filename");
+		// Happens many times during KQ1 (e.g. when typing something)
+		debugC(2, kDebugLevelFile, "Attempted to open a file with an empty filename");
 		return SIGNAL_REG;
 	}
 	debugC(2, kDebugLevelFile, "kFileIO(open): %s, 0x%x", name.c_str(), mode);
