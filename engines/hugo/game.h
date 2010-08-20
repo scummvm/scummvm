@@ -109,7 +109,7 @@ namespace Hugo {
 #define LOOK_S         8                            // Description depends on state of object
 
 // Macros:
-#define TPS           (_config.turboFl ? TURBO_TPS : NORMAL_TPS)
+#define TPS           ((_config.turboFl) ? TURBO_TPS : NORMAL_TPS)
 
 
 enum TEXTCOLORS {

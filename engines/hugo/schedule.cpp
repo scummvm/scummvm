@@ -47,7 +47,7 @@
 
 namespace Hugo {
 
-#define SIGN(X)       (X < 0 ? -1 : 1)
+#define SIGN(X)       ((X < 0) ? -1 : 1)
 
 Scheduler::Scheduler(HugoEngine &vm) : _vm(vm) {
 }

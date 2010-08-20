@@ -200,7 +200,7 @@ void Utils::Debug_out(char *format, ...) {
 
 	if (HugoEngine::get().getGameStatus().debugFl) {
 		/* Create/truncate if first call, else append */
-		if ((fp = fopen("debug.txt", fp == NULL ? "w" : "a")) == NULL) {
+		if ((fp = fopen("debug.txt", (fp == NULL) ? "w" : "a")) == NULL) {
 			Error(WRITE_ERR, "debug.txt");
 			return;
 		}

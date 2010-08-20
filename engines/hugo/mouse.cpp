@@ -167,7 +167,7 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 	case LEFT_ARROW:                                // A scroll arrow - scroll the iconbar
 	case RIGHT_ARROW:
 		// Scroll the iconbar and display results
-		_vm.inventory().processInventory(objId == LEFT_ARROW ? INV_LEFT : INV_RIGHT);
+		_vm.inventory().processInventory((objId == LEFT_ARROW) ? INV_LEFT : INV_RIGHT);
 		_vm.screen().moveImage(_vm.screen().getIconBuffer(), 0, 0, XPIX, INV_DY, XPIX, _vm.screen().getFrontBuffer(), 0, DIBOFF_Y, XPIX);
 		_vm.screen().moveImage(_vm.screen().getIconBuffer(), 0, 0, XPIX, INV_DY, XPIX, _vm.screen().getBackBuffer(), 0, DIBOFF_Y, XPIX);
 		_vm.screen().displayList(D_ADD, 0, DIBOFF_Y, XPIX, INV_DY);
@@ -281,7 +281,7 @@ void MouseHandler::mouseHandler() {
 	if (objId >= 0) {                               // Got a match
 		// Display object name next to cursor (unless CURSOR_NOCHAR)
 		// Note test for swapped hero name
-		name = _vm._arrayNouns[_vm._objects[objId == HERO ? _vm._heroImage : objId].nounIndex][CURSOR_NAME];
+		name = _vm._arrayNouns[(_vm._objects[objId == HERO) ? _vm._heroImage : objId].nounIndex][CURSOR_NAME];
 		if (name[0] != CURSOR_NOCHAR)
 			cursorText(name, cx, cy, U_FONT8, _TBRIGHTWHITE);
 

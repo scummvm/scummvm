@@ -199,7 +199,7 @@ void HugoEngine::initGame(const HugoGameDescription *gd) {
 
 void HugoEngine::initGamePart(const HugoGameDescription *gd) {
 	char tmpStr[8];
-	_gameVariant = _gameType - 1 + (_platform == Common::kPlatformWindows ? 0 : 3);
+	_gameVariant = _gameType - 1 + ((_platform == Common::kPlatformWindows) ? 0 : 3);
 
 //Generate filenames
 	if (gd->desc.platform == Common::kPlatformWindows)

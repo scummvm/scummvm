@@ -262,11 +262,11 @@ void HugoEngine::moveObjects() {
 				if (abs(dx) <= radius)
 					obj->vx = 0;
 				else
-					obj->vx = dx > 0 ? MIN(dx, obj->vxPath) : MAX(dx, -obj->vxPath);
+					obj->vx = (dx > 0) ? MIN(dx, obj->vxPath) : MAX(dx, -obj->vxPath);
 				if (abs(dy) <= radius)
 					obj->vy = 0;
 				else
-					obj->vy = dy > 0 ? MIN(dy, obj->vyPath) : MAX(dy, -obj->vyPath);
+					obj->vy = (dy > 0) ? MIN(dy, obj->vyPath) : MAX(dy, -obj->vyPath);
 
 				// Set first image in sequence (if multi-seq object)
 				switch (obj->seqNumb) {
@@ -467,7 +467,7 @@ int HugoEngine::deltaY(int x1, int x2, int vy, int y) {
 	if (vy == 0)
 		return(0);                                  // Object stationary
 
-	inc = (vy > 0 ? 1 : -1);
+	inc = (vy > 0) ? 1 : -1;
 	for (j = y + inc; j != (y + vy + inc); j += inc) //Search by byte
 		for (i = x1 >> 3; i <= x2 >> 3; i++)
 			if ((b = _boundary[j * XBYTES + i] | _objBound[j * XBYTES + i]) != 0) {    // Any bit set
