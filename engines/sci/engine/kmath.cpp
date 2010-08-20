@@ -35,8 +35,29 @@ reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 
 	case 2: { // get random number
-		int fromNumber = argv[0].toSint16();
-		int toNumber = argv[1].toSint16();
+		// These are unsigned (e.g. in LSL5, this is used for the 5-digit
+		// door access code with Patty at k rap)
+		int fromNumber = argv[0].toUint16();
+		int toNumber = argv[1].toUint16();
+
+		// HACK: Hoyle 4 calls this with (0x0, 0xFFFF) in some dialogs for x,
+		// then it calls it with (0x0, 0x40) and puts x plus the result in y
+		// to displace view 924 in kDrawCel right afterwards and create a
+		// semi-random background in those dialogs. With the current code,
+		// this case isn't handled properly, and the dialog is drawn off-screen.
+		// -1 seems to be incorrect here, so we just return a 0 for now, till
+		// we figure out how to handle this.
+		if (fromNumber == 0 && toNumber == 0xFFFF) {
+			if (g_sci->getGameId() == GID_HOYLE4) {
+				warning("HACK: Special case for Hoyle 4 dialogs in kRandom");
+				return NULL_REG;
+			} else {
+				// Just throw a warning in other games for now, but don't modify
+				// the result...
+				warning("kRandom(0x0, 0xFFFF called - special case?");
+			}
+			
+		}
 
 		// TODO/CHECKME: It is propbably not required to check whether
 		// toNumber is greater than fromNumber, at least not when one
