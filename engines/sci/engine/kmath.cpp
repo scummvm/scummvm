@@ -44,9 +44,10 @@ reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 		// then it calls it with (0x0, 0x40) and puts x plus the result in y
 		// to displace view 924 in kDrawCel right afterwards and create a
 		// semi-random background in those dialogs. With the current code,
-		// this case isn't handled properly, and the dialog is drawn off-screen.
-		// -1 seems to be incorrect here, so we just return a 0 for now, till
-		// we figure out how to handle this.
+		// this case isn't handled properly, and the dialog background is
+		// drawn off-screen. -1 seems to be incorrect here (probably a newly
+		// added special case), so we just return a 0 for now, till we
+		// figure out how to handle this.
 		if (fromNumber == 0 && toNumber == 0xFFFF) {
 			if (g_sci->getGameId() == GID_HOYLE4) {
 				warning("HACK: Special case for Hoyle 4 dialogs in kRandom");
@@ -54,12 +55,12 @@ reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 			} else {
 				// Just throw a warning in other games for now, but don't modify
 				// the result...
-				warning("kRandom(0x0, 0xFFFF called - special case?");
+				warning("kRandom(0x0, 0xFFFF) called - special case?");
 			}
 			
 		}
 
-		// TODO/CHECKME: It is propbably not required to check whether
+		// TODO/CHECKME: It is probably not required to check whether
 		// toNumber is greater than fromNumber, at least not when one
 		// goes by their names, but let us be on the safe side and
 		// allow toNumber to be smaller than fromNumber too.
