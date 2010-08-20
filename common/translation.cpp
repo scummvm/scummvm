@@ -43,15 +43,14 @@ DECLARE_SINGLETON(Common::TranslationManager)
 
 namespace Common {
 
+bool operator<(const TLanguage& l1, const TLanguage& l2) {
+	return strcmp(l1.name, l2.name) < 0;
+}
 
 #ifdef USE_TRANSLATION
 
 // Translation enabled
 	
-bool operator<(const TLanguage& l1, const TLanguage& l2) {
-	return strcmp(l1.name, l2.name) < 0;
-}
-
 TranslationManager::TranslationManager() : _currentLang(-1) {
 	loadTranslationsInfoDat();
 
