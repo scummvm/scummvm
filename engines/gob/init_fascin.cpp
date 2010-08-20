@@ -46,4 +46,12 @@ void Init_Fascination::updateConfig() {
 	_vm->_global->_doSubtitles = true;
 }
 
+void Init_Fascination::initGame() {
+	// HACK - Suppress ADLIB_FLAG as the MDY/TBR player is not working. suppress the honker too,
+	// as the script checks in the intro for it's presence to play or not some noices.
+	_vm->_global->_soundFlags = MIDI_FLAG | BLASTER_FLAG;
+
+	Init::initGame();
+}
+
 } // End of namespace Gob

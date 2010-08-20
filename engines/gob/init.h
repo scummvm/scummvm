@@ -97,6 +97,7 @@ public:
 	~Init_Fascination();
 
 	void updateConfig();
+	void initGame();
 };
 } // End of namespace Gob
 
