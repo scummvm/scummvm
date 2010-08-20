@@ -35,8 +35,8 @@ reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 
 	case 2: { // get random number
-		int fromNumber = argv[0].toUint16();
-		int toNumber = argv[1].toUint16();
+		int fromNumber = argv[0].toSint16();
+		int toNumber = argv[1].toSint16();
 
 		// TODO/CHECKME: It is propbably not required to check whether
 		// toNumber is greater than fromNumber, at least not when one
