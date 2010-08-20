@@ -575,15 +575,26 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 		if (!_texts[textId]->_fontPtr) {
 			// First try to load localized font
 			_texts[textId]->_fontPtr = loadFont(localized);
+			
+			if (_texts[textId]->_fontPtr)
+				FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
 
 			// Fallback to non-localized font
-			if (!_texts[textId]->_fontPtr)
-				_texts[textId]->_fontPtr = loadFont(file);
+			else {
+				// Try built-in fonts
+				_texts[textId]->_fontPtr = FontMan.getFontByName(file);
+				
+				// Try to load it
+				if (!_texts[textId]->_fontPtr) {
+					_texts[textId]->_fontPtr = loadFont(file);
 
-			if (!_texts[textId]->_fontPtr)
-				error("Couldn't load font '%s'", file.c_str());
-
-			FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
+					if (!_texts[textId]->_fontPtr)
+						error("Couldn't load font '%s'", file.c_str());
+					
+					FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
+				}
+				warning("Failed to load localized font '%s'. Using non-localized font instead", file.c_str());
+			}
 		}
 	}
 
