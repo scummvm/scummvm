@@ -288,7 +288,20 @@ void Inter::funcBlock(int16 retFlag) {
 
 				_vm->_util->longDelay(5000);
 			}
+		} // End of workaround
 
+		// WORKAROUND:
+		// The Amiga and Atari ST versions of Fascination don't add a delay after
+		// showing images between some levels, probably using the loading time int account. 
+		// We manually add it here.
+		if ((_vm->getGameType() == kGameTypeFascination) &&
+		    ((_vm->getPlatform() == Common::kPlatformAmiga)||
+	 	     (_vm->getPlatform() == Common::kPlatformAtariST))) {
+			int addr = _vm->_game->_script->pos();
+			if ((startaddr == 0x0202 && addr == 0x0330 && // Before Lab, Amiga & Atari
+			     !strncmp(_vm->_game->_curTotFile, "PLANQUE.tot", 9))) {
+				_vm->_util->longDelay(5000);
+			}
 		} // End of workaround
 
 		cmd = _vm->_game->_script->readByte();
