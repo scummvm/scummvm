@@ -376,6 +376,20 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	if (draw)
 		drawWindow(pwnd);
 	setPort((Port *)pwnd);
+
+	// FIXME: changing setOrigin to not clear the rightmost bit fixes the display of windows
+	// in some fanmade games (e.g. New Year's Mystery (Updated)). Since the fanmade games
+	// use an unmodified SCI interpreter, this leads me to believe that there either is some
+	// off-by-one error in the window drawing code, or there is another place where the
+	// rightmost bit should be cleeared. New Year's Mystery is a good test case for this, as
+	// it draws dialogs and then draws cels on top of them, for fancier dialog corners (like,
+	// for example, KQ5). KQ5 has a custom window style, however, whereas New Year's mystery
+	// has a "classic" style with only SCI_WINDOWMGR_STYLE_NOFRAME set. If
+	// SCI_WINDOWMGR_STYLE_NOFRAME is removed, the window is cleared correctly, because it
+	// grows slightly, covering the view pixels on the left. In any case, the views and the
+	// window have a difference of one pixel when they're drawn via kNewWindow and kDrawCel,
+	// which causes the glitch to appear when the window is closed.
+
 	// All SCI0 games till kq4 .502 (not including) did not adjust against _wmgrPort, we set _wmgrPort->top to 0 in that case
 	setOrigin(pwnd->rect.left, pwnd->rect.top + _wmgrPort->top);
 	pwnd->rect.moveTo(0, 0);
@@ -510,8 +524,7 @@ void GfxPorts::setOrigin(int16 left, int16 top) {
 	// This looks fishy, but it's exactly what sierra did. They removed last bit of left in their interpreter
 	//  It seems sierra did it for EGA byte alignment (EGA uses 1 byte for 2 pixels) and left it in their interpreter even
 	//  when going VGA.
-	// Fan made games do not compensate for this - fixes bug #3041153.
-	_curPort->left = (g_sci->getGameId() != GID_FANMADE) ? left & 0x7FFE : left;
+	_curPort->left = left & 0x7FFE;
 	_curPort->top = top;
 }
 
