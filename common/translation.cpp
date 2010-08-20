@@ -47,6 +47,10 @@ namespace Common {
 #ifdef USE_TRANSLATION
 
 // Translation enabled
+	
+bool operator<(const TLanguage& l1, const TLanguage& l2) {
+	return strcmp(l1.name, l2.name) < 0;
+}
 
 TranslationManager::TranslationManager() : _currentLang(-1) {
 	loadTranslationsInfoDat();
@@ -190,7 +194,7 @@ const TLangArray TranslationManager::getSupportedLanguageNames() const {
 		languages.push_back(lng);
 	}
 
-	//sort(languages.begin(), languages.end());
+	sort(languages.begin(), languages.end());
 
 	return languages;
 }

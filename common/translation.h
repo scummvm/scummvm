@@ -50,7 +50,9 @@ struct TLanguage {
 		id = i;
 	}
 };
-
+	
+bool operator<(const TLanguage&, const TLanguage&);
+	
 typedef Array<TLanguage> TLangArray;
 
 struct PoMessageEntry {
