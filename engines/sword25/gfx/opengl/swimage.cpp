@@ -102,7 +102,7 @@ SWImage::~SWImage() {
 
 bool SWImage::Blit(int PosX, int PosY,
                       int Flipping,
-                      BS_Rect *pPartRect,
+                      Common::Rect *pPartRect,
                       unsigned int Color,
                       int Width, int Height) {
 	BS_LOG_ERRORLN("Blit() is not supported.");
@@ -111,7 +111,7 @@ bool SWImage::Blit(int PosX, int PosY,
 
 // -----------------------------------------------------------------------------
 
-bool SWImage::Fill(const BS_Rect *pFillRect, unsigned int Color) {
+bool SWImage::Fill(const Common::Rect *pFillRect, unsigned int Color) {
 	BS_LOG_ERRORLN("Fill() is not supported.");
 	return false;
 }

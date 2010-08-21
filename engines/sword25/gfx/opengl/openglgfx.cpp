@@ -212,8 +212,8 @@ bool OpenGLGfx::GetVsync() const {
 
 // -----------------------------------------------------------------------------
 
-bool OpenGLGfx::Fill(const BS_Rect *FillRectPtr, unsigned int Color) {
-	BS_Rect Rect;
+bool OpenGLGfx::Fill(const Common::Rect *FillRectPtr, unsigned int Color) {
+	Common::Rect Rect;
 
 	if (!FillRectPtr) {
 		Rect.left = 0;

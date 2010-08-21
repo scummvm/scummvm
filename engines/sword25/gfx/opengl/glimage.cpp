@@ -112,7 +112,7 @@ GLImage::~GLImage() {
 
 // -----------------------------------------------------------------------------
 
-bool GLImage::Fill(const BS_Rect *pFillRect, unsigned int Color) {
+bool GLImage::Fill(const Common::Rect *pFillRect, unsigned int Color) {
 	BS_LOG_ERRORLN("Fill() is not supported.");
 	return false;
 }
@@ -147,7 +147,7 @@ unsigned int GLImage::GetPixel(int X, int Y) {
 
 // -----------------------------------------------------------------------------
 
-bool GLImage::Blit(int PosX, int PosY, int Flipping, BS_Rect *pPartRect, unsigned int Color, int Width, int Height) {
+bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, unsigned int Color, int Width, int Height) {
 	int x1 = 0, y1 = 0;
 	int w = m_Width, h = m_Height;
 	if (pPartRect) {

@@ -53,7 +53,7 @@ const float LINE_SCALE_FACTOR = 1.0f;
 
 bool VectorImage::Blit(int PosX, int PosY,
                           int Flipping,
-                          BS_Rect *pPartRect,
+                          Common::Rect *pPartRect,
                           unsigned int Color,
                           int Width, int Height) {
 #if 0

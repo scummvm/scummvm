@@ -41,7 +41,7 @@
 
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/image/image.h"
-#include "sword25/math/rect.h"
+#include "common/rect.h"
 
 #if 0
 #include "agg_path_storage.h"
@@ -132,7 +132,7 @@ public:
 		return m_FillStyles[FillStyle];
 	}
 
-	const BS_Rect &GetBoundingBox() const {
+	const Common::Rect &GetBoundingBox() const {
 		return m_BoundingBox;
 	}
 
@@ -150,7 +150,7 @@ private:
 	Common::Array<VectorPathInfo> m_PathInfos;
 	Common::Array<LineStyleType> m_LineStyles;
 	Common::Array<uint32>  m_FillStyles;
-	BS_Rect m_BoundingBox;
+	Common::Rect m_BoundingBox;
 };
 
 
@@ -171,7 +171,7 @@ public:
 		BS_ASSERT(ElementNr < m_Elements.size());
 		return m_Elements[ElementNr];
 	}
-	const BS_Rect &GetBoundingBox() const {
+	const Common::Rect &GetBoundingBox() const {
 		return m_BoundingBox;
 	}
 
@@ -179,15 +179,15 @@ public:
 	// Die abstrakten Methoden von BS_Image
 	//
 	virtual int GetWidth() const {
-		return m_BoundingBox.GetWidth();
+		return m_BoundingBox.width();
 	}
 	virtual int GetHeight() const {
-		return m_BoundingBox.GetHeight();
+		return m_BoundingBox.height();
 	}
 	virtual GraphicEngine::COLOR_FORMATS GetColorFormat() const {
 		return GraphicEngine::CF_ARGB32;
 	}
-	virtual bool Fill(const BS_Rect *pFillRect = 0, unsigned int Color = BS_RGB(0, 0, 0));
+	virtual bool Fill(const Common::Rect *pFillRect = 0, unsigned int Color = BS_RGB(0, 0, 0));
 	virtual unsigned int GetPixel(int X, int Y);
 	virtual bool IsBlitSource() const {
 		return true;
@@ -213,7 +213,7 @@ public:
 	virtual bool SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride);
 	virtual bool Blit(int PosX = 0, int PosY = 0,
 	                  int Flipping = FLIP_NONE,
-	                  BS_Rect *pPartRect = NULL,
+	                  Common::Rect *pPartRect = NULL,
 	                  unsigned int Color = BS_ARGB(255, 255, 255, 255),
 	                  int Width = -1, int Height = -1);
 
@@ -224,7 +224,7 @@ private:
 	bool ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsigned int &NumFillBits, unsigned int &NumLineBits);
 
 	Common::Array<VectorImageElement>    m_Elements;
-	BS_Rect                             m_BoundingBox;
+	Common::Rect                             m_BoundingBox;
 };
 
 } // End of namespace Sword25

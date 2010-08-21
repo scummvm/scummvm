@@ -45,15 +45,16 @@
 
 // Includes
 #include "common/array.h"
+#include "common/rect.h"
 #include "common/str.h"
 #include "graphics/surface.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/bs_stdint.h"
 #include "sword25/kernel/resservice.h"
 #include "sword25/kernel/persistable.h"
-#include "sword25/math/rect.h"
 #include "sword25/gfx/framecounter.h"
 #include "sword25/gfx/renderobjectptr.h"
+#include "sword25/math/vertex.h"
 
 namespace Sword25 {
 
@@ -250,7 +251,7 @@ public:
 	/**
 	 * Returns the bounding box of the output buffer: (0, 0, Width, Height)
 	 */
-	BS_Rect    &GetDisplayRect() {
+	Common::Rect    &GetDisplayRect() {
 		return m_ScreenRect;
 	}
 
@@ -284,13 +285,13 @@ public:
 	/**
 	 * Fills a rectangular area of the frame buffer with a colour.
 	 * Notes: It is possible to create transparent rectangles by passing a colour with an Alpha value of 255.
-	 * @param FillRectPtr   Pointer to a BS_Rect, which specifies the section of the frame buffer to be filled.
+	 * @param FillRectPtr   Pointer to a Common::Rect, which specifies the section of the frame buffer to be filled.
 	 * If the rectangle falls partly off-screen, then it is automatically trimmed.
 	 * If a NULL value is passed, then the entire image is to be filled.
 	 * @param Color         The 32-bit colour with which the area is to be filled. The default is BS_RGB(0, 0, 0) (black)
 	    @remark Falls das Rechteck nicht völlig innerhalb des Bildschirms ist, wird es automatisch zurechtgestutzt.
 	 */
-	virtual bool Fill(const BS_Rect *FillRectPtr = 0, unsigned int Color = BS_RGB(0, 0, 0)) = 0;
+	virtual bool Fill(const Common::Rect *FillRectPtr = 0, unsigned int Color = BS_RGB(0, 0, 0)) = 0;
 
 	// Debugging Methods
 
@@ -373,7 +374,7 @@ protected:
 	// -----------------
 	int     m_Width;
 	int     m_Height;
-	BS_Rect m_ScreenRect;
+	Common::Rect m_ScreenRect;
 	int     m_BitDepth;
 	bool    m_Windowed;
 

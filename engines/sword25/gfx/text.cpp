@@ -176,23 +176,23 @@ bool Text::DoRender() {
 	Common::Array<LINE>::iterator Iter = m_Lines.begin();
 	for (; Iter != m_Lines.end(); ++Iter) {
 		// Feststellen, ob überhaupt Buchstaben der aktuellen Zeile vom Update betroffen sind.
-		BS_Rect CheckRect = (*Iter).BBox;
-		CheckRect.Move(m_AbsoluteX, m_AbsoluteY);
+		Common::Rect CheckRect = (*Iter).BBox;
+		CheckRect.translate(m_AbsoluteX, m_AbsoluteY);
 
 		// Jeden Buchstaben einzeln Rendern.
 		int CurX = m_AbsoluteX + (*Iter).BBox.left;
 		int CurY = m_AbsoluteY + (*Iter).BBox.top;
 		for (unsigned int i = 0; i < (*Iter).Text.size(); ++i) {
-			BS_Rect CurRect = FontPtr->GetCharacterRect((unsigned char)(*Iter).Text[i]);
+			Common::Rect CurRect = FontPtr->GetCharacterRect((unsigned char)(*Iter).Text[i]);
 
-			BS_Rect RenderRect(CurX, CurY, CurX + CurRect.GetWidth(), CurY + CurRect.GetHeight());
+			Common::Rect RenderRect(CurX, CurY, CurX + CurRect.width(), CurY + CurRect.height());
 			int RenderX = CurX + (RenderRect.left - RenderRect.left);
 			int RenderY = CurY + (RenderRect.top - RenderRect.top);
-			RenderRect.Move(CurRect.left - CurX, CurRect.top - CurY);
+			RenderRect.translate(CurRect.left - CurX, CurRect.top - CurY);
 			Result = CharMapPtr->Blit(RenderX, RenderY, Image::FLIP_NONE, &RenderRect, m_ModulationColor);
 			if (!Result) break;
 
-			CurX += CurRect.GetWidth() + FontPtr->GetGapWidth();
+			CurX += CurRect.width() + FontPtr->GetGapWidth();
 		}
 	}
 
@@ -260,8 +260,8 @@ void Text::UpdateFormat() {
 			for (j = i; j < m_Text.size(); ++j) {
 				if ((unsigned char)m_Text[j] == ' ') LastSpace = j;
 
-				const BS_Rect &CurCharRect = FontPtr->GetCharacterRect((unsigned char)m_Text[j]);
-				TempLineWidth += CurCharRect.GetWidth();
+				const Common::Rect &CurCharRect = FontPtr->GetCharacterRect((unsigned char)m_Text[j]);
+				TempLineWidth += CurCharRect.width();
 				TempLineWidth += FontPtr->GetGapWidth();
 
 				if ((TempLineWidth >= m_AutoWrapThreshold) && (LastSpace > 0))
@@ -275,10 +275,10 @@ void Text::UpdateFormat() {
 			for (j = i; j < LastSpace; ++j) {
 				m_Lines[CurLine].Text += m_Text[j];
 
-				const BS_Rect &CurCharRect = FontPtr->GetCharacterRect((unsigned char)m_Text[j]);
-				CurLineWidth += CurCharRect.GetWidth();
+				const Common::Rect &CurCharRect = FontPtr->GetCharacterRect((unsigned char)m_Text[j]);
+				CurLineWidth += CurCharRect.width();
 				CurLineWidth += FontPtr->GetGapWidth();
-				if ((unsigned int) CurCharRect.GetHeight() > CurLineHeight) CurLineHeight = CurCharRect.GetHeight();
+				if ((unsigned int) CurCharRect.height() > CurLineHeight) CurLineHeight = CurCharRect.height();
 			}
 
 			m_Lines[CurLine].BBox.right = CurLineWidth;
@@ -299,17 +299,17 @@ void Text::UpdateFormat() {
 		m_Height = 0;
 		Common::Array<LINE>::iterator Iter = m_Lines.begin();
 		for (; Iter != m_Lines.end(); ++Iter) {
-			BS_Rect &BBox = (*Iter).BBox;
+			Common::Rect &BBox = (*Iter).BBox;
 			BBox.left = (m_Width - BBox.right) / 2;
 			BBox.right = BBox.left + BBox.right;
 			BBox.top = (Iter - m_Lines.begin()) * FontPtr->GetLineHeight();
 			BBox.bottom = BBox.top + BBox.bottom;
-			m_Height += BBox.GetHeight();
+			m_Height += BBox.height();
 		}
 	} else {
 		// Keine automatische Formatierung, also wird der gesamte Text in nur eine Zeile kopiert.
 		m_Lines[0].Text = m_Text;
-		m_Lines[0].BBox = BS_Rect(0, 0, m_Width, m_Height);
+		m_Lines[0].BBox = Common::Rect(0, 0, m_Width, m_Height);
 	}
 
 	FontPtr->Release();
@@ -322,10 +322,10 @@ void Text::UpdateMetrics(FontResource &FontResource) {
 	m_Height = 0;
 
 	for (unsigned int i = 0; i < m_Text.size(); ++i) {
-		const BS_Rect &CurRect = FontResource.GetCharacterRect((unsigned char)m_Text[i]);
-		m_Width += CurRect.GetWidth();
+		const Common::Rect &CurRect = FontResource.GetCharacterRect((unsigned char)m_Text[i]);
+		m_Width += CurRect.width();
 		if (i != m_Text.size() - 1) m_Width += FontResource.GetGapWidth();
-		if (m_Height < CurRect.GetHeight()) m_Height = CurRect.GetHeight();
+		if (m_Height < CurRect.height()) m_Height = CurRect.height();
 	}
 }
 

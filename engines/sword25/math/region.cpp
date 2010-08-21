@@ -156,7 +156,7 @@ void Region::UpdateBoundingBox() {
 			else if (m_Polygons[0].Vertecies[i].Y > MaxY) MaxY = m_Polygons[0].Vertecies[i].Y;
 		}
 
-		m_BoundingBox = BS_Rect(MinX, MinY, MaxX + 1, MaxY + 1);
+		m_BoundingBox = Common::Rect(MinX, MinY, MaxX + 1, MaxY + 1);
 	}
 }
 
@@ -196,7 +196,7 @@ void Region::SetPosY(int Y) {
 
 bool Region::IsPointInRegion(int X, int Y) const {
 	// Test whether the point is in the bounding box
-	if (m_BoundingBox.IsPointInRect(X, Y)) {
+	if (m_BoundingBox.contains(X, Y)) {
 		// Test whether the point is in the contour
 		if (m_Polygons[0].IsPointInPolygon(X, Y, true)) {
 			// Test whether the point is in a hole

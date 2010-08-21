@@ -43,7 +43,7 @@
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/gfx/graphicengine.h"
 #include "sword25/gfx/animationtemplateregistry.h"
-#include "sword25/math/rect.h"
+#include "common/rect.h"
 #include "sword25/gfx/renderobject.h"
 #include "sword25/gfx/timedrenderobject.h"
 #include "sword25/gfx/rootrenderobject.h"

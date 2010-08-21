@@ -77,7 +77,7 @@ public:
 	virtual void        SetVsync(bool Vsync);
 	virtual bool        GetVsync() const;
 
-	virtual bool        Fill(const BS_Rect *FillRectPtr = 0, unsigned int Color = BS_RGB(0, 0, 0));
+	virtual bool        Fill(const Common::Rect *FillRectPtr = 0, unsigned int Color = BS_RGB(0, 0, 0));
 	virtual bool        GetScreenshot(unsigned int &Width, unsigned int &Height, byte **Data);
 
 	// Resource-Managing Methoden

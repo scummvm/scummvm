@@ -41,7 +41,7 @@
 
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/resource.h"
-#include "sword25/math/rect.h"
+#include "common/rect.h"
 
 class TiXmlDocument;
 class TiXmlElement;
@@ -100,7 +100,7 @@ public:
 	    @param Character der ASCII-Code des Zeichens
 	    @return Das Bounding-Rect des übergebenen Zeichens auf der Charactermap.
 	*/
-	const BS_Rect &GetCharacterRect(int Character) const {
+	const Common::Rect &GetCharacterRect(int Character) const {
 		BS_ASSERT(Character >= 0 && Character < 256);
 		return _CharacterRects[Character];
 	}
@@ -118,7 +118,7 @@ private:
 	Common::String  _BitmapFileName;
 	int         _LineHeight;
 	int         _GapWidth;
-	BS_Rect     _CharacterRects[256];
+	Common::Rect     _CharacterRects[256];
 
 	// -----------------------------------------------------------------------------
 	// Hilfsmethoden
@@ -126,7 +126,7 @@ private:
 
 	bool _ParseXMLDocument(const Common::String &FileName, TiXmlDocument &Doc) const;
 	bool _ParseFontTag(TiXmlElement &Tag, Common::String &BitmapFileName, int &LineHeight, int &GapWidth) const;
-	bool _ParseCharacterTag(TiXmlElement &Tag, int &Code, BS_Rect &Rect) const;
+	bool _ParseCharacterTag(TiXmlElement &Tag, int &Code, Common::Rect &Rect) const;
 };
 
 } // End of namespace Sword25

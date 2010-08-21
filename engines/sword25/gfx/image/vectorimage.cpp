@@ -168,10 +168,10 @@ const u32 MAX_ACCEPTED_FLASH_VERSION = 3;   // Die höchste Flash-Dateiversion, d
 
 
 // -----------------------------------------------------------------------------
-// Konvertiert SWF-Rechteckdaten in einem Bitstrom in BS_Rect-Objekte
+// Konvertiert SWF-Rechteckdaten in einem Bitstrom in Common::Rect-Objekte
 // -----------------------------------------------------------------------------
 
-BS_Rect FlashRectToBSRect(VectorImage::SWFBitStream &bs) {
+Common::Rect FlashRectToBSRect(VectorImage::SWFBitStream &bs) {
 	bs.FlushByte();
 
 	// Feststellen mit wie vielen Bits die einzelnen Komponenten kodiert sind
@@ -183,7 +183,7 @@ BS_Rect FlashRectToBSRect(VectorImage::SWFBitStream &bs) {
 	s32 YMin = bs.GetSignedBits(BitsPerValue);
 	s32 YMax = bs.GetSignedBits(BitsPerValue);
 
-	return BS_Rect(XMin, YMin, XMax + 1, YMax + 1);
+	return Common::Rect(XMin, YMin, XMax + 1, YMax + 1);
 }
 
 
@@ -210,7 +210,7 @@ struct CBBGetId {
 	const VectorImageElement &vectorImageElement;
 };
 
-BS_Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) {
+Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) {
 #if 0 // TODO
 	agg::path_storage Path = vectorImageElement.GetPaths();
 	CBBGetId IdSource(vectorImageElement);
@@ -221,7 +221,7 @@ BS_Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) {
 	double x1, x2, y1, y2;
 	x1 = x2 = y1 = y2 = 0;
 #endif
-	return BS_Rect(static_cast<int>(x1), static_cast<int>(y1), static_cast<int>(x2) + 1, static_cast<int>(y2) + 1);
+	return Common::Rect(static_cast<int>(x1), static_cast<int>(y1), static_cast<int>(x2) + 1, static_cast<int>(y2) + 1);
 }
 }
 
@@ -264,7 +264,7 @@ VectorImage::VectorImage(const unsigned char *pFileData, unsigned int FileSize, 
 	}
 
 	// SWF-Maße auslesen
-	BS_Rect MovieRect = FlashRectToBSRect(bs);
+	Common::Rect MovieRect = FlashRectToBSRect(bs);
 
 	// Framerate und Frameanzahl auslesen
 	/* u32 FrameRate = */bs.GetU16();
@@ -513,7 +513,7 @@ bool VectorImage::ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsigned
 
 // -----------------------------------------------------------------------------
 
-bool VectorImage::Fill(const BS_Rect *pFillRect, unsigned int Color) {
+bool VectorImage::Fill(const Common::Rect *pFillRect, unsigned int Color) {
 	BS_LOG_ERRORLN("Fill() is not supported.");
 	return false;
 }

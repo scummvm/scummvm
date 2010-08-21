@@ -46,7 +46,7 @@ namespace Sword25 {
 // Forward Declarations
 // -----------------------------------------------------------------------------
 
-class BS_Rect;
+class Common::Rect;
 
 class BitmapResource : public Resource {
 public:
@@ -100,7 +100,7 @@ public:
 	                Der Standardwert ist 0.
 	    @param Flipping gibt an, wie das Bild gespiegelt werden soll.<br>
 	                    Der Standardwert ist BS_Image::FLIP_NONE (keine Spiegelung)
-	    @param pSrcPartRect Pointer auf ein BS_Rect, welches den Ausschnitt des Quellbildes spezifiziert, der gerendert
+	    @param pSrcPartRect Pointer auf ein Common::Rect, welches den Ausschnitt des Quellbildes spezifiziert, der gerendert
 	                        werden soll oder NULL, falls das gesamte Bild gerendert werden soll.<br>
 	                        Dieser Ausschnitt bezieht sich auf das ungespiegelte und unskalierte Bild.<br>
 	                        Der Standardwert ist NULL.
@@ -130,7 +130,7 @@ public:
 	*/
 	bool Blit(int PosX = 0, int PosY = 0,
 	          int Flipping = FLIP_NONE,
-	          BS_Rect *pSrcPartRect = NULL,
+	          Common::Rect *pSrcPartRect = NULL,
 	          unsigned int Color = BS_ARGB(255, 255, 255, 255),
 	          int Width = -1, int Height = -1) {
 		BS_ASSERT(m_pImage);
@@ -139,7 +139,7 @@ public:
 
 	/**
 	    @brief Füllt einen Rechteckigen Bereich des Bildes mit einer Farbe.
-	    @param pFillRect Pointer auf ein BS_Rect, welches den Ausschnitt des Bildes spezifiziert, der gefüllt
+	    @param pFillRect Pointer auf ein Common::Rect, welches den Ausschnitt des Bildes spezifiziert, der gefüllt
 	                      werden soll oder NULL, falls das gesamte Bild gefüllt werden soll.<br>
 	                      Der Standardwert ist NULL.
 	    @param Color der 32 Bit Farbwert mit dem der Bildbereich gefüllt werden soll.
@@ -150,7 +150,7 @@ public:
 	            BS_RGB und BS_ARGB benutzt werden.
 	    @remark Falls das Rechteck nicht völlig innerhalb des Bildschirms ist, wird es automatisch zurechtgestutzt.
 	*/
-	bool Fill(const BS_Rect *pFillRect = 0, unsigned int Color = BS_RGB(0, 0, 0)) {
+	bool Fill(const Common::Rect *pFillRect = 0, unsigned int Color = BS_RGB(0, 0, 0)) {
 		BS_ASSERT(m_pImage);
 		return m_pImage->Fill(pFillRect, Color);
 	}

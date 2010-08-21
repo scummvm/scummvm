@@ -40,7 +40,7 @@
 // -----------------------------------------------------------------------------
 
 #include "sword25/kernel/common.h"
-#include "sword25/math/rect.h"
+#include "common/rect.h"
 #include "sword25/gfx/renderobject.h"
 
 namespace Sword25 {
@@ -164,7 +164,7 @@ private:
 	unsigned int    m_AutoWrapThreshold;
 
 	struct LINE {
-		BS_Rect     BBox;
+		Common::Rect     BBox;
 		Common::String  Text;
 	};
 

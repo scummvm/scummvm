@@ -39,7 +39,7 @@
 #include "sword25/kernel/persistable.h"
 #include "sword25/math/vertex.h"
 #include "sword25/math/polygon.h"
-#include "sword25/math/rect.h"
+#include "common/rect.h"
 
 namespace Sword25 {
 
@@ -214,7 +214,7 @@ protected:
 	// the array is the contour, all others are the holes
 	Common::Array<Polygon> m_Polygons;
 	/// The bounding box for the region
-	BS_Rect m_BoundingBox;
+	Common::Rect m_BoundingBox;
 
 	/**
 	 * Updates the bounding box of the region.

@@ -115,7 +115,7 @@ FontResource::FontResource(Kernel *pKernel, const Common::String &FileName) :
 	// Alle Character-Tags parsen
 	while (pElement) {
 		int     CharCode;
-		BS_Rect CharRect;
+		Common::Rect CharRect;
 
 		// Aktuelles Character-Tag parsen
 		if (!_ParseCharacterTag(*pElement, CharCode, CharRect)) {
@@ -200,7 +200,7 @@ bool FontResource::_ParseFontTag(TiXmlElement &Tag, Common::String &BitmapFileNa
 
 // -----------------------------------------------------------------------------
 
-bool FontResource::_ParseCharacterTag(TiXmlElement &Tag, int &Code, BS_Rect &Rect) const {
+bool FontResource::_ParseCharacterTag(TiXmlElement &Tag, int &Code, Common::Rect &Rect) const {
 	// Code Attribut auslesen
 	const char *CodeString = Tag.Attribute("code");
 	if (!CodeString || !BS_String::ToInt(Common::String(CodeString), Code) || Code < 0 || Code >= 256) {

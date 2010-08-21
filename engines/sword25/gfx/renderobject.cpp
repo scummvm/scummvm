@@ -182,15 +182,17 @@ void RenderObject::UpdateBoxes() {
 	m_BBox = CalcBoundingBox();
 }
 
-BS_Rect RenderObject::CalcBoundingBox() const {
+Common::Rect RenderObject::CalcBoundingBox() const {
 	// Die Bounding-Box mit der Objektgröße initialisieren.
-	BS_Rect BBox(0, 0, m_Width, m_Height);
+	Common::Rect BBox(0, 0, m_Width, m_Height);
 
 	// Die absolute Position der Bounding-Box berechnen.
-	BBox.Move(m_AbsoluteX, m_AbsoluteY);
+	BBox.translate(m_AbsoluteX, m_AbsoluteY);
 
 	// Die Bounding-Box am Elternobjekt clippen.
-	if (m_ParentPtr.IsValid()) BBox.Intersect(m_ParentPtr->GetBBox(), BBox);
+	if (m_ParentPtr.IsValid()) {
+		BBox.clip(m_ParentPtr->GetBBox());
+	}
 
 	return BBox;
 }
@@ -269,8 +271,10 @@ void RenderObject::UpdateAbsolutePos() {
 // Get-Methoden
 // ------------
 
-bool RenderObject::GetObjectIntersection(RenderObjectPtr<RenderObject> pObject, BS_Rect &Result) {
-	return m_BBox.Intersect(pObject->GetBBox(), Result);
+bool RenderObject::GetObjectIntersection(RenderObjectPtr<RenderObject> pObject, Common::Rect &Result) {
+	Result = pObject->GetBBox();
+	Result.clip(m_BBox);
+	return Result.isValidRect();
 }
 
 // Set-Methoden

@@ -48,7 +48,7 @@
 // Includes
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistable.h"
-#include "sword25/math/rect.h"
+#include "common/rect.h"
 #include "sword25/gfx/renderobjectptr.h"
 
 #include "common/list.h"
@@ -336,7 +336,7 @@ public:
 	    @brief Gibt die Bounding-Box des Objektes zurück.
 	    @remark Diese Angabe erfolgt ausnahmsweise in Bildschirmkoordianten und nicht relativ zum Elternobjekt.
 	 */
-	const BS_Rect  &GetBBox() const {
+	const Common::Rect  &GetBBox() const {
 		return m_BBox;
 	}
 	/**
@@ -379,10 +379,10 @@ protected:
 	bool        m_ChildChanged; ///< Ist true, wenn sich ein Kinderobjekt verändert hat
 	TYPES       m_Type;         ///< Der Objekttyp
 	bool        m_InitSuccess;  ///< Ist true, wenn Objekt erfolgreich intialisiert werden konnte
-	BS_Rect     m_BBox;         ///< Die Bounding-Box des Objektes in Bildschirmkoordinaten
+	Common::Rect     m_BBox;         ///< Die Bounding-Box des Objektes in Bildschirmkoordinaten
 
 	// Kopien der Variablen, die für die Errechnung des Dirty-Rects und zur Bestimmung der Objektveränderung notwendig sind
-	BS_Rect     m_OldBBox;
+	Common::Rect     m_OldBBox;
 	int         m_OldX;
 	int         m_OldY;
 	int         m_OldZ;
@@ -463,12 +463,12 @@ private:
 	    @brief Berechnet die Bounding-Box des Objektes.
 	    @return Gibt die Bounding-Box des Objektes in Bildschirmkoordinaten zurück.
 	*/
-	BS_Rect CalcBoundingBox() const;
+	Common::Rect CalcBoundingBox() const;
 	/**
 	    @brief Berechnet das Dirty-Rectangle des Objektes.
 	    @return Gibt das Dirty-Rectangle des Objektes in Bildschirmkoordinaten zurück.
 	*/
-	BS_Rect CalcDirtyRect() const;
+	Common::Rect CalcDirtyRect() const;
 	/**
 	    @brief Berechnet die absolute Position des Objektes.
 	*/
@@ -509,7 +509,7 @@ private:
 	    @param Result das Ergebnisrechteck
 	    @return Gibt false zurück, falls sich die Objekte gar nicht schneiden.
 	 */
-	bool    GetObjectIntersection(RenderObjectPtr<RenderObject> pObject, BS_Rect &Result);
+	bool    GetObjectIntersection(RenderObjectPtr<RenderObject> pObject, Common::Rect &Result);
 	/**
 	    @brief Vergleichsoperator der auf Objektpointern basiert statt auf Objekten.
 	    @remark Diese Methode wird fürs Sortieren der Kinderliste nach der Rendereihenfolge benutzt.

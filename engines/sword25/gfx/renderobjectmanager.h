@@ -46,6 +46,7 @@
 #define SWORD25_RENDEROBJECTMANAGER_H
 
 // Includes
+#include "common/rect.h"
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobjectptr.h"
 #include "sword25/kernel/persistable.h"
@@ -54,7 +55,6 @@ namespace Sword25 {
 
 // Klassendefinition
 class Kernel;
-class BS_Rect;
 class RenderObject;
 class TimedRenderObject;
 
