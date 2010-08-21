@@ -212,18 +212,21 @@ bool OpenGLGfx::GetVsync() const {
 
 // -----------------------------------------------------------------------------
 
-bool OpenGLGfx::Fill(const Common::Rect *FillRectPtr, unsigned int Color) {
-	Common::Rect Rect;
+bool OpenGLGfx::Fill(const Common::Rect *fillRectPtr, unsigned int color) {
+	Common::Rect rect;
 
-	if (!FillRectPtr) {
-		Rect.left = 0;
-		Rect.top = 0;
-		Rect.right = m_Width;
-		Rect.bottom = m_Height;
-		FillRectPtr = &Rect;
+	if (!fillRectPtr) {
+		rect.left = 0;
+		rect.top = 0;
+		rect.right = m_Width - 1;
+		rect.bottom = m_Height - 1;
+		fillRectPtr = &rect;
 	}
 
-	warning("STUB: Fill()");
+	if (fillRectPtr->width() > 0 && fillRectPtr->height() > 0) {
+		_backSurface.fillRect(*fillRectPtr, color);
+		g_system->copyRectToScreen((byte *)_backSurface.getBasePtr(fillRectPtr->left, fillRectPtr->top), _backSurface.pitch, fillRectPtr->left, fillRectPtr->top, fillRectPtr->width(), fillRectPtr->height());
+	}
 
 	return true;
 }
