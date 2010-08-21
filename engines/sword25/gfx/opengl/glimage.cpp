@@ -209,32 +209,36 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 	byte *ino = &_data[y1 * m_Width * 4 + x1 * 4];
 	byte *outo = (byte *)_backSurface->getBasePtr(PosX, PosY);
 	byte *in, *out;
-	bool alphawarn = false;
 
 	for (int i = 0; i < h; i++) {
 		out = outo;
 		in = ino;
 		for (int j = 0; j < w; j++) {
-			if (*in == 0) {
+			switch (*in) {
+			case 0: // Full transparency
 				in += 4;
 				out += 4;
-				continue;
+				break;
+			case 255: // Full opacity
+			default:
+				*out++ = *in++;
+				*out++ = *in++;
+				*out++ = *in++;
+				*out++ = *in++;
+				break;
+#if 0
+			default: // alpha blending
+				*out++ = 255;
+				int alpha = *in++;
+				for (int c = 0; c < 3; c++, out++, in++) {
+					*out = (byte)((int)(*out - *in) * alpha + *in);
+				}
+#endif
 			}
-
-			if (*in != 255)
-				alphawarn = true;
-
-			*out++ = *in++; // TODO: alpha blending
-			*out++ = *in++;
-			*out++ = *in++;
-			*out++ = *in++;
 		}
 		outo += _backSurface->pitch;
 		ino += m_Width * 4;
 	}
-
-	if (alphawarn)
-		warning("STUB: alpha image");
 
 	g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(PosX, PosY), _backSurface->pitch, PosX, PosY, w, h);
 
