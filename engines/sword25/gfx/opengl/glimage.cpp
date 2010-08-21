@@ -193,8 +193,8 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 		PosY = 0;
 	}
 
-	w = CLIP(PosX + w, 0, (int)_backSurface->w - PosX - 1);
-	h = CLIP(PosY + h, 0, (int)_backSurface->h - PosY - 1);
+	w = CLIP(w, 0, (int)_backSurface->w - PosX - 1);
+	h = CLIP(h, 0, (int)_backSurface->h - PosY - 1);
 
 	if (w == 0 || h == 0)
 		return true;
