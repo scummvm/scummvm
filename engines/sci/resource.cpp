@@ -1518,7 +1518,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	} while (type != 0x1F); // the last entry is FF
 
 	// reading each type's offsets
-	uint32 off = 0;
+	uint32 fileOffset = 0;
 	for (type = 0; type < 32; type++) {
 		if (resMap[type].wOffset == 0) // this resource does not exist in map
 			continue;
@@ -1528,15 +1528,15 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			int volume_nr = 0;
 			if (_mapVersion == kResVersionSci11) {
 				// offset stored in 3 bytes
-				off = fileStream->readUint16LE();
-				off |= fileStream->readByte() << 16;
-				off <<= 1;
+				fileOffset = fileStream->readUint16LE();
+				fileOffset |= fileStream->readByte() << 16;
+				fileOffset <<= 1;
 			} else {
 				// offset/volume stored in 4 bytes
-				off = fileStream->readUint32LE();
+				fileOffset = fileStream->readUint32LE();
 				if (_mapVersion < kResVersionSci11) {
-					volume_nr = off >> 28; // most significant 4 bits
-					off &= 0x0FFFFFFF;     // least significant 28 bits
+					volume_nr = fileOffset >> 28; // most significant 4 bits
+					fileOffset &= 0x0FFFFFFF;     // least significant 28 bits
 				} else {
 					// in SCI32 it's a plain offset
 				}
@@ -1547,19 +1547,32 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}
 			resId = ResourceId(convertResType(type), number);
-			// adding new resource only if it does not exist
-			if (_resMap.contains(resId) == false) {
-				// NOTE: We add the map's volume number here to the specified volume number
-				// for SCI2.1 and SCI3 maps that are not resmap.000. The resmap.* files' numbers
-				// need to be used in concurrence with the volume specified in the map to get
-				// the actual resource file.
-				int mapVolumeNr = volume_nr + map->_volumeNumber;
-				ResourceSource *source = findVolume(map, mapVolumeNr);
-				// FIXME: this code has serious issues with multiple RESMAP.* files (like in unmodified gk2)
-				//         adding a resource with source == NULL would crash later on
-				if (!source)
-					error("Unable to find volume for map %s volumeNr %d", map->getLocationName().c_str(), mapVolumeNr);
-				addResource(resId, source, off);
+			if (type == 7)
+				warning("%d, %d", type, number);
+			// NOTE: We add the map's volume number here to the specified volume number
+			// for SCI2.1 and SCI3 maps that are not resmap.000. The resmap.* files' numbers
+			// need to be used in concurrence with the volume specified in the map to get
+			// the actual resource file.
+			int mapVolumeNr = volume_nr + map->_volumeNumber;
+			ResourceSource *source = findVolume(map, mapVolumeNr);
+			// FIXME: this code has serious issues with multiple RESMAP.* files (like in unmodified gk2)
+			//         adding a resource with source == NULL would crash later on
+			if (!source)
+				error("Unable to find volume for map %s volumeNr %d", map->getLocationName().c_str(), mapVolumeNr);
+
+			Resource *resource = _resMap.getVal(resId, NULL);
+			if (!resource) {
+				addResource(resId, source, fileOffset);
+			} else {
+				// if resource is already present, change it to new content
+				//  this is needed at least for pharkas/german. This version
+				//  contains several duplicate resources INSIDE the resource
+				//  data files like fonts, views, scripts, etc. And if we use
+				//  the first entries, half of the game will be english and
+				//  umlauts will also be missing :P
+				resource->_source = source;
+				resource->_fileOffset = fileOffset;
+				resource->size = 0;
 			}
 		}
 	}
