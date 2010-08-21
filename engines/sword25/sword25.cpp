@@ -33,6 +33,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "engines/util.h"
 
 #include "sword25/sword25.h"
@@ -55,6 +56,8 @@ void LogToStdout(const char *Message) {
 Sword25Engine::Sword25Engine(OSystem *syst, const ADGameDescription *gameDesc):
 	Engine(syst),
 	_gameDescription(gameDesc) {
+
+	DebugMan.addDebugChannel(kDebugScript, "Script", "Script debug level");
 }
 
 Sword25Engine::~Sword25Engine() {

@@ -39,6 +39,9 @@
 // -----------------------------------------------------------------------------
 
 #include "common/array.h"
+#include "common/debug-channels.h"
+
+#include "sword25/sword25.h"
 #include "sword25/package/packagemanager.h"
 #include "sword25/script/luascript.h"
 #include "sword25/script/luabindhelper.h"
@@ -92,6 +95,13 @@ int PanicCB(lua_State *L) {
 	BS_LOG_ERRORLN("Lua panic. Error message: %s", lua_isnil(L, -1) ? "" : lua_tostring(L, -1));
 	return 0;
 }
+
+void debugHook(lua_State *L, lua_Debug *ar) {
+	if (!lua_getinfo(L, "Sn", ar))
+		return;
+
+	debug("LUA: %s %s: %s %d", ar->namewhat, ar->name, ar->short_src, ar->currentline);
+}
 }
 
 // -----------------------------------------------------------------------------
@@ -138,6 +148,20 @@ bool LuaScriptEngine::Init() {
 	// Initialise the Pluto-Persistence library
 	luaopen_pluto(m_State);
 	lua_pop(m_State, 1);
+
+	// Initialize debugging callback
+	if (DebugMan.isDebugChannelEnabled(kDebugScript)) {
+		int mask = 0;
+		if (gDebugLevel == 1)
+			mask |= LUA_MASKCALL;
+		if (gDebugLevel == 2)
+			mask |= LUA_MASKRET;
+		if (gDebugLevel == 4)
+			mask |= LUA_MASKLINE;
+
+		if (mask != 0)
+			lua_sethook(m_State, debugHook, mask, 0);
+	}
 
 	BS_LOGLN("Lua initialized.");
 
