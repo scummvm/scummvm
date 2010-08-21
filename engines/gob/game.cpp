@@ -215,7 +215,7 @@ void Game::prepareStart() {
 
 	_vm->_draw->initScreen();
 	_vm->_video->fillRect(*_vm->_draw->_frontSurface, 0, 0,
-			_vm->_video->_surfWidth - 1, _vm->_video->_surfHeight - 1, 1);
+	_vm->_video->_surfWidth - 1, _vm->_video->_surfHeight - 1, 1);
 
 	_vm->_util->setMousePos(152, 92);
 	_vm->_draw->_cursorX = _vm->_global->_inter_mouseX = 152;
@@ -352,8 +352,8 @@ void Game::playTot(int16 skipPlay) {
 				}
 			}
 
-			if (_vm->getGameType() == kGameTypeFascination)
-				_vm->_draw->closeAllWin();
+			_vm->_draw->closeAllWin();
+
 			if (_totToLoad[0] == 0)
 				break;
 

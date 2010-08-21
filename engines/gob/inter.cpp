@@ -292,7 +292,7 @@ void Inter::funcBlock(int16 retFlag) {
 
 		// WORKAROUND:
 		// The Amiga and Atari ST versions of Fascination don't add a delay after
-		// showing images between some levels, probably using the loading time int account. 
+		// showing images between some levels, probably using the loading time int account.
 		// We manually add it here.
 		if ((_vm->getGameType() == kGameTypeFascination) &&
 		    ((_vm->getPlatform() == Common::kPlatformAmiga)||

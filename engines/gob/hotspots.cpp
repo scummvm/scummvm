@@ -431,9 +431,10 @@ void Hotspots::pop() {
 	// Find the end of the filled hotspot space
 	int i;
 	Hotspot *destPtr = _hotspots;
-	for (i = 0; i < kHotspotCount; i++, destPtr++)
+	for (i = 0; i < kHotspotCount; i++, destPtr++) {
 		if (destPtr->isEnd())
 			break;
+	}
 
 	if (((uint32) (kHotspotCount - i)) < backup.size)
 		error("Hotspots::pop(): Not enough free space in the current Hotspot "
@@ -525,12 +526,12 @@ void Hotspots::leave(uint16 index) {
 int16 Hotspots::curWindow(int16 &dx, int16 &dy) const {
 	if ((_vm->_draw->_renderFlags & 0x80)==0)
 		return(0);
-	for (int i = 0; i < 10; i++)
-		if (_vm->_draw->_fascinWin[i].id != -1)
+	for (int i = 0; i < 10; i++) {
+		if (_vm->_draw->_fascinWin[i].id != -1) {
 			if (_vm->_global->_inter_mouseX >= _vm->_draw->_fascinWin[i].left &&
 				_vm->_global->_inter_mouseX < _vm->_draw->_fascinWin[i].left + _vm->_draw->_fascinWin[i].width &&
 				_vm->_global->_inter_mouseY >= _vm->_draw->_fascinWin[i].top &&
-				_vm->_global->_inter_mouseY < _vm->_draw->_fascinWin[i].top + _vm->_draw->_fascinWin[i].height)
+				_vm->_global->_inter_mouseY < _vm->_draw->_fascinWin[i].top + _vm->_draw->_fascinWin[i].height) {
 				if (_vm->_draw->_fascinWin[i].id == _vm->_draw->_winCount-1) {
 					dx = _vm->_draw->_fascinWin[i].left;
 					dy = _vm->_draw->_fascinWin[i].top;
@@ -546,6 +547,9 @@ int16 Hotspots::curWindow(int16 &dx, int16 &dy) const {
 						return(6);
 					return(-i);
 				}
+			}
+		}
+	}
 	return(0);
 }
 
@@ -555,10 +559,7 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 
 	int16 dx = 0;
 	int16 dy = 0;
-	int16 winId = -1;
-
-	if (_vm->getGameType() == kGameTypeFascination)
-		winId = _vm->_draw->isOverWin(dx, dy);
+	int16 winId = _vm->_draw->getWinFromCoord(dx, dy);
 
 	if (winId < 0) {
 		winId = 0;
@@ -753,11 +754,8 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 
 			if (_vm->_game->_mouseButtons != kMouseButtonsNone) {
 				// Mouse button pressed
-				int i;
-				if (_vm->getGameType() == kGameTypeFascination)
-					i = _vm->_draw->handleCurWin();
-				else
-					i = 0;
+				int i = _vm->_draw->handleCurWin();
+
 				if (!i) {
 					_vm->_draw->animateCursor(2);
 					if (delay > 0) {
@@ -1242,7 +1240,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left, top + height - 1, 0);
 			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left + width - 1, top, 0);
 			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top + height - 1, left + width - 1, top + height - 1, 0);
-		} else
+		} else {
 			if ((_vm->_draw->_fascinWin[windowNum].id != -1) && (_vm->_draw->_fascinWin[windowNum].id == _vm->_draw->_winCount - 1)) {
 				left += _vm->_draw->_fascinWin[windowNum].left;
 				top  += _vm->_draw->_fascinWin[windowNum].top;
@@ -1253,6 +1251,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 				left -= _vm->_draw->_fascinWin[windowNum].left;
 				top  -= _vm->_draw->_fascinWin[windowNum].top;
 			}
+		}
 	}
 	type &= 0x7F;
 
@@ -1721,9 +1720,9 @@ void Hotspots::oPlaytoons_F_1B() {
 //	var_4 += unk_var;
 
 	for (int i = 0; i < kHotspotCount; i++) {
-		if (_hotspots[i].isEnd()) {
+		if (_hotspots[i].isEnd())
 			return;
-		}
+
 		if ((_hotspots[i].id == 0xD000 + shortId) || (_hotspots[i].id == 0xB000 + shortId) ||
 			(_hotspots[i].id == 0x4000 + shortId)) {
 			longId = _hotspots[i].id;
@@ -1744,7 +1743,6 @@ void Hotspots::oPlaytoons_F_1B() {
 				right -= 2;
 				bottom -= 2;
 			}
-//			oPlaytoons_sub_F_1B(0x8000 + var2, left, top, right, bottom, _vm->_game->_script->getResultStr(), var3, var4, shortId);
 			_vm->_draw->oPlaytoons_sub_F_1B(0x8000+ var2, left, top, right, bottom, _vm->_game->_script->getResultStr(), fontIndex, var4, shortId);
 			return;
 		}
@@ -2052,7 +2050,6 @@ void Hotspots::matchInputStrings(const InputDesc *inputs) const {
 			cleanFloatString(spot);
 
 		if ((spot.getType() >= kTypeInput2NoLeave) && (spot.getType() <= kTypeInput3Leave)) {
-
 			// Look if we find a match between the wanted and the typed string
 			checkStringMatch(spot, inputs[inputIndex], inputPos);
 			strInputCount++;
