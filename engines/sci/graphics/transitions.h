@@ -91,7 +91,7 @@ private:
 	void horizontalRollToCenter(bool blackoutFlag);
 	void diagonalRollFromCenter(bool blackoutFlag);
 	void diagonalRollToCenter(bool blackoutFlag);
-	void updateScreenAndWait(int msec);
+	void updateScreenAndWait(uint32 shouldBeAtMsec);
 
 	GfxScreen *_screen;
 	GfxPalette *_palette;
@@ -102,6 +102,8 @@ private:
 	bool _blackoutFlag;
 	Common::Rect _picRect;
 	byte *_oldScreen; // buffer for saving current active screen data to, has dimenions of _screen->_displayScreen
+
+	uint32 _transitionStartTime; // when the current transition started in milliseconds
 };
 
 } // End of namespace Sci
