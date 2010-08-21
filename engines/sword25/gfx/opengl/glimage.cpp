@@ -224,10 +224,10 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 			if (*in != 255)
 				alphawarn = true;
 
-			*in++ = *out++; // TODO: alpha blending
-			*in++ = *out++;
-			*in++ = *out++;
-			*in++ = *out++;
+			*out++ = *in++; // TODO: alpha blending
+			*out++ = *in++;
+			*out++ = *in++;
+			*out++ = *in++;
 		}
 		outo += _backSurface->pitch;
 		ino += m_Width * 4;
