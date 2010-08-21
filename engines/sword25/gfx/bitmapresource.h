@@ -42,12 +42,6 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Forward Declarations
-// -----------------------------------------------------------------------------
-
-class Common::Rect;
-
 class BitmapResource : public Resource {
 public:
 	/**
