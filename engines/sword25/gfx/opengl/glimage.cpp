@@ -181,8 +181,23 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 		warning("STUB: Sprite flipping");
 	}
 
-	w = CLIP(x1 + w, 0, (int)_backSurface->w);
-	h = CLIP(y1 + h, 0, (int)_backSurface->h);
+	if (PosX < 0) {
+		w -= PosX;
+		x1 = -PosX;
+		PosX = 0;
+	}
+
+	if (PosY < 0) {
+		h -= PosY;
+		y1 = -PosY;
+		PosY = 0;
+	}
+
+	w = CLIP(PosX + w, 0, (int)_backSurface->w - PosX - 1);
+	h = CLIP(PosY + h, 0, (int)_backSurface->h - PosY - 1);
+
+	if (w == 0 || h == 0)
+		return true;
 
 	// Rendern
 	// TODO:
