@@ -139,12 +139,12 @@ private:
 	 *
 	 * @param index of the language in the list of languages
 	 */
-	void loadLanguageDat(int);
+	void loadLanguageDat(int index);
 
 	/**
 	 * Check the header of the given file to make sure it is a valid translations data file.
 	 */
-	bool checkHeader(File&);
+	bool checkHeader(File &in);
 
 	String _syslang;
 	StringArray _langs;

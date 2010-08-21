@@ -161,9 +161,9 @@ const char *TranslationManager::getTranslation(const char *message) {
 	while (rightIndex >= leftIndex) {
 		const int midIndex = (leftIndex + rightIndex) / 2;
 		const PoMessageEntry * const m = &_currentTranslationMessages[midIndex];
-		
+
 		const int compareResult = strcmp(message, _messageIds[m->msgid].c_str());
-		
+
 		if (compareResult == 0)
 			return m->msgstr.c_str();
 		else if (compareResult < 0)
@@ -238,7 +238,7 @@ void TranslationManager::loadTranslationsInfoDat() {
 	int nbTranslations = in.readUint16BE();
 	
 	// Skip all the block sizes
-	for (int i = 0 ; i < nbTranslations + 2 ; ++i)
+	for (int i = 0; i < nbTranslations + 2; ++i)
 		in.readUint16BE();
 
 	// Read list of languages
@@ -291,7 +291,7 @@ void TranslationManager::loadLanguageDat(int index) {
 
 	// Get size of blocks to skip.
 	int skipSize = 0;
-	for (int i = 0 ; i < index + 2 ; ++i)
+	for (int i = 0; i < index + 2; ++i)
 		skipSize += in.readUint16BE();
 	// We also need to skip the remaining block sizes
 	skipSize += 2 * (nbTranslations - index);
@@ -317,12 +317,12 @@ void TranslationManager::loadLanguageDat(int index) {
 	}
 }
 
-bool TranslationManager::checkHeader(File& in) {
+bool TranslationManager::checkHeader(File &in) {
 	char buf[13];
 	int ver;
 
 	if (!in.isOpen()) {
-		warning("You're missing the 'translations.dat' file. GUI translation will not be available");
+		warning("You re missing the 'translations.dat' file. GUI translation will not be available");
 		return false;
 	}
 
