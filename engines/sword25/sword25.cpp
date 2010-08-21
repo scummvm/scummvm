@@ -85,8 +85,8 @@ Common::Error Sword25Engine::AppStart(const Common::StringArray &CommandParamete
 	// All log messages will be sent to StdOut
 	BS_Log::RegisterLogListener(LogToStdout);
 
-	// Initialise the graphics mode to RGBA8888
-	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	// Initialise the graphics mode to ARGB8888
+	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	initGraphics(800, 600, true, &format);
 	if (format != g_system->getScreenFormat())
 		return Common::kUnsupportedColorMode;
