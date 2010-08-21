@@ -954,14 +954,15 @@ reg_t kFileIOReadByte(EngineState *s, int argc, reg_t *argv) {
 	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
 	if (!f)
 		return NULL_REG;
-	return make_reg(0, (s->r_acc.toUint16() & 0xff00) | f->_in->readByte());
+	byte b = f->_in->readByte();
+	return make_reg(0, (s->r_acc.toUint16() & 0xff00) | b);
 }
 
 reg_t kFileIOWriteByte(EngineState *s, int argc, reg_t *argv) {
 	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
 	if (f)
 		f->_out->writeByte(argv[1].toUint16() & 0xff);
-	return s->r_acc; // FIXME: does this really doesn't return anything?
+	return s->r_acc; // FIXME: does this really not return anything?
 }
 
 reg_t kFileIOReadWord(EngineState *s, int argc, reg_t *argv) {
@@ -975,7 +976,7 @@ reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv) {
 	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
 	if (f)
 		f->_out->writeUint16LE(argv[1].toUint16());
-	return s->r_acc; // FIXME: does this really doesn't return anything?
+	return s->r_acc; // FIXME: does this really not return anything?
 }
 
 reg_t kCD(EngineState *s, int argc, reg_t *argv) {
