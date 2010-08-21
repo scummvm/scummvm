@@ -40,26 +40,19 @@ struct TLanguage {
 	const char *name;
 	int id;
 
-	TLanguage() {
-		name = 0;
-		id = 0;
-	}
-
-	TLanguage(const char *n, int i) {
-		name = n;
-		id = i;
-	}
+	TLanguage() : name(0), id(0) {}
+	TLanguage(const char *n, int i) : name(n), id(i) {}
 };
-	
-bool operator<(const TLanguage&, const TLanguage&);
-	
+
+bool operator<(const TLanguage &l, const TLanguage &r);
+
 typedef Array<TLanguage> TLangArray;
 
 struct PoMessageEntry {
 	int msgid;
 	String msgstr;
 };
-	
+
 /**
  * Message translation manager.
  */
@@ -140,21 +133,23 @@ private:
 	 * Load the list of languages from the translations.dat file
 	 */
 	void loadTranslationsInfoDat();
+
 	/**
 	 * Load the translation for the given language from the translations.dat file
 	 *
 	 * @param index of the language in the list of languages
 	 */
 	void loadLanguageDat(int);
+
 	/**
 	 * Check the header of the given file to make sure it is a valid translations data file.
 	 */
 	bool checkHeader(File&);
-	
+
 	String _syslang;
 	StringArray _langs;
 	StringArray _langNames;
-	
+
 	StringArray _messageIds;
 	Array<PoMessageEntry> _currentTranslationMessages;
 	String _currentCharset;

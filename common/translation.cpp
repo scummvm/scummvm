@@ -43,14 +43,14 @@ DECLARE_SINGLETON(Common::TranslationManager)
 
 namespace Common {
 
-bool operator<(const TLanguage& l1, const TLanguage& l2) {
-	return strcmp(l1.name, l2.name) < 0;
+bool operator<(const TLanguage &l, const TLanguage &r) {
+	return strcmp(l.name, r.name) < 0;
 }
 
 #ifdef USE_TRANSLATION
 
 // Translation enabled
-	
+
 TranslationManager::TranslationManager() : _currentLang(-1) {
 	loadTranslationsInfoDat();
 
@@ -128,19 +128,19 @@ void TranslationManager::setLanguage(const char *lang) {
 	String langStr(lang);
 	if (langStr.empty())
 		langStr = _syslang;
-	
+
 	// Searching for a valid language
 	for (unsigned int i = 0; i < _langs.size() && langIndex == -1; ++i) {
 		if (langStr == _langs[i])
 			langIndex = i;
 	}
-	
+
 	// Try partial match
 	for (unsigned int i = 0; i < _langs.size() && langIndex == -1; ++i) {
 		if (strncmp(langStr.c_str(), _langs[i].c_str(), 2) == 0)
 			langIndex = i;
 	}
-	
+
 	// Load messages for that lang
 	// Call it even if the index is -1 to unload previously loaded translations
 	if (langIndex != _currentLang) {
@@ -153,11 +153,11 @@ const char *TranslationManager::getTranslation(const char *message) {
 	// if no language is set or message is empty, return msgid as is
 	if (_currentTranslationMessages.empty() || *message == '\0')
 		return message;
-	
+
 	// binary-search for the msgid
 	int leftIndex = 0;
 	int rightIndex = _currentTranslationMessages.size() - 1;
-	
+
 	while (rightIndex >= leftIndex) {
 		const int midIndex = (leftIndex + rightIndex) / 2;
 		const PoMessageEntry * const m = &_currentTranslationMessages[midIndex];
@@ -171,7 +171,7 @@ const char *TranslationManager::getTranslation(const char *message) {
 		else
 			leftIndex = midIndex + 1;
 	}
-	
+
 	return message;
 }
 
@@ -225,22 +225,22 @@ const char *TranslationManager::getLangById(int id) {
 }
 
 void TranslationManager::loadTranslationsInfoDat() {
-	File in;	
+	File in;
 	in.open("translations.dat");
-	
+
 	if (!checkHeader(in))
 		return;
-	
+
 	char buf[256];
 	int len;
-	
+
 	// Get number of translations
 	int nbTranslations = in.readUint16BE();
 	
 	// Skip all the block sizes
 	for (int i = 0 ; i < nbTranslations + 2 ; ++i)
 		in.readUint16BE();
-	
+
 	// Read list of languages
 	_langs.resize(nbTranslations);
 	_langNames.resize(nbTranslations);
@@ -252,7 +252,7 @@ void TranslationManager::loadTranslationsInfoDat() {
 		in.read(buf, len);
 		_langNames[i] = String(buf, len);
 	}
-	
+
 	// Read messages
 	int numMessages = in.readUint16BE();
 	_messageIds.resize(numMessages);
@@ -272,42 +272,42 @@ void TranslationManager::loadLanguageDat(int index) {
 			warning("Invalid language index %d passed to TranslationManager::loadLanguageDat", index);
 		return;
 	}
-	
-	File in;	
+
+	File in;
 	in.open("translations.dat");
 
 	if (!checkHeader(in))
 		return;
-	
+
 	char buf[1024];
 	int len;
-	
+
 	// Get number of translations
 	int nbTranslations = in.readUint16BE();
 	if (nbTranslations != (int)_langs.size()) {
 		warning("The 'translations.dat' file has changed since starting ScummVM. GUI translation will not be available");
 		return;
 	}
-	
+
 	// Get size of blocks to skip.
 	int skipSize = 0;
 	for (int i = 0 ; i < index + 2 ; ++i)
 		skipSize += in.readUint16BE();
 	// We also need to skip the remaining block sizes
 	skipSize += 2 * (nbTranslations - index);
-	
+
 	// Seek to start of block we want to read
 	in.seek(skipSize, SEEK_CUR);
-	
+
 	// Read number of translated messages
 	int nbMessages = in.readUint16BE();
 	_currentTranslationMessages.resize(nbMessages);
-	
+
 	// Read charset
 	len = in.readUint16BE();
 	in.read(buf, len);
 	_currentCharset = String(buf, len);
-	
+
 	// Read messages
 	for (int i = 0; i < nbMessages; ++i) {
 		_currentTranslationMessages[i].msgid = in.readUint16BE();
@@ -320,29 +320,29 @@ void TranslationManager::loadLanguageDat(int index) {
 bool TranslationManager::checkHeader(File& in) {
 	char buf[13];
 	int ver;
-	
+
 	if (!in.isOpen()) {
 		warning("You're missing the 'translations.dat' file. GUI translation will not be available");
 		return false;
 	}
-	
+
 	in.read(buf, 12);
 	buf[12] = '\0';
-	
+
 	// Check header
 	if (strcmp(buf, "TRANSLATIONS")) {
 		warning("File 'translations.dat' is corrupt. GUI translation will not be available");
 		return false;
 	}
-	
+
 	// Check version
 	ver = in.readByte();
-	
+
 	if (ver != TRANSLATIONS_DAT_VER) {
 		warning("File 'translations.dat' is wrong version. Expected %d but got %d. GUI translation will not be available", TRANSLATIONS_DAT_VER, ver);
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -383,4 +383,5 @@ const char *TranslationManager::getCurrentCharset() {
 
 #endif // USE_TRANSLATION
 
-}	// End of namespace Common
+} // End of namespace Common
+
