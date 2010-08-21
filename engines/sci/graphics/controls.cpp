@@ -150,7 +150,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 	uint16 maxChars = readSelectorValue(_segMan, controlObject, SELECTOR(max));
 	reg_t textReference = readSelector(_segMan, controlObject, SELECTOR(text));
 	Common::String text;
-	uint16 textSize, eventType, eventKey = 0;
+	uint16 textSize, eventType, eventKey = 0, modifiers = 0;
 	bool textChanged = false;
 	bool textAddChar = false;
 	Common::Rect rect;
@@ -169,6 +169,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 			break;
 		case SCI_EVENT_KEYBOARD:
 			eventKey = readSelectorValue(_segMan, eventObject, SELECTOR(message));
+			modifiers = readSelectorValue(_segMan, eventObject, SELECTOR(modifiers));
 			switch (eventKey) {
 			case SCI_KEY_BACKSPACE:
 				if (cursorPos > 0) {
@@ -194,6 +195,13 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 			case SCI_KEY_RIGHT: // RIGHT
 				if (cursorPos + 1 <= textSize) {
 					cursorPos++; textChanged = true;
+				}
+				break;
+			case 3:	// a bit odd, but this is what is returned when Control - C is pressed
+				if (modifiers & SCI_KEYMOD_CTRL) {
+					// Control-C erases the whole line
+					cursorPos = 0; text.clear();
+					textChanged = true;
 				}
 				break;
 			default:

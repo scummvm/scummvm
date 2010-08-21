@@ -149,7 +149,7 @@ SciEvent EventManager::getScummVMEvent() {
 		found = em->pollEvent(ev);
 	}
 
-	if (found && !ev.synthetic && ev.type != Common::EVENT_MOUSEMOVE) {
+	if (found && ev.type != Common::EVENT_MOUSEMOVE) {
 		int modifiers = em->getModifierState();
 
 		// We add the modifier key status to buckybits
