@@ -197,7 +197,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 					cursorPos++; textChanged = true;
 				}
 				break;
-			case 3:	// a bit odd, but this is what is returned when Control - C is pressed
+			case 3:	// returned in SCI1 late and newer when Control - C is pressed
 				if (modifiers & SCI_KEYMOD_CTRL) {
 					// Control-C erases the whole line
 					cursorPos = 0; text.clear();
@@ -205,7 +205,12 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 				}
 				break;
 			default:
-				if (eventKey > 31 && eventKey < 256 && textSize < maxChars) {
+				if ((modifiers & SCI_KEYMOD_CTRL) && eventKey == 99) {
+					// Control-C in earlier SCI games (SCI0 - SCI1 middle)
+					// Control-C erases the whole line
+					cursorPos = 0; text.clear();
+					textChanged = true;
+				} else if (eventKey > 31 && eventKey < 256 && textSize < maxChars) {
 					// insert pressed character
 					textAddChar = true;
 					textChanged = true;
