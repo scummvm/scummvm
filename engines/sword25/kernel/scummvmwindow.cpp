@@ -150,7 +150,7 @@ void ScummVMWindow::SetTitle(const Common::String &Title) {
 
 bool ScummVMWindow::ProcessMessages() {
 	// No implementation
-	return false;
+	return true;
 }
 
 bool ScummVMWindow::WaitForFocus() {
