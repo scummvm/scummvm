@@ -346,8 +346,7 @@ int16 OSystem_N64::getWidth() {
 }
 
 void OSystem_N64::setPalette(const byte *colors, uint start, uint num) {
-	for (int i = 0; i < num; ++i) {
-		uint8 c[4];
+	for (uint i = 0; i < num; ++i) {
 		_screenPalette[start + i] = colRGB888toBGR555(colors[2], colors[1], colors[0]);
 		colors += 4;
 	}
@@ -413,7 +412,7 @@ void OSystem_N64::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void OSystem_N64::setCursorPalette(const byte *colors, uint start, uint num) {
-	for (int i = 0; i < num; ++i) {
+	for (uint i = 0; i < num; ++i) {
 		_cursorPalette[start + i] = colRGB888toBGR555(colors[2], colors[1], colors[0]);
 		colors += 4;
 	}

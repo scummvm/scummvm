@@ -42,9 +42,6 @@ void disableAudioPlayback(void) {
 
 	_audioEnabled = false;
 
-	OSystem_N64 *osys = (OSystem_N64 *)g_system;
-	Audio::MixerImpl *localmixer = (Audio::MixerImpl *)osys->getMixer();
-
 	while (AI_busy()); // Wait for audio to stop
 }
 
