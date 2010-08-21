@@ -1547,8 +1547,6 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}
 			resId = ResourceId(convertResType(type), number);
-			if (type == 7)
-				warning("%d, %d", type, number);
 			// NOTE: We add the map's volume number here to the specified volume number
 			// for SCI2.1 and SCI3 maps that are not resmap.000. The resmap.* files' numbers
 			// need to be used in concurrence with the volume specified in the map to get
