@@ -214,26 +214,29 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 		out = outo;
 		in = ino;
 		for (int j = 0; j < w; j++) {
-			switch (*in) {
+			int r = *in++;
+			int g = *in++;
+			int b = *in++;
+			int a = *in++;
+			switch (a) {
 			case 0: // Full transparency
-				in += 4;
 				out += 4;
 				break;
 			case 255: // Full opacity
-			default:
-				*out++ = *in++;
-				*out++ = *in++;
-				*out++ = *in++;
-				*out++ = *in++;
+				*out++ = r;
+				*out++ = g;
+				*out++ = b;
+				*out++ = a;
 				break;
-#if 0
 			default: // alpha blending
-				*out++ = 255;
-				int alpha = *in++;
-				for (int c = 0; c < 3; c++, out++, in++) {
-					*out = (byte)((int)(*out - *in) * alpha + *in);
-				}
-#endif
+				*out = (byte)((((int)(*out - r) * a + r) >> 8) & 0xff);
+				out++;
+				*out = (byte)((((int)(*out - g) * a + g) >> 8) & 0xff);
+				out++;
+				*out = (byte)((((int)(*out - b) * a + b) >> 8) & 0xff);
+				out++;
+				*out = 255;
+				out++;
 			}
 		}
 		outo += _backSurface->pitch;
