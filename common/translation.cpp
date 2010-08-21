@@ -322,7 +322,7 @@ bool TranslationManager::checkHeader(File &in) {
 	int ver;
 
 	if (!in.isOpen()) {
-		warning("You re missing the 'translations.dat' file. GUI translation will not be available");
+		warning("You are missing the 'translations.dat' file. GUI translation will not be available");
 		return false;
 	}
 
@@ -331,7 +331,7 @@ bool TranslationManager::checkHeader(File &in) {
 
 	// Check header
 	if (strcmp(buf, "TRANSLATIONS")) {
-		warning("File 'translations.dat' is corrupt. GUI translation will not be available");
+		warning("Your 'translations.dat' file is corrupt. GUI translation will not be available");
 		return false;
 	}
 
@@ -339,7 +339,7 @@ bool TranslationManager::checkHeader(File &in) {
 	ver = in.readByte();
 
 	if (ver != TRANSLATIONS_DAT_VER) {
-		warning("File 'translations.dat' is wrong version. Expected %d but got %d. GUI translation will not be available", TRANSLATIONS_DAT_VER, ver);
+		warning("Your 'translations.dat' file has a mismatching version, expected was %d but you got %d. GUI translation will not be available", TRANSLATIONS_DAT_VER, ver);
 		return false;
 	}
 
