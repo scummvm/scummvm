@@ -1768,6 +1768,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Larry 5 EGA
+	// Supplied by omer_mor in bug report #3049771
+	{"lsl5", "EGA", {
+		{"resource.map", 0, "89dbf8006985ec0c547ffe125c25ebf9", 6255},
+		{"resource.000", 0, "f2537473213d70e7f4fc82e988ab90ca", 765747},
+		{"resource.001", 0, "bb642b0b0f879aca98addd62d901387e", 1196260},
+		{"resource.002", 0, "5a55af4e40728b1a8103dc47ad2afa8d", 1100539},
+		{"resource.003", 0, "16f4d8fb1b526125edaca4fc6cbb7530", 1064563},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Larry 6 - English DOS (from spookypeanut)
 	// SCI interpreter version 1.001.113
 	{"lsl6", "", {
