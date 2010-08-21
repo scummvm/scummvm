@@ -868,13 +868,13 @@ struct objBlock_t {
 	uint32 objLength;
 };
 
-#include "common/pack-start.h"						// START STRUCT PACKING
-struct sound_hdr_t {								// Sound file lookup entry
-	uint16 size;									// Size of sound data in bytes
-	uint32 offset;									// Offset of sound data in file
+#include "common/pack-start.h"                      // START STRUCT PACKING
+struct sound_hdr_t {                                // Sound file lookup entry
+	uint16 size;                                    // Size of sound data in bytes
+	uint32 offset;                                  // Offset of sound data in file
 } PACKED_STRUCT;
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h"                        // END STRUCT PACKING
 
-}
+} // End of namespace Hugo
 
 #endif

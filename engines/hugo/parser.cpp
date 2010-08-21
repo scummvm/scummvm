@@ -53,8 +53,7 @@ namespace Hugo {
 #define CY(Y)   HIWORD(Y)
 
 Parser::Parser(HugoEngine &vm) :
-	_vm(vm), _putIndex(0), _getIndex(0) {
-		_checkDoubleF1Fl = false;
+	_vm(vm), _putIndex(0), _getIndex(0), _checkDoubleF1Fl(false) {
 }
 
 void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
@@ -118,7 +117,7 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 		}
 		break;
 	}
-	if 	((_checkDoubleF1Fl) && (nChar != Common::KEYCODE_F1))
+	if (_checkDoubleF1Fl && (nChar != Common::KEYCODE_F1))
 		_checkDoubleF1Fl = false;
 }
 
@@ -682,9 +681,9 @@ bool Parser::isObjectVerb(object_t *obj, char *line, char *comment) {
 
 void Parser::showDosInventory() {
 // Show user all objects being carried in a variable width 2 column format
-static const char *blanks = "                                        ";
-uint16 index, len, len1 = 0, len2 = 0;
-char buffer[XBYTES * NUM_ROWS] = "\0";
+	static const char *blanks = "                                        ";
+	uint16 index, len, len1 = 0, len2 = 0;
+	char buffer[XBYTES *NUM_ROWS] = "\0";
 
 	index = 0;
 	for (int i = 0; i < _vm._numObj; i++)     /* Find widths of 2 columns */
@@ -700,19 +699,20 @@ char buffer[XBYTES * NUM_ROWS] = "\0";
 	if (len1 + len2 < (uint16)strlen(_vm._textParser[kTBOutro]))
 		len1 = strlen(_vm._textParser[kTBOutro]);
 
-	strncat (buffer, blanks, (len1 + len2 - strlen(_vm._textParser[kTBIntro])) / 2);
-	strcat (strcat (buffer, _vm._textParser[kTBIntro]), "\n");
+	strncat(buffer, blanks, (len1 + len2 - strlen(_vm._textParser[kTBIntro])) / 2);
+	strcat(strcat(buffer, _vm._textParser[kTBIntro]), "\n");
 	index = 0;
 	for (int i = 0; i < _vm._numObj; i++) {     /* Assign strings */
 		if (_vm._objects[i].carriedFl) {
 			if (index++ & 1)
-				strcat (strcat (buffer, _vm._arrayNouns[_vm._objects[i].nounIndex][1]), "\n");
+				strcat(strcat(buffer, _vm._arrayNouns[_vm._objects[i].nounIndex][1]), "\n");
 			else
-				strncat (strcat (buffer, _vm._arrayNouns[_vm._objects[i].nounIndex][1]), blanks, len1 - strlen(_vm._arrayNouns[_vm._objects[i].nounIndex][1]));
+				strncat(strcat(buffer, _vm._arrayNouns[_vm._objects[i].nounIndex][1]), blanks, len1 - strlen(_vm._arrayNouns[_vm._objects[i].nounIndex][1]));
 		}
 	}
-	if (index & 1) strcat (buffer, "\n");
-	strcat (buffer, _vm._textParser[kTBOutro]);
+	if (index & 1)
+		strcat(buffer, "\n");
+	strcat(buffer, _vm._textParser[kTBOutro]);
 
 	Utils::Box(BOX_ANY, buffer);
 }
