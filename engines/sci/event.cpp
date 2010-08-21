@@ -215,6 +215,11 @@ SciEvent EventManager::getScummVMEvent() {
 					else
 						input.character = SCI_KEY_TAB;
 				}
+				if (input.data == Common::KEYCODE_DELETE) {
+					// Delete key
+					input.type = SCI_EVENT_KEYBOARD;
+					input.data = input.character = SCI_KEY_DELETE;
+				}
 			} else if ((input.data >= Common::KEYCODE_F1) && input.data <= Common::KEYCODE_F10) {
 				// F1-F10
 				input.type = SCI_EVENT_KEYBOARD;
