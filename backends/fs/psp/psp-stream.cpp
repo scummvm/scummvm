@@ -24,15 +24,10 @@
  */
 #ifdef __PSP__
 
-#include <pspiofilemgr_stat.h>
 #include <pspiofilemgr.h>
-#include <SDL/SDL_thread.h>
-#include <SDL/SDL_mutex.h>
 
 #include "backends/platform/psp/powerman.h"
 #include "backends/fs/psp/psp-stream.h"
-
-#include <errno.h>
 
 #define MIN2(a,b) ((a < b) ? a : b)
 #define MIN3(a,b,c) ( (a < b) ? (a < c ? a : c) : (b < c ? b : c) )
@@ -65,7 +60,7 @@ void printBuffer(byte *ptr, uint32 len) {
 
 
 PSPIoStream::PSPIoStream(const Common::String &path, bool writeMode)
-		: StdioStream((void *)1), _path(path), _writeMode(writeMode),
+		: _handle(0), _path(path), _writeMode(writeMode),
 		  _ferror(false), _pos(0),
 		  _physicalPos(0), _fileSize(0), _inCache(false), _eos(false),
 		  _cacheStartOffset(-1), _cache(0),
@@ -74,8 +69,6 @@ PSPIoStream::PSPIoStream(const Common::String &path, bool writeMode)
 	DEBUG_ENTER_FUNC();
 
 	// assert(!path.empty());	// do we need this?
-
-	_handle = (void *)0;		// Need to do this since base class asserts not 0.
 }
 
 PSPIoStream::~PSPIoStream() {
@@ -87,7 +80,7 @@ PSPIoStream::~PSPIoStream() {
 	PowerMan.unregisterForSuspend(this); // Unregister with powermanager to be suspended
 									  // Must do this before fclose() or resume() will reopen.
 
-	fclose((FILE *)_handle);		  // We don't need a critical section. Worst case, the handle gets closed on its own
+	sceIoClose(_handle);		  	  // We don't need a critical section. Worst case, the handle gets closed on its own
 	
 	if (_cache)
 		free(_cache);
@@ -105,7 +98,7 @@ void *PSPIoStream::open() {
 		PSP_DEBUG_PRINT_FUNC("Suspended\n");
 	}
 
-	_handle = fopen(_path.c_str(), _writeMode ? "wb" : "rb"); 	// open
+	_handle = sceIoOpen(_path.c_str(), _writeMode ? PSP_O_RDWR | PSP_O_CREAT : PSP_O_RDONLY, 0777); 	// open
 
 	if (_handle) {
 		// Get the file size. This way is much faster than going to the end of the file and back
@@ -122,7 +115,7 @@ void *PSPIoStream::open() {
 
 	PowerMan.endCriticalSection();
 
-	return _handle;
+	return (void *)_handle;
 }
 
 bool PSPIoStream::err() const {
@@ -188,7 +181,7 @@ bool PSPIoStream::seek(int32 offs, int whence) {
 	} else {	// not in cache
 		_inCache = false;		
 	}	
-	_pos = posToSearchFor;		
+	_pos = posToSearchFor;
 	return true;
 }
 
@@ -245,11 +238,10 @@ uint32 PSPIoStream::read(void *ptr, uint32 len) {
 		
 		PSP_DEBUG_PRINT("filling cache with 0x%x bytes from physicalPos[0x%x]. cacheStart[0x%x], pos[0x%x], fileSize[0x%x]\n", lenToCopyToCache, _physicalPos, _cacheStartOffset, _pos, _fileSize);
 		
-		size_t ret = fread(_cache, 1, lenToCopyToCache, (FILE *)_handle);
-		if (ret != lenToCopyToCache) {
+		int ret = sceIoRead(_handle, _cache, lenToCopyToCache);
+		if (ret != (int)lenToCopyToCache) {
 			PSP_ERROR("in filling cache, failed to get 0x%x bytes. Only got 0x%x\n", lenToCopyToCache, ret);
 			_ferror = true;
-			clearerr((FILE *)_handle);
 		}
 		_cacheStartOffset = _physicalPos;
 		_inCache = true;
@@ -264,15 +256,14 @@ uint32 PSPIoStream::read(void *ptr, uint32 len) {
 		
 	} else {	// Too big for cache. No caching
 		PSP_DEBUG_PRINT("reading 0x%x bytes from file to %p. Pos[0x%x], physPos[0x%x]\n", lenFromFile, destPtr, _pos, _physicalPos);
-		size_t ret = fread(destPtr, 1, lenFromFile, (FILE *)_handle);
+		int ret = sceIoRead(_handle, destPtr, lenFromFile);
 
 		_physicalPos += ret;	// Update pos
 		_pos = _physicalPos;
 
-		if (ret != lenFromFile) {	// error
+		if (ret != (int)lenFromFile) {	// error
 			PSP_ERROR("fread returned [0x%x] instead of len[0x%x]\n", ret, lenFromFile);
 			_ferror = true;
-			clearerr((FILE *)_handle);
 			_errorSource = 4;			
 		}
 		_inCache = false;
@@ -290,8 +281,10 @@ uint32 PSPIoStream::read(void *ptr, uint32 len) {
 // TODO: Test if seeking backwards/forwards has any effect on performance
 inline bool PSPIoStream::synchronizePhysicalPos() {
 	if (_pos != _physicalPos) {
-		if (fseek((FILE *)_handle, _pos - _physicalPos, SEEK_CUR) != 0)
+		if (sceIoLseek32(_handle, _pos - _physicalPos, PSP_SEEK_CUR) < 0) {
+			_ferror = true;
 			return false;
+		}
 		_physicalPos = _pos;	
 	}
 	
@@ -314,26 +307,25 @@ uint32 PSPIoStream::write(const void *ptr, uint32 len) {
 
 	PSP_DEBUG_PRINT_FUNC("filename[%s], len[0x%x]\n", _path.c_str(), len);
 
-	if (_ferror)
+	if (!len || _ferror)	// we actually get calls with len=0
 		return 0;
 		
 	_eos = false;	// we can't have eos with write
 	synchronizePhysicalPos();
 	
-	size_t ret = fwrite(ptr, 1, len, (FILE *)_handle);
+	int ret = sceIoWrite(_handle, ptr, len);
 
 	// If we're making the file bigger, adjust the size
-	if (_physicalPos + (int)ret > _fileSize)
+	if (_physicalPos + ret > _fileSize)
 		_fileSize = _physicalPos + ret;
+
 	_physicalPos += ret;
 	_pos = _physicalPos;
 	_inCache = false;
 	_cacheStartOffset = -1;	// invalidate cache
 
-	if (ret != len) {	// Set error
+	if (ret != (int)len) {	// Set error
 		_ferror = true;
-		clearerr((FILE *)_handle);
-		_pos = ftell((FILE *)_handle);	// Update pos
 		_errorSource = 5;
 		PSP_ERROR("fwrite returned[0x%x] instead of len[0x%x]\n", ret, len);
 	}
@@ -344,23 +336,8 @@ uint32 PSPIoStream::write(const void *ptr, uint32 len) {
 }
 
 bool PSPIoStream::flush() {
-	DEBUG_ENTER_FUNC();
-	// Enter critical section
-	if (PowerMan.beginCriticalSection())
-		PSP_DEBUG_PRINT_FUNC("Suspended\n");
 
-	int ret = fflush((FILE *)_handle);
-
-	if (ret != 0) {
-		_ferror = true;
-		clearerr((FILE *)_handle);
-		_errorSource = 6;
-		PSP_ERROR("fflush returned ret[%d]\n", ret);
-	}
-
-	PowerMan.endCriticalSection();
-
-	return (ret == 0);
+	return true;
 }
 
 // For the PSP, since we're building in suspend support, we moved opening
@@ -393,8 +370,8 @@ int PSPIoStream::suspend() {
 	}
 
 	if (_handle > 0) {
-		fclose((FILE *)_handle);		// close our file descriptor
-		_handle = (void *)0xFFFFFFFF;	// Set handle to non-null invalid value so makeFromPath doesn't return error
+		sceIoClose(_handle);		// close our file descriptor
+		_handle = 0xFFFFFFFF;		// Set handle to non-null invalid value so makeFromPath doesn't return error
 	}
 
 	return 0;
@@ -409,19 +386,19 @@ int PSPIoStream::resume() {
 	_suspendCount--;
 
 	// We reopen our file descriptor
-	_handle = fopen(_path.c_str(), _writeMode ? "wb" : "rb");
+	_handle = sceIoOpen(_path.c_str(), _writeMode ? PSP_O_RDWR | PSP_O_CREAT : PSP_O_RDONLY, 0777); 	// open
 	if (_handle <= 0) {
 		PSP_ERROR("Couldn't reopen file %s\n", _path.c_str());
 	}
 
 	// Resume our previous position
 	if (_handle > 0 && _pos > 0) {
-		ret = fseek((FILE *)_handle, _pos, SEEK_SET);
+		ret = sceIoLseek32(_handle, _pos, PSP_SEEK_SET);
 		
 		_physicalPos = _pos;
 		_inCache = false;
 
-		if (ret != 0) {		// Check for problem
+		if (ret < 0) {		// Check for problem
 			_errorSuspend = ResumeError;
 			_errorPos = _pos;
 			_errorHandle = _handle;
