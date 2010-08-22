@@ -102,6 +102,28 @@ public:
 	 */
 	virtual byte *GetFile(const Common::String &FileName, unsigned int *pFileSize = NULL) = 0;
 	/**
+	 * Downloads an XML file and prefixes it with an XML Version key, since the XML files don't contain it,
+	 * and it is required for ScummVM to correctly parse the XML.
+	 * @param FileName      The filename of the file to load
+	 * @param pFileSize     Pointer to the variable that will contain the size of the loaded file. The deafult is NULL.
+	 * @return              Specifies a pointer to the loaded data of the file
+	 * @remark              The client must not forget to release the data of the file using BE_DELETE_A.
+	 */
+	char *GetXmlFile(const Common::String &FileName, unsigned int *pFileSize = NULL) {
+		const char *versionStr = "<?xml version=\"1.0\"?>";
+		unsigned int fileSize;
+		char *data = (char *)GetFile(FileName, &fileSize);
+		char *result = (char *)malloc(fileSize + strlen(versionStr) + 1);
+		strcpy(result, versionStr);
+		Common::copy(data, data + fileSize, result + strlen(versionStr));
+		result[fileSize + strlen(versionStr)] = '\0';
+
+		free(data);
+		if (pFileSize) *pFileSize = fileSize + strlen(versionStr);
+		return result;
+	}
+	
+	/**
 	 * Returns the path to the current directory.
 	 * @return              Returns a string containing the path to the current directory.
 	 * If the path could not be determined, an empty string is returned.
