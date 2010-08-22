@@ -41,7 +41,6 @@
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/string.h"
 #include "sword25/package/packagemanager.h"
-#include "sword25/util/tinyxml/tinyxml.h"
 
 #include "sword25/gfx/fontresource.h"
 
@@ -61,138 +60,63 @@ static const unsigned int DEFAULT_GAPWIDTH = 1;
 FontResource::FontResource(Kernel *pKernel, const Common::String &FileName) :
 	_pKernel(pKernel),
 	_Valid(false),
-	Resource(FileName, Resource::TYPE_FONT) {
-	// XML Fontdatei parsen
-	TiXmlDocument Doc;
-	if (!_ParseXMLDocument(FileName, Doc)) {
-		BS_LOG_ERRORLN("The following TinyXML-Error occured while parsing \"%s\": %s", GetFileName().c_str(), Doc.ErrorDesc());
-		return;
-	}
+	Resource(FileName, Resource::TYPE_FONT),
+	Common::XMLParser() {
 
-	// Font-Tag finden
-	TiXmlElement *pElement = Doc.FirstChildElement("font");
-	if (!pElement) {
-		BS_LOG_ERRORLN("No <font> tag found in \"%s\".", GetFileName().c_str());
-		return;
-	}
-
-	// Font-Tag parsen
-	Common::String BitmapFileName;
-	if (!_ParseFontTag(*pElement, BitmapFileName, _LineHeight, _GapWidth)) {
-		BS_LOG_ERRORLN("An error occurred while parsing <font> tag in \"%s\".", GetFileName().c_str());
-		return;
-	}
-
-	// Absoluten, eindeutigen Pfad zur Bitmapdatei bestimmen und dabei auf vorhandensein prüfen
-	{
-		// Pointer auf den Package-Manager bekommen
-		BS_ASSERT(_pKernel);
-		PackageManager *pPackage = static_cast<PackageManager *>(_pKernel->GetService("package"));
-		BS_ASSERT(pPackage);
-
-		// Absoluten, eindeutigen Pfad bestimmen
-		_BitmapFileName = pPackage->GetAbsolutePath(BitmapFileName);
-		if (_BitmapFileName == "") {
-			BS_LOG_ERRORLN("Image file \"%s\" was specified in <font> tag of \"%s\" but could not be found.",
-			               _BitmapFileName.c_str(), GetFileName().c_str());
-			return;
-		}
-
-		// Bitmapdatei cachen
-		if (!_pKernel->GetResourceManager()->PrecacheResource(_BitmapFileName)) {
-			BS_LOG_ERRORLN("Could not precache \"%s\".", _BitmapFileName.c_str());
-			return;
-		}
-	}
-
-	// Das Erste Character-Tag finden
-	pElement = pElement->FirstChildElement("character");
-	if (!pElement) {
-		BS_LOG_ERRORLN("No <character> tag found in \"%s\".", GetFileName().c_str());
-		return;
-	}
-
-	// Alle Character-Tags parsen
-	while (pElement) {
-		int     CharCode;
-		Common::Rect CharRect;
-
-		// Aktuelles Character-Tag parsen
-		if (!_ParseCharacterTag(*pElement, CharCode, CharRect)) {
-			BS_LOG_ERRORLN("An error occured while parsing a <character> tag in \"%s\".", GetFileName().c_str());
-			return;
-		}
-
-		// Ausgelesene Daten in das _CharacterRects-Array eintragen
-		BS_ASSERT(CharCode < 256);
-		_CharacterRects[CharCode] = CharRect;
-
-		// Zum nächsten Character-Tag iterieren
-		pElement = pElement->NextSiblingElement("character");
-	}
-
-	// Erfolg signalisieren
-	_Valid = true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool FontResource::_ParseXMLDocument(const Common::String &FileName, TiXmlDocument &Doc) const {
-	// Pointer auf den Package-Manager bekommen
+	// Get a pointer to the package manager
 	BS_ASSERT(_pKernel);
 	PackageManager *pPackage = static_cast<PackageManager *>(_pKernel->GetService("package"));
 	BS_ASSERT(pPackage);
 
-	// Die Daten werden zunächst über den Package-Manager gelesen und dann in einen um ein Byte größeren Buffer kopiert
-	// und NULL-Terminiert, da TinyXML NULL-Terminierte Daten benötigt.
-	unsigned int FileSize;
-	char *LoadBuffer = (char *) pPackage->GetFile(GetFileName(), &FileSize);
-	if (!LoadBuffer) {
+	// Load the contents of the file
+	unsigned int fileSize;
+	char *xmlData = pPackage->GetXmlFile(GetFileName(), &fileSize);
+	if (!xmlData) {
 		BS_LOG_ERRORLN("Could not read \"%s\".", GetFileName().c_str());
-		return false;
+		return;
 	}
 
-	// Daten kopieren und NULL-terminieren
-	char *WorkBuffer;
-	WorkBuffer = (char *)malloc(FileSize + 1);
-	memcpy(&WorkBuffer[0], LoadBuffer, FileSize);
-	delete LoadBuffer;
-	WorkBuffer[FileSize] = '\0';
+	// Parse the contents
+	if (!loadBuffer((const byte *)xmlData, fileSize))
+		return;
 
-	// Daten parsen
-	Doc.Parse(&WorkBuffer[0]);
-
-	free(WorkBuffer);
-
-	return !Doc.Error();
+	_Valid = parse();
+	close();
 }
 
 // -----------------------------------------------------------------------------
 
-bool FontResource::_ParseFontTag(TiXmlElement &Tag, Common::String &BitmapFileName, int &Lineheight, int &GapWidth) const {
-	// Bitmap Attribut auslesen
-	const char *BitmapString = Tag.Attribute("bitmap");
-	if (!BitmapString) {
-		BS_LOG_ERRORLN("<font> tag without bitmap attribute occurred in \"%s\".", GetFileName().c_str());
-		return false;
-	}
-	BitmapFileName = BitmapString;
+bool FontResource::parserCallback_font(ParserNode *node) {
+	// Get the attributes of the font
+	Common::String bitmapFilename = node->values["bitmap"];
 
-	// Lineheight Attribut auslesen
-	const char *LineheightString = Tag.Attribute("lineheight");
-	if (!LineheightString || !BS_String::ToInt(Common::String(LineheightString), Lineheight) || Lineheight < 0) {
+	if (!parseIntegerKey(node->values["lineheight"].c_str(), 1, &_LineHeight)) {
 		BS_LOG_WARNINGLN("Illegal or missing lineheight attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
 		                 GetFileName().c_str(), DEFAULT_LINEHEIGHT);
-		Lineheight = DEFAULT_LINEHEIGHT;
+		_LineHeight = DEFAULT_LINEHEIGHT;
 	}
 
-
-	// Gap Attribut auslesen
-	const char *GapString = Tag.Attribute("gap");
-	if (!GapString || !BS_String::ToInt(Common::String(GapString), GapWidth) || GapWidth < 0) {
+	if (!parseIntegerKey(node->values["gap"].c_str(), 1, &_GapWidth)) {
 		BS_LOG_WARNINGLN("Illegal or missing gap attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
 		                 GetFileName().c_str(), DEFAULT_GAPWIDTH);
-		GapWidth = DEFAULT_GAPWIDTH;
+		_GapWidth = DEFAULT_GAPWIDTH;
+	}
+	
+	// Get a reference to the package manager
+	BS_ASSERT(_pKernel);
+	PackageManager *pPackage = static_cast<PackageManager *>(_pKernel->GetService("package"));
+	BS_ASSERT(pPackage);
+
+	// Get the full path and filename for the bitmap resource
+	_BitmapFileName = pPackage->GetAbsolutePath(bitmapFilename);
+	if (_BitmapFileName == "") {
+		BS_LOG_ERRORLN("Image file \"%s\" was specified in <font> tag of \"%s\" but could not be found.",
+		               _BitmapFileName.c_str(), GetFileName().c_str());
+	}
+
+	// Pre-cache the resource
+	if (!_pKernel->GetResourceManager()->PrecacheResource(_BitmapFileName)) {
+		BS_LOG_ERRORLN("Could not precache \"%s\".", _BitmapFileName.c_str());
 	}
 
 	return true;
@@ -200,48 +124,28 @@ bool FontResource::_ParseFontTag(TiXmlElement &Tag, Common::String &BitmapFileNa
 
 // -----------------------------------------------------------------------------
 
-bool FontResource::_ParseCharacterTag(TiXmlElement &Tag, int &Code, Common::Rect &Rect) const {
-	// Code Attribut auslesen
-	const char *CodeString = Tag.Attribute("code");
-	if (!CodeString || !BS_String::ToInt(Common::String(CodeString), Code) || Code < 0 || Code >= 256) {
-		BS_LOG_ERRORLN("Illegal or missing code attribute in <character> tag in \"%s\".", GetFileName().c_str());
-		return false;
+bool FontResource::parserCallback_character(ParserNode *node) {
+	// Get the attributes of the character
+	int charCode, top, left, right, bottom;
+
+	if (!parseIntegerKey(node->values["code"].c_str(), 1, &charCode) || (charCode < 0) || (charCode >= 256)) {
+		return parserError("Illegal or missing code attribute in <character> tag in \"%s\".", GetFileName().c_str());
 	}
 
-	int tmp;
-
-	// Left Attribut auslesen
-	const char *LeftString = Tag.Attribute("left");
-	if (!LeftString || !BS_String::ToInt(Common::String(LeftString), tmp) || tmp < 0) {
-		BS_LOG_ERRORLN("Illegal or missing left attribute in <character> tag in \"%s\".", GetFileName().c_str());
-		return false;
+	if (!parseIntegerKey(node->values["top"].c_str(), 1, &top) || (top < 0)) {
+		return parserError("Illegal or missing top attribute in <character> tag in \"%s\".", GetFileName().c_str());
 	}
-	Rect.left = tmp;
-
-	// Right Attribut auslesen
-	const char *RightString = Tag.Attribute("right");
-	if (!RightString || !BS_String::ToInt(RightString, tmp) || tmp < 0) {
-		BS_LOG_ERRORLN("Illegal or missing right attribute in <character> tag in \"%s\".", GetFileName().c_str());
-		return false;
+	if (!parseIntegerKey(node->values["left"].c_str(), 1, &left) || (left < 0)) {
+		return parserError("Illegal or missing left attribute in <character> tag in \"%s\".", GetFileName().c_str());
 	}
-	Rect.right = tmp;
-
-	// Top Attribut auslesen
-	const char *TopString = Tag.Attribute("top");
-	if (!TopString || !BS_String::ToInt(TopString, tmp) || tmp < 0) {
-		BS_LOG_ERRORLN("Illegal or missing top attribute in <character> tag in \"%s\".", GetFileName().c_str());
-		return false;
+	if (!parseIntegerKey(node->values["right"].c_str(), 1, &right) || (right < 0)) {
+		return parserError("Illegal or missing right attribute in <character> tag in \"%s\".", GetFileName().c_str());
 	}
-	Rect.top = tmp;
-
-	// Bottom Attribut auslesen
-	const char *BottomString = Tag.Attribute("bottom");
-	if (!BottomString || !BS_String::ToInt(BottomString, tmp) || tmp < 0) {
-		BS_LOG_ERRORLN("Illegal or missing bottom attribute in <character> tag in \"%s\".", GetFileName().c_str());
-		return false;
+	if (!parseIntegerKey(node->values["bottom"].c_str(), 1, &bottom) || (bottom < 0)) {
+		return parserError("Illegal or missing bottom attribute in <character> tag in \"%s\".", GetFileName().c_str());
 	}
-	Rect.bottom = tmp;
 
+	this->_CharacterRects[charCode] = Common::Rect(left, top, right, bottom);
 	return true;
 }
 

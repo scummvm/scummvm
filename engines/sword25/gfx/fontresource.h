@@ -39,12 +39,11 @@
 // Includes
 // -----------------------------------------------------------------------------
 
+#include "common/scummsys.h"
+#include "common/rect.h"
+#include "common/xmlparser.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/resource.h"
-#include "common/rect.h"
-
-class TiXmlDocument;
-class TiXmlElement;
 
 namespace Sword25 {
 
@@ -58,7 +57,7 @@ class Kernel;
 // Klassendefinition
 // -----------------------------------------------------------------------------
 
-class FontResource : public Resource {
+class FontResource : public Resource, Common::XMLParser {
 public:
 	/**
 	    @brief Erzeugt eine neues Exemplar von BS_FontResource
@@ -120,13 +119,34 @@ private:
 	int         _GapWidth;
 	Common::Rect     _CharacterRects[256];
 
+	// Parser
+	CUSTOM_XML_PARSER(FontResource) {
+		XML_KEY(font)
+			XML_PROP(bitmap, true)
+			XML_PROP(lineheight, false)
+			XML_PROP(gap, false)
+
+			XML_KEY(character)
+				XML_PROP(code, true)
+				XML_PROP(left, true)
+				XML_PROP(top, true)
+				XML_PROP(right, true)
+				XML_PROP(bottom, true)
+			KEY_END()
+		KEY_END()
+	} PARSER_END()
+
+	// Parser callback methods
+	bool parserCallback_font(ParserNode *node);
+	bool parserCallback_character(ParserNode *node);
+
 	// -----------------------------------------------------------------------------
 	// Hilfsmethoden
 	// -----------------------------------------------------------------------------
 
-	bool _ParseXMLDocument(const Common::String &FileName, TiXmlDocument &Doc) const;
-	bool _ParseFontTag(TiXmlElement &Tag, Common::String &BitmapFileName, int &LineHeight, int &GapWidth) const;
-	bool _ParseCharacterTag(TiXmlElement &Tag, int &Code, Common::Rect &Rect) const;
+//	bool _ParseXMLDocument(const Common::String &FileName, TiXmlDocument &Doc) const;
+//	bool _ParseFontTag(TiXmlElement &Tag, Common::String &BitmapFileName, int &LineHeight, int &GapWidth) const;
+//	bool _ParseCharacterTag(TiXmlElement &Tag, int &Code, Common::Rect &Rect) const;
 };
 
 } // End of namespace Sword25
