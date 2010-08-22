@@ -129,26 +129,26 @@ bool Inter_Fascination::oFascin_assign(OpFuncParams &params) {
 		int16 srcType = _vm->_game->_script->evalExpr(&result);
 
 		switch (destType) {
-		case TYPE_VAR_INT8:   // 18
-			if (srcType != TYPE_IMM_INT16) { //20
+		case TYPE_VAR_INT8:
+			if (srcType != TYPE_IMM_INT16) {
 				char* str = _vm->_game->_script->getResultStr();
 				WRITE_VARO_STR(dest, str);
 			} else
 				WRITE_VARO_UINT8(dest + i, _vm->_game->_script->getResultInt());
 			break;
 
-		case TYPE_VAR_INT32_AS_INT16: // 24. Yes, it's really there
-		case TYPE_ARRAY_INT16: //27
+		case TYPE_VAR_INT32_AS_INT16:
+		case TYPE_ARRAY_INT16:
 			WRITE_VARO_UINT16(dest + i * 2, _vm->_game->_script->getResultInt()); 
 			break;
 
-		case TYPE_VAR_INT32:   // 23
-		case TYPE_ARRAY_INT32: // 26
-			WRITE_VAR_OFFSET(dest + i * 4, _vm->_game->_script->getResultInt()); // or *2 ?
+		case TYPE_VAR_INT32:
+		case TYPE_ARRAY_INT32:
+			WRITE_VAR_OFFSET(dest + i * 4, _vm->_game->_script->getResultInt());
 			break;
 
-		case TYPE_VAR_STR:   // 25
-		case TYPE_ARRAY_STR: // 28
+		case TYPE_VAR_STR:
+		case TYPE_ARRAY_STR:
 			if (srcType == TYPE_IMM_INT16)
 				WRITE_VARO_UINT8(dest, result);
 			else
