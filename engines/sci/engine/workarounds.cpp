@@ -413,6 +413,7 @@ const SciWorkaroundEntry kUnLoad_workarounds[] = {
 	{ GID_LSL6HIRES,     130,   130,  0,    "recruitLarryScr", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during intro, a 3rd parameter is passed by accident
 	{ GID_PQ3,           877,   998,  0,               "View", "delete",         -1,    0, { WORKAROUND_IGNORE, 0 } }, // when getting run over on the freeway, the reference is invalid
 	{ GID_SQ1,            43,   303,  0,            "slotGuy", "dispose",        -1,    0, { WORKAROUND_IGNORE, 0 } }, // when leaving ulence flats bar, parameter 1 is not passed - script error
+	{ GID_SQ3,             2,   998,  0,               "View", "delete",         -1,    0, { WORKAROUND_IGNORE, 0 } }, // clicking the mouse button during the intro, after the escape pod gets pulled into the garbage freighter, the reference is invalid - bug #3050856
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
