@@ -853,9 +853,12 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelFile, "kFileIO(writeString): %d", handle);
 
 	FileHandle *f = getFileFromHandle(s, handle);
-	if (f)
+
+	if (f) {
 		f->_out->write(str.c_str(), str.size());
 		return NULL_REG;
+	}
+
 	return make_reg(0, 6); // DOS - invalid handle
 }
 
@@ -866,8 +869,10 @@ reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
 		
 	FileHandle *f = getFileFromHandle(s, handle);
+
 	if (f)
 		s->r_acc = make_reg(0, f->_in->seek(offset, whence));
+
 	return SIGNAL_REG;
 }
 
