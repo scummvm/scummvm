@@ -33,7 +33,7 @@ PoMessageList::PoMessageList() : _messages(NULL), _size(0), _allocated(0) {
 }
 
 PoMessageList::~PoMessageList() {
-	for (int i = 0 ; i < _size ; ++i)
+	for (int i = 0; i < _size; ++i)
 		delete [] _messages[i];
 	delete [] _messages;
 }
@@ -59,18 +59,18 @@ void PoMessageList::insert(const char *msg) {
 	// between the two (i.a. at leftIndex).
 	if (_size + 1 > _allocated) {
 		_allocated += 100;
-		char** newMessages = new char*[_allocated];
-		for (int i = 0 ; i < leftIndex ; ++i)
+		char **newMessages = new char*[_allocated];
+		for (int i = 0; i < leftIndex; ++i)
 			newMessages[i] = _messages[i];
-		for (int i = leftIndex ; i < _size ; ++i)
-			newMessages[i+1] = _messages[i];
+		for (int i = leftIndex; i < _size; ++i)
+			newMessages[i + 1] = _messages[i];
 		delete [] _messages;
 		_messages = newMessages;
 	} else {
-		for (int i = _size - 1 ; i >= leftIndex ; --i)
-			_messages[i+1] = _messages[i];
+		for (int i = _size - 1; i >= leftIndex; --i)
+			_messages[i + 1] = _messages[i];
 	}
-	_messages[leftIndex] = new char[1+strlen(msg)];
+	_messages[leftIndex] = new char[1 + strlen(msg)];
 	strcpy(_messages[leftIndex], msg);
 	++_size;
 }
@@ -101,13 +101,13 @@ int PoMessageList::size() const {
 	return _size;
 }
 
-const char* PoMessageList::operator[](int index) const {
+const char *PoMessageList::operator[](int index) const {
 	if (index < 0 || index >= _size)
 		return NULL;
 	return _messages[index];
 }
 
-PoMessageEntryList::PoMessageEntryList(const char* lang) :
+PoMessageEntryList::PoMessageEntryList(const char *lang) :
 	_lang(NULL), _charset(NULL), _langName(NULL),
 	_list(NULL), _size(0), _allocated(0)
 {
@@ -125,7 +125,7 @@ PoMessageEntryList::~PoMessageEntryList() {
 	delete [] _lang;
 	delete [] _charset;
 	delete [] _langName;
-	for (int i = 0 ; i < _size ; ++i)
+	for (int i = 0; i < _size; ++i)
 		delete _list[i];
 	delete [] _list;
 }
@@ -134,7 +134,7 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 	if (*message == '\0') {
 		// This is the header.
 		// We get the charset and the language name from the translation string
-		char* str = parseLine(translation, "Language:");
+		char *str = parseLine(translation, "Language:");
 		if (str != NULL) {
 			delete [] _langName;
 			_langName = str;
@@ -177,30 +177,30 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 	// between the two (i.a. at leftIndex).
 	if (_size + 1 > _allocated) {
 		_allocated += 100;
-		PoMessageEntry** newList = new PoMessageEntry*[_allocated];
-		for (int i = 0 ; i < leftIndex ; ++i)
+		PoMessageEntry **newList = new PoMessageEntry*[_allocated];
+		for (int i = 0; i < leftIndex; ++i)
 			newList[i] = _list[i];
-		for (int i = leftIndex ; i < _size ; ++i)
-			newList[i+1] = _list[i];
+		for (int i = leftIndex; i < _size; ++i)
+			newList[i + 1] = _list[i];
 		delete [] _list;
 		_list = newList;
 	} else {
-		for (int i = _size - 1 ; i >= leftIndex ; --i)
-			_list[i+1] = _list[i];
+		for (int i = _size - 1; i >= leftIndex; --i)
+			_list[i + 1] = _list[i];
 	}
 	_list[leftIndex] = new PoMessageEntry(translation, message, context);
 	++_size;
 }
 
-const char* PoMessageEntryList::language() const {
+const char *PoMessageEntryList::language() const {
 	return _lang;
 }
 
-const char* PoMessageEntryList::languageName() const {
+const char *PoMessageEntryList::languageName() const {
 	return _langName;
 }
 
-const char* PoMessageEntryList::charset() const {
+const char *PoMessageEntryList::charset() const {
 	return _charset;
 }
 
@@ -208,15 +208,15 @@ int PoMessageEntryList::size() const {
 	return _size;
 }
 
-const PoMessageEntry* PoMessageEntryList::entry(int index) const {
+const PoMessageEntry *PoMessageEntryList::entry(int index) const {
 	if (index < 0 || index >= _size)
 		return NULL;
 	return _list[index];
 }
 
 
-PoMessageEntryList* parsePoFile(const char* file, PoMessageList& messages) {
-	FILE* inFile = fopen(file, "r");
+PoMessageEntryList *parsePoFile(const char *file, PoMessageList& messages) {
+	FILE *inFile = fopen(file, "r");
 	if (!inFile)
 		return NULL;
 	
@@ -225,11 +225,11 @@ PoMessageEntryList* parsePoFile(const char* file, PoMessageList& messages) {
 	
 	// Get language from file name and create PoMessageEntryList
 	int index = 0, start_index = strlen(file) - 1;
-	while (start_index > 0 && file[start_index-1] != '/' && file[start_index-1] != '\\') {
+	while (start_index > 0 && file[start_index - 1] != '/' && file[start_index - 1] != '\\') {
 		--start_index;
 	}
-	while (file[start_index+index] != '.' && file[start_index+index] != '\0') {
-		msgidBuf[index] = file[start_index+index];
+	while (file[start_index + index] != '.' && file[start_index + index] != '\0') {
+		msgidBuf[index] = file[start_index + index];
 		++index;
 	}
 	msgidBuf[index] = '\0';
@@ -279,7 +279,7 @@ PoMessageEntryList* parsePoFile(const char* file, PoMessageList& messages) {
 	return list;
 }
 
-char* stripLine(char* line) {
+char *stripLine(char *line) {
 	// This function modifies line in place and return it.
 	// Keep only the text between the first two unprotected quotes.
 	// Look for the first quote
@@ -296,12 +296,12 @@ char* stripLine(char* line) {
 	return line;
 }
 
-char* parseLine(const char* line, const char* field) {
+char *parseLine(const char *line, const char *field) {
 	// This function allocate and return a new char*.
 	// It will return a NULL pointer if the field is not found.
 	// It is used to parse the header of the po files to find the language name
 	// and the charset.
-	char* str = strstr(line, field);
+	char *str = strstr(line, field);
 	if (str == NULL)
 		return NULL;
 	str += strlen(field);
@@ -318,7 +318,7 @@ char* parseLine(const char* line, const char* field) {
 	if (len == 0)
 		return NULL;
 	// Create result string
-	char* result = new char[len+1];
+	char *result = new char[len + 1];
 	strncpy(result, str, len);
 	result[len] = '\0';
 	return result;

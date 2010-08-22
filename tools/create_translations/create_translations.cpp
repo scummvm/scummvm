@@ -84,7 +84,7 @@ void writeString(FILE *fp, const char* string) {
 int main(int argc, char *argv[]) {
 	// Build the translation list
 	PoMessageList messageIds;
-	PoMessageEntryList** translations = new PoMessageEntryList*[argc - 1];
+	PoMessageEntryList **translations = new PoMessageEntryList*[argc - 1];
 	int numLangs = 0;
 	for (int i = 1 ; i < argc ; ++i) {
 		translations[numLangs] = parsePoFile(argv[i], messageIds);
@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
 			++numLangs;
 	}
 	
-	FILE* outFile;
+	FILE *outFile;
 	int i, lang;
 	int len;
 
@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
 	// It starts with the number of strings coded on 2 bytes followed by each
 	// string (two bytes for the number of chars and the string itself).
 	len = 2;
-	for (i = 0; i < messageIds.size() ; ++i)
+	for (i = 0; i < messageIds.size(); ++i)
 		len += stringSize(messageIds[i]);
 	writeUint16BE(outFile, len);
 
@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
 	// the string size (two bytes for the number of chars and the string itself).
 	for (lang = 0; lang < numLangs; lang++) {
 		len = 2 + stringSize(translations[lang]->charset());
-		for (i = 0; i < translations[lang]->size() ; ++i)
+		for (i = 0; i < translations[lang]->size(); ++i)
 			len += 2 + stringSize(translations[lang]->entry(i)->msgstr);
 		writeUint16BE(outFile, len);
 	}
@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
 	
 	// Write original messages
 	writeUint16BE(outFile, messageIds.size());
-	for (i = 0; i < messageIds.size() ; ++i) {
+	for (i = 0; i < messageIds.size(); ++i) {
 		writeString(outFile, messageIds[i]);
 	}
 	
@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
 	for (lang = 0; lang < numLangs; lang++) {
 		writeUint16BE(outFile, translations[lang]->size());
 		writeString(outFile, translations[lang]->charset());
-		for (i = 0; i < translations[lang]->size() ; ++i) {
+		for (i = 0; i < translations[lang]->size(); ++i) {
 			writeUint16BE(outFile, messageIds.findIndex(translations[lang]->entry(i)->msgid));
 			writeString(outFile, translations[lang]->entry(i)->msgstr);
 		}
@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
 	fclose(outFile);
 	
 	// Clean the memory
-	for (i = 0 ; i < numLangs ; ++i)
+	for (i = 0; i < numLangs; ++i)
 		delete translations[i];
 	delete [] translations;
 

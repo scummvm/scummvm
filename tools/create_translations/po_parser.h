@@ -36,10 +36,10 @@ public:
 	int findIndex(const char *msg);
 	
 	int size() const;
-	const char* operator[](int) const;
+	const char *operator[](int) const;
 
 private:
-	char** _messages;
+	char **_messages;
 	int _size;
 	int _allocated;
 };
@@ -48,23 +48,23 @@ private:
  * Describes a translation entry.
  */
 struct PoMessageEntry {
-	char* msgstr;
-	char* msgid;
-	char* msgctxt;
+	char *msgstr;
+	char *msgid;
+	char *msgctxt;
 
 	PoMessageEntry(const char *translation, const char *message, const char *context = NULL) :
 		msgstr(NULL), msgid(NULL), msgctxt(NULL)
 	{
 		if (translation != NULL && *translation != '\0') {
-			msgstr = new char[1+strlen(translation)];
+			msgstr = new char[1 + strlen(translation)];
 			strcpy(msgstr, translation);
 		}
 		if (message != NULL && *message != '\0') {
-			msgid = new char[1+strlen(message)];
+			msgid = new char[1 + strlen(message)];
 			strcpy(msgid, message);
 		}
 		if (context != NULL && *context != '\0') {
-			msgctxt = new char[1+strlen(context)];
+			msgctxt = new char[1 + strlen(context)];
 			strcpy(msgctxt, context);
 		}
 	}
@@ -85,26 +85,26 @@ public:
 
 	void addMessageEntry(const char *translation, const char *message, const char *context = NULL);
 	
-	const char* language() const;
-	const char* languageName() const;
-	const char* charset() const;
+	const char *language() const;
+	const char *languageName() const;
+	const char *charset() const;
 
 	int size() const;
-	const PoMessageEntry* entry(int) const;
+	const PoMessageEntry *entry(int) const;
 
 private:
-	char* _lang;
-	char* _charset;
-	char* _langName;
+	char *_lang;
+	char *_charset;
+	char *_langName;
 
-	PoMessageEntry** _list;
+	PoMessageEntry **_list;
 	int _size;
 	int _allocated;
 };
 
 
-PoMessageEntryList* parsePoFile(const char* file, PoMessageList&);
-char* stripLine(char*);
-char* parseLine(const char* line, const char* field);
+PoMessageEntryList *parsePoFile(const char *file, PoMessageList &);
+char *stripLine(char *);
+char *parseLine(const char *line, const char *field);
 
 #endif /* PO_PARSER_H */
