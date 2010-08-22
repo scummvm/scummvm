@@ -877,6 +877,8 @@ FilesystemFactory *OSystem_N64::getFilesystemFactory() {
 }
 
 void OSystem_N64::setTimerCallback(TimerProc callback, int interval) {
+	assert (interval > 0);
+
 	if (callback != NULL) {
 		_timerCallbackTimer = interval;
 		_timerCallbackNext = getMillis() + interval;

@@ -133,8 +133,8 @@ public:
 	uint16 _audioBufferSize;
 	uint32 _viClockRate; // Clock rate of video system, depending on VI mode
 
-	int _timerCallbackNext;
-	int _timerCallbackTimer;
+	uint32 _timerCallbackNext;
+	uint32 _timerCallbackTimer;
 	TimerProc _timerCallback;
 	/* *** */
 
