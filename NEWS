@@ -4,6 +4,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 1.2.0 (????-??-??)
  New Ports:
    - Added Android port.
+   - Added Dingux port.
 
  General:
    - Removed the outdated PalmOS port.
