@@ -314,6 +314,30 @@ void Sound::playSound(int soundID) {
 		stream = Audio::makeRawStream(sound, size, rate, Audio::FLAG_UNSIGNED);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
+	else if (_vm->_game.platform != Common::kPlatformFMTowns && READ_BE_UINT32(ptr) == MKID_BE('SOUN')) {
+		if (_vm->_game.version != 3)
+			ptr += 2;
+
+		int type = *(ptr + 0x0D);
+
+		if (type == 2) {
+			// CD track resource
+			ptr += 0x16;
+			if (soundID == _currentCDSound && pollCD() == 1)
+				return;
+
+			int track = ptr[0];
+			int loops = ptr[1];
+			int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
+			int end = (ptr[5] * 60 + ptr[6]) * 75 + ptr[7];
+
+			playCDTrack(track, loops == 0xff ? -1 : loops, start, end <= start ? 0 : end - start);
+			_currentCDSound = soundID;
+		} else {
+			// All other sound types are ignored
+			warning("Scumm::Sound::playSound: encountered audio resoure with chunk type 'SOUN' and sound type %d", type);
+		}
+	}
 	else if ((_vm->_game.id == GID_LOOM) && (_vm->_game.platform == Common::kPlatformMacintosh))  {
 		// Mac version of Loom uses yet another sound format
 		/*
