@@ -35,10 +35,8 @@ updatepot:
 #$(srcdir)/common/messages.cpp: $(POFILES)
 #	perl $(srcdir)/tools/po2c $^ > $(srcdir)/common/messages.cpp
 
-translations-dat:
-	perl $(srcdir)/tools/create_translations/po2c $(POFILES) > $(srcdir)/tools/create_translations/messages.h
-	make tools/create_translations
-	tools/create_translations/create_translations
+translations-dat: tools/create_translations
+	tools/create_translations/create_translations $(POFILES)
 	mv translations.dat gui/themes/
  
 update-translations: updatepot $(POFILES) translations-dat

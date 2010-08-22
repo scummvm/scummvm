@@ -33,11 +33,7 @@
 #endif // main
 
 #include "create_translations.h"
-
-// Include messages
-// This file is generated from the po files by the script po2c:
-// tools/create_translations/po2c po/*.po > tools/create_translations/messages.h
-#include "messages.h"
+#include "po_parser.h"
 
 #define TRANSLATIONS_DAT_VER 1	// 1 byte
 
@@ -58,6 +54,8 @@ void writeUint16BE(FILE *fp, uint16 value) {
 
 int stringSize(const char* string) {
 	// Each string is preceded by its size coded on 2 bytes
+	if (string == NULL)
+		return 2;
 	int len = strlen(string) + 1;
 	return 2 + len;
 	// The two lines below are an example if we want to align string writes
@@ -67,6 +65,10 @@ int stringSize(const char* string) {
 
 void writeString(FILE *fp, const char* string) {
 	// Each string is preceded by its size coded on 2 bytes
+	if (string == NULL) {
+		writeUint16BE(fp, 0);
+		return;
+	}
 	int len = strlen(string) + 1;
 	writeUint16BE(fp, len);
 	fwrite(string, len, 1, fp);
@@ -78,22 +80,20 @@ void writeString(FILE *fp, const char* string) {
 	// fwrite(padBuf, pad, 1, fp);
 }
 
-int translationArraySize(const PoMessageEntry *msgs) {
-	// ARRAYSIZE() macro does not work on _translations[index].msgs
-	// We rely on the fact that the item of the array has an id of 1 instead.
-	int size = 0;
-	while (msgs[size].msgid != -1) {
-		size++;
-	}
-	return size;
-}
-
 // Main
 int main(int argc, char *argv[]) {
+	// Build the translation list
+	PoMessageList messageIds;
+	PoMessageEntryList** translations = new PoMessageEntryList*[argc - 1];
+	int numLangs = 0;
+	for (int i = 1 ; i < argc ; ++i) {
+		translations[numLangs] = parsePoFile(argv[i], messageIds);
+		if (translations[numLangs] != NULL)
+			++numLangs;
+	}
+	
 	FILE* outFile;
-	int numLangs = ARRAYSIZE(_translations) - 1;
-	int numMessages = ARRAYSIZE(_messageIds) - 1;
-	int i, lang, nb;
+	int i, lang;
 	int len;
 
 	// Padding buffer initialization (filled with 0)
@@ -112,9 +112,9 @@ int main(int argc, char *argv[]) {
 	writeUint16BE(outFile, numLangs);
 	
 	// Write the length of each data block here.
-	// We could write it at the start of each block but that would mean than
+	// We could write it at the start of each block but that would mean that
 	// to go to block 4 we would have to go at the start of each preceding block,
-	// read it size and skip it until we arrive at the block we want.
+	// read its size and skip it until we arrive at the block we want.
 	// By having all the sizes at the start we just need to read the start of the
 	// file and can then skip to the block we want.
 	// Blocks are:
@@ -128,8 +128,8 @@ int main(int argc, char *argv[]) {
 	// Each description
 	len = 0;
 	for (lang = 0; lang < numLangs; lang++) {
-		len += stringSize(_translations[lang].lang);
-		len += stringSize(_translations[lang].langname);
+		len += stringSize(translations[lang]->language());
+		len += stringSize(translations[lang]->languageName());
 	}
 	writeUint16BE(outFile, len);
 	
@@ -137,8 +137,8 @@ int main(int argc, char *argv[]) {
 	// It starts with the number of strings coded on 2 bytes followed by each
 	// string (two bytes for the number of chars and the string itself).
 	len = 2;
-	for (i = 0; i < numMessages ; ++i)
-		len += stringSize(_messageIds[i]);
+	for (i = 0; i < messageIds.size() ; ++i)
+		len += stringSize(messageIds[i]);
 	writeUint16BE(outFile, len);
 
 	// Then comes the size of each translation block.
@@ -146,37 +146,40 @@ int main(int argc, char *argv[]) {
 	// For each string we have the string id (on two bytes) followed by
 	// the string size (two bytes for the number of chars and the string itself).
 	for (lang = 0; lang < numLangs; lang++) {
-		len = 2 + stringSize(_translations[lang].charset);
-		nb = translationArraySize(_translations[lang].msgs);
-		for (i = 0; i < nb ; ++i)
-			len += 2 + stringSize(_translations[lang].msgs[i].msgstr);
+		len = 2 + stringSize(translations[lang]->charset());
+		for (i = 0; i < translations[lang]->size() ; ++i)
+			len += 2 + stringSize(translations[lang]->entry(i)->msgstr);
 		writeUint16BE(outFile, len);
 	}
 
 	// Write list of languages
 	for (lang = 0; lang < numLangs; lang++) {
-		writeString(outFile, _translations[lang].lang);
-		writeString(outFile, _translations[lang].langname);
+		writeString(outFile, translations[lang]->language());
+		writeString(outFile, translations[lang]->languageName());
 	}
 	
 	// Write original messages
-	writeUint16BE(outFile, numMessages);
-	for (i = 0; i < numMessages ; ++i) {
-		writeString(outFile, _messageIds[i]);
+	writeUint16BE(outFile, messageIds.size());
+	for (i = 0; i < messageIds.size() ; ++i) {
+		writeString(outFile, messageIds[i]);
 	}
 	
 	// Write translations
 	for (lang = 0; lang < numLangs; lang++) {
-		nb = translationArraySize(_translations[lang].msgs);
-		writeUint16BE(outFile, nb);
-		writeString(outFile, _translations[lang].charset);
-		for (i = 0; i < nb ; ++i) {
-			writeUint16BE(outFile, _translations[lang].msgs[i].msgid);
-			writeString(outFile, _translations[lang].msgs[i].msgstr);
+		writeUint16BE(outFile, translations[lang]->size());
+		writeString(outFile, translations[lang]->charset());
+		for (i = 0; i < translations[lang]->size() ; ++i) {
+			writeUint16BE(outFile, messageIds.findIndex(translations[lang]->entry(i)->msgid));
+			writeString(outFile, translations[lang]->entry(i)->msgstr);
 		}
 	}
 
 	fclose(outFile);
+	
+	// Clean the memory
+	for (i = 0 ; i < numLangs ; ++i)
+		delete translations[i];
+	delete [] translations;
 
 	return 0;
 }

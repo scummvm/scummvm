@@ -23,8 +23,6 @@
 #ifndef CREATE_TRANSLATIONS_H
 #define CREATE_TRANSLATIONS_H
 
-#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
-
 typedef unsigned char   uint8;
 typedef unsigned short uint16;
 typedef signed short int16;
