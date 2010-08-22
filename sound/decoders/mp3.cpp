@@ -233,6 +233,8 @@ bool MP3Stream::seek(const Timestamp &where) {
 	while (mad_timer_compare(destination, _totalTime) > 0 && _state != MP3_STATE_EOS)
 		readHeader();
 
+	decodeMP3Data();
+
 	return (_state != MP3_STATE_EOS);
 }
 
