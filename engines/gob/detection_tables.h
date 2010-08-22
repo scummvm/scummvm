@@ -2237,6 +2237,62 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"fascination",
+			"CD Version (Censored)",
+			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES
+		},
+		kGameTypeFascination,
+		kFeaturesCD,
+		"disk0.stk", 0, 0
+	},
+	{
+		{
+			"fascination",
+			"CD Version (Censored)",
+			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES
+		},
+		kGameTypeFascination,
+		kFeaturesCD,
+		"disk0.stk", 0, 0
+	},
+	{
+		{
+			"fascination",
+			"CD Version (Censored)",
+			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
+			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES
+		},
+		kGameTypeFascination,
+		kFeaturesCD,
+		"disk0.stk", 0, 0
+	},
+	{
+		{
+			"fascination",
+			"CD Version (Censored)",
+			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
+			ES_ESP,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES
+		},
+		kGameTypeFascination,
+		kFeaturesCD,
+		"disk0.stk", 0, 0
+	},
+	{
+		{
+			"fascination",
 			"VGA 3 disks edition",
 			AD_ENTRY1s("disk0.stk", "a50a8495e1b2d67699fb562cb98fc3e2", 1064387),
 			UNK_LANG,
