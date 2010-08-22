@@ -26,15 +26,19 @@
 #ifndef PSPSTREAM_H_
 #define PSPSTREAM_H_
 
-#include "backends/fs/stdiostream.h"
+#include <pspkerneltypes.h>
 #include "backends/platform/psp/powerman.h"
-#include "common/list.h"
+//#include "common/list.h"
+#include "common/noncopyable.h"
+#include "common/stream.h"
+#include "common/str.h"
 
 /*
  *  Class to handle special suspend/resume needs of PSP IO Streams
  */
-class PSPIoStream : public StdioStream, public Suspendable {
+class PSPIoStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable, public Suspendable {
 protected:
+	SceUID _handle;		// file handle
 	Common::String _path;
 	int _fileSize;
 	bool _writeMode;	// for resuming in the right mode
@@ -61,7 +65,7 @@ protected:
 	int _errorSuspend;			// for debugging
 	mutable int _errorSource;
 	int _errorPos;
-	void * _errorHandle;
+	SceUID _errorHandle;
 	int _suspendCount;
 
 	bool synchronizePhysicalPos();		// synchronize the physical and virtual positions
