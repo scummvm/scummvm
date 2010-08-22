@@ -430,6 +430,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(SetVideoMode),      SIG_EVERYWHERE,           "i",                     NULL,            NULL },
     { MAP_CALL(ShakeScreen),       SIG_EVERYWHERE,           "(i)(i)",                NULL,            NULL },
     { MAP_CALL(ShowMovie),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(Show),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
     { MAP_CALL(SinDiv),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
     { MAP_CALL(Sort),              SIG_EVERYWHERE,           "ooo",                   NULL,            NULL },
     { MAP_CALL(Sqrt),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
@@ -502,7 +503,7 @@ static const char *s_defaultKernelNames[] = {
 	/*0x06*/ "IsObject",
 	/*0x07*/ "RespondsTo",
 	/*0x08*/ "DrawPic",
-	/*0x09*/ "Dummy",	// Show
+	/*0x09*/ "Show",
 	/*0x0a*/ "PicNotValid",
 	/*0x0b*/ "Animate",
 	/*0x0c*/ "SetNowSeen",

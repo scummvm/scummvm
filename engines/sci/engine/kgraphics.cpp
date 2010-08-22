@@ -1155,6 +1155,30 @@ reg_t kTextColors(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+/**
+ * Debug command, used by the SCI builtin debugger
+ */
+reg_t kShow(EngineState *s, int argc, reg_t *argv) {
+	uint16 map = argv[0].toUint16();
+
+	switch (map) {
+	case 1:	// Visual, substituted by display for us
+		g_sci->_gfxScreen->debugShowMap(3);
+		break;
+	case 2:	// Priority
+		g_sci->_gfxScreen->debugShowMap(1);
+		break;
+	case 3:	// Control
+	case 4:	// Control
+		g_sci->_gfxScreen->debugShowMap(2);
+		break;
+	default:
+		warning("Map %d is not available", map);
+	}
+
+	return s->r_acc;
+}
+
 #ifdef ENABLE_SCI32
 
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
