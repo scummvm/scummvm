@@ -19,6 +19,7 @@ public:
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
 	virtual int getDefaultGraphicsMode() const;
+
 	void initSize(uint w, uint h);
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	bool setGraphicsMode(const char *name);
