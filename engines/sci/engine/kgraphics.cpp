@@ -269,7 +269,9 @@ reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv) {
 	int16 priority = (argc > 5) ? argv[5].toSint16() : -1;
 	int16 control = (argc > 6) ? argv[6].toSint16() : -1;
 
-	// TODO: Find out why we get >15 for color in EGA
+	// TODO: Find out why we get > 15 for color in EGA
+	// FIXME: EGA? Which EGA? SCI0 or SCI1? Check the
+	// workarounds inside kGraphFillBoxAny and kNewWindow
 	if (!g_sci->getResMan()->isVGA() && !g_sci->getResMan()->isAmiga32color())
 		color &= 0x0F;
 
@@ -307,6 +309,13 @@ reg_t kGraphFillBoxAny(EngineState *s, int argc, reg_t *argv) {
 	int16 color = argv[5].toSint16();
 	int16 priority = argv[6].toSint16(); // yes, we may read from stack sometimes here
 	int16 control = argv[7].toSint16(); // sierra did the same
+
+	// WORKAROUND: PQ3 EGA is setting invalid colors (above 0 - 15).
+	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
+	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
+	// for the undithering algorithm in EGA games - bug #3048908.
+	if (g_sci->getResMan()->getViewType() == kViewEga && getSciVersion() >= SCI_VERSION_1_EARLY)
+		color &= 0x0F;
 
 	g_sci->_gfxPaint16->kernelGraphFillBox(rect, colorMask, color, priority, control);
 	return s->r_acc;
@@ -1080,6 +1089,15 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 	int	priority = (argc > 6 + argextra) ? argv[6 + argextra].toSint16() : -1;
 	int colorPen = (argc > 7 + argextra) ? argv[7 + argextra].toSint16() : 0;
 	int colorBack = (argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255;
+
+	// WORKAROUND: PQ3 EGA is setting invalid colors (above 0 - 15).
+	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
+	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
+	// for the undithering algorithm in EGA games - bug #3048908.
+	if (g_sci->getResMan()->getViewType() == kViewEga && getSciVersion() >= SCI_VERSION_1_EARLY) {
+		colorPen &= 0x0F;
+		colorBack &= 0x0F;
+	}
 
 	//	const char *title = argv[4 + argextra].segment ? kernel_dereference_char_pointer(s, argv[4 + argextra], 0) : NULL;
 	if (argc>=13) {
