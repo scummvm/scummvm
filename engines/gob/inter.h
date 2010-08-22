@@ -432,6 +432,7 @@ protected:
 
 	void oFascin_playProtracker(OpGobParams &params);
 
+	bool oFascin_assign(OpFuncParams &params);
 	bool oFascin_copySprite(OpFuncParams &params);
 	bool oFascin_keyFunc(OpFuncParams &params);
 

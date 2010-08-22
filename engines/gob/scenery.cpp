@@ -923,13 +923,24 @@ void Scenery::writeAnimLayerInfo(uint16 index, uint16 layer,
 		int16 varDX, int16 varDY, int16 varUnk0, int16 varFrames) {
 
 	assert(index < 10);
-	assert(layer < _animations[index].layersCount);
 
-	AnimLayer &animLayer = _animations[index].layers[layer];
-	WRITE_VAR_OFFSET(varDX, animLayer.animDeltaX);
-	WRITE_VAR_OFFSET(varDY, animLayer.animDeltaY);
-	WRITE_VAR_OFFSET(varUnk0, animLayer.unknown0);
-	WRITE_VAR_OFFSET(varFrames, animLayer.framesCount);
+// WORKAROUND - Fascination Hebrew is using scripts from the CD versions, but of course
+// no CD track, so the anim syncing failed, and the anims were suppressed. But they
+// didn't updated the scripts. Skipping the wrong anims is a solution.
+	if ((_vm->getGameType() == kGameTypeFascination) && (layer >= _animations[index].layersCount)) {
+		WRITE_VAR_OFFSET(varDX, 0);
+		WRITE_VAR_OFFSET(varDY, 0);
+		WRITE_VAR_OFFSET(varUnk0, 0);
+		WRITE_VAR_OFFSET(varFrames, 0);
+	} else {
+		assert(layer < _animations[index].layersCount);
+
+		AnimLayer &animLayer = _animations[index].layers[layer];
+		WRITE_VAR_OFFSET(varDX, animLayer.animDeltaX);
+		WRITE_VAR_OFFSET(varDY, animLayer.animDeltaY);
+		WRITE_VAR_OFFSET(varUnk0, animLayer.unknown0);
+		WRITE_VAR_OFFSET(varFrames, animLayer.framesCount);
+	}
 }
 
 int16 Scenery::getStaticLayersCount(uint16 index) {

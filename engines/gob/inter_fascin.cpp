@@ -33,6 +33,7 @@
 #include "gob/dataio.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/expression.h"
 #include "gob/script.h"
 #include "gob/palanim.h"
 #include "gob/video.h"
@@ -87,7 +88,7 @@ void Inter_Fascination::setupOpcodesDraw() {
 void Inter_Fascination::setupOpcodesFunc() {
 	Inter_v2::setupOpcodesFunc();
 
-	OPCODEFUNC(0x09, o1_assign);
+	OPCODEFUNC(0x09, oFascin_assign);
 	OPCODEFUNC(0x32, oFascin_copySprite);
 }
 
@@ -112,6 +113,52 @@ void Inter_Fascination::setupOpcodesGob() {
 	OPCODEGOB(1002, o2_stopProtracker);
 }
 
+bool Inter_Fascination::oFascin_assign(OpFuncParams &params) {
+	byte destType = _vm->_game->_script->peekByte();
+	int16 dest = _vm->_game->_script->readVarIndex();
+
+	byte loopCount;
+	if (_vm->_game->_script->peekByte() == 99) {
+		_vm->_game->_script->skip(1);
+		loopCount = _vm->_game->_script->readByte();
+	} else
+		loopCount = 1;
+
+	for (int i = 0; i < loopCount; i++) {
+		int16 result;
+		int16 srcType = _vm->_game->_script->evalExpr(&result);
+
+		switch (destType) {
+		case TYPE_VAR_INT8:   // 18
+			if (srcType != TYPE_IMM_INT16) { //20
+				char* str = _vm->_game->_script->getResultStr();
+				WRITE_VARO_STR(dest, str);
+			} else
+				WRITE_VARO_UINT8(dest + i, _vm->_game->_script->getResultInt());
+			break;
+
+		case TYPE_VAR_INT32_AS_INT16: // 24. Yes, it's really there
+		case TYPE_ARRAY_INT16: //27
+			WRITE_VARO_UINT16(dest + i * 2, _vm->_game->_script->getResultInt()); 
+			break;
+
+		case TYPE_VAR_INT32:   // 23
+		case TYPE_ARRAY_INT32: // 26
+			WRITE_VAR_OFFSET(dest + i * 4, _vm->_game->_script->getResultInt()); // or *2 ?
+			break;
+
+		case TYPE_VAR_STR:   // 25
+		case TYPE_ARRAY_STR: // 28
+			if (srcType == TYPE_IMM_INT16)
+				WRITE_VARO_UINT8(dest, result);
+			else
+				WRITE_VARO_STR(dest, _vm->_game->_script->getResultStr());
+			break;
+		}
+	}
+
+	return false;
+}
 
 bool Inter_Fascination::oFascin_copySprite(OpFuncParams &params) {
 	_vm->_draw->_sourceSurface = _vm->_game->_script->readInt16();
