@@ -98,7 +98,7 @@ protected:
 	uint16 _gameWidth, _gameHeight;
 	uint16 _frameBufferWidth; // Width of framebuffer in N64 memory
 	uint8 _offscrPixels; // Pixels to skip on each line before start drawing, used to center image
-	uint8 _maxFps;
+	uint8 _maxFps; // Max frames-per-second which can be shown on screen
 
 	int _shakeOffset;
 
@@ -123,7 +123,7 @@ protected:
 
 	uint8 _controllerPort;
 	int8 _mousePort;
-	bool _controllerHasRumble;
+	bool _controllerHasRumble; // Gets enabled if rumble-pak is detected
 
 	bool _dirtyOffscreen;
 
