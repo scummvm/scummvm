@@ -214,28 +214,28 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 		out = outo;
 		in = ino;
 		for (int j = 0; j < w; j++) {
-			int r = *in++;
-			int g = *in++;
 			int b = *in++;
+			int g = *in++;
+			int r = *in++;
 			int a = *in++;
 			switch (a) {
 			case 0: // Full transparency
 				out += 4;
 				break;
 			case 255: // Full opacity
-				*out++ = r;
-				*out++ = g;
 				*out++ = b;
+				*out++ = g;
+				*out++ = r;
 				*out++ = a;
 				break;
 			default: // alpha blending
-				*out = (byte)((((int)(*out - r) * a + r) >> 8) & 0xff);
+				*out = (byte)(((b - *out) * a + *out) >> 8);
 				out++;
-				*out = (byte)((((int)(*out - g) * a + g) >> 8) & 0xff);
+				*out = (byte)(((g - *out) * a + *out) >> 8);
 				out++;
-				*out = (byte)((((int)(*out - b) * a + b) >> 8) & 0xff);
+				*out = (byte)(((r - *out) * a + *out) >> 8);
 				out++;
-				*out = 255;
+				*out = a;
 				out++;
 			}
 		}
