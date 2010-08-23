@@ -196,7 +196,6 @@ bool WalkRegion::FindPath(const Vertex &Start, const Vertex &End, BS_Path &Path)
 	for (unsigned int i = 0; i < m_Nodes.size(); i++) {
 		// Determine the nearest edge node in the node list
 		DijkstraNode::Iter NodeInter = ChooseClosestNode(DijkstraNodes);
-		(*NodeInter).Chosen = true;
 
 		// If no free nodes are absent from the edge node list, there is no path from start
 		// to end node. This case should never occur, since the number of loop passes is
@@ -204,6 +203,7 @@ bool WalkRegion::FindPath(const Vertex &Start, const Vertex &End, BS_Path &Path)
 		if (NodeInter == DijkstraNodes.end()) return false;
 
 		// If the destination point is closer than the point cost, scan can stop
+		(*NodeInter).Chosen = true;
 		if (EndPoint.Cost <= (*NodeInter).Cost) {
 			// Insert the end point in the list
 			Path.push_back(End);
