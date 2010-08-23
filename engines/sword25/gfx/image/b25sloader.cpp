@@ -46,7 +46,7 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 namespace {
-unsigned int FindEmbeddedPNG(const char *FileDataPtr, unsigned int FileSize) {
+unsigned int FindEmbeddedPNG(const byte *FileDataPtr, unsigned int FileSize) {
 #if 0
 	// Einen Stringstream mit dem Anfang der Datei intialisieren. 512 Byte sollten hierfür genügen.
 	istringstream StringStream(string(FileDataPtr, FileDataPtr + min(static_cast<unsigned int>(512), FileSize)));
@@ -72,7 +72,7 @@ unsigned int FindEmbeddedPNG(const char *FileDataPtr, unsigned int FileSize) {
 
 // -----------------------------------------------------------------------------
 
-bool B25SLoader::IsCorrectImageFormat(const char *FileDataPtr, unsigned int FileSize) {
+bool B25SLoader::IsCorrectImageFormat(const byte *FileDataPtr, unsigned int FileSize) {
 	// PNG innerhalb des Spielstandes finden und den Methodenaufruf zu BS_PNGLoader weiterreichen.
 	unsigned int PNGOffset = FindEmbeddedPNG(FileDataPtr, FileSize);
 	if (PNGOffset > 0) {
@@ -84,7 +84,7 @@ bool B25SLoader::IsCorrectImageFormat(const char *FileDataPtr, unsigned int File
 
 // -----------------------------------------------------------------------------
 
-bool B25SLoader::DecodeImage(const char *FileDataPtr, unsigned int FileSize, GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
+bool B25SLoader::DecodeImage(const byte *FileDataPtr, unsigned int FileSize, GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
                                 int &Width, int &Height, int &Pitch) {
 	// PNG innerhalb des Spielstandes finden und den Methodenaufruf zu BS_PNGLoader weiterreichen.
 	unsigned int PNGOffset = FindEmbeddedPNG(FileDataPtr, FileSize);
@@ -97,7 +97,7 @@ bool B25SLoader::DecodeImage(const char *FileDataPtr, unsigned int FileSize, Gra
 
 // -----------------------------------------------------------------------------
 
-bool B25SLoader::ImageProperties(const char *FileDataPtr, unsigned int FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height) {
+bool B25SLoader::ImageProperties(const byte *FileDataPtr, unsigned int FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height) {
 	// PNG innerhalb des Spielstandes finden und den Methodenaufruf zu BS_PNGLoader weiterreichen.
 	unsigned int PNGOffset = FindEmbeddedPNG(FileDataPtr, FileSize);
 	if (PNGOffset > 0) {

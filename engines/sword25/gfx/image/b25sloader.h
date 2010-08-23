@@ -57,10 +57,10 @@ public:
 	}
 
 protected:
-	virtual bool IsCorrectImageFormat(const char *FileDataPtr, unsigned int FileSize);
-	virtual bool DecodeImage(const char *FileDataPtr, unsigned int FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
+	virtual bool IsCorrectImageFormat(const byte *FileDataPtr, unsigned int FileSize);
+	virtual bool DecodeImage(const byte *FileDataPtr, unsigned int FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
 	                         int &Width, int &Height, int &Pitch);
-	virtual bool ImageProperties(const char *FileDataPtr, unsigned int FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height);
+	virtual bool ImageProperties(const byte *FileDataPtr, unsigned int FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height);
 
 };
 

@@ -62,7 +62,7 @@ static void png_user_read_data(png_structp png_ptr, png_bytep data, png_size_t l
 
 // -----------------------------------------------------------------------------
 
-bool PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
+bool PNGLoader::DoDecodeImage(const byte *FileDataPtr, unsigned int FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
                                  int &Width, int &Height, int &Pitch) {
 	png_structp png_ptr = NULL;
 	png_infop   info_ptr = NULL;
@@ -86,7 +86,7 @@ bool PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,  G
 	}
 
 	// PNG Signatur überprüfen
-	if (!png_check_sig(reinterpret_cast<png_bytep>(const_cast<char *>(FileDataPtr)), 8)) {
+	if (!png_check_sig(reinterpret_cast<png_bytep>(const_cast<byte *>(FileDataPtr)), 8)) {
 		error("png_check_sig failed");
 	}
 
@@ -259,14 +259,14 @@ bool PNGLoader::DoDecodeImage(const char *FileDataPtr, unsigned int FileSize,  G
 
 // -----------------------------------------------------------------------------
 
-bool PNGLoader::DecodeImage(const char *FileDataPtr, unsigned int FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
+bool PNGLoader::DecodeImage(const byte *FileDataPtr, unsigned int FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
                                int &Width, int &Height, int &Pitch) {
 	return DoDecodeImage(FileDataPtr, FileSize, ColorFormat, UncompressedDataPtr, Width, Height, Pitch);
 }
 
 // -----------------------------------------------------------------------------
 
-bool PNGLoader::DoImageProperties(const char *FileDataPtr, unsigned int FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height) {
+bool PNGLoader::DoImageProperties(const byte *FileDataPtr, unsigned int FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height) {
 	// PNG Signatur überprüfen
 	if (!DoIsCorrectImageFormat(FileDataPtr, FileSize)) return false;
 
@@ -310,7 +310,7 @@ bool PNGLoader::DoImageProperties(const char *FileDataPtr, unsigned int FileSize
 
 // -----------------------------------------------------------------------------
 
-bool PNGLoader::ImageProperties(const char *FileDataPtr, unsigned int FileSize,  GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height) {
+bool PNGLoader::ImageProperties(const byte *FileDataPtr, unsigned int FileSize,  GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height) {
 	return DoImageProperties(FileDataPtr, FileSize, ColorFormat, Width, Height);
 }
 
@@ -318,7 +318,7 @@ bool PNGLoader::ImageProperties(const char *FileDataPtr, unsigned int FileSize, 
 // Header überprüfen
 // -----------------------------------------------------------------------------
 
-bool PNGLoader::DoIsCorrectImageFormat(const char *FileDataPtr, unsigned int FileSize) {
+bool PNGLoader::DoIsCorrectImageFormat(const byte *FileDataPtr, unsigned int FileSize) {
 	if (FileSize > 8)
 		return png_check_sig((byte *)FileDataPtr, 8) ? true : false;
 	else
@@ -327,7 +327,7 @@ bool PNGLoader::DoIsCorrectImageFormat(const char *FileDataPtr, unsigned int Fil
 
 // -----------------------------------------------------------------------------
 
-bool PNGLoader::IsCorrectImageFormat(const char *FileDataPtr, unsigned int FileSize) {
+bool PNGLoader::IsCorrectImageFormat(const byte *FileDataPtr, unsigned int FileSize) {
 	return DoIsCorrectImageFormat(FileDataPtr, FileSize);
 }
 

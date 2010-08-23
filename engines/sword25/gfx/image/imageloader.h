@@ -99,7 +99,7 @@ public:
 	    @remark Die Größe der Ausgabedaten in Bytes kann wie folgt berechnet werden: Pitch * Height.
 	    @remark Es darf nicht vergessen werden, die Ausgabedaten nach erfolgter Benutzung mit delete freizugeben.
 	*/
-	static bool LoadImage(const char *pFileData, unsigned int FileSize,
+	static bool LoadImage(const byte *pFileData, unsigned int FileSize,
 	                      GraphicEngine::COLOR_FORMATS ColorFormat,
 	                      byte *&pUncompressedData,
 	                      int &Width, int &Height,
@@ -116,7 +116,7 @@ public:
 	    @return Gibt false zurück, wenn die Bildeigenschaften nicht ausgelesen werden konnten.
 	    @remark Es darf nicht vergessen werden, die Ausgabedaten nach erfolgter Benutzung mit delete freizugeben.
 	*/
-	static bool ExtractImageProperties(const char *pFileData, unsigned int FileSize,
+	static bool ExtractImageProperties(const byte *pFileData, unsigned int FileSize,
 	                                   GraphicEngine::COLOR_FORMATS &ColorFormat,
 	                                   int &Width, int &Height);
 	//@}
@@ -148,7 +148,7 @@ protected:
 	    @return Gibt true zurück, wenn der #BS_ImageLoader das Bild lesen kann, ansonsten false.
 	    @remark Diese Methode muss von allen BS_ImageLoader Klassen implementiert werden.
 	*/
-	virtual bool IsCorrectImageFormat(const char *pFileData, unsigned int FileSize) = 0;
+	virtual bool IsCorrectImageFormat(const byte *pFileData, unsigned int FileSize) = 0;
 
 	/**
 	    @brief Lädt eine Bilddatei.
@@ -170,7 +170,7 @@ protected:
 	    @remark Es darf nicht vergessen werden, die Ausgabedaten nach erfolgter Benutzung mit delete freizugeben.
 	    @remark Diese Methode muss von allen BS_ImageLoader Klassen implementiert werden.
 	*/
-	virtual bool DecodeImage(const char *pFileData, unsigned int FileSize,
+	virtual bool DecodeImage(const byte *pFileData, unsigned int FileSize,
 	                         GraphicEngine::COLOR_FORMATS ColorFormat,
 	                         byte *&pUncompressedData,
 	                         int &Width, int &Height,
@@ -187,7 +187,7 @@ protected:
 	    @remark Es darf nicht vergessen werden, die Ausgabedaten nach erfolgter Benutzung mit delete freizugeben.
 	    @remark Diese Methode muss von allen BS_ImageLoader Klassen implementiert werden.
 	*/
-	virtual bool ImageProperties(const char *pFileData, unsigned int FileSize,
+	virtual bool ImageProperties(const byte *pFileData, unsigned int FileSize,
 	                             GraphicEngine::COLOR_FORMATS &ColorFormat,
 	                             int &Width, int &Height) = 0;
 
@@ -204,7 +204,7 @@ protected:
 	    @remark Es gilt zu beachten, dass der Zielpuffer ausreichend groß ist.<br>
 	            Es sind mindestens Width * 2 Byte notwendig.
 	*/
-	static void RowARGB32ToRGB16(unsigned char *pSrcData, unsigned char *pDestData, unsigned int Width) {
+	static void RowARGB32ToRGB16(byte *pSrcData, byte *pDestData, unsigned int Width) {
 		for (unsigned int i = 0; i < Width; i++) {
 			((uint16_t *)pDestData)[i] = ((pSrcData[2] >> 3) << 11) | ((pSrcData[1] >> 2) << 5) | (pSrcData[0] >> 3);
 			pSrcData += 4;
@@ -219,7 +219,7 @@ protected:
 	    @remark Es gilt zu beachten, dass der Zielpuffer ausreichend groß ist.<br>
 	            Es sind mindestens Width * 2 Byte notwendig.
 	*/
-	static void RowARGB32ToRGB15(unsigned char *pSrcData, unsigned char *pDestData, unsigned int Width) {
+	static void RowARGB32ToRGB15(byte *pSrcData, byte *pDestData, unsigned int Width) {
 		for (unsigned int i = 0; i < Width; i++) {
 			((uint16_t *)pDestData)[i] = ((pSrcData[2] >> 3) << 10) | ((pSrcData[1] >> 3) << 5) | (pSrcData[0] >> 3);
 			pSrcData += 4;
@@ -234,7 +234,7 @@ protected:
 	    @remark Es gilt zu beachten, dass der Zielpuffer ausreichend groß sein muss.<br>
 	            Es sind mindestens ((Width + 3) / 4) * 12 Byte notwendig.
 	*/
-	static void RowARGB32ToRGB16_INTERLEAVED(unsigned char *pSrcData, unsigned char *pDestData, unsigned int Width) {
+	static void RowARGB32ToRGB16_INTERLEAVED(byte *pSrcData, byte *pDestData, unsigned int Width) {
 		// Die Pixelblöcke erstellen, dabei werden immer jeweils 4 Pixel zu einem Block zusammengefasst
 		unsigned int BlockFillCount = 0;
 		unsigned int AlphaBlock = 0;
@@ -278,7 +278,7 @@ protected:
 	    @remark Es gilt zu beachten, dass der Zielpuffer ausreichend groß ist.<br>
 	            Es sind mindestens (Width / 4 + Width % 4) * 3 Byte notwendig.
 	*/
-	static void RowARGB32ToRGB15_INTERLEAVED(unsigned char *pSrcData, unsigned char *pDestData, unsigned int Width) {
+	static void RowARGB32ToRGB15_INTERLEAVED(byte *pSrcData, byte *pDestData, unsigned int Width) {
 		// Die Pixelblöcke erstellen, dabei werden immer jeweils 4 Pixel zu einem Block zusammengefasst
 		unsigned int BlockFillCount = 0;
 		unsigned int AlphaBlock = 0;
@@ -320,7 +320,7 @@ protected:
 	    @param pDestData ein Pointer auf den Zielpuffern.
 	    @param Width die Anzahl der Pixel in der Bildzeile.
 	*/
-	static void RowARGB32ToABGR32(unsigned char *pSrcData, unsigned char *pDestData, unsigned int Width) {
+	static void RowARGB32ToABGR32(byte *pSrcData, byte *pDestData, unsigned int Width) {
 		for (unsigned int i = 0; i < Width; ++i) {
 			*pDestData++ = pSrcData[2];
 			*pDestData++ = pSrcData[1];
@@ -349,7 +349,7 @@ private:
 	    @brief Sucht zu Bilddaten ein BS_ImageLoader Objekt, dass die Bilddaten dekodieren kann.
 	    @return Gibt einen Pointer auf ein passendes BS_ImageLoader Objekt zurück, oder NULL, wenn kein passendes Objekt gefunden wurde.
 	*/
-	static ImageLoader *_FindSuitableImageLoader(const char *pFileData, unsigned int FileSize);
+	static ImageLoader *_FindSuitableImageLoader(const byte *pFileData, unsigned int FileSize);
 
 	static Common::List<ImageLoader *>   _ImageLoaderList;              // Die Liste aller BS_ImageLoader-Objekte
 	static bool                         _ImageLoaderListInitialized;    // Gibt an, ob die Liste schon intialisiert wurde

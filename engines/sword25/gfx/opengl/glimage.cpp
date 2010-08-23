@@ -63,9 +63,9 @@ GLImage::GLImage(const Common::String &Filename, bool &Result) :
 	_backSurface = (static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx")))->getSurface();
 
 	// Datei laden
-	char *pFileData;
+	byte *pFileData;
 	unsigned int FileSize;
-	if (!(pFileData = (char *) pPackage->GetFile(Filename, &FileSize))) {
+	if (!(pFileData = (byte *) pPackage->GetFile(Filename, &FileSize))) {
 		BS_LOG_ERRORLN("File \"%s\" could not be loaded.", Filename.c_str());
 		return;
 	}

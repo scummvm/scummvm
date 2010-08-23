@@ -60,9 +60,9 @@ SWImage::SWImage(const Common::String &Filename, bool &Result) :
 	BS_ASSERT(pPackage);
 
 	// Datei laden
-	char *pFileData;
+	byte *pFileData;
 	unsigned int FileSize;
-	if (!(pFileData = (char *) pPackage->GetFile(Filename, &FileSize))) {
+	if (!(pFileData = (byte *) pPackage->GetFile(Filename, &FileSize))) {
 		BS_LOG_ERRORLN("File \"%s\" could not be loaded.", Filename.c_str());
 		return;
 	}
