@@ -70,6 +70,11 @@ void OSystem_SDL::init() {
 
 	if (_timerManager == 0)
 		_timerManager = new SdlTimerManager();
+
+	#ifdef USE_OPENGL
+		// Setup a list with both SDL and OpenGL graphics modes
+		setupGraphicsModes();
+	#endif
 }
 
 void OSystem_SDL::initBackend() {
@@ -93,9 +98,6 @@ void OSystem_SDL::initBackend() {
 
 	if (_graphicsManager == 0) {
 #ifdef USE_OPENGL
-		// Setup a list with both SDL and OpenGL graphics modes
-		setupGraphicsModes();
-
 		if (ConfMan.hasKey("gfx_mode")) {
 			Common::String gfxMode(ConfMan.get("gfx_mode"));
 			bool use_opengl = false;
