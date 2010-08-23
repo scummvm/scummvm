@@ -169,9 +169,12 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 		Height = m_Height;
 	ScaleY = (float) Height / (float) m_Height;
 
-	if (Color != 0xffffffff) {
-		warning("STUB: Image bg color: %x", Color);
+	if (Color & 0xff000000 != 0xff000000) {
+		warning("STUB: Image transparent bg color: %x", Color);
 	}
+	int cr = (Color >> 16) & 0xff;
+	int cg = (Color >> 8) & 0xff;
+	int cb = (Color >> 0) & 0xff;
 
 	if (ScaleX != 1.0 || ScaleY != 1.0) {
 		warning("STUB: Sprite scaling (%f x %f)", ScaleX, ScaleY);
@@ -223,17 +226,38 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 				out += 4;
 				break;
 			case 255: // Full opacity
-				*out++ = r;
-				*out++ = g;
-				*out++ = b;
+				if (cr != 255)
+					*out++ = (r * cr) >> 8;
+				else
+					*out++ = r;
+
+				if (cg != 255)
+					*out++ = (g * cg) >> 8;
+				else
+					*out++ = g;
+
+				if (cb != 255)
+					*out++ = (b * cb) >> 8;
+				else
+					*out++ = b;
+
 				*out++ = a;
 				break;
 			default: // alpha blending
-				*out += (byte)(((r - *out) * a) >> 8);
+				if (cr != 255)
+					*out += ((r - *out) * a * cr) >> 16;
+				else
+					*out += ((r - *out) * a) >> 8;
 				out++;
-				*out += (byte)(((g - *out) * a) >> 8);
+				if (cg != 255)
+					*out += ((g - *out) * a * cg) >> 16;
+				else
+					*out += ((g - *out) * a) >> 8;
 				out++;
-				*out += (byte)(((b - *out) * a) >> 8);
+				if (cb != 255)
+					*out += ((b - *out) * a * cb) >> 16;
+				else
+					*out += ((b - *out) * a) >> 8;
 				out++;
 				*out = 255;
 				out++;
