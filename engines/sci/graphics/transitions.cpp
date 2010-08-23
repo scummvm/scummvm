@@ -469,7 +469,7 @@ void GfxTransitions::scroll(int16 number) {
 			newScreenRect.right++; newMoveRect.left--;
 			_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
 			if ((stepNr & 1) == 0) {
-				msecCount += 4;
+				msecCount += 5;
 				updateScreenAndWait(msecCount);
 			}
 			stepNr++;
@@ -491,7 +491,7 @@ void GfxTransitions::scroll(int16 number) {
 			newScreenRect.left--;
 			_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
 			if ((stepNr & 1) == 0) {
-				msecCount += 4;
+				msecCount += 5;
 				updateScreenAndWait(msecCount);
 			}
 			stepNr++;
@@ -513,7 +513,7 @@ void GfxTransitions::scroll(int16 number) {
 				scrollCopyOldToScreen(oldScreenRect, _picRect.left, _picRect.top);
 			newScreenRect.bottom++;	newMoveRect.top--;
 			_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
-			msecCount += 4;
+			msecCount += 5;
 			updateScreenAndWait(msecCount);
 		}
 		break;
@@ -526,7 +526,7 @@ void GfxTransitions::scroll(int16 number) {
 				scrollCopyOldToScreen(oldScreenRect, oldMoveRect.left, oldMoveRect.top);
 			newScreenRect.top--;
 			_screen->copyRectToScreen(newScreenRect, _picRect.left, _picRect.top);
-			msecCount += 4;
+			msecCount += 5;
 			updateScreenAndWait(msecCount);
 		}
 		break;
