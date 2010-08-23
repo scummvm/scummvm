@@ -86,7 +86,7 @@ const SciWorkaroundEntry opcodeMulWorkarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
 const SciWorkaroundEntry opcodeAndWorkarounds[] = {
 	{ GID_MOTHERGOOSE,     -1,  999,  0,               "Event", "new",           -1,     0, { WORKAROUND_FAKE,   0 } }, // constantly during the game
-    // ^^ TODO: which of the mother goose versions is affected by this? EGA? SCI1? SCI1.1?
+	// ^^ TODO: which of the mother goose versions is affected by this? EGA? SCI1? SCI1.1?
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -108,7 +108,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_FANMADE,       528,   990,  0,            "GDialog", "doit",           -1,    4, { WORKAROUND_FAKE,   0 } }, // Happens in Cascade Quest when closing the glossary - bug #3038757
 	{ GID_FREDDYPHARKAS,  -1,    24,  0,              "gcWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  -1,    31,  0,            "quitWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
-    { GID_FREDDYPHARKAS, 540,   540,  0,          "WaverCode", "init",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // Gun pratice mini-game (bug #3044218)
+	{ GID_FREDDYPHARKAS, 540,   540,  0,          "WaverCode", "init",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // Gun pratice mini-game (bug #3044218)
 	{ GID_GK1,            -1, 64950, -1,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // sometimes when walk-clicking
 	{ GID_GK2,            -1,    11,  0,                   "", "export 10",      -1,    3, { WORKAROUND_FAKE,   0 } }, // called when the game starts
 	{ GID_GK2,            -1,    11,  0,                   "", "export 10",      -1,    4, { WORKAROUND_FAKE,   0 } }, // called during the game
@@ -127,9 +127,9 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_JONES,           1,   255,  0,                   "", "export 0",       -1,   -1, { WORKAROUND_FAKE,   0 } }, // jones/cd only - called when a game ends, temps 13 and 14
 	{ GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   -1, { WORKAROUND_FAKE,   0 } }, // jones/ega&vga only - called when the game starts, temps 13 and 14
 	//{ GID_KQ5,            -1,     0,  0,                   "", "export 29",      -1,    3, { WORKAROUND_FAKE,   0xf } }, // called when playing harp for the harpies or when aborting dialog in toy shop, is used for kDoAudio - bug #3034700
-    // ^^ shouldn't be needed anymore, we got a script patch instead (kq5PatchCdHarpyVolume)
+	// ^^ shouldn't be needed anymore, we got a script patch instead (kq5PatchCdHarpyVolume)
 	{ GID_KQ5,            25,    25,  0,              "rm025", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // inside witch forest, when going to the room where the walking rock is
-    { GID_KQ5,            55,    55,  0,         "helpScript", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // when giving the tambourine to the monster in the labyrinth (only happens at one of the locations) - bug #3041262
+	{ GID_KQ5,            55,    55,  0,         "helpScript", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // when giving the tambourine to the monster in the labyrinth (only happens at one of the locations) - bug #3041262
 	{ GID_KQ6,            -1,    30,  0,               "rats", "changeState",    -1,   -1, { WORKAROUND_FAKE,   0 } }, // rats in the catacombs (temps 1 - 5) - bugs #3034597, #3035495, #3035824
 	{ GID_KQ6,           210,   210,  0,              "rm210", "scriptCheck",    -1,    0, { WORKAROUND_FAKE,   1 } }, // using inventory in that room - bug #3034565
 	{ GID_KQ6,           500,   500,  0,              "rm500", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // going to island of the beast
@@ -175,7 +175,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG3,          700,   700, -1,      "monsterIsDead", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // in the jungle, after winning any fight, bug #3040624
 	{ GID_QFG3,          470,   470, -1,              "rm470", "notify",         -1,    0, { WORKAROUND_FAKE,   0 } }, // closing the character screen in the Simbani village in the room with the bridge, bug #3040565
 	{ GID_QFG3,          490,   490, -1,      "computersMove", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // when finishing awari game, bug #3040579
-	{ GID_QFG3,          851,    32, -1,			"ProjObj", "doit",			 -1,    1, { WORKAROUND_FAKE,   0 } }, // near the end, when throwing the spear of death, bug #3050122
+	{ GID_QFG3,          851,    32, -1,            "ProjObj", "doit",           -1,    1, { WORKAROUND_FAKE,   0 } }, // near the end, when throwing the spear of death, bug #3050122
 	{ GID_QFG4,           -1,    15, -1,     "charInitScreen", "dispatchEvent",  -1,    5, { WORKAROUND_FAKE,   0 } }, // floppy version, when viewing the character screen
 	{ GID_QFG4,           -1, 64917, -1,       "controlPlane", "setBitmap",      -1,    3, { WORKAROUND_FAKE,   0 } }, // floppy version, when entering the game menu
 	{ GID_QFG4,           -1, 64917, -1,              "Plane", "setBitmap",      -1,    3, { WORKAROUND_FAKE,   0 } }, // floppy version, happen sometimes in fights
@@ -238,7 +238,7 @@ const SciWorkaroundEntry kDisplay_workarounds[] = {
 	{ GID_PQ2,            23,    23,  0,         "rm23Script", "elements",    0x4c1,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of pate's file - 0x75 as id (another pq2 version, bug #3043904)
 	{ GID_QFG1,           11,    11,  0,             "battle", "<noname90>",     -1,    0, { WORKAROUND_IGNORE,    0 } }, // DEMO: When entering battle, 0x75 as id
 	{ GID_SQ1,            -1,   700,  0,       "arcadaRegion", "doit",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // restoring in some rooms of the arcada (right at the start)
-    { GID_SQ4,           397,     0,  0,                   "", "export 12",      -1,    0, { WORKAROUND_IGNORE,    0 } }, // FLOPPY: when going into the computer store (bug #3044044)
+	{ GID_SQ4,           397,     0,  0,                   "", "export 12",      -1,    0, { WORKAROUND_IGNORE,    0 } }, // FLOPPY: when going into the computer store (bug #3044044)
 	{ GID_SQ4,           391,   391,  0,          "doCatalog", "mode",         0x84,    0, { WORKAROUND_IGNORE,    0 } }, // CD: clicking on catalog in roboter sale - a parameter is an object
 	{ GID_SQ4,           391,   391,  0,         "choosePlug", "changeState",    -1,    0, { WORKAROUND_IGNORE,    0 } }, // CD: ordering connector in roboter sale - a parameter is an object
 	SCI_WORKAROUNDENTRY_TERMINATOR
