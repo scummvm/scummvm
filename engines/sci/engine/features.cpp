@@ -275,15 +275,8 @@ SciVersion GameFeatures::detectLofsType() {
 			return _lofsType;
 		}
 
-		// Find the "Game" object, super class of the actual game-object
-		const reg_t game = g_sci->getGameObject();
-		const Object *gameObject = _segMan->getObject(game);
-		reg_t gameSuperClass = NULL_REG;
-		if (gameObject) {
-			gameSuperClass = gameObject->getSuperClassSelector();
-		}
-
-		// Find a function of the game object which invokes lofsa/lofss
+		// Find a function of the "Game" object (which is the game super class) which invokes lofsa/lofss
+		reg_t gameSuperClass = g_sci->getGameSuperClassAddress();
 		bool found = false;
 		if (!gameSuperClass.isNull()) {
 			Common::String gameSuperClassName = _segMan->getObjectName(gameSuperClass);

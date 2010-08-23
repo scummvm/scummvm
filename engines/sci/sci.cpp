@@ -201,7 +201,8 @@ Common::Error SciEngine::run() {
 
 	// Add the after market GM patches for the specified game, if they exist
 	_resMan->addNewGMPatch(_gameId);
-	_gameObj = _resMan->findGameObject();
+	_gameObjectAddress = _resMan->findGameObject();
+	_gameSuperClassAddress = NULL_REG;
 
 	SegManager *segMan = new SegManager(_resMan);
 
@@ -212,6 +213,7 @@ Common::Error SciEngine::run() {
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
 	_kernel = new Kernel(_resMan, segMan);
+
 	_features = new GameFeatures(segMan, _kernel);
 	// Only SCI0, SCI01 and SCI1 EGA games used a parser
 	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA) ? new Vocabulary(_resMan, false) : NULL;
@@ -230,6 +232,14 @@ Common::Error SciEngine::run() {
 		// TODO: Add an "init failed" error?
 		return Common::kUnknownError;
 	}
+
+	// we try to find the super class address of the game object, we can't do that earlier
+	const Object *gameObject = segMan->getObject(_gameObjectAddress);
+	if (!gameObject) {
+		warning("Could not get game object, aborting...");
+		return Common::kUnknownError;
+	}
+	_gameSuperClassAddress = gameObject->getSuperClassSelector();
 
 	script_adjust_opcode_formats();
 
@@ -250,9 +260,9 @@ Common::Error SciEngine::run() {
 		if (selectedLanguage == Common::EN_ANY) {
 			// and english was selected as language
 			if (SELECTOR(printLang) != -1) // set text language to english
-				writeSelectorValue(segMan, _gameObj, SELECTOR(printLang), 1);
+				writeSelectorValue(segMan, _gameObjectAddress, SELECTOR(printLang), 1);
 			if (SELECTOR(parseLang) != -1) // and set parser language to english as well
-				writeSelectorValue(segMan, _gameObj, SELECTOR(parseLang), 1);
+				writeSelectorValue(segMan, _gameObjectAddress, SELECTOR(parseLang), 1);
 		}
 	}
 
@@ -444,8 +454,8 @@ void SciEngine::initStackBaseWithSelector(Selector selector) {
 	_gamestate->stack_base[1] = NULL_REG;
 
 	// Register the first element on the execution stack
-	if (!send_selector(_gamestate, _gameObj, _gameObj, _gamestate->stack_base, 2, _gamestate->stack_base)) {
-		_console->printObject(_gameObj);
+	if (!send_selector(_gamestate, _gameObjectAddress, _gameObjectAddress, _gamestate->stack_base, 2, _gamestate->stack_base)) {
+		_console->printObject(_gameObjectAddress);
 		error("initStackBaseWithSelector: error while registering the first selector in the call stack");
 	}
 
