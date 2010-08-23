@@ -79,7 +79,7 @@ GLImage::GLImage(const Common::String &Filename, bool &Result) :
 	}
 
 	// Das Bild dekomprimieren
-	if (!ImageLoader::LoadImage(pFileData, FileSize, GraphicEngine::CF_ABGR32, _data, m_Width, m_Height, Pitch)) {
+	if (!ImageLoader::LoadImage(pFileData, FileSize, GraphicEngine::CF_ARGB32, _data, m_Width, m_Height, Pitch)) {
 		BS_LOG_ERRORLN("Could not decode image.");
 		return;
 	}
@@ -157,7 +157,7 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 		h = pPartRect->bottom - pPartRect->top;
 	}
 
-	debug(0, "Blit(%d, %d, %d, [%d, %d, %d, %d], %d, %d, %d)", PosX, PosY, Flipping, x1, y1, w, h, Color, Width, Height);
+	debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %d, %d, %d)", PosX, PosY, Flipping, x1, y1, w, h, Color, Width, Height);
 
 	// Skalierungen berechnen
 	float ScaleX, ScaleY;
@@ -214,26 +214,26 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 		out = outo;
 		in = ino;
 		for (int j = 0; j < w; j++) {
-			int b = *in++;
-			int g = *in++;
 			int r = *in++;
+			int g = *in++;
+			int b = *in++;
 			int a = *in++;
 			switch (a) {
 			case 0: // Full transparency
 				out += 4;
 				break;
 			case 255: // Full opacity
-				*out++ = b;
-				*out++ = g;
 				*out++ = r;
+				*out++ = g;
+				*out++ = b;
 				*out++ = a;
 				break;
 			default: // alpha blending
-				*out += (byte)(((b - *out) * a) >> 8);
+				*out += (byte)(((r - *out) * a) >> 8);
 				out++;
 				*out += (byte)(((g - *out) * a) >> 8);
 				out++;
-				*out += (byte)(((r - *out) * a) >> 8);
+				*out += (byte)(((b - *out) * a) >> 8);
 				out++;
 				*out = 255;
 				out++;

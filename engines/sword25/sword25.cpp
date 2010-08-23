@@ -86,7 +86,7 @@ Common::Error Sword25Engine::AppStart(const Common::StringArray &CommandParamete
 	BS_Log::RegisterLogListener(LogToStdout);
 
 	// Initialise the graphics mode to ARGB8888
-	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
 	initGraphics(800, 600, true, &format);
 	if (format != g_system->getScreenFormat())
 		return Common::kUnsupportedColorMode;
