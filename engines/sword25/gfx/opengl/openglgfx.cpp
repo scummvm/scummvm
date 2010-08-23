@@ -289,7 +289,7 @@ Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
 
 	// Bild für den Softwarebuffer laden
 	if (FileName.hasSuffix(PNG_S_EXTENSION)) {
-		bool Result;
+		bool Result = false;
 		SWImage *pImage = new SWImage(FileName, Result);
 		if (!Result) {
 			delete pImage;
@@ -307,7 +307,7 @@ Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
 
 	// Sprite-Bild laden
 	if (FileName.hasSuffix(PNG_EXTENSION) || FileName.hasSuffix(B25S_EXTENSION)) {
-		bool Result;
+		bool Result = false;
 		GLImage *pImage = new GLImage(FileName, Result);
 		if (!Result) {
 			delete pImage;
@@ -338,7 +338,7 @@ Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
 			return 0;
 		}
 
-		bool Result;
+		bool Result = false;
 		VectorImage *pImage = new VectorImage(pFileData, FileSize, Result);
 		if (!Result) {
 			delete pImage;
