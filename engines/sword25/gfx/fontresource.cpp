@@ -82,6 +82,7 @@ FontResource::FontResource(Kernel *pKernel, const Common::String &FileName) :
 
 	_Valid = parse();
 	close();
+	free(xmlData);
 }
 
 // -----------------------------------------------------------------------------
