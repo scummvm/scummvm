@@ -237,11 +237,11 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 	SDL_Rect const* const*availableModes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_OPENGL);
 
-	// If -1, autodetect the fullscreen mode
+	// If -2, autodetect the fullscreen mode
 	// The last used fullscreen mode will be prioritized, if there is no last fullscreen
 	// mode, the desktop resolution will be used, and in case the desktop resolution
 	// is not available as a fullscreen mode, the one with smallest metric will be selected.
-	if (_videoMode.activeFullscreenMode == -1) {
+	if (_videoMode.activeFullscreenMode == -2) {
 		// Desktop resolution
 		int desktopModeIndex = -1;
 
@@ -290,9 +290,19 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 			return true;
 		}
 	} else {
+		// Use last fullscreen mode if looping backwards from the first mode
+		if (_videoMode.activeFullscreenMode == -1) {
+			do {
+				_videoMode.activeFullscreenMode++;
+			} while(availableModes[_videoMode.activeFullscreenMode]);
+			_videoMode.activeFullscreenMode--;
+		}
+
+		// Use first fullscreen mode if looping from last mode
 		if (!availableModes[_videoMode.activeFullscreenMode])
 			_videoMode.activeFullscreenMode = 0;
 
+		// Check if the fullscreen mode is valid
 		if (availableModes[_videoMode.activeFullscreenMode]) {
 			_videoMode.hardwareWidth = availableModes[_videoMode.activeFullscreenMode]->w;
 			_videoMode.hardwareHeight = availableModes[_videoMode.activeFullscreenMode]->h;
@@ -497,13 +507,13 @@ bool OpenGLSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 	return false;
 }
 
-void OpenGLSdlGraphicsManager::toggleFullScreen(bool loop) {
+void OpenGLSdlGraphicsManager::toggleFullScreen(int loop) {
 	beginGFXTransaction();
 		if (_videoMode.fullscreen && loop) {
-			_videoMode.activeFullscreenMode += 1;
+			_videoMode.activeFullscreenMode += loop;
 			setFullscreenMode(true);
 		} else {
-			_videoMode.activeFullscreenMode = -1;
+			_videoMode.activeFullscreenMode = -2;
 			setFullscreenMode(!_videoMode.fullscreen);
 		}
 	endGFXTransaction();
@@ -532,7 +542,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		if (event.kbd.hasFlags(Common::KBD_ALT) &&
 			(event.kbd.keycode == Common::KEYCODE_RETURN ||
 			event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER)) {
-			toggleFullScreen(false);
+			toggleFullScreen(0);
 			return true;
 		}
 
@@ -540,7 +550,15 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		if (event.kbd.hasFlags(Common::KBD_CTRL|Common::KBD_ALT) &&
 			(event.kbd.keycode == Common::KEYCODE_RETURN ||
 			event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER)) {
-			toggleFullScreen(true);
+			toggleFullScreen(1);
+			return true;
+		}
+
+		// Ctrl-Shift-Return and Ctrl-Shift-Enter switches backwards between full screen modes
+		if (event.kbd.hasFlags(Common::KBD_CTRL|Common::KBD_SHIFT) &&
+			(event.kbd.keycode == Common::KEYCODE_RETURN ||
+			event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER)) {
+			toggleFullScreen(-1);
 			return true;
 		}
 

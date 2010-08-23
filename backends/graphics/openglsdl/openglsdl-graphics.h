@@ -78,9 +78,9 @@ protected:
 
 	/**
 	 * Toggles fullscreen.
-	 * @loop if true loop to next supported fullscreen mode
+	 * @loop loop direction for switching fullscreen mode, if 0 toggles it.
 	 */
-	virtual void toggleFullScreen(bool loop);
+	virtual void toggleFullScreen(int loop);
 
 	/**
 	 * Setup the fullscreen mode.
