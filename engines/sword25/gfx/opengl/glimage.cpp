@@ -229,13 +229,13 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 				*out++ = a;
 				break;
 			default: // alpha blending
-				*out = (byte)(((b - *out) * a + *out) >> 8);
+				*out += (byte)(((b - *out) * a) >> 8);
 				out++;
-				*out = (byte)(((g - *out) * a + *out) >> 8);
+				*out += (byte)(((g - *out) * a) >> 8);
 				out++;
-				*out = (byte)(((r - *out) * a + *out) >> 8);
+				*out += (byte)(((r - *out) * a) >> 8);
 				out++;
-				*out = a;
+				*out = 255;
 				out++;
 			}
 		}
