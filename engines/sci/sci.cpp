@@ -254,6 +254,9 @@ Common::Error SciEngine::run() {
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
 
+	// ENABLE THIS FOR REPLACING SIERRA GAME RESTORE DIALOG WITH SCUMMVM RESTORE
+	//patchGameSaveRestore(segMan);
+
 	if (_gameDescription->flags & ADGF_ADDENGLISH) {
 		// if game is multilingual
 		Common::Language selectedLanguage = Common::parseLanguage(ConfMan.get("language"));
@@ -325,6 +328,47 @@ Common::Error SciEngine::run() {
 	ConfMan.flushToDisk();
 
 	return Common::kNoError;
+}
+
+static byte patchGameRestore[] = {
+	0x39, 0x02,        // pushi 02
+	0x76,              // push0
+	0x38, 0xff, 0xff,  // pushi -1
+	0x43, 0xff, 0x04,  // call kRestoreGame (will get fixed directly)
+	0x48,              // ret
+};
+
+void SciEngine::patchGameSaveRestore(SegManager *segMan) {
+	const Object *gameSuperObject = segMan->getObject(_gameSuperClassAddress);
+	const uint16 gameSuperMethodCount = gameSuperObject->getMethodCount();
+	reg_t methodAddress;
+	Script *script = NULL;
+	const byte *scriptRestorePtr = NULL;
+	const uint16 kernelCount = _kernel->getKernelNamesSize();
+	byte kernelIdRestore = 0;
+
+	for (uint16 kernelNr = 0; kernelNr < kernelCount; kernelNr++) {
+		Common::String kernelName = _kernel->getKernelName(kernelNr);
+		if (kernelName == "RestoreGame")
+			kernelIdRestore = kernelNr;
+	}
+
+	for (uint16 methodNr = 0; methodNr < gameSuperMethodCount; methodNr++) {
+		uint16 selectorId = gameSuperObject->getFuncSelector(methodNr);
+		Common::String methodName = _kernel->getSelectorName(selectorId);
+		if (methodName == "restore") {
+			methodAddress = gameSuperObject->getFunction(methodNr);
+			script = segMan->getScript(methodAddress.segment);
+			scriptRestorePtr = script->getBuf(methodAddress.offset);
+			break;
+		}
+	}
+	if (scriptRestorePtr) {
+		// Now patch in our code
+		byte *patchPtr = (byte *)scriptRestorePtr;
+		memcpy(patchPtr, patchGameRestore, sizeof(patchGameRestore));
+		patchPtr[7] = kernelIdRestore;
+	}
 }
 
 bool SciEngine::initGame() {

@@ -53,6 +53,7 @@ class Console;
 class AudioPlayer;
 class SoundCommandParser;
 class EventManager;
+class SegManager;
 
 class GfxAnimate;
 class GfxCache;
@@ -254,6 +255,8 @@ public:
 	void scriptDebug();
 	bool checkExportBreakpoint(uint16 script, uint16 pubfunct);
 	bool checkSelectorBreakpoint(reg_t send_obj, int selector);
+
+	void patchGameSaveRestore(SegManager *segMan);
 
 public:
 

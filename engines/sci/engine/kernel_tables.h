@@ -412,7 +412,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            NULL },
     { MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },
     { MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                      NULL,            NULL },
-    { MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "rir",                   NULL,            NULL },
+    { MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "[r0]i(r)",              NULL,            NULL },
     { MAP_CALL(Said),              SIG_EVERYWHERE,           "[r0]",                  NULL,            NULL },
     { MAP_CALL(SaveGame),          SIG_EVERYWHERE,           "rir(r)",                NULL,            NULL },
     { MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "[io](i)",               NULL,            NULL },
