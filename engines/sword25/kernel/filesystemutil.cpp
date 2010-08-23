@@ -74,7 +74,7 @@ public:
 		Common::String path = ConfMan.get("savepath");
 
 		if (path.empty()) {
-			BS_LOG_ERRORLN("No save path has been defined");
+			error("No save path has been defined");
 			return "";
 		}
 
