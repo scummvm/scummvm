@@ -19,6 +19,11 @@ MODULE_OBJS += \
 	win32/win32.o
 endif
 
+ifdef AMIGAOS
+	amigaos/amigaos-main.o \
+	amigaos/amigaos.o
+endif
+
 # We don't use the rules.mk here on purpose
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))
 OBJS := $(MODULE_OBJS) $(OBJS)
