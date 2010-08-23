@@ -1461,7 +1461,7 @@ void RivenExternal::xgwatch(uint16 argc, uint16 *argv) {
 			if (curSound == 5) // Break out after the last sound is done
 				break;
 
-			_vm->_sound->playSound(getComboDigit(*prisonCombo, curSound) + 13);
+			_vm->_sound->playSound(getComboDigit(*prisonCombo, curSound) + 13, !(_vm->getFeatures() & GF_DVD));
 			curSound++;
 			soundTime = _vm->_system->getMillis();
 		}
