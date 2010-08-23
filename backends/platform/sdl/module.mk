@@ -20,6 +20,7 @@ MODULE_OBJS += \
 endif
 
 ifdef AMIGAOS
+MODULE_OBJS += \
 	amigaos/amigaos-main.o \
 	amigaos/amigaos.o
 endif
