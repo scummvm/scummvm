@@ -149,8 +149,9 @@ void ScummVMWindow::SetTitle(const Common::String &Title) {
 }
 
 bool ScummVMWindow::ProcessMessages() {
-	// No implementation
-	return true;
+	// All messages are handled separately in the input manager. The only thing we
+	// need to do here is to keep returning whether the window/game is still alive
+	return _WindowAlive;
 }
 
 bool ScummVMWindow::WaitForFocus() {
