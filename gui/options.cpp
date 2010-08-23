@@ -1000,7 +1000,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 #ifdef USE_DETECTLANG
 	_guiLanguagePopUp->appendEntry(_("<default>"), Common::kTranslationAutodetectId);
 #endif // USE_DETECTLANG
-	_guiLanguagePopUp->appendEntry(_("English"), Common::kTranslationBuiltinId);
+	_guiLanguagePopUp->appendEntry("English", Common::kTranslationBuiltinId);
 	_guiLanguagePopUp->appendEntry("", 0);
 	Common::TLangArray languages = TransMan.getSupportedLanguageNames();
 	Common::TLangArray::iterator lang = languages.begin();
