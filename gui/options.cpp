@@ -227,7 +227,7 @@ void OptionsDialog::open() {
 
 		Common::String soundFont(ConfMan.get("soundfont", _domain));
 		if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain)) {
-			_soundFont->setLabel(_("None"));
+			_soundFont->setLabel(_c("None", "soundfont"));
 			_soundFontClearButton->setEnabled(false);
 		} else {
 			_soundFont->setLabel(soundFont);
@@ -396,7 +396,7 @@ void OptionsDialog::close() {
 				ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
 
 				Common::String soundFont(_soundFont->getLabel());
-				if (!soundFont.empty() && (soundFont != _("None")))
+				if (!soundFont.empty() && (soundFont != _c("None", "soundfont")))
 					ConfMan.set("soundfont", soundFont, _domain);
 				else
 					ConfMan.removeKey("soundfont", _domain);
@@ -494,7 +494,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_subSpeedLabel->draw();
 		break;
 	case kClearSoundFontCmd:
-		_soundFont->setLabel(_("None"));
+		_soundFont->setLabel(_c("None", "soundfont"));
 		_soundFontClearButton->setEnabled(false);
 		draw();
 		break;
@@ -552,7 +552,7 @@ void OptionsDialog::setMIDISettingsState(bool enabled) {
 	_soundFontButton->setEnabled(enabled);
 	_soundFont->setEnabled(enabled);
 
-	if (enabled && !_soundFont->getLabel().empty() && (_soundFont->getLabel() != _("None")))
+	if (enabled && !_soundFont->getLabel().empty() && (_soundFont->getLabel() != _c("None", "soundfont")))
 		_soundFontClearButton->setEnabled(enabled);
 	else
 		_soundFontClearButton->setEnabled(false);
@@ -730,7 +730,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 
 	// SoundFont
 	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _("SoundFont:"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"), kChooseSoundFontCmd);
-	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", _("None"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"));
+	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", _c("None", "soundfont"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"));
 	_soundFontClearButton = new ButtonWidget(boss, prefix + "mcFontClearButton", "C", _("Clear value"), kClearSoundFontCmd);
 
 	// Multi midi setting
@@ -954,14 +954,14 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_savePath = new StaticTextWidget(tab, "GlobalOptions_Paths.SavePath", "/foo/bar", _("Specifies where your savegames are put"));
 
 	new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _("Theme Path:"), 0, kChooseThemeDirCmd);
-	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", _("None"));
+	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", _c("None", "path"));
 
 	new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
-	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _("None"), _("Specifies path to additional data used by all games or ScummVM"));
+	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _c("None", "path"), _("Specifies path to additional data used by all games or ScummVM"));
 
 #ifdef DYNAMIC_MODULES
 	new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _("Plugins Path:"), 0, kChoosePluginsDirCmd);
-	_pluginsPath = new StaticTextWidget(tab, "GlobalOptions_Paths.PluginsPath", _("None"));
+	_pluginsPath = new StaticTextWidget(tab, "GlobalOptions_Paths.PluginsPath", _c("None", "path"));
 #endif
 #endif
 
@@ -1051,19 +1051,19 @@ void GlobalOptionsDialog::open() {
 	Common::String extraPath(ConfMan.get("extrapath", _domain));
 
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
-		_savePath->setLabel(_("None"));
+		_savePath->setLabel(_c("None", "path"));
 	} else {
 		_savePath->setLabel(savePath);
 	}
 
 	if (themePath.empty() || !ConfMan.hasKey("themepath", _domain)) {
-		_themePath->setLabel(_("None"));
+		_themePath->setLabel(_c("None", "path"));
 	} else {
 		_themePath->setLabel(themePath);
 	}
 
 	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
-		_extraPath->setLabel(_("None"));
+		_extraPath->setLabel(_c("None", "path"));
 	} else {
 		_extraPath->setLabel(extraPath);
 	}
@@ -1071,7 +1071,7 @@ void GlobalOptionsDialog::open() {
 #ifdef DYNAMIC_MODULES
 	Common::String pluginsPath(ConfMan.get("pluginspath", _domain));
 	if (pluginsPath.empty() || !ConfMan.hasKey("pluginspath", _domain)) {
-		_pluginsPath->setLabel(_("None"));
+		_pluginsPath->setLabel(_c("None", "path"));
 	} else {
 		_pluginsPath->setLabel(pluginsPath);
 	}
@@ -1095,24 +1095,24 @@ void GlobalOptionsDialog::open() {
 void GlobalOptionsDialog::close() {
 	if (getResult()) {
 		Common::String savePath(_savePath->getLabel());
-		if (!savePath.empty() && (savePath != _("None")))
+		if (!savePath.empty() && (savePath != _c("None", "path")))
 			ConfMan.set("savepath", savePath, _domain);
 
 		Common::String themePath(_themePath->getLabel());
-		if (!themePath.empty() && (themePath != _("None")))
+		if (!themePath.empty() && (themePath != _c("None", "path")))
 			ConfMan.set("themepath", themePath, _domain);
 		else
 			ConfMan.removeKey("themepath", _domain);
 
 		Common::String extraPath(_extraPath->getLabel());
-		if (!extraPath.empty() && (extraPath != _("None")))
+		if (!extraPath.empty() && (extraPath != _c("None", "path")))
 			ConfMan.set("extrapath", extraPath, _domain);
 		else
 			ConfMan.removeKey("extrapath", _domain);
 
 #ifdef DYNAMIC_MODULES
 		Common::String pluginsPath(_pluginsPath->getLabel());
-		if (!pluginsPath.empty() && (pluginsPath != _("None")))
+		if (!pluginsPath.empty() && (pluginsPath != _c("None", "path")))
 			ConfMan.set("pluginspath", pluginsPath, _domain);
 		else
 			ConfMan.removeKey("pluginspath", _domain);
@@ -1211,7 +1211,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			Common::FSNode file(browser.getResult());
 			_soundFont->setLabel(file.getPath());
 
-			if (!file.getPath().empty() && (file.getPath() != _("None")))
+			if (!file.getPath().empty() && (file.getPath() != _c("None", "path")))
 				_soundFontClearButton->setEnabled(true);
 			else
 				_soundFontClearButton->setEnabled(false);

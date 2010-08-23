@@ -50,6 +50,7 @@ typedef Array<TLanguage> TLangArray;
 
 struct PoMessageEntry {
 	int msgid;
+	String msgctxt;
 	String msgstr;
 };
 
@@ -114,6 +115,28 @@ public:
 	 * it returns the original untranslated message.
 	 */
 	String getTranslation(const String &message);
+	
+	/**
+	 * Returns the translation into the current language of the parameter
+	 * message. In case the message isn't found in the translation catalog,
+	 * it returns the original untranslated message.
+	 *
+	 * If a translation is found for the given context it will return that
+	 * translation, otherwise it will look for a translation for the same
+	 * massage without a context or with a different context.
+	 */
+	const char *getTranslation(const char *message, const char *context);
+	
+	/**
+	 * Returns the translation into the current language of the parameter
+	 * message. In case the message isn't found in the translation catalog,
+	 * it returns the original untranslated message.
+	 *
+	 * If a translation is found for the given context it will return that
+	 * translation, otherwise it will look for a translation for the same
+	 * massage without a context or with a different context.
+	 */
+	String getTranslation(const String &message, const String &context);
 
 	/**
 	 * Returns a list of supported languages.
@@ -163,8 +186,10 @@ private:
 
 #ifdef USE_TRANSLATION
 #define _(str) TransMan.getTranslation(str)
+#define _c(str, context) TransMan.getTranslation(str, context)
 #else
 #define _(str) str
+#define _c(str, context) str
 #endif
 
 #define _s(str) str

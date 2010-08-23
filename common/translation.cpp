@@ -29,7 +29,7 @@
 #undef ARRAYSIZE
 #endif
 
-#define TRANSLATIONS_DAT_VER 1
+#define TRANSLATIONS_DAT_VER 2
 
 #include "translation.h"
 
@@ -150,6 +150,10 @@ void TranslationManager::setLanguage(const char *lang) {
 }
 
 const char *TranslationManager::getTranslation(const char *message) {
+	return getTranslation(message, NULL);
+}
+
+const char *TranslationManager::getTranslation(const char *message, const char *context) {
 	// if no language is set or message is empty, return msgid as is
 	if (_currentTranslationMessages.empty() || *message == '\0')
 		return message;
@@ -160,13 +164,39 @@ const char *TranslationManager::getTranslation(const char *message) {
 
 	while (rightIndex >= leftIndex) {
 		const int midIndex = (leftIndex + rightIndex) / 2;
-		const PoMessageEntry * const m = &_currentTranslationMessages[midIndex];
+		const PoMessageEntry *const m = &_currentTranslationMessages[midIndex];
 
-		const int compareResult = strcmp(message, _messageIds[m->msgid].c_str());
+		int compareResult = strcmp(message, _messageIds[m->msgid].c_str());
 
-		if (compareResult == 0)
-			return m->msgstr.c_str();
-		else if (compareResult < 0)
+		if (compareResult == 0) {
+			// Get the range of messages with the same ID (but different context)
+			leftIndex = rightIndex = midIndex;
+			while (
+				leftIndex > 0 &&
+				_currentTranslationMessages[leftIndex - 1].msgid == m->msgid
+			) {
+				--leftIndex;
+			}
+			while (
+				rightIndex < (int)_currentTranslationMessages.size() - 1 &&
+				_currentTranslationMessages[rightIndex + 1].msgid == m->msgid
+			) {
+				++rightIndex;
+			}
+			// Find the context we want
+			if (context == NULL || *context == '\0' || leftIndex == rightIndex)
+				return _currentTranslationMessages[leftIndex].msgstr.c_str();
+			// We could use again binary search, but there should be only a small number of contexts.
+			while (rightIndex > leftIndex) {
+				compareResult = strcmp(context, _currentTranslationMessages[rightIndex].msgctxt.c_str());
+				if (compareResult == 0)
+					return _currentTranslationMessages[rightIndex].msgstr.c_str();
+				else if (compareResult > 0)
+					break;
+				--rightIndex;
+			}
+			return _currentTranslationMessages[leftIndex].msgstr.c_str();
+		} else if (compareResult < 0)
 			rightIndex = midIndex - 1;
 		else
 			leftIndex = midIndex + 1;
@@ -183,6 +213,10 @@ const char *TranslationManager::getCurrentCharset() {
 
 String TranslationManager::getTranslation(const String &message) {
 	return getTranslation(message.c_str());
+}
+
+String TranslationManager::getTranslation(const String &message, const String &context) {
+	return getTranslation(message.c_str(), context.c_str());
 }
 
 const TLangArray TranslationManager::getSupportedLanguageNames() const {
@@ -314,6 +348,11 @@ void TranslationManager::loadLanguageDat(int index) {
 		len = in.readUint16BE();
 		in.read(buf, len);
 		_currentTranslationMessages[i].msgstr = String(buf, len);
+		len = in.readUint16BE();
+		if (len > 0) {
+			in.read(buf, len);
+			_currentTranslationMessages[i].msgctxt = String(buf, len);
+		}
 	}
 }
 
@@ -370,6 +409,14 @@ const char *TranslationManager::getTranslation(const char *message) {
 }
 
 String TranslationManager::getTranslation(const String &message) {
+	return message;
+}
+
+const char *TranslationManager::getTranslation(const char *message, const char *) {
+	return message;
+}
+
+String TranslationManager::getTranslation(const String &message, const String &) {
 	return message;
 }
 

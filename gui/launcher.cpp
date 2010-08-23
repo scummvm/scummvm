@@ -286,7 +286,7 @@ void EditGameDialog::open() {
 
 	String extraPath(ConfMan.get("extrapath", _domain));
 	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
-		_extraPathWidget->setLabel(_("None"));
+		_extraPathWidget->setLabel(_c("None", "path"));
 	}
 
 	String savePath(ConfMan.get("savepath", _domain));
@@ -366,7 +366,7 @@ void EditGameDialog::close() {
 			ConfMan.set("path", gamePath, _domain);
 
 		String extraPath(_extraPathWidget->getLabel());
-		if (!extraPath.empty() && (extraPath != _("None")))
+		if (!extraPath.empty() && (extraPath != _c("None", "path")))
 			ConfMan.set("extrapath", extraPath, _domain);
 
 		String savePath(_savePathWidget->getLabel());
@@ -415,7 +415,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			Common::FSNode file(browser.getResult());
 			_soundFont->setLabel(file.getPath());
 
-			if (!file.getPath().empty() && (file.getPath() != _("None")))
+			if (!file.getPath().empty() && (file.getPath() != _c("None", "path")))
 				_soundFontClearButton->setEnabled(true);
 			else
 				_soundFontClearButton->setEnabled(false);

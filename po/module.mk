@@ -2,7 +2,7 @@ POTFILE := $(srcdir)/po/scummvm.pot
 POFILES := $(wildcard $(srcdir)/po/*.po)
 
 updatepot:
-	xgettext -f $(srcdir)/po/POTFILES -D $(srcdir) -d scummvm --c++ -k_ -k_s -o $(POTFILE) \
+	xgettext -f $(srcdir)/po/POTFILES -D $(srcdir) -d scummvm --c++ -k_ -k_s -k_c:1,2c -o $(POTFILE) \
 		"--copyright-holder=ScummVM Team" --package-name=ScummVM \
 		--package-version=$(VERSION) --msgid-bugs-address=scummvm-devel@lists.sf.net -o $(POTFILE)_
 
@@ -25,7 +25,7 @@ updatepot:
 	fi;
 
 %.po: $(POTFILE)
-	msgmerge -N $@ $(POTFILE) -o $@.new
+	msgmerge $@ $(POTFILE) -o $@.new
 	if cmp $@ $@.new >/dev/null 2>&1; then \
 		rm -f $@.new; \
 	else \

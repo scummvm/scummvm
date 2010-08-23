@@ -35,7 +35,7 @@
 #include "create_translations.h"
 #include "po_parser.h"
 
-#define TRANSLATIONS_DAT_VER 1	// 1 byte
+#define TRANSLATIONS_DAT_VER 2	// 1 byte
 
 // Padding buffer (filled with 0) used if we want to aligned writes
 // static uint8 padBuf[DATAALIGNMENT];
@@ -125,7 +125,6 @@ int main(int argc, char *argv[]) {
 	//   ...
 	
 	// Write length for translation description
-	// Each description
 	len = 0;
 	for (lang = 0; lang < numLangs; lang++) {
 		len += stringSize(translations[lang]->language());
@@ -147,8 +146,10 @@ int main(int argc, char *argv[]) {
 	// the string size (two bytes for the number of chars and the string itself).
 	for (lang = 0; lang < numLangs; lang++) {
 		len = 2 + stringSize(translations[lang]->charset());
-		for (i = 0; i < translations[lang]->size(); ++i)
+		for (i = 0; i < translations[lang]->size(); ++i) {
 			len += 2 + stringSize(translations[lang]->entry(i)->msgstr);
+			len += stringSize(translations[lang]->entry(i)->msgctxt);
+		}
 		writeUint16BE(outFile, len);
 	}
 
@@ -171,6 +172,7 @@ int main(int argc, char *argv[]) {
 		for (i = 0; i < translations[lang]->size(); ++i) {
 			writeUint16BE(outFile, messageIds.findIndex(translations[lang]->entry(i)->msgid));
 			writeString(outFile, translations[lang]->entry(i)->msgstr);
+			writeString(outFile, translations[lang]->entry(i)->msgctxt);
 		}
 	}
 

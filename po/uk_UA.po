@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-08-19 13:30+0300\n"
+"POT-Creation-Date: 2010-08-23 20:16+0100\n"
 "PO-Revision-Date: 2010-07-30 22:19+0100\n"
 "Last-Translator: Lubomyr Lisen\n"
 "Language-Team: Ukrainian\n"
+"Language: Ukrainian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: Ukrainian\n"
-"Plural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n%"
-"10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n"
+"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #: gui/about.cpp:96
 #, c-format
@@ -225,12 +225,12 @@ msgid "Specifies where your savegames are put"
 msgstr "Вказує шлях до збережень гри"
 
 #: gui/launcher.cpp:289 gui/launcher.cpp:369 gui/launcher.cpp:418
-#: gui/options.cpp:230 gui/options.cpp:399 gui/options.cpp:497
-#: gui/options.cpp:555 gui/options.cpp:733 gui/options.cpp:957
-#: gui/options.cpp:960 gui/options.cpp:964 gui/options.cpp:1054
-#: gui/options.cpp:1060 gui/options.cpp:1066 gui/options.cpp:1074
-#: gui/options.cpp:1098 gui/options.cpp:1102 gui/options.cpp:1108
-#: gui/options.cpp:1115 gui/options.cpp:1214
+#: gui/options.cpp:957 gui/options.cpp:960 gui/options.cpp:964
+#: gui/options.cpp:1054 gui/options.cpp:1060 gui/options.cpp:1066
+#: gui/options.cpp:1074 gui/options.cpp:1098 gui/options.cpp:1102
+#: gui/options.cpp:1108 gui/options.cpp:1115 gui/options.cpp:1214
+#, fuzzy
+msgctxt "path"
 msgid "None"
 msgstr "Не заданий"
 
@@ -463,6 +463,13 @@ msgstr "44 кГц"
 #: gui/options.cpp:80
 msgid "48 kHz"
 msgstr "48 кГц"
+
+#: gui/options.cpp:230 gui/options.cpp:399 gui/options.cpp:497
+#: gui/options.cpp:555 gui/options.cpp:733
+#, fuzzy
+msgctxt "soundfont"
+msgid "None"
+msgstr "Не заданий"
 
 #: gui/options.cpp:632
 msgid "Graphics mode:"
