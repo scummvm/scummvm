@@ -1794,18 +1794,16 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 		if (stripnr * 2 + 2 < smapLen) {
 			offset = READ_LE_UINT16(smap_ptr + stripnr * 2 + 2);
 		}
-		assertRange(0, offset, smapLen-1, "screen strip");
 	} else if (_vm->_game.features & GF_SMALL_HEADER) {
 		smapLen = READ_LE_UINT32(smap_ptr);
 		if (stripnr * 4 + 4 < smapLen)
 			offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 4);
-		assertRange(0, offset, smapLen-1, "screen strip");
 	} else {
 		smapLen = READ_BE_UINT32(smap_ptr);
 		if (stripnr * 4 + 8 < smapLen)
 			offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
-		assertRange(0, offset, smapLen-1, "screen strip");
 	}
+	assertRange(0, offset, smapLen-1, "screen strip");
 
 	return decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
 }
