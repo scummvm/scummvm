@@ -47,6 +47,9 @@ namespace Sword25 {
 
 namespace {
 unsigned int FindEmbeddedPNG(const byte *FileDataPtr, unsigned int FileSize) {
+	if (memcmp(FileDataPtr, "BS25SAVEGAME", 12))
+		return 0;
+
 #if 0
 	// Einen Stringstream mit dem Anfang der Datei intialisieren. 512 Byte sollten hierfür genügen.
 	istringstream StringStream(string(FileDataPtr, FileDataPtr + min(static_cast<unsigned int>(512), FileSize)));
