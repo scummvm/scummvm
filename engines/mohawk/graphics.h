@@ -41,6 +41,8 @@ class MohawkBitmap;
 class MystBitmap;
 
 enum {
+	kRivenOpenHandCursor = 2003,
+	kRivenClosedHandCursor = 2004,
 	kRivenMainCursor = 3000,
 	kRivenPelletCursor = 5000,
 	kRivenHideCursor = 9000

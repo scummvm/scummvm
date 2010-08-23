@@ -309,6 +309,7 @@ RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("listZipCards",   WRAP_METHOD(RivenConsole, Cmd_ListZipCards));
 	DCmd_Register("getRMAP",		WRAP_METHOD(RivenConsole, Cmd_GetRMAP));
 	DCmd_Register("combos",         WRAP_METHOD(RivenConsole, Cmd_Combos));
+	DCmd_Register("sliderState",    WRAP_METHOD(RivenConsole, Cmd_SliderState));
 }
 
 RivenConsole::~RivenConsole() {
@@ -638,6 +639,14 @@ bool RivenConsole::Cmd_Combos(int argc, const char **argv) {
 			DebugPrintf("%d ", i);
 
 	DebugPrintf("\n");
+	return true;
+}
+
+bool RivenConsole::Cmd_SliderState(int argc, const char **argv) {
+	if (argc > 1)
+		_vm->_externalScriptHandler->setDomeSliderState((uint32)atoi(argv[1]));
+
+	DebugPrintf("Dome Slider State = %08x\n", _vm->_externalScriptHandler->getDomeSliderState());
 	return true;
 }
 

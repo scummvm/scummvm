@@ -34,8 +34,12 @@
 
 namespace Mohawk {
 
+static const uint32 kDomeSliderDefaultState = 0x01F00000;
+static const uint32 kDomeSliderSlotCount = 25;
+
 RivenExternal::RivenExternal(MohawkEngine_Riven *vm) : _vm(vm) {
 	setupCommands();
+	_sliderState = kDomeSliderDefaultState;
 }
 
 RivenExternal::~RivenExternal() {
@@ -232,6 +236,86 @@ void RivenExternal::runDomeCheck() {
 	// give a 3 frame leeway in either direction.
 	if (frameCount - curFrame < 3 || curFrame < 3)
 		*_vm->matchVarToString("domecheck") = 1;
+}
+
+void RivenExternal::resetDomeSliders(uint16 bitmapId, uint16 soundId) {
+	// TODO: Draw the animation of the sliders moving back to the start
+	_sliderState = kDomeSliderDefaultState;
+}
+
+void RivenExternal::checkDomeSliders(uint16 resetSlidersHotspot, uint16 openDomeHotspot) {
+	// Let's see if we're all matched up...
+	if (*_vm->matchVarToString("adomecombo") == _sliderState) {
+		// Set the button hotspot to the open dome hotspot
+		_vm->_hotspots[resetSlidersHotspot].enabled = false;
+		_vm->_hotspots[openDomeHotspot].enabled = true;
+	} else {
+		// Set the button hotspot to the reset sliders hotspot
+		_vm->_hotspots[resetSlidersHotspot].enabled = true;
+		_vm->_hotspots[openDomeHotspot].enabled = false;
+	}
+}
+
+void RivenExternal::checkSliderCursorChange(uint16 startHotspot) {
+	// Set the cursor based on _sliderState and what hotspot we're over
+	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
+		if (_vm->_hotspots[i + startHotspot].rect.contains(_vm->_mousePos)) {
+			if (_sliderState & (1 << (24 - i)))
+				_vm->_gfx->changeCursor(kRivenOpenHandCursor);
+			else
+				_vm->_gfx->changeCursor(kRivenMainCursor);
+			break;
+		}
+	}
+}
+
+void RivenExternal::dragDomeSlider(uint16 bitmapId, uint16 soundId, uint16 resetSlidersHotspot, uint16 openDomeHotspot, uint16 startHotspot) {
+	int16 foundSlider = -1;
+
+	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
+		if (_vm->_hotspots[i + startHotspot].rect.contains(_vm->_mousePos)) {
+			// If the slider is not at this hotspot, we can't do anything else
+			if (!(_sliderState & (1 << (24 - i))))
+				return;
+
+			foundSlider = i;
+			break;
+		}
+	}
+
+	// We're not over any slider
+	if (foundSlider < 0)
+		return;
+
+	// We've clicked down, so show the closed hand cursor
+	_vm->_gfx->changeCursor(kRivenClosedHandCursor);
+
+	bool done = false;
+	while (!done) {
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				_vm->_system->updateScreen();
+				break;
+			case Common::EVENT_LBUTTONUP:
+				done = true;
+				break;
+			default:
+				break;
+			}
+		}
+		_vm->_system->delayMillis(10);
+	}
+
+	// TODO: Handle any slider movement
+	// TODO: Redraw the sliders
+
+	// Now that we've released, show the open hand cursor again
+	_vm->_gfx->changeCursor(kRivenOpenHandCursor);
+
+	// Check to see if we have the right combination
+	checkDomeSliders(resetSlidersHotspot, openDomeHotspot);
 }
 
 // ------------------------------------------------------------------------------------
@@ -698,19 +782,19 @@ void RivenExternal::xbaitplate(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xbisland190_opencard(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkDomeSliders(27, 28);
 }
 
 void RivenExternal::xbisland190_resetsliders(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	resetDomeSliders(287, 41);
 }
 
 void RivenExternal::xbisland190_slidermd(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	dragDomeSlider(287, 41, 27, 28, 2);
 }
 
 void RivenExternal::xbisland190_slidermw(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkSliderCursorChange(2);
 }
 
 void RivenExternal::xbscpbtn(uint16 argc, uint16 *argv) {
@@ -730,7 +814,7 @@ void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 	bool done = false;
 
 	// Set the cursor to the closed position
-	_vm->_gfx->changeCursor(2004);
+	_vm->_gfx->changeCursor(kRivenClosedHandCursor);
 	_vm->_system->updateScreen();
 
 	while (!done) {
@@ -819,19 +903,19 @@ void RivenExternal::xgpincontrols(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xgisland25_opencard(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkDomeSliders(29, 30);
 }
 
 void RivenExternal::xgisland25_resetsliders(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	resetDomeSliders(161, 16);
 }
 
 void RivenExternal::xgisland25_slidermd(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	dragDomeSlider(161, 16, 29, 30, 2);
 }
 
 void RivenExternal::xgisland25_slidermw(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkSliderCursorChange(2);
 }
 
 void RivenExternal::xgscpbtn(uint16 argc, uint16 *argv) {
@@ -1105,15 +1189,15 @@ void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xjdome25_resetsliders(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	resetDomeSliders(548, 81);
 }
 
 void RivenExternal::xjdome25_slidermd(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	dragDomeSlider(548, 81, 27, 28, 2);
 }
 
 void RivenExternal::xjdome25_slidermw(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkSliderCursorChange(2);
 }
 
 void RivenExternal::xjscpbtn(uint16 argc, uint16 *argv) {
@@ -1128,7 +1212,7 @@ int RivenExternal::jspitElevatorLoop() {
 	Common::Event event;
 	int changeLevel = 0;
 
-	_vm->_gfx->changeCursor(2004);
+	_vm->_gfx->changeCursor(kRivenClosedHandCursor);
 	_vm->_system->updateScreen();
 	for (;;) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
@@ -1431,19 +1515,19 @@ void RivenExternal::xpisland290_domecheck(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xpisland25_opencard(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkDomeSliders(31, 5);
 }
 
 void RivenExternal::xpisland25_resetsliders(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	resetDomeSliders(58, 10);
 }
 
 void RivenExternal::xpisland25_slidermd(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	dragDomeSlider(58, 10, 31, 5, 6);
 }
 
 void RivenExternal::xpisland25_slidermw(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkSliderCursorChange(6);
 }
 
 // ------------------------------------------------------------------------------------
@@ -1630,19 +1714,19 @@ void RivenExternal::xtisland4990_domecheck(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xtisland5056_opencard(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkDomeSliders(29, 30);
 }
 
 void RivenExternal::xtisland5056_resetsliders(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	resetDomeSliders(798, 37);
 }
 
 void RivenExternal::xtisland5056_slidermd(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	dragDomeSlider(798, 37, 29, 30, 3);
 }
 
 void RivenExternal::xtisland5056_slidermw(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkSliderCursorChange(3);
 }
 
 void RivenExternal::xtatboundary(uint16 argc, uint16 *argv) {
