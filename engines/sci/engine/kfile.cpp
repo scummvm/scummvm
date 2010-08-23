@@ -24,9 +24,12 @@
  */
 
 #include "common/archive.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/str.h"
 #include "common/savefile.h"
+
+#include "gui/saveload.h"
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
@@ -37,7 +40,7 @@
 namespace Sci {
 
 struct SavegameDesc {
-	uint id;
+	int16 id;
 	int virtualId; // straight numbered, according to id but w/o gaps
 	int date;
 	int time;
@@ -269,7 +272,7 @@ reg_t kGetCWD(EngineState *s, int argc, reg_t *argv) {
 }
 
 static void listSavegames(Common::Array<SavegameDesc> &saves);
-static int findSavegame(Common::Array<SavegameDesc> &saves, uint saveId);
+static int findSavegame(Common::Array<SavegameDesc> &saves, int16 saveId);
 
 enum {
 	K_DEVICE_INFO_GET_DEVICE = 0,
@@ -452,7 +455,7 @@ static void listSavegames(Common::Array<SavegameDesc> &saves) {
 }
 
 // Find a savedgame according to virtualId and return the position within our array
-static int findSavegame(Common::Array<SavegameDesc> &saves, uint savegameId) {
+static int findSavegame(Common::Array<SavegameDesc> &saves, int16 savegameId) {
 	for (uint saveNr = 0; saveNr < saves.size(); saveNr++) {
 		if (saves[saveNr].id == savegameId)
 			return saveNr;
@@ -549,7 +552,7 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = s->_segMan->getString(argv[0]);
-	uint virtualId = argv[1].toUint16();
+	int16 virtualId = argv[1].toSint16();
 	Common::String game_description = s->_segMan->getString(argv[2]);
 	Common::String version;
 	if (argc > 3)
@@ -566,7 +569,7 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
-	uint savegameId;
+	int16 savegameId;
 	if ((virtualId >= SAVEGAMEID_OFFICIALRANGE_START) && (virtualId <= SAVEGAMEID_OFFICIALRANGE_END)) {
 		// savegameId is an actual Id, so search for it just to make sure
 		savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
@@ -628,13 +631,26 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = !argv[0].isNull() ? s->_segMan->getString(argv[0]) : "";
-	uint savegameId = argv[1].toUint16();
+	int16 savegameId = argv[1].toSint16();
 
 	debug(3, "kRestoreGame(%s,%d)", game_id.c_str(), savegameId);
 
 	if (argv[0].isNull()) {
-		// Loading from the launcher, don't adjust the ID of the saved game
+		// Direct call, either from launcher or from a patched Game::restore call
+		if (savegameId == -1) {
+			// we are supposed to show a dialog for the user and let him choose a saved game
+			const EnginePlugin *plugin = NULL;
+			EngineMan.findGame(g_sci->getGameIdStr(), &plugin);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore");
+			dialog->setSaveMode(false);
+			savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
+			delete dialog;
+			if (savegameId < 0)
+				return s->r_acc;
+		}
+		// don't adjust ID of the saved game, it's already correct
 	} else {
+		// Real call from script, we need to adjust ID
 		if ((savegameId < SAVEGAMEID_OFFICIALRANGE_START) || (savegameId > SAVEGAMEID_OFFICIALRANGE_END)) {
 			warning("Savegame ID %d is not allowed", savegameId);
 			return TRUE_REG;

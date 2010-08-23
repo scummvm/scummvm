@@ -136,8 +136,8 @@ public:
 
 	DirSeeker _dirseeker;
 
-	uint _lastSaveVirtualId; // last virtual id fed to kSaveGame, if no kGetSaveFiles was called inbetween
-	uint _lastSaveNewId;    // last newly created filename-id by kSaveGame
+	int16 _lastSaveVirtualId; // last virtual id fed to kSaveGame, if no kGetSaveFiles was called inbetween
+	int16 _lastSaveNewId;    // last newly created filename-id by kSaveGame
 
 public:
 	/* VM Information */
