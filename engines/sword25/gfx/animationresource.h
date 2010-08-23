@@ -39,12 +39,11 @@
 // Includes
 // -----------------------------------------------------------------------------
 
+#include "common/xmlparser.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/resource.h"
 #include "sword25/gfx/animationdescription.h"
 #include "sword25/gfx/animation.h"
-
-class TiXmlElement;
 
 namespace Sword25 {
 
@@ -59,9 +58,9 @@ class PackageManager;
 // Class Definition
 // -----------------------------------------------------------------------------
 
-class AnimationResource : public Resource, public AnimationDescription {
+class AnimationResource : public Resource, public AnimationDescription, public Common::XMLParser {
 public:
-	AnimationResource(const Common::String &FileName);
+	AnimationResource(const Common::String &filename);
 	virtual ~AnimationResource();
 
 	virtual const Frame    &GetFrame(unsigned int Index) const {
@@ -100,18 +99,35 @@ public:
 private:
 	bool                            m_Valid;
 
-	Common::Array<Frame>                m_Frames;
+	Common::Array<Frame>            m_Frames;
 
-	//@{
-	/** @name Dokument-Parser Methoden */
+	PackageManager *				_pPackage;
 
-	bool ParseAnimationTag(TiXmlElement &AnimationTag, int &FPS, Animation::ANIMATION_TYPES &AnimationType);
-	bool ParseFrameTag(TiXmlElement &FrameTag, Frame &Frame, PackageManager &PackageManager);
-
-	//@}
 
 	bool ComputeFeatures();
 	bool PrecacheAllFrames() const;
+
+	// Parser
+	CUSTOM_XML_PARSER(AnimationResource) {
+		XML_KEY(animation)
+			XML_PROP(fps, true)
+			XML_PROP(type, true)
+
+			XML_KEY(frame)
+				XML_PROP(file, true)
+				XML_PROP(hotspotx, true)
+				XML_PROP(hotspoty, true)
+				XML_PROP(fliph, false)
+				XML_PROP(flipv, false)
+			KEY_END()
+		KEY_END()
+	} PARSER_END()
+
+	bool parseBooleanKey(Common::String s, bool &result);
+
+	// Parser callback methods
+	bool parserCallback_animation(ParserNode *node);
+	bool parserCallback_frame(ParserNode *node);
 };
 
 } // End of namespace Sword25

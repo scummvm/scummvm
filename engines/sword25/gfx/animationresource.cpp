@@ -41,7 +41,6 @@
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/string.h"
 #include "sword25/package/packagemanager.h"
-#include "sword25/util/tinyxml/tinyxml.h"
 #include "sword25/gfx/bitmapresource.h"
 
 namespace Sword25 {
@@ -64,96 +63,54 @@ const int   MAX_FPS     = 200;
 // Construction / Destruction
 // -----------------------------------------------------------------------------
 
-AnimationResource::AnimationResource(const Common::String &FileName) :
-	Resource(FileName, Resource::TYPE_ANIMATION),
-	m_Valid(false) {
-	// Pointer auf den Package-Manager bekommen
-	PackageManager *PackagePtr = Kernel::GetInstance()->GetPackage();
-	BS_ASSERT(PackagePtr);
+AnimationResource::AnimationResource(const Common::String &filename) :
+		Resource(filename, Resource::TYPE_ANIMATION),
+		Common::XMLParser(),
+		m_Valid(false) {
+	// Get a pointer to the package manager
+	Kernel *pKernel = Kernel::GetInstance();
+	_pPackage = static_cast<PackageManager *>(pKernel->GetService("package"));
+	BS_ASSERT(_pPackage);
 
-	// Animations-XML laden
-	TiXmlDocument Doc;
-	{
-		// Die Daten werden zunächst über den Package-Manager gelesen und dann in einen um ein Byte größeren Buffer kopiert und
-		// NULL-Terminiert, da TinyXML NULL-Terminierte Daten benötigt.
-		unsigned int FileSize;
-		char *LoadBuffer = (char *) PackagePtr->GetFile(GetFileName(), &FileSize);
-		if (!LoadBuffer) {
-			BS_LOG_ERRORLN("Could not read \"%s\".", GetFileName().c_str());
-			return;
-		}
-		char *WorkBuffer;
-		WorkBuffer = (char *)malloc(FileSize + 1);
-		memcpy(&WorkBuffer[0], LoadBuffer, FileSize);
-		delete LoadBuffer;
-		WorkBuffer[FileSize] = '\0';
-
-		// Datei parsen
-		Doc.Parse(&WorkBuffer[0]);
-		free(WorkBuffer);
-		if (Doc.Error()) {
-			BS_LOG_ERRORLN("The following TinyXML-Error occured while parsing \"%s\": %s", GetFileName().c_str(), Doc.ErrorDesc());
-			return;
-		}
-	}
-
-	// Wurzelknoten des Animations-Tags finden, prüfen und Attribute auslesen.
-	TiXmlElement *pElement;
-	{
-		TiXmlNode *pNode = Doc.FirstChild("animation");
-		if (!pNode || pNode->Type() != TiXmlNode::ELEMENT) {
-			BS_LOG_ERRORLN("No <animation> tag found in \"%s\".", GetFileName().c_str());
-			return;
-		}
-		pElement = pNode->ToElement();
-
-		// Animation-Tag parsen
-		if (!ParseAnimationTag(*pElement, m_FPS, m_AnimationType)) {
-			BS_LOG_ERRORLN("An error occurred while parsing <animation> tag in \"%s\".", GetFileName().c_str());
-			return;
-		}
-	}
-
-	// Zeit (in Millisekunden) bestimmen für die ein einzelner Frame angezeigt wird
-	m_MillisPerFrame = 1000000 / m_FPS;
-
-	// In das Verzeichnis der Eingabedatei wechseln, da die Dateiverweise innerhalb der XML-Datei relativ zu diesem Verzeichnis sind.
-	Common::String OldDirectory = PackagePtr->GetCurrentDirectory();
+	// Switch to the folder the specified Xml fiile is in
+	Common::String oldDirectory = _pPackage->GetCurrentDirectory();
 	if (GetFileName().contains('/')) {
-		Common::String Dir = Common::String(GetFileName().c_str(), strrchr(GetFileName().c_str(), '/'));
-		PackagePtr->ChangeDirectory(Dir);
+		Common::String dir = Common::String(GetFileName().c_str(), strrchr(GetFileName().c_str(), '/'));
+		_pPackage->ChangeDirectory(dir);
 	}
 
-	// Nacheinander alle Frames-Informationen erstellen.
-	TiXmlElement *pFrameElement = pElement->FirstChild("frame")->ToElement();
-	while (pFrameElement) {
-		Frame CurFrame;
-
-		if (!ParseFrameTag(*pFrameElement, CurFrame, *PackagePtr)) {
-			BS_LOG_ERRORLN("An error occurred in \"%s\" while parsing <frame> tag.", GetFileName().c_str());
-			return;
-		}
-
-		m_Frames.push_back(CurFrame);
-		pFrameElement = pFrameElement->NextSiblingElement("frame");
+	// Load the contents of the file
+	unsigned int fileSize;
+	char *xmlData = _pPackage->GetXmlFile(GetFileName(), &fileSize);
+	if (!xmlData) {
+		BS_LOG_ERRORLN("Could not read \"%s\".", GetFileName().c_str());
+		return; 
 	}
 
-	// Ursprungsverzeichnis wieder herstellen
-	PackagePtr->ChangeDirectory(OldDirectory);
+	// Parse the contents
+	if (!loadBuffer((const byte *)xmlData, fileSize))
+		return;
 
-	// Sicherstellen, dass die Animation mindestens einen Frame besitzt
+	m_Valid = parse();
+	close();
+	free(xmlData);
+
+	// Switch back to the previous folder
+	_pPackage->ChangeDirectory(oldDirectory);
+
+	// Give an error message if there weren't any frames specified
 	if (m_Frames.empty()) {
 		BS_LOG_ERRORLN("\"%s\" does not have any frames.", GetFileName().c_str());
 		return;
 	}
 
-	// Alle Frame-Dateien werden vorgecached
+	// Pre-cache all the frames
 	if (!PrecacheAllFrames()) {
 		BS_LOG_ERRORLN("Could not precache all frames of \"%s\".", GetFileName().c_str());
 		return;
 	}
 
-	// Feststellen, ob die Animation skalierbar ist
+	// Post processing to compute animation features
 	if (!ComputeFeatures()) {
 		BS_LOG_ERRORLN("Could not determine the features of \"%s\".", GetFileName().c_str());
 		return;
@@ -163,96 +120,109 @@ AnimationResource::AnimationResource(const Common::String &FileName) :
 }
 
 // -----------------------------------------------------------------------------
-// Dokument-Parsermethoden
+
+bool AnimationResource::parseBooleanKey(Common::String s, bool &result) {
+	s.toLowercase();
+	if (!strcmp(s.c_str(), "true"))
+		result = true;
+	else if (!strcmp(s.c_str(), "false"))
+		result = false;
+	else
+		return false;
+	return true;
+}
+
 // -----------------------------------------------------------------------------
 
-bool AnimationResource::ParseAnimationTag(TiXmlElement &AnimationTag, int &FPS, Animation::ANIMATION_TYPES &AnimationType) {
-	// FPS einlesen
-	const char *FPSString;
-	if ((FPSString = AnimationTag.Attribute("fps"))) {
-		int TempFPS;
-		if (!BS_String::ToInt(Common::String(FPSString), TempFPS) || TempFPS < MIN_FPS || TempFPS > MAX_FPS) {
-			BS_LOG_WARNINGLN("Illegal fps value (\"%s\") in <animation> tag in \"%s\". Assuming default (\"%d\"). "
-			                 "The fps value has to be between %d and %d.",
-			                 FPSString, GetFileName().c_str(), DEFAULT_FPS, MIN_FPS, MAX_FPS);
-		} else
-			FPS = TempFPS;
+bool AnimationResource::parserCallback_animation(ParserNode *node) {
+	if (!parseIntegerKey(node->values["fps"].c_str(), 1, &m_FPS) || (m_FPS < MIN_FPS) || (m_FPS > MAX_FPS)) {
+		return parserError("Illegal or missing fps attribute in <animation> tag in \"%s\". Assuming default (\"%d\").",
+		                 GetFileName().c_str(), DEFAULT_FPS);
 	}
 
-	// Loop-Typ einlesen
-	const char *LoopTypeString;
-	if ((LoopTypeString = AnimationTag.Attribute("type"))) {
-		if (strcmp(LoopTypeString, "oneshot") == 0)
-			AnimationType = Animation::AT_ONESHOT;
-		else if (strcmp(LoopTypeString, "loop") == 0)
-			AnimationType = Animation::AT_LOOP;
-		else if (strcmp(LoopTypeString, "jojo") == 0)
-			AnimationType = Animation::AT_JOJO;
-		else
-			BS_LOG_WARNINGLN("Illegal type value (\"%s\") in <animation> tag in \"%s\". Assuming default (\"loop\").",
-			                 LoopTypeString, GetFileName().c_str());
+	// Loop type value
+	const char *loopTypeString = node->values["type"].c_str();
+	
+	if (strcmp(loopTypeString, "oneshot") == 0) {
+		m_AnimationType = Animation::AT_ONESHOT;
+	} else if (strcmp(loopTypeString, "loop") == 0) {
+		m_AnimationType = Animation::AT_LOOP;
+	} else if (strcmp(loopTypeString, "jojo") == 0) {
+		m_AnimationType = Animation::AT_JOJO;
+	} else {
+		BS_LOG_WARNINGLN("Illegal type value (\"%s\") in <animation> tag in \"%s\". Assuming default (\"loop\").",
+				loopTypeString, GetFileName().c_str());
+		m_AnimationType = Animation::AT_LOOP;
 	}
+
+	// Calculate the milliseconds required per frame
+	// FIXME: Double check variable naming. Based on the constant, it may be microseconds
+	m_MillisPerFrame = 1000000 / m_FPS;
 
 	return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool AnimationResource::ParseFrameTag(TiXmlElement &FrameTag, Frame &Frame_, PackageManager &packageManager) {
-	const char *FileString = FrameTag.Attribute("file");
-	if (!FileString) {
+bool AnimationResource::parserCallback_frame(ParserNode *node) {
+	Frame frame;
+
+	const char *fileString = node->values["file"].c_str();
+	if (!fileString) {
 		BS_LOG_ERRORLN("<frame> tag without file attribute occurred in \"%s\".", GetFileName().c_str());
 		return false;
 	}
-	Frame_.FileName = packageManager.GetAbsolutePath(FileString);
-	if (Frame_.FileName == "") {
-		BS_LOG_ERRORLN("Could not create absolute path for file specified in <frame> tag in \"%s\": \"%s\".", GetFileName().c_str(), FileString);
+	frame.FileName = _pPackage->GetAbsolutePath(fileString);
+	if (frame.FileName.empty()) {
+		BS_LOG_ERRORLN("Could not create absolute path for file specified in <frame> tag in \"%s\": \"%s\".", 
+			GetFileName().c_str(), fileString);
 		return false;
 	}
 
-	const char *ActionString = FrameTag.Attribute("action");
-	if (ActionString)
-		Frame_.Action = ActionString;
+	const char *actionString = node->values["action"].c_str();
+	if (actionString)
+		frame.Action = actionString;
 
-	const char *HotspotxString = FrameTag.Attribute("hotspotx");
-	const char *HotspotyString = FrameTag.Attribute("hotspoty");
-	if ((!HotspotxString && HotspotyString) ||
-	        (HotspotxString && !HotspotyString))
+	const char *hotspotxString = node->values["hotspotx"].c_str();
+	const char *hotspotyString = node->values["hotspoty"].c_str();
+	if ((!hotspotxString && hotspotyString) ||
+	        (hotspotxString && !hotspotyString))
 		BS_LOG_WARNINGLN("%s attribute occurred without %s attribute in <frame> tag in \"%s\". Assuming default (\"0\").",
-		                 HotspotxString ? "hotspotx" : "hotspoty",
-		                 !HotspotyString ? "hotspoty" : "hotspotx",
+		                 hotspotxString ? "hotspotx" : "hotspoty",
+		                 !hotspotyString ? "hotspoty" : "hotspotx",
 		                 GetFileName().c_str());
 
-	Frame_.HotspotX = 0;
-	if (HotspotxString && !BS_String::ToInt(Common::String(HotspotxString), Frame_.HotspotX))
+	frame.HotspotX = 0;
+	if (hotspotxString && !parseIntegerKey(hotspotxString, 1, &frame.HotspotX))
 		BS_LOG_WARNINGLN("Illegal hotspotx value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
-		                 HotspotxString, GetFileName().c_str(), Frame_.HotspotX);
+		                 hotspotxString, GetFileName().c_str(), frame.HotspotX);
 
-	Frame_.HotspotY = 0;
-	if (HotspotyString && !BS_String::ToInt(Common::String(HotspotyString), Frame_.HotspotY))
+	frame.HotspotY = 0;
+	if (hotspotyString && !parseIntegerKey(hotspotyString, 1, &frame.HotspotY))
 		BS_LOG_WARNINGLN("Illegal hotspoty value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
-		                 HotspotyString, GetFileName().c_str(), Frame_.HotspotY);
+		                 hotspotyString, GetFileName().c_str(), frame.HotspotY);
 
-	const char *FlipVString = FrameTag.Attribute("flipv");
-	if (FlipVString) {
-		if (!BS_String::ToBool(Common::String(FlipVString), Frame_.FlipV)) {
+	Common::String flipVString = node->values["flipv"];
+	if (!flipVString.empty()) {
+		if (!parseBooleanKey(flipVString, frame.FlipV)) {
 			BS_LOG_WARNINGLN("Illegal flipv value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
-			                 FlipVString, GetFileName().c_str());
-			Frame_.FlipV = false;
+			                 flipVString, GetFileName().c_str());
+			frame.FlipV = false;
 		}
 	} else
-		Frame_.FlipV = false;
+		frame.FlipV = false;
 
-	const char *FlipHString = FrameTag.Attribute("fliph");
-	if (FlipHString) {
-		if (!BS_String::ToBool(FlipHString, Frame_.FlipH)) {
+	Common::String flipHString = node->values["fliph"];
+	if (!flipHString.empty()) {
+		if (!parseBooleanKey(flipVString, frame.FlipV)) {
 			BS_LOG_WARNINGLN("Illegal fliph value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
-			                 FlipHString, GetFileName().c_str());
-			Frame_.FlipH = false;
+			                 flipHString, GetFileName().c_str());
+			frame.FlipH = false;
 		}
 	} else
-		Frame_.FlipH = false;
+		frame.FlipH = false;
 
+	m_Frames.push_back(frame);
 	return true;
 }
 

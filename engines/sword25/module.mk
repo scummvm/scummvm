@@ -102,12 +102,7 @@ MODULE_OBJS := \
 	util/lua/print.o \
 	util/pluto/pdep.o \
 	util/pluto/pluto.o \
-	util/pluto/plzio.o \
-	util/tinyxml/tinystr.o \
-	util/tinyxml/tinyxml.o \
-	util/tinyxml/tinyxmlerror.o \
-	util/tinyxml/tinyxmlparser.o
-
+	util/pluto/plzio.o
 
 # HACK. Use proper CC compiler here
 %.o: %.c
