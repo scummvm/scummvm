@@ -80,11 +80,11 @@ enum {
 	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
 };
 
-// We assume that scripts give us savegameId 0->999 for creating a new save slot
-//  and savegameId 1000->1999 for existing save slots ffs. kfile.cpp
+// We assume that scripts give us savegameId 0->99 for creating a new save slot
+//  and savegameId 100->199 for existing save slots ffs. kfile.cpp
 enum {
-	SAVEGAMEID_OFFICIALRANGE_START = 1000,
-	SAVEGAMEID_OFFICIALRANGE_END = 1999
+	SAVEGAMEID_OFFICIALRANGE_START = 100,
+	SAVEGAMEID_OFFICIALRANGE_END = 199
 };
 
 enum {

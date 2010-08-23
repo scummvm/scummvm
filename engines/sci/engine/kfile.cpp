@@ -218,22 +218,18 @@ reg_t kFPuts(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static bool fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
+static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (!f)
-		return false;
+		return;
 
 	if (!f->_in) {
 		error("fgets_wrapper: Trying to read from file '%s' opened for writing", f->_name.c_str());
-		return false;
+		return;
 	}
 	if (maxsize > 1) {
 		memset(dest, 0, maxsize);
 		f->_in->readLine(dest, maxsize);
-
-		if (f->_in->eos() || f->_in->err())
-			return false;
-
 		// The returned string must not have an ending LF
 		int strSize = strlen(dest);
 		if (strSize > 0) {
@@ -242,14 +238,9 @@ static bool fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 		}
 	} else {
 		*dest = f->_in->readByte();
-
-		if (f->_in->eos() || f->_in->err())
-			return false;
 	}
 
 	debugC(2, kDebugLevelFile, "  -> FGets'ed \"%s\"", dest);
-
-	return true;
 }
 
 reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
@@ -258,9 +249,7 @@ reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
 	int handle = argv[2].toUint16();
 
 	debugC(2, kDebugLevelFile, "kFGets(%d, %d)", handle, maxsize);
-	if (!fgets_wrapper(s, buf, maxsize, handle))
-		*buf = 0;
-
+	fgets_wrapper(s, buf, maxsize, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
 	return argv[0];
 }
@@ -471,7 +460,7 @@ static int findSavegame(Common::Array<SavegameDesc> &saves, uint savegameId) {
 	return -1;
 }
 
-// The scripts get IDs ranging from 1000->1999, because the scripts require us to assign unique ids THAT EVEN STAY BETWEEN
+// The scripts get IDs ranging from 100->199, because the scripts require us to assign unique ids THAT EVEN STAY BETWEEN
 //  SAVES and the scripts also use "saves-count + 1" to create a new savedgame slot.
 //  SCI1.1 actually recycles ids, in that case we will currently get "0".
 // This behaviour is required especially for LSL6. In this game, it's possible to quick save. The scripts will use
@@ -646,11 +635,11 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].isNull()) {
 		// Loading from the launcher, don't adjust the ID of the saved game
 	} else {
-		if ((savegameId < 1000) || (savegameId > 1999)) {
+		if ((savegameId < SAVEGAMEID_OFFICIALRANGE_START) || (savegameId > SAVEGAMEID_OFFICIALRANGE_END)) {
 			warning("Savegame ID %d is not allowed", savegameId);
 			return TRUE_REG;
 		}
-		savegameId -= 1000;
+		savegameId -= SAVEGAMEID_OFFICIALRANGE_START;
 	}
 
 	Common::Array<SavegameDesc> saves;
@@ -669,6 +658,13 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		gamestate_restore(s, in);
 		delete in;
 
+		if (g_sci->getGameId() == GID_MOTHERGOOSE256) {
+			// WORKAROUND: Mother Goose SCI1/SCI1.1 does some weird things for
+			//  saving a previously restored game.
+			// We set the current savedgame-id directly and remove the script
+			//  code concerning this via script patch.
+			s->variables[VAR_GLOBAL][0xB3].offset = SAVEGAMEID_OFFICIALRANGE_START + savegameId;
+		}
 		return s->r_acc;
 	}
 
@@ -784,12 +780,6 @@ reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f) {
 		bytesRead = f->_in->read(buf, size);
-
-		if (f->_in->eos() || f->_in->err()) {
-			*buf = 0;
-			bytesRead = 0;
-		}
-
 		s->_segMan->memcpy(argv[1], (const byte*)buf, size);
 	}
 
@@ -858,9 +848,7 @@ reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
 	int handle = argv[2].toUint16();
 	debugC(2, kDebugLevelFile, "kFileIO(readString): %d, %d", handle, size);
 
-	if (!fgets_wrapper(s, buf, size, handle))
-		*buf = 0;
-
+	fgets_wrapper(s, buf, size, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, size);
 	delete[] buf;
 	return argv[0];

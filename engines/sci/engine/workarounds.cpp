@@ -85,7 +85,7 @@ const SciWorkaroundEntry opcodeMulWorkarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
 const SciWorkaroundEntry opcodeAndWorkarounds[] = {
-	{ GID_MOTHERGOOSE,     -1,  999,  0,               "Event", "new",           -1,     0, { WORKAROUND_FAKE,   0 } }, // constantly during the game
+	{ GID_MOTHERGOOSE256,  -1,  999,  0,               "Event", "new",           -1,     0, { WORKAROUND_FAKE,   0 } }, // constantly during the game
 	// ^^ TODO: which of the mother goose versions is affected by this? EGA? SCI1? SCI1.1?
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
@@ -93,7 +93,7 @@ const SciWorkaroundEntry opcodeAndWorkarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
 const SciWorkaroundEntry opcodeOrWorkarounds[] = {
 	{ GID_ECOQUEST2,      100,    0,  0,                "Rain", "points",     0xcc6,     0, { WORKAROUND_FAKE,   0 } }, // when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #3034464
-	{ GID_MOTHERGOOSE,     -1,    4,  0,               "rm004", "doit",          -1,     0, { WORKAROUND_FAKE,   0 } }, // when going north and reaching the castle (rooms 4 and 37) - bug #3038228
+	{ GID_MOTHERGOOSE256,  -1,    4,  0,               "rm004", "doit",          -1,     0, { WORKAROUND_FAKE,   0 } }, // when going north and reaching the castle (rooms 4 and 37) - bug #3038228
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -156,9 +156,9 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LSL6HIRES,       0,    85,  0,             "LL6Inv", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // on startup
 	{ GID_LSL6HIRES,      -1, 64950,  1,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // at least when entering swimming pool area
 	{ GID_LSL6HIRES,      -1, 64964,  0,              "DPath", "init",           -1,    1, { WORKAROUND_FAKE,   0 } }, // during the game
-	{ GID_MOTHERGOOSE,    -1,     0,  0,                 "MG", "doit",           -1,    5, { WORKAROUND_FAKE,   0 } }, // SCI1.1: When moving the cursor all the way to the left during the game (bug #3043955)
-	{ GID_MOTHERGOOSE,    -1,   992,  0,             "AIPath", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // Happens in the demo and full version. In the demo, it happens when walking two screens from mother goose's house to the north. In the full version, it happens in rooms 7 and 23 - bug #3049146
-	{ GID_MOTHERGOOSE,    94,    94,  0,            "sunrise", "changeState",    -1,  367, { WORKAROUND_FAKE,   0 } }, // At the very end, after the game is completed - bug #3051163
+	{ GID_MOTHERGOOSE256, -1,     0,  0,                 "MG", "doit",           -1,    5, { WORKAROUND_FAKE,   0 } }, // SCI1.1: When moving the cursor all the way to the left during the game (bug #3043955)
+	{ GID_MOTHERGOOSE256, -1,   992,  0,             "AIPath", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // Happens in the demo and full version. In the demo, it happens when walking two screens from mother goose's house to the north. In the full version, it happens in rooms 7 and 23 - bug #3049146
+	{ GID_MOTHERGOOSE256, 94,    94,  0,            "sunrise", "changeState",    -1,  367, { WORKAROUND_FAKE,   0 } }, // At the very end, after the game is completed - bug #3051163
 	{ GID_MOTHERGOOSEHIRES,-1,64950,  1,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // right when clicking on a child at the start and probably also later
 	{ GID_MOTHERGOOSEHIRES,-1,64950,  1,               "View", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // see above
 	{ GID_PEPPER,         -1,   894,  0,            "Package", "doVerb",         -1,    3, { WORKAROUND_FAKE,   0 } }, // using the hand on the book in the inventory - bug #3040012

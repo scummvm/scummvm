@@ -170,6 +170,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "lsl6hires",       GID_LSL6HIRES },
 	{ "lsl7",            GID_LSL7 },
 	{ "mothergoose",     GID_MOTHERGOOSE },
+	{ "mothergoose256",  GID_MOTHERGOOSE256 },
 	{ "mothergoosehires",GID_MOTHERGOOSEHIRES },
 	{ "msastrochicken",  GID_MSASTROCHICKEN },
 	{ "pepper",          GID_PEPPER },

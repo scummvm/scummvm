@@ -2032,7 +2032,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Mixed-Up Mother Goose v2.000 - English DOS Floppy (supplied by markcoolio in bug report #2723795)
 	// Executable scanning reports "1.001.031"
-	{"mothergoose", "", {
+	{"mothergoose256", "", {
 		{"resource.map", 0, "52aae15e493cafd1da7e1c9b657a5bb9", 7026},
 		{"resource.000", 0, "b7ecd8ae9e254e80310b5a668b276e6e", 2948975},
 		AD_LISTEND},
@@ -2041,7 +2041,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Mixed-Up Mother Goose - English DOS CD (from jvprat)
 	// Executable scanning reports "x.yyy.zzz"
 	// SCI interpreter version 0.000.999 (just a guess)
-	{"mothergoose", "CD", {
+	{"mothergoose256", "CD", {
 		{"resource.map", 0, "1c7f311b0a2c927b2fbe81ae341fb2f6", 5790},
 		{"resource.001", 0, "5a0ed1d745855148364de1b3be099bac", 4369438},
 		AD_LISTEND},
@@ -2049,7 +2049,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Mixed-Up Mother Goose - English Windows Interactive Demo
 	// Executable scanning reports "x.yyy.zzz"
-	{"mothergoose", "Demo", {
+	{"mothergoose256", "Demo", {
 		{"resource.map", 0, "87f9dc1cafc4d4fa835fb2f00cf3a6ef", 4560},
 		{"resource.001", 0, "5a0ed1d745855148364de1b3be099bac", 2070072},
 		AD_LISTEND},

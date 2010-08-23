@@ -25,6 +25,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/script.h"
+#include "sci/engine/state.h"
 
 #include "common/util.h"
 
@@ -455,6 +456,50 @@ const SciScriptSignature laurabow2Signatures[] = {
 };
 
 // ===========================================================================
+// Mother Goose SCI1/SCI1.1
+// MG::replay somewhat calculates the savedgame-id used when saving again	
+//  this doesn't work right and we remove the code completely.
+//  We set the savedgame-id directly right after restoring in kRestoreGame.
+const byte mothergoose256SignatureReplay[] = {
+	6,
+	0x36,             // push
+	0x35, 0x20,       // ldi 20
+	0x04,             // sub
+	0xa1, 0xb3,       // sag global[b3]
+	0
+};
+
+const uint16 mothergoose256PatchReplay[] = {
+	0x34, 0x00, 0x00, // ldi 0000 (dummy)
+	0x34, 0x00, 0x00, // ldi 0000 (dummy)
+	PATCH_END
+};
+
+// when saving, it also checks if the savegame-id is below 13.
+//  we change this to check if below 113 instead
+const byte mothergoose256SignatureSaveLimit[] = {
+	5,
+	0x89, 0xb3,       // lsg global[b3]
+	0x35, 0x0d,       // ldi 0d
+	0x20,             // ge?
+	0
+};
+
+const uint16 mothergoose256PatchSaveLimit[] = {
+	PATCH_ADDTOOFFSET | +2,
+	0x35, 0x0d + SAVEGAMEID_OFFICIALRANGE_START, // ldi 113d
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                  adjust
+const SciScriptSignature mothergoose256Signatures[] = {
+    {      0, "replay save issue",                           PATCH_MAGICDWORD(0x20, 0x04, 0xa1, 0xb3),    -2, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
+    {      0, "save limit dialog (SCI1.1)",                  PATCH_MAGICDWORD(0xb3, 0x35, 0x0d, 0x20),    -1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
+    {    994, "save limit dialog (SCI1)",                    PATCH_MAGICDWORD(0xb3, 0x35, 0x0d, 0x20),    -1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
+    {      0, NULL,                                          0,                                            0, NULL,                             NULL }
+};
+
+// ===========================================================================
 //  script 298 of sq4/floppy has an issue. object "nest" uses another property
 //   which isn't included in property count. We return 0 in that case, the game
 //   adds it to nest::x. The problem is that the script also checks if x exceeds
@@ -607,6 +652,8 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		signatureTable = laurabow2Signatures;
 	if (g_sci->getGameId() == GID_LSL6)
 		signatureTable = larry6Signatures;
+	if (g_sci->getGameId() == GID_MOTHERGOOSE256)
+		signatureTable = mothergoose256Signatures;
 	if (g_sci->getGameId() == GID_SQ4)
 		signatureTable = sq4Signatures;
 	if (g_sci->getGameId() == GID_SQ5)
