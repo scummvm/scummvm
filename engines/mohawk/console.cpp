@@ -467,10 +467,11 @@ bool RivenConsole::Cmd_Hotspots(int argc, const char **argv) {
 		DebugPrintf("Hotspot %d, index %d, BLST ID %d (", i, _vm->_hotspots[i].index, _vm->_hotspots[i].blstID);
 
 		if (_vm->_hotspots[i].enabled)
-			DebugPrintf("enabled)\n");
+			DebugPrintf("enabled");
 		else
-			DebugPrintf("disabled)\n");
+			DebugPrintf("disabled");
 
+		DebugPrintf(") - (%d, %d, %d, %d)\n", _vm->_hotspots[i].rect.left, _vm->_hotspots[i].rect.top, _vm->_hotspots[i].rect.right, _vm->_hotspots[i].rect.bottom);
 		DebugPrintf("    Name = %s\n", _vm->getHotspotName(i).c_str());
 	}
 
