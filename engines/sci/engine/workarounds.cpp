@@ -158,6 +158,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LSL6HIRES,      -1, 64964,  0,              "DPath", "init",           -1,    1, { WORKAROUND_FAKE,   0 } }, // during the game
 	{ GID_MOTHERGOOSE,    -1,     0,  0,                 "MG", "doit",           -1,    5, { WORKAROUND_FAKE,   0 } }, // SCI1.1: When moving the cursor all the way to the left during the game (bug #3043955)
 	{ GID_MOTHERGOOSE,    -1,   992,  0,             "AIPath", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // Happens in the demo and full version. In the demo, it happens when walking two screens from mother goose's house to the north. In the full version, it happens in rooms 7 and 23 - bug #3049146
+	{ GID_MOTHERGOOSE,    94,    94,  0,            "sunrise", "changeState",    -1,  367, { WORKAROUND_FAKE,   0 } }, // At the very end, after the game is completed - bug #3051163
 	{ GID_MOTHERGOOSEHIRES,-1,64950,  1,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // right when clicking on a child at the start and probably also later
 	{ GID_MOTHERGOOSEHIRES,-1,64950,  1,               "View", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // see above
 	{ GID_PEPPER,         -1,   894,  0,            "Package", "doVerb",         -1,    3, { WORKAROUND_FAKE,   0 } }, // using the hand on the book in the inventory - bug #3040012
@@ -184,8 +185,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_SQ4,            -1,   398,  0,            "showBox", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // CD: called when rummaging in Software Excess bargain bin
 	{ GID_SQ4,            -1,   928,  0,           "Narrator", "startText",      -1, 1000, { WORKAROUND_FAKE,   1 } }, // CD: method returns this to the caller
 	{ GID_SQ5,           201,   201,  0,        "buttonPanel", "doVerb",         -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking at the orange or red button - bug #3038563
-	{ GID_SQ6,             0,     0,  0,                "SQ6", "init",           -1,    2, { WORKAROUND_FAKE,   0 } }, // DEMO: called when the game starts
-	{ GID_SQ6,           100,     0,  0,                "SQ6", "init",           -1,    2, { WORKAROUND_FAKE,   0 } }, // called when the game starts
+	{ GID_SQ6,            -1,     0,  0,                "SQ6", "init",           -1,    2, { WORKAROUND_FAKE,   0 } }, // Demo and full version: called when the game starts (demo: room 0, full: room 100)
 	{ GID_SQ6,           100, 64950,  0,               "View", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // called when pressing "Start game" in the main menu
 	{ GID_SQ6,            -1, 64964,  0,              "DPath", "init",           -1,    1, { WORKAROUND_FAKE,   0 } }, // during the game
 	SCI_WORKAROUNDENTRY_TERMINATOR
