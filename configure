@@ -1709,7 +1709,6 @@ if test -n "$_host"; then
 			_backend="n64"
 			_need_memalign=yes
 			_mt32emu=no
-			_vkeybd=yes
 			_build_scalers=no
 			_indeo3=no
 			_translation=no
