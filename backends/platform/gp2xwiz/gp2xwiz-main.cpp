@@ -54,23 +54,26 @@
 #include <time.h>	// for getTimeAndDate()
 
 /* Dump console info to files. */
-// #define DUMP_STDOUT
+#define DUMP_STDOUT
 
-int main(int argc, char *argv[]) {
+// Don't use the GP2XWiz main on the Caanoo
+#ifndef CAANOO
+	int main(int argc, char *argv[]) {
 
-	g_system = new OSystem_GP2XWIZ();
-	assert(g_system);
+		g_system = new OSystem_GP2XWIZ();
+		assert(g_system);
 
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
-#endif
+	#ifdef DYNAMIC_MODULES
+		PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
+	#endif
 
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-	g_system->quit();
+		// Invoke the actual ScummVM main entry point:
+		int res = scummvm_main(argc, argv);
+		g_system->quit();
 
-	return res;
-}
+		return res;
+	}
+#endif /* CAANOO */
 
 void OSystem_GP2XWIZ::initBackend() {
 
