@@ -343,10 +343,11 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 	const Object *gameSuperObject = segMan->getObject(_gameSuperClassAddress);
 	const uint16 gameSuperMethodCount = gameSuperObject->getMethodCount();
 	reg_t methodAddress;
-	Script *script = NULL;
-	const byte *scriptRestorePtr = NULL;
 	const uint16 kernelCount = _kernel->getKernelNamesSize();
+	const byte *scriptRestorePtr = NULL;
 	byte kernelIdRestore = 0;
+	const byte *scriptSavePtr = NULL;
+	byte kernelIdSave = 0;
 
 	// this feature is currently not supported on SCI32
 	if (getSciVersion() >= SCI_VERSION_2)
@@ -367,6 +368,8 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 		Common::String kernelName = _kernel->getKernelName(kernelNr);
 		if (kernelName == "RestoreGame")
 			kernelIdRestore = kernelNr;
+		if (kernelName == "SaveGame")
+			kernelIdSave = kernelNr;
 	}
 
 	for (uint16 methodNr = 0; methodNr < gameSuperMethodCount; methodNr++) {
@@ -374,17 +377,32 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 		Common::String methodName = _kernel->getSelectorName(selectorId);
 		if (methodName == "restore") {
 			methodAddress = gameSuperObject->getFunction(methodNr);
-			script = segMan->getScript(methodAddress.segment);
+			Script *script = segMan->getScript(methodAddress.segment);
 			scriptRestorePtr = script->getBuf(methodAddress.offset);
 			break;
 		}
+		if (methodName == "save") {
+			methodAddress = gameSuperObject->getFunction(methodNr);
+			Script *script = segMan->getScript(methodAddress.segment);
+			scriptSavePtr = script->getBuf(methodAddress.offset);
+			break;
+		}
 	}
+
+	switch (_gameId) {
+	case GID_FAIRYTALES: // fairy tales automatically saves w/o dialog
+		scriptSavePtr = NULL;
+	default:
+		break;
+	}
+
 	if (scriptRestorePtr) {
 		// Now patch in our code
 		byte *patchPtr = const_cast<byte *>(scriptRestorePtr);
 		memcpy(patchPtr, patchGameRestore, sizeof(patchGameRestore));
 		patchPtr[8] = kernelIdRestore;
 	}
+	// Saving is not yet patched
 }
 
 bool SciEngine::initGame() {
