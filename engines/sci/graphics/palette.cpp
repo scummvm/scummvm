@@ -614,9 +614,18 @@ bool GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint1
 		_palVaryStepStop = stepStop;
 		_palVaryDirection = direction;
 		// if no ticks are given, jump directly to destination
-		if (!_palVaryTicks)
+		if (!_palVaryTicks) {
 			_palVaryDirection = stepStop;
-		palVaryInstallTimer();
+			// sierra sci set the timer to 1 tick instead of calling it directly
+			//  we have to change this to prevent a race condition to happen in
+			//  at least freddy pharkas during nighttime. In that case kPalVary is
+			//  called right before that and because we load pictures much faster
+			//  the 1 tick won't pass sometimes resulting in the palette being
+			//  daytime instead of nighttime during the transition.
+			palVaryProcess(1, true);
+		} else {
+			palVaryInstallTimer();
+		}
 		return true;
 	}
 	return false;
@@ -633,9 +642,14 @@ int16 GfxPalette::kernelPalVaryReverse(int16 ticks, uint16 stepStop, int16 direc
 	_palVaryStepStop = stepStop;
 	_palVaryDirection = direction != -1 ? -direction : -_palVaryDirection;
 
-	if (!_palVaryTicks)
+	if (!_palVaryTicks) {
 		_palVaryDirection = _palVaryStepStop - _palVaryStep;
-	palVaryInstallTimer();
+		// ffs. see palVaryInit right above, we fix the code here as well
+		//  just in case
+		palVaryProcess(1, true);
+	} else {
+		palVaryInstallTimer();
+	}
 	return kernelPalVaryGetCurrentStep();
 }
 
