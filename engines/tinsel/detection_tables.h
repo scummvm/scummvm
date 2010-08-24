@@ -394,7 +394,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
+		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT | GF_ALT_MIDI,
 		TINSEL_V1,
 	},
 
