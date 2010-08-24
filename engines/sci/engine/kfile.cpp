@@ -551,14 +551,15 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
-	Common::String game_id = s->_segMan->getString(argv[0]);
-	int16 virtualId = argv[1].toSint16();
-	Common::String game_description = s->_segMan->getString(argv[2]);
+	Common::String game_id;
+ 	int16 virtualId = argv[1].toSint16();
+	int16 savegameId = -1;
+	Common::String game_description;
 	Common::String version;
+	bool pausedMusic = false;
+
 	if (argc > 3)
 		version = s->_segMan->getString(argv[3]);
-
-	debug(3, "kSaveGame(%s,%d,%s,%s)", game_id.c_str(), virtualId, game_description.c_str(), version.c_str());
 
 	// We check here, we don't want to delete a users save in case we are within a kernel function
 	if (s->executionStackBase) {
@@ -566,65 +567,94 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	Common::Array<SavegameDesc> saves;
-	listSavegames(saves);
+	if (argv[0].isNull()) {
+		// Direct call, from a patched Game::save
+		if ((argv[1] != SIGNAL_REG) || (!argv[2].isNull()))
+			error("kSaveGame: assumed patched call isn't accurate");
 
-	int16 savegameId;
-	if ((virtualId >= SAVEGAMEID_OFFICIALRANGE_START) && (virtualId <= SAVEGAMEID_OFFICIALRANGE_END)) {
-		// savegameId is an actual Id, so search for it just to make sure
-		savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
-		if (findSavegame(saves, savegameId) == -1)
+		// we are supposed to show a dialog for the user and let him choose where to save
+		g_sci->_soundCmd->pauseAll(true); // pause music
+		const EnginePlugin *plugin = NULL;
+		EngineMan.findGame(g_sci->getGameIdStr(), &plugin);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save");
+		dialog->setSaveMode(true);
+		savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
+		game_description = dialog->getResultString();
+		delete dialog;
+		if (savegameId < 0) {
+			g_sci->_soundCmd->pauseAll(false); // unpause music
 			return NULL_REG;
-	} else if (virtualId < SAVEGAMEID_OFFICIALRANGE_START) {
-		// virtualId is low, we assume that scripts expect us to create new slot
-		if (virtualId == s->_lastSaveVirtualId) {
-			// if last virtual id is the same as this one, we assume that caller wants to overwrite last save
-			savegameId = s->_lastSaveNewId;
-		} else {
-			uint savegameNr;
-			// savegameId is in lower range, scripts expect us to create a new slot
-			for (savegameId = 0; savegameId < SAVEGAMEID_OFFICIALRANGE_START; savegameId++) {
-				for (savegameNr = 0; savegameNr < saves.size(); savegameNr++) {
-					if (savegameId == saves[savegameNr].id)
+		}
+		pausedMusic = true;
+
+	} else {
+		// Real call from script
+		game_id = s->_segMan->getString(argv[0]);
+		if (argv[2].isNull())
+			error("kSaveGame: called with description being NULL");
+		game_description = s->_segMan->getString(argv[2]);
+
+		debug(3, "kSaveGame(%s,%d,%s,%s)", game_id.c_str(), virtualId, game_description.c_str(), version.c_str());
+
+		Common::Array<SavegameDesc> saves;
+		listSavegames(saves);
+
+		if ((virtualId >= SAVEGAMEID_OFFICIALRANGE_START) && (virtualId <= SAVEGAMEID_OFFICIALRANGE_END)) {
+			// savegameId is an actual Id, so search for it just to make sure
+			savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
+			if (findSavegame(saves, savegameId) == -1)
+				return NULL_REG;
+		} else if (virtualId < SAVEGAMEID_OFFICIALRANGE_START) {
+			// virtualId is low, we assume that scripts expect us to create new slot
+			if (virtualId == s->_lastSaveVirtualId) {
+				// if last virtual id is the same as this one, we assume that caller wants to overwrite last save
+				savegameId = s->_lastSaveNewId;
+			} else {
+				uint savegameNr;
+				// savegameId is in lower range, scripts expect us to create a new slot
+				for (savegameId = 0; savegameId < SAVEGAMEID_OFFICIALRANGE_START; savegameId++) {
+					for (savegameNr = 0; savegameNr < saves.size(); savegameNr++) {
+						if (savegameId == saves[savegameNr].id)
+							break;
+					}
+					if (savegameNr == saves.size())
 						break;
 				}
-				if (savegameNr == saves.size())
-					break;
+				if (savegameId == SAVEGAMEID_OFFICIALRANGE_START)
+					error("kSavegame: no more savegame slots available");
 			}
-			if (savegameId == SAVEGAMEID_OFFICIALRANGE_START)
-				error("kSavegame: no more savegame slots available");
+		} else {
+			error("kSaveGame: invalid savegameId used");
 		}
-	} else {
-		error("kSaveGame: invalid savegameId used");
+
+		// Save in case caller wants to overwrite last newly created save
+		s->_lastSaveVirtualId = virtualId;
+		s->_lastSaveNewId = savegameId;
 	}
 
-	// Save in case caller wants to overwrite last newly created save
-	s->_lastSaveVirtualId = virtualId;
-	s->_lastSaveNewId = savegameId;
+	s->r_acc = NULL_REG;
 
 	Common::String filename = g_sci->getSavegameName(savegameId);
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::OutSaveFile *out;
 	if (!(out = saveFileMan->openForSaving(filename))) {
 		warning("Error opening savegame \"%s\" for writing", filename.c_str());
-		s->r_acc = NULL_REG;
-		return NULL_REG;
-	}
-
-	if (!gamestate_save(s, out, game_description.c_str(), version.c_str())) {
-		warning("Saving the game failed.");
-		s->r_acc = NULL_REG;
 	} else {
-		out->finalize();
-		if (out->err()) {
-			delete out;
-			warning("Writing the savegame failed.");
-			s->r_acc = NULL_REG;
+		if (!gamestate_save(s, out, game_description.c_str(), version.c_str())) {
+			warning("Saving the game failed.");
 		} else {
+			out->finalize();
+			if (out->err()) {
+				warning("Writing the savegame failed.");
+			} else {
+				s->r_acc = TRUE_REG; // success
+			}
 			delete out;
-			s->r_acc = make_reg(0, 1);
 		}
 	}
+
+	if (pausedMusic)
+		g_sci->_soundCmd->pauseAll(false); // unpause music
 
 	return s->r_acc;
 }
@@ -637,7 +667,7 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 	debug(3, "kRestoreGame(%s,%d)", game_id.c_str(), savegameId);
 
 	if (argv[0].isNull()) {
-		// Direct call, either from launcher or from a patched Game::restore call
+		// Direct call, either from launcher or from a patched Game::restore
 		if (savegameId == -1) {
 			// we are supposed to show a dialog for the user and let him choose a saved game
 			g_sci->_soundCmd->pauseAll(true); // pause music

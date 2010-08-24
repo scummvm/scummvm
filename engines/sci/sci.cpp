@@ -330,12 +330,12 @@ Common::Error SciEngine::run() {
 	return Common::kNoError;
 }
 
-static byte patchGameRestore[] = {
+static byte patchGameRestoreSave[] = {
 	0x39, 0x03,        // pushi 03
 	0x76,              // push0
 	0x38, 0xff, 0xff,  // pushi -1
 	0x76,              // push0
-	0x43, 0xff, 0x06,  // call kRestoreGame (will get fixed directly)
+	0x43, 0xff, 0x06,  // call kRestoreGame/kSaveGame (will get fixed directly)
 	0x48,              // ret
 };
 
@@ -381,12 +381,6 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 			scriptRestorePtr = script->getBuf(methodAddress.offset);
 			break;
 		}
-		if (methodName == "save") {
-			methodAddress = gameSuperObject->getFunction(methodNr);
-			Script *script = segMan->getScript(methodAddress.segment);
-			scriptSavePtr = script->getBuf(methodAddress.offset);
-			break;
-		}
 	}
 
 	switch (_gameId) {
@@ -399,10 +393,15 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 	if (scriptRestorePtr) {
 		// Now patch in our code
 		byte *patchPtr = const_cast<byte *>(scriptRestorePtr);
-		memcpy(patchPtr, patchGameRestore, sizeof(patchGameRestore));
+		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
 		patchPtr[8] = kernelIdRestore;
 	}
-	// Saving is not yet patched
+	//if (scriptSavePtr) {
+	//	// Now patch in our code
+	//	byte *patchPtr = const_cast<byte *>(scriptSavePtr);
+	//	memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
+	//	patchPtr[8] = kernelIdSave;
+	//}
 }
 
 bool SciEngine::initGame() {
