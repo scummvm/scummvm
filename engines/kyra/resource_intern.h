@@ -38,27 +38,25 @@ class Resource;
 
 class PlainArchive : public Common::Archive {
 public:
-	struct InputEntry {
-		Common::String name;
+	struct Entry {
+		Entry() : offset(0), size(0) {}
+		Entry(uint32 o, uint32 s) : offset(o), size(s) {}
 
 		uint32 offset;
 		uint32 size;
 	};
 
-	typedef Common::List<InputEntry> FileInputList;
+	PlainArchive(Common::SharedPtr<Common::ArchiveMember> file);
 
-	PlainArchive(Common::SharedPtr<Common::ArchiveMember> file, const FileInputList &files);
+	void addFileEntry(const Common::String &name, const Entry entry);
+	Entry getFileEntry(const Common::String &name) const;
 
+	// Common::Archive API implementation
 	bool hasFile(const Common::String &name);
 	int listMembers(Common::ArchiveMemberList &list);
 	Common::ArchiveMemberPtr getMember(const Common::String &name);
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 private:
-	struct Entry {
-		uint32 offset;
-		uint32 size;
-	};
-
 	typedef Common::HashMap<Common::String, Entry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 
 	Common::SharedPtr<Common::ArchiveMember> _file;
