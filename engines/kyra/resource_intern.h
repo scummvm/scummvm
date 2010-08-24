@@ -63,6 +63,24 @@ private:
 	FileMap _files;
 };
 
+class TlkArchive : public Common::Archive {
+public:
+	TlkArchive(Common::SharedPtr<Common::ArchiveMember> file, uint16 entryCount, const uint32 *fileEntries);
+	~TlkArchive();
+
+	bool hasFile(const Common::String &name);
+	int listMembers(Common::ArchiveMemberList &list);
+	Common::ArchiveMemberPtr getMember(const Common::String &name);
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+private:
+	Common::SharedPtr<Common::ArchiveMember> _file;
+
+	const uint32 *findFile(const Common::String &name) const;
+
+	const uint16 _entryCount;
+	const uint32 * const _fileEntries;
+};
+
 class CachedArchive : public Common::Archive {
 public:
 	struct InputEntry {

@@ -84,6 +84,88 @@ PlainArchive::Entry PlainArchive::getFileEntry(const Common::String &name) const
 	return fDesc->_value;
 }
 
+// -> TlkArchive implementation
+
+TlkArchive::TlkArchive(Common::SharedPtr<Common::ArchiveMember> file, uint16 entryCount, const uint32 *fileEntries)
+	: _file(file), _entryCount(entryCount), _fileEntries(fileEntries) {
+}
+
+TlkArchive::~TlkArchive() {
+	delete[] _fileEntries;
+}
+
+bool TlkArchive::hasFile(const Common::String &name) {
+	return (findFile(name) != 0);
+}
+
+int TlkArchive::listMembers(Common::ArchiveMemberList &list) {
+	uint count = 0;
+
+	for (; count < _entryCount; ++count) {
+		const Common::String name = Common::String::printf("%08u.AUD", _fileEntries[count * 2 + 0]);
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, this)));
+	}
+
+	return count;
+}
+
+Common::ArchiveMemberPtr TlkArchive::getMember(const Common::String &name) {
+	if (!hasFile(name))
+		return Common::ArchiveMemberPtr();
+
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+}
+
+Common::SeekableReadStream *TlkArchive::createReadStreamForMember(const Common::String &name) const {
+	const uint32 *fileDesc = findFile(name);
+	if (!fileDesc)
+		return 0;
+
+	Common::SeekableReadStream *parent = _file->createReadStream();
+	if (!parent)
+		return 0;
+
+	parent->seek(fileDesc[1], SEEK_SET);
+	const uint32 size = parent->readUint32LE();
+	const uint32 fileStart = fileDesc[1] + 4;
+
+	return new Common::SeekableSubReadStream(parent, fileStart, fileStart + size, DisposeAfterUse::YES);
+}
+
+const uint32 *TlkArchive::findFile(const Common::String &name) const {
+	Common::String uppercaseName = name;
+	uppercaseName.toUppercase();
+
+	if (!uppercaseName.hasSuffix(".AUD"))
+		return 0;
+
+	uint32 id;
+	if (sscanf(uppercaseName.c_str(), "%08u.AUD", &id) != 1)
+		return 0;
+
+	// Binary search for the file entry
+	int leftIndex = 0;
+	int rightIndex = _entryCount - 1;
+
+	while (leftIndex <= rightIndex) {
+		int mid = (leftIndex + rightIndex) / 2;
+
+		const uint32 key = _fileEntries[mid * 2];
+		if (key == id) {
+			// Found
+			return &_fileEntries[mid * 2];
+		} else if (key > id) {
+			// Take the left sub-tree
+			rightIndex = mid - 1;
+		} else {
+			// Take the right sub-tree
+			leftIndex = mid + 1;
+		}
+	}
+
+	return 0;
+}
+
 // -> CachedArchive implementation
 
 CachedArchive::CachedArchive(const FileInputList &files)
@@ -387,45 +469,19 @@ bool ResLoaderTlk::isLoadable(const Common::String &filename, Common::SeekableRe
 }
 
 Common::Archive *ResLoaderTlk::load(Common::SharedPtr<Common::ArchiveMember> file, Common::SeekableReadStream &stream) const {
-	const uint16 entries = stream.readUint16LE();
-	assert(entries > 0);
+	const uint16 entryCount = stream.readUint16LE();
 
-	Common::ScopedPtr<PlainArchive> result(new PlainArchive(file));
-	if (!result)
-		return 0;
-
-	uint32 *fileEntries = new uint32[entries * 3];
+	uint32 *fileEntries = new uint32[entryCount * 2];
 	assert(fileEntries);
+	stream.read(fileEntries, sizeof(uint32) * entryCount * 2);
 
-	// Read the file index
-	for (uint i = 0; i < entries; ++i) {
-		fileEntries[i * 3 + 0] = stream.readUint32LE();
-		fileEntries[i * 3 + 1] = stream.readUint32LE();
+	for (uint i = 0; i < entryCount; ++i) {
+		fileEntries[i * 2 + 0] = READ_LE_UINT32(&fileEntries[i * 2 + 0]);
+		fileEntries[i * 2 + 1] = READ_LE_UINT32(&fileEntries[i * 2 + 1]);
 	}
 
-	// Read in the the file sizes
-	for (uint i = 0; i < entries; ++i) {
-		uint32 * const entry = &fileEntries[i * 3];
 
-		// Seek to the file entry
-		stream.seek(entry[1], SEEK_SET);
-
-		// Read the file size
-		entry[2] = stream.readUint32LE();
-
-		// Adjust the file offset
-		entry[1] += 4;
-	}
-
-	// Add all the files to the archive
-	for (uint i = 0; i < entries; ++i) {
-		const uint32 * const entry = &fileEntries[i * 3];
-
-		const Common::String name = Common::String::printf("%.08u.AUD", entry[0]);
-		result->addFileEntry(name, PlainArchive::Entry(entry[1], entry[2]));
-	}
-
-	return result.release();
+	return new TlkArchive(file, entryCount, fileEntries);
 }
 
 // InstallerLoader implementation
