@@ -1594,6 +1594,7 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 1'
+			add_line_to_config_h '#define AUDIO_REVERSE_STEREO'
 			add_line_to_config_h '#define GAMECUBE'
 			add_line_to_config_h "/* #define DEBUG_WII_USBGECKO */"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
@@ -1793,6 +1794,7 @@ if test -n "$_host"; then
 			_build_scalers=no
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
+			add_line_to_config_h '#define AUDIO_REVERSE_STEREO'
 			add_line_to_config_h "#define DEBUG_WII_USBGECKO"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
