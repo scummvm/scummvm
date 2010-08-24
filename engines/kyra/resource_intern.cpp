@@ -35,7 +35,7 @@ namespace Kyra {
 
 // -> PlainArchive implementation
 
-PlainArchive::PlainArchive(Common::SharedPtr<Common::ArchiveMember> file)
+PlainArchive::PlainArchive(Common::ArchiveMemberPtr file)
 	: _file(file), _files() {
 }
 
@@ -86,7 +86,7 @@ PlainArchive::Entry PlainArchive::getFileEntry(const Common::String &name) const
 
 // -> TlkArchive implementation
 
-TlkArchive::TlkArchive(Common::SharedPtr<Common::ArchiveMember> file, uint16 entryCount, const uint32 *fileEntries)
+TlkArchive::TlkArchive(Common::ArchiveMemberPtr file, uint16 entryCount, const uint32 *fileEntries)
 	: _file(file), _entryCount(entryCount), _fileEntries(fileEntries) {
 }
 
@@ -285,7 +285,7 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 	return true;
 }
 
-Common::Archive *ResLoaderPak::load(Common::SharedPtr<Common::ArchiveMember> memberFile, Common::SeekableReadStream &stream) const {
+Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common::SeekableReadStream &stream) const {
 	int32 filesize = stream.size();
 	if (filesize < 0)
 		return 0;
@@ -400,7 +400,7 @@ bool ResLoaderInsMalcolm::isLoadable(const Common::String &filename, Common::See
 	return (buffer[0] == 0x0D && buffer[1] == 0x0A);
 }
 
-Common::Archive *ResLoaderInsMalcolm::load(Common::SharedPtr<Common::ArchiveMember> memberFile, Common::SeekableReadStream &stream) const {
+Common::Archive *ResLoaderInsMalcolm::load(Common::ArchiveMemberPtr memberFile, Common::SeekableReadStream &stream) const {
 	Common::List<Common::String> filenames;
 	Common::ScopedPtr<PlainArchive> result(new PlainArchive(memberFile));
 	if (!result)
@@ -468,7 +468,7 @@ bool ResLoaderTlk::isLoadable(const Common::String &filename, Common::SeekableRe
 	return true;
 }
 
-Common::Archive *ResLoaderTlk::load(Common::SharedPtr<Common::ArchiveMember> file, Common::SeekableReadStream &stream) const {
+Common::Archive *ResLoaderTlk::load(Common::ArchiveMemberPtr file, Common::SeekableReadStream &stream) const {
 	const uint16 entryCount = stream.readUint16LE();
 
 	uint32 *fileEntries = new uint32[entryCount * 2];

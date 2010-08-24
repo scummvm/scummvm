@@ -153,7 +153,7 @@ bool Resource::loadPakFile(Common::String filename) {
 	return loadPakFile(filename, file);
 }
 
-bool Resource::loadPakFile(Common::String name, Common::SharedPtr<Common::ArchiveMember> file) {
+bool Resource::loadPakFile(Common::String name, Common::ArchiveMemberPtr file) {
 	name.toUppercase();
 
 	if (_archiveFiles.hasArchive(name) || _protectedFiles.hasArchive(name))
@@ -319,7 +319,7 @@ Common::SeekableReadStream *Resource::createReadStream(const Common::String &fil
 	return _files.createReadStreamForMember(file);
 }
 
-Common::Archive *Resource::loadArchive(const Common::String &name, Common::SharedPtr<Common::ArchiveMember> member) {
+Common::Archive *Resource::loadArchive(const Common::String &name, Common::ArchiveMemberPtr member) {
 	ArchiveMap::iterator cachedArchive = _archiveCache.find(name);
 	if (cachedArchive != _archiveCache.end())
 		return cachedArchive->_value;

@@ -46,7 +46,7 @@ public:
 		uint32 size;
 	};
 
-	PlainArchive(Common::SharedPtr<Common::ArchiveMember> file);
+	PlainArchive(Common::ArchiveMemberPtr file);
 
 	void addFileEntry(const Common::String &name, const Entry entry);
 	Entry getFileEntry(const Common::String &name) const;
@@ -59,13 +59,13 @@ public:
 private:
 	typedef Common::HashMap<Common::String, Entry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 
-	Common::SharedPtr<Common::ArchiveMember> _file;
+	Common::ArchiveMemberPtr _file;
 	FileMap _files;
 };
 
 class TlkArchive : public Common::Archive {
 public:
-	TlkArchive(Common::SharedPtr<Common::ArchiveMember> file, uint16 entryCount, const uint32 *fileEntries);
+	TlkArchive(Common::ArchiveMemberPtr file, uint16 entryCount, const uint32 *fileEntries);
 	~TlkArchive();
 
 	bool hasFile(const Common::String &name);
@@ -73,7 +73,7 @@ public:
 	Common::ArchiveMemberPtr getMember(const Common::String &name);
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 private:
-	Common::SharedPtr<Common::ArchiveMember> _file;
+	Common::ArchiveMemberPtr _file;
 
 	const uint32 *findFile(const Common::String &name) const;
 
@@ -115,28 +115,28 @@ public:
 	virtual ~ResArchiveLoader() {}
 	virtual bool checkFilename(Common::String filename) const = 0;
 	virtual bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const = 0;
-	virtual Common::Archive *load(Common::SharedPtr<Common::ArchiveMember> file, Common::SeekableReadStream &stream) const = 0;
+	virtual Common::Archive *load(Common::ArchiveMemberPtr file, Common::SeekableReadStream &stream) const = 0;
 };
 
 class ResLoaderPak : public ResArchiveLoader {
 public:
 	bool checkFilename(Common::String filename) const;
 	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
-	Common::Archive *load(Common::SharedPtr<Common::ArchiveMember> file, Common::SeekableReadStream &stream) const;
+	Common::Archive *load(Common::ArchiveMemberPtr file, Common::SeekableReadStream &stream) const;
 };
 
 class ResLoaderInsMalcolm : public ResArchiveLoader {
 public:
 	bool checkFilename(Common::String filename) const;
 	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
-	Common::Archive *load(Common::SharedPtr<Common::ArchiveMember> file, Common::SeekableReadStream &stream) const;
+	Common::Archive *load(Common::ArchiveMemberPtr file, Common::SeekableReadStream &stream) const;
 };
 
 class ResLoaderTlk : public ResArchiveLoader {
 public:
 	bool checkFilename(Common::String filename) const;
 	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
-	Common::Archive *load(Common::SharedPtr<Common::ArchiveMember> file, Common::SeekableReadStream &stream) const;
+	Common::Archive *load(Common::ArchiveMemberPtr file, Common::SeekableReadStream &stream) const;
 };
 
 class InstallerLoader {
