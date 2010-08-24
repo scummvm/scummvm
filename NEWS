@@ -34,6 +34,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  KYRA:
    - Fixed some minor graphical glitches.
    - Implemented formerly missing recreation of some in game items.
+   - Added support for playing Kyrandia 3 with the original CD file layout.
 
  Parallaction:
    - Made part one of The Big Red Adventure completable.
