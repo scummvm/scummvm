@@ -88,6 +88,7 @@ void Inter_Fascination::setupOpcodesDraw() {
 void Inter_Fascination::setupOpcodesFunc() {
 	Inter_v2::setupOpcodesFunc();
 
+	OPCODEFUNC(0x06, oFascin_repeatUntil);
 	OPCODEFUNC(0x09, oFascin_assign);
 	OPCODEFUNC(0x32, oFascin_copySprite);
 }
@@ -111,6 +112,43 @@ void Inter_Fascination::setupOpcodesGob() {
 	OPCODEGOB(1000, oFascin_loadMod);
 	OPCODEGOB(1001, oFascin_playProtracker);
 	OPCODEGOB(1002, o2_stopProtracker);
+}
+
+bool Inter_Fascination::oFascin_repeatUntil(OpFuncParams &params) {
+	int16 size;
+	bool flag;
+
+	_nestLevel[0]++;
+
+	uint32 blockPos = _vm->_game->_script->pos();
+
+	do {
+		_vm->_game->_script->seek(blockPos);
+		size = _vm->_game->_script->peekUint16(2) + 2;
+
+		funcBlock(1);
+
+		_vm->_game->_script->seek(blockPos + size + 1);
+
+		flag = _vm->_game->_script->evalBoolResult();
+
+		// WORKAROUND: The script of the PC version of Fascination, when the protection check
+		// fails, writes on purpose everywhere in the memory in order to hang the computer. 
+		// This results in a crash in Scummvm. This workaround avoids that crash.
+		if (_vm->getPlatform() == Common::kPlatformPC) {
+			if ((!scumm_stricmp(_vm->_game->_curTotFile, "INTRO1.TOT") && (blockPos == 3533)) ||
+				(!scumm_stricmp(_vm->_game->_curTotFile, "INTRO2.TOT") && (blockPos == 3519)))
+				_terminate = 1;
+		}
+	} while (!flag && !_break && !_terminate && !_vm->shouldQuit());
+
+	_nestLevel[0]--;
+
+	if (*_breakFromLevel > -1) {
+		_break = false;
+		*_breakFromLevel = -1;
+	}
+	return false;
 }
 
 bool Inter_Fascination::oFascin_assign(OpFuncParams &params) {
@@ -322,4 +360,5 @@ void Inter_Fascination::oFascin_setWinFlags() {
 void Inter_Fascination::oFascin_playProtracker(OpGobParams &params) {
 	_vm->_sound->protrackerPlay("mod.extasy");
 }
+
 } // End of namespace Gob
