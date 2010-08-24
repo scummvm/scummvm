@@ -254,8 +254,8 @@ Common::Error SciEngine::run() {
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
 
-	// ENABLE THIS FOR REPLACING SIERRA GAME RESTORE DIALOG WITH SCUMMVM RESTORE
-	//patchGameSaveRestore(segMan);
+	// Patch in our save/restore code, so that dialogs are replaced
+	patchGameSaveRestore(segMan);
 
 	if (_gameDescription->flags & ADGF_ADDENGLISH) {
 		// if game is multilingual
@@ -346,6 +346,9 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 	const byte *scriptRestorePtr = NULL;
 	const uint16 kernelCount = _kernel->getKernelNamesSize();
 	byte kernelIdRestore = 0;
+
+	// DISABLE NEXT LINE FOR REPLACING SIERRA GAME RESTORE DIALOG WITH SCUMMVM RESTORE
+	return;
 
 	for (uint16 kernelNr = 0; kernelNr < kernelCount; kernelNr++) {
 		Common::String kernelName = _kernel->getKernelName(kernelNr);
@@ -521,6 +524,7 @@ void SciEngine::runGame() {
 			_gamestate->_segMan->resetSegMan();
 			initGame();
 			initStackBaseWithSelector(SELECTOR(play));
+			patchGameSaveRestore(_gamestate->_segMan);
 			_gamestate->gameIsRestarting = GAMEISRESTARTING_RESTART;
 			if (_gfxMenu)
 				_gfxMenu->reset();
@@ -529,6 +533,7 @@ void SciEngine::runGame() {
 			_gamestate->abortScriptProcessing = kAbortNone;
 			_gamestate->_executionStack.clear();
 			initStackBaseWithSelector(SELECTOR(replay));
+			patchGameSaveRestore(_gamestate->_segMan);
 			_gamestate->shrinkStackToBase();
 			_gamestate->abortScriptProcessing = kAbortNone;
 		} else {
