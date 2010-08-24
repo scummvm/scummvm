@@ -340,7 +340,8 @@ void GfxPalette::drewPicture(GuiResourceId pictureId) {
 		_sysPalette.timestamp++;
 
 	if (_palVaryResourceId != -1) {
-		palVaryLoadTargetPalette(pictureId);
+		if (g_sci->getEngineState()->gameIsRestarting == 0) // only if not restored nor restarted
+			palVaryLoadTargetPalette(pictureId);
 	}
 }
 
