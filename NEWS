@@ -45,10 +45,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Several improvements in Maniac Mansion NES.
 
  PSP port:
-   - Switched to new backend design which fixes minor graphical issues,
-     speeds things up, and provides 16-bit support.
-   - Enabled playback of MP3 files using the hardware decoder (ME). This means that
-     the port is now optimized for MP3 playback (as opposed to OGG).
+   - New backend design: fixed minor graphical issues and enabled 16-bit support.
+   - Enabled playback of MP3 files using the Media Engine. This means that
+     the port is optimized for MP3 files (as opposed to OGG).
+   - Many optimizations. Everything should run faster.
 
  Wii port:
    - Added support for USB2 mass storage devices (requires The Homebrew Channel
