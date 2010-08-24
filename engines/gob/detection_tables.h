@@ -2220,6 +2220,21 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdLib,
 		"demo.stk", "demo.tot", 0
 	},
+//  This version is not detected on purpose: it's a pirated version, using a corrupted crack.
+//	{
+//		{
+//			"fascination",
+//			"",
+//			AD_ENTRY1s("disk0.stk", "c14330d052fe4da5a441ac9d81bc5891", 1061955),
+//			UNK_LANG,
+//			kPlatformPC,
+//			ADGF_NO_FLAGS,
+//			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+//		},
+//		kGameTypeFascination,
+//		kFeaturesAdLib,
+//		"disk0.stk", 0, 0
+//	},
 	{
 		{
 			"fascination",
