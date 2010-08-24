@@ -347,8 +347,20 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 	const uint16 kernelCount = _kernel->getKernelNamesSize();
 	byte kernelIdRestore = 0;
 
-	// DISABLE NEXT LINE FOR REPLACING SIERRA GAME RESTORE DIALOG WITH SCUMMVM RESTORE
-	return;
+	// this feature is currently not supported on SCI32
+	if (getSciVersion() >= SCI_VERSION_2)
+		return;
+
+	switch (_gameId) {
+	case GID_MOTHERGOOSE256: // mother goose saves/restores directly and has no save/restore dialogs
+		return;
+	default:
+		break;
+	}
+
+	Common::String replaceDialogOption = ConfMan.get("scireplacedialog", Common::ConfigManager::kApplicationDomain);
+	if (replaceDialogOption == "")
+		return;
 
 	for (uint16 kernelNr = 0; kernelNr < kernelCount; kernelNr++) {
 		Common::String kernelName = _kernel->getKernelName(kernelNr);

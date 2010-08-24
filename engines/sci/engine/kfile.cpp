@@ -632,6 +632,7 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = !argv[0].isNull() ? s->_segMan->getString(argv[0]) : "";
 	int16 savegameId = argv[1].toSint16();
+	bool pausedMusic = false;
 
 	debug(3, "kRestoreGame(%s,%d)", game_id.c_str(), savegameId);
 
@@ -639,14 +640,18 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		// Direct call, either from launcher or from a patched Game::restore call
 		if (savegameId == -1) {
 			// we are supposed to show a dialog for the user and let him choose a saved game
+			g_sci->_soundCmd->pauseAll(true); // pause music
 			const EnginePlugin *plugin = NULL;
 			EngineMan.findGame(g_sci->getGameIdStr(), &plugin);
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore");
 			dialog->setSaveMode(false);
 			savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
 			delete dialog;
-			if (savegameId < 0)
+			if (savegameId < 0) {
+				g_sci->_soundCmd->pauseAll(false); // unpause music
 				return s->r_acc;
+			}
+			pausedMusic = true;
 		}
 		// don't adjust ID of the saved game, it's already correct
 	} else {
@@ -658,34 +663,41 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		savegameId -= SAVEGAMEID_OFFICIALRANGE_START;
 	}
 
+	s->r_acc = NULL_REG; // signals success
+
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 	if (findSavegame(saves, savegameId) == -1) {
+		s->r_acc = TRUE_REG;
 		warning("Savegame ID %d not found", savegameId);
-		return TRUE_REG;
-	}
+	} else {
+		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+		Common::String filename = g_sci->getSavegameName(savegameId);
+		Common::SeekableReadStream *in;
+		if ((in = saveFileMan->openForLoading(filename))) {
+			// found a savegame file
 
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	Common::String filename = g_sci->getSavegameName(savegameId);
-	Common::SeekableReadStream *in;
-	if ((in = saveFileMan->openForLoading(filename))) {
-		// found a savegame file
+			gamestate_restore(s, in);
+			delete in;
 
-		gamestate_restore(s, in);
-		delete in;
-
-		if (g_sci->getGameId() == GID_MOTHERGOOSE256) {
-			// WORKAROUND: Mother Goose SCI1/SCI1.1 does some weird things for
-			//  saving a previously restored game.
-			// We set the current savedgame-id directly and remove the script
-			//  code concerning this via script patch.
-			s->variables[VAR_GLOBAL][0xB3].offset = SAVEGAMEID_OFFICIALRANGE_START + savegameId;
+			if (g_sci->getGameId() == GID_MOTHERGOOSE256) {
+				// WORKAROUND: Mother Goose SCI1/SCI1.1 does some weird things for
+				//  saving a previously restored game.
+				// We set the current savedgame-id directly and remove the script
+				//  code concerning this via script patch.
+				s->variables[VAR_GLOBAL][0xB3].offset = SAVEGAMEID_OFFICIALRANGE_START + savegameId;
+			}
+		} else {
+			s->r_acc = TRUE_REG;
+			warning("Savegame #%d not found", savegameId);
 		}
-		return s->r_acc;
 	}
 
-	s->r_acc = TRUE_REG;
-	warning("Savegame #%d not found", savegameId);
+	if (!s->r_acc.isNull()) {
+		// no success?
+		if (pausedMusic)
+			g_sci->_soundCmd->pauseAll(false); // unpause music
+	}
 
 	return s->r_acc;
 }

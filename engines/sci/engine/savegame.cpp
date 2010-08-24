@@ -708,7 +708,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	sync_SavegameMetadata(ser, meta);
 
 	if (fh->eos()) {
-		s->r_acc = make_reg(0, 1);	// signal failure
+		s->r_acc = TRUE_REG;	// signal failure
 		return;
 	}
 
@@ -723,7 +723,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 		showScummVMDialog("The format of this saved game is obsolete, unable to load it");
 
-		s->r_acc = make_reg(0, 1);	// signal failure
+		s->r_acc = TRUE_REG;	// signal failure
 		return;
 	}
 
@@ -734,7 +734,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 			showScummVMDialog("This saved game was created with a different version of the game, unable to load it");
 
-			s->r_acc = make_reg(0, 1);	// signal failure
+			s->r_acc = TRUE_REG;	// signal failure
 			return;
 		}
 	}
