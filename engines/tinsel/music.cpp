@@ -70,62 +70,8 @@ static SOUND_BUFFER midiBuffer = { 0, 0 };
 static SCNHANDLE	currentMidi = 0;
 static bool		currentLoop = false;
 
-static const SCNHANDLE midiOffsetsGRAVersion[] = {
-		 4,	  4534,	 14298,	 18828,	 23358,	 38888,	 54418,	 57172,	 59926,	 62450,
-	 62952,	 67482,	 72258,	 74538,	 79314,	 87722,	103252,	115176,	127100,	127898,
-	130256,	132614,	134972,	137330,	139688,	150196,	152554,	154912,	167422,	174762,
-	182102,	194612,	198880,	199536,	206128,	206380,	216372,	226364,	235676,	244988,
-	249098,	249606,	251160,	252714,	263116,	268706,	274296,	283562,	297986,	304566,
-	312028,	313524,	319192,	324860,	331772,	336548,	336838,	339950,	343062,	346174,
-	349286,	356246,	359358,	360434,	361510,	369966,	374366,	382822,	384202,	394946,
-	396022,	396730,	399524,	401020,	403814,	418364,	419466,	420568,	425132,	433540,
-	434384,	441504,	452132,	462760,	472804,	486772,	491302,	497722,	501260,	507680,
-	509726,	521858,	524136,	525452,	533480,	538236,	549018,	559870,	564626,	565306,
-	566734,	567616,	570144,	574102,	574900,	582518,	586350,	600736,	604734,	613812,
-	616566,	619626,	623460,	627294,	631128,	634188,	648738,	663288,	667864,	681832,
-	682048,	683014,	688908,	689124,	698888,	708652,	718416,	728180,	737944,	747708,
-	752238,	765522,	766554,	772944,	774546,	776148,	776994,	781698,	786262,	789016,
-	794630,	796422,	798998
-};
-
-static const SCNHANDLE midiOffsetsSCNVersion[] = {
-		 4,	  4504,	 11762,	 21532,	 26070,	 28754,	 33254,	 40512,	 56310,	 72108,
-	 74864,	 77620,	 80152,	 80662,	 85200,	 89982,	 92268,	 97050,	105466,	121264,
-	133194,	145124,	145928,	148294,	150660,	153026,	155392,	157758,	168272,	170638,
-	173004,	185522,	192866,	200210,	212728,	217000,	217662,	224254,	224756,	234754,
-	244752,	245256,	245950,	255256,	264562,	268678,	269192,	270752,	272312,	282712,
-	288312,	293912,	303186,	317624,	324210,	331680,	333208,	338884,	344560,	351478,
-	356262,	356552,	359670,	362788,	365906,	369024,	376014,	379132,	380214,	381296,
-	389758,	394164,	402626,	404012,	414762,	415844,	416552,	419352,	420880,	423680,
-	438236,	439338,	440440,	445010,	453426,	454276,	461398,	472032,	482666,	492716,
-	506690,	511226,	517654,	521198,	527626,	529676,	541814,	546210,	547532,	555562,
-	560316,	571104,	581962,	586716,	587402,	588836,	589718,	592246,	596212,	597016,
-	604636,	608474,	622862,	626860,	635944,	638700,	641456,	645298,	649140,	652982,
-	655738,	670294,	684850,	689432,	703628,	703850,	704816,	706350,	706572,	716342,
-	726112,	735882,	745652,	755422,	765192,	774962,	784732,	794502,	804272,	814042,
-	823812,	832996,	846286,	847324,	853714,	855324,	856934,	857786,	862496,	867066,
-	869822,	875436,	877234,	879818
-};
-
-// Alternative version used in German CD re-release "Neon Edition"
-static const SCNHANDLE midiOffsetsSCNVersionALT[] = {
-		4, 	4504, 	11762, 	21532, 	26070, 	28754, 	33254, 40512, 56310, 59066,
-	 61822, 	64354, 64864, 69402, 74184, 76470, 81252, 89668, 105466, 117396,
-	129326, 130130, 132496, 134862, 137228, 139594, 141960, 152474, 154840, 157206,
-	169724, 177068, 184412, 196930, 201202, 201864, 208456, 208958, 218956, 228954,
-	229458, 230152, 239458, 248764, 252880, 253394, 254954, 256514, 266914, 272514,
-	278114, 287388, 301826, 308412, 315882, 317410, 323086, 328762, 335680, 340464,
-	340754, 343872, 346990, 350108, 353226, 360216, 363334, 364416, 365498, 373960,
-	378366, 386828, 388214, 398964, 400046, 400754, 403554, 405082, 407882, 422438,
-	423540, 424642, 429212, 437628, 438478, 445600, 456234, 466868, 476918, 490892,
-	495428, 501856, 505400, 511828, 513878, 526016, 530412, 531734, 539764, 544518,
-	555306, 566164, 570918, 571604, 573038, 573920, 576448, 580414, 581218, 588838,
-	592676, 607064, 611062, 620146, 622902, 625658, 629500, 633342, 637184, 639940,
-	654496, 669052, 673634, 687830, 688052, 689018, 690552, 690774, 700544, 710314,
-	720084, 729854, 739624, 749394, 759164, 768934, 778704, 788474, 798244, 808014,
-	817198, 830488, 831526, 837916, 839526, 841136, 841988, 846698, 851268, 854024,
-	859638, 861436, 864020
-};
+// We allocate 155 entries because that's the maximum, used in the SCN version
+static SCNHANDLE midiOffsets[155];
 
 static const int enhancedAudioGRAVersion[] = {
 	 1,   2,   1,   1,   3,   3,   4,   4,   5,   6, //   1-10
@@ -185,34 +131,16 @@ static const int enhancedAudioSCNVersionALT[] = {
 };
 
 int GetTrackNumber(SCNHANDLE hMidi) {
-	if (_vm->getFeatures() & GF_ALT_MIDI) {
-		for (int i = 0; i < ARRAYSIZE(midiOffsetsSCNVersionALT); i++) {
-			if (midiOffsetsSCNVersionALT[i] == hMidi)
-				return i;
-		}
-	} else if (_vm->getFeatures() & GF_SCNFILES) {
-		for (int i = 0; i < ARRAYSIZE(midiOffsetsSCNVersion); i++) {
-			if (midiOffsetsSCNVersion[i] == hMidi)
-				return i;
-		}
-	} else {
-		for (int i = 0; i < ARRAYSIZE(midiOffsetsGRAVersion); i++) {
-			if (midiOffsetsGRAVersion[i] == hMidi)
-				return i;
-		}
-	}
+	for (int i = 0; i < ARRAYSIZE(midiOffsets); i++)
+		if (midiOffsets[i] == hMidi)
+			return i;
 
 	return -1;
 }
 
 SCNHANDLE GetTrackOffset(int trackNumber) {
-	if (_vm->getFeatures() & GF_SCNFILES) {
-		assert(trackNumber < ARRAYSIZE(midiOffsetsSCNVersion));
-		return midiOffsetsSCNVersion[trackNumber];
-	} else {
-		assert(trackNumber < ARRAYSIZE(midiOffsetsGRAVersion));
-		return midiOffsetsGRAVersion[trackNumber];
-	}
+	assert(trackNumber < ARRAYSIZE(midiOffsets));
+	return midiOffsets[trackNumber];
 }
 
 /**
@@ -429,6 +357,28 @@ void OpenMidiFiles() {
 		} else {
 			//mSeqHandle = NULL;
 		}
+	}
+
+	// Now scan through the contents of the MIDI file to find the offset
+	// of each individual track, in order to create a mapping from MIDI
+	// offset to track number, for the enhanced MIDI soundtrack
+	// The first song is always at position 4. The subsequent ones are
+	// calculated dynamically.
+	uint32 curOffset = 4;
+	uint32 curTrack = 0;
+	uint32 songLength = 0;
+
+	while (!midiStream.eos() && !midiStream.err()) {
+		assert(curTrack < ARRAYSIZE(midiOffsets));
+		midiOffsets[curTrack++] = curOffset + (4 * curTrack);
+		//printf("%d: %d\n", curTrack - 1, midiOffsets[curTrack - 1]);
+
+		songLength = midiStream.readUint32LE();
+		curOffset += songLength;
+		midiStream.skip(songLength);
+
+		if (curOffset + (4 * curTrack) >= (uint32)midiStream.size())
+			break;
 	}
 
 	midiStream.close();
