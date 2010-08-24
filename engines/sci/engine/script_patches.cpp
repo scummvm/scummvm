@@ -45,6 +45,8 @@ struct SciScriptSignature {
 	const uint16 *patch;
 };
 
+#define SCI_SIGNATUREENTRY_TERMINATOR { 0, NULL, 0, 0, NULL, NULL }
+
 // signatures are built like this:
 //  - first a counter of the bytes that follow
 //  - then the actual bytes that need to get matched
@@ -115,7 +117,7 @@ const uint16 ecoquest1PatchStayAndHelp[] = {
 //    script, description,                                   magic DWORD,                                 adjust
 const SciScriptSignature ecoquest1Signatures[] = {
     {    660, "CD: bad messagebox and freeze",               PATCH_MAGICDWORD(0x38, 0x22, 0x01, 0x78),   -17, ecoquest1SignatureStayAndHelp, ecoquest1PatchStayAndHelp },
-    {      0, NULL,                                          0,                                            0, NULL,                          NULL }
+    SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -177,7 +179,7 @@ const uint16 ecoquest2PatchEcorder[] = {
 //    script, description,                                   magic DWORD,                                 adjust
 const SciScriptSignature ecoquest2Signatures[] = {
     {     50, "initial text not removed on ecorder",         PATCH_MAGICDWORD(0x39, 0x64, 0x39, 0x7d),    -8, ecoquest2SignatureEcorder, ecoquest2PatchEcorder },
-    {      0, NULL,                                          0,                                            0, NULL,                          NULL }
+    SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // daySixBeignet::changeState (4) is called when the cop goes out and sets cycles to 220.
@@ -250,7 +252,7 @@ const SciScriptSignature gk1Signatures[] = {
     {    212, "day 5 phone freeze",                          PATCH_MAGICDWORD(0x35, 0x03, 0x65, 0x1a),     0, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
     {    230, "day 6 police beignet timer issue",            PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),   -16, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
     {    230, "day 6 police sleep timer issue",              PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),    -5, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },
-    {      0, NULL,                                          0,                                            0, NULL,                          NULL }
+    SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -370,7 +372,7 @@ const uint16 kq5PatchCdHarpyVolume[] = {
 //    script, description,                                   magic DWORD,                                 adjust
 const SciScriptSignature kq5Signatures[] = {
     {      0, "CD: harpy volume change",                     PATCH_MAGICDWORD(0x80, 0x91, 0x01, 0x18),     0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
-    {      0, NULL,                                          0,                                            0, NULL,                      NULL }
+    SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -421,7 +423,7 @@ const uint16 larry6PatchDeathDialog[] = {
 //    script, description,                                   magic DWORD,                                  adjust
 const SciScriptSignature larry6Signatures[] = {
     {     82, "death dialog memory corruption",              PATCH_MAGICDWORD(0x3e, 0x33, 0x01, 0x35),     0, larry6SignatureDeathDialog, larry6PatchDeathDialog },
-    {      0, NULL,                                          0,                                            0, NULL,                       NULL }
+    SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -452,7 +454,7 @@ const uint16 laurabow2PatchPaintingClosing[] = {
 //    script, description,                                   magic DWORD,                                  adjust
 const SciScriptSignature laurabow2Signatures[] = {
     {    560, "painting closing immediately",                PATCH_MAGICDWORD(0x36, 0x81, 0x0b, 0x1c),    -2, laurabow2SignaturePaintingClosing, laurabow2PatchPaintingClosing },
-    {      0, NULL,                                          0,                                            0, NULL,                              NULL }
+    SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -496,7 +498,62 @@ const SciScriptSignature mothergoose256Signatures[] = {
     {      0, "replay save issue",                           PATCH_MAGICDWORD(0x20, 0x04, 0xa1, 0xb3),    -2, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
     {      0, "save limit dialog (SCI1.1)",                  PATCH_MAGICDWORD(0xb3, 0x35, 0x0d, 0x20),    -1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
     {    994, "save limit dialog (SCI1)",                    PATCH_MAGICDWORD(0xb3, 0x35, 0x0d, 0x20),    -1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
-    {      0, NULL,                                          0,                                            0, NULL,                             NULL }
+    SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+//  script 215 of qfg1vga pointBox::doit actually processes button-presses
+//   during fighting with monsters. It strangely also calls kGetEvent. Because
+//   the main User::doit also calls kGetEvent it's pure luck, where the event
+//   will hit. It's the same issue as in freddy pharkas and if you turn dos-box
+//   to max cycles, sometimes clicks also won't get registered. Strangely it's
+//   not nearly as bad as in our sci, but these differences may be caused by
+//   timing.
+//   We just reuse the active event, thus removing the duplicate kGetEvent call.
+const byte qfg1vgaSignatureFightEvents[] = {
+	25,
+	0x39, 0x6d,       // pushi 6d (selector new)
+	0x76,             // push0
+	0x51, 0x07,       // class Event
+	0x4a, 0x04,       // send 04 (Event::new)
+	0xa5, 0x00,       // sat temp[0]
+	0x78,             // push1
+	0x76,             // push0
+	0x4a, 0x04,       // send 04 (Event::x)
+	0xa5, 0x03,       // sat temp[3]
+	0x76,             // push0 (selector y)
+	0x76,             // push0
+	0x85, 0x00,       // lat temp[0]
+	0x4a, 0x04,       // send 04
+	0x36,             // push
+	0x35, 0x0a,       // ldi 0a
+	0x04,             // sub (poor mans localization) ;-)
+	0
+};
+
+const uint16 qfg1vgaPatchFightEvents[] = {
+	0x38, 0x5a, 0x01, // pushi 15a (selector curEvent)
+	0x76,             // push0
+	0x81, 0x50,       // lag global[50]
+	0x4a, 0x04,       // send 04 (read User::curEvent) -> needs one byte more than previous code
+	0xa5, 0x00,       // sat temp[0]
+	0x78,             // push1
+	0x76,             // push0
+	0x4a, 0x04,       // send 04 (Event::x)
+	0xa5, 0x03,       // sat temp[3]
+	0x76,             // push0 (selector y)
+	0x76,             // push0
+	0x85, 0x00,       // lat temp[0]
+	0x4a, 0x04,       // send 04
+	0x39, 0x00,       // pushi 00
+	0x02,             // add (waste 3 bytes) - we don't need localization, User::doit has already done it
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                  adjust
+const SciScriptSignature qfg1vgaSignatures[] = {
+    {    215, "fight event issue",                           PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents, qfg1vgaPatchFightEvents },
+    SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -525,7 +582,7 @@ const uint16 sq4FloppyPatchEndlessFlight[] = {
 //    script, description,                                   magic DWORD,                                  adjust
 const SciScriptSignature sq4Signatures[] = {
     {    298, "Floppy: endless flight",                      PATCH_MAGICDWORD(0x67, 0x08, 0x63, 0x44),    -3, sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
-    {      0, NULL,                                          0,                                            0, NULL,                            NULL }
+    SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -573,7 +630,7 @@ const uint16 sq5PatchScrubbing[] = {
 //    script, description,                                   magic DWORD,                                  adjust
 const SciScriptSignature sq5Signatures[] = {
     {    119, "scrubbing send crash",                        PATCH_MAGICDWORD(0x18, 0x31, 0x37, 0x78),     0, sq5SignatureScrubbing, sq5PatchScrubbing },
-    {      0, NULL,                                          0,                                            0, NULL,                  NULL }
+    SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 
@@ -654,6 +711,8 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		signatureTable = larry6Signatures;
 	if (g_sci->getGameId() == GID_MOTHERGOOSE256)
 		signatureTable = mothergoose256Signatures;
+	if (g_sci->getGameId() == GID_QFG1VGA)
+		signatureTable = qfg1vgaSignatures;
 	if (g_sci->getGameId() == GID_SQ4)
 		signatureTable = sq4Signatures;
 	if (g_sci->getGameId() == GID_SQ5)
