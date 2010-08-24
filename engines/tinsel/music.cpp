@@ -361,7 +361,7 @@ void OpenMidiFiles() {
 
 	// Now scan through the contents of the MIDI file to find the offset
 	// of each individual track, in order to create a mapping from MIDI
-	// offset to track number, for the enhanced MIDI soundtrack
+	// offset to track number, for the enhanced MIDI soundtrack.
 	// The first song is always at position 4. The subsequent ones are
 	// calculated dynamically.
 	uint32 curOffset = 4;
@@ -373,16 +373,18 @@ void OpenMidiFiles() {
 		midiOffsets[i] = 0;
 
 	while (!midiStream.eos() && !midiStream.err()) {
+		if (curOffset + (4 * curTrack) >= (uint32)midiStream.size())
+			break;
+
 		assert(curTrack < ARRAYSIZE(midiOffsets));
-		midiOffsets[curTrack++] = curOffset + (4 * curTrack);
-		//printf("%d: %d\n", curTrack - 1, midiOffsets[curTrack - 1]);
+		midiOffsets[curTrack] = curOffset + (4 * curTrack);
+		//printf("%d: %d\n", curTrack, midiOffsets[curTrack]);
 
 		songLength = midiStream.readUint32LE();
 		curOffset += songLength;
 		midiStream.skip(songLength);
 
-		if (curOffset + (4 * curTrack) >= (uint32)midiStream.size())
-			break;
+		curTrack++;
 	}
 
 	midiStream.close();
