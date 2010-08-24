@@ -619,9 +619,9 @@ bool GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint1
 			// sierra sci set the timer to 1 tick instead of calling it directly
 			//  we have to change this to prevent a race condition to happen in
 			//  at least freddy pharkas during nighttime. In that case kPalVary is
-			//  called right before that and because we load pictures much faster
-			//  the 1 tick won't pass sometimes resulting in the palette being
-			//  daytime instead of nighttime during the transition.
+			//  called right before a transition and because we load pictures much
+			//  faster, the 1 tick won't pass sometimes resulting in the palette
+			//  being daytime instead of nighttime during the transition.
 			palVaryProcess(1, true);
 		} else {
 			palVaryInstallTimer();
