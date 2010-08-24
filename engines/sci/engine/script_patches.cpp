@@ -76,7 +76,7 @@ const byte ecoquest1SignatureStayAndHelp[] = {
 	0x78,              // push1
 	0x76,              // push0
 	0x81, 0x00,        // lag global[0]
-	0x4a, 0x06,        // send 06 - ego::setMotion(0)
+	0x4a, 0x06,        // send 06 - call ego::setMotion(0)
 	0x39, 0x6e,        // pushi 6e (selector init)
 	0x39, 0x04,        // pushi 04
 	0x76,              // push0
@@ -84,7 +84,7 @@ const byte ecoquest1SignatureStayAndHelp[] = {
 	0x39, 0x17,        // pushi 17
 	0x7c,              // pushSelf
 	0x51, 0x82,        // class EcoNarrator
-	0x4a, 0x0c,        // send 0c - EcoNarrator::init(0, 0, 23, self) (BADLY BROKEN!)
+	0x4a, 0x0c,        // send 0c - call EcoNarrator::init(0, 0, 23, self) (BADLY BROKEN!)
 	0x33,              // jmp [end]
 	0
 };
@@ -100,7 +100,7 @@ const uint16 ecoquest1PatchStayAndHelp[] = {
 	0x78,              // push1
 	0x76,              // push0
 	0x81, 0x00,        // lag global[0]
-	0x4a, 0x06,        // send 06 - ego::setMotion(0)
+	0x4a, 0x06,        // send 06 - call ego::setMotion(0)
 	0x39, 0x6e,        // pushi 6e (selector init)
 	0x39, 0x06,        // pushi 06
 	0x39, 0x02,        // pushi 02 (additional 2 bytes)
@@ -110,7 +110,7 @@ const uint16 ecoquest1PatchStayAndHelp[] = {
 	0x7c,              // pushSelf
 	0x38, 0x80, 0x02,  // pushi 280 (additional 3 bytes)
 	0x51, 0x82,        // class EcoNarrator
-	0x4a, 0x10,        // send 10 - EcoNarrator::init(2, 0, 0, 23, self, 640)
+	0x4a, 0x10,        // send 10 - call EcoNarrator::init(2, 0, 0, 23, self, 640)
 	PATCH_END
 };
 
@@ -182,6 +182,50 @@ const SciScriptSignature ecoquest2Signatures[] = {
     SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+// ===========================================================================
+//  script 215 of freddy pharkas lowerLadder::doit and highLadder::doit actually
+//   process keyboard-presses when the ladder is on the screen in that room.
+//   They strangely also call kGetEvent. Because the main User::doit also calls
+//   kGetEvent, it's pure luck, where the event will hit. It's the same issue
+//   as in QfG1VGA and if you turn dos-box to max cycles, and click around for
+//   ego, sometimes clicks also won't get registered. Strangely it's not nearly
+//   as bad as in our sci, but these differences may be caused by timing.
+//   We just reuse the active event, thus removing the duplicate kGetEvent call.
+const byte freddypharkasSignatureLadderEvent[] = {
+	21,
+	0x39, 0x6d,       // pushi 6d (selector new)
+	0x76,             // push0
+	0x38, 0xf5, 0x00, // pushi f5 (selector curEvent)
+	0x76,             // push0
+	0x81, 0x50,       // lag global[50]
+	0x4a, 0x04,       // send 04 - read User::curEvent
+	0x4a, 0x04,       // send 04 - call curEvent::new
+	0xa5, 0x00,       // sat temp[0]
+	0x38, 0x94, 0x00, // pushi 94 (selector localize)
+	0x76,             // push0
+	0x4a, 0x04,       // send 04 - call curEvent::localize
+	0
+};
+
+const uint16 freddypharkasPatchLadderEvent[] = {
+	0x34, 0x00, 0x00, // ldi 0000 (waste 3 bytes, overwrites first 2 pushes)
+	PATCH_ADDTOOFFSET | +8,
+	0xa5, 0x00,       // sat temp[0] (waste 2 bytes, overwrites 2nd send)
+	PATCH_ADDTOOFFSET | +2,
+	0x34, 0x00, 0x00, // ldi 0000
+	0x34, 0x00, 0x00, // ldi 0000 (waste 6 bytes, overwrites last 3 opcodes)
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                  adjust
+const SciScriptSignature freddypharkasSignatures[] = {
+    // this is not a typo, both lowerLadder::doit and highLadder::doit have the same event code
+    {    320, "lower ladder event issue",                    PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent, freddypharkasPatchLadderEvent },
+    {    320, "high ladder event issue",                     PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent, freddypharkasPatchLadderEvent },
+    SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // daySixBeignet::changeState (4) is called when the cop goes out and sets cycles to 220.
 //  this is not enough time to get to the door, so we patch that to 23 seconds
 const byte gk1SignatureDay6PoliceBeignet[] = {
@@ -283,12 +327,12 @@ const SciScriptSignature gk1Signatures[] = {
 //	0x38, 0xa7, 0x00,  // pushi 00a7
 //	0x76,              // push0
 //	0x80, 0x29, 0x01,  // lag 0129
-//	0x4a, 0x04,        // send 04 (song::stop)
+//	0x4a, 0x04,        // send 04 - call song::stop
 //	0x39, 0x27,        // pushi 27
 //	0x78,              // push1
 //	0x8f, 0x01,        // lsp 01
 //	0x51, 0x54,        // class 54
-//	0x4a, 0x06,        // send 06 (PlaySong::play)
+//	0x4a, 0x06,        // send 06 - call PlaySong::play
 //	0x33, 0x09,        // jmp 09 -> end of routine
 //	0x38, 0xaa, 0x00,  // pushi 00aa
 //	0x76,              // push0
@@ -303,12 +347,12 @@ const SciScriptSignature gk1Signatures[] = {
 //	0x38, 0x31, 0x01,  // pushi 0131 (selector curEvent)
 //	0x76,              // push0
 //	0x80, 0x50, 0x00,  // lag 0050 (global var 80h, "User")
-//	0x4a, 0x04,        // send 04 (read User::curEvent)
+//	0x4a, 0x04,        // send 04 - read User::curEvent
 //
 //	0x38, 0x93, 0x00,  // pushi 0093 (selector port)
 //	0x78,              // push1
 //	0x76,              // push0
-//	0x4a, 0x06,        // send 06 (write 0 to that object::port)
+//	0x4a, 0x06,        // send 06 - write 0 to that object::port
 //	0x48,              // ret
 //	PATCH_END
 //};
@@ -335,12 +379,12 @@ const byte kq5SignatureCdHarpyVolume[] = {
 	0x38, 0x7b, 0x01,  // pushi 017b
 	0x76,              // push0
 	0x81, 0x01,        // lag global[1]
-	0x4a, 0x04,        // send 04 (getting KQ5::masterVolume)
+	0x4a, 0x04,        // send 04 - read KQ5::masterVolume
 	0xa5, 0x03,        // sat temp[3] (store volume in temp 3)
 	0x38, 0x7b, 0x01,  // pushi 017b
 	0x76,              // push0
 	0x81, 0x01,        // lag global[1]
-	0x4a, 0x04,        // send 04 (getting KQ5::masterVolume)
+	0x4a, 0x04,        // send 04 - read KQ5::masterVolume
 	0x36,              // push
 	0x35, 0x04,        // ldi 04
 	0x20,              // ge? (followed by bnt)
@@ -361,7 +405,7 @@ const uint16 kq5PatchCdHarpyVolume[] = {
 	0x38, 0x7b, 0x01,  // pushi 017b
 	0x76,              // push0
 	0x81, 0x01,        // lag global[1]
-	0x4a, 0x04,        // send 04 (getting KQ5::masterVolume)
+	0x4a, 0x04,        // send 04 - read KQ5::masterVolume
 	0xa5, 0x03,        // sat temp[3] (store volume in temp 3)
 	// saving 8 bytes due removing of duplicate code
 	0x39, 0x04,        // pushi 04 (saving 1 byte due swapping)
@@ -432,7 +476,7 @@ const SciScriptSignature larry6Signatures[] = {
 //  is not in the room. We fix that.
 const byte laurabow2SignaturePaintingClosing[] = {
 	17,
-	0x4a, 0x04,       // send 04 (gets aHeimlich::room)
+	0x4a, 0x04,       // send 04 - read aHeimlich::room
 	0x36,             // push
 	0x81, 0x0b,       // lag global[11d] -> current room
 	0x1c,             // ne?
@@ -515,16 +559,16 @@ const byte qfg1vgaSignatureFightEvents[] = {
 	0x39, 0x6d,       // pushi 6d (selector new)
 	0x76,             // push0
 	0x51, 0x07,       // class Event
-	0x4a, 0x04,       // send 04 (Event::new)
+	0x4a, 0x04,       // send 04 - call Event::new
 	0xa5, 0x00,       // sat temp[0]
 	0x78,             // push1
 	0x76,             // push0
-	0x4a, 0x04,       // send 04 (Event::x)
+	0x4a, 0x04,       // send 04 - read Event::x
 	0xa5, 0x03,       // sat temp[3]
 	0x76,             // push0 (selector y)
 	0x76,             // push0
 	0x85, 0x00,       // lat temp[0]
-	0x4a, 0x04,       // send 04
+	0x4a, 0x04,       // send 04 - read Event::y
 	0x36,             // push
 	0x35, 0x0a,       // ldi 0a
 	0x04,             // sub (poor mans localization) ;-)
@@ -535,16 +579,16 @@ const uint16 qfg1vgaPatchFightEvents[] = {
 	0x38, 0x5a, 0x01, // pushi 15a (selector curEvent)
 	0x76,             // push0
 	0x81, 0x50,       // lag global[50]
-	0x4a, 0x04,       // send 04 (read User::curEvent) -> needs one byte more than previous code
+	0x4a, 0x04,       // send 04 - read User::curEvent -> needs one byte more than previous code
 	0xa5, 0x00,       // sat temp[0]
 	0x78,             // push1
 	0x76,             // push0
-	0x4a, 0x04,       // send 04 (Event::x)
+	0x4a, 0x04,       // send 04 - read Event::x
 	0xa5, 0x03,       // sat temp[3]
 	0x76,             // push0 (selector y)
 	0x76,             // push0
 	0x85, 0x00,       // lat temp[0]
-	0x4a, 0x04,       // send 04
+	0x4a, 0x04,       // send 04 - read Event::y
 	0x39, 0x00,       // pushi 00
 	0x02,             // add (waste 3 bytes) - we don't need localization, User::doit has already done it
 	PATCH_END
@@ -602,8 +646,8 @@ const byte sq5SignatureScrubbing[] = {
 	0x39, 0x38,       // pushi 38 (selector mover)
 	0x76,             // push0
 	0x81, 0x00,       // lag 00
-	0x4a, 0x04,       // send 04 (read ego::mover)
-	0x4a, 0x04,       // send 04 (read ego::mover::x)
+	0x4a, 0x04,       // send 04 - read ego::mover
+	0x4a, 0x04,       // send 04 - read ego::mover::x
 	0x36,             // push
 	0x34, 0xa0, 0x00, // ldi 00a0
 	0x1c,             // ne?
@@ -617,11 +661,11 @@ const uint16 sq5PatchScrubbing[] = {
 	0x39, 0x38,       // pushi 38 (selector mover)
 	0x76,             // push0
 	0x81, 0x00,       // lag 00
-	0x4a, 0x04,       // send 04 (read ego::mover)
+	0x4a, 0x04,       // send 04 - read ego::mover
 	0x31, 0x2e,       // bnt 2e (jump if ego::mover is 0)
 	0x78,             // push1 (selector x)
 	0x76,             // push0
-	0x4a, 0x04,       // send 04 (read ego::mover::x)
+	0x4a, 0x04,       // send 04 - read ego::mover::x
 	0x39, 0xa0,       // pushi a0 (saving 2 bytes)
 	0x1c,             // ne?
 	PATCH_END
@@ -698,6 +742,8 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		signatureTable = ecoquest1Signatures;
 	if (g_sci->getGameId() == GID_ECOQUEST2)
 		signatureTable = ecoquest2Signatures;
+	if (g_sci->getGameId() == GID_FREDDYPHARKAS)
+		signatureTable = freddypharkasSignatures;
 	if (g_sci->getGameId() == GID_GK1)
 		signatureTable = gk1Signatures;
 // hoyle4 now works due workaround inside GfxPorts
