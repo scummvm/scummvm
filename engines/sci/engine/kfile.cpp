@@ -556,7 +556,6 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 	int16 savegameId = -1;
 	Common::String game_description;
 	Common::String version;
-	bool pausedMusic = false;
 
 	if (argc > 3)
 		version = s->_segMan->getString(argv[3]);
@@ -581,11 +580,9 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
 		game_description = dialog->getResultString();
 		delete dialog;
-		if (savegameId < 0) {
-			g_sci->_soundCmd->pauseAll(false); // unpause music
+		g_sci->_soundCmd->pauseAll(false); // unpause music ( we can't have it paused during save)
+		if (savegameId < 0)
 			return NULL_REG;
-		}
-		pausedMusic = true;
 
 	} else {
 		// Real call from script
@@ -652,9 +649,6 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 			delete out;
 		}
 	}
-
-	if (pausedMusic)
-		g_sci->_soundCmd->pauseAll(false); // unpause music
 
 	return s->r_acc;
 }

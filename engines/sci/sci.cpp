@@ -340,6 +340,8 @@ static byte patchGameRestoreSave[] = {
 };
 
 void SciEngine::patchGameSaveRestore(SegManager *segMan) {
+	const Object *gameObject = segMan->getObject(_gameObjectAddress);
+	const uint16 gameMethodCount = gameObject->getMethodCount();
 	const Object *gameSuperObject = segMan->getObject(_gameSuperClassAddress);
 	const uint16 gameSuperMethodCount = gameSuperObject->getMethodCount();
 	reg_t methodAddress;
@@ -372,6 +374,7 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 			kernelIdSave = kernelNr;
 	}
 
+	// Search for gameobject-superclass ::restore
 	for (uint16 methodNr = 0; methodNr < gameSuperMethodCount; methodNr++) {
 		uint16 selectorId = gameSuperObject->getFuncSelector(methodNr);
 		Common::String methodName = _kernel->getSelectorName(selectorId);
@@ -379,6 +382,22 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 			methodAddress = gameSuperObject->getFunction(methodNr);
 			Script *script = segMan->getScript(methodAddress.segment);
 			scriptRestorePtr = script->getBuf(methodAddress.offset);
+		}
+		if (methodName == "save") {
+			methodAddress = gameSuperObject->getFunction(methodNr);
+			Script *script = segMan->getScript(methodAddress.segment);
+			scriptSavePtr = script->getBuf(methodAddress.offset);
+		}
+	}
+
+	// Search for gameobject ::save, if there is one patch that one instead
+	for (uint16 methodNr = 0; methodNr < gameMethodCount; methodNr++) {
+		uint16 selectorId = gameObject->getFuncSelector(methodNr);
+		Common::String methodName = _kernel->getSelectorName(selectorId);
+		if (methodName == "save") {
+			methodAddress = gameObject->getFunction(methodNr);
+			Script *script = segMan->getScript(methodAddress.segment);
+			scriptSavePtr = script->getBuf(methodAddress.offset);
 			break;
 		}
 	}
@@ -396,12 +415,12 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
 		patchPtr[8] = kernelIdRestore;
 	}
-	//if (scriptSavePtr) {
-	//	// Now patch in our code
-	//	byte *patchPtr = const_cast<byte *>(scriptSavePtr);
-	//	memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
-	//	patchPtr[8] = kernelIdSave;
-	//}
+	if (scriptSavePtr) {
+		// Now patch in our code
+		byte *patchPtr = const_cast<byte *>(scriptSavePtr);
+		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
+		patchPtr[8] = kernelIdSave;
+	}
 }
 
 bool SciEngine::initGame() {
