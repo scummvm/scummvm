@@ -207,7 +207,7 @@ struct ADParams {
 	 *
 	 * @note Last item must be 0
 	 */
-	const char **directoryGlobs;
+	const char * const *directoryGlobs;
 };
 
 

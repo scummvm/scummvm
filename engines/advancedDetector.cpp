@@ -349,7 +349,7 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 
 static ADGameDescList detectGameFilebased(const FileMap &allFiles, const ADParams &params);
 
-static void composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, int depth, const char **directoryGlobs) {
+static void composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, int depth, const char * const *directoryGlobs) {
 	if (depth <= 0)
 		return;
 
