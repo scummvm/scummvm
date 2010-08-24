@@ -331,10 +331,11 @@ Common::Error SciEngine::run() {
 }
 
 static byte patchGameRestore[] = {
-	0x39, 0x02,        // pushi 02
+	0x39, 0x03,        // pushi 03
 	0x76,              // push0
 	0x38, 0xff, 0xff,  // pushi -1
-	0x43, 0xff, 0x04,  // call kRestoreGame (will get fixed directly)
+	0x76,              // push0
+	0x43, 0xff, 0x06,  // call kRestoreGame (will get fixed directly)
 	0x48,              // ret
 };
 
@@ -382,7 +383,7 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 		// Now patch in our code
 		byte *patchPtr = (byte *)scriptRestorePtr;
 		memcpy(patchPtr, patchGameRestore, sizeof(patchGameRestore));
-		patchPtr[7] = kernelIdRestore;
+		patchPtr[8] = kernelIdRestore;
 	}
 }
 

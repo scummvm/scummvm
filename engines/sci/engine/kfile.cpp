@@ -655,6 +655,8 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		}
 		// don't adjust ID of the saved game, it's already correct
 	} else {
+		if (argv[2].isNull())
+			error("kRestoreGame: called with parameter 2 being NULL");
 		// Real call from script, we need to adjust ID
 		if ((savegameId < SAVEGAMEID_OFFICIALRANGE_START) || (savegameId > SAVEGAMEID_OFFICIALRANGE_END)) {
 			warning("Savegame ID %d is not allowed", savegameId);
