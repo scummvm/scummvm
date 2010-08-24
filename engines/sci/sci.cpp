@@ -314,7 +314,7 @@ Common::Error SciEngine::run() {
 		// Refer to bug #3036609.
 		Resource *buggyScript = _resMan->findResource(ResourceId(kResourceTypeScript, 180), 0);
 
-		if (buggyScript->size == 12354 || buggyScript->size == 12362) {
+		if (buggyScript && (buggyScript->size == 12354 || buggyScript->size == 12362)) {
 			showScummVMDialog("A known buggy game script has been detected, which could "
 							  "prevent you from progressing later on in the game, during "
 							  "the sequence with the Green Man's riddles. Please, apply "
