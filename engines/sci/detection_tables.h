@@ -727,6 +727,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Hoyle 1 - English DOS (supplied by eddydrama in bug report #3052366)
+	{"hoyle1", "", {
+		{"resource.map", 0, "0af9a3dcd72a091960de070432e1f524", 4386},
+		{"resource.001", 0, "e0dd44069a62463fd124974b915f10d", 518127},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 #if 0 // TODO: unknown if these files are corrupt
 	// Hoyle 1 - English Amiga (from www.back2roots.org)
 	// SCI interpreter version 0.000.519 - FIXME: some have 0.000.530, others x.yyy.zzz
