@@ -381,7 +381,7 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 	}
 	if (scriptRestorePtr) {
 		// Now patch in our code
-		byte *patchPtr = (byte *)scriptRestorePtr;
+		byte *patchPtr = const_cast<byte *>(scriptRestorePtr);
 		memcpy(patchPtr, patchGameRestore, sizeof(patchGameRestore));
 		patchPtr[8] = kernelIdRestore;
 	}
