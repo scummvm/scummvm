@@ -291,16 +291,17 @@ void Inter::funcBlock(int16 retFlag) {
 		} // End of workaround
 
 		// WORKAROUND:
-		// The Amiga and Atari ST versions of Fascination don't add a delay after
-		// showing images between some levels, probably using the loading time int account.
+		// Apart the CD version which is playing a speech in this room, all the versions
+		// of Fascination have a too short delay between the storage room and the lab.
 		// We manually add it here.
 		if ((_vm->getGameType() == kGameTypeFascination) &&
-		    ((_vm->getPlatform() == Common::kPlatformAmiga)||
-	 	     (_vm->getPlatform() == Common::kPlatformAtariST))) {
-			int addr = _vm->_game->_script->pos();
-			if ((startaddr == 0x0202 && addr == 0x0330 && // Before Lab, Amiga & Atari
-			     !strncmp(_vm->_game->_curTotFile, "PLANQUE.tot", 9))) {
-				_vm->_util->longDelay(5000);
+			!strncmp(_vm->_game->_curTotFile, "PLANQUE.tot", 9)) {
+				int addr = _vm->_game->_script->pos();
+				if ((startaddr == 0x0202 && addr == 0x0330) || // Before Lab, Amiga & Atari, English
+					(startaddr == 0x023D && addr == 0x032D) || // Before Lab, PC floppy, German
+					(startaddr == 0x02C2 && addr == 0x03C2)) { // Before Lab, PC floppy, Hebrew
+					warning("Fascination - Adding delay");
+					_vm->_util->longDelay(3000);
 			}
 		} // End of workaround
 
