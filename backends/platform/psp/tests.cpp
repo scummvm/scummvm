@@ -43,7 +43,9 @@
 #include "backends/platform/psp/rtc.h"
 #include "backends/platform/psp/thread.h"
 #include "backends/platform/psp/memory.h"
-
+#include "common/stream.h"
+#include "common/file.h"
+#include "common/fs.h"
 
 #define UNCACHED(x)		((byte *)(((uint32)(x)) | 0x40000000))	/* make an uncached access */
 #define CACHED(x)		((byte *)(((uint32)(x)) & 0xBFFFFFFF))	/* make an uncached access into a cached one */
@@ -445,6 +447,7 @@ void PspSpeedTests::fastCopySpeed() {
 class PspUnitTests {
 public:
 	void testFastCopy();
+	bool testFileSystem();
 
 private:
 	enum {
@@ -453,6 +456,7 @@ private:
 	
 	void fastCopySpecificSize(byte *dst, byte *src, uint32 bytes, bool swap = false);
 	void fastCopyDifferentSizes(byte *dst, byte *src, bool swap = false);
+	
 };	
 
 void PspUnitTests::testFastCopy() {
@@ -537,6 +541,171 @@ void PspUnitTests::fastCopySpecificSize(byte *dst, byte *src, uint32 bytes, bool
 	}	
 }
 
+// This function leaks. For now I don't care
+bool PspUnitTests::testFileSystem() {
+	// create memory
+	const uint32 BufSize = 32 * 1024;
+	char* buffer = new char[BufSize];
+	int i;
+	Common::WriteStream *wrStream;
+	Common::SeekableReadStream *rdStream;
+	
+	PSP_INFO_PRINT("testing fileSystem...\n");
+	
+	// fill buffer
+	for (i=0; i<(int)BufSize; i += 4) {
+		buffer[i] = 'A';
+		buffer[i + 1] = 'B';
+		buffer[i + 2] = 'C';
+		buffer[i + 3] = 'D';
+	}	
+	
+	// create a file
+	const char *path = "./file.test";
+	Common::FSNode file(path);
+	
+	PSP_INFO_PRINT("creating write stream...\n");
+	
+	wrStream = file.createWriteStream();
+	if (!wrStream) {
+		PSP_ERROR("%s couldn't be created.\n", path);
+		return false;
+	}
+
+	// write contents
+	char* index = buffer;
+	int32 totalLength = BufSize;
+	int32 curLength = 50;
+	
+	PSP_INFO_PRINT("writing...\n");
+	
+	while(totalLength - curLength > 0) {
+		if ((int)wrStream->write(index, curLength) != curLength) {
+			PSP_ERROR("couldn't write %d bytes\n", curLength);
+			return false;
+		}
+		totalLength -= curLength;
+		index += curLength;
+		//curLength *= 2;
+		//PSP_INFO_PRINT("write\n");
+	}
+
+	// write the rest
+	if ((int)wrStream->write(index, totalLength) != totalLength) {
+		PSP_ERROR("couldn't write %d bytes\n", curLength);
+		return false;
+	}
+	
+	delete wrStream;
+	
+	PSP_INFO_PRINT("reading...\n");
+	
+	rdStream = file.createReadStream();
+	if (!rdStream) {
+		PSP_ERROR("%s couldn't be created.\n", path);
+		return false;
+	}
+	
+	// seek to beginning
+	if (!rdStream->seek(0, SEEK_SET)) {
+		PSP_ERROR("couldn't seek to the beginning after writing the file\n");
+		return false;
+	}	
+
+	// read the contents
+	char *readBuffer = new char[BufSize + 4];
+	memset(readBuffer, 0, (BufSize + 4));
+	index = readBuffer;
+	while (rdStream->read(index, 100) == 100) {
+		index += 100;
+	}
+	
+	if (!rdStream->eos()) {
+		PSP_ERROR("didn't find EOS at end of stream\n");
+		return false;		
+	}
+	
+	// compare
+	for (i=0; i<(int)BufSize; i++)
+		if (buffer[i] != readBuffer[i]) {
+			PSP_ERROR("reading/writing mistake at %x. Got %x instead of %x\n", i, readBuffer[i], buffer[i]);
+			return false;
+		}
+	
+	// Check for exceeding limit
+	for (i=0; i<4; i++) {
+		if (readBuffer[BufSize + i]) {
+			PSP_ERROR("read exceeded limits. %d = %x\n", BufSize + i, readBuffer[BufSize + i]);
+		}
+	}	
+	
+	delete rdStream;
+	
+	PSP_INFO_PRINT("writing...\n");
+	
+	wrStream = file.createWriteStream();
+	if (!wrStream) {
+		PSP_ERROR("%s couldn't be created.\n", path);
+		return false;
+	}
+	
+	const char *phrase = "Jello is really fabulous";
+	uint32 phraseLen = strlen(phrase);
+	
+	int ret;
+	if ((ret = wrStream->write(phrase, phraseLen)) != (int)phraseLen) {
+		PSP_ERROR("couldn't write phrase. Got %d instead of %d\n", ret, phraseLen);
+		return false;
+	}
+	
+	PSP_INFO_PRINT("reading...\n");
+	
+	delete wrStream;
+	rdStream = file.createReadStream();
+	if (!rdStream) {
+		PSP_ERROR("%s couldn't be created.\n", path);
+		return false;
+	}
+	
+	char *readPhrase = new char[phraseLen + 2];
+	memset(readPhrase, 0, phraseLen + 2);
+	
+	if ((ret = rdStream->read(readPhrase, phraseLen) != phraseLen)) {
+		PSP_ERROR("read error on phrase. Got %d instead of %d\n", ret, phraseLen);
+		return false;
+	}
+	
+	for (i=0; i<(int)phraseLen; i++) {
+		if (readPhrase[i] != phrase[i]) {
+			PSP_ERROR("bad read/write in phrase. At %d, %x != %x\n", i, readPhrase[i], phrase[i]);
+			return false;
+		}
+	}	
+	
+	// check for exceeding
+	if (readPhrase[i] != 0) {
+		PSP_ERROR("found excessive copy in phrase. %c at %d\n", readPhrase[i], i);
+		return false;
+	}
+	
+	PSP_INFO_PRINT("trying to read end...\n");
+	
+	// seek to end
+	if (!rdStream->seek(0, SEEK_END)) {
+		PSP_ERROR("couldn't seek to end for append\n");
+		return false;
+	};
+	
+	// try to read
+	if (rdStream->read(readPhrase, 2) || !rdStream->eos()) {
+		PSP_ERROR("was able to read at end of file\n");
+		return false;
+	}
+	
+	PSP_INFO_PRINT("ok\n");
+	return true;
+}
+
 void psp_tests() {
 	PSP_INFO_PRINT("in tests\n");
 	
@@ -558,7 +727,8 @@ void psp_tests() {
 	// Unit tests
 	PspUnitTests unitTests;
 	
-	unitTests.testFastCopy();
+	//unitTests.testFastCopy();
+	unitTests.testFileSystem();
 #endif	
 }	
 

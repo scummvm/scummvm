@@ -247,11 +247,19 @@ AbstractFSNode *PSPFilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *PSPFilesystemNode::createReadStream() {
-	return PSPIoStream::makeFromPath(getPath(), false);
+	const uint32 READ_BUFFER_SIZE = 1024;
+	
+	Common::SeekableReadStream *stream = PspIoStream::makeFromPath(getPath(), false);
+	
+	return new PspIoBufferedReadStream(stream, READ_BUFFER_SIZE, DisposeAfterUse::YES);
 }
 
 Common::WriteStream *PSPFilesystemNode::createWriteStream() {
-	return PSPIoStream::makeFromPath(getPath(), true);
+	const uint32 WRITE_BUFFER_SIZE = 1024;
+	
+	Common::WriteStream *stream = PspIoStream::makeFromPath(getPath(), true);
+	
+	return new PspIoBufferedWriteStream(stream, WRITE_BUFFER_SIZE, DisposeAfterUse::YES);
 }
 
 #endif //#ifdef __PSP__
