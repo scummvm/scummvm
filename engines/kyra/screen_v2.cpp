@@ -53,7 +53,7 @@ uint8 *Screen_v2::generateOverlay(const Palette &pal, uint8 *buffer, int opColor
 
 	int maxIndex = maxColor;
 	if (maxIndex == -1) {
-		if (_vm->gameFlags().gameID == GI_LOL) {
+		if (_vm->game() == GI_LOL) {
 			if (_use16ColorMode)
 				maxIndex = 255;
 			else

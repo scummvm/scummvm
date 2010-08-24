@@ -92,7 +92,7 @@ void GUI::initMenu(Menu &menu) {
 
 	textY = menu.y + menu.titleY;
 
-	if (_vm->gameFlags().gameID == GI_LOL) {
+	if (_vm->game() == GI_LOL) {
 		printMenuText(getMenuTitle(menu), textX, textY, menu.textColor, 0, 9);
 	} else {
 		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
@@ -136,7 +136,7 @@ void GUI::initMenu(Menu &menu) {
 				textX = getMenuCenterStringX(getMenuItemTitle(menu.item[i]), x1, x2);
 
 			textY = y1 + 2;
-			if (_vm->gameFlags().gameID == GI_LOL) {
+			if (_vm->game() == GI_LOL) {
 				textY++;
 				if (i == menu.highlightedItem)
 					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 8);
@@ -162,7 +162,7 @@ void GUI::initMenu(Menu &menu) {
 
 	for (int i = 0; i < menu.numberOfItems; ++i) {
 		if (getMenuItemLabel(menu.item[i])) {
-			if (_vm->gameFlags().gameID == GI_LOL) {
+			if (_vm->game() == GI_LOL) {
 				menu.item[i].labelX = menu.item[i].x - 1;
 				menu.item[i].labelY = menu.item[i].y + 3;
 				printMenuText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX, menu.y + menu.item[i].labelY, menu.item[i].textColor, 0, 10);
@@ -206,7 +206,7 @@ void GUI::processHighlights(Menu &menu) {
 	int mouseX = p.x;
 	int mouseY = p.y;
 
-	if (_vm->_flags.gameID == GI_LOL && menu.highlightedItem != 255) {
+	if (_vm->game() == GI_LOL && menu.highlightedItem != 255) {
 		// LoL doesnt't have default highlighted items.
 		// We use a highlightedItem value of 255 for this.
 
@@ -230,8 +230,8 @@ void GUI::processHighlights(Menu &menu) {
 		if (mouseX > x1 && mouseX < x2 &&
 			mouseY > y1 && mouseY < y2) {
 
-			if (menu.highlightedItem != i || _vm->_flags.gameID == GI_LOL) {
-				if (_vm->_flags.gameID != GI_LOL) {
+			if (menu.highlightedItem != i || _vm->game() == GI_LOL) {
+				if (_vm->game() != GI_LOL) {
 					if (menu.item[menu.highlightedItem].enabled)
 						redrawText(menu);
 				}
@@ -260,7 +260,7 @@ void GUI::redrawText(const Menu &menu) {
 		textX = getMenuCenterStringX(getMenuItemTitle(menu.item[i]), x1, x2);
 
 	int textY = y1 + 2;
-	if (_vm->gameFlags().gameID == GI_LOL) {
+	if (_vm->game() == GI_LOL) {
 		textY++;
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 8);
 	} else {
@@ -290,7 +290,7 @@ void GUI::redrawHighlight(const Menu &menu) {
 
 	int textY = y1 + 2;
 
-	if (_vm->gameFlags().gameID == GI_LOL) {
+	if (_vm->game() == GI_LOL) {
 		textY++;
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 8);
 	} else {
@@ -399,7 +399,7 @@ void GUI::updateSaveList(bool excludeQuickSaves) {
 int GUI::getNextSavegameSlot() {
 	Common::InSaveFile *in;
 
-	int start = _vm->gameFlags().gameID == GI_LOL ? 0 : 1;
+	int start = _vm->game() == GI_LOL ? 0 : 1;
 
 	for (int i = start; i < 990; i++) {
 		if ((in = _vm->_saveFileMan->openForLoading(_vm->getSavegameFilename(i))))
