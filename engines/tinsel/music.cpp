@@ -368,6 +368,10 @@ void OpenMidiFiles() {
 	uint32 curTrack = 0;
 	uint32 songLength = 0;
 
+	// Init
+	for (int i = 0; i < ARRAYSIZE(midiOffsets); i++)
+		midiOffsets[i] = 0;
+
 	while (!midiStream.eos() && !midiStream.err()) {
 		assert(curTrack < ARRAYSIZE(midiOffsets));
 		midiOffsets[curTrack++] = curOffset + (4 * curTrack);
@@ -976,29 +980,21 @@ void dumpMusic() {
 	int outFileSize = 0;
 	char buffer[20000];
 
-	int total = (_vm->getFeatures() & GF_SCNFILES) ?
-				ARRAYSIZE(midiOffsetsSCNVersion) :
-				ARRAYSIZE(midiOffsetsGRAVersion);
+	const int total = 155;	// maximum (SCN version)
 
 	for (int i = 0; i < total; i++) {
+		if (midiOffsets[i] == 0)
+			break;
+
 		sprintf(outName, "track%03d.xmi", i + 1);
 		outFile.open(outName);
 
-		if (_vm->getFeatures() & GF_SCNFILES) {
-			if (i < total - 1)
-				outFileSize = midiOffsetsSCNVersion[i + 1] - midiOffsetsSCNVersion[i] - 4;
-			else
-				outFileSize = midiFile.size() - midiOffsetsSCNVersion[i] - 4;
+		if (i < total - 1)
+			outFileSize = midiOffsets[i + 1] - midiOffsets[i] - 4;
+		else
+			outFileSize = midiFile.size() - midiOffsets[i] - 4;
 
-			midiFile.seek(midiOffsetsSCNVersion[i] + 4, SEEK_SET);
-		} else {
-			if (i < total - 1)
-				outFileSize = midiOffsetsGRAVersion[i + 1] - midiOffsetsGRAVersion[i] - 4;
-			else
-				outFileSize = midiFile.size() - midiOffsetsGRAVersion[i] - 4;
-
-			midiFile.seek(midiOffsetsGRAVersion[i] + 4, SEEK_SET);
-		}
+		midiFile.seek(midiOffsets[i] + 4, SEEK_SET);
 
 		assert(outFileSize < 20000);
 		midiFile.read(buffer, outFileSize);
