@@ -230,13 +230,21 @@ BufferedReadStream::BufferedReadStream(ReadStream *parentStream, uint32 bufSize,
 	_realBufSize(bufSize) {
 
 	assert(parentStream);
-	_buf = new byte[bufSize];
+	allocBuf(bufSize);
 	assert(_buf);
+}
+
+void BufferedReadStream::allocBuf(uint32 bufSize) {
+	_buf = new byte[bufSize];
 }
 
 BufferedReadStream::~BufferedReadStream() {
 	if (_disposeParentStream)
 		delete _parentStream;
+	deallocBuf();
+}
+
+void BufferedReadStream::deallocBuf() {
 	delete[] _buf;
 }
 
@@ -259,7 +267,7 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 
 		// At this point the buffer is empty. Now if the read request
 		// exceeds the buffer size, just satisfy it directly.
-		if (dataSize > _bufSize)
+		if (dataSize > _realBufSize)
 			return alreadyRead + _parentStream->read(dataPtr, dataSize);
 
 		// Refill the buffer.
@@ -301,6 +309,67 @@ bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 	}
 
 	return true;	// FIXME: STREAM REWRITE
+}
+
+BufferedWriteStream::BufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
+	: _parentStream(parentStream),
+	_disposeParentStream(disposeParentStream),
+	_pos(0),
+	_bufSize(bufSize) {
+
+	assert(parentStream);
+	allocBuf(bufSize);
+	assert(_buf);
+}
+
+BufferedWriteStream::~BufferedWriteStream() {
+	assert(flush());
+	
+	if (_disposeParentStream)
+		delete _parentStream;
+		
+	deallocBuf();
+}
+
+void BufferedWriteStream::allocBuf(uint32 bufSize) {
+	_buf = new byte[bufSize];
+}
+
+void BufferedWriteStream::deallocBuf() {
+	delete[] _buf;
+}
+
+uint32 BufferedWriteStream::write(const void *dataPtr, uint32 dataSize) {
+	// check if we have enough space for writing to the buffer
+	if (_bufSize - _pos >= dataSize) {
+		memcpy(_buf + _pos, dataPtr, dataSize);
+		_pos += dataSize;			
+	} else if (_bufSize >= dataSize) {	// check if we can flush the buffer and load the data
+		// flush the buffer
+		assert(flushBuffer());
+		memcpy(_buf, dataPtr, dataSize);
+		_pos += dataSize;
+	} else	{	// too big for our buffer
+		// flush the buffer
+		assert(flushBuffer());			
+		return _parentStream->write(dataPtr, dataSize);
+	}
+	return dataSize;
+}
+
+bool BufferedWriteStream::flushBuffer() {
+	uint32 bytesToWrite = _pos;
+	
+	if (bytesToWrite) {
+		_pos = 0;
+		if (_parentStream->write(_buf, bytesToWrite) != bytesToWrite)
+			return false;
+	}
+	return true;
+}
+
+bool BufferedWriteStream::flush() {
+	return flushBuffer();
 }
 
 bool MemoryWriteStreamDynamic::seek(int32 offs, int whence) {
