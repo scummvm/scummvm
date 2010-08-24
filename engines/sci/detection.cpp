@@ -655,7 +655,7 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(file->c_str() + file->size() - 3);
 
-		if (slotNum >= 0 && slotNum < 999) {
+		if (slotNum >= 0 && slotNum <= 99) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				SavegameMetadata meta;
@@ -722,7 +722,7 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 	return SaveStateDescriptor();
 }
 
-int SciMetaEngine::getMaximumSaveSlot() const { return 999; }
+int SciMetaEngine::getMaximumSaveSlot() const { return 99; }
 
 void SciMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::printf("%s.%03d", target, slot);
