@@ -122,12 +122,12 @@ void Utils::Warn(bool technote, const char *format, ...) {
 
 	va_start(marker, format);
 	vsnprintf(buffer, WARNLEN, format, marker);
+	va_end(marker);
 ////    if (technote)
 ////        strcat      (buffer, sTech);
 	//MessageBeep(MB_ICONEXCLAMATION);
 	//MessageBox(hwnd, buffer, "HugoWin Warning", MB_OK | MB_ICONEXCLAMATION);
 	warning("Hugo warning: %s", buffer);
-	va_end(marker);
 
 	//sndPlaySound(NULL, 0);                        // Stop beep and restore sound
 
@@ -175,11 +175,11 @@ void Utils::Error(int error_type, const char *format, ...) {
 		HugoEngine::get().shutdown();                                   // Restore any devices before exit
 
 	va_start(marker, format);
-	snprintf(&buffer[strlen(buffer)], ERRLEN - strlen(buffer), format, marker);
+	vsnprintf(&buffer[strlen(buffer)], ERRLEN - strlen(buffer), format, marker);
+	va_end(marker);
 	//MessageBeep(MB_ICONEXCLAMATION);
 	//MessageBox(hwnd, buffer, "HugoWin Error", MB_OK | MB_ICONEXCLAMATION);
 	warning("Hugo Error: %s", buffer);
-	va_end(marker);
 
 	if (fatal)
 		exit(1);
