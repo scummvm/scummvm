@@ -1900,7 +1900,7 @@ void Gdi::decodeMask(int x, int y, const int width, const int height,
 				z_plane_ptr = zplane_list[i] + offs;
 
 				if (tmsk_ptr) {
-					const byte *tmsk = tmsk_ptr + READ_LE_UINT16(tmsk_ptr + 8);
+					const byte *tmsk = tmsk_ptr + READ_LE_UINT16(tmsk_ptr + stripnr * 2 + 8);
 					decompressTMSK(mask_ptr, tmsk, z_plane_ptr, height);
 				} else if (transpStrip && (flag & dbAllowMaskOr)) {
 					decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
