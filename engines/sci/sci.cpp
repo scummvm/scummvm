@@ -270,37 +270,23 @@ Common::Error SciEngine::run() {
 	}
 
 	// Check whether loading a savestate was requested
-	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot >= 0) {
-		reg_t restoreArgv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special call (argv[0] is NULL)
+	// Check whether loading a savestate was requested
+	int directSaveSlotLoading = ConfMan.getInt("save_slot");
+	if (directSaveSlotLoading >= 0) {
+		// call GameObject::play (like normally)
+		initStackBaseWithSelector(SELECTOR(play));
+		// We set this, so that the game automatically quit right after init
+		_gamestate->variables[VAR_GLOBAL][4] = TRUE_REG;
+
+		_gamestate->_executionStackPosChanged = false;
+		run_vm(_gamestate);
+
+		// As soon as we get control again, actually restore the game
+		reg_t restoreArgv[2] = { NULL_REG, make_reg(0, directSaveSlotLoading) };	// special call (argv[0] is NULL)
 		kRestoreGame(_gamestate, 2, restoreArgv);
 
-		// TODO: The best way to do the following would be to invoke Game::init
-		// here and stop when the room is about to be changed, otherwise some
-		// game initialization won't take place
-
-		// Set audio language for KQ5CD (bug #3039477)
-		if (g_sci->getGameId() == GID_KQ5 && Common::File::exists("AUDIO001.002")) {
-			reg_t doAudioArgv[2] = { make_reg(0, 9), make_reg(0, 1) };
-			kDoAudio(_gamestate, 2, doAudioArgv);
-		}
-
-		// Initialize the game menu, if there is one.
-		// This is not done when loading, so we must do it manually.
-		reg_t menuBarObj = _gamestate->_segMan->findObjectByName("MenuBar");
-		if (menuBarObj.isNull())
-			menuBarObj = _gamestate->_segMan->findObjectByName("TheMenuBar");	// LSL2
-		if (menuBarObj.isNull())
-			menuBarObj = _gamestate->_segMan->findObjectByName("menuBar");	// LSL6
-		if (!menuBarObj.isNull()) {
-			// Reset abortScriptProcessing before initializing the game menu, so that the
-			// VM call performed by invokeSelector will actually run.
-			_gamestate->abortScriptProcessing = kAbortNone;
-			Object *menuBar = _gamestate->_segMan->getObject(menuBarObj);
-			// Invoke the first method (init) of the menuBar object
-			invokeSelector(_gamestate, menuBarObj, menuBar->getFuncSelector(0), 0, _gamestate->stack_base);
-			_gamestate->abortScriptProcessing = kAbortLoadGame;
-		}
+		// this indirectly calls GameObject::init, which will setup menu, text font/color codes etc.
+		//  without this games would be pretty badly broken
 	}
 
 	// Show any special warnings for buggy scripts with severe game bugs, 
