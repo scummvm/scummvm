@@ -2117,7 +2117,12 @@ void ScummEngine::scummLoop_updateScummVars() {
 		// Since there are 2 2-stripes wide borders in MM NES screen,
 		// we have to compensate for it here. This fixes paning effects.
 		// Fixes bug #1328120: "MANIACNES: Screen width incorrect, camera halts sometimes"
-		VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT) + 2;
+		// But do not do it when only scrolling right to left, since otherwise Ed will not show
+		// up on the doorbell (Bug #3039004)
+		if (VAR(VAR_CAMERA_POS_X) < (camera._cur.x >> V12_X_SHIFT) + 2)
+			VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT) + 2;
+		else
+			VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT);
 	} else if (_game.version <= 2) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x >> V12_X_SHIFT;
 	} else {
