@@ -651,6 +651,50 @@ void ScummEngine_v2::checkExecVerbs() {
 			}
 		}
 
+		// Simulate inventory picking and scrolling keys
+		int object = -1;
+
+		switch (_mouseAndKeyboardStat) {
+		case 'u': // arrow up
+			if (_inventoryOffset >= 2) {
+				_inventoryOffset -= 2;
+				redrawV2Inventory();
+			}
+			return;
+		case 'j': // arrow down
+			if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
+				_inventoryOffset += 2;
+				redrawV2Inventory();
+			}
+			return;
+		case 'i': // object
+			object = 0;
+			break;
+		case 'o':
+			object = 1;
+			break;
+		case 'k':
+			object = 2;
+			break;
+		case 'l':
+			object = 3;
+			break;
+		}
+
+		if (object != -1) {
+			object = findInventory(_scummVars[VAR_EGO], object + 1 + _inventoryOffset);
+
+			if (object > 0) {
+				if (_game.version == 0) {
+					_activeInventory = object;
+
+				} else {
+					runInputScript(kInventoryClickArea, object, 0);
+				}
+			}
+			return;
+		}
+
 		// Generic keyboard input
 		runInputScript(kKeyClickArea, _mouseAndKeyboardStat, 1);
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
