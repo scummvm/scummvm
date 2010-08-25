@@ -494,7 +494,7 @@ protected:
 	DisposeAfterUse::Flag _disposeParentStream;
 	byte *_buf;
 	uint32 _pos;
-	bool _eos;	// in this context it means: have we tried to read beyond the end of the buffer
+	bool _eos; // end of stream
 	uint32 _bufSize;
 	uint32 _realBufSize;
 	virtual void allocBuf(uint32 bufSize);	// virtual functions to allocate/deallocate the buffer
@@ -504,9 +504,9 @@ public:
 	BufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
 	virtual ~BufferedReadStream();
 
-	virtual bool eos() const { return _eos && _parentStream->eos(); }
+	virtual bool eos() const { return _eos; }
 	virtual bool err() const { return _parentStream->err(); }
-	virtual void clearErr() { _parentStream->clearErr(); }
+	virtual void clearErr() { _eos = false; _parentStream->clearErr(); }
 
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };

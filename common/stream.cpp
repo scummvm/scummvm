@@ -256,7 +256,6 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 	// Check whether the data left in the buffer suffices....
 	if (dataSize > bufBytesLeft) {
 		// Nope, we need to read more data
-		_eos = true;	// we tried to read past the buffer
 
 		// First, flush the buffer, if it is non-empty
 		if (0 < bufBytesLeft) {
@@ -269,8 +268,12 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 
 		// At this point the buffer is empty. Now if the read request
 		// exceeds the buffer size, just satisfy it directly.
-		if (dataSize > _realBufSize)
-			return alreadyRead + _parentStream->read(dataPtr, dataSize);
+		if (dataSize > _realBufSize) {
+			uint32 n = _parentStream->read(dataPtr, dataSize);
+			if (_parentStream->eos())
+				_eos = true;
+			return alreadyRead + n;
+		}
 
 		// Refill the buffer.
 		// If we didn't read as many bytes as requested, the reason
@@ -279,10 +282,12 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 		// return to the caller.
 		_bufSize = _parentStream->read(_buf, _realBufSize);
 		_pos = 0;
-		if (_bufSize)
-			_eos = false;	// we've managed to replenish our buffer
-		if (dataSize > _bufSize)
+		if (_bufSize < dataSize) {
+			// we didn't get enough data from parent
+			if (_parentStream->eos())
+				_eos = true;
 			dataSize = _bufSize;
+		}
 	}
 
 	if (dataSize) {
@@ -307,10 +312,12 @@ bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 	
 	if (whence == SEEK_CUR && (int)_pos + offset >= 0 && _pos + offset <= _bufSize) {
 		_pos += offset;
-		
+
+		// Note: we do not need to reset parent's eos flag here. It is
+		// sufficient that it is reset when actually seeking in the parent.
 	} else {
 		// Seek was not local enough, so we reset the buffer and
-		// just seeks normally in the parent stream.
+		// just seek normally in the parent stream.
 		if (whence == SEEK_CUR)
 			offset -= (_bufSize - _pos);
 		_pos = _bufSize;
