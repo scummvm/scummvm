@@ -111,6 +111,10 @@ public:
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene();
+	void initialise() {
+		_sceneLogic.initialiseScripts();
+		_sceneLogic.initialiseDataMap();
+	}
 
 	// Methods that differ between engines
 	virtual void loadScene(int sceneNumber);

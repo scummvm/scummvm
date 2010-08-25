@@ -77,15 +77,16 @@ class Scene : public View {
 private:
 	HotSpotList _sceneHotspots;
 protected:
-	int _currentScene;
-	int _previousScene;
-	int _nextScene;
 	GameInterfaceView *_interfaceSurface;
 	M4Surface *_backgroundSurface;
 	M4Surface *_walkSurface;
 	RGBList *_palData;
 	RGBList *_interfacePal;
 	SceneResources *_sceneResources;
+public:
+	int _currentScene;
+	int _previousScene;
+	int _nextScene;
 public:
 	Scene(MadsM4Engine *vm, SceneResources *res);
 	virtual ~Scene();

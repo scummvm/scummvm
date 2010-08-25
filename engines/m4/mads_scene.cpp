@@ -68,6 +68,7 @@ MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResour
 	_interfaceSurface = new MadsInterfaceView(vm);
 	_showMousePos = false;
 	_mouseMsgIndex = -1;
+	_previousScene = -1;
 }
 
 MadsScene::~MadsScene() {
@@ -174,7 +175,7 @@ void MadsScene::loadScene(int sceneNumber) {
 
 	// Do any scene specific setup
 	if (_vm->getGameType() == GType_RexNebular)
-		_sceneLogic.enterScene();
+		_sceneLogic.doEnterScene();
 
 	// Miscellaneous player setup
 	_madsVm->_player._destPos = _madsVm->_player._destPos;
