@@ -182,6 +182,7 @@ void MadsSceneLogic::initialiseDataMap() {
 	MAP_DATA(&_madsVm->_player._playerPos.y);
 	MAP_DATA(&_madsVm->_player._direction);
 	MAP_DATA(&_madsVm->_player._visible);
+	MAP_DATA(&_madsVm->scene()->_animActive);
 }
 
 DataMap &MadsSceneLogic::dataMap() {
@@ -537,7 +538,7 @@ void MadsSceneLogic::execute(uint32 subOffset) {
 		case OP_DSTORE:	{		// Stores data variable
 			param = getParam(scriptOffset, opcode); 
 			ScriptVar v = stack.pop();
-			dataMap().set(param, v.isInt() ? v : 0);
+			dataMap().set(param, v.isInt() ? v.get() : 0);
 			break;
 		}
 		
@@ -876,8 +877,8 @@ void MadsSceneLogic::callSubroutine(int subIndex, Common::Stack<ScriptVar> &stac
 	case 19: {
 		// Action_isAction
 		int verbId = stack.pop();
-		int objectNameId = (verbId == 0) ? 0 : stack.pop();
-		int indirectObjectId = (objectNameId == 0) ? 0 : stack.pop();
+		int objectNameId = (verbId == 0) ? 0 : stack.pop().get();
+		int indirectObjectId = (objectNameId == 0) ? 0 : stack.pop().get();
 
 		stack.push(ScriptVar(_madsVm->scene()->_action.isAction(verbId, objectNameId, indirectObjectId)));
 		break;

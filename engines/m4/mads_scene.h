@@ -108,6 +108,7 @@ public:
 	Common::Point _destPos;
 	int _destFacing;
 	Common::Point _customDest;
+	bool _animActive;
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene();
