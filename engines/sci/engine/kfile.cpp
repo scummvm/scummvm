@@ -240,7 +240,7 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 				dest[strSize - 1] = 0;
 		}
 	} else {
-		*dest = f->_in->readByte();
+		*dest = 0;
 	}
 
 	debugC(2, kDebugLevelFile, "  -> FGets'ed \"%s\"", dest);
