@@ -685,7 +685,7 @@ void MadsSceneLogic::execute(uint32 subOffset) {
 		if (gDebugLevel > 0) {
 			if (param != UNUSED_VAL)
 				sprintf(opcodeBuffer + strlen(opcodeBuffer), "\t%d", param);
-			debugC(2, kDebugScript, opcodeBuffer);
+			debugC(2, kDebugScript, "%s", opcodeBuffer);
 		}
 	}
 
