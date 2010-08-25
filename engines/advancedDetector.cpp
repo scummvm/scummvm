@@ -342,7 +342,7 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 	printf("of the game you tried to add and its version/language/etc.:\n");
 
 	for (SizeMD5Map::const_iterator file = filesSizeMD5.begin(); file != filesSizeMD5.end(); ++file)
-		printf("  \"%s\", \"%s\", %d\n", file->_key.c_str(), file->_value.md5, file->_value.size);
+		printf("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5, file->_value.size);
 
 	printf("\n");
 }
