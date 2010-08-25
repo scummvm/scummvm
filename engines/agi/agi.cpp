@@ -501,8 +501,7 @@ AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(sys
 AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
 
 	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	syncSoundSettings();
 
 	parseFeatures();
 
@@ -707,18 +706,6 @@ Common::Error AgiEngine::go() {
 	runGame();
 
 	return Common::kNoError;
-}
-
-void AgiEngine::syncSoundSettings() {
-	// FIXME/TODO: Please explain why we are using "music_volume" for all
-	// three different entries here.
-	int soundVolumeMusic = ConfMan.getInt("music_volume");
-	int soundVolumeSFX = ConfMan.getInt("music_volume");
-	int soundVolumeSpeech = ConfMan.getInt("music_volume");
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 }
 
 void AgiEngine::parseFeatures() {
