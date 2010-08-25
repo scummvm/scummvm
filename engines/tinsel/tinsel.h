@@ -170,7 +170,6 @@ protected:
 #if 0
 	bool canSaveGameStateCurrently();
 #endif
-	virtual void syncSoundSettings();
 
 public:
 	TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc);
