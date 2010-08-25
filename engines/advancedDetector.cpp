@@ -366,8 +366,8 @@ static void composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, 
 				continue;
 
 			bool matched = false;
-			for (const char *glob = *directoryGlobs; *glob; glob++)
-				if (file->getName().matchString(glob, true)) {
+			for (const char * const *glob = directoryGlobs; *glob; glob++)
+				if (file->getName().matchString(*glob, true)) {
 					matched = true;
 					break;
 				}
