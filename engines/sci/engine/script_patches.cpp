@@ -597,6 +597,7 @@ const uint16 qfg1vgaPatchFightEvents[] = {
 //    script, description,                                   magic DWORD,                                  adjust
 const SciScriptSignature qfg1vgaSignatures[] = {
     {    215, "fight event issue",                           PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents, qfg1vgaPatchFightEvents },
+    {    216, "weapon master event issue",                   PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents, qfg1vgaPatchFightEvents },
     SCI_SIGNATUREENTRY_TERMINATOR
 };
 
