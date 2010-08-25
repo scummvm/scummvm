@@ -93,7 +93,7 @@ void *PspIoStream::open() {
 		PSP_DEBUG_PRINT_FUNC("suspended\n");
 	}
 
-	_handle = sceIoOpen(_path.c_str(), _writeMode ? PSP_O_RDWR | PSP_O_CREAT : PSP_O_RDONLY, 0777);
+	_handle = sceIoOpen(_path.c_str(), _writeMode ? PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC : PSP_O_RDONLY, 0777);
 	if (!_handle) {
 		_error = true;
 		_handle = NULL;
@@ -228,8 +228,7 @@ uint32 PspIoStream::read(void *ptr, uint32 len) {
 
 uint32 PspIoStream::write(const void *ptr, uint32 len) {
 	DEBUG_ENTER_FUNC();
-	PSP_DEBUG_PRINT_FUNC("filename[%s], len[0x%x], ptr[%p], _pos[%x], _physPos[%x] buf[%x %x %x %x..%x %x]\n", _path.c_str(), len, ptr, _pos, _physicalPos, ((byte *)ptr)[0], ((byte *)ptr)[1], ((byte *)ptr)[2], ((byte *)ptr)[3], ((byte *)ptr)[len - 2],
-	((byte *)ptr)[len - 1]);
+	PSP_DEBUG_PRINT_FUNC("filename[%s], len[0x%x], ptr[%p], _pos[%x], _physPos[%x]\n", _path.c_str(), len, ptr, _pos, _physicalPos);
 
 	if (!len || _error)		// we actually get some calls with len == 0!
 		return 0;
