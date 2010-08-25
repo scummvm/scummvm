@@ -387,6 +387,7 @@ int AgiEngine::runGame() {
 
 		if (_restartGame) {
 			setflag(fRestartGame, true);
+			_game.lastController = 0;
 			_restartGame = false;
 		}
 
