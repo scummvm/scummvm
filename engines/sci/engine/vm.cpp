@@ -817,7 +817,7 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 
 	for (int i = 0; g_opcode_formats[opcode][i]; ++i) {
 		//printf("Opcode: 0x%x, Opnumber: 0x%x, temp: %d\n", opcode, opcode, temp);
-		assert(i < 4);
+		assert(i < 3);
 		switch (g_opcode_formats[opcode][i]) {
 
 		case Script_Byte:
