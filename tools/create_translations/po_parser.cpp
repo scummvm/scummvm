@@ -301,7 +301,7 @@ char *parseLine(const char *line, const char *field) {
 	// It will return a NULL pointer if the field is not found.
 	// It is used to parse the header of the po files to find the language name
 	// and the charset.
-	char *str = strstr(line, field);
+	const char *str = strstr(line, field);
 	if (str == NULL)
 		return NULL;
 	str += strlen(field);
