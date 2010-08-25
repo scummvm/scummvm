@@ -226,6 +226,7 @@ BufferedReadStream::BufferedReadStream(ReadStream *parentStream, uint32 bufSize,
 	: _parentStream(parentStream),
 	_disposeParentStream(disposeParentStream),
 	_pos(0),
+	_eos(false),
 	_bufSize(0),
 	_realBufSize(bufSize) {
 
@@ -255,6 +256,7 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 	// Check whether the data left in the buffer suffices....
 	if (dataSize > bufBytesLeft) {
 		// Nope, we need to read more data
+		_eos = true;	// we tried to read past the buffer
 
 		// First, flush the buffer, if it is non-empty
 		if (0 < bufBytesLeft) {
@@ -277,13 +279,17 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 		// return to the caller.
 		_bufSize = _parentStream->read(_buf, _realBufSize);
 		_pos = 0;
+		if (_bufSize)
+			_eos = false;	// we've managed to replenish our buffer
 		if (dataSize > _bufSize)
 			dataSize = _bufSize;
 	}
 
-	// Satisfy the request from the buffer
-	memcpy(dataPtr, _buf + _pos, dataSize);
-	_pos += dataSize;
+	if (dataSize) {
+		// Satisfy the request from the buffer
+		memcpy(dataPtr, _buf + _pos, dataSize);
+		_pos += dataSize;
+	}	
 	return alreadyRead + dataSize;
 }
 
@@ -297,8 +303,11 @@ bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 	// in the buffer only.
 	// Note: We could try to handle SEEK_END and SEEK_SET, too, but
 	// since they are rarely used, it seems not worth the effort.
+	_eos = false;	// seeking always cancels EOS
+	
 	if (whence == SEEK_CUR && (int)_pos + offset >= 0 && _pos + offset <= _bufSize) {
 		_pos += offset;
+		
 	} else {
 		// Seek was not local enough, so we reset the buffer and
 		// just seeks normally in the parent stream.
@@ -308,7 +317,7 @@ bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 		_parentStream->seek(offset, whence);
 	}
 
-	return true;	// FIXME: STREAM REWRITE
+	return true;
 }
 
 BufferedWriteStream::BufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
