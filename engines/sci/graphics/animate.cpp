@@ -677,6 +677,7 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 			int16 onlyWidth = onlyCast->celRect.width();
 			if (((onlyWidth == 12) && (onlyHeight == 35)) || // regular benchmark view ("fred", "Speedy", "ego")
 				((onlyWidth == 29) && (onlyHeight == 45)) || // King's Quest 5 french "fred"
+				((onlyWidth == 1) && (onlyHeight == 5)) || // Freddy Pharkas "fred"
 				((onlyWidth == 1) && (onlyHeight == 1))) { // Laura Bow 2 Talkie
 				// check further that there is only one cel in that view
 				GfxView *onlyView = _cache->getView(onlyCast->viewId);
