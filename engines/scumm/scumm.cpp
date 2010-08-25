@@ -1808,6 +1808,15 @@ void ScummEngine::syncSoundSettings() {
 	int soundVolumeSfx = ConfMan.getInt("sfx_volume");
 	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
 
+	bool mute = false;
+
+	if (ConfMan.hasKey("mute")) {
+		mute = ConfMan.getBool("mute");
+
+		if (mute)
+			soundVolumeMusic = soundVolumeSfx = soundVolumeSpeech = 0;
+	}
+
 	if (_musicEngine) {
 		_musicEngine->setMusicVolume(soundVolumeMusic);
 	}
