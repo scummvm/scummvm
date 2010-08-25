@@ -220,6 +220,8 @@ bool cleanupPirated(ADGameDescList &matched) {
 		for (uint j = 0; j < matched.size();) {
 			if (matched[j]->flags & ADGF_PIRATED)
 				matched.remove_at(j);
+			else
+				++j;
 		}
 
 		// We ruled out all variants and now have nothing
