@@ -256,7 +256,7 @@ reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelFile, "kFGets(%d, %d)", handle, maxsize);
 	int readBytes = fgets_wrapper(s, buf, maxsize, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
-	return make_reg(0, readBytes);
+	return readBytes ? argv[0] : NULL_REG;
 }
 
 /**
@@ -907,7 +907,7 @@ reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
 	int readBytes = fgets_wrapper(s, buf, size, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, size);
 	delete[] buf;
-	return make_reg(0, readBytes);
+	return readBytes ? argv[0] : NULL_REG;
 }
 
 reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
