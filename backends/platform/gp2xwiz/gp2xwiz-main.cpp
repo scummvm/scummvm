@@ -56,24 +56,19 @@
 /* Dump console info to files. */
 #define DUMP_STDOUT
 
-// Don't use the GP2XWiz main on the Caanoo
-#ifndef CAANOO
-	int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
+	g_system = new OSystem_GP2XWIZ();
+	assert(g_system);
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
+#endif
 
-		g_system = new OSystem_GP2XWIZ();
-		assert(g_system);
+	// Invoke the actual ScummVM main entry point:
+	int res = scummvm_main(argc, argv);
+	g_system->quit();
 
-	#ifdef DYNAMIC_MODULES
-		PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
-	#endif
-
-		// Invoke the actual ScummVM main entry point:
-		int res = scummvm_main(argc, argv);
-		g_system->quit();
-
-		return res;
-	}
-#endif /* CAANOO */
+	return res;
+}
 
 void OSystem_GP2XWIZ::initBackend() {
 
