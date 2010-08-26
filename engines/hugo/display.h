@@ -96,13 +96,6 @@ private:
 	int16 mergeLists(rect_t *list, rect_t *blist, int16 len, int16 blen, int16 bmax);
 	void writeChr(int sx, int sy, byte color, char *local_fontdata);
 	int16 center(char *s);
-
-// Also used in rout.cpp when DEBUG_ROUTE is defined
-	unsigned int GetPalIndex(byte color);
-
-// Useless ?
-	void     clearPromptLine();
-
 };
 
 } // end of namespace Hugo

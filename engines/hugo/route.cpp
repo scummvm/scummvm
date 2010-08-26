@@ -164,17 +164,11 @@ void Route::segment(int16 x, int16 y) {
 	p = _boundaryMap[y];
 	for (x1 = x; x1 > 0; x1--)
 		if (p[x1] == 0) {
-#if DEBUG_ROUTE
-			SetPixel(hDC, (int16)((long)config.cx * x1  / XPIX), (int16)((long)config.cy *(y - DIBOFF_Y) / VIEW_DY), GetPalIndex(_TLIGHTMAGENTA));
-#endif
 			p[x1] = kMapFill;
 		} else
 			break;
 	for (x2 = x + 1; x2 < XPIX; x2++)
 		if (p[x2] == 0) {
-#if DEBUG_ROUTE
-			SetPixel(hDC, (int16)((long)config.cx * x2  / XPIX), (int16)((long)config.cy *(y - DIBOFF_Y) / VIEW_DY), GetPalIndex(_TLIGHTGREEN));
-#endif
 			p[x2] = kMapFill;
 		} else
 			break;
@@ -192,21 +186,7 @@ void Route::segment(int16 x, int16 y) {
 	// Bounds check y in case no boundary around screen
 	if (y <= 0 || y >= YPIX - 1)
 		return;
-#if FALSE
-	// Find all segments above and below current
-	if (hero_p->x < x1 || hero_p->x + HERO_MAX_WIDTH > x2) {
-		// Hero x not in segment, search x1..x2
-		// Find all segments above current
-		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++)
-			if (_boundaryMap[y - 1][x] == 0)
-				segment(x, y - 1);
 
-		// Find all segments below current
-		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++)
-			if (_boundaryMap[y + 1][x] == 0)
-				segment(x, y + 1);
-	}
-#endif
 	if (_vm._hero->x < x1) {
 		// Hero x not in segment, search x1..x2
 		// Find all segments above current
@@ -316,28 +296,11 @@ bool Route::findRoute(int16 cx, int16 cy) {
 		if ((obj->screenIndex == *_vm._screen_p) && (obj->cycling != INVISIBLE) && (obj->priority == FLOATING))
 			_vm.clearBoundary(obj->oldx + obj->currImagePtr->x1, obj->oldx + obj->currImagePtr->x2, obj->oldy + obj->currImagePtr->y2);
 
-#if DEBUG_ROUTE
-	{
-//	hDC = GetDC(hview);
-		for (y = 0; y < YPIX; y++)
-			for (x = 0; x < XPIX; x++)
-				if (_boundaryMap[y][x])
-					SetPixel(hDC, (int16)((long)config.cx * x  / XPIX), (int16)((long)config.cy *(y - DIBOFF_Y) / VIEW_DY), GetPalIndex(_TBRIGHTWHITE));
-	}
-#endif
-
 	// Search from hero to destination
 	segment(herox1, heroy);
 
-//#if DEBUG_ROUTE
-//	ReleaseDC(hview, hDC);
-//#endif
-
 	// Not found or not enough stack or MAX_SEG exceeded
 	if (!_routeFoundFl || _fullStackFl || _fullSegmentFl) {
-#if DEBUG_ROUTE
-		Box(BOX_ANY, "%s", (_fullStackFl) ? "Stack blown!" : (_fullSegmentFl) ? "Ran out of segments!" : "No Route!");
-#endif
 		return(false);
 	}
 

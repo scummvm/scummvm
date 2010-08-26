@@ -328,32 +328,4 @@ void SoundHandler::initSound() {
 	_midiPlayer->open();
 }
 
-void SoundHandler::pauseSound(bool activeFl, int hTask) {
-	static bool firstFl = true;
-	static bool musicFl, soundFl;
-
-	if (firstFl) {
-		firstFl = false;
-		musicFl = _config.musicFl;
-		soundFl = _config.soundFl;
-	}
-
-	// Kill or restore music, sound
-	if (activeFl) { // Remember states, reset WinHelp flag
-		_config.musicFl = musicFl;
-		_config.soundFl = soundFl;
-		_vm.getGameStatus().helpFl = false;
-	} else {    // Store states and disable
-		musicFl = _config.musicFl;
-		soundFl = _config.soundFl;
-
-		// Don't disable music during WinHelp() or config.music_bkg
-		if (!_vm.getGameStatus().helpFl && !_config.backgroundMusicFl) {
-			_config.musicFl = false;
-			_config.soundFl = false;
-		}
-	}
-	initSound();
-}
-
 } // end of namespace Hugo

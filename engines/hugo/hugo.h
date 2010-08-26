@@ -300,9 +300,11 @@ private:
 	void freeObjects();
 	void boundaryCollision(object_t *obj);
 	void calcMaxScore();
-
 	void initMachine();
 	void runMachine();
+
+	static int y2comp(const void *a, const void *b);
+
 };
 
 } // End of namespace Hugo

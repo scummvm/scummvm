@@ -58,8 +58,6 @@ private:
 	void stopSound();
 	void stopMusic();
 	void playMIDI(sound_pt seq_p, uint16 size);
-	void pauseSound(bool activeFl, int hTask);
-
 };
 
 } // end of namespace Hugo

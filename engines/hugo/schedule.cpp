@@ -241,7 +241,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		insertActionList(action->a3.actPassIndex);
 		break;
 	case BKGD_COLOR:                                // act4: Set new background color
-		HugoEngine::get().screen().setBackgroundColor(action->a4.newBackgroundColor);
+		_vm.screen().setBackgroundColor(action->a4.newBackgroundColor);
 		break;
 	case INIT_OBJVXY:                               // act5: Initialise an object
 		_vm._objects[action->a5.objNumb].vx = action->a5.vx;        // velocities
@@ -400,7 +400,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		insertActionList(action->a34.actIndex);
 		break;
 	case REMAPPAL:                                  // act35: Remap a palette color
-		HugoEngine::get().screen().remapPal(action->a35.oldColorIndex, action->a35.newColorIndex);
+		_vm.screen().remapPal(action->a35.oldColorIndex, action->a35.newColorIndex);
 		break;
 	case COND_NOUN:                                 // act36: Conditional on noun mentioned
 		if (_vm.parser().isWordPresent(_vm._arrayNouns[action->a36.nounIndex]))

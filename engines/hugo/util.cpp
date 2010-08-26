@@ -182,25 +182,4 @@ void Utils::gameOverMsg(void) {
 	warning("STUB: Gameover_msg(): %s", HugoEngine::get()._textUtil[kGameOver]);
 }
 
-#if 0
-// Strangerke: Useless?
-void Utils::Debug_out(char *format, ...) {
-	/* Write debug info to file */
-	static FILE *fp = NULL;
-	va_list marker;
-
-	if (HugoEngine::get().getGameStatus().debugFl) {
-		/* Create/truncate if first call, else append */
-		if ((fp = fopen("debug.txt", (fp == NULL) ? "w" : "a")) == NULL) {
-			Error(WRITE_ERR, "debug.txt");
-			return;
-		}
-
-		va_start(marker, format);
-		vfprintf(fp, format, marker);
-		va_end(marker);
-		fclose(fp);
-	}
-}
-#endif
 } // end of namespace Hugo

@@ -68,16 +68,6 @@ void Screen::createPal() {
 	g_system->setPalette(_vm._palette, 0, NUM_COLORS);
 }
 
-// Translate from our 16-color palette to Windows logical palette index
-uint32 Screen::GetPalIndex(byte color) {
-	debugC(1, kDebugDisplay, "getPalIndex(%d)", color);
-
-	warning("STUB: GetPalIndex()");
-	return 0;
-	//return(PALETTEINDEX(ctab[color]));
-}
-
-// Create DIB headers and init palette
 void Screen::initDisplay() {
 	debugC(1, kDebugDisplay, "initDisplay");
 	// Create logical palette
@@ -111,14 +101,6 @@ void Screen::displayBackground() {
 
 // Blit the supplied rectangle from _frontBuffer to the screen
 void Screen::displayRect(int16 x, int16 y, int16 dx, int16 dy) {
-
-	/* TODO: Suppress this commented block if it's confirmed to be useless
-	    // Find destination rectangle from current scaling
-	    int16 sx =  (int16)((int32)config.cx * x  / XPIX);
-	    int16 sy =  (int16)((int32)config.cy * (y - DIBOFF_Y) / VIEW_DY);
-	    int16 dsx = (int16)((int32)config.cx * dx / XPIX);
-	    int16 dsy = (int16)((int32)config.cy * dy / VIEW_DY);
-	*/
 	debugC(3, kDebugDisplay, "displayRect(%d, %d, %d, %d)", x, y, dx, dy);
 
 	g_system->copyRectToScreen(&_frontBuffer[x + y * 320], 320, x, y, dx, dy);
@@ -164,12 +146,6 @@ void Screen::writeChar(int16 x, int16 y, char c, byte color) {
 	// SetTextColor(hDC, GetPalIndex(color));
 	// TextOut(hDC, x, y, &c, 1);
 }
-
-// Clear prompt line for next command
-void Screen::clearPromptLine() {
-	debugC(1, kDebugDisplay, "clearPromptLine");
-}
-
 
 // Return the overlay state (Foreground/Background) of the currently
 // processed object by looking down the current column for an overlay
@@ -358,8 +334,6 @@ void Screen::writeChr(int sx, int sy, byte color, char *local_fontdata) {
 	byte height = local_fontdata[0];
 	byte width = 8; //local_fontdata[1];
 
-	//warning("STUB: writechr(sx %u, sy %u, color %u, height %u, width %u)", sx, sy, color, height, width);
-
 	// This can probably be optimized quite a bit...
 	for (int y = 0; y < height; ++y)
 		for (int x = 0; x < width; ++x) {
@@ -380,12 +354,6 @@ int16 Screen::fontHeight() {
 	static int16 height[NUM_FONTS] = {5, 7, 8};
 	return(height[_fnt - FIRST_FONT]);
 }
-
-/* TODO: Suppress block if it's confirmed to be useless */
-// static int16 Char_len (char c) {
-// /* Returns length of single character in pixels */
-//	return (*(_font[_fnt][c] + 1) + 1);
-// }
 
 
 // Returns length of supplied string in pixels
@@ -467,28 +435,6 @@ void Screen::loadFont(int16 fontId) {
 
 		offset += 2 + size;
 	}
-
-	// for (i = 0; i < 128; ++i) {
-	//      if( (char)i != 'f' && (char)i != '\\'){
-	//          continue;
-	//      }
-	//      int myHeight = _font[_fnt][i][0];
-	//      int myWidth = _font[_fnt][i][1];
-	//      printf("\n\nFor the letter %c, (%u, %u):\n", i, myWidth, myHeight);
-	//      for (int y = 0; y < myHeight; ++y) {
-	//          for (int x = 0; x < 8; ++x) {
-	//              int pixel = y * (8) + x;
-	//              int bitpos = pixel % 8;
-	//              int offset = pixel / 8;
-	//              byte bitTest = (1 << bitpos);
-	//              if ((_font[_fnt][i][2 + offset] & bitTest) == bitTest)
-	//                  printf("1");
-	//              else
-	//                  printf("0");
-	//          }
-	//          printf("\n");
-	//      }
-	//  }
 }
 
 void Screen::userHelp() {

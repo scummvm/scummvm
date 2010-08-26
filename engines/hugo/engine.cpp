@@ -131,8 +131,8 @@ void HugoEngine::initConfig(inst_t action) {
 		_config.soundVolume = 100;                  // Sound volume %
 		initPlaylist(_config.playlist);             // Initialize default tune playlist
 
-		HugoEngine::get().file().readBootFile();    // Read startup structure
-		HugoEngine::get().file().readConfig();      // Read user's saved config
+		file().readBootFile();    // Read startup structure
+		file().readConfig();      // Read user's saved config
 
 		cx = _config.cx;                            // Save these around OnFileNew()
 		cy = _config.cy;
@@ -152,7 +152,7 @@ void HugoEngine::initConfig(inst_t action) {
 				break;
 			}
 
-		HugoEngine::get().file().initSavedGame();   // Initialize saved game
+		file().initSavedGame();   // Initialize saved game
 		break;
 	case RESTORE:
 		warning("Unhandled action RESTORE");
@@ -163,9 +163,9 @@ void HugoEngine::initialize() {
 	debugC(1, kDebugEngine, "initialize");
 
 	sound().initSound();
-	HugoEngine::get().scheduler().initEventQueue(); // Init scheduler stuff
+	scheduler().initEventQueue(); // Init scheduler stuff
 	screen().initDisplay();                         // Create Dibs and palette
-	HugoEngine::get().file().openDatabaseFiles();   // Open database files
+	file().openDatabaseFiles();   // Open database files
 	calcMaxScore();                                 // Initialise maxscore
 
 	_rnd = new Common::RandomSource();
@@ -195,9 +195,9 @@ void HugoEngine::initialize() {
 void HugoEngine::shutdown() {
 	debugC(1, kDebugEngine, "shutdown");
 
-	HugoEngine::get().file().closeDatabaseFiles();
+	file().closeDatabaseFiles();
 	if (_status.recordFl || _status.playbackFl)
-		HugoEngine::get().file().closePlaybackFile();
+		file().closePlaybackFile();
 	freeObjects();
 }
 
@@ -205,25 +205,25 @@ void HugoEngine::readObjectImages() {
 	debugC(1, kDebugEngine, "readObjectImages");
 
 	for (int i = 0; i < _numObj; i++)
-		HugoEngine::get().file().readImage(i, &_objects[i]);
+		file().readImage(i, &_objects[i]);
 }
 
 // Read the uif image file (inventory icons)
 void HugoEngine::readUIFImages() {
 	debugC(1, kDebugEngine, "readUIFImages");
 
-	HugoEngine::get().file().readUIFItem(UIF_IMAGES, screen().getGUIBuffer());              // Read all uif images
+	file().readUIFItem(UIF_IMAGES, screen().getGUIBuffer());              // Read all uif images
 }
 
 // Read scenery, overlay files for given screen number
 void HugoEngine::readScreenFiles(int screenNum) {
 	debugC(1, kDebugEngine, "readScreenFiles(%d)", screenNum);
 
-	HugoEngine::get().file().readBackground(screenNum);                     // Scenery file
+	file().readBackground(screenNum);                     // Scenery file
 	memcpy(screen().getBackBuffer(), screen().getFrontBuffer(), sizeof(screen().getFrontBuffer()));// Make a copy
-	HugoEngine::get().file().readOverlay(screenNum, _boundary, BOUNDARY);       // Boundary file
-	HugoEngine::get().file().readOverlay(screenNum, _overlay, OVERLAY);         // Overlay file
-	HugoEngine::get().file().readOverlay(screenNum, _ovlBase, OVLBASE);         // Overlay base file
+	file().readOverlay(screenNum, _boundary, BOUNDARY);       // Boundary file
+	file().readOverlay(screenNum, _overlay, OVERLAY);         // Overlay file
+	file().readOverlay(screenNum, _ovlBase, OVLBASE);         // Overlay base file
 }
 
 // Update all object positions.  Process object 'local' events
@@ -541,7 +541,7 @@ void HugoEngine::processMaze() {
 //		aheroxy.y = _hero_p->y;
 		_actListArr[_alNewscrIndex][0].a2.y = _hero->y;
 		_status.routeIndex = -1;
-		HugoEngine::get().scheduler().insertActionList(_alNewscrIndex);
+		scheduler().insertActionList(_alNewscrIndex);
 	} else if (x2 > _maze.x2) {
 		// Exit east
 //			anewscr.screen = *_screen_p + 1;
@@ -551,7 +551,7 @@ void HugoEngine::processMaze() {
 //			aheroxy.y = _hero_p->y;
 		_actListArr[_alNewscrIndex][0].a2.y = _hero->y;
 		_status.routeIndex = -1;
-		HugoEngine::get().scheduler().insertActionList(_alNewscrIndex);
+		scheduler().insertActionList(_alNewscrIndex);
 	} else if (y1 < _maze.y1 - SHIFT) {
 		// Exit north
 //				anewscr.screen = *_screen_p - _maze.size;
@@ -561,7 +561,7 @@ void HugoEngine::processMaze() {
 //				aheroxy.y = _maze.y2 - SHIFT - (y2 - y1);
 		_actListArr[_alNewscrIndex][0].a2.y = _maze.y2 - SHIFT - (y2 - y1);
 		_status.routeIndex = -1;
-		HugoEngine::get().scheduler().insertActionList(_alNewscrIndex);
+		scheduler().insertActionList(_alNewscrIndex);
 	} else if (y2 > _maze.y2 - SHIFT / 2) {
 		// Exit south
 //					anewscr.screen = *_screen_p + _maze.size;
@@ -571,20 +571,20 @@ void HugoEngine::processMaze() {
 //					aheroxy.y = _maze.y1 + SHIFT;
 		_actListArr[_alNewscrIndex][0].a2.y = _maze.y1 + SHIFT;
 		_status.routeIndex = -1;
-		HugoEngine::get().scheduler().insertActionList(_alNewscrIndex);
+		scheduler().insertActionList(_alNewscrIndex);
 	}
 }
 
 // Compare function for the quicksort.  The sort is to order the objects in
 // increasing vertical position, using y+y2 as the baseline
 // Returns -1 if ay2 < by2 else 1 if ay2 > by2 else 0
-int y2comp(const void *a, const void *b) {
+int HugoEngine::y2comp(const void *a, const void *b) {
 	int       ay2, by2;
 
 	debugC(6, kDebugEngine, "y2comp");
 
-	const object_t *p1 = &HugoEngine::get()._objects[*(const byte *)a];
-	const object_t *p2 = &HugoEngine::get()._objects[*(const byte *)b];
+	const object_t *p1 = &s_Engine->_objects[*(const byte *)a];
+	const object_t *p2 = &s_Engine->_objects[*(const byte *)b];
 
 	if (p1 == p2)
 		// Why does qsort try the same indexes?
@@ -848,7 +848,7 @@ void HugoEngine::useObject(int16 objId) {
 					// Deselect dragged icon if inventory not active
 					if (_status.inventoryState != I_ACTIVE)
 						_status.inventoryObjId  = -1;
-					Utils::Box(BOX_ANY, HugoEngine::get()._textData[use->dataIndex]);
+					Utils::Box(BOX_ANY, _textData[use->dataIndex]);
 					return;
 				}
 			}
@@ -907,7 +907,7 @@ void HugoEngine::screenActions(int screenNum) {
 
 	if (screenAct) {
 		for (int i = 0; screenAct[i]; i++)
-			HugoEngine::get().scheduler().insertActionList(screenAct[i]);
+			scheduler().insertActionList(screenAct[i]);
 	}
 }
 
@@ -941,7 +941,7 @@ void HugoEngine::boundaryCollision(object_t *obj) {
 			hotspot = &_hotspots[i];
 			if (hotspot->screenIndex == obj->screenIndex)
 				if ((x >= hotspot->x1) && (x <= hotspot->x2) && (y >= hotspot->y1) && (y <= hotspot->y2)) {
-					HugoEngine::get().scheduler().insertActionList(hotspot->actIndex);
+					scheduler().insertActionList(hotspot->actIndex);
 					break;
 				}
 		}
@@ -954,7 +954,7 @@ void HugoEngine::boundaryCollision(object_t *obj) {
 		if (radius < 0)
 			radius = DX * 2;
 		if ((abs(dx) <= radius) && (abs(dy) <= radius))
-			HugoEngine::get().scheduler().insertActionList(obj->actIndex);
+			scheduler().insertActionList(obj->actIndex);
 	}
 }
 
@@ -988,7 +988,7 @@ void HugoEngine::endGame() {
 	debugC(1, kDebugEngine, "endGame");
 
 	if (!_boot.registered)
-		Utils::Box(BOX_ANY, HugoEngine::get()._textEngine[kEsAdvertise]);
+		Utils::Box(BOX_ANY, _textEngine[kEsAdvertise]);
 	Utils::Box(BOX_ANY, "%s\n%s", _episode, COPYRIGHT);
 	_status.viewState = V_EXIT;
 }
