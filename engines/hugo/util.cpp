@@ -114,11 +114,7 @@ void Utils::Warn(bool technote, const char *format, ...) {
 	/* Arguments are same as printf */
 	/* technote TRUE if we are to refer user to technote file */
 	char buffer[WARNLEN];
-	bool soundFl = _config.soundFl;
 	va_list marker;
-
-	_config.soundFl = false;                            // Kill sound to allow beep sound
-	HugoEngine::get().sound().initSound(RESET);
 
 	va_start(marker, format);
 	vsnprintf(buffer, WARNLEN, format, marker);
@@ -128,11 +124,6 @@ void Utils::Warn(bool technote, const char *format, ...) {
 	//MessageBeep(MB_ICONEXCLAMATION);
 	//MessageBox(hwnd, buffer, "HugoWin Warning", MB_OK | MB_ICONEXCLAMATION);
 	warning("Hugo warning: %s", buffer);
-
-	//sndPlaySound(NULL, 0);                        // Stop beep and restore sound
-
-	_config.soundFl = soundFl;
-	HugoEngine::get().sound().initSound(RESET);
 }
 
 void Utils::Error(int error_type, const char *format, ...) {

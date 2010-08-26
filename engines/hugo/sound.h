@@ -37,6 +37,8 @@
 
 namespace Hugo {
 
+class MidiPlayer;
+	
 class SoundHandler {
 public:
 	SoundHandler(HugoEngine &vm);
@@ -46,11 +48,12 @@ public:
 	void setMusicVolume();
 	void playMusic(short tune);
 	void playSound(short sound, stereo_t channel, byte priority);
-	void initSound(inst_t action);
+	void initSound();
 
 private:
 	HugoEngine &_vm;
 	Audio::SoundHandle _soundHandle;
+	MidiPlayer *_midiPlayer;
 
 	void stopSound();
 	void stopMusic();

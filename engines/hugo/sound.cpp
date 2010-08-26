@@ -36,6 +36,8 @@
 
 #include "sound/decoders/raw.h"
 #include "sound/audiostream.h"
+#include "sound/midiparser.h"
+#include "sound/mididrv.h"
 
 #include "hugo/hugo.h"
 #include "hugo/game.h"
@@ -44,62 +46,236 @@
 
 namespace Hugo {
 
-uint16 SeqID;                                       // Device id of (MIDI) sequencer
-uint16 SeqVolID;                                    // Low level id to set midi volume
-uint16 WavID = 0;                                   // Device id of waveaudio
+class MidiPlayer : public MidiDriver {
+public:
 
-//HWAVEOUT hwav;                                    // Handle of waveaudio
-//LPWAVEHDR lphdr;                                  // WaveOut structure ptr
+	enum {
+		NUM_CHANNELS = 16
+	};
+
+	MidiPlayer(MidiDriver *driver);
+	~MidiPlayer();
+
+	void play(uint8 *stream, uint16 size);
+	void stop();
+	void pause(bool p);
+	void updateTimer();
+	void adjustVolume(int diff);
+	void setVolume(int volume);
+	int getVolume() const { return _masterVolume; }
+	void setLooping(bool loop) { _isLooping = loop; }
+
+	// MidiDriver interface
+	int open();
+	void close();
+	void send(uint32 b);
+	void metaEvent(byte type, byte *data, uint16 length);
+	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
+	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
+	MidiChannel *allocateChannel() { return 0; }
+	MidiChannel *getPercussionChannel() { return 0; }
+
+private:
+
+	static void timerCallback(void *p);
+
+	MidiDriver *_driver;
+	MidiParser *_parser;
+	uint8 *_midiData;
+	bool _isLooping;
+	bool _isPlaying;
+	bool _paused;
+	int _masterVolume;
+	MidiChannel *_channelsTable[NUM_CHANNELS];
+	uint8 _channelsVolume[NUM_CHANNELS];
+	Common::Mutex _mutex;
+};
+
+MidiPlayer::MidiPlayer(MidiDriver *driver)
+	: _driver(driver), _parser(0), _midiData(0), _isLooping(false), _isPlaying(false), _paused(false), _masterVolume(0) {
+	assert(_driver);
+	memset(_channelsTable, 0, sizeof(_channelsTable));
+	for (int i = 0; i < NUM_CHANNELS; i++) {
+		_channelsVolume[i] = 127;
+	}
+}
+
+MidiPlayer::~MidiPlayer() {
+	close();
+}
+
+void MidiPlayer::play(uint8 *stream, uint16 size) {
+	if (!stream) {
+		stop();
+		return;
+	}
+
+	_midiData = (uint8 *)malloc(size);
+	if (_midiData) {
+		memcpy(_midiData, stream, size);
+		_mutex.lock();
+		_parser->loadMusic(_midiData, size);
+		_parser->setTrack(0);
+		_isLooping = true;
+		_isPlaying = true;
+		_mutex.unlock();
+	}
+}
+
+void MidiPlayer::stop() {
+	_mutex.lock();
+	if (_isPlaying) {
+		_isPlaying = false;
+		_parser->unloadMusic();
+		free(_midiData);
+		_midiData = 0;
+	}
+	_mutex.unlock();
+}
+
+void MidiPlayer::pause(bool p) {
+	_paused = p;
+
+	for (int i = 0; i < NUM_CHANNELS; ++i) {
+		if (_channelsTable[i]) {
+			_channelsTable[i]->volume(_paused ? 0 : _channelsVolume[i] * _masterVolume / 255);
+		}
+	}
+}
+
+void MidiPlayer::updateTimer() {
+	if (_paused) {
+		return;
+	}
+
+	_mutex.lock();
+	if (_isPlaying) {
+		_parser->onTimer();
+	}
+	_mutex.unlock();
+}
+
+void MidiPlayer::adjustVolume(int diff) {
+	setVolume(_masterVolume + diff);
+}
+
+void MidiPlayer::setVolume(int volume) {
+	_masterVolume = CLIP(volume, 0, 255);
+	_mutex.lock();
+	for (int i = 0; i < NUM_CHANNELS; ++i) {
+		if (_channelsTable[i]) {
+			_channelsTable[i]->volume(_channelsVolume[i] * _masterVolume / 255);
+		}
+	}
+	_mutex.unlock();
+}
+
+int MidiPlayer::open() {
+	_driver->open();
+
+	_parser = MidiParser::createParser_SMF();
+	_parser->setMidiDriver(this);
+	_parser->setTimerRate(_driver->getBaseTempo());
+	_driver->setTimerCallback(this, &timerCallback);
+
+	return 0;
+}
+
+void MidiPlayer::close() {
+	stop();
+	_mutex.lock();
+	_driver->setTimerCallback(NULL, NULL);
+	_driver->close();
+	delete _driver;
+	_driver = 0;
+	_parser->setMidiDriver(NULL);
+	delete _parser;
+	_mutex.unlock();
+}
+
+void MidiPlayer::send(uint32 b) {
+	byte volume, ch = (byte)(b & 0xF);
+	switch (b & 0xFFF0) {
+	case 0x07B0: // volume change
+		volume = (byte)((b >> 16) & 0x7F);
+		_channelsVolume[ch] = volume;
+		volume = volume * _masterVolume / 255;
+		b = (b & 0xFF00FFFF) | (volume << 16);
+		break;
+	case 0x7BB0: // all notes off
+		if (!_channelsTable[ch]) {
+			// channel not yet allocated, no need to send the event
+			return;
+		}
+		break;
+	}
+
+	if (!_channelsTable[ch]) {
+		_channelsTable[ch] = (ch == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+	}
+	if (_channelsTable[ch]) {
+		_channelsTable[ch]->send(b);
+	}
+}
+
+void MidiPlayer::metaEvent(byte type, byte *data, uint16 length) {
+	switch (type) {
+	case 0x2F: // end of Track
+		if (_isLooping) {
+			_parser->jumpToTick(0);
+		} else {
+			stop();
+		}
+		break;
+	default:
+//		warning("Unhandled meta event: %02x", type);
+		break;
+	}
+}
+
+void MidiPlayer::timerCallback(void *p) {
+	MidiPlayer *player = (MidiPlayer *)p;
+
+	player->updateTimer();
+}
 
 SoundHandler::SoundHandler(HugoEngine &vm) : _vm(vm) {
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	MidiDriver *driver = MidiDriver::createMidi(dev);
+
+	_midiPlayer = new MidiPlayer(driver);
 }
 
 void SoundHandler::setMusicVolume() {
 	/* Set the FM music volume from config.mvolume (0..100%) */
-	warning("STUB: setMusicVolume()");
-
-	// uint32 dwVolume;
-	//
-	// if (config.music) {
-	//  dwVolume = config.mvolume * 0xffffL / 100;  // Convert % to 0..0xffff
-	//  dwVolume |= dwVolume << 16;                 // Set volume in both stereo words
-	//  midiOutSetVolume(SeqVolID, dwVolume);
-	// }
+	
+	_midiPlayer->setVolume(_config.musicVolume * 255 / 100);
 }
 
 void SoundHandler::stopSound() {
 	/* Stop any sound that might be playing */
-	warning("STUB: stopSound()");
-
-	// waveOutReset(hwav);
-	// waveOutUnprepareHeader(hwav, lphdr, sizeof(WAVEHDR));
+	_vm._mixer->stopAll();
 }
 
 void SoundHandler::stopMusic() {
 	/* Stop any tune that might be playing */
-	warning("STUB: stopMusic()");
-	//mciSendCommand(SeqID, MCI_CLOSE, MCI_WAIT, 0);
+	_midiPlayer->stop();
 }
 
 void SoundHandler::toggleMusic() {
 // Turn music on and off
-	if (_config.musicFl)
-		stopMusic();
 	_config.musicFl = !_config.musicFl;
-	initSound(RESET);
+	
+	_midiPlayer->pause(_config.musicFl);
 }
 
 void SoundHandler::toggleSound() {
 // Turn digitized sound on and off
 	_config.soundFl = !_config.soundFl;
-	initSound(RESET);
 }
 
 void SoundHandler::playMIDI(sound_pt seq_p, uint16 size) {
-// Write supplied midi data to a temp file for MCI interface
-// If seq_p is NULL, delete temp file
-
-	warning("STUB: playMIDI()");
+	_midiPlayer->play(seq_p, size);
 }
 
 
@@ -146,19 +322,13 @@ void SoundHandler::playSound(int16 sound, stereo_t channel, byte priority) {
 
 }
 
-void SoundHandler::initSound(inst_t action) {
+void SoundHandler::initSound() {
 	/* Initialize for MCI sound and midi */
 
-	warning("STUB: initSound()");
+	_midiPlayer->open();
 }
 
 void SoundHandler::pauseSound(bool activeFl, int hTask) {
-// Pause and restore music, sound on losing activity to hTask
-// Don't stop music if we are parent of new task, i.e. WinHelp()
-// or config.music_bkg is TRUE.
-
-//TODO: Is 'hTask' still useful ?
-
 	static bool firstFl = true;
 	static bool musicFl, soundFl;
 
@@ -183,7 +353,7 @@ void SoundHandler::pauseSound(bool activeFl, int hTask) {
 			_config.soundFl = false;
 		}
 	}
-	initSound(RESET);
+	initSound();
 }
 
 } // end of namespace Hugo

@@ -162,7 +162,7 @@ void HugoEngine::initConfig(inst_t action) {
 void HugoEngine::initialize() {
 	debugC(1, kDebugEngine, "initialize");
 
-	sound().initSound(INSTALL);
+	sound().initSound();
 	HugoEngine::get().scheduler().initEventQueue(); // Init scheduler stuff
 	screen().initDisplay();                         // Create Dibs and palette
 	HugoEngine::get().file().openDatabaseFiles();   // Open database files
@@ -194,8 +194,6 @@ void HugoEngine::initialize() {
 // Restore all resources before termination
 void HugoEngine::shutdown() {
 	debugC(1, kDebugEngine, "shutdown");
-
-	sound().initSound(RESTORE);
 
 	HugoEngine::get().file().closeDatabaseFiles();
 	if (_status.recordFl || _status.playbackFl)
