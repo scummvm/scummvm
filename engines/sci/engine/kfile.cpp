@@ -221,29 +221,31 @@ reg_t kFPuts(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
+static int fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (!f)
-		return;
+		return 0;
 
 	if (!f->_in) {
 		error("fgets_wrapper: Trying to read from file '%s' opened for writing", f->_name.c_str());
-		return;
+		return 0;
 	}
+	int readBytes = 0;
 	if (maxsize > 1) {
 		memset(dest, 0, maxsize);
 		f->_in->readLine(dest, maxsize);
+		readBytes = strlen(dest); // FIXME: sierra sci returned byte count and didn't react on NUL characters
 		// The returned string must not have an ending LF
-		int strSize = strlen(dest);
-		if (strSize > 0) {
-			if (dest[strSize - 1] == 0x0A)
-				dest[strSize - 1] = 0;
+		if (readBytes > 0) {
+			if (dest[readBytes - 1] == 0x0A)
+				dest[readBytes - 1] = 0;
 		}
 	} else {
 		*dest = 0;
 	}
 
 	debugC(2, kDebugLevelFile, "  -> FGets'ed \"%s\"", dest);
+	return readBytes;
 }
 
 reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
@@ -252,9 +254,9 @@ reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
 	int handle = argv[2].toUint16();
 
 	debugC(2, kDebugLevelFile, "kFGets(%d, %d)", handle, maxsize);
-	fgets_wrapper(s, buf, maxsize, handle);
+	int readBytes = fgets_wrapper(s, buf, maxsize, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
-	return argv[0];
+	return make_reg(0, readBytes);
 }
 
 /**
@@ -902,10 +904,10 @@ reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
 	int handle = argv[2].toUint16();
 	debugC(2, kDebugLevelFile, "kFileIO(readString): %d, %d", handle, size);
 
-	fgets_wrapper(s, buf, size, handle);
+	int readBytes = fgets_wrapper(s, buf, size, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, size);
 	delete[] buf;
-	return argv[0];
+	return make_reg(0, readBytes);
 }
 
 reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
