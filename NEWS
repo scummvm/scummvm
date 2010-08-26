@@ -5,6 +5,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  New Ports:
    - Added Android port.
    - Added Dingux port.
+   - Added Caanoo port (based on the GP2XWiz port).
 
  General:
    - Removed the outdated PalmOS port.
@@ -57,6 +58,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  GameCube port:
    - Added support for DVDs with the ISO9660 file system.
+   
+ GP2X port:
+   - Added support for dynamic engine plugins.
 
 1.1.2 (????-??-??)
   Broken Sword 2
