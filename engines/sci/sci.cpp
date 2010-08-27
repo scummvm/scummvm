@@ -639,9 +639,11 @@ Common::String SciEngine::getSavegamePattern() const {
 Common::String SciEngine::getFilePrefix() const {
 	if (_gameId == GID_QFG2) {
 		// Quest for Glory 2 wants to read files from Quest for Glory 1 (EGA/VGA) to import character data
-		if (_gamestate->currentRoomNumber() == 805)
-			return "qfg1";
-		// TODO: Include import-room for qfg1vga
+		if (_gamestate->currentRoomNumber() == 805) {
+			// Check if there are any QFG1VGA games - bug #3054613
+			Common::StringArray saveNames = g_engine->getSaveFileManager()->listSavefiles("qfg1vga-*.sav");
+			return (saveNames.size() > 0) ? "qfg1vga" : "qfg1";
+		}
 	} else if (_gameId == GID_QFG3) {
 		// Quest for Glory 3 wants to read files from Quest for Glory 2 to import character data
 		if (_gamestate->currentRoomNumber() == 54)
