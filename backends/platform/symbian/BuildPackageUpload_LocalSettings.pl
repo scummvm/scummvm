@@ -4,7 +4,7 @@
 	@WorkingEngines = qw(
 		scumm agos sky queen gob groovie saga drascula 
 		kyra lure agi touche parallaction cine
-		cruise made m4 tinsel tucker sword1 sword2 draci sci teenagent mohawk
+		cruise made m4 tinsel tucker sword1 sword2 draci sci teenagent mohawk hugo
 	);
 	
 	@WorkingEngines_1st = qw(
@@ -16,7 +16,7 @@
 	@WorkingEngines_2nd = qw(
 		agos sky gob 
 		kyra lure agi tinsel
-		sword1 sword2 draci teenagent
+		sword1 sword2 draci teenagent hugo
 	);
 
 	@TestingEngines = qw(
