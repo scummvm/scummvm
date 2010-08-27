@@ -51,5 +51,6 @@ private:
 	void constructInventory(int16 imageTotNumb, int displayNumb, bool scrollFl, int16 firstObjId);
 };
 
-} // end of namespace Hugo
+} // End of namespace Hugo
+
 #endif // HUGO_INVENTORY_H

@@ -76,7 +76,7 @@ event_t *Scheduler::getQueue() {
 	event_t *resEvent;
 
 	if (!_freeEvent)                                // Error: no more events available
-		Utils::Error(EVNT_ERR, "getQueue");
+		Utils::Error(EVNT_ERR, "%s", "getQueue");
 	resEvent = _freeEvent;
 	_freeEvent = _freeEvent->nextEvent;
 	resEvent->nextEvent = 0;
@@ -216,7 +216,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		break;
 	case PROMPT:                                    // act3: Prompt user for key phrase
 // TODO : Add specific code for Hugo 1 DOS, which is handled differently,
-		response = Utils::Box(BOX_PROMPT, _vm.file().fetchString(action->a3.promptIndex));
+		response = Utils::Box(BOX_PROMPT, "%s", _vm.file().fetchString(action->a3.promptIndex));
 
 		warning("STUB: doAction(act3), expecting answer %s", response);
 
@@ -273,7 +273,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 			insertActionList(action->a11.actFailIndex);
 		break;
 	case TEXT:                                      // act12: Text box (CF WARN)
-		Utils::Box(BOX_ANY, _vm.file().fetchString(action->a12.stringIndex));   // Fetch string from file
+		Utils::Box(BOX_ANY, "%s", _vm.file().fetchString(action->a12.stringIndex));   // Fetch string from file
 		break;
 	case SWAP_IMAGES:                               // act13: Swap 2 object images
 		swapImages(action->a13.obj1, action->a13.obj2);
@@ -427,7 +427,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 			_vm.endGame();
 		break;
 	case WARN:                                      // act40: Text box (CF TEXT)
-		Utils::Box(BOX_OK, _vm.file().fetchString(action->a40.stringIndex));
+		Utils::Box(BOX_OK, "%s", _vm.file().fetchString(action->a40.stringIndex));
 		break;
 	case COND_BONUS:                                // act41: Perform action if got bonus
 		if (_vm._points[action->a41.BonusIndex].scoredFl)
@@ -436,11 +436,11 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 			insertActionList(action->a41.actFailIndex);
 		break;
 	case TEXT_TAKE:                                 // act42: Text box with "take" message
-		Utils::Box(BOX_ANY, TAKE_TEXT, _vm._arrayNouns[_vm._objects[action->a42.objNumb].nounIndex][TAKE_NAME]);
+		Utils::Box(BOX_ANY, "%s", TAKE_TEXT, _vm._arrayNouns[_vm._objects[action->a42.objNumb].nounIndex][TAKE_NAME]);
 		break;
 	case YESNO:                                     // act43: Prompt user for Yes or No
 		warning("doAction(act43) - Yes/No Box");
-		if (Utils::Box(BOX_YESNO, _vm.file().fetchString(action->a43.promptIndex)) != NULL)
+		if (Utils::Box(BOX_YESNO, "%s", _vm.file().fetchString(action->a43.promptIndex)) != NULL)
 			insertActionList(action->a43.actYesIndex);
 		else
 			insertActionList(action->a43.actNoIndex);
@@ -479,7 +479,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		warning("STUB: doAction(act49)");
 		break;
 	default:
-		Utils::Error(EVNT_ERR, "doAction");
+		Utils::Error(EVNT_ERR, "%s", "doAction");
 		break;
 	}
 
@@ -537,7 +537,7 @@ void Scheduler::newScreen(int screenIndex) {
 		char line[32];
 		if (!_vm.file().fileExists(strcat(strncat(strcpy(line, _vm._picDir), _vm._screenNames[screenIndex], NAME_LEN), BKGEXT)) &&
 		        !_vm.file().fileExists(strcat(strcpy(line, _vm._screenNames[screenIndex]), ".ART"))) {
-			Utils::Box(BOX_ANY, _vm._textSchedule[kSsNoBackground]);
+			Utils::Box(BOX_ANY, "%s", _vm._textSchedule[kSsNoBackground]);
 			return;
 		}
 	}
@@ -675,4 +675,4 @@ void Scheduler::swapImages(int objNumb1, int objNumb2) {
 	_vm._objects[objNumb1].y += _vm._objects[objNumb2].currImagePtr->y2 - _vm._objects[objNumb1].currImagePtr->y2;
 }
 
-} // end of namespace Hugo
+} // End of namespace Hugo

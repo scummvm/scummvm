@@ -80,5 +80,6 @@ private:
 	Point *newNode();
 };
 
-} // end of namespace Hugo
+} // End of namespace Hugo
+
 #endif //HUGO_ROUTE_H

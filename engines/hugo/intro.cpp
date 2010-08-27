@@ -116,13 +116,13 @@ bool intro_3w::introPlay() {
 		// Text boxes at various times
 		switch (introTicks) {
 		case 4:
-			Utils::Box(BOX_OK, _vm._textIntro[kIntro1]);
+			Utils::Box(BOX_OK, "%s", _vm._textIntro[kIntro1]);
 			break;
 		case 9:
-			Utils::Box(BOX_OK, _vm._textIntro[kIntro2]);
+			Utils::Box(BOX_OK, "%s", _vm._textIntro[kIntro2]);
 			break;
 		case 35:
-			Utils::Box(BOX_OK, _vm._textIntro[kIntro3]);
+			Utils::Box(BOX_OK, "%s", _vm._textIntro[kIntro3]);
 			break;
 		}
 	}
@@ -183,5 +183,4 @@ bool intro_3d::introPlay() {
 	return true;
 }
 
-} // end of namespace Hugo
-
+} // End of namespace Hugo

@@ -278,7 +278,7 @@ void Screen::displayList(dupdate_t update, ...) {
 		break;
 	case D_ADD:                                     // Add a rectangle to list
 		if (addIndex >= DMAX) {
-			Utils::Warn(false, "Display list exceeded");
+			Utils::Warn(false, "%s", "Display list exceeded");
 			return;
 		}
 		va_start(marker, update);                   // Initialize variable arguments
@@ -440,7 +440,8 @@ void Screen::loadFont(int16 fontId) {
 void Screen::userHelp() {
 // Introduce user to the game
 // DOS versions Only
-	Utils::Box(BOX_ANY , "F1  - Press F1 again\n"
+	Utils::Box(BOX_ANY , "%s", 
+	           "F1  - Press F1 again\n"
 	           "      for instructions\n"
 	           "F2  - Sound on/off\n"
 	           "F3  - Recall last line\n"
@@ -452,4 +453,4 @@ void Screen::userHelp() {
 	           "ESC - Return to game");
 }
 
-} // end of namespace Hugo
+} // End of namespace Hugo

@@ -328,4 +328,4 @@ void SoundHandler::initSound() {
 	_midiPlayer->open();
 }
 
-} // end of namespace Hugo
+} // End of namespace Hugo

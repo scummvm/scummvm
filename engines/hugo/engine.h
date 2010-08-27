@@ -39,5 +39,6 @@ enum seqTextEngine {
 	kEsAdvertise = 0
 };
 
-} // end of namespace Hugo
+} // End of namespace Hugo
+
 #endif // HUGO_ENGINE_H

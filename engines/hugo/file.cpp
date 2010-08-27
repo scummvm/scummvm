@@ -108,12 +108,12 @@ seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool
 	f.read(PCC_header.fill2, sizeof(PCC_header.fill2));
 
 	if (PCC_header.mfctr != 10)
-		Utils::Error(PCCH_ERR, name);
+		Utils::Error(PCCH_ERR, "%s", name);
 
 	// Allocate memory for seq_t if NULL
 	if (seqPtr == NULL)
 		if ((seqPtr = (seq_t *)malloc(sizeof(seq_t))) == NULL)
-			Utils::Error(HEAP_ERR, name);
+			Utils::Error(HEAP_ERR, "%s", name);
 
 	// Find size of image data in 8-bit DIB format
 	// Note save of x2 - marks end of valid data before garbage
@@ -126,7 +126,7 @@ seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool
 	// Allocate memory for image data if NULL
 	if (imagePtr == NULL)
 		if ((imagePtr = (byte *)malloc((size_t) size)) == NULL)
-			Utils::Error(HEAP_ERR, name);
+			Utils::Error(HEAP_ERR, "%s", name);
 	seqPtr->imagePtr = imagePtr;
 
 	// Process the image data, converting to 8-bit DIB format
@@ -176,7 +176,7 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 			warning("File %s not found, trying again with %s%s", buf, _vm._arrayNouns[objPtr->nounIndex][0], OBJEXT);
 			strcat(strcpy(buf, _vm._arrayNouns[objPtr->nounIndex][0]), OBJEXT);
 			if (!_objectsArchive.open(buf))
-				Utils::Error(FILE_ERR, buf);
+				Utils::Error(FILE_ERR, "%s", buf);
 		}
 	}
 
@@ -262,7 +262,7 @@ void FileManager::readBackground(int screenIndex) {
 			warning("File %s not found, trying again with %s.ART", buf, _vm._screenNames[screenIndex]);
 			strcat(strcpy(buf, _vm._screenNames[screenIndex]), ".ART");
 			if (!_sceneryArchive.open(buf))
-				Utils::Error(FILE_ERR, buf);
+				Utils::Error(FILE_ERR, "%s", buf);
 		}
 	}
 
@@ -290,7 +290,7 @@ sound_pt FileManager::getSound(int16 sound, uint16 *size) {
 
 	// Open sounds file
 	if (!fp.open(SOUND_FILE)) {
-//		Error(FILE_ERR, SOUND_FILE);
+//		Error(FILE_ERR, "%s", SOUND_FILE);
 		warning("Hugo Error: File not found %s", SOUND_FILE);
 		return(NULL);
 	}
@@ -299,24 +299,24 @@ sound_pt FileManager::getSound(int16 sound, uint16 *size) {
 	static bool has_read_header = false;
 	if (!has_read_header) {
 		if (fp.read(s_hdr, sizeof(s_hdr)) != sizeof(s_hdr))
-			Utils::Error(FILE_ERR, SOUND_FILE);
+			Utils::Error(FILE_ERR, "%s", SOUND_FILE);
 		has_read_header = true;
 	}
 
 	*size = s_hdr[sound].size;
 	if (*size == 0)
-		Utils::Error(SOUND_ERR, SOUND_FILE);
+		Utils::Error(SOUND_ERR, "%s", SOUND_FILE);
 
 	// Allocate memory for sound or music, if possible
 	if ((soundPtr = (byte *)malloc(s_hdr[sound].size)) == 0) {
-		Utils::Warn(false, "Low on memory");
+		Utils::Warn(false, "%s", "Low on memory");
 		return(NULL);
 	}
 
 	// Seek to data and read it
 	fp.seek(s_hdr[sound].offset, SEEK_SET);
 	if (fp.read(soundPtr, s_hdr[sound].size) != s_hdr[sound].size)
-		Utils::Error(FILE_ERR, SOUND_FILE);
+		Utils::Error(FILE_ERR, "%s", SOUND_FILE);
 
 	fp.close();
 
@@ -369,7 +369,7 @@ void FileManager::readOverlay(int screenNum, image_pt image, ovl_t overlayType) 
 			i = sceneBlock.ob_len;
 			break;
 		default:
-			Utils::Error(FILE_ERR, "Bad ovl_type");
+			Utils::Error(FILE_ERR, "%s", "Bad ovl_type");
 			break;
 		}
 		if (i == 0) {
@@ -390,7 +390,7 @@ void FileManager::readOverlay(int screenNum, image_pt image, ovl_t overlayType) 
 		}
 
 		if (!_sceneryArchive.open(buf))
-			Utils::Error(FILE_ERR, buf);
+			Utils::Error(FILE_ERR, "%s", buf);
 
 //		if (eof(f_scenery)) {
 //			_lclose(f_scenery);
@@ -560,7 +560,7 @@ void FileManager::restoreGame(int16 slot) {
 	int saveVersion;
 	in->read(&saveVersion, sizeof(saveVersion));
 	if (saveVersion != kSavegameVersion) {
-		Utils::Error(GEN_ERR, "Savegame of incompatible version");
+		Utils::Error(GEN_ERR, "%s", "Savegame of incompatible version");
 		return;
 	}
 
@@ -644,7 +644,7 @@ void FileManager::initSavedGame() {
 	if (!(in = _vm.getSaveFileManager()->openForLoading(path))) {
 		saveGame(-1, "");
 		if (!(in = _vm.getSaveFileManager()->openForLoading(path))) {
-			Utils::Error(WRITE_ERR, path);
+			Utils::Error(WRITE_ERR, "%s", path);
 			return;
 		}
 	}
@@ -655,7 +655,7 @@ void FileManager::initSavedGame() {
 
 	// Check sanity - maybe disk full or path set to read-only drive?
 	if (_vm.getGameStatus().saveSize == -1)
-		Utils::Error(WRITE_ERR, path);
+		Utils::Error(WRITE_ERR, "%s", path);
 }
 
 // Record and playback handling stuff:
@@ -671,7 +671,7 @@ void FileManager::openPlaybackFile(bool playbackFl, bool recordFl) {
 
 	if (playbackFl) {
 		if (!(fpb = fopen(PBFILE, "r+b")))
-			Utils::Error(FILE_ERR, PBFILE);
+			Utils::Error(FILE_ERR, "%s", PBFILE);
 	} else if (recordFl)
 		fpb = fopen(PBFILE, "wb");
 	pbdata.time = 0;                                // Say no key available
@@ -687,13 +687,13 @@ void FileManager::openDatabaseFiles() {
 	debugC(1, kDebugFile, "openDatabaseFiles");
 
 	if (!_stringArchive.open(STRING_FILE))
-//		Error(FILE_ERR, STRING_FILE);
+//		Error(FILE_ERR, "%s", STRING_FILE);
 		warning("Hugo Error: File not found %s", STRING_FILE);
 	if (_vm.isPacked()) {
 		if (!_sceneryArchive.open(SCENERY_FILE))
-			Utils::Error(FILE_ERR, SCENERY_FILE);
+			Utils::Error(FILE_ERR, "%s", SCENERY_FILE);
 		if (!_objectsArchive.open(OBJECTS_FILE))
-			Utils::Error(FILE_ERR, OBJECTS_FILE);
+			Utils::Error(FILE_ERR, "%s", OBJECTS_FILE);
 	}
 }
 
@@ -718,18 +718,18 @@ char *FileManager::fetchString(int index) {
 	// Get offset to string[index] (and next for length calculation)
 	_stringArchive.seek((uint32)index * sizeof(uint32), SEEK_SET);
 	if (_stringArchive.read((char *)&off1, sizeof(uint32)) == 0)
-		Utils::Error(FILE_ERR, "String offset");
+		Utils::Error(FILE_ERR, "%s", "String offset");
 	if (_stringArchive.read((char *)&off2, sizeof(uint32)) == 0)
-		Utils::Error(FILE_ERR, "String offset");
+		Utils::Error(FILE_ERR, "%s", "String offset");
 
 	// Check size of string
 	if ((off2 - off1) >= MAX_BOX)
-		Utils::Error(FILE_ERR, "Fetched string too long!");
+		Utils::Error(FILE_ERR, "%s", "Fetched string too long!");
 
 	// Position to string and read it into gen purpose _textBoxBuffer
 	_stringArchive.seek(off1, SEEK_SET);
 	if (_stringArchive.read(_textBoxBuffer, (uint16)(off2 - off1)) == 0)
-		Utils::Error(FILE_ERR, "Fetch_string");
+		Utils::Error(FILE_ERR, "%s", "Fetch_string");
 
 	// Null terminate, decode and return it
 	_textBoxBuffer[off2-off1] = '\0';
@@ -751,7 +751,7 @@ void FileManager::printBootText() {
 			warning("printBootText - Skipping as H1 Dos may be a freeware");
 			return;
 		} else
-			Utils::Error(FILE_ERR, BOOTFILE);
+			Utils::Error(FILE_ERR, "%s", BOOTFILE);
 	}
 
 	// Allocate space for the text and print it
@@ -760,14 +760,14 @@ void FileManager::printBootText() {
 		// Skip over the boot structure (already read) and read exit text
 		ofp.seek((long)sizeof(_boot), SEEK_SET);
 		if (ofp.read(buf, _boot.exit_len) != (size_t)_boot.exit_len)
-			Utils::Error(FILE_ERR, BOOTFILE);
+			Utils::Error(FILE_ERR, "%s", BOOTFILE);
 
 		// Decrypt the exit text, using CRYPT substring
 		for (i = 0; i < _boot.exit_len; i++)
 			buf[i] ^= CRYPT[i % strlen(CRYPT)];
 
 		buf[i] = '\0';
-		//Box(BOX_OK, buf_p);
+		//Box(BOX_OK, "%s", buf_p);
 		//MessageBox(hwnd, buf_p, "License", MB_ICONINFORMATION);
 		warning("printBootText(): License: %s", buf);
 	}
@@ -792,11 +792,11 @@ void FileManager::readBootFile() {
 			warning("readBootFile - Skipping as H1 Dos may be a freeware");
 			return;
 		} else
-			Utils::Error(FILE_ERR, BOOTFILE);
+			Utils::Error(FILE_ERR, "%s", BOOTFILE);
 	}
 
 	if (ofp.size() < (int32)sizeof(_boot))
-		Utils::Error(FILE_ERR, BOOTFILE);
+		Utils::Error(FILE_ERR, "%s", BOOTFILE);
 
 	_boot.checksum = ofp.readByte();
 	_boot.registered = ofp.readByte();
@@ -812,7 +812,7 @@ void FileManager::readBootFile() {
 	ofp.close();
 
 	if (checksum)
-		Utils::Error(GEN_ERR, "Program startup file invalid");
+		Utils::Error(GEN_ERR, "%s", "Program startup file invalid");
 }
 
 void FileManager::readConfig() {
@@ -862,10 +862,10 @@ uif_hdr_t *FileManager::getUIFHeader(uif_t id) {
 		firstFl = false;
 		// Open unbuffered to do far read
 		if (!ip.open(UIF_FILE))
-			Utils::Error(FILE_ERR, UIF_FILE);
+			Utils::Error(FILE_ERR, "%s", UIF_FILE);
 
 		if (ip.size() < (int32)sizeof(UIFHeader))
-			Utils::Error(FILE_ERR, UIF_FILE);
+			Utils::Error(FILE_ERR, "%s", UIF_FILE);
 
 		for (int i = 0; i < MAX_UIFS; ++i) {
 			UIFHeader[i].size = ip.readUint16LE();
@@ -887,7 +887,7 @@ void FileManager::readUIFItem(int16 id, byte *buf) {
 
 	// Open uif file to read data
 	if (!ip.open(UIF_FILE))
-		Utils::Error(FILE_ERR, UIF_FILE);
+		Utils::Error(FILE_ERR, "%s", UIF_FILE);
 
 	// Seek to data
 	UIFHeaderPtr = getUIFHeader((uif_t)id);
@@ -900,7 +900,7 @@ void FileManager::readUIFItem(int16 id, byte *buf) {
 		break;
 	default:                                        // Read file data into supplied array
 		if (ip.read(buf, UIFHeaderPtr->size) != UIFHeaderPtr->size)
-			Utils::Error(FILE_ERR, UIF_FILE);
+			Utils::Error(FILE_ERR, "%s", UIF_FILE);
 		break;
 	}
 
@@ -928,11 +928,11 @@ void FileManager::instructions() {
 			f.read(wrkLine, 1);
 		} while (*wrkLine++ != EOP);
 		wrkLine[-2] = '\0';      /* Remove EOP and previous CR */
-		Utils::Box(BOX_ANY, line);
+		Utils::Box(BOX_ANY, "%s", line);
 		wrkLine = line;
 		f.read(readBuf, 2);    /* Remove CRLF after EOP */
 	}
 	f.close();
 }
 
-} // end of namespace Hugo
+} // End of namespace Hugo

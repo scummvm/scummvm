@@ -85,6 +85,6 @@ private:
 //	char     pbget();
 };
 
+} // End of namespace Hugo
 
-} // end of namespace Hugo
 #endif //HUGO_FILE_H

@@ -115,6 +115,6 @@ public:
 	bool introPlay();
 };
 
+} // End of namespace Hugo
 
-} // Namespace Hugo
 #endif

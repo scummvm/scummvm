@@ -98,5 +98,6 @@ private:
 	int16 center(char *s);
 };
 
-} // end of namespace Hugo
+} // End of namespace Hugo
+
 #endif //HUGO_DISPLAY_H

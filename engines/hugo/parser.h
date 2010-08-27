@@ -81,5 +81,6 @@ private:
 	void  takeObject(object_t *obj);
 };
 
-} // end of namespace Hugo
+} // End of namespace Hugo
+
 #endif //HUGO_PARSER_H

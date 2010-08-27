@@ -1442,5 +1442,4 @@ void HugoEngine::freeTexts(char **ptr) {
 	free(ptr);
 }
 
-
 } // End of namespace Hugo

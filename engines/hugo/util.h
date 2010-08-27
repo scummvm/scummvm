@@ -53,11 +53,11 @@ int      firstBit(byte data);
 int      lastBit(byte data);
 void     reverseByte(byte *data);
 void     Warn(bool technote, const char *format, ...) GCC_PRINTF(2, 3);
-void     Error(int code, const char *format, ...); // FIXME  GCC_PRINTF(2, 3);
+void     Error(int code, const char *format, ...) GCC_PRINTF(2, 3);
 void     gameOverMsg();
-//	void     Debug_out(char *format, ...) GCC_PRINTF(1, 2);
-char    *Box(box_t, const char *, ...); // FIXME GCC_PRINTF(2, 3);
+char    *Box(box_t, const char *, ...) GCC_PRINTF(2, 3);
 }
 
-} // Namespace Hugo
+} // End of namespace Hugo
+
 #endif

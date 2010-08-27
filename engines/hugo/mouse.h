@@ -49,5 +49,6 @@ private:
 	void  processLeftClick(int16 objId, int16 cx, int16 cy);
 };
 
-} // end of namespace Hugo
+} // End of namespace Hugo
+
 #endif //HUGO_MOUSE_H

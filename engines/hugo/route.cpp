@@ -469,4 +469,4 @@ bool Route::startRoute(go_t go_for, int16 id, int16 cx, int16 cy) {
 	return foundFl;
 }
 
-} // end of namespace Hugo
+} // End of namespace Hugo

@@ -51,5 +51,5 @@ namespace Hugo {
 #define UIF_FILE   "uif.dat"
 
 static const int kSavegameVersion = 1;
-} // Namespace Hugo
 
+} // End of namespace Hugo

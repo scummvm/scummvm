@@ -304,7 +304,7 @@ void Parser::lineHandler() {
 	// Special meta commands
 	// EXIT/QUIT
 	if (!strcmp("exit", _line) || strstr(_line, "quit")) {
-		Utils::Box(BOX_ANY, _vm._textParser[kTBExit]);
+		Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBExit]);
 		return;
 	}
 
@@ -362,7 +362,7 @@ void Parser::lineHandler() {
 
 	// If a not-near comment was generated, print it
 	if (*farComment != '\0') {
-		Utils::Box(BOX_ANY, farComment);
+		Utils::Box(BOX_ANY, "%s", farComment);
 		return;
 	}
 
@@ -370,16 +370,16 @@ void Parser::lineHandler() {
 	verb = findVerb(_line);
 	noun = findNoun(_line);
 	if (verb == _vm._arrayVerbs[_vm._look][0] && _maze.enabledFl) {
-		Utils::Box(BOX_ANY, _vm._textParser[kTBMaze]);
+		Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBMaze]);
 		showTakeables();
 	} else if (verb && noun)                          // A combination I didn't think of
-		Utils::Box(BOX_ANY, _vm._textParser[kTBNoPoint]);
+		Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBNoPoint]);
 	else if (noun)
-		Utils::Box(BOX_ANY, _vm._textParser[kTBNoun]);
+		Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBNoun]);
 	else if (verb)
-		Utils::Box(BOX_ANY, _vm._textParser[kTBVerb]);
+		Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBVerb]);
 	else
-		Utils::Box(BOX_ANY, _vm._textParser[kTBEh]);
+		Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBEh]);
 }
 
 // Search for matching verb/noun pairs in background command list
@@ -392,7 +392,7 @@ bool Parser::isBackgroundWord(objectList_t obj, char *line) {
 		        isWordPresent(_vm._arrayNouns[obj[i].nounIndex]) &&
 		        ((obj[i].roomState == DONT_CARE) ||
 		         (obj[i].roomState == _vm._screenStates[*_vm._screen_p]))) {
-			Utils::Box(BOX_ANY, _vm.file().fetchString(obj[i].commentIndex));
+			Utils::Box(BOX_ANY, "%s", _vm.file().fetchString(obj[i].commentIndex));
 			_vm.scheduler().processBonus(obj[i].bonusIndex);
 			return true;
 		}
@@ -411,7 +411,7 @@ bool Parser::isCatchallVerb(objectList_t obj, char *line) {
 		        (!obj[i].matchFl || !findNoun(line)) &&
 		        ((obj[i].roomState == DONT_CARE) ||
 		         (obj[i].roomState == _vm._screenStates[*_vm._screen_p]))) {
-			Utils::Box(BOX_ANY, _vm.file().fetchString(obj[i].commentIndex));
+			Utils::Box(BOX_ANY, "%s", _vm.file().fetchString(obj[i].commentIndex));
 			_vm.scheduler().processBonus(obj[i].bonusIndex);
 
 			// If this is LOOK (without a noun), show any takeable objects
@@ -524,8 +524,8 @@ void Parser::showTakeables() {
 		if ((obj->cycling != INVISIBLE) &&
 		        (obj->screenIndex == *_vm._screen_p) &&
 		        (((TAKE & obj->genericCmd) == TAKE) || obj->objValue)) {
-			sprintf(_textBoxBuffer, "You can also see:\n%s.", _vm._arrayNouns[obj->nounIndex][LOOK_NAME]);
-			Utils::Box(BOX_ANY, _textBoxBuffer);
+//			sprintf(_textBoxBuffer, "You can also see:\n%s.", _vm._arrayNouns[obj->nounIndex][LOOK_NAME]);
+			Utils::Box(BOX_ANY, "You can also see:\n%s.", _vm._arrayNouns[obj->nounIndex][LOOK_NAME]);
 		}
 	}
 }
@@ -561,7 +561,7 @@ void Parser::dropObject(object_t *obj) {
 	obj->y = _vm._hero->y + _vm._hero->currImagePtr->y2 - 1;
 	obj->y = (obj->y + obj->currImagePtr->y2 < YPIX) ? obj->y : YPIX - obj->currImagePtr->y2 - 10;
 	_vm.adjustScore(-obj->objValue);
-	Utils::Box(BOX_ANY, _vm._textParser[kTBOk]);
+	Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBOk]);
 }
 
 // Test whether command line contains one of the generic actions
@@ -575,35 +575,35 @@ bool Parser::isGenericVerb(object_t *obj, char *line, char *comment) {
 	if (isWordPresent(_vm._arrayVerbs[_vm._look]) && isNear(obj, _vm._arrayVerbs[_vm._look][0], comment)) {
 		// Test state-dependent look before general look
 		if ((obj->genericCmd & LOOK_S) == LOOK_S) {
-			Utils::Box(BOX_ANY, _vm._textData[obj->stateDataIndex[obj->state]]);
+			Utils::Box(BOX_ANY, "%s", _vm._textData[obj->stateDataIndex[obj->state]]);
 			warning("isGenericVerb: use of state dependant look - To be validated");
 		} else {
 			if ((LOOK & obj->genericCmd) == LOOK)
 				if (_vm._textData[obj->dataIndex])
-					Utils::Box(BOX_ANY, _vm._textData[obj->dataIndex]);
+					Utils::Box(BOX_ANY, "%s", _vm._textData[obj->dataIndex]);
 				else
 					return(false);
 			else
-				Utils::Box(BOX_ANY, _vm._textParser[kTBUnusual]);
+				Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBUnusual]);
 		}
 	} else if (isWordPresent(_vm._arrayVerbs[_vm._take]) && isNear(obj, _vm._arrayVerbs[_vm._take][0], comment)) {
 		if (obj->carriedFl)
-			Utils::Box(BOX_ANY, _vm._textParser[kTBHave]);
+			Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBHave]);
 		else if ((TAKE & obj->genericCmd) == TAKE)
 			takeObject(obj);
 		else if (obj->cmdIndex != 0)                // No comment if possible commands
 			return false;
 		else if (!obj->verbOnlyFl && (TAKE & obj->genericCmd) == TAKE)  // Make sure not taking object in context!
-			Utils::Box(BOX_ANY, _vm._textParser[kTBNoUse]);
+			Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBNoUse]);
 		else
 			return false;
 	} else if (isWordPresent(_vm._arrayVerbs[_vm._drop])) {
 		if (!obj->carriedFl && ((DROP & obj->genericCmd) == DROP))
-			Utils::Box(BOX_ANY, _vm._textParser[kTBDontHave]);
+			Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBDontHave]);
 		else if (obj->carriedFl && ((DROP & obj->genericCmd) == DROP))
 			dropObject(obj);
 		else if (obj->cmdIndex == 0)
-			Utils::Box(BOX_ANY, _vm._textParser[kTBNeed]);
+			Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBNeed]);
 		else
 			return false;
 	} else                                  // It was not a generic cmd
@@ -656,21 +656,21 @@ bool Parser::isObjectVerb(object_t *obj, char *line, char *comment) {
 		reqs = _vm._arrayReqs[cmnd->reqIndex];      // ptr to list of required objects
 		for (i = 0; reqs[i]; i++)                   // for each obj
 			if (!isCarrying(reqs[i])) {
-				Utils::Box(BOX_ANY, _vm._textData[cmnd->textDataNoCarryIndex]);
+				Utils::Box(BOX_ANY, "%s", _vm._textData[cmnd->textDataNoCarryIndex]);
 				return true;
 			}
 	}
 
 	// Required objects are present, now check state is correct
 	if ((obj->state != cmnd->reqState) && (cmnd->reqState != DONT_CARE)) {
-		Utils::Box(BOX_ANY, _vm._textData[cmnd->textDataWrongIndex]);
+		Utils::Box(BOX_ANY, "%s", _vm._textData[cmnd->textDataWrongIndex]);
 		return true;
 	}
 
 	// Everything checked.  Change the state and carry out any actions
 	if (cmnd->reqState != DONT_CARE)                // Don't change new state if required state didn't care
 		obj->state = cmnd->newState;
-	Utils::Box(BOX_ANY, _vm._textData[cmnd->textDataDoneIndex]);
+	Utils::Box(BOX_ANY, "%s", _vm._textData[cmnd->textDataDoneIndex]);
 	_vm.scheduler().insertActionList(cmnd->actIndex);
 
 	// See if any additional generic actions
@@ -714,8 +714,7 @@ void Parser::showDosInventory() {
 		strcat(buffer, "\n");
 	strcat(buffer, _vm._textParser[kTBOutro]);
 
-	Utils::Box(BOX_ANY, buffer);
+	Utils::Box(BOX_ANY, "%s", buffer);
 }
 
-
-} // end of namespace Hugo
+} // End of namespace Hugo

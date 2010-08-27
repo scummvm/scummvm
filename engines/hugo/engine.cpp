@@ -848,7 +848,7 @@ void HugoEngine::useObject(int16 objId) {
 					// Deselect dragged icon if inventory not active
 					if (_status.inventoryState != I_ACTIVE)
 						_status.inventoryObjId  = -1;
-					Utils::Box(BOX_ANY, _textData[use->dataIndex]);
+					Utils::Box(BOX_ANY, "%s", _textData[use->dataIndex]);
 					return;
 				}
 			}
@@ -988,9 +988,9 @@ void HugoEngine::endGame() {
 	debugC(1, kDebugEngine, "endGame");
 
 	if (!_boot.registered)
-		Utils::Box(BOX_ANY, _textEngine[kEsAdvertise]);
+		Utils::Box(BOX_ANY, "%s", _textEngine[kEsAdvertise]);
 	Utils::Box(BOX_ANY, "%s\n%s", _episode, COPYRIGHT);
 	_status.viewState = V_EXIT;
 }
 
-} // end of namespace Hugo
+} // End of namespace Hugo

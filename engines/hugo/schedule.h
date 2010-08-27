@@ -81,5 +81,6 @@ private:
 	event_t *doAction(event_t *curEvent);
 };
 
-} // end of namespace Hugo
+} // End of namespace Hugo
+
 #endif //HUGO_SCHEDULE_H

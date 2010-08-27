@@ -182,4 +182,4 @@ void Utils::gameOverMsg(void) {
 	warning("STUB: Gameover_msg(): %s", HugoEngine::get()._textUtil[kGameOver]);
 }
 
-} // end of namespace Hugo
+} // End of namespace Hugo

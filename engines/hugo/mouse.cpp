@@ -135,7 +135,7 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 				if (_vm._hero->cycling == INVISIBLE)    // If invisible do
 					_vm.useObject(objId);           // immediate use
 				else
-					Utils::Box(BOX_ANY, _vm._textMouse[kMsNoWayText]);      // Can't get there
+					Utils::Box(BOX_ANY, "%s", _vm._textMouse[kMsNoWayText]);      // Can't get there
 			}
 			break;
 		}
@@ -189,7 +189,7 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 				else if (_vm._hotspots[i].direction == Common::KEYCODE_LEFT)
 					x += HERO_MAX_WIDTH;
 				if (!_vm.route().startRoute(GO_EXIT, i, x, y))
-					Utils::Box(BOX_ANY, _vm._textMouse[kMsNoWayText]);      // Can't get there
+					Utils::Box(BOX_ANY, "%s", _vm._textMouse[kMsNoWayText]);      // Can't get there
 			}
 
 			// Get rid of any attached icon
@@ -218,7 +218,7 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 					if (_vm._hero->cycling == INVISIBLE)    // If invisible do
 						_vm.lookObject(obj);            // immediate decription
 					else
-						Utils::Box(BOX_ANY, _vm._textMouse[kMsNoWayText]);  // Can't get there
+						Utils::Box(BOX_ANY, "%s", _vm._textMouse[kMsNoWayText]);  // Can't get there
 				}
 				break;
 			}
@@ -308,4 +308,4 @@ void MouseHandler::mouseHandler() {
 	gameStatus.rightButtonFl = false;
 }
 
-} // end of namespace Hugo
+} // End of namespace Hugo

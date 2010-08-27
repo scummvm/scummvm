@@ -60,5 +60,6 @@ private:
 	void playMIDI(sound_pt seq_p, uint16 size);
 };
 
-} // end of namespace Hugo
+} // End of namespace Hugo
+
 #endif //HUGO_SOUND_H
