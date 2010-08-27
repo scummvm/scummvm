@@ -103,52 +103,52 @@ int main(int argc, char *argv[]) {
 	// Write textData
 	// textData_1w
 	nbrElem = sizeof(textData_1w) / sizeof(char *);
-	writeTextArray(outFile, (char **) textData_1w, nbrElem);
+	writeTextArray(outFile, textData_1w, nbrElem);
 
 	// textData_2w
 	nbrElem = sizeof(textData_2w) / sizeof(char *);
-	writeTextArray(outFile, (char **) textData_2w, nbrElem);
+	writeTextArray(outFile, textData_2w, nbrElem);
 
 	// textData_3w
 	nbrElem = sizeof(textData_3w) / sizeof(char *);
-	writeTextArray(outFile, (char **) textData_3w, nbrElem);
+	writeTextArray(outFile, textData_3w, nbrElem);
 
 	// textData_1d
 	nbrElem = sizeof(textData_1d) / sizeof(char *);
-	writeTextArray(outFile, (char **) textData_1d, nbrElem);
+	writeTextArray(outFile, textData_1d, nbrElem);
 
 	// textData_2d
 	nbrElem = sizeof(textData_2d) / sizeof(char *);
-	writeTextArray(outFile, (char **) textData_2d, nbrElem);
+	writeTextArray(outFile, textData_2d, nbrElem);
 
 	// textData_3d
 	nbrElem = sizeof(textData_3d) / sizeof(char *);
-	writeTextArray(outFile, (char **) textData_3d, nbrElem);
+	writeTextArray(outFile, textData_3d, nbrElem);
 
 	// Write string_t_Data
 	// string_t_Data_1w
 	nbrElem = sizeof(string_t_Data_1w) / sizeof(char *);
-	writeTextArray(outFile, (char **) string_t_Data_1w, nbrElem);
+	writeTextArray(outFile, string_t_Data_1w, nbrElem);
 
 	// string_t_Data_2w
 	nbrElem = sizeof(string_t_Data_2w) / sizeof(char *);
-	writeTextArray(outFile, (char **) string_t_Data_2w, nbrElem);
+	writeTextArray(outFile, string_t_Data_2w, nbrElem);
 
 	// string_t_Data_3w
 	nbrElem = sizeof(string_t_Data_3w) / sizeof(char *);
-	writeTextArray(outFile, (char **) string_t_Data_3w, nbrElem);
+	writeTextArray(outFile, string_t_Data_3w, nbrElem);
 
 	// string_t_Data_1d
 	nbrElem = sizeof(string_t_Data_1d) / sizeof(char *);
-	writeTextArray(outFile, (char **) string_t_Data_1d, nbrElem);
+	writeTextArray(outFile, string_t_Data_1d, nbrElem);
 
 	// string_t_Data_2d
 	nbrElem = sizeof(string_t_Data_2d) / sizeof(char *);
-	writeTextArray(outFile, (char **) string_t_Data_2d, nbrElem);
+	writeTextArray(outFile, string_t_Data_2d, nbrElem);
 
 	// string_t_Data_3d
 	nbrElem = sizeof(string_t_Data_3d) / sizeof(char *);
-	writeTextArray(outFile, (char **) string_t_Data_3d, nbrElem);
+	writeTextArray(outFile, string_t_Data_3d, nbrElem);
 
 	// arrayNouns_1w
 	nbrElem = sizeof(arrayNouns_1w) / sizeof(char **);
@@ -158,7 +158,7 @@ int main(int argc, char *argv[]) {
 		for (nbrSubElem = 1; strcmp(arrayNouns_1w[j][nbrSubElem], ""); nbrSubElem++)
 			;
 		nbrSubElem++;
-		writeTextArray(outFile, (char **) arrayNouns_1w[j], nbrSubElem);
+		writeTextArray(outFile, arrayNouns_1w[j], nbrSubElem);
 	}
 
 	// arrayNouns_2w
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
 		for (nbrSubElem = 1; strcmp(arrayNouns_2w[j][nbrSubElem], ""); nbrSubElem++)
 			;
 		nbrSubElem++;
-		writeTextArray(outFile, (char **) arrayNouns_2w[j], nbrSubElem);
+		writeTextArray(outFile, arrayNouns_2w[j], nbrSubElem);
 	}
 
 	// arrayNouns_3w
@@ -180,7 +180,7 @@ int main(int argc, char *argv[]) {
 		for (nbrSubElem = 1; strcmp(arrayNouns_3w[j][nbrSubElem], ""); nbrSubElem++)
 			;
 		nbrSubElem++;
-		writeTextArray(outFile, (char **) arrayNouns_3w[j], nbrSubElem);
+		writeTextArray(outFile, arrayNouns_3w[j], nbrSubElem);
 	}
 
 	// arrayNouns_1d
@@ -191,7 +191,7 @@ int main(int argc, char *argv[]) {
 		for (nbrSubElem = 1; strcmp(arrayNouns_1d[j][nbrSubElem], ""); nbrSubElem++)
 			;
 		nbrSubElem++;
-		writeTextArray(outFile, (char **) arrayNouns_1d[j], nbrSubElem);
+		writeTextArray(outFile, arrayNouns_1d[j], nbrSubElem);
 	}
 
 	// arrayNouns_2d
@@ -202,7 +202,7 @@ int main(int argc, char *argv[]) {
 		for (nbrSubElem = 1; strcmp(arrayNouns_2d[j][nbrSubElem], ""); nbrSubElem++)
 			;
 		nbrSubElem++;
-		writeTextArray(outFile, (char **) arrayNouns_2d[j], nbrSubElem);
+		writeTextArray(outFile, arrayNouns_2d[j], nbrSubElem);
 	}
 
 	// arrayNouns_3d
@@ -213,7 +213,7 @@ int main(int argc, char *argv[]) {
 		for (nbrSubElem = 1; strcmp(arrayNouns_3d[j][nbrSubElem], ""); nbrSubElem++)
 			;
 		nbrSubElem++;
-		writeTextArray(outFile, (char **) arrayNouns_3d[j], nbrSubElem);
+		writeTextArray(outFile, arrayNouns_3d[j], nbrSubElem);
 	}
 
 	// arrayVerbs_1w
@@ -224,7 +224,7 @@ int main(int argc, char *argv[]) {
 		for (nbrSubElem = 1; strcmp(arrayVerbs_1w[j][nbrSubElem], ""); nbrSubElem++)
 			;
 		nbrSubElem++;
-		writeTextArray(outFile, (char **) arrayVerbs_1w[j], nbrSubElem);
+		writeTextArray(outFile, arrayVerbs_1w[j], nbrSubElem);
 	}
 
 	// arrayVerbs_2w
@@ -235,7 +235,7 @@ int main(int argc, char *argv[]) {
 		for (nbrSubElem = 1; strcmp(arrayVerbs_2w[j][nbrSubElem], ""); nbrSubElem++)
 			;
 		nbrSubElem++;
-		writeTextArray(outFile, (char **) arrayVerbs_2w[j], nbrSubElem);
+		writeTextArray(outFile, arrayVerbs_2w[j], nbrSubElem);
 	}
 
 	// arrayVerbs_3w
@@ -246,7 +246,7 @@ int main(int argc, char *argv[]) {
 		for (nbrSubElem = 1; strcmp(arrayVerbs_3w[j][nbrSubElem], ""); nbrSubElem++)
 			;
 		nbrSubElem++;
-		writeTextArray(outFile, (char **) arrayVerbs_3w[j], nbrSubElem);
+		writeTextArray(outFile, arrayVerbs_3w[j], nbrSubElem);
 	}
 
 	// arrayVerbs_1d
@@ -257,7 +257,7 @@ int main(int argc, char *argv[]) {
 		for (nbrSubElem = 1; strcmp(arrayVerbs_1d[j][nbrSubElem], ""); nbrSubElem++)
 			;
 		nbrSubElem++;
-		writeTextArray(outFile, (char **) arrayVerbs_1d[j], nbrSubElem);
+		writeTextArray(outFile, arrayVerbs_1d[j], nbrSubElem);
 	}
 
 	// arrayVerbs_2d
@@ -268,7 +268,7 @@ int main(int argc, char *argv[]) {
 		for (nbrSubElem = 1; strcmp(arrayVerbs_2d[j][nbrSubElem], ""); nbrSubElem++)
 			;
 		nbrSubElem++;
-		writeTextArray(outFile, (char **) arrayVerbs_2d[j], nbrSubElem);
+		writeTextArray(outFile, arrayVerbs_2d[j], nbrSubElem);
 	}
 
 	// arrayVerbs_3d
@@ -279,33 +279,33 @@ int main(int argc, char *argv[]) {
 		for (nbrSubElem = 1; strcmp(arrayVerbs_3d[j][nbrSubElem], ""); nbrSubElem++)
 			;
 		nbrSubElem++;
-		writeTextArray(outFile, (char **) arrayVerbs_3d[j], nbrSubElem);
+		writeTextArray(outFile, arrayVerbs_3d[j], nbrSubElem);
 	}
 
 	// Write screenNames
 	// screenNames_1w
 	nbrElem = sizeof(screenNames_1w) / sizeof(char *);
-	writeTextArray(outFile, (char **) screenNames_1w, nbrElem);
+	writeTextArray(outFile, screenNames_1w, nbrElem);
 
 	// screenNames_2w
 	nbrElem = sizeof(screenNames_2w) / sizeof(char *);
-	writeTextArray(outFile, (char **) screenNames_2w, nbrElem);
+	writeTextArray(outFile, screenNames_2w, nbrElem);
 
 	// screenNames_3w
 	nbrElem = sizeof(screenNames_3w) / sizeof(char *);
-	writeTextArray(outFile, (char **) screenNames_3w, nbrElem);
+	writeTextArray(outFile, screenNames_3w, nbrElem);
 
 	// screenNames_1d
 	nbrElem = sizeof(screenNames_1d) / sizeof(char *);
-	writeTextArray(outFile, (char **) screenNames_1d, nbrElem);
+	writeTextArray(outFile, screenNames_1d, nbrElem);
 
 	// screenNames_2d
 	nbrElem = sizeof(screenNames_2d) / sizeof(char *);
-	writeTextArray(outFile, (char **) screenNames_2d, nbrElem);
+	writeTextArray(outFile, screenNames_2d, nbrElem);
 
 	// screenNames_3d
 	nbrElem = sizeof(screenNames_3d) / sizeof(char *);
-	writeTextArray(outFile, (char **) screenNames_3d, nbrElem);
+	writeTextArray(outFile, screenNames_3d, nbrElem);
 
 	// Write palette
 	writeUint16BE(outFile, SIZE_PAL_ARRAY);
@@ -314,10 +314,10 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Write textEngine
-	writeTextArray(outFile, (char **) textEngine, NUM_ENGINE_TEXT);
+	writeTextArray(outFile, textEngine, NUM_ENGINE_TEXT);
 
 	// Write textIntro
-	writeTextArray(outFile, (char **) textIntro, NUM_INTRO_TEXT);
+	writeTextArray(outFile, textIntro, NUM_INTRO_TEXT);
 
 	// Write x_intro and y_intro
 	writeUint16BE(outFile, NUM_INTRO_TICK);
@@ -327,40 +327,40 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Write textMouse
-	writeTextArray(outFile, (char **) textMouse, NUM_MOUSE_TEXT);
+	writeTextArray(outFile, textMouse, NUM_MOUSE_TEXT);
 
 	// Write textParser
-	writeTextArray(outFile, (char **) textParser, NUM_PARSER_TEXT);
+	writeTextArray(outFile, textParser, NUM_PARSER_TEXT);
 
 	// Write textSchedule
-	writeTextArray(outFile, (char **) textSchedule, NUM_SCHEDULE_TEXT);
+	writeTextArray(outFile, textSchedule, NUM_SCHEDULE_TEXT);
 
 	// Write textUtil
-	writeTextArray(outFile, (char **) textUtil, NUM_UTIL_TEXT);
+	writeTextArray(outFile, textUtil, NUM_UTIL_TEXT);
 
 	// arrayReqs_1w
 	nbrElem = sizeof(arrayReqs_1w) / sizeof(uint16 *);
-	writeUint16Array(outFile, (uint16 **) arrayReqs_1w, nbrElem);
+	writeUint16Array(outFile, arrayReqs_1w, nbrElem);
 
 	// arrayReqs_2w
 	nbrElem = sizeof(arrayReqs_2w) / sizeof(uint16 *);
-	writeUint16Array(outFile, (uint16 **) arrayReqs_2w, nbrElem);
+	writeUint16Array(outFile, arrayReqs_2w, nbrElem);
 
 	// arrayReqs_3w
 	nbrElem = sizeof(arrayReqs_3w) / sizeof(uint16 *);
-	writeUint16Array(outFile, (uint16 **) arrayReqs_3w, nbrElem);
+	writeUint16Array(outFile, arrayReqs_3w, nbrElem);
 
 	// arrayReqs_1d
 	nbrElem = sizeof(arrayReqs_1d) / sizeof(uint16 *);
-	writeUint16Array(outFile, (uint16 **) arrayReqs_1d, nbrElem);
+	writeUint16Array(outFile, arrayReqs_1d, nbrElem);
 
 	// arrayReqs_2d
 	nbrElem = sizeof(arrayReqs_2d) / sizeof(uint16 *);
-	writeUint16Array(outFile, (uint16 **) arrayReqs_2d, nbrElem);
+	writeUint16Array(outFile, arrayReqs_2d, nbrElem);
 
 	// arrayReqs_3d
 	nbrElem = sizeof(arrayReqs_3d) / sizeof(uint16 *);
-	writeUint16Array(outFile, (uint16 **) arrayReqs_3d, nbrElem);
+	writeUint16Array(outFile, arrayReqs_3d, nbrElem);
 
 	// hotspots_1w
 	nbrElem = sizeof(hotspots_1w) / sizeof(hotspot_t);
@@ -794,7 +794,7 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-void writeTextArray(FILE *outFile, char *textArray[], int nbrText) {
+void writeTextArray(FILE *outFile, const char *textArray[], int nbrText) {
 	int len, len1, pad;
 	uint8 padBuf[DATAALIGNMENT];
 
@@ -821,7 +821,7 @@ void writeTextArray(FILE *outFile, char *textArray[], int nbrText) {
 	}
 }
 
-void writeUint16Array(FILE *outFile, uint16 *uint16Array[], int nbrElem) {
+void writeUint16Array(FILE *outFile, const uint16 *uint16Array[], int nbrElem) {
 	int nbrSubElem;
 
 	writeUint16BE(outFile, nbrElem);
@@ -838,7 +838,7 @@ void writeUint16Array(FILE *outFile, uint16 *uint16Array[], int nbrElem) {
 	}
 }
 
-void writeHotspot(FILE *outFile, hotspot_t hotspots[], int nbrElem) {
+void writeHotspot(FILE *outFile, const hotspot_t hotspots[], int nbrElem) {
 	writeUint16BE(outFile, nbrElem);
 
 	for (int j = 0; j < nbrElem; j++) {
@@ -854,7 +854,7 @@ void writeHotspot(FILE *outFile, hotspot_t hotspots[], int nbrElem) {
 	}
 }
 
-void writeUseArray(FILE *outFile, uses_t uses[], int nbrElem) {
+void writeUseArray(FILE *outFile, const uses_t uses[], int nbrElem) {
 	int nbrSubElem;
 	writeUint16BE(outFile, nbrElem);
 
@@ -871,7 +871,7 @@ void writeUseArray(FILE *outFile, uses_t uses[], int nbrElem) {
 	}
 }
 
-void writeBackgroundArray(FILE *outFile, background_t background[], int nbrElem) {
+void writeBackgroundArray(FILE *outFile, const background_t background[], int nbrElem) {
 	writeUint16BE(outFile, nbrElem);
 
 	for (int j = 0; j < nbrElem; j++) {
@@ -884,7 +884,7 @@ void writeBackgroundArray(FILE *outFile, background_t background[], int nbrElem)
 	}
 }
 
-void writeCmdArray(FILE *outFile, cmd *cmdList[], int nbrElem) {
+void writeCmdArray(FILE *outFile, const cmd *cmdList[], int nbrElem) {
 	int nbrSubElem;
 
 	writeUint16BE(outFile, nbrElem);
@@ -906,7 +906,7 @@ void writeCmdArray(FILE *outFile, cmd *cmdList[], int nbrElem) {
 	}
 }
 
-void writeScreenActs(FILE *outFile, uint16 *screenActs[], int nbrElem) {
+void writeScreenActs(FILE *outFile, const uint16 *screenActs[], int nbrElem) {
 	int nbrSubElem;
 
 	writeUint16BE(outFile, nbrElem);
@@ -924,7 +924,7 @@ void writeScreenActs(FILE *outFile, uint16 *screenActs[], int nbrElem) {
 	}
 }
 
-void writeObjectArray(FILE *outFile, object_t objects[], int nbrElem) {
+void writeObjectArray(FILE *outFile, const object_t objects[], int nbrElem) {
 	int nbrSubElem;
 
 	writeUint16BE(outFile, nbrElem);
@@ -979,7 +979,7 @@ void writeObjectArray(FILE *outFile, object_t objects[], int nbrElem) {
 	}
 }
 
-void writeActListArray(FILE *outFile, actList actListArr[], int nbrElem) {
+void writeActListArray(FILE *outFile, const actList actListArr[], int nbrElem) {
 	int nbrSubElem, nbrCpt;
 	byte subElemType;
 

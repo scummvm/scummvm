@@ -1975,7 +1975,7 @@ uint16 roil_1w[]    = {kNOilcan_1w, 0};
 uint16 rknife_1w[]  = {kNKnife_1w,  0};
 uint16 rbung_1w[]   = {kNBung_1w,   0};
 uint16 rDummy[]     = {0,        0};
-uint16 *arrayReqs_1w[] = {rDummy,rkey_1w, rpkin_1w, rcandle_1w, rmask_1w, roil_1w, rknife_1w, rbung_1w, };
+const uint16 *arrayReqs_1w[] = {rDummy,rkey_1w, rpkin_1w, rcandle_1w, rmask_1w, roil_1w, rknife_1w, rbung_1w, };
 
 uint16 rgarlic_2w[] = {kNGarlic_2w,   0};
 uint16 rmatch_2w[]  = {kNMatches_2w,  0};
@@ -1991,7 +1991,7 @@ uint16 rpencil_2w[] = {kNPencil_2w,   0};
 uint16 rmagnify_2w[]= {kNMagnify_2w,  0};
 uint16 rwill_2w[]   = {kNWill_2w,     0};
 uint16 rserum_2w[]  = {kNBottle_2w,   0};
-uint16 *arrayReqs_2w[] = {
+const uint16 *arrayReqs_2w[] = {
 	rDummy,    rgarlic_2w, rmatch_2w,   rstick_2w,  rdyn_2w,
 	rlamp_2w,  rbanana_2w, rbell_2w,    rcatnip_2w, rgun_2w,
 	rpaper_2w, rpencil_2w, rmagnify_2w, rwill_2w,   rserum_2w
@@ -2004,7 +2004,7 @@ uint16 rexor_3w[]    = {kNBell_3w,    kNBook_3w, kNCandle_3w, 0};
 uint16 rbook_3w[]    = {kNBook_3w,    0};
 uint16 rbell_3w[]    = {kNBell_3w,    0};
 uint16 rpipe_3w[]    = {kNPipe_3w,    0};
-uint16 *arrayReqs_3w[] = {rDummy,rpins_3w, rcheese_3w, rcrystal_3w, rexor_3w, rbook_3w, rbell_3w, rpipe_3w};
+const uint16 *arrayReqs_3w[] = {rDummy,rpins_3w, rcheese_3w, rcrystal_3w, rexor_3w, rbook_3w, rbell_3w, rpipe_3w};
 
 uint16 rkey_1d[]    = {kNKey_1d,    0};
 uint16 rpkin_1d[]   = {kNPkin_1d,   0};
@@ -2013,7 +2013,7 @@ uint16 rmask_1d[]   = {kNMask_1d,   0};
 uint16 roil_1d[]    = {kNOilcan_1d, 0};
 uint16 rknife_1d[]  = {kNKnife_1d,  0};
 uint16 rbung_1d[]   = {kNBung_1d,   0};
-uint16 *arrayReqs_1d[] = {rDummy,rkey_1d, rpkin_1d, rcandle_1d, rmask_1d, roil_1d, rknife_1d, rbung_1d};
+const uint16 *arrayReqs_1d[] = {rDummy,rkey_1d, rpkin_1d, rcandle_1d, rmask_1d, roil_1d, rknife_1d, rbung_1d};
 
 uint16 rgarlic_2d[] = {kNGarlic_2d,   0};
 uint16 rmatch_2d[]  = {kNMatches_2d,  0};
@@ -2030,7 +2030,7 @@ uint16 rmagnify_2d[]= {kNMagnify_2d,  0};
 uint16 rwill_2d[]   = {kNWill_2d,     0};
 uint16 rserum_2d[]  = {kNBottle_2d,   0};
 
-uint16 *arrayReqs_2d[] = {
+const uint16 *arrayReqs_2d[] = {
 	rDummy,    rgarlic_2d, rmatch_2d,   rstick_2d,  rdyn_2d,
 	rlamp_2d,  rbanana_2d, rbell_2d,    rcatnip_2d, rgun_2d,
 	rpaper_2d, rpencil_2d, rmagnify_2d, rwill_2d,   rserum_2d
@@ -2043,7 +2043,7 @@ uint16 rexor_3d[]    = {kNBell_3d,    kNBook_3d, kNCandle_3d, 0};
 uint16 rbook_3d[]    = {kNBook_3d,    0};
 uint16 rbell_3d[]    = {kNBell_3d,    0};
 
-uint16 *arrayReqs_3d[] = {rDummy, rpins_3d, rcheese_3d, rcrystal_3d, rexor_3d, rbook_3d, rbell_3d};
+const uint16 *arrayReqs_3d[] = {rDummy, rpins_3d, rcheese_3d, rcrystal_3d, rexor_3d, rbook_3d, rbell_3d};
 
 
 // List of 'hotspots' which are areas in which actions are taken if hero
@@ -4609,7 +4609,7 @@ cmd trap_1w[]    = {opentrap_1w,   closetrap_1w,   knock_1w,      emptyCmd};
 cmd ward_1w[]    = {openwdoors_1w, closewdoors_1w, knock_1w,      emptyCmd};
 cmd whistle_1w[] = {blowdw_1w,     getdw_1w,       emptyCmd};
 
-cmd *cmdList_1w[] = {
+const cmd *cmdList_1w[] = {
 	cmdDummy,  boat_1w,  bolt_1w,  bung_1w,  carpet_1w,
 	chop_1w,   cupb_1w,  door1_1w, door2_1w, door3_1w,
 	door4_1w,  drac_1w,  frank_1w, gold_1w,  gwen_1w,
@@ -4727,7 +4727,7 @@ cmd well_2w[]     = {climbwell_2w,   emptyCmd};
 cmd will_2w[]     = {readwill_2w,    emptyCmd};
 cmd yellow_2w[]   = {pushyellow_2w,  emptyCmd};
 
-cmd *cmdList_2w[] = {
+const cmd *cmdList_2w[] = {
 	cmdDummy,  album_2w,    balloon_2w,  banana_2w,   bell_2w,
 	blue_2w,   book_2w,     bottle_2w,   button_2w,   catnip_2w,
 	cupbp_2w,  door1_2w,    door2_2w,    door3_2w,    doordum_2w,
@@ -4822,7 +4822,7 @@ cmd cwfall_3w[]    = {cwaterfall_3w,   emptyCmd};
 cmd cwpool_3w[]    = {cdrinkpool_3w,   cwaterpool_3w,   emptyCmd};
 cmd cwstream_3w[]  = {cdrinkstream_3w, cwaterstream_3w, emptyCmd};
 
-cmd *cmdList_3w[] = {
+const cmd *cmdList_3w[] = {
 	cmdDummy,   cbell_3w,   cbook_3w,     cbouillon_3w, ccage_3w,
 	ccandle_3w, ccheese_3w, cclay_3w,     ccrystal_3w,  cdart_3w,
 	cdoctor_3w, cdoor_3w,   celephant_3w, cexit_3w,     cflask_3w,
@@ -4907,7 +4907,7 @@ cmd trap_1d[] =    {opentrap_1d,   closetrap_1d,   knock_1d,      emptyCmd};
 cmd ward_1d[] =    {openwdoors_1d, closewdoors_1d, knock_1d,      emptyCmd};
 cmd whistle_1d[] = {getdw_1d,      blowdw_1d,      emptyCmd};
 
-cmd *cmdList_1d[] = {
+const cmd *cmdList_1d[] = {
 	cmdDummy,
 	boat_1d,   bolt_1d,    bung_1d,  carpet_1d, chop_1d,
 	cupb_1d,   door1_1d,   door2_1d, door3_1d,  door4_1d,
@@ -5011,7 +5011,7 @@ cmd well_2d[] =     {climbwell_2d,   emptyCmd};
 cmd will_2d[] =     {readwill_2d,    emptyCmd};
 cmd yellow_2d[] =   {pushyellow_2d,  emptyCmd};
 
-cmd *cmdList_2d[] = {
+const cmd *cmdList_2d[] = {
 	cmdDummy,    balloon_2d, banana_2d, bell_2d,   blue_2d,
 	book_2d,     bottle_2d,  button_2d, catnip_2d, cupbp_2d,
 	door1_2d,    door2_2d,   door3_2d,  dumb_2d,   dynamite_2d,
@@ -5091,7 +5091,7 @@ cmd cwfall_3d[] =    {cwaterfall_3d,   emptyCmd};
 cmd cwpool_3d[] =    {cwaterpool_3d,   emptyCmd};
 cmd cwstream_3d[] =  {cwaterstream_3d, emptyCmd};
 
-cmd *cmdList_3d[] = {
+const cmd *cmdList_3d[] = {
 	cmdDummy,   cbell_3d,   cbook_3d,  cbouillon_3d, ccage_3d,
 	ccandle_3d, ccheese_3d, cclay_3d,  ccrystal_3d,  cdart_3d,
 	cdoor_3d,   cexit_3d,   cflask_3d, cghost_3d,    cnative_3d,
@@ -5119,7 +5119,7 @@ uint16 s13acts_1w[] = {kALjail_1w,       0};											// Jail
 uint16 s14acts_1w[] = {kALgoodbye_1w,    0};										// The end
 uint16 s15acts_1w[] = {kALlab_1w,        kALbox_1w,        0};									// Laboratory
 
-uint16 *screenActs_1w[] = {
+const uint16 *screenActs_1w[] = {
 	s0acts_1w,  s1acts_1w,  s2acts_1w,  s3acts_1w,  s4acts_1w,
 	s5acts_1w,  s6acts_1w,  s7acts_1w,  s8acts_1w,  s9acts_1w,
 	s10acts_1w, s11acts_1w, s12acts_1w, s13acts_1w, s14acts_1w,
@@ -5147,7 +5147,7 @@ uint16 s34acts_2w[] = {kALscr34_2w,      0};				// Hall3
 uint16 s35acts_2w[] = {kALscr35_2w,      0};				// Organ
 uint16 s36acts_2w[] = {kALscr36_2w,      0};				// Hestroom
 uint16 s37acts_2w[] = {kALsong3_2w,      0};				// Retupmoc
-uint16 *screenActs_2w[] = {
+const uint16 *screenActs_2w[] = {
 	/*  0 */ s0acts_2w,  s1acts_2w,  s2acts_2w,  s3acts_2w,  s4acts_2w,
 	         0,       s6acts_2w,  0,       0,       s9acts_2w,
 	/* 10 */ s10acts_2w, 0,       0,       0,       s14acts_2w,
@@ -5179,7 +5179,7 @@ uint16 s15acts_3w[] = {kALoldman_3w,     kALflash_3w,     0};// Oldman
 uint16 s18acts_3w[] = {kALcamp_3w,       0};		// At camp
 uint16 s19acts_3w[] = {kALsunset_3w,     0};		// Bye bye!
 uint16 s23acts_3w[] = {kALpath_3w,       0};		// Elephant
-uint16 *screenActs_3w[] = {
+const uint16 *screenActs_3w[] = {
 	/*  0 */ s0acts_3w,  s1acts_3w, s2acts_3w, 0,       0,
 	         0,       0,      0,      0,       0,
 	/* 10 */ 0,       0,      0,      s13acts_3w, 0,
@@ -5206,7 +5206,7 @@ uint16 s13acts_1d[] = {kALjail_1d,       0};
 uint16 s14acts_1d[] = {kALgoodbye_1d,    0};
 uint16 s15acts_1d[] = {kALlab_1d,        0};
 
-uint16 *screenActs_1d[] = {
+const uint16 *screenActs_1d[] = {
 	s0acts_1d,  s1acts_1d,  s2acts_1d,  s3acts_1d,  s4acts_1d,
 	s5acts_1d,  s6acts_1d,  s7acts_1d,  s8acts_1d,  s9acts_1d,
 	s10acts_1d, s11acts_1d, s12acts_1d, s13acts_1d, s14acts_1d,
@@ -5235,7 +5235,7 @@ uint16 s35acts_2d[] = {kALscr35_2d,  0};									// Organ
 uint16 s36acts_2d[] = {kALscr36_2d,  0};									// Hestroom
 uint16 s37acts_2d[] = {kALsong3_2d,  0};									// Retupmoc
 
-uint16 *screenActs_2d[] = {
+const uint16 *screenActs_2d[] = {
 	s0acts_2d,  s1acts_2d,  s2acts_2d,  s3acts_2d,  s4acts_2d,
 	0,       s6acts_2d,  0,       0,       s9acts_2d,
 	s10acts_2d, 0,       0,       0,       s14acts_2d,
@@ -5267,7 +5267,7 @@ uint16 s15acts_3d[] = {kALoldman_3d,     kALflash_3d, 0};                 // Old
 uint16 s18acts_3d[] = {kALcamp_3d,       0};                            // At camp
 uint16 s19acts_3d[] = {kALsunset_3d,     0};                          // Bye bye!
 uint16 s23acts_3d[] = {kALpath_3d,       0};                            // Elephant
-uint16 *screenActs_3d[] = {
+const uint16 *screenActs_3d[] = {
 	/*  0 */ s0acts_3d,  s1acts_3d, s2acts_3d, 0,       0,
 	         0,       0,      0,      0,       0,
 	/* 10 */ 0,       0,      0,      s13acts_3d, 0,

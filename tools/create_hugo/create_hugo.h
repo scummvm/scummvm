@@ -542,14 +542,14 @@ union act {
 typedef void       *actListPtr;                     // Ptr to a list of actions
 typedef actListPtr *actList;                        // A list of actions
 
-void writeTextArray(FILE *outFile, char *textData[], int nbrText);
-void writeUint16Array(FILE *outFile, uint16 *uint16Array[], int nbrElem);
-void writeHotspot(FILE *outFile, hotspot_t hotspots[], int nbrElem);
-void writeUseArray(FILE *outFile, uses_t uses[], int nbrElem);
-void writeBackgroundArray(FILE *outFile, background_t background[], int nbrElem);
-void writeCmdArray(FILE *outFile, cmd *cmdList[], int nbrElem);
-void writeScreenActs(FILE *outFile, uint16 *screenActs[], int nbrElem);
-void writeObjectArray(FILE *outFile, object_t objects[], int nbrElem);
-void writeActListArray(FILE *outFile, actList actListArr[], int nbrElem);
+void writeTextArray(FILE *outFile, const char *textData[], int nbrText);
+void writeUint16Array(FILE *outFile, const uint16 *uint16Array[], int nbrElem);
+void writeHotspot(FILE *outFile, const hotspot_t hotspots[], int nbrElem);
+void writeUseArray(FILE *outFile, const uses_t uses[], int nbrElem);
+void writeBackgroundArray(FILE *outFile, const background_t background[], int nbrElem);
+void writeCmdArray(FILE *outFile, const cmd *cmdList[], int nbrElem);
+void writeScreenActs(FILE *outFile, const uint16 *screenActs[], int nbrElem);
+void writeObjectArray(FILE *outFile, const object_t objects[], int nbrElem);
+void writeActListArray(FILE *outFile, const actList actListArr[], int nbrElem);
 
 #endif // CREATE_HUGO_H
