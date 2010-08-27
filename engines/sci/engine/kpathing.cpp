@@ -1098,8 +1098,6 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 		return NULL;
 	}
 
-	Polygon *poly = new Polygon(readSelectorValue(segMan, polygon, SELECTOR(type)));
-
 	SegmentRef pointList = segMan->dereference(points);
 	// Check if the target polygon is still valid. It may have been released
 	// in the meantime (e.g. in LSL6, room 700, when using the elevator).
@@ -1128,6 +1126,8 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 			size = 17;
 		}
 	}
+
+	Polygon *poly = new Polygon(readSelectorValue(segMan, polygon, SELECTOR(type)));
 
 	for (i = skip; i < size; i++) {
 		Vertex *vertex = new Vertex(readPoint(pointList, i));
