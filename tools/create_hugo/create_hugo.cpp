@@ -35,12 +35,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Ick --Vinterstum
-#ifdef __GNUC__
-#define UNIX
-#include "config.h"
-#endif
-
+#include "common/scummsys.h"
 #include "common/events.h"
 
 #include "enums.h"
