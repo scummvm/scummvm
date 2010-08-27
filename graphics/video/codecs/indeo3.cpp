@@ -69,27 +69,22 @@ PixelFormat Indeo3Decoder::getPixelFormat() const {
 	return _pixelFormat;
 }
 
-bool Indeo3Decoder::isIndeo3(byte *data, uint32 dataLen) {
-	// No data, no Indeo 3
-	if (!data)
+bool Indeo3Decoder::isIndeo3(Common::SeekableReadStream &stream) {
+	// Less than 16 bytes? This can't be right
+	if (stream.size() < 16)
 		return false;
 
-	// Less than 16 bytes? This can't be right
-	if (dataLen < 16)
-		return false;
+	uint32 id0 = stream.readUint32LE();
+	uint32 id1 = stream.readUint32LE();
+	uint32 id2 = stream.readUint32LE();
+	uint32 id3 = stream.readUint32LE();
 
 	// Unknown, but according to the docs, always 0
-	if (READ_LE_UINT32(data + 4) != 0)
+	if (id1 != 0)
 		return false;
 
-	uint32 id;
-	id  = READ_LE_UINT32(data     ); // frame number
-	id ^= READ_LE_UINT32(data +  4); // unknown
-	id ^= READ_LE_UINT32(data +  8); // checksum
-	id ^= READ_LE_UINT32(data + 12); // frame data length
-
 	// These 4 uint32s XOR'd need to spell "FRMH"
-	if (id != MKID_BE('FRMH'))
+	if ((id0 ^ id1 ^ id2 ^ id3) != MKID_BE('FRMH'))
 		return false;
 
 	return true;
@@ -174,31 +169,23 @@ void Indeo3Decoder::allocFrames() {
 }
 
 Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *stream) {
-	uint32 dataLen = stream->size();
-
-	byte *inData = new byte[dataLen];
-
-	if (stream->read(inData, dataLen) != dataLen)
-		return 0;
-
 	// Not Indeo 3? Fail
-	if (!isIndeo3(inData, dataLen))
+	if (!isIndeo3(*stream))
 		return 0;
 
-	uint32 frameDataLen = READ_LE_UINT32(inData + 12);
+	stream->seek(12);
+	uint32 frameDataLen = stream->readUint32LE();
 
 	// Less data than the frame should have? Fail
-	if (dataLen < (frameDataLen - 16))
+	if (stream->size() < (int)(frameDataLen - 16))
 		return 0;
 
-	Common::MemoryReadStream frame(inData, dataLen);
+	stream->seek(16); // Behind header
+	stream->skip(2);  // Unknown
 
-	frame.skip(16); // Header
-	frame.skip(2);  // Unknown
-
-	uint16 flags1 = frame.readUint16LE();
-	uint32 flags3 = frame.readUint32LE();
-	uint8  flags2 = frame.readByte();
+	uint16 flags1 = stream->readUint16LE();
+	uint32 flags3 = stream->readUint32LE();
+	uint8  flags2 = stream->readByte();
 
 	// Finding the reference frame
 	if (flags1 & 0x200) {
@@ -212,46 +199,70 @@ Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *stream) {
 	if (flags3 == 0x80)
 		return _surface;
 
-	frame.skip(3);
+	stream->skip(3);
 
-	uint16 fHeight = frame.readUint16LE();
-	uint16 fWidth  = frame.readUint16LE();
+	uint16 fHeight = stream->readUint16LE();
+	uint16 fWidth  = stream->readUint16LE();
 
 	uint32 chromaHeight = ((fHeight >> 2) + 3) & 0x7FFC;
 	uint32 chromaWidth  = ((fWidth  >> 2) + 3) & 0x7FFC;
 
 	uint32 offs;
-	uint32 offsY = frame.readUint32LE() + 16;
-	uint32 offsU = frame.readUint32LE() + 16;
-	uint32 offsV = frame.readUint32LE() + 16;
+	uint32 offsY = stream->readUint32LE() + 16;
+	uint32 offsU = stream->readUint32LE() + 16;
+	uint32 offsV = stream->readUint32LE() + 16;
 
-	frame.skip(4);
+	stream->skip(4);
 
-	uint32 hPos = frame.pos();
+	uint32 hPos = stream->pos();
 
-	byte *hdr_pos = inData + hPos;
+	if (offsY < hPos) {
+		warning("Indeo3Decoder::decodeImage: offsY < hPos");
+		return 0;
+	}
+	if (offsU < hPos) {
+		warning("Indeo3Decoder::decodeImage: offsY < hPos");
+		return 0;
+	}
+	if (offsV < hPos) {
+		warning("Indeo3Decoder::decodeImage: offsY < hPos");
+		return 0;
+	}
+
+	uint32 dataSize = stream->size() - hPos;
+
+	byte *inData = new byte[dataSize];
+
+	if (stream->read(inData, dataSize) != dataSize) {
+		delete[] inData;
+		return 0;
+	}
+
+	byte *hdr_pos = inData;
 	byte *buf_pos;
 
 	// Luminance Y
-	frame.seek(offsY);
-	buf_pos = inData + offsY + 4;
-	offs = frame.readUint32LE();
+	stream->seek(offsY);
+	buf_pos = inData + offsY + 4 - hPos;
+	offs = stream->readUint32LE();
 	decodeChunk(_cur_frame->Ybuf, _ref_frame->Ybuf, fWidth, fHeight,
 			buf_pos + offs * 2, flags2, hdr_pos, buf_pos, MIN<int>(fWidth, 160));
 
 	// Chrominance U
-	frame.seek(offsU);
-	buf_pos = inData + offsU + 4;
-	offs = frame.readUint32LE();
+	stream->seek(offsU);
+	buf_pos = inData + offsU + 4 - hPos;
+	offs = stream->readUint32LE();
 	decodeChunk(_cur_frame->Vbuf, _ref_frame->Vbuf, chromaWidth, chromaHeight,
 			buf_pos + offs * 2, flags2, hdr_pos, buf_pos, MIN<int>(chromaWidth, 40));
 
 	// Chrominance V
-	frame.seek(offsV);
-	buf_pos = inData + offsV + 4;
-	offs = frame.readUint32LE();
+	stream->seek(offsV);
+	buf_pos = inData + offsV + 4 - hPos;
+	offs = stream->readUint32LE();
 	decodeChunk(_cur_frame->Ubuf, _ref_frame->Ubuf, chromaWidth, chromaHeight,
 			buf_pos + offs * 2, flags2, hdr_pos, buf_pos, MIN<int>(chromaWidth, 40));
+
+	delete[] inData;
 
 	// Blit the frame onto the surface
 	const byte *srcY = _cur_frame->Ybuf;

@@ -49,7 +49,7 @@ public:
 	Surface *decodeImage(Common::SeekableReadStream *stream);
 	PixelFormat getPixelFormat() const;
 
-	static bool isIndeo3(byte *data, uint32 dataLen);
+	static bool isIndeo3(Common::SeekableReadStream &stream);
 
 private:
 	Surface *_surface;
