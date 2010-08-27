@@ -436,7 +436,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 			insertActionList(action->a41.actFailIndex);
 		break;
 	case TEXT_TAKE:                                 // act42: Text box with "take" message
-		Utils::Box(BOX_ANY, "%s", TAKE_TEXT, _vm._arrayNouns[_vm._objects[action->a42.objNumb].nounIndex][TAKE_NAME]);
+		Utils::Box(BOX_ANY, TAKE_TEXT, _vm._arrayNouns[_vm._objects[action->a42.objNumb].nounIndex][TAKE_NAME]);
 		break;
 	case YESNO:                                     // act43: Prompt user for Yes or No
 		warning("doAction(act43) - Yes/No Box");
