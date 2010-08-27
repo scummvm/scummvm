@@ -819,7 +819,7 @@ enum screenid_3d {
 	FINTRO_3d,  NUM_PICS_3d
 };
 
-typedef enum string_t_1w {
+enum string_t_1w {
 //Hugo 1
 	kSTsOk_1w,            kSTNopurps_1w,        kSTtrywalk_1w,         kSTnothing_1w,         kSTenopurps_1w,
 	kSTnoidea_1w,         kSTedull_1w,          kSTeempty_1w,          kSTchop1_1w,           kSTnowayhose_1w,
@@ -871,7 +871,7 @@ typedef enum string_t_1w {
 	kSTLookMonkey_1w
 };
 
-typedef enum string_t_2w {
+enum string_t_2w {
 //Hugo2
 	kSTOkgen_2w,        kSTNopurps_2w,    kSTClick_2w,         kSTNocarry_2w,     kSTEmpty_2w,
 	kSTMorespecific_2w, kSTStory_2w,      kSTSmaid1_1_2w,      kSTSmaid1_2_2w,    kSTSmaid1_3_2w,
@@ -950,7 +950,7 @@ typedef enum string_t_2w {
 	kSTLookPMaid_2w,    kSTTalkPMaid_2w,  kSTUsePencil_2w,     kSTDoCrossword_2w
 };
 
-typedef enum string_t_3w {
+enum string_t_3w {
 //Hugo 3
 	kSTOkgen_3w,        kSTNopurps_3w,     kSTClick_3w,          kSTNocarry_3w,        kSTNonecarried_3w,
 	kSTGotit_3w,        kSTEmpty1_3w,      kSTMorespecific_3w,   kSTLookpen_3w,        kSTMmmm_3w,
@@ -1005,7 +1005,7 @@ typedef enum string_t_3w {
 	kSTNoResponse_3w,   kSTCagePrompt_3w,  kSTDartElephant_3w
 };
 
-typedef enum string_t_1d {
+enum string_t_1d {
 //***************************************************************************
 // Hugo 1 Dos - Not stored in a dat file!!!
 //***************************************************************************
@@ -1051,7 +1051,7 @@ typedef enum string_t_1d {
 	kSTnomagic_1d,            kSTnodig_1d,        kSTnorude_1d,        kSTnoknock_1d
 };
 
-typedef enum string_t_2d {
+enum string_t_2d {
 //Hugo 2 DOS
 	kSTOkgen_2d,         kSTNopurps_2d,     kSTClick_2d,      kSTNocarry_2d,      kSTEmpty_2d,
 	kSTMorespecific_2d,  kSTStory_2d,       kSTStory1_2d,     kSTSmaid1_1_2d,     kSTSmaid1_2_2d,
@@ -1126,7 +1126,7 @@ typedef enum string_t_2d {
 	kSTSgraf_2d
 };
 
-typedef enum string_t_3d {
+enum string_t_3d {
 //Hugo 3 DOS
 	kSTOkgen_3d,          kSTNopurps_3d,       kSTClick_3d,          kSTNocarry_3d,        kSTNonecarried_3d,
 	kSTGotit_3d,          kSTEmpty1_3d,        kSTMorespecific_3d,   kSTLookpen_3d,        kSTMmmm_3d,
@@ -1231,7 +1231,7 @@ enum seqReqList_3d {
 	kRbell_3d
 };
 
-typedef enum cmdIdx_1w {
+enum cmdIdx_1w {
 	kCMDDummy,     kCMDboat_1w,  kCMDbolt_1w,  kCMDbung_1w,  kCMDcarpet_1w,
 	kCMDchop_1w,   kCMDcupb_1w,  kCMDdoor1_1w, kCMDdoor2_1w, kCMDdoor3_1w,
 	kCMDdoor4_1w,  kCMDdrac_1w,  kCMDfrank_1w, kCMDgold_1w,  kCMDgwen_1w,
@@ -1240,7 +1240,7 @@ typedef enum cmdIdx_1w {
 	kCMDshed_1w,   kCMDslime_1w, kCMDtrap_1w,  kCMDward_1w,  kCMDwhistle_1w
 };
 
-typedef enum cmdIdx_2w {
+enum cmdIdx_2w {
 	kCMDalbum_2w = 1, kCMDballoon_2w,  kCMDbanana_2w,   kCMDbell_2w,    kCMDblue_2w,
 	kCMDbook_2w,      kCMDbottle_2w,   kCMDbutton_2w,   kCMDcatnip_2w,  kCMDcupbp_2w,
 	kCMDdoor1_2w,     kCMDdoor2_2w,    kCMDdoor3_2w,    kCMDdoordum_2w, kCMDdumb_2w,
@@ -1252,7 +1252,7 @@ typedef enum cmdIdx_2w {
 	kCMDyellow_2w
 };
 
-typedef enum cmdIdx_3w {
+enum cmdIdx_3w {
 	kCMDcbell_3w = 1, kCMDcbook_3w,     kCMDcbouillon_3w, kCMDccage_3w,   kCMDccandle_3w,
 	kCMDccheese_3w,   kCMDcclay_3w,     kCMDccrystal_3w,  kCMDcdart_3w,   kCMDcdoctor_3w,
 	kCMDcdoor_3w,     kCMDcelephant_3w, kCMDcexit_3w,     kCMDcflask_3w,  kCMDcghost_3w,
@@ -1261,7 +1261,7 @@ typedef enum cmdIdx_3w {
 	kCMDcwfall_3w,    kCMDcwpool_3w,    kCMDcwstream_3w
 };
 
-typedef enum cmdIdx_1d {
+enum cmdIdx_1d {
 	kCMDboat_1d = 1, kCMDbolt_1d,    kCMDbung_1d,  kCMDcarpet_1d, kCMDchop_1d,
 	kCMDcupb_1d,     kCMDdoor1_1d,   kCMDdoor2_1d, kCMDdoor3_1d,  kCMDdoor4_1d,
 	kCMDgold_1d,     kCMDigor_1d,    kCMDknife_1d, kCMDmask_1d,   kCMDoilcan_1d,
@@ -1269,7 +1269,7 @@ typedef enum cmdIdx_1d {
 	kCMDward_1d,     kCMDwhistle_1d
 };
 
-typedef enum cmdIdx_2d {
+enum cmdIdx_2d {
 	kCMDballoon_2d = 1, kCMDbanana_2d, kCMDbell_2d,   kCMDblue_2d,     kCMDbook_2d,
 	kCMDbottle_2d,      kCMDbutton_2d, kCMDcatnip_2d, kCMDcupbp_2d,    kCMDdoor1_2d,
 	kCMDdoor2_2d,       kCMDdoor3_2d,  kCMDdumb_2d,   kCMDdynamite_2d, kCMDgarlic_2d,
@@ -1280,7 +1280,7 @@ typedef enum cmdIdx_2d {
 	kCMDwill_2d,        kCMDyellow_2d
 };
 
-typedef enum cmdIdx_3d {
+enum cmdIdx_3d {
 	kCMDcbell_3d = 1, kCMDcbook_3d,  kCMDcbouillon_3d, kCMDccage_3d,    kCMDccandle_3d,
 	kCMDccheese_3d,   kCMDcclay_3d,  kCMDccrystal_3d,  kCMDcdart_3d,    kCMDcdoor_3d,
 	kCMDcexit_3d,     kCMDcflask_3d, kCMDcghost_3d,    kCMDcnative_3d,  kCMDcpins_3d,

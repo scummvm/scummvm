@@ -2223,172 +2223,172 @@ hotspot_t hotspots_3w[] = {
 };
 
 hotspot_t hotspots_1d[] = {
-	{0,  30,  159, 50,  165, kALscr1_1d},     // Front of house to hall
-	{1,  99,  180, 136, 184, kALscr10_1d},    // Hall to front of house
-	{1,  280, 160, 315, 175, kALscr13_1d},    // Hall to dining room
-	{1,  199, 151, 243, 158, kALscr15_1d},    // Hall to kitchen
-	{1,  264, 97,  302, 101, kALscr115_1d},   // Hall to lab
-	{2,  158, 132, 193, 140, kALscr21_1d},    // Bed1 to hall
-	{3,  0,   152, 17,  168, kALscr31_1d},    // Dining room to hall
-	{3,  51,  117, 63,  129, kALscr35_1d},    // Dining room to kitchen
-	{4,  126, 165, 160, 173, kALscr41_1d},    // Bathroom to hall
-	{5,  215, 169, 272, 177, kALscr51_1d},    // Kitchen to hall
-	{5,  248, 135, 291, 152, kALscr53_1d},    // Kitchen to dining room
-	{5,  212, 128, 245, 134, kALscr56_1d},    // Kitchen to garden
-	{5,  20,  140, 45,  156, kALscr57_1d},    // Kitchen to store room
-	{6,  232, 186, 312, 192, kALscr65_1d},    // Garden to kitchen
-	{7,  257, 142, 279, 157, kALscr75_1d},    // Store room to kitchen
-	{8,  156, 141, 186, 143, kALscr89_1d},    // Basement to batcave
-	{8,  108, 50,  141, 56,  kALscr87_1d},    // Basement to storeroom
-	{9,  95,  104, 147, 109, kALscr910_1d},   // Batcave to mummy room
-	{9,  250, 177, 319, 185, kALscr98_1d},    // Batcave to basement
-	{10, 30,  178, 223, 188, kALscr109_1d},  // Mummy room to batcave
-	{10, 258, 117, 282, 125, kALscr1011_1d}, // Mummy room to lake room
-	{11, 43,  183, 88,  191, kALscr1110_1d}, // Lake room to mummy room
-	{11, 300, 50,  319, 86,  kALscr1112_1d}, // Lake room to dead-end
-	{12, 52,  175, 295, 187, kALscr1211_1d}, // Dead-end to lake room
-	{12, 137, 67,  178, 76,  kALscr1213_1d}, // Dead-end to jail
-	{15, 19,  171, 34,  182, kALscr151_1d},  // Laboratory to hall
-	{15, 109, 150, 144, 156, kALbox_1d},     // Professor's box
+	{0,  30,  159, 50,  165, kALscr1_1d,    -1, -1, -1},   // Front of house to hall
+	{1,  99,  180, 136, 184, kALscr10_1d,   -1, -1, -1},   // Hall to front of house
+	{1,  280, 160, 315, 175, kALscr13_1d,   -1, -1, -1},   // Hall to dining room
+	{1,  199, 151, 243, 158, kALscr15_1d,   -1, -1, -1},   // Hall to kitchen
+	{1,  264, 97,  302, 101, kALscr115_1d,  -1, -1, -1},   // Hall to lab
+	{2,  158, 132, 193, 140, kALscr21_1d,   -1, -1, -1},   // Bed1 to hall
+	{3,  0,   152, 17,  168, kALscr31_1d,   -1, -1, -1},   // Dining room to hall
+	{3,  51,  117, 63,  129, kALscr35_1d,   -1, -1, -1},   // Dining room to kitchen
+	{4,  126, 165, 160, 173, kALscr41_1d,   -1, -1, -1},   // Bathroom to hall
+	{5,  215, 169, 272, 177, kALscr51_1d,   -1, -1, -1},   // Kitchen to hall
+	{5,  248, 135, 291, 152, kALscr53_1d,   -1, -1, -1},   // Kitchen to dining room
+	{5,  212, 128, 245, 134, kALscr56_1d,   -1, -1, -1},   // Kitchen to garden
+	{5,  20,  140, 45,  156, kALscr57_1d,   -1, -1, -1},   // Kitchen to store room
+	{6,  232, 186, 312, 192, kALscr65_1d,   -1, -1, -1},   // Garden to kitchen
+	{7,  257, 142, 279, 157, kALscr75_1d,   -1, -1, -1},   // Store room to kitchen
+	{8,  156, 141, 186, 143, kALscr89_1d,   -1, -1, -1},   // Basement to batcave
+	{8,  108, 50,  141, 56,  kALscr87_1d,   -1, -1, -1},   // Basement to storeroom
+	{9,  95,  104, 147, 109, kALscr910_1d,  -1, -1, -1},   // Batcave to mummy room
+	{9,  250, 177, 319, 185, kALscr98_1d,   -1, -1, -1},   // Batcave to basement
+	{10, 30,  178, 223, 188, kALscr109_1d,  -1, -1, -1},   // Mummy room to batcave
+	{10, 258, 117, 282, 125, kALscr1011_1d, -1, -1, -1},   // Mummy room to lake room
+	{11, 43,  183, 88,  191, kALscr1110_1d, -1, -1, -1},   // Lake room to mummy room
+	{11, 300, 50,  319, 86,  kALscr1112_1d, -1, -1, -1},   // Lake room to dead-end
+	{12, 52,  175, 295, 187, kALscr1211_1d, -1, -1, -1},   // Dead-end to lake room
+	{12, 137, 67,  178, 76,  kALscr1213_1d, -1, -1, -1},   // Dead-end to jail
+	{15, 19,  171, 34,  182, kALscr151_1d,  -1, -1, -1},   // Laboratory to hall
+	{15, 109, 150, 144, 156, kALbox_1d,     -1, -1, -1},   // Professor's box
 	{-1}                            // End of list marker
 };
 
 hotspot_t hotspots_2d[] = {
-	{2,   81, 177, 124, 190, kALscr0201_2d},  				// bed1 to hall
-	{3,    1, 155,  32, 168, kALscr0305_2d},  				// bed2 to bed3
-	{3,  230, 182, 277, 194, kALscr0301_2d},  				// bed2 to hall
-	{5,  207, 136, 240, 150, kALscr0503_2d},  				// bed3 to bed2
-	{5,  167, 155, 214, 165, kALscr0301_2d},  				// bed3 to hall (same as bed2 to hall)
-	{6,  201, 125, 238, 132, kALscr0607_2d},  				// kitchen to backdoor
-	{6,  279, 154, 313, 162, kALscr0631_2d},  				// kitchen to parlor
-	{7,  122, 154, 171, 159, kALscr0706_2d},  				// backdoor to kitchen
-	{7,    4, 179, 302, 199, kALscr0708_2d},  				// backdoor to shed
-	{7,    0, 174,  14, 190, kALscr0708_2d},  				// backdoor to shed (again)
-	{7,  294, 150, 319, 199, kALscr0710_2d},  				// backdoor to venus fly traps
-	{8,    0, 121,  20, 171, kALscr0807_2d},  				// shed to backdoor
-	{8,  305, 121, 319, 171, kALscrgate1_2d}, 				// shed to gates
-	{8,  160, 127, 191, 134, kALscr0809_2d},  				// shed to inside shed
-	{9,   34, 129,  66, 137, kALscr0908_2d},  				// inside shed to shed
-	{10,   0,  96,  12, 160, kALscr1007_2d},  				// venus to backdoor
-	{10, 299,  96, 319, 160, kALscrgate1_2d}, 				// venus to gates
-	{10,  32,  97, 298, 158, kALvenus_2d},    				// venus fly traps
-	{11,   0, 155,  12, 185, kALscr1108_2d},  				// gates (open) to shed
-	{12,   0, 155,  12, 185, kALscr1108_2d},  				// gates (close) to shed
-	{11, 300, 157, 319, 185, kALscr1113_2d},  				// gates (open) to stream
-	{12, 300, 157, 319, 185, kALscr1113_2d},  				// gates (close) to stream
-	{11, 145, 133, 195, 145, kAL11maze_2d},   				// gatesopn to maze
-	{13,   0, 133,  14, 163, kALscrgate2_2d}, 				// stream to gates
-	{13, 303, 146, 319, 173, kALscr1314_2d},  				// stream to zapper
-	{13, 158, 115, 226, 147, kALbridge_2d},   				// bridge over stream
-	{14,   0,  96,  14, 160, kALscr1413_2d},  				// zapper to stream
-	{14, 301,  96, 319, 160, kALscr1415_2d},  				// zapper to mushroom
-	{15,   0,  96,  16, 130, kALscr1514_2d},  				// mushroom to zapper
-	{15, 296,  96, 312, 130, kALscr1517_2d},  				// mushroom to snakepit
-	{15,  60, 182, 256, 196, kALscr1516_2d},  				// mushroom to well
-	{16,  83,  59, 144,  69, kALscr1615_2d},  				// well to mushroom
-	{17,   0, 128,  20, 152, kALscr1715_2d},  				// snakepit to mushroom
-	{17, 303, 144, 319, 172, kALscr1718_2d},  				// snakepit to phonebox
-	{17, 301,  98, 319, 115, kALscr1720_2d},  				// snakepit to kennel
-	{18,   0,  54,  15, 120, kALscr1817_2d},  				// phonebox to snakepit
-	{18,   0, 122,  15, 181, kALscr1819l_2d}, 				// phonebox to street (left)
-	{18,   0, 175, 319, 199, kALscr1819c_2d}, 				// phonebox to street (center)
-	{18, 304,  95, 319, 199, kALscr1819r_2d}, 				// phonebox to street (right)
-	{18,  15, 122,  56, 130, kALphonebox_2d}, 				// in the phonebox
-	{19,   0, 122,  20, 183, kALscr1918l_2d}, 				// street to phonebox (left)
-	{19,   0, 175, 319, 199, kALscr1918c_2d}, 				// street to phonebox (center)
-	{19, 301, 122, 319, 199, kALscr1918r_2d}, 				// street to phonebox (right)
-	{20,   5, 103,  22, 186, kALscr2017_2d},  				// kennel to snakepit
-	{22, 287,  75, 312, 102, kALscr2223_2d},  				// rockgone to threeway
-	{23,  59, 179, 245, 193, kALscr2322_2d},  				// threeway to rockgone
-	{23,  11,  82,  33, 103, kALscr2324_2d},  				// threeway to lampcave
-	{23, 141,  52, 178,  65, kALscr2325_2d},  				// threeway to chasm
-	{23, 273,  79, 296, 100, kALscr2326_2d},  				// threeway to passage
-	{24, 300,  83, 319, 183, kALscr2423_2d},  				// lampcave to threeway
-	{25,   0,  98,  15, 171, kALscr2523_2d},  				// chasm to threeway
-	{25, 172,  95, 221, 172, kALchasm_2d},    				// chasm
-	{26,   0,  94,  19, 179, kALscr2623_2d},  				// passage to threeway
-	{26, 300,  87, 319, 179, kALscr2627_2d},  				// passage to ladder
-	{27,   0, 100,  15, 180, kALscr2726_2d},  				// ladder to passage
-	{27, 200,  43, 243,  55, kALtrap_2d},     				// trapdoor at top of ladder
-	{28, 218, 143, 242, 149, kALscr2827_2d},  				// traproom to ladder
-	{28,  35, 146,  74, 153, kALscr2829_2d},  				// traproom to hall2
-	{29, 274, 126, 319, 142, kALscr2928_2d},  				// hall2 to traproom
-	{29, 235,  91, 275, 106, kALscr2930_2d},  				// hall2 to lounge
-	{29,  81,  58, 108,  74, kALscr2931_2d},  				// hall2 to parlor
-	{29,  15,  71,  54,  95, kALscr2934_2d},  				// hall2 to hall3
-	{29,   0, 130,  20, 144, kALscr2938_2d},  				// hall2 to hall1
-	{30, 222, 183, 258, 199, kALscr3029_2d},  				// lounge to hall2
-	{31, 263, 141, 287, 146, kALscr3132_2d},  				// parlor to catroom
-	{31, 172, 164, 211, 178, kALscr3129_2d},  				// parlor to hall2
-	{31,   0, 148,  46, 158, kALscr3106_2d},  				// parlor to kitchen
-	{32,  60, 118,  90, 123, kALscr3231_2d},  				// catroom to parlor
-	{34,   6, 167,  39, 179, kALscr3438_2d},  				// hall3 to hall1
-	{34,   7, 185, 311, 199, kALscr3429_2d},  				// hall3 to hall2
-	{35,  65, 176, 101, 188, kALscr3534_2d},  				// organ to hall3
-	{36, 238, 164, 272, 177, kALscr3634_2d},  				// hestroom to hall3
-	{36,  62, 140, 158, 158, kALhtable_2d},   				// hestroom table
-	{37, 253,  82, 286,  84, kALscr3718_2d},  				// retupmoc to phonebox
-	{38, 275, 156, 307, 166, kALscr3829_2d},  				// hall1 to hall2
-	{38, 142, 138, 172, 150, kALscr3834_2d},  				// hall1 to hall3
-	{MAZE_SCREEN+59, 100, 140, 180, 160, kALexitmaze_2d},  // Exit maze
-	{-1,  -1,  -1,  -1,  -1,  0,  -1,  -1,  -1}				// End of list marker
+	{2,   81, 177, 124, 190, kALscr0201_2d,  -1, -1, -1},  // bed1 to hall
+	{3,    1, 155,  32, 168, kALscr0305_2d,  -1, -1, -1},  // bed2 to bed3
+	{3,  230, 182, 277, 194, kALscr0301_2d,  -1, -1, -1},  // bed2 to hall
+	{5,  207, 136, 240, 150, kALscr0503_2d,  -1, -1, -1},  // bed3 to bed2
+	{5,  167, 155, 214, 165, kALscr0301_2d,  -1, -1, -1},  // bed3 to hall (same as bed2 to hall)
+	{6,  201, 125, 238, 132, kALscr0607_2d,  -1, -1, -1},  // kitchen to backdoor
+	{6,  279, 154, 313, 162, kALscr0631_2d,  -1, -1, -1},  // kitchen to parlor
+	{7,  122, 154, 171, 159, kALscr0706_2d,  -1, -1, -1},  // backdoor to kitchen
+	{7,    4, 179, 302, 199, kALscr0708_2d,  -1, -1, -1},  // backdoor to shed
+	{7,    0, 174,  14, 190, kALscr0708_2d,  -1, -1, -1},  // backdoor to shed (again)
+	{7,  294, 150, 319, 199, kALscr0710_2d,  -1, -1, -1},  // backdoor to venus fly traps
+	{8,    0, 121,  20, 171, kALscr0807_2d,  -1, -1, -1},  // shed to backdoor
+	{8,  305, 121, 319, 171, kALscrgate1_2d, -1, -1, -1},  // shed to gates
+	{8,  160, 127, 191, 134, kALscr0809_2d,  -1, -1, -1},  // shed to inside shed
+	{9,   34, 129,  66, 137, kALscr0908_2d,  -1, -1, -1},  // inside shed to shed
+	{10,   0,  96,  12, 160, kALscr1007_2d,  -1, -1, -1},  // venus to backdoor
+	{10, 299,  96, 319, 160, kALscrgate1_2d, -1, -1, -1},  // venus to gates
+	{10,  32,  97, 298, 158, kALvenus_2d,    -1, -1, -1},  // venus fly traps
+	{11,   0, 155,  12, 185, kALscr1108_2d,  -1, -1, -1},  // gates (open) to shed
+	{12,   0, 155,  12, 185, kALscr1108_2d,  -1, -1, -1},  // gates (close) to shed
+	{11, 300, 157, 319, 185, kALscr1113_2d,  -1, -1, -1},  // gates (open) to stream
+	{12, 300, 157, 319, 185, kALscr1113_2d,  -1, -1, -1},  // gates (close) to stream
+	{11, 145, 133, 195, 145, kAL11maze_2d,   -1, -1, -1},  // gatesopn to maze
+	{13,   0, 133,  14, 163, kALscrgate2_2d, -1, -1, -1},  // stream to gates
+	{13, 303, 146, 319, 173, kALscr1314_2d,  -1, -1, -1},  // stream to zapper
+	{13, 158, 115, 226, 147, kALbridge_2d,   -1, -1, -1},  // bridge over stream
+	{14,   0,  96,  14, 160, kALscr1413_2d,  -1, -1, -1},  // zapper to stream
+	{14, 301,  96, 319, 160, kALscr1415_2d,  -1, -1, -1},  // zapper to mushroom
+	{15,   0,  96,  16, 130, kALscr1514_2d,  -1, -1, -1},  // mushroom to zapper
+	{15, 296,  96, 312, 130, kALscr1517_2d,  -1, -1, -1},  // mushroom to snakepit
+	{15,  60, 182, 256, 196, kALscr1516_2d,  -1, -1, -1},  // mushroom to well
+	{16,  83,  59, 144,  69, kALscr1615_2d,  -1, -1, -1},  // well to mushroom
+	{17,   0, 128,  20, 152, kALscr1715_2d,  -1, -1, -1},  // snakepit to mushroom
+	{17, 303, 144, 319, 172, kALscr1718_2d,  -1, -1, -1},  // snakepit to phonebox
+	{17, 301,  98, 319, 115, kALscr1720_2d,  -1, -1, -1},  // snakepit to kennel
+	{18,   0,  54,  15, 120, kALscr1817_2d,  -1, -1, -1},  // phonebox to snakepit
+	{18,   0, 122,  15, 181, kALscr1819l_2d, -1, -1, -1},  // phonebox to street (left)
+	{18,   0, 175, 319, 199, kALscr1819c_2d, -1, -1, -1},  // phonebox to street (center)
+	{18, 304,  95, 319, 199, kALscr1819r_2d, -1, -1, -1},  // phonebox to street (right)
+	{18,  15, 122,  56, 130, kALphonebox_2d, -1, -1, -1},  // in the phonebox
+	{19,   0, 122,  20, 183, kALscr1918l_2d, -1, -1, -1},  // street to phonebox (left)
+	{19,   0, 175, 319, 199, kALscr1918c_2d, -1, -1, -1},  // street to phonebox (center)
+	{19, 301, 122, 319, 199, kALscr1918r_2d, -1, -1, -1},  // street to phonebox (right)
+	{20,   5, 103,  22, 186, kALscr2017_2d,  -1, -1, -1},  // kennel to snakepit
+	{22, 287,  75, 312, 102, kALscr2223_2d,  -1, -1, -1},  // rockgone to threeway
+	{23,  59, 179, 245, 193, kALscr2322_2d,  -1, -1, -1},  // threeway to rockgone
+	{23,  11,  82,  33, 103, kALscr2324_2d,  -1, -1, -1},  // threeway to lampcave
+	{23, 141,  52, 178,  65, kALscr2325_2d,  -1, -1, -1},  // threeway to chasm
+	{23, 273,  79, 296, 100, kALscr2326_2d,  -1, -1, -1},  // threeway to passage
+	{24, 300,  83, 319, 183, kALscr2423_2d,  -1, -1, -1},  // lampcave to threeway
+	{25,   0,  98,  15, 171, kALscr2523_2d,  -1, -1, -1},  // chasm to threeway
+	{25, 172,  95, 221, 172, kALchasm_2d,    -1, -1, -1},  // chasm
+	{26,   0,  94,  19, 179, kALscr2623_2d,  -1, -1, -1},  // passage to threeway
+	{26, 300,  87, 319, 179, kALscr2627_2d,  -1, -1, -1},  // passage to ladder
+	{27,   0, 100,  15, 180, kALscr2726_2d,  -1, -1, -1},  // ladder to passage
+	{27, 200,  43, 243,  55, kALtrap_2d,     -1, -1, -1},  // trapdoor at top of ladder
+	{28, 218, 143, 242, 149, kALscr2827_2d,  -1, -1, -1},  // traproom to ladder
+	{28,  35, 146,  74, 153, kALscr2829_2d,  -1, -1, -1},  // traproom to hall2
+	{29, 274, 126, 319, 142, kALscr2928_2d,  -1, -1, -1},  // hall2 to traproom
+	{29, 235,  91, 275, 106, kALscr2930_2d,  -1, -1, -1},  // hall2 to lounge
+	{29,  81,  58, 108,  74, kALscr2931_2d,  -1, -1, -1},  // hall2 to parlor
+	{29,  15,  71,  54,  95, kALscr2934_2d,  -1, -1, -1},  // hall2 to hall3
+	{29,   0, 130,  20, 144, kALscr2938_2d,  -1, -1, -1},  // hall2 to hall1
+	{30, 222, 183, 258, 199, kALscr3029_2d,  -1, -1, -1},  // lounge to hall2
+	{31, 263, 141, 287, 146, kALscr3132_2d,  -1, -1, -1},  // parlor to catroom
+	{31, 172, 164, 211, 178, kALscr3129_2d,  -1, -1, -1},  // parlor to hall2
+	{31,   0, 148,  46, 158, kALscr3106_2d,  -1, -1, -1},  // parlor to kitchen
+	{32,  60, 118,  90, 123, kALscr3231_2d,  -1, -1, -1},  // catroom to parlor
+	{34,   6, 167,  39, 179, kALscr3438_2d,  -1, -1, -1},  // hall3 to hall1
+	{34,   7, 185, 311, 199, kALscr3429_2d,  -1, -1, -1},  // hall3 to hall2
+	{35,  65, 176, 101, 188, kALscr3534_2d,  -1, -1, -1},  // organ to hall3
+	{36, 238, 164, 272, 177, kALscr3634_2d,  -1, -1, -1},  // hestroom to hall3
+	{36,  62, 140, 158, 158, kALhtable_2d,   -1, -1, -1},  // hestroom table
+	{37, 253,  82, 286,  84, kALscr3718_2d,  -1, -1, -1},  // retupmoc to phonebox
+	{38, 275, 156, 307, 166, kALscr3829_2d,  -1, -1, -1},  // hall1 to hall2
+	{38, 142, 138, 172, 150, kALscr3834_2d,  -1, -1, -1},  // hall1 to hall3
+	{MAZE_SCREEN+59, 100, 140, 180, 160, kALexitmaze_2d, -1, -1, -1},  // Exit maze
+	{-1,  -1,  -1,  -1,  -1,  0,  -1,  -1,  -1}            // End of list marker
 };
 
 hotspot_t hotspots_3d[] = {
-	{CRASH_3d,     65, 148, 309, 158, kALhorizon_3d},
-	{CRASH_3d,      0, 163,  30, 190, kALcrash_web_3d},
-	{WEB_3d,      296,  73, 319, 190, kALweb_crash_3d},
-	{WEB_3d,        0, 156,  30, 190, kALweb_path_3d},
-	{PATH_UL_3d,  293, 161, 319, 190, kALpath_web_3d},
-	{PATH_UL_3d,    0, 127,  24, 138, kALpath_brg_3d},
-	{BRIDGE_3d,   296, 131, 319, 135, kALbrg_path_3d},
-	{BRIDGE_3d,     0, 130,  21, 135, kALbrg_clftop_3d},
-	{BRIDGE_3d,   225, 132, 235, 135, kALblk_3d},
-	{BRIDGE2_3d,  296, 131, 319, 135, kALbrg_path_3d},
-	{BRIDGE2_3d,    0, 130,  21, 135, kALbrg_clftop_3d},
-	{CLIFFTOP_3d, 293,  69, 319,  79, kALclftop_brg_3d},
-	{CLIFFTOP_3d, 294, 131, 319, 149, kALclftop_slope_3d},
-	{CLIFFTOP_3d, 290, 171, 319, 186, kALclftop_clf_3d},
-	{SLOPE_3d,      0, 147,  25, 165, kALslope_clftop_3d},
-	{SLOPE_3d,    291, 127, 319, 143, kALslope_stream_3d},
-	{CLIFF_3d,      0, 152,  26, 190, kALclf_clftop_3d},
-	{CLIFF_3d,    293, 152, 319, 190, kALclf_wfall_3d},
-	{STREAM_3d,     0, 160,  26, 190, kALstream_slope_3d},
-	{STREAM_3d,   293, 163, 319, 190, kALstream_path_3d},
-	{STREAM_3d,   198, 140, 245, 160, kALfindbook_3d},
-	{STREAM2_3d,    0, 160,  26, 190, kALstream_slope_3d},
-	{STREAM2_3d,  293, 163, 319, 190, kALstream_path_3d},
-	{STREAM2_3d,  198, 140, 245, 160, kALfindbook_3d},
-	{PATH_3d,     292, 161, 319, 190, kALpath_village_3d},
-	{PATH_3d,       0, 161,  24, 190, kALpath_stream_3d},
-	{VILLAGE_3d,   14, 137,  41, 156, kALvillage_thing_3d},
-	{VILLAGE_3d,    0, 148,  24, 190, kALvillage_path_3d},
-	{VILLAGE_3d,  292, 161, 319, 190, kALvillage_turn_3d},
-	{VILLAGE_3d,   14, 139, 111, 155, kALvillage_camp_l_3d},
-	{VILLAGE_3d,  112, 139, 252, 155, kALvillage_camp_r_3d},
-	{HUT_OUT_3d,    0, 147,  30, 190, kALhut_camp_3d},
-	{HUT_OUT_3d,  290, 147, 319, 190, kALhut_village_r_3d},
-	{HUT_OUT_3d,   14, 178, 319, 190, kALhut_village_c_3d},
-	{HUT_OUT_3d,  132, 126, 177, 145, kALhut_enter_3d},
-	{HUT_IN_3d,   138, 183, 189, 199, kALhut_out_3d},
-	{CAMP_3d,     290, 136, 319, 190, kALcamp_hut_3d},
-	{CAMP_3d,       0, 109,  27, 190, kALcamp_village_l_3d},
-	{CAMP_3d,      13, 180, 303, 199, kALcamp_village_c_3d},
-	{TURN_3d,       0, 114,  28, 133, kALturn_village_3d},
-	{TURN_3d,       0, 165,  28, 190, kALturn_cave_3d},
-	{CAVE_3d,     291, 140, 319, 190, kALcave_turn_3d},
-	{CAVE_3d,       0, 146,  27, 190, kALcave_wfall_3d},
-	{CAVE_3d,      86, 128, 162, 141, kALcave_oldman_3d},
-	{WFALL_3d,      0, 166,  28, 190, kALwfall_clf_3d},
-	{WFALL_3d,    294, 159, 319, 190, kALwfall_cave_3d},
-	{WFALL_3d,    238, 147, 284, 158, kALwfall_wbase_3d},
-	{WFALL_B_3d,    0, 166,  28, 190, kALwfallb_clf_3d},
-	{WFALL_B_3d,  294, 159, 319, 190, kALwfallb_cave_3d},
-	{WFALL_B_3d,  238, 147, 284, 158, kALwfallb_wbase_3d},
-	{WBASE_3d,    295, 146, 319, 190, kALwbase_wfall_3d},
-	{WBASE_3d,      0, 149,  26, 190, kALwbase_garden_3d},
-	{GARDEN_3d,   294, 165, 319, 190, kALgarden_wbase_3d},
-	{-1}
+	{CRASH_3d,     65, 148, 309, 158, kALhorizon_3d,        -1, -1, -1},
+	{CRASH_3d,      0, 163,  30, 190, kALcrash_web_3d,      -1, -1, -1},
+	{WEB_3d,      296,  73, 319, 190, kALweb_crash_3d,      -1, -1, -1},
+	{WEB_3d,        0, 156,  30, 190, kALweb_path_3d,       -1, -1, -1},
+	{PATH_UL_3d,  293, 161, 319, 190, kALpath_web_3d,       -1, -1, -1},
+	{PATH_UL_3d,    0, 127,  24, 138, kALpath_brg_3d,       -1, -1, -1},
+	{BRIDGE_3d,   296, 131, 319, 135, kALbrg_path_3d,       -1, -1, -1},
+	{BRIDGE_3d,     0, 130,  21, 135, kALbrg_clftop_3d,     -1, -1, -1},
+	{BRIDGE_3d,   225, 132, 235, 135, kALblk_3d,            -1, -1, -1},
+	{BRIDGE2_3d,  296, 131, 319, 135, kALbrg_path_3d,       -1, -1, -1},
+	{BRIDGE2_3d,    0, 130,  21, 135, kALbrg_clftop_3d,     -1, -1, -1},
+	{CLIFFTOP_3d, 293,  69, 319,  79, kALclftop_brg_3d,     -1, -1, -1},
+	{CLIFFTOP_3d, 294, 131, 319, 149, kALclftop_slope_3d,   -1, -1, -1},
+	{CLIFFTOP_3d, 290, 171, 319, 186, kALclftop_clf_3d,     -1, -1, -1},
+	{SLOPE_3d,      0, 147,  25, 165, kALslope_clftop_3d,   -1, -1, -1},
+	{SLOPE_3d,    291, 127, 319, 143, kALslope_stream_3d,   -1, -1, -1},
+	{CLIFF_3d,      0, 152,  26, 190, kALclf_clftop_3d,     -1, -1, -1},
+	{CLIFF_3d,    293, 152, 319, 190, kALclf_wfall_3d,      -1, -1, -1},
+	{STREAM_3d,     0, 160,  26, 190, kALstream_slope_3d,   -1, -1, -1},
+	{STREAM_3d,   293, 163, 319, 190, kALstream_path_3d,    -1, -1, -1},
+	{STREAM_3d,   198, 140, 245, 160, kALfindbook_3d,       -1, -1, -1},
+	{STREAM2_3d,    0, 160,  26, 190, kALstream_slope_3d,   -1, -1, -1},
+	{STREAM2_3d,  293, 163, 319, 190, kALstream_path_3d,    -1, -1, -1},
+	{STREAM2_3d,  198, 140, 245, 160, kALfindbook_3d,       -1, -1, -1},
+	{PATH_3d,     292, 161, 319, 190, kALpath_village_3d,   -1, -1, -1},
+	{PATH_3d,       0, 161,  24, 190, kALpath_stream_3d,    -1, -1, -1},
+	{VILLAGE_3d,   14, 137,  41, 156, kALvillage_thing_3d,  -1, -1, -1},
+	{VILLAGE_3d,    0, 148,  24, 190, kALvillage_path_3d,   -1, -1, -1},
+	{VILLAGE_3d,  292, 161, 319, 190, kALvillage_turn_3d,   -1, -1, -1},
+	{VILLAGE_3d,   14, 139, 111, 155, kALvillage_camp_l_3d, -1, -1, -1},
+	{VILLAGE_3d,  112, 139, 252, 155, kALvillage_camp_r_3d, -1, -1, -1},
+	{HUT_OUT_3d,    0, 147,  30, 190, kALhut_camp_3d,       -1, -1, -1},
+	{HUT_OUT_3d,  290, 147, 319, 190, kALhut_village_r_3d,  -1, -1, -1},
+	{HUT_OUT_3d,   14, 178, 319, 190, kALhut_village_c_3d,  -1, -1, -1},
+	{HUT_OUT_3d,  132, 126, 177, 145, kALhut_enter_3d,      -1, -1, -1},
+	{HUT_IN_3d,   138, 183, 189, 199, kALhut_out_3d,        -1, -1, -1},
+	{CAMP_3d,     290, 136, 319, 190, kALcamp_hut_3d,       -1, -1, -1},
+	{CAMP_3d,       0, 109,  27, 190, kALcamp_village_l_3d, -1, -1, -1},
+	{CAMP_3d,      13, 180, 303, 199, kALcamp_village_c_3d, -1, -1, -1},
+	{TURN_3d,       0, 114,  28, 133, kALturn_village_3d,   -1, -1, -1},
+	{TURN_3d,       0, 165,  28, 190, kALturn_cave_3d,      -1, -1, -1},
+	{CAVE_3d,     291, 140, 319, 190, kALcave_turn_3d,      -1, -1, -1},
+	{CAVE_3d,       0, 146,  27, 190, kALcave_wfall_3d,     -1, -1, -1},
+	{CAVE_3d,      86, 128, 162, 141, kALcave_oldman_3d,    -1, -1, -1},
+	{WFALL_3d,      0, 166,  28, 190, kALwfall_clf_3d,      -1, -1, -1},
+	{WFALL_3d,    294, 159, 319, 190, kALwfall_cave_3d,     -1, -1, -1},
+	{WFALL_3d,    238, 147, 284, 158, kALwfall_wbase_3d,    -1, -1, -1},
+	{WFALL_B_3d,    0, 166,  28, 190, kALwfallb_clf_3d,     -1, -1, -1},
+	{WFALL_B_3d,  294, 159, 319, 190, kALwfallb_cave_3d,    -1, -1, -1},
+	{WFALL_B_3d,  238, 147, 284, 158, kALwfallb_wbase_3d,   -1, -1, -1},
+	{WBASE_3d,    295, 146, 319, 190, kALwbase_wfall_3d,    -1, -1, -1},
+	{WBASE_3d,      0, 149,  26, 190, kALwbase_garden_3d,   -1, -1, -1},
+	{GARDEN_3d,   294, 165, 319, 190, kALgarden_wbase_3d,   -1, -1, -1},
+	{-1,  -1,  -1,  -1,  -1,  0,  -1,  -1,  -1}            // End of list marker
 };
 
 // List all objects that can appear in inventory list
@@ -2417,305 +2417,305 @@ int16 invent_2d[] = {-1};
 int16 invent_3d[] = {-1};
 
 uses_t uses_1w[] = {
-	{PKIN_1w,    kDTupkin_1w,   {{kNHero_1w, kVOpen_1w},      {0}}},
-	{KEY_1w,     kDTukey_1w,    {{kNDoor_1w, kVUnlock_1w},    {0}}},
-	{CANDLE_1w,  kDTucandle_1w, {{0}}},
-	{MASK_1w,    kDTumasked_1w, {{kNHero_1w, kVMakeUseOf_1w}, {0}}},
-	{BUNG_1w,    kDTubung_1w,   {{kNBoat_1w, kVPlug_1w},      {0}}},
-	{CHOP_1w,    kDTuchop_1w,   {{kNHero_1w, kVEat_1w},       {kNDog_1w,   kVThrowit_1w},{kNButler_1w, kVGive_1w},{kNFrank_1w, kVGive_1w}, {kNDracula_1w, kVGive_1w}, {kNGwen_1w, kVGive_1w}, {kNHood_1w, kVGive_1w}, {kNSlime_1w, kVGive_1w}, {kNPeahead_1w, kVGive_1w}, {kNProf_1w, kVGive_1w}, {kNIgor_1w, kVGive_1w}, {0}}},
-	{KNIFE_1w,   kDTuknife_1w,  {{kNHero_1w, kVCut_1w},       {kNRope_1w,  kVCut_1w},    {0}}},
-	{OILCAN_1w,  kDTuoil_1w,    {{kNHero_1w, kVOil_1w},       {kNTrap_1w,  kVBolt_1w},   {kNBolt_1w,   kVOil_1w}, {kNDoor_1w,  kVOil_1w},  {0}}},
-	{GOLD_1w,    kDTugold_1w,   {{kNHero_1w, kVMakeUseOf_1w}, {kNGuard_1w, kVGive_1w},   {0}}},
-	{LASTOBJ_1w}
+	{PKIN_1w,    kDTupkin_1w,   {{kNHero_1w, kVOpen_1w},      {0, 0}}},
+	{KEY_1w,     kDTukey_1w,    {{kNDoor_1w, kVUnlock_1w},    {0, 0}}},
+	{CANDLE_1w,  kDTucandle_1w, {{0, 0}}},
+	{MASK_1w,    kDTumasked_1w, {{kNHero_1w, kVMakeUseOf_1w}, {0, 0}}},
+	{BUNG_1w,    kDTubung_1w,   {{kNBoat_1w, kVPlug_1w},      {0, 0}}},
+	{CHOP_1w,    kDTuchop_1w,   {{kNHero_1w, kVEat_1w},       {kNDog_1w,   kVThrowit_1w},{kNButler_1w, kVGive_1w},{kNFrank_1w, kVGive_1w}, {kNDracula_1w, kVGive_1w}, {kNGwen_1w, kVGive_1w}, {kNHood_1w, kVGive_1w}, {kNSlime_1w, kVGive_1w}, {kNPeahead_1w, kVGive_1w}, {kNProf_1w, kVGive_1w}, {kNIgor_1w, kVGive_1w}, {0, 0}}},
+	{KNIFE_1w,   kDTuknife_1w,  {{kNHero_1w, kVCut_1w},       {kNRope_1w,  kVCut_1w},    {0, 0}}},
+	{OILCAN_1w,  kDTuoil_1w,    {{kNHero_1w, kVOil_1w},       {kNTrap_1w,  kVBolt_1w},   {kNBolt_1w,   kVOil_1w}, {kNDoor_1w,  kVOil_1w},  {0, 0}}},
+	{GOLD_1w,    kDTugold_1w,   {{kNHero_1w, kVMakeUseOf_1w}, {kNGuard_1w, kVGive_1w},   {0, 0}}},
+	{LASTOBJ_1w, 0, {0, 0}}
 };
 
 uses_t uses_2w[] = {
-	{MATCHES_2w,  kDTumatches_2w,  {{kNHero_2w, kVStrike_2w},    {kNDynamite_2w, kVMakeUseOf_2w},{0}}},
-	{GARLIC_2w,   kDTugarlic_2w,   {{kNHero_2w, kVEat_2w},       {kNGardner_2w,  kVGive_2w},     {kNDog_2w,     kVGive_2w},      {kNCupb_2w,  kVDrop_2w},   {0}}},
-	{MAGNIFY_2w,  kDTumagnify_2w,  {{kNWill_2w, kVRead_2w},      {0}}},
-	{STICK_2w,    kDTustick_2w,    {{kNHero_2w, kVThrowit_2w},   {kNDog_2w,      kVGive_2w},     {kNSnake_2w,   kVAttack_2w},    {0}}},
-	{BOTTLE_2w,   kDTubottle_2w,   {{kNHero_2w, kVDrink_2w},     {kNDog_2w,      kVGive_2w},     {kNSnake_2w,   kVGive_2w},      {0}}},
-	{DYNAMITE_2w, kDTudynamite_2w, {{kNHero_2w, kVStrike_2w},    {kNRock_2w,     kVDrop_2w},     {kNMatches_2w, kVMakeUseOf_2w}, {kNSnake_2w, kVAttack_2w}, {0}}},
-	{GUN_2w,      kDTugun_2w,      {{kNHero_2w, kVFire_2w},      {kNSnake_2w,    kVAttack_2w},   {kNRobot_2w,   kVFire_2w},      {0}}},
-	{BANANA_2w,   kDTubanana_2w,   {{kNHero_2w, kVEat_2w},       {kNGenie_2w,    kVGive_2w},     {0}}},
-	{OILLAMP_2w,  kDTulamp_2w,     {{kNHero_2w, kVRub_2w},       {kNGenie_2w,    kVGive_2w},     {0}}},
-	{SCREW_2w,    kDTuscrew_2w,    {{kNHero_2w, kVMakeUseOf_2w}, {kNSafe_2w,     kVOpen_2w},     {0}}},
-	{BELL_2w,     kDTubell_2w,     {{kNHero_2w, kVRing_2w},      {kNMaid_2w,     kVGive_2w},     {kNCat_2w,     kVGive_2w},      {kNHarry_2w, kVGive_2w},   {kNHester_2w, kVGive_2w}, {kNCook_2w,   kVGive_2w}, {0}}},
-	{CATNIP_2w,   kDTucatnip_2w,   {{kNHero_2w, kVEat_2w},       {kNBell_2w,     kVRub_2w},      {kNMaid_2w,    kVGive_2w},      {kNCat_2w,   kVGive_2w},   {kNHarry_2w,  kVGive_2w}, {kNHester_2w, kVGive_2w}, {kNCook_2w, kVGive_2w}, {0}}},
-	{PAPER_2w,    kDTupaper_2w,    {{kNHero_2w, kVRead_2w},      {kNDoor_2w,     kVPush_2w},     {0}}},
-	{PENCIL_2w,   kDTupencil_2w,   {{kNHero_2w, kVMakeUseOf_2w}, {kNPaper_2w,    kVScribble_2w}, {kNDoor_2w,    kVMakeUseOf_2w}, {0}}},
-	{LASTOBJ_2w}
+	{MATCHES_2w,  kDTumatches_2w,  {{kNHero_2w, kVStrike_2w},    {kNDynamite_2w, kVMakeUseOf_2w},{0, 0}}},
+	{GARLIC_2w,   kDTugarlic_2w,   {{kNHero_2w, kVEat_2w},       {kNGardner_2w,  kVGive_2w},     {kNDog_2w,     kVGive_2w},      {kNCupb_2w,  kVDrop_2w},   {0, 0}}},
+	{MAGNIFY_2w,  kDTumagnify_2w,  {{kNWill_2w, kVRead_2w},      {0, 0}}},
+	{STICK_2w,    kDTustick_2w,    {{kNHero_2w, kVThrowit_2w},   {kNDog_2w,      kVGive_2w},     {kNSnake_2w,   kVAttack_2w},    {0, 0}}},
+	{BOTTLE_2w,   kDTubottle_2w,   {{kNHero_2w, kVDrink_2w},     {kNDog_2w,      kVGive_2w},     {kNSnake_2w,   kVGive_2w},      {0, 0}}},
+	{DYNAMITE_2w, kDTudynamite_2w, {{kNHero_2w, kVStrike_2w},    {kNRock_2w,     kVDrop_2w},     {kNMatches_2w, kVMakeUseOf_2w}, {kNSnake_2w, kVAttack_2w}, {0, 0}}},
+	{GUN_2w,      kDTugun_2w,      {{kNHero_2w, kVFire_2w},      {kNSnake_2w,    kVAttack_2w},   {kNRobot_2w,   kVFire_2w},      {0, 0}}},
+	{BANANA_2w,   kDTubanana_2w,   {{kNHero_2w, kVEat_2w},       {kNGenie_2w,    kVGive_2w},     {0, 0}}},
+	{OILLAMP_2w,  kDTulamp_2w,     {{kNHero_2w, kVRub_2w},       {kNGenie_2w,    kVGive_2w},     {0, 0}}},
+	{SCREW_2w,    kDTuscrew_2w,    {{kNHero_2w, kVMakeUseOf_2w}, {kNSafe_2w,     kVOpen_2w},     {0, 0}}},
+	{BELL_2w,     kDTubell_2w,     {{kNHero_2w, kVRing_2w},      {kNMaid_2w,     kVGive_2w},     {kNCat_2w,     kVGive_2w},      {kNHarry_2w, kVGive_2w},   {kNHester_2w, kVGive_2w}, {kNCook_2w,   kVGive_2w}, {0, 0}}},
+	{CATNIP_2w,   kDTucatnip_2w,   {{kNHero_2w, kVEat_2w},       {kNBell_2w,     kVRub_2w},      {kNMaid_2w,    kVGive_2w},      {kNCat_2w,   kVGive_2w},   {kNHarry_2w,  kVGive_2w}, {kNHester_2w, kVGive_2w}, {kNCook_2w, kVGive_2w}, {0, 0}}},
+	{PAPER_2w,    kDTupaper_2w,    {{kNHero_2w, kVRead_2w},      {kNDoor_2w,     kVPush_2w},     {0, 0}}},
+	{PENCIL_2w,   kDTupencil_2w,   {{kNHero_2w, kVMakeUseOf_2w}, {kNPaper_2w,    kVScribble_2w}, {kNDoor_2w,    kVMakeUseOf_2w}, {0, 0}}},
+	{LASTOBJ_2w,  0, {0, 0}}
 };
 
 uses_t uses_3w[] = {
-	{CLAY_3w,     kDTuclay_3w,     {{kNHero_3w, kVMake_3w},   {0}}},
-	{FLASK_3w,    kDTuflask_3w,    {{kNHero_3w, kVDrink_3w},  {kNPennylie_3w, kVGive_3w},     {kNWater_3w, kVFill_3w},     {kNPool_3w, kVFill_3w},   {0}}},
-	{BOUILLON_3w, kDTubouillon_3w, {{kNNat1_3w, kVGive_3w},   {kNNat2_3w,     kVGive_3w},     {kNNat3_3w,  kVGive_3w},     {kNNatb_3w, kVGive_3w},   {kNNatg_3w, kVGive_3w}, {kNPennylie_3w, kVGive_3w}, {kNDoctor_3w, kVGive_3w}, {0}}},
-	{CRYSTAL_3w,  kDTucrystal_3w,  {{kNHero_3w, kVRub_3w},    {0}}},
-	{CHEESE_3w,   kDTucheese_3w,   {{kNHero_3w, kVEat_3w},    {kNCage_3w,     kVPut_3w},      {0}}},
-	{SCROLL_3w,   kDTuread_3w,     {{kNHero_3w, kVRead_3w},   {0}}},
-	{BOOK_3w,     kDTuread_3w,     {{kNHero_3w, kVRead_3w},   {kNGhost_3w,    kVExorcise_3w}, {0}}},
-	{CANDLE_3w,   kDTucandle_3w,   {{kNHero_3w, kVStrike_3w}, {0}}},
-	{BELL_3w,     kDTubell_3w,     {{kNHero_3w, kVRing_3w},   {0}}},
-	{BLOWPIPE_3w, kDTupipe_3w,     {{kNHero_3w, kVShoot_3w},  {kNDoctor_3w,   kVShoot_3w},    {kNElephant_3w, kVShoot_3w}, {kNGhost_3w, kVShoot_3w}, {0}}},
-	{LASTOBJ_3w}
+	{CLAY_3w,     kDTuclay_3w,     {{kNHero_3w, kVMake_3w},   {0, 0}}},
+	{FLASK_3w,    kDTuflask_3w,    {{kNHero_3w, kVDrink_3w},  {kNPennylie_3w, kVGive_3w},     {kNWater_3w, kVFill_3w},     {kNPool_3w, kVFill_3w},   {0, 0}}},
+	{BOUILLON_3w, kDTubouillon_3w, {{kNNat1_3w, kVGive_3w},   {kNNat2_3w,     kVGive_3w},     {kNNat3_3w,  kVGive_3w},     {kNNatb_3w, kVGive_3w},   {kNNatg_3w, kVGive_3w}, {kNPennylie_3w, kVGive_3w}, {kNDoctor_3w, kVGive_3w}, {0, 0}}},
+	{CRYSTAL_3w,  kDTucrystal_3w,  {{kNHero_3w, kVRub_3w},    {0, 0}}},
+	{CHEESE_3w,   kDTucheese_3w,   {{kNHero_3w, kVEat_3w},    {kNCage_3w,     kVPut_3w},      {0, 0}}},
+	{SCROLL_3w,   kDTuread_3w,     {{kNHero_3w, kVRead_3w},   {0, 0}}},
+	{BOOK_3w,     kDTuread_3w,     {{kNHero_3w, kVRead_3w},   {kNGhost_3w,    kVExorcise_3w}, {0, 0}}},
+	{CANDLE_3w,   kDTucandle_3w,   {{kNHero_3w, kVStrike_3w}, {0, 0}}},
+	{BELL_3w,     kDTubell_3w,     {{kNHero_3w, kVRing_3w},   {0, 0}}},
+	{BLOWPIPE_3w, kDTupipe_3w,     {{kNHero_3w, kVShoot_3w},  {kNDoctor_3w,   kVShoot_3w},    {kNElephant_3w, kVShoot_3w}, {kNGhost_3w, kVShoot_3w}, {0, 0}}},
+	{LASTOBJ_3w,  0, {0, 0}}
 };
 
 // TODO: This use lists are only used in Win versions. Should we add them in the DOS versions?
 uses_t uses_1d[] = {
-	{LASTOBJ_1d}
+	{LASTOBJ_1d,  0, {0, 0}}
 };
 
 uses_t uses_2d[] = {
-	{LASTOBJ_2d}
+	{LASTOBJ_2d,  0, {0, 0}}
 };
 
 uses_t uses_3d[] = {
-	{LASTOBJ_3d}
+	{LASTOBJ_3d,  0, {0, 0}}
 };
 
 background_t catchall_1w[] = {					// Generally applicable phrases
-  {kVJump_1w,      0,         kSTnojump_1w,      false, 0, 0},
-  {kVGo_1w,        0,         kSTtrywalk_1w,     false, 0, 0},
-  {kVEnter_1w,     0,         kSTtrywalk_1w,     false, 0, 0},
-  {kVClimb_1w,     0,         kSTnoclimb_1w,     false, 0, 0},
-  {kVShout_1w,     0,         kSTnothing_1w,     false, 0, 0},
-  {kVTalk_1w,      0,         kSTnotalk_1w,      false, 0, 0},
-  {kVSwitch_1w,    0,         kSTenopurps_1w,    false, 0, 0},
-  {kVThrowit_1w,   0,         kSTenopurps_1w,    false, 0, 0},
-  {kVAttack_1w,    0,         kSTnoattack_1w,    false, 0, 0},
-  {kVBreak_1w,     0,         kSTnobreak_1w,     false, 0, 0},
-  {kVListen_1w,    0,         kSTnonoise_1w,     false, 0, 0},
-  {kVSmell_1w,     0,         kSTnosmell_1w,     false, 0, 0},
-  {kVQuery_1w,     0,         kSTnoidea_1w,      false, 0, 0},
-  {kVLook_1w,      kNSky_1w,     kSTlooksky_1w,     false, 0, 0},
-  {kVLook_1w,      kNWall_1w,    kSTedull_1w,       false, 0, 0},
-  {kVLook_1w,      kNGround_1w,  kSTedull_1w,       false, 0, 0},
-  {kVHelp_1w,      0,         kSTaskhelp_1w,     false, 0, 0},
-  {kVMagic_1w,     0,         kSTabracadabra_1w, false, 0, 0},
-  {kVDig_1w,       0,         kSTnodig_1w,       false, 0, 0},
-  {kVRude_1w,      0,         kSTnorude_1w,      false, 0, 0},
-  {kVKnock_1w,     0,         kSTnoanswer_1w,    false, 0, 0},
-  {kVTake_1w,      kNPicture_1w, kSTenopurps_1w,    false, 0, 0},
-  {kVHero,         kNCut_1w,     kSTCutHero_1w,     false, 0, 0},
-  {kVHero,         kNOil_1w,     kSTOilHero_1w,     false, 0, 0},
-  {kVMakeUseOf_1w, kNGold_1w,    kSTGoldHero_1w,    false, 0, 0},
-  {kVLook_1w,      kNMonkey_1w,  kSTLookMonkey_1w,  false, 0, 0},
-  {0,           0,         0,              false, 0, 0}
+	{kVJump_1w,      0,         kSTnojump_1w,      false, 0, 0},
+	{kVGo_1w,        0,         kSTtrywalk_1w,     false, 0, 0},
+	{kVEnter_1w,     0,         kSTtrywalk_1w,     false, 0, 0},
+	{kVClimb_1w,     0,         kSTnoclimb_1w,     false, 0, 0},
+	{kVShout_1w,     0,         kSTnothing_1w,     false, 0, 0},
+	{kVTalk_1w,      0,         kSTnotalk_1w,      false, 0, 0},
+	{kVSwitch_1w,    0,         kSTenopurps_1w,    false, 0, 0},
+	{kVThrowit_1w,   0,         kSTenopurps_1w,    false, 0, 0},
+	{kVAttack_1w,    0,         kSTnoattack_1w,    false, 0, 0},
+	{kVBreak_1w,     0,         kSTnobreak_1w,     false, 0, 0},
+	{kVListen_1w,    0,         kSTnonoise_1w,     false, 0, 0},
+	{kVSmell_1w,     0,         kSTnosmell_1w,     false, 0, 0},
+	{kVQuery_1w,     0,         kSTnoidea_1w,      false, 0, 0},
+	{kVLook_1w,      kNSky_1w,     kSTlooksky_1w,     false, 0, 0},
+	{kVLook_1w,      kNWall_1w,    kSTedull_1w,       false, 0, 0},
+	{kVLook_1w,      kNGround_1w,  kSTedull_1w,       false, 0, 0},
+	{kVHelp_1w,      0,         kSTaskhelp_1w,     false, 0, 0},
+	{kVMagic_1w,     0,         kSTabracadabra_1w, false, 0, 0},
+	{kVDig_1w,       0,         kSTnodig_1w,       false, 0, 0},
+	{kVRude_1w,      0,         kSTnorude_1w,      false, 0, 0},
+	{kVKnock_1w,     0,         kSTnoanswer_1w,    false, 0, 0},
+	{kVTake_1w,      kNPicture_1w, kSTenopurps_1w,    false, 0, 0},
+	{kVHero,         kNCut_1w,     kSTCutHero_1w,     false, 0, 0},
+	{kVHero,         kNOil_1w,     kSTOilHero_1w,     false, 0, 0},
+	{kVMakeUseOf_1w, kNGold_1w,    kSTGoldHero_1w,    false, 0, 0},
+	{kVLook_1w,      kNMonkey_1w,  kSTLookMonkey_1w,  false, 0, 0},
+	{0,           0,         0,              false, 0, 0}
 };
 
 background_t screen0_desc_1w[] = {						// Outside house
-  {kVLook_1w,  kNTree_1w,   kSTlooktree_1w,    false, 0, 0},
-  {kVLook_1w,  kNFence_1w,  kSTlookfence_1w,   false, 0, 0},
-  {kVLook_1w,  kNHouse_1w,  kSTlookhouse_1w,   false, 0, 0},
-  {kVLook_1w,  kNWindow_1w, kSTlookwindow_1w,  false, 0, 0},
-  {kVLook_1w,  kNRoof_1w,   kSTedull_1w,       false, 0, 0},
-  {kVLook_1w,  kNLight_1w,  kSTedull_1w,       false, 0, 0},
-  {kVLook_1w,  kNMoon_1w,   kSTlookmoon_1w,    false, 0, 0},
-  {kVClimb_1w, kNTree_1w,   kSTclimbtree1_1w,  false, 0, 0},
-  {kVClimb_1w, kNFence_1w,  kSTclimbfence_1w,  false, 0, 0},
-  {kVEat_1w,   kNPkin_1w,   kSTeatpumpkin_1w,  false, 0, 0},
-  {kVUnder_1w, kNCarpet_1w, kSTundermat_1w,    false, 0, 0},
-  {kVLook_1w,  0,        kSTlookscreen0_1w, true,  0, 0},
-  {0,       0,        0,              false, 0, 0}
+	{kVLook_1w,  kNTree_1w,   kSTlooktree_1w,    false, 0, 0},
+	{kVLook_1w,  kNFence_1w,  kSTlookfence_1w,   false, 0, 0},
+	{kVLook_1w,  kNHouse_1w,  kSTlookhouse_1w,   false, 0, 0},
+	{kVLook_1w,  kNWindow_1w, kSTlookwindow_1w,  false, 0, 0},
+	{kVLook_1w,  kNRoof_1w,   kSTedull_1w,       false, 0, 0},
+	{kVLook_1w,  kNLight_1w,  kSTedull_1w,       false, 0, 0},
+	{kVLook_1w,  kNMoon_1w,   kSTlookmoon_1w,    false, 0, 0},
+	{kVClimb_1w, kNTree_1w,   kSTclimbtree1_1w,  false, 0, 0},
+	{kVClimb_1w, kNFence_1w,  kSTclimbfence_1w,  false, 0, 0},
+	{kVEat_1w,   kNPkin_1w,   kSTeatpumpkin_1w,  false, 0, 0},
+	{kVUnder_1w, kNCarpet_1w, kSTundermat_1w,    false, 0, 0},
+	{kVLook_1w,  0,        kSTlookscreen0_1w, true,  0, 0},
+	{0,       0,        0,              false, 0, 0}
 };
 
 background_t screen1_desc_1w[] = {						// Hall
-  {kVLook_1w,   kNBat_1w,     kSTlookbat_1w,      false, 0, 0},
-  {kVLook_1w,   kNPicture_1w, kSTlookpicture_1w,  false, 0, 0},
-  {kVLook_1w,   kNTable_1w,   kSTlooktable_1w,    false, 0, 0},
-  {kVLook_1w,   kNCarpet_1w,  kSTedull_1w,        false, 0, 0},
-  {kVLook_1w,   kNStairs_1w,  kSTlookupstairs_1w, false, 0, 0},
-  {kVLook_1w,   kNLight_1w,   kSTlooklight_1w,    false, 0, 0},
-  {kVLook_1w,   0,         kSTlookscreen1_1w,  true,  0, 0},
-  {kVListen_1w, 0,         kSTlistenhall_1w,   false, 0, 0},
-  {0,        0,         0,               false, 0, 0}
+	{kVLook_1w,   kNBat_1w,     kSTlookbat_1w,      false, 0, 0},
+	{kVLook_1w,   kNPicture_1w, kSTlookpicture_1w,  false, 0, 0},
+	{kVLook_1w,   kNTable_1w,   kSTlooktable_1w,    false, 0, 0},
+	{kVLook_1w,   kNCarpet_1w,  kSTedull_1w,        false, 0, 0},
+	{kVLook_1w,   kNStairs_1w,  kSTlookupstairs_1w, false, 0, 0},
+	{kVLook_1w,   kNLight_1w,   kSTlooklight_1w,    false, 0, 0},
+	{kVLook_1w,   0,         kSTlookscreen1_1w,  true,  0, 0},
+	{kVListen_1w, 0,         kSTlistenhall_1w,   false, 0, 0},
+	{0,        0,         0,               false, 0, 0}
 };
 
 background_t screen2_desc_1w[] = {						// Bedroom 1
-  {kVLook_1w,  kNBed_1w,    kSTlookbed_1w,     false, 0, 0},
-  {kVUnder_1w, kNBed_1w,    kSTlookbed_1w,     false, 0, 0},
-  {kVRide_1w,  kNBed_1w,    kSTnosnooze_1w,    false, 0, 0},
-  {kVInto_1w,  kNBed_1w,    kSTnosnooze_1w,    false, 0, 0},
-  {kVLook_1w,  kNWard_1w,   kSTlookward_1w,    false, 0, 0},
-  {kVLook_1w,  kNCupb_1w,   kSTlookcupbd_1w,   false, 0, 0},
-  {kVLook_1w,  kNWindow_1w, kSTlookbed1win_1w, false, 0, 0},
-  {kVLook_1w,  kNLight_1w,  kSTedull_1w,       false, 0, 0},
-  {kVLook_1w,  kNFace_1w,   kSTlookface_1w,    false, 0, 0},
-  {kVLook_1w,  0,        kSTlookscreen2_1w, true,  0, 0},
-  {0,       0,        0,              false, 0, 0}
+	{kVLook_1w,  kNBed_1w,    kSTlookbed_1w,     false, 0, 0},
+	{kVUnder_1w, kNBed_1w,    kSTlookbed_1w,     false, 0, 0},
+	{kVRide_1w,  kNBed_1w,    kSTnosnooze_1w,    false, 0, 0},
+	{kVInto_1w,  kNBed_1w,    kSTnosnooze_1w,    false, 0, 0},
+	{kVLook_1w,  kNWard_1w,   kSTlookward_1w,    false, 0, 0},
+	{kVLook_1w,  kNCupb_1w,   kSTlookcupbd_1w,   false, 0, 0},
+	{kVLook_1w,  kNWindow_1w, kSTlookbed1win_1w, false, 0, 0},
+	{kVLook_1w,  kNLight_1w,  kSTedull_1w,       false, 0, 0},
+	{kVLook_1w,  kNFace_1w,   kSTlookface_1w,    false, 0, 0},
+	{kVLook_1w,  0,        kSTlookscreen2_1w, true,  0, 0},
+	{0,       0,        0,              false, 0, 0}
 };
 
 background_t screen3_desc_1w[] = {						// Dining room
-  {kVLook_1w,   kNTable_1w,   kSTlookspread_1w,      false, 0, 0},
-  {kVLook_1w,   kNButler_1w,  kSTlookbutler_1w,      false, 0, 0},
-  {kVLook_1w,   kNPlant_1w,   kSTlookplant_1w,       false, 0, 0},
-  {kVLook_1w,   kNPicture_1w, kSTlookzelda_1w,       false, 0, 0},
-  {kVLook_1w,   kNWitch_1w,   kSTlookzelda_1w,       false, 0, 0},
-  {kVLook_1w,   kNWindow_1w,  kSTlookdiningwin_1w,   false, 0, 0},
-  {kVLook_1w,   kNFood_1w,    kSTlookfood_1w,        false, 0, 0},
-  {kVLook_1w,   kNMan_1w,     kSTlookdiningman_1w,   false, 0, 0},
-  {kVLook_1w,   kNCupb_1w,    kSTedull_1w,           false, 0, 0},
-  {kVLook_1w,   kNWoman_1w,   kSTlookwoman_1w,       false, 0, 0},
-  {kVLook_1w,   0,         kSTlookscreen3_1w,     true,  0, 0},
-  {kVSit_1w,    0,         kSTsitdown_1w,         false, 0, 0},
-  {kVTake_1w,   kNFood_1w,    kSTtakefood_1w,        false, 0, 0},
-  {kVEat_1w,    0,         kSTtakefood_1w,        false, 0, 0},
-  {kVTalk_1w,   kNMan_1w,     kSTtalkdiningman_1w,   false, 0, 0},
-  {kVTalk_1w,   kNWoman_1w,   kSTtalkdiningwoman_1w, false, 0, 0},
-  {kVTalk_1w,   kNButler_1w,  kSTtalkbutler_1w,      false, 0, 0},
-  {kVKiss_1w,   0,         kSTskiss_1w,           false, 0, 0},
-  {kVListen_1w, 0,         kSTlistendining_1w,    false, 0, 0},
-  {kVDrink_1w,  0,         kSTdrinkdining_1w,     false, 0, 0},
-  {0,        0,         0,                  false, 0, 0}
+	{kVLook_1w,   kNTable_1w,   kSTlookspread_1w,      false, 0, 0},
+	{kVLook_1w,   kNButler_1w,  kSTlookbutler_1w,      false, 0, 0},
+	{kVLook_1w,   kNPlant_1w,   kSTlookplant_1w,       false, 0, 0},
+	{kVLook_1w,   kNPicture_1w, kSTlookzelda_1w,       false, 0, 0},
+	{kVLook_1w,   kNWitch_1w,   kSTlookzelda_1w,       false, 0, 0},
+	{kVLook_1w,   kNWindow_1w,  kSTlookdiningwin_1w,   false, 0, 0},
+	{kVLook_1w,   kNFood_1w,    kSTlookfood_1w,        false, 0, 0},
+	{kVLook_1w,   kNMan_1w,     kSTlookdiningman_1w,   false, 0, 0},
+	{kVLook_1w,   kNCupb_1w,    kSTedull_1w,           false, 0, 0},
+	{kVLook_1w,   kNWoman_1w,   kSTlookwoman_1w,       false, 0, 0},
+	{kVLook_1w,   0,         kSTlookscreen3_1w,     true,  0, 0},
+	{kVSit_1w,    0,         kSTsitdown_1w,         false, 0, 0},
+	{kVTake_1w,   kNFood_1w,    kSTtakefood_1w,        false, 0, 0},
+	{kVEat_1w,    0,         kSTtakefood_1w,        false, 0, 0},
+	{kVTalk_1w,   kNMan_1w,     kSTtalkdiningman_1w,   false, 0, 0},
+	{kVTalk_1w,   kNWoman_1w,   kSTtalkdiningwoman_1w, false, 0, 0},
+	{kVTalk_1w,   kNButler_1w,  kSTtalkbutler_1w,      false, 0, 0},
+	{kVKiss_1w,   0,         kSTskiss_1w,           false, 0, 0},
+	{kVListen_1w, 0,         kSTlistendining_1w,    false, 0, 0},
+	{kVDrink_1w,  0,         kSTdrinkdining_1w,     false, 0, 0},
+	{0,        0,         0,                  false, 0, 0}
 };
 
 background_t screen4_desc_1w[] = {						// Bathroom
-  {kVLook_1w, kNWindow_1w, kSTlookbathwin_1w, false, 0, 0},
-  {kVLook_1w, kNLight_1w,  kSTedull_1w,       false, 0, 0},
-  {kVLook_1w, kNMirror_1w, kSTlookmirror_1w,  false, 0, 0},
-  {kVLook_1w, kNToilet_1w, kSTlooktoilet_1w,  false, 0, 0},
-  {kVLook_1w, kNBath_1w,   kSTlooktub_1w,     false, 0, 0},
-  {kVLook_1w, kNSink_1w,   kSTedull_1w,       false, 0, 0},
-  {kVLook_1w, 0,        kSTlookscreen4_1w, true,  0, 0},
-  {kVCrap_1w, 0,        kSTdopoo_1w,       false, 0, 0},
-  {kVSit_1w,  kNToilet_1w, kSTdowee_1w,       false, 0, 0},
-  {kVRide_1w, kNToilet_1w, kSTdowee_1w,       false, 0, 0},
-  {kVInto_1w, kNBath_1w,   kSTusetub_1w,      false, 0, 0},
-  {kVTake_1w, kNBath_1w,   kSTusetub_1w,      false, 0, 0},
-  {kVSit_1w,  0,        kSTsittoilet_1w,   false, 0, 0},
-  {kVWash_1w, kNHands_1w,  kSTwashhands_1w,   false, 0, 0},
-  {0,      0,        0,              false, 0, 0}
+	{kVLook_1w, kNWindow_1w, kSTlookbathwin_1w, false, 0, 0},
+	{kVLook_1w, kNLight_1w,  kSTedull_1w,       false, 0, 0},
+	{kVLook_1w, kNMirror_1w, kSTlookmirror_1w,  false, 0, 0},
+	{kVLook_1w, kNToilet_1w, kSTlooktoilet_1w,  false, 0, 0},
+	{kVLook_1w, kNBath_1w,   kSTlooktub_1w,     false, 0, 0},
+	{kVLook_1w, kNSink_1w,   kSTedull_1w,       false, 0, 0},
+	{kVLook_1w, 0,        kSTlookscreen4_1w, true,  0, 0},
+	{kVCrap_1w, 0,        kSTdopoo_1w,       false, 0, 0},
+	{kVSit_1w,  kNToilet_1w, kSTdowee_1w,       false, 0, 0},
+	{kVRide_1w, kNToilet_1w, kSTdowee_1w,       false, 0, 0},
+	{kVInto_1w, kNBath_1w,   kSTusetub_1w,      false, 0, 0},
+	{kVTake_1w, kNBath_1w,   kSTusetub_1w,      false, 0, 0},
+	{kVSit_1w,  0,        kSTsittoilet_1w,   false, 0, 0},
+	{kVWash_1w, kNHands_1w,  kSTwashhands_1w,   false, 0, 0},
+	{0,      0,        0,              false, 0, 0}
 };
 
 background_t screen5_desc_1w[] = {						// Kitchen
-  {kVLook_1w,   kNLight_1w,  kSTedull_1w,          false, 0, 0},
-  {kVLook_1w,   kNUnits_1w,  kSTlookunits_1w,      false, 0, 0},
-  {kVOpen_1w,   kNUnits_1w,  kSTeempty_1w,         false, 0, 0},
-  {kVLook_1w,   kNWindow_1w, kSTlookkitchenwin_1w, false, 0, 0},
-  {kVLook_1w,   kNBroom_1w,  kSTlookbroom_1w,      false, 0, 0},
-  {kVTake_1w,   kNBroom_1w,  kSTtakebroom_1w,      false, 0, 0},
-  {kVRide_1w,   kNBroom_1w,  kSTridebroom_1w,      false, 0, 0},
-  {kVLook_1w,   0,        kSTlookscreen5_1w,    true,  0, 0},
-  {kVSweep_1w,  0,        kSTsweepbroom_1w,     false, 0, 0},
-  {kVListen_1w, 0,        kSTlistenkitchen_1w,  false, 0, 0},
-  {0,        0,        0,                 false, 0, 0}
+	{kVLook_1w,   kNLight_1w,  kSTedull_1w,          false, 0, 0},
+	{kVLook_1w,   kNUnits_1w,  kSTlookunits_1w,      false, 0, 0},
+	{kVOpen_1w,   kNUnits_1w,  kSTeempty_1w,         false, 0, 0},
+	{kVLook_1w,   kNWindow_1w, kSTlookkitchenwin_1w, false, 0, 0},
+	{kVLook_1w,   kNBroom_1w,  kSTlookbroom_1w,      false, 0, 0},
+	{kVTake_1w,   kNBroom_1w,  kSTtakebroom_1w,      false, 0, 0},
+	{kVRide_1w,   kNBroom_1w,  kSTridebroom_1w,      false, 0, 0},
+	{kVLook_1w,   0,        kSTlookscreen5_1w,    true,  0, 0},
+	{kVSweep_1w,  0,        kSTsweepbroom_1w,     false, 0, 0},
+	{kVListen_1w, 0,        kSTlistenkitchen_1w,  false, 0, 0},
+	{0,        0,        0,                 false, 0, 0}
 };
 
 background_t screen6_desc_1w[] = {						// Garden
-  {kVLook_1w,  kNShed_1w,       kSTlookShed_1w,    false, 0, 0},
-  {kVLook_1w,  kNMoon_1w,       kSTedull_1w,       false, 0, 0},
-  {kVLook_1w,  kNTree_1w,       kSTlooktree_1w,    false, 0, 0},
-  {kVClimb_1w, kNTree_1w,       kSTclimbtree_1w,   false, 0, 0},
-  {kVLook_1w,  kNGardenbits_1w, kSTlookgarden_1w,  false, 0, 0},
-  {kVLook_1w,  0,            kSTlookscreen6_1w, true,  0, 0},
-  {0,       0,            0,              false, 0, 0}
+	{kVLook_1w,  kNShed_1w,       kSTlookShed_1w,    false, 0, 0},
+	{kVLook_1w,  kNMoon_1w,       kSTedull_1w,       false, 0, 0},
+	{kVLook_1w,  kNTree_1w,       kSTlooktree_1w,    false, 0, 0},
+	{kVClimb_1w, kNTree_1w,       kSTclimbtree_1w,   false, 0, 0},
+	{kVLook_1w,  kNGardenbits_1w, kSTlookgarden_1w,  false, 0, 0},
+	{kVLook_1w,  0,            kSTlookscreen6_1w, true,  0, 0},
+	{0,       0,            0,              false, 0, 0}
 };
 
 background_t screen7_desc_1w[] = {						// Store room
-  {kVLook_1w,   kNCarpet_1w,    kSTLookCarpet_1w,    false, 0, 0},
-  {kVLook_1w,   kNLight_1w,     kSTedull_1w,         false, 0, 0},
-  {kVUnbolt_1w, kNTrap_1w,      kSTsayunbolt_1w,     false, 0, 0},
-  {kVLook_1w,   kNMousehole_1w, kSTlookmousehole_1w, false, 0, 0},
-  {kVTake_1w,   kNMousehole_1w, kSTtakedroppings_1w, false, 0, 0},
-  {kVTake_1w,   kNDroppings_1w, kSTtakedroppings_1w, false, 0, 0},
-  {kVStroke_1w, kNDog_1w,       kSTStrokeDog_1w,     false, 0, 0},
-  {kVGive_1w,   kNChop_1w,      kSTchop1_1w,         false, 0, 0},
-  {kVFeed_1w,   kNDog_1w,       kSTchop1_1w,         false, 0, 0},
-  {kVLook_1w,   0,           kSTlookscreen7_1w,   true,  0, 0},
-  {0,        0,           0,                false, 0, 0}
+	{kVLook_1w,   kNCarpet_1w,    kSTLookCarpet_1w,    false, 0, 0},
+	{kVLook_1w,   kNLight_1w,     kSTedull_1w,         false, 0, 0},
+	{kVUnbolt_1w, kNTrap_1w,      kSTsayunbolt_1w,     false, 0, 0},
+	{kVLook_1w,   kNMousehole_1w, kSTlookmousehole_1w, false, 0, 0},
+	{kVTake_1w,   kNMousehole_1w, kSTtakedroppings_1w, false, 0, 0},
+	{kVTake_1w,   kNDroppings_1w, kSTtakedroppings_1w, false, 0, 0},
+	{kVStroke_1w, kNDog_1w,       kSTStrokeDog_1w,     false, 0, 0},
+	{kVGive_1w,   kNChop_1w,      kSTchop1_1w,         false, 0, 0},
+	{kVFeed_1w,   kNDog_1w,       kSTchop1_1w,         false, 0, 0},
+	{kVLook_1w,   0,           kSTlookscreen7_1w,   true,  0, 0},
+	{0,        0,           0,                false, 0, 0}
 };
 
 background_t screen8_desc_1w[] = {						// Basement
-  {kVLook_1w,   kNLight_1w,    kSTedull_1w,          false, 0, 0},
-  {kVLook_1w,   kNDoor_1w,     kSTlookbasedoor_1w,   false, 0, 0},
-  {kVPush_1w,   kNDoor_1w,     kSTpushbasedoor_1w,   false, 0, 0},
-  {kVOil_1w,    kNDoor_1w,     kSToilbasedoor_1w,    false, 0, 0},
-  {kVLook_1w,   kNRock_1w,     kSTexaminerock_1w,    false, 0, 0},
-  {kVPush_1w,   kNRock_1w,     kSTnowayhose_1w,      false, 0, 0},
-  {kVLift_1w,   kNRock_1w,     kSTnowayhose_1w,      false, 0, 0},
-  {kVMove_1w,   kNRock_1w,     kSTnowayhose_1w,      false, 0, 0},
-  {kVUnder_1w,  kNRock_1w,     kSTnounder_1w,        false, 0, 0},
-  {kVAttack_1w, kNDoor_1w,     kSTbreakbasedoor_1w,  false, 0, 0},
-  {kVBreak_1w,  kNDoor_1w,     kSTbreakbasedoor_1w,  false, 0, 0},
-  {kVOpen_1w,   kNDoor_1w,     kSTopenbasedoor_1w,   false, 0, 0},
-  {kVUnlock_1w, kNDoor_1w,     kSTunlockbasedoor_1w, false, 0, 0},
-  {kVKnock_1w,  kNDoor_1w,     kSTknockbasedoor_1w,  false, 0, 0},
-  {kVTalk_1w,   kNPenelope_1w, kSTtalkpenelope_1w,   false, 0, 0},
-  {kVShout_1w,  kNPenelope_1w, kSTtalkpenelope_1w,   false, 0, 0},
-  {kVListen_1w, 0,          kSTlistenbase_1w,     false, 0, 0},
-  {kVLook_1w,   0,          kSTlookscreen8_1w,    true,  0, 0},
-  {0,        0,          0,                 false, 0, 0}
+	{kVLook_1w,   kNLight_1w,    kSTedull_1w,          false, 0, 0},
+	{kVLook_1w,   kNDoor_1w,     kSTlookbasedoor_1w,   false, 0, 0},
+	{kVPush_1w,   kNDoor_1w,     kSTpushbasedoor_1w,   false, 0, 0},
+	{kVOil_1w,    kNDoor_1w,     kSToilbasedoor_1w,    false, 0, 0},
+	{kVLook_1w,   kNRock_1w,     kSTexaminerock_1w,    false, 0, 0},
+	{kVPush_1w,   kNRock_1w,     kSTnowayhose_1w,      false, 0, 0},
+	{kVLift_1w,   kNRock_1w,     kSTnowayhose_1w,      false, 0, 0},
+	{kVMove_1w,   kNRock_1w,     kSTnowayhose_1w,      false, 0, 0},
+	{kVUnder_1w,  kNRock_1w,     kSTnounder_1w,        false, 0, 0},
+	{kVAttack_1w, kNDoor_1w,     kSTbreakbasedoor_1w,  false, 0, 0},
+	{kVBreak_1w,  kNDoor_1w,     kSTbreakbasedoor_1w,  false, 0, 0},
+	{kVOpen_1w,   kNDoor_1w,     kSTopenbasedoor_1w,   false, 0, 0},
+	{kVUnlock_1w, kNDoor_1w,     kSTunlockbasedoor_1w, false, 0, 0},
+	{kVKnock_1w,  kNDoor_1w,     kSTknockbasedoor_1w,  false, 0, 0},
+	{kVTalk_1w,   kNPenelope_1w, kSTtalkpenelope_1w,   false, 0, 0},
+	{kVShout_1w,  kNPenelope_1w, kSTtalkpenelope_1w,   false, 0, 0},
+	{kVListen_1w, 0,          kSTlistenbase_1w,     false, 0, 0},
+	{kVLook_1w,   0,          kSTlookscreen8_1w,    true,  0, 0},
+	{0,        0,          0,                 false, 0, 0}
 };
 
 background_t screen9_desc_1w[] = {						// Bat cave
-  {kVLook_1w,  0,      kSTlookscreen9_1w, true,  0, 0},
-  {kVLook_1w,  kNRock_1w, kSTlookrock_1w,    false, 0, 0},
-  {kVPush_1w,  kNRock_1w, kSTnowayhose_1w,   false, 0, 0},
-  {kVLift_1w,  kNRock_1w, kSTnowayhose_1w,   false, 0, 0},
-  {kVMove_1w,  kNRock_1w, kSTnowayhose_1w,   false, 0, 0},
-  {kVUnder_1w, kNRock_1w, kSTnounder_1w,     false, 0, 0},
-  {0,       0,      0,              false, 0, 0}
+	{kVLook_1w,  0,      kSTlookscreen9_1w, true,  0, 0},
+	{kVLook_1w,  kNRock_1w, kSTlookrock_1w,    false, 0, 0},
+	{kVPush_1w,  kNRock_1w, kSTnowayhose_1w,   false, 0, 0},
+	{kVLift_1w,  kNRock_1w, kSTnowayhose_1w,   false, 0, 0},
+	{kVMove_1w,  kNRock_1w, kSTnowayhose_1w,   false, 0, 0},
+	{kVUnder_1w, kNRock_1w, kSTnounder_1w,     false, 0, 0},
+	{0,       0,      0,              false, 0, 0}
 };
 
 background_t screen10_desc_1w[] = {					// Mummy room
-  {kVLook_1w,  0,       kSTlookscreen10_1w, true,  0, 0},
-  {kVLook_1w,  kNRock_1w,  kSTlookrock_1w,     false, 0, 0},
-  {kVPush_1w,  kNRock_1w,  kSTnowayhose_1w,    false, 0, 0},
-  {kVLift_1w,  kNRock_1w,  kSTnowayhose_1w,    false, 0, 0},
-  {kVMove_1w,  kNRock_1w,  kSTnowayhose_1w,    false, 0, 0},
-  {kVUnder_1w, kNRock_1w,  kSTnounder_1w,      false, 0, 0},
-  {kVLook_1w,  kNTomb_1w,  kSTlooktomb_1w,     false, 0, 0},
-  {kVLook_1w,  kNMummy_1w, kSTLookMummy_1w,    false, 0, 0},
-  {kVTalk_1w,  kNMummy_1w, kSTTalkMummy_1w,    false, 0, 0},
-  {0,       0,       0,               false, 0, 0}
+	{kVLook_1w,  0,       kSTlookscreen10_1w, true,  0, 0},
+	{kVLook_1w,  kNRock_1w,  kSTlookrock_1w,     false, 0, 0},
+	{kVPush_1w,  kNRock_1w,  kSTnowayhose_1w,    false, 0, 0},
+	{kVLift_1w,  kNRock_1w,  kSTnowayhose_1w,    false, 0, 0},
+	{kVMove_1w,  kNRock_1w,  kSTnowayhose_1w,    false, 0, 0},
+	{kVUnder_1w, kNRock_1w,  kSTnounder_1w,      false, 0, 0},
+	{kVLook_1w,  kNTomb_1w,  kSTlooktomb_1w,     false, 0, 0},
+	{kVLook_1w,  kNMummy_1w, kSTLookMummy_1w,    false, 0, 0},
+	{kVTalk_1w,  kNMummy_1w, kSTTalkMummy_1w,    false, 0, 0},
+	{0,       0,       0,               false, 0, 0}
 };
 
 background_t screen11_desc_1w[] = {					// Lake room
-  {kVLook_1w,      kNRock_1w, kSTlookrock_1w,     false, 0, 0},
-  {kVPush_1w,      kNRock_1w, kSTnowayhose_1w,    false, 0, 0},
-  {kVLift_1w,      kNRock_1w, kSTnowayhose_1w,    false, 0, 0},
-  {kVMove_1w,      kNRock_1w, kSTnowayhose_1w,    false, 0, 0},
-  {kVUnder_1w,     kNRock_1w, kSTnounder_1w,      false, 0, 0},
-  {kVLook_1w,      0,      kSTlookscreen11_1w, true,  0, 0},
-  {kVLakeverbs_1w, 0,      kSTsuggestboat_1w,  false, 0, 0},
-  {kVDrink_1w,     0,      kSTnotthirsty_1w,   false, 0, 0},
-  {kVPlug_1w,      0,      kSTqueryplug_1w,    false, 0, 0},
-  {kVMakeUseOf_1w, kNBoat_1w, kSTsShutup_1w,      false, 0, 0},
-  {0,           0,      0,               false, 0, 0}
+	{kVLook_1w,      kNRock_1w, kSTlookrock_1w,     false, 0, 0},
+	{kVPush_1w,      kNRock_1w, kSTnowayhose_1w,    false, 0, 0},
+	{kVLift_1w,      kNRock_1w, kSTnowayhose_1w,    false, 0, 0},
+	{kVMove_1w,      kNRock_1w, kSTnowayhose_1w,    false, 0, 0},
+	{kVUnder_1w,     kNRock_1w, kSTnounder_1w,      false, 0, 0},
+	{kVLook_1w,      0,      kSTlookscreen11_1w, true,  0, 0},
+	{kVLakeverbs_1w, 0,      kSTsuggestboat_1w,  false, 0, 0},
+	{kVDrink_1w,     0,      kSTnotthirsty_1w,   false, 0, 0},
+	{kVPlug_1w,      0,      kSTqueryplug_1w,    false, 0, 0},
+	{kVMakeUseOf_1w, kNBoat_1w, kSTsShutup_1w,      false, 0, 0},
+	{0,           0,      0,               false, 0, 0}
 };
 
 background_t screen12_desc_1w[] = {					// Dead end
-  {kVLook_1w,  kNRock_1w,  kSTlookrock_1w,     false, 0, 0},
-  {kVPush_1w,  kNRock_1w,  kSTnowayhose_1w,    false, 0, 0},
-  {kVLift_1w,  kNRock_1w,  kSTnowayhose_1w,    false, 0, 0},
-  {kVMove_1w,  kNRock_1w,  kSTnowayhose_1w,    false, 0, 0},
-  {kVUnder_1w, kNRock_1w,  kSTnounder_1w,      false, 0, 0},
-  {kVLook_1w,  0,       kSTlookscreen12_1w, true,  0, 0},
-  {kVTalk_1w,  kNGuard_1w, kSTtalkguard_1w,    false, 0, 0},
-  {0,       0,       0,               false, 0, 0}
+	{kVLook_1w,  kNRock_1w,  kSTlookrock_1w,     false, 0, 0},
+	{kVPush_1w,  kNRock_1w,  kSTnowayhose_1w,    false, 0, 0},
+	{kVLift_1w,  kNRock_1w,  kSTnowayhose_1w,    false, 0, 0},
+	{kVMove_1w,  kNRock_1w,  kSTnowayhose_1w,    false, 0, 0},
+	{kVUnder_1w, kNRock_1w,  kSTnounder_1w,      false, 0, 0},
+	{kVLook_1w,  0,       kSTlookscreen12_1w, true,  0, 0},
+	{kVTalk_1w,  kNGuard_1w, kSTtalkguard_1w,    false, 0, 0},
+	{0,       0,       0,               false, 0, 0}
 };
 
 background_t screen13_desc_1w[] = {					// Jail
-  {0, 0, 0, false, 0, 0}
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen14_desc_1w[] = {					// The end
-  {0, 0, 0, false, 0, 0}
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen15_desc_1w[] =  {					// Laboratory
-  {kVLook_1w,  0,             kSTlookscreen15_1w, true,  0, 0},
-  {kVTalk_1w,  kNIgor_1w,        kSTtalkigor_1w,     false, 0, 0},
-  {kVTalk_1w,  kNProf_1w,        kSTtalkprof_1w,     false, 0, 0},
-  {kVLook_1w,  kNMachinebits_1w, kSTlookmachine_1w,  false, 0, 0},
-  {kVPush_1w,  kNMachinebits_1w, kSTusemachine_1w,   false, 0, 0},
-  {kVLook_1w,  kNTable_1w,       kSTlooklabtable_1w, false, 0, 0},
-  {kVClose_1w, kNDoor_1w,        kSTuseboxdoor_1w,   false, 0, 0},
-  {kVOpen_1w,  kNDoor_1w,        kSTuseboxdoor_1w,   false, 0, 0},
-  {kVLook_1w,  kNLight_1w,       kSTlooklights_1w,   false, 0, 0},
-  {kVLook_1w,  kNBooth_1w,       kSTlookbooth_1w,    false, 0, 0},
-  {0,       0,             0,               false, 0, 0}
+	{kVLook_1w,  0,             kSTlookscreen15_1w, true,  0, 0},
+	{kVTalk_1w,  kNIgor_1w,        kSTtalkigor_1w,     false, 0, 0},
+	{kVTalk_1w,  kNProf_1w,        kSTtalkprof_1w,     false, 0, 0},
+	{kVLook_1w,  kNMachinebits_1w, kSTlookmachine_1w,  false, 0, 0},
+	{kVPush_1w,  kNMachinebits_1w, kSTusemachine_1w,   false, 0, 0},
+	{kVLook_1w,  kNTable_1w,       kSTlooklabtable_1w, false, 0, 0},
+	{kVClose_1w, kNDoor_1w,        kSTuseboxdoor_1w,   false, 0, 0},
+	{kVOpen_1w,  kNDoor_1w,        kSTuseboxdoor_1w,   false, 0, 0},
+	{kVLook_1w,  kNLight_1w,       kSTlooklights_1w,   false, 0, 0},
+	{kVLook_1w,  kNBooth_1w,       kSTlookbooth_1w,    false, 0, 0},
+	{0,       0,             0,               false, 0, 0}
 };
 
 
@@ -2729,472 +2729,472 @@ objectList_t backgroundList_1w[] = {
 
 background_t catchall_2w[] = {					// Generally applicable phrases
 // Make sure verbs with nouns come before same verb with 0
-  {kVTake_2w,      kNPicture_2w,    kSTNopurps_2w,      false, DONT_CARE, 0},
-  {kVLook_2w,      kNPenny_2w,      kSTLookpen_2w,      false, DONT_CARE, 0},
-  {kVKiss_2w,      kNPenny_2w,      kSTMmmm_2w,         false, DONT_CARE, 0},
-  {kVRude_2w,      kNPenny_2w,      kSTHeadache_2w,     false, DONT_CARE, 0},
-  {kVLook_2w,      kNStairs_2w,     kSTDull_2w,         false, DONT_CARE, 0},
-  {kVUnder_2w,     kNStairs_2w,     kSTDull_2w,         false, DONT_CARE, 0},
-  {kVLook_2w,      kNPlant_2w,      kSTSplant_2w,       false, DONT_CARE, 0},
-  {kVLook_2w,      kNWindow_2w,     kSTS6garden_2w,     false, DONT_CARE, 0},
-  {kVLook_2w,      kNPicture_2w,    kSTSpicture_2w,     false, DONT_CARE, 0},
-  {kVLook_2w,      kNMirror_2w,     kSTDull_2w,         false, DONT_CARE, 0},
-  {kVLook_2w,      kNTable_2w,      kSTNo_on_2w,        false, DONT_CARE, 0},
-  {kVJump_2w,      0,            kSTSjump_2w,        false, DONT_CARE, 0},
-  {kVGo_2w,        0,            kSTTrywalk_2w,      false, DONT_CARE, 0},
-  {kVInto_2w,      0,            kSTTrywalk_2w,      false, DONT_CARE, 0},
-  {kVClimb_2w,     0,            kSTSclimb_2w,       false, DONT_CARE, 0},
-  {kVShout_2w,     0,            kSTNothing_2w,      false, DONT_CARE, 0},
-  {kVTalk_2w,      0,            kSTStalk_2w,        false, DONT_CARE, 0},
-  {kVSwitch_2w,    0,            kSTMorespecific_2w, false, DONT_CARE, 0},
-  {kVThrowit_2w,   0,            kSTNopurps_2w,      false, DONT_CARE, 0},
-  {kVAttack_2w,    0,            kSTSattack_2w,      false, DONT_CARE, 0},
-  {kVBreak_2w,     0,            kSTSbreak_2w,       false, DONT_CARE, 0},
-  {kVListen_2w,    0,            kSTQuiet_2w,        false, DONT_CARE, 0},
-  {kVSmell_2w,     0,            kSTAroma_2w,        false, DONT_CARE, 0},
-  {kVQuery_2w,     0,            kSTNoidea_2w,       false, DONT_CARE, 0},
-  {kVLook_2w,      kNSky_2w,        kSTFalling_2w,      false, DONT_CARE, 0},
-  {kVLook_2w,      kNWall_2w,       kSTDull_2w,         false, DONT_CARE, 0},
-  {kVLook_2w,      kNGround_2w,     kSTDull_2w,         false, DONT_CARE, 0},
-  {kVHelp_2w,      0,            kSTShelp_2w,        false, DONT_CARE, 0},
-  {kVMagic_2w,     0,            kSTSmagic_2w,       false, DONT_CARE, 0},
-  {kVWish_2w,      0,            kSTSmagic_2w,       false, DONT_CARE, 0},
-  {kVDig_2w,       0,            kSTSdig_2w,         false, DONT_CARE, 0},
-  {kVRude_2w,      0,            kSTSrude_2w,        false, DONT_CARE, 0},
-  {kVKnock_2w,     0,            kSTNoanswer_2w,     false, DONT_CARE, 0},
-  {kVOpen_2w,      kNDoor_2w,       kSTWontopen_2w,     false, DONT_CARE, 0},
-  {kVUnlock_2w,    kNDoor_2w,       kSTCantunlock_2w,   false, DONT_CARE, 0},
-  {kVLook_2w,      kNDoor_2w,       kSTDull_2w,         false, DONT_CARE, 0},
-  {kVLook_2w,      kNLight_2w,      kSTDull_2w,         false, DONT_CARE, 0},
-  {kVHello_2w,     0,            kSTHi_2w,           false, DONT_CARE, 0},
-  {kVLook_2w,      kNFence_2w,      kSTLookover_2w,     false, DONT_CARE, 0},
-  {kVLook_2w,      kNWall_2w,       kSTLookover_2w,     false, DONT_CARE, 0},
-  {kVLook_2w,      kNGardenbits_2w, kSTDull_2w,         false, DONT_CARE, 0},
-  {kVGive_2w,      0,            kSTNothanks_2w,     false, DONT_CARE, 0},
-  {kVLook_2w,      kNTree_2w,       kSTDull2_2w,        false, DONT_CARE, 0},
-  {kVFire_2w,      0,            kSTFire2_2w,        false, DONT_CARE, 0},
-  {kVShout_2w,     0,            kSTNoanswer_2w,     false, DONT_CARE, 0},
-  {kVHerring_2w,   0,            kSTSherring_2w,     false, DONT_CARE, 0},
-  {kVUndress_2w,   0,            kSTSundress_2w,     false, DONT_CARE, 0},
-  {kVSit_2w,       0,            kSTStired_2w,       false, DONT_CARE, 0},
-  {kVFeed_2w,      0,            kSTNothanks_2w,     false, DONT_CARE, 0},
-  {kVRub_2w,       kNCatnip_2w,     kSTRubcatnip1_2w,   false, DONT_CARE, 0},
-  {kVMakeUseOf_2w, kNScrew_2w,      kSTLookScrew_2w,    false, DONT_CARE, 0},
-  {0,           0,            0,               false, 0,         0}
+	{kVTake_2w,      kNPicture_2w,    kSTNopurps_2w,      false, DONT_CARE, 0},
+	{kVLook_2w,      kNPenny_2w,      kSTLookpen_2w,      false, DONT_CARE, 0},
+	{kVKiss_2w,      kNPenny_2w,      kSTMmmm_2w,         false, DONT_CARE, 0},
+	{kVRude_2w,      kNPenny_2w,      kSTHeadache_2w,     false, DONT_CARE, 0},
+	{kVLook_2w,      kNStairs_2w,     kSTDull_2w,         false, DONT_CARE, 0},
+	{kVUnder_2w,     kNStairs_2w,     kSTDull_2w,         false, DONT_CARE, 0},
+	{kVLook_2w,      kNPlant_2w,      kSTSplant_2w,       false, DONT_CARE, 0},
+	{kVLook_2w,      kNWindow_2w,     kSTS6garden_2w,     false, DONT_CARE, 0},
+	{kVLook_2w,      kNPicture_2w,    kSTSpicture_2w,     false, DONT_CARE, 0},
+	{kVLook_2w,      kNMirror_2w,     kSTDull_2w,         false, DONT_CARE, 0},
+	{kVLook_2w,      kNTable_2w,      kSTNo_on_2w,        false, DONT_CARE, 0},
+	{kVJump_2w,      0,            kSTSjump_2w,        false, DONT_CARE, 0},
+	{kVGo_2w,        0,            kSTTrywalk_2w,      false, DONT_CARE, 0},
+	{kVInto_2w,      0,            kSTTrywalk_2w,      false, DONT_CARE, 0},
+	{kVClimb_2w,     0,            kSTSclimb_2w,       false, DONT_CARE, 0},
+	{kVShout_2w,     0,            kSTNothing_2w,      false, DONT_CARE, 0},
+	{kVTalk_2w,      0,            kSTStalk_2w,        false, DONT_CARE, 0},
+	{kVSwitch_2w,    0,            kSTMorespecific_2w, false, DONT_CARE, 0},
+	{kVThrowit_2w,   0,            kSTNopurps_2w,      false, DONT_CARE, 0},
+	{kVAttack_2w,    0,            kSTSattack_2w,      false, DONT_CARE, 0},
+	{kVBreak_2w,     0,            kSTSbreak_2w,       false, DONT_CARE, 0},
+	{kVListen_2w,    0,            kSTQuiet_2w,        false, DONT_CARE, 0},
+	{kVSmell_2w,     0,            kSTAroma_2w,        false, DONT_CARE, 0},
+	{kVQuery_2w,     0,            kSTNoidea_2w,       false, DONT_CARE, 0},
+	{kVLook_2w,      kNSky_2w,        kSTFalling_2w,      false, DONT_CARE, 0},
+	{kVLook_2w,      kNWall_2w,       kSTDull_2w,         false, DONT_CARE, 0},
+	{kVLook_2w,      kNGround_2w,     kSTDull_2w,         false, DONT_CARE, 0},
+	{kVHelp_2w,      0,            kSTShelp_2w,        false, DONT_CARE, 0},
+	{kVMagic_2w,     0,            kSTSmagic_2w,       false, DONT_CARE, 0},
+	{kVWish_2w,      0,            kSTSmagic_2w,       false, DONT_CARE, 0},
+	{kVDig_2w,       0,            kSTSdig_2w,         false, DONT_CARE, 0},
+	{kVRude_2w,      0,            kSTSrude_2w,        false, DONT_CARE, 0},
+	{kVKnock_2w,     0,            kSTNoanswer_2w,     false, DONT_CARE, 0},
+	{kVOpen_2w,      kNDoor_2w,       kSTWontopen_2w,     false, DONT_CARE, 0},
+	{kVUnlock_2w,    kNDoor_2w,       kSTCantunlock_2w,   false, DONT_CARE, 0},
+	{kVLook_2w,      kNDoor_2w,       kSTDull_2w,         false, DONT_CARE, 0},
+	{kVLook_2w,      kNLight_2w,      kSTDull_2w,         false, DONT_CARE, 0},
+	{kVHello_2w,     0,            kSTHi_2w,           false, DONT_CARE, 0},
+	{kVLook_2w,      kNFence_2w,      kSTLookover_2w,     false, DONT_CARE, 0},
+	{kVLook_2w,      kNWall_2w,       kSTLookover_2w,     false, DONT_CARE, 0},
+	{kVLook_2w,      kNGardenbits_2w, kSTDull_2w,         false, DONT_CARE, 0},
+	{kVGive_2w,      0,            kSTNothanks_2w,     false, DONT_CARE, 0},
+	{kVLook_2w,      kNTree_2w,       kSTDull2_2w,        false, DONT_CARE, 0},
+	{kVFire_2w,      0,            kSTFire2_2w,        false, DONT_CARE, 0},
+	{kVShout_2w,     0,            kSTNoanswer_2w,     false, DONT_CARE, 0},
+	{kVHerring_2w,   0,            kSTSherring_2w,     false, DONT_CARE, 0},
+	{kVUndress_2w,   0,            kSTSundress_2w,     false, DONT_CARE, 0},
+	{kVSit_2w,       0,            kSTStired_2w,       false, DONT_CARE, 0},
+	{kVFeed_2w,      0,            kSTNothanks_2w,     false, DONT_CARE, 0},
+	{kVRub_2w,       kNCatnip_2w,     kSTRubcatnip1_2w,   false, DONT_CARE, 0},
+	{kVMakeUseOf_2w, kNScrew_2w,      kSTLookScrew_2w,    false, DONT_CARE, 0},
+	{0,           0,            0,               false, 0,         0}
 };
 
 background_t screen0_desc_2w[] = {						// Outside house
-  {kVLook_2w, 0, kSTWelcome_2w, false, 0, 0},
-  {0,      0, 0,          false, 0, 0}
+	{kVLook_2w, 0, kSTWelcome_2w, false, 0, 0},
+	{0,      0, 0,          false, 0, 0}
 };
 
 background_t screen1_desc_2w[] = {						// Hall
-  {kVLook_2w,   0,       kSTLookhall_2w,  true,  0, 0},
-  {kVLook_2w,   kNMaid_2w,  kSTTmaid_2w,     false, 0, 0},
-  {kVTalk_2w,   kNMaid_2w,  kSTChatmaid1_2w, false, 0, 0},
-  {kVTalk_2w,   kNPenny_2w, kSTChatmaid2_2w, false, 0, 0},
-  {kVKiss_2w,   kNMaid_2w,  kSTChatmaid3_2w, false, 0, 0},
-  {kVRude_2w,   kNMaid_2w,  kSTRudemaid_2w,  false, 0, 0},
-  {kVOpen_2w,   kNDoor_2w,  kSTTmaiddoor_2w, false, 0, 0},
-  {kVUnlock_2w, kNDoor_2w,  kSTTmaiddoor_2w, false, 0, 0},
-  {kVLook_2w,   kNDoor_2w,  kSTSdoor_2w,     false, 0, 0},
-  {0,        0,       0,            false, 0, 0}
+	{kVLook_2w,   0,       kSTLookhall_2w,  true,  0, 0},
+	{kVLook_2w,   kNMaid_2w,  kSTTmaid_2w,     false, 0, 0},
+	{kVTalk_2w,   kNMaid_2w,  kSTChatmaid1_2w, false, 0, 0},
+	{kVTalk_2w,   kNPenny_2w, kSTChatmaid2_2w, false, 0, 0},
+	{kVKiss_2w,   kNMaid_2w,  kSTChatmaid3_2w, false, 0, 0},
+	{kVRude_2w,   kNMaid_2w,  kSTRudemaid_2w,  false, 0, 0},
+	{kVOpen_2w,   kNDoor_2w,  kSTTmaiddoor_2w, false, 0, 0},
+	{kVUnlock_2w, kNDoor_2w,  kSTTmaiddoor_2w, false, 0, 0},
+	{kVLook_2w,   kNDoor_2w,  kSTSdoor_2w,     false, 0, 0},
+	{0,        0,       0,            false, 0, 0}
 };
 
 background_t screen2_desc_2w[] = { 					// Bed1
-  {kVLook_2w,  0,          kSTLookbed1_2w, true,  DONT_CARE, 0},
-  {kVLook_2w,  kNBed_2w,      kSTLookbed_2w,  false, DONT_CARE, 0},
-  {kVInto_2w,  kNBed_2w,      kSTS2bed_2w,    false, 0,         0},
-  {kVRide_2w,  kNBed_2w,      kSTS2bed_2w,    false, 0,         0},
-  {kVRest_2w,  kNBed_2w,      kSTS2bed_2w,    false, 0,         0},
-  {kVRide_2w,  kNPenny_2w,    kSTS2bed_2w,    false, 0,         0},
-  {kVTalk_2w,  kNPenny_2w,    kSTZzzz_2w,     false, 0,         0},
-  {kVLook_2w,  kNPennylie_2w, kSTZzzz_2w,     false, 0,         0},
-  {kVTalk_2w,  kNPennylie_2w, kSTS2bed_2w,    false, 0,         0},
-  {kVInto_2w,  kNBed_2w,      kSTNopurps_2w,  false, 1,         0},
-  {kVRide_2w,  kNBed_2w,      kSTNopurps_2w,  false, 1,         0},
-  {kVRest_2w,  kNBed_2w,      kSTNopurps_2w,  false, 1,         0},
-  {kVUnder_2w, kNBed_2w,      kSTSsearch_2w,  false, DONT_CARE, 0},
-  {kVRead_2w,  kNBook_2w,     kSTNocarry_2w,  false, DONT_CARE, 0},
-  {0,       0,          0,           false, 0,         0}
+	{kVLook_2w,  0,          kSTLookbed1_2w, true,  DONT_CARE, 0},
+	{kVLook_2w,  kNBed_2w,      kSTLookbed_2w,  false, DONT_CARE, 0},
+	{kVInto_2w,  kNBed_2w,      kSTS2bed_2w,    false, 0,         0},
+	{kVRide_2w,  kNBed_2w,      kSTS2bed_2w,    false, 0,         0},
+	{kVRest_2w,  kNBed_2w,      kSTS2bed_2w,    false, 0,         0},
+	{kVRide_2w,  kNPenny_2w,    kSTS2bed_2w,    false, 0,         0},
+	{kVTalk_2w,  kNPenny_2w,    kSTZzzz_2w,     false, 0,         0},
+	{kVLook_2w,  kNPennylie_2w, kSTZzzz_2w,     false, 0,         0},
+	{kVTalk_2w,  kNPennylie_2w, kSTS2bed_2w,    false, 0,         0},
+	{kVInto_2w,  kNBed_2w,      kSTNopurps_2w,  false, 1,         0},
+	{kVRide_2w,  kNBed_2w,      kSTNopurps_2w,  false, 1,         0},
+	{kVRest_2w,  kNBed_2w,      kSTNopurps_2w,  false, 1,         0},
+	{kVUnder_2w, kNBed_2w,      kSTSsearch_2w,  false, DONT_CARE, 0},
+	{kVRead_2w,  kNBook_2w,     kSTNocarry_2w,  false, DONT_CARE, 0},
+	{0,       0,          0,           false, 0,         0}
 };
 
 background_t screen3_desc_2w[] = {						// Bed2
-  {kVLook_2w,  0,         kSTLookbed2_2w,   true , 0, 0},
-  {kVLook_2w,  kNBird_2w,    kSTParrot_2w,     false, 0, 0},
-  {kVLook_2w,  kNPenny_2w,   kSTLookpen_2w,    false, 0, 0}, // since following cage has synonym "pen"
-  {kVLook_2w,  kNCage_2w,    kSTDull_2w,       false, 0, 0},
-  {kVLook_2w,  kNPencil_2w,  kSTDull_2w,       false, 0, 0},
-  {kVLook_2w,  kNPhone_2w,   kSTDull_2w,       false, 0, 0},
-  {kVLook_2w,  kNPaper_2w,   kSTBlotter_2w,    false, 0, 0},
-  {kVRead_2w,  kNPaper_2w,   kSTBlotter_2w,    false, 0, 0},
-  {kVTake_2w,  kNBlotpad_2w, kSTNouse_2w,      false, 0, 0},
-  {kVLook_2w,  kNChair_2w,   kSTDull_2w,       false, 0, 0},
-  {kVTake_2w,  kNPencil_2w,  kSTNouse_2w,      false, 0, 0},
-  {kVTake_2w,  kNPaper_2w,   kSTNouse_2w,      false, 0, 0},
-  {kVLook_2w,  kNKeyhole_2w, kSTKeyhole2_2w,   false, 0, 0},
-  {kVOpen_2w,  kNKeyhole_2w, kSTKeyhole3_2w,   false, 0, 0},
-  {kVLook_2w,  kNWall_2w,    kSTDumbwaiter_2w, false, 0, 0},
-  {kVLook_2w,  kNButton_2w,  kSTSbutton_2w,    false, 0, 0},
-  {kVPush_2w,  kNButton_2w,  kSTS3dumb_2w,     false, 0, 0},
-  {kVPush_2w,  kNSwitch_2w,  kSTS3dumb_2w,     false, 0, 0},
-  {kVDial_2w,  0,         kSTS3phone_2w,    false, 0, 4},
-  {kVTake_2w,  kNPhone_2w,   kSTS3phone_2w,    false, 0, 4},
-  {kVUse_2w,   kNPhone_2w,   kSTS3phone_2w,    false, 0, 4},
-  {kVLift_2w,  kNPhone_2w,   kSTS3phone_2w,    false, 0, 4},
-  {kVTalk_2w,  kNBird_2w,    kSTS3bird_2w,     false, 0, 5},
-  {kVInto_2w,  0,         kSTSinto_2w,      true,  0, 0},
-  {kVUnder_2w, kNCupb_2w,    kSTSsearch_2w,    false, 0, 0},
-  {kVFeed_2w,  kNBird_2w,    kSTBirdfull_2w,   false, 0, 0},
-  {0,       0,         0,             false, 0, 0}
+	{kVLook_2w,  0,         kSTLookbed2_2w,   true , 0, 0},
+	{kVLook_2w,  kNBird_2w,    kSTParrot_2w,     false, 0, 0},
+	{kVLook_2w,  kNPenny_2w,   kSTLookpen_2w,    false, 0, 0}, // since following cage has synonym "pen"
+	{kVLook_2w,  kNCage_2w,    kSTDull_2w,       false, 0, 0},
+	{kVLook_2w,  kNPencil_2w,  kSTDull_2w,       false, 0, 0},
+	{kVLook_2w,  kNPhone_2w,   kSTDull_2w,       false, 0, 0},
+	{kVLook_2w,  kNPaper_2w,   kSTBlotter_2w,    false, 0, 0},
+	{kVRead_2w,  kNPaper_2w,   kSTBlotter_2w,    false, 0, 0},
+	{kVTake_2w,  kNBlotpad_2w, kSTNouse_2w,      false, 0, 0},
+	{kVLook_2w,  kNChair_2w,   kSTDull_2w,       false, 0, 0},
+	{kVTake_2w,  kNPencil_2w,  kSTNouse_2w,      false, 0, 0},
+	{kVTake_2w,  kNPaper_2w,   kSTNouse_2w,      false, 0, 0},
+	{kVLook_2w,  kNKeyhole_2w, kSTKeyhole2_2w,   false, 0, 0},
+	{kVOpen_2w,  kNKeyhole_2w, kSTKeyhole3_2w,   false, 0, 0},
+	{kVLook_2w,  kNWall_2w,    kSTDumbwaiter_2w, false, 0, 0},
+	{kVLook_2w,  kNButton_2w,  kSTSbutton_2w,    false, 0, 0},
+	{kVPush_2w,  kNButton_2w,  kSTS3dumb_2w,     false, 0, 0},
+	{kVPush_2w,  kNSwitch_2w,  kSTS3dumb_2w,     false, 0, 0},
+	{kVDial_2w,  0,         kSTS3phone_2w,    false, 0, 4},
+	{kVTake_2w,  kNPhone_2w,   kSTS3phone_2w,    false, 0, 4},
+	{kVUse_2w,   kNPhone_2w,   kSTS3phone_2w,    false, 0, 4},
+	{kVLift_2w,  kNPhone_2w,   kSTS3phone_2w,    false, 0, 4},
+	{kVTalk_2w,  kNBird_2w,    kSTS3bird_2w,     false, 0, 5},
+	{kVInto_2w,  0,         kSTSinto_2w,      true,  0, 0},
+	{kVUnder_2w, kNCupb_2w,    kSTSsearch_2w,    false, 0, 0},
+	{kVFeed_2w,  kNBird_2w,    kSTBirdfull_2w,   false, 0, 0},
+	{0,       0,         0,             false, 0, 0}
 };
 
 background_t screen4_desc_2w[] = {						// Keyhole
-  {kVLook_2w, 0, kSTLooklook_2w, true,  0, 0},
-  {0,      0, 0,           false, 0, 0}
+	{kVLook_2w, 0, kSTLooklook_2w, true,  0, 0},
+	{0,      0, 0,           false, 0, 0}
 };
 
 background_t screen5_desc_2w[] = {						// Bed3
-  {kVLook_2w,  0,        kSTLookbed3_2w,     true,  0, 0},
-  {kVLook_2w,  kNBlock_2w,  kSTLookblocks_2w,   false, 0, 0},
-  {kVPlay_2w,  kNBlock_2w,  kSTSblock_2w,       false, 0, 0},
-  {kVBlock_2w, 0,        kSTSblock_2w,       false, 0, 0},
-  {kVLook_2w,  kNCage_2w,   kSTLookplaypen_2w,  false, 0, 0},
-  {kVInto_2w,  kNCage_2w,   kSTStoobigtofit_2w, false, 0, 0},
-  {kVLook_2w,  kNWindow_2w, kSTS6garden_2w,     false, 0, 0},
-  {0,       0,        0,               false, 0, 0}
+	{kVLook_2w,  0,        kSTLookbed3_2w,     true,  0, 0},
+	{kVLook_2w,  kNBlock_2w,  kSTLookblocks_2w,   false, 0, 0},
+	{kVPlay_2w,  kNBlock_2w,  kSTSblock_2w,       false, 0, 0},
+	{kVBlock_2w, 0,        kSTSblock_2w,       false, 0, 0},
+	{kVLook_2w,  kNCage_2w,   kSTLookplaypen_2w,  false, 0, 0},
+	{kVInto_2w,  kNCage_2w,   kSTStoobigtofit_2w, false, 0, 0},
+	{kVLook_2w,  kNWindow_2w, kSTS6garden_2w,     false, 0, 0},
+	{0,       0,        0,               false, 0, 0}
 };
 
 background_t screen6_desc_2w[] = {						// Kitchen
-  {kVLook_2w,   0,        kSTLookkitchen_2w,   true,  DONT_CARE, 0},
-  {kVLook_2w,   kNButton_2w, kSTSbutton_2w,       false, DONT_CARE, 0},
-  {kVPush_2w,   kNButton_2w, kSTS3dumb_2w,        false, DONT_CARE, 0},
-  {kVLook_2w,   kNWindow_2w, kSTS6garden_2w,      false, DONT_CARE, 0},
-  {kVLook_2w,   kNUnits_2w,  kSTS6dull_2w,        false, DONT_CARE, 0},
-  {kVOpen_2w,   kNUnits_2w,  kSTS6dull_2w,        false, DONT_CARE, 0},
-  {kVInto_2w,   0,        kSTSinto_2w,         true,  DONT_CARE, 0},
-  {kVOpen_2w,   kNDoor_2w,   kSTMorespecific_2w,  false, DONT_CARE, 0},
-  {kVLook_2w,   kNDoor_2w,   kSTMorespecific_2w,  false, DONT_CARE, 0},
-  {kVTalk_2w,   kNCook_2w,   kSTTalkcook_2w,      false, 1,         0},
-  {kVLook_2w,   kNCook_2w,   kSTLookcook_2w,      false, 1,         0},
-  {kVLook_2w,   kNKnife_2w,  kSTLookknife_2w,     false, 1,         0},
-  {kVTake_2w,   kNKnife_2w,  kSTTakeknife_2w,     false, 1,         0},
-  {kVListen_2w, 0,        kSTListenkitchen_2w, false, 1,         0},
-  {0,        0,        0,                false, 0,         0}
+	{kVLook_2w,   0,        kSTLookkitchen_2w,   true,  DONT_CARE, 0},
+	{kVLook_2w,   kNButton_2w, kSTSbutton_2w,       false, DONT_CARE, 0},
+	{kVPush_2w,   kNButton_2w, kSTS3dumb_2w,        false, DONT_CARE, 0},
+	{kVLook_2w,   kNWindow_2w, kSTS6garden_2w,      false, DONT_CARE, 0},
+	{kVLook_2w,   kNUnits_2w,  kSTS6dull_2w,        false, DONT_CARE, 0},
+	{kVOpen_2w,   kNUnits_2w,  kSTS6dull_2w,        false, DONT_CARE, 0},
+	{kVInto_2w,   0,        kSTSinto_2w,         true,  DONT_CARE, 0},
+	{kVOpen_2w,   kNDoor_2w,   kSTMorespecific_2w,  false, DONT_CARE, 0},
+	{kVLook_2w,   kNDoor_2w,   kSTMorespecific_2w,  false, DONT_CARE, 0},
+	{kVTalk_2w,   kNCook_2w,   kSTTalkcook_2w,      false, 1,         0},
+	{kVLook_2w,   kNCook_2w,   kSTLookcook_2w,      false, 1,         0},
+	{kVLook_2w,   kNKnife_2w,  kSTLookknife_2w,     false, 1,         0},
+	{kVTake_2w,   kNKnife_2w,  kSTTakeknife_2w,     false, 1,         0},
+	{kVListen_2w, 0,        kSTListenkitchen_2w, false, 1,         0},
+	{0,        0,        0,                false, 0,         0}
 };
 
 background_t screen7_desc_2w[] = {						// Backdoor
-  {kVLook_2w, 0,        kSTLookback_2w, true,  0, 0},
-  {kVLook_2w, kNWindow_2w, kSTLookwin_2w,  false, 0, 0},
-  {0,      0,        0,           false, 0, 0}
+	{kVLook_2w, 0,        kSTLookback_2w, true,  0, 0},
+	{kVLook_2w, kNWindow_2w, kSTLookwin_2w,  false, 0, 0},
+	{0,      0,        0,           false, 0, 0}
 };
 
 background_t screen8_desc_2w[] = {						// Shed
-  {kVLook_2w, 0,        kSTLookshed_2w,   true,  0, 0},
-  {kVLook_2w, kNWindow_2w, kSTLookwin_2w,    false, 0, 0},
-  {kVLook_2w, kNShed_2w,   kSTLookatshed_2w, false, 0, 0},
-  {0,      0,        0,             false, 0, 0}
+	{kVLook_2w, 0,        kSTLookshed_2w,   true,  0, 0},
+	{kVLook_2w, kNWindow_2w, kSTLookwin_2w,    false, 0, 0},
+	{kVLook_2w, kNShed_2w,   kSTLookatshed_2w, false, 0, 0},
+	{0,      0,        0,             false, 0, 0}
 };
 
 background_t screen9_desc_2w[] = {						// In shed
-  {kVLook_2w,  0,         kSTLookinshed_2w,  true,  0, 0},
-  {kVLook_2w,  kNWall_2w,    kSTS9tools1_2w,    false, 0, 0},
-  {kVLook_2w,  kNTools_2w,   kSTS9tools1_2w,    false, 0, 0},
-  {kVTake_2w,  kNTools_2w,   kSTS9tools2_2w,    false, 0, 0},
-  {kVLook_2w,  kNBroom_2w,   kSTDull_2w,        false, 0, 0},
-  {kVTake_2w,  kNBroom_2w,   kSTNouse_2w,       false, 0, 0},
-  {kVLook_2w,  kNTable_2w,   kSTSomebuttons_2w, false, 0, 0},
-  {kVKiss_2w,  kNGardner_2w, kSTMore_2w,        false, 0, 0},
-  {kVRude_2w,  kNGardner_2w, kSTRudeshed_2w,    false, 0, 0},
-  {kVTalk_2w,  kNGardner_2w, kSTIgnore_2w,      false, 0, 0},
-  {kVClose_2w, kNDoor_2w,    kSTShedclose_2w,   false, 0, 0},
-  {0,       0,         0,              false, 0, 0}
+	{kVLook_2w,  0,         kSTLookinshed_2w,  true,  0, 0},
+	{kVLook_2w,  kNWall_2w,    kSTS9tools1_2w,    false, 0, 0},
+	{kVLook_2w,  kNTools_2w,   kSTS9tools1_2w,    false, 0, 0},
+	{kVTake_2w,  kNTools_2w,   kSTS9tools2_2w,    false, 0, 0},
+	{kVLook_2w,  kNBroom_2w,   kSTDull_2w,        false, 0, 0},
+	{kVTake_2w,  kNBroom_2w,   kSTNouse_2w,       false, 0, 0},
+	{kVLook_2w,  kNTable_2w,   kSTSomebuttons_2w, false, 0, 0},
+	{kVKiss_2w,  kNGardner_2w, kSTMore_2w,        false, 0, 0},
+	{kVRude_2w,  kNGardner_2w, kSTRudeshed_2w,    false, 0, 0},
+	{kVTalk_2w,  kNGardner_2w, kSTIgnore_2w,      false, 0, 0},
+	{kVClose_2w, kNDoor_2w,    kSTShedclose_2w,   false, 0, 0},
+	{0,       0,         0,              false, 0, 0}
 };
 
 background_t screen10_desc_2w[] = {					// Venus fly traps
-  {kVLook_2w, 0,        kSTLookvenus_2w, true,  0, 0},
-  {kVTake_2w, kNMirror_2w, kSTNotmirror_2w, false, 0, 0},
-  {kVLook_2w, kNFly_2w,    kSTLookFly_2w,   false, 0, 0},
-  {kVLook_2w, kNLeaf_2w,   kSTLookTrap_2w,  false, 0, 0},
-  {0,      0,        0,            false, 0, 0}
+	{kVLook_2w, 0,        kSTLookvenus_2w, true,  0, 0},
+	{kVTake_2w, kNMirror_2w, kSTNotmirror_2w, false, 0, 0},
+	{kVLook_2w, kNFly_2w,    kSTLookFly_2w,   false, 0, 0},
+	{kVLook_2w, kNLeaf_2w,   kSTLookTrap_2w,  false, 0, 0},
+	{0,      0,        0,            false, 0, 0}
 };
 
 background_t screen11_desc_2w[] = {					// Gates open
-  {kVLook_2w,  0,      kSTS11look_2w, true,  0, 0},
-  {kVClose_2w, kNDoor_2w, kSTNopurps_2w, false, 0, 0},
-  {0,       0,      0,          false, 0, 0}
+	{kVLook_2w,  0,      kSTS11look_2w, true,  0, 0},
+	{kVClose_2w, kNDoor_2w, kSTNopurps_2w, false, 0, 0},
+	{0,       0,      0,          false, 0, 0}
 };
 
 background_t screen12_desc_2w[] = {					// Gates closed
-  {kVLook_2w,   0,      kSTS12look_2w, true,  0, 0},
-  {kVLook_2w,   kNDoor_2w, kSTGates1_2w,  false, 0, 0},
-  {kVOpen_2w,   kNDoor_2w, kSTGates1_2w,  false, 0, 0},
-  {kVBreak_2w,  kNDoor_2w, kSTGates2_2w,  false, 0, 0},
-  {kVAttack_2w, kNDoor_2w, kSTGates2_2w,  false, 0, 0},
-  {kVUnlock_2w, kNDoor_2w, kSTGates3_2w,  false, 0, 0},
-  {kVUnlock_2w, kNGate_2w, kSTGates3_2w,  false, 0, 0},
-  {0,        0,      0,          false, 0, 0}
+	{kVLook_2w,   0,      kSTS12look_2w, true,  0, 0},
+	{kVLook_2w,   kNDoor_2w, kSTGates1_2w,  false, 0, 0},
+	{kVOpen_2w,   kNDoor_2w, kSTGates1_2w,  false, 0, 0},
+	{kVBreak_2w,  kNDoor_2w, kSTGates2_2w,  false, 0, 0},
+	{kVAttack_2w, kNDoor_2w, kSTGates2_2w,  false, 0, 0},
+	{kVUnlock_2w, kNDoor_2w, kSTGates3_2w,  false, 0, 0},
+	{kVUnlock_2w, kNGate_2w, kSTGates3_2w,  false, 0, 0},
+	{0,        0,      0,          false, 0, 0}
 };
 
 background_t screen13_desc_2w[] = {					// Stream
-  {kVLook_2w,    0,         kSTS13look_2w,    true,  0, 0},
-  {kVLook_2w,    kNBridge_2w,  kSTNospecial_2w,  false, 0, 0},
-  {kVUnder_2w,   kNBridge_2w,  kSTSsearch_2w,    false, 0, 0},
-  {kVLook_2w,    kNWater_2w,   kSTDull_2w,       false, 0, 0},
-  {kVThrowit_2w, kNMatches_2w, kSTThrowmatch_2w, false, 0, 0},
-  {0,         0,         0,             false, 0, 0}
+	{kVLook_2w,    0,         kSTS13look_2w,    true,  0, 0},
+	{kVLook_2w,    kNBridge_2w,  kSTNospecial_2w,  false, 0, 0},
+	{kVUnder_2w,   kNBridge_2w,  kSTSsearch_2w,    false, 0, 0},
+	{kVLook_2w,    kNWater_2w,   kSTDull_2w,       false, 0, 0},
+	{kVThrowit_2w, kNMatches_2w, kSTThrowmatch_2w, false, 0, 0},
+	{0,         0,         0,             false, 0, 0}
 };
 
 background_t screen14_desc_2w[] = {					// Zapper
-  {kVLook_2w,   0,        kSTS14look_2w,  true,  0, 0},
-  {kVSwitch_2w, kNZapper_2w, kSTNoswitch_2w, false, 0, 0},
-  {kVWind_2w,   kNZapper_2w, kSTNoswitch_2w, false, 0, 0},
-  {0,        0,        0,           false, 0, 0}
+	{kVLook_2w,   0,        kSTS14look_2w,  true,  0, 0},
+	{kVSwitch_2w, kNZapper_2w, kSTNoswitch_2w, false, 0, 0},
+	{kVWind_2w,   kNZapper_2w, kSTNoswitch_2w, false, 0, 0},
+	{0,        0,        0,           false, 0, 0}
 };
 
 background_t screen15_desc_2w[] = {					// Mushroom
-  {kVLook_2w,   0,        kSTS15look_2w,  true,  0, 0},
-  {kVUse_2w,    kNOldman_2w, kSTS15wand2_2w, false, 0, 0},
-  {kVTalk_2w,   kNOldman_2w, kSTNoreply_2w,  false, 0, 0},
-  {kVLook_2w,   kNWand_2w,   kSTS15wand1_2w, false, 0, 0},
-  {kVTake_2w,   kNWand_2w,   kSTS15wand2_2w, false, 0, 0},
-  {kVSearch_2w, kNOldman_2w, kSTSsearch_2w,  false, 0, 0},
-  {0,        0,        0,           false, 0, 0}
+	{kVLook_2w,   0,        kSTS15look_2w,  true,  0, 0},
+	{kVUse_2w,    kNOldman_2w, kSTS15wand2_2w, false, 0, 0},
+	{kVTalk_2w,   kNOldman_2w, kSTNoreply_2w,  false, 0, 0},
+	{kVLook_2w,   kNWand_2w,   kSTS15wand1_2w, false, 0, 0},
+	{kVTake_2w,   kNWand_2w,   kSTS15wand2_2w, false, 0, 0},
+	{kVSearch_2w, kNOldman_2w, kSTSsearch_2w,  false, 0, 0},
+	{0,        0,        0,           false, 0, 0}
 };
 
 background_t screen16_desc_2w[] = {					// Well
-  {kVLook_2w,  0,        kSTS16look_2w,     true,  0, 0},
-  {kVClimb_2w, 0,        kSTTryrope_2w,     false, 0, 0},
-  {kVGo_2w,    kNWell_2w,   kSTTryrope_2w,     false, 0, 0},
-  {kVWind_2w,  kNRope_2w,   kSTWindwell_2w,    false, 0, 0},
-  {kVTie_2w,   kNRope_2w,   kSTNopurps_2w,     false, 0, 0},
-  {kVTake_2w,  kNBucket_2w, kSTNosee_2w,       false, 0, 0},
-  {kVLook_2w,  kNBucket_2w, kSTNosee_2w,       false, 0, 0},
-  {kVWind_2w,  kNBucket_2w, kSTWindwell_2w,    false, 0, 0},
-  {kVTake_2w,  kNWater_2w,  kSTNosee_2w,       false, 0, 0},
-  {kVWind_2w,  kNHandle_2w, kSTWindwell_2w,    false, 0, 0},
-  {kVInto_2w,  kNBucket_2w, kSTNosee_2w,       false, 0, 0},
-  {kVInto_2w,  kNWell_2w,   kSTIntowell_2w,    false, 0, 0},
-  {kVWish_2w,  0,        kSTGetonwithit_2w, false, 0, 0},
-  {0,       0,        0,              false, 0, 0}
+	{kVLook_2w,  0,        kSTS16look_2w,     true,  0, 0},
+	{kVClimb_2w, 0,        kSTTryrope_2w,     false, 0, 0},
+	{kVGo_2w,    kNWell_2w,   kSTTryrope_2w,     false, 0, 0},
+	{kVWind_2w,  kNRope_2w,   kSTWindwell_2w,    false, 0, 0},
+	{kVTie_2w,   kNRope_2w,   kSTNopurps_2w,     false, 0, 0},
+	{kVTake_2w,  kNBucket_2w, kSTNosee_2w,       false, 0, 0},
+	{kVLook_2w,  kNBucket_2w, kSTNosee_2w,       false, 0, 0},
+	{kVWind_2w,  kNBucket_2w, kSTWindwell_2w,    false, 0, 0},
+	{kVTake_2w,  kNWater_2w,  kSTNosee_2w,       false, 0, 0},
+	{kVWind_2w,  kNHandle_2w, kSTWindwell_2w,    false, 0, 0},
+	{kVInto_2w,  kNBucket_2w, kSTNosee_2w,       false, 0, 0},
+	{kVInto_2w,  kNWell_2w,   kSTIntowell_2w,    false, 0, 0},
+	{kVWish_2w,  0,        kSTGetonwithit_2w, false, 0, 0},
+	{0,       0,        0,              false, 0, 0}
 };
 
 background_t screen17_desc_2w[] = {					// Snakepit
-  {kVLook_2w,   0,       kSTS17look_2w, true,  0, 0},
-  {kVAttack_2w, kNSnake_2w, kSTS17kill_2w, false, 0, 0},
-  {kVBreak_2w,  kNSnake_2w, kSTS17kill_2w, false, 0, 0},
-  {0,        0,       0,          false, 0, 0}
+	{kVLook_2w,   0,       kSTS17look_2w, true,  0, 0},
+	{kVAttack_2w, kNSnake_2w, kSTS17kill_2w, false, 0, 0},
+	{kVBreak_2w,  kNSnake_2w, kSTS17kill_2w, false, 0, 0},
+	{0,        0,       0,          false, 0, 0}
 };
 
 background_t screen18_desc_2w[] = {					// Phonebox
-  {kVLook_2w, 0,       kSTS18look_2w, true,  0, 0},
-  {kVLook_2w, kNPhone_2w, kSTS18look_2w, false, 0, 0},
-  {0,      0,       0,          false, 0, 0}
+	{kVLook_2w, 0,       kSTS18look_2w, true,  0, 0},
+	{kVLook_2w, kNPhone_2w, kSTS18look_2w, false, 0, 0},
+	{0,      0,       0,          false, 0, 0}
 };
 
 background_t screen19_desc_2w[] = {					// Street
-  {kVLook_2w, 0,      kSTS19look_2w, true,  0, 0},
-  {kVLook_2w, kNWall_2w, kSTSgraf_2w,   false, 0, 0},
-  {kVRead_2w, kNWall_2w, kSTSgraf_2w,   false, 0, 0},
-  {kVLook_2w, kNGraf_2w, kSTSgraf_2w,   false, 0, 0},
-  {kVRead_2w, kNGraf_2w, kSTSgraf_2w,   false, 0, 0},
-  {0,      0,      0,          false, 0, 0}
+	{kVLook_2w, 0,      kSTS19look_2w, true,  0, 0},
+	{kVLook_2w, kNWall_2w, kSTSgraf_2w,   false, 0, 0},
+	{kVRead_2w, kNWall_2w, kSTSgraf_2w,   false, 0, 0},
+	{kVLook_2w, kNGraf_2w, kSTSgraf_2w,   false, 0, 0},
+	{kVRead_2w, kNGraf_2w, kSTSgraf_2w,   false, 0, 0},
+	{0,      0,      0,          false, 0, 0}
 };
 
 background_t screen20_desc_2w[] = {					// Kennel
-  {kVLook_2w,    0,        kSTS20look_2w,      true,  0, 0},
-  {kVLook_2w,    kNWindow_2w, kSTMorespecific_2w, false, 0, 0},
-  {kVThrowit_2w, kNStick_2w,  kSTDonthaveone_2w,  false, 0, 0},
-  {kVStroke_2w,  kNDog_2w,    kSTStrokedog_2w,    false, 0, 0},
-  {kVTalk_2w,    kNDog_2w,    kSTStrokedog_2w,    false, 0, 0},
-  {kVInto_2w,    0,        kSTStoobigtofit_2w, false, 0, 0},
-  {kVTake_2w,    kNStick_2w,  kSTThrown_2w,       false, 0, 0},
-  {0,         0,        0,               false, 0, 0}
+	{kVLook_2w,    0,        kSTS20look_2w,      true,  0, 0},
+	{kVLook_2w,    kNWindow_2w, kSTMorespecific_2w, false, 0, 0},
+	{kVThrowit_2w, kNStick_2w,  kSTDonthaveone_2w,  false, 0, 0},
+	{kVStroke_2w,  kNDog_2w,    kSTStrokedog_2w,    false, 0, 0},
+	{kVTalk_2w,    kNDog_2w,    kSTStrokedog_2w,    false, 0, 0},
+	{kVInto_2w,    0,        kSTStoobigtofit_2w, false, 0, 0},
+	{kVTake_2w,    kNStick_2w,  kSTThrown_2w,       false, 0, 0},
+	{0,         0,        0,               false, 0, 0}
 };
 
 background_t screen21_desc_2w[] = {					// Rockroom
-  {kVLook_2w,  0,      kSTS21look_2w,   true,  0, 0},
-  {kVClimb_2w, kNRope_2w, kSTNotclose_2w,  false, 0, 0},
-  {kVMove_2w,  kNRock_2w, kSTTooheavy_2w,  false, 0, 0},
-  {kVUnder_2w, kNRock_2w, kSTNounder_2w,   false, 0, 0},
-  {kVLift_2w,  kNRock_2w, kSTNowayhose_2w, false, 0, 0},
-  {kVLook_2w,  kNRock_2w, kSTDull_2w,      false, 0, 0},
-  {kVTake_2w,  kNRock_2w, kSTNowayhose_2w, false, 0, 0},
-  {0,       0,      0,            false, 0, 0}
+	{kVLook_2w,  0,      kSTS21look_2w,   true,  0, 0},
+	{kVClimb_2w, kNRope_2w, kSTNotclose_2w,  false, 0, 0},
+	{kVMove_2w,  kNRock_2w, kSTTooheavy_2w,  false, 0, 0},
+	{kVUnder_2w, kNRock_2w, kSTNounder_2w,   false, 0, 0},
+	{kVLift_2w,  kNRock_2w, kSTNowayhose_2w, false, 0, 0},
+	{kVLook_2w,  kNRock_2w, kSTDull_2w,      false, 0, 0},
+	{kVTake_2w,  kNRock_2w, kSTNowayhose_2w, false, 0, 0},
+	{0,       0,      0,            false, 0, 0}
 };
 
 background_t screen22_desc_2w[] = {					// Rockgone
-  {kVLook_2w,  0,      kSTS22look_2w,  true,  0, 0},
-  {kVClimb_2w, kNRope_2w, kSTNotclose_2w, false, 0, 0},
-  {kVLift_2w,  kNRock_2w, kSTNopurps_2w,  false, 0, 0},
-  {kVLook_2w,  kNRock_2w, kSTDull_2w,     false, 0, 0},
-  {kVTake_2w,  kNRock_2w, kSTNopurps_2w,  false, 0, 0},
-  {kVUnder_2w, kNRock_2w, kSTSsearch_2w,  false, 0, 0},
-  {0,       0,      0,           false, 0, 0}
+	{kVLook_2w,  0,      kSTS22look_2w,  true,  0, 0},
+	{kVClimb_2w, kNRope_2w, kSTNotclose_2w, false, 0, 0},
+	{kVLift_2w,  kNRock_2w, kSTNopurps_2w,  false, 0, 0},
+	{kVLook_2w,  kNRock_2w, kSTDull_2w,     false, 0, 0},
+	{kVTake_2w,  kNRock_2w, kSTNopurps_2w,  false, 0, 0},
+	{kVUnder_2w, kNRock_2w, kSTSsearch_2w,  false, 0, 0},
+	{0,       0,      0,           false, 0, 0}
 };
 
 background_t screen23_desc_2w[] = {					// Threeway
-  {kVLook_2w,  0,      kSTS23look_2w, true,  0, 0},
-  {kVLift_2w,  kNRock_2w, kSTNopurps_2w, false, 0, 0},
-  {kVLook_2w,  kNRock_2w, kSTDull_2w,    false, 0, 0},
-  {kVUnder_2w, kNRock_2w, kSTDull2_2w,   false, 0, 0},
-  {kVTake_2w,  kNRock_2w, kSTNopurps_2w, false, 0, 0},
-  {0,       0,      0,          false, 0, 0}
+	{kVLook_2w,  0,      kSTS23look_2w, true,  0, 0},
+	{kVLift_2w,  kNRock_2w, kSTNopurps_2w, false, 0, 0},
+	{kVLook_2w,  kNRock_2w, kSTDull_2w,    false, 0, 0},
+	{kVUnder_2w, kNRock_2w, kSTDull2_2w,   false, 0, 0},
+	{kVTake_2w,  kNRock_2w, kSTNopurps_2w, false, 0, 0},
+	{0,       0,      0,          false, 0, 0}
 };
 
 background_t screen24_desc_2w[] = {					// Lampcave
-  {kVLook_2w,  0,      kSTS24look_2w,   true,  0, 0},
-  {kVLift_2w,  kNRock_2w, kSTSsearch_2w,   false, 0, 0},
-  {kVLook_2w,  kNRock_2w, kSTNospecial_2w, false, 0, 0},
-  {kVUnder_2w, kNRock_2w, kSTDull2_2w,     false, 0, 0},
-  {kVTake_2w,  kNRock_2w, kSTNopurps_2w,   false, 0, 0},
-  {0,       0,      0,            false, 0, 0}
+	{kVLook_2w,  0,      kSTS24look_2w,   true,  0, 0},
+	{kVLift_2w,  kNRock_2w, kSTSsearch_2w,   false, 0, 0},
+	{kVLook_2w,  kNRock_2w, kSTNospecial_2w, false, 0, 0},
+	{kVUnder_2w, kNRock_2w, kSTDull2_2w,     false, 0, 0},
+	{kVTake_2w,  kNRock_2w, kSTNopurps_2w,   false, 0, 0},
+	{0,       0,      0,            false, 0, 0}
 };
 
 background_t screen25_desc_2w[] = {					// Chasm
-  {kVLook_2w,  0,      kSTS25look_2w, true,  0, 0},
-  {kVUnder_2w, kNRock_2w, kSTSsearch_2w, false, 0, 0},
-  {kVLift_2w,  kNRock_2w, kSTSsearch_2w, false, 0, 0},
-  {kVLook_2w,  kNRock_2w, kSTDull_2w,    false, 0, 0},
-  {kVTake_2w,  kNRock_2w, kSTNopurps_2w, false, 0, 0},
-  {kVJump_2w,  0,      kSTSnojump_2w, false, 0, 0},
-  {0,       0,      0,          false, 0, 0}
+	{kVLook_2w,  0,      kSTS25look_2w, true,  0, 0},
+	{kVUnder_2w, kNRock_2w, kSTSsearch_2w, false, 0, 0},
+	{kVLift_2w,  kNRock_2w, kSTSsearch_2w, false, 0, 0},
+	{kVLook_2w,  kNRock_2w, kSTDull_2w,    false, 0, 0},
+	{kVTake_2w,  kNRock_2w, kSTNopurps_2w, false, 0, 0},
+	{kVJump_2w,  0,      kSTSnojump_2w, false, 0, 0},
+	{0,       0,      0,          false, 0, 0}
 };
 
 background_t screen26_desc_2w[] = {					// Passage
-  {kVLook_2w,  0,      kSTS26look_2w, true,  0, 0},
-  {kVUnder_2w, kNRock_2w, kSTSsearch_2w, false, 0, 0},
-  {kVLift_2w,  kNRock_2w, kSTSsearch_2w, false, 0, 0},
-  {kVLook_2w,  kNRock_2w, kSTDull_2w,    false, 0, 0},
-  {kVTake_2w,  kNRock_2w, kSTNopurps_2w, false, 0, 0},
-  {0,       0,      0,          false, 0, 0}
+	{kVLook_2w,  0,      kSTS26look_2w, true,  0, 0},
+	{kVUnder_2w, kNRock_2w, kSTSsearch_2w, false, 0, 0},
+	{kVLift_2w,  kNRock_2w, kSTSsearch_2w, false, 0, 0},
+	{kVLook_2w,  kNRock_2w, kSTDull_2w,    false, 0, 0},
+	{kVTake_2w,  kNRock_2w, kSTNopurps_2w, false, 0, 0},
+	{0,       0,      0,          false, 0, 0}
 };
 
 background_t screen27_desc_2w[] = {					// genie
-  {kVLook_2w,    0,        kSTS27look_2w,   true,  0, 0},
-  {kVUnder_2w,   kNRock_2w,   kSTSsearch_2w,   false, 0, 0},
-  {kVLift_2w,    kNRock_2w,   kSTSsearch_2w,   false, 0, 0},
-  {kVLook_2w,    kNRock_2w,   kSTDull_2w,      false, 0, 0},
-  {kVLook_2w,    kNTrap_2w,   kSTBudge_2w,     false, 0, 0},
-  {kVOpen_2w,    kNTrap_2w,   kSTBudge_2w,     false, 0, 0},
-  {kVUnscrew_2w, kNTrap_2w,   kSTBudge_2w,     false, 0, 0},
-  {kVUnlock_2w,  kNTrap_2w,   kSTBudge_2w,     false, 0, 0},
-  {kVPush_2w,    kNTrap_2w,   kSTBudge_2w,     false, 0, 0},
-  {kVTalk_2w,    kNGenie_2w,  kSTTalkgenie_2w, false, 0, 0},
-  {kVRude_2w,    kNGenie_2w,  kSTRudeshed_2w,  false, 0, 0},
-  {kVKiss_2w,    kNGenie_2w,  kSTRudeshed_2w,  false, 0, 0},
-  {kVGive_2w,    kNBanana_2w, kSTNobanana_2w,  false, 0, 0},
-  {kVClimb_2w,   kNStairs_2w, kSTTrywalk_2w,   false, 0, 0},
-  {0,         0,        0,            false, 0, 0}
+	{kVLook_2w,    0,        kSTS27look_2w,   true,  0, 0},
+	{kVUnder_2w,   kNRock_2w,   kSTSsearch_2w,   false, 0, 0},
+	{kVLift_2w,    kNRock_2w,   kSTSsearch_2w,   false, 0, 0},
+	{kVLook_2w,    kNRock_2w,   kSTDull_2w,      false, 0, 0},
+	{kVLook_2w,    kNTrap_2w,   kSTBudge_2w,     false, 0, 0},
+	{kVOpen_2w,    kNTrap_2w,   kSTBudge_2w,     false, 0, 0},
+	{kVUnscrew_2w, kNTrap_2w,   kSTBudge_2w,     false, 0, 0},
+	{kVUnlock_2w,  kNTrap_2w,   kSTBudge_2w,     false, 0, 0},
+	{kVPush_2w,    kNTrap_2w,   kSTBudge_2w,     false, 0, 0},
+	{kVTalk_2w,    kNGenie_2w,  kSTTalkgenie_2w, false, 0, 0},
+	{kVRude_2w,    kNGenie_2w,  kSTRudeshed_2w,  false, 0, 0},
+	{kVKiss_2w,    kNGenie_2w,  kSTRudeshed_2w,  false, 0, 0},
+	{kVGive_2w,    kNBanana_2w, kSTNobanana_2w,  false, 0, 0},
+	{kVClimb_2w,   kNStairs_2w, kSTTrywalk_2w,   false, 0, 0},
+	{0,         0,        0,            false, 0, 0}
 };
 
 background_t screen28_desc_2w[] = {					// traproom
-  {kVLook_2w,    0,           kSTS28look_2w,      true,  0, 0},
-  {kVBreak_2w,   kNSafe_2w,      kSTNowayhose_2w,    false, 0, 0},
-  {kVLook_2w,    kNHole_2w,      kSTS28hole_2w,      false, 0, 28},
-  {kVTake_2w,    kNMouse_2w,     kSTS28mouse_2w,     false, 0, 0},
-  {kVTake_2w,    kNMousehole_2w, kSTS28mouse_2w,     false, 0, 0},
-  {kVTake_2w,    kNDroppings_2w, kSTSdroppings_2w,   false, 0, 0},
-  {kVUnscrew_2w, kNSafe_2w,      kSTMorespecific_2w, false, 0, 0},
-  {kVOpen_2w,    0,           kSTUnlocksafe_2w,   false, 0, 0},
-  {kVUnlock_2w,  kNSafe_2w,      kSTUnlocksafe_2w,   false, 0, 0},
-  {0,         0,           0,               false, 0, 0}
+	{kVLook_2w,    0,           kSTS28look_2w,      true,  0, 0},
+	{kVBreak_2w,   kNSafe_2w,      kSTNowayhose_2w,    false, 0, 0},
+	{kVLook_2w,    kNHole_2w,      kSTS28hole_2w,      false, 0, 28},
+	{kVTake_2w,    kNMouse_2w,     kSTS28mouse_2w,     false, 0, 0},
+	{kVTake_2w,    kNMousehole_2w, kSTS28mouse_2w,     false, 0, 0},
+	{kVTake_2w,    kNDroppings_2w, kSTSdroppings_2w,   false, 0, 0},
+	{kVUnscrew_2w, kNSafe_2w,      kSTMorespecific_2w, false, 0, 0},
+	{kVOpen_2w,    0,           kSTUnlocksafe_2w,   false, 0, 0},
+	{kVUnlock_2w,  kNSafe_2w,      kSTUnlocksafe_2w,   false, 0, 0},
+	{0,         0,           0,               false, 0, 0}
 };
 
 background_t screen29_desc_2w[] = {					// Hall 2
-  {kVLook_2w, 0, kSTLookhall_2w, true,  0, 0},
-  {0,      0, 0,           false, 0, 0}
+	{kVLook_2w, 0, kSTLookhall_2w, true,  0, 0},
+	{0,      0, 0,           false, 0, 0}
 };
 
 background_t screen30_desc_2w[] = {					// Lounge
-  {kVLook_2w, 0,        kSTS30look_2w,  true,  0, 0},
-  {kVLook_2w, kNWindow_2w, kSTS6garden_2w, false, 0, 0},
-  {0,      0,        0,           false, 0, 0}
+	{kVLook_2w, 0,        kSTS30look_2w,  true,  0, 0},
+	{kVLook_2w, kNWindow_2w, kSTS6garden_2w, false, 0, 0},
+	{0,      0,        0,           false, 0, 0}
 };
 
 background_t screen31_desc_2w[] = {					// parlor
-  {kVLook_2w,   0,      kSTS31look_2w,      true,  0, 0},
-  {kVListen_2w, 0,      kSTBlah_2w,         false, 0, 0},
-  {kVOpen_2w,   kNDoor_2w, kSTMorespecific_2w, false, 0, 0},
-  {kVLook_2w,   kNDoor_2w, kSTMorespecific_2w, false, 0, 0},
-  {kVLook_2w,   kNMaid_2w, kSTLookPMaid_2w,    false, 0, 0},
-  {kVTalk_2w,   kNMaid_2w, kSTTalkPMaid_2w,    false, 0, 0},
-  {0,        0,      0,               false, 0, 0}
+	{kVLook_2w,   0,      kSTS31look_2w,      true,  0, 0},
+	{kVListen_2w, 0,      kSTBlah_2w,         false, 0, 0},
+	{kVOpen_2w,   kNDoor_2w, kSTMorespecific_2w, false, 0, 0},
+	{kVLook_2w,   kNDoor_2w, kSTMorespecific_2w, false, 0, 0},
+	{kVLook_2w,   kNMaid_2w, kSTLookPMaid_2w,    false, 0, 0},
+	{kVTalk_2w,   kNMaid_2w, kSTTalkPMaid_2w,    false, 0, 0},
+	{0,        0,      0,               false, 0, 0}
 };
 
 background_t screen32_desc_2w[] = {					// catroom
-  {kVLook_2w,   0,        kSTS32look_2w,    true,  0, 0},
-  {kVStroke_2w, kNCat_2w,    kSTSstrokecat_2w, false, 0, 0},
-  {kVPlay_2w,   kNCat_2w,    kSTSplaycat_2w,   false, 0, 0},
-  {kVTalk_2w,   kNCat_2w,    kSTStalkcat_2w,   false, 0, 0},
-  {kVLook_2w,   kNPost_2w,   kSTSlookpost_2w,  false, 0, 0},
-  {kVGive_2w,   0,        kSTSgivecat_2w,   false, 0, 0},
-  {kVLook_2w,   kNWindow_2w, kSTS6garden_2w,   false, 0, 0},
-  {kVRub_2w,    kNCatnip_2w, kSTRubcatnip2_2w, false, 0, 0},
-  {0,        0,        0,             false, 0, 0}
+	{kVLook_2w,   0,        kSTS32look_2w,    true,  0, 0},
+	{kVStroke_2w, kNCat_2w,    kSTSstrokecat_2w, false, 0, 0},
+	{kVPlay_2w,   kNCat_2w,    kSTSplaycat_2w,   false, 0, 0},
+	{kVTalk_2w,   kNCat_2w,    kSTStalkcat_2w,   false, 0, 0},
+	{kVLook_2w,   kNPost_2w,   kSTSlookpost_2w,  false, 0, 0},
+	{kVGive_2w,   0,        kSTSgivecat_2w,   false, 0, 0},
+	{kVLook_2w,   kNWindow_2w, kSTS6garden_2w,   false, 0, 0},
+	{kVRub_2w,    kNCatnip_2w, kSTRubcatnip2_2w, false, 0, 0},
+	{0,        0,        0,             false, 0, 0}
 };
 
 background_t screen33_desc_2w[] = {					// Boxroom
-  {kVLook_2w,      0,        kSTS33look_2w,      true,  0, 0},
-  {kVLook_2w,      kNDoor_2w,   kSTLookboxdoor_2w,  false, 0, 0},
-  {kVOpen_2w,      kNDoor_2w,   kSTWontopen_2w,     false, 0, 0},
-  {kVRead_2w,      kNPaper_2w,  kSTReadpaper_2w,    false, 0, 29},
-  {kVLook_2w,      kNPaper_2w,  kSTReadpaper_2w,    false, 0, 29},
-  {kVLook_2w,      kNCrate_2w,  kSTSlookbox_2w,     false, 0, 0},
-  {kVInto_2w,      kNCrate_2w,  kSTSgetinbox_2w,    false, 0, 0},
-  {kVLook_2w,      kNChute_2w,  kSTLookchute_2w,    false, 0, 0},
-  {kVLook_2w,      kNHole_2w,   kSTLookchute_2w,    false, 0, 0},
-  {kVClimb_2w,     kNChute_2w,  kSTUpchute_2w,      false, 0, 0},
-  {kVLook_2w,      kNWall_2w,   kSTLookchute_2w,    false, 0, 0},
-  {kVInto_2w,      kNDoor_2w,   kSTMorespecific_2w, false, 0, 0},// Kludge for "put pencil in door"
-  {kVPush_2w,      kNKey_2w,    kSTMorespecific_2w, false, 0, 0},
-  {kVMakeUseOf_2w, kNPencil_2w, kSTUsePencil_2w,    false, 0, 0},
-  {kVScribble_2w,  kNPencil_2w, kSTDoCrossword_2w,  false, 0, 0},
-  {0,           0,        0,               false, 0, 0}
+	{kVLook_2w,      0,        kSTS33look_2w,      true,  0, 0},
+	{kVLook_2w,      kNDoor_2w,   kSTLookboxdoor_2w,  false, 0, 0},
+	{kVOpen_2w,      kNDoor_2w,   kSTWontopen_2w,     false, 0, 0},
+	{kVRead_2w,      kNPaper_2w,  kSTReadpaper_2w,    false, 0, 29},
+	{kVLook_2w,      kNPaper_2w,  kSTReadpaper_2w,    false, 0, 29},
+	{kVLook_2w,      kNCrate_2w,  kSTSlookbox_2w,     false, 0, 0},
+	{kVInto_2w,      kNCrate_2w,  kSTSgetinbox_2w,    false, 0, 0},
+	{kVLook_2w,      kNChute_2w,  kSTLookchute_2w,    false, 0, 0},
+	{kVLook_2w,      kNHole_2w,   kSTLookchute_2w,    false, 0, 0},
+	{kVClimb_2w,     kNChute_2w,  kSTUpchute_2w,      false, 0, 0},
+	{kVLook_2w,      kNWall_2w,   kSTLookchute_2w,    false, 0, 0},
+	{kVInto_2w,      kNDoor_2w,   kSTMorespecific_2w, false, 0, 0},// Kludge for "put pencil in door"
+	{kVPush_2w,      kNKey_2w,    kSTMorespecific_2w, false, 0, 0},
+	{kVMakeUseOf_2w, kNPencil_2w, kSTUsePencil_2w,    false, 0, 0},
+	{kVScribble_2w,  kNPencil_2w, kSTDoCrossword_2w,  false, 0, 0},
+	{0,           0,        0,               false, 0, 0}
 };
 
 background_t screen34_desc_2w[] = {					// hall3
-  {kVLook_2w, 0,        kSTLookhall_2w,   true,  0, 0},
-  {kVLook_2w, kNMirror_2w, kSTLookMirror_2w, false, 0, 0},
-  {kVTake_2w, kNMirror_2w, kSTNouse_2w,      false, 0, 0},
-  {0,      0,        0,             false, 0, 0}
+	{kVLook_2w, 0,        kSTLookhall_2w,   true,  0, 0},
+	{kVLook_2w, kNMirror_2w, kSTLookMirror_2w, false, 0, 0},
+	{kVTake_2w, kNMirror_2w, kSTNouse_2w,      false, 0, 0},
+	{0,      0,        0,             false, 0, 0}
 };
 
 background_t screen35_desc_2w[] = {					// Organ
-  {kVLook_2w,   0,       kSTS35look_2w,   true,  DONT_CARE, 0},
-  {kVLook_2w,   kNOrgan_2w, kSTLookOrgan_2w, false, DONT_CARE, 0},
-  {kVPlay_2w,   kNOrgan_2w, kSTPlayorgan_2w, false, DONT_CARE, 0},
-  {kVListen_2w, 0,       kSTHearorgan_2w, false, 0,         0},
-  {kVListen_2w, 0,       kSTHearlaugh_2w, false, 1,         0},
-  {0,        0,       0,            false, 0,         0}
+	{kVLook_2w,   0,       kSTS35look_2w,   true,  DONT_CARE, 0},
+	{kVLook_2w,   kNOrgan_2w, kSTLookOrgan_2w, false, DONT_CARE, 0},
+	{kVPlay_2w,   kNOrgan_2w, kSTPlayorgan_2w, false, DONT_CARE, 0},
+	{kVListen_2w, 0,       kSTHearorgan_2w, false, 0,         0},
+	{kVListen_2w, 0,       kSTHearlaugh_2w, false, 1,         0},
+	{0,        0,       0,            false, 0,         0}
 };
 
 background_t screen36_desc_2w[] = {					// Hestroom
-  {kVLook_2w, 0,          kSTLookhest_2w,    true,  0, 0},
-  {kVTake_2w, kNBook_2w,     kSTS36book_2w,     false, 0, 0},
-  {kVTake_2w, kNBookcase_2w, kSTS36book_2w,     false, 0, 0},
-  {kVRead_2w, kNBook_2w,     kSTS36book_2w,     false, 0, 0},
-  {kVLook_2w, kNBook_2w,     kSTS36lookbook_2w, false, 0, 0},
-  {kVLook_2w, kNTable_2w,    kSTS36table_2w,    false, 0, 0},
-  {kVTalk_2w, kNHester_2w,   kSTTalkhester_2w,  false, 0, 0},
-  {kVLook_2w, kNWindow_2w,   kSTS6garden_2w,    false, 0, 0},
-  {0,      0,          0,              false, 0, 0}
+	{kVLook_2w, 0,          kSTLookhest_2w,    true,  0, 0},
+	{kVTake_2w, kNBook_2w,     kSTS36book_2w,     false, 0, 0},
+	{kVTake_2w, kNBookcase_2w, kSTS36book_2w,     false, 0, 0},
+	{kVRead_2w, kNBook_2w,     kSTS36book_2w,     false, 0, 0},
+	{kVLook_2w, kNBook_2w,     kSTS36lookbook_2w, false, 0, 0},
+	{kVLook_2w, kNTable_2w,    kSTS36table_2w,    false, 0, 0},
+	{kVTalk_2w, kNHester_2w,   kSTTalkhester_2w,  false, 0, 0},
+	{kVLook_2w, kNWindow_2w,   kSTS6garden_2w,    false, 0, 0},
+	{0,      0,          0,              false, 0, 0}
 };
 
 background_t screen37_desc_2w[] = {					// Retupmoc
 // Screen states: 0: default, 1: Got screwdriver
-  {kVLook_2w,  0,        kSTS37look_2w,   true,  DONT_CARE, 0},
-  {kVLift_2w,  kNRock_2w,   kSTNopurps_2w,   false, 0,         0},
-  {kVLook_2w,  kNRock_2w,   kSTNospecial_2w, false, 0,         0},
-  {kVUnder_2w, kNRock_2w,   kSTDull2_2w,     false, 0,         0},
-  {kVTalk_2w,  kNDoctor_2w, kSTComeHere_2w,  false, 0,         0},
-  {kVTalk_2w,  kNDoctor_2w, kSTPleasego_2w,  false, 1,         0},
-  {0,       0,        0,            false, 0,         0}
+	{kVLook_2w,  0,        kSTS37look_2w,   true,  DONT_CARE, 0},
+	{kVLift_2w,  kNRock_2w,   kSTNopurps_2w,   false, 0,         0},
+	{kVLook_2w,  kNRock_2w,   kSTNospecial_2w, false, 0,         0},
+	{kVUnder_2w, kNRock_2w,   kSTDull2_2w,     false, 0,         0},
+	{kVTalk_2w,  kNDoctor_2w, kSTComeHere_2w,  false, 0,         0},
+	{kVTalk_2w,  kNDoctor_2w, kSTPleasego_2w,  false, 1,         0},
+	{0,       0,        0,            false, 0,         0}
 };
 
 background_t screen38_desc_2w[] = {					// hall1
-  {kVLook_2w, 0, kSTS38look_2w, true,  0, 0},
-  {0,      0, 0,          false, 0, 0}
+	{kVLook_2w, 0, kSTS38look_2w, true,  0, 0},
+	{0,      0, 0,          false, 0, 0}
 };
 
 // Array of ptrs to object_list_t
@@ -3211,280 +3211,280 @@ objectList_t backgroundList_2w[] = {
 
 background_t catchall_3w[] = {					// Generally applicable phrases
 // Make sure verbs with nouns come before same verb with 0
-  {kVLook_3w,    kNPenny_3w,  kSTLookpen_3w,      false, DONT_CARE, 0},
-  {kVKiss_3w,    kNPenny_3w,  kSTMmmm_3w,         false, DONT_CARE, 0},
-  {kVRude_3w,    kNPenny_3w,  kSTHeadache_3w,     false, DONT_CARE, 0},
-  {kVNaughty_3w, kNPenny_3w,  kSTHeadache_3w,     false, DONT_CARE, 0},
-  {kVInto_3w,    kNWindow_3w, kSTThruwindow_3w,   false, DONT_CARE, 0},
-  {kVOutof_3w,   kNWindow_3w, kSTThruwindow_3w,   false, DONT_CARE, 0},
-  {kVJump_3w,    0,        kSTSjump_3w,        false, DONT_CARE, 0},
-  {kVGo_3w,      0,        kSTTrywalk_3w,      false, DONT_CARE, 0},
-  {kVInto_3w,    0,        kSTTrywalk_3w,      false, DONT_CARE, 0},
-  {kVClimb_3w,   0,        kSTSclimb_3w,       false, DONT_CARE, 0},
-  {kVShout_3w,   0,        kSTNothing_3w,      false, DONT_CARE, 0},
-  {kVTalk_3w,    0,        kSTStalk_3w,        false, DONT_CARE, 0},
-  {kVSwitch_3w,  0,        kSTMorespecific_3w, false, DONT_CARE, 0},
-  {kVUse_3w,     0,        kSTMorespecific_3w, false, DONT_CARE, 0},
-  {kVThrowit_3w, 0,        kSTNopurps_3w,      false, DONT_CARE, 0},
-  {kVRude_3w,    0,        kSTSrude_3w,        false, DONT_CARE, 0},
-  {kVAttack_3w,  0,        kSTSattack_3w,      false, DONT_CARE, 0},
-  {kVBreak_3w,   0,        kSTSbreak_3w,       false, DONT_CARE, 0},
-  {kVListen_3w,  0,        kSTQuiet_3w,        false, DONT_CARE, 0},
-  {kVSmell_3w,   0,        kSTAroma_3w,        false, DONT_CARE, 0},
-  {kVQuery_3w,   0,        kSTNoidea_3w,       false, DONT_CARE, 0},
-  {kVLook_3w,    kNSky_3w,    kSTFalling_3w,      false, DONT_CARE, 0},
-  {kVLook_3w,    kNWall_3w,   kSTDull_3w,         false, DONT_CARE, 0},
-  {kVLook_3w,    kNGround_3w, kSTDull_3w,         false, DONT_CARE, 0},
-  {kVHelp_3w,    0,        kSTShelp_3w,        false, DONT_CARE, 0},
-  {kVMagic_3w,   0,        kSTSmagic_3w,       false, DONT_CARE, 0},
-  {kVWish_3w,    0,        kSTSmagic_3w,       false, DONT_CARE, 0},
-  {kVDig_3w,     0,        kSTSdig_3w,         false, DONT_CARE, 0},
-  {kVNaughty_3w, 0,        kSTSnaughty_3w,     false, DONT_CARE, 0},
-  {kVKnock_3w,   0,        kSTNoanswer_3w,     false, DONT_CARE, 0},
-  {kVOpen_3w,    kNDoor_3w,   kSTWontopen_3w,     false, DONT_CARE, 0},
-  {kVUnlock_3w,  kNDoor_3w,   kSTCantunlock_3w,   false, DONT_CARE, 0},
-  {kVLook_3w,    kNDoor_3w,   kSTDull_3w,         false, DONT_CARE, 0},
-  {kVHello_3w,   0,        kSTHi_3w,           false, DONT_CARE, 0},
-  {kVGive_3w,    0,        kSTNothanks_3w,     false, DONT_CARE, 0},
-  {kVShout_3w,   0,        kSTNoanswer_3w,     false, DONT_CARE, 0},
-  {kVUndress_3w, 0,        kSTSundress_3w,     false, DONT_CARE, 0},
-  {kVSit_3w,     0,        kSTStired_3w,       false, DONT_CARE, 0},
-  {kVFeed_3w,    0,        kSTNothanks_3w,     false, DONT_CARE, 0},
-  {kVTake_3w,    kNVine_3w,   kSTNopurps_3w,      false, DONT_CARE, 0},
-  {kVClimb_3w,   kNJungle_3w, kSTNopurps_3w,      false, DONT_CARE, 0},
-  {kVLook_3w,    kNJungle_3w, kSTLookjungle_3w,   false, DONT_CARE, 0},
-  {kVPut_3w,     kNFire_3w,   kSTNopurps_3w,      false, DONT_CARE, 0},
-  {kVSwim_3w,    0,        kSTCantswim_3w,     false, DONT_CARE, 0},
-  {kVTake_3w,    kNMouse_3w,  kSTCantcatch_3w,    false, DONT_CARE, 0},
-  {kVLook_3w,    kNMouse_3w,  kSTNospecial_3w,    false, DONT_CARE, 0},
-  {0,         0,        0,               false, 0,         0}
+	{kVLook_3w,    kNPenny_3w,  kSTLookpen_3w,      false, DONT_CARE, 0},
+	{kVKiss_3w,    kNPenny_3w,  kSTMmmm_3w,         false, DONT_CARE, 0},
+	{kVRude_3w,    kNPenny_3w,  kSTHeadache_3w,     false, DONT_CARE, 0},
+	{kVNaughty_3w, kNPenny_3w,  kSTHeadache_3w,     false, DONT_CARE, 0},
+	{kVInto_3w,    kNWindow_3w, kSTThruwindow_3w,   false, DONT_CARE, 0},
+	{kVOutof_3w,   kNWindow_3w, kSTThruwindow_3w,   false, DONT_CARE, 0},
+	{kVJump_3w,    0,        kSTSjump_3w,        false, DONT_CARE, 0},
+	{kVGo_3w,      0,        kSTTrywalk_3w,      false, DONT_CARE, 0},
+	{kVInto_3w,    0,        kSTTrywalk_3w,      false, DONT_CARE, 0},
+	{kVClimb_3w,   0,        kSTSclimb_3w,       false, DONT_CARE, 0},
+	{kVShout_3w,   0,        kSTNothing_3w,      false, DONT_CARE, 0},
+	{kVTalk_3w,    0,        kSTStalk_3w,        false, DONT_CARE, 0},
+	{kVSwitch_3w,  0,        kSTMorespecific_3w, false, DONT_CARE, 0},
+	{kVUse_3w,     0,        kSTMorespecific_3w, false, DONT_CARE, 0},
+	{kVThrowit_3w, 0,        kSTNopurps_3w,      false, DONT_CARE, 0},
+	{kVRude_3w,    0,        kSTSrude_3w,        false, DONT_CARE, 0},
+	{kVAttack_3w,  0,        kSTSattack_3w,      false, DONT_CARE, 0},
+	{kVBreak_3w,   0,        kSTSbreak_3w,       false, DONT_CARE, 0},
+	{kVListen_3w,  0,        kSTQuiet_3w,        false, DONT_CARE, 0},
+	{kVSmell_3w,   0,        kSTAroma_3w,        false, DONT_CARE, 0},
+	{kVQuery_3w,   0,        kSTNoidea_3w,       false, DONT_CARE, 0},
+	{kVLook_3w,    kNSky_3w,    kSTFalling_3w,      false, DONT_CARE, 0},
+	{kVLook_3w,    kNWall_3w,   kSTDull_3w,         false, DONT_CARE, 0},
+	{kVLook_3w,    kNGround_3w, kSTDull_3w,         false, DONT_CARE, 0},
+	{kVHelp_3w,    0,        kSTShelp_3w,        false, DONT_CARE, 0},
+	{kVMagic_3w,   0,        kSTSmagic_3w,       false, DONT_CARE, 0},
+	{kVWish_3w,    0,        kSTSmagic_3w,       false, DONT_CARE, 0},
+	{kVDig_3w,     0,        kSTSdig_3w,         false, DONT_CARE, 0},
+	{kVNaughty_3w, 0,        kSTSnaughty_3w,     false, DONT_CARE, 0},
+	{kVKnock_3w,   0,        kSTNoanswer_3w,     false, DONT_CARE, 0},
+	{kVOpen_3w,    kNDoor_3w,   kSTWontopen_3w,     false, DONT_CARE, 0},
+	{kVUnlock_3w,  kNDoor_3w,   kSTCantunlock_3w,   false, DONT_CARE, 0},
+	{kVLook_3w,    kNDoor_3w,   kSTDull_3w,         false, DONT_CARE, 0},
+	{kVHello_3w,   0,        kSTHi_3w,           false, DONT_CARE, 0},
+	{kVGive_3w,    0,        kSTNothanks_3w,     false, DONT_CARE, 0},
+	{kVShout_3w,   0,        kSTNoanswer_3w,     false, DONT_CARE, 0},
+	{kVUndress_3w, 0,        kSTSundress_3w,     false, DONT_CARE, 0},
+	{kVSit_3w,     0,        kSTStired_3w,       false, DONT_CARE, 0},
+	{kVFeed_3w,    0,        kSTNothanks_3w,     false, DONT_CARE, 0},
+	{kVTake_3w,    kNVine_3w,   kSTNopurps_3w,      false, DONT_CARE, 0},
+	{kVClimb_3w,   kNJungle_3w, kSTNopurps_3w,      false, DONT_CARE, 0},
+	{kVLook_3w,    kNJungle_3w, kSTLookjungle_3w,   false, DONT_CARE, 0},
+	{kVPut_3w,     kNFire_3w,   kSTNopurps_3w,      false, DONT_CARE, 0},
+	{kVSwim_3w,    0,        kSTCantswim_3w,     false, DONT_CARE, 0},
+	{kVTake_3w,    kNMouse_3w,  kSTCantcatch_3w,    false, DONT_CARE, 0},
+	{kVLook_3w,    kNMouse_3w,  kSTNospecial_3w,    false, DONT_CARE, 0},
+	{0,         0,        0,               false, 0,         0}
 };
 
 background_t crash_desc_3w[] = {						// At the crash site
-  {kVLook_3w,   0,       kSTLookcrash_3w,     false, 0, 0},
-  {kVRepair_3w, kNPlane_3w, kSTNopurps_3w,       false, 0, 0},
-  {kVFly_3w,    kNPlane_3w, kSTNopurps_3w,       false, 0, 0},
-  {kVInto_3w,   0,       kSTMorespecific_3w,  true , 0, 0},
-  {kVOpen_3w,   kNDoor_3w,  kSTOpenplanedoor_3w, false, 0, 0},
-  {0,        0,       0,                false, 0, 0}
+	{kVLook_3w,   0,       kSTLookcrash_3w,     false, 0, 0},
+	{kVRepair_3w, kNPlane_3w, kSTNopurps_3w,       false, 0, 0},
+	{kVFly_3w,    kNPlane_3w, kSTNopurps_3w,       false, 0, 0},
+	{kVInto_3w,   0,       kSTMorespecific_3w,  true , 0, 0},
+	{kVOpen_3w,   kNDoor_3w,  kSTOpenplanedoor_3w, false, 0, 0},
+	{0,        0,       0,                false, 0, 0}
 };
 
 background_t plane_desc_3w[] = {						// Inside the plane
-  {kVLook_3w,   0, kSTLookplane_3w, true , 0, 0},
-  {kVSearch_3w, 0, kSTSaylook_3w,   false, 0, 0},
-  {kVInto_3w,   0, kSTYouarein_3w,  false, 0, 0},
-  {0,        0, 0,            false, 0, 0}
+	{kVLook_3w,   0, kSTLookplane_3w, true , 0, 0},
+	{kVSearch_3w, 0, kSTSaylook_3w,   false, 0, 0},
+	{kVInto_3w,   0, kSTYouarein_3w,  false, 0, 0},
+	{0,        0, 0,            false, 0, 0}
 };
 
 background_t web_desc_3w[] = { 						// At the spider's web
-  {kVLook_3w, 0,        kSTLookweb_3w,   true,  0, 0},
-  {kVTake_3w, kNNative_3w, kSTTakegirl_3w,  false, 0, 0},
-  {kVLook_3w, kNWeb_3w,    kSTLookatweb_3w, false, 0, 0},
-  {kVTake_3w, kNPenny_3w,  kSTTakepenny_3w, false, 0, 0},
-  {kVTalk_3w, kNPenny_3w,  kSTTalkpenny_3w, false, 0, 0},
-  {0,      0,        0,            false, 0, 0}
+	{kVLook_3w, 0,        kSTLookweb_3w,   true,  0, 0},
+	{kVTake_3w, kNNative_3w, kSTTakegirl_3w,  false, 0, 0},
+	{kVLook_3w, kNWeb_3w,    kSTLookatweb_3w, false, 0, 0},
+	{kVTake_3w, kNPenny_3w,  kSTTakepenny_3w, false, 0, 0},
+	{kVTalk_3w, kNPenny_3w,  kSTTalkpenny_3w, false, 0, 0},
+	{0,      0,        0,            false, 0, 0}
 };
 
 background_t wfall_desc_3w[] = {						// Waterfall and stream
-  {kVLook_3w,   0,       kSTLookwfall_3w,  true,  0, 0},
-  {kVLook_3w,   kNWater_3w, kSTLookwfall_3w,  false, 0, 0},
-  {kVCross_3w,  kNWater_3w, kSTCantcross_3w,  false, 0, 0},
-  {kVListen_3w, 0,       kSTListenfall_3w, false, 0, 0},
-  {0,        0,       0,             false, 0, 0}
+	{kVLook_3w,   0,       kSTLookwfall_3w,  true,  0, 0},
+	{kVLook_3w,   kNWater_3w, kSTLookwfall_3w,  false, 0, 0},
+	{kVCross_3w,  kNWater_3w, kSTCantcross_3w,  false, 0, 0},
+	{kVListen_3w, 0,       kSTListenfall_3w, false, 0, 0},
+	{0,        0,       0,             false, 0, 0}
 };
 
 background_t wfall_b_desc_3w[] = {						// Same as above but no water
-  {kVLook_3w,  0,       kSTLookwfall_b_3w, true,  0, 0},
-  {kVLook_3w,  kNWater_3w, kSTLookwfall_b_3w, false, 0, 0},
-  {kVCross_3w, kNWater_3w, kSTToomuddy_3w,    false, 0, 0},
-  {0,       0,       0,              false, 0, 0}
+	{kVLook_3w,  0,       kSTLookwfall_b_3w, true,  0, 0},
+	{kVLook_3w,  kNWater_3w, kSTLookwfall_b_3w, false, 0, 0},
+	{kVCross_3w, kNWater_3w, kSTToomuddy_3w,    false, 0, 0},
+	{0,       0,       0,              false, 0, 0}
 };
 
 background_t wbase_desc_3w[] = {						// Base of waterfall
-  {kVLook_3w,  0,       kSTLookwbase_3w, true , 0, 0},
-  {kVLook_3w,  kNWater_3w, kSTLookwbase_3w, false, 0, 0},
-  {kVCross_3w, kNWater_3w, kSTToomuddy_3w,  false, 0, 0},
-  {0,       0,       0,            false, 0, 0}
+	{kVLook_3w,  0,       kSTLookwbase_3w, true , 0, 0},
+	{kVLook_3w,  kNWater_3w, kSTLookwbase_3w, false, 0, 0},
+	{kVCross_3w, kNWater_3w, kSTToomuddy_3w,  false, 0, 0},
+	{0,       0,       0,            false, 0, 0}
 };
 
 background_t path_ul_desc_3w[] = {						// Path at left of spider's web
-  {kVLook_3w, 0, kSTLookpath_ul_3w, true,  0, 0},
-  {0,      0, 0,              false, 0, 0}
+	{kVLook_3w, 0, kSTLookpath_ul_3w, true,  0, 0},
+	{0,      0, 0,              false, 0, 0}
 };
 
 background_t bridge_desc_3w[] = {						// At the bridge
-  {kVLook_3w,  0,      kSTLookbridge1_3w,    true,  0, 0},
-  {kVSwing_3w, 0,      kSTSwingbridge_3w,    false, 0, 0},
-  {kVTake_3w,  kNVine_3w, kSTGetbridgevines_3w, false, 0, 0},
-  {kVTie_3w,   kNThem_3w, kSTMorespecific_3w,   false, 0, 0},
-  {0,       0,      0,                 false, 0, 0}
+	{kVLook_3w,  0,      kSTLookbridge1_3w,    true,  0, 0},
+	{kVSwing_3w, 0,      kSTSwingbridge_3w,    false, 0, 0},
+	{kVTake_3w,  kNVine_3w, kSTGetbridgevines_3w, false, 0, 0},
+	{kVTie_3w,   kNThem_3w, kSTMorespecific_3w,   false, 0, 0},
+	{0,       0,      0,                 false, 0, 0}
 };
 
 background_t bridge2_desc_3w[] = {						// At the bridge
-  {kVLook_3w,  0, kSTLookbridge2_3w, true,  0, 0},
-  {kVSwing_3w, 0, kSTSwingbridge_3w, false, 0, 0},
-  {0,       0, 0,              false, 0, 0}
+	{kVLook_3w,  0, kSTLookbridge2_3w, true,  0, 0},
+	{kVSwing_3w, 0, kSTSwingbridge_3w, false, 0, 0},
+	{0,       0, 0,              false, 0, 0}
 };
 
 background_t stream_desc_3w[] = {						// stream with vines crossing
-  {kVLook_3w,  0, kSTLookstream1_3w,  true,  0, 0},
-  {kVSwing_3w, 0, kSTMorespecific_3w, false, 0, 0},
-  {kVCross_3w, 0, kSTStep1_3w,        false, 0, 0},
-  {0,       0, 0,               false, 0, 0}
+	{kVLook_3w,  0, kSTLookstream1_3w,  true,  0, 0},
+	{kVSwing_3w, 0, kSTMorespecific_3w, false, 0, 0},
+	{kVCross_3w, 0, kSTStep1_3w,        false, 0, 0},
+	{0,       0, 0,               false, 0, 0}
 };
 
 background_t stream2_desc_3w[] = {						// Stream with elephant sitting in it
-  {kVLook_3w,  0,          kSTLookstream2_3w, true,  0, 0},
-  {kVSwing_3w, 0,          kSTCantswing_3w,   false, 0, 0},
-  {kVLook_3w,  kNElephant_3w, kSTLookele2_3w,    false, 0, 0},
-  {0,       0,          0,              false, 0, 0}
+	{kVLook_3w,  0,          kSTLookstream2_3w, true,  0, 0},
+	{kVSwing_3w, 0,          kSTCantswing_3w,   false, 0, 0},
+	{kVLook_3w,  kNElephant_3w, kSTLookele2_3w,    false, 0, 0},
+	{0,       0,          0,              false, 0, 0}
 };
 
 background_t village_desc_3w[] = {						// Long shot of village
-  {kVLook_3w, 0,      kSTLookvillage_3w, true,  0, 0},
-  {kVTake_3w, kNFood_3w, kSTTakething_3w,   false, 0, 0},
-  {kVLook_3w, kNFood_3w, kSTTakething_3w,   false, 0, 0},
-  {0,      0,      0,              false, 0, 0}
+	{kVLook_3w, 0,      kSTLookvillage_3w, true,  0, 0},
+	{kVTake_3w, kNFood_3w, kSTTakething_3w,   false, 0, 0},
+	{kVLook_3w, kNFood_3w, kSTTakething_3w,   false, 0, 0},
+	{0,      0,      0,              false, 0, 0}
 };
 
 background_t hut_out_desc_3w[] = {						// Outside witch doctor's hut
-  {kVLook_3w,   0,         kSTLookhut_out_3w, false, 0, 0},
-  {kVLook_3w,   kNDocbits_3w, kSTLookdocbits_3w, false, 0, 0},
-  {kVTake_3w,   kNDocbits_3w, kSTTakedocbits_3w, false, 0, 0},
-  {kVLook_3w,   kNFire_3w,    kSTLookdocbits_3w, false, 0, 0},
-  {kVTake_3w,   kNFire_3w,    kSTTakedocbits_3w, false, 0, 0},
-  {kVLook_3w,   kNSpider_3w,  kSTLookspider_3w,  false, 0, 0},
-  {kVTake_3w,   kNSpider_3w,  kSTTakespider_3w,  false, 0, 0},
-  {kVLook_3w,   kNSnake_3w,   kSTLooksnake_3w,   false, 0, 0},
-  {kVTake_3w,   kNSnake_3w,   kSTTakesnake_3w,   false, 0, 0},
-  {kVSearch_3w, kNWindow_3w,  kSTLookinhut_3w,   false, 0, 0},
-  {kVLook_3w,   kNWindow_3w,  kSTLookinhut_3w,   false, 0, 0},
-  {kVSearch_3w, kNHut_3w,     kSTLookinhut_3w,   false, 0, 0},
-  {0,        0,         0,              false, 0, 0}
+	{kVLook_3w,   0,         kSTLookhut_out_3w, false, 0, 0},
+	{kVLook_3w,   kNDocbits_3w, kSTLookdocbits_3w, false, 0, 0},
+	{kVTake_3w,   kNDocbits_3w, kSTTakedocbits_3w, false, 0, 0},
+	{kVLook_3w,   kNFire_3w,    kSTLookdocbits_3w, false, 0, 0},
+	{kVTake_3w,   kNFire_3w,    kSTTakedocbits_3w, false, 0, 0},
+	{kVLook_3w,   kNSpider_3w,  kSTLookspider_3w,  false, 0, 0},
+	{kVTake_3w,   kNSpider_3w,  kSTTakespider_3w,  false, 0, 0},
+	{kVLook_3w,   kNSnake_3w,   kSTLooksnake_3w,   false, 0, 0},
+	{kVTake_3w,   kNSnake_3w,   kSTTakesnake_3w,   false, 0, 0},
+	{kVSearch_3w, kNWindow_3w,  kSTLookinhut_3w,   false, 0, 0},
+	{kVLook_3w,   kNWindow_3w,  kSTLookinhut_3w,   false, 0, 0},
+	{kVSearch_3w, kNHut_3w,     kSTLookinhut_3w,   false, 0, 0},
+	{0,        0,         0,              false, 0, 0}
 };
 
 background_t hut_in_desc_3w[] = {						// Inside hut
 // States: 0 imprisoned, 1 doctor incapacitated
-  {kVLook_3w,    0,           kSTLookhut_in_3w,     true,  0,         0},
-  {kVLook_3w,    0,           kSTLookhut_in2_3w,    true,  1,         0},
-  {kVLook_3w,    kNDoctor_3w,    kSTLookhut_in2_3w,    false, 1,         0},
-  {kVTake_3w,    0,           kSTTakeincage_3w,     false, 0,         0},
-  {kVTake_3w,    kNDoctor_3w,    kSTTakedoctor0_3w,    false, 0,         0},
-  {kVTake_3w,    kNDoctor_3w,    kSTTakedoctor1_3w,    false, 1,         0},
-  {kVLook_3w,    kNDocbits_3w,   kSTLookdocbits_3w,    false, DONT_CARE, 0},
-  {kVTake_3w,    kNDocbits_3w,   kSTTakedocbits_3w,    false, DONT_CARE, 0},
-  {kVLook_3w,    kNSpider_3w,    kSTLookspider_3w,     false, DONT_CARE, 0},
-  {kVTake_3w,    kNSpider_3w,    kSTTakespider_3w,     false, DONT_CARE, 0},
-  {kVLook_3w,    kNSnake_3w,     kSTLooksnake_3w,      false, DONT_CARE, 0},
-  {kVTake_3w,    kNSnake_3w,     kSTTakesnake_3w,      false, DONT_CARE, 0},
-  {kVLook_3w,    kNWindow_3w,    kSTLookouthut_3w,     false, DONT_CARE, 0},
-  {kVLook_3w,    kNShelfbits_3w, kSTLookshelfbits_3w,  false, 0,         0},
-  {kVLook_3w,    kNShelfbits_3w, kSTLookshelfbits2_3w, false, 1,         0},
-  {kVTake_3w,    kNShelfbits_3w, kSTTakeshelfbits_3w,  false, 1,         0},
-  {kVDrink_3w,   kNShelfbits_3w, kSTTakeshelfbits_3w,  false, 1,         0},
-  {kVLook_3w,    kNBottles_3w,   kSTLookshelfbits_3w,  false, 0,         0},
-  {kVLook_3w,    kNBottles_3w,   kSTLookshelfbits2_3w, false, 1,         0},
-  {kVTake_3w,    kNBottles_3w,   kSTTakeshelfbits_3w,  false, 1,         0},
-  {kVDrink_3w,   kNBottles_3w,   kSTTakeshelfbits_3w,  false, 1,         0},
-  {kVSearch_3w,  0,           kSTCantlookin_3w,     false, 0,         0},
-  {kVInto_3w,    kNFire_3w,      kSTGetinpot_3w,       false, 1,         0},
-  {kVSearch_3w,  kNFire_3w,      kSTLookinfire_3w,     false, 1,         0},
-  {kVLook_3w,    kNFire_3w,      kSTLookfire_3w,       false, DONT_CARE, 0},
-  {kVTalk_3w,    kNDoctor_3w,    kSTTalkdoc_3w,        false, 0,         0},
-  {kVTalk_3w,    kNDoctor_3w,    kSTTalkdoc2_3w,       false, 1,         0},
-  {kVSearch_3w,  kNMouse_3w,     kSTLookinhole_3w,     false, DONT_CARE, 0},
-  {kVTalk_3w,    kNMouse_3w,     kSTTalkmouse_3w,      false, DONT_CARE, 0},
-  {kVUnlock_3w,  kNCdoor_3w,     kSTPicklock_3w,       false, 0,         0},
-  {kVTake_3w,    kNDoorlock_3w,  kSTPicklock_3w,       false, 0,         0},
-  {kVGive_3w,    kNMouse_3w,     kSTGivemouse_3w,      false, DONT_CARE, 0},
-  {kVThrowit_3w, kNCheese_3w,    kSTGivemouse_3w,      false, DONT_CARE, 0},
-  {kVTake_3w,    kNNative_3w,    kSTTakenative_3w,     false, 0,         0},
-  {kVShoot_3w,   kNDoctor_3w,    kSTMissed_3w,         false, DONT_CARE, 0},
-  {kVBlow_3w,    kNDoctor_3w,    kSTMissed_3w,         false, DONT_CARE, 0},
-  {kVUse_3w,     kNPipe_3w,      kSTMissed_3w,         false, DONT_CARE, 0},
-  {kVClose_3w,   kNCdoor_3w,     kSTNotclose_3w,       false, DONT_CARE, 0},
-  {0,         0,           0,                 false, 0,         0}
+	{kVLook_3w,    0,           kSTLookhut_in_3w,     true,  0,         0},
+	{kVLook_3w,    0,           kSTLookhut_in2_3w,    true,  1,         0},
+	{kVLook_3w,    kNDoctor_3w,    kSTLookhut_in2_3w,    false, 1,         0},
+	{kVTake_3w,    0,           kSTTakeincage_3w,     false, 0,         0},
+	{kVTake_3w,    kNDoctor_3w,    kSTTakedoctor0_3w,    false, 0,         0},
+	{kVTake_3w,    kNDoctor_3w,    kSTTakedoctor1_3w,    false, 1,         0},
+	{kVLook_3w,    kNDocbits_3w,   kSTLookdocbits_3w,    false, DONT_CARE, 0},
+	{kVTake_3w,    kNDocbits_3w,   kSTTakedocbits_3w,    false, DONT_CARE, 0},
+	{kVLook_3w,    kNSpider_3w,    kSTLookspider_3w,     false, DONT_CARE, 0},
+	{kVTake_3w,    kNSpider_3w,    kSTTakespider_3w,     false, DONT_CARE, 0},
+	{kVLook_3w,    kNSnake_3w,     kSTLooksnake_3w,      false, DONT_CARE, 0},
+	{kVTake_3w,    kNSnake_3w,     kSTTakesnake_3w,      false, DONT_CARE, 0},
+	{kVLook_3w,    kNWindow_3w,    kSTLookouthut_3w,     false, DONT_CARE, 0},
+	{kVLook_3w,    kNShelfbits_3w, kSTLookshelfbits_3w,  false, 0,         0},
+	{kVLook_3w,    kNShelfbits_3w, kSTLookshelfbits2_3w, false, 1,         0},
+	{kVTake_3w,    kNShelfbits_3w, kSTTakeshelfbits_3w,  false, 1,         0},
+	{kVDrink_3w,   kNShelfbits_3w, kSTTakeshelfbits_3w,  false, 1,         0},
+	{kVLook_3w,    kNBottles_3w,   kSTLookshelfbits_3w,  false, 0,         0},
+	{kVLook_3w,    kNBottles_3w,   kSTLookshelfbits2_3w, false, 1,         0},
+	{kVTake_3w,    kNBottles_3w,   kSTTakeshelfbits_3w,  false, 1,         0},
+	{kVDrink_3w,   kNBottles_3w,   kSTTakeshelfbits_3w,  false, 1,         0},
+	{kVSearch_3w,  0,           kSTCantlookin_3w,     false, 0,         0},
+	{kVInto_3w,    kNFire_3w,      kSTGetinpot_3w,       false, 1,         0},
+	{kVSearch_3w,  kNFire_3w,      kSTLookinfire_3w,     false, 1,         0},
+	{kVLook_3w,    kNFire_3w,      kSTLookfire_3w,       false, DONT_CARE, 0},
+	{kVTalk_3w,    kNDoctor_3w,    kSTTalkdoc_3w,        false, 0,         0},
+	{kVTalk_3w,    kNDoctor_3w,    kSTTalkdoc2_3w,       false, 1,         0},
+	{kVSearch_3w,  kNMouse_3w,     kSTLookinhole_3w,     false, DONT_CARE, 0},
+	{kVTalk_3w,    kNMouse_3w,     kSTTalkmouse_3w,      false, DONT_CARE, 0},
+	{kVUnlock_3w,  kNCdoor_3w,     kSTPicklock_3w,       false, 0,         0},
+	{kVTake_3w,    kNDoorlock_3w,  kSTPicklock_3w,       false, 0,         0},
+	{kVGive_3w,    kNMouse_3w,     kSTGivemouse_3w,      false, DONT_CARE, 0},
+	{kVThrowit_3w, kNCheese_3w,    kSTGivemouse_3w,      false, DONT_CARE, 0},
+	{kVTake_3w,    kNNative_3w,    kSTTakenative_3w,     false, 0,         0},
+	{kVShoot_3w,   kNDoctor_3w,    kSTMissed_3w,         false, DONT_CARE, 0},
+	{kVBlow_3w,    kNDoctor_3w,    kSTMissed_3w,         false, DONT_CARE, 0},
+	{kVUse_3w,     kNPipe_3w,      kSTMissed_3w,         false, DONT_CARE, 0},
+	{kVClose_3w,   kNCdoor_3w,     kSTNotclose_3w,       false, DONT_CARE, 0},
+	{0,         0,           0,                 false, 0,         0}
 };
 
 background_t garden_desc_3w[] = {						// The secret garden
-  {kVLook_3w,  0,        kSTLookgarden_3w,  true,  0, 0},
-  {kVLook_3w,  kNOrchid_3w, kSTLookorchid_3w,  false, 0, 0},
-  {kVTake_3w,  kNOrchid_3w, kSTTakeorchid_3w,  false, 0, 0},
-  {kVCross_3w, 0,        kSTCrossgarden_3w, false, 0, 0},
-  {kVLook_3w,  kNWater_3w,  kSTLookgarden_3w,  false, 0, 0},
-  {0,       0,        0,              false, 0, 0}
+	{kVLook_3w,  0,        kSTLookgarden_3w,  true,  0, 0},
+	{kVLook_3w,  kNOrchid_3w, kSTLookorchid_3w,  false, 0, 0},
+	{kVTake_3w,  kNOrchid_3w, kSTTakeorchid_3w,  false, 0, 0},
+	{kVCross_3w, 0,        kSTCrossgarden_3w, false, 0, 0},
+	{kVLook_3w,  kNWater_3w,  kSTLookgarden_3w,  false, 0, 0},
+	{0,       0,        0,              false, 0, 0}
 };
 
 background_t clifftop_desc_3w[] = {					// Top of cliff path
-  {kVLook_3w, 0, kSTLookclifftop_3w, true,  0, 0},
-  {0,      0, 0,               false, 0, 0}
+	{kVLook_3w, 0, kSTLookclifftop_3w, true,  0, 0},
+	{0,      0, 0,               false, 0, 0}
 };
 
 background_t oldman_desc_3w[] = {						// Old man inside cave
-  {kVLook_3w, 0, kSTLookoldman_3w, true,  0, 0},
-  {0,      0, 0,             false, 0, 0}
+	{kVLook_3w, 0, kSTLookoldman_3w, true,  0, 0},
+	{0,      0, 0,             false, 0, 0}
 };
 
 background_t cliff_desc_3w[] = {						// Lower cliff path
-  {kVLook_3w, 0, kSTLookcliff_3w, true,  0, 0},
-  {0,      0, 0,            false, 0, 0}
+	{kVLook_3w, 0, kSTLookcliff_3w, true,  0, 0},
+	{0,      0, 0,            false, 0, 0}
 };
 
 background_t camp_desc_3w[] = {						// Camp scene in village
-  {kVLook_3w,   0,          kSTLookcamp_3w,    true,  0, 0},
-  {kVLook_3w,   kNFire_3w,     kSTLookhyena_3w,   false, 0, 0},
-  {kVLook_3w,   kNPole_3w,     kSTLookpole_3w,    false, 0, 0},
-  {kVBehind_3w, kNHut_3w,      kSTBehindhut_3w,   false, 0, 0},// Must come before look hut
-  {kVSearch_3w, kNWindow_3w,   kSTLookintohut_3w, false, 0, 0},
-  {kVSearch_3w, kNHut_3w,      kSTLookintohut_3w, false, 0, 0},
-  {kVLook_3w,   kNHut_3w,      kSTLookhut_3w,     false, 0, 0},
-  {kVLook_3w,   kNWindow_3w,   kSTLookintohut_3w, false, 0, 0},
-  {kVEat_3w,    0,          kSTEatroast_3w,    false, 0, 0},
-  {kVTake_3w,   kNFood_3w,     kSTEatroast_3w,    false, 0, 0},
-  {kVInto_3w,   kNFire_3w,     kSTIntofire_3w,    false, 0, 0},
-  {kVTake_3w,   kNFire_3w,     kSTIntofire_3w,    false, 0, 0},
-  {kVTake_3w,   kNNative_3w,   kSTTakenative_3w,  false, 0, 0},
-  {kVTake_3w,   kNPipe_3w,     kSTMakeoffer_3w,   false, 0, 0},
-  {kVGive_3w,   kNBouillon_3w, kSTNonecarried_3w, false, 0, 0},
-  {0,        0,          0,              false, 0, 0}
+	{kVLook_3w,   0,          kSTLookcamp_3w,    true,  0, 0},
+	{kVLook_3w,   kNFire_3w,     kSTLookhyena_3w,   false, 0, 0},
+	{kVLook_3w,   kNPole_3w,     kSTLookpole_3w,    false, 0, 0},
+	{kVBehind_3w, kNHut_3w,      kSTBehindhut_3w,   false, 0, 0},// Must come before look hut
+	{kVSearch_3w, kNWindow_3w,   kSTLookintohut_3w, false, 0, 0},
+	{kVSearch_3w, kNHut_3w,      kSTLookintohut_3w, false, 0, 0},
+	{kVLook_3w,   kNHut_3w,      kSTLookhut_3w,     false, 0, 0},
+	{kVLook_3w,   kNWindow_3w,   kSTLookintohut_3w, false, 0, 0},
+	{kVEat_3w,    0,          kSTEatroast_3w,    false, 0, 0},
+	{kVTake_3w,   kNFood_3w,     kSTEatroast_3w,    false, 0, 0},
+	{kVInto_3w,   kNFire_3w,     kSTIntofire_3w,    false, 0, 0},
+	{kVTake_3w,   kNFire_3w,     kSTIntofire_3w,    false, 0, 0},
+	{kVTake_3w,   kNNative_3w,   kSTTakenative_3w,  false, 0, 0},
+	{kVTake_3w,   kNPipe_3w,     kSTMakeoffer_3w,   false, 0, 0},
+	{kVGive_3w,   kNBouillon_3w, kSTNonecarried_3w, false, 0, 0},
+	{0,        0,          0,              false, 0, 0}
 };
 
 background_t turn_desc_3w[] = {						// Turnaround path
-  {kVLook_3w,  0,      kSTLookturn_3w,  true,  DONT_CARE, 0},
-  {kVUnder_3w, kNRock_3w, kSTUnderrock_3w, false, 0,         0},
-  {kVLook_3w,  kNRock_3w, kSTLookrock_3w,  false, 0,         0},
-  {kVRide_3w,  kNRock_3w, kSTOntorock_3w,  false, 0,         0},
-  {kVClimb_3w, kNRock_3w, kSTOntorock_3w,  false, 0,         0},
-  {0,       0,      0,            false, 0,         0}
+	{kVLook_3w,  0,      kSTLookturn_3w,  true,  DONT_CARE, 0},
+	{kVUnder_3w, kNRock_3w, kSTUnderrock_3w, false, 0,         0},
+	{kVLook_3w,  kNRock_3w, kSTLookrock_3w,  false, 0,         0},
+	{kVRide_3w,  kNRock_3w, kSTOntorock_3w,  false, 0,         0},
+	{kVClimb_3w, kNRock_3w, kSTOntorock_3w,  false, 0,         0},
+	{0,       0,      0,            false, 0,         0}
 };
 
 background_t slope_desc_3w[] = {						// Slope between cliff and stream
-  {kVLook_3w, 0, kSTLookslope_3w, true,  0, 0},
-  {0,      0, 0,            false, 0, 0}
+	{kVLook_3w, 0, kSTLookslope_3w, true,  0, 0},
+	{0,      0, 0,            false, 0, 0}
 };
 
 background_t path_desc_3w[] = {						// Path containing elephant
 // States: 0 Elephant present, 1 - Elephant not present
-  {kVLook_3w, 0,          kSTLookpath2_1_3w,  true,  0, 0},
-  {kVLook_3w, 0,          kSTLookpath2_2_3w,  true,  1, 0},
-  {kVRide_3w, kNElephant_3w, kSTRideelephant_3w, false, 0, 0},
-  {kVTake_3w, kNElephant_3w, kSTGetelephant_3w,  false, 0, 0},
-  {kVShow_3w, kNMouse_3w,    kSTShowmouse_3w,    false, 0, 0},
-  {0,      0,          0,               false, 0, 0}
+	{kVLook_3w, 0,          kSTLookpath2_1_3w,  true,  0, 0},
+	{kVLook_3w, 0,          kSTLookpath2_2_3w,  true,  1, 0},
+	{kVRide_3w, kNElephant_3w, kSTRideelephant_3w, false, 0, 0},
+	{kVTake_3w, kNElephant_3w, kSTGetelephant_3w,  false, 0, 0},
+	{kVShow_3w, kNMouse_3w,    kSTShowmouse_3w,    false, 0, 0},
+	{0,      0,          0,               false, 0, 0}
 };
 
 background_t cave_desc_3w[] = {						// Cave mouth
-  {kVLook_3w,   0,       kSTLookcave1_3w,   true,  0, 0},
-  {kVLook_3w,   0,       kSTLookcave2_3w,   true,  1, 0},
-  {kVAttack_3w, kNGhost_3w, kSTAttackghost_3w, false, 0, 0},
-  {kVBreak_3w,  kNGhost_3w, kSTAttackghost_3w, false, 0, 0},
-  {kVShoot_3w,  kNGhost_3w, kSTAttackghost_3w, false, 0, 0},
-  {kVTake_3w,   kNGhost_3w, kSTTakeghost_3w,   false, 0, 0},
-  {0,        0,       0,              false, 0, 0}
+	{kVLook_3w,   0,       kSTLookcave1_3w,   true,  0, 0},
+	{kVLook_3w,   0,       kSTLookcave2_3w,   true,  1, 0},
+	{kVAttack_3w, kNGhost_3w, kSTAttackghost_3w, false, 0, 0},
+	{kVBreak_3w,  kNGhost_3w, kSTAttackghost_3w, false, 0, 0},
+	{kVShoot_3w,  kNGhost_3w, kSTAttackghost_3w, false, 0, 0},
+	{kVTake_3w,   kNGhost_3w, kSTTakeghost_3w,   false, 0, 0},
+	{0,        0,       0,              false, 0, 0}
 };
 
 background_t bgDummy[] = {
-  {0, 0, 0, false, 0, 0}
+	{0, 0, 0, false, 0, 0}
 };
 
 // Array of ptrs to background_t
@@ -3498,231 +3498,231 @@ objectList_t backgroundList_3w[] =  {
 };
 
 background_t catchall_1d[] = { // Generally applicable phrases
-	{kVJump_1d,   0,         kSTnojump_1d},
-	{kVGo_1d,     0,         kSTtrywalk_1d},
-	{kVEnter_1d,  0,         kSTtrywalk_1d},
-	{kVClimb_1d,  0,         kSTnoclimb_1d},
-	{kVShout_1d,  0,         kSTnothing_1d},
-	{kVTalk_1d,   0,         kSTnotalk_1d},
-	{kVSwitch_1d, 0,         kSTnopurps_1d},
-	{kVThrow_1d,  0,         kSTnopurps_1d},
-	{kVAttack_1d, 0,         kSTnoattack_1d},
-	{kVBreak_1d,  0,         kSTnobreak_1d},
-	{kVListen_1d, 0,         kSTnolisten_1d},
-	{kVSmell_1d,  0,         kSTnosmell_1d},
-	{kVQuery_1d,  0,         kSTnoidea_1d},
-	{kVLook_1d,   kNSky_1d,     kSTnolook_1d},
-	{kVLook_1d,   kNWall_1d,    kSTdull_1d},
-	{kVLook_1d,   kNGround_1d,  kSTdull_1d},
-	{kVHelp_1d,   0,         kSTnohelp_1d},
-	{kVMagic_1d,  0,         kSTnomagic_1d},
-	{kVDig_1d,    0,         kSTnodig_1d},
-	{kVRude_1d,   0,         kSTnorude_1d},
-	{kVKnock_1d,  0,         kSTnoknock_1d},
-	{kVTake_1d,   kNPicture_1d, kSTnopurps_1d},
-	{0}
+	{kVJump_1d,   0,            kSTnojump_1d, false, 0, 0},
+	{kVGo_1d,     0,            kSTtrywalk_1d, false, 0, 0},
+	{kVEnter_1d,  0,            kSTtrywalk_1d, false, 0, 0},
+	{kVClimb_1d,  0,            kSTnoclimb_1d, false, 0, 0},
+	{kVShout_1d,  0,            kSTnothing_1d, false, 0, 0},
+	{kVTalk_1d,   0,            kSTnotalk_1d, false, 0, 0},
+	{kVSwitch_1d, 0,            kSTnopurps_1d, false, 0, 0},
+	{kVThrow_1d,  0,            kSTnopurps_1d, false, 0, 0},
+	{kVAttack_1d, 0,            kSTnoattack_1d, false, 0, 0},
+	{kVBreak_1d,  0,            kSTnobreak_1d, false, 0, 0},
+	{kVListen_1d, 0,            kSTnolisten_1d, false, 0, 0},
+	{kVSmell_1d,  0,            kSTnosmell_1d, false, 0, 0},
+	{kVQuery_1d,  0,            kSTnoidea_1d, false, 0, 0},
+	{kVLook_1d,   kNSky_1d,     kSTnolook_1d, false, 0, 0},
+	{kVLook_1d,   kNWall_1d,    kSTdull_1d, false, 0, 0},
+	{kVLook_1d,   kNGround_1d,  kSTdull_1d, false, 0, 0},
+	{kVHelp_1d,   0,            kSTnohelp_1d, false, 0, 0},
+	{kVMagic_1d,  0,            kSTnomagic_1d, false, 0, 0},
+	{kVDig_1d,    0,            kSTnodig_1d, false, 0, 0},
+	{kVRude_1d,   0,            kSTnorude_1d, false, 0, 0},
+	{kVKnock_1d,  0,            kSTnoknock_1d, false, 0, 0},
+	{kVTake_1d,   kNPicture_1d, kSTnopurps_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0} 
 };
 
 background_t screen0_desc_1d[] = {      // Outside house
-	{kVLook_1d,  kNTree_1d,   kSTlooks0tree_1d},
-	{kVLook_1d,  kNFence_1d,  kSTlooks0fence_1d},
-	{kVLook_1d,  kNHouse_1d,  kSTlooks0house_1d},
-	{kVLook_1d,  kNWindow_1d, kSTlooks0window_1d},
-	{kVLook_1d,  kNRoof_1d,   kSTdull_1d},
-	{kVLook_1d,  kNLight_1d,  kSTdull_1d},
-	{kVLook_1d,  kNMoon_1d,   kSTlooks0moon_1d},
-	{kVEat_1d,   kNPkin_1d,   kSTeats0pkin_1d},
-	{kVUnder_1d, kNCarpet_1d, kSTunders0carpet_1d},
-	{kVLook_1d,  0,        kSTlooks0_1d},
-	{0}
+	{kVLook_1d,  kNTree_1d,   kSTlooks0tree_1d, false, 0, 0},
+	{kVLook_1d,  kNFence_1d,  kSTlooks0fence_1d, false, 0, 0},
+	{kVLook_1d,  kNHouse_1d,  kSTlooks0house_1d, false, 0, 0},
+	{kVLook_1d,  kNWindow_1d, kSTlooks0window_1d, false, 0, 0},
+	{kVLook_1d,  kNRoof_1d,   kSTdull_1d, false, 0, 0},
+	{kVLook_1d,  kNLight_1d,  kSTdull_1d, false, 0, 0},
+	{kVLook_1d,  kNMoon_1d,   kSTlooks0moon_1d, false, 0, 0},
+	{kVEat_1d,   kNPkin_1d,   kSTeats0pkin_1d, false, 0, 0},
+	{kVUnder_1d, kNCarpet_1d, kSTunders0carpet_1d, false, 0, 0},
+	{kVLook_1d,  0,        kSTlooks0_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen1_desc_1d[] = {      // Hall
-	{kVLook_1d,   kNBat_1d,     kSTlooks1bat_1d},
-	{kVLook_1d,   kNPicture_1d, kSTlooks1picture_1d},
-	{kVLook_1d,   kNTable_1d,   kSTlooks1table_1d},
-	{kVLook_1d,   kNCarpet_1d,  kSTdull_1d},
-	{kVLook_1d,   kNStairs_1d,  kSTlooks1stairs_1d},
-	{kVLook_1d,   kNLight_1d,   kSTlooks1light_1d},
-	{kVLook_1d,   0,         kSTlooks1_1d},
-	{kVListen_1d, 0,         kSTlistens1_1d},
-	{0}
+	{kVLook_1d,   kNBat_1d,     kSTlooks1bat_1d, false, 0, 0},
+	{kVLook_1d,   kNPicture_1d, kSTlooks1picture_1d, false, 0, 0},
+	{kVLook_1d,   kNTable_1d,   kSTlooks1table_1d, false, 0, 0},
+	{kVLook_1d,   kNCarpet_1d,  kSTdull_1d, false, 0, 0},
+	{kVLook_1d,   kNStairs_1d,  kSTlooks1stairs_1d, false, 0, 0},
+	{kVLook_1d,   kNLight_1d,   kSTlooks1light_1d, false, 0, 0},
+	{kVLook_1d,   0,         kSTlooks1_1d, false, 0, 0},
+	{kVListen_1d, 0,         kSTlistens1_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen2_desc_1d[] = {      // Bedroom 1
-	{kVLook_1d,  kNBed_1d,    kSTlooks2bed_1d},
-	{kVUnder_1d, kNBed_1d,    kSTlooks2bed_1d},
-	{kVRide_1d,  kNBed_1d,    kSTrides2bed_1d},
-	{kVInto_1d,  kNBed_1d,    kSTrides2bed_1d},
-	{kVLook_1d,  kNWard_1d,   kSTlooks2ward_1d},
-	{kVLook_1d,  kNCupb_1d,   kSTlooks2cupb_1d},
-	{kVLook_1d,  kNWindow_1d, kSTlooks2window_1d},
-	{kVLook_1d,  kNLight_1d,  kSTdull_1d},
-	{kVLook_1d,  kNFace_1d,   kSTlooks2face_1d},
-	{kVLook_1d,  0,        kSTlooks2_1d},
-	{0}
+	{kVLook_1d,  kNBed_1d,    kSTlooks2bed_1d, false, 0, 0},
+	{kVUnder_1d, kNBed_1d,    kSTlooks2bed_1d, false, 0, 0},
+	{kVRide_1d,  kNBed_1d,    kSTrides2bed_1d, false, 0, 0},
+	{kVInto_1d,  kNBed_1d,    kSTrides2bed_1d, false, 0, 0},
+	{kVLook_1d,  kNWard_1d,   kSTlooks2ward_1d, false, 0, 0},
+	{kVLook_1d,  kNCupb_1d,   kSTlooks2cupb_1d, false, 0, 0},
+	{kVLook_1d,  kNWindow_1d, kSTlooks2window_1d, false, 0, 0},
+	{kVLook_1d,  kNLight_1d,  kSTdull_1d, false, 0, 0},
+	{kVLook_1d,  kNFace_1d,   kSTlooks2face_1d, false, 0, 0},
+	{kVLook_1d,  0,        kSTlooks2_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen3_desc_1d[] = {      // Dining room
-	{kVLook_1d,   kNTable_1d,   kSTlooks3table_1d},
-	{kVLook_1d,   kNButler_1d,  kSTlooks3butler_1d},
-	{kVLook_1d,   kNPlant_1d,   kSTlooks3plant_1d},
-	{kVLook_1d,   kNPicture_1d, kSTlooks3witch_1d},
-	{kVLook_1d,   kNWitch_1d,   kSTlooks3witch_1d},
-	{kVLook_1d,   kNWindow_1d,  kSTlooks3window_1d},
-	{kVLook_1d,   kNFood_1d,    kSTlooks3food_1d},
-	{kVLook_1d,   kNMan_1d,     kSTlooks3man_1d},
-	{kVLook_1d,   kNCupb_1d,    kSTdull_1d},
-	{kVLook_1d,   kNWoman_1d,   kSTlooks3woman_1d},
-	{kVLook_1d,   0,         kSTlooks3_1d},
-	{kVSit_1d,    0,         kSTsits3_1d},
-	{kVTake_1d,   kNFood_1d,    kSTtakes3food_1d},
-	{kVEat_1d,    0,         kSTtakes3food_1d},
-	{kVTalk_1d,   kNMan_1d,     kSTtalks3man_1d},
-	{kVTalk_1d,   kNWoman_1d,   kSTtalks3woman_1d},
-	{kVTalk_1d,   kNButler_1d,  kSTtalkS3butler_1d},
-	{kVKiss_1d,   0,         kSTkisss3_1d},
-	{kVListen_1d, 0,         kSTlistens3_1d},
-	{kVDrink_1d,  0,         kSTdrinks3_1d},
-	{0}
+	{kVLook_1d,   kNTable_1d,   kSTlooks3table_1d, false, 0, 0},
+	{kVLook_1d,   kNButler_1d,  kSTlooks3butler_1d, false, 0, 0},
+	{kVLook_1d,   kNPlant_1d,   kSTlooks3plant_1d, false, 0, 0},
+	{kVLook_1d,   kNPicture_1d, kSTlooks3witch_1d, false, 0, 0},
+	{kVLook_1d,   kNWitch_1d,   kSTlooks3witch_1d, false, 0, 0},
+	{kVLook_1d,   kNWindow_1d,  kSTlooks3window_1d, false, 0, 0},
+	{kVLook_1d,   kNFood_1d,    kSTlooks3food_1d, false, 0, 0},
+	{kVLook_1d,   kNMan_1d,     kSTlooks3man_1d, false, 0, 0},
+	{kVLook_1d,   kNCupb_1d,    kSTdull_1d, false, 0, 0},
+	{kVLook_1d,   kNWoman_1d,   kSTlooks3woman_1d, false, 0, 0},
+	{kVLook_1d,   0,         kSTlooks3_1d, false, 0, 0},
+	{kVSit_1d,    0,         kSTsits3_1d, false, 0, 0},
+	{kVTake_1d,   kNFood_1d,    kSTtakes3food_1d, false, 0, 0},
+	{kVEat_1d,    0,         kSTtakes3food_1d, false, 0, 0},
+	{kVTalk_1d,   kNMan_1d,     kSTtalks3man_1d, false, 0, 0},
+	{kVTalk_1d,   kNWoman_1d,   kSTtalks3woman_1d, false, 0, 0},
+	{kVTalk_1d,   kNButler_1d,  kSTtalkS3butler_1d, false, 0, 0},
+	{kVKiss_1d,   0,         kSTkisss3_1d, false, 0, 0},
+	{kVListen_1d, 0,         kSTlistens3_1d, false, 0, 0},
+	{kVDrink_1d,  0,         kSTdrinks3_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen4_desc_1d[] = {      // Bathroom
-	{kVLook_1d, kNWindow_1d, kSTlooks2window_1d},
-	{kVLook_1d, kNLight_1d,  kSTdull_1d},
-	{kVLook_1d, kNMirror_1d, kSTlooks4mirror_1d},
-	{kVLook_1d, kNToilet_1d, kSTlooks4toilet_1d},
-	{kVLook_1d, kNBath_1d,   kSTdull_1d},
-	{kVLook_1d, kNSink_1d,   kSTdull_1d},
-	{kVLook_1d, 0,        kSTlooks4_1d},
-	{kVCrap_1d, 0,        kSTcraps4_1d},
-	{kVSit_1d,  0,        kSTsits4_1d},
-	{kVWash_1d, kNHands_1d,  kSTwashs4hands_1d},
-	{0}
+	{kVLook_1d, kNWindow_1d, kSTlooks2window_1d, false, 0, 0},
+	{kVLook_1d, kNLight_1d,  kSTdull_1d, false, 0, 0},
+	{kVLook_1d, kNMirror_1d, kSTlooks4mirror_1d, false, 0, 0},
+	{kVLook_1d, kNToilet_1d, kSTlooks4toilet_1d, false, 0, 0},
+	{kVLook_1d, kNBath_1d,   kSTdull_1d, false, 0, 0},
+	{kVLook_1d, kNSink_1d,   kSTdull_1d, false, 0, 0},
+	{kVLook_1d, 0,        kSTlooks4_1d, false, 0, 0},
+	{kVCrap_1d, 0,        kSTcraps4_1d, false, 0, 0},
+	{kVSit_1d,  0,        kSTsits4_1d, false, 0, 0},
+	{kVWash_1d, kNHands_1d,  kSTwashs4hands_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen5_desc_1d[] = {      // Kitchen
-	{kVLook_1d,   kNLight_1d,  kSTdull_1d},
-	{kVLook_1d,   kNUnits_1d,  kSTlooks5units_1d},
-	{kVOpen_1d,   kNUnits_1d,  kSTempty_1d},
-	{kVLook_1d,   kNWindow_1d, kSTlooks5window_1d},
-	{kVLook_1d,   kNBroom_1d,  kSTlooks5broom_1d},
-	{kVTake_1d,   kNBroom_1d,  kSTtakes5broom_1d},
-	{kVRide_1d,   kNBroom_1d,  kSTrides5broom_1d},
-	{kVLook_1d,   0,        kSTlooks5_1d},
-	{kVSweep_1d,  0,        kSTsweeps5_1d},
-	{kVListen_1d, 0,        kSTlistens1_1d},
-	{0}
+	{kVLook_1d,   kNLight_1d,  kSTdull_1d, false, 0, 0},
+	{kVLook_1d,   kNUnits_1d,  kSTlooks5units_1d, false, 0, 0},
+	{kVOpen_1d,   kNUnits_1d,  kSTempty_1d, false, 0, 0},
+	{kVLook_1d,   kNWindow_1d, kSTlooks5window_1d, false, 0, 0},
+	{kVLook_1d,   kNBroom_1d,  kSTlooks5broom_1d, false, 0, 0},
+	{kVTake_1d,   kNBroom_1d,  kSTtakes5broom_1d, false, 0, 0},
+	{kVRide_1d,   kNBroom_1d,  kSTrides5broom_1d, false, 0, 0},
+	{kVLook_1d,   0,        kSTlooks5_1d, false, 0, 0},
+	{kVSweep_1d,  0,        kSTsweeps5_1d, false, 0, 0},
+	{kVListen_1d, 0,        kSTlistens1_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen6_desc_1d[] = {      // Garden
-	{kVLook_1d,  kNShed_1d,       kSTlooks6sched_1d},
-	{kVLook_1d,  kNMoon_1d,       kSTdull_1d},
-	{kVLook_1d,  kNTree_1d,       kSTlooks0tree_1d},
-	{kVClimb_1d, kNTree_1d,       kSTclimbs6tree_1d},
-	{kVLook_1d,  kNGardenbits_1d, kSTlooks6gardenbits_1d},
-	{kVLook_1d,  0,            kSTlooks6_1d},
-	{0}
+	{kVLook_1d,  kNShed_1d,       kSTlooks6sched_1d, false, 0, 0},
+	{kVLook_1d,  kNMoon_1d,       kSTdull_1d, false, 0, 0},
+	{kVLook_1d,  kNTree_1d,       kSTlooks0tree_1d, false, 0, 0},
+	{kVClimb_1d, kNTree_1d,       kSTclimbs6tree_1d, false, 0, 0},
+	{kVLook_1d,  kNGardenbits_1d, kSTlooks6gardenbits_1d, false, 0, 0},
+	{kVLook_1d,  0,            kSTlooks6_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen7_desc_1d[] = {      // Store room
-	{kVLook_1d,   kNCarpet_1d,    kSTdull_1d},
-	{kVLook_1d,   kNLight_1d,     kSTdull_1d},
-	{kVUnbolt_1d, kNTrap_1d,      kSTunbolts7trap_1d},
-	{kVLook_1d,   kNMousehole_1d, kSTlooks7mousehole_1d},
-	{kVTake_1d,   kNDroppings_1d, kSTtakes7droppings_1d},
-	{kVGive_1d,   kNChop_1d,      kSTchop1_1d},
-	{kVFeed_1d,   kNDog_1d,       kSTchop1_1d},
-	{kVLook_1d,   0,           kSTlooks7_1d},
-	{0}
+	{kVLook_1d,   kNCarpet_1d,    kSTdull_1d, false, 0, 0},
+	{kVLook_1d,   kNLight_1d,     kSTdull_1d, false, 0, 0},
+	{kVUnbolt_1d, kNTrap_1d,      kSTunbolts7trap_1d, false, 0, 0},
+	{kVLook_1d,   kNMousehole_1d, kSTlooks7mousehole_1d, false, 0, 0},
+	{kVTake_1d,   kNDroppings_1d, kSTtakes7droppings_1d, false, 0, 0},
+	{kVGive_1d,   kNChop_1d,      kSTchop1_1d, false, 0, 0},
+	{kVFeed_1d,   kNDog_1d,       kSTchop1_1d, false, 0, 0},
+	{kVLook_1d,   0,           kSTlooks7_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen8_desc_1d[] = {      // Basement
-	{kVLook_1d,   kNLight_1d,    kSTdull_1d},
-	{kVLook_1d,   kNDoor_1d,     kSTlooks8door_1d},
-	{kVOil_1d,    kNDoor_1d,     kSToils8door_1d},
-	{kVPush_1d,   kNDoor_1d,     kSTpushs8door_1d},
-	{kVLook_1d,   kNRock_1d,     kSTlooks8rock_1d},
-	{kVPush_1d,   kNRock_1d,     kSTnowayhose_1d},
-	{kVLift_1d,   kNRock_1d,     kSTnowayhose_1d},
-	{kVMove_1d,   kNRock_1d,     kSTnowayhose_1d},
-	{kVUnder_1d,  kNRock_1d,     kSTnounder_1d},
-	{kVAttack_1d, kNDoor_1d,     kSTbreaks8door_1d},
-	{kVBreak_1d,  kNDoor_1d,     kSTbreaks8door_1d},
-	{kVOpen_1d,   kNDoor_1d,     kSTopens8door_1d},
-	{kVUnlock_1d, kNDoor_1d,     kSTunlocks8door_1d},
-	{kVKnock_1d,  kNDoor_1d,     kSTknocks8door_1d},
-	{kVTalk_1d,   kNPenelope_1d, kSTtalks8penelope_1d},
-	{kVShout_1d,  kNPenelope_1d, kSTtalks8penelope_1d},
-	{kVListen_1d, 0,          kSTlistens8_1d},
-	{kVLook_1d,   0,          kSTlooks8_1d},
-	{0}
+	{kVLook_1d,   kNLight_1d,    kSTdull_1d, false, 0, 0},
+	{kVLook_1d,   kNDoor_1d,     kSTlooks8door_1d, false, 0, 0},
+	{kVOil_1d,    kNDoor_1d,     kSToils8door_1d, false, 0, 0},
+	{kVPush_1d,   kNDoor_1d,     kSTpushs8door_1d, false, 0, 0},
+	{kVLook_1d,   kNRock_1d,     kSTlooks8rock_1d, false, 0, 0},
+	{kVPush_1d,   kNRock_1d,     kSTnowayhose_1d, false, 0, 0},
+	{kVLift_1d,   kNRock_1d,     kSTnowayhose_1d, false, 0, 0},
+	{kVMove_1d,   kNRock_1d,     kSTnowayhose_1d, false, 0, 0},
+	{kVUnder_1d,  kNRock_1d,     kSTnounder_1d, false, 0, 0},
+	{kVAttack_1d, kNDoor_1d,     kSTbreaks8door_1d, false, 0, 0},
+	{kVBreak_1d,  kNDoor_1d,     kSTbreaks8door_1d, false, 0, 0},
+	{kVOpen_1d,   kNDoor_1d,     kSTopens8door_1d, false, 0, 0},
+	{kVUnlock_1d, kNDoor_1d,     kSTunlocks8door_1d, false, 0, 0},
+	{kVKnock_1d,  kNDoor_1d,     kSTknocks8door_1d, false, 0, 0},
+	{kVTalk_1d,   kNPenelope_1d, kSTtalks8penelope_1d, false, 0, 0},
+	{kVShout_1d,  kNPenelope_1d, kSTtalks8penelope_1d, false, 0, 0},
+	{kVListen_1d, 0,          kSTlistens8_1d, false, 0, 0},
+	{kVLook_1d,   0,          kSTlooks8_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen9_desc_1d[] = {      // Bat cave
-	{kVLook_1d,  0,      kSTlooks9_1d},
-	{kVLook_1d,  kNRock_1d, kSTlooks9rock_1d},
-	{kVPush_1d,  kNRock_1d, kSTnowayhose_1d},
-	{kVLift_1d,  kNRock_1d, kSTnowayhose_1d},
-	{kVMove_1d,  kNRock_1d, kSTnowayhose_1d},
-	{kVUnder_1d, kNRock_1d, kSTnounder_1d},
-	{0}
+	{kVLook_1d,  0,      kSTlooks9_1d, false, 0, 0},
+	{kVLook_1d,  kNRock_1d, kSTlooks9rock_1d, false, 0, 0},
+	{kVPush_1d,  kNRock_1d, kSTnowayhose_1d, false, 0, 0},
+	{kVLift_1d,  kNRock_1d, kSTnowayhose_1d, false, 0, 0},
+	{kVMove_1d,  kNRock_1d, kSTnowayhose_1d, false, 0, 0},
+	{kVUnder_1d, kNRock_1d, kSTnounder_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen10_desc_1d[] = {     // Mummy room
-	{kVLook_1d,  0,      kSTlooks10_1d},
-	{kVLook_1d,  kNRock_1d, kSTlooks9rock_1d},
-	{kVPush_1d,  kNRock_1d, kSTnowayhose_1d},
-	{kVLift_1d,  kNRock_1d, kSTnowayhose_1d},
-	{kVMove_1d,  kNRock_1d, kSTnowayhose_1d},
-	{kVUnder_1d, kNRock_1d, kSTnounder_1d},
-	{kVLook_1d,  kNTomb_1d, kSTlooks10tomb_1d},
-	{0}
+	{kVLook_1d,  0,      kSTlooks10_1d, false, 0, 0},
+	{kVLook_1d,  kNRock_1d, kSTlooks9rock_1d, false, 0, 0},
+	{kVPush_1d,  kNRock_1d, kSTnowayhose_1d, false, 0, 0},
+	{kVLift_1d,  kNRock_1d, kSTnowayhose_1d, false, 0, 0},
+	{kVMove_1d,  kNRock_1d, kSTnowayhose_1d, false, 0, 0},
+	{kVUnder_1d, kNRock_1d, kSTnounder_1d, false, 0, 0},
+	{kVLook_1d,  kNTomb_1d, kSTlooks10tomb_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen11_desc_1d[] = {     // Lake room
-	{kVLook_1d,      kNRock_1d, kSTlooks9rock_1d},
-	{kVPush_1d,      kNRock_1d, kSTnowayhose_1d},
-	{kVLift_1d,      kNRock_1d, kSTnowayhose_1d},
-	{kVMove_1d,      kNRock_1d, kSTnowayhose_1d},
-	{kVUnder_1d,     kNRock_1d, kSTnounder_1d},
-	{kVLook_1d,      0,      kSTlooks11_1d},
-	{kVLakeverbs_1d, 0,      kSTlakeverbss11_1d},
-	{kVDrink_1d,     0,      kSTdrinks3_1d},
-	{kVPlug_1d,      0,      kSTplugs11_1d},
-	{0}
+	{kVLook_1d,      kNRock_1d, kSTlooks9rock_1d, false, 0, 0},
+	{kVPush_1d,      kNRock_1d, kSTnowayhose_1d, false, 0, 0},
+	{kVLift_1d,      kNRock_1d, kSTnowayhose_1d, false, 0, 0},
+	{kVMove_1d,      kNRock_1d, kSTnowayhose_1d, false, 0, 0},
+	{kVUnder_1d,     kNRock_1d, kSTnounder_1d, false, 0, 0},
+	{kVLook_1d,      0,      kSTlooks11_1d, false, 0, 0},
+	{kVLakeverbs_1d, 0,      kSTlakeverbss11_1d, false, 0, 0},
+	{kVDrink_1d,     0,      kSTdrinks3_1d, false, 0, 0},
+	{kVPlug_1d,      0,      kSTplugs11_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen12_desc_1d[] = {     // Dead end
-	{kVLook_1d,  kNRock_1d,  kSTlooks9rock_1d},
-	{kVPush_1d,  kNRock_1d,  kSTnowayhose_1d},
-	{kVLift_1d,  kNRock_1d,  kSTnowayhose_1d},
-	{kVMove_1d,  kNRock_1d,  kSTnowayhose_1d},
-	{kVUnder_1d, kNRock_1d,  kSTnounder_1d},
-	{kVLook_1d,  0,       kSTlooks12_1d},
-	{kVTalk_1d,  kNGuard_1d, kSTtalks12guard_1d},
-	{0}
+	{kVLook_1d,  kNRock_1d,  kSTlooks9rock_1d, false, 0, 0},
+	{kVPush_1d,  kNRock_1d,  kSTnowayhose_1d, false, 0, 0},
+	{kVLift_1d,  kNRock_1d,  kSTnowayhose_1d, false, 0, 0},
+	{kVMove_1d,  kNRock_1d,  kSTnowayhose_1d, false, 0, 0},
+	{kVUnder_1d, kNRock_1d,  kSTnounder_1d, false, 0, 0},
+	{kVLook_1d,  0,       kSTlooks12_1d, false, 0, 0},
+	{kVTalk_1d,  kNGuard_1d, kSTtalks12guard_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen13_desc_1d[] = {     // Jail
-	{0}
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen14_desc_1d[] = {     // The end
-	{0}
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen15_desc_1d[] = {     // Laboratory
-	{kVLook_1d,  0,             kSTlooks15_1d},
-	{kVTalk_1d,  kNIgor_1d,        kSTtalks15igor_1d},
-	{kVTalk_1d,  kNProf_1d,        kSTtalks15prof_1d},
-	{kVLook_1d,  kNMachinebits_1d, kSTlooks15machinebits_1d},
-	{kVPush_1d,  kNMachinebits_1d, kSTpushs15machinebits_1d},
-	{kVLook_1d,  kNTable_1d,       kSTlooks15table_1d},
-	{kVClose_1d, kNDoor_1d,        kSTopens15door_1d},
-	{kVOpen_1d,  kNDoor_1d,        kSTopens15door_1d},
-	{kVLook_1d,  kNLight_1d,       kSTlooks15light_1d},
-	{0}
+	{kVLook_1d,  0,             kSTlooks15_1d, false, 0, 0},
+	{kVTalk_1d,  kNIgor_1d,        kSTtalks15igor_1d, false, 0, 0},
+	{kVTalk_1d,  kNProf_1d,        kSTtalks15prof_1d, false, 0, 0},
+	{kVLook_1d,  kNMachinebits_1d, kSTlooks15machinebits_1d, false, 0, 0},
+	{kVPush_1d,  kNMachinebits_1d, kSTpushs15machinebits_1d, false, 0, 0},
+	{kVLook_1d,  kNTable_1d,       kSTlooks15table_1d, false, 0, 0},
+	{kVClose_1d, kNDoor_1d,        kSTopens15door_1d, false, 0, 0},
+	{kVOpen_1d,  kNDoor_1d,        kSTopens15door_1d, false, 0, 0},
+	{kVLook_1d,  kNLight_1d,       kSTlooks15light_1d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 // Array of ptrs to object_list_t
@@ -3787,396 +3787,395 @@ background_t catchall_2d[] = { // Generally applicable phrases
 };
 
 background_t screen0_desc_2d[] = {       // Outside house
-	{kVLook_2d, 0, kSTWelcome_2d},
-	{0}
+	{kVLook_2d, 0, kSTWelcome_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen1_desc_2d[] = {       // Hall
-	{kVLook_2d,   0,       kSTLookhall_2d,  true},
-	{kVLook_2d,   kNMaid_2d,  kSTTmaid_2d},
-	{kVTalk_2d,   kNMaid_2d,  kSTChatmaid1_2d},
-	{kVTalk_2d,   kNPenny_2d, kSTChatmaid2_2d},
-	{kVKiss_2d,   kNMaid_2d,  kSTChatmaid3_2d},
-	{kVRude_2d,   kNMaid_2d,  kSTRudemaid_2d},
-	{kVOpen_2d,   kNDoor_2d,  kSTTmaiddoor_2d},
-	{kVUnlock_2d, kNDoor_2d,  kSTTmaiddoor_2d},
-	{kVLook_2d,   kNDoor_2d,  kSTSdoor_2d},
-	{0}
+	{kVLook_2d,   0,       kSTLookhall_2d,  true, 0, 0},
+	{kVLook_2d,   kNMaid_2d,  kSTTmaid_2d, false, 0, 0},
+	{kVTalk_2d,   kNMaid_2d,  kSTChatmaid1_2d, false, 0, 0},
+	{kVTalk_2d,   kNPenny_2d, kSTChatmaid2_2d, false, 0, 0},
+	{kVKiss_2d,   kNMaid_2d,  kSTChatmaid3_2d, false, 0, 0},
+	{kVRude_2d,   kNMaid_2d,  kSTRudemaid_2d, false, 0, 0},
+	{kVOpen_2d,   kNDoor_2d,  kSTTmaiddoor_2d, false, 0, 0},
+	{kVUnlock_2d, kNDoor_2d,  kSTTmaiddoor_2d, false, 0, 0},
+	{kVLook_2d,   kNDoor_2d,  kSTSdoor_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen2_desc_2d[] = {       // Bed1
-	{kVLook_2d,  0,       kSTLookbed1_2d, true,  DONT_CARE},
-	{kVLook_2d,  kNBed_2d,   kSTLookbed_2d,  false, DONT_CARE},
-	{kVInto_2d,  kNBed_2d,   kSTS2bed_2d},
-	{kVRide_2d,  kNBed_2d,   kSTS2bed_2d},
-	{kVRest_2d,  kNBed_2d,   kSTS2bed_2d},
-	{kVRide_2d,  kNPenny_2d, kSTS2bed_2d},
-	{kVTalk_2d,  kNPenny_2d, kSTZzzz_2d},
-	{kVInto_2d,  kNBed_2d,   kSTNopurps_2d,  false, 1},
-	{kVRide_2d,  kNBed_2d,   kSTNopurps_2d,  false, 1},
-	{kVRest_2d,  kNBed_2d,   kSTNopurps_2d,  false, 1},
-	{kVUnder_2d, kNBed_2d,   kSTSsearch_2d,  false, DONT_CARE},
-	{kVRead_2d,  kNBook_2d,  kSTNocarry_2d,  false, DONT_CARE},
-	{0}
+	{kVLook_2d,  0,       kSTLookbed1_2d, true,  DONT_CARE, 0},
+	{kVLook_2d,  kNBed_2d,   kSTLookbed_2d,  false, DONT_CARE, 0},
+	{kVInto_2d,  kNBed_2d,   kSTS2bed_2d, false, 0, 0},
+	{kVRide_2d,  kNBed_2d,   kSTS2bed_2d, false, 0, 0},
+	{kVRest_2d,  kNBed_2d,   kSTS2bed_2d, false, 0, 0},
+	{kVRide_2d,  kNPenny_2d, kSTS2bed_2d, false, 0, 0},
+	{kVTalk_2d,  kNPenny_2d, kSTZzzz_2d, false, 0, 0},
+	{kVInto_2d,  kNBed_2d,   kSTNopurps_2d,  false, 1, 0},
+	{kVRide_2d,  kNBed_2d,   kSTNopurps_2d,  false, 1, 0},
+	{kVRest_2d,  kNBed_2d,   kSTNopurps_2d,  false, 1, 0},
+	{kVUnder_2d, kNBed_2d,   kSTSsearch_2d,  false, DONT_CARE, 0},
+	{kVRead_2d,  kNBook_2d,  kSTNocarry_2d,  false, DONT_CARE, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen3_desc_2d[] = {       // Bed2
-	{kVLook_2d,  0,        kSTLookbed2_2d,   true},
-	{kVLook_2d,  kNBird_2d,   kSTParrot_2d},
-	{kVLook_2d,  kNCage_2d,   kSTDull_2d},
-	{kVLook_2d,  kNPencil_2d, kSTDull_2d},
-	{kVLook_2d,  kNPhone_2d,  kSTDull_2d},
-	{kVLook_2d,  kNPaper_2d,  kSTBlotter_2d},
-	{kVRead_2d,  kNPaper_2d,  kSTBlotter_2d},
-	{kVLook_2d,  kNChair_2d,  kSTDull_2d},
-	{kVTake_2d,  kNPencil_2d, kSTNouse_2d},
-	{kVTake_2d,  kNPaper_2d,  kSTNouse_2d},
-	{kVLook_2d,  kNHole_2d,   kSTDull_2d},
-	{kVLook_2d,  kNWall_2d,   kSTDumbwaiter_2d},
-	{kVLook_2d,  kNButton_2d, kSTSbutton_2d},
-	{kVPush_2d,  kNButton_2d, kSTS3dumb_2d},
+	{kVLook_2d,  0,        kSTLookbed2_2d,   true, 0, 0},
+	{kVLook_2d,  kNBird_2d,   kSTParrot_2d, false, 0, 0},
+	{kVLook_2d,  kNCage_2d,   kSTDull_2d, false, 0, 0},
+	{kVLook_2d,  kNPencil_2d, kSTDull_2d, false, 0, 0},
+	{kVLook_2d,  kNPhone_2d,  kSTDull_2d, false, 0, 0},
+	{kVLook_2d,  kNPaper_2d,  kSTBlotter_2d, false, 0, 0},
+	{kVRead_2d,  kNPaper_2d,  kSTBlotter_2d, false, 0, 0},
+	{kVLook_2d,  kNChair_2d,  kSTDull_2d, false, 0, 0},
+	{kVTake_2d,  kNPencil_2d, kSTNouse_2d, false, 0, 0},
+	{kVTake_2d,  kNPaper_2d,  kSTNouse_2d, false, 0, 0},
+	{kVLook_2d,  kNHole_2d,   kSTDull_2d, false, 0, 0},
+	{kVLook_2d,  kNWall_2d,   kSTDumbwaiter_2d, false, 0, 0},
+	{kVLook_2d,  kNButton_2d, kSTSbutton_2d, false, 0, 0},
+	{kVPush_2d,  kNButton_2d, kSTS3dumb_2d, false, 0, 0},
 	{kVDial_2d,  0,        kSTS3phone_2d,    false, 0, 4},
 	{kVTake_2d,  kNPhone_2d,  kSTS3phone_2d,    false, 0, 4},
 	{kVUse_2d,   kNPhone_2d,  kSTS3phone_2d,    false, 0, 4},
 	{kVLift_2d,  kNPhone_2d,  kSTS3phone_2d,    false, 0, 4},
 	{kVTalk_2d,  kNBird_2d,   kSTS3bird_2d,     false, 0, 5},
-	{kVInto_2d,  0,        kSTSinto_2d,      true},
-	{kVUnder_2d, kNCupb_2d,   kSTSsearch_2d},
-	{kVFeed_2d,  kNBird_2d,   kSTBirdfull_2d},
-	{0}
+	{kVInto_2d,  0,        kSTSinto_2d,      true, 0, 0},
+	{kVUnder_2d, kNCupb_2d,   kSTSsearch_2d, false, 0, 0},
+	{kVFeed_2d,  kNBird_2d,   kSTBirdfull_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 
 background_t screen4_desc_2d[] = {       // Keyhole
-	{kVLook_2d, 0, kSTLooklook_2d, true},
-	{0}
+	{kVLook_2d, 0, kSTLooklook_2d, true, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen5_desc_2d[] = {       // Bed3
-	{kVLook_2d,  0,        kSTLookbed3_2d,     true},
-	{kVBlock_2d, 0,        kSTSblock_2d},
-	{kVInto_2d,  kNCage_2d,   kSTStoobigtofit_2d},
-	{kVLook_2d,  kNWindow_2d, kSTS6garden_2d},
-	{0}
+	{kVLook_2d,  0,        kSTLookbed3_2d,     true, 0, 0},
+	{kVBlock_2d, 0,        kSTSblock_2d, false, 0, 0},
+	{kVInto_2d,  kNCage_2d,   kSTStoobigtofit_2d, false, 0, 0},
+	{kVLook_2d,  kNWindow_2d, kSTS6garden_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen6_desc_2d[] = {       // Kitchen
-	{kVLook_2d,   0,        kSTLookkitchen_2d,   true,  DONT_CARE},
-	{kVLook_2d,   kNButton_2d, kSTSbutton_2d,       false, DONT_CARE},
-	{kVPush_2d,   kNButton_2d, kSTS3dumb_2d,        false, DONT_CARE},
-	{kVLook_2d,   kNWindow_2d, kSTS6garden_2d,      false, DONT_CARE},
-	{kVLook_2d,   kNUnits_2d,  kSTS6dull_2d,        false, DONT_CARE},
-	{kVOpen_2d,   kNUnits_2d,  kSTS6dull_2d,        false, DONT_CARE},
-	{kVInto_2d,   0,        kSTSinto_2d,         true,  DONT_CARE},
-	{kVOpen_2d,   kNDoor_2d,   kSTMorespecific_2d,  false, DONT_CARE},
-	{kVLook_2d,   kNDoor_2d,   kSTMorespecific_2d,  false, DONT_CARE},
-	{kVTalk_2d,   kNCook_2d,   kSTTalkcook_2d,      false, 1},
-	{kVLook_2d,   kNCook_2d,   kSTLookcook_2d,      false, 1},
-	{kVLook_2d,   kNKnife_2d,  kSTLookknife_2d,     false, 1},
-	{kVTake_2d,   kNKnife_2d,  kSTTakeknife_2d,     false, 1},
-	{kVListen_2d, 0,        kSTListenkitchen_2d, false, 1},
-	{0}
+	{kVLook_2d,   0,        kSTLookkitchen_2d,   true,  DONT_CARE, 0},
+	{kVLook_2d,   kNButton_2d, kSTSbutton_2d,       false, DONT_CARE, 0},
+	{kVPush_2d,   kNButton_2d, kSTS3dumb_2d,        false, DONT_CARE, 0},
+	{kVLook_2d,   kNWindow_2d, kSTS6garden_2d,      false, DONT_CARE, 0},
+	{kVLook_2d,   kNUnits_2d,  kSTS6dull_2d,        false, DONT_CARE, 0},
+	{kVOpen_2d,   kNUnits_2d,  kSTS6dull_2d,        false, DONT_CARE, 0},
+	{kVInto_2d,   0,        kSTSinto_2d,         true,  DONT_CARE, 0},
+	{kVOpen_2d,   kNDoor_2d,   kSTMorespecific_2d,  false, DONT_CARE, 0},
+	{kVLook_2d,   kNDoor_2d,   kSTMorespecific_2d,  false, DONT_CARE, 0},
+	{kVTalk_2d,   kNCook_2d,   kSTTalkcook_2d,      false, 1, 0},
+	{kVLook_2d,   kNCook_2d,   kSTLookcook_2d,      false, 1, 0},
+	{kVLook_2d,   kNKnife_2d,  kSTLookknife_2d,     false, 1, 0},
+	{kVTake_2d,   kNKnife_2d,  kSTTakeknife_2d,     false, 1, 0},
+	{kVListen_2d, 0,        kSTListenkitchen_2d, false, 1, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen7_desc_2d[] = {       // Backdoor
-	{kVLook_2d, 0,        kSTLookback_2d, true},
-	{kVLook_2d, kNWindow_2d, kSTLookwin_2d},
-	{0}
+	{kVLook_2d, 0,        kSTLookback_2d, true, 0, 0},
+	{kVLook_2d, kNWindow_2d, kSTLookwin_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen8_desc_2d[] = {       // Shed
-	{kVLook_2d, 0,        kSTLookshed_2d,   true},
-	{kVLook_2d, kNWindow_2d, kSTLookwin_2d},
-	{kVLook_2d, kNShed_2d,   kSTLookatshed_2d},
-	{0}
+	{kVLook_2d, 0,        kSTLookshed_2d,   true, 0, 0},
+	{kVLook_2d, kNWindow_2d, kSTLookwin_2d, false, 0, 0},
+	{kVLook_2d, kNShed_2d,   kSTLookatshed_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen9_desc_2d[] = {       // In shed
-	{kVLook_2d,  0,         kSTLookinshed_2d, true},
-	{kVLook_2d,  kNWall_2d,    kSTS9tools1_2d},
-	{kVLook_2d,  kNTools_2d,   kSTS9tools1_2d},
-	{kVTake_2d,  kNTools_2d,   kSTS9tools2_2d},
-	{kVLook_2d,  kNBroom_2d,   kSTDull_2d},
-	{kVTake_2d,  kNBroom_2d,   kSTNouse_2d},
-	{kVLook_2d,  kNTable_2d,   kSTSomebuttons_2d},
-	{kVKiss_2d,  kNGardner_2d, kSTMore_2d},
-	{kVRude_2d,  kNGardner_2d, kSTRudeshed_2d},
-	{kVTalk_2d,  kNGardner_2d, kSTIgnore_2d},
-	{kVClose_2d, kNDoor_2d,    kSTShedclose_2d},
-	{0}
+	{kVLook_2d,  0,         kSTLookinshed_2d, true, 0, 0},
+	{kVLook_2d,  kNWall_2d,    kSTS9tools1_2d, false, 0, 0},
+	{kVLook_2d,  kNTools_2d,   kSTS9tools1_2d, false, 0, 0},
+	{kVTake_2d,  kNTools_2d,   kSTS9tools2_2d, false, 0, 0},
+	{kVLook_2d,  kNBroom_2d,   kSTDull_2d, false, 0, 0},
+	{kVTake_2d,  kNBroom_2d,   kSTNouse_2d, false, 0, 0},
+	{kVLook_2d,  kNTable_2d,   kSTSomebuttons_2d, false, 0, 0},
+	{kVKiss_2d,  kNGardner_2d, kSTMore_2d, false, 0, 0},
+	{kVRude_2d,  kNGardner_2d, kSTRudeshed_2d, false, 0, 0},
+	{kVTalk_2d,  kNGardner_2d, kSTIgnore_2d, false, 0, 0},
+	{kVClose_2d, kNDoor_2d,    kSTShedclose_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen10_desc_2d[] = {      // Venus fly traps
-	{kVLook_2d, 0,        kSTLookvenus_2d, true},
-	{kVTake_2d, kNMirror_2d, kSTNotmirror_2d},
-	{0}
+	{kVLook_2d, 0,        kSTLookvenus_2d, true, 0, 0},
+	{kVTake_2d, kNMirror_2d, kSTNotmirror_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen11_desc_2d[] = {      // Gates kVOpen_2d, 
-	{kVLook_2d,  0,      kSTS11look_2d, true},
-	{kVClose_2d, kNDoor_2d, kSTNopurps_2d},
-	{0}
+	{kVLook_2d,  0,      kSTS11look_2d, true, 0, 0},
+	{kVClose_2d, kNDoor_2d, kSTNopurps_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen12_desc_2d[] = {      // Gates closed
-	{kVLook_2d,   0,      kSTS12look_2d, true},
-	{kVOpen_2d,   kNDoor_2d, kSTGates1_2d},
-	{kVBreak_2d,  kNDoor_2d, kSTGates2_2d},
-	{kVAttack_2d, kNDoor_2d, kSTGates2_2d},
-	{kVUnlock_2d, kNDoor_2d, kSTGates3_2d},
-	{0}
+	{kVLook_2d,   0,      kSTS12look_2d, true, 0, 0},
+	{kVOpen_2d,   kNDoor_2d, kSTGates1_2d, false, 0, 0},
+	{kVBreak_2d,  kNDoor_2d, kSTGates2_2d, false, 0, 0},
+	{kVAttack_2d, kNDoor_2d, kSTGates2_2d, false, 0, 0},
+	{kVUnlock_2d, kNDoor_2d, kSTGates3_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen13_desc_2d[] = {      // Stream
-	{kVLook_2d,  0,         kSTS13look_2d,    true},
-	{kVLook_2d,  kNBridge_2d,  kSTNospecial_2d},
-	{kVUnder_2d, kNBridge_2d,  kSTSsearch_2d},
-	{kVLook_2d,  kNWater_2d,   kSTDull_2d},
-	{kVThrow_2d, kNMatches_2d, kSTThrowmatch_2d},
-	{0}
+	{kVLook_2d,  0,         kSTS13look_2d,    true, 0, 0},
+	{kVLook_2d,  kNBridge_2d,  kSTNospecial_2d, false, 0, 0},
+	{kVUnder_2d, kNBridge_2d,  kSTSsearch_2d, false, 0, 0},
+	{kVLook_2d,  kNWater_2d,   kSTDull_2d, false, 0, 0},
+	{kVThrow_2d, kNMatches_2d, kSTThrowmatch_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen14_desc_2d[] = {      // Zapper
-	{kVLook_2d,   0,        kSTS14look_2d,  true},
-	{kVSwitch_2d, kNZapper_2d, kSTNoswitch_2d},
-	{kVWind_2d,   kNZapper_2d, kSTNoswitch_2d},
-	{0}
+	{kVLook_2d,   0,        kSTS14look_2d,  true, 0, 0},
+	{kVSwitch_2d, kNZapper_2d, kSTNoswitch_2d, false, 0, 0},
+	{kVWind_2d,   kNZapper_2d, kSTNoswitch_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen15_desc_2d[] = {      // Mushroom
-	{kVLook_2d,   0,      kSTS15look_2d,  true},
-	{kVTalk_2d,   kNMan_2d,  kSTNoreply_2d},
-	{kVLook_2d,   kNWand_2d, kSTS15wand1_2d},
-	{kVTake_2d,   kNWand_2d, kSTS15wand2_2d},
-	{kVSearch_2d, kNMan_2d,  kSTSsearch_2d},
-	{0}
+	{kVLook_2d,   0,      kSTS15look_2d,  true, 0, 0},
+	{kVTalk_2d,   kNMan_2d,  kSTNoreply_2d, false, 0, 0},
+	{kVLook_2d,   kNWand_2d, kSTS15wand1_2d, false, 0, 0},
+	{kVTake_2d,   kNWand_2d, kSTS15wand2_2d, false, 0, 0},
+	{kVSearch_2d, kNMan_2d,  kSTSsearch_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen16_desc_2d[] = {      // Well
-	{kVLook_2d,  0,        kSTS16look_2d,     true},
-	{kVClimb_2d, 0,        kSTTryrope_2d},
-	{kVGo_2d,    kNWell_2d,   kSTTryrope_2d},
-	{kVWind_2d,  kNRope_2d,   kSTWindwell_2d},
-	{kVTie_2d,   kNRope_2d,   kSTNopurps_2d},
-	{kVTake_2d,  kNBucket_2d, kSTNosee_2d},
-	{kVLook_2d,  kNBucket_2d, kSTNosee_2d},
-	{kVWind_2d,  kNBucket_2d, kSTWindwell_2d},
-	{kVTake_2d,  kNWater_2d,  kSTNosee_2d},
-	{kVWind_2d,  kNHandle_2d, kSTWindwell_2d},
-	{kVInto_2d,  kNBucket_2d, kSTNosee_2d},
-	{kVInto_2d,  kNWell_2d,   kSTIntowell_2d},
-	{kVWish_2d,  0,        kSTGetonwithit_2d},
-	{0}
+	{kVLook_2d,  0,        kSTS16look_2d,     true, 0, 0},
+	{kVClimb_2d, 0,        kSTTryrope_2d, false, 0, 0},
+	{kVGo_2d,    kNWell_2d,   kSTTryrope_2d, false, 0, 0},
+	{kVWind_2d,  kNRope_2d,   kSTWindwell_2d, false, 0, 0},
+	{kVTie_2d,   kNRope_2d,   kSTNopurps_2d, false, 0, 0},
+	{kVTake_2d,  kNBucket_2d, kSTNosee_2d, false, 0, 0},
+	{kVLook_2d,  kNBucket_2d, kSTNosee_2d, false, 0, 0},
+	{kVWind_2d,  kNBucket_2d, kSTWindwell_2d, false, 0, 0},
+	{kVTake_2d,  kNWater_2d,  kSTNosee_2d, false, 0, 0},
+	{kVWind_2d,  kNHandle_2d, kSTWindwell_2d, false, 0, 0},
+	{kVInto_2d,  kNBucket_2d, kSTNosee_2d, false, 0, 0},
+	{kVInto_2d,  kNWell_2d,   kSTIntowell_2d, false, 0, 0},
+	{kVWish_2d,  0,        kSTGetonwithit_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen17_desc_2d[] = {      // Snakepit
-	{kVLook_2d,   0,       kSTS17look_2d, true},
-	{kVAttack_2d, kNSnake_2d, kSTS17kill_2d},
-	{kVBreak_2d,  kNSnake_2d, kSTS17kill_2d},
-	{0}
+	{kVLook_2d,   0,       kSTS17look_2d, true, 0, 0},
+	{kVAttack_2d, kNSnake_2d, kSTS17kill_2d, false, 0, 0},
+	{kVBreak_2d,  kNSnake_2d, kSTS17kill_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen18_desc_2d[] = {      // Phonebox
-	{kVLook_2d, 0,       kSTS18look_2d, true},
-	{kVLook_2d, kNPhone_2d, kSTS18look_2d},
-	{0}
+	{kVLook_2d, 0,       kSTS18look_2d, true, 0, 0},
+	{kVLook_2d, kNPhone_2d, kSTS18look_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 
 background_t screen19_desc_2d[] = {      // Street
-	{kVLook_2d, 0,      kSTS19look_2d, true},
-	{kVLook_2d, kNWall_2d, kSTSgraf_2d},
-	{kVRead_2d, kNWall_2d, kSTSgraf_2d},
-	{kVLook_2d, kNGraf_2d, kSTSgraf_2d},
-	{kVRead_2d, kNGraf_2d, kSTSgraf_2d},
-	{0}
+	{kVLook_2d, 0,      kSTS19look_2d, true, 0, 0},
+	{kVLook_2d, kNWall_2d, kSTSgraf_2d, false, 0, 0},
+	{kVRead_2d, kNWall_2d, kSTSgraf_2d, false, 0, 0},
+	{kVLook_2d, kNGraf_2d, kSTSgraf_2d, false, 0, 0},
+	{kVRead_2d, kNGraf_2d, kSTSgraf_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen20_desc_2d[] = {      // Kennel
-	{kVLook_2d,   0,        kSTS20look_2d,      true},
-	{kVLook_2d,   kNWindow_2d, kSTMorespecific_2d},
-	{kVThrow_2d,  kNStick_2d,  kSTDonthaveone_2d},
-	{kVStroke_2d, kNDog_2d,    kSTStrokedog_2d},
-	{kVTalk_2d,   kNDog_2d,    kSTStrokedog_2d},
-	{kVInto_2d,   0,        kSTStoobigtofit_2d},
-	{0}
+	{kVLook_2d,   0,        kSTS20look_2d,      true, 0, 0},
+	{kVLook_2d,   kNWindow_2d, kSTMorespecific_2d, false, 0, 0},
+	{kVThrow_2d,  kNStick_2d,  kSTDonthaveone_2d, false, 0, 0},
+	{kVStroke_2d, kNDog_2d,    kSTStrokedog_2d, false, 0, 0},
+	{kVTalk_2d,   kNDog_2d,    kSTStrokedog_2d, false, 0, 0},
+	{kVInto_2d,   0,        kSTStoobigtofit_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen21_desc_2d[] = {      // Rockroom
-	{kVLook_2d,  0,      kSTS21look_2d,   true},
-	{kVClimb_2d, kNRope_2d, kSTNotclose_2d},
-	{kVUnder_2d, kNRock_2d, kSTNounder_2d, },
-	{kVMove_2d,  kNRock_2d, kSTTooheavy_2d},
-	{kVLift_2d,  kNRock_2d, kSTNowayhose_2d},
-	{kVLook_2d,  kNRock_2d, kSTDull_2d},
-	{kVTake_2d,  kNRock_2d, kSTNowayhose_2d},
-	{0}
+	{kVLook_2d,  0,      kSTS21look_2d,   true, 0, 0},
+	{kVClimb_2d, kNRope_2d, kSTNotclose_2d, false, 0, 0},
+	{kVUnder_2d, kNRock_2d, kSTNounder_2d, false, 0, 0},
+	{kVMove_2d,  kNRock_2d, kSTTooheavy_2d, false, 0, 0},
+	{kVLift_2d,  kNRock_2d, kSTNowayhose_2d, false, 0, 0},
+	{kVLook_2d,  kNRock_2d, kSTDull_2d, false, 0, 0},
+	{kVTake_2d,  kNRock_2d, kSTNowayhose_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen22_desc_2d[] = {      // Rockgone
-	{kVLook_2d,  0,      kSTS22look_2d,  true},
-	{kVClimb_2d, kNRope_2d, kSTNotclose_2d},
-	{kVLift_2d,  kNRock_2d, kSTNopurps_2d},
-	{kVLook_2d,  kNRock_2d, kSTDull_2d},
-	{kVTake_2d,  kNRock_2d, kSTNopurps_2d},
-	{kVUnder_2d, kNRock_2d, kSTSsearch_2d},
-	{0}
+	{kVLook_2d,  0,      kSTS22look_2d,  true, 0, 0},
+	{kVClimb_2d, kNRope_2d, kSTNotclose_2d, false, 0, 0},
+	{kVLift_2d,  kNRock_2d, kSTNopurps_2d, false, 0, 0},
+	{kVLook_2d,  kNRock_2d, kSTDull_2d, false, 0, 0},
+	{kVTake_2d,  kNRock_2d, kSTNopurps_2d, false, 0, 0},
+	{kVUnder_2d, kNRock_2d, kSTSsearch_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen23_desc_2d[] = {      // Threeway
-	{kVLook_2d,  0,      kSTS23look_2d,  true},
-	{kVLift_2d,  kNRock_2d, kSTNopurps_2d},
-	{kVLook_2d,  kNRock_2d, kSTDull_2d},
-	{kVUnder_2d, kNRock_2d, kSTDull2_2d},
-	{kVTake_2d,  kNRock_2d, kSTNopurps_2d},
-	{0}
+	{kVLook_2d,  0,      kSTS23look_2d,  true, 0, 0},
+	{kVLift_2d,  kNRock_2d, kSTNopurps_2d, false, 0, 0},
+	{kVLook_2d,  kNRock_2d, kSTDull_2d, false, 0, 0},
+	{kVUnder_2d, kNRock_2d, kSTDull2_2d, false, 0, 0},
+	{kVTake_2d,  kNRock_2d, kSTNopurps_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 
 background_t screen24_desc_2d[] = {      // Lampcave
-	{kVLook_2d,  0,      kSTS24look_2d,   true},
-	{kVLift_2d,  kNRock_2d, kSTSsearch_2d},
-	{kVLook_2d,  kNRock_2d, kSTNospecial_2d},
-	{kVUnder_2d, kNRock_2d, kSTDull2_2d},
-	{kVTake_2d,  kNRock_2d, kSTNopurps_2d},
-	{0}
+	{kVLook_2d,  0,      kSTS24look_2d,   true, 0, 0},
+	{kVLift_2d,  kNRock_2d, kSTSsearch_2d, false, 0, 0},
+	{kVLook_2d,  kNRock_2d, kSTNospecial_2d, false, 0, 0},
+	{kVUnder_2d, kNRock_2d, kSTDull2_2d, false, 0, 0},
+	{kVTake_2d,  kNRock_2d, kSTNopurps_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen25_desc_2d[] = {      // Chasm
-	{kVLook_2d,  0,      kSTS25look_2d, true},
-	{kVUnder_2d, kNRock_2d, kSTSsearch_2d},
-	{kVLift_2d,  kNRock_2d, kSTSsearch_2d},
-	{kVLook_2d,  kNRock_2d, kSTDull_2d},
-	{kVTake_2d,  kNRock_2d, kSTNopurps_2d},
-	{kVJump_2d,  0,      kSTSnojump_2d},
-	{0}
+	{kVLook_2d,  0,      kSTS25look_2d, true, 0, 0},
+	{kVUnder_2d, kNRock_2d, kSTSsearch_2d, false, 0, 0},
+	{kVLift_2d,  kNRock_2d, kSTSsearch_2d, false, 0, 0},
+	{kVLook_2d,  kNRock_2d, kSTDull_2d, false, 0, 0},
+	{kVTake_2d,  kNRock_2d, kSTNopurps_2d, false, 0, 0},
+	{kVJump_2d,  0,      kSTSnojump_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen26_desc_2d[] = {      // Passage
-	{kVLook_2d,  0,      kSTS26look_2d, true},
-	{kVUnder_2d, kNRock_2d, kSTSsearch_2d},
-	{kVLift_2d,  kNRock_2d, kSTSsearch_2d},
-	{kVLook_2d,  kNRock_2d, kSTDull_2d},
-	{kVTake_2d,  kNRock_2d, kSTNopurps_2d},
-	{0}
+	{kVLook_2d,  0,      kSTS26look_2d, true, 0, 0},
+	{kVUnder_2d, kNRock_2d, kSTSsearch_2d, false, 0, 0},
+	{kVLift_2d,  kNRock_2d, kSTSsearch_2d, false, 0, 0},
+	{kVLook_2d,  kNRock_2d, kSTDull_2d, false, 0, 0},
+	{kVTake_2d,  kNRock_2d, kSTNopurps_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen27_desc_2d[] = {      // genie
-	{kVLook_2d,    0,        kSTS27look_2d,   true},
-	{kVUnder_2d,   kNRock_2d,   kSTSsearch_2d},
-	{kVLift_2d,    kNRock_2d,   kSTSsearch_2d},
-	{kVLook_2d,    kNRock_2d,   kSTDull_2d},
-	{kVLook_2d,    kNTrap_2d,   kSTBudge_2d},
-	{kVOpen_2d,    kNTrap_2d,   kSTBudge_2d},
-	{kVUnscrew_2d, kNTrap_2d,   kSTBudge_2d},
-	{kVUnlock_2d,  kNTrap_2d,   kSTBudge_2d},
-	{kVPush_2d,    kNTrap_2d,   kSTBudge_2d},
-	{kVTalk_2d,    kNGenie_2d,  kSTTalkgenie_2d},
-	{kVRude_2d,    kNGenie_2d,  kSTRudeshed_2d},
-	{kVKiss_2d,    kNGenie_2d,  kSTRudeshed_2d},
-	{kVGive_2d,    kNBanana_2d, kSTNobanana_2d},
-	{kVClimb_2d,   kNStairs_2d, kSTTrywalk_2d},
-	{0}
+	{kVLook_2d,    0,        kSTS27look_2d,   true, 0, 0},
+	{kVUnder_2d,   kNRock_2d,   kSTSsearch_2d, false, 0, 0},
+	{kVLift_2d,    kNRock_2d,   kSTSsearch_2d, false, 0, 0},
+	{kVLook_2d,    kNRock_2d,   kSTDull_2d, false, 0, 0},
+	{kVLook_2d,    kNTrap_2d,   kSTBudge_2d, false, 0, 0},
+	{kVOpen_2d,    kNTrap_2d,   kSTBudge_2d, false, 0, 0},
+	{kVUnscrew_2d, kNTrap_2d,   kSTBudge_2d, false, 0, 0},
+	{kVUnlock_2d,  kNTrap_2d,   kSTBudge_2d, false, 0, 0},
+	{kVPush_2d,    kNTrap_2d,   kSTBudge_2d, false, 0, 0},
+	{kVTalk_2d,    kNGenie_2d,  kSTTalkgenie_2d, false, 0, 0},
+	{kVRude_2d,    kNGenie_2d,  kSTRudeshed_2d, false, 0, 0},
+	{kVKiss_2d,    kNGenie_2d,  kSTRudeshed_2d, false, 0, 0},
+	{kVGive_2d,    kNBanana_2d, kSTNobanana_2d, false, 0, 0},
+	{kVClimb_2d,   kNStairs_2d, kSTTrywalk_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen28_desc_2d[] = {      // traproom
-	{kVLook_2d,    0,           kSTS28look_2d,      true},
-	{kVBreak_2d,   kNSafe_2d,      kSTNowayhose_2d},
+	{kVLook_2d,    0,           kSTS28look_2d,      true, 0, 0},
+	{kVBreak_2d,   kNSafe_2d,      kSTNowayhose_2d, false, 0, 0},
 	{kVLook_2d,    kNHole_2d,      kSTS28hole_2d,      false, 0, 28},
-	{kVTake_2d,    kNMouse_2d,     kSTS28mouse_2d},
-	{kVTake_2d,    kNDroppings_2d, kSTSdroppings_2d},
-	{kVUnscrew_2d, kNSafe_2d,      kSTMorespecific_2d},
-	{kVOpen_2d,    0,           kSTUnlocksafe_2d},
-	{kVUnlock_2d,  kNSafe_2d,      kSTUnlocksafe_2d},
-	{0}
+	{kVTake_2d,    kNMouse_2d,     kSTS28mouse_2d, false, 0, 0},
+	{kVTake_2d,    kNDroppings_2d, kSTSdroppings_2d, false, 0, 0},
+	{kVUnscrew_2d, kNSafe_2d,      kSTMorespecific_2d, false, 0, 0},
+	{kVOpen_2d,    0,           kSTUnlocksafe_2d, false, 0, 0},
+	{kVUnlock_2d,  kNSafe_2d,      kSTUnlocksafe_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen29_desc_2d[] = {      // Hall 2
-	{kVLook_2d, 0, kSTLookhall_2d, true},
-	{0}
+	{kVLook_2d, 0, kSTLookhall_2d, true, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen30_desc_2d[] = {      // Lounge
-	{kVLook_2d, 0,        kSTS30look_2d,  true},
-	{kVLook_2d, kNWindow_2d, kSTS6garden_2d},
-	{0}
+	{kVLook_2d, 0,        kSTS30look_2d,  true, 0, 0},
+	{kVLook_2d, kNWindow_2d, kSTS6garden_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen31_desc_2d[] = {      // parlor
-	{kVLook_2d,   0,      kSTS31look_2d,      true},
-	{kVListen_2d, 0,      kSTBlah_2d},
-	{kVOpen_2d,   kNDoor_2d, kSTMorespecific_2d},
-	{kVLook_2d,   kNDoor_2d, kSTMorespecific_2d},
-	{0}
+	{kVLook_2d,   0,      kSTS31look_2d,      true, 0, 0},
+	{kVListen_2d, 0,      kSTBlah_2d, false, 0, 0},
+	{kVOpen_2d,   kNDoor_2d, kSTMorespecific_2d, false, 0, 0},
+	{kVLook_2d,   kNDoor_2d, kSTMorespecific_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen32_desc_2d[] = {      // catroom
-	{kVLook_2d,   0,        kSTS32look_2d,     true},
-	{kVStroke_2d, kNCat_2d,    kSTSstrokecat_2d},
-	{kVPlay_2d,   kNCat_2d,    kSTSplaycat_2d},
-	{kVTalk_2d,   kNCat_2d,    kSTStalkcat_2d},
-	{kVLook_2d,   kNPost_2d,   kSTSlookpost_2d},
-	{kVGive_2d,   0,        kSTSgivecat_2d},
-	{kVLook_2d,   kNWindow_2d, kSTS6garden_2d},
-	{kVRub_2d,    kNCatnip_2d, kSTRubcatnip2_2d},
-	{0}
+	{kVLook_2d,   0,        kSTS32look_2d,     true, 0, 0},
+	{kVStroke_2d, kNCat_2d,    kSTSstrokecat_2d, false, 0, 0},
+	{kVPlay_2d,   kNCat_2d,    kSTSplaycat_2d, false, 0, 0},
+	{kVTalk_2d,   kNCat_2d,    kSTStalkcat_2d, false, 0, 0},
+	{kVLook_2d,   kNPost_2d,   kSTSlookpost_2d, false, 0, 0},
+	{kVGive_2d,   0,        kSTSgivecat_2d, false, 0, 0},
+	{kVLook_2d,   kNWindow_2d, kSTS6garden_2d, false, 0, 0},
+	{kVRub_2d,    kNCatnip_2d, kSTRubcatnip2_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen33_desc_2d[] = {      // Boxroom
-	{kVLook_2d,  0,       kSTS33look_2d,      true},
-	{kVLook_2d,  kNDoor_2d,  kSTLookboxdoor_2d},
+	{kVLook_2d,  0,       kSTS33look_2d,      true, 0, 0},
+	{kVLook_2d,  kNDoor_2d,  kSTLookboxdoor_2d, false, 0, 0},
 	{kVRead_2d,  kNPaper_2d, kSTReadpaper_2d,    false, 0, 29},
 	{kVLook_2d,  kNPaper_2d, kSTReadpaper_2d,    false, 0, 29},
-	{kVLook_2d,  kNCrate_2d, kSTSlookbox_2d},
-	{kVInto_2d,  kNCrate_2d, kSTSgetinbox_2d},
-	{kVLook_2d,  kNChute_2d, kSTLookchute_2d},
-	{kVLook_2d,  kNHole_2d,  kSTLookchute_2d},
-	{kVClimb_2d, kNChute_2d, kSTUpchute_2d},
-	{kVLook_2d,  kNWall_2d,  kSTLookchute_2d},
-	{kVInto_2d,  kNDoor_2d,  kSTMorespecific_2d},
-	{0}
+	{kVLook_2d,  kNCrate_2d, kSTSlookbox_2d, false, 0, 0},
+	{kVInto_2d,  kNCrate_2d, kSTSgetinbox_2d, false, 0, 0},
+	{kVLook_2d,  kNChute_2d, kSTLookchute_2d, false, 0, 0},
+	{kVLook_2d,  kNHole_2d,  kSTLookchute_2d, false, 0, 0},
+	{kVClimb_2d, kNChute_2d, kSTUpchute_2d, false, 0, 0},
+	{kVLook_2d,  kNWall_2d,  kSTLookchute_2d, false, 0, 0},
+	{kVInto_2d,  kNDoor_2d,  kSTMorespecific_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen34_desc_2d[] = {      // hall3
-	{kVLook_2d, 0,        kSTLookhall_2d,  true},
-	{kVLook_2d, kNMirror_2d, kSTNospecial_2d},
-	{0}
+	{kVLook_2d, 0,        kSTLookhall_2d,  true, 0, 0},
+	{kVLook_2d, kNMirror_2d, kSTNospecial_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen35_desc_2d[] = {      // Organ
-	{kVLook_2d,   0,       kSTS35look_2d,   true,  DONT_CARE},
-	{kVLook_2d,   kNOrgan_2d, kSTNospecial_2d, false, DONT_CARE},
-	{kVPlay_2d,   kNOrgan_2d, kSTPlayorgan_2d, false, DONT_CARE},
-	{kVListen_2d, 0,       kSTHearorgan_2d, false, 0},
-	{kVListen_2d, 0,       kSTHearlaugh_2d, false, 1},
-	{0}
+	{kVLook_2d,   0,       kSTS35look_2d,   true,  DONT_CARE, 0},
+	{kVLook_2d,   kNOrgan_2d, kSTNospecial_2d, false, DONT_CARE, 0},
+	{kVPlay_2d,   kNOrgan_2d, kSTPlayorgan_2d, false, DONT_CARE, 0},
+	{kVListen_2d, 0,       kSTHearorgan_2d, false, 0, 0},
+	{kVListen_2d, 0,       kSTHearlaugh_2d, false, 1, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen36_desc_2d[] = {      // Hestroom
-	{kVLook_2d, 0,        kSTLookhest_2d,   true},
-	{kVTake_2d, kNBook_2d,   kSTS36book_2d},
-	{kVRead_2d, kNBook_2d,   kSTS36book_2d},
-	{kVLook_2d, kNBook_2d,   kSTS36book_2d},
-	{kVLook_2d, kNTable_2d,  kSTS36table_2d},
-	{kVTalk_2d, kNHester_2d, kSTTalkhester_2d},
-	{kVLook_2d, kNWindow_2d, kSTS6garden_2d},
-	{0}
+	{kVLook_2d, 0,        kSTLookhest_2d,   true, 0, 0},
+	{kVTake_2d, kNBook_2d,   kSTS36book_2d, false, 0, 0},
+	{kVRead_2d, kNBook_2d,   kSTS36book_2d, false, 0, 0},
+	{kVLook_2d, kNBook_2d,   kSTS36book_2d, false, 0, 0},
+	{kVLook_2d, kNTable_2d,  kSTS36table_2d, false, 0, 0},
+	{kVTalk_2d, kNHester_2d, kSTTalkhester_2d, false, 0, 0},
+	{kVLook_2d, kNWindow_2d, kSTS6garden_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen37_desc_2d[] = {      // Retupmoc
-	{kVLook_2d,  0,        kSTS37look_2d,    true},
-	{kVLift_2d,  kNRock_2d,   kSTNopurps_2d},
-	{kVLook_2d,  kNRock_2d,   kSTNospecial_2d},
-	{kVUnder_2d, kNRock_2d,   kSTDull2_2d},
-	{kVTalk_2d,  kNDoctor_2d, kSTPleasego_2d},
-	{0}
+	{kVLook_2d,  0,        kSTS37look_2d,    true, 0, 0},
+	{kVLift_2d,  kNRock_2d,   kSTNopurps_2d, false, 0, 0},
+	{kVLook_2d,  kNRock_2d,   kSTNospecial_2d, false, 0, 0},
+	{kVUnder_2d, kNRock_2d,   kSTDull2_2d, false, 0, 0},
+	{kVTalk_2d,  kNDoctor_2d, kSTPleasego_2d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen38_desc_2d[] = {      // hall1
-	{kVLook_2d, 0, kSTS38look_2d, true},
-	{0}
+	{kVLook_2d, 0, kSTS38look_2d, true, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
-
 
 objectList_t backgroundList_2d[] =  {
 	screen0_desc_2d,  screen1_desc_2d,  screen2_desc_2d,  screen3_desc_2d,  screen4_desc_2d,
@@ -4190,254 +4189,254 @@ objectList_t backgroundList_2d[] =  {
 };
 
 background_t catchall_3d[] = {  // Generally applicable phrases
-	{kVLook_3d,    kNPenny_3d,  kSTLookpen_3d,      false, DONT_CARE},
-	{kVKiss_3d,    kNPenny_3d,  kSTMmmm_3d,         false, DONT_CARE},
-	{kVRude_3d,    kNPenny_3d,  kSTHeadache_3d,     false, DONT_CARE},
-	{kVNaughty_3d, kNPenny_3d,  kSTHeadache_3d,     false, DONT_CARE},
-	{kVInto_3d,    kNWindow_3d, kSTThruwindow_3d,   false, DONT_CARE},
-	{kVOutof_3d,   kNWindow_3d, kSTThruwindow_3d,   false, DONT_CARE},
-	{kVJump_3d,    0,        kSTSjump_3d,        false, DONT_CARE},
-	{kVGo_3d,      0,        kSTTrywalk_3d,      false, DONT_CARE},
-	{kVInto_3d,    0,        kSTTrywalk_3d,      false, DONT_CARE},
-	{kVClimb_3d,   0,        kSTSclimb_3d,       false, DONT_CARE},
-	{kVShout_3d,   0,        kSTNothing_3d,      false, DONT_CARE},
-	{kVTalk_3d,    0,        kSTStalk_3d,        false, DONT_CARE},
-	{kVSwitch_3d,  0,        kSTMorespecific_3d, false, DONT_CARE},
-	{kVUse_3d,     0,        kSTMorespecific_3d, false, DONT_CARE},
-	{kVThrow_3d,   0,        kSTNopurps_3d,      false, DONT_CARE},
-	{kVRude_3d,    0,        kSTSrude_3d,        false, DONT_CARE},
-	{kVAttack_3d,  0,        kSTSattack_3d,      false, DONT_CARE},
-	{kVBreak_3d,   0,        kSTSbreak_3d,       false, DONT_CARE},
-	{kVListen_3d,  0,        kSTQuiet_3d,        false, DONT_CARE},
-	{kVSmell_3d,   0,        kSTAroma_3d,        false, DONT_CARE},
-	{kVQuery_3d,   0,        kSTNoidea_3d,       false, DONT_CARE},
-	{kVLook_3d,    kNSky_3d,    kSTFalling_3d,      false, DONT_CARE},
-	{kVLook_3d,    kNWall_3d,   kSTDull_3d,         false, DONT_CARE},
-	{kVLook_3d,    kNGround_3d, kSTDull_3d,         false, DONT_CARE},
-	{kVHelp_3d,    0,        kSTShelp_3d,        false, DONT_CARE},
-	{kVMagic_3d,   0,        kSTSmagic_3d,       false, DONT_CARE},
-	{kVWish_3d,    0,        kSTSmagic_3d,       false, DONT_CARE},
-	{kVDig_3d,     0,        kSTSdig_3d,         false, DONT_CARE},
-	{kVNaughty_3d, 0,        kSTSnaughty_3d,     false, DONT_CARE},
-	{kVKnock_3d,   0,        kSTNoanswer_3d,     false, DONT_CARE},
-	{kVOpen_3d,    kNDoor_3d,   kSTWontopen_3d,     false, DONT_CARE},
-	{kVUnlock_3d,  kNDoor_3d,   kSTCantunlock_3d,   false, DONT_CARE},
-	{kVLook_3d,    kNDoor_3d,   kSTDull_3d,         false, DONT_CARE},
-	{kVHello_3d,   0,        kSTHi_3d,           false, DONT_CARE},
-	{kVGive_3d,    0,        kSTNothanks_3d,     false, DONT_CARE},
-	{kVShout_3d,   0,        kSTNoanswer_3d,     false, DONT_CARE},
-	{kVUndress_3d, 0,        kSTSundress_3d,     false, DONT_CARE},
-	{kVSit_3d,     0,        kSTStired_3d,       false, DONT_CARE},
-	{kVFeed_3d,    0,        kSTNothanks_3d,     false, DONT_CARE},
-	{kVTake_3d,    kNVine_3d,   kSTNopurps_3d,      false, DONT_CARE},
-	{kVClimb_3d,   kNJungle_3d, kSTNopurps_3d,      false, DONT_CARE},
-	{kVLook_3d,    kNJungle_3d, kSTLookjungle_3d,   false, DONT_CARE},
-	{kVPut_3d,     kNFire_3d,   kSTNopurps_3d,      false, DONT_CARE},
-	{kVSwim_3d,    0,        kSTCantswim_3d,     false, DONT_CARE},
-	{kVTake_3d,    kNMouse_3d,  kSTCantcatch_3d,    false, DONT_CARE},
-	{kVLook_3d,    kNMouse_3d,  kSTNospecial_3d,    false, DONT_CARE},
-	{0}
+	{kVLook_3d,    kNPenny_3d,  kSTLookpen_3d,      false, DONT_CARE, 0},
+	{kVKiss_3d,    kNPenny_3d,  kSTMmmm_3d,         false, DONT_CARE, 0},
+	{kVRude_3d,    kNPenny_3d,  kSTHeadache_3d,     false, DONT_CARE, 0},
+	{kVNaughty_3d, kNPenny_3d,  kSTHeadache_3d,     false, DONT_CARE, 0},
+	{kVInto_3d,    kNWindow_3d, kSTThruwindow_3d,   false, DONT_CARE, 0},
+	{kVOutof_3d,   kNWindow_3d, kSTThruwindow_3d,   false, DONT_CARE, 0},
+	{kVJump_3d,    0,        kSTSjump_3d,        false, DONT_CARE, 0},
+	{kVGo_3d,      0,        kSTTrywalk_3d,      false, DONT_CARE, 0},
+	{kVInto_3d,    0,        kSTTrywalk_3d,      false, DONT_CARE, 0},
+	{kVClimb_3d,   0,        kSTSclimb_3d,       false, DONT_CARE, 0},
+	{kVShout_3d,   0,        kSTNothing_3d,      false, DONT_CARE, 0},
+	{kVTalk_3d,    0,        kSTStalk_3d,        false, DONT_CARE, 0},
+	{kVSwitch_3d,  0,        kSTMorespecific_3d, false, DONT_CARE, 0},
+	{kVUse_3d,     0,        kSTMorespecific_3d, false, DONT_CARE, 0},
+	{kVThrow_3d,   0,        kSTNopurps_3d,      false, DONT_CARE, 0},
+	{kVRude_3d,    0,        kSTSrude_3d,        false, DONT_CARE, 0},
+	{kVAttack_3d,  0,        kSTSattack_3d,      false, DONT_CARE, 0},
+	{kVBreak_3d,   0,        kSTSbreak_3d,       false, DONT_CARE, 0},
+	{kVListen_3d,  0,        kSTQuiet_3d,        false, DONT_CARE, 0},
+	{kVSmell_3d,   0,        kSTAroma_3d,        false, DONT_CARE, 0},
+	{kVQuery_3d,   0,        kSTNoidea_3d,       false, DONT_CARE, 0},
+	{kVLook_3d,    kNSky_3d,    kSTFalling_3d,      false, DONT_CARE, 0},
+	{kVLook_3d,    kNWall_3d,   kSTDull_3d,         false, DONT_CARE, 0},
+	{kVLook_3d,    kNGround_3d, kSTDull_3d,         false, DONT_CARE, 0},
+	{kVHelp_3d,    0,        kSTShelp_3d,        false, DONT_CARE, 0},
+	{kVMagic_3d,   0,        kSTSmagic_3d,       false, DONT_CARE, 0},
+	{kVWish_3d,    0,        kSTSmagic_3d,       false, DONT_CARE, 0},
+	{kVDig_3d,     0,        kSTSdig_3d,         false, DONT_CARE, 0},
+	{kVNaughty_3d, 0,        kSTSnaughty_3d,     false, DONT_CARE, 0},
+	{kVKnock_3d,   0,        kSTNoanswer_3d,     false, DONT_CARE, 0},
+	{kVOpen_3d,    kNDoor_3d,   kSTWontopen_3d,     false, DONT_CARE, 0},
+	{kVUnlock_3d,  kNDoor_3d,   kSTCantunlock_3d,   false, DONT_CARE, 0},
+	{kVLook_3d,    kNDoor_3d,   kSTDull_3d,         false, DONT_CARE, 0},
+	{kVHello_3d,   0,        kSTHi_3d,           false, DONT_CARE, 0},
+	{kVGive_3d,    0,        kSTNothanks_3d,     false, DONT_CARE, 0},
+	{kVShout_3d,   0,        kSTNoanswer_3d,     false, DONT_CARE, 0},
+	{kVUndress_3d, 0,        kSTSundress_3d,     false, DONT_CARE, 0},
+	{kVSit_3d,     0,        kSTStired_3d,       false, DONT_CARE, 0},
+	{kVFeed_3d,    0,        kSTNothanks_3d,     false, DONT_CARE, 0},
+	{kVTake_3d,    kNVine_3d,   kSTNopurps_3d,      false, DONT_CARE, 0},
+	{kVClimb_3d,   kNJungle_3d, kSTNopurps_3d,      false, DONT_CARE, 0},
+	{kVLook_3d,    kNJungle_3d, kSTLookjungle_3d,   false, DONT_CARE, 0},
+	{kVPut_3d,     kNFire_3d,   kSTNopurps_3d,      false, DONT_CARE, 0},
+	{kVSwim_3d,    0,        kSTCantswim_3d,     false, DONT_CARE, 0},
+	{kVTake_3d,    kNMouse_3d,  kSTCantcatch_3d,    false, DONT_CARE, 0},
+	{kVLook_3d,    kNMouse_3d,  kSTNospecial_3d,    false, DONT_CARE, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t crash_desc_3d[] = {      // At the crash site
-	{kVLook_3d,   0,       kSTLookcrash_3d,    false},
-	{kVRepair_3d, kNPlane_3d, kSTNopurps_3d},
-	{kVFly_3d,    kNPlane_3d, kSTNopurps_3d},
-	{kVInto_3d,   0,       kSTMorespecific_3d, true},
-	{kVOpen_3d,   kNDoor_3d,  kSTOpenplanedoor_3d},
-	{0}
+	{kVLook_3d,   0,       kSTLookcrash_3d,    false, 0, 0},
+	{kVRepair_3d, kNPlane_3d, kSTNopurps_3d, false, 0, 0},
+	{kVFly_3d,    kNPlane_3d, kSTNopurps_3d, false, 0, 0},
+	{kVInto_3d,   0,       kSTMorespecific_3d, true, 0, 0},
+	{kVOpen_3d,   kNDoor_3d,  kSTOpenplanedoor_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t plane_desc_3d[] = {      // Inside the plane
-	{kVLook_3d,   0, kSTLookplane_3d, true},
-	{kVSearch_3d, 0, kSTSaylook_3d},
-	{kVInto_3d,   0, kSTYouarein_3d},
-	{0}
+	{kVLook_3d,   0, kSTLookplane_3d, true, 0, 0},
+	{kVSearch_3d, 0, kSTSaylook_3d, false, 0, 0},
+	{kVInto_3d,   0, kSTYouarein_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t web_desc_3d[] = {      // At the spider's web
-	{kVLook_3d, 0,        kSTLookweb_3d,   true},
-	{kVTake_3d, kNNative_3d, kSTTakegirl_3d},
-	{kVLook_3d, kNWeb_3d,    kSTLookatweb_3d},
-	{kVTake_3d, kNPenny_3d,  kSTTakepenny_3d},
-	{kVTalk_3d, kNPenny_3d,  kSTTalkpenny_3d},
-	{0}
+	{kVLook_3d, 0,        kSTLookweb_3d,   true, 0, 0},
+	{kVTake_3d, kNNative_3d, kSTTakegirl_3d, false, 0, 0},
+	{kVLook_3d, kNWeb_3d,    kSTLookatweb_3d, false, 0, 0},
+	{kVTake_3d, kNPenny_3d,  kSTTakepenny_3d, false, 0, 0},
+	{kVTalk_3d, kNPenny_3d,  kSTTalkpenny_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t wfall_desc_3d[] = {      // Waterfall and stream
-	{kVLook_3d,   0,       kSTLookwfall_3d,  true},
-	{kVLook_3d,   kNWater_3d, kSTLookwfall_3d},
-	{kVCross_3d,  kNWater_3d, kSTCantcross_3d},
-	{kVListen_3d, 0,       kSTListenfall_3d},
-	{0}
+	{kVLook_3d,   0,       kSTLookwfall_3d,  true, 0, 0},
+	{kVLook_3d,   kNWater_3d, kSTLookwfall_3d, false, 0, 0},
+	{kVCross_3d,  kNWater_3d, kSTCantcross_3d, false, 0, 0},
+	{kVListen_3d, 0,       kSTListenfall_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t wfall_b_desc_3d[] = {      // Same as above but no water
-	{kVLook_3d,  0,       kSTLookwfall_b_3d,  true},
-	{kVLook_3d,  kNWater_3d, kSTLookwfall_b_3d},
-	{kVCross_3d, kNWater_3d, kSTToomuddy_3d},
-	{0}
+	{kVLook_3d,  0,       kSTLookwfall_b_3d,  true, 0, 0},
+	{kVLook_3d,  kNWater_3d, kSTLookwfall_b_3d, false, 0, 0},
+	{kVCross_3d, kNWater_3d, kSTToomuddy_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t wbase_desc_3d[] = {      // Base of waterfall
-	{kVLook_3d,  0,       kSTLookwbase_3d,  true},
-	{kVLook_3d,  kNWater_3d, kSTLookwbase_3d},
-	{kVCross_3d, kNWater_3d, kSTToomuddy_3d},
-	{0}
+	{kVLook_3d,  0,       kSTLookwbase_3d,  true, 0, 0},
+	{kVLook_3d,  kNWater_3d, kSTLookwbase_3d, false, 0, 0},
+	{kVCross_3d, kNWater_3d, kSTToomuddy_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t path_ul_desc_3d[] = {      // Path at left of spider's web
-	{kVLook_3d, 0, kSTLookpath_ul_3d, true},
-	{0}
+	{kVLook_3d, 0, kSTLookpath_ul_3d, true, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t bridge_desc_3d[] = {      // At the bridge
-	{kVLook_3d,  0,      kSTLookbridge1_3d,     true},
-	{kVSwing_3d, 0,      kSTSwingbridge_3d},
-	{kVTake_3d,  kNVine_3d, kSTGetbridgevines_3d},
-	{kVTie_3d,   kNThem_3d, kSTMorespecific_3d},
-	{0}
+	{kVLook_3d,  0,      kSTLookbridge1_3d,     true, 0, 0},
+	{kVSwing_3d, 0,      kSTSwingbridge_3d, false, 0, 0},
+	{kVTake_3d,  kNVine_3d, kSTGetbridgevines_3d, false, 0, 0},
+	{kVTie_3d,   kNThem_3d, kSTMorespecific_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t bridge2_desc_3d[] = {      // At the bridge
-	{kVLook_3d,  0, kSTLookbridge2_3d, true},
-	{kVSwing_3d, 0, kSTSwingbridge_3d},
-	{0}
+	{kVLook_3d,  0, kSTLookbridge2_3d, true, 0, 0},
+	{kVSwing_3d, 0, kSTSwingbridge_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t stream_desc_3d[] = {      // stream with vines crossing
-	{kVLook_3d,  0, kSTLookstream1_3d,   true},
-	{kVSwing_3d, 0, kSTMorespecific_3d},
-	{kVCross_3d, 0, kSTStep1_3d},
-	{0}
+	{kVLook_3d,  0, kSTLookstream1_3d,   true, 0, 0},
+	{kVSwing_3d, 0, kSTMorespecific_3d, false, 0, 0},
+	{kVCross_3d, 0, kSTStep1_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t stream2_desc_3d[] = {      // Stream with elephant sitting in it
-	{kVLook_3d,  0,          kSTLookstream2_3d, true},
-	{kVSwing_3d, 0,          kSTCantswing_3d},
-	{kVLook_3d,  kNElephant_3d, kSTLookele2_3d},
-	{0}
+	{kVLook_3d,  0,          kSTLookstream2_3d, true, 0, 0},
+	{kVSwing_3d, 0,          kSTCantswing_3d, false, 0, 0},
+	{kVLook_3d,  kNElephant_3d, kSTLookele2_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t village_desc_3d[] = {      // Long shot of village
-	{kVLook_3d, 0,      kSTLookvillage_3d, true},
-	{kVTake_3d, kNFood_3d, kSTTakething_3d},
-	{kVLook_3d, kNFood_3d, kSTTakething_3d},
-	{0}
+	{kVLook_3d, 0,      kSTLookvillage_3d, true, 0, 0},
+	{kVTake_3d, kNFood_3d, kSTTakething_3d, false, 0, 0},
+	{kVLook_3d, kNFood_3d, kSTTakething_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t hut_out_desc_3d[] = {      // Outside witch doctor's hut
-	{kVLook_3d,   0,         kSTLookhut_out_3d},
-	{kVLook_3d,   kNDocbits_3d, kSTLookdocbits_3d},
-	{kVTake_3d,   kNDocbits_3d, kSTTakedocbits_3d},
-	{kVLook_3d,   kNSpider_3d,  kSTLookspider_3d},
-	{kVTake_3d,   kNSpider_3d,  kSTTakespider_3d},
-	{kVLook_3d,   kNSnake_3d,   kSTLooksnake_3d},
-	{kVTake_3d,   kNSnake_3d,   kSTTakesnake_3d},
-	{kVSearch_3d, kNWindow_3d,  kSTLookinhut_3d},
-	{kVLook_3d,   kNWindow_3d,  kSTLookinhut_3d},
-	{kVSearch_3d, kNHut_3d,     kSTLookinhut_3d},
-	{0}
+	{kVLook_3d,   0,         kSTLookhut_out_3d, false, 0, 0},
+	{kVLook_3d,   kNDocbits_3d, kSTLookdocbits_3d, false, 0, 0},
+	{kVTake_3d,   kNDocbits_3d, kSTTakedocbits_3d, false, 0, 0},
+	{kVLook_3d,   kNSpider_3d,  kSTLookspider_3d, false, 0, 0},
+	{kVTake_3d,   kNSpider_3d,  kSTTakespider_3d, false, 0, 0},
+	{kVLook_3d,   kNSnake_3d,   kSTLooksnake_3d, false, 0, 0},
+	{kVTake_3d,   kNSnake_3d,   kSTTakesnake_3d, false, 0, 0},
+	{kVSearch_3d, kNWindow_3d,  kSTLookinhut_3d, false, 0, 0},
+	{kVLook_3d,   kNWindow_3d,  kSTLookinhut_3d, false, 0, 0},
+	{kVSearch_3d, kNHut_3d,     kSTLookinhut_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t hut_in_desc_3d[] = {      // Inside hut
 // States: 0 imprisoned_3d, 1 doctor incapacitated
-	{kVLook_3d,   0,           kSTLookhut_in_3d,     true,  0},
-	{kVLook_3d,   0,           kSTLookhut_in2_3d,    true,  1},
-	{kVLook_3d,   kNDoctor_3d,    kSTLookhut_in2_3d,    false, 1},
-	{kVTake_3d,   0,           kSTTakeincage_3d,     false, 0},
-	{kVTake_3d,   kNDoctor_3d,    kSTTakedoctor0_3d,    false, 0},
-	{kVTake_3d,   kNDoctor_3d,    kSTTakedoctor1_3d,    false, 1},
-	{kVLook_3d,   kNDocbits_3d,   kSTLookdocbits_3d,    false, DONT_CARE},
-	{kVTake_3d,   kNDocbits_3d,   kSTTakedocbits_3d,    false, DONT_CARE},
-	{kVLook_3d,   kNSpider_3d,    kSTLookspider_3d,     false, DONT_CARE},
-	{kVTake_3d,   kNSpider_3d,    kSTTakespider_3d,     false, DONT_CARE},
-	{kVLook_3d,   kNSnake_3d,     kSTLooksnake_3d,      false, DONT_CARE},
-	{kVTake_3d,   kNSnake_3d,     kSTTakesnake_3d,      false, DONT_CARE},
-	{kVLook_3d,   kNWindow_3d,    kSTLookouthut_3d,     false, DONT_CARE},
-	{kVLook_3d,   kNShelfbits_3d, kSTLookshelfbits_3d,  false, 0},
-	{kVLook_3d,   kNShelfbits_3d, kSTLookshelfbits2_3d, false, 1},
-	{kVTake_3d,   kNShelfbits_3d, kSTTakeshelfbits_3d,  false, 1},
-	{kVDrink_3d,  kNShelfbits_3d, kSTTakeshelfbits_3d,  false, 1},
-	{kVLook_3d,   kNBottles_3d,   kSTLookshelfbits_3d,  false, 0},
-	{kVLook_3d,   kNBottles_3d,   kSTLookshelfbits2_3d, false, 1},
-	{kVTake_3d,   kNBottles_3d,   kSTTakeshelfbits_3d,  false, 1},
-	{kVDrink_3d,  kNBottles_3d,   kSTTakeshelfbits_3d,  false, 1},
-	{kVSearch_3d, 0,           kSTCantlookin_3d,     false, 0},
-	{kVSearch_3d, kNFire_3d,      kSTLookinfire_3d,     false, 1},
-	{kVLook_3d,   kNFire_3d,      kSTLookfire_3d,       false, DONT_CARE},
-	{kVTalk_3d,   kNDoctor_3d,    kSTTalkdoc_3d,        false, 0},
-	{kVTalk_3d,   kNDoctor_3d,    kSTTalkdoc2_3d,       false, 1},
-	{kVSearch_3d, kNMouse_3d,     kSTLookinhole_3d,     false, DONT_CARE},
-	{kVTalk_3d,   kNMouse_3d,     kSTTalkmouse_3d,      false, DONT_CARE},
-	{kVUnlock_3d, kNCdoor_3d,     kSTPicklock_3d,       false, 0},
-	{kVTake_3d,   kNDoorlock_3d,  kSTPicklock_3d,       false, 0},
-	{kVGive_3d,   kNMouse_3d,     kSTGivemouse_3d,      false, DONT_CARE},
-	{kVThrow_3d,  kNCheese_3d,    kSTGivemouse_3d,      false, DONT_CARE},
-	{kVInto_3d,   kNFire_3d,      kSTGetinpot_3d,       false, 1},
-	{kVTake_3d,   kNNative_3d,    kSTTakenative_3d,     false, 0},
-	{kVShoot_3d,  kNDoctor_3d,    kSTMissed_3d,         false, DONT_CARE},
-	{kVBlow_3d,   kNDoctor_3d,    kSTMissed_3d,         false, DONT_CARE},
-	{kVUse_3d,    kNPipe_3d,      kSTMissed_3d,         false, DONT_CARE},
-	{kVClose_3d,  kNCdoor_3d,     kSTNotclose_3d,       false, DONT_CARE},
-	{0}
+	{kVLook_3d,   0,           kSTLookhut_in_3d,     true,  0, 0},
+	{kVLook_3d,   0,           kSTLookhut_in2_3d,    true,  1, 0},
+	{kVLook_3d,   kNDoctor_3d,    kSTLookhut_in2_3d,    false, 1, 0},
+	{kVTake_3d,   0,           kSTTakeincage_3d,     false, 0, 0},
+	{kVTake_3d,   kNDoctor_3d,    kSTTakedoctor0_3d,    false, 0, 0},
+	{kVTake_3d,   kNDoctor_3d,    kSTTakedoctor1_3d,    false, 1, 0},
+	{kVLook_3d,   kNDocbits_3d,   kSTLookdocbits_3d,    false, DONT_CARE, 0},
+	{kVTake_3d,   kNDocbits_3d,   kSTTakedocbits_3d,    false, DONT_CARE, 0},
+	{kVLook_3d,   kNSpider_3d,    kSTLookspider_3d,     false, DONT_CARE, 0},
+	{kVTake_3d,   kNSpider_3d,    kSTTakespider_3d,     false, DONT_CARE, 0},
+	{kVLook_3d,   kNSnake_3d,     kSTLooksnake_3d,      false, DONT_CARE, 0},
+	{kVTake_3d,   kNSnake_3d,     kSTTakesnake_3d,      false, DONT_CARE, 0},
+	{kVLook_3d,   kNWindow_3d,    kSTLookouthut_3d,     false, DONT_CARE, 0},
+	{kVLook_3d,   kNShelfbits_3d, kSTLookshelfbits_3d,  false, 0, 0},
+	{kVLook_3d,   kNShelfbits_3d, kSTLookshelfbits2_3d, false, 1, 0},
+	{kVTake_3d,   kNShelfbits_3d, kSTTakeshelfbits_3d,  false, 1, 0},
+	{kVDrink_3d,  kNShelfbits_3d, kSTTakeshelfbits_3d,  false, 1, 0},
+	{kVLook_3d,   kNBottles_3d,   kSTLookshelfbits_3d,  false, 0, 0},
+	{kVLook_3d,   kNBottles_3d,   kSTLookshelfbits2_3d, false, 1, 0},
+	{kVTake_3d,   kNBottles_3d,   kSTTakeshelfbits_3d,  false, 1, 0},
+	{kVDrink_3d,  kNBottles_3d,   kSTTakeshelfbits_3d,  false, 1, 0},
+	{kVSearch_3d, 0,           kSTCantlookin_3d,     false, 0, 0},
+	{kVSearch_3d, kNFire_3d,      kSTLookinfire_3d,     false, 1, 0},
+	{kVLook_3d,   kNFire_3d,      kSTLookfire_3d,       false, DONT_CARE, 0},
+	{kVTalk_3d,   kNDoctor_3d,    kSTTalkdoc_3d,        false, 0, 0},
+	{kVTalk_3d,   kNDoctor_3d,    kSTTalkdoc2_3d,       false, 1, 0},
+	{kVSearch_3d, kNMouse_3d,     kSTLookinhole_3d,     false, DONT_CARE, 0},
+	{kVTalk_3d,   kNMouse_3d,     kSTTalkmouse_3d,      false, DONT_CARE, 0},
+	{kVUnlock_3d, kNCdoor_3d,     kSTPicklock_3d,       false, 0, 0},
+	{kVTake_3d,   kNDoorlock_3d,  kSTPicklock_3d,       false, 0, 0},
+	{kVGive_3d,   kNMouse_3d,     kSTGivemouse_3d,      false, DONT_CARE, 0},
+	{kVThrow_3d,  kNCheese_3d,    kSTGivemouse_3d,      false, DONT_CARE, 0},
+	{kVInto_3d,   kNFire_3d,      kSTGetinpot_3d,       false, 1, 0},
+	{kVTake_3d,   kNNative_3d,    kSTTakenative_3d,     false, 0, 0},
+	{kVShoot_3d,  kNDoctor_3d,    kSTMissed_3d,         false, DONT_CARE, 0},
+	{kVBlow_3d,   kNDoctor_3d,    kSTMissed_3d,         false, DONT_CARE, 0},
+	{kVUse_3d,    kNPipe_3d,      kSTMissed_3d,         false, DONT_CARE, 0},
+	{kVClose_3d,  kNCdoor_3d,     kSTNotclose_3d,       false, DONT_CARE, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t garden_desc_3d[] = {      // The secret garden
-	{kVLook_3d,  0,        kSTLookgarden_3d,  true},
-	{kVLook_3d,  kNOrchid_3d, kSTLookorchid_3d},
-	{kVTake_3d,  kNOrchid_3d, kSTTakeorchid_3d},
-	{kVCross_3d, 0,        kSTCrossgarden_3d, false},
-	{kVLook_3d,  kNWater_3d,  kSTLookgarden_3d},
-	{0}
+	{kVLook_3d,  0,        kSTLookgarden_3d,  true, 0, 0},
+	{kVLook_3d,  kNOrchid_3d, kSTLookorchid_3d, false, 0, 0},
+	{kVTake_3d,  kNOrchid_3d, kSTTakeorchid_3d, false, 0, 0},
+	{kVCross_3d, 0,        kSTCrossgarden_3d, false, 0, 0},
+	{kVLook_3d,  kNWater_3d,  kSTLookgarden_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t clifftop_desc_3d[] = {      // Top of cliff path
-	{kVLook_3d, 0, kSTLookclifftop_3d, true},
-	{0}
+	{kVLook_3d, 0, kSTLookclifftop_3d, true, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t oldman_desc_3d[] = {      // Old man inside cave
-	{kVLook_3d, 0, kSTLookoldman_3d, true},
-	{0}
+	{kVLook_3d, 0, kSTLookoldman_3d, true, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t cliff_desc_3d[] = {      // Lower cliff path
-	{kVLook_3d, 0, kSTLookcliff_3d, true},
-	{0}
+	{kVLook_3d, 0, kSTLookcliff_3d, true, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t camp_desc_3d[] = {      // Camp scene in village
-	{kVLook_3d,   0,          kSTLookcamp_3d,    true},
-	{kVLook_3d,   kNFire_3d,     kSTLookhyena_3d},
-	{kVLook_3d,   kNPole_3d,     kSTLookpole_3d},
-	{kVBehind_3d, kNHut_3d,      kSTBehindhut_3d},
-	{kVSearch_3d, kNWindow_3d,   kSTLookintohut_3d},
-	{kVSearch_3d, kNHut_3d,      kSTLookintohut_3d},
-	{kVLook_3d,   kNHut_3d,      kSTLookhut_3d},
-	{kVLook_3d,   kNWindow_3d,   kSTLookintohut_3d},
-	{kVEat_3d,    0,          kSTEatroast_3d,    false},
-	{kVTake_3d,   kNFood_3d,     kSTEatroast_3d},
-	{kVInto_3d,   kNFire_3d,     kSTIntofire_3d},
-	{kVTake_3d,   kNFire_3d,     kSTIntofire_3d},
-	{kVTake_3d,   kNNative_3d,   kSTTakenative_3d},
-	{kVTake_3d,   kNPipe_3d,     kSTMakeoffer_3d},
-	{kVGive_3d,   kNBouillon_3d, kSTNonecarried_3d},
-	{0}
+	{kVLook_3d,   0,          kSTLookcamp_3d,    true, 0, 0},
+	{kVLook_3d,   kNFire_3d,     kSTLookhyena_3d, false, 0, 0},
+	{kVLook_3d,   kNPole_3d,     kSTLookpole_3d, false, 0, 0},
+	{kVBehind_3d, kNHut_3d,      kSTBehindhut_3d, false, 0, 0},
+	{kVSearch_3d, kNWindow_3d,   kSTLookintohut_3d, false, 0, 0},
+	{kVSearch_3d, kNHut_3d,      kSTLookintohut_3d, false, 0, 0},
+	{kVLook_3d,   kNHut_3d,      kSTLookhut_3d, false, 0, 0},
+	{kVLook_3d,   kNWindow_3d,   kSTLookintohut_3d, false, 0, 0},
+	{kVEat_3d,    0,          kSTEatroast_3d,    false, 0, 0},
+	{kVTake_3d,   kNFood_3d,     kSTEatroast_3d, false, 0, 0},
+	{kVInto_3d,   kNFire_3d,     kSTIntofire_3d, false, 0, 0},
+	{kVTake_3d,   kNFire_3d,     kSTIntofire_3d, false, 0, 0},
+	{kVTake_3d,   kNNative_3d,   kSTTakenative_3d, false, 0, 0},
+	{kVTake_3d,   kNPipe_3d,     kSTMakeoffer_3d, false, 0, 0},
+	{kVGive_3d,   kNBouillon_3d, kSTNonecarried_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t turn_desc_3d[] = {      // Turnaround path
-	{kVLook_3d,  0,      kSTLookturn_3d,  true, DONT_CARE},
-	{kVUnder_3d, kNRock_3d, kSTUnderrock_3d},
-	{kVLook_3d,  kNRock_3d, kSTLookrock_3d},
-	{kVRide_3d,  kNRock_3d, kSTOntorock_3d},
-	{kVClimb_3d, kNRock_3d, kSTOntorock_3d},
-	{0}
+	{kVLook_3d,  0,      kSTLookturn_3d,  true, DONT_CARE, 0},
+	{kVUnder_3d, kNRock_3d, kSTUnderrock_3d, false, 0, 0},
+	{kVLook_3d,  kNRock_3d, kSTLookrock_3d, false, 0, 0},
+	{kVRide_3d,  kNRock_3d, kSTOntorock_3d, false, 0, 0},
+	{kVClimb_3d, kNRock_3d, kSTOntorock_3d, false, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t slope_desc_3d[] = {      // Slope between cliff and stream
-	{kVLook_3d, 0, kSTLookslope_3d, true},
-	{0}
+	{kVLook_3d, 0, kSTLookslope_3d, true, 0, 0},
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t path_desc_3d[] = {       // Path containing elephant
@@ -4447,7 +4446,7 @@ background_t path_desc_3d[] = {       // Path containing elephant
 	{kVRide_3d, kNElephant_3d, kSTRideelephant_3d, false, 0},
 	{kVTake_3d, kNElephant_3d, kSTGetelephant_3d,  false, 0},
 	{kVShow_3d, kNMouse_3d,    kSTShowmouse_3d,    false, 0},
-	{0}
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t cave_desc_3d[] = {      // Cave mouth
@@ -4457,7 +4456,7 @@ background_t cave_desc_3d[] = {      // Cave mouth
 	{kVBreak_3d,  kNGhost_3d, kSTAttackghost_3d, false, 0},
 	{kVShoot_3d,  kNGhost_3d, kSTAttackghost_3d, false, 0},
 	{kVTake_3d,   kNGhost_3d, kSTTakeghost_3d,   false, 0},
-	{0}
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t *backgroundList_3d[] =  {
@@ -4576,39 +4575,39 @@ cmd useboat_1w     = {kVMakeUseOf_1w, 0,        kDTnull,         DONT_CARE, 0, k
 cmd usemask_1w     = {kVMakeUseOf_1w, kRmask_1w,   kDTnocgen_1w,    DONT_CARE, 0, kDTnull,         kDTnull,          kALusemask_1w};
 cmd wearmask_1w    = {kVWear_1w,      kRmask_1w,   kDTnocgen_1w,    0,         1, kDTsworn1_1w,    kDTokgen_1w,      kALswapmask_1w};
 
-cmd cmdDummy[]    = {{0,           0,        kDTnull,         0,         0, kDTnull,         kDTnull,          0}, 
-	                 0
-                    };
+cmd emptyCmd      =  {0,           0,        kDTnull,         0,         0, kDTnull,         kDTnull,          0};
 
-cmd boat_1w[]    = {useboat_1w,    getinboat_1w,   getoutboat_1w, pushboat_1w,  0};
-cmd bolt_1w[]    = {openbolt_1w,   oilbolt_1w,     unlockbolt_1w, closebolt_1w, lockbolt_1w, 0};
-cmd bung_1w[]    = {plugbung_1w,   0};
-cmd carpet_1w[]  = {movecarp1_1w,  movecarp2_1w,   movecarp3_1w,  0};
-cmd chop_1w[]    = {eatchop_1w,    throwchop_1w,   getchop_1w,    0};
-cmd cupb_1w[]    = {lookcupb_1w,   0};
-cmd door1_1w[]   = {opendoor1_1w,  closedoor1_1w,  unlkdoor_1w,   lockdoor_1w,  knock_1w,    0};
-cmd door2_1w[]   = {opendoor2_1w,  closedoor2_1w,  knock_1w,      unlock_1w,    0};
-cmd door3_1w[]   = {opendoor3_1w,  closedoor3_1w,  knock_1w,      unlock_1w,    0};
-cmd door4_1w[]   = {opendoor4_1w,  closedoor4_1w,  knock_1w,      0};
-cmd drac_1w[]    = {talkdrac_1w,   0};
-cmd frank_1w[]   = {talkfrank_1w,  0};
-cmd gold_1w[]    = {givegold_1w,   0};
-cmd gwen_1w[]    = {talkgwen_1w,   0};
-cmd hood_1w[]    = {talkhood_1w,   0};
-cmd igor_1w[]    = {pushigor_1w,   0};
-cmd knife_1w[]   = {getknife_1w,   0};
-cmd mask_1w[]    = {usemask_1w,    wearmask_1w,    offmask_1w,    dropmask_1w,  0};
-cmd oilcan_1w[]  = {getoilcan_1w,  ruboilcan_1w,   0};
-cmd oldman_1w[]  = {omtalk_1w,     omattack_1w,    ombreak_1w,    0};
-cmd peahd_1w[]   = {talkpeahd_1w,  0};
-cmd pkin_1w[]    = {openpkin_1w,   kickpkin_1w,    breakpkin_1w,  droppkin_1w,  0};
-cmd rock_1w[]    = {hiderock_1w,   0};
-cmd rope_1w[]    = {cutrope_1w,    untierope_1w,   brkrope_1w,    0};
-cmd shed_1w[]    = {lookshed_1w,   0};
-cmd slime_1w[]   = {talkslime_1w,  0};
-cmd trap_1w[]    = {opentrap_1w,   closetrap_1w,   knock_1w,      0};
-cmd ward_1w[]    = {openwdoors_1w, closewdoors_1w, knock_1w,      0};
-cmd whistle_1w[] = {blowdw_1w,     getdw_1w,       0};
+cmd cmdDummy[]    = {emptyCmd};
+
+cmd boat_1w[]    = {useboat_1w,    getinboat_1w,   getoutboat_1w, pushboat_1w,  emptyCmd};
+cmd bolt_1w[]    = {openbolt_1w,   oilbolt_1w,     unlockbolt_1w, closebolt_1w, lockbolt_1w, emptyCmd};
+cmd bung_1w[]    = {plugbung_1w,   emptyCmd};
+cmd carpet_1w[]  = {movecarp1_1w,  movecarp2_1w,   movecarp3_1w,  emptyCmd};
+cmd chop_1w[]    = {eatchop_1w,    throwchop_1w,   getchop_1w,    emptyCmd};
+cmd cupb_1w[]    = {lookcupb_1w,   emptyCmd};
+cmd door1_1w[]   = {opendoor1_1w,  closedoor1_1w,  unlkdoor_1w,   lockdoor_1w,  knock_1w,    emptyCmd};
+cmd door2_1w[]   = {opendoor2_1w,  closedoor2_1w,  knock_1w,      unlock_1w,    emptyCmd};
+cmd door3_1w[]   = {opendoor3_1w,  closedoor3_1w,  knock_1w,      unlock_1w,    emptyCmd};
+cmd door4_1w[]   = {opendoor4_1w,  closedoor4_1w,  knock_1w,      emptyCmd};
+cmd drac_1w[]    = {talkdrac_1w,   emptyCmd};
+cmd frank_1w[]   = {talkfrank_1w,  emptyCmd};
+cmd gold_1w[]    = {givegold_1w,   emptyCmd};
+cmd gwen_1w[]    = {talkgwen_1w,   emptyCmd};
+cmd hood_1w[]    = {talkhood_1w,   emptyCmd};
+cmd igor_1w[]    = {pushigor_1w,   emptyCmd};
+cmd knife_1w[]   = {getknife_1w,   emptyCmd};
+cmd mask_1w[]    = {usemask_1w,    wearmask_1w,    offmask_1w,    dropmask_1w,  emptyCmd};
+cmd oilcan_1w[]  = {getoilcan_1w,  ruboilcan_1w,   emptyCmd};
+cmd oldman_1w[]  = {omtalk_1w,     omattack_1w,    ombreak_1w,    emptyCmd};
+cmd peahd_1w[]   = {talkpeahd_1w,  emptyCmd};
+cmd pkin_1w[]    = {openpkin_1w,   kickpkin_1w,    breakpkin_1w,  droppkin_1w,  emptyCmd};
+cmd rock_1w[]    = {hiderock_1w,   emptyCmd};
+cmd rope_1w[]    = {cutrope_1w,    untierope_1w,   brkrope_1w,    emptyCmd};
+cmd shed_1w[]    = {lookshed_1w,   emptyCmd};
+cmd slime_1w[]   = {talkslime_1w,  emptyCmd};
+cmd trap_1w[]    = {opentrap_1w,   closetrap_1w,   knock_1w,      emptyCmd};
+cmd ward_1w[]    = {openwdoors_1w, closewdoors_1w, knock_1w,      emptyCmd};
+cmd whistle_1w[] = {blowdw_1w,     getdw_1w,       emptyCmd};
 
 cmd *cmdList_1w[] = {
 	cmdDummy,  boat_1w,  bolt_1w,  bung_1w,  carpet_1w,
@@ -4686,47 +4685,47 @@ cmd unlockdum_2w     = {kVUnlock_2w,    0,        kDTnull,       DONT_CARE, 0, k
 cmd usedynamite_2w   = {kVMakeUseOf_2w, kRmatch_2w,  kDTnomatch_2w, DONT_CARE, 0, kDTnull,         kDTnull,           kALlightdynamite_2w};
 cmd userobot_2w      = {kVMakeUseOf_2w, 0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           0};
 
-cmd album_2w[]    = {readalbum_2w,   0};
-cmd balloon_2w[]  = {popballoon_2w,  getballoon_2w,   0};
-cmd banana_2w[]   = {givebanana_2w,  eatbanana_2w,    0};
-cmd bell_2w[]     = {ringbell_2w,    givebell_2w,     0};
-cmd blue_2w[]     = {pushblue_2w,    0};
-cmd book_2w[]     = {getbook_2w,     0};
-cmd bottle_2w[]   = {serum_2w,       0};
-cmd button_2w[]   = {pushbutton_2w,  0};
-cmd catnip_2w[]   = {rubcatnip_2w,   givecatnip_2w,   eatcatnip_2w,     0};
-cmd cupbp_2w[]    = {opencubp_2w,    lookcubp_2w,     0};
-cmd door1_2w[]    = {opendoor1_2w,   closedoor1_2w,   knock_2w,         unlock_2w, 0};
-cmd door2_2w[]    = {opendoor2_2w,   closedoor2_2w,   knock_2w,         unlock_2w, 0};
-cmd door3_2w[]    = {opendoor3_2w,   closedoor3_2w,   knock_2w,         unlock_2w, 0};
-cmd doordum_2w[]  = {opendum_2w,     unlockdum_2w,    knock_2w,         0};
-cmd dumb_2w[]     = {intodumb_2w,    climbdumb_2w,    0};
-cmd dynamite_2w[] = {getdynamite_2w, dropdynamite_2w, lightdynamite_2w, 0};
-cmd garlic_2w[]   = {eatgarlic_2w,   0};
-cmd green_2w[]    = {pushgreen_2w,   0};
-cmd gun_2w[]      = {firegun_2w,     0};
-cmd harry_2w[]    = {talkharry_2w,   0};
-cmd kdoor_2w[]    = {openkdoor_2w,   0};
-cmd kennel_2w[]   = {lookkennel_2w,  0};
-cmd keyhole_2w[]  = {lookhole_2w,    0};
-cmd lamp_2w[]     = {rublamp_2w,     openlamp_2w,     0};
-cmd letter_2w[]   = {readletter_2w,  getletter_2w,    0};
-cmd lookcupb_2w[] = {opengarlic_2w,  lookgarlic_2w,   0};
-cmd lookdesk_2w[] = {openmat_2w,     lookmat_2w,      0};
-cmd lookgard_2w[] = {gard1_2w,       gard2_2w,        0};
-cmd matches_2w[]  = {strikematch_2w, usedynamite_2w,  0};
-cmd paper_2w[]    = {pushpaper_2w,   takepaper_2w,    0};
-cmd pdoor_2w[]    = {openpdoor_2w,   0};
-cmd pencil_2w[]   = {doorpencil_2w,  pushpencil_2w,   0};
-cmd red_2w[]      = {pushred_2w,     0};
-cmd robot_2w[]    = {userobot_2w,    firegun_2w,      0};
-cmd rope_2w[]     = {climbrope_2w,   0};
-cmd safe_2w[]     = {opensafe_2w,    closesafe_2w,    0};
-cmd stick_2w[]    = {throwstick_2w,  0};
-cmd tardis_2w[]   = {dialphone_2w,   takephone_2w,    0};
-cmd well_2w[]     = {climbwell_2w,   0};
-cmd will_2w[]     = {readwill_2w,    0};
-cmd yellow_2w[]   = {pushyellow_2w,  0};
+cmd album_2w[]    = {readalbum_2w,   emptyCmd};
+cmd balloon_2w[]  = {popballoon_2w,  getballoon_2w,   emptyCmd};
+cmd banana_2w[]   = {givebanana_2w,  eatbanana_2w,    emptyCmd};
+cmd bell_2w[]     = {ringbell_2w,    givebell_2w,     emptyCmd};
+cmd blue_2w[]     = {pushblue_2w,    emptyCmd};
+cmd book_2w[]     = {getbook_2w,     emptyCmd};
+cmd bottle_2w[]   = {serum_2w,       emptyCmd};
+cmd button_2w[]   = {pushbutton_2w,  emptyCmd};
+cmd catnip_2w[]   = {rubcatnip_2w,   givecatnip_2w,   eatcatnip_2w,     emptyCmd};
+cmd cupbp_2w[]    = {opencubp_2w,    lookcubp_2w,     emptyCmd};
+cmd door1_2w[]    = {opendoor1_2w,   closedoor1_2w,   knock_2w,         unlock_2w, emptyCmd};
+cmd door2_2w[]    = {opendoor2_2w,   closedoor2_2w,   knock_2w,         unlock_2w, emptyCmd};
+cmd door3_2w[]    = {opendoor3_2w,   closedoor3_2w,   knock_2w,         unlock_2w, emptyCmd};
+cmd doordum_2w[]  = {opendum_2w,     unlockdum_2w,    knock_2w,         emptyCmd};
+cmd dumb_2w[]     = {intodumb_2w,    climbdumb_2w,    emptyCmd};
+cmd dynamite_2w[] = {getdynamite_2w, dropdynamite_2w, lightdynamite_2w, emptyCmd};
+cmd garlic_2w[]   = {eatgarlic_2w,   emptyCmd};
+cmd green_2w[]    = {pushgreen_2w,   emptyCmd};
+cmd gun_2w[]      = {firegun_2w,     emptyCmd};
+cmd harry_2w[]    = {talkharry_2w,   emptyCmd};
+cmd kdoor_2w[]    = {openkdoor_2w,   emptyCmd};
+cmd kennel_2w[]   = {lookkennel_2w,  emptyCmd};
+cmd keyhole_2w[]  = {lookhole_2w,    emptyCmd};
+cmd lamp_2w[]     = {rublamp_2w,     openlamp_2w,     emptyCmd};
+cmd letter_2w[]   = {readletter_2w,  getletter_2w,    emptyCmd};
+cmd lookcupb_2w[] = {opengarlic_2w,  lookgarlic_2w,   emptyCmd};
+cmd lookdesk_2w[] = {openmat_2w,     lookmat_2w,      emptyCmd};
+cmd lookgard_2w[] = {gard1_2w,       gard2_2w,        emptyCmd};
+cmd matches_2w[]  = {strikematch_2w, usedynamite_2w,  emptyCmd};
+cmd paper_2w[]    = {pushpaper_2w,   takepaper_2w,    emptyCmd};
+cmd pdoor_2w[]    = {openpdoor_2w,   emptyCmd};
+cmd pencil_2w[]   = {doorpencil_2w,  pushpencil_2w,   emptyCmd};
+cmd red_2w[]      = {pushred_2w,     emptyCmd};
+cmd robot_2w[]    = {userobot_2w,    firegun_2w,      emptyCmd};
+cmd rope_2w[]     = {climbrope_2w,   emptyCmd};
+cmd safe_2w[]     = {opensafe_2w,    closesafe_2w,    emptyCmd};
+cmd stick_2w[]    = {throwstick_2w,  emptyCmd};
+cmd tardis_2w[]   = {dialphone_2w,   takephone_2w,    emptyCmd};
+cmd well_2w[]     = {climbwell_2w,   emptyCmd};
+cmd will_2w[]     = {readwill_2w,    emptyCmd};
+cmd yellow_2w[]   = {pushyellow_2w,  emptyCmd};
 
 cmd *cmdList_2w[] = {
 	cmdDummy,  album_2w,    balloon_2w,  banana_2w,   bell_2w,
@@ -4794,34 +4793,34 @@ cmd swingc_3w       = {kVSwing_3w,     0,         kDTnull,      0,         1, kD
 cmd unlock_3w       = {kVUnlock_3w,    0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTsUnlocked_3w, 0};
 cmd usedoc_3w       = {kVMakeUseOf_3w, 0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALtalkdoc_3w};
 
-cmd cbell_3w[]     = {bell_3w,         0};
-cmd cbook_3w[]     = {book_3w,         0};
-cmd cbouillon_3w[] = {cube1_3w,        0};
-cmd ccage_3w[]     = {cageuse_3w,      cage1_3w,        cage2_3w,   cage3_3w,   0};
-cmd ccandle_3w[]   = {candle1_3w,      candle2_3w,      0};
-cmd ccheese_3w[]   = {cheese1_3w,      cheese2_3w,      cheese3_3w, cheese4_3w, 0};
-cmd cclay_3w[]     = {cmake1_3w,       cmake2_3w,       0};
-cmd ccrystal_3w[]  = {crystal_3w,      0};
-cmd cdart_3w[]     = {dart_3w,         blow_3w,         0};
-cmd cdoctor_3w[]   = {usedoc_3w,       blowdoc_3w,      0};
-cmd cdoor_3w[]     = {cdoor1_3w,       cdoor2_3w,       0};
-cmd celephant_3w[] = {elephant_3w,     dart_3w,         blow_3w,    0};
-cmd cexit_3w[]     = {cexit1_3w,       cexit2_3w,       0};
-cmd cflask_3w[]    = {cflask1_3w,      cflask2_3w,      cflask3_3w, cflask4_3w, cflask5_3w, 0};
-cmd cghost_3w[]    = {ghost1_3w,       ghost2_3w,       0};
-cmd cnative_3w[]   = {ctalknat_3w,     0};
-cmd cpins_3w[]     = {cstick1_3w,      0};
-cmd cplane_3w[]    = {cplane1_3w,      cplane2_3w,      cplane3_3w, 0};
-cmd crock_3w[]     = {rock1_3w,        0};
-cmd crush_3w[]     = {lookrush_3w,     0};
-cmd cscroll_3w[]   = {readit_3w,       0};
-cmd csteps_3w[]    = {csteps1_3w,      0};
-cmd cswing_3w[]    = {cswing1_3w,      0};
-cmd cswingc_3w[]   = {swingc_3w,       0};
-cmd cvine_3w[]     = {cvine1_3w,       cvine2_3w,       cvine3_3w,  0};
-cmd cwfall_3w[]    = {cwaterfall_3w,   0};
-cmd cwpool_3w[]    = {cdrinkpool_3w,   cwaterpool_3w,   0};
-cmd cwstream_3w[]  = {cdrinkstream_3w, cwaterstream_3w, 0};
+cmd cbell_3w[]     = {bell_3w,         emptyCmd};
+cmd cbook_3w[]     = {book_3w,         emptyCmd};
+cmd cbouillon_3w[] = {cube1_3w,        emptyCmd};
+cmd ccage_3w[]     = {cageuse_3w,      cage1_3w,        cage2_3w,   cage3_3w,   emptyCmd};
+cmd ccandle_3w[]   = {candle1_3w,      candle2_3w,      emptyCmd};
+cmd ccheese_3w[]   = {cheese1_3w,      cheese2_3w,      cheese3_3w, cheese4_3w, emptyCmd};
+cmd cclay_3w[]     = {cmake1_3w,       cmake2_3w,       emptyCmd};
+cmd ccrystal_3w[]  = {crystal_3w,      emptyCmd};
+cmd cdart_3w[]     = {dart_3w,         blow_3w,         emptyCmd};
+cmd cdoctor_3w[]   = {usedoc_3w,       blowdoc_3w,      emptyCmd};
+cmd cdoor_3w[]     = {cdoor1_3w,       cdoor2_3w,       emptyCmd};
+cmd celephant_3w[] = {elephant_3w,     dart_3w,         blow_3w,    emptyCmd};
+cmd cexit_3w[]     = {cexit1_3w,       cexit2_3w,       emptyCmd};
+cmd cflask_3w[]    = {cflask1_3w,      cflask2_3w,      cflask3_3w, cflask4_3w, cflask5_3w, emptyCmd};
+cmd cghost_3w[]    = {ghost1_3w,       ghost2_3w,       emptyCmd};
+cmd cnative_3w[]   = {ctalknat_3w,     emptyCmd};
+cmd cpins_3w[]     = {cstick1_3w,      emptyCmd};
+cmd cplane_3w[]    = {cplane1_3w,      cplane2_3w,      cplane3_3w, emptyCmd};
+cmd crock_3w[]     = {rock1_3w,        emptyCmd};
+cmd crush_3w[]     = {lookrush_3w,     emptyCmd};
+cmd cscroll_3w[]   = {readit_3w,       emptyCmd};
+cmd csteps_3w[]    = {csteps1_3w,      emptyCmd};
+cmd cswing_3w[]    = {cswing1_3w,      emptyCmd};
+cmd cswingc_3w[]   = {swingc_3w,       emptyCmd};
+cmd cvine_3w[]     = {cvine1_3w,       cvine2_3w,       cvine3_3w,  emptyCmd};
+cmd cwfall_3w[]    = {cwaterfall_3w,   emptyCmd};
+cmd cwpool_3w[]    = {cdrinkpool_3w,   cwaterpool_3w,   emptyCmd};
+cmd cwstream_3w[]  = {cdrinkstream_3w, cwaterstream_3w, emptyCmd};
 
 cmd *cmdList_3w[] = {
 	cmdDummy,   cbell_3w,   cbook_3w,     cbouillon_3w, ccage_3w,
@@ -4885,28 +4884,28 @@ cmd unlockbolt_1d =   {kVUnlock_1d, 0,        0,            1,         2, kDTsst
 cmd untierope_1d =    {kVUntie_1d,  0,        0,            DONT_CARE, 0, 0,          kDTsuntie_1d,    0};
 cmd wearmask_1d =     {kVWear_1d,   kRmask_1d,   kDTnocgen_1d,    0,         1, kDTsworn1_1d,  kDTokgen_1d,     kALswapmask_1d};
 
-cmd boat_1d[] =    {getinboat_1d,  getoutboat_1d,  pushboat_1d,   0};
-cmd bolt_1d[] =    {oilbolt_1d,    openbolt_1d,    unlockbolt_1d, closebolt_1d,  lockbolt_1d, 0};
-cmd bung_1d[] =    {plugbung_1d,   0};
-cmd carpet_1d[] =  {movecarp1_1d,  movecarp2_1d,   movecarp3_1d,  0};
-cmd chop_1d[] =    {eatchop_1d,    throwchop_1d,   0};
-cmd cupb_1d[] =    {lookcupb_1d,   0};
-cmd door1_1d[] =   {lockdoor_1d,   unlkdoor_1d,    opendoor1_1d,  closedoor1_1d, knock_1d,    0};
-cmd door2_1d[] =   {opendoor2_1d,  closedoor2_1d,  knock_1d,      unlock_1d,     0};
-cmd door3_1d[] =   {opendoor3_1d,  closedoor3_1d,  knock_1d,      unlock_1d,     0};
-cmd door4_1d[] =   {opendoor4_1d,  closedoor4_1d,  knock_1d,      0};
-cmd gold_1d[] =    {givegold_1d,   0};
-cmd igor_1d[] =    {pushigor_1d,   0};
-cmd knife_1d[] =   {getknife_1d,   0};
-cmd mask_1d[] =    {wearmask_1d,   offmask_1d,     dropmask_1d,   0};
-cmd oilcan_1d[] =  {getoilcan_1d,  ruboilcan_1d,   0};
-cmd oldman_1d[] =  {omattack_1d,   ombreak_1d,     omtalk_1d,     0};
-cmd pkin_1d[] =    {kickpkin_1d,   breakpkin_1d,   openpkin_1d,   droppkin_1d,   0};
-cmd rope_1d[] =    {cutrope_1d,    untierope_1d,   brkrope_1d,    0};
-cmd shed_1d[] =    {lookshed_1d,   0};
-cmd trap_1d[] =    {opentrap_1d,   closetrap_1d,   knock_1d,      0};
-cmd ward_1d[] =    {openwdoors_1d, closewdoors_1d, knock_1d,      0};
-cmd whistle_1d[] = {getdw_1d,      blowdw_1d,      0};
+cmd boat_1d[] =    {getinboat_1d,  getoutboat_1d,  pushboat_1d,   emptyCmd};
+cmd bolt_1d[] =    {oilbolt_1d,    openbolt_1d,    unlockbolt_1d, closebolt_1d,  lockbolt_1d, emptyCmd};
+cmd bung_1d[] =    {plugbung_1d,   emptyCmd};
+cmd carpet_1d[] =  {movecarp1_1d,  movecarp2_1d,   movecarp3_1d,  emptyCmd};
+cmd chop_1d[] =    {eatchop_1d,    throwchop_1d,   emptyCmd};
+cmd cupb_1d[] =    {lookcupb_1d,   emptyCmd};
+cmd door1_1d[] =   {lockdoor_1d,   unlkdoor_1d,    opendoor1_1d,  closedoor1_1d, knock_1d,    emptyCmd};
+cmd door2_1d[] =   {opendoor2_1d,  closedoor2_1d,  knock_1d,      unlock_1d,     emptyCmd};
+cmd door3_1d[] =   {opendoor3_1d,  closedoor3_1d,  knock_1d,      unlock_1d,     emptyCmd};
+cmd door4_1d[] =   {opendoor4_1d,  closedoor4_1d,  knock_1d,      emptyCmd};
+cmd gold_1d[] =    {givegold_1d,   emptyCmd};
+cmd igor_1d[] =    {pushigor_1d,   emptyCmd};
+cmd knife_1d[] =   {getknife_1d,   emptyCmd};
+cmd mask_1d[] =    {wearmask_1d,   offmask_1d,     dropmask_1d,   emptyCmd};
+cmd oilcan_1d[] =  {getoilcan_1d,  ruboilcan_1d,   emptyCmd};
+cmd oldman_1d[] =  {omattack_1d,   ombreak_1d,     omtalk_1d,     emptyCmd};
+cmd pkin_1d[] =    {kickpkin_1d,   breakpkin_1d,   openpkin_1d,   droppkin_1d,   emptyCmd};
+cmd rope_1d[] =    {cutrope_1d,    untierope_1d,   brkrope_1d,    emptyCmd};
+cmd shed_1d[] =    {lookshed_1d,   emptyCmd};
+cmd trap_1d[] =    {opentrap_1d,   closetrap_1d,   knock_1d,      emptyCmd};
+cmd ward_1d[] =    {openwdoors_1d, closewdoors_1d, knock_1d,      emptyCmd};
+cmd whistle_1d[] = {getdw_1d,      blowdw_1d,      emptyCmd};
 
 cmd *cmdList_1d[] = {
 	cmdDummy,
@@ -4974,43 +4973,43 @@ cmd talkharry_2d =     {kVTalk_2d,   0,        0,          0,         1, kDTshar
 cmd throwstick_2d =    {kVThrow_2d,  kRstick_2d,  kDTnocgen_2d,  0,         1, 0,           0,                kALthrowstick_2d};
 cmd unlock_2d =        {kVUnlock_2d, 0,        0,          DONT_CARE, 0, 0,           kDTtnounlock_2d,     0};
 
-cmd balloon_2d[] =  {popballoon_2d,  getballoon_2d,   0};
-cmd banana_2d[] =   {givebanana_2d,  eatbanana_2d,    0};
-cmd bell_2d[] =     {ringbell_2d,    givebell_2d,     0};
-cmd blue_2d[] =     {pushblue_2d,    0};
-cmd book_2d[] =     {getbook_2d,     0};
-cmd bottle_2d[] =   {serum_2d,       0};
-cmd button_2d[] =   {pushbutton_2d,  0};
-cmd catnip_2d[] =   {rubcatnip_2d,   givecatnip_2d,   0};
-cmd cupbp_2d[] =    {opencubp_2d,    lookcubp_2d,     0};
-cmd door1_2d[] =    {opendoor1_2d,   closedoor1_2d,   knock_2d,         unlock_2d, 0};
-cmd door2_2d[] =    {opendoor2_2d,   closedoor2_2d,   knock_2d,         unlock_2d, 0};
-cmd door3_2d[] =    {opendoor3_2d,   closedoor3_2d,   knock_2d,         unlock_2d, 0};
-cmd dumb_2d[] =     {intodumb_2d,    climbdumb_2d,    0};
-cmd dynamite_2d[] = {getdynamite_2d, dropdynamite_2d, lightdynamite_2d, 0};
-cmd garlic_2d[] =   {eatgarlic_2d,   0};
-cmd green_2d[] =    {pushgreen_2d,   0};
-cmd gun_2d[] =      {firegun_2d,     0};
-cmd harry_2d[] =    {talkharry_2d,   0};
-cmd kdoor_2d[] =    {openkdoor_2d,   0};
-cmd kennel_2d[] =   {lookkennel_2d,  0};
-cmd keyhole_2d[] =  {lookhole_2d,    0};
-cmd lamp_2d[] =     {rublamp_2d,     openlamp_2d,     0};
-cmd letter_2d[] =   {getletter_2d,   readletter_2d,   0};
-cmd lookcupb_2d[] = {opengarlic_2d,  lookgarlic_2d,   0};
-cmd lookdesk_2d[] = {openmat_2d,     lookmat_2d,      0};
-cmd matches_2d[] =  {lookmatch_2d,   strikematch_2d,  0};
-cmd paper_2d[] =    {pushpaper_2d,   0};
-cmd pdoor_2d[] =    {openpdoor_2d,   0};
-cmd pencil_2d[] =   {pushpencil_2d,  0};
-cmd red_2d[] =      {pushred_2d,     0};
-cmd rope_2d[] =     {climbrope_2d,   0};
-cmd safe_2d[] =     {opensafe_2d,    closesafe_2d,    0};
-cmd stick_2d[] =    {throwstick_2d,  0};
-cmd tardis_2d[] =   {dialphone_2d,   0};
-cmd well_2d[] =     {climbwell_2d,   0};
-cmd will_2d[] =     {readwill_2d,    0};
-cmd yellow_2d[] =   {pushyellow_2d,  0};
+cmd balloon_2d[] =  {popballoon_2d,  getballoon_2d,   emptyCmd};
+cmd banana_2d[] =   {givebanana_2d,  eatbanana_2d,    emptyCmd};
+cmd bell_2d[] =     {ringbell_2d,    givebell_2d,     emptyCmd};
+cmd blue_2d[] =     {pushblue_2d,    emptyCmd};
+cmd book_2d[] =     {getbook_2d,     emptyCmd};
+cmd bottle_2d[] =   {serum_2d,       emptyCmd};
+cmd button_2d[] =   {pushbutton_2d,  emptyCmd};
+cmd catnip_2d[] =   {rubcatnip_2d,   givecatnip_2d,   emptyCmd};
+cmd cupbp_2d[] =    {opencubp_2d,    lookcubp_2d,     emptyCmd};
+cmd door1_2d[] =    {opendoor1_2d,   closedoor1_2d,   knock_2d,         unlock_2d, emptyCmd};
+cmd door2_2d[] =    {opendoor2_2d,   closedoor2_2d,   knock_2d,         unlock_2d, emptyCmd};
+cmd door3_2d[] =    {opendoor3_2d,   closedoor3_2d,   knock_2d,         unlock_2d, emptyCmd};
+cmd dumb_2d[] =     {intodumb_2d,    climbdumb_2d,    emptyCmd};
+cmd dynamite_2d[] = {getdynamite_2d, dropdynamite_2d, lightdynamite_2d, emptyCmd};
+cmd garlic_2d[] =   {eatgarlic_2d,   emptyCmd};
+cmd green_2d[] =    {pushgreen_2d,   emptyCmd};
+cmd gun_2d[] =      {firegun_2d,     emptyCmd};
+cmd harry_2d[] =    {talkharry_2d,   emptyCmd};
+cmd kdoor_2d[] =    {openkdoor_2d,   emptyCmd};
+cmd kennel_2d[] =   {lookkennel_2d,  emptyCmd};
+cmd keyhole_2d[] =  {lookhole_2d,    emptyCmd};
+cmd lamp_2d[] =     {rublamp_2d,     openlamp_2d,     emptyCmd};
+cmd letter_2d[] =   {getletter_2d,   readletter_2d,   emptyCmd};
+cmd lookcupb_2d[] = {opengarlic_2d,  lookgarlic_2d,   emptyCmd};
+cmd lookdesk_2d[] = {openmat_2d,     lookmat_2d,      emptyCmd};
+cmd matches_2d[] =  {lookmatch_2d,   strikematch_2d,  emptyCmd};
+cmd paper_2d[] =    {pushpaper_2d,   emptyCmd};
+cmd pdoor_2d[] =    {openpdoor_2d,   emptyCmd};
+cmd pencil_2d[] =   {pushpencil_2d,  emptyCmd};
+cmd red_2d[] =      {pushred_2d,     emptyCmd};
+cmd rope_2d[] =     {climbrope_2d,   emptyCmd};
+cmd safe_2d[] =     {opensafe_2d,    closesafe_2d,    emptyCmd};
+cmd stick_2d[] =    {throwstick_2d,  emptyCmd};
+cmd tardis_2d[] =   {dialphone_2d,   emptyCmd};
+cmd well_2d[] =     {climbwell_2d,   emptyCmd};
+cmd will_2d[] =     {readwill_2d,    emptyCmd};
+cmd yellow_2d[] =   {pushyellow_2d,  emptyCmd};
 
 cmd *cmdList_2d[] = {
 	cmdDummy,    balloon_2d, banana_2d, bell_2d,   blue_2d,
@@ -5067,30 +5066,30 @@ cmd rock1_3d =        {kVBehind_3d,   0,         0,         0,         1, kDTsfo
 cmd swingc_3d =       {kVSwing_3d,    0,         0,         DONT_CARE, 0, 0,          kDTswingcave_3d, 0};
 cmd unlock_3d =       {kVUnlock_3d,   0,         0,         DONT_CARE, 0, 0,          kDTsUnlocked_3d, 0};
 
-cmd cbell_3d[] =     {bell_3d,         0};
-cmd cbook_3d[] =     {book_3d,         0};
-cmd cbouillon_3d[] = {cube1_3d,        0};
-cmd ccage_3d[] =     {cage1_3d,        cage2_3d,   cage3_3d,   0};
-cmd ccandle_3d[] =   {candle1_3d,      candle2_3d, 0};
-cmd ccheese_3d[] =   {cheese1_3d,      cheese2_3d, cheese3_3d, cheese4_3d, 0};
-cmd cclay_3d[] =     {cmake1_3d,       cmake2_3d,  0};
-cmd ccrystal_3d[] =  {crystal_3d,      0};
-cmd cdart_3d[] =     {dart_3d,         blow_3d,    0};
-cmd cdoor_3d[] =     {cdoor1_3d,       cdoor2_3d,  0};
-cmd cexit_3d[] =     {cexit1_3d,       cexit2_3d,  0};
-cmd cflask_3d[] =    {cflask1_3d,      cflask2_3d, cflask3_3d, cflask4_3d, cflask5_3d, 0};
-cmd cghost_3d[] =    {ghost_3d,        0};
-cmd cnative_3d[] =   {ctalknat_3d,     0};
-cmd cpins_3d[] =     {cstick1_3d,      0};
-cmd cplane_3d[] =    {cplane1_3d,      cplane2_3d, cplane3_3d, 0};
-cmd crock_3d[] =     {rock1_3d,        0};
-cmd cscroll_3d[] =   {readit_3d,       0};
-cmd cswing_3d[] =    {cswing1_3d,      0};
-cmd cswingc_3d[] =   {swingc_3d,       0};
-cmd cvine_3d[] =     {cvine1_3d,       cvine2_3d,  0};
-cmd cwfall_3d[] =    {cwaterfall_3d,   0};
-cmd cwpool_3d[] =    {cwaterpool_3d,   0};
-cmd cwstream_3d[] =  {cwaterstream_3d, 0};
+cmd cbell_3d[] =     {bell_3d,         emptyCmd};
+cmd cbook_3d[] =     {book_3d,         emptyCmd};
+cmd cbouillon_3d[] = {cube1_3d,        emptyCmd};
+cmd ccage_3d[] =     {cage1_3d,        cage2_3d,   cage3_3d,   emptyCmd};
+cmd ccandle_3d[] =   {candle1_3d,      candle2_3d, emptyCmd};
+cmd ccheese_3d[] =   {cheese1_3d,      cheese2_3d, cheese3_3d, cheese4_3d, emptyCmd};
+cmd cclay_3d[] =     {cmake1_3d,       cmake2_3d,  emptyCmd};
+cmd ccrystal_3d[] =  {crystal_3d,      emptyCmd};
+cmd cdart_3d[] =     {dart_3d,         blow_3d,    emptyCmd};
+cmd cdoor_3d[] =     {cdoor1_3d,       cdoor2_3d,  emptyCmd};
+cmd cexit_3d[] =     {cexit1_3d,       cexit2_3d,  emptyCmd};
+cmd cflask_3d[] =    {cflask1_3d,      cflask2_3d, cflask3_3d, cflask4_3d, cflask5_3d, emptyCmd};
+cmd cghost_3d[] =    {ghost_3d,        emptyCmd};
+cmd cnative_3d[] =   {ctalknat_3d,     emptyCmd};
+cmd cpins_3d[] =     {cstick1_3d,      emptyCmd};
+cmd cplane_3d[] =    {cplane1_3d,      cplane2_3d, cplane3_3d, emptyCmd};
+cmd crock_3d[] =     {rock1_3d,        emptyCmd};
+cmd cscroll_3d[] =   {readit_3d,       emptyCmd};
+cmd cswing_3d[] =    {cswing1_3d,      emptyCmd};
+cmd cswingc_3d[] =   {swingc_3d,       emptyCmd};
+cmd cvine_3d[] =     {cvine1_3d,       cvine2_3d,  emptyCmd};
+cmd cwfall_3d[] =    {cwaterfall_3d,   emptyCmd};
+cmd cwpool_3d[] =    {cwaterpool_3d,   emptyCmd};
+cmd cwstream_3d[] =  {cwaterstream_3d, emptyCmd};
 
 cmd *cmdList_3d[] = {
 	cmdDummy,   cbell_3d,   cbook_3d,  cbouillon_3d, ccage_3d,
