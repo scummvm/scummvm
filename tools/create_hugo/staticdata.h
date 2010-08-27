@@ -2080,7 +2080,7 @@ hotspot_t hotspots_1w[] = {
 	{12, 137,  33, 178,  80, kALscr1213_1w, 152, 75,  Common::KEYCODE_UP},		// Dead-end to jail
 	{15,  19, 110,  34, 182, kALscr151_1w,  30,  177, Common::KEYCODE_LEFT},	// Laboratory to hall
 	{15, 109, 150, 144, 156, kALbox_1w,     -1,  -1,  -1},						// Professor's box
-	{-1, -1, -1, -1, -1, 0, -1, -1, -1}											// End of list marker
+	{-1,  -1,  -1,  -1,  -1,  0,  -1,  -1,  -1}            // End of list marker
 };
 
 hotspot_t hotspots_2w[] = {
@@ -2161,7 +2161,7 @@ hotspot_t hotspots_2w[] = {
 	{38, 275, 116, 307, 166, kALscr3829_2w,  279, 164, Common::KEYCODE_RIGHT}, // hall1 to hall2
 	{38, 142, 108, 172, 150, kALscr3834_2w,  152, 150, Common::KEYCODE_UP},    // hall1 to hall3
 	{MAZE_SCREEN + 59, 100, 140, 180, 160, kALexitmaze_2w, 133, 143, Common::KEYCODE_DOWN},  // Exit maze
-	{-1, -1, -1, -1, -1, 0, -1, -1, -1}											// End of list marker
+	{-1,  -1,  -1,  -1,  -1,  0,  -1,  -1,  -1}            // End of list marker
 };
 
 hotspot_t hotspots_3w[] = {
@@ -2219,7 +2219,7 @@ hotspot_t hotspots_3w[] = {
 	{WBASE_3w,    295, 146, 319, 190, kALwbase_wfall_3w,    306, 154, Common::KEYCODE_RIGHT},
 	{WBASE_3w,      0, 149,  26, 190, kALwbase_garden_3w,    14, 154, Common::KEYCODE_LEFT},
 	{GARDEN_3w,   294, 165, 319, 190, kALgarden_wbase_3w,   306, 177, Common::KEYCODE_RIGHT},
-	{-1, -1, -1, -1, -1, 0, -1, -1, -1}											// End of list marker
+	{-1,  -1,  -1,  -1,  -1,  0,  -1,  -1,  -1}            // End of list marker
 };
 
 hotspot_t hotspots_1d[] = {
@@ -2250,7 +2250,7 @@ hotspot_t hotspots_1d[] = {
 	{12, 137, 67,  178, 76,  kALscr1213_1d, -1, -1, -1},   // Dead-end to jail
 	{15, 19,  171, 34,  182, kALscr151_1d,  -1, -1, -1},   // Laboratory to hall
 	{15, 109, 150, 144, 156, kALbox_1d,     -1, -1, -1},   // Professor's box
-	{-1}                            // End of list marker
+	{-1,  -1,  -1,  -1,  -1,  0,  -1,  -1,  -1}            // End of list marker
 };
 
 hotspot_t hotspots_2d[] = {
@@ -2426,7 +2426,7 @@ uses_t uses_1w[] = {
 	{KNIFE_1w,   kDTuknife_1w,  {{kNHero_1w, kVCut_1w},       {kNRope_1w,  kVCut_1w},    {0, 0}}},
 	{OILCAN_1w,  kDTuoil_1w,    {{kNHero_1w, kVOil_1w},       {kNTrap_1w,  kVBolt_1w},   {kNBolt_1w,   kVOil_1w}, {kNDoor_1w,  kVOil_1w},  {0, 0}}},
 	{GOLD_1w,    kDTugold_1w,   {{kNHero_1w, kVMakeUseOf_1w}, {kNGuard_1w, kVGive_1w},   {0, 0}}},
-	{LASTOBJ_1w, 0, {0, 0}}
+	{LASTOBJ_1w, 0, {{0, 0}}}
 };
 
 uses_t uses_2w[] = {
@@ -2444,7 +2444,7 @@ uses_t uses_2w[] = {
 	{CATNIP_2w,   kDTucatnip_2w,   {{kNHero_2w, kVEat_2w},       {kNBell_2w,     kVRub_2w},      {kNMaid_2w,    kVGive_2w},      {kNCat_2w,   kVGive_2w},   {kNHarry_2w,  kVGive_2w}, {kNHester_2w, kVGive_2w}, {kNCook_2w, kVGive_2w}, {0, 0}}},
 	{PAPER_2w,    kDTupaper_2w,    {{kNHero_2w, kVRead_2w},      {kNDoor_2w,     kVPush_2w},     {0, 0}}},
 	{PENCIL_2w,   kDTupencil_2w,   {{kNHero_2w, kVMakeUseOf_2w}, {kNPaper_2w,    kVScribble_2w}, {kNDoor_2w,    kVMakeUseOf_2w}, {0, 0}}},
-	{LASTOBJ_2w,  0, {0, 0}}
+	{LASTOBJ_2w,  0, {{0, 0}}}
 };
 
 uses_t uses_3w[] = {
@@ -2458,20 +2458,20 @@ uses_t uses_3w[] = {
 	{CANDLE_3w,   kDTucandle_3w,   {{kNHero_3w, kVStrike_3w}, {0, 0}}},
 	{BELL_3w,     kDTubell_3w,     {{kNHero_3w, kVRing_3w},   {0, 0}}},
 	{BLOWPIPE_3w, kDTupipe_3w,     {{kNHero_3w, kVShoot_3w},  {kNDoctor_3w,   kVShoot_3w},    {kNElephant_3w, kVShoot_3w}, {kNGhost_3w, kVShoot_3w}, {0, 0}}},
-	{LASTOBJ_3w,  0, {0, 0}}
+	{LASTOBJ_3w,  0, {{0, 0}}}
 };
 
 // TODO: This use lists are only used in Win versions. Should we add them in the DOS versions?
 uses_t uses_1d[] = {
-	{LASTOBJ_1d,  0, {0, 0}}
+	{LASTOBJ_1d,  0, {{0, 0}}}
 };
 
 uses_t uses_2d[] = {
-	{LASTOBJ_2d,  0, {0, 0}}
+	{LASTOBJ_2d,  0, {{0, 0}}}
 };
 
 uses_t uses_3d[] = {
-	{LASTOBJ_3d,  0, {0, 0}}
+	{LASTOBJ_3d,  0, {{0, 0}}}
 };
 
 background_t catchall_1w[] = {					// Generally applicable phrases
@@ -4441,21 +4441,21 @@ background_t slope_desc_3d[] = {      // Slope between cliff and stream
 
 background_t path_desc_3d[] = {       // Path containing elephant
 // States: 0 Elephant present_3d, 1 - Elephant not present
-	{kVLook_3d, 0,          kSTLookpath2_1_3d,  true,  0},
-	{kVLook_3d, 0,          kSTLookpath2_2_3d,  true,  1},
-	{kVRide_3d, kNElephant_3d, kSTRideelephant_3d, false, 0},
-	{kVTake_3d, kNElephant_3d, kSTGetelephant_3d,  false, 0},
-	{kVShow_3d, kNMouse_3d,    kSTShowmouse_3d,    false, 0},
+	{kVLook_3d, 0,          kSTLookpath2_1_3d,  true,  0, 0},
+	{kVLook_3d, 0,          kSTLookpath2_2_3d,  true,  1, 0},
+	{kVRide_3d, kNElephant_3d, kSTRideelephant_3d, false, 0, 0},
+	{kVTake_3d, kNElephant_3d, kSTGetelephant_3d,  false, 0, 0},
+	{kVShow_3d, kNMouse_3d,    kSTShowmouse_3d,    false, 0, 0},
 	{0, 0, 0, false, 0, 0}
 };
 
 background_t cave_desc_3d[] = {      // Cave mouth
-	{kVLook_3d,   0,       kSTLookcave1_3d,   true,  0},
-	{kVLook_3d,   0,       kSTLookcave2_3d,   true,  1},
-	{kVAttack_3d, kNGhost_3d, kSTAttackghost_3d, false, 0},
-	{kVBreak_3d,  kNGhost_3d, kSTAttackghost_3d, false, 0},
-	{kVShoot_3d,  kNGhost_3d, kSTAttackghost_3d, false, 0},
-	{kVTake_3d,   kNGhost_3d, kSTTakeghost_3d,   false, 0},
+	{kVLook_3d,   0,       kSTLookcave1_3d,   true,  0, 0},
+	{kVLook_3d,   0,       kSTLookcave2_3d,   true,  1, 0},
+	{kVAttack_3d, kNGhost_3d, kSTAttackghost_3d, false, 0, 0},
+	{kVBreak_3d,  kNGhost_3d, kSTAttackghost_3d, false, 0, 0},
+	{kVShoot_3d,  kNGhost_3d, kSTAttackghost_3d, false, 0, 0},
+	{kVTake_3d,   kNGhost_3d, kSTTakeghost_3d,   false, 0, 0},
 	{0, 0, 0, false, 0, 0}
 };
 
@@ -6077,14 +6077,14 @@ act2 alab2_1w       = {INIT_OBJXY, 0,               PROF_1w,  100, 130};
 act2 abox4a_1w      = {INIT_OBJXY, 20,              HERO,     124, 122};
 act2 aigor12_1w     = {INIT_OBJXY, 30,              HERO,     116, 112};
 
-act3 aopenp_1w = {PROMPT, 0, kSTsopenp_1w, openrep_1w, kALopenyes_1w, kALopenno_1w};
-act3 amanq1_1w = {PROMPT, 0, kSTsq1_1w,    rep1_1w,    kALrepyes1_1w, kALrepno1_1w};
-act3 amanq2_1w = {PROMPT, 0, kSTsq2_1w,    rep2_1w,    kALrepyes2_1w, kALrepno1_1w};
-act3 amanq3_1w = {PROMPT, 0, kSTsq3_1w,    rep3_1w,    kALrepyes3_1w, kALrepno1_1w};
-act3 amanq4_1w = {PROMPT, 0, kSTsq4_1w,    rep4_1w,    kALrepyes4_1w, kALrepno1_1w};
-act3 amanq5_1w = {PROMPT, 0, kSTsq5_1w,    rep5_1w,    kALrepyes5_1w, kALrepno1_1w};
-act3 amanq6_1w = {PROMPT, 0, kSTsq6_1w,    rep6_1w,    kALrepyes6_1w, kALrepno1_1w};
-act3 amanq7_1w = {PROMPT, 0, kSTsq7_1w,    rep7_1w,    kALrepyes7_1w, kALrepno3_1w};
+act3 aopenp_1w = {PROMPT, 0, kSTsopenp_1w, openrep_1w, kALopenyes_1w, kALopenno_1w, false};
+act3 amanq1_1w = {PROMPT, 0, kSTsq1_1w,    rep1_1w,    kALrepyes1_1w, kALrepno1_1w, false};
+act3 amanq2_1w = {PROMPT, 0, kSTsq2_1w,    rep2_1w,    kALrepyes2_1w, kALrepno1_1w, false};
+act3 amanq3_1w = {PROMPT, 0, kSTsq3_1w,    rep3_1w,    kALrepyes3_1w, kALrepno1_1w, false};
+act3 amanq4_1w = {PROMPT, 0, kSTsq4_1w,    rep4_1w,    kALrepyes4_1w, kALrepno1_1w, false};
+act3 amanq5_1w = {PROMPT, 0, kSTsq5_1w,    rep5_1w,    kALrepyes5_1w, kALrepno1_1w, false};
+act3 amanq6_1w = {PROMPT, 0, kSTsq6_1w,    rep6_1w,    kALrepyes6_1w, kALrepno1_1w, false};
+act3 amanq7_1w = {PROMPT, 0, kSTsq7_1w,    rep7_1w,    kALrepyes7_1w, kALrepno3_1w, false};
 
 act4 abk1_1w     = {BKGD_COLOR, 0,  _BLUE};
 act4 abknorm1_1w = {BKGD_COLOR, 0,  _BLACK};
@@ -6895,9 +6895,9 @@ act2 aheroxy01_2w   = {INIT_OBJXY, 0,         HERO,        169, 141};
 act2 apenxy_2w      = {INIT_OBJXY, 0,         PENNY_2w,    109, 140};
 act2 askip2_2w      = {INIT_OBJXY, 0,         HERO,        100, 100};
 
-act3 aclimax7_2w = {PROMPT, 100, kSTSclimax7_2w, whorsp_2w,  kALcheat_2w, kALdidnt_2w};
-act3 adial_2w    = {PROMPT, 0,   kSTSdial1_2w,   dialrsp_2w, kALwho_2w,   kALnoreply_2w};
-act3 asafepr_2w  = {PROMPT, 0,   kSTSafepr_2w,   dialrsp_2w, kALcomb1_2w, kALcomb2_2w};
+act3 aclimax7_2w = {PROMPT, 100, kSTSclimax7_2w, whorsp_2w,  kALcheat_2w, kALdidnt_2w,   false};
+act3 adial_2w    = {PROMPT, 0,   kSTSdial1_2w,   dialrsp_2w, kALwho_2w,   kALnoreply_2w, false};
+act3 asafepr_2w  = {PROMPT, 0,   kSTSafepr_2w,   dialrsp_2w, kALcomb1_2w, kALcomb2_2w,   false};
 
 act5 aball2_2w     = {INIT_OBJVXY, 0,             BALLOON_2w,  0,       0};
 act5 acop2_2w      = {INIT_OBJVXY, 0,             COP_2w,      DX,      0};
@@ -9193,6 +9193,11 @@ act7 ahchase1_1d = {INIT_HF_COORD, 5 * NORMAL_TPS, DOG_1d};// Set screen to hero
 act7 akchase1_1d = {INIT_HF_COORD, 5 * NORMAL_TPS, DOG_1d}; // Set screen to hero's
 act7 amovekey_1d = {INIT_HF_COORD, 0,              KEY_1d}; // Move key to hero's coords
 
+// Those two were originally defined as act11, but with the type INIT_HF_COORD
+// They are now defined as act7 to silence GCC warnings.
+act7 adog3_1d =    {INIT_HF_COORD, 0, DOG_1d};        // Set correct screen
+act7 alab1_1d =    {INIT_HF_COORD, 0, PROF_1d};           // Set correct screen
+
 act8 aopen78_1d  = {NEW_SCREEN, 1 * NORMAL_TPS + 12, 8}; // Goto to Basement
 act8 atheend2_1d = {NEW_SCREEN, 5 * NORMAL_TPS,      14};
 act8 ascr01_1d   = {NEW_SCREEN, 0,                   1};
@@ -9256,7 +9261,7 @@ act10 abata4b_1d  = {INIT_PATH, 4,              BAT5_1d,   WANDER, DX,     DY};
 act10 abin3_1d    = {INIT_PATH, 0,              HERO,      AUTO,   0,      0};
 act10 about3_1d   = {INIT_PATH, 0,              HERO,      USER,   0,      0};
 act10 abut2_1d    = {INIT_PATH, 8 * NORMAL_TPS, BUTLER_1d, CHASE,  DX - 2, DY - 2};
-act10 abut3_1d    = {INIT_PATH, 0,              HERO,      AUTO};           // Stop HERO and prompt
+act10 abut3_1d    = {INIT_PATH, 0,              HERO,      AUTO,   0,      0};     // Stop HERO and prompt
 act10 abut8_1d    = {INIT_PATH, 0,              BUTLER_1d, WANDER, DX - 2, DY - 2};
 act10 abut9_1d    = {INIT_PATH, 0,              HERO,      USER,   0,      0};
 act10 acyc1_1d    = {INIT_PATH, 0,              HERO,      AUTO,   0,      0};
@@ -9267,7 +9272,7 @@ act10 adef4_1d    = {INIT_PATH, 1 * NORMAL_TPS, BAT4_1d,   WANDER, DX,     DY};
 act10 adef5_1d    = {INIT_PATH, 1 * NORMAL_TPS, BAT5_1d,   WANDER, DX,     DY};
 act10 adog2_1d    = {INIT_PATH, 0,              DOG_1d,    CHASE,  DX * 2, DY * 2};
 act10 ahchase3_1d = {INIT_PATH, 5 * NORMAL_TPS, DOG_1d,    CHASE,  DX * 2, DY * 2};
-act10 ajail1_1d   = {INIT_PATH, 0,              HERO,      AUTO,   0,      0};    // Stop user control
+act10 ajail1_1d   = {INIT_PATH, 0,              HERO,      AUTO,   0,      0};     // Stop user control
 act10 akchase3_1d = {INIT_PATH, 5 * NORMAL_TPS, DOG_1d,    CHASE,  DX * 2, DY * 2};
 act10 alab14_1d   = {INIT_PATH, 40,             IGOR_1d,   WANDER, DX,     0};
 act10 amum2_1d    = {INIT_PATH, 3 * NORMAL_TPS, MUMMY_1d,  CHASE,  DX * 2, DY * 2};
@@ -9299,8 +9304,6 @@ act11 atcup0_1d =   {COND_R, 0,   CUPBOARD_1d, 0, kALcuptxt0_1d,    kALlookcupb1
 act11 atcup1_1d =   {COND_R, 0,   CUPBOARD_1d, 1, kALcuptxt1_1d,    kALlookcupb2_1d};
 act11 atcup2_1d =   {COND_R, 0,   CUPBOARD_1d, 2, kALcuptxt2_1d,    kALcuptxt3_1d};
 act11 atrap_1d =    {COND_R, 0,   BOLT_1d,     2, kALopenpass_1d,   kALopenfail_1d};
-act11 adog3_1d =    {INIT_HF_COORD, 0, DOG_1d};        // Set correct screen
-act11 alab1_1d =    {INIT_HF_COORD, 0, PROF_1d};           // Set correct screen
 
 act12 achopfail_1d =   {TEXT, 0,                  kSTsthrown_1d};
 act12 achopthrown_1d = {TEXT, 5 * NORMAL_TPS,     kSTsachopthrown_1d};
@@ -9384,11 +9387,11 @@ act13 abox4_1d =     {SWAP_IMAGES, 20, HERO, WHERO_1d};
 act13 aswaphero_1d = {SWAP_IMAGES, 0,  HERO, WHERO_1d};
 act13 aswapmask_1d = {SWAP_IMAGES, 0,  HERO, MONKEY_1d};
 
-act14 athrowchop_1d = {COND_SCR, 0, 7,  kALchoppass_1d,  kALchopfail_1d};
-act14 ablow1_1d =     {COND_SCR, 0, 1,  kALchasehall_1d, kALcond5_1d};
-act14 achkscr_1d =    {COND_SCR, 0, 12, kALgive_1d,      kALnogive_1d};
-act14 acond5_1d =     {COND_SCR, 0, 5,  kALchasekit_1d,  kALcond9_1d};
-act14 acond9_1d =     {COND_SCR, 0, 9,  kALdefbats_1d,   kALnought_1d};
+act14 athrowchop_1d = {COND_SCR, 0, HERO, 7,  kALchoppass_1d,  kALchopfail_1d};
+act14 ablow1_1d =     {COND_SCR, 0, HERO, 1,  kALchasehall_1d, kALcond5_1d};
+act14 achkscr_1d =    {COND_SCR, 0, HERO, 12, kALgive_1d,      kALnogive_1d};
+act14 acond5_1d =     {COND_SCR, 0, HERO, 5,  kALchasekit_1d,  kALcond9_1d};
+act14 acond9_1d =     {COND_SCR, 0, HERO, 9,  kALdefbats_1d,   kALnought_1d};
 
 act15 adogchop_1d = {AUTOPILOT, 0, DOG_1d, CHOP_1d, DX + 2, DY * 2};
 
@@ -9440,7 +9443,6 @@ act29 achkmask_1d =  {COND_CARRY, 0, MASK_1d, kALputmask_1d, 0};
 act29 achkmask2_1d = {COND_CARRY, 0, MASK_1d, kALridmask_1d, 0};
 
 //Strangerke - act26 are stored in new act49, as songs were not handled the same way in DOS version (in harcoded strings)
-
 act49 ahchase4_1d = {OLD_SONG, 4 * NORMAL_TPS, kDTsong3_1d};
 act49 asong1_1d =   {OLD_SONG, 0,              kDTsong1_1d};
 act49 asong2_1d =   {OLD_SONG, 1 * NORMAL_TPS, kDTsong2_1d};
@@ -9855,10 +9857,10 @@ act2 apeng2_2d      = {INIT_OBJXY, 23,        HERO,        192, 93};
 act2 aheroxy01_2d   = {INIT_OBJXY, 0,         HERO,        169, 141};
 act2 apenxy_2d      = {INIT_OBJXY, 0,         PENNY_2d,    109, 140};
 
-act3 aclimax7_2d = {PROMPT, 100, kSTSclimax7_2d, whorsp_2d,  kALcheat_2d,  kALdidnt_2d};
-act3 adial_2d    = {PROMPT, 0,   kSTSdial1_2d,   dialrsp_2d, kALwho_2d,    kALnoreply_2d};
-act3 ahestd3_2d  = {PROMPT, 0,   kSTShest1_2d,   hestrsp_2d, kALhdrink_2d, kALnodrink_2d};
-act3 asafepr_2d  = {PROMPT, 0,   kSTSafepr_2d,   dialrsp_2d, kALcomb1_2d,  kALcomb2_2d};
+act3 aclimax7_2d = {PROMPT, 100, kSTSclimax7_2d, whorsp_2d,  kALcheat_2d,  kALdidnt_2d,   false};
+act3 adial_2d    = {PROMPT, 0,   kSTSdial1_2d,   dialrsp_2d, kALwho_2d,    kALnoreply_2d, false};
+act3 ahestd3_2d  = {PROMPT, 0,   kSTShest1_2d,   hestrsp_2d, kALhdrink_2d, kALnodrink_2d, false};
+act3 asafepr_2d  = {PROMPT, 0,   kSTSafepr_2d,   dialrsp_2d, kALcomb1_2d,  kALcomb2_2d,   false};
 
 act5 aball2_2d     = {INIT_OBJVXY, 0,             BALLOON_2d,  0,       0};
 act5 acop2_2d      = {INIT_OBJVXY, 0,             COP_2d,      DX,      0};
@@ -11016,10 +11018,10 @@ act2 axy_wfall_cave_3d     = {INIT_OBJXY, 0,  HERO,      27,  140};
 act2 axy_wfall_clf_3d      = {INIT_OBJXY, 0,  HERO,      280, 140};
 act2 axy_wfallb_wbase_3d   = {INIT_OBJXY, 0,  HERO,      273, 114};
 
-act3 abtipprompt_3d = {PROMPT, 0,  kSTBridgeprompt_3d, tiprsp_3d, kALnotip_3d, kALbtip_3d};
-act3 aold1c_3d      = {PROMPT, 60, kSTOldman1_3d,      oldrsp_3d, kALold2_3d,  kALwrong_3d};
-act3 aold2_3d       = {PROMPT, 0,  kSTOldman2_3d,      oldrsp_3d, kALold3_3d,  kALwrong_3d};
-act3 aold3_3d       = {PROMPT, 0,  kSTOldman3_3d,      oldrsp_3d, kALold7_3d,  kALold4_3d};
+act3 abtipprompt_3d = {PROMPT, 0,  kSTBridgeprompt_3d, tiprsp_3d, kALnotip_3d, kALbtip_3d,  false};
+act3 aold1c_3d      = {PROMPT, 60, kSTOldman1_3d,      oldrsp_3d, kALold2_3d,  kALwrong_3d, false};
+act3 aold2_3d       = {PROMPT, 0,  kSTOldman2_3d,      oldrsp_3d, kALold3_3d,  kALwrong_3d, false};
+act3 aold3_3d       = {PROMPT, 0,  kSTOldman3_3d,      oldrsp_3d, kALold7_3d,  kALold4_3d,  false};
 
 act5 acamp4a_3d =    {INIT_OBJVXY, 0,   NAT2_3d,     4,       0};
 act5 acamp4b_3d =    {INIT_OBJVXY, 0,   NATG_3d,     3,       0};
