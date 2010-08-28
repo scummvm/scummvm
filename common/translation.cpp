@@ -32,6 +32,8 @@
 #define TRANSLATIONS_DAT_VER 2
 
 #include "translation.h"
+#include "common/archive.h"
+#include "common/config-manager.h"
 
 DECLARE_SINGLETON(Common::TranslationManager)
 
@@ -258,9 +260,55 @@ const char *TranslationManager::getLangById(int id) {
 	return "";
 }
 
+bool TranslationManager::openTranslationsFile(File& inFile) {
+	// First try to open it directly (i.e. using the SearchMan).
+	if (inFile.open("translations.dat"))
+		return true;
+	
+	// Then look in the Themepath if we can find the file.
+	if (ConfMan.hasKey("themepath"))
+		return openTranslationsFile(FSNode(ConfMan.get("themepath")), inFile);
+	
+	return false;
+}
+
+bool TranslationManager::openTranslationsFile(const FSNode &node, File& inFile, int depth) {
+	if (!node.exists() || !node.isReadable() || !node.isDirectory())
+		return false;
+	
+	// Check if we can find the file in this directory
+	// Since File::open(FSNode) makes all the needed tests, it is not really
+	// necessary to make them here. But it avoid printing warnings.
+	FSNode fileNode = node.getChild("translations.dat");
+	if (fileNode.exists() && fileNode.isReadable() && !fileNode.isDirectory()) {
+		if (inFile.open(fileNode))
+			return true;
+	}
+	
+	// Check if we exceeded the given recursion depth
+	if (depth - 1 == -1)
+		return false;	
+	
+	// Otherwise look for it in sub-directories
+	FSList fileList;
+	if (!node.getChildren(fileList, FSNode::kListDirectoriesOnly))
+		return false;
+	
+	for (FSList::iterator i = fileList.begin(); i != fileList.end(); ++i) {
+		if (openTranslationsFile(*i, inFile, depth == -1 ? - 1 : depth - 1))
+			return true;
+	}
+	
+	// Not found in this directory or its sub-directories
+	return false;
+}
+
 void TranslationManager::loadTranslationsInfoDat() {
 	File in;
-	in.open("translations.dat");
+	if (!openTranslationsFile(in)) {
+		warning("You are missing the 'translations.dat' file. GUI translation will not be available");
+		return;
+	}
 
 	if (!checkHeader(in))
 		return;
@@ -308,7 +356,8 @@ void TranslationManager::loadLanguageDat(int index) {
 	}
 
 	File in;
-	in.open("translations.dat");
+	if (!openTranslationsFile(in))
+		return;
 
 	if (!checkHeader(in))
 		return;
@@ -359,11 +408,6 @@ void TranslationManager::loadLanguageDat(int index) {
 bool TranslationManager::checkHeader(File &in) {
 	char buf[13];
 	int ver;
-
-	if (!in.isOpen()) {
-		warning("You are missing the 'translations.dat' file. GUI translation will not be available");
-		return false;
-	}
 
 	in.read(buf, 12);
 	buf[12] = '\0';

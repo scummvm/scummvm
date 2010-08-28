@@ -28,6 +28,7 @@
 #include "common/singleton.h"
 #include "common/str-array.h"
 #include "common/file.h"
+#include "common/fs.h"
 
 namespace Common {
 
@@ -152,6 +153,19 @@ public:
 
 private:
 #ifdef USE_TRANSLATION
+	/**
+	 * Find the translations.dat file. It looks first using the SearchMan and
+	 * then if needed using the Themepath. If found it opens the given File
+	 * to read the translations.dat file.
+	 */
+	bool openTranslationsFile(File&);
+
+	/**
+	 * Find the translations.dat file in the given directory node.
+	 * If found it opens the given File to read the translations.dat file.
+	 */
+	bool openTranslationsFile(const FSNode &node, File&, int depth = -1);
+
 	/**
 	 * Load the list of languages from the translations.dat file
 	 */
