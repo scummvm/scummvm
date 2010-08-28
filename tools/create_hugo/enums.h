@@ -1298,24 +1298,24 @@ enum path_t {
 	WANDER2                                     // Same as WANDER, except keeps cycling when stationary
 };
 
-#define PERSON    4, NULL, {4, NULL, 4, NULL, 2, NULL, 2, NULL}
-#define PERSON2   2, NULL, {4, NULL, 4, NULL}
-#define PERSON3   3, NULL, {4, NULL, 4, NULL, 1, NULL}
-#define PERSON4   4, NULL, {4, NULL, 4, NULL, 1, NULL, 1, NULL}
-#define PERSON5   3, NULL, {4, NULL, 4, NULL, 4, NULL}
-#define ANIMAL    4, NULL, {3, NULL, 3, NULL, 1, NULL, 1, NULL}
-#define THING0    0, NULL, {0, NULL}
-#define THING1    1, NULL, {1, NULL}
-#define THING2    1, NULL, {2, NULL}
-#define THING3    1, NULL, {3, NULL}
-#define THING4    1, NULL, {4, NULL}
-#define THING2a   2, NULL, {1, NULL, 2, NULL}
-#define THING2b   2, NULL, {2, NULL, 2, NULL}
-#define THING2c   2, NULL, {1, NULL, 1, NULL}
-#define THING2d   2, NULL, {1, NULL, 4, NULL}
-#define THING2e   2, NULL, {5, NULL, 1, NULL}
-#define THING2f   2, NULL, {2, NULL, 3, NULL}
-#define THING2g   2, NULL, {3, NULL, 4, NULL}
+#define PERSON    4, NULL, {{4, NULL}, {4, NULL}, {2, NULL}, {2, NULL}}
+#define PERSON2   2, NULL, {{4, NULL}, {4, NULL}}
+#define PERSON3   3, NULL, {{4, NULL}, {4, NULL}, {1, NULL}}
+#define PERSON4   4, NULL, {{4, NULL}, {4, NULL}, {1, NULL}, {1, NULL}}
+#define PERSON5   3, NULL, {{4, NULL}, {4, NULL}, {4, NULL}}
+#define ANIMAL    4, NULL, {{3, NULL}, {3, NULL}, {1, NULL}, {1, NULL}}
+#define THING0    0, NULL, {{0, NULL}}
+#define THING1    1, NULL, {{1, NULL}}
+#define THING2    1, NULL, {{2, NULL}}
+#define THING3    1, NULL, {{3, NULL}}
+#define THING4    1, NULL, {{4, NULL}}
+#define THING2a   2, NULL, {{1, NULL}, {2, NULL}}
+#define THING2b   2, NULL, {{2, NULL}, {2, NULL}}
+#define THING2c   2, NULL, {{1, NULL}, {1, NULL}}
+#define THING2d   2, NULL, {{1, NULL}, {4, NULL}}
+#define THING2e   2, NULL, {{5, NULL}, {1, NULL}}
+#define THING2f   2, NULL, {{2, NULL}, {3, NULL}}
+#define THING2g   2, NULL, {{3, NULL}, {4, NULL}}
 #define GO_OBJ  -1
 
 enum cycle_t {INVISIBLE, ALMOST_INVISIBLE, NOT_CYCLING, CYCLE_FORWARD, CYCLE_BACKWARD};
