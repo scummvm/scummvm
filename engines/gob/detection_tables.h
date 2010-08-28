@@ -2269,7 +2269,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"fascination",
-			"VGA 3 disks edition",
+			"Hebrew edition (censored)",
 			AD_ENTRY1s("intro.stk", "d6e45ce548598727e2b5587a99718eba", 1055909),
 			HE_ISR,
 			kPlatformPC,
@@ -2382,7 +2382,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"fascination",
 			"CD Version (Censored)",
-			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
+			AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 			EN_ANY,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
@@ -2390,13 +2390,13 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeFascination,
 		kFeaturesCD,
-		"disk0.stk", 0, 0
+		"intro.stk", 0, 0
 	},
 	{
 		{
 			"fascination",
 			"CD Version (Censored)",
-			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
+			AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
@@ -2404,13 +2404,13 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeFascination,
 		kFeaturesCD,
-		"disk0.stk", 0, 0
+		"intro.stk", 0, 0
 	},
 	{
 		{
 			"fascination",
 			"CD Version (Censored)",
-			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
+			AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
@@ -2418,13 +2418,13 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeFascination,
 		kFeaturesCD,
-		"disk0.stk", 0, 0
+		"intro.stk", 0, 0
 	},
 	{
 		{
 			"fascination",
 			"CD Version (Censored)",
-			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
+			AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
@@ -2432,13 +2432,13 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeFascination,
 		kFeaturesCD,
-		"disk0.stk", 0, 0
+		"intro.stk", 0, 0
 	},
 	{
 		{
 			"fascination",
 			"CD Version (Censored)",
-			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
+			AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
@@ -2446,7 +2446,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeFascination,
 		kFeaturesCD,
-		"disk0.stk", 0, 0
+		"intro.stk", 0, 0
 	},
 	{
 		{
