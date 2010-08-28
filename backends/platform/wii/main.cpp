@@ -37,8 +37,7 @@
 #ifdef DEBUG_WII_GDB
 #include <debug.h>
 #endif
-#include <gfx/gfx.h>
-#include <gfx/gfx_con.h>
+#include <gxflux/gfx_con.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,7 +50,6 @@ void reset_cb(void) {
 #ifdef DEBUG_WII_GDB
 	printf("attach gdb now\n");
 	_break();
-	SYS_SetResetCallback(reset_cb);
 #else
 	reset_btn_pressed = true;
 #endif
@@ -77,6 +75,11 @@ static void show_console(int code) {
 
 	for (i = 0; i < 60 * 3; ++i)
 		VIDEO_WaitVSync();
+
+#ifdef DEBUG_WII_GDB
+	printf("attach gdb now\n");
+	_break();
+#endif
 
 	printf("Press any key to continue.\n");
 
@@ -157,12 +160,13 @@ void wii_memstats(void) {
 int main(int argc, char *argv[]) {
 	s32 res;
 
-#ifdef USE_WII_DI
+#if defined(USE_WII_DI) && !defined(GAMECUBE)
 	DI_Init();
 #endif
 
 	VIDEO_Init();
 	PAD_Init();
+	DSP_Init();
 	AUDIO_Init(NULL);
 
 	gfx_video_init(NULL);

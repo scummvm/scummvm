@@ -246,6 +246,10 @@ void MixerImpl::playStream(
 			}
 	}
 
+#ifdef AUDIO_REVERSE_STEREO
+	reverseStereo = !reverseStereo;
+#endif
+
 	// Create the channel
 	Channel *chan = new Channel(this, type, stream, autofreeStream, reverseStereo, id, permanent);
 	chan->setVolume(volume);

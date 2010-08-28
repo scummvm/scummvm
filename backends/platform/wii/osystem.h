@@ -26,7 +26,7 @@
 #include <gccore.h>
 #include <ogcsys.h>
 
-#include <gfx/gfx.h>
+#include <gxflux/gfx.h>
 
 #include "base/main.h"
 #include "common/fs.h"
