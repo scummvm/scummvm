@@ -320,7 +320,7 @@ bool PNGLoader::ImageProperties(const byte *FileDataPtr, unsigned int FileSize, 
 
 bool PNGLoader::DoIsCorrectImageFormat(const byte *FileDataPtr, unsigned int FileSize) {
 	if (FileSize > 8)
-		return png_check_sig((byte *)FileDataPtr, 8) ? true : false;
+		return png_check_sig(const_cast<byte *>(FileDataPtr), 8) ? true : false;
 	else
 		return false;
 }

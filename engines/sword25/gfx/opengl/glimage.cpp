@@ -169,7 +169,7 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 		Height = m_Height;
 	ScaleY = (float) Height / (float) m_Height;
 
-	if (Color & 0xff000000 != 0xff000000) {
+	if ((Color & 0xff000000) != 0xff000000) {
 		warning("STUB: Image transparent bg color: %x", Color);
 	}
 	int cr = (Color >> 16) & 0xff;
