@@ -206,7 +206,7 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 	if (!flipVString.empty()) {
 		if (!parseBooleanKey(flipVString, frame.FlipV)) {
 			BS_LOG_WARNINGLN("Illegal flipv value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
-			                 flipVString, GetFileName().c_str());
+			                 flipVString.c_str(), GetFileName().c_str());
 			frame.FlipV = false;
 		}
 	} else
@@ -216,7 +216,7 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 	if (!flipHString.empty()) {
 		if (!parseBooleanKey(flipVString, frame.FlipV)) {
 			BS_LOG_WARNINGLN("Illegal fliph value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
-			                 flipHString, GetFileName().c_str());
+			                 flipHString.c_str(), GetFileName().c_str());
 			frame.FlipH = false;
 		}
 	} else

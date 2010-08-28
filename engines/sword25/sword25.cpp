@@ -50,7 +50,7 @@ const char *const PACKAGE_MANAGER = "archiveFS";
 const char *const DEFAULT_SCRIPT_FILE = "/system/boot.lua";
 
 void LogToStdout(const char *Message) {
-	debugN(0, Message);
+	debugN(0, "%s", Message);
 }
 
 Sword25Engine::Sword25Engine(OSystem *syst, const ADGameDescription *gameDesc):
