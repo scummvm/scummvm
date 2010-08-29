@@ -165,9 +165,15 @@ bool Actor::readFromStream(Common::ReadStream *stream) {
 bool Animation::readFromStream(Common::ReadStream *stream) {
 	_id = stream->readUint32LE();
 	_ver = stream->readUint32LE();
-	_u1 = stream->readUint32LE();
-	_u2 = stream->readUint32LE();
-	_time = stream->readUint32LE();
+	if (_ver == 3) {
+		_u1 = 0;
+		_time = stream->readUint32LE();
+		_u2 = stream->readUint32LE();
+	} else {
+		_u1 = stream->readUint32LE();
+		_u2 = stream->readUint32LE();
+		_time = stream->readUint32LE();
+	}
 	if (_u2 != 0xdeadbabe)
 		return false;
 
