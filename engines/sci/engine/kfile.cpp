@@ -777,26 +777,6 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		//  when we get here. That's why we need to remember selection via kDrawControl
 		name = s->_dirseeker.getVirtualFilename(s->_chosenQfGImportItem);
 		unwrapFilename = false;
-	// Since we're not wrapping/unwrapping save files for QFG import screens,
-	// the name of the save file will almost certainly be over 12 characters in
-	// length. Compensate for that fact here, by cutting off the last character
-	// and searching for the file via the first 11 characters
-	if (g_sci->isQFGImportScreen()) {
-		name.deleteLastChar();
-		Common::String pattern = name + "*";
-
-		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-		Common::StringArray saveNames = saveFileMan->listSavefiles(pattern);
-
-		// There should be exactly one match for this search, otherwise throw a warning
-		if (saveNames.size() == 0) {
-			warning("QFG character import: No matches for %s", pattern.c_str());
-		} else if (saveNames.size() == 1) {
-			name = saveNames[0];
-		} else {
-			warning("QFG character import: More than 1 matches for %s, using the first one", pattern.c_str());
-			name = saveNames[0];
-		}
 	}
 
 	return file_open(s, name.c_str(), mode, unwrapFilename);
