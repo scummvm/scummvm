@@ -240,27 +240,26 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 	int x = (int16)readSelectorValue(segMan, client, SELECTOR(x));
 	int y = (int16)readSelectorValue(segMan, client, SELECTOR(y));
-	int oldx, oldy, destx, desty, dx, dy, bdi, bi1, bi2, movcnt, bdelta, axis;
 	uint16 signal = readSelectorValue(segMan, client, SELECTOR(signal));
-	int completed = 0;
-	int max_movcnt = readSelectorValue(segMan, client, SELECTOR(moveSpeed));
+	int16 max_movcnt = (int16)readSelectorValue(segMan, client, SELECTOR(moveSpeed));
+	int16 old_x = x;
+	int16 old_y = y;
+	int16 dest_x = (int16)readSelectorValue(segMan, mover, SELECTOR(x));
+	int16 dest_y = (int16)readSelectorValue(segMan, mover, SELECTOR(y));
+	int16 dx = (int16)readSelectorValue(segMan, mover, SELECTOR(dx));
+	int16 dy = (int16)readSelectorValue(segMan, mover, SELECTOR(dy));
+	int16 bdi = (int16)readSelectorValue(segMan, mover, SELECTOR(b_di));
+	int16 bi1 = (int16)readSelectorValue(segMan, mover, SELECTOR(b_i1));
+	int16 bi2 = (int16)readSelectorValue(segMan, mover, SELECTOR(b_i2));
+	int16 movcnt = (int16)readSelectorValue(segMan, mover, SELECTOR(b_movCnt));
+	int16 bdelta = (int16)readSelectorValue(segMan, mover, SELECTOR(b_incr));
+	int16 axis = (int16)readSelectorValue(segMan, mover, SELECTOR(b_xAxis));
+	bool completed = false;
 
-	if (getSciVersion() > SCI_VERSION_01)
+	if (getSciVersion() > SCI_VERSION_01) {
 		signal &= ~kSignalHitObstacle;
-
-	writeSelector(segMan, client, SELECTOR(signal), make_reg(0, signal)); // This is a NOP for SCI0
-	oldx = x;
-	oldy = y;
-	destx = (int16)readSelectorValue(segMan, mover, SELECTOR(x));
-	desty = (int16)readSelectorValue(segMan, mover, SELECTOR(y));
-	dx = (int16)readSelectorValue(segMan, mover, SELECTOR(dx));
-	dy = (int16)readSelectorValue(segMan, mover, SELECTOR(dy));
-	bdi = (int16)readSelectorValue(segMan, mover, SELECTOR(b_di));
-	bi1 = (int16)readSelectorValue(segMan, mover, SELECTOR(b_i1));
-	bi2 = (int16)readSelectorValue(segMan, mover, SELECTOR(b_i2));
-	movcnt = readSelectorValue(segMan, mover, SELECTOR(b_movCnt));
-	bdelta = (int16)readSelectorValue(segMan, mover, SELECTOR(b_incr));
-	axis = (int16)readSelectorValue(segMan, mover, SELECTOR(b_xAxis));
+		writeSelector(segMan, client, SELECTOR(signal), make_reg(0, signal));
+	}
 
 	if ((getSciVersion() >= SCI_VERSION_1_LATE)) {
 		// Mixed-Up Fairy Tales has no xLast/yLast selectors
@@ -277,7 +276,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		if (max_movcnt > movcnt) {
 			++movcnt;
 			writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), movcnt); // Needed for HQ1/Ogre?
-			return NULL_REG;
+			return NULL_REG; // why do we exit here?
 		} else {
 			movcnt = 0;
 			writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), movcnt); // Needed for HQ1/Ogre?
@@ -298,20 +297,20 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	x += dx;
 	y += dy;
 
-	if ((MOVING_ON_X && (((x < destx) && (oldx >= destx)) // Moving left, exceeded?
-	            || ((x > destx) && (oldx <= destx)) // Moving right, exceeded?
-	            || ((x == destx) && (ABS(dx) > ABS(dy))) // Moving fast, reached?
+	if ((MOVING_ON_X && (((x < dest_x) && (old_x >= dest_x)) // Moving left, exceeded?
+	            || ((x > dest_x) && (old_x <= dest_x)) // Moving right, exceeded?
+	            || ((x == dest_x) && (ABS(dx) > ABS(dy))) // Moving fast, reached?
 	            // Treat this last case specially- when doing sub-pixel movements
 	            // on the other axis, we could still be far away from the destination
-				)) || (MOVING_ON_Y && (((y < desty) && (oldy >= desty)) /* Moving upwards, exceeded? */
-	                || ((y > desty) && (oldy <= desty)) /* Moving downwards, exceeded? */
-	                || ((y == desty) && (ABS(dy) >= ABS(dx))) /* Moving fast, reached? */
+				)) || (MOVING_ON_Y && (((y < dest_y) && (old_y >= dest_y)) /* Moving upwards, exceeded? */
+	                || ((y > dest_y) && (old_y <= dest_y)) /* Moving downwards, exceeded? */
+	                || ((y == dest_y) && (ABS(dy) >= ABS(dx))) /* Moving fast, reached? */
 				))) {
 		// Whew... in short: If we have reached or passed our target position
 
-		x = destx;
-		y = desty;
-		completed = 1;
+		x = dest_x;
+		y = dest_y;
+		completed = true;
 
 		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x", PRINT_REG(mover));
 	}
@@ -341,8 +340,8 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	if (collision) {
 		signal = readSelectorValue(segMan, client, SELECTOR(signal));
 
-		writeSelectorValue(segMan, client, SELECTOR(x), oldx);
-		writeSelectorValue(segMan, client, SELECTOR(y), oldy);
+		writeSelectorValue(segMan, client, SELECTOR(x), old_x);
+		writeSelectorValue(segMan, client, SELECTOR(y), old_y);
 		writeSelectorValue(segMan, client, SELECTOR(signal), (signal | kSignalHitObstacle));
 
 		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x by collision", PRINT_REG(mover));
