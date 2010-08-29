@@ -80,9 +80,9 @@ my @excludes_snd = (
 	"fluidsynth.cpp",
 	"i386.cpp",
 	"part.*",
-	"synth.cpp",
 	"tables.cpp",
 	"freeverb.cpp",
+	"synth.cpp",
 	"rate.*"			# not really needed, USE_ARM_SOUND_ASM currently not parsed correctly,
 						# "rate[_arm|_arm_asm].(cpp|s)" will be added later based on WINS/ARM build!
 						# These #defines for compile time are set in portdefs.h
