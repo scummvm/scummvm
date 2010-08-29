@@ -347,7 +347,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x by collision", PRINT_REG(mover));
 		// We shall not set completed in this case, sierra sci also doesn't do it
-		//  if we set call .moveDone in those cases qfg1 vga gate at the castle and lsl1 casino door will not work
+		//  if we call .moveDone in those cases qfg1 vga gate at the castle and lsl1 casino door will not work
 	}
 
 	if ((getSciVersion() >= SCI_VERSION_1_EGA))
