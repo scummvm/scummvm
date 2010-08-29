@@ -944,12 +944,12 @@ reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager 
 	int QfGImport = g_sci->inQfGImportRoom();
 	if (QfGImport) {
 		_files.clear();
-		addAsVirtualFiles("-QfG1-", "qfg1-*");
-		addAsVirtualFiles("-QfG1VGA-", "qfg1vga-*");
+		addAsVirtualFiles("-QfG1-", "qfg1-*.sav");
+		addAsVirtualFiles("-QfG1VGA-", "qfg1vga-*.sav");
 		if (QfGImport > 2)
-			addAsVirtualFiles("-QfG2-", "qfg2-*");
+			addAsVirtualFiles("-QfG2-", "qfg2-*.sav");
 		if (QfGImport > 3)
-			addAsVirtualFiles("-QfG3-", "qfg3-*");
+			addAsVirtualFiles("-QfG3-", "qfg3-*.sav");
 
 		if (QfGImport == 3) {
 			// QfG3 sorts the filelisting itself, we can't let that happen otherwise our
