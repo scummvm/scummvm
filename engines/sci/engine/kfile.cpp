@@ -823,7 +823,16 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 
 		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 		Common::StringArray saveNames = saveFileMan->listSavefiles(pattern);
-		name = saveNames.size() > 0 ? saveNames[0] : name;
+
+		// There should be exactly one match for this search, otherwise throw a warning
+		if (saveNames.size() == 0) {
+			warning("QFG No matches for %s", pattern.c_str());
+		} else if (saveNames.size() == 1) {
+			name = saveNames[0];
+		} else {
+			warning("More than 1 matches for %s, using the first one", pattern.c_str());
+			name = saveNames[0];
+		}
 	}
 
 	return file_open(s, name.c_str(), mode);
