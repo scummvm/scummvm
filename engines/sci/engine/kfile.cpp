@@ -812,6 +812,20 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		return SIGNAL_REG;
 	}
 	debugC(2, kDebugLevelFile, "kFileIO(open): %s, 0x%x", name.c_str(), mode);
+
+	// Since we're not wrapping/unwrapping save files for QFG import screens,
+	// the name of the save file will almost certainly be over 12 characters in
+	// length. Compensate for that fact here, by cutting off the last character
+	// and searching for the file via the first 11 characters
+	if (g_sci->isQFGImportScreen()) {
+		name.deleteLastChar();
+		Common::String pattern = name + "*";
+
+		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+		Common::StringArray saveNames = saveFileMan->listSavefiles(pattern);
+		name = saveNames.size() > 0 ? saveNames[0] : name;
+	}
+
 	return file_open(s, name.c_str(), mode);
 }
 
@@ -944,6 +958,12 @@ reg_t kFileIOFindFirst(EngineState *s, int argc, reg_t *argv) {
 	reg_t buf = argv[1];
 	int attr = argv[2].toUint16(); // We won't use this, Win32 might, though...
 	debugC(2, kDebugLevelFile, "kFileIO(findFirst): %s, 0x%x", mask.c_str(), attr);
+
+	// Change the file mask in QFG character import screens. The game
+	// is looking for *.*, but that may well include other files as well,
+	// thus limit the file mask to only include exported characters.
+	if (g_sci->isQFGImportScreen())
+		mask = "qfg*.sav";
 
 	// QfG3 uses "/\*.*" for the character import, QfG4 uses "/\*"
 	if (mask.hasPrefix("/\\")) {

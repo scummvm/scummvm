@@ -637,34 +637,38 @@ Common::String SciEngine::getSavegamePattern() const {
 }
 
 Common::String SciEngine::getFilePrefix() const {
-	if (_gameId == GID_QFG2) {
-		// Quest for Glory 2 wants to read files from Quest for Glory 1 (EGA/VGA) to import character data
-		if (_gamestate->currentRoomNumber() == 805) {
-			// Check if there are any QFG1VGA games - bug #3054613
-			Common::StringArray saveNames = g_engine->getSaveFileManager()->listSavefiles("qfg1vga-*.sav");
-			return (saveNames.size() > 0) ? "qfg1vga" : "qfg1";
-		}
-	} else if (_gameId == GID_QFG3) {
-		// Quest for Glory 3 wants to read files from Quest for Glory 2 to import character data
-		if (_gamestate->currentRoomNumber() == 54)
-			return "qfg2";
-	} else if (_gameId == GID_QFG4) {
-		// Quest for Glory 4 wants to read files from Quest for Glory 3 to import character data
-		if (_gamestate->currentRoomNumber() == 54)
-			return "qfg3";
-	}
 	return _targetName;
 }
 
 Common::String SciEngine::wrapFilename(const Common::String &name) const {
-	return getFilePrefix() + "-" + name;
+	// Do not wrap the game prefix when reading files in QFG import screens.
+	// That way, we can read exported characters from all QFG games, as
+	// intended.
+	return !isQFGImportScreen() ? getFilePrefix() + "-" + name : name;
 }
 
 Common::String SciEngine::unwrapFilename(const Common::String &name) const {
 	Common::String prefix = getFilePrefix() + "-";
-	if (name.hasPrefix(prefix.c_str()))
+	// Do not unwrap the file name when reading files in QFG import screens.
+	// We don't wrap the game ID prefix in these screens in order to read
+	// save states from all QFG games.
+	if (name.hasPrefix(prefix.c_str()) && !isQFGImportScreen())
 		return Common::String(name.c_str() + prefix.size());
 	return name;
+}
+
+bool SciEngine::isQFGImportScreen() const {
+	if (_gameId == GID_QFG2 && _gamestate->currentRoomNumber() == 805) {
+		// QFG2 character import screen
+		return true;
+	} else if (_gameId == GID_QFG3 && _gamestate->currentRoomNumber() == 54) {
+		// QFG3 character import screen
+		return true;
+	} else if (_gameId == GID_QFG4 && _gamestate->currentRoomNumber() == 54) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void SciEngine::pauseEngineIntern(bool pause) {

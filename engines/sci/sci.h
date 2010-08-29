@@ -250,6 +250,12 @@ public:
 	/** Remove the 'TARGET-' prefix of the given filename, if present. */
 	Common::String unwrapFilename(const Common::String &name) const;
 
+	/**
+	 * Checks if we are in a QFG import screen, where special handling
+	 * of save states is performed.
+	 */
+	bool isQFGImportScreen() const;
+
 	void sleep(uint32 msecs);
 
 	void scriptDebug();
