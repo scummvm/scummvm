@@ -89,7 +89,6 @@ void DLObject::unload() {
 }
 
 bool DLObject::readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr) {
-
 	// Start reading the elf header. Check for errors
 	if (DLFile->read(ehdr, sizeof(*ehdr)) != sizeof(*ehdr) ||
 	        memcmp(ehdr->e_ident, ELFMAG, SELFMAG) ||			// Check MAGIC
@@ -113,7 +112,6 @@ bool DLObject::readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehd
 }
 
 bool DLObject::readProgramHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num) {
-
 	// Read program header
 	if (DLFile->seek(ehdr->e_phoff + sizeof(*phdr)*num, SEEK_SET) < 0 ||
 	    DLFile->read(phdr, sizeof(*phdr)) != sizeof(*phdr)) {
@@ -131,11 +129,9 @@ bool DLObject::readProgramHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr
 	    phdr->p_offset, phdr->p_filesz, phdr->p_memsz, phdr->p_align);
 
 	return true;
-
 }
 
 bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr) {
-
 	char *baseAddress = 0;
 
 	// Attempt to allocate memory for segment
@@ -163,7 +159,7 @@ bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr)
 
 	// Read the segment into memory
 	if (DLFile->seek(phdr->p_offset, SEEK_SET) < 0 ||
-	        DLFile->read(baseAddress, phdr->p_filesz) != (ssize_t)phdr->p_filesz) {
+	        DLFile->read(baseAddress, phdr->p_filesz) != phdr->p_filesz) {
 		seterror("Segment load failed.");
 		return false;
 	}
@@ -174,7 +170,6 @@ bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr)
 }
 
 Elf32_Shdr * DLObject::loadSectionHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr) {
-
 	Elf32_Shdr *shdr = NULL;
 
 	// Allocate memory for section headers
@@ -186,7 +181,7 @@ Elf32_Shdr * DLObject::loadSectionHeaders(Common::SeekableReadStream* DLFile, El
 	// Read from file into section headers
 	if (DLFile->seek(ehdr->e_shoff, SEEK_SET) < 0 ||
 	        DLFile->read(shdr, ehdr->e_shnum * sizeof(*shdr)) !=
-	        (ssize_t)(ehdr->e_shnum * sizeof(*shdr))) {
+	        ehdr->e_shnum * sizeof(*shdr)) {
 		seterror("Section headers load failed.");
 		return NULL;
 	}
@@ -195,7 +190,6 @@ Elf32_Shdr * DLObject::loadSectionHeaders(Common::SeekableReadStream* DLFile, El
 }
 
 int DLObject::loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
-
 	// Loop over sections, looking for symbol table linked to a string table
 	for (int i = 0; i < ehdr->e_shnum; i++) {
 		if (shdr[i].sh_type == SHT_SYMTAB &&
@@ -224,7 +218,7 @@ int DLObject::loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *eh
 	// Read symbol table into memory
 	if (DLFile->seek(shdr[_symtab_sect].sh_offset, SEEK_SET) < 0 ||
 	        DLFile->read(_symtab, shdr[_symtab_sect].sh_size) !=
-	        (ssize_t)shdr[_symtab_sect].sh_size) {
+	        shdr[_symtab_sect].sh_size) {
 		seterror("Symbol table load failed.");
 		return -1;
 	}
@@ -234,11 +228,9 @@ int DLObject::loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *eh
 	DBG("Loaded %d symbols.\n", _symbol_cnt);
 
 	return _symtab_sect;
-
 }
 
 bool DLObject::loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *shdr) {
-
 	int string_sect = shdr[_symtab_sect].sh_link;
 
 	// Allocate memory for string table
@@ -250,7 +242,7 @@ bool DLObject::loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *s
 	// Read string table into memory
 	if (DLFile->seek(shdr[string_sect].sh_offset, SEEK_SET) < 0 ||
 	        DLFile->read(_strtab, shdr[string_sect].sh_size) !=
-	        (ssize_t)shdr[string_sect].sh_size) {
+	        shdr[string_sect].sh_size) {
 		seterror("Symbol table strings load failed.");
 		return false;
 	}
@@ -259,17 +251,11 @@ bool DLObject::loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *s
 }
 
 void DLObject::relocateSymbols(Elf32_Addr offset) {
-
-	int mainCount = 0;
-	int shortsCount= 0;
-
 	// Loop over symbols, add relocation offset
 	Elf32_Sym *s = (Elf32_Sym *)_symtab;
 	for (int c = _symbol_cnt; c--; s++) {
-
 		// Make sure we don't relocate special valued symbols
 		if (s->st_shndx < SHN_LOPROC) {
-				mainCount++;
 				s->st_value += offset;
 				if (s->st_value < (Elf32_Addr)_segment || s->st_value > (Elf32_Addr)_segment + _segmentSize)
 					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
@@ -288,7 +274,6 @@ bool DLObject::load(Common::SeekableReadStream* DLFile) {
 	}
 
 	for (int i = 0; i < ehdr.e_phnum; i++) {	//Load our segments
-
 		DBG("Loading segment %d\n", i);
 
 		if (readProgramHeaders(DLFile, &ehdr, &phdr, i) == false)
@@ -316,11 +301,9 @@ bool DLObject::load(Common::SeekableReadStream* DLFile) {
 	free(shdr);
 
 	return ret;
-
 }
 
 bool DLObject::open(const char *path) {
-
 	Common::SeekableReadStream* DLFile;
 	void *ctors_start, *ctors_end;
 
@@ -358,11 +341,11 @@ bool DLObject::open(const char *path) {
 		return false;
 	}
 
-	DBG(("Calling constructors.\n"));
+	DBG("Calling constructors.\n");
 	for (void (**f)(void) = (void (**)(void))ctors_start; f != ctors_end; f++)
 		(**f)();
 
-	DBG(("%s opened ok.\n", path));
+	DBG("%s opened ok.\n", path);
 
 	return true;
 }
@@ -377,7 +360,7 @@ bool DLObject::close() {
 }
 
 void *DLObject::symbol(const char *name) {
-	DBG(("symbol(\"%s\")\n", name));
+	DBG("symbol(\"%s\")\n", name);
 
 	if (_symtab == NULL || _strtab == NULL || _symbol_cnt < 1) {
 		seterror("No symbol table loaded.");
@@ -386,7 +369,6 @@ void *DLObject::symbol(const char *name) {
 
 	Elf32_Sym *s = (Elf32_Sym *)_symtab;
 	for (int c = _symbol_cnt; c--; s++)
-
 		// We can only import symbols that are global or weak in the plugin
 		if ((SYM_BIND(s->st_info) == STB_GLOBAL || SYM_BIND(s->st_info) == STB_WEAK) &&
 		       !strcmp(name, _strtab + s->st_name)) {
