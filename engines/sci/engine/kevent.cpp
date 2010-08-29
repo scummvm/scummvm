@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "sci/sci.h"
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
@@ -161,6 +163,11 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		// the sound-SCI1 behavior of cmdUpdateSoundCues with this call
 		g_sci->_soundCmd->updateSci0Cues();
 	}
+
+	// Wait a bit here, so that the CPU isn't maxed out when the game
+	// is waiting for user input (e.g. when showing text boxes) - bug
+	// #3037874.
+	g_system->delayMillis(10);
 
 	return s->r_acc;
 }
