@@ -91,6 +91,7 @@ private:
 	void horizontalRollToCenter(bool blackoutFlag);
 	void diagonalRollFromCenter(bool blackoutFlag);
 	void diagonalRollToCenter(bool blackoutFlag);
+	bool doCreateFrame(uint32 shouldBeAtMsec);
 	void updateScreenAndWait(uint32 shouldBeAtMsec);
 
 	GfxScreen *_screen;

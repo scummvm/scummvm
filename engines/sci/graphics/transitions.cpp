@@ -121,20 +121,24 @@ void GfxTransitions::setup(int16 number, bool blackoutFlag) {
 	}
 }
 
+bool GfxTransitions::doCreateFrame(uint32 shouldBeAtMsec) {
+	uint32 msecPos = g_system->getMillis() - _transitionStartTime;
+
+	if (shouldBeAtMsec > msecPos)
+		return true;
+	return false;
+}
+
 void GfxTransitions::updateScreenAndWait(uint32 shouldBeAtMsec) {
 	Common::Event ev;
-	uint32 msecPos = g_system->getMillis() - _transitionStartTime;
 
 	while (g_system->getEventManager()->pollEvent(ev)) {}	// discard all events
 
-	if (shouldBeAtMsec > msecPos) {
-		// only update screen, if we are not behind schedule
-		g_system->updateScreen();
-		// and if still too early, delay those milliseconds
-		msecPos = g_system->getMillis() - _transitionStartTime;
-		if (shouldBeAtMsec > msecPos)
-			g_system->delayMillis(shouldBeAtMsec - msecPos);
-	}
+	g_system->updateScreen();
+	// if we have still some time left, delay accordingly
+	uint32 msecPos = g_system->getMillis() - _transitionStartTime;
+	if (shouldBeAtMsec > msecPos)
+		g_system->delayMillis(shouldBeAtMsec - msecPos);
 }
 
 // will translate a number and return corresponding translationEntry
@@ -464,21 +468,17 @@ void GfxTransitions::scroll(int16 number) {
 		newMoveRect.left = newMoveRect.right;
 		while (oldMoveRect.left < oldMoveRect.right) {
 			oldMoveRect.right--; oldScreenRect.left++;
-			if (oldMoveRect.right > oldMoveRect.left)
-				scrollCopyOldToScreen(oldScreenRect, oldMoveRect.left, oldMoveRect.top);
 			newScreenRect.right++; newMoveRect.left--;
-			_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
 			if ((stepNr & 1) == 0) {
 				msecCount += 5;
-				updateScreenAndWait(msecCount);
+				if (doCreateFrame(msecCount)) {
+					if (oldMoveRect.right > oldMoveRect.left)
+						scrollCopyOldToScreen(oldScreenRect, oldMoveRect.left, oldMoveRect.top);
+					_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
+					updateScreenAndWait(msecCount);
+				}
 			}
 			stepNr++;
-		}
-		if ((stepNr & 1) == 0) {
-			if (g_system->getMillis() - g_sci->getEngineState()->_screenUpdateTime >= 1000 / 60) {
-				g_system->updateScreen();
-				g_sci->getEngineState()->_screenUpdateTime = g_system->getMillis();
-			}
 		}
 		break;
 
@@ -486,21 +486,17 @@ void GfxTransitions::scroll(int16 number) {
 		newScreenRect.left = newScreenRect.right;
 		while (oldMoveRect.left < oldMoveRect.right) {
 			oldMoveRect.left++; oldScreenRect.right--;
-			if (oldMoveRect.right > oldMoveRect.left)
-				scrollCopyOldToScreen(oldScreenRect, oldMoveRect.left, oldMoveRect.top);
 			newScreenRect.left--;
-			_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
 			if ((stepNr & 1) == 0) {
 				msecCount += 5;
-				updateScreenAndWait(msecCount);
+				if (doCreateFrame(msecCount)) {
+					if (oldMoveRect.right > oldMoveRect.left)
+						scrollCopyOldToScreen(oldScreenRect, oldMoveRect.left, oldMoveRect.top);
+					_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
+					updateScreenAndWait(msecCount);
+				}
 			}
 			stepNr++;
-		}
-		if ((stepNr & 1) == 0) {
-			if (g_system->getMillis() - g_sci->getEngineState()->_screenUpdateTime >= 1000 / 60) {
-				g_system->updateScreen();
-				g_sci->getEngineState()->_screenUpdateTime = g_system->getMillis();
-			}
 		}
 		break;
 
@@ -509,12 +505,15 @@ void GfxTransitions::scroll(int16 number) {
 		newMoveRect.top = newMoveRect.bottom;
 		while (oldMoveRect.top < oldMoveRect.bottom) {
 			oldMoveRect.top++; oldScreenRect.top++; 
-			if (oldMoveRect.top < oldMoveRect.bottom)
-				scrollCopyOldToScreen(oldScreenRect, _picRect.left, _picRect.top);
 			newScreenRect.bottom++;	newMoveRect.top--;
-			_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
+
 			msecCount += 5;
-			updateScreenAndWait(msecCount);
+			if (doCreateFrame(msecCount)) {
+				if (oldMoveRect.top < oldMoveRect.bottom)
+					scrollCopyOldToScreen(oldScreenRect, _picRect.left, _picRect.top);
+				_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
+				updateScreenAndWait(msecCount);
+			}
 		}
 		break;
 
@@ -522,15 +521,22 @@ void GfxTransitions::scroll(int16 number) {
 		newScreenRect.top = newScreenRect.bottom;
 		while (oldMoveRect.top < oldMoveRect.bottom) {
 			oldMoveRect.top++; oldScreenRect.bottom--;
-			if (oldMoveRect.top < oldMoveRect.bottom)
-				scrollCopyOldToScreen(oldScreenRect, oldMoveRect.left, oldMoveRect.top);
 			newScreenRect.top--;
-			_screen->copyRectToScreen(newScreenRect, _picRect.left, _picRect.top);
+
 			msecCount += 5;
-			updateScreenAndWait(msecCount);
+			if (doCreateFrame(msecCount)) {
+				if (oldMoveRect.top < oldMoveRect.bottom)
+					scrollCopyOldToScreen(oldScreenRect, oldMoveRect.left, oldMoveRect.top);
+				_screen->copyRectToScreen(newScreenRect, _picRect.left, _picRect.top);
+				updateScreenAndWait(msecCount);
+			}
 		}
 		break;
 	}
+
+	// Copy over final position just in case
+	_screen->copyRectToScreen(newScreenRect);
+	g_system->updateScreen();
 }
 
 // Vertically displays new screen starting from center - works on _picRect area
