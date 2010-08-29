@@ -96,7 +96,7 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 			invokeSelector(_s, curObject, SELECTOR(doit), argc, argv, 0);
 
 			// If a game is being loaded, stop processing
-			if (_s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+			if (_s->abortScriptProcessing != kAbortNone)
 				return true; // Stop processing
 
 			// Lookup node again, since the nodetable it was in may have been reallocated.

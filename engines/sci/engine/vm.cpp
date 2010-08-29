@@ -911,7 +911,7 @@ void run_vm(EngineState *s) {
 		g_sci->_debugState.old_pc_offset = s->xs->addr.pc.offset;
 		g_sci->_debugState.old_sp = s->xs->sp;
 
-		if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+		if (s->abortScriptProcessing != kAbortNone)
 			return; // Stop processing
 
 		if (s->_executionStackPosChanged) {
@@ -942,7 +942,7 @@ void run_vm(EngineState *s) {
 			s->variables[VAR_PARAM] = s->xs->variables_argp;
 		}
 
-		if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+		if (s->abortScriptProcessing != kAbortNone)
 			return; // Stop processing
 
 		// Debug if this has been requested:
@@ -1442,7 +1442,7 @@ void run_vm(EngineState *s) {
 			s->_executionStackPosChanged = true;
 
 			// If a game is being loaded, stop processing
-			if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+			if (s->abortScriptProcessing != kAbortNone)
 				return; // Stop processing
 
 			break;
