@@ -187,7 +187,7 @@ reg_t GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 
 	if (!checkRect.isValidRect()) {	// can occur in Iceman and Mother Goose - HACK? TODO: is this really occuring in sierra sci? check this
 		warning("kCan(t)BeHere - invalid rect %d, %d -> %d, %d", checkRect.left, checkRect.top, checkRect.right, checkRect.bottom);
-		return NULL_REG;
+		return NULL_REG; // this means "can be here"
 	}
 
 	adjustedRect = _coordAdjuster->onControl(checkRect);
