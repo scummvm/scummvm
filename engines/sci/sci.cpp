@@ -641,34 +641,27 @@ Common::String SciEngine::getFilePrefix() const {
 }
 
 Common::String SciEngine::wrapFilename(const Common::String &name) const {
-	// Do not wrap the game prefix when reading files in QFG import screens.
-	// That way, we can read exported characters from all QFG games, as
-	// intended.
-	return !isQFGImportScreen() ? getFilePrefix() + "-" + name : name;
+	return getFilePrefix() + "-" + name;
 }
 
 Common::String SciEngine::unwrapFilename(const Common::String &name) const {
 	Common::String prefix = getFilePrefix() + "-";
-	// Do not unwrap the file name when reading files in QFG import screens.
-	// We don't wrap the game ID prefix in these screens in order to read
-	// save states from all QFG games.
-	if (name.hasPrefix(prefix.c_str()) && !isQFGImportScreen())
+	if (name.hasPrefix(prefix.c_str()))
 		return Common::String(name.c_str() + prefix.size());
 	return name;
 }
 
-bool SciEngine::isQFGImportScreen() const {
+int SciEngine::inQfGImportRoom() const {
 	if (_gameId == GID_QFG2 && _gamestate->currentRoomNumber() == 805) {
 		// QFG2 character import screen
-		return true;
+		return 2;
 	} else if (_gameId == GID_QFG3 && _gamestate->currentRoomNumber() == 54) {
 		// QFG3 character import screen
-		return true;
+		return 3;
 	} else if (_gameId == GID_QFG4 && _gamestate->currentRoomNumber() == 54) {
-		return true;
-	} else {
-		return false;
+		return 4;
 	}
+	return 0;
 }
 
 void SciEngine::pauseEngineIntern(bool pause) {

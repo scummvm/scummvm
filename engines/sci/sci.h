@@ -251,10 +251,10 @@ public:
 	Common::String unwrapFilename(const Common::String &name) const;
 
 	/**
-	 * Checks if we are in a QFG import screen, where special handling
-	 * of save states is performed.
+	 * Checks if we are in a QfG import screen, where special handling
+	 * of file-listings is performed.
 	 */
-	bool isQFGImportScreen() const;
+	int inQfGImportRoom() const;
 
 	void sleep(uint32 msecs);
 

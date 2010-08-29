@@ -110,6 +110,8 @@ void EngineState::reset(bool isRestoring) {
 	_lastSaveVirtualId = SAVEGAMEID_OFFICIALRANGE_START;
 	_lastSaveNewId = 0;
 
+	_chosenQfGImportItem = 0;
+
 	scriptStepCounter = 0;
 	scriptGCInterval = GC_INTERVAL;
 }

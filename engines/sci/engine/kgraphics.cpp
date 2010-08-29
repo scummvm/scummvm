@@ -944,6 +944,7 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 						"for Quest for Glory 2. Example: 'qfg2-thief.sav'.");
 			}
 		}
+		s->_chosenQfGImportItem = readSelectorValue(s->_segMan, controlObject, SELECTOR(mark));
 	}
 
 	_k_GenericDrawControl(s, controlObject, false);

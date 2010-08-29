@@ -59,17 +59,23 @@ enum AbortGameState {
 class DirSeeker {
 protected:
 	reg_t _outbuffer;
-	Common::StringArray _savefiles;
+	Common::StringArray _files;
+	Common::StringArray _virtualFiles;
 	Common::StringArray::const_iterator _iter;
 
 public:
 	DirSeeker() {
 		_outbuffer = NULL_REG;
-		_iter = _savefiles.begin();
+		_iter = _files.begin();
 	}
 
 	reg_t firstFile(const Common::String &mask, reg_t buffer, SegManager *segMan);
 	reg_t nextFile(SegManager *segMan);
+
+	Common::String getVirtualFilename(uint fileNumber);
+
+private:
+	void addAsVirtualFiles(Common::String title, Common::String fileMask);
 };
 
 enum {
@@ -138,6 +144,8 @@ public:
 
 	int16 _lastSaveVirtualId; // last virtual id fed to kSaveGame, if no kGetSaveFiles was called inbetween
 	int16 _lastSaveNewId;    // last newly created filename-id by kSaveGame
+
+	uint _chosenQfGImportItem; // Remembers the item selected in QfG import rooms
 
 public:
 	/* VM Information */

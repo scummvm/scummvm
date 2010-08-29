@@ -86,7 +86,8 @@ void Kernel::mapSelectors() {
 	// window
 	FIND_SELECTOR(cursor);
 	FIND_SELECTOR(max);
-	// mark
+	FIND_SELECTOR(mark);
+	FIND_SELECTOR(sort);
 	// who
 	FIND_SELECTOR(message);
 	// edit

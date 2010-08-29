@@ -101,13 +101,9 @@ enum {
 
 
 
-reg_t file_open(EngineState *s, const char *filename, int mode) {
-	// QfG3 character import prepends /\ to the filenames.
-	if (filename[0] == '/' && filename[1] == '\\')
-		filename += 2;
-
+reg_t file_open(EngineState *s, const char *filename, int mode, bool unwrapFilename) {
 	Common::String englishName = g_sci->getSciLanguageString(filename, K_LANG_ENGLISH);
-	const Common::String wrappedName = g_sci->wrapFilename(englishName);
+	Common::String wrappedName = unwrapFilename ? g_sci->wrapFilename(englishName) : englishName;
 	Common::SeekableReadStream *inFile = 0;
 	Common::WriteStream *outFile = 0;
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
@@ -183,7 +179,7 @@ reg_t kFOpen(EngineState *s, int argc, reg_t *argv) {
 	int mode = argv[1].toUint16();
 
 	debugC(2, kDebugLevelFile, "kFOpen(%s,0x%x)", name.c_str(), mode);
-	return file_open(s, name.c_str(), mode);
+	return file_open(s, name.c_str(), mode, true);
 }
 
 static FileHandle *getFileFromHandle(EngineState *s, uint handle) {
@@ -739,45 +735,6 @@ reg_t kValidPath(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, 1);
 }
 
-reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager *segMan) {
-	// Verify that we are given a valid buffer
-	if (!buffer.segment) {
-		error("DirSeeker::firstFile('%s') invoked with invalid buffer", mask.c_str());
-		return NULL_REG;
-	}
-	_outbuffer = buffer;
-
-	// Prefix the mask
-	const Common::String wrappedMask = g_sci->wrapFilename(mask);
-
-	// Obtain a list of all savefiles matching the given mask
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	_savefiles = saveFileMan->listSavefiles(wrappedMask);
-
-	// Reset the list iterator and write the first match to the output buffer,
-	// if any.
-	_iter = _savefiles.begin();
-	return nextFile(segMan);
-}
-
-reg_t DirSeeker::nextFile(SegManager *segMan) {
-	if (_iter == _savefiles.end()) {
-		return NULL_REG;
-	}
-
-	const Common::String wrappedString = *_iter;
-
-	// Strip the prefix
-	Common::String string = g_sci->unwrapFilename(wrappedString);
-	if (string.size() > 12)
-		string = Common::String(string.c_str(), 12);
-	segMan->strcpy(_outbuffer, string.c_str());
-
-	// Return the result and advance the list iterator :)
-	++_iter;
-	return _outbuffer;
-}
-
 reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 	if (!s)
 		return make_reg(0, getSciVersion());
@@ -790,6 +747,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	// SCI32 can call K_FILEIO_OPEN with only one argument. It seems to
 	// just be checking if it exists.
 	int mode = (argc < 2) ? (int)_K_FILE_MODE_OPEN_OR_FAIL : argv[1].toUint16();
+	bool unwrapFilename = true;
 
 	// SQ4 floppy prepends /\ to the filenames
 	if (name.hasPrefix("/\\")) {
@@ -813,6 +771,12 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	}
 	debugC(2, kDebugLevelFile, "kFileIO(open): %s, 0x%x", name.c_str(), mode);
 
+	// QFG import rooms get a virtual filelisting instead of an actual one
+	if (g_sci->inQfGImportRoom()) {
+		// we need to find out what the user actually selected, "savedHeroes" is already destroyed
+		//  when we get here. That's why we need to remember selection via kDrawControl
+		name = s->_dirseeker.getVirtualFilename(s->_chosenQfGImportItem);
+		unwrapFilename = false;
 	// Since we're not wrapping/unwrapping save files for QFG import screens,
 	// the name of the save file will almost certainly be over 12 characters in
 	// length. Compensate for that fact here, by cutting off the last character
@@ -835,7 +799,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		}
 	}
 
-	return file_open(s, name.c_str(), mode);
+	return file_open(s, name.c_str(), mode, unwrapFilename);
 }
 
 reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
@@ -962,23 +926,103 @@ reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 	return SIGNAL_REG;
 }
 
+void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask) {
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::StringArray foundFiles = saveFileMan->listSavefiles(fileMask);
+	if (!foundFiles.empty()) {
+		_files.push_back(title);
+		_virtualFiles.push_back("");
+		Common::StringArray::iterator it;
+		Common::StringArray::iterator it_end = foundFiles.end();
+		for (it = foundFiles.begin(); it != it_end; it++) {
+			Common::String regularFilename = *it;
+			Common::String wrappedFilename = Common::String(regularFilename.c_str() + fileMask.size() - 1);
+			// We need to remove the prefix for display purposes
+			_files.push_back(wrappedFilename);
+			// but remember the actual name as well
+			_virtualFiles.push_back(regularFilename);
+		}
+	}
+}
+
+Common::String DirSeeker::getVirtualFilename(uint fileNumber) {
+	if (fileNumber >= _virtualFiles.size())
+		error("invalid virtual filename access");
+	return _virtualFiles[fileNumber];
+}
+
+reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager *segMan) {
+	// Verify that we are given a valid buffer
+	if (!buffer.segment) {
+		error("DirSeeker::firstFile('%s') invoked with invalid buffer", mask.c_str());
+		return NULL_REG;
+	}
+	_outbuffer = buffer;
+	_files.clear();
+	_virtualFiles.clear();
+
+	int QfGImport = g_sci->inQfGImportRoom();
+	if (QfGImport) {
+		_files.clear();
+		addAsVirtualFiles("-QfG1-", "qfg1-*");
+		addAsVirtualFiles("-QfG1VGA-", "qfg1vga-*");
+		if (QfGImport > 2)
+			addAsVirtualFiles("-QfG2-", "qfg2-*");
+		if (QfGImport > 3)
+			addAsVirtualFiles("-QfG3-", "qfg3-*");
+
+		if (QfGImport == 3) {
+			// QfG3 sorts the filelisting itself, we can't let that happen otherwise our
+			//  virtual list would go out-of-sync
+			SegManager *segMan = g_sci->getEngineState()->_segMan;
+			reg_t savedHeros = segMan->findObjectByName("savedHeros");
+			if (!savedHeros.isNull())
+				writeSelectorValue(segMan, savedHeros, SELECTOR(sort), 0);
+		}
+
+	} else {
+		// Prefix the mask
+		const Common::String wrappedMask = g_sci->wrapFilename(mask);
+
+		// Obtain a list of all files matching the given mask
+		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+		_files = saveFileMan->listSavefiles(wrappedMask);
+	}
+
+	// Reset the list iterator and write the first match to the output buffer,
+	// if any.
+	_iter = _files.begin();
+	return nextFile(segMan);
+}
+
+reg_t DirSeeker::nextFile(SegManager *segMan) {
+	if (_iter == _files.end()) {
+		return NULL_REG;
+	}
+
+	Common::String string;
+
+	if (_virtualFiles.empty()) {
+		// Strip the prefix, if we don't got a virtual filelisting
+		const Common::String wrappedString = *_iter;
+		string = g_sci->unwrapFilename(wrappedString);
+	} else {
+		string = *_iter;
+	}
+	if (string.size() > 12)
+		string = Common::String(string.c_str(), 12);
+	segMan->strcpy(_outbuffer, string.c_str());
+
+	// Return the result and advance the list iterator :)
+	++_iter;
+	return _outbuffer;
+}
+
 reg_t kFileIOFindFirst(EngineState *s, int argc, reg_t *argv) {
 	Common::String mask = s->_segMan->getString(argv[0]);
 	reg_t buf = argv[1];
 	int attr = argv[2].toUint16(); // We won't use this, Win32 might, though...
 	debugC(2, kDebugLevelFile, "kFileIO(findFirst): %s, 0x%x", mask.c_str(), attr);
-
-	// Change the file mask in QFG character import screens. The game
-	// is looking for *.*, but that may well include other files as well,
-	// thus limit the file mask to only include exported characters.
-	if (g_sci->isQFGImportScreen())
-		mask = "qfg*.sav";
-
-	// QfG3 uses "/\*.*" for the character import, QfG4 uses "/\*"
-	if (mask.hasPrefix("/\\")) {
-		mask.deleteChar(0);
-		mask.deleteChar(0);
-	}
 
 	// We remove ".*". mask will get prefixed, so we will return all additional files for that gameid
 	if (mask == "*.*")

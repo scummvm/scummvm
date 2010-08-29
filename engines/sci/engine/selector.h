@@ -58,7 +58,9 @@ struct SelectorCache {
 	Selector state, font, type;///< Used by controls
 	// window
 	Selector cursor, max; ///< Used by EditControl
-	// mark, who
+	Selector mark; //< Used by list controls
+	Selector sort; //< Used by list controls (script internal, is needed by us for QfG3 import room)
+	// who
 	Selector message; ///< Used by GetEvent
 	// edit
 	Selector play; ///< Play function (first function to be called)
