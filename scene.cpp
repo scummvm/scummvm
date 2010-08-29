@@ -27,6 +27,7 @@
 #include "engines/stark/archive.h"
 #include "engines/stark/xmg.h"
 
+#include "engines/stark/actor.h"
 #include "engines/stark/xrc.h"
 
 namespace Stark {
@@ -47,6 +48,9 @@ Scene::Scene(GfxDriver *gfx) : _gfx(gfx) {
 	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop6_wall.xmg", 0, 0));
 	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop8_pillar.xmg", 534, 0));
 
+	SceneElementActor *actor = SceneElementActor::load(&xarc, "oldapril.cir");
+	actor->setAnim(&xarc, "oldapril_idle.ani");
+	_elements.push_back(actor);
 	// Just to test the XRC loading code
 	XRCNode *node = XRCNode::read(xarc.createReadStreamForMember("00.xrc"));
 	delete node;

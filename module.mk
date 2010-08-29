@@ -1,6 +1,7 @@
 MODULE := engines/stark
 
 MODULE_OBJS := \
+	actor.o \
 	adpcm.o \
 	archive.o \
 	detection.o \
