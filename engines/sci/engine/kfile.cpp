@@ -954,7 +954,6 @@ reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager 
 		if (QfGImport == 3) {
 			// QfG3 sorts the filelisting itself, we can't let that happen otherwise our
 			//  virtual list would go out-of-sync
-			SegManager *segMan = g_sci->getEngineState()->_segMan;
 			reg_t savedHeros = segMan->findObjectByName("savedHeros");
 			if (!savedHeros.isNull())
 				writeSelectorValue(segMan, savedHeros, SELECTOR(sort), 0);
