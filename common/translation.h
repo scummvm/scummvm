@@ -207,5 +207,7 @@ private:
 #endif
 
 #define _s(str) str
+#define _sc(str, ctxt) str
+#define DECLARE_TRANSLATION_ADDITIONAL_CONTEXT(str, ctxt) 
 
 #endif
