@@ -914,9 +914,17 @@ void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask)
 		_virtualFiles.push_back("");
 		Common::StringArray::iterator it;
 		Common::StringArray::iterator it_end = foundFiles.end();
+		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+
 		for (it = foundFiles.begin(); it != it_end; it++) {
 			Common::String regularFilename = *it;
 			Common::String wrappedFilename = Common::String(regularFilename.c_str() + fileMask.size() - 1);
+
+			Common::SeekableReadStream *testfile = saveFileMan->openForLoading(regularFilename);
+			int32 testfileSize = testfile->size();
+			delete testfile;
+			if (testfileSize > 1024)
+				continue;
 			// We need to remove the prefix for display purposes
 			_files.push_back(wrappedFilename);
 			// but remember the actual name as well
