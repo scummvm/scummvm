@@ -914,7 +914,6 @@ void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask)
 		_virtualFiles.push_back("");
 		Common::StringArray::iterator it;
 		Common::StringArray::iterator it_end = foundFiles.end();
-		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
 		for (it = foundFiles.begin(); it != it_end; it++) {
 			Common::String regularFilename = *it;
