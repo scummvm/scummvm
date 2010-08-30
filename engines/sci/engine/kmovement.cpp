@@ -166,6 +166,9 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+#define USE_OLD_BRESEN 1
+
+#ifdef USE_OLD_BRESEN
 #define _K_BRESEN_AXIS_X 0
 #define _K_BRESEN_AXIS_Y 1
 
@@ -229,7 +232,216 @@ reg_t kInitBresen(EngineState *s, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
+#endif
 
+#ifndef USE_OLD_BRESEN
+reg_t kInitBresen(EngineState *s, int argc, reg_t *argv) {
+	SegManager *segMan = s->_segMan;
+	reg_t mover = argv[0];
+	reg_t client = readSelector(segMan, mover, SELECTOR(client));
+	int16 stepFactor = (argc >= 2) ? argv[1].toUint16() : 1;
+	int16 mover_x = readSelectorValue(segMan, mover, SELECTOR(x));
+	int16 mover_y = readSelectorValue(segMan, mover, SELECTOR(y));
+	int16 client_xStep = readSelectorValue(segMan, client, SELECTOR(xStep)) * stepFactor;
+	int16 client_yStep = readSelectorValue(segMan, client, SELECTOR(yStep)) * stepFactor;
+
+	int16 client_step;
+	if (client_xStep < client_yStep)
+		client_step = client_yStep * 2;
+	else
+		client_step = client_xStep * 2;
+
+	int16 deltaX = mover_x - readSelectorValue(segMan, client, SELECTOR(x));
+	int16 deltaY = mover_y - readSelectorValue(segMan, client, SELECTOR(y));
+	int16 mover_dx = 0;
+	int16 mover_dy = 0;
+	int16 mover_i1 = 0;
+	int16 mover_i2 = 0;
+	int16 mover_di = 0;
+	int16 mover_incr = 0;
+	int16 mover_xAxis = 0;
+
+	while (1) {
+		mover_dx = client_xStep;
+		mover_dy = client_yStep;
+		mover_incr = 1;
+
+		if (ABS(deltaX) >= ABS(deltaY)) {
+			mover_xAxis = 1;
+			if (deltaX < 0)
+				mover_dx = -mover_dx;
+			mover_dy = deltaX ? mover_dx * deltaY / deltaX : 0;
+			mover_i1 = ((mover_dx * deltaY) - (mover_dy * deltaX)) * 2;
+			if (deltaY < 0) {
+				mover_incr = -1;
+				mover_i1 = -mover_i1;
+			}
+			mover_i2 = mover_i1 - (deltaX * 2);
+			mover_di = mover_i1 - deltaX;
+			if (deltaX < 0) {
+				mover_i1 = -mover_i1;
+				mover_i2 = -mover_i2;
+				mover_di = -mover_di;
+			}
+		} else {
+			mover_xAxis = 0;
+			if (deltaY < 0)
+				mover_dy = -mover_dy;
+			mover_dx = deltaY ? mover_dy * deltaX / deltaY : 0;
+			mover_i1 = ((mover_dy * deltaX) - (mover_dx * deltaY)) * 2;
+			if (deltaX < 0) {
+				mover_incr = -1;
+				mover_i1 = -mover_i1;
+			}
+			mover_i2 = mover_i1 - (deltaY * 2);
+			mover_di = mover_i1 - deltaY;
+			if (deltaY < 0) {
+				mover_i1 = -mover_i1;
+				mover_i2 = -mover_i2;
+				mover_di = -mover_di;
+			}
+			break;
+		}
+		if (client_xStep <= client_yStep)
+			break;
+		if (!client_xStep)
+			break;
+		if (client_yStep >= ABS(mover_dy + mover_incr))
+			break;
+
+		client_step--;
+		if (!client_step)
+			error("kInitBresen failed");		
+		client_xStep--;
+	}
+
+	// set mover
+	writeSelectorValue(segMan, mover, SELECTOR(dx), mover_dx);
+	writeSelectorValue(segMan, mover, SELECTOR(dy), mover_dy);
+	writeSelectorValue(segMan, mover, SELECTOR(b_i1), mover_i1);
+	writeSelectorValue(segMan, mover, SELECTOR(b_i2), mover_i2);
+	writeSelectorValue(segMan, mover, SELECTOR(b_di), mover_di);
+	writeSelectorValue(segMan, mover, SELECTOR(b_incr), mover_incr);
+	writeSelectorValue(segMan, mover, SELECTOR(b_xAxis), mover_xAxis);
+	return s->r_acc;
+}
+#endif
+
+#ifndef USE_OLD_BRESEN
+reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
+	SegManager *segMan = s->_segMan;
+	reg_t mover = argv[0];
+	reg_t client = readSelector(segMan, mover, SELECTOR(client));
+	bool completed = false;
+
+	if (getSciVersion() >= SCI_VERSION_1_EGA) {
+		uint client_signal = readSelectorValue(segMan, client, SELECTOR(signal));
+		writeSelectorValue(segMan, client, SELECTOR(signal), client_signal & ~kSignalHitObstacle);
+	}
+
+	int16 mover_moveCnt = readSelectorValue(segMan, mover, SELECTOR(b_movCnt));
+	int16 client_moveSpeed = readSelectorValue(segMan, client, SELECTOR(moveSpeed));
+
+	mover_moveCnt++;
+	if (client_moveSpeed < mover_moveCnt) {
+		mover_moveCnt = 0;
+		int16 client_x = readSelectorValue(segMan, client, SELECTOR(x));
+		int16 client_y = readSelectorValue(segMan, client, SELECTOR(y));
+		int16 client_org_x = client_x;
+		int16 client_org_y = client_y;
+		int16 mover_x = readSelectorValue(segMan, mover, SELECTOR(x));
+		int16 mover_y = readSelectorValue(segMan, mover, SELECTOR(y));
+		int16 mover_xAxis = readSelectorValue(segMan, mover, SELECTOR(b_xAxis));
+		int16 mover_dx = readSelectorValue(segMan, mover, SELECTOR(dx));
+		int16 mover_dy = readSelectorValue(segMan, mover, SELECTOR(dy));
+		int16 mover_incr = readSelectorValue(segMan, mover, SELECTOR(b_incr));
+		int16 mover_i1 = readSelectorValue(segMan, mover, SELECTOR(b_i1));
+		int16 mover_i2 = readSelectorValue(segMan, mover, SELECTOR(b_i2));
+		int16 mover_di = readSelectorValue(segMan, mover, SELECTOR(b_di));
+		int16 mover_org_i1 = mover_i1;
+		int16 mover_org_i2 = mover_i2;
+		int16 mover_org_di = mover_di;
+
+		if ((getSciVersion() >= SCI_VERSION_1_EGA)) {
+			// save current position into mover
+			writeSelectorValue(segMan, mover, SELECTOR(xLast), client_x);
+			writeSelectorValue(segMan, mover, SELECTOR(yLast), client_y);
+		}
+		// sierra sci saves full client selector variables here
+
+		if (mover_xAxis) {
+			if (ABS(mover_x - client_x) < ABS(mover_dx))
+				completed = true;
+		} else {
+			if (ABS(mover_y - client_y) < ABS(mover_dy))
+				completed = true;
+		}
+		if (completed) {
+			client_x = mover_x;
+			client_y = mover_y;
+		} else {
+			client_x += mover_dx;
+			client_y += mover_dy;
+			if (mover_di < 0) {
+				mover_di += mover_i1;
+			} else {
+				mover_di += mover_i2;
+				if (mover_xAxis == 0) {
+					client_x += mover_incr;
+				} else {
+					client_y += mover_incr;
+				}
+			}
+		}
+		writeSelectorValue(segMan, client, SELECTOR(x), client_x);
+		writeSelectorValue(segMan, client, SELECTOR(y), client_y);
+
+		// Now call client::canBeHere/client::cantBehere to check for collisions
+		bool collision = false;
+		reg_t cantBeHere = NULL_REG;
+
+		if (SELECTOR(cantBeHere) != -1) {
+			// adding this here for hoyle 3 to get happy. CantBeHere is a dummy in hoyle 3 and acc is != 0 so we would
+			//  get a collision otherwise
+			s->r_acc = NULL_REG;
+			invokeSelector(s, client, SELECTOR(cantBeHere), argc, argv);
+			if (!s->r_acc.isNull())
+				collision = true;
+			cantBeHere = s->r_acc;
+		} else {
+			invokeSelector(s, client, SELECTOR(canBeHere), argc, argv);
+			if (s->r_acc.isNull())
+				collision = true;
+		}
+
+		if (collision) {
+			// sierra restores full client variables here, seems that restoring x/y is enough
+			writeSelectorValue(segMan, client, SELECTOR(x), client_org_x);
+			writeSelectorValue(segMan, client, SELECTOR(y), client_org_y);
+			mover_i1 = mover_org_i1;
+			mover_i2 = mover_org_i2;
+			mover_di = mover_org_di;
+
+			uint16 client_signal = readSelectorValue(segMan, client, SELECTOR(signal));
+			writeSelectorValue(segMan, client, SELECTOR(signal), client_signal | kSignalHitObstacle);
+		}
+		writeSelectorValue(segMan, mover, SELECTOR(b_i1), mover_i1);
+		writeSelectorValue(segMan, mover, SELECTOR(b_i2), mover_i2);
+		writeSelectorValue(segMan, mover, SELECTOR(b_di), mover_di);
+	}
+	writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), mover_moveCnt);
+	if ((getSciVersion() >= SCI_VERSION_1_EGA)) {
+		// Sierra SCI compared client_x&mover_x and client_y&mover_y
+		//  those variables were not initialized in case the moveSpeed
+		//  compare failed
+		if (completed)
+			invokeSelector(s, mover, SELECTOR(moveDone), argc, argv);
+	}
+	return s->r_acc;
+}
+#endif
+
+#ifdef USE_OLD_BRESEN
 #define MOVING_ON_X (((axis == _K_BRESEN_AXIS_X)&&bi1) || dx)
 #define MOVING_ON_Y (((axis == _K_BRESEN_AXIS_Y)&&bi1) || dy)
 
@@ -357,6 +569,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		return cantBeHere;
 	return make_reg(0, completed);
 }
+#endif
 
 extern void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv);
 
