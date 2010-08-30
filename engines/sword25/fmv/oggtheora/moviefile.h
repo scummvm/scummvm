@@ -41,25 +41,22 @@
 
 #include "sword25/kernel/common.h"
 
-#include "sword25/kernel/memlog_off.h"
-#include <string>
-#include "sword25/kernel/memlog_on.h"
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 
-class BS_OggState;
+class OggState;
 
 // -----------------------------------------------------------------------------
 // Klassendefinition
 // -----------------------------------------------------------------------------
 
-class BS_MovieFile
-{
+class MovieFile {
 public:
-  BS_MovieFile(const std::string & Filename, unsigned int ReadBlockSize, bool & Success);
-	virtual ~BS_MovieFile();
+	MovieFile(const Common::String &Filename, unsigned int ReadBlockSize, bool &Success);
+	virtual ~MovieFile();
 
-	int		BufferData(BS_OggState & OggState);
+	int		BufferData(OggState &OggState);
 	bool	IsEOF() const;
 
 private:
@@ -68,5 +65,7 @@ private:
 	unsigned int	m_ReadPos;
 	unsigned int	m_ReadBlockSize;
 };
+
+} // End of namespace Sword25
 
 #endif

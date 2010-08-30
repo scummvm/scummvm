@@ -38,22 +38,21 @@
 
 #include "sword25/fmv/oggtheora/oggstreamstate.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 
-BS_OggStreamState::BS_OggStreamState(int SerialNo)
-{
+OggStreamState::OggStreamState(int SerialNo) {
 	ogg_stream_init(&m_State, SerialNo);
 }
 
 // -----------------------------------------------------------------------------
 
-BS_OggStreamState::~BS_OggStreamState()
-{
+OggStreamState::~OggStreamState() {
 	ogg_stream_clear(&m_State);
 
 	// Alle gepufferten Pages löschen.
-	while (!m_PageBuffer.empty())
-	{
+	while (!m_PageBuffer.empty()) {
 		delete [] m_PageBuffer.front().header;
 		delete [] m_PageBuffer.front().body;
 		m_PageBuffer.pop();
@@ -62,24 +61,20 @@ BS_OggStreamState::~BS_OggStreamState()
 
 // -----------------------------------------------------------------------------
 
-int BS_OggStreamState::PageIn(ogg_page * PagePtr)
-{
+int OggStreamState::PageIn(ogg_page *PagePtr) {
 	return ogg_stream_pagein(&m_State, PagePtr);
 }
 
 // -----------------------------------------------------------------------------
 
-int BS_OggStreamState::PacketOut(ogg_packet * PacketPtr)
-{
+int OggStreamState::PacketOut(ogg_packet *PacketPtr) {
 	return ogg_stream_packetout(&m_State, PacketPtr);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_OggStreamState::BufferPage(ogg_page * PagePtr)
-{
-	if (PageBelongsToStream(PagePtr))
-	{
+void OggStreamState::BufferPage(ogg_page *PagePtr) {
+	if (PageBelongsToStream(PagePtr)) {
 		// Pages können nicht direkt gespeichert werden, da die Pointer im Laufe der Zeit ungültig werden.
 		// Daher wird an dieser Stelle eine tiefe Kopie der Page im erzeugt und im Pagebuffer angelegt.
 		ogg_page PageCopy;
@@ -96,10 +91,8 @@ void BS_OggStreamState::BufferPage(ogg_page * PagePtr)
 
 // -----------------------------------------------------------------------------
 
-int BS_OggStreamState::PageInBufferedPage()
-{
-	if (GetPageBufferSize() > 0)
-	{
+int OggStreamState::PageInBufferedPage() {
+	if (GetPageBufferSize() > 0) {
 		// Page in den Stream einfügen, löschen und aus dem Puffer entfernen.
 		int Result = PageIn(&m_PageBuffer.front());
 		delete [] m_PageBuffer.front().header;
@@ -113,21 +106,20 @@ int BS_OggStreamState::PageInBufferedPage()
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_OggStreamState::GetPageBufferSize() const
-{
+unsigned int OggStreamState::GetPageBufferSize() const {
 	return m_PageBuffer.size();
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_OggStreamState::GetUnprocessedBytes() const
-{
+unsigned int OggStreamState::GetUnprocessedBytes() const {
 	return m_State.body_fill - m_State.body_returned;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_OggStreamState::PageBelongsToStream(ogg_page * PagePtr) const
-{
+bool OggStreamState::PageBelongsToStream(ogg_page *PagePtr) const {
 	return m_State.serialno == ogg_page_serialno(PagePtr);
 }
+
+} // End of namespace Sword25

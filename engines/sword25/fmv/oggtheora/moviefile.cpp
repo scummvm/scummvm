@@ -47,42 +47,37 @@
 #include "sword25/fmv/oggtheora/oggstate.h"
 #include "sword25/fmv/oggtheora/moviefile.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 
-BS_MovieFile::BS_MovieFile(const std::string & Filename, unsigned int ReadBlockSize, bool & Success) :
-	m_Data(0), m_Size(0), m_ReadPos(0), m_ReadBlockSize(ReadBlockSize)
-{
-	m_Data = reinterpret_cast<char *>(BS_Kernel::GetInstance()->GetPackage()->GetFile(Filename, &m_Size));
-	if (!m_Data)
-	{
+MovieFile::MovieFile(const Common::String &Filename, unsigned int ReadBlockSize, bool &Success) :
+	m_Data(0), m_Size(0), m_ReadPos(0), m_ReadBlockSize(ReadBlockSize) {
+	m_Data = reinterpret_cast<char *>(Kernel::GetInstance()->GetPackage()->GetFile(Filename, &m_Size));
+	if (!m_Data) {
 		BS_LOG_ERRORLN("Could not load movie file \"%s\".", Filename.c_str());
 		Success = false;
-	}
-	else
+	} else
 		Success = true;
 }
 
 // -----------------------------------------------------------------------------
 
-BS_MovieFile::~BS_MovieFile()
-{
+MovieFile::~MovieFile() {
 	if (m_Data) delete [] m_Data;
 }
 
 // -----------------------------------------------------------------------------
 
-int BS_MovieFile::BufferData(BS_OggState & OggState)
-{
-	if (!m_Data || !m_Size || m_ReadPos >= m_Size)
-	{
+int MovieFile::BufferData(OggState &OggState) {
+	if (!m_Data || !m_Size || m_ReadPos >= m_Size) {
 		BS_LOG_ERRORLN("Tried to read past the movie buffer's end.");
 		return 0;
 	}
 
 	// just grab some more compressed bitstream and sync it for page extraction 
-	char * Buffer = OggState.SyncBuffer(m_ReadBlockSize);
-	if (!Buffer)
-	{
+	char *Buffer = OggState.SyncBuffer(m_ReadBlockSize);
+	if (!Buffer) {
 		BS_LOG_ERRORLN("ogg_sync_buffer() failed.");
 		return 0;
 	}
@@ -99,7 +94,8 @@ int BS_MovieFile::BufferData(BS_OggState & OggState)
 
 // -----------------------------------------------------------------------------
 
-bool BS_MovieFile::IsEOF() const
-{
+bool MovieFile::IsEOF() const {
 	return m_ReadPos >= m_Size;
 }
+
+} // End of namespace Sword25

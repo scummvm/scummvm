@@ -39,30 +39,32 @@
 // Includes
 // -----------------------------------------------------------------------------
 
+#include "common/queue.h"
 #include "sword25/kernel/common.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
-// Klassendefinition
+// Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_AudioBuffer
-{
+class AudioBuffer {
 public:
-	BS_AudioBuffer();
-	virtual ~BS_AudioBuffer();
+	AudioBuffer();
+	virtual ~AudioBuffer();
 
-	void Push(signed short * SamplePtr, unsigned int SampleCount);
-	unsigned int Pop(signed short * SamplePtr, unsigned int SampleCount);
+	void Push(signed short *SamplePtr, unsigned int SampleCount);
+	unsigned int Pop(signed short *SamplePtr, unsigned int SampleCount);
 	unsigned int Size() const;
 
 private:
-	// PIMPL Pattern
-	struct Impl;
-	Impl * t;
+	Common::Queue<unsigned short> _buffer;
 
 	// Kopie verbieten
-	BS_AudioBuffer(const BS_AudioBuffer &);
-	const BS_AudioBuffer & operator=(const BS_AudioBuffer &);
+	AudioBuffer(const AudioBuffer &);
+	const AudioBuffer & operator=(const AudioBuffer &);
 };
+
+} // End of namespace Sword25
 
 #endif

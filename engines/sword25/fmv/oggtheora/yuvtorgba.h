@@ -39,21 +39,19 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "sword25/kernel/memlog_off.h"
-#include <vector>
-#include "sword25/kernel/memlog_on.h"
-
 #include "sword25/kernel/common.h"
-#include "theora/theora.h"
+#include <theora/theora.h>
 
+namespace Sword25 {
 // -----------------------------------------------------------------------------
 // Klassendefinition
 // -----------------------------------------------------------------------------
 
-class BS_YUVtoRGBA
-{
+class BS_YUVtoRGBA {
 public:
-	static void YUVtoRGBA(yuv_buffer & YUVBuffer, const theora_info & TheoraInfo, std::vector<unsigned char> & Pixels);
+	static void YUVtoRGBA(yuv_buffer &YUVBuffer, const theora_info &TheoraInfo, byte *Pixels, int PixelsSize);
 };
+
+} // End of namespace Sword25
 
 #endif

@@ -40,50 +40,46 @@
 // -----------------------------------------------------------------------------
 
 #include "sword25/kernel/common.h"
-#include "ogg/ogg.h"
-#include <queue>
-// XXX
-#include <iostream>
-// XXX
+#include <ogg/ogg.h>
+#include "common/queue.h"
+
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
-// Klassendefinition
+// Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_OggStreamState
-{
+class OggStreamState {
 public:
-	BS_OggStreamState(int SerialNo);
-	virtual ~BS_OggStreamState();
+	OggStreamState(int SerialNo);
+	virtual ~OggStreamState();
 
-	int PageIn(ogg_page * PagePtr);
-	int PacketOut(ogg_packet * PacketPtr);
+	int PageIn(ogg_page *PagePtr);
+	int PacketOut(ogg_packet *PacketPtr);
 
-	void BufferPage(ogg_page * PagePtr);
+	void BufferPage(ogg_page *PagePtr);
 	int PageInBufferedPage();
 	unsigned int GetPageBufferSize() const;
 
 	unsigned int GetUnprocessedBytes() const;
-	bool PageBelongsToStream(ogg_page * PagePtr) const;
+	bool PageBelongsToStream(ogg_page *PagePtr) const;
 
 	// XXX
-	void DumpInternals()
-	{
-		using namespace std;
-
-		cout << "body_storage: " << m_State.body_storage << endl;
-		cout << "body_fill: " << m_State.body_fill << endl;
-		cout << "body_returned: " << m_State.body_returned << endl;
-		cout << "lacing_storage: " << m_State.lacing_storage << endl;
-		cout << "lacing_fill: " << m_State.lacing_fill << endl;
-		cout << "lacing_returned: " << m_State.lacing_returned << endl;
-		cout << endl;
+	void DumpInternals() {
+		warning("body_storage: %d", m_State.body_storage);
+		warning("body_fill: %d", m_State.body_fill);
+		warning("body_returned: %d", m_State.body_returned);
+		warning("lacing_storage: %d", m_State.lacing_storage);
+		warning("lacing_fill: %d", m_State.lacing_fill);
+		warning("lacing_returned: %d", m_State.lacing_returned);
 	}
 	// XXX
 
 private:
 	ogg_stream_state		m_State;
-	std::queue<ogg_page>	m_PageBuffer;
+	Common::Queue<ogg_page>	m_PageBuffer;
 };
+
+} // End of namespace Sword25
 
 #endif

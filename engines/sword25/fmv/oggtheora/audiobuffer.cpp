@@ -37,72 +37,46 @@
 // -----------------------------------------------------------------------------
 
 #include "sword25/fmv/oggtheora/audiobuffer.h"
-#include <windows.h>
-#include <queue>
-
-using namespace std;
 
 // -----------------------------------------------------------------------------
 
-struct BS_AudioBuffer::Impl
-{
-	CRITICAL_SECTION CS;
-	queue<signed short> Buffer;
-};
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 
-BS_AudioBuffer::BS_AudioBuffer() : t(new Impl())
-{
-	InitializeCriticalSection(&t->CS);
+AudioBuffer::AudioBuffer() {
 }
 
 // -----------------------------------------------------------------------------
 
-BS_AudioBuffer::~BS_AudioBuffer()
-{
-	DeleteCriticalSection(&t->CS);
-
-	delete t;
+AudioBuffer::~AudioBuffer() {
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_AudioBuffer::Push(signed short * SamplePtr, unsigned int SampleCount)
-{
-	EnterCriticalSection(&t->CS);
-
-	signed short * SampleEndPtr = SamplePtr + SampleCount;
-	while (SamplePtr != SampleEndPtr) t->Buffer.push(*SamplePtr++);
-
-	LeaveCriticalSection(&t->CS);
+void AudioBuffer::Push(signed short *SamplePtr, unsigned int SampleCount) {
+	signed short *SampleEndPtr = SamplePtr + SampleCount;
+	while (SamplePtr != SampleEndPtr) _buffer.push(*SamplePtr++);
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_AudioBuffer::Pop(signed short * SamplePtr, unsigned int SampleCount)
-{
-	EnterCriticalSection(&t->CS);
-
+unsigned int AudioBuffer::Pop(signed short *SamplePtr, unsigned int SampleCount) {
 	unsigned int i = 0;
-	for (; i < SampleCount && !t->Buffer.empty(); ++i)
-	{
-		SamplePtr[i] = t->Buffer.front();
-		t->Buffer.pop();
+	for (; i < SampleCount && !_buffer.empty(); ++i) {
+		SamplePtr[i] = _buffer.front();
+		_buffer.pop();
 	}
-
-	LeaveCriticalSection(&t->CS);
 
 	return i;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_AudioBuffer::Size() const
-{
-	EnterCriticalSection(&t->CS);
-	unsigned int result = t->Buffer.size();
-	LeaveCriticalSection(&t->CS);
+unsigned int AudioBuffer::Size() const {
+	unsigned int result = _buffer.size();
 
 	return result;
 }
+
+} // End of namespace Sword25

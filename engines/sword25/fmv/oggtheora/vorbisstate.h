@@ -42,25 +42,26 @@
 #include "sword25/kernel/common.h"
 #include <vorbis/codec.h>
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
-// Klassendefinition
+// Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_VorbisState
-{
+class VorbisState {
 public:
-	BS_VorbisState();
-	virtual ~BS_VorbisState();
+	VorbisState();
+	virtual ~VorbisState();
 
-	int	SynthesisHeaderIn(ogg_packet * OggPacketPtr);
+	int	SynthesisHeaderIn(ogg_packet *OggPacketPtr);
 	int SynthesisInit();
 	int BlockInit();
-	int SynthesisPCMout(float *** PCM);
+	int SynthesisPCMout(float ***PCM);
 	int SynthesisRead(int Samples);
-	int Synthesis(ogg_packet * OggPacketPtr);
+	int Synthesis(ogg_packet *OggPacketPtr);
 	int SynthesisBlockIn();
 
-	const vorbis_info & GetInfo() const { return m_Info; }
+	const vorbis_info &GetInfo() const { return m_Info; }
 
 private:
 	vorbis_info					m_Info;
@@ -70,5 +71,7 @@ private:
 	vorbis_block				m_Block;
 	vorbis_comment				m_Comment;
 };
+
+} // End of namespace Sword25
 
 #endif

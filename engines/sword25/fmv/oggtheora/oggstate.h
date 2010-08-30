@@ -40,39 +40,37 @@
 // -----------------------------------------------------------------------------
 
 #include "sword25/kernel/common.h"
-#include "ogg/ogg.h"
-// XXX
-#include <iostream>
-// XXX
+#include <ogg/ogg.h>
+
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
-// Klassendefinition
+// Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_OggState
-{
+class OggState {
 public:
-	BS_OggState();
-	virtual ~BS_OggState();
+	OggState();
+	virtual ~OggState();
 
-	int		SyncPageout(ogg_page * OggPage);
+	int		SyncPageout(ogg_page *OggPage);
 	char *	SyncBuffer(long Size);
 	int		SyncWrote(long Bytes);
 
 	// XXX
-	void DumpInternals()
-	{
-		std::cout << "bodybytes: " << m_SyncState.bodybytes << std::endl;
-		std::cout << "fill: " << m_SyncState.fill << std::endl;
-		std::cout << "headerbytes: " << m_SyncState.headerbytes << std::endl;
-		std::cout << "returned: " << m_SyncState.returned << std::endl;
-		std::cout << "storage: " << m_SyncState.storage << std::endl;
-		std::cout << "unsynched: " << m_SyncState.unsynced << std::endl;
-		std::cout << std::endl;
+	void DumpInternals() {
+		warning("bodybytes: %d", m_SyncState.bodybytes);
+		warning("fill: %d", m_SyncState.fill);
+		warning("headerbytes: %d", m_SyncState.headerbytes );
+		warning("returned: %d", m_SyncState.returned );
+		warning("storage: %d", m_SyncState.storage );
+		warning("unsynched: %d", m_SyncState.unsynced );
 	}
 	// XXX
 private:
 	ogg_sync_state				m_SyncState;
 };
+
+} // End of namespace Sword25
 
 #endif

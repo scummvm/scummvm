@@ -38,19 +38,19 @@
 
 #include "sword25/fmv/oggtheora/theorastate.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 
-BS_TheoraState::BS_TheoraState() :
-	m_StateInitialized(false)
-{
+TheoraState::TheoraState() :
+		m_StateInitialized(false) {
 	theora_comment_init(&m_Comment);
 	theora_info_init(&m_Info);
 }
 
 // -----------------------------------------------------------------------------
 
-BS_TheoraState::~BS_TheoraState()
-{
+TheoraState::~TheoraState() {
 	if (m_StateInitialized) theora_clear(&m_State);
 	theora_info_clear(&m_Info);
 	theora_comment_clear(&m_Comment);
@@ -58,15 +58,13 @@ BS_TheoraState::~BS_TheoraState()
 
 // -----------------------------------------------------------------------------
 
-int BS_TheoraState::DecodeHeader(ogg_packet * OggPacketPtr)
-{
+int TheoraState::DecodeHeader(ogg_packet *OggPacketPtr) {
 	return theora_decode_header(&m_Info, &m_Comment, OggPacketPtr);
 }
 
 // -----------------------------------------------------------------------------
 
-int BS_TheoraState::DecodeInit()
-{
+int TheoraState::DecodeInit() {
 	int Result = theora_decode_init(&m_State, &m_Info);
 	m_StateInitialized = (Result == 0);
 	return Result;
@@ -74,21 +72,20 @@ int BS_TheoraState::DecodeInit()
 
 // -----------------------------------------------------------------------------
 
-double BS_TheoraState::GranuleTime()
-{
+double TheoraState::GranuleTime() {
 	return theora_granule_time(&m_State, m_State.granulepos);
 }
 
 // -----------------------------------------------------------------------------
 
-int BS_TheoraState::DecodePacketIn(ogg_packet * OggPacketPtr)
-{
+int TheoraState::DecodePacketIn(ogg_packet *OggPacketPtr) {
 	return theora_decode_packetin(&m_State, OggPacketPtr);
 }
 
 // -----------------------------------------------------------------------------
 
-int BS_TheoraState::DecodeYUVOut(yuv_buffer * YUV)
-{
+int TheoraState::DecodeYUVOut(yuv_buffer *YUV) {
 	return theora_decode_YUVout(&m_State, YUV);
 }
+
+} // End of namespace Sword25
