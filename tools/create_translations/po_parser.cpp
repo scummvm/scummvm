@@ -175,6 +175,22 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 	}
 	// We now have rightIndex = leftIndex - 1 and we need to insert the new message
 	// between the two (i.a. at leftIndex).
+	// However since the TranslationManager will pick the translation associated to no
+	// context if it is not present for a specific context, we can optimize the file
+	// size, memory used at run-time and performances (less strings to read from the file
+	// and less strings to look for) by avoiding duplicate.
+	if (context != NULL && *context != '\0') {
+		// Check if we have the same translation for no context
+		int contextIndex = leftIndex - 1;
+		while (contextIndex >= 0 && strcmp (message, _list[contextIndex]->msgid) == 0) {
+			--contextIndex;
+		}
+		++contextIndex;
+		if (contextIndex < leftIndex && _list[contextIndex]->msgctxt == NULL && strcmp(translation, _list[contextIndex]->msgstr) == 0)
+			return;
+	}
+	
+	
 	if (_size + 1 > _allocated) {
 		_allocated += 100;
 		PoMessageEntry **newList = new PoMessageEntry*[_allocated];
@@ -190,6 +206,29 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 	}
 	_list[leftIndex] = new PoMessageEntry(translation, message, context);
 	++_size;
+	
+	if (context == NULL || *context == '\0') {
+		// Remove identical translations for a specific context (see comment above)
+		int contextIndex = leftIndex + 1;
+		int removed = 0;
+		while (contextIndex < _size && strcmp(message, _list[contextIndex]->msgid) == 0) {
+			if (strcmp(translation, _list[contextIndex]->msgstr) == 0) {
+				delete _list[contextIndex];
+				++removed;
+			} else {
+				_list[contextIndex - removed] = _list[contextIndex];
+			}
+			++contextIndex;
+		}
+		if (removed > 0) {
+			while (contextIndex < _size) {
+				_list[contextIndex - removed] = _list[contextIndex];
+				++contextIndex;
+			}
+		}
+		_size -= removed;
+	}
+	
 }
 
 const char *PoMessageEntryList::language() const {
