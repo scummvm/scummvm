@@ -275,11 +275,11 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	if (g_sci->_features->handleMoveCount()) {
 		if (max_movcnt > movcnt) {
 			++movcnt;
-			writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), movcnt); // Needed for HQ1/Ogre?
-			return NULL_REG; // why do we exit here?
+			writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), movcnt);
+			return NULL_REG; // sierra sci1+ checks, if destination got reached in this case
 		} else {
 			movcnt = 0;
-			writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), movcnt); // Needed for HQ1/Ogre?
+			writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), movcnt);
 		}
 	}
 
