@@ -117,6 +117,7 @@ private:
 	void deinitGfx();
 	void updateScreenResolution();
 	void switchVideoMode(int mode);
+	bool needsScreenUpdate();
 
 	void initSfx();
 	void deinitSfx();
