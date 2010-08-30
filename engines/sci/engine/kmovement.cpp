@@ -333,16 +333,21 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	reg_t mover = argv[0];
 	reg_t client = readSelector(segMan, mover, SELECTOR(client));
 	bool completed = false;
+	bool handleMoveCount = g_sci->_features->handleMoveCount();
 
 	if (getSciVersion() >= SCI_VERSION_1_EGA) {
 		uint client_signal = readSelectorValue(segMan, client, SELECTOR(signal));
 		writeSelectorValue(segMan, client, SELECTOR(signal), client_signal & ~kSignalHitObstacle);
 	}
 
-	int16 mover_moveCnt = readSelectorValue(segMan, mover, SELECTOR(b_movCnt));
-	int16 client_moveSpeed = readSelectorValue(segMan, client, SELECTOR(moveSpeed));
+	int16 mover_moveCnt = 1;
+	int16 client_moveSpeed = 0;
+	if (handleMoveCount) {
+		mover_moveCnt = readSelectorValue(segMan, mover, SELECTOR(b_movCnt));
+		client_moveSpeed = readSelectorValue(segMan, client, SELECTOR(moveSpeed));
+		mover_moveCnt++;
+	}
 
-	mover_moveCnt++;
 	if (client_moveSpeed < mover_moveCnt) {
 		mover_moveCnt = 0;
 		int16 client_x = readSelectorValue(segMan, client, SELECTOR(x));
@@ -429,7 +434,9 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		writeSelectorValue(segMan, mover, SELECTOR(b_i2), mover_i2);
 		writeSelectorValue(segMan, mover, SELECTOR(b_di), mover_di);
 	}
-	writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), mover_moveCnt);
+	if (handleMoveCount)
+		writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), mover_moveCnt);
+
 	if ((getSciVersion() >= SCI_VERSION_1_EGA)) {
 		// Sierra SCI compared client_x&mover_x and client_y&mover_y
 		//  those variables were not initialized in case the moveSpeed
