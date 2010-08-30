@@ -923,8 +923,8 @@ void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask)
 			Common::SeekableReadStream *testfile = saveFileMan->openForLoading(regularFilename);
 			int32 testfileSize = testfile->size();
 			delete testfile;
-			if (testfileSize > 1024)
-				continue;
+			if (testfileSize > 1024) // check, if larger than 1k. in that case its a saved game.
+				continue; // and we dont want to have those in the list
 			// We need to remove the prefix for display purposes
 			_files.push_back(wrappedFilename);
 			// but remember the actual name as well
