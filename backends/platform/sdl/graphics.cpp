@@ -56,6 +56,8 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
+DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Normal (no scaling)", "lowres")
+
 // Table of relative scalers magnitudes
 // [definedScale - 1][scaleFactor - 1]
 static ScalerProc *scalersMagn[3][3] = {

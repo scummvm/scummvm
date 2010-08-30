@@ -337,6 +337,9 @@ const ThemeEngine::Renderer ThemeEngine::_rendererModes[] = {
 	{ _s("Antialiased Renderer (16bpp)"), "aa_16bpp", kGfxAntialias16bit }
 #endif
 };
+	
+DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Standard Renderer (16bpp)", "lowres")
+DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Antialiased Renderer (16bpp)", "lowres")
 
 const uint ThemeEngine::_rendererModesSize = ARRAYSIZE(ThemeEngine::_rendererModes);
 

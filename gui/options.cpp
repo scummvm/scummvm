@@ -627,7 +627,10 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 
 void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &prefix) {
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
-
+	Common::String context;
+	if (g_system->getOverlayWidth() <= 320)
+		context = "lowres";
+	
 	// The GFX mode popup
 	_gfxPopUpDesc = new StaticTextWidget(boss, prefix + "grModePopupDesc", _("Graphics mode:"));
 	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup");
@@ -635,7 +638,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	_gfxPopUp->appendEntry(_("<default>"));
 	_gfxPopUp->appendEntry("");
 	while (gm->name) {
-		_gfxPopUp->appendEntry(_(gm->description), gm->id);
+		_gfxPopUp->appendEntry(_c(gm->description, context), gm->id);
 		gm++;
 	}
 
@@ -646,7 +649,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	_renderModePopUp->appendEntry("");
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
 	for (; rm->code; ++rm) {
-		_renderModePopUp->appendEntry(_(rm->description), rm->id);
+		_renderModePopUp->appendEntry(_c(rm->description, context), rm->id);
 	}
 
 	// Fullscreen checkbox
@@ -729,7 +732,10 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 	}
 
 	// SoundFont
-	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _("SoundFont:"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"), kChooseSoundFontCmd);
+	if (g_system->getOverlayWidth() > 320)
+		_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _("SoundFont:"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"), kChooseSoundFontCmd);
+	else
+		_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _c("SoundFont:", "lowres"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"), kChooseSoundFontCmd);
 	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", _c("None", "soundfont"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"));
 	_soundFontClearButton = new ButtonWidget(boss, prefix + "mcFontClearButton", "C", _("Clear value"), kClearSoundFontCmd);
 
@@ -751,7 +757,10 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 	_mt32DevicePopUp = new PopUpWidget(boss, prefix + "auPrefMt32Popup");
 
 	// Native mt32 setting
-	_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _("True Roland MT-32 (disable GM emulation)"), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
+	if (g_system->getOverlayWidth() > 320)
+		_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _("True Roland MT-32 (disable GM emulation)"), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
+	else
+		_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _c("True Roland MT-32 (disable GM emulation)", "lowres"), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
 
 	// GS Extensions setting
 	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Enable Roland GS Mode"), _("Turns off General MIDI mapping for games with Roland MT-32 soundtrack"));
@@ -778,24 +787,29 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 // make use of the widgets. The launcher range is 0-255. SCUMM's 0-9
 void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &prefix, int maxSliderVal) {
 
-	_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", _("Text and Speech:"));
-
 	if (g_system->getOverlayWidth() > 320) {
+		_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", _("Text and Speech:"));
+
 		_subToggleGroup = new RadiobuttonGroup(boss, kSubtitleToggle);
 
 		_subToggleSpeechOnly = new RadiobuttonWidget(boss, prefix + "subToggleSpeechOnly", _subToggleGroup, kSubtitlesSpeech, _("Speech"));
 		_subToggleSubOnly = new RadiobuttonWidget(boss, prefix + "subToggleSubOnly", _subToggleGroup, kSubtitlesSubs, _("Subtitles"));
 		_subToggleSubBoth = new RadiobuttonWidget(boss, prefix + "subToggleSubBoth", _subToggleGroup, kSubtitlesBoth, _("Both"));
+		
+		_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", _("Subtitle speed:"));
 	} else {
+		_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", _c("Text and Speech:", "lowres"));
+
 		_subToggleGroup = new RadiobuttonGroup(boss, kSubtitleToggle);
 
 		_subToggleSpeechOnly = new RadiobuttonWidget(boss, prefix + "subToggleSpeechOnly", _subToggleGroup, kSubtitlesSpeech, _("Spch"), _("Speech"));
 		_subToggleSubOnly = new RadiobuttonWidget(boss, prefix + "subToggleSubOnly", _subToggleGroup, kSubtitlesSubs, _("Subs"), _("Subtitles"));
-		_subToggleSubBoth = new RadiobuttonWidget(boss, prefix + "subToggleSubBoth", _subToggleGroup, kSubtitlesBoth, _("Both"), _("Show subtitles and play speech"));
+		_subToggleSubBoth = new RadiobuttonWidget(boss, prefix + "subToggleSubBoth", _subToggleGroup, kSubtitlesBoth, _c("Both", "lowres"), _("Show subtitles and play speech"));
+		
+		_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", _c("Subtitle speed:", "lowres"));
 	}
 
 	// Subtitle speed
-	_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", _("Subtitle speed:"));
 	_subSpeedSlider = new SliderWidget(boss, prefix + "subSubtitleSpeedSlider", 0, kSubtitleSpeedChanged);
 	_subSpeedLabel = new StaticTextWidget(boss, prefix + "subSubtitleSpeedLabel", "100%");
 	_subSpeedSlider->setMinValue(0); _subSpeedSlider->setMaxValue(maxSliderVal);
@@ -807,7 +821,10 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &p
 void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &prefix) {
 
 	// Volume controllers
-	_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", _("Music volume:"));
+	if (g_system->getOverlayWidth() > 320)
+		_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", _("Music volume:"));
+	else
+		_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", _c("Music volume:", "lowres"));
 	_musicVolumeSlider = new SliderWidget(boss, prefix + "vcMusicSlider", 0, kMusicVolumeChanged);
 	_musicVolumeLabel = new StaticTextWidget(boss, prefix + "vcMusicLabel", "100%");
 	_musicVolumeSlider->setMinValue(0);
@@ -816,15 +833,20 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 
 	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", _("Mute All"), 0, kMuteAllChanged);
 
-
-	_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", _("SFX volume:"), _("Special sound effects volume"));
+	if (g_system->getOverlayWidth() > 320)
+		_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", _("SFX volume:"), _("Special sound effects volume"));
+	else
+		_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", _c("SFX volume:", "lowres"), _("Special sound effects volume"));
 	_sfxVolumeSlider = new SliderWidget(boss, prefix + "vcSfxSlider", _("Special sound effects volume"), kSfxVolumeChanged);
 	_sfxVolumeLabel = new StaticTextWidget(boss, prefix + "vcSfxLabel", "100%");
 	_sfxVolumeSlider->setMinValue(0);
 	_sfxVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 
-	_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , _("Speech volume:"));
+	if (g_system->getOverlayWidth() > 320)
+		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , _("Speech volume:"));
+	else
+		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , _c("Speech volume:", "lowres"));
 	_speechVolumeSlider = new SliderWidget(boss, prefix + "vcSpeechSlider", 0, kSpeechVolumeChanged);
 	_speechVolumeLabel = new StaticTextWidget(boss, prefix + "vcSpeechLabel", "100%");
 	_speechVolumeSlider->setMinValue(0);
@@ -923,7 +945,10 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	addAudioControls(tab, "GlobalOptions_Audio.");
 	addSubtitleControls(tab, "GlobalOptions_Audio.");
 
-	tab->addTab(_("Volume"));
+	if (g_system->getOverlayWidth() > 320)
+		tab->addTab(_("Volume"));
+	else
+		tab->addTab(_c("Volume", "lowres"));
 	addVolumeControls(tab, "GlobalOptions_Volume.");
 
 	// TODO: cd drive setting
@@ -968,7 +993,10 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	// 6) The miscellaneous tab
 	//
-	tab->addTab(_("Misc"));
+	if (g_system->getOverlayWidth() > 320)
+		tab->addTab(_("Misc"));
+	else
+		tab->addTab(_c("Misc", "lowres"));
 
 	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", _("Theme:"), 0, kChooseThemeCmd);
 	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
@@ -977,10 +1005,18 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_rendererPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.RendererPopupDesc", _("GUI Renderer:"));
 	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.RendererPopup");
 
-	for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
-		_rendererPopUp->appendEntry(_(GUI::ThemeEngine::_rendererModes[i].name), GUI::ThemeEngine::_rendererModes[i].mode);
+	if (g_system->getOverlayWidth() > 320) {
+		for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
+			_rendererPopUp->appendEntry(_(GUI::ThemeEngine::_rendererModes[i].name), GUI::ThemeEngine::_rendererModes[i].mode);
+	} else {
+		for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
+			_rendererPopUp->appendEntry(_c(GUI::ThemeEngine::_rendererModes[i].name, "lowres"), GUI::ThemeEngine::_rendererModes[i].mode);
+	}
 
-	_autosavePeriodPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopupDesc", _("Autosave:"));
+	if (g_system->getOverlayWidth() > 320)
+		_autosavePeriodPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopupDesc", _("Autosave:"));
+	else
+		_autosavePeriodPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopupDesc", _c("Autosave:", "lowres"));
 	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopup");
 
 	for (int i = 0; savePeriodLabels[i]; i++) {
