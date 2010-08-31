@@ -266,6 +266,16 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 	kernelShow();
 }
 
+// this list contains all mandatory set cursor changes, that need special handling
+//  ffs. GfxCursor::setPosition (below)
+//    Game,            newPosition, validRect
+static const SciCursorSetPositionWorkarounds setPositionWorkarounds[] = {
+    { GID_ISLANDBRAIN, 84, 109,     46, 76, 174, 243 }, // island of dr. brain / game menu
+    { GID_LSL5,        23, 171,     0, 0, 26, 320 },    // larry 5 / skip forward helper
+    { GID_QFG1VGA,     64, 174,     40, 37, 74, 284 },  // Quest For Glory 1 VGA / run/walk/sleep sub-menu
+    { (SciGameId)0,    -1, -1,     -1, -1, -1, -1 }
+};
+
 void GfxCursor::setPosition(Common::Point pos) {
 	// Don't set position, when cursor is not visible.
 	// This fixes eco quest 1 (floppy) right at the start, which is setting
@@ -281,6 +291,31 @@ void GfxCursor::setPosition(Common::Point pos) {
 	} else {
 		_screen->adjustToUpscaledCoordinates(pos.y, pos.x);
 		g_system->warpMouse(pos.x, pos.y);
+	}
+
+	// Some games display a new menu, set mouse position somewhere within and
+	//  expect it to be in there. This is fine for a real mouse, but on wii using
+	//  wii-mote or touch interfaces this won't work. In fact on those platforms
+	//  the menus will close immediately because of that behaviour.
+	// We identify those cases and set a reaction-rect. If the mouse it outside
+	//  of that rect, we won't report the position back to the scripts.
+	//  As soon as the mouse was inside once, we will revert to normal behaviour
+	// Currently this code is enabled for all platforms, especially because we can't
+	//  differentiate between e.g. Windows used via mouse and Windows used via touchscreen
+	// The workaround won't hurt real-mouse platforms
+	const SciGameId gameId = g_sci->getGameId();
+	const SciCursorSetPositionWorkarounds *workaround;
+	workaround = setPositionWorkarounds;
+	while (workaround->newPositionX != -1) {
+		if (workaround->gameId == gameId
+			&& ((workaround->newPositionX == pos.x) && (workaround->newPositionY == pos.y))) {
+			EngineState *s = g_sci->getEngineState();
+			s->_cursorWorkaroundActive = true;
+			s->_cursorWorkaroundPoint = pos;
+			s->_cursorWorkaroundRect = Common::Rect(workaround->rectLeft, workaround->rectTop, workaround->rectRight, workaround->rectBottom);
+			return;
+		}
+		workaround++;
 	}
 }
 

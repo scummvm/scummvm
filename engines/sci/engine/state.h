@@ -147,6 +147,10 @@ public:
 
 	uint _chosenQfGImportItem; // Remembers the item selected in QfG import rooms
 
+	bool _cursorWorkaroundActive; // ffs. GfxCursor::setPosition()
+	Common::Point _cursorWorkaroundPoint;
+	Common::Rect _cursorWorkaroundRect;
+
 public:
 	/* VM Information */
 

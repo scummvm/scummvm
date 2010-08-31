@@ -112,6 +112,8 @@ void EngineState::reset(bool isRestoring) {
 
 	_chosenQfGImportItem = 0;
 
+	_cursorWorkaroundActive = false;
+
 	scriptStepCounter = 0;
 	scriptGCInterval = GC_INTERVAL;
 }

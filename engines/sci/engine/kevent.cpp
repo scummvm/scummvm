@@ -44,7 +44,6 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	int mask = argv[0].toUint16();
 	reg_t obj = argv[1];
 	SciEvent curEvent;
-	int oldx, oldy;
 	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_KEYMOD_ALL : SCI_KEYMOD_NO_FOOLOCK;
 	SegManager *segMan = s->_segMan;
 	Common::Point mousePos;
@@ -69,12 +68,23 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, 1);
 	}
 
-	oldx = mousePos.x;
-	oldy = mousePos.y;
 	curEvent = g_sci->getEventManager()->getSciEvent(mask);
 
 	if (g_sci->getVocabulary())
 		g_sci->getVocabulary()->parser_event = NULL_REG; // Invalidate parser event
+
+	if (s->_cursorWorkaroundActive) {
+		// ffs: GfxCursor::setPosition()
+		// we check, if actual cursor position is inside given rect
+		//  if that's the case, we switch ourself off. Otherwise
+		//  we simulate the original set position to the scripts
+		if (s->_cursorWorkaroundRect.contains(mousePos.x, mousePos.y)) {
+			s->_cursorWorkaroundActive = false;
+		} else {
+			mousePos.x = s->_cursorWorkaroundPoint.x;
+			mousePos.y = s->_cursorWorkaroundPoint.y;
+		}
+	}
 
 	writeSelectorValue(segMan, obj, SELECTOR(x), mousePos.x);
 	writeSelectorValue(segMan, obj, SELECTOR(y), mousePos.y);
