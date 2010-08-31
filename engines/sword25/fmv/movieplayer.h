@@ -41,6 +41,7 @@
 
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/service.h"
+#include "graphics/surface.h"
 
 namespace Sword25 {
 
@@ -140,6 +141,7 @@ private:
 	bool _RegisterScriptBindings();
 
 	TheoraDecoder *_decoder;
+	Graphics::Surface *_backSurface;
 };
 
 } // End of namespace Sword25

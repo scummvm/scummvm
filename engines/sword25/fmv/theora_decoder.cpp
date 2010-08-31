@@ -53,10 +53,6 @@ TheoraDecoder::TheoraDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundT
 	_fileStream = 0;
 	_surface = 0;
 
-	_theoraPacket = 0;
-	_vorbisPacket = 0;
-	_stateFlag = false;
-
 	_soundType = soundType;
 	_audStream = 0;
 	_audHandle = new Audio::SoundHandle();
@@ -299,7 +295,6 @@ void TheoraDecoder::close() {
 		if (_mixer)
 			_mixer->stopHandle(*_audHandle);
 		_audStream = 0;
-		_vorbisPacket = 0;
 	}
 	if (_theoraPacket) {
 		ogg_stream_clear(&_theoraOut);
@@ -307,7 +302,6 @@ void TheoraDecoder::close() {
 		th_comment_clear(&_theoraComment);
 		th_info_clear(&_theoraInfo);
 		_theoraDecode = 0;
-		_theoraPacket = 0;
 	}
 
 	if (!_fileStream)
@@ -463,6 +457,10 @@ void TheoraDecoder::reset() {
 	_audiobufGranulePos = 0;
 
 	_curFrame = 0;
+
+	_theoraPacket = 0;
+	_vorbisPacket = 0;
+	_stateFlag = false;
 }
 
 bool TheoraDecoder::endOfVideo() const {

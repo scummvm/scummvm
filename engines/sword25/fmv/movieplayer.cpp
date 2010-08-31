@@ -32,9 +32,12 @@
  *
  */
 
+#include "graphics/surface.h"
+
 #include "sword25/fmv/movieplayer.h"
 #include "sword25/fmv/theora_decoder.h"
 #include "sword25/kernel/kernel.h"
+#include "sword25/gfx/graphicengine.h"
 #include "sword25/package/packagemanager.h"
 
 namespace Sword25 {
@@ -52,6 +55,7 @@ MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel) {
 		BS_LOGLN("Script bindings registered.");
 
 	_decoder = new TheoraDecoder();
+	_backSurface = (static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx")))->getSurface();
 }
 
 bool MoviePlayer::LoadMovie(const Common::String &filename, unsigned int z) {
@@ -97,6 +101,11 @@ void MoviePlayer::Update() {
 		return;
 
 	Graphics::Surface *surface = _decoder->decodeNextFrame();
+
+	// Probably it's better to copy to _backSurface
+	if (surface->w > 0 && surface->h > 0)
+		g_system->copyRectToScreen((byte *)surface->getBasePtr(0, 0), surface->pitch, 0, 0, 
+							   MIN(surface->w, _backSurface->w), MIN(surface->h, _backSurface->h));
 }
 
 bool MoviePlayer::IsMovieLoaded() {
