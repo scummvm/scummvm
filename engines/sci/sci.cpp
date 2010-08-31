@@ -257,6 +257,11 @@ Common::Error SciEngine::run() {
 	// Patch in our save/restore code, so that dialogs are replaced
 	patchGameSaveRestore(segMan);
 
+	// Switch off undithering, if requested by user
+	Common::String ditherOption = ConfMan.get("sci_dither");
+	if (ditherOption != "")
+		_gfxScreen->debugUnditherSetState(false);
+
 	if (_gameDescription->flags & ADGF_ADDENGLISH) {
 		// if game is multilingual
 		Common::Language selectedLanguage = Common::parseLanguage(ConfMan.get("language"));
@@ -348,8 +353,8 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 		break;
 	}
 
-	Common::String replaceDialogOption = ConfMan.get("scireplacedialog", Common::ConfigManager::kApplicationDomain);
-	if (replaceDialogOption == "")
+	Common::String originalSaveLoadOption = ConfMan.get("sci_originalsaveload");
+	if (originalSaveLoadOption != "")
 		return;
 
 	for (uint16 kernelNr = 0; kernelNr < kernelCount; kernelNr++) {
