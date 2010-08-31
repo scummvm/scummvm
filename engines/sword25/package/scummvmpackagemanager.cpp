@@ -152,6 +152,17 @@ byte *ScummVMPackageManager::GetFile(const Common::String &fileName, unsigned in
 	return buffer;
 }
 
+Common::SeekableReadStream *ScummVMPackageManager::GetStream(const Common::String &fileName) {
+	Common::SeekableReadStream *in;
+	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(fileName, _currentDirectory));
+	if (!fileNode)
+		return 0;
+	if (!(in = fileNode->createReadStream()))
+		return 0;
+
+	return in;
+}
+
 Common::String ScummVMPackageManager::GetCurrentDirectory() {
 	return _currentDirectory;
 }

@@ -47,14 +47,14 @@ namespace Sword25 {
  */
 class TheoraDecoder : public Graphics::FixedRateVideoDecoder {
 public:
-	TheoraDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType);
+	TheoraDecoder(Audio::Mixer *mixer = 0, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	virtual ~TheoraDecoder();
 
 	/**
 	 * Load a video file
 	 * @param stream  the stream to load
 	 */
-	bool load(Common::SeekableReadStream &stream);
+	bool load(Common::SeekableReadStream *stream);
 	void close();
 	void reset();
 

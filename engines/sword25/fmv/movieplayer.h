@@ -44,9 +44,7 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Class definitions
-// -----------------------------------------------------------------------------
+class TheoraDecoder;
 
 class MoviePlayer : public Service {
 public:
@@ -140,6 +138,8 @@ public:
 
 private:
 	bool _RegisterScriptBindings();
+
+	TheoraDecoder *_decoder;
 };
 
 } // End of namespace Sword25

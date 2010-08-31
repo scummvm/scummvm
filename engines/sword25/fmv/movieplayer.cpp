@@ -33,6 +33,9 @@
  */
 
 #include "sword25/fmv/movieplayer.h"
+#include "sword25/fmv/theora_decoder.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/package/packagemanager.h"
 
 namespace Sword25 {
 
@@ -47,13 +50,29 @@ MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel) {
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else
 		BS_LOGLN("Script bindings registered.");
+
+	_decoder = new TheoraDecoder();
 }
 
-bool MoviePlayer::LoadMovie(const Common::String &Filename, unsigned int Z) {
+bool MoviePlayer::LoadMovie(const Common::String &filename, unsigned int Z) {
+	Common::SeekableReadStream *in = Kernel::GetInstance()->GetPackage()->GetStream(filename);
+
+	if (!in) {
+		BS_LOG_ERRORLN("Could not open movie file \"%s\".", filename.c_str());
+		return false;
+	}
+
+	if (!_decoder->load(in)) {
+		BS_LOG_ERRORLN("Could not load movie file \"%s\".", filename.c_str());
+		return false;
+	}
+
 	return true;
 }
 
 bool MoviePlayer::UnloadMovie() {
+	_decoder->close();
+
 	return true;
 }
 

@@ -84,10 +84,10 @@ int TheoraDecoder::bufferData() {
 	return(bytes);
 }
 
-bool TheoraDecoder::load(Common::SeekableReadStream &stream) {
+bool TheoraDecoder::load(Common::SeekableReadStream *stream) {
 	close();
 
-	_fileStream = &stream;
+	_fileStream = stream;
 
 	// start up Ogg stream synchronization layer
 	ogg_sync_init(&_oggSync);
@@ -236,7 +236,7 @@ bool TheoraDecoder::load(Common::SeekableReadStream &stream) {
 	// open audio
 	if (_vorbisPacket) {
 		_audStream = createAudioStream();
-		if (_audStream)
+		if (_audStream && _mixer)
 			_mixer->playStream(_soundType, _audHandle, _audStream);
 	}
 
@@ -255,7 +255,8 @@ void TheoraDecoder::close() {
 		vorbis_comment_clear(&_vorbisComment);
 		vorbis_info_clear(&_vorbisInfo);
 
-		_mixer->stopHandle(*_audHandle);
+		if (_mixer)
+			_mixer->stopHandle(*_audHandle);
 		_audStream = 0;
 	}
 	if (_theoraPacket) {
@@ -264,10 +265,11 @@ void TheoraDecoder::close() {
 		th_comment_clear(&_theoraComment);
 		th_info_clear(&_theoraInfo);
 	}
-	ogg_sync_clear(&_oggSync);
 
 	if (!_fileStream)
 		return;
+
+	ogg_sync_clear(&_oggSync);
 
 	delete _fileStream;
 	_fileStream = 0;
@@ -417,7 +419,7 @@ void TheoraDecoder::reset() {
 }
 
 uint32 TheoraDecoder::getElapsedTime() const {
-	if (_audStream)
+	if (_audStream && _mixer)
 		return _mixer->getSoundElapsedTime(*_audHandle);
 
 	return VideoDecoder::getElapsedTime();

@@ -101,6 +101,13 @@ public:
 	 * @remark              The client must not forget to release the data of the file using BE_DELETE_A.
 	 */
 	virtual byte *GetFile(const Common::String &FileName, unsigned int *pFileSize = NULL) = 0;
+
+	/**
+	 * Returns a stream from file file from the virtual directory tree
+	 * @param FileName      The filename of the file to load
+	 * @return              Pointer to the stream object
+	 */
+	virtual Common::SeekableReadStream *GetStream(const Common::String &fileName) = 0;
 	/**
 	 * Downloads an XML file and prefixes it with an XML Version key, since the XML files don't contain it,
 	 * and it is required for ScummVM to correctly parse the XML.
