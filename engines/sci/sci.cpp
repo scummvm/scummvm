@@ -181,7 +181,7 @@ Common::Error SciEngine::run() {
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("sci_undither", "true");
 	ConfMan.registerDefault("sci_originalsaveload", "false");
-	ConfMan.registerDefault("sci_enable_fb01", "false");
+	ConfMan.registerDefault("native_fb01", "false");
 
 	_resMan = new ResourceManager();
 	assert(_resMan);
