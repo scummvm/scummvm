@@ -2780,6 +2780,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NONE	},
 
+	// Quest for Glory 3 - Italian DOS
+	// Supplied by ghoost in bug report #3053457
+	{"qfg3", "", {
+		{"resource.map", 0, "19e2bf9b693932b5e2bb59b9f9ab86c9", 5958},
+		{"resource.000", 0, "6178ad2e83e58e4671ca03315f7a6498", 5868000},
+		{"resource.msg", 0, "5a0a896ff3e4a628db38a75eb6c84114", 259018},
+		AD_LISTEND},
+		Common::IT_ITA, Common::kPlatformPC, 0, GUIO_NONE	},
+
 	// Quest for Glory 4 - English DOS Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.001.069 (just a guess)
 	{"qfg4", "Demo", {
