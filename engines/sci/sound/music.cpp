@@ -83,7 +83,7 @@ void SciMusic::init() {
 		_pMidiDrv = MidiPlayer_PCSpeaker_create(_soundVersion);
 		break;
 	default:
-		if (ConfMan.getBool("enable_fb01"))
+		if (ConfMan.getBool("sci_enable_fb01"))
 			_pMidiDrv = MidiPlayer_Fb01_create(_soundVersion);
 		else
 			_pMidiDrv = MidiPlayer_Midi_create(_soundVersion);
