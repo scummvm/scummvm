@@ -179,8 +179,9 @@ Common::Error SciEngine::run() {
 	g_eventRec.registerRandomSource(_rng, "sci");
 
 	// Assign default values to the config manager, in case settings are missing
-	ConfMan.registerDefault("undither", "true");
-	ConfMan.registerDefault("enable_fb01", "false");
+	ConfMan.registerDefault("sci_undither", "true");
+	ConfMan.registerDefault("sci_originalsaveload", "false");
+	ConfMan.registerDefault("sci_enable_fb01", "false");
 
 	_resMan = new ResourceManager();
 	assert(_resMan);
@@ -208,7 +209,7 @@ Common::Error SciEngine::run() {
 
 	// Initialize the game screen
 	_gfxScreen = new GfxScreen(_resMan);
-	_gfxScreen->debugUnditherSetState(ConfMan.getBool("undither"));
+	_gfxScreen->debugUnditherSetState(ConfMan.getBool("sci_undither"));
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
@@ -256,11 +257,6 @@ Common::Error SciEngine::run() {
 
 	// Patch in our save/restore code, so that dialogs are replaced
 	patchGameSaveRestore(segMan);
-
-	// Switch off undithering, if requested by user
-	Common::String ditherOption = ConfMan.get("sci_dither");
-	if (ditherOption != "")
-		_gfxScreen->debugUnditherSetState(false);
 
 	if (_gameDescription->flags & ADGF_ADDENGLISH) {
 		// if game is multilingual
@@ -352,8 +348,7 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 		break;
 	}
 
-	Common::String originalSaveLoadOption = ConfMan.get("sci_originalsaveload");
-	if (originalSaveLoadOption != "")
+	if (ConfMan.getBool("sci_originalsaveload"))
 		return;
 
 	for (uint16 kernelNr = 0; kernelNr < kernelCount; kernelNr++) {
