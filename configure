@@ -1485,7 +1485,7 @@ case $_host_os in
 		DEFINES="$DEFINES -D_EE -D__PLAYSTATION2__"
 		;;
 	psp)
-		CXXFLAGS="$CXXFLAGS -O3 -I$PSPSDK/include -D_PSP_FW_VERSION=150"
+		CXXFLAGS="$CXXFLAGS -O3 -I$PSPSDK/include -D_PSP_FW_VERSION=150 -fno-strict-aliasing"
 		;;
 	solaris*)
 		DEFINES="$DEFINES -DSOLARIS -DSYSTEM_NOT_SUPPORTING_D_TYPE"

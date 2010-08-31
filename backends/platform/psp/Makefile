@@ -66,7 +66,7 @@ endif
 
 # Variables for common Scummvm makefile
 CXX      = psp-g++
-CXXFLAGS = -O3 -Wall -Wno-multichar -fno-exceptions -fno-rtti
+CXXFLAGS = -O3 -Wall -Wno-multichar -fno-exceptions -fno-rtti -fno-strict-aliasing
 DEFINES  = -D__PSP__ -DNONSTANDARD_PORT -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DUSE_ZLIB  -DDISABLE_DOSBOX_OPL -DUSE_RGB_COLOR
 
 LDFLAGS  :=
