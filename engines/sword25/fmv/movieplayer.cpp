@@ -54,7 +54,7 @@ MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel) {
 	_decoder = new TheoraDecoder();
 }
 
-bool MoviePlayer::LoadMovie(const Common::String &filename, unsigned int Z) {
+bool MoviePlayer::LoadMovie(const Common::String &filename, unsigned int z) {
 	Common::SeekableReadStream *in = Kernel::GetInstance()->GetPackage()->GetStream(filename);
 
 	if (!in) {
@@ -62,10 +62,14 @@ bool MoviePlayer::LoadMovie(const Common::String &filename, unsigned int Z) {
 		return false;
 	}
 
+	debug(2, "LoadMovie(%s, %d)", filename.c_str(), z);
+
 	if (!_decoder->load(in)) {
 		BS_LOG_ERRORLN("Could not load movie file \"%s\".", filename.c_str());
 		return false;
 	}
+
+	warning("STUB: MoviePlayer::LoadMovie(). Z is not handled");
 
 	return true;
 }
@@ -77,22 +81,30 @@ bool MoviePlayer::UnloadMovie() {
 }
 
 bool MoviePlayer::Play() {
+	_decoder->pauseVideo(false);
+
 	return true;
 }
 
 bool MoviePlayer::Pause() {
+	_decoder->pauseVideo(true);
+
 	return true;
 }
 
 void MoviePlayer::Update() {
+	if (!_decoder->isVideoLoaded())
+		return;
+
+	Graphics::Surface *surface = _decoder->decodeNextFrame();
 }
 
 bool MoviePlayer::IsMovieLoaded() {
-	return true;
+	return _decoder->isVideoLoaded();
 }
 
 bool MoviePlayer::IsPaused() {
-	return true;
+	return _decoder->isPaused();
 }
 
 float MoviePlayer::GetScaleFactor() {
@@ -103,7 +115,7 @@ void MoviePlayer::SetScaleFactor(float ScaleFactor) {
 }
 
 double MoviePlayer::GetTime() {
-	return 1.0;
+	return (double)_decoder->getElapsedTime() / 1000.0;
 }
 
 

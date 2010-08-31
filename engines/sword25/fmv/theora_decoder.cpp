@@ -60,11 +60,21 @@ TheoraDecoder::TheoraDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundT
 	_soundType = soundType;
 	_audStream = 0;
 	_audHandle = new Audio::SoundHandle();
+
+	_theoraDecode = 0;
+	_theoraSetup = 0;
+
+	_curFrame = 0;
+
+	_audiobuf = (ogg_int16_t *)calloc(AUDIOFD_FRAGSIZE, sizeof(ogg_int16_t));
+
+	reset();
 }
 
 TheoraDecoder::~TheoraDecoder() {
 	close();
 	delete _audHandle;
+	free(_audiobuf);
 }
 
 void TheoraDecoder::queuePage(ogg_page *page) {
@@ -81,7 +91,7 @@ int TheoraDecoder::bufferData() {
 
 	ogg_sync_wrote(&_oggSync, bytes);
 
-	return(bytes);
+	return bytes;
 }
 
 bool TheoraDecoder::load(Common::SeekableReadStream *stream) {
@@ -209,6 +219,36 @@ bool TheoraDecoder::load(Common::SeekableReadStream *stream) {
 			debug(1, "  Frame content is %dx%d with offset (%d,%d).",
 			      _theoraInfo.frame_width, _theoraInfo.frame_height, _theoraInfo.pic_x, _theoraInfo.pic_y);
 
+		switch (_theoraInfo.colorspace){
+		case TH_CS_UNSPECIFIED:
+			/* nothing to report */
+			break;;
+		case TH_CS_ITU_REC_470M:
+			debug(1, "  encoder specified ITU Rec 470M (NTSC) color.");
+			break;
+		case TH_CS_ITU_REC_470BG:
+			debug(1, "  encoder specified ITU Rec 470BG (PAL) color.");
+			break;
+		default:
+			debug(1, "warning: encoder specified unknown colorspace (%d).", _theoraInfo.colorspace);
+			break;
+		}
+
+		debug(1, "Encoded by %s", _theoraComment.vendor);
+		if (_theoraComment.comments) {
+			debug(1, "theora comment header:");
+			for (int i = 0; i < _theoraComment.comments; i++) {
+				if (_theoraComment.user_comments[i]) {
+					int len = _theoraComment.comment_lengths[i];
+					char *value = (char *)malloc(len + 1);
+					memcpy(value, _theoraComment.user_comments[i], len);
+					value[len] = '\0';
+					debug(1, "\t%s", value);
+					free(value);
+				}
+			}
+		}
+
 		th_decode_ctl(_theoraDecode, TH_DECCTL_GET_PPLEVEL_MAX, &_ppLevelMax, sizeof(_ppLevelMax));
 		_ppLevel = _ppLevelMax;
 		th_decode_ctl(_theoraDecode, TH_DECCTL_SET_PPLEVEL, &_ppLevel, sizeof(_ppLevel));
@@ -220,7 +260,9 @@ bool TheoraDecoder::load(Common::SeekableReadStream *stream) {
 		th_comment_clear(&_theoraComment);
 	}
 
+
 	th_setup_free(_theoraSetup);
+	_theoraSetup = 0;
 
 	if (_vorbisPacket) {
 		vorbis_synthesis_init(&_vorbisDSP, &_vorbisInfo);
@@ -241,8 +283,7 @@ bool TheoraDecoder::load(Common::SeekableReadStream *stream) {
 	}
 
 	_surface = new Graphics::Surface();
-
-	_surface->create(_theoraInfo.frame_width, _theoraInfo.frame_height, 3);
+	_surface->create(_theoraInfo.frame_width, _theoraInfo.frame_height, 4);
 
 	return true;
 }
@@ -258,12 +299,15 @@ void TheoraDecoder::close() {
 		if (_mixer)
 			_mixer->stopHandle(*_audHandle);
 		_audStream = 0;
+		_vorbisPacket = 0;
 	}
 	if (_theoraPacket) {
 		ogg_stream_clear(&_theoraOut);
 		th_decode_free(_theoraDecode);
 		th_comment_clear(&_theoraComment);
 		th_info_clear(&_theoraInfo);
+		_theoraDecode = 0;
+		_theoraPacket = 0;
 	}
 
 	if (!_fileStream)
@@ -406,6 +450,7 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 
 void TheoraDecoder::reset() {
 	VideoDecoder::reset();
+
 	if (_fileStream)
 		_fileStream->seek(0);
 
@@ -416,7 +461,14 @@ void TheoraDecoder::reset() {
 	_audiobufFill = 0;
 	_audiobufReady = false;
 	_audiobufGranulePos = 0;
+
+	_curFrame = 0;
 }
+
+bool TheoraDecoder::endOfVideo() const {
+	return !isVideoLoaded();
+}
+
 
 uint32 TheoraDecoder::getElapsedTime() const {
 	if (_audStream && _mixer)

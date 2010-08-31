@@ -68,6 +68,10 @@ public:
 	bool isVideoLoaded() const {
 		return _fileStream != 0;
 	}
+	bool isPaused() const {
+		return (VideoDecoder::isPaused() || !isVideoLoaded());
+	}
+
 	uint16 getWidth() const {
 		return _surface->w;
 	}
@@ -75,13 +79,17 @@ public:
 		return _surface->h;
 	}
 	uint32 getFrameCount() const {
-		return _frameCount;
+		// It is not possible to get frame count easily
+		// I.e. seeking is required
+		assert(0);
 	}
 	Graphics::PixelFormat getPixelFormat() const {
-		return Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 0, 0, 0);
+		return Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
 	}
 
 	uint32 getElapsedTime() const;
+
+	bool endOfVideo() const;
 
 protected:
 	Common::Rational getFrameRate() const {
