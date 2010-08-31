@@ -275,7 +275,6 @@ Common::Error SciEngine::run() {
 	}
 
 	// Check whether loading a savestate was requested
-	// Check whether loading a savestate was requested
 	int directSaveSlotLoading = ConfMan.getInt("save_slot");
 	if (directSaveSlotLoading >= 0) {
 		// call GameObject::play (like normally)
