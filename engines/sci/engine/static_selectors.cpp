@@ -27,6 +27,7 @@
 // them. This includes the King's Quest IV Demo and LSL3 Demo.
 
 #include "sci/engine/kernel.h"
+#include "sci/engine/seg_manager.h"
 
 namespace Sci {
 
@@ -158,6 +159,81 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 			}
 		}
 
+		// Now, we need to find out selectors which keep changing place...
+		// We do that by dissecting game objects, and looking for selectors at
+		// specified locations.
+
+		// We need to initialize script 0 here, to make sure that it's always
+		// located at segment 1.
+		_segMan->instantiateScript(0);
+
+		// The Actor class contains the init, xLast and yLast selectors, which
+		// we reference directly. It's always in script 998, so we need to
+		// explicitly load it here.
+		if (_resMan->testResource(ResourceId(kResourceTypeScript, 998))) {
+			_segMan->instantiateScript(998);
+
+			const Object *actorClass = _segMan->getObject(_segMan->findObjectByName("Actor"));
+
+			if (actorClass) {
+				// The init selector is always the first function
+				int initSelectorPos = actorClass->getFuncSelector(0);
+
+				if (names.size() < (uint32)initSelectorPos + 1)
+					names.resize((uint32)initSelectorPos + 1);
+
+				names[initSelectorPos] = "init";
+
+				if ((getSciVersion() >= SCI_VERSION_1_EGA)) {
+					// Find the xLast and yLast selectors, used in kDoBresen
+
+					// xLast and yLast always come between illegalBits and xStep
+					int illegalBitsSelectorPos = actorClass->locateVarSelector(_segMan, 15 + offset);	// illegalBits
+					int xStepSelectorPos = actorClass->locateVarSelector(_segMan, 51 + offset);	// xStep
+					if (xStepSelectorPos - illegalBitsSelectorPos != 3) {
+						error("illegalBits and xStep selectors aren't found in "
+							  "known locations. illegalBits = %d, xStep = %d",
+							  illegalBitsSelectorPos, xStepSelectorPos);
+					}
+
+					int xLastSelectorPos = actorClass->getVarSelector(illegalBitsSelectorPos + 1);
+					int yLastSelectorPos = actorClass->getVarSelector(illegalBitsSelectorPos + 2);
+
+					if (names.size() < (uint32)yLastSelectorPos + 1)
+						names.resize((uint32)yLastSelectorPos + 1);
+
+					names[xLastSelectorPos] = "xLast";
+					names[yLastSelectorPos] = "yLast";
+				}	// if ((getSciVersion() >= SCI_VERSION_1_EGA))
+			}	// if (actorClass)
+
+			_segMan->uninstantiateScript(998);
+		}	// if (_resMan->testResource(ResourceId(kResourceTypeScript, 998)))
+
+		if (_resMan->testResource(ResourceId(kResourceTypeScript, 981))) {
+			// The SysWindow class contains the open selectors, which we
+			// reference directly. It's always in script 981, so we need to
+			// explicitly load it here
+			_segMan->instantiateScript(981);
+
+			const Object *sysWindowClass = _segMan->getObject(_segMan->findObjectByName("SysWindow"));
+
+			if (sysWindowClass) {
+				if (sysWindowClass->getMethodCount() < 2)
+					error("The SysWindow class has less than 2 methods");
+
+				// The open selector is always the second function
+				int openSelectorPos = sysWindowClass->getFuncSelector(1);
+
+				if (names.size() < (uint32)openSelectorPos + 1)
+					names.resize((uint32)openSelectorPos + 1);
+
+				names[openSelectorPos] = "open";
+			}
+
+			_segMan->uninstantiateScript(981);
+		}	// if (_resMan->testResource(ResourceId(kResourceTypeScript, 981)))
+
 		if (g_sci->getGameId() == GID_HOYLE4) {
 			// The demo of Hoyle 4 is one of the few demos with lip syncing and no selector vocabulary.
 			// This needs two selectors, "syncTime" and "syncCue", which keep changing positions in each
@@ -168,25 +244,13 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 
 			names[274] = "syncTime";
 			names[275] = "syncCue";
-		} else if (g_sci->getGameId() == GID_ISLANDBRAIN) {
-			// The demo of Island of Dr. Brain needs the init selector set to match up with the full
-			// game's workaround - bug #3035033
-			if (names.size() < 111)
-				names.resize(111);
-
-			names[110] = "init";
 		} else if (g_sci->getGameId() == GID_LAURABOW2) {
-			// The floppy of version needs the open and changeState selectors set to match up with the
-			// CD version's workarounds - bugs #3035694, #3036291 and #3041257. Also, xLast and yLast
-			// are set, since they're used inside kDoBresen()
+			// The floppy of version needs the changeState selector set to match up with the
+			// CD version's workarounds.
 			if (names.size() < 251)
 				names.resize(251);
 
-			names[110] = "init";
 			names[144] = "changeState";
-			names[189] = "open";
-			names[249] = "xLast";
-			names[250] = "yLast";
 		}
 
 #ifdef ENABLE_SCI32
