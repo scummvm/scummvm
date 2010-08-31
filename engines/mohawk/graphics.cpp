@@ -685,6 +685,8 @@ void RivenGraphics::drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect 
 
 	surface->free();
 	delete surface;
+
+	_dirtyScreen = true;
 }
 
 LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm) : _vm(vm) {

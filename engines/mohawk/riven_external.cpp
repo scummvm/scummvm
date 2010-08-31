@@ -238,9 +238,37 @@ void RivenExternal::runDomeCheck() {
 		*_vm->matchVarToString("domecheck") = 1;
 }
 
-void RivenExternal::resetDomeSliders(uint16 bitmapId, uint16 soundId) {
-	// TODO: Draw the animation of the sliders moving back to the start
-	_sliderState = kDomeSliderDefaultState;
+void RivenExternal::resetDomeSliders(uint16 bitmapId, uint16 soundId, uint16 startHotspot) {
+	// The rightmost slider should move left until it finds the next slider,
+	// then those two continue until they find the third slider. This continues
+	// until all five sliders have returned their starting slots.
+	byte slidersFound = 0;
+	for (uint32 i = 0; i < kDomeSliderSlotCount; i++) {
+		if (_sliderState & (1 << i)) {
+			// A slider occupies this spot. Increase the number of sliders we
+			// have found, but we're not doing any moving this iteration.
+			slidersFound++;
+		} else {
+			// Move all the sliders we have found over one slot
+			for (byte j = 0; j < slidersFound; j++) {
+				_sliderState &= ~(1 << (i - j - 1));
+				_sliderState |= 1 << (i - j);
+			}
+
+			// If we have at least one found slider, it has now moved
+			// so we should redraw and play a tick sound
+			if (slidersFound) {
+				_vm->_sound->playSound(soundId, false);
+				drawDomeSliders(bitmapId, startHotspot);
+				_vm->_system->delayMillis(10);
+			}
+		}
+	}
+
+	// Sanity checks - the slider count should always be 5 and we should end up at
+	// the default state after moving them all over.
+	assert(slidersFound == 5);
+	assert(_sliderState == kDomeSliderDefaultState);
 }
 
 void RivenExternal::checkDomeSliders(uint16 resetSlidersHotspot, uint16 openDomeHotspot) {
@@ -296,7 +324,26 @@ void RivenExternal::dragDomeSlider(uint16 bitmapId, uint16 soundId, uint16 reset
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
-				_vm->_system->updateScreen();
+				if (foundSlider < 24 && !(_sliderState & (1 << (23 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot + 1].rect.contains(event.mouse)) {
+					// We've moved the slider right one space
+					_sliderState &= ~(_sliderState & (1 << (24 - foundSlider)));
+					foundSlider++;
+					_sliderState |= 1 << (24 - foundSlider);
+
+					// Now play a click sound and redraw
+					_vm->_sound->playSound(soundId, false);
+					drawDomeSliders(bitmapId, startHotspot);
+				} else if (foundSlider > 0 && !(_sliderState & (1 << (25 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot - 1].rect.contains(event.mouse)) {
+					// We've moved the slider left one space
+					_sliderState &= ~(_sliderState & (1 << (24 - foundSlider)));
+					foundSlider--;
+					_sliderState |= 1 << (24 - foundSlider);
+
+					// Now play a click sound and redraw
+					_vm->_sound->playSound(soundId, false);
+					drawDomeSliders(bitmapId, startHotspot);
+				} else
+					_vm->_system->updateScreen(); // A normal update for the cursor
 				break;
 			case Common::EVENT_LBUTTONUP:
 				done = true;
@@ -308,14 +355,31 @@ void RivenExternal::dragDomeSlider(uint16 bitmapId, uint16 soundId, uint16 reset
 		_vm->_system->delayMillis(10);
 	}
 
-	// TODO: Handle any slider movement
-	// TODO: Redraw the sliders
-
-	// Now that we've released, show the open hand cursor again
-	_vm->_gfx->changeCursor(kRivenOpenHandCursor);
-
 	// Check to see if we have the right combination
 	checkDomeSliders(resetSlidersHotspot, openDomeHotspot);
+}
+
+void RivenExternal::drawDomeSliders(uint16 bitmapId, uint16 startHotspot) {
+	Common::Rect dstAreaRect = Common::Rect(200, 250, 420, 319);
+
+	// On pspit, the rect is different by two pixels
+	// (alternatively, we could just use hotspot 3 here, but only on pspit is there a hotspot for this)
+	if (_vm->getCurStack() == pspit)
+		dstAreaRect.translate(-2, 0);
+
+	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
+		Common::Rect srcRect = _vm->_hotspots[startHotspot + i].rect;
+		srcRect.translate(-dstAreaRect.left, -dstAreaRect.top); // Adjust the rect so it's in the destination area
+
+		Common::Rect dstRect = _vm->_hotspots[startHotspot + i].rect;
+
+		if (_sliderState & (1 << (24 - i)))
+			_vm->_gfx->drawImageRect(bitmapId, srcRect, dstRect);
+		else
+			_vm->_gfx->drawImageRect(bitmapId + 1, srcRect, dstRect);
+	}
+
+	_vm->_gfx->updateScreen();
 }
 
 // ------------------------------------------------------------------------------------
@@ -786,11 +850,11 @@ void RivenExternal::xbisland190_opencard(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xbisland190_resetsliders(uint16 argc, uint16 *argv) {
-	resetDomeSliders(287, 41);
+	resetDomeSliders(701, 41, 2);
 }
 
 void RivenExternal::xbisland190_slidermd(uint16 argc, uint16 *argv) {
-	dragDomeSlider(287, 41, 27, 28, 2);
+	dragDomeSlider(701, 41, 27, 28, 2);
 }
 
 void RivenExternal::xbisland190_slidermw(uint16 argc, uint16 *argv) {
@@ -907,7 +971,7 @@ void RivenExternal::xgisland25_opencard(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xgisland25_resetsliders(uint16 argc, uint16 *argv) {
-	resetDomeSliders(161, 16);
+	resetDomeSliders(161, 16, 2);
 }
 
 void RivenExternal::xgisland25_slidermd(uint16 argc, uint16 *argv) {
@@ -1189,11 +1253,11 @@ void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xjdome25_resetsliders(uint16 argc, uint16 *argv) {
-	resetDomeSliders(548, 81);
+	resetDomeSliders(_vm->getFeatures() & GF_DVD ? 547 : 548, 81, 2);
 }
 
 void RivenExternal::xjdome25_slidermd(uint16 argc, uint16 *argv) {
-	dragDomeSlider(548, 81, 27, 28, 2);
+	dragDomeSlider(_vm->getFeatures() & GF_DVD ? 547: 548, 81, 29, 28, 2);
 }
 
 void RivenExternal::xjdome25_slidermw(uint16 argc, uint16 *argv) {
@@ -1519,7 +1583,7 @@ void RivenExternal::xpisland25_opencard(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xpisland25_resetsliders(uint16 argc, uint16 *argv) {
-	resetDomeSliders(58, 10);
+	resetDomeSliders(58, 10, 6);
 }
 
 void RivenExternal::xpisland25_slidermd(uint16 argc, uint16 *argv) {
@@ -1718,11 +1782,11 @@ void RivenExternal::xtisland5056_opencard(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xtisland5056_resetsliders(uint16 argc, uint16 *argv) {
-	resetDomeSliders(798, 37);
+	resetDomeSliders(_vm->getFeatures() & GF_DVD ? 813 : 798, 37, 3);
 }
 
 void RivenExternal::xtisland5056_slidermd(uint16 argc, uint16 *argv) {
-	dragDomeSlider(798, 37, 29, 30, 3);
+	dragDomeSlider(_vm->getFeatures() & GF_DVD ? 813 : 798, 37, 29, 30, 3);
 }
 
 void RivenExternal::xtisland5056_slidermw(uint16 argc, uint16 *argv) {

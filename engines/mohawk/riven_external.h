@@ -63,10 +63,11 @@ private:
 	void runEndGame(uint16 video);
 	void runDomeCheck();
 	void runDomeButtonMovie();
-	void resetDomeSliders(uint16 bitmapId, uint16 soundId);
+	void resetDomeSliders(uint16 bitmapId, uint16 soundId, uint16 startHotspot);
 	void checkDomeSliders(uint16 resetSlidersHotspot, uint16 openDomeHotspot);
 	void checkSliderCursorChange(uint16 startHotspot);
 	void dragDomeSlider(uint16 bitmapId, uint16 soundId, uint16 resetSlidersHotspot, uint16 openDomeHotspot, uint16 startHotspot);
+	void drawDomeSliders(uint16 bitmapId, uint16 startHotspot);
 
 	// -----------------------------------------------------
 	// aspit (Main Menu, Books, Setup) external commands
