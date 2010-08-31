@@ -39,37 +39,10 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "common/ptr.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/service.h"
-#include "sword25/fmv/oggtheora/audiobuffer.h"
-#include "sword25/fmv/oggtheora/moviefile.h"
-#include "sword25/fmv/oggtheora/oggstreamstate.h"
-#include "sword25/fmv/oggtheora/theorastate.h"
-#include "sword25/fmv/oggtheora/vorbisstate.h"
-#include "sword25/gfx/bitmap.h"
 
 namespace Sword25 {
-
-/* FIXME: Audio stubs
-class OggStreamState {
-public:
-	OggStreamState(int v) {}
-	void PageIn(void *v) {}
-	bool PacketOut(void *v) { return true; }
-};
-class VorbisState {
-public:
-	void BlockInit() {}
-	void SynthesisInit() {}
-	bool SynthesisHeaderIn(void *v) { return false; }
-};
-class OggState {
-public:
-	bool SyncPageout(void *v) { return false; }
-	char *SyncBuffer(int v) { return NULL; }
-};
-*/
 
 // -----------------------------------------------------------------------------
 // Class definitions
@@ -82,10 +55,10 @@ public:
 	// -----------------------------------------------------------------------------
 
 	MoviePlayer(Kernel *pKernel);
-	~MoviePlayer();
+	~MoviePlayer() {};
 
 	// -----------------------------------------------------------------------------
-	// Player interface must be implemented by a Movie Player
+	// Abstract interface must be implemented by each Movie Player
 	// -----------------------------------------------------------------------------
 
 	/**
@@ -164,44 +137,9 @@ public:
 	 * @remark              This method can only be called when IsMovieLoaded() returns true.
 	 */
 	double GetTime();
+
 private:
-	// -----------------------------------------------------------------------------
-	// Internal support methods
-	// -----------------------------------------------------------------------------
 	bool _RegisterScriptBindings();
-	bool DecodeTheora();
-	void DecodeVorbis();
-	void ReadData();
-	static void DynamicSoundCallBack(void *UserData, void *Data, unsigned int DataLength);
-
-private:
-	bool								m_MovieLoaded;
-	bool								m_Paused;
-
-	Common::SharedPtr<OggStreamState>	m_VorbisStreamState;
-	bool								m_VorbisPresent;
-	Common::SharedPtr<VorbisState>		m_VorbisState;
-	unsigned int						m_SoundHandle;
-	bool								m_AudioEnded;
-	Common::SharedPtr<AudioBuffer>		m_AudioBuffer;
-
-	Common::SharedPtr<OggStreamState>	m_TheoraStreamState;
-	bool								m_TheoraPresent;
-	Common::SharedPtr<TheoraState>		m_TheoraState;
-	bool								m_VideoEnded;
-
-	Common::SharedPtr<OggState>			m_OggState;
-
-	Common::SharedPtr<MovieFile>		m_File;
-
-	uint64_t							m_StartTime;
-	double								m_LastFrameTime;
-
-	float								m_Timer;
-
-	byte *								_pixels;
-	int									_pixelsSize;
-	RenderObjectPtr<Bitmap>				m_OutputBitmap;
 };
 
 } // End of namespace Sword25

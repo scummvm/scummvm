@@ -38,19 +38,19 @@
 
 #include "sword25/fmv/oggtheora/theorastate.h"
 
-namespace Sword25 {
-
 // -----------------------------------------------------------------------------
 
-TheoraState::TheoraState() :
-		m_StateInitialized(false) {
+BS_TheoraState::BS_TheoraState() :
+	m_StateInitialized(false)
+{
 	theora_comment_init(&m_Comment);
 	theora_info_init(&m_Info);
 }
 
 // -----------------------------------------------------------------------------
 
-TheoraState::~TheoraState() {
+BS_TheoraState::~BS_TheoraState()
+{
 	if (m_StateInitialized) theora_clear(&m_State);
 	theora_info_clear(&m_Info);
 	theora_comment_clear(&m_Comment);
@@ -58,13 +58,15 @@ TheoraState::~TheoraState() {
 
 // -----------------------------------------------------------------------------
 
-int TheoraState::DecodeHeader(ogg_packet *OggPacketPtr) {
+int BS_TheoraState::DecodeHeader(ogg_packet * OggPacketPtr)
+{
 	return theora_decode_header(&m_Info, &m_Comment, OggPacketPtr);
 }
 
 // -----------------------------------------------------------------------------
 
-int TheoraState::DecodeInit() {
+int BS_TheoraState::DecodeInit()
+{
 	int Result = theora_decode_init(&m_State, &m_Info);
 	m_StateInitialized = (Result == 0);
 	return Result;
@@ -72,20 +74,21 @@ int TheoraState::DecodeInit() {
 
 // -----------------------------------------------------------------------------
 
-double TheoraState::GranuleTime() {
+double BS_TheoraState::GranuleTime()
+{
 	return theora_granule_time(&m_State, m_State.granulepos);
 }
 
 // -----------------------------------------------------------------------------
 
-int TheoraState::DecodePacketIn(ogg_packet *OggPacketPtr) {
+int BS_TheoraState::DecodePacketIn(ogg_packet * OggPacketPtr)
+{
 	return theora_decode_packetin(&m_State, OggPacketPtr);
 }
 
 // -----------------------------------------------------------------------------
 
-int TheoraState::DecodeYUVOut(yuv_buffer *YUV) {
+int BS_TheoraState::DecodeYUVOut(yuv_buffer * YUV)
+{
 	return theora_decode_YUVout(&m_State, YUV);
 }
-
-} // End of namespace Sword25

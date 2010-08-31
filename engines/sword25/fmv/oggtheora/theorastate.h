@@ -42,21 +42,20 @@
 #include "sword25/kernel/common.h"
 #include <theora/theora.h>
 
-namespace Sword25 {
-
 // -----------------------------------------------------------------------------
-// Class definitions
+// Klassendefinition
 // -----------------------------------------------------------------------------
 
-class TheoraState {
+class BS_TheoraState
+{
 public:
-	TheoraState();
-	virtual ~TheoraState();
+	BS_TheoraState();
+	virtual ~BS_TheoraState();
 
-	int		DecodeHeader(ogg_packet *OggPacketPtr);
+	int		DecodeHeader(ogg_packet * OggPacketPtr);
 	int		DecodeInit();
-	int		DecodePacketIn(ogg_packet *OggPacketPtr);
-	int		DecodeYUVOut(yuv_buffer *YUV);
+	int		DecodePacketIn(ogg_packet * OggPacketPtr);
+	int		DecodeYUVOut(yuv_buffer * YUV);
 	double	GranuleTime();
 
 	const theora_info & GetInfo() const { return m_Info; }
@@ -67,7 +66,5 @@ private:
 	bool						m_StateInitialized;
 	theora_state				m_State;
 };
-
-} // End of namespace Sword25
 
 #endif

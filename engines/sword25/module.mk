@@ -6,13 +6,6 @@ MODULE_OBJS := \
 	fmv/movieplayer.o \
 	fmv/movieplayer_script.o \
 	fmv/theora_decoder.o \
-	fmv/oggtheora/audiobuffer.o \
-	fmv/oggtheora/moviefile.o \
-	fmv/oggtheora/oggstate.o \
-	fmv/oggtheora/oggstreamstate.o \
-	fmv/oggtheora/theorastate.o \
-	fmv/oggtheora/vorbisstate.o \
-	fmv/oggtheora/yuvtorgba.o \
 	gfx/animation.o \
 	gfx/animationdescription.o \
 	gfx/animationresource.o \

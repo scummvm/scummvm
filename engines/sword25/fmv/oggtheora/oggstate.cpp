@@ -38,36 +38,37 @@
 
 #include "sword25/fmv/oggtheora/oggstate.h"
 
-namespace Sword25 {
-
 // -----------------------------------------------------------------------------
 
-OggState::OggState() {
+BS_OggState::BS_OggState()
+{
 	ogg_sync_init(&m_SyncState);
 }
 
 // -----------------------------------------------------------------------------
 
-OggState::~OggState() {
+BS_OggState::~BS_OggState()
+{
 	ogg_sync_clear(&m_SyncState);
 }
 
 // -----------------------------------------------------------------------------
 
-int OggState::SyncPageout(ogg_page *OggPage) {
+int BS_OggState::SyncPageout(ogg_page * OggPage)
+{
 	return ogg_sync_pageout(&m_SyncState, OggPage);
 }
 
 // -----------------------------------------------------------------------------
 
-char *OggState::SyncBuffer(long Size) {
+char * BS_OggState::SyncBuffer(long Size)
+{
 	return ogg_sync_buffer(&m_SyncState, Size);
 }
 
 // -----------------------------------------------------------------------------
 
-int OggState::SyncWrote(long Bytes) {
+int BS_OggState::SyncWrote(long Bytes)
+{
 	return ogg_sync_wrote(&m_SyncState, Bytes);
 }
-
-} // End of namespace Sword25
