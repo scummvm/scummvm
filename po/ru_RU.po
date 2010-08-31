@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-08-30 22:59+0100\n"
+"POT-Creation-Date: 2010-08-31 20:55+0100\n"
 "PO-Revision-Date: 2010-06-13 20:55+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -391,7 +391,7 @@ msgstr "~У~далить игру"
 msgid "Search in game list"
 msgstr "Поиск в списке игр"
 
-#: gui/launcher.cpp:579 gui/launcher.cpp:1090
+#: gui/launcher.cpp:579 gui/launcher.cpp:1092
 msgid "Search:"
 msgstr "Поиск:"
 
@@ -457,11 +457,23 @@ msgstr "Эта игра не поддерживает загрузку сохранений через главное меню."
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM не смог найти движок для запуска выбранной игры!"
 
-#: gui/launcher.cpp:1042
+#: gui/launcher.cpp:1044
+#, fuzzy
+msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Много игр..."
 
-#: gui/launcher.cpp:1043
+#: gui/launcher.cpp:1044
+msgid "Mass Add..."
+msgstr "Много игр..."
+
+#: gui/launcher.cpp:1045
+#, fuzzy
+msgctxt "lowres"
+msgid "Add Game..."
+msgstr "Новая игра..."
+
+#: gui/launcher.cpp:1045
 msgid "Add Game..."
 msgstr "Новая игра..."
 

@@ -1038,9 +1038,11 @@ void LauncherDialog::updateButtons() {
 	// Update the label of the "Add" button depending on whether shift is pressed or not
 	int modifiers = g_system->getEventManager()->getModifierState();
 	const bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
+	const bool lowRes = g_system->getOverlayWidth() <= 320;
+	
 	const char *newAddButtonLabel = massAdd
-		? _("Mass Add...")
-		: _("Add Game...");
+		? (lowRes ? _c("Mass Add...", "lowres") : _("Mass Add..."))
+		: (lowRes ? _c("Add Game...", "lowres") : _("Add Game..."));
 
 	if (_addButton->getLabel() != newAddButtonLabel)
 		_addButton->setLabel(newAddButtonLabel);

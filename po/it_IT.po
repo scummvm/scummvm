@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-08-30 22:59+0100\n"
+"POT-Creation-Date: 2010-08-31 20:55+0100\n"
 "PO-Revision-Date: 2010-06-30 23:56+0100\n"
 "Last-Translator: Maff <matteo.maff at gmail dot com>\n"
 "Language-Team: Italian\n"
@@ -389,7 +389,7 @@ msgstr "~R~imuovi gioco"
 msgid "Search in game list"
 msgstr "Cerca nella lista dei giochi"
 
-#: gui/launcher.cpp:579 gui/launcher.cpp:1090
+#: gui/launcher.cpp:579 gui/launcher.cpp:1092
 msgid "Search:"
 msgstr "Cerca:"
 
@@ -459,11 +459,23 @@ msgstr ""
 "ScummVM non ha potuto trovare un motore in grado di eseguire il gioco "
 "selezionato!"
 
-#: gui/launcher.cpp:1042
+#: gui/launcher.cpp:1044
+#, fuzzy
+msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Agg. in massa..."
 
-#: gui/launcher.cpp:1043
+#: gui/launcher.cpp:1044
+msgid "Mass Add..."
+msgstr "Agg. in massa..."
+
+#: gui/launcher.cpp:1045
+#, fuzzy
+msgctxt "lowres"
+msgid "Add Game..."
+msgstr "Aggiungi gioco..."
+
+#: gui/launcher.cpp:1045
 msgid "Add Game..."
 msgstr "Aggiungi gioco..."
 
