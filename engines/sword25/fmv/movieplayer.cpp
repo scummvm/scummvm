@@ -49,8 +49,7 @@ Service *OggTheora_CreateObject(Kernel *pKernel) {
 	return new MoviePlayer(pKernel);
 }
 
-MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel),
-		_decoder(g_system->getMixer()) {
+MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel), _decoder(g_system->getMixer()) {
 	if (!_RegisterScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else
@@ -68,8 +67,7 @@ bool MoviePlayer::LoadMovie(const Common::String &filename, unsigned int z) {
 
 	// Ausgabebitmap erstellen
 	GraphicEngine *pGfx = Kernel::GetInstance()->GetGfx();
-	_outputBitmap = pGfx->GetMainPanel()->AddDynamicBitmap(
-		_decoder.getWidth(), _decoder.getHeight());
+	_outputBitmap = pGfx->GetMainPanel()->AddDynamicBitmap(_decoder.getWidth(), _decoder.getHeight());
 	if (!_outputBitmap.IsValid()) {
 		BS_LOG_ERRORLN("Output bitmap for movie playback could not be created.");
 		return false;
@@ -79,7 +77,10 @@ bool MoviePlayer::LoadMovie(const Common::String &filename, unsigned int z) {
 	float ScreenToVideoWidth = (float) pGfx->GetDisplayWidth() / (float) _outputBitmap->GetWidth();
 	float ScreenToVideoHeight = (float) pGfx->GetDisplayHeight() / (float) _outputBitmap->GetHeight();
 	float ScaleFactor = MIN(ScreenToVideoWidth, ScreenToVideoHeight);
-	if (abs(ScaleFactor - 1.0f) < FLT_EPSILON) ScaleFactor = 1.0f;
+
+	if (abs(ScaleFactor - 1.0f) < FLT_EPSILON)
+		ScaleFactor = 1.0f;
+
 	_outputBitmap->SetScaleFactor(ScaleFactor);
 
 	// Z-Wert setzen
@@ -135,9 +136,9 @@ float MoviePlayer::GetScaleFactor() {
 		return 0;
 }
 
-void MoviePlayer::SetScaleFactor(float ScaleFactor) {
+void MoviePlayer::SetScaleFactor(float scaleFactor) {
 	if (_decoder.isVideoLoaded()) {
-		_outputBitmap->SetScaleFactor(ScaleFactor);
+		_outputBitmap->SetScaleFactor(scaleFactor);
 
 		// Ausgabebitmap auf dem Bildschirm zentrieren
 		GraphicEngine *gfxPtr = Kernel::GetInstance()->GetGfx();
