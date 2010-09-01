@@ -93,7 +93,7 @@ void OpenGLGfxDriver::drawSurface(const Graphics::Surface *surface, Common::Poin
 
 
 void OpenGLGfxDriver::start2DMode() {
-/*
+
 	// Load the ModelView matrix with the identity
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -103,7 +103,6 @@ void OpenGLGfxDriver::start2DMode() {
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-*/
 
 	// Enable alpha blending
 	glEnable(GL_BLEND);
@@ -121,7 +120,6 @@ void OpenGLGfxDriver::end2DMode() {
 	// Disable alpha blending
 	glDisable(GL_BLEND);
 
-/*
 	// Pop the identity Projection matrix
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -129,7 +127,7 @@ void OpenGLGfxDriver::end2DMode() {
 	// Pop the identity ModelView matrix
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
-*/
+
 }
 
 /*
@@ -207,13 +205,13 @@ static void glShadowProjection(Graphics::Vector3d light, Graphics::Vector3d plan
 
 	glMultMatrixf((GLfloat *)mat);
 }
-
+*/
 void OpenGLGfxDriver::set3DMode() {
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 }
-
+/*
 void OpenGLGfxDriver::translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();

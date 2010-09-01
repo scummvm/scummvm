@@ -49,9 +49,9 @@ public:
 
 	/*
 	virtual bool isHardwareAccelerated() = 0;
-
+*/
 	virtual void set3DMode() = 0;
-
+/*
 	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
 	virtual void positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest) = 0;
 

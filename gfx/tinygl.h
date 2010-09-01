@@ -48,9 +48,9 @@ public:
 
 	/*
 	bool isHardwareAccelerated();
-
+*/
 	void set3DMode();
-
+/*
 	void setupCamera(float fov, float nclip, float fclip, float roll);
 	void positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest);
 
@@ -61,6 +61,7 @@ public:
 
 	void startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, float roll);
 	void finishActorDraw();
+	
 	void setShadow(Shadow *shadow);
 	void drawShadowPlanes();
 	void setShadowMode();

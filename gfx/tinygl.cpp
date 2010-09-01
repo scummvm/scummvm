@@ -445,12 +445,12 @@ void TinyGLGfxDriver::setShadowMode() {
 void TinyGLGfxDriver::clearShadowMode() {
 	tglDisable(TGL_SHADOW_MODE);
 }
-
+#endif
 void TinyGLGfxDriver::set3DMode() {
 	tglMatrixMode(TGL_MODELVIEW);
 	tglEnable(TGL_DEPTH_TEST);
 }
-
+#if 0
 void TinyGLGfxDriver::setShadow(Shadow *shadow) {
 	_currentShadowArray = shadow;
 	if (shadow)
