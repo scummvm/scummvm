@@ -38,7 +38,7 @@ namespace Mohawk {
 RivenScript::RivenScript(MohawkEngine_Riven *vm, Common::SeekableReadStream *stream, uint16 scriptType, uint16 parentStack, uint16 parentCard)
 	: _vm(vm), _stream(stream), _scriptType(scriptType), _parentStack(parentStack), _parentCard(parentCard) {
 	setupOpcodes();
-	_isRunning = false;
+	_isRunning = _continueRunning = false;
 }
 
 RivenScript::~RivenScript() {
@@ -227,7 +227,7 @@ void RivenScript::dumpCommands(Common::StringArray varNames, Common::StringArray
 }
 
 void RivenScript::runScript() {
-	_isRunning = true;
+	_isRunning = _continueRunning = true;
 
 	if (_stream->pos() != 0)
 		_stream->seek(0);
@@ -242,7 +242,7 @@ void RivenScript::processCommands(bool runCommands) {
 
 	uint16 commandCount = _stream->readUint16BE();
 
-	for (uint16 j = 0; j < commandCount && !_vm->shouldQuit() && _stream->pos() < _stream->size(); j++) {
+	for (uint16 j = 0; j < commandCount && !_vm->shouldQuit() && _stream->pos() < _stream->size() && _continueRunning; j++) {
 		uint16 command = _stream->readUint16BE();
 
 		if (command == 8) {
@@ -630,6 +630,11 @@ RivenScriptList RivenScriptManager::readScripts(Common::SeekableReadStream *stre
 	}
 
 	return scriptList;
+}
+
+void RivenScriptManager::stopAllScripts() {
+	for (uint32 i = 0; i < _currentScripts.size(); i++)
+		_currentScripts[i]->stopRunning();
 }
 
 void RivenScriptManager::unloadUnusedScripts() {

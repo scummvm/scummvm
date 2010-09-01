@@ -211,9 +211,26 @@ void RivenExternal::runDemoBoundaryDialog() {
 
 void RivenExternal::runEndGame(uint16 video) {
 	_vm->_sound->stopAllSLST();
-	_vm->_video->playMovieBlocking(video);
+	_vm->_video->playMovie(video);
+	runCredits(video);
+}
 
+void RivenExternal::runCredits(uint16 video) {
 	// TODO: Play until the last frame and then run the credits
+
+	VideoHandle videoHandle = _vm->_video->findVideoHandle(video);
+
+	while (!_vm->_video->endOfVideo(videoHandle) && !_vm->shouldQuit()) {
+		if (_vm->_video->updateBackgroundMovies())
+			_vm->_system->updateScreen();
+
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event))
+			;
+
+		_vm->_system->delayMillis(10);
+	}
+
 	_vm->setGameOver();
 }
 
@@ -1433,11 +1450,122 @@ void RivenExternal::xorollcredittime(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
-	// TODO: This fun external command is probably one of the most complex,
-	// up there with the marble puzzle ones. It involves so much... Basically,
-	// it's playing when Gehn holds the trap book up to you and you have to
-	// click on the book (hence the name of the function). Yeah, not fun.
-	// Lots of timing stuff needs to be done for a couple videos.
+	// Hide the cursor
+	_vm->_gfx->changeCursor(kRivenHideCursor);
+
+	// Let's hook onto our video
+	VideoHandle video = _vm->_video->findVideoHandle(argv[0]);
+
+	// Convert from the standard QuickTime base time to milliseconds
+	// The values are in terms of 1/600 of a second.
+	// Have I said how much I just *love* QuickTime? </sarcasm>
+	uint32 startTime = argv[1] * 1000 / 600;
+	uint32 endTime = argv[2] * 1000 / 600;
+
+	// Track down our hotspot
+	// Of course, they're not in any sane order...
+	static const uint16 hotspotMap[] = { 1, 3, 2, 0 };
+	Common::Rect hotspotRect = _vm->_hotspots[hotspotMap[argv[3] - 1]].rect;
+
+	debug(0, "xbookclick:");
+	debug(0, "\tVideo Code = %d", argv[0]);
+	debug(0, "\tStart Time = %dms", startTime);
+	debug(0, "\tEnd Time   = %dms", endTime);
+	debug(0, "\tHotspot    = %d -> %d", argv[3], hotspotMap[argv[3] - 1]);
+
+	// Just let the video play while we wait until Gehn opens the trap book for us
+	while (_vm->_video->getElapsedTime(video) < startTime && !_vm->shouldQuit()) {
+		if (_vm->_video->updateBackgroundMovies())
+			_vm->_system->updateScreen();
+
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event))
+			;
+
+		_vm->_system->delayMillis(10);
+	}
+
+	// Break out if we're quitting
+	if (_vm->shouldQuit())
+		return;
+
+	// Update our hotspot stuff
+	if (hotspotRect.contains(_vm->_system->getEventManager()->getMousePos()))
+		_vm->_gfx->changeCursor(kRivenOpenHandCursor);
+	else
+		_vm->_gfx->changeCursor(kRivenMainCursor);
+	
+	// OK, Gehn has opened the trap book and has asked us to go in. Let's watch
+	// and see what the player will do...
+	while (_vm->_video->getElapsedTime(video) < endTime && !_vm->shouldQuit()) {
+		bool updateScreen = _vm->_video->updateBackgroundMovies();
+
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				if (hotspotRect.contains(_vm->_system->getEventManager()->getMousePos()))
+					_vm->_gfx->changeCursor(kRivenOpenHandCursor);
+				else
+					_vm->_gfx->changeCursor(kRivenMainCursor);
+				updateScreen = false; // Don't update twice, changing the cursor already updates the screen
+				break;
+			case Common::EVENT_LBUTTONUP:
+				if (hotspotRect.contains(_vm->_system->getEventManager()->getMousePos())) {
+					// OK, we've used the trap book! We go for ride lady!
+					_vm->_scriptMan->stopAllScripts();                  // Stop all running scripts (so we don't remain in the cage)
+					_vm->_video->stopVideos();                          // Stop all videos
+					_vm->_gfx->changeCursor(kRivenHideCursor);          // Hide the cursor
+					_vm->_gfx->drawPLST(3);                             // Black out the screen
+					_vm->_gfx->updateScreen();                          // Update the screen
+					_vm->_sound->playSound(0, false);                   // Play the link sound
+					_vm->_video->activateMLST(7, _vm->getCurCard());    // Activate Gehn Link Video
+					_vm->_video->playMovieBlocking(1);                  // Play Gehn Link Video
+					*_vm->matchVarToString("agehn") = 4;                // Set Gehn to the trapped state
+					*_vm->matchVarToString("atrapbook") = 1;            // We've got the trap book again
+					_vm->_sound->playSound(0, false);                   // Play the link sound again
+					_vm->changeToCard(_vm->matchRMAPToCard(0x2885));    // Link out! (TODO: Shouldn't this card change?)
+					return;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (updateScreen && !_vm->shouldQuit())
+			_vm->_system->updateScreen();
+
+		_vm->_system->delayMillis(10);
+	}
+
+	// Break out if we're quitting
+	if (_vm->shouldQuit())
+		return;
+
+	// Hide the cursor again
+	_vm->_gfx->changeCursor(kRivenHideCursor);
+
+	// If there was no click and this is the third time Gehn asks us to
+	// use the trap book, he will shoot the player. Dead on arrival.
+	// Run the credits from here.
+	if (*_vm->matchVarToString("agehn") == 3) {
+		_vm->_scriptMan->stopAllScripts();
+		runCredits(argv[0]);
+		return;
+	}
+
+	// There was no click, so just play the rest of the video.
+	while (!_vm->_video->endOfVideo(video) && !_vm->shouldQuit()) {
+		if (_vm->_video->updateBackgroundMovies())
+			_vm->_system->updateScreen();
+
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event))
+			;
+
+		_vm->_system->delayMillis(10);
+	}
 }
 
 void RivenExternal::xooffice30_closebook(uint16 argc, uint16 *argv) {

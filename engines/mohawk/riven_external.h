@@ -61,6 +61,7 @@ private:
 	int jspitElevatorLoop();
 	void runDemoBoundaryDialog();
 	void runEndGame(uint16 video);
+	void runCredits(uint16 video);
 	void runDomeCheck();
 	void runDomeButtonMovie();
 	void resetDomeSliders(uint16 bitmapId, uint16 soundId, uint16 startHotspot);

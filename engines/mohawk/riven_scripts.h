@@ -62,6 +62,7 @@ public:
 	uint16 getParentStack() { return _parentStack; }
 	uint16 getParentCard() { return _parentCard; }
 	bool isRunning() { return _isRunning; }
+	void stopRunning() { _continueRunning = false; }
 
 	static uint32 calculateScriptSize(Common::SeekableReadStream *script);
 
@@ -76,8 +77,8 @@ private:
 
 	MohawkEngine_Riven *_vm;
 	Common::SeekableReadStream *_stream;
-	uint16 _scriptType, _parentStack, _parentCard, _parentHotspot;
-	bool _isRunning;
+	uint16 _scriptType, _parentStack, _parentCard;
+	bool _isRunning, _continueRunning;
 
 	void dumpCommands(Common::StringArray varNames, Common::StringArray xNames, byte tabs);
 	void processCommands(bool runCommands);
@@ -131,6 +132,7 @@ public:
 	~RivenScriptManager();
 
 	RivenScriptList readScripts(Common::SeekableReadStream *stream, bool garbageCollect = true);
+	void stopAllScripts();
 
 private:
 	void unloadUnusedScripts();

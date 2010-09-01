@@ -412,4 +412,14 @@ uint32 VideoManager::getFrameCount(const VideoHandle &handle) {
 	return _videoStreams[handle]->getFrameCount();
 }
 
+uint32 VideoManager::getElapsedTime(const VideoHandle &handle) {
+	assert(handle != NULL_VID_HANDLE);
+	return _videoStreams[handle]->getElapsedTime();
+}
+
+bool VideoManager::endOfVideo(const VideoHandle &handle) {
+	assert(handle != NULL_VID_HANDLE);
+	return _videoStreams[handle]->endOfVideo();
+}
+
 } // End of namespace Mohawk
