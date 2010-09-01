@@ -154,7 +154,6 @@ msgid "Platform the game was originally designed for"
 msgstr "Платформа, для которой игра была изначально разработана"
 
 #: gui/launcher.cpp:197
-#, fuzzy
 msgctxt "lowres"
 msgid "Platform:"
 msgstr "Платформа:"
@@ -172,7 +171,6 @@ msgid "Override global graphic settings"
 msgstr "Перекрыть глобальные установки графики"
 
 #: gui/launcher.cpp:214
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Перекрыть глобальные установки графики"
@@ -186,7 +184,6 @@ msgid "Override global audio settings"
 msgstr "Перекрыть глобальные установки аудио"
 
 #: gui/launcher.cpp:226
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Перекрыть глобальные установки аудио"
@@ -196,17 +193,15 @@ msgid "Volume"
 msgstr "Громкость"
 
 #: gui/launcher.cpp:237 gui/options.cpp:951
-#, fuzzy
 msgctxt "lowres"
 msgid "Volume"
-msgstr "Громкость"
+msgstr "Громк"
 
 #: gui/launcher.cpp:240
 msgid "Override global volume settings"
 msgstr "Перекрыть глобальные установки громкости"
 
 #: gui/launcher.cpp:242
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Перекрыть глобальные установки громкости"
@@ -220,7 +215,6 @@ msgid "Override global MIDI settings"
 msgstr "Перекрыть глобальные установки MIDI"
 
 #: gui/launcher.cpp:254
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Перекрыть глобальные установки MIDI"
@@ -234,7 +228,6 @@ msgid "Override global MT-32 settings"
 msgstr "Перекрыть глобальные установки MT-32"
 
 #: gui/launcher.cpp:269
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Перекрыть глобальные установки MT-32"
@@ -257,7 +250,7 @@ msgstr "Указывает путь к дополнительным файлам данных для игры"
 
 #: gui/launcher.cpp:294
 msgid "Save Path:"
-msgstr "Путь сохр: "
+msgstr "Сохранения игр: "
 
 #: gui/launcher.cpp:294 gui/launcher.cpp:296 gui/launcher.cpp:297
 #: gui/options.cpp:978 gui/options.cpp:979
@@ -265,17 +258,15 @@ msgid "Specifies where your savegames are put"
 msgstr "Указывает путь к сохранениям игры"
 
 #: gui/launcher.cpp:296
-#, fuzzy
 msgctxt "lowres"
 msgid "Save Path:"
-msgstr "Путь сохр: "
+msgstr "Путь сохр:"
 
 #: gui/launcher.cpp:313 gui/launcher.cpp:393 gui/launcher.cpp:442
 #: gui/options.cpp:982 gui/options.cpp:985 gui/options.cpp:989
 #: gui/options.cpp:1090 gui/options.cpp:1096 gui/options.cpp:1102
 #: gui/options.cpp:1110 gui/options.cpp:1134 gui/options.cpp:1138
 #: gui/options.cpp:1144 gui/options.cpp:1151 gui/options.cpp:1250
-#, fuzzy
 msgctxt "path"
 msgid "None"
 msgstr "Не задан"
@@ -370,19 +361,16 @@ msgid "Remove game from the list. The game data files stay intact"
 msgstr "Удалить игру из списка. Не удаляет игру с жесткого диска"
 
 #: gui/launcher.cpp:563
-#, fuzzy
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~Д~об. игру..."
 
 #: gui/launcher.cpp:565
-#, fuzzy
 msgctxt "lowres"
 msgid "~E~dit Game..."
 msgstr "О~п~ции игры..."
 
 #: gui/launcher.cpp:567
-#, fuzzy
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~У~далить игру"
@@ -458,7 +446,6 @@ msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM не смог найти движок для запуска выбранной игры!"
 
 #: gui/launcher.cpp:1044
-#, fuzzy
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Много игр..."
@@ -468,10 +455,9 @@ msgid "Mass Add..."
 msgstr "Много игр..."
 
 #: gui/launcher.cpp:1045
-#, fuzzy
 msgctxt "lowres"
 msgid "Add Game..."
-msgstr "Новая игра..."
+msgstr "Новая игра"
 
 #: gui/launcher.cpp:1045
 msgid "Add Game..."
@@ -542,7 +528,6 @@ msgstr "48 кГц"
 
 #: gui/options.cpp:230 gui/options.cpp:399 gui/options.cpp:497
 #: gui/options.cpp:555 gui/options.cpp:739
-#, fuzzy
 msgctxt "soundfont"
 msgid "None"
 msgstr "Не задан"
@@ -626,7 +611,6 @@ msgstr ""
 "Timidity"
 
 #: gui/options.cpp:738
-#, fuzzy
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "SoundFont:"
@@ -666,10 +650,9 @@ msgstr ""
 "хотите его использовать"
 
 #: gui/options.cpp:763
-#, fuzzy
 msgctxt "lowres"
 msgid "True Roland MT-32 (disable GM emulation)"
-msgstr "Настоящий Roland MT-32 (запретить эмуляцию GM)"
+msgstr "Настоящий Roland MT-32 (запретить GM)"
 
 #: gui/options.cpp:766
 msgid "Enable Roland GS Mode"
@@ -701,7 +684,6 @@ msgid "Subtitle speed:"
 msgstr "Скорость титров:"
 
 #: gui/options.cpp:801
-#, fuzzy
 msgctxt "lowres"
 msgid "Text and Speech:"
 msgstr "Текст и озвучка:"
@@ -715,7 +697,6 @@ msgid "Subs"
 msgstr "Суб"
 
 #: gui/options.cpp:807
-#, fuzzy
 msgctxt "lowres"
 msgid "Both"
 msgstr "Всё"
@@ -725,7 +706,6 @@ msgid "Show subtitles and play speech"
 msgstr "Показывать субтитры и воспроизводить речь"
 
 #: gui/options.cpp:809
-#, fuzzy
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "Скорость титров:"
@@ -735,7 +715,6 @@ msgid "Music volume:"
 msgstr "Громк. музыки:"
 
 #: gui/options.cpp:827
-#, fuzzy
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "Громк. музыки:"
@@ -746,14 +725,13 @@ msgstr "Выкл. всё"
 
 #: gui/options.cpp:837
 msgid "SFX volume:"
-msgstr "Громк. SFX:"
+msgstr "Громкость SFX:"
 
 #: gui/options.cpp:837 gui/options.cpp:839 gui/options.cpp:840
 msgid "Special sound effects volume"
 msgstr "Громкость специальных звуковых эффектов"
 
 #: gui/options.cpp:839
-#, fuzzy
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "Громк. SFX:"
@@ -763,7 +741,6 @@ msgid "Speech volume:"
 msgstr "Громк. озвучки:"
 
 #: gui/options.cpp:849
-#, fuzzy
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Громк. озвучки:"
@@ -791,7 +768,6 @@ msgid "Misc"
 msgstr "Разное"
 
 #: gui/options.cpp:999
-#, fuzzy
 msgctxt "lowres"
 msgid "Misc"
 msgstr "Разное"
@@ -809,10 +785,9 @@ msgid "Autosave:"
 msgstr "Автосохранение:"
 
 #: gui/options.cpp:1019
-#, fuzzy
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "Автосохранение:"
+msgstr "Автосохр.:"
 
 #: gui/options.cpp:1027
 msgid "Keys"
@@ -903,16 +878,14 @@ msgid "Antialiased Renderer (16bpp)"
 msgstr "Растеризатор со сглаживанием (16bpp)"
 
 #: gui/ThemeEngine.cpp:341
-#, fuzzy
 msgctxt "lowres"
 msgid "Standard Renderer (16bpp)"
-msgstr "Стандартный растеризатор (16bpp)"
+msgstr "Стандартный (16bpp)"
 
 #: gui/ThemeEngine.cpp:342
-#, fuzzy
 msgctxt "lowres"
 msgid "Antialiased Renderer (16bpp)"
-msgstr "Растеризатор со сглаживанием (16bpp)"
+msgstr "Со сглаживанием (16bpp)"
 
 #: base/main.cpp:205
 #, c-format
@@ -1007,13 +980,11 @@ msgid "Hercules Amber"
 msgstr "Hercules Янтарный"
 
 #: common/util.cpp:262
-#, fuzzy
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Hercules Зеленый"
 
 #: common/util.cpp:263
-#, fuzzy
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Янтарный"
@@ -1047,10 +1018,9 @@ msgid "~R~eturn to Launcher"
 msgstr "~В~ыйти в главное меню"
 
 #: engines/dialogs.cpp:112
-#, fuzzy
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr "~В~ыйти в главное меню"
+msgstr "~В~ главное меню"
 
 #: engines/dialogs.cpp:122
 msgid "Save game:"
@@ -1258,7 +1228,6 @@ msgid "Normal (no scaling)"
 msgstr "Без увеличения"
 
 #: backends/platform/sdl/graphics.cpp:59
-#, fuzzy
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Без увеличения"
@@ -1554,11 +1523,3 @@ msgstr "Показать "
 #: backends/platform/wince/CELauncherDialog.cpp:104
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Вы хотите произвести автоматический поиск?"
-
-#, fuzzy
-#~ msgctxt "lowres"
-#~ msgid "Special sound effects volume"
-#~ msgstr "Громкость специальных звуковых эффектов"
-
-#~ msgid "English"
-#~ msgstr "English"
