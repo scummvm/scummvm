@@ -45,6 +45,7 @@
 #include "sci/engine/selector.h"	// for SELECTOR
 
 #include "sci/sound/audio.h"
+#include "sci/sound/music.h"
 #include "sci/sound/soundcmd.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
@@ -678,7 +679,7 @@ void SciEngine::syncSoundSettings() {
 	int soundVolumeMusic = (mute ? 0 : ConfMan.getInt("music_volume"));
 
 	if (_gamestate && g_sci->_soundCmd) {
-		int vol =  (soundVolumeMusic + 1) * SoundCommandParser::kMaxSciVolume / Audio::Mixer::kMaxMixerVolume;
+		int vol =  (soundVolumeMusic + 1) * MUSIC_MASTERVOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
 		g_sci->_soundCmd->setMasterVolume(vol);
 	}
 }

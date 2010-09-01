@@ -53,6 +53,7 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 	_ppqn = 1;
 	setTempo(16667);
 
+	_masterVolume = 15;
 	_volume = 127;
 
 	_signalSet = false;
@@ -418,7 +419,7 @@ void MidiParser_SCI::sendToDriver(uint32 midi) {
 		int channelVolume = (midi >> 16) & 0xFF;
 		// Remember, if we need to set it ourselves
 		_channelVolume[midiChannel] = channelVolume;
-		// Adjust volume accordingly to current "global" volume
+		// Adjust volume accordingly to current local volume
 		channelVolume = channelVolume * _volume / 127;
 		midi = (midi & 0xFFF0) | ((channelVolume & 0xFF) << 16);
 	}
@@ -659,6 +660,28 @@ void MidiParser_SCI::allNotesOff() {
 	memset(_active_notes, 0, sizeof(_active_notes));
 }
 
+void MidiParser_SCI::setMasterVolume(byte masterVolume) {
+	assert(masterVolume <= MUSIC_MASTERVOLUME_MAX);
+	_masterVolume = masterVolume;
+	switch (_soundVersion) {
+	case SCI_VERSION_0_EARLY:
+	case SCI_VERSION_0_LATE:
+		// update driver master volume
+		setVolume(_volume);
+		break;
+
+	case SCI_VERSION_1_EARLY:
+	case SCI_VERSION_1_LATE:
+	case SCI_VERSION_2_1:
+		// directly set master volume (global volume is merged with channel volumes)
+		((MidiPlayer *)_driver)->setVolume(masterVolume);
+		break;
+
+	default:
+		error("MidiParser_SCI::setVolume: Unsupported soundVersion");
+	}
+}
+
 void MidiParser_SCI::setVolume(byte volume) {
 	assert(volume <= MUSIC_VOLUME_MAX);
 	_volume = volume;
@@ -667,8 +690,7 @@ void MidiParser_SCI::setVolume(byte volume) {
 	case SCI_VERSION_0_EARLY:
 	case SCI_VERSION_0_LATE: {
 		// SCI0 adlib driver doesn't support channel volumes, so we need to go this way
-		// TODO: this should take the actual master volume into account
-		int16 globalVolume = _volume * 15 / 127;
+		int16 globalVolume = _volume * _masterVolume / MUSIC_VOLUME_MAX;
 		((MidiPlayer *)_driver)->setVolume(globalVolume);
 		break;
 	}

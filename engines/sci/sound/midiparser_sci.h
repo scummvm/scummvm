@@ -65,6 +65,7 @@ public:
 	}
 	void sendInitCommands();
 	void unloadMusic();
+	void setMasterVolume(byte masterVolume);
 	void setVolume(byte volume);
 	void stop() {
 		_abort_parse = true;
@@ -104,7 +105,8 @@ protected:
 	SoundResource::Track *_track;
 	MusicEntry *_pSnd;
 	uint32 _loopTick;
-	byte _volume;
+	byte _masterVolume; // the overall master volume (same for all tracks)
+	byte _volume; // the global volume of the current track
 
 	bool _signalSet;
 	int16 _signalToSet;

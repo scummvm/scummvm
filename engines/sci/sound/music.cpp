@@ -261,6 +261,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				pSnd->pMidiParser = new MidiParser_SCI(_soundVersion, this);
 				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
 				pSnd->pMidiParser->setTimerRate(_dwTempo);
+				pSnd->pMidiParser->setMasterVolume(_masterVolume);
 			}
 
 			pSnd->pauseCounter = 0;
@@ -526,8 +527,11 @@ void SciMusic::soundSetMasterVolume(uint16 vol) {
 
 	Common::StackLock lock(_mutex);
 
-	if (_pMidiDrv)
-		_pMidiDrv->setVolume(vol);
+	const MusicList::iterator end = _playList.end();
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+		if ((*i)->pMidiParser)
+			(*i)->pMidiParser->setMasterVolume(vol);
+	}
 }
 
 void SciMusic::sendMidiCommand(uint32 cmd) {

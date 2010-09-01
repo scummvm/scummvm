@@ -47,10 +47,6 @@ public:
 	SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion);
 	~SoundCommandParser();
 
-	enum {
-		kMaxSciVolume = 15
-	};
-
 	//reg_t parseCommand(int argc, reg_t *argv, reg_t acc);
 
 	// Functions used for game state loading

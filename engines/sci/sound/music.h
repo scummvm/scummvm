@@ -47,6 +47,8 @@ enum SoundStatus {
 
 #define MUSIC_VOLUME_DEFAULT 127
 #define MUSIC_VOLUME_MAX 127
+#define MUSIC_MASTERVOLUME_DEFAULT 15
+#define MUSIC_MASTERVOLUME_MAX 15
 
 class MidiParser_SCI;
 class SegManager;
