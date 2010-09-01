@@ -32,8 +32,8 @@
  *
  */
 
-#ifndef SWORD25_THEORASTATE_H
-#define SWORD25_THEORASTATE_H
+#ifndef SWORD25_YUVTORGBA_H
+#define SWORD25_YUVTORGBA_H
 
 // -----------------------------------------------------------------------------
 // Includes
@@ -41,30 +41,19 @@
 
 #include "sword25/kernel/common.h"
 #include <theora/theora.h>
+#include <theora/codec.h>
+
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
-// Klassendefinition
+// Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_TheoraState
-{
+class YUVtoBGRA {
 public:
-	BS_TheoraState();
-	virtual ~BS_TheoraState();
-
-	int		DecodeHeader(ogg_packet * OggPacketPtr);
-	int		DecodeInit();
-	int		DecodePacketIn(ogg_packet * OggPacketPtr);
-	int		DecodeYUVOut(yuv_buffer * YUV);
-	double	GranuleTime();
-
-	const theora_info & GetInfo() const { return m_Info; }
-
-private:
-	theora_info					m_Info;
-	theora_comment				m_Comment;
-	bool						m_StateInitialized;
-	theora_state				m_State;
+	static void translate(th_ycbcr_buffer &YUVBuffer, const th_info &TheoraInfo, byte *PixelData, int PixelsSize);
 };
+
+} // End of namespace Sword25
 
 #endif

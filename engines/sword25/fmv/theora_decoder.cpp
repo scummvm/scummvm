@@ -37,7 +37,7 @@
  */
 
 #include "sword25/fmv/theora_decoder.h"
-
+#include "sword25/fmv/yuvtorgba.h"
 #include "common/system.h"
 #include "sound/decoders/raw.h"
 
@@ -422,7 +422,9 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 
 		th_decode_ycbcr_out(_theoraDecode, yuv);
 
-		// TODO: YUV->RGB
+		// Convert YUV data to RGB data
+		YUVtoBGRA::translate(yuv, _theoraInfo, (byte *)_surface->getBasePtr(0, 0), _surface->pitch * _surface->h);
+		
 		switch (_theoraInfo.pixel_fmt) {
 		case TH_PF_420:
 			break;
