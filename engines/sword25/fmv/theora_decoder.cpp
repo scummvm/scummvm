@@ -55,6 +55,7 @@ TheoraDecoder::TheoraDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundT
 
 	_theoraPacket = 0;
 	_vorbisPacket = 0;
+	_theoraDecode = 0;
 	_theoraSetup = 0;
 	_stateFlag = false;
 

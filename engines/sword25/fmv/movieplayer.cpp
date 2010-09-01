@@ -61,13 +61,10 @@ MoviePlayer::~MoviePlayer() {
 	_decoder.close();
 }
 
-bool MoviePlayer::LoadMovie(const Common::String &Filename, unsigned int Z) {
+bool MoviePlayer::LoadMovie(const Common::String &filename, unsigned int z) {
 	// Get the file and load it into the decoder
-	uint dataSize;
-	const byte *data = reinterpret_cast<const byte *>(Kernel::GetInstance()->GetPackage()->GetFile(Filename, &dataSize));
-	Common::MemoryReadStream *stream = new Common::MemoryReadStream(
-		data, dataSize, DisposeAfterUse::YES);
-	_decoder.load(stream);
+	Common::SeekableReadStream *in = Kernel::GetInstance()->GetPackage()->GetStream(filename);
+	_decoder.load(in);
 
 	// Ausgabebitmap erstellen
 	GraphicEngine *pGfx = Kernel::GetInstance()->GetGfx();
@@ -86,7 +83,7 @@ bool MoviePlayer::LoadMovie(const Common::String &Filename, unsigned int Z) {
 	_outputBitmap->SetScaleFactor(ScaleFactor);
 
 	// Z-Wert setzen
-	_outputBitmap->SetZ(Z);
+	_outputBitmap->SetZ(z);
 
 	// Ausgabebitmap auf dem Bildschirm zentrieren
 	_outputBitmap->SetX((pGfx->GetDisplayWidth() - _outputBitmap->GetWidth()) / 2);
@@ -150,8 +147,7 @@ void MoviePlayer::SetScaleFactor(float ScaleFactor) {
 }
 
 double MoviePlayer::GetTime() {
-	// FIXME: This may need conversion
-	return _decoder.getElapsedTime();
+	return _decoder.getElapsedTime() / 1000.0;
 }
 
 } // End of namespace Sword25
