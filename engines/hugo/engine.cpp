@@ -523,9 +523,6 @@ void HugoEngine::processMaze() {
 
 	debugC(1, kDebugEngine, "processMaze");
 
-	//actlist     alnewscr  = {&aheroxy,&astophero,&aherostop,&anewscr,NULL};
-	//actlist_pt  alist     = &alnewscr[0];
-
 	currImage = _hero->currImagePtr;                // Get ptr to current image
 	x1 = _hero->x + currImage->x1;                  // Left edge of object
 	x2 = _hero->x + currImage->x2;                  // Right edge
@@ -534,41 +531,29 @@ void HugoEngine::processMaze() {
 
 	if (x1 < _maze.x1) {
 		// Exit west
-//		anewscr.screen = *_screen_p - 1;
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_screen_p - 1;
-//		aheroxy.x = _maze.x2 - SHIFT - (x2 - x1);
 		_actListArr[_alNewscrIndex][0].a2.x = _maze.x2 - SHIFT - (x2 - x1);
-//		aheroxy.y = _hero_p->y;
 		_actListArr[_alNewscrIndex][0].a2.y = _hero->y;
 		_status.routeIndex = -1;
 		scheduler().insertActionList(_alNewscrIndex);
 	} else if (x2 > _maze.x2) {
 		// Exit east
-//			anewscr.screen = *_screen_p + 1;
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_screen_p + 1;
-//			aheroxy.x = _maze.x1 + SHIFT;
 		_actListArr[_alNewscrIndex][0].a2.x = _maze.x1 + SHIFT;
-//			aheroxy.y = _hero_p->y;
 		_actListArr[_alNewscrIndex][0].a2.y = _hero->y;
 		_status.routeIndex = -1;
 		scheduler().insertActionList(_alNewscrIndex);
 	} else if (y1 < _maze.y1 - SHIFT) {
 		// Exit north
-//				anewscr.screen = *_screen_p - _maze.size;
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_screen_p - _maze.size;
-//				aheroxy.x = _maze.x3;             // special offset for perspective
 		_actListArr[_alNewscrIndex][0].a2.x = _maze.x3;
-//				aheroxy.y = _maze.y2 - SHIFT - (y2 - y1);
 		_actListArr[_alNewscrIndex][0].a2.y = _maze.y2 - SHIFT - (y2 - y1);
 		_status.routeIndex = -1;
 		scheduler().insertActionList(_alNewscrIndex);
 	} else if (y2 > _maze.y2 - SHIFT / 2) {
 		// Exit south
-//					anewscr.screen = *_screen_p + _maze.size;
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_screen_p + _maze.size;
-//					aheroxy.x = _maze.x4;            // special offset for perspective
 		_actListArr[_alNewscrIndex][0].a2.x = _maze.x4;
-//					aheroxy.y = _maze.y1 + SHIFT;
 		_actListArr[_alNewscrIndex][0].a2.y = _maze.y1 + SHIFT;
 		_status.routeIndex = -1;
 		scheduler().insertActionList(_alNewscrIndex);

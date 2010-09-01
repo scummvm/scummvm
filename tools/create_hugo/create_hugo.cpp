@@ -1154,6 +1154,7 @@ void writeActListArray(FILE *outFile, const actList actListArr[], int nbrElem) {
 			case INIT_MAZE:          // 30
 				writeSint16BE(outFile, ((act *) actListArr[i][j])->a30.timer);
 				writeByte(outFile, ((act *) actListArr[i][j])->a30.mazeSize);
+				writeSint16BE(outFile, ((act *) actListArr[i][j])->a30.x1);
 				writeSint16BE(outFile, ((act *) actListArr[i][j])->a30.y1);
 				writeSint16BE(outFile, ((act *) actListArr[i][j])->a30.x2);
 				writeSint16BE(outFile, ((act *) actListArr[i][j])->a30.y2);

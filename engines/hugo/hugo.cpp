@@ -848,6 +848,7 @@ bool HugoEngine::loadHugoDat() {
 					case INIT_MAZE:          // 30
 						_actListArr[i][j].a30.timer = in.readSint16BE();
 						_actListArr[i][j].a30.mazeSize = in.readByte();
+						_actListArr[i][j].a30.x1 = in.readSint16BE();
 						_actListArr[i][j].a30.y1 = in.readSint16BE();
 						_actListArr[i][j].a30.x2 = in.readSint16BE();
 						_actListArr[i][j].a30.y2 = in.readSint16BE();
@@ -1125,6 +1126,7 @@ bool HugoEngine::loadHugoDat() {
 					case INIT_MAZE:          // 30
 						in.readSint16BE();
 						in.readByte();
+						in.readSint16BE();
 						in.readSint16BE();
 						in.readSint16BE();
 						in.readSint16BE();
