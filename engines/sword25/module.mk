@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	fmv/movieplayer.o \
 	fmv/movieplayer_script.o \
 	fmv/theora_decoder.o \
+	fmv/yuvtorgba.o \
 	gfx/animation.o \
 	gfx/animationdescription.o \
 	gfx/animationresource.o \
