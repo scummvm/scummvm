@@ -111,6 +111,13 @@ bool Actor::readFromStream(Common::ReadStream *stream) {
 		_bones.push_back(node);
 	}
 
+	for (uint32 i = 0; i < numBones; ++i) {
+		BoneNode *node = _bones[i];
+		for (int j = 0; j < node->_children.size(); ++j) {
+			_bones[node->_children[j]]->_parent = i;
+		}
+	}
+
 	uint32 numMeshes = stream->readUint32LE();
 
 	for (uint32 i = 0; i < numMeshes; ++i) {
@@ -125,7 +132,7 @@ bool Actor::readFromStream(Common::ReadStream *stream) {
 		len = stream->readUint32LE();
 		for (uint32 j = 0; j < len; ++j) {
 			FaceNode *face = new FaceNode();
-			face->_idx = stream->readUint32LE();
+			face->_matIdx = stream->readUint32LE();
 
 			uint32 childCount = stream->readUint32LE();
 			for (uint32 k = 0; k < childCount; ++k) {
@@ -178,6 +185,7 @@ bool Animation::readFromStream(Common::ReadStream *stream) {
 		return false;
 
 	uint32 num = stream->readUint32LE();
+	_anims.resize(num);
 	for (uint32 i = 0; i < num; ++i) {
 		AnimNode *node = new AnimNode();
 		node->_bone = stream->readUint32LE();
@@ -194,7 +202,7 @@ bool Animation::readFromStream(Common::ReadStream *stream) {
 			node->_keys.push_back(key);
 		}
 
-		_anims.push_back(node);
+		_anims[node->_bone] = node;
 	}
 
 	return true;

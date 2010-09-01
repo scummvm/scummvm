@@ -64,7 +64,7 @@ public:
 			delete *it;
 	}
 	
-	uint32 _idx;
+	uint32 _matIdx;
 	Common::Array<VertNode *> _verts;
 	Common::Array<TriNode *> _tris;
 };
@@ -101,11 +101,12 @@ public:
 
 class BoneNode {
 public:
-	BoneNode() { }
+	BoneNode() : _parent(-1) { }
 	~BoneNode() { }
 	Common::String _name;
 	float _u1;
 	Common::Array<uint32> _children;
+	int _parent;
 };
 
 
@@ -119,6 +120,10 @@ public:
 	~Actor();
 
 	bool readFromStream(Common::ReadStream *stream);
+
+	const Common::Array<BoneNode *> &getBones() const { return _bones; }
+	const Common::Array<MeshNode *> &getMeshes() const { return _meshes; }
+	const Common::Array<MaterialNode *> &getMaterials() const { return _materials; }
 
 private:
 	uint32 _id;
@@ -156,6 +161,8 @@ public:
 			delete *it;
 	}
 	bool readFromStream(Common::ReadStream *stream);
+
+	const Common::Array<AnimNode *> &getNodes() const { return _anims; }
 
 private:
 	uint32 _id, _ver, _u1, _u2, _time;
