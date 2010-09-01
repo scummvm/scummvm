@@ -53,15 +53,18 @@ TheoraDecoder::TheoraDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundT
 	_fileStream = 0;
 	_surface = 0;
 
+	_theoraPacket = 0;
+	_vorbisPacket = 0;
+	_theoraSetup = 0;
+	_stateFlag = false;
+
 	_soundType = soundType;
 	_audStream = 0;
 	_audHandle = new Audio::SoundHandle();
 
-	_theoraDecode = 0;
-	_theoraSetup = 0;
+	ogg_sync_init(&_oggSync);
 
 	_curFrame = 0;
-
 	_audiobuf = (ogg_int16_t *)calloc(AUDIOFD_FRAGSIZE, sizeof(ogg_int16_t));
 
 	reset();
@@ -69,6 +72,7 @@ TheoraDecoder::TheoraDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundT
 
 TheoraDecoder::~TheoraDecoder() {
 	close();
+	delete _fileStream;
 	delete _audHandle;
 	free(_audiobuf);
 }
@@ -249,13 +253,11 @@ bool TheoraDecoder::load(Common::SeekableReadStream *stream) {
 		_ppLevel = _ppLevelMax;
 		th_decode_ctl(_theoraDecode, TH_DECCTL_SET_PPLEVEL, &_ppLevel, sizeof(_ppLevel));
 		_ppInc = 0;
-
 	} else {
 		// tear down the partial theora setup
 		th_info_clear(&_theoraInfo);
 		th_comment_clear(&_theoraComment);
 	}
-
 
 	th_setup_free(_theoraSetup);
 	_theoraSetup = 0;
@@ -279,6 +281,7 @@ bool TheoraDecoder::load(Common::SeekableReadStream *stream) {
 	}
 
 	_surface = new Graphics::Surface();
+
 	_surface->create(_theoraInfo.frame_width, _theoraInfo.frame_height, 4);
 
 	return true;
@@ -295,6 +298,7 @@ void TheoraDecoder::close() {
 		if (_mixer)
 			_mixer->stopHandle(*_audHandle);
 		_audStream = 0;
+		_vorbisPacket = false;
 	}
 	if (_theoraPacket) {
 		ogg_stream_clear(&_theoraOut);
@@ -302,6 +306,7 @@ void TheoraDecoder::close() {
 		th_comment_clear(&_theoraComment);
 		th_info_clear(&_theoraInfo);
 		_theoraDecode = 0;
+		_theoraPacket = false;
 	}
 
 	if (!_fileStream)
@@ -322,7 +327,7 @@ void TheoraDecoder::close() {
 Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 	int i, j;
 
-	_stateFlag = false; // playback has not begun
+//	_stateFlag = false; // playback has not begun
 
 	// we want a video and audio frame ready to go at all times.  If
 	// we have to buffer incoming, buffer the compressed data (ie, let
@@ -404,9 +409,11 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 	}
 
 	// If playback has begun, top audio buffer off immediately.
+/* FIXME: This is currently crashing
 	if (_stateFlag) {
 		_audStream->queueBuffer((byte *)_audiobuf, AUDIOFD_FRAGSIZE, DisposeAfterUse::NO, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO);
 	}
+*/
 
 	// are we at or past time for this video frame?
 	if (_stateFlag && _videobufReady) {

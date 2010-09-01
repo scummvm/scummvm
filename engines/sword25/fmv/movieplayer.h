@@ -41,11 +41,14 @@
 
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/service.h"
-#include "graphics/surface.h"
+#include "sword25/fmv/theora_decoder.h"
+#include "sword25/gfx/bitmap.h"
 
 namespace Sword25 {
 
-class TheoraDecoder;
+// -----------------------------------------------------------------------------
+// Class definitions
+// -----------------------------------------------------------------------------
 
 class MoviePlayer : public Service {
 public:
@@ -54,10 +57,10 @@ public:
 	// -----------------------------------------------------------------------------
 
 	MoviePlayer(Kernel *pKernel);
-	~MoviePlayer() {};
+	~MoviePlayer();
 
 	// -----------------------------------------------------------------------------
-	// Abstract interface must be implemented by each Movie Player
+	// Player interface must be implemented by a Movie Player
 	// -----------------------------------------------------------------------------
 
 	/**
@@ -136,12 +139,12 @@ public:
 	 * @remark              This method can only be called when IsMovieLoaded() returns true.
 	 */
 	double GetTime();
-
 private:
 	bool _RegisterScriptBindings();
 
-	TheoraDecoder *_decoder;
-	Graphics::Surface *_backSurface;
+	TheoraDecoder _decoder;
+
+	RenderObjectPtr<Bitmap>	_outputBitmap;
 };
 
 } // End of namespace Sword25

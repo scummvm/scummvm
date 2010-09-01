@@ -32,100 +32,126 @@
  *
  */
 
-#include "graphics/surface.h"
-
 #include "sword25/fmv/movieplayer.h"
-#include "sword25/fmv/theora_decoder.h"
-#include "sword25/kernel/kernel.h"
 #include "sword25/gfx/graphicengine.h"
+#include "sword25/gfx/panel.h"
+#include "sword25/kernel/kernel.h"
 #include "sword25/package/packagemanager.h"
+#include "sword25/sfx/soundengine.h"
 
 namespace Sword25 {
 
 #define BS_LOG_PREFIX "MOVIEPLAYER"
 
+#define FLT_EPSILON     1.192092896e-07F        /* smallest such that 1.0+FLT_EPSILON != 1.0 */
+
 Service *OggTheora_CreateObject(Kernel *pKernel) {
 	return new MoviePlayer(pKernel);
 }
 
-MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel) {
+MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel),
+		_decoder(g_system->getMixer()) {
 	if (!_RegisterScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else
 		BS_LOGLN("Script bindings registered.");
-
-	_decoder = new TheoraDecoder();
-	_backSurface = (static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx")))->getSurface();
 }
 
-bool MoviePlayer::LoadMovie(const Common::String &filename, unsigned int z) {
-	Common::SeekableReadStream *in = Kernel::GetInstance()->GetPackage()->GetStream(filename);
+MoviePlayer::~MoviePlayer() {
+	_decoder.close();
+}
 
-	if (!in) {
-		BS_LOG_ERRORLN("Could not open movie file \"%s\".", filename.c_str());
+bool MoviePlayer::LoadMovie(const Common::String &Filename, unsigned int Z) {
+	// Get the file and load it into the decoder
+	uint dataSize;
+	const byte *data = reinterpret_cast<const byte *>(Kernel::GetInstance()->GetPackage()->GetFile(Filename, &dataSize));
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(
+		data, dataSize, DisposeAfterUse::YES);
+	_decoder.load(stream);
+
+	// Ausgabebitmap erstellen
+	GraphicEngine *pGfx = Kernel::GetInstance()->GetGfx();
+	_outputBitmap = pGfx->GetMainPanel()->AddDynamicBitmap(
+		_decoder.getWidth(), _decoder.getHeight());
+	if (!_outputBitmap.IsValid()) {
+		BS_LOG_ERRORLN("Output bitmap for movie playback could not be created.");
 		return false;
 	}
 
-	debug(2, "LoadMovie(%s, %d)", filename.c_str(), z);
+	// Skalierung des Ausgabebitmaps berechnen, so dass es möglichst viel Bildschirmfläche einnimmt.
+	float ScreenToVideoWidth = (float) pGfx->GetDisplayWidth() / (float) _outputBitmap->GetWidth();
+	float ScreenToVideoHeight = (float) pGfx->GetDisplayHeight() / (float) _outputBitmap->GetHeight();
+	float ScaleFactor = MIN(ScreenToVideoWidth, ScreenToVideoHeight);
+	if (abs(ScaleFactor - 1.0f) < FLT_EPSILON) ScaleFactor = 1.0f;
+	_outputBitmap->SetScaleFactor(ScaleFactor);
 
-	if (!_decoder->load(in)) {
-		BS_LOG_ERRORLN("Could not load movie file \"%s\".", filename.c_str());
-		return false;
-	}
+	// Z-Wert setzen
+	_outputBitmap->SetZ(Z);
 
-	warning("STUB: MoviePlayer::LoadMovie(). Z is not handled");
+	// Ausgabebitmap auf dem Bildschirm zentrieren
+	_outputBitmap->SetX((pGfx->GetDisplayWidth() - _outputBitmap->GetWidth()) / 2);
+	_outputBitmap->SetY((pGfx->GetDisplayHeight() - _outputBitmap->GetHeight()) / 2);
 
 	return true;
 }
 
 bool MoviePlayer::UnloadMovie() {
-	_decoder->close();
+	_decoder.close();
+	_outputBitmap.Erase();
 
 	return true;
 }
 
 bool MoviePlayer::Play() {
-	_decoder->pauseVideo(false);
-
+	_decoder.pauseVideo(false);
 	return true;
 }
 
 bool MoviePlayer::Pause() {
-	_decoder->pauseVideo(true);
-
+	_decoder.pauseVideo(true);
 	return true;
 }
 
 void MoviePlayer::Update() {
-	if (!_decoder->isVideoLoaded())
-		return;
+	if (_decoder.isVideoLoaded()) {
+		Graphics::Surface *s = _decoder.decodeNextFrame();
 
-	Graphics::Surface *surface = _decoder->decodeNextFrame();
-
-	// Probably it's better to copy to _backSurface
-	if (surface->w > 0 && surface->h > 0)
-		g_system->copyRectToScreen((byte *)surface->getBasePtr(0, 0), surface->pitch, 0, 0, 
-							   MIN(surface->w, _backSurface->w), MIN(surface->h, _backSurface->h));
+		// Transfer the next frame
+		assert(s->bytesPerPixel == 4);
+		byte *frameData = (byte *)s->getBasePtr(0, 0);
+		_outputBitmap->SetContent(frameData, s->pitch * s->h, 0, s->pitch);
+	}
 }
 
 bool MoviePlayer::IsMovieLoaded() {
-	return _decoder->isVideoLoaded();
+	return _decoder.isVideoLoaded();
 }
 
 bool MoviePlayer::IsPaused() {
-	return _decoder->isPaused();
+	return _decoder.isPaused();
 }
 
 float MoviePlayer::GetScaleFactor() {
-	return 1.0f;
+	if (_decoder.isVideoLoaded())
+		return _outputBitmap->GetScaleFactorX();
+	else
+		return 0;
 }
 
 void MoviePlayer::SetScaleFactor(float ScaleFactor) {
+	if (_decoder.isVideoLoaded()) {
+		_outputBitmap->SetScaleFactor(ScaleFactor);
+
+		// Ausgabebitmap auf dem Bildschirm zentrieren
+		GraphicEngine *gfxPtr = Kernel::GetInstance()->GetGfx();
+		_outputBitmap->SetX((gfxPtr->GetDisplayWidth() - _outputBitmap->GetWidth()) / 2);
+		_outputBitmap->SetY((gfxPtr->GetDisplayHeight() - _outputBitmap->GetHeight()) / 2);
+	}
 }
 
 double MoviePlayer::GetTime() {
-	return (double)_decoder->getElapsedTime() / 1000.0;
+	// FIXME: This may need conversion
+	return _decoder.getElapsedTime();
 }
-
 
 } // End of namespace Sword25

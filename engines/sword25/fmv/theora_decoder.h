@@ -82,6 +82,7 @@ public:
 		// It is not possible to get frame count easily
 		// I.e. seeking is required
 		assert(0);
+		return 0;
 	}
 	Graphics::PixelFormat getPixelFormat() const {
 		return Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
