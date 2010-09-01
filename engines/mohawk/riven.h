@@ -153,10 +153,7 @@ private:
 	bool _ignoreNextMouseUp;
 
 public:
-	Common::SeekableReadStream *getExtrasResource(uint32 tag, uint16 id);
-	bool _activatedSLST;
-	void runLoadDialog();
-
+	// Stack/card/script funtions
 	void changeToCard(uint16 dest);
 	void changeToStack(uint16);
 	void refreshCard();
@@ -169,6 +166,7 @@ public:
 	uint16 matchRMAPToCard(uint32);
 	uint32 getCurCardRMAP();
 
+	// Hotspot functions/variables
 	RivenHotspot *_hotspots;
 	int32 _curHotspot;
 	Common::Array<ZipMode> _zipModeData;
@@ -177,6 +175,7 @@ public:
 	int32 getCurHotspot() { return _curHotspot; }
 	Common::String getHotspotName(uint16 hotspot);
 
+	// Variable functions
 	void initVars();
 	uint32 getVarCount() { return _varCount; }
 	uint32 getGlobalVar(uint32 index);
@@ -185,8 +184,13 @@ public:
 	uint32 *matchVarToString(Common::String varName);
 	uint32 *matchVarToString(const char *varName);
 
+	// Miscellaneous
 	void setGameOver() { _gameOver = true; }
 	void ignoreNextMouseUp() { _ignoreNextMouseUp = true; }
+	Common::SeekableReadStream *getExtrasResource(uint32 tag, uint16 id);
+	bool _activatedSLST;
+	void runLoadDialog();
+	void delayAndUpdate(uint32 ms);
 };
 
 } // End of namespace Mohawk

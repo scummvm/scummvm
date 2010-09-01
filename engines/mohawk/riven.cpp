@@ -593,6 +593,24 @@ void MohawkEngine_Riven::runHotspotScript(uint16 hotspot, uint16 scriptType) {
 		}
 }
 
+void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
+	uint32 startTime = _system->getMillis();
+
+	while (_system->getMillis() < startTime + ms && !shouldQuit()) {
+		bool needsUpdate = _gfx->runScheduledWaterEffects();
+		needsUpdate |= _video->updateBackgroundMovies();
+
+		Common::Event event;
+		while (_system->getEventManager()->pollEvent(event))
+			;
+
+		if (needsUpdate)
+			_system->updateScreen();
+
+		_system->delayMillis(10); // Ease off the CPU
+	}
+}
+
 void MohawkEngine_Riven::runLoadDialog() {
 	GUI::SaveLoadChooser slc("Load Game:", "Load");
 	slc.setSaveMode(false);

@@ -398,7 +398,7 @@ void RivenScript::changeCursor(uint16 op, uint16 argc, uint16 *argv) {
 void RivenScript::delay(uint16 op, uint16 argc, uint16 *argv) {
 	debug(2, "Delay %dms", argv[0]);
 	if (argv[0] > 0)
-		_vm->_system->delayMillis(argv[0]);
+		_vm->delayAndUpdate(argv[0]);
 }
 
 // Command 17: call external command
