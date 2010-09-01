@@ -143,11 +143,10 @@ Common::Error MohawkEngine_Riven::run() {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
-				_mousePos = event.mouse;
 				checkHotspotChange();
 
 				// Check to show the inventory
-				if (_mousePos.y >= 392)
+				if (_eventMan->getMousePos().y >= 392)
 					_gfx->showInventory();
 				else
 					_gfx->hideInventory();
@@ -384,7 +383,6 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 	_hotspotCount = inStream->readUint16BE();
 	_hotspots = new RivenHotspot[_hotspotCount];
 
-
 	for (uint16 i = 0; i < _hotspotCount; i++) {
 		_hotspots[i].enabled = true;
 
@@ -396,26 +394,12 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 		int16 right = inStream->readSint16BE();
 		int16 bottom = inStream->readSint16BE();
 
-		// Riven has some weird hotspots, disable them here
-		if (left >= right || top >= bottom) {
-			left = top = right = bottom = 0;
-			_hotspots[i].enabled = 0;
-		}
-
 		_hotspots[i].rect = Common::Rect(left, top, right, bottom);
 
 		_hotspots[i].u0 = inStream->readUint16BE();
-
-		if (_hotspots[i].u0 != 0)
-			warning("Hotspot %d u0 non-zero", i);
-
 		_hotspots[i].mouse_cursor = inStream->readUint16BE();
 		_hotspots[i].index = inStream->readUint16BE();
 		_hotspots[i].u1 = inStream->readSint16BE();
-
-		if (_hotspots[i].u1 != -1)
-			warning("Hotspot %d u1 not -1", i);
-
 		_hotspots[i].zipModeHotspot = inStream->readUint16BE();
 
 		// Read in the scripts now
@@ -455,7 +439,7 @@ void MohawkEngine_Riven::checkHotspotChange() {
 	uint16 hotspotIndex = 0;
 	bool foundHotspot = false;
 	for (uint16 i = 0; i < _hotspotCount; i++)
-		if (_hotspots[i].enabled && _hotspots[i].rect.contains(_mousePos)) {
+		if (_hotspots[i].enabled && _hotspots[i].rect.contains(_eventMan->getMousePos())) {
 			foundHotspot = true;
 			hotspotIndex = i;
 		}
@@ -481,8 +465,10 @@ Common::String MohawkEngine_Riven::getHotspotName(uint16 hotspot) {
 }
 
 void MohawkEngine_Riven::checkInventoryClick() {
+	Common::Point mousePos = _eventMan->getMousePos();
+
 	// Don't even bother. We're not in the inventory portion of the screen.
-	if (_mousePos.y < 392)
+	if (mousePos.y < 392)
 		return;
 
 	// No inventory in the demo or opening screens.
@@ -500,31 +486,31 @@ void MohawkEngine_Riven::checkInventoryClick() {
 
 	// Go to the book if a hotspot contains the mouse
 	if (!hasCathBook) {
-		if (g_atrusJournalRect1->contains(_mousePos)) {
+		if (g_atrusJournalRect1->contains(mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(5);
 		}
 	} else if (!hasTrapBook) {
-		if (g_atrusJournalRect2->contains(_mousePos)) {
+		if (g_atrusJournalRect2->contains(mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(5);
-		} else if (g_cathJournalRect2->contains(_mousePos)) {
+		} else if (g_cathJournalRect2->contains(mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(6);
 		}
 	} else {
-		if (g_atrusJournalRect3->contains(_mousePos)) {
+		if (g_atrusJournalRect3->contains(mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(5);
-		} else if (g_cathJournalRect3->contains(_mousePos)) {
+		} else if (g_cathJournalRect3->contains(mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(6);
-		} else if (g_trapBookRect3->contains(_mousePos)) {
+		} else if (g_trapBookRect3->contains(mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(7);

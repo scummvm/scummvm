@@ -304,7 +304,7 @@ void RivenExternal::checkDomeSliders(uint16 resetSlidersHotspot, uint16 openDome
 void RivenExternal::checkSliderCursorChange(uint16 startHotspot) {
 	// Set the cursor based on _sliderState and what hotspot we're over
 	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
-		if (_vm->_hotspots[i + startHotspot].rect.contains(_vm->_mousePos)) {
+		if (_vm->_hotspots[i + startHotspot].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
 			if (_sliderState & (1 << (24 - i)))
 				_vm->_gfx->changeCursor(kRivenOpenHandCursor);
 			else
@@ -318,7 +318,7 @@ void RivenExternal::dragDomeSlider(uint16 bitmapId, uint16 soundId, uint16 reset
 	int16 foundSlider = -1;
 
 	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
-		if (_vm->_hotspots[i + startHotspot].rect.contains(_vm->_mousePos)) {
+		if (_vm->_hotspots[i + startHotspot].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
 			// If the slider is not at this hotspot, we can't do anything else
 			if (!(_sliderState & (1 << (24 - i))))
 				return;
@@ -887,6 +887,8 @@ void RivenExternal::xbisland_domecheck(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
+	Common::Point startPos = _vm->_system->getEventManager()->getMousePos();
+
 	// Get the variable for the valve
 	uint32 *valve = _vm->matchVarToString("bvalve");
 
@@ -904,8 +906,8 @@ void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
-				changeX = event.mouse.x - _vm->_mousePos.x;
-				changeY = _vm->_mousePos.y - event.mouse.y;
+				changeX = event.mouse.x - startPos.x;
+				changeY = startPos.y - event.mouse.y;
 				_vm->_system->updateScreen();
 				break;
 			case Common::EVENT_LBUTTONUP:
@@ -1290,6 +1292,8 @@ void RivenExternal::xjisland3500_domecheck(uint16 argc, uint16 *argv) {
 }
 
 int RivenExternal::jspitElevatorLoop() {
+	Common::Point startPos = _vm->_system->getEventManager()->getMousePos();
+
 	Common::Event event;
 	int changeLevel = 0;
 
@@ -1299,9 +1303,9 @@ int RivenExternal::jspitElevatorLoop() {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
-				if (event.mouse.y > (_vm->_mousePos.y + 10)) {
+				if (event.mouse.y > (startPos.y + 10)) {
 					changeLevel = -1;
-				} else if (event.mouse.y < (_vm->_mousePos.y - 10)) {
+				} else if (event.mouse.y < (startPos.y - 10)) {
 					changeLevel = 1;
 				} else {
 					changeLevel = 0;

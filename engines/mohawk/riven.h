@@ -169,7 +169,6 @@ public:
 	uint16 matchRMAPToCard(uint32);
 	uint32 getCurCardRMAP();
 
-	Common::Point _mousePos;
 	RivenHotspot *_hotspots;
 	int32 _curHotspot;
 	Common::Array<ZipMode> _zipModeData;
