@@ -182,10 +182,6 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 		warning("STUB: Sprite scaling (%f x %f)", ScaleX, ScaleY);
 	}
 
-	if (Flipping & (Image::FLIP_V | Image::FLIP_H)) {
-		warning("STUB: Sprite flipping");
-	}
-
 	if (PosX < 0) {
 		w -= PosX;
 		x1 = -PosX;
@@ -210,7 +206,18 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 	// weiterzuführen. Bei Gelegenheit ist dieses aber zu ändern.
 
 	// TODO: scaling
-	// TODO: Flipping
+	int inStep = 4;
+	int inoStep = m_Width * 4;
+	if (Flipping & Image::FLIP_V) {
+		inStep = -inStep;
+		x1 = x1 + w - 1;
+	}
+
+	if (Flipping & Image::FLIP_H) {
+		inoStep = -inoStep;
+		y1 = y1 + h - 1;
+	}
+
 	byte *ino = &_data[y1 * m_Width * 4 + x1 * 4];
 	byte *outo = (byte *)_backSurface->getBasePtr(PosX, PosY);
 	byte *in, *out;
@@ -219,10 +226,12 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 		out = outo;
 		in = ino;
 		for (int j = 0; j < w; j++) {
-			int r = *in++;
-			int g = *in++;
-			int b = *in++;
-			int a = *in++;
+			int r = in[0];
+			int g = in[1];
+			int b = in[2];
+			int a = in[3];
+			in += inStep;
+
 			switch (a) {
 			case 0: // Full transparency
 				out += 4;
@@ -266,7 +275,7 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, un
 			}
 		}
 		outo += _backSurface->pitch;
-		ino += m_Width * 4;
+		ino += inoStep;
 	}
 
 	g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(PosX, PosY), _backSurface->pitch, PosX, PosY, w, h);
