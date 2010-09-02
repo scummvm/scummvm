@@ -1404,8 +1404,11 @@ void TownsAudioInterface::updateOutputVolume() {
 	// balance values for our -128 to 127 volume range
 	
 	// CD-AUDIO
-	int volume = (int)(((float)MAX(_outputLevel[12], _outputLevel[13]) * 255.0f) / 63.0f);
-	int balance = (int)((float)((_outputLevel[13] - _outputLevel[12]) * 127.0f) / (float)MAX(_outputLevel[12], _outputLevel[13]));
+	uint32 maxVol = MAX(_outputLevel[12], _outputLevel[13]);
+	
+	int volume = (int)(maxVol * (255.0f / 63.0f));
+	int balance = maxVol ? (int)( ( ((int)_outputLevel[13] - _outputLevel[12]) * 127) / (float)maxVol) : 0;
+	
 	AudioCD.setVolume(volume);
 	AudioCD.setBalance(balance);
 }
