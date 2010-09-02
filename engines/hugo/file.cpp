@@ -826,8 +826,12 @@ void FileManager::readConfig() {
 	sprintf(path, "%s%s", _vm.getGameStatus().path, CONFIGFILE);
 	if (f.open(path)) {
 		// If config format changed, ignore it and use defaults
-		if (f.read(&_config, sizeof(_config)) != sizeof(_config))
-			_config = tmpConfig;
+		if (f.size() != sizeof(_config)) {
+			warning("Incompatible %s: file size:%d expected size: %d. Skipping loading.", CONFIGFILE, f.size(), sizeof(_config));
+		} else {
+			if (f.read(&_config, sizeof(_config)) != sizeof(_config))
+				_config = tmpConfig;
+		}
 
 		f.close();
 	}
