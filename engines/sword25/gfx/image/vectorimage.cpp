@@ -50,12 +50,6 @@ namespace Sword25 {
 // SWF Datentypen
 // -----------------------------------------------------------------------------
 
-typedef uint8_t u8;
-typedef uint32_t u32;
-typedef uint16_t u16;
-typedef int16_t s32;
-
-
 // -----------------------------------------------------------------------------
 // Bitstream Hilfsklasse
 // -----------------------------------------------------------------------------
@@ -70,12 +64,12 @@ public:
 		m_Pos(pData), m_End(pData + DataSize), m_WordMask(0)
 	{}
 
-	inline u32 GetBits(unsigned int BitCount) {
+	inline uint32 GetBits(unsigned int BitCount) {
 		if (BitCount == 0 || BitCount > 32) {
 			error("SWFBitStream::GetBits() must read at least 1 and at most 32 bits at a time");
 		}
 
-		u32 value = 0;
+		uint32 value = 0;
 		while (BitCount) {
 			if (m_WordMask == 0) FlushByte();
 
@@ -89,9 +83,9 @@ public:
 		return value;
 	}
 
-	inline s32 GetSignedBits(unsigned int BitCount) {
+	inline int32 GetSignedBits(unsigned int BitCount) {
 		// Bits einlesen
-		u32 Temp = GetBits(BitCount);
+		uint32 Temp = GetBits(BitCount);
 
 		// Falls das Sign-Bit gesetzt ist, den Rest des Rückgabewertes mit 1-Bits auffüllen (Sign Extension)
 		if (Temp & 1 << (BitCount - 1))
@@ -100,25 +94,25 @@ public:
 			return Temp;
 	}
 
-	inline u32 GetU32() {
-		u32 Byte1 = GetU8();
-		u32 Byte2 = GetU8();
-		u32 Byte3 = GetU8();
-		u32 Byte4 = GetU8();
+	inline uint32 GetUInt32() {
+		uint32 Byte1 = GetByte();
+		uint32 Byte2 = GetByte();
+		uint32 Byte3 = GetByte();
+		uint32 Byte4 = GetByte();
 
 		return Byte1 | (Byte2 << 8) | (Byte3 << 16) | (Byte4 << 24);
 	}
 
-	inline u16 GetU16() {
-		u32 Byte1 = GetU8();
-		u32 Byte2 = GetU8();
+	inline uint16 GetUInt16() {
+		uint32 Byte1 = GetByte();
+		uint32 Byte2 = GetByte();
 
 		return Byte1 | (Byte2 << 8);
 	}
 
-	inline u8 GetU8() {
+	inline byte GetByte() {
 		FlushByte();
-		u8 Value = m_Word;
+		byte Value = m_Word;
 		m_WordMask = 0;
 		FlushByte();
 
@@ -150,7 +144,7 @@ private:
 	const unsigned char    *m_Pos;
 	const unsigned char    *m_End;
 
-	u8                      m_Word;
+	byte                      m_Word;
 	unsigned int            m_WordMask;
 };
 
@@ -164,7 +158,7 @@ namespace {
 // Konstanten
 // -----------------------------------------------------------------------------
 
-const u32 MAX_ACCEPTED_FLASH_VERSION = 3;   // Die höchste Flash-Dateiversion, die vom Lader akzeptiert wird
+const uint32 MAX_ACCEPTED_FLASH_VERSION = 3;   // Die höchste Flash-Dateiversion, die vom Lader akzeptiert wird
 
 
 // -----------------------------------------------------------------------------
@@ -175,13 +169,13 @@ Common::Rect FlashRectToBSRect(VectorImage::SWFBitStream &bs) {
 	bs.FlushByte();
 
 	// Feststellen mit wie vielen Bits die einzelnen Komponenten kodiert sind
-	u32 BitsPerValue = bs.GetBits(5);
+	uint32 BitsPerValue = bs.GetBits(5);
 
 	// Die einzelnen Komponenten einlesen
-	s32 XMin = bs.GetSignedBits(BitsPerValue);
-	s32 XMax = bs.GetSignedBits(BitsPerValue);
-	s32 YMin = bs.GetSignedBits(BitsPerValue);
-	s32 YMax = bs.GetSignedBits(BitsPerValue);
+	int32 XMin = bs.GetSignedBits(BitsPerValue);
+	int32 XMax = bs.GetSignedBits(BitsPerValue);
+	int32 YMin = bs.GetSignedBits(BitsPerValue);
+	int32 YMax = bs.GetSignedBits(BitsPerValue);
 
 	return Common::Rect(XMin, YMin, XMax + 1, YMax + 1);
 }
@@ -238,10 +232,10 @@ VectorImage::VectorImage(const unsigned char *pFileData, unsigned int FileSize, 
 	SWFBitStream bs(pFileData, FileSize);
 
 	// SWF-Signatur überprüfen
-	u32 Signature[3];
-	Signature[0] = bs.GetU8();
-	Signature[1] = bs.GetU8();
-	Signature[2] = bs.GetU8();
+	uint32 Signature[3];
+	Signature[0] = bs.GetByte();
+	Signature[1] = bs.GetByte();
+	Signature[2] = bs.GetByte();
 	if (Signature[0] != 'F' ||
 		Signature[1] != 'W' ||
 		Signature[2] != 'S') {
@@ -250,14 +244,14 @@ VectorImage::VectorImage(const unsigned char *pFileData, unsigned int FileSize, 
 	}
 
 	// Versionsangabe überprüfen
-	u32 Version = bs.GetU8();
+	uint32 Version = bs.GetByte();
 	if (Version > MAX_ACCEPTED_FLASH_VERSION) {
 		BS_LOG_ERRORLN("File is of version %d. Highest accepted version is %d.", Version, MAX_ACCEPTED_FLASH_VERSION);
 		return;
 	}
 
 	// Dateigröße auslesen und mit der tatsächlichen Größe vergleichen
-	u32 StoredFileSize = bs.GetU32();
+	uint32 StoredFileSize = bs.GetUInt32();
 	if (StoredFileSize != FileSize) {
 		BS_LOG_ERRORLN("File is not a valid SWF-file");
 		return;
@@ -267,8 +261,8 @@ VectorImage::VectorImage(const unsigned char *pFileData, unsigned int FileSize, 
 	Common::Rect MovieRect = FlashRectToBSRect(bs);
 
 	// Framerate und Frameanzahl auslesen
-	/* u32 FrameRate = */bs.GetU16();
-	/* u32 FrameCount = */bs.GetU16();
+	/* uint32 FrameRate = */bs.GetUInt16();
+	/* uint32 FrameCount = */bs.GetUInt16();
 
 	// Tags parsen
 	// Da wir uns nur für das erste DefineShape-Tag interessieren
@@ -278,11 +272,11 @@ VectorImage::VectorImage(const unsigned char *pFileData, unsigned int FileSize, 
 		bs.FlushByte();
 
 		// Tagtyp und Länge auslesen
-		u16 TagTypeAndLength = bs.GetU16();
-		u32 TagType = TagTypeAndLength >> 6;
-		u32 TagLength = TagTypeAndLength & 0x3f;
+		uint16 TagTypeAndLength = bs.GetUInt16();
+		uint32 TagType = TagTypeAndLength >> 6;
+		uint32 TagLength = TagTypeAndLength & 0x3f;
 		if (TagLength == 0x3f)
-			TagLength = bs.GetU32();
+			TagLength = bs.GetUInt32();
 
 		switch (TagType) {
 		case 2:
@@ -310,7 +304,7 @@ VectorImage::VectorImage(const unsigned char *pFileData, unsigned int FileSize, 
 // -----------------------------------------------------------------------------
 
 bool VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) {
-	/*u32 ShapeID = */bs.GetU16();
+	/*uint32 ShapeID = */bs.GetUInt16();
 
 	// Bounding Box auslesen
 	m_BoundingBox = FlashRectToBSRect(bs);
@@ -333,26 +327,26 @@ bool VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) {
 
 	bool EndOfShapeDiscovered = false;
 	while (!EndOfShapeDiscovered) {
-		u32 TypeFlag = bs.GetBits(1);
+		uint32 TypeFlag = bs.GetBits(1);
 
 		// Non-Edge Record
 		if (TypeFlag == 0) {
 			// Feststellen welche Parameter gesetzt werden
-			u32 StateNewStyles = bs.GetBits(1);
-			u32 StateLineStyle = bs.GetBits(1);
-			u32 StateFillStyle1 = bs.GetBits(1);
-			u32 StateFillStyle0 = bs.GetBits(1);
-			u32 StateMoveTo = bs.GetBits(1);
+			uint32 StateNewStyles = bs.GetBits(1);
+			uint32 StateLineStyle = bs.GetBits(1);
+			uint32 StateFillStyle1 = bs.GetBits(1);
+			uint32 StateFillStyle0 = bs.GetBits(1);
+			uint32 StateMoveTo = bs.GetBits(1);
 
 			// End der Shape-Definition erreicht?
 			if (!StateNewStyles && !StateLineStyle && !StateFillStyle0 && !StateFillStyle1 && !StateMoveTo)
 				EndOfShapeDiscovered = true;
 			// Parameter dekodieren
 			else {
-				s32 MoveDeltaX = 0;
-				s32 MoveDeltaY = 0;
+				int32 MoveDeltaX = 0;
+				int32 MoveDeltaY = 0;
 				if (StateMoveTo) {
-					u32 MoveToBits = bs.GetBits(5);
+					uint32 MoveToBits = bs.GetBits(5);
 					MoveDeltaX = bs.GetSignedBits(MoveToBits);
 					MoveDeltaY = bs.GetSignedBits(MoveToBits);
 				}
@@ -406,15 +400,15 @@ bool VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) {
 			}
 		} else {
 			// Edge Record
-			u32 EdgeFlag = bs.GetBits(1);
-			u32 NumBits = bs.GetBits(4) + 2;
+			uint32 EdgeFlag = bs.GetBits(1);
+			uint32 NumBits = bs.GetBits(4) + 2;
 
 			// Curved edge
 			if (EdgeFlag == 0) {
-				/* s32 ControlDeltaX = */bs.GetSignedBits(NumBits);
-				/* s32 ControlDeltaY = */bs.GetSignedBits(NumBits);
-				/* s32 AnchorDeltaX = */bs.GetSignedBits(NumBits);
-				/* s32 AnchorDeltaY = */bs.GetSignedBits(NumBits);
+				/* int32 ControlDeltaX = */bs.GetSignedBits(NumBits);
+				/* int32 ControlDeltaY = */bs.GetSignedBits(NumBits);
+				/* int32 AnchorDeltaX = */bs.GetSignedBits(NumBits);
+				/* int32 AnchorDeltaY = */bs.GetSignedBits(NumBits);
 
 #if 0 // TODO
 				double ControlX = m_Elements.back().m_Paths.last_x() + ControlDeltaX;
@@ -425,15 +419,15 @@ bool VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) {
 #endif
 			} else {
 				// Staight edge
-				s32 DeltaX = 0;
-				s32 DeltaY = 0;
+				int32 DeltaX = 0;
+				int32 DeltaY = 0;
 
-				u32 GeneralLineFlag = bs.GetBits(1);
+				uint32 GeneralLineFlag = bs.GetBits(1);
 				if (GeneralLineFlag) {
 					DeltaX = bs.GetSignedBits(NumBits);
 					DeltaY = bs.GetSignedBits(NumBits);
 				} else {
-					u32 VertLineFlag = bs.GetBits(1);
+					uint32 VertLineFlag = bs.GetBits(1);
 					if (VertLineFlag)
 						DeltaY = bs.GetSignedBits(NumBits);
 					else
@@ -464,17 +458,17 @@ bool VectorImage::ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsigned
 	// -----------------
 
 	// Anzahl an Fillstyles bestimmen
-	unsigned int FillStyleCount = bs.GetU8();
-	if (FillStyleCount == 0xff) FillStyleCount = bs.GetU16();
+	unsigned int FillStyleCount = bs.GetByte();
+	if (FillStyleCount == 0xff) FillStyleCount = bs.GetUInt16();
 
 	// Alle Fillstyles einlesen, falls ein Fillstyle mit Typ != 0 gefunden wird, wird das Parsen abgebrochen.
 	// Es wird nur "solid fill" (Typ 0) unterstützt.
 	m_Elements.back().m_FillStyles.reserve(FillStyleCount);
 	for (unsigned int i = 0; i < FillStyleCount; ++i) {
-		u8 Type = bs.GetU8();
-		u32 Color;
+		byte Type = bs.GetByte();
+		uint32 Color;
 		if (ShapeType == 3) {
-			Color = (bs.GetU8() << 16) | (bs.GetU8() << 8) | bs.GetU8() | (bs.GetU8() << 24);
+			Color = (bs.GetByte() << 16) | (bs.GetByte() << 8) | bs.GetByte() | (bs.GetByte() << 24);
 		} else
 			Color = bs.GetBits(24) | (0xff << 24);
 		if (Type != 0) return false;
@@ -486,17 +480,17 @@ bool VectorImage::ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsigned
 	// -----------------
 
 	// Anzahl an Linestyles bestimmen
-	unsigned int LineStyleCount = bs.GetU8();
+	unsigned int LineStyleCount = bs.GetByte();
 	if (LineStyleCount == 0xff)
-		LineStyleCount = bs.GetU16();
+		LineStyleCount = bs.GetUInt16();
 
 	// Alle Linestyles einlesen
 	m_Elements.back().m_LineStyles.reserve(LineStyleCount);
 	for (unsigned int i = 0; i < LineStyleCount; ++i) {
-		double Width = bs.GetU16();
-		u32 Color;
+		double Width = bs.GetUInt16();
+		uint32 Color;
 		if (ShapeType == 3)
-			Color = (bs.GetU8() << 16) | (bs.GetU8() << 8) | bs.GetU8() | (bs.GetU8() << 24);
+			Color = (bs.GetByte() << 16) | (bs.GetByte() << 8) | bs.GetByte() | (bs.GetByte() << 24);
 		else
 			Color = bs.GetBits(24) | (0xff << 24);
 
