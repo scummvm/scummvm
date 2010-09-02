@@ -60,7 +60,7 @@ namespace Sword25 {
 
 class VectorImage::SWFBitStream {
 public:
-	SWFBitStream(const unsigned char *pData, unsigned int DataSize) :
+	SWFBitStream(const byte *pData, unsigned int DataSize) :
 		m_Pos(pData), m_End(pData + DataSize), m_WordMask(0)
 	{}
 
@@ -141,8 +141,8 @@ public:
 	}
 
 private:
-	const unsigned char    *m_Pos;
-	const unsigned char    *m_End;
+	const byte    *m_Pos;
+	const byte    *m_End;
 
 	byte                      m_Word;
 	unsigned int            m_WordMask;
@@ -224,7 +224,7 @@ Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) 
 // Konstruktion
 // -----------------------------------------------------------------------------
 
-VectorImage::VectorImage(const unsigned char *pFileData, unsigned int FileSize, bool &Success) {
+VectorImage::VectorImage(const byte *pFileData, unsigned int FileSize, bool &Success) {
 	Success = false;
 
 	// Bitstream-Objekt erzeugen

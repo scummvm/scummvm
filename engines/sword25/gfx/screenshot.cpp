@@ -46,15 +46,15 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 struct RGB_PIXEL {
-	RGB_PIXEL(unsigned char _Red, unsigned char _Green, unsigned char _Blue) :
+	RGB_PIXEL(byte _Red, byte _Green, byte _Blue) :
 		Red(_Red),
 		Green(_Green),
 		Blue(_Blue)
 	{};
 
-	unsigned char Red;
-	unsigned char Green;
-	unsigned char Blue;
+	byte Red;
+	byte Green;
+	byte Blue;
 };
 
 bool Screenshot::SaveToFile(unsigned int Width, unsigned int Height, const byte *Data, const Common::String &Filename) {

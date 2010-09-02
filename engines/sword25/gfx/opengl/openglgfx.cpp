@@ -331,9 +331,9 @@ Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
 		BS_ASSERT(pPackage);
 
 		// Datei laden
-		unsigned char *pFileData;
+		byte *pFileData;
 		unsigned int FileSize;
-		if (!(pFileData = static_cast<unsigned char *>(pPackage->GetFile(FileName, &FileSize)))) {
+		if (!(pFileData = static_cast<byte *>(pPackage->GetFile(FileName, &FileSize)))) {
 			BS_LOG_ERRORLN("File \"%s\" could not be loaded.", FileName.c_str());
 			return 0;
 		}

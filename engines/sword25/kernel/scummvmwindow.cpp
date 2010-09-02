@@ -247,7 +247,7 @@ LRESULT CALLBACK BS_ScummVMWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wPara
 
     case WM_CHAR:
         {
-            unsigned char theChar = static_cast<unsigned char>(wParam & 0xff);
+            byte theChar = static_cast<byte>(wParam & 0xff);
 
             // Alle Zeichen, die keine Steuerzeichen sind, werden als Buchstaben dem Input-Service mitgeteilt.
             if (theChar >= 32)

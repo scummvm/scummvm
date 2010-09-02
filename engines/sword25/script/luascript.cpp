@@ -439,8 +439,8 @@ bool PushPermanentsTable(lua_State *L, PERMANENT_TABLE_TYPE TableType) {
 
 namespace {
 int Chunkwriter(lua_State *L, const void *p, size_t sz, void *ud) {
-	Common::Array<unsigned char> & chunkData = *reinterpret_cast<Common::Array<unsigned char> * >(ud);
-	const unsigned char *buffer = reinterpret_cast<const unsigned char *>(p);
+	Common::Array<byte> & chunkData = *reinterpret_cast<Common::Array<byte> * >(ud);
+	const byte *buffer = reinterpret_cast<const byte *>(p);
 
 	while (sz--) chunkData.push_back(*buffer++) ;
 
@@ -461,7 +461,7 @@ bool LuaScriptEngine::Persist(OutputPersistenceBlock &Writer) {
 	lua_getglobal(m_State, "_G");
 
 	// Lua persists and stores the data in a Common::Array
-	Common::Array<unsigned char> chunkData;
+	Common::Array<byte> chunkData;
 	pluto_persist(m_State, Chunkwriter, &chunkData);
 
 	// Persistenzdaten in den Writer schreiben.
@@ -569,7 +569,7 @@ bool LuaScriptEngine::Unpersist(InputPersistenceBlock &Reader) {
 	ClearGlobalTable(m_State, ClearExceptionsSecondPass);
 
 	// Persisted Lua data
-	Common::Array<unsigned char> chunkData;
+	Common::Array<byte> chunkData;
 	Reader.Read(chunkData);
 
 	// Chunk-Reader initialisation. It is used with pluto_unpersist to restore read data

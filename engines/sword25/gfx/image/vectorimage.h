@@ -162,7 +162,7 @@ private:
 
 class VectorImage : public Image {
 public:
-	VectorImage(const unsigned char *pFileData, unsigned int FileSize, bool &Success);
+	VectorImage(const byte *pFileData, unsigned int FileSize, bool &Success);
 
 	unsigned int GetElementCount() const {
 		return m_Elements.size();

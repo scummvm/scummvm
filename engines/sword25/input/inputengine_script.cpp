@@ -244,7 +244,7 @@ static int SetMouseY(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static void TheCharacterCallback(int Character) {
-	CharacterCallbackPtr->Character = static_cast<unsigned char>(Character);
+	CharacterCallbackPtr->Character = static_cast<byte>(Character);
 	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->GetScriptObject());
 	CharacterCallbackPtr->InvokeCallbackFunctions(L, 1);
 }

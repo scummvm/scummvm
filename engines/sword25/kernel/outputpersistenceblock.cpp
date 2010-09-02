@@ -114,7 +114,7 @@ void OutputPersistenceBlock::Write(const void *BufferPtr, size_t Size) {
 
 // -----------------------------------------------------------------------------
 
-void OutputPersistenceBlock::WriteMarker(unsigned char Marker) {
+void OutputPersistenceBlock::WriteMarker(byte Marker) {
 	m_Data.push_back(Marker);
 }
 

@@ -296,7 +296,7 @@ public:
 	 */
 	virtual bool UnregisterCommandCallback(CommandCallback Callback) = 0;
 
-	virtual void ReportCharacter(unsigned char Character) = 0;
+	virtual void ReportCharacter(byte Character) = 0;
 	virtual void ReportCommand(KEY_COMMANDS Command) = 0;
 
 private:

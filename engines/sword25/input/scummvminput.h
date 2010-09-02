@@ -69,7 +69,7 @@ public:
 	virtual bool UnregisterCharacterCallback(CallbackPtr Callback);
 	virtual bool RegisterCommandCallback(CallbackPtr Callback);
 	virtual bool UnregisterCommandCallback(CallbackPtr Callback);
-	virtual void ReportCharacter(unsigned char Character);
+	virtual void ReportCharacter(byte Character);
 	virtual void ReportCommand(KEY_COMMANDS Command);
 
 	bool Persist(OutputPersistenceBlock &Writer);

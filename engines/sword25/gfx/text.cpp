@@ -183,7 +183,7 @@ bool Text::DoRender() {
 		int CurX = m_AbsoluteX + (*Iter).BBox.left;
 		int CurY = m_AbsoluteY + (*Iter).BBox.top;
 		for (unsigned int i = 0; i < (*Iter).Text.size(); ++i) {
-			Common::Rect CurRect = FontPtr->GetCharacterRect((unsigned char)(*Iter).Text[i]);
+			Common::Rect CurRect = FontPtr->GetCharacterRect((byte)(*Iter).Text[i]);
 
 			Common::Rect RenderRect(CurX, CurY, CurX + CurRect.width(), CurY + CurRect.height());
 			int RenderX = CurX + (RenderRect.left - RenderRect.left);
@@ -258,9 +258,9 @@ void Text::UpdateFormat() {
 			TempLineWidth = 0;
 			LastSpace = 0;
 			for (j = i; j < m_Text.size(); ++j) {
-				if ((unsigned char)m_Text[j] == ' ') LastSpace = j;
+				if ((byte)m_Text[j] == ' ') LastSpace = j;
 
-				const Common::Rect &CurCharRect = FontPtr->GetCharacterRect((unsigned char)m_Text[j]);
+				const Common::Rect &CurCharRect = FontPtr->GetCharacterRect((byte)m_Text[j]);
 				TempLineWidth += CurCharRect.width();
 				TempLineWidth += FontPtr->GetGapWidth();
 
@@ -275,7 +275,7 @@ void Text::UpdateFormat() {
 			for (j = i; j < LastSpace; ++j) {
 				m_Lines[CurLine].Text += m_Text[j];
 
-				const Common::Rect &CurCharRect = FontPtr->GetCharacterRect((unsigned char)m_Text[j]);
+				const Common::Rect &CurCharRect = FontPtr->GetCharacterRect((byte)m_Text[j]);
 				CurLineWidth += CurCharRect.width();
 				CurLineWidth += FontPtr->GetGapWidth();
 				if ((unsigned int) CurCharRect.height() > CurLineHeight) CurLineHeight = CurCharRect.height();
@@ -322,7 +322,7 @@ void Text::UpdateMetrics(FontResource &FontResource) {
 	m_Height = 0;
 
 	for (unsigned int i = 0; i < m_Text.size(); ++i) {
-		const Common::Rect &CurRect = FontResource.GetCharacterRect((unsigned char)m_Text[i]);
+		const Common::Rect &CurRect = FontResource.GetCharacterRect((byte)m_Text[i]);
 		m_Width += CurRect.width();
 		if (i != m_Text.size() - 1) m_Width += FontResource.GetGapWidth();
 		if (m_Height < CurRect.height()) m_Height = CurRect.height();

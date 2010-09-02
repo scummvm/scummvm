@@ -47,7 +47,7 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 InputPersistenceBlock::InputPersistenceBlock(const void *Data, unsigned int DataLength) :
-	m_Data(static_cast<const unsigned char *>(Data), DataLength),
+	m_Data(static_cast<const byte *>(Data), DataLength),
 	m_ErrorState(NONE) {
 	m_Iter = m_Data.begin();
 }
@@ -132,13 +132,13 @@ void InputPersistenceBlock::Read(Common::String &Value) {
 
 // -----------------------------------------------------------------------------
 
-void InputPersistenceBlock::Read(Common::Array<unsigned char> &Value) {
+void InputPersistenceBlock::Read(Common::Array<byte> &Value) {
 	if (CheckMarker(BLOCK_MARKER)) {
 		unsigned int Size;
 		Read(Size);
 
 		if (CheckBlockSize(Size)) {
-			Value = Common::Array<unsigned char>(m_Iter, Size);
+			Value = Common::Array<byte>(m_Iter, Size);
 			m_Iter += Size;
 		}
 	}
@@ -167,7 +167,7 @@ bool InputPersistenceBlock::CheckBlockSize(int Size) {
 
 // -----------------------------------------------------------------------------
 
-bool InputPersistenceBlock::CheckMarker(unsigned char Marker) {
+bool InputPersistenceBlock::CheckMarker(byte Marker) {
 	if (!IsGood() || !CheckBlockSize(1)) return false;
 
 	if (*m_Iter++ == Marker) {

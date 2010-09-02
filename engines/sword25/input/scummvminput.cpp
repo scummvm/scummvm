@@ -303,7 +303,7 @@ bool ScummVMInput::UnregisterCommandCallback(CommandCallback Callback) {
 
 // -----------------------------------------------------------------------------
 
-void ScummVMInput::ReportCharacter(unsigned char Character) {
+void ScummVMInput::ReportCharacter(byte Character) {
 	Common::List<CharacterCallback>::const_iterator CallbackIter = m_CharacterCallbacks.begin();
 	while (CallbackIter != m_CharacterCallbacks.end()) {
 		// Iterator vor dem Aufruf erhöhen und im Folgendem auf einer Kopie arbeiten.

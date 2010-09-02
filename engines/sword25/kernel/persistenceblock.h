@@ -50,19 +50,19 @@ namespace Sword25 {
 class PersistenceBlock {
 public:
 	static unsigned int GetSInt32Size() {
-		return sizeof(signed int) + sizeof(unsigned char);
+		return sizeof(signed int) + sizeof(byte);
 	}
 	static unsigned int GetUInt32Size() {
-		return sizeof(unsigned int) + sizeof(unsigned char);
+		return sizeof(unsigned int) + sizeof(byte);
 	}
 	static unsigned int GetFloat32Size() {
-		return sizeof(float) + sizeof(unsigned char);
+		return sizeof(float) + sizeof(byte);
 	}
 	static unsigned int GetBoolSize() {
-		return sizeof(unsigned char) + sizeof(unsigned char);
+		return sizeof(byte) + sizeof(byte);
 	}
 	static unsigned int GetStringSize(const Common::String &String) {
-		return static_cast<unsigned int>(sizeof(unsigned int) + String.size() + sizeof(unsigned char));
+		return static_cast<unsigned int>(sizeof(unsigned int) + String.size() + sizeof(byte));
 	}
 
 protected:
@@ -98,7 +98,7 @@ protected:
 private:
 	static bool IsBigEndian() {
 		unsigned int Dummy = 1;
-		unsigned char *DummyPtr = reinterpret_cast<unsigned char *>(&Dummy);
+		byte *DummyPtr = reinterpret_cast<byte *>(&Dummy);
 		return DummyPtr[0] == 0;
 	}
 
@@ -111,7 +111,7 @@ private:
 
 	static void ReverseByteOrder(void *Ptr) {
 		// Reverses the byte order of the 32-bit word pointed to by Ptr
-		unsigned char *CharPtr = static_cast<unsigned char *>(Ptr);
+		byte *CharPtr = static_cast<byte *>(Ptr);
 		Swap(CharPtr[0], CharPtr[3]);
 		Swap(CharPtr[1], CharPtr[2]);
 	}
@@ -122,7 +122,7 @@ private:
 // -----------------------------------------------------------------------------
 
 #define CTASSERT(ex) typedef char ctassert_type[(ex) ? 1 : -1]
-CTASSERT(sizeof(unsigned char) == 1);
+CTASSERT(sizeof(byte) == 1);
 CTASSERT(sizeof(signed int) == 4);
 CTASSERT(sizeof(unsigned int) == 4);
 CTASSERT(sizeof(float) == 4);

@@ -67,10 +67,10 @@ public:
 	}
 
 private:
-	void WriteMarker(unsigned char Marker);
+	void WriteMarker(byte Marker);
 	void RawWrite(const void *DataPtr, size_t Size);
 
-	Common::Array<unsigned char> m_Data;
+	Common::Array<byte> m_Data;
 };
 
 } // End of namespace Sword25

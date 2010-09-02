@@ -66,7 +66,7 @@ public:
 	void Read(float &Value);
 	void Read(bool &Value);
 	void Read(Common::String &Value);
-	void Read(Common::Array<unsigned char> &Value);
+	void Read(Common::Array<byte> &Value);
 
 	bool IsGood() const {
 		return m_ErrorState == NONE;
@@ -76,12 +76,12 @@ public:
 	}
 
 private:
-	bool CheckMarker(unsigned char Marker);
+	bool CheckMarker(byte Marker);
 	bool CheckBlockSize(int Size);
 	void RawRead(void *DestPtr, size_t Size);
 
-	Common::Array<unsigned char> m_Data;
-	Common::Array<unsigned char>::const_iterator m_Iter;
+	Common::Array<byte> m_Data;
+	Common::Array<byte>::const_iterator m_Iter;
 	ErrorState m_ErrorState;
 };
 
