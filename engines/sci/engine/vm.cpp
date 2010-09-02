@@ -516,9 +516,9 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 							break;
 						}
 					}
+					printf("\n");
 				}
 #endif
-				printf("\n");
 			}
 
 			{
