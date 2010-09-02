@@ -174,6 +174,9 @@ Common::Error HugoEngine::run() {
 
 	while (!doQuitFl) {
 		g_system->updateScreen();
+
+		// WORKAROUND: Force the mouse cursor to be displayed. This fixes the disappearing mouse cursor issue.
+		g_system->showMouse(true);
 		runMachine();
 		// Handle input
 		Common::Event event;

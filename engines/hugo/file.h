@@ -57,7 +57,6 @@ public:
 	void     openDatabaseFiles();
 	void     readBackground(int screenIndex);
 	void     readBootFile();
-	void     readConfig();
 	void     readImage(int objNum, object_t *objPtr);
 	void     readOverlay(int screenNum, image_pt image, ovl_t overlayType);
 	void     readUIFItem(short id, byte *buf);
@@ -65,7 +64,6 @@ public:
 	void     restoreSeq(object_t *obj);
 	void     saveGame(short slot, const char *descrip);
 	void     saveSeq(object_t *obj);
-	void     writeConfig();
 
 private:
 	HugoEngine &_vm;

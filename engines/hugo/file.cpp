@@ -815,44 +815,6 @@ void FileManager::readBootFile() {
 		Utils::Error(GEN_ERR, "%s", "Program startup file invalid");
 }
 
-void FileManager::readConfig() {
-// Read the user's config if it exists
-	Common::File f;
-	fpath_t  path;
-	config_t tmpConfig = _config;
-
-	debugC(1, kDebugFile, "readConfig");
-
-	sprintf(path, "%s%s", _vm.getGameStatus().path, CONFIGFILE);
-	if (f.open(path)) {
-		// If config format changed, ignore it and use defaults
-		if (f.size() != sizeof(_config)) {
-			warning("Incompatible %s: file size: %ld expected size: %ld. Skipping loading.", CONFIGFILE, f.size(), sizeof(_config));
-		} else {
-			if (f.read(&_config, sizeof(_config)) != sizeof(_config))
-				_config = tmpConfig;
-		}
-
-		f.close();
-	}
-}
-
-void FileManager::writeConfig() {
-// Write the user's config
-	FILE   *f;
-	fpath_t path;
-
-	debugC(1, kDebugFile, "writeConfig");
-
-	// Write user's config
-	// No error checking in case CD-ROM with no alternate path specified
-	sprintf(path, "%s%s", _vm.getGameStatus().path, CONFIGFILE);
-	if ((f = fopen(path, "w+")) != NULL)
-		fwrite(&_config, sizeof(_config), 1, f);
-
-	fclose(f);
-}
-
 uif_hdr_t *FileManager::getUIFHeader(uif_t id) {
 // Returns address of uif_hdr[id], reading it in if first call
 	static uif_hdr_t UIFHeader[MAX_UIFS];           // Lookup for uif fonts/images

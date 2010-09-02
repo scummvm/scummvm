@@ -124,26 +124,18 @@ void HugoEngine::initConfig(inst_t action) {
 		_config.cx = VIEW_DX * 2;                   // Window view size
 		_config.cy = VIEW_DY * 2;
 
-//		_config.wx = 0;
-//		_config.wy = 0;
-
 		_config.musicVolume = 85;                   // Music volume %
 		_config.soundVolume = 100;                  // Sound volume %
 		initPlaylist(_config.playlist);             // Initialize default tune playlist
 
 		file().readBootFile();    // Read startup structure
-		file().readConfig();      // Read user's saved config
 
 		cx = _config.cx;                            // Save these around OnFileNew()
 		cy = _config.cy;
-//		wx = _config.wx;
-//		wy = _config.wy;
 		break;
 	case RESET:
 		_config.cx = cx;                            // Restore cx, cy
 		_config.cy = cy;
-//		_config.wx = wx;
-//		_config.wy = wy;
 
 		// Find first tune and play it
 		for (i = 0; i < MAX_TUNES; i++)
