@@ -56,61 +56,62 @@ namespace Sword25 {
 // Konstruktion / Desktruktion
 // -----------------------------------------------------------------------------
 
-RenderObjectManager::RenderObjectManager(int Width, int Height, int FramebufferCount) :
-	m_FrameStarted(false) {
+RenderObjectManager::RenderObjectManager(int width, int height, int framebufferCount) :
+	_frameStarted(false) {
 	// Wurzel des BS_RenderObject-Baumes erzeugen.
-	m_RootPtr = (new RootRenderObject(this, Width, Height))->GetHandle();
+	_rootPtr = (new RootRenderObject(this, width, height))->getHandle();
 }
 
 // -----------------------------------------------------------------------------
 
 RenderObjectManager::~RenderObjectManager() {
 	// Die Wurzel des Baumes löschen, damit werden alle BS_RenderObjects mitgelöscht.
-	m_RootPtr.Erase();
+	_rootPtr.erase();
 }
 
 // -----------------------------------------------------------------------------
 // Interface
 // -----------------------------------------------------------------------------
 
-void RenderObjectManager::StartFrame() {
-	m_FrameStarted = true;
+void RenderObjectManager::startFrame() {
+	_frameStarted = true;
 
 	// Verstrichene Zeit bestimmen
-	int TimeElapsed = Kernel::GetInstance()->GetGfx()->GetLastFrameDurationMicro();
+	int timeElapsed = Kernel::GetInstance()->GetGfx()->GetLastFrameDurationMicro();
 
 	// Alle BS_TimedRenderObject Objekte über den Framestart und die verstrichene Zeit in Kenntnis setzen
-	RenderObjectList::iterator Iter = m_TimedRenderObjects.begin();
-	for (; Iter != m_TimedRenderObjects.end(); ++Iter)
-		(*Iter)->FrameNotification(TimeElapsed);
+	RenderObjectList::iterator iter = _timedRenderObjects.begin();
+	for (; iter != _timedRenderObjects.end(); ++iter)
+		(*iter)->frameNotification(timeElapsed);
 }
 
 // -----------------------------------------------------------------------------
 
-bool RenderObjectManager::Render() {
+bool RenderObjectManager::render() {
 	// Den Objekt-Status des Wurzelobjektes aktualisieren. Dadurch werden rekursiv alle Baumelemente aktualisiert.
 	// Beim aktualisieren des Objekt-Status werden auch die Update-Rects gefunden, so dass feststeht, was neu gezeichnet
 	// werden muss.
-	if (!m_RootPtr.IsValid() || !m_RootPtr->UpdateObjectState()) return false;
+	if (!_rootPtr.isValid() || !_rootPtr->updateObjectState())
+		return false;
 
-	m_FrameStarted = false;
+	_frameStarted = false;
 
 	// Die Render-Methode der Wurzel aufrufen. Dadurch wird das rekursive Rendern der Baumelemente angestoßen.
-	return m_RootPtr->Render();
+	return _rootPtr->render();
 }
 
 // -----------------------------------------------------------------------------
 
-void RenderObjectManager::AttatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> RenderObjectPtr) {
-	m_TimedRenderObjects.push_back(RenderObjectPtr);
+void RenderObjectManager::attatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> renderObjectPtr) {
+	_timedRenderObjects.push_back(renderObjectPtr);
 }
 
 // -----------------------------------------------------------------------------
 
-void RenderObjectManager::DetatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> RenderObjectPtr) {
-	for (uint i = 0; i < m_TimedRenderObjects.size(); i++)
-		if (m_TimedRenderObjects[i] == RenderObjectPtr) {
-			m_TimedRenderObjects.remove_at(i);
+void RenderObjectManager::detatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> renderObjectPtr) {
+	for (uint i = 0; i < _timedRenderObjects.size(); i++)
+		if (_timedRenderObjects[i] == renderObjectPtr) {
+			_timedRenderObjects.remove_at(i);
 			break;
 		}
 }
@@ -119,57 +120,58 @@ void RenderObjectManager::DetatchTimedRenderObject(RenderObjectPtr<TimedRenderOb
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool RenderObjectManager::Persist(OutputPersistenceBlock &Writer) {
-	bool Result = true;
+bool RenderObjectManager::persist(OutputPersistenceBlock &writer) {
+	bool result = true;
 
 	// Alle Kinder des Wurzelknotens speichern. Dadurch werden alle BS_RenderObjects gespeichert rekursiv gespeichert.
-	Result &= m_RootPtr->PersistChildren(Writer);
+	result &= _rootPtr->persistChildren(writer);
 
-	Writer.Write(m_FrameStarted);
+	writer.write(_frameStarted);
 
 	// Referenzen auf die TimedRenderObjects persistieren.
-	Writer.Write(m_TimedRenderObjects.size());
-	RenderObjectList::const_iterator Iter = m_TimedRenderObjects.begin();
-	while (Iter != m_TimedRenderObjects.end()) {
-		Writer.Write((*Iter)->GetHandle());
-		++Iter;
+	writer.write(_timedRenderObjects.size());
+	RenderObjectList::const_iterator iter = _timedRenderObjects.begin();
+	while (iter != _timedRenderObjects.end()) {
+		writer.write((*iter)->getHandle());
+		++iter;
 	}
 
 	// Alle BS_AnimationTemplates persistieren.
-	Result &= AnimationTemplateRegistry::GetInstance().Persist(Writer);
+	result &= AnimationTemplateRegistry::GetInstance().persist(writer);
 
-	return Result;
+	return result;
 }
 
 // -----------------------------------------------------------------------------
 
-bool RenderObjectManager::Unpersist(InputPersistenceBlock &Reader) {
-	bool Result = true;
+bool RenderObjectManager::unpersist(InputPersistenceBlock &reader) {
+	bool result = true;
 
 	// Alle Kinder des Wurzelknotens löschen. Damit werden alle BS_RenderObjects gelöscht.
-	m_RootPtr->DeleteAllChildren();
+	_rootPtr->deleteAllChildren();
 
 	// Alle BS_RenderObjects wieder hestellen.
-	if (!m_RootPtr->UnpersistChildren(Reader)) return false;
+	if (!_rootPtr->unpersistChildren(reader))
+		return false;
 
-	Reader.Read(m_FrameStarted);
+	reader.read(_frameStarted);
 
 	// Momentan gespeicherte Referenzen auf TimedRenderObjects löschen.
-	m_TimedRenderObjects.resize(0);
+	_timedRenderObjects.resize(0);
 
 	// Referenzen auf die TimedRenderObjects wieder herstellen.
-	uint TimedObjectCount;
-	Reader.Read(TimedObjectCount);
-	for (uint i = 0; i < TimedObjectCount; ++i) {
-		uint Handle;
-		Reader.Read(Handle);
-		m_TimedRenderObjects.push_back(Handle);
+	uint timedObjectCount;
+	reader.read(timedObjectCount);
+	for (uint i = 0; i < timedObjectCount; ++i) {
+		uint handle;
+		reader.read(handle);
+		_timedRenderObjects.push_back(handle);
 	}
 
 	// Alle BS_AnimationTemplates wieder herstellen.
-	Result &= AnimationTemplateRegistry::GetInstance().Unpersist(Reader);
+	result &= AnimationTemplateRegistry::GetInstance().unpersist(reader);
 
-	return Result;
+	return result;
 }
 
 } // End of namespace Sword25

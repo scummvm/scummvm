@@ -59,7 +59,7 @@ Polygon::Polygon(const Polygon &Other) : VertexCount(0), Vertecies(NULL) {
 }
 
 Polygon::Polygon(InputPersistenceBlock &Reader) : VertexCount(0), Vertecies(NULL) {
-	Unpersist(Reader);
+	unpersist(Reader);
 }
 
 Polygon::~Polygon() {
@@ -414,31 +414,31 @@ bool Polygon::IsPointInPolygon(const Vertex &Point, bool EdgesBelongToPolygon) c
 	else return false;
 }
 
-bool Polygon::Persist(OutputPersistenceBlock &Writer) {
-	Writer.Write(VertexCount);
+bool Polygon::persist(OutputPersistenceBlock &writer) {
+	writer.write(VertexCount);
 	for (int i = 0; i < VertexCount; ++i) {
-		Writer.Write(Vertecies[i].X);
-		Writer.Write(Vertecies[i].Y);
+		writer.write(Vertecies[i].X);
+		writer.write(Vertecies[i].Y);
 	}
 
 	return true;
 }
 
-bool Polygon::Unpersist(InputPersistenceBlock &Reader) {
+bool Polygon::unpersist(InputPersistenceBlock &reader) {
 	int StoredVertexCount;
-	Reader.Read(StoredVertexCount);
+	reader.read(StoredVertexCount);
 
 	Common::Array<Vertex> StoredVertecies;
 	for (int i = 0; i < StoredVertexCount; ++i) {
 		int x, y;
-		Reader.Read(x);
-		Reader.Read(y);
+		reader.read(x);
+		reader.read(y);
 		StoredVertecies.push_back(Vertex(x, y));
 	}
 
 	Init(StoredVertexCount, &StoredVertecies[0]);
 
-	return Reader.IsGood();
+	return reader.isGood();
 }
 
 // Main Focus

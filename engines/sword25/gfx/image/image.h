@@ -76,17 +76,17 @@ public:
 	/**
 	    @brief Gibt die Breite des Bildes in Pixeln zurück
 	*/
-	virtual int GetWidth() const = 0;
+	virtual int getWidth() const = 0;
 
 	/**
 	    @brief Gibt die Höhe des Bildes in Pixeln zurück
 	*/
-	virtual int GetHeight() const = 0;
+	virtual int getHeight() const = 0;
 
 	/**
 	    @brief Gibt das Farbformat des Bildes zurück
 	*/
-	virtual GraphicEngine::COLOR_FORMATS GetColorFormat() const = 0;
+	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const = 0;
 
 	//@}
 
@@ -131,11 +131,11 @@ public:
 	            - IsColorModulationAllowed()
 	            - IsSetContentAllowed()
 	*/
-	virtual bool Blit(int PosX = 0, int PosY = 0,
-	                  int Flipping = FLIP_NONE,
+	virtual bool blit(int posX = 0, int posY = 0,
+	                  int flipping = FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
-	                  uint Color = BS_ARGB(255, 255, 255, 255),
-	                  int Width = -1, int Height = -1) = 0;
+	                  uint color = BS_ARGB(255, 255, 255, 255),
+	                  int width = -1, int height = -1) = 0;
 
 	/**
 	    @brief Füllt einen Rechteckigen Bereich des Bildes mit einer Farbe.
@@ -149,7 +149,7 @@ public:
 	            BS_RGB und BS_ARGB benutzt werden.
 	    @remark Falls das Rechteck nicht völlig innerhalb des Bildschirms ist, wird es automatisch zurechtgestutzt.
 	*/
-	virtual bool Fill(const Common::Rect *pFillRect = 0, uint Color = BS_RGB(0, 0, 0)) = 0;
+	virtual bool fill(const Common::Rect *pFillRect = 0, uint color = BS_RGB(0, 0, 0)) = 0;
 
 	/**
 	    @brief Füllt den Inhalt des Bildes mit Pixeldaten.
@@ -162,7 +162,7 @@ public:
 	    @return Gibt false zurück, falls der Aufruf fehlgeschlagen ist.
 	    @remark Ein Aufruf dieser Methode ist nur erlaubt, wenn IsSetContentAllowed() true zurückgibt.
 	*/
-	virtual bool SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride) = 0;
+	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride) = 0;
 
 	/**
 	    @brief Liest einen Pixel des Bildes.
@@ -172,7 +172,7 @@ public:
 	    @remark Diese Methode sollte auf keine Fall benutzt werden um größere Teile des Bildes zu lesen, da sie sehr langsam ist. Sie ist
 	            eher dafür gedacht einzelne Pixel des Bildes auszulesen.
 	*/
-	virtual uint GetPixel(int X, int Y) = 0;
+	virtual uint getPixel(int x, int y) = 0;
 
 	//@{
 	/** @name Auskunfts-Methoden */
@@ -181,38 +181,38 @@ public:
 	    @brief Überprüft, ob an dem BS_Image Blit() aufgerufen werden darf.
 	    @return Gibt false zurück, falls ein Blit()-Aufruf an diesem Objekt nicht gestattet ist.
 	*/
-	virtual bool IsBlitSource() const = 0;
+	virtual bool isBlitSource() const = 0;
 
 	/**
 	    @brief Überprüft, ob das BS_Image ein Zielbild für einen Blit-Aufruf sein kann.
 	    @return Gibt false zurück, falls ein Blit-Aufruf mit diesem Objekt als Ziel nicht gestattet ist.
 	*/
-	virtual bool IsBlitTarget() const = 0;
+	virtual bool isBlitTarget() const = 0;
 
 	/**
 	    @brief Gibt true zurück, falls das BS_Image bei einem Aufruf von Blit() skaliert dargestellt werden kann.
 	*/
-	virtual bool IsScalingAllowed() const = 0;
+	virtual bool isScalingAllowed() const = 0;
 
 	/**
 	    @brief Gibt true zurück, wenn das BS_Image mit einem Aufruf von Fill() gefüllt werden kann.
 	*/
-	virtual bool IsFillingAllowed() const = 0;
+	virtual bool isFillingAllowed() const = 0;
 
 	/**
 	    @brief Gibt true zurück, wenn das BS_Image bei einem Aufruf von Blit() mit einem Alphawert dargestellt werden kann.
 	*/
-	virtual bool IsAlphaAllowed() const = 0;
+	virtual bool isAlphaAllowed() const = 0;
 
 	/**
 	    @brief Gibt true zurück, wenn das BS_Image bei einem Aufruf von Blit() mit Farbmodulation dargestellt werden kann.
 	*/
-	virtual bool IsColorModulationAllowed() const = 0;
+	virtual bool isColorModulationAllowed() const = 0;
 
 	/**
 	    @brief Gibt true zurück, wenn der Inhalt des BS_Image durch eine Aufruf von SetContent() ausgetauscht werden kann.
 	*/
-	virtual bool IsSetContentAllowed() const = 0;
+	virtual bool isSetContentAllowed() const = 0;
 
 	//@}
 };

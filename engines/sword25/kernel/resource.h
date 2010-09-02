@@ -56,14 +56,14 @@ public:
 		TYPE_FONT
 	};
 
-	Resource(const Common::String &UniqueFileName, RESOURCE_TYPES Type);
+	Resource(const Common::String &uniqueFileName, RESOURCE_TYPES type);
 
 	/**
 	 * Prevents the resource from being released.
 	 * @remarks             This method allows a resource to be locked multiple times.
 	 **/
 	void AddReference() {
-		++_RefCount;
+		++_refCount;
 	}
 
 	/**
@@ -71,46 +71,46 @@ public:
 	 * @remarks             The resource can still be released more times than it was 'locked', although it is
 	 * not recommended.
 	 **/
-	void Release();
+	void release();
 
 	/**
 	 * Returns the current lock count for the resource
 	 * @return              The current lock count
 	 **/
 	int GetLockCount() const {
-		return _RefCount;
+		return _refCount;
 	}
 
 	/**
 	 * Returns the absolute path of the given resource
 	 */
-	const Common::String &GetFileName() const {
-		return _FileName;
+	const Common::String &getFileName() const {
+		return _fileName;
 	}
 
 	/**
 	 * Returns the hash of the filename of a resource
 	*/
 	uint GetFileNameHash() const {
-		return _FileNameHash;
+		return _fileNameHash;
 	}
 
 	/**
 	 * Returns a resource's type
 	 */
 	uint GetType() const {
-		return _Type;
+		return _type;
 	}
 
 protected:
 	virtual ~Resource() {};
 
 private:
-	Common::String                      _FileName;          ///< The absolute filename
-	uint                        _FileNameHash;      ///< The hash value of the filename
-	uint                        _RefCount;          ///< The number of locks
-	uint                        _Type;              ///< The type of the resource
-	Common::List<Resource *>::iterator _Iterator;        ///< Points to the resource position in the LRU list
+	Common::String                      _fileName;          ///< The absolute filename
+	uint                        _fileNameHash;      ///< The hash value of the filename
+	uint                        _refCount;          ///< The number of locks
+	uint                        _type;              ///< The type of the resource
+	Common::List<Resource *>::iterator _iterator;        ///< Points to the resource position in the LRU list
 };
 
 } // End of namespace Sword25

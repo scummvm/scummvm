@@ -63,23 +63,23 @@ void AnimationTemplateRegistry::LogWarningLn(const char *Message) const {
 
 // -----------------------------------------------------------------------------
 
-bool AnimationTemplateRegistry::Persist(OutputPersistenceBlock &Writer) {
+bool AnimationTemplateRegistry::persist(OutputPersistenceBlock &writer) {
 	bool Result = true;
 
 	// Das nächste zu vergebene Handle schreiben.
-	Writer.Write(m_NextHandle);
+	writer.write(m_NextHandle);
 
 	// Anzahl an BS_AnimationTemplates schreiben.
-	Writer.Write(m_Handle2PtrMap.size());
+	writer.write(m_Handle2PtrMap.size());
 
 	// Alle BS_AnimationTemplates persistieren.
 	HANDLE2PTR_MAP::const_iterator Iter = m_Handle2PtrMap.begin();
 	while (Iter != m_Handle2PtrMap.end()) {
 		// Handle persistieren.
-		Writer.Write(Iter->_key);
+		writer.write(Iter->_key);
 
 		// Objekt persistieren.
-		Result &= Iter->_value->Persist(Writer);
+		Result &= Iter->_value->persist(writer);
 
 		++Iter;
 	}
@@ -89,11 +89,11 @@ bool AnimationTemplateRegistry::Persist(OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool AnimationTemplateRegistry::Unpersist(InputPersistenceBlock &Reader) {
+bool AnimationTemplateRegistry::unpersist(InputPersistenceBlock &reader) {
 	bool Result = true;
 
 	// Das nächste zu vergebene Handle wieder herstellen.
-	Reader.Read(m_NextHandle);
+	reader.read(m_NextHandle);
 
 	// Alle vorhandenen BS_AnimationTemplates zerstören.
 	while (!m_Handle2PtrMap.empty())
@@ -101,19 +101,19 @@ bool AnimationTemplateRegistry::Unpersist(InputPersistenceBlock &Reader) {
 
 	// Anzahl an BS_AnimationTemplates einlesen.
 	uint AnimationTemplateCount;
-	Reader.Read(AnimationTemplateCount);
+	reader.read(AnimationTemplateCount);
 
 	// Alle gespeicherten BS_AnimationTemplates wieder herstellen.
 	for (uint i = 0; i < AnimationTemplateCount; ++i) {
 		// Handle lesen.
 		uint Handle;
-		Reader.Read(Handle);
+		reader.read(Handle);
 
 		// BS_AnimationTemplate wieder herstellen.
-		Result &= (AnimationTemplate::Create(Reader, Handle) != 0);
+		Result &= (AnimationTemplate::Create(reader, Handle) != 0);
 	}
 
-	return Reader.IsGood() && Result;
+	return reader.isGood() && Result;
 }
 
 } // End of namespace Sword25

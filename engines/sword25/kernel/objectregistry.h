@@ -129,7 +129,7 @@ public:
 
 	// -----------------------------------------------------------------------------
 
-	T *ResolveHandle(uint Handle) {
+	T *resolveHandle(uint Handle) {
 		// Zum Handle gehöriges Objekt in der Hash-Map finden.
 		T *ObjectPtr = FindPtrByHandle(Handle);
 

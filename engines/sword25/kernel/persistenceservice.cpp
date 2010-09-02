@@ -318,11 +318,11 @@ bool PersistenceService::SaveGame(uint SlotID, const Common::String &ScreenshotF
 	// Alle notwendigen Module persistieren.
 	OutputPersistenceBlock Writer;
 	bool Success = true;
-	Success &= Kernel::GetInstance()->GetScript()->Persist(Writer);
-	Success &= RegionRegistry::GetInstance().Persist(Writer);
-	Success &= Kernel::GetInstance()->GetGfx()->Persist(Writer);
-	Success &= Kernel::GetInstance()->GetSfx()->Persist(Writer);
-	Success &= Kernel::GetInstance()->GetInput()->Persist(Writer);
+	Success &= Kernel::GetInstance()->GetScript()->persist(Writer);
+	Success &= RegionRegistry::GetInstance().persist(Writer);
+	Success &= Kernel::GetInstance()->GetGfx()->persist(Writer);
+	Success &= Kernel::GetInstance()->GetSfx()->persist(Writer);
+	Success &= Kernel::GetInstance()->GetInput()->persist(Writer);
 	if (!Success) {
 		error("Unable to persist modules for savegame file \"%s\".", Filename.c_str());
 	}
@@ -433,12 +433,12 @@ bool PersistenceService::LoadGame(uint SlotID) {
 
 	// Einzelne Engine-Module depersistieren.
 	bool Success = true;
-	Success &= Kernel::GetInstance()->GetScript()->Unpersist(Reader);
+	Success &= Kernel::GetInstance()->GetScript()->unpersist(Reader);
 	// Muss unbedingt nach Script passieren. Da sonst die bereits wiederhergestellten Regions per Garbage-Collection gekillt werden.
-	Success &= RegionRegistry::GetInstance().Unpersist(Reader);
-	Success &= Kernel::GetInstance()->GetGfx()->Unpersist(Reader);
-	Success &= Kernel::GetInstance()->GetSfx()->Unpersist(Reader);
-	Success &= Kernel::GetInstance()->GetInput()->Unpersist(Reader);
+	Success &= RegionRegistry::GetInstance().unpersist(Reader);
+	Success &= Kernel::GetInstance()->GetGfx()->unpersist(Reader);
+	Success &= Kernel::GetInstance()->GetSfx()->unpersist(Reader);
+	Success &= Kernel::GetInstance()->GetInput()->unpersist(Reader);
 
 	delete[] CompressedDataBuffer;
 	delete[] UncompressedDataBuffer;

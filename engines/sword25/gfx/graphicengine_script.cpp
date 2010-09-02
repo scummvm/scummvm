@@ -144,7 +144,7 @@ static AnimationTemplate *CheckAnimationTemplate(lua_State *L, int idx = 1) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable der Klasse Gfx.AnimationTemplate
 	uint AnimationTemplateHandle;
 	if ((AnimationTemplateHandle = *reinterpret_cast<uint *>(my_checkudata(L, idx, ANIMATION_TEMPLATE_CLASS_NAME))) != 0) {
-		AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::GetInstance().ResolveHandle(AnimationTemplateHandle);
+		AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::GetInstance().resolveHandle(AnimationTemplateHandle);
 		if (!AnimationTemplatePtr)
 			luaL_error(L, "The animation template with the handle %d does no longer exist.", AnimationTemplateHandle);
 		return AnimationTemplatePtr;
@@ -159,8 +159,8 @@ static AnimationTemplate *CheckAnimationTemplate(lua_State *L, int idx = 1) {
 
 static int NewAnimationTemplate(lua_State *L) {
 	uint AnimationTemplateHandle = AnimationTemplate::Create(luaL_checkstring(L, 1));
-	AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::GetInstance().ResolveHandle(AnimationTemplateHandle);
-	if (AnimationTemplatePtr && AnimationTemplatePtr->IsValid()) {
+	AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::GetInstance().resolveHandle(AnimationTemplateHandle);
+	if (AnimationTemplatePtr && AnimationTemplatePtr->isValid()) {
 		NewUintUserData(L, AnimationTemplateHandle);
 		//luaL_getmetatable(L, ANIMATION_TEMPLATE_CLASS_NAME);
 		LuaBindhelper::GetMetatable(L, ANIMATION_TEMPLATE_CLASS_NAME);
@@ -292,13 +292,13 @@ static int Init(lua_State *L) {
 
 	// Main-Panel zum Gfx-Modul hinzufügen
 	RenderObjectPtr<Panel> MainPanelPtr(GetGE()->GetMainPanel());
-	BS_ASSERT(MainPanelPtr.IsValid());
+	BS_ASSERT(MainPanelPtr.isValid());
 
 	lua_pushstring(L, GFX_LIBRARY_NAME);
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	BS_ASSERT(!lua_isnil(L, -1));
 
-	NewUintUserData(L, MainPanelPtr->GetHandle());
+	NewUintUserData(L, MainPanelPtr->getHandle());
 	BS_ASSERT(!lua_isnil(L, -1));
 	// luaL_getmetatable(L, PANEL_CLASS_NAME);
 	LuaBindhelper::GetMetatable(L, PANEL_CLASS_NAME);
@@ -520,7 +520,7 @@ static RenderObjectPtr<RenderObject> CheckRenderObject(lua_State *L, bool ErrorI
 	        (UserDataPtr = (uint *) my_checkudata(L, 1, PANEL_CLASS_NAME)) != 0 ||
 	        (UserDataPtr = (uint *) my_checkudata(L, 1, TEXT_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> ROPtr(* UserDataPtr);
-		if (ROPtr.IsValid())
+		if (ROPtr.isValid())
 			return ROPtr;
 		else {
 			if (ErrorIfRemoved)
@@ -537,10 +537,10 @@ static RenderObjectPtr<RenderObject> CheckRenderObject(lua_State *L, bool ErrorI
 
 static int RO_SetPos(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
+	BS_ASSERT(ROPtr.isValid());
 	Vertex Pos;
 	Vertex::LuaVertexToVertex(L, 2, Pos);
-	ROPtr->SetPos(Pos.X, Pos.Y);
+	ROPtr->setPos(Pos.X, Pos.Y);
 	return 0;
 }
 
@@ -548,8 +548,8 @@ static int RO_SetPos(lua_State *L) {
 
 static int RO_SetX(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	ROPtr->SetX(static_cast<int>(luaL_checknumber(L, 2)));
+	BS_ASSERT(ROPtr.isValid());
+	ROPtr->setX(static_cast<int>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -557,8 +557,8 @@ static int RO_SetX(lua_State *L) {
 
 static int RO_SetY(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	ROPtr->SetY(static_cast<int>(luaL_checknumber(L, 2)));
+	BS_ASSERT(ROPtr.isValid());
+	ROPtr->setY(static_cast<int>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -566,8 +566,8 @@ static int RO_SetY(lua_State *L) {
 
 static int RO_SetZ(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	ROPtr->SetZ(static_cast<int>(luaL_checknumber(L, 2)));
+	BS_ASSERT(ROPtr.isValid());
+	ROPtr->setZ(static_cast<int>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -575,8 +575,8 @@ static int RO_SetZ(lua_State *L) {
 
 static int RO_SetVisible(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	ROPtr->SetVisible(lua_tobooleancpp(L, 2));
+	BS_ASSERT(ROPtr.isValid());
+	ROPtr->setVisible(lua_tobooleancpp(L, 2));
 	return 0;
 }
 
@@ -584,8 +584,8 @@ static int RO_SetVisible(lua_State *L) {
 
 static int RO_GetX(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	lua_pushnumber(L, ROPtr->GetX());
+	BS_ASSERT(ROPtr.isValid());
+	lua_pushnumber(L, ROPtr->getX());
 
 	return 1;
 }
@@ -594,8 +594,8 @@ static int RO_GetX(lua_State *L) {
 
 static int RO_GetY(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	lua_pushnumber(L, ROPtr->GetY());
+	BS_ASSERT(ROPtr.isValid());
+	lua_pushnumber(L, ROPtr->getY());
 
 	return 1;
 }
@@ -604,8 +604,8 @@ static int RO_GetY(lua_State *L) {
 
 static int RO_GetZ(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	lua_pushnumber(L, ROPtr->GetZ());
+	BS_ASSERT(ROPtr.isValid());
+	lua_pushnumber(L, ROPtr->getZ());
 
 	return 1;
 }
@@ -614,8 +614,8 @@ static int RO_GetZ(lua_State *L) {
 
 static int RO_GetAbsoluteX(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	lua_pushnumber(L, ROPtr->GetAbsoluteX());
+	BS_ASSERT(ROPtr.isValid());
+	lua_pushnumber(L, ROPtr->getAbsoluteX());
 
 	return 1;
 }
@@ -624,8 +624,8 @@ static int RO_GetAbsoluteX(lua_State *L) {
 
 static int RO_GetAbsoluteY(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	lua_pushnumber(L, ROPtr->GetAbsoluteY());
+	BS_ASSERT(ROPtr.isValid());
+	lua_pushnumber(L, ROPtr->getAbsoluteY());
 
 	return 1;
 }
@@ -634,8 +634,8 @@ static int RO_GetAbsoluteY(lua_State *L) {
 
 static int RO_GetWidth(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	lua_pushnumber(L, ROPtr->GetWidth());
+	BS_ASSERT(ROPtr.isValid());
+	lua_pushnumber(L, ROPtr->getWidth());
 
 	return 1;
 }
@@ -644,8 +644,8 @@ static int RO_GetWidth(lua_State *L) {
 
 static int RO_GetHeight(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	lua_pushnumber(L, ROPtr->GetHeight());
+	BS_ASSERT(ROPtr.isValid());
+	lua_pushnumber(L, ROPtr->getHeight());
 
 	return 1;
 }
@@ -654,8 +654,8 @@ static int RO_GetHeight(lua_State *L) {
 
 static int RO_IsVisible(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	lua_pushbooleancpp(L, ROPtr->IsVisible());
+	BS_ASSERT(ROPtr.isValid());
+	lua_pushbooleancpp(L, ROPtr->isVisible());
 
 	return 1;
 }
@@ -664,12 +664,12 @@ static int RO_IsVisible(lua_State *L) {
 
 static int RO_AddPanel(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	RenderObjectPtr<Panel> PanelPtr = ROPtr->AddPanel(static_cast<int>(luaL_checknumber(L, 2)),
+	BS_ASSERT(ROPtr.isValid());
+	RenderObjectPtr<Panel> PanelPtr = ROPtr->addPanel(static_cast<int>(luaL_checknumber(L, 2)),
 	                                        static_cast<int>(luaL_checknumber(L, 3)),
 	                                        GraphicEngine::LuaColorToARGBColor(L, 4));
-	if (PanelPtr.IsValid()) {
-		NewUintUserData(L, PanelPtr->GetHandle());
+	if (PanelPtr.isValid()) {
+		NewUintUserData(L, PanelPtr->getHandle());
 		// luaL_getmetatable(L, PANEL_CLASS_NAME);
 		LuaBindhelper::GetMetatable(L, PANEL_CLASS_NAME);
 		BS_ASSERT(!lua_isnil(L, -1));
@@ -684,10 +684,10 @@ static int RO_AddPanel(lua_State *L) {
 
 static int RO_AddBitmap(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	RenderObjectPtr<Bitmap> BitmaPtr = ROPtr->AddBitmap(luaL_checkstring(L, 2));
-	if (BitmaPtr.IsValid()) {
-		NewUintUserData(L, BitmaPtr->GetHandle());
+	BS_ASSERT(ROPtr.isValid());
+	RenderObjectPtr<Bitmap> BitmaPtr = ROPtr->addBitmap(luaL_checkstring(L, 2));
+	if (BitmaPtr.isValid()) {
+		NewUintUserData(L, BitmaPtr->getHandle());
 		// luaL_getmetatable(L, BITMAP_CLASS_NAME);
 		LuaBindhelper::GetMetatable(L, BITMAP_CLASS_NAME);
 		BS_ASSERT(!lua_isnil(L, -1));
@@ -702,14 +702,14 @@ static int RO_AddBitmap(lua_State *L) {
 
 static int RO_AddText(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
+	BS_ASSERT(ROPtr.isValid());
 
 	RenderObjectPtr<Text> TextPtr;
-	if (lua_gettop(L) >= 3) TextPtr = ROPtr->AddText(luaL_checkstring(L, 2), luaL_checkstring(L, 3));
-	else TextPtr = ROPtr->AddText(luaL_checkstring(L, 2));
+	if (lua_gettop(L) >= 3) TextPtr = ROPtr->addText(luaL_checkstring(L, 2), luaL_checkstring(L, 3));
+	else TextPtr = ROPtr->addText(luaL_checkstring(L, 2));
 
-	if (TextPtr.IsValid()) {
-		NewUintUserData(L, TextPtr->GetHandle());
+	if (TextPtr.isValid()) {
+		NewUintUserData(L, TextPtr->getHandle());
 		// luaL_getmetatable(L, TEXT_CLASS_NAME);
 		LuaBindhelper::GetMetatable(L, TEXT_CLASS_NAME);
 		BS_ASSERT(!lua_isnil(L, -1));
@@ -724,25 +724,25 @@ static int RO_AddText(lua_State *L) {
 
 static int RO_AddAnimation(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
+	BS_ASSERT(ROPtr.isValid());
 
 	RenderObjectPtr<Animation> AnimationPtr;
 	if (lua_type(L, 2) == LUA_TUSERDATA)
-		AnimationPtr = ROPtr->AddAnimation(*CheckAnimationTemplate(L, 2));
+		AnimationPtr = ROPtr->addAnimation(*CheckAnimationTemplate(L, 2));
 	else
-		AnimationPtr = ROPtr->AddAnimation(luaL_checkstring(L, 2));
+		AnimationPtr = ROPtr->addAnimation(luaL_checkstring(L, 2));
 
-	if (AnimationPtr.IsValid()) {
-		NewUintUserData(L, AnimationPtr->GetHandle());
+	if (AnimationPtr.isValid()) {
+		NewUintUserData(L, AnimationPtr->getHandle());
 		// luaL_getmetatable(L, ANIMATION_CLASS_NAME);
 		LuaBindhelper::GetMetatable(L, ANIMATION_CLASS_NAME);
 		BS_ASSERT(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 
 		// Alle Animationscallbacks registrieren.
-		AnimationPtr->RegisterDeleteCallback(AnimationDeleteCallback, AnimationPtr->GetHandle());
-		AnimationPtr->RegisterLoopPointCallback(AnimationLoopPointCallback, AnimationPtr->GetHandle());
-		AnimationPtr->RegisterActionCallback(AnimationActionCallback, AnimationPtr->GetHandle());
+		AnimationPtr->RegisterDeleteCallback(AnimationDeleteCallback, AnimationPtr->getHandle());
+		AnimationPtr->RegisterLoopPointCallback(AnimationLoopPointCallback, AnimationPtr->getHandle());
+		AnimationPtr->RegisterActionCallback(AnimationActionCallback, AnimationPtr->getHandle());
 	} else
 		lua_pushnil(L);
 
@@ -779,8 +779,8 @@ static RenderObjectPtr<Panel> CheckPanel(lua_State *L) {
 	uint *UserDataPtr;
 	if ((UserDataPtr = (uint *) my_checkudata(L, 1, PANEL_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> ROPtr(*UserDataPtr);
-		if (ROPtr.IsValid()) {
-			return ROPtr->ToPanel();
+		if (ROPtr.isValid()) {
+			return ROPtr->toPanel();
 		} else
 			luaL_error(L, "The panel with the handle %d does no longer exist.", *UserDataPtr);
 	} else {
@@ -794,8 +794,8 @@ static RenderObjectPtr<Panel> CheckPanel(lua_State *L) {
 
 static int P_GetColor(lua_State *L) {
 	RenderObjectPtr<Panel> PanelPtr = CheckPanel(L);
-	BS_ASSERT(PanelPtr.IsValid());
-	GraphicEngine::ARGBColorToLuaColor(L, PanelPtr->GetColor());
+	BS_ASSERT(PanelPtr.isValid());
+	GraphicEngine::ARGBColorToLuaColor(L, PanelPtr->getColor());
 
 	return 1;
 }
@@ -804,8 +804,8 @@ static int P_GetColor(lua_State *L) {
 
 static int P_SetColor(lua_State *L) {
 	RenderObjectPtr<Panel> PanelPtr = CheckPanel(L);
-	BS_ASSERT(PanelPtr.IsValid());
-	PanelPtr->SetColor(GraphicEngine::LuaColorToARGBColor(L, 2));
+	BS_ASSERT(PanelPtr.isValid());
+	PanelPtr->setColor(GraphicEngine::LuaColorToARGBColor(L, 2));
 	return 0;
 }
 
@@ -813,8 +813,8 @@ static int P_SetColor(lua_State *L) {
 
 static int P_Remove(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	ROPtr.Erase();
+	BS_ASSERT(ROPtr.isValid());
+	ROPtr.erase();
 	return 0;
 }
 
@@ -834,8 +834,8 @@ static RenderObjectPtr<Bitmap> CheckBitmap(lua_State *L) {
 	uint *UserDataPtr;
 	if ((UserDataPtr = (uint *) my_checkudata(L, 1, BITMAP_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> ROPtr(*UserDataPtr);
-		if (ROPtr.IsValid()) {
-			return ROPtr->ToBitmap();
+		if (ROPtr.isValid()) {
+			return ROPtr->toBitmap();
 		} else
 			luaL_error(L, "The bitmap with the handle %d does no longer exist.", *UserDataPtr);
 	} else {
@@ -849,8 +849,8 @@ static RenderObjectPtr<Bitmap> CheckBitmap(lua_State *L) {
 
 static int B_SetAlpha(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	BitmapPtr->SetAlpha(static_cast<uint>(luaL_checknumber(L, 2)));
+	BS_ASSERT(BitmapPtr.isValid());
+	BitmapPtr->setAlpha(static_cast<uint>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -858,8 +858,8 @@ static int B_SetAlpha(lua_State *L) {
 
 static int B_SetTintColor(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	BitmapPtr->SetModulationColor(GraphicEngine::LuaColorToARGBColor(L, 2));
+	BS_ASSERT(BitmapPtr.isValid());
+	BitmapPtr->setModulationColor(GraphicEngine::LuaColorToARGBColor(L, 2));
 	return 0;
 }
 
@@ -867,8 +867,8 @@ static int B_SetTintColor(lua_State *L) {
 
 static int B_SetScaleFactor(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	BitmapPtr->SetScaleFactor(static_cast<float>(luaL_checknumber(L, 2)));
+	BS_ASSERT(BitmapPtr.isValid());
+	BitmapPtr->setScaleFactor(static_cast<float>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -876,8 +876,8 @@ static int B_SetScaleFactor(lua_State *L) {
 
 static int B_SetScaleFactorX(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	BitmapPtr->SetScaleFactorX(static_cast<float>(luaL_checknumber(L, 2)));
+	BS_ASSERT(BitmapPtr.isValid());
+	BitmapPtr->setScaleFactorX(static_cast<float>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -885,8 +885,8 @@ static int B_SetScaleFactorX(lua_State *L) {
 
 static int B_SetScaleFactorY(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	BitmapPtr->SetScaleFactorY(static_cast<float>(luaL_checknumber(L, 2)));
+	BS_ASSERT(BitmapPtr.isValid());
+	BitmapPtr->setScaleFactorY(static_cast<float>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -894,8 +894,8 @@ static int B_SetScaleFactorY(lua_State *L) {
 
 static int B_SetFlipH(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	BitmapPtr->SetFlipH(lua_tobooleancpp(L, 2));
+	BS_ASSERT(BitmapPtr.isValid());
+	BitmapPtr->setFlipH(lua_tobooleancpp(L, 2));
 	return 0;
 }
 
@@ -903,8 +903,8 @@ static int B_SetFlipH(lua_State *L) {
 
 static int B_SetFlipV(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	BitmapPtr->SetFlipV(lua_tobooleancpp(L, 2));
+	BS_ASSERT(BitmapPtr.isValid());
+	BitmapPtr->setFlipV(lua_tobooleancpp(L, 2));
 	return 0;
 }
 
@@ -912,8 +912,8 @@ static int B_SetFlipV(lua_State *L) {
 
 static int B_GetAlpha(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	lua_pushnumber(L, BitmapPtr->GetAlpha());
+	BS_ASSERT(BitmapPtr.isValid());
+	lua_pushnumber(L, BitmapPtr->getAlpha());
 	return 1;
 }
 
@@ -921,8 +921,8 @@ static int B_GetAlpha(lua_State *L) {
 
 static int B_GetTintColor(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	GraphicEngine::ARGBColorToLuaColor(L, BitmapPtr->GetModulationColor());
+	BS_ASSERT(BitmapPtr.isValid());
+	GraphicEngine::ARGBColorToLuaColor(L, BitmapPtr->getModulationColor());
 	return 1;
 }
 
@@ -930,8 +930,8 @@ static int B_GetTintColor(lua_State *L) {
 
 static int B_GetScaleFactorX(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	lua_pushnumber(L, BitmapPtr->GetScaleFactorX());
+	BS_ASSERT(BitmapPtr.isValid());
+	lua_pushnumber(L, BitmapPtr->getScaleFactorX());
 	return 1;
 }
 
@@ -939,8 +939,8 @@ static int B_GetScaleFactorX(lua_State *L) {
 
 static int B_GetScaleFactorY(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	lua_pushnumber(L, BitmapPtr->GetScaleFactorY());
+	BS_ASSERT(BitmapPtr.isValid());
+	lua_pushnumber(L, BitmapPtr->getScaleFactorY());
 	return 1;
 }
 
@@ -948,8 +948,8 @@ static int B_GetScaleFactorY(lua_State *L) {
 
 static int B_IsFlipH(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	lua_pushbooleancpp(L, BitmapPtr->IsFlipH());
+	BS_ASSERT(BitmapPtr.isValid());
+	lua_pushbooleancpp(L, BitmapPtr->isFlipH());
 	return 1;
 }
 
@@ -957,8 +957,8 @@ static int B_IsFlipH(lua_State *L) {
 
 static int B_IsFlipV(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	lua_pushbooleancpp(L, BitmapPtr->IsFlipV());
+	BS_ASSERT(BitmapPtr.isValid());
+	lua_pushbooleancpp(L, BitmapPtr->isFlipV());
 	return 1;
 }
 
@@ -966,10 +966,10 @@ static int B_IsFlipV(lua_State *L) {
 
 static int B_GetPixel(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
+	BS_ASSERT(BitmapPtr.isValid());
 	Vertex Pos;
 	Vertex::LuaVertexToVertex(L, 2, Pos);
-	GraphicEngine::ARGBColorToLuaColor(L, BitmapPtr->GetPixel(Pos.X, Pos.Y));
+	GraphicEngine::ARGBColorToLuaColor(L, BitmapPtr->getPixel(Pos.X, Pos.Y));
 	return 1;
 }
 
@@ -977,8 +977,8 @@ static int B_GetPixel(lua_State *L) {
 
 static int B_IsScalingAllowed(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	lua_pushbooleancpp(L, BitmapPtr->IsScalingAllowed());
+	BS_ASSERT(BitmapPtr.isValid());
+	lua_pushbooleancpp(L, BitmapPtr->isScalingAllowed());
 	return 1;
 }
 
@@ -986,8 +986,8 @@ static int B_IsScalingAllowed(lua_State *L) {
 
 static int B_IsAlphaAllowed(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	lua_pushbooleancpp(L, BitmapPtr->IsAlphaAllowed());
+	BS_ASSERT(BitmapPtr.isValid());
+	lua_pushbooleancpp(L, BitmapPtr->isAlphaAllowed());
 	return 1;
 }
 
@@ -995,16 +995,16 @@ static int B_IsAlphaAllowed(lua_State *L) {
 
 static int B_IsTintingAllowed(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
-	BS_ASSERT(BitmapPtr.IsValid());
-	lua_pushbooleancpp(L, BitmapPtr->IsColorModulationAllowed());
+	BS_ASSERT(BitmapPtr.isValid());
+	lua_pushbooleancpp(L, BitmapPtr->isColorModulationAllowed());
 	return 1;
 }
 // -----------------------------------------------------------------------------
 
 static int B_Remove(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
-	BS_ASSERT(ROPtr.IsValid());
-	ROPtr.Erase();
+	BS_ASSERT(ROPtr.isValid());
+	ROPtr.erase();
 	return 0;
 }
 
@@ -1039,8 +1039,8 @@ static RenderObjectPtr<Animation> CheckAnimation(lua_State *L) {
 	uint *UserDataPtr;
 	if ((UserDataPtr = (uint *) my_checkudata(L, 1, ANIMATION_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> ROPtr(*UserDataPtr);
-		if (ROPtr.IsValid())
-			return ROPtr->ToAnimation();
+		if (ROPtr.isValid())
+			return ROPtr->toAnimation();
 		else {
 			luaL_error(L, "The animation with the handle %d does no longer exist.", *UserDataPtr);
 		}
@@ -1055,7 +1055,7 @@ static RenderObjectPtr<Animation> CheckAnimation(lua_State *L) {
 
 static int A_Play(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
+	BS_ASSERT(AnimationPtr.isValid());
 	AnimationPtr->Play();
 	return 0;
 }
@@ -1064,7 +1064,7 @@ static int A_Play(lua_State *L) {
 
 static int A_Pause(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
+	BS_ASSERT(AnimationPtr.isValid());
 	AnimationPtr->Pause();
 	return 0;
 }
@@ -1073,7 +1073,7 @@ static int A_Pause(lua_State *L) {
 
 static int A_Stop(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
+	BS_ASSERT(AnimationPtr.isValid());
 	AnimationPtr->Stop();
 	return 0;
 }
@@ -1082,7 +1082,7 @@ static int A_Stop(lua_State *L) {
 
 static int A_SetFrame(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
+	BS_ASSERT(AnimationPtr.isValid());
 	AnimationPtr->SetFrame(static_cast<uint>(luaL_checknumber(L, 2)));
 	return 0;
 }
@@ -1091,16 +1091,16 @@ static int A_SetFrame(lua_State *L) {
 
 static int A_SetAlpha(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
-	AnimationPtr->SetAlpha(static_cast<int>(luaL_checknumber(L, 2)));
+	BS_ASSERT(AnimationPtr.isValid());
+	AnimationPtr->setAlpha(static_cast<int>(luaL_checknumber(L, 2)));
 	return 0;
 }
 // -----------------------------------------------------------------------------
 
 static int A_SetTintColor(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
-	AnimationPtr->SetModulationColor(GraphicEngine::LuaColorToARGBColor(L, 2));
+	BS_ASSERT(AnimationPtr.isValid());
+	AnimationPtr->setModulationColor(GraphicEngine::LuaColorToARGBColor(L, 2));
 	return 0;
 }
 
@@ -1108,8 +1108,8 @@ static int A_SetTintColor(lua_State *L) {
 
 static int A_SetScaleFactor(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
-	AnimationPtr->SetScaleFactor(static_cast<float>(luaL_checknumber(L, 2)));
+	BS_ASSERT(AnimationPtr.isValid());
+	AnimationPtr->setScaleFactor(static_cast<float>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -1117,8 +1117,8 @@ static int A_SetScaleFactor(lua_State *L) {
 
 static int A_SetScaleFactorX(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
-	AnimationPtr->SetScaleFactorX(static_cast<float>(luaL_checknumber(L, 2)));
+	BS_ASSERT(AnimationPtr.isValid());
+	AnimationPtr->setScaleFactorX(static_cast<float>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -1126,8 +1126,8 @@ static int A_SetScaleFactorX(lua_State *L) {
 
 static int A_SetScaleFactorY(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
-	AnimationPtr->SetScaleFactorY(static_cast<float>(luaL_checknumber(L, 2)));
+	BS_ASSERT(AnimationPtr.isValid());
+	AnimationPtr->setScaleFactorY(static_cast<float>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -1135,8 +1135,8 @@ static int A_SetScaleFactorY(lua_State *L) {
 
 static int A_GetScaleFactorX(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
-	lua_pushnumber(L, AnimationPtr->GetScaleFactorX());
+	BS_ASSERT(AnimationPtr.isValid());
+	lua_pushnumber(L, AnimationPtr->getScaleFactorX());
 	return 1;
 }
 
@@ -1144,8 +1144,8 @@ static int A_GetScaleFactorX(lua_State *L) {
 
 static int A_GetScaleFactorY(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
-	lua_pushnumber(L, AnimationPtr->GetScaleFactorY());
+	BS_ASSERT(AnimationPtr.isValid());
+	lua_pushnumber(L, AnimationPtr->getScaleFactorY());
 	return 1;
 }
 
@@ -1153,8 +1153,8 @@ static int A_GetScaleFactorY(lua_State *L) {
 
 static int A_GetAnimationType(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
-	switch (AnimationPtr->GetAnimationType()) {
+	BS_ASSERT(AnimationPtr.isValid());
+	switch (AnimationPtr->getAnimationType()) {
 	case Animation::AT_JOJO:
 		lua_pushstring(L, "jojo");
 		break;
@@ -1174,8 +1174,8 @@ static int A_GetAnimationType(lua_State *L) {
 
 static int A_GetFPS(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
-	lua_pushnumber(L, AnimationPtr->GetFPS());
+	BS_ASSERT(AnimationPtr.isValid());
+	lua_pushnumber(L, AnimationPtr->getFPS());
 	return 1;
 }
 
@@ -1184,8 +1184,8 @@ static int A_GetFPS(lua_State *L) {
 
 static int A_GetFrameCount(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
-	lua_pushnumber(L, AnimationPtr->GetFrameCount());
+	BS_ASSERT(AnimationPtr.isValid());
+	lua_pushnumber(L, AnimationPtr->getFrameCount());
 	return 1;
 }
 
@@ -1193,8 +1193,8 @@ static int A_GetFrameCount(lua_State *L) {
 
 static int A_IsScalingAllowed(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
-	lua_pushbooleancpp(L, AnimationPtr->IsScalingAllowed());
+	BS_ASSERT(AnimationPtr.isValid());
+	lua_pushbooleancpp(L, AnimationPtr->isScalingAllowed());
 	return 1;
 }
 
@@ -1202,8 +1202,8 @@ static int A_IsScalingAllowed(lua_State *L) {
 
 static int A_IsAlphaAllowed(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
-	lua_pushbooleancpp(L, AnimationPtr->IsAlphaAllowed());
+	BS_ASSERT(AnimationPtr.isValid());
+	lua_pushbooleancpp(L, AnimationPtr->isAlphaAllowed());
 	return 1;
 }
 
@@ -1211,8 +1211,8 @@ static int A_IsAlphaAllowed(lua_State *L) {
 
 static int A_IsTintingAllowed(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
-	lua_pushbooleancpp(L, AnimationPtr->IsColorModulationAllowed());
+	BS_ASSERT(AnimationPtr.isValid());
+	lua_pushbooleancpp(L, AnimationPtr->isColorModulationAllowed());
 	return 1;
 }
 
@@ -1220,7 +1220,7 @@ static int A_IsTintingAllowed(lua_State *L) {
 
 static int A_GetCurrentFrame(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
+	BS_ASSERT(AnimationPtr.isValid());
 	lua_pushnumber(L, AnimationPtr->GetCurrentFrame());
 	return 1;
 }
@@ -1229,7 +1229,7 @@ static int A_GetCurrentFrame(lua_State *L) {
 
 static int A_GetCurrentAction(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
+	BS_ASSERT(AnimationPtr.isValid());
 	lua_pushstring(L, AnimationPtr->GetCurrentAction().c_str());
 	return 1;
 }
@@ -1238,7 +1238,7 @@ static int A_GetCurrentAction(lua_State *L) {
 
 static int A_IsPlaying(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
+	BS_ASSERT(AnimationPtr.isValid());
 	lua_pushbooleancpp(L, AnimationPtr->IsRunning());
 	return 1;
 }
@@ -1256,11 +1256,11 @@ static bool AnimationLoopPointCallback(uint Handle) {
 
 static int A_RegisterLoopPointCallback(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
+	BS_ASSERT(AnimationPtr.isValid());
 	luaL_checktype(L, 2, LUA_TFUNCTION);
 
 	lua_pushvalue(L, 2);
-	LoopPointCallbackPtr->RegisterCallbackFunction(L, AnimationPtr->GetHandle());
+	LoopPointCallbackPtr->RegisterCallbackFunction(L, AnimationPtr->getHandle());
 
 	return 0;
 }
@@ -1269,11 +1269,11 @@ static int A_RegisterLoopPointCallback(lua_State *L) {
 
 static int A_UnregisterLoopPointCallback(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
+	BS_ASSERT(AnimationPtr.isValid());
 	luaL_checktype(L, 2, LUA_TFUNCTION);
 
 	lua_pushvalue(L, 2);
-	LoopPointCallbackPtr->UnregisterCallbackFunction(L, AnimationPtr->GetHandle());
+	LoopPointCallbackPtr->UnregisterCallbackFunction(L, AnimationPtr->getHandle());
 
 	return 0;
 }
@@ -1282,10 +1282,10 @@ static int A_UnregisterLoopPointCallback(lua_State *L) {
 
 static bool AnimationActionCallback(uint Handle) {
 	RenderObjectPtr<Animation> AnimationPtr(Handle);
-	if (AnimationPtr.IsValid()) {
+	if (AnimationPtr.isValid()) {
 		ActionCallbackPtr->Action = AnimationPtr->GetCurrentAction();
 		lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->GetScriptObject());
-		ActionCallbackPtr->InvokeCallbackFunctions(L, AnimationPtr->GetHandle());
+		ActionCallbackPtr->InvokeCallbackFunctions(L, AnimationPtr->getHandle());
 	}
 
 	return true;
@@ -1295,11 +1295,11 @@ static bool AnimationActionCallback(uint Handle) {
 
 static int A_RegisterActionCallback(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
+	BS_ASSERT(AnimationPtr.isValid());
 	luaL_checktype(L, 2, LUA_TFUNCTION);
 
 	lua_pushvalue(L, 2);
-	ActionCallbackPtr->RegisterCallbackFunction(L, AnimationPtr->GetHandle());
+	ActionCallbackPtr->RegisterCallbackFunction(L, AnimationPtr->getHandle());
 
 	return 0;
 }
@@ -1308,11 +1308,11 @@ static int A_RegisterActionCallback(lua_State *L) {
 
 static int A_UnregisterActionCallback(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
+	BS_ASSERT(AnimationPtr.isValid());
 	luaL_checktype(L, 2, LUA_TFUNCTION);
 
 	lua_pushvalue(L, 2);
-	ActionCallbackPtr->UnregisterCallbackFunction(L, AnimationPtr->GetHandle());
+	ActionCallbackPtr->UnregisterCallbackFunction(L, AnimationPtr->getHandle());
 
 	return 0;
 }
@@ -1330,8 +1330,8 @@ static bool AnimationDeleteCallback(uint Handle) {
 
 static int A_Remove(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
-	BS_ASSERT(AnimationPtr.IsValid());
-	AnimationPtr.Erase();
+	BS_ASSERT(AnimationPtr.isValid());
+	AnimationPtr.erase();
 	return 0;
 }
 
@@ -1373,8 +1373,8 @@ static RenderObjectPtr<Text> CheckText(lua_State *L) {
 	uint *UserDataPtr;
 	if ((UserDataPtr = (uint *) my_checkudata(L, 1, TEXT_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> ROPtr(*UserDataPtr);
-		if (ROPtr.IsValid())
-			return ROPtr->ToText();
+		if (ROPtr.isValid())
+			return ROPtr->toText();
 		else
 			luaL_error(L, "The text with the handle %d does no longer exist.", *UserDataPtr);
 	} else {
@@ -1388,7 +1388,7 @@ static RenderObjectPtr<Text> CheckText(lua_State *L) {
 
 static int T_SetFont(lua_State *L) {
 	RenderObjectPtr<Text> TextPtr = CheckText(L);
-	BS_ASSERT(TextPtr.IsValid());
+	BS_ASSERT(TextPtr.isValid());
 	TextPtr->SetFont(luaL_checkstring(L, 2));
 	return 0;
 }
@@ -1397,7 +1397,7 @@ static int T_SetFont(lua_State *L) {
 
 static int T_SetText(lua_State *L) {
 	RenderObjectPtr<Text> TextPtr = CheckText(L);
-	BS_ASSERT(TextPtr.IsValid());
+	BS_ASSERT(TextPtr.isValid());
 	TextPtr->SetText(luaL_checkstring(L, 2));
 	return 0;
 }
@@ -1406,8 +1406,8 @@ static int T_SetText(lua_State *L) {
 
 static int T_SetAlpha(lua_State *L) {
 	RenderObjectPtr<Text> TextPtr = CheckText(L);
-	BS_ASSERT(TextPtr.IsValid());
-	TextPtr->SetAlpha(static_cast<int>(luaL_checknumber(L, 2)));
+	BS_ASSERT(TextPtr.isValid());
+	TextPtr->setAlpha(static_cast<int>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -1415,8 +1415,8 @@ static int T_SetAlpha(lua_State *L) {
 
 static int T_SetColor(lua_State *L) {
 	RenderObjectPtr<Text> TextPtr = CheckText(L);
-	BS_ASSERT(TextPtr.IsValid());
-	TextPtr->SetColor(GraphicEngine::LuaColorToARGBColor(L, 2));
+	BS_ASSERT(TextPtr.isValid());
+	TextPtr->setColor(GraphicEngine::LuaColorToARGBColor(L, 2));
 	return 0;
 }
 
@@ -1424,7 +1424,7 @@ static int T_SetColor(lua_State *L) {
 
 static int T_SetAutoWrap(lua_State *L) {
 	RenderObjectPtr<Text> TextPtr = CheckText(L);
-	BS_ASSERT(TextPtr.IsValid());
+	BS_ASSERT(TextPtr.isValid());
 	TextPtr->SetAutoWrap(lua_tobooleancpp(L, 2));
 	return 0;
 }
@@ -1433,7 +1433,7 @@ static int T_SetAutoWrap(lua_State *L) {
 
 static int T_SetAutoWrapThreshold(lua_State *L) {
 	RenderObjectPtr<Text> TextPtr = CheckText(L);
-	BS_ASSERT(TextPtr.IsValid());
+	BS_ASSERT(TextPtr.isValid());
 	TextPtr->SetAutoWrapThreshold(static_cast<uint>(luaL_checknumber(L, 2)));
 	return 0;
 }
@@ -1442,7 +1442,7 @@ static int T_SetAutoWrapThreshold(lua_State *L) {
 
 static int T_GetText(lua_State *L) {
 	RenderObjectPtr<Text> TextPtr = CheckText(L);
-	BS_ASSERT(TextPtr.IsValid());
+	BS_ASSERT(TextPtr.isValid());
 	lua_pushstring(L, TextPtr->GetText().c_str());
 	return 1;
 }
@@ -1451,7 +1451,7 @@ static int T_GetText(lua_State *L) {
 
 static int T_GetFont(lua_State *L) {
 	RenderObjectPtr<Text> TextPtr = CheckText(L);
-	BS_ASSERT(TextPtr.IsValid());
+	BS_ASSERT(TextPtr.isValid());
 	lua_pushstring(L, TextPtr->GetFont().c_str());
 	return 1;
 }
@@ -1460,8 +1460,8 @@ static int T_GetFont(lua_State *L) {
 
 static int T_GetAlpha(lua_State *L) {
 	RenderObjectPtr<Text> TextPtr = CheckText(L);
-	BS_ASSERT(TextPtr.IsValid());
-	lua_pushnumber(L, TextPtr->GetAlpha());
+	BS_ASSERT(TextPtr.isValid());
+	lua_pushnumber(L, TextPtr->getAlpha());
 	return 1;
 }
 
@@ -1469,8 +1469,8 @@ static int T_GetAlpha(lua_State *L) {
 
 static int T_GetColor(lua_State *L) {
 	RenderObjectPtr<Text> TextPtr = CheckText(L);
-	BS_ASSERT(TextPtr.IsValid());
-	lua_pushnumber(L, TextPtr->GetColor());
+	BS_ASSERT(TextPtr.isValid());
+	lua_pushnumber(L, TextPtr->getColor());
 	return 1;
 }
 
@@ -1478,7 +1478,7 @@ static int T_GetColor(lua_State *L) {
 
 static int T_IsAutoWrap(lua_State *L) {
 	RenderObjectPtr<Text> TextPtr = CheckText(L);
-	BS_ASSERT(TextPtr.IsValid());
+	BS_ASSERT(TextPtr.isValid());
 	lua_pushbooleancpp(L, TextPtr->IsAutoWrapActive());
 	return 1;
 }
@@ -1487,7 +1487,7 @@ static int T_IsAutoWrap(lua_State *L) {
 
 static int T_GetAutoWrapThreshold(lua_State *L) {
 	RenderObjectPtr<Text> TextPtr = CheckText(L);
-	BS_ASSERT(TextPtr.IsValid());
+	BS_ASSERT(TextPtr.isValid());
 	lua_pushnumber(L, TextPtr->GetAutoWrapThreshold());
 	return 1;
 }
@@ -1496,8 +1496,8 @@ static int T_GetAutoWrapThreshold(lua_State *L) {
 
 static int T_Remove(lua_State *L) {
 	RenderObjectPtr<Text> TextPtr = CheckText(L);
-	BS_ASSERT(TextPtr.IsValid());
-	TextPtr.Erase();
+	BS_ASSERT(TextPtr.isValid());
+	TextPtr.erase();
 	return 0;
 }
 

@@ -335,27 +335,27 @@ void ScummVMInput::ReportCommand(KEY_COMMANDS Command) {
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool ScummVMInput::Persist(OutputPersistenceBlock &Writer) {
+bool ScummVMInput::persist(OutputPersistenceBlock &writer) {
 	// Anzahl an Command-Callbacks persistieren.
-	Writer.Write(m_CommandCallbacks.size());
+	writer.write(m_CommandCallbacks.size());
 
 	// Alle Command-Callbacks einzeln persistieren.
 	{
 		Common::List<CommandCallback>::const_iterator It = m_CommandCallbacks.begin();
 		while (It != m_CommandCallbacks.end()) {
-			Writer.Write(CallbackRegistry::getInstance().resolveCallbackPointer(*It));
+			writer.write(CallbackRegistry::getInstance().resolveCallbackPointer(*It));
 			++It;
 		}
 	}
 
 	// Anzahl an Character-Callbacks persistieren.
-	Writer.Write(m_CharacterCallbacks.size());
+	writer.write(m_CharacterCallbacks.size());
 
 	// Alle Character-Callbacks einzeln persistieren.
 	{
 		Common::List<CharacterCallback>::const_iterator It = m_CharacterCallbacks.begin();
 		while (It != m_CharacterCallbacks.end()) {
-			Writer.Write(CallbackRegistry::getInstance().resolveCallbackPointer(*It));
+			writer.write(CallbackRegistry::getInstance().resolveCallbackPointer(*It));
 			++It;
 		}
 	}
@@ -365,18 +365,18 @@ bool ScummVMInput::Persist(OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool ScummVMInput::Unpersist(InputPersistenceBlock &Reader) {
+bool ScummVMInput::unpersist(InputPersistenceBlock &reader) {
 	// Command-Callbackliste leeren.
 	m_CommandCallbacks.clear();
 
 	// Anzahl an Command-Callbacks lesen.
 	uint CommandCallbackCount;
-	Reader.Read(CommandCallbackCount);
+	reader.read(CommandCallbackCount);
 
 	// Alle Command-Callbacks wieder herstellen.
 	for (uint i = 0; i < CommandCallbackCount; ++i) {
 		Common::String CallbackFunctionName;
-		Reader.Read(CallbackFunctionName);
+		reader.read(CallbackFunctionName);
 
 		m_CommandCallbacks.push_back(reinterpret_cast<CommandCallback>(
 		                                 CallbackRegistry::getInstance().resolveCallbackFunction(CallbackFunctionName)));
@@ -387,17 +387,17 @@ bool ScummVMInput::Unpersist(InputPersistenceBlock &Reader) {
 
 	// Anzahl an Character-Callbacks lesen.
 	uint CharacterCallbackCount;
-	Reader.Read(CharacterCallbackCount);
+	reader.read(CharacterCallbackCount);
 
 	// Alle Character-Callbacks wieder herstellen.
 	for (uint i = 0; i < CharacterCallbackCount; ++i) {
 		Common::String CallbackFunctionName;
-		Reader.Read(CallbackFunctionName);
+		reader.read(CallbackFunctionName);
 
 		m_CharacterCallbacks.push_back(reinterpret_cast<CharacterCallback>(CallbackRegistry::getInstance().resolveCallbackFunction(CallbackFunctionName)));
 	}
 
-	return Reader.IsGood();
+	return reader.isGood();
 }
 
 } // End of namespace Sword25

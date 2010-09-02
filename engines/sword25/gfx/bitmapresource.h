@@ -60,30 +60,30 @@ public:
 		FLIP_VH = FLIP_H | FLIP_V
 	};
 
-	BitmapResource(const Common::String &Filename, Image *pImage);
+	BitmapResource(const Common::String &filename, Image *pImage);
 	virtual ~BitmapResource();
 
 	/**
 	    @brief Gibt zurück, ob das Objekt einen gültigen Zustand hat.
 	*/
-	bool IsValid() const {
-		return m_Valid;
+	bool isValid() const {
+		return _valid;
 	}
 
 	/**
 	    @brief Gibt die Breite des Bitmaps zurück.
 	*/
-	int GetWidth() const {
-		BS_ASSERT(m_pImage);
-		return m_pImage->GetWidth();
+	int getWidth() const {
+		BS_ASSERT(_pImage);
+		return _pImage->getWidth();
 	}
 
 	/**
 	    @brief Gibt die Höhe des Bitmaps zurück.
 	*/
-	int GetHeight() const {
-		BS_ASSERT(m_pImage);
-		return m_pImage->GetHeight();
+	int getHeight() const {
+		BS_ASSERT(_pImage);
+		return _pImage->getHeight();
 	}
 
 	/**
@@ -122,13 +122,13 @@ public:
 	            - IsAlphaAllowed()
 	            - IsColorModulationAllowed()
 	*/
-	bool Blit(int PosX = 0, int PosY = 0,
-	          int Flipping = FLIP_NONE,
+	bool blit(int posX = 0, int posY = 0,
+	          int flipping = FLIP_NONE,
 	          Common::Rect *pSrcPartRect = NULL,
-	          uint Color = BS_ARGB(255, 255, 255, 255),
-	          int Width = -1, int Height = -1) {
-		BS_ASSERT(m_pImage);
-		return m_pImage->Blit(PosX, PosY, Flipping, pSrcPartRect, Color, Width, Height);
+	          uint color = BS_ARGB(255, 255, 255, 255),
+	          int width = -1, int height = -1) {
+		BS_ASSERT(_pImage);
+		return _pImage->blit(posX, posY, flipping, pSrcPartRect, color, width, height);
 	}
 
 	/**
@@ -144,9 +144,9 @@ public:
 	            BS_RGB und BS_ARGB benutzt werden.
 	    @remark Falls das Rechteck nicht völlig innerhalb des Bildschirms ist, wird es automatisch zurechtgestutzt.
 	*/
-	bool Fill(const Common::Rect *pFillRect = 0, uint Color = BS_RGB(0, 0, 0)) {
-		BS_ASSERT(m_pImage);
-		return m_pImage->Fill(pFillRect, Color);
+	bool fill(const Common::Rect *pFillRect = 0, uint color = BS_RGB(0, 0, 0)) {
+		BS_ASSERT(_pImage);
+		return _pImage->fill(pFillRect, color);
 	}
 
 	/**
@@ -157,7 +157,7 @@ public:
 	    @remark Diese Methode sollte auf keine Fall benutzt werden um größere Teile des Bildes zu lesen, da sie sehr langsam ist. Sie ist
 	            eher dafür gedacht einzelne Pixel des Bildes auszulesen.
 	*/
-	uint GetPixel(int X, int Y) const;
+	uint getPixel(int x, int y) const;
 
 	//@{
 	/** @name Auskunfts-Methoden */
@@ -166,46 +166,46 @@ public:
 	    @brief Überprüft, ob das BS_Image ein Zielbild für einen Blit-Aufruf sein kann.
 	    @return Gibt false zurück, falls ein Blit-Aufruf mit diesem Objekt als Ziel nicht gestattet ist.
 	*/
-	bool IsBlitTarget() {
-		BS_ASSERT(m_pImage);
-		return m_pImage->IsBlitTarget();
+	bool isBlitTarget() {
+		BS_ASSERT(_pImage);
+		return _pImage->isBlitTarget();
 	}
 
 	/**
 	    @brief Gibt true zurück, falls das BS_Image bei einem Aufruf von Blit() skaliert dargestellt werden kann.
 	*/
-	bool IsScalingAllowed() {
-		BS_ASSERT(m_pImage);
-		return m_pImage->IsScalingAllowed();
+	bool isScalingAllowed() {
+		BS_ASSERT(_pImage);
+		return _pImage->isScalingAllowed();
 	}
 
 	/**
 	    @brief Gibt true zurück, wenn das BS_Image mit einem Aufruf von Fill() gefüllt werden kann.
 	*/
-	bool IsFillingAllowed() {
-		BS_ASSERT(m_pImage);
-		return m_pImage->IsFillingAllowed();
+	bool isFillingAllowed() {
+		BS_ASSERT(_pImage);
+		return _pImage->isFillingAllowed();
 	}
 
 	/**
 	    @brief Gibt true zurück, wenn das BS_Image bei einem Aufruf von Blit() mit einem Alphawert dargestellt werden kann.
 	*/
-	bool IsAlphaAllowed() {
-		BS_ASSERT(m_pImage);
-		return m_pImage->IsAlphaAllowed();
+	bool isAlphaAllowed() {
+		BS_ASSERT(_pImage);
+		return _pImage->isAlphaAllowed();
 	}
 
 	/**
 	    @brief Gibt true zurück, wenn das BS_Image bei einem Aufruf von Blit() mit Farbmodulation dargestellt werden kann.
 	*/
-	bool IsColorModulationAllowed() {
-		BS_ASSERT(m_pImage);
-		return m_pImage->IsColorModulationAllowed();
+	bool isColorModulationAllowed() {
+		BS_ASSERT(_pImage);
+		return _pImage->isColorModulationAllowed();
 	}
 
 private:
-	Image   *m_pImage;
-	bool        m_Valid;
+	Image   *_pImage;
+	bool    _valid;
 };
 
 } // End of namespace Sword25

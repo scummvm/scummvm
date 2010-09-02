@@ -67,35 +67,35 @@ bool MoviePlayer::LoadMovie(const Common::String &filename, uint z) {
 
 	// Ausgabebitmap erstellen
 	GraphicEngine *pGfx = Kernel::GetInstance()->GetGfx();
-	_outputBitmap = pGfx->GetMainPanel()->AddDynamicBitmap(_decoder.getWidth(), _decoder.getHeight());
-	if (!_outputBitmap.IsValid()) {
+	_outputBitmap = pGfx->GetMainPanel()->addDynamicBitmap(_decoder.getWidth(), _decoder.getHeight());
+	if (!_outputBitmap.isValid()) {
 		BS_LOG_ERRORLN("Output bitmap for movie playback could not be created.");
 		return false;
 	}
 
 	// Skalierung des Ausgabebitmaps berechnen, so dass es möglichst viel Bildschirmfläche einnimmt.
-	float ScreenToVideoWidth = (float) pGfx->GetDisplayWidth() / (float) _outputBitmap->GetWidth();
-	float ScreenToVideoHeight = (float) pGfx->GetDisplayHeight() / (float) _outputBitmap->GetHeight();
-	float ScaleFactor = MIN(ScreenToVideoWidth, ScreenToVideoHeight);
+	float screenToVideoWidth = (float)pGfx->GetDisplayWidth() / (float)_outputBitmap->getWidth();
+	float screenToVideoHeight = (float)pGfx->GetDisplayHeight() / (float)_outputBitmap->getHeight();
+	float scaleFactor = MIN(screenToVideoWidth, screenToVideoHeight);
 
-	if (abs(ScaleFactor - 1.0f) < FLT_EPSILON)
-		ScaleFactor = 1.0f;
+	if (abs(scaleFactor - 1.0f) < FLT_EPSILON)
+		scaleFactor = 1.0f;
 
-	_outputBitmap->SetScaleFactor(ScaleFactor);
+	_outputBitmap->setScaleFactor(scaleFactor);
 
 	// Z-Wert setzen
-	_outputBitmap->SetZ(z);
+	_outputBitmap->setZ(z);
 
 	// Ausgabebitmap auf dem Bildschirm zentrieren
-	_outputBitmap->SetX((pGfx->GetDisplayWidth() - _outputBitmap->GetWidth()) / 2);
-	_outputBitmap->SetY((pGfx->GetDisplayHeight() - _outputBitmap->GetHeight()) / 2);
+	_outputBitmap->setX((pGfx->GetDisplayWidth() - _outputBitmap->getWidth()) / 2);
+	_outputBitmap->setY((pGfx->GetDisplayHeight() - _outputBitmap->getHeight()) / 2);
 
 	return true;
 }
 
 bool MoviePlayer::UnloadMovie() {
 	_decoder.close();
-	_outputBitmap.Erase();
+	_outputBitmap.erase();
 
 	return true;
 }
@@ -117,7 +117,7 @@ void MoviePlayer::Update() {
 		// Transfer the next frame
 		assert(s->bytesPerPixel == 4);
 		byte *frameData = (byte *)s->getBasePtr(0, 0);
-		_outputBitmap->SetContent(frameData, s->pitch * s->h, 0, s->pitch);
+		_outputBitmap->setContent(frameData, s->pitch * s->h, 0, s->pitch);
 	}
 }
 
@@ -131,19 +131,19 @@ bool MoviePlayer::IsPaused() {
 
 float MoviePlayer::GetScaleFactor() {
 	if (_decoder.isVideoLoaded())
-		return _outputBitmap->GetScaleFactorX();
+		return _outputBitmap->getScaleFactorX();
 	else
 		return 0;
 }
 
 void MoviePlayer::SetScaleFactor(float scaleFactor) {
 	if (_decoder.isVideoLoaded()) {
-		_outputBitmap->SetScaleFactor(scaleFactor);
+		_outputBitmap->setScaleFactor(scaleFactor);
 
 		// Ausgabebitmap auf dem Bildschirm zentrieren
 		GraphicEngine *gfxPtr = Kernel::GetInstance()->GetGfx();
-		_outputBitmap->SetX((gfxPtr->GetDisplayWidth() - _outputBitmap->GetWidth()) / 2);
-		_outputBitmap->SetY((gfxPtr->GetDisplayHeight() - _outputBitmap->GetHeight()) / 2);
+		_outputBitmap->setX((gfxPtr->GetDisplayWidth() - _outputBitmap->getWidth()) / 2);
+		_outputBitmap->setY((gfxPtr->GetDisplayHeight() - _outputBitmap->getHeight()) / 2);
 	}
 }
 

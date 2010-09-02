@@ -764,7 +764,7 @@ bool FMODExSound::CanLoadResource(const Common::String &FileName) {
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool FMODExSound::Persist(OutputPersistenceBlock &Writer) {
+bool FMODExSound::persist(OutputPersistenceBlock &writer) {
 #if 0
 	BS_ASSERT(m_FMOD);
 
@@ -815,7 +815,7 @@ bool FMODExSound::Persist(OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool FMODExSound::Unpersist(InputPersistenceBlock &Reader) {
+bool FMODExSound::unpersist(InputPersistenceBlock &reader) {
 #if 0
 	BS_ASSERT(m_FMOD);
 

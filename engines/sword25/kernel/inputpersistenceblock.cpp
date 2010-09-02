@@ -62,15 +62,15 @@ InputPersistenceBlock::~InputPersistenceBlock() {
 // Reading
 // -----------------------------------------------------------------------------
 
-void InputPersistenceBlock::Read(int16 &Value) {
+void InputPersistenceBlock::read(int16 &Value) {
 	signed int v;
-	Read(v);
+	read(v);
 	Value = static_cast<int16>(v);
 }
 
 // -----------------------------------------------------------------------------
 
-void InputPersistenceBlock::Read(signed int &Value) {
+void InputPersistenceBlock::read(signed int &Value) {
 	if (CheckMarker(SINT_MARKER)) {
 		RawRead(&Value, sizeof(signed int));
 		Value = ConvertEndianessFromStorageToSystem(Value);
@@ -81,7 +81,7 @@ void InputPersistenceBlock::Read(signed int &Value) {
 
 // -----------------------------------------------------------------------------
 
-void InputPersistenceBlock::Read(uint &Value) {
+void InputPersistenceBlock::read(uint &Value) {
 	if (CheckMarker(UINT_MARKER)) {
 		RawRead(&Value, sizeof(uint));
 		Value = ConvertEndianessFromStorageToSystem(Value);
@@ -92,7 +92,7 @@ void InputPersistenceBlock::Read(uint &Value) {
 
 // -----------------------------------------------------------------------------
 
-void InputPersistenceBlock::Read(float &Value) {
+void InputPersistenceBlock::read(float &Value) {
 	if (CheckMarker(FLOAT_MARKER)) {
 		RawRead(&Value, sizeof(float));
 		Value = ConvertEndianessFromStorageToSystem(Value);
@@ -103,7 +103,7 @@ void InputPersistenceBlock::Read(float &Value) {
 
 // -----------------------------------------------------------------------------
 
-void InputPersistenceBlock::Read(bool &Value) {
+void InputPersistenceBlock::read(bool &Value) {
 	if (CheckMarker(BOOL_MARKER)) {
 		uint UIntBool;
 		RawRead(&UIntBool, sizeof(float));
@@ -116,12 +116,12 @@ void InputPersistenceBlock::Read(bool &Value) {
 
 // -----------------------------------------------------------------------------
 
-void InputPersistenceBlock::Read(Common::String &Value) {
+void InputPersistenceBlock::read(Common::String &Value) {
 	Value = "";
 
 	if (CheckMarker(STRING_MARKER)) {
 		uint Size;
-		Read(Size);
+		read(Size);
 
 		if (CheckBlockSize(Size)) {
 			Value = Common::String(reinterpret_cast<const char *>(&*m_Iter), Size);
@@ -132,10 +132,10 @@ void InputPersistenceBlock::Read(Common::String &Value) {
 
 // -----------------------------------------------------------------------------
 
-void InputPersistenceBlock::Read(Common::Array<byte> &Value) {
+void InputPersistenceBlock::read(Common::Array<byte> &Value) {
 	if (CheckMarker(BLOCK_MARKER)) {
 		uint Size;
-		Read(Size);
+		read(Size);
 
 		if (CheckBlockSize(Size)) {
 			Value = Common::Array<byte>(m_Iter, Size);
@@ -168,7 +168,7 @@ bool InputPersistenceBlock::CheckBlockSize(int Size) {
 // -----------------------------------------------------------------------------
 
 bool InputPersistenceBlock::CheckMarker(byte Marker) {
-	if (!IsGood() || !CheckBlockSize(1)) return false;
+	if (!isGood() || !CheckBlockSize(1)) return false;
 
 	if (*m_Iter++ == Marker) {
 		return true;

@@ -51,11 +51,11 @@ namespace Sword25 {
 // CONSTRUCTION / DESTRUCTION
 // -----------------------------------------------------------------------------
 
-GLImage::GLImage(const Common::String &Filename, bool &Result) :
+GLImage::GLImage(const Common::String &filename, bool &result) :
 	_data(0),
-	m_Width(0),
-	m_Height(0) {
-	Result = false;
+	_width(0),
+	_height(0) {
+	result = false;
 
 	PackageManager *pPackage = static_cast<PackageManager *>(Kernel::GetInstance()->GetService("package"));
 	BS_ASSERT(pPackage);
@@ -64,22 +64,22 @@ GLImage::GLImage(const Common::String &Filename, bool &Result) :
 
 	// Datei laden
 	byte *pFileData;
-	uint FileSize;
-	if (!(pFileData = (byte *) pPackage->GetFile(Filename, &FileSize))) {
-		BS_LOG_ERRORLN("File \"%s\" could not be loaded.", Filename.c_str());
+	uint fileSize;
+	if (!(pFileData = (byte *)pPackage->GetFile(filename, &fileSize))) {
+		BS_LOG_ERRORLN("File \"%s\" could not be loaded.", filename.c_str());
 		return;
 	}
 
 	// Bildeigenschaften bestimmen
-	GraphicEngine::COLOR_FORMATS ColorFormat;
-	int Pitch;
-	if (!ImageLoader::ExtractImageProperties(pFileData, FileSize, ColorFormat, m_Width, m_Height)) {
+	GraphicEngine::COLOR_FORMATS colorFormat;
+	int pitch;
+	if (!ImageLoader::ExtractImageProperties(pFileData, fileSize, colorFormat, _width, _height)) {
 		BS_LOG_ERRORLN("Could not read image properties.");
 		return;
 	}
 
 	// Das Bild dekomprimieren
-	if (!ImageLoader::LoadImage(pFileData, FileSize, GraphicEngine::CF_ARGB32, _data, m_Width, m_Height, Pitch)) {
+	if (!ImageLoader::LoadImage(pFileData, fileSize, GraphicEngine::CF_ARGB32, _data, _width, _height, pitch)) {
 		BS_LOG_ERRORLN("Could not decode image.");
 		return;
 	}
@@ -87,22 +87,22 @@ GLImage::GLImage(const Common::String &Filename, bool &Result) :
 	// Dateidaten freigeben
 	delete[] pFileData;
 
-	Result = true;
+	result = true;
 	return;
 }
 
 // -----------------------------------------------------------------------------
 
-GLImage::GLImage(uint Width, uint Height, bool &Result) :
-	m_Width(Width),
-	m_Height(Height) {
-	Result = false;
+GLImage::GLImage(uint width, uint height, bool &result) :
+	_width(width),
+	_height(height) {
+	result = false;
 
-	_data = new byte[Width * Height * 4];
+	_data = new byte[width * height * 4];
 
 	_backSurface = (static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx")))->getSurface();
 
-	Result = true;
+	result = true;
 	return;
 }
 
@@ -114,27 +114,27 @@ GLImage::~GLImage() {
 
 // -----------------------------------------------------------------------------
 
-bool GLImage::Fill(const Common::Rect *pFillRect, uint Color) {
+bool GLImage::fill(const Common::Rect *pFillRect, uint color) {
 	BS_LOG_ERRORLN("Fill() is not supported.");
 	return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool GLImage::SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride) {
+bool GLImage::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
 	// Überprüfen, ob PixelData ausreichend viele Pixel enthält um ein Bild der Größe Width * Height zu erzeugen
-	if (size < static_cast<uint>(m_Width * m_Height * 4)) {
-		BS_LOG_ERRORLN("PixelData vector is too small to define a 32 bit %dx%d image.", m_Width, m_Height);
+	if (size < static_cast<uint>(_width * _height * 4)) {
+		BS_LOG_ERRORLN("PixelData vector is too small to define a 32 bit %dx%d image.", _width, _height);
 		return false;
 	}
 
-	const byte *in = &Pixeldata[Offset];
+	const byte *in = &pixeldata[offset];
 	byte *out = _data;
 
-	for (int i = 0; i < m_Height; i++) {
-		memcpy(out, in, m_Width * 4);
-		out += m_Width * 4;
-		in += Stride;
+	for (int i = 0; i < _height; i++) {
+		memcpy(out, in, _width * 4);
+		out += _width * 4;
+		in += stride;
 	}
 
 	return true;
@@ -142,16 +142,16 @@ bool GLImage::SetContent(const byte *Pixeldata, uint size, uint Offset, uint Str
 
 // -----------------------------------------------------------------------------
 
-uint GLImage::GetPixel(int X, int Y) {
+uint GLImage::getPixel(int x, int y) {
 	BS_LOG_ERRORLN("GetPixel() is not supported. Returning black.");
 	return 0;
 }
 
 // -----------------------------------------------------------------------------
 
-bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, uint Color, int Width, int Height) {
+bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
 	int x1 = 0, y1 = 0;
-	int w = m_Width, h = m_Height;
+	int w = _width, h = _height;
 	if (pPartRect) {
 		x1 = pPartRect->left;
 		y1 = pPartRect->top;
@@ -159,43 +159,43 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, ui
 		h = pPartRect->bottom - pPartRect->top;
 	}
 
-	debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %d, %d, %d)", PosX, PosY, Flipping, x1, y1, w, h, Color, Width, Height);
+	debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %d, %d, %d)", posX, posY, flipping, x1, y1, w, h, color, width, height);
 
 	// Skalierungen berechnen
-	float ScaleX, ScaleY;
-	if (Width == -1)
-		Width = m_Width;
-	ScaleX = (float) Width / (float) m_Width;
+	float scaleX, scaleY;
+	if (width == -1)
+		width = _width;
+	scaleX = (float)width / (float)_width;
 
-	if (Height == -1)
-		Height = m_Height;
-	ScaleY = (float) Height / (float) m_Height;
+	if (height == -1)
+		height = _height;
+	scaleY = (float)height / (float)_height;
 
-	if ((Color & 0xff000000) != 0xff000000) {
-		warning("STUB: Image transparent bg color: %x", Color);
+	if ((color & 0xff000000) != 0xff000000) {
+		warning("STUB: Image transparent bg color: %x", color);
 	}
-	int cr = (Color >> 16) & 0xff;
-	int cg = (Color >> 8) & 0xff;
-	int cb = (Color >> 0) & 0xff;
+	int cr = (color >> 16) & 0xff;
+	int cg = (color >> 8) & 0xff;
+	int cb = (color >> 0) & 0xff;
 
-	if (ScaleX != 1.0 || ScaleY != 1.0) {
-		warning("STUB: Sprite scaling (%f x %f)", ScaleX, ScaleY);
-	}
-
-	if (PosX < 0) {
-		w -= PosX;
-		x1 = -PosX;
-		PosX = 0;
+	if (scaleX != 1.0 || scaleY != 1.0) {
+		warning("STUB: Sprite scaling (%f x %f)", scaleX, scaleY);
 	}
 
-	if (PosY < 0) {
-		h -= PosY;
-		y1 = -PosY;
-		PosY = 0;
+	if (posX < 0) {
+		w -= posX;
+		x1 = -posX;
+		posX = 0;
 	}
 
-	w = CLIP(w, 0, MAX((int)_backSurface->w - PosX - 1, 0));
-	h = CLIP(h, 0, MAX((int)_backSurface->h - PosY - 1, 0));
+	if (posY < 0) {
+		h -= posY;
+		y1 = -posY;
+		posY = 0;
+	}
+
+	w = CLIP(w, 0, MAX((int)_backSurface->w - posX - 1, 0));
+	h = CLIP(h, 0, MAX((int)_backSurface->h - posY - 1, 0));
 
 	if (w == 0 || h == 0)
 		return true;
@@ -207,19 +207,19 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, ui
 
 	// TODO: scaling
 	int inStep = 4;
-	int inoStep = m_Width * 4;
-	if (Flipping & Image::FLIP_V) {
+	int inoStep = _width * 4;
+	if (flipping & Image::FLIP_V) {
 		inStep = -inStep;
 		x1 = x1 + w - 1;
 	}
 
-	if (Flipping & Image::FLIP_H) {
+	if (flipping & Image::FLIP_H) {
 		inoStep = -inoStep;
 		y1 = y1 + h - 1;
 	}
 
-	byte *ino = &_data[y1 * m_Width * 4 + x1 * 4];
-	byte *outo = (byte *)_backSurface->getBasePtr(PosX, PosY);
+	byte *ino = &_data[y1 * _width * 4 + x1 * 4];
+	byte *outo = (byte *)_backSurface->getBasePtr(posX, posY);
 	byte *in, *out;
 
 	for (int i = 0; i < h; i++) {
@@ -278,7 +278,7 @@ bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, ui
 		ino += inoStep;
 	}
 
-	g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(PosX, PosY), _backSurface->pitch, PosX, PosY, w, h);
+	g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY, w, h);
 
 	return true;
 }

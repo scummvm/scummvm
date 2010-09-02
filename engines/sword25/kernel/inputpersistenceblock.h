@@ -60,15 +60,15 @@ public:
 	InputPersistenceBlock(const void *Data, uint DataLength);
 	virtual ~InputPersistenceBlock();
 
-	void Read(int16 &Value);
-	void Read(signed int &Value);
-	void Read(uint &Value);
-	void Read(float &Value);
-	void Read(bool &Value);
-	void Read(Common::String &Value);
-	void Read(Common::Array<byte> &Value);
+	void read(int16 &Value);
+	void read(signed int &Value);
+	void read(uint &Value);
+	void read(float &Value);
+	void read(bool &Value);
+	void read(Common::String &Value);
+	void read(Common::Array<byte> &Value);
 
-	bool IsGood() const {
+	bool isGood() const {
 		return m_ErrorState == NONE;
 	}
 	ErrorState GetErrorState() const {

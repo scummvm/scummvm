@@ -221,7 +221,7 @@ static uint TableRegionToRegion(lua_State *L, const char *ClassName) {
 	case LUA_TNUMBER: {
 		Polygon polygon;
 		TablePolygonToPolygon(L, polygon);
-		RegionRegistry::GetInstance().ResolveHandle(RegionHandle)->Init(polygon);
+		RegionRegistry::GetInstance().resolveHandle(RegionHandle)->Init(polygon);
 	}
 	break;
 
@@ -233,7 +233,7 @@ static uint TableRegionToRegion(lua_State *L, const char *ClassName) {
 
 		int PolygonCount = luaL_getn(L, -1);
 		if (PolygonCount == 1)
-			RegionRegistry::GetInstance().ResolveHandle(RegionHandle)->Init(polygon);
+			RegionRegistry::GetInstance().resolveHandle(RegionHandle)->Init(polygon);
 		else {
 			Common::Array<Polygon> Holes;
 			Holes.reserve(PolygonCount - 1);
@@ -246,7 +246,7 @@ static uint TableRegionToRegion(lua_State *L, const char *ClassName) {
 			}
 			BS_ASSERT((int)Holes.size() == PolygonCount - 1);
 
-			RegionRegistry::GetInstance().ResolveHandle(RegionHandle)->Init(polygon, &Holes);
+			RegionRegistry::GetInstance().resolveHandle(RegionHandle)->Init(polygon, &Holes);
 		}
 	}
 	break;
@@ -309,7 +309,7 @@ static Region *CheckRegion(lua_State *L) {
 	uint *RegionHandlePtr;
 	if ((RegionHandlePtr = reinterpret_cast<uint *>(my_checkudata(L, 1, REGION_CLASS_NAME))) != 0 ||
 	        (RegionHandlePtr = reinterpret_cast<uint *>(my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
-		return RegionRegistry::GetInstance().ResolveHandle(*RegionHandlePtr);
+		return RegionRegistry::GetInstance().resolveHandle(*RegionHandlePtr);
 	} else {
 		luaL_argcheck(L, 0, 1, "'" REGION_CLASS_NAME "' expected");
 	}
@@ -492,7 +492,7 @@ static WalkRegion *CheckWalkRegion(lua_State *L) {
 	// The first parameter must be of type 'userdate', and the Metatable class Geo.WalkRegion
 	uint RegionHandle;
 	if ((RegionHandle = *reinterpret_cast<uint *>(my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
-		return reinterpret_cast<WalkRegion *>(RegionRegistry::GetInstance().ResolveHandle(RegionHandle));
+		return reinterpret_cast<WalkRegion *>(RegionRegistry::GetInstance().resolveHandle(RegionHandle));
 	} else {
 		luaL_argcheck(L, 0, 1, "'" WALKREGION_CLASS_NAME "' expected");
 	}

@@ -50,34 +50,34 @@ namespace Sword25 {
 // CONSTRUCTION / DESTRUCTION
 // -----------------------------------------------------------------------------
 
-SWImage::SWImage(const Common::String &Filename, bool &Result) :
-	_ImageDataPtr(0),
-	m_Width(0),
-	m_Height(0) {
-	Result = false;
+SWImage::SWImage(const Common::String &filename, bool &result) :
+	_imageDataPtr(0),
+	_width(0),
+	_height(0) {
+	result = false;
 
 	PackageManager *pPackage = static_cast<PackageManager *>(Kernel::GetInstance()->GetService("package"));
 	BS_ASSERT(pPackage);
 
 	// Datei laden
 	byte *pFileData;
-	uint FileSize;
-	if (!(pFileData = (byte *) pPackage->GetFile(Filename, &FileSize))) {
-		BS_LOG_ERRORLN("File \"%s\" could not be loaded.", Filename.c_str());
+	uint fileSize;
+	if (!(pFileData = (byte *)pPackage->GetFile(filename, &fileSize))) {
+		BS_LOG_ERRORLN("File \"%s\" could not be loaded.", filename.c_str());
 		return;
 	}
 
 	// Bildeigenschaften bestimmen
-	GraphicEngine::COLOR_FORMATS ColorFormat;
-	int Pitch;
-	if (!ImageLoader::ExtractImageProperties(pFileData, FileSize, ColorFormat, m_Width, m_Height)) {
+	GraphicEngine::COLOR_FORMATS colorFormat;
+	int pitch;
+	if (!ImageLoader::ExtractImageProperties(pFileData, fileSize, colorFormat, _width, _height)) {
 		BS_LOG_ERRORLN("Could not read image properties.");
 		return;
 	}
 
 	// Das Bild dekomprimieren
 	byte *pUncompressedData;
-	if (!ImageLoader::LoadImage(pFileData, FileSize, GraphicEngine::CF_ABGR32, pUncompressedData, m_Width, m_Height, Pitch)) {
+	if (!ImageLoader::LoadImage(pFileData, fileSize, GraphicEngine::CF_ABGR32, pUncompressedData, _width, _height, pitch)) {
 		BS_LOG_ERRORLN("Could not decode image.");
 		return;
 	}
@@ -85,51 +85,51 @@ SWImage::SWImage(const Common::String &Filename, bool &Result) :
 	// Dateidaten freigeben
 	delete[] pFileData;
 
-	_ImageDataPtr = (uint *) pUncompressedData;
+	_imageDataPtr = (uint *)pUncompressedData;
 
-	Result = true;
+	result = true;
 	return;
 }
 
 // -----------------------------------------------------------------------------
 
 SWImage::~SWImage() {
-	delete [] _ImageDataPtr;
+	delete[] _imageDataPtr;
 }
 
 
 // -----------------------------------------------------------------------------
 
-bool SWImage::Blit(int PosX, int PosY,
-                      int Flipping,
+bool SWImage::blit(int posX, int posY,
+                      int flipping,
                       Common::Rect *pPartRect,
-                      uint Color,
-                      int Width, int Height) {
+                      uint color,
+                      int width, int height) {
 	BS_LOG_ERRORLN("Blit() is not supported.");
 	return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool SWImage::Fill(const Common::Rect *pFillRect, uint Color) {
+bool SWImage::fill(const Common::Rect *pFillRect, uint color) {
 	BS_LOG_ERRORLN("Fill() is not supported.");
 	return false;
 }
 
 // -----------------------------------------------------------------------------
 
-	bool SWImage::SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride) {
+bool SWImage::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
 	BS_LOG_ERRORLN("SetContent() is not supported.");
 	return false;
 }
 
 // -----------------------------------------------------------------------------
 
-uint SWImage::GetPixel(int X, int Y) {
-	BS_ASSERT(X >= 0 && X < m_Width);
-	BS_ASSERT(Y >= 0 && Y < m_Height);
+uint SWImage::getPixel(int x, int y) {
+	BS_ASSERT(x >= 0 && x < _width);
+	BS_ASSERT(y >= 0 && y < _height);
 
-	return _ImageDataPtr[m_Width * Y + X];
+	return _imageDataPtr[_width * y + x];
 }
 
 } // End of namespace Sword25

@@ -54,15 +54,15 @@ class RootRenderObject : public RenderObject {
 	friend class RenderObjectManager;
 
 private:
-	RootRenderObject(RenderObjectManager *ManagerPtr, int Width, int Height) :
+	RootRenderObject(RenderObjectManager *managerPtr, int width, int height) :
 		RenderObject(RenderObjectPtr<RenderObject>(), TYPE_ROOT) {
-		m_ManagerPtr = ManagerPtr;
-		m_Width = Width;
-		m_Height = Height;
+		_managerPtr = managerPtr;
+		_width = width;
+		_height = height;
 	}
 
 protected:
-	virtual bool DoRender() {
+	virtual bool doRender() {
 		return true;
 	}
 };

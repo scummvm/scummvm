@@ -70,19 +70,19 @@ private:
 public:
 	~AnimationTemplate();
 
-	virtual const Frame    &GetFrame(uint Index) const {
-		BS_ASSERT(Index < m_Frames.size());
-		return m_Frames[Index];
+	virtual const Frame    &getFrame(uint Index) const {
+		BS_ASSERT(Index < _frames.size());
+		return _frames[Index];
 	}
-	virtual uint    GetFrameCount() const {
-		return m_Frames.size();
+	virtual uint    getFrameCount() const {
+		return _frames.size();
 	}
-	virtual void            Unlock() {
+	virtual void            unlock() {
 		delete this;
 	}
 
-	bool IsValid() const {
-		return m_Valid;
+	bool isValid() const {
+		return _valid;
 	}
 
 	/**
@@ -106,7 +106,7 @@ public:
 	    @param Type der Typ der Animation. Muss aus den enum BS_Animation::ANIMATION_TYPES sein.
 	*/
 	void SetAnimationType(Animation::ANIMATION_TYPES Type) {
-		m_AnimationType = Type;
+		_animationType = Type;
 	}
 
 	/**
@@ -115,13 +115,13 @@ public:
 	*/
 	void SetFPS(int FPS);
 
-	virtual bool Persist(OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(InputPersistenceBlock &Reader);
+	virtual bool persist(OutputPersistenceBlock &writer);
+	virtual bool unpersist(InputPersistenceBlock &reader);
 
 private:
-	Common::Array<Frame>  m_Frames;
-	AnimationResource       *m_SourceAnimationPtr;
-	bool                        m_Valid;
+	Common::Array<Frame>  _frames;
+	AnimationResource    *_sourceAnimationPtr;
+	bool                  _valid;
 
 	AnimationResource *RequestSourceAnimation(const Common::String &SourceAnimation) const;
 	bool ValidateSourceIndex(uint Index) const;

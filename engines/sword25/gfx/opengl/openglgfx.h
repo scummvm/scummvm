@@ -77,7 +77,7 @@ public:
 	virtual void        SetVsync(bool Vsync);
 	virtual bool        GetVsync() const;
 
-	virtual bool        Fill(const Common::Rect *FillRectPtr = 0, uint Color = BS_RGB(0, 0, 0));
+	virtual bool        fill(const Common::Rect *FillRectPtr = 0, uint Color = BS_RGB(0, 0, 0));
 	virtual bool        GetScreenshot(uint &Width, uint &Height, byte **Data);
 
 	// Resource-Managing Methoden
@@ -91,8 +91,8 @@ public:
 
 	// Persistenz Methoden
 	// -------------------
-	virtual bool Persist(OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(InputPersistenceBlock &Reader);
+	virtual bool persist(OutputPersistenceBlock &writer);
+	virtual bool unpersist(InputPersistenceBlock &reader);
 
 private:
 	bool                m_GLspritesInitialized;
@@ -100,7 +100,7 @@ private:
 
 	RenderObjectPtr<Panel> m_MainPanelPtr;
 
-	Common::ScopedPtr<RenderObjectManager>   m_RenderObjectManagerPtr;
+	Common::ScopedPtr<RenderObjectManager>   _renderObjectManagerPtr;
 
 	struct DebugLine {
 		DebugLine(const Vertex &_Start, const Vertex &_End, uint _Color) :

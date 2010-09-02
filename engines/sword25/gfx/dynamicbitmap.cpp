@@ -53,32 +53,32 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-DynamicBitmap::DynamicBitmap(RenderObjectPtr<RenderObject> ParentPtr, uint Width, uint Height) :
-	Bitmap(ParentPtr, TYPE_DYNAMICBITMAP) {
+DynamicBitmap::DynamicBitmap(RenderObjectPtr<RenderObject> parentPtr, uint width, uint height) :
+	Bitmap(parentPtr, TYPE_DYNAMICBITMAP) {
 	// Das BS_Bitmap konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
-	if (!m_InitSuccess) return;
+	if (!_initSuccess) return;
 
-	m_InitSuccess = CreateGLImage(Width, Height);
+	_initSuccess = createGLImage(width, height);
 }
 
 // -----------------------------------------------------------------------------
 
-DynamicBitmap::DynamicBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle) :
-	Bitmap(ParentPtr, TYPE_DYNAMICBITMAP, Handle) {
-	m_InitSuccess = Unpersist(Reader);
+DynamicBitmap::DynamicBitmap(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle) :
+	Bitmap(parentPtr, TYPE_DYNAMICBITMAP, handle) {
+	_initSuccess = unpersist(reader);
 }
 
 // -----------------------------------------------------------------------------
 
-bool DynamicBitmap::CreateGLImage(uint Width, uint Height) {
+bool DynamicBitmap::createGLImage(uint width, uint height) {
 	// GLImage mit den gewünschten Maßen erstellen
-	bool Result = false;
-	m_Image.reset(new GLImage(Width, Height, Result));
+	bool result = false;
+	_image.reset(new GLImage(width, height, result));
 
-	m_OriginalWidth = m_Width = Width;
-	m_OriginalHeight = m_Height = Height;
+	_originalWidth = _width = width;
+	_originalHeight = _height = height;
 
-	return Result;
+	return result;
 }
 
 // -----------------------------------------------------------------------------
@@ -88,66 +88,66 @@ DynamicBitmap::~DynamicBitmap() {
 
 // -----------------------------------------------------------------------------
 
-uint DynamicBitmap::GetPixel(int X, int Y) const {
-	BS_ASSERT(X >= 0 && X < m_Width);
-	BS_ASSERT(Y >= 0 && Y < m_Height);
+uint DynamicBitmap::getPixel(int x, int y) const {
+	BS_ASSERT(x >= 0 && x < _width);
+	BS_ASSERT(y >= 0 && y < _height);
 
-	return m_Image->GetPixel(X, Y);
+	return _image->getPixel(x, y);
 }
 
 // -----------------------------------------------------------------------------
 
-bool DynamicBitmap::DoRender() {
+bool DynamicBitmap::doRender() {
 	// Framebufferobjekt holen
 	GraphicEngine *pGfx = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
 	BS_ASSERT(pGfx);
 
 	// Bitmap zeichnen
-	bool Result;
-	if (m_ScaleFactorX == 1.0f && m_ScaleFactorY == 1.0f) {
-		Result = m_Image->Blit(m_AbsoluteX, m_AbsoluteY,
-		                       (m_FlipV ? BitmapResource::FLIP_V : 0) |
-		                       (m_FlipH ? BitmapResource::FLIP_H : 0),
-		                       0, m_ModulationColor, -1, -1);
+	bool result;
+	if (_scaleFactorX == 1.0f && _scaleFactorY == 1.0f) {
+		result = _image->blit(_absoluteX, _absoluteY,
+		                       (_flipV ? BitmapResource::FLIP_V : 0) |
+		                       (_flipH ? BitmapResource::FLIP_H : 0),
+		                       0, _modulationColor, -1, -1);
 	} else {
-		Result = m_Image->Blit(m_AbsoluteX, m_AbsoluteY,
-		                       (m_FlipV ? BitmapResource::FLIP_V : 0) |
-		                       (m_FlipH ? BitmapResource::FLIP_H : 0),
-		                       0, m_ModulationColor, m_Width, m_Height);
+		result = _image->blit(_absoluteX, _absoluteY,
+		                       (_flipV ? BitmapResource::FLIP_V : 0) |
+		                       (_flipH ? BitmapResource::FLIP_H : 0),
+		                       0, _modulationColor, _width, _height);
 	}
 
-	return Result;
+	return result;
 }
 
 // -----------------------------------------------------------------------------
 
-bool DynamicBitmap::SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride) {
-	return m_Image->SetContent(Pixeldata, size, Offset, Stride);
+bool DynamicBitmap::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
+	return _image->setContent(pixeldata, size, offset, stride);
 }
 
 // -----------------------------------------------------------------------------
 // Auskunftsmethoden
 // -----------------------------------------------------------------------------
 
-bool DynamicBitmap::IsScalingAllowed() const {
-	return m_Image->IsScalingAllowed();
+bool DynamicBitmap::isScalingAllowed() const {
+	return _image->isScalingAllowed();
 }
 
 // -----------------------------------------------------------------------------
 
-bool DynamicBitmap::IsAlphaAllowed() const {
-	return m_Image->IsAlphaAllowed();
+bool DynamicBitmap::isAlphaAllowed() const {
+	return _image->isAlphaAllowed();
 }
 
 // -----------------------------------------------------------------------------
 
-bool DynamicBitmap::IsColorModulationAllowed() const {
-	return m_Image->IsColorModulationAllowed();
+bool DynamicBitmap::isColorModulationAllowed() const {
+	return _image->isColorModulationAllowed();
 }
 
 // -----------------------------------------------------------------------------
 
-bool DynamicBitmap::IsSetContentAllowed() const {
+bool DynamicBitmap::isSetContentAllowed() const {
 	return true;
 }
 
@@ -155,39 +155,39 @@ bool DynamicBitmap::IsSetContentAllowed() const {
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool DynamicBitmap::Persist(OutputPersistenceBlock &Writer) {
-	bool Result = true;
+bool DynamicBitmap::persist(OutputPersistenceBlock &writer) {
+	bool result = true;
 
-	Result &= Bitmap::Persist(Writer);
+	result &= Bitmap::persist(writer);
 
 	// Bilddaten werden nicht gespeichert. Dies ist auch nicht weiter von bedeutung, da BS_DynamicBitmap nur vom Videoplayer benutzt wird.
 	// Während ein Video abläuft kann niemals gespeichert werden. BS_DynamicBitmap kann nur der Vollständigkeit halber persistiert werden.
 	BS_LOG_WARNINGLN("Persisting a BS_DynamicBitmap. Bitmap content is not persisted.");
 
-	Result &= RenderObject::PersistChildren(Writer);
+	result &= RenderObject::persistChildren(writer);
 
-	return Result;
+	return result;
 }
 
-bool DynamicBitmap::Unpersist(InputPersistenceBlock &Reader) {
-	bool Result = true;
+bool DynamicBitmap::unpersist(InputPersistenceBlock &reader) {
+	bool result = true;
 
-	Result &= Bitmap::Unpersist(Reader);
+	result &= Bitmap::unpersist(reader);
 
 	// Ein BS_GLImage mit den gespeicherten Maßen erstellen.
-	Result &= CreateGLImage(m_Width, m_Height);
+	result &= createGLImage(_width, _height);
 
 	// Bilddaten werden nicht gespeichert (s.o.).
 	BS_LOG_WARNINGLN("Unpersisting a BS_DynamicBitmap. Bitmap contents are missing.");
 
 	// Bild mit durchsichtigen Bilddaten initialisieren.
-	byte *TransparentImageData = (byte *)calloc(m_Width * m_Height * 4, 1);
-	m_Image->SetContent(TransparentImageData, m_Width * m_Height);
-	free(TransparentImageData);
+	byte *transparentImageData = (byte *)calloc(_width * _height * 4, 1);
+	_image->setContent(transparentImageData, _width * _height);
+	free(transparentImageData);
 
-	Result &= RenderObject::UnpersistChildren(Reader);
+	result &= RenderObject::unpersistChildren(reader);
 
-	return Reader.IsGood() && Result;
+	return reader.isGood() && result;
 }
 
 } // End of namespace Sword25

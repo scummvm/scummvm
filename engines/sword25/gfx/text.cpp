@@ -66,7 +66,7 @@ const uint AUTO_WRAP_THRESHOLD_DEFAULT = 300;
 
 Text::Text(RenderObjectPtr<RenderObject> ParentPtr) :
 	RenderObject(ParentPtr, RenderObject::TYPE_TEXT),
-	m_ModulationColor(0xffffffff),
+	_modulationColor(0xffffffff),
 	m_AutoWrap(false),
 	m_AutoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {
 
@@ -76,7 +76,7 @@ Text::Text(RenderObjectPtr<RenderObject> ParentPtr) :
 
 Text::Text(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle) :
 	RenderObject(ParentPtr, TYPE_TEXT, Handle) {
-	m_InitSuccess = Unpersist(Reader);
+	_initSuccess = unpersist(Reader);
 }
 
 // -----------------------------------------------------------------------------
@@ -86,7 +86,7 @@ bool Text::SetFont(const Common::String &Font) {
 	if (GetResourceManager()->PrecacheResource(Font)) {
 		m_Font = Font;
 		UpdateFormat();
-		ForceRefresh();
+		forceRefresh();
 		return true;
 	} else {
 		BS_LOG_ERRORLN("Could not precache font \"%s\". Font probably does not exist.", Font.c_str());
@@ -100,27 +100,27 @@ bool Text::SetFont(const Common::String &Font) {
 void Text::SetText(const Common::String &text) {
 	m_Text = text;
 	UpdateFormat();
-	ForceRefresh();
+	forceRefresh();
 }
 
 // -----------------------------------------------------------------------------
 
-void Text::SetColor(uint ModulationColor) {
-	uint NewModulationColor = (ModulationColor & 0x00ffffff) | (m_ModulationColor & 0xff000000);
-	if (NewModulationColor != m_ModulationColor) {
-		m_ModulationColor = NewModulationColor;
-		ForceRefresh();
+void Text::setColor(uint modulationColor) {
+	uint newModulationColor = (modulationColor & 0x00ffffff) | (_modulationColor & 0xff000000);
+	if (newModulationColor != _modulationColor) {
+		_modulationColor = newModulationColor;
+		forceRefresh();
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void Text::SetAlpha(int Alpha) {
-	BS_ASSERT(Alpha >= 0 && Alpha < 256);
-	uint NewModulationColor = (m_ModulationColor & 0x00ffffff) | Alpha << 24;
-	if (NewModulationColor != m_ModulationColor) {
-		m_ModulationColor = NewModulationColor;
-		ForceRefresh();
+void Text::setAlpha(int alpha) {
+	BS_ASSERT(alpha >= 0 && alpha < 256);
+	uint newModulationColor = (_modulationColor & 0x00ffffff) | alpha << 24;
+	if (newModulationColor != _modulationColor) {
+		_modulationColor = newModulationColor;
+		forceRefresh();
 	}
 }
 
@@ -130,7 +130,7 @@ void Text::SetAutoWrap(bool AutoWrap) {
 	if (AutoWrap != m_AutoWrap) {
 		m_AutoWrap = AutoWrap;
 		UpdateFormat();
-		ForceRefresh();
+		forceRefresh();
 	}
 }
 
@@ -140,13 +140,13 @@ void Text::SetAutoWrapThreshold(uint AutoWrapThreshold) {
 	if (AutoWrapThreshold != m_AutoWrapThreshold) {
 		m_AutoWrapThreshold = AutoWrapThreshold;
 		UpdateFormat();
-		ForceRefresh();
+		forceRefresh();
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-bool Text::DoRender() {
+bool Text::doRender() {
 	// Font-Resource locken.
 	FontResource *FontPtr = LockFontResource();
 	if (!FontPtr) return false;
@@ -177,11 +177,11 @@ bool Text::DoRender() {
 	for (; Iter != m_Lines.end(); ++Iter) {
 		// Feststellen, ob überhaupt Buchstaben der aktuellen Zeile vom Update betroffen sind.
 		Common::Rect CheckRect = (*Iter).BBox;
-		CheckRect.translate(m_AbsoluteX, m_AbsoluteY);
+		CheckRect.translate(_absoluteX, _absoluteY);
 
 		// Jeden Buchstaben einzeln Rendern.
-		int CurX = m_AbsoluteX + (*Iter).BBox.left;
-		int CurY = m_AbsoluteY + (*Iter).BBox.top;
+		int CurX = _absoluteX + (*Iter).BBox.left;
+		int CurY = _absoluteY + (*Iter).BBox.top;
 		for (uint i = 0; i < (*Iter).Text.size(); ++i) {
 			Common::Rect CurRect = FontPtr->GetCharacterRect((byte)(*Iter).Text[i]);
 
@@ -189,7 +189,7 @@ bool Text::DoRender() {
 			int RenderX = CurX + (RenderRect.left - RenderRect.left);
 			int RenderY = CurY + (RenderRect.top - RenderRect.top);
 			RenderRect.translate(CurRect.left - CurX, CurRect.top - CurY);
-			Result = CharMapPtr->Blit(RenderX, RenderY, Image::FLIP_NONE, &RenderRect, m_ModulationColor);
+			Result = CharMapPtr->blit(RenderX, RenderY, Image::FLIP_NONE, &RenderRect, _modulationColor);
 			if (!Result) break;
 
 			CurX += CurRect.width() + FontPtr->GetGapWidth();
@@ -197,10 +197,10 @@ bool Text::DoRender() {
 	}
 
 	// Charactermap-Resource freigeben.
-	CharMapPtr->Release();
+	CharMapPtr->release();
 
 	// Font-Resource freigeben.
-	FontPtr->Release();
+	FontPtr->release();
 
 	return Result;
 }
@@ -245,8 +245,8 @@ void Text::UpdateFormat() {
 	UpdateMetrics(*FontPtr);
 
 	m_Lines.resize(1);
-	if (m_AutoWrap && (uint) m_Width >= m_AutoWrapThreshold && m_Text.size() >= 2) {
-		m_Width = 0;
+	if (m_AutoWrap && (uint) _width >= m_AutoWrapThreshold && m_Text.size() >= 2) {
+		_width = 0;
 		uint CurLineWidth = 0;
 		uint CurLineHeight = 0;
 		uint CurLine = 0;
@@ -283,7 +283,7 @@ void Text::UpdateFormat() {
 
 			m_Lines[CurLine].BBox.right = CurLineWidth;
 			m_Lines[CurLine].BBox.bottom = CurLineHeight;
-			if ((uint) m_Width < CurLineWidth) m_Width = CurLineWidth;
+			if ((uint) _width < CurLineWidth) _width = CurLineWidth;
 
 			if (LastSpace < m_Text.size()) {
 				++CurLine;
@@ -296,36 +296,36 @@ void Text::UpdateFormat() {
 		}
 
 		// Bounding-Box der einzelnen Zeilen relativ zur ersten festlegen (vor allem zentrieren).
-		m_Height = 0;
+		_height = 0;
 		Common::Array<LINE>::iterator Iter = m_Lines.begin();
 		for (; Iter != m_Lines.end(); ++Iter) {
 			Common::Rect &BBox = (*Iter).BBox;
-			BBox.left = (m_Width - BBox.right) / 2;
+			BBox.left = (_width - BBox.right) / 2;
 			BBox.right = BBox.left + BBox.right;
 			BBox.top = (Iter - m_Lines.begin()) * FontPtr->GetLineHeight();
 			BBox.bottom = BBox.top + BBox.bottom;
-			m_Height += BBox.height();
+			_height += BBox.height();
 		}
 	} else {
 		// Keine automatische Formatierung, also wird der gesamte Text in nur eine Zeile kopiert.
 		m_Lines[0].Text = m_Text;
-		m_Lines[0].BBox = Common::Rect(0, 0, m_Width, m_Height);
+		m_Lines[0].BBox = Common::Rect(0, 0, _width, _height);
 	}
 
-	FontPtr->Release();
+	FontPtr->release();
 }
 
 // -----------------------------------------------------------------------------
 
 void Text::UpdateMetrics(FontResource &FontResource) {
-	m_Width = 0;
-	m_Height = 0;
+	_width = 0;
+	_height = 0;
 
 	for (uint i = 0; i < m_Text.size(); ++i) {
 		const Common::Rect &CurRect = FontResource.GetCharacterRect((byte)m_Text[i]);
-		m_Width += CurRect.width();
-		if (i != m_Text.size() - 1) m_Width += FontResource.GetGapWidth();
-		if (m_Height < CurRect.height()) m_Height = CurRect.height();
+		_width += CurRect.width();
+		if (i != m_Text.size() - 1) _width += FontResource.GetGapWidth();
+		if (_height < CurRect.height()) _height = CurRect.height();
 	}
 }
 
@@ -333,52 +333,52 @@ void Text::UpdateMetrics(FontResource &FontResource) {
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool Text::Persist(OutputPersistenceBlock &Writer) {
-	bool Result = true;
+bool Text::persist(OutputPersistenceBlock &writer) {
+	bool result = true;
 
-	Result &= RenderObject::Persist(Writer);
+	result &= RenderObject::persist(writer);
 
-	Writer.Write(m_ModulationColor);
-	Writer.Write(m_Font);
-	Writer.Write(m_Text);
-	Writer.Write(m_AutoWrap);
-	Writer.Write(m_AutoWrapThreshold);
+	writer.write(_modulationColor);
+	writer.write(m_Font);
+	writer.write(m_Text);
+	writer.write(m_AutoWrap);
+	writer.write(m_AutoWrapThreshold);
 
-	Result &= RenderObject::PersistChildren(Writer);
+	result &= RenderObject::persistChildren(writer);
 
-	return Result;
+	return result;
 }
 
-bool Text::Unpersist(InputPersistenceBlock &Reader) {
-	bool Result = true;
+bool Text::unpersist(InputPersistenceBlock &reader) {
+	bool result = true;
 
-	Result &= RenderObject::Unpersist(Reader);
+	result &= RenderObject::unpersist(reader);
 
 	// Farbe und Alpha einlesen.
-	Reader.Read(m_ModulationColor);
+	reader.read(_modulationColor);
 
 	// Beim Laden der anderen Member werden die Set-Methoden benutzt statt der tatsächlichen Member.
 	// So wird das Layout automatisch aktualisiert und auch alle anderen notwendigen Methoden ausgeführt.
 
 	Common::String Font;
-	Reader.Read(Font);
+	reader.read(Font);
 	SetFont(Font);
 
 	Common::String text;
-	Reader.Read(text);
+	reader.read(text);
 	SetText(text);
 
 	bool AutoWrap;
-	Reader.Read(AutoWrap);
+	reader.read(AutoWrap);
 	SetAutoWrap(AutoWrap);
 
 	uint AutoWrapThreshold;
-	Reader.Read(AutoWrapThreshold);
+	reader.read(AutoWrapThreshold);
 	SetAutoWrapThreshold(AutoWrapThreshold);
 
-	Result &= RenderObject::UnpersistChildren(Reader);
+	result &= RenderObject::unpersistChildren(reader);
 
-	return Reader.IsGood() && Result;
+	return reader.isGood() && result;
 }
 
 } // End of namespace Sword25

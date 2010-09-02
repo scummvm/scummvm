@@ -52,12 +52,12 @@ class OutputPersistenceBlock : public PersistenceBlock {
 public:
 	OutputPersistenceBlock();
 
-	void Write(signed int Value);
-	void Write(uint Value);
-	void Write(float Value);
-	void Write(bool Value);
-	void Write(const Common::String &String);
-	void Write(const void *BufferPtr, size_t Size);
+	void write(signed int Value);
+	void write(uint Value);
+	void write(float Value);
+	void write(bool Value);
+	void write(const Common::String &String);
+	void write(const void *BufferPtr, size_t Size);
 
 	const void *GetData() const {
 		return &m_Data[0];

@@ -61,7 +61,7 @@ WalkRegion::WalkRegion() {
 WalkRegion::WalkRegion(InputPersistenceBlock &Reader, uint Handle) :
 	Region(Reader, Handle) {
 	m_Type = RT_WALKREGION;
-	Unpersist(Reader);
+	unpersist(Reader);
 }
 
 // -----------------------------------------------------------------------------
@@ -340,78 +340,78 @@ void WalkRegion::SetPos(int X, int Y) {
 
 // -----------------------------------------------------------------------------
 
-bool WalkRegion::Persist(OutputPersistenceBlock &Writer) {
-	bool Result = true;
+bool WalkRegion::persist(OutputPersistenceBlock &writer) {
+	bool result = true;
 
 	// Persist the parent region
-	Result &= Region::Persist(Writer);
+	result &= Region::persist(writer);
 
 	// Persist the nodes
-	Writer.Write(m_Nodes.size());
+	writer.write(m_Nodes.size());
 	Common::Array<Vertex>::const_iterator It = m_Nodes.begin();
 	while (It != m_Nodes.end()) {
-		Writer.Write(It->X);
-		Writer.Write(It->Y);
+		writer.write(It->X);
+		writer.write(It->Y);
 		++It;
 	}
 
 	// Persist the visibility matrix
-	Writer.Write(m_VisibilityMatrix.size());
+	writer.write(m_VisibilityMatrix.size());
 	Common::Array< Common::Array<int> >::const_iterator RowIter = m_VisibilityMatrix.begin();
 	while (RowIter != m_VisibilityMatrix.end()) {
-		Writer.Write(RowIter->size());
+		writer.write(RowIter->size());
 		Common::Array<int>::const_iterator ColIter = RowIter->begin();
 		while (ColIter != RowIter->end()) {
-			Writer.Write(*ColIter);
+			writer.write(*ColIter);
 			++ColIter;
 		}
 
 		++RowIter;
 	}
 
-	return Result;
+	return result;
 }
 
 // -----------------------------------------------------------------------------
 
-bool WalkRegion::Unpersist(InputPersistenceBlock &Reader) {
-	bool Result = true;
+bool WalkRegion::unpersist(InputPersistenceBlock &reader) {
+	bool result = true;
 
 	// The parent object was already loaded in the constructor of BS_Region, so at
 	// this point only the additional data from BS_WalkRegion needs to be loaded
 
 	// Node load
 	uint NodeCount;
-	Reader.Read(NodeCount);
+	reader.read(NodeCount);
 	m_Nodes.clear();
 	m_Nodes.resize(NodeCount);
 	Common::Array<Vertex>::iterator It = m_Nodes.begin();
 	while (It != m_Nodes.end()) {
-		Reader.Read(It->X);
-		Reader.Read(It->Y);
+		reader.read(It->X);
+		reader.read(It->Y);
 		++It;
 	}
 
 	// Visibility matrix load
 	uint RowCount;
-	Reader.Read(RowCount);
+	reader.read(RowCount);
 	m_VisibilityMatrix.clear();
 	m_VisibilityMatrix.resize(RowCount);
 	Common::Array< Common::Array<int> >::iterator RowIter = m_VisibilityMatrix.begin();
 	while (RowIter != m_VisibilityMatrix.end()) {
 		uint ColCount;
-		Reader.Read(ColCount);
+		reader.read(ColCount);
 		RowIter->resize(ColCount);
 		Common::Array<int>::iterator ColIter = RowIter->begin();
 		while (ColIter != RowIter->end()) {
-			Reader.Read(*ColIter);
+			reader.read(*ColIter);
 			++ColIter;
 		}
 
 		++RowIter;
 	}
 
-	return Result && Reader.IsGood();
+	return result && reader.isGood();
 }
 
 } // End of namespace Sword25

@@ -52,12 +52,12 @@ namespace Sword25 {
 class AnimationDescription : public Persistable {
 protected:
 	AnimationDescription() :
-		m_AnimationType(Animation::AT_LOOP),
-		m_FPS(10),
-		m_MillisPerFrame(0),
-		m_ScalingAllowed(true),
-		m_AlphaAllowed(true),
-		m_ColorModulationAllowed(true)
+		_animationType(Animation::AT_LOOP),
+		_FPS(10),
+		_millisPerFrame(0),
+		_scalingAllowed(true),
+		_alphaAllowed(true),
+		_colorModulationAllowed(true)
 	{};
 
 public:
@@ -75,43 +75,43 @@ public:
 	// Abstrakte Methoden
 	// -----------------------------------------------------------------------------
 
-	virtual const Frame    &GetFrame(uint Index) const = 0;
-	virtual uint    GetFrameCount() const = 0;
-	virtual void            Unlock() = 0;
+	virtual const Frame    &getFrame(uint index) const = 0;
+	virtual uint  getFrameCount() const = 0;
+	virtual void  unlock() = 0;
 
 	// -----------------------------------------------------------------------------
 	// Getter Methoden
 	// -----------------------------------------------------------------------------
 
-	Animation::ANIMATION_TYPES   GetAnimationType() const {
-		return m_AnimationType;
+	Animation::ANIMATION_TYPES   getAnimationType() const {
+		return _animationType;
 	}
-	int                             GetFPS() const {
-		return m_FPS;
+	int                             getFPS() const {
+		return _FPS;
 	}
-	int                             GetMillisPerFrame() const {
-		return m_MillisPerFrame;
+	int                             getMillisPerFrame() const {
+		return _millisPerFrame;
 	}
-	bool                            IsScalingAllowed() const {
-		return m_ScalingAllowed;
+	bool                            isScalingAllowed() const {
+		return _scalingAllowed;
 	}
-	bool                            IsAlphaAllowed() const {
-		return m_AlphaAllowed;
+	bool                            isAlphaAllowed() const {
+		return _alphaAllowed;
 	}
-	bool                            IsColorModulationAllowed() const {
-		return m_ColorModulationAllowed;
+	bool                            isColorModulationAllowed() const {
+		return _colorModulationAllowed;
 	}
 
-	virtual bool Persist(OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(InputPersistenceBlock &Reader);
+	virtual bool persist(OutputPersistenceBlock &writer);
+	virtual bool unpersist(InputPersistenceBlock &reader);
 
 protected:
-	Animation::ANIMATION_TYPES   m_AnimationType;
-	int                             m_FPS;
-	int                             m_MillisPerFrame;
-	bool                            m_ScalingAllowed;
-	bool                            m_AlphaAllowed;
-	bool                            m_ColorModulationAllowed;
+	Animation::ANIMATION_TYPES   _animationType;
+	int                          _FPS;
+	int                          _millisPerFrame;
+	bool                         _scalingAllowed;
+	bool                         _alphaAllowed;
+	bool                         _colorModulationAllowed;
 };
 
 } // End of namespace Sword25

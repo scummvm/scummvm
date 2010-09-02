@@ -291,7 +291,7 @@ public:
 	 * @param Color         The 32-bit colour with which the area is to be filled. The default is BS_RGB(0, 0, 0) (black)
 	    @remark Falls das Rechteck nicht völlig innerhalb des Bildschirms ist, wird es automatisch zurechtgestutzt.
 	 */
-	virtual bool Fill(const Common::Rect *FillRectPtr = 0, uint Color = BS_RGB(0, 0, 0)) = 0;
+	virtual bool fill(const Common::Rect *FillRectPtr = 0, uint Color = BS_RGB(0, 0, 0)) = 0;
 
 	// Debugging Methods
 
@@ -359,8 +359,8 @@ public:
 
 	// Persistence Methods
 	// -------------------
-	virtual bool Persist(OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(InputPersistenceBlock &Reader);
+	virtual bool persist(OutputPersistenceBlock &Writer);
+	virtual bool unpersist(InputPersistenceBlock &Reader);
 
 	static void ARGBColorToLuaColor(lua_State *L, uint Color);
 	static uint LuaColorToARGBColor(lua_State *L, int StackIndex);

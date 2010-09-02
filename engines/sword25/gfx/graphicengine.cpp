@@ -196,16 +196,16 @@ uint GraphicEngine::LuaColorToARGBColor(lua_State *L, int StackIndex) {
 
 // -----------------------------------------------------------------------------
 
-bool GraphicEngine::Persist(OutputPersistenceBlock &Writer) {
-	Writer.Write(m_TimerActive);
+bool GraphicEngine::persist(OutputPersistenceBlock &writer) {
+	writer.write(m_TimerActive);
 	return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool GraphicEngine::Unpersist(InputPersistenceBlock &Reader) {
-	Reader.Read(m_TimerActive);
-	return Reader.IsGood();
+bool GraphicEngine::unpersist(InputPersistenceBlock &reader) {
+	reader.read(m_TimerActive);
+	return reader.isGood();
 }
 
 } // End of namespace Sword25

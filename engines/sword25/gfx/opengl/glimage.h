@@ -57,7 +57,7 @@ typedef void *GLS_Sprite;
 
 class GLImage : public Image {
 public:
-	GLImage(const Common::String &Filename, bool &Result);
+	GLImage(const Common::String &filename, bool &result);
 
 	/**
 	    @brief Erzeugt ein leeres BS_GLImage
@@ -67,53 +67,53 @@ public:
 	    @param Result gibt dem Aufrufer bekannt, ob der Konstruktor erfolgreich ausgeführt wurde. Wenn es nach dem Aufruf false enthalten sollte,
 	                  dürfen keine Methoden am Objekt aufgerufen werden und das Objekt ist sofort zu zerstören.
 	*/
-	GLImage(uint Width, uint Height, bool &Result);
+	GLImage(uint width, uint height, bool &result);
 	virtual ~GLImage();
 
-	virtual int GetWidth() const {
-		return m_Width;
+	virtual int getWidth() const {
+		return _width;
 	}
-	virtual int GetHeight() const {
-		return m_Height;
+	virtual int getHeight() const {
+		return _height;
 	}
-	virtual GraphicEngine::COLOR_FORMATS GetColorFormat() const {
+	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const {
 		return GraphicEngine::CF_ARGB32;
 	}
 
-	virtual bool Blit(int PosX = 0, int PosY = 0,
-	                  int Flipping = Image::FLIP_NONE,
+	virtual bool blit(int posX = 0, int posY = 0,
+	                  int flipping = Image::FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
-	                  uint Color = BS_ARGB(255, 255, 255, 255),
-	                  int Width = -1, int Height = -1);
-	virtual bool Fill(const Common::Rect *pFillRect, uint Color);
-	virtual bool SetContent(const byte *Pixeldata, uint size, uint Offset = 0, uint Stride = 0);
-	virtual uint GetPixel(int X, int Y);
+	                  uint color = BS_ARGB(255, 255, 255, 255),
+	                  int width = -1, int height = -1);
+	virtual bool fill(const Common::Rect *pFillRect, uint color);
+	virtual bool setContent(const byte *pixeldata, uint size, uint offset = 0, uint stride = 0);
+	virtual uint getPixel(int x, int y);
 
-	virtual bool IsBlitSource() const               {
+	virtual bool isBlitSource() const               {
 		return true;
 	}
-	virtual bool IsBlitTarget() const               {
+	virtual bool isBlitTarget() const               {
 		return false;
 	}
-	virtual bool IsScalingAllowed() const           {
+	virtual bool isScalingAllowed() const           {
 		return true;
 	}
-	virtual bool IsFillingAllowed() const           {
+	virtual bool isFillingAllowed() const           {
 		return false;
 	}
-	virtual bool IsAlphaAllowed() const             {
+	virtual bool isAlphaAllowed() const             {
 		return true;
 	}
-	virtual bool IsColorModulationAllowed() const   {
+	virtual bool isColorModulationAllowed() const   {
 		return true;
 	}
-	virtual bool IsSetContentAllowed() const        {
+	virtual bool isSetContentAllowed() const        {
 		return true;
 	}
 private:
 	byte *_data;
-	int         m_Width;
-	int         m_Height;
+	int  _width;
+	int  _height;
 
 	Graphics::Surface *_backSurface;
 };

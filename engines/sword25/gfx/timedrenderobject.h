@@ -59,7 +59,7 @@ namespace Sword25 {
 
 class TimedRenderObject : public RenderObject {
 public:
-	TimedRenderObject(RenderObjectPtr<RenderObject> pParent, TYPES Type, uint Handle = 0);
+	TimedRenderObject(RenderObjectPtr<RenderObject> pParent, TYPES type, uint handle = 0);
 	~TimedRenderObject();
 
 	/**
@@ -69,7 +69,7 @@ public:
 	    ihren Zustand Zeitabhängig zu verändern (z.B. Animationen).<br>
 	    @param int TimeElapsed gibt an wie viel Zeit (in Microsekunden) seit dem letzten Frame vergangen ist.
 	*/
-	virtual void FrameNotification(int TimeElapsed) = 0;
+	virtual void frameNotification(int timeElapsed) = 0;
 };
 
 } // End of namespace Sword25

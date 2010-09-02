@@ -78,8 +78,8 @@ public:
 	// Persistenz
 	// -----------------------------------------------------------------------------
 
-	bool Persist(OutputPersistenceBlock &Writer);
-	bool Unpersist(InputPersistenceBlock &Reader);
+	bool persist(OutputPersistenceBlock &writer);
+	bool unpersist(InputPersistenceBlock &reader);
 
 #if 0
 private:

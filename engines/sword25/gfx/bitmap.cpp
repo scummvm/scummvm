@@ -52,13 +52,13 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-Bitmap::Bitmap(RenderObjectPtr<RenderObject> ParentPtr, TYPES Type, uint Handle) :
-	RenderObject(ParentPtr, Type, Handle),
-	m_ModulationColor(0xffffffff),
-	m_ScaleFactorX(1.0f),
-	m_ScaleFactorY(1.0f),
-	m_FlipH(false),
-	m_FlipV(false) {
+Bitmap::Bitmap(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle) :
+	RenderObject(parentPtr, type, handle),
+	_modulationColor(0xffffffff),
+	_scaleFactorX(1.0f),
+	_scaleFactorY(1.0f),
+	_flipH(false),
+	_flipV(false) {
 }
 
 // -----------------------------------------------------------------------------
@@ -70,142 +70,146 @@ Bitmap::~Bitmap() {
 // Darstellungsart festlegen
 // -----------------------------------------------------------------------------
 
-void Bitmap::SetAlpha(int Alpha) {
-	if (!IsAlphaAllowed()) {
+void Bitmap::setAlpha(int alpha) {
+	if (!isAlphaAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set alpha value on a bitmap that does not support alpha blending. Call was ignored.");
 		return;
 	}
 
-	if (Alpha < 0 || Alpha > 255) {
-		int OldAlpha = Alpha;
-		if (Alpha < 0) Alpha = 0;
-		if (Alpha > 255) Alpha = 255;
-		BS_LOG_WARNINGLN("Tried to set an invalid alpha value (%d) on a bitmap. Value was changed to %d.", OldAlpha, Alpha);
+	if (alpha < 0 || alpha > 255) {
+		int oldAlpha = alpha;
+		if (alpha < 0)
+			alpha = 0;
+		if (alpha > 255)
+			alpha = 255;
+		BS_LOG_WARNINGLN("Tried to set an invalid alpha value (%d) on a bitmap. Value was changed to %d.", oldAlpha, alpha);
 
 		return;
 	}
 
-	uint NewModulationColor = (m_ModulationColor & 0x00ffffff) | Alpha << 24;
-	if (NewModulationColor != m_ModulationColor) {
-		m_ModulationColor = NewModulationColor;
-		ForceRefresh();
+	uint newModulationColor = (_modulationColor & 0x00ffffff) | alpha << 24;
+	if (newModulationColor != _modulationColor) {
+		_modulationColor = newModulationColor;
+		forceRefresh();
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void Bitmap::SetModulationColor(uint ModulationColor) {
-	if (!IsColorModulationAllowed()) {
+void Bitmap::setModulationColor(uint modulationColor) {
+	if (!isColorModulationAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set modulation color of a bitmap that does not support color modulation. Call was ignored.");
 		return;
 	}
 
-	uint NewModulationColor = (ModulationColor & 0x00ffffff) | (m_ModulationColor & 0xff000000);
-	if (NewModulationColor != m_ModulationColor) {
-		m_ModulationColor = NewModulationColor;
-		ForceRefresh();
+	uint newModulationColor = (modulationColor & 0x00ffffff) | (_modulationColor & 0xff000000);
+	if (newModulationColor != _modulationColor) {
+		_modulationColor = newModulationColor;
+		forceRefresh();
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void Bitmap::SetScaleFactor(float ScaleFactor) {
-	SetScaleFactorX(ScaleFactor);
-	SetScaleFactorY(ScaleFactor);
+void Bitmap::setScaleFactor(float scaleFactor) {
+	setScaleFactorX(scaleFactor);
+	setScaleFactorY(scaleFactor);
 }
 
 // -----------------------------------------------------------------------------
 
-void Bitmap::SetScaleFactorX(float ScaleFactorX) {
-	if (!IsScalingAllowed()) {
+void Bitmap::setScaleFactorX(float scaleFactorX) {
+	if (!isScalingAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set scale factor of a bitmap that does not support scaling. Call was ignored.");
 		return;
 	}
 
-	if (ScaleFactorX < 0) {
+	if (scaleFactorX < 0) {
 		BS_LOG_WARNINGLN("Tried to set scale factor of a bitmap to a negative value. Call was ignored.");
 		return;
 	}
 
-	if (ScaleFactorX != m_ScaleFactorX) {
-		m_ScaleFactorX = ScaleFactorX;
-		m_Width = static_cast<int>(m_OriginalWidth * m_ScaleFactorX);
-		if (m_ScaleFactorX <= 0.0f) m_ScaleFactorX = 0.001f;
-		ForceRefresh();
+	if (scaleFactorX != _scaleFactorX) {
+		_scaleFactorX = scaleFactorX;
+		_width = static_cast<int>(_originalWidth * _scaleFactorX);
+		if (_scaleFactorX <= 0.0f)
+			_scaleFactorX = 0.001f;
+		forceRefresh();
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void Bitmap::SetScaleFactorY(float ScaleFactorY) {
-	if (!IsScalingAllowed()) {
+void Bitmap::setScaleFactorY(float scaleFactorY) {
+	if (!isScalingAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set scale factor of a bitmap that does not support scaling. Call was ignored.");
 		return;
 	}
 
-	if (ScaleFactorY < 0) {
+	if (scaleFactorY < 0) {
 		BS_LOG_WARNINGLN("Tried to set scale factor of a bitmap to a negative value. Call was ignored.");
 		return;
 	}
 
-	if (ScaleFactorY != m_ScaleFactorY) {
-		m_ScaleFactorY = ScaleFactorY;
-		m_Height = static_cast<int>(m_OriginalHeight * ScaleFactorY);
-		if (m_ScaleFactorY <= 0.0f) m_ScaleFactorY = 0.001f;
-		ForceRefresh();
+	if (scaleFactorY != _scaleFactorY) {
+		_scaleFactorY = scaleFactorY;
+		_height = static_cast<int>(_originalHeight * scaleFactorY);
+		if (_scaleFactorY <= 0.0f)
+			_scaleFactorY = 0.001f;
+		forceRefresh();
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void Bitmap::SetFlipH(bool FlipH) {
-	m_FlipH = FlipH;
-	ForceRefresh();
+void Bitmap::setFlipH(bool flipH) {
+	_flipH = flipH;
+	forceRefresh();
 }
 
 // -----------------------------------------------------------------------------
 
-void Bitmap::SetFlipV(bool FlipV) {
-	m_FlipV = FlipV;
-	ForceRefresh();
+void Bitmap::setFlipV(bool flipV) {
+	_flipV = flipV;
+	forceRefresh();
 }
 
 // -----------------------------------------------------------------------------
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool Bitmap::Persist(OutputPersistenceBlock &Writer) {
-	bool Result = true;
+bool Bitmap::persist(OutputPersistenceBlock &writer) {
+	bool result = true;
 
-	Result &= RenderObject::Persist(Writer);
-	Writer.Write(m_FlipH);
-	Writer.Write(m_FlipV);
-	Writer.Write(m_ScaleFactorX);
-	Writer.Write(m_ScaleFactorY);
-	Writer.Write(m_ModulationColor);
-	Writer.Write(m_OriginalWidth);
-	Writer.Write(m_OriginalHeight);
+	result &= RenderObject::persist(writer);
+	writer.write(_flipH);
+	writer.write(_flipV);
+	writer.write(_scaleFactorX);
+	writer.write(_scaleFactorY);
+	writer.write(_modulationColor);
+	writer.write(_originalWidth);
+	writer.write(_originalHeight);
 
-	return Result;
+	return result;
 }
 
 // -----------------------------------------------------------------------------
 
-bool Bitmap::Unpersist(InputPersistenceBlock &Reader) {
-	bool Result = true;
+bool Bitmap::unpersist(InputPersistenceBlock &reader) {
+	bool result = true;
 
-	Result &= RenderObject::Unpersist(Reader);
-	Reader.Read(m_FlipH);
-	Reader.Read(m_FlipV);
-	Reader.Read(m_ScaleFactorX);
-	Reader.Read(m_ScaleFactorY);
-	Reader.Read(m_ModulationColor);
-	Reader.Read(m_OriginalWidth);
-	Reader.Read(m_OriginalHeight);
+	result &= RenderObject::unpersist(reader);
+	reader.read(_flipH);
+	reader.read(_flipV);
+	reader.read(_scaleFactorX);
+	reader.read(_scaleFactorY);
+	reader.read(_modulationColor);
+	reader.read(_originalWidth);
+	reader.read(_originalHeight);
 
-	ForceRefresh();
+	forceRefresh();
 
-	return Reader.IsGood() && Result;
+	return reader.isGood() && result;
 }
 
 } // End of namespace Sword25

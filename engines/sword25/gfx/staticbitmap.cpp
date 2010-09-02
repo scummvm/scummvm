@@ -54,46 +54,47 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-StaticBitmap::StaticBitmap(RenderObjectPtr<RenderObject> ParentPtr, const Common::String &Filename) :
-	Bitmap(ParentPtr, TYPE_STATICBITMAP) {
+StaticBitmap::StaticBitmap(RenderObjectPtr<RenderObject> parentPtr, const Common::String &filename) :
+	Bitmap(parentPtr, TYPE_STATICBITMAP) {
 	// Das BS_Bitmap konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
-	if (!m_InitSuccess) return;
+	if (!_initSuccess)
+		return;
 
-	m_InitSuccess = InitBitmapResource(Filename);
+	_initSuccess = initBitmapResource(filename);
 }
 
 // -----------------------------------------------------------------------------
 
-StaticBitmap::StaticBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle) :
-	Bitmap(ParentPtr, TYPE_STATICBITMAP, Handle) {
-	m_InitSuccess = Unpersist(Reader);
+StaticBitmap::StaticBitmap(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle) :
+	Bitmap(parentPtr, TYPE_STATICBITMAP, handle) {
+	_initSuccess = unpersist(reader);
 }
 
 // -----------------------------------------------------------------------------
 
-bool StaticBitmap::InitBitmapResource(const Common::String &Filename) {
+bool StaticBitmap::initBitmapResource(const Common::String &filename) {
 	// Bild-Resource laden
-	Resource *ResourcePtr = Kernel::GetInstance()->GetResourceManager()->RequestResource(Filename);
-	if (!ResourcePtr) {
-		BS_LOG_ERRORLN("Could not request resource \"%s\".", Filename.c_str());
+	Resource *resourcePtr = Kernel::GetInstance()->GetResourceManager()->RequestResource(filename);
+	if (!resourcePtr) {
+		BS_LOG_ERRORLN("Could not request resource \"%s\".", filename.c_str());
 		return false;
 	}
-	if (ResourcePtr->GetType() != Resource::TYPE_BITMAP) {
-		BS_LOG_ERRORLN("Requested resource \"%s\" is not a bitmap.", Filename.c_str());
+	if (resourcePtr->GetType() != Resource::TYPE_BITMAP) {
+		BS_LOG_ERRORLN("Requested resource \"%s\" is not a bitmap.", filename.c_str());
 		return false;
 	}
 
-	BitmapResource *BitmapPtr = static_cast<BitmapResource *>(ResourcePtr);
+	BitmapResource *bitmapPtr = static_cast<BitmapResource *>(resourcePtr);
 
 	// Den eindeutigen Dateinamen zum späteren Referenzieren speichern
-	m_ResourceFilename = BitmapPtr->GetFileName();
+	_resourceFilename = bitmapPtr->getFileName();
 
 	// RenderObject Eigenschaften aktualisieren
-	m_OriginalWidth = m_Width = BitmapPtr->GetWidth();
-	m_OriginalHeight = m_Height = BitmapPtr->GetHeight();
+	_originalWidth = _width = bitmapPtr->getWidth();
+	_originalHeight = _height = bitmapPtr->getHeight();
 
 	// Bild-Resource freigeben
-	BitmapPtr->Release();
+	bitmapPtr->release();
 
 	return true;
 }
@@ -105,54 +106,54 @@ StaticBitmap::~StaticBitmap() {
 
 // -----------------------------------------------------------------------------
 
-bool StaticBitmap::DoRender() {
+bool StaticBitmap::doRender() {
 	// Bitmap holen
-	Resource *ResourcePtr = Kernel::GetInstance()->GetResourceManager()->RequestResource(m_ResourceFilename);
-	BS_ASSERT(ResourcePtr);
-	BS_ASSERT(ResourcePtr->GetType() == Resource::TYPE_BITMAP);
-	BitmapResource *BitmapResourcePtr = static_cast<BitmapResource *>(ResourcePtr);
+	Resource *resourcePtr = Kernel::GetInstance()->GetResourceManager()->RequestResource(_resourceFilename);
+	BS_ASSERT(resourcePtr);
+	BS_ASSERT(resourcePtr->GetType() == Resource::TYPE_BITMAP);
+	BitmapResource *bitmapResourcePtr = static_cast<BitmapResource *>(resourcePtr);
 
 	// Framebufferobjekt holen
-	GraphicEngine *GfxPtr = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
-	BS_ASSERT(GfxPtr);
+	GraphicEngine *gfxPtr = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
+	BS_ASSERT(gfxPtr);
 
 	// Bitmap zeichnen
-	bool Result;
-	if (m_ScaleFactorX == 1.0f && m_ScaleFactorY == 1.0f) {
-		Result = BitmapResourcePtr->Blit(m_AbsoluteX, m_AbsoluteY,
-		                                 (m_FlipV ? BitmapResource::FLIP_V : 0) |
-		                                 (m_FlipH ? BitmapResource::FLIP_H : 0),
-		                                 0, m_ModulationColor, -1, -1);
+	bool result;
+	if (_scaleFactorX == 1.0f && _scaleFactorY == 1.0f) {
+		result = bitmapResourcePtr->blit(_absoluteX, _absoluteY,
+		                                 (_flipV ? BitmapResource::FLIP_V : 0) |
+		                                 (_flipH ? BitmapResource::FLIP_H : 0),
+		                                 0, _modulationColor, -1, -1);
 	} else {
-		Result = BitmapResourcePtr->Blit(m_AbsoluteX, m_AbsoluteY,
-		                                 (m_FlipV ? BitmapResource::FLIP_V : 0) |
-		                                 (m_FlipH ? BitmapResource::FLIP_H : 0),
-		                                 0, m_ModulationColor, m_Width, m_Height);
+		result = bitmapResourcePtr->blit(_absoluteX, _absoluteY,
+		                                 (_flipV ? BitmapResource::FLIP_V : 0) |
+		                                 (_flipH ? BitmapResource::FLIP_H : 0),
+		                                 0, _modulationColor, _width, _height);
 	}
 
 	// Resource freigeben
-	BitmapResourcePtr->Release();
+	bitmapResourcePtr->release();
 
-	return Result;
+	return result;
 }
 
 // -----------------------------------------------------------------------------
 
-uint StaticBitmap::GetPixel(int X, int Y) const {
-	BS_ASSERT(X >= 0 && X < m_Width);
-	BS_ASSERT(Y >= 0 && Y < m_Height);
+uint StaticBitmap::getPixel(int x, int y) const {
+	BS_ASSERT(x >= 0 && x < _width);
+	BS_ASSERT(y >= 0 && y < _height);
 
-	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(m_ResourceFilename);
+	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(_resourceFilename);
 	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmapResource = static_cast<BitmapResource *>(pResource);
-	uint Result = pBitmapResource->GetPixel(X, Y);
-	pResource->Release();
-	return Result;
+	uint result = pBitmapResource->getPixel(x, y);
+	pResource->release();
+	return result;
 }
 
 // -----------------------------------------------------------------------------
 
-bool StaticBitmap::SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride) {
+bool StaticBitmap::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
 	BS_LOG_ERRORLN("SetContent() ist not supported with this object.");
 	return false;
 }
@@ -161,60 +162,60 @@ bool StaticBitmap::SetContent(const byte *Pixeldata, uint size, uint Offset, uin
 // Auskunftsmethoden
 // -----------------------------------------------------------------------------
 
-bool StaticBitmap::IsAlphaAllowed() const {
-	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(m_ResourceFilename);
+bool StaticBitmap::isAlphaAllowed() const {
+	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(_resourceFilename);
 	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
-	bool Result = static_cast<BitmapResource *>(pResource)->IsAlphaAllowed();
-	pResource->Release();
-	return Result;
+	bool result = static_cast<BitmapResource *>(pResource)->isAlphaAllowed();
+	pResource->release();
+	return result;
 }
 
 // -----------------------------------------------------------------------------
 
-bool StaticBitmap::IsColorModulationAllowed() const {
-	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(m_ResourceFilename);
+bool StaticBitmap::isColorModulationAllowed() const {
+	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(_resourceFilename);
 	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
-	bool Result = static_cast<BitmapResource *>(pResource)->IsColorModulationAllowed();
-	pResource->Release();
-	return Result;
+	bool result = static_cast<BitmapResource *>(pResource)->isColorModulationAllowed();
+	pResource->release();
+	return result;
 }
 
 // -----------------------------------------------------------------------------
 
-bool StaticBitmap::IsScalingAllowed() const {
-	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(m_ResourceFilename);
+bool StaticBitmap::isScalingAllowed() const {
+	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(_resourceFilename);
 	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
-	bool Result = static_cast<BitmapResource *>(pResource)->IsScalingAllowed();
-	pResource->Release();
-	return Result;
+	bool result = static_cast<BitmapResource *>(pResource)->isScalingAllowed();
+	pResource->release();
+	return result;
 }
 
 // -----------------------------------------------------------------------------
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool StaticBitmap::Persist(OutputPersistenceBlock &Writer) {
-	bool Result = true;
+bool StaticBitmap::persist(OutputPersistenceBlock &writer) {
+	bool result = true;
 
-	Result &= Bitmap::Persist(Writer);
-	Writer.Write(m_ResourceFilename);
+	result &= Bitmap::persist(writer);
+	writer.write(_resourceFilename);
 
-	Result &= RenderObject::PersistChildren(Writer);
+	result &= RenderObject::persistChildren(writer);
 
-	return Result;
+	return result;
 }
 
-bool StaticBitmap::Unpersist(InputPersistenceBlock &Reader) {
-	bool Result = true;
+bool StaticBitmap::unpersist(InputPersistenceBlock &reader) {
+	bool result = true;
 
-	Result &= Bitmap::Unpersist(Reader);
-	Common::String ResourceFilename;
-	Reader.Read(ResourceFilename);
-	Result &= InitBitmapResource(ResourceFilename);
+	result &= Bitmap::unpersist(reader);
+	Common::String resourceFilename;
+	reader.read(resourceFilename);
+	result &= initBitmapResource(resourceFilename);
 
-	Result &= RenderObject::UnpersistChildren(Reader);
+	result &= RenderObject::unpersistChildren(reader);
 
-	return Reader.IsGood() && Result;
+	return reader.isGood() && result;
 }
 
 } // End of namespace Sword25

@@ -103,8 +103,8 @@ public:
 	*/
 	virtual void SetCommandLine(const Common::Array<Common::String> &CommandLineParameters) = 0;
 
-	virtual bool Persist(OutputPersistenceBlock &Writer) = 0;
-	virtual bool Unpersist(InputPersistenceBlock &Reader) = 0;
+	virtual bool persist(OutputPersistenceBlock &writer) = 0;
+	virtual bool unpersist(InputPersistenceBlock &reader) = 0;
 };
 
 } // End of namespace Sword25

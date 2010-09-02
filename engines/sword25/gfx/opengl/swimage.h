@@ -52,54 +52,54 @@ namespace Sword25 {
 
 class SWImage : public Image {
 public:
-	SWImage(const Common::String &Filename, bool &Result);
+	SWImage(const Common::String &filename, bool &result);
 	virtual ~SWImage();
 
-	virtual int GetWidth() const {
-		return m_Width;
+	virtual int getWidth() const {
+		return _width;
 	}
-	virtual int GetHeight() const {
-		return m_Height;
+	virtual int getHeight() const {
+		return _height;
 	}
-	virtual GraphicEngine::COLOR_FORMATS GetColorFormat() const {
+	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const {
 		return GraphicEngine::CF_ARGB32;
 	}
 
-	virtual bool Blit(int PosX = 0, int PosY = 0,
-	                  int Flipping = Image::FLIP_NONE,
+	virtual bool blit(int posX = 0, int posY = 0,
+	                  int flipping = Image::FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
-	                  uint Color = BS_ARGB(255, 255, 255, 255),
-	                  int Width = -1, int Height = -1);
-	virtual bool Fill(const Common::Rect *FillRectPtr, uint Color);
-	virtual bool SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride);
-	virtual uint GetPixel(int X, int Y);
+	                  uint color = BS_ARGB(255, 255, 255, 255),
+	                  int width = -1, int height = -1);
+	virtual bool fill(const Common::Rect *fillRectPtr, uint color);
+	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride);
+	virtual uint getPixel(int x, int y);
 
-	virtual bool IsBlitSource() const               {
+	virtual bool isBlitSource() const               {
 		return false;
 	}
-	virtual bool IsBlitTarget() const               {
+	virtual bool isBlitTarget() const               {
 		return false;
 	}
-	virtual bool IsScalingAllowed() const           {
+	virtual bool isScalingAllowed() const           {
 		return false;
 	}
-	virtual bool IsFillingAllowed() const           {
+	virtual bool isFillingAllowed() const           {
 		return false;
 	}
-	virtual bool IsAlphaAllowed() const             {
+	virtual bool isAlphaAllowed() const             {
 		return false;
 	}
-	virtual bool IsColorModulationAllowed() const   {
+	virtual bool isColorModulationAllowed() const   {
 		return false;
 	}
-	virtual bool IsSetContentAllowed() const        {
+	virtual bool isSetContentAllowed() const        {
 		return false;
 	}
 private:
-	uint *_ImageDataPtr;
+	uint *_imageDataPtr;
 
-	int m_Width;
-	int m_Height;
+	int _width;
+	int _height;
 };
 
 } // End of namespace Sword25

@@ -72,8 +72,8 @@ public:
 	virtual void ReportCharacter(byte Character);
 	virtual void ReportCommand(KEY_COMMANDS Command);
 
-	bool Persist(OutputPersistenceBlock &Writer);
-	bool Unpersist(InputPersistenceBlock &Reader);
+	bool persist(OutputPersistenceBlock &writer);
+	bool unpersist(InputPersistenceBlock &reader);
 
 private:
 	void TestForLeftDoubleClick();

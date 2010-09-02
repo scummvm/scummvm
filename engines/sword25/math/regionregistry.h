@@ -63,8 +63,8 @@ public:
 		return *m_InstancePtr.get();
 	}
 
-	virtual bool Persist(OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(InputPersistenceBlock &Reader);
+	virtual bool persist(OutputPersistenceBlock &writer);
+	virtual bool unpersist(InputPersistenceBlock &reader);
 
 private:
 	virtual void LogErrorLn(const char *Message) const;

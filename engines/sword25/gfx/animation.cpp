@@ -57,17 +57,17 @@ namespace Sword25 {
 Animation::Animation(RenderObjectPtr<RenderObject> ParentPtr, const Common::String &FileName) :
 	TimedRenderObject(ParentPtr, RenderObject::TYPE_ANIMATION) {
 	// Das BS_RenderObject konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
-	if (!m_InitSuccess) return;
+	if (!_initSuccess) return;
 
 	InitMembers();
 
 	// Vom negativen Fall ausgehen.
-	m_InitSuccess = false;
+	_initSuccess = false;
 
 	InitializeAnimationResource(FileName);
 
 	// Erfolg signalisieren.
-	m_InitSuccess = true;
+	_initSuccess = true;
 }
 
 // -----------------------------------------------------------------------------
@@ -75,17 +75,17 @@ Animation::Animation(RenderObjectPtr<RenderObject> ParentPtr, const Common::Stri
 Animation::Animation(RenderObjectPtr<RenderObject> ParentPtr, const AnimationTemplate &Template) :
 	TimedRenderObject(ParentPtr, RenderObject::TYPE_ANIMATION) {
 	// Das BS_RenderObject konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
-	if (!m_InitSuccess) return;
+	if (!_initSuccess) return;
 
 	InitMembers();
 
 	// Vom negativen Fall ausgehen.
-	m_InitSuccess = false;
+	_initSuccess = false;
 
 	m_AnimationTemplateHandle = AnimationTemplate::Create(Template);
 
 	// Erfolg signalisieren.
-	m_InitSuccess = true;
+	_initSuccess = true;
 }
 
 // -----------------------------------------------------------------------------
@@ -93,12 +93,12 @@ Animation::Animation(RenderObjectPtr<RenderObject> ParentPtr, const AnimationTem
 Animation::Animation(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle) :
 	TimedRenderObject(ParentPtr, RenderObject::TYPE_ANIMATION, Handle) {
 	// Das BS_RenderObject konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
-	if (!m_InitSuccess) return;
+	if (!_initSuccess) return;
 
 	InitMembers();
 
 	// Objekt vom Stream laden.
-	m_InitSuccess = Unpersist(Reader);
+	_initSuccess = unpersist(Reader);
 }
 
 // -----------------------------------------------------------------------------
@@ -125,11 +125,11 @@ void Animation::InitMembers() {
 	m_Direction = FORWARD;
 	m_Running = false;
 	m_Finished = false;
-	m_RelX = 0;
-	m_RelY = 0;
-	m_ScaleFactorX = 1.0f;
-	m_ScaleFactorY = 1.0f;
-	m_ModulationColor = 0xffffffff;
+	_relX = 0;
+	_relY = 0;
+	_scaleFactorX = 1.0f;
+	_scaleFactorY = 1.0f;
+	_modulationColor = 0xffffffff;
 	m_AnimationResourcePtr = 0;
 	m_AnimationTemplateHandle = 0;
 	m_FramesLocked = false;
@@ -140,7 +140,7 @@ void Animation::InitMembers() {
 Animation::~Animation() {
 	if (GetAnimationDescription()) {
 		Stop();
-		GetAnimationDescription()->Unlock();
+		GetAnimationDescription()->unlock();
 	}
 
 	// Delete Callbacks
@@ -183,29 +183,29 @@ void Animation::SetFrame(uint Nr) {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
 
-	if (Nr >= animationDescriptionPtr->GetFrameCount()) {
+	if (Nr >= animationDescriptionPtr->getFrameCount()) {
 		BS_LOG_ERRORLN("Tried to set animation to illegal frame (%d). Value must be between 0 and %d.",
-		               Nr, animationDescriptionPtr->GetFrameCount());
+		               Nr, animationDescriptionPtr->getFrameCount());
 		return;
 	}
 
 	m_CurrentFrame = Nr;
 	m_CurrentFrameTime = 0;
 	ComputeCurrentCharacteristics();
-	ForceRefresh();
+	forceRefresh();
 }
 
 // -----------------------------------------------------------------------------
 // Rendern
 // -----------------------------------------------------------------------------
 
-bool Animation::DoRender() {
+bool Animation::doRender() {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	BS_ASSERT(m_CurrentFrame < animationDescriptionPtr->GetFrameCount());
+	BS_ASSERT(m_CurrentFrame < animationDescriptionPtr->getFrameCount());
 
 	// Bitmap des aktuellen Frames holen
-	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->GetFrame(m_CurrentFrame).FileName);
+	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->getFrame(m_CurrentFrame).FileName);
 	BS_ASSERT(pResource);
 	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmapResource = static_cast<BitmapResource *>(pResource);
@@ -216,20 +216,20 @@ bool Animation::DoRender() {
 
 	// Bitmap zeichnen
 	bool Result;
-	if (IsScalingAllowed() && (m_Width != pBitmapResource->GetWidth() || m_Height != pBitmapResource->GetHeight())) {
-		Result = pBitmapResource->Blit(m_AbsoluteX, m_AbsoluteY,
-		                               (animationDescriptionPtr->GetFrame(m_CurrentFrame).FlipV ? BitmapResource::FLIP_V : 0) |
-		                               (animationDescriptionPtr->GetFrame(m_CurrentFrame).FlipH ? BitmapResource::FLIP_H : 0),
-		                               0, m_ModulationColor, m_Width, m_Height);
+	if (isScalingAllowed() && (_width != pBitmapResource->getWidth() || _height != pBitmapResource->getHeight())) {
+		Result = pBitmapResource->blit(_absoluteX, _absoluteY,
+		                               (animationDescriptionPtr->getFrame(m_CurrentFrame).FlipV ? BitmapResource::FLIP_V : 0) |
+		                               (animationDescriptionPtr->getFrame(m_CurrentFrame).FlipH ? BitmapResource::FLIP_H : 0),
+		                               0, _modulationColor, _width, _height);
 	} else {
-		Result = pBitmapResource->Blit(m_AbsoluteX, m_AbsoluteY,
-		                               (animationDescriptionPtr->GetFrame(m_CurrentFrame).FlipV ? BitmapResource::FLIP_V : 0) |
-		                               (animationDescriptionPtr->GetFrame(m_CurrentFrame).FlipH ? BitmapResource::FLIP_H : 0),
-		                               0, m_ModulationColor, -1, -1);
+		Result = pBitmapResource->blit(_absoluteX, _absoluteY,
+		                               (animationDescriptionPtr->getFrame(m_CurrentFrame).FlipV ? BitmapResource::FLIP_V : 0) |
+		                               (animationDescriptionPtr->getFrame(m_CurrentFrame).FlipH ? BitmapResource::FLIP_H : 0),
+		                               0, _modulationColor, -1, -1);
 	}
 
 	// Resource freigeben
-	pBitmapResource->Release();
+	pBitmapResource->release();
 
 	return Result;
 }
@@ -238,7 +238,7 @@ bool Animation::DoRender() {
 // Frame Notifikation
 // -----------------------------------------------------------------------------
 
-void Animation::FrameNotification(int TimeElapsed) {
+void Animation::frameNotification(int TimeElapsed) {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
 	BS_ASSERT(TimeElapsed >= 0);
@@ -249,10 +249,10 @@ void Animation::FrameNotification(int TimeElapsed) {
 		m_CurrentFrameTime += TimeElapsed;
 
 		// Anzahl an zu überpringenden Frames bestimmen
-		int SkipFrames = animationDescriptionPtr->GetMillisPerFrame() == 0 ? 0 : m_CurrentFrameTime / animationDescriptionPtr->GetMillisPerFrame();
+		int SkipFrames = animationDescriptionPtr->getMillisPerFrame() == 0 ? 0 : m_CurrentFrameTime / animationDescriptionPtr->getMillisPerFrame();
 
 		// Neue Frame-Restzeit bestimmen
-		m_CurrentFrameTime -= animationDescriptionPtr->GetMillisPerFrame() * SkipFrames;
+		m_CurrentFrameTime -= animationDescriptionPtr->getMillisPerFrame() * SkipFrames;
 
 		// Neuen Frame bestimmen (je nach aktuellener Abspielrichtung wird addiert oder subtrahiert)
 		int TmpCurFrame = m_CurrentFrame;
@@ -280,10 +280,10 @@ void Animation::FrameNotification(int TimeElapsed) {
 			}
 
 			// Ein Unterlauf darf nur auftreten, wenn der Animationstyp JOJO ist.
-			BS_ASSERT(animationDescriptionPtr->GetAnimationType() == AT_JOJO);
+			BS_ASSERT(animationDescriptionPtr->getAnimationType() == AT_JOJO);
 			TmpCurFrame = - TmpCurFrame;
 			m_Direction = FORWARD;
-		} else if (static_cast<uint>(TmpCurFrame) >= animationDescriptionPtr->GetFrameCount()) {
+		} else if (static_cast<uint>(TmpCurFrame) >= animationDescriptionPtr->getFrameCount()) {
 			// Loop-Point Callbacks
 			for (uint i = 0; i < m_LoopPointCallbacks.size();) {
 				if ((m_LoopPointCallbacks[i].Callback)(m_LoopPointCallbacks[i].Data) == false) {
@@ -292,19 +292,19 @@ void Animation::FrameNotification(int TimeElapsed) {
 					i++;
 			}
 
-			switch (animationDescriptionPtr->GetAnimationType()) {
+			switch (animationDescriptionPtr->getAnimationType()) {
 			case AT_ONESHOT:
-				TmpCurFrame = animationDescriptionPtr->GetFrameCount() - 1;
+				TmpCurFrame = animationDescriptionPtr->getFrameCount() - 1;
 				m_Finished = true;
 				Pause();
 				break;
 
 			case AT_LOOP:
-				TmpCurFrame = TmpCurFrame % animationDescriptionPtr->GetFrameCount();
+				TmpCurFrame = TmpCurFrame % animationDescriptionPtr->getFrameCount();
 				break;
 
 			case AT_JOJO:
-				TmpCurFrame = animationDescriptionPtr->GetFrameCount() - (TmpCurFrame % animationDescriptionPtr->GetFrameCount()) - 1;
+				TmpCurFrame = animationDescriptionPtr->getFrameCount() - (TmpCurFrame % animationDescriptionPtr->getFrameCount()) - 1;
 				m_Direction = BACKWARD;
 				break;
 
@@ -314,9 +314,9 @@ void Animation::FrameNotification(int TimeElapsed) {
 		}
 
 		if ((int)m_CurrentFrame != TmpCurFrame) {
-			ForceRefresh();
+			forceRefresh();
 
-			if (animationDescriptionPtr->GetFrame(m_CurrentFrame).Action != "") {
+			if (animationDescriptionPtr->getFrame(m_CurrentFrame).Action != "") {
 				// Action Callbacks
 				for (uint i = 0; i < m_ActionCallbacks.size();) {
 					if ((m_ActionCallbacks[i].Callback)(m_ActionCallbacks[i].Data) == false) {
@@ -333,7 +333,7 @@ void Animation::FrameNotification(int TimeElapsed) {
 	// Größe und Position der Animation anhand des aktuellen Frames bestimmen
 	ComputeCurrentCharacteristics();
 
-	BS_ASSERT(m_CurrentFrame < animationDescriptionPtr->GetFrameCount());
+	BS_ASSERT(m_CurrentFrame < animationDescriptionPtr->getFrameCount());
 	BS_ASSERT(m_CurrentFrameTime >= 0);
 }
 
@@ -342,7 +342,7 @@ void Animation::FrameNotification(int TimeElapsed) {
 void Animation::ComputeCurrentCharacteristics() {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	const AnimationResource::Frame &CurFrame = animationDescriptionPtr->GetFrame(m_CurrentFrame);
+	const AnimationResource::Frame &CurFrame = animationDescriptionPtr->getFrame(m_CurrentFrame);
 
 	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(CurFrame.FileName);
 	BS_ASSERT(pResource);
@@ -350,16 +350,16 @@ void Animation::ComputeCurrentCharacteristics() {
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
 	// Größe des Bitmaps auf die Animation übertragen
-	m_Width = static_cast<int>(pBitmap->GetWidth() * m_ScaleFactorX);
-	m_Height = static_cast<int>(pBitmap->GetHeight() * m_ScaleFactorY);
+	_width = static_cast<int>(pBitmap->getWidth() * _scaleFactorX);
+	_height = static_cast<int>(pBitmap->getHeight() * _scaleFactorY);
 
 	// Position anhand des Hotspots berechnen und setzen
-	int PosX = m_RelX + ComputeXModifier();
-	int PosY = m_RelY + ComputeYModifier();
+	int PosX = _relX + ComputeXModifier();
+	int PosY = _relY + ComputeYModifier();
 
-	RenderObject::SetPos(PosX, PosY);
+	RenderObject::setPos(PosX, PosY);
 
-	pBitmap->Release();
+	pBitmap->release();
 }
 
 // -----------------------------------------------------------------------------
@@ -368,8 +368,8 @@ bool Animation::LockAllFrames() {
 	if (!m_FramesLocked) {
 		AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 		BS_ASSERT(animationDescriptionPtr);
-		for (uint i = 0; i < animationDescriptionPtr->GetFrameCount(); ++i) {
-			if (!Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->GetFrame(i).FileName)) {
+		for (uint i = 0; i < animationDescriptionPtr->getFrameCount(); ++i) {
+			if (!Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->getFrame(i).FileName)) {
 				BS_LOG_ERRORLN("Could not lock all animation frames.");
 				return false;
 			}
@@ -387,16 +387,17 @@ bool Animation::UnlockAllFrames() {
 	if (m_FramesLocked) {
 		AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 		BS_ASSERT(animationDescriptionPtr);
-		for (uint i = 0; i < animationDescriptionPtr->GetFrameCount(); ++i) {
+		for (uint i = 0; i < animationDescriptionPtr->getFrameCount(); ++i) {
 			Resource *pResource;
-			if (!(pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->GetFrame(i).FileName))) {
+			if (!(pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->getFrame(i).FileName))) {
 				BS_LOG_ERRORLN("Could not unlock all animation frames.");
 				return false;
 			}
 
 			// Zwei mal freigeben um den Request von LockAllFrames() und den jetzigen Request aufzuheben
-			pResource->Release();
-			if (pResource->GetLockCount()) pResource->Release();
+			pResource->release();
+			if (pResource->GetLockCount())
+				pResource->release();
 		}
 
 		m_FramesLocked = false;
@@ -409,75 +410,75 @@ bool Animation::UnlockAllFrames() {
 // Getter
 // -----------------------------------------------------------------------------
 
-Animation::ANIMATION_TYPES Animation::GetAnimationType() const {
+Animation::ANIMATION_TYPES Animation::getAnimationType() const {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	return animationDescriptionPtr->GetAnimationType();
+	return animationDescriptionPtr->getAnimationType();
 }
 
 // -----------------------------------------------------------------------------
 
-int Animation::GetFPS() const {
+int Animation::getFPS() const {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	return animationDescriptionPtr->GetFPS();
+	return animationDescriptionPtr->getFPS();
 }
 
 // -----------------------------------------------------------------------------
 
-int Animation::GetFrameCount() const {
+int Animation::getFrameCount() const {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	return animationDescriptionPtr->GetFrameCount();
+	return animationDescriptionPtr->getFrameCount();
 }
 
 // -----------------------------------------------------------------------------
 
-bool Animation::IsScalingAllowed() const {
+bool Animation::isScalingAllowed() const {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	return animationDescriptionPtr->IsScalingAllowed();
+	return animationDescriptionPtr->isScalingAllowed();
 }
 
 // -----------------------------------------------------------------------------
 
-bool Animation::IsAlphaAllowed() const {
+bool Animation::isAlphaAllowed() const {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	return animationDescriptionPtr->IsAlphaAllowed();
+	return animationDescriptionPtr->isAlphaAllowed();
 }
 
 // -----------------------------------------------------------------------------
 
-bool Animation::IsColorModulationAllowed() const {
+bool Animation::isColorModulationAllowed() const {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	return animationDescriptionPtr->IsColorModulationAllowed();
+	return animationDescriptionPtr->isColorModulationAllowed();
 }
 
 // -----------------------------------------------------------------------------
 // Positionieren
 // -----------------------------------------------------------------------------
 
-void Animation::SetPos(int RelX, int RelY) {
-	m_RelX = RelX;
-	m_RelY = RelY;
+void Animation::setPos(int relX, int relY) {
+	_relX = relX;
+	_relY = relY;
 
 	ComputeCurrentCharacteristics();
 }
 
 // -----------------------------------------------------------------------------
 
-void Animation::SetX(int RelX) {
-	m_RelX = RelX;
+void Animation::setX(int relX) {
+	_relX = relX;
 
 	ComputeCurrentCharacteristics();
 }
 
 // -----------------------------------------------------------------------------
 
-void Animation::SetY(int RelY) {
-	m_RelY = RelY;
+void Animation::setY(int relY) {
+	_relY = relY;
 
 	ComputeCurrentCharacteristics();
 }
@@ -486,77 +487,79 @@ void Animation::SetY(int RelY) {
 // Darstellungsart festlegen
 // -----------------------------------------------------------------------------
 
-void Animation::SetAlpha(int Alpha) {
+void Animation::setAlpha(int alpha) {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	if (!animationDescriptionPtr->IsAlphaAllowed()) {
+	if (!animationDescriptionPtr->isAlphaAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set alpha value on an animation that does not support alpha. Call was ignored.");
 		return;
 	}
 
-	uint NewModulationColor = (m_ModulationColor & 0x00ffffff) | Alpha << 24;
-	if (NewModulationColor != m_ModulationColor) {
-		m_ModulationColor = NewModulationColor;
-		ForceRefresh();
+	uint newModulationColor = (_modulationColor & 0x00ffffff) | alpha << 24;
+	if (newModulationColor != _modulationColor) {
+		_modulationColor = newModulationColor;
+		forceRefresh();
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void Animation::SetModulationColor(uint ModulationColor) {
+void Animation::setModulationColor(uint modulationColor) {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	if (!animationDescriptionPtr->IsColorModulationAllowed()) {
+	if (!animationDescriptionPtr->isColorModulationAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set modulation color on an animation that does not support color modulation. Call was ignored");
 		return;
 	}
 
-	uint NewModulationColor = (ModulationColor & 0x00ffffff) | (m_ModulationColor & 0xff000000);
-	if (NewModulationColor != m_ModulationColor) {
-		m_ModulationColor = NewModulationColor;
-		ForceRefresh();
+	uint newModulationColor = (modulationColor & 0x00ffffff) | (_modulationColor & 0xff000000);
+	if (newModulationColor != _modulationColor) {
+		_modulationColor = newModulationColor;
+		forceRefresh();
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void Animation::SetScaleFactor(float ScaleFactor) {
-	SetScaleFactorX(ScaleFactor);
-	SetScaleFactorY(ScaleFactor);
+void Animation::setScaleFactor(float scaleFactor) {
+	setScaleFactorX(scaleFactor);
+	setScaleFactorY(scaleFactor);
 }
 
 // -----------------------------------------------------------------------------
 
-void Animation::SetScaleFactorX(float ScaleFactorX) {
+void Animation::setScaleFactorX(float scaleFactorX) {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	if (!animationDescriptionPtr->IsScalingAllowed()) {
+	if (!animationDescriptionPtr->isScalingAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set x scale factor on an animation that does not support scaling. Call was ignored");
 		return;
 	}
 
-	if (ScaleFactorX != m_ScaleFactorX) {
-		m_ScaleFactorX = ScaleFactorX;
-		if (m_ScaleFactorX <= 0.0f) m_ScaleFactorX = 0.001f;
-		ForceRefresh();
+	if (scaleFactorX != _scaleFactorX) {
+		_scaleFactorX = scaleFactorX;
+		if (_scaleFactorX <= 0.0f)
+			_scaleFactorX = 0.001f;
+		forceRefresh();
 		ComputeCurrentCharacteristics();
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void Animation::SetScaleFactorY(float ScaleFactorY) {
+void Animation::setScaleFactorY(float scaleFactorY) {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	if (!animationDescriptionPtr->IsScalingAllowed()) {
+	if (!animationDescriptionPtr->isScalingAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set y scale factor on an animation that does not support scaling. Call was ignored");
 		return;
 	}
 
-	if (ScaleFactorY != m_ScaleFactorY) {
-		m_ScaleFactorY = ScaleFactorY;
-		if (m_ScaleFactorY <= 0.0f) m_ScaleFactorY = 0.001f;
-		ForceRefresh();
+	if (scaleFactorY != _scaleFactorY) {
+		_scaleFactorY = scaleFactorY;
+		if (_scaleFactorY <= 0.0f)
+			_scaleFactorY = 0.001f;
+		forceRefresh();
 		ComputeCurrentCharacteristics();
 	}
 }
@@ -566,31 +569,31 @@ void Animation::SetScaleFactorY(float ScaleFactorY) {
 const Common::String &Animation::GetCurrentAction() const {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	return animationDescriptionPtr->GetFrame(m_CurrentFrame).Action;
+	return animationDescriptionPtr->getFrame(m_CurrentFrame).Action;
 }
 
 // -----------------------------------------------------------------------------
 
-int Animation::GetX() const {
-	return m_RelX;
+int Animation::getX() const {
+	return _relX;
 }
 
 // -----------------------------------------------------------------------------
 
-int Animation::GetY() const {
-	return m_RelY;
+int Animation::getY() const {
+	return _relY;
 }
 
 // -----------------------------------------------------------------------------
 
-int Animation::GetAbsoluteX() const {
-	return m_AbsoluteX + (m_RelX - m_X);
+int Animation::getAbsoluteX() const {
+	return _absoluteX + (_relX - _x);
 }
 
 // -----------------------------------------------------------------------------
 
-int Animation::GetAbsoluteY() const {
-	return m_AbsoluteY + (m_RelY - m_Y);
+int Animation::getAbsoluteY() const {
+	return _absoluteY + (_relY - _y);
 }
 
 // -----------------------------------------------------------------------------
@@ -598,17 +601,17 @@ int Animation::GetAbsoluteY() const {
 int Animation::ComputeXModifier() const {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	const AnimationResource::Frame &CurFrame = animationDescriptionPtr->GetFrame(m_CurrentFrame);
+	const AnimationResource::Frame &CurFrame = animationDescriptionPtr->getFrame(m_CurrentFrame);
 
 	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(CurFrame.FileName);
 	BS_ASSERT(pResource);
 	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
-	int Result = CurFrame.FlipV ? - static_cast<int>((pBitmap->GetWidth() - 1 - CurFrame.HotspotX) * m_ScaleFactorX) :
-	             - static_cast<int>(CurFrame.HotspotX * m_ScaleFactorX);
+	int Result = CurFrame.FlipV ? - static_cast<int>((pBitmap->getWidth() - 1 - CurFrame.HotspotX) * _scaleFactorX) :
+	             - static_cast<int>(CurFrame.HotspotX * _scaleFactorX);
 
-	pBitmap->Release();
+	pBitmap->release();
 
 	return Result;
 }
@@ -618,17 +621,17 @@ int Animation::ComputeXModifier() const {
 int Animation::ComputeYModifier() const {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
-	const AnimationResource::Frame &CurFrame = animationDescriptionPtr->GetFrame(m_CurrentFrame);
+	const AnimationResource::Frame &CurFrame = animationDescriptionPtr->getFrame(m_CurrentFrame);
 
 	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(CurFrame.FileName);
 	BS_ASSERT(pResource);
 	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
-	int Result = CurFrame.FlipH ? - static_cast<int>((pBitmap->GetHeight() - 1 - CurFrame.HotspotY) * m_ScaleFactorY) :
-	             - static_cast<int>(CurFrame.HotspotY * m_ScaleFactorY);
+	int Result = CurFrame.FlipH ? - static_cast<int>((pBitmap->getHeight() - 1 - CurFrame.HotspotY) * _scaleFactorY) :
+	             - static_cast<int>(CurFrame.HotspotY * _scaleFactorY);
 
-	pBitmap->Release();
+	pBitmap->release();
 
 	return Result;
 }
@@ -666,13 +669,13 @@ void Animation::RegisterDeleteCallback(ANIMATION_CALLBACK Callback, uint Data) {
 
 void Animation::PersistCallbackVector(OutputPersistenceBlock &Writer, const Common::Array<ANIMATION_CALLBACK_DATA> & Vector) {
 	// Anzahl an Callbacks persistieren.
-	Writer.Write(Vector.size());
+	Writer.write(Vector.size());
 
 	// Alle Callbacks einzeln persistieren.
 	Common::Array<ANIMATION_CALLBACK_DATA>::const_iterator It = Vector.begin();
 	while (It != Vector.end()) {
-		Writer.Write(CallbackRegistry::getInstance().resolveCallbackPointer((void (*)(int))It->Callback));
-		Writer.Write(It->Data);
+		Writer.write(CallbackRegistry::getInstance().resolveCallbackPointer((void (*)(int))It->Callback));
+		Writer.write(It->Data);
 
 		++It;
 	}
@@ -686,17 +689,17 @@ void Animation::UnpersistCallbackVector(InputPersistenceBlock &Reader, Common::A
 
 	// Anzahl an Callbacks einlesen.
 	uint CallbackCount;
-	Reader.Read(CallbackCount);
+	Reader.read(CallbackCount);
 
 	// Alle Callbacks einzeln wieder herstellen.
 	for (uint i = 0; i < CallbackCount; ++i) {
 		ANIMATION_CALLBACK_DATA CallbackData;
 
 		Common::String CallbackFunctionName;
-		Reader.Read(CallbackFunctionName);
+		Reader.read(CallbackFunctionName);
 		CallbackData.Callback = reinterpret_cast<ANIMATION_CALLBACK>(CallbackRegistry::getInstance().resolveCallbackFunction(CallbackFunctionName));
 
-		Reader.Read(CallbackData.Data);
+		Reader.read(CallbackData.Data);
 
 		Vector.push_back(CallbackData);
 	}
@@ -704,97 +707,97 @@ void Animation::UnpersistCallbackVector(InputPersistenceBlock &Reader, Common::A
 
 // -----------------------------------------------------------------------------
 
-bool Animation::Persist(OutputPersistenceBlock &Writer) {
-	bool Result = true;
+bool Animation::persist(OutputPersistenceBlock &writer) {
+	bool result = true;
 
-	Result &= RenderObject::Persist(Writer);
+	result &= RenderObject::persist(writer);
 
-	Writer.Write(m_RelX);
-	Writer.Write(m_RelY);
-	Writer.Write(m_ScaleFactorX);
-	Writer.Write(m_ScaleFactorY);
-	Writer.Write(m_ModulationColor);
-	Writer.Write(m_CurrentFrame);
-	Writer.Write(m_CurrentFrameTime);
-	Writer.Write(m_Running);
-	Writer.Write(m_Finished);
-	Writer.Write(static_cast<uint>(m_Direction));
+	writer.write(_relX);
+	writer.write(_relY);
+	writer.write(_scaleFactorX);
+	writer.write(_scaleFactorY);
+	writer.write(_modulationColor);
+	writer.write(m_CurrentFrame);
+	writer.write(m_CurrentFrameTime);
+	writer.write(m_Running);
+	writer.write(m_Finished);
+	writer.write(static_cast<uint>(m_Direction));
 
 	// Je nach Animationstyp entweder das Template oder die Ressource speichern.
 	if (m_AnimationResourcePtr) {
 		uint Marker = 0;
-		Writer.Write(Marker);
-		Writer.Write(m_AnimationResourcePtr->GetFileName());
+		writer.write(Marker);
+		writer.write(m_AnimationResourcePtr->getFileName());
 	} else if (m_AnimationTemplateHandle) {
 		uint Marker = 1;
-		Writer.Write(Marker);
-		Writer.Write(m_AnimationTemplateHandle);
+		writer.write(Marker);
+		writer.write(m_AnimationTemplateHandle);
 	} else {
 		BS_ASSERT(false);
 	}
 
-	//Writer.Write(m_AnimationDescriptionPtr);
+	//writer.write(m_AnimationDescriptionPtr);
 
-	Writer.Write(m_FramesLocked);
-	PersistCallbackVector(Writer, m_LoopPointCallbacks);
-	PersistCallbackVector(Writer, m_ActionCallbacks);
-	PersistCallbackVector(Writer, m_DeleteCallbacks);
+	writer.write(m_FramesLocked);
+	PersistCallbackVector(writer, m_LoopPointCallbacks);
+	PersistCallbackVector(writer, m_ActionCallbacks);
+	PersistCallbackVector(writer, m_DeleteCallbacks);
 
-	Result &= RenderObject::PersistChildren(Writer);
+	result &= RenderObject::persistChildren(writer);
 
-	return Result;
+	return result;
 }
 
 // -----------------------------------------------------------------------------
 
-bool Animation::Unpersist(InputPersistenceBlock &Reader) {
-	bool Result = true;
+bool Animation::unpersist(InputPersistenceBlock &reader) {
+	bool result = true;
 
-	Result &= RenderObject::Unpersist(Reader);
+	result &= RenderObject::unpersist(reader);
 
-	Reader.Read(m_RelX);
-	Reader.Read(m_RelY);
-	Reader.Read(m_ScaleFactorX);
-	Reader.Read(m_ScaleFactorY);
-	Reader.Read(m_ModulationColor);
-	Reader.Read(m_CurrentFrame);
-	Reader.Read(m_CurrentFrameTime);
-	Reader.Read(m_Running);
-	Reader.Read(m_Finished);
+	reader.read(_relX);
+	reader.read(_relY);
+	reader.read(_scaleFactorX);
+	reader.read(_scaleFactorY);
+	reader.read(_modulationColor);
+	reader.read(m_CurrentFrame);
+	reader.read(m_CurrentFrameTime);
+	reader.read(m_Running);
+	reader.read(m_Finished);
 	uint Direction;
-	Reader.Read(Direction);
+	reader.read(Direction);
 	m_Direction = static_cast<DIRECTION>(Direction);
 
 	// Animationstyp einlesen.
 	uint Marker;
-	Reader.Read(Marker);
+	reader.read(Marker);
 	if (Marker == 0) {
 		Common::String ResourceFilename;
-		Reader.Read(ResourceFilename);
+		reader.read(ResourceFilename);
 		InitializeAnimationResource(ResourceFilename);
 	} else if (Marker == 1) {
-		Reader.Read(m_AnimationTemplateHandle);
+		reader.read(m_AnimationTemplateHandle);
 	} else {
 		BS_ASSERT(false);
 	}
 
-	Reader.Read(m_FramesLocked);
+	reader.read(m_FramesLocked);
 	if (m_FramesLocked) LockAllFrames();
 
-	UnpersistCallbackVector(Reader, m_LoopPointCallbacks);
-	UnpersistCallbackVector(Reader, m_ActionCallbacks);
-	UnpersistCallbackVector(Reader, m_DeleteCallbacks);
+	UnpersistCallbackVector(reader, m_LoopPointCallbacks);
+	UnpersistCallbackVector(reader, m_ActionCallbacks);
+	UnpersistCallbackVector(reader, m_DeleteCallbacks);
 
-	Result &= RenderObject::UnpersistChildren(Reader);
+	result &= RenderObject::unpersistChildren(reader);
 
-	return Reader.IsGood() && Result;
+	return reader.isGood() && result;
 }
 
 // -----------------------------------------------------------------------------
 
 AnimationDescription *Animation::GetAnimationDescription() const {
 	if (m_AnimationResourcePtr) return m_AnimationResourcePtr;
-	else return AnimationTemplateRegistry::GetInstance().ResolveHandle(m_AnimationTemplateHandle);
+	else return AnimationTemplateRegistry::GetInstance().resolveHandle(m_AnimationTemplateHandle);
 }
 
 } // End of namespace Sword25

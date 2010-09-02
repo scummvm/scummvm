@@ -448,7 +448,7 @@ int Chunkwriter(lua_State *L, const void *p, size_t sz, void *ud) {
 }
 }
 
-bool LuaScriptEngine::Persist(OutputPersistenceBlock &Writer) {
+bool LuaScriptEngine::persist(OutputPersistenceBlock &Writer) {
 	// Empty the Lua stack. pluto_persist() xepects that the stack is empty except for its parameters
 	lua_settop(m_State, 0);
 
@@ -465,7 +465,7 @@ bool LuaScriptEngine::Persist(OutputPersistenceBlock &Writer) {
 	pluto_persist(m_State, Chunkwriter, &chunkData);
 
 	// Persistenzdaten in den Writer schreiben.
-	Writer.Write(&chunkData[0], chunkData.size());
+	Writer.write(&chunkData[0], chunkData.size());
 
 	// Die beiden Tabellen vom Stack nehmen.
 	lua_pop(m_State, 2);
@@ -540,7 +540,7 @@ void ClearGlobalTable(lua_State *L, const char **Exceptions) {
 
 // -----------------------------------------------------------------------------
 
-bool LuaScriptEngine::Unpersist(InputPersistenceBlock &Reader) {
+bool LuaScriptEngine::unpersist(InputPersistenceBlock &Reader) {
 	// Empty the Lua stack. pluto_persist() xepects that the stack is empty except for its parameters
 	lua_settop(m_State, 0);
 
@@ -570,7 +570,7 @@ bool LuaScriptEngine::Unpersist(InputPersistenceBlock &Reader) {
 
 	// Persisted Lua data
 	Common::Array<byte> chunkData;
-	Reader.Read(chunkData);
+	Reader.read(chunkData);
 
 	// Chunk-Reader initialisation. It is used with pluto_unpersist to restore read data
 	ChunkreaderData cd;

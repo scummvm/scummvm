@@ -103,8 +103,8 @@ public:
 		return m_VisibilityMatrix;
 	}
 
-	virtual bool Persist(OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(InputPersistenceBlock &Reader);
+	virtual bool persist(OutputPersistenceBlock &writer);
+	virtual bool unpersist(InputPersistenceBlock &reader);
 
 private:
 	Common::Array<Vertex> m_Nodes;

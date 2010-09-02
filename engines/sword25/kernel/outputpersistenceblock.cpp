@@ -62,7 +62,7 @@ OutputPersistenceBlock::OutputPersistenceBlock() {
 // Writing
 // -----------------------------------------------------------------------------
 
-void OutputPersistenceBlock::Write(signed int Value) {
+void OutputPersistenceBlock::write(signed int Value) {
 	WriteMarker(SINT_MARKER);
 	Value = ConvertEndianessFromSystemToStorage(Value);
 	RawWrite(&Value, sizeof(Value));
@@ -70,7 +70,7 @@ void OutputPersistenceBlock::Write(signed int Value) {
 
 // -----------------------------------------------------------------------------
 
-void OutputPersistenceBlock::Write(uint Value) {
+void OutputPersistenceBlock::write(uint Value) {
 	WriteMarker(UINT_MARKER);
 	Value = ConvertEndianessFromSystemToStorage(Value);
 	RawWrite(&Value, sizeof(Value));
@@ -78,7 +78,7 @@ void OutputPersistenceBlock::Write(uint Value) {
 
 // -----------------------------------------------------------------------------
 
-void OutputPersistenceBlock::Write(float Value) {
+void OutputPersistenceBlock::write(float Value) {
 	WriteMarker(FLOAT_MARKER);
 	Value = ConvertEndianessFromSystemToStorage(Value);
 	RawWrite(&Value, sizeof(Value));
@@ -86,7 +86,7 @@ void OutputPersistenceBlock::Write(float Value) {
 
 // -----------------------------------------------------------------------------
 
-void OutputPersistenceBlock::Write(bool Value) {
+void OutputPersistenceBlock::write(bool Value) {
 	WriteMarker(BOOL_MARKER);
 
 	uint UIntBool = Value ? 1 : 0;
@@ -96,19 +96,19 @@ void OutputPersistenceBlock::Write(bool Value) {
 
 // -----------------------------------------------------------------------------
 
-void OutputPersistenceBlock::Write(const Common::String &String) {
+void OutputPersistenceBlock::write(const Common::String &String) {
 	WriteMarker(STRING_MARKER);
 
-	Write(String.size());
+	write(String.size());
 	RawWrite(String.c_str(), String.size());
 }
 
 // -----------------------------------------------------------------------------
 
-void OutputPersistenceBlock::Write(const void *BufferPtr, size_t Size) {
+void OutputPersistenceBlock::write(const void *BufferPtr, size_t Size) {
 	WriteMarker(BLOCK_MARKER);
 
-	Write(Size);
+	write(Size);
 	RawWrite(BufferPtr, Size);
 }
 

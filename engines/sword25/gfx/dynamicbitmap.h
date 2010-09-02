@@ -58,28 +58,28 @@ class DynamicBitmap : public Bitmap {
 public:
 	virtual ~DynamicBitmap();
 
-	virtual uint GetPixel(int X, int Y) const;
+	virtual uint getPixel(int x, int y) const;
 
-	virtual bool    SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride);
+	virtual bool    setContent(const byte *pixeldata, uint size, uint offset, uint stride);
 
-	virtual bool    IsScalingAllowed() const;
-	virtual bool    IsAlphaAllowed() const;
-	virtual bool    IsColorModulationAllowed() const;
-	virtual bool    IsSetContentAllowed() const;
+	virtual bool    isScalingAllowed() const;
+	virtual bool    isAlphaAllowed() const;
+	virtual bool    isColorModulationAllowed() const;
+	virtual bool    isSetContentAllowed() const;
 
-	virtual bool    Persist(OutputPersistenceBlock &Writer);
-	virtual bool    Unpersist(InputPersistenceBlock &Reader);
+	virtual bool    persist(OutputPersistenceBlock &writer);
+	virtual bool    unpersist(InputPersistenceBlock &reader);
 
 protected:
-	virtual bool    DoRender();
+	virtual bool    doRender();
 
 private:
-	DynamicBitmap(RenderObjectPtr<RenderObject> ParentPtr, uint Width, uint Height);
-	DynamicBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle);
+	DynamicBitmap(RenderObjectPtr<RenderObject> parentPtr, uint width, uint height);
+	DynamicBitmap(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle);
 
-	bool CreateGLImage(uint Width, uint Height);
+	bool createGLImage(uint width, uint height);
 
-	Common::ScopedPtr<GLImage> m_Image;
+	Common::ScopedPtr<GLImage> _image;
 };
 
 } // End of namespace Sword25

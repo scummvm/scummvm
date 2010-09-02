@@ -50,7 +50,7 @@ namespace Sword25 {
 
 class Bitmap : public RenderObject {
 protected:
-	Bitmap(RenderObjectPtr<RenderObject> ParentPtr, TYPES Type, uint Handle = 0);
+	Bitmap(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle = 0);
 
 public:
 
@@ -61,90 +61,90 @@ public:
 	    @param Alpha der neue Alphawert der Bitmaps (0 = keine Deckung, 255 = volle Deckung).
 	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsAlphaAllowed() true zurückgibt.
 	*/
-	void SetAlpha(int Alpha);
+	void setAlpha(int alpha);
 
 	/**
 	    @brief Setzt die Modulationfarbe der Bitmaps.
 	    @param Color eine 24-Bit Farbe, die die Modulationsfarbe des Bitmaps festlegt.
 	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsColorModulationAllowed() true zurückgibt.
 	*/
-	void SetModulationColor(uint ModulationColor);
+	void setModulationColor(uint modulationColor);
 
 	/**
 	    @brief Setzt den Skalierungsfaktor des Bitmaps.
 	    @param ScaleFactor der Faktor um den das Bitmap in beide Richtungen gestreckt werden soll.
 	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
 	*/
-	void SetScaleFactor(float ScaleFactor);
+	void setScaleFactor(float scaleFactor);
 
 	/**
 	    @brief Setzt den Skalierungsfaktor der Bitmap auf der X-Achse.
 	    @param ScaleFactor der Faktor um den die Bitmap in Richtungen der X-Achse gestreckt werden soll. Dieser Wert muss positiv sein.
 	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
 	*/
-	void SetScaleFactorX(float ScaleFactorX);
+	void setScaleFactorX(float scaleFactorX);
 
 	/**
 	    @brief Setzt den Skalierungsfaktor der Bitmap auf der Y-Achse.
 	    @param ScaleFactor der Faktor um den die Bitmap in Richtungen der Y-Achse gestreckt werden soll. Dieser Wert muss positiv sein.
 	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
 	*/
-	void SetScaleFactorY(float ScaleFactorY);
+	void setScaleFactorY(float scaleFactorY);
 
 	/**
 	    @brief Legt fest, ob das Bild an der X-Achse gespiegelt werden soll.
 	*/
-	void SetFlipH(bool FlipH);
+	void setFlipH(bool flipH);
 
 	/**
 	    @brief Legt fest, ob das Bild an der Y-Achse gespiegelt werden soll.
 	*/
-	void SetFlipV(bool FlipV);
+	void setFlipV(bool flipV);
 
 	/**
 	    @brief Gibt den aktuellen Alphawert des Bildes zurück.
 	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsAlphaAllowed() true zurückgibt.
 	*/
-	int GetAlpha() {
-		return m_ModulationColor >> 24;
+	int getAlpha() {
+		return _modulationColor >> 24;
 	}
 
 	/**
 	    @brief Gibt die aktuelle 24bit RGB Modulationsfarde des Bildes zurück.
 	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsColorModulationAllowed() true zurückgibt.
 	*/
-	int GetModulationColor() {
-		return m_ModulationColor & 0x00ffffff;
+	int getModulationColor() {
+		return _modulationColor & 0x00ffffff;
 	}
 
 	/**
 	    @brief Gibt den Skalierungsfakter des Bitmaps auf der X-Achse zurück.
 	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
 	*/
-	float GetScaleFactorX() const {
-		return m_ScaleFactorX;
+	float getScaleFactorX() const {
+		return _scaleFactorX;
 	}
 
 	/**
 	    @brief Gibt den Skalierungsfakter des Bitmaps auf der Y-Achse zurück.
 	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
 	*/
-	float GetScaleFactorY() const {
-		return m_ScaleFactorY;
+	float getScaleFactorY() const {
+		return _scaleFactorY;
 	}
 
 	/**
 	    @brief Gibt zurück, ob das Bild an der X-Achse gespiegelt angezeigt wird.
 	*/
-	bool IsFlipH() {
-		return m_FlipH;
+	bool isFlipH() {
+		return _flipH;
 	}
 
 	/**
 	    @brief Gibt zurück, ob das Bild an der Y-Achse gespiegelt angezeigt wird.
 	*/
-	bool IsFlipV() {
-		return m_FlipV;
+	bool isFlipV() {
+		return _flipV;
 	}
 
 	// -----------------------------------------------------------------------------
@@ -159,7 +159,7 @@ public:
 	    @remark Diese Methode sollte auf keine Fall benutzt werden um größere Teile des Bildes zu lesen, da sie sehr langsam ist. Sie ist
 	            eher dafür gedacht einzelne Pixel des Bildes auszulesen.
 	*/
-	virtual uint GetPixel(int X, int Y) const = 0;
+	virtual uint getPixel(int x, int y) const = 0;
 
 	/**
 	    @brief Füllt den Inhalt des Bildes mit Pixeldaten.
@@ -172,24 +172,24 @@ public:
 	    @return Gibt false zurück, falls der Aufruf fehlgeschlagen ist.
 	    @remark Ein Aufruf dieser Methode ist nur erlaubt, wenn IsSetContentAllowed() true zurückgibt.
 	*/
-	virtual bool    SetContent(const byte *Pixeldata, uint size, uint Offset = 0, uint Stride = 0) = 0;
+	virtual bool    setContent(const byte *pixeldata, uint size, uint offset = 0, uint stride = 0) = 0;
 
-	virtual bool    IsScalingAllowed() const = 0;
-	virtual bool    IsAlphaAllowed() const = 0;
-	virtual bool    IsColorModulationAllowed() const = 0;
-	virtual bool    IsSetContentAllowed() const = 0;
+	virtual bool    isScalingAllowed() const = 0;
+	virtual bool    isAlphaAllowed() const = 0;
+	virtual bool    isColorModulationAllowed() const = 0;
+	virtual bool    isSetContentAllowed() const = 0;
 
-	virtual bool    Persist(OutputPersistenceBlock &Writer);
-	virtual bool    Unpersist(InputPersistenceBlock &Reader);
+	virtual bool    persist(OutputPersistenceBlock &writer);
+	virtual bool    unpersist(InputPersistenceBlock &reader);
 
 protected:
-	bool            m_FlipH;
-	bool            m_FlipV;
-	float           m_ScaleFactorX;
-	float           m_ScaleFactorY;
-	uint    m_ModulationColor;
-	int             m_OriginalWidth;
-	int             m_OriginalHeight;
+	bool  _flipH;
+	bool  _flipV;
+	float _scaleFactorX;
+	float _scaleFactorY;
+	uint  _modulationColor;
+	int   _originalWidth;
+	int   _originalHeight;
 };
 
 } // End of namespace Sword25

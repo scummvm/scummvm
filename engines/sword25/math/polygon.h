@@ -194,8 +194,8 @@ public:
 	/// COntains the Vertecies of the polygon
 	Vertex *Vertecies;
 
-	virtual bool Persist(OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(InputPersistenceBlock &Reader);
+	virtual bool persist(OutputPersistenceBlock &writer);
+	virtual bool unpersist(InputPersistenceBlock &reader);
 
 private:
 	bool m_IsCW;

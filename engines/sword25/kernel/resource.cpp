@@ -41,20 +41,20 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "RESOURCE"
 
-Resource::Resource(const Common::String &FileName, RESOURCE_TYPES Type) :
-	_Type(Type),
-	_RefCount(0) {
+Resource::Resource(const Common::String &fileName, RESOURCE_TYPES type) :
+	_type(type),
+	_refCount(0) {
 	BS_ASSERT(Kernel::GetInstance()->GetService("package"));
 
-	_FileName = static_cast<PackageManager *>(Kernel::GetInstance()->GetService("package"))->GetAbsolutePath(FileName);
-	_FileNameHash = BS_String::GetHash(FileName);
+	_fileName = static_cast<PackageManager *>(Kernel::GetInstance()->GetService("package"))->GetAbsolutePath(fileName);
+	_fileNameHash = BS_String::GetHash(fileName);
 }
 
-void Resource::Release() {
-	if (_RefCount) {
-		--_RefCount;
+void Resource::release() {
+	if (_refCount) {
+		--_refCount;
 	} else
-		BS_LOG_WARNINGLN("Released unlocked resource \"%s\".", _FileName.c_str());
+		BS_LOG_WARNINGLN("Released unlocked resource \"%s\".", _fileName.c_str());
 }
 
 } // End of namespace Sword25

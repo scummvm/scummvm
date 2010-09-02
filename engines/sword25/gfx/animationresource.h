@@ -63,43 +63,43 @@ public:
 	AnimationResource(const Common::String &filename);
 	virtual ~AnimationResource();
 
-	virtual const Frame    &GetFrame(uint Index) const {
-		BS_ASSERT(Index < m_Frames.size());
-		return m_Frames[Index];
+	virtual const Frame    &getFrame(uint index) const {
+		BS_ASSERT(index < _frames.size());
+		return _frames[index];
 	}
-	virtual uint    GetFrameCount() const {
-		return m_Frames.size();
+	virtual uint    getFrameCount() const {
+		return _frames.size();
 	}
-	virtual void            Unlock() {
-		Release();
+	virtual void            unlock() {
+		release();
 	}
 
-	Animation::ANIMATION_TYPES   GetAnimationType() const {
-		return m_AnimationType;
+	Animation::ANIMATION_TYPES   getAnimationType() const {
+		return _animationType;
 	}
-	int                             GetFPS() const {
-		return m_FPS;
+	int                             getFPS() const {
+		return _FPS;
 	}
-	int                             GetMillisPerFrame() const {
-		return m_MillisPerFrame;
+	int                             getMillisPerFrame() const {
+		return _millisPerFrame;
 	}
-	bool                            IsScalingAllowed() const {
-		return m_ScalingAllowed;
+	bool                            isScalingAllowed() const {
+		return _scalingAllowed;
 	}
-	bool                            IsAlphaAllowed() const {
-		return m_AlphaAllowed;
+	bool                            isAlphaAllowed() const {
+		return _alphaAllowed;
 	}
-	bool                            IsColorModulationAllowed() const {
-		return m_ColorModulationAllowed;
+	bool                            isColorModulationAllowed() const {
+		return _colorModulationAllowed;
 	}
-	bool                            IsValid() const {
-		return m_Valid;
+	bool                            isValid() const {
+		return _valid;
 	}
 
 private:
-	bool                            m_Valid;
+	bool                            _valid;
 
-	Common::Array<Frame>            m_Frames;
+	Common::Array<Frame>            _frames;
 
 	PackageManager *				_pPackage;
 

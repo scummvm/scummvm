@@ -46,30 +46,30 @@ namespace Sword25 {
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool AnimationDescription::Persist(OutputPersistenceBlock &Writer) {
-	Writer.Write(static_cast<uint>(m_AnimationType));
-	Writer.Write(m_FPS);
-	Writer.Write(m_MillisPerFrame);
-	Writer.Write(m_ScalingAllowed);
-	Writer.Write(m_AlphaAllowed);
-	Writer.Write(m_ColorModulationAllowed);
+bool AnimationDescription::persist(OutputPersistenceBlock &writer) {
+	writer.write(static_cast<uint>(_animationType));
+	writer.write(_FPS);
+	writer.write(_millisPerFrame);
+	writer.write(_scalingAllowed);
+	writer.write(_alphaAllowed);
+	writer.write(_colorModulationAllowed);
 
 	return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool AnimationDescription::Unpersist(InputPersistenceBlock &Reader) {
-	uint AnimationType;
-	Reader.Read(AnimationType);
-	m_AnimationType = static_cast<Animation::ANIMATION_TYPES>(AnimationType);
-	Reader.Read(m_FPS);
-	Reader.Read(m_MillisPerFrame);
-	Reader.Read(m_ScalingAllowed);
-	Reader.Read(m_AlphaAllowed);
-	Reader.Read(m_ColorModulationAllowed);
+bool AnimationDescription::unpersist(InputPersistenceBlock &reader) {
+	uint animationType;
+	reader.read(animationType);
+	_animationType = static_cast<Animation::ANIMATION_TYPES>(animationType);
+	reader.read(_FPS);
+	reader.read(_millisPerFrame);
+	reader.read(_scalingAllowed);
+	reader.read(_alphaAllowed);
+	reader.read(_colorModulationAllowed);
 
-	return Reader.IsGood();
+	return reader.isGood();
 }
 
 } // End of namespace Sword25

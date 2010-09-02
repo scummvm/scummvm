@@ -55,33 +55,33 @@ private:
 	/**
 	    @remark Filename muss absoluter Pfad sein
 	*/
-	StaticBitmap(RenderObjectPtr<RenderObject> ParentPtr, const Common::String &Filename);
-	StaticBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle);
+	StaticBitmap(RenderObjectPtr<RenderObject> parentPtr, const Common::String &filename);
+	StaticBitmap(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle);
 
 public:
 	virtual ~StaticBitmap();
 
-	virtual uint GetPixel(int X, int Y) const;
+	virtual uint getPixel(int x, int y) const;
 
-	virtual bool    SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride);
+	virtual bool    setContent(const byte *pixeldata, uint size, uint offset, uint stride);
 
-	virtual bool    IsScalingAllowed() const;
-	virtual bool    IsAlphaAllowed() const;
-	virtual bool    IsColorModulationAllowed() const;
-	virtual bool    IsSetContentAllowed() const {
+	virtual bool    isScalingAllowed() const;
+	virtual bool    isAlphaAllowed() const;
+	virtual bool    isColorModulationAllowed() const;
+	virtual bool    isSetContentAllowed() const {
 		return false;
 	}
 
-	virtual bool    Persist(OutputPersistenceBlock &Writer);
-	virtual bool    Unpersist(InputPersistenceBlock &Reader);
+	virtual bool    persist(OutputPersistenceBlock &writer);
+	virtual bool    unpersist(InputPersistenceBlock &reader);
 
 protected:
-	virtual bool    DoRender();
+	virtual bool    doRender();
 
 private:
-	Common::String m_ResourceFilename;
+	Common::String _resourceFilename;
 
-	bool InitBitmapResource(const Common::String &Filename);
+	bool initBitmapResource(const Common::String &filename);
 };
 
 } // End of namespace Sword25

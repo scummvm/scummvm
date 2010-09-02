@@ -54,7 +54,7 @@ Region::Region() : m_Valid(false), m_Type(RT_REGION) {
 
 Region::Region(InputPersistenceBlock &Reader, uint Handle) : m_Valid(false), m_Type(RT_REGION) {
 	RegionRegistry::GetInstance().RegisterObject(this, Handle);
-	Unpersist(Reader);
+	unpersist(Reader);
 }
 
 // -----------------------------------------------------------------------------
@@ -79,17 +79,17 @@ uint Region::Create(REGION_TYPE Type) {
 
 // -----------------------------------------------------------------------------
 
-uint Region::Create(InputPersistenceBlock &Reader, uint Handle) {
+uint Region::Create(InputPersistenceBlock &reader, uint Handle) {
 	// Read type
 	uint Type;
-	Reader.Read(Type);
+	reader.read(Type);
 
 	// Depending on the type, create a new BS_Region or BS_WalkRegion object
 	Region *RegionPtr = NULL;
 	if (Type == RT_REGION) {
-		RegionPtr = new Region(Reader, Handle);
+		RegionPtr = new Region(reader, Handle);
 	} else if (Type == RT_WALKREGION) {
-		RegionPtr = new WalkRegion(Reader, Handle);
+		RegionPtr = new WalkRegion(reader, Handle);
 	} else {
 		BS_ASSERT(false);
 	}
@@ -334,49 +334,49 @@ bool Region::IsLineOfSight(const Vertex &a, const Vertex &b) const {
 // Persistence
 // -----------------------------------------------------------------------------
 
-bool Region::Persist(OutputPersistenceBlock &Writer) {
+bool Region::persist(OutputPersistenceBlock &writer) {
 	bool Result = true;
 
-	Writer.Write(static_cast<uint>(m_Type));
-	Writer.Write(m_Valid);
-	Writer.Write(m_Position.X);
-	Writer.Write(m_Position.Y);
+	writer.write(static_cast<uint>(m_Type));
+	writer.write(m_Valid);
+	writer.write(m_Position.X);
+	writer.write(m_Position.Y);
 
-	Writer.Write(m_Polygons.size());
+	writer.write(m_Polygons.size());
 	Common::Array<Polygon>::iterator It = m_Polygons.begin();
 	while (It != m_Polygons.end()) {
-		Result &= It->Persist(Writer);
+		Result &= It->persist(writer);
 		++It;
 	}
 
-	Writer.Write(m_BoundingBox.left);
-	Writer.Write(m_BoundingBox.top);
-	Writer.Write(m_BoundingBox.right);
-	Writer.Write(m_BoundingBox.bottom);
+	writer.write(m_BoundingBox.left);
+	writer.write(m_BoundingBox.top);
+	writer.write(m_BoundingBox.right);
+	writer.write(m_BoundingBox.bottom);
 
 	return Result;
 }
 
 // -----------------------------------------------------------------------------
 
-bool Region::Unpersist(InputPersistenceBlock &Reader) {
-	Reader.Read(m_Valid);
-	Reader.Read(m_Position.X);
-	Reader.Read(m_Position.Y);
+bool Region::unpersist(InputPersistenceBlock &reader) {
+	reader.read(m_Valid);
+	reader.read(m_Position.X);
+	reader.read(m_Position.Y);
 
 	m_Polygons.clear();
 	uint PolygonCount;
-	Reader.Read(PolygonCount);
+	reader.read(PolygonCount);
 	for (uint i = 0; i < PolygonCount; ++i) {
-		m_Polygons.push_back(Polygon(Reader));
+		m_Polygons.push_back(Polygon(reader));
 	}
 
-	Reader.Read(m_BoundingBox.left);
-	Reader.Read(m_BoundingBox.top);
-	Reader.Read(m_BoundingBox.right);
-	Reader.Read(m_BoundingBox.bottom);
+	reader.read(m_BoundingBox.left);
+	reader.read(m_BoundingBox.top);
+	reader.read(m_BoundingBox.right);
+	reader.read(m_BoundingBox.bottom);
 
-	return Reader.IsGood();
+	return reader.isGood();
 }
 
 // -----------------------------------------------------------------------------

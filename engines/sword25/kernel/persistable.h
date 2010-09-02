@@ -44,8 +44,8 @@ class Persistable {
 public:
 	virtual ~Persistable() {};
 
-	virtual bool Persist(OutputPersistenceBlock &Writer) = 0;
-	virtual bool Unpersist(InputPersistenceBlock &Reader) = 0;
+	virtual bool persist(OutputPersistenceBlock &writer) = 0;
+	virtual bool unpersist(InputPersistenceBlock &reader) = 0;
 };
 
 } // End of namespace Sword25

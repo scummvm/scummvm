@@ -112,11 +112,11 @@ public:
 	/**
 	 * @remark              The Lua stack is cleared by this method
 	 */
-	virtual bool Persist(OutputPersistenceBlock &Writer);
+	virtual bool persist(OutputPersistenceBlock &writer);
 	/**
 	 * @remark              The Lua stack is cleared by this method
 	 */
-	virtual bool Unpersist(InputPersistenceBlock &Reader);
+	virtual bool unpersist(InputPersistenceBlock &reader);
 
 private:
 	lua_State *m_State;

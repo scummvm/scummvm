@@ -127,12 +127,12 @@ bool OpenGLGfx::Init(int Width, int Height, int BitDepth, int BackbufferCount, b
 	SetVsync(true);
 
 	// Layer-Manager initialisieren.
-	m_RenderObjectManagerPtr.reset(new RenderObjectManager(Width, Height, BackbufferCount + 1));
+	_renderObjectManagerPtr.reset(new RenderObjectManager(Width, Height, BackbufferCount + 1));
 
 	// Hauptpanel erstellen
-	m_MainPanelPtr = m_RenderObjectManagerPtr->GetTreeRoot()->AddPanel(Width, Height, BS_ARGB(0, 0, 0, 0));
-	if (!m_MainPanelPtr.IsValid()) return false;
-	m_MainPanelPtr->SetVisible(true);
+	m_MainPanelPtr = _renderObjectManagerPtr->getTreeRoot()->addPanel(Width, Height, BS_ARGB(0, 0, 0, 0));
+	if (!m_MainPanelPtr.isValid()) return false;
+	m_MainPanelPtr->setVisible(true);
 
 	return true;
 }
@@ -145,7 +145,7 @@ bool OpenGLGfx::StartFrame(bool UpdateAll) {
 	UpdateLastFrameDuration();
 
 	// Den Layer-Manager auf den nächsten Frame vorbereiten
-	m_RenderObjectManagerPtr->StartFrame();
+	_renderObjectManagerPtr->startFrame();
 
 	return true;
 }
@@ -154,7 +154,7 @@ bool OpenGLGfx::StartFrame(bool UpdateAll) {
 
 bool OpenGLGfx::EndFrame() {
 	// Scene zeichnen
-	m_RenderObjectManagerPtr->Render();
+	_renderObjectManagerPtr->render();
 
 	g_system->updateScreen();
 
@@ -212,7 +212,7 @@ bool OpenGLGfx::GetVsync() const {
 
 // -----------------------------------------------------------------------------
 
-bool OpenGLGfx::Fill(const Common::Rect *fillRectPtr, uint color) {
+bool OpenGLGfx::fill(const Common::Rect *fillRectPtr, uint color) {
 	Common::Rect rect(m_Width - 1, m_Height - 1);
 
 	if (fillRectPtr) {
@@ -297,7 +297,7 @@ Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
 		}
 
 		BitmapResource *pResource = new BitmapResource(FileName, pImage);
-		if (!pResource->IsValid()) {
+		if (!pResource->isValid()) {
 			delete pResource;
 			return 0;
 		}
@@ -315,7 +315,7 @@ Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
 		}
 
 		BitmapResource *pResource = new BitmapResource(FileName, pImage);
-		if (!pResource->IsValid()) {
+		if (!pResource->isValid()) {
 			delete pResource;
 			return 0;
 		}
@@ -347,20 +347,20 @@ Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
 		}
 
 		BitmapResource *pResource = new BitmapResource(FileName, pImage);
-		if (!pResource->IsValid()) {
+		if (!pResource->isValid()) {
 			delete pResource;
-			delete [] pFileData;
+			delete[] pFileData;
 			return 0;
 		}
 
-		delete [] pFileData;
+		delete[] pFileData;
 		return pResource;
 	}
 
 	// Animation laden
 	if (FileName.hasSuffix(ANI_EXTENSION)) {
 		AnimationResource *pResource = new AnimationResource(FileName);
-		if (pResource->IsValid())
+		if (pResource->isValid())
 			return pResource;
 		else {
 			delete pResource;
@@ -406,24 +406,24 @@ void OpenGLGfx::DrawDebugLine(const Vertex &Start, const Vertex &End, uint Color
 // PERSISTENZ
 // -----------------------------------------------------------------------------
 
-bool OpenGLGfx::Persist(OutputPersistenceBlock &Writer) {
+bool OpenGLGfx::persist(OutputPersistenceBlock &writer) {
 	bool result = true;
 
-	result &= GraphicEngine::Persist(Writer);
-	result &= m_RenderObjectManagerPtr->Persist(Writer);
+	result &= GraphicEngine::persist(writer);
+	result &= _renderObjectManagerPtr->persist(writer);
 
 	return result;
 }
 
 // -----------------------------------------------------------------------------
 
-bool OpenGLGfx::Unpersist(InputPersistenceBlock &Reader) {
+bool OpenGLGfx::unpersist(InputPersistenceBlock &reader) {
 	bool result = true;
 
-	result &= GraphicEngine::Unpersist(Reader);
-	result &= m_RenderObjectManagerPtr->Unpersist(Reader);
+	result &= GraphicEngine::unpersist(reader);
+	result &= _renderObjectManagerPtr->unpersist(reader);
 
-	return result && Reader.IsGood();
+	return result && reader.isGood();
 }
 
 } // End of namespace Sword25

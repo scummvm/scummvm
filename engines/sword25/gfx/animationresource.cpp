@@ -66,7 +66,7 @@ const int   MAX_FPS     = 200;
 AnimationResource::AnimationResource(const Common::String &filename) :
 		Resource(filename, Resource::TYPE_ANIMATION),
 		Common::XMLParser(),
-		m_Valid(false) {
+		_valid(false) {
 	// Get a pointer to the package manager
 	Kernel *pKernel = Kernel::GetInstance();
 	_pPackage = static_cast<PackageManager *>(pKernel->GetService("package"));
@@ -74,16 +74,16 @@ AnimationResource::AnimationResource(const Common::String &filename) :
 
 	// Switch to the folder the specified Xml fiile is in
 	Common::String oldDirectory = _pPackage->GetCurrentDirectory();
-	if (GetFileName().contains('/')) {
-		Common::String dir = Common::String(GetFileName().c_str(), strrchr(GetFileName().c_str(), '/'));
+	if (getFileName().contains('/')) {
+		Common::String dir = Common::String(getFileName().c_str(), strrchr(getFileName().c_str(), '/'));
 		_pPackage->ChangeDirectory(dir);
 	}
 
 	// Load the contents of the file
 	uint fileSize;
-	char *xmlData = _pPackage->GetXmlFile(GetFileName(), &fileSize);
+	char *xmlData = _pPackage->GetXmlFile(getFileName(), &fileSize);
 	if (!xmlData) {
-		BS_LOG_ERRORLN("Could not read \"%s\".", GetFileName().c_str());
+		BS_LOG_ERRORLN("Could not read \"%s\".", getFileName().c_str());
 		return; 
 	}
 
@@ -91,7 +91,7 @@ AnimationResource::AnimationResource(const Common::String &filename) :
 	if (!loadBuffer((const byte *)xmlData, fileSize))
 		return;
 
-	m_Valid = parse();
+	_valid = parse();
 	close();
 	free(xmlData);
 
@@ -99,24 +99,24 @@ AnimationResource::AnimationResource(const Common::String &filename) :
 	_pPackage->ChangeDirectory(oldDirectory);
 
 	// Give an error message if there weren't any frames specified
-	if (m_Frames.empty()) {
-		BS_LOG_ERRORLN("\"%s\" does not have any frames.", GetFileName().c_str());
+	if (_frames.empty()) {
+		BS_LOG_ERRORLN("\"%s\" does not have any frames.", getFileName().c_str());
 		return;
 	}
 
 	// Pre-cache all the frames
 	if (!PrecacheAllFrames()) {
-		BS_LOG_ERRORLN("Could not precache all frames of \"%s\".", GetFileName().c_str());
+		BS_LOG_ERRORLN("Could not precache all frames of \"%s\".", getFileName().c_str());
 		return;
 	}
 
 	// Post processing to compute animation features
 	if (!ComputeFeatures()) {
-		BS_LOG_ERRORLN("Could not determine the features of \"%s\".", GetFileName().c_str());
+		BS_LOG_ERRORLN("Could not determine the features of \"%s\".", getFileName().c_str());
 		return;
 	}
 
-	m_Valid = true;
+	_valid = true;
 }
 
 // -----------------------------------------------------------------------------
@@ -135,29 +135,29 @@ bool AnimationResource::parseBooleanKey(Common::String s, bool &result) {
 // -----------------------------------------------------------------------------
 
 bool AnimationResource::parserCallback_animation(ParserNode *node) {
-	if (!parseIntegerKey(node->values["fps"].c_str(), 1, &m_FPS) || (m_FPS < MIN_FPS) || (m_FPS > MAX_FPS)) {
+	if (!parseIntegerKey(node->values["fps"].c_str(), 1, &_FPS) || (_FPS < MIN_FPS) || (_FPS > MAX_FPS)) {
 		return parserError("Illegal or missing fps attribute in <animation> tag in \"%s\". Assuming default (\"%d\").",
-		                 GetFileName().c_str(), DEFAULT_FPS);
+		                 getFileName().c_str(), DEFAULT_FPS);
 	}
 
 	// Loop type value
 	const char *loopTypeString = node->values["type"].c_str();
 	
 	if (strcmp(loopTypeString, "oneshot") == 0) {
-		m_AnimationType = Animation::AT_ONESHOT;
+		_animationType = Animation::AT_ONESHOT;
 	} else if (strcmp(loopTypeString, "loop") == 0) {
-		m_AnimationType = Animation::AT_LOOP;
+		_animationType = Animation::AT_LOOP;
 	} else if (strcmp(loopTypeString, "jojo") == 0) {
-		m_AnimationType = Animation::AT_JOJO;
+		_animationType = Animation::AT_JOJO;
 	} else {
 		BS_LOG_WARNINGLN("Illegal type value (\"%s\") in <animation> tag in \"%s\". Assuming default (\"loop\").",
-				loopTypeString, GetFileName().c_str());
-		m_AnimationType = Animation::AT_LOOP;
+				loopTypeString, getFileName().c_str());
+		_animationType = Animation::AT_LOOP;
 	}
 
 	// Calculate the milliseconds required per frame
 	// FIXME: Double check variable naming. Based on the constant, it may be microseconds
-	m_MillisPerFrame = 1000000 / m_FPS;
+	_millisPerFrame = 1000000 / _FPS;
 
 	return true;
 }
@@ -169,13 +169,13 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 
 	const char *fileString = node->values["file"].c_str();
 	if (!fileString) {
-		BS_LOG_ERRORLN("<frame> tag without file attribute occurred in \"%s\".", GetFileName().c_str());
+		BS_LOG_ERRORLN("<frame> tag without file attribute occurred in \"%s\".", getFileName().c_str());
 		return false;
 	}
 	frame.FileName = _pPackage->GetAbsolutePath(fileString);
 	if (frame.FileName.empty()) {
 		BS_LOG_ERRORLN("Could not create absolute path for file specified in <frame> tag in \"%s\": \"%s\".", 
-			GetFileName().c_str(), fileString);
+			getFileName().c_str(), fileString);
 		return false;
 	}
 
@@ -190,23 +190,23 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 		BS_LOG_WARNINGLN("%s attribute occurred without %s attribute in <frame> tag in \"%s\". Assuming default (\"0\").",
 		                 hotspotxString ? "hotspotx" : "hotspoty",
 		                 !hotspotyString ? "hotspoty" : "hotspotx",
-		                 GetFileName().c_str());
+		                 getFileName().c_str());
 
 	frame.HotspotX = 0;
 	if (hotspotxString && !parseIntegerKey(hotspotxString, 1, &frame.HotspotX))
 		BS_LOG_WARNINGLN("Illegal hotspotx value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
-		                 hotspotxString, GetFileName().c_str(), frame.HotspotX);
+		                 hotspotxString, getFileName().c_str(), frame.HotspotX);
 
 	frame.HotspotY = 0;
 	if (hotspotyString && !parseIntegerKey(hotspotyString, 1, &frame.HotspotY))
 		BS_LOG_WARNINGLN("Illegal hotspoty value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
-		                 hotspotyString, GetFileName().c_str(), frame.HotspotY);
+		                 hotspotyString, getFileName().c_str(), frame.HotspotY);
 
 	Common::String flipVString = node->values["flipv"];
 	if (!flipVString.empty()) {
 		if (!parseBooleanKey(flipVString, frame.FlipV)) {
 			BS_LOG_WARNINGLN("Illegal flipv value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
-			                 flipVString.c_str(), GetFileName().c_str());
+			                 flipVString.c_str(), getFileName().c_str());
 			frame.FlipV = false;
 		}
 	} else
@@ -216,13 +216,13 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 	if (!flipHString.empty()) {
 		if (!parseBooleanKey(flipVString, frame.FlipV)) {
 			BS_LOG_WARNINGLN("Illegal fliph value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
-			                 flipHString.c_str(), GetFileName().c_str());
+			                 flipHString.c_str(), getFileName().c_str());
 			frame.FlipH = false;
 		}
 	} else
 		frame.FlipH = false;
 
-	m_Frames.push_back(frame);
+	_frames.push_back(frame);
 	return true;
 }
 
@@ -234,10 +234,10 @@ AnimationResource::~AnimationResource() {
 // -----------------------------------------------------------------------------
 
 bool AnimationResource::PrecacheAllFrames() const {
-	Common::Array<Frame>::const_iterator Iter = m_Frames.begin();
-	for (; Iter != m_Frames.end(); ++Iter) {
-		if (!Kernel::GetInstance()->GetResourceManager()->PrecacheResource((*Iter).FileName)) {
-			BS_LOG_ERRORLN("Could not precache \"%s\".", (*Iter).FileName.c_str());
+	Common::Array<Frame>::const_iterator iter = _frames.begin();
+	for (; iter != _frames.end(); ++iter) {
+		if (!Kernel::GetInstance()->GetResourceManager()->PrecacheResource((*iter).FileName)) {
+			BS_LOG_ERRORLN("Could not precache \"%s\".", (*iter).FileName.c_str());
 			return false;
 		}
 	}
@@ -248,30 +248,30 @@ bool AnimationResource::PrecacheAllFrames() const {
 // -----------------------------------------------------------------------------
 
 bool AnimationResource::ComputeFeatures() {
-	BS_ASSERT(m_Frames.size());
+	BS_ASSERT(_frames.size());
 
 	// Alle Features werden als vorhanden angenommen
-	m_ScalingAllowed = true;
-	m_AlphaAllowed = true;
-	m_ColorModulationAllowed = true;
+	_scalingAllowed = true;
+	_alphaAllowed = true;
+	_colorModulationAllowed = true;
 
 	// Alle Frame durchgehen und alle Features deaktivieren, die auch nur von einem Frame nicht unterstützt werden.
-	Common::Array<Frame>::const_iterator Iter = m_Frames.begin();
-	for (; Iter != m_Frames.end(); ++Iter) {
+	Common::Array<Frame>::const_iterator Iter = _frames.begin();
+	for (; Iter != _frames.end(); ++Iter) {
 		BitmapResource *pBitmap;
 		if (!(pBitmap = static_cast<BitmapResource *>(Kernel::GetInstance()->GetResourceManager()->RequestResource((*Iter).FileName)))) {
 			BS_LOG_ERRORLN("Could not request \"%s\".", (*Iter).FileName.c_str());
 			return false;
 		}
 
-		if (!pBitmap->IsScalingAllowed())
-			m_ScalingAllowed = false;
-		if (!pBitmap->IsAlphaAllowed())
-			m_AlphaAllowed = false;
-		if (!pBitmap->IsColorModulationAllowed())
-			m_ColorModulationAllowed = false;
+		if (!pBitmap->isScalingAllowed())
+			_scalingAllowed = false;
+		if (!pBitmap->isAlphaAllowed())
+			_alphaAllowed = false;
+		if (!pBitmap->isColorModulationAllowed())
+			_colorModulationAllowed = false;
 
-		pBitmap->Release();
+		pBitmap->release();
 	}
 
 	return true;

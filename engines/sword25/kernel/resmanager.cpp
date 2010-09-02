@@ -50,11 +50,11 @@ ResourceManager::~ResourceManager() {
 	// All remaining resources are not released, so print warnings and release
 	Common::List<Resource *>::iterator Iter = m_Resources.begin();
 	for (; Iter != m_Resources.end(); ++Iter) {
-		BS_LOG_WARNINGLN("Resource \"%s\" was not released.", (*Iter)->GetFileName().c_str());
+		BS_LOG_WARNINGLN("Resource \"%s\" was not released.", (*Iter)->getFileName().c_str());
 
 		// Set the lock count to zero
 		while ((*Iter)->GetLockCount() > 0) {
-			(*Iter)->Release();
+			(*Iter)->release();
 		};
 
 		// Delete the resource
@@ -208,11 +208,11 @@ bool ResourceManager::PrecacheResource(const Common::String &FileName, bool Forc
  */
 void ResourceManager::MoveToFront(Resource *pResource) {
 	// Erase the resource from it's current position
-	m_Resources.erase(pResource->_Iterator);
+	m_Resources.erase(pResource->_iterator);
 	// Re-add the resource at the front of the list
 	m_Resources.push_front(pResource);
 	// Reset the resource iterator to the repositioned item
-	pResource->_Iterator = m_Resources.begin();
+	pResource->_iterator = m_Resources.begin();
 }
 
 /**
@@ -237,7 +237,7 @@ Resource *ResourceManager::LoadResource(const Common::String &FileName) {
 
 			// Add the resource to the front of the list
 			m_Resources.push_front(pResource);
-			pResource->_Iterator = m_Resources.begin();
+			pResource->_iterator = m_Resources.begin();
 
 			// Also store the resource in the hash table for quick lookup
 			m_ResourceHashTable[pResource->GetFileNameHash() % HASH_TABLE_BUCKETS].push_front(pResource);
@@ -280,7 +280,7 @@ Common::List<Resource *>::iterator ResourceManager::DeleteResource(Resource *pRe
 	Resource *pDummy = pResource;
 
 	// Delete the resource from the resource list
-	Common::List<Resource *>::iterator Result = m_Resources.erase(pResource->_Iterator);
+	Common::List<Resource *>::iterator Result = m_Resources.erase(pResource->_iterator);
 
 	// Delete the resource
 	delete(pDummy);
@@ -302,7 +302,7 @@ Resource *ResourceManager::GetResource(const Common::String &UniqueFileName) con
 		Common::List<Resource *>::const_iterator Iter = HashBucket.begin();
 		for (; Iter != HashBucket.end(); ++Iter) {
 			// Wenn die Resource gefunden wurde wird sie zurückgegeben.
-			if ((*Iter)->GetFileName() == UniqueFileName)
+			if ((*Iter)->getFileName() == UniqueFileName)
 				return *Iter;
 		}
 	}
@@ -317,7 +317,7 @@ Resource *ResourceManager::GetResource(const Common::String &UniqueFileName) con
 void ResourceManager::DumpLockedResources() {
 	for (Common::List<Resource *>::iterator Iter = m_Resources.begin(); Iter != m_Resources.end(); ++Iter) {
 		if ((*Iter)->GetLockCount() > 0) {
-			BS_LOGLN("%s", (*Iter)->GetFileName().c_str());
+			BS_LOGLN("%s", (*Iter)->getFileName().c_str());
 		}
 	}
 }

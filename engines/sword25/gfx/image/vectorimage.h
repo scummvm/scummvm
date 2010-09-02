@@ -60,31 +60,31 @@ class VectorImage;
 
 class VectorPathInfo {
 public:
-	VectorPathInfo(uint ID, uint LineStyle, uint FillStyle0, uint FillStyle1) :
-		m_ID(ID), m_LineStyle(LineStyle), m_FillStyle0(FillStyle0), m_FillStyle1(FillStyle1) {}
+	VectorPathInfo(uint id, uint lineStyle, uint fillStyle0, uint fillStyle1) :
+		_id(id), _lineStyle(lineStyle), _fillStyle0(fillStyle0), _fillStyle1(fillStyle1) {}
 
 	VectorPathInfo() {
-		m_ID = m_LineStyle = m_FillStyle0 = m_FillStyle1 = 0;
+		_id = _lineStyle = _fillStyle0 = _fillStyle1 = 0;
 	}
 
-	uint GetID() const {
-		return m_ID;
+	uint getId() const {
+		return _id;
 	}
-	uint GetLineStyle() const {
-		return m_LineStyle;
+	uint getLineStyle() const {
+		return _lineStyle;
 	}
-	uint GetFillStyle0() const {
-		return m_FillStyle0;
+	uint getFillStyle0() const {
+		return _fillStyle0;
 	}
-	uint GetFillStyle1() const {
-		return m_FillStyle1;
+	uint getFillStyle1() const {
+		return _fillStyle1;
 	}
 
 private:
-	uint m_ID;
-	uint m_LineStyle;
-	uint m_FillStyle0;
-	uint m_FillStyle1;
+	uint _id;
+	uint _lineStyle;
+	uint _fillStyle0;
+	uint _fillStyle1;
 };
 
 
@@ -96,61 +96,61 @@ class VectorImageElement {
 	friend class VectorImage;
 public:
 #if 0 // TODO
-	const agg::path_storage &GetPaths() const {
-		return m_Paths;
+	const agg::path_storage &getPaths() const {
+		return _paths;
 	}
 #endif
 
-	uint GetPathCount() const {
-		return m_PathInfos.size();
+	uint getPathCount() const {
+		return _pathInfos.size();
 	}
-	const VectorPathInfo &GetPathInfo(uint PathNr) const {
-		BS_ASSERT(PathNr < GetPathCount());
-		return m_PathInfos[PathNr];
-	}
-
-	double GetLineStyleWidth(uint LineStyle) const {
-		BS_ASSERT(LineStyle < m_LineStyles.size());
-		return m_LineStyles[LineStyle].Width;
+	const VectorPathInfo &getPathInfo(uint pathNr) const {
+		BS_ASSERT(pathNr < getPathCount());
+		return _pathInfos[pathNr];
 	}
 
-	uint GetLineStyleCount() const {
-		return m_LineStyles.size();
+	double getLineStyleWidth(uint lineStyle) const {
+		BS_ASSERT(lineStyle < _lineStyles.size());
+		return _lineStyles[lineStyle].width;
 	}
 
-	uint32 GetLineStyleColor(uint LineStyle) const {
-		BS_ASSERT(LineStyle < m_LineStyles.size());
-		return m_LineStyles[LineStyle].Color;
+	uint getLineStyleCount() const {
+		return _lineStyles.size();
 	}
 
-	uint GetFillStyleCount() const {
-		return m_FillStyles.size();
+	uint32 getLineStyleColor(uint lineStyle) const {
+		BS_ASSERT(lineStyle < _lineStyles.size());
+		return _lineStyles[lineStyle].color;
 	}
 
-	uint32 GetFillStyleColor(uint FillStyle) const {
-		BS_ASSERT(FillStyle < m_FillStyles.size());
-		return m_FillStyles[FillStyle];
+	uint getFillStyleCount() const {
+		return _fillStyles.size();
 	}
 
-	const Common::Rect &GetBoundingBox() const {
-		return m_BoundingBox;
+	uint32 getFillStyleColor(uint fillStyle) const {
+		BS_ASSERT(fillStyle < _fillStyles.size());
+		return _fillStyles[fillStyle];
+	}
+
+	const Common::Rect &getBoundingBox() const {
+		return _boundingBox;
 	}
 
 private:
 	struct LineStyleType {
-		LineStyleType(double Width_, uint32 Color_) : Width(Width_), Color(Color_) {}
-		LineStyleType() { Width = 0; Color = 0; }
-		double Width;
-		uint32 Color;
+		LineStyleType(double width_, uint32 color_) : width(width_), color(color_) {}
+		LineStyleType() { width = 0; color = 0; }
+		double width;
+		uint32 color;
 	};
 
 #if 0 // TODO
-	agg::path_storage m_Paths;
+	agg::path_storage _paths;
 #endif
-	Common::Array<VectorPathInfo> m_PathInfos;
-	Common::Array<LineStyleType> m_LineStyles;
-	Common::Array<uint32>  m_FillStyles;
-	Common::Rect m_BoundingBox;
+	Common::Array<VectorPathInfo> _pathInfos;
+	Common::Array<LineStyleType> _lineStyles;
+	Common::Array<uint32>  _fillStyles;
+	Common::Rect _boundingBox;
 };
 
 
@@ -162,69 +162,69 @@ private:
 
 class VectorImage : public Image {
 public:
-	VectorImage(const byte *pFileData, uint FileSize, bool &Success);
+	VectorImage(const byte *pFileData, uint fileSize, bool &success);
 
-	uint GetElementCount() const {
-		return m_Elements.size();
+	uint getElementCount() const {
+		return _elements.size();
 	}
-	const VectorImageElement &GetElement(uint ElementNr) const {
-		BS_ASSERT(ElementNr < m_Elements.size());
-		return m_Elements[ElementNr];
+	const VectorImageElement &getElement(uint elementNr) const {
+		BS_ASSERT(elementNr < _elements.size());
+		return _elements[elementNr];
 	}
-	const Common::Rect &GetBoundingBox() const {
-		return m_BoundingBox;
+	const Common::Rect &getBoundingBox() const {
+		return _boundingBox;
 	}
 
 	//
 	// Die abstrakten Methoden von BS_Image
 	//
-	virtual int GetWidth() const {
-		return m_BoundingBox.width();
+	virtual int getWidth() const {
+		return _boundingBox.width();
 	}
-	virtual int GetHeight() const {
-		return m_BoundingBox.height();
+	virtual int getHeight() const {
+		return _boundingBox.height();
 	}
-	virtual GraphicEngine::COLOR_FORMATS GetColorFormat() const {
+	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const {
 		return GraphicEngine::CF_ARGB32;
 	}
-	virtual bool Fill(const Common::Rect *pFillRect = 0, uint Color = BS_RGB(0, 0, 0));
-	virtual uint GetPixel(int X, int Y);
-	virtual bool IsBlitSource() const {
+	virtual bool fill(const Common::Rect *pFillRect = 0, uint color = BS_RGB(0, 0, 0));
+	virtual uint getPixel(int x, int y);
+	virtual bool isBlitSource() const {
 		return true;
 	}
-	virtual bool IsBlitTarget() const {
+	virtual bool isBlitTarget() const {
 		return false;
 	}
-	virtual bool IsScalingAllowed() const {
+	virtual bool isScalingAllowed() const {
 		return true;
 	}
-	virtual bool IsFillingAllowed() const {
+	virtual bool isFillingAllowed() const {
 		return false;
 	}
-	virtual bool IsAlphaAllowed() const {
+	virtual bool isAlphaAllowed() const {
 		return true;
 	}
-	virtual bool IsColorModulationAllowed() const {
+	virtual bool isColorModulationAllowed() const {
 		return true;
 	}
-	virtual bool IsSetContentAllowed() const {
+	virtual bool isSetContentAllowed() const {
 		return false;
 	}
-	virtual bool SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride);
-	virtual bool Blit(int PosX = 0, int PosY = 0,
-	                  int Flipping = FLIP_NONE,
+	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride);
+	virtual bool blit(int posX = 0, int posY = 0,
+	                  int flipping = FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
-	                  uint Color = BS_ARGB(255, 255, 255, 255),
-	                  int Width = -1, int Height = -1);
+	                  uint color = BS_ARGB(255, 255, 255, 255),
+	                  int width = -1, int height = -1);
 
 	class SWFBitStream;
 
 private:
-	bool ParseDefineShape(uint ShapeType, SWFBitStream &bs);
-	bool ParseStyles(uint ShapeType, SWFBitStream &bs, uint &NumFillBits, uint &NumLineBits);
+	bool parseDefineShape(uint shapeType, SWFBitStream &bs);
+	bool parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBits, uint &numLineBits);
 
-	Common::Array<VectorImageElement>    m_Elements;
-	Common::Rect                             m_BoundingBox;
+	Common::Array<VectorImageElement>    _elements;
+	Common::Rect                         _boundingBox;
 };
 
 } // End of namespace Sword25

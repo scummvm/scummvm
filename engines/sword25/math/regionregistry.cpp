@@ -69,23 +69,23 @@ void RegionRegistry::LogWarningLn(const char *Message) const {
 
 // -----------------------------------------------------------------------------
 
-bool RegionRegistry::Persist(OutputPersistenceBlock &Writer) {
+bool RegionRegistry::persist(OutputPersistenceBlock &writer) {
 	bool Result = true;
 
-	// Write out the next handle
-	Writer.Write(m_NextHandle);
+	// write out the next handle
+	writer.write(m_NextHandle);
 
 	// Number of regions to write
-	Writer.Write(m_Handle2PtrMap.size());
+	writer.write(m_Handle2PtrMap.size());
 
 	// Persist all the BS_Regions
 	HANDLE2PTR_MAP::const_iterator Iter = m_Handle2PtrMap.begin();
 	while (Iter != m_Handle2PtrMap.end()) {
 		// Handle persistence
-		Writer.Write(Iter->_key);
+		writer.write(Iter->_key);
 
 		// Persist object
-		Result &= Iter->_value->Persist(Writer);
+		Result &= Iter->_value->persist(writer);
 
 		++Iter;
 	}
@@ -95,31 +95,31 @@ bool RegionRegistry::Persist(OutputPersistenceBlock &Writer) {
 
 // -----------------------------------------------------------------------------
 
-bool RegionRegistry::Unpersist(InputPersistenceBlock &Reader) {
+bool RegionRegistry::unpersist(InputPersistenceBlock &reader) {
 	bool Result = true;
 
-	// Read in the next handle
-	Reader.Read(m_NextHandle);
+	// read in the next handle
+	reader.read(m_NextHandle);
 
 	// Destroy all existing BS_Regions
 //FIXME: This doesn't seem right - the value is being deleted but not the actual hash node itself?
 	while (!m_Handle2PtrMap.empty()) delete m_Handle2PtrMap.begin()->_value;
 
-	// Read in the number of BS_Regions
+	// read in the number of BS_Regions
 	uint RegionCount;
-	Reader.Read(RegionCount);
+	reader.read(RegionCount);
 
 	// Restore all the BS_Regions objects
 	for (uint i = 0; i < RegionCount; ++i)  {
 		// Handle read
 		uint Handle;
-		Reader.Read(Handle);
+		reader.read(Handle);
 
 		// BS_Region restore
-		Result &= Region::Create(Reader, Handle) != 0;
+		Result &= Region::Create(reader, Handle) != 0;
 	}
 
-	return Reader.IsGood() && Result;
+	return reader.isGood() && Result;
 }
 
 } // End of namespace Sword25

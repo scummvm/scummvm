@@ -53,32 +53,32 @@ namespace Sword25 {
 // Construction/Destruction
 // -----------------------------------------------------------------------------
 
-Panel::Panel(RenderObjectPtr<RenderObject> ParentPtr, int Width, int Height, uint Color) :
-	RenderObject(ParentPtr, RenderObject::TYPE_PANEL),
-	m_Color(Color) {
-	m_InitSuccess = false;
+Panel::Panel(RenderObjectPtr<RenderObject> parentPtr, int width, int height, uint color) :
+	RenderObject(parentPtr, RenderObject::TYPE_PANEL),
+	_color(color) {
+	_initSuccess = false;
 
-	m_Width = Width;
-	m_Height = Height;
+	_width = width;
+	_height = height;
 
-	if (m_Width < 0) {
-		BS_LOG_ERRORLN("Tried to initialise a panel with an invalid width (%d).", m_Width);
+	if (_width < 0) {
+		BS_LOG_ERRORLN("Tried to initialise a panel with an invalid width (%d).", _width);
 		return;
 	}
 
-	if (m_Height < 0) {
-		BS_LOG_ERRORLN("Tried to initialise a panel with an invalid height (%d).", m_Height);
+	if (_height < 0) {
+		BS_LOG_ERRORLN("Tried to initialise a panel with an invalid height (%d).", _height);
 		return;
 	}
 
-	m_InitSuccess = true;
+	_initSuccess = true;
 }
 
 // -----------------------------------------------------------------------------
 
-Panel::Panel(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle) :
-	RenderObject(ParentPtr, RenderObject::TYPE_PANEL, Handle) {
-	m_InitSuccess = Unpersist(Reader);
+Panel::Panel(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle) :
+	RenderObject(parentPtr, RenderObject::TYPE_PANEL, handle) {
+	_initSuccess = unpersist(reader);
 }
 
 // -----------------------------------------------------------------------------
@@ -90,45 +90,46 @@ Panel::~Panel() {
 // Rendern
 // -----------------------------------------------------------------------------
 
-bool Panel::DoRender() {
+bool Panel::doRender() {
 	// Falls der Alphawert 0 ist, ist das Panel komplett durchsichtig und es muss nichts gezeichnet werden.
-	if (m_Color >> 24 == 0) return true;
+	if (_color >> 24 == 0)
+		return true;
 
-	GraphicEngine *GfxPtr = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
-	BS_ASSERT(GfxPtr);
+	GraphicEngine *gfxPtr = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
+	BS_ASSERT(gfxPtr);
 
-	return GfxPtr->Fill(&m_BBox, m_Color);
+	return gfxPtr->fill(&_bbox, _color);
 }
 
 // -----------------------------------------------------------------------------
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool Panel::Persist(OutputPersistenceBlock &Writer) {
-	bool Result = true;
+bool Panel::persist(OutputPersistenceBlock &writer) {
+	bool result = true;
 
-	Result &= RenderObject::Persist(Writer);
-	Writer.Write(m_Color);
+	result &= RenderObject::persist(writer);
+	writer.write(_color);
 
-	Result &= RenderObject::PersistChildren(Writer);
+	result &= RenderObject::persistChildren(writer);
 
-	return Result;
+	return result;
 }
 
 // -----------------------------------------------------------------------------
 
-bool Panel::Unpersist(InputPersistenceBlock &Reader) {
-	bool Result = true;
+bool Panel::unpersist(InputPersistenceBlock &reader) {
+	bool result = true;
 
-	Result &= RenderObject::Unpersist(Reader);
+	result &= RenderObject::unpersist(reader);
 
-	uint Color;
-	Reader.Read(Color);
-	SetColor(Color);
+	uint color;
+	reader.read(color);
+	setColor(color);
 
-	Result &= RenderObject::UnpersistChildren(Reader);
+	result &= RenderObject::unpersistChildren(reader);
 
-	return Reader.IsGood() && Result;
+	return reader.isGood() && result;
 }
 
 } // End of namespace Sword25

@@ -78,7 +78,7 @@ public:
 	    @brief Setzt den Alphawert des Textes.
 	    @param Alpha der neue Alphawert des Textes (0 = keine Deckung, 255 = volle Deckung).
 	*/
-	void SetAlpha(int Alpha);
+	void setAlpha(int alpha);
 
 	/**
 	    @brief Legt fest, ob der Text automatisch umgebrochen werden soll.
@@ -115,22 +115,22 @@ public:
 	    @brief Setzt die Farbe des Textes.
 	    @param Color eine 24-Bit RGB Farbe, die die Farbe des Textes festlegt.
 	*/
-	void SetColor(uint ModulationColor);
+	void setColor(uint modulationColor);
 
 	/**
 	    @brief Gibt den Alphawert des Textes zurück.
 	    @return Der Alphawert des Textes (0 = keine Deckung, 255 = volle Deckung).
 	*/
-	int GetAlpha() const {
-		return m_ModulationColor >> 24;
+	int getAlpha() const {
+		return _modulationColor >> 24;
 	}
 
 	/**
 	    @brief Gibt die Farbe des Textes zurück.
 	    @return Eine 24-Bit RGB Farbe, die die Farbe des Textes angibt.
 	*/
-	int GetColor() const {
-		return m_ModulationColor & 0x00ffffff;
+	int getColor() const {
+		return _modulationColor & 0x00ffffff;
 	}
 
 	/**
@@ -147,17 +147,17 @@ public:
 		return m_AutoWrapThreshold;
 	}
 
-	virtual bool    Persist(OutputPersistenceBlock &Writer);
-	virtual bool    Unpersist(InputPersistenceBlock &Reader);
+	virtual bool    persist(OutputPersistenceBlock &writer);
+	virtual bool    unpersist(InputPersistenceBlock &reader);
 
 protected:
-	virtual bool DoRender();
+	virtual bool doRender();
 
 private:
 	Text(RenderObjectPtr<RenderObject> ParentPtr);
 	Text(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle);
 
-	uint    m_ModulationColor;
+	uint    _modulationColor;
 	Common::String      m_Font;
 	Common::String      m_Text;
 	bool            m_AutoWrap;

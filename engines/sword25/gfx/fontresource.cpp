@@ -70,9 +70,9 @@ FontResource::FontResource(Kernel *pKernel, const Common::String &FileName) :
 
 	// Load the contents of the file
 	uint fileSize;
-	char *xmlData = pPackage->GetXmlFile(GetFileName(), &fileSize);
+	char *xmlData = pPackage->GetXmlFile(getFileName(), &fileSize);
 	if (!xmlData) {
-		BS_LOG_ERRORLN("Could not read \"%s\".", GetFileName().c_str());
+		BS_LOG_ERRORLN("Could not read \"%s\".", getFileName().c_str());
 		return;
 	}
 
@@ -93,13 +93,13 @@ bool FontResource::parserCallback_font(ParserNode *node) {
 
 	if (!parseIntegerKey(node->values["lineheight"].c_str(), 1, &_LineHeight)) {
 		BS_LOG_WARNINGLN("Illegal or missing lineheight attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
-		                 GetFileName().c_str(), DEFAULT_LINEHEIGHT);
+		                 getFileName().c_str(), DEFAULT_LINEHEIGHT);
 		_LineHeight = DEFAULT_LINEHEIGHT;
 	}
 
 	if (!parseIntegerKey(node->values["gap"].c_str(), 1, &_GapWidth)) {
 		BS_LOG_WARNINGLN("Illegal or missing gap attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
-		                 GetFileName().c_str(), DEFAULT_GAPWIDTH);
+		                 getFileName().c_str(), DEFAULT_GAPWIDTH);
 		_GapWidth = DEFAULT_GAPWIDTH;
 	}
 	
@@ -112,7 +112,7 @@ bool FontResource::parserCallback_font(ParserNode *node) {
 	_BitmapFileName = pPackage->GetAbsolutePath(bitmapFilename);
 	if (_BitmapFileName == "") {
 		BS_LOG_ERRORLN("Image file \"%s\" was specified in <font> tag of \"%s\" but could not be found.",
-		               _BitmapFileName.c_str(), GetFileName().c_str());
+		               _BitmapFileName.c_str(), getFileName().c_str());
 	}
 
 	// Pre-cache the resource
@@ -130,20 +130,20 @@ bool FontResource::parserCallback_character(ParserNode *node) {
 	int charCode, top, left, right, bottom;
 
 	if (!parseIntegerKey(node->values["code"].c_str(), 1, &charCode) || (charCode < 0) || (charCode >= 256)) {
-		return parserError("Illegal or missing code attribute in <character> tag in \"%s\".", GetFileName().c_str());
+		return parserError("Illegal or missing code attribute in <character> tag in \"%s\".", getFileName().c_str());
 	}
 
 	if (!parseIntegerKey(node->values["top"].c_str(), 1, &top) || (top < 0)) {
-		return parserError("Illegal or missing top attribute in <character> tag in \"%s\".", GetFileName().c_str());
+		return parserError("Illegal or missing top attribute in <character> tag in \"%s\".", getFileName().c_str());
 	}
 	if (!parseIntegerKey(node->values["left"].c_str(), 1, &left) || (left < 0)) {
-		return parserError("Illegal or missing left attribute in <character> tag in \"%s\".", GetFileName().c_str());
+		return parserError("Illegal or missing left attribute in <character> tag in \"%s\".", getFileName().c_str());
 	}
 	if (!parseIntegerKey(node->values["right"].c_str(), 1, &right) || (right < 0)) {
-		return parserError("Illegal or missing right attribute in <character> tag in \"%s\".", GetFileName().c_str());
+		return parserError("Illegal or missing right attribute in <character> tag in \"%s\".", getFileName().c_str());
 	}
 	if (!parseIntegerKey(node->values["bottom"].c_str(), 1, &bottom) || (bottom < 0)) {
-		return parserError("Illegal or missing bottom attribute in <character> tag in \"%s\".", GetFileName().c_str());
+		return parserError("Illegal or missing bottom attribute in <character> tag in \"%s\".", getFileName().c_str());
 	}
 
 	this->_CharacterRects[charCode] = Common::Rect(left, top, right, bottom);

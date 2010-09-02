@@ -57,29 +57,29 @@ class RenderObject;
 template<class T>
 class RenderObjectPtr {
 public:
-	RenderObjectPtr() : m_Handle(0) {}
+	RenderObjectPtr() : _handle(0) {}
 
-	RenderObjectPtr(uint Handle) : m_Handle(Handle) {}
+	RenderObjectPtr(uint handle) : _handle(handle) {}
 
 	T *operator->() const {
-		return static_cast<T *>(RenderObjectRegistry::GetInstance().ResolveHandle(m_Handle));
+		return static_cast<T *>(RenderObjectRegistry::GetInstance().resolveHandle(_handle));
 	}
 
 	bool operator==(const RenderObjectPtr<T> & other) {
-		return m_Handle == other.m_Handle;
+		return _handle == other._handle;
 	}
 
-	bool IsValid() const {
-		return RenderObjectRegistry::GetInstance().ResolveHandle(m_Handle) != 0;
+	bool isValid() const {
+		return RenderObjectRegistry::GetInstance().resolveHandle(_handle) != 0;
 	}
 
-	void Erase() {
-		delete static_cast<T *>(RenderObjectRegistry::GetInstance().ResolveHandle(m_Handle));
-		m_Handle = 0;
+	void erase() {
+		delete static_cast<T *>(RenderObjectRegistry::GetInstance().resolveHandle(_handle));
+		_handle = 0;
 	}
 
 private:
-	uint m_Handle;
+	uint _handle;
 };
 
 } // End of namespace Sword25

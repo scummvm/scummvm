@@ -72,7 +72,7 @@ public:
 	    @param Height die vertikale Bildschirmauflösung in Pixeln
 	    @param Die Anzahl an Framebuffern, die eingesetzt wird (Backbuffer + Primary).
 	*/
-	RenderObjectManager(int Width, int Height, int FramebufferCount);
+	RenderObjectManager(int width, int height, int framebufferCount);
 	virtual ~RenderObjectManager();
 
 	// Interface
@@ -85,17 +85,17 @@ public:
 	            zurückgesetzt. Wenn man also mit diesen Werten arbeiten möchten, muss man dies nach einem Aufruf von Render() und vor
 	            einem Aufruf von StartFrame() tun.
 	 */
-	void StartFrame();
+	void startFrame();
 	/**
 	    @brief Rendert alle Objekte die sich während des letzten Aufrufes von Render() verändert haben.
 	    @return Gibt false zurück, falls das Rendern fehlgeschlagen ist.
 	 */
-	bool Render();
+	bool render();
 	/**
 	    @brief Gibt einen Pointer auf die Wurzel des Objektbaumes zurück.
 	 */
-	RenderObjectPtr<RenderObject> GetTreeRoot() {
-		return m_RootPtr;
+	RenderObjectPtr<RenderObject> getTreeRoot() {
+		return _rootPtr;
 	}
 	/**
 	    @brief Fügt ein BS_TimedRenderObject in die Liste der zeitabhängigen Render-Objekte.
@@ -105,25 +105,25 @@ public:
 
 	    @param RenderObject das einzufügende BS_TimedRenderObject
 	*/
-	void AttatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> pRenderObject);
+	void attatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> pRenderObject);
 	/**
 	    @brief Entfernt ein BS_TimedRenderObject aus der Liste für zeitabhängige Render-Objekte.
 	*/
-	void DetatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> pRenderObject);
+	void detatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> pRenderObject);
 
-	virtual bool Persist(OutputPersistenceBlock &Writer);
-	virtual bool Unpersist(InputPersistenceBlock &Reader);
+	virtual bool persist(OutputPersistenceBlock &writer);
+	virtual bool unpersist(InputPersistenceBlock &reader);
 
 private:
-	bool m_FrameStarted;
+	bool _frameStarted;
 	typedef Common::Array<RenderObjectPtr<TimedRenderObject> > RenderObjectList;
-	RenderObjectList m_TimedRenderObjects;
+	RenderObjectList _timedRenderObjects;
 
 	// RenderObject-Tree Variablen
 	// ---------------------------
 	// Der Baum legt die hierachische Ordnung der BS_RenderObjects fest.
 	// Zu weiteren Informationen siehe: "renderobject.h"
-	RenderObjectPtr<RenderObject>     m_RootPtr;      // Die Wurzel der Baumes
+	RenderObjectPtr<RenderObject>     _rootPtr;      // Die Wurzel der Baumes
 };
 
 } // End of namespace Sword25
