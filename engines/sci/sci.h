@@ -260,7 +260,7 @@ public:
 
 	void scriptDebug();
 	bool checkExportBreakpoint(uint16 script, uint16 pubfunct);
-	bool checkSelectorBreakpoint(reg_t send_obj, int selector);
+	bool checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector);
 
 	void patchGameSaveRestore(SegManager *segMan);
 

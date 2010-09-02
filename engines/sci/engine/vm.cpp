@@ -366,27 +366,24 @@ struct CallsStruct {
 	int type; /**< Same as ExecStack.type */
 };
 
-bool SciEngine::checkSelectorBreakpoint(reg_t send_obj, int selector) {
-	if (_debugState._activeBreakpointTypes & BREAK_SELECTOR) {
-		char method_name[256];
+bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector) {
+	char method_name[256];
 
-		sprintf(method_name, "%s::%s", _gamestate->_segMan->getObjectName(send_obj), getKernel()->getSelectorName(selector).c_str());
+	sprintf(method_name, "%s::%s", _gamestate->_segMan->getObjectName(send_obj), getKernel()->getSelectorName(selector).c_str());
 
-		Common::List<Breakpoint>::const_iterator bp;
-		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
-			int cmplen = bp->name.size();
-			if (bp->name.lastChar() != ':')
-				cmplen = 256;
+	Common::List<Breakpoint>::const_iterator bp;
+	for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+		int cmplen = bp->name.size();
+		if (bp->name.lastChar() != ':')
+			cmplen = 256;
 
-			if (bp->type == BREAK_SELECTOR && !strncmp(bp->name.c_str(), method_name, cmplen)) {
-				_console->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
-				_debugState.debugging = true;
-				_debugState.breakpointWasHit = true;
-				return true;
-			}
+		if (bp->type == breakpointType && !strncmp(bp->name.c_str(), method_name, cmplen)) {
+			_console->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
+			_debugState.debugging = true;
+			_debugState.breakpointWasHit = true;
+			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -399,11 +396,12 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	int selector;
 	int argc;
 	int origin = s->_executionStack.size()-1; // Origin: Used for debugging
-	bool printSendActions = false;
 	// We return a pointer to the new active ExecStack
 
 	// The selector calls we catch are stored below:
 	Common::Stack<CallsStruct> sendCalls;
+
+	int activeBreakpointTypes = g_sci->_debugState._activeBreakpointTypes;
 
 	while (framesize > 0) {
 		selector = validate_arithmetic(*argp++);
@@ -412,9 +410,6 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		if (argc > 0x800) { // More arguments than the stack could possibly accomodate for
 			error("send_selector(): More than 0x800 arguments to function call");
 		}
-
-		// Check if a breakpoint is set on this method
-		printSendActions = g_sci->checkSelectorBreakpoint(send_obj, selector);
 
 #ifdef VM_DEBUG_SEND
 		printf("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj), 
@@ -439,18 +434,23 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 			// argc == 0: read selector
 			// argc != 0: write selector
-			if (printSendActions && !argc) {	// read selector
-				debug("[read selector]\n");
-				printSendActions = false;
-			}
-
-			if (printSendActions && argc) {
-				reg_t oldReg = *varp.getPointer(s->_segMan);
-				reg_t newReg = argp[1];
-				warning("[write to selector (%s:%s): change %04x:%04x to %04x:%04x]\n", 
-					s->_segMan->getObjectName(send_obj), g_sci->getKernel()->getSelectorName(selector).c_str(), 
-					PRINT_REG(oldReg), PRINT_REG(newReg));
-				printSendActions = false;
+			if (!argc) {
+				// read selector
+				if (activeBreakpointTypes & BREAK_SELECTORREAD) {
+					if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORREAD, send_obj, selector))
+						debug("[read selector]\n");
+				}
+			} else {
+				// write selector
+				if (activeBreakpointTypes & BREAK_SELECTORWRITE) {
+					if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORWRITE, send_obj, selector)) {
+						reg_t oldReg = *varp.getPointer(s->_segMan);
+						reg_t newReg = argp[1];
+						warning("[write to selector (%s:%s): change %04x:%04x to %04x:%04x]\n", 
+							s->_segMan->getObjectName(send_obj), g_sci->getKernel()->getSelectorName(selector).c_str(), 
+							PRINT_REG(oldReg), PRINT_REG(newReg));
+					}
+				}
 			}
 
 			if (argc > 1) {
@@ -483,6 +483,8 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		case kSelectorMethod:
 
 #ifdef VM_DEBUG_SEND
+			if (_debugState._activeBreakpointTypes & BREAK_SELECTOREXEC)
+				g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector);
 			printf("Funcselector(");
 			for (int i = 0; i < argc; i++) {
 				printf("%04x:%04x", PRINT_REG(argp[i+1]));
@@ -491,30 +493,32 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			}
 			printf(") at %04x:%04x\n", PRINT_REG(funcp));
 #endif // VM_DEBUG_SEND
-			if (printSendActions) {
-				printf("[invoke selector]");
 #ifndef VM_DEBUG_SEND
-				int displaySize = 0;
-				for (int argNr = 1; argNr <= argc; argNr++) {
-					if (argNr == 1)
-						printf(" - ");
-					reg_t curParam = argp[argNr];
-					if (curParam.segment) {
-						printf("[%04x:%04x] ", PRINT_REG(curParam));
-						displaySize += 12;
-					} else {
-						printf("[%04x] ", curParam.offset);
-						displaySize += 7;
-					}
-					if (displaySize > 50) {
-						if (argNr < argc)
-							printf("...");
-						break;
+			if (activeBreakpointTypes & BREAK_SELECTOREXEC) {
+				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector)) {
+					printf("[execute selector]");
+
+					int displaySize = 0;
+					for (int argNr = 1; argNr <= argc; argNr++) {
+						if (argNr == 1)
+							printf(" - ");
+						reg_t curParam = argp[argNr];
+						if (curParam.segment) {
+							printf("[%04x:%04x] ", PRINT_REG(curParam));
+							displaySize += 12;
+						} else {
+							printf("[%04x] ", curParam.offset);
+							displaySize += 7;
+						}
+						if (displaySize > 50) {
+							if (argNr < argc)
+								printf("...");
+							break;
+						}
 					}
 				}
 #endif
 				printf("\n");
-				printSendActions = false;
 			}
 
 			{
