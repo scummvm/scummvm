@@ -72,7 +72,7 @@ DynamicBitmap::DynamicBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<Rend
 
 bool DynamicBitmap::CreateGLImage(unsigned int Width, unsigned int Height) {
 	// GLImage mit den gewünschten Maßen erstellen
-	bool Result;
+	bool Result = false;
 	m_Image.reset(new GLImage(Width, Height, Result));
 
 	m_OriginalWidth = m_Width = Width;
