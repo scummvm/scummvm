@@ -79,11 +79,6 @@ int main(int argc, char *argv[]) {
 	int i;
 	int nbrElem, nbrSubElem;
 
-	uint8 padBuf[DATAALIGNMENT];
-
-	for (i = 0; i < DATAALIGNMENT; i++)
-		padBuf[i] = 0;
-
 	outFile = fopen("hugo.dat", "wb");
 
 	// Write header
