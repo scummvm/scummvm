@@ -310,6 +310,39 @@ Common::Error SciEngine::run() {
 		}
 	}
 
+	// Show a warning if the user has selected a General MIDI device, no GM patch exists
+	// (i.e. patch 4) and the game is one of the known 8 SCI1 games that Sierra has provided
+	// after market patches for in their "General MIDI Utility".
+	if (_soundCmd->getMusicType() == MT_GM) {
+		if (!_resMan->findResource(ResourceId(kResourceTypePatch, 4), 0)) {
+			switch (getGameId()) {
+			case GID_ECOQUEST:
+			case GID_HOYLE3:
+			case GID_LSL1:
+			case GID_LSL5:
+			case GID_LONGBOW:
+			case GID_SQ1:
+			case GID_SQ4:
+			case GID_FAIRYTALES:
+				showScummVMDialog("You have selected General MIDI as a sound device. Sierra "
+								  "has provided after-market support for General MIDI for this "
+								  "game in their \"General MIDI Utility\". Please, apply this "
+								  "patch in order to enjoy MIDI music with this game. Once you "
+								  "have obtained it, you can unpack all of the included *.PAT "
+								  "files in your ScummVM extras folder and ScummVM will add the "
+								  "appropriate patch automatically. Alternatively, you can follow "
+								  "the instructions in the READ.ME file included in the patch and "
+								  "rename the associated *.PAT file to 4.PAT and place it in the "
+								  "game folder. Without this patch, General MIDI music for this "
+								  "game will sound badly distorted.");
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+
 	runGame();
 
 	ConfMan.flushToDisk();

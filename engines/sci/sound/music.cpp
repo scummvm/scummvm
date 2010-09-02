@@ -67,8 +67,9 @@ void SciMusic::init() {
 	// Default to MIDI in SCI2.1+ games, as many don't have AdLib support.
 	Common::Platform platform = g_sci->getPlatform();
 	uint32 dev = MidiDriver::detectDevice((getSciVersion() >= SCI_VERSION_2_1) ? (MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM) : (MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI));
+	_musicType = MidiDriver::getMusicType(dev);
 
-	switch (MidiDriver::getMusicType(dev)) {
+	switch (_musicType) {
 	case MT_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
 		if (g_sci->getPlatform() == Common::kPlatformAmiga || platform == Common::kPlatformMacintosh)

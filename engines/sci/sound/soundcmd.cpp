@@ -696,4 +696,9 @@ void SoundCommandParser::pauseAll(bool pause) {
 	_music->pauseAll(pause);
 }
 
+MusicType SoundCommandParser::getMusicType() const {
+	assert(_music);
+	return _music->soundGetMusicType();
+}
+
 } // End of namespace Sci

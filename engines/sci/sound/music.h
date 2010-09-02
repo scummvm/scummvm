@@ -155,6 +155,7 @@ public:
 	void soundSetSoundOn(bool soundOnFlag);
 	uint16 soundGetVoices();
 	uint32 soundGetTempo() const { return _dwTempo; }
+	MusicType soundGetMusicType() const { return _musicType; }
 
 	bool soundIsActive(MusicEntry *pSnd) {
 		assert(pSnd->pStreamAud != 0);
@@ -218,6 +219,7 @@ private:
 	MusicEntry *_usedChannel[16];
 
 	MidiCommandQueue _queuedCommands;
+	MusicType _musicType;
 
 	int _driverFirstChannel;
 };

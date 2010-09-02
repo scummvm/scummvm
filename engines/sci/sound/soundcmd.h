@@ -27,6 +27,7 @@
 #define SCI_SOUNDCMD_H
 
 #include "common/list.h"
+#include "sound/mididrv.h"	// for MusicType
 #include "sci/engine/state.h"
 
 namespace Sci {
@@ -66,6 +67,8 @@ public:
 
 	void processPlaySound(reg_t obj);
 	void processStopSound(reg_t obj, bool sampleFinishedPlaying);
+
+	MusicType getMusicType() const;
 
 	/**
 	 * Synchronizes the current state of the music list to the rest of the engine, so that
