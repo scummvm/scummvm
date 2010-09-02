@@ -1837,7 +1837,7 @@ bool VMDDecoder::readFiles() {
 				break;
 
 			if (_frames[i].parts[j].type == kPartTypeFile) {
-				File file;;
+				File file;
 
 				file.offset   = _stream->pos() + 20;
 				file.size     = _frames[i].parts[j].size;

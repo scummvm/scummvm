@@ -295,7 +295,7 @@ bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
 				_console->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
 				_debugState.debugging = true;
 				_debugState.breakpointWasHit = true;
-				return true;;
+				return true;
 			}
 		}
 	}
