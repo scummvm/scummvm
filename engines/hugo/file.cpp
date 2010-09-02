@@ -827,7 +827,7 @@ void FileManager::readConfig() {
 	if (f.open(path)) {
 		// If config format changed, ignore it and use defaults
 		if (f.size() != sizeof(_config)) {
-			warning("Incompatible %s: file size:%d expected size: %d. Skipping loading.", CONFIGFILE, f.size(), sizeof(_config));
+			warning("Incompatible %s: file size: %ld expected size: %ld. Skipping loading.", CONFIGFILE, f.size(), sizeof(_config));
 		} else {
 			if (f.read(&_config, sizeof(_config)) != sizeof(_config))
 				_config = tmpConfig;
