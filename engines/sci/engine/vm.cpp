@@ -482,17 +482,6 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 		case kSelectorMethod:
 
-#ifdef VM_DEBUG_SEND
-			if (_debugState._activeBreakpointTypes & BREAK_SELECTOREXEC)
-				g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector);
-			printf("Funcselector(");
-			for (int i = 0; i < argc; i++) {
-				printf("%04x:%04x", PRINT_REG(argp[i+1]));
-				if (i + 1 < argc)
-					printf(", ");
-			}
-			printf(") at %04x:%04x\n", PRINT_REG(funcp));
-#endif // VM_DEBUG_SEND
 #ifndef VM_DEBUG_SEND
 			if (activeBreakpointTypes & BREAK_SELECTOREXEC) {
 				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector)) {
@@ -518,8 +507,18 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 					}
 					printf("\n");
 				}
-#endif
 			}
+#else // VM_DEBUG_SEND
+			if (activeBreakpointTypes & BREAK_SELECTOREXEC)
+				g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector);
+			printf("Funcselector(");
+			for (int i = 0; i < argc; i++) {
+				printf("%04x:%04x", PRINT_REG(argp[i+1]));
+				if (i + 1 < argc)
+					printf(", ");
+			}
+			printf(") at %04x:%04x\n", PRINT_REG(funcp));
+#endif // VM_DEBUG_SEND
 
 			{
 				CallsStruct call;
