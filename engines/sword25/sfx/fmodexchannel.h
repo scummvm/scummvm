@@ -61,16 +61,16 @@ public:
 	bool SetVolume(float Volume);
 	bool SetPanning(float Panning);
 	bool SetLoop(bool Loop);
-	bool SetLoopPoints(unsigned int LoopStart, unsigned int LoopEnd);
-	bool SetPosition(unsigned int Position);
+	bool SetLoopPoints(uint LoopStart, uint LoopEnd);
+	bool SetPosition(uint Position);
 	bool Stop();
 
 	float           GetVolume();
 	float           GetPanning();
-	unsigned int    GetPosition();
-	unsigned int    GetTime();
-	unsigned int    GetLoopStart();
-	unsigned int    GetLoopEnd();
+	uint    GetPosition();
+	uint    GetTime();
+	uint    GetLoopStart();
+	uint    GetLoopEnd();
 	bool            IsLooping();
 	bool            IsPaused();
 	bool            IsPlaying();

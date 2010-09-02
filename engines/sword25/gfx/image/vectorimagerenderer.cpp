@@ -95,7 +95,7 @@ class StyleHandler {
 public:
 	StyleHandler(const BS_VectorImageElement &VectorImageElement) : m_ImageElement(VectorImageElement) {}
 
-	bool is_solid(unsigned int style) const {
+	bool is_solid(uint style) const {
 		return true;
 	}
 
@@ -120,12 +120,12 @@ BS_VectorImageRenderer::BS_VectorImageRenderer() :
 
 bool BS_VectorImageRenderer::Render(const BS_VectorImage &VectorImage,
                                     float ScaleFactorX, float ScaleFactorY,
-                                    unsigned int &Width, unsigned int &Height,
+                                    uint &Width, uint &Height,
                                     byte *ImageData,
                                     float LineScaleFactor,
                                     bool NoAlphaShapes) {
-	Width = static_cast<unsigned int>(VectorImage.GetWidth() * ScaleFactorX);
-	Height = static_cast<unsigned int>(VectorImage.GetHeight() * ScaleFactorY);
+	Width = static_cast<uint>(VectorImage.GetWidth() * ScaleFactorX);
+	Height = static_cast<uint>(VectorImage.GetHeight() * ScaleFactorY);
 
 	ImageData.resize(Width * Height * 4);
 	memset(&ImageData[0], 0, ImageData.size());
@@ -139,7 +139,7 @@ bool BS_VectorImageRenderer::Render(const BS_VectorImage &VectorImage,
 	Scale = agg::trans_affine_translation(- VectorImage.GetBoundingBox().left, - VectorImage.GetBoundingBox().top);
 	Scale *= agg::trans_affine_scaling(ScaleFactorX, ScaleFactorY);
 
-	for (unsigned int element = 0; element < VectorImage.GetElementCount(); ++element) {
+	for (uint element = 0; element < VectorImage.GetElementCount(); ++element) {
 		const BS_VectorImageElement &CurImageElement = VectorImage.GetElement(element);
 
 		CompoundShape ImageCompoundShape(CurImageElement);
@@ -151,9 +151,9 @@ bool BS_VectorImageRenderer::Render(const BS_VectorImage &VectorImage,
 		//----------------------
 		CompoundRasterizer.clip_box(0, 0, Width, Height);
 		CompoundRasterizer.reset();
-		for (unsigned int i = 0; i < CurImageElement.GetPathCount(); ++i) {
-			unsigned int FillStyle0 = CurImageElement.GetPathInfo(i).GetFillStyle0();
-			unsigned int FillStyle1 = CurImageElement.GetPathInfo(i).GetFillStyle1();
+		for (uint i = 0; i < CurImageElement.GetPathCount(); ++i) {
+			uint FillStyle0 = CurImageElement.GetPathInfo(i).GetFillStyle0();
+			uint FillStyle1 = CurImageElement.GetPathInfo(i).GetFillStyle1();
 
 			if (NoAlphaShapes) {
 				if (FillStyle0 != 0 && CurImageElement.GetFillStyleColor(FillStyle0 - 1).a != 255) FillStyle0 = 0;
@@ -173,10 +173,10 @@ bool BS_VectorImageRenderer::Render(const BS_VectorImage &VectorImage,
 		Rasterizer.clip_box(0, 0, Width, Height);
 		Stroke.line_join(agg::round_join);
 		Stroke.line_cap(agg::round_cap);
-		for (unsigned int i = 0; i < CurImageElement.GetPathCount(); ++i) {
+		for (uint i = 0; i < CurImageElement.GetPathCount(); ++i) {
 			Rasterizer.reset();
 
-			unsigned int CurrentLineStyle = CurImageElement.GetPathInfo(i).GetLineStyle();
+			uint CurrentLineStyle = CurImageElement.GetPathInfo(i).GetLineStyle();
 			if (CurrentLineStyle != 0) {
 				Stroke.width(ScaleFactorX * CurImageElement.GetLineStyleWidth(CurrentLineStyle - 1) * LineScaleFactor);
 				Rasterizer.add_path(Stroke, CurImageElement.GetPathInfo(i).GetID());
@@ -202,7 +202,7 @@ VectorImageRenderer::VectorImageRenderer() {}
 
 bool VectorImageRenderer::Render(const VectorImage &VectorImage,
                                     float ScaleFactorX, float ScaleFactorY,
-                                    unsigned int &Width, unsigned int &Height,
+                                    uint &Width, uint &Height,
                                     byte *ImageData,
                                     float LineScaleFactor,
                                     bool NoAlphaShapes) {

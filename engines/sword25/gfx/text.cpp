@@ -57,7 +57,7 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 namespace {
-const unsigned int AUTO_WRAP_THRESHOLD_DEFAULT = 300;
+const uint AUTO_WRAP_THRESHOLD_DEFAULT = 300;
 }
 
 // -----------------------------------------------------------------------------
@@ -74,7 +74,7 @@ Text::Text(RenderObjectPtr<RenderObject> ParentPtr) :
 
 // -----------------------------------------------------------------------------
 
-Text::Text(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle) :
+Text::Text(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle) :
 	RenderObject(ParentPtr, TYPE_TEXT, Handle) {
 	m_InitSuccess = Unpersist(Reader);
 }
@@ -105,8 +105,8 @@ void Text::SetText(const Common::String &text) {
 
 // -----------------------------------------------------------------------------
 
-void Text::SetColor(unsigned int ModulationColor) {
-	unsigned int NewModulationColor = (ModulationColor & 0x00ffffff) | (m_ModulationColor & 0xff000000);
+void Text::SetColor(uint ModulationColor) {
+	uint NewModulationColor = (ModulationColor & 0x00ffffff) | (m_ModulationColor & 0xff000000);
 	if (NewModulationColor != m_ModulationColor) {
 		m_ModulationColor = NewModulationColor;
 		ForceRefresh();
@@ -117,7 +117,7 @@ void Text::SetColor(unsigned int ModulationColor) {
 
 void Text::SetAlpha(int Alpha) {
 	BS_ASSERT(Alpha >= 0 && Alpha < 256);
-	unsigned int NewModulationColor = (m_ModulationColor & 0x00ffffff) | Alpha << 24;
+	uint NewModulationColor = (m_ModulationColor & 0x00ffffff) | Alpha << 24;
 	if (NewModulationColor != m_ModulationColor) {
 		m_ModulationColor = NewModulationColor;
 		ForceRefresh();
@@ -136,7 +136,7 @@ void Text::SetAutoWrap(bool AutoWrap) {
 
 // -----------------------------------------------------------------------------
 
-void Text::SetAutoWrapThreshold(unsigned int AutoWrapThreshold) {
+void Text::SetAutoWrapThreshold(uint AutoWrapThreshold) {
 	if (AutoWrapThreshold != m_AutoWrapThreshold) {
 		m_AutoWrapThreshold = AutoWrapThreshold;
 		UpdateFormat();
@@ -182,7 +182,7 @@ bool Text::DoRender() {
 		// Jeden Buchstaben einzeln Rendern.
 		int CurX = m_AbsoluteX + (*Iter).BBox.left;
 		int CurY = m_AbsoluteY + (*Iter).BBox.top;
-		for (unsigned int i = 0; i < (*Iter).Text.size(); ++i) {
+		for (uint i = 0; i < (*Iter).Text.size(); ++i) {
 			Common::Rect CurRect = FontPtr->GetCharacterRect((byte)(*Iter).Text[i]);
 
 			Common::Rect RenderRect(CurX, CurY, CurX + CurRect.width(), CurY + CurRect.height());
@@ -245,16 +245,16 @@ void Text::UpdateFormat() {
 	UpdateMetrics(*FontPtr);
 
 	m_Lines.resize(1);
-	if (m_AutoWrap && (unsigned int) m_Width >= m_AutoWrapThreshold && m_Text.size() >= 2) {
+	if (m_AutoWrap && (uint) m_Width >= m_AutoWrapThreshold && m_Text.size() >= 2) {
 		m_Width = 0;
-		unsigned int CurLineWidth = 0;
-		unsigned int CurLineHeight = 0;
-		unsigned int CurLine = 0;
-		unsigned int TempLineWidth = 0;
-		unsigned int LastSpace = 0; // we need at least 1 space character to start a new line...
+		uint CurLineWidth = 0;
+		uint CurLineHeight = 0;
+		uint CurLine = 0;
+		uint TempLineWidth = 0;
+		uint LastSpace = 0; // we need at least 1 space character to start a new line...
 		m_Lines[0].Text = "";
-		for (unsigned int i = 0; i < m_Text.size(); ++i) {
-			unsigned int j;
+		for (uint i = 0; i < m_Text.size(); ++i) {
+			uint j;
 			TempLineWidth = 0;
 			LastSpace = 0;
 			for (j = i; j < m_Text.size(); ++j) {
@@ -278,12 +278,12 @@ void Text::UpdateFormat() {
 				const Common::Rect &CurCharRect = FontPtr->GetCharacterRect((byte)m_Text[j]);
 				CurLineWidth += CurCharRect.width();
 				CurLineWidth += FontPtr->GetGapWidth();
-				if ((unsigned int) CurCharRect.height() > CurLineHeight) CurLineHeight = CurCharRect.height();
+				if ((uint) CurCharRect.height() > CurLineHeight) CurLineHeight = CurCharRect.height();
 			}
 
 			m_Lines[CurLine].BBox.right = CurLineWidth;
 			m_Lines[CurLine].BBox.bottom = CurLineHeight;
-			if ((unsigned int) m_Width < CurLineWidth) m_Width = CurLineWidth;
+			if ((uint) m_Width < CurLineWidth) m_Width = CurLineWidth;
 
 			if (LastSpace < m_Text.size()) {
 				++CurLine;
@@ -321,7 +321,7 @@ void Text::UpdateMetrics(FontResource &FontResource) {
 	m_Width = 0;
 	m_Height = 0;
 
-	for (unsigned int i = 0; i < m_Text.size(); ++i) {
+	for (uint i = 0; i < m_Text.size(); ++i) {
 		const Common::Rect &CurRect = FontResource.GetCharacterRect((byte)m_Text[i]);
 		m_Width += CurRect.width();
 		if (i != m_Text.size() - 1) m_Width += FontResource.GetGapWidth();
@@ -372,7 +372,7 @@ bool Text::Unpersist(InputPersistenceBlock &Reader) {
 	Reader.Read(AutoWrap);
 	SetAutoWrap(AutoWrap);
 
-	unsigned int AutoWrapThreshold;
+	uint AutoWrapThreshold;
 	Reader.Read(AutoWrapThreshold);
 	SetAutoWrapThreshold(AutoWrapThreshold);
 

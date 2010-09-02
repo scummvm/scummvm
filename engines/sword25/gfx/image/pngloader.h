@@ -60,20 +60,20 @@ public:
 
 	// Alle virtuellen Methoden von BS_ImageLoader sind hier als static-Methode implementiert, damit sie von BS_B25SLoader aufgerufen werden können.
 	// Die virtuellen Methoden rufen diese Methoden auf.
-	static bool DoIsCorrectImageFormat(const byte *FileDataPtr, unsigned int FileSize);
-	static bool DoDecodeImage(const byte *FileDataPtr, unsigned int FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
+	static bool DoIsCorrectImageFormat(const byte *FileDataPtr, uint FileSize);
+	static bool DoDecodeImage(const byte *FileDataPtr, uint FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
 	                          int &Width, int &Height, int &Pitch);
-	static bool DoImageProperties(const byte *FileDataPtr, unsigned int FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height);
+	static bool DoImageProperties(const byte *FileDataPtr, uint FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height);
 
 protected:
 	PNGLoader();
-	bool DecodeImage(const byte *pFileData, unsigned int FileSize,
+	bool DecodeImage(const byte *pFileData, uint FileSize,
 	                 GraphicEngine::COLOR_FORMATS ColorFormat,
 	                 byte *&pUncompressedData,
 	                 int &Width, int &Height,
 	                 int &Pitch);
-	bool IsCorrectImageFormat(const byte *FileDataPtr, unsigned int FileSize);
-	bool ImageProperties(const byte *FileDatePtr, unsigned int FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height);
+	bool IsCorrectImageFormat(const byte *FileDataPtr, uint FileSize);
+	bool ImageProperties(const byte *FileDatePtr, uint FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height);
 };
 
 } // End of namespace Sword25

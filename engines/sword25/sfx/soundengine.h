@@ -80,7 +80,7 @@ public:
 	 * @param Data          Pointer to the data buffer
 	 * @param DataLength    Length of the data to be written in bytes
 	*/
-	typedef void (*DynamicSoundReadCallback)(void *UserData, void *Data, unsigned int DataLength);
+	typedef void (*DynamicSoundReadCallback)(void *UserData, void *Data, uint DataLength);
 
 	// -----------------------------------------------------------------------------
 	// Constructor / destructor
@@ -101,7 +101,7 @@ public:
 	 * @remark              Calls to other methods may take place only if this
 	 * method was called successfully.
 	 */
-	virtual bool Init(unsigned int SampleRate, unsigned int Channels = 32) = 0;
+	virtual bool Init(uint SampleRate, uint Channels = 32) = 0;
 
 	/**
 	 * Performs a "tick" of the sound engine
@@ -141,13 +141,13 @@ public:
 	 * Pauses all sounds of a given layer.
 	 * @param Layer         The Sound Layer
 	*/
-	virtual void PauseLayer(unsigned int Layer) = 0;
+	virtual void PauseLayer(uint Layer) = 0;
 
 	/**
 	 * Resumes all the sounds in a layer that was previously stopped with PauseLayer()
 	 * @param Layer         The Sound Layer
 	*/
-	virtual void ResumeLayer(unsigned int Layer) = 0;
+	virtual void ResumeLayer(uint Layer) = 0;
 
 
 	/**
@@ -166,7 +166,7 @@ public:
 	 * @remark              If more control is needed over the playing, eg. changing the sound parameters
 	 * for Volume and Panning, then PlaySoundEx should be used.
 	*/
-	virtual bool PlaySound(const Common::String &FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, unsigned int Layer = 0) = 0;
+	virtual bool PlaySound(const Common::String &FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, uint Layer = 0) = 0;
 
 	/**
 	 * Plays a sound
@@ -183,7 +183,7 @@ public:
 	 * @remark              If more control is needed over the playing, eg. changing the sound parameters
 	 * for Volume and Panning, then PlaySoundEx should be used.
 	 */
-	virtual unsigned int PlaySoundEx(const Common::String &FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, unsigned int Layer = 0) = 0;
+	virtual uint PlaySoundEx(const Common::String &FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, uint Layer = 0) = 0;
 
 	/**
 	 * Plays a sound generated at runtime
@@ -202,69 +202,69 @@ public:
 	 * @return              Returns a handle to the sound. With this handle, the sound can be manipulated during playback.
 	 * @remark              Dynamic sounds cannot be persisted.
 	 */
-	virtual unsigned int PlayDynamicSoundEx(DynamicSoundReadCallback ReadCallback, void *UserData, SOUND_TYPES Type, unsigned int SampleRate, unsigned int BitsPerSample, unsigned int Channels, float Volume = 1.0f, float Pan = 0.0f, unsigned int Layer = 0) = 0;
+	virtual uint PlayDynamicSoundEx(DynamicSoundReadCallback ReadCallback, void *UserData, SOUND_TYPES Type, uint SampleRate, uint BitsPerSample, uint Channels, float Volume = 1.0f, float Pan = 0.0f, uint Layer = 0) = 0;
 
 	/**
 	 * Sets the volume of a playing sound
 	 * @param Handle        The sound handle
 	 * @param Volume        The volume of the sound (0 = off, 1 = full volume)
 	 */
-	virtual void SetSoundVolume(unsigned int Handle, float Volume) = 0;
+	virtual void SetSoundVolume(uint Handle, float Volume) = 0;
 
 	/**
 	 * Sets the panning of a playing sound
 	 * @param Handle        The sound handle
 	 * @param Pan           Panning (-1 = full left, 1 = right)
 	 */
-	virtual void SetSoundPanning(unsigned int Handle, float Pan) = 0;
+	virtual void SetSoundPanning(uint Handle, float Pan) = 0;
 
 	/**
 	 * Pauses a playing sound
 	 * @param Handle        The sound handle
 	 */
-	virtual void PauseSound(unsigned int Handle) = 0;
+	virtual void PauseSound(uint Handle) = 0;
 
 	/**
 	 * Resumes a paused sound
 	 * @param Handle        The sound handle
 	 */
-	virtual void ResumeSound(unsigned int Handle) = 0;
+	virtual void ResumeSound(uint Handle) = 0;
 
 	/**
 	 * Stops a playing sound
 	 * @param Handle        The sound handle
 	 * @remark              Calling this method invalidates the passed handle; it can no longer be used.
 	 */
-	virtual void StopSound(unsigned int Handle) = 0;
+	virtual void StopSound(uint Handle) = 0;
 
 	/**
 	 * Returns whether a sound is paused
 	 * @param Handle        The sound handle
 	 * @return              Returns true if the sound is paused, false otherwise.
 	 */
-	virtual bool IsSoundPaused(unsigned int Handle) = 0;
+	virtual bool IsSoundPaused(uint Handle) = 0;
 
 	/**
 	 * Returns whether a sound is still playing.
 	 * @param Handle        The sound handle
 	 * @return              Returns true if the sound is playing, false otherwise.
 	*/
-	virtual bool IsSoundPlaying(unsigned int Handle) = 0;
+	virtual bool IsSoundPlaying(uint Handle) = 0;
 
 	/**
 	 * Returns the volume of a playing sound (0 = off, 1 = full volume)
 	 */
-	virtual float GetSoundVolume(unsigned int Handle) = 0;
+	virtual float GetSoundVolume(uint Handle) = 0;
 
 	/**
 	 * Returns the panning of a playing sound (-1 = full left, 1 = right)
 	 */
-	virtual float GetSoundPanning(unsigned int Handle) = 0;
+	virtual float GetSoundPanning(uint Handle) = 0;
 
 	/**
 	 * Returns the position within a playing sound in seconds
 	 */
-	virtual float GetSoundTime(unsigned int Handle) = 0;
+	virtual float GetSoundTime(uint Handle) = 0;
 
 private:
 	bool _RegisterScriptBindings();

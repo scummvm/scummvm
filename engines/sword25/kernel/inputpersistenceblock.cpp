@@ -46,7 +46,7 @@ namespace Sword25 {
 // Constructor / Destructor
 // -----------------------------------------------------------------------------
 
-InputPersistenceBlock::InputPersistenceBlock(const void *Data, unsigned int DataLength) :
+InputPersistenceBlock::InputPersistenceBlock(const void *Data, uint DataLength) :
 	m_Data(static_cast<const byte *>(Data), DataLength),
 	m_ErrorState(NONE) {
 	m_Iter = m_Data.begin();
@@ -81,9 +81,9 @@ void InputPersistenceBlock::Read(signed int &Value) {
 
 // -----------------------------------------------------------------------------
 
-void InputPersistenceBlock::Read(unsigned int &Value) {
+void InputPersistenceBlock::Read(uint &Value) {
 	if (CheckMarker(UINT_MARKER)) {
-		RawRead(&Value, sizeof(unsigned int));
+		RawRead(&Value, sizeof(uint));
 		Value = ConvertEndianessFromStorageToSystem(Value);
 	} else {
 		Value = 0;
@@ -105,7 +105,7 @@ void InputPersistenceBlock::Read(float &Value) {
 
 void InputPersistenceBlock::Read(bool &Value) {
 	if (CheckMarker(BOOL_MARKER)) {
-		unsigned int UIntBool;
+		uint UIntBool;
 		RawRead(&UIntBool, sizeof(float));
 		UIntBool = ConvertEndianessFromStorageToSystem(UIntBool);
 		Value = UIntBool == 0 ? false : true;
@@ -120,7 +120,7 @@ void InputPersistenceBlock::Read(Common::String &Value) {
 	Value = "";
 
 	if (CheckMarker(STRING_MARKER)) {
-		unsigned int Size;
+		uint Size;
 		Read(Size);
 
 		if (CheckBlockSize(Size)) {
@@ -134,7 +134,7 @@ void InputPersistenceBlock::Read(Common::String &Value) {
 
 void InputPersistenceBlock::Read(Common::Array<byte> &Value) {
 	if (CheckMarker(BLOCK_MARKER)) {
-		unsigned int Size;
+		uint Size;
 		Read(Size);
 
 		if (CheckBlockSize(Size)) {

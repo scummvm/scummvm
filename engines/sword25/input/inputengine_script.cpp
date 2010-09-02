@@ -210,7 +210,7 @@ static int GetMouseY(lua_State *L) {
 static int IsKeyDown(lua_State *L) {
 	InputEngine *pIE = GetIE();
 
-	lua_pushbooleancpp(L, pIE->IsKeyDown((unsigned int) luaL_checknumber(L, 1)));
+	lua_pushbooleancpp(L, pIE->IsKeyDown((uint) luaL_checknumber(L, 1)));
 	return 1;
 }
 
@@ -219,7 +219,7 @@ static int IsKeyDown(lua_State *L) {
 static int WasKeyDown(lua_State *L) {
 	InputEngine *pIE = GetIE();
 
-	lua_pushbooleancpp(L, pIE->WasKeyDown((unsigned int) luaL_checknumber(L, 1)));
+	lua_pushbooleancpp(L, pIE->WasKeyDown((uint) luaL_checknumber(L, 1)));
 	return 1;
 }
 

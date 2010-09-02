@@ -59,7 +59,7 @@ class RenderObjectPtr {
 public:
 	RenderObjectPtr() : m_Handle(0) {}
 
-	RenderObjectPtr(unsigned int Handle) : m_Handle(Handle) {}
+	RenderObjectPtr(uint Handle) : m_Handle(Handle) {}
 
 	T *operator->() const {
 		return static_cast<T *>(RenderObjectRegistry::GetInstance().ResolveHandle(m_Handle));
@@ -79,7 +79,7 @@ public:
 	}
 
 private:
-	unsigned int m_Handle;
+	uint m_Handle;
 };
 
 } // End of namespace Sword25

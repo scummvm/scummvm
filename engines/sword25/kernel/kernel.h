@@ -126,7 +126,7 @@ public:
 	/**
 	 * Returns the number of register superclasses
 	 */
-	unsigned int GetSuperclassCount();
+	uint GetSuperclassCount();
 
 	/**
 	 * Returns the name of a superclass with the specified index.
@@ -134,14 +134,14 @@ public:
 	 * @param Number        The number of the superclass to return the identifier for.
 	 * It should be noted that the number should be between 0 und GetSuperclassCount() - 1.
 	 */
-	Common::String GetSuperclassIdentifier(unsigned int Number);
+	Common::String GetSuperclassIdentifier(uint Number);
 
 	/**
 	 * Returns the number of services registered with a given superclass
 	 * @param SuperclassIdentifier      The name of the superclass
 	 *         z.B: "sfx", "gfx", "package" ...
 	 */
-	unsigned int GetServiceCount(const Common::String &SuperclassIdentifier);
+	uint GetServiceCount(const Common::String &SuperclassIdentifier);
 
 	/**
 	 * Gets the identifier of a service with a given superclass.
@@ -152,12 +152,12 @@ public:
 	 *         Hierbei ist zu beachten, dass der erste Service die Nummer 0 erhält. Number muss also eine Zahl zwischen
 	 *         0 und GetServiceCount() - 1 sein.
 	 */
-	Common::String GetServiceIdentifier(const Common::String &SuperclassIdentifier, unsigned int Number);
+	Common::String GetServiceIdentifier(const Common::String &SuperclassIdentifier, uint Number);
 
 	/**
 	 * Returns the elapsed time since startup in milliseconds
 	 */
-	unsigned int GetMilliTicks();
+	uint GetMilliTicks();
 
 	/**
 	 * Returns the elapsed time since the system start in microseconds.
@@ -216,7 +216,7 @@ public:
 	 * Pauses for the specified amount of time
 	 * @param Msecs     The amount of time in milliseconds
 	 */
-	void Sleep(unsigned int Msecs) const;
+	void Sleep(uint Msecs) const;
 
 	/**
 	 * Returns the singleton instance for the kernel
@@ -264,7 +264,7 @@ private:
 	class Superclass {
 	private:
 		Kernel *_pKernel;
-		unsigned int _ServiceCount;
+		uint _ServiceCount;
 		Common::String _Identifier;
 		Service *_ActiveService;
 		Common::String _ActiveServiceName;
@@ -273,7 +273,7 @@ private:
 		Superclass(Kernel *pKernel, const Common::String &Identifier);
 		~Superclass();
 
-		unsigned int GetServiceCount() const {
+		uint GetServiceCount() const {
 			return _ServiceCount;
 		}
 		Common::String GetIdentifier() const {
@@ -285,7 +285,7 @@ private:
 		Common::String GetActiveServiceName() const {
 			return _ActiveServiceName;
 		}
-		Common::String GetServiceIdentifier(unsigned int Number);
+		Common::String GetServiceIdentifier(uint Number);
 		Service *NewService(const Common::String &ServiceIdentifier);
 		bool DisconnectService();
 	};

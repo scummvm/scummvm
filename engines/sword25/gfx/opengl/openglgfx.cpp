@@ -166,7 +166,7 @@ bool OpenGLGfx::EndFrame() {
 
 		Common::Array<DebugLine>::const_iterator iter = m_DebugLines.begin();
 		for (; iter != m_DebugLines.end(); ++iter) {
-			const unsigned int &Color = (*iter).Color;
+			const uint &Color = (*iter).Color;
 			const BS_Vertex &Start = (*iter).Start;
 			const BS_Vertex &End = (*iter).End;
 
@@ -212,7 +212,7 @@ bool OpenGLGfx::GetVsync() const {
 
 // -----------------------------------------------------------------------------
 
-bool OpenGLGfx::Fill(const Common::Rect *fillRectPtr, unsigned int color) {
+bool OpenGLGfx::Fill(const Common::Rect *fillRectPtr, uint color) {
 	Common::Rect rect(m_Width - 1, m_Height - 1);
 
 	if (fillRectPtr) {
@@ -229,7 +229,7 @@ bool OpenGLGfx::Fill(const Common::Rect *fillRectPtr, unsigned int color) {
 
 // -----------------------------------------------------------------------------
 
-bool OpenGLGfx::GetScreenshot(unsigned int &Width, unsigned int &Height, byte **Data) {
+bool OpenGLGfx::GetScreenshot(uint &Width, uint &Height, byte **Data) {
 	if (!ReadFramebufferContents(m_Width, m_Height, Data))
 		return false;
 
@@ -246,7 +246,7 @@ bool OpenGLGfx::GetScreenshot(unsigned int &Width, unsigned int &Height, byte **
 
 // -----------------------------------------------------------------------------
 
-bool OpenGLGfx::ReadFramebufferContents(unsigned int Width, unsigned int Height, byte **Data) {
+bool OpenGLGfx::ReadFramebufferContents(uint Width, uint Height, byte **Data) {
     *Data = (byte *)malloc(Width * Height * 4);
 	
 	return true;
@@ -258,7 +258,7 @@ void OpenGLGfx::ReverseRGBAComponentOrder(byte *Data, uint size) {
 	uint32 *ptr = (uint32 *)Data;
 
 	for (uint i = 0; i < size; i++) {
-		unsigned int Pixel = *ptr;
+		uint Pixel = *ptr;
 		*ptr = (Pixel & 0xff00ff00) | ((Pixel >> 16) & 0xff) | ((Pixel & 0xff) << 16);
 		++ptr;
 	}
@@ -266,13 +266,13 @@ void OpenGLGfx::ReverseRGBAComponentOrder(byte *Data, uint size) {
 
 // -----------------------------------------------------------------------------
 
-void OpenGLGfx::FlipImagedataVertical(unsigned int Width, unsigned int Height, byte *Data) {
+void OpenGLGfx::FlipImagedataVertical(uint Width, uint Height, byte *Data) {
 #if 0 // TODO
-	vector<unsigned int> LineBuffer(Width);
+	vector<uint> LineBuffer(Width);
 
-	for (unsigned int Y = 0; Y < Height / 2; ++Y) {
-		vector<unsigned int>::iterator Line1It = Data.begin() + Y * Width;
-		vector<unsigned int>::iterator Line2It = Data.begin() + (Height - 1 - Y) * Width;
+	for (uint Y = 0; Y < Height / 2; ++Y) {
+		vector<uint>::iterator Line1It = Data.begin() + Y * Width;
+		vector<uint>::iterator Line2It = Data.begin() + (Height - 1 - Y) * Width;
 		copy(Line1It, Line1It + Width, LineBuffer.begin());
 		copy(Line2It, Line2It + Width, Line1It);
 		copy(LineBuffer.begin(), LineBuffer.end(), Line2It);
@@ -332,7 +332,7 @@ Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
 
 		// Datei laden
 		byte *pFileData;
-		unsigned int FileSize;
+		uint FileSize;
 		if (!(pFileData = static_cast<byte *>(pPackage->GetFile(FileName, &FileSize)))) {
 			BS_LOG_ERRORLN("File \"%s\" could not be loaded.", FileName.c_str());
 			return 0;
@@ -398,7 +398,7 @@ bool OpenGLGfx::CanLoadResource(const Common::String &FileName) {
 // DEBUGGING
 // -----------------------------------------------------------------------------
 
-void OpenGLGfx::DrawDebugLine(const Vertex &Start, const Vertex &End, unsigned int Color) {
+void OpenGLGfx::DrawDebugLine(const Vertex &Start, const Vertex &End, uint Color) {
 	m_DebugLines.push_back(DebugLine(Start, End, Color));
 }
 

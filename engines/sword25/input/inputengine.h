@@ -243,7 +243,7 @@ public:
 	 * @param KeyCode       The key code to be checked
 	 * @return              Returns true if the given key is done, otherwise false.
 	 */
-	virtual bool IsKeyDown(unsigned int KeyCode) = 0;
+	virtual bool IsKeyDown(uint KeyCode) = 0;
 
 	/**
 	 * Returns true if a certain key was pushed and released.
@@ -253,7 +253,7 @@ public:
 	 * strings that users type.
 	 * @param KeyCode       The key code to be checked
 	 */
-	virtual bool WasKeyDown(unsigned int KeyCode) = 0;
+	virtual bool WasKeyDown(uint KeyCode) = 0;
 
 	typedef CallbackPtr CharacterCallback;
 

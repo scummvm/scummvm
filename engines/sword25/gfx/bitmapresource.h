@@ -125,7 +125,7 @@ public:
 	bool Blit(int PosX = 0, int PosY = 0,
 	          int Flipping = FLIP_NONE,
 	          Common::Rect *pSrcPartRect = NULL,
-	          unsigned int Color = BS_ARGB(255, 255, 255, 255),
+	          uint Color = BS_ARGB(255, 255, 255, 255),
 	          int Width = -1, int Height = -1) {
 		BS_ASSERT(m_pImage);
 		return m_pImage->Blit(PosX, PosY, Flipping, pSrcPartRect, Color, Width, Height);
@@ -144,7 +144,7 @@ public:
 	            BS_RGB und BS_ARGB benutzt werden.
 	    @remark Falls das Rechteck nicht völlig innerhalb des Bildschirms ist, wird es automatisch zurechtgestutzt.
 	*/
-	bool Fill(const Common::Rect *pFillRect = 0, unsigned int Color = BS_RGB(0, 0, 0)) {
+	bool Fill(const Common::Rect *pFillRect = 0, uint Color = BS_RGB(0, 0, 0)) {
 		BS_ASSERT(m_pImage);
 		return m_pImage->Fill(pFillRect, Color);
 	}
@@ -157,7 +157,7 @@ public:
 	    @remark Diese Methode sollte auf keine Fall benutzt werden um größere Teile des Bildes zu lesen, da sie sehr langsam ist. Sie ist
 	            eher dafür gedacht einzelne Pixel des Bildes auszulesen.
 	*/
-	unsigned int GetPixel(int X, int Y) const;
+	uint GetPixel(int X, int Y) const;
 
 	//@{
 	/** @name Auskunfts-Methoden */

@@ -52,16 +52,16 @@ class Panel : public RenderObject {
 	friend class RenderObject;
 
 private:
-	Panel(RenderObjectPtr<RenderObject> ParentPtr, int Width, int Height, unsigned int Color);
-	Panel(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
+	Panel(RenderObjectPtr<RenderObject> ParentPtr, int Width, int Height, uint Color);
+	Panel(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle);
 
 public:
 	virtual ~Panel();
 
-	unsigned int    GetColor() const {
+	uint    GetColor() const {
 		return m_Color;
 	}
-	void            SetColor(unsigned int Color) {
+	void            SetColor(uint Color) {
 		m_Color = Color;
 		ForceRefresh();
 	}
@@ -73,7 +73,7 @@ protected:
 	virtual bool DoRender();
 
 private:
-	unsigned int m_Color;
+	uint m_Color;
 };
 
 } // End of namespace Sword25

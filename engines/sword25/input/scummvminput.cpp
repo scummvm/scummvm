@@ -161,7 +161,7 @@ void ScummVMInput::TestForLeftDoubleClick() {
 	// Only bother checking for a double click if the left mouse button was clicked
 	if (WasLeftMouseDown()) {
 		// Get the time now
-		unsigned int Now = Kernel::GetInstance()->GetMilliTicks();
+		uint Now = Kernel::GetInstance()->GetMilliTicks();
 
 		// A double click is signalled if
 		// 1. The two clicks are close enough together
@@ -224,13 +224,13 @@ int ScummVMInput::GetMouseY() {
 
 // -----------------------------------------------------------------------------
 
-bool ScummVMInput::IsKeyDown(unsigned int KeyCode) {
+bool ScummVMInput::IsKeyDown(uint KeyCode) {
 	return (m_KeyboardState[m_CurrentState][KeyCode] & 0x80) != 0;
 }
 
 // -----------------------------------------------------------------------------
 
-bool ScummVMInput::WasKeyDown(unsigned int KeyCode) {
+bool ScummVMInput::WasKeyDown(uint KeyCode) {
 	return ((m_KeyboardState[m_CurrentState][KeyCode] & 0x80) == 0) &&
 	       ((m_KeyboardState[m_CurrentState ^ 1][KeyCode] & 0x80) != 0);
 }
@@ -370,11 +370,11 @@ bool ScummVMInput::Unpersist(InputPersistenceBlock &Reader) {
 	m_CommandCallbacks.clear();
 
 	// Anzahl an Command-Callbacks lesen.
-	unsigned int CommandCallbackCount;
+	uint CommandCallbackCount;
 	Reader.Read(CommandCallbackCount);
 
 	// Alle Command-Callbacks wieder herstellen.
-	for (unsigned int i = 0; i < CommandCallbackCount; ++i) {
+	for (uint i = 0; i < CommandCallbackCount; ++i) {
 		Common::String CallbackFunctionName;
 		Reader.Read(CallbackFunctionName);
 
@@ -386,11 +386,11 @@ bool ScummVMInput::Unpersist(InputPersistenceBlock &Reader) {
 	m_CharacterCallbacks.clear();
 
 	// Anzahl an Character-Callbacks lesen.
-	unsigned int CharacterCallbackCount;
+	uint CharacterCallbackCount;
 	Reader.Read(CharacterCallbackCount);
 
 	// Alle Character-Callbacks wieder herstellen.
-	for (unsigned int i = 0; i < CharacterCallbackCount; ++i) {
+	for (uint i = 0; i < CharacterCallbackCount; ++i) {
 		Common::String CallbackFunctionName;
 		Reader.Read(CallbackFunctionName);
 

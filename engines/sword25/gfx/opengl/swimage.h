@@ -68,11 +68,11 @@ public:
 	virtual bool Blit(int PosX = 0, int PosY = 0,
 	                  int Flipping = Image::FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
-	                  unsigned int Color = BS_ARGB(255, 255, 255, 255),
+	                  uint Color = BS_ARGB(255, 255, 255, 255),
 	                  int Width = -1, int Height = -1);
-	virtual bool Fill(const Common::Rect *FillRectPtr, unsigned int Color);
-	virtual bool SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride);
-	virtual unsigned int GetPixel(int X, int Y);
+	virtual bool Fill(const Common::Rect *FillRectPtr, uint Color);
+	virtual bool SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride);
+	virtual uint GetPixel(int X, int Y);
 
 	virtual bool IsBlitSource() const               {
 		return false;
@@ -96,7 +96,7 @@ public:
 		return false;
 	}
 private:
-	unsigned int *_ImageDataPtr;
+	uint *_ImageDataPtr;
 
 	int m_Width;
 	int m_Height;

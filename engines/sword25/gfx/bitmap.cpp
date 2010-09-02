@@ -52,7 +52,7 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-Bitmap::Bitmap(RenderObjectPtr<RenderObject> ParentPtr, TYPES Type, unsigned int Handle) :
+Bitmap::Bitmap(RenderObjectPtr<RenderObject> ParentPtr, TYPES Type, uint Handle) :
 	RenderObject(ParentPtr, Type, Handle),
 	m_ModulationColor(0xffffffff),
 	m_ScaleFactorX(1.0f),
@@ -85,7 +85,7 @@ void Bitmap::SetAlpha(int Alpha) {
 		return;
 	}
 
-	unsigned int NewModulationColor = (m_ModulationColor & 0x00ffffff) | Alpha << 24;
+	uint NewModulationColor = (m_ModulationColor & 0x00ffffff) | Alpha << 24;
 	if (NewModulationColor != m_ModulationColor) {
 		m_ModulationColor = NewModulationColor;
 		ForceRefresh();
@@ -94,13 +94,13 @@ void Bitmap::SetAlpha(int Alpha) {
 
 // -----------------------------------------------------------------------------
 
-void Bitmap::SetModulationColor(unsigned int ModulationColor) {
+void Bitmap::SetModulationColor(uint ModulationColor) {
 	if (!IsColorModulationAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set modulation color of a bitmap that does not support color modulation. Call was ignored.");
 		return;
 	}
 
-	unsigned int NewModulationColor = (ModulationColor & 0x00ffffff) | (m_ModulationColor & 0xff000000);
+	uint NewModulationColor = (ModulationColor & 0x00ffffff) | (m_ModulationColor & 0xff000000);
 	if (NewModulationColor != m_ModulationColor) {
 		m_ModulationColor = NewModulationColor;
 		ForceRefresh();

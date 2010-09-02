@@ -106,13 +106,13 @@ bool RegionRegistry::Unpersist(InputPersistenceBlock &Reader) {
 	while (!m_Handle2PtrMap.empty()) delete m_Handle2PtrMap.begin()->_value;
 
 	// Read in the number of BS_Regions
-	unsigned int RegionCount;
+	uint RegionCount;
 	Reader.Read(RegionCount);
 
 	// Restore all the BS_Regions objects
-	for (unsigned int i = 0; i < RegionCount; ++i)  {
+	for (uint i = 0; i < RegionCount; ++i)  {
 		// Handle read
-		unsigned int Handle;
+		uint Handle;
 		Reader.Read(Handle);
 
 		// BS_Region restore

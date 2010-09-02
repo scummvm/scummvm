@@ -134,7 +134,7 @@ Kernel::Superclass::Superclass(Kernel *pKernel, const Common::String &Identifier
 	_Identifier(Identifier),
 	_ServiceCount(0),
 	_ActiveService(NULL) {
-	for (unsigned int i = 0; i < BS_SERVICE_COUNT; i++)
+	for (uint i = 0; i < BS_SERVICE_COUNT; i++)
 		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier)
 			_ServiceCount++;
 }
@@ -152,11 +152,11 @@ Kernel::Superclass::~Superclass() {
  *         Hierbei ist zu beachten, dass der erste Service die Nummer 0 erhält. Number muss also eine Zahl zwischen
  *         0 und GetServiceCount() - 1 sein.
  */
-Common::String Kernel::Superclass::GetServiceIdentifier(unsigned int Number) {
+Common::String Kernel::Superclass::GetServiceIdentifier(uint Number) {
 	if (Number > _ServiceCount) return NULL;
 
-	unsigned int CurServiceOrd = 0;
-	for (unsigned int i = 0; i < BS_SERVICE_COUNT; i++) {
+	uint CurServiceOrd = 0;
+	for (uint i = 0; i < BS_SERVICE_COUNT; i++) {
 		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier) {
 			if (Number == CurServiceOrd)
 				return BS_SERVICE_TABLE[i].ServiceIdentifier;
@@ -178,7 +178,7 @@ Common::String Kernel::Superclass::GetServiceIdentifier(unsigned int Number) {
  *         For the superclass "sfx" an example could be "Fmod" or "directsound"
  */
 Service *Kernel::Superclass::NewService(const Common::String &ServiceIdentifier) {
-	for (unsigned int i = 0; i < BS_SERVICE_COUNT; i++)
+	for (uint i = 0; i < BS_SERVICE_COUNT; i++)
 		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier &&
 		        BS_SERVICE_TABLE[i].ServiceIdentifier == ServiceIdentifier) {
 			Service *NewService_ = BS_SERVICE_TABLE[i].CreateMethod(_pKernel);
@@ -230,7 +230,7 @@ Kernel::Superclass *Kernel::GetSuperclassByIdentifier(const Common::String &Iden
 /**
  * Returns the number of register superclasses
  */
-unsigned int Kernel::GetSuperclassCount() {
+uint Kernel::GetSuperclassCount() {
 	return _SuperclassList.size();
 }
 
@@ -240,10 +240,10 @@ unsigned int Kernel::GetSuperclassCount() {
  * @param Number        The number of the superclass to return the identifier for.
  * It should be noted that the number should be between 0 und GetSuperclassCount() - 1.
  */
-Common::String Kernel::GetSuperclassIdentifier(unsigned int Number) {
+Common::String Kernel::GetSuperclassIdentifier(uint Number) {
 	if (Number > _SuperclassList.size()) return NULL;
 
-	unsigned int CurSuperclassOrd = 0;
+	uint CurSuperclassOrd = 0;
 	Common::Array<Superclass *>::iterator Iter;
 	for (Iter = _SuperclassList.begin(); Iter != _SuperclassList.end(); ++Iter) {
 		if (CurSuperclassOrd == Number)
@@ -260,7 +260,7 @@ Common::String Kernel::GetSuperclassIdentifier(unsigned int Number) {
  * @param SuperclassIdentifier      The name of the superclass
  *         z.B: "sfx", "gfx", "package" ...
  */
-unsigned int Kernel::GetServiceCount(const Common::String &SuperclassIdentifier) {
+uint Kernel::GetServiceCount(const Common::String &SuperclassIdentifier) {
 	Superclass *pSuperclass;
 	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier)))
 		return 0;
@@ -278,7 +278,7 @@ unsigned int Kernel::GetServiceCount(const Common::String &SuperclassIdentifier)
  *         Hierbei ist zu beachten, dass der erste Service die Nummer 0 erhält. Number muss also eine Zahl zwischen
  *         0 und GetServiceCount() - 1 sein.
  */
-Common::String Kernel::GetServiceIdentifier(const Common::String &SuperclassIdentifier, unsigned int Number) {
+Common::String Kernel::GetServiceIdentifier(const Common::String &SuperclassIdentifier, uint Number) {
 	Superclass *pSuperclass;
 	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) return NULL;
 
@@ -358,7 +358,7 @@ int Kernel::GetRandomNumber(int Min, int Max) {
 /**
  * Returns the elapsed time since startup in milliseconds
  */
-unsigned int Kernel::GetMilliTicks() {
+uint Kernel::GetMilliTicks() {
 	return g_system->getMillis();
 }
 
@@ -447,7 +447,7 @@ MoviePlayer *Kernel::GetFMV() {
 
 // -----------------------------------------------------------------------------
 
-void Kernel::Sleep(unsigned int Msecs) const {
+void Kernel::Sleep(uint Msecs) const {
 	g_system->delayMillis(Msecs);
 }
 

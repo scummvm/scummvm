@@ -50,8 +50,8 @@ namespace Sword25 {
 // Konstanten
 // -----------------------------------------------------------------------------
 
-static const unsigned int DEFAULT_LINEHEIGHT = 20;
-static const unsigned int DEFAULT_GAPWIDTH = 1;
+static const uint DEFAULT_LINEHEIGHT = 20;
+static const uint DEFAULT_GAPWIDTH = 1;
 
 // -----------------------------------------------------------------------------
 // Konstruktion / Destruktion
@@ -69,7 +69,7 @@ FontResource::FontResource(Kernel *pKernel, const Common::String &FileName) :
 	BS_ASSERT(pPackage);
 
 	// Load the contents of the file
-	unsigned int fileSize;
+	uint fileSize;
 	char *xmlData = pPackage->GetXmlFile(GetFileName(), &fileSize);
 	if (!xmlData) {
 		BS_LOG_ERRORLN("Could not read \"%s\".", GetFileName().c_str());

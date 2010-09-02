@@ -104,7 +104,7 @@ public:
 	 * as a guideline, and not as a fixed boundary. It is not guaranteed not to be exceeded;
 	 * the whole game engine may still use more memory than any amount specified.
 	 */
-	void SetMaxMemoryUsage(unsigned int MaxMemoryUsage);
+	void SetMaxMemoryUsage(uint MaxMemoryUsage);
 
 	/**
 	 * Specifies whether a warning is written to the log when a cache miss occurs.
@@ -181,7 +181,7 @@ private:
 	void DeleteResourcesIfNecessary();
 
 	Kernel                          *m_KernelPtr;
-	unsigned int                        m_MaxMemoryUsage;
+	uint                        m_MaxMemoryUsage;
 	Common::Array<ResourceService *> m_ResourceServices;
 	Common::List<Resource *>         m_Resources;
 	Common::List<Resource *>         m_ResourceHashTable[HASH_TABLE_BUCKETS];

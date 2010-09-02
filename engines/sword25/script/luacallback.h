@@ -65,14 +65,14 @@ public:
 	virtual ~LuaCallback();
 
 	// Funktion muss auf dem Lua-Stack liegen.
-	void RegisterCallbackFunction(lua_State *L, unsigned int ObjectHandle);
+	void RegisterCallbackFunction(lua_State *L, uint ObjectHandle);
 
 	// Funktion muss auf dem Lua-Stack liegen.
-	void UnregisterCallbackFunction(lua_State *L, unsigned int ObjectHandle);
+	void UnregisterCallbackFunction(lua_State *L, uint ObjectHandle);
 
-	void RemoveAllObjectCallbacks(lua_State *L, unsigned int ObjectHandle);
+	void RemoveAllObjectCallbacks(lua_State *L, uint ObjectHandle);
 
-	void InvokeCallbackFunctions(lua_State *L, unsigned int ObjectHandle);
+	void InvokeCallbackFunctions(lua_State *L, uint ObjectHandle);
 
 protected:
 	virtual int PreFunctionInvokation(lua_State *L) {
@@ -80,9 +80,9 @@ protected:
 	}
 
 private:
-	void EnsureObjectCallbackTableExists(lua_State *L, unsigned int ObjectHandle);
+	void EnsureObjectCallbackTableExists(lua_State *L, uint ObjectHandle);
 	void PushCallbackTable(lua_State *L);
-	void PushObjectCallbackTable(lua_State *L, unsigned int ObjectHandle);
+	void PushObjectCallbackTable(lua_State *L, uint ObjectHandle);
 };
 
 } // End of namespace Sword25

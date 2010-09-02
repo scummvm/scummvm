@@ -61,7 +61,7 @@ SWImage::SWImage(const Common::String &Filename, bool &Result) :
 
 	// Datei laden
 	byte *pFileData;
-	unsigned int FileSize;
+	uint FileSize;
 	if (!(pFileData = (byte *) pPackage->GetFile(Filename, &FileSize))) {
 		BS_LOG_ERRORLN("File \"%s\" could not be loaded.", Filename.c_str());
 		return;
@@ -85,7 +85,7 @@ SWImage::SWImage(const Common::String &Filename, bool &Result) :
 	// Dateidaten freigeben
 	delete[] pFileData;
 
-	_ImageDataPtr = (unsigned int *) pUncompressedData;
+	_ImageDataPtr = (uint *) pUncompressedData;
 
 	Result = true;
 	return;
@@ -103,7 +103,7 @@ SWImage::~SWImage() {
 bool SWImage::Blit(int PosX, int PosY,
                       int Flipping,
                       Common::Rect *pPartRect,
-                      unsigned int Color,
+                      uint Color,
                       int Width, int Height) {
 	BS_LOG_ERRORLN("Blit() is not supported.");
 	return false;
@@ -111,21 +111,21 @@ bool SWImage::Blit(int PosX, int PosY,
 
 // -----------------------------------------------------------------------------
 
-bool SWImage::Fill(const Common::Rect *pFillRect, unsigned int Color) {
+bool SWImage::Fill(const Common::Rect *pFillRect, uint Color) {
 	BS_LOG_ERRORLN("Fill() is not supported.");
 	return false;
 }
 
 // -----------------------------------------------------------------------------
 
-	bool SWImage::SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) {
+	bool SWImage::SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride) {
 	BS_LOG_ERRORLN("SetContent() is not supported.");
 	return false;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned int SWImage::GetPixel(int X, int Y) {
+uint SWImage::GetPixel(int X, int Y) {
 	BS_ASSERT(X >= 0 && X < m_Width);
 	BS_ASSERT(Y >= 0 && Y < m_Height);
 

@@ -73,7 +73,7 @@ public:
 	 * @param Z             Z indicates the position of the film on the main graphics layer
 	 * @return              Returns false if an error occured while loading, otherwise true.
 	*/
-	bool LoadMovie(const Common::String &Filename, unsigned int Z);
+	bool LoadMovie(const Common::String &Filename, uint Z);
 
 	/**
 	 * Unloads the currently loaded movie file.

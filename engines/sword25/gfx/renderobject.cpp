@@ -55,7 +55,7 @@ namespace Sword25 {
 
 // Konstruktion / Destruktion
 // --------------------------
-RenderObject::RenderObject(RenderObjectPtr<RenderObject> ParentPtr, TYPES Type, unsigned int Handle) :
+RenderObject::RenderObject(RenderObjectPtr<RenderObject> ParentPtr, TYPES Type, uint Handle) :
 	m_ManagerPtr(0),
 	m_ParentPtr(ParentPtr),
 	m_X(0),
@@ -347,7 +347,7 @@ RenderObjectPtr<Bitmap> RenderObject::AddBitmap(const Common::String &Filename) 
 
 // -----------------------------------------------------------------------------
 
-RenderObjectPtr<Bitmap> RenderObject::AddDynamicBitmap(unsigned int Width, unsigned int Height) {
+RenderObjectPtr<Bitmap> RenderObject::AddDynamicBitmap(uint Width, uint Height) {
 	RenderObjectPtr<Bitmap> BitmapPtr((new DynamicBitmap(this->GetHandle(), Width, Height))->GetHandle());
 	if (BitmapPtr.IsValid() && BitmapPtr->GetInitSuccess())
 		return BitmapPtr;
@@ -359,7 +359,7 @@ RenderObjectPtr<Bitmap> RenderObject::AddDynamicBitmap(unsigned int Width, unsig
 
 // -----------------------------------------------------------------------------
 
-RenderObjectPtr<Panel> RenderObject::AddPanel(int Width, int Height, unsigned int Color) {
+RenderObjectPtr<Panel> RenderObject::AddPanel(int Width, int Height, uint Color) {
 	RenderObjectPtr<Panel> PanelPtr((new Panel(this->GetHandle(), Width, Height, Color))->GetHandle());
 	if (PanelPtr.IsValid() && PanelPtr->GetInitSuccess())
 		return PanelPtr;
@@ -387,7 +387,7 @@ RenderObjectPtr<Text> RenderObject::AddText(const Common::String &Font, const Co
 
 bool RenderObject::Persist(OutputPersistenceBlock &Writer) {
 	// Typ und Handle werden als erstes gespeichert, damit beim Laden ein Objekt vom richtigen Typ mit dem richtigen Handle erzeugt werden kann.
-	Writer.Write(static_cast<unsigned int>(m_Type));
+	Writer.Write(static_cast<uint>(m_Type));
 	Writer.Write(m_Handle);
 
 	// Restliche Objekteigenschaften speichern.
@@ -445,7 +445,7 @@ bool RenderObject::Unpersist(InputPersistenceBlock &Reader) {
 	Reader.Read(m_OldY);
 	Reader.Read(m_OldZ);
 	Reader.Read(m_OldVisible);
-	unsigned int ParentHandle;
+	uint ParentHandle;
 	Reader.Read(ParentHandle);
 	m_ParentPtr = RenderObjectPtr<RenderObject>(ParentHandle);
 	Reader.Read(m_RefreshForced);
@@ -480,12 +480,12 @@ bool RenderObject::UnpersistChildren(InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// Kinderanzahl einlesen.
-	unsigned int ChildrenCount;
+	uint ChildrenCount;
 	Reader.Read(ChildrenCount);
 	if (!Reader.IsGood()) return false;
 
 	// Alle Kinder rekursiv wieder herstellen.
-	for (unsigned int i = 0; i < ChildrenCount; ++i) {
+	for (uint i = 0; i < ChildrenCount; ++i) {
 		if (!RecreatePersistedRenderObject(Reader).IsValid()) return false;
 	}
 
@@ -498,8 +498,8 @@ RenderObjectPtr<RenderObject> RenderObject::RecreatePersistedRenderObject(InputP
 	RenderObjectPtr<RenderObject> Result;
 
 	// Typ und Handle auslesen.
-	unsigned int Type;
-	unsigned int Handle;
+	uint Type;
+	uint Handle;
 	Reader.Read(Type);
 	Reader.Read(Handle);
 	if (!Reader.IsGood()) return Result;

@@ -54,7 +54,7 @@ const float LINE_SCALE_FACTOR = 1.0f;
 bool VectorImage::Blit(int PosX, int PosY,
                           int Flipping,
                           Common::Rect *pPartRect,
-                          unsigned int Color,
+                          uint Color,
                           int Width, int Height) {
 #if 0
 	static BS_VectorImageRenderer VectorImageRenderer;
@@ -82,8 +82,8 @@ bool VectorImage::Blit(int PosX, int PosY,
 		float ScaleFactorX = (Width == - 1) ? 1 : static_cast<float>(Width) / static_cast<float>(GetWidth());
 		float ScaleFactorY = (Height == - 1) ? 1 : static_cast<float>(Height) / static_cast<float>(GetHeight());
 
-		unsigned int RenderedWidth;
-		unsigned int RenderedHeight;
+		uint RenderedWidth;
+		uint RenderedHeight;
 		if (!VectorImageRenderer.Render(*this, ScaleFactorX, ScaleFactorY, RenderedWidth, RenderedHeight, PixelData, LINE_SCALE_FACTOR)) {
 			BS_LOG_ERRORLN("Call to BS_VectorImageRenderer::Render() failed.");
 			return false;

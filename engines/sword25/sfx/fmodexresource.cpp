@@ -53,7 +53,7 @@
 // -----------------------------------------------------------------------------
 
 namespace {
-const unsigned int MAX_SAMPLE_SIZE = 100 * 1024; // Die Dateigröße in Byte ab der ein Sound als Stream abgespielt wird
+const uint MAX_SAMPLE_SIZE = 100 * 1024; // Die Dateigröße in Byte ab der ein Sound als Stream abgespielt wird
 }
 
 // -----------------------------------------------------------------------------
@@ -78,7 +78,7 @@ BS_FMODExResource::BS_FMODExResource(const std::string &FileName, FMOD_SYSTEM *F
 	}
 
 	// Datei laden
-	unsigned int FileSize;
+	uint FileSize;
 	char *FileDataPtr = (char *) PackagePtr->GetFile(GetFileName(), &FileSize);
 	if (!FileDataPtr) {
 		BS_LOG_ERRORLN("File \"%s\" could not be loaded.", GetFileName().c_str());

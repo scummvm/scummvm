@@ -67,7 +67,7 @@ public:
 	    @param Result gibt dem Aufrufer bekannt, ob der Konstruktor erfolgreich ausgeführt wurde. Wenn es nach dem Aufruf false enthalten sollte,
 	                  dürfen keine Methoden am Objekt aufgerufen werden und das Objekt ist sofort zu zerstören.
 	*/
-	GLImage(unsigned int Width, unsigned int Height, bool &Result);
+	GLImage(uint Width, uint Height, bool &Result);
 	virtual ~GLImage();
 
 	virtual int GetWidth() const {
@@ -83,11 +83,11 @@ public:
 	virtual bool Blit(int PosX = 0, int PosY = 0,
 	                  int Flipping = Image::FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
-	                  unsigned int Color = BS_ARGB(255, 255, 255, 255),
+	                  uint Color = BS_ARGB(255, 255, 255, 255),
 	                  int Width = -1, int Height = -1);
-	virtual bool Fill(const Common::Rect *pFillRect, unsigned int Color);
-	virtual bool SetContent(const byte *Pixeldata, uint size, unsigned int Offset = 0, unsigned int Stride = 0);
-	virtual unsigned int GetPixel(int X, int Y);
+	virtual bool Fill(const Common::Rect *pFillRect, uint Color);
+	virtual bool SetContent(const byte *Pixeldata, uint size, uint Offset = 0, uint Stride = 0);
+	virtual uint GetPixel(int X, int Y);
 
 	virtual bool IsBlitSource() const               {
 		return true;

@@ -68,7 +68,7 @@ public:
 
 	bool Render(const VectorImage &VectorImage,
 	            float ScaleFactorX, float ScaleFactorY,
-	            unsigned int &Width, unsigned int &Height,
+	            uint &Width, uint &Height,
 	            byte *ImageData,
 	            float LineScaleFactor = 1.0f,
 	            bool NoAlphaShapes = false);

@@ -53,7 +53,7 @@ namespace Sword25 {
 // Construction/Destruction
 // -----------------------------------------------------------------------------
 
-Panel::Panel(RenderObjectPtr<RenderObject> ParentPtr, int Width, int Height, unsigned int Color) :
+Panel::Panel(RenderObjectPtr<RenderObject> ParentPtr, int Width, int Height, uint Color) :
 	RenderObject(ParentPtr, RenderObject::TYPE_PANEL),
 	m_Color(Color) {
 	m_InitSuccess = false;
@@ -76,7 +76,7 @@ Panel::Panel(RenderObjectPtr<RenderObject> ParentPtr, int Width, int Height, uns
 
 // -----------------------------------------------------------------------------
 
-Panel::Panel(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle) :
+Panel::Panel(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle) :
 	RenderObject(ParentPtr, RenderObject::TYPE_PANEL, Handle) {
 	m_InitSuccess = Unpersist(Reader);
 }
@@ -122,7 +122,7 @@ bool Panel::Unpersist(InputPersistenceBlock &Reader) {
 
 	Result &= RenderObject::Unpersist(Reader);
 
-	unsigned int Color;
+	uint Color;
 	Reader.Read(Color);
 	SetColor(Color);
 

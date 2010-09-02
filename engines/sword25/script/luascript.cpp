@@ -181,7 +181,7 @@ bool LuaScriptEngine::ExecuteFile(const Common::String &FileName) {
 	BS_ASSERT(pPackage);
 
 	// File read
-	unsigned int FileSize;
+	uint FileSize;
 	byte *FileData = pPackage->GetFile(FileName, &FileSize);
 	if (!FileData) {
 		BS_LOG_ERRORLN("Couldn't read \"%s\".", FileName.c_str());
@@ -244,7 +244,7 @@ bool LuaScriptEngine::RegisterStandardLibs() {
 
 // -----------------------------------------------------------------------------
 
-bool LuaScriptEngine::ExecuteBuffer(const byte *Data, unsigned int Size, const Common::String &Name) const {
+bool LuaScriptEngine::ExecuteBuffer(const byte *Data, uint Size, const Common::String &Name) const {
 	// Compile buffer
 	if (luaL_loadbuffer(m_State, (const char *)Data, Size, Name.c_str()) != 0) {
 		BS_LOG_ERRORLN("Couldn't compile \"%s\":\n%s", Name.c_str(), lua_tostring(m_State, -1));
@@ -361,7 +361,7 @@ bool PushPermanentsTable(lua_State *L, PERMANENT_TABLE_TYPE TableType) {
 	lua_newtable(L);
 
 	// All standard permanents are inserted into this table
-	unsigned int Index = 0;
+	uint Index = 0;
 	while (STANDARD_PERMANENTS[Index]) {
 		// Permanents are placed onto the stack; if it does not exist, it is simply ignored
 		lua_getglobal(L, STANDARD_PERMANENTS[Index]);

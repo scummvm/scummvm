@@ -53,7 +53,7 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-unsigned int AnimationTemplate::Create(const Common::String &SourceAnimation) {
+uint AnimationTemplate::Create(const Common::String &SourceAnimation) {
 	AnimationTemplate *AnimationTemplatePtr = new AnimationTemplate(SourceAnimation);
 
 	if (AnimationTemplatePtr->IsValid()) {
@@ -66,7 +66,7 @@ unsigned int AnimationTemplate::Create(const Common::String &SourceAnimation) {
 
 // -----------------------------------------------------------------------------
 
-unsigned int AnimationTemplate::Create(const AnimationTemplate &Other) {
+uint AnimationTemplate::Create(const AnimationTemplate &Other) {
 	AnimationTemplate *AnimationTemplatePtr = new AnimationTemplate(Other);
 
 	if (AnimationTemplatePtr->IsValid()) {
@@ -79,7 +79,7 @@ unsigned int AnimationTemplate::Create(const AnimationTemplate &Other) {
 
 // -----------------------------------------------------------------------------
 
-unsigned int AnimationTemplate::Create(InputPersistenceBlock &Reader, unsigned int Handle) {
+uint AnimationTemplate::Create(InputPersistenceBlock &Reader, uint Handle) {
 	AnimationTemplate *AnimationTemplatePtr = new AnimationTemplate(Reader, Handle);
 
 	if (AnimationTemplatePtr->IsValid()) {
@@ -133,7 +133,7 @@ AnimationTemplate::AnimationTemplate(const AnimationTemplate &Other) {
 
 // -----------------------------------------------------------------------------
 
-AnimationTemplate::AnimationTemplate(InputPersistenceBlock &Reader, unsigned int Handle) {
+AnimationTemplate::AnimationTemplate(InputPersistenceBlock &Reader, uint Handle) {
 	// Objekt registrieren.
 	AnimationTemplateRegistry::GetInstance().RegisterObject(this, Handle);
 
@@ -183,7 +183,7 @@ void AnimationTemplate::SetFrame(int DestIndex, int SrcIndex) {
 
 // -----------------------------------------------------------------------------
 
-bool AnimationTemplate::ValidateSourceIndex(unsigned int Index) const {
+bool AnimationTemplate::ValidateSourceIndex(uint Index) const {
 	if (Index > m_SourceAnimationPtr->GetFrameCount()) {
 		BS_LOG_WARNINGLN("Tried to insert a frame (\"%d\") that does not exist in the source animation (\"%s\"). Ignoring call.",
 		                 Index, m_SourceAnimationPtr->GetFileName().c_str());
@@ -194,7 +194,7 @@ bool AnimationTemplate::ValidateSourceIndex(unsigned int Index) const {
 
 // -----------------------------------------------------------------------------
 
-bool AnimationTemplate::ValidateDestIndex(unsigned int Index) const {
+bool AnimationTemplate::ValidateDestIndex(uint Index) const {
 	if (Index > m_Frames.size()) {
 		BS_LOG_WARNINGLN("Tried to change a nonexistent frame (\"%d\") in a template animation. Ignoring call.",
 		                 Index);
@@ -249,11 +249,11 @@ bool AnimationTemplate::Unpersist(InputPersistenceBlock &Reader) {
 	Result &= AnimationDescription::Unpersist(Reader);
 
 	// Frameanzahl lesen.
-	unsigned int FrameCount;
+	uint FrameCount;
 	Reader.Read(FrameCount);
 
 	// Frames einzeln wieder herstellen.
-	for (unsigned int i = 0; i < FrameCount; ++i) {
+	for (uint i = 0; i < FrameCount; ++i) {
 		Frame frame;
 		Reader.Read(frame.HotspotX);
 		Reader.Read(frame.HotspotY);

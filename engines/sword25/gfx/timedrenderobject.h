@@ -59,7 +59,7 @@ namespace Sword25 {
 
 class TimedRenderObject : public RenderObject {
 public:
-	TimedRenderObject(RenderObjectPtr<RenderObject> pParent, TYPES Type, unsigned int Handle = 0);
+	TimedRenderObject(RenderObjectPtr<RenderObject> pParent, TYPES Type, uint Handle = 0);
 	~TimedRenderObject();
 
 	/**

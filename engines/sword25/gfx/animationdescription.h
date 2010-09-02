@@ -75,8 +75,8 @@ public:
 	// Abstrakte Methoden
 	// -----------------------------------------------------------------------------
 
-	virtual const Frame    &GetFrame(unsigned int Index) const = 0;
-	virtual unsigned int    GetFrameCount() const = 0;
+	virtual const Frame    &GetFrame(uint Index) const = 0;
+	virtual uint    GetFrameCount() const = 0;
 	virtual void            Unlock() = 0;
 
 	// -----------------------------------------------------------------------------

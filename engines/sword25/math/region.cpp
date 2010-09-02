@@ -52,14 +52,14 @@ Region::Region() : m_Valid(false), m_Type(RT_REGION) {
 
 // -----------------------------------------------------------------------------
 
-Region::Region(InputPersistenceBlock &Reader, unsigned int Handle) : m_Valid(false), m_Type(RT_REGION) {
+Region::Region(InputPersistenceBlock &Reader, uint Handle) : m_Valid(false), m_Type(RT_REGION) {
 	RegionRegistry::GetInstance().RegisterObject(this, Handle);
 	Unpersist(Reader);
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned int Region::Create(REGION_TYPE Type) {
+uint Region::Create(REGION_TYPE Type) {
 	Region *RegionPtr = NULL;
 	switch (Type) {
 	case RT_REGION:
@@ -79,9 +79,9 @@ unsigned int Region::Create(REGION_TYPE Type) {
 
 // -----------------------------------------------------------------------------
 
-unsigned int Region::Create(InputPersistenceBlock &Reader, unsigned int Handle) {
+uint Region::Create(InputPersistenceBlock &Reader, uint Handle) {
 	// Read type
-	unsigned int Type;
+	uint Type;
 	Reader.Read(Type);
 
 	// Depending on the type, create a new BS_Region or BS_WalkRegion object
@@ -125,7 +125,7 @@ bool Region::Init(const Polygon &Contour, const Common::Array<Polygon> *pHoles) 
 
 	// Place the hole polygons in the following positions
 	if (pHoles) {
-		for (unsigned int i = 0; i < pHoles->size(); ++i) {
+		for (uint i = 0; i < pHoles->size(); ++i) {
 			m_Polygons.push_back(Polygon());
 			m_Polygons[i + 1].Init((*pHoles)[i].VertexCount, (*pHoles)[i].Vertecies);
 			m_Polygons[i + 1].EnsureCWOrder();
@@ -171,7 +171,7 @@ void Region::SetPos(int X, int Y) {
 	m_Position = Vertex(X, Y);
 
 	// Move all the vertecies
-	for (unsigned int i = 0; i < m_Polygons.size(); ++i) {
+	for (uint i = 0; i < m_Polygons.size(); ++i) {
 		m_Polygons[i] += Delta;
 	}
 
@@ -200,7 +200,7 @@ bool Region::IsPointInRegion(int X, int Y) const {
 		// Test whether the point is in the contour
 		if (m_Polygons[0].IsPointInPolygon(X, Y, true)) {
 			// Test whether the point is in a hole
-			for (unsigned int i = 1; i < m_Polygons.size(); i++) {
+			for (uint i = 1; i < m_Polygons.size(); i++) {
 				if (m_Polygons[i].IsPointInPolygon(X, Y, false))
 					return false;
 			}
@@ -225,7 +225,7 @@ Vertex Region::FindClosestRegionPoint(const Vertex &Point) const {
 	// point on the edge of the hole is determined
 	int PolygonIdx = 0;
 	{
-		for (unsigned int i = 1; i < m_Polygons.size(); ++i) {
+		for (uint i = 1; i < m_Polygons.size(); ++i) {
 			if (m_Polygons[i].IsPointInPolygon(Point)) {
 				PolygonIdx = i;
 				break;
@@ -337,7 +337,7 @@ bool Region::IsLineOfSight(const Vertex &a, const Vertex &b) const {
 bool Region::Persist(OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
-	Writer.Write(static_cast<unsigned int>(m_Type));
+	Writer.Write(static_cast<uint>(m_Type));
 	Writer.Write(m_Valid);
 	Writer.Write(m_Position.X);
 	Writer.Write(m_Position.Y);
@@ -365,9 +365,9 @@ bool Region::Unpersist(InputPersistenceBlock &Reader) {
 	Reader.Read(m_Position.Y);
 
 	m_Polygons.clear();
-	unsigned int PolygonCount;
+	uint PolygonCount;
 	Reader.Read(PolygonCount);
-	for (unsigned int i = 0; i < PolygonCount; ++i) {
+	for (uint i = 0; i < PolygonCount; ++i) {
 		m_Polygons.push_back(Polygon(Reader));
 	}
 

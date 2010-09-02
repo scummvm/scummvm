@@ -54,17 +54,17 @@
 #include <string.h>
 
 typedef struct {
-	unsigned int        address;
-	unsigned int        size;
+	uint        address;
+	uint        size;
 	std::string         file;
-	unsigned int        line;
+	uint        line;
 } ALLOC_INFO;
 
 static const char *MEMLEAK_LOG_FILE = "memory_leaks.txt";
-static const unsigned int BUCKET_COUNT = 1021;
+static const uint BUCKET_COUNT = 1021;
 std::vector< std::vector<ALLOC_INFO> > TrackData(BUCKET_COUNT);
 
-static unsigned int TotalSize = 0;
+static uint TotalSize = 0;
 
 // Diese Klasse stellt sicher, dass beim Programmende, das Memory-Leak Log geschrieben wird.
 static class LeakDumper {
@@ -102,7 +102,7 @@ void DumpUnfreed(const char *OutputFilename) {
 	fclose(Log);
 }
 
-void AddTrack(unsigned int addr,  unsigned int asize,  const char *fname, unsigned int lnum) {
+void AddTrack(uint addr,  uint asize,  const char *fname, uint lnum) {
 	std::vector<ALLOC_INFO> & CurBucket = TrackData[(addr >> 3) % BUCKET_COUNT];
 	ALLOC_INFO Info;
 	Info.address = addr;
@@ -114,7 +114,7 @@ void AddTrack(unsigned int addr,  unsigned int asize,  const char *fname, unsign
 	TotalSize += asize;
 }
 
-void RemoveTrack(unsigned int addr) {
+void RemoveTrack(uint addr) {
 	if (addr != 0 && TrackData.size() == BUCKET_COUNT) {
 		std::vector<ALLOC_INFO> & CurBucket = TrackData[(addr >> 3) % BUCKET_COUNT];
 		std::vector<ALLOC_INFO>::iterator Iter = CurBucket.begin();

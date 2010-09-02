@@ -44,22 +44,22 @@
 #include <malloc.h>
 
 void DumpUnfreed(const char *OutputFilename);
-void AddTrack(unsigned int addr,  unsigned int asize,  const char *fname, unsigned int lnum);
-void RemoveTrack(unsigned int addr);
+void AddTrack(uint addr,  uint asize,  const char *fname, uint lnum);
+void RemoveTrack(uint addr);
 
-inline void *__cdecl operator new(unsigned int size, const char *file, int line) {
+inline void *__cdecl operator new(uint size, const char *file, int line) {
 	void *ptr = malloc(size);
-	if (ptr) AddTrack((unsigned int)ptr, size, file, line);
+	if (ptr) AddTrack((uint)ptr, size, file, line);
 	return(ptr);
 };
 
 inline void __cdecl operator delete(void *p) {
-	RemoveTrack((unsigned int)p);
+	RemoveTrack((uint)p);
 	free(p);
 };
 
 inline void __cdecl operator delete[](void *p) {
-	RemoveTrack((unsigned int)p);
+	RemoveTrack((uint)p);
 	free(p);
 };
 

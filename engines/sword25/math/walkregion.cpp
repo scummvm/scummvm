@@ -58,7 +58,7 @@ WalkRegion::WalkRegion() {
 
 // -----------------------------------------------------------------------------
 
-WalkRegion::WalkRegion(InputPersistenceBlock &Reader, unsigned int Handle) :
+WalkRegion::WalkRegion(InputPersistenceBlock &Reader, uint Handle) :
 	Region(Reader, Handle) {
 	m_Type = RT_WALKREGION;
 	Unpersist(Reader);
@@ -155,7 +155,7 @@ static void RelaxNodes(DijkstraNode::Container &Nodes,
 	// a shorter path has been found to them.
 
 	int CurNodeIndex = CurNodeIter - Nodes.begin();
-	for (unsigned int i = 0; i < Nodes.size(); i++) {
+	for (uint i = 0; i < Nodes.size(); i++) {
 		int Cost = VisibilityMatrix[CurNodeIndex][i];
 		if (!Nodes[i].Chosen && Cost != infinity) {
 			int TotalCost = (*CurNodeIter).Cost + Cost;
@@ -193,7 +193,7 @@ bool WalkRegion::FindPath(const Vertex &Start, const Vertex &End, BS_Path &Path)
 
 	// Since a node is selected each round from the node list, and can never be selected again
 	// after that, the maximum number of loop iterations is limited by the number of nodes
-	for (unsigned int i = 0; i < m_Nodes.size(); i++) {
+	for (uint i = 0; i < m_Nodes.size(); i++) {
 		// Determine the nearest edge node in the node list
 		DijkstraNode::Iter NodeInter = ChooseClosestNode(DijkstraNodes);
 
@@ -245,14 +245,14 @@ void WalkRegion::InitNodeVector() {
 	// Determine the number of nodes
 	int NodeCount = 0;
 	{
-		for (unsigned int i = 0; i < m_Polygons.size(); i++)
+		for (uint i = 0; i < m_Polygons.size(); i++)
 			NodeCount += m_Polygons[i].VertexCount;
 	}
 
 	// Knoten-Vector füllen
 	m_Nodes.reserve(NodeCount);
 	{
-		for (unsigned int j = 0; j < m_Polygons.size(); j++)
+		for (uint j = 0; j < m_Polygons.size(); j++)
 			for (int i = 0; i < m_Polygons[j].VertexCount; i++)
 				m_Nodes.push_back(m_Polygons[j].Vertecies[i]);
 	}
@@ -272,8 +272,8 @@ void WalkRegion::ComputeVisibilityMatrix() {
 	}
 
 	// Calculate visibility been vertecies
-	for (unsigned int j = 0; j < m_Nodes.size(); ++j) {
-		for (unsigned int i = j; i < m_Nodes.size(); ++i)   {
+	for (uint j = 0; j < m_Nodes.size(); ++j) {
+		for (uint i = j; i < m_Nodes.size(); ++i)   {
 			if (IsLineOfSight(m_Nodes[i], m_Nodes[j])) {
 				// There is a line of sight, so save the distance between the two
 				int Distance = m_Nodes[i].Distance(m_Nodes[j]);
@@ -332,7 +332,7 @@ void WalkRegion::SetPos(int X, int Y) {
 	Vertex Delta(X - m_Position.X, Y - m_Position.Y);
 
 	// Move all the nodes
-	for (unsigned int i = 0; i < m_Nodes.size(); i++) m_Nodes[i] += Delta;
+	for (uint i = 0; i < m_Nodes.size(); i++) m_Nodes[i] += Delta;
 
 	// Move regions
 	Region::SetPos(X, Y);
@@ -381,7 +381,7 @@ bool WalkRegion::Unpersist(InputPersistenceBlock &Reader) {
 	// this point only the additional data from BS_WalkRegion needs to be loaded
 
 	// Node load
-	unsigned int NodeCount;
+	uint NodeCount;
 	Reader.Read(NodeCount);
 	m_Nodes.clear();
 	m_Nodes.resize(NodeCount);
@@ -393,13 +393,13 @@ bool WalkRegion::Unpersist(InputPersistenceBlock &Reader) {
 	}
 
 	// Visibility matrix load
-	unsigned int RowCount;
+	uint RowCount;
 	Reader.Read(RowCount);
 	m_VisibilityMatrix.clear();
 	m_VisibilityMatrix.resize(RowCount);
 	Common::Array< Common::Array<int> >::iterator RowIter = m_VisibilityMatrix.begin();
 	while (RowIter != m_VisibilityMatrix.end()) {
-		unsigned int ColCount;
+		uint ColCount;
 		Reader.Read(ColCount);
 		RowIter->resize(ColCount);
 		Common::Array<int>::iterator ColIter = RowIter->begin();

@@ -61,9 +61,9 @@ namespace Sword25 {
 // Callback-Objekte
 // -----------------------------------------------------------------------------
 
-static bool AnimationDeleteCallback(unsigned int Data);
-static bool AnimationActionCallback(unsigned int Data);
-static bool AnimationLoopPointCallback(unsigned int Data);
+static bool AnimationDeleteCallback(uint Data);
+static bool AnimationActionCallback(uint Data);
+static bool AnimationLoopPointCallback(uint Data);
 
 namespace {
 // -------------------------------------------------------------------------
@@ -133,7 +133,7 @@ static void *my_checkudata(lua_State *L, int ud, const char *tname) {
 
 // -----------------------------------------------------------------------------
 
-static void NewUintUserData(lua_State *L, unsigned int Value) {
+static void NewUintUserData(lua_State *L, uint Value) {
 	void *UserData = lua_newuserdata(L, sizeof(Value));
 	memcpy(UserData, &Value, sizeof(Value));
 }
@@ -142,8 +142,8 @@ static void NewUintUserData(lua_State *L, unsigned int Value) {
 
 static AnimationTemplate *CheckAnimationTemplate(lua_State *L, int idx = 1) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable der Klasse Gfx.AnimationTemplate
-	unsigned int AnimationTemplateHandle;
-	if ((AnimationTemplateHandle = *reinterpret_cast<unsigned int *>(my_checkudata(L, idx, ANIMATION_TEMPLATE_CLASS_NAME))) != 0) {
+	uint AnimationTemplateHandle;
+	if ((AnimationTemplateHandle = *reinterpret_cast<uint *>(my_checkudata(L, idx, ANIMATION_TEMPLATE_CLASS_NAME))) != 0) {
 		AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::GetInstance().ResolveHandle(AnimationTemplateHandle);
 		if (!AnimationTemplatePtr)
 			luaL_error(L, "The animation template with the handle %d does no longer exist.", AnimationTemplateHandle);
@@ -158,7 +158,7 @@ static AnimationTemplate *CheckAnimationTemplate(lua_State *L, int idx = 1) {
 // -----------------------------------------------------------------------------
 
 static int NewAnimationTemplate(lua_State *L) {
-	unsigned int AnimationTemplateHandle = AnimationTemplate::Create(luaL_checkstring(L, 1));
+	uint AnimationTemplateHandle = AnimationTemplate::Create(luaL_checkstring(L, 1));
 	AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::GetInstance().ResolveHandle(AnimationTemplateHandle);
 	if (AnimationTemplatePtr && AnimationTemplatePtr->IsValid()) {
 		NewUintUserData(L, AnimationTemplateHandle);
@@ -514,11 +514,11 @@ static const luaL_reg GFX_FUNCTIONS[] = {
 
 static RenderObjectPtr<RenderObject> CheckRenderObject(lua_State *L, bool ErrorIfRemoved = true) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable einer Klasse haben, die von Gfx.RenderObject "erbt".
-	unsigned int *UserDataPtr;
-	if ((UserDataPtr = (unsigned int *) my_checkudata(L, 1, BITMAP_CLASS_NAME)) != 0 ||
-	        (UserDataPtr = (unsigned int *) my_checkudata(L, 1, ANIMATION_CLASS_NAME)) != 0 ||
-	        (UserDataPtr = (unsigned int *) my_checkudata(L, 1, PANEL_CLASS_NAME)) != 0 ||
-	        (UserDataPtr = (unsigned int *) my_checkudata(L, 1, TEXT_CLASS_NAME)) != 0) {
+	uint *UserDataPtr;
+	if ((UserDataPtr = (uint *) my_checkudata(L, 1, BITMAP_CLASS_NAME)) != 0 ||
+	        (UserDataPtr = (uint *) my_checkudata(L, 1, ANIMATION_CLASS_NAME)) != 0 ||
+	        (UserDataPtr = (uint *) my_checkudata(L, 1, PANEL_CLASS_NAME)) != 0 ||
+	        (UserDataPtr = (uint *) my_checkudata(L, 1, TEXT_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> ROPtr(* UserDataPtr);
 		if (ROPtr.IsValid())
 			return ROPtr;
@@ -776,8 +776,8 @@ static const luaL_reg RENDEROBJECT_METHODS[] = {
 
 static RenderObjectPtr<Panel> CheckPanel(lua_State *L) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable der Klasse Gfx.Panel
-	unsigned int *UserDataPtr;
-	if ((UserDataPtr = (unsigned int *) my_checkudata(L, 1, PANEL_CLASS_NAME)) != 0) {
+	uint *UserDataPtr;
+	if ((UserDataPtr = (uint *) my_checkudata(L, 1, PANEL_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> ROPtr(*UserDataPtr);
 		if (ROPtr.IsValid()) {
 			return ROPtr->ToPanel();
@@ -831,8 +831,8 @@ static const luaL_reg PANEL_METHODS[] = {
 
 static RenderObjectPtr<Bitmap> CheckBitmap(lua_State *L) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable der Klasse Gfx.Bitmap
-	unsigned int *UserDataPtr;
-	if ((UserDataPtr = (unsigned int *) my_checkudata(L, 1, BITMAP_CLASS_NAME)) != 0) {
+	uint *UserDataPtr;
+	if ((UserDataPtr = (uint *) my_checkudata(L, 1, BITMAP_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> ROPtr(*UserDataPtr);
 		if (ROPtr.IsValid()) {
 			return ROPtr->ToBitmap();
@@ -850,7 +850,7 @@ static RenderObjectPtr<Bitmap> CheckBitmap(lua_State *L) {
 static int B_SetAlpha(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
 	BS_ASSERT(BitmapPtr.IsValid());
-	BitmapPtr->SetAlpha(static_cast<unsigned int>(luaL_checknumber(L, 2)));
+	BitmapPtr->SetAlpha(static_cast<uint>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -1036,8 +1036,8 @@ static const luaL_reg BITMAP_METHODS[] = {
 
 static RenderObjectPtr<Animation> CheckAnimation(lua_State *L) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable der Klasse Gfx.Animation
-	unsigned int *UserDataPtr;
-	if ((UserDataPtr = (unsigned int *) my_checkudata(L, 1, ANIMATION_CLASS_NAME)) != 0) {
+	uint *UserDataPtr;
+	if ((UserDataPtr = (uint *) my_checkudata(L, 1, ANIMATION_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> ROPtr(*UserDataPtr);
 		if (ROPtr.IsValid())
 			return ROPtr->ToAnimation();
@@ -1083,7 +1083,7 @@ static int A_Stop(lua_State *L) {
 static int A_SetFrame(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
 	BS_ASSERT(AnimationPtr.IsValid());
-	AnimationPtr->SetFrame(static_cast<unsigned int>(luaL_checknumber(L, 2)));
+	AnimationPtr->SetFrame(static_cast<uint>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -1245,7 +1245,7 @@ static int A_IsPlaying(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static bool AnimationLoopPointCallback(unsigned int Handle) {
+static bool AnimationLoopPointCallback(uint Handle) {
 	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->GetScriptObject());
 	LoopPointCallbackPtr->InvokeCallbackFunctions(L, Handle);
 
@@ -1280,7 +1280,7 @@ static int A_UnregisterLoopPointCallback(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static bool AnimationActionCallback(unsigned int Handle) {
+static bool AnimationActionCallback(uint Handle) {
 	RenderObjectPtr<Animation> AnimationPtr(Handle);
 	if (AnimationPtr.IsValid()) {
 		ActionCallbackPtr->Action = AnimationPtr->GetCurrentAction();
@@ -1319,7 +1319,7 @@ static int A_UnregisterActionCallback(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static bool AnimationDeleteCallback(unsigned int Handle) {
+static bool AnimationDeleteCallback(uint Handle) {
 	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->GetScriptObject());
 	LoopPointCallbackPtr->RemoveAllObjectCallbacks(L, Handle);
 
@@ -1370,8 +1370,8 @@ static const luaL_reg ANIMATION_METHODS[] = {
 
 static RenderObjectPtr<Text> CheckText(lua_State *L) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable der Klasse Gfx.Text
-	unsigned int *UserDataPtr;
-	if ((UserDataPtr = (unsigned int *) my_checkudata(L, 1, TEXT_CLASS_NAME)) != 0) {
+	uint *UserDataPtr;
+	if ((UserDataPtr = (uint *) my_checkudata(L, 1, TEXT_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> ROPtr(*UserDataPtr);
 		if (ROPtr.IsValid())
 			return ROPtr->ToText();
@@ -1434,7 +1434,7 @@ static int T_SetAutoWrap(lua_State *L) {
 static int T_SetAutoWrapThreshold(lua_State *L) {
 	RenderObjectPtr<Text> TextPtr = CheckText(L);
 	BS_ASSERT(TextPtr.IsValid());
-	TextPtr->SetAutoWrapThreshold(static_cast<unsigned int>(luaL_checknumber(L, 2)));
+	TextPtr->SetAutoWrapThreshold(static_cast<uint>(luaL_checknumber(L, 2)));
 	return 0;
 }
 

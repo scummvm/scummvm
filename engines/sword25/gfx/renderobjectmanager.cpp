@@ -158,10 +158,10 @@ bool RenderObjectManager::Unpersist(InputPersistenceBlock &Reader) {
 	m_TimedRenderObjects.resize(0);
 
 	// Referenzen auf die TimedRenderObjects wieder herstellen.
-	unsigned int TimedObjectCount;
+	uint TimedObjectCount;
 	Reader.Read(TimedObjectCount);
-	for (unsigned int i = 0; i < TimedObjectCount; ++i) {
-		unsigned int Handle;
+	for (uint i = 0; i < TimedObjectCount; ++i) {
+		uint Handle;
 		Reader.Read(Handle);
 		m_TimedRenderObjects.push_back(Handle);
 	}

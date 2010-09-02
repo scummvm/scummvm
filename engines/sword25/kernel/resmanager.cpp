@@ -223,7 +223,7 @@ void ResourceManager::MoveToFront(Resource *pResource) {
  */
 Resource *ResourceManager::LoadResource(const Common::String &FileName) {
 	// ResourceService finden, der die Resource laden kann.
-	for (unsigned int i = 0; i < m_ResourceServices.size(); ++i) {
+	for (uint i = 0; i < m_ResourceServices.size(); ++i) {
 		if (m_ResourceServices[i]->CanLoadResource(FileName)) {
 			// If more memory is desired, memory must be released
 			DeleteResourcesIfNecessary();
@@ -328,7 +328,7 @@ void ResourceManager::DumpLockedResources() {
  * as a guideline, and not as a fixed boundary. It is not guaranteed not to be exceeded;
  * the whole game engine may still use more memory than any amount specified.
  */
-void ResourceManager::SetMaxMemoryUsage(unsigned int MaxMemoryUsage) {
+void ResourceManager::SetMaxMemoryUsage(uint MaxMemoryUsage) {
 	m_MaxMemoryUsage = MaxMemoryUsage;
 	DeleteResourcesIfNecessary();
 }

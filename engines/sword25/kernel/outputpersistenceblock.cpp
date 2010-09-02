@@ -45,7 +45,7 @@
 // -----------------------------------------------------------------------------
 
 namespace {
-const unsigned int INITIAL_BUFFER_SIZE = 1024 * 64;
+const uint INITIAL_BUFFER_SIZE = 1024 * 64;
 }
 
 namespace Sword25 {
@@ -70,7 +70,7 @@ void OutputPersistenceBlock::Write(signed int Value) {
 
 // -----------------------------------------------------------------------------
 
-void OutputPersistenceBlock::Write(unsigned int Value) {
+void OutputPersistenceBlock::Write(uint Value) {
 	WriteMarker(UINT_MARKER);
 	Value = ConvertEndianessFromSystemToStorage(Value);
 	RawWrite(&Value, sizeof(Value));
@@ -89,7 +89,7 @@ void OutputPersistenceBlock::Write(float Value) {
 void OutputPersistenceBlock::Write(bool Value) {
 	WriteMarker(BOOL_MARKER);
 
-	unsigned int UIntBool = Value ? 1 : 0;
+	uint UIntBool = Value ? 1 : 0;
 	UIntBool = ConvertEndianessFromSystemToStorage(UIntBool);
 	RawWrite(&UIntBool, sizeof(UIntBool));
 }
@@ -122,7 +122,7 @@ void OutputPersistenceBlock::WriteMarker(byte Marker) {
 
 void OutputPersistenceBlock::RawWrite(const void *DataPtr, size_t Size) {
 	if (Size > 0) {
-		unsigned int OldSize = m_Data.size();
+		uint OldSize = m_Data.size();
 		m_Data.resize(OldSize + Size);
 		memcpy(&m_Data[OldSize], DataPtr, Size);
 	}

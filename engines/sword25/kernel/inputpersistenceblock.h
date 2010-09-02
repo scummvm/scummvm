@@ -57,12 +57,12 @@ public:
 		OUT_OF_SYNC
 	};
 
-	InputPersistenceBlock(const void *Data, unsigned int DataLength);
+	InputPersistenceBlock(const void *Data, uint DataLength);
 	virtual ~InputPersistenceBlock();
 
 	void Read(int16 &Value);
 	void Read(signed int &Value);
-	void Read(unsigned int &Value);
+	void Read(uint &Value);
 	void Read(float &Value);
 	void Read(bool &Value);
 	void Read(Common::String &Value);

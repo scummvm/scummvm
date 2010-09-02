@@ -49,20 +49,20 @@ namespace Sword25 {
 
 class PersistenceBlock {
 public:
-	static unsigned int GetSInt32Size() {
+	static uint GetSInt32Size() {
 		return sizeof(signed int) + sizeof(byte);
 	}
-	static unsigned int GetUInt32Size() {
-		return sizeof(unsigned int) + sizeof(byte);
+	static uint GetUInt32Size() {
+		return sizeof(uint) + sizeof(byte);
 	}
-	static unsigned int GetFloat32Size() {
+	static uint GetFloat32Size() {
 		return sizeof(float) + sizeof(byte);
 	}
-	static unsigned int GetBoolSize() {
+	static uint GetBoolSize() {
 		return sizeof(byte) + sizeof(byte);
 	}
-	static unsigned int GetStringSize(const Common::String &String) {
-		return static_cast<unsigned int>(sizeof(unsigned int) + String.size() + sizeof(byte));
+	static uint GetStringSize(const Common::String &String) {
+		return static_cast<uint>(sizeof(uint) + String.size() + sizeof(byte));
 	}
 
 protected:
@@ -97,7 +97,7 @@ protected:
 
 private:
 	static bool IsBigEndian() {
-		unsigned int Dummy = 1;
+		uint Dummy = 1;
 		byte *DummyPtr = reinterpret_cast<byte *>(&Dummy);
 		return DummyPtr[0] == 0;
 	}
@@ -124,7 +124,7 @@ private:
 #define CTASSERT(ex) typedef char ctassert_type[(ex) ? 1 : -1]
 CTASSERT(sizeof(byte) == 1);
 CTASSERT(sizeof(signed int) == 4);
-CTASSERT(sizeof(unsigned int) == 4);
+CTASSERT(sizeof(uint) == 4);
 CTASSERT(sizeof(float) == 4);
 #undef CTASSERT
 

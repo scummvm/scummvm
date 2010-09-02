@@ -64,7 +64,7 @@ public:
 private:
 	FMOD_SOUND     *m_SoundPtr;
 	char           *m_SoundDataPtr;
-	unsigned int    m_SoundDataSize;
+	uint    m_SoundDataSize;
 };
 
 #endif

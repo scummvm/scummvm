@@ -39,10 +39,10 @@
 
 namespace BS_String {
 
-inline unsigned int GetHash(const Common::String &Str) {
-	unsigned int Result = 0;
+inline uint GetHash(const Common::String &Str) {
+	uint Result = 0;
 
-	for (unsigned int i = 0; i < Str.size(); i++)
+	for (uint i = 0; i < Str.size(); i++)
 		Result = ((Result << 5) - Result) + Str[i];
 
 	return Result;

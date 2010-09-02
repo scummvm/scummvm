@@ -95,7 +95,7 @@ public:
 	    @remark Dieses Attribut wird mit dem Wert 300 initialisiert.
 	    @remark Eine automatische Formatierung wird nur vorgenommen, wenn diese durch einen Aufruf von SetAutoWrap() aktiviert wurde.
 	*/
-	void SetAutoWrapThreshold(unsigned int AutoWrapThreshold);
+	void SetAutoWrapThreshold(uint AutoWrapThreshold);
 
 	/**
 	    @brief Gibt den dargestellten Text zurück.
@@ -115,7 +115,7 @@ public:
 	    @brief Setzt die Farbe des Textes.
 	    @param Color eine 24-Bit RGB Farbe, die die Farbe des Textes festlegt.
 	*/
-	void SetColor(unsigned int ModulationColor);
+	void SetColor(uint ModulationColor);
 
 	/**
 	    @brief Gibt den Alphawert des Textes zurück.
@@ -143,7 +143,7 @@ public:
 	/**
 	    @brief Gibt die Längengrenze des Textes in Pixeln zurück, ab der eine automatische Formatierung vorgenommen wird.
 	*/
-	unsigned int GetAutoWrapThreshold() const {
+	uint GetAutoWrapThreshold() const {
 		return m_AutoWrapThreshold;
 	}
 
@@ -155,13 +155,13 @@ protected:
 
 private:
 	Text(RenderObjectPtr<RenderObject> ParentPtr);
-	Text(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
+	Text(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle);
 
-	unsigned int    m_ModulationColor;
+	uint    m_ModulationColor;
 	Common::String      m_Font;
 	Common::String      m_Text;
 	bool            m_AutoWrap;
-	unsigned int    m_AutoWrapThreshold;
+	uint    m_AutoWrapThreshold;
 
 	struct LINE {
 		Common::Rect     BBox;

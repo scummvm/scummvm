@@ -100,13 +100,13 @@ bool AnimationTemplateRegistry::Unpersist(InputPersistenceBlock &Reader) {
 		delete m_Handle2PtrMap.begin()->_value;
 
 	// Anzahl an BS_AnimationTemplates einlesen.
-	unsigned int AnimationTemplateCount;
+	uint AnimationTemplateCount;
 	Reader.Read(AnimationTemplateCount);
 
 	// Alle gespeicherten BS_AnimationTemplates wieder herstellen.
-	for (unsigned int i = 0; i < AnimationTemplateCount; ++i) {
+	for (uint i = 0; i < AnimationTemplateCount; ++i) {
 		// Handle lesen.
-		unsigned int Handle;
+		uint Handle;
 		Reader.Read(Handle);
 
 		// BS_AnimationTemplate wieder herstellen.

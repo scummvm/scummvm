@@ -55,7 +55,7 @@ class Animation : public TimedRenderObject {
 private:
 	Animation(RenderObjectPtr<RenderObject> ParentPtr, const Common::String &FileName);
 	Animation(RenderObjectPtr<RenderObject> ParentPtr, const AnimationTemplate &Template);
-	Animation(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
+	Animation(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle);
 
 public:
 	enum ANIMATION_TYPES {
@@ -69,7 +69,7 @@ public:
 	void Play();
 	void Pause();
 	void Stop();
-	void SetFrame(unsigned int Nr);
+	void SetFrame(uint Nr);
 
 	virtual void SetPos(int X, int Y);
 	virtual void SetX(int X);
@@ -92,7 +92,7 @@ public:
 	    @param Color eine 24-Bit Farbe, die die Modulationsfarbe der Animation festlegt.
 	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsColorModulationAllowed() true zurückgibt.
 	*/
-	void SetModulationColor(unsigned int ModulationColor);
+	void SetModulationColor(uint ModulationColor);
 
 	/**
 	    @brief Setzt den Skalierungsfaktor der Animation.
@@ -142,7 +142,7 @@ public:
 	bool                IsScalingAllowed() const;
 	bool                IsAlphaAllowed() const;
 	bool                IsColorModulationAllowed() const;
-	unsigned int        GetCurrentFrame() const {
+	uint        GetCurrentFrame() const {
 		return m_CurrentFrame;
 	}
 	const Common::String   &GetCurrentAction() const ;
@@ -150,11 +150,11 @@ public:
 		return m_Running;
 	}
 
-	typedef bool (*ANIMATION_CALLBACK)(unsigned int);
+	typedef bool (*ANIMATION_CALLBACK)(uint);
 
-	void RegisterLoopPointCallback(ANIMATION_CALLBACK Callback, unsigned int Data = 0);
-	void RegisterActionCallback(ANIMATION_CALLBACK Callback, unsigned int Data = 0);
-	void RegisterDeleteCallback(ANIMATION_CALLBACK Callback, unsigned int Data = 0);
+	void RegisterLoopPointCallback(ANIMATION_CALLBACK Callback, uint Data = 0);
+	void RegisterActionCallback(ANIMATION_CALLBACK Callback, uint Data = 0);
+	void RegisterDeleteCallback(ANIMATION_CALLBACK Callback, uint Data = 0);
 
 protected:
 	virtual bool DoRender();
@@ -169,19 +169,19 @@ private:
 	int                         m_RelY;
 	float                       m_ScaleFactorX;
 	float                       m_ScaleFactorY;
-	unsigned int                m_ModulationColor;
-	unsigned int                m_CurrentFrame;
+	uint                m_ModulationColor;
+	uint                m_CurrentFrame;
 	int                         m_CurrentFrameTime;
 	bool                        m_Running;
 	bool                        m_Finished;
 	DIRECTION                   m_Direction;
 	AnimationResource       *m_AnimationResourcePtr;
-	unsigned int                m_AnimationTemplateHandle;
+	uint                m_AnimationTemplateHandle;
 	bool                        m_FramesLocked;
 
 	struct ANIMATION_CALLBACK_DATA {
 		ANIMATION_CALLBACK  Callback;
-		unsigned int        Data;
+		uint        Data;
 	};
 	Common::Array<ANIMATION_CALLBACK_DATA> m_LoopPointCallbacks;
 	Common::Array<ANIMATION_CALLBACK_DATA> m_ActionCallbacks;

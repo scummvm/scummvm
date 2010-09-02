@@ -64,7 +64,7 @@ GLImage::GLImage(const Common::String &Filename, bool &Result) :
 
 	// Datei laden
 	byte *pFileData;
-	unsigned int FileSize;
+	uint FileSize;
 	if (!(pFileData = (byte *) pPackage->GetFile(Filename, &FileSize))) {
 		BS_LOG_ERRORLN("File \"%s\" could not be loaded.", Filename.c_str());
 		return;
@@ -93,7 +93,7 @@ GLImage::GLImage(const Common::String &Filename, bool &Result) :
 
 // -----------------------------------------------------------------------------
 
-GLImage::GLImage(unsigned int Width, unsigned int Height, bool &Result) :
+GLImage::GLImage(uint Width, uint Height, bool &Result) :
 	m_Width(Width),
 	m_Height(Height) {
 	Result = false;
@@ -114,16 +114,16 @@ GLImage::~GLImage() {
 
 // -----------------------------------------------------------------------------
 
-bool GLImage::Fill(const Common::Rect *pFillRect, unsigned int Color) {
+bool GLImage::Fill(const Common::Rect *pFillRect, uint Color) {
 	BS_LOG_ERRORLN("Fill() is not supported.");
 	return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool GLImage::SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) {
+bool GLImage::SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride) {
 	// Überprüfen, ob PixelData ausreichend viele Pixel enthält um ein Bild der Größe Width * Height zu erzeugen
-	if (size < static_cast<unsigned int>(m_Width * m_Height * 4)) {
+	if (size < static_cast<uint>(m_Width * m_Height * 4)) {
 		BS_LOG_ERRORLN("PixelData vector is too small to define a 32 bit %dx%d image.", m_Width, m_Height);
 		return false;
 	}
@@ -142,14 +142,14 @@ bool GLImage::SetContent(const byte *Pixeldata, uint size, unsigned int Offset, 
 
 // -----------------------------------------------------------------------------
 
-unsigned int GLImage::GetPixel(int X, int Y) {
+uint GLImage::GetPixel(int X, int Y) {
 	BS_LOG_ERRORLN("GetPixel() is not supported. Returning black.");
 	return 0;
 }
 
 // -----------------------------------------------------------------------------
 
-bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, unsigned int Color, int Width, int Height) {
+bool GLImage::Blit(int PosX, int PosY, int Flipping, Common::Rect *pPartRect, uint Color, int Width, int Height) {
 	int x1 = 0, y1 = 0;
 	int w = m_Width, h = m_Height;
 	if (pPartRect) {

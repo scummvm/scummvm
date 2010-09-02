@@ -53,7 +53,7 @@ public:
 	OutputPersistenceBlock();
 
 	void Write(signed int Value);
-	void Write(unsigned int Value);
+	void Write(uint Value);
 	void Write(float Value);
 	void Write(bool Value);
 	void Write(const Common::String &String);
@@ -62,7 +62,7 @@ public:
 	const void *GetData() const {
 		return &m_Data[0];
 	}
-	unsigned int GetDataSize() const {
+	uint GetDataSize() const {
 		return m_Data.size();
 	}
 

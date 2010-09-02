@@ -146,7 +146,7 @@ static void SplitSearchPath(const Common::String &Path, Common::String &Director
 
 // -----------------------------------------------------------------------------
 
-static void DoSearch(lua_State *L, const Common::String &path, unsigned int type) {
+static void DoSearch(lua_State *L, const Common::String &path, uint type) {
 	PackageManager *pPM = GetPM();
 
 	// Der Packagemanager-Service muss den Suchstring und den Pfad getrennt übergeben bekommen.
@@ -195,7 +195,7 @@ static int FindDirectories(lua_State *L) {
 static int GetFileAsString(lua_State *L) {
 	PackageManager *pPM = GetPM();
 
-	unsigned int FileSize;
+	uint FileSize;
 	char *FileData = (char *)pPM->GetFile(luaL_checkstring(L, 1), &FileSize);
 	if (FileData) {
 		lua_pushlstring(L, FileData, FileSize);

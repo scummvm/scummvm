@@ -100,7 +100,7 @@ public:
 	 * @return              Specifies a pointer to the loaded data of the file
 	 * @remark              The client must not forget to release the data of the file using BE_DELETE_A.
 	 */
-	virtual byte *GetFile(const Common::String &FileName, unsigned int *pFileSize = NULL) = 0;
+	virtual byte *GetFile(const Common::String &FileName, uint *pFileSize = NULL) = 0;
 
 	/**
 	 * Returns a stream from file file from the virtual directory tree
@@ -116,9 +116,9 @@ public:
 	 * @return              Specifies a pointer to the loaded data of the file
 	 * @remark              The client must not forget to release the data of the file using BE_DELETE_A.
 	 */
-	char *GetXmlFile(const Common::String &FileName, unsigned int *pFileSize = NULL) {
+	char *GetXmlFile(const Common::String &FileName, uint *pFileSize = NULL) {
 		const char *versionStr = "<?xml version=\"1.0\"?>";
-		unsigned int fileSize;
+		uint fileSize;
 		char *data = (char *)GetFile(FileName, &fileSize);
 		char *result = (char *)malloc(fileSize + strlen(versionStr) + 1);
 		strcpy(result, versionStr);
@@ -162,7 +162,7 @@ public:
 	 * @return              Specifies a pointer to a BS_PackageManager::FileSearch object, or NULL if no file was found.
 	 * @remark              Do not forget to delete the object after use.
 	*/
-	virtual int doSearch(Common::ArchiveMemberList &list, const Common::String &Filter, const Common::String &Path, unsigned int TypeFilter = FT_DIRECTORY | FT_FILE) = 0;
+	virtual int doSearch(Common::ArchiveMemberList &list, const Common::String &Filter, const Common::String &Path, uint TypeFilter = FT_DIRECTORY | FT_FILE) = 0;
 
 	/**
 	 * Returns a file's size
@@ -170,7 +170,7 @@ public:
 	 * @return              The file size. If an error occurs, then 0xffffffff is returned.
 	 * @remarks             For files in packages, then uncompressed size is returned.
 	 **/
-	virtual unsigned int GetFileSize(const Common::String &FileName) = 0;
+	virtual uint GetFileSize(const Common::String &FileName) = 0;
 
 	/**
 	 * Returns the type of a file.
@@ -179,7 +179,7 @@ public:
 	 * or BS_PackageManager::FT_FILE).
 	 * If the file was not found, then 0 is returned.
 	 */
-	virtual unsigned int GetFileType(const Common::String &FileName) = 0;
+	virtual uint GetFileType(const Common::String &FileName) = 0;
 
 	/**
 	 * Determines whether a file exists

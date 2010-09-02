@@ -59,13 +59,13 @@ namespace Sword25 {
 const char         *SAVEGAME_EXTENSION = ".b25s";
 const char         *SAVEGAME_DIRECTORY = "saves";
 const char         *FILE_MARKER = "BS25SAVEGAME";
-const unsigned int  SLOT_COUNT = 18;
-const unsigned int  FILE_COPY_BUFFER_SIZE = 1024 * 10;
+const uint  SLOT_COUNT = 18;
+const uint  FILE_COPY_BUFFER_SIZE = 1024 * 10;
 const char *VERSIONID = "1";
 
 // -------------------------------------------------------------------------
 
-Common::String GenerateSavegameFilename(unsigned int SlotID) {
+Common::String GenerateSavegameFilename(uint SlotID) {
 	Common::String oss;
 	oss += SlotID;
 	oss += SAVEGAME_EXTENSION;
@@ -74,7 +74,7 @@ Common::String GenerateSavegameFilename(unsigned int SlotID) {
 
 // -------------------------------------------------------------------------
 
-Common::String GenerateSavegamePath(unsigned int SlotID) {
+Common::String GenerateSavegamePath(uint SlotID) {
 	Common::String oss;
 	oss = PersistenceService::GetSavegameDirectory();
 	oss += FileSystemUtil::GetInstance().GetPathSeparator();
@@ -124,9 +124,9 @@ struct SavegameInformation {
 	bool            IsCompatible;
 	Common::String  Description;
 	Common::String  Filename;
-	unsigned int    GamedataLength;
-	unsigned int    GamedataOffset;
-	unsigned int    GamedataUncompressedLength;
+	uint    GamedataLength;
+	uint    GamedataOffset;
+	uint    GamedataUncompressedLength;
 
 	SavegameInformation() {
 		Clear();
@@ -156,12 +156,12 @@ struct PersistenceService::Impl {
 
 	void ReloadSlots() {
 		// Über alle Spielstanddateien iterieren und deren Infos einlesen.
-		for (unsigned int i = 0; i < SLOT_COUNT; ++i) {
+		for (uint i = 0; i < SLOT_COUNT; ++i) {
 			ReadSlotSavegameInformation(i);
 		}
 	}
 
-	void ReadSlotSavegameInformation(unsigned int SlotID) {
+	void ReadSlotSavegameInformation(uint SlotID) {
 		// Aktuelle Slotinformationen in den Ausgangszustand versetzen, er wird im Folgenden neu gefüllt.
 		SavegameInformation &CurSavegameInfo = m_SavegameInformations[SlotID];
 		CurSavegameInfo.Clear();
@@ -194,7 +194,7 @@ struct PersistenceService::Impl {
 					CurSavegameInfo.Description = FormatTimestamp(FileSystemUtil::GetInstance().GetFileTime(Filename));
 					// Den Offset zu den gespeicherten Spieldaten innerhalb der Datei speichern.
 					// Dieses entspricht der aktuellen Position + 1, da nach der letzten Headerinformation noch ein Leerzeichen als trenner folgt.
-					CurSavegameInfo.GamedataOffset = static_cast<unsigned int>(File->pos()) + 1;
+					CurSavegameInfo.GamedataOffset = static_cast<uint>(File->pos()) + 1;
 				}
 
 				delete File;
@@ -233,7 +233,7 @@ void PersistenceService::ReloadSlots() {
 
 // -----------------------------------------------------------------------------
 
-unsigned int PersistenceService::GetSlotCount() {
+uint PersistenceService::GetSlotCount() {
 	return SLOT_COUNT;
 }
 
@@ -246,7 +246,7 @@ Common::String PersistenceService::GetSavegameDirectory() {
 // -----------------------------------------------------------------------------
 
 namespace {
-bool CheckSlotID(unsigned int SlotID) {
+bool CheckSlotID(uint SlotID) {
 	// Überprüfen, ob die Slot-ID zulässig ist.
 	if (SlotID >= SLOT_COUNT) {
 		BS_LOG_ERRORLN("Tried to access an invalid slot (%d). Only slot ids from 0 to %d are allowed.", SlotID, SLOT_COUNT - 1);
@@ -259,21 +259,21 @@ bool CheckSlotID(unsigned int SlotID) {
 
 // -----------------------------------------------------------------------------
 
-bool PersistenceService::IsSlotOccupied(unsigned int SlotID) {
+bool PersistenceService::IsSlotOccupied(uint SlotID) {
 	if (!CheckSlotID(SlotID)) return false;
 	return m_impl->m_SavegameInformations[SlotID].IsOccupied;
 }
 
 // -----------------------------------------------------------------------------
 
-bool PersistenceService::IsSavegameCompatible(unsigned int SlotID) {
+bool PersistenceService::IsSavegameCompatible(uint SlotID) {
 	if (!CheckSlotID(SlotID)) return false;
 	return m_impl->m_SavegameInformations[SlotID].IsCompatible;
 }
 
 // -----------------------------------------------------------------------------
 
-Common::String &PersistenceService::GetSavegameDescription(unsigned int SlotID) {
+Common::String &PersistenceService::GetSavegameDescription(uint SlotID) {
 	static Common::String EmptyString;
 	if (!CheckSlotID(SlotID)) return EmptyString;
 	return m_impl->m_SavegameInformations[SlotID].Description;
@@ -281,7 +281,7 @@ Common::String &PersistenceService::GetSavegameDescription(unsigned int SlotID) 
 
 // -----------------------------------------------------------------------------
 
-Common::String &PersistenceService::GetSavegameFilename(unsigned int SlotID) {
+Common::String &PersistenceService::GetSavegameFilename(uint SlotID) {
 	static Common::String EmptyString;
 	if (!CheckSlotID(SlotID)) return EmptyString;
 	return m_impl->m_SavegameInformations[SlotID].Filename;
@@ -289,7 +289,7 @@ Common::String &PersistenceService::GetSavegameFilename(unsigned int SlotID) {
 
 // -----------------------------------------------------------------------------
 
-bool PersistenceService::SaveGame(unsigned int SlotID, const Common::String &ScreenshotFilename) {
+bool PersistenceService::SaveGame(uint SlotID, const Common::String &ScreenshotFilename) {
 	// Überprüfen, ob die Slot-ID zulässig ist.
 	if (SlotID >= SLOT_COUNT) {
 		BS_LOG_ERRORLN("Tried to save to an invalid slot (%d). Only slot ids form 0 to %d are allowed.", SlotID, SLOT_COUNT - 1);
@@ -376,7 +376,7 @@ bool PersistenceService::SaveGame(unsigned int SlotID, const Common::String &Scr
 
 // -----------------------------------------------------------------------------
 
-bool PersistenceService::LoadGame(unsigned int SlotID) {
+bool PersistenceService::LoadGame(uint SlotID) {
 	Common::SaveFileManager *sfm = g_system->getSavefileManager();
 	Common::InSaveFile *File;
 

@@ -58,9 +58,9 @@ class DynamicBitmap : public Bitmap {
 public:
 	virtual ~DynamicBitmap();
 
-	virtual unsigned int GetPixel(int X, int Y) const;
+	virtual uint GetPixel(int X, int Y) const;
 
-	virtual bool    SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride);
+	virtual bool    SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride);
 
 	virtual bool    IsScalingAllowed() const;
 	virtual bool    IsAlphaAllowed() const;
@@ -74,10 +74,10 @@ protected:
 	virtual bool    DoRender();
 
 private:
-	DynamicBitmap(RenderObjectPtr<RenderObject> ParentPtr, unsigned int Width, unsigned int Height);
-	DynamicBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
+	DynamicBitmap(RenderObjectPtr<RenderObject> ParentPtr, uint Width, uint Height);
+	DynamicBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle);
 
-	bool CreateGLImage(unsigned int Width, unsigned int Height);
+	bool CreateGLImage(uint Width, uint Height);
 
 	Common::ScopedPtr<GLImage> m_Image;
 };

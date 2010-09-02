@@ -130,7 +130,7 @@ bool ScummVMPackageManager::LoadDirectoryAsPackage(const Common::String &directo
 	}
 }
 
-byte *ScummVMPackageManager::GetFile(const Common::String &fileName, unsigned int *fileSizePtr) {
+byte *ScummVMPackageManager::GetFile(const Common::String &fileName, uint *fileSizePtr) {
 	Common::SeekableReadStream *in;
 	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(fileName, _currentDirectory));
 	if (!fileNode)
@@ -177,7 +177,7 @@ Common::String ScummVMPackageManager::GetAbsolutePath(const Common::String &file
 	return normalizePath(fileName, _currentDirectory);
 }
 
-unsigned int ScummVMPackageManager::GetFileSize(const Common::String &fileName) {
+uint ScummVMPackageManager::GetFileSize(const Common::String &fileName) {
 	Common::SeekableReadStream *in;
 	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(fileName, _currentDirectory));
 	if (!fileNode)
@@ -190,7 +190,7 @@ unsigned int ScummVMPackageManager::GetFileSize(const Common::String &fileName) 
 	return fileSize;
 }
 
-unsigned int ScummVMPackageManager::GetFileType(const Common::String &fileName) {
+uint ScummVMPackageManager::GetFileType(const Common::String &fileName) {
 	warning("STUB: BS_ScummVMPackageManager::GetFileType(%s)", fileName.c_str());
 
 	//return fileNode.isDirectory() ? BS_PackageManager::FT_DIRECTORY : BS_PackageManager::FT_FILE;
@@ -202,7 +202,7 @@ bool ScummVMPackageManager::FileExists(const Common::String &fileName) {
 	return fileNode;
 }
 
-int ScummVMPackageManager::doSearch(Common::ArchiveMemberList &list, const Common::String &filter, const Common::String &path, unsigned int typeFilter) {
+int ScummVMPackageManager::doSearch(Common::ArchiveMemberList &list, const Common::String &filter, const Common::String &path, uint typeFilter) {
 	Common::String normalizedFilter = normalizePath(filter, _currentDirectory);
 	int num = 0;
 

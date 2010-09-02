@@ -50,7 +50,7 @@ namespace Sword25 {
 
 class Bitmap : public RenderObject {
 protected:
-	Bitmap(RenderObjectPtr<RenderObject> ParentPtr, TYPES Type, unsigned int Handle = 0);
+	Bitmap(RenderObjectPtr<RenderObject> ParentPtr, TYPES Type, uint Handle = 0);
 
 public:
 
@@ -68,7 +68,7 @@ public:
 	    @param Color eine 24-Bit Farbe, die die Modulationsfarbe des Bitmaps festlegt.
 	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsColorModulationAllowed() true zurückgibt.
 	*/
-	void SetModulationColor(unsigned int ModulationColor);
+	void SetModulationColor(uint ModulationColor);
 
 	/**
 	    @brief Setzt den Skalierungsfaktor des Bitmaps.
@@ -159,7 +159,7 @@ public:
 	    @remark Diese Methode sollte auf keine Fall benutzt werden um größere Teile des Bildes zu lesen, da sie sehr langsam ist. Sie ist
 	            eher dafür gedacht einzelne Pixel des Bildes auszulesen.
 	*/
-	virtual unsigned int GetPixel(int X, int Y) const = 0;
+	virtual uint GetPixel(int X, int Y) const = 0;
 
 	/**
 	    @brief Füllt den Inhalt des Bildes mit Pixeldaten.
@@ -172,7 +172,7 @@ public:
 	    @return Gibt false zurück, falls der Aufruf fehlgeschlagen ist.
 	    @remark Ein Aufruf dieser Methode ist nur erlaubt, wenn IsSetContentAllowed() true zurückgibt.
 	*/
-	virtual bool    SetContent(const byte *Pixeldata, uint size, unsigned int Offset = 0, unsigned int Stride = 0) = 0;
+	virtual bool    SetContent(const byte *Pixeldata, uint size, uint Offset = 0, uint Stride = 0) = 0;
 
 	virtual bool    IsScalingAllowed() const = 0;
 	virtual bool    IsAlphaAllowed() const = 0;
@@ -187,7 +187,7 @@ protected:
 	bool            m_FlipV;
 	float           m_ScaleFactorX;
 	float           m_ScaleFactorY;
-	unsigned int    m_ModulationColor;
+	uint    m_ModulationColor;
 	int             m_OriginalWidth;
 	int             m_OriginalHeight;
 };

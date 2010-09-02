@@ -49,8 +49,8 @@ namespace Sword25 {
 
 class Screenshot {
 public:
-	static bool SaveToFile(unsigned int Width, unsigned int Height, const byte *Data, const Common::String &Filename);
-	static bool SaveThumbnailToFile(unsigned int Width, unsigned int Height, const byte *Data, const Common::String &Filename);
+	static bool SaveToFile(uint Width, uint Height, const byte *Data, const Common::String &Filename);
+	static bool SaveThumbnailToFile(uint Width, uint Height, const byte *Data, const Common::String &Filename);
 };
 
 } // End of namespace Sword25

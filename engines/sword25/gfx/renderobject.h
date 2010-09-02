@@ -112,7 +112,7 @@ public:
 	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurück.<br>
 	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
-	RenderObjectPtr<Bitmap> AddDynamicBitmap(unsigned int Width, unsigned int Height);
+	RenderObjectPtr<Bitmap> AddDynamicBitmap(uint Width, uint Height);
 	/**
 	    @brief Erzeugt eine Animation auf Basis einer Animationsdatei als Kinderobjekt des Renderobjektes.
 	    @param FileName der Dateiname der Quelldatei
@@ -138,7 +138,7 @@ public:
 	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
 
-	RenderObjectPtr<Panel> AddPanel(int Width, int Height, unsigned int Color = 0xff000000);
+	RenderObjectPtr<Panel> AddPanel(int Width, int Height, uint Color = 0xff000000);
 	/**
 	    @brief Erzeugt ein Textobjekt als Kinderobjekt des Renderobjektes.
 	    @param Font der Dateiname des zu verwendenen Fonts
@@ -206,7 +206,7 @@ public:
 	            Es ist nicht notwendig alle BS_RenderObject Instanzen einzeln zu löschen. Dieses geschiet automatisch beim Löschen eines
 	            Vorfahren oder beim Löschen des zuständigen BS_RenderObjectManager.
 	 */
-	RenderObject(RenderObjectPtr<RenderObject> pParent, TYPES Type, unsigned int Handle = 0);
+	RenderObject(RenderObjectPtr<RenderObject> pParent, TYPES Type, uint Handle = 0);
 	virtual ~RenderObject();
 
 	// Interface
@@ -348,7 +348,7 @@ public:
 	/**
 	    @brief Gibt das Handle des Objekte zurück.
 	*/
-	unsigned int GetHandle() const {
+	uint GetHandle() const {
 		return m_Handle;
 	}
 
@@ -447,7 +447,7 @@ private:
 	/// Ist true, wenn das Objekt in nächsten Frame neu gezeichnet werden soll
 	bool m_RefreshForced;
 
-	unsigned int m_Handle;
+	uint m_Handle;
 
 	/**
 	    @brief Entfernt ein Objekt aus der Kinderliste.

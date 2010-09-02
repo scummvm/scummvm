@@ -91,14 +91,14 @@ public:
 	/**
 	 * Returns the hash of the filename of a resource
 	*/
-	unsigned int GetFileNameHash() const {
+	uint GetFileNameHash() const {
 		return _FileNameHash;
 	}
 
 	/**
 	 * Returns a resource's type
 	 */
-	unsigned int GetType() const {
+	uint GetType() const {
 		return _Type;
 	}
 
@@ -107,9 +107,9 @@ protected:
 
 private:
 	Common::String                      _FileName;          ///< The absolute filename
-	unsigned int                        _FileNameHash;      ///< The hash value of the filename
-	unsigned int                        _RefCount;          ///< The number of locks
-	unsigned int                        _Type;              ///< The type of the resource
+	uint                        _FileNameHash;      ///< The hash value of the filename
+	uint                        _RefCount;          ///< The number of locks
+	uint                        _Type;              ///< The type of the resource
 	Common::List<Resource *>::iterator _Iterator;        ///< Points to the resource position in the LRU list
 };
 

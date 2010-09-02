@@ -56,14 +56,14 @@ private:
 	    @remark Filename muss absoluter Pfad sein
 	*/
 	StaticBitmap(RenderObjectPtr<RenderObject> ParentPtr, const Common::String &Filename);
-	StaticBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle);
+	StaticBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle);
 
 public:
 	virtual ~StaticBitmap();
 
-	virtual unsigned int GetPixel(int X, int Y) const;
+	virtual uint GetPixel(int X, int Y) const;
 
-	virtual bool    SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride);
+	virtual bool    SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride);
 
 	virtual bool    IsScalingAllowed() const;
 	virtual bool    IsAlphaAllowed() const;

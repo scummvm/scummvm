@@ -64,7 +64,7 @@ StaticBitmap::StaticBitmap(RenderObjectPtr<RenderObject> ParentPtr, const Common
 
 // -----------------------------------------------------------------------------
 
-StaticBitmap::StaticBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle) :
+StaticBitmap::StaticBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle) :
 	Bitmap(ParentPtr, TYPE_STATICBITMAP, Handle) {
 	m_InitSuccess = Unpersist(Reader);
 }
@@ -138,21 +138,21 @@ bool StaticBitmap::DoRender() {
 
 // -----------------------------------------------------------------------------
 
-unsigned int StaticBitmap::GetPixel(int X, int Y) const {
+uint StaticBitmap::GetPixel(int X, int Y) const {
 	BS_ASSERT(X >= 0 && X < m_Width);
 	BS_ASSERT(Y >= 0 && Y < m_Height);
 
 	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(m_ResourceFilename);
 	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmapResource = static_cast<BitmapResource *>(pResource);
-	unsigned int Result = pBitmapResource->GetPixel(X, Y);
+	uint Result = pBitmapResource->GetPixel(X, Y);
 	pResource->Release();
 	return Result;
 }
 
 // -----------------------------------------------------------------------------
 
-bool StaticBitmap::SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) {
+bool StaticBitmap::SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride) {
 	BS_LOG_ERRORLN("SetContent() ist not supported with this object.");
 	return false;
 }

@@ -133,7 +133,7 @@ bool BS_FMODExChannel::SetLoop(bool Loop) {
 
 // -----------------------------------------------------------------------------
 
-bool BS_FMODExChannel::SetLoopPoints(unsigned int LoopStart, unsigned int LoopEnd) {
+bool BS_FMODExChannel::SetLoopPoints(uint LoopStart, uint LoopEnd) {
 	BS_ASSERT(m_ChannelPtr);
 
 	FMOD_RESULT Result = FMOD_Channel_SetLoopPoints(m_ChannelPtr, LoopStart, FMOD_TIMEUNIT_PCM, LoopEnd, FMOD_TIMEUNIT_PCM);
@@ -146,7 +146,7 @@ bool BS_FMODExChannel::SetLoopPoints(unsigned int LoopStart, unsigned int LoopEn
 
 // -----------------------------------------------------------------------------
 
-bool BS_FMODExChannel::SetPosition(unsigned int Position) {
+bool BS_FMODExChannel::SetPosition(uint Position) {
 	BS_ASSERT(m_ChannelPtr);
 
 	FMOD_RESULT Result = FMOD_Channel_SetPosition(m_ChannelPtr, Position, FMOD_TIMEUNIT_PCM);
@@ -198,10 +198,10 @@ float BS_FMODExChannel::GetPanning() {
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_FMODExChannel::GetPosition() {
+uint BS_FMODExChannel::GetPosition() {
 	BS_ASSERT(m_ChannelPtr);
 
-	unsigned int Position = 0;
+	uint Position = 0;
 	FMOD_RESULT Result = FMOD_Channel_GetPosition(m_ChannelPtr, &Position, FMOD_TIMEUNIT_PCM);
 	if (IsImportantError(Result)) BS_FMODExException("FMOD_Channel_GetPosition()", Result).Log();
 
@@ -210,10 +210,10 @@ unsigned int BS_FMODExChannel::GetPosition() {
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_FMODExChannel::GetTime() {
+uint BS_FMODExChannel::GetTime() {
 	BS_ASSERT(m_ChannelPtr);
 
-	unsigned int Time = 0;
+	uint Time = 0;
 	FMOD_RESULT Result = FMOD_Channel_GetPosition(m_ChannelPtr, &Time, FMOD_TIMEUNIT_MS);
 	if (IsImportantError(Result)) BS_FMODExException("FMOD_Channel_GetPosition()", Result).Log();
 
@@ -222,9 +222,9 @@ unsigned int BS_FMODExChannel::GetTime() {
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_FMODExChannel::GetLoopStart() {
+uint BS_FMODExChannel::GetLoopStart() {
 	BS_ASSERT(m_ChannelPtr);
-	unsigned int LoopStart = 0;
+	uint LoopStart = 0;
 	FMOD_RESULT Result = FMOD_Channel_GetLoopPoints(m_ChannelPtr, &LoopStart, FMOD_TIMEUNIT_PCM, 0, FMOD_TIMEUNIT_PCM);
 	if (IsImportantError(Result)) BS_FMODExException("FMOD_Channel_GetLoopPoints()", Result).Log();
 
@@ -233,9 +233,9 @@ unsigned int BS_FMODExChannel::GetLoopStart() {
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_FMODExChannel::GetLoopEnd() {
+uint BS_FMODExChannel::GetLoopEnd() {
 	BS_ASSERT(m_ChannelPtr);
-	unsigned int LoopEnd = 0;
+	uint LoopEnd = 0;
 	FMOD_RESULT Result = FMOD_Channel_GetLoopPoints(m_ChannelPtr, 0, FMOD_TIMEUNIT_PCM, &LoopEnd, FMOD_TIMEUNIT_PCM);
 	if (IsImportantError(Result)) BS_FMODExException("FMOD_Channel_GetLoopPoints()", Result).Log();
 

@@ -72,14 +72,14 @@ public:
 
 	virtual bool LoadPackage(const Common::String &fileName, const Common::String &mountPosition);
 	virtual bool LoadDirectoryAsPackage(const Common::String &directoryName, const Common::String &mountPosition);
-	virtual byte *GetFile(const Common::String &fileName, unsigned int *fileSizePtr = 0);
+	virtual byte *GetFile(const Common::String &fileName, uint *fileSizePtr = 0);
 	virtual Common::SeekableReadStream *GetStream(const Common::String &fileName);
 	virtual Common::String GetCurrentDirectory();
 	virtual bool ChangeDirectory(const Common::String &directory);
 	virtual Common::String GetAbsolutePath(const Common::String &fileName);
-	virtual int doSearch(Common::ArchiveMemberList &list, const Common::String &filter, const Common::String &path, unsigned int typeFilter = FT_DIRECTORY | FT_FILE);
-	virtual unsigned int GetFileSize(const Common::String &fileName);
-	virtual unsigned int GetFileType(const Common::String &fileName);
+	virtual int doSearch(Common::ArchiveMemberList &list, const Common::String &filter, const Common::String &path, uint typeFilter = FT_DIRECTORY | FT_FILE);
+	virtual uint GetFileSize(const Common::String &fileName);
+	virtual uint GetFileType(const Common::String &fileName);
 	virtual bool FileExists(const Common::String &fileName);
 };
 

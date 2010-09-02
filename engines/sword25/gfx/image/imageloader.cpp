@@ -46,7 +46,7 @@ bool ImageLoader::_ImageLoaderListInitialized = false;
 // Lade Methode
 // ------------
 
-bool ImageLoader::LoadImage(const byte *pFileData, unsigned int FileSize,
+bool ImageLoader::LoadImage(const byte *pFileData, uint FileSize,
                                GraphicEngine::COLOR_FORMATS ColorFormat,
                                byte *&pUncompressedData,
                                int &Width, int &Height,
@@ -71,7 +71,7 @@ bool ImageLoader::LoadImage(const byte *pFileData, unsigned int FileSize,
 // Info Methode
 // ------------
 
-bool ImageLoader::ExtractImageProperties(const byte *pFileData, unsigned int FileSize,
+bool ImageLoader::ExtractImageProperties(const byte *pFileData, uint FileSize,
         GraphicEngine::COLOR_FORMATS &ColorFormat,
         int &Width, int &Height) {
 	// Falls die Liste der BS_ImageLoader noch nicht initialisiert wurde, wird dies getan.
@@ -111,7 +111,7 @@ void ImageLoader::_DeinitializeLoaderList() {
 	}
 }
 
-ImageLoader *ImageLoader::_FindSuitableImageLoader(const byte *pFileData, unsigned int FileSize) {
+ImageLoader *ImageLoader::_FindSuitableImageLoader(const byte *pFileData, uint FileSize) {
 	// Alle BS_ImageLoader-Objekte durchgehen, bis eins gefunden wurde, dass das Bild laden kann
 	Common::List<ImageLoader *>::iterator Iter = _ImageLoaderList.begin();
 	for (; Iter != _ImageLoaderList.end(); ++Iter) {

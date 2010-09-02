@@ -58,7 +58,7 @@ public:
 
 	// -------------------------------------------------------------------------
 
-	unsigned int RegisterObject(T *ObjectPtr) {
+	uint RegisterObject(T *ObjectPtr) {
 		// Null-Pointer können nicht registriert werden.
 		if (ObjectPtr == 0) {
 			LogErrorLn("Cannot register a null pointer.");
@@ -66,7 +66,7 @@ public:
 		}
 
 		// Falls das Objekt bereits registriert wurde, wird eine Warnung ausgeben und das Handle zurückgeben.
-		unsigned int Handle = FindHandleByPtr(ObjectPtr);
+		uint Handle = FindHandleByPtr(ObjectPtr);
 		if (Handle != 0) {
 			LogWarningLn("Tried to register a object that was already registered.");
 			return Handle;
@@ -82,7 +82,7 @@ public:
 
 	// -----------------------------------------------------------------------------
 
-	unsigned int RegisterObject(T *ObjectPtr, unsigned int Handle) {
+	uint RegisterObject(T *ObjectPtr, uint Handle) {
 		// Null-Pointer und Null-Handle können nicht registriert werden.
 		if (ObjectPtr == 0 || Handle == 0) {
 			LogErrorLn("Cannot register a null pointer or a null handle.");
@@ -90,7 +90,7 @@ public:
 		}
 
 		// Falls das Objekt bereits registriert wurde, wird ein Fehler ausgegeben und 0 zurückgeben.
-		unsigned int HandleTest = FindHandleByPtr(ObjectPtr);
+		uint HandleTest = FindHandleByPtr(ObjectPtr);
 		if (HandleTest != 0) {
 			LogErrorLn("Tried to register a object that was already registered.");
 			return 0;
@@ -116,7 +116,7 @@ public:
 	// -----------------------------------------------------------------------------
 
 	void DeregisterObject(T *ObjectPtr) {
-		unsigned int Handle = FindHandleByPtr(ObjectPtr);
+		uint Handle = FindHandleByPtr(ObjectPtr);
 
 		if (Handle != 0) {
 			// Registriertes Objekt aus beiden Maps entfernen.
@@ -129,7 +129,7 @@ public:
 
 	// -----------------------------------------------------------------------------
 
-	T *ResolveHandle(unsigned int Handle) {
+	T *ResolveHandle(uint Handle) {
 		// Zum Handle gehöriges Objekt in der Hash-Map finden.
 		T *ObjectPtr = FindPtrByHandle(Handle);
 
@@ -139,9 +139,9 @@ public:
 
 	// -----------------------------------------------------------------------------
 
-	unsigned int ResolvePtr(T *ObjectPtr) {
+	uint ResolvePtr(T *ObjectPtr) {
 		// Zum Pointer gehöriges Handle in der Hash-Map finden.
-		unsigned int Handle = FindHandleByPtr(ObjectPtr);
+		uint Handle = FindHandleByPtr(ObjectPtr);
 
 		// Handle zurückgeben. Im Fehlerfall ist dieses 0.
 		return Handle;
@@ -160,16 +160,16 @@ protected:
 		}
 	};
 
-	typedef Common::HashMap<unsigned int, T *>  HANDLE2PTR_MAP;
-	typedef Common::HashMap<T *, unsigned int, ClassPointer_Hash, ClassPointer_EqualTo> PTR2HANDLE_MAP;
+	typedef Common::HashMap<uint, T *>  HANDLE2PTR_MAP;
+	typedef Common::HashMap<T *, uint, ClassPointer_Hash, ClassPointer_EqualTo> PTR2HANDLE_MAP;
 
 	HANDLE2PTR_MAP  m_Handle2PtrMap;
 	PTR2HANDLE_MAP  m_Ptr2HandleMap;
-	unsigned int    m_NextHandle;
+	uint    m_NextHandle;
 
 	// -----------------------------------------------------------------------------
 
-	T *FindPtrByHandle(unsigned int Handle) {
+	T *FindPtrByHandle(uint Handle) {
 		// Zum Handle gehörigen Pointer finden.
 		typename HANDLE2PTR_MAP::const_iterator it = m_Handle2PtrMap.find(Handle);
 
@@ -179,7 +179,7 @@ protected:
 
 	// -----------------------------------------------------------------------------
 
-	unsigned int FindHandleByPtr(T *ObjectPtr) {
+	uint FindHandleByPtr(T *ObjectPtr) {
 		// Zum Pointer gehöriges Handle finden.
 		typename PTR2HANDLE_MAP::const_iterator it = m_Ptr2HandleMap.find(ObjectPtr);
 

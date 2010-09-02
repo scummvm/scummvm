@@ -59,7 +59,7 @@ class WalkRegion : public Region {
 
 protected:
 	WalkRegion();
-	WalkRegion(InputPersistenceBlock &Reader, unsigned int Handle);
+	WalkRegion(InputPersistenceBlock &Reader, uint Handle);
 
 public:
 	virtual ~WalkRegion();

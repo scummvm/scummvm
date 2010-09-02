@@ -60,11 +60,11 @@ namespace Sword25 {
 
 class VectorImage::SWFBitStream {
 public:
-	SWFBitStream(const byte *pData, unsigned int DataSize) :
+	SWFBitStream(const byte *pData, uint DataSize) :
 		m_Pos(pData), m_End(pData + DataSize), m_WordMask(0)
 	{}
 
-	inline uint32 GetBits(unsigned int BitCount) {
+	inline uint32 GetBits(uint BitCount) {
 		if (BitCount == 0 || BitCount > 32) {
 			error("SWFBitStream::GetBits() must read at least 1 and at most 32 bits at a time");
 		}
@@ -83,7 +83,7 @@ public:
 		return value;
 	}
 
-	inline int32 GetSignedBits(unsigned int BitCount) {
+	inline int32 GetSignedBits(uint BitCount) {
 		// Bits einlesen
 		uint32 Temp = GetBits(BitCount);
 
@@ -130,7 +130,7 @@ public:
 		}
 	}
 
-	inline void SkipBytes(unsigned int SkipLength) {
+	inline void SkipBytes(uint SkipLength) {
 		FlushByte();
 		if (m_Pos + SkipLength >= m_End) {
 			error("Attempted to read past end of file");
@@ -145,7 +145,7 @@ private:
 	const byte    *m_End;
 
 	byte                      m_Word;
-	unsigned int            m_WordMask;
+	uint            m_WordMask;
 };
 
 
@@ -185,7 +185,7 @@ Common::Rect FlashRectToBSRect(VectorImage::SWFBitStream &bs) {
 // Konvertiert SWF-Farben in AntiGrain Farben
 // -----------------------------------------------------------------------------
 
-uint32 FlashColorToAGGRGBA8(unsigned int FlashColor) {
+uint32 FlashColorToAGGRGBA8(uint FlashColor) {
 	uint32 ResultColor = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(FlashColor >> 24, (FlashColor >> 16) & 0xff, (FlashColor >> 8) & 0xff, FlashColor & 0xff);
 
 	return ResultColor;
@@ -224,7 +224,7 @@ Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) 
 // Konstruktion
 // -----------------------------------------------------------------------------
 
-VectorImage::VectorImage(const byte *pFileData, unsigned int FileSize, bool &Success) {
+VectorImage::VectorImage(const byte *pFileData, uint FileSize, bool &Success) {
 	Success = false;
 
 	// Bitstream-Objekt erzeugen
@@ -303,7 +303,7 @@ VectorImage::VectorImage(const byte *pFileData, unsigned int FileSize, bool &Suc
 
 // -----------------------------------------------------------------------------
 
-bool VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) {
+bool VectorImage::ParseDefineShape(uint ShapeType, SWFBitStream &bs) {
 	/*uint32 ShapeID = */bs.GetUInt16();
 
 	// Bounding Box auslesen
@@ -313,14 +313,14 @@ bool VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) {
 	m_Elements.resize(1);
 
 	// Styles einlesen
-	unsigned int NumFillBits;
-	unsigned int NumLineBits;
+	uint NumFillBits;
+	uint NumLineBits;
 	if (!ParseStyles(ShapeType, bs, NumFillBits, NumLineBits))
 		return false;
 
-	unsigned int LineStyle = 0;
-	unsigned int FillStyle0 = 0;
-	unsigned int FillStyle1 = 0;
+	uint LineStyle = 0;
+	uint FillStyle0 = 0;
+	uint FillStyle1 = 0;
 
 	// Shaperecord parsen
 	// ------------------
@@ -451,20 +451,20 @@ bool VectorImage::ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs) {
 
 // -----------------------------------------------------------------------------
 
-bool VectorImage::ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsigned int &NumFillBits, unsigned int &NumLineBits) {
+bool VectorImage::ParseStyles(uint ShapeType, SWFBitStream &bs, uint &NumFillBits, uint &NumLineBits) {
 	bs.FlushByte();
 
 	// Fillstyles parsen
 	// -----------------
 
 	// Anzahl an Fillstyles bestimmen
-	unsigned int FillStyleCount = bs.GetByte();
+	uint FillStyleCount = bs.GetByte();
 	if (FillStyleCount == 0xff) FillStyleCount = bs.GetUInt16();
 
 	// Alle Fillstyles einlesen, falls ein Fillstyle mit Typ != 0 gefunden wird, wird das Parsen abgebrochen.
 	// Es wird nur "solid fill" (Typ 0) unterstützt.
 	m_Elements.back().m_FillStyles.reserve(FillStyleCount);
-	for (unsigned int i = 0; i < FillStyleCount; ++i) {
+	for (uint i = 0; i < FillStyleCount; ++i) {
 		byte Type = bs.GetByte();
 		uint32 Color;
 		if (ShapeType == 3) {
@@ -480,13 +480,13 @@ bool VectorImage::ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsigned
 	// -----------------
 
 	// Anzahl an Linestyles bestimmen
-	unsigned int LineStyleCount = bs.GetByte();
+	uint LineStyleCount = bs.GetByte();
 	if (LineStyleCount == 0xff)
 		LineStyleCount = bs.GetUInt16();
 
 	// Alle Linestyles einlesen
 	m_Elements.back().m_LineStyles.reserve(LineStyleCount);
-	for (unsigned int i = 0; i < LineStyleCount; ++i) {
+	for (uint i = 0; i < LineStyleCount; ++i) {
 		double Width = bs.GetUInt16();
 		uint32 Color;
 		if (ShapeType == 3)
@@ -507,7 +507,7 @@ bool VectorImage::ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsigned
 
 // -----------------------------------------------------------------------------
 
-bool VectorImage::Fill(const Common::Rect *pFillRect, unsigned int Color) {
+bool VectorImage::Fill(const Common::Rect *pFillRect, uint Color) {
 	BS_LOG_ERRORLN("Fill() is not supported.");
 	return false;
 }
@@ -515,14 +515,14 @@ bool VectorImage::Fill(const Common::Rect *pFillRect, unsigned int Color) {
 
 // -----------------------------------------------------------------------------
 
-unsigned int VectorImage::GetPixel(int X, int Y) {
+uint VectorImage::GetPixel(int X, int Y) {
 	BS_LOG_ERRORLN("GetPixel() is not supported. Returning black.");
 	return 0;
 }
 
 // -----------------------------------------------------------------------------
 
-bool VectorImage::SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) {
+bool VectorImage::SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride) {
 	BS_LOG_ERRORLN("SetContent() is not supported.");
 	return 0;
 }

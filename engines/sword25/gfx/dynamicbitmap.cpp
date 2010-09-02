@@ -53,7 +53,7 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-DynamicBitmap::DynamicBitmap(RenderObjectPtr<RenderObject> ParentPtr, unsigned int Width, unsigned int Height) :
+DynamicBitmap::DynamicBitmap(RenderObjectPtr<RenderObject> ParentPtr, uint Width, uint Height) :
 	Bitmap(ParentPtr, TYPE_DYNAMICBITMAP) {
 	// Das BS_Bitmap konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
 	if (!m_InitSuccess) return;
@@ -63,14 +63,14 @@ DynamicBitmap::DynamicBitmap(RenderObjectPtr<RenderObject> ParentPtr, unsigned i
 
 // -----------------------------------------------------------------------------
 
-DynamicBitmap::DynamicBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle) :
+DynamicBitmap::DynamicBitmap(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle) :
 	Bitmap(ParentPtr, TYPE_DYNAMICBITMAP, Handle) {
 	m_InitSuccess = Unpersist(Reader);
 }
 
 // -----------------------------------------------------------------------------
 
-bool DynamicBitmap::CreateGLImage(unsigned int Width, unsigned int Height) {
+bool DynamicBitmap::CreateGLImage(uint Width, uint Height) {
 	// GLImage mit den gewünschten Maßen erstellen
 	bool Result = false;
 	m_Image.reset(new GLImage(Width, Height, Result));
@@ -88,7 +88,7 @@ DynamicBitmap::~DynamicBitmap() {
 
 // -----------------------------------------------------------------------------
 
-unsigned int DynamicBitmap::GetPixel(int X, int Y) const {
+uint DynamicBitmap::GetPixel(int X, int Y) const {
 	BS_ASSERT(X >= 0 && X < m_Width);
 	BS_ASSERT(Y >= 0 && Y < m_Height);
 
@@ -121,7 +121,7 @@ bool DynamicBitmap::DoRender() {
 
 // -----------------------------------------------------------------------------
 
-bool DynamicBitmap::SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) {
+bool DynamicBitmap::SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride) {
 	return m_Image->SetContent(Pixeldata, size, Offset, Stride);
 }
 

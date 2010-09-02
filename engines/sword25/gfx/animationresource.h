@@ -63,11 +63,11 @@ public:
 	AnimationResource(const Common::String &filename);
 	virtual ~AnimationResource();
 
-	virtual const Frame    &GetFrame(unsigned int Index) const {
+	virtual const Frame    &GetFrame(uint Index) const {
 		BS_ASSERT(Index < m_Frames.size());
 		return m_Frames[Index];
 	}
-	virtual unsigned int    GetFrameCount() const {
+	virtual uint    GetFrameCount() const {
 		return m_Frames.size();
 	}
 	virtual void            Unlock() {

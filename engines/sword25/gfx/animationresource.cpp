@@ -80,7 +80,7 @@ AnimationResource::AnimationResource(const Common::String &filename) :
 	}
 
 	// Load the contents of the file
-	unsigned int fileSize;
+	uint fileSize;
 	char *xmlData = _pPackage->GetXmlFile(GetFileName(), &fileSize);
 	if (!xmlData) {
 		BS_LOG_ERRORLN("Could not read \"%s\".", GetFileName().c_str());

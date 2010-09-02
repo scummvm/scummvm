@@ -90,7 +90,7 @@ Animation::Animation(RenderObjectPtr<RenderObject> ParentPtr, const AnimationTem
 
 // -----------------------------------------------------------------------------
 
-Animation::Animation(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, unsigned int Handle) :
+Animation::Animation(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle) :
 	TimedRenderObject(ParentPtr, RenderObject::TYPE_ANIMATION, Handle) {
 	// Das BS_RenderObject konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
 	if (!m_InitSuccess) return;
@@ -179,7 +179,7 @@ void Animation::Stop() {
 
 // -----------------------------------------------------------------------------
 
-void Animation::SetFrame(unsigned int Nr) {
+void Animation::SetFrame(uint Nr) {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
 
@@ -283,7 +283,7 @@ void Animation::FrameNotification(int TimeElapsed) {
 			BS_ASSERT(animationDescriptionPtr->GetAnimationType() == AT_JOJO);
 			TmpCurFrame = - TmpCurFrame;
 			m_Direction = FORWARD;
-		} else if (static_cast<unsigned int>(TmpCurFrame) >= animationDescriptionPtr->GetFrameCount()) {
+		} else if (static_cast<uint>(TmpCurFrame) >= animationDescriptionPtr->GetFrameCount()) {
 			// Loop-Point Callbacks
 			for (uint i = 0; i < m_LoopPointCallbacks.size();) {
 				if ((m_LoopPointCallbacks[i].Callback)(m_LoopPointCallbacks[i].Data) == false) {
@@ -327,7 +327,7 @@ void Animation::FrameNotification(int TimeElapsed) {
 			}
 		}
 
-		m_CurrentFrame = static_cast<unsigned int>(TmpCurFrame);
+		m_CurrentFrame = static_cast<uint>(TmpCurFrame);
 	}
 
 	// Größe und Position der Animation anhand des aktuellen Frames bestimmen
@@ -368,7 +368,7 @@ bool Animation::LockAllFrames() {
 	if (!m_FramesLocked) {
 		AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 		BS_ASSERT(animationDescriptionPtr);
-		for (unsigned int i = 0; i < animationDescriptionPtr->GetFrameCount(); ++i) {
+		for (uint i = 0; i < animationDescriptionPtr->GetFrameCount(); ++i) {
 			if (!Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->GetFrame(i).FileName)) {
 				BS_LOG_ERRORLN("Could not lock all animation frames.");
 				return false;
@@ -387,7 +387,7 @@ bool Animation::UnlockAllFrames() {
 	if (m_FramesLocked) {
 		AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 		BS_ASSERT(animationDescriptionPtr);
-		for (unsigned int i = 0; i < animationDescriptionPtr->GetFrameCount(); ++i) {
+		for (uint i = 0; i < animationDescriptionPtr->GetFrameCount(); ++i) {
 			Resource *pResource;
 			if (!(pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->GetFrame(i).FileName))) {
 				BS_LOG_ERRORLN("Could not unlock all animation frames.");
@@ -494,7 +494,7 @@ void Animation::SetAlpha(int Alpha) {
 		return;
 	}
 
-	unsigned int NewModulationColor = (m_ModulationColor & 0x00ffffff) | Alpha << 24;
+	uint NewModulationColor = (m_ModulationColor & 0x00ffffff) | Alpha << 24;
 	if (NewModulationColor != m_ModulationColor) {
 		m_ModulationColor = NewModulationColor;
 		ForceRefresh();
@@ -503,7 +503,7 @@ void Animation::SetAlpha(int Alpha) {
 
 // -----------------------------------------------------------------------------
 
-void Animation::SetModulationColor(unsigned int ModulationColor) {
+void Animation::SetModulationColor(uint ModulationColor) {
 	AnimationDescription *animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
 	if (!animationDescriptionPtr->IsColorModulationAllowed()) {
@@ -511,7 +511,7 @@ void Animation::SetModulationColor(unsigned int ModulationColor) {
 		return;
 	}
 
-	unsigned int NewModulationColor = (ModulationColor & 0x00ffffff) | (m_ModulationColor & 0xff000000);
+	uint NewModulationColor = (ModulationColor & 0x00ffffff) | (m_ModulationColor & 0xff000000);
 	if (NewModulationColor != m_ModulationColor) {
 		m_ModulationColor = NewModulationColor;
 		ForceRefresh();
@@ -635,7 +635,7 @@ int Animation::ComputeYModifier() const {
 
 // -----------------------------------------------------------------------------
 
-void Animation::RegisterActionCallback(ANIMATION_CALLBACK Callback, unsigned int Data) {
+void Animation::RegisterActionCallback(ANIMATION_CALLBACK Callback, uint Data) {
 	ANIMATION_CALLBACK_DATA CD;
 	CD.Callback = Callback;
 	CD.Data = Data;
@@ -644,7 +644,7 @@ void Animation::RegisterActionCallback(ANIMATION_CALLBACK Callback, unsigned int
 
 // -----------------------------------------------------------------------------
 
-void Animation::RegisterLoopPointCallback(ANIMATION_CALLBACK Callback, unsigned int Data) {
+void Animation::RegisterLoopPointCallback(ANIMATION_CALLBACK Callback, uint Data) {
 	ANIMATION_CALLBACK_DATA CD;
 	CD.Callback = Callback;
 	CD.Data = Data;
@@ -653,7 +653,7 @@ void Animation::RegisterLoopPointCallback(ANIMATION_CALLBACK Callback, unsigned 
 
 // -----------------------------------------------------------------------------
 
-void Animation::RegisterDeleteCallback(ANIMATION_CALLBACK Callback, unsigned int Data) {
+void Animation::RegisterDeleteCallback(ANIMATION_CALLBACK Callback, uint Data) {
 	ANIMATION_CALLBACK_DATA CD;
 	CD.Callback = Callback;
 	CD.Data = Data;
@@ -685,11 +685,11 @@ void Animation::UnpersistCallbackVector(InputPersistenceBlock &Reader, Common::A
 	Vector.resize(0);
 
 	// Anzahl an Callbacks einlesen.
-	unsigned int CallbackCount;
+	uint CallbackCount;
 	Reader.Read(CallbackCount);
 
 	// Alle Callbacks einzeln wieder herstellen.
-	for (unsigned int i = 0; i < CallbackCount; ++i) {
+	for (uint i = 0; i < CallbackCount; ++i) {
 		ANIMATION_CALLBACK_DATA CallbackData;
 
 		Common::String CallbackFunctionName;
@@ -718,15 +718,15 @@ bool Animation::Persist(OutputPersistenceBlock &Writer) {
 	Writer.Write(m_CurrentFrameTime);
 	Writer.Write(m_Running);
 	Writer.Write(m_Finished);
-	Writer.Write(static_cast<unsigned int>(m_Direction));
+	Writer.Write(static_cast<uint>(m_Direction));
 
 	// Je nach Animationstyp entweder das Template oder die Ressource speichern.
 	if (m_AnimationResourcePtr) {
-		unsigned int Marker = 0;
+		uint Marker = 0;
 		Writer.Write(Marker);
 		Writer.Write(m_AnimationResourcePtr->GetFileName());
 	} else if (m_AnimationTemplateHandle) {
-		unsigned int Marker = 1;
+		uint Marker = 1;
 		Writer.Write(Marker);
 		Writer.Write(m_AnimationTemplateHandle);
 	} else {
@@ -761,12 +761,12 @@ bool Animation::Unpersist(InputPersistenceBlock &Reader) {
 	Reader.Read(m_CurrentFrameTime);
 	Reader.Read(m_Running);
 	Reader.Read(m_Finished);
-	unsigned int Direction;
+	uint Direction;
 	Reader.Read(Direction);
 	m_Direction = static_cast<DIRECTION>(Direction);
 
 	// Animationstyp einlesen.
-	unsigned int Marker;
+	uint Marker;
 	Reader.Read(Marker);
 	if (Marker == 0) {
 		Common::String ResourceFilename;

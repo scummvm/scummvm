@@ -49,7 +49,7 @@ int LoadMovie(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
-	lua_pushbooleancpp(L, FMVPtr->LoadMovie(luaL_checkstring(L, 1), lua_gettop(L) == 2 ? static_cast<unsigned int>(luaL_checknumber(L, 2)) : 10));
+	lua_pushbooleancpp(L, FMVPtr->LoadMovie(luaL_checkstring(L, 1), lua_gettop(L) == 2 ? static_cast<uint>(luaL_checknumber(L, 2)) : 10));
 
 	return 1;
 }

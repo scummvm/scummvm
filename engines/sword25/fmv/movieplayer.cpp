@@ -60,7 +60,7 @@ MoviePlayer::~MoviePlayer() {
 	_decoder.close();
 }
 
-bool MoviePlayer::LoadMovie(const Common::String &filename, unsigned int z) {
+bool MoviePlayer::LoadMovie(const Common::String &filename, uint z) {
 	// Get the file and load it into the decoder
 	Common::SeekableReadStream *in = Kernel::GetInstance()->GetPackage()->GetStream(filename);
 	_decoder.load(in);

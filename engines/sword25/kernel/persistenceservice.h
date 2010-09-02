@@ -62,17 +62,17 @@ public:
 	// Interface
 	// -----------------------------------------------------------------------------
 
-	static unsigned int GetSlotCount();
+	static uint GetSlotCount();
 	static Common::String GetSavegameDirectory();
 
 	void            ReloadSlots();
-	bool            IsSlotOccupied(unsigned int SlotID);
-	bool            IsSavegameCompatible(unsigned int SlotID);
-	Common::String &GetSavegameDescription(unsigned int SlotID);
-	Common::String &GetSavegameFilename(unsigned int SlotID);
+	bool            IsSlotOccupied(uint SlotID);
+	bool            IsSavegameCompatible(uint SlotID);
+	Common::String &GetSavegameDescription(uint SlotID);
+	Common::String &GetSavegameFilename(uint SlotID);
 
-	bool            SaveGame(unsigned int SlotID, const Common::String &ScreenshotFilename);
-	bool            LoadGame(unsigned int SlotID);
+	bool            SaveGame(uint SlotID, const Common::String &ScreenshotFilename);
+	bool            LoadGame(uint SlotID);
 
 private:
 	struct Impl;

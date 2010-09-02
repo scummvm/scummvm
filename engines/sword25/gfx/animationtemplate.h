@@ -57,24 +57,24 @@ class AnimationResource;
 
 class AnimationTemplate : public AnimationDescription {
 public:
-	static unsigned int Create(const Common::String &SourceAnimation);
-	static unsigned int Create(const AnimationTemplate &Other);
-	static unsigned int Create(InputPersistenceBlock &Reader, unsigned int Handle);
-	AnimationTemplate *ResolveHandle(unsigned int Handle) const;
+	static uint Create(const Common::String &SourceAnimation);
+	static uint Create(const AnimationTemplate &Other);
+	static uint Create(InputPersistenceBlock &Reader, uint Handle);
+	AnimationTemplate *ResolveHandle(uint Handle) const;
 
 private:
 	AnimationTemplate(const Common::String &SourceAnimation);
 	AnimationTemplate(const AnimationTemplate &Other);
-	AnimationTemplate(InputPersistenceBlock &Reader, unsigned int Handle);
+	AnimationTemplate(InputPersistenceBlock &Reader, uint Handle);
 
 public:
 	~AnimationTemplate();
 
-	virtual const Frame    &GetFrame(unsigned int Index) const {
+	virtual const Frame    &GetFrame(uint Index) const {
 		BS_ASSERT(Index < m_Frames.size());
 		return m_Frames[Index];
 	}
-	virtual unsigned int    GetFrameCount() const {
+	virtual uint    GetFrameCount() const {
 		return m_Frames.size();
 	}
 	virtual void            Unlock() {
@@ -124,8 +124,8 @@ private:
 	bool                        m_Valid;
 
 	AnimationResource *RequestSourceAnimation(const Common::String &SourceAnimation) const;
-	bool ValidateSourceIndex(unsigned int Index) const;
-	bool ValidateDestIndex(unsigned int Index) const;
+	bool ValidateSourceIndex(uint Index) const;
+	bool ValidateDestIndex(uint Index) const;
 };
 
 } // End of namespace Sword25

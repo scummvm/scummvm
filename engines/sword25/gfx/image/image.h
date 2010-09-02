@@ -134,7 +134,7 @@ public:
 	virtual bool Blit(int PosX = 0, int PosY = 0,
 	                  int Flipping = FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
-	                  unsigned int Color = BS_ARGB(255, 255, 255, 255),
+	                  uint Color = BS_ARGB(255, 255, 255, 255),
 	                  int Width = -1, int Height = -1) = 0;
 
 	/**
@@ -149,7 +149,7 @@ public:
 	            BS_RGB und BS_ARGB benutzt werden.
 	    @remark Falls das Rechteck nicht völlig innerhalb des Bildschirms ist, wird es automatisch zurechtgestutzt.
 	*/
-	virtual bool Fill(const Common::Rect *pFillRect = 0, unsigned int Color = BS_RGB(0, 0, 0)) = 0;
+	virtual bool Fill(const Common::Rect *pFillRect = 0, uint Color = BS_RGB(0, 0, 0)) = 0;
 
 	/**
 	    @brief Füllt den Inhalt des Bildes mit Pixeldaten.
@@ -162,7 +162,7 @@ public:
 	    @return Gibt false zurück, falls der Aufruf fehlgeschlagen ist.
 	    @remark Ein Aufruf dieser Methode ist nur erlaubt, wenn IsSetContentAllowed() true zurückgibt.
 	*/
-	virtual bool SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride) = 0;
+	virtual bool SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride) = 0;
 
 	/**
 	    @brief Liest einen Pixel des Bildes.
@@ -172,7 +172,7 @@ public:
 	    @remark Diese Methode sollte auf keine Fall benutzt werden um größere Teile des Bildes zu lesen, da sie sehr langsam ist. Sie ist
 	            eher dafür gedacht einzelne Pixel des Bildes auszulesen.
 	*/
-	virtual unsigned int GetPixel(int X, int Y) = 0;
+	virtual uint GetPixel(int X, int Y) = 0;
 
 	//@{
 	/** @name Auskunfts-Methoden */

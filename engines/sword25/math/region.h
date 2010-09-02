@@ -62,7 +62,7 @@ protected:
 	 */
 	Region();
 
-	Region(InputPersistenceBlock &Reader, unsigned int Handle);
+	Region(InputPersistenceBlock &Reader, uint Handle);
 
 public:
 	enum REGION_TYPE {
@@ -70,8 +70,8 @@ public:
 		RT_WALKREGION
 	};
 
-	static unsigned int Create(REGION_TYPE Type);
-	static unsigned int Create(InputPersistenceBlock &Reader, unsigned int Handle = 0);
+	static uint Create(REGION_TYPE Type);
+	static uint Create(InputPersistenceBlock &Reader, uint Handle = 0);
 
 	virtual ~Region();
 
@@ -154,7 +154,7 @@ public:
 	 * The index must be between 0 and GetHoleCount() - 1.
 	 * @return              Returns the desired hole polygon
 	 */
-	inline const Polygon &GetHole(unsigned int i) const;
+	inline const Polygon &GetHole(uint i) const;
 
 	/**
 	 * For a point outside the region, finds the closest point inside the region
@@ -236,7 +236,7 @@ protected:
 // Inlines
 // -----------------------------------------------------------------------------
 
-inline const Polygon &Region::GetHole(unsigned int i) const {
+inline const Polygon &Region::GetHole(uint i) const {
 	BS_ASSERT(i < m_Polygons.size() - 1);
 	return m_Polygons[i + 1];
 }

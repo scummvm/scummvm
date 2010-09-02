@@ -57,7 +57,7 @@ struct RGB_PIXEL {
 	byte Blue;
 };
 
-bool Screenshot::SaveToFile(unsigned int Width, unsigned int Height, const byte *Data, const Common::String &Filename) {
+bool Screenshot::SaveToFile(uint Width, uint Height, const byte *Data, const Common::String &Filename) {
 #if 0
 	BS_ASSERT(Data.size() == Width * Height);
 
@@ -66,10 +66,10 @@ bool Screenshot::SaveToFile(unsigned int Width, unsigned int Height, const byte 
 	PixelBuffer.reserve(Width * Height);
 
 	// Framebufferdaten pixelweise von RGBA nach RGB konvertieren
-	vector<unsigned int>::const_iterator it = Data.begin();
-	for (unsigned int y = 0; y < Height; y++) {
-		for (unsigned int x = 0; x < Width; x++) {
-			unsigned int SrcPixel = *it++;
+	vector<uint>::const_iterator it = Data.begin();
+	for (uint y = 0; y < Height; y++) {
+		for (uint x = 0; x < Width; x++) {
+			uint SrcPixel = *it++;
 			PixelBuffer.push_back(RGB_PIXEL((SrcPixel >> 16) & 0xff, (SrcPixel >> 8) & 0xff, SrcPixel & 0xff));
 		}
 	}
@@ -118,7 +118,7 @@ bool Screenshot::SaveToFile(unsigned int Width, unsigned int Height, const byte 
 		// Rowpointer erstellen
 		vector<png_bytep> RowPointers;
 		RowPointers.reserve(Height);
-		for (unsigned int i = 0; i < Height; i++) {
+		for (uint i = 0; i < Height; i++) {
 			RowPointers.push_back((png_bytep)(&PixelBuffer[Width * i]));
 		}
 		png_set_rows(png_ptr, info_ptr, &RowPointers[0]);
@@ -154,7 +154,7 @@ bool Screenshot::SaveToFile(unsigned int Width, unsigned int Height, const byte 
 
 // -----------------------------------------------------------------------------
 
-bool Screenshot::SaveThumbnailToFile(unsigned int Width, unsigned int Height, const byte *Data, const Common::String &Filename) {
+bool Screenshot::SaveThumbnailToFile(uint Width, uint Height, const byte *Data, const Common::String &Filename) {
 #if 0
 	//
 	// Diese Methode nimmt ein Screenshot mit den Maßen von 800x600 und erzeugt einen Screenshot mit den Maßen von 200x125.
@@ -170,18 +170,18 @@ bool Screenshot::SaveThumbnailToFile(unsigned int Width, unsigned int Height, co
 	}
 
 	// Buffer für die Zieldaten erstellen (RGBA Bild mit den Maßen 200x125).
-	vector<unsigned int> ThumbnailData(200 * 125);
+	vector<uint> ThumbnailData(200 * 125);
 
 	// Über das Zielbild iterieren und einen Pixel zur Zeit berechnen.
-	unsigned int x, y;
+	uint x, y;
 	x = y = 0;
-	for (vector<unsigned int>::iterator Iter = ThumbnailData.begin(); Iter != ThumbnailData.end(); ++Iter) {
+	for (vector<uint>::iterator Iter = ThumbnailData.begin(); Iter != ThumbnailData.end(); ++Iter) {
 		// Durchschnitt über 4x4 Pixelblock im Quellbild bilden.
-		unsigned int Alpha, Red, Green, Blue;
+		uint Alpha, Red, Green, Blue;
 		Alpha = Red = Green = Blue = 0;
-		for (unsigned int j = 0; j < 4; ++j) {
-			for (unsigned int i = 0; i < 4; ++i) {
-				unsigned int Pixel = Data[((y * 4) + j + 50) * 800 + ((x * 4) + i)];
+		for (uint j = 0; j < 4; ++j) {
+			for (uint i = 0; i < 4; ++i) {
+				uint Pixel = Data[((y * 4) + j + 50) * 800 + ((x * 4) + i)];
 				Alpha += (Pixel >> 24);
 				Red += (Pixel >> 16) & 0xff;
 				Green += (Pixel >> 8) & 0xff;

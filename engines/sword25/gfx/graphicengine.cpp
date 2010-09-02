@@ -53,7 +53,7 @@ namespace Sword25 {
 
 using namespace Lua;
 
-static const unsigned int FRAMETIME_SAMPLE_COUNT = 5;       // Anzahl der Framezeiten über die, die Framezeit gemittelt wird
+static const uint FRAMETIME_SAMPLE_COUNT = 5;       // Anzahl der Framezeiten über die, die Framezeit gemittelt wird
 
 GraphicEngine::GraphicEngine(Kernel *pKernel) :
 	m_Width(0),
@@ -82,13 +82,13 @@ void  GraphicEngine::UpdateLastFrameDuration() {
 
 	// Verstrichene Zeit seit letztem Frame berechnen und zu große Zeitsprünge ( > 250 msek.) unterbinden
 	// (kann vorkommen bei geladenen Spielständen, während des Debuggings oder Hardwareungenauigkeiten)
-	m_FrameTimeSamples[m_FrameTimeSampleSlot] = static_cast<unsigned int>(CurrentTime - m_LastTimeStamp);
+	m_FrameTimeSamples[m_FrameTimeSampleSlot] = static_cast<uint>(CurrentTime - m_LastTimeStamp);
 	if (m_FrameTimeSamples[m_FrameTimeSampleSlot] > 250000) m_FrameTimeSamples[m_FrameTimeSampleSlot] = 250000;
 	m_FrameTimeSampleSlot = (m_FrameTimeSampleSlot + 1) % FRAMETIME_SAMPLE_COUNT;
 
 	// Die Framezeit wird über mehrere Frames gemittelt um Ausreisser zu eliminieren
-	Common::Array<unsigned int>::const_iterator it = m_FrameTimeSamples.begin();
-	unsigned int Sum = *it;
+	Common::Array<uint>::const_iterator it = m_FrameTimeSamples.begin();
+	uint Sum = *it;
 	for (it++; it != m_FrameTimeSamples.end(); it++) Sum += *it;
 	m_LastFrameDuration = Sum / FRAMETIME_SAMPLE_COUNT;
 
@@ -100,8 +100,8 @@ void  GraphicEngine::UpdateLastFrameDuration() {
 
 namespace {
 bool DoSaveScreenshot(GraphicEngine &GraphicEngine, const Common::String &Filename, bool Thumbnail) {
-	unsigned int Width;
-	unsigned int Height;
+	uint Width;
+	uint Height;
 	byte *Data;
 	if (!GraphicEngine.GetScreenshot(Width, Height, &Data)) {
 		BS_LOG_ERRORLN("Call to GetScreenshot() failed. Cannot save screenshot.");
@@ -129,7 +129,7 @@ bool GraphicEngine::SaveThumbnailScreenshot(const Common::String &Filename) {
 
 // -----------------------------------------------------------------------------
 
-void GraphicEngine::ARGBColorToLuaColor(lua_State *L, unsigned int Color) {
+void GraphicEngine::ARGBColorToLuaColor(lua_State *L, uint Color) {
 	lua_Number Components[4] = {
 		(Color >> 16) & 0xff,   // Rot
 		(Color >> 8) & 0xff,    // Grün
@@ -139,7 +139,7 @@ void GraphicEngine::ARGBColorToLuaColor(lua_State *L, unsigned int Color) {
 
 	lua_newtable(L);
 
-	for (unsigned int i = 1; i <= 4; i++) {
+	for (uint i = 1; i <= 4; i++) {
 		lua_pushnumber(L, i);
 		lua_pushnumber(L, Components[i - 1]);
 		lua_settable(L, -3);
@@ -148,7 +148,7 @@ void GraphicEngine::ARGBColorToLuaColor(lua_State *L, unsigned int Color) {
 
 // -----------------------------------------------------------------------------
 
-unsigned int GraphicEngine::LuaColorToARGBColor(lua_State *L, int StackIndex) {
+uint GraphicEngine::LuaColorToARGBColor(lua_State *L, int StackIndex) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
@@ -156,33 +156,33 @@ unsigned int GraphicEngine::LuaColorToARGBColor(lua_State *L, int StackIndex) {
 	// Sicherstellen, dass wir wirklich eine Tabelle betrachten
 	luaL_checktype(L, StackIndex, LUA_TTABLE);
 	// Größe der Tabelle auslesen
-	unsigned int n = luaL_getn(L, StackIndex);
+	uint n = luaL_getn(L, StackIndex);
 	// RGB oder RGBA Farben werden unterstützt und sonst keine
 	if (n != 3 && n != 4) luaL_argcheck(L, 0, StackIndex, "at least 3 of the 4 color components have to be specified");
 
 	// Rote Farbkomponente auslesen
 	lua_rawgeti(L, StackIndex, 1);
-	unsigned int Red = static_cast<unsigned int>(lua_tonumber(L, -1));
+	uint Red = static_cast<uint>(lua_tonumber(L, -1));
 	if (!lua_isnumber(L, -1) || Red >= 256) luaL_argcheck(L, 0, StackIndex, "red color component must be an integer between 0 and 255");
 	lua_pop(L, 1);
 
 	// Grüne Farbkomponente auslesen
 	lua_rawgeti(L, StackIndex, 2);
-	unsigned int Green = static_cast<unsigned int>(lua_tonumber(L, -1));
+	uint Green = static_cast<uint>(lua_tonumber(L, -1));
 	if (!lua_isnumber(L, -1) || Green >= 256) luaL_argcheck(L, 0, StackIndex, "green color component must be an integer between 0 and 255");
 	lua_pop(L, 1);
 
 	// Blaue Farbkomponente auslesen
 	lua_rawgeti(L, StackIndex, 3);
-	unsigned int Blue = static_cast<unsigned int>(lua_tonumber(L, -1));
+	uint Blue = static_cast<uint>(lua_tonumber(L, -1));
 	if (!lua_isnumber(L, -1) || Blue >= 256) luaL_argcheck(L, 0, StackIndex, "blue color component must be an integer between 0 and 255");
 	lua_pop(L, 1);
 
 	// Alpha Farbkomponente auslesen
-	unsigned int Alpha = 0xff;
+	uint Alpha = 0xff;
 	if (n == 4) {
 		lua_rawgeti(L, StackIndex, 4);
-		Alpha = static_cast<unsigned int>(lua_tonumber(L, -1));
+		Alpha = static_cast<uint>(lua_tonumber(L, -1));
 		if (!lua_isnumber(L, -1) || Alpha >= 256) luaL_argcheck(L, 0, StackIndex, "alpha color component must be an integer between 0 and 255");
 		lua_pop(L, 1);
 	}

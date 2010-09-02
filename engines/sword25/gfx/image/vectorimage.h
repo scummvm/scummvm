@@ -60,31 +60,31 @@ class VectorImage;
 
 class VectorPathInfo {
 public:
-	VectorPathInfo(unsigned int ID, unsigned int LineStyle, unsigned int FillStyle0, unsigned int FillStyle1) :
+	VectorPathInfo(uint ID, uint LineStyle, uint FillStyle0, uint FillStyle1) :
 		m_ID(ID), m_LineStyle(LineStyle), m_FillStyle0(FillStyle0), m_FillStyle1(FillStyle1) {}
 
 	VectorPathInfo() {
 		m_ID = m_LineStyle = m_FillStyle0 = m_FillStyle1 = 0;
 	}
 
-	unsigned int GetID() const {
+	uint GetID() const {
 		return m_ID;
 	}
-	unsigned int GetLineStyle() const {
+	uint GetLineStyle() const {
 		return m_LineStyle;
 	}
-	unsigned int GetFillStyle0() const {
+	uint GetFillStyle0() const {
 		return m_FillStyle0;
 	}
-	unsigned int GetFillStyle1() const {
+	uint GetFillStyle1() const {
 		return m_FillStyle1;
 	}
 
 private:
-	unsigned int m_ID;
-	unsigned int m_LineStyle;
-	unsigned int m_FillStyle0;
-	unsigned int m_FillStyle1;
+	uint m_ID;
+	uint m_LineStyle;
+	uint m_FillStyle0;
+	uint m_FillStyle1;
 };
 
 
@@ -101,33 +101,33 @@ public:
 	}
 #endif
 
-	unsigned int GetPathCount() const {
+	uint GetPathCount() const {
 		return m_PathInfos.size();
 	}
-	const VectorPathInfo &GetPathInfo(unsigned int PathNr) const {
+	const VectorPathInfo &GetPathInfo(uint PathNr) const {
 		BS_ASSERT(PathNr < GetPathCount());
 		return m_PathInfos[PathNr];
 	}
 
-	double GetLineStyleWidth(unsigned int LineStyle) const {
+	double GetLineStyleWidth(uint LineStyle) const {
 		BS_ASSERT(LineStyle < m_LineStyles.size());
 		return m_LineStyles[LineStyle].Width;
 	}
 
-	unsigned int GetLineStyleCount() const {
+	uint GetLineStyleCount() const {
 		return m_LineStyles.size();
 	}
 
-	uint32 GetLineStyleColor(unsigned int LineStyle) const {
+	uint32 GetLineStyleColor(uint LineStyle) const {
 		BS_ASSERT(LineStyle < m_LineStyles.size());
 		return m_LineStyles[LineStyle].Color;
 	}
 
-	unsigned int GetFillStyleCount() const {
+	uint GetFillStyleCount() const {
 		return m_FillStyles.size();
 	}
 
-	uint32 GetFillStyleColor(unsigned int FillStyle) const {
+	uint32 GetFillStyleColor(uint FillStyle) const {
 		BS_ASSERT(FillStyle < m_FillStyles.size());
 		return m_FillStyles[FillStyle];
 	}
@@ -162,12 +162,12 @@ private:
 
 class VectorImage : public Image {
 public:
-	VectorImage(const byte *pFileData, unsigned int FileSize, bool &Success);
+	VectorImage(const byte *pFileData, uint FileSize, bool &Success);
 
-	unsigned int GetElementCount() const {
+	uint GetElementCount() const {
 		return m_Elements.size();
 	}
-	const VectorImageElement &GetElement(unsigned int ElementNr) const {
+	const VectorImageElement &GetElement(uint ElementNr) const {
 		BS_ASSERT(ElementNr < m_Elements.size());
 		return m_Elements[ElementNr];
 	}
@@ -187,8 +187,8 @@ public:
 	virtual GraphicEngine::COLOR_FORMATS GetColorFormat() const {
 		return GraphicEngine::CF_ARGB32;
 	}
-	virtual bool Fill(const Common::Rect *pFillRect = 0, unsigned int Color = BS_RGB(0, 0, 0));
-	virtual unsigned int GetPixel(int X, int Y);
+	virtual bool Fill(const Common::Rect *pFillRect = 0, uint Color = BS_RGB(0, 0, 0));
+	virtual uint GetPixel(int X, int Y);
 	virtual bool IsBlitSource() const {
 		return true;
 	}
@@ -210,18 +210,18 @@ public:
 	virtual bool IsSetContentAllowed() const {
 		return false;
 	}
-	virtual bool SetContent(const byte *Pixeldata, uint size, unsigned int Offset, unsigned int Stride);
+	virtual bool SetContent(const byte *Pixeldata, uint size, uint Offset, uint Stride);
 	virtual bool Blit(int PosX = 0, int PosY = 0,
 	                  int Flipping = FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
-	                  unsigned int Color = BS_ARGB(255, 255, 255, 255),
+	                  uint Color = BS_ARGB(255, 255, 255, 255),
 	                  int Width = -1, int Height = -1);
 
 	class SWFBitStream;
 
 private:
-	bool ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs);
-	bool ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsigned int &NumFillBits, unsigned int &NumLineBits);
+	bool ParseDefineShape(uint ShapeType, SWFBitStream &bs);
+	bool ParseStyles(uint ShapeType, SWFBitStream &bs, uint &NumFillBits, uint &NumLineBits);
 
 	Common::Array<VectorImageElement>    m_Elements;
 	Common::Rect                             m_BoundingBox;

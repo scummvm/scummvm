@@ -55,9 +55,9 @@ static int Init(lua_State *L) {
 	if (lua_gettop(L) == 0)
 		lua_pushbooleancpp(L, pSfx->Init(44100, 32));
 	else if (lua_gettop(L) == 1)
-		lua_pushbooleancpp(L, pSfx->Init(static_cast<unsigned int>(luaL_checknumber(L, 1)), 32));
+		lua_pushbooleancpp(L, pSfx->Init(static_cast<uint>(luaL_checknumber(L, 1)), 32));
 	else
-		lua_pushbooleancpp(L, pSfx->Init(static_cast<unsigned int>(luaL_checknumber(L, 1)), static_cast<unsigned int>(luaL_checknumber(L, 2))));
+		lua_pushbooleancpp(L, pSfx->Init(static_cast<uint>(luaL_checknumber(L, 1)), static_cast<uint>(luaL_checknumber(L, 2))));
 
 	return 1;
 }
@@ -84,7 +84,7 @@ static int SetVolume(lua_State *L) {
 	BS_ASSERT(pSfx);
 
 	pSfx->SetVolume(static_cast<float>(luaL_checknumber(L, 1)),
-	                static_cast<SoundEngine::SOUND_TYPES>(static_cast<unsigned int>(luaL_checknumber(L, 2))));
+	                static_cast<SoundEngine::SOUND_TYPES>(static_cast<uint>(luaL_checknumber(L, 2))));
 
 	return 0;
 }
@@ -97,7 +97,7 @@ static int GetVolume(lua_State *L) {
 	SoundEngine *pSfx = static_cast<SoundEngine *>(Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
-	lua_pushnumber(L, pSfx->GetVolume(static_cast<SoundEngine::SOUND_TYPES>(static_cast<unsigned int>(luaL_checknumber(L, 1)))));
+	lua_pushnumber(L, pSfx->GetVolume(static_cast<SoundEngine::SOUND_TYPES>(static_cast<uint>(luaL_checknumber(L, 1)))));
 
 	return 1;
 }
@@ -156,10 +156,10 @@ static int ResumeLayer(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static void ProcessPlayParams(lua_State *L, Common::String &FileName, SoundEngine::SOUND_TYPES &Type, float &Volume, float &Pan, bool &Loop, int &LoopStart, int &LoopEnd, unsigned int &Layer) {
+static void ProcessPlayParams(lua_State *L, Common::String &FileName, SoundEngine::SOUND_TYPES &Type, float &Volume, float &Pan, bool &Loop, int &LoopStart, int &LoopEnd, uint &Layer) {
 	FileName = luaL_checkstring(L, 1);
 
-	Type = static_cast<SoundEngine::SOUND_TYPES>(static_cast<unsigned int>(luaL_checknumber(L, 2)));
+	Type = static_cast<SoundEngine::SOUND_TYPES>(static_cast<uint>(luaL_checknumber(L, 2)));
 
 	if (lua_gettop(L) < 3 || lua_isnil(L, 3)) Volume = 1.0f;
 	else Volume = static_cast<float>(luaL_checknumber(L, 3));
@@ -177,7 +177,7 @@ static void ProcessPlayParams(lua_State *L, Common::String &FileName, SoundEngin
 	else LoopEnd = static_cast<int>(luaL_checknumber(L, 7));
 
 	if (lua_gettop(L) < 8 || lua_isnil(L, 8)) Layer = 0;
-	else Layer = static_cast<unsigned int>(luaL_checknumber(L, 8));
+	else Layer = static_cast<uint>(luaL_checknumber(L, 8));
 }
 
 static int PlaySound(lua_State *L) {
@@ -193,7 +193,7 @@ static int PlaySound(lua_State *L) {
 	bool Loop;
 	int LoopStart;
 	int LoopEnd;
-	unsigned int Layer;
+	uint Layer;
 	ProcessPlayParams(L, FileName, Type, Volume, Pan, Loop, LoopStart, LoopEnd, Layer);
 
 	lua_pushbooleancpp(L, pSfx->PlaySound(FileName, Type, Volume, Pan, Loop, LoopStart, LoopEnd, Layer));
@@ -214,7 +214,7 @@ static int PlaySoundEx(lua_State *L) {
 	bool Loop;
 	int LoopStart;
 	int LoopEnd;
-	unsigned int Layer;
+	uint Layer;
 	ProcessPlayParams(L, FileName, Type, Volume, Pan, Loop, LoopStart, LoopEnd, Layer);
 
 	lua_pushnumber(L, pSfx->PlaySoundEx(FileName, Type, Volume, Pan, Loop, LoopStart, LoopEnd, Layer));
@@ -230,7 +230,7 @@ static int SetSoundVolume(lua_State *L) {
 	SoundEngine *pSfx = static_cast<SoundEngine *>(Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
-	pSfx->SetSoundVolume(static_cast<unsigned int>(luaL_checknumber(L, 1)), static_cast<float>(luaL_checknumber(L, 2)));
+	pSfx->SetSoundVolume(static_cast<uint>(luaL_checknumber(L, 1)), static_cast<float>(luaL_checknumber(L, 2)));
 
 	return 0;
 }
@@ -243,7 +243,7 @@ static int SetSoundPanning(lua_State *L) {
 	SoundEngine *pSfx = static_cast<SoundEngine *>(Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
-	pSfx->SetSoundPanning(static_cast<unsigned int>(luaL_checknumber(L, 1)), static_cast<float>(luaL_checknumber(L, 2)));
+	pSfx->SetSoundPanning(static_cast<uint>(luaL_checknumber(L, 1)), static_cast<float>(luaL_checknumber(L, 2)));
 
 	return 0;
 }
@@ -256,7 +256,7 @@ static int PauseSound(lua_State *L) {
 	SoundEngine *pSfx = static_cast<SoundEngine *>(Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
-	pSfx->PauseSound(static_cast<unsigned int>(luaL_checknumber(L, 1)));
+	pSfx->PauseSound(static_cast<uint>(luaL_checknumber(L, 1)));
 
 	return 0;
 }
@@ -269,7 +269,7 @@ static int ResumeSound(lua_State *L) {
 	SoundEngine *pSfx = static_cast<SoundEngine *>(Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
-	pSfx->ResumeSound(static_cast<unsigned int>(luaL_checknumber(L, 1)));
+	pSfx->ResumeSound(static_cast<uint>(luaL_checknumber(L, 1)));
 
 	return 0;
 }
@@ -282,7 +282,7 @@ static int StopSound(lua_State *L) {
 	SoundEngine *pSfx = static_cast<SoundEngine *>(Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
-	pSfx->StopSound(static_cast<unsigned int>(luaL_checknumber(L, 1)));
+	pSfx->StopSound(static_cast<uint>(luaL_checknumber(L, 1)));
 
 	return 0;
 }
@@ -295,7 +295,7 @@ static int IsSoundPaused(lua_State *L) {
 	SoundEngine *pSfx = static_cast<SoundEngine *>(Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
-	lua_pushbooleancpp(L, pSfx->IsSoundPaused(static_cast<unsigned int>(luaL_checknumber(L, 1))));
+	lua_pushbooleancpp(L, pSfx->IsSoundPaused(static_cast<uint>(luaL_checknumber(L, 1))));
 
 	return 1;
 }
@@ -308,7 +308,7 @@ static int IsSoundPlaying(lua_State *L) {
 	SoundEngine *pSfx = static_cast<SoundEngine *>(Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
-	lua_pushbooleancpp(L, pSfx->IsSoundPlaying(static_cast<unsigned int>(luaL_checknumber(L, 1))));
+	lua_pushbooleancpp(L, pSfx->IsSoundPlaying(static_cast<uint>(luaL_checknumber(L, 1))));
 
 	return 1;
 }
@@ -321,7 +321,7 @@ static int GetSoundVolume(lua_State *L) {
 	SoundEngine *pSfx = static_cast<SoundEngine *>(Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
-	lua_pushnumber(L, pSfx->GetSoundVolume(static_cast<unsigned int>(luaL_checknumber(L, 1))));
+	lua_pushnumber(L, pSfx->GetSoundVolume(static_cast<uint>(luaL_checknumber(L, 1))));
 
 	return 1;
 }
@@ -334,7 +334,7 @@ static int GetSoundPanning(lua_State *L) {
 	SoundEngine *pSfx = static_cast<SoundEngine *>(Kernel::GetInstance()->GetService("sfx"));
 	BS_ASSERT(pSfx);
 
-	lua_pushnumber(L, pSfx->GetSoundPanning(static_cast<unsigned int>(luaL_checknumber(L, 1))));
+	lua_pushnumber(L, pSfx->GetSoundPanning(static_cast<uint>(luaL_checknumber(L, 1))));
 
 	return 1;
 }

@@ -72,7 +72,7 @@ LuaCallback::~LuaCallback() {
 
 // -----------------------------------------------------------------------------
 
-void LuaCallback::RegisterCallbackFunction(lua_State *L, unsigned int ObjectHandle) {
+void LuaCallback::RegisterCallbackFunction(lua_State *L, uint ObjectHandle) {
 	BS_ASSERT(lua_isfunction(L, -1));
 	EnsureObjectCallbackTableExists(L, ObjectHandle);
 
@@ -86,7 +86,7 @@ void LuaCallback::RegisterCallbackFunction(lua_State *L, unsigned int ObjectHand
 
 // -----------------------------------------------------------------------------
 
-void LuaCallback::UnregisterCallbackFunction(lua_State *L, unsigned int ObjectHandle) {
+void LuaCallback::UnregisterCallbackFunction(lua_State *L, uint ObjectHandle) {
 	BS_ASSERT(lua_isfunction(L, -1));
 	EnsureObjectCallbackTableExists(L, ObjectHandle);
 
@@ -116,7 +116,7 @@ void LuaCallback::UnregisterCallbackFunction(lua_State *L, unsigned int ObjectHa
 
 // -----------------------------------------------------------------------------
 
-void LuaCallback::RemoveAllObjectCallbacks(lua_State *L, unsigned int ObjectHandle) {
+void LuaCallback::RemoveAllObjectCallbacks(lua_State *L, uint ObjectHandle) {
 	PushCallbackTable(L);
 
 	// Remove the object callback from the callback table
@@ -129,7 +129,7 @@ void LuaCallback::RemoveAllObjectCallbacks(lua_State *L, unsigned int ObjectHand
 
 // -----------------------------------------------------------------------------
 
-void LuaCallback::InvokeCallbackFunctions(lua_State *L, unsigned int ObjectHandle) {
+void LuaCallback::InvokeCallbackFunctions(lua_State *L, uint ObjectHandle) {
 	EnsureObjectCallbackTableExists(L, ObjectHandle);
 
 	// Iterate through the table and perform all the callbacks
@@ -161,7 +161,7 @@ void LuaCallback::InvokeCallbackFunctions(lua_State *L, unsigned int ObjectHandl
 
 // -----------------------------------------------------------------------------
 
-void LuaCallback::EnsureObjectCallbackTableExists(lua_State *L, unsigned int ObjectHandle) {
+void LuaCallback::EnsureObjectCallbackTableExists(lua_State *L, uint ObjectHandle) {
 	PushObjectCallbackTable(L, ObjectHandle);
 
 	// If the table is nil, it must first be created
@@ -190,7 +190,7 @@ void LuaCallback::PushCallbackTable(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-void LuaCallback::PushObjectCallbackTable(lua_State *L, unsigned int ObjectHandle) {
+void LuaCallback::PushObjectCallbackTable(lua_State *L, uint ObjectHandle) {
 	PushCallbackTable(L);
 
 	// Push Object Callback table onto the stack

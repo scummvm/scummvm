@@ -86,7 +86,7 @@ static void *my_checkudata(lua_State *L, int ud, const char *tname) {
 
 // -----------------------------------------------------------------------------
 
-static void NewUintUserData(lua_State *L, unsigned int Value) {
+static void NewUintUserData(lua_State *L, uint Value) {
 	void *UserData = lua_newuserdata(L, sizeof(Value));
 	memcpy(UserData, &Value, sizeof(Value));
 }
@@ -181,7 +181,7 @@ static void TablePolygonToPolygon(lua_State *L, Polygon &Polygon) {
 
 // -----------------------------------------------------------------------------
 
-static unsigned int TableRegionToRegion(lua_State *L, const char *ClassName) {
+static uint TableRegionToRegion(lua_State *L, const char *ClassName) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
@@ -199,7 +199,7 @@ static unsigned int TableRegionToRegion(lua_State *L, const char *ClassName) {
 		return 0;
 	}
 
-	unsigned int RegionHandle = 0;
+	uint RegionHandle = 0;
 	if (!strcmp(ClassName, REGION_CLASS_NAME)) {
 		RegionHandle = Region::Create(Region::RT_REGION);
 	} else if (!strcmp(ClassName, WALKREGION_CLASS_NAME)) {
@@ -268,7 +268,7 @@ static unsigned int TableRegionToRegion(lua_State *L, const char *ClassName) {
 static void NewUserdataRegion(lua_State *L, const char *ClassName) {
 	// Region due to the Lua code to create
 	// Any errors that occur will be intercepted to the luaL_error
-	unsigned int RegionHandle = TableRegionToRegion(L, ClassName);
+	uint RegionHandle = TableRegionToRegion(L, ClassName);
 	BS_ASSERT(RegionHandle);
 
 	NewUintUserData(L, RegionHandle);
@@ -306,9 +306,9 @@ static const luaL_reg GEO_FUNCTIONS[] = {
 
 static Region *CheckRegion(lua_State *L) {
 	// The first parameter must be of type 'userdata', and the Metatable class Geo.Region or Geo.WalkRegion
-	unsigned int *RegionHandlePtr;
-	if ((RegionHandlePtr = reinterpret_cast<unsigned int *>(my_checkudata(L, 1, REGION_CLASS_NAME))) != 0 ||
-	        (RegionHandlePtr = reinterpret_cast<unsigned int *>(my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
+	uint *RegionHandlePtr;
+	if ((RegionHandlePtr = reinterpret_cast<uint *>(my_checkudata(L, 1, REGION_CLASS_NAME))) != 0 ||
+	        (RegionHandlePtr = reinterpret_cast<uint *>(my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
 		return RegionRegistry::GetInstance().ResolveHandle(*RegionHandlePtr);
 	} else {
 		luaL_argcheck(L, 0, 1, "'" REGION_CLASS_NAME "' expected");
@@ -407,7 +407,7 @@ static int R_SetY(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static void DrawPolygon(const Polygon &Polygon, unsigned int Color, const Vertex &Offset) {
+static void DrawPolygon(const Polygon &Polygon, uint Color, const Vertex &Offset) {
 	GraphicEngine *pGE = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
 	BS_ASSERT(pGE);
 
@@ -419,7 +419,7 @@ static void DrawPolygon(const Polygon &Polygon, unsigned int Color, const Vertex
 
 // -----------------------------------------------------------------------------
 
-static void DrawRegion(const Region &Region, unsigned int Color, const Vertex &Offset) {
+static void DrawRegion(const Region &Region, uint Color, const Vertex &Offset) {
 	DrawPolygon(Region.GetContour(), Color, Offset);
 	for (int i = 0; i < Region.GetHoleCount(); i++)
 		DrawPolygon(Region.GetHole(i), Color, Offset);
@@ -490,8 +490,8 @@ static const luaL_reg REGION_METHODS[] = {
 
 static WalkRegion *CheckWalkRegion(lua_State *L) {
 	// The first parameter must be of type 'userdate', and the Metatable class Geo.WalkRegion
-	unsigned int RegionHandle;
-	if ((RegionHandle = *reinterpret_cast<unsigned int *>(my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
+	uint RegionHandle;
+	if ((RegionHandle = *reinterpret_cast<uint *>(my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
 		return reinterpret_cast<WalkRegion *>(RegionRegistry::GetInstance().ResolveHandle(RegionHandle));
 	} else {
 		luaL_argcheck(L, 0, 1, "'" WALKREGION_CLASS_NAME "' expected");

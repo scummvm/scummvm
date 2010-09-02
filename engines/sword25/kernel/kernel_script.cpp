@@ -87,7 +87,7 @@ static int GetSuperclassIdentifier(lua_State *L) {
 	BS_ASSERT(pKernel);
 
 	lua_pushstring(L, pKernel->GetSuperclassIdentifier(
-	                   static_cast<unsigned int>(luaL_checknumber(L, 1))).c_str());
+	                   static_cast<uint>(luaL_checknumber(L, 1))).c_str());
 
 	return 1;
 }
@@ -110,7 +110,7 @@ static int GetServiceIdentifier(lua_State *L) {
 	BS_ASSERT(pKernel);
 
 	lua_pushstring(L, pKernel->GetServiceIdentifier(luaL_checkstring(L, 1),
-	               static_cast<unsigned int>(luaL_checknumber(L, 2))).c_str());
+	               static_cast<uint>(luaL_checknumber(L, 2))).c_str());
 
 	return 1;
 }
@@ -153,7 +153,7 @@ static int StartService(lua_State *L) {
 static int Sleep(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	pKernel->Sleep(static_cast<unsigned int>(luaL_checknumber(L, 1) * 1000));
+	pKernel->Sleep(static_cast<uint>(luaL_checknumber(L, 1) * 1000));
 	return 0;
 }
 
@@ -563,7 +563,7 @@ static int SetMaxMemoryUsage(lua_State *L) {
 	ResourceManager *pResource = pKernel->GetResourceManager();
 	BS_ASSERT(pResource);
 
-	pResource->SetMaxMemoryUsage(static_cast<unsigned int>(lua_tonumber(L, 1)));
+	pResource->SetMaxMemoryUsage(static_cast<uint>(lua_tonumber(L, 1)));
 
 	return 0;
 }
@@ -655,7 +655,7 @@ static int GetSlotCount(lua_State *L) {
 
 static int IsSlotOccupied(lua_State *L) {
 	lua_pushbooleancpp(L, PersistenceService::GetInstance().IsSlotOccupied(
-	                       static_cast<unsigned int>(luaL_checknumber(L, 1)) - 1));
+	                       static_cast<uint>(luaL_checknumber(L, 1)) - 1));
 	return 1;
 }
 
@@ -670,7 +670,7 @@ static int GetSavegameDirectory(lua_State *L) {
 
 static int IsSavegameCompatible(lua_State *L) {
 	lua_pushbooleancpp(L, PersistenceService::GetInstance().IsSavegameCompatible(
-	                       static_cast<unsigned int>(luaL_checknumber(L, 1)) - 1));
+	                       static_cast<uint>(luaL_checknumber(L, 1)) - 1));
 	return 1;
 }
 
@@ -678,28 +678,28 @@ static int IsSavegameCompatible(lua_State *L) {
 
 static int GetSavegameDescription(lua_State *L) {
 	lua_pushstring(L, PersistenceService::GetInstance().GetSavegameDescription(
-	                   static_cast<unsigned int>(luaL_checknumber(L, 1)) - 1).c_str());
+	                   static_cast<uint>(luaL_checknumber(L, 1)) - 1).c_str());
 	return 1;
 }
 
 // -----------------------------------------------------------------------------
 
 static int GetSavegameFilename(lua_State *L) {
-	lua_pushstring(L, PersistenceService::GetInstance().GetSavegameFilename(static_cast<unsigned int>(luaL_checknumber(L, 1)) - 1).c_str());
+	lua_pushstring(L, PersistenceService::GetInstance().GetSavegameFilename(static_cast<uint>(luaL_checknumber(L, 1)) - 1).c_str());
 	return 1;
 }
 
 // -----------------------------------------------------------------------------
 
 static int LoadGame(lua_State *L) {
-	lua_pushbooleancpp(L, PersistenceService::GetInstance().LoadGame(static_cast<unsigned int>(luaL_checknumber(L, 1)) - 1));
+	lua_pushbooleancpp(L, PersistenceService::GetInstance().LoadGame(static_cast<uint>(luaL_checknumber(L, 1)) - 1));
 	return 1;
 }
 
 // -----------------------------------------------------------------------------
 
 static int SaveGame(lua_State *L) {
-	lua_pushbooleancpp(L, PersistenceService::GetInstance().SaveGame(static_cast<unsigned int>(luaL_checknumber(L, 1)) - 1, luaL_checkstring(L, 2)));
+	lua_pushbooleancpp(L, PersistenceService::GetInstance().SaveGame(static_cast<uint>(luaL_checknumber(L, 1)) - 1, luaL_checkstring(L, 2)));
 	return 1;
 }
 

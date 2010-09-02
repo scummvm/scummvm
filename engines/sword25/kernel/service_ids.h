@@ -73,7 +73,7 @@ const BS_ServiceInfo BS_SERVICE_TABLE[] = {
 	BS_ServiceInfo("fmv", "oggtheora", OggTheora_CreateObject),
 };
 
-const unsigned int BS_SERVICE_COUNT = sizeof(BS_SERVICE_TABLE) / sizeof(BS_ServiceInfo);
+const uint BS_SERVICE_COUNT = sizeof(BS_SERVICE_TABLE) / sizeof(BS_ServiceInfo);
 
 } // End of namespace Sword25
 

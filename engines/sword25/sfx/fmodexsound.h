@@ -48,28 +48,28 @@ public:
 	FMODExSound(Kernel *pKernel);
 	virtual ~FMODExSound();
 
-	bool            Init(unsigned int SampleRate, unsigned int Channels = 32);
+	bool            Init(uint SampleRate, uint Channels = 32);
 	void            Update();
 	void            SetVolume(float Volume, SOUND_TYPES Type);
 	float           GetVolume(SOUND_TYPES Type);
 	void            PauseAll();
 	void            ResumeAll();
-	void            PauseLayer(unsigned int Layer);
-	void            ResumeLayer(unsigned int Layer);
-	bool            PlaySound(const Common::String &FileName, SOUND_TYPES Type, float Volume, float Pan, bool Loop, int LoopStart, int LoopEnd, unsigned int Layer);
-	unsigned int    PlaySoundEx(const Common::String &FileName, SOUND_TYPES Type, float Volume, float Pan, bool Loop, int LoopStart, int LoopEnd, unsigned int Layer);
-	unsigned int    PlayDynamicSoundEx(DynamicSoundReadCallback ReadCallback, void *UserData, SOUND_TYPES Type, unsigned int SampleRate, unsigned int BitsPerSample, unsigned int Channels, float Volume = 1.0f, float Pan = 0.0f, unsigned int Layer = 0);
+	void            PauseLayer(uint Layer);
+	void            ResumeLayer(uint Layer);
+	bool            PlaySound(const Common::String &FileName, SOUND_TYPES Type, float Volume, float Pan, bool Loop, int LoopStart, int LoopEnd, uint Layer);
+	uint    PlaySoundEx(const Common::String &FileName, SOUND_TYPES Type, float Volume, float Pan, bool Loop, int LoopStart, int LoopEnd, uint Layer);
+	uint    PlayDynamicSoundEx(DynamicSoundReadCallback ReadCallback, void *UserData, SOUND_TYPES Type, uint SampleRate, uint BitsPerSample, uint Channels, float Volume = 1.0f, float Pan = 0.0f, uint Layer = 0);
 
-	void    SetSoundVolume(unsigned int Handle, float Volume);
-	void    SetSoundPanning(unsigned int Handle, float Pan);
-	void    PauseSound(unsigned int Handle);
-	void    ResumeSound(unsigned int Handle);
-	void    StopSound(unsigned int Handle);
-	bool    IsSoundPaused(unsigned int Handle);
-	bool    IsSoundPlaying(unsigned int Handle);
-	float   GetSoundVolume(unsigned int Handle);
-	float   GetSoundPanning(unsigned int Handle);
-	float   GetSoundTime(unsigned int Handle);
+	void    SetSoundVolume(uint Handle, float Volume);
+	void    SetSoundPanning(uint Handle, float Pan);
+	void    PauseSound(uint Handle);
+	void    ResumeSound(uint Handle);
+	void    StopSound(uint Handle);
+	bool    IsSoundPaused(uint Handle);
+	bool    IsSoundPlaying(uint Handle);
+	float   GetSoundVolume(uint Handle);
+	float   GetSoundPanning(uint Handle);
+	float   GetSoundTime(uint Handle);
 
 	Resource    *LoadResource(const Common::String &FileName);
 	bool            CanLoadResource(const Common::String &FileName);
@@ -85,7 +85,7 @@ public:
 private:
 	struct PlayingSoundData {
 		PlayingSoundData() {};
-		PlayingSoundData(BS_Resource *ResourcePtr_, BS_FMODExChannel *ChannelPtr_, SOUND_TYPES Type_, unsigned int Layer_, float Volume_, DynamicSoundReadCallback ReadCallback_ = 0, void *UserData_ = 0) :
+		PlayingSoundData(BS_Resource *ResourcePtr_, BS_FMODExChannel *ChannelPtr_, SOUND_TYPES Type_, uint Layer_, float Volume_, DynamicSoundReadCallback ReadCallback_ = 0, void *UserData_ = 0) :
 			ResourcePtr(ResourcePtr_),
 			ChannelPtr(ChannelPtr_),
 			Type(Type_),
@@ -101,7 +101,7 @@ private:
 		BS_Resource                *ResourcePtr;
 		BS_FMODExChannel           *ChannelPtr;
 		SOUND_TYPES                 Type;
-		unsigned int                Layer;
+		uint                Layer;
 		DynamicSoundReadCallback    ReadCallback;
 		void                       *UserData;
 
@@ -111,23 +111,23 @@ private:
 		bool    PausedGlobal;
 	};
 
-	typedef BS_Hashmap<unsigned int, PlayingSoundData>                  PSM;
-	typedef BS_Hashmap<unsigned int, PlayingSoundData>::iterator        PSM_ITER;
-	typedef BS_Hashmap<unsigned int, PlayingSoundData>::const_iterator  PSM_CONST_ITER;
+	typedef BS_Hashmap<uint, PlayingSoundData>                  PSM;
+	typedef BS_Hashmap<uint, PlayingSoundData>::iterator        PSM_ITER;
+	typedef BS_Hashmap<uint, PlayingSoundData>::const_iterator  PSM_CONST_ITER;
 	PSM m_PlayingSoundsMap;
 
 	FMOD_SYSTEM    *m_FMOD;
 	float           m_Volumes[3];
-	unsigned int    m_NextHandle;
+	uint    m_NextHandle;
 
 	void                RemoveInactiveSounds();
-	PlayingSoundData   *GetPlayingSoundDataByHandle(unsigned int Handle);
-	unsigned int        PlaySoundInternal(const Common::String &FileName, SOUND_TYPES Type, float Volume, float Pan, bool Loop, int LoopStart, int LoopEnd, unsigned int Layer, unsigned int Handle, unsigned int Position);
-	unsigned int        CountPlayingDynamicSounds();
+	PlayingSoundData   *GetPlayingSoundDataByHandle(uint Handle);
+	uint        PlaySoundInternal(const Common::String &FileName, SOUND_TYPES Type, float Volume, float Pan, bool Loop, int LoopStart, int LoopEnd, uint Layer, uint Handle, uint Position);
+	uint        CountPlayingDynamicSounds();
 
-	static FMOD_RESULT F_CALLBACK FMODExDynamicSoundSetPosCallback(FMOD_SOUND *sound, int subsound, unsigned int position, FMOD_TIMEUNIT postype);
-	static FMOD_RESULT F_CALLBACK FMODExDynamicSoundReadCallback(FMOD_SOUND *sound, void *data, unsigned int datalen);
-	static FMOD_RESULT F_CALLBACK DSPReadCallback(FMOD_DSP_STATE *dsp_state, float *inbuffer, float *outbuffer, unsigned int length, int inchannels, int outchannels);
+	static FMOD_RESULT F_CALLBACK FMODExDynamicSoundSetPosCallback(FMOD_SOUND *sound, int subsound, uint position, FMOD_TIMEUNIT postype);
+	static FMOD_RESULT F_CALLBACK FMODExDynamicSoundReadCallback(FMOD_SOUND *sound, void *data, uint datalen);
+	static FMOD_RESULT F_CALLBACK DSPReadCallback(FMOD_DSP_STATE *dsp_state, float *inbuffer, float *outbuffer, uint length, int inchannels, int outchannels);
 #endif
 };
 

@@ -64,7 +64,7 @@ class Panel;
 class Screenshot;
 
 // Typen
-typedef unsigned int BS_COLOR;
+typedef uint BS_COLOR;
 
 // Makros
 #define BS_RGB(R,G,B)       (0xFF000000 | ((R) << 16) | ((G) << 8) | (B))
@@ -174,7 +174,7 @@ public:
 	* @param End        The ending point of the line
 	* @param Color      The colour of the line. The default is BS_RGB (255,255,255) (White)
 	*/
-	virtual void        DrawDebugLine(const Vertex &Start, const Vertex &End, unsigned int Color = BS_RGB(255, 255, 255)) = 0;
+	virtual void        DrawDebugLine(const Vertex &Start, const Vertex &End, uint Color = BS_RGB(255, 255, 255)) = 0;
 
 	/**
 	 * Creates a screenshot of the current frame buffer and writes it to a graphic file in PNG format.
@@ -201,7 +201,7 @@ public:
 	 * @param Height    Returns the height of the frame buffer
 	 * @param Data      Returns the raw data of the frame buffer as an array of 32-bit colour values.
 	*/
-	virtual bool GetScreenshot(unsigned int &Width, unsigned int &Height, byte **Data) = 0;
+	virtual bool GetScreenshot(uint &Width, uint &Height, byte **Data) = 0;
 
 
 	virtual RenderObjectPtr<Panel> GetMainPanel() = 0;
@@ -291,7 +291,7 @@ public:
 	 * @param Color         The 32-bit colour with which the area is to be filled. The default is BS_RGB(0, 0, 0) (black)
 	    @remark Falls das Rechteck nicht völlig innerhalb des Bildschirms ist, wird es automatisch zurechtgestutzt.
 	 */
-	virtual bool Fill(const Common::Rect *FillRectPtr = 0, unsigned int Color = BS_RGB(0, 0, 0)) = 0;
+	virtual bool Fill(const Common::Rect *FillRectPtr = 0, uint Color = BS_RGB(0, 0, 0)) = 0;
 
 	// Debugging Methods
 
@@ -362,8 +362,8 @@ public:
 	virtual bool Persist(OutputPersistenceBlock &Writer);
 	virtual bool Unpersist(InputPersistenceBlock &Reader);
 
-	static void ARGBColorToLuaColor(lua_State *L, unsigned int Color);
-	static unsigned int LuaColorToARGBColor(lua_State *L, int StackIndex);
+	static void ARGBColorToLuaColor(lua_State *L, uint Color);
+	static uint LuaColorToARGBColor(lua_State *L, int StackIndex);
 
 protected:
 	// Constructor
@@ -382,7 +382,7 @@ protected:
 	// -------------------
 	Framecounter m_FPSCounter;
 
-	unsigned int    m_RepaintedPixels;
+	uint    m_RepaintedPixels;
 
 	/**
 	 * Calculates the time since the last frame beginning has passed.
@@ -395,10 +395,10 @@ private:
 	// LastFrameDuration Variables
 	// ---------------------------
 	uint64                      m_LastTimeStamp;
-	unsigned int                m_LastFrameDuration;
+	uint                m_LastFrameDuration;
 	bool                        m_TimerActive;
-	Common::Array<unsigned int> m_FrameTimeSamples;
-	unsigned int                m_FrameTimeSampleSlot;
+	Common::Array<uint> m_FrameTimeSamples;
+	uint                m_FrameTimeSampleSlot;
 };
 
 } // End of namespace Sword25
