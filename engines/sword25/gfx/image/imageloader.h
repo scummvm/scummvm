@@ -60,12 +60,7 @@ namespace Sword25 {
     - Die Klasse muss eine statische Methode haben, die eine Instanz von ihr erzeugt und einen Pointer darauf zurückgibt.
     - Diese Methode muss in der Liste in der Datei imageloader_ids.h eingetragen werden.
     - Die Klasse muss JEDES Eingabebild seines Bildformates in die folgenden Farbformate konvertieren können:
-        - BS_GraphicEngine::CF_RGB16
-        - BS_GraphicEngine::CF_RGB15
-        - BS_GraphicEngine::CF_RGB16_INTERLEAVED
-        - BS_GraphicEngine::CF_RGB15_INTERLEAVED
         - BS_GraphicEngine::CF_ARGB32
-        - BS_GraphicEngine::CF_BGRA32
     - Zum Konvertieren der Bilddaten können die Hilfsmethoden dieser Klasse benutzt werden, die ARGB Bilddaten in alle benötigten
       Farbformate konvertieren.
 */
@@ -86,10 +81,6 @@ public:
 	    @param FileSize die Größe der Bilddaten in Byte.
 	    @param ColorFormat gibt das gewünschte Farbformat an, in das die Bilddaten konvertiert werden sollen.<br>
 	                       Folgende Farbformate werden unterstützt:
-	                       - BS_GraphicEngine::CF_RGB16
-	                       - BS_GraphicEngine::CF_RGB15
-	                       - BS_GraphicEngine::CF_RGB16_INTERLEAVED
-	                       - BS_GraphicEngine::CF_RGB15_INTERLEAVED
 	                       - BS_GraphicEngine::CF_ARGB32
 	    @param pUncompressedData nach erfolgreichen Laden zeigt dieser Pointer auf die enpackten und konvertierten Bilddaten.
 	    @param Width gibt nach erfolgreichen Laden die Breite des geladenen Bildes an.
@@ -156,10 +147,6 @@ protected:
 	    @param FileSize die Größe der Bilddaten in Byte.
 	    @param ColorFormat gibt das gewünschte Farbformat an, in das die Bilddaten konvertiert werden sollen.<br>
 	                       Folgende Farbformate werden unterstützt:
-	                       - BS_GraphicEngine::CF_RGB16
-	                       - BS_GraphicEngine::CF_RGB15
-	                       - BS_GraphicEngine::CF_RGB16_INTERLEAVED
-	                       - BS_GraphicEngine::CF_RGB15_INTERLEAVED
 	                       - BS_GraphicEngine::CF_ARGB32
 	    @param pUncompressedData nach erfolgreichen Laden zeigt dieser Pointer auf die enpackten und konvertierten Bilddaten.
 	    @param Width gibt nach erfolgreichen Laden die Breite des geladenen Bildes an.
@@ -192,144 +179,6 @@ protected:
 	                             int &Width, int &Height) = 0;
 
 	//@}
-
-	//@{
-	/** @name Konvertierungsmethoden */
-
-	/**
-	    @brief Konvertiert eine Bildzeile mit ARGB Pixeldaten in das BS_GraphicEngine::CF_RGB16 Farbformat.
-	    @param pSrcData ein Pointer auf die Quelldaten.
-	    @param pDestData ein Pointer auf den Zielpuffern.
-	    @param Width die Anzahl der Pixel in der Bildzeile.
-	    @remark Es gilt zu beachten, dass der Zielpuffer ausreichend groß ist.<br>
-	            Es sind mindestens Width * 2 Byte notwendig.
-	*/
-	static void RowARGB32ToRGB16(byte *pSrcData, byte *pDestData, uint Width) {
-		for (uint i = 0; i < Width; i++) {
-			((uint16_t *)pDestData)[i] = ((pSrcData[2] >> 3) << 11) | ((pSrcData[1] >> 2) << 5) | (pSrcData[0] >> 3);
-			pSrcData += 4;
-		}
-	}
-
-	/**
-	    @brief Konvertiert eine Bildzeile mit ARGB Pixeldaten in das BS_GraphicEngine::CF_RGB15 Farbformat.
-	    @param pSrcData ein Pointer auf die Quelldaten.
-	    @param pDestData ein Pointer auf den Zielpuffern.
-	    @param Width die Anzahl der Pixel in der Bildzeile.
-	    @remark Es gilt zu beachten, dass der Zielpuffer ausreichend groß ist.<br>
-	            Es sind mindestens Width * 2 Byte notwendig.
-	*/
-	static void RowARGB32ToRGB15(byte *pSrcData, byte *pDestData, uint Width) {
-		for (uint i = 0; i < Width; i++) {
-			((uint16_t *)pDestData)[i] = ((pSrcData[2] >> 3) << 10) | ((pSrcData[1] >> 3) << 5) | (pSrcData[0] >> 3);
-			pSrcData += 4;
-		}
-	}
-
-	/**
-	    @brief Konvertiert eine Bildzeile mit ARGB Pixeldaten in das BS_GraphicEngine::CF_RGB16_INTERLEAVED Farbformat.
-	    @param pSrcData ein Pointer auf die Quelldaten.
-	    @param pDestData ein Pointer auf den Zielpuffern.
-	    @param Width die Anzahl der Pixel in der Bildzeile.
-	    @remark Es gilt zu beachten, dass der Zielpuffer ausreichend groß sein muss.<br>
-	            Es sind mindestens ((Width + 3) / 4) * 12 Byte notwendig.
-	*/
-	static void RowARGB32ToRGB16_INTERLEAVED(byte *pSrcData, byte *pDestData, uint Width) {
-		// Die Pixelblöcke erstellen, dabei werden immer jeweils 4 Pixel zu einem Block zusammengefasst
-		uint BlockFillCount = 0;
-		uint AlphaBlock = 0;
-		for (uint i = 0; i < Width; i++) {
-			// Alphawert in den Alphablock schreiben
-			AlphaBlock = (AlphaBlock >> 8) | (pSrcData[BlockFillCount * 4 + 3] << 24);
-
-			// Füllstand der Pixelblockes aktualisieren
-			BlockFillCount++;
-
-			// Sobald 4 Alphawerte gesammelt wurden, oder die Zeile zu Ende ist wird der Pixelblock in den Zielpuffer geschrieben
-			if (BlockFillCount == 4 || i == (Width - 1)) {
-				// Falls der AlphaBlock nicht ganz gefüllt ist muss geshiftet werden um sicherzustellen, dass die Alphawerte
-				// "left aligned" sind.
-				AlphaBlock >>= (4 - BlockFillCount) * 8;
-
-				// Alphablock schreiben
-				*((uint *)pDestData) = AlphaBlock;
-				pDestData += 4;
-
-				// Pixel konvertieren und schreiben
-				RowARGB32ToRGB16(pSrcData, pDestData, BlockFillCount);
-
-				// Pointer auf den nächsten Platz im Zielpuffer setzen
-				pDestData += 8;
-
-				// Pointer auf die nächsten 4 Pixel im Quellpuffer setzen
-				pSrcData += 16;
-
-				// Neuen Pixelblock beginnen
-				BlockFillCount = 0;
-			}
-		}
-	}
-
-	/**
-	    @brief Konvertiert eine Bildzeile mit ARGB Pixeldaten in das BS_GraphicEngine::CF_RGB15_INTERLEAVED Farbformat.
-	    @param pSrcData ein Pointer auf die Quelldaten.
-	    @param pDestData ein Pointer auf den Zielpuffern.
-	    @param Width die Anzahl der Pixel in der Bildzeile.
-	    @remark Es gilt zu beachten, dass der Zielpuffer ausreichend groß ist.<br>
-	            Es sind mindestens (Width / 4 + Width % 4) * 3 Byte notwendig.
-	*/
-	static void RowARGB32ToRGB15_INTERLEAVED(byte *pSrcData, byte *pDestData, uint Width) {
-		// Die Pixelblöcke erstellen, dabei werden immer jeweils 4 Pixel zu einem Block zusammengefasst
-		uint BlockFillCount = 0;
-		uint AlphaBlock = 0;
-		for (uint i = 0; i < Width; i++) {
-			// Alphawert in den Alphablock schreiben
-			AlphaBlock = (AlphaBlock >> 8) | (pSrcData[BlockFillCount * 4 + 3] << 24);
-
-			// Füllstand der Pixelblockes aktualisieren
-			BlockFillCount++;
-
-			// Sobald 4 Alphawerte gesammelt wurden, oder die Zeile zu Ende ist wird der Pixelblock in den Zielpuffer geschrieben
-			if (BlockFillCount == 4 || i == (Width - 1)) {
-				// Falls der AlphaBlock nicht ganz gefüllt ist muss geshiftet werden um sicherzustellen, dass die Alphawerte
-				// "left aligned" sind.
-				AlphaBlock >>= (4 - BlockFillCount) * 8;
-
-				// Alphablock schreiben
-				*((uint *)pDestData) = AlphaBlock;
-				pDestData += 4;
-
-				// Pixel konvertieren und schreiben
-				RowARGB32ToRGB15(pSrcData, pDestData, BlockFillCount);
-
-				// Pointer auf den nächsten Platz im Zielpuffer setzen
-				pDestData += 8;
-
-				// Pointer auf die nächsten 4 Pixel im Quellpuffer setzen
-				pSrcData += 16;
-
-				// Neuen Pixelblock beginnen
-				BlockFillCount = 0;
-			}
-		}
-	}
-
-	/**
-	    @brief Konvertiert eine Bildzeile mit ARGB Pixeldaten in das BS_GraphicEngine::CF_BGRA32 Farbformat.
-	    @param pSrcData ein Pointer auf die Quelldaten.
-	    @param pDestData ein Pointer auf den Zielpuffern.
-	    @param Width die Anzahl der Pixel in der Bildzeile.
-	*/
-	static void RowARGB32ToABGR32(byte *pSrcData, byte *pDestData, uint Width) {
-		for (uint i = 0; i < Width; ++i) {
-			*pDestData++ = pSrcData[2];
-			*pDestData++ = pSrcData[1];
-			*pDestData++ = pSrcData[0];
-			*pDestData++ = pSrcData[3];
-
-			pSrcData += 4;
-		}
-	}
 
 private:
 

@@ -75,12 +75,7 @@ bool PNGLoader::DoDecodeImage(const byte *FileDataPtr, uint FileSize,  GraphicEn
 	int         i;
 
 	// Zielfarbformat überprüfen
-	if (ColorFormat != GraphicEngine::CF_RGB16 &&
-	        ColorFormat != GraphicEngine::CF_RGB15 &&
-	        ColorFormat != GraphicEngine::CF_RGB16_INTERLEAVED &&
-	        ColorFormat != GraphicEngine::CF_RGB15_INTERLEAVED &&
-	        ColorFormat != GraphicEngine::CF_ARGB32 &&
-	        ColorFormat != GraphicEngine::CF_ABGR32) {
+	if (ColorFormat != GraphicEngine::CF_ARGB32) {
 		BS_LOG_ERRORLN("Illegal or unsupported color format.");
 		return false;
 	}
@@ -157,31 +152,9 @@ bool PNGLoader::DoDecodeImage(const byte *FileDataPtr, uint FileSize,  GraphicEn
 
 			// Zeile konvertieren
 			switch (ColorFormat) {
-			case GraphicEngine::CF_RGB16:
-				RowARGB32ToRGB16((byte *)RawDataBuffer, (byte *)&UncompressedDataPtr[i * Pitch], Width);
-				break;
-
-			case GraphicEngine::CF_RGB15:
-				RowARGB32ToRGB15((byte *)RawDataBuffer, (byte *)&UncompressedDataPtr[i * Pitch], Width);
-				break;
-
-			case GraphicEngine::CF_RGB16_INTERLEAVED:
-				RowARGB32ToRGB16_INTERLEAVED((byte *)RawDataBuffer, (byte *)&UncompressedDataPtr[i * Pitch], Width);
-				break;
-
-			case GraphicEngine::CF_RGB15_INTERLEAVED:
-				RowARGB32ToRGB15_INTERLEAVED((byte *)RawDataBuffer,
-											 (byte *)&UncompressedDataPtr[i * Pitch], Width);
-				break;
-
 			case GraphicEngine::CF_ARGB32:
 				memcpy(&UncompressedDataPtr[i * Pitch], RawDataBuffer, Pitch);
 				break;
-
-			case GraphicEngine::CF_ABGR32:
-				RowARGB32ToABGR32((byte *)RawDataBuffer, (byte *)&UncompressedDataPtr[i * Pitch], Width);
-				break;
-
 			default:
 				assert(0);
 			}
@@ -209,30 +182,6 @@ bool PNGLoader::DoDecodeImage(const byte *FileDataPtr, uint FileSize,  GraphicEn
 
 		// Bilddaten zeilenweise in das gewünschte Ausgabeformat konvertieren
 		switch (ColorFormat) {
-		case GraphicEngine::CF_RGB16:
-			for (i = 0; i < Height; i++)
-				RowARGB32ToRGB16((byte *)(&RawDataBuffer[i * png_get_rowbytes(png_ptr, info_ptr)]),
-								 (byte *)&UncompressedDataPtr[i * Pitch], Width);
-			break;
-
-		case GraphicEngine::CF_RGB15:
-			for (i = 0; i < Height; i++)
-				RowARGB32ToRGB15((byte *)(&RawDataBuffer[i * png_get_rowbytes(png_ptr, info_ptr)]),
-								 (byte *)&UncompressedDataPtr[i * Pitch], Width);
-			break;
-
-		case GraphicEngine::CF_RGB16_INTERLEAVED:
-			for (i = 0; i < Height; i++)
-				RowARGB32ToRGB16_INTERLEAVED((byte *)(&RawDataBuffer[i * png_get_rowbytes(png_ptr, info_ptr)]),
-											 (byte *)&UncompressedDataPtr[i * Pitch], Width);
-			break;
-
-		case GraphicEngine::CF_RGB15_INTERLEAVED:
-			for (i = 0; i < Height; i++)
-				RowARGB32ToRGB15_INTERLEAVED((byte *)(&RawDataBuffer[i * png_get_rowbytes(png_ptr, info_ptr)]),
-											 (byte *)&UncompressedDataPtr[i * Pitch], Width);
-			break;
-
 		case GraphicEngine::CF_ARGB32:
 			for (i = 0; i < Height; i++)
 				memcpy(&UncompressedDataPtr[i * Pitch], &RawDataBuffer[i * png_get_rowbytes(png_ptr, info_ptr)], Pitch);

@@ -77,7 +77,7 @@ SWImage::SWImage(const Common::String &filename, bool &result) :
 
 	// Das Bild dekomprimieren
 	byte *pUncompressedData;
-	if (!ImageLoader::LoadImage(pFileData, fileSize, GraphicEngine::CF_ABGR32, pUncompressedData, _width, _height, pitch)) {
+	if (!ImageLoader::LoadImage(pFileData, fileSize, GraphicEngine::CF_ARGB32, pUncompressedData, _width, _height, pitch)) {
 		BS_LOG_ERRORLN("Could not decode image.");
 		return;
 	}

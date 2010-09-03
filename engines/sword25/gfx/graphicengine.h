@@ -91,32 +91,6 @@ public:
 	enum COLOR_FORMATS {
 		/// Undefined/unknown colour format
 		CF_UNKNOWN = 0,
-		/// 16-bit colour format (R5G5B5)
-		CF_RGB15,
-		/// 16-bit colour format (R5G6R5)
-		CF_RGB16,
-		/**
-		 * Special alpha colour format of the engine, which supports very quick display using MMX instructions.
-		 * The pixels are 16-bits wide and have the same format as #CF_RGB15. In addition, each pixel has an 8-bit
-		 * alpha value.
-		 * It summarises groupings of pixels pixels and four alpha values in a 12-byte data block.
-		 * The data is stored in the following order:
-		 * Alpha0 Alpha1 Alpha2 Alpha3 Pixel0 Pixel1 Pixel2 Pixel3
-		 * If the number of pixels in a line is not divisible by 4, then unused pixels and alpha values can have
-		 * arbitrary values.
-		 */
-		CF_RGB15_INTERLEAVED,
-		/**
-		 * Special alpha colour format of the engine, which supports very quick display using MMX instructions.
-		 * The pixels are 16-bits wide and have the same format as #CF_RGB16. In addition, each pixel has an 8-bit
-		 * alpha value.
-		 * It summarises groupings of pixels pixels and four alpha values in a 12-byte data block.
-		 * The data is stored in the following order:
-		 * Alpha0 Alpha1 Alpha2 Alpha3 Pixel0 Pixel1 Pixel2 Pixel3
-		 * If the number of pixels in a line is not divisible by 4, then unused pixels and alpha values can have
-		 * arbitrary values.
-		 */
-		CF_RGB16_INTERLEAVED,
 		/**
 		 * 24-bit colour format (R8G8B8)
 		 */
@@ -314,14 +288,6 @@ public:
 	 */
 	static int GetPixelSize(GraphicEngine::COLOR_FORMATS ColorFormat) {
 		switch (ColorFormat) {
-		case GraphicEngine::CF_RGB16:
-		case GraphicEngine::CF_RGB15:
-			return 2;
-
-		case GraphicEngine::CF_RGB16_INTERLEAVED:
-		case GraphicEngine::CF_RGB15_INTERLEAVED:
-			return 3;
-
 		case GraphicEngine::CF_ARGB32:
 			return 4;
 		default:
@@ -338,16 +304,7 @@ public:
 	 */
 	static int CalcPitch(GraphicEngine::COLOR_FORMATS ColorFormat, int Width) {
 		switch (ColorFormat) {
-		case GraphicEngine::CF_RGB16:
-		case GraphicEngine::CF_RGB15:
-			return Width * 2;
-
-		case GraphicEngine::CF_RGB16_INTERLEAVED:
-		case GraphicEngine::CF_RGB15_INTERLEAVED:
-			return (Width + 3) / 4 * 12;
-
 		case GraphicEngine::CF_ARGB32:
-		case GraphicEngine::CF_ABGR32:
 			return Width * 4;
 
 		default:
