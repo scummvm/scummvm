@@ -33,7 +33,6 @@ MODULE_OBJS := \
 	gfx/image/vectorimage.o \
 	gfx/image/vectorimagerenderer.o \
 	gfx/opengl/glimage.o \
-	gfx/opengl/glvectorimageblit.o \
 	gfx/opengl/openglgfx.o \
 	gfx/opengl/swimage.o \
 	input/inputengine.o \

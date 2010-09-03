@@ -87,6 +87,8 @@ GLImage::GLImage(const Common::String &filename, bool &result) :
 	// Dateidaten freigeben
 	delete[] pFileData;
 
+	_doCleanup = true;
+
 	result = true;
 	return;
 }
@@ -96,20 +98,30 @@ GLImage::GLImage(const Common::String &filename, bool &result) :
 GLImage::GLImage(uint width, uint height, bool &result) :
 	_width(width),
 	_height(height) {
-	result = false;
 
 	_data = new byte[width * height * 4];
 
 	_backSurface = (static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx")))->getSurface();
 
+	_doCleanup = true;
+
 	result = true;
+	return;
+}
+
+GLImage::GLImage() : _width(0), _height(0), _data(0) {
+	_backSurface = (static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx")))->getSurface();
+
+	_doCleanup = false;
+
 	return;
 }
 
 // -----------------------------------------------------------------------------
 
 GLImage::~GLImage() {
-	delete[] _data;
+	if (_doCleanup)
+		delete[] _data;
 }
 
 // -----------------------------------------------------------------------------
@@ -140,6 +152,11 @@ bool GLImage::setContent(const byte *pixeldata, uint size, uint offset, uint str
 	return true;
 }
 
+void GLImage::replaceContent(byte *pixeldata, int width, int height) {
+	_width = width;
+	_height = height;
+	_data = pixeldata;
+}
 // -----------------------------------------------------------------------------
 
 uint GLImage::getPixel(int x, int y) {

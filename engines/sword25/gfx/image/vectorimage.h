@@ -181,6 +181,9 @@ public:
 		return GraphicEngine::CF_ARGB32;
 	}
 	virtual bool fill(const Common::Rect *pFillRect = 0, uint color = BS_RGB(0, 0, 0));
+
+	void render(float scaleFactorX, float scaleFactorY, uint &width, uint &height);
+
 	virtual uint getPixel(int x, int y);
 	virtual bool isBlitSource() const {
 		return true;
@@ -219,6 +222,8 @@ private:
 	ArtBpath *storeBez(ArtBpath *bez, int lineStyle, int fillStyle0, int fillStyle1, int *bezNodes, int *bezAllocated);
 	Common::Array<VectorImageElement>    _elements;
 	Common::Rect                         _boundingBox;
+
+	byte *_pixelData;
 };
 
 } // End of namespace Sword25

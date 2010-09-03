@@ -68,6 +68,8 @@ public:
 	                  dürfen keine Methoden am Objekt aufgerufen werden und das Objekt ist sofort zu zerstören.
 	*/
 	GLImage(uint width, uint height, bool &result);
+	GLImage();
+
 	virtual ~GLImage();
 
 	virtual int getWidth() const {
@@ -87,6 +89,7 @@ public:
 	                  int width = -1, int height = -1);
 	virtual bool fill(const Common::Rect *pFillRect, uint color);
 	virtual bool setContent(const byte *pixeldata, uint size, uint offset = 0, uint stride = 0);
+	void replaceContent(byte *pixeldata, int width, int height);
 	virtual uint getPixel(int x, int y);
 
 	virtual bool isBlitSource() const               {
@@ -114,6 +117,7 @@ private:
 	byte *_data;
 	int  _width;
 	int  _height;
+	bool _doCleanup;
 
 	Graphics::Surface *_backSurface;
 };

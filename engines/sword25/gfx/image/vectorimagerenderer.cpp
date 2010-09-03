@@ -32,182 +32,282 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
+#include <libart_lgpl/art_vpath_bpath.h>
+#include <libart_lgpl/art_svp_vpath.h>
+#include <libart_lgpl/art_svp_vpath_stroke.h>
+#include <libart_lgpl/art_svp_render_aa.h>
+#include <libart_lgpl/art_rgb_svp.h>
+#include <libart_lgpl/art_rgb.h>
 
-#include "sword25/gfx/image/vectorimagerenderer.h"
 #include "sword25/gfx/image/vectorimage.h"
-
-#if 0 // TODO
-#include "agg_conv_curve.h"
-#include "agg_path_storage.h"
-#include "agg_conv_stroke.h"
-#endif
 
 namespace Sword25 {
 
-#if 0 // TODO
-// -----------------------------------------------------------------------------
-// CompoundShape
-// -----------------------------------------------------------------------------
+void
+art_rgb_fill_run1(art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int n) {
+	int i;
 
-class CompoundShape {
-public:
-	CompoundShape(const BS_VectorImageElement &VectorImageElement) :
-		m_ImageElement(VectorImageElement),
-		m_Path(VectorImageElement.GetPaths()),
-		m_Affine(),
-		m_Curve(m_Path),
-		m_Trans(m_Curve, m_Affine)
-	{}
-
-	unsigned operator [](unsigned i) const {
-		return m_ImageElement.GetPathInfo(i).GetID();
+	if (r == g && g == b && r == 255) {
+		memset(buf, g, n + n + n + n);
+	} else {
+		art_u32 *alt = (art_u32 *)buf;
+		//art_u32 color = (r << 24) | (g << 16) | (b << 8) | 0xff;
+		art_u32 color = (r << 0) | (g << 8) | (b << 16) | (0xff << 24);
+		for (i = 0; i < n; i++)
+			*alt++ = color;
 	}
+}
 
-	unsigned paths() const {
-		return m_ImageElement.GetPathCount();
+void
+art_rgb_run_alpha1(art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int alpha, int n) {
+	int i;
+	int v;
+
+	for (i = 0; i < n; i++) {
+		v = *buf;
+		*buf++ = v + (((r - v) * alpha + 0x80) >> 8);
+		v = *buf;
+		*buf++ = v + (((g - v) * alpha + 0x80) >> 8);
+		v = *buf;
+		*buf++ = v + (((b - v) * alpha + 0x80) >> 8);
+		v = *buf;
+		*buf++ = v + (((alpha - v) * alpha + 0x80) >> 8);
 	}
+}
 
-	void rewind(unsigned path_id) {
-		m_Trans.rewind(path_id);
-	}
+typedef struct _ArtRgbSVPAlphaData ArtRgbSVPAlphaData;
 
-	unsigned vertex(double *x, double *y) {
-		return m_Trans.vertex(x, y);
-	}
-
-private:
-	const BS_VectorImageElement                                &m_ImageElement;
-	agg::path_storage                                           m_Path;
-	agg::trans_affine                                           m_Affine;
-	agg::conv_curve<agg::path_storage>                          m_Curve;
-	agg::conv_transform< agg::conv_curve<agg::path_storage> >   m_Trans;
+struct _ArtRgbSVPAlphaData {
+	int alphatab[256];
+	art_u8 r, g, b, alpha;
+	art_u8 *buf;
+	int rowstride;
+	int x0, x1;
 };
 
+static void
+art_rgb_svp_alpha_callback1(void *callback_data, int y,
+                            int start, ArtSVPRenderAAStep *steps, int n_steps) {
+	ArtRgbSVPAlphaData *data = (ArtRgbSVPAlphaData *)callback_data;
+	art_u8 *linebuf;
+	int run_x0, run_x1;
+	art_u32 running_sum = start;
+	int x0, x1;
+	int k;
+	art_u8 r, g, b;
+	int *alphatab;
+	int alpha;
 
-// -----------------------------------------------------------------------------
-// StyleHandler
-// -----------------------------------------------------------------------------
+	linebuf = data->buf;
+	x0 = data->x0;
+	x1 = data->x1;
 
-class StyleHandler {
-public:
-	StyleHandler(const BS_VectorImageElement &VectorImageElement) : m_ImageElement(VectorImageElement) {}
+	r = data->r;
+	g = data->g;
+	b = data->b;
+	alphatab = data->alphatab;
 
-	bool is_solid(uint style) const {
-		return true;
-	}
+	if (n_steps > 0) {
+		run_x1 = steps[0].x;
+		if (run_x1 > x0) {
+			alpha = (running_sum >> 16) & 0xff;
+			if (alpha)
+				art_rgb_run_alpha1(linebuf, r, g, b, alphatab[alpha], run_x1 - x0);
+		}
 
-	const agg::rgba8 &color(unsigned style) const {
-		return m_ImageElement.GetFillStyleColor(style);
-	}
-
-	void generate_span(agg::rgba8 *span, int x, int y, unsigned len, unsigned style) {
-		// Wird nicht benutzt
-		return;
-	}
-
-private:
-	const BS_VectorImageElement &m_ImageElement;
-};
-
-BS_VectorImageRenderer::BS_VectorImageRenderer() :
-	PixelFormat(rbuf) {
-
-}
-
-
-bool BS_VectorImageRenderer::Render(const BS_VectorImage &VectorImage,
-                                    float ScaleFactorX, float ScaleFactorY,
-                                    uint &Width, uint &Height,
-                                    byte *ImageData,
-                                    float LineScaleFactor,
-                                    bool NoAlphaShapes) {
-	Width = static_cast<uint>(VectorImage.GetWidth() * ScaleFactorX);
-	Height = static_cast<uint>(VectorImage.GetHeight() * ScaleFactorY);
-
-	ImageData.resize(Width * Height * 4);
-	memset(&ImageData[0], 0, ImageData.size());
-	rbuf.attach(reinterpret_cast<agg::int8u *>(&ImageData[0]), Width, Height, Width * 4);
-
-	BaseRenderer.attach(PixelFormat);
-	ScanlineRenderer.attach(BaseRenderer);
-
-	// Die SWF-Shapes sind häufig nicht am Ursprung (0, 0) ausgerichtet, daher wird die Shape vor dem Rendern derart verschoben, dass
-	// sich die linke obere Ecke der Bounding-Box im Ursprung befindet. Danach wird die Skalierung angewandt.
-	Scale = agg::trans_affine_translation(- VectorImage.GetBoundingBox().left, - VectorImage.GetBoundingBox().top);
-	Scale *= agg::trans_affine_scaling(ScaleFactorX, ScaleFactorY);
-
-	for (uint element = 0; element < VectorImage.GetElementCount(); ++element) {
-		const BS_VectorImageElement &CurImageElement = VectorImage.GetElement(element);
-
-		CompoundShape ImageCompoundShape(CurImageElement);
-		StyleHandler ImageStyleHandler(CurImageElement);
-		agg::conv_transform<CompoundShape> Shape(ImageCompoundShape, Scale);
-		agg::conv_stroke<agg::conv_transform<CompoundShape> > Stroke(Shape);
-
-		// Fill shape
-		//----------------------
-		CompoundRasterizer.clip_box(0, 0, Width, Height);
-		CompoundRasterizer.reset();
-		for (uint i = 0; i < CurImageElement.GetPathCount(); ++i) {
-			uint FillStyle0 = CurImageElement.GetPathInfo(i).GetFillStyle0();
-			uint FillStyle1 = CurImageElement.GetPathInfo(i).GetFillStyle1();
-
-			if (NoAlphaShapes) {
-				if (FillStyle0 != 0 && CurImageElement.GetFillStyleColor(FillStyle0 - 1).a != 255) FillStyle0 = 0;
-				if (FillStyle1 != 0 && CurImageElement.GetFillStyleColor(FillStyle1 - 1).a != 255) FillStyle1 = 0;
-			}
-
-			if (FillStyle0 != 0 || FillStyle1 != 0) {
-				CompoundRasterizer.styles(FillStyle0 - 1, FillStyle1 - 1);
-				CompoundRasterizer.add_path(Shape, CurImageElement.GetPathInfo(i).GetID());
+		for (k = 0; k < n_steps - 1; k++) {
+			running_sum += steps[k].delta;
+			run_x0 = run_x1;
+			run_x1 = steps[k + 1].x;
+			if (run_x1 > run_x0) {
+				alpha = (running_sum >> 16) & 0xff;
+				if (alpha)
+					art_rgb_run_alpha1(linebuf + (run_x0 - x0) * 4, r, g, b, alphatab[alpha], run_x1 - run_x0);
 			}
 		}
-		agg::render_scanlines_compound_layered(CompoundRasterizer, Scanline, BaseRenderer, Alloc, ImageStyleHandler);
+		running_sum += steps[k].delta;
+		if (x1 > run_x1) {
+			alpha = (running_sum >> 16) & 0xff;
+			if (alpha)
+				art_rgb_run_alpha1(linebuf + (run_x1 - x0) * 4, r, g, b, alphatab[alpha], x1 - run_x1);
+		}
+	} else {
+		alpha = (running_sum >> 16) & 0xff;
+		if (alpha)
+			art_rgb_run_alpha1(linebuf, r, g, b, alphatab[alpha], x1 - x0);
+	}
 
+	data->buf += data->rowstride;
+}
 
-		// Draw strokes
-		//----------------------
-		Rasterizer.clip_box(0, 0, Width, Height);
-		Stroke.line_join(agg::round_join);
-		Stroke.line_cap(agg::round_cap);
-		for (uint i = 0; i < CurImageElement.GetPathCount(); ++i) {
-			Rasterizer.reset();
+static void
+art_rgb_svp_alpha_opaque_callback1(void *callback_data, int y,
+                                   int start,
+                                   ArtSVPRenderAAStep *steps, int n_steps) {
+	ArtRgbSVPAlphaData *data = (ArtRgbSVPAlphaData *)callback_data;
+	art_u8 *linebuf;
+	int run_x0, run_x1;
+	art_u32 running_sum = start;
+	int x0, x1;
+	int k;
+	art_u8 r, g, b;
+	int *alphatab;
+	int alpha;
 
-			uint CurrentLineStyle = CurImageElement.GetPathInfo(i).GetLineStyle();
-			if (CurrentLineStyle != 0) {
-				Stroke.width(ScaleFactorX * CurImageElement.GetLineStyleWidth(CurrentLineStyle - 1) * LineScaleFactor);
-				Rasterizer.add_path(Stroke, CurImageElement.GetPathInfo(i).GetID());
-				ScanlineRenderer.color(CurImageElement.GetLineStyleColor(CurrentLineStyle - 1));
-				// HACK
-				// Die SWF-Frames enthalten zum Teil Reste von grünen Linien, die wohl von Bernd als Umriss benutzt wurden.
-				// Damit diese Reste nicht störend auffallen werden grüne Linien schlichtweg ignoriert.
-				if (!(CurImageElement.GetLineStyleColor(CurrentLineStyle - 1).a == 255 &&
-				        CurImageElement.GetLineStyleColor(CurrentLineStyle - 1).r == 0 &&
-				        CurImageElement.GetLineStyleColor(CurrentLineStyle - 1).g == 255 &&
-				        CurImageElement.GetLineStyleColor(CurrentLineStyle - 1).b == 0))
-					agg::render_scanlines(Rasterizer, Scanline, ScanlineRenderer);
+	linebuf = data->buf;
+	x0 = data->x0;
+	x1 = data->x1;
+
+	r = data->r;
+	g = data->g;
+	b = data->b;
+	alphatab = data->alphatab;
+
+	if (n_steps > 0) {
+		run_x1 = steps[0].x;
+		if (run_x1 > x0) {
+			alpha = running_sum >> 16;
+			if (alpha) {
+				if (alpha >= 255)
+					art_rgb_fill_run1(linebuf, r, g, b, run_x1 - x0);
+				else
+					art_rgb_run_alpha1(linebuf, r, g, b, alphatab[alpha], run_x1 - x0);
 			}
+		}
+
+		for (k = 0; k < n_steps - 1; k++) {
+			running_sum += steps[k].delta;
+			run_x0 = run_x1;
+			run_x1 = steps[k + 1].x;
+			if (run_x1 > run_x0) {
+				alpha = running_sum >> 16;
+				if (alpha) {
+					if (alpha >= 255)
+						art_rgb_fill_run1(linebuf + (run_x0 - x0) * 4, r, g, b, run_x1 - run_x0);
+					else
+						art_rgb_run_alpha1(linebuf + (run_x0 - x0) * 4, r, g, b, alphatab[alpha], run_x1 - run_x0);
+				}
+			}
+		}
+		running_sum += steps[k].delta;
+		if (x1 > run_x1) {
+			alpha = running_sum >> 16;
+			if (alpha) {
+				if (alpha >= 255)
+					art_rgb_fill_run1(linebuf + (run_x1 - x0) * 4, r, g, b, x1 - run_x1);
+				else
+					art_rgb_run_alpha1(linebuf + (run_x1 - x0) * 4, r, g, b, alphatab[alpha], x1 - run_x1);
+			}
+		}
+	} else {
+		alpha = running_sum >> 16;
+		if (alpha) {
+			if (alpha >= 255)
+				art_rgb_fill_run1(linebuf, r, g, b, x1 - x0);
+			else
+				art_rgb_run_alpha1(linebuf, r, g, b, alphatab[alpha], x1 - x0);
 		}
 	}
 
-	return true;
+	data->buf += data->rowstride;
 }
 
-#else
+void
+art_rgb_svp_alpha1(const ArtSVP *svp,
+                   int x0, int y0, int x1, int y1,
+                   art_u32 rgba,
+                   art_u8 *buf, int rowstride,
+                   ArtAlphaGamma *alphagamma) {
+	ArtRgbSVPAlphaData data;
+	int r, g, b, alpha;
+	int i;
+	int a, da;
 
-VectorImageRenderer::VectorImageRenderer() {}
+	r = rgba >> 24;
+	g = (rgba >> 16) & 0xff;
+	b = (rgba >> 8) & 0xff;
+	alpha = rgba & 0xff;
 
-bool VectorImageRenderer::Render(const VectorImage &VectorImage,
-                                    float ScaleFactorX, float ScaleFactorY,
-                                    uint &Width, uint &Height,
-                                    byte *ImageData,
-                                    float LineScaleFactor,
-                                    bool NoAlphaShapes) {
-	return true;
+	data.r = r;
+	data.g = g;
+	data.b = b;
+	data.alpha = alpha;
+
+	a = 0x8000;
+	da = (alpha * 66051 + 0x80) >> 8; /* 66051 equals 2 ^ 32 / (255 * 255) */
+
+	for (i = 0; i < 256; i++) {
+		data.alphatab[i] = a >> 16;
+		a += da;
+	}
+
+	data.buf = buf;
+	data.rowstride = rowstride;
+	data.x0 = x0;
+	data.x1 = x1;
+	if (alpha == 255)
+		art_svp_render_aa(svp, x0, y0, x1, y1, art_rgb_svp_alpha_opaque_callback1, &data);
+	else
+		art_svp_render_aa(svp, x0, y0, x1, y1, art_rgb_svp_alpha_callback1, &data);
 }
-#endif
+
+void VectorImage::render(float scaleFactorX, float scaleFactorY, uint &width, uint &height) {
+	width = static_cast<uint>(getWidth() * scaleFactorX);
+	height = static_cast<uint>(getHeight() * scaleFactorY);
+
+	if (_pixelData)
+		free(_pixelData);
+
+	_pixelData = (byte *)malloc(width * height * 4);
+	memset(_pixelData, 0, width * height * 4);
+
+	for (int j = _elements.size() - 1; j >= 0; j--)
+		for (int i = _elements[j].getPathCount() - 1; i >= 0; i--) {
+			if (!_elements[j].getPathInfo(i).getVec())
+				continue;
+
+			bool needfree = false;
+			ArtVpath *vec = _elements[j].getPathInfo(i).getVec();
+
+			// Upscale vector
+			if (scaleFactorX != 1.0 || scaleFactorY != 1.0) {
+				ArtVpath *vec1;
+				int size;
+
+				for (size = 0; vec[size].code != ART_END; size++);
+
+				vec1 = art_new(ArtVpath, size + 1);
+
+				int k;
+				for (k = 0; k < size; k++) {
+					vec1[k].code = vec[k].code;
+					vec1[k].x = vec[k].x * scaleFactorX;
+					vec1[k].y = vec[k].y * scaleFactorY;
+				}
+
+				vec1[k].code = ART_END;
+
+				vec = vec1;
+				needfree = true;
+			}
+
+			ArtSVP *svp1 = art_svp_from_vpath(vec);
+
+			int penWidth = _elements[j].getLineStyleWidth(_elements[j].getPathInfo(i).getLineStyle());
+			ArtSVP *svp2 = art_svp_vpath_stroke(vec, ART_PATH_STROKE_JOIN_ROUND, ART_PATH_STROKE_CAP_ROUND, penWidth, 1.0, 0.5);
+			if (needfree)
+				art_free(vec);
+
+			int color1 = _elements[j].getFillStyleColor(_elements[j].getPathInfo(i).getFillStyle0());
+			int color2 = _elements[j].getLineStyleColor(_elements[j].getPathInfo(i).getLineStyle());
+
+			art_rgb_svp_alpha1(svp1, 0, 0, width, height, color1, _pixelData, width * 4, NULL);
+			art_rgb_svp_alpha1(svp2, 0, 0, width, height, color2, _pixelData, width * 4, NULL);
+
+			art_free(svp2);
+			art_free(svp1);
+		}
+}
+
 
 } // End of namespace Sword25

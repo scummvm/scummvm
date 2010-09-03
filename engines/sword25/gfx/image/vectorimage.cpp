@@ -43,6 +43,8 @@
 
 #include <libart_lgpl/art_vpath_bpath.h>
 
+#include "sword25/gfx/opengl/glimage.h"
+
 namespace Sword25 {
 
 #define BS_LOG_PREFIX "VECTORIMAGE"
@@ -230,7 +232,7 @@ Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) 
 // Konstruktion
 // -----------------------------------------------------------------------------
 
-VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success) {
+VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success) : _pixelData(0) {
 	success = false;
 
 	// Bitstream-Objekt erzeugen
@@ -312,6 +314,9 @@ VectorImage::~VectorImage() {
 		for (int i = _elements[j].getPathCount() - 1; i >= 0; i--)
 			if (_elements[j].getPathInfo(i).getVec())
 				art_free(_elements[j].getPathInfo(i).getVec());
+
+	if (_pixelData)
+		free(_pixelData);
 }
 
 
@@ -589,6 +594,44 @@ uint VectorImage::getPixel(int x, int y) {
 bool VectorImage::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
 	BS_LOG_ERRORLN("SetContent() is not supported.");
 	return 0;
+}
+
+bool VectorImage::blit(int posX, int posY,
+                          int flipping,
+                          Common::Rect *pPartRect,
+                          uint color,
+                          int width, int height) {
+	static VectorImage *oldThis = 0;
+	static int              oldWidth = -2;
+	static int              oldHeight = -2;
+
+	// Falls Breite oder Höhe 0 sind, muss nichts dargestellt werden.
+	if (width == 0 || height == 0)
+		return true;
+
+	// Feststellen, ob das alte Bild im Cache nicht wiederbenutzt werden kann und neu Berechnet werden muss
+	if (!(oldThis == this && oldWidth == width && oldHeight == height)) {
+		float ScaleFactorX = (width == - 1) ? 1 : static_cast<float>(width) / static_cast<float>(getWidth());
+		float ScaleFactorY = (height == - 1) ? 1 : static_cast<float>(height) / static_cast<float>(getHeight());
+
+		uint RenderedWidth;
+		uint RenderedHeight;
+
+		render(ScaleFactorX, ScaleFactorY, RenderedWidth, RenderedHeight);
+
+		oldThis = this;
+		oldHeight = height;
+		oldWidth = width;
+	}
+
+	GLImage *rend = new GLImage();
+
+	rend->replaceContent(_pixelData, width, height);
+	rend->blit(posX, posY, flipping, pPartRect, color, width, height);
+
+	delete rend;
+
+	return true;
 }
 
 } // End of namespace Sword25

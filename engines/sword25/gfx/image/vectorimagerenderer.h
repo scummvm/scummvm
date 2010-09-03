@@ -41,18 +41,6 @@
 
 #include "sword25/kernel/common.h"
 
-#if 0 // TODO
-#include "agg_rendering_buffer.h"
-#include "agg_pixfmt_rgba.h"
-#include "agg_renderer_scanline.h"
-#include "agg_rasterizer_scanline_aa.h"
-#include "agg_rasterizer_compound_aa.h"
-#include "agg_scanline_u.h"
-#include "agg_scanline_bin.h"
-#include "agg_trans_affine.h"
-#include "agg_span_allocator.h"
-#endif
-
 namespace Sword25 {
 
 class VectorImage;
@@ -69,9 +57,7 @@ public:
 	bool Render(const VectorImage &VectorImage,
 	            float ScaleFactorX, float ScaleFactorY,
 	            uint &Width, uint &Height,
-	            byte *ImageData,
-	            float LineScaleFactor = 1.0f,
-	            bool NoAlphaShapes = false);
+	            byte *ImageData);
 
 private:
 #if 0
