@@ -376,7 +376,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-extern void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv);
+extern void kDirLoopWorker(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv);
 
 int getAngle(int xrel, int yrel) {
 	if ((xrel == 0) && (yrel == 0))
@@ -503,7 +503,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 			return s->r_acc;
 		} else {
 			// No looper? Fall back to DirLoop
-			_k_dirloop(client, (uint16)angle, s, argc, argv);
+			kDirLoopWorker(client, (uint16)angle, s, argc, argv);
 		}
 	}
 

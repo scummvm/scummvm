@@ -62,48 +62,43 @@ void showScummVMDialog(const Common::String &message) {
 	dialog.runModal();
 }
 
-void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
+void kDirLoopWorker(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
 	uint16 signal = readSelectorValue(s->_segMan, object, SELECTOR(signal));
-	int16 loopNo;
-	int16 maxLoops;
-	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	if (signal & kSignalDoesntTurn)
 		return;
 
 	angle %= 360;
 
-	if (!oldScriptHeader) {
-		if (angle < 45)
-			loopNo = 3;
-		else if (angle < 136)
-			loopNo = 0;
-		else if (angle < 225)
-			loopNo = 2;
-		else if (angle < 316)
-			loopNo = 1;
-		else
-			loopNo = 3;
+	int16 useLoop = -1;
+	if (getSciVersion() > SCI_VERSION_0_EARLY) {
+		if ((angle > 315) || (angle < 45)) {
+			useLoop = 3;
+		} else if ((angle > 135) && (angle < 225)) {
+			useLoop = 2;
+		}
 	} else {
-		if (angle >= 330 || angle <= 30)
-			loopNo = 3;
-		else if (angle <= 150)
-			loopNo = 0;
-		else if (angle <= 210)
-			loopNo = 2;
-		else if (angle < 330)
-			loopNo = 1;
-		else loopNo = -1;
+		// SCI0EARLY
+		if ((angle > 330) || (angle < 30)) {
+			useLoop = 3;
+		} else if ((angle > 150) && (angle < 210)) {
+			useLoop = 2;
+		}
+	}
+	if (useLoop == -1) {
+		if (angle >= 180) {
+			useLoop = 1;
+		} else {
+			useLoop = 0;
+		}
+	} else {
+		int16 loopCount = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
+		if (loopCount < 4)
+			return;
 	}
 
-	maxLoops = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
-		
-
-	if ((loopNo > 1) && (maxLoops < 4))
-		return;
-
-	writeSelectorValue(s->_segMan, object, SELECTOR(loop), loopNo);
+	writeSelectorValue(s->_segMan, object, SELECTOR(loop), useLoop);
 }
 
 static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
@@ -411,7 +406,7 @@ reg_t kPriCoord(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDirLoop(EngineState *s, int argc, reg_t *argv) {
-	_k_dirloop(argv[0], argv[1].toUint16(), s, argc, argv);
+	kDirLoopWorker(argv[0], argv[1].toUint16(), s, argc, argv);
 
 	return s->r_acc;
 }
