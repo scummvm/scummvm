@@ -43,9 +43,9 @@
 #include "sword25/gfx/image/image.h"
 #include "common/rect.h"
 
-#if 0
-#include "agg_path_storage.h"
-#endif
+#include <libart_lgpl/art_vpath.h>
+#include <libart_lgpl/art_bpath.h>
+#include <libart_lgpl/art_misc.h>
 
 namespace Sword25 {
 
@@ -60,15 +60,16 @@ class VectorImage;
 
 class VectorPathInfo {
 public:
-	VectorPathInfo(uint id, uint lineStyle, uint fillStyle0, uint fillStyle1) :
-		_id(id), _lineStyle(lineStyle), _fillStyle0(fillStyle0), _fillStyle1(fillStyle1) {}
+	VectorPathInfo(ArtVpath *vec, uint lineStyle, uint fillStyle0, uint fillStyle1) :
+		_vec(vec), _lineStyle(lineStyle), _fillStyle0(fillStyle0), _fillStyle1(fillStyle1) {}
 
 	VectorPathInfo() {
-		_id = _lineStyle = _fillStyle0 = _fillStyle1 = 0;
+		_lineStyle = _fillStyle0 = _fillStyle1 = 0;
+		_vec = 0;
 	}
 
-	uint getId() const {
-		return _id;
+	ArtVpath *getVec() const {
+		return _vec;
 	}
 	uint getLineStyle() const {
 		return _lineStyle;
@@ -81,7 +82,7 @@ public:
 	}
 
 private:
-	uint _id;
+	ArtVpath *_vec;
 	uint _lineStyle;
 	uint _fillStyle0;
 	uint _fillStyle1;
@@ -95,12 +96,6 @@ private:
 class VectorImageElement {
 	friend class VectorImage;
 public:
-#if 0 // TODO
-	const agg::path_storage &getPaths() const {
-		return _paths;
-	}
-#endif
-
 	uint getPathCount() const {
 		return _pathInfos.size();
 	}
@@ -144,9 +139,6 @@ private:
 		uint32 color;
 	};
 
-#if 0 // TODO
-	agg::path_storage _paths;
-#endif
 	Common::Array<VectorPathInfo> _pathInfos;
 	Common::Array<LineStyleType> _lineStyles;
 	Common::Array<uint32>  _fillStyles;
@@ -163,6 +155,7 @@ private:
 class VectorImage : public Image {
 public:
 	VectorImage(const byte *pFileData, uint fileSize, bool &success);
+	~VectorImage();
 
 	uint getElementCount() const {
 		return _elements.size();
@@ -223,6 +216,7 @@ private:
 	bool parseDefineShape(uint shapeType, SWFBitStream &bs);
 	bool parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBits, uint &numLineBits);
 
+	ArtBpath *storeBez(ArtBpath *bez, int lineStyle, int fillStyle0, int fillStyle1, int *bezNodes, int *bezAllocated);
 	Common::Array<VectorImageElement>    _elements;
 	Common::Rect                         _boundingBox;
 };

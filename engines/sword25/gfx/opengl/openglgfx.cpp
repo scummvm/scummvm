@@ -326,6 +326,8 @@ Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
 
 	// Vectorgraphik laden
 	if (FileName.hasSuffix(SWF_EXTENSION)) {
+		debug(2, "VectorImage: %s", FileName.c_str());
+
 		// Pointer auf Package-Manager holen
 		PackageManager *pPackage = Kernel::GetInstance()->GetPackage();
 		BS_ASSERT(pPackage);

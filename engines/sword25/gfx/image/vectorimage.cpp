@@ -41,10 +41,13 @@
 
 #include "graphics/colormasks.h"
 
+#include <libart_lgpl/art_vpath_bpath.h>
+
 namespace Sword25 {
 
 #define BS_LOG_PREFIX "VECTORIMAGE"
 
+#define BEZSMOOTHNESS 0.5
 
 // -----------------------------------------------------------------------------
 // SWF Datentypen
@@ -197,27 +200,29 @@ uint32 flashColorToAGGRGBA8(uint flashColor) {
 // Berechnet die Bounding-Box eines BS_VectorImageElement
 // -----------------------------------------------------------------------------
 
-struct CBBGetId {
-	CBBGetId(const VectorImageElement &vectorImageElement_) : vectorImageElement(vectorImageElement_) {}
-	unsigned operator [](unsigned i) const {
-		return vectorImageElement.getPathInfo(i).getId();
-	}
-	const VectorImageElement &vectorImageElement;
-};
-
 Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) {
-#if 0 // TODO
-	agg::path_storage Path = vectorImageElement.GetPaths();
-	CBBGetId IdSource(vectorImageElement);
+	double x0, y0, x1, y1;
 
-	double x1, x2, y1, y2;
-	agg::bounding_rect(Path, IdSource, 0, vectorImageElement.GetPathCount(), &x1, &y1, &x2, &y2);
-#else
-	double x1, x2, y1, y2;
-	x1 = x2 = y1 = y2 = 0;
-#endif
-	return Common::Rect(static_cast<int>(x1), static_cast<int>(y1), static_cast<int>(x2) + 1, static_cast<int>(y2) + 1);
+	for (int j = vectorImageElement.getPathCount() - 1; j >= 0; j--) {
+		ArtVpath *vec = vectorImageElement.getPathInfo(j).getVec();
+
+		if (vec[0].code == ART_END) {
+			continue;
+		} else {
+			x0 = x1 = vec[0].x;
+			y0 = y1 = vec[0].y;
+			for (int i = 1; vec[i].code != ART_END; i++) {
+				if (vec[i].x < x0) x0 = vec[i].x;
+				if (vec[i].x > x1) x1 = vec[i].x;
+				if (vec[i].y < y0) y0 = vec[i].y;
+				if (vec[i].y > y1) y1 = vec[i].y;
+			}
+		}
+	}
+
+	return Common::Rect(static_cast<int>(x0), static_cast<int>(y0), static_cast<int>(x1) + 1, static_cast<int>(y1) + 1);
 }
+
 }
 
 
@@ -302,7 +307,38 @@ VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success) {
 	BS_ASSERT(false);
 }
 
-// -----------------------------------------------------------------------------
+VectorImage::~VectorImage() {
+	for (int j = _elements.size() - 1; j >= 0; j--)
+		for (int i = _elements[j].getPathCount() - 1; i >= 0; i--)
+			if (_elements[j].getPathInfo(i).getVec())
+				art_free(_elements[j].getPathInfo(i).getVec());
+}
+
+
+ArtBpath *ensureBezStorage(ArtBpath *bez, int nodes, int *allocated) {
+	if (*allocated <= nodes) {
+		(*allocated) += 20;
+
+		return art_renew(bez, ArtBpath, *allocated);
+	}
+
+	return bez;
+}
+
+ArtBpath *VectorImage::storeBez(ArtBpath *bez, int lineStyle, int fillStyle0, int fillStyle1, int *bezNodes, int *bezAllocated) {
+	(*bezNodes)++;
+
+	bez = ensureBezStorage(bez, *bezNodes, bezAllocated);
+	bez[*bezNodes].code = ART_END;
+
+	ArtVpath *vec = art_bez_path_to_vec(bez, BEZSMOOTHNESS);
+
+	_elements.back()._pathInfos.push_back(VectorPathInfo(vec, lineStyle, fillStyle0, fillStyle1));
+
+	return bez;
+}
+
+#define SWF_SCALE_FACTOR		(1/20.0)
 
 bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 	/*uint32 shapeID = */bs.getUInt16();
@@ -326,6 +362,12 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 	// Shaperecord parsen
 	// ------------------
 
+	double curX = 0;
+	double curY = 0;
+	int bezNodes = 0;
+	int bezAllocated = 10;
+	ArtBpath *bez = art_new(ArtBpath, bezAllocated);
+
 	bool endOfShapeDiscovered = false;
 	while (!endOfShapeDiscovered) {
 		uint32 typeFlag = bs.getBits(1);
@@ -344,12 +386,10 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 				endOfShapeDiscovered = true;
 			// Parameter dekodieren
 			} else {
-				int32 moveDeltaX = 0;
-				int32 moveDeltaY = 0;
 				if (stateMoveTo) {
 					uint32 moveToBits = bs.getBits(5);
-					moveDeltaX = bs.getSignedBits(moveToBits);
-					moveDeltaY = bs.getSignedBits(moveToBits);
+					curX = bs.getSignedBits(moveToBits) * SWF_SCALE_FACTOR;
+					curY = bs.getSignedBits(moveToBits) * SWF_SCALE_FACTOR;
 				}
 
 				if (stateFillStyle0) {
@@ -383,21 +423,17 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 
 				// Ein neuen Pfad erzeugen, es sei denn, es wurden nur neue Styles definiert
 				if (stateLineStyle || stateFillStyle0 || stateFillStyle1 || stateMoveTo) {
-					// Letzte Zeichenposition merken, beim Aufruf von start_new_path() wird die Zeichenpostionen auf 0, 0 zurückgesetzt
-#if 0 // TODO
-					double lastX = _elements.back()._paths.last_x();
-					double lastY = _elements.back()._paths.last_y();
+					// Store previous curve if any
+					if (bezNodes) {
+						bez = storeBez(bez, lineStyle, fillStyle0, fillStyle1, &bezNodes, &bezAllocated);
+					}
 
-					// Neue Pfadinformation erzeugen
-					_elements.back()._pathInfos.push_back(VectorPathInfo(_elements.back()._paths.start_new_path(), lineStyle, fillStyle0, fillStyle1));
-
-					// Falls eine Bewegung definiert wurde, wird die Zeichenpositionen an die entsprechende Position gesetzt.
-					// Ansonsten wird die Zeichenposition auf die letzte Zeichenposition gesetzt.
-					if (stateMoveTo)
-						_elements.back()._paths.move_to(moveDeltaX, moveDeltaY);
-					else
-						_elements.back()._paths.move_to(lastX, lastY);
-#endif
+					// Start new curve
+					bez = ensureBezStorage(bez, 1, &bezAllocated);
+					bez[0].code = ART_MOVETO_OPEN;
+					bez[0].x3 = curX;
+					bez[0].y3 = curY;
+					bezNodes = 0;
 				}
 			}
 		} else {
@@ -407,18 +443,30 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 
 			// Curved edge
 			if (edgeFlag == 0) {
-				/* int32 controlDeltaX = */bs.getSignedBits(numBits);
-				/* int32 controlDeltaY = */bs.getSignedBits(numBits);
-				/* int32 anchorDeltaX = */bs.getSignedBits(numBits);
-				/* int32 anchorDeltaY = */bs.getSignedBits(numBits);
+				double controlDeltaX = bs.getSignedBits(numBits) * SWF_SCALE_FACTOR;
+				double controlDeltaY = bs.getSignedBits(numBits) * SWF_SCALE_FACTOR;
+				double anchorDeltaX = bs.getSignedBits(numBits) * SWF_SCALE_FACTOR;
+				double anchorDeltaY = bs.getSignedBits(numBits) * SWF_SCALE_FACTOR;
 
-#if 0 // TODO
-				double controlX = _elements.back()._paths.last_x() + controlDeltaX;
-				double controlY = _elements.back()._paths.last_y() + controlDeltaY;
-				double anchorX = controlX + AnchorDeltaX;
-				double anchorY = controlY + AnchorDeltaY;
-				_elements.back()._paths.curve3(controlX, controlY, anchorX, anchorY);
-#endif
+				double newX = curX + controlDeltaX;
+				double newY = curY + controlDeltaY;
+				double anchorX = curX + anchorDeltaX;
+				double anchorY = curY + anchorDeltaY;
+
+#define WEIGHT (2.0/3.0)
+
+				bezNodes++;
+				bez = ensureBezStorage(bez, bezNodes, &bezAllocated);
+				bez[bezNodes].code = ART_CURVETO;
+				bez[bezNodes].x1 = WEIGHT * anchorX + (1 - WEIGHT) * curX;
+				bez[bezNodes].y1 = WEIGHT * anchorY + (1 - WEIGHT) * curY;
+				bez[bezNodes].x2 = WEIGHT * anchorX + (1 - WEIGHT) * newX;
+				bez[bezNodes].y2 = WEIGHT * anchorY + (1 - WEIGHT) * newY;
+				bez[bezNodes].x3 = newX;
+				bez[bezNodes].y3 = newY;
+
+				curX = newX;
+				curY = newY;
 			} else {
 				// Staight edge
 				int32 deltaX = 0;
@@ -436,12 +484,23 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 						deltaX = bs.getSignedBits(numBits);
 				}
 
-#if 0 // TODO
-				_elements.back()._paths.line_rel(deltaX, deltaY);
-#endif
+				curX += deltaX * SWF_SCALE_FACTOR;
+				curY += deltaY * SWF_SCALE_FACTOR;
+
+				bezNodes++;
+				bez = ensureBezStorage(bez, bezNodes, &bezAllocated);
+				bez[bezNodes].code = ART_LINETO;
+				bez[bezNodes].x3 = curX;
+				bez[bezNodes].y3 = curY;
 			}
 		}
 	}
+
+	// Store last curve
+	if (bezNodes)
+		bez = storeBez(bez, lineStyle, fillStyle0, fillStyle1, &bezNodes, &bezAllocated);
+
+	art_free(bez);
 
 	// Bounding-Boxes der einzelnen Elemente berechnen
 	Common::Array<VectorImageElement>::iterator it = _elements.begin();

@@ -110,7 +110,8 @@ MODULE_OBJS := \
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
 	$(QUIET_CXX)gcc  $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 
-LIBS += -lpng -ltheoradec
+LIBS += -lpng -ltheoradec -lart_lgpl_2
+CXXFLAGS += -I/usr/include/libart-2.0
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SWORD25), DYNAMIC_PLUGIN)
