@@ -335,15 +335,15 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 			// Feststellen welche Parameter gesetzt werden
 			uint32 stateNewStyles = bs.getBits(1);
 			uint32 stateLineStyle = bs.getBits(1);
-			uint32 stateFillStyle1 = bs.getBits(1);
 			uint32 stateFillStyle0 = bs.getBits(1);
+			uint32 stateFillStyle1 = bs.getBits(1);
 			uint32 stateMoveTo = bs.getBits(1);
 
 			// End der Shape-Definition erreicht?
-			if (!stateNewStyles && !stateLineStyle && !stateFillStyle0 && !stateFillStyle1 && !stateMoveTo)
+			if (!stateNewStyles && !stateLineStyle && !stateFillStyle0 && !stateFillStyle1 && !stateMoveTo) {
 				endOfShapeDiscovered = true;
 			// Parameter dekodieren
-			else {
+			} else {
 				int32 moveDeltaX = 0;
 				int32 moveDeltaY = 0;
 				if (stateMoveTo) {
@@ -407,10 +407,10 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 
 			// Curved edge
 			if (edgeFlag == 0) {
-				/* int32 ControlDeltaX = */bs.getSignedBits(numBits);
-				/* int32 ControlDeltaY = */bs.getSignedBits(numBits);
-				/* int32 AnchorDeltaX = */bs.getSignedBits(numBits);
-				/* int32 AnchorDeltaY = */bs.getSignedBits(numBits);
+				/* int32 controlDeltaX = */bs.getSignedBits(numBits);
+				/* int32 controlDeltaY = */bs.getSignedBits(numBits);
+				/* int32 anchorDeltaX = */bs.getSignedBits(numBits);
+				/* int32 anchorDeltaY = */bs.getSignedBits(numBits);
 
 #if 0 // TODO
 				double controlX = _elements.back()._paths.last_x() + controlDeltaX;
