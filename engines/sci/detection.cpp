@@ -55,6 +55,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"laurabow",        "Laura Bow: The Colonel's Bequest"},
 	{"lsl2",            "Leisure Suit Larry 2: Goes Looking for Love (in Several Wrong Places)"},
 	{"lsl3",            "Leisure Suit Larry 3: Passionate Patti in Pursuit of the Pulsating Pectorals"},
+	{"mothergoose",     "Mixed-Up Mother Goose"},
 	{"pq2",             "Police Quest II: The Vengeance"},
 	{"qfg1",            "Quest for Glory I: So You Want to Be a Hero"},
 	{"sq3",             "Space Quest III: The Pirates of Pestulon"},
@@ -77,6 +78,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"longbow",         "Conquests of the Longbow: The Adventures of Robin Hood"},
 	{"lsl1sci",         "Leisure Suit Larry in the Land of the Lounge Lizards"},
 	{"lsl5",            "Leisure Suit Larry 5: Passionate Patti Does a Little Undercover Work"},
+	{"mothergoose256",  "Mixed-Up Mother Goose"},
 	{"msastrochicken",  "Ms. Astro Chicken"},
 	{"pq1sci",          "Police Quest: In Pursuit of the Death Angel"},
 	{"pq3",             "Police Quest III: The Kindred"},
@@ -94,7 +96,6 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"sq5",             "Space Quest V: The Next Mutation"},
 	{"islandbrain",     "The Island of Dr. Brain"},
 	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
-	{"mothergoose",     "Mixed-Up Mother Goose"},
 	{"pepper",          "Pepper's Adventure in Time"},
 	{"slater",          "Slater & Charlie Go Camping"},
 	// === SCI2 games =========================================================
