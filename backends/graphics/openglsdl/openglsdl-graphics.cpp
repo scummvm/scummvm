@@ -315,6 +315,10 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 }
 
 bool OpenGLSdlGraphicsManager::loadGFXMode() {
+	// Force 4/3 if feature enabled
+	if (_aspectRatioCorrection)
+		_videoMode.mode = OpenGL::GFX_4_3;
+
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
@@ -587,6 +591,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 					beginGFXTransaction();
 						_videoMode.mode = sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1);
 						_transactionDetails.needRefresh = true;
+						_aspectRatioCorrection = false;
 					endGFXTransaction();
 #ifdef USE_OSD
 					if (lastMode != _videoMode.mode)

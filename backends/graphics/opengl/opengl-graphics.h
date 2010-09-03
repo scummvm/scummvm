@@ -189,6 +189,8 @@ protected:
 	virtual void calculateDisplaySize(int &width, int &height);
 	virtual void refreshDisplaySize();
 
+	bool _aspectRatioCorrection;
+
 	/**
 	 * Returns the current target aspect ratio x 10000
 	 */

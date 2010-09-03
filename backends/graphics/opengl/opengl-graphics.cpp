@@ -48,7 +48,8 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	_cursorVisible(false), _cursorKeyColor(0),
 	_cursorTargetScale(1),
 	_formatBGR(false),
-	_displayX(0), _displayY(0), _displayWidth(0), _displayHeight(0) {
+	_displayX(0), _displayY(0), _displayWidth(0), _displayHeight(0),
+	_aspectRatioCorrection(false) {
 
 	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
 	memset(&_videoMode, 0, sizeof(_videoMode));
@@ -95,7 +96,8 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) {
 void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
-		setGraphicsMode(enable ? OpenGL::GFX_CONSERVE : OpenGL::GFX_NORMAL);
+		_videoMode.mode = OpenGL::GFX_4_3;
+		_aspectRatioCorrection = enable;
 		break;
 	default:
 		break;
@@ -1293,6 +1295,7 @@ void OpenGLGraphicsManager::switchDisplayMode(int mode) {
 			_videoMode.mode = mode;
 
 		_transactionDetails.needRefresh = true;
+		_aspectRatioCorrection = false;
 	}
 }
 
