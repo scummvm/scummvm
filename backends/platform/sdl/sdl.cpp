@@ -358,10 +358,12 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 			if (_graphicsMode >= _sdlModesCount && mode < _sdlModesCount) {
 				delete _graphicsManager;
 				_graphicsManager = new SdlGraphicsManager();
+				((SdlGraphicsManager *)_graphicsManager)->initEventObserver();
 				_graphicsManager->beginGFXTransaction();
 			} else if (_graphicsMode < _sdlModesCount && mode >= _sdlModesCount) {
 				delete _graphicsManager;
 				_graphicsManager = new OpenGLSdlGraphicsManager();
+				((OpenGLSdlGraphicsManager *)_graphicsManager)->initEventObserver();
 				_graphicsManager->beginGFXTransaction();
 			}
 			_graphicsMode = mode;
