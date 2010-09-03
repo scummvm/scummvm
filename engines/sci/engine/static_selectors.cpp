@@ -98,6 +98,7 @@ static const char * const sci2Selectors[] = {
 #endif
 
 static const SelectorRemap sciSelectorRemap[] = {
+	{    SCI_VERSION_0_EARLY,     SCI_VERSION_1_LATE,     "-info-",   2 },
 	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,   "moveDone", 170 },
 	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,     "points", 316 },
 	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,      "flags", 368 },
@@ -106,6 +107,7 @@ static const SelectorRemap sciSelectorRemap[] = {
 	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,  "topString", 101 },
 	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,      "flags", 102 },
 	// SCI1.1
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,     "-info-",4103 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,    "nodePtr",  41 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "cantBeHere",  54 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,  "topString",  98 },

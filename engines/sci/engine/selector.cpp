@@ -50,7 +50,7 @@ namespace Sci {
 void Kernel::mapSelectors() {
 	// species
 	// superClass
-	// -info-
+	FIND_SELECTOR2(_info_, "-info-");
 	FIND_SELECTOR(y);
 	FIND_SELECTOR(x);
 	FIND_SELECTOR(view);

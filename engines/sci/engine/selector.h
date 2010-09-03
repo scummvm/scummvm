@@ -40,6 +40,7 @@ struct SelectorCache {
 	}
 
 	// Statically defined selectors, (almost the) same in all SCI versions
+	Selector _info_;
 	Selector y;
 	Selector x;
 	Selector view, loop, cel; ///< Description of a specific image
