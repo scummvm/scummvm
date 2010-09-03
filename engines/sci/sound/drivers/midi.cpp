@@ -834,6 +834,14 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 
 			warning("Game has no native support for General MIDI, applying auto-mapping");
 
+			// TODO: The MT-32 <-> GM mapping hasn't been worked on for SCI1 games. Throw
+			// a warning to the user
+			if (getSciVersion() >= SCI_VERSION_1_EGA)
+				warning("The automatic mapping for General MIDI hasn't been worked on for "
+						"SCI1 games. Music might sound wrong or broken. Please choose another "
+						"music driver for this game (e.g. Adlib or MT-32) if you are "
+						"experiencing issues with music");
+
 			// Modify velocity map to make low velocity notes a little louder
 			for (uint i = 1; i < 0x40; i++) {
 				_velocityMap[0][i] = 0x20 + (i - 1) / 2;
