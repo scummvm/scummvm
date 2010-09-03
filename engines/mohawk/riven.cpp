@@ -44,6 +44,7 @@ Common::Rect *g_cathJournalRect2;
 Common::Rect *g_atrusJournalRect3;
 Common::Rect *g_cathJournalRect3;
 Common::Rect *g_trapBookRect3;
+Common::Rect *g_demoExitRect;
 
 MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
 	_showHotspots = false;
@@ -73,6 +74,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	g_atrusJournalRect3 = new Common::Rect(222, 402, 240, 426);
 	g_cathJournalRect3 = new Common::Rect(291, 408, 311, 419);
 	g_trapBookRect3 = new Common::Rect(363, 396, 386, 432);
+	g_demoExitRect = new Common::Rect(291, 408, 317, 419);
 }
 
 MohawkEngine_Riven::~MohawkEngine_Riven() {
@@ -92,6 +94,7 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete g_atrusJournalRect3;
 	delete g_cathJournalRect3;
 	delete g_trapBookRect3;
+	delete g_demoExitRect;
 }
 
 GUI::Debugger *MohawkEngine_Riven::getDebugger() {
@@ -114,29 +117,33 @@ Common::Error MohawkEngine_Riven::run() {
 
 	initVars();
 
-	// Open extras.mhk for common images (non-existant in the demo)
-	if (!(getFeatures() & GF_DEMO)) {
-		_extrasFile = new MohawkArchive();
-		_extrasFile->open("extras.mhk");
-	}
+	// Open extras.mhk for common images
+	_extrasFile = new MohawkArchive();
+	_extrasFile->open("extras.mhk");
 
 	// Start at main cursor
 	_gfx->changeCursor(kRivenMainCursor);
 
-	// Load game from launcher/command line if requested
-	if (ConfMan.hasKey("save_slot") && !(getFeatures() & GF_DEMO)) {
+	// Let's begin, shall we?
+	if (getFeatures() & GF_DEMO) {
+		// Start the demo off with the videos
+		changeToStack(aspit);
+		changeToCard(6);
+	} else if (ConfMan.hasKey("save_slot")) {
+		// Load game from launcher/command line if requested
 		uint32 gameToLoad = ConfMan.getInt("save_slot");
 		Common::StringArray savedGamesList = _saveLoad->generateSaveGameList();
 		if (gameToLoad > savedGamesList.size())
 			error ("Could not find saved game");
 		_saveLoad->loadGame(savedGamesList[gameToLoad]);
-	} else { // Otherwise, start us off at aspit's card 1
+	} else {
+		// Otherwise, start us off at aspit's card 1 (the main menu)
         changeToStack(aspit);
 		changeToCard(1);
 	}
 
 	Common::Event event;
-	while (!_gameOver) {
+	while (!_gameOver && !shouldQuit()) {
 		bool needsUpdate = _gfx->runScheduledWaterEffects();
 		needsUpdate |= _video->updateBackgroundMovies();
 
@@ -145,11 +152,13 @@ Common::Error MohawkEngine_Riven::run() {
 			case Common::EVENT_MOUSEMOVE:
 				checkHotspotChange();
 
-				// Check to show the inventory
-				if (_eventMan->getMousePos().y >= 392)
-					_gfx->showInventory();
-				else
-					_gfx->hideInventory();
+				if (!(getFeatures() & GF_DEMO)) {
+					// Check to show the inventory, but it is always "showing" in the demo
+					if (_eventMan->getMousePos().y >= 392)
+						_gfx->showInventory();
+					else
+						_gfx->hideInventory();
+				}
 
 				needsUpdate = true;
 				break;
@@ -192,11 +201,20 @@ Common::Error MohawkEngine_Riven::run() {
 					runDialog(*_optionsDialog);
 					updateZipMode();
 					break;
-				case Common::KEYCODE_ESCAPE:
-					if (getFeatures() & GF_DEMO) {
+				case Common::KEYCODE_r:
+					// Return to the main menu in the demo on ctrl+r
+					if (event.kbd.flags & Common::KBD_CTRL && getFeatures() & GF_DEMO) {
 						if (_curStack != aspit)
 							changeToStack(aspit);
 						changeToCard(1);
+					}
+					break;
+				case Common::KEYCODE_p:
+					// Play the intro videos in the demo on ctrl+p
+					if (event.kbd.flags & Common::KBD_CTRL && getFeatures() & GF_DEMO) {
+						if (_curStack != aspit)
+							changeToStack(aspit);
+						changeToCard(6);
 					}
 					break;
 				default:
@@ -210,17 +228,6 @@ Common::Error MohawkEngine_Riven::run() {
 
 		if (_curHotspot >= 0)
 			runHotspotScript(_curHotspot, kMouseInsideScript);
-
-		if (shouldQuit()) {
-			if (_eventMan->shouldRTL() && (getFeatures() & GF_DEMO) && !(_curStack == aspit && _curCard == 12)) {
-				if (_curStack != aspit)
-					changeToStack(aspit);
-				changeToCard(12);
-				_eventMan->resetRTL();
-				continue;
-			}
-			return Common::kNoError;
-		}
 
 		// Update the screen if we need to
 		if (needsUpdate)
@@ -471,8 +478,27 @@ void MohawkEngine_Riven::checkInventoryClick() {
 	if (mousePos.y < 392)
 		return;
 
-	// No inventory in the demo or opening screens.
-	if (getFeatures() & GF_DEMO || _curStack == aspit)
+	// In the demo, check if we've clicked the exit button
+	if (getFeatures() & GF_DEMO) {
+		if (g_demoExitRect->contains(mousePos)) {
+			if (_curStack == aspit && _curCard == 1) {
+				// From the main menu, go to the "quit" screen
+				changeToCard(12);
+			} else if (_curStack == aspit && _curCard == 12) {
+				// From the "quit" screen, just quit
+				_gameOver = true;
+			} else {
+				// Otherwise, return to the main menu
+				if (_curStack != aspit)
+					changeToStack(aspit);
+				changeToCard(1);
+			}
+		}
+		return;
+	}
+
+	// No inventory shown on aspit
+	if (_curStack == aspit)
 		return;
 
 	// Set the return stack/card id's.

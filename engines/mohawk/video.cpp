@@ -123,7 +123,7 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 
 	delete _videoStreams[videoHandle].video;
 	_videoStreams[videoHandle].video = 0;
-	_videoStreams[videoHandle].id = 0;
+	_videoStreams[videoHandle].id = 0xffff;
 	_videoStreams[videoHandle].filename.clear();
 }
 
@@ -156,7 +156,7 @@ bool VideoManager::updateBackgroundMovies() {
 			} else {
 				delete _videoStreams[i].video;
 				_videoStreams[i].video = 0;
-				_videoStreams[i].id = 0;
+				_videoStreams[i].id = 0xffff;
 				_videoStreams[i].filename.clear();
 				continue;
 			}
@@ -292,7 +292,7 @@ void VideoManager::stopMovie(uint16 id) {
 				if (_mlstRecords[i].movieID == _videoStreams[j].id) {
 					delete _videoStreams[j].video;
 					_videoStreams[j].video = 0;
-					_videoStreams[j].id = 0;
+					_videoStreams[j].id = 0xffff;
 					_videoStreams[j].filename.clear();
 					return;
 				}
@@ -368,7 +368,7 @@ VideoHandle VideoManager::createVideoHandle(Common::String filename, uint16 x, u
 	entry.x = x;
 	entry.y = y;
 	entry.filename = filename;
-	entry.id = 0;
+	entry.id = 0xffff;
 	entry.loop = loop;
 	entry.enabled = true;
 	

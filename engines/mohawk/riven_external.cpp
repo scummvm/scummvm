@@ -68,6 +68,8 @@ void RivenExternal::setupCommands() {
 	COMMAND(xadisablemenureturn);
 	COMMAND(xaenablemenureturn);
 	COMMAND(xalaunchbrowser);
+	COMMAND(xadisablemenuintro);
+	COMMAND(xaenablemenuintro);
 
 	// bspit (Bookmaking Island) external commands
 	COMMAND(xblabopenbook);
@@ -204,8 +206,8 @@ void RivenExternal::runCommand(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::runDemoBoundaryDialog() {
-	GUI::MessageDialog dialog("This demo does not allow you\n"
-							  "to visit that part of Riven.");
+	GUI::MessageDialog dialog("Exploration beyond this point available only within the full version of\n"
+							  "the game.");
 	dialog.runModal();
 }
 
@@ -596,20 +598,58 @@ void RivenExternal::xarestoregame(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xadisablemenureturn(uint16 argc, uint16 *argv) {
-	// Dummy function -- implemented in Mohawk::go
+	// This function would normally enable the Windows menu item for
+	// returning to the main menu. Ctrl+r will do this instead.
+	// The original also had this shortcut.
 }
 
 void RivenExternal::xaenablemenureturn(uint16 argc, uint16 *argv) {
-	// Dummy function -- implemented in Mohawk::go
+	// This function would normally enable the Windows menu item for
+	// returning to the main menu. Ctrl+r will do this instead.
+	// The original also had this shortcut.
 }
 
 void RivenExternal::xalaunchbrowser(uint16 argc, uint16 *argv) {
 	// Well, we can't launch a browser for obvious reasons ;)
+	// The original text is as follows (for reference):
+
+	// If you have an auto-dial configured connection to the Internet,
+	// please select YES below.
+	//
+	// America Online and CompuServe users may experience difficulty. If
+	// you find that you are unable to connect, please quit the Riven
+	// Demo, launch your browser and type in the following URL:
+	//
+	//     www.redorb.com/buyriven
+	//
+	// Would you like to attempt to make the connection?
+	//
+	// [YES] [NO]
+
 	GUI::MessageDialog dialog("At this point, the Riven Demo would\n"
-							  "open up a web browser to bring you to\n"
-							  "the Riven website. ScummVM cannot do\n"
-							  "that. Visit the site on your own.");
+							  "ask if you would like to open a web browser\n"
+							  "to bring you to the Red Orb store to buy\n"
+							  "the game. ScummVM cannot do that and\n"
+							  "the site no longer exists.");
 	dialog.runModal();
+}
+
+void RivenExternal::xadisablemenuintro(uint16 argc, uint16 *argv) {
+	// This function would normally enable the Windows menu item for
+	// playing the intro. Ctrl+p will play the intro movies instead.
+	// The original also had this shortcut.
+
+	// Hide the "exit" button here
+	_vm->_gfx->hideInventory();
+}
+
+void RivenExternal::xaenablemenuintro(uint16 argc, uint16 *argv) {
+	// This function would normally enable the Windows menu item for
+	// playing the intro. Ctrl+p will play the intro movies instead.
+	// The original also had this shortcut.
+
+	// Show the "exit" button here
+	_vm->_gfx->showInventory();
 }
 
 // ------------------------------------------------------------------------------------

@@ -597,28 +597,35 @@ void RivenGraphics::showInventory() {
 	// Clear the inventory area
 	clearInventoryArea();
 
-	// The demo doesn't have the inventory system and we don't want
-	// to show the inventory on setup screens or in other journals.
-	if (_vm->getFeatures() & GF_DEMO || _vm->getCurStack() == aspit)
-		return;
-
-	// There are three books and three vars. We have three different
-	// combinations. At the start you have just Atrus' journal. Later,
-	// you get Catherine's journal and the trap book. Near the end,
-	// you lose the trap book and have just the two journals.
-
-	bool hasCathBook = *_vm->matchVarToString("acathbook") != 0;
-	bool hasTrapBook = *_vm->matchVarToString("atrapbook") != 0;
-
-	if (!hasCathBook) {
-		drawInventoryImage(101, g_atrusJournalRect1);
-	} else if (!hasTrapBook) {
-		drawInventoryImage(101, g_atrusJournalRect2);
-		drawInventoryImage(102, g_cathJournalRect2);
+	// Draw the demo's exit button
+	if (_vm->getFeatures() & GF_DEMO) {
+		// extras.mhk tBMP 101 contains "EXIT" instead of Atrus' journal in the demo!
+		// The demo's extras.mhk contains all the other inventory/marble/credits image
+		// but has hacked tBMP 101 with "EXIT". *sigh*
+		drawInventoryImage(101, g_demoExitRect);
 	} else {
-		drawInventoryImage(101, g_atrusJournalRect3);
-		drawInventoryImage(102, g_cathJournalRect3);
-		drawInventoryImage(100, g_trapBookRect3);
+		// We don't want to show the inventory on setup screens or in other journals.
+		if (_vm->getCurStack() == aspit)
+			return;
+
+		// There are three books and three vars. We have three different
+		// combinations. At the start you have just Atrus' journal. Later,
+		// you get Catherine's journal and the trap book. Near the end,
+		// you lose the trap book and have just the two journals.
+
+		bool hasCathBook = *_vm->matchVarToString("acathbook") != 0;
+		bool hasTrapBook = *_vm->matchVarToString("atrapbook") != 0;
+
+		if (!hasCathBook) {
+			drawInventoryImage(101, g_atrusJournalRect1);
+		} else if (!hasTrapBook) {
+			drawInventoryImage(101, g_atrusJournalRect2);
+			drawInventoryImage(102, g_cathJournalRect2);
+		} else {
+			drawInventoryImage(101, g_atrusJournalRect3);
+			drawInventoryImage(102, g_cathJournalRect3);
+			drawInventoryImage(100, g_trapBookRect3);
+		}
 	}
 
 	_vm->_system->updateScreen();

@@ -74,6 +74,7 @@ extern Common::Rect *g_cathJournalRect2;
 extern Common::Rect *g_atrusJournalRect3;
 extern Common::Rect *g_cathJournalRect3;
 extern Common::Rect *g_trapBookRect3;
+extern Common::Rect *g_demoExitRect;
 
 struct RivenHotspot {
 	uint16 blstID;
