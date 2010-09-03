@@ -48,17 +48,16 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	_cursorVisible(false), _cursorKeyColor(0),
 	_cursorTargetScale(1),
 	_formatBGR(false),
-	_aspectX(0), _aspectY(0), _aspectWidth(0), _aspectHeight(0) {
+	_displayX(0), _displayY(0), _displayWidth(0), _displayHeight(0) {
 
 	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
 	memset(&_videoMode, 0, sizeof(_videoMode));
 	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
 
-	_videoMode.mode = OpenGL::GFX_DOUBLESIZE;
+	_videoMode.mode = OpenGL::GFX_NORMAL;
 	_videoMode.scaleFactor = 2;
 	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
 	_videoMode.antialiasing = false;
-	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio") ? kAspectRatioConserve : kAspectRatioNone;
 
 	_gamePalette = (byte *)calloc(sizeof(byte) * 4, 256);
 	_cursorPalette = (byte *)calloc(sizeof(byte) * 4, 256);
@@ -96,7 +95,7 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) {
 void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
-		setAspectRatioCorrection(enable ? -1 : 0);
+		setGraphicsMode(enable ? OpenGL::GFX_CONSERVE : OpenGL::GFX_NORMAL);
 		break;
 	default:
 		break;
@@ -112,11 +111,10 @@ bool OpenGLGraphicsManager::getFeatureState(OSystem::Feature f) {
 //
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{"gl1x", _s("OpenGL Normal"), OpenGL::GFX_NORMAL},
-#ifdef USE_SCALERS
-	{"gl2x", "OpenGL 2x", OpenGL::GFX_DOUBLESIZE},
-	{"gl3x", "OpenGL 3x", OpenGL::GFX_TRIPLESIZE},
-#endif
+	{"gl1", _s("OpenGL Normal"), OpenGL::GFX_NORMAL},
+	{"gl2", _s("OpenGL Conserve"), OpenGL::GFX_CONSERVE},
+	{"gl3", _s("OpenGL 4/3"), OpenGL::GFX_4_3},
+	{"gl4", _s("OpenGL Original"), OpenGL::GFX_ORIGINAL},
 	{0, 0, 0}
 };
 
@@ -138,32 +136,19 @@ bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
 	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
 		return true;
 
-	int newScaleFactor = 1;
-
 	switch (mode) {
 	case OpenGL::GFX_NORMAL:
-		newScaleFactor = 1;
+	case OpenGL::GFX_CONSERVE:
+	case OpenGL::GFX_4_3:
+	case OpenGL::GFX_ORIGINAL:
 		break;
-#ifdef USE_SCALERS
-	case OpenGL::GFX_DOUBLESIZE:
-		newScaleFactor = 2;
-		break;
-	case OpenGL::GFX_TRIPLESIZE:
-		newScaleFactor = 3;
-		break;
-#endif
 	default:
 		warning("unknown gfx mode %d", mode);
 		return false;
 	}
 
-	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
-		_transactionDetails.needRefresh = true;
-
-	_transactionDetails.needUpdatescreen = true;
-
 	_videoMode.mode = mode;
-	_videoMode.scaleFactor = newScaleFactor;
+	_transactionDetails.needRefresh = true;
 
 	return true;
 }
@@ -248,10 +233,6 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 			errors |= OSystem::kTransactionFullscreenFailed;
 
 			_videoMode.fullscreen = _oldVideoMode.fullscreen;
-		} else if (_videoMode.aspectRatioCorrection != _oldVideoMode.aspectRatioCorrection) {
-			errors |= OSystem::kTransactionAspectRatioFailed;
-
-			_videoMode.aspectRatioCorrection = _oldVideoMode.aspectRatioCorrection;
 		} else if (_videoMode.mode != _oldVideoMode.mode) {
 			errors |= OSystem::kTransactionModeSwitchFailed;
 
@@ -274,7 +255,6 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		}
 
 		if (_videoMode.fullscreen == _oldVideoMode.fullscreen &&
-			_videoMode.aspectRatioCorrection == _oldVideoMode.aspectRatioCorrection &&
 			_videoMode.mode == _oldVideoMode.mode &&
 			_videoMode.screenWidth == _oldVideoMode.screenWidth &&
 			_videoMode.screenHeight == _oldVideoMode.screenHeight) {
@@ -818,7 +798,7 @@ void OpenGLGraphicsManager::refreshCursorScale() {
 		_videoMode.hardwareHeight * 10000 / _videoMode.screenHeight);
 
 	// Do not scale cursor if original size is used
-	if (_videoMode.aspectRatioCorrection == kAspectRatioOriginal)
+	if (_videoMode.mode == OpenGL::GFX_ORIGINAL)
 		screenScaleFactor = _videoMode.scaleFactor * 10000;
 
 	if ((uint)_cursorTargetScale * 10000 >= screenScaleFactor && (uint)_videoMode.scaleFactor * 10000 >= screenScaleFactor) {
@@ -845,27 +825,31 @@ void OpenGLGraphicsManager::refreshCursorScale() {
 	_cursorState.vHotY = (int16)(_cursorState.hotY * screenScaleFactor / 10000);
 }
 
-void OpenGLGraphicsManager::refreshAspectRatio() {
-	if (_videoMode.aspectRatioCorrection == kAspectRatioOriginal) {
-		_aspectWidth = _videoMode.overlayWidth;
-		_aspectHeight = _videoMode.overlayHeight;
+void OpenGLGraphicsManager::calculateDisplaySize(int &width, int &height) {
+	if (_videoMode.mode == OpenGL::GFX_ORIGINAL) {
+		width = _videoMode.overlayWidth;
+		height = _videoMode.overlayHeight;
 	} else {
-		_aspectWidth = _videoMode.hardwareWidth;
-		_aspectHeight = _videoMode.hardwareHeight;
+		width = _videoMode.hardwareWidth;
+		height = _videoMode.hardwareHeight;
 
-		uint aspectRatio = _videoMode.hardwareWidth * 10000 / _videoMode.hardwareHeight;
+		uint aspectRatio = (_videoMode.hardwareWidth * 10000 + 5000) / _videoMode.hardwareHeight;
 		uint desiredAspectRatio = getAspectRatio();
 
 		// Adjust one screen dimension for mantaining the aspect ratio
 		if (aspectRatio < desiredAspectRatio)
-			_aspectHeight = _aspectWidth * 10000 / desiredAspectRatio;
+			height = (width * 10000 + 5000) / desiredAspectRatio;
 		else if (aspectRatio > desiredAspectRatio)
-			_aspectWidth = _aspectHeight * desiredAspectRatio / 10000;
+			width = (height * desiredAspectRatio + 5000) / 10000;
 	}
+}
+
+void OpenGLGraphicsManager::refreshDisplaySize() {
+	calculateDisplaySize(_displayWidth, _displayHeight);
 
 	// Adjust x and y for centering the screen
-	_aspectX = (_videoMode.hardwareWidth - _aspectWidth) / 2;
-	_aspectY = (_videoMode.hardwareHeight - _aspectHeight) / 2;
+	_displayX = (_videoMode.hardwareWidth - _displayWidth) / 2;
+	_displayY = (_videoMode.hardwareHeight - _displayHeight) / 2;
 }
 
 void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &intFormat, GLenum &glFormat, GLenum &gltype) {
@@ -969,7 +953,7 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 	glTranslatef(0, _shakePos * scaleFactor, 0); CHECK_GL_ERROR();
 
 	// Draw the game screen
-	_gameTexture->drawTexture(_aspectX, _aspectY, _aspectWidth, _aspectHeight);
+	_gameTexture->drawTexture(_displayX, _displayY, _displayWidth, _displayHeight);
 
 	glPopMatrix();
 
@@ -979,7 +963,7 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 			refreshOverlay();
 
 		// Draw the overlay
-		_overlayTexture->drawTexture(_aspectX, _aspectY, _aspectWidth, _aspectHeight);
+		_overlayTexture->drawTexture(_displayX, _displayY, _displayWidth, _displayHeight);
 	}
 
 	if (_cursorVisible) {
@@ -1146,7 +1130,7 @@ bool OpenGLGraphicsManager::loadGFXMode() {
 
 	refreshCursorScale();
 
-	refreshAspectRatio();
+	refreshDisplaySize();
 
 	internUpdateScreen();
 
@@ -1161,52 +1145,15 @@ void OpenGLGraphicsManager::setScale(int newScale) {
 	if (newScale == _videoMode.scaleFactor)
 		return;
 
-	switch (newScale - 1) {
-	case OpenGL::GFX_NORMAL:
-		_videoMode.mode = OpenGL::GFX_NORMAL;
-		break;
-	case OpenGL::GFX_DOUBLESIZE:
-		_videoMode.mode = OpenGL::GFX_DOUBLESIZE;
-		break;
-	case OpenGL::GFX_TRIPLESIZE:
-		_videoMode.mode = OpenGL::GFX_TRIPLESIZE;
-		break;
-	}
-
 	_videoMode.scaleFactor = newScale;
 	_transactionDetails.sizeChanged = true;
 }
 
-void OpenGLGraphicsManager::setAspectRatioCorrection(int mode) {
-	if (_oldVideoMode.setup && _oldVideoMode.aspectRatioCorrection == mode)
-		return;
-
-	if (_transactionMode == kTransactionActive) {
-		if (mode == -1)
-			// If -1, switch to next mode
-			_videoMode.aspectRatioCorrection = (_videoMode.aspectRatioCorrection + 1) % 3;
-		else
-			_videoMode.aspectRatioCorrection = mode;
-		_transactionDetails.needRefresh = true;
-	}
-}
-
-Common::String OpenGLGraphicsManager::getAspectRatioName() {
-	switch (_videoMode.aspectRatioCorrection) {
-	case kAspectRatioNone:
-		return "None";
-	case kAspectRatioConserve:
-		return "Conserve";
-	case kAspectRatioOriginal:
-		return "Original";
-	default:
-		return "";
-	}
-}
-
 uint OpenGLGraphicsManager::getAspectRatio() {
-	if (_videoMode.aspectRatioCorrection == kAspectRatioNone)
+	if (_videoMode.mode == OpenGL::GFX_NORMAL)
 		return _videoMode.hardwareWidth * 10000 / _videoMode.hardwareHeight;
+	else if (_videoMode.mode == OpenGL::GFX_4_3)
+		return 13333;
 	else
 		return _videoMode.screenWidth * 10000 / _videoMode.screenHeight;
 }
@@ -1216,7 +1163,7 @@ void OpenGLGraphicsManager::adjustMouseEvent(const Common::Event &event) {
 		Common::Event newEvent(event);
 		newEvent.synthetic = true;
 
-		if (!_videoMode.aspectRatioCorrection) {
+		if (_videoMode.mode == OpenGL::GFX_NORMAL) {
 			if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
 				newEvent.mouse.x = newEvent.mouse.x * _videoMode.overlayWidth / _videoMode.hardwareWidth;
 			if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
@@ -1228,19 +1175,19 @@ void OpenGLGraphicsManager::adjustMouseEvent(const Common::Event &event) {
 			}
 
 		} else {
-			newEvent.mouse.x -= _aspectX;
-			newEvent.mouse.y -= _aspectY;
+			newEvent.mouse.x -= _displayX;
+			newEvent.mouse.y -= _displayY;
 
 			if (_overlayVisible) {
-				if (_aspectWidth != _videoMode.overlayWidth)
-					newEvent.mouse.x = newEvent.mouse.x * _videoMode.overlayWidth / _aspectWidth;
-				if (_aspectHeight != _videoMode.overlayHeight)
-					newEvent.mouse.y = newEvent.mouse.y * _videoMode.overlayHeight / _aspectHeight;
+				if (_displayWidth != _videoMode.overlayWidth)
+					newEvent.mouse.x = newEvent.mouse.x * _videoMode.overlayWidth / _displayWidth;
+				if (_displayHeight != _videoMode.overlayHeight)
+					newEvent.mouse.y = newEvent.mouse.y * _videoMode.overlayHeight / _displayHeight;
 			} else {
-				if (_aspectWidth != _videoMode.screenWidth)
-					newEvent.mouse.x = newEvent.mouse.x * _videoMode.screenWidth / _aspectWidth;
-				if (_aspectHeight != _videoMode.screenHeight)
-					newEvent.mouse.y = newEvent.mouse.y * _videoMode.screenHeight / _aspectHeight;
+				if (_displayWidth != _videoMode.screenWidth)
+					newEvent.mouse.x = newEvent.mouse.x * _videoMode.screenWidth / _displayWidth;
+				if (_displayHeight != _videoMode.screenHeight)
+					newEvent.mouse.y = newEvent.mouse.y * _videoMode.screenHeight / _displayHeight;
 			}
 		}
 
@@ -1318,6 +1265,35 @@ bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	delete[] pixels;
 
 	return true;
+}
+
+const char *OpenGLGraphicsManager::getCurrentModeName() {
+	const char *modeName = 0;
+	const OSystem::GraphicsMode *g = getSupportedGraphicsModes();
+	while (g->name) {
+		if (g->id == _videoMode.mode) {
+			modeName = g->description;
+			break;
+		}
+		g++;
+	}
+	return modeName;
+}
+
+void OpenGLGraphicsManager::switchDisplayMode(int mode) {
+	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
+		return;
+
+	if (_transactionMode == kTransactionActive) {
+		if (mode == -1) // If -1, switch to next mode
+			_videoMode.mode = (_videoMode.mode + 1) % 4;
+		else if (mode == -2) // If -2, switch to previous mode
+			_videoMode.mode = (_videoMode.mode + 3) % 4;
+		else
+			_videoMode.mode = mode;
+
+		_transactionDetails.needRefresh = true;
+	}
 }
 
 #endif

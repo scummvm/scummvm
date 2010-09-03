@@ -38,8 +38,9 @@ namespace OpenGL {
 // do not clash with the SDL GFX modes.
 enum {
 	GFX_NORMAL = 0,
-	GFX_DOUBLESIZE = 1,
-	GFX_TRIPLESIZE = 2
+	GFX_CONSERVE = 1,
+	GFX_4_3 = 2,
+	GFX_ORIGINAL = 3
 };
 
 }
@@ -141,18 +142,11 @@ protected:
 	TransactionDetails _transactionDetails;
 	int _transactionMode;
 
-	enum {
-		kAspectRatioNone,
-		kAspectRatioConserve,
-		kAspectRatioOriginal
-	};
-
 	struct VideoState {
 		bool setup;
 
 		bool fullscreen;
 		int activeFullscreenMode;
-		int aspectRatioCorrection;
 
 		int mode;
 		int scaleFactor;
@@ -178,20 +172,22 @@ protected:
 
 	virtual void setScale(int newScale);
 
-	// Drawing coordinates for the current aspect ratio
-	int _aspectX;
-	int _aspectY;
-	int _aspectWidth;
-	int _aspectHeight;
+	// Drawing coordinates for the current display mode and scale
+	int _displayX;
+	int _displayY;
+	int _displayWidth;
+	int _displayHeight;
 
 	/**
-	 * Sets the aspect ratio mode.
-	 * @mode the aspect ratio mode, if -1 it will switch to next mode.
+	 * Sets the dispaly mode.
+	 * @mode the dispaly mode, if -1 it will switch to next mode. If -2 to previous mode.
 	 */
-	virtual void setAspectRatioCorrection(int mode);
+	virtual void switchDisplayMode(int mode);
 
-	virtual void refreshAspectRatio();
-	virtual Common::String getAspectRatioName();
+	virtual const char *getCurrentModeName();
+
+	virtual void calculateDisplaySize(int &width, int &height);
+	virtual void refreshDisplaySize();
 
 	/**
 	 * Returns the current target aspect ratio x 10000

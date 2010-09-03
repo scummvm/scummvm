@@ -191,7 +191,7 @@ void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
 	int scaledX = x;
 	int scaledY = y;
 
-	if (!_videoMode.aspectRatioCorrection) {
+	if (_videoMode.mode == OpenGL::GFX_NORMAL) {
 		if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
 			scaledX = scaledX * _videoMode.hardwareWidth / _videoMode.overlayWidth;
 		if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
@@ -203,19 +203,19 @@ void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
 		}
 	} else {
 		if (_overlayVisible) {
-			if (_aspectWidth != _videoMode.overlayWidth)
-				scaledX = scaledX * _aspectWidth / _videoMode.overlayWidth;
-			if (_aspectHeight != _videoMode.overlayHeight)
-				scaledY = scaledY * _aspectHeight / _videoMode.overlayHeight;
+			if (_displayWidth != _videoMode.overlayWidth)
+				scaledX = scaledX * _displayWidth / _videoMode.overlayWidth;
+			if (_displayHeight != _videoMode.overlayHeight)
+				scaledY = scaledY * _displayHeight / _videoMode.overlayHeight;
 		} else {
-			if (_aspectWidth != _videoMode.screenWidth)
-				scaledX = scaledX * _aspectWidth / _videoMode.screenWidth;
-			if (_aspectHeight != _videoMode.screenHeight)
-				scaledY = scaledY * _aspectHeight / _videoMode.screenHeight;
+			if (_displayWidth != _videoMode.screenWidth)
+				scaledX = scaledX * _displayWidth / _videoMode.screenWidth;
+			if (_displayHeight != _videoMode.screenHeight)
+				scaledY = scaledY * _displayHeight / _videoMode.screenHeight;
 		}
 
-		scaledX += _aspectX;
-		scaledY += _aspectY;
+		scaledX += _displayX;
+		scaledY += _displayY;
 	}
 
 	SDL_WarpMouse(scaledX, scaledY);
@@ -356,7 +356,7 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 
 	if (_videoMode.fullscreen)
 		flags |= SDL_FULLSCREEN;
-	else if (_videoMode.aspectRatioCorrection == kAspectRatioNone)
+	else
 		flags |= SDL_RESIZABLE;
 
 	// Create our window
@@ -406,85 +406,30 @@ void OpenGLSdlGraphicsManager::internUpdateScreen() {
 	SDL_GL_SwapBuffers(); 
 }
 
-bool OpenGLSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
-
-	// Ctrl-Alt-a toggles aspect ratio correction
-	if (key == 'a') {
-		beginGFXTransaction();
-			setAspectRatioCorrection(-1);
-		endGFXTransaction();
 #ifdef USE_OSD
+void OpenGLSdlGraphicsManager::displayModeChangedMsg() {
+	const char *newModeName = getCurrentModeName();
+	if (newModeName) {
 		char buffer[128];
-		sprintf(buffer, "Current aspect ratio mode: %s\n%d x %d -> %d x %d",
-			getAspectRatioName().c_str(),
+		sprintf(buffer, "Current display mode: %s\n%d x %d -> %d x %d",
+			newModeName,
 			_videoMode.screenWidth * _videoMode.scaleFactor,
 			_videoMode.screenHeight * _videoMode.scaleFactor,
 			_hwscreen->w, _hwscreen->h
 			);
 		displayMessageOnOSD(buffer);
-#endif
-		internUpdateScreen();
-		return true;
 	}
-
-	// Ctrl-Alt-f toggles antialiasing
-	if (key == 'f') {
-		beginGFXTransaction();
-			_videoMode.antialiasing = !_videoMode.antialiasing;
-			_transactionDetails.filterChanged = true;
-		endGFXTransaction();
-#ifdef USE_OSD
-		if (_videoMode.antialiasing)
-			displayMessageOnOSD("Active filter mode: Linear");
-		else
-			displayMessageOnOSD("Active filter mode: Nearest");
-#endif
-		return true;
-	}
-
-	SDLKey sdlKey = (SDLKey)key;
-
-	// Increase/decrease the scale factor
-	if (sdlKey == SDLK_EQUALS || sdlKey == SDLK_PLUS || sdlKey == SDLK_MINUS ||
-		sdlKey == SDLK_KP_PLUS || sdlKey == SDLK_KP_MINUS) {
-		int factor = _videoMode.scaleFactor;
-		factor += (sdlKey == SDLK_MINUS || sdlKey == SDLK_KP_MINUS) ? -1 : +1;
-		if (0 < factor && factor < 4) {
-			// Check if the desktop resolution has been detected
-			if (_desktopWidth > 0 && _desktopHeight > 0)
-				// If the new scale factor is too big, do not scale
-				if (_videoMode.screenWidth * factor > _desktopWidth || 
-					_videoMode.screenHeight * factor > _desktopHeight)
-					return false;
-
-			beginGFXTransaction();
-				setScale(factor);
-			endGFXTransaction();
-#ifdef USE_OSD
-			const char *newScalerName = 0;
-			const OSystem::GraphicsMode *g = getSupportedGraphicsModes();
-			while (g->name) {
-				if (g->id == _videoMode.mode) {
-					newScalerName = g->description;
-					break;
-				}
-				g++;
-			}
-			if (newScalerName) {
-				char buffer[128];
-				sprintf(buffer, "Active graphics mode: %s\n%d x %d -> %d x %d",
-					newScalerName,
-					_videoMode.screenWidth, _videoMode.screenHeight,
-					_hwscreen->w, _hwscreen->h
-					);
-				displayMessageOnOSD(buffer);
-			}
-#endif
-			return true;
-		}
-	}
-	return false;
 }
+void OpenGLSdlGraphicsManager::displayScaleChangedMsg() {
+	char buffer[128];
+	sprintf(buffer, "Current scale: x%d\n%d x %d -> %d x %d",
+		_videoMode.scaleFactor,
+		_videoMode.screenWidth, _videoMode.screenHeight,
+		_videoMode.overlayWidth, _videoMode.overlayHeight
+		);
+	displayMessageOnOSD(buffer);
+}
+#endif
 
 void OpenGLSdlGraphicsManager::setFullscreenMode(bool enable) {
 	if (_oldVideoMode.setup && _oldVideoMode.fullscreen == enable &&
@@ -497,12 +442,17 @@ void OpenGLSdlGraphicsManager::setFullscreenMode(bool enable) {
 	}
 }
 
-bool OpenGLSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
+bool OpenGLSdlGraphicsManager::isHotkey(const Common::Event &event) {
 	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-		const bool isScaleKey = (event.kbd.keycode == Common::KEYCODE_EQUALS || event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS ||
-			event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS);
-
-		return (isScaleKey || event.kbd.keycode == 'a' || event.kbd.keycode == 'f');
+		if (event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS ||
+			event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS ||
+			event.kbd.keycode == 'a' || event.kbd.keycode == 'f')
+			return true;
+	} else if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_SHIFT)) == (Common::KBD_CTRL|Common::KBD_SHIFT)) {
+		if (event.kbd.keycode == 'a' || event.kbd.keycode == 'f')
+			return true;
+	} else if ((event.kbd.flags & (Common::KBD_ALT)) == (Common::KBD_ALT) && event.kbd.keycode == 's') {
+		return true;
 	}
 	return false;
 }
@@ -538,71 +488,171 @@ void OpenGLSdlGraphicsManager::toggleFullScreen(int loop) {
 bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	switch ((int)event.type) {
 	case Common::EVENT_KEYDOWN:
-		// Alt-Return and Alt-Enter toggle full screen mode
-		if (event.kbd.hasFlags(Common::KBD_ALT) &&
-			(event.kbd.keycode == Common::KEYCODE_RETURN ||
-			event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER)) {
-			toggleFullScreen(0);
-			return true;
-		}
-
-		// Ctrl-Alt-Return and Ctrl-Alt-Enter switches between full screen modes
-		if (event.kbd.hasFlags(Common::KBD_CTRL|Common::KBD_ALT) &&
-			(event.kbd.keycode == Common::KEYCODE_RETURN ||
-			event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER)) {
-			toggleFullScreen(1);
-			return true;
-		}
-
-		// Ctrl-Shift-Return and Ctrl-Shift-Enter switches backwards between full screen modes
-		if (event.kbd.hasFlags(Common::KBD_CTRL|Common::KBD_SHIFT) &&
-			(event.kbd.keycode == Common::KEYCODE_RETURN ||
-			event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER)) {
-			toggleFullScreen(-1);
-			return true;
-		}
-
-		// Alt-S: Create a screenshot
-		if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == 's') {
-			char filename[20];
-
-			for (int n = 0;; n++) {
-				SDL_RWops *file;
-
-				sprintf(filename, "scummvm%05d.bmp", n);
-				file = SDL_RWFromFile(filename, "r");
-				if (!file)
-					break;
-				SDL_RWclose(file);
-			}
-			if (saveScreenshot(filename))
-				printf("Saved '%s'\n", filename);
-			else
-				printf("Could not save screenshot!\n");
-			return true;
-		}
-
-		// Ctrl-Alt-<key> will change the GFX mode
-		if (event.kbd.hasFlags(Common::KBD_CTRL|Common::KBD_ALT)) {
-			if (handleScalerHotkeys(event.kbd.keycode))
+		if (event.kbd.hasFlags(Common::KBD_ALT)) {
+			// Alt-Return and Alt-Enter toggle full screen mode
+			if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+				event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER) {
+				toggleFullScreen(0);
 				return true;
+			}
+
+			// Alt-S create a screenshot
+			if (event.kbd.keycode == 's') {
+				char filename[20];
+
+				for (int n = 0;; n++) {
+					SDL_RWops *file;
+
+					sprintf(filename, "scummvm%05d.bmp", n);
+					file = SDL_RWFromFile(filename, "r");
+					if (!file)
+						break;
+					SDL_RWclose(file);
+				}
+				if (saveScreenshot(filename))
+					printf("Saved '%s'\n", filename);
+				else
+					printf("Could not save screenshot!\n");
+				return true;
+			}
 		}
+
+		if (event.kbd.hasFlags(Common::KBD_CTRL|Common::KBD_ALT)) {
+			// Ctrl-Alt-Return and Ctrl-Alt-Enter switch between full screen modes
+			if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+				event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER) {
+				toggleFullScreen(1);
+				return true;
+			}
+
+			// Ctrl-Alt-a switch between display modes
+			if (event.kbd.keycode == 'a') {
+				beginGFXTransaction();
+					switchDisplayMode(-1);
+				endGFXTransaction();
+#ifdef USE_OSD
+				displayModeChangedMsg();
+#endif
+				internUpdateScreen();
+				return true;
+			}
+
+			// Ctrl-Alt-f toggles antialiasing
+			if (event.kbd.keycode == 'f') {
+				beginGFXTransaction();
+					_videoMode.antialiasing = !_videoMode.antialiasing;
+					_transactionDetails.filterChanged = true;
+				endGFXTransaction();
+#ifdef USE_OSD
+				if (_videoMode.antialiasing)
+					displayMessageOnOSD("Active filter mode: Linear");
+				else
+					displayMessageOnOSD("Active filter mode: Nearest");
+#endif
+				return true;
+			}
+
+			SDLKey sdlKey = (SDLKey)event.kbd.keycode;
+
+			// Ctrl+Alt+Plus/Minus Increase/decrease the scale factor
+			if ((sdlKey == SDLK_EQUALS || sdlKey == SDLK_PLUS || sdlKey == SDLK_MINUS ||
+				sdlKey == SDLK_KP_PLUS || sdlKey == SDLK_KP_MINUS)) {
+				int factor = _videoMode.scaleFactor;
+				factor += (sdlKey == SDLK_MINUS || sdlKey == SDLK_KP_MINUS) ? -1 : +1;
+				if (0 < factor && factor < 4) {
+					// Check if the desktop resolution has been detected
+					if (_desktopWidth > 0 && _desktopHeight > 0)
+						// If the new scale factor is too big, do not scale
+						if (_videoMode.screenWidth * factor > _desktopWidth || 
+							_videoMode.screenHeight * factor > _desktopHeight)
+							return false;
+
+					beginGFXTransaction();
+						setScale(factor);
+					endGFXTransaction();
+#ifdef USE_OSD
+					displayScaleChangedMsg();
+#endif
+					return true;
+				}
+			}
+
+			const bool isNormalNumber = (SDLK_1 <= sdlKey && sdlKey <= SDLK_4);
+			const bool isKeypadNumber = (SDLK_KP1 <= sdlKey && sdlKey <= SDLK_KP4);
+
+			// Ctrl-Alt-<number key> will change the GFX mode
+			if (isNormalNumber || isKeypadNumber) {
+				if (sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1) <= 4) {
+					int lastMode = _videoMode.mode;
+					beginGFXTransaction();
+						_videoMode.mode = sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1);
+						_transactionDetails.needRefresh = true;
+					endGFXTransaction();
+#ifdef USE_OSD
+					if (lastMode != _videoMode.mode)
+						displayModeChangedMsg();
+#endif
+					internUpdateScreen();
+				}
+			}
+		}
+
+		if (event.kbd.hasFlags(Common::KBD_CTRL|Common::KBD_SHIFT)) {
+			// Ctrl-Shift-Return and Ctrl-Shift-Enter switch backwards between full screen modes
+			if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+				event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER) {
+				toggleFullScreen(-1);
+				return true;
+			}
+
+			// Ctrl-Shift-a switch backwards between display modes
+			if (event.kbd.keycode == 'a') {
+				beginGFXTransaction();
+					switchDisplayMode(-2);
+				endGFXTransaction();
+#ifdef USE_OSD
+				displayModeChangedMsg();
+#endif
+				internUpdateScreen();
+				return true;
+			}
+		}
+		break;
 	case Common::EVENT_KEYUP:
-		return isScalerHotkey(event);
-	/*case OSystem_SDL::kSdlEventExpose:
-		break;*/
-	// HACK: Handle special SDL event
+		return isHotkey(event);
+	// HACK: Handle special SDL event 
+	// The new screen size is saved on the mouse event as part of HACK,
+	// there is no common resize event.
 	case OSystem_SDL::kSdlEventResize:
 		// Do not resize if ignoring resize events.
-		if (!_ignoreResizeFrames) {
+		if (!_ignoreResizeFrames && !_videoMode.fullscreen) {
+			bool scaleChanged = false;
 			beginGFXTransaction();
-				// Set the new screen size. It is saved on the mouse event as part of HACK,
-				// there is no common resize event
 				_videoMode.hardwareWidth = event.mouse.x;
 				_videoMode.hardwareHeight = event.mouse.y;
-				_screenResized = true;
+
+				if (_videoMode.mode != OpenGL::GFX_ORIGINAL) {
+					_screenResized = true;
+					calculateDisplaySize(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
+				}
+
+				int scale = MIN(_videoMode.hardwareWidth / _videoMode.screenWidth,
+							_videoMode.hardwareHeight / _videoMode.screenHeight);
+				if (_videoMode.scaleFactor != scale) {
+					scaleChanged = true;
+					_videoMode.scaleFactor = MAX(MIN(scale, 3), 1);
+				}
+
+				if (_videoMode.mode == OpenGL::GFX_ORIGINAL) {
+					calculateDisplaySize(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
+				}
+
 				_transactionDetails.sizeChanged = true;
 			endGFXTransaction();
+#ifdef USE_OSD
+			if (scaleChanged)
+				displayScaleChangedMsg();
+#endif
 		}
 		return true;
 
