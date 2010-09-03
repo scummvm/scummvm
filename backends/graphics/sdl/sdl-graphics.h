@@ -78,6 +78,8 @@ public:
 	SdlGraphicsManager();
 	virtual ~SdlGraphicsManager();
 
+	virtual void initEventObserver();
+
 	virtual bool hasFeature(OSystem::Feature f);
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
 	virtual bool getFeatureState(OSystem::Feature f);

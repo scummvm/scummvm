@@ -184,9 +184,6 @@ SdlGraphicsManager::SdlGraphicsManager()
 #else
 	_videoMode.fullscreen = true;
 #endif
-
-	// Register the graphics manager as a event observer
-	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 2, false);
 }
 
 SdlGraphicsManager::~SdlGraphicsManager() {
@@ -200,6 +197,11 @@ SdlGraphicsManager::~SdlGraphicsManager() {
 	free(_currentPalette);
 	free(_cursorPalette);
 	free(_mouseData);
+}
+
+void SdlGraphicsManager::initEventObserver() {
+	// Register the graphics manager as a event observer
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
 bool SdlGraphicsManager::hasFeature(OSystem::Feature f) {

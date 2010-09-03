@@ -81,20 +81,7 @@ void OSystem_SDL::initBackend() {
 	// Check if backend has not been initialized
 	assert(!_inited);
 
-	// Creates the backend managers, if they don't exist yet (we check
-	// for this to allow subclasses to provide their own).
-	if (_eventManager == 0)
-		_eventManager = new SdlEventManager(this);
-
-	if (_savefileManager == 0)
-		_savefileManager = new DefaultSaveFileManager();
-
-	if (_mixerManager == 0) {
-		_mixerManager = new SdlMixerManager();
-
-		// Setup and start mixer
-		_mixerManager->init();
-	}
+	int graphicsManagerType = 0;
 
 	if (_graphicsManager == 0) {
 #ifdef USE_OPENGL
@@ -110,12 +97,42 @@ void OSystem_SDL::initBackend() {
 			}
 
 			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
-			if (use_opengl)
+			if (use_opengl) {
 				_graphicsManager = new OpenGLSdlGraphicsManager();
+				graphicsManagerType = 1;
+			}
 		}
 #endif
-		if (_graphicsManager == 0)
+		if (_graphicsManager == 0) {
 			_graphicsManager = new SdlGraphicsManager();
+			graphicsManagerType = 0;
+		}
+	}
+
+	// Creates the backend managers, if they don't exist yet (we check
+	// for this to allow subclasses to provide their own).
+	if (_eventManager == 0)
+		_eventManager = new SdlEventManager(this);
+
+	// We have to initialize the graphics manager before the event manager
+	// so the virtual keyboard can be initialized, but we have to add the
+	// graphics manager as an event observer after initializing the event
+	// manager.
+	if (graphicsManagerType == 0)
+		((SdlGraphicsManager *)_graphicsManager)->initEventObserver();
+#ifdef USE_OPENGL
+	else if (graphicsManagerType == 1)
+		((OpenGLSdlGraphicsManager *)_graphicsManager)->initEventObserver();
+#endif
+
+	if (_savefileManager == 0)
+		_savefileManager = new DefaultSaveFileManager();
+
+	if (_mixerManager == 0) {
+		_mixerManager = new SdlMixerManager();
+
+		// Setup and start mixer
+		_mixerManager->init();
 	}
 
 	if (_audiocdManager == 0)

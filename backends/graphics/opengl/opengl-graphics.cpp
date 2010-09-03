@@ -62,9 +62,6 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 
 	_gamePalette = (byte *)calloc(sizeof(byte) * 4, 256);
 	_cursorPalette = (byte *)calloc(sizeof(byte) * 4, 256);
-	
-	// Register the graphics manager as a event observer
-	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 2, false);
 }
 
 OpenGLGraphicsManager::~OpenGLGraphicsManager() {
@@ -81,6 +78,11 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 		delete _overlayTexture;
 	if (_cursorTexture != NULL)
 		delete _cursorTexture;
+}
+
+void OpenGLGraphicsManager::initEventObserver() {
+	// Register the graphics manager as a event observer
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
 //
