@@ -293,19 +293,26 @@ void VectorImage::render(float scaleFactorX, float scaleFactorY, uint &width, ui
 
 			ArtSVP *svp1 = art_svp_from_vpath(vec);
 
-			int penWidth = _elements[j].getLineStyleWidth(_elements[j].getPathInfo(i).getLineStyle());
-			ArtSVP *svp2 = art_svp_vpath_stroke(vec, ART_PATH_STROKE_JOIN_ROUND, ART_PATH_STROKE_CAP_ROUND, penWidth, 1.0, 0.5);
+			
+			if (_elements[j].getPathInfo(i).getFillStyle0()) {
+				int color1 = _elements[j].getFillStyleColor(_elements[j].getPathInfo(i).getFillStyle0() - 1);
+				art_rgb_svp_alpha1(svp1, 0, 0, width, height, color1, _pixelData, width * 4, NULL);
+				art_free(svp1);
+			}
+
+			if (_elements[j].getPathInfo(i).getLineStyle()) {
+				int penWidth = _elements[j].getLineStyleWidth(_elements[j].getPathInfo(i).getLineStyle() - 1);
+				ArtSVP *svp2 = art_svp_vpath_stroke(vec, ART_PATH_STROKE_JOIN_ROUND, ART_PATH_STROKE_CAP_ROUND, penWidth, 1.0, 0.5);
+				int color2 = _elements[j].getLineStyleColor(_elements[j].getPathInfo(i).getLineStyle() - 1);
+
+				art_rgb_svp_alpha1(svp2, 0, 0, width, height, color2, _pixelData, width * 4, NULL);
+
+				art_free(svp2);
+			}
+
 			if (needfree)
 				art_free(vec);
 
-			int color1 = _elements[j].getFillStyleColor(_elements[j].getPathInfo(i).getFillStyle0());
-			int color2 = _elements[j].getLineStyleColor(_elements[j].getPathInfo(i).getLineStyle());
-
-			art_rgb_svp_alpha1(svp1, 0, 0, width, height, color1, _pixelData, width * 4, NULL);
-			art_rgb_svp_alpha1(svp2, 0, 0, width, height, color2, _pixelData, width * 4, NULL);
-
-			art_free(svp2);
-			art_free(svp1);
 		}
 }
 
