@@ -329,11 +329,13 @@ uint16 Script::validateExportFunc(int pubfunct) {
 	uint16 offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct);
 	VERIFY(offset < _bufSize, "invalid export function pointer");
 
-	if (offset == 0 && getSciVersion() <= SCI_VERSION_1_LATE) {
-		// Check if the game has a second export table (e.g. script 912 in Camelot).
-		// This only makes sense for SCI0-SCI1, as the export table in SCI1.1+ games
-		// is located at a specific address, thus findBlock() won't work.
-		// Fixes bug #3039785
+	// Check if the offset found points to a second export table (e.g. script 912
+	// in Camelot and script 306 in KQ4). Such offsets are usually small (i.e. < 10),
+	// thus easily distinguished from actual code offsets.
+	// This only makes sense for SCI0-SCI1, as the export table in SCI1.1+ games
+	// is located at a specific address, thus findBlock() won't work.
+	// Fixes bugs #3039785 and #3037595.
+	if (offset < 10 && getSciVersion() <= SCI_VERSION_1_LATE) {
 		const uint16 *secondExportTable = (const uint16 *)findBlock(SCI_OBJ_EXPORTS, 0);
 
 		if (secondExportTable) {
