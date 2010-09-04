@@ -135,7 +135,6 @@ void Utils::Error(int error_type, const char *format, ...) {
 
 	switch (error_type) {
 	case FILE_ERR:
-//	case FONT_ERR:
 		strcpy(buffer, HugoEngine::get()._textUtil[kErr1]);
 		break;
 	case WRITE_ERR:
@@ -151,12 +150,6 @@ void Utils::Error(int error_type, const char *format, ...) {
 	case SOUND_ERR:
 		strcpy(buffer, HugoEngine::get()._textUtil[kErr5]);
 		break;
-//	case TIMER_ERR:
-//		strcpy(buffer, HugoEngine::get()._textUtil[kObsoleteErr1]);
-//		break;
-//	case VBX_ERR:
-//		strcpy(buffer, HugoEngine::get()._textUtil[kObsoleteErr2]);
-//		break;
 	default:
 		strcpy(buffer, HugoEngine::get()._textUtil[kErr6]);
 		break;

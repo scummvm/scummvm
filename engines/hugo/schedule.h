@@ -79,6 +79,24 @@ private:
 	event_t *getQueue();
 	void     delQueue(event_t *curEvent);
 	event_t *doAction(event_t *curEvent);
+	
+	virtual const char* getCypher() = 0;
+};
+
+class Scheduler_v1 : public Scheduler {
+public:
+	Scheduler_v1(HugoEngine &vm);
+	~Scheduler_v1();
+
+	const char *getCypher();
+};
+
+class Scheduler_v2 : public Scheduler {
+public:
+	Scheduler_v2(HugoEngine &vm);
+	~Scheduler_v2();
+
+	const char *getCypher();
 };
 
 } // End of namespace Hugo

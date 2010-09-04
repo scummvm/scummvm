@@ -406,7 +406,7 @@ void Screen::shadowStr(int16 sx, int16 sy, char *s, byte color) {
 // Load font file, construct font ptrs and reverse data bytes
 void Screen::loadFont(int16 fontId) {
 	byte  height, width;
-	static bool fontLoadedFl[NUM_FONTS] = {0, 0, 0};
+	static bool fontLoadedFl[NUM_FONTS] = {false, false, false};
 
 	debugC(2, kDebugDisplay, "loadFont(%d)", fontId);
 

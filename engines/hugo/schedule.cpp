@@ -176,7 +176,7 @@ void Scheduler::decodeString(char *line) {
 // Decode a string
 	debugC(1, kDebugSchedule, "decodeString(%s)", line);
 
-	static char cypher[] = "Copyright 1992, Gray Design Associates";
+	const char *cypher = getCypher();
 
 	for (uint16 i = 0; i < strlen(line); i++)
 		line[i] -= cypher[i % strlen(cypher)];
@@ -675,4 +675,23 @@ void Scheduler::swapImages(int objNumb1, int objNumb2) {
 	_vm._objects[objNumb1].y += _vm._objects[objNumb2].currImagePtr->y2 - _vm._objects[objNumb1].currImagePtr->y2;
 }
 
+Scheduler_v1::Scheduler_v1(HugoEngine &vm) : Scheduler(vm) {
+}
+
+Scheduler_v1::~Scheduler_v1() {
+}
+
+const char *Scheduler_v1::getCypher() {
+	return "Copyright 1991, Gray Design Associates"; 
+}
+
+Scheduler_v2::Scheduler_v2(HugoEngine &vm) : Scheduler(vm) {
+}
+
+Scheduler_v2::~Scheduler_v2() {
+}
+
+const char *Scheduler_v2::getCypher() {
+	return "Copyright 1992, Gray Design Associates"; 
+}
 } // End of namespace Hugo

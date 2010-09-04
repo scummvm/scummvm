@@ -26,7 +26,6 @@
 #include "engines/advancedDetector.h"
 
 #include "hugo/hugo.h"
-#include "hugo/intro.h"
 
 namespace Hugo {
 
@@ -44,7 +43,6 @@ static const PlainGameDescriptor hugoGames[] = {
 	{"hugo1", "Hugo 1: Hugo's House of Horrors"},
 	{"hugo2", "Hugo 2: Hugo's Mystery Adventure"},
 	{"hugo3", "Hugo 3: Hugo's Amazon Adventure"},
-
 	{0, 0}
 };
 
@@ -172,7 +170,6 @@ bool HugoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	if (gd) {
 		*engine = new HugoEngine(syst, (const HugoGameDescription *)gd);
 		((HugoEngine *)*engine)->initGame((const HugoGameDescription *)gd);
-		((HugoEngine *)*engine)->initGamePart((const HugoGameDescription *)gd);
 	}
 	return gd != 0;
 }
@@ -192,13 +189,11 @@ REGISTER_PLUGIN_STATIC(HUGO, PLUGIN_TYPE_ENGINE, Hugo::HugoMetaEngine);
 namespace Hugo {
 
 void HugoEngine::initGame(const HugoGameDescription *gd) {
+	char tmpStr[8];
+
 	_gameType = gd->gameType;
 	_platform = gd->desc.platform;
 	_packedFl = (getFeatures() & GF_PACKED);
-}
-
-void HugoEngine::initGamePart(const HugoGameDescription *gd) {
-	char tmpStr[8];
 	_gameVariant = _gameType - 1 + ((_platform == Common::kPlatformWindows) ? 0 : 3);
 
 //Generate filenames
@@ -209,27 +204,6 @@ void HugoEngine::initGamePart(const HugoGameDescription *gd) {
 
 	sprintf(_initFilename, "%s-00.SAV", tmpStr);
 	sprintf(_saveFilename, "%s-%s.SAV", tmpStr, "%d");
-
-	switch (_gameVariant) {
-	case 0:
-		_introHandler = new intro_1w(*this);
-		break;
-	case 1:
-		_introHandler = new intro_2w(*this);
-		break;
-	case 2:
-		_introHandler = new intro_3w(*this);
-		break;
-	case 3:
-		_introHandler = new intro_1d(*this);
-		break;
-	case 4:
-		_introHandler = new intro_2d(*this);
-		break;
-	case 5:
-		_introHandler = new intro_3d(*this);
-		break;
-	}
 }
 
 } // End of namespace Hugo
