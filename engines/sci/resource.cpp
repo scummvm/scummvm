@@ -2155,7 +2155,7 @@ bool ResourceManager::detectEarlySound() {
 		if (res->size >= 0x22) {
 			if (READ_LE_UINT16(res->data + 0x1f) == 0) // channel 15 voice count + play mask is 0 in SCI0LATE
 				if (res->data[0x21] == 0) // last byte right before actual data is 0 as well
-					return false; // these 2 bytes are 
+					return false;
 		}
 	}
 	return true;
