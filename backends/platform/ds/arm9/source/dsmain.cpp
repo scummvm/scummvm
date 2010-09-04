@@ -3232,6 +3232,10 @@ int main(void) {
 
 
 int main() {
+#ifndef DISABLE_TEXT_CONSOLE
+	consoleDebugInit(DebugDevice_NOCASH);
+	nocashMessage("startup\n");
+#endif
 	DS::main();
 }
 

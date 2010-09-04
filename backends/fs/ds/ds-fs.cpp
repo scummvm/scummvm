@@ -631,7 +631,10 @@ size_t std_fwrite(const void *ptr, size_t size, size_t numItems, FILE *handle) {
 		return 0;
 
 	if ((handle == stderr) || (handle == stdout)) {
+#ifndef DISABLE_TEXT_CONSOLE
+		nocashMessage((char *) ptr);
 //		consolePrintf((char *) ptr);
+#endif
 		return size;
 	}
 
