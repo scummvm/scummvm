@@ -345,6 +345,8 @@ public:
 	bool detectFontExtended();
 	// Detects, if SCI1.1 game uses palette merging
 	bool detectForPaletteMergingForSci11();
+	// Detects, if SCI0EARLY game also has SCI0EARLY sound resources
+	bool detectEarlySound();
 
 	/**
 	 * Finds the internal Sierra ID of the current game from script 0.

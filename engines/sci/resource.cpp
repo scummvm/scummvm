@@ -2148,6 +2148,19 @@ bool ResourceManager::detectForPaletteMergingForSci11() {
 	return false;
 }
 
+// is called on SCI0EARLY games to make sure that sound resources are in fact also SCI0EARLY
+bool ResourceManager::detectEarlySound() {
+	Resource *res = findResource(ResourceId(kResourceTypeSound, 1), 0);
+	if (res) {
+		if (res->size >= 0x22) {
+			if (READ_LE_UINT16(res->data + 0x1f) == 0) // channel 15 voice count + play mask is 0 in SCI0LATE
+				if (res->data[0x21] == 0) // last byte right before actual data is 0 as well
+					return false; // these 2 bytes are 
+		}
+	}
+	return true;
+}
+
 // Functions below are based on PD code by Brian Provinciano (SCI Studio)
 bool ResourceManager::hasOldScriptHeader() {
 	Resource *res = findResource(ResourceId(kResourceTypeScript, 0), 0);

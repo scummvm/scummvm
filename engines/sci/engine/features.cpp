@@ -138,12 +138,9 @@ bool GameFeatures::autoDetectSoundType() {
 SciVersion GameFeatures::detectDoSoundType() {
 	if (_doSoundType == SCI_VERSION_NONE) {
 		if (getSciVersion() == SCI_VERSION_0_EARLY) {
-			// This game is using early SCI0 sound code (different headers than
-			// SCI0 late)
-			if (g_sci->getGameId() == GID_LSL2)
-				_doSoundType = SCI_VERSION_0_LATE;
-			else
-				_doSoundType = SCI_VERSION_0_EARLY;
+			// Almost all of the SCI0EARLY games use different sound resources than
+			//  SCI0LATE. Although the last SCI0EARLY game (lsl2) uses SCI0LATE resources
+			_doSoundType = g_sci->getResMan()->detectEarlySound() ? SCI_VERSION_0_EARLY : SCI_VERSION_0_LATE;
 #ifdef ENABLE_SCI32
 		} else if (getSciVersion() >= SCI_VERSION_2_1) {
 			_doSoundType = SCI_VERSION_2_1;
