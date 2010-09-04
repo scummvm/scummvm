@@ -835,8 +835,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-	// Hoyle 3 - English DOS Floppy 1.0 (supplied by abevi in bug report #2612718)
+
+	// Hoyle 3 - English DOS Floppy (supplied by eddydrama in bug report #3038837)
 	{"hoyle3", "", {
+		{"resource.map", 0, "31c9fc0977ac6e5b566c37096803d0cb", 2469},
+		{"resource.000", 0, "6ef28cac094dcd97fdb461662ead6f92", 12070},
+		{"resource.001", 0, "ca6a9750a2c138d8bcbba369126040e9", 348646},
+		{"resource.002", 0, "0a98a268ee99b92c233a0d7187c1f0fa", 345811},
+		{"resource.003", 0, "97cfd72633f8f9b2a0b1d4116cf3ee81", 346116},
+		{"resource.004", 0, "2884fb91b225fabd9ca87ea231293b48", 351218},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// Hoyle 3 EGA - English DOS Floppy 1.0 (supplied by abevi in bug report #2612718)
+	{"hoyle3", "EGA", {
 		{"resource.map", 0, "1728af1f6a85938c3522e64449e76ca1", 2205},
 		{"resource.000", 0, "6ef28cac094dcd97fdb461662ead6f92", 319905},
 		{"resource.001", 0, "0a98a268ee99b92c233a0d7187c1f0fa", 526438},
