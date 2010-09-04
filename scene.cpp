@@ -65,9 +65,9 @@ Scene::~Scene() {
 	}
 }
 
-void Scene::render() {
+void Scene::render(uint32 delta) {
 	// setup cam
-
+		
 	// Draw bg
 
 	// Draw other things
@@ -76,6 +76,7 @@ void Scene::render() {
 	Common::Array<SceneElement *>::iterator element = _elements.begin();
 	while (element != _elements.end()) {
 		// Draw the current element
+		(*element)->update(delta);
 		(*element)->render(_gfx);
 
 		// Go for the next one

@@ -94,11 +94,16 @@ void StarkEngine::mainLoop() {
 }
 
 void StarkEngine::updateDisplayScene() {
+	// Get frame delay
+	static uint32 lastFrame = g_system->getMillis();
+	uint32 delta = g_system->getMillis() - lastFrame;
+	lastFrame += delta;
+
 	// Clear the screen
 	_gfx->clearScreen();
 
 	// Render the current scene
-	_scene->render();
+	_scene->render(delta);
 
 	// Swap buffers
 	_gfx->flipBuffer();

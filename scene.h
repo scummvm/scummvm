@@ -35,7 +35,7 @@ public:
 	Scene(GfxDriver *gfx);
 	~Scene();
 
-	void render();
+	void render(uint32 delta);
 
 private:
 	GfxDriver *_gfx;

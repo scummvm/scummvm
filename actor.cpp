@@ -182,6 +182,10 @@ bool SceneElementActor::setAnim(const Common::Archive *archive, const Common::St
 	return _actor->setAnim(stream);
 }
 
+void SceneElementActor::update(uint32 delta) {
+	_actor->getSkeleton()->animate(delta);
+}
+
 void SceneElementActor::render(Stark::GfxDriver *gfx) {
 	// Prepare vertex list and push to gfx driver
 	// HACK: Purely because I just want to see something for now
@@ -192,8 +196,8 @@ ctr += .1;
 	glLoadIdentity();
 	glScalef(0.005f, .005f, -.005f);
 	glTranslatef(0, -20.f, 100.f);
-	glRotatef(180, 0, 1, 0);
-	glRotatef((ctr * 10.3f), -4.0f, 10.0f, 1.0f);
+	glRotatef(20, .3f, 1.f, 0.f);
+	//glRotatef((ctr * 10.3f), -4.0f, 10.0f, 1.0f);
 
 	glBegin(GL_TRIANGLES);
 	

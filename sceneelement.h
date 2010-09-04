@@ -33,6 +33,7 @@ namespace Stark {
 class SceneElement {
 public:
 	virtual ~SceneElement() {}
+	virtual void update(uint32 delta) {}
 	virtual void render(GfxDriver *gfx) = 0;
 };
 

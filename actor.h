@@ -114,7 +114,7 @@ public:
 
 	const Common::Array<MeshNode *> &getMeshes() const { return _meshes; }
 	const Common::Array<MaterialNode *> &getMaterials() const { return _materials; }
-	const Skeleton *getSkeleton() const { return _skeleton; }
+	Skeleton *getSkeleton() const { return _skeleton; }
 
 	bool setAnim(Common::ReadStream *stream);
 
@@ -137,6 +137,7 @@ public:
 	static SceneElementActor *load(const Common::Archive *archive, const Common::String &name);
 	bool setAnim(const Common::Archive *archive, const Common::String &name);
 
+	void update(uint32 delta);
 	void render(GfxDriver *gfx);
 
 private:
