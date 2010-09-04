@@ -385,7 +385,7 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 	
 	// NOTE: The hotspot scripts are cleared by the RivenScriptManager automatically.
 
-	Common::SeekableReadStream* inStream = getRawData(ID_HSPT, id);
+	Common::SeekableReadStream *inStream = getRawData(ID_HSPT, id);
 
 	_hotspotCount = inStream->readUint16BE();
 	_hotspots = new RivenHotspot[_hotspotCount];
@@ -400,6 +400,15 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 		int16 top = inStream->readSint16BE();
 		int16 right = inStream->readSint16BE();
 		int16 bottom = inStream->readSint16BE();
+
+		// Riven has some invalid rects, disable them here
+		// Known weird hotspots:
+		// - tspit 371 (DVD: 377), hotspot 4
+		if (left >= right || top >= bottom) {
+			warning("%s %d hotspot %d is invalid: (%d, %d, %d, %d)", getStackName(_curStack).c_str(), _curCard, i, left, top, right, bottom);
+			left = top = right = bottom = 0; 	 
+			_hotspots[i].enabled = 0; 	 
+		}
 
 		_hotspots[i].rect = Common::Rect(left, top, right, bottom);
 
