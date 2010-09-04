@@ -401,6 +401,120 @@ int getAngle(int xrel, int yrel) {
 reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	reg_t avoider = argv[0];
+	int16 timesStep = argc > 1 ? argv[1].toUint16() : 1;
+
+	if (!s->_segMan->isHeapObject(avoider)) {
+		error("DoAvoider() where avoider %04x:%04x is not an object", PRINT_REG(avoider));
+		return SIGNAL_REG;
+	}
+
+	reg_t client = readSelector(segMan, avoider, SELECTOR(client));
+	reg_t mover = readSelector(segMan, client, SELECTOR(mover));
+	if (mover.isNull())
+		return SIGNAL_REG;
+
+	// call mover::doit
+	invokeSelector(s, mover, SELECTOR(doit), argc, argv);
+
+	// Read mover again
+	mover = readSelector(segMan, client, SELECTOR(mover));
+	if (mover.isNull())
+		return SIGNAL_REG;
+
+	int16 clientX = readSelectorValue(segMan, client, SELECTOR(x));
+	int16 clientY = readSelectorValue(segMan, client, SELECTOR(y));
+	int16 moverX = readSelectorValue(segMan, mover, SELECTOR(x));
+	int16 moverY = readSelectorValue(segMan, mover, SELECTOR(y));
+	int16 avoiderHeading = readSelectorValue(segMan, avoider, SELECTOR(heading));
+
+	// call client::isBlocked
+	invokeSelector(s, client, SELECTOR(isBlocked), argc, argv);
+
+	if (s->r_acc.isNull()) {
+		// not blocked
+		if (avoiderHeading == -1)
+			return SIGNAL_REG;
+		avoiderHeading = -1;
+
+		// TODO: reverse this
+		uint16 angle = getAngle(moverX - clientX, moverY - clientY);
+
+		reg_t clientLooper = readSelector(segMan, client, SELECTOR(looper));
+		if (clientLooper.isNull()) {
+			kDirLoopWorker(client, angle, s, argc, argv);
+		} else {
+			// call looper::doit
+			reg_t params[2] = { make_reg(0, angle), client };
+			invokeSelector(s, clientLooper, SELECTOR(doit), argc, argv, 2, params);
+		}
+		s->r_acc = SIGNAL_REG;
+		
+	} else {
+		// is blocked
+		if (avoiderHeading == -1)
+			avoiderHeading = g_sci->getRNG().getRandomBit() ? 45 : -45;
+		int16 clientHeading = readSelectorValue(segMan, client, SELECTOR(heading));
+		clientHeading = (clientHeading / 45) * 45;
+
+		int16 clientXstep = readSelectorValue(segMan, client, SELECTOR(xStep)) * timesStep;
+		int16 clientYstep = readSelectorValue(segMan, client, SELECTOR(yStep)) * timesStep;
+		int16 newHeading = clientHeading;
+
+		while (1) {
+			int16 newX = clientX;
+			int16 newY = clientY;
+			switch (newHeading) {
+			case 45:
+			case 90:
+			case 135:
+				newX += clientXstep;
+				break;
+			case 225:
+			case 270:
+			case 315:
+				newX -= clientXstep;
+			}
+
+			switch (newHeading) {
+			case 0:
+			case 45:
+			case 315:
+				newY -= clientYstep;
+				break;
+			case 135:
+			case 180:
+			case 225:
+				newY += clientYstep;
+			}
+			writeSelectorValue(segMan, client, SELECTOR(x), newX);
+			writeSelectorValue(segMan, client, SELECTOR(y), newY);
+
+			// call client::canBeHere
+			invokeSelector(s, client, SELECTOR(canBeHere), argc, argv);
+
+			if (!s->r_acc.isNull()) {
+				s->r_acc = make_reg(0, newHeading);
+				break; // break out
+			}
+
+			clientHeading += avoiderHeading;
+			if (newHeading >= 360)
+				newHeading -= 360;
+			if (newHeading < 0)
+				newHeading += 360;
+			if (newHeading == clientHeading) {
+				// tried everything
+				writeSelectorValue(segMan, client, SELECTOR(x), clientX);
+				writeSelectorValue(segMan, client, SELECTOR(y), clientY);
+				s->r_acc = SIGNAL_REG;
+				break; // break out
+			}
+		}
+	}
+	writeSelectorValue(segMan, avoider, SELECTOR(heading), avoiderHeading);
+	return s->r_acc;
+
+#if 0
 	reg_t client, looper, mover;
 	int angle;
 	int dx, dy;
@@ -508,6 +622,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	return s->r_acc;
+#endif
 }
 
 } // End of namespace Sci

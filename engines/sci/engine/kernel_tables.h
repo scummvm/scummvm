@@ -329,7 +329,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "i(i*)",                 NULL,            kDisposeScript_workarounds },
     { MAP_CALL(DisposeWindow),     SIG_EVERYWHERE,           "i(i)",                  NULL,            NULL },
     { MAP_CALL(DoAudio),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
-    { MAP_CALL(DoAvoider),         SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(DoAvoider),         SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
     { MAP_CALL(DoBresen),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i(.*)",                 kDoSound_subops, NULL },
     { MAP_CALL(DoSync),            SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
