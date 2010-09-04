@@ -140,7 +140,10 @@ SciVersion GameFeatures::detectDoSoundType() {
 		if (getSciVersion() == SCI_VERSION_0_EARLY) {
 			// This game is using early SCI0 sound code (different headers than
 			// SCI0 late)
-			_doSoundType = SCI_VERSION_0_EARLY;
+			if (g_sci->getGameId() == GID_LSL2)
+				_doSoundType = SCI_VERSION_0_LATE;
+			else
+				_doSoundType = SCI_VERSION_0_EARLY;
 #ifdef ENABLE_SCI32
 		} else if (getSciVersion() >= SCI_VERSION_2_1) {
 			_doSoundType = SCI_VERSION_2_1;
