@@ -182,7 +182,7 @@ public:
 	}
 	virtual bool fill(const Common::Rect *pFillRect = 0, uint color = BS_RGB(0, 0, 0));
 
-	void render(float scaleFactorX, float scaleFactorY, uint &width, uint &height);
+	void render(int width, int height);
 
 	virtual uint getPixel(int x, int y);
 	virtual bool isBlitSource() const {

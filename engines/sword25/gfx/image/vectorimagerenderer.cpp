@@ -40,6 +40,7 @@
 #include <libart_lgpl/art_rgb.h>
 
 #include "sword25/gfx/image/vectorimage.h"
+#include "graphics/colormasks.h"
 
 namespace Sword25 {
 
@@ -50,9 +51,8 @@ art_rgb_fill_run1(art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int n) {
 	if (r == g && g == b && r == 255) {
 		memset(buf, g, n + n + n + n);
 	} else {
-		art_u32 *alt = (art_u32 *)buf;
-		//art_u32 color = (r << 24) | (g << 16) | (b << 8) | 0xff;
-		art_u32 color = (r << 0) | (g << 8) | (b << 16) | (0xff << 24);
+		uint32 *alt = (uint32 *)buf;
+		uint32 color = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(0xff, r, g, b);
 		for (i = 0; i < n; i++)
 			*alt++ = color;
 	}
@@ -215,18 +215,15 @@ art_rgb_svp_alpha_opaque_callback1(void *callback_data, int y,
 void
 art_rgb_svp_alpha1(const ArtSVP *svp,
                    int x0, int y0, int x1, int y1,
-                   art_u32 rgba,
+                   uint32 color,
                    art_u8 *buf, int rowstride,
                    ArtAlphaGamma *alphagamma) {
 	ArtRgbSVPAlphaData data;
-	int r, g, b, alpha;
+	byte r, g, b, alpha;
 	int i;
 	int a, da;
 
-	r = rgba >> 24;
-	g = (rgba >> 16) & 0xff;
-	b = (rgba >> 8) & 0xff;
-	alpha = rgba & 0xff;
+	Graphics::colorToARGB<Graphics::ColorMasks<8888> >(color, alpha, r, g, b);
 
 	data.r = r;
 	data.g = g;
@@ -251,9 +248,9 @@ art_rgb_svp_alpha1(const ArtSVP *svp,
 		art_svp_render_aa(svp, x0, y0, x1, y1, art_rgb_svp_alpha_callback1, &data);
 }
 
-void VectorImage::render(float scaleFactorX, float scaleFactorY, uint &width, uint &height) {
-	width = static_cast<uint>(getWidth() * scaleFactorX);
-	height = static_cast<uint>(getHeight() * scaleFactorY);
+void VectorImage::render(int width, int height) {
+	float scaleFactorX = (width == - 1) ? 1 : static_cast<float>(width) / static_cast<float>(getWidth());
+	float scaleFactorY = (height == - 1) ? 1 : static_cast<float>(height) / static_cast<float>(getHeight());
 
 	if (_pixelData)
 		free(_pixelData);

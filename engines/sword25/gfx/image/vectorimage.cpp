@@ -186,18 +186,6 @@ Common::Rect flashRectToBSRect(VectorImage::SWFBitStream &bs) {
 	return Common::Rect(xMin, yMin, xMax + 1, yMax + 1);
 }
 
-
-// -----------------------------------------------------------------------------
-// Konvertiert SWF-Farben in AntiGrain Farben
-// -----------------------------------------------------------------------------
-
-uint32 flashColorToAGGRGBA8(uint flashColor) {
-	uint32 resultColor = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(flashColor >> 24, (flashColor >> 16) & 0xff, (flashColor >> 8) & 0xff, flashColor & 0xff);
-
-	return resultColor;
-}
-
-
 // -----------------------------------------------------------------------------
 // Berechnet die Bounding-Box eines BS_VectorImageElement
 // -----------------------------------------------------------------------------
@@ -343,8 +331,6 @@ ArtBpath *VectorImage::storeBez(ArtBpath *bez, int lineStyle, int fillStyle0, in
 	return bez;
 }
 
-#define SWF_SCALE_FACTOR		(1/20.0)
-
 bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 	/*uint32 shapeID = */bs.getUInt16();
 
@@ -393,8 +379,8 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 			} else {
 				if (stateMoveTo) {
 					uint32 moveToBits = bs.getBits(5);
-					curX = bs.getSignedBits(moveToBits) * SWF_SCALE_FACTOR;
-					curY = bs.getSignedBits(moveToBits) * SWF_SCALE_FACTOR;
+					curX = bs.getSignedBits(moveToBits);
+					curY = bs.getSignedBits(moveToBits);
 				}
 
 				if (stateFillStyle0) {
@@ -448,10 +434,10 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 
 			// Curved edge
 			if (edgeFlag == 0) {
-				double controlDeltaX = bs.getSignedBits(numBits) * SWF_SCALE_FACTOR;
-				double controlDeltaY = bs.getSignedBits(numBits) * SWF_SCALE_FACTOR;
-				double anchorDeltaX = bs.getSignedBits(numBits) * SWF_SCALE_FACTOR;
-				double anchorDeltaY = bs.getSignedBits(numBits) * SWF_SCALE_FACTOR;
+				double controlDeltaX = bs.getSignedBits(numBits);
+				double controlDeltaY = bs.getSignedBits(numBits);
+				double anchorDeltaX = bs.getSignedBits(numBits);
+				double anchorDeltaY = bs.getSignedBits(numBits);
 
 				double newX = curX + controlDeltaX;
 				double newY = curY + controlDeltaY;
@@ -489,8 +475,8 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 						deltaX = bs.getSignedBits(numBits);
 				}
 
-				curX += deltaX * SWF_SCALE_FACTOR;
-				curY += deltaY * SWF_SCALE_FACTOR;
+				curX += deltaX;
+				curY += deltaY;
 
 				bezNodes++;
 				bez = ensureBezStorage(bez, bezNodes, &bezAllocated);
@@ -535,14 +521,20 @@ bool VectorImage::parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBit
 	for (uint i = 0; i < fillStyleCount; ++i) {
 		byte type = bs.getByte();
 		uint32 color;
-		if (shapeType == 3) {
-			color = (bs.getByte() << 16) | (bs.getByte() << 8) | bs.getByte() | (bs.getByte() << 24);
-		} else
-			color = bs.getBits(24) | (0xff << 24);
+		byte r = bs.getByte();
+		byte g = bs.getByte();
+		byte b = bs.getByte();
+		byte a = 0xff;
+
+		if (shapeType == 3)
+			a = bs.getByte();
+
+		color = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(a, r, g, b);
+
 		if (type != 0)
 			return false;
 
-		_elements.back()._fillStyles.push_back(flashColorToAGGRGBA8(color));
+		_elements.back()._fillStyles.push_back(color);
 	}
 
 	// Linestyles parsen
@@ -558,12 +550,18 @@ bool VectorImage::parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBit
 	for (uint i = 0; i < lineStyleCount; ++i) {
 		double width = bs.getUInt16();
 		uint32 color;
-		if (shapeType == 3)
-			color = (bs.getByte() << 16) | (bs.getByte() << 8) | bs.getByte() | (bs.getByte() << 24);
-		else
-			color = bs.getBits(24) | (0xff << 24);
+		byte r = bs.getByte();
+		byte g = bs.getByte();
+		byte b = bs.getByte();
+		byte a = 0xff;
 
-		_elements.back()._lineStyles.push_back(VectorImageElement::LineStyleType(width, flashColorToAGGRGBA8(color)));
+		if (shapeType == 3)
+			a = bs.getByte();
+
+		color = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(a, r, g, b);
+
+		debug(0, "color: %08x", color);
+		_elements.back()._lineStyles.push_back(VectorImageElement::LineStyleType(width, color));
 	}
 
 	// Bitbreite für die folgenden Styleindizes auslesen
@@ -611,13 +609,7 @@ bool VectorImage::blit(int posX, int posY,
 
 	// Feststellen, ob das alte Bild im Cache nicht wiederbenutzt werden kann und neu Berechnet werden muss
 	if (!(oldThis == this && oldWidth == width && oldHeight == height)) {
-		float ScaleFactorX = (width == - 1) ? 1 : static_cast<float>(width) / static_cast<float>(getWidth());
-		float ScaleFactorY = (height == - 1) ? 1 : static_cast<float>(height) / static_cast<float>(getHeight());
-
-		uint RenderedWidth;
-		uint RenderedHeight;
-
-		render(ScaleFactorX, ScaleFactorY, RenderedWidth, RenderedHeight);
+		render(width, height);
 
 		oldThis = this;
 		oldHeight = height;
