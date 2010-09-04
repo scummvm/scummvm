@@ -142,7 +142,7 @@ private:
 	bool _regProtectionFlag;
 
 	typedef void (TownsPC98_FmSynth::*ChipTimerProc)();
-	void idleTimerCallback() {};
+	void idleTimerCallback() {}
 
 	struct ChipTimer {
 		bool enabled;
