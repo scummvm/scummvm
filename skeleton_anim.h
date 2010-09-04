@@ -63,6 +63,8 @@ public:
 
 	bool createFromStream(Common::ReadStream *stream);
 	Coordinate getCoordForBone(uint32 time, int boneIdx);
+
+	uint32 getLength() const { return _time; }
 private:
 	uint32 _id, _ver, _u1, _u2, _time;
 

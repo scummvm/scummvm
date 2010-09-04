@@ -83,9 +83,17 @@ bool SkeletonAnim::createFromStream(Common::ReadStream *stream) {
 Coordinate SkeletonAnim::getCoordForBone(uint32 time, int boneIdx) {
 	Coordinate c;
 	// SLERP et al.
-	AnimKey *key = _anims[boneIdx]->_keys[0];
-	c.setTranslation(key->_pos.x(), key->_pos.y(), key->_pos.z());
-	c.setRotation(key->_rotW, key->_rot.x(), key->_rot.y(), key->_rot.z());
+	for (Common::Array<AnimKey *>::iterator it = _anims[boneIdx]->_keys.begin(); it < _anims[boneIdx]->_keys.end(); ++it) {
+		if ((*it)->_time > time)
+		{
+			--it;
+			AnimKey *key = *it;
+			c.setTranslation(key->_pos.x(), key->_pos.y(), key->_pos.z());
+			c.setRotation(key->_rotW, key->_rot.x(), key->_rot.y(), key->_rot.z());
+
+			break;
+		}
+	}
 	
 	return c;
 }
