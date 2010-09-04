@@ -560,7 +560,6 @@ bool VectorImage::parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBit
 
 		color = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(a, r, g, b);
 
-		debug(0, "color: %08x", color);
 		_elements.back()._lineStyles.push_back(VectorImageElement::LineStyleType(width, color));
 	}
 

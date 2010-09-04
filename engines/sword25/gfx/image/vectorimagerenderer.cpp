@@ -44,8 +44,7 @@
 
 namespace Sword25 {
 
-void
-art_rgb_fill_run1(art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int n) {
+void art_rgb_fill_run1(art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int n) {
 	int i;
 
 	if (r == g && g == b && r == 255) {
@@ -53,25 +52,25 @@ art_rgb_fill_run1(art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int n) {
 	} else {
 		uint32 *alt = (uint32 *)buf;
 		uint32 color = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(0xff, r, g, b);
+
 		for (i = 0; i < n; i++)
 			*alt++ = color;
 	}
 }
 
-void
-art_rgb_run_alpha1(art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int alpha, int n) {
+void art_rgb_run_alpha1(art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int alpha, int n) {
 	int i;
 	int v;
 
 	for (i = 0; i < n; i++) {
+		v = *buf;
+		*buf++ = v + (((alpha - v) * alpha + 0x80) >> 8);
 		v = *buf;
 		*buf++ = v + (((r - v) * alpha + 0x80) >> 8);
 		v = *buf;
 		*buf++ = v + (((g - v) * alpha + 0x80) >> 8);
 		v = *buf;
 		*buf++ = v + (((b - v) * alpha + 0x80) >> 8);
-		v = *buf;
-		*buf++ = v + (((alpha - v) * alpha + 0x80) >> 8);
 	}
 }
 
@@ -85,8 +84,7 @@ struct _ArtRgbSVPAlphaData {
 	int x0, x1;
 };
 
-static void
-art_rgb_svp_alpha_callback1(void *callback_data, int y,
+static void art_rgb_svp_alpha_callback1(void *callback_data, int y,
                             int start, ArtSVPRenderAAStep *steps, int n_steps) {
 	ArtRgbSVPAlphaData *data = (ArtRgbSVPAlphaData *)callback_data;
 	art_u8 *linebuf;
@@ -140,8 +138,7 @@ art_rgb_svp_alpha_callback1(void *callback_data, int y,
 	data->buf += data->rowstride;
 }
 
-static void
-art_rgb_svp_alpha_opaque_callback1(void *callback_data, int y,
+static void art_rgb_svp_alpha_opaque_callback1(void *callback_data, int y,
                                    int start,
                                    ArtSVPRenderAAStep *steps, int n_steps) {
 	ArtRgbSVPAlphaData *data = (ArtRgbSVPAlphaData *)callback_data;
@@ -212,8 +209,7 @@ art_rgb_svp_alpha_opaque_callback1(void *callback_data, int y,
 	data->buf += data->rowstride;
 }
 
-void
-art_rgb_svp_alpha1(const ArtSVP *svp,
+void art_rgb_svp_alpha1(const ArtSVP *svp,
                    int x0, int y0, int x1, int y1,
                    uint32 color,
                    art_u8 *buf, int rowstride,
@@ -290,7 +286,7 @@ void VectorImage::render(int width, int height) {
 
 			ArtSVP *svp1 = art_svp_from_vpath(vec);
 
-			
+
 			if (_elements[j].getPathInfo(i).getFillStyle0()) {
 				int color1 = _elements[j].getFillStyleColor(_elements[j].getPathInfo(i).getFillStyle0() - 1);
 				art_rgb_svp_alpha1(svp1, 0, 0, width, height, color1, _pixelData, width * 4, NULL);
