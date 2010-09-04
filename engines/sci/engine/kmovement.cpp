@@ -362,16 +362,26 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		writeSelectorValue(segMan, mover, SELECTOR(b_i1), mover_i1);
 		writeSelectorValue(segMan, mover, SELECTOR(b_i2), mover_i2);
 		writeSelectorValue(segMan, mover, SELECTOR(b_di), mover_di);
-	}
-	if (handleMoveCount)
-		writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), mover_moveCnt);
 
-	if ((getSciVersion() >= SCI_VERSION_1_EGA)) {
-		// Sierra SCI compared client_x&mover_x and client_y&mover_y
-		//  those variables were not initialized in case the moveSpeed
-		//  compare failed
-		if (completed)
-			invokeSelector(s, mover, SELECTOR(moveDone), argc, argv);
+		if ((getSciVersion() >= SCI_VERSION_1_EGA)) {
+			// this calling code here was right before the last return in
+			//  sci1ega and got changed to this position since sci1early
+			//  this was an uninitialized issue in sierra sci
+			if ((handleMoveCount) && (getSciVersion() >= SCI_VERSION_1_EARLY))
+				writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), mover_moveCnt);
+			// We need to compare directly in here, complete may have happened during
+			//  the current move
+			if ((client_x == mover_x) && (client_y == mover_y))
+				invokeSelector(s, mover, SELECTOR(moveDone), argc, argv);
+			if (getSciVersion() >= SCI_VERSION_1_EARLY)
+				return s->r_acc;
+		}
+	}
+	if (handleMoveCount) {
+		if (getSciVersion() <= SCI_VERSION_1_EGA)
+			writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), mover_moveCnt);
+		else
+			writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), client_moveSpeed);
 	}
 	return s->r_acc;
 }
