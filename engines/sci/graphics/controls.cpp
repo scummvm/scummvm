@@ -178,8 +178,10 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 				}
 				break;
 			case SCI_KEY_DELETE:
-				text.deleteChar(cursorPos);
-				textChanged = true;
+				if (cursorPos < textSize) {
+					text.deleteChar(cursorPos);
+					textChanged = true;
+				}
 				break;
 			case SCI_KEY_HOME: // HOME
 				cursorPos = 0; textChanged = true;
