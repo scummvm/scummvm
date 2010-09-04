@@ -38,6 +38,8 @@ namespace Common {
 
 namespace Stark {
 
+class Skeleton;
+
 class VertNode {
 public:
 	Graphics::Vector3d _pos1, _pos2;
@@ -99,17 +101,6 @@ public:
 	float _u1, _u2, _u3, _u4;
 };
 
-class BoneNode {
-public:
-	BoneNode() : _parent(-1) { }
-	~BoneNode() { }
-	Common::String _name;
-	float _u1;
-	Common::Array<uint32> _children;
-	int _parent;
-};
-
-
 
 
 
@@ -121,53 +112,19 @@ public:
 
 	bool readFromStream(Common::ReadStream *stream);
 
-	const Common::Array<BoneNode *> &getBones() const { return _bones; }
 	const Common::Array<MeshNode *> &getMeshes() const { return _meshes; }
 	const Common::Array<MaterialNode *> &getMaterials() const { return _materials; }
+	const Skeleton *getSkeleton() const { return _skeleton; }
+
+	bool setAnim(Common::ReadStream *stream);
 
 private:
 	uint32 _id;
 
 	Common::Array<MaterialNode *> _materials;
 	Common::Array<MeshNode *> _meshes;
-	Common::Array<BoneNode *> _bones;
-	
+	Skeleton *_skeleton;	
 
-};
-
-class AnimKey {
-public:
-	uint32 _time;
-	Graphics::Vector3d _rot;
-	float _rotW;
-	Graphics::Vector3d _pos;
-};
-
-class AnimNode {
-public:
-	~AnimNode() {
-		for (Common::Array<AnimKey *>::iterator it = _keys.begin(); it != _keys.end(); ++it)
-			delete *it;
-	}
-
-	uint32 _bone;
-	Common::Array<AnimKey *> _keys;
-};
-
-class Animation {
-public:
-	~Animation() {
-		for (Common::Array<AnimNode *>::iterator it = _anims.begin(); it != _anims.end(); ++it)
-			delete *it;
-	}
-	bool readFromStream(Common::ReadStream *stream);
-
-	const Common::Array<AnimNode *> &getNodes() const { return _anims; }
-
-private:
-	uint32 _id, _ver, _u1, _u2, _time;
-
-	Common::Array<AnimNode *> _anims;
 };
 
 class SceneElementActor : public SceneElement {
@@ -184,7 +141,6 @@ public:
 
 private:
 	Actor *_actor;
-	Animation *_anim;
 };
 
 } // end of namespace Stark
