@@ -497,7 +497,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 				break; // break out
 			}
 
-			clientHeading += avoiderHeading;
+			newHeading += avoiderHeading;
 			if (newHeading >= 360)
 				newHeading -= 360;
 			if (newHeading < 0)
