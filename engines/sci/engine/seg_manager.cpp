@@ -1052,7 +1052,7 @@ void SegManager::uninstantiateScriptSci0(int script_nr) {
 	reg_t reg = make_reg(segmentId, oldScriptHeader ? 2 : 0);
 	int objType, objLength = 0;
 
-	// Make a pass over the object in order uninstantiate all superclasses
+	// Make a pass over the object in order to uninstantiate all superclasses
 
 	do {
 		reg.offset += objLength; // Step over the last checked object

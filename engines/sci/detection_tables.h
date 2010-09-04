@@ -835,7 +835,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-
 	// Hoyle 3 - English DOS Floppy (supplied by eddydrama in bug report #3038837)
 	{"hoyle3", "", {
 		{"resource.map", 0, "31c9fc0977ac6e5b566c37096803d0cb", 2469},
