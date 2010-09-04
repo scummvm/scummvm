@@ -40,10 +40,6 @@
 
 #define double float
 
-#ifndef DISABLE_TEXT_CONSOLE
-#define DISABLE_TEXT_CONSOLE
-#endif
-
 #ifndef DISABLE_COMMAND_LINE
 #define DISABLE_COMMAND_LINE
 #endif
