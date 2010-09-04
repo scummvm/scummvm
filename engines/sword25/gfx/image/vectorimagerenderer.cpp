@@ -33,6 +33,7 @@
  */
 
 #include <libart_lgpl/art_vpath_bpath.h>
+#include <libart_lgpl/art_vpath_bpath.h>
 #include <libart_lgpl/art_svp_vpath.h>
 #include <libart_lgpl/art_svp_vpath_stroke.h>
 #include <libart_lgpl/art_svp_render_aa.h>
@@ -64,13 +65,13 @@ void art_rgb_run_alpha1(art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int alpha, in
 
 	for (i = 0; i < n; i++) {
 		v = *buf;
-		*buf++ = v + (((alpha - v) * alpha + 0x80) >> 8);
-		v = *buf;
-		*buf++ = v + (((r - v) * alpha + 0x80) >> 8);
+		*buf++ = v + (((b - v) * alpha + 0x80) >> 8);
 		v = *buf;
 		*buf++ = v + (((g - v) * alpha + 0x80) >> 8);
 		v = *buf;
-		*buf++ = v + (((b - v) * alpha + 0x80) >> 8);
+		*buf++ = v + (((r - v) * alpha + 0x80) >> 8);
+		v = *buf;
+		*buf++ = v + (((alpha - v) * alpha + 0x80) >> 8);
 	}
 }
 
@@ -244,9 +245,63 @@ void art_rgb_svp_alpha1(const ArtSVP *svp,
 		art_svp_render_aa(svp, x0, y0, x1, y1, art_rgb_svp_alpha_callback1, &data);
 }
 
+void drawBez(ArtBpath *bez, art_u8 *buffer, int width, int height, double scaleX, double scaleY, double penWidth, unsigned int color) {
+	ArtVpath *vec = NULL;
+	ArtSVP *svp = NULL;
+
+#if 0
+	const char *codes[] = {"ART_MOVETO", "ART_MOVETO_OPEN", "ART_CURVETO", "ART_LINETO", "ART_END"};
+	for (int i = 0;; i++) {
+		printf("    bez[%d].code = %s;\n", i, codes[bez[i].code]);
+		if (bez[i].code == ART_END)
+			break;
+		if (bez[i].code == ART_CURVETO) {
+			printf("    bez[%d].x1 = %f; bez[%d].y1 = %f;\n", i, bez[i].x1, i, bez[i].y1);
+			printf("    bez[%d].x2 = %f; bez[%d].y2 = %f;\n", i, bez[i].x2, i, bez[i].y2);
+		}
+		printf("    bez[%d].x3 = %f; bez[%d].y3 = %f;\n", i, bez[i].x3, i, bez[i].y3);
+	}
+
+	printf("    drawBez(bez, buffer, 1.0, 1.0, %f, 0x%08x);\n", penWidth, color);
+#endif
+
+	vec = art_bez_path_to_vec(bez, 0.5);
+
+	if (scaleX != 1.0 || scaleY != 1.0) {
+		ArtVpath *vec1;
+		int size;
+
+		for (size = 0; vec[size].code != ART_END; size++);
+
+		vec1 = art_new(ArtVpath, size + 1);
+
+		int k;
+		for (k = 0; k < size; k++) {
+			vec1[k].code = vec[k].code;
+			vec1[k].x = vec[k].x * scaleX;
+			vec1[k].y = vec[k].y * scaleY;
+		}
+		vec1[k].code = ART_END;
+		art_free(vec);
+
+		vec = vec1;
+	}
+
+	if (penWidth != -1) {
+		svp = art_svp_vpath_stroke(vec, ART_PATH_STROKE_JOIN_ROUND, ART_PATH_STROKE_CAP_ROUND, penWidth, 1.0, 0.5);
+	} else {
+		svp = art_svp_from_vpath(vec);
+	}
+
+	art_rgb_svp_alpha1(svp, 0, 0, width, height, color, buffer, width * 4, NULL);
+
+	art_free(svp);
+	art_free(vec);
+}
+
 void VectorImage::render(int width, int height) {
-	float scaleFactorX = (width == - 1) ? 1 : static_cast<float>(width) / static_cast<float>(getWidth());
-	float scaleFactorY = (height == - 1) ? 1 : static_cast<float>(height) / static_cast<float>(getHeight());
+	double scaleX = (width == - 1) ? 1 : static_cast<double>(width) / static_cast<double>(getWidth());
+	double scaleY = (height == - 1) ? 1 : static_cast<double>(height) / static_cast<double>(getHeight());
 
 	if (_pixelData)
 		free(_pixelData);
@@ -254,60 +309,95 @@ void VectorImage::render(int width, int height) {
 	_pixelData = (byte *)malloc(width * height * 4);
 	memset(_pixelData, 0, width * height * 4);
 
-	for (int j = _elements.size() - 1; j >= 0; j--)
-		for (int i = _elements[j].getPathCount() - 1; i >= 0; i--) {
-			if (!_elements[j].getPathInfo(i).getVec())
-				continue;
+	for (uint e = 0; e < _elements.size(); e++) {
 
-			bool needfree = false;
-			ArtVpath *vec = _elements[j].getPathInfo(i).getVec();
+		//// Draw shapes
+		for (uint s = 0; s < _elements[e].getFillStyleCount(); s++) {
+			int fill0len = 0;
+			int fill1len = 0;
 
-			// Upscale vector
-			if (scaleFactorX != 1.0 || scaleFactorY != 1.0) {
-				ArtVpath *vec1;
-				int size;
+			// Count vector sizes in order to minimize memory
+			// fragmentation
+			for (uint p = 0; p < _elements[e].getPathCount(); p++) {
+				if (_elements[e].getPathInfo(p).getFillStyle0() == s + 1)
+					fill1len += _elements[e].getPathInfo(p).getVecLen();
 
-				for (size = 0; vec[size].code != ART_END; size++);
+				if (_elements[e].getPathInfo(p).getFillStyle1() == s + 1)
+					fill0len += _elements[e].getPathInfo(p).getVecLen();
+			}
 
-				vec1 = art_new(ArtVpath, size + 1);
+			// Now lump together vectors
+			ArtBpath *fill1 = art_new(ArtBpath, fill1len + 1);
+			ArtBpath *fill0 = art_new(ArtBpath, fill0len + 1);
+			ArtBpath *fill1pos = fill1;
+			ArtBpath *fill0pos = fill0;
 
-				int k;
-				for (k = 0; k < size; k++) {
-					vec1[k].code = vec[k].code;
-					vec1[k].x = vec[k].x * scaleFactorX;
-					vec1[k].y = vec[k].y * scaleFactorY;
+			for (uint p = 0; p < _elements[e].getPathCount(); p++) {
+				// Normal order
+				if (_elements[e].getPathInfo(p).getFillStyle0() == s + 1) {
+					for (int i = 0; i < _elements[e].getPathInfo(p).getVecLen(); i++)
+						*fill1pos++ = _elements[e].getPathInfo(p).getVec()[i];
 				}
 
-				vec1[k].code = ART_END;
-
-				vec = vec1;
-				needfree = true;
+				// Reverse order
+				if (_elements[e].getPathInfo(p).getFillStyle1() == s + 1) {
+					for (int i = _elements[e].getPathInfo(p).getVecLen() - 1; i >= 0; i--)
+						*fill0pos++ = _elements[e].getPathInfo(p).getVec()[i];
+				}
 			}
 
-			ArtSVP *svp1 = art_svp_from_vpath(vec);
+			// Close vectors
+			(*fill1pos).code = ART_END;
+			(*fill0pos).code = ART_END;
 
+			if (fill1len)
+				drawBez(fill1, _pixelData, width, height, scaleX, scaleY, -1, _elements[e].getFillStyleColor(s));
 
-			if (_elements[j].getPathInfo(i).getFillStyle0()) {
-				int color1 = _elements[j].getFillStyleColor(_elements[j].getPathInfo(i).getFillStyle0() - 1);
-				art_rgb_svp_alpha1(svp1, 0, 0, width, height, color1, _pixelData, width * 4, NULL);
-				art_free(svp1);
-			}
+			if (fill0len)
+				drawBez(fill0, _pixelData, width, height, scaleX, scaleY, -1, _elements[e].getFillStyleColor(s));
 
-			if (_elements[j].getPathInfo(i).getLineStyle()) {
-				double penWidth = _elements[j].getLineStyleWidth(_elements[j].getPathInfo(i).getLineStyle() - 1);
-				penWidth = sqrt(fabs(scaleFactorX * scaleFactorY));
-				ArtSVP *svp2 = art_svp_vpath_stroke(vec, ART_PATH_STROKE_JOIN_ROUND, ART_PATH_STROKE_CAP_ROUND, penWidth, 1.0, 0.5);
-				int color2 = _elements[j].getLineStyleColor(_elements[j].getPathInfo(i).getLineStyle() - 1);
-
-				art_rgb_svp_alpha1(svp2, 0, 0, width, height, color2, _pixelData, width * 4, NULL);
-
-				art_free(svp2);
-			}
-
-			if (needfree)
-				art_free(vec);
-
+			art_free(fill0);
+			art_free(fill1);
 		}
+
+		//// Draw strokes
+		for (uint s = 0; s < _elements[e].getLineStyleCount(); s++) {
+			int strokelen = 0;
+
+			// Count vector sizes in order to minimize memory
+			// fragmentation
+			for (uint p = 0; p < _elements[e].getPathCount(); p++) {
+				if (_elements[e].getPathInfo(p).getLineStyle() == s + 1)
+					strokelen += _elements[e].getPathInfo(p).getVecLen();
+			}
+
+			if (strokelen == 0)
+				continue;
+
+			// Now lump together vectors
+			ArtBpath *stroke = art_new(ArtBpath, strokelen + 1);
+			ArtBpath *strokepos = stroke;
+
+			for (uint p = 0; p < _elements[e].getPathCount(); p++) {
+				// Normal order
+				if (_elements[e].getPathInfo(p).getLineStyle() == s + 1) {
+					for (int i = 0; i < _elements[e].getPathInfo(p).getVecLen(); i++)
+						*strokepos++ = _elements[e].getPathInfo(p).getVec()[i];
+				}
+			}
+
+			// Close vector
+			(*strokepos).code = ART_END;
+
+			double penWidth = _elements[e].getLineStyleWidth(s);
+			penWidth *= sqrt(fabs(scaleX * scaleY));
+
+			drawBez(stroke, _pixelData, width, height, scaleX, scaleY, penWidth, _elements[e].getLineStyleColor(s));
+
+			art_free(stroke);
+		}
+	}
+
 }
 
 

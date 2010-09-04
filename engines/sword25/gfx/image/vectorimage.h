@@ -60,16 +60,19 @@ class VectorImage;
 
 class VectorPathInfo {
 public:
-	VectorPathInfo(ArtVpath *vec, uint lineStyle, uint fillStyle0, uint fillStyle1) :
-		_vec(vec), _lineStyle(lineStyle), _fillStyle0(fillStyle0), _fillStyle1(fillStyle1) {}
+ VectorPathInfo(ArtBpath *vec, int len, uint lineStyle, uint fillStyle0, uint fillStyle1) :
+	_vec(vec), _lineStyle(lineStyle), _fillStyle0(fillStyle0), _fillStyle1(fillStyle1), _len(len) {}
 
 	VectorPathInfo() {
-		_lineStyle = _fillStyle0 = _fillStyle1 = 0;
+		_lineStyle = _fillStyle0 = _fillStyle1 = _len = 0;
 		_vec = 0;
 	}
 
-	ArtVpath *getVec() const {
+	ArtBpath *getVec() const {
 		return _vec;
+	}
+	int getVecLen() const {
+		return _len;
 	}
 	uint getLineStyle() const {
 		return _lineStyle;
@@ -82,12 +85,12 @@ public:
 	}
 
 private:
-	ArtVpath *_vec;
+	ArtBpath *_vec;
 	uint _lineStyle;
 	uint _fillStyle0;
 	uint _fillStyle1;
+	uint _len;
 };
-
 
 /**
     @brief Ein Element eines Vektorbild. Ein BS_VectorImage besteht aus diesen Elementen, die jeweils einen Teil der Graphik definieren.

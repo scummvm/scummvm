@@ -194,7 +194,8 @@ Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) 
 	double x0, y0, x1, y1;
 
 	for (int j = vectorImageElement.getPathCount() - 1; j >= 0; j--) {
-		ArtVpath *vec = vectorImageElement.getPathInfo(j).getVec();
+		ArtBpath *bez = vectorImageElement.getPathInfo(j).getVec();
+		ArtVpath *vec = art_bez_path_to_vec(bez, 0.5);
 
 		if (vec[0].code == ART_END) {
 			continue;
@@ -208,6 +209,7 @@ Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) 
 				if (vec[i].y > y1) y1 = vec[i].y;
 			}
 		}
+		art_free(vec);
 	}
 
 	return Common::Rect(static_cast<int>(x0), static_cast<int>(y0), static_cast<int>(x1) + 1, static_cast<int>(y1) + 1);
@@ -324,9 +326,12 @@ ArtBpath *VectorImage::storeBez(ArtBpath *bez, int lineStyle, int fillStyle0, in
 	bez = ensureBezStorage(bez, *bezNodes, bezAllocated);
 	bez[*bezNodes].code = ART_END;
 
-	ArtVpath *vec = art_bez_path_to_vec(bez, BEZSMOOTHNESS);
+	ArtBpath *bez1 = art_new(ArtBpath, *bezNodes + 1);
 
-	_elements.back()._pathInfos.push_back(VectorPathInfo(vec, lineStyle, fillStyle0, fillStyle1));
+	for (int i = 0; i <= *bezNodes; i++)
+		bez1[i] = bez[i];
+
+	_elements.back()._pathInfos.push_back(VectorPathInfo(bez1, *bezNodes, lineStyle, fillStyle0, fillStyle1));
 
 	return bez;
 }

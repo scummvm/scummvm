@@ -176,7 +176,7 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
 		h = pPartRect->bottom - pPartRect->top;
 	}
 
-	debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %d, %d, %d)", posX, posY, flipping, x1, y1, w, h, color, width, height);
+	debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, x1, y1, w, h, color, width, height);
 
 	// Skalierungen berechnen
 	float scaleX, scaleY;
