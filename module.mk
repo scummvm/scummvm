@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	adpcm.o \
 	archive.o \
 	detection.o \
+	gfx/coordinate.o \
 	gfx/driver.o \
 	gfx/opengl.o \
 	gfx/tinygl.o \
