@@ -254,7 +254,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 	case 4:
 		title = "Other game controls:";
 		if (version <= 2) {
-			ADD_TEXT("Inventory: (not yet implemented)");
+			ADD_TEXT("Inventory:");
 			ADD_BIND("u", "Scroll list up");
 			ADD_BIND("j", "Scroll list down");
 			ADD_BIND("i", "Upper left item");
