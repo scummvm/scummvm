@@ -10,6 +10,8 @@ MODULE_OBJS := \
 	gfx/opengl.o \
 	gfx/tinygl.o \
 	scene.o \
+	skeleton.o \
+	skeleton_anim.o \
 	sound.o \
 	stark.o \
 	xmg.o \
