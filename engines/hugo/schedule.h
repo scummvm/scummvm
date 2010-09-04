@@ -48,6 +48,7 @@ struct event_t {
 class Scheduler {
 public:
 	Scheduler(HugoEngine &vm);
+	virtual ~Scheduler();
 
 	void   initEventQueue();
 	void   insertAction(act *action);

@@ -52,6 +52,9 @@ namespace Hugo {
 Scheduler::Scheduler(HugoEngine &vm) : _vm(vm) {
 }
 
+Scheduler::~Scheduler() {
+}
+
 // Initialise the timer event queue
 void Scheduler::initEventQueue() {
 	debugC(1, kDebugSchedule, "initEventQueue");
