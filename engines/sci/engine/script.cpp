@@ -69,6 +69,9 @@ void Script::freeScript() {
 void Script::init(int script_nr, ResourceManager *resMan) {
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
 
+	if (!script)
+		error("Script %d not found\n", script_nr);
+
 	_localsOffset = 0;
 	_localsBlock = NULL;
 	_localsCount = 0;
