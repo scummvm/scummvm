@@ -69,8 +69,6 @@ void kDirLoopWorker(reg_t object, uint16 angle, EngineState *s, int argc, reg_t 
 	if (signal & kSignalDoesntTurn)
 		return;
 
-	angle %= 360;
-
 	int16 useLoop = -1;
 	if (getSciVersion() > SCI_VERSION_0_EARLY) {
 		if ((angle > 315) || (angle < 45)) {
