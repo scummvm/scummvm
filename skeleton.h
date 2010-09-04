@@ -66,6 +66,8 @@ public:
 private:
 	Common::Array<BoneNode *> _bones;
 	SkeletonAnim *_anim;
+
+	uint32 _lastTime, _maxTime;
 };
 
 } // end of namespace Stark
