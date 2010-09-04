@@ -81,7 +81,7 @@ private:
 	void     delQueue(event_t *curEvent);
 	event_t *doAction(event_t *curEvent);
 	
-	virtual const char* getCypher() = 0;
+	virtual const char *getCypher() = 0;
 };
 
 class Scheduler_v1 : public Scheduler {
