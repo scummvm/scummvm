@@ -294,7 +294,8 @@ void VectorImage::render(int width, int height) {
 			}
 
 			if (_elements[j].getPathInfo(i).getLineStyle()) {
-				int penWidth = _elements[j].getLineStyleWidth(_elements[j].getPathInfo(i).getLineStyle() - 1);
+				double penWidth = _elements[j].getLineStyleWidth(_elements[j].getPathInfo(i).getLineStyle() - 1);
+				penWidth = sqrt(fabs(scaleFactorX * scaleFactorY));
 				ArtSVP *svp2 = art_svp_vpath_stroke(vec, ART_PATH_STROKE_JOIN_ROUND, ART_PATH_STROKE_CAP_ROUND, penWidth, 1.0, 0.5);
 				int color2 = _elements[j].getLineStyleColor(_elements[j].getPathInfo(i).getLineStyle() - 1);
 
