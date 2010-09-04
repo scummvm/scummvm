@@ -157,7 +157,7 @@ private:
 
 class VectorImage : public Image {
 public:
-	VectorImage(const byte *pFileData, uint fileSize, bool &success);
+	VectorImage(const byte *pFileData, uint fileSize, bool &success, const Common::String &fname);
 	~VectorImage();
 
 	uint getElementCount() const {
@@ -227,6 +227,8 @@ private:
 	Common::Rect                         _boundingBox;
 
 	byte *_pixelData;
+
+	Common::String _fname;
 };
 
 } // End of namespace Sword25

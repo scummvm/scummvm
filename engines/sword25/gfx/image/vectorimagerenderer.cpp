@@ -303,6 +303,8 @@ void VectorImage::render(int width, int height) {
 	double scaleX = (width == - 1) ? 1 : static_cast<double>(width) / static_cast<double>(getWidth());
 	double scaleY = (height == - 1) ? 1 : static_cast<double>(height) / static_cast<double>(getHeight());
 
+	debug(0, "VectorImage::render(%d, %d) %s", width, height, _fname.c_str());
+
 	if (_pixelData)
 		free(_pixelData);
 
@@ -319,10 +321,10 @@ void VectorImage::render(int width, int height) {
 			// Count vector sizes in order to minimize memory
 			// fragmentation
 			for (uint p = 0; p < _elements[e].getPathCount(); p++) {
-				if (_elements[e].getPathInfo(p).getFillStyle0() == s + 1)
+				if (_elements[e].getPathInfo(p).getFillStyle1() == s + 1)
 					fill1len += _elements[e].getPathInfo(p).getVecLen();
 
-				if (_elements[e].getPathInfo(p).getFillStyle1() == s + 1)
+				if (_elements[e].getPathInfo(p).getFillStyle0() == s + 1)
 					fill0len += _elements[e].getPathInfo(p).getVecLen();
 			}
 
@@ -334,13 +336,13 @@ void VectorImage::render(int width, int height) {
 
 			for (uint p = 0; p < _elements[e].getPathCount(); p++) {
 				// Normal order
-				if (_elements[e].getPathInfo(p).getFillStyle0() == s + 1) {
+				if (_elements[e].getPathInfo(p).getFillStyle1() == s + 1) {
 					for (int i = 0; i < _elements[e].getPathInfo(p).getVecLen(); i++)
 						*fill1pos++ = _elements[e].getPathInfo(p).getVec()[i];
 				}
 
 				// Reverse order
-				if (_elements[e].getPathInfo(p).getFillStyle1() == s + 1) {
+				if (_elements[e].getPathInfo(p).getFillStyle0() == s + 1) {
 					for (int i = _elements[e].getPathInfo(p).getVecLen() - 1; i >= 0; i--)
 						*fill0pos++ = _elements[e].getPathInfo(p).getVec()[i];
 				}
@@ -350,11 +352,13 @@ void VectorImage::render(int width, int height) {
 			(*fill1pos).code = ART_END;
 			(*fill0pos).code = ART_END;
 
+			#if 0
 			if (fill1len)
 				drawBez(fill1, _pixelData, width, height, scaleX, scaleY, -1, _elements[e].getFillStyleColor(s));
 
 			if (fill0len)
 				drawBez(fill0, _pixelData, width, height, scaleX, scaleY, -1, _elements[e].getFillStyleColor(s));
+			#endif
 
 			art_free(fill0);
 			art_free(fill1);
@@ -362,42 +366,16 @@ void VectorImage::render(int width, int height) {
 
 		//// Draw strokes
 		for (uint s = 0; s < _elements[e].getLineStyleCount(); s++) {
-			int strokelen = 0;
-
-			// Count vector sizes in order to minimize memory
-			// fragmentation
-			for (uint p = 0; p < _elements[e].getPathCount(); p++) {
-				if (_elements[e].getPathInfo(p).getLineStyle() == s + 1)
-					strokelen += _elements[e].getPathInfo(p).getVecLen();
-			}
-
-			if (strokelen == 0)
-				continue;
-
-			// Now lump together vectors
-			ArtBpath *stroke = art_new(ArtBpath, strokelen + 1);
-			ArtBpath *strokepos = stroke;
-
-			for (uint p = 0; p < _elements[e].getPathCount(); p++) {
-				// Normal order
-				if (_elements[e].getPathInfo(p).getLineStyle() == s + 1) {
-					for (int i = 0; i < _elements[e].getPathInfo(p).getVecLen(); i++)
-						*strokepos++ = _elements[e].getPathInfo(p).getVec()[i];
-				}
-			}
-
-			// Close vector
-			(*strokepos).code = ART_END;
-
 			double penWidth = _elements[e].getLineStyleWidth(s);
 			penWidth *= sqrt(fabs(scaleX * scaleY));
 
-			drawBez(stroke, _pixelData, width, height, scaleX, scaleY, penWidth, _elements[e].getLineStyleColor(s));
-
-			art_free(stroke);
+			for (uint p = 0; p < _elements[e].getPathCount(); p++) {
+				if (_elements[e].getPathInfo(p).getLineStyle() == s + 1) {
+					drawBez(_elements[e].getPathInfo(p).getVec(), _pixelData, width, height, scaleX, scaleY, penWidth, _elements[e].getLineStyleColor(s));
+				}
+			}
 		}
 	}
-
 }
 
 

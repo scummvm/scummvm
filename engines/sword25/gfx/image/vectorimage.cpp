@@ -222,7 +222,7 @@ Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) 
 // Konstruktion
 // -----------------------------------------------------------------------------
 
-VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success) : _pixelData(0) {
+VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, const Common::String &fname) : _pixelData(0), _fname(fname) {
 	success = false;
 
 	// Bitstream-Objekt erzeugen

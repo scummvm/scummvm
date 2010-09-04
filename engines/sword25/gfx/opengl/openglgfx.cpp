@@ -341,7 +341,7 @@ Resource *OpenGLGfx::LoadResource(const Common::String &FileName) {
 		}
 
 		bool Result = false;
-		VectorImage *pImage = new VectorImage(pFileData, FileSize, Result);
+		VectorImage *pImage = new VectorImage(pFileData, FileSize, Result, FileName);
 		if (!Result) {
 			delete pImage;
 			delete [] pFileData;
