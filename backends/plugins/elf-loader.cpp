@@ -63,6 +63,22 @@ static void flushDataCache(void *ptr, uint32 len) {
 #endif
 }
 
+DLObject::DLObject() :
+	_segment(0),
+	_symtab(0),
+	_strtab(0),
+	_symbol_cnt(0),
+	_symtab_sect(-1),
+	_dtors_start(0),
+	_dtors_end(0),
+	_segmentSize(0),
+	_segmentOffset(0) {
+}
+
+DLObject::~DLObject() {
+	unload();
+}
+
 // Expel the symbol table from memory
 void DLObject::discard_symtab() {
 	free(_symtab);
@@ -276,7 +292,7 @@ bool DLObject::loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *s
 	return true;
 }
 
-void DLObject::relocateSymbols(Elf32_Addr offset) {
+void DLObject::relocateSymbols(ptrdiff_t offset) {
 	// Loop over symbols, add relocation offset
 	Elf32_Sym *s = (Elf32_Sym *)_symtab;
 	for (int c = _symbol_cnt; c--; s++) {
@@ -318,8 +334,11 @@ bool DLObject::load(Common::SeekableReadStream* DLFile) {
 	if (ret && (loadStringTable(DLFile, shdr) == false))
 		ret = false;
 
-	if (ret)
-		relocateSymbols((Elf32_Addr)_segment);	// Offset by our segment allocated address
+	if (ret) {
+		// Offset by our segment allocated address
+		_segmentOffset = ptrdiff_t(_segment) - phdr.p_vaddr;
+		relocateSymbols(_segmentOffset);
+	}
 
 	if (ret && (relocateRels(DLFile, &ehdr, shdr) == false))
 		ret = false;

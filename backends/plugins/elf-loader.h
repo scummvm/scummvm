@@ -28,6 +28,8 @@
 #ifndef ELF_LOADER_H
 #define ELF_LOADER_H
 
+#include <stddef.h>
+
 #include "backends/plugins/dynamic-plugin.h"
 #include "backends/plugins/elf32.h"
 
@@ -49,6 +51,7 @@ protected:
     void *_dtors_start, *_dtors_end;
 
     uint32 _segmentSize;
+	ptrdiff_t _segmentOffset;
 
     virtual void unload();
     virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) = 0;
@@ -60,7 +63,7 @@ protected:
     Elf32_Shdr *loadSectionHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
     int loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
     bool loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *shdr);
-    virtual void relocateSymbols(Elf32_Addr offset);
+    virtual void relocateSymbols(ptrdiff_t offset);
     virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) = 0;
 
 public:
@@ -69,9 +72,8 @@ public:
     void *symbol(const char *name);
     void discard_symtab();
 
-	DLObject() : _segment(NULL), _symtab(NULL), _strtab(NULL), _symbol_cnt(0),
-				 _symtab_sect(-1), _dtors_start(NULL), _dtors_end(NULL), _segmentSize(0) {}
-	virtual ~DLObject() { unload(); }
+	DLObject();
+	virtual ~DLObject();
 };
 
 #endif /* ELF_LOADER_H */
