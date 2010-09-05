@@ -44,7 +44,9 @@
 
 namespace Hugo {
 FileManager::FileManager(HugoEngine &vm) : _vm(vm) {
+}
 
+FileManager::~FileManager() {
 }
 
 byte *FileManager::convertPCC(byte *p, uint16 y, uint16 bpl, image_pt dataPtr) {
@@ -235,44 +237,6 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 		_objectsArchive.close();
 }
 
-void FileManager::readBackground(int screenIndex) {
-// Read a PCX image into dib_a
-	seq_t        seq;                               // Image sequence structure for Read_pcx
-	sceneBlock_t sceneBlock;                        // Read a database header entry
-
-	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
-
-	if (_vm.isPacked()) {
-		_sceneryArchive.seek((uint32) screenIndex * sizeof(sceneBlock_t), SEEK_SET);
-
-		sceneBlock.scene_off = _sceneryArchive.readUint32LE();
-		sceneBlock.scene_len = _sceneryArchive.readUint32LE();
-		sceneBlock.b_off = _sceneryArchive.readUint32LE();
-		sceneBlock.b_len = _sceneryArchive.readUint32LE();
-		sceneBlock.o_off = _sceneryArchive.readUint32LE();
-		sceneBlock.o_len = _sceneryArchive.readUint32LE();
-		sceneBlock.ob_off = _sceneryArchive.readUint32LE();
-		sceneBlock.ob_len = _sceneryArchive.readUint32LE();
-
-		_sceneryArchive.seek(sceneBlock.scene_off, SEEK_SET);
-	} else {
-		char *buf = (char *) malloc(2048 + 1);      // Buffer for file access
-		strcat(strcat(strcpy(buf, _vm._picDir), _vm._screenNames[screenIndex]), BKGEXT);
-		if (!_sceneryArchive.open(buf)) {
-			warning("File %s not found, trying again with %s.ART", buf, _vm._screenNames[screenIndex]);
-			strcat(strcpy(buf, _vm._screenNames[screenIndex]), ".ART");
-			if (!_sceneryArchive.open(buf))
-				Utils::Error(FILE_ERR, "%s", buf);
-		}
-	}
-
-	// Read the image into dummy seq and static dib_a
-	readPCX(_sceneryArchive, &seq, _vm.screen().getFrontBuffer(), true, _vm._screenNames[screenIndex]);
-
-	if (!_vm.isPacked())
-		_sceneryArchive.close();
-}
-
 sound_pt FileManager::getSound(int16 sound, uint16 *size) {
 // Read sound (or music) file data.  Call with SILENCE to free-up
 // any allocated memory.  Also returns size of data
@@ -331,100 +295,6 @@ bool FileManager::fileExists(char *filename) {
 		return true;
 	}
 	return false;
-}
-
-void FileManager::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
-// Open and read in an overlay file, close file
-	uint32       i = 0;
-	int16        j, k;
-	int8         data;                              // Must be 8 bits signed
-	image_pt     tmpImage = image;                  // temp ptr to overlay file
-	sceneBlock_t sceneBlock;                        // Database header entry
-
-	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
-
-	if (_vm.isPacked()) {
-		_sceneryArchive.seek((uint32)screenNum * sizeof(sceneBlock_t), SEEK_SET);
-
-		sceneBlock.scene_off = _sceneryArchive.readUint32LE();
-		sceneBlock.scene_len = _sceneryArchive.readUint32LE();
-		sceneBlock.b_off = _sceneryArchive.readUint32LE();
-		sceneBlock.b_len = _sceneryArchive.readUint32LE();
-		sceneBlock.o_off = _sceneryArchive.readUint32LE();
-		sceneBlock.o_len = _sceneryArchive.readUint32LE();
-		sceneBlock.ob_off = _sceneryArchive.readUint32LE();
-		sceneBlock.ob_len = _sceneryArchive.readUint32LE();
-
-		switch (overlayType) {
-		case BOUNDARY:
-			_sceneryArchive.seek(sceneBlock.b_off, SEEK_SET);
-			i = sceneBlock.b_len;
-			break;
-		case OVERLAY:
-			_sceneryArchive.seek(sceneBlock.o_off, SEEK_SET);
-			i = sceneBlock.o_len;
-			break;
-		case OVLBASE:
-			_sceneryArchive.seek(sceneBlock.ob_off, SEEK_SET);
-			i = sceneBlock.ob_len;
-			break;
-		default:
-			Utils::Error(FILE_ERR, "%s", "Bad ovl_type");
-			break;
-		}
-		if (i == 0) {
-			for (i = 0; i < OVL_SIZE; i++)
-				image[i] = 0;
-			return;
-		}
-	} else {
-		const char  *ovl_ext[] = {".b", ".o", ".ob"};
-		char *buf = (char *) malloc(2048 + 1);      // Buffer for file access
-
-		strcat(strcpy(buf, _vm._screenNames[screenNum]), ovl_ext[overlayType]);
-
-		if (!fileExists(buf)) {
-			for (i = 0; i < OVL_SIZE; i++)
-				image[i] = 0;
-			return;
-		}
-
-		if (!_sceneryArchive.open(buf))
-			Utils::Error(FILE_ERR, "%s", buf);
-
-//		if (eof(f_scenery)) {
-//			_lclose(f_scenery);
-//			return;
-//		}
-	}
-
-	switch (_vm._gameVariant) {
-	case 0:                                         // Hugo 1 DOS and WIN don't pack data
-	case 3:
-		_sceneryArchive.read(tmpImage, OVL_SIZE);
-		break;
-	default:
-		// Read in the overlay file using MAC Packbits.  (We're not proud!)
-		k = 0;                                      // byte count
-		do {
-			data = _sceneryArchive.readByte();      // Read a code byte
-			if ((byte)data == 0x80)             // Noop
-				k = k;
-			else if (data >= 0) {                   // Copy next data+1 literally
-				for (i = 0; i <= (byte)data; i++, k++)
-					*tmpImage++ = _sceneryArchive.readByte();
-			} else {                            // Repeat next byte -data+1 times
-				j = _sceneryArchive.readByte();
-
-				for (i = 0; i < (byte)(-data + 1); i++, k++)
-					*tmpImage++ = j;
-			}
-		} while (k < OVL_SIZE);
-		break;
-	}
-
-	if (!_vm.isPacked())
-		_sceneryArchive.close();
 }
 
 void FileManager::saveSeq(object_t *obj) {
@@ -681,33 +551,6 @@ void FileManager::closePlaybackFile() {
 	fclose(fpb);
 }
 
-void FileManager::openDatabaseFiles() {
-//TODO : HUGO 1 DOS uses _stringtData instead of a strings.dat
-//This should be tested adequately and should be handled by an error and not by a warning.
-	debugC(1, kDebugFile, "openDatabaseFiles");
-
-	if (!_stringArchive.open(STRING_FILE))
-//		Error(FILE_ERR, "%s", STRING_FILE);
-		warning("Hugo Error: File not found %s", STRING_FILE);
-	if (_vm.isPacked()) {
-		if (!_sceneryArchive.open(SCENERY_FILE))
-			Utils::Error(FILE_ERR, "%s", SCENERY_FILE);
-		if (!_objectsArchive.open(OBJECTS_FILE))
-			Utils::Error(FILE_ERR, "%s", OBJECTS_FILE);
-	}
-}
-
-void FileManager::closeDatabaseFiles() {
-// TODO: stringArchive shouldn't be closed in Hugo 1 DOS
-	debugC(1, kDebugFile, "closeDatabaseFiles");
-
-	_stringArchive.close();
-	if (_vm.isPacked()) {
-		_sceneryArchive.close();
-		_objectsArchive.close();
-	}
-}
-
 char *FileManager::fetchString(int index) {
 //TODO : HUGO 1 DOS uses _stringtData instead of a strings.dat
 // Fetch string from file, decode and return ptr to string in memory
@@ -901,4 +744,434 @@ void FileManager::instructions() {
 	f.close();
 }
 
+
+FileManager_v1::FileManager_v1(HugoEngine &vm) : FileManager(vm) {
+}
+
+FileManager_v1::~FileManager_v1() {
+}
+
+void FileManager_v1::openDatabaseFiles() {
+	debugC(1, kDebugFile, "openDatabaseFiles");
+}
+
+void FileManager_v1::closeDatabaseFiles() {
+	debugC(1, kDebugFile, "closeDatabaseFiles");
+}
+
+void FileManager_v1::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
+// Open and read in an overlay file, close file
+	uint32       i = 0;
+	image_pt     tmpImage = image;                  // temp ptr to overlay file
+
+	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
+
+	const char  *ovl_ext[] = {".b", ".o", ".ob"};
+	char *buf = (char *) malloc(2048 + 1);      // Buffer for file access
+
+	strcat(strcpy(buf, _vm._screenNames[screenNum]), ovl_ext[overlayType]);
+
+	if (!fileExists(buf)) {
+		for (i = 0; i < OVL_SIZE; i++)
+			image[i] = 0;
+		return;
+	}
+
+	if (!_sceneryArchive1.open(buf))
+		Utils::Error(FILE_ERR, "%s", buf);
+
+	_sceneryArchive1.read(tmpImage, OVL_SIZE);
+	_sceneryArchive1.close();
+}
+
+void FileManager_v1::readBackground(int screenIndex) {
+// Read a PCX image into dib_a
+	seq_t        seq;                               // Image sequence structure for Read_pcx
+
+	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
+
+	char *buf = (char *) malloc(2048 + 1);      // Buffer for file access
+	strcat(strcat(strcpy(buf, _vm._picDir), _vm._screenNames[screenIndex]), BKGEXT);
+	if (!_sceneryArchive1.open(buf)) {
+		warning("File %s not found, trying again with %s.ART", buf, _vm._screenNames[screenIndex]);
+		strcat(strcpy(buf, _vm._screenNames[screenIndex]), ".ART");
+		if (!_sceneryArchive1.open(buf))
+			Utils::Error(FILE_ERR, "%s", buf);
+	}
+	// Read the image into dummy seq and static dib_a
+	readPCX(_sceneryArchive1, &seq, _vm.screen().getFrontBuffer(), true, _vm._screenNames[screenIndex]);
+
+	_sceneryArchive1.close();
+}
+
+FileManager_v2::FileManager_v2(HugoEngine &vm) : FileManager(vm) {
+}
+
+FileManager_v2::~FileManager_v2() {
+}
+
+void FileManager_v2::openDatabaseFiles() {
+	debugC(1, kDebugFile, "openDatabaseFiles");
+
+	if (!_stringArchive.open(STRING_FILE))
+		Utils::Error(FILE_ERR, "%s", STRING_FILE);
+	if (!_sceneryArchive1.open("scenery.dat"))
+		Utils::Error(FILE_ERR, "%s", "scenery.dat");
+	if (!_objectsArchive.open(OBJECTS_FILE))
+		Utils::Error(FILE_ERR, "%s", OBJECTS_FILE);
+}
+
+void FileManager_v2::closeDatabaseFiles() {
+	debugC(1, kDebugFile, "closeDatabaseFiles");
+
+	_stringArchive.close();
+	_sceneryArchive1.close();
+	_objectsArchive.close();
+}
+
+void FileManager_v2::readBackground(int screenIndex) {
+// Read a PCX image into dib_a
+	seq_t        seq;                               // Image sequence structure for Read_pcx
+	sceneBlock_t sceneBlock;                        // Read a database header entry
+
+	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
+
+	_sceneryArchive1.seek((uint32) screenIndex * sizeof(sceneBlock_t), SEEK_SET);
+
+	sceneBlock.scene_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.scene_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.b_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.b_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.o_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.o_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.ob_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.ob_len = _sceneryArchive1.readUint32LE();
+
+	_sceneryArchive1.seek(sceneBlock.scene_off, SEEK_SET);
+
+	// Read the image into dummy seq and static dib_a
+	readPCX(_sceneryArchive1, &seq, _vm.screen().getFrontBuffer(), true, _vm._screenNames[screenIndex]);
+}
+
+void FileManager_v2::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
+// Open and read in an overlay file, close file
+	uint32       i = 0;
+	int16        j, k;
+	int8         data;                              // Must be 8 bits signed
+	image_pt     tmpImage = image;                  // temp ptr to overlay file
+	sceneBlock_t sceneBlock;                        // Database header entry
+
+	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
+
+	_sceneryArchive1.seek((uint32)screenNum * sizeof(sceneBlock_t), SEEK_SET);
+
+	sceneBlock.scene_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.scene_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.b_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.b_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.o_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.o_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.ob_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.ob_len = _sceneryArchive1.readUint32LE();
+
+	switch (overlayType) {
+	case BOUNDARY:
+		_sceneryArchive1.seek(sceneBlock.b_off, SEEK_SET);
+		i = sceneBlock.b_len;
+		break;
+	case OVERLAY:
+		_sceneryArchive1.seek(sceneBlock.o_off, SEEK_SET);
+		i = sceneBlock.o_len;
+		break;
+	case OVLBASE:
+		_sceneryArchive1.seek(sceneBlock.ob_off, SEEK_SET);
+		i = sceneBlock.ob_len;
+		break;
+	default:
+		Utils::Error(FILE_ERR, "%s", "Bad ovl_type");
+		break;
+	}
+	if (i == 0) {
+		for (i = 0; i < OVL_SIZE; i++)
+			image[i] = 0;
+		return;
+	}
+
+	// Read in the overlay file using MAC Packbits.  (We're not proud!)
+	k = 0;                                      // byte count
+	do {
+		data = _sceneryArchive1.readByte();      // Read a code byte
+		if ((byte)data == 0x80)             // Noop
+			k = k;
+		else if (data >= 0) {                   // Copy next data+1 literally
+			for (i = 0; i <= (byte)data; i++, k++)
+				*tmpImage++ = _sceneryArchive1.readByte();
+		} else {                            // Repeat next byte -data+1 times
+			j = _sceneryArchive1.readByte();
+
+			for (i = 0; i < (byte)(-data + 1); i++, k++)
+				*tmpImage++ = j;
+		}
+	} while (k < OVL_SIZE);
+}
+
+FileManager_v3::FileManager_v3(HugoEngine &vm) : FileManager(vm) {
+}
+
+FileManager_v3::~FileManager_v3() {
+}
+
+void FileManager_v3::openDatabaseFiles() {
+	debugC(1, kDebugFile, "openDatabaseFiles");
+
+	if (!_stringArchive.open(STRING_FILE))
+		Utils::Error(FILE_ERR, "%s", STRING_FILE);
+	if (!_sceneryArchive1.open("scenery.dat"))
+		Utils::Error(FILE_ERR, "%s", "scenery.dat");
+	if (!_objectsArchive.open(OBJECTS_FILE))
+		Utils::Error(FILE_ERR, "%s", OBJECTS_FILE);
+}
+
+void FileManager_v3::closeDatabaseFiles() {
+	debugC(1, kDebugFile, "closeDatabaseFiles");
+
+	_stringArchive.close();
+	_sceneryArchive1.close();
+	_objectsArchive.close();
+}
+
+void FileManager_v3::readBackground(int screenIndex) {
+// Read a PCX image into dib_a
+	seq_t        seq;                               // Image sequence structure for Read_pcx
+	sceneBlock_t sceneBlock;                        // Read a database header entry
+
+	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
+
+	_sceneryArchive1.seek((uint32) screenIndex * sizeof(sceneBlock_t), SEEK_SET);
+
+	sceneBlock.scene_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.scene_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.b_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.b_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.o_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.o_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.ob_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.ob_len = _sceneryArchive1.readUint32LE();
+
+	_sceneryArchive1.seek(sceneBlock.scene_off, SEEK_SET);
+
+	// Read the image into dummy seq and static dib_a
+	readPCX(_sceneryArchive1, &seq, _vm.screen().getFrontBuffer(), true, _vm._screenNames[screenIndex]);
+}
+
+void FileManager_v3::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
+// Open and read in an overlay file, close file
+	uint32       i = 0;
+	image_pt     tmpImage = image;                  // temp ptr to overlay file
+	sceneBlock_t sceneBlock;                        // Database header entry
+
+	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
+
+	_sceneryArchive1.seek((uint32)screenNum * sizeof(sceneBlock_t), SEEK_SET);
+
+	sceneBlock.scene_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.scene_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.b_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.b_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.o_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.o_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.ob_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.ob_len = _sceneryArchive1.readUint32LE();
+
+	switch (overlayType) {
+	case BOUNDARY:
+		_sceneryArchive1.seek(sceneBlock.b_off, SEEK_SET);
+		i = sceneBlock.b_len;
+		break;
+	case OVERLAY:
+		_sceneryArchive1.seek(sceneBlock.o_off, SEEK_SET);
+		i = sceneBlock.o_len;
+		break;
+	case OVLBASE:
+		_sceneryArchive1.seek(sceneBlock.ob_off, SEEK_SET);
+		i = sceneBlock.ob_len;
+		break;
+	default:
+		Utils::Error(FILE_ERR, "%s", "Bad ovl_type");
+		break;
+	}
+	if (i == 0) {
+		for (i = 0; i < OVL_SIZE; i++)
+			image[i] = 0;
+		return;
+	}
+
+	_sceneryArchive1.read(tmpImage, OVL_SIZE);
+}
+
+FileManager_v4::FileManager_v4(HugoEngine &vm) : FileManager(vm) {
+}
+
+FileManager_v4::~FileManager_v4() {
+}
+
+void FileManager_v4::readBackground(int screenIndex) {
+// Read a PCX image into dib_a
+	seq_t        seq;                               // Image sequence structure for Read_pcx
+	sceneBlock_t sceneBlock;                        // Read a database header entry
+	Common::File sceneryArchive;
+
+	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
+
+	_sceneryArchive1.seek((uint32) screenIndex * sizeof(sceneBlock_t), SEEK_SET);
+	
+	sceneBlock.scene_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.scene_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.b_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.b_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.o_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.o_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.ob_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.ob_len = _sceneryArchive1.readUint32LE();
+
+	if (screenIndex < 20) {
+		_sceneryArchive1.seek(sceneBlock.scene_off, SEEK_SET);
+	
+		// Read the image into dummy seq and static dib_a
+		readPCX(_sceneryArchive1, &seq, _vm.screen().getFrontBuffer(), true, _vm._screenNames[screenIndex]);
+	} else {
+		_sceneryArchive2.seek(sceneBlock.scene_off, SEEK_SET);
+	
+		// Read the image into dummy seq and static dib_a
+		readPCX(_sceneryArchive2, &seq, _vm.screen().getFrontBuffer(), true, _vm._screenNames[screenIndex]);
+	}
+}
+
+void FileManager_v4::openDatabaseFiles() {
+	debugC(1, kDebugFile, "openDatabaseFiles");
+
+	if (!_stringArchive.open(STRING_FILE))
+		Utils::Error(FILE_ERR, "%s", STRING_FILE);
+	if (!_sceneryArchive1.open("scenery1.dat"))
+		Utils::Error(FILE_ERR, "%s", "scenery1.dat");
+	if (!_sceneryArchive2.open("scenery2.dat"))
+		Utils::Error(FILE_ERR, "%s", "scenery2.dat");
+	if (!_objectsArchive.open(OBJECTS_FILE))
+		Utils::Error(FILE_ERR, "%s", OBJECTS_FILE);
+}
+
+void FileManager_v4::closeDatabaseFiles() {
+	debugC(1, kDebugFile, "closeDatabaseFiles");
+
+	_stringArchive.close();
+	_sceneryArchive1.close();
+	_sceneryArchive2.close();
+	_objectsArchive.close();
+}
+
+void FileManager_v4::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
+// Open and read in an overlay file, close file
+	uint32       i = 0;
+	int16        j, k;
+	int8         data;                              // Must be 8 bits signed
+	image_pt     tmpImage = image;                  // temp ptr to overlay file
+	sceneBlock_t sceneBlock;                        // Database header entry
+	Common::File sceneryArchive;
+	
+	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
+
+	_sceneryArchive1.seek((uint32)screenNum * sizeof(sceneBlock_t), SEEK_SET);
+	
+	sceneBlock.scene_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.scene_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.b_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.b_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.o_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.o_len = _sceneryArchive1.readUint32LE();
+	sceneBlock.ob_off = _sceneryArchive1.readUint32LE();
+	sceneBlock.ob_len = _sceneryArchive1.readUint32LE();
+
+	if (screenNum < 20) {
+		switch (overlayType) {
+		case BOUNDARY:
+			_sceneryArchive1.seek(sceneBlock.b_off, SEEK_SET);
+			i = sceneBlock.b_len;
+			break;
+		case OVERLAY:
+			_sceneryArchive1.seek(sceneBlock.o_off, SEEK_SET);
+			i = sceneBlock.o_len;
+			break;
+		case OVLBASE:
+			_sceneryArchive1.seek(sceneBlock.ob_off, SEEK_SET);
+			i = sceneBlock.ob_len;
+			break;
+		default:
+			Utils::Error(FILE_ERR, "%s", "Bad ovl_type");
+			break;
+		}
+		if (i == 0) {
+			for (i = 0; i < OVL_SIZE; i++)
+				image[i] = 0;
+			return;
+		}
+	
+		// Read in the overlay file using MAC Packbits.  (We're not proud!)
+		k = 0;                                      // byte count
+		do {
+			data = _sceneryArchive1.readByte();      // Read a code byte
+			if ((byte)data == 0x80)             // Noop
+				k = k;
+			else if (data >= 0) {                   // Copy next data+1 literally
+				for (i = 0; i <= (byte)data; i++, k++)
+					*tmpImage++ = _sceneryArchive1.readByte();
+			} else {                            // Repeat next byte -data+1 times
+				j = _sceneryArchive1.readByte();
+	
+				for (i = 0; i < (byte)(-data + 1); i++, k++)
+					*tmpImage++ = j;
+			}
+		} while (k < OVL_SIZE);
+	} else {
+		switch (overlayType) {
+		case BOUNDARY:
+			_sceneryArchive2.seek(sceneBlock.b_off, SEEK_SET);
+			i = sceneBlock.b_len;
+			break;
+		case OVERLAY:
+			_sceneryArchive2.seek(sceneBlock.o_off, SEEK_SET);
+			i = sceneBlock.o_len;
+			break;
+		case OVLBASE:
+			_sceneryArchive2.seek(sceneBlock.ob_off, SEEK_SET);
+			i = sceneBlock.ob_len;
+			break;
+		default:
+			Utils::Error(FILE_ERR, "%s", "Bad ovl_type");
+			break;
+		}
+		if (i == 0) {
+			for (i = 0; i < OVL_SIZE; i++)
+				image[i] = 0;
+			return;
+		}
+	
+		// Read in the overlay file using MAC Packbits.  (We're not proud!)
+		k = 0;                                      // byte count
+		do {
+			data = _sceneryArchive2.readByte();      // Read a code byte
+			if ((byte)data == 0x80)             // Noop
+				k = k;
+			else if (data >= 0) {                   // Copy next data+1 literally
+				for (i = 0; i <= (byte)data; i++, k++)
+					*tmpImage++ = _sceneryArchive2.readByte();
+			} else {                            // Repeat next byte -data+1 times
+				j = _sceneryArchive2.readByte();
+	
+				for (i = 0; i < (byte)(-data + 1); i++, k++)
+					*tmpImage++ = j;
+			}
+		} while (k < OVL_SIZE);
+	}
+}
 } // End of namespace Hugo
+

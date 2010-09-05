@@ -224,9 +224,8 @@ Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, con
 }
 
 const char *KyraEngine_v1::getSavegameFilename(int num) {
-	static Common::String filename;
-	filename = getSavegameFilename(_targetName, num);
-	return filename.c_str();
+	_savegameFilename = getSavegameFilename(_targetName, num);
+	return _savegameFilename.c_str();
 }
 
 Common::String KyraEngine_v1::getSavegameFilename(const Common::String &target, int num) {
