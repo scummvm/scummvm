@@ -387,26 +387,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 }
 
 extern void kDirLoopWorker(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv);
-
-int getAngle(int xrel, int yrel) {
-	if ((xrel == 0) && (yrel == 0))
-		return 0;
-	else {
-		int val = (int)(180.0 / PI * atan2((double)xrel, (double) - yrel));
-		if (val < 0)
-			val += 360;
-
-		// Take care of OB1 differences between SSCI and
-		// FSCI. SCI games sometimes check for equality with
-		// "round" angles
-		if (val % 45 == 44)
-			val++;
-		else if (val % 45 == 1)
-			val--;
-
-		return val;
-	}
-}
+extern uint16 kGetAngleWorker(int16 x1, int16 y1, int16 x2, int16 y2);
 
 reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
@@ -446,8 +427,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 			return SIGNAL_REG;
 		avoiderHeading = -1;
 
-		// TODO: reverse this
-		uint16 angle = getAngle(moverX - clientX, moverY - clientY);
+		uint16 angle = kGetAngleWorker(clientX, clientY, moverX, moverY);
 
 		reg_t clientLooper = readSelector(segMan, client, SELECTOR(looper));
 		if (clientLooper.isNull()) {

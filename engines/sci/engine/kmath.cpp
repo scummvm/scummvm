@@ -72,30 +72,24 @@ reg_t kSqrt(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, (int16) sqrt((float) ABS(argv[0].toSint16())));
 }
 
-reg_t kGetAngle(EngineState *s, int argc, reg_t *argv) {
-	// Based on behavior observed with a test program created with
-	// SCI Studio.
-	int x1 = argv[0].toSint16();
-	int y1 = argv[1].toSint16();
-	int x2 = argv[2].toSint16();
-	int y2 = argv[3].toSint16();
-	int xrel = x2 - x1;
-	int yrel = y1 - y2; // y-axis is mirrored.
-	int angle;
+uint16 kGetAngleWorker(int16 x1, int16 y1, int16 x2, int16 y2) {
+	int16 xRel = x2 - x1;
+	int16 yRel = y1 - y2; // y-axis is mirrored.
+	int16 angle;
 
 	// Move (xrel, yrel) to first quadrant.
 	if (y1 < y2)
-		yrel = -yrel;
+		yRel = -yRel;
 	if (x2 < x1)
-		xrel = -xrel;
+		xRel = -xRel;
 
 	// Compute angle in grads.
-	if (yrel == 0 && xrel == 0)
-		angle = 0;
+	if (yRel == 0 && xRel == 0)
+		return 0;
 	else
-		angle = 100 * xrel / (xrel + yrel);
+		angle = 100 * xRel / (xRel + yRel);
 
-	// Fix up angle for actual quadrant of (xrel, yrel).
+	// Fix up angle for actual quadrant of (xRel, yRel).
 	if (y1 < y2)
 		angle = 200 - angle;
 	if (x2 < x1)
@@ -105,8 +99,18 @@ reg_t kGetAngle(EngineState *s, int argc, reg_t *argv) {
 	// grad 10 with grad 11, grad 20 with grad 21, etc. This leads to
 	// "degrees" that equal either one or two grads.
 	angle -= (angle + 9) / 10;
+	return angle;
+}
 
-	return make_reg(0, angle);
+reg_t kGetAngle(EngineState *s, int argc, reg_t *argv) {
+	// Based on behavior observed with a test program created with
+	// SCI Studio.
+	int x1 = argv[0].toSint16();
+	int y1 = argv[1].toSint16();
+	int x2 = argv[2].toSint16();
+	int y2 = argv[3].toSint16();
+
+	return make_reg(0, kGetAngleWorker(x1, y1, x2, y2));
 }
 
 reg_t kGetDistance(EngineState *s, int argc, reg_t *argv) {
