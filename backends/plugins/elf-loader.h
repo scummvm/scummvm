@@ -28,9 +28,10 @@
 #ifndef ELF_LOADER_H
 #define ELF_LOADER_H
 
-#include "elf32.h"
-#include "common/stream.h"
 #include "backends/plugins/dynamic-plugin.h"
+#include "backends/plugins/elf32.h"
+
+#include "common/stream.h"
 
 /**
  * DLObject
@@ -49,7 +50,6 @@ protected:
 
     uint32 _segmentSize;
 
-    //void seterror(const char *fmt, ...);
     virtual void unload();
     virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) = 0;
     bool load(Common::SeekableReadStream* DLFile);

@@ -27,9 +27,8 @@
 
 #include "backends/plugins/elf-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
-#include "common/fs.h"
 
-#include "backends/plugins/elf-loader.h"
+#include "common/fs.h"
 
 DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
 	void *func;
@@ -42,9 +41,9 @@ DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
 	}
 	if (!func) {
 		if (handleNull) {
-			warning("Failed loading symbol '%s' from plugin '%s' (Handle is NULL)", symbol, _filename.c_str());
+			warning("elfloader: Failed loading symbol '%s' from plugin '%s' (Handle is NULL)", symbol, _filename.c_str());
 		} else {
-			warning("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
+			warning("elfloader: Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
 		}
 	}
 
@@ -69,7 +68,7 @@ bool ELFPlugin::loadPlugin() {
 		}
 
 		if (!_dlHandle) {
-			warning("Failed loading plugin '%s'", _filename.c_str());
+			warning("elfloader: Failed loading plugin '%s'", _filename.c_str());
 			return false;
 		}
 
@@ -80,13 +79,13 @@ bool ELFPlugin::loadPlugin() {
 		}
 
 		return ret;
-};
+}
 
 void ELFPlugin::unloadPlugin() {
 	DynamicPlugin::unloadPlugin();
 	if (_dlHandle) {
 		if (!_dlHandle->close()) {
-			warning("Failed unloading plugin '%s'", _filename.c_str());
+			warning("elfloader: Failed unloading plugin '%s'", _filename.c_str());
 		}
 		delete _dlHandle;
 		_dlHandle = 0;

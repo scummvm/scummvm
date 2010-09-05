@@ -26,8 +26,8 @@
 
 #if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
 
-#include "elf-loader.h"
-#include "shorts-segment-manager.h"
+#include "backends/plugins/elf-loader.h"
+#include "backends/plugins/shorts-segment-manager.h"
 
 class MIPSDLObject : public DLObject {
 protected:

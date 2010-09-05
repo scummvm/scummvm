@@ -27,18 +27,8 @@
 
 #include <string.h>
 #include <stdarg.h>
-#include <stdio.h>
-#include <malloc.h>	// for memalign() (Linux specific)
-#include <unistd.h>
-#include <sys/fcntl.h>
-#include <sys/_default_fcntl.h>	// FIXME: Why do we need this DevKitPro specific header?
-
-#include "common/file.h"
-#include "common/fs.h"
-#include "elf-loader.h"
 
 #ifdef __PSP__
-#include "backends/platform/psp/powerman.h"
 #include <psputils.h>
 #include <psputilsforkernel.h>
 #endif
@@ -47,15 +37,11 @@
 #include <nds.h>
 #endif
 
-#define __DEBUG_PLUGINS__
+#include "backends/plugins/elf-loader.h"
 
-#ifdef __DEBUG_PLUGINS__
-#define DBG(x,...) printf(x, ## __VA_ARGS__)
-#else
-#define DBG(x,...)
-#endif
-
-#define seterror(x,...) printf(x, ## __VA_ARGS__)
+#include "common/debug.h"
+#include "common/file.h"
+#include "common/fs.h"
 
 /**
  * Flushes the data cache (Platform Specific).
@@ -106,12 +92,12 @@ bool DLObject::readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehd
 #endif
 	        ehdr->e_phentsize < sizeof(Elf32_Phdr)	 ||			// Check for size of program header
 	        ehdr->e_shentsize != sizeof(Elf32_Shdr)) {			// Check for size of section header
-		seterror("Invalid file type.");
+		warning("elfloader: Invalid file type.");
 		return false;
 	}
 
-	DBG("phoff = %d, phentsz = %d, phnum = %d\n",
-	    ehdr->e_phoff, ehdr->e_phentsize, ehdr->e_phnum);
+	debug(2, "elfloader: phoff = %d, phentsz = %d, phnum = %d",
+			ehdr->e_phoff, ehdr->e_phentsize, ehdr->e_phnum);
 
 	return true;
 }
@@ -120,18 +106,18 @@ bool DLObject::readProgramHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr
 	// Read program header
 	if (DLFile->seek(ehdr->e_phoff + sizeof(*phdr)*num, SEEK_SET) < 0 ||
 	    DLFile->read(phdr, sizeof(*phdr)) != sizeof(*phdr)) {
-		seterror("Program header load failed.");
+		warning("elfloader: Program header load failed.");
 		return false;
 	}
 
 	// Check program header values
 	if (phdr->p_type != PT_LOAD  || phdr->p_filesz > phdr->p_memsz) {
-		seterror("Invalid program header.");
+		warning("elfloader: Invalid program header.");
 		return false;
 	}
 
-	DBG("offs = %x, filesz = %x, memsz = %x, align = %x\n",
-	    phdr->p_offset, phdr->p_filesz, phdr->p_memsz, phdr->p_align);
+	debug(2, "elfloader: offs = %x, filesz = %x, memsz = %x, align = %x",
+			phdr->p_offset, phdr->p_filesz, phdr->p_memsz, phdr->p_align);
 
 	return true;
 }
@@ -141,14 +127,14 @@ bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr)
 
 	// Attempt to allocate memory for segment
 	int extra = phdr->p_vaddr % phdr->p_align;	// Get extra length TODO: check logic here
-	DBG("extra mem is %x\n", extra);
+	debug(2, "elfloader: Extra mem is %x", extra);
 
 	if (!(_segment = (char *)memalign(phdr->p_align, phdr->p_memsz + extra))) {
-		seterror("Out of memory.\n");
+		warning("elfloader: Out of memory.");
 		return false;
 	}
 
-	DBG("allocated segment @ %p\n", _segment);
+	debug(2, "elfloader: Allocated segment @ %p", _segment);
 
 	// Get offset to load segment into
 	baseAddress = (char *)_segment + phdr->p_vaddr;
@@ -156,20 +142,20 @@ bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr)
 
 	// Set bss segment to 0 if necessary (assumes bss is at the end)
 	if (phdr->p_memsz > phdr->p_filesz) {
-		DBG("Setting %p to %p to 0 for bss\n", baseAddress + phdr->p_filesz, baseAddress + phdr->p_memsz);
+		debug(2, "elfloader: Setting %p to %p to 0 for bss", baseAddress + phdr->p_filesz, baseAddress + phdr->p_memsz);
 		memset(baseAddress + phdr->p_filesz, 0, phdr->p_memsz - phdr->p_filesz);
 	}
 
-	DBG("Reading the segment into memory\n");
+	debug(2, "elfloader: Reading the segment into memory");
 
 	// Read the segment into memory
 	if (DLFile->seek(phdr->p_offset, SEEK_SET) < 0 ||
 	        DLFile->read(baseAddress, phdr->p_filesz) != phdr->p_filesz) {
-		seterror("Segment load failed.");
+		warning("elfloader: Segment load failed.");
 		return false;
 	}
 
-	DBG("Segment has been read into memory\n");
+	debug(2, "elfloader: Segment has been read into memory");
 
 	return true;
 }
@@ -179,7 +165,7 @@ Elf32_Shdr * DLObject::loadSectionHeaders(Common::SeekableReadStream* DLFile, El
 
 	// Allocate memory for section headers
 	if (!(shdr = (Elf32_Shdr *)malloc(ehdr->e_shnum * sizeof(*shdr)))) {
-		seterror("Out of memory.");
+		warning("elfloader: Out of memory.");
 		return NULL;
 	}
 
@@ -187,7 +173,7 @@ Elf32_Shdr * DLObject::loadSectionHeaders(Common::SeekableReadStream* DLFile, El
 	if (DLFile->seek(ehdr->e_shoff, SEEK_SET) < 0 ||
 	        DLFile->read(shdr, ehdr->e_shnum * sizeof(*shdr)) !=
 	        ehdr->e_shnum * sizeof(*shdr)) {
-		seterror("Section headers load failed.");
+		warning("elfloader: Section headers load failed.");
 		return NULL;
 	}
 
@@ -208,15 +194,15 @@ int DLObject::loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *eh
 
 	// Check for no symbol table
 	if (_symtab_sect < 0) {
-		seterror("No symbol table.");
+		warning("elfloader: No symbol table.");
 		return -1;
 	}
 
-	DBG("Symbol section at section %d, size %x\n", _symtab_sect, shdr[_symtab_sect].sh_size);
+	debug(2, "elfloader: Symbol section at section %d, size %x", _symtab_sect, shdr[_symtab_sect].sh_size);
 
 	// Allocate memory for symbol table
 	if (!(_symtab = malloc(shdr[_symtab_sect].sh_size))) {
-		seterror("Out of memory.");
+		warning("elfloader: Out of memory.");
 		return -1;
 	}
 
@@ -224,13 +210,13 @@ int DLObject::loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *eh
 	if (DLFile->seek(shdr[_symtab_sect].sh_offset, SEEK_SET) < 0 ||
 	        DLFile->read(_symtab, shdr[_symtab_sect].sh_size) !=
 	        shdr[_symtab_sect].sh_size) {
-		seterror("Symbol table load failed.");
+		warning("elfloader: Symbol table load failed.");
 		return -1;
 	}
 
 	// Set number of symbols
 	_symbol_cnt = shdr[_symtab_sect].sh_size / sizeof(Elf32_Sym);
-	DBG("Loaded %d symbols.\n", _symbol_cnt);
+	debug(2, "elfloader: Loaded %d symbols.", _symbol_cnt);
 
 	return _symtab_sect;
 }
@@ -240,7 +226,7 @@ bool DLObject::loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *s
 
 	// Allocate memory for string table
 	if (!(_strtab = (char *)malloc(shdr[string_sect].sh_size))) {
-		seterror("Out of memory.");
+		warning("elfloader: Out of memory.");
 		return false;
 	}
 
@@ -248,7 +234,7 @@ bool DLObject::loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *s
 	if (DLFile->seek(shdr[string_sect].sh_offset, SEEK_SET) < 0 ||
 	        DLFile->read(_strtab, shdr[string_sect].sh_size) !=
 	        shdr[string_sect].sh_size) {
-		seterror("Symbol table strings load failed.");
+		warning("elfloader: Symbol table strings load failed.");
 		return false;
 	}
 
@@ -263,7 +249,7 @@ void DLObject::relocateSymbols(Elf32_Addr offset) {
 		if (s->st_shndx < SHN_LOPROC) {
 				s->st_value += offset;
 				if (s->st_value < (Elf32_Addr)_segment || s->st_value > (Elf32_Addr)_segment + _segmentSize)
-					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
+					warning("elfloader: Symbol out of bounds! st_value = %x", s->st_value);
 		}
 	}
 }
@@ -279,7 +265,7 @@ bool DLObject::load(Common::SeekableReadStream* DLFile) {
 	}
 
 	for (int i = 0; i < ehdr.e_phnum; i++) {	//Load our segments
-		DBG("Loading segment %d\n", i);
+		debug(2, "elfloader: Loading segment %d", i);
 
 		if (readProgramHeaders(DLFile, &ehdr, &phdr, i) == false)
 			return false;
@@ -312,16 +298,16 @@ bool DLObject::open(const char *path) {
 	Common::SeekableReadStream* DLFile;
 	void *ctors_start, *ctors_end;
 
-	DBG("open(\"%s\")\n", path);
+	debug(2, "elfloader: open(\"%s\")", path);
 
 	Common::FSNode file(path);
 
 	if (!(DLFile = file.createReadStream())) {
-		seterror("%s not found.", path);
+		warning("elfloader: %s not found.", path);
 		return false;
 	}
 
-	DBG("%s found!\n", path);
+	debug(2, "elfloader: %s found!", path);
 
 	/*Try to load and relocate*/
 	if (!load(DLFile)) {
@@ -329,7 +315,7 @@ bool DLObject::open(const char *path) {
 		return false;
 	}
 
-	DBG("loaded!/n");
+	debug(2, "elfloader: Loaded!");
 
 	flushDataCache(_segment, _segmentSize);
 
@@ -340,17 +326,17 @@ bool DLObject::open(const char *path) {
 
 	if (ctors_start == NULL || ctors_end == NULL || _dtors_start == NULL ||
 	        _dtors_end == NULL) {
-		seterror("Missing ctors/dtors.");
+		warning("elfloader: Missing ctors/dtors.");
 		_dtors_start = _dtors_end = NULL;
 		unload();
 		return false;
 	}
 
-	DBG("Calling constructors.\n");
+	debug(2, "elfloader: Calling constructors.");
 	for (void (**f)(void) = (void (**)(void))ctors_start; f != ctors_end; f++)
 		(**f)();
 
-	DBG("%s opened ok.\n", path);
+	debug(2, "elfloader: %s opened ok.", path);
 
 	return true;
 }
@@ -365,10 +351,10 @@ bool DLObject::close() {
 }
 
 void *DLObject::symbol(const char *name) {
-	DBG("symbol(\"%s\")\n", name);
+	debug(2, "elfloader: Symbol(\"%s\")", name);
 
 	if (_symtab == NULL || _strtab == NULL || _symbol_cnt < 1) {
-		seterror("No symbol table loaded.");
+		warning("elfloader: No symbol table loaded.");
 		return NULL;
 	}
 
@@ -379,12 +365,12 @@ void *DLObject::symbol(const char *name) {
 		       !strcmp(name, _strtab + s->st_name)) {
 
 			// We found the symbol
-			DBG("=> %p\n", (void*)s->st_value);
+			debug(2, "elfloader: => %p", (void*)s->st_value);
 			return (void*)s->st_value;
 		}
 
 	// We didn't find the symbol
-	seterror("Symbol \"%s\" not found.", name);
+	warning("elfloader: Symbol \"%s\" not found.", name);
 	return NULL;
 }
 

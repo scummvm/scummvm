@@ -25,9 +25,7 @@
 
 #if defined(DYNAMIC_MODULES) && defined(ARM_TARGET)
 
-#include "backends/fs/ds/ds-fs.h"
-#include "elf-loader.h"
-#include "dsmain.h"
+#include "backends/plugins/elf-loader.h"
 
 class ARMDLObject : public DLObject {
 protected:

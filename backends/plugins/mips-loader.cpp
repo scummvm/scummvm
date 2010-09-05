@@ -25,17 +25,9 @@
 
 #if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
 
-#include "mips-loader.h"
+#include "backends/plugins/mips-loader.h"
 
-//#define __DEBUG_PLUGINS__
-
-#ifdef __DEBUG_PLUGINS__
-#define DBG(x,...) printf(x, ## __VA_ARGS__)
-#else
-#define DBG(x,...)
-#endif
-
-#define seterror(x,...) printf(x, ## __VA_ARGS__)
+#include "common/debug.h"
 
 /**
  * Follow the instruction of a relocation section.
@@ -51,14 +43,14 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 
 	// Allocate memory for relocation table
 	if (!(rel = (Elf32_Rel *)malloc(size))) {
-		seterror("Out of memory.");
+		warning("elfloader: Out of memory.");
 		return false;
 	}
 
 	// Read in our relocation table
 	if (DLFile->seek(offset, SEEK_SET) < 0 ||
 	        DLFile->read(rel, size) != (ssize_t)size) {
-		seterror("Relocation table load failed.");
+		warning("elfloader: Relocation table load failed.");
 		free(rel);
 		return false;
 	}
@@ -66,7 +58,7 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 	// Treat each relocation entry. Loop over all of them
 	int cnt = size / sizeof(*rel);
 
-	DBG("Loaded relocation table. %d entries. base address=%p\n", cnt, relSegment);
+	debug(2, "elfloader: Loaded relocation table. %d entries. base address=%p", cnt, relSegment);
 
 	bool seenHi16 = false;	// For treating HI/LO16 commands
 	int firstHi16 = -1;		// Mark the point of the first hi16 seen
@@ -105,7 +97,7 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 				lastHiSymVal = sym->st_value;
 				hi16InShorts = (ShortsMan.inGeneralSegment((char *)sym->st_value)); // Fix for problem with switching btw segments
 				if (debugRelocs[0]++ < DEBUG_NUM)	// Print only a set number
-					DBG("R_MIPS_HI16: i=%d, offset=%x, ahl = %x, target = %x\n",
+					debug(8, "elfloader: R_MIPS_HI16: i=%d, offset=%x, ahl = %x, target = %x",
 					    i, rel[i].r_offset, ahl, *target);
 			}
 			break;
@@ -113,7 +105,7 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 		case R_MIPS_LO16:						// Absolute addressing. Needs a HI16 to come before it
 			if (sym->st_shndx < SHN_LOPROC) {		// Only shift for plugin section. (ie. has a real section index)
 				if (!seenHi16) {					// We MUST have seen HI16 first
-					seterror("R_MIPS_LO16 w/o preceding R_MIPS_HI16 at relocation %d!\n", i);
+					debug(8, "elfloader: R_MIPS_LO16 w/o preceding R_MIPS_HI16 at relocation %d!", i);
 					free(rel);
 					return false;
 				}
@@ -158,10 +150,10 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 				*target |= relocation & 0xffff;				// Take the lower 16 bits of the relocation
 
 				if (debugRelocs[1]++ < DEBUG_NUM)
-					DBG("R_MIPS_LO16: i=%d, offset=%x, a=%x, ahl = %x, lastTarget = %x, origt = %x, target = %x\n",
+					debug(8, "elfloader: R_MIPS_LO16: i=%d, offset=%x, a=%x, ahl = %x, lastTarget = %x, origt = %x, target = %x",
 					    i, rel[i].r_offset, a, ahl, *lastTarget, origTarget, *target);
 				if (lo16InShorts && debugRelocs[2]++ < DEBUG_NUM)
-					DBG("R_MIPS_LO16s: i=%d, offset=%x, a=%x, ahl = %x, lastTarget = %x, origt = %x, target = %x\n",
+					debug(8, "elfloader: R_MIPS_LO16s: i=%d, offset=%x, a=%x, ahl = %x, lastTarget = %x, origt = %x, target = %x",
 					    i, rel[i].r_offset, a, ahl, *lastTarget, origTarget, *target);
 			}
 			break;
@@ -175,11 +167,11 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 				*target |= (relocation & 0x03ffffff);
 
 				if (debugRelocs[3]++ < DEBUG_NUM)
-					DBG("R_MIPS_26: i=%d, offset=%x, symbol=%d, stinfo=%x, a=%x, origTarget=%x, target=%x\n",
+					debug(8, "elfloader: R_MIPS_26: i=%d, offset=%x, symbol=%d, stinfo=%x, a=%x, origTarget=%x, target=%x",
 					    i, rel[i].r_offset, REL_INDEX(rel[i].r_info), sym->st_info, a, origTarget, *target);
 			} else {
 				if (debugRelocs[4]++ < DEBUG_NUM)
-					DBG("R_MIPS_26: i=%d, offset=%x, symbol=%d, stinfo=%x, a=%x, origTarget=%x, target=%x\n",
+					debug(8, "elfloader: R_MIPS_26: i=%d, offset=%x, symbol=%d, stinfo=%x, a=%x, origTarget=%x, target=%x",
 					    i, rel[i].r_offset, REL_INDEX(rel[i].r_info), sym->st_info, a, origTarget, *target);
 			}
 			break;
@@ -196,7 +188,7 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 				*target |= relocation & 0xffff;
 
 				if (debugRelocs[5]++ < DEBUG_NUM)
-					DBG("R_MIPS_GPREL16: i=%d, a=%x, gpVal=%x, origTarget=%x, target=%x, offset=%x\n",
+					debug(8, "elfloader: R_MIPS_GPREL16: i=%d, a=%x, gpVal=%x, origTarget=%x, target=%x, offset=%x",
 					    i, a, _gpVal, origTarget, *target, _shortsSegment->getOffset());
 			}
 
@@ -213,18 +205,18 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 				*target = relocation;
 
 				if (debugRelocs[6]++ < DEBUG_NUM)
-					DBG("R_MIPS_32: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
+					debug("8, elfloader: R_MIPS_32: i=%d, a=%x, origTarget=%x, target=%x", i, a, origTarget, *target);
 			}
 			break;
 
 		default:
-			seterror("Unknown relocation type %x at relocation %d.\n", REL_TYPE(rel[i].r_info), i);
+			warning("elfloader: Unknown relocation type %x at relocation %d.", REL_TYPE(rel[i].r_info), i);
 			free(rel);
 			return false;
 		}
 	}
 
-	DBG("Done with relocation. extendedHi16=%d\n\n", extendedHi16);
+	debug(2, "elfloader: Done with relocation. extendedHi16=%d", extendedHi16);
 
 	free(rel);
 	return true;
@@ -274,12 +266,12 @@ void MIPSDLObject::relocateSymbols(Elf32_Addr offset) {
 				mainCount++;
 				s->st_value += offset;
 				if (s->st_value < (Elf32_Addr)_segment || s->st_value > (Elf32_Addr)_segment + _segmentSize)
-					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
+					warning("elfloader: Symbol out of bounds! st_value = %x", s->st_value);
 			} else {	// shorts section
 				shortsCount++;
 				s->st_value += _shortsSegment->getOffset();
 				if (!_shortsSegment->inSegment((char *)s->st_value))
-					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
+					warning("elfloader: Symbol out of bounds! st_value = %x", s->st_value);
 			}
 
 		}
@@ -295,15 +287,15 @@ bool MIPSDLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *p
 
 		// Attempt to allocate memory for segment
 		int extra = phdr->p_vaddr % phdr->p_align;	// Get extra length TODO: check logic here
-		DBG("extra mem is %x\n", extra);
+		debug(2, "elfloader: Extra mem is %x", extra);
 
 		if (phdr->p_align < 0x10000) phdr->p_align = 0x10000;	// Fix for wrong alignment on e.g. AGI
 
 		if (!(_segment = (char *)memalign(phdr->p_align, phdr->p_memsz + extra))) {
-			seterror("Out of memory.\n");
+			warning("elfloader: Out of memory.");
 			return false;
 		}
-		DBG("allocated segment @ %p\n", _segment);
+		debug(2, "elfloader: Allocated segment @ %p", _segment);
 
 		// Get offset to load segment into
 		baseAddress = (char *)_segment + phdr->p_vaddr;
@@ -312,26 +304,26 @@ bool MIPSDLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *p
 		_shortsSegment = ShortsMan.newSegment(phdr->p_memsz, (char *)phdr->p_vaddr);
 
 		baseAddress = _shortsSegment->getStart();
-		DBG("shorts segment @ %p to %p. Segment wants to be at %x. Offset=%x\n",
+		debug(2, "elfloader: Shorts segment @ %p to %p. Segment wants to be at %x. Offset=%x",
 		    _shortsSegment->getStart(), _shortsSegment->getEnd(), phdr->p_vaddr, _shortsSegment->getOffset());
 	}
 
 	// Set bss segment to 0 if necessary (assumes bss is at the end)
 	if (phdr->p_memsz > phdr->p_filesz) {
-		DBG("Setting %p to %p to 0 for bss\n", baseAddress + phdr->p_filesz, baseAddress + phdr->p_memsz);
+		debug(2, "elfloader: Setting %p to %p to 0 for bss", baseAddress + phdr->p_filesz, baseAddress + phdr->p_memsz);
 		memset(baseAddress + phdr->p_filesz, 0, phdr->p_memsz - phdr->p_filesz);
 	}
 
-	DBG("Reading the segment into memory\n");
+	debug(2, "elfloader: Reading the segment into memory");
 
 	// Read the segment into memory
 	if (DLFile->seek(phdr->p_offset, SEEK_SET) < 0 ||
 	        DLFile->read(baseAddress, phdr->p_filesz) != (ssize_t)phdr->p_filesz) {
-		seterror("Segment load failed.");
+		warning("elfloader: Segment load failed.");
 		return false;
 	}
 
-	DBG("Segment has been read into memory\n");
+	debug(2, "elfloader: Segment has been read into memory");
 
 	return true;
 }

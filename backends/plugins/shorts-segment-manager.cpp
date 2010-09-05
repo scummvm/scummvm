@@ -25,19 +25,13 @@
 
 #if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
 
-#include "shorts-segment-manager.h"
+#include "backends/plugins/shorts-segment-manager.h"
+
+#include "common/debug.h"
 
 extern char __plugin_hole_start;	// Indicates start of hole in program file for shorts
 extern char __plugin_hole_end;		// Indicates end of hole in program file
 extern char _gp[];			// Value of gp register
-
-#ifdef DEBUG_PLUGINS
-#define DBG(x,...) printf(x, ## __VA_ARGS__)
-#else
-#define DBG(x,...)
-#endif
-
-#define seterror(x,...) printf(x, ## __VA_ARGS__)
 
 DECLARE_SINGLETON(ShortSegmentManager);	// For singleton
 
@@ -63,7 +57,7 @@ ShortSegmentManager::Segment *ShortSegmentManager::newSegment(int size, char *or
 		lastAddress += 4 - ((Elf32_Addr)lastAddress & 3);	// Round up to multiple of 4
 
 	if (lastAddress + size > _shortsEnd) {
-		seterror("Error. No space in shorts segment for %x bytes. Last address is %p, max address is %p.\n",
+		warning("elfloader: No space in shorts segment for %x bytes. Last address is %p, max address is %p.",
 		         size, lastAddress, _shortsEnd);
 		return NULL;
 	}
@@ -74,14 +68,14 @@ ShortSegmentManager::Segment *ShortSegmentManager::newSegment(int size, char *or
 
 	_list.insert(i, seg);
 
-	DBG("Shorts segment size %x allocated. End = %p. Remaining space = %x. Highest so far is %p.\n",
+	debug(2, "elfloader: Shorts segment size %x allocated. End = %p. Remaining space = %x. Highest so far is %p.",
 	    size, lastAddress + size, _shortsEnd - _list.back()->getEnd(), _highestAddress);
 
 	return seg;
 }
 
 void ShortSegmentManager::deleteSegment(ShortSegmentManager::Segment *seg) {
-	DBG("Deleting shorts segment from %p to %p.\n\n", seg->getStart(), seg->getEnd());
+	debug(2, "elfloader: Deleting shorts segment from %p to %p.", seg->getStart(), seg->getEnd());
 	_list.remove(seg);
 	delete seg;
 }
