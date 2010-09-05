@@ -446,8 +446,8 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 
 				double newX = curX + controlDeltaX;
 				double newY = curY + controlDeltaY;
-				double anchorX = curX + anchorDeltaX;
-				double anchorY = curY + anchorDeltaY;
+				double anchorX = newX + anchorDeltaX;
+				double anchorY = newY + anchorDeltaY;
 
 #define WEIGHT (2.0/3.0)
 

@@ -341,9 +341,16 @@ void drawBez(ArtBpath *bez1, ArtBpath *bez2, art_u8 *buffer, int width, int heig
 #endif
 
 	vec1 = art_bez_path_to_vec(bez1, 0.5);
-	vec2 = art_bez_path_to_vec(bez2, 0.5);
-	vec2 = art_vpath_reverse_free(vec2);
-	vec = art_vpath_cat(vec1, vec2);
+	if (bez2 != 0) {
+		vec2 = art_bez_path_to_vec(bez2, 0.5);
+		vec2 = art_vpath_reverse_free(vec2);
+		vec = art_vpath_cat(vec1, vec2);
+
+		art_free(vec1);
+		art_free(vec2);
+	} else {
+		vec = vec1;
+	}
 
 	if (scaleX != 1.0 || scaleY != 1.0) {
 		ArtVpath *vect;
@@ -363,7 +370,7 @@ void drawBez(ArtBpath *bez1, ArtBpath *bez2, art_u8 *buffer, int width, int heig
 		vec = vect;
 	}
 
-	if (penWidth != -1) {
+	if (bez2 == 0) { // Line drawing
 		svp = art_svp_vpath_stroke(vec, ART_PATH_STROKE_JOIN_ROUND, ART_PATH_STROKE_CAP_ROUND, penWidth, 1.0, 0.5);
 	} else {
 		svp = art_svp_from_vpath(vec);
@@ -427,7 +434,7 @@ void VectorImage::render(int width, int height) {
 			(*fill0pos).code = ART_END;
 			(*fill1pos).code = ART_END;
 
-			drawBez(fill0, fill1, _pixelData, width, height, scaleX, scaleY, -1, _elements[e].getFillStyleColor(s));
+			drawBez(fill1, fill0, _pixelData, width, height, scaleX, scaleY, -1, _elements[e].getFillStyleColor(s));
 
 			art_free(fill0);
 			art_free(fill1);
