@@ -32,6 +32,10 @@ else
 	$(CP) $(srcdir)/dists/wii/icon.png wiidist/scummvm/
 	sed "s/@REVISION@/$(VER_SVNREV)/;s/@TIMESTAMP@/`date +%Y%m%d%H%M%S`/" < $(srcdir)/dists/wii/meta.xml > wiidist/scummvm/meta.xml
 endif
+ifeq ($(DYNAMIC_MODULES),1)
+	$(MKDIR) wiidist/scummvm/plugins
+	for i in $(PLUGINS); do $(STRIP) --strip-debug $$i -o wiidist/scummvm/plugins/`basename $$i`; done
+endif
 	sed 's/$$/\r/' < $(srcdir)/dists/wii/READMII > wiidist/scummvm/READMII.txt
 	for i in $(DIST_FILES_DOCS); do sed 's/$$/\r/' < $$i > wiidist/scummvm/`basename $$i`.txt; done
 	$(CP) $(DIST_FILES_THEMES) wiidist/scummvm/
