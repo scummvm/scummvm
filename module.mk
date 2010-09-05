@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	skeleton_anim.o \
 	sound.o \
 	stark.o \
+	texture.o \
 	xmg.o \
 	xrc.o
 
