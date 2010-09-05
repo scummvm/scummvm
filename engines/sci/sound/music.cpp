@@ -352,24 +352,25 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		}
 	}
 
-	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
-		// Sierra SCI ignores volume set when playing samples via kDoSound
-		//  At least freddy pharkas/CD has a script bug that sets volume to 0
-		//  when playing the "score" sample
-		pSnd->volume = 0x7f;
-		if (pSnd->loop > 1) {
-			pSnd->pLoopStream = new Audio::LoopingAudioStream(pSnd->pStreamAud,
-			                                                  pSnd->loop, DisposeAfterUse::NO);
-			_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
-			                         pSnd->pLoopStream, -1, pSnd->volume, 0,
-			                         DisposeAfterUse::NO);
-		} else {
-			// Rewind in case we play the same sample multiple times
-			// (non-looped) like in pharkas right at the start
-			pSnd->pStreamAud->rewind();
-			_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
-			                         pSnd->pStreamAud, -1, pSnd->volume, 0,
-			                         DisposeAfterUse::NO);
+	if (pSnd->pStreamAud) {
+		if (!_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
+			// Sierra SCI ignores volume set when playing samples via kDoSound
+			//  At least freddy pharkas/CD has a script bug that sets volume to 0
+			//  when playing the "score" sample
+			if (pSnd->loop > 1) {
+				pSnd->pLoopStream = new Audio::LoopingAudioStream(pSnd->pStreamAud,
+																pSnd->loop, DisposeAfterUse::NO);
+				_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
+										pSnd->pLoopStream, -1, _pMixer->kMaxChannelVolume, 0,
+										DisposeAfterUse::NO);
+			} else {
+				// Rewind in case we play the same sample multiple times
+				// (non-looped) like in pharkas right at the start
+				pSnd->pStreamAud->rewind();
+				_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
+										pSnd->pStreamAud, -1, _pMixer->kMaxChannelVolume, 0,
+										DisposeAfterUse::NO);
+			}
 		}
 	} else {
 		if (pSnd->pMidiParser) {
@@ -419,7 +420,8 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 	assert(volume <= MUSIC_VOLUME_MAX);
 	if (pSnd->pStreamAud) {
-		_pMixer->setChannelVolume(pSnd->hCurrentAud, volume * 2); // Mixer is 0-255, SCI is 0-127
+		// we simply ignore volume changes for samples, because sierra sci also
+		//  doesn't support volume for samples via kDoSound
 	} else if (pSnd->pMidiParser) {
 		_mutex.lock();
 		pSnd->pMidiParser->mainThreadBegin();
