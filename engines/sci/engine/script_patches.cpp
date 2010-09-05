@@ -183,6 +183,31 @@ const SciScriptSignature ecoquest2Signatures[] = {
 };
 
 // ===========================================================================
+//  script 0 of freddy pharkas/CD PointsSound::check waits for a signal and if
+//   no signal received will call kDoSound(0xD) which is a dummy in sierra sci
+//   and ScummVM and will use acc (which is not set by the dummy) to trigger
+//   sound disposal. This somewhat worked in sierra sci, because the sample
+//   was already playing in the sound driver. In our case we would also stop
+//   the sample from playing, so we patch it out
+//   The "score" code is already buggy and sets volume to 0 when playing
+const byte freddypharkasSignatureScoreDisposal[] = {
+	10,
+	0x67, 0x32,       // pTos 32 (selector theAudCount)
+	0x78,             // push1
+	0x39, 0x0d,       // pushi 0d
+	0x43, 0x75, 0x02, // call kDoAudio
+	0x1c,             // ne?
+	0x31,             // bnt (-> to skip disposal)
+	0
+};
+
+const uint16 freddypharkasPatchScoreDisposal[] = {
+	0x34, 0x00, 0x00, // ldi 0000
+	0x34, 0x00, 0x00, // ldi 0000
+	0x34, 0x00, 0x00, // ldi 0000
+	PATCH_END
+};
+
 //  script 215 of freddy pharkas lowerLadder::doit and highLadder::doit actually
 //   process keyboard-presses when the ladder is on the screen in that room.
 //   They strangely also call kGetEvent. Because the main User::doit also calls
@@ -219,9 +244,10 @@ const uint16 freddypharkasPatchLadderEvent[] = {
 
 //    script, description,                                   magic DWORD,                                  adjust
 const SciScriptSignature freddypharkasSignatures[] = {
+    {      0, "CD: score early disposal",                    PATCH_MAGICDWORD(0x39, 0x0d, 0x43, 0x75),    -3, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
     // this is not a typo, both lowerLadder::doit and highLadder::doit have the same event code
-    {    320, "lower ladder event issue",                    PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent, freddypharkasPatchLadderEvent },
-    {    320, "high ladder event issue",                     PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent, freddypharkasPatchLadderEvent },
+    {    320, "lower ladder event issue",                    PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
+    {    320, "high ladder event issue",                     PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
     SCI_SIGNATUREENTRY_TERMINATOR
 };
 
