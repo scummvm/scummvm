@@ -137,6 +137,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_KQ6,           500,   500,  0,              "rm500", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // going to island of the beast
 	{ GID_KQ6,           520,   520,  0,              "rm520", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // going to boiling water trap on beast isle
 	{ GID_KQ6,            -1,   903,  0,         "controlWin", "open",           -1,    4, { WORKAROUND_FAKE,   0 } }, // when opening the controls window (save, load etc)
+	{ GID_KQ6,            -1,   907,  0,             "tomato", "doVerb",         -1,    2, { WORKAROUND_FAKE,   0 } }, // when looking at the rotten tomato in the inventory - bug #3059544
 	{ GID_KQ7,            30, 64996,  0,               "User", "handleEvent",    -1,    1, { WORKAROUND_FAKE,   0 } }, // called when pushing a keyboard key
 	{ GID_LAURABOW,       37,     0,  0,                "CB1", "doit",           -1,    1, { WORKAROUND_FAKE,   0 } }, // when going up the stairs (bug #3037694)
 	{ GID_LAURABOW,       -1,   967,  0,             "myIcon", "cycle",          -1,    1, { WORKAROUND_FAKE,   0 } }, // having any portrait conversation coming up (initial bug #3034985)
