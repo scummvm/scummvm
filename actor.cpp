@@ -46,6 +46,9 @@ Actor::~Actor() {
 
 	for (Common::Array<MeshNode *>::iterator it = _meshes.begin(); it != _meshes.end(); ++it)
 		delete *it;
+
+	if (_skeleton)
+		delete _skeleton;
 }
 
 bool Actor::readFromStream(Common::ReadStream *stream) {
