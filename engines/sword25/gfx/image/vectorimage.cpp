@@ -444,20 +444,20 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 				double anchorDeltaX = bs.getSignedBits(numBits);
 				double anchorDeltaY = bs.getSignedBits(numBits);
 
-				double newX = curX + controlDeltaX;
-				double newY = curY + controlDeltaY;
-				double anchorX = newX + anchorDeltaX;
-				double anchorY = newY + anchorDeltaY;
+				double controlX = curX + controlDeltaX;
+				double controlY = curY + controlDeltaY;
+				double newX = controlX + anchorDeltaX;
+				double newY = controlY + anchorDeltaY;
 
 #define WEIGHT (2.0/3.0)
 
 				bezNodes++;
 				bez = ensureBezStorage(bez, bezNodes, &bezAllocated);
 				bez[bezNodes].code = ART_CURVETO;
-				bez[bezNodes].x1 = WEIGHT * anchorX + (1 - WEIGHT) * curX;
-				bez[bezNodes].y1 = WEIGHT * anchorY + (1 - WEIGHT) * curY;
-				bez[bezNodes].x2 = WEIGHT * anchorX + (1 - WEIGHT) * newX;
-				bez[bezNodes].y2 = WEIGHT * anchorY + (1 - WEIGHT) * newY;
+				bez[bezNodes].x1 = WEIGHT * controlX + (1 - WEIGHT) * curX;
+				bez[bezNodes].y1 = WEIGHT * controlY + (1 - WEIGHT) * curY;
+				bez[bezNodes].x2 = WEIGHT * controlX + (1 - WEIGHT) * newX;
+				bez[bezNodes].y2 = WEIGHT * controlY + (1 - WEIGHT) * newY;
 				bez[bezNodes].x3 = newX;
 				bez[bezNodes].y3 = newY;
 
