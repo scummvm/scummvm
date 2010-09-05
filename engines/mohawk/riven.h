@@ -74,6 +74,7 @@ extern Common::Rect *g_cathJournalRect2;
 extern Common::Rect *g_atrusJournalRect3;
 extern Common::Rect *g_cathJournalRect3;
 extern Common::Rect *g_trapBookRect3;
+extern Common::Rect *g_demoExitRect;
 
 struct RivenHotspot {
 	uint16 blstID;
@@ -135,6 +136,7 @@ private:
 	uint16 _curCard;
 	uint16 _curStack;
 	void loadCard(uint16);
+	void handleEvents();
 
 	// Hotspot related functions and variables
 	uint16 _hotspotCount;
@@ -153,41 +155,43 @@ private:
 	bool _ignoreNextMouseUp;
 
 public:
-	Common::SeekableReadStream *getExtrasResource(uint32 tag, uint16 id);
-	bool _activatedSLST;
-	void runLoadDialog();
-
+	// Stack/card/script funtions
 	void changeToCard(uint16 dest);
 	void changeToStack(uint16);
 	void refreshCard();
 	Common::String getName(uint16 nameResource, uint16 nameID);
-	Common::String getStackName(uint16 stack);
+	Common::String getStackName(uint16 stack) const;
 	void runCardScript(uint16 scriptType);
 	void runUpdateScreenScript() { runCardScript(kCardUpdateScript); }
-	uint16 getCurCard() { return _curCard; }
-	uint16 getCurStack() { return _curStack; }
+	uint16 getCurCard() const { return _curCard; }
+	uint16 getCurStack() const { return _curStack; }
 	uint16 matchRMAPToCard(uint32);
 	uint32 getCurCardRMAP();
 
-	Common::Point _mousePos;
+	// Hotspot functions/variables
 	RivenHotspot *_hotspots;
 	int32 _curHotspot;
 	Common::Array<ZipMode> _zipModeData;
-	uint16 getHotspotCount() { return _hotspotCount; }
+	uint16 getHotspotCount() const { return _hotspotCount; }
 	void runHotspotScript(uint16 hotspot, uint16 scriptType);
-	int32 getCurHotspot() { return _curHotspot; }
+	int32 getCurHotspot() const { return _curHotspot; }
 	Common::String getHotspotName(uint16 hotspot);
 
+	// Variable functions
 	void initVars();
-	uint32 getVarCount() { return _varCount; }
+	uint32 getVarCount() const { return _varCount; }
 	uint32 getGlobalVar(uint32 index);
 	Common::String getGlobalVarName(uint32 index);
 	uint32 *getLocalVar(uint32 index);
-	uint32 *matchVarToString(Common::String varName);
-	uint32 *matchVarToString(const char *varName);
+	uint32 *getVar(const Common::String &varName);
 
+	// Miscellaneous
 	void setGameOver() { _gameOver = true; }
 	void ignoreNextMouseUp() { _ignoreNextMouseUp = true; }
+	Common::SeekableReadStream *getExtrasResource(uint32 tag, uint16 id);
+	bool _activatedSLST;
+	void runLoadDialog();
+	void delayAndUpdate(uint32 ms);
 };
 
 } // End of namespace Mohawk

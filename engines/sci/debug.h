@@ -37,13 +37,15 @@ enum BreakpointType {
 	 * Break when selector is executed. data contains (char *) selector name
 	 * (in the format Object::Method)
 	 */
-	BREAK_SELECTOR = 1,
+	BREAK_SELECTOREXEC = 1 << 0, // break when selector gets executed
+	BREAK_SELECTORREAD = 1 << 1, // break when selector gets executed
+	BREAK_SELECTORWRITE = 1 << 2, // break when selector gets executed
 
 	/**
 	 * Break when an exported function is called. data contains
 	 * script_no << 16 | export_no.
 	 */
-	BREAK_EXPORT = 2
+	BREAK_EXPORT = 1 << 3
 };
 
 struct Breakpoint {

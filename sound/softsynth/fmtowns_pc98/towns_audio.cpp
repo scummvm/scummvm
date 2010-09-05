@@ -104,7 +104,8 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 	_fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
 	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver),
 	_pcmSfxChanMask(0),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
-	_outputVolumeFlags(0), _outputMuteFlags(0), _ready(false) {
+	_outputVolumeFlags(0), _outputMuteFlags(0), _pcmChanOut(0), _pcmChanReserved(0), _pcmChanKeyPressed(0),
+	_pcmChanEffectPlaying(0), _pcmChanKeyPlaying(0), _ready(false) {
 
 #define INTCB(x) &TownsAudioInterface::intf_##x
 	static const TownsAudioIntfCallback intfCb[] = {
@@ -200,7 +201,7 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 		INTCB(notImpl),
 		// 72
 		INTCB(notImpl),
-		INTCB(notImpl),
+		INTCB(cdaToggle),
 		INTCB(notImpl),
 		INTCB(notImpl),
 		// 76
@@ -225,6 +226,11 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 }
 
 TownsAudioInterface::~TownsAudioInterface() {
+	Common::StackLock lock(_mutex);
+	reset();
+	deinit();
+	_ready = false;
+
 	delete[] _fmSaveReg[0];
 	delete[] _fmSaveReg[1];
 	delete[] _fmInstruments;
@@ -360,7 +366,6 @@ void TownsAudioInterface::timerCallbackB() {
 }
 
 int TownsAudioInterface::intf_reset(va_list &args) {
-	Common::StackLock lock(_mutex);
 	fmReset();
 	pcmReset();
 	callback(68);
@@ -757,6 +762,12 @@ int TownsAudioInterface::intf_updateOutputVolume(va_list &args) {
 	int flags = va_arg(args, int);
 	_outputMuteFlags = flags & 3;
 	updateOutputVolume();
+	return 0;
+}
+
+int TownsAudioInterface::intf_cdaToggle(va_list &args) {
+	//int mode = va_arg(args, int);
+	//_unkMask = mode ? 0x7f : 0x3f;
 	return 0;
 }
 
@@ -1393,12 +1404,12 @@ void TownsAudioInterface::updateOutputVolume() {
 	// balance values for our -128 to 127 volume range
 	
 	// CD-AUDIO
-	int vl = (int)(((float)_outputLevel[12] * 127.0f) / 63.0f);
-	int vr = (int)(((float)_outputLevel[13] * 127.0f) / 63.0f);
-	int8 balance = vr - vl;
-	vl = (int)(((float)_outputLevel[12] * 255.0f) / 63.0f);
-	vr = (int)(((float)_outputLevel[13] * 255.0f) / 63.0f);
-	AudioCD.setVolume((vl + vr) >> 1);
+	uint32 maxVol = MAX(_outputLevel[12], _outputLevel[13]);
+	
+	int volume = (int)(((float)(maxVol * 255) / 63.0f));
+	int balance = maxVol ? (int)( ( ((int)_outputLevel[13] - _outputLevel[12]) * 127) / (float)maxVol) : 0;
+	
+	AudioCD.setVolume(volume);
 	AudioCD.setBalance(balance);
 }
 

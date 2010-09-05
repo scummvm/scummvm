@@ -125,17 +125,17 @@ RivenOptionsDialog::~RivenOptionsDialog() {
 void RivenOptionsDialog::open() {
 	Dialog::open();
 
-	_zipModeCheckbox->setState(*_vm->matchVarToString("azip") != 0);
-	_waterEffectCheckbox->setState(*_vm->matchVarToString("waterenabled") != 0);
+	_zipModeCheckbox->setState(*_vm->getVar("azip") != 0);
+	_waterEffectCheckbox->setState(*_vm->getVar("waterenabled") != 0);
 }
 
 void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kZipCmd:
-		*_vm->matchVarToString("azip") = _zipModeCheckbox->getState() ? 1 : 0;
+		*_vm->getVar("azip") = _zipModeCheckbox->getState() ? 1 : 0;
 		break;
 	case kWaterCmd:
-		*_vm->matchVarToString("waterenabled") = _waterEffectCheckbox->getState() ? 1 : 0;
+		*_vm->getVar("waterenabled") = _waterEffectCheckbox->getState() ? 1 : 0;
 		break;
 	case GUI::kCloseCmd:
 		close();

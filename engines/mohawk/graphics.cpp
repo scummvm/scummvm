@@ -399,7 +399,7 @@ void RivenGraphics::clearWaterEffects() {
 
 bool RivenGraphics::runScheduledWaterEffects() {
 	// Don't run the effect if it's disabled
-	if (*_vm->matchVarToString("waterenabled") == 0)
+	if (*_vm->getVar("waterenabled") == 0)
 		return false;
 
 	Graphics::Surface *screen = NULL;
@@ -597,28 +597,35 @@ void RivenGraphics::showInventory() {
 	// Clear the inventory area
 	clearInventoryArea();
 
-	// The demo doesn't have the inventory system and we don't want
-	// to show the inventory on setup screens or in other journals.
-	if (_vm->getFeatures() & GF_DEMO || _vm->getCurStack() == aspit)
-		return;
-
-	// There are three books and three vars. We have three different
-	// combinations. At the start you have just Atrus' journal. Later,
-	// you get Catherine's journal and the trap book. Near the end,
-	// you lose the trap book and have just the two journals.
-
-	bool hasCathBook = *_vm->matchVarToString("acathbook") != 0;
-	bool hasTrapBook = *_vm->matchVarToString("atrapbook") != 0;
-
-	if (!hasCathBook) {
-		drawInventoryImage(101, g_atrusJournalRect1);
-	} else if (!hasTrapBook) {
-		drawInventoryImage(101, g_atrusJournalRect2);
-		drawInventoryImage(102, g_cathJournalRect2);
+	// Draw the demo's exit button
+	if (_vm->getFeatures() & GF_DEMO) {
+		// extras.mhk tBMP 101 contains "EXIT" instead of Atrus' journal in the demo!
+		// The demo's extras.mhk contains all the other inventory/marble/credits image
+		// but has hacked tBMP 101 with "EXIT". *sigh*
+		drawInventoryImage(101, g_demoExitRect);
 	} else {
-		drawInventoryImage(101, g_atrusJournalRect3);
-		drawInventoryImage(102, g_cathJournalRect3);
-		drawInventoryImage(100, g_trapBookRect3);
+		// We don't want to show the inventory on setup screens or in other journals.
+		if (_vm->getCurStack() == aspit)
+			return;
+
+		// There are three books and three vars. We have three different
+		// combinations. At the start you have just Atrus' journal. Later,
+		// you get Catherine's journal and the trap book. Near the end,
+		// you lose the trap book and have just the two journals.
+
+		bool hasCathBook = *_vm->getVar("acathbook") != 0;
+		bool hasTrapBook = *_vm->getVar("atrapbook") != 0;
+
+		if (!hasCathBook) {
+			drawInventoryImage(101, g_atrusJournalRect1);
+		} else if (!hasTrapBook) {
+			drawInventoryImage(101, g_atrusJournalRect2);
+			drawInventoryImage(102, g_cathJournalRect2);
+		} else {
+			drawInventoryImage(101, g_atrusJournalRect3);
+			drawInventoryImage(102, g_cathJournalRect3);
+			drawInventoryImage(100, g_trapBookRect3);
+		}
 	}
 
 	_vm->_system->updateScreen();
@@ -672,6 +679,23 @@ void RivenGraphics::drawRect(Common::Rect rect, bool active) {
 	_vm->_system->unlockScreen();
 }
 
+void RivenGraphics::drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect dstRect) {
+	// Draw tBMP id from srcRect to dstRect
+	ImageData *imageData = _bitmapDecoder->decodeImage(_vm->getRawData(ID_TBMP, id));
+	Graphics::Surface *surface = imageData->getSurface();
+	delete imageData;
+
+	assert(srcRect.width() == dstRect.width() && srcRect.height() == dstRect.height());
+
+	for (uint16 i = 0; i < srcRect.height(); i++)
+		memcpy(_mainScreen->getBasePtr(dstRect.left, i + dstRect.top), surface->getBasePtr(srcRect.left, i + srcRect.top), srcRect.width() * surface->bytesPerPixel);
+
+	surface->free();
+	delete surface;
+
+	_dirtyScreen = true;
+}
+
 LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm) : _vm(vm) {
 	_bmpDecoder = (_vm->getGameType() == GType_LIVINGBOOKSV1) ? new OldMohawkBitmap() : new MohawkBitmap();
 	_palette = new byte[256 * 4];
@@ -707,7 +731,7 @@ void LBGraphics::copyImageToScreen(uint16 image, uint16 left, uint16 right) {
 }
 
 void LBGraphics::setPalette(uint16 id) {
-	// Old Living Books gamnes use the old CTBL-style palette format while newer
+	// Old Living Books games use the old CTBL-style palette format while newer
 	// games use the better tPAL format which can store partial palettes.
 
 	if (_vm->getGameType() == GType_LIVINGBOOKSV1) {

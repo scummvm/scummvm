@@ -40,7 +40,7 @@ namespace Kyra {
 
 Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 	: _system(system), _vm(vm), _sjisInvisibleColor(0),
-	_cursorColorKey((vm->gameFlags().gameID == GI_KYRA1) ? 0xFF : 0x00) {
+	_cursorColorKey((vm->game() == GI_KYRA1) ? 0xFF : 0x00) {
 	_debugEnabled = false;
 	_maskMinY = _maskMaxY = -1;
 
@@ -86,7 +86,7 @@ bool Screen::init() {
 	if (_vm->gameFlags().useHiResOverlay) {
 		_useOverlays = true;
 		_useSJIS = (_vm->gameFlags().lang == Common::JA_JPN);
-		_sjisInvisibleColor = (_vm->gameFlags().gameID == GI_KYRA1) ? 0x80 : 0xF6;
+		_sjisInvisibleColor = (_vm->game() == GI_KYRA1) ? 0x80 : 0xF6;
 
 		for (int i = 0; i < SCREEN_OVLS_NUM; ++i) {
 			if (!_sjisOverlayPtrs[i]) {
@@ -1300,7 +1300,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		_dsScaleH = 0x100;
 	}
 
-	if ((flags & 0x2000) && _vm->gameFlags().gameID != GI_KYRA1)
+	if ((flags & 0x2000) && _vm->game() != GI_KYRA1)
 		_dsTable5 = va_arg(args, uint8 *);
 
 	static const DsMarginSkipFunc dsMarginFunc[] = {
@@ -1436,7 +1436,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	uint16 frameSize = READ_LE_UINT16(src); src += 2;
 
-	int colorTableColors = ((_vm->gameFlags().gameID != GI_KYRA1) && (shapeFlags & 4)) ? *src++ : 16;
+	int colorTableColors = ((_vm->game() != GI_KYRA1) && (shapeFlags & 4)) ? *src++ : 16;
 
 	if (!(flags & 0x8000) && (shapeFlags & 1))
 		_dsTable2 = src;
@@ -3016,10 +3016,10 @@ byte *Screen::getOverlayPtr(int page) {
 	else if (page == 2 || page == 3)
 		return _sjisOverlayPtrs[2];
 
-	if (_vm->gameFlags().gameID == GI_KYRA2) {
+	if (_vm->game() == GI_KYRA2) {
 		if (page == 12 || page == 13)
 			return _sjisOverlayPtrs[3];
-	} else if (_vm->gameFlags().gameID == GI_LOL) {
+	} else if (_vm->game() == GI_LOL) {
 		if (page == 4 || page == 5)
 			return _sjisOverlayPtrs[3];
 		if (page == 6 || page == 7)

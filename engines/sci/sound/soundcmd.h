@@ -27,6 +27,7 @@
 #define SCI_SOUNDCMD_H
 
 #include "common/list.h"
+#include "sound/mididrv.h"	// for MusicType
 #include "sci/engine/state.h"
 
 namespace Sci {
@@ -47,10 +48,6 @@ public:
 	SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion);
 	~SoundCommandParser();
 
-	enum {
-		kMaxSciVolume = 15
-	};
-
 	//reg_t parseCommand(int argc, reg_t *argv, reg_t acc);
 
 	// Functions used for game state loading
@@ -70,6 +67,8 @@ public:
 
 	void processPlaySound(reg_t obj);
 	void processStopSound(reg_t obj, bool sampleFinishedPlaying);
+
+	MusicType getMusicType() const;
 
 	/**
 	 * Synchronizes the current state of the music list to the rest of the engine, so that

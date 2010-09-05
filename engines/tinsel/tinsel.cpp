@@ -283,7 +283,7 @@ static void SingleLeftProcess(CORO_PARAM, const void *param) {
 	} while (DwGetCurrentTime() < _ctx->endTicks);
 
 	if (GetProvNotProcessed()) {
-		Common::Point clickPos = *(Common::Point *)param;
+		const Common::Point clickPos = *(const Common::Point *)param;
 		PlayerEvent(PLR_WALKTO, clickPos);
 	}
 
@@ -834,8 +834,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	DebugMan.addDebugChannel(kTinselDebugMusic, "music", "Music debugging");
 
 	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	syncSoundSettings();
 
 	// Add DW2 subfolder to search path in case user is running directly from the CDs
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -905,17 +904,6 @@ TinselEngine::~TinselEngine() {
 	delete _config;
 
 	MemoryDeinit();
-}
-
-void TinselEngine::syncSoundSettings() {
-	// Sync the engine with the config manager
-	int soundVolumeMusic = ConfMan.getInt("music_volume");
-	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
-	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 }
 
 Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {

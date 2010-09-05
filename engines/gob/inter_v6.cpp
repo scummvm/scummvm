@@ -171,7 +171,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 
 	_vm->_vidPlayer->evaluateFlags(props);
 
-	int slot;
+	int slot = 0;
 	if ((fileName[0] != 0) && ((slot = _vm->_vidPlayer->openVideo(true, fileName, props)) < 0)) {
 		WRITE_VAR(11, (uint32) -1);
 		return;

@@ -259,6 +259,9 @@ const RenderModeDescription g_renderModes[] = {
 	{0, 0, kRenderDefault}
 };
 
+DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Hercules Green", "lowres")
+DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Hercules Amber", "lowres")
+
 RenderMode parseRenderMode(const String &str) {
 	if (str.empty())
 		return kRenderDefault;
@@ -306,6 +309,9 @@ const struct GameOpt {
 	{ GUIO_MIDICMS,      "midiCMS" },
 	{ GUIO_MIDIPCJR,     "midiPCJr" },
 	{ GUIO_MIDIADLIB,    "midiAdLib" },
+	{ GUIO_MIDIC64,      "midiC64" },
+	{ GUIO_MIDIAMIGA,    "midiAmiga" },
+	{ GUIO_MIDIAPPLEIIGS,"midiAppleIIgs" },
 	{ GUIO_MIDITOWNS,    "midiTowns" },
 	{ GUIO_MIDIPC98,     "midiPC98" },
 	{ GUIO_MIDIMT32,     "midiMt32" },

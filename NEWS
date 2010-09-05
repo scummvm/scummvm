@@ -4,6 +4,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 1.2.0 (????-??-??)
  New Ports:
    - Added Android port.
+   - Added Dingux port.
+   - Added Caanoo port (based on the GP2XWiz port).
 
  General:
    - Removed the outdated PalmOS port.
@@ -33,6 +35,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  KYRA:
    - Fixed some minor graphical glitches.
    - Implemented formerly missing recreation of some in game items.
+   - Added support for playing Kyrandia 3 with the original CD file layout.
 
  Parallaction:
    - Made part one of The Big Red Adventure completable.
@@ -44,10 +47,20 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Several improvements in Maniac Mansion NES.
 
  PSP port:
-   - Switched to new backend design which fixes minor graphical issues,
-     speeds things up, and provides 16-bit support.
-   - Enabled playback of MP3 files using the hardware decoder (ME). This means that
-     the port is now optimized for MP3 playback (as opposed to OGG).
+   - New backend design: fixed minor graphical issues and enabled 16-bit support.
+   - Enabled playback of MP3 files using the Media Engine. This means that
+     the port is optimized for MP3 files (as opposed to OGG).
+   - Many optimizations. Everything should run faster.
+
+ Wii port:
+   - Added support for USB2 mass storage devices (requires The Homebrew Channel
+     >= v1.0.8 with IOS58).
+
+ GameCube port:
+   - Added support for DVDs with the ISO9660 file system.
+   
+ GP2X port:
+   - Added support for dynamic engine plugins.
 
 1.1.2 (????-??-??)
   Broken Sword 2

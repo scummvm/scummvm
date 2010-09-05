@@ -432,6 +432,8 @@ protected:
 
 	void oFascin_playProtracker(OpGobParams &params);
 
+	bool oFascin_repeatUntil(OpFuncParams &params);
+	bool oFascin_assign(OpFuncParams &params);
 	bool oFascin_copySprite(OpFuncParams &params);
 	bool oFascin_keyFunc(OpFuncParams &params);
 
@@ -452,6 +454,7 @@ protected:
 	void oFascin_closeWin();
 	void oFascin_activeWin();
 	void oFascin_openWin();
+	void oFascin_initCursorAnim();
 	void oFascin_setRenderFlags();
 	void oFascin_setWinFlags();
 };

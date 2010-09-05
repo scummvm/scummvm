@@ -30,7 +30,6 @@
 #include "backends/platform/gp2xwiz/gp2xwiz-hw.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "base/main.h"
-#include "base/internal_version.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
@@ -55,13 +54,11 @@
 #include <time.h>	// for getTimeAndDate()
 
 /* Dump console info to files. */
-// #define DUMP_STDOUT
+#define DUMP_STDOUT
 
 int main(int argc, char *argv[]) {
-
 	g_system = new OSystem_GP2XWIZ();
 	assert(g_system);
-
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
 #endif

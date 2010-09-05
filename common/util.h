@@ -223,10 +223,13 @@ enum GameGUIOption {
 	GUIO_MIDICMS		= (1 << 7),
 	GUIO_MIDIPCJR		= (1 << 8),
 	GUIO_MIDIADLIB		= (1 << 9),
-	GUIO_MIDITOWNS		= (1 << 10),
-	GUIO_MIDIPC98		= (1 << 11),
-	GUIO_MIDIMT32		= (1 << 12),
-	GUIO_MIDIGM			= (1 << 13)
+	GUIO_MIDIC64        = (1 << 10),
+	GUIO_MIDIAMIGA      = (1 << 11),
+	GUIO_MIDIAPPLEIIGS  = (1 << 12),
+	GUIO_MIDITOWNS		= (1 << 13),
+	GUIO_MIDIPC98		= (1 << 14),
+	GUIO_MIDIMT32		= (1 << 15),
+	GUIO_MIDIGM			= (1 << 16)
 };
 
 bool checkGameGUIOption(GameGUIOption option, const String &str);

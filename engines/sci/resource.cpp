@@ -365,8 +365,6 @@ Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *sourc
 	return NULL;
 }
 
-static uint32 resTypeToMacTag(ResourceType type);
-
 void ResourceManager::loadResource(Resource *res) {
 	res->_source->loadResource(this, res);
 }
@@ -382,8 +380,14 @@ void PatchResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	}
 }
 
+static Common::Array<uint32> resTypeToMacTags(ResourceType type);
+
 void MacResourceForkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
-	Common::SeekableReadStream *stream = _macResMan->getResource(resTypeToMacTag(res->getType()), res->getNumber());
+	Common::SeekableReadStream *stream = 0;
+	Common::Array<uint32> tagArray = resTypeToMacTags(res->getType());
+
+	for (uint32 i = 0; i < tagArray.size() && !stream; i++)
+		stream = _macResMan->getResource(tagArray[i], res->getNumber());
 
 	if (!stream)
 		error("Could not get Mac resource fork resource: %s %d", getResourceTypeName(res->getType()), res->getNumber());
@@ -1514,7 +1518,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	} while (type != 0x1F); // the last entry is FF
 
 	// reading each type's offsets
-	uint32 off = 0;
+	uint32 fileOffset = 0;
 	for (type = 0; type < 32; type++) {
 		if (resMap[type].wOffset == 0) // this resource does not exist in map
 			continue;
@@ -1524,15 +1528,15 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			int volume_nr = 0;
 			if (_mapVersion == kResVersionSci11) {
 				// offset stored in 3 bytes
-				off = fileStream->readUint16LE();
-				off |= fileStream->readByte() << 16;
-				off <<= 1;
+				fileOffset = fileStream->readUint16LE();
+				fileOffset |= fileStream->readByte() << 16;
+				fileOffset <<= 1;
 			} else {
 				// offset/volume stored in 4 bytes
-				off = fileStream->readUint32LE();
+				fileOffset = fileStream->readUint32LE();
 				if (_mapVersion < kResVersionSci11) {
-					volume_nr = off >> 28; // most significant 4 bits
-					off &= 0x0FFFFFFF;     // least significant 28 bits
+					volume_nr = fileOffset >> 28; // most significant 4 bits
+					fileOffset &= 0x0FFFFFFF;     // least significant 28 bits
 				} else {
 					// in SCI32 it's a plain offset
 				}
@@ -1543,19 +1547,30 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}
 			resId = ResourceId(convertResType(type), number);
-			// adding new resource only if it does not exist
-			if (_resMap.contains(resId) == false) {
-				// NOTE: We add the map's volume number here to the specified volume number
-				// for SCI2.1 and SCI3 maps that are not resmap.000. The resmap.* files' numbers
-				// need to be used in concurrence with the volume specified in the map to get
-				// the actual resource file.
-				int mapVolumeNr = volume_nr + map->_volumeNumber;
-				ResourceSource *source = findVolume(map, mapVolumeNr);
-				// FIXME: this code has serious issues with multiple RESMAP.* files (like in unmodified gk2)
-				//         adding a resource with source == NULL would crash later on
-				if (!source)
-					error("Unable to find volume for map %s volumeNr %d", map->getLocationName().c_str(), mapVolumeNr);
-				addResource(resId, source, off);
+			// NOTE: We add the map's volume number here to the specified volume number
+			// for SCI2.1 and SCI3 maps that are not resmap.000. The resmap.* files' numbers
+			// need to be used in concurrence with the volume specified in the map to get
+			// the actual resource file.
+			int mapVolumeNr = volume_nr + map->_volumeNumber;
+			ResourceSource *source = findVolume(map, mapVolumeNr);
+			// FIXME: this code has serious issues with multiple RESMAP.* files (like in unmodified gk2)
+			//         adding a resource with source == NULL would crash later on
+			if (!source)
+				error("Unable to find volume for map %s volumeNr %d", map->getLocationName().c_str(), mapVolumeNr);
+
+			Resource *resource = _resMap.getVal(resId, NULL);
+			if (!resource) {
+				addResource(resId, source, fileOffset);
+			} else {
+				// if resource is already present, change it to new content
+				//  this is needed at least for pharkas/german. This version
+				//  contains several duplicate resources INSIDE the resource
+				//  data files like fonts, views, scripts, etc. And if we use
+				//  the first entries, half of the game will be english and
+				//  umlauts will also be missing :P
+				resource->_source = source;
+				resource->_fileOffset = fileOffset;
+				resource->size = 0;
 			}
 		}
 	}
@@ -1588,12 +1603,14 @@ struct {
 	{ MKID_BE('SYN '), kResourceTypeSync }
 };
 
-static uint32 resTypeToMacTag(ResourceType type) {
+static Common::Array<uint32> resTypeToMacTags(ResourceType type) {
+	Common::Array<uint32> tags;
+
 	for (uint32 i = 0; i < ARRAYSIZE(macResTagMap); i++)
 		if (macResTagMap[i].type == type)
-			return macResTagMap[i].tag;
+			tags.push_back(macResTagMap[i].tag);
 
-	return 0;
+	return tags;
 }
 
 void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
@@ -2051,6 +2068,15 @@ void ResourceManager::detectSciVersion() {
 			s_sciVersion = SCI_VERSION_1_1;
 			return;
 		}
+		// FIXME: this is really difficult, lsl1 spanish has map/vol sci1late
+		//  and the only current detection difference is movecounttype which
+		//  is increment here, but ignore for all the regular sci1late games
+		//  the problem is, we dont have access to that detection till later
+		//  so maybe (part of?) that detection should get moved in here
+		if (g_sci && (g_sci->getGameId() == GID_LSL1) && (g_sci->getLanguage() == Common::ES_ESP)) {
+			s_sciVersion = SCI_VERSION_1_MIDDLE;
+			return;
+		}
 		s_sciVersion = SCI_VERSION_1_LATE;
 		return;
 	case kResVersionSci11:
@@ -2120,6 +2146,19 @@ bool ResourceManager::detectForPaletteMergingForSci11() {
 		return false;
 	}
 	return false;
+}
+
+// is called on SCI0EARLY games to make sure that sound resources are in fact also SCI0EARLY
+bool ResourceManager::detectEarlySound() {
+	Resource *res = findResource(ResourceId(kResourceTypeSound, 1), 0);
+	if (res) {
+		if (res->size >= 0x22) {
+			if (READ_LE_UINT16(res->data + 0x1f) == 0) // channel 15 voice count + play mask is 0 in SCI0LATE
+				if (res->data[0x21] == 0) // last byte right before actual data is 0 as well
+					return false;
+		}
+	}
+	return true;
 }
 
 // Functions below are based on PD code by Brian Provinciano (SCI Studio)

@@ -62,12 +62,14 @@ void SceneNode::load(Common::SeekableReadStream *stream) {
 MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResources), MadsView(this) {
 	_vm = vm;
 	_activeAnimation = NULL;
+	_animActive = false;
 
 	MadsView::_bgSurface = Scene::_backgroundSurface;
 	MadsView::_depthSurface = Scene::_walkSurface;
 	_interfaceSurface = new MadsInterfaceView(vm);
 	_showMousePos = false;
 	_mouseMsgIndex = -1;
+	_previousScene = -1;
 }
 
 MadsScene::~MadsScene() {
@@ -174,7 +176,7 @@ void MadsScene::loadScene(int sceneNumber) {
 
 	// Do any scene specific setup
 	if (_vm->getGameType() == GType_RexNebular)
-		_sceneLogic.enterScene();
+		_sceneLogic.doEnterScene();
 
 	// Miscellaneous player setup
 	_madsVm->_player._destPos = _madsVm->_player._destPos;
@@ -215,6 +217,7 @@ void MadsScene::leaveScene() {
 	if (_activeAnimation) {
 		delete _activeAnimation;
 		_activeAnimation = NULL;
+		_animActive = false;
 	}
 
 	Scene::leaveScene();
@@ -383,6 +386,7 @@ void MadsScene::updateState() {
 		if (((MadsAnimation *) _activeAnimation)->freeFlag() || freeFlag) {
 			delete _activeAnimation;
 			_activeAnimation = NULL;
+			_animActive = false;
 		}
 	}
 
@@ -454,6 +458,7 @@ void MadsScene::freeAnimation() {
 
 	delete _activeAnimation;
 	_activeAnimation = NULL;
+	_animActive = false;
 }
 
 
@@ -573,6 +578,7 @@ void MadsScene::loadAnimation(const Common::String &animName, int abortTimers) {
 	MadsAnimation *anim = new MadsAnimation(_vm, this);
 	anim->load(animName.c_str(), abortTimers);
 	_activeAnimation = anim;
+	_animActive = true;
 }
 
 bool MadsScene::getDepthHighBit(const Common::Point &pt) {

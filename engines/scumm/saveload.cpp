@@ -32,6 +32,7 @@
 #include "scumm/charset.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse/imuse.h"
+#include "player_towns.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -446,6 +447,9 @@ bool ScummEngine::loadState(int slot, bool compat) {
 
 	// Update volume settings
 	syncSoundSettings();
+
+	if (_townsPlayer && (hdr.ver >= VER(81)))
+		_townsPlayer->restoreAfterLoad();
 
 	// Init NES costume data
 	if (_game.platform == Common::kPlatformNES) {
@@ -1393,6 +1397,11 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	if (_imuse && (_saveSound || !_saveTemporaryState)) {
 		_imuse->save_or_load(s, this);
 	}
+
+
+	// Save/load FM-Towns audio status
+	if (_townsPlayer)
+		_townsPlayer->saveLoadWithSerializer(s);
 
 	//
 	// Save/load the charset renderer state

@@ -172,11 +172,10 @@ SVNROOT := https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/
 endif
 
 # Define the Subversion revision if available, either autodetected or
-# specified by the user
+# specified by the user, but only for base/version.cpp.
 ifneq ($(origin VER_SVNREV), undefined)
-CXXFLAGS+= -DSCUMMVM_SVN_REVISION=\"$(VER_SVNREV)\"
+base/version.o: CXXFLAGS:=$(CXXFLAGS) -DSCUMMVM_SVN_REVISION=\"$(VER_SVNREV)\"
 endif
-
 
 ######################################################################
 # Distribution settings
@@ -227,12 +226,19 @@ dist-src: \
 DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYRIGHT NEWS README)
 
 # Themes files
-DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,scummmodern.zip)
+DIST_FILES_THEMES=scummmodern.zip
+ifdef USE_TRANSLATION
+DIST_FILES_THEMES+=translations.dat
+endif
+DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,$(DIST_FILES_THEMES))
 
 # Engine data files
 DIST_FILES_ENGINEDATA=
 ifdef ENABLE_DRASCULA
 DIST_FILES_ENGINEDATA+=drascula.dat
+endif
+ifdef ENABLE_HUGO
+DIST_FILES_ENGINEDATA+=hugo.dat
 endif
 ifdef ENABLE_KYRA
 DIST_FILES_ENGINEDATA+=kyra.dat

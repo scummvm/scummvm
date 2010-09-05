@@ -47,9 +47,13 @@ enum SoundStatus {
 
 #define MUSIC_VOLUME_DEFAULT 127
 #define MUSIC_VOLUME_MAX 127
+#define MUSIC_MASTERVOLUME_DEFAULT 15
+#define MUSIC_MASTERVOLUME_MAX 15
 
 class MidiParser_SCI;
 class SegManager;
+
+typedef Common::Array<uint16> SignalQueue;
 
 class MusicEntry : public Common::Serializable {
 public:
@@ -90,6 +94,11 @@ public:
 
 	MidiParser_SCI *pMidiParser;
 
+	// this is used for storing signals, when the current signal is not yet
+	//  sent to the scripts. We shouldn't need to save it, this normally only
+	//  happens in rare situations like lb1, knocking on the door in the attic
+	SignalQueue signalQueue;
+
 	// TODO: We need to revise how we store the different
 	// audio stream objects we require.
 	Audio::RewindableAudioStream *pStreamAud;
@@ -102,6 +111,7 @@ public:
 
 	void doFade();
 	void onTimer();
+	void setSignal(int signal);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -145,6 +155,7 @@ public:
 	void soundSetSoundOn(bool soundOnFlag);
 	uint16 soundGetVoices();
 	uint32 soundGetTempo() const { return _dwTempo; }
+	MusicType soundGetMusicType() const { return _musicType; }
 
 	bool soundIsActive(MusicEntry *pSnd) {
 		assert(pSnd->pStreamAud != 0);
@@ -208,6 +219,7 @@ private:
 	MusicEntry *_usedChannel[16];
 
 	MidiCommandQueue _queuedCommands;
+	MusicType _musicType;
 
 	int _driverFirstChannel;
 };

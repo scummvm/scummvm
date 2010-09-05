@@ -135,6 +135,8 @@ private:
 	bool cmdBreakpointList(int argc, const char **argv);
 	bool cmdBreakpointDelete(int argc, const char **argv);
 	bool cmdBreakpointMethod(int argc, const char **argv);
+	bool cmdBreakpointRead(int argc, const char **argv);
+	bool cmdBreakpointWrite(int argc, const char **argv);
 	bool cmdBreakpointKernel(int argc, const char **argv);
 	bool cmdBreakpointFunction(int argc, const char **argv);
 	// VM

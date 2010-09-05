@@ -59,17 +59,23 @@ enum AbortGameState {
 class DirSeeker {
 protected:
 	reg_t _outbuffer;
-	Common::StringArray _savefiles;
+	Common::StringArray _files;
+	Common::StringArray _virtualFiles;
 	Common::StringArray::const_iterator _iter;
 
 public:
 	DirSeeker() {
 		_outbuffer = NULL_REG;
-		_iter = _savefiles.begin();
+		_iter = _files.begin();
 	}
 
 	reg_t firstFile(const Common::String &mask, reg_t buffer, SegManager *segMan);
 	reg_t nextFile(SegManager *segMan);
+
+	Common::String getVirtualFilename(uint fileNumber);
+
+private:
+	void addAsVirtualFiles(Common::String title, Common::String fileMask);
 };
 
 enum {
@@ -80,11 +86,11 @@ enum {
 	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
 };
 
-// We assume that scripts give us savegameId 0->999 for creating a new save slot
-//  and savegameId 1000->1999 for existing save slots ffs. kfile.cpp
+// We assume that scripts give us savegameId 0->99 for creating a new save slot
+//  and savegameId 100->199 for existing save slots ffs. kfile.cpp
 enum {
-	SAVEGAMEID_OFFICIALRANGE_START = 1000,
-	SAVEGAMEID_OFFICIALRANGE_END = 1999
+	SAVEGAMEID_OFFICIALRANGE_START = 100,
+	SAVEGAMEID_OFFICIALRANGE_END = 199
 };
 
 enum {
@@ -136,8 +142,14 @@ public:
 
 	DirSeeker _dirseeker;
 
-	uint _lastSaveVirtualId; // last virtual id fed to kSaveGame, if no kGetSaveFiles was called inbetween
-	uint _lastSaveNewId;    // last newly created filename-id by kSaveGame
+	int16 _lastSaveVirtualId; // last virtual id fed to kSaveGame, if no kGetSaveFiles was called inbetween
+	int16 _lastSaveNewId;    // last newly created filename-id by kSaveGame
+
+	uint _chosenQfGImportItem; // Remembers the item selected in QfG import rooms
+
+	bool _cursorWorkaroundActive; // ffs. GfxCursor::setPosition()
+	Common::Point _cursorWorkaroundPoint;
+	Common::Rect _cursorWorkaroundRect;
 
 public:
 	/* VM Information */

@@ -43,6 +43,13 @@ struct KYRAGameDescription {
 
 #include "kyra/detection_tables.h"
 
+namespace {
+
+const char * const directoryGlobs[] = {
+	"malcolm",
+	0
+};
+
 const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)adGameDescs,
@@ -63,10 +70,12 @@ const ADParams detectionParams = {
 	// Additional GUI options (for every game}
 	Common::GUIO_NONE,
 	// Maximum directory depth
-	1,
+	2,
 	// List of directory globs
-	0
+	directoryGlobs
 };
+
+} // End of anonymous namespace
 
 class KyraMetaEngine : public AdvancedMetaEngine {
 public:

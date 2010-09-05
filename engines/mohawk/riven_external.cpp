@@ -34,8 +34,12 @@
 
 namespace Mohawk {
 
+static const uint32 kDomeSliderDefaultState = 0x01F00000;
+static const uint32 kDomeSliderSlotCount = 25;
+
 RivenExternal::RivenExternal(MohawkEngine_Riven *vm) : _vm(vm) {
 	setupCommands();
+	_sliderState = kDomeSliderDefaultState;
 }
 
 RivenExternal::~RivenExternal() {
@@ -64,6 +68,8 @@ void RivenExternal::setupCommands() {
 	COMMAND(xadisablemenureturn);
 	COMMAND(xaenablemenureturn);
 	COMMAND(xalaunchbrowser);
+	COMMAND(xadisablemenuintro);
+	COMMAND(xaenablemenuintro);
 
 	// bspit (Bookmaking Island) external commands
 	COMMAND(xblabopenbook);
@@ -200,16 +206,33 @@ void RivenExternal::runCommand(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::runDemoBoundaryDialog() {
-	GUI::MessageDialog dialog("This demo does not allow you\n"
-							  "to visit that part of Riven.");
+	GUI::MessageDialog dialog("Exploration beyond this point available only within the full version of\n"
+							  "the game.");
 	dialog.runModal();
 }
 
 void RivenExternal::runEndGame(uint16 video) {
 	_vm->_sound->stopAllSLST();
-	_vm->_video->playMovieBlocking(video);
+	_vm->_video->playMovie(video);
+	runCredits(video);
+}
 
+void RivenExternal::runCredits(uint16 video) {
 	// TODO: Play until the last frame and then run the credits
+
+	VideoHandle videoHandle = _vm->_video->findVideoHandle(video);
+
+	while (!_vm->_video->endOfVideo(videoHandle) && !_vm->shouldQuit()) {
+		if (_vm->_video->updateBackgroundMovies())
+			_vm->_system->updateScreen();
+
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event))
+			;
+
+		_vm->_system->delayMillis(10);
+	}
+
 	_vm->setGameOver();
 }
 
@@ -231,7 +254,151 @@ void RivenExternal::runDomeCheck() {
 	// frame that is the magic one is the one with the golden symbol) but we
 	// give a 3 frame leeway in either direction.
 	if (frameCount - curFrame < 3 || curFrame < 3)
-		*_vm->matchVarToString("domecheck") = 1;
+		*_vm->getVar("domecheck") = 1;
+}
+
+void RivenExternal::resetDomeSliders(uint16 bitmapId, uint16 soundId, uint16 startHotspot) {
+	// The rightmost slider should move left until it finds the next slider,
+	// then those two continue until they find the third slider. This continues
+	// until all five sliders have returned their starting slots.
+	byte slidersFound = 0;
+	for (uint32 i = 0; i < kDomeSliderSlotCount; i++) {
+		if (_sliderState & (1 << i)) {
+			// A slider occupies this spot. Increase the number of sliders we
+			// have found, but we're not doing any moving this iteration.
+			slidersFound++;
+		} else {
+			// Move all the sliders we have found over one slot
+			for (byte j = 0; j < slidersFound; j++) {
+				_sliderState &= ~(1 << (i - j - 1));
+				_sliderState |= 1 << (i - j);
+			}
+
+			// If we have at least one found slider, it has now moved
+			// so we should redraw and play a tick sound
+			if (slidersFound) {
+				_vm->_sound->playSound(soundId, false);
+				drawDomeSliders(bitmapId, startHotspot);
+				_vm->_system->delayMillis(10);
+			}
+		}
+	}
+
+	// Sanity checks - the slider count should always be 5 and we should end up at
+	// the default state after moving them all over.
+	assert(slidersFound == 5);
+	assert(_sliderState == kDomeSliderDefaultState);
+}
+
+void RivenExternal::checkDomeSliders(uint16 resetSlidersHotspot, uint16 openDomeHotspot) {
+	// Let's see if we're all matched up...
+	if (*_vm->getVar("adomecombo") == _sliderState) {
+		// Set the button hotspot to the open dome hotspot
+		_vm->_hotspots[resetSlidersHotspot].enabled = false;
+		_vm->_hotspots[openDomeHotspot].enabled = true;
+	} else {
+		// Set the button hotspot to the reset sliders hotspot
+		_vm->_hotspots[resetSlidersHotspot].enabled = true;
+		_vm->_hotspots[openDomeHotspot].enabled = false;
+	}
+}
+
+void RivenExternal::checkSliderCursorChange(uint16 startHotspot) {
+	// Set the cursor based on _sliderState and what hotspot we're over
+	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
+		if (_vm->_hotspots[i + startHotspot].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
+			if (_sliderState & (1 << (24 - i)))
+				_vm->_gfx->changeCursor(kRivenOpenHandCursor);
+			else
+				_vm->_gfx->changeCursor(kRivenMainCursor);
+			break;
+		}
+	}
+}
+
+void RivenExternal::dragDomeSlider(uint16 bitmapId, uint16 soundId, uint16 resetSlidersHotspot, uint16 openDomeHotspot, uint16 startHotspot) {
+	int16 foundSlider = -1;
+
+	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
+		if (_vm->_hotspots[i + startHotspot].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
+			// If the slider is not at this hotspot, we can't do anything else
+			if (!(_sliderState & (1 << (24 - i))))
+				return;
+
+			foundSlider = i;
+			break;
+		}
+	}
+
+	// We're not over any slider
+	if (foundSlider < 0)
+		return;
+
+	// We've clicked down, so show the closed hand cursor
+	_vm->_gfx->changeCursor(kRivenClosedHandCursor);
+
+	bool done = false;
+	while (!done) {
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				if (foundSlider < 24 && !(_sliderState & (1 << (23 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot + 1].rect.contains(event.mouse)) {
+					// We've moved the slider right one space
+					_sliderState &= ~(_sliderState & (1 << (24 - foundSlider)));
+					foundSlider++;
+					_sliderState |= 1 << (24 - foundSlider);
+
+					// Now play a click sound and redraw
+					_vm->_sound->playSound(soundId, false);
+					drawDomeSliders(bitmapId, startHotspot);
+				} else if (foundSlider > 0 && !(_sliderState & (1 << (25 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot - 1].rect.contains(event.mouse)) {
+					// We've moved the slider left one space
+					_sliderState &= ~(_sliderState & (1 << (24 - foundSlider)));
+					foundSlider--;
+					_sliderState |= 1 << (24 - foundSlider);
+
+					// Now play a click sound and redraw
+					_vm->_sound->playSound(soundId, false);
+					drawDomeSliders(bitmapId, startHotspot);
+				} else
+					_vm->_system->updateScreen(); // A normal update for the cursor
+				break;
+			case Common::EVENT_LBUTTONUP:
+				done = true;
+				break;
+			default:
+				break;
+			}
+		}
+		_vm->_system->delayMillis(10);
+	}
+
+	// Check to see if we have the right combination
+	checkDomeSliders(resetSlidersHotspot, openDomeHotspot);
+}
+
+void RivenExternal::drawDomeSliders(uint16 bitmapId, uint16 startHotspot) {
+	Common::Rect dstAreaRect = Common::Rect(200, 250, 420, 319);
+
+	// On pspit, the rect is different by two pixels
+	// (alternatively, we could just use hotspot 3 here, but only on pspit is there a hotspot for this)
+	if (_vm->getCurStack() == pspit)
+		dstAreaRect.translate(-2, 0);
+
+	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
+		Common::Rect srcRect = _vm->_hotspots[startHotspot + i].rect;
+		srcRect.translate(-dstAreaRect.left, -dstAreaRect.top); // Adjust the rect so it's in the destination area
+
+		Common::Rect dstRect = _vm->_hotspots[startHotspot + i].rect;
+
+		if (_sliderState & (1 << (24 - i)))
+			_vm->_gfx->drawImageRect(bitmapId, srcRect, dstRect);
+		else
+			_vm->_gfx->drawImageRect(bitmapId + 1, srcRect, dstRect);
+	}
+
+	_vm->_gfx->updateScreen();
 }
 
 // ------------------------------------------------------------------------------------
@@ -252,7 +419,7 @@ void RivenExternal::xasetupcomplete(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xaatrusopenbook(uint16 argc, uint16 *argv) {
 	// Get the variable
-	uint32 page = *_vm->matchVarToString("aatruspage");
+	uint32 page = *_vm->getVar("aatruspage");
 
 	// Set hotspots depending on the page
 	if (page == 1) {
@@ -271,13 +438,13 @@ void RivenExternal::xaatrusopenbook(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xaatrusbookback(uint16 argc, uint16 *argv) {
 	// Return to where we were before entering the book
-	_vm->changeToStack(*_vm->matchVarToString("returnstackid"));
-	_vm->changeToCard(*_vm->matchVarToString("returncardid"));
+	_vm->changeToStack(*_vm->getVar("returnstackid"));
+	_vm->changeToCard(*_vm->getVar("returncardid"));
 }
 
 void RivenExternal::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
-	uint32 *page = _vm->matchVarToString("aatruspage");
+	uint32 *page = _vm->getVar("aatruspage");
 
 	// Decrement the page if it's not the first page
 	if (*page == 1)
@@ -297,7 +464,7 @@ void RivenExternal::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
-	uint32 *page = _vm->matchVarToString("aatruspage");
+	uint32 *page = _vm->getVar("aatruspage");
 
 	// Increment the page if it's not the last page
 	if (((_vm->getFeatures() & GF_DEMO) && *page == 6) || *page == 10)
@@ -317,7 +484,7 @@ void RivenExternal::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xacathopenbook(uint16 argc, uint16 *argv) {
 	// Get the variable
-	uint32 page = *_vm->matchVarToString("acathpage");
+	uint32 page = *_vm->getVar("acathpage");
 
 	// Set hotspots depending on the page
 	if (page == 1) {
@@ -340,19 +507,33 @@ void RivenExternal::xacathopenbook(uint16 argc, uint16 *argv) {
 		_vm->_gfx->drawPLST(51);
 
 	if (page == 28) {
-		// TODO: Draw telescope combination
+		// Draw the telescope combination
+		// The images for the numbers are tBMP's 13 through 17.
+		// The start point is at (156, 247)
+		uint32 teleCombo = *_vm->getVar("tcorrectorder");
+		static const uint16 kNumberWidth = 32;
+		static const uint16 kNumberHeight = 25;
+		static const uint16 kDstX = 156;
+		static const uint16 kDstY = 247;
+
+		for (byte i = 0; i < 5; i++) {
+			uint16 offset = (getComboDigit(teleCombo, i) - 1) * kNumberWidth;
+			Common::Rect srcRect = Common::Rect(offset, 0, offset + kNumberWidth, kNumberHeight);
+			Common::Rect dstRect = Common::Rect(i * kNumberWidth + kDstX, kDstY, (i + 1) * kNumberWidth + kDstX, kDstY + kNumberHeight);
+			_vm->_gfx->drawImageRect(i + 13, srcRect, dstRect);
+		}
 	}
 }
 
 void RivenExternal::xacathbookback(uint16 argc, uint16 *argv) {
 	// Return to where we were before entering the book
-	_vm->changeToStack(*_vm->matchVarToString("returnstackid"));
-	_vm->changeToCard(*_vm->matchVarToString("returncardid"));
+	_vm->changeToStack(*_vm->getVar("returnstackid"));
+	_vm->changeToCard(*_vm->getVar("returncardid"));
 }
 
 void RivenExternal::xacathbookprevpage(uint16 argc, uint16 *argv) {
 	// Get the variable
-	uint32 *page = _vm->matchVarToString("acathpage");
+	uint32 *page = _vm->getVar("acathpage");
 
 	// Increment the page if it's not the first page
 	if (*page == 1)
@@ -369,7 +550,7 @@ void RivenExternal::xacathbookprevpage(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xacathbooknextpage(uint16 argc, uint16 *argv) {
 	// Get the variable
-	uint32 *page = _vm->matchVarToString("acathpage");
+	uint32 *page = _vm->getVar("acathpage");
 
 	// Increment the page if it's not the last page
 	if (*page == 49)
@@ -386,14 +567,14 @@ void RivenExternal::xacathbooknextpage(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xtrapbookback(uint16 argc, uint16 *argv) {
 	// Return to where we were before entering the book
-	*_vm->matchVarToString("atrap") = 0;
-	_vm->changeToStack(*_vm->matchVarToString("returnstackid"));
-	_vm->changeToCard(*_vm->matchVarToString("returncardid"));
+	*_vm->getVar("atrap") = 0;
+	_vm->changeToStack(*_vm->getVar("returnstackid"));
+	_vm->changeToCard(*_vm->getVar("returncardid"));
 }
 
 void RivenExternal::xatrapbookclose(uint16 argc, uint16 *argv) {
 	// Close the trap book
-	*_vm->matchVarToString("atrap") = 0;
+	*_vm->getVar("atrap") = 0;
 
 	// Play the page turning sound
 	_vm->_sound->playSound(8, false);
@@ -403,7 +584,7 @@ void RivenExternal::xatrapbookclose(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xatrapbookopen(uint16 argc, uint16 *argv) {
 	// Open the trap book
-	*_vm->matchVarToString("atrap") = 1;
+	*_vm->getVar("atrap") = 1;
 
 	// Play the page turning sound
 	_vm->_sound->playSound(9, false);
@@ -417,20 +598,58 @@ void RivenExternal::xarestoregame(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xadisablemenureturn(uint16 argc, uint16 *argv) {
-	// Dummy function -- implemented in Mohawk::go
+	// This function would normally enable the Windows menu item for
+	// returning to the main menu. Ctrl+r will do this instead.
+	// The original also had this shortcut.
 }
 
 void RivenExternal::xaenablemenureturn(uint16 argc, uint16 *argv) {
-	// Dummy function -- implemented in Mohawk::go
+	// This function would normally enable the Windows menu item for
+	// returning to the main menu. Ctrl+r will do this instead.
+	// The original also had this shortcut.
 }
 
 void RivenExternal::xalaunchbrowser(uint16 argc, uint16 *argv) {
 	// Well, we can't launch a browser for obvious reasons ;)
+	// The original text is as follows (for reference):
+
+	// If you have an auto-dial configured connection to the Internet,
+	// please select YES below.
+	//
+	// America Online and CompuServe users may experience difficulty. If
+	// you find that you are unable to connect, please quit the Riven
+	// Demo, launch your browser and type in the following URL:
+	//
+	//     www.redorb.com/buyriven
+	//
+	// Would you like to attempt to make the connection?
+	//
+	// [YES] [NO]
+
 	GUI::MessageDialog dialog("At this point, the Riven Demo would\n"
-							  "open up a web browser to bring you to\n"
-							  "the Riven website. ScummVM cannot do\n"
-							  "that. Visit the site on your own.");
+							  "ask if you would like to open a web browser\n"
+							  "to bring you to the Red Orb store to buy\n"
+							  "the game. ScummVM cannot do that and\n"
+							  "the site no longer exists.");
 	dialog.runModal();
+}
+
+void RivenExternal::xadisablemenuintro(uint16 argc, uint16 *argv) {
+	// This function would normally enable the Windows menu item for
+	// playing the intro. Ctrl+p will play the intro movies instead.
+	// The original also had this shortcut.
+
+	// Hide the "exit" button here
+	_vm->_gfx->hideInventory();
+}
+
+void RivenExternal::xaenablemenuintro(uint16 argc, uint16 *argv) {
+	// This function would normally enable the Windows menu item for
+	// playing the intro. Ctrl+p will play the intro movies instead.
+	// The original also had this shortcut.
+
+	// Show the "exit" button here
+	_vm->_gfx->showInventory();
 }
 
 // ------------------------------------------------------------------------------------
@@ -439,20 +658,39 @@ void RivenExternal::xalaunchbrowser(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xblabopenbook(uint16 argc, uint16 *argv) {
 	// Get the variable
-	uint32 page = *_vm->matchVarToString("blabbook");
+	uint32 page = *_vm->getVar("blabbook");
 
 	// Draw the image of the page based on the blabbook variable
 	_vm->_gfx->drawPLST(page);
 
-	// TODO: Draw the dome combo
 	if (page == 14) {
-		warning ("Need to draw dome combo");
+		// Draw the dome combination
+		// The images for the numbers are tBMP's 364 through 368
+		// The start point is at (240, 82)
+		uint32 domeCombo = *_vm->getVar("adomecombo");
+		static const uint16 kNumberWidth = 32;
+		static const uint16 kNumberHeight = 24;
+		static const uint16 kDstX = 240;
+		static const uint16 kDstY = 82;
+		byte numCount = 0;
+
+		for (int bitPos = 24; bitPos >= 0; bitPos--) {
+			if (domeCombo & (1 << bitPos)) {
+				uint16 offset = (24 - bitPos) * kNumberWidth;
+				Common::Rect srcRect = Common::Rect(offset, 0, offset + kNumberWidth, kNumberHeight);
+				Common::Rect dstRect = Common::Rect(numCount * kNumberWidth + kDstX, kDstY, (numCount + 1) * kNumberWidth + kDstX, kDstY + kNumberHeight);
+				_vm->_gfx->drawImageRect(numCount + 364, srcRect, dstRect);
+				numCount++;
+			}
+		}
+
+		assert(numCount == 5); // Sanity check
 	}
 }
 
 void RivenExternal::xblabbookprevpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
-	uint32 *page = _vm->matchVarToString("blabbook");
+	uint32 *page = _vm->getVar("blabbook");
 
 	// Decrement the page if it's not the first page
 	if (*page == 1)
@@ -469,7 +707,7 @@ void RivenExternal::xblabbookprevpage(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
-	uint32 *page = _vm->matchVarToString("blabbook");
+	uint32 *page = _vm->getVar("blabbook");
 
 	// Increment the page if it's not the last page
 	if (*page == 22)
@@ -485,8 +723,8 @@ void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xsoundplug(uint16 argc, uint16 *argv) {
-	uint32 heat = *_vm->matchVarToString("bheat");
-	uint32 boilerInactive = *_vm->matchVarToString("bcratergg");
+	uint32 heat = *_vm->getVar("bheat");
+	uint32 boilerInactive = *_vm->getVar("bcratergg");
 
 	if (heat != 0)
 		_vm->_sound->playSLST(1, _vm->getCurCard());
@@ -497,9 +735,9 @@ void RivenExternal::xsoundplug(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
-	uint32 heat = *_vm->matchVarToString("bheat");
-	uint32 water = *_vm->matchVarToString("bblrwtr");
-	uint32 platform = *_vm->matchVarToString("bblrgrt");
+	uint32 heat = *_vm->getVar("bheat");
+	uint32 water = *_vm->getVar("bblrwtr");
+	uint32 platform = *_vm->getVar("bblrgrt");
 
 	if (argv[0] == 1) {
 		if (water == 0) {
@@ -561,8 +799,8 @@ void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
-	uint32 heat = *_vm->matchVarToString("bheat");
-	uint32 platform = *_vm->matchVarToString("bblrgrt");
+	uint32 heat = *_vm->getVar("bheat");
+	uint32 platform = *_vm->getVar("bblrgrt");
 
 	if (heat) {
 		if (platform == 0) {
@@ -613,7 +851,7 @@ void RivenExternal::xbait(uint16 argc, uint16 *argv) {
 
 	// Set the bait if we put it on the plate
 	if (_vm->_hotspots[9].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
-		*_vm->matchVarToString("bbait") = 1;
+		*_vm->getVar("bbait") = 1;
 		_vm->_gfx->drawPLST(4);
 		_vm->_gfx->updateScreen();
 		_vm->_hotspots[3].enabled = false; // Disable bait hotspot
@@ -652,32 +890,32 @@ void RivenExternal::xbaitplate(uint16 argc, uint16 *argv) {
 
 	// Set the bait if we put it on the plate, remove otherwise
 	if (_vm->_hotspots[9].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
-		*_vm->matchVarToString("bbait") = 1;
+		*_vm->getVar("bbait") = 1;
 		_vm->_gfx->drawPLST(4);
 		_vm->_gfx->updateScreen();
 		_vm->_hotspots[3].enabled = false; // Disable bait hotspot
 		_vm->_hotspots[9].enabled = true; // Enable baitplate hotspot
 	} else {
-		*_vm->matchVarToString("bbait") = 0;
+		*_vm->getVar("bbait") = 0;
 		_vm->_hotspots[3].enabled = true; // Enable bait hotspot
 		_vm->_hotspots[9].enabled = false; // Disable baitplate hotspot
 	}
 }
 
 void RivenExternal::xbisland190_opencard(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkDomeSliders(27, 28);
 }
 
 void RivenExternal::xbisland190_resetsliders(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	resetDomeSliders(701, 41, 2);
 }
 
 void RivenExternal::xbisland190_slidermd(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	dragDomeSlider(701, 41, 27, 28, 2);
 }
 
 void RivenExternal::xbisland190_slidermw(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkSliderCursorChange(2);
 }
 
 void RivenExternal::xbscpbtn(uint16 argc, uint16 *argv) {
@@ -689,15 +927,17 @@ void RivenExternal::xbisland_domecheck(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
+	Common::Point startPos = _vm->_system->getEventManager()->getMousePos();
+
 	// Get the variable for the valve
-	uint32 *valve = _vm->matchVarToString("bvalve");
+	uint32 *valve = _vm->getVar("bvalve");
 
 	int changeX = 0;
 	int changeY = 0;
 	bool done = false;
 
 	// Set the cursor to the closed position
-	_vm->_gfx->changeCursor(2004);
+	_vm->_gfx->changeCursor(kRivenClosedHandCursor);
 	_vm->_system->updateScreen();
 
 	while (!done) {
@@ -706,8 +946,8 @@ void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
-				changeX = event.mouse.x - _vm->_mousePos.x;
-				changeY = _vm->_mousePos.y - event.mouse.y;
+				changeX = event.mouse.x - startPos.x;
+				changeY = startPos.y - event.mouse.y;
 				_vm->_system->updateScreen();
 				break;
 			case Common::EVENT_LBUTTONUP:
@@ -746,26 +986,26 @@ void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 	// If we changed state and the new state is that the valve is flowing to
 	// the boiler, we need to update the boiler state.
 	if (*valve == 1) {
-		if (*_vm->matchVarToString("bidvlv") == 1) { // Check which way the water is going at the boiler
-			if (*_vm->matchVarToString("bblrarm") == 1) {
+		if (*_vm->getVar("bidvlv") == 1) { // Check which way the water is going at the boiler
+			if (*_vm->getVar("bblrarm") == 1) {
 				// If the pipe is open, make sure the water is drained out
-				*_vm->matchVarToString("bheat") = 0;
-				*_vm->matchVarToString("bblrwtr") = 0;
+				*_vm->getVar("bheat") = 0;
+				*_vm->getVar("bblrwtr") = 0;
 			} else {
 				// If the pipe is closed, fill the boiler again
-				*_vm->matchVarToString("bheat") = *_vm->matchVarToString("bblrvalve");
-				*_vm->matchVarToString("bblrwtr") = 1;
+				*_vm->getVar("bheat") = *_vm->getVar("bblrvalve");
+				*_vm->getVar("bblrwtr") = 1;
 			}
 		} else {
 			// Have the grating inside the boiler match the switch outside
-			*_vm->matchVarToString("bblrgrt") = (*_vm->matchVarToString("bblrsw") == 1) ? 0 : 1;
+			*_vm->getVar("bblrgrt") = (*_vm->getVar("bblrsw") == 1) ? 0 : 1;
 		}
 	}
 }
 
 void RivenExternal::xbchipper(uint16 argc, uint16 *argv) {
 	// Why is this an external command....?
-	if (*_vm->matchVarToString("bvalve") == 2)
+	if (*_vm->getVar("bvalve") == 2)
 		_vm->_video->playMovieBlocking(2);
 }
 
@@ -786,19 +1026,19 @@ void RivenExternal::xgpincontrols(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xgisland25_opencard(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkDomeSliders(29, 30);
 }
 
 void RivenExternal::xgisland25_resetsliders(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	resetDomeSliders(161, 16, 2);
 }
 
 void RivenExternal::xgisland25_slidermd(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	dragDomeSlider(161, 16, 29, 30, 2);
 }
 
 void RivenExternal::xgisland25_slidermw(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkSliderCursorChange(2);
 }
 
 void RivenExternal::xgscpbtn(uint16 argc, uint16 *argv) {
@@ -815,13 +1055,13 @@ void RivenExternal::xgplateau3160_dopools(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xgwt200_scribetime(uint16 argc, uint16 *argv) {
 	// Get the current time
-	*_vm->matchVarToString("gscribetime") = _vm->_system->getMillis();
+	*_vm->getVar("gscribetime") = _vm->_system->getMillis();
 }
 
 void RivenExternal::xgwt900_scribe(uint16 argc, uint16 *argv) {
-	uint32 *scribeVar = _vm->matchVarToString("gscribe");
+	uint32 *scribeVar = _vm->getVar("gscribe");
 
-	if (*scribeVar == 1 && _vm->_system->getMillis() > *_vm->matchVarToString("gscribetime") + 40000)
+	if (*scribeVar == 1 && _vm->_system->getMillis() > *_vm->getVar("gscribetime") + 40000)
 		*scribeVar = 2;
 }
 
@@ -863,9 +1103,9 @@ void RivenExternal::xglview_villageon(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xreseticons(uint16 argc, uint16 *argv) {
 	// Reset the icons when going to Tay (rspit)
-	*_vm->matchVarToString("jicons") = 0;
-	*_vm->matchVarToString("jiconorder") = 0;
-	*_vm->matchVarToString("jrbook") = 0;
+	*_vm->getVar("jicons") = 0;
+	*_vm->getVar("jiconorder") = 0;
+	*_vm->getVar("jrbook") = 0;
 }
 
 // Count up how many icons are pressed
@@ -886,30 +1126,30 @@ static byte countDepressedIcons(uint32 iconOrderVar) {
 
 void RivenExternal::xicon(uint16 argc, uint16 *argv) {
 	// Set atemp as the status of whether or not the icon can be depressed.
-	if (*_vm->matchVarToString("jicons") & (1 << (argv[0] - 1))) {
+	if (*_vm->getVar("jicons") & (1 << (argv[0] - 1))) {
 		// This icon is depressed. Allow depression only if the last depressed icon was this one.
-		if ((*_vm->matchVarToString("jiconorder") & 0x1f) == argv[0])
-			*_vm->matchVarToString("atemp") = 1;
+		if ((*_vm->getVar("jiconorder") & 0x1f) == argv[0])
+			*_vm->getVar("atemp") = 1;
 		else
-			*_vm->matchVarToString("atemp") = 2;
+			*_vm->getVar("atemp") = 2;
 	} else
-		*_vm->matchVarToString("atemp") = 0;
+		*_vm->getVar("atemp") = 0;
 }
 
 void RivenExternal::xcheckicons(uint16 argc, uint16 *argv) {
 	// Reset the icons if this is the sixth icon
-	uint32 *iconOrderVar = _vm->matchVarToString("jiconorder");
+	uint32 *iconOrderVar = _vm->getVar("jiconorder");
 	if (countDepressedIcons(*iconOrderVar) == 5) {
 		*iconOrderVar = 0;
-		*_vm->matchVarToString("jicons") = 0;
+		*_vm->getVar("jicons") = 0;
 		_vm->_sound->playSound(46, false);
 	}
 }
 
 void RivenExternal::xtoggleicon(uint16 argc, uint16 *argv) {
 	// Get the variables
-	uint32 *iconsDepressed = _vm->matchVarToString("jicons");
-	uint32 *iconOrderVar = _vm->matchVarToString("jiconorder");
+	uint32 *iconsDepressed = _vm->getVar("jicons");
+	uint32 *iconOrderVar = _vm->getVar("jiconorder");
 
 	if (*iconsDepressed & (1 << (argv[0] - 1))) {
 		// The icon is depressed, now unpress it
@@ -922,13 +1162,13 @@ void RivenExternal::xtoggleicon(uint16 argc, uint16 *argv) {
 	}
 
 	// Check if the puzzle is complete now and assign 1 to jrbook if the puzzle is complete.
-	if (*iconOrderVar == *_vm->matchVarToString("jiconcorrectorder"))
-		*_vm->matchVarToString("jrbook") = 1;
+	if (*iconOrderVar == *_vm->getVar("jiconcorrectorder"))
+		*_vm->getVar("jrbook") = 1;
 }
 
 void RivenExternal::xjtunnel103_pictfix(uint16 argc, uint16 *argv) {
 	// Get the jicons variable which contains which of the stones are depressed in the rebel tunnel puzzle
-	uint32 iconsDepressed = *_vm->matchVarToString("jicons");
+	uint32 iconsDepressed = *_vm->getVar("jicons");
 
 	// Now, draw which icons are depressed based on the bits of the variable
 	if (iconsDepressed & (1 << 0))
@@ -949,7 +1189,7 @@ void RivenExternal::xjtunnel103_pictfix(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xjtunnel104_pictfix(uint16 argc, uint16 *argv) {
 	// Get the jicons variable which contains which of the stones are depressed in the rebel tunnel puzzle
-	uint32 iconsDepressed = *_vm->matchVarToString("jicons");
+	uint32 iconsDepressed = *_vm->getVar("jicons");
 
 	// Now, draw which icons are depressed based on the bits of the variable
 	if (iconsDepressed & (1 << 9))
@@ -972,7 +1212,7 @@ void RivenExternal::xjtunnel104_pictfix(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xjtunnel105_pictfix(uint16 argc, uint16 *argv) {
 	// Get the jicons variable which contains which of the stones are depressed in the rebel tunnel puzzle
-	uint32 iconsDepressed = *_vm->matchVarToString("jicons");
+	uint32 iconsDepressed = *_vm->getVar("jicons");
 
 	// Now, draw which icons are depressed based on the bits of the variable
 	if (iconsDepressed & (1 << 3))
@@ -993,7 +1233,7 @@ void RivenExternal::xjtunnel105_pictfix(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xjtunnel106_pictfix(uint16 argc, uint16 *argv) {
 	// Get the jicons variable which contains which of the stones are depressed in the rebel tunnel puzzle
-	uint32 iconsDepressed = *_vm->matchVarToString("jicons");
+	uint32 iconsDepressed = *_vm->getVar("jicons");
 
 	// Now, draw which icons are depressed based on the bits of the variable
 	if (iconsDepressed & (1 << 16))
@@ -1027,7 +1267,7 @@ void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
 	_vm->changeToCard(_vm->matchRMAPToCard(0x183a9));  // Change to card looking straight again
 	_vm->_video->playMovieBlocking(2);
 
-	uint32 *gallows = _vm->matchVarToString("jgallows");
+	uint32 *gallows = _vm->getVar("jgallows");
 	if (*gallows == 1) {
 		// If the gallows is open, play the up movie and return
 		_vm->_video->playMovieBlocking(3);
@@ -1072,15 +1312,15 @@ void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xjdome25_resetsliders(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	resetDomeSliders(_vm->getFeatures() & GF_DVD ? 547 : 548, 81, 2);
 }
 
 void RivenExternal::xjdome25_slidermd(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	dragDomeSlider(_vm->getFeatures() & GF_DVD ? 547: 548, 81, 29, 28, 2);
 }
 
 void RivenExternal::xjdome25_slidermw(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkSliderCursorChange(2);
 }
 
 void RivenExternal::xjscpbtn(uint16 argc, uint16 *argv) {
@@ -1092,18 +1332,20 @@ void RivenExternal::xjisland3500_domecheck(uint16 argc, uint16 *argv) {
 }
 
 int RivenExternal::jspitElevatorLoop() {
+	Common::Point startPos = _vm->_system->getEventManager()->getMousePos();
+
 	Common::Event event;
 	int changeLevel = 0;
 
-	_vm->_gfx->changeCursor(2004);
+	_vm->_gfx->changeCursor(kRivenClosedHandCursor);
 	_vm->_system->updateScreen();
 	for (;;) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
-				if (event.mouse.y > (_vm->_mousePos.y + 10)) {
+				if (event.mouse.y > (startPos.y + 10)) {
 					changeLevel = -1;
-				} else if (event.mouse.y < (_vm->_mousePos.y - 10)) {
+				} else if (event.mouse.y < (startPos.y - 10)) {
 					changeLevel = 1;
 				} else {
 					changeLevel = 0;
@@ -1157,7 +1399,7 @@ void RivenExternal::xhandlecontrolmid(uint16 argc, uint16 *argv) {
 		_vm->_video->playMovieBlocking(6);
 
 	// If the whark's mouth is open, close it
-	uint32 *mouthVar = _vm->matchVarToString("jwmouth");
+	uint32 *mouthVar = _vm->getVar("jwmouth");
 	if (*mouthVar == 1) {
 		_vm->_video->playMovieBlocking(3);
 		_vm->_video->playMovieBlocking(8);
@@ -1176,27 +1418,27 @@ void RivenExternal::xhandlecontrolmid(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xjplaybeetle_550(uint16 argc, uint16 *argv) {
 	// Play a beetle animation 25% of the time
-	*_vm->matchVarToString("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
+	*_vm->getVar("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
 }
 
 void RivenExternal::xjplaybeetle_600(uint16 argc, uint16 *argv) {
 	// Play a beetle animation 25% of the time
-	*_vm->matchVarToString("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
+	*_vm->getVar("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
 }
 
 void RivenExternal::xjplaybeetle_950(uint16 argc, uint16 *argv) {
 	// Play a beetle animation 25% of the time
-	*_vm->matchVarToString("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
+	*_vm->getVar("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
 }
 
 void RivenExternal::xjplaybeetle_1050(uint16 argc, uint16 *argv) {
 	// Play a beetle animation 25% of the time
-	*_vm->matchVarToString("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
+	*_vm->getVar("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
 }
 
 void RivenExternal::xjplaybeetle_1450(uint16 argc, uint16 *argv) {
 	// Play a beetle animation 25% of the time as long as the girl is not present
-	*_vm->matchVarToString("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0 && *_vm->matchVarToString("jgirl") != 1) ? 1 : 0;
+	*_vm->getVar("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0 && *_vm->getVar("jgirl") != 1) ? 1 : 0;
 }
 
 void RivenExternal::xjlagoon700_alert(uint16 argc, uint16 *argv) {
@@ -1209,7 +1451,7 @@ void RivenExternal::xjlagoon800_alert(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xjlagoon1500_alert(uint16 argc, uint16 *argv) {
 	// Have the sunners move a bit as you get closer ;)
-	uint32 *sunners = _vm->matchVarToString("jsunners");
+	uint32 *sunners = _vm->getVar("jsunners");
 	if (*sunners == 0) {
 		_vm->_video->playMovieBlocking(3);
 	} else if (*sunners == 1) {
@@ -1234,14 +1476,14 @@ void RivenExternal::xorollcredittime(uint16 argc, uint16 *argv) {
 	// WORKAROUND: The special change stuff only handles one destination and it would
 	// be messy to modify the way that currently works. If we use the trap book on Tay,
 	// we should be using the Tay end game sequences.
-	if (*_vm->matchVarToString("returnstackid") == rspit) {
+	if (*_vm->getVar("returnstackid") == rspit) {
 		_vm->changeToStack(rspit);
 		_vm->changeToCard(2);
 		return;
 	}
 
 	// You used the trap book... why? What were you thinking?
-	uint32 *gehnState = _vm->matchVarToString("agehn");
+	uint32 *gehnState = _vm->getVar("agehn");
 
 	if (*gehnState == 0)		// Gehn who?
 		runEndGame(1);
@@ -1252,16 +1494,127 @@ void RivenExternal::xorollcredittime(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
-	// TODO: This fun external command is probably one of the most complex,
-	// up there with the marble puzzle ones. It involves so much... Basically,
-	// it's playing when Gehn holds the trap book up to you and you have to
-	// click on the book (hence the name of the function). Yeah, not fun.
-	// Lots of timing stuff needs to be done for a couple videos.
+	// Hide the cursor
+	_vm->_gfx->changeCursor(kRivenHideCursor);
+
+	// Let's hook onto our video
+	VideoHandle video = _vm->_video->findVideoHandle(argv[0]);
+
+	// Convert from the standard QuickTime base time to milliseconds
+	// The values are in terms of 1/600 of a second.
+	// Have I said how much I just *love* QuickTime? </sarcasm>
+	uint32 startTime = argv[1] * 1000 / 600;
+	uint32 endTime = argv[2] * 1000 / 600;
+
+	// Track down our hotspot
+	// Of course, they're not in any sane order...
+	static const uint16 hotspotMap[] = { 1, 3, 2, 0 };
+	Common::Rect hotspotRect = _vm->_hotspots[hotspotMap[argv[3] - 1]].rect;
+
+	debug(0, "xbookclick:");
+	debug(0, "\tVideo Code = %d", argv[0]);
+	debug(0, "\tStart Time = %dms", startTime);
+	debug(0, "\tEnd Time   = %dms", endTime);
+	debug(0, "\tHotspot    = %d -> %d", argv[3], hotspotMap[argv[3] - 1]);
+
+	// Just let the video play while we wait until Gehn opens the trap book for us
+	while (_vm->_video->getElapsedTime(video) < startTime && !_vm->shouldQuit()) {
+		if (_vm->_video->updateBackgroundMovies())
+			_vm->_system->updateScreen();
+
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event))
+			;
+
+		_vm->_system->delayMillis(10);
+	}
+
+	// Break out if we're quitting
+	if (_vm->shouldQuit())
+		return;
+
+	// Update our hotspot stuff
+	if (hotspotRect.contains(_vm->_system->getEventManager()->getMousePos()))
+		_vm->_gfx->changeCursor(kRivenOpenHandCursor);
+	else
+		_vm->_gfx->changeCursor(kRivenMainCursor);
+	
+	// OK, Gehn has opened the trap book and has asked us to go in. Let's watch
+	// and see what the player will do...
+	while (_vm->_video->getElapsedTime(video) < endTime && !_vm->shouldQuit()) {
+		bool updateScreen = _vm->_video->updateBackgroundMovies();
+
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				if (hotspotRect.contains(_vm->_system->getEventManager()->getMousePos()))
+					_vm->_gfx->changeCursor(kRivenOpenHandCursor);
+				else
+					_vm->_gfx->changeCursor(kRivenMainCursor);
+				updateScreen = false; // Don't update twice, changing the cursor already updates the screen
+				break;
+			case Common::EVENT_LBUTTONUP:
+				if (hotspotRect.contains(_vm->_system->getEventManager()->getMousePos())) {
+					// OK, we've used the trap book! We go for ride lady!
+					_vm->_scriptMan->stopAllScripts();                  // Stop all running scripts (so we don't remain in the cage)
+					_vm->_video->stopVideos();                          // Stop all videos
+					_vm->_gfx->changeCursor(kRivenHideCursor);          // Hide the cursor
+					_vm->_gfx->drawPLST(3);                             // Black out the screen
+					_vm->_gfx->updateScreen();                          // Update the screen
+					_vm->_sound->playSound(0, false);                   // Play the link sound
+					_vm->_video->activateMLST(7, _vm->getCurCard());    // Activate Gehn Link Video
+					_vm->_video->playMovieBlocking(1);                  // Play Gehn Link Video
+					*_vm->getVar("agehn") = 4;                // Set Gehn to the trapped state
+					*_vm->getVar("atrapbook") = 1;            // We've got the trap book again
+					_vm->_sound->playSound(0, false);                   // Play the link sound again
+					_vm->changeToCard(_vm->matchRMAPToCard(0x2885));    // Link out! (TODO: Shouldn't this card change?)
+					return;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (updateScreen && !_vm->shouldQuit())
+			_vm->_system->updateScreen();
+
+		_vm->_system->delayMillis(10);
+	}
+
+	// Break out if we're quitting
+	if (_vm->shouldQuit())
+		return;
+
+	// Hide the cursor again
+	_vm->_gfx->changeCursor(kRivenHideCursor);
+
+	// If there was no click and this is the third time Gehn asks us to
+	// use the trap book, he will shoot the player. Dead on arrival.
+	// Run the credits from here.
+	if (*_vm->getVar("agehn") == 3) {
+		_vm->_scriptMan->stopAllScripts();
+		runCredits(argv[0]);
+		return;
+	}
+
+	// There was no click, so just play the rest of the video.
+	while (!_vm->_video->endOfVideo(video) && !_vm->shouldQuit()) {
+		if (_vm->_video->updateBackgroundMovies())
+			_vm->_system->updateScreen();
+
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event))
+			;
+
+		_vm->_system->delayMillis(10);
+	}
 }
 
 void RivenExternal::xooffice30_closebook(uint16 argc, uint16 *argv) {
 	// Close the blank linking book if it's open
-	uint32 *book = _vm->matchVarToString("odeskbook");
+	uint32 *book = _vm->getVar("odeskbook");
 	if (*book != 1)
 		return;
 
@@ -1284,16 +1637,16 @@ void RivenExternal::xooffice30_closebook(uint16 argc, uint16 *argv) {
 void RivenExternal::xobedroom5_closedrawer(uint16 argc, uint16 *argv) {
 	// Close the drawer if open when clicking on the journal.
 	_vm->_video->playMovieBlocking(2);
-	*_vm->matchVarToString("ostanddrawer") = 0;
+	*_vm->getVar("ostanddrawer") = 0;
 }
 
 void RivenExternal::xogehnopenbook(uint16 argc, uint16 *argv) {
-	_vm->_gfx->drawPLST(*_vm->matchVarToString("ogehnpage"));
+	_vm->_gfx->drawPLST(*_vm->getVar("ogehnpage"));
 }
 
 void RivenExternal::xogehnbookprevpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
-	uint32 *page = _vm->matchVarToString("ogehnpage");
+	uint32 *page = _vm->getVar("ogehnpage");
 
 	// Decrement the page if it's not the first page
 	if (*page == 1)
@@ -1310,7 +1663,7 @@ void RivenExternal::xogehnbookprevpage(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xogehnbooknextpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
-	uint32 *page = _vm->matchVarToString("ogehnpage");
+	uint32 *page = _vm->getVar("ogehnpage");
 
 	// Increment the page if it's not the last page
 	if (*page == 13)
@@ -1334,7 +1687,7 @@ void RivenExternal::xgwatch(uint16 argc, uint16 *argv) {
 	// Hide the cursor
 	_vm->_gfx->changeCursor(kRivenHideCursor);
 
-	uint32 *prisonCombo = _vm->matchVarToString("pcorrectorder");
+	uint32 *prisonCombo = _vm->getVar("pcorrectorder");
 	uint32 soundTime = _vm->_system->getMillis() - 500; // Start the first sound instantly
 	byte curSound = 0;
 
@@ -1344,7 +1697,7 @@ void RivenExternal::xgwatch(uint16 argc, uint16 *argv) {
 			if (curSound == 5) // Break out after the last sound is done
 				break;
 
-			_vm->_sound->playSound(getComboDigit(*prisonCombo, curSound) + 13);
+			_vm->_sound->playSound(getComboDigit(*prisonCombo, curSound) + 13, !(_vm->getFeatures() & GF_DVD));
 			curSound++;
 			soundTime = _vm->_system->getMillis();
 		}
@@ -1376,14 +1729,14 @@ void RivenExternal::xpisland990_elevcombo(uint16 argc, uint16 *argv) {
 	// It is impossible to get here if Gehn is not trapped. However,
 	// the original also disallows brute forcing the ending if you have
 	// not yet trapped Gehn.
-	if (*_vm->matchVarToString("agehn") != 4)
+	if (*_vm->getVar("agehn") != 4)
 		return;
 
-	uint32 *correctDigits = _vm->matchVarToString("pelevcombo");
+	uint32 *correctDigits = _vm->getVar("pelevcombo");
 
 	// pelevcombo keeps count of how many buttons we have pressed in the correct order.
 	// When pelevcombo is 5, clicking the handle will show the video freeing Catherine.
-	if (*correctDigits < 5 && argv[0] == getComboDigit(*_vm->matchVarToString("pcorrectorder"), *correctDigits))
+	if (*correctDigits < 5 && argv[0] == getComboDigit(*_vm->getVar("pcorrectorder"), *correctDigits))
 		*correctDigits += 1;
 	else
 		*correctDigits = 0;
@@ -1398,19 +1751,19 @@ void RivenExternal::xpisland290_domecheck(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xpisland25_opencard(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkDomeSliders(31, 5);
 }
 
 void RivenExternal::xpisland25_resetsliders(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	resetDomeSliders(58, 10, 6);
 }
 
 void RivenExternal::xpisland25_slidermd(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	dragDomeSlider(58, 10, 31, 5, 6);
 }
 
 void RivenExternal::xpisland25_slidermw(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkSliderCursorChange(6);
 }
 
 // ------------------------------------------------------------------------------------
@@ -1430,8 +1783,8 @@ void RivenExternal::xrcredittime(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xrshowinventory(uint16 argc, uint16 *argv) {
 	// Give the trap book and Catherine's journal to the player
-	*_vm->matchVarToString("atrapbook") = 1;
-	*_vm->matchVarToString("acathbook") = 1;
+	*_vm->getVar("atrapbook") = 1;
+	*_vm->getVar("acathbook") = 1;
 	_vm->_gfx->showInventory();
 }
 
@@ -1452,29 +1805,29 @@ void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 	_vm->_video->playMovieBlocking(3);
 
 	// Don't do anything else if the telescope power is off
-	if (*_vm->matchVarToString("ttelevalve") == 0)
+	if (*_vm->getVar("ttelevalve") == 0)
 		return;
 
-	uint32 *telescopePos = _vm->matchVarToString("ttelescope");
-	uint32 *telescopeCover = _vm->matchVarToString("ttelecover");
+	uint32 *telescopePos = _vm->getVar("ttelescope");
+	uint32 *telescopeCover = _vm->getVar("ttelecover");
 
 	if (*telescopePos == 1) {
 		// We're at the bottom, which means one of two things can happen...
-		if (*telescopeCover == 1 && *_vm->matchVarToString("ttelepin") == 1) {
+		if (*telescopeCover == 1 && *_vm->getVar("ttelepin") == 1) {
 			// ...if the cover is open and the pin is up, the game is now over.
-			if (*_vm->matchVarToString("pcage") == 2) {
+			if (*_vm->getVar("pcage") == 2) {
 				// The best ending: Catherine is free, Gehn is trapped, Atrus comes to rescue you.
 				// And now we fall back to Earth... all the way...
 				warning("xtexterior300_telescopedown: Good ending");
 				_vm->_video->activateMLST(8, _vm->getCurCard());
 				runEndGame(8);
-			} else if (*_vm->matchVarToString("agehn") == 4) {
+			} else if (*_vm->getVar("agehn") == 4) {
 				// The ok ending: Catherine is still trapped, Gehn is trapped, Atrus comes to rescue you.
 				// Nice going! Catherine and the islanders are all dead now! Just go back to your home...
 				warning("xtexterior300_telescopedown: OK ending");
 				_vm->_video->activateMLST(9, _vm->getCurCard());
 				runEndGame(9);
-			} else if (*_vm->matchVarToString("atrapbook") == 1) {
+			} else if (*_vm->getVar("atrapbook") == 1) {
 				// The bad ending: Catherine is trapped, Gehn is free, Atrus gets shot by Gehn,
 				// And then you get shot by Cho. Nice going! Catherine and the islanders are dead
 				// and you have just set Gehn free from Riven, not to mention you're dead.
@@ -1510,10 +1863,10 @@ void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 	_vm->_video->playMovieBlocking(3);
 
 	// Don't do anything else if the telescope power is off
-	if (*_vm->matchVarToString("ttelevalve") == 0)
+	if (*_vm->getVar("ttelevalve") == 0)
 		return;
 
-	uint32 *telescopePos = _vm->matchVarToString("ttelescope");
+	uint32 *telescopePos = _vm->getVar("ttelescope");
 
 	// Check if we can't move up anymore
 	if (*telescopePos == 5) {
@@ -1530,9 +1883,9 @@ void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xtisland390_covercombo(uint16 argc, uint16 *argv) {
 	// Called when clicking the telescope cover buttons. argv[0] is the button number (1...5).
-	uint32 *correctDigits = _vm->matchVarToString("tcovercombo");
+	uint32 *correctDigits = _vm->getVar("tcovercombo");
 
-	if (*correctDigits < 5 && argv[0] == getComboDigit(*_vm->matchVarToString("tcorrectorder"), *correctDigits))
+	if (*correctDigits < 5 && argv[0] == getComboDigit(*_vm->getVar("tcorrectorder"), *correctDigits))
 		*correctDigits += 1;
 	else
 		*correctDigits = 0;
@@ -1548,8 +1901,8 @@ void RivenExternal::xtisland390_covercombo(uint16 argc, uint16 *argv) {
 // Atrus' Journal and Trap Book are added to inventory
 void RivenExternal::xtatrusgivesbooks(uint16 argc, uint16 *argv) {
 	// Give the player Atrus' Journal and the Trap book
-	*_vm->matchVarToString("aatrusbook") = 1;
-	*_vm->matchVarToString("atrapbook") = 1;
+	*_vm->getVar("aatrusbook") = 1;
+	*_vm->getVar("atrapbook") = 1;
 }
 
 // Trap Book is removed from inventory
@@ -1557,7 +1910,7 @@ void RivenExternal::xtchotakesbook(uint16 argc, uint16 *argv) {
 	// And now Cho takes the trap book. Sure, this isn't strictly
 	// necessary to add and them remove the trap book... but it
 	// seems better to do this ;)
-	*_vm->matchVarToString("atrapbook") = 0;
+	*_vm->getVar("atrapbook") = 0;
 }
 
 void RivenExternal::xthideinventory(uint16 argc, uint16 *argv) {
@@ -1569,7 +1922,7 @@ void RivenExternal::xt7500_checkmarbles(uint16 argc, uint16 *argv) {
 	// marble position and set apower based on that. The game handles the video playing
 	// so we don't have to. For the purposes of making the game progress further, we'll
 	// just turn the power on for now.
-	*_vm->matchVarToString("apower") = 1;
+	*_vm->getVar("apower") = 1;
 }
 
 void RivenExternal::xt7600_setupmarbles(uint16 argc, uint16 *argv) {
@@ -1597,19 +1950,19 @@ void RivenExternal::xtisland4990_domecheck(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xtisland5056_opencard(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkDomeSliders(29, 30);
 }
 
 void RivenExternal::xtisland5056_resetsliders(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	resetDomeSliders(_vm->getFeatures() & GF_DVD ? 813 : 798, 37, 3);
 }
 
 void RivenExternal::xtisland5056_slidermd(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	dragDomeSlider(_vm->getFeatures() & GF_DVD ? 813 : 798, 37, 29, 30, 3);
 }
 
 void RivenExternal::xtisland5056_slidermw(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	checkSliderCursorChange(3);
 }
 
 void RivenExternal::xtatboundary(uint16 argc, uint16 *argv) {

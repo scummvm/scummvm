@@ -1040,7 +1040,10 @@ TownsPC98_AudioDriver::TownsPC98_AudioDriver(Audio::Mixer *mixer, EmuType type) 
 }
 
 TownsPC98_AudioDriver::~TownsPC98_AudioDriver() {
+	Common::StackLock lock(_mutex);
 	reset();
+	deinit();
+	_ready = false;
 
 	if (_channels) {
 		for (int i = 0; i < _numChan; i++)

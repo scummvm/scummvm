@@ -71,6 +71,8 @@ public:
 	}
 
 protected:
+	void deinit();
+
 	// Implement this in your inherited class if your driver generates
 	// additional output that has to be inserted into the buffer.
 	virtual void nextTickEx(int32 *buffer, uint32 bufferSize) {}
@@ -140,6 +142,7 @@ private:
 	bool _regProtectionFlag;
 
 	typedef void (TownsPC98_FmSynth::*ChipTimerProc)();
+	void idleTimerCallback() {}
 
 	struct ChipTimer {
 		bool enabled;

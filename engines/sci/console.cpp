@@ -178,6 +178,10 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("bc",					WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
 	DCmd_Register("bp_method",			WRAP_METHOD(Console, cmdBreakpointMethod));
 	DCmd_Register("bpx",				WRAP_METHOD(Console, cmdBreakpointMethod));			// alias
+	DCmd_Register("bp_read",			WRAP_METHOD(Console, cmdBreakpointRead));
+	DCmd_Register("bpr",				WRAP_METHOD(Console, cmdBreakpointRead));			// alias
+	DCmd_Register("bp_write",			WRAP_METHOD(Console, cmdBreakpointWrite));
+	DCmd_Register("bpw",				WRAP_METHOD(Console, cmdBreakpointWrite));			// alias
 	DCmd_Register("bp_kernel",			WRAP_METHOD(Console, cmdBreakpointKernel));
 	DCmd_Register("bpk",				WRAP_METHOD(Console, cmdBreakpointKernel));			// alias
 	DCmd_Register("bp_function",		WRAP_METHOD(Console, cmdBreakpointFunction));
@@ -389,7 +393,9 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("Breakpoints:\n");
 	DebugPrintf(" bp_list / bplist / bl - Lists the current breakpoints\n");
 	DebugPrintf(" bp_del / bpdel / bc - Deletes a breakpoint with the specified index\n");
-	DebugPrintf(" bp_method / bpx - Sets a breakpoint on the execution or access of a specified method/selector\n");
+	DebugPrintf(" bp_method / bpx - Sets a breakpoint on the execution of a specified method/selector\n");
+	DebugPrintf(" bp_read / bpr - Sets a breakpoint on reading of a specified selector\n");
+	DebugPrintf(" bp_write / bpw - Sets a breakpoint on writing to a specified selector\n");
 	DebugPrintf(" bp_kernel / bpk - Sets a breakpoint on execution of a kernel function\n");
 	DebugPrintf(" bp_function / bpe - Sets a breakpoint on the execution of the specified exported function\n");
 	DebugPrintf("\n");
@@ -446,6 +452,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	DebugPrintf("Resource volume version: %s\n", g_sci->getResMan()->getVolVersionDesc());
 	DebugPrintf("Resource map version: %s\n", g_sci->getResMan()->getMapVersionDesc());
 	DebugPrintf("Contains selector vocabulary (vocab.997): %s\n", hasVocab997 ? "yes" : "no");
+	DebugPrintf("Has CantBeHere selector: %s\n", g_sci->getKernel()->_selectorCache.cantBeHere != -1 ? "yes" : "no");
 	DebugPrintf("Game version (VERSION file): %s\n", gameVersion.c_str());
 	DebugPrintf("\n");
 
@@ -2740,8 +2747,14 @@ bool Console::cmdBreakpointList(int argc, const char **argv) {
 	for (; bp != end; ++bp) {
 		DebugPrintf("  #%i: ", i);
 		switch (bp->type) {
-		case BREAK_SELECTOR:
+		case BREAK_SELECTOREXEC:
 			DebugPrintf("Execute %s\n", bp->name.c_str());
+			break;
+		case BREAK_SELECTORREAD:
+			DebugPrintf("Read %s\n", bp->name.c_str());
+			break;
+		case BREAK_SELECTORWRITE:
+			DebugPrintf("Write %s\n", bp->name.c_str());
 			break;
 		case BREAK_EXPORT:
 			bpdata = bp->address;
@@ -2802,7 +2815,7 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 
 bool Console::cmdBreakpointMethod(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Sets a breakpoint on execution/access of a specified method/selector.\n");
+		DebugPrintf("Sets a breakpoint on execution of a specified method/selector.\n");
 		DebugPrintf("Usage: %s <name>\n", argv[0]);
 		DebugPrintf("Example: %s ego::doit\n", argv[0]);
 		DebugPrintf("May also be used to set a breakpoint that applies whenever an object\n");
@@ -2814,12 +2827,45 @@ bool Console::cmdBreakpointMethod(int argc, const char **argv) {
 	   Thus, we can't check whether the command argument is a valid method name.
 	   A breakpoint set on an invalid method name will just never trigger. */
 	Breakpoint bp;
-	bp.type = BREAK_SELECTOR;
+	bp.type = BREAK_SELECTOREXEC;
 	bp.name = argv[1];
 
 	_debugState._breakpoints.push_back(bp);
-	_debugState._activeBreakpointTypes |= BREAK_SELECTOR;
+	_debugState._activeBreakpointTypes |= BREAK_SELECTOREXEC;
+	return true;
+}
 
+bool Console::cmdBreakpointRead(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Sets a breakpoint on reading of a specified selector.\n");
+		DebugPrintf("Usage: %s <name>\n", argv[0]);
+		DebugPrintf("Example: %s ego::view\n", argv[0]);
+		return true;
+	}
+
+	Breakpoint bp;
+	bp.type = BREAK_SELECTORREAD;
+	bp.name = argv[1];
+
+	_debugState._breakpoints.push_back(bp);
+	_debugState._activeBreakpointTypes |= BREAK_SELECTORREAD;
+	return true;
+}
+
+bool Console::cmdBreakpointWrite(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Sets a breakpoint on writing of a specified selector.\n");
+		DebugPrintf("Usage: %s <name>\n", argv[0]);
+		DebugPrintf("Example: %s ego::view\n", argv[0]);
+		return true;
+	}
+
+	Breakpoint bp;
+	bp.type = BREAK_SELECTORWRITE;
+	bp.name = argv[1];
+
+	_debugState._breakpoints.push_back(bp);
+	_debugState._activeBreakpointTypes |= BREAK_SELECTORWRITE;
 	return true;
 }
 

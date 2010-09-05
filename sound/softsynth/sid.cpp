@@ -31,6 +31,7 @@
 #ifndef DISABLE_SID
 
 #include "sid.h"
+#include "sound/null.h"
 #include <math.h>
 
 namespace Resid {
@@ -1421,5 +1422,35 @@ int SID::clock(cycle_count& delta_t, short* buf, int n, int interleave) {
 }
 
 }
+
+//	Plugin interface
+//	(This can only create a null driver since C64 audio support is not part of the
+//	midi driver architecture. But we need the plugin for the options menu in the launcher
+//	and for MidiDriver::detectDevice() which is more or less used by all engines.)
+
+class C64MusicPlugin : public NullMusicPlugin {
+public:
+	const char *getName() const {
+		return _s("C64 Audio Emulator");
+	}
+
+	const char *getId() const {
+		return "C64";
+	}
+
+	MusicDevices getDevices() const;
+};
+
+MusicDevices C64MusicPlugin::getDevices() const {
+	MusicDevices devices;
+	devices.push_back(MusicDevice(this, "", MT_C64));
+	return devices;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(C64)
+	//REGISTER_PLUGIN_DYNAMIC(C64, PLUGIN_TYPE_MUSIC, C64MusicPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(C64, PLUGIN_TYPE_MUSIC, C64MusicPlugin);
+//#endif
 
 #endif

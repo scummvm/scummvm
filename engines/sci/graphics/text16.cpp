@@ -92,7 +92,7 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 	const char *textCode = text;
 	int16 textCodeSize = 0;
 	char curCode;
-	unsigned char curCodeParm;
+	signed char curCodeParm;
 
 	// Find the end of the textcode
 	while ((++textCodeSize) && (*text != 0) && (*text++ != 0x7C)) { }
@@ -105,11 +105,11 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 	if (isdigit(curCodeParm)) {
 		curCodeParm -= '0';
 	} else {
-		curCodeParm = 0;
+		curCodeParm = -1;
 	}
 	switch (curCode) {
 	case 'c': // set text color
-		if (curCodeParm == 0) {
+		if (curCodeParm == -1) {
 			_ports->_curPort->penClr = orgPenColor;
 		} else {
 			if (curCodeParm < _codeColorsCount) {
@@ -117,14 +117,17 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 			}
 		}
 		break;
-	case 'f':
-		if (curCodeParm == 0) {
+	case 'f': // set text font
+		if (curCodeParm == -1) {
 			SetFont(orgFontId);
 		} else {
 			if (curCodeParm < _codeFontsCount) {
 				SetFont(_codeFonts[curCodeParm]);
 			}
 		}
+		break;
+	case 'r': // reference?!
+		// Used in Pepper, no idea how this works out
 		break;
 	}
 	return textCodeSize;

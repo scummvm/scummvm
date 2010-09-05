@@ -226,7 +226,7 @@ bool Sequence::runProgram() {
 	while (!done) {
 		Instruction instruction;
 		_code->loadInstruction(instruction);
-		if (sequenceCommandsTable[instruction.instr] != NULL)
+		if (sequenceCommandsTable[instruction.instr] != 0)
 			done = !(this->*sequenceCommandsTable[instruction.instr])(instruction);
 		else { fflush(stdout); /*g_system->delayMillis(1000);*/ }
 	}

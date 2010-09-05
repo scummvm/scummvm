@@ -38,6 +38,11 @@ namespace Kyra {
 Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(), _protectedFiles(), _loaders(), _vm(vm) {
 	initializeLoaders();
 
+	// Initialize directories for playing from CD or with original
+	// directory structure
+	if (_vm->game() == GI_KYRA3)
+		SearchMan.addSubDirectoryMatching(Common::FSNode(ConfMan.get("path")), "malcolm");
+
 	_files.add("global_search", &Common::SearchManager::instance(), 3, false);
 	// compressed installer archives are added at level '2',
 	// but that's done in Resource::reset not here
@@ -70,7 +75,7 @@ bool Resource::reset() {
 			// List of files in the talkie version, which can never be unload.
 			static const char * const list[] = {
 				"ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "FINALE.PAK", "INTRO1.PAK", "INTRO2.PAK",
-				"INTRO3.PAK", "INTRO4.PAK", "MISC.PAK",	"SND.PAK", "STARTUP.PAK", "XMI.PAK",
+				"INTRO3.PAK", "INTRO4.PAK", "MISC.PAK", "SND.PAK", "STARTUP.PAK", "XMI.PAK",
 				"CAVE.APK", "DRAGON1.APK", "DRAGON2.APK", "LAGOON.APK", 0
 			};
 
@@ -148,7 +153,7 @@ bool Resource::loadPakFile(Common::String filename) {
 	return loadPakFile(filename, file);
 }
 
-bool Resource::loadPakFile(Common::String name, Common::SharedPtr<Common::ArchiveMember> file) {
+bool Resource::loadPakFile(Common::String name, Common::ArchiveMemberPtr file) {
 	name.toUppercase();
 
 	if (_archiveFiles.hasArchive(name) || _protectedFiles.hasArchive(name))
@@ -314,7 +319,7 @@ Common::SeekableReadStream *Resource::createReadStream(const Common::String &fil
 	return _files.createReadStreamForMember(file);
 }
 
-Common::Archive *Resource::loadArchive(const Common::String &name, Common::SharedPtr<Common::ArchiveMember> member) {
+Common::Archive *Resource::loadArchive(const Common::String &name, Common::ArchiveMemberPtr member) {
 	ArchiveMap::iterator cachedArchive = _archiveCache.find(name);
 	if (cachedArchive != _archiveCache.end())
 		return cachedArchive->_value;

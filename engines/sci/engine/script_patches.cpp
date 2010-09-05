@@ -25,6 +25,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/script.h"
+#include "sci/engine/state.h"
 
 #include "common/util.h"
 
@@ -44,6 +45,8 @@ struct SciScriptSignature {
 	const uint16 *patch;
 };
 
+#define SCI_SIGNATUREENTRY_TERMINATOR { 0, NULL, 0, 0, NULL, NULL }
+
 // signatures are built like this:
 //  - first a counter of the bytes that follow
 //  - then the actual bytes that need to get matched
@@ -51,6 +54,7 @@ struct SciScriptSignature {
 //  - if not EOS, an adjust offset and the actual bytes
 //  - rinse and repeat
 
+// ===========================================================================
 // stayAndHelp::changeState (0) is called when ego swims to the left or right
 //  boundaries of room 660. Normally a textbox is supposed to get on screen
 //  but the call is wrong, so not only do we get an error message the script
@@ -72,7 +76,7 @@ const byte ecoquest1SignatureStayAndHelp[] = {
 	0x78,              // push1
 	0x76,              // push0
 	0x81, 0x00,        // lag global[0]
-	0x4a, 0x06,        // send 06 - ego::setMotion(0)
+	0x4a, 0x06,        // send 06 - call ego::setMotion(0)
 	0x39, 0x6e,        // pushi 6e (selector init)
 	0x39, 0x04,        // pushi 04
 	0x76,              // push0
@@ -80,7 +84,7 @@ const byte ecoquest1SignatureStayAndHelp[] = {
 	0x39, 0x17,        // pushi 17
 	0x7c,              // pushSelf
 	0x51, 0x82,        // class EcoNarrator
-	0x4a, 0x0c,        // send 0c - EcoNarrator::init(0, 0, 23, self) (BADLY BROKEN!)
+	0x4a, 0x0c,        // send 0c - call EcoNarrator::init(0, 0, 23, self) (BADLY BROKEN!)
 	0x33,              // jmp [end]
 	0
 };
@@ -96,7 +100,7 @@ const uint16 ecoquest1PatchStayAndHelp[] = {
 	0x78,              // push1
 	0x76,              // push0
 	0x81, 0x00,        // lag global[0]
-	0x4a, 0x06,        // send 06 - ego::setMotion(0)
+	0x4a, 0x06,        // send 06 - call ego::setMotion(0)
 	0x39, 0x6e,        // pushi 6e (selector init)
 	0x39, 0x06,        // pushi 06
 	0x39, 0x02,        // pushi 02 (additional 2 bytes)
@@ -106,16 +110,122 @@ const uint16 ecoquest1PatchStayAndHelp[] = {
 	0x7c,              // pushSelf
 	0x38, 0x80, 0x02,  // pushi 280 (additional 3 bytes)
 	0x51, 0x82,        // class EcoNarrator
-	0x4a, 0x10,        // send 10 - EcoNarrator::init(2, 0, 0, 23, self, 640)
+	0x4a, 0x10,        // send 10 - call EcoNarrator::init(2, 0, 0, 23, self, 640)
 	PATCH_END
 };
 
 //    script, description,                                   magic DWORD,                                 adjust
 const SciScriptSignature ecoquest1Signatures[] = {
     {    660, "CD: bad messagebox and freeze",               PATCH_MAGICDWORD(0x38, 0x22, 0x01, 0x78),   -17, ecoquest1SignatureStayAndHelp, ecoquest1PatchStayAndHelp },
-    {      0, NULL,                                          0,                                            0, NULL,                          NULL }
+    SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+// ===========================================================================
+// doMyThing::changeState (2) is supposed to remove the initial text on the
+//  ecorder. This is done by reusing temp-space, that was filled on state 1.
+//  this worked in sierra sci just by accident. In our sci, the temp space
+//  is resetted every time, which means the previous text isn't available
+//  anymore. We have to patch the code because of that ffs. bug #3035386
+const byte ecoquest2SignatureEcorder[] = {
+	35,
+	0x31, 0x22,        // bnt [next state]
+	0x39, 0x0a,        // pushi 0a
+	0x5b, 0x04, 0x1e,  // lea temp[1e]
+	0x36,              // push
+	0x39, 0x64,        // pushi 64
+	0x39, 0x7d,        // pushi 7d
+	0x39, 0x32,        // pushi 32
+	0x39, 0x66,        // pushi 66
+	0x39, 0x17,        // pushi 17
+	0x39, 0x69,        // pushi 69
+	0x38, 0x31, 0x26,  // pushi 2631
+	0x39, 0x6a,        // pushi 6a
+	0x39, 0x64,        // pushi 64
+	0x43, 0x1b, 0x14,  // call kDisplay
+	0x35, 0x0a,        // ldi 0a
+	0x65, 0x20,        // aTop ticks
+	0x33,              // jmp [end]
+	+1, 5,             // [skip 1 byte]
+	0x3c,              // dup
+	0x35, 0x03,        // ldi 03
+	0x1a,              // eq?
+	0x31,              // bnt [end]
+	0
+};
+
+const uint16 ecoquest2PatchEcorder[] = {
+	0x2f, 0x02,        // bt [to pushi 07]
+	0x3a,              // toss
+	0x48,              // ret
+	0x38, 0x07, 0x00,  // pushi 07 (parameter count) (waste 1 byte)
+	0x39, 0x0b,        // push (FillBoxAny)
+	0x39, 0x1d,        // pushi 29d
+	0x39, 0x73,        // pushi 115d
+	0x39, 0x5e,        // pushi 94d
+	0x38, 0xd7, 0x00,  // pushi 215d
+	0x78,              // push1 (visual screen)
+	0x38, 0x17, 0x00,  // pushi 17 (color) (waste 1 byte)
+	0x43, 0x6c, 0x0e,  // call kGraph
+	0x38, 0x05, 0x00,  // pushi 05 (parameter count) (waste 1 byte)
+	0x39, 0x0c,        // pushi 12d (UpdateBox)
+	0x39, 0x1d,        // pushi 29d
+	0x39, 0x73,        // pushi 115d
+	0x39, 0x5e,        // pushi 94d
+	0x38, 0xd7, 0x00,  // pushi 215d
+	0x43, 0x6c, 0x0a,  // call kGraph
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                 adjust
+const SciScriptSignature ecoquest2Signatures[] = {
+    {     50, "initial text not removed on ecorder",         PATCH_MAGICDWORD(0x39, 0x64, 0x39, 0x7d),    -8, ecoquest2SignatureEcorder, ecoquest2PatchEcorder },
+    SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+//  script 215 of freddy pharkas lowerLadder::doit and highLadder::doit actually
+//   process keyboard-presses when the ladder is on the screen in that room.
+//   They strangely also call kGetEvent. Because the main User::doit also calls
+//   kGetEvent, it's pure luck, where the event will hit. It's the same issue
+//   as in QfG1VGA and if you turn dos-box to max cycles, and click around for
+//   ego, sometimes clicks also won't get registered. Strangely it's not nearly
+//   as bad as in our sci, but these differences may be caused by timing.
+//   We just reuse the active event, thus removing the duplicate kGetEvent call.
+const byte freddypharkasSignatureLadderEvent[] = {
+	21,
+	0x39, 0x6d,       // pushi 6d (selector new)
+	0x76,             // push0
+	0x38, 0xf5, 0x00, // pushi f5 (selector curEvent)
+	0x76,             // push0
+	0x81, 0x50,       // lag global[50]
+	0x4a, 0x04,       // send 04 - read User::curEvent
+	0x4a, 0x04,       // send 04 - call curEvent::new
+	0xa5, 0x00,       // sat temp[0]
+	0x38, 0x94, 0x00, // pushi 94 (selector localize)
+	0x76,             // push0
+	0x4a, 0x04,       // send 04 - call curEvent::localize
+	0
+};
+
+const uint16 freddypharkasPatchLadderEvent[] = {
+	0x34, 0x00, 0x00, // ldi 0000 (waste 3 bytes, overwrites first 2 pushes)
+	PATCH_ADDTOOFFSET | +8,
+	0xa5, 0x00,       // sat temp[0] (waste 2 bytes, overwrites 2nd send)
+	PATCH_ADDTOOFFSET | +2,
+	0x34, 0x00, 0x00, // ldi 0000
+	0x34, 0x00, 0x00, // ldi 0000 (waste 6 bytes, overwrites last 3 opcodes)
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                  adjust
+const SciScriptSignature freddypharkasSignatures[] = {
+    // this is not a typo, both lowerLadder::doit and highLadder::doit have the same event code
+    {    320, "lower ladder event issue",                    PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent, freddypharkasPatchLadderEvent },
+    {    320, "high ladder event issue",                     PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent, freddypharkasPatchLadderEvent },
+    SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // daySixBeignet::changeState (4) is called when the cop goes out and sets cycles to 220.
 //  this is not enough time to get to the door, so we patch that to 23 seconds
 const byte gk1SignatureDay6PoliceBeignet[] = {
@@ -186,73 +296,130 @@ const SciScriptSignature gk1Signatures[] = {
     {    212, "day 5 phone freeze",                          PATCH_MAGICDWORD(0x35, 0x03, 0x65, 0x1a),     0, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
     {    230, "day 6 police beignet timer issue",            PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),   -16, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
     {    230, "day 6 police sleep timer issue",              PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),    -5, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },
-    {      0, NULL,                                          0,                                            0, NULL,                          NULL }
+    SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+// ===========================================================================
 // this here gets called on entry and when going out of game windows
 //  uEvt::port will not get changed after kDisposeWindow but a bit later, so
 //  we would get an invalid port handle to a kSetPort call. We just patch in
 //  resetting of the port selector. We destroy the stop/fade code in there,
 //  it seems it isn't used at all in the game.
-const byte hoyle4SignaturePortFix[] = {
-	28,
-	0x39, 0x09,        // pushi 09
-	0x89, 0x0b,        // lsg 0b
-	0x39, 0x64,        // pushi 64
-	0x38, 0xc8, 0x00,  // pushi 00c8
-	0x38, 0x2c, 0x01,  // pushi 012c
-	0x38, 0x90, 0x01,  // pushi 0190
-	0x38, 0xf4, 0x01,  // pushi 01f4
-	0x38, 0x58, 0x02,  // pushi 0258
-	0x38, 0xbc, 0x02,  // pushi 02bc
-	0x38, 0x20, 0x03,  // pushi 0320
-	0x46,              // calle [xxxx] [xxxx] [xx]
-	+5, 43,            // [skip 5 bytes]
-	0x30, 0x27, 0x00,  // bnt 0027 -> end of routine
-	0x87, 0x00,        // lap 00
-	0x30, 0x19, 0x00,  // bnt 0019 -> fade out
-	0x87, 0x01,        // lap 01
-	0x30, 0x14, 0x00,  // bnt 0014 -> fade out
-	0x38, 0xa7, 0x00,  // pushi 00a7
+//const byte hoyle4SignaturePortFix[] = {
+//	28,
+//	0x39, 0x09,        // pushi 09
+//	0x89, 0x0b,        // lsg 0b
+//	0x39, 0x64,        // pushi 64
+//	0x38, 0xc8, 0x00,  // pushi 00c8
+//	0x38, 0x2c, 0x01,  // pushi 012c
+//	0x38, 0x90, 0x01,  // pushi 0190
+//	0x38, 0xf4, 0x01,  // pushi 01f4
+//	0x38, 0x58, 0x02,  // pushi 0258
+//	0x38, 0xbc, 0x02,  // pushi 02bc
+//	0x38, 0x20, 0x03,  // pushi 0320
+//	0x46,              // calle [xxxx] [xxxx] [xx]
+//	+5, 43,            // [skip 5 bytes]
+//	0x30, 0x27, 0x00,  // bnt 0027 -> end of routine
+//	0x87, 0x00,        // lap 00
+//	0x30, 0x19, 0x00,  // bnt 0019 -> fade out
+//	0x87, 0x01,        // lap 01
+//	0x30, 0x14, 0x00,  // bnt 0014 -> fade out
+//	0x38, 0xa7, 0x00,  // pushi 00a7
+//	0x76,              // push0
+//	0x80, 0x29, 0x01,  // lag 0129
+//	0x4a, 0x04,        // send 04 - call song::stop
+//	0x39, 0x27,        // pushi 27
+//	0x78,              // push1
+//	0x8f, 0x01,        // lsp 01
+//	0x51, 0x54,        // class 54
+//	0x4a, 0x06,        // send 06 - call PlaySong::play
+//	0x33, 0x09,        // jmp 09 -> end of routine
+//	0x38, 0xaa, 0x00,  // pushi 00aa
+//	0x76,              // push0
+//	0x80, 0x29, 0x01,  // lag 0129
+//	0x4a, 0x04,        // send 04
+//	0x48,              // ret
+//	0
+//};
+
+//const uint16 hoyle4PatchPortFix[] = {
+//	PATCH_ADDTOOFFSET | +33,
+//	0x38, 0x31, 0x01,  // pushi 0131 (selector curEvent)
+//	0x76,              // push0
+//	0x80, 0x50, 0x00,  // lag 0050 (global var 80h, "User")
+//	0x4a, 0x04,        // send 04 - read User::curEvent
+//
+//	0x38, 0x93, 0x00,  // pushi 0093 (selector port)
+//	0x78,              // push1
+//	0x76,              // push0
+//	0x4a, 0x06,        // send 06 - write 0 to that object::port
+//	0x48,              // ret
+//	PATCH_END
+//};
+
+//    script, description,                                   magic DWORD,                                 adjust
+//const SciScriptSignature hoyle4Signatures[] = {
+//    {      0, "port fix when disposing windows",             PATCH_MAGICDWORD(0x64, 0x38, 0xC8, 0x00),    -5, hoyle4SignaturePortFix,   hoyle4PatchPortFix },
+//    {      0, NULL,                                          0,                                            0, NULL,                     NULL }
+//};
+
+// ===========================================================================
+// at least during harpy scene export 29 of script 0 is called in kq5cd and
+//  has an issue for those calls, where temp 3 won't get inititialized, but
+//  is later used to set master volume. This issue makes sierra sci set
+//  the volume to max. We fix the export, so volume won't get modified in
+//  those cases.
+const byte kq5SignatureCdHarpyVolume[] = {
+	34,
+	0x80, 0x91, 0x01,  // lag global[191h]
+	0x18,              // not
+	0x30, 0x2c, 0x00,  // bnt [jump further] (jumping, if global 191h is 1)
+	0x35, 0x01,        // ldi 01
+	0xa0, 0x91, 0x01,  // sag global[191h] (setting global 191h to 1)
+	0x38, 0x7b, 0x01,  // pushi 017b
 	0x76,              // push0
-	0x80, 0x29, 0x01,  // lag 0129
-	0x4a, 0x04,        // send 04 (song::stop)
-	0x39, 0x27,        // pushi 27
-	0x78,              // push1
-	0x8f, 0x01,        // lsp 01
-	0x51, 0x54,        // class 54
-	0x4a, 0x06,        // send 06 (PlaySong::play)
-	0x33, 0x09,        // jmp 09 -> end of routine
-	0x38, 0xaa, 0x00,  // pushi 00aa
+	0x81, 0x01,        // lag global[1]
+	0x4a, 0x04,        // send 04 - read KQ5::masterVolume
+	0xa5, 0x03,        // sat temp[3] (store volume in temp 3)
+	0x38, 0x7b, 0x01,  // pushi 017b
 	0x76,              // push0
-	0x80, 0x29, 0x01,  // lag 0129
-	0x4a, 0x04,        // send 04
-	0x48,              // ret
+	0x81, 0x01,        // lag global[1]
+	0x4a, 0x04,        // send 04 - read KQ5::masterVolume
+	0x36,              // push
+	0x35, 0x04,        // ldi 04
+	0x20,              // ge? (followed by bnt)
 	0
 };
 
-const uint16 hoyle4PatchPortFix[] = {
-	PATCH_ADDTOOFFSET | +33,
-	0x38, 0x31, 0x01,  // pushi 0131 (selector curEvent)
+const uint16 kq5PatchCdHarpyVolume[] = {
+	0x38, 0x2f, 0x02,  // pushi 022f (selector theVol) (3 new bytes)
+	0x76,              // push0 (1 new byte)
+	0x51, 0x88,        // class SpeakTimer (2 new bytes)
+	0x4a, 0x04,        // send 04 (2 new bytes) -> read SpeakTimer::theVol
+	0xa5, 0x03,        // sat temp[3] (2 new bytes) -> write to temp 3
+	0x80, 0x91, 0x01,  // lag global[191h]
+	// saving 1 byte due optimization
+	0x2e, 0x23, 0x00,  // bt [jump further] (jumping, if global 191h is 1)
+	0x35, 0x01,        // ldi 01
+	0xa0, 0x91, 0x01,  // sag global[191h] (setting global 191h to 1)
+	0x38, 0x7b, 0x01,  // pushi 017b
 	0x76,              // push0
-	0x80, 0x50, 0x00,  // lag 0050 (global var 80h, "User")
-	0x4a, 0x04,        // send 04 (read User::curEvent)
-
-	0x38, 0x93, 0x00,  // pushi 0093 (selector port)
-	0x78,              // push1
-	0x76,              // push0
-	0x4a, 0x06,        // send 06 (write 0 to that object::port)
-	0x48,              // ret
+	0x81, 0x01,        // lag global[1]
+	0x4a, 0x04,        // send 04 - read KQ5::masterVolume
+	0xa5, 0x03,        // sat temp[3] (store volume in temp 3)
+	// saving 8 bytes due removing of duplicate code
+	0x39, 0x04,        // pushi 04 (saving 1 byte due swapping)
+	0x22,              // lt? (because we switched values)
 	PATCH_END
 };
 
 //    script, description,                                   magic DWORD,                                 adjust
-const SciScriptSignature hoyle4Signatures[] = {
-    {      0, "port fix when disposing windows",             PATCH_MAGICDWORD(0x64, 0x38, 0xC8, 0x00),    -5, hoyle4SignaturePortFix,   hoyle4PatchPortFix },
-    {      0, NULL,                                          0,                                            0, NULL,                     NULL }
+const SciScriptSignature kq5Signatures[] = {
+    {      0, "CD: harpy volume change",                     PATCH_MAGICDWORD(0x80, 0x91, 0x01, 0x18),     0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
+    SCI_SIGNATUREENTRY_TERMINATOR
 };
 
-
+// ===========================================================================
 // this is called on every death dialog. Problem is at least the german
 //  version of lsl6 gets title text that is far too long for the
 //  available temp space resulting in temp space corruption
@@ -300,9 +467,170 @@ const uint16 larry6PatchDeathDialog[] = {
 //    script, description,                                   magic DWORD,                                  adjust
 const SciScriptSignature larry6Signatures[] = {
     {     82, "death dialog memory corruption",              PATCH_MAGICDWORD(0x3e, 0x33, 0x01, 0x35),     0, larry6SignatureDeathDialog, larry6PatchDeathDialog },
-    {      0, NULL,                                          0,                                            0, NULL,                       NULL }
+    SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+// ===========================================================================
+// rm560::doit was supposed to close the painting, when heimlich enters the
+//  room. The code is buggy, so it actually closes the painting, when heimlich
+//  is not in the room. We fix that.
+const byte laurabow2SignaturePaintingClosing[] = {
+	17,
+	0x4a, 0x04,       // send 04 - read aHeimlich::room
+	0x36,             // push
+	0x81, 0x0b,       // lag global[11d] -> current room
+	0x1c,             // ne?
+	0x31, 0x0e,       // bnt [don't close]
+	0x35, 0x00,       // ldi 00
+	0xa3, 0x00,       // sal local[0]
+	0x38, 0x92, 0x00, // pushi 0092
+	0x78,             // push1
+	0x72,             // lofsa sDumpSafe
+	0
+};
+
+const uint16 laurabow2PatchPaintingClosing[] = {
+	PATCH_ADDTOOFFSET | +6,
+	0x2f, 0x0e,       // bt [don't close]
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                  adjust
+const SciScriptSignature laurabow2Signatures[] = {
+    {    560, "painting closing immediately",                PATCH_MAGICDWORD(0x36, 0x81, 0x0b, 0x1c),    -2, laurabow2SignaturePaintingClosing, laurabow2PatchPaintingClosing },
+    SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+// Mother Goose SCI1/SCI1.1
+// MG::replay somewhat calculates the savedgame-id used when saving again	
+//  this doesn't work right and we remove the code completely.
+//  We set the savedgame-id directly right after restoring in kRestoreGame.
+const byte mothergoose256SignatureReplay[] = {
+	6,
+	0x36,             // push
+	0x35, 0x20,       // ldi 20
+	0x04,             // sub
+	0xa1, 0xb3,       // sag global[b3]
+	0
+};
+
+const uint16 mothergoose256PatchReplay[] = {
+	0x34, 0x00, 0x00, // ldi 0000 (dummy)
+	0x34, 0x00, 0x00, // ldi 0000 (dummy)
+	PATCH_END
+};
+
+// when saving, it also checks if the savegame-id is below 13.
+//  we change this to check if below 113 instead
+const byte mothergoose256SignatureSaveLimit[] = {
+	5,
+	0x89, 0xb3,       // lsg global[b3]
+	0x35, 0x0d,       // ldi 0d
+	0x20,             // ge?
+	0
+};
+
+const uint16 mothergoose256PatchSaveLimit[] = {
+	PATCH_ADDTOOFFSET | +2,
+	0x35, 0x0d + SAVEGAMEID_OFFICIALRANGE_START, // ldi 113d
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                  adjust
+const SciScriptSignature mothergoose256Signatures[] = {
+    {      0, "replay save issue",                           PATCH_MAGICDWORD(0x20, 0x04, 0xa1, 0xb3),    -2, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
+    {      0, "save limit dialog (SCI1.1)",                  PATCH_MAGICDWORD(0xb3, 0x35, 0x0d, 0x20),    -1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
+    {    994, "save limit dialog (SCI1)",                    PATCH_MAGICDWORD(0xb3, 0x35, 0x0d, 0x20),    -1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
+    SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+//  script 215 of qfg1vga pointBox::doit actually processes button-presses
+//   during fighting with monsters. It strangely also calls kGetEvent. Because
+//   the main User::doit also calls kGetEvent it's pure luck, where the event
+//   will hit. It's the same issue as in freddy pharkas and if you turn dos-box
+//   to max cycles, sometimes clicks also won't get registered. Strangely it's
+//   not nearly as bad as in our sci, but these differences may be caused by
+//   timing.
+//   We just reuse the active event, thus removing the duplicate kGetEvent call.
+const byte qfg1vgaSignatureFightEvents[] = {
+	25,
+	0x39, 0x6d,       // pushi 6d (selector new)
+	0x76,             // push0
+	0x51, 0x07,       // class Event
+	0x4a, 0x04,       // send 04 - call Event::new
+	0xa5, 0x00,       // sat temp[0]
+	0x78,             // push1
+	0x76,             // push0
+	0x4a, 0x04,       // send 04 - read Event::x
+	0xa5, 0x03,       // sat temp[3]
+	0x76,             // push0 (selector y)
+	0x76,             // push0
+	0x85, 0x00,       // lat temp[0]
+	0x4a, 0x04,       // send 04 - read Event::y
+	0x36,             // push
+	0x35, 0x0a,       // ldi 0a
+	0x04,             // sub (poor mans localization) ;-)
+	0
+};
+
+const uint16 qfg1vgaPatchFightEvents[] = {
+	0x38, 0x5a, 0x01, // pushi 15a (selector curEvent)
+	0x76,             // push0
+	0x81, 0x50,       // lag global[50]
+	0x4a, 0x04,       // send 04 - read User::curEvent -> needs one byte more than previous code
+	0xa5, 0x00,       // sat temp[0]
+	0x78,             // push1
+	0x76,             // push0
+	0x4a, 0x04,       // send 04 - read Event::x
+	0xa5, 0x03,       // sat temp[3]
+	0x76,             // push0 (selector y)
+	0x76,             // push0
+	0x85, 0x00,       // lat temp[0]
+	0x4a, 0x04,       // send 04 - read Event::y
+	0x39, 0x00,       // pushi 00
+	0x02,             // add (waste 3 bytes) - we don't need localization, User::doit has already done it
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                  adjust
+const SciScriptSignature qfg1vgaSignatures[] = {
+    {    215, "fight event issue",                           PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents, qfg1vgaPatchFightEvents },
+    {    216, "weapon master event issue",                   PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents, qfg1vgaPatchFightEvents },
+    SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+//  script 298 of sq4/floppy has an issue. object "nest" uses another property
+//   which isn't included in property count. We return 0 in that case, the game
+//   adds it to nest::x. The problem is that the script also checks if x exceeds
+//   we never reach that of course, so the pterodactyl-flight will go endlessly
+//   we could either calculate property count differently somehow fixing this
+//   but I think just patching it out is cleaner (ffs. bug #3037938)
+const byte sq4FloppySignatureEndlessFlight[] = {
+	8,
+	0x39, 0x04,       // pushi 04 (selector x)
+	0x78,             // push1
+	0x67, 0x08,       // pTos 08 (property x)
+	0x63, 0x44,       // pToa 44 (invalid property)
+	0x02,             // add
+	0
+};
+
+const uint16 sq4FloppyPatchEndlessFlight[] = {
+	PATCH_ADDTOOFFSET | +5,
+	0x35, 0x03,       // ldi 03 (which would be the content of the property)
+	PATCH_END
+};
+
+//    script, description,                                   magic DWORD,                                  adjust
+const SciScriptSignature sq4Signatures[] = {
+    {    298, "Floppy: endless flight",                      PATCH_MAGICDWORD(0x67, 0x08, 0x63, 0x44),    -3, sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
+    SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // It seems to scripts warp ego outside the screen somehow (or maybe kDoBresen?)
 //  ego::mover is set to 0 and rm119::doit will crash in that case. This here
 //  fixes part of the problem and actually checks ego::mover to be 0 and skips
@@ -319,8 +647,8 @@ const byte sq5SignatureScrubbing[] = {
 	0x39, 0x38,       // pushi 38 (selector mover)
 	0x76,             // push0
 	0x81, 0x00,       // lag 00
-	0x4a, 0x04,       // send 04 (read ego::mover)
-	0x4a, 0x04,       // send 04 (read ego::mover::x)
+	0x4a, 0x04,       // send 04 - read ego::mover
+	0x4a, 0x04,       // send 04 - read ego::mover::x
 	0x36,             // push
 	0x34, 0xa0, 0x00, // ldi 00a0
 	0x1c,             // ne?
@@ -334,11 +662,11 @@ const uint16 sq5PatchScrubbing[] = {
 	0x39, 0x38,       // pushi 38 (selector mover)
 	0x76,             // push0
 	0x81, 0x00,       // lag 00
-	0x4a, 0x04,       // send 04 (read ego::mover)
+	0x4a, 0x04,       // send 04 - read ego::mover
 	0x31, 0x2e,       // bnt 2e (jump if ego::mover is 0)
 	0x78,             // push1 (selector x)
 	0x76,             // push0
-	0x4a, 0x04,       // send 04 (read ego::mover::x)
+	0x4a, 0x04,       // send 04 - read ego::mover::x
 	0x39, 0xa0,       // pushi a0 (saving 2 bytes)
 	0x1c,             // ne?
 	PATCH_END
@@ -347,7 +675,7 @@ const uint16 sq5PatchScrubbing[] = {
 //    script, description,                                   magic DWORD,                                  adjust
 const SciScriptSignature sq5Signatures[] = {
     {    119, "scrubbing send crash",                        PATCH_MAGICDWORD(0x18, 0x31, 0x37, 0x78),     0, sq5SignatureScrubbing, sq5PatchScrubbing },
-    {      0, NULL,                                          0,                                            0, NULL,                  NULL }
+    SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 
@@ -361,6 +689,7 @@ void Script::applyPatch(const uint16 *patch, byte *scriptData, const uint32 scri
 			offset += patchWord & ~PATCH_ADDTOOFFSET;
 		} else if (patchWord & PATCH_GETORIGINALBYTE) {
 			// TODO: implement this
+			// Can be used to patch in some bytes from the original script into another location
 		} else {
 			scriptData[offset] = patchWord & 0xFF;
 			offset++;
@@ -380,7 +709,7 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 	uint32 DWordOffset = 0;
 	// first search for the magic DWORD
 	while (DWordOffset < searchLimit) {
-		if (magicDWord == *(const uint32 *)(scriptData + DWordOffset)) {
+		if (magicDWord == READ_UINT32(scriptData + DWordOffset)) {
 			// magic DWORD found, check if actual signature matches
 			uint32 offset = DWordOffset + signature->magicOffset;
 			uint32 byteOffset = offset;
@@ -410,17 +739,47 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 
 void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
 	const SciScriptSignature *signatureTable = NULL;
-	if (g_sci->getGameId() == GID_ECOQUEST)
+	switch (g_sci->getGameId()) {
+	case GID_ECOQUEST:
 		signatureTable = ecoquest1Signatures;
-	if (g_sci->getGameId() == GID_GK1)
+		break;
+	case GID_ECOQUEST2:
+		signatureTable = ecoquest2Signatures;
+		break;
+	case GID_FREDDYPHARKAS:
+		signatureTable = freddypharkasSignatures;
+		break;
+	case GID_GK1:
 		signatureTable = gk1Signatures;
-// hoyle4 now works due workaround inside GfxPorts
-//	if (g_sci->getGameId() == GID_HOYLE4)
-//		signatureTable = hoyle4Signatures;
-	if (g_sci->getGameId() == GID_LSL6)
+		break;
+	// hoyle4 now works due to workaround inside GfxPorts
+	//case GID_HOYLE4:
+	//	signatureTable = hoyle4Signatures;
+	//	break;
+	case GID_KQ5:
+		signatureTable = kq5Signatures;
+		break;
+	case GID_LAURABOW2:
+		signatureTable = laurabow2Signatures;
+		break;
+	case GID_LSL6:
 		signatureTable = larry6Signatures;
-	if (g_sci->getGameId() == GID_SQ5)
+		break;
+	case GID_MOTHERGOOSE256:
+		signatureTable = mothergoose256Signatures;
+		break;
+	case GID_QFG1VGA:
+		signatureTable = qfg1vgaSignatures;
+		break;
+	case GID_SQ4:
+		signatureTable = sq4Signatures;
+		break;
+	case GID_SQ5:
 		signatureTable = sq5Signatures;
+		break;
+	default:
+		break;
+	}
 
 	if (signatureTable) {
 		while (signatureTable->data) {

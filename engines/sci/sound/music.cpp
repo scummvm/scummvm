@@ -30,6 +30,7 @@
 #include "sci/sci.h"
 #include "sci/console.h"
 #include "sci/resource.h"
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/sound/midiparser_sci.h"
@@ -66,8 +67,9 @@ void SciMusic::init() {
 	// Default to MIDI in SCI2.1+ games, as many don't have AdLib support.
 	Common::Platform platform = g_sci->getPlatform();
 	uint32 dev = MidiDriver::detectDevice((getSciVersion() >= SCI_VERSION_2_1) ? (MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM) : (MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI));
+	_musicType = MidiDriver::getMusicType(dev);
 
-	switch (MidiDriver::getMusicType(dev)) {
+	switch (_musicType) {
 	case MT_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
 		if (g_sci->getPlatform() == Common::kPlatformAmiga || platform == Common::kPlatformMacintosh)
@@ -82,7 +84,7 @@ void SciMusic::init() {
 		_pMidiDrv = MidiPlayer_PCSpeaker_create(_soundVersion);
 		break;
 	default:
-		if (ConfMan.getBool("enable_fb01"))
+		if (ConfMan.getBool("native_fb01"))
 			_pMidiDrv = MidiPlayer_Fb01_create(_soundVersion);
 		else
 			_pMidiDrv = MidiPlayer_Midi_create(_soundVersion);
@@ -260,6 +262,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				pSnd->pMidiParser = new MidiParser_SCI(_soundVersion, this);
 				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
 				pSnd->pMidiParser->setTimerRate(_dwTempo);
+				pSnd->pMidiParser->setMasterVolume(_masterVolume);
 			}
 
 			pSnd->pauseCounter = 0;
@@ -465,6 +468,17 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 }
 
 void SciMusic::soundPause(MusicEntry *pSnd) {
+	// SCI seems not to be pausing samples played back by kDoSound at all
+	//  It only stops looping samples (actually doesn't loop them again before they are unpaused)
+	//  Examples: Space Quest 1 death by acid drops (pause is called even specifically for the sample, see bug #3038048)
+	//             Eco Quest 1 during the intro when going to the abort-menu
+	//             In both cases sierra sci keeps playing
+	//            Leisure Suit Larry 1 doll scene - it seems that pausing here actually just stops
+	//             further looping from happening
+	//  This is a somewhat bigger change, I'm leaving in the old code in here just in case
+	//  I'm currently pausing looped sounds directly, non-looped sounds won't get paused
+	if ((pSnd->pStreamAud) && (!pSnd->pLoopStream))
+		return;
 	pSnd->pauseCounter++;
 	if (pSnd->status != kSoundPlaying)
 		return;
@@ -514,8 +528,11 @@ void SciMusic::soundSetMasterVolume(uint16 vol) {
 
 	Common::StackLock lock(_mutex);
 
-	if (_pMidiDrv)
-		_pMidiDrv->setVolume(vol);
+	const MusicList::iterator end = _playList.end();
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+		if ((*i)->pMidiParser)
+			(*i)->pMidiParser->setMasterVolume(vol);
+	}
 }
 
 void SciMusic::sendMidiCommand(uint32 cmd) {
@@ -627,6 +644,14 @@ MusicEntry::~MusicEntry() {
 }
 
 void MusicEntry::onTimer() {
+	if (!signal) {
+		if (!signalQueue.empty()) {
+			// no signal set, but signal in queue, set that one
+			signal = signalQueue[0];
+			signalQueue.remove_at(0);
+		}
+	}
+
 	if (status != kSoundPlaying)
 		return;
 
@@ -659,6 +684,25 @@ void MusicEntry::doFade() {
 		}
 
 		fadeSetVolume = true; // set flag so that SoundCommandParser::cmdUpdateCues will set the volume of the stream
+	}
+}
+
+void MusicEntry::setSignal(int newSignal) {
+	// For SCI0, we cache the signals to set, as some songs might
+	// update their signal faster than kGetEvent is called (which is where
+	// we manually invoke kDoSoundUpdateCues for SCI0 games). SCI01 and
+	// newer handle signalling inside kDoSoundUpdateCues. Refer to bug #3042981
+	if (g_sci->_features->detectDoSoundType() <= SCI_VERSION_0_LATE) {
+		if (!signal) {
+			signal = newSignal;
+		} else {
+			// signal already set and waiting for getting to scripts, queue new one
+			signalQueue.push_back(newSignal);
+		}
+	} else {
+		// Set the signal directly for newer games, otherwise the sound
+		// object might be deleted already later on (refer to bug #3045913)
+		signal = newSignal;
 	}
 }
 

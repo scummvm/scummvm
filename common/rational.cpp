@@ -207,7 +207,7 @@ bool Rational::operator==(int right) const {
 }
 
 bool Rational::operator!=(int right) const {
-	return (_denom == 1) && (_num != right);
+	return (_denom != 1) || (_num != right);
 }
 
 bool Rational::operator>(int right) const {

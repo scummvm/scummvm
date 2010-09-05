@@ -4,27 +4,24 @@
 	@WorkingEngines = qw(
 		scumm agos sky queen gob groovie saga drascula 
 		kyra lure agi touche parallaction cine
-		cruise made m4 tinsel tucker sword1 sword2 draci sci teenagent mohawk
+		cruise made m4 tinsel tucker sword1 sword2 draci sci teenagent mohawk hugo
 	);
 	
 	@WorkingEngines_1st = qw(
 		scumm queen groovie saga drascula 
 		touche parallaction cine
-		cruise made m4 tucker 
+?		cruise made m4 tucker 
 	);
 	
 	@WorkingEngines_2nd = qw(
 		agos sky gob 
 		kyra lure agi tinsel
-		sword1 sword2 draci teenagent
+		sword1 sword2 draci sci teenagent hugo
 	);
 
 	@TestingEngines = qw(
 		 
-	);
-
-	@BrokenEngines = qw(	
-	);
+	);	
 
 	@EnablableEngines = (@WorkingEngines, @TestingEngines);
 
@@ -249,7 +246,7 @@
 		$SDK_RootDirs{'S60v3'}= "G:\\S60v3";
 		#$SDK_RootDirs{'S80'}= "D:\\S80";
 		#$SDK_RootDirs{'S90'}= "D:\\S90";
-		$ECompXL_BinDir= "D:\\ECompXL\\";
+		#$ECompXL_BinDir= "D:\\ECompXL\\";
 		if (0) # so we can turn them on/off easily
 		{
 #			$SDK_LibraryDirs{'ALL'}{'zlib.lib'}		= "C:\\S\\zlib-1.2.2\\epoc";
@@ -305,7 +302,8 @@
 		# the first one includes all SDKs & release-ready engines
 	
 			$VariationSets{'ALL'}{'all'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
-	
+			$VariationSets{'ALL'}{'1St'} = "$DefaultFeatures @WorkingEngines_1st @EnablableSubEngines";
+			$VariationSets{'ALL'}{'2nd'} = "$DefaultFeatures @WorkingEngines_2nd @EnablableSubEngines";
 		# now one for each ready-for-release engine
 		if (0)
 		{

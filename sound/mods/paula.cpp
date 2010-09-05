@@ -24,6 +24,7 @@
  */
 
 #include "sound/mods/paula.h"
+#include "sound/null.h"
 
 namespace Audio {
 
@@ -178,3 +179,34 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 }
 
 } // End of namespace Audio
+
+
+//	Plugin interface
+//	(This can only create a null driver since apple II gs support seeems not to be implemented
+//  and also is not part of the midi driver architecture. But we need the plugin for the options
+//  menu in the launcher and for MidiDriver::detectDevice() which is more or less used by all engines.)
+
+class AmigaMusicPlugin : public NullMusicPlugin {
+public:
+	const char *getName() const {
+		return _s("Amiga Audio Emulator");
+	}
+
+	const char *getId() const {
+		return "amiga";
+	}
+
+	MusicDevices getDevices() const;
+};
+
+MusicDevices AmigaMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	devices.push_back(MusicDevice(this, "", MT_AMIGA));
+	return devices;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(AMIGA)
+	//REGISTER_PLUGIN_DYNAMIC(AMIGA, PLUGIN_TYPE_MUSIC, AmigaMusicPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(AMIGA, PLUGIN_TYPE_MUSIC, AmigaMusicPlugin);
+//#endif

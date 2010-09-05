@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "sci/sci.h"
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
@@ -42,7 +44,6 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	int mask = argv[0].toUint16();
 	reg_t obj = argv[1];
 	SciEvent curEvent;
-	int oldx, oldy;
 	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_KEYMOD_ALL : SCI_KEYMOD_NO_FOOLOCK;
 	SegManager *segMan = s->_segMan;
 	Common::Point mousePos;
@@ -67,12 +68,23 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, 1);
 	}
 
-	oldx = mousePos.x;
-	oldy = mousePos.y;
 	curEvent = g_sci->getEventManager()->getSciEvent(mask);
 
 	if (g_sci->getVocabulary())
 		g_sci->getVocabulary()->parser_event = NULL_REG; // Invalidate parser event
+
+	if (s->_cursorWorkaroundActive) {
+		// ffs: GfxCursor::setPosition()
+		// we check, if actual cursor position is inside given rect
+		//  if that's the case, we switch ourself off. Otherwise
+		//  we simulate the original set position to the scripts
+		if (s->_cursorWorkaroundRect.contains(mousePos.x, mousePos.y)) {
+			s->_cursorWorkaroundActive = false;
+		} else {
+			mousePos.x = s->_cursorWorkaroundPoint.x;
+			mousePos.y = s->_cursorWorkaroundPoint.y;
+		}
+	}
 
 	writeSelectorValue(segMan, obj, SELECTOR(x), mousePos.x);
 	writeSelectorValue(segMan, obj, SELECTOR(y), mousePos.y);
@@ -160,6 +172,21 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		// cmdUpdateSoundCues. kGetEvent is called quite often, so emulate
 		// the sound-SCI1 behavior of cmdUpdateSoundCues with this call
 		g_sci->_soundCmd->updateSci0Cues();
+	}
+
+	// Wait a bit here, so that the CPU isn't maxed out when the game
+	// is waiting for user input (e.g. when showing text boxes) - bug
+	// #3037874. This works when games do benchmarking at the beginning,
+	// because most of them call kAnimate for benchmarking without
+	// calling kGetEvent in between (rightly so).
+	if (g_sci->getGameId() == GID_JONES && g_sci->getEngineState()->currentRoomNumber() == 764) {
+		// Jones CD is an exception, as it incorrectly calls GetEvent
+		// while benchmarking. Thus, don't delay here for room 764 in
+		// Jones (the speed test room), otherwise speed testing will
+		// fail and the game won't show any views, as it will think that
+		// the user has a slow machine - bug #3058865
+	} else {
+		g_system->delayMillis(10);
 	}
 
 	return s->r_acc;

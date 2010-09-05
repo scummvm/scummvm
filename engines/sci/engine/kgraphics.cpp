@@ -57,48 +57,46 @@
 
 namespace Sci {
 
-void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
+void showScummVMDialog(const Common::String &message) {
+	GUI::MessageDialog dialog(message, "OK");
+	dialog.runModal();
+}
+
+void kDirLoopWorker(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
 	uint16 signal = readSelectorValue(s->_segMan, object, SELECTOR(signal));
-	int16 loopNo;
-	int16 maxLoops;
-	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	if (signal & kSignalDoesntTurn)
 		return;
 
-	angle %= 360;
-
-	if (!oldScriptHeader) {
-		if (angle < 45)
-			loopNo = 3;
-		else if (angle < 136)
-			loopNo = 0;
-		else if (angle < 225)
-			loopNo = 2;
-		else if (angle < 316)
-			loopNo = 1;
-		else
-			loopNo = 3;
+	int16 useLoop = -1;
+	if (getSciVersion() > SCI_VERSION_0_EARLY) {
+		if ((angle > 315) || (angle < 45)) {
+			useLoop = 3;
+		} else if ((angle > 135) && (angle < 225)) {
+			useLoop = 2;
+		}
 	} else {
-		if (angle >= 330 || angle <= 30)
-			loopNo = 3;
-		else if (angle <= 150)
-			loopNo = 0;
-		else if (angle <= 210)
-			loopNo = 2;
-		else if (angle < 330)
-			loopNo = 1;
-		else loopNo = -1;
+		// SCI0EARLY
+		if ((angle > 330) || (angle < 30)) {
+			useLoop = 3;
+		} else if ((angle > 150) && (angle < 210)) {
+			useLoop = 2;
+		}
+	}
+	if (useLoop == -1) {
+		if (angle >= 180) {
+			useLoop = 1;
+		} else {
+			useLoop = 0;
+		}
+	} else {
+		int16 loopCount = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
+		if (loopCount < 4)
+			return;
 	}
 
-	maxLoops = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
-		
-
-	if ((loopNo > 1) && (maxLoops < 4))
-		return;
-
-	writeSelectorValue(s->_segMan, object, SELECTOR(loop), loopNo);
+	writeSelectorValue(s->_segMan, object, SELECTOR(loop), useLoop);
 }
 
 static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
@@ -264,7 +262,9 @@ reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv) {
 	int16 priority = (argc > 5) ? argv[5].toSint16() : -1;
 	int16 control = (argc > 6) ? argv[6].toSint16() : -1;
 
-	// TODO: Find out why we get >15 for color in EGA
+	// TODO: Find out why we get > 15 for color in EGA
+	// FIXME: EGA? Which EGA? SCI0 or SCI1? Check the
+	// workarounds inside kGraphFillBoxAny and kNewWindow
 	if (!g_sci->getResMan()->isVGA() && !g_sci->getResMan()->isAmiga32color())
 		color &= 0x0F;
 
@@ -300,8 +300,15 @@ reg_t kGraphFillBoxAny(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect rect = getGraphRect(argv);
 	int16 colorMask = argv[4].toUint16();
 	int16 color = argv[5].toSint16();
-	int16 priority = (argc > 6) ? argv[6].toSint16() : -1;
-	int16 control = (argc > 7) ? argv[7].toSint16() : -1;
+	int16 priority = argv[6].toSint16(); // yes, we may read from stack sometimes here
+	int16 control = argv[7].toSint16(); // sierra did the same
+
+	// WORKAROUND: PQ3 EGA is setting invalid colors (above 0 - 15).
+	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
+	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
+	// for the undithering algorithm in EGA games - bug #3048908.
+	if (g_sci->getResMan()->getViewType() == kViewEga && getSciVersion() >= SCI_VERSION_1_EARLY)
+		color &= 0x0F;
 
 	g_sci->_gfxPaint16->kernelGraphFillBox(rect, colorMask, color, priority, control);
 	return s->r_acc;
@@ -397,7 +404,7 @@ reg_t kPriCoord(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDirLoop(EngineState *s, int argc, reg_t *argv) {
-	_k_dirloop(argv[0], argv[1].toUint16(), s, argc, argv);
+	kDirLoopWorker(argv[0], argv[1].toUint16(), s, argc, argv);
 
 	return s->r_acc;
 }
@@ -922,16 +929,15 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 		if (!changeDirButton.isNull()) {
 			// check if checkDirButton is still enabled, in that case we are called the first time during that room
 			if (!(readSelectorValue(s->_segMan, changeDirButton, SELECTOR(state)) & SCI_CONTROLS_STYLE_DISABLED)) {
-				GUI::MessageDialog dialog("Characters saved inside ScummVM are shown "
+				showScummVMDialog("Characters saved inside ScummVM are shown "
 						"automatically. Character files saved in the original "
 						"interpreter need to be put inside ScummVM's saved games "
 						"directory and a prefix needs to be added depending on which "
 						"game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
-						"for Quest for Glory 2. Example: 'qfg2-thief.sav'.",
-						"OK");
-				dialog.runModal();
+						"for Quest for Glory 2. Example: 'qfg2-thief.sav'.");
 			}
 		}
+		s->_chosenQfGImportItem = readSelectorValue(s->_segMan, controlObject, SELECTOR(mark));
 	}
 
 	_k_GenericDrawControl(s, controlObject, false);
@@ -1078,6 +1084,15 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 	int colorPen = (argc > 7 + argextra) ? argv[7 + argextra].toSint16() : 0;
 	int colorBack = (argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255;
 
+	// WORKAROUND: PQ3 EGA is setting invalid colors (above 0 - 15).
+	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
+	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
+	// for the undithering algorithm in EGA games - bug #3048908.
+	if (g_sci->getResMan()->getViewType() == kViewEga && getSciVersion() >= SCI_VERSION_1_EARLY) {
+		colorPen &= 0x0F;
+		colorBack &= 0x0F;
+	}
+
 	//	const char *title = argv[4 + argextra].segment ? kernel_dereference_char_pointer(s, argv[4 + argextra], 0) : NULL;
 	if (argc>=13) {
 		rect2 = Common::Rect (argv[5].toSint16(), argv[4].toSint16(), argv[7].toSint16(), argv[6].toSint16());
@@ -1149,6 +1164,30 @@ reg_t kTextFonts(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kTextColors(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxText16->kernelTextColors(argc, argv);
+	return s->r_acc;
+}
+
+/**
+ * Debug command, used by the SCI builtin debugger
+ */
+reg_t kShow(EngineState *s, int argc, reg_t *argv) {
+	uint16 map = argv[0].toUint16();
+
+	switch (map) {
+	case 1:	// Visual, substituted by display for us
+		g_sci->_gfxScreen->debugShowMap(3);
+		break;
+	case 2:	// Priority
+		g_sci->_gfxScreen->debugShowMap(1);
+		break;
+	case 3:	// Control
+	case 4:	// Control
+		g_sci->_gfxScreen->debugShowMap(2);
+		break;
+	default:
+		warning("Map %d is not available", map);
+	}
+
 	return s->r_acc;
 }
 

@@ -39,9 +39,12 @@ public:
 
 	void runCommand(uint16 argc, uint16 *argv);
 	uint16 getComboDigit(uint32 correctCombo, uint32 digit);
+	uint32 getDomeSliderState() { return _sliderState; }
+	void setDomeSliderState(uint32 state) { _sliderState = state; }
 
 private:
 	MohawkEngine_Riven *_vm;
+	uint32 _sliderState;
 
 	typedef void (RivenExternal::*ExternalCmd)(uint16 argc, uint16 *argv);
 
@@ -58,8 +61,14 @@ private:
 	int jspitElevatorLoop();
 	void runDemoBoundaryDialog();
 	void runEndGame(uint16 video);
+	void runCredits(uint16 video);
 	void runDomeCheck();
 	void runDomeButtonMovie();
+	void resetDomeSliders(uint16 bitmapId, uint16 soundId, uint16 startHotspot);
+	void checkDomeSliders(uint16 resetSlidersHotspot, uint16 openDomeHotspot);
+	void checkSliderCursorChange(uint16 startHotspot);
+	void dragDomeSlider(uint16 bitmapId, uint16 soundId, uint16 resetSlidersHotspot, uint16 openDomeHotspot, uint16 startHotspot);
+	void drawDomeSliders(uint16 bitmapId, uint16 startHotspot);
 
 	// -----------------------------------------------------
 	// aspit (Main Menu, Books, Setup) external commands
@@ -86,6 +95,8 @@ private:
 	void xadisablemenureturn(uint16 argc, uint16 *argv);
 	void xaenablemenureturn(uint16 argc, uint16 *argv);
 	void xalaunchbrowser(uint16 argc, uint16 *argv);
+	void xadisablemenuintro(uint16 argc, uint16 *argv);
+	void xaenablemenuintro(uint16 argc, uint16 *argv);
 
 	// -----------------------------------------------------
 	// bspit (Boiler Island) external commands

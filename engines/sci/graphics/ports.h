@@ -83,6 +83,7 @@ public:
 
 	void offsetRect(Common::Rect &r);
 	void offsetLine(Common::Point &start, Common::Point &end);
+	void clipLine(Common::Point &start, Common::Point &end);
 
 	void priorityBandsInit(int16 bandCount, int16 top, int16 bottom);
 	void priorityBandsInit(byte *data);

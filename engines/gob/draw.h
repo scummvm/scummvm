@@ -192,21 +192,6 @@ public:
 			int16 bottom, const char *str, int16 fontIndex, int16 color);
 	void oPlaytoons_sub_F_1B( uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *paramStr, int16 var3, int16 var4, int16 shortId);
 
-	int16 openWin(int16 id);
-	int16 handleCurWin();
-	bool winOverlap(int16 idWin1, int16 idWin2);
-	void winDecomp(int16 x, int16 y, SurfaceDescPtr destPtr);
-	void activeWin(int16 id);
-	void closeWin(int16 id);
-	void closeAllWin();
-	void restoreWin(int16 i);
-	void saveWin(int16 id);
-	void winMove(int16 id);
-	void handleWinBorder(int16 id);
-	void winDraw(int16 fct);
-	void winTrace(int16 left, int16 top, int16 width, int16 height);
-	int16 isOverWin(int16 &dx, int16 &dy);
-
 	int32 getSpriteRectSize(int16 index);
 	void forceBlit(bool backwards = false);
 
@@ -222,6 +207,15 @@ public:
 	virtual void animateCursor(int16 cursor) = 0;
 	virtual void printTotText(int16 id) = 0;
 	virtual void spriteOperation(int16 operation) = 0;
+
+	virtual int16 openWin(int16 id) { return 0; }
+	virtual void closeWin(int16 id) {}
+	virtual int16 handleCurWin() { return 0; }
+	virtual int16 getWinFromCoord(int16 &dx, int16 &dy) { return -1; }
+	virtual void moveWin(int16 id) {}
+	virtual bool overlapWin(int16 idWin1, int16 idWin2) { return false; }
+	virtual void closeAllWin() {}
+	virtual void activeWin(int16 id) {}
 
 	Draw(GobEngine *vm);
 	virtual ~Draw();
@@ -272,6 +266,23 @@ public:
 	Draw_Fascination(GobEngine *vm);
 	virtual ~Draw_Fascination() {}
 	virtual void spriteOperation(int16 operation);
+
+	void decompWin(int16 x, int16 y, SurfaceDescPtr destPtr);
+	void drawWin(int16 fct);
+	void saveWin(int16 id);
+	void restoreWin(int16 id);
+	void handleWinBorder(int16 id);
+	void drawWinTrace(int16 left, int16 top, int16 width, int16 height);
+
+	virtual int16 openWin(int16 id);
+	virtual void closeWin(int16 id);
+	virtual int16 getWinFromCoord(int16 &dx, int16 &dy);
+	virtual int16 handleCurWin();
+	virtual void activeWin(int16 id);
+	virtual void moveWin(int16 id);
+	virtual bool overlapWin(int16 idWin1, int16 idWin2);
+	virtual void closeAllWin();
+
 };
 
 class Draw_Playtoons: public Draw_v2 {

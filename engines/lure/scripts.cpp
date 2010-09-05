@@ -1297,6 +1297,11 @@ bool HotspotScript::execute(Hotspot *h) {
 
 		default:
 			// Set the animation frame number
+
+			// WORKAROUND: In Lure English EGA, the apparatus in room #30 can be set with an invalid frame number
+			if ((h->hotspotId() == 1059) && (opcode >= h->numFrames()))
+				opcode = h->numFrames() - 1;
+
 			debugC(ERROR_DETAILED, kLureDebugScripts, "SET FRAME NUMBER = %d", opcode);
 
 			h->setFrameNumber(opcode);

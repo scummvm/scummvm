@@ -29,6 +29,7 @@
 #include "scumm/scumm_v3.h"
 #include "scumm/scumm_v5.h"
 #include "scumm/sound.h"
+#include "scumm/player_towns.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
 
@@ -375,6 +376,25 @@ int ScummEngine_v5::getVarOrDirectWord(byte mask) {
 	if (_opcode & mask)
 		return getVar();
 	return fetchScriptWordSigned();
+}
+
+void ScummEngine_v5::getResultPos() {
+	int a;
+
+	_resultVarNumber = fetchScriptWord();
+	if (_resultVarNumber & 0x2000) {
+		a = fetchScriptWord();
+		if (a & 0x2000) {
+			_resultVarNumber += readVar(a & ~0x2000);
+		} else {
+			_resultVarNumber += a & 0xFFF;
+		}
+		_resultVarNumber &= ~0x2000;
+	}
+}
+
+void ScummEngine_v5::setResult(int value) {
+	writeVar(_resultVarNumber, value);
 }
 
 void ScummEngine_v5::jumpRelative(bool cond) {
@@ -980,17 +1000,6 @@ void ScummEngine_v5::o5_getActorRoom() {
 void ScummEngine_v5::o5_getActorScale() {
 	Actor *a;
 
-	// INDY3 uses this opcode for waitForActor
-	if (_game.id == GID_INDY3) {
-		const byte *oldaddr = _scriptPointer - 1;
-		a = derefActor(getVarOrDirectByte(PARAM_1), "o5_getActorScale (wait)");
-		if (a->_moving) {
-			_scriptPointer = oldaddr;
-			o5_breakHere();
-		}
-		return;
-	}
-
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	a = derefActor(act, "o5_getActorScale");
@@ -1587,21 +1596,18 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, vm.slot[_currentScript].number);
 		break;
 	case 35:
-		// TODO: Might be used to set CD volume in FM-TOWNS Loom
-		foo = getVarOrDirectByte(PARAM_2);
-		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, vm.slot[_currentScript].number);
+		if (_townsPlayer)
+			_townsPlayer->setVolumeCD(getVarOrDirectByte(PARAM_2), resid);
 		break;
 	case 36:
-		// TODO: Sets the loudness of a sound resource. Used in Indy3 and Zak.
 		foo = getVarOrDirectByte(PARAM_2);
 		bar = fetchScriptByte();
-		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, vm.slot[_currentScript].number);
+		if (_townsPlayer)
+			_townsPlayer->setSoundVolume(resid, foo, bar);		
 		break;
 	case 37:
-		// TODO: Sets the pitch of a sound resource (pitch = foo - center semitones.
-		// "center" is at 0x32 in the sfx resource (always 0x3C in zak256, but sometimes different in Indy3).
-		foo = getVarOrDirectByte(PARAM_2);
-		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, vm.slot[_currentScript].number);
+		if (_townsPlayer)
+			_townsPlayer->setSoundNote(resid, getVarOrDirectByte(PARAM_2));
 		break;
 
 	default:
@@ -1972,7 +1978,7 @@ void ScummEngine_v5::o5_startMusic() {
 			result = _sound->getCurrentCDSound();
 			break;
 		case 0xFF:
-			// TODO: Might return current CD volume in FM-TOWNS Loom. See also bug #805691.
+			result = _townsPlayer->getCurrentCdaVolume();
 			break;
 		default:
 			// TODO: return track length in seconds. We'll have to extend Sound and OSystem for this.
@@ -2025,19 +2031,6 @@ void ScummEngine_v5::o5_isSoundRunning() {
 
 void ScummEngine_v5::o5_soundKludge() {
 	int items[16];
-
-	if (_game.features & GF_SMALL_HEADER) {	// Is WaitForSentence in SCUMM V3
-		if (_sentenceNum) {
-			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
-				return;
-		} else if (!isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
-			return;
-
-		_scriptPointer--;
-		o5_breakHere();
-		return;
-	}
-
 	int num = getWordVararg(items);
 	_sound->soundKludge(items, num);
 }

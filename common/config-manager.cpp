@@ -219,32 +219,27 @@ void ConfigManager::flushToDisk() {
 		stream = dump;
 	}
 
+	// Write the application domain
+	writeDomain(*stream, kApplicationDomain, _appDomain);
+
+#ifdef ENABLE_KEYMAPPER
+	// Write the keymapper domain
+	writeDomain(*stream, kKeymapperDomain, _keymapperDomain);
+#endif
+
 	// First write the domains in _domainSaveOrder, in that order.
 	// Note: It's possible for _domainSaveOrder to list domains which
-	// are not present anymore.
+	// are not present anymore, so we validate each name.
 	Array<String>::const_iterator i;
 	for (i = _domainSaveOrder.begin(); i != _domainSaveOrder.end(); ++i) {
-		if (kApplicationDomain == *i) {
-			writeDomain(*stream, *i, _appDomain);
-#ifdef ENABLE_KEYMAPPER
-		} else if (kKeymapperDomain == *i) {
-			writeDomain(*stream, *i, _keymapperDomain);
-#endif
-		} else if (_gameDomains.contains(*i)) {
+		if (_gameDomains.contains(*i)) {
 			writeDomain(*stream, *i, _gameDomains[*i]);
 		}
 	}
 
 	DomainMap::const_iterator d;
 
-
 	// Now write the domains which haven't been written yet
-	if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), kApplicationDomain) == _domainSaveOrder.end())
-		writeDomain(*stream, kApplicationDomain, _appDomain);
-#ifdef ENABLE_KEYMAPPER
-	if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), kKeymapperDomain) == _domainSaveOrder.end())
-		writeDomain(*stream, kKeymapperDomain, _keymapperDomain);
-#endif
 	for (d = _gameDomains.begin(); d != _gameDomains.end(); ++d) {
 		if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), d->_key) == _domainSaveOrder.end())
 			writeDomain(*stream, d->_key, d->_value);

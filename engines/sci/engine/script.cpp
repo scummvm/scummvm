@@ -69,6 +69,9 @@ void Script::freeScript() {
 void Script::init(int script_nr, ResourceManager *resMan) {
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
 
+	if (!script)
+		error("Script %d not found\n", script_nr);
+
 	_localsOffset = 0;
 	_localsBlock = NULL;
 	_localsCount = 0;
@@ -288,7 +291,8 @@ void Script::relocate(reg_t block) {
 		// code blocks. In SCI1.1 and newer versions, only locals and objects
 		// are relocated.
 		if (!relocateLocal(block.segment, pos)) {
-			// Not a local? It's probably an object or code block. If it's an object, relocate it.
+			// Not a local? It's probably an object or code block. If it's an
+			// object, relocate it.
 			const ObjMap::iterator end = _objects.end();
 			for (ObjMap::iterator it = _objects.begin(); it != end; ++it)
 				if (it->_value.relocate(block.segment, pos, _scriptSize))
@@ -329,11 +333,13 @@ uint16 Script::validateExportFunc(int pubfunct) {
 	uint16 offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct);
 	VERIFY(offset < _bufSize, "invalid export function pointer");
 
-	if (offset == 0) {
-		// Check if the game has a second export table (e.g. script 912 in Camelot)
-		// Fixes bug #3039785
-		if (g_sci->getGameId() == GID_ECOQUEST) // cheap fix in here for eco quest 1, [md5] plz look into this TODO FIXME
-			return offset;
+	// Check if the offset found points to a second export table (e.g. script 912
+	// in Camelot and script 306 in KQ4). Such offsets are usually small (i.e. < 10),
+	// thus easily distinguished from actual code offsets.
+	// This only makes sense for SCI0-SCI1, as the export table in SCI1.1+ games
+	// is located at a specific address, thus findBlock() won't work.
+	// Fixes bugs #3039785 and #3037595.
+	if (offset < 10 && getSciVersion() <= SCI_VERSION_1_LATE) {
 		const uint16 *secondExportTable = (const uint16 *)findBlock(SCI_OBJ_EXPORTS, 0);
 
 		if (secondExportTable) {
@@ -530,7 +536,7 @@ void Script::initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 
 		// If object is instance, get -propDict- from class and set it for this
 		// object. This is needed for ::isMemberOf() to work.
-		// Example testcase - room 381 of sq4cd - if isMemberOf() doesn't work,
+		// Example test case - room 381 of sq4cd - if isMemberOf() doesn't work,
 		// talk-clicks on the robot will act like clicking on ego
 		if (!obj->isClass()) {
 			reg_t classObject = obj->getSuperClassSelector();

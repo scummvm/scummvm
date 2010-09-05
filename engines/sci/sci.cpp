@@ -45,6 +45,7 @@
 #include "sci/engine/selector.h"	// for SELECTOR
 
 #include "sci/sound/audio.h"
+#include "sci/sound/music.h"
 #include "sci/sound/soundcmd.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
@@ -173,12 +174,15 @@ SciEngine::~SciEngine() {
 	g_sci = 0;
 }
 
+extern void showScummVMDialog(const Common::String &message);
+
 Common::Error SciEngine::run() {
 	g_eventRec.registerRandomSource(_rng, "sci");
 
 	// Assign default values to the config manager, in case settings are missing
-	ConfMan.registerDefault("undither", "true");
-	ConfMan.registerDefault("enable_fb01", "false");
+	ConfMan.registerDefault("sci_undither", "true");
+	ConfMan.registerDefault("sci_originalsaveload", "false");
+	ConfMan.registerDefault("native_fb01", "false");
 
 	_resMan = new ResourceManager();
 	assert(_resMan);
@@ -199,17 +203,19 @@ Common::Error SciEngine::run() {
 
 	// Add the after market GM patches for the specified game, if they exist
 	_resMan->addNewGMPatch(_gameId);
-	_gameObj = _resMan->findGameObject();
+	_gameObjectAddress = _resMan->findGameObject();
+	_gameSuperClassAddress = NULL_REG;
 
 	SegManager *segMan = new SegManager(_resMan);
 
 	// Initialize the game screen
 	_gfxScreen = new GfxScreen(_resMan);
-	_gfxScreen->debugUnditherSetState(ConfMan.getBool("undither"));
+	_gfxScreen->debugUnditherSetState(ConfMan.getBool("sci_undither"));
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
 	_kernel = new Kernel(_resMan, segMan);
+
 	_features = new GameFeatures(segMan, _kernel);
 	// Only SCI0, SCI01 and SCI1 EGA games used a parser
 	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA) ? new Vocabulary(_resMan, false) : NULL;
@@ -229,6 +235,14 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 	}
 
+	// we try to find the super class address of the game object, we can't do that earlier
+	const Object *gameObject = segMan->getObject(_gameObjectAddress);
+	if (!gameObject) {
+		warning("Could not get game object, aborting...");
+		return Common::kUnknownError;
+	}
+	_gameSuperClassAddress = gameObject->getSuperClassSelector();
+
 	script_adjust_opcode_formats();
 
 	// Must be called after game_init(), as they use _features
@@ -242,57 +256,191 @@ Common::Error SciEngine::run() {
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
 
+	// Patch in our save/restore code, so that dialogs are replaced
+	patchGameSaveRestore(segMan);
+
 	if (_gameDescription->flags & ADGF_ADDENGLISH) {
 		// if game is multilingual
 		Common::Language selectedLanguage = Common::parseLanguage(ConfMan.get("language"));
 		if (selectedLanguage == Common::EN_ANY) {
 			// and english was selected as language
 			if (SELECTOR(printLang) != -1) // set text language to english
-				writeSelectorValue(segMan, _gameObj, SELECTOR(printLang), 1);
+				writeSelectorValue(segMan, _gameObjectAddress, SELECTOR(printLang), 1);
 			if (SELECTOR(parseLang) != -1) // and set parser language to english as well
-				writeSelectorValue(segMan, _gameObj, SELECTOR(parseLang), 1);
+				writeSelectorValue(segMan, _gameObjectAddress, SELECTOR(parseLang), 1);
 		}
 	}
 
 	// Check whether loading a savestate was requested
-	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot >= 0) {
-		reg_t restoreArgv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special call (argv[0] is NULL)
+	int directSaveSlotLoading = ConfMan.getInt("save_slot");
+	if (directSaveSlotLoading >= 0) {
+		// call GameObject::play (like normally)
+		initStackBaseWithSelector(SELECTOR(play));
+		// We set this, so that the game automatically quit right after init
+		_gamestate->variables[VAR_GLOBAL][4] = TRUE_REG;
+
+		_gamestate->_executionStackPosChanged = false;
+		run_vm(_gamestate);
+
+		// As soon as we get control again, actually restore the game
+		reg_t restoreArgv[2] = { NULL_REG, make_reg(0, directSaveSlotLoading) };	// special call (argv[0] is NULL)
 		kRestoreGame(_gamestate, 2, restoreArgv);
 
-		// TODO: The best way to do the following would be to invoke Game::init
-		// here and stop when the room is about to be changed, otherwise some
-		// game initialization won't take place
+		// this indirectly calls GameObject::init, which will setup menu, text font/color codes etc.
+		//  without this games would be pretty badly broken
+	}
 
-		// Set audio language for KQ5CD (bug #3039477)
-		if (g_sci->getGameId() == GID_KQ5 && Common::File::exists("AUDIO001.002")) {
-			reg_t doAudioArgv[2] = { make_reg(0, 9), make_reg(0, 1) };
-			kDoAudio(_gamestate, 2, doAudioArgv);
-		}
+	// Show any special warnings for buggy scripts with severe game bugs, 
+	// which have been patched by Sierra
+	if (getGameId() == GID_LONGBOW) {
+		// Longbow 1.0 has a buggy script which prevents the game
+		// from progressing during the Green Man riddle sequence.
+		// A patch for this buggy script has been released by Sierra,
+		// and is necessary to complete the game without issues.
+		// The patched script is included in Longbow 1.1.
+		// Refer to bug #3036609.
+		Resource *buggyScript = _resMan->findResource(ResourceId(kResourceTypeScript, 180), 0);
 
-		// Initialize the game menu, if there is one.
-		// This is not done when loading, so we must do it manually.
-		reg_t menuBarObj = _gamestate->_segMan->findObjectByName("MenuBar");
-		if (menuBarObj.isNull())
-			menuBarObj = _gamestate->_segMan->findObjectByName("TheMenuBar");	// LSL2
-		if (menuBarObj.isNull())
-			menuBarObj = _gamestate->_segMan->findObjectByName("menuBar");	// LSL6
-		if (!menuBarObj.isNull()) {
-			// Reset abortScriptProcessing before initializing the game menu, so that the
-			// VM call performed by invokeSelector will actually run.
-			_gamestate->abortScriptProcessing = kAbortNone;
-			Object *menuBar = _gamestate->_segMan->getObject(menuBarObj);
-			// Invoke the first method (init) of the menuBar object
-			invokeSelector(_gamestate, menuBarObj, menuBar->getFuncSelector(0), 0, _gamestate->stack_base);
-			_gamestate->abortScriptProcessing = kAbortLoadGame;
+		if (buggyScript && (buggyScript->size == 12354 || buggyScript->size == 12362)) {
+			showScummVMDialog("A known buggy game script has been detected, which could "
+							  "prevent you from progressing later on in the game, during "
+							  "the sequence with the Green Man's riddles. Please, apply "
+							  "the latest patch for this game by Sierra to avoid possible "
+							  "problems");
 		}
 	}
+
+	// Show a warning if the user has selected a General MIDI device, no GM patch exists
+	// (i.e. patch 4) and the game is one of the known 8 SCI1 games that Sierra has provided
+	// after market patches for in their "General MIDI Utility".
+	if (_soundCmd->getMusicType() == MT_GM) {
+		if (!_resMan->findResource(ResourceId(kResourceTypePatch, 4), 0)) {
+			switch (getGameId()) {
+			case GID_ECOQUEST:
+			case GID_HOYLE3:
+			case GID_LSL1:
+			case GID_LSL5:
+			case GID_LONGBOW:
+			case GID_SQ1:
+			case GID_SQ4:
+			case GID_FAIRYTALES:
+				showScummVMDialog("You have selected General MIDI as a sound device. Sierra "
+								  "has provided after-market support for General MIDI for this "
+								  "game in their \"General MIDI Utility\". Please, apply this "
+								  "patch in order to enjoy MIDI music with this game. Once you "
+								  "have obtained it, you can unpack all of the included *.PAT "
+								  "files in your ScummVM extras folder and ScummVM will add the "
+								  "appropriate patch automatically. Alternatively, you can follow "
+								  "the instructions in the READ.ME file included in the patch and "
+								  "rename the associated *.PAT file to 4.PAT and place it in the "
+								  "game folder. Without this patch, General MIDI music for this "
+								  "game will sound badly distorted.");
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
 
 	runGame();
 
 	ConfMan.flushToDisk();
 
 	return Common::kNoError;
+}
+
+static byte patchGameRestoreSave[] = {
+	0x39, 0x03,        // pushi 03
+	0x76,              // push0
+	0x38, 0xff, 0xff,  // pushi -1
+	0x76,              // push0
+	0x43, 0xff, 0x06,  // call kRestoreGame/kSaveGame (will get fixed directly)
+	0x48,              // ret
+};
+
+void SciEngine::patchGameSaveRestore(SegManager *segMan) {
+	const Object *gameObject = segMan->getObject(_gameObjectAddress);
+	const uint16 gameMethodCount = gameObject->getMethodCount();
+	const Object *gameSuperObject = segMan->getObject(_gameSuperClassAddress);
+	const uint16 gameSuperMethodCount = gameSuperObject->getMethodCount();
+	reg_t methodAddress;
+	const uint16 kernelCount = _kernel->getKernelNamesSize();
+	const byte *scriptRestorePtr = NULL;
+	byte kernelIdRestore = 0;
+	const byte *scriptSavePtr = NULL;
+	byte kernelIdSave = 0;
+
+	// this feature is currently not supported on SCI32
+	if (getSciVersion() >= SCI_VERSION_2)
+		return;
+
+	switch (_gameId) {
+	case GID_MOTHERGOOSE256: // mother goose saves/restores directly and has no save/restore dialogs
+	case GID_JONES: // gets confused, when we patch us in, although the game isn't able to save/restore o_O
+		return;
+	default:
+		break;
+	}
+
+	if (ConfMan.getBool("sci_originalsaveload"))
+		return;
+
+	for (uint16 kernelNr = 0; kernelNr < kernelCount; kernelNr++) {
+		Common::String kernelName = _kernel->getKernelName(kernelNr);
+		if (kernelName == "RestoreGame")
+			kernelIdRestore = kernelNr;
+		if (kernelName == "SaveGame")
+			kernelIdSave = kernelNr;
+	}
+
+	// Search for gameobject-superclass ::restore
+	for (uint16 methodNr = 0; methodNr < gameSuperMethodCount; methodNr++) {
+		uint16 selectorId = gameSuperObject->getFuncSelector(methodNr);
+		Common::String methodName = _kernel->getSelectorName(selectorId);
+		if (methodName == "restore") {
+			methodAddress = gameSuperObject->getFunction(methodNr);
+			Script *script = segMan->getScript(methodAddress.segment);
+			scriptRestorePtr = script->getBuf(methodAddress.offset);
+		}
+		if (methodName == "save") {
+			methodAddress = gameSuperObject->getFunction(methodNr);
+			Script *script = segMan->getScript(methodAddress.segment);
+			scriptSavePtr = script->getBuf(methodAddress.offset);
+		}
+	}
+
+	// Search for gameobject ::save, if there is one patch that one instead
+	for (uint16 methodNr = 0; methodNr < gameMethodCount; methodNr++) {
+		uint16 selectorId = gameObject->getFuncSelector(methodNr);
+		Common::String methodName = _kernel->getSelectorName(selectorId);
+		if (methodName == "save") {
+			methodAddress = gameObject->getFunction(methodNr);
+			Script *script = segMan->getScript(methodAddress.segment);
+			scriptSavePtr = script->getBuf(methodAddress.offset);
+			break;
+		}
+	}
+
+	switch (_gameId) {
+	case GID_FAIRYTALES: // fairy tales automatically saves w/o dialog
+		scriptSavePtr = NULL;
+	default:
+		break;
+	}
+
+	if (scriptRestorePtr) {
+		// Now patch in our code
+		byte *patchPtr = const_cast<byte *>(scriptRestorePtr);
+		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
+		patchPtr[8] = kernelIdRestore;
+	}
+	if (scriptSavePtr) {
+		// Now patch in our code
+		byte *patchPtr = const_cast<byte *>(scriptSavePtr);
+		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
+		patchPtr[8] = kernelIdSave;
+	}
 }
 
 bool SciEngine::initGame() {
@@ -422,8 +570,8 @@ void SciEngine::initStackBaseWithSelector(Selector selector) {
 	_gamestate->stack_base[1] = NULL_REG;
 
 	// Register the first element on the execution stack
-	if (!send_selector(_gamestate, _gameObj, _gameObj, _gamestate->stack_base, 2, _gamestate->stack_base)) {
-		_console->printObject(_gameObj);
+	if (!send_selector(_gamestate, _gameObjectAddress, _gameObjectAddress, _gamestate->stack_base, 2, _gamestate->stack_base)) {
+		_console->printObject(_gameObjectAddress);
 		error("initStackBaseWithSelector: error while registering the first selector in the call stack");
 	}
 
@@ -445,6 +593,7 @@ void SciEngine::runGame() {
 			_gamestate->_segMan->resetSegMan();
 			initGame();
 			initStackBaseWithSelector(SELECTOR(play));
+			patchGameSaveRestore(_gamestate->_segMan);
 			_gamestate->gameIsRestarting = GAMEISRESTARTING_RESTART;
 			if (_gfxMenu)
 				_gfxMenu->reset();
@@ -453,6 +602,7 @@ void SciEngine::runGame() {
 			_gamestate->abortScriptProcessing = kAbortNone;
 			_gamestate->_executionStack.clear();
 			initStackBaseWithSelector(SELECTOR(replay));
+			patchGameSaveRestore(_gamestate->_segMan);
 			_gamestate->shrinkStackToBase();
 			_gamestate->abortScriptProcessing = kAbortNone;
 		} else {
@@ -521,20 +671,6 @@ Common::String SciEngine::getSavegamePattern() const {
 }
 
 Common::String SciEngine::getFilePrefix() const {
-	if (_gameId == GID_QFG2) {
-		// Quest for Glory 2 wants to read files from Quest for Glory 1 (EGA/VGA) to import character data
-		if (_gamestate->currentRoomNumber() == 805)
-			return "qfg1";
-		// TODO: Include import-room for qfg1vga
-	} else if (_gameId == GID_QFG3) {
-		// Quest for Glory 3 wants to read files from Quest for Glory 2 to import character data
-		if (_gamestate->currentRoomNumber() == 54)
-			return "qfg2";
-	} else if (_gameId == GID_QFG4) {
-		// Quest for Glory 4 wants to read files from Quest for Glory 3 to import character data
-		if (_gamestate->currentRoomNumber() == 54)
-			return "qfg3";
-	}
 	return _targetName;
 }
 
@@ -547,6 +683,19 @@ Common::String SciEngine::unwrapFilename(const Common::String &name) const {
 	if (name.hasPrefix(prefix.c_str()))
 		return Common::String(name.c_str() + prefix.size());
 	return name;
+}
+
+int SciEngine::inQfGImportRoom() const {
+	if (_gameId == GID_QFG2 && _gamestate->currentRoomNumber() == 805) {
+		// QFG2 character import screen
+		return 2;
+	} else if (_gameId == GID_QFG3 && _gamestate->currentRoomNumber() == 54) {
+		// QFG3 character import screen
+		return 3;
+	} else if (_gameId == GID_QFG4 && _gamestate->currentRoomNumber() == 54) {
+		return 4;
+	}
+	return 0;
 }
 
 void SciEngine::pauseEngineIntern(bool pause) {
@@ -563,7 +712,7 @@ void SciEngine::syncSoundSettings() {
 	int soundVolumeMusic = (mute ? 0 : ConfMan.getInt("music_volume"));
 
 	if (_gamestate && g_sci->_soundCmd) {
-		int vol =  (soundVolumeMusic + 1) * SoundCommandParser::kMaxSciVolume / Audio::Mixer::kMaxMixerVolume;
+		int vol =  (soundVolumeMusic + 1) * MUSIC_MASTERVOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
 		g_sci->_soundCmd->setMasterVolume(vol);
 	}
 }

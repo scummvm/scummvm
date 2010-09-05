@@ -110,6 +110,10 @@ void EngineState::reset(bool isRestoring) {
 	_lastSaveVirtualId = SAVEGAMEID_OFFICIALRANGE_START;
 	_lastSaveNewId = 0;
 
+	_chosenQfGImportItem = 0;
+
+	_cursorWorkaroundActive = false;
+
 	scriptStepCounter = 0;
 	scriptGCInterval = GC_INTERVAL;
 }
@@ -251,7 +255,7 @@ kLanguage SciEngine::getSciLanguage() {
 	lang = K_LANG_ENGLISH;
 
 	if (SELECTOR(printLang) != -1) {
-		lang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(printLang));
+		lang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(printLang));
 
 		if ((getSciVersion() >= SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
 			// If language is set to none, we use the language from the game detector.
@@ -292,7 +296,7 @@ kLanguage SciEngine::getSciLanguage() {
 
 void SciEngine::setSciLanguage(kLanguage lang) {
 	if (SELECTOR(printLang) != -1)
-		writeSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(printLang), lang);
+		writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(printLang), lang);
 }
 
 void SciEngine::setSciLanguage() {
@@ -304,7 +308,7 @@ Common::String SciEngine::strSplit(const char *str, const char *sep) {
 	kLanguage subLang = K_LANG_NONE;
 
 	if (SELECTOR(subtitleLang) != -1) {
-		subLang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(subtitleLang));
+		subLang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(subtitleLang));
 	}
 
 	kLanguage secondLang;
@@ -327,7 +331,7 @@ Common::String SciEngine::strSplit(const char *str, const char *sep) {
 void SciEngine::checkVocabularySwitch() {
 	uint16 parserLanguage = 1;
 	if (SELECTOR(parseLang) != -1)
-		parserLanguage = readSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(parseLang));
+		parserLanguage = readSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(parseLang));
 		
 	if (parserLanguage != _vocabularyLanguage) {
 		delete _vocabulary;

@@ -309,6 +309,7 @@ RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("listZipCards",   WRAP_METHOD(RivenConsole, Cmd_ListZipCards));
 	DCmd_Register("getRMAP",		WRAP_METHOD(RivenConsole, Cmd_GetRMAP));
 	DCmd_Register("combos",         WRAP_METHOD(RivenConsole, Cmd_Combos));
+	DCmd_Register("sliderState",    WRAP_METHOD(RivenConsole, Cmd_SliderState));
 }
 
 RivenConsole::~RivenConsole() {
@@ -349,7 +350,7 @@ bool RivenConsole::Cmd_Var(int argc, const char **argv) {
 		return true;
 	}
 
-	uint32 *globalVar = _vm->matchVarToString(argv[1]);
+	uint32 *globalVar = _vm->getVar(argv[1]);
 
 	if (!globalVar) {
 		DebugPrintf("Unknown variable \'%s\'\n", argv[1]);
@@ -466,10 +467,11 @@ bool RivenConsole::Cmd_Hotspots(int argc, const char **argv) {
 		DebugPrintf("Hotspot %d, index %d, BLST ID %d (", i, _vm->_hotspots[i].index, _vm->_hotspots[i].blstID);
 
 		if (_vm->_hotspots[i].enabled)
-			DebugPrintf("enabled)\n");
+			DebugPrintf("enabled");
 		else
-			DebugPrintf("disabled)\n");
+			DebugPrintf("disabled");
 
+		DebugPrintf(") - (%d, %d, %d, %d)\n", _vm->_hotspots[i].rect.left, _vm->_hotspots[i].rect.top, _vm->_hotspots[i].rect.right, _vm->_hotspots[i].rect.bottom);
 		DebugPrintf("    Name = %s\n", _vm->getHotspotName(i).c_str());
 	}
 
@@ -477,7 +479,7 @@ bool RivenConsole::Cmd_Hotspots(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_ZipMode(int argc, const char **argv) {
-	uint32 *zipModeActive = _vm->matchVarToString("azip");
+	uint32 *zipModeActive = _vm->getVar("azip");
 	*zipModeActive = !(*zipModeActive);
 
 	DebugPrintf("Zip Mode is ");
@@ -620,9 +622,9 @@ bool RivenConsole::Cmd_Combos(int argc, const char **argv) {
 	// You'll need to look up the Rebel Tunnel puzzle on your own; the
 	// solution is constant.
 
-	uint32 teleCombo = *_vm->matchVarToString("tcorrectorder");
-	uint32 prisonCombo = *_vm->matchVarToString("pcorrectorder");
-	uint32 domeCombo = *_vm->matchVarToString("adomecombo");
+	uint32 teleCombo = *_vm->getVar("tcorrectorder");
+	uint32 prisonCombo = *_vm->getVar("pcorrectorder");
+	uint32 domeCombo = *_vm->getVar("adomecombo");
 	
 	DebugPrintf("Telescope Combo:\n  ");
 	for (int i = 0; i < 5; i++)
@@ -638,6 +640,14 @@ bool RivenConsole::Cmd_Combos(int argc, const char **argv) {
 			DebugPrintf("%d ", i);
 
 	DebugPrintf("\n");
+	return true;
+}
+
+bool RivenConsole::Cmd_SliderState(int argc, const char **argv) {
+	if (argc > 1)
+		_vm->_externalScriptHandler->setDomeSliderState((uint32)atoi(argv[1]));
+
+	DebugPrintf("Dome Slider State = %08x\n", _vm->_externalScriptHandler->getDomeSliderState());
 	return true;
 }
 

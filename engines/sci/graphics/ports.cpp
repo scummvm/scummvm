@@ -105,16 +105,9 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	case GID_CNICK_KQ:
 		offTop = 0;
 		break;
-	case GID_MOTHERGOOSE:
-		// TODO: if mother goose EGA also uses offTop we can simply remove this check altogether
-		switch (getSciVersion()) {
-		case SCI_VERSION_1_EARLY:
-		case SCI_VERSION_1_1:
-			offTop = 0;
-			break;
-		default:
-			break;
-		}
+	case GID_MOTHERGOOSE256:
+		// only the SCI1 and SCI1.1 (VGA) versions need this
+		offTop = 0;
 		break;
 	case GID_FAIRYTALES:
 		// Mixed-Up Fairy Tales (& its demo) uses -w 26 0 200 320. If we don't
@@ -288,6 +281,16 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	// Find an unused window/port id
 	uint id = PORTS_FIRSTWINDOWID;
 	while (id < _windowsById.size() && _windowsById[id]) {
+		if (_windowsById[id]->counterTillFree) {
+			// port that is already disposed, but not freed yet
+			freeWindow((Window *)_windowsById[id]);
+			_freeCounter--;
+			break; // reuse the handle
+			// we do this especially for sq4cd. it creates and disposes the
+			//  inventory window all the time, but reuses old handles as well
+			//  this worked somewhat under the original interpreter, because
+			//  it put the new window where the old was.
+		}
 		++id;
 	}
 	if (id == _windowsById.size())
@@ -366,6 +369,20 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	if (draw)
 		drawWindow(pwnd);
 	setPort((Port *)pwnd);
+
+	// FIXME: changing setOrigin to not clear the rightmost bit fixes the display of windows
+	// in some fanmade games (e.g. New Year's Mystery (Updated)). Since the fanmade games
+	// use an unmodified SCI interpreter, this leads me to believe that there either is some
+	// off-by-one error in the window drawing code, or there is another place where the
+	// rightmost bit should be cleeared. New Year's Mystery is a good test case for this, as
+	// it draws dialogs and then draws cels on top of them, for fancier dialog corners (like,
+	// for example, KQ5). KQ5 has a custom window style, however, whereas New Year's mystery
+	// has a "classic" style with only SCI_WINDOWMGR_STYLE_NOFRAME set. If
+	// SCI_WINDOWMGR_STYLE_NOFRAME is removed, the window is cleared correctly, because it
+	// grows slightly, covering the view pixels on the left. In any case, the views and the
+	// window have a difference of one pixel when they're drawn via kNewWindow and kDrawCel,
+	// which causes the glitch to appear when the window is closed.
+
 	// All SCI0 games till kq4 .502 (not including) did not adjust against _wmgrPort, we set _wmgrPort->top to 0 in that case
 	setOrigin(pwnd->rect.left, pwnd->rect.top + _wmgrPort->top);
 	pwnd->rect.moveTo(0, 0);
@@ -446,14 +463,15 @@ void GfxPorts::removeWindow(Window *pWnd, bool reanimate) {
 		_paint16->kernelGraphRedrawBox(pWnd->restoreRect);
 	_windowList.remove(pWnd);
 	setPort(_windowList.back());
-	// We will actually free this window after 10 kSetPort-calls
+	// We will actually free this window after 15 kSetPort-calls
 	// Sierra sci freed the pointer immediately, but pointer to that port
 	//  still worked till the memory got overwritten. Some games depend
 	//  on this (dispose a window and then kSetPort to it again for once)
 	//  Those are actually script bugs, but patching all of those out
 	//  would be quite a hassle and this just keeps compatibility
 	//  (examples: hoyle 4 game menu and sq4cd inventory)
-	pWnd->counterTillFree = 10;
+	//  sq4cd gum wrapper requires more than 10
+	pWnd->counterTillFree = 15;
 	_freeCounter++;
 }
 
@@ -563,6 +581,13 @@ void GfxPorts::offsetLine(Common::Point &start, Common::Point &end) {
 	start.y += _curPort->top;
 	end.x += _curPort->left;
 	end.y += _curPort->top;
+}
+
+void GfxPorts::clipLine(Common::Point &start, Common::Point &end) {
+	start.y = CLIP<int16>(start.y, _curPort->rect.top, _curPort->rect.bottom - 1);
+	start.x = CLIP<int16>(start.x, _curPort->rect.left, _curPort->rect.right - 1);
+	end.y = CLIP<int16>(end.y, _curPort->rect.top, _curPort->rect.bottom - 1);
+	end.x = CLIP<int16>(end.x, _curPort->rect.left, _curPort->rect.right - 1);
 }
 
 void GfxPorts::priorityBandsInit(int16 bandCount, int16 top, int16 bottom) {

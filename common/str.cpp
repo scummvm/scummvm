@@ -30,11 +30,6 @@
 
 #include <stdarg.h>
 
-#if !defined(__SYMBIAN32__)
-#include <new>
-#endif
-
-
 namespace Common {
 
 MemoryPool *g_refCountPool = 0; // FIXME: This is never freed right now
@@ -421,7 +416,7 @@ void String::trim() {
 
 	// Trim leading whitespace
 	char *t = _str;
-	while (isspace(*t))
+	while (isspace((unsigned char)*t))
 		t++;
 
 	if (t != _str) {
@@ -626,7 +621,7 @@ Common::String lastPathComponent(const Common::String &path, const char sep) {
 
 	// Now scan the whole component
 	const char *first = last - 1;
-	while (first >= str && *first != sep)
+	while (first > str && *first != sep)
 		--first;
 
 	if (*first == sep)

@@ -48,6 +48,7 @@
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/smush_player.h"
+#include "scumm/player_towns.h"
 #include "scumm/insane/insane.h"
 #include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
@@ -146,6 +147,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_imuse = NULL;
 	_imuseDigital = NULL;
 	_musicEngine = NULL;
+	_townsPlayer = NULL;
 	_verbs = NULL;
 	_objs = NULL;
 	_sound = NULL;
@@ -214,7 +216,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_opcode = 0;
 	vm.numNestedScripts = 0;
 	_lastCodePtr = NULL;
-	_resultVarNumber = 0;
 	_scummStackPos = 0;
 	memset(_vmStack, 0, sizeof(_vmStack));
 	_fileOffset = 0;
@@ -631,6 +632,10 @@ ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
 	_flashlight.xStrips = 7;
 	_flashlight.yStrips = 7;
 	_flashlight.buffer = NULL;
+
+	memset(_saveLoadVarsFilename, 0, sizeof(_saveLoadVarsFilename));
+
+	_resultVarNumber = 0;
 }
 
 ScummEngine_v4::ScummEngine_v4(OSystem *syst, const DetectorResult &dr)
@@ -1642,8 +1647,10 @@ void ScummEngine::setupMusic(int midi) {
 		_musicType = MDT_NONE;
 		break;
 	case MT_PCSPK:
-	case MT_PCJR:
 		_musicType = MDT_PCSPK;
+		break;
+	case MT_PCJR:
+		_musicType = MDT_PCJR;
 		break;
 	//case MT_CMS:
 #if 1
@@ -1657,6 +1664,12 @@ void ScummEngine::setupMusic(int midi) {
 		break;
 	case MT_ADLIB:
 		_musicType = MDT_ADLIB;
+		break;
+	case MT_C64:
+		_musicType = MDT_C64;
+		break;
+	case MT_APPLEIIGS:
+		_musicType = MDT_APPLEIIGS;
 		break;
 	default:
 		_musicType = MDT_MIDI;
@@ -1706,7 +1719,7 @@ void ScummEngine::setupMusic(int midi) {
 	 * automatically when samples need to be generated */
 	if (!_mixer->isReady()) {
 		warning("Sound mixer initialization failed");
-		if (_musicType == MDT_ADLIB || _musicType == MDT_PCSPK || _musicType == MDT_CMS)	{
+		if (_musicType == MDT_ADLIB || _musicType == MDT_PCSPK || _musicType == MDT_PCJR || _musicType == MDT_CMS) {
 			dev = 0;
 			_musicType = MDT_NONE;
 			warning("MIDI driver depends on sound mixer, switching to null MIDI driver");
@@ -1740,12 +1753,16 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V1(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if (_game.version <= 2) {
 		_musicEngine = new Player_V2(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
-	} else if ((_musicType == MDT_PCSPK) && (_game.version > 2 && _game.version <= 4)) {
+	} else if ((_musicType == MDT_PCSPK || _musicType == MDT_PCJR) && (_game.version > 2 && _game.version <= 4)) {
 		_musicEngine = new Player_V2(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if (_musicType == MDT_CMS) {
 		_musicEngine = new Player_V2CMS(this, _mixer);
 	} else if (_game.platform == Common::kPlatform3DO && _game.heversion <= 62) {
 		// 3DO versions use digital music and sound samples.
+	} else if (_game.platform == Common::kPlatformFMTowns && (_game.version == 3 || _game.id == GID_MONKEY)) {
+		_musicEngine = _townsPlayer = new Player_Towns(this, _mixer);
+		if (!_townsPlayer->init())
+			error("Failed to initialize FM-Towns audio driver.");
 	} else if (_game.version >= 3 && _game.heversion <= 62) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
@@ -1791,8 +1808,21 @@ void ScummEngine::syncSoundSettings() {
 	int soundVolumeSfx = ConfMan.getInt("sfx_volume");
 	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
 
+	bool mute = false;
+
+	if (ConfMan.hasKey("mute")) {
+		mute = ConfMan.getBool("mute");
+
+		if (mute)
+			soundVolumeMusic = soundVolumeSfx = soundVolumeSpeech = 0;
+	}
+
 	if (_musicEngine) {
 		_musicEngine->setMusicVolume(soundVolumeMusic);
+	}
+
+	if (_townsPlayer) {
+		_townsPlayer->setSfxVolume(soundVolumeSfx);
 	}
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSfx);
@@ -2087,7 +2117,12 @@ void ScummEngine::scummLoop_updateScummVars() {
 		// Since there are 2 2-stripes wide borders in MM NES screen,
 		// we have to compensate for it here. This fixes paning effects.
 		// Fixes bug #1328120: "MANIACNES: Screen width incorrect, camera halts sometimes"
-		VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT) + 2;
+		// But do not do it when only scrolling right to left, since otherwise Ed will not show
+		// up on the doorbell (Bug #3039004)
+		if (VAR(VAR_CAMERA_POS_X) < (camera._cur.x >> V12_X_SHIFT) + 2)
+			VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT) + 2;
+		else
+			VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT);
 	} else if (_game.version <= 2) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x >> V12_X_SHIFT;
 	} else {

@@ -40,6 +40,7 @@ struct SelectorCache {
 	}
 
 	// Statically defined selectors, (almost the) same in all SCI versions
+	Selector _info_;
 	Selector y;
 	Selector x;
 	Selector view, loop, cel; ///< Description of a specific image
@@ -58,7 +59,9 @@ struct SelectorCache {
 	Selector state, font, type;///< Used by controls
 	// window
 	Selector cursor, max; ///< Used by EditControl
-	// mark, who
+	Selector mark; //< Used by list controls
+	Selector sort; //< Used by list controls (script internal, is needed by us for QfG3 import room)
+	// who
 	Selector message; ///< Used by GetEvent
 	// edit
 	Selector play; ///< Play function (first function to be called)
@@ -126,8 +129,6 @@ struct SelectorCache {
 
 	// SCI1.1 Mac icon bar selectors
 	Selector iconIndex; ///< Used to index icon bar objects
-
-	Selector port; // used by a hoyle 4 workaround
 
 #ifdef ENABLE_SCI32
 	Selector data; // Used by Array()/String()

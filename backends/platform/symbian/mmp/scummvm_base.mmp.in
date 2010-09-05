@@ -98,6 +98,8 @@ SOURCEPATH ..\..\..\..\sound
 	// empty base file, will be updated by Perl build scripts
 
 //STOP_AUTO_OBJECTS_SOUND_//
+SOURCE softsynth\fmtowns_pc98\towns_pc98_fmsynth.cpp // Included since its excluded by filter
+
 #if defined (WINS)
 SOURCE rate.cpp			// WINS emulator version: add regular .cpp
 #else

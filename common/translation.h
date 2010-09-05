@@ -27,6 +27,8 @@
 
 #include "common/singleton.h"
 #include "common/str-array.h"
+#include "common/file.h"
+#include "common/fs.h"
 
 namespace Common {
 
@@ -39,18 +41,19 @@ struct TLanguage {
 	const char *name;
 	int id;
 
-	TLanguage() {
-		name = 0;
-		id = 0;
-	}
-
-	TLanguage(const char *n, int i) {
-		name = n;
-		id = i;
-	}
+	TLanguage() : name(0), id(0) {}
+	TLanguage(const char *n, int i) : name(n), id(i) {}
 };
 
+bool operator<(const TLanguage &l, const TLanguage &r);
+
 typedef Array<TLanguage> TLangArray;
+
+struct PoMessageEntry {
+	int msgid;
+	String msgctxt;
+	String msgstr;
+};
 
 /**
  * Message translation manager.
@@ -113,6 +116,28 @@ public:
 	 * it returns the original untranslated message.
 	 */
 	String getTranslation(const String &message);
+	
+	/**
+	 * Returns the translation into the current language of the parameter
+	 * message. In case the message isn't found in the translation catalog,
+	 * it returns the original untranslated message.
+	 *
+	 * If a translation is found for the given context it will return that
+	 * translation, otherwise it will look for a translation for the same
+	 * massage without a context or with a different context.
+	 */
+	const char *getTranslation(const char *message, const char *context);
+	
+	/**
+	 * Returns the translation into the current language of the parameter
+	 * message. In case the message isn't found in the translation catalog,
+	 * it returns the original untranslated message.
+	 *
+	 * If a translation is found for the given context it will return that
+	 * translation, otherwise it will look for a translation for the same
+	 * massage without a context or with a different context.
+	 */
+	String getTranslation(const String &message, const String &context);
 
 	/**
 	 * Returns a list of supported languages.
@@ -127,7 +152,46 @@ public:
 	const char *getCurrentCharset();
 
 private:
-	Common::String _syslang;
+#ifdef USE_TRANSLATION
+	/**
+	 * Find the translations.dat file. It looks first using the SearchMan and
+	 * then if needed using the Themepath. If found it opens the given File
+	 * to read the translations.dat file.
+	 */
+	bool openTranslationsFile(File&);
+
+	/**
+	 * Find the translations.dat file in the given directory node.
+	 * If found it opens the given File to read the translations.dat file.
+	 */
+	bool openTranslationsFile(const FSNode &node, File&, int depth = -1);
+
+	/**
+	 * Load the list of languages from the translations.dat file
+	 */
+	void loadTranslationsInfoDat();
+
+	/**
+	 * Load the translation for the given language from the translations.dat file
+	 *
+	 * @param index of the language in the list of languages
+	 */
+	void loadLanguageDat(int index);
+
+	/**
+	 * Check the header of the given file to make sure it is a valid translations data file.
+	 */
+	bool checkHeader(File &in);
+
+	String _syslang;
+	StringArray _langs;
+	StringArray _langNames;
+
+	StringArray _messageIds;
+	Array<PoMessageEntry> _currentTranslationMessages;
+	String _currentCharset;
+	int _currentLang;
+#endif
 };
 
 } // End of namespace Common
@@ -136,10 +200,14 @@ private:
 
 #ifdef USE_TRANSLATION
 #define _(str) TransMan.getTranslation(str)
+#define _c(str, context) TransMan.getTranslation(str, context)
 #else
 #define _(str) str
+#define _c(str, context) str
 #endif
 
 #define _s(str) str
+#define _sc(str, ctxt) str
+#define DECLARE_TRANSLATION_ADDITIONAL_CONTEXT(str, ctxt) 
 
 #endif

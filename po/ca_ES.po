@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-07-30 22:14+0100\n"
+"POT-Creation-Date: 2010-09-01 18:36+0300\n"
 "PO-Revision-Date: 2010-06-26 16:45+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@gmail.com>\n"
 "Language-Team: Catalan <scummvm-devel@lists.sf.net>\n"
@@ -38,7 +38,7 @@ msgid "Go to previous directory level"
 msgstr "Torna al nivell de directoris anterior"
 
 #: gui/browser.cpp:70 gui/chooser.cpp:49 gui/KeysDialog.cpp:46
-#: gui/launcher.cpp:280 gui/massadd.cpp:95 gui/options.cpp:1029
+#: gui/launcher.cpp:304 gui/massadd.cpp:95 gui/options.cpp:1066
 #: gui/saveload.cpp:65 gui/saveload.cpp:157 gui/themebrowser.cpp:56
 #: backends/platform/wii/options.cpp:48
 msgid "Cancel"
@@ -68,8 +68,8 @@ msgstr "Remapeja les tecles"
 msgid "Map"
 msgstr "Mapeja"
 
-#: gui/KeysDialog.cpp:45 gui/launcher.cpp:281 gui/launcher.cpp:893
-#: gui/launcher.cpp:897 gui/massadd.cpp:92 gui/options.cpp:1030
+#: gui/KeysDialog.cpp:45 gui/launcher.cpp:305 gui/launcher.cpp:926
+#: gui/launcher.cpp:930 gui/massadd.cpp:92 gui/options.cpp:1067
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "OK"
@@ -137,215 +137,281 @@ msgstr ""
 "Idioma del joc. Això no convertirà la vostra versió Espanyola del joc a "
 "Anglès"
 
-#: gui/launcher.cpp:185 gui/launcher.cpp:196 gui/options.cpp:80
-#: gui/options.cpp:635 gui/options.cpp:645 gui/options.cpp:1000
+#: gui/launcher.cpp:185 gui/launcher.cpp:199 gui/options.cpp:80
+#: gui/options.cpp:638 gui/options.cpp:648 gui/options.cpp:1037
 #: sound/null.cpp:42
 msgid "<default>"
 msgstr "<per defecte>"
 
-#: gui/launcher.cpp:194
+#: gui/launcher.cpp:195
 msgid "Platform:"
 msgstr "Plataforma:"
 
-#: gui/launcher.cpp:194 gui/launcher.cpp:195
+#: gui/launcher.cpp:195 gui/launcher.cpp:197 gui/launcher.cpp:198
 msgid "Platform the game was originally designed for"
 msgstr "Plataforma per la que el joc es va dissenyar originalment"
 
-#: gui/launcher.cpp:206 gui/options.cpp:898 gui/options.cpp:915
+#: gui/launcher.cpp:197
+#, fuzzy
+msgctxt "lowres"
+msgid "Platform:"
+msgstr "Plataforma:"
+
+#: gui/launcher.cpp:209 gui/options.cpp:921 gui/options.cpp:938
 msgid "Graphics"
 msgstr "Gràfics"
 
-#: gui/launcher.cpp:206 gui/options.cpp:898 gui/options.cpp:915
+#: gui/launcher.cpp:209 gui/options.cpp:921 gui/options.cpp:938
 msgid "GFX"
 msgstr "GFX"
 
-#: gui/launcher.cpp:208
+#: gui/launcher.cpp:212
 msgid "Override global graphic settings"
 msgstr "Fer canvis sobre les opcions globals de gràfics"
 
-#: gui/launcher.cpp:215 gui/options.cpp:921
+#: gui/launcher.cpp:214
+#, fuzzy
+msgctxt "lowres"
+msgid "Override global graphic settings"
+msgstr "Fer canvis sobre les opcions globals de gràfics"
+
+#: gui/launcher.cpp:221 gui/options.cpp:944
 msgid "Audio"
 msgstr "Àudio"
 
-#: gui/launcher.cpp:217
+#: gui/launcher.cpp:224
 msgid "Override global audio settings"
 msgstr "Fer canvis sobre les opcions globals d'àudio"
 
-#: gui/launcher.cpp:225 gui/options.cpp:925
+#: gui/launcher.cpp:226
+#, fuzzy
+msgctxt "lowres"
+msgid "Override global audio settings"
+msgstr "Fer canvis sobre les opcions globals d'àudio"
+
+#: gui/launcher.cpp:235 gui/options.cpp:949
 msgid "Volume"
 msgstr "Volum"
 
-#: gui/launcher.cpp:227
+#: gui/launcher.cpp:237 gui/options.cpp:951
+#, fuzzy
+msgctxt "lowres"
+msgid "Volume"
+msgstr "Volum"
+
+#: gui/launcher.cpp:240
 msgid "Override global volume settings"
 msgstr "Fer canvis sobre les opcions globals de volum"
 
-#: gui/launcher.cpp:234 gui/options.cpp:933
+#: gui/launcher.cpp:242
+#, fuzzy
+msgctxt "lowres"
+msgid "Override global volume settings"
+msgstr "Fer canvis sobre les opcions globals de volum"
+
+#: gui/launcher.cpp:249 gui/options.cpp:959
 msgid "MIDI"
 msgstr "MIDI"
 
-#: gui/launcher.cpp:236
+#: gui/launcher.cpp:252
 msgid "Override global MIDI settings"
 msgstr "Fer canvis sobre les opcions globals de MIDI"
 
-#: gui/launcher.cpp:246 gui/options.cpp:939
+#: gui/launcher.cpp:254
+#, fuzzy
+msgctxt "lowres"
+msgid "Override global MIDI settings"
+msgstr "Fer canvis sobre les opcions globals de MIDI"
+
+#: gui/launcher.cpp:264 gui/options.cpp:965
 msgid "MT-32"
 msgstr ""
 
-#: gui/launcher.cpp:248
+#: gui/launcher.cpp:267
 #, fuzzy
 msgid "Override global MT-32 settings"
 msgstr "Fer canvis sobre les opcions globals de MIDI"
 
-#: gui/launcher.cpp:258 gui/options.cpp:945
+#: gui/launcher.cpp:269
+#, fuzzy
+msgctxt "lowres"
+msgid "Override global MT-32 settings"
+msgstr "Fer canvis sobre les opcions globals de MIDI"
+
+#: gui/launcher.cpp:279 gui/options.cpp:971
 msgid "Paths"
 msgstr "Camins"
 
-#: gui/launcher.cpp:264
+#: gui/launcher.cpp:285
 msgid "Game Path:"
 msgstr "Camí del Joc:"
 
-#: gui/launcher.cpp:268 gui/options.cpp:958
+#: gui/launcher.cpp:289 gui/options.cpp:984
 msgid "Extra Path:"
 msgstr "Camí Extra:"
 
-#: gui/launcher.cpp:268 gui/launcher.cpp:269
+#: gui/launcher.cpp:289 gui/launcher.cpp:290
 msgid "Specifies path to additional data used the game"
 msgstr "Especifica el camí de dades addicionals utilitzades pel joc"
 
-#: gui/launcher.cpp:272
+#: gui/launcher.cpp:294
 msgid "Save Path:"
 msgstr "Camí de les Partides:"
 
-#: gui/launcher.cpp:272 gui/launcher.cpp:273 gui/options.cpp:952
-#: gui/options.cpp:953
+#: gui/launcher.cpp:294 gui/launcher.cpp:296 gui/launcher.cpp:297
+#: gui/options.cpp:978 gui/options.cpp:979
 msgid "Specifies where your savegames are put"
 msgstr "Especifica on es desaran les partides"
 
-#: gui/launcher.cpp:289 gui/launcher.cpp:369 gui/launcher.cpp:418
-#: gui/options.cpp:230 gui/options.cpp:399 gui/options.cpp:497
-#: gui/options.cpp:555 gui/options.cpp:732 gui/options.cpp:956
-#: gui/options.cpp:959 gui/options.cpp:963 gui/options.cpp:1053
-#: gui/options.cpp:1059 gui/options.cpp:1065 gui/options.cpp:1073
-#: gui/options.cpp:1097 gui/options.cpp:1101 gui/options.cpp:1107
-#: gui/options.cpp:1114 gui/options.cpp:1213
+#: gui/launcher.cpp:296
+#, fuzzy
+msgctxt "lowres"
+msgid "Save Path:"
+msgstr "Camí de les Partides:"
+
+#: gui/launcher.cpp:313 gui/launcher.cpp:393 gui/launcher.cpp:442
+#: gui/options.cpp:982 gui/options.cpp:985 gui/options.cpp:989
+#: gui/options.cpp:1090 gui/options.cpp:1096 gui/options.cpp:1102
+#: gui/options.cpp:1110 gui/options.cpp:1134 gui/options.cpp:1138
+#: gui/options.cpp:1144 gui/options.cpp:1151 gui/options.cpp:1250
+#, fuzzy
+msgctxt "path"
 msgid "None"
 msgstr "Cap"
 
-#: gui/launcher.cpp:294 gui/launcher.cpp:373
+#: gui/launcher.cpp:318 gui/launcher.cpp:397
 #: backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Per defecte"
 
-#: gui/launcher.cpp:411 gui/options.cpp:1207
+#: gui/launcher.cpp:435 gui/options.cpp:1244
 msgid "Select SoundFont"
 msgstr "Seleccioneu el fitxer SoundFont"
 
-#: gui/launcher.cpp:430 gui/launcher.cpp:568
+#: gui/launcher.cpp:454 gui/launcher.cpp:601
 msgid "Select directory with game data"
 msgstr "Seleccioneu el directori amb les dades del joc"
 
-#: gui/launcher.cpp:448
+#: gui/launcher.cpp:472
 msgid "Select additional game directory"
 msgstr "Seleccioneu el directori addicional del joc"
 
-#: gui/launcher.cpp:460
+#: gui/launcher.cpp:484
 msgid "Select directory for saved games"
 msgstr "Seleccioneu el directori de les partides desades"
 
-#: gui/launcher.cpp:479
+#: gui/launcher.cpp:503
 msgid "This game ID is already taken. Please choose another one."
 msgstr ""
 "Aquest identificador de joc ja està usat. Si us plau, trieu-ne un altre."
 
-#: gui/launcher.cpp:520 engines/dialogs.cpp:113
+#: gui/launcher.cpp:544 engines/dialogs.cpp:116
 msgid "~Q~uit"
 msgstr "~T~anca"
 
-#: gui/launcher.cpp:520
+#: gui/launcher.cpp:544
 msgid "Quit ScummVM"
 msgstr "Surt de ScummVM"
 
-#: gui/launcher.cpp:521
+#: gui/launcher.cpp:545
 msgid "A~b~out..."
 msgstr "~Q~uant a..."
 
-#: gui/launcher.cpp:521
+#: gui/launcher.cpp:545
 msgid "About ScummVM"
 msgstr "Quant a ScummVM"
 
-#: gui/launcher.cpp:522
+#: gui/launcher.cpp:546
 msgid "~O~ptions..."
 msgstr "~O~pcions..."
 
-#: gui/launcher.cpp:522
+#: gui/launcher.cpp:546
 msgid "Change global ScummVM options"
 msgstr "Canvia les opcions globals de ScummVM"
 
-#: gui/launcher.cpp:524
+#: gui/launcher.cpp:548
 msgid "~S~tart"
 msgstr "~I~nicia"
 
-#: gui/launcher.cpp:524
+#: gui/launcher.cpp:548
 msgid "Start selected game"
 msgstr "Iniciant el joc seleccionat"
 
-#: gui/launcher.cpp:527
+#: gui/launcher.cpp:551
 msgid "~L~oad..."
 msgstr "~C~arrega..."
 
-#: gui/launcher.cpp:527
+#: gui/launcher.cpp:551
 msgid "Load savegame for selected game"
 msgstr "Carrega una partida pel joc seleccionat"
 
-#: gui/launcher.cpp:531
+#: gui/launcher.cpp:556
 msgid "~A~dd Game..."
 msgstr "~A~fegeix Joc..."
 
-#: gui/launcher.cpp:531
+#: gui/launcher.cpp:556 gui/launcher.cpp:563
 msgid "Hold Shift for Mass Add"
 msgstr "Mantingueu premut Shift per a l'Addició Massiva"
 
-#: gui/launcher.cpp:533
+#: gui/launcher.cpp:558
 msgid "~E~dit Game..."
 msgstr "~E~dita Joc..."
 
-#: gui/launcher.cpp:533
+#: gui/launcher.cpp:558 gui/launcher.cpp:565
 msgid "Change game options"
 msgstr "Canvia les opcions del joc"
 
-#: gui/launcher.cpp:535
+#: gui/launcher.cpp:560
 msgid "~R~emove Game"
 msgstr "~S~uprimeix Joc"
 
-#: gui/launcher.cpp:535
+#: gui/launcher.cpp:560 gui/launcher.cpp:567
 msgid "Remove game from the list. The game data files stay intact"
 msgstr ""
 "Elimina un joc de la llista. Els fitxers de dades del joc es mantenen "
 "intactes"
 
-#: gui/launcher.cpp:542
+#: gui/launcher.cpp:563
+#, fuzzy
+msgctxt "lowres"
+msgid "~A~dd Game..."
+msgstr "~A~fegeix Joc..."
+
+#: gui/launcher.cpp:565
+#, fuzzy
+msgctxt "lowres"
+msgid "~E~dit Game..."
+msgstr "~E~dita Joc..."
+
+#: gui/launcher.cpp:567
+#, fuzzy
+msgctxt "lowres"
+msgid "~R~emove Game"
+msgstr "~S~uprimeix Joc"
+
+#: gui/launcher.cpp:575
 msgid "Search in game list"
 msgstr "Cerca a la llista de jocs"
 
-#: gui/launcher.cpp:546 gui/launcher.cpp:1057
+#: gui/launcher.cpp:579 gui/launcher.cpp:1092
 msgid "Search:"
 msgstr "Cerca:"
 
-#: gui/launcher.cpp:549 gui/options.cpp:733
+#: gui/launcher.cpp:582 gui/options.cpp:740
 msgid "Clear value"
 msgstr "Neteja el valor"
 
-#: gui/launcher.cpp:571 engines/dialogs.cpp:117
+#: gui/launcher.cpp:604 engines/dialogs.cpp:120
 msgid "Load game:"
 msgstr "Carrega partida:"
 
-#: gui/launcher.cpp:571 engines/dialogs.cpp:117
+#: gui/launcher.cpp:604 engines/dialogs.cpp:120
 #: backends/platform/wince/CEActionsPocket.cpp:263
 #: backends/platform/wince/CEActionsSmartphone.cpp:225
 msgid "Load"
 msgstr "Carrega"
 
-#: gui/launcher.cpp:680
+#: gui/launcher.cpp:713
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -353,7 +419,7 @@ msgstr ""
 "Esteu segur que voleu executar el detector massiu de jocs? Això pot afegir "
 "una gran quantitat de jocs."
 
-#: gui/launcher.cpp:681 gui/launcher.cpp:830
+#: gui/launcher.cpp:714 gui/launcher.cpp:863
 #: backends/platform/symbian/src/SymbianOS.cpp:446
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
@@ -361,7 +427,7 @@ msgstr ""
 msgid "Yes"
 msgstr "Sí"
 
-#: gui/launcher.cpp:681 gui/launcher.cpp:830
+#: gui/launcher.cpp:714 gui/launcher.cpp:863
 #: backends/platform/symbian/src/SymbianOS.cpp:446
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
@@ -369,36 +435,48 @@ msgstr "Sí"
 msgid "No"
 msgstr "No"
 
-#: gui/launcher.cpp:728
+#: gui/launcher.cpp:761
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM no ha pogut obrir el directori especificat!"
 
-#: gui/launcher.cpp:740
+#: gui/launcher.cpp:773
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM no ha pogut trobar cap joc al directori especificat!"
 
-#: gui/launcher.cpp:754
+#: gui/launcher.cpp:787
 msgid "Pick the game:"
 msgstr "Seleccioneu el joc:"
 
-#: gui/launcher.cpp:830
+#: gui/launcher.cpp:863
 msgid "Do you really want to remove this game configuration?"
 msgstr "Realment voleu suprimir la configuració d'aquest joc?"
 
-#: gui/launcher.cpp:893
+#: gui/launcher.cpp:926
 msgid "This game does not support loading games from the launcher."
 msgstr "Aquest joc no suporta la càrrega de partides des del llançador."
 
-#: gui/launcher.cpp:897
+#: gui/launcher.cpp:930
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "ScummVM no ha pogut trobar cap motor capaç d'executar el joc seleccionat!"
 
-#: gui/launcher.cpp:1009
+#: gui/launcher.cpp:1044
+#, fuzzy
+msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Addició Massiva..."
 
-#: gui/launcher.cpp:1010
+#: gui/launcher.cpp:1044
+msgid "Mass Add..."
+msgstr "Addició Massiva..."
+
+#: gui/launcher.cpp:1045
+#, fuzzy
+msgctxt "lowres"
+msgid "Add Game..."
+msgstr "Afegeix Joc..."
+
+#: gui/launcher.cpp:1045
 msgid "Add Game..."
 msgstr "Afegeix Joc..."
 
@@ -465,60 +543,67 @@ msgstr "44 kHz"
 msgid "48 kHz"
 msgstr "48 kHz"
 
-#: gui/options.cpp:632
+#: gui/options.cpp:230 gui/options.cpp:399 gui/options.cpp:497
+#: gui/options.cpp:555 gui/options.cpp:739
+#, fuzzy
+msgctxt "soundfont"
+msgid "None"
+msgstr "Cap"
+
+#: gui/options.cpp:635
 msgid "Graphics mode:"
 msgstr "Mode gràfic:"
 
-#: gui/options.cpp:643
+#: gui/options.cpp:646
 msgid "Render mode:"
 msgstr "Mode de pintat:"
 
-#: gui/options.cpp:643 gui/options.cpp:644
+#: gui/options.cpp:646 gui/options.cpp:647
 msgid "Special dithering modes supported by some games"
 msgstr "Modes de dispersió especials suportats per alguns jocs"
 
-#: gui/options.cpp:653
+#: gui/options.cpp:656
 msgid "Fullscreen mode"
 msgstr "Mode pantalla completa"
 
-#: gui/options.cpp:656
+#: gui/options.cpp:659
 msgid "Aspect ratio correction"
 msgstr "Correcció del rati d'aspecte"
 
-#: gui/options.cpp:656
+#: gui/options.cpp:659
 msgid "Correct aspect ratio for 320x200 games"
 msgstr "Corregeix la relació d'aspecte per jocs de 320x200"
 
-#: gui/options.cpp:663
+#: gui/options.cpp:666
 msgid "Preferred Device:"
 msgstr "Dispositiu Preferit:"
 
-#: gui/options.cpp:663
+#: gui/options.cpp:666
 #, fuzzy
 msgid "Music Device:"
 msgstr "Dispositiu GM:"
 
-#: gui/options.cpp:663
+#: gui/options.cpp:666
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr "Especifica el dispositiu de so o l'emulador de tarja de so preferit"
 
-#: gui/options.cpp:663 gui/options.cpp:664
+#: gui/options.cpp:666 gui/options.cpp:667
 msgid "Specifies output sound device or sound card emulator"
 msgstr "Especifica el dispositiu de so o l'emulador de tarja de so de sortida"
 
-#: gui/options.cpp:688
+#: gui/options.cpp:692
 msgid "AdLib emulator:"
 msgstr "Emulador d'AdLib:"
 
-#: gui/options.cpp:688 gui/options.cpp:689
+#: gui/options.cpp:692 gui/options.cpp:693
 msgid "AdLib is used for music in many games"
 msgstr "AdLib s'utilitza per la música de molts jocs"
 
-#: gui/options.cpp:699
+#: gui/options.cpp:703
 msgid "Output rate:"
 msgstr "Freqüència de sortida:"
 
-#: gui/options.cpp:699 gui/options.cpp:700
+#: gui/options.cpp:703 gui/options.cpp:704
 msgid ""
 "Higher value specifies better sound quality but may be not supported by your "
 "soundcard"
@@ -526,51 +611,57 @@ msgstr ""
 "Valors més alts especifiquen millor qualitat de so però pot ser que la "
 "vostra tarja de so no ho suporti"
 
-#: gui/options.cpp:710
+#: gui/options.cpp:714
 msgid "GM Device:"
 msgstr "Dispositiu GM:"
 
-#: gui/options.cpp:710
+#: gui/options.cpp:714
 msgid "Specifies default sound device for General MIDI output"
 msgstr ""
 "Especifica el dispositiu de so per defecte per a la sortida General MIDI"
 
-#: gui/options.cpp:731
+#: gui/options.cpp:736
 msgid "SoundFont:"
 msgstr "Fitxer SoundFont:"
 
-#: gui/options.cpp:731 gui/options.cpp:732
+#: gui/options.cpp:736 gui/options.cpp:738 gui/options.cpp:739
 msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
 msgstr "Algunes targes de so, Fluidsynth i Timidity suporten SoundFont"
 
-#: gui/options.cpp:736
+#: gui/options.cpp:738
+#, fuzzy
+msgctxt "lowres"
+msgid "SoundFont:"
+msgstr "Fitxer SoundFont:"
+
+#: gui/options.cpp:743
 msgid "Mixed AdLib/MIDI mode"
 msgstr "Mode combinat AdLib/MIDI"
 
-#: gui/options.cpp:736
+#: gui/options.cpp:743
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "Utilitza MIDI i la generació de so AdLib alhora"
 
-#: gui/options.cpp:739
+#: gui/options.cpp:746
 msgid "MIDI gain:"
 msgstr "Guany MIDI:"
 
-#: gui/options.cpp:749
+#: gui/options.cpp:756
 #, fuzzy
 msgid "MT-32 Device:"
 msgstr "Dispositiu MT32:"
 
-#: gui/options.cpp:749
+#: gui/options.cpp:756
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
 "Especifica el dispositiu de so per defecte per a la sortida de Roland MT-32/"
 "LAPC1/CM32l/CM64"
 
-#: gui/options.cpp:753
+#: gui/options.cpp:761
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Roland MT-32 real (desactiva l'emulació GM)"
 
-#: gui/options.cpp:753
+#: gui/options.cpp:761 gui/options.cpp:763
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
@@ -578,141 +669,191 @@ msgstr ""
 "Marqueu si voleu utilitzar el vostre dispositiu hardware real de so "
 "compatible amb Roland connectat al vostre ordinador"
 
-#: gui/options.cpp:756
+#: gui/options.cpp:763
+#, fuzzy
+msgctxt "lowres"
+msgid "True Roland MT-32 (disable GM emulation)"
+msgstr "Roland MT-32 real (desactiva l'emulació GM)"
+
+#: gui/options.cpp:766
 msgid "Enable Roland GS Mode"
 msgstr "Activa el Mode Roland GS"
 
-#: gui/options.cpp:756
+#: gui/options.cpp:766
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
 msgstr ""
 "Desactiva la conversió General MIDI pels jocs que tenen banda sonora per a "
 "Roland MT-32"
 
-#: gui/options.cpp:780
+#: gui/options.cpp:791
 msgid "Text and Speech:"
 msgstr "Text i Veus:"
 
-#: gui/options.cpp:785 gui/options.cpp:791
+#: gui/options.cpp:795 gui/options.cpp:805
 msgid "Speech"
 msgstr "Veus"
 
-#: gui/options.cpp:786 gui/options.cpp:792
+#: gui/options.cpp:796 gui/options.cpp:806
 msgid "Subtitles"
 msgstr "Subtítols"
 
-#: gui/options.cpp:787 gui/options.cpp:793
+#: gui/options.cpp:797
 msgid "Both"
 msgstr "Ambdós"
 
-#: gui/options.cpp:791
-msgid "Spch"
-msgstr "Veus"
-
-#: gui/options.cpp:792
-msgid "Subs"
-msgstr "Subt"
-
-#: gui/options.cpp:793
-msgid "Show subtitles and play speech"
-msgstr "Mostra els subtítols i reprodueix la veu"
-
-#: gui/options.cpp:797
+#: gui/options.cpp:799
 msgid "Subtitle speed:"
 msgstr "Velocitat dels subtítols:"
 
+#: gui/options.cpp:801
+#, fuzzy
+msgctxt "lowres"
+msgid "Text and Speech:"
+msgstr "Text i Veus:"
+
+#: gui/options.cpp:805
+msgid "Spch"
+msgstr "Veus"
+
+#: gui/options.cpp:806
+msgid "Subs"
+msgstr "Subt"
+
+#: gui/options.cpp:807
+#, fuzzy
+msgctxt "lowres"
+msgid "Both"
+msgstr "Ambdós"
+
+#: gui/options.cpp:807
+msgid "Show subtitles and play speech"
+msgstr "Mostra els subtítols i reprodueix la veu"
+
 #: gui/options.cpp:809
+#, fuzzy
+msgctxt "lowres"
+msgid "Subtitle speed:"
+msgstr "Velocitat dels subtítols:"
+
+#: gui/options.cpp:825
 msgid "Music volume:"
 msgstr "Volum de la música:"
 
-#: gui/options.cpp:816
+#: gui/options.cpp:827
+#, fuzzy
+msgctxt "lowres"
+msgid "Music volume:"
+msgstr "Volum de la música:"
+
+#: gui/options.cpp:834
 msgid "Mute All"
 msgstr "Silenciar tot"
 
-#: gui/options.cpp:819
+#: gui/options.cpp:837
 msgid "SFX volume:"
 msgstr "Volum dels efectes:"
 
-#: gui/options.cpp:819 gui/options.cpp:820
+#: gui/options.cpp:837 gui/options.cpp:839 gui/options.cpp:840
 msgid "Special sound effects volume"
 msgstr "Volum dels sons d'efectes especials"
 
-#: gui/options.cpp:826
+#: gui/options.cpp:839
+#, fuzzy
+msgctxt "lowres"
+msgid "SFX volume:"
+msgstr "Volum dels efectes:"
+
+#: gui/options.cpp:847
 msgid "Speech volume:"
 msgstr "Volum de la veu:"
 
-#: gui/options.cpp:952
+#: gui/options.cpp:849
+#, fuzzy
+msgctxt "lowres"
+msgid "Speech volume:"
+msgstr "Volum de la veu:"
+
+#: gui/options.cpp:978
 msgid "Save Path: "
 msgstr "Camí de les Partides: "
 
-#: gui/options.cpp:955
+#: gui/options.cpp:981
 msgid "Theme Path:"
 msgstr "Camí dels Temes:"
 
-#: gui/options.cpp:958 gui/options.cpp:959
+#: gui/options.cpp:984 gui/options.cpp:985
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
 "Especifica el camí de les dades addicionals utilitzades per tots els jocs o "
 "pel ScummVM"
 
-#: gui/options.cpp:962
+#: gui/options.cpp:988
 msgid "Plugins Path:"
 msgstr "Camí dels connectors:"
 
-#: gui/options.cpp:970
+#: gui/options.cpp:997
 msgid "Misc"
 msgstr "Misc"
 
-#: gui/options.cpp:972
+#: gui/options.cpp:999
+#, fuzzy
+msgctxt "lowres"
+msgid "Misc"
+msgstr "Misc"
+
+#: gui/options.cpp:1001
 msgid "Theme:"
 msgstr "Tema:"
 
-#: gui/options.cpp:976
+#: gui/options.cpp:1005
 msgid "GUI Renderer:"
 msgstr "Mode de pintat de la interfície d'usuari:"
 
-#: gui/options.cpp:982
+#: gui/options.cpp:1017
 msgid "Autosave:"
 msgstr "Desat automàtic:"
 
-#: gui/options.cpp:990
+#: gui/options.cpp:1019
+#, fuzzy
+msgctxt "lowres"
+msgid "Autosave:"
+msgstr "Desat automàtic:"
+
+#: gui/options.cpp:1027
 msgid "Keys"
 msgstr "Tecles"
 
-#: gui/options.cpp:997
+#: gui/options.cpp:1034
 msgid "GUI Language:"
 msgstr "Idioma de la interfície d'usuari:"
 
-#: gui/options.cpp:997
+#: gui/options.cpp:1034
 msgid "Language of ScummVM GUI"
 msgstr "Idioma de la interfície d'usuari de ScummVM"
 
-#: gui/options.cpp:1002
-msgid "English"
-msgstr "Anglès"
-
-#: gui/options.cpp:1146
+#: gui/options.cpp:1183
 msgid "You have to restart ScummVM to take the effect."
 msgstr "Heu de reiniciar ScummVM perquè tots els canvis tingui efecte."
 
-#: gui/options.cpp:1159
+#: gui/options.cpp:1196
 msgid "Select directory for savegames"
 msgstr "Seleccioneu el directori de les partides desades"
 
-#: gui/options.cpp:1166
+#: gui/options.cpp:1203
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 "No es pot escriure al directori seleccionat. Si us plau, escolliu-ne un "
 "altre."
 
-#: gui/options.cpp:1175
+#: gui/options.cpp:1212
 msgid "Select directory for GUI themes"
 msgstr "Seleccioneu el directori dels temes de la Interfície d'Usuari"
 
-#: gui/options.cpp:1185
+#: gui/options.cpp:1222
 msgid "Select directory for extra files"
 msgstr "Seleccioneu el directori dels fitxers extra"
 
-#: gui/options.cpp:1196
+#: gui/options.cpp:1233
 msgid "Select directory for plugins"
 msgstr "Seleccioneu el directori dels connectors"
 
@@ -765,6 +906,18 @@ msgid "Standard Renderer (16bpp)"
 msgstr "Pintat estàndard (16bpp)"
 
 #: gui/ThemeEngine.cpp:337
+msgid "Antialiased Renderer (16bpp)"
+msgstr "Pintat amb antialias (16bpp)"
+
+#: gui/ThemeEngine.cpp:341
+#, fuzzy
+msgctxt "lowres"
+msgid "Standard Renderer (16bpp)"
+msgstr "Pintat estàndard (16bpp)"
+
+#: gui/ThemeEngine.cpp:342
+#, fuzzy
+msgctxt "lowres"
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Pintat amb antialias (16bpp)"
 
@@ -860,6 +1013,18 @@ msgstr "Hercules Verd"
 msgid "Hercules Amber"
 msgstr "Hercules Àmbar"
 
+#: common/util.cpp:262
+#, fuzzy
+msgctxt "lowres"
+msgid "Hercules Green"
+msgstr "Hercules Verd"
+
+#: common/util.cpp:263
+#, fuzzy
+msgctxt "lowres"
+msgid "Hercules Amber"
+msgstr "Hercules Àmbar"
+
 #: engines/dialogs.cpp:89
 msgid "~R~esume"
 msgstr "~C~ontinua"
@@ -884,15 +1049,21 @@ msgstr "~A~juda"
 msgid "~A~bout"
 msgstr "~Q~uant a"
 
-#: engines/dialogs.cpp:109
+#: engines/dialogs.cpp:110
 msgid "~R~eturn to Launcher"
 msgstr "~R~etorna al Llançador"
 
-#: engines/dialogs.cpp:119
+#: engines/dialogs.cpp:112
+#, fuzzy
+msgctxt "lowres"
+msgid "~R~eturn to Launcher"
+msgstr "~R~etorna al Llançador"
+
+#: engines/dialogs.cpp:122
 msgid "Save game:"
 msgstr "Desa la partida:"
 
-#: engines/dialogs.cpp:119 backends/platform/symbian/src/SymbianActions.cpp:47
+#: engines/dialogs.cpp:122 backends/platform/symbian/src/SymbianActions.cpp:47
 #: backends/platform/wince/CEActionsPocket.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:263
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
@@ -900,17 +1071,17 @@ msgstr "Desa la partida:"
 msgid "Save"
 msgstr "Desa"
 
-#: engines/dialogs.cpp:301 engines/mohawk/dialogs.cpp:84
+#: engines/dialogs.cpp:304 engines/mohawk/dialogs.cpp:84
 #: engines/mohawk/dialogs.cpp:118
 msgid "~O~K"
 msgstr "~D~'acord"
 
-#: engines/dialogs.cpp:302 engines/mohawk/dialogs.cpp:85
+#: engines/dialogs.cpp:305 engines/mohawk/dialogs.cpp:85
 #: engines/mohawk/dialogs.cpp:119
 msgid "~C~ancel"
 msgstr "~C~ancel·la"
 
-#: engines/dialogs.cpp:305
+#: engines/dialogs.cpp:308
 msgid "~K~eys"
 msgstr "~T~ecles"
 
@@ -951,8 +1122,22 @@ msgstr "Emulador OPL de DOSBox"
 msgid "No music"
 msgstr "Sense música"
 
+#: sound/mods/paula.cpp:192
+#, fuzzy
+msgid "Amiga Audio Emulator"
+msgstr "Emulador d'AdLib"
+
 #: sound/softsynth/adlib.cpp:1590
 msgid "AdLib Emulator"
+msgstr "Emulador d'AdLib"
+
+#: sound/softsynth/appleiigs.cpp:36
+msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
+msgstr ""
+
+#: sound/softsynth/sid.cpp:1434
+#, fuzzy
+msgid "C64 Audio Emulator"
 msgstr "Emulador d'AdLib"
 
 #: sound/softsynth/mt32.cpp:327
@@ -1078,6 +1263,12 @@ msgstr "Mode Touchpad desactivat."
 #: backends/platform/sdl/graphics.cpp:40
 #: backends/platform/wince/wince-sdl.cpp:111
 #: backends/platform/wince/wince-sdl.cpp:118
+msgid "Normal (no scaling)"
+msgstr "Normal (sense escalar)"
+
+#: backends/platform/sdl/graphics.cpp:59
+#, fuzzy
+msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal (sense escalar)"
 
@@ -1245,47 +1436,47 @@ msgstr "Munta SMB"
 msgid "Unmount SMB"
 msgstr "Desmunta SMB"
 
-#: backends/platform/wii/options.cpp:145
+#: backends/platform/wii/options.cpp:143
 msgid "DVD Mounted successfully"
 msgstr "El DVD s'ha muntat satisfactòriament"
 
-#: backends/platform/wii/options.cpp:148
+#: backends/platform/wii/options.cpp:146
 msgid "Error while mounting the DVD"
 msgstr "Error al muntar el DVD"
 
-#: backends/platform/wii/options.cpp:150
+#: backends/platform/wii/options.cpp:148
 msgid "DVD not mounted"
 msgstr "El DVD no està muntat"
 
-#: backends/platform/wii/options.cpp:163
+#: backends/platform/wii/options.cpp:161
 msgid "Network up, share mounted"
 msgstr "Xarxa activa, compartició muntada"
 
-#: backends/platform/wii/options.cpp:165
+#: backends/platform/wii/options.cpp:163
 msgid "Network up"
 msgstr "Xarxa activa"
 
-#: backends/platform/wii/options.cpp:168
+#: backends/platform/wii/options.cpp:166
 msgid ", error while mounting the share"
 msgstr ", error al muntar la compartició"
 
-#: backends/platform/wii/options.cpp:170
+#: backends/platform/wii/options.cpp:168
 msgid ", share not mounted"
 msgstr ", compartició no muntada"
 
-#: backends/platform/wii/options.cpp:176
+#: backends/platform/wii/options.cpp:174
 msgid "Network down"
 msgstr "Xarxa inactiva"
 
-#: backends/platform/wii/options.cpp:180
+#: backends/platform/wii/options.cpp:178
 msgid "Initialising network"
 msgstr "Iniciant la xarxa"
 
-#: backends/platform/wii/options.cpp:184
+#: backends/platform/wii/options.cpp:182
 msgid "Timeout while initialising network"
 msgstr ""
 
-#: backends/platform/wii/options.cpp:188
+#: backends/platform/wii/options.cpp:186
 #, c-format
 msgid "Network not initialsed (%d)"
 msgstr "Xarxa no iniciada (%d)"
@@ -1372,6 +1563,14 @@ msgstr "Pantalla"
 #: backends/platform/wince/CELauncherDialog.cpp:104
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Voleu fer una cerca automàtica?"
+
+#, fuzzy
+#~ msgctxt "lowres"
+#~ msgid "Special sound effects volume"
+#~ msgstr "Volum dels sons d'efectes especials"
+
+#~ msgid "English"
+#~ msgstr "Anglès"
 
 #~ msgid "Failed to load any GUI theme, aborting"
 #~ msgstr "No s'ha pogut carregar cap tema de la interfície d'usuari, avortant"

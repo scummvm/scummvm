@@ -226,17 +226,26 @@ BufferedReadStream::BufferedReadStream(ReadStream *parentStream, uint32 bufSize,
 	: _parentStream(parentStream),
 	_disposeParentStream(disposeParentStream),
 	_pos(0),
+	_eos(false),
 	_bufSize(0),
 	_realBufSize(bufSize) {
 
 	assert(parentStream);
-	_buf = new byte[bufSize];
+	allocBuf(bufSize);
 	assert(_buf);
+}
+
+void BufferedReadStream::allocBuf(uint32 bufSize) {
+	_buf = new byte[bufSize];
 }
 
 BufferedReadStream::~BufferedReadStream() {
 	if (_disposeParentStream)
 		delete _parentStream;
+	deallocBuf();
+}
+
+void BufferedReadStream::deallocBuf() {
 	delete[] _buf;
 }
 
@@ -259,8 +268,12 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 
 		// At this point the buffer is empty. Now if the read request
 		// exceeds the buffer size, just satisfy it directly.
-		if (dataSize > _bufSize)
-			return alreadyRead + _parentStream->read(dataPtr, dataSize);
+		if (dataSize > _realBufSize) {
+			uint32 n = _parentStream->read(dataPtr, dataSize);
+			if (_parentStream->eos())
+				_eos = true;
+			return alreadyRead + n;
+		}
 
 		// Refill the buffer.
 		// If we didn't read as many bytes as requested, the reason
@@ -269,13 +282,19 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 		// return to the caller.
 		_bufSize = _parentStream->read(_buf, _realBufSize);
 		_pos = 0;
-		if (dataSize > _bufSize)
+		if (_bufSize < dataSize) {
+			// we didn't get enough data from parent
+			if (_parentStream->eos())
+				_eos = true;
 			dataSize = _bufSize;
+		}
 	}
 
-	// Satisfy the request from the buffer
-	memcpy(dataPtr, _buf + _pos, dataSize);
-	_pos += dataSize;
+	if (dataSize) {
+		// Satisfy the request from the buffer
+		memcpy(dataPtr, _buf + _pos, dataSize);
+		_pos += dataSize;
+	}	
 	return alreadyRead + dataSize;
 }
 
@@ -289,18 +308,84 @@ bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 	// in the buffer only.
 	// Note: We could try to handle SEEK_END and SEEK_SET, too, but
 	// since they are rarely used, it seems not worth the effort.
+	_eos = false;	// seeking always cancels EOS
+	
 	if (whence == SEEK_CUR && (int)_pos + offset >= 0 && _pos + offset <= _bufSize) {
 		_pos += offset;
+
+		// Note: we do not need to reset parent's eos flag here. It is
+		// sufficient that it is reset when actually seeking in the parent.
 	} else {
 		// Seek was not local enough, so we reset the buffer and
-		// just seeks normally in the parent stream.
+		// just seek normally in the parent stream.
 		if (whence == SEEK_CUR)
 			offset -= (_bufSize - _pos);
 		_pos = _bufSize;
 		_parentStream->seek(offset, whence);
 	}
 
-	return true;	// FIXME: STREAM REWRITE
+	return true;
+}
+
+BufferedWriteStream::BufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
+	: _parentStream(parentStream),
+	_disposeParentStream(disposeParentStream),
+	_pos(0),
+	_bufSize(bufSize) {
+
+	assert(parentStream);
+	allocBuf(bufSize);
+	assert(_buf);
+}
+
+BufferedWriteStream::~BufferedWriteStream() {
+	assert(flush());
+	
+	if (_disposeParentStream)
+		delete _parentStream;
+		
+	deallocBuf();
+}
+
+void BufferedWriteStream::allocBuf(uint32 bufSize) {
+	_buf = new byte[bufSize];
+}
+
+void BufferedWriteStream::deallocBuf() {
+	delete[] _buf;
+}
+
+uint32 BufferedWriteStream::write(const void *dataPtr, uint32 dataSize) {
+	// check if we have enough space for writing to the buffer
+	if (_bufSize - _pos >= dataSize) {
+		memcpy(_buf + _pos, dataPtr, dataSize);
+		_pos += dataSize;			
+	} else if (_bufSize >= dataSize) {	// check if we can flush the buffer and load the data
+		// flush the buffer
+		assert(flushBuffer());
+		memcpy(_buf, dataPtr, dataSize);
+		_pos += dataSize;
+	} else	{	// too big for our buffer
+		// flush the buffer
+		assert(flushBuffer());			
+		return _parentStream->write(dataPtr, dataSize);
+	}
+	return dataSize;
+}
+
+bool BufferedWriteStream::flushBuffer() {
+	uint32 bytesToWrite = _pos;
+	
+	if (bytesToWrite) {
+		_pos = 0;
+		if (_parentStream->write(_buf, bytesToWrite) != bytesToWrite)
+			return false;
+	}
+	return true;
+}
+
+bool BufferedWriteStream::flush() {
+	return flushBuffer();
 }
 
 bool MemoryWriteStreamDynamic::seek(int32 offs, int whence) {

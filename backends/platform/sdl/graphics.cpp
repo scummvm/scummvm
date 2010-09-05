@@ -56,6 +56,8 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
+DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Normal (no scaling)", "lowres")
+
 // Table of relative scalers magnitudes
 // [definedScale - 1][scaleFactor - 1]
 static ScalerProc *scalersMagn[3][3] = {
@@ -537,7 +539,7 @@ bool OSystem_SDL::loadGFXMode() {
 	assert(_inited);
 	_forceFull = true;
 
-#if !defined(__MAEMO__) && !defined(GP2XWIZ) && !defined(LINUXMOTO)
+#if !defined(__MAEMO__) && !defined(GP2XWIZ) && !defined(LINUXMOTO) && !defined(DINGUX)
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
@@ -1393,9 +1395,11 @@ void OSystem_SDL::setMousePos(int x, int y) {
 void OSystem_SDL::warpMouse(int x, int y) {
 	int y1 = y;
 
-	// Don't change mouse position, when mouse is outside of our window (in case of windowed mode)
-	if (!(SDL_GetAppState( ) & SDL_APPMOUSEFOCUS))
+	// Don't change actual mouse position, when mouse is outside of our window (in case of windowed mode)
+	if (!(SDL_GetAppState( ) & SDL_APPMOUSEFOCUS)) {
+		setMousePos(x, y); // but change game cursor position
 		return;
+	}
 
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 		y1 = real2Aspect(y);

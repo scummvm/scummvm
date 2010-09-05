@@ -194,7 +194,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NOSPEECH
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIAMIGA
 		},
 		KYRA1_AMIGA_FLAGS
 	},
@@ -211,7 +211,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NOSPEECH
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIAMIGA
 		},
 		KYRA1_AMIGA_FLAGS
 	},

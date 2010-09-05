@@ -519,12 +519,12 @@ bool SoundMidiPC::init() {
 	if (_nativeMT32 && _type == kMidiMT32) {
 		const char *midiFile = 0;
 		const char *pakFile = 0;
-		if (_vm->gameFlags().gameID == GI_KYRA1) {
+		if (_vm->game() == GI_KYRA1) {
 			midiFile = "INTRO";
-		} else if (_vm->gameFlags().gameID == GI_KYRA2) {
+		} else if (_vm->game() == GI_KYRA2) {
 			midiFile = "HOF_SYX";
 			pakFile = "AUDIO.PAK";
-		} else if (_vm->gameFlags().gameID == GI_LOL) {
+		} else if (_vm->game() == GI_LOL) {
 			midiFile = "LOREINTR";
 
 			if (_vm->gameFlags().isDemo) {
@@ -618,7 +618,7 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 
 	// Since KYRA1 uses the same file for SFX and Music
 	// we setup sfx to play from music file as well
-	if (_vm->gameFlags().gameID == GI_KYRA1) {
+	if (_vm->game() == GI_KYRA1) {
 		for (int i = 0; i < 3; ++i) {
 			_output->setSoundSource(i+1);
 			_sfx[i]->loadMusic(_musicFile, fileSize);
@@ -631,7 +631,7 @@ void SoundMidiPC::loadSfxFile(Common::String file) {
 	Common::StackLock lock(_mutex);
 
 	// Kyrandia 1 doesn't use a special sfx file
-	if (_vm->gameFlags().gameID == GI_KYRA1)
+	if (_vm->game() == GI_KYRA1)
 		return;
 
 	file = getFileName(file);

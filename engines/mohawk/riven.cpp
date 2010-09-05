@@ -44,6 +44,7 @@ Common::Rect *g_cathJournalRect2;
 Common::Rect *g_atrusJournalRect3;
 Common::Rect *g_cathJournalRect3;
 Common::Rect *g_trapBookRect3;
+Common::Rect *g_demoExitRect;
 
 MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
 	_showHotspots = false;
@@ -73,6 +74,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	g_atrusJournalRect3 = new Common::Rect(222, 402, 240, 426);
 	g_cathJournalRect3 = new Common::Rect(291, 408, 311, 419);
 	g_trapBookRect3 = new Common::Rect(363, 396, 386, 432);
+	g_demoExitRect = new Common::Rect(291, 408, 317, 419);
 }
 
 MohawkEngine_Riven::~MohawkEngine_Riven() {
@@ -92,12 +94,12 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete g_atrusJournalRect3;
 	delete g_cathJournalRect3;
 	delete g_trapBookRect3;
+	delete g_demoExitRect;
 }
 
 GUI::Debugger *MohawkEngine_Riven::getDebugger() {
 	return _console;
 }
-
 
 Common::Error MohawkEngine_Riven::run() {
 	MohawkEngine::run();
@@ -114,124 +116,133 @@ Common::Error MohawkEngine_Riven::run() {
 
 	initVars();
 
-	// Open extras.mhk for common images (non-existant in the demo)
-	if (!(getFeatures() & GF_DEMO)) {
-		_extrasFile = new MohawkArchive();
-		_extrasFile->open("extras.mhk");
-	}
+	// Open extras.mhk for common images
+	_extrasFile = new MohawkArchive();
+	_extrasFile->open("extras.mhk");
 
 	// Start at main cursor
 	_gfx->changeCursor(kRivenMainCursor);
 
-	// Load game from launcher/command line if requested
-	if (ConfMan.hasKey("save_slot") && !(getFeatures() & GF_DEMO)) {
+	// Let's begin, shall we?
+	if (getFeatures() & GF_DEMO) {
+		// Start the demo off with the videos
+		changeToStack(aspit);
+		changeToCard(6);
+	} else if (ConfMan.hasKey("save_slot")) {
+		// Load game from launcher/command line if requested
 		uint32 gameToLoad = ConfMan.getInt("save_slot");
 		Common::StringArray savedGamesList = _saveLoad->generateSaveGameList();
 		if (gameToLoad > savedGamesList.size())
 			error ("Could not find saved game");
 		_saveLoad->loadGame(savedGamesList[gameToLoad]);
-	} else { // Otherwise, start us off at aspit's card 1
+	} else {
+		// Otherwise, start us off at aspit's card 1 (the main menu)
         changeToStack(aspit);
 		changeToCard(1);
 	}
 
+	
+	while (!_gameOver && !shouldQuit())
+		handleEvents();
+
+	return Common::kNoError;
+}
+
+void MohawkEngine_Riven::handleEvents() {
 	Common::Event event;
-	while (!_gameOver) {
-		bool needsUpdate = _gfx->runScheduledWaterEffects();
-		needsUpdate |= _video->updateBackgroundMovies();
 
-		while (_eventMan->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_MOUSEMOVE:
-				_mousePos = event.mouse;
-				checkHotspotChange();
+	// Update background videos and the water effect
+	bool needsUpdate = _gfx->runScheduledWaterEffects();
+	needsUpdate |= _video->updateBackgroundMovies();
 
-				// Check to show the inventory
-				if (_mousePos.y >= 392)
+	while (_eventMan->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_MOUSEMOVE:
+			checkHotspotChange();
+
+			if (!(getFeatures() & GF_DEMO)) {
+				// Check to show the inventory, but it is always "showing" in the demo
+				if (_eventMan->getMousePos().y >= 392)
 					_gfx->showInventory();
 				else
 					_gfx->hideInventory();
+			}
 
-				needsUpdate = true;
-				break;
-			case Common::EVENT_LBUTTONDOWN:
+			needsUpdate = true;
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+			if (_curHotspot >= 0)
+				runHotspotScript(_curHotspot, kMouseDownScript);
+			break;
+		case Common::EVENT_LBUTTONUP:
+			// See RivenScript::switchCard() for more information on why we sometimes
+			// disable the next up event.
+			if (!_ignoreNextMouseUp) {
 				if (_curHotspot >= 0)
-					runHotspotScript(_curHotspot, kMouseDownScript);
-				break;
-			case Common::EVENT_LBUTTONUP:
-				// See RivenScript::switchCard() for more information on why we sometimes
-				// disable the next up event.
-				if (!_ignoreNextMouseUp) {
-					if (_curHotspot >= 0)
-						runHotspotScript(_curHotspot, kMouseUpScript);
-					else
-						checkInventoryClick();
+					runHotspotScript(_curHotspot, kMouseUpScript);
+				else
+					checkInventoryClick();
+			}
+			_ignoreNextMouseUp = false;
+			break;
+		case Common::EVENT_KEYDOWN:
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_d:
+				if (event.kbd.flags & Common::KBD_CTRL) {
+					_console->attach();
+					_console->onFrame();
 				}
-				_ignoreNextMouseUp = false;
 				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_d:
-					if (event.kbd.flags & Common::KBD_CTRL) {
-						_console->attach();
-						_console->onFrame();
-					}
-					break;
-				case Common::KEYCODE_SPACE:
-					pauseGame();
-					break;
-				case Common::KEYCODE_F4:
-					_showHotspots = !_showHotspots;
-					if (_showHotspots) {
-						for (uint16 i = 0; i < _hotspotCount; i++)
-							_gfx->drawRect(_hotspots[i].rect, _hotspots[i].enabled);
-						needsUpdate = true;
-					} else
-						refreshCard();
-					break;
-				case Common::KEYCODE_F5:
-					runDialog(*_optionsDialog);
-					updateZipMode();
-					break;
-				case Common::KEYCODE_ESCAPE:
-					if (getFeatures() & GF_DEMO) {
-						if (_curStack != aspit)
-							changeToStack(aspit);
-						changeToCard(1);
-					}
-					break;
-				default:
-					break;
+			case Common::KEYCODE_SPACE:
+				pauseGame();
+				break;
+			case Common::KEYCODE_F4:
+				_showHotspots = !_showHotspots;
+				if (_showHotspots) {
+					for (uint16 i = 0; i < _hotspotCount; i++)
+						_gfx->drawRect(_hotspots[i].rect, _hotspots[i].enabled);
+					needsUpdate = true;
+				} else
+					refreshCard();
+				break;
+			case Common::KEYCODE_F5:
+				runDialog(*_optionsDialog);
+				updateZipMode();
+				break;
+			case Common::KEYCODE_r:
+				// Return to the main menu in the demo on ctrl+r
+				if (event.kbd.flags & Common::KBD_CTRL && getFeatures() & GF_DEMO) {
+					if (_curStack != aspit)
+						changeToStack(aspit);
+					changeToCard(1);
+				}
+				break;
+			case Common::KEYCODE_p:
+				// Play the intro videos in the demo on ctrl+p
+				if (event.kbd.flags & Common::KBD_CTRL && getFeatures() & GF_DEMO) {
+					if (_curStack != aspit)
+						changeToStack(aspit);
+					changeToCard(6);
 				}
 				break;
 			default:
 				break;
 			}
+			break;
+		default:
+			break;
 		}
-
-		if (_curHotspot >= 0)
-			runHotspotScript(_curHotspot, kMouseInsideScript);
-
-		if (shouldQuit()) {
-			if (_eventMan->shouldRTL() && (getFeatures() & GF_DEMO) && !(_curStack == aspit && _curCard == 12)) {
-				if (_curStack != aspit)
-					changeToStack(aspit);
-				changeToCard(12);
-				_eventMan->resetRTL();
-				continue;
-			}
-			return Common::kNoError;
-		}
-
-		// Update the screen if we need to
-		if (needsUpdate)
-			_system->updateScreen();
-
-		// Cut down on CPU usage
-		_system->delayMillis(10);
 	}
 
-	return Common::kNoError;
+	if (_curHotspot >= 0)
+		runHotspotScript(_curHotspot, kMouseInsideScript);
+
+	// Update the screen if we need to
+	if (needsUpdate)
+		_system->updateScreen();
+
+	// Cut down on CPU usage
+	_system->delayMillis(10);
 }
 
 // Stack/Card-Related Functions
@@ -379,11 +390,10 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 	
 	// NOTE: The hotspot scripts are cleared by the RivenScriptManager automatically.
 
-	Common::SeekableReadStream* inStream = getRawData(ID_HSPT, id);
+	Common::SeekableReadStream *inStream = getRawData(ID_HSPT, id);
 
 	_hotspotCount = inStream->readUint16BE();
 	_hotspots = new RivenHotspot[_hotspotCount];
-
 
 	for (uint16 i = 0; i < _hotspotCount; i++) {
 		_hotspots[i].enabled = true;
@@ -396,26 +406,21 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 		int16 right = inStream->readSint16BE();
 		int16 bottom = inStream->readSint16BE();
 
-		// Riven has some weird hotspots, disable them here
+		// Riven has some invalid rects, disable them here
+		// Known weird hotspots:
+		// - tspit 371 (DVD: 377), hotspot 4
 		if (left >= right || top >= bottom) {
-			left = top = right = bottom = 0;
-			_hotspots[i].enabled = 0;
+			warning("%s %d hotspot %d is invalid: (%d, %d, %d, %d)", getStackName(_curStack).c_str(), _curCard, i, left, top, right, bottom);
+			left = top = right = bottom = 0; 	 
+			_hotspots[i].enabled = 0; 	 
 		}
 
 		_hotspots[i].rect = Common::Rect(left, top, right, bottom);
 
 		_hotspots[i].u0 = inStream->readUint16BE();
-
-		if (_hotspots[i].u0 != 0)
-			warning("Hotspot %d u0 non-zero", i);
-
 		_hotspots[i].mouse_cursor = inStream->readUint16BE();
 		_hotspots[i].index = inStream->readUint16BE();
 		_hotspots[i].u1 = inStream->readSint16BE();
-
-		if (_hotspots[i].u1 != -1)
-			warning("Hotspot %d u1 not -1", i);
-
 		_hotspots[i].zipModeHotspot = inStream->readUint16BE();
 
 		// Read in the scripts now
@@ -431,7 +436,7 @@ void MohawkEngine_Riven::updateZipMode() {
 
 	for (uint32 i = 0; i < _hotspotCount; i++) {
 		if (_hotspots[i].zipModeHotspot) {
-			if (*matchVarToString("azip") != 0) {
+			if (*getVar("azip") != 0) {
 				// Check if a zip mode hotspot is enabled by checking the name/id against the ZIPS records.
 				Common::String hotspotName = getName(HotspotNames, _hotspots[i].name_resource);
 
@@ -455,7 +460,7 @@ void MohawkEngine_Riven::checkHotspotChange() {
 	uint16 hotspotIndex = 0;
 	bool foundHotspot = false;
 	for (uint16 i = 0; i < _hotspotCount; i++)
-		if (_hotspots[i].enabled && _hotspots[i].rect.contains(_mousePos)) {
+		if (_hotspots[i].enabled && _hotspots[i].rect.contains(_eventMan->getMousePos())) {
 			foundHotspot = true;
 			hotspotIndex = i;
 		}
@@ -481,50 +486,71 @@ Common::String MohawkEngine_Riven::getHotspotName(uint16 hotspot) {
 }
 
 void MohawkEngine_Riven::checkInventoryClick() {
+	Common::Point mousePos = _eventMan->getMousePos();
+
 	// Don't even bother. We're not in the inventory portion of the screen.
-	if (_mousePos.y < 392)
+	if (mousePos.y < 392)
 		return;
 
-	// No inventory in the demo or opening screens.
-	if (getFeatures() & GF_DEMO || _curStack == aspit)
+	// In the demo, check if we've clicked the exit button
+	if (getFeatures() & GF_DEMO) {
+		if (g_demoExitRect->contains(mousePos)) {
+			if (_curStack == aspit && _curCard == 1) {
+				// From the main menu, go to the "quit" screen
+				changeToCard(12);
+			} else if (_curStack == aspit && _curCard == 12) {
+				// From the "quit" screen, just quit
+				_gameOver = true;
+			} else {
+				// Otherwise, return to the main menu
+				if (_curStack != aspit)
+					changeToStack(aspit);
+				changeToCard(1);
+			}
+		}
+		return;
+	}
+
+	// No inventory shown on aspit
+	if (_curStack == aspit)
 		return;
 
 	// Set the return stack/card id's.
-	*matchVarToString("returnstackid") = _curStack;
-	*matchVarToString("returncardid") = _curCard;
+	*getVar("returnstackid") = _curStack;
+	*getVar("returncardid") = _curCard;
 
 	// See RivenGraphics::showInventory() for an explanation
 	// of the variables' meanings.
-	bool hasCathBook = *matchVarToString("acathbook") != 0;
-	bool hasTrapBook = *matchVarToString("atrapbook") != 0;
+	bool hasCathBook = *getVar("acathbook") != 0;
+	bool hasTrapBook = *getVar("atrapbook") != 0;
 
 	// Go to the book if a hotspot contains the mouse
 	if (!hasCathBook) {
-		if (g_atrusJournalRect1->contains(_mousePos)) {
+		if (g_atrusJournalRect1->contains(mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(5);
 		}
 	} else if (!hasTrapBook) {
-		if (g_atrusJournalRect2->contains(_mousePos)) {
+		if (g_atrusJournalRect2->contains(mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(5);
-		} else if (g_cathJournalRect2->contains(_mousePos)) {
+		} else if (g_cathJournalRect2->contains(mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(6);
 		}
 	} else {
-		if (g_atrusJournalRect3->contains(_mousePos)) {
+		if (g_atrusJournalRect3->contains(mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(5);
-		} else if (g_cathJournalRect3->contains(_mousePos)) {
+		} else if (g_cathJournalRect3->contains(mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(6);
-		} else if (g_trapBookRect3->contains(_mousePos)) {
+		} else if (g_trapBookRect3->contains(mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(7);
@@ -607,6 +633,24 @@ void MohawkEngine_Riven::runHotspotScript(uint16 hotspot, uint16 scriptType) {
 		}
 }
 
+void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
+	uint32 startTime = _system->getMillis();
+
+	while (_system->getMillis() < startTime + ms && !shouldQuit()) {
+		bool needsUpdate = _gfx->runScheduledWaterEffects();
+		needsUpdate |= _video->updateBackgroundMovies();
+
+		Common::Event event;
+		while (_system->getEventManager()->pollEvent(event))
+			;
+
+		if (needsUpdate)
+			_system->updateScreen();
+
+		_system->delayMillis(10); // Ease off the CPU
+	}
+}
+
 void MohawkEngine_Riven::runLoadDialog() {
 	GUI::SaveLoadChooser slc("Load Game:", "Load");
 	slc.setSaveMode(false);
@@ -636,19 +680,19 @@ Common::Error MohawkEngine_Riven::saveGameState(int slot, const char *desc) {
 	return _saveLoad->saveGame(Common::String(desc)) ? Common::kNoError : Common::kUnknownError;
 }
 
-static const char *rivenStackNames[] = {
-	"aspit",
-	"bspit",
-	"gspit",
-	"jspit",
-	"ospit",
-	"pspit",
-	"rspit",
-	"tspit"
-};
+Common::String MohawkEngine_Riven::getStackName(uint16 stack) const {
+	static const char *rivenStackNames[] = {
+		"aspit",
+		"bspit",
+		"gspit",
+		"jspit",
+		"ospit",
+		"pspit",
+		"rspit",
+		"tspit"
+	};
 
-Common::String MohawkEngine_Riven::getStackName(uint16 stack) {
-	return Common::String(rivenStackNames[stack]);
+	return rivenStackNames[stack];
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

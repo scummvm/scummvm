@@ -42,6 +42,10 @@ ifeq "$(HAVE_CLANG)" "1"
 	CXXFLAGS+= -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants
 endif
 
+# Warn if global constructors are used. Only available in GCC with LLVM backend
+# (and maybe clang?), hence off by default.
+#CXXFLAGS+= -Wglobal-constructors
+
 #######################################################################
 # Default commands - put the necessary replacements in config.mk      #
 #######################################################################

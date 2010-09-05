@@ -46,12 +46,13 @@ reg_t kSetMenu(EngineState *s, int argc, reg_t *argv) {
 	uint16 itemId = argv[0].toUint16() & 0xFF;
 	uint16 attributeId;
 	int argPos = 1;
+	reg_t value;
 
 	while (argPos < argc) {
 		attributeId = argv[argPos].toUint16();
-		if ((argPos + 1) >= argc)
-			error("Too few parameters for kSetMenu");
-		g_sci->_gfxMenu->kernelSetAttribute(menuId, itemId, attributeId, argv[argPos + 1]);
+		// Happens in the fanmade game Cascade Quest when loading - bug #3038767
+		value = (argPos + 1 < argc) ? argv[argPos + 1] : NULL_REG;
+		g_sci->_gfxMenu->kernelSetAttribute(menuId, itemId, attributeId, value);
 		argPos += 2;
 	}
 	return s->r_acc;
@@ -75,6 +76,11 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 	if (!textReference.isNull()) {
 		// Sometimes this is called without giving text, if thats the case dont process it.
 		text = s->_segMan->getString(textReference);
+
+		if (text == "Replaying sound") {
+			// Happens in the fanmade game Cascade Quest when loading - ignore it
+			return s->r_acc;
+		}
 
 		g_sci->_gfxMenu->kernelDrawStatus(g_sci->strSplit(text.c_str(), NULL).c_str(), colorPen, colorBack);
 	}

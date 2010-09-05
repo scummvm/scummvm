@@ -70,6 +70,7 @@ class CharsetRenderer;
 class IMuse;
 class IMuseDigital;
 class MusicEngine;
+class Player_Towns;
 class ScummEngine;
 class ScummDebugger;
 class Serializer;
@@ -426,6 +427,7 @@ public:
 	IMuse *_imuse;
 	IMuseDigital *_imuseDigital;
 	MusicEngine *_musicEngine;
+	Player_Towns *_townsPlayer;
 	Sound *_sound;
 
 	VerbSlot *_verbs;
@@ -689,7 +691,7 @@ protected:
 	const byte *_scriptPointer, *_scriptOrgPointer;
 	byte _opcode, _currentScript;
 	const byte * const *_lastCodePtr;
-	int _resultVarNumber, _scummStackPos;
+	int _scummStackPos;
 	int _vmStack[150];
 
 	OpcodeEntry _opcodes[256];
@@ -745,8 +747,6 @@ protected:
 	int fetchScriptDWordSigned();
 	void ignoreScriptWord() { fetchScriptWord(); }
 	void ignoreScriptByte() { fetchScriptByte(); }
-	virtual void getResultPos();
-	void setResult(int result);
 	void push(int a);
 	int pop();
 	virtual int readVar(uint var);

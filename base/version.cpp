@@ -24,8 +24,10 @@
  */
 
 #include "common/scummsys.h"
-#include "base/internal_version.h"
 #include "base/version.h"
+
+#define INCLUDED_FROM_BASE_VERSION_CPP
+#include "base/internal_version.h"
 
 /*
  * Version string and build date string. These can be used by anything that

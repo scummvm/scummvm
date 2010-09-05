@@ -33,6 +33,7 @@
 #include "gob/dataio.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/expression.h"
 #include "gob/script.h"
 #include "gob/palanim.h"
 #include "gob/video.h"
@@ -56,6 +57,8 @@ void Inter_Fascination::setupOpcodesDraw() {
 	OPCODEDRAW(0x04, oFascin_closeWin);
 	OPCODEDRAW(0x05, oFascin_activeWin);
 	OPCODEDRAW(0x06, oFascin_openWin);
+
+	OPCODEDRAW(0x08, oFascin_initCursorAnim);
 
 	OPCODEDRAW(0x0A, oFascin_setRenderFlags);
 	OPCODEDRAW(0x0B, oFascin_setWinFlags);
@@ -85,7 +88,8 @@ void Inter_Fascination::setupOpcodesDraw() {
 void Inter_Fascination::setupOpcodesFunc() {
 	Inter_v2::setupOpcodesFunc();
 
-	OPCODEFUNC(0x09, o1_assign);
+	OPCODEFUNC(0x06, oFascin_repeatUntil);
+	OPCODEFUNC(0x09, oFascin_assign);
 	OPCODEFUNC(0x32, oFascin_copySprite);
 }
 
@@ -110,6 +114,89 @@ void Inter_Fascination::setupOpcodesGob() {
 	OPCODEGOB(1002, o2_stopProtracker);
 }
 
+bool Inter_Fascination::oFascin_repeatUntil(OpFuncParams &params) {
+	int16 size;
+	bool flag;
+
+	_nestLevel[0]++;
+
+	uint32 blockPos = _vm->_game->_script->pos();
+
+	do {
+		_vm->_game->_script->seek(blockPos);
+		size = _vm->_game->_script->peekUint16(2) + 2;
+
+		funcBlock(1);
+
+		_vm->_game->_script->seek(blockPos + size + 1);
+
+		flag = _vm->_game->_script->evalBoolResult();
+
+		// WORKAROUND: The script of the PC version of Fascination, when the protection check
+		// fails, writes on purpose everywhere in the memory in order to hang the computer. 
+		// This results in a crash in Scummvm. This workaround avoids that crash.
+		if (_vm->getPlatform() == Common::kPlatformPC) {
+			if ((!scumm_stricmp(_vm->_game->_curTotFile, "INTRO1.TOT") && (blockPos == 3533)) ||
+				(!scumm_stricmp(_vm->_game->_curTotFile, "INTRO2.TOT") && (blockPos == 3519)))
+				_terminate = 1;
+		}
+	} while (!flag && !_break && !_terminate && !_vm->shouldQuit());
+
+	_nestLevel[0]--;
+
+	if (*_breakFromLevel > -1) {
+		_break = false;
+		*_breakFromLevel = -1;
+	}
+	return false;
+}
+
+bool Inter_Fascination::oFascin_assign(OpFuncParams &params) {
+	byte destType = _vm->_game->_script->peekByte();
+	int16 dest = _vm->_game->_script->readVarIndex();
+
+	byte loopCount;
+	if (_vm->_game->_script->peekByte() == 99) {
+		_vm->_game->_script->skip(1);
+		loopCount = _vm->_game->_script->readByte();
+	} else
+		loopCount = 1;
+
+	for (int i = 0; i < loopCount; i++) {
+		int16 result;
+		int16 srcType = _vm->_game->_script->evalExpr(&result);
+
+		switch (destType) {
+		case TYPE_VAR_INT8:
+			if (srcType != TYPE_IMM_INT16) {
+				char* str = _vm->_game->_script->getResultStr();
+				WRITE_VARO_STR(dest, str);
+			} else
+				WRITE_VARO_UINT8(dest + i, _vm->_game->_script->getResultInt());
+			break;
+
+		case TYPE_VAR_INT32_AS_INT16:
+		case TYPE_ARRAY_INT16:
+			WRITE_VARO_UINT16(dest + i * 2, _vm->_game->_script->getResultInt()); 
+			break;
+
+		case TYPE_VAR_INT32:
+		case TYPE_ARRAY_INT32:
+			WRITE_VAR_OFFSET(dest + i * 4, _vm->_game->_script->getResultInt());
+			break;
+
+		case TYPE_VAR_STR:
+		case TYPE_ARRAY_STR:
+			if (srcType == TYPE_IMM_INT16)
+				WRITE_VARO_UINT8(dest, result);
+			else
+				WRITE_VARO_STR(dest, _vm->_game->_script->getResultStr());
+			break;
+		}
+	}
+
+	return false;
+}
 
 bool Inter_Fascination::oFascin_copySprite(OpFuncParams &params) {
 	_vm->_draw->_sourceSurface = _vm->_game->_script->readInt16();
@@ -129,8 +216,6 @@ bool Inter_Fascination::oFascin_copySprite(OpFuncParams &params) {
 }
 
 void Inter_Fascination::oFascin_playTirb(OpGobParams &params) {
-	warning("funcPlayImd with parameter : 'tirb.imd'");
-
 	VideoPlayer::Properties vidProps;
 
 	vidProps.type   = VideoPlayer::kVideoTypePreIMD;
@@ -149,8 +234,6 @@ void Inter_Fascination::oFascin_playTirb(OpGobParams &params) {
 }
 
 void Inter_Fascination::oFascin_playTira(OpGobParams &params) {
-	warning("funcPlayImd with parameter : 'tira.imd'");
-
 	VideoPlayer::Properties vidProps;
 
 	vidProps.type   = VideoPlayer::kVideoTypePreIMD;
@@ -255,6 +338,13 @@ void Inter_Fascination::oFascin_openWin() {
 	WRITE_VAR((retVal / 4), (int32) _vm->_draw->openWin(id));
 }
 
+void Inter_Fascination::oFascin_initCursorAnim() {
+	int16 ind = _vm->_game->_script->readValExpr();
+	_vm->_draw->_cursorAnimLow[ind] = _vm->_game->_script->readInt16();
+	_vm->_draw->_cursorAnimHigh[ind] = _vm->_game->_script->readInt16();
+	_vm->_draw->_cursorAnimDelays[ind] = _vm->_game->_script->readInt16();
+}
+
 void Inter_Fascination::oFascin_setRenderFlags() {
 	int16 expr;
 	_vm->_game->_script->evalExpr(&expr);
@@ -270,4 +360,5 @@ void Inter_Fascination::oFascin_setWinFlags() {
 void Inter_Fascination::oFascin_playProtracker(OpGobParams &params) {
 	_vm->_sound->protrackerPlay("mod.extasy");
 }
+
 } // End of namespace Gob

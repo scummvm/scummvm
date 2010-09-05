@@ -40,6 +40,9 @@ static bool isSaneNodePointer(SegManager *segMan, reg_t addr) {
 			if ((g_sci->getGameId() == GID_ICEMAN) && (g_sci->getEngineState()->currentRoomNumber() == 40)) {
 				// ICEMAN: when plotting course, unDrawLast is called by startPlot::changeState
 				//  there is no previous entry so we get 0 in here
+			} else if ((g_sci->getGameId() == GID_HOYLE1) && (g_sci->getEngineState()->currentRoomNumber() == 3)) {
+				// HOYLE1: after sorting cards in hearts, in the next round
+				// we get an invalid node - bug #3038433
 			} else {
 				error("isSaneNodePointer: Node at %04x:%04x wasn't found", PRINT_REG(addr));
 			}

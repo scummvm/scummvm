@@ -143,8 +143,10 @@ void Surface::fillRect(Common::Rect r, uint32 color) {
 		lineLen *= 2;
 		if ((uint16)color != ((color & 0xff) | (color & 0xff) << 8))
 			useMemset = false;
+	} else if (bytesPerPixel == 4) {
+		useMemset = false;
 	} else if (bytesPerPixel != 1) {
-		error("Surface::fillRect: bytesPerPixel must be 1 or 2");
+		error("Surface::fillRect: bytesPerPixel must be 1, 2 or 4");
 	}
 
 	if (useMemset) {
@@ -154,10 +156,18 @@ void Surface::fillRect(Common::Rect r, uint32 color) {
 			ptr += pitch;
 		}
 	} else {
-		uint16 *ptr = (uint16 *)getBasePtr(r.left, r.top);
-		while (height--) {
-			Common::set_to(ptr, ptr + width, (uint16)color);
-			ptr += pitch/2;
+		if (bytesPerPixel == 2) {
+			uint16 *ptr = (uint16 *)getBasePtr(r.left, r.top);
+			while (height--) {
+				Common::set_to(ptr, ptr + width, (uint16)color);
+				ptr += pitch/2;
+			}
+		} else {
+			uint32 *ptr = (uint32 *)getBasePtr(r.left, r.top);
+			while (height--) {
+				Common::set_to(ptr, ptr + width, color);
+				ptr += pitch / 4;
+			}
 		}
 	}
 }

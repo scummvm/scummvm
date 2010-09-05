@@ -61,10 +61,9 @@ class PSPKeyboard;
 class DisplayManager {
 public:
 	enum GraphicsModeID {			///> Possible output formats onscreen
-		CENTERED_320X200,
-		CENTERED_435X272,
-		STRETCHED_480X272,
-		CENTERED_362X272
+		ORIGINAL_RESOLUTION,
+		KEEP_ASPECT_RATIO,
+		STRETCHED_FULL_SCREEN
 	};
 	DisplayManager() : _screen(0), _cursor(0), _overlay(0), _keyboard(0), _lastUpdateTime(0), _graphicsMode(0) {}
 	~DisplayManager();
@@ -74,7 +73,7 @@ public:
 	bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);
 	int getGraphicsMode() const { return _graphicsMode; }
-	uint32 getDefaultGraphicsMode() const { return STRETCHED_480X272; }
+	uint32 getDefaultGraphicsMode() const { return STRETCHED_FULL_SCREEN; }
 	const OSystem::GraphicsMode* getSupportedGraphicsModes() const { return _supportedModes; }
 
 	// Setters

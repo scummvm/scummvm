@@ -62,7 +62,7 @@ public:
 	void invertRectViaXOR(const Common::Rect &rect);
 	void eraseRect(const Common::Rect &rect);
 	void paintRect(const Common::Rect &rect);
-	void fillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen, byte clrBack = 0, byte bControl = 0);
+	void fillRect(const Common::Rect &rect, int16 drawFlags, byte color, byte priority = 0, byte control = 0);
 	void frameRect(const Common::Rect &rect);
 
 	void bitsShow(const Common::Rect &r);

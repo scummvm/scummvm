@@ -121,6 +121,12 @@ int SoundGenMIDI::open() {
 		return ret;
 
 	_driver->setTimerCallback(this, &onTimer);
+
+	// General MIDI System On message
+	// Resets all GM devices to default settings
+	_driver->sysEx((const byte *)"\x7E\x7F\x09\x01", 4);
+	g_system->delayMillis(20);
+
 	return 0;
 }
 

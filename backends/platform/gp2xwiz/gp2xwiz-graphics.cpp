@@ -35,10 +35,8 @@
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Fullscreen", GFX_NORMAL},
-//	{"½x", "Downscale", GFX_HALF},
 	{0, 0, 0}
 };
-
 
 const OSystem::GraphicsMode *OSystem_GP2XWIZ::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
@@ -111,7 +109,6 @@ void OSystem_GP2XWIZ::setGraphicsModeIntern() {
 	blitCursor();
 }
 
-
 void OSystem_GP2XWIZ::initSize(uint w, uint h) {
 	assert(_transactionMode == kTransactionActive);
 
@@ -131,13 +128,30 @@ void OSystem_GP2XWIZ::initSize(uint w, uint h) {
 }
 
 bool OSystem_GP2XWIZ::loadGFXMode() {
-	_videoMode.overlayWidth = 320;
-	_videoMode.overlayHeight = 240;
-	_videoMode.fullscreen = true;
-
-	if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
+	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
 		_videoMode.aspectRatioCorrection = false;
+		setGraphicsMode(GFX_HALF);
+		printf("GFX_HALF\n");
+	} else {
+		setGraphicsMode(GFX_NORMAL);
+		printf("GFX_NORMAL\n");
+	}
 
+	if ((_videoMode.mode == GFX_HALF) && !_overlayVisible) {
+		_videoMode.overlayWidth = _videoMode.screenWidth / 2;
+		_videoMode.overlayHeight = _videoMode.screenHeight / 2;
+		_videoMode.fullscreen = true;
+	} else {
+
+		_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
+		_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
+
+		if (_videoMode.aspectRatioCorrection)
+			_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
+
+		_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
+		_videoMode.hardwareHeight = effectiveScreenHeight();
+	}
 	return OSystem_SDL::loadGFXMode();
 }
 
@@ -149,6 +163,7 @@ void OSystem_GP2XWIZ::drawMouse() {
 
 	SDL_Rect dst;
 	int scale;
+	int width, height;
 	int hotX, hotY;
 
 	if (_videoMode.mode == GFX_HALF && !_overlayVisible){
@@ -161,12 +176,16 @@ void OSystem_GP2XWIZ::drawMouse() {
 
 	if (!_overlayVisible) {
 		scale = _videoMode.scaleFactor;
+		width = _videoMode.screenWidth;
+		height = _videoMode.screenHeight;
 		dst.w = _mouseCurState.vW;
 		dst.h = _mouseCurState.vH;
 		hotX = _mouseCurState.vHotX;
 		hotY = _mouseCurState.vHotY;
 	} else {
 		scale = 1;
+		width = _videoMode.overlayWidth;
+		height = _videoMode.overlayHeight;
 		dst.w = _mouseCurState.rW;
 		dst.h = _mouseCurState.rH;
 		hotX = _mouseCurState.rHotX;
@@ -231,7 +250,7 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 	ScalerProc *scalerProc;
 	int scale1;
 
-#if defined (DEBUG) && ! defined(_WIN32_WCE) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
+#if defined (DEBUG)
 	assert(_hwscreen != NULL);
 	assert(_hwscreen->map->sw_data != NULL);
 #endif
@@ -295,7 +314,6 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 		width = _videoMode.overlayWidth;
 		height = _videoMode.overlayHeight;
 		scalerProc = Normal1x;
-
 		scale1 = 1;
 	}
 
@@ -358,7 +376,7 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 
 				assert(scalerProc != NULL);
 
-				if (_videoMode.mode == GFX_HALF && scalerProc == DownscaleAllByHalf){
+				if ((_videoMode.mode == GFX_HALF) && (scalerProc == DownscaleAllByHalf)) {
 					if (dst_x%2==1){
 						dst_x--;
 						dst_w++;
@@ -371,9 +389,13 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 					src_y = dst_y;
 					dst_x = dst_x / 2;
 					dst_y = dst_y / 2;
-				}
-				scalerProc((byte *)srcSurf->pixels + (src_x * 2 + 2) + (src_y + 1) * srcPitch, srcPitch,
+
+					scalerProc((byte *)srcSurf->pixels + (src_x * 2 + 2) + (src_y + 1) * srcPitch, srcPitch,
 						   (byte *)_hwscreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
+				} else {
+					scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+					           (byte *)_hwscreen->pixels + r->x * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
+				}
 			}
 
 			if (_videoMode.mode == GFX_HALF && scalerProc == DownscaleAllByHalf){

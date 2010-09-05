@@ -987,8 +987,8 @@ void Scene::processSceneResources() {
 	size_t resourceDataLength;
 	const byte *palPointer;
 	size_t i;
-	SAGAResourceTypes *types;
-	int typesCount;
+	SAGAResourceTypes *types = 0;
+	int typesCount = 0;
 	SAGAResourceTypes resType;
 
 	getResourceTypes(types, typesCount);

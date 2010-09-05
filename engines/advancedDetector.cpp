@@ -214,9 +214,35 @@ static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *
 		desc.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
 }
 
+bool cleanupPirated(ADGameDescList &matched) {
+	// OKay, now let's sense presense of pirated games
+	if (!matched.empty()) {
+		for (uint j = 0; j < matched.size();) {
+			if (matched[j]->flags & ADGF_PIRATED)
+				matched.remove_at(j);
+			else
+				++j;
+		}
+
+		// We ruled out all variants and now have nothing
+		if (matched.empty()) {
+			
+			warning("Illegitimate copy of the game detected. We give no support in such cases %d", matched.size());
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
 GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
 	ADGameDescList matches = detectGame(fslist, params, Common::UNK_LANG, Common::kPlatformUnknown, "");
 	GameList detectedGames;
+
+	if (cleanupPirated(matches))
+		return detectedGames;
 
 	// Use fallback detector if there were no matches by other means
 	if (matches.empty()) {
@@ -282,6 +308,9 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 
 	ADGameDescList matches = detectGame(files, params, language, platform, extra);
 
+	if (cleanupPirated(matches))
+		return Common::kNoGameDataFoundError;
+
 	if (params.singleid == NULL) {
 		for (uint i = 0; i < matches.size(); i++) {
 			if (matches[i]->gameid == gameid) {
@@ -342,14 +371,14 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 	printf("of the game you tried to add and its version/language/etc.:\n");
 
 	for (SizeMD5Map::const_iterator file = filesSizeMD5.begin(); file != filesSizeMD5.end(); ++file)
-		printf("  \"%s\", \"%s\", %d\n", file->_key.c_str(), file->_value.md5, file->_value.size);
+		printf("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5, file->_value.size);
 
 	printf("\n");
 }
 
 static ADGameDescList detectGameFilebased(const FileMap &allFiles, const ADParams &params);
 
-static void composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, int depth, const char **directoryGlobs) {
+static void composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, int depth, const char * const *directoryGlobs) {
 	if (depth <= 0)
 		return;
 
@@ -366,8 +395,8 @@ static void composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, 
 				continue;
 
 			bool matched = false;
-			for (const char *glob = *directoryGlobs; *glob; glob++)
-				if (file->getName().matchString(glob, true)) {
+			for (const char * const *glob = directoryGlobs; *glob; glob++)
+				if (file->getName().matchString(*glob, true)) {
 					matched = true;
 					break;
 				}

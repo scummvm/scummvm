@@ -557,6 +557,7 @@ void MacResManager::convertCrsrCursor(byte *data, int datasize, byte **cursor, i
 	*hotspot_y = dis.readUint16BE();
 	*hotspot_x = dis.readUint16BE();
 	*w = *h = 16;
+	*keycolor = 0xff;
 
 	// Use b/w cursor on backends which don't support cursor palettes
 	if (!colored)

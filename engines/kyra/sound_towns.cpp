@@ -48,6 +48,7 @@ SoundTowns::SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 SoundTowns::~SoundTowns() {
 	AudioCD.stop();
 	haltTrack();
+	delete _driver;
 	delete[] _musicTrackData;
 	delete[] _sfxFileData;
 }
@@ -592,7 +593,7 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 
 	int h = 0;
 	if (_currentSFX) {
-		while (_mixer->isSoundHandleActive(_soundChannels[h]) && h < kNumChannelHandles)
+		while (h < kNumChannelHandles && _mixer->isSoundHandleActive(_soundChannels[h]))
 			h++;
 		if (h >= kNumChannelHandles)
 			return 0;

@@ -150,7 +150,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 	uint16 maxChars = readSelectorValue(_segMan, controlObject, SELECTOR(max));
 	reg_t textReference = readSelector(_segMan, controlObject, SELECTOR(text));
 	Common::String text;
-	uint16 textSize, eventType, eventKey = 0;
+	uint16 textSize, eventType, eventKey = 0, modifiers = 0;
 	bool textChanged = false;
 	bool textAddChar = false;
 	Common::Rect rect;
@@ -169,6 +169,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 			break;
 		case SCI_EVENT_KEYBOARD:
 			eventKey = readSelectorValue(_segMan, eventObject, SELECTOR(message));
+			modifiers = readSelectorValue(_segMan, eventObject, SELECTOR(modifiers));
 			switch (eventKey) {
 			case SCI_KEY_BACKSPACE:
 				if (cursorPos > 0) {
@@ -177,8 +178,10 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 				}
 				break;
 			case SCI_KEY_DELETE:
-				text.deleteChar(cursorPos);
-				textChanged = true;
+				if (cursorPos < textSize) {
+					text.deleteChar(cursorPos);
+					textChanged = true;
+				}
 				break;
 			case SCI_KEY_HOME: // HOME
 				cursorPos = 0; textChanged = true;
@@ -196,8 +199,20 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 					cursorPos++; textChanged = true;
 				}
 				break;
+			case 3:	// returned in SCI1 late and newer when Control - C is pressed
+				if (modifiers & SCI_KEYMOD_CTRL) {
+					// Control-C erases the whole line
+					cursorPos = 0; text.clear();
+					textChanged = true;
+				}
+				break;
 			default:
-				if (eventKey > 31 && eventKey < 256 && textSize < maxChars) {
+				if ((modifiers & SCI_KEYMOD_CTRL) && eventKey == 99) {
+					// Control-C in earlier SCI games (SCI0 - SCI1 middle)
+					// Control-C erases the whole line
+					cursorPos = 0; text.clear();
+					textChanged = true;
+				} else if (eventKey > 31 && eventKey < 256 && textSize < maxChars) {
 					// insert pressed character
 					textAddChar = true;
 					textChanged = true;

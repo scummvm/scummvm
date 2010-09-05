@@ -145,6 +145,7 @@ reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 	reg_t parent_addr = argv[0];
 	const Object *parent_obj = s->_segMan->getObject(parent_addr);
+	const bool parentIsClone = parent_obj->isClone();
 	reg_t clone_addr;
 	Clone *clone_obj; // same as Object*
 
@@ -162,10 +163,22 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
+	// In case the parent object is a clone itself we need to refresh our
+	// pointer to it here. This is because calling allocateClone might
+	// invalidate all pointers, references and iterators to data in the clones
+	// segment.
+	//
+	// The reason why it might invalidate those is, that the segement code
+	// (Table) uses Common::Array for internal storage. Common::Array now
+	// might invalidate references to its contained data, when it has to
+	// extend the internal storage size.
+	if (parentIsClone)
+		parent_obj = s->_segMan->getObject(parent_addr);
+
 	*clone_obj = *parent_obj;
 
 	// Mark as clone
-	clone_obj->markAsClone();
+	clone_obj->markAsClone(); // sets bit 0 of -info- selector
 	clone_obj->setSpeciesSelector(clone_obj->getPos());
 	if (parent_obj->isClass())
 		clone_obj->setSuperClassSelector(parent_obj->getPos());
@@ -178,21 +191,22 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 extern void _k_view_list_mark_free(EngineState *s, reg_t off);
 
 reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
-	reg_t victim_addr = argv[0];
-	Clone *victim_obj = s->_segMan->getObject(victim_addr);
+	reg_t obj = argv[0];
+	Clone *object = s->_segMan->getObject(obj);
 
-	if (!victim_obj) {
+	if (!object) {
 		error("Attempt to dispose non-class/object at %04x:%04x",
-		         PRINT_REG(victim_addr));
+		         PRINT_REG(obj));
 		return s->r_acc;
 	}
 
-	if (!victim_obj->isClone()) {
-		// SCI silently ignores this behaviour; some games actually depend on it
-		return s->r_acc;
-	}
-
-	victim_obj->markAsFreed();
+	// SCI uses this technique to find out, if it's a clone and if it's supposed to get freed
+	//  At least kq4early relies on this behaviour. The scripts clone "Sound", then set bit 1 manually
+	//  and call kDisposeClone later. In that case we may not free it, otherwise we will run into issues
+	//  later, because kIsObject would then return false and Sound object wouldn't get checked.
+	uint16 infoSelector = readSelectorValue(s->_segMan, obj, SELECTOR(_info_));
+	if ((infoSelector & 3) == kInfoFlagClone)
+		object->markAsFreed();
 
 	return s->r_acc;
 }

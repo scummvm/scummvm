@@ -26,7 +26,10 @@ sound/fmopl.cpp
 sound/musicplugin.cpp
 sound/null.h
 sound/null.cpp
+sound/mods/paula.cpp
 sound/softsynth/adlib.cpp
+sound/softsynth/appleiigs.cpp
+sound/softsynth/sid.cpp
 sound/softsynth/mt32.cpp
 sound/softsynth/pcspk.cpp
 sound/softsynth/ym2612.cpp

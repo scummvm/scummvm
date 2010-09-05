@@ -96,7 +96,7 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 			invokeSelector(_s, curObject, SELECTOR(doit), argc, argv, 0);
 
 			// If a game is being loaded, stop processing
-			if (_s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+			if (_s->abortScriptProcessing != kAbortNone)
 				return true; // Stop processing
 
 			// Lookup node again, since the nodetable it was in may have been reallocated.
@@ -190,7 +190,7 @@ void GfxAnimate::makeSortedList(List *list) {
 	Common::sort(_list.begin(), _list.end(), sortHelper);
 }
 
-void GfxAnimate::fill(byte &old_picNotValid) {
+void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 	reg_t curObject;
 	uint16 signal;
 	GfxView *view = NULL;
@@ -205,54 +205,69 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 		view = _cache->getView(it->viewId);
 
 		// adjust loop and cel, if any of those is invalid
-		if (it->loopNo >= view->getLoopCount()) {
+		//  this seems to be completely crazy code
+		//  sierra sci checked signed int16 to be above or equal the counts and reseted to 0 in those cases
+		//  later during view processing those are compared unsigned again and then set to maximum count - 1
+		//  Games rely on this behaviour. For example laura bow 1 has a knight standing around in room 37
+		//   which has cel set to 3. This cel does not exist and the actual knight is 0
+		//   In kq5 on the other hand during the intro, when the trunk is opened, cel is set to some real
+		//   high number, which is negative when considered signed. This actually requires to get fixed to
+		//   maximum cel, otherwise the trunk would be closed.
+		int16 viewLoopCount = view->getLoopCount();
+		if (it->loopNo >= viewLoopCount) {
 			it->loopNo = 0;
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(loop), it->loopNo);
+		} else if (it->loopNo < 0) {
+			it->loopNo = viewLoopCount - 1;
+			// not setting selector is right, sierra sci didn't do it during view processing as well
 		}
-		if (it->celNo >= view->getCelCount(it->loopNo)) {
+		int16 viewCelCount = view->getCelCount(it->loopNo);
+		if (it->celNo >= viewCelCount) {
 			it->celNo = 0;
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(cel), it->celNo);
+		} else if (it->celNo < 0) {
+			it->celNo = viewCelCount - 1;
 		}
-
-		// Process global scaling, if needed
-		if (it->scaleSignal & kScaleSignalDoScaling) {
-			if (it->scaleSignal & kScaleSignalGlobalScaling) {
-				// Global scaling uses global var 2 and some other stuff to calculate scaleX/scaleY
-				int16 maxScale = readSelectorValue(_s->_segMan, curObject, SELECTOR(maxScale));
-				int16 celHeight = view->getHeight(it->loopNo, it->celNo);
-				int16 maxCelHeight = (maxScale * celHeight) >> 7;
-				reg_t globalVar2 = _s->variables[VAR_GLOBAL][2]; // current room object
-				int16 vanishingY = readSelectorValue(_s->_segMan, globalVar2, SELECTOR(vanishingY));
-
-				int16 fixedPortY = _ports->getPort()->rect.bottom - vanishingY;
-				int16 fixedEntryY = it->y - vanishingY;
-				if (!fixedEntryY)
-					fixedEntryY = 1;
-
-				if ((celHeight == 0) || (fixedPortY == 0))
-					error("global scaling panic");
-
-				it->scaleY = ( maxCelHeight * fixedEntryY ) / fixedPortY;
-				it->scaleY = (it->scaleY * 128) / celHeight;
-
-				it->scaleX = it->scaleY;
-
-				// and set objects scale selectors
-				writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX), it->scaleX);
-				writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), it->scaleY);
-			}
-		}
-
-		//warning("%s", _s->_segMan->getObjectName(curObject));
 
 		if (!view->isScaleable()) {
 			// Laura Bow 2 (especially floppy) depends on this, some views are not supposed to be scaleable
 			//  this "feature" was removed in later versions of SCI1.1
 			it->scaleSignal = 0;
 			it->scaleY = it->scaleX = 128;
+		} else {
+			// Process global scaling, if needed
+			if (it->scaleSignal & kScaleSignalDoScaling) {
+				if (it->scaleSignal & kScaleSignalGlobalScaling) {
+					// Global scaling uses global var 2 and some other stuff to calculate scaleX/scaleY
+					int16 maxScale = readSelectorValue(_s->_segMan, curObject, SELECTOR(maxScale));
+					int16 celHeight = view->getHeight(it->loopNo, it->celNo);
+					int16 maxCelHeight = (maxScale * celHeight) >> 7;
+					reg_t globalVar2 = _s->variables[VAR_GLOBAL][2]; // current room object
+					int16 vanishingY = readSelectorValue(_s->_segMan, globalVar2, SELECTOR(vanishingY));
+
+					int16 fixedPortY = _ports->getPort()->rect.bottom - vanishingY;
+					int16 fixedEntryY = it->y - vanishingY;
+					if (!fixedEntryY)
+						fixedEntryY = 1;
+
+					if ((celHeight == 0) || (fixedPortY == 0))
+						error("global scaling panic");
+
+					it->scaleY = ( maxCelHeight * fixedEntryY ) / fixedPortY;
+					it->scaleY = (it->scaleY * 128) / celHeight;
+
+					it->scaleX = it->scaleY;
+
+					// and set objects scale selectors
+					writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX), it->scaleX);
+					writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), it->scaleY);
+				}
+			}
 		}
 
-		bool setNsRect = true;
+		//warning("%s view %d, loop %d, cel %d", _s->_segMan->getObjectName(curObject), it->viewId, it->loopNo, it->celNo);
+
+		bool setNsRect = maySetNsRect;
 
 		// Create rect according to coordinates and given cel
 		if (it->scaleSignal & kScaleSignalDoScaling) {
@@ -613,7 +628,7 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 	disposeLastCast();
 
 	makeSortedList(list);
-	fill(old_picNotValid);
+	fill(old_picNotValid, true);
 
 	if (old_picNotValid) {
 		// beginUpdate()/endUpdate() were introduced SCI1.
@@ -662,6 +677,7 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 			int16 onlyWidth = onlyCast->celRect.width();
 			if (((onlyWidth == 12) && (onlyHeight == 35)) || // regular benchmark view ("fred", "Speedy", "ego")
 				((onlyWidth == 29) && (onlyHeight == 45)) || // King's Quest 5 french "fred"
+				((onlyWidth == 1) && (onlyHeight == 5)) || // Freddy Pharkas "fred"
 				((onlyWidth == 1) && (onlyHeight == 1))) { // Laura Bow 2 Talkie
 				// check further that there is only one cel in that view
 				GfxView *onlyView = _cache->getView(onlyCast->viewId);
@@ -698,7 +714,7 @@ void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) 
 
 	makeSortedList(list);
 	preprocessAddToPicList();
-	fill(tempPicNotValid);
+	fill(tempPicNotValid, getSciVersion() >= SCI_VERSION_1_1 ? true : false);
 	addToPicDrawCels();
 
 	addToPicSetPicNotValid();

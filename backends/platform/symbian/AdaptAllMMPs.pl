@@ -33,6 +33,7 @@ chdir("../../../");
 	"mmp/scummvm_draci.mmp", 
 	"mmp/scummvm_teenagent.mmp", 
 	"mmp/scummvm_mohawk.mmp", 
+	"mmp/scummvm_hugo.mmp", 
 	# Target Platform Project Files
 	"S60/ScummVM_S60.mmp",  
 	"S60v3/ScummVM_S60v3.mmp", 
@@ -79,9 +80,9 @@ my @excludes_snd = (
 	"fluidsynth.cpp",
 	"i386.cpp",
 	"part.*",
-	"synth.cpp",
 	"tables.cpp",
 	"freeverb.cpp",
+	"synth.cpp",
 	"rate.*"			# not really needed, USE_ARM_SOUND_ASM currently not parsed correctly,
 						# "rate[_arm|_arm_asm].(cpp|s)" will be added later based on WINS/ARM build!
 						# These #defines for compile time are set in portdefs.h
@@ -136,6 +137,7 @@ ParseModule("_sci",	"sci",		\@section_empty);
 ParseModule("_draci",	"draci",	\@section_empty);
 ParseModule("_teenagent","teenagent",	\@section_empty);
 ParseModule("_mohawk"   ,"mohawk",	\@section_empty);
+ParseModule("_hugo"     ,"hugo",	\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P

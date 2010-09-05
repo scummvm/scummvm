@@ -284,8 +284,8 @@ reg_t SoundCommandParser::kDoSoundMasterVolume(int argc, reg_t *argv, reg_t acc)
 
 	if (argc > 0) {
 		debugC(2, kDebugLevelSound, "kDoSound(masterVolume): %d", argv[0].toSint16());
-		int vol = CLIP<int16>(argv[0].toSint16(), 0, kMaxSciVolume);
-		vol = vol * Audio::Mixer::kMaxMixerVolume / kMaxSciVolume;
+		int vol = CLIP<int16>(argv[0].toSint16(), 0, MUSIC_MASTERVOLUME_MAX);
+		vol = vol * Audio::Mixer::kMaxMixerVolume / MUSIC_MASTERVOLUME_MAX;
 		ConfMan.setInt("music_volume", vol);
 		ConfMan.setInt("sfx_volume", vol);
 		g_engine->syncSoundSettings();
@@ -298,7 +298,7 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("kDoSound(fade): Slot not found (%04x:%04x)", PRINT_REG(obj));
+		debugC(2, kDebugLevelSound, "kDoSound(fade): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return acc;
 	}
 
@@ -688,11 +688,17 @@ void SoundCommandParser::startNewSound(int number) {
 }
 
 void SoundCommandParser::setMasterVolume(int vol) {
+	// 0...15
 	_music->soundSetMasterVolume(vol);
 }
 
 void SoundCommandParser::pauseAll(bool pause) {
 	_music->pauseAll(pause);
+}
+
+MusicType SoundCommandParser::getMusicType() const {
+	assert(_music);
+	return _music->soundGetMusicType();
 }
 
 } // End of namespace Sci

@@ -46,7 +46,7 @@ protected:
 		MP3_STATE_EOS		// end of data reached (may need to loop)
 	};
 
-	#define MAX_SAMPLES_PER_FRAME	2048 * 2
+	#define MAX_SAMPLES_PER_FRAME	1152 * 2	/* x2 for stereo */
 	int16 _pcmSamples[MAX_SAMPLES_PER_FRAME] __attribute__((aligned(64)));	// samples to output PCM data into
 	byte _codecInBuffer[3072] __attribute__((aligned(64))); // the codec always needs alignment
 	unsigned long _codecParams[65]__attribute__((aligned(64)));		// TODO: change to struct
@@ -54,7 +54,7 @@ protected:
 	Common::SeekableReadStream *_inStream;
 	DisposeAfterUse::Flag _disposeAfterUse;
 	
-	uint32 _pcmLength;		// how many pcm samples we have (/2 for mono)
+	uint32 _pcmLength;		// how many pcm samples we have for this type of file (x2 this for stereo)
 	
 	uint _posInFrame;		// position in frame
 	State _state;			// what state the stream is in
@@ -83,7 +83,8 @@ protected:
 	int initStream();
 	void findValidHeader();
 	void deinitStream();
-
+	void updatePcmLength();
+	
 	// to init and uninit ME decoder
 	static bool initDecoder();
 	static bool stopDecoder();

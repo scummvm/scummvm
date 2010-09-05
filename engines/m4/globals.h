@@ -229,7 +229,68 @@ struct MadsConfigData {
 #define SET_GLOBAL(x,y) _madsVm->globals()->_globals[x] = y
 #define SET_GLOBAL32(x,y) { _madsVm->globals()->_globals[x] = (y) & 0xffff; _madsVm->globals()->_globals[(x) + 1] = (y) >> 16; }
 
-typedef Common::HashMap<uint16, uint16> IntStorage;
+union DataMapEntry {
+	bool *boolValue;
+	uint16 *uint16Value;
+	int *intValue;
+};
+
+typedef Common::HashMap<uint16, uint16> DataMapHash;
+
+enum DataMapType {BOOL, UINT16, INT};
+
+class DataMapWrapper {
+	friend class DataMap;
+private:
+	DataMapEntry _value;
+	DataMapType _type;
+public:
+	DataMapWrapper(bool *v) { _value.boolValue = v; _type = BOOL; }
+	DataMapWrapper(uint16 *v) { _value.uint16Value = v; _type = UINT16; }
+	DataMapWrapper(int16 *v) { _value.uint16Value = (uint16 *)v; _type = UINT16; }
+	DataMapWrapper(int *v) { _value.intValue = v; _type = INT; }
+
+	uint16 getIntValue() {
+		if (_type == BOOL) return *_value.boolValue ? 0xffff : 0;
+		else if (_type == UINT16) return *_value.uint16Value;
+		else return *_value.intValue;
+	}
+	void setIntValue(uint16 v) {
+		if (_type == BOOL) *_value.boolValue = v != 0;
+		else if (_type == UINT16) *_value.uint16Value = v;
+		else *_value.intValue = v;
+	}
+};
+
+#define MAP_DATA(V) _madsVm->globals()->_dataMap.addMapping(new DataMapWrapper(V))
+
+class DataMap {
+private:
+	DataMapHash _data;
+	Common::Array<DataMapWrapper *> _mapList;
+public:
+	DataMap() {
+		_mapList.push_back(NULL);
+	}
+	~DataMap() {
+		for (uint i = 1; i < _mapList.size(); ++i)
+			delete _mapList[i];
+	}
+	
+	void addMapping(DataMapWrapper *v) { _mapList.push_back(v); }
+	uint16 get(uint16 index) {
+		if (index < _mapList.size()) 
+			return _mapList[index]->getIntValue();
+
+		return _data[index];
+	}
+	void set(uint16 index, uint16 v) {
+		if (index < _mapList.size()) 
+			_mapList[index]->setIntValue(v);
+		else
+			_data[index] = v;
+	}
+};
 
 class MadsGlobals : public Globals {
 private:
@@ -259,7 +320,7 @@ public:
 	int previousScene;
 	int16 _nextSceneId;
 	uint16 actionNouns[3];
-	IntStorage _dataMap;
+	DataMap _dataMap;
 	int _difficultyLevel;
 
 	void loadMadsVocab();

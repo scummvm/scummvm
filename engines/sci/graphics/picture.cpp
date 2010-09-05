@@ -120,10 +120,6 @@ void GfxPicture::drawSci11Vga() {
 	// [priorityBandData:WORD] * priorityBandCount
 	// [priority:BYTE] [unknown:BYTE]
 
-	// Create palette and set it
-	_palette->createFromData(inbuffer + palette_data_ptr, size - palette_data_ptr, &palette);
-	_palette->set(&palette, true);
-
 	// priority bands are supposed to be 14 for sci1.1 pictures
 	assert(priorityBandsCount == 14);
 
@@ -132,8 +128,13 @@ void GfxPicture::drawSci11Vga() {
 	}
 
 	// display Cel-data
-	if (has_cel)
+	if (has_cel) {
+		// Create palette and set it
+		_palette->createFromData(inbuffer + palette_data_ptr, size - palette_data_ptr, &palette);
+		_palette->set(&palette, true);
+
 		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, 0);
+	}
 
 	// process vector data
 	drawVectorData(inbuffer + vector_dataPos, vector_size);

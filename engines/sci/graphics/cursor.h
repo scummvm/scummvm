@@ -40,6 +40,16 @@ class GfxPalette;
 
 typedef Common::HashMap<int, GfxView *> CursorCache;
 
+struct SciCursorSetPositionWorkarounds {
+	SciGameId gameId;
+	int16 newPositionY;
+	int16 newPositionX;
+	int16 rectTop;
+	int16 rectLeft;
+	int16 rectBottom;
+	int16 rectRight;
+};
+
 class GfxCursor {
 public:
 	GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen);
