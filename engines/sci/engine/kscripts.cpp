@@ -178,16 +178,12 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 	*clone_obj = *parent_obj;
 
 	// Mark as clone
-	clone_obj->markAsClone();
+	clone_obj->markAsClone(); // sets -info- selector
 	clone_obj->setSpeciesSelector(clone_obj->getPos());
 	if (parent_obj->isClass())
 		clone_obj->setSuperClassSelector(parent_obj->getPos());
 	s->_segMan->getScript(parent_obj->getPos().segment)->incrementLockers();
 	s->_segMan->getScript(clone_obj->getPos().segment)->incrementLockers();
-
-	// Mark as clone for scripts as well
-	uint16 infoSelector = readSelectorValue(s->_segMan, clone_addr, SELECTOR(_info_));
-	writeSelectorValue(s->_segMan, clone_addr, SELECTOR(_info_), (infoSelector & 0x7fff) | 1);
 
 	return clone_addr;
 }
@@ -204,17 +200,12 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	if (!object->isClone()) {
-		// SCI silently ignores non-clones; some games actually depend on it
-		return s->r_acc;
-	}
-
 	// SCI uses this technique to find out, if it's a clone and if it's supposed to get freed
 	//  At least kq4early relies on this behaviour. The scripts clone "Sound", then set bit 1 manually
 	//  and call kDisposeClone later. In that case we may not free it, otherwise we will run into issues
 	//  later, because kIsObject would then return false and Sound object wouldn't get checked.
 	uint16 infoSelector = readSelectorValue(s->_segMan, obj, SELECTOR(_info_));
-	if ((infoSelector & 3) == 1)
+	if ((infoSelector & 3) == kInfoFlagClone)
 		object->markAsFreed();
 
 	return s->r_acc;

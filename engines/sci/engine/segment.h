@@ -290,7 +290,7 @@ public:
 	bool isClass() const { return (getInfoSelector().offset & kInfoFlagClass); }
 	const Object *getClass(SegManager *segMan) const;
 
-	void markAsClone() { setInfoSelector(make_reg(0, kInfoFlagClone)); }
+	void markAsClone() { setInfoSelector(make_reg(0, getInfoSelector().offset | kInfoFlagClone)); }
 	bool isClone() const { return (getInfoSelector().offset & kInfoFlagClone); }
 
 	void markAsFreed() { _flags |= OBJECT_FLAG_FREED; }
