@@ -709,7 +709,7 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 	uint32 DWordOffset = 0;
 	// first search for the magic DWORD
 	while (DWordOffset < searchLimit) {
-		if (magicDWord == *(const uint32 *)(scriptData + DWordOffset)) {
+		if (magicDWord == READ_UINT32(scriptData + DWordOffset)) {
 			// magic DWORD found, check if actual signature matches
 			uint32 offset = DWordOffset + signature->magicOffset;
 			uint32 byteOffset = offset;
