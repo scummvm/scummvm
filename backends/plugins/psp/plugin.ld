@@ -1,11 +1,12 @@
-OUTPUT_FORMAT("elf32-littlemips", "elf32-bigmips",
-	      "elf32-littlemips")
+OUTPUT_FORMAT("elf32-littlemips", "elf32-bigmips", "elf32-littlemips")
 OUTPUT_ARCH(mips:allegrex)
+
 PHDRS
 {
    plugin PT_LOAD ;
    shorts PT_LOAD ;
 }
+
 /* Do we need any of these for elf?
    __DYNAMIC = 0;    */
 SECTIONS
@@ -234,6 +235,4 @@ SECTIONS
     PROVIDE (__sbss_end = .);
     PROVIDE (___sbss_end = .);
   }
-
-  
 }

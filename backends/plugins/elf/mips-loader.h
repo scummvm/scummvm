@@ -34,7 +34,7 @@
 
 class MIPSDLObject : public DLObject {
 protected:
-	ShortSegmentManager::Segment *_shortsSegment;			// For assigning shorts ranges
+	ShortSegmentManager::Segment *_shortsSegment;	// For assigning shorts ranges
 	uint32 _gpVal;									// Value of Global Pointer
 
 	virtual bool relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment);
@@ -44,10 +44,11 @@ protected:
 	virtual void unload();
 
 public:
-    MIPSDLObject() : DLObject() {
+	MIPSDLObject() :
+		DLObject() {
 		_shortsSegment = NULL;
 		_gpVal = 0;
-    }
+	}
 };
 
 #endif /* BACKENDS_PLUGINS_MIPS_LOADER_H */

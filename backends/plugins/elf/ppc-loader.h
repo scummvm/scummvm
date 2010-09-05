@@ -36,7 +36,9 @@ protected:
 	virtual bool relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
 
 public:
-    PPCDLObject() : DLObject() {}
+	PPCDLObject() :
+		DLObject() {
+	}
 };
 
 #endif /* BACKENDS_PLUGINS_PPC_LOADER_H */

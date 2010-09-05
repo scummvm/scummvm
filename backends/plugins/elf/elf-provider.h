@@ -49,8 +49,10 @@ protected:
 	virtual VoidFunc findSymbol(const char *symbol);
 
 public:
-	ELFPlugin(const Common::String &filename)
-		: _dlHandle(0), _filename(filename) {}
+	ELFPlugin(const Common::String &filename) :
+		_dlHandle(0),
+		_filename(filename) {
+	}
 
 	virtual ~ELFPlugin() {
 		if (_dlHandle)
@@ -65,7 +67,7 @@ public:
 
 class ELFPluginProvider : public FilePluginProvider {
 protected:
-	virtual Plugin* createPlugin(const Common::FSNode &node) const = 0;
+	virtual Plugin *createPlugin(const Common::FSNode &node) const = 0;
 
 	bool isPluginFilename(const Common::FSNode &node) const;
 };

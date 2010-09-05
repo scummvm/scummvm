@@ -36,7 +36,7 @@
 
 typedef uint16 Elf32_Half, Elf32_Section;
 typedef uint32 Elf32_Word, Elf32_Addr, Elf32_Off;
-typedef int32  Elf32_Sword;
+typedef int32 Elf32_Sword;
 typedef Elf32_Half Elf32_Versym;
 
 #define EI_NIDENT (16)
@@ -46,41 +46,41 @@ typedef Elf32_Half Elf32_Versym;
 
 // ELF header (contains info about the file)
 typedef struct {
-	byte          e_ident[EI_NIDENT];     /* Magic number and other info */
-	Elf32_Half    e_type;                 /* Object file type */
-	Elf32_Half    e_machine;              /* Architecture */
-	Elf32_Word    e_version;              /* Object file version */
-	Elf32_Addr    e_entry;                /* Entry point virtual address */
-	Elf32_Off     e_phoff;                /* Program header table file offset */
-	Elf32_Off     e_shoff;                /* Section header table file offset */
-	Elf32_Word    e_flags;                /* Processor-specific flags */
-	Elf32_Half    e_ehsize;               /* ELF header size in bytes */
-	Elf32_Half    e_phentsize;            /* Program header table entry size */
-	Elf32_Half    e_phnum;                /* Program header table entry count */
-	Elf32_Half    e_shentsize;            /* Section header table entry size */
-	Elf32_Half    e_shnum;                /* Section header table entry count */
-	Elf32_Half    e_shstrndx;             /* Section header string table index */
+	byte		e_ident[EI_NIDENT];	/* Magic number and other info */
+	Elf32_Half	e_type;				/* Object file type */
+	Elf32_Half	e_machine;			/* Architecture */
+	Elf32_Word	e_version;			/* Object file version */
+	Elf32_Addr	e_entry;				/* Entry point virtual address */
+	Elf32_Off	e_phoff;				/* Program header table file offset */
+	Elf32_Off	e_shoff;				/* Section header table file offset */
+	Elf32_Word	e_flags;				/* Processor-specific flags */
+	Elf32_Half	e_ehsize;				/* ELF header size in bytes */
+	Elf32_Half	e_phentsize;			/* Program header table entry size */
+	Elf32_Half	e_phnum;				/* Program header table entry count */
+	Elf32_Half	e_shentsize;			/* Section header table entry size */
+	Elf32_Half	e_shnum;				/* Section header table entry count */
+	Elf32_Half	e_shstrndx;			/* Section header string table index */
 } Elf32_Ehdr;
 
 // Should be in e_ident
 #define ELFMAG		"\177ELF"	/* ELF Magic number */
 
-#define EI_CLASS	4		/* File class byte index */
-#define ELFCLASS32	1		/* 32-bit objects */
+#define EI_CLASS	4			/* File class byte index */
+#define ELFCLASS32	1			/* 32-bit objects */
 
-#define EI_DATA		5		/* Data encoding byte index */
-#define ELFDATA2LSB	1		/* 2's complement, little endian */
-#define ELFDATA2MSB	2		/* 2's complement, big endian */
+#define EI_DATA		5			/* Data encoding byte index */
+#define ELFDATA2LSB	1			/* 2's complement, little endian */
+#define ELFDATA2MSB	2			/* 2's complement, big endian */
 
 #define EI_VERSION	6
-#define EV_CURRENT	1		/* Current version */
+#define EV_CURRENT	1			/* Current version */
 
 // e_type values
-#define ET_NONE		0	/* no file type */
-#define ET_REL		1	/* relocatable */
-#define ET_EXEC		2	/* executable */
-#define ET_DYN		3	/* shared object */
-#define ET_CORE		4	/* core file */
+#define ET_NONE		0			/* no file type */
+#define ET_REL		1			/* relocatable */
+#define ET_EXEC		2			/* executable */
+#define ET_DYN		3			/* shared object */
+#define ET_CORE		4			/* core file */
 
 // e_machine values
 #define EM_MIPS		8
@@ -89,27 +89,27 @@ typedef struct {
 
 // Program header (contains info about segment)
 typedef struct {
-	Elf32_Word    p_type;                 /* Segment type */
-	Elf32_Off     p_offset;               /* Segment file offset */
-	Elf32_Addr    p_vaddr;                /* Segment virtual address */
-	Elf32_Addr    p_paddr;                /* Segment physical address */
-	Elf32_Word    p_filesz;               /* Segment size in file */
-	Elf32_Word    p_memsz;                /* Segment size in memory */
-	Elf32_Word    p_flags;                /* Segment flags */
-	Elf32_Word    p_align;                /* Segment alignment */
+	Elf32_Word	p_type;		/* Segment type */
+	Elf32_Off	p_offset;	/* Segment file offset */
+	Elf32_Addr	p_vaddr;	/* Segment virtual address */
+	Elf32_Addr	p_paddr;	/* Segment physical address */
+	Elf32_Word	p_filesz;	/* Segment size in file */
+	Elf32_Word	p_memsz;	/* Segment size in memory */
+	Elf32_Word	p_flags;	/* Segment flags */
+	Elf32_Word	p_align;	/* Segment alignment */
 } Elf32_Phdr;
 
 // p_type values
-#define PT_NULL 		0	/* ignored */
-#define PT_LOAD			1	/* loadable segment */
-#define PT_DYNAMIC		2	/* dynamic linking info */
-#define PT_INTERP		3	/* info about interpreter */
-#define PT_NOTE			4	/* note segment */
-#define PT_SHLIB		5	/* reserved */
-#define PT_PHDR			6	/* Program header table */
-#define PT_MIPS_REGINFO 0x70000000 /* Register usage info for MIPS */
-#define PT_ARM_ARCHEXT 	0x70000000 /* Platform architecture compatibility info for ARM */
-#define PT_ARM_EXIDX 	0x70000001 /* Exception unwind tables for ARM */
+#define PT_NULL 		0			/* ignored */
+#define PT_LOAD			1			/* loadable segment */
+#define PT_DYNAMIC		2			/* dynamic linking info */
+#define PT_INTERP		3			/* info about interpreter */
+#define PT_NOTE			4			/* note segment */
+#define PT_SHLIB		5			/* reserved */
+#define PT_PHDR			6			/* Program header table */
+#define PT_MIPS_REGINFO	0x70000000	/* Register usage info for MIPS */
+#define PT_ARM_ARCHEXT	0x70000000	/* Platform architecture compatibility info for ARM */
+#define PT_ARM_EXIDX	0x70000001	/* Exception unwind tables for ARM */
 
 // p_flags value
 #define PF_X	1	/* execute */
@@ -118,31 +118,31 @@ typedef struct {
 
 // Section header (contains info about section)
 typedef struct {
-	Elf32_Word    sh_name;                /* Section name (string tbl index) */
-	Elf32_Word    sh_type;                /* Section type */
-	Elf32_Word    sh_flags;               /* Section flags */
-	Elf32_Addr    sh_addr;                /* Section virtual addr at execution */
-	Elf32_Off     sh_offset;              /* Section file offset */
-	Elf32_Word    sh_size;                /* Section size in bytes */
-	Elf32_Word    sh_link;                /* Link to another section */
-	Elf32_Word    sh_info;                /* Additional section information */
-	Elf32_Word    sh_addralign;           /* Section alignment */
-	Elf32_Word    sh_entsize;             /* Entry size if section holds table */
+	Elf32_Word	sh_name;		/* Section name (string tbl index) */
+	Elf32_Word	sh_type;		/* Section type */
+	Elf32_Word	sh_flags;		/* Section flags */
+	Elf32_Addr	sh_addr;		/* Section virtual addr at execution */
+	Elf32_Off	sh_offset;		/* Section file offset */
+	Elf32_Word	sh_size;		/* Section size in bytes */
+	Elf32_Word	sh_link;		/* Link to another section */
+	Elf32_Word	sh_info;		/* Additional section information */
+	Elf32_Word	sh_addralign;	/* Section alignment */
+	Elf32_Word	sh_entsize;		/* Entry size if section holds table */
 } Elf32_Shdr;
 
 // sh_type values
-#define SHT_NULL			0	/* Inactive section */
-#define SHT_PROGBITS		1	/* Proprietary */
-#define SHT_SYMTAB			2	/* Symbol table */
-#define SHT_STRTAB			3	/* String table */
-#define SHT_RELA			4	/* Relocation entries with addend */
-#define SHT_HASH			5	/* Symbol hash table */
-#define SHT_DYNAMIC			6	/* Info for dynamic linking */
-#define SHT_NOTE			7	/* Note section */
-#define SHT_NOBITS			8	/* Occupies no space */
-#define SHT_REL				9	/* Relocation entries without addend */
-#define SHT_SHLIB			10	/* Reserved */
-#define SHT_DYNSYM			11	/* Minimal set of dynamic linking symbols */
+#define SHT_NULL			0			/* Inactive section */
+#define SHT_PROGBITS		1			/* Proprietary */
+#define SHT_SYMTAB			2			/* Symbol table */
+#define SHT_STRTAB			3			/* String table */
+#define SHT_RELA			4			/* Relocation entries with addend */
+#define SHT_HASH			5			/* Symbol hash table */
+#define SHT_DYNAMIC			6			/* Info for dynamic linking */
+#define SHT_NOTE			7			/* Note section */
+#define SHT_NOBITS			8			/* Occupies no space */
+#define SHT_REL				9			/* Relocation entries without addend */
+#define SHT_SHLIB			10			/* Reserved */
+#define SHT_DYNSYM			11			/* Minimal set of dynamic linking symbols */
 #define SHT_MIPS_LIBLSIT	0x70000000	/* Info about dynamic shared object libs for MIPS*/
 #define SHT_MIPS_CONFLICT	0x70000002	/* Conflicts btw executables and shared objects for MIPS */
 #define SHT_MIPS_GPTAB		0x70000003	/* Global pointer table for MIPS*/
@@ -151,24 +151,24 @@ typedef struct {
 #define SHT_ARM_ATTRIBUTES	0x70000003	/* Object file compatibility attributes for ARM*/
 
 // sh_flags values
-#define SHF_WRITE		0	/* writable section */
-#define SHF_ALLOC		2	/* section occupies memory */
-#define SHF_EXECINSTR	4	/* machine instructions */
+#define SHF_WRITE		0			/* writable section */
+#define SHF_ALLOC		2			/* section occupies memory */
+#define SHF_EXECINSTR	4			/* machine instructions */
 #define SHF_MIPS_GPREL	0x10000000	/* Must be made part of global data area for MIPS */
 
 // Symbol entry (contain info about a symbol)
 typedef struct {
-	Elf32_Word    st_name;                /* Symbol name (string tbl index) */
-	Elf32_Addr    st_value;               /* Symbol value */
-	Elf32_Word    st_size;                /* Symbol size */
-	byte          st_info;                /* Symbol type and binding */
-	byte          st_other;               /* Symbol visibility */
-	Elf32_Section st_shndx;               /* Section index */
+	Elf32_Word		st_name;	/* Symbol name (string tbl index) */
+	Elf32_Addr		st_value;	/* Symbol value */
+	Elf32_Word		st_size;	/* Symbol size */
+	byte			st_info;	/* Symbol type and binding */
+	byte			st_other;	/* Symbol visibility */
+	Elf32_Section	st_shndx;	/* Section index */
 } Elf32_Sym;
 
 // Extract from the st_info
-#define SYM_TYPE(x)		((x)&0xF)
-#define SYM_BIND(x)		((x)>>4)
+#define SYM_TYPE(x)		((x) & 0xf)
+#define SYM_BIND(x)		((x) >> 4)
 
 // Symbol binding values from st_info
 #define STB_LOCAL	0	/* Symbol not visible outside object */
@@ -192,16 +192,15 @@ typedef struct {
 
 // Relocation entry with implicit addend (info about how to relocate)
 typedef struct {
-	Elf32_Addr    r_offset;               /* Address */
-	Elf32_Word    r_info;                 /* Relocation type and symbol index */
+	Elf32_Addr	r_offset;	/* Address */
+	Elf32_Word	r_info;		/* Relocation type and symbol index */
 } Elf32_Rel;
 
 // Relocation entry with explicit addend (info about how to relocate)
-typedef struct
-{
-  Elf32_Addr    r_offset;               /* Address */
-  Elf32_Word    r_info;                 /* Relocation type and symbol index */
-  Elf32_Sword   r_addend;               /* Addend */
+typedef struct {
+	Elf32_Addr	r_offset;	/* Address */
+	Elf32_Word	r_info;		/* Relocation type and symbol index */
+	Elf32_Sword	r_addend;	/* Addend */
 } Elf32_Rela;
 
 // Access macros for the relocation info
@@ -245,11 +244,11 @@ typedef struct
 #define R_PPC_REL32			26
 
 // Mock function to get value of global pointer for MIPS
-#define getGP()	({	\
-	uint32 __valgp;	\
+#define getGP() { \
+	uint32 __valgp; \
 	__asm__ ("add %0, $gp, $0" : "=r"(__valgp) : ); \
 	__valgp; \
-})
+}
 
 #endif /* BACKENDS_ELF_H */
 

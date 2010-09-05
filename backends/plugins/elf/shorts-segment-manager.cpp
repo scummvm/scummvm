@@ -31,7 +31,7 @@
 
 extern char __plugin_hole_start;	// Indicates start of hole in program file for shorts
 extern char __plugin_hole_end;		// Indicates end of hole in program file
-extern char _gp[];			// Value of gp register
+extern char _gp[];					// Value of gp register
 
 DECLARE_SINGLETON(ShortSegmentManager);	// For singleton
 
@@ -59,7 +59,7 @@ ShortSegmentManager::Segment *ShortSegmentManager::newSegment(uint32 size, char 
 
 	if (lastAddress + size > _shortsEnd) {
 		warning("elfloader: No space in shorts segment for %x bytes. Last address is %p, max address is %p.",
-		         size, lastAddress, _shortsEnd);
+				size, lastAddress, _shortsEnd);
 		return 0;
 	}
 

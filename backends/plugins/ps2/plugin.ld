@@ -3,6 +3,7 @@ PHDRS {
   plugin PT_LOAD ; /* Specifies that the plugin segment should be loaded from file */
   shorts PT_LOAD ; /* Specifies that the shorts segment should be loaded from file */
 }
+
 SECTIONS {
 	.text 0: {
 		_ftext = . ;
@@ -90,5 +91,4 @@ SECTIONS {
 		*(.gnu.linkonce.sb*)
 		*(.scommon)
 	}
-
 }

@@ -36,7 +36,9 @@ protected:
 	virtual bool relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
 
 public:
-	ARMDLObject() : DLObject() {}
+	ARMDLObject() :
+		DLObject() {
+	}
 };
 
 #endif /* BACKENDS_PLUGINS_ARM_LOADER_H */

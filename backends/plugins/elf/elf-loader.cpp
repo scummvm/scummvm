@@ -156,7 +156,7 @@ bool DLObject::loadSegment(Elf32_Phdr *phdr) {
 	uint32 extra = phdr->p_vaddr % phdr->p_align;	// Get extra length TODO: check logic here
 	debug(2, "elfloader: Extra mem is %x", extra);
 
-	_segment = (byte *) allocSegment(phdr->p_align, phdr->p_memsz + extra);
+	_segment = (byte *)allocSegment(phdr->p_align, phdr->p_memsz + extra);
 
 	if (!_segment) {
 		warning("elfloader: Out of memory.");
@@ -171,7 +171,8 @@ bool DLObject::loadSegment(Elf32_Phdr *phdr) {
 
 	// Set bss segment to 0 if necessary (assumes bss is at the end)
 	if (phdr->p_memsz > phdr->p_filesz) {
-		debug(2, "elfloader: Setting %p to %p to 0 for bss", _segment + phdr->p_filesz, _segment + phdr->p_memsz);
+		debug(2, "elfloader: Setting %p to %p to 0 for bss",
+				_segment + phdr->p_filesz, _segment + phdr->p_memsz);
 		memset(_segment + phdr->p_filesz, 0, phdr->p_memsz - phdr->p_filesz);
 	}
 
@@ -195,7 +196,7 @@ Elf32_Shdr * DLObject::loadSectionHeaders(Elf32_Ehdr *ehdr) {
 	Elf32_Shdr *shdr = 0;
 
 	// Allocate memory for section headers
-	if (!(shdr = (Elf32_Shdr *) malloc(ehdr->e_shnum * sizeof(*shdr)))) {
+	if (!(shdr = (Elf32_Shdr *)malloc(ehdr->e_shnum * sizeof(*shdr)))) {
 		warning("elfloader: Out of memory.");
 		return 0;
 	}
@@ -231,10 +232,11 @@ int DLObject::loadSymbolTable(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 		return -1;
 	}
 
-	debug(2, "elfloader: Symbol section at section %d, size %x", _symtab_sect, shdr[_symtab_sect].sh_size);
+	debug(2, "elfloader: Symbol section at section %d, size %x",
+			_symtab_sect, shdr[_symtab_sect].sh_size);
 
 	// Allocate memory for symbol table
-	if (!(_symtab = (Elf32_Sym *) malloc(shdr[_symtab_sect].sh_size))) {
+	if (!(_symtab = (Elf32_Sym *)malloc(shdr[_symtab_sect].sh_size))) {
 		warning("elfloader: Out of memory.");
 		return -1;
 	}
@@ -260,7 +262,7 @@ bool DLObject::loadStringTable(Elf32_Shdr *shdr) {
 	uint32 string_sect = shdr[_symtab_sect].sh_link;
 
 	// Allocate memory for string table
-	if (!(_strtab = (char *) malloc(shdr[string_sect].sh_size))) {
+	if (!(_strtab = (char *)malloc(shdr[string_sect].sh_size))) {
 		warning("elfloader: Out of memory.");
 		return false;
 	}
@@ -284,7 +286,9 @@ void DLObject::relocateSymbols(ptrdiff_t offset) {
 		// Make sure we don't relocate special valued symbols
 		if (s->st_shndx < SHN_LOPROC) {
 			s->st_value += offset;
-			if (s->st_value < Elf32_Addr(_segment) || s->st_value > Elf32_Addr(_segment) + _segmentSize)
+
+			if (s->st_value < Elf32_Addr(_segment) ||
+					s->st_value > Elf32_Addr(_segment) + _segmentSize)
 				warning("elfloader: Symbol out of bounds! st_value = %x", s->st_value);
 		}
 	}
@@ -407,7 +411,7 @@ void *DLObject::symbol(const char *name) {
 				!strcmp(name, _strtab + s->st_name)) {
 			// We found the symbol
 			debug(2, "elfloader: => 0x%08x", s->st_value);
-			return (void*) s->st_value;
+			return (void*)s->st_value;
 		}
 
 	// We didn't find the symbol

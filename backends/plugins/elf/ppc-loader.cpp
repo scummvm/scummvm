@@ -56,7 +56,7 @@ bool PPCDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 		Elf32_Sym *sym = _symtab + (REL_INDEX(rel[i].r_info));
 
 		// Get the target instruction in the code
-		src = (uint32 *) ((char *) relSegment + rel[i].r_offset - _segmentVMA);
+		src = (uint32 *)((char *)relSegment + rel[i].r_offset - _segmentVMA);
 		value = sym->st_value + rel[i].r_addend;
 
 		//debug(8, "elfloader: i=%05d %p +0x%04x: (0x%08x) 0x%08x ", i, src, rel[i].r_addend, sym->st_value, *src);
@@ -67,23 +67,23 @@ bool PPCDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 			debug(8, "elfloader: R_PPC_ADDR32 -> 0x%08x", *src);
 			break;
 		case R_PPC_ADDR16_LO:
-			*((uint16 *) src) = value;
+			*(uint16 *)src = value;
 			debug(8, "elfloader: R_PPC_ADDR16_LO -> 0x%08x", *src);
 			break;
 		case R_PPC_ADDR16_HI:
-			*(uint16 *) src = value >> 16;
+			*(uint16 *)src = value >> 16;
 			debug(8, "elfloader: R_PPC_ADDR16_HA -> 0x%08x", *src);
 			break;
 		case R_PPC_ADDR16_HA:
-			*(uint16 *) src = (value + 0x8000) >> 16;
+			*(uint16 *)src = (value + 0x8000) >> 16;
 			debug(8, "elfloader: R_PPC_ADDR16_HA -> 0x%08x", *src);
 			break;
 		case R_PPC_REL24:
-			*src = (*src & ~0x03fffffc) | ((value - (uint32) src) & 0x03fffffc);
+			*src = (*src & ~0x03fffffc) | ((value - (uint32)src) & 0x03fffffc);
 			debug(8, "elfloader: R_PPC_REL24 -> 0x%08x", *src);
 			break;
 		case R_PPC_REL32:
-			*src = value - (uint32) src;
+			*src = value - (uint32)src;
 			debug(8, "elfloader: R_PPC_REL32 -> 0x%08x", *src);
 			break;
 		default:

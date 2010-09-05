@@ -44,7 +44,7 @@
  */
 class DLObject {
 protected:
-	Common::SeekableReadStream* _file;
+	Common::SeekableReadStream *_file;
 
 	byte *_segment;
 	Elf32_Sym *_symtab;

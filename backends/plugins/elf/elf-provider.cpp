@@ -55,6 +55,7 @@ DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
 
 bool ELFPlugin::loadPlugin() {
 	assert(!_dlHandle);
+
 	DLObject *obj = makeDLObject();
 	if (obj->open(_filename.c_str())) {
 		_dlHandle = obj;
@@ -78,10 +79,11 @@ bool ELFPlugin::loadPlugin() {
 
 void ELFPlugin::unloadPlugin() {
 	DynamicPlugin::unloadPlugin();
+
 	if (_dlHandle) {
-		if (!_dlHandle->close()) {
+		if (!_dlHandle->close())
 			warning("elfloader: Failed unloading plugin '%s'", _filename.c_str());
-		}
+
 		delete _dlHandle;
 		_dlHandle = 0;
 	}
@@ -90,7 +92,9 @@ void ELFPlugin::unloadPlugin() {
 bool ELFPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
 	Common::String filename = node.getName();
-	if (!filename.hasSuffix(".PLG") && !filename.hasSuffix(".plg") && !filename.hasSuffix(".PLUGIN") && !filename.hasSuffix(".plugin"))
+
+	if (!filename.hasSuffix(".PLG") && !filename.hasSuffix(".plg") &&
+			!filename.hasSuffix(".PLUGIN") && !filename.hasSuffix(".plugin"))
 		return false;
 
 	return true;
