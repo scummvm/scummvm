@@ -47,7 +47,7 @@ protected:
     int _symtab_sect;
     void *_dtors_start, *_dtors_end;
 
-    int _segmentSize;
+    uint32 _segmentSize;
 
     //void seterror(const char *fmt, ...);
     virtual void unload();

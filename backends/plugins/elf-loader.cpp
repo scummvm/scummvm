@@ -39,7 +39,8 @@
 
 #ifdef __PSP__
 #include "backends/platform/psp/powerman.h"
-#include "psputils.h"
+#include <psputils.h>
+#include <psputilsforkernel.h>
 #endif
 
 #ifdef __DS__
@@ -59,16 +60,20 @@
 /**
  * Flushes the data cache (Platform Specific).
  */
-static void flushDataCache() {
+static void flushDataCache(void *ptr, uint32 len) {
 #ifdef __DS__
-  DC_FlushAll();
+	DC_FlushRange(ptr, len);
+	IC_InvalidateRange(ptr, len);
 #endif
 #ifdef __PLAYSTATION2__
-  FlushCache(0);
-  FlushCache(2);
+	(void) ptr;
+	(void) len;
+	FlushCache(0);
+	FlushCache(2);
 #endif
 #ifdef __PSP__
-  sceKernelDcacheWritebackAll();
+	sceKernelDcacheWritebackRange(ptr, len);
+	sceKernelIcacheInvalidateRange(ptr, len);
 #endif
 }
 
@@ -326,7 +331,7 @@ bool DLObject::open(const char *path) {
 
 	DBG("loaded!/n");
 
-	flushDataCache();
+	flushDataCache(_segment, _segmentSize);
 
 	ctors_start = symbol("___plugin_ctors");
 	ctors_end = symbol("___plugin_ctors_end");
