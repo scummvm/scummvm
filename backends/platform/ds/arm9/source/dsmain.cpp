@@ -3230,11 +3230,15 @@ int main(void) {
 
 }	// End of namespace DS
 
+#ifndef DISABLE_TEXT_CONSOLE
+extern int gDebugLevel;
+#endif
 
 int main() {
 #ifndef DISABLE_TEXT_CONSOLE
 	consoleDebugInit(DebugDevice_NOCASH);
 	nocashMessage("startup\n");
+	gDebugLevel = 2;
 #endif
 	DS::main();
 }
