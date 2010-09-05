@@ -69,7 +69,7 @@ bool MIPSDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment)
 		// Get the symbol this relocation entry is referring to
 		Elf32_Sym *sym = _symtab + (REL_INDEX(rel[i].r_info));
 
-		// Get the target instruction in the code
+		// Get the target instruction in the code. TODO: repect _segmentVMA
 		uint32 *target = (uint32 *)((byte *)relSegment + rel[i].r_offset);
 
 		uint32 origTarget = *target;	// Save for debugging
@@ -288,6 +288,7 @@ bool MIPSDLObject::loadSegment(Elf32_Phdr *phdr) {
 		// Get offset to load segment into
 		baseAddress = _segment + phdr->p_vaddr;
 		_segmentSize = phdr->p_memsz;
+		_segmentVMA = phdr->p_vaddr;
 
 		// Set .bss segment to 0 if necessary
 		if (phdr->p_memsz > phdr->p_filesz) {

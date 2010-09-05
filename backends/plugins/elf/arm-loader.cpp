@@ -59,7 +59,7 @@ bool ARMDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 		// Get the symbol this relocation entry is referring to
 		Elf32_Sym *sym = _symtab + (REL_INDEX(rel[i].r_info));
 
-		// Get the target instruction in the code
+		// Get the target instruction in the code. TODO: repect _segmentVMA
 		uint32 *target = (uint32 *)((byte *)relSegment + rel[i].r_offset);
 
 		uint32 origTarget = *target;	//Save for debugging
