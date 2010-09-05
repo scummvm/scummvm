@@ -107,6 +107,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_ECOQUEST,       -1,    -1,  0,                 NULL, "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // almost clicking anywhere triggers this in almost all rooms
 	{ GID_FANMADE,       516,   979,  0,                   "", "export 0",       -1,   20, { WORKAROUND_FAKE,   0 } }, // Happens in Grotesteing after the logos
 	{ GID_FANMADE,       528,   990,  0,            "GDialog", "doit",           -1,    4, { WORKAROUND_FAKE,   0 } }, // Happens in Cascade Quest when closing the glossary - bug #3038757
+	{ GID_FANMADE,       488,     1,  0,         "RoomScript", "doit",       0x1f17,    1, { WORKAROUND_FAKE,   0 } }, // Happens in Ocean Battle while playing - bug #3059871
 	{ GID_FREDDYPHARKAS,  -1,    24,  0,              "gcWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  -1,    31,  0,            "quitWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS, 540,   540,  0,          "WaverCode", "init",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // Gun pratice mini-game (bug #3044218)
