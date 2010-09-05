@@ -34,8 +34,14 @@ ifeq "$(HAVE_GCC)" "1"
 	# being helpful.
 	#CXXFLAGS+= -Wmissing-format-attribute
 
-	# Disable RTTI and exceptions, and enable checking of pointers returned by "new"
-	CXXFLAGS+= -fno-rtti -fno-exceptions -fcheck-new
+	# Disable RTTI and exceptions
+	CXXFLAGS+= -fno-rtti -fno-exceptions
+
+ifneq "$(HAVE_CLANG)" "1"
+	# enable checking of pointers returned by "new", but only when we do not
+	# build with clang
+	CXXFLAGS+= -fcheck-new
+endif
 endif
 
 ifeq "$(HAVE_CLANG)" "1"
