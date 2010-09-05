@@ -739,31 +739,47 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 
 void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
 	const SciScriptSignature *signatureTable = NULL;
-	if (g_sci->getGameId() == GID_ECOQUEST)
+	switch (g_sci->getGameId()) {
+	case GID_ECOQUEST:
 		signatureTable = ecoquest1Signatures;
-	if (g_sci->getGameId() == GID_ECOQUEST2)
+		break;
+	case GID_ECOQUEST2:
 		signatureTable = ecoquest2Signatures;
-	if (g_sci->getGameId() == GID_FREDDYPHARKAS)
+		break;
+	case GID_FREDDYPHARKAS:
 		signatureTable = freddypharkasSignatures;
-	if (g_sci->getGameId() == GID_GK1)
+		break;
+	case GID_GK1:
 		signatureTable = gk1Signatures;
-// hoyle4 now works due workaround inside GfxPorts
-//	if (g_sci->getGameId() == GID_HOYLE4)
-//		signatureTable = hoyle4Signatures;
-	if (g_sci->getGameId() == GID_KQ5)
+		break;
+	// hoyle4 now works due to workaround inside GfxPorts
+	//case GID_HOYLE4:
+	//	signatureTable = hoyle4Signatures;
+	//	break;
+	case GID_KQ5:
 		signatureTable = kq5Signatures;
-	if (g_sci->getGameId() == GID_LAURABOW2)
+		break;
+	case GID_LAURABOW2:
 		signatureTable = laurabow2Signatures;
-	if (g_sci->getGameId() == GID_LSL6)
+		break;
+	case GID_LSL6:
 		signatureTable = larry6Signatures;
-	if (g_sci->getGameId() == GID_MOTHERGOOSE256)
+		break;
+	case GID_MOTHERGOOSE256:
 		signatureTable = mothergoose256Signatures;
-	if (g_sci->getGameId() == GID_QFG1VGA)
+		break;
+	case GID_QFG1VGA:
 		signatureTable = qfg1vgaSignatures;
-	if (g_sci->getGameId() == GID_SQ4)
+		break;
+	case GID_SQ4:
 		signatureTable = sq4Signatures;
-	if (g_sci->getGameId() == GID_SQ5)
+		break;
+	case GID_SQ5:
 		signatureTable = sq5Signatures;
+		break;
+	default:
+		break;
+	}
 
 	if (signatureTable) {
 		while (signatureTable->data) {
