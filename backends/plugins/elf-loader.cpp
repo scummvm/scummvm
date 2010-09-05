@@ -137,7 +137,7 @@ bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr)
 	debug(2, "elfloader: Allocated segment @ %p", _segment);
 
 	// Get offset to load segment into
-	baseAddress = (char *)_segment + phdr->p_vaddr;
+	baseAddress = (char *)_segment;
 	_segmentSize = phdr->p_memsz + extra;
 
 	// Set bss segment to 0 if necessary (assumes bss is at the end)
