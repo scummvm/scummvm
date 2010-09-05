@@ -31,20 +31,16 @@
 #include "common/fs.h"
 
 DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
-	void *func;
-	bool handleNull;
-	if (_dlHandle == NULL) {
-		func = NULL;
-		handleNull = true;
-	} else {
+	void *func = 0;
+
+	if (_dlHandle)
 		func = _dlHandle->symbol(symbol);
-	}
+
 	if (!func) {
-		if (handleNull) {
+		if (!_dlHandle)
 			warning("elfloader: Failed loading symbol '%s' from plugin '%s' (Handle is NULL)", symbol, _filename.c_str());
-		} else {
+		else
 			warning("elfloader: Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
-		}
 	}
 
 	// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
@@ -64,7 +60,7 @@ bool ELFPlugin::loadPlugin() {
 			_dlHandle = obj;
 		} else {
 			delete obj;
-			_dlHandle = NULL;
+			_dlHandle = 0;
 		}
 
 		if (!_dlHandle) {

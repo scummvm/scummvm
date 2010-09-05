@@ -59,7 +59,7 @@ ShortSegmentManager::Segment *ShortSegmentManager::newSegment(int size, char *or
 	if (lastAddress + size > _shortsEnd) {
 		warning("elfloader: No space in shorts segment for %x bytes. Last address is %p, max address is %p.",
 		         size, lastAddress, _shortsEnd);
-		return NULL;
+		return 0;
 	}
 
 	Segment *seg = new Segment(lastAddress, size, origAddr);	// Create a new segment

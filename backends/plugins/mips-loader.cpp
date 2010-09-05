@@ -39,7 +39,7 @@
  *
  */
 bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
-	Elf32_Rel *rel = NULL;	// relocation entry
+	Elf32_Rel *rel = 0;	// relocation entry
 
 	// Allocate memory for relocation table
 	if (!(rel = (Elf32_Rel *)malloc(size))) {
@@ -48,8 +48,8 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 	}
 
 	// Read in our relocation table
-	if (DLFile->seek(offset, SEEK_SET) < 0 ||
-	        DLFile->read(rel, size) != (ssize_t)size) {
+	if (!DLFile->seek(offset, SEEK_SET) ||
+	        DLFile->read(rel, size) != size) {
 		warning("elfloader: Relocation table load failed.");
 		free(rel);
 		return false;
@@ -317,8 +317,8 @@ bool MIPSDLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *p
 	debug(2, "elfloader: Reading the segment into memory");
 
 	// Read the segment into memory
-	if (DLFile->seek(phdr->p_offset, SEEK_SET) < 0 ||
-	        DLFile->read(baseAddress, phdr->p_filesz) != (ssize_t)phdr->p_filesz) {
+	if (!DLFile->seek(phdr->p_offset, SEEK_SET) ||
+	        DLFile->read(baseAddress, phdr->p_filesz) != phdr->p_filesz) {
 		warning("elfloader: Segment load failed.");
 		return false;
 	}
@@ -332,11 +332,11 @@ bool MIPSDLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *p
 void MIPSDLObject::unload() {
 	discard_symtab();
 	free(_segment);
-	_segment = NULL;
+	_segment = 0;
 
 	if (_shortsSegment) {
 		ShortsMan.deleteSegment(_shortsSegment);
-		_shortsSegment = NULL;
+		_shortsSegment = 0;
 	}
 }
 

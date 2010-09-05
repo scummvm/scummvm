@@ -67,8 +67,8 @@ static void flushDataCache(void *ptr, uint32 len) {
 void DLObject::discard_symtab() {
 	free(_symtab);
 	free(_strtab);
-	_symtab = NULL;
-	_strtab = NULL;
+	_symtab = 0;
+	_strtab = 0;
 	_symbol_cnt = 0;
 }
 
@@ -76,7 +76,7 @@ void DLObject::discard_symtab() {
 void DLObject::unload() {
 	discard_symtab();
 	free(_segment);
-	_segment = NULL;
+	_segment = 0;
 }
 
 bool DLObject::readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr) {
@@ -104,7 +104,7 @@ bool DLObject::readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehd
 
 bool DLObject::readProgramHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num) {
 	// Read program header
-	if (DLFile->seek(ehdr->e_phoff + sizeof(*phdr)*num, SEEK_SET) < 0 ||
+	if (!DLFile->seek(ehdr->e_phoff + sizeof(*phdr)*num, SEEK_SET) ||
 	    DLFile->read(phdr, sizeof(*phdr)) != sizeof(*phdr)) {
 		warning("elfloader: Program header load failed.");
 		return false;
@@ -149,7 +149,7 @@ bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr)
 	debug(2, "elfloader: Reading the segment into memory");
 
 	// Read the segment into memory
-	if (DLFile->seek(phdr->p_offset, SEEK_SET) < 0 ||
+	if (!DLFile->seek(phdr->p_offset, SEEK_SET) ||
 	        DLFile->read(baseAddress, phdr->p_filesz) != phdr->p_filesz) {
 		warning("elfloader: Segment load failed.");
 		return false;
@@ -161,20 +161,20 @@ bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr)
 }
 
 Elf32_Shdr * DLObject::loadSectionHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr) {
-	Elf32_Shdr *shdr = NULL;
+	Elf32_Shdr *shdr = 0;
 
 	// Allocate memory for section headers
 	if (!(shdr = (Elf32_Shdr *)malloc(ehdr->e_shnum * sizeof(*shdr)))) {
 		warning("elfloader: Out of memory.");
-		return NULL;
+		return 0;
 	}
 
 	// Read from file into section headers
-	if (DLFile->seek(ehdr->e_shoff, SEEK_SET) < 0 ||
+	if (!DLFile->seek(ehdr->e_shoff, SEEK_SET) ||
 	        DLFile->read(shdr, ehdr->e_shnum * sizeof(*shdr)) !=
 	        ehdr->e_shnum * sizeof(*shdr)) {
 		warning("elfloader: Section headers load failed.");
-		return NULL;
+		return 0;
 	}
 
 	return shdr;
@@ -207,7 +207,7 @@ int DLObject::loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *eh
 	}
 
 	// Read symbol table into memory
-	if (DLFile->seek(shdr[_symtab_sect].sh_offset, SEEK_SET) < 0 ||
+	if (!DLFile->seek(shdr[_symtab_sect].sh_offset, SEEK_SET) ||
 	        DLFile->read(_symtab, shdr[_symtab_sect].sh_size) !=
 	        shdr[_symtab_sect].sh_size) {
 		warning("elfloader: Symbol table load failed.");
@@ -231,7 +231,7 @@ bool DLObject::loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *s
 	}
 
 	// Read string table into memory
-	if (DLFile->seek(shdr[string_sect].sh_offset, SEEK_SET) < 0 ||
+	if (!DLFile->seek(shdr[string_sect].sh_offset, SEEK_SET) ||
 	        DLFile->read(_strtab, shdr[string_sect].sh_size) !=
 	        shdr[string_sect].sh_size) {
 		warning("elfloader: Symbol table strings load failed.");
@@ -274,7 +274,7 @@ bool DLObject::load(Common::SeekableReadStream* DLFile) {
 			return false;
 	}
 
-	if ((shdr = loadSectionHeaders(DLFile, &ehdr)) == NULL)
+	if ((shdr = loadSectionHeaders(DLFile, &ehdr)) == 0)
 		ret = false;
 
 	if (ret && ((_symtab_sect = loadSymbolTable(DLFile, &ehdr, shdr)) < 0))
@@ -324,10 +324,9 @@ bool DLObject::open(const char *path) {
 	_dtors_start = symbol("___plugin_dtors");
 	_dtors_end = symbol("___plugin_dtors_end");
 
-	if (ctors_start == NULL || ctors_end == NULL || _dtors_start == NULL ||
-	        _dtors_end == NULL) {
+	if (!ctors_start || !ctors_end || !_dtors_start || !_dtors_end) {
 		warning("elfloader: Missing ctors/dtors.");
-		_dtors_start = _dtors_end = NULL;
+		_dtors_start = _dtors_end = 0;
 		unload();
 		return false;
 	}
@@ -342,10 +341,10 @@ bool DLObject::open(const char *path) {
 }
 
 bool DLObject::close() {
-	if (_dtors_start != NULL && _dtors_end != NULL)
+	if (_dtors_start && _dtors_end)
 		for (void (**f)(void) = (void (**)(void))_dtors_start; f != _dtors_end; f++)
 			(**f)();
-	_dtors_start = _dtors_end = NULL;
+	_dtors_start = _dtors_end = 0;
 	unload();
 	return true;
 }
@@ -353,9 +352,9 @@ bool DLObject::close() {
 void *DLObject::symbol(const char *name) {
 	debug(2, "elfloader: Symbol(\"%s\")", name);
 
-	if (_symtab == NULL || _strtab == NULL || _symbol_cnt < 1) {
+	if (!_symtab || !_strtab || _symbol_cnt < 1) {
 		warning("elfloader: No symbol table loaded.");
-		return NULL;
+		return 0;
 	}
 
 	Elf32_Sym *s = (Elf32_Sym *)_symtab;
@@ -371,7 +370,7 @@ void *DLObject::symbol(const char *name) {
 
 	// We didn't find the symbol
 	warning("elfloader: Symbol \"%s\" not found.", name);
-	return NULL;
+	return 0;
 }
 
 #endif /* defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET) */

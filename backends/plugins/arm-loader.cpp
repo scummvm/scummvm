@@ -39,7 +39,7 @@
  *
  */
 bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
-	Elf32_Rel *rel = NULL; //relocation entry
+	Elf32_Rel *rel = 0; //relocation entry
 
 	// Allocate memory for relocation table
 	if (!(rel = (Elf32_Rel *)malloc(size))) {
@@ -49,7 +49,7 @@ bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long off
 
 	// Read in our relocation table
 	if (DLFile->seek(offset, SEEK_SET) < 0 ||
-	        DLFile->read(rel, size) != (ssize_t)size) {
+	        DLFile->read(rel, size) != size) {
 		warning("elfloader: Relocation table load failed.");
 		free(rel);
 		return false;
