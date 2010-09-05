@@ -353,6 +353,10 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 	}
 
 	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
+		// Sierra SCI ignores volume set when playing samples via kDoSound
+		//  At least freddy pharkas/CD has a script bug that sets volume to 0
+		//  when playing the "score" sample
+		pSnd->volume = 0x7f;
 		if (pSnd->loop > 1) {
 			pSnd->pLoopStream = new Audio::LoopingAudioStream(pSnd->pStreamAud,
 			                                                  pSnd->loop, DisposeAfterUse::NO);
