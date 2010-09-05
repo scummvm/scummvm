@@ -26,15 +26,17 @@
 #ifndef BACKENDS_ELF_H
 #define BACKENDS_ELF_H
 
+#include "common/scummsys.h"
+
 /**
  *  ELF stuff:
  *  The contents of this file were gathered mainly from the SYSTEM V APPLICATION BINARY INTERFACE.
  *  Processor-specific things were garnered from processor-specific supplements to the abi.
  */
 
-typedef unsigned short Elf32_Half, Elf32_Section;
-typedef unsigned int Elf32_Word, Elf32_Addr, Elf32_Off;
-typedef signed int  Elf32_Sword;
+typedef uint16 Elf32_Half, Elf32_Section;
+typedef uint32 Elf32_Word, Elf32_Addr, Elf32_Off;
+typedef int32  Elf32_Sword;
 typedef Elf32_Half Elf32_Versym;
 
 #define EI_NIDENT (16)
@@ -44,7 +46,7 @@ typedef Elf32_Half Elf32_Versym;
 
 // ELF header (contains info about the file)
 typedef struct {
-	unsigned char e_ident[EI_NIDENT];     /* Magic number and other info */
+	byte          e_ident[EI_NIDENT];     /* Magic number and other info */
 	Elf32_Half    e_type;                 /* Object file type */
 	Elf32_Half    e_machine;              /* Architecture */
 	Elf32_Word    e_version;              /* Object file version */
@@ -159,8 +161,8 @@ typedef struct {
 	Elf32_Word    st_name;                /* Symbol name (string tbl index) */
 	Elf32_Addr    st_value;               /* Symbol value */
 	Elf32_Word    st_size;                /* Symbol size */
-	unsigned char st_info;                /* Symbol type and binding */
-	unsigned char st_other;               /* Symbol visibility */
+	byte          st_info;                /* Symbol type and binding */
+	byte          st_other;               /* Symbol visibility */
 	Elf32_Section st_shndx;               /* Section index */
 } Elf32_Sym;
 
@@ -203,7 +205,7 @@ typedef struct
 } Elf32_Rela;
 
 // Access macros for the relocation info
-#define REL_TYPE(x)		((unsigned char) (x))	/* Extract relocation type */
+#define REL_TYPE(x)		((byte) (x))	/* Extract relocation type */
 #define REL_INDEX(x)	((x)>>8)		/* Extract relocation index into symbol table */
 
 //MIPS relocation types
@@ -244,9 +246,10 @@ typedef struct
 
 // Mock function to get value of global pointer for MIPS
 #define getGP()	({	\
-	unsigned int __valgp;	\
+	uint32 __valgp;	\
 	__asm__ ("add %0, $gp, $0" : "=r"(__valgp) : ); \
 	__valgp; \
 })
 
 #endif /* BACKENDS_ELF_H */
+

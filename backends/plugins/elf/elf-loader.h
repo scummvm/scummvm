@@ -44,21 +44,23 @@
  */
 class DLObject {
 protected:
-	void *_segment, *_symtab;
+	byte *_segment;
+	Elf32_Sym *_symtab;
 	char *_strtab;
-	int _symbol_cnt;
-	int _symtab_sect;
-	void *_dtors_start, *_dtors_end;
 
 	uint32 _segmentSize;
 	ptrdiff_t _segmentOffset;
 	uint32 _segmentVMA;
 
+	uint32 _symbol_cnt;
+	int32 _symtab_sect;
+	void *_dtors_start, *_dtors_end;
+
 	virtual void unload();
 	bool load(Common::SeekableReadStream* DLFile);
 
 	bool readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
-	bool readProgramHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num);
+	bool readProgramHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, Elf32_Half num);
 	virtual bool loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr);
 	Elf32_Shdr *loadSectionHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
 	int loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
@@ -66,13 +68,14 @@ protected:
 	virtual void relocateSymbols(ptrdiff_t offset);
 
 	// architecture specific
-	virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) = 0;
+	virtual bool relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset, Elf32_Word size, byte *relSegment) = 0;
 	virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) = 0;
 
 	// platform specific
 	virtual void *allocSegment(size_t boundary, size_t size) const = 0;
 	virtual void freeSegment(void *segment) const = 0;
 	virtual void flushDataCache(void *ptr, uint32 len) const = 0;
+
 public:
 	DLObject();
 	virtual ~DLObject();
@@ -86,3 +89,4 @@ public:
 #endif /* BACKENDS_PLUGINS_ELF_LOADER_H */
 
 #endif /* defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET) */
+

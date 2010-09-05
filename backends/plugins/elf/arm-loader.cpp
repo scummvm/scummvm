@@ -38,47 +38,46 @@
  * @param size			Size of relocation section
  * @param relSegment	Base address of relocated segment in memory (memory offset)
  */
-bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
+bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset, Elf32_Word size, byte *relSegment) {
 	Elf32_Rel *rel = 0; //relocation entry
 
 	// Allocate memory for relocation table
-	if (!(rel = (Elf32_Rel *)malloc(size))) {
+	if (!(rel = (Elf32_Rel *) malloc(size))) {
 		warning("elfloader: Out of memory.");
 		return false;
 	}
 
 	// Read in our relocation table
-	if (!DLFile->seek(offset, SEEK_SET) ||
-			DLFile->read(rel, size) != size) {
+	if (!DLFile->seek(offset, SEEK_SET) || DLFile->read(rel, size) != size) {
 		warning("elfloader: Relocation table load failed.");
 		free(rel);
 		return false;
 	}
 
 	// Treat each relocation entry. Loop over all of them
-	int cnt = size / sizeof(*rel);
+	uint32 cnt = size / sizeof(*rel);
 
 	debug(2, "elfloader: Loaded relocation table. %d entries. base address=%p", cnt, relSegment);
 
-	int a = 0;
-	unsigned int relocation = 0;
+	int32 a = 0;
+	uint32 relocation = 0;
 
 	// Loop over relocation entries
-	for (int i = 0; i < cnt; i++) {
+	for (uint32 i = 0; i < cnt; i++) {
 		// Get the symbol this relocation entry is referring to
-		Elf32_Sym *sym = (Elf32_Sym *)(_symtab) + (REL_INDEX(rel[i].r_info));
+		Elf32_Sym *sym = _symtab + (REL_INDEX(rel[i].r_info));
 
 		// Get the target instruction in the code
-		unsigned int *target = (unsigned int *)((char *)relSegment + rel[i].r_offset);
+		uint32 *target = (uint32 *) ((byte *) relSegment + rel[i].r_offset);
 
-		unsigned int origTarget = *target;	//Save for debugging
+		uint32 origTarget = *target;	//Save for debugging
 
 		// Act differently based on the type of relocation
 		switch (REL_TYPE(rel[i].r_info)) {
 		case R_ARM_ABS32:
 			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
 				a = *target;							// Get full 32 bits of addend
-				relocation = a + (Elf32_Addr)_segment;			   // Shift by main offset
+				relocation = a + Elf32_Addr(_segment);	// Shift by main offset
 
 				*target = relocation;
 
@@ -115,12 +114,12 @@ bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long off
 
 bool ARMDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 	// Loop over sections, finding relocation sections
-	for (int i = 0; i < ehdr->e_shnum; i++) {
+	for (uint32 i = 0; i < ehdr->e_shnum; i++) {
 		Elf32_Shdr *curShdr = &(shdr[i]);
 
 		if ((curShdr->sh_type == SHT_REL || curShdr->sh_type == SHT_RELA) &&		// Check for a relocation section
 				curShdr->sh_entsize == sizeof(Elf32_Rel) &&			// Check for proper relocation size
-				(int)curShdr->sh_link == _symtab_sect &&			// Check that the sh_link connects to our symbol table
+				int32(curShdr->sh_link) == _symtab_sect &&			// Check that the sh_link connects to our symbol table
 				curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
 				(shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {  	// Check if relocated section resides in memory
 
@@ -138,3 +137,4 @@ bool ARMDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *e
 }
 
 #endif /* defined(DYNAMIC_MODULES) && defined(ARM_TARGET) */
+

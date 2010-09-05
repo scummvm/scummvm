@@ -62,33 +62,44 @@ public:
 
 	// Returns whether or not an absolute address is in the GP-relative section.
 	bool inGeneralSegment(char *addr) {
-		return ((char *)addr >= _shortsStart && (char *)addr < _shortsEnd);
+		return (addr >= _shortsStart && addr < _shortsEnd);
 	}
 
 	class Segment {
 	private:
 		friend class ShortSegmentManager;
-		Segment(char *start, int size, char *origAddr) : _startAddress(start), _size(size), _origAddress(origAddr) {}
-		~Segment() {}
+		Segment(char *start, uint32 size, char *origAddr) :
+			_startAddress(start),
+			_size(size),
+			_origAddress(origAddr) {
+		}
+
+		virtual ~Segment() {
+		}
+
 		char *_startAddress;		// Start of shorts segment in memory
-		int  _size;					// Size of shorts segment
+		uint32 _size;				// Size of shorts segment
 		char *_origAddress;			// Original address this segment was supposed to be at
+
 	public:
 		char *getStart() {
 			return _startAddress;
 		}
+
 		char *getEnd() {
 			return (_startAddress + _size);
 		}
+
 		Elf32_Addr getOffset() {
 			return (Elf32_Addr)(_startAddress - _origAddress);
 		}
+
 		bool inSegment(char *addr) {
-			return ((char *)addr >= _startAddress && (char *)addr <= _startAddress + _size);
+			return (addr >= _startAddress && addr <= _startAddress + _size);
 		}
 	};
 
-	Segment *newSegment(int size, char *origAddr);
+	Segment *newSegment(uint32 size, char *origAddr);
 	void deleteSegment(Segment *);
 
 private:
@@ -101,3 +112,4 @@ private:
 #endif /* SHORTS_SEGMENT_MANAGER_H */
 
 #endif /* defined(DYNAMIC_MODULES) && defined(MIPS_TARGET) */
+

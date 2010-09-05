@@ -30,7 +30,7 @@
 
 #include "common/debug.h"
 
-bool PPCDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
+bool PPCDLObject::relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset, Elf32_Word size, byte *relSegment) {
 	Elf32_Rela *rel = NULL;
 
 	if (!(rel = (Elf32_Rela *)malloc(size))) {
@@ -38,26 +38,25 @@ bool PPCDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long off
 		return false;
 	}
 
-	if (DLFile->seek(offset, SEEK_SET) < 0 ||
-			DLFile->read(rel, size) != size) {
+	if (!DLFile->seek(offset, SEEK_SET) || DLFile->read(rel, size) != size) {
 		warning("elfloader: Relocation table load failed.");
 		free(rel);
 		return false;
 	}
 
-	int cnt = size / sizeof(*rel);
+	uint32 cnt = size / sizeof(*rel);
 
 	debug(2, "elfloader: Loaded relocation table. %d entries. base address=%p\n", cnt, relSegment);
 
 	uint32 *src;
 	uint32 value;
 
-	for (int i = 0; i < cnt; i++) {
+	for (uint32 i = 0; i < cnt; i++) {
 		// Get the symbol this relocation entry is referring to
-		Elf32_Sym *sym = (Elf32_Sym *)(_symtab) + (REL_INDEX(rel[i].r_info));
+		Elf32_Sym *sym = _symtab + (REL_INDEX(rel[i].r_info));
 
 		// Get the target instruction in the code
-		src = (uint32 *)((char *)relSegment + rel[i].r_offset - _segmentVMA);
+		src = (uint32 *) ((char *) relSegment + rel[i].r_offset - _segmentVMA);
 		value = sym->st_value + rel[i].r_addend;
 
 		//debug(8, "elfloader: i=%05d %p +0x%04x: (0x%08x) 0x%08x ", i, src, rel[i].r_addend, sym->st_value, *src);
@@ -99,12 +98,12 @@ bool PPCDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long off
 }
 
 bool PPCDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
-	for (int i = 0; i < ehdr->e_shnum; i++) {
+	for (uint32 i = 0; i < ehdr->e_shnum; i++) {
 		Elf32_Shdr *curShdr = &(shdr[i]);
 
 		if ((curShdr->sh_type == SHT_REL) &&
 				curShdr->sh_entsize == sizeof(Elf32_Rel) &&
-				(int)curShdr->sh_link == _symtab_sect &&
+				int32(curShdr->sh_link) == _symtab_sect &&
 				curShdr->sh_info < ehdr->e_shnum &&
 				(shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {
 			warning("elfloader: REL entries not supported!\n");
@@ -113,7 +112,7 @@ bool PPCDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *e
 
 		if ((curShdr->sh_type == SHT_RELA) &&
 				curShdr->sh_entsize == sizeof(Elf32_Rela) &&
-				(int)curShdr->sh_link == _symtab_sect &&
+				int32(curShdr->sh_link) == _symtab_sect &&
 				curShdr->sh_info < ehdr->e_shnum &&
 				(shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {
 			if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, _segment))

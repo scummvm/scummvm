@@ -40,7 +40,7 @@ ShortSegmentManager::ShortSegmentManager() {
 	_shortsEnd = &__plugin_hole_end;		//and ends at the end of that hole.
 }
 
-ShortSegmentManager::Segment *ShortSegmentManager::newSegment(int size, char *origAddr) {
+ShortSegmentManager::Segment *ShortSegmentManager::newSegment(uint32 size, char *origAddr) {
 	char *lastAddress = origAddr;
 	Common::List<Segment *>::iterator i;
 
@@ -48,7 +48,8 @@ ShortSegmentManager::Segment *ShortSegmentManager::newSegment(int size, char *or
 	for (i = _list.begin(); i != _list.end(); ++i) {
 		char *currAddress = (*i)->getStart();
 
-		if ((int)(currAddress - lastAddress) >= size) break;
+		if (uint32(currAddress) - uint32(lastAddress) >= size)
+			break;
 
 		lastAddress = (*i)->getEnd();
 	}
@@ -82,3 +83,4 @@ void ShortSegmentManager::deleteSegment(ShortSegmentManager::Segment *seg) {
 }
 
 #endif /* DYNAMIC_MODULES && MIPS_TARGET */
+
