@@ -178,7 +178,7 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 	*clone_obj = *parent_obj;
 
 	// Mark as clone
-	clone_obj->markAsClone(); // sets -info- selector
+	clone_obj->markAsClone(); // sets bit 0 of -info- selector
 	clone_obj->setSpeciesSelector(clone_obj->getPos());
 	if (parent_obj->isClass())
 		clone_obj->setSuperClassSelector(parent_obj->getPos());
