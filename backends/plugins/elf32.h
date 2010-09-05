@@ -38,7 +38,7 @@ typedef signed int  Elf32_Sword;
 typedef Elf32_Half Elf32_Versym;
 
 #define EI_NIDENT (16)
-#define SELFMAG         6
+#define SELFMAG   4
 
 /* ELF File format structures. Look up ELF structure for more details */
 
@@ -61,7 +61,17 @@ typedef struct {
 } Elf32_Ehdr;
 
 // Should be in e_ident
-#define ELFMAG          "\177ELF\1\1"	/* ELF Magic number */
+#define ELFMAG          "\177ELF"	/* ELF Magic number */
+
+#define EI_CLASS	4		/* File class byte index */
+#define ELFCLASS32	1		/* 32-bit objects */
+
+#define EI_DATA		5		/* Data encoding byte index */
+#define ELFDATA2LSB	1		/* 2's complement, little endian */
+#define ELFDATA2MSB	2		/* 2's complement, big endian */
+
+#define EI_VERSION	6
+#define EV_CURRENT	1		/* Current version */
 
 // e_type values
 #define ET_NONE		0	/* no file type */

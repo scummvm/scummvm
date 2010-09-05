@@ -80,19 +80,54 @@ void DLObject::unload() {
 }
 
 bool DLObject::readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr) {
-	// Start reading the elf header. Check for errors
+	// Start reading the elf header. Check for errors and magic
 	if (DLFile->read(ehdr, sizeof(*ehdr)) != sizeof(*ehdr) ||
-	        memcmp(ehdr->e_ident, ELFMAG, SELFMAG) ||			// Check MAGIC
-	        ehdr->e_type != ET_EXEC ||							// Check for executable
+			memcmp(ehdr->e_ident, ELFMAG, SELFMAG)) {
+		warning("elfloader: No ELF file.");
+		return false;
+	}
+
+	if (ehdr->e_ident[EI_CLASS] != ELFCLASS32) {
+		warning("elfloader: Wrong ELF file class.");
+		return false;
+	}
+
+	if (ehdr->e_ident[EI_DATA] !=
+#ifdef SCUMM_BIG_ENDIAN
+			ELFDATA2MSB
+#else
+			ELFDATA2LSB
+#endif
+			) {
+		warning("elfloader: Wrong ELF file endianess.");
+		return false;
+	}
+
+	if (ehdr->e_ident[EI_VERSION] != EV_CURRENT) {
+		warning("elfloader: Wrong ELF file version.");
+		return false;
+	}
+
+	if (ehdr->e_type != ET_EXEC) {
+		warning("elfloader: No executable ELF file.");
+		return false;
+	}
+
+	if (ehdr->e_machine !=
 #ifdef ARM_TARGET
-	        ehdr->e_machine != EM_ARM ||						// Check for ARM machine type
+			EM_ARM
 #endif
 #ifdef MIPS_TARGET
-	        ehdr->e_machine != EM_MIPS ||						// Check for MIPS machine type
+			EM_MIPS
 #endif
-	        ehdr->e_phentsize < sizeof(Elf32_Phdr)	 ||			// Check for size of program header
-	        ehdr->e_shentsize != sizeof(Elf32_Shdr)) {			// Check for size of section header
-		warning("elfloader: Invalid file type.");
+			) {
+		warning("elfloader: Wrong ELF file architecture.");
+		return false;
+	}
+
+	if (ehdr->e_phentsize < sizeof(Elf32_Phdr)	 ||			// Check for size of program header
+			ehdr->e_shentsize != sizeof(Elf32_Shdr)) {		// Check for size of section header
+		warning("elfloader: Invalid ELF structure sizes.");
 		return false;
 	}
 
