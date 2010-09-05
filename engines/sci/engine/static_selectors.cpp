@@ -98,7 +98,6 @@ static const char * const sci2Selectors[] = {
 #endif
 
 static const SelectorRemap sciSelectorRemap[] = {
-	{    SCI_VERSION_0_EARLY,     SCI_VERSION_1_LATE,     "-info-",   2 },
 	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,   "moveDone", 170 },
 	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,     "points", 316 },
 	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,      "flags", 368 },
@@ -107,7 +106,6 @@ static const SelectorRemap sciSelectorRemap[] = {
 	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,  "topString", 101 },
 	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,      "flags", 102 },
 	// SCI1.1
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,     "-info-",4103 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,    "nodePtr",  41 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "cantBeHere",  54 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,  "topString",  98 },
@@ -121,6 +119,7 @@ static const SelectorRemap sciSelectorRemap[] = {
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,   "maxScale", 106 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "vanishingX", 107 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "vanishingY", 108 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,     "-info-",4103 },
 	{ SCI_VERSION_NONE,             SCI_VERSION_NONE,            0,   0 }
 };
 
@@ -136,8 +135,12 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 
 	// Resize the list of selector names and fill in the SCI 0 names.
 	names.resize(count);
-	for (int i = 0; i < offset; i++)
-		names[i].clear();
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		// Fill selectors 0 - 2 for SCI0 - SCI1 late
+		names[0] = "species";
+		names[1] = "superClass";
+		names[2] = "-info-";
+	}
 
 	if (getSciVersion() <= SCI_VERSION_1_1) {
 		// SCI0 - SCI11
@@ -185,6 +188,8 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 					names.resize((uint32)initSelectorPos + 1);
 
 				names[initSelectorPos] = "init";
+				// dispose comes right after init
+				names[initSelectorPos + 1] = "dispose";
 
 				if ((getSciVersion() >= SCI_VERSION_1_EGA)) {
 					// Find the xLast and yLast selectors, used in kDoBresen
@@ -246,6 +251,13 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 
 			names[274] = "syncTime";
 			names[275] = "syncCue";
+		} else if (g_sci->getGameId() == GID_PEPPER) {
+			// Same as above for the non-interactive demo of Pepper
+			if (names.size() < 265)
+				names.resize(265);
+
+			names[263] = "syncTime";
+			names[264] = "syncCue";
 		} else if (g_sci->getGameId() == GID_LAURABOW2) {
 			// The floppy of version needs the changeState selector set to match up with the
 			// CD version's workarounds.
