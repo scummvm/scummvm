@@ -25,7 +25,7 @@
 
 #if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
 
-#include "backends/plugins/shorts-segment-manager.h"
+#include "backends/plugins/elf/shorts-segment-manager.h"
 
 #include "common/debug.h"
 

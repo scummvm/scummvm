@@ -28,8 +28,8 @@
 #ifndef BACKENDS_PLUGINS_PSP_PSP_PROVIDER_H
 #define BACKENDS_PLUGINS_PSP_PSP_PROVIDER_H
 
-#include "backends/plugins/elf-provider.h"
-#include "backends/plugins/mips-loader.h"
+#include "backends/plugins/elf/elf-provider.h"
+#include "backends/plugins/elf/mips-loader.h"
 
 class PSPPluginProvider : public ELFPluginProvider {
 	class PSPPlugin : public ELFPlugin {

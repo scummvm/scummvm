@@ -28,7 +28,7 @@
 #ifndef BACKENDS_PLUGINS_ELF_PROVIDER_H
 #define BACKENDS_PLUGINS_ELF_PROVIDER_H
 
-#include "backends/plugins/elf-loader.h"
+#include "backends/plugins/elf/elf-loader.h"
 
 #include "common/fs.h"
 

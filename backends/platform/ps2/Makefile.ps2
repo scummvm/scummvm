@@ -88,9 +88,9 @@ CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP
 # Variables for dynamic plugin building
 PLUGIN_PREFIX =
 PLUGIN_SUFFIX = .plg
-PLUGIN_EXTRA_DEPS = $(srcdir)/backends/plugins/plugin.syms elf/scummvm.elf
+PLUGIN_EXTRA_DEPS = $(srcdir)/backends/plugins/elf/plugin.syms elf/scummvm.elf
 PLUGIN_LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o
-PLUGIN_LDFLAGS += -nostartfiles -Wl,-q,--just-symbols,elf/scummvm.elf,-T$(srcdir)/backends/plugins/ps2/plugin.ld,--retain-symbols-file,$(srcdir)/backends/plugins/plugin.syms -lstdc++ -lc
+PLUGIN_LDFLAGS += -nostartfiles -Wl,-q,--just-symbols,elf/scummvm.elf,-T$(srcdir)/backends/plugins/ps2/plugin.ld,--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms -lstdc++ -lc
 
 
 BACKEND := ps2

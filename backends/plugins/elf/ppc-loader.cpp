@@ -25,8 +25,8 @@
 
 #if defined(DYNAMIC_MODULES) && defined(PPC_TARGET)
 
-#include "backends/plugins/elf-loader.h"
-#include "backends/plugins/ppc-loader.h"
+#include "backends/plugins/elf/elf-loader.h"
+#include "backends/plugins/elf/ppc-loader.h"
 
 #include "common/debug.h"
 

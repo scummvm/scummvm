@@ -106,7 +106,6 @@
 #include "engine.h"
 
 #include "backends/plugins/ds/ds-provider.h"
-#include "backends/plugins/elf-provider.h"
 #include "backends/fs/ds/ds-fs.h"
 #include "base/version.h"
 #include "common/util.h"

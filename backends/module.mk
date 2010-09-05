@@ -22,12 +22,12 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	midi/dmedia.o \
 	midi/windows.o \
-	plugins/elf-loader.o \
-	plugins/mips-loader.o \
-	plugins/shorts-segment-manager.o \
-	plugins/arm-loader.o \
-	plugins/ppc-loader.o \
-	plugins/elf-provider.o \
+	plugins/elf/elf-loader.o \
+	plugins/elf/mips-loader.o \
+	plugins/elf/shorts-segment-manager.o \
+	plugins/elf/ppc-loader.o \
+	plugins/elf/arm-loader.o \
+	plugins/elf/elf-provider.o \
 	plugins/dc/dc-provider.o \
 	plugins/posix/posix-provider.o \
 	plugins/sdl/sdl-provider.o \

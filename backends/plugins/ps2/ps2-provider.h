@@ -25,8 +25,8 @@
 
 #if defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 
-#include "backends/plugins/elf-provider.h"
-#include "backends/plugins/mips-loader.h"
+#include "backends/plugins/elf/elf-provider.h"
+#include "backends/plugins/elf/mips-loader.h"
 
 class PS2PluginProvider : public ELFPluginProvider {
 	class PS2Plugin : public ELFPlugin {

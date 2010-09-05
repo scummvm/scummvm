@@ -25,8 +25,8 @@
 
 #if defined(DYNAMIC_MODULES) && defined(__WII__)
 
-#include "backends/plugins/elf-provider.h"
-#include "backends/plugins/ppc-loader.h"
+#include "backends/plugins/elf/elf-provider.h"
+#include "backends/plugins/elf/ppc-loader.h"
 
 class WiiPluginProvider : public ELFPluginProvider {
 	class WiiPlugin : public ELFPlugin {

@@ -25,8 +25,8 @@
 
 #if defined(DYNAMIC_MODULES) && defined(ARM_TARGET)
 
-#include "backends/plugins/elf-loader.h"
-#include "backends/plugins/arm-loader.h"
+#include "backends/plugins/elf/elf-loader.h"
+#include "backends/plugins/elf/arm-loader.h"
 
 #include "common/debug.h"
 

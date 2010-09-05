@@ -25,7 +25,7 @@
 
 #if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
 
-#include "backends/plugins/mips-loader.h"
+#include "backends/plugins/elf/mips-loader.h"
 
 #include "common/debug.h"
 

@@ -25,7 +25,7 @@
 
 #if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
-#include "backends/plugins/elf-provider.h"
+#include "backends/plugins/elf/elf-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
 
 #include "common/fs.h"

@@ -42,7 +42,7 @@
 #include <ogc/cache.h>
 #endif
 
-#include "backends/plugins/elf-loader.h"
+#include "backends/plugins/elf/elf-loader.h"
 
 #include "common/debug.h"
 #include "common/file.h"

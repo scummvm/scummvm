@@ -37,7 +37,6 @@
 #include <common/system.h>
 #include <engines/engine.h>
 #include <base/main.h>
-#include <base/plugins.h>
 #include "backends/platform/psp/powerman.h"
 #include "backends/platform/psp/thread.h"
 

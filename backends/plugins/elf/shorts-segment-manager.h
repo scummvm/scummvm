@@ -28,7 +28,7 @@
 #ifndef SHORTS_SEGMENT_MANAGER_H
 #define SHORTS_SEGMENT_MANAGER_H
 
-#include "backends/plugins/elf32.h"
+#include "backends/plugins/elf/elf32.h"
 
 #include "common/singleton.h"
 #include "common/list.h"
