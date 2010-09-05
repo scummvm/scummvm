@@ -399,7 +399,7 @@ void RivenGraphics::clearWaterEffects() {
 
 bool RivenGraphics::runScheduledWaterEffects() {
 	// Don't run the effect if it's disabled
-	if (*_vm->matchVarToString("waterenabled") == 0)
+	if (*_vm->getVar("waterenabled") == 0)
 		return false;
 
 	Graphics::Surface *screen = NULL;
@@ -613,8 +613,8 @@ void RivenGraphics::showInventory() {
 		// you get Catherine's journal and the trap book. Near the end,
 		// you lose the trap book and have just the two journals.
 
-		bool hasCathBook = *_vm->matchVarToString("acathbook") != 0;
-		bool hasTrapBook = *_vm->matchVarToString("atrapbook") != 0;
+		bool hasCathBook = *_vm->getVar("acathbook") != 0;
+		bool hasTrapBook = *_vm->getVar("atrapbook") != 0;
 
 		if (!hasCathBook) {
 			drawInventoryImage(101, g_atrusJournalRect1);

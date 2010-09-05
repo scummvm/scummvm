@@ -271,7 +271,7 @@ static const char *variableNames[] = {
 };
 
 uint32 *MohawkEngine_Riven::getLocalVar(uint32 index) {
-	return matchVarToString(getName(VariableNames, index));
+	return getVar(getName(VariableNames, index));
 }
 
 uint32 MohawkEngine_Riven::getGlobalVar(uint32 index) {
@@ -279,18 +279,15 @@ uint32 MohawkEngine_Riven::getGlobalVar(uint32 index) {
 }
 
 Common::String MohawkEngine_Riven::getGlobalVarName(uint32 index) {
-	return Common::String(variableNames[index]);
+	return variableNames[index];
 }
 
-uint32 *MohawkEngine_Riven::matchVarToString(Common::String varName) {
-	return matchVarToString(varName.c_str());
-}
-
-uint32 *MohawkEngine_Riven::matchVarToString(const char *varName) {
+uint32 *MohawkEngine_Riven::getVar(const Common::String &varName) {
 	for (uint32 i = 0; i < _varCount; i++)
-		if (!scumm_stricmp(varName, variableNames[i]))
+		if (varName.equalsIgnoreCase(variableNames[i]))
 			return &_vars[i];
-	error ("Unknown variable: \'%s\'", varName);
+
+	error ("Unknown variable: '%s'", varName.c_str());
 	return NULL;
 }
 
@@ -304,33 +301,33 @@ void MohawkEngine_Riven::initVars() {
 		_vars[i] = 0;
 
 	// Init Variables to their correct starting state.
-	*matchVarToString("ttelescope") = 5;
-	*matchVarToString("tgatestate") = 1;
-	*matchVarToString("jbridge1") = 1;
-	*matchVarToString("jbridge4") = 1;
-	*matchVarToString("jgallows") = 1;
-	*matchVarToString("jiconcorrectorder") = 12068577;
-	*matchVarToString("bblrvalve") = 1;
-	*matchVarToString("bblrwtr") = 1;
-	*matchVarToString("bfans") = 1;
-	*matchVarToString("bytrap") = 2;
-	*matchVarToString("aatruspage") = 1;
-	*matchVarToString("acathpage") = 1;
-	*matchVarToString("bheat") = 1;
-	*matchVarToString("waterenabled") = 1;
-	*matchVarToString("ogehnpage") = 1;
-	*matchVarToString("bblrsw") = 1;
-	*matchVarToString("ocage") = 1;
+	*getVar("ttelescope") = 5;
+	*getVar("tgatestate") = 1;
+	*getVar("jbridge1") = 1;
+	*getVar("jbridge4") = 1;
+	*getVar("jgallows") = 1;
+	*getVar("jiconcorrectorder") = 12068577;
+	*getVar("bblrvalve") = 1;
+	*getVar("bblrwtr") = 1;
+	*getVar("bfans") = 1;
+	*getVar("bytrap") = 2;
+	*getVar("aatruspage") = 1;
+	*getVar("acathpage") = 1;
+	*getVar("bheat") = 1;
+	*getVar("waterenabled") = 1;
+	*getVar("ogehnpage") = 1;
+	*getVar("bblrsw") = 1;
+	*getVar("ocage") = 1;
 
 	// Randomize the telescope combination
-	uint32 *teleCombo = matchVarToString("tcorrectorder");
+	uint32 *teleCombo = getVar("tcorrectorder");
 	for (byte i = 0; i < 5; i++) {
 		*teleCombo *= 10;
 		*teleCombo += _rnd->getRandomNumberRng(1, 5); // 5 buttons
 	}
 
 	// Randomize the prison combination
-	uint32 *prisonCombo = matchVarToString("pcorrectorder");
+	uint32 *prisonCombo = getVar("pcorrectorder");
 	for (byte i = 0; i < 5; i++) {
 		*prisonCombo *= 10;
 		*prisonCombo += _rnd->getRandomNumberRng(1, 3); // 3 buttons/sounds
@@ -338,7 +335,7 @@ void MohawkEngine_Riven::initVars() {
 
 	// Randomize the dome combination -- each bit represents a slider position,
 	// the highest bit (1 << 24) represents 1, (1 << 23) represents 2, etc.
-	uint32 *domeCombo = matchVarToString("adomecombo");
+	uint32 *domeCombo = getVar("adomecombo");
 	for (byte bitsSet = 0; bitsSet < 5;) {
 		uint32 randomBit = 1 << (24 - _rnd->getRandomNumber(24));
 

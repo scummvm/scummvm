@@ -101,7 +101,6 @@ GUI::Debugger *MohawkEngine_Riven::getDebugger() {
 	return _console;
 }
 
-
 Common::Error MohawkEngine_Riven::run() {
 	MohawkEngine::run();
 
@@ -142,102 +141,108 @@ Common::Error MohawkEngine_Riven::run() {
 		changeToCard(1);
 	}
 
+	
+	while (!_gameOver && !shouldQuit())
+		handleEvents();
+
+	return Common::kNoError;
+}
+
+void MohawkEngine_Riven::handleEvents() {
 	Common::Event event;
-	while (!_gameOver && !shouldQuit()) {
-		bool needsUpdate = _gfx->runScheduledWaterEffects();
-		needsUpdate |= _video->updateBackgroundMovies();
 
-		while (_eventMan->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_MOUSEMOVE:
-				checkHotspotChange();
+	// Update background videos and the water effect
+	bool needsUpdate = _gfx->runScheduledWaterEffects();
+	needsUpdate |= _video->updateBackgroundMovies();
 
-				if (!(getFeatures() & GF_DEMO)) {
-					// Check to show the inventory, but it is always "showing" in the demo
-					if (_eventMan->getMousePos().y >= 392)
-						_gfx->showInventory();
-					else
-						_gfx->hideInventory();
-				}
+	while (_eventMan->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_MOUSEMOVE:
+			checkHotspotChange();
 
-				needsUpdate = true;
-				break;
-			case Common::EVENT_LBUTTONDOWN:
+			if (!(getFeatures() & GF_DEMO)) {
+				// Check to show the inventory, but it is always "showing" in the demo
+				if (_eventMan->getMousePos().y >= 392)
+					_gfx->showInventory();
+				else
+					_gfx->hideInventory();
+			}
+
+			needsUpdate = true;
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+			if (_curHotspot >= 0)
+				runHotspotScript(_curHotspot, kMouseDownScript);
+			break;
+		case Common::EVENT_LBUTTONUP:
+			// See RivenScript::switchCard() for more information on why we sometimes
+			// disable the next up event.
+			if (!_ignoreNextMouseUp) {
 				if (_curHotspot >= 0)
-					runHotspotScript(_curHotspot, kMouseDownScript);
-				break;
-			case Common::EVENT_LBUTTONUP:
-				// See RivenScript::switchCard() for more information on why we sometimes
-				// disable the next up event.
-				if (!_ignoreNextMouseUp) {
-					if (_curHotspot >= 0)
-						runHotspotScript(_curHotspot, kMouseUpScript);
-					else
-						checkInventoryClick();
+					runHotspotScript(_curHotspot, kMouseUpScript);
+				else
+					checkInventoryClick();
+			}
+			_ignoreNextMouseUp = false;
+			break;
+		case Common::EVENT_KEYDOWN:
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_d:
+				if (event.kbd.flags & Common::KBD_CTRL) {
+					_console->attach();
+					_console->onFrame();
 				}
-				_ignoreNextMouseUp = false;
 				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_d:
-					if (event.kbd.flags & Common::KBD_CTRL) {
-						_console->attach();
-						_console->onFrame();
-					}
-					break;
-				case Common::KEYCODE_SPACE:
-					pauseGame();
-					break;
-				case Common::KEYCODE_F4:
-					_showHotspots = !_showHotspots;
-					if (_showHotspots) {
-						for (uint16 i = 0; i < _hotspotCount; i++)
-							_gfx->drawRect(_hotspots[i].rect, _hotspots[i].enabled);
-						needsUpdate = true;
-					} else
-						refreshCard();
-					break;
-				case Common::KEYCODE_F5:
-					runDialog(*_optionsDialog);
-					updateZipMode();
-					break;
-				case Common::KEYCODE_r:
-					// Return to the main menu in the demo on ctrl+r
-					if (event.kbd.flags & Common::KBD_CTRL && getFeatures() & GF_DEMO) {
-						if (_curStack != aspit)
-							changeToStack(aspit);
-						changeToCard(1);
-					}
-					break;
-				case Common::KEYCODE_p:
-					// Play the intro videos in the demo on ctrl+p
-					if (event.kbd.flags & Common::KBD_CTRL && getFeatures() & GF_DEMO) {
-						if (_curStack != aspit)
-							changeToStack(aspit);
-						changeToCard(6);
-					}
-					break;
-				default:
-					break;
+			case Common::KEYCODE_SPACE:
+				pauseGame();
+				break;
+			case Common::KEYCODE_F4:
+				_showHotspots = !_showHotspots;
+				if (_showHotspots) {
+					for (uint16 i = 0; i < _hotspotCount; i++)
+						_gfx->drawRect(_hotspots[i].rect, _hotspots[i].enabled);
+					needsUpdate = true;
+				} else
+					refreshCard();
+				break;
+			case Common::KEYCODE_F5:
+				runDialog(*_optionsDialog);
+				updateZipMode();
+				break;
+			case Common::KEYCODE_r:
+				// Return to the main menu in the demo on ctrl+r
+				if (event.kbd.flags & Common::KBD_CTRL && getFeatures() & GF_DEMO) {
+					if (_curStack != aspit)
+						changeToStack(aspit);
+					changeToCard(1);
+				}
+				break;
+			case Common::KEYCODE_p:
+				// Play the intro videos in the demo on ctrl+p
+				if (event.kbd.flags & Common::KBD_CTRL && getFeatures() & GF_DEMO) {
+					if (_curStack != aspit)
+						changeToStack(aspit);
+					changeToCard(6);
 				}
 				break;
 			default:
 				break;
 			}
+			break;
+		default:
+			break;
 		}
-
-		if (_curHotspot >= 0)
-			runHotspotScript(_curHotspot, kMouseInsideScript);
-
-		// Update the screen if we need to
-		if (needsUpdate)
-			_system->updateScreen();
-
-		// Cut down on CPU usage
-		_system->delayMillis(10);
 	}
 
-	return Common::kNoError;
+	if (_curHotspot >= 0)
+		runHotspotScript(_curHotspot, kMouseInsideScript);
+
+	// Update the screen if we need to
+	if (needsUpdate)
+		_system->updateScreen();
+
+	// Cut down on CPU usage
+	_system->delayMillis(10);
 }
 
 // Stack/Card-Related Functions
@@ -431,7 +436,7 @@ void MohawkEngine_Riven::updateZipMode() {
 
 	for (uint32 i = 0; i < _hotspotCount; i++) {
 		if (_hotspots[i].zipModeHotspot) {
-			if (*matchVarToString("azip") != 0) {
+			if (*getVar("azip") != 0) {
 				// Check if a zip mode hotspot is enabled by checking the name/id against the ZIPS records.
 				Common::String hotspotName = getName(HotspotNames, _hotspots[i].name_resource);
 
@@ -511,13 +516,13 @@ void MohawkEngine_Riven::checkInventoryClick() {
 		return;
 
 	// Set the return stack/card id's.
-	*matchVarToString("returnstackid") = _curStack;
-	*matchVarToString("returncardid") = _curCard;
+	*getVar("returnstackid") = _curStack;
+	*getVar("returncardid") = _curCard;
 
 	// See RivenGraphics::showInventory() for an explanation
 	// of the variables' meanings.
-	bool hasCathBook = *matchVarToString("acathbook") != 0;
-	bool hasTrapBook = *matchVarToString("atrapbook") != 0;
+	bool hasCathBook = *getVar("acathbook") != 0;
+	bool hasTrapBook = *getVar("atrapbook") != 0;
 
 	// Go to the book if a hotspot contains the mouse
 	if (!hasCathBook) {
@@ -675,19 +680,19 @@ Common::Error MohawkEngine_Riven::saveGameState(int slot, const char *desc) {
 	return _saveLoad->saveGame(Common::String(desc)) ? Common::kNoError : Common::kUnknownError;
 }
 
-static const char *rivenStackNames[] = {
-	"aspit",
-	"bspit",
-	"gspit",
-	"jspit",
-	"ospit",
-	"pspit",
-	"rspit",
-	"tspit"
-};
+Common::String MohawkEngine_Riven::getStackName(uint16 stack) const {
+	static const char *rivenStackNames[] = {
+		"aspit",
+		"bspit",
+		"gspit",
+		"jspit",
+		"ospit",
+		"pspit",
+		"rspit",
+		"tspit"
+	};
 
-Common::String MohawkEngine_Riven::getStackName(uint16 stack) {
-	return Common::String(rivenStackNames[stack]);
+	return rivenStackNames[stack];
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

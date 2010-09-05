@@ -161,7 +161,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 		if (name == "dropLeftStart" || name == "dropRightStart")
 			continue;
 
-		uint32 *var = _vm->matchVarToString(name);
+		uint32 *var = _vm->getVar(name);
 
 		*var = rawVariables[i];
 
@@ -272,8 +272,8 @@ bool RivenSaveLoad::saveGame(Common::String filename) {
 		filename += ".rvn";
 
 	// Convert class variables to variable numbers
-	*_vm->matchVarToString("currentstackid") = mapNewStackIDToOld(_vm->getCurStack());
-	*_vm->matchVarToString("currentcardid") = _vm->getCurCard();
+	*_vm->getVar("currentstackid") = mapNewStackIDToOld(_vm->getCurStack());
+	*_vm->getVar("currentcardid") = _vm->getCurCard();
 
 	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(filename);
 	if (!saveFile)
