@@ -18,24 +18,58 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/branches/gsoc2010-plugins/backends/plugins/ds/ds-provider.h $
- * $Id: ds-provider.h 52112 2010-08-16 08:41:04Z toneman1138 $
+ * $URL$
+ * $Id$
  *
  */
 
 #if defined(DYNAMIC_MODULES) && defined(__PSP__)
 
-#ifndef BACKENDS_PLUGINS_PSP_PSP_PROVIDER_H
-#define BACKENDS_PLUGINS_PSP_PSP_PROVIDER_H
+#include <psputils.h>
+#include <psputilsforkernel.h>
 
-#include "backends/plugins/elf/elf-provider.h"
+#include "backends/plugins/psp/psp-provider.h"
+#include "backends/plugins/elf/mips-loader.h"
 
-class PSPPluginProvider : public ELFPluginProvider {
+class PSPDLObject : public MIPSDLObject {
 public:
-	Plugin *createPlugin(const Common::FSNode &node) const;
+	PSPDLObject() :
+		MIPSDLObject() {
+	}
+
+	virtual ~PSPDLObject() {
+		unload();
+	}
+
+protected:
+	virtual void *allocSegment(size_t boundary, size_t size) const {
+		return memalign(boundary, size);
+	}
+
+	virtual void freeSegment(void *segment) const {
+		free(segment);
+	}
+
+	virtual void flushDataCache(void *ptr, uint32 len) const {
+		sceKernelDcacheWritebackRange(ptr, len);
+		sceKernelIcacheInvalidateRange(ptr, len);
+	}
 };
 
-#endif // BACKENDS_PLUGINS_PSP_PROVIDER_H
+class PSPPlugin : public ELFPlugin {
+public:
+	PSPPlugin(const Common::String &filename) :
+		ELFPlugin(filename) {
+	}
+
+	virtual DLObject *makeDLObject() {
+		return new PSPDLObject();
+	}
+};
+
+Plugin *PSPPluginProvider::createPlugin(const Common::FSNode &node) const {
+	return new PSPPlugin(node.getPath());
+}
 
 #endif // defined(DYNAMIC_MODULES) && defined(__PSP__)
 

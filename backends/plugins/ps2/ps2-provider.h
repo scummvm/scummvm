@@ -18,29 +18,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
+ * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/branches/gsoc2010-plugins/backends/plugins/ds/ds-provider.h $
+ * $Id: ds-provider.h 52112 2010-08-16 08:41:04Z toneman1138 $
  *
  */
 
 #if defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 
+#ifndef BACKENDS_PLUGINS_PS2_PROVIDER_H
+#define BACKENDS_PLUGINS_PS2_PROVIDER_H
+
 #include "backends/plugins/elf/elf-provider.h"
-#include "backends/plugins/elf/mips-loader.h"
 
 class PS2PluginProvider : public ELFPluginProvider {
-	class PS2Plugin : public ELFPlugin {
-	public:
-		PS2Plugin(const Common::String &filename) : ELFPlugin(filename) {}
-
-		DLObject *makeDLObject() { return new MIPSDLObject(); }
-	};
-
 public:
-	Plugin* createPlugin(const Common::FSNode &node) const {
-		return new PS2Plugin(node.getPath());
-	}
+	Plugin *createPlugin(const Common::FSNode &node) const;
 };
+
+#endif // BACKENDS_PLUGINS_PS2_PROVIDER_H
 
 #endif // defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 

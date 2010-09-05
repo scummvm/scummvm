@@ -25,6 +25,9 @@
 
 #if defined(DYNAMIC_MODULES) && defined(PPC_TARGET)
 
+#ifndef BACKENDS_PLUGINS_PPC_LOADER_H
+#define BACKENDS_PLUGINS_PPC_LOADER_H
+
 #include "backends/plugins/elf/elf-loader.h"
 
 class PPCDLObject : public DLObject {
@@ -35,6 +38,8 @@ protected:
 public:
     PPCDLObject() : DLObject() {}
 };
+
+#endif /* BACKENDS_PLUGINS_PPC_LOADER_H */
 
 #endif /* defined(DYNAMIC_MODULES) && defined(PPC_TARGET) */
 

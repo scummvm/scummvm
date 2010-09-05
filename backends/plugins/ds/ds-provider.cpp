@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -24,33 +23,53 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
+#if defined(DYNAMIC_MODULES) && defined(__DS__)
 
-#ifndef BACKENDS_PLUGINS_MIPS_LOADER_H
-#define BACKENDS_PLUGINS_MIPS_LOADER_H
+#include <malloc.h>
+#include <nds.h>
 
-#include "backends/plugins/elf/elf-loader.h"
-#include "backends/plugins/elf/shorts-segment-manager.h"
+#include "backends/plugins/ds/ds-provider.h"
+#include "backends/plugins/elf/arm-loader.h"
 
-class MIPSDLObject : public DLObject {
-protected:
-	ShortSegmentManager::Segment *_shortsSegment;			// For assigning shorts ranges
-	unsigned int _gpVal;									// Value of Global Pointer
-
-	virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
-	virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
-	virtual void relocateSymbols(Elf32_Addr offset);
-	virtual bool loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr);
-	virtual void unload();
-
+class DSDLObject : public ARMDLObject {
 public:
-    MIPSDLObject() : DLObject() {
-		_shortsSegment = NULL;
-		_gpVal = 0;
-    }
+	DSDLObject() :
+		ARMDLObject() {
+	}
+
+	virtual ~DSDLObject() {
+		unload();
+	}
+
+protected:
+	virtual void *allocSegment(size_t boundary, size_t size) const {
+		return memalign(boundary, size);
+	}
+
+	virtual void freeSegment(void *segment) const {
+		free(segment);
+	}
+
+	virtual void flushDataCache(void *ptr, uint32 len) const {
+		DC_FlushRange(ptr, len);
+		IC_InvalidateRange(ptr, len);
+	}
 };
 
-#endif /* BACKENDS_PLUGINS_MIPS_LOADER_H */
+class DSPlugin : public ELFPlugin {
+public:
+	DSPlugin(const Common::String &filename) :
+		ELFPlugin(filename) {
+	}
 
-#endif /* defined(DYNAMIC_MODULES) && defined(MIPS_TARGET) */
+	virtual DLObject *makeDLObject() {
+		return new DSDLObject();
+	}
+};
+
+Plugin *DSPluginProvider::createPlugin(const Common::FSNode &node) const {
+	return new DSPlugin(node.getPath());
+}
+
+#endif // defined(DYNAMIC_MODULES) && defined(__DS__)
 

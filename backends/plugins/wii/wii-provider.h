@@ -25,21 +25,17 @@
 
 #if defined(DYNAMIC_MODULES) && defined(__WII__)
 
+#ifndef BACKENDS_PLUGINS_WII_PROVIDER_H
+#define BACKENDS_PLUGINS_WII_PROVIDER_H
+
 #include "backends/plugins/elf/elf-provider.h"
-#include "backends/plugins/elf/ppc-loader.h"
 
 class WiiPluginProvider : public ELFPluginProvider {
-	class WiiPlugin : public ELFPlugin {
-	public:
-		WiiPlugin(const Common::String &filename) : ELFPlugin(filename) {}
-
-		DLObject *makeDLObject() { return new PPCDLObject(); }
-	};
-
 public:
-	Plugin* createPlugin(const Common::FSNode &node) const {
-		return new WiiPlugin(node.getPath());
-	}
+	Plugin *createPlugin(const Common::FSNode &node) const;
 };
 
+#endif // BACKENDS_PLUGINS_WII_PROVIDER_H
+
 #endif // defined(DYNAMIC_MODULES) && defined(__WII__)
+

@@ -25,52 +25,11 @@
 
 #if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
-#include <string.h>
-#include <stdarg.h>
-
-#ifdef __PSP__
-#include <psputils.h>
-#include <psputilsforkernel.h>
-#endif
-
-#ifdef __DS__
-#include <nds.h>
-#endif
-
-#ifdef __WII__
-#include <malloc.h>
-#include <ogc/cache.h>
-#endif
-
 #include "backends/plugins/elf/elf-loader.h"
 
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/fs.h"
-
-/**
- * Flushes the data cache (Platform Specific).
- */
-static void flushDataCache(void *ptr, uint32 len) {
-#ifdef __DS__
-	DC_FlushRange(ptr, len);
-	IC_InvalidateRange(ptr, len);
-#endif
-#ifdef __PLAYSTATION2__
-	(void) ptr;
-	(void) len;
-	FlushCache(0);
-	FlushCache(2);
-#endif
-#ifdef __PSP__
-	sceKernelDcacheWritebackRange(ptr, len);
-	sceKernelIcacheInvalidateRange(ptr, len);
-#endif
-#ifdef __WII__
-	DCFlushRange(ptr, len);
-	ICInvalidateRange(ptr, len);
-#endif
-}
 
 DLObject::DLObject() :
 	_segment(0),
@@ -86,7 +45,6 @@ DLObject::DLObject() :
 }
 
 DLObject::~DLObject() {
-	unload();
 }
 
 // Expel the symbol table from memory
@@ -101,8 +59,11 @@ void DLObject::discard_symtab() {
 // Unload all objects from memory
 void DLObject::unload() {
 	discard_symtab();
-	free(_segment);
+	freeSegment(_segment);
 	_segment = 0;
+	_segmentSize = 0;
+	_segmentOffset = 0;
+	_segmentVMA = 0;
 }
 
 bool DLObject::readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr) {
@@ -193,7 +154,7 @@ bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr)
 	int extra = phdr->p_vaddr % phdr->p_align;	// Get extra length TODO: check logic here
 	debug(2, "elfloader: Extra mem is %x", extra);
 
-	if (!(_segment = (char *)memalign(phdr->p_align, phdr->p_memsz + extra))) {
+	if (!(_segment = (char *) allocSegment(phdr->p_align, phdr->p_memsz + extra))) {
 		warning("elfloader: Out of memory.");
 		return false;
 	}

@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -24,33 +23,53 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
+#if defined(DYNAMIC_MODULES) && defined(__WII__)
 
-#ifndef BACKENDS_PLUGINS_MIPS_LOADER_H
-#define BACKENDS_PLUGINS_MIPS_LOADER_H
+#include <malloc.h>
+#include <ogc/cache.h>
 
-#include "backends/plugins/elf/elf-loader.h"
-#include "backends/plugins/elf/shorts-segment-manager.h"
+#include "backends/plugins/wii/wii-provider.h"
+#include "backends/plugins/elf/ppc-loader.h"
 
-class MIPSDLObject : public DLObject {
-protected:
-	ShortSegmentManager::Segment *_shortsSegment;			// For assigning shorts ranges
-	unsigned int _gpVal;									// Value of Global Pointer
-
-	virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
-	virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
-	virtual void relocateSymbols(Elf32_Addr offset);
-	virtual bool loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr);
-	virtual void unload();
-
+class WiiDLObject : public PPCDLObject {
 public:
-    MIPSDLObject() : DLObject() {
-		_shortsSegment = NULL;
-		_gpVal = 0;
-    }
+	WiiDLObject() :
+		PPCDLObject() {
+	}
+
+	virtual ~WiiDLObject() {
+		unload();
+	}
+
+protected:
+	virtual void *allocSegment(size_t boundary, size_t size) const {
+		return memalign(boundary, size);
+	}
+
+	virtual void freeSegment(void *segment) const {
+		free(segment);
+	}
+
+	virtual void flushDataCache(void *ptr, uint32 len) const {
+		DCFlushRange(ptr, len);
+		ICInvalidateRange(ptr, len);
+	}
 };
 
-#endif /* BACKENDS_PLUGINS_MIPS_LOADER_H */
+class WiiPlugin : public ELFPlugin {
+public:
+	WiiPlugin(const Common::String &filename) :
+		ELFPlugin(filename) {
+	}
 
-#endif /* defined(DYNAMIC_MODULES) && defined(MIPS_TARGET) */
+	virtual DLObject *makeDLObject() {
+		return new WiiDLObject();
+	}
+};
+
+Plugin *WiiPluginProvider::createPlugin(const Common::FSNode &node) const {
+	return new WiiPlugin(node.getPath());
+}
+
+#endif // defined(DYNAMIC_MODULES) && defined(__WII__)
 

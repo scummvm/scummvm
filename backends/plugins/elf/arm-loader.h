@@ -25,6 +25,9 @@
 
 #if defined(DYNAMIC_MODULES) && defined(ARM_TARGET)
 
+#ifndef BACKENDS_PLUGINS_ARM_LOADER_H
+#define BACKENDS_PLUGINS_ARM_LOADER_H
+
 #include "backends/plugins/elf/elf-loader.h"
 
 class ARMDLObject : public DLObject {
@@ -35,5 +38,7 @@ protected:
 public:
 	ARMDLObject() : DLObject() {}
 };
+
+#endif /* BACKENDS_PLUGINS_ARM_LOADER_H */
 
 #endif /* defined(DYNAMIC_MODULES) && defined(ARM_TARGET) */

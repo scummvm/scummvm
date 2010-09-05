@@ -50,7 +50,8 @@ endif
 ifeq ($(BACKEND),ds)
 MODULE_OBJS += \
 	fs/ds/ds-fs-factory.o \
-	fs/ds/ds-fs.o
+	fs/ds/ds-fs.o \
+	plugins/ds/ds-provider.o
 endif
 
 ifeq ($(BACKEND),n64)
@@ -61,20 +62,23 @@ endif
 
 ifeq ($(BACKEND),ps2)
 MODULE_OBJS += \
-	fs/ps2/ps2-fs-factory.o
+	fs/ps2/ps2-fs-factory.o \
+	plugins/ps2/ps2-provider.o
 endif
 
 ifeq ($(BACKEND),psp)
 MODULE_OBJS += \
 	fs/psp/psp-fs-factory.o \
 	fs/psp/psp-stream.o \
+	plugins/psp/psp-provider.o \
 	saves/psp/psp-saves.o \
 	timer/psp/timer.o
 endif
 
 ifeq ($(BACKEND),wii)
 MODULE_OBJS += \
-	fs/wii/wii-fs-factory.o
+	fs/wii/wii-fs-factory.o \
+	plugins/wii/wii-provider.o
 endif
 
 # Include common rules

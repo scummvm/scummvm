@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -24,33 +23,50 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
+#if defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 
-#ifndef BACKENDS_PLUGINS_MIPS_LOADER_H
-#define BACKENDS_PLUGINS_MIPS_LOADER_H
+#include "backends/plugins/ps2/ps2-provider.h"
+#include "backends/plugins/elf/mips-loader.h"
 
-#include "backends/plugins/elf/elf-loader.h"
-#include "backends/plugins/elf/shorts-segment-manager.h"
-
-class MIPSDLObject : public DLObject {
-protected:
-	ShortSegmentManager::Segment *_shortsSegment;			// For assigning shorts ranges
-	unsigned int _gpVal;									// Value of Global Pointer
-
-	virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
-	virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
-	virtual void relocateSymbols(Elf32_Addr offset);
-	virtual bool loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr);
-	virtual void unload();
-
+class PS2DLObject : public MIPSDLObject {
 public:
-    MIPSDLObject() : DLObject() {
-		_shortsSegment = NULL;
-		_gpVal = 0;
-    }
+	PS2DLObject() :
+		MIPSDLObject() {
+	}
+
+	virtual ~PS2DLObject() {
+		unload();
+	}
+
+protected:
+	virtual void *allocSegment(size_t boundary, size_t size) const {
+		return memalign(boundary, size);
+	}
+
+	virtual void freeSegment(void *segment) const {
+		free(segment);
+	}
+
+	virtual void flushDataCache(void *, uint32) const {
+		FlushCache(0);
+		FlushCache(2);
+	}
 };
 
-#endif /* BACKENDS_PLUGINS_MIPS_LOADER_H */
+class PS2Plugin : public ELFPlugin {
+public:
+	PS2Plugin(const Common::String &filename) :
+		ELFPlugin(filename) {
+	}
 
-#endif /* defined(DYNAMIC_MODULES) && defined(MIPS_TARGET) */
+	virtual DLObject *makeDLObject() {
+		return new PS2DLObject();
+	}
+};
+
+Plugin *PS2PluginProvider::createPlugin(const Common::FSNode &node) const {
+	return new PS2Plugin(node.getPath());
+}
+
+#endif // defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 

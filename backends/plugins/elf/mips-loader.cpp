@@ -321,10 +321,6 @@ bool MIPSDLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *p
 
 // Unload all objects from memory
 void MIPSDLObject::unload() {
-	discard_symtab();
-	free(_segment);
-	_segment = 0;
-
 	if (_shortsSegment) {
 		ShortsMan.deleteSegment(_shortsSegment);
 		_shortsSegment = 0;

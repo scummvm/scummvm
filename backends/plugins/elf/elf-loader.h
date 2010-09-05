@@ -25,8 +25,8 @@
 
 #if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
-#ifndef ELF_LOADER_H
-#define ELF_LOADER_H
+#ifndef BACKENDS_PLUGINS_ELF_LOADER_H
+#define BACKENDS_PLUGINS_ELF_LOADER_H
 
 #include <stddef.h>
 
@@ -65,9 +65,14 @@ protected:
 	bool loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *shdr);
 	virtual void relocateSymbols(ptrdiff_t offset);
 
+	// architecture specific
 	virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) = 0;
 	virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) = 0;
 
+	// platform specific
+	virtual void *allocSegment(size_t boundary, size_t size) const = 0;
+	virtual void freeSegment(void *segment) const = 0;
+	virtual void flushDataCache(void *ptr, uint32 len) const = 0;
 public:
 	DLObject();
 	virtual ~DLObject();
@@ -78,6 +83,6 @@ public:
 	void discard_symtab();
 };
 
-#endif /* ELF_LOADER_H */
+#endif /* BACKENDS_PLUGINS_ELF_LOADER_H */
 
 #endif /* defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET) */

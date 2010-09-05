@@ -52,7 +52,7 @@ public:
 	ELFPlugin(const Common::String &filename)
 		: _dlHandle(0), _filename(filename) {}
 
-	~ELFPlugin() {
+	virtual ~ELFPlugin() {
 		if (_dlHandle)
 			unloadPlugin();
 	}
