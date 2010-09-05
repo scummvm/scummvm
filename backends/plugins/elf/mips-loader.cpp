@@ -32,12 +32,11 @@
 /**
  * Follow the instruction of a relocation section.
  *
- * @param DLFile		SeekableReadStream of File
  * @param fileOffset	Offset into the File
  * @param size			Size of relocation section
  * @param relSegment	Base address of relocated segment in memory (memory offset)
  */
-bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset, Elf32_Word size, byte *relSegment) {
+bool MIPSDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) {
 	Elf32_Rel *rel = 0;	// relocation entry
 
 	// Allocate memory for relocation table
@@ -47,7 +46,7 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset
 	}
 
 	// Read in our relocation table
-	if (!DLFile->seek(offset, SEEK_SET) || DLFile->read(rel, size) != size) {
+	if (!_file->seek(offset, SEEK_SET) || _file->read(rel, size) != size) {
 		warning("elfloader: Relocation table load failed.");
 		free(rel);
 		return false;
@@ -221,7 +220,7 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset
 	return true;
 }
 
-bool MIPSDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
+bool MIPSDLObject::relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 	// Loop over sections, finding relocation sections
 	for (uint32 i = 0; i < ehdr->e_shnum; i++) {
 
@@ -234,10 +233,10 @@ bool MIPSDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *
 				curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
 				(shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {  	// Check if relocated section resides in memory
 			if (!ShortsMan.inGeneralSegment((char *) shdr[curShdr->sh_info].sh_addr)) {			// regular segment
-				if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, _segment))
+				if (!relocate(curShdr->sh_offset, curShdr->sh_size, _segment))
 					return false;
 			} else { 	// In Shorts segment
-				if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, (byte *) _shortsSegment->getOffset()))
+				if (!relocate(curShdr->sh_offset, curShdr->sh_size, (byte *) _shortsSegment->getOffset()))
 					return false;
 			}
 		}
@@ -267,7 +266,7 @@ void MIPSDLObject::relocateSymbols(Elf32_Addr offset) {
 	}
 }
 
-bool MIPSDLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr) {
+bool MIPSDLObject::loadSegment(Elf32_Phdr *phdr) {
 	byte *baseAddress = 0;
 
 	// We need to take account of non-allocated segment for shorts
@@ -308,8 +307,8 @@ bool MIPSDLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *p
 	debug(2, "elfloader: Reading the segment into memory");
 
 	// Read the segment into memory
-	if (!DLFile->seek(phdr->p_offset, SEEK_SET) ||
-			DLFile->read(baseAddress, phdr->p_filesz) != phdr->p_filesz) {
+	if (!_file->seek(phdr->p_offset, SEEK_SET) ||
+			_file->read(baseAddress, phdr->p_filesz) != phdr->p_filesz) {
 		warning("elfloader: Segment load failed.");
 		return false;
 	}

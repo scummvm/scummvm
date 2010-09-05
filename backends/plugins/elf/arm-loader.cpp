@@ -33,12 +33,11 @@
 /**
  * Follow the instruction of a relocation section.
  *
- * @param DLFile		SeekableReadStream of File
  * @param fileOffset	Offset into the File
  * @param size			Size of relocation section
  * @param relSegment	Base address of relocated segment in memory (memory offset)
  */
-bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset, Elf32_Word size, byte *relSegment) {
+bool ARMDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) {
 	Elf32_Rel *rel = 0; //relocation entry
 
 	// Allocate memory for relocation table
@@ -48,7 +47,7 @@ bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset,
 	}
 
 	// Read in our relocation table
-	if (!DLFile->seek(offset, SEEK_SET) || DLFile->read(rel, size) != size) {
+	if (!_file->seek(offset, SEEK_SET) || _file->read(rel, size) != size) {
 		warning("elfloader: Relocation table load failed.");
 		free(rel);
 		return false;
@@ -112,7 +111,7 @@ bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset,
 	return true;
 }
 
-bool ARMDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
+bool ARMDLObject::relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 	// Loop over sections, finding relocation sections
 	for (uint32 i = 0; i < ehdr->e_shnum; i++) {
 		Elf32_Shdr *curShdr = &(shdr[i]);
@@ -128,7 +127,7 @@ bool ARMDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *e
 				return false;
 			}
 
-			if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, _segment))
+			if (!relocate(curShdr->sh_offset, curShdr->sh_size, _segment))
 				return false;
 		}
 	}

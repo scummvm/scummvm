@@ -30,7 +30,7 @@
 
 #include "common/debug.h"
 
-bool PPCDLObject::relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset, Elf32_Word size, byte *relSegment) {
+bool PPCDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) {
 	Elf32_Rela *rel = NULL;
 
 	if (!(rel = (Elf32_Rela *)malloc(size))) {
@@ -38,7 +38,7 @@ bool PPCDLObject::relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset,
 		return false;
 	}
 
-	if (!DLFile->seek(offset, SEEK_SET) || DLFile->read(rel, size) != size) {
+	if (!_file->seek(offset, SEEK_SET) || _file->read(rel, size) != size) {
 		warning("elfloader: Relocation table load failed.");
 		free(rel);
 		return false;
@@ -46,7 +46,7 @@ bool PPCDLObject::relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset,
 
 	uint32 cnt = size / sizeof(*rel);
 
-	debug(2, "elfloader: Loaded relocation table. %d entries. base address=%p\n", cnt, relSegment);
+	debug(2, "elfloader: Loaded relocation table. %d entries. base address=%p", cnt, relSegment);
 
 	uint32 *src;
 	uint32 value;
@@ -64,30 +64,30 @@ bool PPCDLObject::relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset,
 		switch (REL_TYPE(rel[i].r_info)) {
 		case R_PPC_ADDR32:
 			*src = value;
-			debug(8, "elfloader: R_PPC_ADDR32 -> 0x%08x\n", *src);
+			debug(8, "elfloader: R_PPC_ADDR32 -> 0x%08x", *src);
 			break;
 		case R_PPC_ADDR16_LO:
 			*((uint16 *) src) = value;
-			debug(8, "elfloader: R_PPC_ADDR16_LO -> 0x%08x\n", *src);
+			debug(8, "elfloader: R_PPC_ADDR16_LO -> 0x%08x", *src);
 			break;
 		case R_PPC_ADDR16_HI:
 			*(uint16 *) src = value >> 16;
-			debug(8, "elfloader: R_PPC_ADDR16_HA -> 0x%08x\n", *src);
+			debug(8, "elfloader: R_PPC_ADDR16_HA -> 0x%08x", *src);
 			break;
 		case R_PPC_ADDR16_HA:
 			*(uint16 *) src = (value + 0x8000) >> 16;
-			debug(8, "elfloader: R_PPC_ADDR16_HA -> 0x%08x\n", *src);
+			debug(8, "elfloader: R_PPC_ADDR16_HA -> 0x%08x", *src);
 			break;
 		case R_PPC_REL24:
 			*src = (*src & ~0x03fffffc) | ((value - (uint32) src) & 0x03fffffc);
-			debug(8, "elfloader: R_PPC_REL24 -> 0x%08x\n", *src);
+			debug(8, "elfloader: R_PPC_REL24 -> 0x%08x", *src);
 			break;
 		case R_PPC_REL32:
 			*src = value - (uint32) src;
-			debug(8, "elfloader: R_PPC_REL32 -> 0x%08x\n", *src);
+			debug(8, "elfloader: R_PPC_REL32 -> 0x%08x", *src);
 			break;
 		default:
-			warning("elfloader: Unknown relocation type %d\n", REL_TYPE(rel[i].r_info));
+			warning("elfloader: Unknown relocation type %d", REL_TYPE(rel[i].r_info));
 			free(rel);
 			return false;
 		}
@@ -97,7 +97,7 @@ bool PPCDLObject::relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset,
 	return true;
 }
 
-bool PPCDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
+bool PPCDLObject::relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 	for (uint32 i = 0; i < ehdr->e_shnum; i++) {
 		Elf32_Shdr *curShdr = &(shdr[i]);
 
@@ -106,7 +106,7 @@ bool PPCDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *e
 				int32(curShdr->sh_link) == _symtab_sect &&
 				curShdr->sh_info < ehdr->e_shnum &&
 				(shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {
-			warning("elfloader: REL entries not supported!\n");
+			warning("elfloader: REL entries not supported!");
 			return false;
 		}
 
@@ -115,7 +115,7 @@ bool PPCDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *e
 				int32(curShdr->sh_link) == _symtab_sect &&
 				curShdr->sh_info < ehdr->e_shnum &&
 				(shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {
-			if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, _segment))
+			if (!relocate(curShdr->sh_offset, curShdr->sh_size, _segment))
 				return false;
 		}
 	}

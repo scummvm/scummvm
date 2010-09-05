@@ -32,8 +32,8 @@
 
 class PPCDLObject : public DLObject {
 protected:
-	virtual bool relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset, Elf32_Word size, byte *relSegment);
-	virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
+	virtual bool relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment);
+	virtual bool relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
 
 public:
     PPCDLObject() : DLObject() {}

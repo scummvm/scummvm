@@ -37,10 +37,10 @@ protected:
 	ShortSegmentManager::Segment *_shortsSegment;			// For assigning shorts ranges
 	uint32 _gpVal;									// Value of Global Pointer
 
-	virtual bool relocate(Common::SeekableReadStream* DLFile, Elf32_Off offset, Elf32_Word size, byte *relSegment);
-	virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
+	virtual bool relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment);
+	virtual bool relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
 	virtual void relocateSymbols(Elf32_Addr offset);
-	virtual bool loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr);
+	virtual bool loadSegment(Elf32_Phdr *phdr);
 	virtual void unload();
 
 public:
