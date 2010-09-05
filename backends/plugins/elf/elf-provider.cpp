@@ -71,8 +71,7 @@ bool ELFPlugin::loadPlugin() {
 
 	bool ret = DynamicPlugin::loadPlugin();
 
-	if (ret && _dlHandle)
-		_dlHandle->discard_symtab();
+	_dlHandle->discard_symtab();
 
 	return ret;
 }

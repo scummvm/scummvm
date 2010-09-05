@@ -51,16 +51,20 @@ DLObject::~DLObject() {
 // Expel the symbol table from memory
 void DLObject::discard_symtab() {
 	free(_symtab);
-	free(_strtab);
 	_symtab = 0;
+
+	free(_strtab);
 	_strtab = 0;
+
 	_symbol_cnt = 0;
 }
 
 // Unload all objects from memory
 void DLObject::unload() {
 	discard_symtab();
+
 	freeSegment(_segment);
+
 	_segment = 0;
 	_segmentSize = 0;
 	_segmentOffset = 0;
@@ -207,6 +211,7 @@ Elf32_Shdr * DLObject::loadSectionHeaders(Elf32_Ehdr *ehdr) {
 			_file->read(shdr, ehdr->e_shnum * sizeof(*shdr)) !=
 			ehdr->e_shnum * sizeof(*shdr)) {
 		warning("elfloader: Section headers load failed.");
+		free(shdr);
 		return 0;
 	}
 
@@ -247,6 +252,8 @@ int DLObject::loadSymbolTable(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 			_file->read(_symtab, shdr[_symtab_sect].sh_size) !=
 			shdr[_symtab_sect].sh_size) {
 		warning("elfloader: Symbol table load failed.");
+		free(_symtab);
+		_symtab = 0;
 		return -1;
 	}
 
@@ -273,6 +280,8 @@ bool DLObject::loadStringTable(Elf32_Shdr *shdr) {
 			_file->read(_strtab, shdr[string_sect].sh_size) !=
 			shdr[string_sect].sh_size) {
 		warning("elfloader: Symbol table strings load failed.");
+		free(_strtab);
+		_strtab = 0;
 		return false;
 	}
 
@@ -314,8 +323,9 @@ bool DLObject::load() {
 			return false;
 	}
 
-	if (!(shdr = loadSectionHeaders(&ehdr)))
-		ret = false;
+	shdr = loadSectionHeaders(&ehdr);
+	if (!shdr)
+		return false;
 
 	if (ret && ((_symtab_sect = loadSymbolTable(&ehdr, shdr)) < 0))
 		ret = false;
