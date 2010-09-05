@@ -50,6 +50,7 @@ Scene::Scene(GfxDriver *gfx) : _gfx(gfx) {
 
 	SceneElementActor *actor = SceneElementActor::load(&xarc, "oldapril.cir");
 	actor->setAnim(&xarc, "oldapril_idle.ani");
+	actor->setTexture(&xarc, "oldapril.tm");
 	_elements.push_back(actor);
 	// Just to test the XRC loading code
 	XRCNode *node = XRCNode::read(xarc.createReadStreamForMember("00.xrc"));

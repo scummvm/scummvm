@@ -39,6 +39,7 @@ namespace Common {
 namespace Stark {
 
 class Skeleton;
+class Texture;
 
 class VertNode {
 public:
@@ -115,8 +116,10 @@ public:
 	const Common::Array<MeshNode *> &getMeshes() const { return _meshes; }
 	const Common::Array<MaterialNode *> &getMaterials() const { return _materials; }
 	Skeleton *getSkeleton() const { return _skeleton; }
+	const Texture *getTexture() const { return _texture; }
 
 	bool setAnim(Common::ReadStream *stream);
+	bool setTexture(Common::ReadStream *stream);
 
 private:
 	uint32 _id;
@@ -124,6 +127,7 @@ private:
 	Common::Array<MaterialNode *> _materials;
 	Common::Array<MeshNode *> _meshes;
 	Skeleton *_skeleton;	
+	Texture *_texture;
 
 };
 
@@ -136,6 +140,7 @@ public:
 
 	static SceneElementActor *load(const Common::Archive *archive, const Common::String &name);
 	bool setAnim(const Common::Archive *archive, const Common::String &name);
+	bool setTexture(const Common::Archive *archive, const Common::String &name);
 
 	void update(uint32 delta);
 	void render(GfxDriver *gfx);

@@ -26,6 +26,7 @@
 #include "engines/stark/actor.h"
 
 #include "engines/stark/skeleton.h"
+#include "engines/stark/texture.h"
 #include "engines/stark/gfx/coordinate.h"
 #include "engines/stark/stark.h"
 
@@ -36,7 +37,7 @@
 
 namespace Stark {
 
-Actor::Actor() : _skeleton(NULL) {
+Actor::Actor() : _skeleton(NULL), _texture(NULL) {
 	
 }
 
@@ -49,6 +50,9 @@ Actor::~Actor() {
 
 	if (_skeleton)
 		delete _skeleton;
+
+	if (_texture)
+		delete _texture;
 }
 
 bool Actor::readFromStream(Common::ReadStream *stream) {
@@ -156,6 +160,14 @@ bool Actor::setAnim(Common::ReadStream *stream)
 	return _skeleton->setAnim(stream);
 }
 
+bool Actor::setTexture(Common::ReadStream *stream)
+{
+	if (_texture)
+		delete _texture;
+
+	_texture = new Texture();
+	return _texture->createFromStream(stream);
+}
 SceneElementActor *SceneElementActor::load(const Common::Archive *archive, const Common::String &name) {
 	Common::ReadStream *stream = archive->createReadStreamForMember(name);
 	if (!stream)
@@ -185,6 +197,14 @@ bool SceneElementActor::setAnim(const Common::Archive *archive, const Common::St
 	return _actor->setAnim(stream);
 }
 
+bool SceneElementActor::setTexture(const Common::Archive *archive, const Common::String &name) {
+	Common::ReadStream *stream = archive->createReadStreamForMember(name);
+	if (!stream)
+		return false;
+
+	return _actor->setTexture(stream);
+}
+
 void SceneElementActor::update(uint32 delta) {
 	_actor->getSkeleton()->animate(delta);
 }
@@ -200,18 +220,29 @@ ctr += .1;
 	glScalef(0.005f, .005f, -.005f);
 	glTranslatef(0, -20.f, 100.f);
 	glRotatef(20, .3f, 1.f, 0.f);
+
+	glRotatef(180, 0.f, 1.f, 0.f);
 	//glRotatef((ctr * 10.3f), -4.0f, 10.0f, 1.0f);
 
-	glBegin(GL_TRIANGLES);
+	glEnable(GL_TEXTURE_2D);
 	
 	Common::Array<BoneNode *> bones = _actor->getSkeleton()->getBones();
 	Common::Array<MeshNode *> meshes = _actor->getMeshes();
 	Common::Array<MaterialNode *> mats = _actor->getMaterials();
+	const Texture *texture = _actor->getTexture();
 
 	for (Common::Array<MeshNode *>::iterator mesh = meshes.begin(); mesh != meshes.end(); ++mesh) {
 		for (Common::Array<FaceNode *>::iterator face = (*mesh)->_faces.begin(); face != (*mesh)->_faces.end(); ++face) {
 			// For each triangle to draw
-			glColor3f(mats[(*face)->_matIdx]->_r, mats[(*face)->_matIdx]->_g, mats[(*face)->_matIdx]->_b);
+			uint32 tex = texture->getTexture(mats[(*face)->_matIdx]->_texName);
+				if (tex)
+					glColor3f(1.f, 1.f, 1.f);
+				else
+					glColor3f(mats[(*face)->_matIdx]->_r, mats[(*face)->_matIdx]->_g, mats[(*face)->_matIdx]->_b);
+
+			glBindTexture(GL_TEXTURE_2D, tex);
+
+			glBegin(GL_TRIANGLES);
 			for (Common::Array<TriNode *>::iterator tri = (*face)->_tris.begin(); tri != (*face)->_tris.end(); ++tri) {
 				// Contains 3 vertices
 				// Each vertex relative to a bone coordinate
@@ -239,14 +270,15 @@ ctr += .1;
 
 					float w = (*face)->_verts[vertIdx]->_boneWeight;
 					Coordinate pos = b1 * w + b2 * (1.f - w);
-					glVertex3f(pos.x(), pos.y(), pos.z()); // - is LHS->RHS
+					if (tex)
+						glTexCoord2f(-(*face)->_verts[vertIdx]->_texS, (*face)->_verts[vertIdx]->_texT);
+
+					glVertex3f(pos.x(), pos.y(), -pos.z()); // - is LHS->RHS
 				}
 			}
-
+			glEnd();
 		}
 	}
-
-	glEnd();
 
 	glPopMatrix();
 }
