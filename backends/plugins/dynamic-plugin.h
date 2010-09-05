@@ -28,7 +28,6 @@
 
 #include "base/plugins.h"
 
-
 class DynamicPlugin : public Plugin {
 protected:
 	typedef int32 (*IntFunc)();

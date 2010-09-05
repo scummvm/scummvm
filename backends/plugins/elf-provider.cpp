@@ -54,27 +54,26 @@ DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
 }
 
 bool ELFPlugin::loadPlugin() {
-		assert(!_dlHandle);
-		DLObject *obj = makeDLObject();
-		if (obj->open(_filename.c_str())) {
-			_dlHandle = obj;
-		} else {
-			delete obj;
-			_dlHandle = 0;
-		}
+	assert(!_dlHandle);
+	DLObject *obj = makeDLObject();
+	if (obj->open(_filename.c_str())) {
+		_dlHandle = obj;
+	} else {
+		delete obj;
+		_dlHandle = 0;
+	}
 
-		if (!_dlHandle) {
-			warning("elfloader: Failed loading plugin '%s'", _filename.c_str());
-			return false;
-		}
+	if (!_dlHandle) {
+		warning("elfloader: Failed loading plugin '%s'", _filename.c_str());
+		return false;
+	}
 
-		bool ret = DynamicPlugin::loadPlugin();
+	bool ret = DynamicPlugin::loadPlugin();
 
-		if (ret && _dlHandle) {
-			_dlHandle->discard_symtab();
-		}
+	if (ret && _dlHandle)
+		_dlHandle->discard_symtab();
 
-		return ret;
+	return ret;
 }
 
 void ELFPlugin::unloadPlugin() {
@@ -91,9 +90,9 @@ void ELFPlugin::unloadPlugin() {
 bool ELFPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
 	Common::String filename = node.getName();
-	if (!filename.hasSuffix(".PLG") && !filename.hasSuffix(".plg") && !filename.hasSuffix(".PLUGIN") && !filename.hasSuffix(".plugin")) {
+	if (!filename.hasSuffix(".PLG") && !filename.hasSuffix(".plg") && !filename.hasSuffix(".PLUGIN") && !filename.hasSuffix(".plugin"))
 		return false;
-	}
+
 	return true;
 }
 

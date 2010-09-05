@@ -32,11 +32,10 @@
 /**
  * Follow the instruction of a relocation section.
  *
- * @param DLFile 	 SeekableReadStream of File
- * @param offset 	 Offset into the File
- * @param size   	 Size of relocation section
- * @param relSegment Base address of relocated segment in memory (memory offset)
- *
+ * @param DLFile		SeekableReadStream of File
+ * @param fileOffset	Offset into the File
+ * @param size			Size of relocation section
+ * @param relSegment	Base address of relocated segment in memory (memory offset)
  */
 bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
 	Elf32_Rel *rel = 0;	// relocation entry
@@ -49,7 +48,7 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 
 	// Read in our relocation table
 	if (!DLFile->seek(offset, SEEK_SET) ||
-	        DLFile->read(rel, size) != size) {
+			DLFile->read(rel, size) != size) {
 		warning("elfloader: Relocation table load failed.");
 		free(rel);
 		return false;
@@ -86,10 +85,9 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 
 		// Act differently based on the type of relocation
 		switch (REL_TYPE(rel[i].r_info)) {
-
 		case R_MIPS_HI16:						// Absolute addressing.
 			if (sym->st_shndx < SHN_LOPROC &&		// Only shift for plugin section (ie. has a real section index)
-			        firstHi16 < 0) {				// Only process first in block of HI16s
+				firstHi16 < 0) {				// Only process first in block of HI16s
 				firstHi16 = i;						// Keep the first Hi16 we saw
 				seenHi16 = true;
 				ahl = (*target & 0xffff) << 16;		// Take lower 16 bits shifted up
@@ -98,7 +96,7 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 				hi16InShorts = (ShortsMan.inGeneralSegment((char *)sym->st_value)); // Fix for problem with switching btw segments
 				if (debugRelocs[0]++ < DEBUG_NUM)	// Print only a set number
 					debug(8, "elfloader: R_MIPS_HI16: i=%d, offset=%x, ahl = %x, target = %x",
-					    i, rel[i].r_offset, ahl, *target);
+							i, rel[i].r_offset, ahl, *target);
 			}
 			break;
 
@@ -127,9 +125,9 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 				ahl += a;						// Add lower 16 bits. AHL is now complete
 
 				// Fix: we can have LO16 access to the short segment sometimes
-				if (lo16InShorts) {
+				if (lo16InShorts)
 					relocation = ahl + _shortsSegment->getOffset();		// Add in the short segment offset
-				} else	// It's in the regular segment
+				else	// It's in the regular segment
 					relocation = ahl + (Elf32_Addr)_segment;			// Add in the new offset for the segment
 
 				if (firstHi16 >= 0) {					// We haven't treated the HI16s yet so do it now
@@ -139,7 +137,8 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 						lastTarget = (unsigned int *)((char *)relSegment + rel[j].r_offset);	// get hi16 target
 						*lastTarget &= 0xffff0000;		// Clear the lower 16 bits of the last target
 						*lastTarget |= (relocation >> 16) & 0xffff;	// Take the upper 16 bits of the relocation
-						if (relocation & 0x8000)(*lastTarget)++;	// Subtle: we need to add 1 to the HI16 in this case
+						if (relocation & 0x8000)
+							(*lastTarget)++;	// Subtle: we need to add 1 to the HI16 in this case
 					}
 					firstHi16 = -1;						// Reset so we'll know we treated it
 				} else {
@@ -151,10 +150,10 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 
 				if (debugRelocs[1]++ < DEBUG_NUM)
 					debug(8, "elfloader: R_MIPS_LO16: i=%d, offset=%x, a=%x, ahl = %x, lastTarget = %x, origt = %x, target = %x",
-					    i, rel[i].r_offset, a, ahl, *lastTarget, origTarget, *target);
+							i, rel[i].r_offset, a, ahl, *lastTarget, origTarget, *target);
 				if (lo16InShorts && debugRelocs[2]++ < DEBUG_NUM)
 					debug(8, "elfloader: R_MIPS_LO16s: i=%d, offset=%x, a=%x, ahl = %x, lastTarget = %x, origt = %x, target = %x",
-					    i, rel[i].r_offset, a, ahl, *lastTarget, origTarget, *target);
+							i, rel[i].r_offset, a, ahl, *lastTarget, origTarget, *target);
 			}
 			break;
 
@@ -168,17 +167,17 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 
 				if (debugRelocs[3]++ < DEBUG_NUM)
 					debug(8, "elfloader: R_MIPS_26: i=%d, offset=%x, symbol=%d, stinfo=%x, a=%x, origTarget=%x, target=%x",
-					    i, rel[i].r_offset, REL_INDEX(rel[i].r_info), sym->st_info, a, origTarget, *target);
+							i, rel[i].r_offset, REL_INDEX(rel[i].r_info), sym->st_info, a, origTarget, *target);
 			} else {
 				if (debugRelocs[4]++ < DEBUG_NUM)
 					debug(8, "elfloader: R_MIPS_26: i=%d, offset=%x, symbol=%d, stinfo=%x, a=%x, origTarget=%x, target=%x",
-					    i, rel[i].r_offset, REL_INDEX(rel[i].r_info), sym->st_info, a, origTarget, *target);
+							i, rel[i].r_offset, REL_INDEX(rel[i].r_info), sym->st_info, a, origTarget, *target);
 			}
 			break;
 
 		case R_MIPS_GPREL16:							// GP Relative addressing
 			if (_shortsSegment->getOffset() != 0 && 	// Only relocate if we shift the shorts section
-			        ShortsMan.inGeneralSegment((char *)sym->st_value)) {	// Only relocate things in the plugin hole
+					ShortsMan.inGeneralSegment((char *)sym->st_value)) {	// Only relocate things in the plugin hole
 				a = *target & 0xffff;				    // Get 16 bits' worth of the addend
 				a = (a << 16) >> 16;						// Sign extend it
 
@@ -189,7 +188,7 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 
 				if (debugRelocs[5]++ < DEBUG_NUM)
 					debug(8, "elfloader: R_MIPS_GPREL16: i=%d, a=%x, gpVal=%x, origTarget=%x, target=%x, offset=%x",
-					    i, a, _gpVal, origTarget, *target, _shortsSegment->getOffset());
+							i, a, _gpVal, origTarget, *target, _shortsSegment->getOffset());
 			}
 
 			break;
@@ -223,7 +222,6 @@ bool MIPSDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long of
 }
 
 bool MIPSDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
-
 	// Loop over sections, finding relocation sections
 	for (int i = 0; i < ehdr->e_shnum; i++) {
 
@@ -231,20 +229,17 @@ bool MIPSDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *
 		//Elf32_Shdr *linkShdr = &(shdr[curShdr->sh_info]);
 
 		if (curShdr->sh_type == SHT_REL && 						// Check for a relocation section
-		        curShdr->sh_entsize == sizeof(Elf32_Rel) &&		    // Check for proper relocation size
-		        (int)curShdr->sh_link == _symtab_sect &&			// Check that the sh_link connects to our symbol table
-		        curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
-		        (shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {  	// Check if relocated section resides in memory
+				curShdr->sh_entsize == sizeof(Elf32_Rel) &&		    // Check for proper relocation size
+				(int)curShdr->sh_link == _symtab_sect &&			// Check that the sh_link connects to our symbol table
+				curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
+				(shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {  	// Check if relocated section resides in memory
 			if (!ShortsMan.inGeneralSegment((char *)shdr[curShdr->sh_info].sh_addr)) {			// regular segment
-				if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, _segment)) {
+				if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, _segment))
 					return false;
-				}
 			} else { 	// In Shorts segment
-				if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, (void *)_shortsSegment->getOffset())) {
+				if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, (void *)_shortsSegment->getOffset()))
 					return false;
-				}
 			}
-
 		}
 	}
 
@@ -252,14 +247,12 @@ bool MIPSDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *
 }
 
 void MIPSDLObject::relocateSymbols(Elf32_Addr offset) {
-
 	int mainCount = 0;
 	int shortsCount= 0;
 
 	// Loop over symbols, add relocation offset
 	Elf32_Sym *s = (Elf32_Sym *)_symtab;
 	for (int c = _symbol_cnt; c--; s++) {
-
 		// Make sure we don't relocate special valued symbols
 		if (s->st_shndx < SHN_LOPROC) {
 			if (!ShortsMan.inGeneralSegment((char *)s->st_value)) {
@@ -273,23 +266,21 @@ void MIPSDLObject::relocateSymbols(Elf32_Addr offset) {
 				if (!_shortsSegment->inSegment((char *)s->st_value))
 					warning("elfloader: Symbol out of bounds! st_value = %x", s->st_value);
 			}
-
 		}
 	}
 }
 
 bool MIPSDLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr) {
-
 	char *baseAddress = 0;
 
 	// We need to take account of non-allocated segment for shorts
 	if (phdr->p_flags & PF_X) {	// This is a relocated segment
-
 		// Attempt to allocate memory for segment
 		int extra = phdr->p_vaddr % phdr->p_align;	// Get extra length TODO: check logic here
 		debug(2, "elfloader: Extra mem is %x", extra);
 
-		if (phdr->p_align < 0x10000) phdr->p_align = 0x10000;	// Fix for wrong alignment on e.g. AGI
+		if (phdr->p_align < 0x10000)
+			phdr->p_align = 0x10000;	// Fix for wrong alignment on e.g. AGI
 
 		if (!(_segment = (char *)memalign(phdr->p_align, phdr->p_memsz + extra))) {
 			warning("elfloader: Out of memory.");
@@ -305,7 +296,7 @@ bool MIPSDLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *p
 
 		baseAddress = _shortsSegment->getStart();
 		debug(2, "elfloader: Shorts segment @ %p to %p. Segment wants to be at %x. Offset=%x",
-		    _shortsSegment->getStart(), _shortsSegment->getEnd(), phdr->p_vaddr, _shortsSegment->getOffset());
+				_shortsSegment->getStart(), _shortsSegment->getEnd(), phdr->p_vaddr, _shortsSegment->getOffset());
 	}
 
 	// Set bss segment to 0 if necessary (assumes bss is at the end)
@@ -318,7 +309,7 @@ bool MIPSDLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *p
 
 	// Read the segment into memory
 	if (!DLFile->seek(phdr->p_offset, SEEK_SET) ||
-	        DLFile->read(baseAddress, phdr->p_filesz) != phdr->p_filesz) {
+			DLFile->read(baseAddress, phdr->p_filesz) != phdr->p_filesz) {
 		warning("elfloader: Segment load failed.");
 		return false;
 	}

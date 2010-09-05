@@ -33,10 +33,10 @@
 /**
  * Follow the instruction of a relocation section.
  *
- * @param DLFile 	 SeekableReadStream of File
- * @param offset 	 Offset into the File
- * @param size   	 Size of relocation section
- *
+ * @param DLFile		SeekableReadStream of File
+ * @param fileOffset	Offset into the File
+ * @param size			Size of relocation section
+ * @param relSegment	Base address of relocated segment in memory (memory offset)
  */
 bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
 	Elf32_Rel *rel = 0; //relocation entry
@@ -48,8 +48,8 @@ bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long off
 	}
 
 	// Read in our relocation table
-	if (DLFile->seek(offset, SEEK_SET) < 0 ||
-	        DLFile->read(rel, size) != size) {
+	if (!DLFile->seek(offset, SEEK_SET) ||
+			DLFile->read(rel, size) != size) {
 		warning("elfloader: Relocation table load failed.");
 		free(rel);
 		return false;
@@ -65,7 +65,6 @@ bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long off
 
 	// Loop over relocation entries
 	for (int i = 0; i < cnt; i++) {
-
 		// Get the symbol this relocation entry is referring to
 		Elf32_Sym *sym = (Elf32_Sym *)(_symtab) + (REL_INDEX(rel[i].r_info));
 
@@ -76,7 +75,6 @@ bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long off
 
 		// Act differently based on the type of relocation
 		switch (REL_TYPE(rel[i].r_info)) {
-
 		case R_ARM_ABS32:
 			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
 				a = *target;							// Get full 32 bits of addend
@@ -109,7 +107,6 @@ bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long off
 			free(rel);
 			return false;
 		}
-
 	}
 
 	free(rel);
@@ -117,27 +114,23 @@ bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long off
 }
 
 bool ARMDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
-
 	// Loop over sections, finding relocation sections
 	for (int i = 0; i < ehdr->e_shnum; i++) {
-
 		Elf32_Shdr *curShdr = &(shdr[i]);
 
 		if ((curShdr->sh_type == SHT_REL || curShdr->sh_type == SHT_RELA) &&		// Check for a relocation section
-		        curShdr->sh_entsize == sizeof(Elf32_Rel) &&			// Check for proper relocation size
-		        (int)curShdr->sh_link == _symtab_sect &&			// Check that the sh_link connects to our symbol table
-		        curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
-		        (shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {  	// Check if relocated section resides in memory
+				curShdr->sh_entsize == sizeof(Elf32_Rel) &&			// Check for proper relocation size
+				(int)curShdr->sh_link == _symtab_sect &&			// Check that the sh_link connects to our symbol table
+				curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
+				(shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {  	// Check if relocated section resides in memory
 
 			if (curShdr->sh_type == SHT_RELA) {
 				warning("elfloader: RELA entries not supported yet!");
 				return false;
 			}
 
-			if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, _segment)) {
+			if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, _segment))
 				return false;
-			}
-
 		}
 	}
 

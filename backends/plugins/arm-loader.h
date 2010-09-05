@@ -29,11 +29,11 @@
 
 class ARMDLObject : public DLObject {
 protected:
-    bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
-    bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
+	virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
+	virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
 
 public:
-    ARMDLObject() : DLObject() {}
+	ARMDLObject() : DLObject() {}
 };
 
 #endif /* defined(DYNAMIC_MODULES) && defined(ARM_TARGET) */

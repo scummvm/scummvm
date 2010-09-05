@@ -34,11 +34,11 @@ protected:
 	ShortSegmentManager::Segment *_shortsSegment;			// For assigning shorts ranges
 	unsigned int _gpVal;									// Value of Global Pointer
 
-	bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
-    bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
-    void relocateSymbols(Elf32_Addr offset);
-    bool loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr);
-    void unload();
+	virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
+	virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
+	virtual void relocateSymbols(Elf32_Addr offset);
+	virtual bool loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr);
+	virtual void unload();
 
 public:
     MIPSDLObject() : DLObject() {

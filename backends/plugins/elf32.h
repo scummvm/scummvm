@@ -61,7 +61,7 @@ typedef struct {
 } Elf32_Ehdr;
 
 // Should be in e_ident
-#define ELFMAG          "\177ELF"	/* ELF Magic number */
+#define ELFMAG		"\177ELF"	/* ELF Magic number */
 
 #define EI_CLASS	4		/* File class byte index */
 #define ELFCLASS32	1		/* 32-bit objects */
@@ -129,7 +129,7 @@ typedef struct {
 
 // sh_type values
 #define SHT_NULL			0	/* Inactive section */
-#define SHT_PROGBITS        1	/* Proprietary */
+#define SHT_PROGBITS		1	/* Proprietary */
 #define SHT_SYMTAB			2	/* Symbol table */
 #define SHT_STRTAB			3	/* String table */
 #define SHT_RELA			4	/* Relocation entries with addend */
@@ -143,9 +143,9 @@ typedef struct {
 #define SHT_MIPS_LIBLSIT	0x70000000	/* Info about dynamic shared object libs for MIPS*/
 #define SHT_MIPS_CONFLICT	0x70000002	/* Conflicts btw executables and shared objects for MIPS */
 #define SHT_MIPS_GPTAB		0x70000003	/* Global pointer table for MIPS*/
-#define SHT_ARM_EXIDX 		0x70000001	/* Exception Index table for ARM*/
-#define SHT_ARM_PREEMPTMAP 	0x70000002	/* BPABI DLL dynamic linking pre-emption map for ARM */
-#define SHT_ARM_ATTRIBUTES 	0x70000003	/* Object file compatibility attributes for ARM*/
+#define SHT_ARM_EXIDX		0x70000001	/* Exception Index table for ARM*/
+#define SHT_ARM_PREEMPTMAP	0x70000002	/* BPABI DLL dynamic linking pre-emption map for ARM */
+#define SHT_ARM_ATTRIBUTES	0x70000003	/* Object file compatibility attributes for ARM*/
 
 // sh_flags values
 #define SHF_WRITE		0	/* writable section */
@@ -168,8 +168,8 @@ typedef struct {
 #define SYM_BIND(x)		((x)>>4)
 
 // Symbol binding values from st_info
-#define STB_LOCAL 	0	/* Symbol not visible outside object */
-#define STB_GLOBAL 	1	/* Symbol visible to all object files */
+#define STB_LOCAL	0	/* Symbol not visible outside object */
+#define STB_GLOBAL	1	/* Symbol visible to all object files */
 #define STB_WEAK	2	/* Similar to STB_GLOBAL */
 
 // Symbol type values from st_info
@@ -180,12 +180,12 @@ typedef struct {
 #define STT_FILE	4	/* Source file associated with object file */
 
 // Special section header index values from st_shndex
-#define SHN_UNDEF  		0
-#define SHN_LOPROC 		0xFF00	/* Extended values */
-#define SHN_ABS	   		0xFFF1	/* Absolute value: don't relocate */
-#define SHN_COMMON 		0xFFF2	/* Common block. Not allocated yet */
-#define SHN_HIPROC 		0xFF1F
-#define SHN_HIRESERVE 	0xFFFF
+#define SHN_UNDEF		0
+#define SHN_LOPROC		0xFF00	/* Extended values */
+#define SHN_ABS			0xFFF1	/* Absolute value: don't relocate */
+#define SHN_COMMON		0xFFF2	/* Common block. Not allocated yet */
+#define SHN_HIPROC		0xFF1F
+#define SHN_HIRESERVE	0xFFFF
 
 // Relocation entry with implicit addend (info about how to relocate)
 typedef struct {
@@ -227,7 +227,7 @@ typedef struct
 // ARM relocation types
 #define R_ARM_NONE			0
 #define R_ARM_ABS32			2
-#define R_ARM_THM_CALL      10
+#define R_ARM_THM_CALL		10
 #define R_ARM_CALL			28
 #define R_ARM_JUMP24		29
 #define R_ARM_TARGET1		38

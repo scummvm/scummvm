@@ -37,7 +37,7 @@ class PS2PluginProvider : public ELFPluginProvider {
 	};
 
 public:
-	Plugin* PS2PluginProvider::createPlugin(const Common::FSNode &node) const {
+	Plugin* createPlugin(const Common::FSNode &node) const {
 		return new PS2Plugin(node.getPath());
 	}
 };

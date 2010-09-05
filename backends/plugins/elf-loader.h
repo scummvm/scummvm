@@ -44,36 +44,37 @@
  */
 class DLObject {
 protected:
-    void *_segment, *_symtab;
-    char *_strtab;
-    int _symbol_cnt;
-    int _symtab_sect;
-    void *_dtors_start, *_dtors_end;
+	void *_segment, *_symtab;
+	char *_strtab;
+	int _symbol_cnt;
+	int _symtab_sect;
+	void *_dtors_start, *_dtors_end;
 
-    uint32 _segmentSize;
+	uint32 _segmentSize;
 	ptrdiff_t _segmentOffset;
 
-    virtual void unload();
-    virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) = 0;
-    bool load(Common::SeekableReadStream* DLFile);
+	virtual void unload();
+	bool load(Common::SeekableReadStream* DLFile);
 
-    bool readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
-    bool readProgramHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num);
-    virtual bool loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr);
-    Elf32_Shdr *loadSectionHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
-    int loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
-    bool loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *shdr);
-    virtual void relocateSymbols(ptrdiff_t offset);
-    virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) = 0;
+	bool readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
+	bool readProgramHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num);
+	virtual bool loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr);
+	Elf32_Shdr *loadSectionHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
+	int loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
+	bool loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *shdr);
+	virtual void relocateSymbols(ptrdiff_t offset);
+
+	virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) = 0;
+	virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) = 0;
 
 public:
-    bool open(const char *path);
-    bool close();
-    void *symbol(const char *name);
-    void discard_symtab();
-
 	DLObject();
 	virtual ~DLObject();
+
+	bool open(const char *path);
+	bool close();
+	void *symbol(const char *name);
+	void discard_symtab();
 };
 
 #endif /* ELF_LOADER_H */

@@ -64,12 +64,13 @@ ShortSegmentManager::Segment *ShortSegmentManager::newSegment(int size, char *or
 
 	Segment *seg = new Segment(lastAddress, size, origAddr);	// Create a new segment
 
-	if (lastAddress + size > _highestAddress) _highestAddress = lastAddress + size;	// Keep track of maximum
+	if (lastAddress + size > _highestAddress)
+		_highestAddress = lastAddress + size;	// Keep track of maximum
 
 	_list.insert(i, seg);
 
 	debug(2, "elfloader: Shorts segment size %x allocated. End = %p. Remaining space = %x. Highest so far is %p.",
-	    size, lastAddress + size, _shortsEnd - _list.back()->getEnd(), _highestAddress);
+			size, lastAddress + size, _shortsEnd - _list.back()->getEnd(), _highestAddress);
 
 	return seg;
 }
