@@ -32,6 +32,7 @@
 #include "common/fs.h"
 
 DLObject::DLObject() :
+	_file(0),
 	_segment(0),
 	_symtab(0),
 	_strtab(0),
