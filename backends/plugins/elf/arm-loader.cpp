@@ -30,13 +30,6 @@
 
 #include "common/debug.h"
 
-/**
- * Follow the instruction of a relocation section.
- *
- * @param fileOffset	Offset into the File
- * @param size			Size of relocation section
- * @param relSegment	Base address of relocated segment in memory (memory offset)
- */
 bool ARMDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) {
 	Elf32_Rel *rel = 0; //relocation entry
 

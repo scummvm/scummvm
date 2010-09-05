@@ -70,6 +70,14 @@ protected:
 	virtual void relocateSymbols(ptrdiff_t offset);
 
 	// architecture specific
+
+	/**
+	 * Follow the instruction of a relocation section.
+	 *
+	 * @param fileOffset	Offset into the File
+	 * @param size			Size of relocation section
+	 * @param relSegment	Base address of relocated segment in memory (memory offset)
+	 */
 	virtual bool relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) = 0;
 	virtual bool relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) = 0;
 
