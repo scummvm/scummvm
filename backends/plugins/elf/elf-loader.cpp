@@ -157,11 +157,7 @@ bool DLObject::readProgramHeaders(Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, Elf32_Half
 }
 
 bool DLObject::loadSegment(Elf32_Phdr *phdr) {
-	// Attempt to allocate memory for segment
-	uint32 extra = phdr->p_vaddr % phdr->p_align;	// Get extra length TODO: check logic here
-	debug(2, "elfloader: Extra mem is %x", extra);
-
-	_segment = (byte *)allocSegment(phdr->p_align, phdr->p_memsz + extra);
+	_segment = (byte *)allocSegment(phdr->p_align, phdr->p_memsz);
 
 	if (!_segment) {
 		warning("elfloader: Out of memory.");
@@ -171,10 +167,10 @@ bool DLObject::loadSegment(Elf32_Phdr *phdr) {
 	debug(2, "elfloader: Allocated segment @ %p", _segment);
 
 	// Get offset to load segment into
-	_segmentSize = phdr->p_memsz + extra;
+	_segmentSize = phdr->p_memsz;
 	_segmentVMA = phdr->p_vaddr;
 
-	// Set bss segment to 0 if necessary (assumes bss is at the end)
+	// Set .bss segment to 0 if necessary
 	if (phdr->p_memsz > phdr->p_filesz) {
 		debug(2, "elfloader: Setting %p to %p to 0 for bss",
 				_segment + phdr->p_filesz, _segment + phdr->p_memsz);
