@@ -82,6 +82,7 @@ typedef struct {
 
 // e_machine values
 #define EM_MIPS		8
+#define EM_PPC		20
 #define EM_ARM		40
 
 // Program header (contains info about segment)
@@ -232,6 +233,14 @@ typedef struct
 #define R_ARM_JUMP24		29
 #define R_ARM_TARGET1		38
 #define R_ARM_V4BX 			40
+
+// PPC relocation types
+#define R_PPC_ADDR32		1
+#define R_PPC_ADDR16_LO		4
+#define R_PPC_ADDR16_HI		5
+#define R_PPC_ADDR16_HA		6
+#define R_PPC_REL24			10
+#define R_PPC_REL32			26
 
 // Mock function to get value of global pointer for MIPS
 #define getGP()	({	\

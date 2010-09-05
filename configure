@@ -1418,6 +1418,10 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
 		# libogc is required to link the cc tests (includes _start())
 		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube -logc"
+		if test "$_dynamic_modules" = "yes" ; then
+			# retarded toolchain patch forces --gc-sections, overwrite it
+			LDFLAGS="$LDFLAGS -Wl,--no-gc-sections"
+		fi
 		;;
 	haiku*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1478,6 +1482,10 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
 		# libogc is required to link the cc tests (includes _start())
 		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii -logc"
+		if test "$_dynamic_modules" = "yes" ; then
+			# retarded toolchain patch forces --gc-sections, overwrite it
+			LDFLAGS="$LDFLAGS -Wl,--no-gc-sections"
+		fi
 		;;
 	wince)
 		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale"
@@ -1969,6 +1977,23 @@ CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
+'
+		;;
+	gamecube | wii)
+DEFINES="$DEFINES -DELF_LOADER_TARGET -DPPC_TARGET -DONE_PLUGIN_AT_A_TIME"
+_def_plugin='
+#define PLUGIN_PREFIX	""
+#define PLUGIN_SUFFIX	".plg"
+'
+_mak_plugins='
+DYNAMIC_MODULES		:= 1
+PLUGIN_PREFIX		:=
+PLUGIN_SUFFIX		:= .plg
+PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
+CXXFLAGS			+= -DDYNAMIC_MODULES
+PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),-T$(srcdir)/backends/plugins/wii/plugin.ld -Wl,--retain-symbols-file,$(srcdir)/backends/plugins/plugin.syms
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
 		;;
 	gp2xwiz*)

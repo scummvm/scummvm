@@ -52,6 +52,7 @@ protected:
 
 	uint32 _segmentSize;
 	ptrdiff_t _segmentOffset;
+	uint32 _segmentVMA;
 
 	virtual void unload();
 	bool load(Common::SeekableReadStream* DLFile);

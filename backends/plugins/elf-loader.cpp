@@ -37,6 +37,11 @@
 #include <nds.h>
 #endif
 
+#ifdef __WII__
+#include <malloc.h>
+#include <ogc/cache.h>
+#endif
+
 #include "backends/plugins/elf-loader.h"
 
 #include "common/debug.h"
@@ -61,6 +66,10 @@ static void flushDataCache(void *ptr, uint32 len) {
 	sceKernelDcacheWritebackRange(ptr, len);
 	sceKernelIcacheInvalidateRange(ptr, len);
 #endif
+#ifdef __WII__
+	DCFlushRange(ptr, len);
+	ICInvalidateRange(ptr, len);
+#endif
 }
 
 DLObject::DLObject() :
@@ -72,7 +81,8 @@ DLObject::DLObject() :
 	_dtors_start(0),
 	_dtors_end(0),
 	_segmentSize(0),
-	_segmentOffset(0) {
+	_segmentOffset(0),
+	_segmentVMA(0) {
 }
 
 DLObject::~DLObject() {
@@ -136,6 +146,9 @@ bool DLObject::readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehd
 #ifdef MIPS_TARGET
 			EM_MIPS
 #endif
+#ifdef PPC_TARGET
+			EM_PPC
+#endif
 			) {
 		warning("elfloader: Wrong ELF file architecture.");
 		return false;
@@ -190,6 +203,7 @@ bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr)
 	// Get offset to load segment into
 	baseAddress = (char *)_segment;
 	_segmentSize = phdr->p_memsz + extra;
+	_segmentVMA = phdr->p_vaddr;
 
 	// Set bss segment to 0 if necessary (assumes bss is at the end)
 	if (phdr->p_memsz > phdr->p_filesz) {

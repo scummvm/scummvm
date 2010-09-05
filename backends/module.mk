@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	plugins/mips-loader.o \
 	plugins/shorts-segment-manager.o \
 	plugins/arm-loader.o \
+	plugins/ppc-loader.o \
 	plugins/elf-provider.o \
 	plugins/dc/dc-provider.o \
 	plugins/posix/posix-provider.o \
