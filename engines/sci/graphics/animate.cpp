@@ -229,43 +229,43 @@ void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 			it->celNo = viewCelCount - 1;
 		}
 
-		// Process global scaling, if needed
-		if (it->scaleSignal & kScaleSignalDoScaling) {
-			if (it->scaleSignal & kScaleSignalGlobalScaling) {
-				// Global scaling uses global var 2 and some other stuff to calculate scaleX/scaleY
-				int16 maxScale = readSelectorValue(_s->_segMan, curObject, SELECTOR(maxScale));
-				int16 celHeight = view->getHeight(it->loopNo, it->celNo);
-				int16 maxCelHeight = (maxScale * celHeight) >> 7;
-				reg_t globalVar2 = _s->variables[VAR_GLOBAL][2]; // current room object
-				int16 vanishingY = readSelectorValue(_s->_segMan, globalVar2, SELECTOR(vanishingY));
-
-				int16 fixedPortY = _ports->getPort()->rect.bottom - vanishingY;
-				int16 fixedEntryY = it->y - vanishingY;
-				if (!fixedEntryY)
-					fixedEntryY = 1;
-
-				if ((celHeight == 0) || (fixedPortY == 0))
-					error("global scaling panic");
-
-				it->scaleY = ( maxCelHeight * fixedEntryY ) / fixedPortY;
-				it->scaleY = (it->scaleY * 128) / celHeight;
-
-				it->scaleX = it->scaleY;
-
-				// and set objects scale selectors
-				writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX), it->scaleX);
-				writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), it->scaleY);
-			}
-		}
-
-		//warning("%s view %d, loop %d, cel %d", _s->_segMan->getObjectName(curObject), it->viewId, it->loopNo, it->celNo);
-
 		if (!view->isScaleable()) {
 			// Laura Bow 2 (especially floppy) depends on this, some views are not supposed to be scaleable
 			//  this "feature" was removed in later versions of SCI1.1
 			it->scaleSignal = 0;
 			it->scaleY = it->scaleX = 128;
+		} else {
+			// Process global scaling, if needed
+			if (it->scaleSignal & kScaleSignalDoScaling) {
+				if (it->scaleSignal & kScaleSignalGlobalScaling) {
+					// Global scaling uses global var 2 and some other stuff to calculate scaleX/scaleY
+					int16 maxScale = readSelectorValue(_s->_segMan, curObject, SELECTOR(maxScale));
+					int16 celHeight = view->getHeight(it->loopNo, it->celNo);
+					int16 maxCelHeight = (maxScale * celHeight) >> 7;
+					reg_t globalVar2 = _s->variables[VAR_GLOBAL][2]; // current room object
+					int16 vanishingY = readSelectorValue(_s->_segMan, globalVar2, SELECTOR(vanishingY));
+
+					int16 fixedPortY = _ports->getPort()->rect.bottom - vanishingY;
+					int16 fixedEntryY = it->y - vanishingY;
+					if (!fixedEntryY)
+						fixedEntryY = 1;
+
+					if ((celHeight == 0) || (fixedPortY == 0))
+						error("global scaling panic");
+
+					it->scaleY = ( maxCelHeight * fixedEntryY ) / fixedPortY;
+					it->scaleY = (it->scaleY * 128) / celHeight;
+
+					it->scaleX = it->scaleY;
+
+					// and set objects scale selectors
+					writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX), it->scaleX);
+					writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), it->scaleY);
+				}
+			}
 		}
+
+		//warning("%s view %d, loop %d, cel %d", _s->_segMan->getObjectName(curObject), it->viewId, it->loopNo, it->celNo);
 
 		bool setNsRect = maySetNsRect;
 
