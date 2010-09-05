@@ -42,38 +42,41 @@ namespace Hugo {
 class FileManager {
 public:
 	FileManager(HugoEngine &vm);
+	virtual ~FileManager();
 
 
 	bool     fileExists(char *filename);
-
 	char    *fetchString(int index);
-
 	sound_pt getSound(short sound, uint16 *size);
 
 	void     closePlaybackFile();
-	void     closeDatabaseFiles();
 	void     initSavedGame();
 	void     instructions();
-	void     openDatabaseFiles();
-	void     readBackground(int screenIndex);
 	void     readBootFile();
 	void     readImage(int objNum, object_t *objPtr);
-	void     readOverlay(int screenNum, image_pt image, ovl_t overlayType);
 	void     readUIFItem(short id, byte *buf);
 	void     restoreGame(short slot);
 	void     restoreSeq(object_t *obj);
 	void     saveGame(short slot, const char *descrip);
 	void     saveSeq(object_t *obj);
 
-private:
+	virtual void openDatabaseFiles() = 0;
+	virtual void closeDatabaseFiles() = 0;
+
+	virtual void readBackground(int screenIndex) = 0;
+	virtual void readOverlay(int screenNum, image_pt image, ovl_t overlayType) = 0;
+
+protected:
 	HugoEngine &_vm;
 
 	Common::File _stringArchive;                        /* Handle for string file */
-	Common::File _sceneryArchive;                       /* Handle for scenery file */
+	Common::File _sceneryArchive1;                      /* Handle for scenery file */
 	Common::File _objectsArchive;                       /* Handle for objects file */
 
-	byte *convertPCC(byte *p, uint16 y, uint16 bpl, image_pt data_p);
 	seq_t *readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool firstFl, const char *name);
+private:
+
+	byte *convertPCC(byte *p, uint16 y, uint16 bpl, image_pt data_p);
 	uif_hdr_t *getUIFHeader(uif_t id);
 
 //Strangerke : Not used?
@@ -83,6 +86,51 @@ private:
 //	char     pbget();
 };
 
-} // End of namespace Hugo
+class FileManager_v1 : public FileManager {
+public:
+	FileManager_v1(HugoEngine &vm);
+	~FileManager_v1();
 
+	void openDatabaseFiles();
+	void closeDatabaseFiles();
+	void readBackground(int screenIndex);
+	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
+};
+
+class FileManager_v2 : public FileManager {
+public:
+	FileManager_v2(HugoEngine &vm);
+	~FileManager_v2();
+
+	void openDatabaseFiles();
+	void closeDatabaseFiles();
+	void readBackground(int screenIndex);
+	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
+};
+
+class FileManager_v3 : public FileManager {
+public:
+	FileManager_v3(HugoEngine &vm);
+	~FileManager_v3();
+
+	void openDatabaseFiles();
+	void closeDatabaseFiles();
+	void readBackground(int screenIndex);
+	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
+};
+
+class FileManager_v4 : public FileManager {
+public:
+	FileManager_v4(HugoEngine &vm);
+	~FileManager_v4();
+
+	void openDatabaseFiles();
+	void closeDatabaseFiles();
+	void readBackground(int screenIndex);
+	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
+private:
+	Common::File _sceneryArchive2;                      /* Handle for scenery file */
+
+};
+} // End of namespace Hugo
 #endif //HUGO_FILE_H

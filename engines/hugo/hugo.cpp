@@ -140,7 +140,6 @@ Common::Error HugoEngine::run() {
 	s_Engine = this;
 	initGraphics(320, 200, false);
 
-	_fileManager = new FileManager(*this);
 	_screen = new Screen(*this);
 	_mouseHandler = new MouseHandler(*this);
 	_inventoryHandler = new InventoryHandler(*this);
@@ -149,27 +148,33 @@ Common::Error HugoEngine::run() {
 	_soundHandler = new SoundHandler(*this);
 
 	switch (_gameVariant) {
-	case 0:
+	case 0: // H1 Win
+		_fileManager = new FileManager_v3(*this);
 		_scheduler = new Scheduler_v2(*this);
 		_introHandler = new intro_1w(*this);
 		break;
 	case 1:
+		_fileManager = new FileManager_v2(*this);
 		_scheduler = new Scheduler_v2(*this);
 		_introHandler = new intro_2w(*this);
 		break;
 	case 2:
+		_fileManager = new FileManager_v2(*this);
 		_scheduler = new Scheduler_v2(*this);
 		_introHandler = new intro_3w(*this);
 		break;
-	case 3:
+	case 3: // H1 DOS
+		_fileManager = new FileManager_v1(*this);
 		_scheduler = new Scheduler_v1(*this);
 		_introHandler = new intro_1d(*this);
 		break;
 	case 4:
+		_fileManager = new FileManager_v2(*this);
 		_scheduler = new Scheduler_v1(*this);
 		_introHandler = new intro_2d(*this);
 		break;
 	case 5:
+		_fileManager = new FileManager_v4(*this);
 		_scheduler = new Scheduler_v2(*this);
 		_introHandler = new intro_3d(*this);
 		break;

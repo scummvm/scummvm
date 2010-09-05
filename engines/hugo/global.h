@@ -37,12 +37,10 @@ namespace Hugo {
 #define DESCRIPLEN     32                           /* Length of description string */
 #define MAX_SOUNDS     64                           /* Max number of sounds */
 #define BOOTFILE       "HUGO.BSF"                   /* Name of boot structure file */
-#define CONFIGFILE     "CONFIG.DAT"                 /* Name of config file */
 #define LEN_MASK       0x3F                         /* Lower 6 bits are length */
 #define PBFILE         "playback.dat"
 
 /* Name scenery and objects picture databases */
-#define SCENERY_FILE   "scenery.dat"
 #define OBJECTS_FILE   "objects.dat"
 #define STRING_FILE    "strings.dat"
 #define SOUND_FILE     "sounds.dat"
