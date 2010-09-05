@@ -40,6 +40,9 @@ ifneq ($(DIST_FILES_ENGINEDATA),)
 endif
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip wiidist/scummvm/
 
+wiiloaddist: wiidist
+	cd wiidist && zip -9r scummvm.zip scummvm/
+	$(DEVKITPPC)/bin/wiiload wiidist/scummvm.zip
 
-.PHONY: wiiclean wiiload geckoupload wiigdb wiidebug wiidist
+.PHONY: wiiclean wiiload geckoupload wiigdb wiidebug wiidist wiiloaddist
 
