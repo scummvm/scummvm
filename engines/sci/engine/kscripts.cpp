@@ -145,6 +145,7 @@ reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 	reg_t parent_addr = argv[0];
 	const Object *parent_obj = s->_segMan->getObject(parent_addr);
+	const bool parentIsClone = parent_obj->isClone();
 	reg_t clone_addr;
 	Clone *clone_obj; // same as Object*
 
@@ -161,6 +162,18 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 		error("Cloning %04x:%04x failed-- internal error", PRINT_REG(parent_addr));
 		return NULL_REG;
 	}
+
+	// In case the parent object is a clone itself we need to refresh our
+	// pointer to it here. This is because calling allocateClone might
+	// invalidate all pointers, references and iterators to data in the clones
+	// segment.
+	//
+	// The reason why it might invalidate those is, that the segement code
+	// (Table) uses Common::Array for internal storage. Common::Array now
+	// might invalidate references to its contained data, when it has to
+	// extend the internal storage size.
+	if (parentIsClone)
+		parent_obj = s->_segMan->getObject(parent_addr);
 
 	*clone_obj = *parent_obj;
 
