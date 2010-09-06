@@ -94,7 +94,7 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 #if defined(ELF_LOADER_TARGET) && defined(ELF_LOADER_CXA_ATEXIT)
 #define PLUGIN_DYNAMIC_EXTRA_DECL uint32 __dso_handle __attribute__((visibility ("hidden"))) = 0
 #else
-#define PLUGIN_DYNAMIC_EXTRA_DECL
+#define PLUGIN_DYNAMIC_EXTRA_DECL void dummyFuncToAllowTrailingSemicolon()
 #endif
 
 /**
