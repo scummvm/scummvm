@@ -184,8 +184,8 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 				// The init selector is always the first function
 				int initSelectorPos = actorClass->getFuncSelector(0);
 
-				if (names.size() < (uint32)initSelectorPos + 1)
-					names.resize((uint32)initSelectorPos + 1);
+				if (names.size() < (uint32)initSelectorPos + 2)
+					names.resize((uint32)initSelectorPos + 2);
 
 				names[initSelectorPos] = "init";
 				// dispose comes right after init
