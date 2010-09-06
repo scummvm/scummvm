@@ -46,7 +46,7 @@ struct SciScriptSignature {
 	const uint16 *patch;
 };
 
-#define SCI_SIGNATUREENTRY_TERMINATOR { 0, NULL, 0, 0, NULL, NULL }
+#define SCI_SIGNATUREENTRY_TERMINATOR { 0, NULL, 0, 0, 0, NULL, NULL }
 
 // signatures are built like this:
 //  - first a counter of the bytes that follow
