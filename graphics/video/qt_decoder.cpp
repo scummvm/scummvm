@@ -811,6 +811,17 @@ int QuickTimeDecoder::readSTSD(MOVatom atom) {
 		_fd->readUint16BE(); // index
 
 		debug(0, "size=%d 4CC= %s codec_type=%d", size, tag2str(format), st->codec_type);
+
+		if (st->codec_tag && st->codec_tag != format) {
+			// HACK: Multiple FourCC, skip this. FFmpeg does this too and also
+			// skips it with a TODO. However, we really don't need to support
+			// multiple codec tags since the only two videos in Riven DVD that
+			// do this just have a fake second stream (or so it seems).
+			debug(3, "Multiple FourCC not supported");
+			_fd->seek(start_pos + size);
+			continue;
+		}
+
 		st->codec_tag = format;
 
 		if (st->codec_type == CODEC_TYPE_VIDEO) {
