@@ -539,7 +539,7 @@ bool OSystem_SDL::loadGFXMode() {
 	assert(_inited);
 	_forceFull = true;
 
-#if !defined(__MAEMO__) && !defined(GP2XWIZ) && !defined(LINUXMOTO) && !defined(DINGUX)
+#if !defined(__MAEMO__) && !defined(GP2XWIZ) && !defined(LINUXMOTO) && !defined(DINGUX) && !defined(OPENPANDORA)
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
@@ -785,7 +785,7 @@ void OSystem_SDL::internUpdateScreen() {
 #endif
 
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos || 
+	if (_currentShakePos != _newShakePos ||
 		(_mouseNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
 		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor};
 
