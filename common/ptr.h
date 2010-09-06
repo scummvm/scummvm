@@ -235,6 +235,7 @@ public:
 	ReferenceType operator*() const { return *_pointer; }
 	PointerType operator->() const { return _pointer; }
 	operator PointerType() const { return _pointer; }
+	
 
 	/**
 	 * Implicit conversion operator to bool for convenience, to make
@@ -242,15 +243,17 @@ public:
 	 */
 	operator bool() const { return _pointer != 0; }
 
+	void deletePointer() { delete _pointer; }
+	
 	~ScopedPtr() {
-		delete _pointer;
+		deletePointer();		
 	}
 
 	/**
 	 * Resets the pointer with the new value. Old object will be destroyed
 	 */
 	void reset(PointerType o = 0) {
-		delete _pointer;
+		deletePointer();
 		_pointer = o;
 	}
 
@@ -273,10 +276,19 @@ public:
 		return r;
 	}
 
-private:
-	PointerType _pointer;
+protected:
+	PointerType _pointer;	
 };
 
+template<typename T>
+class ScopedPtrC : public ScopedPtr<T> {
+public:
+	typedef T *PointerType;
+	
+	explicit ScopedPtrC(PointerType o = 0) : ScopedPtr<T>(o) {}
+	
+	void deletePointer() { free(ScopedPtr<T>::_pointer); }
+};
 
 } // End of namespace Common
 

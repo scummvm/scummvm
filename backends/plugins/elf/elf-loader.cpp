@@ -30,6 +30,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/ptr.h"
 
 DLObject::DLObject() :
 	_file(0),
@@ -303,8 +304,6 @@ void DLObject::relocateSymbols(ptrdiff_t offset) {
 bool DLObject::load() {
 	Elf32_Ehdr ehdr;
 	Elf32_Phdr phdr;
-	Elf32_Shdr *shdr;
-	bool ret = true;
 
 	if (readElfHeader(&ehdr) == false)
 		return false;
@@ -319,29 +318,26 @@ bool DLObject::load() {
 			return false;
 	}
 
-	shdr = loadSectionHeaders(&ehdr);
+	Common::ScopedPtrC<Elf32_Shdr> shdr(loadSectionHeaders(&ehdr));
 	if (!shdr)
 		return false;
 
-	if (ret && ((_symtab_sect = loadSymbolTable(&ehdr, shdr)) < 0))
-		ret = false;
+	_symtab_sect = loadSymbolTable(&ehdr, shdr);
+	if (_symtab_sect < 0)
+		return false;
+		
+	if (!loadStringTable(shdr))
+		return false;
+	
+	// Offset by our segment allocated address
+	// must use _segmentVMA here for multiple segments (MIPS)
+	_segmentOffset = ptrdiff_t(_segment) - _segmentVMA;
+	relocateSymbols(_segmentOffset);
 
-	if (ret && !loadStringTable(shdr))
-		ret = false;
+	if (!relocateRels(&ehdr, shdr))
+		return false;
 
-	if (ret) {
-		// Offset by our segment allocated address
-		// must use _segmentVMA here for multiple segments (MIPS)
-		_segmentOffset = ptrdiff_t(_segment) - _segmentVMA;
-		relocateSymbols(_segmentOffset);
-	}
-
-	if (ret && !relocateRels(&ehdr, shdr))
-		ret = false;
-
-	free(shdr);
-
-	return ret;
+	return true;
 }
 
 bool DLObject::open(const char *path) {
