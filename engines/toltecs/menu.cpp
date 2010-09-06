@@ -454,6 +454,7 @@ void MenuSystem::initSavegames() {
 		}
 	}
 
+#if 0
 	// DEBUG: Add some more items
 	_savegames.push_back(SavegameItem("abc", "Test 1"));
 	_savegames.push_back(SavegameItem("abc", "Test 2"));
@@ -467,6 +468,7 @@ void MenuSystem::initSavegames() {
 	_savegames.push_back(SavegameItem("abc", "Test 10"));
 	_savegames.push_back(SavegameItem("abc", "Test 11"));
 	_savegames.push_back(SavegameItem("abc", "Test 12"));
+#endif	
 
 }
 
