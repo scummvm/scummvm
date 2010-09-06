@@ -651,7 +651,7 @@ Usage: $0 [OPTIONS]...
 Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (caanoo, dc, gp2x, gp2xwiz, iphone,
-                          linuxmoto, ds, null, ps2, psp, sdl, wii, wince)
+                          linuxmoto, ds, null, openpandora, ps2, psp, sdl, wii, wince)
                           [sdl]
 
 Installation directories:
@@ -1003,6 +1003,11 @@ n64)
 neuros)
 	_host_os=linux
 	_host_cpu=arm
+	;;
+openpandora)
+	_host_os=openpandora-linux
+	_host_cpu=arm
+	_host_alias=arm-angstrom-linux-gnueabi
 	;;
 ppc-amigaos)
 	_host_os=amigaos
@@ -1547,7 +1552,7 @@ if test -n "$_host"; then
 			_need_memalign=yes
 			;;
 		caanoo)
-			DEFINES="$DEFINES -DGP2XWIZ -DCAANOO -DNDEBUG"
+			DEFINES="$DEFINES -DCAANOO -DNDEBUG"
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 			ASFLAGS="$ASFLAGS"
 			_unix=yes
@@ -1758,6 +1763,24 @@ if test -n "$_host"; then
 			_build_hq_scalers=no
 			_mt32emu=no
 			;;
+		openpandora)
+			DEFINES="$DEFINES -DOPENPANDORA -DNDEBUG"
+			CXXFLAGS="$CXXFLAGS -march=armv7-a -mtune=cortex-a8 -mfpu=neon"
+			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
+			_unix=yes
+			_need_memalign=yes
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_backend="openpandora"
+			_build_hq_scalers=yes
+			_mt32emu=no
+			_vkeybd=no
+			_seq_midi=no
+			_port_mk="backends/platform/openpandora/op-bundle.mk"
+			;;	
 		ppc-amigaos)
 			_endian=big
 			_need_memalign=yes
@@ -1900,7 +1923,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	dreamcast | dingux | samsungtv | sdl | wii | psp)
+	caanoo | dreamcast | dingux | gp2x | gp2xwiz | openpandora | samsungtv | sdl | wii | psp)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -2006,7 +2029,7 @@ PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
-	gp2x* | gp2xwiz* | caanoo*)
+	gp2x* | gp2xwiz* | caanoo* | openpandora*)
 _def_plugin='
 #define PLUGIN_PREFIX	""
 #define PLUGIN_SUFFIX	".plugin"
@@ -2628,6 +2651,13 @@ case $_backend in
 		;;
 	null)
 		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
+		;;
+	openpandora)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		LDFLAGS="$LDFLAGS"
+		CXXFLAGS="$CXXFLAGS -march=armv7-a -mtune=cortex-a8 -mfpu=neon"
 		;;
 	ps2)
 		# TODO ps2
