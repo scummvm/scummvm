@@ -44,6 +44,7 @@ public:
 			unloadPlugin();
 			return false;
 		}
+
 		if (verFunc() != PLUGIN_VERSION) {
 			warning("Plugin uses a different API version (you have: '%d', needed is: '%d')", verFunc(), PLUGIN_VERSION);
 			unloadPlugin();
@@ -56,6 +57,7 @@ public:
 			unloadPlugin();
 			return false;
 		}
+
 		_type = (PluginType)typeFunc();
 		if (_type >= PLUGIN_TYPE_MAX) {
 			warning("Plugin type unknown: %d", _type);
@@ -69,6 +71,7 @@ public:
 			unloadPlugin();
 			return false;
 		}
+
 		if (typeVerFunc() != pluginTypeVersions[_type]) {
 			warning("Plugin uses a different type API version (you have: '%d', needed is: '%d')", typeVerFunc(), pluginTypeVersions[_type]);
 			unloadPlugin();
