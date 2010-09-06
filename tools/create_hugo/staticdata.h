@@ -1170,317 +1170,87 @@ const char **arrayNouns_3w[] = {
 //***************************************************************************
 
 const char *nArc_1d[]       = {"arc", ""};
-const char *nArm_1d[]       = {"arm", ""};
-const char *nBat_1d[]       = {"bat", "~", "bat", ""};
-const char *nBoat_1d[]      = {"boat", "~", "boat", ""};
-const char *nBolt_1d[]      = {"bolt", "~", "bolt", ""};
-const char *nBung_1d[]      = {"bung", "~", "bung", ""};
-const char *nButler_1d[]    = {"butler", "waiter", "butler", "servant", ""};
-const char *nCandle_1d[]    = {"candle", "a candle", "candle", ""};
-const char *nCarpet_1d[]    = {"carpet", "mat", "rug", ""};
-const char *nChop_1d[]      = {"chop", "a juicy chop", "chop", "meat", "steak", ""};
-const char *nCupb_1d[]      = {"cupboard", "cabinet", "cupboard", "dresser", "hutch", "sideboard", "bureau", ""};
-const char *nDog_1d[]       = {"dog", "~", "dog", ""};
-const char *nDoor_1d[]      = {"door", "~", "door", ""};
-const char *nEyes_1d[]      = {"eyes", "~", "eyes", ""};
-const char *nFuzyhero_1d[]  = {"fuzyhero", "~", "Hugo", ""};
-const char *nGdoor_1d[]     = {"glasdoor", "~", "door", ""};
-const char *nGold_1d[]      = {"gold", "a bag of gold", "gold", "money", "treasure", "bag", "jewels", ""};
-const char *nGuard_1d[]     = {"guard", "man", "Guard", ""};
-const char *nHdlshero_1d[]  = {"hdlshero", "~", "Hugo", ""};
 const char *nHero_1d[]      = {"hero", "self", "Hugo", ""};
-const char *nHerodead_1d[]  = {"herodead", "~", "Hugo", ""};
-const char *nIgor_1d[]      = {"igor", "man", "Igor", ""};
 const char *nKey_1d[]       = {"key", "a door key", " key", ""};
-const char *nKnife_1d[]     = {"knife", "a penknife", "penknife", ""};
-const char *nLips_1d[]      = {"lips", ""};
-const char *nMask_1d[]      = {"mask", "a mask", "mask", ""};
-const char *nMdoor_1d[]     = {"mdoor", "~", "tomb", ""};
 const char *nMonkey_1d[]    = {"monkey", "~", "Hugo", ""};
-const char *nMummy_1d[]     = {"mummy", "monster", "Mummy", ""};
-const char *nOilcan_1d[]    = {" oil", "an oilcan", "oilcan", ""};
 const char *nOldman_1d[]    = {"oldman", "old", "old man", "man",  ""};
 const char *nPkin_1d[]      = {"pumpkin", "a pumpkin", "pumpkin", ""};
-const char *nProf_1d[]      = {"prof", "~", "Professor", ""};
-const char *nRedeyes_1d[]   = {"redeyes", ""};
-const char *nRope_1d[]      = {"rope", "some rope", "rope", "string", ""};
-const char *nSpachero_1d[]  = {"spachero", "~", "Hugo", ""};
-const char *nTrap_1d[]      = {"trap", "~", "trapdoor", ""};
 const char *nWard_1d[]      = {"wardrobe", "cabinet", "closet", ""};
-const char *nWdoorl_1d[]    = {"wdoorl", ""};
-const char *nWdoorr_1d[]    = {"wdoorr", ""};
-const char *nWhero_1d[]     = {"whero", "~", "Hugo", ""};
-const char *nWhistle_1d[]   = {"whistle", "a whistle", "whistle", ""};
 
-const char *nBath_1d[]      = {"bath", "~", "tub", ""};
-const char *nBed_1d[]       = {"bed", "~", "bed", ""};
-const char *nBroom_1d[]     = {"broom", "~", "broom", ""};
-const char *nFence_1d[]     = {"fence", "~", "fence", ""};
-const char *nFood_1d[]      = {"food", "plate", "food", ""};
 const char *nMan_1d[]       = {"man", "dracula", "monster", "frankenstein", "alien", "guest", "vampire", ""};
-const char *nMirror_1d[]    = {"mirror", "~", "mirror", ""};
-const char *nMousehole_1d[] = {"hole", "~", "mousehole"""};
-const char *nPicture_1d[]   = {"picture", "painting", "picture", ""};
 const char *nPlant_1d[]     = {"plant", "flower", "plant", "vase", ""};
-const char *nRock_1d[]      = {"rock", "boulder", "rock", "stone", ""};
-const char *nTable_1d[]     = {"table", "~", "table", ""};
-const char *nToilet_1d[]    = {"toilet", "~", "toilet", ""};
-const char *nTomb_1d[]      = {"tomb", "coffin", "tomb", "box", "sarcop", ""};
-const char *nTree_1d[]      = {"tree", "~", "tree", ""};
-const char *nUnits_1d[]     = {"Unit", "oven", "cupboard", "sink", "cupb", "drawer", "pantry", "cabinet", "range", "counter", ""};
-const char *nWindow_1d[]    = {"window", "outside", "window", "inside", ""};
 
 const char **arrayNouns_1d[] = {
-	nDummy,          nHero_1d,     nTrap_1d,     nWard_1d,     nDoor_1d,
-	nBat_1d,         nEyes_1d,     nPkin_1d,     nCandle_1d,   nRope_1d,
-	nCupb_1d,        nKnife_1d,    nWhistle_1d,  nWdoorl_1d,   nWdoorr_1d,
-	nMask_1d,        nButler_1d,   nChop_1d,     nRedeyes_1d,  nLips_1d,
-	nArm_1d,         nHdlshero_1d, nMonkey_1d,   nKey_1d,      nShed_2w,
-	nDog_1d,         nCarpet_1d,   nBolt_1d,     nHerodead_1d, nOilcan_1d,
-	nMummy_1d,       nMdoor_1d,    nGold_1d,     nBoat_1d,     nWhero_1d,
-	nOldman_1d,      nGuard_1d,    nProf_1d,     nIgor_1d,     nBung_1d,
-	nGdoor_1d,       nSpachero_1d, nFuzyhero_1d, nArc_1d,      nSky_1w,
-	nWall_1w,        nGround_1w,   nTree_1d,     nFence_1d,    nHouse_1w,
-	nRoof_1w,        nLight_1w,    nMoon_1w,     nPicture_1d,  nTable_1d,
-	nStairs_1w,      nBed_1d,      nFace_1w,     nPlant_1d,    nWitch_1w,
-	nFood_1d,        nWoman_1w,    nMan_1d,      nMirror_1d,   nToilet_1d,
-	nBath_1d,        nSink_1w,     nUnits_1d,    nBroom_1d,    nGardenbits_1w,
-	nMousehole_1d,   nPenelope_1w, nRock_1d,     nTomb_1d,     nDroppings_1w,
-	nMachinebits_1w, nHands_1w,    nWindow_1d
+	nDummy,          nHero_1d,     nTrap_1w,     nWard_1d,     nDoor_1w,
+	nBat_1w,         nEyes_1w,     nPkin_1d,     nCandle_1w,   nRope_1w,
+	nCupb_1w,        nKnife_1w,    nWhistle_1w,  nWdoorl_1w,   nWdoorr_1w,
+	nMask_1w,        nButler_1w,   nChop_1w,     nRedeyes_1w,  nLips_1w,
+	nArm_1w,         nHdlshero_1w, nMonkey_1d,   nKey_1d,      nShed_2w,
+	nDog_1w,         nCarpet_1w,   nBolt_1w,     nHerodead_1w, nOilcan_1w,
+	nMummy_1w,       nMdoor_1w,    nGold_1w,     nBoat_1w,     nWhero_1w,
+	nOldman_1d,      nGuard_1w,    nProf_1w,     nIgor_1w,     nBung_1w,
+	nGdoor_1w,       nSpachero_1w, nFuzyhero_1w, nArc_1d,      nSky_1w,
+	nWall_1w,        nGround_1w,   nTree_1w,     nFence_1w,    nHouse_1w,
+	nRoof_1w,        nLight_1w,    nMoon_1w,     nPicture_1w,  nTable_1w,
+	nStairs_1w,      nBed_1w,      nFace_1w,     nPlant_1d,    nWitch_1w,
+	nFood_1w,        nWoman_1w,    nMan_1d,      nMirror_1w,   nToilet_1w,
+	nBath_1w,        nSink_1w,     nUnits_1w,    nBroom_1w,    nGardenbits_1w,
+	nMousehole_1w,   nPenelope_1w, nRock_1w,     nTomb_1w,     nDroppings_1w,
+	nMachinebits_1w, nHands_1w,    nWindow_1w
 };
 
 //***************************************************************************
 // Hugo 2 Dos
 //***************************************************************************
-const char *nAlbum_2d[]      = {"album", "photo", "album", ""};
-const char *nBalloon_2d[]    = {"balloon", "balloon", "balloon", ""};
-const char *nBanana_2d[]     = {"banana", "a moldy banana", "banana", ""};
-const char *nBell_2d[]       = {"bell", "a bell", "bell", ""};
-const char *nBlue_2d[]       = {"blue", "blue", "blue button", ""};
-const char *nBook_2d[]       = {"book", "book", "book", ""};
-const char *nBookcase_2d[]   = {"bookcase", "bookcase", "bookcase", ""};
-const char *nBottle_2d[]     = {"bottle", "a bottle", "serum", ""};
 const char *nBug_2d[]        = {"bug", "bee", "bug zapper", "insect", "wasp", ""};
-const char *nButton_2d[]     = {"button", "switch", "button", "knob", ""};
-const char *nCat_2d[]        = {"cat", "puss", "cat", ""};
-const char *nCatnip_2d[]     = {"catnip", "some catnip", "catnip", ""};
-const char *nCook_2d[]       = {"cook", "woman", "cook", "girl", "lady", ""};
-const char *nCookb_2d[]      = {"cookb", ""};
-const char *nCop_2d[]        = {"cop", "man", "Officer Higgins", ""};
-const char *nCrate_2d[]      = {"crate", "box", "box", ""};
 const char *nCupb_2d[]       = {"cupboard", "cabinet", "dresser", "hutch", "sideboard", "bureau", "desk", "drawer", ""};
 const char *nDalek_2d[]      = {"alek", "monster", "robot", ""};
-const char *nDoctor_2d[]     = {"doctor", "man", "Strange man", ""};
-const char *nDog_2d[]        = {"dog", "dog", "dog", ""};
-const char *nDoor_2d[]       = {"door", "gate", ""};
-const char *nDumb_2d[]       = {"dumb", "waiter", "dumb waiter", "box", ""};
-const char *nDynamite_2d[]   = {"dynamite", "a stick of dynamite", "dynamite", "fuze", "fuse", ""};
-const char *nFly_2d[]        = {"fly", "~", "fly", ""};
-const char *nGardner_2d[]    = {"gard", "man", "gardener", ""};
-const char *nGarlic_2d[]     = {"garlic", "some garlic", "garlic", "clove", ""};
-const char *nGatelight_2d[]  = {"glight", "~", "lantern", ""};
-const char *nGenie_2d[]      = {"genie", "man", "Genie", ""};
-const char *nGreen_2d[]      = {"green", "green", "green button", ""};
-const char *nGun_2d[]        = {"gun", "a gun", "pistol", "revolver", "weapon", ""};
-const char *nHarry_2d[]      = {"harry", "man", "Harry", ""};
-const char *nHero_2d[]       = {"hero", "self", "Hugo", ""};
-const char *nHester_2d[]     = {"hester", "woman", "Hester", "girl", "lady", ""};
-const char *nHorace_2d[]     = {"horace", "man", "Horace", ""};
-const char *nKennel_2d[]     = {"kennel", "house", "dog house", ""};
-const char *nKey_2d[]        = {"key", "key", "key", ""};
-const char *nKeyhole_2d[]    = {"hole", "hole", "keyhole", ""};
-const char *nKnife_2d[]      = {"knife", "knife", "knife", ""};
-const char *nLamp_2d[]       = {"lamp", "an old dusty oil lamp", "oil lamp", ""};
-const char *nLeaf_2d[]       = {"leaf", "~", "venus fly trap", ""};
-const char *nLetter_2d[]     = {"letter", "envelope", "letter", "card", ""};
-const char *nLips_2d[]       = {"lips", ""};
-const char *nMagnify_2d[]    = {"magnifier", "a magnifying glass", "magnifying glass", "magnify", "glass", ""};
-const char *nMaid_2d[]       = {"maid", "waitress", "maid", "woman", "girl", "lady", ""};
-const char *nMatches_2d[]    = {"matches", "a box of matches", "matches", "match", ""};
-const char *nMurder_2d[]     = {"murder", "~", "~", ""};
-const char *nOldman_2d[]     = {"oldman", "old", "man", ""};
-const char *nPanel_2d[]      = {"panel", ""};
-const char *nPaper_2d[]      = {"paper", "a newspaper", "newspaper", "notepad", " pad", "blotter", ""};
-const char *nPencil_2d[]     = {"pencil", "a pencil", "pencil", " pen", ""};
-const char *nPenfall_2d[]    = {"penfall", "woman", "Penelope", ""};
-const char *nPenny_2d[]      = {"penelope", "woman", "Penelope", "girl", "lady", ""};
-const char *nPennylie_2d[]   = {"pennylie", "woman", "Penelope", ""};
-const char *nRed_2d[]        = {"red", "red", "red button", ""};
-const char *nRope_2d[]       = {"rope", "string", ""};
-const char *nSafe_2d[]       = {"safe", "safe", "safe", ""};
-const char *nScrew_2d[]      = {"screwdriver", "sonic", "screwdriver", ""};
-const char *nShed_2d[]       = {"shed", ""};
-const char *nShedlight_2d[]  = {"slight", "~", "light bulb", ""};
-const char *nSmoke_2d[]      = {"smoke", "~", "~", ""};
-const char *nSnake_2d[]      = {"snake", "snake", "snake", ""};
-const char *nStick_2d[]      = {"stick", "a pile of sticks", "stick", "twig", ""};
-const char *nTardis_2d[]     = {"tardis", "phone", "phone booth", ""};
-const char *nTrap_2d[]       = {"trap", ""};
-const char *nWard_2d[]       = {"wardrobe", "cabinet", "closet", ""};
-const char *nWell_2d[]       = {"well", "rope", "well", ""};
-const char *nWill_2d[]       = {"will", "print", "Horace's will", ""};
-const char *nYellow_2d[]     = {"yellow", "yellow", "yellow button", ""};
-const char *nZapper_2d[]     = {"zapper", "lamp", "light", "lantern", ""};
-
-const char *nBed_2d[]        = {"bed", "bed", "bed", ""};
-const char *nBird_2d[]       = {"bird", "budgie", "parrot", ""};
-const char *nBridge_2d[]     = {"bridge", "~", "bridge", ""};
-const char *nBroom_2d[]      = {"broom", "brush", ""};
-const char *nBucket_2d[]     = {"bucket", "container", ""};
-const char *nCage_2d[]       = {"cage", "pen", "playpen", ""};
-const char *nChair_2d[]      = {"chair", "seat", "couch", "settee", ""};
-const char *nChute_2d[]      = {"chute", "~", "chute", ""};
-const char *nDroppings_2d[]  = {"droppings", ""};
-const char *nFence_2d[]      = {"fence", "hedge", "bush", ""};
-const char *nFood_2d[]       = {"food", "plate", ""};
-const char *nGardenbits_2d[] = {"grass", "fence", "Branch", "path", ""};
-const char *nGraf_2d[]       = {"graffiti", "graf", "graffiti", "writing", ""};
-const char *nGround_2d[]     = {"ground", "floor", ""};
-const char *nHandle_2d[]     = {"handle", "lever", ""};
-const char *nHole_2d[]       = {"hole", "~", "chasm", ""};
-const char *nHouse_2d[]      = {"house", ""};
-const char *nLight_2d[]      = {"light", "lamp", ""};
-const char *nMan_2d[]        = {"man", ""};
-const char *nMirror_2d[]     = {"mirror", "~", "mirror", ""};
-const char *nMoon_2d[]       = {"moon", ""};
-const char *nMouse_2d[]      = {"mouse", "rat", "rodent", "animal", "furry", ""};
-const char *nOrgan_2d[]      = {"organ", "piano", "organ", "pipe", ""};
-const char *nPhone_2d[]      = {"phone", "phone", "phone", ""};
-const char *nPicture_2d[]    = {"picture", "painting", "picture", ""};
-const char *nPlant_2d[]      = {"plant", "flower", "plant", "vase", ""};
-const char *nPost_2d[]       = {"post", "pole", "scratching post", ""};
-const char *nRock_2d[]       = {"rock", "boulder", "rockfall", "stone", ""};
-const char *nRoof_2d[]       = {"roof", "chimney", ""};
-const char *nSink_2d[]       = {"sink", ""};
-const char *nSky_2d[]        = {"sky", "ceiling", ""};
-const char *nStairs_2d[]     = {"stair", "landing", "ladder", ""};
-const char *nTable_2d[]      = {"table", "bench", ""};
-const char *nTools_2d[]      = {"tools", "hammer", "tools", "pliers", "screw", "knife", "saw", ""};
-const char *nTree_2d[]       = {"tree", ""};
-const char *nUnits_2d[]      = {"Unit", "oven", "sink", "cupb", "drawer", "pantry", "cabinet", "range", "counter", "cooker", ""};
-const char *nWall_2d[]       = {"wall", ""};
-const char *nWand_2d[]       = {"wand", ""};
-const char *nWater_2d[]      = {"water", ""};
-const char *nWindow_2d[]     = {"window", "outside", "window", "inside", ""};
-const char *nWoman_2d[]      = {"woman", "girl", "lady", ""};
 
 const char **arrayNouns_2d[] = {
-	nDummy,        nHero_2d,       nPenny_2d,   nPennylie_2d,  nPenfall_2d,
-	nSmoke_2d,     nLips_2d,       nMaid_2d,    nBookcase_2d,  nBook_2d,
-	nKeyhole_2d,   nPanel_2d,      nMatches_2d, nCrate_2d,     nDumb_2d,
-	nMurder_2d,    nTrap_2d,       nWard_2d,    nDoor_2d,      nRope_2d,
-	nCupb_2d,      nGarlic_2d,     nGardner_2d, nButton_2d,    nRed_2d,
-	nYellow_2d,    nGreen_2d,      nBlue_2d,    nFly_2d,       nLeaf_2d,
-	nShedlight_2d, nGatelight_2d,  nZapper_2d,  nBug_2d,       nKnife_2d,
-	nShed_2d,      nOldman_2d,     nSnake_2d,   nStick_2d,     nDynamite_2d,
-	nKennel_2d,    nDog_2d,        nWell_2d,    nBanana_2d,    nLamp_2d,
-	nGenie_2d,     nTardis_2d,     nHarry_2d,   nHester_2d,    nLetter_2d,
-	nDoctor_2d,    nDalek_2d,      nCook_2d,    nCookb_2d,     nCop_2d,
-	nHorace_2d,    nBell_2d,       nCatnip_2d,  nCat_2d,       nGun_2d,
-	nPaper_2d,     nPencil_2d,     nKey_2d,     nMagnify_2d,   nSafe_2d,
-	nScrew_2d,     nWill_2d,       nAlbum_2d,   nBottle_2d,    nBalloon_2d,
-	nSky_2d,       nWall_2d,       nGround_2d,  nTree_2d,      nFence_2d,
-	nHouse_2d,     nRoof_2d,       nLight_2d,   nMoon_2d,      nPicture_2d,
-	nTable_2d,     nStairs_2d,     nBed_2d,     nPlant_2d,     nFood_2d,
-	nWoman_2d,     nMan_2d,        nMirror_2d,  nSink_2d,      nUnits_2d,
-	nBroom_2d,     nGardenbits_2d, nRock_2d,    nDroppings_2d, nWindow_2d,
-	nBird_2d,      nCage_2d,       nPhone_2d,   nChair_2d,     nTools_2d,
-	nBridge_2d,    nWater_2d,      nBucket_2d,  nMouse_2d,     nWand_2d,
-	nHole_2d,      nHandle_2d,     nChute_2d,   nOrgan_2d,     nPost_2d,
-	nGraf_2d
+	nDummy,        nHero_2w,       nPenny_2w,   nPennylie_2w,  nPenfall_2w,
+	nSmoke_2w,     nLips_1w,       nMaid_2w,    nBookcase_2w,  nBook_2w,
+	nKeyhole_2w,   nPanel_2w,      nMatches_2w, nCrate_2w,     nDumb_2w,
+	nMurder_2w,    nTrap_2w,       nWard_2w,    nDoor_2w,      nRope_2w,
+	nCupb_2d,      nGarlic_2w,     nGardner_2w, nButton_2w,    nRed_2w,
+	nYellow_2w,    nGreen_2w,      nBlue_2w,    nFly_2w,       nLeaf_2w,
+	nShedlight_2w, nGatelight_2w,  nZapper_2w,  nBug_2d,       nKnife_2w,
+	nShed_2w,      nOldman_2w,     nSnake_2w,   nStick_2w,     nDynamite_2w,
+	nKennel_2w,    nDog_2w,        nWell_2w,    nBanana_2w,    nLamp_2w,
+	nGenie_2w,     nTardis_2w,     nHarry_2w,   nHester_2w,    nLetter_2w,
+	nDoctor_2w,    nDalek_2d,      nCook_2w,    nCookb_2w,     nCop_2w,
+	nHorace_2w,    nBell_2w,       nCatnip_2w,  nCat_2w,       nGun_2w,
+	nPaper_2w,     nPencil_2w,     nKey_2w,     nMagnify_2w,   nSafe_2w,
+	nScrew_2w,     nWill_2w,       nAlbum_2w,   nBottle_2w,    nBalloon_2w,
+	nSky_1w,       nWall_1w,       nGround_1w,  nTree_2w,      nFence_2w,
+	nHouse_1w,     nRoof_1w,       nLight_1w,   nMoon_1w,      nPicture_1w,
+	nTable_2w,     nStairs_2w,     nBed_2w,     nPlant_2w,     nFood_2w,
+	nWoman_1w,     nMan_2w,        nMirror_1w,  nSink_1w,      nUnits_2w,
+	nBroom_2w,     nGardenbits_1w, nRock_2w,    nDroppings_1w, nWindow_1w,
+	nBird_2w,      nCage_2w,       nPhone_2w,   nChair_2w,     nTools_2w,
+	nBridge_2w,    nWater_2w,      nBucket_2w,  nMouse_2w,     nWand_2w,
+	nHole_2w,      nHandle_2w,     nChute_2w,   nOrgan_2w,     nPost_2w,
+	nGraf_2w
 };
 
-const char *nBell_3d[]     = {"bell", "a golden bell", "bell", ""};
-const char *nBlock_3d[]    = {"block", ""};
-const char *nBook_3d[]     = {"book", "a spell book", "book", "spell", ""};
-const char *nBottles_3d[]  = {"bottles", ""};
-const char *nBouillon_3d[] = {"bouillon", "bouillon cubes", "bouillon cubes", "bouil", "boull", "boulion", "cube", "season", "oxo", "knorr", ""};
-const char *nCage_3d[]     = {"cage", "a little cage", "cage", "door", ""};
-const char *nCandle_3d[]   = {"candle", "a golden candle", "candle", ""};
-const char *nCdoor_3d[]    = {"door", "cage", "door", "gate", ""};
-const char *nCheese_3d[]   = {"cheese", "a sandwich", "sandwich", ""};
-const char *nClay_3d[]     = {"clay", "some clay", "modelling clay", "plasticine", "model", "effigy", "voodoo", "doll", ""};
-const char *nCrystal_3d[]  = {"crystal", "a crystal ball", "crystal ball", "ball", ""};
 const char *nDocbits_3d[]  = {"skull", "shield", "torch", "fire", "flame", "spear", "bone", ""};
-const char *nDoclie_3d[]   = {"doclie", ".", "witch doctor", ""};
-const char *nDoctor_3d[]   = {"doctor", "witch", "Witch Doctor", "native", "man", ""};
-const char *nDoor_3d[]     = {"door", ""};
-const char *nDoorlock_3d[] = {"lock", ""};
-const char *nE_eyes_3d[]   = {"e_eyes", ""};
-const char *nElephant_3d[] = {"elephant", "animal", "elephant", ""};
-const char *nFire_1_3d[]   = {"fire_1", ""};
-const char *nFire_2_3d[]   = {"fire_2", ""};
-const char *nFire_3_3d[]   = {"fire_3", ""};
-const char *nFire_3d[]     = {"fire", "flame", "pot", ""};
-const char *nFlask_3d[]    = {"flask", "a water flask", "flask", "water", "remedy", "antidote", ""};
-const char *nFroth_3d[]    = {"froth", ""};
-const char *nGhost_3d[]    = {"ghost", "ghoul", "ghost", "spirit", ""};
-const char *nHero_3d[]     = {"hero", "self", "Hugo", ""};
-const char *nHero_old_3d[] = {"hero_old", "~", "Hugo", ""};
-const char *nLips_3d[]     = {"lips", ""};
-const char *nMoushole_3d[] = {"moushole", ""};
-const char *nNat1_3d[]     = {"nat1", "man", "native", ""};
-const char *nNat2_3d[]     = {"nat2", "man", "native", ""};
-const char *nNat3_3d[]     = {"nat3", "man", "native", ""};
-const char *nNatb_3d[]     = {"natb", "man", "native", ""};
-const char *nNatg_3d[]     = {"natg", "man", "native girl", "girl", ""};
-const char *nNative_3d[]   = {"native", "man", "native", "lady", ""};
-const char *nNeedles_3d[]  = {"needle", "some pins", "needles", "pin", ""};
-const char *nPenny_3d[]    = {"penelope", "woman", "Penelope", "girl", "lady", ""};
-const char *nPennylie_3d[] = {"pennylie", "woman", "Penelope", ""};
 const char *nPipe_3d[]     = {"blowpipe", "blowpipe & darts", "blowpipe", "dart", ""};
-const char *nPlane_3d[]    = {"plane", "craft", "cabin", "cockpit", ""};
-const char *nScroll_3d[]   = {"scroll", "an old scroll", "scroll", "writing", ""};
-const char *nSnake_3d[]    = {"snake", ""};
-const char *nSpider_3d[]   = {"spider", "insect", "spider", "tarantula", ""};
-const char *nSwinger_3d[]  = {"swinger", ""};
-const char *nVine_3d[]     = {"vine", "rope", "vine", ""};
-const char *nWhero_3d[]    = {"whero", "~", "Hugo", ""};
-const char *nWheroold_3d[] = {"wheroold", "~", "Hugo", ""};
-
-const char *nAircraft_3d[] = {"aircraft", ""};
-const char *nBridge_3d[]   = {"bridge", ""};
-const char *nFence_3d[]    = {"fence", "hedge", "bush", ""};
-const char *nFire_4_3d[]   = {"fire_4", ""};
-const char *nFood_3d[]     = {"food", "meat", "hyena", ""};
-const char *nGround_3d[]   = {"ground", "floor", ""};
-const char *nHut_3d[]      = {"hut", "house", "hut", "shed", ""};
-const char *nJungle_3d[]   = {"tree", "vine", "flower", "fern", "frond", "plant", "jungle", "undergrowth", ""};
-const char *nMouse_3d[]    = {"mouse", "rat", "mouse", "rodent", "animal", "furry", ""};
-const char *nMouth_3d[]    = {"mouth", ""};
-const char *nO_eye_3d[]    = {"o_eye", ""};
-const char *nOrchid_3d[]   = {"orchid", "flower", "plant", ""};
-const char *nPlant1_3d[]   = {"plant1", ""};
-const char *nPlant2_3d[]   = {"plant2", ""};
-const char *nPlant3_3d[]   = {"plant3", ""};
-const char *nPlant4_3d[]   = {"plant4", ""};
-const char *nPlant5_3d[]   = {"plant5", ""};
-const char *nPole_3d[]     = {"pole", "stick", "wood", ""};
-const char *nRock_3d[]     = {"rock", "stone", "boulder", ""};
-const char *nShelfbits_3d[]= {"shelf", "bottle", "jar", "medicine", "label", ""};
-const char *nSky_3d[]      = {"sky", "ceiling", ""};
-const char *nThem_3d[]     = {"them", ""};
-const char *nWall_3d[]     = {"wall", ""};
-const char *nWater_3d[]    = {"water", "stream", "river", "pool", "lake", ""};
-const char *nWeb_3d[]      = {"web", ""};
-const char *nWindow_3d[]   = {"window", "~", "window", ""};
 
 const char **arrayNouns_3d[] = {
-	nDummy,       nHero_3d,      nWhero_3d,    nHero_old_3d, nWheroold_3d,
-	nPenny_3d,    nPennylie_3d,  nLips_3d,     nPlane_3d,    nDoor_3d,
-	nCdoor_3d,    nBlock_3d,     nVine_3d,     nSwinger_3d,  nDoctor_3d,
-	nClay_3d,     nDoorlock_3d,  nNeedles_3d,  nNative_3d,   nNat1_3d,
-	nNat2_3d,     nNat3_3d,      nNatb_3d,     nNatg_3d,     nBottles_3d,
-	nFlask_3d,    nCage_3d,      nPipe_3d,     nElephant_3d, nE_eyes_3d,
-	nBouillon_3d, nMoushole_3d,  nDoclie_3d,   nCheese_3d,   nSpider_3d,
-	nSnake_3d,    nFire_3d,      nDocbits_3d,  nFire_1_3d,   nFire_2_3d,
-	nFire_3_3d,   nFroth_3d,     nScroll_3d,   nCrystal_3d,  nGhost_3d,
-	nBell_3d,     nBook_3d,      nCandle_3d,   nSky_3d,      nWall_3d,
-	nGround_3d,   nFence_3d,     nBridge_3d,   nWater_3d,    nMouse_3d,
-	nWindow_3d,   nShelfbits_3d, nJungle_3d,   nOrchid_3d,   nPole_3d,
-	nHut_3d,      nRock_3d,      nAircraft_3d, nPlant1_3d,   nPlant2_3d,
-	nPlant3_3d,   nPlant4_3d,    nPlant5_3d,   nWeb_3d,      nO_eye_3d,
-	nFire_4_3d,   nMouth_3d,     nFood_3d,     nThem_3d
+	nDummy,       nHero_2w,      nWhero_1w,    nHero_old_3w, nWheroold_3w,
+	nPenny_2w,    nPennylie_2w,  nLips_1w,     nPlane_3w,    nDoor_3w,
+	nCdoor_3w,    nBlock_3w,     nVine_3w,     nSwinger_3w,  nDoctor_3w,
+	nClay_3w,     nDoorlock_3w,  nNeedles_3w,  nNative_3w,   nNat1_3w,
+	nNat2_3w,     nNat3_3w,      nNatb_3w,     nNatg_3w,     nBottles_3w,
+	nFlask_3w,    nCage_3w,      nPipe_3d,     nElephant_3w, nE_eyes_3w,
+	nBouillon_3w, nMoushole_3w,  nDoclie_3w,   nCheese_3w,   nSpider_3w,
+	nSnake_3w,    nFire_3w,      nDocbits_3d,  nFire_1_3w,   nFire_2_3w,
+	nFire_3_3w,   nFroth_3w,     nScroll_3w,   nCrystal_3w,  nGhost_3w,
+	nBell_3w,     nBook_3w,      nCandle_3w,   nSky_1w,      nWall_1w,
+	nGround_1w,   nFence_2w,     nBridge_3w,   nWater_3w,    nMouse_3w,
+	nWindow_3w,   nShelfbits_3w, nJungle_3w,   nOrchid_3w,   nPole_3w,
+	nHut_3w,      nRock_3w,      nAircraft_3w, nPlant1_3w,   nPlant2_3w,
+	nPlant3_3w,   nPlant4_3w,    nPlant5_3w,   nWeb_3w,      nO_eye_3w,
+	nFire_4_3w,   nMouth_3w,     nFood_3w,     nThem_3w
 };
 
 // Verbs and synonyms (N.B. put null string at end of last synonym)
