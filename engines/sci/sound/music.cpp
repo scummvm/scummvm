@@ -431,6 +431,13 @@ void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 	}
 }
 
+// this is used to set volume of the sample, used for fading only!
+void SciMusic::soundSetSampleVolume(MusicEntry *pSnd, byte volume) {
+	assert(volume <= MUSIC_VOLUME_MAX);
+	assert(pSnd->pStreamAud);
+	_pMixer->setChannelVolume(pSnd->hCurrentAud, volume * 2); // Mixer is 0-255, SCI is 0-127
+}
+
 void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 	Common::StackLock lock(_mutex);
 

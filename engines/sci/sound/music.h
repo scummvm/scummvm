@@ -148,6 +148,7 @@ public:
 	void soundResume(MusicEntry *pSnd);
 	void soundToggle(MusicEntry *pSnd, bool pause);
 	void soundSetVolume(MusicEntry *pSnd, byte volume);
+	void soundSetSampleVolume(MusicEntry *pSnd, byte volume);
 	void soundSetPriority(MusicEntry *pSnd, byte prio);
 	uint16 soundGetMasterVolume();
 	void soundSetMasterVolume(uint16 vol);

@@ -402,7 +402,7 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		}
 		// We get a flag from MusicEntry::doFade() here to set volume for the stream
 		if (musicSlot->fadeSetVolume) {
-			_music->soundSetVolume(musicSlot, musicSlot->volume);
+			_music->soundSetSampleVolume(musicSlot, musicSlot->volume);
 			musicSlot->fadeSetVolume = false;
 		}
 	} else if (musicSlot->pMidiParser) {
