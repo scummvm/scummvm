@@ -1,0 +1,140 @@
+ScummVM - OPENPANDORA SPECIFIC README - HEAD SVN
+------------------------------------------------------------------------
+
+Contents:
+
+    * About the backend/port <#About_the_backendport>
+    * Game compatability <#Game_compatibility>
+    * Included engines <#Included_engines>
+    * Supported audio options <#Supported_audio_options>
+    * Supported cut-scene options <#Supported_cut-scene_options>
+    * Recent changes <#Recent_changes>
+    * How to save <#How_to_save>
+    * Controller mappings <#Controller_mappings>
+    * Known issues <#Knonw_issues>
+    * Additional resources/links <#Additional_resourceslinks>
+    * Credits <#Credits>
+
+------------------------------------------------------------------------
+
+Please refer to the:
+
+ScummVM Forum: <http://forums.scummvm.org/> 
+WiKi: <http://wiki.scummvm.org/index.php/OpenPandora> 
+
+for the most current information on the port and any updates to this 
+documentation.
+
+------------------------------------------------------------------------
+About the backend/port
+
+This is the readme for the official GP2XWiz ScummVM backend (also known as
+the GP2XWiz port).
+
+This is an SVN test release of ScummVM for the GP2XWiz, it would be
+appreciated if this SVN test distribution was not mirrored and that
+people be directed to http://scummvm.distant-earth.com/ instead for
+updated SVN builds.
+
+Full supported official releases of the GP2X WIZ ScummVM backend are made in
+line with main official releases and are avalalble from the ScummVM
+downloads page <http://www.scummvm.org/downloads.php>.
+
+This build is in an active state of development and as such no
+"expected" behavior can be guaranteed ;).
+
+------------------------------------------------------------------------
+Game compatibility
+
+For information on the compatability of a specific game please refer to
+the GP2XWiz compatability section of the ScummVM WiKi
+<http://wiki.scummvm.org/index.php/GP2XWiz#Compatibility_List>.
+
+Please note the version and date of the ScummVM build you are running
+when reviewing the above list.
+
+------------------------------------------------------------------------
+Supported audio options
+
+Raw audio.
+MP3 audio.
+OGG Vorbis audio.
+
+FLAC audio is currently unsupported.
+
+For best results use uncompressed audio in games.
+
+------------------------------------------------------------------------
+How to save
+
+NOTE: Everything is saved to the SD card, saves are stored in the saves
+folder under your main ScummVM executable unless you set another save
+location.
+
+The configiration file for ScummVM (.scummvmrc) is stored in the same
+place as the ScummVM executable.
+
+The save process below is for Scumm engine games but the principle is
+the same for all.
+
+In Game.
+
+1. Menu Button
+2. Select SAVE with B
+3. Select a position with B
+4. Right trigger puts 0 in the name box for some text.
+5. Press B to save
+
+Basically the emulated keys you can use are equivelent to the values
+buttons are mapped to,
+
+------------------------------------------------------------------------
+Controller mappings
+
+Touch screen:
+Touch: Move Pointer and Left click
+
+Mouse emulation:
+
+dPad: Move Pointer
+B: Left click
+X: Right click
+
+Keyboard emulation:
+
+Right Trigger: Return
+Select: Escape
+Y: Space Bar (Pause)
+Menu: Game Menu (Save, Load, Quit etc.)
+Volume Buttons: Increase and Decrease volume
+
+Fancy button combos:
+
+NOTE: To use button combos press and hold the Left Trigger then...
+
+Right Trigger: Display Virtual Keyboard 
+Menu: Bring up the Global main menu for ScummVM
+Select: Exit ScummVM completely (and gracefully)
+
+------------------------------------------------------------------------
+Known issues
+
+No major known issues
+
+------------------------------------------------------------------------
+Additional resources/links
+
+    * ScummVM WiKi GP2X page <http://wiki.scummvm.org/index.php/GP2X>
+    * ScummVM forums GP2X forum
+      <http://forums.scummvm.org/viewforum.php?f=14>
+    * My own ScummVM page <http://scummvm.distant-earth.com/> (for
+      SVN/test builds)
+    * Main ScummVM site <http://www.scummvm.org> (for official supported
+      release builds)
+
+------------------------------------------------------------------------
+Credits
+
+Core ScummVM code (c) The ScummVM Team
+GP2X Wiz backend (c) John Willis
+Detailed (c) information can be found within the source code
