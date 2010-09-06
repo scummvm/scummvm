@@ -113,11 +113,13 @@ bool ELFPlugin::loadPlugin() {
 	bool ret = DynamicPlugin::loadPlugin();
 
 #ifdef ELF_LOADER_CXA_ATEXIT
-	// FIXME HACK: Reverse HACK of findSymbol() :P
-	VoidFunc tmp;
-	tmp = findSymbol("__dso_handle");
-	memcpy(&_dso_handle, &tmp, sizeof(VoidFunc));
-	debug(2, "elfloader: __dso_handle is %p", _dso_handle);
+	if (ret) {
+		// FIXME HACK: Reverse HACK of findSymbol() :P
+		VoidFunc tmp;
+		tmp = findSymbol("__dso_handle");
+		memcpy(&_dso_handle, &tmp, sizeof(VoidFunc));
+		debug(2, "elfloader: __dso_handle is %p", _dso_handle);
+	}
 #endif
 
 	_dlHandle->discard_symtab();
