@@ -1080,6 +1080,22 @@ const KYRAGameDescription adGameDescs[] = {
 			"lol",
 			0,
 			{
+				{ "WESTWOOD.1", 0, "320b2828be595c491903f467094f05eb", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_FLOPPY_CMP_FLAGS
+	},
+
+	{
+		{
+			"lol",
+			0,
+			{
 				{ "WESTWOOD.1", 0, "3c61cb7de5b2ec452f5851f5075207ee", -1 },
 				{ 0, 0, 0, 0 }
 			},
