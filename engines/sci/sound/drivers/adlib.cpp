@@ -586,7 +586,7 @@ void MidiDriver_AdLib::voiceOn(int voice, int note, int velocity) {
 	}
 
 	// Set patch if different from current patch
-	if ((patch != _voices[voice].patch) && _playSwitch)
+	if (patch != _voices[voice].patch)
 		setPatch(voice, patch);
 
 	_voices[voice].velocity = velocity;
