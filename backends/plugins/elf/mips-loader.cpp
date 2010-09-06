@@ -69,7 +69,7 @@ bool MIPSDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment)
 		// Get the symbol this relocation entry is referring to
 		Elf32_Sym *sym = _symtab + (REL_INDEX(rel[i].r_info));
 
-		// Get the target instruction in the code. TODO: repect _segmentVMA
+		// Get the target instruction in the code.
 		uint32 *target = (uint32 *)((byte *)relSegment + rel[i].r_offset);
 
 		uint32 origTarget = *target;	// Save for debugging
@@ -119,7 +119,7 @@ bool MIPSDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment)
 				if (lo16InShorts)
 					relocation = ahl + _shortsSegment->getOffset();		// Add in the short segment offset
 				else	// It's in the regular segment
-					relocation = ahl + Elf32_Addr(_segment);			// Add in the new offset for the segment
+					relocation = ahl + Elf32_Addr(relSegment);			// Add in the new offset for the segment
 
 				if (firstHi16 >= 0) {					// We haven't treated the HI16s yet so do it now
 					for (uint32 j = firstHi16; j < i; j++) {
@@ -157,7 +157,7 @@ bool MIPSDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment)
 			if (sym->st_shndx < SHN_LOPROC) {							// Only relocate for main segment
 				a = *target & 0x03ffffff;								// Get 26 bits' worth of the addend
 				a = (a << 6) >> 6; 										// Sign extend a
-				relocation = ((a << 2) + Elf32_Addr(_segment)) >> 2;	// a already points to the target. Subtract our offset
+				relocation = ((a << 2) + Elf32_Addr(relSegment)) >> 2;	// a already points to the target. Subtract our offset
 				*target &= 0xfc000000;									// Clean lower 26 target bits
 				*target |= (relocation & 0x03ffffff);
 
@@ -199,7 +199,7 @@ bool MIPSDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment)
 				if (ShortsMan.inGeneralSegment((char *)sym->st_value))	// Check if we're in the shorts segment
 					relocation = a + _shortsSegment->getOffset();		// Shift by shorts offset
 				else													// We're in the main section
-					relocation = a + Elf32_Addr(_segment);				// Shift by main offset
+					relocation = a + Elf32_Addr(relSegment);			// Shift by main offset
 
 				*target = relocation;
 
@@ -235,7 +235,7 @@ bool MIPSDLObject::relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 				curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
 				(shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {	// Check if relocated section resides in memory
 			if (!ShortsMan.inGeneralSegment((char *)shdr[curShdr->sh_info].sh_addr)) {			// regular segment
-				if (!relocate(curShdr->sh_offset, curShdr->sh_size, _segment))
+				if (!relocate(curShdr->sh_offset, curShdr->sh_size, _segment - _segmentVMA))
 					return false;
 			} else {	// In Shorts segment
 				if (!relocate(curShdr->sh_offset, curShdr->sh_size, (byte *)_shortsSegment->getOffset()))
@@ -255,6 +255,9 @@ void MIPSDLObject::relocateSymbols(Elf32_Addr offset) {
 		// Make sure we don't relocate special valued symbols
 		if (s->st_shndx < SHN_LOPROC) {
 			if (!ShortsMan.inGeneralSegment((char *)s->st_value)) {
+				if (s->st_value < _segmentVMA)
+					s->st_value = _segmentVMA;	// deal with symbols referring to sections, which start before the VMA
+					
 				s->st_value += offset;
 
 				if (s->st_value < Elf32_Addr(_segment) || s->st_value > Elf32_Addr(_segment) + _segmentSize)
@@ -273,9 +276,7 @@ bool MIPSDLObject::loadSegment(Elf32_Phdr *phdr) {
 
 	// We need to take account of non-allocated segment for shorts
 	if (phdr->p_flags & PF_X) {	// This is a relocated segment
-		if (phdr->p_align < 0x10000)
-			phdr->p_align = 0x10000;	// Fix for wrong alignment on e.g. AGI
-
+		// Attempt to allocate memory for segment
 		_segment = (byte *)allocSegment(phdr->p_align, phdr->p_memsz);
 
 		if (!_segment) {
@@ -286,16 +287,10 @@ bool MIPSDLObject::loadSegment(Elf32_Phdr *phdr) {
 		debug(2, "elfloader: Allocated segment @ %p", _segment);
 
 		// Get offset to load segment into
-		baseAddress = _segment + phdr->p_vaddr;
+		baseAddress = _segment;
 		_segmentSize = phdr->p_memsz;
 		_segmentVMA = phdr->p_vaddr;
 
-		// Set .bss segment to 0 if necessary
-		if (phdr->p_memsz > phdr->p_filesz) {
-			debug(2, "elfloader: Setting %p to %p to 0 for bss",
-					_segment + phdr->p_filesz, _segment + phdr->p_memsz);
-			memset(_segment + phdr->p_filesz, 0, phdr->p_memsz - phdr->p_filesz);
-		}
 	} else {						// This is a shorts section.
 		_shortsSegment = ShortsMan.newSegment(phdr->p_memsz, (char *)phdr->p_vaddr);
 

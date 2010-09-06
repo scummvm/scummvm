@@ -331,7 +331,8 @@ bool DLObject::load() {
 
 	if (ret) {
 		// Offset by our segment allocated address
-		_segmentOffset = ptrdiff_t(_segment) - phdr.p_vaddr;
+		// must use _segmentVMA here for multiple segments (MIPS)
+		_segmentOffset = ptrdiff_t(_segment) - _segmentVMA;
 		relocateSymbols(_segmentOffset);
 	}
 
