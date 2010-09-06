@@ -1923,7 +1923,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	caanoo | dreamcast | dingux | gp2x | gp2xwiz | openpandora | samsungtv | sdl | wii | psp)
+	caanoo | dreamcast | dingux | gp2xwiz | openpandora | samsungtv | sdl | wii | psp)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
