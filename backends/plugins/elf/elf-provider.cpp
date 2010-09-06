@@ -25,10 +25,51 @@
 
 #if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
+#ifdef ELF_LOADER_CXA_ATEXIT
+#include <cxxabi.h>
+#endif
+
 #include "backends/plugins/elf/elf-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
 
+#include "common/debug.h"
 #include "common/fs.h"
+
+/* Note about ELF_LOADER_CXA_ATEXIT:
+ *
+ * consider the code:
+ *
+ * class Foobar {
+ *   const char *work() {
+ *     static String foo = "bar";
+ *     return s.c_str();
+ *   }
+ * }
+ *
+ * When instantiating Foobar and calling work() for the first time the String
+ * foo will be constructed. GCC automatically registers its destruction via
+ * either atexit() or __cxa_atexit(). Only the latter will add information
+ * about which DSO did the construction (Using &__dso_handle).
+ *
+ * __cxa_atexit allows plugins to reference C++ ABI symbols in the main
+ * executable without code duplication (No need to link the plugin against
+ * libstdc++), since we can distinguish which registered exit functions belong
+ * to a specific DSO. When unloading a plugin, we just use the C++ ABI call
+ * __cxa_finalize(&__dso_handle) to call all destructors of only that DSO.
+ *
+ * Prerequisites:
+ * - The used libc needs to support __cxa_atexit
+ * - -fuse-cxa-atexit in CXXFLAGS
+ * - Every plugin needs its own hidden __dso_handle symbol
+ *   This is automatically done via REGISTER_PLUGIN_DYNAMIC, see base/plugins.h
+ *
+ * When __cxa_atexit can not be used, each plugin needs to link against
+ * libstdc++ to embed its own set of C++ ABI symbols. When not doing so,
+ * registered destructors of already unloaded plugins will crash the
+ * application upon returning from main().
+ *
+ * See "3.3.5 DSO Object Destruction API" of the C++ ABI
+ */
 
 DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
 	void *func = 0;
@@ -71,6 +112,14 @@ bool ELFPlugin::loadPlugin() {
 
 	bool ret = DynamicPlugin::loadPlugin();
 
+#ifdef ELF_LOADER_CXA_ATEXIT
+	// FIXME HACK: Reverse HACK of findSymbol() :P
+	VoidFunc tmp;
+	tmp = findSymbol("__dso_handle");
+	memcpy(&_dso_handle, &tmp, sizeof(VoidFunc));
+	debug(2, "elfloader: __dso_handle is %p", _dso_handle);
+#endif
+
 	_dlHandle->discard_symtab();
 
 	return ret;
@@ -80,6 +129,14 @@ void ELFPlugin::unloadPlugin() {
 	DynamicPlugin::unloadPlugin();
 
 	if (_dlHandle) {
+#ifdef ELF_LOADER_CXA_ATEXIT
+		if (_dso_handle) {
+			debug(2, "elfloader: calling __cxa_finalize");
+			__cxxabiv1::__cxa_finalize(_dso_handle);
+			_dso_handle = 0;
+		}
+#endif
+
 		if (!_dlHandle->close())
 			warning("elfloader: Failed unloading plugin '%s'", _filename.c_str());
 

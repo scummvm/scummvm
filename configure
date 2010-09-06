@@ -1424,6 +1424,7 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -isystem $DEVKITPRO/libnds/include -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
 		CXXFLAGS="$CXXFLAGS -mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer -mthumb-interwork"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fno-strict-aliasing"
+		CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit"
 		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt"
 		if test "$_dynamic_modules" = no ; then
   			LDFLAGS="$LDFLAGS -Wl,--gc-sections"
@@ -1495,6 +1496,7 @@ case $_host_os in
 		;;
 	psp)
 		CXXFLAGS="$CXXFLAGS -O3 -I$PSPSDK/include -D_PSP_FW_VERSION=150"
+		CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit"
 		;;
 	solaris*)
 		DEFINES="$DEFINES -DSOLARIS -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1505,6 +1507,7 @@ case $_host_os in
 	wii)
 		CXXFLAGS="$CXXFLAGS -Os -mrvl -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
+		CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit"
 		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
 		# libogc is required to link the cc tests (includes _start())
 		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii -logc"
@@ -2004,7 +2007,7 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
 		;;
 	ds)
-DEFINES="$DEFINES -DELF_LOADER_TARGET -DONE_PLUGIN_AT_A_TIME"
+DEFINES="$DEFINES -DELF_LOADER_TARGET -DELF_LOADER_CXA_ATEXIT -DONE_PLUGIN_AT_A_TIME"
 _def_plugin='
 #define PLUGIN_PREFIX	""
 #define PLUGIN_SUFFIX	".plg"
@@ -2015,7 +2018,7 @@ PLUGIN_PREFIX		:=
 PLUGIN_SUFFIX		:= .plg
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
 CXXFLAGS		+= -DDYNAMIC_MODULES
-PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),-T$(srcdir)/backends/plugins/ds/plugin.ld -lstdc++ -lc -mthumb-interwork -mno-fpu -Wl,--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms
+PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mno-fpu -Wl,--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
@@ -2038,7 +2041,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
 	gamecube | wii)
-DEFINES="$DEFINES -DELF_LOADER_TARGET -DPPC_TARGET -DONE_PLUGIN_AT_A_TIME"
+DEFINES="$DEFINES -DELF_LOADER_TARGET -DPPC_TARGET -DELF_LOADER_CXA_ATEXIT -DONE_PLUGIN_AT_A_TIME"
 _def_plugin='
 #define PLUGIN_PREFIX	""
 #define PLUGIN_SUFFIX	".plg"
@@ -2108,7 +2111,7 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
 		;;
 	psp)
-DEFINES="$DEFINES -DELF_LOADER_TARGET -DMIPS_TARGET"
+DEFINES="$DEFINES -DELF_LOADER_TARGET -DMIPS_TARGET -DELF_LOADER_CXA_ATEXIT"
 _def_plugin='
 #define PLUGIN_PREFIX	""
 #define PLUGIN_SUFFIX	".plg"
@@ -2120,7 +2123,7 @@ PLUGIN_SUFFIX		:= .plg
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
 CXXFLAGS		+= -DDYNAMIC_MODULES
 LDFLAGS			+= -Wl,-T$(srcdir)/backends/platform/psp/main_prog.ld
-PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc -lm -Wl,--wrap,memcpy
+PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms,-T$(srcdir)/backends/plugins/psp/plugin.ld -lc -Wl,--wrap,memcpy
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '

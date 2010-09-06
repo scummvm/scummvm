@@ -45,13 +45,15 @@ class ELFPlugin : public DynamicPlugin {
 protected:
 	DLObject *_dlHandle;
 	Common::String _filename;
+	void *_dso_handle;
 
 	virtual VoidFunc findSymbol(const char *symbol);
 
 public:
 	ELFPlugin(const Common::String &filename) :
 		_dlHandle(0),
-		_filename(filename) {
+		_filename(filename),
+		_dso_handle(0) {
 	}
 
 	virtual ~ELFPlugin() {
