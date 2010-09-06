@@ -36,17 +36,22 @@
 
 // couple debug-functions
 namespace {
-	void displayPatternstep(const void *const vptr);
-	void displayMacroStep(const void *const vptr);
 
-	const uint16 noteIntervalls[64] = {
+#if 0
+void displayPatternstep(const void * const vptr);
+void displayMacroStep(const void * const vptr);
+#endif
+
+static const uint16 noteIntervalls[64] = {
 	1710, 1614, 1524, 1438, 1357, 1281, 1209, 1141, 1077, 1017,  960,  908,
 	 856,  810,  764,  720,  680,  642,  606,  571,  539,  509,  480,  454,
 	 428,  404,  381,  360,  340,  320,  303,  286,  270,  254,  240,  227,
 	 214,  202,  191,  180,  170,  160,  151,  143,  135,  127,  120,  113,
 	 214,  202,  191,  180,  170,  160,  151,  143,  135,  127,  120,  113,
-	 214,  202,  191,  180 };
-}
+	 214,  202,  191,  180
+};
+
+} // End of anonymous namespace
 
 namespace Audio {
 
@@ -101,7 +106,7 @@ void Tfmx::interrupt() {
 
 		// externally queued macros
 		if (channel.customMacro) {
-			const byte *const noteCmd = (const byte *)&channel.customMacro;
+			const byte * const noteCmd = (const byte *)&channel.customMacro;
 			channel.sfxLocked = false;
 			noteCommand(noteCmd[0], noteCmd[1], (noteCmd[2] & 0xF0) | (uint8)i, noteCmd[3]);
 			channel.customMacro = 0;
@@ -1096,10 +1101,11 @@ int Tfmx::doSfx(uint16 sfxIndex, bool unlockChannel) {
 }	// End of namespace Audio
 
 // some debugging functions
+#if 0
 namespace {
-#if !defined(NDEBUG) && 0
-void displayMacroStep(const void *const vptr) {
-	const char *tableMacros[] = {
+
+void displayMacroStep(const void * const vptr) {
+	static const char *tableMacros[] = {
 		"DMAoff+Resetxx/xx/xx flag/addset/vol   ",
 		"DMAon (start sample at selected begin) ",
 		"SetBegin    xxxxxx   sample-startadress",
@@ -1144,15 +1150,15 @@ void displayMacroStep(const void *const vptr) {
 		"SID stop    xx....   flag (1=clear all)"
 	};
 
-	const byte *const macroData = (const byte *const)vptr;
+	const byte *const macroData = (const byte * const)vptr;
 	if (macroData[0] < ARRAYSIZE(tableMacros))
 		debug("%s %02X%02X%02X", tableMacros[macroData[0]], macroData[1], macroData[2], macroData[3]);
 	else
 		debug("Unkown Macro #%02X %02X%02X%02X", macroData[0], macroData[1], macroData[2], macroData[3]);
 }
 
-void displayPatternstep(const void *const vptr) {
-	const char *tablePatterns[] = {
+void displayPatternstep(const void * const vptr) {
+	static const char *tablePatterns[] = {
 		"End --Next track  step--",
 		"Loop[count     / step.w]",
 		"Cont[patternno./ step.w]",
@@ -1171,7 +1177,7 @@ void displayPatternstep(const void *const vptr) {
 		"NOP!-no operation-------"
 	};
 
-	const byte *const patData = (const byte *const)vptr;
+	const byte * const patData = (const byte * const)vptr;
 	const byte command = patData[0];
 	if (command < 0xF0) { // Playnote
 		const byte flags = command >> 6; // 0-1 means note+detune, 2 means wait, 3 means portamento?
@@ -1180,10 +1186,8 @@ void displayPatternstep(const void *const vptr) {
 	} else
 		debug("%s %02X%02X%02X",tablePatterns[command & 0xF], patData[1], patData[2], patData[3]);
 }
-#else
-void displayMacroStep(const void *const vptr, int chan, int index) {}
-void displayPatternstep(const void *const vptr) {}
+
+} // End of anonymous namespace
 #endif
-}	// End of namespace
 
 #endif // #if defined(SOUND_MODS_TFMX_H)
