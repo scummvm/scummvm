@@ -651,7 +651,8 @@ Usage: $0 [OPTIONS]...
 Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (caanoo, dc, gp2x, gp2xwiz, iphone,
-                          linuxmoto, ds, null, openpandora, ps2, psp, sdl, wii, wince)
+                          linuxmoto, ds, null, openpandora, ps2, psp, sdl, wii,
+                          wince)
                           [sdl]
 
 Installation directories:
@@ -671,7 +672,8 @@ Fine tuning of the installation directories:
   --bindir=DIR            user executables [EPREFIX/bin]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --datarootdir=DIR       read-only arch.-independent data root [PREFIX/share]
-  --datadir=DIR           read-only architecture-independent data [DATAROOTDIR/scummvm]
+  --datadir=DIR           read-only architecture-independent data
+                          [DATAROOTDIR/scummvm]
   --mandir=DIR            man documentation [DATAROOTDIR/man]
   --docdir=DIR            documentation root [DATAROOTDIR/doc/scummvm]
 
@@ -694,7 +696,8 @@ $engines_help
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
-  --enable-release         enable building in release mode (this activates optimizations)
+  --enable-release         enable building in release mode (this activates
+                           optimizations)
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
@@ -704,7 +707,8 @@ Optional Features:
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-translation    don't build support for translated messages
   --enable-text-console    use text console instead of graphical console
-  --enable-verbose-build   enable regular echoing of commands during build process
+  --enable-verbose-build   enable regular echoing of commands during build
+                           process
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -731,10 +735,12 @@ Optional Libraries:
 
   --disable-indeo3         disable Indeo3 decoder [autodetect]
 
-  --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is installed (optional)
+  --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is 
+                           installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
-  --with-sdl-prefix=DIR    Prefix where the sdl-config script is installed (optional)
+  --with-sdl-prefix=DIR    Prefix where the sdl-config script is
+                           installed (optional)
 
   --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
