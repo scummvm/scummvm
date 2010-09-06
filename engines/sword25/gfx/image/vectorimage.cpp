@@ -191,7 +191,7 @@ Common::Rect flashRectToBSRect(VectorImage::SWFBitStream &bs) {
 // -----------------------------------------------------------------------------
 
 Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) {
-	double x0, y0, x1, y1;
+	double x0 = 0.0, y0 = 0.0, x1 = 0.0, y1 = 0.0;
 
 	for (int j = vectorImageElement.getPathCount() - 1; j >= 0; j--) {
 		ArtBpath *bez = vectorImageElement.getPathInfo(j).getVec();
