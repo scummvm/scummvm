@@ -328,6 +328,8 @@ bool MIPSDLObject::loadSegment(Elf32_Phdr *phdr) {
 
 // Unload all objects from memory
 void MIPSDLObject::unload() {
+	DLObject::unload();
+	
 	if (_shortsSegment) {
 		ShortsMan.deleteSegment(_shortsSegment);
 		_shortsSegment = 0;
