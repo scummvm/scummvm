@@ -86,6 +86,8 @@ public:
 	double toDouble() const;
 	frac_t toFrac() const;
 
+	void debugPrint(int debuglevel = 0, const char *caption = "Rational:") const;
+
 private:
 	int _num;
 	int _denom;

@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#include "common/debug.h"
 #include "common/rational.h"
 #include "common/util.h"
 #include "common/algorithm.h"
@@ -287,6 +288,10 @@ const Rational operator/(int left, const Rational &right) {
 	Rational tmp = right;
 	tmp /= left;
 	return tmp;
+}
+
+void Rational::debugPrint(int debuglevel, const char *caption) const {
+	debug(debuglevel, "%s %d/%d", caption, _num, _denom);
 }
 
 bool operator==(int left, const Rational &right) {
