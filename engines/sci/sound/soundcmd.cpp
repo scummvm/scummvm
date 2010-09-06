@@ -81,7 +81,8 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 	bool checkAudioResource = getSciVersion() >= SCI_VERSION_1_1;
 	if (g_sci->getGameId() == GID_HOYLE4)
 		checkAudioResource = false; // hoyle 4 has garbled audio resources in place of the sound resources
-	// if we play those, we will only make the user deaf and break speakers
+	// if we play those, we will only make the user deaf and break speakers. Sierra SCI doesn't play anything
+	// on soundblaster. FIXME: check, why this is
 
 	if (checkAudioResource && _resMan->testResource(ResourceId(kResourceTypeAudio, resourceId))) {
 		// Found a relevant audio resource, play it
