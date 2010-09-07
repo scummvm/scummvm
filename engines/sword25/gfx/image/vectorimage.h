@@ -43,9 +43,7 @@
 #include "sword25/gfx/image/image.h"
 #include "common/rect.h"
 
-#include <libart_lgpl/art_vpath.h>
-#include <libart_lgpl/art_bpath.h>
-#include <libart_lgpl/art_misc.h>
+#include "art.h"
 
 namespace Sword25 {
 
@@ -60,8 +58,8 @@ class VectorImage;
 
 class VectorPathInfo {
 public:
- VectorPathInfo(ArtBpath *vec, int len, uint lineStyle, uint fillStyle0, uint fillStyle1) :
-	_vec(vec), _lineStyle(lineStyle), _fillStyle0(fillStyle0), _fillStyle1(fillStyle1), _len(len) {}
+	VectorPathInfo(ArtBpath *vec, int len, uint lineStyle, uint fillStyle0, uint fillStyle1) :
+		_vec(vec), _lineStyle(lineStyle), _fillStyle0(fillStyle0), _fillStyle1(fillStyle1), _len(len) {}
 
 	VectorPathInfo() {
 		_lineStyle = _fillStyle0 = _fillStyle1 = _len = 0;
@@ -137,7 +135,10 @@ public:
 private:
 	struct LineStyleType {
 		LineStyleType(double width_, uint32 color_) : width(width_), color(color_) {}
-		LineStyleType() { width = 0; color = 0; }
+		LineStyleType() {
+			width = 0;
+			color = 0;
+		}
 		double width;
 		uint32 color;
 	};

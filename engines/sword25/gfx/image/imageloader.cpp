@@ -47,10 +47,10 @@ bool ImageLoader::_ImageLoaderListInitialized = false;
 // ------------
 
 bool ImageLoader::LoadImage(const byte *pFileData, uint FileSize,
-                               GraphicEngine::COLOR_FORMATS ColorFormat,
-                               byte *&pUncompressedData,
-                               int &Width, int &Height,
-                               int &Pitch) {
+                            GraphicEngine::COLOR_FORMATS ColorFormat,
+                            byte *&pUncompressedData,
+                            int &Width, int &Height,
+                            int &Pitch) {
 	// Falls die Liste der BS_ImageLoader noch nicht initialisiert wurde, wird dies getan.
 	if (!_ImageLoaderListInitialized)
 		_InitializeLoaderList();

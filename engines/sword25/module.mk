@@ -32,6 +32,12 @@ MODULE_OBJS := \
 	gfx/image/pngloader.o \
 	gfx/image/vectorimage.o \
 	gfx/image/vectorimagerenderer.o \
+	gfx/image/art.o \
+	gfx/image/art_svp_intersect.o \
+	gfx/image/art_svp_render_aa.o \
+	gfx/image/art_svp_vpath.o \
+	gfx/image/art_svp_vpath_stroke.o \
+	gfx/image/art_vpath_bpath.o \
 	gfx/opengl/glimage.o \
 	gfx/opengl/openglgfx.o \
 	gfx/opengl/swimage.o \
@@ -109,8 +115,7 @@ MODULE_OBJS := \
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
 	$(QUIET_CXX)gcc  $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 
-LIBS += -lpng -ltheoradec -lart_lgpl_2
-CXXFLAGS += -I/usr/include/libart-2.0
+LIBS += -lpng -ltheoradec
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SWORD25), DYNAMIC_PLUGIN)

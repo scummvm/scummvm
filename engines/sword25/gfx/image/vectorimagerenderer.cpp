@@ -32,13 +32,11 @@
  *
  */
 
-#include <libart_lgpl/art_vpath_bpath.h>
-#include <libart_lgpl/art_vpath_bpath.h>
-#include <libart_lgpl/art_svp_vpath.h>
-#include <libart_lgpl/art_svp_vpath_stroke.h>
-#include <libart_lgpl/art_svp_render_aa.h>
-#include <libart_lgpl/art_rgb_svp.h>
-#include <libart_lgpl/art_rgb.h>
+#include "art_vpath_bpath.h"
+#include "art_vpath_bpath.h"
+#include "art_svp_vpath.h"
+#include "art_svp_vpath_stroke.h"
+#include "art_svp_render_aa.h"
 
 #include "sword25/gfx/image/vectorimage.h"
 #include "graphics/colormasks.h"
@@ -86,7 +84,7 @@ struct _ArtRgbSVPAlphaData {
 };
 
 static void art_rgb_svp_alpha_callback1(void *callback_data, int y,
-                            int start, ArtSVPRenderAAStep *steps, int n_steps) {
+                                        int start, ArtSVPRenderAAStep *steps, int n_steps) {
 	ArtRgbSVPAlphaData *data = (ArtRgbSVPAlphaData *)callback_data;
 	art_u8 *linebuf;
 	int run_x0, run_x1;
@@ -140,8 +138,8 @@ static void art_rgb_svp_alpha_callback1(void *callback_data, int y,
 }
 
 static void art_rgb_svp_alpha_opaque_callback1(void *callback_data, int y,
-                                   int start,
-                                   ArtSVPRenderAAStep *steps, int n_steps) {
+        int start,
+        ArtSVPRenderAAStep *steps, int n_steps) {
 	ArtRgbSVPAlphaData *data = (ArtRgbSVPAlphaData *)callback_data;
 	art_u8 *linebuf;
 	int run_x0, run_x1;
@@ -211,10 +209,9 @@ static void art_rgb_svp_alpha_opaque_callback1(void *callback_data, int y,
 }
 
 void art_rgb_svp_alpha1(const ArtSVP *svp,
-                   int x0, int y0, int x1, int y1,
-                   uint32 color,
-                   art_u8 *buf, int rowstride,
-                   ArtAlphaGamma *alphagamma) {
+                        int x0, int y0, int x1, int y1,
+                        uint32 color,
+                        art_u8 *buf, int rowstride) {
 	ArtRgbSVPAlphaData data;
 	byte r, g, b, alpha;
 	int i;
@@ -299,7 +296,7 @@ ArtVpath *art_vpath_reverse(ArtVpath *a) {
 			state = 1;
 		}
 		if (a[len - i - 1].code == ART_MOVETO ||
-			a[len - i - 1].code == ART_MOVETO_OPEN) {
+		        a[len - i - 1].code == ART_MOVETO_OPEN) {
 			state = 0;
 		}
 		dest[i] = it;
@@ -313,7 +310,7 @@ ArtVpath *art_vpath_reverse_free(ArtVpath *a) {
 	ArtVpath *dest;
 
 	dest = art_vpath_reverse(a);
-	art_free(a);
+	free(a);
 
 	return dest;
 }
@@ -346,8 +343,8 @@ void drawBez(ArtBpath *bez1, ArtBpath *bez2, art_u8 *buffer, int width, int heig
 		vec2 = art_vpath_reverse_free(vec2);
 		vec = art_vpath_cat(vec1, vec2);
 
-		art_free(vec1);
-		art_free(vec2);
+		free(vec1);
+		free(vec2);
 	} else {
 		vec = vec1;
 	}
@@ -365,7 +362,7 @@ void drawBez(ArtBpath *bez1, ArtBpath *bez2, art_u8 *buffer, int width, int heig
 			vect[k].y = vec[k].y * scaleY;
 		}
 		vect[k].code = ART_END;
-		art_free(vec);
+		free(vec);
 
 		vec = vect;
 	}
@@ -377,10 +374,10 @@ void drawBez(ArtBpath *bez1, ArtBpath *bez2, art_u8 *buffer, int width, int heig
 		art_svp_make_convex(svp);
 	}
 
-	art_rgb_svp_alpha1(svp, 0, 0, width, height, color, buffer, width * 4, NULL);
+	art_rgb_svp_alpha1(svp, 0, 0, width, height, color, buffer, width * 4);
 
-	art_free(svp);
-	art_free(vec);
+	free(svp);
+	free(vec);
 }
 
 void VectorImage::render(int width, int height) {
@@ -436,8 +433,8 @@ void VectorImage::render(int width, int height) {
 
 			drawBez(fill1, fill0, _pixelData, width, height, scaleX, scaleY, -1, _elements[e].getFillStyleColor(s));
 
-			art_free(fill0);
-			art_free(fill1);
+			free(fill0);
+			free(fill1);
 		}
 
 		//// Draw strokes

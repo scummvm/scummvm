@@ -41,7 +41,7 @@
 
 #include "graphics/colormasks.h"
 
-#include <libart_lgpl/art_vpath_bpath.h>
+#include "art_vpath_bpath.h"
 
 #include "sword25/gfx/opengl/glimage.h"
 
@@ -209,7 +209,7 @@ Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) 
 				if (vec[i].y > y1) y1 = vec[i].y;
 			}
 		}
-		art_free(vec);
+		free(vec);
 	}
 
 	return Common::Rect(static_cast<int>(x0), static_cast<int>(y0), static_cast<int>(x1) + 1, static_cast<int>(y1) + 1);
@@ -235,8 +235,8 @@ VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, co
 	signature[1] = bs.getByte();
 	signature[2] = bs.getByte();
 	if (signature[0] != 'F' ||
-		signature[1] != 'W' ||
-		signature[2] != 'S') {
+	        signature[1] != 'W' ||
+	        signature[2] != 'S') {
 		BS_LOG_ERRORLN("File is not a valid SWF-file");
 		return;
 	}
@@ -259,8 +259,10 @@ VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, co
 	Common::Rect movieRect = flashRectToBSRect(bs);
 
 	// Framerate und Frameanzahl auslesen
-	/* uint32 frameRate = */bs.getUInt16();
-	/* uint32 frameCount = */bs.getUInt16();
+	/* uint32 frameRate = */
+	bs.getUInt16();
+	/* uint32 frameCount = */
+	bs.getUInt16();
 
 	// Tags parsen
 	// Da wir uns nur für das erste DefineShape-Tag interessieren
@@ -303,7 +305,7 @@ VectorImage::~VectorImage() {
 	for (int j = _elements.size() - 1; j >= 0; j--)
 		for (int i = _elements[j].getPathCount() - 1; i >= 0; i--)
 			if (_elements[j].getPathInfo(i).getVec())
-				art_free(_elements[j].getPathInfo(i).getVec());
+				free(_elements[j].getPathInfo(i).getVec());
 
 	if (_pixelData)
 		free(_pixelData);
@@ -380,7 +382,7 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 			// End der Shape-Definition erreicht?
 			if (!stateNewStyles && !stateLineStyle && !stateFillStyle0 && !stateFillStyle1 && !stateMoveTo) {
 				endOfShapeDiscovered = true;
-			// Parameter dekodieren
+				// Parameter dekodieren
 			} else {
 				if (stateMoveTo) {
 					uint32 moveToBits = bs.getBits(5);
@@ -496,7 +498,7 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 	if (bezNodes)
 		bez = storeBez(bez, lineStyle, fillStyle0, fillStyle1, &bezNodes, &bezAllocated);
 
-	art_free(bez);
+	free(bez);
 
 	// Bounding-Boxes der einzelnen Elemente berechnen
 	Common::Array<VectorImageElement>::iterator it = _elements.begin();
@@ -599,10 +601,10 @@ bool VectorImage::setContent(const byte *pixeldata, uint size, uint offset, uint
 }
 
 bool VectorImage::blit(int posX, int posY,
-                          int flipping,
-                          Common::Rect *pPartRect,
-                          uint color,
-                          int width, int height) {
+                       int flipping,
+                       Common::Rect *pPartRect,
+                       uint color,
+                       int width, int height) {
 	static VectorImage *oldThis = 0;
 	static int              oldWidth = -2;
 	static int              oldHeight = -2;

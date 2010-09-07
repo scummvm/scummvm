@@ -63,7 +63,7 @@ static void png_user_read_data(png_structp png_ptr, png_bytep data, png_size_t l
 // -----------------------------------------------------------------------------
 
 bool PNGLoader::DoDecodeImage(const byte *FileDataPtr, uint FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
-                                 int &Width, int &Height, int &Pitch) {
+                              int &Width, int &Height, int &Pitch) {
 	png_structp png_ptr = NULL;
 	png_infop   info_ptr = NULL;
 	png_bytep   RawDataBuffer = NULL;
@@ -125,7 +125,7 @@ bool PNGLoader::DoDecodeImage(const byte *FileDataPtr, uint FileSize,  GraphicEn
 	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
 		png_set_expand(png_ptr);
 	if (ColorType == PNG_COLOR_TYPE_GRAY ||
-		ColorType == PNG_COLOR_TYPE_GRAY_ALPHA)
+	        ColorType == PNG_COLOR_TYPE_GRAY_ALPHA)
 		png_set_gray_to_rgb(png_ptr);
 
 	png_set_bgr(png_ptr);
@@ -191,7 +191,7 @@ bool PNGLoader::DoDecodeImage(const byte *FileDataPtr, uint FileSize,  GraphicEn
 			break;
 		}
 	}
-	
+
 	// Die zusätzlichen Daten am Ende des Bildes lesen
 	png_read_end(png_ptr, NULL);
 
@@ -209,7 +209,7 @@ bool PNGLoader::DoDecodeImage(const byte *FileDataPtr, uint FileSize,  GraphicEn
 // -----------------------------------------------------------------------------
 
 bool PNGLoader::DecodeImage(const byte *FileDataPtr, uint FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
-                               int &Width, int &Height, int &Pitch) {
+                            int &Width, int &Height, int &Pitch) {
 	return DoDecodeImage(FileDataPtr, FileSize, ColorFormat, UncompressedDataPtr, Width, Height, Pitch);
 }
 
