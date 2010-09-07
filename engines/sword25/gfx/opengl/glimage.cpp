@@ -167,26 +167,46 @@ uint GLImage::getPixel(int x, int y) {
 // -----------------------------------------------------------------------------
 
 bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
-	int x1 = 0, y1 = 0;
-	int w = _width, h = _height;
+	// Create an encapsulating surface for the data
+	Graphics::Surface srcImage;
+	srcImage.bytesPerPixel = 4;
+	srcImage.pitch = _width * 4;
+	srcImage.w = _width;
+	srcImage.h = _height;
+	srcImage.pixels = _data;
+
 	if (pPartRect) {
-		x1 = pPartRect->left;
-		y1 = pPartRect->top;
-		w = pPartRect->right - pPartRect->left;
-		h = pPartRect->bottom - pPartRect->top;
+		srcImage.pixels = &_data[pPartRect->top * srcImage.pitch + pPartRect->left * 4];
+		srcImage.w = pPartRect->right - pPartRect->left;
+		srcImage.h = pPartRect->bottom - pPartRect->top;
+
+		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %d, %d, %d)", posX, posY, flipping, 
+			pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
+	} else {
+
+		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %d, %d, %d)", posX, posY, flipping, 0, 0, 
+			srcImage.w, srcImage.h, color, width, height);
 	}
 
-	debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, x1, y1, w, h, color, width, height);
-
-	// Skalierungen berechnen
-	float scaleX, scaleY;
 	if (width == -1)
-		width = _width;
-	scaleX = (float)width / (float)_width;
-
+		width = srcImage.w;
 	if (height == -1)
-		height = _height;
-	scaleY = (float)height / (float)_height;
+		height = srcImage.h;
+
+#ifdef SCALING_TESTING
+	// Hardcode scaling to 66% to test scaling
+	width = width * 2 / 3;
+	height = height * 2 / 3;
+#endif
+
+	Graphics::Surface *img;
+	Graphics::Surface *imgScaled = NULL;
+	if ((width != srcImage.w) || (height != srcImage.h)) {
+		// Scale the image
+		img = imgScaled = scale(srcImage, width, height);
+	} else {
+		img = &srcImage;
+	}
 
 	if ((color & 0xff000000) != 0xff000000) {
 		warning("STUB: Image transparent bg color: %x", color);
@@ -195,54 +215,46 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
 	int cg = (color >> 8) & 0xff;
 	int cb = (color >> 0) & 0xff;
 
-	if (scaleX != 1.0 || scaleY != 1.0) {
-		warning("STUB: Sprite scaling (%f x %f)", scaleX, scaleY);
-	}
-
-	if (posX < 0) {
-		w -= posX;
-		x1 = -posX;
-		posX = 0;
-	}
-
+	// Handle off-screen clipping
 	if (posY < 0) {
-		h -= posY;
-		y1 = -posY;
+		img->h -= -posY;
+		img->pixels = (byte *)img->pixels + img->pitch * -posY;
 		posY = 0;
 	}
 
-	w = CLIP(w, 0, MAX((int)_backSurface->w - posX - 1, 0));
-	h = CLIP(h, 0, MAX((int)_backSurface->h - posY - 1, 0));
+	if (posX < 0) {
+		img->w -= -posX;
+		img->pixels = (byte *)img->pixels + -posX;
+		posX = 0;
+	}
 
-	if (w == 0 || h == 0)
+	img->w = CLIP((int)img->w, 0, (int)MAX((int)_backSurface->w - posX, 0));
+	img->h = CLIP((int)img->h, 0, (int)MAX((int)_backSurface->h - posY, 0));
+
+	if (img->w == 0 || img->h == 0)
 		return true;
 
-	// Rendern
-	// TODO:
-	// Die Bedeutung von FLIP_V und FLIP_H ist vertauscht. Allerdings glaubt der Rest der Engine auch daran, daher war es einfacher diesen Fehler
-	// weiterzuführen. Bei Gelegenheit ist dieses aber zu ändern.
-
-	// TODO: scaling
+	int xp = 0, yp = 0;
 	int inStep = 4;
-	int inoStep = _width * 4;
+	int inoStep = img->pitch;
 	if (flipping & Image::FLIP_V) {
 		inStep = -inStep;
-		x1 = x1 + w - 1;
+		xp = img->w - 1;
 	}
 
 	if (flipping & Image::FLIP_H) {
 		inoStep = -inoStep;
-		y1 = y1 + h - 1;
+		yp = img->h - 1;
 	}
 
-	byte *ino = &_data[y1 * _width * 4 + x1 * 4];
+	byte *ino = (byte *)img->getBasePtr(xp, yp);
 	byte *outo = (byte *)_backSurface->getBasePtr(posX, posY);
 	byte *in, *out;
 
-	for (int i = 0; i < h; i++) {
+	for (int i = 0; i < img->h; i++) {
 		out = outo;
 		in = ino;
-		for (int j = 0; j < w; j++) {
+		for (int j = 0; j < img->w; j++) {
 			int r = in[0];
 			int g = in[1];
 			int b = in[2];
@@ -295,9 +307,71 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
 		ino += inoStep;
 	}
 
-	g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY, w, h);
+	g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY, 
+		img->w, img->h);
+
+	if (imgScaled) {
+		imgScaled->free();
+		delete imgScaled;
+	}
 
 	return true;
+}
+
+/**
+ * Scales a passed surface, creating a new surface with the result
+ * @param srcImage		Source image to scale
+ * @param scaleFactor	Scale amount. Must be between 0 and 1.0 (but not zero)
+ * @remarks Caller is responsible for freeing the returned surface
+ */
+Graphics::Surface *GLImage::scale(const Graphics::Surface &srcImage, int xSize, int ySize) {
+	Graphics::Surface *s = new Graphics::Surface();
+	s->create(xSize, ySize, srcImage.bytesPerPixel);
+
+	int *horizUsage = scaleLine(xSize, srcImage.w);
+	int *vertUsage = scaleLine(ySize, srcImage.h);
+
+	// Loop to create scaled version
+	for (int yp = 0; yp < ySize; ++yp) {
+		byte *srcP = (byte *)srcImage.getBasePtr(0, vertUsage[yp]);
+		byte *destP = (byte *)s->getBasePtr(0, yp);
+
+		for (int xp = 0; xp < xSize; ++xp) {
+			byte *tempSrcP = srcP + (horizUsage[xp] * srcImage.bytesPerPixel);
+			for (int byteCtr = 0; byteCtr < srcImage.bytesPerPixel; ++byteCtr) {
+				*destP++ = *tempSrcP++;
+			}
+		}
+	}
+
+	// Delete arrays and return surface
+	delete[] horizUsage;
+	delete[] vertUsage;
+	return s;
+}
+
+/**
+ * Returns an array indicating which pixels of a source image horizontally or vertically get
+ * included in a scaled image
+ */
+int *GLImage::scaleLine(int size, int srcSize) {
+	int scale = 100 * size / srcSize;
+	assert(scale > 0);
+	int *v = new int[size];
+	Common::set_to(v, &v[size], 0);
+
+	int distCtr = 0;
+	int *destP = v;
+	for (int distIndex = 0; distIndex < srcSize; ++distIndex) {
+		distCtr += scale;
+		while (distCtr >= 100) {
+			assert(destP < &v[size]);
+			*destP++ = distIndex;
+			distCtr -= 100;
+		}
+	}
+	
+	return v;
 }
 
 } // End of namespace Sword25
