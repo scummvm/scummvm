@@ -679,7 +679,7 @@ art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 
 		if (left_y1 < right_y1) {
 			/* Test left (x1, y1) against right segment */
-			double left_x1 = left_seg->x[1];
+			left_x1 = left_seg->x[1];
 
 			if (left_x1 <
 			        right_seg->x[(right_seg->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] ||
@@ -708,14 +708,14 @@ art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 				return ART_FALSE;
 			else if (d > -EPSILON_A) {
 				/* See above regarding break flags. */
-				double left_x1 = art_svp_intersect_break(ctx, left_seg,
+				left_x1 = art_svp_intersect_break(ctx, left_seg,
 				                 right_x1, right_y1,
 				                 ART_BREAK_LEFT);
 				if (left_x1 <= right_x1)
 					return ART_FALSE;
 			}
 		} else { /* left_y1 == right_y1 */
-			double left_x1 = left_seg->x[1];
+			left_x1 = left_seg->x[1];
 			double right_x1 = right_seg->x[1];
 
 			if (left_x1 <= right_x1)
@@ -727,7 +727,7 @@ art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 
 	if (left_y1 < right_y1) {
 		/* Test left (x1, y1) against right segment */
-		double left_x1 = left_seg->x[1];
+		left_x1 = left_seg->x[1];
 
 		if (left_x1 <
 		        right_seg->x[(right_seg->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] ||
@@ -754,14 +754,14 @@ art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 		if (d > EPSILON_A)
 			return ART_FALSE;
 		else if (d > -EPSILON_A) {
-			double left_x1 = art_svp_intersect_break(ctx, left_seg,
+			left_x1 = art_svp_intersect_break(ctx, left_seg,
 			                 right_x1, right_y1,
 			                 ART_BREAK_LEFT);
 			if (left_x1 <= right_x1)
 				return ART_FALSE;
 		}
 	} else { /* left_y1 == right_y1 */
-		double left_x1 = left_seg->x[1];
+		left_x1 = left_seg->x[1];
 		double right_x1 = right_seg->x[1];
 
 		if (left_x1 <= right_x1)
