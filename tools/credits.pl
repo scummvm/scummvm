@@ -1023,6 +1023,15 @@ begin_credits("Credits");
   "John Young, Colin Smythe and especially Terry Pratchett himself for ".
   "sharing the source code of Discworld I &amp; II with us.");
 
+  add_paragraph(
+  "Emilio de Paz Arag&oacute;n from Alcachofa Soft for sharing the source code ".
+  "of Drascula: The Vampire Strikes Back with us and his generousity with ".
+  "freewaring the game.");
+
+  add_paragraph(
+  "David P. Gray from Gray Design Associate for sharing the source code ".
+  "of Hugo trilogy.");
+
   end_section();
 
 end_credits();
