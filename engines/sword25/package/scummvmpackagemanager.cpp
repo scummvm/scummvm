@@ -147,7 +147,13 @@ byte *ScummVMPackageManager::GetFile(const Common::String &fileName, uint *fileS
 
 	// Read the file
 	byte *buffer = new byte[in->size()];
-	if (!in->read(buffer, in->size())) return 0;
+	int bytesRead = in->read(buffer, in->size());
+	delete in;
+
+	if (!bytesRead) {
+		delete buffer;
+		return NULL;
+	}
 
 	return buffer;
 }
