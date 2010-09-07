@@ -397,7 +397,8 @@ void LoLEngine::kingSelectionIntro() {
 			_screen->fprintStringIntro("%s", 8, y + i * 10, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(57 + i));
 	}
 
-	_sound->voicePlay("KING01", &_speechHandle);
+	if (_flags.isTalkie)
+		_sound->voicePlay("KING01", &_speechHandle);
 
 	int index = 4;
 	while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && !skipFlag()) {
@@ -441,7 +442,8 @@ void LoLEngine::kingSelectionReminder() {
 		_screen->fprintStringIntro("%s", 8, y + 10, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(63));
 	}
 
-	_sound->voicePlay("KING02", &_speechHandle);
+	if (_flags.isTalkie)
+		_sound->voicePlay("KING02", &_speechHandle);
 
 	int index = 0;
 	while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && index < 15) {
@@ -468,7 +470,8 @@ void LoLEngine::kingSelectionReminder() {
 }
 
 void LoLEngine::kingSelectionOutro() {
-	_sound->voicePlay("KING03", &_speechHandle);
+	if (_flags.isTalkie)
+		_sound->voicePlay("KING03", &_speechHandle);
 
 	int index = 0;
 	while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && !shouldQuit() && !skipFlag()) {
@@ -627,7 +630,8 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 		if (speechEnabled() && !_sound->isVoicePresent(file))
 			break;
 
-		_sound->voicePlay(file, &_speechHandle);
+		if (_flags.isTalkie)
+			_sound->voicePlay(file, &_speechHandle);
 
 		int i = 0;
 		while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && _charSelectionInfoResult == -1 && !shouldQuit()) {
