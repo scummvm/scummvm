@@ -853,11 +853,11 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 
 	// Now remove screens, that already got the right color/priority/control
 	if ((screenMask & GFX_SCREEN_MASK_VISUAL) && (searchColor == color))
-		screenMask ^= GFX_SCREEN_MASK_VISUAL;
+		screenMask &= ~GFX_SCREEN_MASK_VISUAL;
 	if ((screenMask & GFX_SCREEN_MASK_PRIORITY) && (searchPriority == priority))
-		screenMask ^= GFX_SCREEN_MASK_PRIORITY;
+		screenMask &= ~GFX_SCREEN_MASK_PRIORITY;
 	if ((screenMask & GFX_SCREEN_MASK_CONTROL) && (searchControl == control))
-		screenMask ^= GFX_SCREEN_MASK_CONTROL;
+		screenMask &= ~GFX_SCREEN_MASK_CONTROL;
 
 	// Exit, if no screens left
 	if (!screenMask)
