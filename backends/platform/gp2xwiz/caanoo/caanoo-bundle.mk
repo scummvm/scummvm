@@ -16,6 +16,7 @@ caanoo-bundle: $(EXECUTABLE)
 
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/caanoo/scummvm.gpe $(bundle_name)/scummvm/
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvm.png $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvmb.png $(bundle_name)/scummvm/
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/README-GP2XWIZ $(bundle_name)/scummvm/README-CAANOO
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvm.ini $(bundle_name)/	
 
@@ -46,6 +47,7 @@ caanoo-bundle-debug: $(EXECUTABLE)
 
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/caanoo/scummvm-gdb.gpe $(bundle_name)/scummvm/scummvm.gpe
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvm.png $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvmb.png $(bundle_name)/scummvm/
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/README-GP2XWIZ $(bundle_name)/scummvm/README-CAANOO
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvm.ini $(bundle_name)/	
 

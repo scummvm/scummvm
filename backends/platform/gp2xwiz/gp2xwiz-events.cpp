@@ -272,191 +272,201 @@ bool OSystem_GPH::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 /* Custom handleJoyButtonDown/handleJoyButtonUp to deal with the joystick buttons on GPH devices */
 
 bool OSystem_GPH::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
-			_stickBtn[ev.jbutton.button] = 1;
-			if (ev.jbutton.button == BUTTON_B) {
-				event.type = Common::EVENT_LBUTTONDOWN;
-				fillMouseEvent(event, _km.x, _km.y);
-			} else if (ev.jbutton.button == BUTTON_CLICK) {
-				event.type = Common::EVENT_LBUTTONDOWN;
-				fillMouseEvent(event, _km.x, _km.y);
-			} else if (ev.jbutton.button == BUTTON_X) {
-				event.type = Common::EVENT_RBUTTONDOWN;
-				fillMouseEvent(event, _km.x, _km.y);
-			} else if (_stickBtn[BUTTON_L] && (ev.jbutton.button == BUTTON_SELECT)) {
-				event.type = Common::EVENT_QUIT;
-#if !defined (CAANOO)
-			} else if (ev.jbutton.button < 8) {
-				moveStick();
-				event.type = Common::EVENT_MOUSEMOVE;
-				fillMouseEvent(event, _km.x, _km.y);
+	switch (ev.jbutton.button) {
+		case BUTTON_UP:
+		case BUTTON_UPLEFT:
+		case BUTTON_LEFT:
+		case BUTTON_DOWNLEFT:
+		case BUTTON_DOWN:
+		case BUTTON_DOWNRIGHT:
+		case BUTTON_RIGHT:
+		case BUTTON_UPRIGHT:
+			moveStick();
+			event.type = Common::EVENT_MOUSEMOVE;
+			fillMouseEvent(event, _km.x, _km.y);
+			break;
+		case BUTTON_B:
+		case BUTTON_CLICK:
+			event.type = Common::EVENT_LBUTTONDOWN;
+			fillMouseEvent(event, _km.x, _km.y);
+			break;
+		case BUTTON_X:
+			event.type = Common::EVENT_RBUTTONDOWN;
+			fillMouseEvent(event, _km.x, _km.y);
+			break;
+		case BUTTON_L:
+			BUTTON_STATE_L = true;
+			break;
+		case BUTTON_R:
+			event.type = Common::EVENT_KEYDOWN;
+			if (BUTTON_STATE_L == true) {
+#ifdef ENABLE_VKEYBD
+				event.kbd.keycode = Common::KEYCODE_F7;
+				event.kbd.ascii = mapKey(SDLK_F7, ev.key.keysym.mod, 0);
+#else
+				event.kbd.keycode = Common::KEYCODE_0;
+				event.kbd.ascii = mapKey(SDLK_0, ev.key.keysym.mod, 0);
 #endif
 			} else {
-				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.flags = 0;
-				switch (ev.jbutton.button) {
-					case BUTTON_L:
-						BUTTON_STATE_L = true;
-						break;
-					case BUTTON_R:
-						if (BUTTON_STATE_L == true) {
-#ifdef ENABLE_VKEYBD
-							event.kbd.keycode = Common::KEYCODE_F7;
-							event.kbd.ascii = mapKey(SDLK_F7, ev.key.keysym.mod, 0);
-#else
-							event.kbd.keycode = Common::KEYCODE_0;
-							event.kbd.ascii = mapKey(SDLK_0, ev.key.keysym.mod, 0);
-#endif
-						} else {
-							event.kbd.keycode = Common::KEYCODE_RETURN;
-							event.kbd.ascii = mapKey(SDLK_RETURN, ev.key.keysym.mod, 0);
-						}
-						break;
-					case BUTTON_SELECT:
-					case BUTTON_HELP2:
-						if (BUTTON_STATE_L == true) {
-							event.type = Common::EVENT_QUIT;
-						} else {
-							event.kbd.keycode = Common::KEYCODE_ESCAPE;
-							event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
-						}
-						break;
-					case BUTTON_A:
-						if (BUTTON_STATE_L == true) {
-							event.type = Common::EVENT_PREDICTIVE_DIALOG;
-						} else {
-						event.kbd.keycode = Common::KEYCODE_PERIOD;
-						event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
-						}
-						break;
-					case BUTTON_Y:
-						if (BUTTON_STATE_L == true) {
-							GPH::ToggleTapMode();
-							if (GPH::tapmodeLevel == TAPMODE_LEFT) {
-								displayMessageOnOSD("Touchscreen 'Tap Mode': Left Click");
-							} else if (GPH::tapmodeLevel == TAPMODE_RIGHT) {
-								displayMessageOnOSD("Touchscreen 'Tap Mode': Right Click");
-							} else if (GPH::tapmodeLevel == TAPMODE_HOVER) {
-							displayMessageOnOSD("Touchscreen 'Tap Mode': Hover (No Click)");
-							}
-						} else {
-							event.kbd.keycode = Common::KEYCODE_SPACE;
-							event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
-						}
-						break;
-					case BUTTON_MENU:
-					case BUTTON_HELP:
-						if (BUTTON_STATE_L == true) {
-							event.type = Common::EVENT_MAINMENU;
-						} else {
-							event.kbd.keycode = Common::KEYCODE_F5;
-							event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-						}
-						break;
-					case BUTTON_VOLUP:
-						WIZ_HW::mixerMoveVolume(2);
-						if (WIZ_HW::volumeLevel == 100) {
-							displayMessageOnOSD("Maximum Volume");
-						} else {
-							displayMessageOnOSD("Increasing Volume");
-						}
-						break;
-					case BUTTON_VOLDOWN:
-						WIZ_HW::mixerMoveVolume(1);
-						if (WIZ_HW::volumeLevel == 0) {
-							displayMessageOnOSD("Minimal Volume");
-						} else {
-							displayMessageOnOSD("Decreasing Volume");
-						}
-						break;
-					case BUTTON_HOLD:
-						event.type = Common::EVENT_QUIT;
- 						break;
-					case BUTTON_HOME:
-						GPH::ToggleTapMode();
-						if (GPH::tapmodeLevel == TAPMODE_LEFT) {
-							displayMessageOnOSD("Touchscreen 'Tap Mode': Left Click");
-						} else if (GPH::tapmodeLevel == TAPMODE_RIGHT) {
-							displayMessageOnOSD("Touchscreen 'Tap Mode': Right Click");
-						} else if (GPH::tapmodeLevel == TAPMODE_HOVER) {
-							displayMessageOnOSD("Touchscreen 'Tap Mode': Hover (No Click)");
-						}
- 						break;
-				}
+				event.kbd.keycode = Common::KEYCODE_RETURN;
+				event.kbd.ascii = mapKey(SDLK_RETURN, ev.key.keysym.mod, 0);
 			}
-			return true;
+			break;
+		case BUTTON_SELECT:
+		case BUTTON_HOME:
+			event.type = Common::EVENT_KEYDOWN;
+			if (BUTTON_STATE_L == true) {
+				event.type = Common::EVENT_QUIT;
+			} else {
+				event.kbd.keycode = Common::KEYCODE_ESCAPE;
+				event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+			}
+			break;
+		case BUTTON_A:
+			event.type = Common::EVENT_KEYDOWN;
+			if (BUTTON_STATE_L == true) {
+				event.type = Common::EVENT_PREDICTIVE_DIALOG;
+			} else {
+			event.kbd.keycode = Common::KEYCODE_PERIOD;
+			event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+			}
+			break;
+		case BUTTON_Y:
+			event.type = Common::EVENT_KEYDOWN;
+			if (BUTTON_STATE_L == true) {
+				GPH::ToggleTapMode();
+				if (GPH::tapmodeLevel == TAPMODE_LEFT) {
+					displayMessageOnOSD("Touchscreen 'Tap Mode' - Left Click");
+				} else if (GPH::tapmodeLevel == TAPMODE_RIGHT) {
+					displayMessageOnOSD("Touchscreen 'Tap Mode' - Right Click");
+				} else if (GPH::tapmodeLevel == TAPMODE_HOVER) {
+					displayMessageOnOSD("Touchscreen 'Tap Mode' - Hover (No Click)");
+				}
+			} else {
+				event.kbd.keycode = Common::KEYCODE_SPACE;
+				event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+			}
+			break;
+		case BUTTON_MENU:
+		case BUTTON_HELP:
+			event.type = Common::EVENT_KEYDOWN;
+			if (BUTTON_STATE_L == true) {
+				event.type = Common::EVENT_MAINMENU;
+			} else {
+				event.kbd.keycode = Common::KEYCODE_F5;
+				event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+			}
+			break;
+		case BUTTON_VOLUP:
+			WIZ_HW::mixerMoveVolume(2);
+			if (WIZ_HW::volumeLevel == 100) {
+				displayMessageOnOSD("Maximum Volume");
+			} else {
+				displayMessageOnOSD("Increasing Volume");
+			}
+			break;
+		case BUTTON_VOLDOWN:
+			WIZ_HW::mixerMoveVolume(1);
+			if (WIZ_HW::volumeLevel == 0) {
+				displayMessageOnOSD("Minimal Volume");
+			} else {
+				displayMessageOnOSD("Decreasing Volume");
+			}
+			break;
+		case BUTTON_HOLD:
+			event.type = Common::EVENT_QUIT;
+			break;
+		case BUTTON_HELP2:
+			GPH::ToggleTapMode();
+			if (GPH::tapmodeLevel == TAPMODE_LEFT) {
+				displayMessageOnOSD("Touchscreen 'Tap Mode': Left Click");
+			} else if (GPH::tapmodeLevel == TAPMODE_RIGHT) {
+				displayMessageOnOSD("Touchscreen 'Tap Mode': Right Click");
+			} else if (GPH::tapmodeLevel == TAPMODE_HOVER) {
+				displayMessageOnOSD("Touchscreen 'Tap Mode': Hover (No Click)");
+			}
+			break;
+	}
+	return true;
 }
 
 bool OSystem_GPH::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
-			_stickBtn[ev.jbutton.button] = 0;
-			if (ev.jbutton.button == BUTTON_B) {
-				event.type = Common::EVENT_LBUTTONUP;
-				fillMouseEvent(event, _km.x, _km.y);
-			} else if (ev.jbutton.button == BUTTON_CLICK) {
-				event.type = Common::EVENT_LBUTTONUP;
-				fillMouseEvent(event, _km.x, _km.y);
-			} else if (ev.jbutton.button == BUTTON_X) {
-				event.type = Common::EVENT_RBUTTONUP;
-				fillMouseEvent(event, _km.x, _km.y);
-#if !defined (CAANOO)
-			} else if (ev.jbutton.button < 8) {
-				moveStick();
-				event.type = Common::EVENT_MOUSEMOVE;
-				fillMouseEvent(event, _km.x, _km.y);
+	switch (ev.jbutton.button) {
+		case BUTTON_UP:
+		case BUTTON_UPLEFT:
+		case BUTTON_LEFT:
+		case BUTTON_DOWNLEFT:
+		case BUTTON_DOWN:
+		case BUTTON_DOWNRIGHT:
+		case BUTTON_RIGHT:
+		case BUTTON_UPRIGHT:
+			moveStick();
+			event.type = Common::EVENT_MOUSEMOVE;
+			fillMouseEvent(event, _km.x, _km.y);
+			break;
+		case BUTTON_B:
+		case BUTTON_CLICK:
+			event.type = Common::EVENT_LBUTTONUP;
+			fillMouseEvent(event, _km.x, _km.y);
+			break;
+		case BUTTON_X:
+			event.type = Common::EVENT_RBUTTONUP;
+			fillMouseEvent(event, _km.x, _km.y);
+			break;
+		case BUTTON_L:
+			BUTTON_STATE_L = true;
+			break;
+		case BUTTON_SELECT:
+		case BUTTON_HOME:
+			event.type = Common::EVENT_KEYUP;
+			event.kbd.keycode = Common::KEYCODE_ESCAPE;
+			event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+			break;
+		case BUTTON_A:
+			event.type = Common::EVENT_KEYUP;
+			event.kbd.keycode = Common::KEYCODE_PERIOD;
+			event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+			break;
+		case BUTTON_Y:
+			event.type = Common::EVENT_KEYUP;
+			event.kbd.keycode = Common::KEYCODE_SPACE;
+			event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+			break;
+		case BUTTON_MENU:
+		case BUTTON_HELP:
+			event.type = Common::EVENT_KEYUP;
+			if (BUTTON_STATE_L == true) {
+				event.type = Common::EVENT_MAINMENU;
+			} else {
+				event.kbd.keycode = Common::KEYCODE_F5;
+				event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+			}
+			break;
+		case BUTTON_R:
+			event.type = Common::EVENT_KEYUP;
+			if (BUTTON_STATE_L == true) {
+#ifdef ENABLE_VKEYBD
+				event.kbd.keycode = Common::KEYCODE_F7;
+				event.kbd.ascii = mapKey(SDLK_F7, ev.key.keysym.mod, 0);
+#else
+				event.kbd.keycode = Common::KEYCODE_0;
+				event.kbd.ascii = mapKey(SDLK_0, ev.key.keysym.mod, 0);
 #endif
 			} else {
-				event.type = Common::EVENT_KEYUP;
-				event.kbd.flags = 0;
-				switch (ev.jbutton.button) {
-					case BUTTON_SELECT:
-					case BUTTON_HELP2:
-						event.kbd.keycode = Common::KEYCODE_ESCAPE;
-						event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
-						break;
-					case BUTTON_A:
-						event.kbd.keycode = Common::KEYCODE_PERIOD;
-						event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
-						break;
-					case BUTTON_Y:
-						event.kbd.keycode = Common::KEYCODE_SPACE;
-						event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
-						break;
-					case BUTTON_MENU:
-					case BUTTON_HELP:
-						if (BUTTON_STATE_L == true) {
-							event.type = Common::EVENT_MAINMENU;
-						} else {
-							event.kbd.keycode = Common::KEYCODE_F5;
-							event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-						}
-						break;
-					case BUTTON_L:
-						BUTTON_STATE_L = false;
-						break;
-					case BUTTON_R:
-						if (BUTTON_STATE_L == true) {
-#ifdef ENABLE_VKEYBD
-							event.kbd.keycode = Common::KEYCODE_F7;
-							event.kbd.ascii = mapKey(SDLK_F7, ev.key.keysym.mod, 0);
-#else
-							event.kbd.keycode = Common::KEYCODE_0;
-							event.kbd.ascii = mapKey(SDLK_0, ev.key.keysym.mod, 0);
-#endif
-						} else {
-							event.kbd.keycode = Common::KEYCODE_RETURN;
-							event.kbd.ascii = mapKey(SDLK_RETURN, ev.key.keysym.mod, 0);
-						}
-						break;
-					case BUTTON_VOLUP:
-						break;
-					case BUTTON_VOLDOWN:
-						break;
-					case BUTTON_HOLD:
- 						break;
-					case BUTTON_HOME:
-						break;
-				}
+				event.kbd.keycode = Common::KEYCODE_RETURN;
+				event.kbd.ascii = mapKey(SDLK_RETURN, ev.key.keysym.mod, 0);
 			}
-			return true;
+			break;
+		case BUTTON_VOLUP:
+			break;
+		case BUTTON_VOLDOWN:
+			break;
+		case BUTTON_HOLD:
+			break;
+		case BUTTON_HELP2:
+			break;
+	}
+	return true;
 }
 
 bool OSystem_GPH::remapKey(SDL_Event &ev,Common::Event &event) {

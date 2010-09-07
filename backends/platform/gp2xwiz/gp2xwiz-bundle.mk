@@ -16,6 +16,7 @@ gp2xwiz-bundle: $(EXECUTABLE)
 
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvm.gpe $(bundle_name)/scummvm/
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvm.png $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvmb.png $(bundle_name)/scummvm/
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/README-GP2XWIZ $(bundle_name)/scummvm/
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvm.ini $(bundle_name)/	
 
@@ -49,6 +50,7 @@ gp2xwiz-bundle-debug: $(EXECUTABLE)
 
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvm-gdb.gpe $(bundle_name)/scummvm/scummvm.gpe
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvm.png $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvmb.png $(bundle_name)/scummvm/
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/README-GP2XWIZ $(bundle_name)/scummvm/
 	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvm.ini $(bundle_name)/	
 
