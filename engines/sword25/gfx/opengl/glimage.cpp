@@ -100,6 +100,7 @@ GLImage::GLImage(uint width, uint height, bool &result) :
 	_height(height) {
 
 	_data = new byte[width * height * 4];
+	Common::set_to(_data, &_data[width * height * 4], 0);
 
 	_backSurface = (static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx")))->getSurface();
 
