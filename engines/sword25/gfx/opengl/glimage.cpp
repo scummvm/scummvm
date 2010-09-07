@@ -75,12 +75,14 @@ GLImage::GLImage(const Common::String &filename, bool &result) :
 	int pitch;
 	if (!ImageLoader::ExtractImageProperties(pFileData, fileSize, colorFormat, _width, _height)) {
 		BS_LOG_ERRORLN("Could not read image properties.");
+		delete[] pFileData;
 		return;
 	}
 
 	// Das Bild dekomprimieren
 	if (!ImageLoader::LoadImage(pFileData, fileSize, GraphicEngine::CF_ARGB32, _data, _width, _height, pitch)) {
 		BS_LOG_ERRORLN("Could not decode image.");
+		delete[] pFileData;
 		return;
 	}
 
