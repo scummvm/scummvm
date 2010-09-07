@@ -1055,7 +1055,9 @@ void RivenExternal::xgisland1490_domecheck(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xgplateau3160_dopools(uint16 argc, uint16 *argv) {
-	// TODO: "Bubble" map related
+	// Play the deactivation of a pool if one is active and a different one is activated
+	_vm->_gfx->changeCursor(kRivenHideCursor);
+	_vm->_video->playMovieBlocking(*_vm->getVar("glkbtns") * 2);
 }
 
 void RivenExternal::xgwt200_scribetime(uint16 argc, uint16 *argv) {
