@@ -32,8 +32,6 @@
  *
  */
 
-#include "art_vpath_bpath.h"
-#include "art_vpath_bpath.h"
 #include "art_svp_vpath.h"
 #include "art_svp_vpath_stroke.h"
 #include "art_svp_render_aa.h"

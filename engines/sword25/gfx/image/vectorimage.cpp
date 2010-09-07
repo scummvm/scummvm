@@ -41,7 +41,7 @@
 
 #include "graphics/colormasks.h"
 
-#include "art_vpath_bpath.h"
+#include "art.h"
 
 #include "sword25/gfx/opengl/glimage.h"
 
