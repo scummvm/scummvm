@@ -23,13 +23,11 @@
 #ifndef __ART_MISC_H__
 #define __ART_MISC_H__
 
-#include "config.h"
+#include "common/scummsys.h"
 
 typedef byte art_u8;
 typedef uint16 art_u16;
 typedef uint32 art_u32;
-
-#include <stdlib.h> /* for malloc, etc. */
 
 /* These aren't, strictly speaking, configuration macros, but they're
    damn handy to have around, and may be worth playing with for
