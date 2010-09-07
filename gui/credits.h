@@ -574,9 +574,9 @@ static const char *credits[] = {
 "C0""",
 "C0""John Young, Colin Smythe and especially Terry Pratchett himself for sharing the source code of Discworld I & II with us.",
 "C0""",
-"C0""Emilio de Paz Aragon from Alcachofa Soft for sharing the source code of Drascula: The Vampire Strikes Back with us and his generousity with freewaring the game.",
+"C0""Emilio de Paz Aragon from Alcachofa Soft for sharing the source code of Drascula: The Vampire Strikes Back with us and his generosity with freewaring the game.",
 "C0""",
-"C0""David P. Gray from Gray Design Associate for sharing the source code of Hugo trilogy.",
+"C0""David P. Gray from Gray Design Associate for sharing the source code of the Hugo trilogy.",
 "C0""",
 "",
 };

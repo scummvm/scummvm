@@ -1025,12 +1025,12 @@ begin_credits("Credits");
 
   add_paragraph(
   "Emilio de Paz Arag&oacute;n from Alcachofa Soft for sharing the source code ".
-  "of Drascula: The Vampire Strikes Back with us and his generousity with ".
+  "of Drascula: The Vampire Strikes Back with us and his generosity with ".
   "freewaring the game.");
 
   add_paragraph(
   "David P. Gray from Gray Design Associate for sharing the source code ".
-  "of Hugo trilogy.");
+  "of the Hugo trilogy.");
 
   end_section();
 
