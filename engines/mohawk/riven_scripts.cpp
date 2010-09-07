@@ -348,7 +348,7 @@ void RivenScript::playScriptSLST(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 4: play local tWAV resource (twav_id, volume, u1)
 void RivenScript::playSound(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_sound->playSound(argv[0], false);
+	_vm->_sound->playSound(argv[0]);
 }
 
 // Command 7: set variable value (variable, value)

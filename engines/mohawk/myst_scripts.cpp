@@ -870,7 +870,7 @@ void MystScriptParser::opcode_30(uint16 op, uint16 var, uint16 argc, uint16 *arg
 			_vm->_sound->stopSound();
 			// TODO: Need to keep sound handle and add function to change volume of
 			// looped running sound for kMystSoundActionChangeVolume type
-			_vm->_sound->playSound(soundAction, true, soundVolume);
+			_vm->_sound->playSound(soundAction, soundVolume);
 		} else {
 			debugC(kDebugScript, "Unknown");
 			warning("Unknown sound control value in opcode %d", op);

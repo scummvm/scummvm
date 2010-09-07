@@ -118,8 +118,7 @@ public:
 	Sound(MohawkEngine*);
 	~Sound();
 
-	void loadRivenSounds(uint16 stack);
-	Audio::SoundHandle *playSound(uint16 id, bool mainSoundFile = true, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
+	Audio::SoundHandle *playSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
 	void playMidi(uint16 id);
 	void stopSound();
 	void pauseSound();
@@ -132,11 +131,9 @@ public:
 
 private:
 	MohawkEngine *_vm;
-	MohawkArchive *_rivenSoundFile;
 	MidiDriver *_midiDriver;
 	MidiParser *_midiParser;
 
-	static Audio::AudioStream *getCSAmtrakMusic(uint16 id);
 	static Audio::AudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream);
 	static Audio::AudioStream *makeOldMohawkWaveStream(Common::SeekableReadStream *stream);
 	void initMidi();

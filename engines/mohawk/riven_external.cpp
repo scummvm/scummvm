@@ -277,7 +277,7 @@ void RivenExternal::resetDomeSliders(uint16 bitmapId, uint16 soundId, uint16 sta
 			// If we have at least one found slider, it has now moved
 			// so we should redraw and play a tick sound
 			if (slidersFound) {
-				_vm->_sound->playSound(soundId, false);
+				_vm->_sound->playSound(soundId);
 				drawDomeSliders(bitmapId, startHotspot);
 				_vm->_system->delayMillis(10);
 			}
@@ -350,7 +350,7 @@ void RivenExternal::dragDomeSlider(uint16 bitmapId, uint16 soundId, uint16 reset
 					_sliderState |= 1 << (24 - foundSlider);
 
 					// Now play a click sound and redraw
-					_vm->_sound->playSound(soundId, false);
+					_vm->_sound->playSound(soundId);
 					drawDomeSliders(bitmapId, startHotspot);
 				} else if (foundSlider > 0 && !(_sliderState & (1 << (25 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot - 1].rect.contains(event.mouse)) {
 					// We've moved the slider left one space
@@ -359,7 +359,7 @@ void RivenExternal::dragDomeSlider(uint16 bitmapId, uint16 soundId, uint16 reset
 					_sliderState |= 1 << (24 - foundSlider);
 
 					// Now play a click sound and redraw
-					_vm->_sound->playSound(soundId, false);
+					_vm->_sound->playSound(soundId);
 					drawDomeSliders(bitmapId, startHotspot);
 				} else
 					_vm->_system->updateScreen(); // A normal update for the cursor
@@ -453,9 +453,9 @@ void RivenExternal::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 
 	// Play the page turning sound
 	if (_vm->getFeatures() & GF_DEMO)
-		_vm->_sound->playSound(4, false);
+		_vm->_sound->playSound(4);
 	else
-		_vm->_sound->playSound(3, false);
+		_vm->_sound->playSound(3);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(1);
@@ -473,9 +473,9 @@ void RivenExternal::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
 
 	// Play the page turning sound
 	if (_vm->getFeatures() & GF_DEMO)
-		_vm->_sound->playSound(5, false);
+		_vm->_sound->playSound(5);
 	else
-		_vm->_sound->playSound(4, false);
+		_vm->_sound->playSound(4);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(0);
@@ -541,7 +541,7 @@ void RivenExternal::xacathbookprevpage(uint16 argc, uint16 *argv) {
 	(*page)--;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(5, false);
+	_vm->_sound->playSound(5);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(3);
@@ -558,7 +558,7 @@ void RivenExternal::xacathbooknextpage(uint16 argc, uint16 *argv) {
 	(*page)++;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(6, false);
+	_vm->_sound->playSound(6);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(2);
@@ -577,7 +577,7 @@ void RivenExternal::xatrapbookclose(uint16 argc, uint16 *argv) {
 	*_vm->getVar("atrap") = 0;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(8, false);
+	_vm->_sound->playSound(8);
 
 	_vm->refreshCard();
 }
@@ -587,7 +587,7 @@ void RivenExternal::xatrapbookopen(uint16 argc, uint16 *argv) {
 	*_vm->getVar("atrap") = 1;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(9, false);
+	_vm->_sound->playSound(9);
 
 	_vm->refreshCard();
 }
@@ -698,7 +698,7 @@ void RivenExternal::xblabbookprevpage(uint16 argc, uint16 *argv) {
 	(*page)--;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(22, false);
+	_vm->_sound->playSound(22);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(1);
@@ -715,7 +715,7 @@ void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
 	(*page)++;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(23, false);
+	_vm->_sound->playSound(23);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(0);
@@ -1149,7 +1149,7 @@ void RivenExternal::xcheckicons(uint16 argc, uint16 *argv) {
 	if (countDepressedIcons(*iconOrderVar) == 5) {
 		*iconOrderVar = 0;
 		*_vm->getVar("jicons") = 0;
-		_vm->_sound->playSound(46, false);
+		_vm->_sound->playSound(46);
 	}
 }
 
@@ -1569,12 +1569,12 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 					_vm->_gfx->changeCursor(kRivenHideCursor);          // Hide the cursor
 					_vm->_gfx->drawPLST(3);                             // Black out the screen
 					_vm->_gfx->updateScreen();                          // Update the screen
-					_vm->_sound->playSound(0, false);                   // Play the link sound
+					_vm->_sound->playSound(0);                          // Play the link sound
 					_vm->_video->activateMLST(7, _vm->getCurCard());    // Activate Gehn Link Video
 					_vm->_video->playMovieBlocking(1);                  // Play Gehn Link Video
-					*_vm->getVar("agehn") = 4;                // Set Gehn to the trapped state
-					*_vm->getVar("atrapbook") = 1;            // We've got the trap book again
-					_vm->_sound->playSound(0, false);                   // Play the link sound again
+					*_vm->getVar("agehn") = 4;                          // Set Gehn to the trapped state
+					*_vm->getVar("atrapbook") = 1;                      // We've got the trap book again
+					_vm->_sound->playSound(0);                          // Play the link sound again
 					_vm->changeToCard(_vm->matchRMAPToCard(0x2885));    // Link out! (TODO: Shouldn't this card change?)
 					return;
 				}
@@ -1661,7 +1661,7 @@ void RivenExternal::xogehnbookprevpage(uint16 argc, uint16 *argv) {
 	(*page)--;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(12, false);
+	_vm->_sound->playSound(12);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(1);
@@ -1678,7 +1678,7 @@ void RivenExternal::xogehnbooknextpage(uint16 argc, uint16 *argv) {
 	(*page)++;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(13, false);
+	_vm->_sound->playSound(13);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(0);
@@ -1704,7 +1704,7 @@ void RivenExternal::xgwatch(uint16 argc, uint16 *argv) {
 			if (curSound == 5) // Break out after the last sound is done
 				break;
 
-			_vm->_sound->playSound(getComboDigit(*prisonCombo, curSound) + 13, !(_vm->getFeatures() & GF_DVD));
+			_vm->_sound->playSound(getComboDigit(*prisonCombo, curSound) + 13);
 			curSound++;
 			soundTime = _vm->_system->getMillis();
 		}
@@ -1731,7 +1731,7 @@ void RivenExternal::xgwatch(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xpisland990_elevcombo(uint16 argc, uint16 *argv) {
 	// Play button sound based on argv[0]
-	_vm->_sound->playSound(argv[0] + 5, false);
+	_vm->_sound->playSound(argv[0] + 5);
 
 	// It is impossible to get here if Gehn is not trapped. However,
 	// the original also disallows brute forcing the ending if you have
@@ -1853,7 +1853,7 @@ void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 		} else {
 			// ...the telescope can't move down anymore.
 			// Play the sound of not being able to move
-			_vm->_sound->playSound(13, false);
+			_vm->_sound->playSound(13);
 		}
 	} else {
 		// We're not at the bottom, and we can move down again
@@ -1879,7 +1879,7 @@ void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 	// Check if we can't move up anymore
 	if (*telescopePos == 5) {
 		// Play the sound of not being able to move
-		_vm->_sound->playSound(13, false);
+		_vm->_sound->playSound(13);
 		return;
 	}
 

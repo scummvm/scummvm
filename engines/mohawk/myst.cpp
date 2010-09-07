@@ -427,7 +427,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 
 		// NOTE: All sounds are looped when played via the sound section of the
 		// VIEW resources.
-		_sound->playSound(soundAction, true, soundActionVolume, true);
+		_sound->playSound(soundAction, soundActionVolume, true);
 	} else {
 		error("Unknown sound action %d", soundAction);
 	}

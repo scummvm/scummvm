@@ -251,7 +251,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	// The endings are in reverse order because of the way the 1.02 patch works.
 	// The only "Data3" file is j_Data3.mhk from that patch. Patch files have higher
 	// priorities over the regular files and are therefore loaded and checked first.
-	static const char *endings[] = { "_Data3.mhk", "_Data2.mhk", "_Data1.mhk", "_Data.mhk" };
+	static const char *endings[] = { "_Data3.mhk", "_Data2.mhk", "_Data1.mhk", "_Data.mhk", "_Sounds.mhk" };
 
 	// Don't change stack to the current stack (if the files are loaded)
 	if (_curStack == n && !_mhk.empty())
@@ -285,9 +285,8 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	if (_mhk.empty())
 		error("Could not load stack %s", getStackName(_curStack).c_str());
 
-	// Stop any currently playing sounds and load the new sound file too
+	// Stop any currently playing sounds
 	_sound->stopAllSLST();
-	_sound->loadRivenSounds(_curStack);
 }
 
 // Riven uses some hacks to change stacks for linking books

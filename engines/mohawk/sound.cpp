@@ -36,7 +36,6 @@
 namespace Mohawk {
 
 Sound::Sound(MohawkEngine* vm) : _vm(vm) {
-	_rivenSoundFile = NULL;
 	_midiDriver = NULL;
 	_midiParser = NULL;
 
@@ -51,7 +50,6 @@ Sound::Sound(MohawkEngine* vm) : _vm(vm) {
 Sound::~Sound() {
 	stopSound();
 	stopAllSLST();
-	delete _rivenSoundFile;
 
 	if (_midiDriver) {
 		_midiDriver->close();
@@ -62,15 +60,6 @@ Sound::~Sound() {
 		_midiParser->unloadMusic();
 		delete _midiParser;
 	}
-}
-
-void Sound::loadRivenSounds(uint16 stack) {
-	static const char prefixes[] = { 'a', 'b', 'g', 'j', 'o', 'p', 'r', 't' };
-
-	if (!_rivenSoundFile)
-		_rivenSoundFile = new MohawkArchive();
-
-	_rivenSoundFile->open(Common::String(prefixes[stack]) + "_Sounds.mhk");
 }
 
 void Sound::initMidi() {
@@ -87,7 +76,7 @@ void Sound::initMidi() {
 	_midiParser->setTimerRate(_midiDriver->getBaseTempo());
 }
 
-Audio::SoundHandle *Sound::playSound(uint16 id, bool mainSoundFile, byte volume, bool loop) {
+Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop) {
 	debug (0, "Playing sound %d", id);
 
 	SndHandle *handle = getHandle();
@@ -113,20 +102,8 @@ Audio::SoundHandle *Sound::playSound(uint16 id, bool mainSoundFile, byte volume,
 		} else
 			audStream = makeMohawkWaveStream(_vm->getRawData(ID_MSND, id));
 		break;
-	case GType_RIVEN:
-		if (mainSoundFile)
-			audStream = makeMohawkWaveStream(_rivenSoundFile->getRawData(ID_TWAV, id));
-		else
-			audStream = makeMohawkWaveStream(_vm->getRawData(ID_TWAV, id));
-		break;
 	case GType_ZOOMBINI:
 		audStream = makeMohawkWaveStream(_vm->getRawData(ID_SND, id));
-		break;
-	case GType_CSAMTRAK:
-		if (mainSoundFile)
-			audStream = makeMohawkWaveStream(_vm->getRawData(ID_TWAV, id));
-		else
-			audStream = getCSAmtrakMusic(id);
 		break;
 	case GType_LIVINGBOOKSV1:
 		audStream = makeOldMohawkWaveStream(_vm->getRawData(ID_WAV, id));
@@ -304,7 +281,7 @@ void Sound::playSLSTSound(uint16 id, bool fade, bool loop, uint16 volume, int16 
 	sndHandle.id = id;
 	_currentSLSTSounds.push_back(sndHandle);
 
-	Audio::AudioStream *audStream = makeMohawkWaveStream(_rivenSoundFile->getRawData(ID_TWAV, id));
+	Audio::AudioStream *audStream = makeMohawkWaveStream(_vm->getRawData(ID_TWAV, id));
 
 	// Loop here if necessary
 	if (loop)
@@ -334,16 +311,6 @@ void Sound::pauseSLST() {
 void Sound::resumeSLST() {
 	for (uint16 i = 0; i < _currentSLSTSounds.size(); i++)
 		_vm->_mixer->pauseHandle(*_currentSLSTSounds[i].handle, false);
-}
-
-Audio::AudioStream *Sound::getCSAmtrakMusic(uint16 id) {
-	char filename[18];
-	sprintf(filename, "MUSIC/MUSIC%02d.MHK", id);
-	MohawkArchive *file = new MohawkArchive();
-	file->open(filename);
-	Audio::AudioStream *audStream = makeMohawkWaveStream(file->getRawData(ID_TWAV, 2000 + id));
-	delete file;
-	return audStream;
 }
 
 Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stream) {
