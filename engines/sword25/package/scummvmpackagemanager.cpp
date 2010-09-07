@@ -59,6 +59,11 @@ ScummVMPackageManager::ScummVMPackageManager(Kernel *kernelPtr) :
 }
 
 ScummVMPackageManager::~ScummVMPackageManager() {
+	// Free the package list
+	Common::List<ArchiveEntry *>::iterator i;
+	for (i = _archiveList.begin(); i != _archiveList.end(); ++i)
+		delete *i;
+
 }
 
 Service *ScummVMPackageManager_CreateObject(Kernel *kernelPtr) {
