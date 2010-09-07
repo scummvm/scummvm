@@ -313,7 +313,7 @@ Common::Error SciEngine::run() {
 	// Show a warning if the user has selected a General MIDI device, no GM patch exists
 	// (i.e. patch 4) and the game is one of the known 8 SCI1 games that Sierra has provided
 	// after market patches for in their "General MIDI Utility".
-	if (_soundCmd->getMusicType() == MT_GM) {
+	if (_soundCmd->getMusicType() == MT_GM && !ConfMan.getBool("native_mt32")) {
 		if (!_resMan->findResource(ResourceId(kResourceTypePatch, 4), 0)) {
 			switch (getGameId()) {
 			case GID_ECOQUEST:
