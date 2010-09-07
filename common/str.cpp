@@ -691,9 +691,18 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMod
 
 		switch (*pat) {
 		case '*':
-			// Record pattern / string position for backtracking
-			p = ++pat;
-			q = str;
+			if (*str) {
+				// Record pattern / string position for backtracking
+				p = ++pat;
+				q = str;
+			} else {
+				// If we've reached the end of str, we can't backtrack further
+				// NB: We can't simply check if pat also ended here, because
+				// the pattern might end with any number of *s.
+				++pat;
+				p = 0;
+				q = 0;
+			}
 			// If pattern ended with * -> match
 			if (!*pat)
 				return true;
