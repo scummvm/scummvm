@@ -40,9 +40,9 @@ enum {
 	#define PATH_MAX 255
 #endif
 
-class OSystem_GP2XWIZ : public OSystem_SDL {
+class OSystem_GPH : public OSystem_SDL {
 public:
-	OSystem_GP2XWIZ() {}
+	OSystem_GPH() {}
 
 	/* Graphics */
     void initSize(uint w, uint h);
@@ -59,7 +59,6 @@ public:
     void hideOverlay();
 
 	/* Event Stuff */
-	bool pollEvent(Common::Event &event);
 	void moveStick();
 	void fillMouseEvent(Common::Event&, int, int);
 	void warpMouse(int, int);
@@ -72,6 +71,11 @@ public:
 
 protected:
 	bool _stickBtn[32];
+
+	bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
+	bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
+	bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
+	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 };
 
 #endif

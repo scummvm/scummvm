@@ -57,7 +57,7 @@
 #define DUMP_STDOUT
 
 int main(int argc, char *argv[]) {
-	g_system = new OSystem_GP2XWIZ();
+	g_system = new OSystem_GPH();
 	assert(g_system);
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
 	return res;
 }
 
-void OSystem_GP2XWIZ::initBackend() {
+void OSystem_GPH::initBackend() {
 
 	/* Setup default save path to be workingdir/saves */
 
@@ -164,7 +164,7 @@ void OSystem_GP2XWIZ::initBackend() {
 	OSystem_SDL::initBackend();
 }
 
-void OSystem_GP2XWIZ::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+void OSystem_GPH::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 
 	/* Setup default extra data paths for engine data files and plugins */
 	char workDirName[PATH_MAX+1];
@@ -199,7 +199,7 @@ void OSystem_GP2XWIZ::addSysArchivesToSearchSet(Common::SearchSet &s, int priori
 	}
 }
 
-void OSystem_GP2XWIZ::quit() {
+void OSystem_GPH::quit() {
 
 	WIZ_HW::deviceDeinit();
 

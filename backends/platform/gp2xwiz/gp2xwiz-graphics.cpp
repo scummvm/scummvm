@@ -38,15 +38,15 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
-const OSystem::GraphicsMode *OSystem_GP2XWIZ::getSupportedGraphicsModes() const {
+const OSystem::GraphicsMode *OSystem_GPH::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
-int OSystem_GP2XWIZ::getDefaultGraphicsMode() const {
+int OSystem_GPH::getDefaultGraphicsMode() const {
 	return GFX_NORMAL;
 }
 
-bool OSystem_GP2XWIZ::setGraphicsMode(int mode) {
+bool OSystem_GPH::setGraphicsMode(int mode) {
 	Common::StackLock lock(_graphicsMutex);
 
 	assert(_transactionMode == kTransactionActive);
@@ -80,7 +80,7 @@ bool OSystem_GP2XWIZ::setGraphicsMode(int mode) {
 	return true;
 }
 
-void OSystem_GP2XWIZ::setGraphicsModeIntern() {
+void OSystem_GPH::setGraphicsModeIntern() {
 	Common::StackLock lock(_graphicsMutex);
 	ScalerProc *newScalerProc = 0;
 
@@ -109,7 +109,7 @@ void OSystem_GP2XWIZ::setGraphicsModeIntern() {
 	blitCursor();
 }
 
-void OSystem_GP2XWIZ::initSize(uint w, uint h) {
+void OSystem_GPH::initSize(uint w, uint h) {
 	assert(_transactionMode == kTransactionActive);
 
 	// Avoid redundant res changes
@@ -127,7 +127,7 @@ void OSystem_GP2XWIZ::initSize(uint w, uint h) {
 	_transactionDetails.sizeChanged = true;
 }
 
-bool OSystem_GP2XWIZ::loadGFXMode() {
+bool OSystem_GPH::loadGFXMode() {
 	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
 		_videoMode.aspectRatioCorrection = false;
 		setGraphicsMode(GFX_HALF);
@@ -155,7 +155,7 @@ bool OSystem_GP2XWIZ::loadGFXMode() {
 	return OSystem_SDL::loadGFXMode();
 }
 
-void OSystem_GP2XWIZ::drawMouse() {
+void OSystem_GPH::drawMouse() {
 	if (!_mouseVisible || !_mouseSurface) {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 		return;
@@ -226,7 +226,7 @@ void OSystem_GP2XWIZ::drawMouse() {
 	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 
-void OSystem_GP2XWIZ::undrawMouse() {
+void OSystem_GPH::undrawMouse() {
 	const int x = _mouseBackup.x;
 	const int y = _mouseBackup.y;
 
@@ -244,7 +244,7 @@ void OSystem_GP2XWIZ::undrawMouse() {
 	}
 }
 
-void OSystem_GP2XWIZ::internUpdateScreen() {
+void OSystem_GPH::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	int height, width;
 	ScalerProc *scalerProc;
@@ -256,7 +256,8 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 #endif
 
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos) {
+	if (_currentShakePos != _newShakePos ||
+		(_mouseNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
 		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
@@ -314,6 +315,7 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 		width = _videoMode.overlayWidth;
 		height = _videoMode.overlayHeight;
 		scalerProc = Normal1x;
+
 		scale1 = 1;
 	}
 
@@ -441,7 +443,7 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 	_mouseNeedsRedraw = false;
 }
 
-void OSystem_GP2XWIZ::showOverlay() {
+void OSystem_GPH::showOverlay() {
 	if (_videoMode.mode == GFX_HALF){
 		_mouseCurState.x = _mouseCurState.x / 2;
 		_mouseCurState.y = _mouseCurState.y / 2;
@@ -449,7 +451,7 @@ void OSystem_GP2XWIZ::showOverlay() {
 	OSystem_SDL::showOverlay();
 }
 
-void OSystem_GP2XWIZ::hideOverlay() {
+void OSystem_GPH::hideOverlay() {
 	if (_videoMode.mode == GFX_HALF){
 		_mouseCurState.x = _mouseCurState.x * 2;
 		_mouseCurState.y = _mouseCurState.y * 2;
@@ -457,7 +459,7 @@ void OSystem_GP2XWIZ::hideOverlay() {
 	OSystem_SDL::hideOverlay();
 }
 
-void OSystem_GP2XWIZ::warpMouse(int x, int y) {
+void OSystem_GPH::warpMouse(int x, int y) {
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible){
 			x = x / 2;
