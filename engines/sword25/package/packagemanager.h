@@ -125,7 +125,7 @@ public:
 		Common::copy(data, data + fileSize, result + strlen(versionStr));
 		result[fileSize + strlen(versionStr)] = '\0';
 
-		free(data);
+		delete[] data;
 		if (pFileSize) *pFileSize = fileSize + strlen(versionStr);
 		return result;
 	}

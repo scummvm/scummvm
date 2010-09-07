@@ -199,7 +199,7 @@ static int GetFileAsString(lua_State *L) {
 	char *FileData = (char *)pPM->GetFile(luaL_checkstring(L, 1), &FileSize);
 	if (FileData) {
 		lua_pushlstring(L, FileData, FileSize);
-		delete FileData;
+		delete[] FileData;
 
 		return 1;
 	} else
