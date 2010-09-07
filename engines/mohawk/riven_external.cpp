@@ -739,54 +739,60 @@ void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
 	uint32 water = *_vm->getVar("bblrwtr");
 	uint32 platform = *_vm->getVar("bblrgrt");
 
+	// Stop any background videos
+	_vm->_video->stopVideos();
+
 	if (argv[0] == 1) {
+		// Water is filling/draining from the boiler
 		if (water == 0) {
-			if (platform == 0)
-				_vm->_video->activateMLST(10, _vm->getCurCard());
-			else
+			if (platform == 1)
 				_vm->_video->activateMLST(12, _vm->getCurCard());
-		} else if (heat == 0) {
-			if (platform == 0)
-				_vm->_video->activateMLST(19, _vm->getCurCard());
 			else
+				_vm->_video->activateMLST(10, _vm->getCurCard());
+		} else if (heat == 1) {
+			if (platform == 1)
 				_vm->_video->activateMLST(22, _vm->getCurCard());
-		} else {
-			if (platform == 0)
-				_vm->_video->activateMLST(13, _vm->getCurCard());
 			else
+				_vm->_video->activateMLST(19, _vm->getCurCard());
+		} else {
+			if (platform == 1)
 				_vm->_video->activateMLST(16, _vm->getCurCard());
+			else
+				_vm->_video->activateMLST(13, _vm->getCurCard());
 		}
 	} else if (argv[0] == 2 && water != 0) {
-		if (heat == 0) {
-			if (platform == 0)
-				_vm->_video->activateMLST(20, _vm->getCurCard());
-			else
+		if (heat == 1) {
+			// Turning on the heat
+			if (platform == 1)
 				_vm->_video->activateMLST(23, _vm->getCurCard());
+			else
+				_vm->_video->activateMLST(20, _vm->getCurCard());
 		} else {
-			if (platform == 0)
+			// Turning off the heat
+			if (platform == 1)
 				_vm->_video->activateMLST(18, _vm->getCurCard());
 			else
 				_vm->_video->activateMLST(15, _vm->getCurCard());
 		}
 	} else if (argv[0] == 3) {
-		if (platform == 0) {
-			if (water == 0) {
-				_vm->_video->activateMLST(11, _vm->getCurCard());
-			} else {
-				if (heat == 0)
-					_vm->_video->activateMLST(17, _vm->getCurCard());
-				else
+		if (platform == 1) {
+			// Lowering the platform
+			if (water == 1) {
+				if (heat == 1)
 					_vm->_video->activateMLST(24, _vm->getCurCard());
-			}
-		} else {
-			if (water == 0) {
-				_vm->_video->activateMLST(9, _vm->getCurCard());
-			} else {
-				if (heat == 0)
-					_vm->_video->activateMLST(14, _vm->getCurCard());
 				else
+					_vm->_video->activateMLST(17, _vm->getCurCard());
+			} else
+				_vm->_video->activateMLST(11, _vm->getCurCard());
+		} else {
+			// Raising the platform
+			if (water == 1) {
+				if (heat == 1)
 					_vm->_video->activateMLST(21, _vm->getCurCard());
-			}
+				else
+					_vm->_video->activateMLST(14, _vm->getCurCard());
+			} else
+				_vm->_video->activateMLST(9, _vm->getCurCard());
 		}
 	}
 
@@ -795,7 +801,8 @@ void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
 	else if (argv[0] == 2)
 		_vm->_sound->playSLST(1, _vm->getCurCard());
 
-	_vm->_video->playMovie(11);
+	_vm->_gfx->changeCursor(kRivenHideCursor);
+	_vm->_video->playMovieBlocking(11);
 }
 
 void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
@@ -804,18 +811,16 @@ void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
 
 	if (heat) {
 		if (platform == 0) {
-			_vm->_video->activateMLST(7, _vm->getCurCard());
-			_vm->_video->playMovie(7);
-		} else {
 			_vm->_video->activateMLST(8, _vm->getCurCard());
 			_vm->_video->playMovie(8);
+		} else {
+			_vm->_video->activateMLST(7, _vm->getCurCard());
+			_vm->_video->playMovie(7);
 		}
 	} else {
-		_vm->_video->stopMovie(7);
-		_vm->_video->stopMovie(8);
+		_vm->_video->disableMovie(7);
+		_vm->_video->disableMovie(8);
 	}
-
-	_vm->refreshCard();
 }
 
 void RivenExternal::xbsettrap(uint16 argc, uint16 *argv) {
