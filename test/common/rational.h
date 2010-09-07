@@ -17,8 +17,17 @@ public:
 		Common::Rational r6 = r5 - 1;
 
 		TS_ASSERT(r4 == r5);
+		TS_ASSERT(!(r4 != r5));
+
+		TS_ASSERT(r4 != r6);
+		TS_ASSERT(!(r4 == r6));
 
 		TS_ASSERT(-r4 == -r5);
+
+		TS_ASSERT(r0 == 2);
+		TS_ASSERT(!(r0 != 2));
+		TS_ASSERT(!(r3 == 2));
+		TS_ASSERT(r3 != 2);
 
 		TS_ASSERT(  r4 >  r6);
 		TS_ASSERT(  r4 >= r6);
