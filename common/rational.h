@@ -76,9 +76,6 @@ public:
 	bool operator>=(int right) const;
 	bool operator<=(int right) const;
 
-	operator int() const;
-	operator double() const;
-
 	void invert();
 	Rational getInverse() const;
 

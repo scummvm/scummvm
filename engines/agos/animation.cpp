@@ -372,10 +372,10 @@ bool MoviePlayerDXA::processFrame() {
 	_vm->_system->unlockScreen();
 
 	Common::Rational soundTime(_mixer->getSoundElapsedTime(_bgSound), 1000);
-	if ((_bgSoundStream == NULL) || ((int)(soundTime * getFrameRate()) / 1000 < getCurFrame() + 1)) {
+	if ((_bgSoundStream == NULL) || ((soundTime * getFrameRate()).toInt() / 1000 < getCurFrame() + 1)) {
 
 		if (_bgSoundStream && _mixer->isSoundHandleActive(_bgSound)) {
-			while (_mixer->isSoundHandleActive(_bgSound) && ((int) (soundTime * getFrameRate())) < getCurFrame()) {
+			while (_mixer->isSoundHandleActive(_bgSound) && (soundTime * getFrameRate()).toInt() < getCurFrame()) {
 				_vm->_system->delayMillis(10);
 				soundTime = Common::Rational(_mixer->getSoundElapsedTime(_bgSound), 1000);
 			}

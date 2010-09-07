@@ -258,14 +258,6 @@ frac_t Rational::toFrac() const {
 	return (_num * FRAC_ONE) / _denom;
 }
 
-Rational::operator int() const {
-	return toInt();
-}
-
-Rational::operator double() const {
-	return toDouble();
-}
-
 const Rational operator+(int left, const Rational &right) {
 	Rational tmp = right;
 	tmp += left;

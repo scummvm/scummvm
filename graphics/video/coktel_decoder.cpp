@@ -581,7 +581,7 @@ uint32 CoktelDecoder::getTimeToNextFrame() const {
 	// the middle of a long video.
 
 	if (!hasSound())
-		return Common::Rational(1000, _frameRate).toInt();
+		return (1000 / _frameRate).toInt();
 
 	// If there /is/ audio, we do need to keep video and audio
 	// in sync, though.
