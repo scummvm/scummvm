@@ -709,10 +709,7 @@ void MystScriptParser::playSoundBlocking(uint16 op, uint16 var, uint16 argc, uin
 		debugC(kDebugScript, "Opcode %d: playSoundBlocking", op);
 		debugC(kDebugScript, "\tsoundId: %d", soundId);
 
-		Audio::SoundHandle *handle = _vm->_sound->playSound(soundId);
-
-		while (_vm->_mixer->isSoundHandleActive(*handle))
-			_vm->_system->delayMillis(10);
+		_vm->_sound->playSoundBlocking(soundId);
 	} else
 		unknown(op, var, argc, argv);
 }

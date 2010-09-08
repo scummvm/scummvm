@@ -1853,7 +1853,8 @@ void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 		} else {
 			// ...the telescope can't move down anymore.
 			// Play the sound of not being able to move
-			_vm->_sound->playSound(13);
+			_vm->_gfx->changeCursor(kRivenHideCursor);
+			_vm->_sound->playSoundBlocking(13);
 		}
 	} else {
 		// We're not at the bottom, and we can move down again
@@ -1879,7 +1880,8 @@ void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 	// Check if we can't move up anymore
 	if (*telescopePos == 5) {
 		// Play the sound of not being able to move
-		_vm->_sound->playSound(13);
+		_vm->_gfx->changeCursor(kRivenHideCursor);
+		_vm->_sound->playSoundBlocking(13);
 		return;
 	}
 

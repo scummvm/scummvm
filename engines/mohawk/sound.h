@@ -115,19 +115,23 @@ class MohawkEngine;
 
 class Sound {
 public:
-	Sound(MohawkEngine*);
+	Sound(MohawkEngine *vm);
 	~Sound();
 
 	Audio::SoundHandle *playSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
+	void playSoundBlocking(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume);
 	void playMidi(uint16 id);
 	void stopSound();
 	void pauseSound();
 	void resumeSound();
+
+	// Riven-specific
 	void playSLST(uint16 index, uint16 card);
 	void playSLST(SLSTRecord slstRecord);
 	void pauseSLST();
 	void resumeSLST();
 	void stopAllSLST();
+	static byte convertRivenVolume(uint16 volume);
 
 private:
 	MohawkEngine *_vm;
@@ -141,7 +145,7 @@ private:
 	Common::Array<SndHandle> _handles;
 	SndHandle *getHandle();
 
-	// Riven specific
+	// Riven-specific
 	void playSLSTSound(uint16 index, bool fade, bool loop, uint16 volume, int16 balance);
 	void stopSLSTSound(uint16 id, bool fade);
 	Common::Array<SLSTSndHandle> _currentSLSTSounds;

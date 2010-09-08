@@ -124,6 +124,13 @@ Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop) {
 	return NULL;
 }
 
+void Sound::playSoundBlocking(uint16 id, byte volume) {
+	Audio::SoundHandle *handle = playSound(id, volume);
+
+	while (_vm->_mixer->isSoundHandleActive(*handle))
+		_vm->_system->delayMillis(10);
+}
+
 void Sound::playMidi(uint16 id) {
 	uint32 idTag;
 	if (!(_vm->getFeatures() & GF_HASMIDI)) {
@@ -163,6 +170,10 @@ void Sound::playMidi(uint16 id) {
 		error ("Could not play MIDI music from tMID %04x\n", id);
 
 	_midiDriver->setTimerCallback(_midiParser, MidiParser::timerCallback);
+}
+
+byte Sound::convertRivenVolume(uint16 volume) {
+	return (volume == 256) ? 255 : volume;
 }
 
 void Sound::playSLST(uint16 index, uint16 card) {
@@ -287,13 +298,9 @@ void Sound::playSLSTSound(uint16 id, bool fade, bool loop, uint16 volume, int16 
 	if (loop)
 		audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
 
-	// The max mixer volume is 255 and the max Riven volume is 256. Just change it to 255.
-	if (volume == 256)
-		volume = 255;
-
 	// TODO: Handle fading, possibly just raise the volume of the channel in increments?
 
-	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, sndHandle.handle, audStream, -1, volume, convertBalance(balance));
+	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, sndHandle.handle, audStream, -1, convertRivenVolume(volume), convertBalance(balance));
 }
 
 void Sound::stopSLSTSound(uint16 index, bool fade) {
