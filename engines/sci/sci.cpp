@@ -377,7 +377,8 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 
 	switch (_gameId) {
 	case GID_MOTHERGOOSE256: // mother goose saves/restores directly and has no save/restore dialogs
-	case GID_JONES: // gets confused, when we patch us in, although the game isn't able to save/restore o_O
+	case GID_JONES: // gets confused, when we patch us in, the game is only able to save to 1 slot, so hooking is not required
+	case GID_HOYLE1: // gets confused, although the game doesnt support saving/restoring at all
 		return;
 	default:
 		break;
