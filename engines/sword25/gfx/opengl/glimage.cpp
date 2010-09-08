@@ -204,9 +204,11 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
 
 	Graphics::Surface *img;
 	Graphics::Surface *imgScaled = NULL;
+	byte *savedPixels;
 	if ((width != srcImage.w) || (height != srcImage.h)) {
 		// Scale the image
 		img = imgScaled = scale(srcImage, width, height);
+		savedPixels = (byte *)img->pixels;
 	} else {
 		img = &srcImage;
 	}
@@ -234,86 +236,88 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
 	img->w = CLIP((int)img->w, 0, (int)MAX((int)_backSurface->w - posX, 0));
 	img->h = CLIP((int)img->h, 0, (int)MAX((int)_backSurface->h - posY, 0));
 
-	if (img->w == 0 || img->h == 0)
-		return true;
+	if (img->w > 0 && img->h > 0) {
+		int xp = 0, yp = 0;
 
-	int xp = 0, yp = 0;
-	int inStep = 4;
-	int inoStep = img->pitch;
-	if (flipping & Image::FLIP_V) {
-		inStep = -inStep;
-		xp = img->w - 1;
-	}
-
-	if (flipping & Image::FLIP_H) {
-		inoStep = -inoStep;
-		yp = img->h - 1;
-	}
-
-	byte *ino = (byte *)img->getBasePtr(xp, yp);
-	byte *outo = (byte *)_backSurface->getBasePtr(posX, posY);
-	byte *in, *out;
-
-	for (int i = 0; i < img->h; i++) {
-		out = outo;
-		in = ino;
-		for (int j = 0; j < img->w; j++) {
-			int r = in[0];
-			int g = in[1];
-			int b = in[2];
-			int a = in[3];
-			in += inStep;
-
-			switch (a) {
-			case 0: // Full transparency
-				out += 4;
-				break;
-			case 255: // Full opacity
-				if (cr != 255)
-					*out++ = (r * cr) >> 8;
-				else
-					*out++ = r;
-
-				if (cg != 255)
-					*out++ = (g * cg) >> 8;
-				else
-					*out++ = g;
-
-				if (cb != 255)
-					*out++ = (b * cb) >> 8;
-				else
-					*out++ = b;
-
-				*out++ = a;
-				break;
-			default: // alpha blending
-				if (cr != 255)
-					*out += ((r - *out) * a * cr) >> 16;
-				else
-					*out += ((r - *out) * a) >> 8;
-				out++;
-				if (cg != 255)
-					*out += ((g - *out) * a * cg) >> 16;
-				else
-					*out += ((g - *out) * a) >> 8;
-				out++;
-				if (cb != 255)
-					*out += ((b - *out) * a * cb) >> 16;
-				else
-					*out += ((b - *out) * a) >> 8;
-				out++;
-				*out = 255;
-				out++;
-			}
+		int inStep = 4;
+		int inoStep = img->pitch;
+		if (flipping & Image::FLIP_V) {
+			inStep = -inStep;
+			xp = img->w - 1;
 		}
-		outo += _backSurface->pitch;
-		ino += inoStep;
-	}
 
-	g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY, 
-		img->w, img->h);
+		if (flipping & Image::FLIP_H) {
+			inoStep = -inoStep;
+			yp = img->h - 1;
+		}
+
+		byte *ino = (byte *)img->getBasePtr(xp, yp);
+		byte *outo = (byte *)_backSurface->getBasePtr(posX, posY);
+		byte *in, *out;
+
+		for (int i = 0; i < img->h; i++) {
+			out = outo;
+			in = ino;
+			for (int j = 0; j < img->w; j++) {
+				int r = in[0];
+				int g = in[1];
+				int b = in[2];
+				int a = in[3];
+				in += inStep;
+
+				switch (a) {
+				case 0: // Full transparency
+					out += 4;
+					break;
+				case 255: // Full opacity
+					if (cr != 255)
+						*out++ = (r * cr) >> 8;
+					else
+						*out++ = r;
+
+					if (cg != 255)
+						*out++ = (g * cg) >> 8;
+					else
+						*out++ = g;
+
+					if (cb != 255)
+						*out++ = (b * cb) >> 8;
+					else
+						*out++ = b;
+
+					*out++ = a;
+					break;
+
+				default: // alpha blending
+					if (cr != 255)
+						*out += ((r - *out) * a * cr) >> 16;
+					else
+						*out += ((r - *out) * a) >> 8;
+					out++;
+					if (cg != 255)
+						*out += ((g - *out) * a * cg) >> 16;
+					else
+						*out += ((g - *out) * a) >> 8;
+					out++;
+					if (cb != 255)
+						*out += ((b - *out) * a * cb) >> 16;
+					else
+						*out += ((b - *out) * a) >> 8;
+					out++;
+					*out = 255;
+					out++;
+				}
+			}
+			outo += _backSurface->pitch;
+			ino += inoStep;
+		}
+
+		g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY, 
+			img->w, img->h);
+	}
 
 	if (imgScaled) {
+		imgScaled->pixels = savedPixels;
 		imgScaled->free();
 		delete imgScaled;
 	}
