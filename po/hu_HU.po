@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-01 18:36+0300\n"
+"POT-Creation-Date: 2010-09-08 19:37+0200\n"
 "PO-Revision-Date: 2009-11-25 07:42-0500\n"
 "Last-Translator: Alex Bevilacqua <alexbevi@gmail.com>\n"
 "Language-Team: Hungarian\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=cp1250\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: gui/about.cpp:96
@@ -1452,7 +1452,7 @@ msgstr ""
 
 #: backends/platform/wii/options.cpp:186
 #, c-format
-msgid "Network not initialsed (%d)"
+msgid "Network not initialised (%d)"
 msgstr ""
 
 #: backends/platform/wince/CEActionsPocket.cpp:45

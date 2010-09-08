@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-01 18:36+0300\n"
+"POT-Creation-Date: 2010-09-08 19:37+0200\n"
 "PO-Revision-Date: 2010-09-02 16:01+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
@@ -1445,8 +1445,8 @@ msgid "Timeout while initialising network"
 msgstr "Zeitüberschreitung beim Starten des Netzwerks"
 
 #: backends/platform/wii/options.cpp:186
-#, c-format
-msgid "Network not initialsed (%d)"
+#, fuzzy, c-format
+msgid "Network not initialised (%d)"
 msgstr "Netzwerk nicht gestartet (%d)"
 
 #: backends/platform/wince/CEActionsPocket.cpp:45

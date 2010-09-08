@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-08-31 20:55+0100\n"
+"POT-Creation-Date: 2010-09-08 19:37+0200\n"
 "PO-Revision-Date: 2010-06-13 20:55+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -1437,8 +1437,8 @@ msgid "Timeout while initialising network"
 msgstr "Время подключения к сети истекло"
 
 #: backends/platform/wii/options.cpp:186
-#, c-format
-msgid "Network not initialsed (%d)"
+#, fuzzy, c-format
+msgid "Network not initialised (%d)"
 msgstr "Сеть не настроена (%d)"
 
 #: backends/platform/wince/CEActionsPocket.cpp:45
