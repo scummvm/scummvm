@@ -903,6 +903,10 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t controlObject = argv[0];
 	Common::String objName = s->_segMan->getObjectName(controlObject);
 
+	// Most of the time, we won't return anything to the caller
+	//  but |r| textcodes will trigger creation of rects in memory and will then set s->r_acc
+	s->r_acc = NULL_REG;
+
 	// Disable the "Change Directory" button, as we don't allow the game engine to
 	// change the directory where saved games are placed
 	// "changeDirItem" is used in the import windows of QFG2&3
@@ -941,7 +945,7 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	_k_GenericDrawControl(s, controlObject, false);
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kHiliteControl(EngineState *s, int argc, reg_t *argv) {
