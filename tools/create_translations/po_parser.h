@@ -34,7 +34,7 @@ public:
 
 	void insert(const char *msg);
 	int findIndex(const char *msg);
-	
+
 	int size() const;
 	const char *operator[](int) const;
 
@@ -69,9 +69,9 @@ struct PoMessageEntry {
 		}
 	}
 	~PoMessageEntry() {
-		delete [] msgstr;
-		delete [] msgid;
-		delete [] msgctxt;
+		delete[] msgstr;
+		delete[] msgid;
+		delete[] msgctxt;
 	}
 };
 
@@ -80,11 +80,11 @@ struct PoMessageEntry {
  */
 class PoMessageEntryList {
 public:
-	PoMessageEntryList(const char* language);
+	PoMessageEntryList(const char *language);
 	~PoMessageEntryList();
 
 	void addMessageEntry(const char *translation, const char *message, const char *context = NULL);
-	
+
 	const char *language() const;
 	const char *languageName() const;
 	const char *charset() const;

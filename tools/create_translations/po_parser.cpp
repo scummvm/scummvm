@@ -34,14 +34,14 @@ PoMessageList::PoMessageList() : _messages(NULL), _size(0), _allocated(0) {
 
 PoMessageList::~PoMessageList() {
 	for (int i = 0; i < _size; ++i)
-		delete [] _messages[i];
-	delete [] _messages;
+		delete[] _messages[i];
+	delete[] _messages;
 }
 
 void PoMessageList::insert(const char *msg) {
 	if (msg == NULL || *msg == '\0')
 		return;
-	
+
 	// binary-search for the insertion index
 	int leftIndex = 0;
 	int rightIndex = _size - 1;
@@ -64,7 +64,7 @@ void PoMessageList::insert(const char *msg) {
 			newMessages[i] = _messages[i];
 		for (int i = leftIndex; i < _size; ++i)
 			newMessages[i + 1] = _messages[i];
-		delete [] _messages;
+		delete[] _messages;
 		_messages = newMessages;
 	} else {
 		for (int i = _size - 1; i >= leftIndex; --i)
@@ -78,11 +78,11 @@ void PoMessageList::insert(const char *msg) {
 int PoMessageList::findIndex(const char *msg) {
 	if (msg == NULL || *msg == '\0')
 		return -1;
-	
+
 	// binary-search for the message
 	int leftIndex = 0;
 	int rightIndex = _size - 1;
-	
+
 	while (rightIndex >= leftIndex) {
 		const int midIndex = (leftIndex + rightIndex) / 2;
 		const int compareResult = strcmp(msg, _messages[midIndex]);
@@ -122,12 +122,12 @@ PoMessageEntryList::PoMessageEntryList(const char *lang) :
 }
 
 PoMessageEntryList::~PoMessageEntryList() {
-	delete [] _lang;
-	delete [] _charset;
-	delete [] _langName;
+	delete[] _lang;
+	delete[] _charset;
+	delete[] _langName;
 	for (int i = 0; i < _size; ++i)
 		delete _list[i];
-	delete [] _list;
+	delete[] _list;
 }
 
 void PoMessageEntryList::addMessageEntry(const char *translation, const char *message, const char *context) {
@@ -136,17 +136,17 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 		// We get the charset and the language name from the translation string
 		char *str = parseLine(translation, "Language:");
 		if (str != NULL) {
-			delete [] _langName;
+			delete[] _langName;
 			_langName = str;
 		}
 		str = parseLine(translation, "charset=");
 		if (str != NULL) {
-			delete [] _charset;
+			delete[] _charset;
 			_charset = str;
 		}
 		return;
-	}	
-	
+	}
+
 	// binary-search for the insertion index
 	int leftIndex = 0;
 	int rightIndex = _size - 1;
@@ -189,8 +189,8 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 		if (contextIndex < leftIndex && _list[contextIndex]->msgctxt == NULL && strcmp(translation, _list[contextIndex]->msgstr) == 0)
 			return;
 	}
-	
-	
+
+
 	if (_size + 1 > _allocated) {
 		_allocated += 100;
 		PoMessageEntry **newList = new PoMessageEntry*[_allocated];
@@ -198,7 +198,7 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 			newList[i] = _list[i];
 		for (int i = leftIndex; i < _size; ++i)
 			newList[i + 1] = _list[i];
-		delete [] _list;
+		delete[] _list;
 		_list = newList;
 	} else {
 		for (int i = _size - 1; i >= leftIndex; --i)
@@ -206,7 +206,7 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 	}
 	_list[leftIndex] = new PoMessageEntry(translation, message, context);
 	++_size;
-	
+
 	if (context == NULL || *context == '\0') {
 		// Remove identical translations for a specific context (see comment above)
 		int contextIndex = leftIndex + 1;
@@ -228,7 +228,7 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 		}
 		_size -= removed;
 	}
-	
+
 }
 
 const char *PoMessageEntryList::language() const {
@@ -258,10 +258,10 @@ PoMessageEntryList *parsePoFile(const char *file, PoMessageList& messages) {
 	FILE *inFile = fopen(file, "r");
 	if (!inFile)
 		return NULL;
-	
+
 	char msgidBuf[1024], msgctxtBuf[1024], msgstrBuf[1024];
-	char line[1024], *currentBuf = NULL;
-	
+	char line[1024], *currentBuf = msgstrBuf;
+
 	// Get language from file name and create PoMessageEntryList
 	int index = 0, start_index = strlen(file) - 1;
 	while (start_index > 0 && file[start_index - 1] != '/' && file[start_index - 1] != '\\') {
@@ -273,34 +273,53 @@ PoMessageEntryList *parsePoFile(const char *file, PoMessageList& messages) {
 	}
 	msgidBuf[index] = '\0';
 	PoMessageEntryList *list = new PoMessageEntryList(msgidBuf);
-	
+
+	// Initialize the message attributes.
+	bool fuzzy = false;
+	bool fuzzy_next = false;
+
 	// Parse the file line by line.
 	// The msgstr is always the last line of an entry (i.e. msgid and msgctxt always
 	// precede the corresponding msgstr).
 	msgidBuf[0] = msgstrBuf[0] = msgctxtBuf[0] = '\0';
 	while (!feof(inFile) && fgets(line, 1024, inFile)) {
+		if (line[0] == '#' && line[1] == ',') {
+			// Handle message attributes.
+			if (strstr(line, "fuzzy")) {
+				fuzzy_next = true;
+				continue;
+			}
+		}
 		// Skip empty and comment line
 		if (*line == '\n' || *line == '#')
 			continue;
 		if (strncmp(line, "msgid", 5) == 0) {
 			if (currentBuf == msgstrBuf) {
 				// add previous entry
-				if (*msgstrBuf != '\0') {
+				if (*msgstrBuf != '\0' && !fuzzy) {
 					messages.insert(msgidBuf);
 					list->addMessageEntry(msgstrBuf, msgidBuf, msgctxtBuf);
 				}
 				msgidBuf[0] = msgstrBuf[0] = msgctxtBuf[0] = '\0';
+
+				// Reset the attribute flags.
+				fuzzy = fuzzy_next;
+				fuzzy_next = false;
 			}
 			strcpy(msgidBuf, stripLine(line));
 			currentBuf = msgidBuf;
 		} else if (strncmp(line, "msgctxt", 7) == 0) {
 			if (currentBuf == msgstrBuf) {
 				// add previous entry
-				if (*msgstrBuf != '\0') {
+				if (*msgstrBuf != '\0' && !fuzzy) {
 					messages.insert(msgidBuf);
 					list->addMessageEntry(msgstrBuf, msgidBuf, msgctxtBuf);
 				}
 				msgidBuf[0] = msgstrBuf[0] = msgctxtBuf[0] = '\0';
+
+				// Reset the attribute flags
+				fuzzy = fuzzy_next;
+				fuzzy_next = false;
 			}
 			strcpy(msgctxtBuf, stripLine(line));
 			currentBuf = msgctxtBuf;
@@ -313,7 +332,7 @@ PoMessageEntryList *parsePoFile(const char *file, PoMessageList& messages) {
 				strcat(currentBuf, stripLine(line));
 		}
 	}
-	
+
 	fclose(inFile);
 	return list;
 }
@@ -327,8 +346,8 @@ char *stripLine(char *line) {
 	while (start < len && line[start++] != '"') {}
 	// shift characters until we reach the end of the string or an unprotected quote
 	int i = 0;
-	while (start+i < len && (line[start+i] != '"' || (i > 0 && line[start+i-1] == '\\'))) {
-		line[i] = line[start+i];
+	while (start + i < len && (line[start + i] != '"' || (i > 0 && line[start + i - 1] == '\\'))) {
+		line[i] = line[start + i];
 		++i;
 	}
 	line[i] = '\0';
