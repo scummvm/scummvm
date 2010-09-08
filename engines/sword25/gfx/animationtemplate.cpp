@@ -107,7 +107,7 @@ AnimationTemplate::AnimationTemplate(const Common::String &SourceAnimation) {
 
 // -----------------------------------------------------------------------------
 
-AnimationTemplate::AnimationTemplate(const AnimationTemplate &Other) {
+AnimationTemplate::AnimationTemplate(const AnimationTemplate &Other) : AnimationDescription(){
 	// Objekt registrieren.
 	AnimationTemplateRegistry::GetInstance().RegisterObject(this);
 

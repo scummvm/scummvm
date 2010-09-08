@@ -259,13 +259,13 @@ art_svp_render_aa_iter_step(ArtSVPRenderAAIter *iter, int *p_start,
 					x_min = x_bot;
 					x_max = x_top;
 				}
-				ix_min = floor(x_min);
-				ix_max = floor(x_max);
+				ix_min = (int)floor(x_min);
+				ix_max = (int)floor(x_max);
 				if (ix_min >= x1) {
 					/* skip; it starts to the right of the render region */
 				} else if (ix_max < x0)
 					/* it ends to the left of the render region */
-					start += delta;
+					start += (int)delta;
 				else if (ix_min == ix_max) {
 					/* case 1, antialias a single pixel */
 					xdelta = (ix_min + 1 - (x_min + x_max) * 0.5) * delta;

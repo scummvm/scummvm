@@ -78,7 +78,7 @@ bool MoviePlayer::LoadMovie(const Common::String &filename, uint z) {
 	float screenToVideoHeight = (float)pGfx->GetDisplayHeight() / (float)_outputBitmap->getHeight();
 	float scaleFactor = MIN(screenToVideoWidth, screenToVideoHeight);
 
-	if (abs(scaleFactor - 1.0f) < FLT_EPSILON)
+	if (abs((int)(scaleFactor - 1.0f)) < FLT_EPSILON)
 		scaleFactor = 1.0f;
 
 	_outputBitmap->setScaleFactor(scaleFactor);
