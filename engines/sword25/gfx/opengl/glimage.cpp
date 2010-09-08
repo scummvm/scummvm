@@ -213,12 +213,20 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
 		img = &srcImage;
 	}
 
-	if ((color & 0xff000000) != 0xff000000) {
-		warning("STUB: Image transparent bg color: %x", color);
-	}
+	int ca = (color >> 24) & 0xff;
 	int cr = (color >> 16) & 0xff;
 	int cg = (color >> 8) & 0xff;
 	int cb = (color >> 0) & 0xff;
+
+	// Check if we need to draw anything at all
+	if (ca == 0)
+		return true;
+
+	if (ca != 255) {
+		cr = cr * ca >> 8;
+		cg = cg * ca >> 8;
+		cb = cb * ca >> 8;
+	}
 
 	// Handle off-screen clipping
 	if (posY < 0) {
