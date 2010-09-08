@@ -1601,7 +1601,7 @@ void OSystem_GP2X::displayMessageOnOSD(const char *msg) {
 #pragma mark --- Misc ---
 #pragma mark -
 
-void OSystem_GP2X::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
+bool OSystem_GP2X::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 	// Ctrl-Alt-a toggles aspect ratio correction
 	if (key.keysym.sym == 'a') {
 		beginGFXTransaction();
@@ -1620,8 +1620,8 @@ void OSystem_GP2X::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 				);
 		displayMessageOnOSD(buffer);
 
-
-		return;
+		internUpdateScreen();
+		return true;
 	}
 
 	int newMode = -1;
@@ -1641,7 +1641,7 @@ void OSystem_GP2X::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 	if (isNormalNumber || isKeypadNumber) {
 		_scalerType = key.keysym.sym - (isNormalNumber ? SDLK_1 : SDLK_KP1);
 		if (_scalerType >= ARRAYSIZE(s_gfxModeSwitchTable))
-			return;
+			return false;
 
 		while (s_gfxModeSwitchTable[_scalerType][factor] < 0) {
 			assert(factor > 0);
@@ -1675,5 +1675,27 @@ void OSystem_GP2X::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 				displayMessageOnOSD(buffer);
 			}
 		}
+		internUpdateScreen();
+
+		return true;
+	} else {
+		return false;
 	}
+}
+
+bool OSystem_GP2X::isScalerHotkey(const Common::Event &event) {
+	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
+		const bool isNormalNumber = (Common::KEYCODE_1 <= event.kbd.keycode && event.kbd.keycode <= Common::KEYCODE_9);
+		const bool isKeypadNumber = (Common::KEYCODE_KP1 <= event.kbd.keycode && event.kbd.keycode <= Common::KEYCODE_KP9);
+		const bool isScaleKey = (event.kbd.keycode == Common::KEYCODE_EQUALS || event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS ||
+			event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS);
+
+		if (isNormalNumber || isKeypadNumber) {
+			int keyValue = event.kbd.keycode - (isNormalNumber ? Common::KEYCODE_1 : Common::KEYCODE_KP1);
+			if (keyValue >= ARRAYSIZE(s_gfxModeSwitchTable))
+				return false;
+		}
+		return (isScaleKey || event.kbd.keycode == 'a');
+	}
+	return false;
 }
