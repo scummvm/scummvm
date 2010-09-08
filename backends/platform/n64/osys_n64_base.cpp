@@ -867,7 +867,7 @@ void OSystem_N64::getTimeAndDate(TimeDate &t) const {
 	t.tm_hour = (((now / 1000) / 60) / 60) % 24;
 	t.tm_mday = 1;
 	t.tm_mon  = 0;
-	t.tm_year = 1900;
+	t.tm_year = 110;
 
 	return;
 }
