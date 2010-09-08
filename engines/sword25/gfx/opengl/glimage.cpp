@@ -204,7 +204,7 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
 
 	Graphics::Surface *img;
 	Graphics::Surface *imgScaled = NULL;
-	byte *savedPixels;
+	byte *savedPixels = NULL;
 	if ((width != srcImage.w) || (height != srcImage.h)) {
 		// Scale the image
 		img = imgScaled = scale(srcImage, width, height);
@@ -217,10 +217,6 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
 	int cr = (color >> 16) & 0xff;
 	int cg = (color >> 8) & 0xff;
 	int cb = (color >> 0) & 0xff;
-
-	// Check if we need to draw anything at all
-	if (ca == 0)
-		return true;
 
 	if (ca != 255) {
 		cr = cr * ca >> 8;
@@ -244,7 +240,7 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
 	img->w = CLIP((int)img->w, 0, (int)MAX((int)_backSurface->w - posX, 0));
 	img->h = CLIP((int)img->h, 0, (int)MAX((int)_backSurface->h - posY, 0));
 
-	if (img->w > 0 && img->h > 0) {
+	if ((ca != 0) && (img->w > 0) && (img->h > 0)) {
 		int xp = 0, yp = 0;
 
 		int inStep = 4;
