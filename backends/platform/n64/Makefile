@@ -49,7 +49,7 @@ USE_RGB_COLOR=0
 
 ENABLED=STATIC_PLUGIN
 
-ENABLE_SCUMM = $(ENABLED)
+#ENABLE_SCUMM = $(ENABLED)
 #ENABLE_SCI = $(ENABLED)
 #ENABLE_GOB = $(ENABLED)
 #ENABLE_PARALLACTION = $(ENABLED)
@@ -74,7 +74,7 @@ all: $(TARGET).v64
 
 $(TARGET).v64: $(TARGET).bin ROMFS.img bootcode
 	cat bootcode $(TARGET).bin ROMFS.img > $(TARGET).v64
-	./pad_rom.sh
+	./pad_rom.sh $(TARGET).v64
 
 ROMFS.img:
 	genromfs -f ./ROMFS.img -d ./ROMFS -V romtest

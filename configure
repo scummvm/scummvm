@@ -1761,6 +1761,7 @@ if test -n "$_host"; then
 			_mad=yes
 			_tremor=yes
 			_zlib=yes
+			_port_mk="backends/platform/n64/n64.mk"
 			;;
 		neuros)
 			DEFINES="$DEFINES -DNEUROS"
