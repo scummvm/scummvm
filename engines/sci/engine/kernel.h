@@ -463,6 +463,8 @@ reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv);
 reg_t kCD(EngineState *s, int argc, reg_t *argv);
 reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv);
 reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv);
+reg_t kWinHelp(EngineState *s, int argc, reg_t *argv);
+reg_t kWinDLL(EngineState *s, int argc, reg_t *argv);
 
 reg_t kAddBefore(EngineState *s, int argc, reg_t *argv);
 reg_t kMoveToFront(EngineState *s, int argc, reg_t *argv);

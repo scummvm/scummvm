@@ -1477,6 +1477,12 @@ reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv) {
 	}
 }
 
+reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
+	showScummVMDialog("Please use an external viewer to open the game's help file");
+
+	return s->r_acc;
+}
+
 #endif
 
 } // End of namespace Sci

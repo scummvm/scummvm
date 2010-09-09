@@ -81,6 +81,8 @@ struct SciKernelMapSubEntry {
 #define SIG_EVERYWHERE  SIG_SCIALL, SIGFOR_ALL
 
 #define MAP_CALL(_name_) #_name_, k##_name_
+#define MAP_EMPTY(_name_) #_name_, kEmpty
+#define MAP_DUMMY(_name_) #_name_, kDummy
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kDoSound_subops[] = {
@@ -264,13 +266,7 @@ static const SciKernelMapSubEntry kList_subops[] = {
     { SIG_SCI21,          15, MAP_CALL(FindKey),                   "l.",                   NULL },
     { SIG_SCI21,          16, MAP_CALL(DeleteKey),                 "l.",                   NULL },
     { SIG_SCI21,          17, MAP_CALL(ListAt),                    "li",                   NULL },
-    // FIXME: This doesn't seem to be ListIndexOf. In Torin demo, an index is
-    // passed as a second parameter instead of an object. Thus, it seems to
-    // be something like ListAt instead... If we swap the two subops though,
-    // Torin demo crashes complaining that it tried to send to a non-object,
-    // therefore the semantics might be different here (signature was l[o0])
-	// In SQ6 object is passed right when skipping the intro
-    { SIG_SCI21,          18, MAP_CALL(StubNull),                  "l[io]",                NULL },
+    { SIG_SCI21,          18, MAP_CALL(ListIndexOf) ,              "l[io]",                NULL },
     { SIG_SCI21,          19, MAP_CALL(ListEachElementDo),         "li(.*)",               NULL },
     { SIG_SCI21,          20, MAP_CALL(ListFirstTrue),             "li(.*)",               NULL },
     { SIG_SCI21,          21, MAP_CALL(ListAllTrue),               "li(.*)",               NULL },
@@ -455,6 +451,22 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(ValidPath),         SIG_EVERYWHERE,           "r",                     NULL,            NULL },
     { MAP_CALL(Wait),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 
+	// Unimplemented SCI0-SCI1.1 unused functions, always mapped to kDummy
+	{ MAP_DUMMY(InspectObj),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(ShowSends),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(ShowObjs),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(ShowFree),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(StackUsage),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(Profiler),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(ShiftScreen),     SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(ListOps),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(ATan),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(Record),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(PlayBack),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(DbugStr),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+
+	// =======================================================================================================
+
 #ifdef ENABLE_SCI32
     // SCI2 Kernel Functions
     { MAP_CALL(AddPlane),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
@@ -488,10 +500,28 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(Save),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(Text),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
-	{ "SetWindowsOption", kEmpty,  SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
-    { NULL, NULL,                  SIG_EVERYWHERE,           NULL,                    NULL,            NULL }
+	{ MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(WinDLL),           SIG_EVERYWHERE,            "(.*)",                  NULL,            NULL },
+
+	// SCI2.1 empty functions
+	{ MAP_EMPTY(SetWindowsOption), SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+
+	// Unimplemented SCI2.1 unused functions, always mapped to kDummy
+	{ MAP_DUMMY(InspectObject),    SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	// Profiler (same as SCI0-SCI1.1)
+	// Record (same as SCI0-SCI1.1)
+	// PlayBack (same as SCI0-SCI1.1)
+	{ MAP_DUMMY(MonoOut),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(SetFatalStr),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(IntegrityChecking),SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(CheckIntegrity),   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(MarkMemory),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(GetSierraProfileInt),    SIG_EVERYWHERE,     "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(GetSierraProfileString), SIG_EVERYWHERE,     "(.*)",                  NULL,            NULL },
 #endif
+
+    { NULL, NULL,                  SIG_EVERYWHERE,           NULL,                    NULL,            NULL }
 };
 
 /** Default kernel name table. */
@@ -577,20 +607,20 @@ static const char *s_defaultKernelNames[] = {
 	/*0x4a*/ "ReadNumber",
 	/*0x4b*/ "BaseSetter",
 	/*0x4c*/ "DirLoop",
-	/*0x4d*/ "CanBeHere", // CantBeHere in newer SCI versions
+	/*0x4d*/ "CanBeHere",       // CantBeHere in newer SCI versions
 	/*0x4e*/ "OnControl",
 	/*0x4f*/ "InitBresen",
 	/*0x50*/ "DoBresen",
-	/*0x51*/ "Platform", // DoAvoider (SCI0)
+	/*0x51*/ "Platform",        // DoAvoider (SCI0)
 	/*0x52*/ "SetJump",
-	/*0x53*/ "SetDebug",
-	/*0x54*/ "Dummy",    // InspectObj
-	/*0x55*/ "Dummy",    // ShowSends
-	/*0x56*/ "Dummy",    // ShowObjs
-	/*0x57*/ "Dummy",    // ShowFree
+	/*0x53*/ "SetDebug",        // for debugging
+	/*0x54*/ "InspectObj",      // for debugging
+	/*0x55*/ "ShowSends",       // for debugging
+	/*0x56*/ "ShowObjs",        // for debugging
+	/*0x57*/ "ShowFree",        // for debugging
 	/*0x58*/ "MemoryInfo",
-	/*0x59*/ "Dummy",    // StackUsage
-	/*0x5a*/ "Dummy",    // Profiler
+	/*0x59*/ "StackUsage",      // for debugging
+	/*0x5a*/ "Profiler",        // for debugging
 	/*0x5b*/ "GetMenu",
 	/*0x5c*/ "SetMenu",
 	/*0x5d*/ "GetSaveFiles",
@@ -611,33 +641,33 @@ static const char *s_defaultKernelNames[] = {
 	/*0x6c*/ "Graph",
 	/*0x6d*/ "Joystick",
 	// End of kernel function table for SCI0
-	/*0x6e*/ "Dummy",	// ShiftScreen
+	/*0x6e*/ "ShiftScreen",     // never called?
 	/*0x6f*/ "Palette",
 	/*0x70*/ "MemorySegment",
 	/*0x71*/ "Intersections",	// MoveCursor (SCI1 late), PalVary (SCI1.1)
 	/*0x72*/ "Memory",
-	/*0x73*/ "Dummy",	// ListOps
+	/*0x73*/ "ListOps",         // never called?
 	/*0x74*/ "FileIO",
 	/*0x75*/ "DoAudio",
 	/*0x76*/ "DoSync",
 	/*0x77*/ "AvoidPath",
-	/*0x78*/ "Sort",	// StrSplit (SCI01)
-	/*0x79*/ "Dummy",	// ATan
+	/*0x78*/ "Sort",            // StrSplit (SCI01)
+	/*0x79*/ "ATan",            // never called?
 	/*0x7a*/ "Lock",
 	/*0x7b*/ "StrSplit",
-	/*0x7c*/ "GetMessage",	// Message (SCI1.1)
+	/*0x7c*/ "GetMessage",      // Message (SCI1.1)
 	/*0x7d*/ "IsItSkip",
 	/*0x7e*/ "MergePoly",
 	/*0x7f*/ "ResCheck",
 	/*0x80*/ "AssertPalette",
 	/*0x81*/ "TextColors",
 	/*0x82*/ "TextFonts",
-	/*0x83*/ "Dummy",	// Record
-	/*0x84*/ "Dummy",	// PlayBack
+	/*0x83*/ "Record",          // for debugging
+	/*0x84*/ "PlayBack",        // for debugging
 	/*0x85*/ "ShowMovie",
 	/*0x86*/ "SetVideoMode",
 	/*0x87*/ "SetQuitStr",
-	/*0x88*/ "Dummy"	// DbugStr
+	/*0x88*/ "DbugStr"          // for debugging
 };
 
 #ifdef ENABLE_SCI32
@@ -760,13 +790,13 @@ static const char *sci2_default_knames[] = {
 	/*0x70*/ "InPolygon",
 	/*0x71*/ "MergePoly",
 	/*0x72*/ "SetDebug",
-	/*0x73*/ "Dummy",	// InspectObject (GK2 demo debug function, probably similar to the SCI0-SCI11 InspectObj)
+	/*0x73*/ "InspectObject",     // for debugging
 	/*0x74*/ "MemoryInfo",
-	/*0x75*/ "Dummy",	// Profiler (GK2 demo debug function, probably similar to SCI0-SCI11)
-	/*0x76*/ "Dummy",	// Record (GK2 demo debug function, probably similar to SCI0-SCI11)
-	/*0x77*/ "Dummy",	// PlayBack (GK2 demo debug function, probably similar to SCI0-SCI11)
-	/*0x78*/ "Dummy",	// MonoOut (GK2 demo debug function)
-	/*0x79*/ "Dummy",	// SetFatalStr (GK2 demo debug function)
+	/*0x75*/ "Profiler",          // for debugging
+	/*0x76*/ "Record",            // for debugging
+	/*0x77*/ "PlayBack",          // for debugging
+	/*0x78*/ "MonoOut",           // for debugging
+	/*0x79*/ "SetFatalStr",       // for debugging
 	/*0x7a*/ "GetCWD",
 	/*0x7b*/ "ValidPath",
 	/*0x7c*/ "FileIO",
@@ -778,10 +808,10 @@ static const char *sci2_default_knames[] = {
 	/*0x82*/ "Array",
 	/*0x83*/ "String",
 	/*0x84*/ "RemapColors",
-	/*0x85*/ "Dummy",	// IntegrityChecking (GK2 demo debug function)
-	/*0x86*/ "Dummy",	// CheckIntegrity (GK2 demo debug function)
+	/*0x85*/ "IntegrityChecking", // for debugging
+	/*0x86*/ "CheckIntegrity",	  // for debugging
 	/*0x87*/ "ObjectIntersect",
-	/*0x88*/ "Dummy",	// MarkMemory (GK2 demo debug function)
+	/*0x88*/ "MarkMemory",	      // for debugging
 	/*0x89*/ "TextWidth",
 	/*0x8a*/ "PointSize",
 
@@ -937,7 +967,7 @@ static const char *sci21_default_knames[] = {
 	/*0x7c*/ "SetQuitStr",
 	/*0x7d*/ "GetConfig",
 	/*0x7e*/ "Table",
-	/*0x7f*/ "Dummy", // WinHelp, Windows only
+	/*0x7f*/ "WinHelp",     // Windows only
 	/*0x80*/ "Dummy",
 	/*0x81*/ "Dummy",
 	/*0x82*/ "Dummy",
@@ -959,11 +989,11 @@ static const char *sci21_default_knames[] = {
 	/*0x92*/ "PlayVMD",
 	/*0x93*/ "SetHotRectangles",
 	/*0x94*/ "MulDiv",
-	/*0x95*/ "Dummy", // GetSierraProfileInt, Windows only
-	/*0x96*/ "Dummy", // GetSierraProfileString, Windows only
+	/*0x95*/ "GetSierraProfileInt", // , Windows only
+	/*0x96*/ "GetSierraProfileString", // , Windows only
 	/*0x97*/ "SetWindowsOption", // Windows only
 	/*0x98*/ "GetWindowsOption", // Windows only
-	/*0x99*/ "Dummy", // WinDLL, Windows only
+	/*0x99*/ "WinDLL", // Windows only
 	/*0x9a*/ "Dummy",
 	/*0x9b*/ "Dummy",
 	/*0x9c*/ "DeletePic"
