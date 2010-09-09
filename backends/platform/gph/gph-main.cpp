@@ -26,8 +26,8 @@
 #include "common/scummsys.h"
 #include <SDL/SDL.h>
 
-#include "backends/platform/gp2xwiz/gp2xwiz-sdl.h"
-#include "backends/platform/gp2xwiz/gp2xwiz-hw.h"
+#include "backends/platform/gph/gph-sdl.h"
+#include "backends/platform/gph/gph-hw.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "base/main.h"
 

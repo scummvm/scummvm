@@ -23,7 +23,7 @@
  *
  */
 
-#include "backends/platform/gp2xwiz/gp2xwiz-sdl.h"
+#include "backends/platform/gph/gph-sdl.h"
 
 #include "common/mutex.h"
 #include "graphics/font.h"

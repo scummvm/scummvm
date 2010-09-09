@@ -14,11 +14,11 @@ caanoo-bundle: $(EXECUTABLE)
 	
 	echo "Please put your save games in this dir" >> "$(bundle_name)/scummvm/saves/PUT_SAVES_IN_THIS_DIR"
 
-	$(CP) $(srcdir)/backends/platform/gp2xwiz/caanoo/scummvm.gpe $(bundle_name)/scummvm/
-	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvm.png $(bundle_name)/scummvm/
-	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvmb.png $(bundle_name)/scummvm/
-	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/README-GP2XWIZ $(bundle_name)/scummvm/README-CAANOO
-	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvm.ini $(bundle_name)/	
+	$(CP) $(srcdir)/backends/platform/gph/caanoo/scummvm.gpe $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/backends/platform/gph/build/scummvm.png $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/backends/platform/gph/build/scummvmb.png $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/backends/platform/gph/build/README-GP2XWIZ $(bundle_name)/scummvm/README-CAANOO
+	$(CP) $(srcdir)/backends/platform/gph/build/scummvm.ini $(bundle_name)/	
 
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) $(bundle_name)/scummvm/
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)/scummvm/
@@ -45,11 +45,11 @@ caanoo-bundle-debug: $(EXECUTABLE)
 	
 	echo "Please put your save games in this dir" >> "$(bundle_name)/scummvm/saves/PUT_SAVES_IN_THIS_DIR"
 
-	$(CP) $(srcdir)/backends/platform/gp2xwiz/caanoo/scummvm-gdb.gpe $(bundle_name)/scummvm/scummvm.gpe
-	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvm.png $(bundle_name)/scummvm/
-	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvmb.png $(bundle_name)/scummvm/
-	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/README-GP2XWIZ $(bundle_name)/scummvm/README-CAANOO
-	$(CP) $(srcdir)/backends/platform/gp2xwiz/build/scummvm.ini $(bundle_name)/	
+	$(CP) $(srcdir)/backends/platform/gph/caanoo/scummvm-gdb.gpe $(bundle_name)/scummvm/scummvm.gpe
+	$(CP) $(srcdir)/backends/platform/gph/build/scummvm.png $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/backends/platform/gph/build/scummvmb.png $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/backends/platform/gph/build/README-GP2XWIZ $(bundle_name)/scummvm/README-CAANOO
+	$(CP) $(srcdir)/backends/platform/gph/build/scummvm.ini $(bundle_name)/	
 
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) $(bundle_name)/scummvm/
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)/scummvm/

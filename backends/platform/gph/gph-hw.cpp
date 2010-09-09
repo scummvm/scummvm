@@ -28,7 +28,7 @@
  *
  */
 
-#include "backends/platform/gp2xwiz/gp2xwiz-hw.h"
+#include "backends/platform/gph/gph-hw.h"
 
 #include <fcntl.h>
 #include <signal.h>

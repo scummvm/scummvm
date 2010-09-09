@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GP2XWIZ_SDL_H
-#define GP2XWIZ_SDL_H
+#ifndef GPH_SDL_H
+#define GPH_SDL_H
 
 #include "backends/platform/sdl/sdl.h"
 
@@ -78,4 +78,4 @@ protected:
 	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 };
 
-#endif
+#endif //GPH_SDL_H

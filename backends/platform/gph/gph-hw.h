@@ -28,16 +28,8 @@
  *
  */
 
-#ifndef GP2XWIZ_HW_H
-#define GP2XWIZ_HW_H
-
-#if defined (CAANOO)
-	/* Vibrate features that GPH put in the */
-	/* SDL port but did not define */
-	extern void SDL_VibrateInit();
-	extern void SDL_VibrateQuit();
-	extern void SDL_VibratePlay(int);
-#endif
+#ifndef GPH_HW_H
+#define GPH_HW_H
 
 namespace WIZ_HW {
 
@@ -54,8 +46,7 @@ namespace GPH {
 extern int tapmodeLevel;
 
 extern void	ToggleTapMode();
-extern int GetTapMode();
 
 } /* namespace GPH */
 
-#endif //GP2XWIZ_HW_H
+#endif //GPH_HW_H

@@ -1,10 +1,10 @@
-MODULE := backends/platform/gp2xwiz
+MODULE := backends/platform/gph
 
 MODULE_OBJS := \
-	gp2xwiz-events.o \
-	gp2xwiz-graphics.o \
-	gp2xwiz-hw.o \
-	gp2xwiz-main.o
+	gph-events.o \
+	gph-graphics.o \
+	gph-hw.o \
+	gph-main.o
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))
