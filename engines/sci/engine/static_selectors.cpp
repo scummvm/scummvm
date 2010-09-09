@@ -155,15 +155,6 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 				names[i] = sci1Selectors[i - count];
 		}
 
-		for (const SelectorRemap *selectorRemap = sciSelectorRemap; selectorRemap->slot; ++selectorRemap) {
-			if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
-				const uint32 slot = selectorRemap->slot;
-				if (slot >= names.size())
-					names.resize(slot + 1);
-				names[slot] = selectorRemap->name;
-			}
-		}
-
 		// Now, we need to find out selectors which keep changing place...
 		// We do that by dissecting game objects, and looking for selectors at
 		// specified locations.
@@ -273,6 +264,15 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 		for (int i = 0; i < count; i++)
 			names[i] = sci2Selectors[i];
 #endif
+	}
+
+	for (const SelectorRemap *selectorRemap = sciSelectorRemap; selectorRemap->slot; ++selectorRemap) {
+		if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
+			const uint32 slot = selectorRemap->slot;
+			if (slot >= names.size())
+				names.resize(slot + 1);
+			names[slot] = selectorRemap->name;
+		}
 	}
 
 	return names;
