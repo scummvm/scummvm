@@ -16,7 +16,9 @@ dingux-dist: all
 	$(MKDIR) $(bundle_name)/saves
 	$(STRIP) $(EXECUTABLE) -o $(bundle_name)/scummvm.elf
 	$(CP) $(DIST_FILES_THEMES) $(bundle_name)/ 
+ifdef DIST_FILES_ENGINEDATA
 	$(CP) $(DIST_FILES_ENGINEDATA) $(bundle_name)/
+endif
 	$(CP) $(DIST_FILES_DOCS) $(bundle_name)/
 ifdef DYNAMIC_MODULES
 		$(MKDIR) $(bundle_name)/plugins

@@ -15,7 +15,9 @@ n64-distclean:
 n64-dist: all
 	$(MKDIR) $(bundle_name)
 	$(MKDIR) $(bundle_name)/romfs
+ifdef DIST_FILES_ENGINEDATA
 	$(CP) $(DIST_FILES_ENGINEDATA) $(bundle_name)/romfs
+endif
 	$(CP) $(DIST_FILES_DOCS) $(bundle_name)/
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip $(bundle_name)/romfs
 	genromfs -f $(bundle_name)/romfs.img -d $(bundle_name)/romfs -V scummvmn64
