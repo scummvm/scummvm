@@ -68,7 +68,7 @@ Scene::~Scene() {
 
 void Scene::render(uint32 delta) {
 	// setup cam
-		
+
 	// Draw bg
 
 	// Draw other things

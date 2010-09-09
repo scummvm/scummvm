@@ -36,7 +36,7 @@ namespace Common {
 namespace Stark {
 
 class SkeletonAnim;
-	
+
 class BoneNode {
 public:
 	BoneNode() : _parent(-1) { }
@@ -84,6 +84,6 @@ private:
 	uint32 _lastTime, _maxTime;
 };
 
-} // end of namespace Stark
+} // End of namespace Stark
 
-#endif
+#endif // STARK_SKELETON_H

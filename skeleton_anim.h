@@ -34,7 +34,7 @@ namespace Common {
 	class ReadStream;
 }
 
-namespace Stark {	
+namespace Stark {
 
 class AnimKey {
 public:
@@ -74,12 +74,13 @@ public:
 	 * Get total animation length (in ms)
 	 */
 	uint32 getLength() const { return _time; }
+
 private:
 	uint32 _id, _ver, _u1, _u2, _time;
 
 	Common::Array<AnimNode *> _anims;
 };
 
-} // end of namespace Stark
+} // End of namespace Stark
 
-#endif
+#endif // STARK_SKELETON_ANIM_H

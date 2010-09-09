@@ -34,7 +34,7 @@
 namespace Stark {
 
 Texture::Texture() : _palette(NULL) {
-	
+
 }
 
 Texture::~Texture() {
@@ -87,8 +87,7 @@ bool Texture::readChunk(Common::ReadStream *stream, uint32 format) {
 			*ptr++ = (byte)stream->readUint16LE();
 			*ptr++ = 0xff;
 		}
-	}
-	else if (type == 0x02faf080) {
+	} else if (type == 0x02faf080) {
 		// Img
 		uint16 nameLength = stream->readUint16LE();
 		char *name = new char[nameLength];
@@ -100,7 +99,7 @@ bool Texture::readChunk(Common::ReadStream *stream, uint32 format) {
 		uint32 texIdx;
 		glGenTextures(1, &texIdx);
 		_texMap.setVal(nameStr, texIdx);
-		
+
 		glBindTexture(GL_TEXTURE_2D, texIdx);
 
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -125,13 +124,12 @@ bool Texture::readChunk(Common::ReadStream *stream, uint32 format) {
 			//glTexImage2D(GL_TEXTURE_2D, i, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);		// For whatever reason, this doesn't work...
 
 			delete[] img;
-			
+
 			w /= 2;
 			h /= 2;
 		}
 
-	}
-	else {
+	} else {
 		byte *data = new byte[size];
 		stream->read(data, size);
 		delete[] data;
@@ -157,4 +155,4 @@ uint32 Texture::getTexture(Common::String name) const {
 	return 0;
 }
 
-} // end of namespace Stark
+} // End of namespace Stark

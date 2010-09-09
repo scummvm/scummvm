@@ -38,7 +38,7 @@
 namespace Stark {
 
 Actor::Actor() : _skeleton(NULL), _texture(NULL) {
-	
+
 }
 
 Actor::~Actor() {
@@ -67,7 +67,7 @@ bool Actor::readFromStream(Common::ReadStream *stream) {
 
 
 	uint32 numMaterials = stream->readUint32LE();
-	
+
 	for (uint i = 0; i < numMaterials; ++i) {
 		MaterialNode *node = new MaterialNode();
 		uint32 len = stream->readUint32LE();
@@ -175,7 +175,7 @@ SceneElementActor *SceneElementActor::load(const Common::Archive *archive, const
 
 	SceneElementActor *cir = new SceneElementActor();
 	cir->_actor = new Actor();
-	
+
 	cir->_actor->readFromStream(stream);
 	return cir;
 }
@@ -225,7 +225,7 @@ ctr += .1;
 	//glRotatef((ctr * 10.3f), -4.0f, 10.0f, 1.0f);
 
 	glEnable(GL_TEXTURE_2D);
-	
+
 	Common::Array<BoneNode *> bones = _actor->getSkeleton()->getBones();
 	Common::Array<MeshNode *> meshes = _actor->getMeshes();
 	Common::Array<MaterialNode *> mats = _actor->getMaterials();
@@ -247,7 +247,7 @@ ctr += .1;
 				// Contains 3 vertices
 				// Each vertex relative to a bone coordinate
 				// 'move' to join location and rotation, then place the vertex there
-			
+
 				for (int vert = 0; vert < 3; ++vert) {
 					int vertIdx;
 					if (vert == 0)
@@ -256,8 +256,8 @@ ctr += .1;
 						vertIdx = (*tri)->_vert3;
 					else
 						vertIdx = (*tri)->_vert2;
-				
-					
+
+
 					Coordinate b1 = (*face)->_verts[vertIdx]->_pos1;
 					BoneNode *bone = bones[(*face)->_verts[vertIdx]->_bone1];
 					b1.rotate(bone->_animPos);
@@ -283,4 +283,4 @@ ctr += .1;
 	glPopMatrix();
 }
 
-} // end of namespace Stark
+} // End of namespace Stark

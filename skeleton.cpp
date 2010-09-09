@@ -33,7 +33,7 @@
 namespace Stark {
 
 Skeleton::Skeleton() : _anim(NULL), _lastTime(0), _maxTime(0) {
-	
+
 }
 
 Skeleton::~Skeleton() {
@@ -89,8 +89,7 @@ void Skeleton::setNode(uint32 time, BoneNode *bone, const Coordinate &parentCoor
 	animCoord.rotate(parentCoord);
 	bone->_animPos = parentCoord + animCoord;
 
-	for (int i = 0; i < bone->_children.size(); ++i)
-	{
+	for (int i = 0; i < bone->_children.size(); ++i) {
 		setNode(time, _bones[bone->_children[i]], bone->_animPos);
 	}
 }
@@ -100,13 +99,12 @@ bool Skeleton::animate(uint32 delta) {
 	// For each child
 	//  - Set childs animation coordinate
 	//  - Process that childs children
-	if (_maxTime > 0)
-	{
+	if (_maxTime > 0) {
 		_lastTime += delta;
 		while (_lastTime > _maxTime)
 			_lastTime -= _maxTime;
 	}
-	
+
 	setNode(_lastTime, _bones[0], Coordinate());
 	/*
 	Graphics::Vector3d b1 = (*face)->_verts[vertIdx]->_pos1;
@@ -123,8 +121,8 @@ bool Skeleton::animate(uint32 delta) {
 
 	} while (idx != -1);
 */
-					
+
 	return true;
 }
 
-} // end of namespace Stark
+} // End of namespace Stark

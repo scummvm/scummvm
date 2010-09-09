@@ -33,7 +33,7 @@ namespace Stark {
 
 
 SkeletonAnim::SkeletonAnim() {
-	
+
 }
 
 SkeletonAnim::~SkeletonAnim() {
@@ -82,7 +82,7 @@ bool SkeletonAnim::createFromStream(Common::ReadStream *stream) {
 
 Coordinate SkeletonAnim::getCoordForBone(uint32 time, int boneIdx) {
 	Coordinate c;
-	
+
 	for (Common::Array<AnimKey *>::iterator it = _anims[boneIdx]->_keys.begin(); it < _anims[boneIdx]->_keys.end(); ++it) {
 		if ((*it)->_time == time) {
 			AnimKey *key = *it;
@@ -98,14 +98,14 @@ Coordinate SkeletonAnim::getCoordForBone(uint32 time, int boneIdx) {
 
 			float t = (float)(time - b->_time) / (float)(a->_time - b->_time);
 
-			c.setTranslation(b->_pos.x() + (a->_pos.x() - b->_pos.x())*t, b->_pos.y() + (a->_pos.y() - b->_pos.y())*t, b->_pos.z() + (a->_pos.z() - b->_pos.z())*t);
-			c.setRotation(b->_rotW + (a->_rotW - b->_rotW)*t, b->_rot.x() + (a->_rot.x() - b->_rot.x())*t, b->_rot.y()+ (a->_rot.y() - b->_rot.y())*t, b->_rot.z() + (a->_rot.z() - b->_rot.z())*t);
+			c.setTranslation(b->_pos.x() + (a->_pos.x() - b->_pos.x()) * t, b->_pos.y() + (a->_pos.y() - b->_pos.y()) * t, b->_pos.z() + (a->_pos.z() - b->_pos.z()) * t);
+			c.setRotation(b->_rotW + (a->_rotW - b->_rotW) * t, b->_rot.x() + (a->_rot.x() - b->_rot.x()) * t, b->_rot.y()+ (a->_rot.y() - b->_rot.y()) * t, b->_rot.z() + (a->_rot.z() - b->_rot.z()) * t);
 
 			break;
 		}
 	}
-	
+
 	return c;
 }
 
-} // end of namespace Stark
+} // End of namespace Stark

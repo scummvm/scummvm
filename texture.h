@@ -45,8 +45,8 @@ public:
 	bool createFromStream(Common::ReadStream *stream);
 
 	uint32 getTexture(Common::String name) const;
-private:
 
+private:
 	bool readChunk(Common::ReadStream *stream, uint32 format);
 
 	uint32 *_palette;
@@ -54,6 +54,6 @@ private:
 	Common::HashMap<Common::String, uint32> _texMap;
 };
 
-} // end of namespace Stark
+} // End of namespace Stark
 
-#endif
+#endif // STARK_TEXTURE_H

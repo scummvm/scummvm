@@ -59,14 +59,14 @@ class FaceNode {
 public:
 	FaceNode() { }
 
-	~FaceNode() { 
+	~FaceNode() {
 		for (Common::Array<VertNode *>::iterator it = _verts.begin(); it != _verts.end(); ++it)
 			delete *it;
 
 		for (Common::Array<TriNode *>::iterator it = _tris.begin(); it != _tris.end(); ++it)
 			delete *it;
 	}
-	
+
 	uint32 _matIdx;
 	Common::Array<VertNode *> _verts;
 	Common::Array<TriNode *> _tris;
@@ -76,13 +76,13 @@ public:
 class MeshNode {
 public:
 	MeshNode() { }
-	~MeshNode() { 
+	~MeshNode() {
 		Common::Array<FaceNode *>::iterator it = _faces.begin();
 		while (it != _faces.end()) {
 			delete *it;
 			++it;
 		}
-	
+
 	}
 	Common::String _name;
 	Common::Array<FaceNode *> _faces;
@@ -101,8 +101,6 @@ class UnknownNode {
 public:
 	float _u1, _u2, _u3, _u4;
 };
-
-
 
 
 /**
@@ -138,10 +136,10 @@ private:
 
 	Common::Array<MaterialNode *> _materials;
 	Common::Array<MeshNode *> _meshes;
-	Skeleton *_skeleton;	
+	Skeleton *_skeleton;
 	Texture *_texture;
-
 };
+
 
 class SceneElementActor : public SceneElement {
 private:
@@ -161,6 +159,6 @@ private:
 	Actor *_actor;
 };
 
-} // end of namespace Stark
+} // End of namespace Stark
 
-#endif
+#endif // STARK_ACTOR_H
