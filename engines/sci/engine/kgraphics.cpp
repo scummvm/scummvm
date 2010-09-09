@@ -1305,9 +1305,8 @@ reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
-	// Tests if the cursor is on the passed object
-
+// Tests if the coordinate is on the passed object
+reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 	uint16 x = argv[0].toUint16();
 	uint16 y = argv[1].toUint16();
 	reg_t targetObject = argv[2];
@@ -1340,73 +1339,7 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 		if (g_sci->_gfxCompare->kernelIsItSkip(viewId, loopNo, celNo, Common::Point(x - nsRect.left, y - nsRect.top)))
 			contained = false;
 	}
-// these hacks shouldn't be needed anymore
-//	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
-//	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
-
-	// If top and left are negative, we need to adjust coordinates by
-	// the item's x and y (e.g. happens in GK1, day 1, with detective
-	// Mosely's hotspot in his office)
-
-//	if (nsRect.left < 0)
-//		nsRect.translate(itemX, 0);
-//	
-//	if (nsRect.top < 0)
-//		nsRect.translate(0, itemY);
-
-//	// HACK: nsLeft and nsTop can be invalid, so try and fix them here
-//	// using x and y (e.g. with the inventory screen in GK1)
-//	if (nsRect.left == itemY && nsRect.top == itemX) {
-//		// Swap the values, as they're inversed (eh???)
-//		nsRect.left = itemX;
-//		nsRect.top = itemY;
-//	}
-
 	return make_reg(0, contained);
-}
-
-reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
-	// Tests if the cursor is on the passed object, after adjusting the
-	// coordinates of the object according to the object's plane
-
-	uint16 x = argv[0].toUint16();
-	uint16 y = argv[1].toUint16();
-	reg_t targetObject = argv[2];
-	// TODO: argv[3] - it's usually 0
-	Common::Rect nsRect;
-
-	// Get the bounding rectangle of the object
-	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
-	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
-	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
-	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
-
-	// Get the object's plane
-#if 0
-	reg_t planeObject = readSelector(s->_segMan, targetObject, SELECTOR(plane));
-	if (!planeObject.isNull()) {
-		//uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
-		//uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
-		uint16 planeResY = readSelectorValue(s->_segMan, planeObject, SELECTOR(resY));
-		uint16 planeResX = readSelectorValue(s->_segMan, planeObject, SELECTOR(resX));
-		uint16 planeTop = readSelectorValue(s->_segMan, planeObject, SELECTOR(top));
-		uint16 planeLeft = readSelectorValue(s->_segMan, planeObject, SELECTOR(left));
-		planeTop = (planeTop * g_sci->_gfxScreen->getHeight()) / planeResY;
-		planeLeft = (planeLeft * g_sci->_gfxScreen->getWidth()) / planeResX;
-
-		// Adjust the bounding rectangle of the object by the object's
-		// actual X, Y coordinates
-		nsRect.top = ((nsRect.top * g_sci->_gfxScreen->getHeight()) / planeResY);
-		nsRect.left = ((nsRect.left * g_sci->_gfxScreen->getWidth()) / planeResX);
-		nsRect.bottom = ((nsRect.bottom * g_sci->_gfxScreen->getHeight()) / planeResY);
-		nsRect.right = ((nsRect.right * g_sci->_gfxScreen->getWidth()) / planeResX);
-
-		nsRect.translate(planeLeft, planeTop);
-	}
-#endif
-	//warning("kIsOnMe: (%d, %d) on object %04x:%04x, parameter %d", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), argv[3].toUint16());
-
-	return make_reg(0, nsRect.contains(x, y));
 }
 
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {

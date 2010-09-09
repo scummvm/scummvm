@@ -446,11 +446,11 @@ reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv);
 reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv);
 reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv);
 reg_t kFrameOut(EngineState *s, int argc, reg_t *argv);
+reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv); // kOnMe for SCI2, kIsOnMe for SCI2.1
 reg_t kListIndexOf(EngineState *s, int argc, reg_t *argv);
 reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv);
 reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv);
 reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv);
-reg_t kOnMe(EngineState *s, int argc, reg_t *argv);
 reg_t kInPolygon(EngineState *s, int argc, reg_t *argv);
 
 // SCI2.1 Kernel Functions
@@ -459,7 +459,6 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv);
 reg_t kList(EngineState *s, int argc, reg_t *argv);
 reg_t kRobot(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv);
-reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv);
 reg_t kCD(EngineState *s, int argc, reg_t *argv);
 reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv);
 reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv);

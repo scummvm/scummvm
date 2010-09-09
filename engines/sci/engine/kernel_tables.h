@@ -469,6 +469,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 #ifdef ENABLE_SCI32
     // SCI2 Kernel Functions
+	// TODO: whoever knows his way through those calls, fix the signatures.
     { MAP_CALL(AddPlane),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(AddScreenItem),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(Array),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -484,7 +485,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(ListEachElementDo), SIG_EVERYWHERE,           "li(.*)",                NULL,            NULL },
     { MAP_CALL(ListFirstTrue),     SIG_EVERYWHERE,           "li(.*)",                NULL,            NULL },
     { MAP_CALL(ListIndexOf),       SIG_EVERYWHERE,           "l[o0]",                 NULL,            NULL },
-    { MAP_CALL(OnMe),              SIG_EVERYWHERE,           "iio(.*)",               NULL,            NULL },
+    { "OnMe", kIsOnMe,             SIG_EVERYWHERE,           "iioi",                  NULL,            NULL },
     { MAP_CALL(RepaintPlane),      SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
@@ -492,7 +493,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 
     // SCI2.1 Kernel Functions
     { MAP_CALL(CD),           	   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-    { MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iio(.*)",               NULL,            NULL },
+    { MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iioi",                  NULL,            NULL },
     { MAP_CALL(List),              SIG_SCI21, SIGFOR_ALL,    "(.*)",                  kList_subops,    NULL },
     { MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                   NULL,            NULL },
     { MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
