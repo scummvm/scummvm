@@ -30,11 +30,19 @@
 
 namespace Stark {
 
+/** 
+ * Manager for the current game scene
+ */
 class Scene {
 public:
 	Scene(GfxDriver *gfx);
 	~Scene();
 
+	/**
+	 * Render the scene
+	 *
+	 * @param delta Time offset (in ms) since last frame render
+	 */
 	void render(uint32 delta);
 
 private:

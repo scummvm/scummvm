@@ -105,12 +105,17 @@ public:
 
 
 
-
+/**
+ * Base object for handling 3D actors
+ */
 class Actor {
 public:
 	Actor();
 	~Actor();
 
+	/**
+	 * Try and initialise object from the specified stream
+	 */
 	bool readFromStream(Common::ReadStream *stream);
 
 	const Common::Array<MeshNode *> &getMeshes() const { return _meshes; }
@@ -118,7 +123,14 @@ public:
 	Skeleton *getSkeleton() const { return _skeleton; }
 	const Texture *getTexture() const { return _texture; }
 
+	/**
+	 * Load animation data from the specified stream
+	 */
 	bool setAnim(Common::ReadStream *stream);
+
+	/**
+	 * Load texture data from the specified stream
+	 */
 	bool setTexture(Common::ReadStream *stream);
 
 private:

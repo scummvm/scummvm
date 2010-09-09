@@ -32,6 +32,9 @@
 
 namespace Stark {
 
+/**
+ * ISS sound decoder
+ */
 class ISS {
 public:
 	ISS(Common::SeekableReadStream *str);

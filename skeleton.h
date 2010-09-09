@@ -50,20 +50,34 @@ public:
 	Coordinate _animPos;
 };
 
+/**
+ * Skeleton manager to load and store skeletal information about an actor
+ */
 class Skeleton {
 public:
 	Skeleton();
 	~Skeleton();
 
-	bool animate(uint32 time = 0);
-	void setNode(uint32 time, BoneNode *bone, const Coordinate &parentCoord);
+	/**
+	 * Increment the skeleton timestamp, and apply bone animations if required
+	 */
+	bool animate(uint32 delta = 0);
 
+	/**
+	 * Start reading animation data from the specified stream
+	 */
 	bool setAnim(Common::ReadStream *stream);
+
+	/**
+	 * Create skeleton object from the specified stream
+	 */
 	bool readFromStream(Common::ReadStream *stream);
 
 	const Common::Array<BoneNode *> &getBones() const { return _bones; }
 
 private:
+	void setNode(uint32 time, BoneNode *bone, const Coordinate &parentCoord);
+
 	Common::Array<BoneNode *> _bones;
 	SkeletonAnim *_anim;
 

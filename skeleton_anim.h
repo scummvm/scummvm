@@ -55,15 +55,24 @@ public:
 	Common::Array<AnimKey *> _keys;
 };
 
-
+/**
+ * Data structure responsible for skeletal animation of an actor object.
+ */
 class SkeletonAnim {
 public:
 	SkeletonAnim();
 	~SkeletonAnim();
 
 	bool createFromStream(Common::ReadStream *stream);
+
+	/**
+	 * Get the interpolated bone coordinate for a given bone at a given animation timestamp
+	 */
 	Coordinate getCoordForBone(uint32 time, int boneIdx);
 
+	/**
+	 * Get total animation length (in ms)
+	 */
 	uint32 getLength() const { return _time; }
 private:
 	uint32 _id, _ver, _u1, _u2, _time;

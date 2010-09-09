@@ -30,6 +30,13 @@
 
 namespace Stark {
 
+/**
+ * Convenient 'joint' coordinate manipulation structure.
+ *
+ * This structure contains information on a bone+joint system - the best way to think
+ * of this class is a vector to a location plus a quaterntion rotation to apply at
+ * that position to any children (socket + ball style)
+ */
 class Coordinate {
 public:
 	Coordinate();
@@ -44,14 +51,29 @@ public:
 	float& z() { return _coords[2]; }
 	float z() const { return _coords[2]; }
 
+	/**
+	 * Rotate the coordinate vector - socket rotation unaffected.
+	 */
 	void rotate(float w, float x, float y, float z);
 	void rotate(const Coordinate &coord);
+	/**
+	 * Move coordinate vector - socket rotation unaffected.
+	 */
 	void translate(float x, float y, float z);
 	void translate(const Coordinate &coord);
+
+	/**
+	 * Set the coordinate rotation to an explicit value
+	 */
 	void setRotation(float w, float x, float y, float z);
+	/**
+	 * Set the coordinate vector to an explicit value
+	 */
 	void setTranslation(float x, float y, float z);
 
-
+	/**
+	 * Add two coordinates - rotation affected as we're moving down the chain
+	 */
 	Coordinate& operator +=(const Coordinate &v) {
 		_coords[0] += v._coords[0]; _coords[1] += v._coords[1]; _coords[2] += v._coords[2];
 		
@@ -66,6 +88,9 @@ public:
 		return *this;
 	}
 
+	/**
+	 * Apply a scalar to the bone - vector change only
+	 */
 	Coordinate& operator *=(const float &f) {
 		_coords[0] *= f; _coords[1] *= f; _coords[2] *= f;
 		return *this;

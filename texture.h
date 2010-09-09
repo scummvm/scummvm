@@ -34,6 +34,9 @@ namespace Common {
 
 namespace Stark {
 
+/**
+ * Texture manager to load and store actor textures
+ */
 class Texture {
 public:
 	Texture();

@@ -32,6 +32,9 @@
 
 namespace Stark {
 
+/**
+ * XMG (still image) decoder and renderer
+ */
 class SceneElementXMG : public SceneElement {
 private:
 	SceneElementXMG();
