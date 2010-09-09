@@ -248,7 +248,7 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 static const SciKernelMapSubEntry kList_subops[] = {
     { SIG_SCI21,           0, MAP_CALL(NewList),                   "",                     NULL },
     { SIG_SCI21,           1, MAP_CALL(DisposeList),               "l",                    NULL },
-    { SIG_SCI21,           2, MAP_CALL(NewNode),                   ".",                    NULL },
+    { SIG_SCI21,           2, MAP_CALL(NewNode),                   ".(.)",                 NULL },
     { SIG_SCI21,           3, MAP_CALL(FirstNode),                 "[l0]",                 NULL },
     { SIG_SCI21,           4, MAP_CALL(LastNode),                  "l",                    NULL },
     { SIG_SCI21,           5, MAP_CALL(EmptyList),                 "l",                    NULL },
@@ -257,7 +257,7 @@ static const SciKernelMapSubEntry kList_subops[] = {
     { SIG_SCI21,           8, MAP_CALL(NodeValue),                 "[n0]",                 NULL },
     { SIG_SCI21,           9, MAP_CALL(AddAfter),                  "lnn.",                 NULL },
     { SIG_SCI21,          10, MAP_CALL(AddToFront),                "ln.",                  NULL },
-    { SIG_SCI21,          11, MAP_CALL(AddToEnd),                  "ln.",                  NULL },
+    { SIG_SCI21,          11, MAP_CALL(AddToEnd),                  "ln(.)",                NULL },
     { SIG_SCI21,          12, MAP_CALL(AddBefore),                 "ln.",                  NULL },
     { SIG_SCI21,          13, MAP_CALL(MoveToFront),               "ln",                   NULL },
     { SIG_SCI21,          14, MAP_CALL(MoveToEnd),                 "ln",                   NULL },
