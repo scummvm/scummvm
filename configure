@@ -1196,12 +1196,12 @@ else
 	CXX=
 	for compiler in $compilers; do
 		if test_compiler $compiler; then
-			echo "success testing compiler: $1" >> "$TMPLOG"
+			echo "success testing compiler: $compiler" >> "$TMPLOG"
 			CXX=$compiler
 			echo $CXX
 			break
 		else
-			echo "failure testing compiler: $1" >> "$TMPLOG"
+			echo "failure testing compiler: $compiler" >> "$TMPLOG"
 		fi
 	done
 fi
