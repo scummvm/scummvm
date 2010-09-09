@@ -102,6 +102,7 @@ void SciMusic::init() {
 	// Find out what the first possible channel is (used, when doing channel
 	// remapping).
 	_driverFirstChannel = _pMidiDrv->getFirstChannel();
+	_driverLastChannel = _pMidiDrv->getLastChannel();
 }
 
 void SciMusic::miditimerCallback(void *p) {

@@ -664,7 +664,8 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 						channel->data = resource->data + dataOffset;
 						channel->size = READ_LE_UINT16(data + 4);
 						channel->curPos = 0;
-						channel->number = *channel->data;
+						channel->number = *channel->data & 0xf;
+						channel->isRhythm = *channel->data & 0x20;
 						channel->poly = *(channel->data + 1);
 						channel->time = channel->prev = 0;
 						channel->data += 2; // skip over header

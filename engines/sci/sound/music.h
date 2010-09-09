@@ -223,6 +223,7 @@ private:
 	MusicType _musicType;
 
 	int _driverFirstChannel;
+	int _driverLastChannel;
 };
 
 } // End of namespace Sci

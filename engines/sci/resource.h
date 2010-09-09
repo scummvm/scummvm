@@ -512,6 +512,7 @@ class SoundResource {
 public:
 	struct Channel {
 		byte number;
+		bool isRhythm;
 		byte poly;
 		uint16 prio;
 		uint16 size;

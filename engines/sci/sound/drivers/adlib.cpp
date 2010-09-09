@@ -73,6 +73,8 @@ public:
 	bool loadResource(const byte *data, uint size);
 	virtual uint32 property(int prop, uint32 param);
 
+	bool useRhythmChannel() { return _rhythmKeyMap != NULL; }
+
 private:
 	enum ChannelID {
 		kLeftChannel = 1,
@@ -177,6 +179,8 @@ public:
 	void setVolume(byte volume) { static_cast<MidiDriver_AdLib *>(_driver)->setVolume(volume); }
 	void playSwitch(bool play) { static_cast<MidiDriver_AdLib *>(_driver)->playSwitch(play); }
 	void loadInstrument(int idx, byte *data);
+
+	int getLastChannel() { return (static_cast<MidiDriver_AdLib *>(_driver)->useRhythmChannel() ? 8 : 15); }
 };
 
 static const byte registerOffset[MidiDriver_AdLib::kVoices] = {
