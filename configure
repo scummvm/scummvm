@@ -193,12 +193,8 @@ _host_alias=""
 _srcdir=`dirname $0`
 _port_mk="ports.mk"
 
-# Determine a tmp file name, using mktemp(1) when available.
-if type mktemp > /dev/null 2>&1 ; then
-	TMPO=`mktemp /tmp/scummvm-conf.XXXXXXXXXX`
-else
-	TMPO=./scummvm-conf
-fi
+# Use temp files in the build directory
+TMPO=./scummvm-conf
 TMPC=${TMPO}.cpp
 TMPLOG=config.log
 
