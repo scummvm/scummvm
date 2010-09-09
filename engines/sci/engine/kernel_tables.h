@@ -488,6 +488,8 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(Save),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(Text),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
+	{ "SetWindowsOption", kEmpty,  SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
     { NULL, NULL,                  SIG_EVERYWHERE,           NULL,                    NULL,            NULL }
 #endif
 };
@@ -758,13 +760,13 @@ static const char *sci2_default_knames[] = {
 	/*0x70*/ "InPolygon",
 	/*0x71*/ "MergePoly",
 	/*0x72*/ "SetDebug",
-	/*0x73*/ "InspectObject",
+	/*0x73*/ "Dummy",	// InspectObject (GK2 demo debug function, probably similar to the SCI0-SCI11 InspectObj)
 	/*0x74*/ "MemoryInfo",
-	/*0x75*/ "Profiler",
-	/*0x76*/ "Record",
-	/*0x77*/ "PlayBack",
-	/*0x78*/ "MonoOut",
-	/*0x79*/ "SetFatalStr",
+	/*0x75*/ "Dummy",	// Profiler (GK2 demo debug function, probably similar to SCI0-SCI11)
+	/*0x76*/ "Dummy",	// Record (GK2 demo debug function, probably similar to SCI0-SCI11)
+	/*0x77*/ "Dummy",	// PlayBack (GK2 demo debug function, probably similar to SCI0-SCI11)
+	/*0x78*/ "Dummy",	// MonoOut (GK2 demo debug function)
+	/*0x79*/ "Dummy",	// SetFatalStr (GK2 demo debug function)
 	/*0x7a*/ "GetCWD",
 	/*0x7b*/ "ValidPath",
 	/*0x7c*/ "FileIO",
@@ -776,10 +778,10 @@ static const char *sci2_default_knames[] = {
 	/*0x82*/ "Array",
 	/*0x83*/ "String",
 	/*0x84*/ "RemapColors",
-	/*0x85*/ "IntegrityChecking",
-	/*0x86*/ "CheckIntegrity",
+	/*0x85*/ "Dummy",	// IntegrityChecking (GK2 demo debug function)
+	/*0x86*/ "Dummy",	// CheckIntegrity (GK2 demo debug function)
 	/*0x87*/ "ObjectIntersect",
-	/*0x88*/ "MarkMemory",
+	/*0x88*/ "Dummy",	// MarkMemory (GK2 demo debug function)
 	/*0x89*/ "TextWidth",
 	/*0x8a*/ "PointSize",
 
@@ -935,7 +937,7 @@ static const char *sci21_default_knames[] = {
 	/*0x7c*/ "SetQuitStr",
 	/*0x7d*/ "GetConfig",
 	/*0x7e*/ "Table",
-	/*0x7f*/ "WinHelp", // Windows only
+	/*0x7f*/ "Dummy", // WinHelp, Windows only
 	/*0x80*/ "Dummy",
 	/*0x81*/ "Dummy",
 	/*0x82*/ "Dummy",
@@ -957,11 +959,11 @@ static const char *sci21_default_knames[] = {
 	/*0x92*/ "PlayVMD",
 	/*0x93*/ "SetHotRectangles",
 	/*0x94*/ "MulDiv",
-	/*0x95*/ "GetSierraProfileInt", // Windows only
-	/*0x96*/ "GetSierraProfileString", // Windows only
+	/*0x95*/ "Dummy", // GetSierraProfileInt, Windows only
+	/*0x96*/ "Dummy", // GetSierraProfileString, Windows only
 	/*0x97*/ "SetWindowsOption", // Windows only
 	/*0x98*/ "GetWindowsOption", // Windows only
-	/*0x99*/ "WinDLL", // Windows only
+	/*0x99*/ "Dummy", // WinDLL, Windows only
 	/*0x9a*/ "Dummy",
 	/*0x9b*/ "Dummy",
 	/*0x9c*/ "DeletePic"

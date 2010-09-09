@@ -1465,6 +1465,18 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv) {
+	uint16 windowsOption = argv[0].toUint16();
+	switch (windowsOption) {
+	case 0:
+		// Title bar on/off in Phantasmagoria, we return 0 (off)
+		return NULL_REG;
+	default:
+		warning("GetWindowsOption: Unknown option %d", windowsOption);
+		return NULL_REG;
+	}
+}
+
 #endif
 
 } // End of namespace Sci
