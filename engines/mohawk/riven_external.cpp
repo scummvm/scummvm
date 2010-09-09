@@ -1928,28 +1928,146 @@ void RivenExternal::xthideinventory(uint16 argc, uint16 *argv) {
 	_vm->_gfx->hideInventory();
 }
 
+// Marble Puzzle related constants
+static const uint32 kMarbleCount = 6;
+static const int kSmallMarbleWidth = 4;
+static const int kSmallMarbleHeight = 2;
+static const int kLargeMarbleSize = 8;
+static const int kMarbleHotspotSize = 13;
+static const char *s_marbleNames[] = { "tred", "torange", "tyellow", "tgreen", "tblue", "tviolet" };
+
+#if 0
+// Marble Puzzle helper functions
+// The y portion takes the upper 16 bits, while the x portion takes the lower 16 bits
+static void setMarbleX(uint32 *var, byte x) {
+	*var = (*var & 0xff00) | x;
+}
+
+static void setMarbleY(uint32 *var, byte y) {
+	*var = (y << 16) | (*var & 0xff);
+}
+
+static byte getMarbleX(uint32 *var) {
+	return *var & 0xff;
+}
+
+static byte getMarbleY(uint32 *var) { // Give that that Y you old hag!
+	return (*var >> 16) & 0xff;
+}
+#endif
+
 void RivenExternal::xt7500_checkmarbles(uint16 argc, uint16 *argv) {
-	// TODO: Lots of stuff to do here, eventually we have to check each individual
-	// marble position and set apower based on that. The game handles the video playing
-	// so we don't have to. For the purposes of making the game progress further, we'll
-	// just turn the power on for now.
+	// TODO: Set apower if the marbles are in their correct spot. 
+	// HACK: For the purposes of making the game progress further, we'll just turn the
+	// power on for now.
 	*_vm->getVar("apower") = 1;
 }
 
 void RivenExternal::xt7600_setupmarbles(uint16 argc, uint16 *argv) {
-	// TODO: Marble puzzle related
+	// Draw the small marbles when we're a step away from the waffle
+	uint16 baseBitmapId = (_vm->getFeatures() & GF_DVD) ? 539 : 526;
+	bool waffleDown = *_vm->getVar("twaffle") != 0;
+
+	// Note that each of the small marble images is exactly 4x2
+
+	for (uint16 i = 0; i < kMarbleCount; i++) {
+		uint32 *var = _vm->getVar(s_marbleNames[i]);
+
+		if (*var == 0) {
+			// The marble is still in its initial place
+			// (Note that this is still drawn even if the waffle is down)
+			int marbleX = 376 + i * 2;
+			int marbleY = 253 + i * 4;
+			_vm->_gfx->copyImageToScreen(baseBitmapId + i, marbleX, marbleY, marbleX + kSmallMarbleWidth, marbleY + kSmallMarbleHeight);
+		} else if (waffleDown) {
+			// The marble is on the grid and the waffle is down
+			// (Nothing to draw here)
+		} else {
+			// The marble is on the grid and the waffle is up
+			// TODO: Draw them onto the grid
+		}
+	}
+}
+
+void RivenExternal::setMarbleHotspots() {
+	// TODO: Set the hotspots
 }
 
 void RivenExternal::xt7800_setup(uint16 argc, uint16 *argv) {
-	// TODO: Marble puzzle related
+	// Move the marble hotspots based on their position variables
+	setMarbleHotspots();
+	*_vm->getVar("themarble") = 0;
+}
+
+void RivenExternal::drawMarbles() {
+	for (uint32 i = 0; i < kMarbleCount; i++) {
+		// Don't draw the marble if we're holding it
+		if (*_vm->getVar("themarble") - 1 == i)
+			continue;
+
+		Common::Rect rect = _vm->_hotspots[i + 3].rect;
+		// Trim the rect down a bit
+		rect.left += 3;
+		rect.top += 3;
+		rect.right -= 2;
+		rect.bottom -= 2;
+		_vm->_gfx->drawExtrasImage(i + 200, rect);
+	}
 }
 
 void RivenExternal::xdrawmarbles(uint16 argc, uint16 *argv) {
-	// TODO: Marble puzzle related
+	// Draw marbles in the closeup
+	drawMarbles();
+
+	// We have to re-enable the updates here
+	// Would be really nice if the scripts did this for us, but alas...
+	_vm->_gfx->_updatesEnabled = true;
 }
 
 void RivenExternal::xtakeit(uint16 argc, uint16 *argv) {
-	// TODO: Marble puzzle related
+	// Pick up and move a marble
+
+	// First, let's figure out what marble we're now holding
+	uint32 *marble = _vm->getVar("themarble");
+	*marble = 0;
+
+	for (uint32 i = 0; i < kMarbleCount; i++)
+		if (_vm->_hotspots[i + 3].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
+			*marble = i + 1;
+			break;
+		}
+
+	// xtakeit() shouldn't be called if we're not on a marble hotspot
+	assert(*marble);
+
+	// Redraw the background
+	_vm->_gfx->drawPLST(1);
+	_vm->_gfx->updateScreen();
+
+	// Loop until the player lets go (or quits)
+	Common::Event event;
+	bool mouseDown = true;
+	while (mouseDown) {
+		while (_vm->_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_LBUTTONUP)
+				mouseDown = false;
+			else if (event.type == Common::EVENT_MOUSEMOVE)
+				_vm->_system->updateScreen();
+			else if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RTL)
+				return;
+		}
+
+		_vm->_system->delayMillis(10); // Take it easy on the CPU
+	}
+
+	// TODO: Check if we landed in a valid location and no other marble has that location
+
+	// Check the new hotspots and refresh everything
+	*marble = 0;
+	setMarbleHotspots();
+	_vm->_curHotspot = -1;
+	_vm->checkHotspotChange();
+	_vm->_gfx->updateScreen();
 }
 
 void RivenExternal::xtscpbtn(uint16 argc, uint16 *argv) {
