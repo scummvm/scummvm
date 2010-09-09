@@ -1478,7 +1478,18 @@ reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
-	showScummVMDialog("Please use an external viewer to open the game's help file");
+	switch (argv[0].toUint16()) {
+	case 1:
+		// Load a help file
+		// Maybe in the future we can implement this, but for now this message should suffice
+		showScummVMDialog("Please use an external viewer to open the game's help file: " + s->_segMan->getString(argv[1]));
+		break;
+	case 2:
+		// Looks like some init function
+		break;
+	default:
+		warning("Unknown kWinHelp subop %d", argv[0].toUint16());
+	}
 
 	return s->r_acc;
 }
