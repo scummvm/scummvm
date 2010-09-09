@@ -30,6 +30,7 @@
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/cache.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/font.h"
@@ -88,7 +89,7 @@ void GfxText16::ClearChar(int16 chr) {
 // will process the encountered code and set new font/set color. We only support
 // one-digit codes currently, don't know if multi-digit codes are possible.
 // Returns textcode character count.
-int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor) {
+int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor, bool doingDrawing) {
 	const char *textCode = text;
 	int16 textCodeSize = 0;
 	char curCode;
@@ -126,8 +127,20 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 			}
 		}
 		break;
-	case 'r': // reference?!
-		// Used in Pepper, no idea how this works out
+	case 'r': // reference (used in pepper)
+		if (doingDrawing) {
+			if (_codeRefTempRect.top == -1) {
+				// Starting point
+				_codeRefTempRect.top = _ports->_curPort->curTop;
+				_codeRefTempRect.left = _ports->_curPort->curLeft;
+			} else {
+				// End point reached
+				_codeRefTempRect.bottom = _ports->_curPort->curTop + _ports->_curPort->fontHeight;
+				_codeRefTempRect.right = _ports->_curPort->curLeft;
+				_codeRefRects.push_back(_codeRefTempRect);
+				_codeRefTempRect.left = _codeRefTempRect.top = -1;
+			}
+		}
 		break;
 	}
 	return textCodeSize;
@@ -162,7 +175,7 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 		case 0x7C:
 			if (getSciVersion() >= SCI_VERSION_1_1) {
 				curCharCount++;
-				curCharCount += CodeProcessing(text, orgFontId, previousPenColor);
+				curCharCount += CodeProcessing(text, orgFontId, previousPenColor, false);
 				continue;
 			}
 			break;
@@ -258,7 +271,7 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 				break;
 			case 0x7C:
 				if (getSciVersion() >= SCI_VERSION_1_1) {
-					len -= CodeProcessing(text, orgFontId, 0);
+					len -= CodeProcessing(text, orgFontId, 0, false);
 					break;
 				}
 			default:
@@ -359,7 +372,7 @@ void GfxText16::Draw(const char *text, int16 from, int16 len, GuiResourceId orgF
 			break;
 		case 0x7C:
 			if (getSciVersion() >= SCI_VERSION_1_1) {
-				len -= CodeProcessing(text, orgFontId, orgPenColor);
+				len -= CodeProcessing(text, orgFontId, orgPenColor, true);
 				break;
 			}
 		default:
@@ -407,6 +420,10 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 		if (SwitchToFont900OnSjis(text))
 			doubleByteMode = true;
 	}
+
+	// Reset reference code rects
+	_codeRefRects.clear();
+	_codeRefTempRect.left = _codeRefTempRect.top = -1;
 
 	maxTextWidth = 0;
 	while (*text) {
@@ -483,6 +500,30 @@ bool GfxText16::SwitchToFont900OnSjis(const char *text) {
 		return true;
 	}
 	return false;
+}
+
+reg_t GfxText16::allocAndFillReferenceRectArray() {
+	uint rectCount = _codeRefRects.size();
+	if (rectCount) {
+		reg_t rectArray;
+		byte *rectArrayPtr = g_sci->getEngineState()->_segMan->allocDynmem(4 * 2 * (rectCount + 1), "text code reference rects", &rectArray);
+		GfxCoordAdjuster *coordAdjuster = g_sci->_gfxCoordAdjuster;
+		for (uint curRect = 0; curRect < rectCount; curRect++) {
+			coordAdjuster->kernelLocalToGlobal(_codeRefRects[curRect].left, _codeRefRects[curRect].top);
+			coordAdjuster->kernelLocalToGlobal(_codeRefRects[curRect].right, _codeRefRects[curRect].bottom);
+			WRITE_LE_UINT16(rectArrayPtr + 0, _codeRefRects[curRect].left);
+			WRITE_LE_UINT16(rectArrayPtr + 2, _codeRefRects[curRect].top);
+			WRITE_LE_UINT16(rectArrayPtr + 4, _codeRefRects[curRect].right);
+			WRITE_LE_UINT16(rectArrayPtr + 6, _codeRefRects[curRect].bottom);
+			rectArrayPtr += 8;
+		}
+		WRITE_LE_UINT16(rectArrayPtr + 0, 0x7777);
+		WRITE_LE_UINT16(rectArrayPtr + 2, 0x7777);
+		WRITE_LE_UINT16(rectArrayPtr + 4, 0x7777);
+		WRITE_LE_UINT16(rectArrayPtr + 6, 0x7777);
+		return rectArray;
+	}
+	return NULL_REG;
 }
 
 void GfxText16::kernelTextSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {

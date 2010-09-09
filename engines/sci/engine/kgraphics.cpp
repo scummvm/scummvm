@@ -808,6 +808,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		alignment = readSelectorValue(s->_segMan, controlObject, SELECTOR(mode));
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
 		g_sci->_gfxControls->kernelDrawText(rect, controlObject, g_sci->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
+		s->r_acc = g_sci->_gfxText16->allocAndFillReferenceRectArray();
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXTEDIT:

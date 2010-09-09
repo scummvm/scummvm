@@ -32,6 +32,8 @@ namespace Sci {
 #define SCI_TEXT16_ALIGNMENT_CENTER 1
 #define SCI_TEXT16_ALIGNMENT_LEFT	0
 
+typedef Common::Array<Common::Rect> CodeRefRectArray;
+
 class GfxPorts;
 class GfxPaint16;
 class GfxScreen;
@@ -48,7 +50,7 @@ public:
 	GfxFont *GetFont();
 	void SetFont(GuiResourceId fontId);
 
-	int16 CodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor);
+	int16 CodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor, bool doingDrawing);
 
 	void ClearChar(int16 chr);
 
@@ -64,6 +66,8 @@ public:
 	void Draw_String(const char *text);
 
 	GfxFont *_font;
+
+	reg_t allocAndFillReferenceRectArray();
 
 	void kernelTextSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight);
 	void kernelTextFonts(int argc, reg_t *argv);
@@ -83,6 +87,9 @@ private:
 	GuiResourceId *_codeFonts;
 	int _codeColorsCount;
 	uint16 *_codeColors;
+
+	Common::Rect _codeRefTempRect;
+	CodeRefRectArray _codeRefRects;
 };
 
 } // End of namespace Sci
