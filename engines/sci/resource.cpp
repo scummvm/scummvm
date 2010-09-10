@@ -490,8 +490,9 @@ void ResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 
 	int error = res->decompress(resMan->getVolVersion(), fileStream);
 	if (error) {
-		warning("Error %d occurred while reading %s from resource file: %s",
-				error, res->_id.toString().c_str(), sci_error_types[error]);
+		warning("Error %d occurred while reading %s from resource file %s: %s",
+				error, res->_id.toString().c_str(), res->getResourceLocation().c_str(),
+				sci_error_types[error]);
 		res->unalloc();
 	}
 
@@ -2351,6 +2352,10 @@ Common::String ResourceManager::findSierraGameId() {
 	sierraId += (const char *)seeker;
 
 	return sierraId;
+}
+
+const Common::String &Resource::getResourceLocation() const {
+	return _source->getLocationName();
 }
 
 } // End of namespace Sci

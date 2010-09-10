@@ -98,7 +98,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("diskdump",			WRAP_METHOD(Console, cmdDiskDump));
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
 	DCmd_Register("resource_id",		WRAP_METHOD(Console, cmdResourceId));
-	DCmd_Register("resource_size",		WRAP_METHOD(Console, cmdResourceSize));
+	DCmd_Register("resource_info",		WRAP_METHOD(Console, cmdResourceInfo));
 	DCmd_Register("resource_types",		WRAP_METHOD(Console, cmdResourceTypes));
 	DCmd_Register("list",				WRAP_METHOD(Console, cmdList));
 	DCmd_Register("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
@@ -327,7 +327,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" diskdump - Dumps the specified resource to disk as a patch file\n");
 	DebugPrintf(" hexdump - Dumps the specified resource to standard output\n");
 	DebugPrintf(" resource_id - Identifies a resource number by splitting it up in resource type and resource number\n");
-	DebugPrintf(" resource_size - Shows the size of a resource\n");
+	DebugPrintf(" resource_info - Shows info about a resource\n");
 	DebugPrintf(" resource_types - Shows the valid resource types\n");
 	DebugPrintf(" list - Lists all the resources of a given type\n");
 	DebugPrintf(" hexgrep - Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers\n");
@@ -647,7 +647,7 @@ bool Console::cmdDiskDump(int argc, const char **argv) {
 			outFile->finalize();
 			outFile->close();
 			delete outFile;
-			DebugPrintf("Resource %s.%03d has been dumped to disk\n", argv[1], resNum);
+			DebugPrintf("Resource %s.%03d (located in %s) has been dumped to disk\n", argv[1], resNum, resource->getResourceLocation().c_str());
 		} else {
 			DebugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
 		}
@@ -724,9 +724,9 @@ bool Console::cmdRoomNumber(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdResourceSize(int argc, const char **argv) {
+bool Console::cmdResourceInfo(int argc, const char **argv) {
 	if (argc != 3) {
-		DebugPrintf("Shows the size of a resource\n");
+		DebugPrintf("Shows information about a resource\n");
 		DebugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
 		return true;
 	}
@@ -740,6 +740,7 @@ bool Console::cmdResourceSize(int argc, const char **argv) {
 		Resource *resource = _engine->getResMan()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
 			DebugPrintf("Resource size: %d\n", resource->size);
+			DebugPrintf("Resource location: %s\n", resource->getResourceLocation().c_str());
 		} else {
 			DebugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
 		}
