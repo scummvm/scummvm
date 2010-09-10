@@ -21,7 +21,6 @@ TODO
 BUGS
 ------
 
-- Still some clipping issues (walking upstairs in the saloon, when on top of the tower in the hideout)
 - Crashes sometimes on scene changes
   (I guess because some talktext is still running although the slot used by it has changed)
 - Crashes sometimes (e.g. when inside the barn and going up the ladder)
@@ -32,3 +31,4 @@ DONE
 - Optimize segment mask redrawing (only redraw what's neccessary)
 - Add movie playback functionality (movie format is known, needs implementing)
 - Add sound support (after rewrite of the resource system)
+- Still some clipping issues (walking upstairs in the saloon, when on top of the tower in the hideout)
