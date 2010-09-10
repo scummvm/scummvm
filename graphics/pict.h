@@ -72,10 +72,12 @@ private:
 	JPEG *_jpeg;
 	byte _palette[256 * 4];
 	bool _isPaletted;
+	Graphics::Surface *_outputSurface;
 
-	void decodeDirectBitsRect(Common::SeekableReadStream *stream, Surface *image, bool hasPalette);
-	void decodeDirectBitsLine(byte *out, uint32 length, Common::SeekableReadStream *data, byte bytesPerPixel);
-	void decodeCompressedQuickTime(Common::SeekableReadStream *stream, Surface *image);
+	void decodeDirectBitsRect(Common::SeekableReadStream *stream, uint16 width, uint16 height, bool hasPalette);
+	void decodeDirectBitsLine(byte *out, uint32 length, Common::SeekableReadStream *data, byte bitsPerPixel, byte bytesPerPixel);
+	void decodeCompressedQuickTime(Common::SeekableReadStream *stream);
+	void outputPixelBuffer(byte *&out, byte value, byte bitsPerPixel);
 };
 
 } // End of namespace Graphics

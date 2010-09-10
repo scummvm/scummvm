@@ -48,6 +48,8 @@ PictDecoder::~PictDecoder() {
 Surface *PictDecoder::decodeImage(Common::SeekableReadStream *stream, byte *palette) {
 	assert(stream);
 
+	_outputSurface = 0;
+
 	uint16 fileSize = stream->readUint16BE();
 
 	// If we have no file size here, we probably have a PICT from a file
@@ -61,9 +63,6 @@ Surface *PictDecoder::decodeImage(Common::SeekableReadStream *stream, byte *pale
 	_imageRect.bottom = stream->readUint16BE();
 	_imageRect.right = stream->readUint16BE();
 	_imageRect.debugPrint(0, "PICT Rect:");
-
-	Graphics::Surface *image = new Graphics::Surface();
-	image->create(_imageRect.width(), _imageRect.height(), _pixelFormat.bytesPerPixel);
 	_isPaletted = false;
 
 	// NOTE: This is only a subset of the full PICT format.
@@ -96,10 +95,10 @@ Surface *PictDecoder::decodeImage(Common::SeekableReadStream *stream, byte *pale
 		} else if (opcode == 0x001E) { // DefHilite
 			// Ignore, Contains no Data
 		} else if (opcode == 0x0098) { // PackBitsRect
-			decodeDirectBitsRect(stream, image, true);
+			decodeDirectBitsRect(stream, _imageRect.width(), _imageRect.height(), true);
 			_isPaletted = true;
 		} else if (opcode == 0x009A) { // DirectBitsRect
-			decodeDirectBitsRect(stream, image, false);
+			decodeDirectBitsRect(stream, _imageRect.width(), _imageRect.height(), false);
 		} else if (opcode == 0x00A1) { // LongComment
 			stream->readUint16BE();
 			uint16 dataSize = stream->readUint16BE();
@@ -119,7 +118,7 @@ Surface *PictDecoder::decodeImage(Common::SeekableReadStream *stream, byte *pale
 			origResRect.right = stream->readUint16BE();
 			stream->readUint32BE(); // Reserved
 		} else if (opcode == 0x8200) { // CompressedQuickTime
-			decodeCompressedQuickTime(stream, image);
+			decodeCompressedQuickTime(stream);
 			break;
 		} else {
 			warning("Unknown PICT opcode %04x", opcode);
@@ -130,7 +129,7 @@ Surface *PictDecoder::decodeImage(Common::SeekableReadStream *stream, byte *pale
 	if (palette && _isPaletted)
 		memcpy(palette, _palette, 256 * 4);
 
-	return image;
+	return _outputSurface;
 }
 
 PictDecoder::PixMap PictDecoder::readPixMap(Common::SeekableReadStream *stream, bool hasBaseAddr) {
@@ -163,7 +162,7 @@ struct DirectBitsRectData {
 	uint16 mode;
 };
 
-void PictDecoder::decodeDirectBitsRect(Common::SeekableReadStream *stream, Surface *image, bool hasPalette) {
+void PictDecoder::decodeDirectBitsRect(Common::SeekableReadStream *stream, uint16 width, uint16 height, bool hasPalette) {
 	static const PixelFormat directBitsFormat16 = PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 
 	// Clear the palette
@@ -197,11 +196,18 @@ void PictDecoder::decodeDirectBitsRect(Common::SeekableReadStream *stream, Surfa
 	directBitsData.dstRect.right = stream->readUint16BE();
 	directBitsData.mode = stream->readUint16BE();
 
-	if (directBitsData.pixMap.pixelSize != 8 && directBitsData.pixMap.pixelSize != 16 && directBitsData.pixMap.pixelSize != 32)
-		error("Unhandled DirectBitsRect bitsPerPixel %d", directBitsData.pixMap.pixelSize);
+	byte bytesPerPixel = 0;
 
-	byte bytesPerPixel = (directBitsData.pixMap.pixelSize == 32) ? 3 : directBitsData.pixMap.pixelSize / 8;
-	byte *buffer = new byte[image->w * image->h * bytesPerPixel];
+	if (directBitsData.pixMap.pixelSize <= 8)
+		bytesPerPixel = 1;
+	else if (directBitsData.pixMap.pixelSize == 32)
+		bytesPerPixel = 3;
+	else
+		bytesPerPixel = directBitsData.pixMap.pixelSize / 8;
+
+	_outputSurface = new Graphics::Surface();
+	_outputSurface->create(width, height, (bytesPerPixel == 1) ? 1 : _pixelFormat.bytesPerPixel);
+	byte *buffer = new byte[width * height * bytesPerPixel];
 
 	// Read in amount of data per row
 	for (uint16 i = 0; i < directBitsData.pixMap.bounds.height(); i++) {
@@ -217,37 +223,37 @@ void PictDecoder::decodeDirectBitsRect(Common::SeekableReadStream *stream, Surfa
 			error("Unpacked DirectBitsRect data (not padded)");
 		} else if (directBitsData.pixMap.packType == 0 || directBitsData.pixMap.packType > 2) { // Packed
 			uint16 byteCount = (directBitsData.pixMap.rowBytes > 250) ? stream->readUint16BE() : stream->readByte();
-			decodeDirectBitsLine(buffer + i * image->w * bytesPerPixel, directBitsData.pixMap.rowBytes, stream->readStream(byteCount), bytesPerPixel);
+			decodeDirectBitsLine(buffer + i * _outputSurface->w * bytesPerPixel, directBitsData.pixMap.rowBytes, stream->readStream(byteCount), directBitsData.pixMap.pixelSize, bytesPerPixel);
 		}
 	}
 
 	if (bytesPerPixel == 1) {
 		// Just copy to the image
-		memcpy(image->pixels, buffer, image->w * image->h);
+		memcpy(_outputSurface->pixels, buffer, _outputSurface->w * _outputSurface->h);
 	} else if (bytesPerPixel == 2) {
 		// Convert from 16-bit to whatever surface we need
-		for (uint16 y = 0; y < image->h; y++) {
-			for (uint16 x = 0; x < image->w; x++) {
+		for (uint16 y = 0; y < _outputSurface->h; y++) {
+			for (uint16 x = 0; x < _outputSurface->w; x++) {
 				byte r = 0, g = 0, b = 0;
-				uint32 color = READ_BE_UINT16(buffer + (y * image->w + x) * bytesPerPixel);
+				uint32 color = READ_BE_UINT16(buffer + (y * _outputSurface->w + x) * bytesPerPixel);
 				directBitsFormat16.colorToRGB(color, r, g, b);
 				if (_pixelFormat.bytesPerPixel == 2)
-					*((uint16 *)image->getBasePtr(x, y)) = _pixelFormat.RGBToColor(r, g, b);
+					*((uint16 *)_outputSurface->getBasePtr(x, y)) = _pixelFormat.RGBToColor(r, g, b);
 				else
-					*((uint32 *)image->getBasePtr(x, y)) = _pixelFormat.RGBToColor(r, g, b);
+					*((uint32 *)_outputSurface->getBasePtr(x, y)) = _pixelFormat.RGBToColor(r, g, b);
 			}
 		}
 	} else {
 		// Convert from 24-bit (planar!) to whatever surface we need
-		for (uint16 y = 0; y < image->h; y++) {
-			for (uint16 x = 0; x < image->w; x++) {
-				byte r = *(buffer + y * image->w * 3 + x);
-				byte g = *(buffer + y * image->w * 3 + image->w + x);
-				byte b = *(buffer + y * image->w * 3 + image->w * 2 + x);
+		for (uint16 y = 0; y < _outputSurface->h; y++) {
+			for (uint16 x = 0; x < _outputSurface->w; x++) {
+				byte r = *(buffer + y * _outputSurface->w * 3 + x);
+				byte g = *(buffer + y * _outputSurface->w * 3 + _outputSurface->w + x);
+				byte b = *(buffer + y * _outputSurface->w * 3 + _outputSurface->w * 2 + x);
 				if (_pixelFormat.bytesPerPixel == 2)
-					*((uint16 *)image->getBasePtr(x, y)) = _pixelFormat.RGBToColor(r, g, b);
+					*((uint16 *)_outputSurface->getBasePtr(x, y)) = _pixelFormat.RGBToColor(r, g, b);
 				else
-					*((uint32 *)image->getBasePtr(x, y)) = _pixelFormat.RGBToColor(r, g, b);
+					*((uint32 *)_outputSurface->getBasePtr(x, y)) = _pixelFormat.RGBToColor(r, g, b);
 			}
 		}
 	}
@@ -255,7 +261,7 @@ void PictDecoder::decodeDirectBitsRect(Common::SeekableReadStream *stream, Surfa
 	delete[] buffer;
 }
 
-void PictDecoder::decodeDirectBitsLine(byte *out, uint32 length, Common::SeekableReadStream *data, byte bytesPerPixel) {
+void PictDecoder::decodeDirectBitsLine(byte *out, uint32 length, Common::SeekableReadStream *data, byte bitsPerPixel, byte bytesPerPixel) {
 	uint32 dataDecoded = 0;
 	byte bytesPerDecode = (bytesPerPixel == 2) ? 2 : 1;
 
@@ -270,14 +276,17 @@ void PictDecoder::decodeDirectBitsLine(byte *out, uint32 length, Common::Seekabl
 				if (bytesPerDecode == 2) {
 					WRITE_BE_UINT16(out, value);
 					out += 2;
-				} else
-					*out++ = value;
+				} else {
+					outputPixelBuffer(out, value, bitsPerPixel);
+				}
 			}
 			dataDecoded += runSize * bytesPerDecode;
 		} else {
 			uint32 runSize = (op + 1) * bytesPerDecode;
+
 			for (uint32 i = 0; i < runSize; i++)
-				*out++ = data->readByte();
+				outputPixelBuffer(out, data->readByte(), bitsPerPixel);
+
 			dataDecoded += runSize;
 		}
 	}
@@ -292,12 +301,31 @@ void PictDecoder::decodeDirectBitsLine(byte *out, uint32 length, Common::Seekabl
 	delete data;
 }
 
+void PictDecoder::outputPixelBuffer(byte *&out, byte value, byte bitsPerPixel) {
+	switch (bitsPerPixel) {
+	case 1:
+		for (int i = 7; i >= 0; i--)
+			*out++ = (value >> i) & 1;
+		break;
+	case 2:
+		for (int i = 6; i >= 0; i -= 2)
+			*out++ = (value >> i) & 3;
+		break;
+	case 4:
+		*out++ = (value >> 4) & 0xf;
+		*out++ = value & 0xf;
+		break;
+	default:
+		*out++ = value;
+	}
+}
+
 // Compressed QuickTime details can be found here:
 // http://developer.apple.com/documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/B-Chapter/2TheImageCompression.html
 // http://developer.apple.com/documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/F-Chapter/6WorkingwiththeImage.html
 // I'm just ignoring that because Myst ME uses none of that extra stuff. The offset is always the same.
 
-void PictDecoder::decodeCompressedQuickTime(Common::SeekableReadStream *stream, Graphics::Surface *image) {
+void PictDecoder::decodeCompressedQuickTime(Common::SeekableReadStream *stream) {
 	uint32 dataSize = stream->readUint32BE();
 	uint32 startPos = stream->pos();
 
@@ -310,23 +338,21 @@ void PictDecoder::decodeCompressedQuickTime(Common::SeekableReadStream *stream, 
 	Surface *uComponent = _jpeg->getComponent(2);
 	Surface *vComponent = _jpeg->getComponent(3);
 
-	Surface jpegImage;
-	jpegImage.create(yComponent->w, yComponent->h, _pixelFormat.bytesPerPixel);
+	_outputSurface = new Graphics::Surface();
+	_outputSurface->create(yComponent->w, yComponent->h, _pixelFormat.bytesPerPixel);
 
-	for (uint16 i = 0; i < jpegImage.h; i++) {
-		for (uint16 j = 0; j < jpegImage.w; j++) {
+	for (uint16 i = 0; i < _outputSurface->h; i++) {
+		for (uint16 j = 0; j < _outputSurface->w; j++) {
 			byte r = 0, g = 0, b = 0;
 			YUV2RGB(*((byte *)yComponent->getBasePtr(j, i)), *((byte *)uComponent->getBasePtr(j, i)), *((byte *)vComponent->getBasePtr(j, i)), r, g, b);
 			if (_pixelFormat.bytesPerPixel == 2)
-				*((uint16 *)jpegImage.getBasePtr(j, i)) = _pixelFormat.RGBToColor(r, g, b);
+				*((uint16 *)_outputSurface->getBasePtr(j, i)) = _pixelFormat.RGBToColor(r, g, b);
 			else
-				*((uint32 *)jpegImage.getBasePtr(j, i)) = _pixelFormat.RGBToColor(r, g, b);
+				*((uint32 *)_outputSurface->getBasePtr(j, i)) = _pixelFormat.RGBToColor(r, g, b);
 		}
 	}
 
-	image->copyFrom(jpegImage);
 	stream->seek(startPos + dataSize);
-	jpegImage.free();
 	delete jpegStream;
 }
 
