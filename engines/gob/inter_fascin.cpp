@@ -137,7 +137,8 @@ bool Inter_Fascination::oFascin_repeatUntil(OpFuncParams &params) {
 		// This results in a crash in Scummvm. This workaround avoids that crash.
 		if (_vm->getPlatform() == Common::kPlatformPC) {
 			if ((!scumm_stricmp(_vm->_game->_curTotFile, "INTRO1.TOT") && (blockPos == 3533)) ||
-				(!scumm_stricmp(_vm->_game->_curTotFile, "INTRO2.TOT") && (blockPos == 3519)))
+				(!scumm_stricmp(_vm->_game->_curTotFile, "INTRO2.TOT") && (blockPos == 3519)) ||
+				(!scumm_stricmp(_vm->_game->_curTotFile, "INTRO2.TOT") && (blockPos == 3265)))  //PC Hebrew
 				_terminate = 1;
 		}
 	} while (!flag && !_break && !_terminate && !_vm->shouldQuit());
