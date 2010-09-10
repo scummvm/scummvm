@@ -56,6 +56,51 @@ struct SciScriptSignature {
 //  - rinse and repeat
 
 // ===========================================================================
+// Castle of Dr. Brain
+// cipher::init (script 391) is called on room 380 init. This resets the word
+//  cipher puzzle. The puzzle sadly operates on some hep strings, which aren't
+//  saved in our sci. So saving/restoring in this room will break the puzzle
+//  Because of this issue, we just init the puzzle each time it's accessed.
+//  this is not 100% sierra behaviour, in fact we will actually reset the puzzle
+//  during each access which makes it impossible to cheat.
+const byte castlebrainSignatureCipherPuzzle[] = {
+	22,
+	0x35, 0x00,        // ldi 00
+	0xa3, 0x26,        // sal local[26]
+	0xa3, 0x25,        // sal local[25]
+	0x35, 0x00,        // ldi 00
+	0xa3, 0x2a,        // sal local[2a] (local is not used)
+	0xa3, 0x29,        // sal local[29] (local is not used)
+	0x35, 0xff,        // ldi ff
+	0xa3, 0x2c,        // sal local[2c]
+	0xa3, 0x2b,        // sal local[2b]
+	0x35, 0x00,        // ldi 00
+	0x65, 0x16,        // aTop highlightedIcon
+	0
+};
+
+const uint16 castlebrainPatchCipherPuzzle[] = {
+	0x39, 0x6b,        // pushi 6b (selector init)
+	0x76,              // push0
+	0x55, 0x04,        // self 04
+	0x35, 0x00,        // ldi 00
+	0xa3, 0x25,        // sal local[25]
+	0xa3, 0x26,        // sal local[26]
+	0xa3, 0x29,        // sal local[29]
+	0x65, 0x16,        // aTop highlightedIcon
+	0x34, 0xff, 0xff,  // ldi ffff
+	0xa3, 0x2b,        // sal local[2b]
+	0xa3, 0x2c,        // sal local[2c]
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                             adjust
+const SciScriptSignature castlebrainSignatures[] = {
+    {    391, "cipher puzzle save/restore break",            1, PATCH_MAGICDWORD(0xa3, 0x26, 0xa3, 0x25),    -2, castlebrainSignatureCipherPuzzle, castlebrainPatchCipherPuzzle },
+    SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // stayAndHelp::changeState (0) is called when ego swims to the left or right
 //  boundaries of room 660. Normally a textbox is supposed to get on screen
 //  but the call is wrong, so not only do we get an error message the script
@@ -793,6 +838,9 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
 	const SciScriptSignature *signatureTable = NULL;
 	switch (g_sci->getGameId()) {
+	case GID_CASTLEBRAIN:
+		signatureTable = castlebrainSignatures;
+		break;
 	case GID_ECOQUEST:
 		signatureTable = ecoquest1Signatures;
 		break;
