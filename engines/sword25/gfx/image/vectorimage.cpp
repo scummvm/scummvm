@@ -375,9 +375,13 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 			// Feststellen welche Parameter gesetzt werden
 			uint32 stateNewStyles = bs.getBits(1);
 			uint32 stateLineStyle = bs.getBits(1);
-			uint32 stateFillStyle0 = bs.getBits(1);
 			uint32 stateFillStyle1 = bs.getBits(1);
+			uint32 stateFillStyle0 = bs.getBits(1);
 			uint32 stateMoveTo = bs.getBits(1);
+
+			uint prevLineStyle = lineStyle;
+			uint prevFillStyle0 = fillStyle0;
+			uint prevFillStyle1 = fillStyle1;
 
 			// End der Shape-Definition erreicht?
 			if (!stateNewStyles && !stateLineStyle && !stateFillStyle0 && !stateFillStyle1 && !stateMoveTo) {
@@ -423,7 +427,7 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 				if (stateLineStyle || stateFillStyle0 || stateFillStyle1 || stateMoveTo) {
 					// Store previous curve if any
 					if (bezNodes) {
-						bez = storeBez(bez, lineStyle, fillStyle0, fillStyle1, &bezNodes, &bezAllocated);
+						bez = storeBez(bez, prevLineStyle, prevFillStyle0, prevFillStyle1, &bezNodes, &bezAllocated);
 					}
 
 					// Start new curve
