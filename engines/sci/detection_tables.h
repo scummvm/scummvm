@@ -1154,6 +1154,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// King's Quest 5 EGA 1.2M disk version (from LordHoto)
+	// VERSION file reports "0.000.055"
+	{"kq5", "EGA", {
+		{"resource.002", 0, "4d74e8094ff57cea6ee92faf63dbd0af", 1195538},
+		{"resource.003", 0, "3cca5b2dae8afe94532edfdc98d7edbe", 1092132},
+		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 413818},
+		{"resource.001", 0, "c1eef048fa9fe76298c2d4705ef9549f", 1162752},
+		{"resource.map", 0, "53206afb4fd73871a484e83acab80f31", 7608},
+		{"resource.004", 0, "83568edf7fde18b3eed988bc5d22ceb1", 1188053},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// King's Quest 5 EGA (supplied by omer_mor in bug report #3035421)
 	// VERSION file reports "0.000.062"
 	{"kq5", "EGA", {
