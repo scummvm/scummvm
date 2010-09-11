@@ -259,26 +259,26 @@ frac_t Rational::toFrac() const {
 }
 
 const Rational operator+(int left, const Rational &right) {
-	Rational tmp = right;
-	tmp += left;
+	Rational tmp(left);
+	tmp += right;
 	return tmp;
 }
 
 const Rational operator-(int left, const Rational &right) {
-	Rational tmp = right;
-	tmp -= left;
+	Rational tmp(left);
+	tmp -= right;
 	return tmp;
 }
 
 const Rational operator*(int left, const Rational &right) {
-	Rational tmp = right;
-	tmp *= left;
+	Rational tmp(left);
+	tmp *= right;
 	return tmp;
 }
 
 const Rational operator/(int left, const Rational &right) {
-	Rational tmp = right;
-	tmp /= left;
+	Rational tmp(left);
+	tmp /= right;
 	return tmp;
 }
 
