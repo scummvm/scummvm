@@ -1169,7 +1169,11 @@ void TinselEngine::RestartDrivers() {
 	}
 
 	// Set midi volume
-	SetMidiVolume(_vm->_config->_musicVolume);
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
 }
 
 /**

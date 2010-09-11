@@ -158,7 +158,11 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 	if (TinselV1PSX) return false;
 
 	if (_vm->_config->_musicVolume != 0) {
-		SetMidiVolume(_vm->_config->_musicVolume);
+		bool mute = false;
+		if (ConfMan.hasKey("mute"))
+			mute = ConfMan.getBool("mute");
+
+		SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
 	}
 
 	// the index and length of the last tune loaded
@@ -967,8 +971,12 @@ void RestoreMidiFacts(SCNHANDLE	Midi, bool Loop) {
 	currentLoop = Loop;
 
 	if (_vm->_config->_musicVolume != 0 && Loop) {
+		bool mute = false;
+		if (ConfMan.hasKey("mute"))
+			mute = ConfMan.getBool("mute");
+
 		PlayMidiSequence(currentMidi, true);
-		SetMidiVolume(_vm->_config->_musicVolume);
+		SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
 	}
 }
 

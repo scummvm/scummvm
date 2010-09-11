@@ -129,9 +129,13 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 			error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
 		// FIXME: Should set this in a different place ;)
-		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _vm->_config->_soundVolume);
+		bool mute = false;
+		if (ConfMan.hasKey("mute"))
+			mute = ConfMan.getBool("mute");
+
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mute ? 0 : _vm->_config->_soundVolume);
 		//_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _vm->_config->_voiceVolume);
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mute ? 0 : _vm->_config->_voiceVolume);
 
 		Audio::AudioStream *sampleStream = 0;
 
