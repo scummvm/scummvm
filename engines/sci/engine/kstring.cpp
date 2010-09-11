@@ -275,7 +275,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 					reg = readSelector(s->_segMan, reg, SELECTOR(data));
 #endif
 
-				Common::String tempsource = (reg == NULL_REG) ? "" : g_sci->getKernel()->lookupText(reg,
+				Common::String tempsource = g_sci->getKernel()->lookupText(reg,
 				                                  arguments[paramindex + 1]);
 				int slen = strlen(tempsource.c_str());
 				int extralen = str_leng - slen;
