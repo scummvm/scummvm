@@ -172,7 +172,10 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	tab->addTab(_("Game"));
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, "GameOptions_Game.Id", _("ID:"), _("Short game identifier used for referring to savegames and running the game from the command line"));
+	if (g_system->getOverlayWidth() > 320)
+		new StaticTextWidget(tab, "GameOptions_Game.Id", _("ID:"), _("Short game identifier used for referring to savegames and running the game from the command line"));
+	else
+		new StaticTextWidget(tab, "GameOptions_Game.Id", _c("ID:", "lowres"), _("Short game identifier used for referring to savegames and running the game from the command line"));
 	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain, _("Short game identifier used for referring to savegames and running the game from the command line"));
 
 	// GUI:  Label & edit widget for the description
@@ -276,17 +279,26 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 7) The Paths tab
 	//
-	tab->addTab(_("Paths"));
+	if (g_system->getOverlayWidth() > 320)
+		tab->addTab(_("Paths"));
+	else
+		tab->addTab(_c("Paths", "lowres"));
 
 	// These buttons have to be extra wide, or the text will be truncated
 	// in the small version of the GUI.
 
 	// GUI:  Button + Label for the game path
-	new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), 0, kCmdGameBrowser);
+	if (g_system->getOverlayWidth() > 320)
+		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), 0, kCmdGameBrowser);
+	else
+		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _c("Game Path:", "context"), 0, kCmdGameBrowser);
 	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
-	new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _("Extra Path:"), _("Specifies path to additional data used the game"), kCmdExtraBrowser);
+	if (g_system->getOverlayWidth() > 320)
+		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _("Extra Path:"), _("Specifies path to additional data used the game"), kCmdExtraBrowser);
+	else
+		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _c("Extra Path:", "lowres"), _("Specifies path to additional data used the game"), kCmdExtraBrowser);
 	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath, _("Specifies path to additional data used the game"));
 
 	// GUI:  Button + Label for the save path

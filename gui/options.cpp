@@ -968,24 +968,39 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	// 5) The Paths tab
 	//
-	tab->addTab(_("Paths"));
+	if (g_system->getOverlayWidth() > 320)
+		tab->addTab(_("Paths"));
+	else
+		tab->addTab(_c("Paths", "lowres"));
 
 #if !( defined(__DC__) || defined(__GP32__) )
 	// These two buttons have to be extra wide, or the text will be
 	// truncated in the small version of the GUI.
 
 	// Save game path
-	new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _("Save Path: "), _("Specifies where your savegames are put"), kChooseSaveDirCmd);
+	if (g_system->getOverlayWidth() > 320)
+		new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _("Save Path: "), _("Specifies where your savegames are put"), kChooseSaveDirCmd);
+	else
+		new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _c("Save Path: ", "lowres"), _("Specifies where your savegames are put"), kChooseSaveDirCmd);
 	_savePath = new StaticTextWidget(tab, "GlobalOptions_Paths.SavePath", "/foo/bar", _("Specifies where your savegames are put"));
 
-	new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _("Theme Path:"), 0, kChooseThemeDirCmd);
+	if (g_system->getOverlayWidth() > 320)
+		new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _("Theme Path:"), 0, kChooseThemeDirCmd);
+	else
+		new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _c("Theme Path:", "lowres"), 0, kChooseThemeDirCmd);
 	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", _c("None", "path"));
 
-	new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
+	if (g_system->getOverlayWidth() > 320)
+		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
+	else
+		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _c("Extra Path:", "lowres"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
 	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _c("None", "path"), _("Specifies path to additional data used by all games or ScummVM"));
 
 #ifdef DYNAMIC_MODULES
-	new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _("Plugins Path:"), 0, kChoosePluginsDirCmd);
+	if (g_system->getOverlayWidth() > 320)
+		new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _("Plugins Path:"), 0, kChoosePluginsDirCmd);
+	else
+		new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _c("Plugins Path:", "lowres"), 0, kChoosePluginsDirCmd);
 	_pluginsPath = new StaticTextWidget(tab, "GlobalOptions_Paths.PluginsPath", _c("None", "path"));
 #endif
 #endif
