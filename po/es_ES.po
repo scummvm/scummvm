@@ -345,7 +345,7 @@ msgstr "Acerca de ScummVM"
 
 #: gui/launcher.cpp:558
 msgid "~O~ptions..."
-msgstr "~O~opciones..."
+msgstr "~O~pciones..."
 
 #: gui/launcher.cpp:558
 msgid "Change global ScummVM options"

@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2010-09-11 16:55+0100\n"
-"PO-Revision-Date: 2010-09-11 17:11+0100\n"
-"Last-Translator: Maff <matteo.maff at gmail dot com>\n"
+"PO-Revision-Date: 2010-09-11 18:30+0100\n"
+"Last-Translator: Matteo 'Maff' Angelino <matteo.maff at gmail dot com>\n"
 "Language-Team: Italian\n"
 "Language: Italiano\n"
 "MIME-Version: 1.0\n"
@@ -135,7 +135,6 @@ msgid "Short game identifier used for referring to savegames and running the gam
 msgstr "Breve identificatore di gioco utilizzato per il riferimento a salvataggi e per l'esecuzione del gioco dalla riga di comando"
 
 #: gui/launcher.cpp:178
-#, fuzzy
 msgctxt "lowres"
 msgid "ID:"
 msgstr "ID:"
@@ -273,20 +272,18 @@ msgstr "Percorsi"
 
 #: gui/launcher.cpp:285
 #: gui/options.cpp:974
-#, fuzzy
 msgctxt "lowres"
 msgid "Paths"
-msgstr "Percorsi"
+msgstr "Perc."
 
 #: gui/launcher.cpp:292
 msgid "Game Path:"
 msgstr "Percorso gioco:"
 
 #: gui/launcher.cpp:294
-#, fuzzy
 msgctxt "context"
 msgid "Game Path:"
-msgstr "Percorso gioco:"
+msgstr "Perc. gioco:"
 
 #: gui/launcher.cpp:299
 #: gui/options.cpp:994
@@ -301,10 +298,9 @@ msgstr "Specifica il percorso di ulteriori dati usati dal gioco"
 
 #: gui/launcher.cpp:301
 #: gui/options.cpp:996
-#, fuzzy
 msgctxt "lowres"
 msgid "Extra Path:"
-msgstr "Percorso extra:"
+msgstr "Perc. extra:"
 
 #: gui/launcher.cpp:306
 msgid "Save Path:"
@@ -833,7 +829,6 @@ msgid "Save Path: "
 msgstr "Salvataggi:"
 
 #: gui/options.cpp:984
-#, fuzzy
 msgctxt "lowres"
 msgid "Save Path: "
 msgstr "Salvataggi:"
@@ -843,10 +838,9 @@ msgid "Theme Path:"
 msgstr "Percorso tema:"
 
 #: gui/options.cpp:990
-#, fuzzy
 msgctxt "lowres"
 msgid "Theme Path:"
-msgstr "Percorso tema:"
+msgstr "Perc. tema:"
 
 #: gui/options.cpp:994
 #: gui/options.cpp:996
@@ -859,10 +853,9 @@ msgid "Plugins Path:"
 msgstr "Percorso plugin:"
 
 #: gui/options.cpp:1003
-#, fuzzy
 msgctxt "lowres"
 msgid "Plugins Path:"
-msgstr "Percorso plugin:"
+msgstr "Perc. plugin:"
 
 #: gui/options.cpp:1012
 msgid "Misc"
