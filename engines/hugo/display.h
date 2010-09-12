@@ -40,6 +40,7 @@ struct rect_t;
 class Screen {
 public:
 	Screen(HugoEngine &vm);
+	virtual ~Screen();
 
 	int16    fontHeight();
 	int16    stringLength(char *s);

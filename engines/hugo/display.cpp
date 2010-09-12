@@ -62,6 +62,9 @@ Screen::Screen(HugoEngine &vm) : _vm(vm) {
 
 }
 
+Screen::~Screen() {
+}
+
 void Screen::createPal() {
 	debugC(1, kDebugDisplay, "createPal");
 
