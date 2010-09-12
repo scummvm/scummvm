@@ -453,4 +453,49 @@ void Screen::userHelp() {
 	           "ESC - Return to game");
 }
 
+Screen_v2::Screen_v2(HugoEngine &vm) : Screen(vm) {
+}
+
+Screen_v2::~Screen_v2() {
+}
+
+// Load font file, construct font ptrs and reverse data bytes
+// TODO: This uses hardcoded fonts in hugo.dat, it should be replaced
+//       by a proper implementation of .FON files
+void Screen_v2::loadFont(int16 fontId) {
+	byte  height, width;
+	static bool fontLoadedFl[NUM_FONTS] = {false, false, false};
+
+	debugC(2, kDebugDisplay, "loadFont(%d)", fontId);
+
+	_fnt = fontId - FIRST_FONT;                     // Set current font number
+
+	if (fontLoadedFl[_fnt])                             // If already loaded, return
+		return;
+
+	fontLoadedFl[_fnt] = true;
+
+	memcpy(_fontdata[_fnt], _vm._arrayFont[_fnt], _vm._arrayFontSize[_fnt]);
+	_font[_fnt][0] = _fontdata[_fnt];               // Store height,width of fonts
+
+	int16 offset = 2;                                       // Start at fontdata[2] ([0],[1] used for height,width)
+
+	// Setup the font array (127 characters)
+	for (int i = 1; i < 128; i++) {
+		if (i == 127) 
+			i = i;
+
+		_font[_fnt][i] = _fontdata[_fnt] + offset;
+		height = *(_fontdata[_fnt] + offset);
+		width  = *(_fontdata[_fnt] + offset + 1);
+
+		int16 size = height * ((width + 7) >> 3);
+		for (int j = 0; j < size; j++)
+			Utils::reverseByte(&_fontdata[_fnt][offset + 2 + j]);
+
+		offset += 2 + size;
+	}
+}
+
 } // End of namespace Hugo
+

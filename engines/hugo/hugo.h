@@ -33,7 +33,7 @@
 #include "hugo/game.h"
 
 #define HUGO_DAT_VER_MAJ 0  // 1 byte
-#define HUGO_DAT_VER_MIN 21 // 1 byte
+#define HUGO_DAT_VER_MIN 22 // 1 byte
 #define DATAALIGNMENT 4
 
 namespace Common {
@@ -97,6 +97,8 @@ public:
 	byte  *_introX;
 	byte  *_introY;
 	byte  *_screenStates;
+	byte  *_arrayFont[3];
+	int16  _arrayFontSize[3];
 	char  **_textData;
 	char  **_stringtData;
 	char  **_screenNames;

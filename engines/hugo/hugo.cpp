@@ -122,6 +122,15 @@ HugoEngine::~HugoEngine() {
 
 	free(_defltTunes);
 	free(_screenStates);
+
+	if (_arrayFont[0])
+		free(_arrayFont[0]);
+
+	if (_arrayFont[1])
+		free(_arrayFont[1]);
+
+	if (_arrayFont[2])
+		free(_arrayFont[2]);
 }
 
 GameType HugoEngine::getGameType() const {
@@ -140,7 +149,6 @@ Common::Error HugoEngine::run() {
 	s_Engine = this;
 	initGraphics(320, 200, false);
 
-	_screen = new Screen(*this);
 	_mouseHandler = new MouseHandler(*this);
 	_inventoryHandler = new InventoryHandler(*this);
 	_parser = new Parser(*this);
@@ -152,31 +160,37 @@ Common::Error HugoEngine::run() {
 		_fileManager = new FileManager_v3(*this);
 		_scheduler = new Scheduler_v2(*this);
 		_introHandler = new intro_1w(*this);
+		_screen = new Screen(*this);
 		break;
 	case 1:
 		_fileManager = new FileManager_v2(*this);
 		_scheduler = new Scheduler_v2(*this);
 		_introHandler = new intro_2w(*this);
+		_screen = new Screen(*this);
 		break;
 	case 2:
 		_fileManager = new FileManager_v2(*this);
 		_scheduler = new Scheduler_v2(*this);
 		_introHandler = new intro_3w(*this);
+		_screen = new Screen(*this);
 		break;
 	case 3: // H1 DOS
 		_fileManager = new FileManager_v1(*this);
 		_scheduler = new Scheduler_v1(*this);
 		_introHandler = new intro_1d(*this);
+		_screen = new Screen_v2(*this);
 		break;
 	case 4:
 		_fileManager = new FileManager_v2(*this);
 		_scheduler = new Scheduler_v1(*this);
 		_introHandler = new intro_2d(*this);
+		_screen = new Screen_v2(*this);
 		break;
 	case 5:
 		_fileManager = new FileManager_v4(*this);
 		_scheduler = new Scheduler_v2(*this);
 		_introHandler = new intro_3d(*this);
+		_screen = new Screen_v2(*this);
 		break;
 	}
 
@@ -1332,6 +1346,37 @@ bool HugoEngine::loadHugoDat() {
 			_alNewscrIndex = numElem;
 	}
 
+	for (int j = 0; j < NUM_FONTS; j++)
+		_arrayFont[j] = 0;
+
+	if (_gameVariant > 2) {
+		_arrayFontSize[0] = in.readUint16BE();
+		_arrayFont[0] = (byte *)malloc(sizeof(byte) * _arrayFontSize[0]);
+		for (int j = 0; j < _arrayFontSize[0]; j++)
+			_arrayFont[0][j] = in.readByte();
+
+		_arrayFontSize[1] = in.readUint16BE();
+		_arrayFont[1] = (byte *)malloc(sizeof(byte) * _arrayFontSize[1]);
+		for (int j = 0; j < _arrayFontSize[1]; j++)
+			_arrayFont[1][j] = in.readByte();
+
+		_arrayFontSize[2] = in.readUint16BE();
+		_arrayFont[2] = (byte *)malloc(sizeof(byte) * _arrayFontSize[2]);
+		for (int j = 0; j < _arrayFontSize[2]; j++)
+			_arrayFont[2][j] = in.readByte();
+	} else {
+		numElem = in.readUint16BE();
+		for (int j = 0; j < numElem; j++)
+			in.readByte();
+
+		numElem = in.readUint16BE();
+		for (int j = 0; j < numElem; j++)
+			in.readByte();
+
+		numElem = in.readUint16BE();
+		for (int j = 0; j < numElem; j++)
+			in.readByte();
+	}
 	return true;
 }
 

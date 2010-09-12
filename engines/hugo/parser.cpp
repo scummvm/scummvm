@@ -197,8 +197,7 @@ void Parser::charHandler() {
 void Parser::drawStatusText() {
 	debugC(4, kDebugParser, "drawStatusText");
 
-	if (_vm.getPlatform() == Common::kPlatformWindows)
-		_vm.screen().loadFont(U_FONT8);
+	_vm.screen().loadFont(U_FONT8);
 	uint16 sdx = _vm.screen().stringLength(_statusLine);
 	uint16 sdy = _vm.screen().fontHeight() + 1;                 // + 1 for shadow
 	uint16 posX = 0;

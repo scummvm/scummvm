@@ -49,7 +49,7 @@ public:
 	void     displayList(dupdate_t update, ...);
 	void     displayRect(int16 x, int16 y, int16 dx, int16 dy);
 	void     initDisplay();
-	void     loadFont(int16 fontId);
+	virtual void loadFont(int16 fontId);
 	void     moveImage(image_pt srcImage, uint16 x1, uint16 y1, uint16 dx, uint16 dy, uint16 width1, image_pt dstImage, uint16 x2, uint16 y2, uint16 width2);
 	void     remapPal(uint16 oldIndex, uint16 newIndex);
 	void     restorePal(Common::SeekableReadStream *f);
@@ -76,7 +76,7 @@ public:
 		return _GUIBuffer;
 	}
 
-private:
+protected:
 	HugoEngine &_vm;
 
 	// Fonts used in dib (non-GDI)
@@ -84,6 +84,7 @@ private:
 	byte _fontdata[NUM_FONTS][FONTSIZE];            // Font data
 	byte *_font[NUM_FONTS][FONT_LEN];               // Ptrs to each char
 
+private:
 	viewdib_t _frontBuffer;
 	viewdib_t _backBuffer;
 	viewdib_t _GUIBuffer;                           // User interface images
@@ -97,6 +98,15 @@ private:
 	void writeChr(int sx, int sy, byte color, char *local_fontdata);
 	int16 center(char *s);
 };
+
+class Screen_v2 : public Screen {
+public:
+	Screen_v2(HugoEngine &vm);
+	~Screen_v2();
+
+	virtual void loadFont(int16 fontId);
+};
+
 
 } // End of namespace Hugo
 

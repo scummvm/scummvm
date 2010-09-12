@@ -67,8 +67,7 @@ void MouseHandler::cursorText(char *buffer, int16 cx, int16 cy, uif_t fontId, in
 
 	debugC(1, kDebugMouse, "cursorText(%s, %d, %d, %d, %d)", buffer, cx, cy, fontId, color);
 
-	if (_vm.getPlatform() == Common::kPlatformWindows)
-		_vm.screen().loadFont(fontId);
+	_vm.screen().loadFont(fontId);
 
 	// Find bounding rect for string
 	int16 sdx = _vm.screen().stringLength(buffer);
