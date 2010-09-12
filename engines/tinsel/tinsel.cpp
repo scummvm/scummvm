@@ -146,7 +146,6 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 		// Get the next keyboard event off the stack
 		Common::Event evt = _vm->_keypresses.front();
 		_vm->_keypresses.pop_front();
-		const Common::Point mousePos = _vm->getMousePosition();
 
 		// Switch for special keys
 		switch (evt.kbd.keycode) {
