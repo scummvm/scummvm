@@ -21,6 +21,9 @@ common/util.cpp
 engines/dialogs.cpp
 engines/scumm/dialogs.cpp
 engines/mohawk/dialogs.cpp
+engines/mohawk/myst.cpp
+engines/mohawk/riven.cpp
+engines/cruise/menu.cpp
 
 sound/fmopl.cpp
 sound/musicplugin.cpp

@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/keyboard.h"
+#include "common/translation.h"
 
 #include "mohawk/graphics.h"
 #include "mohawk/resource.h"
@@ -651,7 +652,7 @@ void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
 }
 
 void MohawkEngine_Riven::runLoadDialog() {
-	GUI::SaveLoadChooser slc("Load Game:", "Load");
+	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"));
 	slc.setSaveMode(false);
 
 	Common::String gameId = ConfMan.get("gameid");

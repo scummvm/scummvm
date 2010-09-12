@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-12 12:18+0100\n"
+"POT-Creation-Date: 2010-09-12 22:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -407,11 +407,13 @@ msgstr ""
 msgid "Clear value"
 msgstr ""
 
-#: gui/launcher.cpp:616 engines/dialogs.cpp:120
+#: gui/launcher.cpp:616 engines/dialogs.cpp:120 engines/mohawk/myst.cpp:222
+#: engines/mohawk/riven.cpp:655 engines/cruise/menu.cpp:218
 msgid "Load game:"
 msgstr ""
 
-#: gui/launcher.cpp:616 engines/dialogs.cpp:120
+#: gui/launcher.cpp:616 engines/dialogs.cpp:120 engines/mohawk/myst.cpp:222
+#: engines/mohawk/riven.cpp:655 engines/cruise/menu.cpp:218
 #: backends/platform/wince/CEActionsPocket.cpp:263
 #: backends/platform/wince/CEActionsSmartphone.cpp:225
 msgid "Load"
@@ -1057,11 +1059,12 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr ""
 
-#: engines/dialogs.cpp:122
+#: engines/dialogs.cpp:122 engines/cruise/menu.cpp:216
 msgid "Save game:"
 msgstr ""
 
-#: engines/dialogs.cpp:122 backends/platform/symbian/src/SymbianActions.cpp:47
+#: engines/dialogs.cpp:122 engines/cruise/menu.cpp:216
+#: backends/platform/symbian/src/SymbianActions.cpp:47
 #: backends/platform/wince/CEActionsPocket.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:263
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
