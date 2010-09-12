@@ -403,7 +403,7 @@ bool GFXtests::fullScreenMode() {
 	"upon your initial state.";
 
 	Common::Point pt(0, 100);
-	Common::Rect rect = Testsuite::writeOnScreen("Testing fullscreen mode", pt);
+	Testsuite::writeOnScreen("Testing fullscreen mode", pt);
 	
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : FullScreenMode\n");
@@ -496,7 +496,7 @@ bool GFXtests::aspectRatio() {
 
 	bool isFeaturePresent;
 	bool isFeatureEnabled;
-	bool passed;
+	bool passed = true;
 	Common::String prompt;
 	OptionSelected shouldSelect;
 
@@ -693,7 +693,7 @@ bool GFXtests::iconifyWindow() {
 	}
 	
 	Common::Point pt(0, 100);
-	Common::Rect rect = Testsuite::writeOnScreen("Testing Iconifying window", pt);
+	Testsuite::writeOnScreen("Testing Iconifying window", pt);
 
 	bool isFeaturePresent;
 	bool isFeatureEnabled;
@@ -915,7 +915,6 @@ bool GFXtests::paletteRotation() {
 		Testsuite::logPrintf("Info! Skipping test : palette Rotation\n");
 		return true;
 	}
-	Common::Point pt(0, 10);
 	Testsuite::clearEntireScreen();
 
 	// Use 256 colors
@@ -1022,7 +1021,7 @@ bool GFXtests::pixelFormats() {
 
 	int numFormatsTested = 0;
 	int numPassed = 0;
-	bool numFailed = 0;
+	int numFailed = 0;
 
 	Testsuite::logDetailedPrintf("Testing Pixel Formats. Size of list : %d\n", pfList.size());
 
@@ -1092,7 +1091,7 @@ bool GFXtests::pixelFormats() {
 	Testsuite::clearScreen();
 
 	if (numFailed) {
-		Testsuite::logDetailedPrintf("Pixel Format test: Failed : %d, Passed : %d, Ignored %d\n",numFailed, numPassed, numFormatsTested - (numPassed + numFailed));
+		Testsuite::logDetailedPrintf("Pixel Format test: Failed : %d, Passed : %d, Ignored %d\n", numFailed, numPassed, numFormatsTested - (numPassed + numFailed));
 		return false;
 	}
 
