@@ -32,9 +32,14 @@
 namespace Sci {
 
 #define PATCH_END             0xFFFF
-#define PATCH_ADDTOOFFSET     0x8000
-#define PATCH_GETORIGINALBYTE 0x4000
+#define PATCH_COMMANDMASK     0xF000
+#define PATCH_VALUEMASK       0x0FFF
+#define PATCH_ADDTOOFFSET     0xE000
+#define PATCH_GETORIGINALBYTE 0xD000
+#define PATCH_ADJUSTWORD      0xC000
+#define PATCH_ADJUSTWORD_NEG  0xB000
 #define PATCH_MAGICDWORD(a, b, c, d) CONSTANT_LE_32(a | (b << 8) | (c << 16) | (d << 24))
+#define PATCH_VALUELIMIT      4096
 
 struct SciScriptSignature {
 	uint16 scriptNr;
@@ -779,17 +784,48 @@ const SciScriptSignature sq5Signatures[] = {
 
 // will actually patch previously found signature area
 void Script::applyPatch(const uint16 *patch, byte *scriptData, const uint32 scriptSize, int32 signatureOffset) {
+	byte orgData[PATCH_VALUELIMIT];
 	int32 offset = signatureOffset;
 	uint16 patchWord = *patch;
 
+	// Copy over original bytes from script
+	uint32 orgDataSize = scriptSize - offset;
+	if (orgDataSize > PATCH_VALUELIMIT)
+		orgDataSize = PATCH_VALUELIMIT;
+	memcpy(&orgData, &scriptData[offset], orgDataSize);
+
 	while (patchWord != PATCH_END) {
-		if (patchWord & PATCH_ADDTOOFFSET) {
-			offset += patchWord & ~PATCH_ADDTOOFFSET;
-		} else if (patchWord & PATCH_GETORIGINALBYTE) {
-			// TODO: implement this
-			// Can be used to patch in some bytes from the original script into another location
-		} else {
-			scriptData[offset] = patchWord & 0xFF;
+		uint16 patchValue = patchWord & PATCH_VALUEMASK;
+		switch (patchWord & PATCH_COMMANDMASK) {
+		case PATCH_ADDTOOFFSET:
+			// add value to offset
+			offset += patchValue & ~PATCH_ADDTOOFFSET;
+			break;
+		case PATCH_GETORIGINALBYTE:
+			// get original byte from script
+			if (patchValue >= orgDataSize)
+				error("patching: can not get requested original byte from script");
+			scriptData[offset] = orgData[patchValue];
+			offset++;
+			break;
+		case PATCH_ADJUSTWORD: {
+			// Adjust word right before current position
+			byte *adjustPtr = &scriptData[offset - 2];
+			uint16 adjustWord = READ_LE_UINT16(adjustPtr);
+			adjustWord += patchValue;
+			WRITE_LE_UINT16(adjustPtr, adjustWord);
+			break;
+		}
+		case PATCH_ADJUSTWORD_NEG: {
+			// Adjust word right before current position (negative way)
+			byte *adjustPtr = &scriptData[offset - 2];
+			uint16 adjustWord = READ_LE_UINT16(adjustPtr);
+			adjustWord -= patchValue;
+			WRITE_LE_UINT16(adjustPtr, adjustWord);
+			break;
+		}
+		default:
+			scriptData[offset] = patchValue & 0xFF;
 			offset++;
 		}
 		patch++;
