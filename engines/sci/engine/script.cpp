@@ -310,6 +310,16 @@ void Script::incrementLockers() {
 void Script::decrementLockers() {
 	if (_lockers > 0)
 		_lockers--;
+
+	// WORKAROUND for bug #3038837: HOYLE3: EGA/VGA Crashes
+	// This is caused by script 0 lockers reaching zero. Since
+	// this should never happen, I'm confident in making this a
+	// non-specific fix.
+	//
+	// TODO: Figure out why this happens, and fix it properly!
+	if (_nr == 0 && _lockers == 0)
+		_lockers++;
+
 }
 
 int Script::getLockers() const {
