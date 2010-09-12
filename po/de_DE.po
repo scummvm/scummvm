@@ -1,4 +1,4 @@
-# LANGUAGE translation for ScummVM.
+# German translation for ScummVM.
 # Copyright (C) 2010 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2010-09-12 12:18+0100\n"
-"PO-Revision-Date: 2010-09-02 16:01+0100\n"
+"PO-Revision-Date: 2010-09-11 20:17+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
 "<SimSaw@gmx.de>\n"
@@ -126,10 +126,9 @@ msgstr ""
 "Kommandozeile aus starten zu können"
 
 #: gui/launcher.cpp:178
-#, fuzzy
 msgctxt "lowres"
 msgid "ID:"
-msgstr "Kennung:"
+msgstr "ID:"
 
 #: gui/launcher.cpp:182
 msgid "Name:"
@@ -249,7 +248,6 @@ msgid "Paths"
 msgstr "Pfade"
 
 #: gui/launcher.cpp:285 gui/options.cpp:977
-#, fuzzy
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Pfade"
@@ -259,7 +257,6 @@ msgid "Game Path:"
 msgstr "Spielpfad:"
 
 #: gui/launcher.cpp:294
-#, fuzzy
 msgctxt "context"
 msgid "Game Path:"
 msgstr "Spielpfad:"
@@ -273,7 +270,6 @@ msgid "Specifies path to additional data used the game"
 msgstr "Legt das Verzeichnis für zusätzliche Spieldateien fest."
 
 #: gui/launcher.cpp:301 gui/options.cpp:999
-#, fuzzy
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Extrapfad:"
@@ -798,17 +794,15 @@ msgid "Save Path: "
 msgstr "Spielstände: "
 
 #: gui/options.cpp:987
-#, fuzzy
 msgctxt "lowres"
 msgid "Save Path: "
-msgstr "Spielstände: "
+msgstr "Speichern: "
 
 #: gui/options.cpp:991
 msgid "Theme Path:"
 msgstr "Themenpfad:"
 
 #: gui/options.cpp:993
-#, fuzzy
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Themenpfad:"
@@ -824,7 +818,6 @@ msgid "Plugins Path:"
 msgstr "Plugin-Pfad:"
 
 #: gui/options.cpp:1006
-#, fuzzy
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Plugin-Pfad:"
@@ -1511,7 +1504,7 @@ msgid "Timeout while initialising network"
 msgstr "Zeitüberschreitung beim Starten des Netzwerks"
 
 #: backends/platform/wii/options.cpp:186
-#, fuzzy, c-format
+#, c-format
 msgid "Network not initialised (%d)"
 msgstr "Netzwerk nicht gestartet (%d)"
 
