@@ -331,15 +331,12 @@ ThemeEngine::~ThemeEngine() {
  *	Rendering mode management
  *********************************************************/
 const ThemeEngine::Renderer ThemeEngine::_rendererModes[] = {
-	{ _s("Disabled GFX"), "none", kGfxDisabled },
-	{ _s("Standard Renderer (16bpp)"), "normal_16bpp", kGfxStandard16bit },
+	{ _s("Disabled GFX"), _sc("Disabled GFX", "lowres"), "none", kGfxDisabled },
+	{ _s("Standard Renderer (16bpp)"), _s("Standard (16bpp)"), "normal_16bpp", kGfxStandard16bit },
 #ifndef DISABLE_FANCY_THEMES
-	{ _s("Antialiased Renderer (16bpp)"), "aa_16bpp", kGfxAntialias16bit }
+	{ _s("Antialiased Renderer (16bpp)"), _s("Antialiased (16bpp)"), "aa_16bpp", kGfxAntialias16bit }
 #endif
 };
-	
-DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Standard Renderer (16bpp)", "lowres")
-DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Antialiased Renderer (16bpp)", "lowres")
 
 const uint ThemeEngine::_rendererModesSize = ARRAYSIZE(ThemeEngine::_rendererModes);
 

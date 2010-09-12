@@ -663,7 +663,10 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &prefix) {
 	// The MIDI mode popup & a label
-	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? _("Preferred Device:") : _("Music Device:"), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
+	if (g_system->getOverlayWidth() > 320)
+		_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? _("Preferred Device:") : _("Music Device:"), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
+	else
+		_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? _c("Preferred Device:", "lowres") : _c("Music Device:", "lowres"), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", _("Specifies output sound device or sound card emulator"));
 
 	// Populate it
@@ -1025,7 +1028,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 			_rendererPopUp->appendEntry(_(GUI::ThemeEngine::_rendererModes[i].name), GUI::ThemeEngine::_rendererModes[i].mode);
 	} else {
 		for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
-			_rendererPopUp->appendEntry(_c(GUI::ThemeEngine::_rendererModes[i].name, "lowres"), GUI::ThemeEngine::_rendererModes[i].mode);
+			_rendererPopUp->appendEntry(_(GUI::ThemeEngine::_rendererModes[i].shortname), GUI::ThemeEngine::_rendererModes[i].mode);
 	}
 
 	if (g_system->getOverlayWidth() > 320)

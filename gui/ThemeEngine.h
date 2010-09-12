@@ -238,6 +238,7 @@ public:
 
 	struct Renderer {
 		const char *name;
+		const char *shortname;
 		const char *cfg;
 		GraphicsMode mode;
 	};

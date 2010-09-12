@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-11 16:55+0100\n"
+"POT-Creation-Date: 2010-09-12 12:18+0100\n"
 "PO-Revision-Date: 2010-09-02 16:01+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
@@ -31,22 +31,28 @@ msgstr "Verwendete Funktionen:"
 msgid "Available engines:"
 msgstr "Verfügbare Spiele-Engines:"
 
-#: gui/browser.cpp:69
+#: gui/browser.cpp:70
 msgid "Go up"
 msgstr "Pfad hoch"
 
-#: gui/browser.cpp:69
+#: gui/browser.cpp:70 gui/browser.cpp:72
 msgid "Go to previous directory level"
 msgstr "Zu höherer Pfadebene wechseln"
 
-#: gui/browser.cpp:70 gui/chooser.cpp:49 gui/KeysDialog.cpp:46
-#: gui/launcher.cpp:316 gui/massadd.cpp:95 gui/options.cpp:1081
+#: gui/browser.cpp:72
+#, fuzzy
+msgctxt "lowres"
+msgid "Go up"
+msgstr "Pfad hoch"
+
+#: gui/browser.cpp:73 gui/chooser.cpp:49 gui/KeysDialog.cpp:46
+#: gui/launcher.cpp:316 gui/massadd.cpp:95 gui/options.cpp:1084
 #: gui/saveload.cpp:65 gui/saveload.cpp:157 gui/themebrowser.cpp:56
 #: backends/platform/wii/options.cpp:48
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: gui/browser.cpp:71 gui/chooser.cpp:50 gui/themebrowser.cpp:57
+#: gui/browser.cpp:74 gui/chooser.cpp:50 gui/themebrowser.cpp:57
 msgid "Choose"
 msgstr "Auswählen"
 
@@ -71,7 +77,7 @@ msgid "Map"
 msgstr "Zuweisen"
 
 #: gui/KeysDialog.cpp:45 gui/launcher.cpp:317 gui/launcher.cpp:938
-#: gui/launcher.cpp:942 gui/massadd.cpp:92 gui/options.cpp:1082
+#: gui/launcher.cpp:942 gui/massadd.cpp:92 gui/options.cpp:1085
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "OK"
@@ -146,7 +152,7 @@ msgstr ""
 "Spiels in eine deutsche verwandeln."
 
 #: gui/launcher.cpp:188 gui/launcher.cpp:202 gui/options.cpp:80
-#: gui/options.cpp:638 gui/options.cpp:648 gui/options.cpp:1052
+#: gui/options.cpp:638 gui/options.cpp:648 gui/options.cpp:1055
 #: sound/null.cpp:42
 msgid "<default>"
 msgstr "<Standard>"
@@ -164,11 +170,11 @@ msgctxt "lowres"
 msgid "Platform:"
 msgstr "Plattform:"
 
-#: gui/launcher.cpp:212 gui/options.cpp:921 gui/options.cpp:938
+#: gui/launcher.cpp:212 gui/options.cpp:924 gui/options.cpp:941
 msgid "Graphics"
 msgstr "Grafik"
 
-#: gui/launcher.cpp:212 gui/options.cpp:921 gui/options.cpp:938
+#: gui/launcher.cpp:212 gui/options.cpp:924 gui/options.cpp:941
 msgid "GFX"
 msgstr "GFX"
 
@@ -181,7 +187,7 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Globale Grafikeinstellungen übergehen"
 
-#: gui/launcher.cpp:224 gui/options.cpp:944
+#: gui/launcher.cpp:224 gui/options.cpp:947
 msgid "Audio"
 msgstr "Audio"
 
@@ -194,11 +200,11 @@ msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Globale Audioeinstellungen übergehen"
 
-#: gui/launcher.cpp:238 gui/options.cpp:949
+#: gui/launcher.cpp:238 gui/options.cpp:952
 msgid "Volume"
 msgstr "Lautstärke"
 
-#: gui/launcher.cpp:240 gui/options.cpp:951
+#: gui/launcher.cpp:240 gui/options.cpp:954
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Lautst."
@@ -212,7 +218,7 @@ msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Globale Lautstärkeeinstellungen übergehen"
 
-#: gui/launcher.cpp:252 gui/options.cpp:959
+#: gui/launcher.cpp:252 gui/options.cpp:962
 msgid "MIDI"
 msgstr "MIDI"
 
@@ -225,7 +231,7 @@ msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Globale MIDI-Einstellungen übergehen"
 
-#: gui/launcher.cpp:267 gui/options.cpp:965
+#: gui/launcher.cpp:267 gui/options.cpp:968
 msgid "MT-32"
 msgstr "MT-32"
 
@@ -238,11 +244,11 @@ msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Globale MT-32-Einstellungen übergehen"
 
-#: gui/launcher.cpp:283 gui/options.cpp:972
+#: gui/launcher.cpp:283 gui/options.cpp:975
 msgid "Paths"
 msgstr "Pfade"
 
-#: gui/launcher.cpp:285 gui/options.cpp:974
+#: gui/launcher.cpp:285 gui/options.cpp:977
 #, fuzzy
 msgctxt "lowres"
 msgid "Paths"
@@ -258,7 +264,7 @@ msgctxt "context"
 msgid "Game Path:"
 msgstr "Spielpfad:"
 
-#: gui/launcher.cpp:299 gui/options.cpp:994
+#: gui/launcher.cpp:299 gui/options.cpp:997
 msgid "Extra Path:"
 msgstr "Extrapfad:"
 
@@ -266,7 +272,7 @@ msgstr "Extrapfad:"
 msgid "Specifies path to additional data used the game"
 msgstr "Legt das Verzeichnis für zusätzliche Spieldateien fest."
 
-#: gui/launcher.cpp:301 gui/options.cpp:996
+#: gui/launcher.cpp:301 gui/options.cpp:999
 #, fuzzy
 msgctxt "lowres"
 msgid "Extra Path:"
@@ -277,7 +283,7 @@ msgid "Save Path:"
 msgstr "Spielstände:"
 
 #: gui/launcher.cpp:306 gui/launcher.cpp:308 gui/launcher.cpp:309
-#: gui/options.cpp:982 gui/options.cpp:984 gui/options.cpp:985
+#: gui/options.cpp:985 gui/options.cpp:987 gui/options.cpp:988
 msgid "Specifies where your savegames are put"
 msgstr "Legt fest, wo die Spielstände abgelegt werden."
 
@@ -287,10 +293,10 @@ msgid "Save Path:"
 msgstr "Speichern:"
 
 #: gui/launcher.cpp:325 gui/launcher.cpp:405 gui/launcher.cpp:454
-#: gui/options.cpp:991 gui/options.cpp:997 gui/options.cpp:1004
-#: gui/options.cpp:1105 gui/options.cpp:1111 gui/options.cpp:1117
-#: gui/options.cpp:1125 gui/options.cpp:1149 gui/options.cpp:1153
-#: gui/options.cpp:1159 gui/options.cpp:1166 gui/options.cpp:1265
+#: gui/options.cpp:994 gui/options.cpp:1000 gui/options.cpp:1007
+#: gui/options.cpp:1108 gui/options.cpp:1114 gui/options.cpp:1120
+#: gui/options.cpp:1128 gui/options.cpp:1152 gui/options.cpp:1156
+#: gui/options.cpp:1162 gui/options.cpp:1169 gui/options.cpp:1268
 msgctxt "path"
 msgid "None"
 msgstr "Keiner"
@@ -300,7 +306,7 @@ msgstr "Keiner"
 msgid "Default"
 msgstr "Standard"
 
-#: gui/launcher.cpp:447 gui/options.cpp:1259
+#: gui/launcher.cpp:447 gui/options.cpp:1262
 msgid "Select SoundFont"
 msgstr "SoundFont auswählen"
 
@@ -409,7 +415,7 @@ msgstr "In Spieleliste suchen"
 msgid "Search:"
 msgstr "Suchen:"
 
-#: gui/launcher.cpp:594 gui/options.cpp:740
+#: gui/launcher.cpp:594 gui/options.cpp:743
 msgid "Clear value"
 msgstr "Wert löschen"
 
@@ -554,7 +560,7 @@ msgid "48 kHz"
 msgstr "48 kHz"
 
 #: gui/options.cpp:230 gui/options.cpp:399 gui/options.cpp:497
-#: gui/options.cpp:555 gui/options.cpp:739
+#: gui/options.cpp:555 gui/options.cpp:742
 msgctxt "soundfont"
 msgid "None"
 msgstr "-"
@@ -584,36 +590,48 @@ msgstr "Seitenverhältnis korrigieren"
 msgid "Correct aspect ratio for 320x200 games"
 msgstr "Seitenverhältnis für Spiele mit der Auflösung 320x200 korrigieren"
 
-#: gui/options.cpp:666
+#: gui/options.cpp:667
 msgid "Preferred Device:"
 msgstr "Standard-Gerät:"
 
-#: gui/options.cpp:666
+#: gui/options.cpp:667
 msgid "Music Device:"
 msgstr "Musikgerät:"
 
-#: gui/options.cpp:666
+#: gui/options.cpp:667 gui/options.cpp:669
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr ""
 "Legt das bevorzugte Tonwiedergabe-Gerät oder den Soundkarten-Emulator fest."
 
-#: gui/options.cpp:666 gui/options.cpp:667
+#: gui/options.cpp:667 gui/options.cpp:669 gui/options.cpp:670
 msgid "Specifies output sound device or sound card emulator"
 msgstr "Legt das Musikwiedergabe-Gerät oder den Soundkarten-Emulator fest."
 
-#: gui/options.cpp:692
+#: gui/options.cpp:669
+#, fuzzy
+msgctxt "lowres"
+msgid "Preferred Device:"
+msgstr "Standard-Gerät:"
+
+#: gui/options.cpp:669
+#, fuzzy
+msgctxt "lowres"
+msgid "Music Device:"
+msgstr "Musikgerät:"
+
+#: gui/options.cpp:695
 msgid "AdLib emulator:"
 msgstr "AdLib-Emulator"
 
-#: gui/options.cpp:692 gui/options.cpp:693
+#: gui/options.cpp:695 gui/options.cpp:696
 msgid "AdLib is used for music in many games"
 msgstr "AdLib wird für die Musik in vielen Spielen verwendet."
 
-#: gui/options.cpp:703
+#: gui/options.cpp:706
 msgid "Output rate:"
 msgstr "Ausgabefrequenz:"
 
-#: gui/options.cpp:703 gui/options.cpp:704
+#: gui/options.cpp:706 gui/options.cpp:707
 msgid ""
 "Higher value specifies better sound quality but may be not supported by your "
 "soundcard"
@@ -621,56 +639,56 @@ msgstr ""
 "Höhere Werte bewirken eine bessere Soundqualität, werden aber möglicherweise "
 "nicht von jeder Soundkarte unterstützt."
 
-#: gui/options.cpp:714
+#: gui/options.cpp:717
 msgid "GM Device:"
 msgstr "GM-Gerät:"
 
-#: gui/options.cpp:714
+#: gui/options.cpp:717
 msgid "Specifies default sound device for General MIDI output"
 msgstr ""
 "Legt das standardmäßige Musikwiedergabe-Gerät für General-MIDI-Ausgabe fest."
 
-#: gui/options.cpp:736
+#: gui/options.cpp:739
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:736 gui/options.cpp:738 gui/options.cpp:739
+#: gui/options.cpp:739 gui/options.cpp:741 gui/options.cpp:742
 msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
 msgstr ""
 "SoundFont wird von einigen Soundkarten, Fluidsynth und Timidity unterstützt."
 
-#: gui/options.cpp:738
+#: gui/options.cpp:741
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:743
+#: gui/options.cpp:746
 msgid "Mixed AdLib/MIDI mode"
 msgstr "AdLib-/MIDI-Modus"
 
-#: gui/options.cpp:743
+#: gui/options.cpp:746
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "Benutzt MIDI und AdLib zur Sounderzeugung."
 
-#: gui/options.cpp:746
+#: gui/options.cpp:749
 msgid "MIDI gain:"
 msgstr "MIDI-Lautstärke:"
 
-#: gui/options.cpp:756
+#: gui/options.cpp:759
 msgid "MT-32 Device:"
 msgstr "MT-32-Gerät:"
 
-#: gui/options.cpp:756
+#: gui/options.cpp:759
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
 "Legt das standardmäßige Tonwiedergabe-Gerät für die Ausgabe von Roland MT-32/"
 "LAPC1/CM32l/CM64 fest."
 
-#: gui/options.cpp:761
+#: gui/options.cpp:764
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Echte Roland-MT-32-Emulation (GM-Emulation deaktiviert)"
 
-#: gui/options.cpp:761 gui/options.cpp:763
+#: gui/options.cpp:764 gui/options.cpp:766
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
@@ -678,200 +696,200 @@ msgstr ""
 "Wählen Sie dies aus, wenn Sie Ihre echte Hardware, die mit einer Roland-"
 "kompatiblen Soundkarte verbunden ist, verwenden möchten."
 
-#: gui/options.cpp:763
+#: gui/options.cpp:766
 msgctxt "lowres"
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Echte Roland-MT-32-Emulation (kein GM)"
 
-#: gui/options.cpp:766
+#: gui/options.cpp:769
 msgid "Enable Roland GS Mode"
 msgstr "Roland-GS-Modus"
 
-#: gui/options.cpp:766
+#: gui/options.cpp:769
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
 msgstr ""
 "Schaltet die General-MIDI-Zuweisung für Spiele mit Roland-MT-32-Audiospur "
 "aus."
 
-#: gui/options.cpp:791
+#: gui/options.cpp:794
 msgid "Text and Speech:"
 msgstr "Sprache und Text:"
 
-#: gui/options.cpp:795 gui/options.cpp:805
+#: gui/options.cpp:798 gui/options.cpp:808
 msgid "Speech"
 msgstr "Sprache"
 
-#: gui/options.cpp:796 gui/options.cpp:806
+#: gui/options.cpp:799 gui/options.cpp:809
 msgid "Subtitles"
 msgstr "Untertitel"
 
-#: gui/options.cpp:797
+#: gui/options.cpp:800
 msgid "Both"
 msgstr "Beides"
 
-#: gui/options.cpp:799
+#: gui/options.cpp:802
 msgid "Subtitle speed:"
 msgstr "Untertitel-Tempo:"
 
-#: gui/options.cpp:801
+#: gui/options.cpp:804
 msgctxt "lowres"
 msgid "Text and Speech:"
 msgstr "Sprache + Text:"
 
-#: gui/options.cpp:805
+#: gui/options.cpp:808
 msgid "Spch"
 msgstr "Spr."
 
-#: gui/options.cpp:806
+#: gui/options.cpp:809
 msgid "Subs"
 msgstr "TXT"
 
-#: gui/options.cpp:807
+#: gui/options.cpp:810
 msgctxt "lowres"
 msgid "Both"
 msgstr "S+T"
 
-#: gui/options.cpp:807
+#: gui/options.cpp:810
 msgid "Show subtitles and play speech"
 msgstr "Untertitel anzeigen und Sprachausgabe aktivieren"
 
-#: gui/options.cpp:809
+#: gui/options.cpp:812
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "Text-Tempo:"
 
-#: gui/options.cpp:825
+#: gui/options.cpp:828
 msgid "Music volume:"
 msgstr "Musiklautstärke:"
 
-#: gui/options.cpp:827
+#: gui/options.cpp:830
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "Musiklautstärke:"
 
-#: gui/options.cpp:834
+#: gui/options.cpp:837
 msgid "Mute All"
 msgstr "Alles aus"
 
-#: gui/options.cpp:837
+#: gui/options.cpp:840
 msgid "SFX volume:"
 msgstr "Effektlautstärke:"
 
-#: gui/options.cpp:837 gui/options.cpp:839 gui/options.cpp:840
+#: gui/options.cpp:840 gui/options.cpp:842 gui/options.cpp:843
 msgid "Special sound effects volume"
 msgstr "Lautstärke spezieller Soundeffekte"
 
-#: gui/options.cpp:839
+#: gui/options.cpp:842
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "Effektlautst.:"
 
-#: gui/options.cpp:847
+#: gui/options.cpp:850
 msgid "Speech volume:"
 msgstr "Sprachlautstärke:"
 
-#: gui/options.cpp:849
+#: gui/options.cpp:852
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Sprachlautst.:"
 
-#: gui/options.cpp:982
+#: gui/options.cpp:985
 msgid "Save Path: "
 msgstr "Spielstände: "
 
-#: gui/options.cpp:984
+#: gui/options.cpp:987
 #, fuzzy
 msgctxt "lowres"
 msgid "Save Path: "
 msgstr "Spielstände: "
 
-#: gui/options.cpp:988
+#: gui/options.cpp:991
 msgid "Theme Path:"
 msgstr "Themenpfad:"
 
-#: gui/options.cpp:990
+#: gui/options.cpp:993
 #, fuzzy
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Themenpfad:"
 
-#: gui/options.cpp:994 gui/options.cpp:996 gui/options.cpp:997
+#: gui/options.cpp:997 gui/options.cpp:999 gui/options.cpp:1000
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
 "Legt das Verzeichnis für zusätzliche Spieldateien für alle Spiele in ScummVM "
 "fest."
 
-#: gui/options.cpp:1001
+#: gui/options.cpp:1004
 msgid "Plugins Path:"
 msgstr "Plugin-Pfad:"
 
-#: gui/options.cpp:1003
+#: gui/options.cpp:1006
 #, fuzzy
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Plugin-Pfad:"
 
-#: gui/options.cpp:1012
+#: gui/options.cpp:1015
 msgid "Misc"
 msgstr "Sonstiges"
 
-#: gui/options.cpp:1014
+#: gui/options.cpp:1017
 msgctxt "lowres"
 msgid "Misc"
 msgstr "Andere"
 
-#: gui/options.cpp:1016
+#: gui/options.cpp:1019
 msgid "Theme:"
 msgstr "Thema:"
 
-#: gui/options.cpp:1020
+#: gui/options.cpp:1023
 msgid "GUI Renderer:"
 msgstr "GUI-Renderer:"
 
-#: gui/options.cpp:1032
+#: gui/options.cpp:1035
 msgid "Autosave:"
 msgstr "Autom. Speichern:"
 
-#: gui/options.cpp:1034
+#: gui/options.cpp:1037
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Autom. Sich.:"
 
-#: gui/options.cpp:1042
+#: gui/options.cpp:1045
 msgid "Keys"
 msgstr "Tasten"
 
-#: gui/options.cpp:1049
+#: gui/options.cpp:1052
 msgid "GUI Language:"
 msgstr "GUI-Sprache:"
 
-#: gui/options.cpp:1049
+#: gui/options.cpp:1052
 msgid "Language of ScummVM GUI"
 msgstr "Sprache der ScummVM-Oberfläche"
 
-#: gui/options.cpp:1198
+#: gui/options.cpp:1201
 msgid "You have to restart ScummVM to take the effect."
 msgstr "Sie müssen ScummVM neustarten, um die Einstellungen zu übernehmen."
 
-#: gui/options.cpp:1211
+#: gui/options.cpp:1214
 msgid "Select directory for savegames"
 msgstr "Verzeichnis für Spielstände auswählen"
 
-#: gui/options.cpp:1218
+#: gui/options.cpp:1221
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 "In das gewählte Verzeichnis kann nicht geschrieben werden. Bitte ein anderes "
 "auswählen."
 
-#: gui/options.cpp:1227
+#: gui/options.cpp:1230
 msgid "Select directory for GUI themes"
 msgstr "Verzeichnis für Oberflächen-Themen"
 
-#: gui/options.cpp:1237
+#: gui/options.cpp:1240
 msgid "Select directory for extra files"
 msgstr "Verzeichnis für zusätzliche Dateien auswählen"
 
-#: gui/options.cpp:1248
+#: gui/options.cpp:1251
 msgid "Select directory for plugins"
 msgstr "Verzeichnis für Erweiterungen auswählen"
 
@@ -919,22 +937,28 @@ msgstr "Thema auswählen"
 msgid "Disabled GFX"
 msgstr "GFX ausgeschalten"
 
+#: gui/ThemeEngine.cpp:334
+#, fuzzy
+msgctxt "lowres"
+msgid "Disabled GFX"
+msgstr "GFX ausgeschalten"
+
 #: gui/ThemeEngine.cpp:335
 msgid "Standard Renderer (16bpp)"
+msgstr "Standard-Renderer (16bpp)"
+
+#: gui/ThemeEngine.cpp:335
+#, fuzzy
+msgid "Standard (16bpp)"
 msgstr "Standard-Renderer (16bpp)"
 
 #: gui/ThemeEngine.cpp:337
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Kantenglättung (16bpp)"
 
-#: gui/ThemeEngine.cpp:341
-msgctxt "lowres"
-msgid "Standard Renderer (16bpp)"
-msgstr "Standard-Renderer(16bpp)"
-
-#: gui/ThemeEngine.cpp:342
-msgctxt "lowres"
-msgid "Antialiased Renderer (16bpp)"
+#: gui/ThemeEngine.cpp:337
+#, fuzzy
+msgid "Antialiased (16bpp)"
 msgstr "Kantenglättung (16bpp)"
 
 #: base/main.cpp:205
@@ -1573,6 +1597,14 @@ msgstr "Anzeige"
 #: backends/platform/wince/CELauncherDialog.cpp:104
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Möchten Sie eine automatische Durchsuchung vornehmen?"
+
+#~ msgctxt "lowres"
+#~ msgid "Standard Renderer (16bpp)"
+#~ msgstr "Standard-Renderer(16bpp)"
+
+#~ msgctxt "lowres"
+#~ msgid "Antialiased Renderer (16bpp)"
+#~ msgstr "Kantenglättung (16bpp)"
 
 #, fuzzy
 #~ msgctxt "lowres"
