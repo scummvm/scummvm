@@ -120,7 +120,7 @@ private:
 	byte *_palette;
 	bool _dirtyPalette;
 
-	uint32 _frameRate;
+	Common::Rational _frameRate;
 	uint32 _frameCount;
 	Surface *_surface;
 

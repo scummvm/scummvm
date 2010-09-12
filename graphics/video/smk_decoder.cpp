@@ -390,9 +390,9 @@ bool SmackerDecoder::load(Common::SeekableReadStream *stream) {
 	int32 frameRate = _fileStream->readSint32LE();
 
 	if (frameRate > 0)
-		_frameRate = 1000 / frameRate;
+		_frameRate = Common::Rational(1000, frameRate);
 	else if (frameRate < 0)
-		_frameRate = 100000 / (-frameRate);
+		_frameRate = Common::Rational(100000, -frameRate);
 	else
 		_frameRate = 10;
 
