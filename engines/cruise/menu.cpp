@@ -29,6 +29,7 @@
 
 #include "engines/metaengine.h"
 #include "gui/saveload.h"
+#include "common/translation.h"
 
 namespace Cruise {
 
@@ -212,9 +213,9 @@ static void handleSaveLoad(bool saveFlag) {
 	EngineMan.findGame(_vm->getGameId(), &plugin);
 	GUI::SaveLoadChooser *dialog;
 	if (saveFlag)
-		dialog = new GUI::SaveLoadChooser("Save game:", "Save");
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
 	else
-		dialog = new GUI::SaveLoadChooser("Load game:", "Load");
+		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"));
 
 	dialog->setSaveMode(saveFlag);
 	int slot = dialog->runModal(plugin, ConfMan.getActiveDomainName());
