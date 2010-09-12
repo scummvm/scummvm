@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-12 22:33+0100\n"
+"POT-Creation-Date: 2010-09-12 22:51+0100\n"
 "PO-Revision-Date: 2010-06-13 20:55+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -1091,10 +1091,12 @@ msgid "~R~eturn to Launcher"
 msgstr "~В~ главное меню"
 
 #: engines/dialogs.cpp:122 engines/cruise/menu.cpp:216
+#: engines/sci/engine/kfile.cpp:577
 msgid "Save game:"
 msgstr "Сохранить игру: "
 
 #: engines/dialogs.cpp:122 engines/cruise/menu.cpp:216
+#: engines/sci/engine/kfile.cpp:577
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: backends/platform/wince/CEActionsPocket.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:263
@@ -1141,6 +1143,15 @@ msgstr "Переходы активированы"
 #: engines/mohawk/dialogs.cpp:116
 msgid "~W~ater Effect Enabled"
 msgstr "Эффекты воды включены"
+
+#: engines/sci/engine/kfile.cpp:677
+#, fuzzy
+msgid "Restore game:"
+msgstr "Сохранить игру: "
+
+#: engines/sci/engine/kfile.cpp:677
+msgid "Restore"
+msgstr ""
 
 #: sound/fmopl.cpp:51
 msgid "MAME OPL emulator"

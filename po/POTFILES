@@ -24,6 +24,7 @@ engines/mohawk/dialogs.cpp
 engines/mohawk/myst.cpp
 engines/mohawk/riven.cpp
 engines/cruise/menu.cpp
+engines/sci/engine/kfile.cpp
 
 sound/fmopl.cpp
 sound/musicplugin.cpp

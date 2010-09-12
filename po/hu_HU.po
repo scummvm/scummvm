@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-12 22:33+0100\n"
+"POT-Creation-Date: 2010-09-12 22:51+0100\n"
 "PO-Revision-Date: 2009-11-25 07:42-0500\n"
 "Last-Translator: Alex Bevilacqua <alexbevi@gmail.com>\n"
 "Language-Team: Hungarian\n"
@@ -1087,10 +1087,12 @@ msgid "~R~eturn to Launcher"
 msgstr ""
 
 #: engines/dialogs.cpp:122 engines/cruise/menu.cpp:216
+#: engines/sci/engine/kfile.cpp:577
 msgid "Save game:"
 msgstr ""
 
 #: engines/dialogs.cpp:122 engines/cruise/menu.cpp:216
+#: engines/sci/engine/kfile.cpp:577
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: backends/platform/wince/CEActionsPocket.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:263
@@ -1138,6 +1140,14 @@ msgstr ""
 
 #: engines/mohawk/dialogs.cpp:116
 msgid "~W~ater Effect Enabled"
+msgstr ""
+
+#: engines/sci/engine/kfile.cpp:677
+msgid "Restore game:"
+msgstr ""
+
+#: engines/sci/engine/kfile.cpp:677
+msgid "Restore"
 msgstr ""
 
 #: sound/fmopl.cpp:51

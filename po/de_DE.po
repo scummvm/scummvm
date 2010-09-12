@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-12 22:33+0100\n"
+"POT-Creation-Date: 2010-09-12 22:51+0100\n"
 "PO-Revision-Date: 2010-09-11 20:17+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
@@ -1092,10 +1092,12 @@ msgid "~R~eturn to Launcher"
 msgstr "Zur Spiele~l~iste"
 
 #: engines/dialogs.cpp:122 engines/cruise/menu.cpp:216
+#: engines/sci/engine/kfile.cpp:577
 msgid "Save game:"
 msgstr "Speichern:"
 
 #: engines/dialogs.cpp:122 engines/cruise/menu.cpp:216
+#: engines/sci/engine/kfile.cpp:577
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: backends/platform/wince/CEActionsPocket.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:263
@@ -1142,6 +1144,15 @@ msgstr "Über~g~änge aktiviert"
 #: engines/mohawk/dialogs.cpp:116
 msgid "~W~ater Effect Enabled"
 msgstr "~W~assereffekt aktiviert"
+
+#: engines/sci/engine/kfile.cpp:677
+#, fuzzy
+msgid "Restore game:"
+msgstr "Speichern:"
+
+#: engines/sci/engine/kfile.cpp:677
+msgid "Restore"
+msgstr ""
 
 #: sound/fmopl.cpp:51
 msgid "MAME OPL emulator"

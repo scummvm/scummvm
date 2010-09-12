@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-12 22:33+0100\n"
+"POT-Creation-Date: 2010-09-12 22:51+0100\n"
 "PO-Revision-Date: 2010-09-08 19:38+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@jvprat.com>\n"
 "Language-Team: Catalan <scummvm-devel@lists.sf.net>\n"
@@ -1095,10 +1095,12 @@ msgid "~R~eturn to Launcher"
 msgstr "~R~etorna al Llançador"
 
 #: engines/dialogs.cpp:122 engines/cruise/menu.cpp:216
+#: engines/sci/engine/kfile.cpp:577
 msgid "Save game:"
 msgstr "Desa la partida:"
 
 #: engines/dialogs.cpp:122 engines/cruise/menu.cpp:216
+#: engines/sci/engine/kfile.cpp:577
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: backends/platform/wince/CEActionsPocket.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:263
@@ -1145,6 +1147,15 @@ msgstr "~T~ransicions activades"
 #: engines/mohawk/dialogs.cpp:116
 msgid "~W~ater Effect Enabled"
 msgstr "~E~fecte de l'aigua activat"
+
+#: engines/sci/engine/kfile.cpp:677
+#, fuzzy
+msgid "Restore game:"
+msgstr "Desa la partida:"
+
+#: engines/sci/engine/kfile.cpp:677
+msgid "Restore"
+msgstr ""
 
 #: sound/fmopl.cpp:51
 msgid "MAME OPL emulator"

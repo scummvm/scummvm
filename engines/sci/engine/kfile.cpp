@@ -28,6 +28,7 @@
 #include "common/file.h"
 #include "common/str.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 #include "gui/saveload.h"
 
@@ -573,7 +574,7 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		g_sci->_soundCmd->pauseAll(true); // pause music
 		const EnginePlugin *plugin = NULL;
 		EngineMan.findGame(g_sci->getGameIdStr(), &plugin);
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save");
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
 		dialog->setSaveMode(true);
 		savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
 		game_description = dialog->getResultString();
@@ -673,7 +674,7 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 			g_sci->_soundCmd->pauseAll(true); // pause music
 			const EnginePlugin *plugin = NULL;
 			EngineMan.findGame(g_sci->getGameIdStr(), &plugin);
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore");
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"));
 			dialog->setSaveMode(false);
 			savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
 			delete dialog;
