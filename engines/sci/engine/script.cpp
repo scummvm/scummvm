@@ -314,11 +314,20 @@ void Script::decrementLockers() {
 	// WORKAROUND for bug #3038837: HOYLE3: EGA/VGA Crashes
 	// This is caused by script 0 lockers reaching zero. Since
 	// this should never happen, I'm confident in making this a
-	// non-specific fix.
+	// non-specific fix. We can't just reset lockers to 1, because
+	// the objects associated with the script are already marked
+	// to be deleted at this point, thus we need to reload the
+	// script itself. If we don't, the game will surely error
+	// out later on, because of objects associated with this
+	// script which are incorrectly marked to be deleted. For
+	// example, in Hoyle 3, if you exit Checkers and reenter
+	// checkers, the game will crash when selecting a player.
 	//
 	// TODO: Figure out why this happens, and fix it properly!
-	if (_nr == 0 && _lockers == 0)
-		_lockers++;
+	if (_nr == 0 && _lockers == 0) {
+		init(0, g_sci->getResMan());
+		load(g_sci->getResMan());
+	}
 
 }
 
