@@ -33,7 +33,7 @@
 #include "testbed/testbed.h"
 
 static const PlainGameDescriptor testbed_setting[] = {
-	{ "testbed", "Testbed: The backend testing framework" },
+	{ "testbed", "Testbed: The Backend Testing Framework" },
 	{ 0, 0 }
 };
 
@@ -70,7 +70,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "TestBed: The backend testing framework";
+		return "Testbed: The Backend Testing Framework";
 	}
 
 	virtual const char *getOriginalCopyright() const {
