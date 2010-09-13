@@ -313,7 +313,7 @@ ArtVpath *art_vpath_reverse_free(ArtVpath *a) {
 	return dest;
 }
 
-void drawBez(ArtBpath *bez1, ArtBpath *bez2, art_u8 *buffer, int width, int height, double scaleX, double scaleY, double penWidth, unsigned int color) {
+void drawBez(ArtBpath *bez1, ArtBpath *bez2, art_u8 *buffer, int width, int height, int deltaX, int deltaY, double scaleX, double scaleY, double penWidth, unsigned int color) {
 	ArtVpath *vec = NULL;
 	ArtVpath *vec1 = NULL;
 	ArtVpath *vec2 = NULL;
@@ -347,33 +347,27 @@ void drawBez(ArtBpath *bez1, ArtBpath *bez2, art_u8 *buffer, int width, int heig
 		vec = vec1;
 	}
 
-	if (scaleX != 1.0 || scaleY != 1.0) {
-		ArtVpath *vect;
-		int size = art_vpath_len(vec);
+	int size = art_vpath_len(vec);
+	ArtVpath *vect = art_new(ArtVpath, size + 1);
 
-		vect = art_new(ArtVpath, size + 1);
-
-		int k;
-		for (k = 0; k < size; k++) {
-			vect[k].code = vec[k].code;
-			vect[k].x = vec[k].x * scaleX;
-			vect[k].y = vec[k].y * scaleY;
-		}
-		vect[k].code = ART_END;
-		free(vec);
-
-		vec = vect;
+	int k;
+	for (k = 0; k < size; k++) {
+		vect[k].code = vec[k].code;
+		vect[k].x = (vec[k].x - deltaX) * scaleX;
+		vect[k].y = (vec[k].y - deltaY) * scaleY;
 	}
+	vect[k].code = ART_END;
 
 	if (bez2 == 0) { // Line drawing
-		svp = art_svp_vpath_stroke(vec, ART_PATH_STROKE_JOIN_ROUND, ART_PATH_STROKE_CAP_ROUND, penWidth, 1.0, 0.5);
+		svp = art_svp_vpath_stroke(vect, ART_PATH_STROKE_JOIN_ROUND, ART_PATH_STROKE_CAP_ROUND, penWidth, 1.0, 0.5);
 	} else {
-		svp = art_svp_from_vpath(vec);
+		svp = art_svp_from_vpath(vect);
 		art_svp_make_convex(svp);
 	}
 
 	art_rgb_svp_alpha1(svp, 0, 0, width, height, color, buffer, width * 4);
 
+	free(vect);
 	free(svp);
 	free(vec);
 }
@@ -382,7 +376,7 @@ void VectorImage::render(int width, int height) {
 	double scaleX = (width == - 1) ? 1 : static_cast<double>(width) / static_cast<double>(getWidth());
 	double scaleY = (height == - 1) ? 1 : static_cast<double>(height) / static_cast<double>(getHeight());
 
-	debug(0, "VectorImage::render(%d, %d) %s", width, height, _fname.c_str());
+	debug(3, "VectorImage::render(%d, %d) %s", width, height, _fname.c_str());
 
 	if (_pixelData)
 		free(_pixelData);
@@ -429,7 +423,7 @@ void VectorImage::render(int width, int height) {
 			(*fill0pos).code = ART_END;
 			(*fill1pos).code = ART_END;
 
-			drawBez(fill1, fill0, _pixelData, width, height, scaleX, scaleY, -1, _elements[e].getFillStyleColor(s));
+			drawBez(fill1, fill0, _pixelData, width, height, _boundingBox.left, _boundingBox.top, scaleX, scaleY, -1, _elements[e].getFillStyleColor(s));
 
 			free(fill0);
 			free(fill1);
@@ -442,7 +436,7 @@ void VectorImage::render(int width, int height) {
 
 			for (uint p = 0; p < _elements[e].getPathCount(); p++) {
 				if (_elements[e].getPathInfo(p).getLineStyle() == s + 1) {
-					drawBez(_elements[e].getPathInfo(p).getVec(), 0, _pixelData, width, height, scaleX, scaleY, penWidth, _elements[e].getLineStyleColor(s));
+					drawBez(_elements[e].getPathInfo(p).getVec(), 0, _pixelData, width, height, _boundingBox.left, _boundingBox.top, scaleX, scaleY, penWidth, _elements[e].getLineStyleColor(s));
 				}
 			}
 		}
