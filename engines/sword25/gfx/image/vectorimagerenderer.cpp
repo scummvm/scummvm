@@ -257,7 +257,7 @@ ArtVpath *art_vpath_cat(ArtVpath *a, ArtVpath *b) {
 	dest = art_new(ArtVpath, len_a + len_b + 1);
 	p = dest;
 
-	for (int i = 0; i < len_a - 1; i++)
+	for (int i = 0; i < len_a; i++)
 		*p++ = *a++;
 	for (int i = 0; i <= len_b; i++)
 		*p++ = *b++;
