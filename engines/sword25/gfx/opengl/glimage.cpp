@@ -183,11 +183,11 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
 		srcImage.w = pPartRect->right - pPartRect->left;
 		srcImage.h = pPartRect->bottom - pPartRect->top;
 
-		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %d, %d, %d)", posX, posY, flipping, 
+		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 
 			pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
 	} else {
 
-		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %d, %d, %d)", posX, posY, flipping, 0, 0, 
+		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0, 
 			srcImage.w, srcImage.h, color, width, height);
 	}
 
