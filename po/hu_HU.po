@@ -1,4 +1,4 @@
-# LANGUAGE translation for ScummVM.
+# Hungarian translation for ScummVM.
 # Copyright (C) 2009 ScummVM
 # This file is distributed under the same license as the ScummVM package.
 # Alex Bevilacqua <alexbevi@gmail.com>, 2009.
@@ -11,7 +11,7 @@ msgstr ""
 "PO-Revision-Date: 2009-11-25 07:42-0500\n"
 "Last-Translator: Alex Bevilacqua <alexbevi@gmail.com>\n"
 "Language-Team: Hungarian\n"
-"Language: \n"
+"Language: Magyar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=cp1250\n"
 "Content-Transfer-Encoding: 8bit\n"
