@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2010-09-13 11:29+0200\n"
-"PO-Revision-Date: 2010-09-11 20:17+0100\n"
+"PO-Revision-Date: 2010-09-13 12:28+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
 "<SimSaw@gmx.de>\n"
@@ -40,7 +40,6 @@ msgid "Go to previous directory level"
 msgstr "Zu höherer Pfadebene wechseln"
 
 #: gui/browser.cpp:72
-#, fuzzy
 msgctxt "lowres"
 msgid "Go up"
 msgstr "Pfad hoch"
@@ -606,13 +605,11 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Legt das Musikwiedergabe-Gerät oder den Soundkarten-Emulator fest."
 
 #: gui/options.cpp:669
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred Device:"
 msgstr "Standard-Gerät:"
 
 #: gui/options.cpp:669
-#, fuzzy
 msgctxt "lowres"
 msgid "Music Device:"
 msgstr "Musikgerät:"
@@ -839,7 +836,7 @@ msgstr "Autom. Speichern:"
 #: gui/options.cpp:1037
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "Autom. Sich.:"
+msgstr "Speich.(auto)"
 
 #: gui/options.cpp:1045
 msgid "Keys"
@@ -921,29 +918,26 @@ msgstr "Thema auswählen"
 
 #: gui/ThemeEngine.cpp:334
 msgid "Disabled GFX"
-msgstr "GFX ausgeschalten"
+msgstr "GFX ausgeschaltet"
 
 #: gui/ThemeEngine.cpp:334
-#, fuzzy
 msgctxt "lowres"
 msgid "Disabled GFX"
-msgstr "GFX ausgeschalten"
+msgstr "GFX ausgeschaltet"
 
 #: gui/ThemeEngine.cpp:335
 msgid "Standard Renderer (16bpp)"
 msgstr "Standard-Renderer (16bpp)"
 
 #: gui/ThemeEngine.cpp:335
-#, fuzzy
 msgid "Standard (16bpp)"
-msgstr "Standard-Renderer (16bpp)"
+msgstr "Standard (16bpp)"
 
 #: gui/ThemeEngine.cpp:337
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Kantenglättung (16bpp)"
 
 #: gui/ThemeEngine.cpp:337
-#, fuzzy
 msgid "Antialiased (16bpp)"
 msgstr "Kantenglättung (16bpp)"
 
@@ -1137,13 +1131,12 @@ msgid "~W~ater Effect Enabled"
 msgstr "~W~assereffekt aktiviert"
 
 #: engines/sci/engine/kfile.cpp:677
-#, fuzzy
 msgid "Restore game:"
-msgstr "Speichern:"
+msgstr "Spiel laden:"
 
 #: engines/sci/engine/kfile.cpp:677
 msgid "Restore"
-msgstr ""
+msgstr "Laden"
 
 #: sound/fmopl.cpp:51
 msgid "MAME OPL emulator"
@@ -1611,7 +1604,6 @@ msgstr "Möchten Sie eine automatische Durchsuchung vornehmen?"
 #~ msgid "Antialiased Renderer (16bpp)"
 #~ msgstr "Kantenglättung (16bpp)"
 
-#, fuzzy
 #~ msgctxt "lowres"
 #~ msgid "Special sound effects volume"
 #~ msgstr "Lautstärke spezieller Soundeffekte"
