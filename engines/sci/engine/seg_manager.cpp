@@ -1004,12 +1004,7 @@ int SegManager::instantiateScript(int scriptNum) {
 	scr->load(_resMan);
 	scr->initialiseLocals(this);
 	scr->initialiseClasses(this);
-
-	if (getSciVersion() >= SCI_VERSION_1_1) {
-		scr->initialiseObjectsSci11(this, segmentId);
-	} else {
-		scr->initialiseObjectsSci0(this, segmentId);
-	}
+	scr->initialiseObjects(this, segmentId);
 
 	return segmentId;
 }
@@ -1074,8 +1069,12 @@ void SegManager::uninstantiateScriptSci0(int script_nr) {
 				if (superclass_script == script_nr) {
 					if (scr->getLockers())
 						scr->decrementLockers();  // Decrease lockers if this is us ourselves
-				} else
-					uninstantiateScript(superclass_script);
+				} else {
+					// Uninstantiate superclass, but never uninstantiate
+					// system scripts, i.e. script 0 and scripts 900-999 - bug #3038837
+					if (superclass_script != 0 && superclass_script < 900)
+						uninstantiateScript(superclass_script);
+				}
 				// Recurse to assure that the superclass lockers number gets decreased
 			}
 

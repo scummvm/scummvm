@@ -310,25 +310,6 @@ void Script::incrementLockers() {
 void Script::decrementLockers() {
 	if (_lockers > 0)
 		_lockers--;
-
-	// WORKAROUND for bug #3038837: HOYLE3: EGA/VGA Crashes
-	// This is caused by script 0 lockers reaching zero. Since
-	// this should never happen, I'm confident in making this a
-	// non-specific fix. We can't just reset lockers to 1, because
-	// the objects associated with the script are already marked
-	// to be deleted at this point, thus we need to reload the
-	// script itself. If we don't, the game will surely error
-	// out later on, because of objects associated with this
-	// script which are incorrectly marked to be deleted. For
-	// example, in Hoyle 3, if you exit Checkers and reenter
-	// checkers, the game will crash when selecting a player.
-	//
-	// TODO: Figure out why this happens, and fix it properly!
-	if (_nr == 0 && _lockers == 0) {
-		init(0, g_sci->getResMan());
-		load(g_sci->getResMan());
-	}
-
 }
 
 int Script::getLockers() const {
@@ -575,6 +556,13 @@ void Script::initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 	}
 
 	relocate(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(_heapStart)));
+}
+
+void Script::initialiseObjects(SegManager *segMan, SegmentId segmentId) {
+	if (getSciVersion() >= SCI_VERSION_1_1)
+		initialiseObjectsSci11(segMan, segmentId);
+	else
+		initialiseObjectsSci0(segMan, segmentId);
 }
 
 reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) const {
