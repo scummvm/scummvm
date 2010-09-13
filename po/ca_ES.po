@@ -38,7 +38,6 @@ msgid "Go to previous directory level"
 msgstr "Torna al nivell de directoris anterior"
 
 #: gui/browser.cpp:72
-#, fuzzy
 msgctxt "lowres"
 msgid "Go up"
 msgstr "Amunt"
@@ -113,7 +112,7 @@ msgstr "Joc"
 
 #: gui/launcher.cpp:176
 msgid "ID:"
-msgstr "ID:"
+msgstr "Identificador:"
 
 #: gui/launcher.cpp:176 gui/launcher.cpp:178 gui/launcher.cpp:179
 msgid ""
@@ -124,7 +123,6 @@ msgstr ""
 "executar el joc des de la línia de comandes"
 
 #: gui/launcher.cpp:178
-#, fuzzy
 msgctxt "lowres"
 msgid "ID:"
 msgstr "ID:"
@@ -247,7 +245,6 @@ msgid "Paths"
 msgstr "Camins"
 
 #: gui/launcher.cpp:285 gui/options.cpp:977
-#, fuzzy
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Camins"
@@ -257,7 +254,6 @@ msgid "Game Path:"
 msgstr "Camí del joc:"
 
 #: gui/launcher.cpp:294
-#, fuzzy
 msgctxt "context"
 msgid "Game Path:"
 msgstr "Camí del joc:"
@@ -271,14 +267,13 @@ msgid "Specifies path to additional data used the game"
 msgstr "Especifica el camí de dades addicionals utilitzades pel joc"
 
 #: gui/launcher.cpp:301 gui/options.cpp:999
-#, fuzzy
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Camí extra:"
 
 #: gui/launcher.cpp:306 gui/options.cpp:985
 msgid "Save Path:"
-msgstr "Camí de les partides:"
+msgstr "Camí de partides:"
 
 #: gui/launcher.cpp:306 gui/launcher.cpp:308 gui/launcher.cpp:309
 #: gui/options.cpp:985 gui/options.cpp:987 gui/options.cpp:988
@@ -592,11 +587,11 @@ msgstr "Corregeix la relació d'aspecte per jocs de 320x200"
 
 #: gui/options.cpp:667
 msgid "Preferred Device:"
-msgstr "Dispositiu Preferit:"
+msgstr "Disp. preferit:"
 
 #: gui/options.cpp:667
 msgid "Music Device:"
-msgstr "Dispositiu de Música:"
+msgstr "Disp. de música:"
 
 #: gui/options.cpp:667 gui/options.cpp:669
 msgid "Specifies preferred sound device or sound card emulator"
@@ -607,16 +602,14 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Especifica el dispositiu de so o l'emulador de tarja de so de sortida"
 
 #: gui/options.cpp:669
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred Device:"
-msgstr "Dispositiu Preferit:"
+msgstr "Disp. preferit:"
 
 #: gui/options.cpp:669
-#, fuzzy
 msgctxt "lowres"
 msgid "Music Device:"
-msgstr "Dispositiu de Música:"
+msgstr "Disp. de música:"
 
 #: gui/options.cpp:695
 msgid "AdLib emulator:"
@@ -727,7 +720,7 @@ msgstr "Ambdós"
 
 #: gui/options.cpp:802
 msgid "Subtitle speed:"
-msgstr "Velocitat dels subtítols:"
+msgstr "Velocitat de subt.:"
 
 #: gui/options.cpp:804
 msgctxt "lowres"
@@ -758,7 +751,7 @@ msgstr "Velocitat de subt.:"
 
 #: gui/options.cpp:828
 msgid "Music volume:"
-msgstr "Volum de la música:"
+msgstr "Volum de música:"
 
 #: gui/options.cpp:830
 msgctxt "lowres"
@@ -771,7 +764,7 @@ msgstr "Silenciar tot"
 
 #: gui/options.cpp:840
 msgid "SFX volume:"
-msgstr "Volum dels efectes:"
+msgstr "Volum d'efectes:"
 
 #: gui/options.cpp:840 gui/options.cpp:842 gui/options.cpp:843
 msgid "Special sound effects volume"
@@ -784,7 +777,7 @@ msgstr "Volum d'efectes:"
 
 #: gui/options.cpp:850
 msgid "Speech volume:"
-msgstr "Volum de les veus:"
+msgstr "Volum de veus:"
 
 #: gui/options.cpp:852
 msgctxt "lowres"
@@ -796,10 +789,9 @@ msgid "Theme Path:"
 msgstr "Camí dels temes:"
 
 #: gui/options.cpp:993
-#, fuzzy
 msgctxt "lowres"
 msgid "Theme Path:"
-msgstr "Camí dels temes:"
+msgstr "Camí de temes:"
 
 #: gui/options.cpp:997 gui/options.cpp:999 gui/options.cpp:1000
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -812,10 +804,9 @@ msgid "Plugins Path:"
 msgstr "Camí dels connectors:"
 
 #: gui/options.cpp:1006
-#, fuzzy
 msgctxt "lowres"
 msgid "Plugins Path:"
-msgstr "Camí dels connectors:"
+msgstr "Camí de connectors:"
 
 #: gui/options.cpp:1015
 msgid "Misc"
@@ -832,7 +823,7 @@ msgstr "Tema:"
 
 #: gui/options.cpp:1023
 msgid "GUI Renderer:"
-msgstr "Mode de pintat de la interfície d'usuari:"
+msgstr "Pintat de la IU:"
 
 #: gui/options.cpp:1035
 msgid "Autosave:"
@@ -849,7 +840,7 @@ msgstr "Tecles"
 
 #: gui/options.cpp:1052
 msgid "GUI Language:"
-msgstr "Idioma de la interfície d'usuari:"
+msgstr "Idioma de la IU:"
 
 #: gui/options.cpp:1052
 msgid "Language of ScummVM GUI"
@@ -926,7 +917,6 @@ msgid "Disabled GFX"
 msgstr "GFX desactivats"
 
 #: gui/ThemeEngine.cpp:334
-#, fuzzy
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX desactivats"
@@ -936,18 +926,16 @@ msgid "Standard Renderer (16bpp)"
 msgstr "Pintat estàndard (16bpp)"
 
 #: gui/ThemeEngine.cpp:335
-#, fuzzy
 msgid "Standard (16bpp)"
-msgstr "Pintat estàndard (16bpp)"
+msgstr "Estàndard (16bpp)"
 
 #: gui/ThemeEngine.cpp:337
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Pintat amb antialias (16bpp)"
 
 #: gui/ThemeEngine.cpp:337
-#, fuzzy
 msgid "Antialiased (16bpp)"
-msgstr "Pintat amb antialias (16bpp)"
+msgstr "Amb antialias (16bpp)"
 
 #: base/main.cpp:205
 #, c-format
@@ -1139,13 +1127,12 @@ msgid "~W~ater Effect Enabled"
 msgstr "~E~fecte de l'aigua activat"
 
 #: engines/sci/engine/kfile.cpp:677
-#, fuzzy
 msgid "Restore game:"
 msgstr "Desa la partida:"
 
 #: engines/sci/engine/kfile.cpp:677
 msgid "Restore"
-msgstr ""
+msgstr "Restaura"
 
 #: sound/fmopl.cpp:51
 msgid "MAME OPL emulator"
@@ -1396,7 +1383,7 @@ msgstr "Mode de vídeo actual:"
 
 #: backends/platform/wii/options.cpp:56
 msgid "Double-strike"
-msgstr ""
+msgstr "Double-strike"
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
