@@ -3,13 +3,15 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
 1.2.0 (????-??-??)
  New Games:
+   - Added support for Fascination.
+   
+ New Games (Sierra SCI0 - SCI1.1):
    - Added support for Castle of Dr. Brain (EGA and VGA).
    - Added support for Codename: ICEMAN.
    - Added support for Conquests of Camelot.
    - Added support for Conquests of the Longbow (EGA and VGA).
    - Added support for EcoQuest: The Search for Cetus.
    - Added support for EcoQuest 2: Lost Secret of the Rainforest.
-   - Added support for Fascination.
    - Added support for Freddy Pharkas: Frontier Pharmacist.
    - Added support for Hoyle's Book of Games 1.
    - Added support for Hoyle's Book of Games 2.
