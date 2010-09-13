@@ -3,44 +3,44 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
 1.2.0 (????-??-??)
  New Games:
-   - Added support for Castle of Dr. Brain (EGA and VGA)
-   - Added support for Codename: ICEMAN
-   - Added support for Conquests of Camelot
-   - Added support for Conquests of the Longbow (EGA and VGA)
-   - Added support for EcoQuest: The Search for Cetus
-   - Added support for EcoQuest 2: Lost Secret of the Rainforest
+   - Added support for Castle of Dr. Brain (EGA and VGA).
+   - Added support for Codename: ICEMAN.
+   - Added support for Conquests of Camelot.
+   - Added support for Conquests of the Longbow (EGA and VGA).
+   - Added support for EcoQuest: The Search for Cetus.
+   - Added support for EcoQuest 2: Lost Secret of the Rainforest.
    - Added support for Fascination.
-   - Added support for Freddy Pharkas: Frontier Pharmacist
-   - Added support for Hoyle's Book of Games 1
-   - Added support for Hoyle's Book of Games 2
-   - Added support for Hoyle's Book of Games 3 (EGA and VGA)
-   - Added support for Jones in the Fast Lane
-   - Added support for King's Quest IV
-   - Added support for King's Quest V (EGA and VGA)
-   - Added support for King's Quest VI (low and hi res)
+   - Added support for Freddy Pharkas: Frontier Pharmacist.
+   - Added support for Hoyle's Book of Games 1.
+   - Added support for Hoyle's Book of Games 2.
+   - Added support for Hoyle's Book of Games 3 (EGA and VGA).
+   - Added support for Jones in the Fast Lane.
+   - Added support for King's Quest IV.
+   - Added support for King's Quest V (EGA and VGA).
+   - Added support for King's Quest VI (low and hi res).
    - Added support for Laura Bow: The Colonel's Bequest.
    - Added support for Laura Bow 2: The Dagger of Amon Ra.
-   - Added support for Leisure Suit Larry 1 (SCI remake) (EGA and VGA)
-   - Added support for Leisure Suit Larry 2
-   - Added support for Leisure Suit Larry 3
-   - Added support for Leisure Suit Larry 5 (EGA and VGA)
-   - Added support for Leisure Suit Larry 6 (low res)
-   - Added support for Mixed-up Fairy Tales
-   - Added support for Mixed-up Mother Goose
-   - Added support for Pepper's Adventures in Time
-   - Added support for Police Quest 1 (SCI remake)
-   - Added support for Police Quest 2
-   - Added support for Police Quest 3 (EGA and VGA)
-   - Added support for Quest for Glory 1/Hero Quest
-   - Added support for Quest for Glory 1 VGA remake
-   - Added support for Quest for Glory 2
-   - Added support for Quest for Glory 3
-   - Added support for Slater & Charlie go camping
-   - Added support for Space Quest I (EGA and VGA)
-   - Added support for Space Quest III
-   - Added support for Space Quest IV (EGA and VGA)
-   - Added support for Space Quest V
-   - Added support for The Island of Dr. Brain
+   - Added support for Leisure Suit Larry 1 (SCI remake) (EGA and VGA).
+   - Added support for Leisure Suit Larry 2.
+   - Added support for Leisure Suit Larry 3.
+   - Added support for Leisure Suit Larry 5 (EGA and VGA).
+   - Added support for Leisure Suit Larry 6 (low res).
+   - Added support for Mixed-up Fairy Tales.
+   - Added support for Mixed-up Mother Goose.
+   - Added support for Pepper's Adventures in Time.
+   - Added support for Police Quest 1 (SCI remake).
+   - Added support for Police Quest 2.
+   - Added support for Police Quest 3 (EGA and VGA).
+   - Added support for Quest for Glory 1/Hero Quest.
+   - Added support for Quest for Glory 1 VGA remake.
+   - Added support for Quest for Glory 2.
+   - Added support for Quest for Glory 3.
+   - Added support for Slater & Charlie go camping.
+   - Added support for Space Quest I (EGA and VGA).
+   - Added support for Space Quest III.
+   - Added support for Space Quest IV (EGA and VGA).
+   - Added support for Space Quest V.
+   - Added support for The Island of Dr. Brain.
    
  New Ports:
    - Added Android port.
