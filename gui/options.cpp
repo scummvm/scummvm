@@ -982,9 +982,9 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	// Save game path
 	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _("Save Path: "), _("Specifies where your savegames are put"), kChooseSaveDirCmd);
+		new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _("Save Path:"), _("Specifies where your savegames are put"), kChooseSaveDirCmd);
 	else
-		new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _c("Save Path: ", "lowres"), _("Specifies where your savegames are put"), kChooseSaveDirCmd);
+		new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _c("Save Path:", "lowres"), _("Specifies where your savegames are put"), kChooseSaveDirCmd);
 	_savePath = new StaticTextWidget(tab, "GlobalOptions_Paths.SavePath", "/foo/bar", _("Specifies where your savegames are put"));
 
 	if (g_system->getOverlayWidth() > 320)

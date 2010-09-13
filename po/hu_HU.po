@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-12 22:51+0100\n"
+"POT-Creation-Date: 2010-09-13 11:29+0200\n"
 "PO-Revision-Date: 2009-11-25 07:42-0500\n"
 "Last-Translator: Alex Bevilacqua <alexbevi@gmail.com>\n"
 "Language-Team: Hungarian\n"
@@ -273,7 +273,7 @@ msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Extra Útvonal:"
 
-#: gui/launcher.cpp:306
+#: gui/launcher.cpp:306 gui/options.cpp:985
 #, fuzzy
 msgid "Save Path:"
 msgstr "Extra Útvonal:"
@@ -283,7 +283,7 @@ msgstr "Extra Útvonal:"
 msgid "Specifies where your savegames are put"
 msgstr ""
 
-#: gui/launcher.cpp:308
+#: gui/launcher.cpp:308 gui/options.cpp:987
 #, fuzzy
 msgctxt "lowres"
 msgid "Save Path:"
@@ -787,16 +787,6 @@ msgstr "Beszéd mennyiség:"
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Beszéd mennyiség:"
-
-#: gui/options.cpp:985
-msgid "Save Path: "
-msgstr ""
-
-#: gui/options.cpp:987
-#, fuzzy
-msgctxt "lowres"
-msgid "Save Path: "
-msgstr "Extra Útvonal:"
 
 #: gui/options.cpp:991
 msgid "Theme Path:"
@@ -1611,6 +1601,11 @@ msgstr ""
 #: backends/platform/wince/CELauncherDialog.cpp:104
 msgid "Do you want to perform an automatic scan ?"
 msgstr ""
+
+#, fuzzy
+#~ msgctxt "lowres"
+#~ msgid "Save Path: "
+#~ msgstr "Extra Útvonal:"
 
 #~ msgid "Music driver:"
 #~ msgstr "Zenei vezet :"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-12 22:51+0100\n"
+"POT-Creation-Date: 2010-09-13 11:29+0200\n"
 "PO-Revision-Date: 2010-06-13 20:55+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -278,7 +278,7 @@ msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Доп. путь:"
 
-#: gui/launcher.cpp:306
+#: gui/launcher.cpp:306 gui/options.cpp:985
 msgid "Save Path:"
 msgstr "Сохранения игр: "
 
@@ -287,7 +287,7 @@ msgstr "Сохранения игр: "
 msgid "Specifies where your savegames are put"
 msgstr "Указывает путь к сохранениям игры"
 
-#: gui/launcher.cpp:308
+#: gui/launcher.cpp:308 gui/options.cpp:987
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Путь сохр:"
@@ -788,16 +788,6 @@ msgstr "Громк. озвучки:"
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Громк. озвучки:"
-
-#: gui/options.cpp:985
-msgid "Save Path: "
-msgstr "Сохранения игр:"
-
-#: gui/options.cpp:987
-#, fuzzy
-msgctxt "lowres"
-msgid "Save Path: "
-msgstr "Сохранения игр:"
 
 #: gui/options.cpp:991
 msgid "Theme Path:"
@@ -1603,6 +1593,14 @@ msgstr "Показать "
 #: backends/platform/wince/CELauncherDialog.cpp:104
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Вы хотите произвести автоматический поиск?"
+
+#~ msgid "Save Path: "
+#~ msgstr "Сохранения игр:"
+
+#, fuzzy
+#~ msgctxt "lowres"
+#~ msgid "Save Path: "
+#~ msgstr "Сохранения игр:"
 
 #~ msgctxt "lowres"
 #~ msgid "Standard Renderer (16bpp)"
