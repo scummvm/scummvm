@@ -335,6 +335,13 @@ void drawBez(ArtBpath *bez1, ArtBpath *bez2, art_u8 *buffer, int width, int heig
 	printf("    drawBez(bez, buffer, 1.0, 1.0, %f, 0x%08x);\n", penWidth, color);
 #endif
 
+	// HACK: Some frames have green bounding boxes drawn.
+	// Perhaps they were used by original game artist Umriss
+	// We skip them just like the original
+	if (bez2 == 0 && color == Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(0xff, 0x00, 0xff, 0x00)) {
+		return;
+	}
+
 	vec1 = art_bez_path_to_vec(bez1, 0.5);
 	if (bez2 != 0) {
 		vec2 = art_bez_path_to_vec(bez2, 0.5);
