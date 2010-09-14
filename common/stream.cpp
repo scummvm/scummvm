@@ -231,21 +231,13 @@ BufferedReadStream::BufferedReadStream(ReadStream *parentStream, uint32 bufSize,
 	_realBufSize(bufSize) {
 
 	assert(parentStream);
-	allocBuf(bufSize);
-	assert(_buf);
-}
-
-void BufferedReadStream::allocBuf(uint32 bufSize) {
 	_buf = new byte[bufSize];
+	assert(_buf);
 }
 
 BufferedReadStream::~BufferedReadStream() {
 	if (_disposeParentStream)
 		delete _parentStream;
-	deallocBuf();
-}
-
-void BufferedReadStream::deallocBuf() {
 	delete[] _buf;
 }
 
@@ -334,7 +326,7 @@ BufferedWriteStream::BufferedWriteStream(WriteStream *parentStream, uint32 bufSi
 	_bufSize(bufSize) {
 
 	assert(parentStream);
-	allocBuf(bufSize);
+	_buf = new byte[bufSize];
 	assert(_buf);
 }
 
@@ -344,14 +336,6 @@ BufferedWriteStream::~BufferedWriteStream() {
 	if (_disposeParentStream)
 		delete _parentStream;
 		
-	deallocBuf();
-}
-
-void BufferedWriteStream::allocBuf(uint32 bufSize) {
-	_buf = new byte[bufSize];
-}
-
-void BufferedWriteStream::deallocBuf() {
 	delete[] _buf;
 }
 

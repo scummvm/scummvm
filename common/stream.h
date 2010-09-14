@@ -497,8 +497,6 @@ protected:
 	bool _eos; // end of stream
 	uint32 _bufSize;
 	uint32 _realBufSize;
-	void allocBuf(uint32 bufSize);
-	void deallocBuf();
 
 public:
 	BufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
@@ -538,8 +536,6 @@ protected:
 	uint32 _pos;
 	uint32 _bufSize;
 	bool flushBuffer();						// write out the data in the buffer
-	void allocBuf(uint32 bufSize);
-	void deallocBuf();	
 
 public:
 	BufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
