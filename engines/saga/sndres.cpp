@@ -331,6 +331,8 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			if (onlyHeader)
 				free(data);
 			buffer.flags |= Audio::FLAG_UNSIGNED;
+			buffer.flags &= ~Audio::FLAG_16BITS;
+			buffer.flags &= ~Audio::FLAG_STEREO;
 		}
 
 		if (result) {
