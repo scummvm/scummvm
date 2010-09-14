@@ -354,7 +354,7 @@ public:
 };
 
 template<class T>
-void ReverseArray(Common::Array<T> Arr) {
+void ReverseArray(Common::Array<T> &Arr) {
 	if (Arr.size() < 2)
 		return;
 
