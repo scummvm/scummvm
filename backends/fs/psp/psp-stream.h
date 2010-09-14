@@ -33,22 +33,6 @@
 #include "common/stream.h"
 #include "common/str.h"
 
-class PspIoBufferedReadStream : public Common::BufferedSeekableReadStream {
-public:
-	PspIoBufferedReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES) : BufferedSeekableReadStream(parentStream, bufSize, disposeParentStream) {}
-protected:	
-	virtual void allocBuf(uint32 bufSize) { _buf = (byte *)memalign(64, bufSize); }	// want 64 byte alignment for cache
-	virtual void deallocBuf() { free(_buf); }	
-};
-
-class PspIoBufferedWriteStream : public Common::BufferedWriteStream {
-public:
-	PspIoBufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES) : BufferedWriteStream(parentStream, bufSize, disposeParentStream) {}
-protected:	
-	virtual void allocBuf(uint32 bufSize) { _buf = (byte *)memalign(64, bufSize); }
-	virtual void deallocBuf() { free(_buf); }
-};
-
 /**
  *  Class to handle special suspend/resume needs of PSP IO Streams
  */
