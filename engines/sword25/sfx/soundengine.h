@@ -56,6 +56,9 @@
 #include "sword25/kernel/resservice.h"
 #include "sword25/kernel/persistable.h"
 
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
+
 namespace Sword25 {
 
 // -----------------------------------------------------------------------------
@@ -87,7 +90,7 @@ public:
 	// -----------------------------------------------------------------------------
 
 	SoundEngine(Kernel *pKernel);
-	virtual ~SoundEngine() {};
+	~SoundEngine() {};
 
 	// --------------------------------------------------------------
 	// THIS METHOD MUST BE IMPLEMENTED BY THE SOUND ENGINE
@@ -101,7 +104,7 @@ public:
 	 * @remark              Calls to other methods may take place only if this
 	 * method was called successfully.
 	 */
-	virtual bool Init(uint SampleRate, uint Channels = 32) = 0;
+	bool Init(uint SampleRate, uint Channels = 32);
 
 	/**
 	 * Performs a "tick" of the sound engine
@@ -110,14 +113,14 @@ public:
 	 * of the sound engine that are not running in their own thread, or to perform
 	 * additional administrative tasks that are needed.
 	 */
-	virtual void Update() = 0;
+	void Update();
 
 	/**
 	 * Sets the default volume for the different sound types
 	 * @param Volume        The default volume level (0 = off, 1 = full volume)
 	 * @param Type          The SoundType whose volume is to be changed
 	 */
-	virtual void SetVolume(float Volume, SOUND_TYPES Type) = 0;
+	void SetVolume(float Volume, SOUND_TYPES Type);
 
 	/**
 	 * Specifies the default volume of different sound types
@@ -125,29 +128,29 @@ public:
 	 * @return              Returns the standard sound volume for the given type
 	 * (0 = off, 1 = full volume).
 	*/
-	virtual float GetVolume(SOUND_TYPES Type) = 0;
+	float GetVolume(SOUND_TYPES Type);
 
 	/**
 	 * Pauses all the sounds that are playing.
 	 */
-	virtual void PauseAll() = 0;
+	void PauseAll();
 
 	/**
 	 * Resumes all currently stopped sounds
 	 */
-	virtual void ResumeAll() = 0;
+	void ResumeAll();
 
 	/**
 	 * Pauses all sounds of a given layer.
 	 * @param Layer         The Sound Layer
 	*/
-	virtual void PauseLayer(uint Layer) = 0;
+	void PauseLayer(uint Layer);
 
 	/**
 	 * Resumes all the sounds in a layer that was previously stopped with PauseLayer()
 	 * @param Layer         The Sound Layer
 	*/
-	virtual void ResumeLayer(uint Layer) = 0;
+	void ResumeLayer(uint Layer);
 
 
 	/**
@@ -166,7 +169,7 @@ public:
 	 * @remark              If more control is needed over the playing, eg. changing the sound parameters
 	 * for Volume and Panning, then PlaySoundEx should be used.
 	*/
-	virtual bool PlaySound(const Common::String &FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, uint Layer = 0) = 0;
+	bool PlaySound(const Common::String &FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, uint Layer = 0);
 
 	/**
 	 * Plays a sound
@@ -183,7 +186,7 @@ public:
 	 * @remark              If more control is needed over the playing, eg. changing the sound parameters
 	 * for Volume and Panning, then PlaySoundEx should be used.
 	 */
-	virtual uint PlaySoundEx(const Common::String &FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, uint Layer = 0) = 0;
+	uint PlaySoundEx(const Common::String &FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, uint Layer = 0);
 
 	/**
 	 * Plays a sound generated at runtime
@@ -202,72 +205,81 @@ public:
 	 * @return              Returns a handle to the sound. With this handle, the sound can be manipulated during playback.
 	 * @remark              Dynamic sounds cannot be persisted.
 	 */
-	virtual uint PlayDynamicSoundEx(DynamicSoundReadCallback ReadCallback, void *UserData, SOUND_TYPES Type, uint SampleRate, uint BitsPerSample, uint Channels, float Volume = 1.0f, float Pan = 0.0f, uint Layer = 0) = 0;
+	uint PlayDynamicSoundEx(DynamicSoundReadCallback ReadCallback, void *UserData, SOUND_TYPES Type, uint SampleRate, uint BitsPerSample, uint Channels, float Volume = 1.0f, float Pan = 0.0f, uint Layer = 0);
 
 	/**
 	 * Sets the volume of a playing sound
 	 * @param Handle        The sound handle
 	 * @param Volume        The volume of the sound (0 = off, 1 = full volume)
 	 */
-	virtual void SetSoundVolume(uint Handle, float Volume) = 0;
+	void SetSoundVolume(uint Handle, float Volume);
 
 	/**
 	 * Sets the panning of a playing sound
 	 * @param Handle        The sound handle
 	 * @param Pan           Panning (-1 = full left, 1 = right)
 	 */
-	virtual void SetSoundPanning(uint Handle, float Pan) = 0;
+	void SetSoundPanning(uint Handle, float Pan);
 
 	/**
 	 * Pauses a playing sound
 	 * @param Handle        The sound handle
 	 */
-	virtual void PauseSound(uint Handle) = 0;
+	void PauseSound(uint Handle);
 
 	/**
 	 * Resumes a paused sound
 	 * @param Handle        The sound handle
 	 */
-	virtual void ResumeSound(uint Handle) = 0;
+	void ResumeSound(uint Handle);
 
 	/**
 	 * Stops a playing sound
 	 * @param Handle        The sound handle
 	 * @remark              Calling this method invalidates the passed handle; it can no longer be used.
 	 */
-	virtual void StopSound(uint Handle) = 0;
+	void StopSound(uint Handle);
 
 	/**
 	 * Returns whether a sound is paused
 	 * @param Handle        The sound handle
 	 * @return              Returns true if the sound is paused, false otherwise.
 	 */
-	virtual bool IsSoundPaused(uint Handle) = 0;
+	bool IsSoundPaused(uint Handle);
 
 	/**
 	 * Returns whether a sound is still playing.
 	 * @param Handle        The sound handle
 	 * @return              Returns true if the sound is playing, false otherwise.
 	*/
-	virtual bool IsSoundPlaying(uint Handle) = 0;
+	bool IsSoundPlaying(uint Handle);
 
 	/**
 	 * Returns the volume of a playing sound (0 = off, 1 = full volume)
 	 */
-	virtual float GetSoundVolume(uint Handle) = 0;
+	float GetSoundVolume(uint Handle);
 
 	/**
 	 * Returns the panning of a playing sound (-1 = full left, 1 = right)
 	 */
-	virtual float GetSoundPanning(uint Handle) = 0;
+	float GetSoundPanning(uint Handle);
 
 	/**
 	 * Returns the position within a playing sound in seconds
 	 */
-	virtual float GetSoundTime(uint Handle) = 0;
+	float GetSoundTime(uint Handle);
+
+	Resource    *LoadResource(const Common::String &FileName);
+	bool            CanLoadResource(const Common::String &FileName);
+
+	bool persist(OutputPersistenceBlock &writer);
+	bool unpersist(InputPersistenceBlock &reader);
 
 private:
 	bool _RegisterScriptBindings();
+
+private:
+	Audio::Mixer *_mixer;
 };
 
 } // End of namespace Sword25

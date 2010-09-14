@@ -68,7 +68,6 @@ MODULE_OBJS := \
 	script/luacallback.o \
 	script/luascript.o \
 	script/lua_extensions.o \
-	sfx/fmodexsound.o \
 	sfx/soundengine.o \
 	sfx/soundengine_script.o \
 	util/lua/lapi.o \
