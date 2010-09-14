@@ -55,60 +55,60 @@ protected:
 	int16 introTicks;                               // Count calls to introPlay()
 };
 
-class intro_1w : public IntroHandler {
+class intro_v1w : public IntroHandler {
 public:
-	intro_1w(HugoEngine &vm);
-	~intro_1w();
+	intro_v1w(HugoEngine &vm);
+	~intro_v1w();
 
 	void preNewGame();
 	void introInit();
 	bool introPlay();
 };
 
-class intro_1d : public IntroHandler {
+class intro_v1d : public IntroHandler {
 public:
-	intro_1d(HugoEngine &vm);
-	~intro_1d();
+	intro_v1d(HugoEngine &vm);
+	~intro_v1d();
 
 	void preNewGame();
 	void introInit();
 	bool introPlay();
 };
 
-class intro_2w : public IntroHandler {
+class intro_v2w : public IntroHandler {
 public:
-	intro_2w(HugoEngine &vm);
-	~intro_2w();
+	intro_v2w(HugoEngine &vm);
+	~intro_v2w();
 
 	void preNewGame();
 	void introInit();
 	bool introPlay();
 };
 
-class intro_2d : public IntroHandler {
+class intro_v2d : public IntroHandler {
 public:
-	intro_2d(HugoEngine &vm);
-	~intro_2d();
+	intro_v2d(HugoEngine &vm);
+	~intro_v2d();
 
 	void preNewGame();
 	void introInit();
 	bool introPlay();
 };
 
-class intro_3w : public IntroHandler {
+class intro_v3w : public IntroHandler {
 public:
-	intro_3w(HugoEngine &vm);
-	~intro_3w();
+	intro_v3w(HugoEngine &vm);
+	~intro_v3w();
 
 	void preNewGame();
 	void introInit();
 	bool introPlay();
 };
 
-class intro_3d : public IntroHandler {
+class intro_v3d : public IntroHandler {
 public:
-	intro_3d(HugoEngine &vm);
-	~intro_3d();
+	intro_v3d(HugoEngine &vm);
+	~intro_v3d();
 
 	void preNewGame();
 	void introInit();

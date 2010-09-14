@@ -86,10 +86,10 @@ private:
 //	char     pbget();
 };
 
-class FileManager_v1 : public FileManager {
+class FileManager_v1d : public FileManager {
 public:
-	FileManager_v1(HugoEngine &vm);
-	~FileManager_v1();
+	FileManager_v1d(HugoEngine &vm);
+	~FileManager_v1d();
 
 	void openDatabaseFiles();
 	void closeDatabaseFiles();
@@ -97,10 +97,10 @@ public:
 	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
 };
 
-class FileManager_v2 : public FileManager {
+class FileManager_v2d : public FileManager {
 public:
-	FileManager_v2(HugoEngine &vm);
-	~FileManager_v2();
+	FileManager_v2d(HugoEngine &vm);
+	~FileManager_v2d();
 
 	void openDatabaseFiles();
 	void closeDatabaseFiles();
@@ -108,10 +108,10 @@ public:
 	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
 };
 
-class FileManager_v3 : public FileManager {
+class FileManager_v1w : public FileManager {
 public:
-	FileManager_v3(HugoEngine &vm);
-	~FileManager_v3();
+	FileManager_v1w(HugoEngine &vm);
+	~FileManager_v1w();
 
 	void openDatabaseFiles();
 	void closeDatabaseFiles();
@@ -119,10 +119,10 @@ public:
 	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
 };
 
-class FileManager_v4 : public FileManager {
+class FileManager_v3d : public FileManager {
 public:
-	FileManager_v4(HugoEngine &vm);
-	~FileManager_v4();
+	FileManager_v3d(HugoEngine &vm);
+	~FileManager_v3d();
 
 	void openDatabaseFiles();
 	void closeDatabaseFiles();

@@ -745,21 +745,21 @@ void FileManager::instructions() {
 }
 
 
-FileManager_v1::FileManager_v1(HugoEngine &vm) : FileManager(vm) {
+FileManager_v1d::FileManager_v1d(HugoEngine &vm) : FileManager(vm) {
 }
 
-FileManager_v1::~FileManager_v1() {
+FileManager_v1d::~FileManager_v1d() {
 }
 
-void FileManager_v1::openDatabaseFiles() {
+void FileManager_v1d::openDatabaseFiles() {
 	debugC(1, kDebugFile, "openDatabaseFiles");
 }
 
-void FileManager_v1::closeDatabaseFiles() {
+void FileManager_v1d::closeDatabaseFiles() {
 	debugC(1, kDebugFile, "closeDatabaseFiles");
 }
 
-void FileManager_v1::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
+void FileManager_v1d::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
 // Open and read in an overlay file, close file
 	uint32       i = 0;
 	image_pt     tmpImage = image;                  // temp ptr to overlay file
@@ -784,7 +784,7 @@ void FileManager_v1::readOverlay(int screenNum, image_pt image, ovl_t overlayTyp
 	_sceneryArchive1.close();
 }
 
-void FileManager_v1::readBackground(int screenIndex) {
+void FileManager_v1d::readBackground(int screenIndex) {
 // Read a PCX image into dib_a
 	seq_t        seq;                               // Image sequence structure for Read_pcx
 
@@ -804,13 +804,13 @@ void FileManager_v1::readBackground(int screenIndex) {
 	_sceneryArchive1.close();
 }
 
-FileManager_v2::FileManager_v2(HugoEngine &vm) : FileManager(vm) {
+FileManager_v2d::FileManager_v2d(HugoEngine &vm) : FileManager(vm) {
 }
 
-FileManager_v2::~FileManager_v2() {
+FileManager_v2d::~FileManager_v2d() {
 }
 
-void FileManager_v2::openDatabaseFiles() {
+void FileManager_v2d::openDatabaseFiles() {
 	debugC(1, kDebugFile, "openDatabaseFiles");
 
 	if (!_stringArchive.open(STRING_FILE))
@@ -821,7 +821,7 @@ void FileManager_v2::openDatabaseFiles() {
 		Utils::Error(FILE_ERR, "%s", OBJECTS_FILE);
 }
 
-void FileManager_v2::closeDatabaseFiles() {
+void FileManager_v2d::closeDatabaseFiles() {
 	debugC(1, kDebugFile, "closeDatabaseFiles");
 
 	_stringArchive.close();
@@ -829,7 +829,7 @@ void FileManager_v2::closeDatabaseFiles() {
 	_objectsArchive.close();
 }
 
-void FileManager_v2::readBackground(int screenIndex) {
+void FileManager_v2d::readBackground(int screenIndex) {
 // Read a PCX image into dib_a
 	seq_t        seq;                               // Image sequence structure for Read_pcx
 	sceneBlock_t sceneBlock;                        // Read a database header entry
@@ -853,7 +853,7 @@ void FileManager_v2::readBackground(int screenIndex) {
 	readPCX(_sceneryArchive1, &seq, _vm.screen().getFrontBuffer(), true, _vm._screenNames[screenIndex]);
 }
 
-void FileManager_v2::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
+void FileManager_v2d::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
 // Open and read in an overlay file, close file
 	uint32       i = 0;
 	int16        j, k;
@@ -915,13 +915,13 @@ void FileManager_v2::readOverlay(int screenNum, image_pt image, ovl_t overlayTyp
 	} while (k < OVL_SIZE);
 }
 
-FileManager_v3::FileManager_v3(HugoEngine &vm) : FileManager(vm) {
+FileManager_v1w::FileManager_v1w(HugoEngine &vm) : FileManager(vm) {
 }
 
-FileManager_v3::~FileManager_v3() {
+FileManager_v1w::~FileManager_v1w() {
 }
 
-void FileManager_v3::openDatabaseFiles() {
+void FileManager_v1w::openDatabaseFiles() {
 	debugC(1, kDebugFile, "openDatabaseFiles");
 
 	if (!_stringArchive.open(STRING_FILE))
@@ -932,7 +932,7 @@ void FileManager_v3::openDatabaseFiles() {
 		Utils::Error(FILE_ERR, "%s", OBJECTS_FILE);
 }
 
-void FileManager_v3::closeDatabaseFiles() {
+void FileManager_v1w::closeDatabaseFiles() {
 	debugC(1, kDebugFile, "closeDatabaseFiles");
 
 	_stringArchive.close();
@@ -940,7 +940,7 @@ void FileManager_v3::closeDatabaseFiles() {
 	_objectsArchive.close();
 }
 
-void FileManager_v3::readBackground(int screenIndex) {
+void FileManager_v1w::readBackground(int screenIndex) {
 // Read a PCX image into dib_a
 	seq_t        seq;                               // Image sequence structure for Read_pcx
 	sceneBlock_t sceneBlock;                        // Read a database header entry
@@ -964,7 +964,7 @@ void FileManager_v3::readBackground(int screenIndex) {
 	readPCX(_sceneryArchive1, &seq, _vm.screen().getFrontBuffer(), true, _vm._screenNames[screenIndex]);
 }
 
-void FileManager_v3::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
+void FileManager_v1w::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
 // Open and read in an overlay file, close file
 	uint32       i = 0;
 	image_pt     tmpImage = image;                  // temp ptr to overlay file
@@ -1009,13 +1009,13 @@ void FileManager_v3::readOverlay(int screenNum, image_pt image, ovl_t overlayTyp
 	_sceneryArchive1.read(tmpImage, OVL_SIZE);
 }
 
-FileManager_v4::FileManager_v4(HugoEngine &vm) : FileManager(vm) {
+FileManager_v3d::FileManager_v3d(HugoEngine &vm) : FileManager(vm) {
 }
 
-FileManager_v4::~FileManager_v4() {
+FileManager_v3d::~FileManager_v3d() {
 }
 
-void FileManager_v4::readBackground(int screenIndex) {
+void FileManager_v3d::readBackground(int screenIndex) {
 // Read a PCX image into dib_a
 	seq_t        seq;                               // Image sequence structure for Read_pcx
 	sceneBlock_t sceneBlock;                        // Read a database header entry
@@ -1047,7 +1047,7 @@ void FileManager_v4::readBackground(int screenIndex) {
 	}
 }
 
-void FileManager_v4::openDatabaseFiles() {
+void FileManager_v3d::openDatabaseFiles() {
 	debugC(1, kDebugFile, "openDatabaseFiles");
 
 	if (!_stringArchive.open(STRING_FILE))
@@ -1060,7 +1060,7 @@ void FileManager_v4::openDatabaseFiles() {
 		Utils::Error(FILE_ERR, "%s", OBJECTS_FILE);
 }
 
-void FileManager_v4::closeDatabaseFiles() {
+void FileManager_v3d::closeDatabaseFiles() {
 	debugC(1, kDebugFile, "closeDatabaseFiles");
 
 	_stringArchive.close();
@@ -1069,7 +1069,7 @@ void FileManager_v4::closeDatabaseFiles() {
 	_objectsArchive.close();
 }
 
-void FileManager_v4::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
+void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
 // Open and read in an overlay file, close file
 	uint32       i = 0;
 	int16        j, k;

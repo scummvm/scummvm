@@ -84,18 +84,18 @@ private:
 	virtual const char *getCypher() = 0;
 };
 
-class Scheduler_v1 : public Scheduler {
+class Scheduler_v1d : public Scheduler {
 public:
-	Scheduler_v1(HugoEngine &vm);
-	~Scheduler_v1();
+	Scheduler_v1d(HugoEngine &vm);
+	~Scheduler_v1d();
 
 	const char *getCypher();
 };
 
-class Scheduler_v2 : public Scheduler {
+class Scheduler_v3d : public Scheduler {
 public:
-	Scheduler_v2(HugoEngine &vm);
-	~Scheduler_v2();
+	Scheduler_v3d(HugoEngine &vm);
+	~Scheduler_v3d();
 
 	const char *getCypher();
 };

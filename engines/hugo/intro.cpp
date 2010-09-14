@@ -48,51 +48,51 @@ IntroHandler::IntroHandler(HugoEngine &vm) : _vm(vm) {
 IntroHandler::~IntroHandler() {
 }
 
-intro_1w::intro_1w(HugoEngine &vm) : IntroHandler(vm) {
+intro_v1w::intro_v1w(HugoEngine &vm) : IntroHandler(vm) {
 }
 
-intro_1w::~intro_1w() {
+intro_v1w::~intro_v1w() {
 }
 
-void intro_1w::preNewGame() {
+void intro_v1w::preNewGame() {
 	// Auto-start a new game
 	_vm.file().restoreGame(-1);
 	_vm.getGameStatus().viewState = V_INTROINIT;
 }
 
-void intro_1w::introInit() {
+void intro_v1w::introInit() {
 }
 
-bool intro_1w::introPlay() {
+bool intro_v1w::introPlay() {
 	return true;
 }
 
-intro_2w::intro_2w(HugoEngine &vm) : IntroHandler(vm) {
+intro_v2w::intro_v2w(HugoEngine &vm) : IntroHandler(vm) {
 }
 
-intro_2w::~intro_2w() {
+intro_v2w::~intro_v2w() {
 }
 
-void intro_2w::preNewGame() {
+void intro_v2w::preNewGame() {
 }
 
-void intro_2w::introInit() {
+void intro_v2w::introInit() {
 }
 
-bool intro_2w::introPlay() {
+bool intro_v2w::introPlay() {
 	return true;
 }
 
-intro_3w::intro_3w(HugoEngine &vm) : IntroHandler(vm) {
+intro_v3w::intro_v3w(HugoEngine &vm) : IntroHandler(vm) {
 }
 
-intro_3w::~intro_3w() {
+intro_v3w::~intro_v3w() {
 }
 
-void intro_3w::preNewGame() {
+void intro_v3w::preNewGame() {
 }
 
-void intro_3w::introInit() {
+void intro_v3w::introInit() {
 // Hugo 3 - show map and set up for introPlay()
 //#if STORY
 	_vm.file().readBackground(22); // display screen MAP_3w
@@ -101,7 +101,7 @@ void intro_3w::introInit() {
 //#endif
 }
 
-bool intro_3w::introPlay() {
+bool intro_v3w::introPlay() {
 	byte introSize = _vm.getIntroSize();
 
 // Hugo 3 - Preamble screen before going into game.  Draws path of Hugo's plane.
@@ -133,53 +133,53 @@ bool intro_3w::introPlay() {
 //#endif //STORY
 }
 
-intro_1d::intro_1d(HugoEngine &vm) : IntroHandler(_vm) {
+intro_v1d::intro_v1d(HugoEngine &vm) : IntroHandler(_vm) {
 }
 
-intro_1d::~intro_1d() {
+intro_v1d::~intro_v1d() {
 }
 
-void intro_1d::preNewGame() {
+void intro_v1d::preNewGame() {
 }
 
-void intro_1d::introInit() {
+void intro_v1d::introInit() {
 }
 
-bool intro_1d::introPlay() {
-	warning("STUB: intro_1d::introPlay()");
+bool intro_v1d::introPlay() {
+	warning("STUB: intro_v1d::introPlay()");
 	return true;
 }
 //TODO : Add code for intro H2 DOS
-intro_2d::intro_2d(HugoEngine &vm) : IntroHandler(_vm) {
+intro_v2d::intro_v2d(HugoEngine &vm) : IntroHandler(_vm) {
 }
 
-intro_2d::~intro_2d() {
+intro_v2d::~intro_v2d() {
 }
 
-void intro_2d::preNewGame() {
+void intro_v2d::preNewGame() {
 }
 
-void intro_2d::introInit() {
+void intro_v2d::introInit() {
 }
 
-bool intro_2d::introPlay() {
+bool intro_v2d::introPlay() {
 	return true;
 }
 
 //TODO : Add code for intro H3 DOS
-intro_3d::intro_3d(HugoEngine &vm) : IntroHandler(_vm) {
+intro_v3d::intro_v3d(HugoEngine &vm) : IntroHandler(_vm) {
 }
 
-intro_3d::~intro_3d() {
+intro_v3d::~intro_v3d() {
 }
 
-void intro_3d::preNewGame() {
+void intro_v3d::preNewGame() {
 }
 
-void intro_3d::introInit() {
+void intro_v3d::introInit() {
 }
 
-bool intro_3d::introPlay() {
+bool intro_v3d::introPlay() {
 	return true;
 }
 
