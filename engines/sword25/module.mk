@@ -28,8 +28,10 @@ MODULE_OBJS := \
 	gfx/text.o \
 	gfx/timedrenderobject.o \
 	gfx/image/b25sloader.o \
+	gfx/image/glimage.o \
 	gfx/image/imageloader.o \
 	gfx/image/pngloader.o \
+	gfx/image/swimage.o \
 	gfx/image/vectorimage.o \
 	gfx/image/vectorimagerenderer.o \
 	gfx/image/art.o \
@@ -38,8 +40,6 @@ MODULE_OBJS := \
 	gfx/image/art_svp_vpath.o \
 	gfx/image/art_svp_vpath_stroke.o \
 	gfx/image/art_vpath_bpath.o \
-	gfx/opengl/glimage.o \
-	gfx/opengl/swimage.o \
 	input/inputengine.o \
 	input/inputengine_script.o \
 	kernel/callbackregistry.o \
