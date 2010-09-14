@@ -226,13 +226,13 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
 
 	// Handle off-screen clipping
 	if (posY < 0) {
-		img->h -= -posY;
+		img->h = MAX(0, (int)img->h - -posY);
 		img->pixels = (byte *)img->pixels + img->pitch * -posY;
 		posY = 0;
 	}
 
 	if (posX < 0) {
-		img->w -= -posX;
+		img->w = MAX(0, (int)img->w - -posX);
 		img->pixels = (byte *)img->pixels + (-posX * 4);
 		posX = 0;
 	}
