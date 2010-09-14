@@ -358,7 +358,7 @@ void ReverseArray(Common::Array<T> &Arr) {
 	if (Arr.size() < 2)
 		return;
 
-	for (uint i = 0; i < (Arr.size() / 2 - 1); ++i) {
+	for (uint i = 0; i <= (Arr.size() / 2 - 1); ++i) {
 		T temp = Arr[i];
 		Arr[i] = Arr[Arr.size() - i - 1];
 		Arr[Arr.size() - i - 1] = temp;
