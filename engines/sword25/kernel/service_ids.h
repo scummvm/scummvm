@@ -49,7 +49,7 @@
 
 namespace Sword25 {
 
-Service *OpenGLGfx_CreateObject(Kernel *pKernel);
+Service *GraphicEngine_CreateObject(Kernel *pKernel);
 Service *PackageManager_CreateObject(Kernel *pKernel);
 Service *InputEngine_CreateObject(Kernel *pKernel);
 Service *FMODExSound_CreateObject(Kernel *pKernel);
@@ -64,7 +64,7 @@ const BS_ServiceInfo BS_SERVICE_TABLE[] = {
 	// of the class and returns it
 	// Example:
 	// BS_ServiceInfo("Superclass", "Service", CreateMethod)
-	BS_ServiceInfo("gfx", "opengl", OpenGLGfx_CreateObject),
+	BS_ServiceInfo("gfx", "opengl", GraphicEngine_CreateObject),
 	BS_ServiceInfo("package", "archiveFS", PackageManager_CreateObject),
 	BS_ServiceInfo("input", "winapi", InputEngine_CreateObject),
 	BS_ServiceInfo("sfx", "fmodex", FMODExSound_CreateObject),

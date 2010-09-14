@@ -39,7 +39,6 @@ MODULE_OBJS := \
 	gfx/image/art_svp_vpath_stroke.o \
 	gfx/image/art_vpath_bpath.o \
 	gfx/opengl/glimage.o \
-	gfx/opengl/openglgfx.o \
 	gfx/opengl/swimage.o \
 	input/inputengine.o \
 	input/inputengine_script.o \

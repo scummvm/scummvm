@@ -62,6 +62,7 @@ class Kernel;
 class Image;
 class Panel;
 class Screenshot;
+class RenderObjectManager;
 
 // Typen
 typedef uint BS_COLOR;
@@ -105,6 +106,11 @@ public:
 		CF_ABGR32
 	};
 
+	// Constructor
+	// -----------
+	GraphicEngine(Kernel *pKernel);
+	~GraphicEngine();
+
 	// Interface
 	// ---------
 
@@ -117,7 +123,7 @@ public:
 	 * @param BackbufferCount   The number of back buffers to be created. The default value is 2
 	 * @param Windowed          Indicates whether the engine is to run in windowed mode.
 	 */
-	virtual bool        Init(int Width = 800, int Height = 600, int BitDepth = 16, int BackbufferCount = 2, bool Windowed = false) = 0;
+	bool        Init(int Width = 800, int Height = 600, int BitDepth = 16, int BackbufferCount = 2, bool Windowed = false);
 
 	/**
 	 * Begins rendering a new frame.
@@ -126,7 +132,7 @@ public:
 	 * @param UpdateAll         Specifies whether the renderer should redraw everything on the next frame.
 	 * This feature can be useful if the renderer with Dirty Rectangles works, but sometimes the client may
 	*/
-	virtual bool        StartFrame(bool UpdateAll = false) = 0;
+	bool        StartFrame(bool UpdateAll = false);
 
 	/**
 	 * Ends the rendering of a frame and draws it on the screen.
@@ -134,7 +140,7 @@ public:
 	 * This method must be at the end of the main loop. After this call, no further Render method may be called.
 	 * This should only be called once for a given previous call to #StartFrame.
 	*/
-	virtual bool        EndFrame() = 0;
+	bool        EndFrame();
 
 	// Debug methods
 
@@ -148,7 +154,7 @@ public:
 	* @param End        The ending point of the line
 	* @param Color      The colour of the line. The default is BS_RGB (255,255,255) (White)
 	*/
-	virtual void        DrawDebugLine(const Vertex &Start, const Vertex &End, uint Color = BS_RGB(255, 255, 255)) = 0;
+	void        DrawDebugLine(const Vertex &Start, const Vertex &End, uint Color = BS_RGB(255, 255, 255));
 
 	/**
 	 * Creates a screenshot of the current frame buffer and writes it to a graphic file in PNG format.
@@ -175,10 +181,10 @@ public:
 	 * @param Height    Returns the height of the frame buffer
 	 * @param Data      Returns the raw data of the frame buffer as an array of 32-bit colour values.
 	*/
-	virtual bool GetScreenshot(uint &Width, uint &Height, byte **Data) = 0;
+	bool GetScreenshot(uint &Width, uint &Height, byte **Data);
 
 
-	virtual RenderObjectPtr<Panel> GetMainPanel() = 0;
+	RenderObjectPtr<Panel> GetMainPanel();
 
 	/**
 	 * Specifies the time (in microseconds) since the last frame has passed
@@ -241,13 +247,13 @@ public:
 	 * Notes: In windowed mode, this setting has no effect.
 	 * @param Vsync     Indicates whether the frame buffer changes are to be synchronised with Vsync.
 	 */
-	virtual void    SetVsync(bool Vsync) = 0;
+	void    SetVsync(bool Vsync);
 
 	/**
 	 * Returns true if V-Sync is on.
 	 * Notes: In windowed mode, this setting has no effect.
 	 */
-	virtual bool    GetVsync() const = 0;
+	bool    GetVsync() const;
 
 	/**
 	 * Returns true if the engine is running in Windowed mode.
@@ -265,7 +271,7 @@ public:
 	 * @param Color         The 32-bit colour with which the area is to be filled. The default is BS_RGB(0, 0, 0) (black)
 	    @remark Falls das Rechteck nicht völlig innerhalb des Bildschirms ist, wird es automatisch zurechtgestutzt.
 	 */
-	virtual bool fill(const Common::Rect *FillRectPtr = 0, uint Color = BS_RGB(0, 0, 0)) = 0;
+	bool fill(const Common::Rect *FillRectPtr = 0, uint Color = BS_RGB(0, 0, 0));
 
 	// Debugging Methods
 
@@ -314,6 +320,11 @@ public:
 		return -1;
 	}
 
+	// Resource-Managing Methods
+	// --------------------------
+	virtual Resource    *LoadResource(const Common::String &FileName);
+	virtual bool            CanLoadResource(const Common::String &FileName);
+
 	// Persistence Methods
 	// -------------------
 	virtual bool persist(OutputPersistenceBlock &Writer);
@@ -323,9 +334,6 @@ public:
 	static uint LuaColorToARGBColor(lua_State *L, int StackIndex);
 
 protected:
-	// Constructor
-	// -----------
-	GraphicEngine(Kernel *pKernel);
 
 	// Display Variables
 	// -----------------
@@ -356,6 +364,31 @@ private:
 	bool                        m_TimerActive;
 	Common::Array<uint> m_FrameTimeSamples;
 	uint                m_FrameTimeSampleSlot;
+
+private:
+	byte *_backBuffer;
+
+	RenderObjectPtr<Panel> m_MainPanelPtr;
+
+	Common::ScopedPtr<RenderObjectManager>   _renderObjectManagerPtr;
+
+	struct DebugLine {
+		DebugLine(const Vertex &_Start, const Vertex &_End, uint _Color) :
+			Start(_Start),
+			End(_End),
+			Color(_Color) {}
+		DebugLine() {}
+
+		Vertex       Start;
+		Vertex       End;
+		uint    Color;
+	};
+
+	Common::Array<DebugLine> m_DebugLines;
+
+	static bool ReadFramebufferContents(uint Width, uint Height, byte **Data);
+	static void ReverseRGBAComponentOrder(byte *Data, uint size);
+	static void FlipImagedataVertical(uint Width, uint Height, byte *Data);
 };
 
 } // End of namespace Sword25
