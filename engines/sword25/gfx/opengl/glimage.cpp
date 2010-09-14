@@ -233,7 +233,7 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
 
 	if (posX < 0) {
 		img->w -= -posX;
-		img->pixels = (byte *)img->pixels + -posX;
+		img->pixels = (byte *)img->pixels + (-posX * 4);
 		posX = 0;
 	}
 
