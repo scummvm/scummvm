@@ -50,11 +50,14 @@
 #ifndef SWORD25_PACKAGE_MANAGER_H
 #define SWORD25_PACKAGE_MANAGER_H
 
+#include "common/archive.h"
+#include "common/array.h"
+#include "common/fs.h"
+#include "common/str.h"
+
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/service.h"
-
-#include "common/archive.h"
 
 namespace Sword25 {
 
@@ -70,9 +73,29 @@ namespace Sword25 {
  *    have all files in packages.
  */
 class PackageManager : public Service {
+private:
+	class ArchiveEntry {
+	public:
+		Common::Archive *archive;
+		Common::String _mountPath;
+
+		ArchiveEntry(Common::Archive *archive_, const Common::String &mountPath_):
+			archive(archive_), _mountPath(mountPath_) {
+		}
+		~ArchiveEntry() {
+			delete archive;
+		}
+	};
+
+	Common::String _currentDirectory;
+	Common::FSNode _rootFolder;
+	Common::List<ArchiveEntry *> _archiveList;
+
+	Common::ArchiveMemberPtr GetArchiveMember(const Common::String &fileName);
+
 public:
 	PackageManager(Kernel *pKernel);
-	virtual ~PackageManager() {};
+	~PackageManager();
 
 	enum FILE_TYPES {
 		FT_DIRECTORY    = (1 << 0),
@@ -80,34 +103,34 @@ public:
 	};
 
 	/**
-	 * Mounts the contents of a package in the directory specified in the virtual directory tree.
+	 * Mounts the contents of a package in the directory specified in the directory tree.
 	 * @param FileName      The filename of the package to mount
 	 * @param MountPosition The directory name under which the package should be mounted
 	 * @return              Returns true if the mount was successful, otherwise false.
 	 */
-	virtual bool LoadPackage(const Common::String &FileName, const Common::String &MountPosition) = 0;
+	bool LoadPackage(const Common::String &FileName, const Common::String &MountPosition);
 	/**
-	 * Mounts the contents of a directory in the specified directory in the virtual directory tree.
+	 * Mounts the contents of a directory in the specified directory in the directory tree.
 	 * @param               The name of the directory to mount
 	 * @param MountPosition The directory name under which the package should be mounted
 	 * @return              Returns true if the mount was successful, otherwise false.
 	 */
-	virtual bool LoadDirectoryAsPackage(const Common::String &DirectoryName, const Common::String &MountPosition) = 0;
+	bool LoadDirectoryAsPackage(const Common::String &DirectoryName, const Common::String &MountPosition);
 	/**
-	 * Downloads a file from the virtual directory tree
+	 * Downloads a file from the directory tree
 	 * @param FileName      The filename of the file to load
 	 * @param pFileSize     Pointer to the variable that will contain the size of the loaded file. The deafult is NULL.
 	 * @return              Specifies a pointer to the loaded data of the file
 	 * @remark              The client must not forget to release the data of the file using BE_DELETE_A.
 	 */
-	virtual byte *GetFile(const Common::String &FileName, uint *pFileSize = NULL) = 0;
+	byte *GetFile(const Common::String &FileName, uint *pFileSize = NULL);
 
 	/**
-	 * Returns a stream from file file from the virtual directory tree
+	 * Returns a stream from file file from the directory tree
 	 * @param FileName      The filename of the file to load
 	 * @return              Pointer to the stream object
 	 */
-	virtual Common::SeekableReadStream *GetStream(const Common::String &fileName) = 0;
+	Common::SeekableReadStream *GetStream(const Common::String &fileName);
 	/**
 	 * Downloads an XML file and prefixes it with an XML Version key, since the XML files don't contain it,
 	 * and it is required for ScummVM to correctly parse the XML.
@@ -136,22 +159,22 @@ public:
 	 * If the path could not be determined, an empty string is returned.
 	 * @remark              For cutting path elements '\' is used rather than '/' elements.
 	 */
-	virtual     Common::String GetCurrentDirectory() = 0;
+	Common::String GetCurrentDirectory();
 	/**
 	 * Changes the current directory.
 	 * @param Directory     The path to the new directory. The path can be relative.
 	 * @return              Returns true if the operation was successful, otherwise false.
 	 * @remark              For cutting path elements '\' is used rather than '/' elements.
 	 */
-	virtual bool ChangeDirectory(const Common::String &Directory) = 0;
+	bool ChangeDirectory(const Common::String &Directory);
 	/**
-	 * Returns the absolute path to a file in the virtual directory tree.
+	 * Returns the absolute path to a file in the directory tree.
 	 * @param FileName      The filename of the file whose absolute path is to be determined.
 	 * These parameters may include both relative and absolute paths.
 	 * @return              Returns an absolute path to the given file.
 	 * @remark              For cutting path elements '\' is used rather than '/' elements.
 	 */
-	virtual Common::String GetAbsolutePath(const Common::String &FileName) = 0;
+	Common::String GetAbsolutePath(const Common::String &FileName);
 	/**
 	 * Creates a BS_PackageManager::FileSearch object to search for files
 	 * @param Filter        Specifies the search string. Wildcards of '*' and '?' are allowed
@@ -162,7 +185,7 @@ public:
 	 * @return              Specifies a pointer to a BS_PackageManager::FileSearch object, or NULL if no file was found.
 	 * @remark              Do not forget to delete the object after use.
 	*/
-	virtual int doSearch(Common::ArchiveMemberList &list, const Common::String &Filter, const Common::String &Path, uint TypeFilter = FT_DIRECTORY | FT_FILE) = 0;
+	int doSearch(Common::ArchiveMemberList &list, const Common::String &Filter, const Common::String &Path, uint TypeFilter = FT_DIRECTORY | FT_FILE);
 
 	/**
 	 * Returns a file's size
@@ -170,7 +193,7 @@ public:
 	 * @return              The file size. If an error occurs, then 0xffffffff is returned.
 	 * @remarks             For files in packages, then uncompressed size is returned.
 	 **/
-	virtual uint GetFileSize(const Common::String &FileName) = 0;
+	uint GetFileSize(const Common::String &FileName);
 
 	/**
 	 * Returns the type of a file.
@@ -179,19 +202,19 @@ public:
 	 * or BS_PackageManager::FT_FILE).
 	 * If the file was not found, then 0 is returned.
 	 */
-	virtual uint GetFileType(const Common::String &FileName) = 0;
+	uint GetFileType(const Common::String &FileName);
 
 	/**
 	 * Determines whether a file exists
 	 * @param FileName      The filename
 	 * @return              Returns true if the file exists, otherwise false.
 	 */
-	virtual bool FileExists(const Common::String &FileName) = 0;
+	bool FileExists(const Common::String &FileName);
 
 private:
 	bool _RegisterScriptBindings();
 };
 
-} // ENd of namespace Sword25
+} // End of namespace Sword25
 
 #endif
