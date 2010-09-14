@@ -38,12 +38,11 @@
 
 #include "sword25/kernel/bs_stdint.h"
 #include "sword25/gfx/image/vectorimage.h"
+#include "sword25/gfx/image/renderedimage.h"
 
 #include "graphics/colormasks.h"
 
 #include "art.h"
-
-#include "sword25/gfx/image/glimage.h"
 
 namespace Sword25 {
 
@@ -626,7 +625,7 @@ bool VectorImage::blit(int posX, int posY,
 		oldWidth = width;
 	}
 
-	GLImage *rend = new GLImage();
+	RenderedImage *rend = new RenderedImage();
 
 	rend->replaceContent(_pixelData, width, height);
 	rend->blit(posX, posY, flipping, pPartRect, color, width, height);

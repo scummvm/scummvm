@@ -32,8 +32,8 @@
  *
  */
 
-#ifndef SWORD25_GL_IMAGE_H
-#define SWORD25_GL_IMAGE_H
+#ifndef SWORD25_RENDERED_IMAGE_H
+#define SWORD25_RENDERED_IMAGE_H
 
 // -----------------------------------------------------------------------------
 // INCLUDES
@@ -45,32 +45,22 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// FORWARD DECLARATION
-// -----------------------------------------------------------------------------
-
-typedef void *GLS_Sprite;
-
-// -----------------------------------------------------------------------------
-// CLASS DEFINITION
-// -----------------------------------------------------------------------------
-
-class GLImage : public Image {
+class RenderedImage : public Image {
 public:
-	GLImage(const Common::String &filename, bool &result);
+	RenderedImage(const Common::String &filename, bool &result);
 
 	/**
-	    @brief Erzeugt ein leeres BS_GLImage
+	    @brief Erzeugt ein leeres BS_RenderedImage
 
 	    @param Width die Breite des zu erzeugenden Bildes.
 	    @param Height die Höhe des zu erzeugenden Bildes
 	    @param Result gibt dem Aufrufer bekannt, ob der Konstruktor erfolgreich ausgeführt wurde. Wenn es nach dem Aufruf false enthalten sollte,
 	                  dürfen keine Methoden am Objekt aufgerufen werden und das Objekt ist sofort zu zerstören.
 	*/
-	GLImage(uint width, uint height, bool &result);
-	GLImage();
+	RenderedImage(uint width, uint height, bool &result);
+	RenderedImage();
 
-	virtual ~GLImage();
+	virtual ~RenderedImage();
 
 	virtual int getWidth() const {
 		return _width;

@@ -38,19 +38,19 @@
 
 #include "sword25/package/packagemanager.h"
 #include "sword25/gfx/image/imageloader.h"
-#include "sword25/gfx/image/glimage.h"
+#include "sword25/gfx/image/renderedimage.h"
 
 #include "common/system.h"
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "GLIMAGE"
+#define BS_LOG_PREFIX "RENDEREDIMAGE"
 
 // -----------------------------------------------------------------------------
 // CONSTRUCTION / DESTRUCTION
 // -----------------------------------------------------------------------------
 
-GLImage::GLImage(const Common::String &filename, bool &result) :
+RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 	_data(0),
 	_width(0),
 	_height(0) {
@@ -96,7 +96,7 @@ GLImage::GLImage(const Common::String &filename, bool &result) :
 
 // -----------------------------------------------------------------------------
 
-GLImage::GLImage(uint width, uint height, bool &result) :
+RenderedImage::RenderedImage(uint width, uint height, bool &result) :
 	_width(width),
 	_height(height) {
 
@@ -111,7 +111,7 @@ GLImage::GLImage(uint width, uint height, bool &result) :
 	return;
 }
 
-GLImage::GLImage() : _width(0), _height(0), _data(0) {
+RenderedImage::RenderedImage() : _width(0), _height(0), _data(0) {
 	_backSurface = (static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx")))->getSurface();
 
 	_doCleanup = false;
@@ -121,21 +121,21 @@ GLImage::GLImage() : _width(0), _height(0), _data(0) {
 
 // -----------------------------------------------------------------------------
 
-GLImage::~GLImage() {
+RenderedImage::~RenderedImage() {
 	if (_doCleanup)
 		delete[] _data;
 }
 
 // -----------------------------------------------------------------------------
 
-bool GLImage::fill(const Common::Rect *pFillRect, uint color) {
+bool RenderedImage::fill(const Common::Rect *pFillRect, uint color) {
 	BS_LOG_ERRORLN("Fill() is not supported.");
 	return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool GLImage::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
+bool RenderedImage::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
 	// Überprüfen, ob PixelData ausreichend viele Pixel enthält um ein Bild der Größe Width * Height zu erzeugen
 	if (size < static_cast<uint>(_width * _height * 4)) {
 		BS_LOG_ERRORLN("PixelData vector is too small to define a 32 bit %dx%d image.", _width, _height);
@@ -154,21 +154,21 @@ bool GLImage::setContent(const byte *pixeldata, uint size, uint offset, uint str
 	return true;
 }
 
-void GLImage::replaceContent(byte *pixeldata, int width, int height) {
+void RenderedImage::replaceContent(byte *pixeldata, int width, int height) {
 	_width = width;
 	_height = height;
 	_data = pixeldata;
 }
 // -----------------------------------------------------------------------------
 
-uint GLImage::getPixel(int x, int y) {
+uint RenderedImage::getPixel(int x, int y) {
 	BS_LOG_ERRORLN("GetPixel() is not supported. Returning black.");
 	return 0;
 }
 
 // -----------------------------------------------------------------------------
 
-bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
+bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
 	int ca = (color >> 24) & 0xff;
 
 	// Check if we need to draw anything at all
@@ -341,7 +341,7 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
  * @param scaleFactor	Scale amount. Must be between 0 and 1.0 (but not zero)
  * @remarks Caller is responsible for freeing the returned surface
  */
-Graphics::Surface *GLImage::scale(const Graphics::Surface &srcImage, int xSize, int ySize) {
+Graphics::Surface *RenderedImage::scale(const Graphics::Surface &srcImage, int xSize, int ySize) {
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(xSize, ySize, srcImage.bytesPerPixel);
 
@@ -371,7 +371,7 @@ Graphics::Surface *GLImage::scale(const Graphics::Surface &srcImage, int xSize, 
  * Returns an array indicating which pixels of a source image horizontally or vertically get
  * included in a scaled image
  */
-int *GLImage::scaleLine(int size, int srcSize) {
+int *RenderedImage::scaleLine(int size, int srcSize) {
 	int scale = 100 * size / srcSize;
 	assert(scale > 0);
 	int *v = new int[size];
