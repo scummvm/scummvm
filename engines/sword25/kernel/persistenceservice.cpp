@@ -36,6 +36,7 @@
 // Includes
 // -----------------------------------------------------------------------------
 
+#include "common/fs.h"
 #include "common/savefile.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/persistenceservice.h"
@@ -61,25 +62,22 @@ const char         *SAVEGAME_DIRECTORY = "saves";
 const char         *FILE_MARKER = "BS25SAVEGAME";
 const uint  SLOT_COUNT = 18;
 const uint  FILE_COPY_BUFFER_SIZE = 1024 * 10;
-const char *VERSIONID = "1";
+const char *VERSIONID = "5";
 
 // -------------------------------------------------------------------------
 
-Common::String GenerateSavegameFilename(uint SlotID) {
-	Common::String oss;
-	oss += SlotID;
-	oss += SAVEGAME_EXTENSION;
-	return oss;
+Common::String GenerateSavegameFilename(uint slotID) {
+	char buffer[10];
+	sprintf(buffer, "%d%s", slotID, SAVEGAME_EXTENSION);
+	return Common::String(buffer);
 }
 
 // -------------------------------------------------------------------------
 
 Common::String GenerateSavegamePath(uint SlotID) {
-	Common::String oss;
-	oss = PersistenceService::GetSavegameDirectory();
-	oss += FileSystemUtil::GetInstance().GetPathSeparator();
-	oss += GenerateSavegameFilename(SlotID);
-	return oss;
+	Common::FSNode folder(PersistenceService::GetSavegameDirectory());
+	
+	return folder.getChild(GenerateSavegameFilename(SlotID)).getPath();
 }
 
 // -------------------------------------------------------------------------
@@ -92,7 +90,7 @@ Common::String FormatTimestamp(TimeDate Time) {
 	};
 	char buffer[100];
 	snprintf(buffer, 100, "%.2d-%s-%.4d %.2d:%.2d:%.2d",
-	         Time.tm_mday, monthList[Time.tm_mon].c_str(), Time.tm_year,
+	         Time.tm_mday, monthList[Time.tm_mon].c_str(), 1900 + Time.tm_year,
 	         Time.tm_hour, Time.tm_min, Time.tm_sec
 	        );
 
@@ -103,14 +101,17 @@ Common::String FormatTimestamp(TimeDate Time) {
 
 Common::String LoadString(Common::InSaveFile *In, uint MaxSize = 999) {
 	Common::String Result;
-	char ch;
-	while ((ch = (char)In->readByte()) != '\0') {
+
+	char ch = (char)In->readByte();
+	while ((ch != '\0') && (ch != ' ')) {
 		Result += ch;
 		if (Result.size() >= MaxSize) break;
+		ch = (char)In->readByte();
 	}
 
 	return Result;
 }
+
 }
 
 namespace Sword25 {
@@ -167,38 +168,37 @@ struct PersistenceService::Impl {
 		CurSavegameInfo.Clear();
 
 		// Den Dateinamen für den Spielstand des Slots generieren.
-		Common::String Filename = GenerateSavegamePath(SlotID);
+		Common::String Filename = GenerateSavegameFilename(SlotID);
 
-		// Feststellen, ob eine Spielstanddatei dieses Namens existiert.
-		if (FileSystemUtil::GetInstance().FileExists(Filename)) {
-			// Read in the game
-			Common::SaveFileManager *sfm = g_system->getSavefileManager();
-			Common::InSaveFile *File = sfm->openForLoading(Filename);
+		// Try to open the savegame for loading
+		Common::SaveFileManager *sfm = g_system->getSavefileManager();
+		Common::InSaveFile *File = sfm->openForLoading(Filename);
 
-			if (File) {
-				// Read in the header
-				Common::String StoredMarker = LoadString(File);
-				Common::String StoredVersionID = LoadString(File);
-				CurSavegameInfo.GamedataLength = File->readUint32LE();
-				CurSavegameInfo.GamedataUncompressedLength = File->readUint32LE();
+		if (File) {
+			// Read in the header
+			Common::String StoredMarker = LoadString(File);
+			Common::String StoredVersionID = LoadString(File);
+			Common::String gameDataLength = LoadString(File);
+			CurSavegameInfo.GamedataLength = atoi(gameDataLength.c_str());
+			Common::String gamedataUncompressedLength = LoadString(File);
+			CurSavegameInfo.GamedataUncompressedLength = atoi(gamedataUncompressedLength.c_str());
 
-				// If the header can be read in and is detected to be valid, we will have a valid file
-				if (StoredMarker == FILE_MARKER) {
-					// Der Slot wird als belegt markiert.
-					CurSavegameInfo.IsOccupied = true;
-					// Speichern, ob der Spielstand kompatibel mit der aktuellen Engine-Version ist.
-					CurSavegameInfo.IsCompatible = (StoredVersionID == Common::String(VERSIONID));
-					// Dateinamen des Spielstandes speichern.
-					CurSavegameInfo.Filename = GenerateSavegameFilename(SlotID);
-					// Die Beschreibung des Spielstandes besteht aus einer textuellen Darstellung des Änderungsdatums der Spielstanddatei.
-					CurSavegameInfo.Description = FormatTimestamp(FileSystemUtil::GetInstance().GetFileTime(Filename));
-					// Den Offset zu den gespeicherten Spieldaten innerhalb der Datei speichern.
-					// Dieses entspricht der aktuellen Position + 1, da nach der letzten Headerinformation noch ein Leerzeichen als trenner folgt.
-					CurSavegameInfo.GamedataOffset = static_cast<uint>(File->pos()) + 1;
-				}
-
-				delete File;
+			// If the header can be read in and is detected to be valid, we will have a valid file
+			if (StoredMarker == FILE_MARKER) {
+				// Der Slot wird als belegt markiert.
+				CurSavegameInfo.IsOccupied = true;
+				// Speichern, ob der Spielstand kompatibel mit der aktuellen Engine-Version ist.
+				CurSavegameInfo.IsCompatible = (StoredVersionID == Common::String(VERSIONID));
+				// Dateinamen des Spielstandes speichern.
+				CurSavegameInfo.Filename = GenerateSavegameFilename(SlotID);
+				// Die Beschreibung des Spielstandes besteht aus einer textuellen Darstellung des Änderungsdatums der Spielstanddatei.
+				CurSavegameInfo.Description = FormatTimestamp(FileSystemUtil::GetInstance().GetFileTime(Filename));
+				// Den Offset zu den gespeicherten Spieldaten innerhalb der Datei speichern.
+				// Dieses entspricht der aktuellen Position + 1, da nach der letzten Headerinformation noch ein Leerzeichen als trenner folgt.
+				CurSavegameInfo.GamedataOffset = static_cast<uint>(File->pos()) + 1;
 			}
+
+			delete File;
 		}
 	}
 };
@@ -240,7 +240,14 @@ uint PersistenceService::GetSlotCount() {
 // -----------------------------------------------------------------------------
 
 Common::String PersistenceService::GetSavegameDirectory() {
-	return FileSystemUtil::GetInstance().GetUserdataDirectory() + FileSystemUtil::GetInstance().GetPathSeparator() + SAVEGAME_DIRECTORY;
+	Common::FSNode node(FileSystemUtil::GetInstance().GetUserdataDirectory());
+	Common::FSNode childNode = node.getChild(SAVEGAME_DIRECTORY);
+
+	// Try and return the path using the savegame subfolder. But if doesn't exist, fall back on the data directory
+	if (childNode.exists())
+		return childNode.getPath();
+	
+	return node.getPath();
 }
 
 // -----------------------------------------------------------------------------
@@ -297,7 +304,7 @@ bool PersistenceService::SaveGame(uint SlotID, const Common::String &ScreenshotF
 	}
 
 	// Dateinamen erzeugen.
-	Common::String Filename = GenerateSavegamePath(SlotID).c_str();
+	Common::String Filename = GenerateSavegameFilename(SlotID);
 
 	// Sicherstellen, dass das Verzeichnis für die Spielstanddateien existiert.
 	FileSystemUtil::GetInstance().CreateDirectory(GetSavegameDirectory());
@@ -340,7 +347,7 @@ bool PersistenceService::SaveGame(uint SlotID, const Common::String &ScreenshotF
 	snprintf(sBuffer, 10, "%ld", CompressedLength);
 	File->writeString(sBuffer);
 	File->writeByte(' ');
-	snprintf(sBuffer, 10, "%uld", Writer.GetDataSize());
+	snprintf(sBuffer, 10, "%lu", Writer.GetDataSize());
 	File->writeString(sBuffer);
 	File->writeByte(' ');
 
@@ -368,6 +375,8 @@ bool PersistenceService::SaveGame(uint SlotID, const Common::String &ScreenshotF
 	// Savegameinformationen für diesen Slot aktualisieren.
 	m_impl->ReadSlotSavegameInformation(SlotID);
 
+	File->finalize();
+	delete File;
 	delete[] CompressionBuffer;
 
 	// Erfolg signalisieren.
