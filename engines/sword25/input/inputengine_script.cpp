@@ -335,7 +335,7 @@ static const lua_constant_reg PACKAGE_CONSTANTS[] = {
 
 // -----------------------------------------------------------------------------
 
-bool InputEngine::_RegisterScriptBindings() {
+bool InputEngine::registerScriptBindings() {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
