@@ -4,7 +4,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 1.2.0 (????-??-??)
  New Games:
    - Added support for Fascination.
-   
+
  New Games (Sierra SCI0 - SCI1.1):
    - Added support for Castle of Dr. Brain (EGA and VGA).
    - Added support for Codename: ICEMAN.
@@ -17,7 +17,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Hoyle's Book of Games 2.
    - Added support for Hoyle's Book of Games 3 (EGA and VGA).
    - Added support for Jones in the Fast Lane.
-   - Added support for King's Quest IV.
+   - Added support for King's Quest I (SCI remake).
+   - Added support for King's Quest IV (SCI version).
    - Added support for King's Quest V (EGA and VGA).
    - Added support for King's Quest VI (low and hi res).
    - Added support for Laura Bow: The Colonel's Bequest.
@@ -38,12 +39,12 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Quest for Glory 2.
    - Added support for Quest for Glory 3.
    - Added support for Slater & Charlie go camping.
-   - Added support for Space Quest I (EGA and VGA).
+   - Added support for Space Quest I (SCI remake) (EGA and VGA).
    - Added support for Space Quest III.
    - Added support for Space Quest IV (EGA and VGA).
    - Added support for Space Quest V.
    - Added support for The Island of Dr. Brain.
-   
+
  New Ports:
    - Added Android port.
    - Added Dingux port.
