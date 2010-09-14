@@ -28,9 +28,9 @@ MODULE_OBJS := \
 	gfx/text.o \
 	gfx/timedrenderobject.o \
 	gfx/image/b25sloader.o \
-	gfx/image/glimage.o \
 	gfx/image/imageloader.o \
 	gfx/image/pngloader.o \
+	gfx/image/renderedimage.o \
 	gfx/image/swimage.o \
 	gfx/image/vectorimage.o \
 	gfx/image/vectorimagerenderer.o \
