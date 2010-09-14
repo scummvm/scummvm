@@ -84,10 +84,10 @@ public:
 	MidiChannel *getPercussionChannel() { return _driver->getPercussionChannel(); }
 	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) { _driver->setTimerCallback(timer_param, timer_proc); }
 
-	virtual byte getPlayId() = 0;
+	virtual byte getPlayId() const = 0;
 	virtual int getPolyphony() const = 0;
-	virtual int getFirstChannel() { return 0; }
-	virtual int getLastChannel() { return 15; }
+	virtual int getFirstChannel() const { return 0; }
+	virtual int getLastChannel() const { return 15; }
 
 	virtual void setVolume(byte volume) {
 		if(_driver)
@@ -98,7 +98,7 @@ public:
 		return _driver ? _driver->property(MIDI_PROP_MASTER_VOLUME, 0xffff) : 0;
 	}
 
-	virtual byte getReverb() { return _reverb; }
+	virtual byte getReverb() const { return _reverb; }
 	virtual void setReverb(byte reverb) { _reverb = reverb; }
 
 	virtual void playSwitch(bool play) {

@@ -53,10 +53,10 @@ public:
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
 	bool hasRhythmChannel() const { return true; }
-	byte getPlayId();
+	byte getPlayId() const;
 	int getPolyphony() const { return kVoices; }
-	int getFirstChannel();
-	int getLastChannel();
+	int getFirstChannel() const;
+	int getLastChannel() const;
 	void setVolume(byte volume);
 	int getVolume();
 	void setReverb(byte reverb);
@@ -330,13 +330,13 @@ void MidiPlayer_Midi::send(uint32 b) {
 
 // We return 1 for mt32, because if we remap channels to 0 for mt32, those won't get played at all
 // NOTE: SSCI uses channels 1 through 8 for General MIDI as well, in the drivers I checked
-int MidiPlayer_Midi::getFirstChannel() {
+int MidiPlayer_Midi::getFirstChannel() const {
 	if (_isMt32)
 		return 1;
 	return 0;
 }
 
-int MidiPlayer_Midi::getLastChannel() {
+int MidiPlayer_Midi::getLastChannel() const {
 	if (_isMt32)
 		return 8;
 	return 15;
@@ -910,7 +910,7 @@ void MidiPlayer_Midi::sysEx(const byte *msg, uint16 length) {
 	g_system->updateScreen();
 }
 
-byte MidiPlayer_Midi::getPlayId() {
+byte MidiPlayer_Midi::getPlayId() const {
 	switch (_version) {
 	case SCI_VERSION_0_EARLY:
 	case SCI_VERSION_0_LATE:
