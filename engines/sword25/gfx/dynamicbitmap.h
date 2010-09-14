@@ -42,7 +42,7 @@
 
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/bitmap.h"
-#include "sword25/gfx/image/glimage.h"
+#include "sword25/gfx/image/renderedimage.h"
 
 #include "common/ptr.h"
 
@@ -77,9 +77,9 @@ private:
 	DynamicBitmap(RenderObjectPtr<RenderObject> parentPtr, uint width, uint height);
 	DynamicBitmap(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle);
 
-	bool createGLImage(uint width, uint height);
+	bool createRenderedImage(uint width, uint height);
 
-	Common::ScopedPtr<GLImage> _image;
+	Common::ScopedPtr<RenderedImage> _image;
 };
 
 } // End of namespace Sword25

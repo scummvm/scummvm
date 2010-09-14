@@ -58,7 +58,7 @@ DynamicBitmap::DynamicBitmap(RenderObjectPtr<RenderObject> parentPtr, uint width
 	// Das BS_Bitmap konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
 	if (!_initSuccess) return;
 
-	_initSuccess = createGLImage(width, height);
+	_initSuccess = createRenderedImage(width, height);
 }
 
 // -----------------------------------------------------------------------------
@@ -70,10 +70,10 @@ DynamicBitmap::DynamicBitmap(InputPersistenceBlock &reader, RenderObjectPtr<Rend
 
 // -----------------------------------------------------------------------------
 
-bool DynamicBitmap::createGLImage(uint width, uint height) {
-	// GLImage mit den gewünschten Maßen erstellen
+bool DynamicBitmap::createRenderedImage(uint width, uint height) {
+	// RenderedImage mit den gewünschten Maßen erstellen
 	bool result = false;
-	_image.reset(new GLImage(width, height, result));
+	_image.reset(new RenderedImage(width, height, result));
 
 	_originalWidth = _width = width;
 	_originalHeight = _height = height;
@@ -174,8 +174,8 @@ bool DynamicBitmap::unpersist(InputPersistenceBlock &reader) {
 
 	result &= Bitmap::unpersist(reader);
 
-	// Ein BS_GLImage mit den gespeicherten Maßen erstellen.
-	result &= createGLImage(_width, _height);
+	// Ein RenderedImage mit den gespeicherten Maßen erstellen.
+	result &= createRenderedImage(_width, _height);
 
 	// Bilddaten werden nicht gespeichert (s.o.).
 	BS_LOG_WARNINGLN("Unpersisting a BS_DynamicBitmap. Bitmap contents are missing.");

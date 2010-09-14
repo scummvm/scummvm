@@ -42,7 +42,7 @@
 #include "sword25/gfx/panel.h"
 #include "sword25/gfx/renderobjectmanager.h"
 #include "sword25/gfx/screenshot.h"
-#include "sword25/gfx/image/glimage.h"
+#include "sword25/gfx/image/renderedimage.h"
 #include "sword25/gfx/image/swimage.h"
 #include "sword25/gfx/image/vectorimage.h"
 #include "sword25/package/packagemanager.h"
@@ -315,7 +315,7 @@ Resource *GraphicEngine::LoadResource(const Common::String &FileName) {
 	// Sprite-Bild laden
 	if (FileName.hasSuffix(PNG_EXTENSION) || FileName.hasSuffix(B25S_EXTENSION)) {
 		bool Result = false;
-		GLImage *pImage = new GLImage(FileName, Result);
+		RenderedImage *pImage = new RenderedImage(FileName, Result);
 		if (!Result) {
 			delete pImage;
 			return 0;
