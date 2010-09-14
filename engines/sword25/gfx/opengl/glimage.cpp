@@ -170,6 +170,24 @@ uint GLImage::getPixel(int x, int y) {
 // -----------------------------------------------------------------------------
 
 bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
+	int ca = (color >> 24) & 0xff;
+
+	// Check if we need to draw anything at all
+	if (ca == 0)
+		return true;
+
+	int cr = (color >> 16) & 0xff;
+	int cg = (color >> 8) & 0xff;
+	int cb = (color >> 0) & 0xff;
+
+	// Compensate for transparency. Since we're coming
+	// down to 255 alpha, we just compensate for the colors here
+	if (ca != 255) {
+		cr = cr * ca >> 8;
+		cg = cg * ca >> 8;
+		cb = cb * ca >> 8;
+	}
+
 	// Create an encapsulating surface for the data
 	Graphics::Surface srcImage;
 	srcImage.bytesPerPixel = 4;
@@ -213,17 +231,6 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
 		img = &srcImage;
 	}
 
-	int ca = (color >> 24) & 0xff;
-	int cr = (color >> 16) & 0xff;
-	int cg = (color >> 8) & 0xff;
-	int cb = (color >> 0) & 0xff;
-
-	if (ca != 255) {
-		cr = cr * ca >> 8;
-		cg = cg * ca >> 8;
-		cb = cb * ca >> 8;
-	}
-
 	// Handle off-screen clipping
 	if (posY < 0) {
 		img->h = MAX(0, (int)img->h - -posY);
@@ -240,7 +247,7 @@ bool GLImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, ui
 	img->w = CLIP((int)img->w, 0, (int)MAX((int)_backSurface->w - posX, 0));
 	img->h = CLIP((int)img->h, 0, (int)MAX((int)_backSurface->h - posY, 0));
 
-	if ((ca != 0) && (img->w > 0) && (img->h > 0)) {
+	if ((img->w > 0) && (img->h > 0)) {
 		int xp = 0, yp = 0;
 
 		int inStep = 4;
@@ -344,11 +351,11 @@ Graphics::Surface *GLImage::scale(const Graphics::Surface &srcImage, int xSize, 
 
 	// Loop to create scaled version
 	for (int yp = 0; yp < ySize; ++yp) {
-		byte *srcP = (byte *)srcImage.getBasePtr(0, vertUsage[yp]);
+		const byte *srcP = (const byte *)srcImage.getBasePtr(0, vertUsage[yp]);
 		byte *destP = (byte *)s->getBasePtr(0, yp);
 
 		for (int xp = 0; xp < xSize; ++xp) {
-			byte *tempSrcP = srcP + (horizUsage[xp] * srcImage.bytesPerPixel);
+			const byte *tempSrcP = srcP + (horizUsage[xp] * srcImage.bytesPerPixel);
 			for (int byteCtr = 0; byteCtr < srcImage.bytesPerPixel; ++byteCtr) {
 				*destP++ = *tempSrcP++;
 			}
