@@ -1,4 +1,4 @@
-# LANGUAGE translation for ScummVM.
+# Spanish translation for ScummVM.
 # Copyright (C) YEAR ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2010-09-13 11:29+0200\n"
-"PO-Revision-Date: 2010-07-30 22:17+0100\n"
+"PO-Revision-Date: 2010-09-14 14:51+0100\n"
 "Last-Translator: Tomás Maidagan\n"
 "Language-Team: \n"
 "Language: Espanol\n"
@@ -38,7 +38,6 @@ msgid "Go to previous directory level"
 msgstr "Ir al directorio anterior"
 
 #: gui/browser.cpp:72
-#, fuzzy
 msgctxt "lowres"
 msgid "Go up"
 msgstr "Arriba"
@@ -79,7 +78,7 @@ msgstr "Asignar"
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "OK"
-msgstr "De acuerdo"
+msgstr "Aceptar"
 
 #: gui/KeysDialog.cpp:52
 msgid "Select an action and click 'Map'"
@@ -124,7 +123,6 @@ msgstr ""
 "desde la línea de comando"
 
 #: gui/launcher.cpp:178
-#, fuzzy
 msgctxt "lowres"
 msgid "ID:"
 msgstr "ID:"
@@ -164,7 +162,6 @@ msgid "Platform the game was originally designed for"
 msgstr "Plataforma para la que se diseñó el juego"
 
 #: gui/launcher.cpp:200
-#, fuzzy
 msgctxt "lowres"
 msgid "Platform:"
 msgstr "Plataforma:"
@@ -182,10 +179,9 @@ msgid "Override global graphic settings"
 msgstr "Ignorar opciones gráficas generales"
 
 #: gui/launcher.cpp:217
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "Ignorar opciones gráficas generales"
+msgstr "Opciones gráficas específicas"
 
 #: gui/launcher.cpp:224 gui/options.cpp:947
 msgid "Audio"
@@ -196,17 +192,15 @@ msgid "Override global audio settings"
 msgstr "Ignorar opciones de sonido generales"
 
 #: gui/launcher.cpp:229
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr "Ignorar opciones de sonido generales"
+msgstr "Opciones de sonido específicas"
 
 #: gui/launcher.cpp:238 gui/options.cpp:952
 msgid "Volume"
 msgstr "Volumen"
 
 #: gui/launcher.cpp:240 gui/options.cpp:954
-#, fuzzy
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Volumen"
@@ -216,10 +210,9 @@ msgid "Override global volume settings"
 msgstr "Ignorar opciones de volumen generales"
 
 #: gui/launcher.cpp:245
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr "Ignorar opciones de volumen generales"
+msgstr "Opciones de volumen específicas"
 
 #: gui/launcher.cpp:252 gui/options.cpp:962
 msgid "MIDI"
@@ -227,13 +220,12 @@ msgstr "MIDI"
 
 #: gui/launcher.cpp:255
 msgid "Override global MIDI settings"
-msgstr "Ignorar opciones MIDI generales"
+msgstr "Ignorar opciones de MIDI generales"
 
 #: gui/launcher.cpp:257
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "Ignorar opciones MIDI generales"
+msgstr "Opciones de MIDI específicas"
 
 #: gui/launcher.cpp:267 gui/options.cpp:968
 msgid "MT-32"
@@ -241,20 +233,18 @@ msgstr "MT-32"
 
 #: gui/launcher.cpp:270
 msgid "Override global MT-32 settings"
-msgstr "Ignorar opciones MT-32 generales"
+msgstr "Ignorar opciones de MT-32 generales"
 
 #: gui/launcher.cpp:272
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr "Ignorar opciones MT-32 generales"
+msgstr "Opciones de Mt-32 específicas"
 
 #: gui/launcher.cpp:283 gui/options.cpp:975
 msgid "Paths"
 msgstr "Rutas"
 
 #: gui/launcher.cpp:285 gui/options.cpp:977
-#, fuzzy
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Rutas"
@@ -264,7 +254,6 @@ msgid "Game Path:"
 msgstr "Juego:"
 
 #: gui/launcher.cpp:294
-#, fuzzy
 msgctxt "context"
 msgid "Game Path:"
 msgstr "Juego:"
@@ -278,7 +267,6 @@ msgid "Specifies path to additional data used the game"
 msgstr "Especifica un directorio para datos adicionales del juego"
 
 #: gui/launcher.cpp:301 gui/options.cpp:999
-#, fuzzy
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Adicional:"
@@ -293,7 +281,6 @@ msgid "Specifies where your savegames are put"
 msgstr "Especifica dónde guardar tus partidas"
 
 #: gui/launcher.cpp:308 gui/options.cpp:987
-#, fuzzy
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Partidas:"
@@ -303,10 +290,9 @@ msgstr "Partidas:"
 #: gui/options.cpp:1108 gui/options.cpp:1114 gui/options.cpp:1120
 #: gui/options.cpp:1128 gui/options.cpp:1152 gui/options.cpp:1156
 #: gui/options.cpp:1162 gui/options.cpp:1169 gui/options.cpp:1268
-#, fuzzy
 msgctxt "path"
 msgid "None"
-msgstr "Ninguno"
+msgstr "Ninguna"
 
 #: gui/launcher.cpp:330 gui/launcher.cpp:409
 #: backends/platform/wii/options.cpp:56
@@ -398,19 +384,16 @@ msgid "Remove game from the list. The game data files stay intact"
 msgstr "Elimina el juego de la lista. Los archivos no se borran"
 
 #: gui/launcher.cpp:575
-#, fuzzy
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~A~ñadir juego..."
 
 #: gui/launcher.cpp:577
-#, fuzzy
 msgctxt "lowres"
 msgid "~E~dit Game..."
 msgstr "~E~ditar juego..."
 
 #: gui/launcher.cpp:579
-#, fuzzy
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "E~l~iminar juego"
@@ -489,7 +472,6 @@ msgstr ""
 "¡ScummVM no ha podido encontrar ningún motor capaz de ejecutar el juego!"
 
 #: gui/launcher.cpp:1056
-#, fuzzy
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Añadir varios..."
@@ -499,7 +481,6 @@ msgid "Mass Add..."
 msgstr "Añadir varios..."
 
 #: gui/launcher.cpp:1057
-#, fuzzy
 msgctxt "lowres"
 msgid "Add Game..."
 msgstr "Añadir juego..."
@@ -573,10 +554,9 @@ msgstr "48 kHz"
 
 #: gui/options.cpp:230 gui/options.cpp:399 gui/options.cpp:497
 #: gui/options.cpp:555 gui/options.cpp:742
-#, fuzzy
 msgctxt "soundfont"
 msgid "None"
-msgstr "Ninguno"
+msgstr "Ninguna"
 
 #: gui/options.cpp:635
 msgid "Graphics mode:"
@@ -604,11 +584,11 @@ msgstr "Corregir relación de aspecto en juegos 320x200"
 
 #: gui/options.cpp:667
 msgid "Preferred Device:"
-msgstr "Dispositivo preferido:"
+msgstr "Disp. preferido:"
 
 #: gui/options.cpp:667
 msgid "Music Device:"
-msgstr "Dispositivo de música:"
+msgstr "Disp. de música:"
 
 #: gui/options.cpp:667 gui/options.cpp:669
 msgid "Specifies preferred sound device or sound card emulator"
@@ -622,16 +602,14 @@ msgstr ""
 "Especifica el dispositivo de sonido o emulador de tarjeta de sonido de salida"
 
 #: gui/options.cpp:669
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred Device:"
-msgstr "Dispositivo preferido:"
+msgstr "Disp. preferido:"
 
 #: gui/options.cpp:669
-#, fuzzy
 msgctxt "lowres"
 msgid "Music Device:"
-msgstr "Dispositivo de música:"
+msgstr "Disp. de música:"
 
 #: gui/options.cpp:695
 msgid "AdLib emulator:"
@@ -670,7 +648,6 @@ msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
 msgstr "Algunas tarjetas de sonido, Fluidsynth y Timidity soportan SoundFont"
 
 #: gui/options.cpp:741
-#, fuzzy
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "SoundFont:"
@@ -710,7 +687,6 @@ msgstr ""
 "ordenador y compatible con Roland"
 
 #: gui/options.cpp:766
-#, fuzzy
 msgctxt "lowres"
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Roland MT-32 auténtica (desactivar emulación GM)"
@@ -741,10 +717,9 @@ msgstr "Ambos"
 
 #: gui/options.cpp:802
 msgid "Subtitle speed:"
-msgstr "Velocidad de los subtítulos:"
+msgstr "Vel. de subtítulos:"
 
 #: gui/options.cpp:804
-#, fuzzy
 msgctxt "lowres"
 msgid "Text and Speech:"
 msgstr "Texto y voces:"
@@ -758,7 +733,6 @@ msgid "Subs"
 msgstr "Subt."
 
 #: gui/options.cpp:810
-#, fuzzy
 msgctxt "lowres"
 msgid "Both"
 msgstr "Ambos"
@@ -768,20 +742,18 @@ msgid "Show subtitles and play speech"
 msgstr "Reproducir voces y subtítulos"
 
 #: gui/options.cpp:812
-#, fuzzy
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr "Velocidad de los subtítulos:"
+msgstr "Vel. de subtítulos:"
 
 #: gui/options.cpp:828
 msgid "Music volume:"
-msgstr "Volumen de la música:"
+msgstr "Vol. de música:"
 
 #: gui/options.cpp:830
-#, fuzzy
 msgctxt "lowres"
 msgid "Music volume:"
-msgstr "Volumen de la música:"
+msgstr "Vol. de música:"
 
 #: gui/options.cpp:837
 msgid "Mute All"
@@ -789,34 +761,31 @@ msgstr "Silenciar"
 
 #: gui/options.cpp:840
 msgid "SFX volume:"
-msgstr "Volumen de los efectos"
+msgstr "Vol. de efectos:"
 
 #: gui/options.cpp:840 gui/options.cpp:842 gui/options.cpp:843
 msgid "Special sound effects volume"
 msgstr "Volumen de los efectos de sonido"
 
 #: gui/options.cpp:842
-#, fuzzy
 msgctxt "lowres"
 msgid "SFX volume:"
-msgstr "Volumen de los efectos"
+msgstr "Vol. de efectos:"
 
 #: gui/options.cpp:850
 msgid "Speech volume:"
-msgstr "Volumen de las voces"
+msgstr "Vol. de voces:"
 
 #: gui/options.cpp:852
-#, fuzzy
 msgctxt "lowres"
 msgid "Speech volume:"
-msgstr "Volumen de las voces"
+msgstr "Vol. de voces:"
 
 #: gui/options.cpp:991
 msgid "Theme Path:"
 msgstr "Temas:"
 
 #: gui/options.cpp:993
-#, fuzzy
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Temas:"
@@ -830,7 +799,6 @@ msgid "Plugins Path:"
 msgstr "Plugins:"
 
 #: gui/options.cpp:1006
-#, fuzzy
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Plugins:"
@@ -840,7 +808,6 @@ msgid "Misc"
 msgstr "Otros"
 
 #: gui/options.cpp:1017
-#, fuzzy
 msgctxt "lowres"
 msgid "Misc"
 msgstr "Otros"
@@ -858,7 +825,6 @@ msgid "Autosave:"
 msgstr "Autoguardado:"
 
 #: gui/options.cpp:1037
-#, fuzzy
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Autoguardado:"
@@ -945,7 +911,6 @@ msgid "Disabled GFX"
 msgstr "GFX desactivados"
 
 #: gui/ThemeEngine.cpp:334
-#, fuzzy
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX desactivados"
@@ -955,7 +920,6 @@ msgid "Standard Renderer (16bpp)"
 msgstr "Estándar (16bpp)"
 
 #: gui/ThemeEngine.cpp:335
-#, fuzzy
 msgid "Standard (16bpp)"
 msgstr "Estándar (16bpp)"
 
@@ -964,7 +928,6 @@ msgid "Antialiased Renderer (16bpp)"
 msgstr "Antialiasing (16bpp)"
 
 #: gui/ThemeEngine.cpp:337
-#, fuzzy
 msgid "Antialiased (16bpp)"
 msgstr "Antialiasing (16bpp)"
 
@@ -1061,13 +1024,11 @@ msgid "Hercules Amber"
 msgstr "Hercules ámbar"
 
 #: common/util.cpp:262
-#, fuzzy
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Hercules verde"
 
 #: common/util.cpp:263
-#, fuzzy
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules ámbar"
@@ -1101,7 +1062,6 @@ msgid "~R~eturn to Launcher"
 msgstr "~V~olver al lanzador"
 
 #: engines/dialogs.cpp:112
-#, fuzzy
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~V~olver al lanzador"
@@ -1161,13 +1121,12 @@ msgid "~W~ater Effect Enabled"
 msgstr "Efecto ag~u~a activado"
 
 #: engines/sci/engine/kfile.cpp:677
-#, fuzzy
 msgid "Restore game:"
-msgstr "Guardar partida"
+msgstr "Cargar partida:"
 
 #: engines/sci/engine/kfile.cpp:677
 msgid "Restore"
-msgstr ""
+msgstr "Cargar"
 
 #: sound/fmopl.cpp:51
 msgid "MAME OPL emulator"
@@ -1182,9 +1141,8 @@ msgid "No music"
 msgstr "Sin música"
 
 #: sound/mods/paula.cpp:192
-#, fuzzy
 msgid "Amiga Audio Emulator"
-msgstr "Emulador de AdLib"
+msgstr "Emulador de Amiga Audio"
 
 #: sound/softsynth/adlib.cpp:1590
 msgid "AdLib Emulator"
@@ -1192,12 +1150,11 @@ msgstr "Emulador de AdLib"
 
 #: sound/softsynth/appleiigs.cpp:36
 msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
-msgstr ""
+msgstr "Emulador de Apple II GS (NO IMPLEMENTADO)"
 
 #: sound/softsynth/sid.cpp:1434
-#, fuzzy
 msgid "C64 Audio Emulator"
-msgstr "Emulador de AdLib"
+msgstr "Emulador de C64 Audio"
 
 #: sound/softsynth/mt32.cpp:327
 msgid "Initialising MT-32 Emulator"
@@ -1326,7 +1283,6 @@ msgid "Normal (no scaling)"
 msgstr "Normal (sin escalado)"
 
 #: backends/platform/sdl/graphics.cpp:59
-#, fuzzy
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal (sin escalado)"
@@ -1536,7 +1492,7 @@ msgid "Timeout while initialising network"
 msgstr "Se ha excedido el tiempo de inicialización de red"
 
 #: backends/platform/wii/options.cpp:186
-#, fuzzy, c-format
+#, c-format
 msgid "Network not initialised (%d)"
 msgstr "Red no inicializada (%d)"
 

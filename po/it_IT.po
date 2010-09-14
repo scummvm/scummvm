@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2010-09-13 11:29+0200\n"
-"PO-Revision-Date: 2010-09-11 18:30+0100\n"
+"PO-Revision-Date: 2010-09-14 19:25+0100\n"
 "Last-Translator: Matteo 'Maff' Angelino <matteo.maff at gmail dot com>\n"
 "Language-Team: Italian\n"
 "Language: Italiano\n"
@@ -38,10 +38,9 @@ msgid "Go to previous directory level"
 msgstr "Vai alla cartella superiore"
 
 #: gui/browser.cpp:72
-#, fuzzy
 msgctxt "lowres"
 msgid "Go up"
-msgstr "Cartella superiore"
+msgstr "Su"
 
 #: gui/browser.cpp:73 gui/chooser.cpp:49 gui/KeysDialog.cpp:46
 #: gui/launcher.cpp:316 gui/massadd.cpp:95 gui/options.cpp:1084
@@ -477,11 +476,11 @@ msgstr ""
 #: gui/launcher.cpp:1056
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr "Agg. in massa..."
+msgstr "Agg. massa..."
 
 #: gui/launcher.cpp:1056
 msgid "Mass Add..."
-msgstr "Agg. massa..."
+msgstr "Agg. in massa..."
 
 #: gui/launcher.cpp:1057
 msgctxt "lowres"
@@ -604,16 +603,14 @@ msgstr ""
 "Specifica il dispositivo di output audio o l'emulatore della scheda audio"
 
 #: gui/options.cpp:669
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred Device:"
 msgstr "Disp. preferito:"
 
 #: gui/options.cpp:669
-#, fuzzy
 msgctxt "lowres"
 msgid "Music Device:"
-msgstr "Dispositivo audio:"
+msgstr "Disposit. audio:"
 
 #: gui/options.cpp:695
 msgid "AdLib emulator:"
@@ -693,7 +690,7 @@ msgstr ""
 #: gui/options.cpp:766
 msgctxt "lowres"
 msgid "True Roland MT-32 (disable GM emulation)"
-msgstr "Roland MT-32 effettivo (disat. emul. GM)"
+msgstr "Roland MT-32 effettivo (disat.emul.GM)"
 
 #: gui/options.cpp:769
 msgid "Enable Roland GS Mode"
@@ -916,7 +913,6 @@ msgid "Disabled GFX"
 msgstr "Grafica disattivata"
 
 #: gui/ThemeEngine.cpp:334
-#, fuzzy
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Grafica disattivata"
@@ -926,18 +922,16 @@ msgid "Standard Renderer (16bpp)"
 msgstr "Renderer standard (16bpp)"
 
 #: gui/ThemeEngine.cpp:335
-#, fuzzy
 msgid "Standard (16bpp)"
-msgstr "Renderer standard (16bpp)"
+msgstr "Standard (16bpp)"
 
 #: gui/ThemeEngine.cpp:337
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Renderer con antialiasing (16bpp)"
 
 #: gui/ThemeEngine.cpp:337
-#, fuzzy
 msgid "Antialiased (16bpp)"
-msgstr "Renderer con antialiasing (16bpp)"
+msgstr "Con antialiasing (16bpp)"
 
 #: base/main.cpp:205
 #, c-format
@@ -1068,12 +1062,12 @@ msgstr "~I~nfo"
 
 #: engines/dialogs.cpp:110
 msgid "~R~eturn to Launcher"
-msgstr "~V~ai a schermata di avvio"
+msgstr "~T~orna a elenco giochi"
 
 #: engines/dialogs.cpp:112
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr "~V~ai a scher. di avvio"
+msgstr "~V~ai a elenco giochi"
 
 #: engines/dialogs.cpp:122 engines/cruise/menu.cpp:216
 #: engines/sci/engine/kfile.cpp:577
@@ -1130,13 +1124,12 @@ msgid "~W~ater Effect Enabled"
 msgstr "~E~ffetto acqua attivo"
 
 #: engines/sci/engine/kfile.cpp:677
-#, fuzzy
 msgid "Restore game:"
-msgstr "Salva gioco:"
+msgstr "Ripristina gioco:"
 
 #: engines/sci/engine/kfile.cpp:677
 msgid "Restore"
-msgstr ""
+msgstr "Ripristina"
 
 #: sound/fmopl.cpp:51
 msgid "MAME OPL emulator"
@@ -1295,7 +1288,7 @@ msgstr "Normale (nessun ridimensionamento)"
 #: backends/platform/sdl/graphics.cpp:59
 msgctxt "lowres"
 msgid "Normal (no scaling)"
-msgstr "Normale (no ridimen.)"
+msgstr "Normale (no ridim.)"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: backends/platform/wince/CEActionsSmartphone.cpp:38
