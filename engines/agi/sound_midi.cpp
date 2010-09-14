@@ -75,7 +75,7 @@ SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, p
 	_driver = MidiDriver::createMidi(dev);
 
 	if (ConfMan.getBool("native_mt32"))
-		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
 	memset(_channel, 0, sizeof(_channel));
 	memset(_channelVolume, 255, sizeof(_channelVolume));
