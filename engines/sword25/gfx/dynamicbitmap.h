@@ -42,7 +42,7 @@
 
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/bitmap.h"
-#include "sword25/gfx/opengl/glimage.h"
+#include "sword25/gfx/image/glimage.h"
 
 #include "common/ptr.h"
 

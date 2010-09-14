@@ -38,8 +38,7 @@
 
 #include "sword25/package/packagemanager.h"
 #include "sword25/gfx/image/imageloader.h"
-#include "sword25/gfx/opengl/openglgfx.h"
-#include "sword25/gfx/opengl/glimage.h"
+#include "sword25/gfx/image/glimage.h"
 
 #include "common/system.h"
 

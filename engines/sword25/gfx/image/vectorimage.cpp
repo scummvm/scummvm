@@ -43,7 +43,7 @@
 
 #include "art.h"
 
-#include "sword25/gfx/opengl/glimage.h"
+#include "sword25/gfx/image/glimage.h"
 
 namespace Sword25 {
 

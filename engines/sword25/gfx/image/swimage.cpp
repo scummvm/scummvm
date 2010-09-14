@@ -38,8 +38,7 @@
 
 #include "sword25/package/packagemanager.h"
 #include "sword25/gfx/image/imageloader.h"
-
-#include "sword25/gfx/opengl/swimage.h"
+#include "sword25/gfx/image/swimage.h"
 
 namespace Sword25 {
 
