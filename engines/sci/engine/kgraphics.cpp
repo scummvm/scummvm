@@ -1196,6 +1196,57 @@ reg_t kShow(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
+	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
+	kStub(s, argc, argv);
+
+	uint16 operation = argv[0].toUint16();
+
+	switch (operation) {
+	case 0:	{ // Initialize remapping to base. 0 turns remapping off.
+		//int16 unk1 = (argc >= 2) ? argv[1].toSint16() : 0;
+		}
+		break;
+	case 1:	{ // unknown
+		// The demo of QFG4 calls this with 1+3 parameters, thus there are differences here
+		//int16 unk1 = argv[1].toSint16();
+		//int16 unk2 = argv[2].toSint16();
+		//int16 unk3 = argv[3].toSint16();
+		//uint16 unk4 = argv[4].toUint16();
+		//uint16 unk5 = (argc >= 6) ? argv[5].toUint16() : 0;
+		}
+		break;
+	case 2:	{ // remap by percent
+		//int16 unk1 = argv[1].toSint16();
+		//uint16 percent = argv[2].toUint16();
+		//uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
+		}
+		break;
+	case 3:	{ // remap to gray
+		//int16 unk1 = argv[1].toSint16();
+		//int16 percent = argv[2].toSint16();	// 0 - 100
+		//uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
+		}
+		break;
+	case 4:	{ // unknown
+		//int16 unk1 = argv[1].toSint16();
+		//uint16 unk2 = argv[2].toUint16();
+		//uint16 unk3 = argv[3].toUint16();
+		//uint16 unk4 = (argc >= 5) ? argv[4].toUint16() : 0;
+		}
+		break;
+	case 5:	{ // increment color
+		//int16 unk1 = argv[1].toSint16();
+		//uint16 unk2 = argv[2].toUint16();
+		}
+		break;
+	default:
+		break;
+	}
+
+	return s->r_acc;
+}
+
 #ifdef ENABLE_SCI32
 
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
