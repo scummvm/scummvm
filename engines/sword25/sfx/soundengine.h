@@ -48,10 +48,6 @@
 #ifndef SWORD25_SOUNDENGINE_H
 #define SWORD25_SOUNDENGINE_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/resservice.h"
 #include "sword25/kernel/persistable.h"
@@ -61,9 +57,19 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Class definitions
-// -----------------------------------------------------------------------------
+#define SOUND_HANDLES 32
+
+enum sndHandleType {
+	kFreeHandle,
+	kEffectHandle,
+	kVoiceHandle
+};
+
+struct SndHandle {
+	Audio::SoundHandle handle;
+	sndHandleType type;
+};
+
 
 class SoundEngine : public ResourceService, public Persistable {
 public:
@@ -277,9 +283,11 @@ public:
 
 private:
 	bool _RegisterScriptBindings();
+	SndHandle *getHandle(uint *id);
 
 private:
 	Audio::Mixer *_mixer;
+	SndHandle _handles[SOUND_HANDLES];
 };
 
 } // End of namespace Sword25
