@@ -82,7 +82,7 @@ bool SoundEngine::PlaySound(const Common::String &FileName, SOUND_TYPES Type, fl
 }
 
 uint SoundEngine::PlaySoundEx(const Common::String &FileName, SOUND_TYPES Type, float Volume, float Pan, bool Loop, int LoopStart, int LoopEnd, uint Layer) {
-	return 0;
+	return true;
 }
 
 void SoundEngine::SetSoundVolume(uint Handle, float Volume) {
