@@ -335,32 +335,34 @@ void PluginManager::loadFirstPlugin() { //TODO: rename? It's not quite clear tha
 	}
 
 	//this loop is for loading all non-engine plugins and the first engine plugin.
-	while (true) {
-		assert(tryLoadPlugin(*_currentPlugin));
-		if ((*_currentPlugin)->getType() == PLUGIN_TYPE_ENGINE) { //TODO: This assumes all non-engine plugins will precede the first engine plugin!
+	for (; _currentPlugin != _allPlugs.end(); ++_currentPlugin) {
+		if (!tryLoadPlugin(*_currentPlugin))
+			continue;
+
+		// TODO: This assumes all non-engine plugins will precede the first engine plugin!
+		if ((*_currentPlugin)->getType() == PLUGIN_TYPE_ENGINE)
 			break;
-		}
+
 		_nonEnginePlugs++;
-		++_currentPlugin;
-		if (_currentPlugin == _allPlugs.end()) {
-			break; //break if there were no engine plugins to load.
-		}
 	}
+
 	return;
 }
 
 bool PluginManager::loadNextPlugin() {
 	if (_nonEnginePlugs == _allPlugs.size())
 		return false; //There are no Engine Plugins in this case.
-	//To ensure only one engine plugin is loaded at a time, we unload all engine plugins before trying to load a new one.
+
+	// To ensure only one engine plugin is loaded at a time, we unload all engine plugins before trying to load a new one.
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL);
+
 	++_currentPlugin;
-	if (_currentPlugin == _allPlugs.end()) {
-		loadFirstPlugin(); //load first engine plugin again at this point.
-		return false;
-	}
-	assert(tryLoadPlugin(*_currentPlugin));
-	return true;
+	for (; _currentPlugin != _allPlugs.end(); ++_currentPlugin)
+		if (tryLoadPlugin(*_currentPlugin))
+			return true;
+
+	loadFirstPlugin();
+	return false;
 }
 
 void PluginManager::loadPlugins() {
