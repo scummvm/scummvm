@@ -23,10 +23,12 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
-
 #ifndef SHORTS_SEGMENT_MANAGER_H
 #define SHORTS_SEGMENT_MANAGER_H
+
+#include "common/scummsys.h"
+
+#if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(MIPS_TARGET)
 
 #include "backends/plugins/elf/elf32.h"
 
@@ -109,7 +111,7 @@ private:
 	char *_highestAddress;
 };
 
-#endif /* SHORTS_SEGMENT_MANAGER_H */
+#endif // defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(MIPS_TARGET)
 
-#endif /* defined(DYNAMIC_MODULES) && defined(MIPS_TARGET) */
+#endif /* SHORTS_SEGMENT_MANAGER_H */
 

@@ -137,6 +137,7 @@ _indeo3=auto
 _enable_prof=no
 _unix=no
 _global_constructors=no
+_elf_loader=no
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -1617,7 +1618,6 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE -DSTREAM_AUDIO_FROM_DISK"
 			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU"
 			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
-			DEFINES="$DEFINES -DARM_TARGET"
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
@@ -2007,20 +2007,10 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
 		;;
 	ds)
-DEFINES="$DEFINES -DELF_LOADER_TARGET -DELF_LOADER_CXA_ATEXIT -DONE_PLUGIN_AT_A_TIME"
-_def_plugin='
-#define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".plg"
-'
+		_elf_loader=yes
+		DEFINES="$DEFINES -DARM_TARGET -DELF_LOADER_CXA_ATEXIT -DONE_PLUGIN_AT_A_TIME"
 _mak_plugins='
-DYNAMIC_MODULES		:= 1
-PLUGIN_PREFIX		:=
-PLUGIN_SUFFIX		:= .plg
-PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-CXXFLAGS		+= -DDYNAMIC_MODULES
-PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mno-fpu -Wl,--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms
-PRE_OBJS_FLAGS		:= -Wl,--whole-archive
-POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mno-fpu
 '
 		;;
 	freebsd*)
@@ -2041,20 +2031,10 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
 	gamecube | wii)
-DEFINES="$DEFINES -DELF_LOADER_TARGET -DPPC_TARGET -DELF_LOADER_CXA_ATEXIT -DONE_PLUGIN_AT_A_TIME"
-_def_plugin='
-#define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".plg"
-'
+		_elf_loader=yes
+		DEFINES="$DEFINES -DPPC_TARGET -DELF_LOADER_CXA_ATEXIT -DONE_PLUGIN_AT_A_TIME"
 _mak_plugins='
-DYNAMIC_MODULES		:= 1
-PLUGIN_PREFIX		:=
-PLUGIN_SUFFIX		:= .plg
-PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-CXXFLAGS			+= -DDYNAMIC_MODULES
-PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),-T$(srcdir)/backends/plugins/wii/plugin.ld -Wl,--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms
-PRE_OBJS_FLAGS		:= -Wl,--whole-archive
-POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/wii/plugin.ld
 '
 		;;
 	linux*|android)
@@ -2092,40 +2072,19 @@ POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-im
 '
 		;;
 	ps2)
-DEFINES="$DEFINES -DELF_LOADER_TARGET -DMIPS_TARGET"
-_def_plugin='
-#define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".plg"
-'
+		_elf_loader=yes
+		DEFINES="$DEFINES -DMIPS_TARGET"
 _mak_plugins='
-DYNAMIC_MODULES		:= 1
-PLUGIN_PREFIX		:=
-PLUGIN_SUFFIX		:= .plg
-PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-CXXFLAGS		+= -DDYNAMIC_MODULES
-LDFLAGS			+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T$(srcdir)/backends/plugins/ps2/main_prog.ld
-PLUGIN_LDFLAGS 	+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o
-PLUGIN_LDFLAGS 	+= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),-T$(srcdir)/backends/plugins/ps2/plugin.ld,--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms -lstdc++ -lc
-PRE_OBJS_FLAGS		:= -Wl,--whole-archive
-POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+LDFLAGS				+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T$(srcdir)/backends/plugins/ps2/main_prog.ld
+PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/plugin.ld -lstdc++ -lc
 '
 		;;
 	psp)
-DEFINES="$DEFINES -DELF_LOADER_TARGET -DMIPS_TARGET -DELF_LOADER_CXA_ATEXIT"
-_def_plugin='
-#define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".plg"
-'
+		_elf_loader=yes
+		DEFINES="$DEFINES -DMIPS_TARGET -DELF_LOADER_CXA_ATEXIT"
 _mak_plugins='
-DYNAMIC_MODULES		:= 1
-PLUGIN_PREFIX		:=
-PLUGIN_SUFFIX		:= .plg
-PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-CXXFLAGS		+= -DDYNAMIC_MODULES
-LDFLAGS			+= -Wl,-T$(srcdir)/backends/platform/psp/main_prog.ld
-PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms,-T$(srcdir)/backends/plugins/psp/plugin.ld -lc -Wl,--wrap,memcpy
-PRE_OBJS_FLAGS		:= -Wl,--whole-archive
-POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+LDFLAGS				+= -Wl,-T$(srcdir)/backends/platform/psp/main_prog.ld
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lc -Wl,--wrap,memcpy
 '
 		;;
 	*)
@@ -2137,6 +2096,27 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 	echo "$_dynamic_modules"
 fi
 
+#
+# Check whether integrated ELF loader support is requested
+#
+define_in_config_if_yes "$_elf_loader" 'USE_ELF_LOADER'
+
+if test "$_elf_loader" = yes; then
+	CXXFLAGS="$CXXFLAGS -DDYNAMIC_MODULES"
+	_def_plugin='
+#define PLUGIN_PREFIX	""
+#define PLUGIN_SUFFIX	".plg"
+'
+	_mak_plugins='
+DYNAMIC_MODULES		:= 1
+PLUGIN_PREFIX		:=
+PLUGIN_SUFFIX		:= .plg
+PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
+PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+'"$_mak_plugins"
+fi
 
 #
 # Check whether integrated MT-32 emulator support is requested

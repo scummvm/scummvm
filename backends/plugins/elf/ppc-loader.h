@@ -23,10 +23,12 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(PPC_TARGET)
-
 #ifndef BACKENDS_PLUGINS_PPC_LOADER_H
 #define BACKENDS_PLUGINS_PPC_LOADER_H
+
+#include "common/scummsys.h"
+
+#if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(PPC_TARGET)
 
 #include "backends/plugins/elf/elf-loader.h"
 
@@ -41,7 +43,7 @@ public:
 	}
 };
 
-#endif /* BACKENDS_PLUGINS_PPC_LOADER_H */
+#endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(PPC_TARGET) */
 
-#endif /* defined(DYNAMIC_MODULES) && defined(PPC_TARGET) */
+#endif /* BACKENDS_PLUGINS_PPC_LOADER_H */
 

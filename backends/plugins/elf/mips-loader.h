@@ -24,10 +24,12 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
-
 #ifndef BACKENDS_PLUGINS_MIPS_LOADER_H
 #define BACKENDS_PLUGINS_MIPS_LOADER_H
+
+#include "common/scummsys.h"
+
+#if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(MIPS_TARGET)
 
 #include "backends/plugins/elf/elf-loader.h"
 #include "backends/plugins/elf/shorts-segment-manager.h"
@@ -51,7 +53,7 @@ public:
 	}
 };
 
-#endif /* BACKENDS_PLUGINS_MIPS_LOADER_H */
+#endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(MIPS_TARGET) */
 
-#endif /* defined(DYNAMIC_MODULES) && defined(MIPS_TARGET) */
+#endif /* BACKENDS_PLUGINS_MIPS_LOADER_H */
 

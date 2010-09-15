@@ -23,7 +23,9 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
+#include "common/scummsys.h"
+
+#if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
 #include "backends/plugins/elf/elf-loader.h"
 
@@ -423,5 +425,5 @@ void *DLObject::symbol(const char *name) {
 	return 0;
 }
 
-#endif /* defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET) */
+#endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) */
 

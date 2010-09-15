@@ -23,7 +23,9 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(MIPS_TARGET)
+#include "common/scummsys.h"
+
+#if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(MIPS_TARGET)
 
 #include "backends/plugins/elf/mips-loader.h"
 
@@ -331,5 +333,5 @@ void MIPSDLObject::unload() {
 	}
 }
 
-#endif /* defined(DYNAMIC_MODULES) && defined(MIPS_TARGET) */
+#endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(MIPS_TARGET) */
 

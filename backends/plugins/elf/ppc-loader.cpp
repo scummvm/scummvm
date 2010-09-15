@@ -23,7 +23,9 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(PPC_TARGET)
+#include "common/scummsys.h"
+
+#if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(PPC_TARGET)
 
 #include "backends/plugins/elf/elf-loader.h"
 #include "backends/plugins/elf/ppc-loader.h"
@@ -123,5 +125,5 @@ bool PPCDLObject::relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 	return true;
 }
 
-#endif /* defined(DYNAMIC_MODULES) && defined(PPC_TARGET) */
+#endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(PPC_TARGET) */
 

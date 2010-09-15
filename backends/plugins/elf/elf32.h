@@ -28,6 +28,8 @@
 
 #include "common/scummsys.h"
 
+#if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
+
 /**
  *  ELF stuff:
  *  The contents of this file were gathered mainly from the SYSTEM V APPLICATION BINARY INTERFACE.
@@ -249,6 +251,8 @@ typedef struct {
 	__asm__ ("add %0, $gp, $0" : "=r"(__valgp) : ); \
 	__valgp; \
 }
+
+#endif // defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
 #endif /* BACKENDS_ELF_H */
 

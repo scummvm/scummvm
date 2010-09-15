@@ -23,7 +23,9 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
+#include "common/scummsys.h"
+
+#if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
 #ifdef ELF_LOADER_CXA_ATEXIT
 #include <cxxabi.h>
@@ -158,4 +160,5 @@ bool ELFPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	return true;
 }
 
-#endif // defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
+#endif // defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
+

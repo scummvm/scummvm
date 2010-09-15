@@ -23,10 +23,12 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
-
 #ifndef BACKENDS_PLUGINS_ELF_LOADER_H
 #define BACKENDS_PLUGINS_ELF_LOADER_H
+
+#include "common/scummsys.h"
+
+#if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
 #include <stddef.h>
 
@@ -96,7 +98,7 @@ public:
 	void discard_symtab();
 };
 
-#endif /* BACKENDS_PLUGINS_ELF_LOADER_H */
+#endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) */
 
-#endif /* defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET) */
+#endif /* BACKENDS_PLUGINS_ELF_LOADER_H */
 

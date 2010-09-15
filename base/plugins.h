@@ -91,10 +91,11 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 	(ENABLE_##ID && (ENABLE_##ID == DYNAMIC_PLUGIN) && DYNAMIC_MODULES)
 
 // see comments in backends/plugins/elf/elf-provider.cpp
-#if defined(ELF_LOADER_TARGET) && defined(ELF_LOADER_CXA_ATEXIT)
-#define PLUGIN_DYNAMIC_EXTRA_DECL uint32 __dso_handle __attribute__((visibility ("hidden"))) = 0
+#if defined(USE_ELF_LOADER) && defined(ELF_LOADER_CXA_ATEXIT)
+#define PLUGIN_DYNAMIC_DSO_HANDLE \
+	uint32 __dso_handle __attribute__((visibility("hidden"))) = 0;
 #else
-#define PLUGIN_DYNAMIC_EXTRA_DECL void dummyFuncToAllowTrailingSemicolon()
+#define PLUGIN_DYNAMIC_DSO_HANDLE
 #endif
 
 /**
@@ -126,7 +127,7 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
  */
 #define REGISTER_PLUGIN_DYNAMIC(ID,TYPE,PLUGINCLASS) \
 	extern "C" { \
-		PLUGIN_DYNAMIC_EXTRA_DECL; \
+		PLUGIN_DYNAMIC_DSO_HANDLE \
 		PLUGIN_EXPORT int32 PLUGIN_getVersion() { return PLUGIN_VERSION; } \
 		PLUGIN_EXPORT int32 PLUGIN_getType() { return TYPE; } \
 		PLUGIN_EXPORT int32 PLUGIN_getTypeVersion() { return TYPE##_VERSION; } \

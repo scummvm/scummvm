@@ -23,9 +23,10 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(ARM_TARGET)
+#include "common/scummsys.h"
 
-#include "backends/plugins/elf/elf-loader.h"
+#if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(ARM_TARGET)
+
 #include "backends/plugins/elf/arm-loader.h"
 
 #include "common/debug.h"
@@ -128,5 +129,5 @@ bool ARMDLObject::relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 	return true;
 }
 
-#endif /* defined(DYNAMIC_MODULES) && defined(ARM_TARGET) */
+#endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(ARM_TARGET) */
 
