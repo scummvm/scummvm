@@ -420,6 +420,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdLib,
 		0, 0, 0
 	},
+	{ // Provided by pykman in the forums.
+		{
+			"gob1cd",
+			"Polish",
+			AD_ENTRY1s("intro.stk", "97d2443948b2e367cf567fe7e101f5f2", 4049267),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesCD,
+		0, 0, 0
+	},
 	{ // CD 1.000 version.
 		{
 			"gob1cd",
