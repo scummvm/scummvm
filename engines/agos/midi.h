@@ -61,6 +61,7 @@ protected:
 	MidiDriver *_driver;
 	bool _map_mt32_to_gm;
 	bool _passThrough;
+	bool _nativeMT32;
 
 	MusicInfo _music;
 	MusicInfo _sfx;
@@ -97,6 +98,7 @@ public:
 	void loadS1D(Common::File *in, bool sfx = false);
 
 	void mapMT32toGM(bool map);
+	void setNativeMT32(bool nativeMT32) { _nativeMT32 = nativeMT32; }
 	void setLoop(bool loop);
 	void startTrack(int track);
 	void queueTrack(int track, bool loop);

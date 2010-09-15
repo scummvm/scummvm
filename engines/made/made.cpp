@@ -107,6 +107,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 
 	_music = new MusicPlayer(driver);
 	_music->setNativeMT32(native_mt32);
+	_music->open();
 	//_music->setAdLib(adlib);
 
 	// Set default sound frequency

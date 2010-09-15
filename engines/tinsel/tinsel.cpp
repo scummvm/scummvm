@@ -867,6 +867,11 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	//_midiMusic->setNativeMT32(native_mt32);
 	//_midiMusic->setAdLib(adlib);
 
+	if (native_mt32)
+		_driver->sendMT32Reset();
+	else
+		_driver->sendGMReset();
+
 	_musicVolume = ConfMan.getInt("music_volume");
 
 	_sound = new SoundManager(this);

@@ -101,6 +101,11 @@ int MidiPlayer::open() {
 		_parser->setMidiDriver(this);
 		_parser->setTimerRate(_driver->getBaseTempo());
 		_driver->setTimerCallback(this, &timerCallback);
+
+		if (_nativeMT32)
+			_driver->sendMT32Reset();
+		else
+			_driver->sendGMReset();
 	}
 	return ret;
 }

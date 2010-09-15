@@ -306,3 +306,16 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 
 	return 0;
 }
+
+void MidiDriver::sendMT32Reset() {
+	static const byte resetSysEx[] = { 0x41, 0x10, 0x16, 0x12, 0x7F, 0x00, 0x00, 0x01, 0x00 };
+	sysEx(resetSysEx, sizeof(resetSysEx));
+	g_system->delayMillis(100);
+}
+
+void MidiDriver::sendGMReset() {
+	static const byte resetSysEx[] = { 0x7E, 0x7F, 0x09, 0x01 };
+	sysEx(resetSysEx, sizeof(resetSysEx));
+	g_system->delayMillis(100);
+}
+

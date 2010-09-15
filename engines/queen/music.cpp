@@ -82,6 +82,11 @@ MidiMusic::MidiMusic(QueenEngine *vm)
 	_driver->open();
 	_driver->setTimerCallback(this, &timerCallback);
 
+	if (_nativeMT32)
+		_driver->sendMT32Reset();
+	else
+		_driver->sendGMReset();
+
 	_parser = MidiParser::createParser_SMF();
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(_driver->getBaseTempo());

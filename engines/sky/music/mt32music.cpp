@@ -44,6 +44,7 @@ MT32Music::MT32Music(MidiDriver *pMidiDrv, Disk *pDisk) : MusicBase(pDisk) {
 		error("Can't open midi device. Errorcode: %d",midiRes);
 	_timerCount = 0;
 	_midiDrv->setTimerCallback(this, passTimerFunc);
+	_midiDrv->sendMT32Reset();
 }
 
 MT32Music::~MT32Music() {

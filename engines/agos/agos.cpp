@@ -562,11 +562,11 @@ Common::Error AGOSEngine::init() {
 
 		_driver = MidiDriver::createMidi(dev);
 
-		if (_nativeMT32) {
+		if (_nativeMT32)
 			_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-		}
 
-		_midi.mapMT32toGM (getGameType() != GType_SIMON2 && !_nativeMT32);
+		_midi.setNativeMT32(_nativeMT32);
+		_midi.mapMT32toGM(getGameType() != GType_SIMON2 && !_nativeMT32);
 
 		_midi.setDriver(_driver);
 

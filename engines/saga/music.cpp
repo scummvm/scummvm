@@ -60,6 +60,19 @@ MusicDriver::~MusicDriver() {
 	delete _driver;
 }
 
+int MusicDriver::open() {
+	int retValue = _driver->open();
+	if (retValue)
+		return retValue;
+
+	if (_nativeMT32)
+		_driver->sendMT32Reset();
+	else
+		_driver->sendGMReset();
+
+	return 0;
+}
+
 void MusicDriver::setVolume(int volume) {
 	volume = CLIP(volume, 0, 255);
 
