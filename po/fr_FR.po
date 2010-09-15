@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-13 11:29+0200\n"
+"POT-Creation-Date: 2010-09-15 23:40+0100\n"
 "PO-Revision-Date: 2010-08-11 22:14+0100\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.sf.net>\n"
@@ -120,8 +120,8 @@ msgid ""
 "Short game identifier used for referring to savegames and running the game "
 "from the command line"
 msgstr ""
-"ID compact du jeu utilisé pour identifier les sauvegardes et démarrer le jeu "
-"depuis la ligne de commande"
+"ID compact du jeu utilisée pour identifier les sauvegardes et démarrer le "
+"jeu depuis la ligne de commande"
 
 #: gui/launcher.cpp:178
 msgctxt "lowres"
@@ -876,15 +876,15 @@ msgstr "Sélectionner le répertoire des plugins"
 
 #: gui/saveload.cpp:60 gui/saveload.cpp:241
 msgid "No date saved"
-msgstr "Date non sauvée"
+msgstr "Date inconnue"
 
 #: gui/saveload.cpp:61 gui/saveload.cpp:242
 msgid "No time saved"
-msgstr "Heure non sauvée"
+msgstr "Heure inconnue"
 
 #: gui/saveload.cpp:62 gui/saveload.cpp:243
 msgid "No playtime saved"
-msgstr "Durée de jeu non sauvée"
+msgstr "Durée de jeu inconnue"
 
 #: gui/saveload.cpp:69 gui/saveload.cpp:157
 msgid "Delete"
@@ -1115,6 +1115,39 @@ msgstr "~S~uivant"
 #: backends/platform/ds/arm9/source/dsoptions.cpp:59
 msgid "~C~lose"
 msgstr "~F~ermer"
+
+#: engines/scumm/scumm.cpp:2171 engines/agos/saveload.cpp:192
+#, c-format
+msgid ""
+"Failed to save game state to file:\n"
+"\n"
+"%s"
+msgstr ""
+"Échec de l'enregistrement de l'état du jeu dans le fichier:\n"
+"\n"
+"%s"
+
+#: engines/scumm/scumm.cpp:2178 engines/agos/saveload.cpp:157
+#, c-format
+msgid ""
+"Failed to load game state from file:\n"
+"\n"
+"%s"
+msgstr ""
+"Échec du chargement de l'état du jeu depuis le fichier:\n"
+"\n"
+"%s"
+
+#: engines/scumm/scumm.cpp:2190 engines/agos/saveload.cpp:200
+#, c-format
+msgid ""
+"Successfully saved game state in file:\n"
+"\n"
+"%s"
+msgstr ""
+"État du jeu enregistré avec succès dans le fichier:\n"
+"\n"
+"%s"
 
 #: engines/mohawk/dialogs.cpp:81 engines/mohawk/dialogs.cpp:115
 msgid "~Z~ip Mode Activated"
@@ -1560,7 +1593,7 @@ msgstr "Droit"
 #: backends/platform/wince/CEActionsPocket.cpp:263
 #: backends/platform/wince/CEActionsSmartphone.cpp:225
 msgid "Do you want to load or save the game?"
-msgstr "Voulez-vous charger ou sauver le jeu?"
+msgstr "Voulez-vous charger ou enregistrer le jeu?"
 
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272

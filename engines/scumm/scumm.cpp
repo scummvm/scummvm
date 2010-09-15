@@ -29,6 +29,7 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "engines/util.h"
 
@@ -2167,14 +2168,14 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		if (_saveLoadFlag == 1) {
 			success = saveState(_saveLoadSlot, _saveTemporaryState);
 			if (!success)
-				errMsg = "Failed to save game state to file:\n\n%s";
+				errMsg = _("Failed to save game state to file:\n\n%s");
 
 			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF && _game.version <= 7)
 				VAR(VAR_GAME_LOADED) = 201;
 		} else {
 			success = loadState(_saveLoadSlot, _saveTemporaryState);
 			if (!success)
-				errMsg = "Failed to load game state from file:\n\n%s";
+				errMsg = _("Failed to load game state from file:\n\n%s");
 
 			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF)
 				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : 203;
@@ -2186,7 +2187,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
 			// Display "Save successful" message, except for auto saves
 			char buf[256];
-			snprintf(buf, sizeof(buf), "Successfully saved game state in file:\n\n%s", filename.c_str());
+			snprintf(buf, sizeof(buf), _("Successfully saved game state in file:\n\n%s"), filename.c_str());
 
 			GUI::TimedMessageDialog dialog(buf, 1500);
 			runDialog(dialog);

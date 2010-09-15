@@ -26,6 +26,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "gui/about.h"
 #include "gui/message.h"
@@ -153,7 +154,7 @@ void AGOSEngine::quickLoadOrSave() {
 		Subroutine *sub;
 		success = loadGame(genSaveName(_saveLoadSlot));
 		if (!success) {
-			sprintf(buf, "Failed to load game state to file:\n\n%s", filename);
+			sprintf(buf, _("Failed to load game state from file:\n\n%s"), filename);
 		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 			drawIconArray(2, me(), 0, 0);
 			setBitFlag(97, true);
@@ -188,7 +189,7 @@ void AGOSEngine::quickLoadOrSave() {
 	} else {
 		success = saveGame(_saveLoadSlot, _saveLoadName);
 		if (!success)
-			sprintf(buf, "Failed to save game state to file:\n\n%s", filename);
+			sprintf(buf, _("Failed to save game state to file:\n\n%s"), filename);
 	}
 
 	if (!success) {
@@ -196,7 +197,7 @@ void AGOSEngine::quickLoadOrSave() {
 		dialog.runModal();
 
 	} else if (_saveLoadType == 1) {
-		sprintf(buf, "Successfully saved game state in file:\n\n%s", filename);
+		sprintf(buf, _("Successfully saved game state in file:\n\n%s"), filename);
 		GUI::TimedMessageDialog dialog(buf, 1500);
 		dialog.runModal();
 

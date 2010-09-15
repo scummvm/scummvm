@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-13 11:29+0200\n"
+"POT-Creation-Date: 2010-09-15 23:40+0100\n"
 "PO-Revision-Date: 2010-09-13 12:28+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
@@ -1117,6 +1117,30 @@ msgstr "~W~eiter"
 #: backends/platform/ds/arm9/source/dsoptions.cpp:59
 msgid "~C~lose"
 msgstr "~S~chlieﬂen"
+
+#: engines/scumm/scumm.cpp:2171 engines/agos/saveload.cpp:192
+#, c-format
+msgid ""
+"Failed to save game state to file:\n"
+"\n"
+"%s"
+msgstr ""
+
+#: engines/scumm/scumm.cpp:2178 engines/agos/saveload.cpp:157
+#, c-format
+msgid ""
+"Failed to load game state from file:\n"
+"\n"
+"%s"
+msgstr ""
+
+#: engines/scumm/scumm.cpp:2190 engines/agos/saveload.cpp:200
+#, c-format
+msgid ""
+"Successfully saved game state in file:\n"
+"\n"
+"%s"
+msgstr ""
 
 #: engines/mohawk/dialogs.cpp:81 engines/mohawk/dialogs.cpp:115
 msgid "~Z~ip Mode Activated"
