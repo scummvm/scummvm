@@ -45,6 +45,7 @@ public:
 private:
 	MohawkEngine_Riven *_vm;
 	uint32 _sliderState;
+	Common::Array<Common::Rect> _marbleBaseHotspots;
 
 	typedef void (RivenExternal::*ExternalCmd)(uint16 argc, uint16 *argv);
 

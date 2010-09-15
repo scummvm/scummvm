@@ -1936,31 +1936,54 @@ static const int kLargeMarbleSize = 8;
 static const int kMarbleHotspotSize = 13;
 static const char *s_marbleNames[] = { "tred", "torange", "tyellow", "tgreen", "tblue", "tviolet" };
 
-#if 0
 // Marble Puzzle helper functions
 // The y portion takes the upper 16 bits, while the x portion takes the lower 16 bits
 static void setMarbleX(uint32 *var, byte x) {
-	*var = (*var & 0xff00) | x;
+	*var = (*var & 0xff00) | (x + 1);
 }
 
 static void setMarbleY(uint32 *var, byte y) {
-	*var = (y << 16) | (*var & 0xff);
+	*var = ((y + 1) << 16) | (*var & 0xff);
 }
 
 static byte getMarbleX(uint32 *var) {
-	return *var & 0xff;
+	return (*var & 0xff) - 1;
 }
 
-static byte getMarbleY(uint32 *var) { // Give that that Y you old hag!
-	return (*var >> 16) & 0xff;
+static byte getMarbleY(uint32 *var) { // Give that that Y you old hag! </bad Seinfeld reference>
+	return ((*var >> 16) & 0xff) - 1;
 }
-#endif
+
+static Common::Rect generateMarbleGridRect(uint16 x, uint16 y) {
+	// x/y in terms of 0!
+	static const int marbleGridOffsetX[] = { 134, 202, 270, 338, 406 };
+	static const int marbleGridOffsetY[] = {  24,  92, 159, 227, 295 };
+
+	uint16 offsetX = marbleGridOffsetX[x / 5] + (x % 5) * kMarbleHotspotSize;
+	uint16 offsetY = marbleGridOffsetY[y / 5] + (y % 5) * kMarbleHotspotSize;
+	return Common::Rect(offsetX, offsetY, offsetX + kMarbleHotspotSize, offsetY + kMarbleHotspotSize);
+}
 
 void RivenExternal::xt7500_checkmarbles(uint16 argc, uint16 *argv) {
-	// TODO: Set apower if the marbles are in their correct spot. 
-	// HACK: For the purposes of making the game progress further, we'll just turn the
-	// power on for now.
-	*_vm->getVar("apower") = 1;
+	// Set apower if the marbles are in their correct spot. 
+
+	bool valid = true;
+	static const uint32 marbleFinalValues[] = { 1114121, 1441798, 0, 65552, 65558, 262146 };
+
+	for (uint16 i = 0; i < kMarbleCount; i++)
+		if (*_vm->getVar(s_marbleNames[i]) != marbleFinalValues[i]) {
+			valid = false;
+			break;
+		}
+
+	// If we have the correct combo, activate the power and reset the marble positions
+	// Otherwise, make sure the power is off
+	if (valid) {
+		*_vm->getVar("apower") = 1;
+		for (uint16 i = 0; i < kMarbleCount; i++)
+			*_vm->getVar(s_marbleNames[i]) = 0;
+	} else
+		*_vm->getVar("apower") = 0;
 }
 
 void RivenExternal::xt7600_setupmarbles(uint16 argc, uint16 *argv) {
@@ -1990,10 +2013,23 @@ void RivenExternal::xt7600_setupmarbles(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::setMarbleHotspots() {
-	// TODO: Set the hotspots
+	// Set the hotspots
+	for (uint16 i = 0; i < kMarbleCount; i++) {
+		uint32 *marblePos = _vm->getVar(s_marbleNames[i]);
+
+		if (*marblePos == 0) // In the receptacle
+			_vm->_hotspots[i + 3].rect = _marbleBaseHotspots[i];
+		else                 // On the grid
+			_vm->_hotspots[i + 3].rect = generateMarbleGridRect(getMarbleX(marblePos), getMarbleY(marblePos));
+	}
 }
 
 void RivenExternal::xt7800_setup(uint16 argc, uint16 *argv) {
+	// First, let's store the base receptacle hotspots for the marbles
+	if (_marbleBaseHotspots.empty())
+		for (uint16 i = 0; i < kMarbleCount; i++)
+			_marbleBaseHotspots.push_back(_vm->_hotspots[i + 3].rect);
+
 	// Move the marble hotspots based on their position variables
 	setMarbleHotspots();
 	*_vm->getVar("themarble") = 0;
@@ -2060,7 +2096,34 @@ void RivenExternal::xtakeit(uint16 argc, uint16 *argv) {
 		_vm->_system->delayMillis(10); // Take it easy on the CPU
 	}
 
-	// TODO: Check if we landed in a valid location and no other marble has that location
+	// Check if we landed in a valid location and no other marble has that location
+	uint32 *marblePos = _vm->getVar(s_marbleNames[*marble - 1]);
+
+	bool foundMatch = false;
+	for (int y = 0; y < 25 && !foundMatch; y++) {
+		for (int x = 0; x < 25 && !foundMatch; x++) {
+			Common::Rect testHotspot = generateMarbleGridRect(x, y);
+
+			// Let's try to place the marble!
+			if (testHotspot.contains(_vm->_system->getEventManager()->getMousePos())) {
+				// Set this as the position
+				setMarbleX(marblePos, x);
+				setMarbleY(marblePos, y);
+
+				// Let's make sure no other marble is in this spot...
+				for (uint16 i = 0; i < kMarbleCount; i++)
+					if (i != *marble - 1 && *_vm->getVar(s_marbleNames[i]) == *marblePos)
+						*marblePos = 0;
+
+				// We have a match
+				foundMatch = true;
+			}
+		}
+	}
+
+	// If we still don't have a match, reset it to the original location
+	if (!foundMatch)
+		*marblePos = 0;
 
 	// Check the new hotspots and refresh everything
 	*marble = 0;
