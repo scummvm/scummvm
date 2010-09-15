@@ -340,15 +340,42 @@ PoMessageEntryList *parsePoFile(const char *file, PoMessageList& messages) {
 char *stripLine(char *line) {
 	// This function modifies line in place and return it.
 	// Keep only the text between the first two unprotected quotes.
+	// It also look for literal special characters (e.g. preceded by '\n', '\\', '\"', '\'', '\t')
+	// and replace them by the special character so that strcmp() can match them at run time.
 	// Look for the first quote
 	int start = 0;
 	int len = strlen(line);
 	while (start < len && line[start++] != '"') {}
 	// shift characters until we reach the end of the string or an unprotected quote
-	int i = 0;
-	while (start + i < len && (line[start + i] != '"' || (i > 0 && line[start + i - 1] == '\\'))) {
-		line[i] = line[start + i];
-		++i;
+	int i = 0, j = 0;
+	while (start + i + j < len && line[start + i + j] != '"') {
+		if (line[start + i + j] == '\\') {
+			switch (line[start + i + j + 1]) {
+			case 'n':
+				line[i++] = '\n';
+				break;
+			case 't':
+				line[i++] = '\t';
+				break;				
+			case '\"':
+				line[i++] = '\"';
+				break;
+			case '\'':
+				line[i++] = '\'';
+				break;				
+			case '\\':
+				line[i++] = '\\';
+				break;
+			default:
+				// Just skip
+				fprintf(stdout, "Unsupported special character \"%c%c\" in string. Please contact ScummVM developers.\n", line[start + i + j], line[start + i + j + 1]);
+				++j;
+			}
+			++j;
+		} else {
+			line[i] = line[start + i + j];
+			++i;
+		}
 	}
 	line[i] = '\0';
 	return line;
@@ -367,10 +394,9 @@ char *parseLine(const char *line, const char *field) {
 	while (*str != '\0' && isspace(*str)) {
 		++str;
 	}
-	// Find string length (top at the first '\\'
-	// (since the string we want is followed by a '\\n')
+	// Find string length (stop at the first '\n')
 	int len = 0;
-	while (str[len] != '\0' && str[len] != '\\') {
+	while (str[len] != '\0' && str[len] != '\n') {
 		++len;
 	}
 	if (len == 0)
