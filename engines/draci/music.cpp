@@ -38,7 +38,7 @@ namespace Draci {
 
 MusicPlayer::MusicPlayer(MidiDriver *driver, const char *pathMask) : _parser(0), _driver(driver), _pathMask(pathMask), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false), _track(-1) {
 	memset(_channel, 0, sizeof(_channel));
-	memset(_channelVolume, 255, sizeof(_channelVolume));
+	memset(_channelVolume, 127, sizeof(_channelVolume));
 	_masterVolume = 0;
 	_smfParser = MidiParser::createParser_SMF();
 	_midiMusicData = NULL;
