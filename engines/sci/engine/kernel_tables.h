@@ -491,6 +491,12 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 
+	// SCI2 empty functions
+
+	// Purge is used by the memory manager in SSCI to ensure that X number of bytes (the so called "unmovable
+	// memory") are available. We have our own memory manager and garbage collector, thus we ignore this call.
+	{ MAP_EMPTY(Purge),            SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+
     // SCI2.1 Kernel Functions
     { MAP_CALL(CD),           	   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iioi",                  NULL,            NULL },
@@ -507,6 +513,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(PrintDebug),        SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
 
 	// SCI2.1 empty functions
+
+	// SetWindowsOption is used to set Windows specific options, like for example the title bar visibility of
+	// the game window in Phantasmagoria 2. We ignore these settings completely.
 	{ MAP_EMPTY(SetWindowsOption), SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 
 	// Unimplemented SCI2.1 unused functions, always mapped to kDummy
