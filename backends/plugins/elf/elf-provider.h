@@ -45,6 +45,8 @@
  */
 class ELFPlugin : public DynamicPlugin {
 protected:
+	typedef const char *(*CharFunc)();
+
 	DLObject *_dlHandle;
 	Common::String _filename;
 	void *_dso_handle;

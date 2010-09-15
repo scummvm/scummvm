@@ -112,6 +112,19 @@ bool ELFPlugin::loadPlugin() {
 		return false;
 	}
 
+	CharFunc buildDateFunc = (CharFunc)findSymbol("PLUGIN_getBuildDate");
+	if (!buildDateFunc) {
+		unloadPlugin();
+		warning("elfloader: plugin '%s' is missing symbols", _filename.c_str());
+		return false;
+	}
+
+	if (strncmp(gScummVMPluginBuildDate, buildDateFunc(), strlen(gScummVMPluginBuildDate))) {
+		unloadPlugin();
+		warning("elfloader: plugin '%s' has a different build date", _filename.c_str());
+		return false;
+	}
+
 	bool ret = DynamicPlugin::loadPlugin();
 
 #ifdef ELF_LOADER_CXA_ATEXIT

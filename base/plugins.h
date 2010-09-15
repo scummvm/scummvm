@@ -30,6 +30,7 @@
 #include "common/error.h"
 #include "common/singleton.h"
 #include "common/util.h"
+#include "backends/plugins/elf/version.h"
 
 namespace Common {
 	class FSList;
@@ -98,6 +99,13 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 #define PLUGIN_DYNAMIC_DSO_HANDLE
 #endif
 
+#ifdef USE_ELF_LOADER
+#define PLUGIN_DYNAMIC_BUILD_DATE \
+	PLUGIN_EXPORT const char *PLUGIN_getBuildDate() { return gScummVMPluginBuildDate; }
+#else
+#define PLUGIN_DYNAMIC_BUILD_DATE
+#endif
+
 /**
  * REGISTER_PLUGIN_STATIC is a convenience macro which is used to declare
  * the plugin interface for static plugins. Code (such as game engines)
@@ -128,6 +136,7 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 #define REGISTER_PLUGIN_DYNAMIC(ID,TYPE,PLUGINCLASS) \
 	extern "C" { \
 		PLUGIN_DYNAMIC_DSO_HANDLE \
+		PLUGIN_DYNAMIC_BUILD_DATE \
 		PLUGIN_EXPORT int32 PLUGIN_getVersion() { return PLUGIN_VERSION; } \
 		PLUGIN_EXPORT int32 PLUGIN_getType() { return TYPE; } \
 		PLUGIN_EXPORT int32 PLUGIN_getTypeVersion() { return TYPE##_VERSION; } \

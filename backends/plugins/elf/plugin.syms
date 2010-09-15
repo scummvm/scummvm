@@ -1,3 +1,4 @@
+PLUGIN_getBuildDate
 PLUGIN_getVersion
 PLUGIN_getType
 PLUGIN_getTypeVersion
