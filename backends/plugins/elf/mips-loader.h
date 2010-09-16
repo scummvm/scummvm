@@ -41,7 +41,7 @@ protected:
 
 	virtual bool relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment);
 	virtual bool relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
-	virtual void relocateSymbols(Elf32_Addr offset);
+	virtual void relocateSymbols(ptrdiff_t offset);
 	virtual bool loadSegment(Elf32_Phdr *phdr);
 	virtual void unload();
 

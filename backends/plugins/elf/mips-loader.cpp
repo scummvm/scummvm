@@ -249,7 +249,7 @@ bool MIPSDLObject::relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 	return true;
 }
 
-void MIPSDLObject::relocateSymbols(Elf32_Addr offset) {
+void MIPSDLObject::relocateSymbols(ptrdiff_t offset) {
 	// Loop over symbols, add relocation offset
 	Elf32_Sym *s = _symtab;
 
