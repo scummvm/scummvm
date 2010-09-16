@@ -54,6 +54,8 @@ bool MIPSDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment)
 
 	debug(2, "elfloader: Loaded relocation table. %d entries. base address=%p", cnt, relSegment);
 
+	Elf32_Addr adjustedMainSegment = Elf32_Addr(_segment) - _segmentVMA;	// adjust for VMA offset
+	
 	bool seenHi16 = false;			// For treating HI/LO16 commands
 	int32 firstHi16 = -1;			// Mark the point of the first hi16 seen
 	Elf32_Addr ahl = 0;				// Calculated addend
@@ -121,7 +123,7 @@ bool MIPSDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment)
 				if (lo16InShorts)
 					relocation = ahl + _shortsSegment->getOffset();		// Add in the short segment offset
 				else	// It's in the regular segment
-					relocation = ahl + Elf32_Addr(relSegment);			// Add in the new offset for the segment
+					relocation = ahl + adjustedMainSegment;				// Add in the new offset for the segment
 
 				if (firstHi16 >= 0) {					// We haven't treated the HI16s yet so do it now
 					for (uint32 j = firstHi16; j < i; j++) {
@@ -159,7 +161,7 @@ bool MIPSDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment)
 			if (sym->st_shndx < SHN_LOPROC) {							// Only relocate for main segment
 				a = *target & 0x03ffffff;								// Get 26 bits' worth of the addend
 				a = (a << 6) >> 6; 										// Sign extend a
-				relocation = ((a << 2) + Elf32_Addr(relSegment)) >> 2;	// a already points to the target. Subtract our offset
+				relocation = ((a << 2) + adjustedMainSegment) >> 2;		// a already points to the target. Add our offset
 				*target &= 0xfc000000;									// Clean lower 26 target bits
 				*target |= (relocation & 0x03ffffff);
 
@@ -201,7 +203,7 @@ bool MIPSDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment)
 				if (ShortsMan.inGeneralSegment((char *)sym->st_value))	// Check if we're in the shorts segment
 					relocation = a + _shortsSegment->getOffset();		// Shift by shorts offset
 				else													// We're in the main section
-					relocation = a + Elf32_Addr(relSegment);			// Shift by main offset
+					relocation = a + adjustedMainSegment;				// Shift by main offset
 
 				*target = relocation;
 
