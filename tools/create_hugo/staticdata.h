@@ -1700,7 +1700,7 @@ const char *screenNames_1d[] = {
 		"House",    "Hall",     "Bed1",     "Diningrm", "Bathroom",
 /* 5*/	"Kitchen",  "Garden",   "Storerm",  "Basement", "Batcave",
 /*10*/	"Mummyrm",  "Lakeroom", "Deadend",  "Jail",     "The_end",
-/*15*/	"Lab"
+/*15*/	"Lab",      "House"
 };
 
 const char *screenNames_2d[] = {
