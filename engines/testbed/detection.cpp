@@ -41,7 +41,7 @@ static const ADGameDescription testbedDescriptions[] = {
 	{
 		"testbed",
 		"",
-		AD_ENTRY1(NULL, 0),	// No data files required
+		AD_ENTRY1("TESTBED", 0),  // Game-data file for detection.
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
