@@ -1,0 +1,10 @@
+ScummVM-DINGUX README
+==============================================================================
+
+Requirements
+============
+- Dingoo A320/A330
+- Dingux installed on SD card
+- Fixed Tremor libs in dingux rootfs (see below)
+
+* To Be Filled *

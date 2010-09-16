@@ -27,3 +27,4 @@ ifdef DYNAMIC_MODULES
 endif
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip $(bundle_name)/
 	$(CP) $(srcdir)/backends/platform/dingux/scummvm.gpe $(bundle_name)/
+	$(CP) $(srcdir)/backends/platform/dingux/README.DINGUX $(bundle_name)/
