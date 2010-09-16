@@ -258,7 +258,10 @@ Common::Error HugoEngine::run() {
 }
 
 void HugoEngine::initMachine() {
-	file().readBackground(_numScreens - 1);         // Splash screen
+	if (_gameVariant == 3)
+		readScreenFiles(0);
+	else
+		file().readBackground(_numScreens - 1);         // Splash screen
 	readObjectImages();                             // Read all object images
 	if (_platform == Common::kPlatformWindows)
 		readUIFImages();                            // Read all uif images (only in Win versions)
@@ -1397,6 +1400,7 @@ char **HugoEngine::loadTextsVariante(Common::File &in, uint16 *arraySize) {
 			res = (char **)malloc(sizeof(char *) * numTexts);
 			res[0] = pos;
 			in.read(res[0], entryLen);
+			res[0] += DATAALIGNMENT;
 		} else {
 			in.read(pos, entryLen);
 		}
@@ -1467,6 +1471,7 @@ char ***HugoEngine::loadTextsArray(Common::File &in) {
 				res = (char **)malloc(sizeof(char *) * numTexts);
 				res[0] = pos;
 				in.read(res[0], entryLen);
+				res[0] += DATAALIGNMENT;
 			} else {
 				in.read(pos, entryLen);
 			}

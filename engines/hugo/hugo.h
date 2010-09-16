@@ -48,7 +48,7 @@ enum GameType {
 	kGameTypeHugo3
 };
 
-enum HugoebugChannels {
+enum HugoDebugChannels {
 	kDebugSchedule   = 1 <<  0,
 	kDebugEngine     = 1 <<  1,
 	kDebugDisplay    = 1 <<  2,

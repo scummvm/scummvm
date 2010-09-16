@@ -231,6 +231,8 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 	case CYCLE_BACKWARD:
 		objPtr->currImagePtr = seqPtr;
 		break;
+	default:
+		warning("Unexpected cycling: %d", objPtr->cycling);
 	}
 
 	if (!_vm.isPacked())
@@ -791,13 +793,9 @@ void FileManager_v1d::readBackground(int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
 	char *buf = (char *) malloc(2048 + 1);      // Buffer for file access
-	strcat(strcat(strcpy(buf, _vm._picDir), _vm._screenNames[screenIndex]), BKGEXT);
-	if (!_sceneryArchive1.open(buf)) {
-		warning("File %s not found, trying again with %s.ART", buf, _vm._screenNames[screenIndex]);
-		strcat(strcpy(buf, _vm._screenNames[screenIndex]), ".ART");
-		if (!_sceneryArchive1.open(buf))
-			Utils::Error(FILE_ERR, "%s", buf);
-	}
+	strcat(strcpy(buf, _vm._screenNames[screenIndex]), ".ART");
+	if (!_sceneryArchive1.open(buf))
+		Utils::Error(FILE_ERR, "%s", buf);
 	// Read the image into dummy seq and static dib_a
 	readPCX(_sceneryArchive1, &seq, _vm.screen().getFrontBuffer(), true, _vm._screenNames[screenIndex]);
 
