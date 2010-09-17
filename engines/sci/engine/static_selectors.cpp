@@ -244,11 +244,12 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 			names[275] = "syncCue";
 		} else if (g_sci->getGameId() == GID_PEPPER) {
 			// Same as above for the non-interactive demo of Pepper
-			if (names.size() < 265)
-				names.resize(265);
+			if (names.size() < 539)
+				names.resize(539);
 
 			names[263] = "syncTime";
 			names[264] = "syncCue";
+			names[538] = "startText";
 		} else if (g_sci->getGameId() == GID_LAURABOW2) {
 			// The floppy of version needs the changeState selector set to match up with the
 			// CD version's workarounds.
@@ -256,6 +257,11 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 				names.resize(251);
 
 			names[144] = "changeState";
+		} else if (g_sci->getGameId() == GID_CNICK_KQ) {
+			if (names.size() < 447)
+				names.resize(447);
+
+			names[446] = "say";
 		}
 
 #ifdef ENABLE_SCI32
