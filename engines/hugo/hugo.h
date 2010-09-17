@@ -33,7 +33,7 @@
 #include "hugo/game.h"
 
 #define HUGO_DAT_VER_MAJ 0  // 1 byte
-#define HUGO_DAT_VER_MIN 22 // 1 byte
+#define HUGO_DAT_VER_MIN 23 // 1 byte
 #define DATAALIGNMENT 4
 
 namespace Common {
@@ -46,6 +46,15 @@ enum GameType {
 	kGameTypeHugo1,
 	kGameTypeHugo2,
 	kGameTypeHugo3
+};
+
+enum GameVariant {
+	kGameVariantH1Win = 0,
+	kGameVariantH2Win,
+	kGameVariantH3Win,
+	kGameVariantH1Dos,
+	kGameVariantH2Dos,
+	kGameVariantH3Dos
 };
 
 enum HugoDebugChannels {

@@ -553,35 +553,6 @@ void FileManager::closePlaybackFile() {
 	fclose(fpb);
 }
 
-char *FileManager::fetchString(int index) {
-//TODO : HUGO 1 DOS uses _stringtData instead of a strings.dat
-// Fetch string from file, decode and return ptr to string in memory
-	uint32 off1, off2;
-
-	debugC(1, kDebugFile, "fetchString(%d)", index);
-
-	// Get offset to string[index] (and next for length calculation)
-	_stringArchive.seek((uint32)index * sizeof(uint32), SEEK_SET);
-	if (_stringArchive.read((char *)&off1, sizeof(uint32)) == 0)
-		Utils::Error(FILE_ERR, "%s", "String offset");
-	if (_stringArchive.read((char *)&off2, sizeof(uint32)) == 0)
-		Utils::Error(FILE_ERR, "%s", "String offset");
-
-	// Check size of string
-	if ((off2 - off1) >= MAX_BOX)
-		Utils::Error(FILE_ERR, "%s", "Fetched string too long!");
-
-	// Position to string and read it into gen purpose _textBoxBuffer
-	_stringArchive.seek(off1, SEEK_SET);
-	if (_stringArchive.read(_textBoxBuffer, (uint16)(off2 - off1)) == 0)
-		Utils::Error(FILE_ERR, "%s", "Fetch_string");
-
-	// Null terminate, decode and return it
-	_textBoxBuffer[off2-off1] = '\0';
-	_vm.scheduler().decodeString(_textBoxBuffer);
-	return _textBoxBuffer;
-}
-
 void FileManager::printBootText() {
 // Read the encrypted text from the boot file and print it
 	Common::File ofp;
@@ -802,6 +773,12 @@ void FileManager_v1d::readBackground(int screenIndex) {
 	_sceneryArchive1.close();
 }
 
+char *FileManager_v1d::fetchString(int index) {
+	debugC(1, kDebugFile, "fetchString(%d)", index);
+
+	return _vm._stringtData[index];
+}
+
 FileManager_v2d::FileManager_v2d(HugoEngine &vm) : FileManager(vm) {
 }
 
@@ -913,53 +890,39 @@ void FileManager_v2d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 	} while (k < OVL_SIZE);
 }
 
-FileManager_v1w::FileManager_v1w(HugoEngine &vm) : FileManager(vm) {
+char *FileManager_v2d::fetchString(int index) {
+// Fetch string from file, decode and return ptr to string in memory
+	uint32 off1, off2;
+
+	debugC(1, kDebugFile, "fetchString(%d)", index);
+
+	// Get offset to string[index] (and next for length calculation)
+	_stringArchive.seek((uint32)index * sizeof(uint32), SEEK_SET);
+	if (_stringArchive.read((char *)&off1, sizeof(uint32)) == 0)
+		Utils::Error(FILE_ERR, "%s", "String offset");
+	if (_stringArchive.read((char *)&off2, sizeof(uint32)) == 0)
+		Utils::Error(FILE_ERR, "%s", "String offset");
+
+	// Check size of string
+	if ((off2 - off1) >= MAX_BOX)
+		Utils::Error(FILE_ERR, "%s", "Fetched string too long!");
+
+	// Position to string and read it into gen purpose _textBoxBuffer
+	_stringArchive.seek(off1, SEEK_SET);
+	if (_stringArchive.read(_textBoxBuffer, (uint16)(off2 - off1)) == 0)
+		Utils::Error(FILE_ERR, "%s", "Fetch_string");
+
+	// Null terminate, decode and return it
+	_textBoxBuffer[off2-off1] = '\0';
+	_vm.scheduler().decodeString(_textBoxBuffer);
+	return _textBoxBuffer;
+}
+
+
+FileManager_v1w::FileManager_v1w(HugoEngine &vm) : FileManager_v2d(vm) {
 }
 
 FileManager_v1w::~FileManager_v1w() {
-}
-
-void FileManager_v1w::openDatabaseFiles() {
-	debugC(1, kDebugFile, "openDatabaseFiles");
-
-	if (!_stringArchive.open(STRING_FILE))
-		Utils::Error(FILE_ERR, "%s", STRING_FILE);
-	if (!_sceneryArchive1.open("scenery.dat"))
-		Utils::Error(FILE_ERR, "%s", "scenery.dat");
-	if (!_objectsArchive.open(OBJECTS_FILE))
-		Utils::Error(FILE_ERR, "%s", OBJECTS_FILE);
-}
-
-void FileManager_v1w::closeDatabaseFiles() {
-	debugC(1, kDebugFile, "closeDatabaseFiles");
-
-	_stringArchive.close();
-	_sceneryArchive1.close();
-	_objectsArchive.close();
-}
-
-void FileManager_v1w::readBackground(int screenIndex) {
-// Read a PCX image into dib_a
-	seq_t        seq;                               // Image sequence structure for Read_pcx
-	sceneBlock_t sceneBlock;                        // Read a database header entry
-
-	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
-
-	_sceneryArchive1.seek((uint32) screenIndex * sizeof(sceneBlock_t), SEEK_SET);
-
-	sceneBlock.scene_off = _sceneryArchive1.readUint32LE();
-	sceneBlock.scene_len = _sceneryArchive1.readUint32LE();
-	sceneBlock.b_off = _sceneryArchive1.readUint32LE();
-	sceneBlock.b_len = _sceneryArchive1.readUint32LE();
-	sceneBlock.o_off = _sceneryArchive1.readUint32LE();
-	sceneBlock.o_len = _sceneryArchive1.readUint32LE();
-	sceneBlock.ob_off = _sceneryArchive1.readUint32LE();
-	sceneBlock.ob_len = _sceneryArchive1.readUint32LE();
-
-	_sceneryArchive1.seek(sceneBlock.scene_off, SEEK_SET);
-
-	// Read the image into dummy seq and static dib_a
-	readPCX(_sceneryArchive1, &seq, _vm.screen().getFrontBuffer(), true, _vm._screenNames[screenIndex]);
 }
 
 void FileManager_v1w::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
@@ -1007,7 +970,7 @@ void FileManager_v1w::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 	_sceneryArchive1.read(tmpImage, OVL_SIZE);
 }
 
-FileManager_v3d::FileManager_v3d(HugoEngine &vm) : FileManager(vm) {
+FileManager_v3d::FileManager_v3d(HugoEngine &vm) : FileManager_v2d(vm) {
 }
 
 FileManager_v3d::~FileManager_v3d() {

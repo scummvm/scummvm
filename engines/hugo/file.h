@@ -46,7 +46,6 @@ public:
 
 
 	bool     fileExists(char *filename);
-	char    *fetchString(int index);
 	sound_pt getSound(short sound, uint16 *size);
 
 	void     closePlaybackFile();
@@ -65,6 +64,8 @@ public:
 
 	virtual void readBackground(int screenIndex) = 0;
 	virtual void readOverlay(int screenNum, image_pt image, ovl_t overlayType) = 0;
+
+	virtual char *fetchString(int index) = 0;
 
 protected:
 	HugoEngine &_vm;
@@ -95,6 +96,7 @@ public:
 	void closeDatabaseFiles();
 	void readBackground(int screenIndex);
 	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
+	char *fetchString(int index);
 };
 
 class FileManager_v2d : public FileManager {
@@ -106,20 +108,10 @@ public:
 	void closeDatabaseFiles();
 	void readBackground(int screenIndex);
 	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
+	char *fetchString(int index);
 };
 
-class FileManager_v1w : public FileManager {
-public:
-	FileManager_v1w(HugoEngine &vm);
-	~FileManager_v1w();
-
-	void openDatabaseFiles();
-	void closeDatabaseFiles();
-	void readBackground(int screenIndex);
-	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
-};
-
-class FileManager_v3d : public FileManager {
+class FileManager_v3d : public FileManager_v2d {
 public:
 	FileManager_v3d(HugoEngine &vm);
 	~FileManager_v3d();
@@ -130,7 +122,15 @@ public:
 	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
 private:
 	Common::File _sceneryArchive2;                      /* Handle for scenery file */
-
 };
+
+class FileManager_v1w : public FileManager_v2d {
+public:
+	FileManager_v1w(HugoEngine &vm);
+	~FileManager_v1w();
+
+	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
+};
+
 } // End of namespace Hugo
 #endif //HUGO_FILE_H

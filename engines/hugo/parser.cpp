@@ -266,7 +266,7 @@ void Parser::lineHandler() {
 	// fetch <object name>                          Hero carries named object
 	// fetch all                                    Hero carries all possible objects
 	// find <object name>                           Takes hero to screen containing named object
-	if (DEBUG || gameStatus.godModeFl) {
+	if (gameStatus.godModeFl) {
 		// Special code to allow me to go straight to any screen
 		if (strstr(_line, "goto"))
 			for (int i = 0; i < _vm._numScreens; i++)

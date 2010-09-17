@@ -67,6 +67,9 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	DebugMan.addDebugChannel(kDebugFile, "File", "File IO debug level");
 	DebugMan.addDebugChannel(kDebugRoute, "Route", "Route debug level");
 	DebugMan.addDebugChannel(kDebugInventory, "Inventory", "Inventory debug level");
+
+	for (int j = 0; j < NUM_FONTS; j++)
+		_arrayFont[j] = 0;
 }
 
 HugoEngine::~HugoEngine() {
@@ -258,7 +261,7 @@ Common::Error HugoEngine::run() {
 }
 
 void HugoEngine::initMachine() {
-	if (_gameVariant == 3)
+	if (_gameVariant == kGameVariantH1Dos)
 		readScreenFiles(0);
 	else
 		file().readBackground(_numScreens - 1);         // Splash screen
@@ -1348,9 +1351,6 @@ bool HugoEngine::loadHugoDat() {
 		if (varnt == _gameVariant)
 			_alNewscrIndex = numElem;
 	}
-
-	for (int j = 0; j < NUM_FONTS; j++)
-		_arrayFont[j] = 0;
 
 	if (_gameVariant > 2) {
 		_arrayFontSize[0] = in.readUint16BE();

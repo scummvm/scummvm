@@ -48,12 +48,6 @@ namespace Hugo {
 // Copy helpedit\hugow_?.hlp to .\hugowin?.hlp
 // Type "PPG" in the game to enter cheat mode.
 
-#define DEBUG       false                           // Allow me to do special things (EDIT, GOTO)
-#define STORY       true                            // Skip any intro stuff if FALSE
-//#define DATABASE    TRUE                          // Use database instead of individual files. Individual files are used by Hugo1 DOS!
-//#define BETA        FALSE                         // Puts big msg in intro/about box
-#define EPISODE_NUM         1                       // Episode we are building
-#define TITLE       "Hugo for Windows"
 #define COPYRIGHT   "Copyright © 1995-97, David P. Gray"
 // Started code on 04/01/95
 // Don't forget to update Hugowin.rc2 with version info
@@ -62,7 +56,7 @@ namespace Hugo {
 //#define VER "v1.2"// 10/12/95 Added "background music" checkbox in volume dlg
 //#define VER "v1.3"// 10/23/95 Support game 1 as shareware
 //#define VER "v1.4"// 12/06/95 Faster graphics, logical palette
-#define VER "v1.5"  // 10/07/97 Added order form, new web site
+//#define VER "v1.5"  // 10/07/97 Added order form, new web site
 
 // Game specific equates
 #define MAX_TUNES      16                           // Max number of tunes
@@ -111,6 +105,13 @@ namespace Hugo {
 // Macros:
 #define TPS           ((_config.turboFl) ? TURBO_TPS : NORMAL_TPS)
 
+#define MAX_UIFS   32                               // Max possible uif items in hdr
+#define NUM_FONTS  3                                // Number of dib fonts
+#define FIRST_FONT U_FONT5
+#define FONT_LEN   128                              // Number of chars in font
+#define FONTSIZE   1200                             // Max size of font data
+
+#define CRYPT "Copyright 1992, David P Gray, Gray Design Associates"
 
 enum TEXTCOLORS {
 	_TBLACK,    _TBLUE,         _TGREEN,       _TCYAN,
@@ -119,32 +120,7 @@ enum TEXTCOLORS {
 	_TLIGHTRED, _TLIGHTMAGENTA, _TLIGHTYELLOW, _TBRIGHTWHITE
 };
 
-#define CRYPT "Copyright 1992, David P Gray, Gray Design Associates"
-
-struct hugo_boot_t {                                // Common HUGO boot file
-	char checksum;                                  // Checksum for boot structure (not exit text)
-	char registered;                                // TRUE if registered version, else FALSE
-	char pbswitch[8];                               // Playback switch string
-	char distrib[32];                               // Distributor branding string
-	uint16 exit_len;                                // Length of exit text (next in file)
-};
-
-#define MAX_UIFS   32                               // Max possible uif items in hdr
-#define NUM_FONTS  3                                // Number of dib fonts
-#define FIRST_FONT U_FONT5
-#define FONT_LEN   128                              // Number of chars in font
-#define FONTSIZE   1200                             // Max size of font data
-
-struct uif_hdr_t {                                  // UIF font/image look up
-	uint16  size;                                   // Size of uif item
-	uint32  offset;                                 // Offset of item in file
-};
-
 enum uif_t {U_FONT5, U_FONT6, U_FONT8, UIF_IMAGES, NUM_UIF_ITEMS};
-
-// Game specific type definitions
-typedef byte *image_pt;                             // ptr to an object image (sprite)
-typedef byte *sound_pt;                             // ptr to sound (or music) data
 
 // Enumerate overlay file types
 enum ovl_t {BOUNDARY, OVERLAY, OVLBASE};
@@ -213,21 +189,6 @@ enum invact_t {INV_INIT, INV_LEFT, INV_RIGHT, INV_GET};
 // Purpose of an automatic route
 enum go_t {GO_SPACE, GO_EXIT, GO_LOOK, GO_GET};
 
-// Following are points for achieving certain actions.
-struct point_t {
-	byte score;                                     // The value of the point
-	bool scoredFl;                                  // Whether scored yet
-};
-
-// Structure for initializing maze processing
-struct maze_t {
-	bool enabledFl;                                 // TRUE when maze processing enabled
-	byte size;                                      // Size of (square) maze matrix
-	int  x1, y1, x2, y2;                            // maze hotspot bounding box
-	int  x3, x4;                                    // north, south x entry coordinates
-	byte firstScreenIndex;                          // index of first screen in maze
-};
-
 // Following defines the action types and action list
 enum action_t {                                     // Parameters:
 	ANULL              = 0xff,                      // Special NOP used to 'delete' events in DEL_EVENTS
@@ -284,6 +245,37 @@ enum action_t {                                     // Parameters:
 	OLD_SONG           = 49                         // Added by Strangerke - Set currently playing sound, old way: that is, using a string index instead of a reference in a file
 };
 
+struct hugo_boot_t {                                // Common HUGO boot file
+	char checksum;                                  // Checksum for boot structure (not exit text)
+	char registered;                                // TRUE if registered version, else FALSE
+	char pbswitch[8];                               // Playback switch string
+	char distrib[32];                               // Distributor branding string
+	uint16 exit_len;                                // Length of exit text (next in file)
+};
+
+struct uif_hdr_t {                                  // UIF font/image look up
+	uint16  size;                                   // Size of uif item
+	uint32  offset;                                 // Offset of item in file
+};
+
+// Game specific type definitions
+typedef byte *image_pt;                             // ptr to an object image (sprite)
+typedef byte *sound_pt;                             // ptr to sound (or music) data
+
+// Following are points for achieving certain actions.
+struct point_t {
+	byte score;                                     // The value of the point
+	bool scoredFl;                                  // Whether scored yet
+};
+
+// Structure for initializing maze processing
+struct maze_t {
+	bool enabledFl;                                 // TRUE when maze processing enabled
+	byte size;                                      // Size of (square) maze matrix
+	int  x1, y1, x2, y2;                            // maze hotspot bounding box
+	int  x3, x4;                                    // north, south x entry coordinates
+	byte firstScreenIndex;                          // index of first screen in maze
+};
 
 struct act0 {                                       // Type 0 - Schedule
 	action_t actType;                               // The type of action
