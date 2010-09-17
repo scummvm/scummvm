@@ -67,6 +67,7 @@ MODULE_OBJS := \
 	sound/soundcmd.o \
 	sound/drivers/adlib.o \
 	sound/drivers/amigamac.o \
+	sound/drivers/cms.o \
 	sound/drivers/fb01.o \
 	sound/drivers/midi.o \
 	sound/drivers/pcjr.o \
