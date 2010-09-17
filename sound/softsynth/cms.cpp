@@ -34,7 +34,7 @@
 #define LEFT	0x00
 #define RIGHT	0x01
 
-static byte envelope[8][64] = {
+static const byte envelope[8][64] = {
 	/* zero amplitude */
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -77,7 +77,7 @@ static byte envelope[8][64] = {
 	  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15 }
 };
 
-static int amplitude_lookup[16] = {
+static const int amplitude_lookup[16] = {
 	 0*32767/16,  1*32767/16,  2*32767/16,	3*32767/16,
 	 4*32767/16,  5*32767/16,  6*32767/16,	7*32767/16,
 	 8*32767/16,  9*32767/16, 10*32767/16, 11*32767/16,
