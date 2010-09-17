@@ -347,7 +347,7 @@ bool PersistenceService::SaveGame(uint SlotID, const Common::String &ScreenshotF
 	snprintf(sBuffer, 10, "%ld", CompressedLength);
 	File->writeString(sBuffer);
 	File->writeByte(' ');
-	snprintf(sBuffer, 10, "%lu", Writer.GetDataSize());
+	snprintf(sBuffer, 10, "%u", Writer.GetDataSize());
 	File->writeString(sBuffer);
 	File->writeByte(' ');
 
