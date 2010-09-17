@@ -588,7 +588,7 @@ void MidiDriver_CMS::generateSamples(int16 *buffer, int len) {
 			}
 		}
 
-		int32 render = MIN(len, _samplesTillCallback);
+		int32 render = MIN<int32>(len, _samplesTillCallback);
 		len -= render;
 		_samplesTillCallback -= render;
 		_cms->readBuffer(buffer, render);
