@@ -27,6 +27,7 @@
 
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/debug.h"
 
 // CMS/Gameblaster Emulation taken from DosBox
 
@@ -338,8 +339,10 @@ void CMSEmulator::portWriteIntern(int chip, int offset, int data) {
 			}
 			break;
 
-		default:	/* Error! */
-			error("CMS Unkown write to reg %x with %x",reg, data);
+		default:
+			// The CMS allows all registers to be written, so we just output some debug
+			// message here
+			debug(5, "CMS Unkown write to reg %x with %x",reg, data);
 	}
 }
 
