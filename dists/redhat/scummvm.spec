@@ -44,7 +44,7 @@ games) and many more. See http://www.scummvm.org for a full compatibility list.
 #   install scripts
 #------------------------------------------------------------------------------
 %prep
-%setup -q -a 1 -a 2 -n scummvm-%{version}
+%setup -q -a 1 -n scummvm-%{version}
 mkdir tmp
 
 %build
@@ -56,6 +56,8 @@ make
 install -m755 -D scummvm %{buildroot}%{_bindir}/scummvm
 install -m644 -D dists/scummvm.6 %{buildroot}%{_mandir}/man6/scummvm.6
 install -m644 -D icons/scummvm.xpm %{buildroot}%{_datadir}/pixmaps/scummvm.xpm
+install -m644 -D icons/scummvm.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/scummvm.svg
+install -m644 -D dists/redhat/scummvm48.png %{buildroot}%{_datadir}/icons/hicolor/48x48/apps/scummvm.png
 install -m644 -D gui/themes/scummclassic.zip %{buildroot}%{_datadir}/scummvm/scummclassic.zip
 install -m644 -D gui/themes/scummmodern.zip %{buildroot}%{_datadir}/scummvm/scummmodern.zip
 install -m644 -D dists/pred.dic %{buildroot}%{_datadir}/scummvm/pred.dic
@@ -70,6 +72,18 @@ desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/application
 %clean
 rm -Rf ${RPM_BUILD_ROOT}
 
+%post
+touch --no-create %{_datadir}/icons/hicolor || :
+if [ -x %{_bindir}/gtk-update-icon-cache ]; then
+        %{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
+fi
+
+%postun
+touch --no-create %{_datadir}/icons/hicolor || :
+if [ -x %{_bindir}/gtk-update-icon-cache ]; then
+        %{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
+fi
+
 #------------------------------------------------------------------------------
 #   Files listing.
 #------------------------------------------------------------------------------
@@ -79,6 +93,8 @@ rm -Rf ${RPM_BUILD_ROOT}
 %attr(0755,root,root)%{_bindir}/scummvm
 %{_datadir}/applications/*
 %{_datadir}/pixmaps/scummvm.xpm
+%{_datadir}/icons/hicolor/48x48/apps/scummvm.png
+%{_datadir}/icons/hicolor/scalable/apps/scummvm.svg
 %{_datadir}/scummvm/scumm*.zip
 %{_datadir}/scummvm/pred.dic
 %{_datadir}/scummvm/kyra.dat
@@ -93,6 +109,9 @@ rm -Rf ${RPM_BUILD_ROOT}
 #   Change Log
 #------------------------------------------------------------------------------
 %changelog
+* Fri Sep 17 2010 (1.2.0)
+  - include png/svg icons
+  - remove libmpeg2
 * Thu Sep 21 2006 (0.9.1)
   - include modern theme
 * Mon Dec 20 2004 (0.7.0)
