@@ -129,6 +129,12 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	// Query the selected music device (defaults to MT_AUTO device).
 	DeviceHandle hdl = getDeviceHandle(ConfMan.get("music_driver"));
 
+	// HACK: disable PREFER_GM and PREFER_MT32 since they can result in
+	// unusable devices (such as the mt32emu without ROMs) being selected
+	// by default for certain games.
+	flags &= ~(MDT_PREFER_GM | MDT_PREFER_MT32);
+
+
 	_forceTypeMT32 = false;
 
 	// Check whether the selected music driver is compatible with the
