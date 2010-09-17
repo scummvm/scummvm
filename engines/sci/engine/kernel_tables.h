@@ -405,7 +405,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(PriCoord),          SIG_EVERYWHERE,           "i",                     NULL,            NULL },
     { MAP_CALL(Random),            SIG_EVERYWHERE,           "i(i)(i)",               NULL,            NULL },
     { MAP_CALL(ReadNumber),        SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(RemapColors),       SIG_EVERYWHERE,           "i(i)(i)(i)(i)(i)",      NULL,            NULL },
+    { MAP_CALL(RemapColors),       SIG_EVERYWHERE,           "i(i)(i)(i)(i)(i)",      NULL,            NULL },
     { MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            NULL },
     { MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },
     { MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                      NULL,            NULL },
@@ -427,7 +427,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(SetVideoMode),      SIG_EVERYWHERE,           "i",                     NULL,            NULL },
     { MAP_CALL(ShakeScreen),       SIG_EVERYWHERE,           "(i)(i)",                NULL,            NULL },
     { MAP_CALL(ShowMovie),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_CALL(Show),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(Show),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
     { MAP_CALL(SinDiv),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
     { MAP_CALL(Sort),              SIG_EVERYWHERE,           "ooo",                   NULL,            NULL },
     { MAP_CALL(Sqrt),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
@@ -452,25 +452,25 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(ValidPath),         SIG_EVERYWHERE,           "r",                     NULL,            NULL },
     { MAP_CALL(Wait),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 
-	// Unimplemented SCI0-SCI1.1 unused functions, always mapped to kDummy
-	{ MAP_DUMMY(InspectObj),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(ShowSends),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(ShowObjs),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(ShowFree),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(StackUsage),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(Profiler),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(ShiftScreen),     SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(ListOps),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(ATan),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(Record),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(PlayBack),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(DbugStr),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    // Unimplemented SCI0-SCI1.1 unused functions, always mapped to kDummy
+    { MAP_DUMMY(InspectObj),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(ShowSends),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(ShowObjs),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(ShowFree),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(StackUsage),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(Profiler),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(ShiftScreen),     SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(ListOps),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(ATan),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(Record),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(PlayBack),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(DbugStr),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
-	// =======================================================================================================
+    // =======================================================================================================
 
 #ifdef ENABLE_SCI32
     // SCI2 Kernel Functions
-	// TODO: whoever knows his way through those calls, fix the signatures.
+    // TODO: whoever knows his way through those calls, fix the signatures.
     { MAP_CALL(AddPlane),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(AddScreenItem),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(Array),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -488,19 +488,19 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(ListIndexOf),       SIG_EVERYWHERE,           "l[o0]",                 NULL,            NULL },
     { "OnMe", kIsOnMe,             SIG_EVERYWHERE,           "iioi",                  NULL,            NULL },
     { MAP_CALL(RepaintPlane),      SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-	{ MAP_CALL(SetShowStyle),      SIG_EVERYWHERE,           "ioiiiii(i)",            NULL,            NULL },
+    { MAP_CALL(SetShowStyle),      SIG_EVERYWHERE,           "ioiiiii(i)",            NULL,            NULL },
     { MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 
-	// SCI2 empty functions
+    // SCI2 empty functions
 
-	// Purge is used by the memory manager in SSCI to ensure that X number of bytes (the so called "unmovable
-	// memory") are available. We have our own memory manager and garbage collector, thus we ignore this call.
-	{ MAP_EMPTY(Purge),            SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    // Purge is used by the memory manager in SSCI to ensure that X number of bytes (the so called "unmovable
+    // memory") are available. We have our own memory manager and garbage collector, thus we ignore this call.
+    { MAP_EMPTY(Purge),            SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 
     // SCI2.1 Kernel Functions
-    { MAP_CALL(CD),           	   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(CD),                SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iioi",                  NULL,            NULL },
     { MAP_CALL(List),              SIG_SCI21, SIGFOR_ALL,    "(.*)",                  kList_subops,    NULL },
     { MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                   NULL,            NULL },
@@ -509,29 +509,29 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(Save),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(Text),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
-	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
-	{ MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_CALL(WinDLL),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_CALL(PrintDebug),        SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
+    { MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(WinDLL),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(PrintDebug),        SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
 
-	// SCI2.1 empty functions
+    // SCI2.1 empty functions
 
-	// SetWindowsOption is used to set Windows specific options, like for example the title bar visibility of
-	// the game window in Phantasmagoria 2. We ignore these settings completely.
-	{ MAP_EMPTY(SetWindowsOption), SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    // SetWindowsOption is used to set Windows specific options, like for example the title bar visibility of
+    // the game window in Phantasmagoria 2. We ignore these settings completely.
+    { MAP_EMPTY(SetWindowsOption), SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 
-	// Unimplemented SCI2.1 unused functions, always mapped to kDummy
-	{ MAP_DUMMY(InspectObject),    SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	// Profiler (same as SCI0-SCI1.1)
-	// Record (same as SCI0-SCI1.1)
-	// PlayBack (same as SCI0-SCI1.1)
-	{ MAP_DUMMY(MonoOut),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(SetFatalStr),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(IntegrityChecking),SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(CheckIntegrity),   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(MarkMemory),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(GetSierraProfileInt),    SIG_EVERYWHERE,     "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(GetSierraProfileString), SIG_EVERYWHERE,     "(.*)",                  NULL,            NULL },
+    // Unimplemented SCI2.1 unused functions, always mapped to kDummy
+    { MAP_DUMMY(InspectObject),    SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    // Profiler (same as SCI0-SCI1.1)
+    // Record (same as SCI0-SCI1.1)
+    // PlayBack (same as SCI0-SCI1.1)
+    { MAP_DUMMY(MonoOut),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(SetFatalStr),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(IntegrityChecking),SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(CheckIntegrity),   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(MarkMemory),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(GetSierraProfileInt),    SIG_EVERYWHERE,     "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(GetSierraProfileString), SIG_EVERYWHERE,     "(.*)",                  NULL,            NULL },
 #endif
 
     { NULL, NULL,                  SIG_EVERYWHERE,           NULL,                    NULL,            NULL }
