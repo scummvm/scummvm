@@ -1478,6 +1478,32 @@ reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+/**
+ * Used to programmatically mass set properties of the target plane
+ */
+reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
+	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
+	kStub(s, argc, argv);
+
+	// showStyle matches the style selector of the associated plane object
+	uint16 showStyle = argv[0].toUint16();	// 0 - 15
+	reg_t planeObj = argv[1];
+	//argv[2]
+	//int16 priority = argv[3].toSint16();
+	//argv[4]
+	//argv[5]
+	//argv[6]
+	//argv[7]
+	//int16 unk8 = (argc >= 9) ? argv[8].toSint16() : 0;
+
+	if (showStyle > 15) {
+		warning("kSetShowStyle: Illegal style %d for plane %04x:%04x", showStyle, PRINT_REG(planeObj));
+		return s->r_acc;
+	}
+
+	return s->r_acc;
+}
+
 #endif
 
 } // End of namespace Sci
