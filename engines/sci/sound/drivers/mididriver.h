@@ -69,7 +69,7 @@ protected:
 	byte _reverb;
 
 public:
-	MidiPlayer(SciVersion version) : _reverb(0), _version(version) { }
+	MidiPlayer(SciVersion version) : _driver(0), _reverb(0), _version(version) { }
 
 	int open() {
 		ResourceManager *resMan = g_sci->getResMan();	// HACK
