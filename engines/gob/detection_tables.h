@@ -1068,6 +1068,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesCD,
 		0, 0, 0
 	},
+	{ // Supplied by pykman in bug report #3067489
+		{
+			"gob2cd",
+			"v2.01 Polish",
+			AD_ENTRY1s("intro.stk", "3025f05482b646c18c2c79c615a3a1df", 5011726),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesCD,
+		0, 0, 0
+	},
 	{
 		{
 			"gob2cd",
@@ -2804,6 +2818,20 @@ static const GOBGameDescription gameDescriptions[] = {
 			"v1.000",
 			AD_ENTRY1("intro.stk", "6f2c226c62dd7ab0ab6f850e89d3fc47"),
 			EN_USA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob3,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by pykman in bug report #3067489
+		{
+			"gob3cd",
+			"v1.02 Polish",
+			AD_ENTRY1s("intro.stk", "978afddcac81bb95a04757b61f78471c", 619825),
+			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
