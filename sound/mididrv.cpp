@@ -58,7 +58,7 @@ const byte MidiDriver::_gmToMt32[128] = {
 
 static const uint32 GUIOMapping[] = {
 	MT_PCSPK,		Common::GUIO_MIDIPCSPK,
-	/*MDT_CMS,		Common::GUIO_MIDICMS,*/
+	MT_CMS,			Common::GUIO_MIDICMS,
 	MT_PCJR,		Common::GUIO_MIDIPCJR,
 	MT_ADLIB,		Common::GUIO_MIDIADLIB,
 	MT_C64,		    Common::GUIO_MIDIC64,

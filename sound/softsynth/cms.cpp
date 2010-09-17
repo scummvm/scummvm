@@ -23,8 +23,10 @@
  */
 
 #include "sound/softsynth/cms.h"
+#include "sound/null.h"
 
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 // CMS/Gameblaster Emulation taken from DosBox
 
@@ -341,3 +343,27 @@ void CMSEmulator::portWriteIntern(int chip, int offset, int data) {
 	}
 }
 
+class CMSMusicPlugin : public NullMusicPlugin {
+public:
+	const char *getName() const {
+		return _s("Creative Music System Emulator");
+	}
+
+	const char *getId() const {
+		return "cms";
+	}
+
+	MusicDevices getDevices() const;
+};
+
+MusicDevices CMSMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	devices.push_back(MusicDevice(this, "", MT_CMS));
+	return devices;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(CMS)
+	//REGISTER_PLUGIN_DYNAMIC(CMS, PLUGIN_TYPE_MUSIC, CMSMusicPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(CMS, PLUGIN_TYPE_MUSIC, CMSMusicPlugin);
+//#endif
