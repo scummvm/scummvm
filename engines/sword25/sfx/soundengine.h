@@ -73,10 +73,6 @@ struct SndHandle {
 
 class SoundEngine : public ResourceService, public Persistable {
 public:
-	// -----------------------------------------------------------------------------
-	// Enums and Types
-	// -----------------------------------------------------------------------------
-
 	enum SOUND_TYPES {
 		MUSIC = 0,
 		SPEECH = 1,
@@ -91,16 +87,8 @@ public:
 	*/
 	typedef void (*DynamicSoundReadCallback)(void *UserData, void *Data, uint DataLength);
 
-	// -----------------------------------------------------------------------------
-	// Constructor / destructor
-	// -----------------------------------------------------------------------------
-
 	SoundEngine(Kernel *pKernel);
 	~SoundEngine() {};
-
-	// --------------------------------------------------------------
-	// THIS METHOD MUST BE IMPLEMENTED BY THE SOUND ENGINE
-	// --------------------------------------------------------------
 
 	/**
 	 * Initialises the sound engine
@@ -195,25 +183,6 @@ public:
 	uint PlaySoundEx(const Common::String &FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, uint Layer = 0);
 
 	/**
-	 * Plays a sound generated at runtime
-	 * @param ReadCallback  A pointer to a callback function that is called when sound data is needed.
-	 * See the documentation for DynamicSoundReadCallback for more information.
-	 * @param UserData      A pointer to the data. These are passed to the callback function each time.
-	 * If no such data is needed, this parameter can be set to NULL.
-	 * @param Type          The type of sound
-	 * @param SampleRate    The sample rate for the sound
-	 * @param BitsPerSample The size of the sample in bits. This statement is independant of the number of
-	 * channels. Allowed values are 8, 16, 24, and 32.
-	 * @param Channels      The number of channels. Allowed values are 1 and 2.
-	 * @param Volume        The volume of the sound (0 = off, 1 = full volume)
-	 * @param Pan           Panning (-1 = full left, 1 = right)
-	 * @param Layer         The sound layer
-	 * @return              Returns a handle to the sound. With this handle, the sound can be manipulated during playback.
-	 * @remark              Dynamic sounds cannot be persisted.
-	 */
-	uint PlayDynamicSoundEx(DynamicSoundReadCallback ReadCallback, void *UserData, SOUND_TYPES Type, uint SampleRate, uint BitsPerSample, uint Channels, float Volume = 1.0f, float Pan = 0.0f, uint Layer = 0);
-
-	/**
 	 * Sets the volume of a playing sound
 	 * @param Handle        The sound handle
 	 * @param Volume        The volume of the sound (0 = off, 1 = full volume)
@@ -276,7 +245,7 @@ public:
 	float GetSoundTime(uint Handle);
 
 	Resource    *LoadResource(const Common::String &FileName);
-	bool            CanLoadResource(const Common::String &FileName);
+	bool         CanLoadResource(const Common::String &FileName);
 
 	bool persist(OutputPersistenceBlock &writer);
 	bool unpersist(InputPersistenceBlock &reader);

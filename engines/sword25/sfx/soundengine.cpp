@@ -36,10 +36,23 @@
 
 #include "sword25/sfx/soundengine.h"
 #include "sword25/package/packagemanager.h"
+#include "sword25/kernel/resource.h"
 
 #include "sound/decoders/vorbis.h"
 
 namespace Sword25 {
+
+class SoundResource : public Resource {
+public:
+	SoundResource(const Common::String &fileName) : Resource(fileName, Resource::TYPE_SOUND), _fname(fileName) {}
+	virtual ~SoundResource() {
+		debug(1, "Unloading file %s", _fname.c_str());
+	}
+
+private:
+	Common::String _fname;
+};
+
 
 SoundEngine::SoundEngine(Kernel *pKernel) : ResourceService(pKernel) {
 	if (!_RegisterScriptBindings())
@@ -57,30 +70,42 @@ Service *SoundEngine_CreateObject(Kernel *pKernel) {
 	return new SoundEngine(pKernel);
 }
 
-bool SoundEngine::Init(uint SampleRate, uint Channels) {
+bool SoundEngine::Init(uint sampleRate, uint channels) {
+	warning("STUB: SoundEngine::Init(%d, %d)", sampleRate, channels);
+
 	return true;
 }
 
 void SoundEngine::Update() {
 }
 
-void SoundEngine::SetVolume(float Volume, SOUND_TYPES Type) {
+void SoundEngine::SetVolume(float volume, SOUND_TYPES type) {
+	warning("STUB: SoundEngine::SetVolume(%f, %d)", volume, type);
 }
 
-float SoundEngine::GetVolume(SOUND_TYPES Type) {
+float SoundEngine::GetVolume(SOUND_TYPES type) {
+	warning("STUB: SoundEngine::GetVolume(%d)", type);
 	return 0;
 }
 
 void SoundEngine::PauseAll() {
+	debug(1, "SoundEngine::PauseAll()");
+
+	_mixer->pauseAll(true);
 }
 
 void SoundEngine::ResumeAll() {
+	debug(1, "SoundEngine::ResumeAll()");
+
+	_mixer->pauseAll(false);
 }
 
-void SoundEngine::PauseLayer(uint Layer) {
+void SoundEngine::PauseLayer(uint layer) {
+	warning("STUB: SoundEngine::PauseLayer(%d)", layer);
 }
 
-void SoundEngine::ResumeLayer(uint Layer) {
+void SoundEngine::ResumeLayer(uint layer) {
+	warning("STUB: SoundEngine::ResumeLayer(%d)", layer);
 }
 
 SndHandle *SoundEngine::getHandle(uint *id) {
@@ -121,18 +146,22 @@ Audio::Mixer::SoundType getType(SoundEngine::SOUND_TYPES type) {
 }
 
 bool SoundEngine::PlaySound(const Common::String &fileName, SOUND_TYPES type, float volume, float pan, bool loop, int loopStart, int loopEnd, uint layer) {
-	//PlaySoundEx(fileName, type, volume, pan, loop, loopStart, loopEnd, layer);
+	debug(1, "SoundEngine::PlaySound(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
+
+	PlaySoundEx(fileName, type, volume, pan, loop, loopStart, loopEnd, layer);
 
 	return true;
 }
 
 uint SoundEngine::PlaySoundEx(const Common::String &fileName, SOUND_TYPES type, float volume, float pan, bool loop, int loopStart, int loopEnd, uint layer) {
-	return true;
-
 	Common::SeekableReadStream *in = Kernel::GetInstance()->GetPackage()->GetStream(fileName);
 	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(in, DisposeAfterUse::YES);
 	uint id;
 	SndHandle *handle = getHandle(&id);
+
+	Resource *ResourcePtr = Kernel::GetInstance()->GetResourceManager()->RequestResource(fileName);
+
+	debug(1, "SoundEngine::PlaySoundEx(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
 
 	_mixer->playStream(getType(type), &(handle->handle), stream, -1, (byte)(volume * 255), (int8)(pan * 127));
 
@@ -142,11 +171,15 @@ uint SoundEngine::PlaySoundEx(const Common::String &fileName, SOUND_TYPES type, 
 void SoundEngine::SetSoundVolume(uint handle, float volume) {
 	assert(handle < SOUND_HANDLES);
 
+	debug(1, "SoundEngine::SetSoundVolume(%d, %f)", handle, volume);
+
 	_mixer->setChannelVolume(_handles[handle].handle, (byte)(volume * 255));
 }
 
 void SoundEngine::SetSoundPanning(uint handle, float pan) {
 	assert(handle < SOUND_HANDLES);
+
+	debug(1, "SoundEngine::SetSoundPanning(%d, %f)", handle, pan);
 
 	_mixer->setChannelBalance(_handles[handle].handle, (int8)(pan * 127));
 }
@@ -154,11 +187,15 @@ void SoundEngine::SetSoundPanning(uint handle, float pan) {
 void SoundEngine::PauseSound(uint handle) {
 	assert(handle < SOUND_HANDLES);
 
+	debug(1, "SoundEngine::PauseSound(%d)", handle);
+
 	_mixer->pauseHandle(_handles[handle].handle, true);
 }
 
 void SoundEngine::ResumeSound(uint handle) {
 	assert(handle < SOUND_HANDLES);
+
+	debug(1, "SoundEngine::ResumeSound(%d)", handle);
 
 	_mixer->pauseHandle(_handles[handle].handle, false);
 }
@@ -166,35 +203,53 @@ void SoundEngine::ResumeSound(uint handle) {
 void SoundEngine::StopSound(uint handle) {
 	assert(handle < SOUND_HANDLES);
 
+	debug(1, "SoundEngine::StopSound(%d)", handle);
+
 	_mixer->stopHandle(_handles[handle].handle);
 }
 
 bool SoundEngine::IsSoundPaused(uint handle) {
+	warning("STUB: SoundEngine::IsSoundPaused(%d)", handle);
+
 	return false;
 }
 
 bool SoundEngine::IsSoundPlaying(uint handle) {
-	return false;
+	assert(handle < SOUND_HANDLES);
+
+	debug(1, "SoundEngine::IsSoundPlaying(%d)", handle);
+
+	return _mixer->isSoundHandleActive(_handles[handle].handle);
 }
 
 float SoundEngine::GetSoundVolume(uint handle) {
+	warning("STUB: SoundEngine::GetSoundVolume(%d)", handle);
+
 	return 0;
 }
 
 float SoundEngine::GetSoundPanning(uint handle) {
+	warning("STUB: SoundEngine::GetSoundPanning(%d)", handle);
+
 	return 0;
 }
 
 float SoundEngine::GetSoundTime(uint handle) {
+	warning("STUB: SoundEngine::GetSoundTime(%d)", handle);
+
 	return 0;
 }
 
-Resource *SoundEngine::LoadResource(const Common::String &FileName) {
-	return 0;
+Resource *SoundEngine::LoadResource(const Common::String &fileName) {
+	warning("STUB: SoundEngine::LoadResource(%s)", fileName.c_str());
+
+	return new SoundResource(fileName);
 }
 
 bool SoundEngine::CanLoadResource(const Common::String &fileName) {
 	Common::String fname = fileName;
+
+	debug(1, "SoundEngine::CanLoadResource(%s)", fileName.c_str());
 
 	fname.toLowercase();
 

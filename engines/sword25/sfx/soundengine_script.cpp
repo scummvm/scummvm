@@ -44,7 +44,6 @@
 #include "sword25/sfx/soundengine.h"
 
 namespace Sword25 {
-// -----------------------------------------------------------------------------
 
 static int Init(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
@@ -62,8 +61,6 @@ static int Init(lua_State *L) {
 	return 1;
 }
 
-// -----------------------------------------------------------------------------
-
 static int Update(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
@@ -74,8 +71,6 @@ static int Update(lua_State *L) {
 
 	return 0;
 }
-
-// -----------------------------------------------------------------------------
 
 static int SetVolume(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
@@ -89,8 +84,6 @@ static int SetVolume(lua_State *L) {
 	return 0;
 }
 
-// -----------------------------------------------------------------------------
-
 static int GetVolume(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
@@ -101,8 +94,6 @@ static int GetVolume(lua_State *L) {
 
 	return 1;
 }
-
-// -----------------------------------------------------------------------------
 
 static int PauseAll(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
@@ -115,8 +106,6 @@ static int PauseAll(lua_State *L) {
 	return 0;
 }
 
-// -----------------------------------------------------------------------------
-
 static int ResumeAll(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
@@ -127,8 +116,6 @@ static int ResumeAll(lua_State *L) {
 
 	return 0;
 }
-
-// -----------------------------------------------------------------------------
 
 static int PauseLayer(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
@@ -141,8 +128,6 @@ static int PauseLayer(lua_State *L) {
 	return 0;
 }
 
-// -----------------------------------------------------------------------------
-
 static int ResumeLayer(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
@@ -153,8 +138,6 @@ static int ResumeLayer(lua_State *L) {
 
 	return 0;
 }
-
-// -----------------------------------------------------------------------------
 
 static void ProcessPlayParams(lua_State *L, Common::String &FileName, SoundEngine::SOUND_TYPES &Type, float &Volume, float &Pan, bool &Loop, int &LoopStart, int &LoopEnd, uint &Layer) {
 	FileName = luaL_checkstring(L, 1);
@@ -222,8 +205,6 @@ static int PlaySoundEx(lua_State *L) {
 	return 1;
 }
 
-// -----------------------------------------------------------------------------
-
 static int SetSoundVolume(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
@@ -234,8 +215,6 @@ static int SetSoundVolume(lua_State *L) {
 
 	return 0;
 }
-
-// -----------------------------------------------------------------------------
 
 static int SetSoundPanning(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
@@ -248,8 +227,6 @@ static int SetSoundPanning(lua_State *L) {
 	return 0;
 }
 
-// -----------------------------------------------------------------------------
-
 static int PauseSound(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
@@ -260,8 +237,6 @@ static int PauseSound(lua_State *L) {
 
 	return 0;
 }
-
-// -----------------------------------------------------------------------------
 
 static int ResumeSound(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
@@ -274,8 +249,6 @@ static int ResumeSound(lua_State *L) {
 	return 0;
 }
 
-// -----------------------------------------------------------------------------
-
 static int StopSound(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
@@ -286,8 +259,6 @@ static int StopSound(lua_State *L) {
 
 	return 0;
 }
-
-// -----------------------------------------------------------------------------
 
 static int IsSoundPaused(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
@@ -300,8 +271,6 @@ static int IsSoundPaused(lua_State *L) {
 	return 1;
 }
 
-// -----------------------------------------------------------------------------
-
 static int IsSoundPlaying(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
@@ -312,8 +281,6 @@ static int IsSoundPlaying(lua_State *L) {
 
 	return 1;
 }
-
-// -----------------------------------------------------------------------------
 
 static int GetSoundVolume(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
@@ -326,8 +293,6 @@ static int GetSoundVolume(lua_State *L) {
 	return 1;
 }
 
-// -----------------------------------------------------------------------------
-
 static int GetSoundPanning(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
@@ -338,8 +303,6 @@ static int GetSoundPanning(lua_State *L) {
 
 	return 1;
 }
-
-// -----------------------------------------------------------------------------
 
 static const char *SFX_LIBRARY_NAME = "Sfx";
 
@@ -372,8 +335,6 @@ static const lua_constant_reg SFX_CONSTANTS[] = {
 	{"SFX", SoundEngine::SFX},
 	{0, 0}
 };
-
-// -----------------------------------------------------------------------------
 
 bool SoundEngine::_RegisterScriptBindings() {
 	Kernel *pKernel = Kernel::GetInstance();
