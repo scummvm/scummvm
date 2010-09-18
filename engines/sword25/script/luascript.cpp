@@ -152,11 +152,11 @@ bool LuaScriptEngine::Init() {
 	// Initialize debugging callback
 	if (DebugMan.isDebugChannelEnabled(kDebugScript)) {
 		int mask = 0;
-		if (gDebugLevel == 1)
+		if ((gDebugLevel & 1) != 0)
 			mask |= LUA_MASKCALL;
-		if (gDebugLevel == 2)
+		if ((gDebugLevel & 2) != 0)
 			mask |= LUA_MASKRET;
-		if (gDebugLevel == 4)
+		if ((gDebugLevel & 4) != 0)
 			mask |= LUA_MASKLINE;
 
 		if (mask != 0)
