@@ -110,14 +110,16 @@ void SoundEngine::ResumeLayer(uint layer) {
 }
 
 SndHandle *SoundEngine::getHandle(uint *id) {
-	for (uint i = 0; i < SOUND_HANDLES; i++) {
+
+	// NOTE: Index 0 means error. Thus we're not using it
+	for (uint i = 1; i < SOUND_HANDLES; i++) {
 		if (_handles[i].type != kFreeHandle && !_mixer->isSoundHandleActive(_handles[i].handle)) {
 			debugC(kDebugSound, 5, "Handle %d has finished playing", i);
 			_handles[i].type = kFreeHandle;
 		}
 	}
 
-	for (uint i = 0; i < SOUND_HANDLES; i++) {
+	for (uint i = 1; i < SOUND_HANDLES; i++) {
 		if (_handles[i].type == kFreeHandle) {
 			debugC(kDebugSound, 5, "Allocated handle %d", i);
 			if (id)
@@ -159,8 +161,6 @@ uint SoundEngine::PlaySoundEx(const Common::String &fileName, SOUND_TYPES type, 
 	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(in, DisposeAfterUse::YES);
 	uint id;
 	SndHandle *handle = getHandle(&id);
-
-	Resource *ResourcePtr = Kernel::GetInstance()->GetResourceManager()->RequestResource(fileName);
 
 	debugC(1, kDebugSound, "SoundEngine::PlaySoundEx(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
 
