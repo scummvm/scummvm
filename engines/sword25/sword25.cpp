@@ -58,6 +58,8 @@ Sword25Engine::Sword25Engine(OSystem *syst, const ADGameDescription *gameDesc):
 	_gameDescription(gameDesc) {
 
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Script debug level");
+	DebugMan.addDebugChannel(kDebugScript, "Scripts", "Script debug level");
+	DebugMan.addDebugChannel(kDebugSound, "Sound", "Sound debug level");
 }
 
 Sword25Engine::~Sword25Engine() {

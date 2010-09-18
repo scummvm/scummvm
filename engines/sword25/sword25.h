@@ -42,7 +42,8 @@ enum {
 };
 
 enum {
-	kDebugScript = 1 << 0
+	kDebugScript = 1 << 0,
+	kDebugSound = 1 << 1
 };
 
 enum GameFlags {
