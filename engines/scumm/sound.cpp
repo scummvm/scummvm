@@ -78,6 +78,7 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer)
 	_curSoundPos(0),
 	_currentCDSound(0),
 	_currentMusic(0),
+	_lastSound(0),
 	_soundsPaused(false),
 	_sfxMode(0) {
 
@@ -95,6 +96,7 @@ Sound::~Sound() {
 void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {
 	if (_vm->VAR_LAST_SOUND != 0xFF)
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
+	_lastSound = sound;
 
 	// HE music resources are in separate file
 	if (sound <= _vm->_numSounds)
@@ -789,6 +791,7 @@ void Sound::stopAllSounds() {
 	}
 
 	// Clear the (secondary) sound queue
+	_lastSound = 0;
 	_soundQue2Pos = 0;
 	memset(_soundQue2, 0, sizeof(_soundQue2));
 
