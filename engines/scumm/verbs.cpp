@@ -756,19 +756,6 @@ void ScummEngine_v0::runObject(int obj, int entry) {
 	}
 }
 
-void ScummEngine_v2::runObject(int obj, int entry) {
-	if (getVerbEntrypoint(obj, entry) != 0) {
-		runObjectScript(obj, entry, false, false, NULL);
-	} else if (entry != 13 && entry != 15) {
-		VAR(9) = entry;
-		runScript(3, 0, 0, 0);
-	}
-
-	_activeInventory = 0;
-	_activeObject = 0;
-	_activeVerb = 13;
-}
-
 bool ScummEngine_v0::verbMoveToActor(int actor) {
 	Actor *a = derefActor(VAR(VAR_EGO), "verbMoveToActor");
 	Actor *a2 = derefActor(actor, "verbMoveToActor");
