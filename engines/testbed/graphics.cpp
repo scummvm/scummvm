@@ -351,7 +351,7 @@ void GFXtests::drawEllipse(int cx, int cy, int a, int b) {
 	int width = g_system->getWidth();
 	int height = Testsuite::getDisplayRegionCoordinates().y;
 	byte *buffer = new byte[height * width];
-	float theta;
+	double theta;
 	int x, y, x1, y1;
 
 	memset(buffer, 0, sizeof(byte) * width * height);

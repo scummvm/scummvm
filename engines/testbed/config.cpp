@@ -159,10 +159,7 @@ void TestbedInteractionDialog::addButtonXY(uint x, uint y, uint w, uint h, const
 }
 
 void TestbedInteractionDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
-	switch (cmd) {
-	default:
-		GUI::Dialog::handleCommand(sender, cmd, data);
-	}
+	GUI::Dialog::handleCommand(sender, cmd, data);
 }
 
 void TestbedConfigManager::initDefaultConfiguration() {
