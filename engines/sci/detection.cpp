@@ -516,6 +516,15 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	resMan->init();
 	// TODO: Add error handling.
 
+#ifndef ENABLE_SCI32
+	// Is SCI32 compiled in? If not, and this is a SCI32 game,
+	// stop here
+	if (getSciVersion() >= SCI_VERSION_2) {
+		delete resMan;
+		return (const ADGameDescription *)&s_fallbackDesc;
+	}
+#endif
+
 	ViewType gameViews = resMan->getViewType();
 
 	// Have we identified the game views? If not, stop here
@@ -525,15 +534,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		delete resMan;
 		return 0;
 	}
-
-#ifndef ENABLE_SCI32
-	// Is SCI32 compiled in? If not, and this is a SCI32 game,
-	// stop here
-	if (getSciVersion() >= SCI_VERSION_2) {
-		delete resMan;
-		return (const ADGameDescription *)&s_fallbackDesc;
-	}
-#endif
 
 	// EGA views
 	if (gameViews == kViewEga && s_fallbackDesc.platform != Common::kPlatformAmiga)

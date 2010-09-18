@@ -273,6 +273,13 @@ void ResourceManager::removeAudioResource(ResourceId resId) {
 // w syncAscSize (iff seq has bit 6 set)
 
 int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
+#ifndef ENABLE_SCI32
+	// SCI32 support is not built in. Check if this is a SCI32 game
+	// and if it is abort here.
+	if (_volVersion == kResVersionSci32)
+		return SCI_ERROR_RESMAP_NOT_FOUND;
+#endif
+
 	uint32 offset = 0;
 	Resource *mapRes = findResource(ResourceId(kResourceTypeMap, map->_volumeNumber), false);
 
