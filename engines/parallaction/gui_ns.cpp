@@ -586,7 +586,7 @@ public:
 		if (_points[2] >= _points[0] && _points[2] >= _points[1]) {
 			character = CHAR_DOUGH;
 		} else {
-			error("If you read this, either your CPU or transivity is broken (we believe the former).");
+			error("If you read this, either your CPU or transivity is broken (we believe the former)");
 		}
 
 		_vm->cleanupGame();

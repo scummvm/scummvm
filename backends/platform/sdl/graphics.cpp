@@ -527,7 +527,7 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 	}
 
 	if (!bestMode) {
-		warning("Unable to enforce the desired aspect ratio!");
+		warning("Unable to enforce the desired aspect ratio");
 		return;
 	}
 	//printf("%d %d\n", bestMode->w, bestMode->h);

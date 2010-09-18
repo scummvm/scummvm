@@ -1084,7 +1084,7 @@ void Screen::setTextColor(const uint8 *cmap, int a, int b) {
 
 bool Screen::loadFont(FontId fontId, const char *filename) {
 	if (fontId == FID_SJIS_FNT) {
-		warning("Trying to replace system SJIS font.");
+		warning("Trying to replace system SJIS font");
 		return true;
 	}
 

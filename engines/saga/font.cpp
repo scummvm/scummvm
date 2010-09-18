@@ -123,7 +123,7 @@ void Font::loadFont(uint32 fontResourceId) {
 	}
 
 	if (readS.pos() != FONT_DESCSIZE) {
-		error("Invalid font resource size.");
+		error("Invalid font resource size");
 	}
 
 	font->normal.font = (byte*)malloc(fontResourceLength - FONT_DESCSIZE);

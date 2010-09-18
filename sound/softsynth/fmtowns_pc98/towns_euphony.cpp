@@ -560,10 +560,10 @@ uint8 TownsEuphonyDriver::appendEvent(uint8 evt, uint8 chan) {
 
 void TownsEuphonyDriver::sendEvent(uint8 mode, uint8 command) {
 	if (mode == 0) {
-		warning("TownsEuphonyDriver: Mode 0 not implemented.");
+		warning("TownsEuphonyDriver: Mode 0 not implemented");
 
 	} else if (mode == 0x10) {
-		warning("TownsEuphonyDriver: Mode 0x10 not implemented.");
+		warning("TownsEuphonyDriver: Mode 0x10 not implemented");
 
 	} else if (mode == 0xff) {
 		if (command >= 0xf0) {

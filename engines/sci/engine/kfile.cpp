@@ -496,7 +496,7 @@ reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 
 	// Find saved-game
 	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
-		error("kCheckSaveGame: called with invalid savegameId!");
+		error("kCheckSaveGame: called with invalid savegameId");
 	uint savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
 	int savegameNr = findSavegame(saves, savegameId);
 	if (savegameNr == -1)
@@ -645,11 +645,11 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		warning("Error opening savegame \"%s\" for writing", filename.c_str());
 	} else {
 		if (!gamestate_save(s, out, game_description.c_str(), version.c_str())) {
-			warning("Saving the game failed.");
+			warning("Saving the game failed");
 		} else {
 			out->finalize();
 			if (out->err()) {
-				warning("Writing the savegame failed.");
+				warning("Writing the savegame failed");
 			} else {
 				s->r_acc = TRUE_REG; // success
 			}

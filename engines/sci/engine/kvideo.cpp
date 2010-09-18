@@ -117,7 +117,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			initGraphics(screenWidth, screenHeight, screenWidth > 320, NULL);
 
 			if (g_system->getScreenFormat().bytesPerPixel == 1) {
-				error("This video requires >8bpp color to be displayed, but could not switch to RGB color mode.");
+				error("This video requires >8bpp color to be displayed, but could not switch to RGB color mode");
 				return NULL_REG;
 			}
 

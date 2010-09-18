@@ -1102,7 +1102,7 @@ bool Console::cmdSaveGame(int argc, const char **argv) {
 	} else {
 		out->finalize();
 		if (out->err()) {
-			warning("Writing the savegame failed.");
+			warning("Writing the savegame failed");
 		}
 		delete out;
 	}

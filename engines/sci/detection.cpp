@@ -765,7 +765,7 @@ Common::Error SciEngine::saveGameState(int slot, const char *desc) {
 	} else {
 		out->finalize();
 		if (out->err()) {
-			warning("Writing the savegame failed.");
+			warning("Writing the savegame failed");
 			return Common::kWritingFailed;
 		}
 		delete out;

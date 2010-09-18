@@ -103,7 +103,7 @@ void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &
 			break;
 
 		default:
-			error("Vertical alignment in horizontal data.");
+			error("Vertical alignment in horizontal data");
 		}
 	} else {
 		in_x = area.left;
@@ -132,7 +132,7 @@ void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &
 			break;
 
 		default:
-			error("Horizontal alignment in vertical data.");
+			error("Horizontal alignment in vertical data");
 		}
 	} else {
 		in_y = area.top;

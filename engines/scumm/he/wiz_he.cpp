@@ -2088,7 +2088,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 
 	if (_vm->_fullRedraw && dstResNum == 0) {
 		if (sourceImage != 0 || (params->processFlags & (kWPFScaled | kWPFRotate)))
-			error("Can't do this command in the enter script.");
+			error("Can't do this command in the enter script");
 
 		assert(_imagesNum < ARRAYSIZE(_images));
 		WizImage *pwi = &_images[_imagesNum];

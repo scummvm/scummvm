@@ -518,7 +518,7 @@ void AgiEngine::loadDict() {
 
 	_predictiveDictLine = (char **)calloc(1, sizeof(char *) * lines);
 	if (_predictiveDictLine == NULL) {
-		warning("Cannot allocate memory for line index buffer.");
+		warning("Cannot allocate memory for line index buffer");
 		return;
 	}
 	_predictiveDictLine[0] = _predictiveDictText;

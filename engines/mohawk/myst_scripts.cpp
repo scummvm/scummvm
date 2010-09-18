@@ -2455,7 +2455,7 @@ void MystScriptParser::opcode_120(uint16 op, uint16 var, uint16 argc, uint16 *ar
 			if (var8 != 0xFFFF)
 				_vm->_varStore->setVar(var8, !_vm->_varStore->getVar(var8));
 			else
-				warning("Opcode 120: No invoking Resource Var 8 found!");
+				warning("Opcode 120: No invoking Resource Var 8 found");
 		} else
 			unknown(op, var, argc, argv);
 		break;

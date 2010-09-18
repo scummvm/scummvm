@@ -110,7 +110,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 	delete vers;
 	if ((saveGameVersion == kCDSaveGameVersion && (_vm->getFeatures() & GF_DVD))
 		|| (saveGameVersion == kDVDSaveGameVersion && !(_vm->getFeatures() & GF_DVD))) {
-		warning("Incompatible saved game versions. No support for this yet.");
+		warning("Incompatible saved game versions. No support for this yet");
 		delete mhk;
 		return false;
 	}

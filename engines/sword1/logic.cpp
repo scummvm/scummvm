@@ -1017,7 +1017,7 @@ int Logic::fnNewScript(Object *cpt, int32 id, int32 script, int32 d, int32 e, in
 int Logic::fnSubScript(Object *cpt, int32 id, int32 script, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_tree.o_script_level++;
 	if (cpt->o_tree.o_script_level == TOTAL_script_levels)
-		error("Compact %d: script level exceeded in fnSubScript.", id);
+		error("Compact %d: script level exceeded in fnSubScript", id);
 	cpt->o_tree.o_script_pc[cpt->o_tree.o_script_level] = script;
 	cpt->o_tree.o_script_id[cpt->o_tree.o_script_level] = script;
 	return SCRIPT_STOP;
@@ -1605,7 +1605,7 @@ int Logic::fnStopMusic(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d
 }
 
 int Logic::fnInnerSpace(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
-	error("fnInnerSpace() not working.");
+	error("fnInnerSpace() not working");
 	return SCRIPT_STOP;	// for compilers that don't support NORETURN
 }
 

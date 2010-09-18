@@ -950,9 +950,9 @@ Common::Error processSettings(Common::String &command, Common::StringMap &settin
 		if (dir && *dir && strlen(dir) < MAXPATHLEN) {
 			Common::FSNode saveDir(dir);
 			if (!saveDir.exists()) {
-				warning("Non-existent SCUMMVM_SAVEPATH save path. It will be ignored.");
+				warning("Non-existent SCUMMVM_SAVEPATH save path. It will be ignored");
 			} else if (!saveDir.isWritable()) {
-				warning("Non-writable SCUMMVM_SAVEPATH save path. It will be ignored.");
+				warning("Non-writable SCUMMVM_SAVEPATH save path. It will be ignored");
 			} else {
 				settings["savepath"] = dir;
 			}

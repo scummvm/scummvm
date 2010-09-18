@@ -1763,7 +1763,7 @@ void ScummEngine::setupMusic(int midi) {
 	} else if (_game.platform == Common::kPlatformFMTowns && (_game.version == 3 || _game.id == GID_MONKEY)) {
 		_musicEngine = _townsPlayer = new Player_Towns(this, _mixer);
 		if (!_townsPlayer->init())
-			error("Failed to initialize FM-Towns audio driver.");
+			error("Failed to initialize FM-Towns audio driver");
 	} else if (_game.version >= 3 && _game.heversion <= 62) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;

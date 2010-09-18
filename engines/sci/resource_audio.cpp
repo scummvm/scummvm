@@ -61,7 +61,7 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 		// Now read the whole offset mapping table for later usage
 		int32 recordCount = fileStream->readUint32LE();
 		if (!recordCount)
-			error("compressed audio volume doesn't contain any entries!");
+			error("compressed audio volume doesn't contain any entries");
 		int32 *offsetMapping = new int32[(recordCount + 1) * 2];
 		_audioCompressionOffsetMapping = offsetMapping;
 		for (int recordNo = 0; recordNo < recordCount; recordNo++) {

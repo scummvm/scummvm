@@ -429,7 +429,7 @@ void OSystem_WINCE3::initBackend() {
 	GUI::Actions::init();
 	GUI_Actions::Instance()->initInstanceMain(this);
 	if (!GUI_Actions::Instance()->loadMapping()) {	// error during loading means not present/wrong version
-		warning("Setting default action mappings.");
+		warning("Setting default action mappings");
 		GUI_Actions::Instance()->saveMapping();	// write defaults
 	}
 

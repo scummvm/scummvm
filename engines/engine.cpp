@@ -110,7 +110,7 @@ Engine::Engine(OSystem *syst)
 	// heaps of (sound) memory get allocated but never freed. Of course,
 	// there still would be problems with many games...
 	if (!_mixer->isReady())
-		warning("Sound initialization failed. This may cause severe problems in some games.");
+		warning("Sound initialization failed. This may cause severe problems in some games");
 
 	// Setup a dummy cursor and palette, so that all engines can use
 	// CursorMan.replace without having any headaches about memory leaks.

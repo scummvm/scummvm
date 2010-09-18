@@ -333,7 +333,7 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 		debug(0, "Saved game MD5: \"%s\"", md5);
 
 		if (!getGameMD5()) {
-			warning("Since your game was only detected via the fallback detector, there is no possibility to assure the save is compatible with your game version.");
+			warning("Since your game was only detected via the fallback detector, there is no possibility to assure the save is compatible with your game version");
 
 			debug(0, "The game used for saving is \"%s\".", md5);
 		} else if (strcmp(md5, getGameMD5())) {

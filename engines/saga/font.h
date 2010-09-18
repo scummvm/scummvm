@@ -186,7 +186,7 @@ class Font {
 
 	 void validate(FontId fontId) {
 		 if (!valid(fontId)) {
-			 error("Font::validate: Invalid font id.");
+			 error("Font::validate: Invalid font id");
 		 }
 	 }
 	 bool valid(FontId fontId) {

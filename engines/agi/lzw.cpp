@@ -107,7 +107,7 @@ uint8 *LZWDecoder::decodeString(uint8 *buffer, uint32 code) {
 		*buffer++ = appendCharacter[code];
 		code = prefixCode[code];
 		if (i++ >= 4000) {
-			error("lzw: error in code expansion.");
+			error("lzw: error in code expansion");
 		}
 	}
 	*buffer = code;

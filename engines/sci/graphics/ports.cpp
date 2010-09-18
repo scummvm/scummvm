@@ -301,7 +301,7 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	Common::Rect r;
 
 	if (!pwnd) {
-		error("Can't open window!");
+		error("Can't open window");
 		return 0;
 	}
 

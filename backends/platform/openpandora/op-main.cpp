@@ -79,7 +79,7 @@ void OSystem_OP::initBackend() {
 	char workDirName[PATH_MAX+1];
 
 	if (getcwd(workDirName, PATH_MAX) == NULL) {
-		error("Could not obtain current working directory.");
+		error("Could not obtain current working directory");
 	} else {
 		printf("Current working directory: %s\n", workDirName);
 	}
@@ -165,7 +165,7 @@ void OSystem_OP::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	char workDirName[PATH_MAX+1];
 
 	if (getcwd(workDirName, PATH_MAX) == NULL) {
-		error("Error: Could not obtain current working directory.");
+		error("Error: Could not obtain current working directory");
 	}
 
 	Common::FSNode workdirNode(workDirName);
