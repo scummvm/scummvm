@@ -966,11 +966,15 @@ void Screen::rollCredits() {
 	if (Sword2Engine::isPsx()) {
 		if (!f.open("credits.txt")) {
 			warning("Can't find credits.txt");
+
+			free(logoData);
 			return;
 		}
 	} else {
 		if (!f.open("credits.clu")) {
 			warning("Can't find credits.clu");
+
+			free(logoData);
 			return;
 		}
 	}
