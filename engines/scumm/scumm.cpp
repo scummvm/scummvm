@@ -698,6 +698,10 @@ ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	_activeObject2Inv = false;
 	_activeObjectObtained = false;
 	_activeObject2Obtained = false;
+
+	VAR_ACTIVE_ACTOR = 0xFF;
+	VAR_IS_SOUND_RUNNING = 0xFF;
+	VAR_ACTIVE_VERB = 0xFF;
 }
 
 ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
@@ -1929,6 +1933,12 @@ void ScummEngine::waitForTimer(int msec_delay) {
 			break;
 		_system->delayMillis(10);
 	}
+}
+
+void ScummEngine_v0::scummLoop(int delta) {
+	VAR(VAR_IS_SOUND_RUNNING) = (_sound->_lastSound && _sound->isSoundRunning(_sound->_lastSound) != 0);
+
+	ScummEngine::scummLoop(delta);
 }
 
 void ScummEngine::scummLoop(int delta) {

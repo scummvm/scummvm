@@ -745,13 +745,13 @@ void ScummEngine_v0::runObject(int obj, int entry) {
 		runObjectScript(obj, entry, false, false, NULL);
 	} else if (entry != 13 && entry != 15) {
 		if (_activeVerb != 3) {
-			VAR(9) = entry;
+			VAR(VAR_ACTIVE_VERB) = entry;
 			runScript(3, 0, 0, 0);
 
 		// For some reasons, certain objects don't have a "give" script
-		} else if (VAR(5) > 0 && VAR(5) < 8) {
+		} else if (VAR(VAR_ACTIVE_ACTOR) > 0 && VAR(VAR_ACTIVE_ACTOR) < 8) {
 			if (_activeInventory)
-				setOwnerOf(_activeInventory, VAR(5));
+				setOwnerOf(_activeInventory, VAR(VAR_ACTIVE_ACTOR));
 		}
 	}
 }
@@ -955,7 +955,7 @@ bool ScummEngine_v0::verbExec() {
 			return true;
 		}
 		_v0ObjectInInventory = true;
-		VAR(5) = _activeActor;
+		VAR(VAR_ACTIVE_ACTOR) = _activeActor;
 		runObject(_activeInventory , 3);
 		_v0ObjectInInventory = false;
 
