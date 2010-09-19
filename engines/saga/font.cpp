@@ -610,7 +610,7 @@ void Font::textDrawRect(FontId fontId, const char *text, const Common::Rect &rec
 			}
 			w_total = 0;
 			len_total = 0;
-			if (wc == 0) {
+			if (wc == 0 && measurePointer) {
 				searchPointer = measurePointer + 1;
 			}
 			wc = 0;
