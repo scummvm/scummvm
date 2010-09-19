@@ -179,7 +179,10 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain, _("Short game identifier used for referring to savegames and running the game from the command line"));
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, "GameOptions_Game.Name", _("Name:"), _("Full title of the game"));
+	if (g_system->getOverlayWidth() > 320)
+		new StaticTextWidget(tab, "GameOptions_Game.Name", _("Name:"), _("Full title of the game"));
+	else
+		new StaticTextWidget(tab, "GameOptions_Game.Name", _c("Name:", "lowres"), _("Full title of the game"));
 	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description, _("Full title of the game"));
 
 	// Language popup
