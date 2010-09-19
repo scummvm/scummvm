@@ -32,7 +32,14 @@ struct PlaneEntry {
 	reg_t object;
 	uint16 priority;
 	uint16 lastPriority;
+	int16 planeOffsetX;
 	GuiResourceId pictureId;
+	Common::Rect planeRect;
+	Common::Rect planeClipRect;
+	Common::Rect upscaledPlaneRect;
+	Common::Rect upscaledPlaneClipRect;
+	bool planePictureMirrored;
+	byte planeBack;
 };
 
 typedef Common::List<PlaneEntry> PlaneList;
@@ -81,8 +88,10 @@ public:
 
 	void kernelAddPlane(reg_t object);
 	void kernelUpdatePlane(reg_t object);
+	void kernelRepaintPlane(reg_t object);
 	void kernelDeletePlane(reg_t object);
 	void kernelAddScreenItem(reg_t object);
+	void kernelUpdateScreenItem(reg_t object);
 	void kernelDeleteScreenItem(reg_t object);
 	int16 kernelGetHighPlanePri();
 	void kernelAddPicAt(reg_t planeObj, int16 forWidth, GuiResourceId pictureId);

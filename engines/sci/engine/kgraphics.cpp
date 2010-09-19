@@ -1267,69 +1267,38 @@ reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
-	reg_t viewObj = argv[0];
-
-	g_sci->_gfxFrameout->kernelAddScreenItem(viewObj);
-	return NULL_REG;
+	g_sci->_gfxFrameout->kernelAddScreenItem(argv[0]);
+	return s->r_acc;
 }
 
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
-	//reg_t viewObj = argv[0];
-
-	//warning("kUpdateScreenItem, object %04x:%04x, view %d, loop %d, cel %d, pri %d", PRINT_REG(viewObj), viewId, loopNo, celNo, priority);
-	return NULL_REG;
+	g_sci->_gfxFrameout->kernelUpdateScreenItem(argv[0]);
+	return s->r_acc;
 }
 
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
-	reg_t viewObj = argv[0];
-
-	g_sci->_gfxFrameout->kernelDeleteScreenItem(viewObj);
-
-	/*
-	reg_t viewObj = argv[0];
-	uint16 viewId = readSelectorValue(s->_segMan, viewObj, SELECTOR(view));
-	int16 loopNo = readSelectorValue(s->_segMan, viewObj, SELECTOR(loop));
-	int16 celNo = readSelectorValue(s->_segMan, viewObj, SELECTOR(cel));
-	//int16 leftPos = 0;
-	//int16 topPos = 0;
-	int16 priority = readSelectorValue(s->_segMan, viewObj, SELECTOR(priority));
-	//int16 control = 0;
-	*/
-
-	// TODO
-
-	//warning("kDeleteScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
-	return NULL_REG;
+	g_sci->_gfxFrameout->kernelDeleteScreenItem(argv[0]);
+	return s->r_acc;
 }
 
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
-	reg_t planeObj = argv[0];
-
-	g_sci->_gfxFrameout->kernelAddPlane(planeObj);
-	return NULL_REG;
+	g_sci->_gfxFrameout->kernelAddPlane(argv[0]);
+	return s->r_acc;
 }
 
 reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
-	reg_t planeObj = argv[0];
-
-	g_sci->_gfxFrameout->kernelDeletePlane(planeObj);
-	return NULL_REG;
+	g_sci->_gfxFrameout->kernelDeletePlane(argv[0]);
+	return s->r_acc;
 }
 
 reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
-	reg_t planeObj = argv[0];
-
-	g_sci->_gfxFrameout->kernelUpdatePlane(planeObj);
+	g_sci->_gfxFrameout->kernelUpdatePlane(argv[0]);
 	return s->r_acc;
 }
 
 reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
-	reg_t picObj = argv[0];
-
-	// TODO
-
-	warning("kRepaintPlane object %04x:%04x", PRINT_REG(picObj));
-	return NULL_REG;
+	g_sci->_gfxFrameout->kernelRepaintPlane(argv[0]);
+	return s->r_acc;
 }
 
 reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv) {

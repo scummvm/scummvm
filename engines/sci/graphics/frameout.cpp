@@ -70,6 +70,7 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 	newPlane.pictureId = 0xFFFF;
 	newPlane.priority = readSelectorValue(_segMan, object, SELECTOR(priority));
 	newPlane.lastPriority = 0xFFFF; // hidden
+	newPlane.planeOffsetX = 0;
 	_planes.push_back(newPlane);
 
 	kernelUpdatePlane(object);
@@ -91,11 +92,52 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 						addPlanePicture(object, it->pictureId, 0);
 				}
 			}
+			it->planeRect.top = readSelectorValue(_segMan, object, SELECTOR(top));
+			it->planeRect.left = readSelectorValue(_segMan, object, SELECTOR(left));
+			it->planeRect.bottom = readSelectorValue(_segMan, object, SELECTOR(bottom)) + 1;
+			it->planeRect.right = readSelectorValue(_segMan, object, SELECTOR(right)) + 1;
+
+			Common::Rect screenRect(_screen->getWidth(), _screen->getHeight());
+			it->planeRect.top = (it->planeRect.top * screenRect.height()) / scriptsRunningHeight;
+			it->planeRect.left = (it->planeRect.left * screenRect.width()) / scriptsRunningWidth;
+			it->planeRect.bottom = (it->planeRect.bottom * screenRect.height()) / scriptsRunningHeight;
+			it->planeRect.right = (it->planeRect.right * screenRect.width()) / scriptsRunningWidth;
+
+			// We get negative left in kq7 in scrolling rooms
+			if (it->planeRect.left < 0) {
+				it->planeOffsetX = -it->planeRect.left;
+				it->planeRect.left = 0;
+			}
+			if (it->planeRect.top < 0)
+				it->planeRect.top = 0;
+			// We get bad plane-bottom in sq6
+			if (it->planeRect.right > _screen->getWidth())
+				it->planeRect.right = _screen->getWidth();
+			if (it->planeRect.bottom > _screen->getHeight())
+				it->planeRect.bottom = _screen->getHeight();
+
+			it->planeClipRect = Common::Rect(it->planeRect.width(), it->planeRect.height());
+			it->upscaledPlaneRect = it->planeRect;
+			it->upscaledPlaneClipRect = it->planeClipRect;
+			if (_screen->getUpscaledHires()) {
+				_screen->adjustToUpscaledCoordinates(it->upscaledPlaneRect.top, it->upscaledPlaneRect.left);
+				_screen->adjustToUpscaledCoordinates(it->upscaledPlaneRect.bottom, it->upscaledPlaneRect.right);
+				_screen->adjustToUpscaledCoordinates(it->upscaledPlaneClipRect.top, it->upscaledPlaneClipRect.left);
+				_screen->adjustToUpscaledCoordinates(it->upscaledPlaneClipRect.bottom, it->upscaledPlaneClipRect.right);
+			}
+
+			it->planePictureMirrored = readSelectorValue(_segMan, object, SELECTOR(mirrored));
+			it->planeBack = readSelectorValue(_segMan, object, SELECTOR(back));
+
 			sortPlanes();
 			return;
 		}
 	}
 	error("kUpdatePlane called on plane that wasn't added before");
+}
+
+void GfxFrameout::kernelRepaintPlane(reg_t object) {
+	// TODO
 }
 
 void GfxFrameout::kernelDeletePlane(reg_t object) {
@@ -145,6 +187,10 @@ void GfxFrameout::deletePlanePictures(reg_t object) {
 
 void GfxFrameout::kernelAddScreenItem(reg_t object) {
 	_screenItems.push_back(object);
+}
+
+void GfxFrameout::kernelUpdateScreenItem(reg_t object) {
+	// TODO
 }
 
 void GfxFrameout::kernelDeleteScreenItem(reg_t object) {
@@ -207,72 +253,31 @@ void GfxFrameout::kernelFrameout() {
 	_palette->palVaryUpdate();
 
 	// Allocate enough space for all screen items
+	// TODO: Modify _screenItems to hold FrameoutEntry entries instead.
+	// Creating and destroying this in kernelFrameout() is overkill!
 	FrameoutEntry *itemData = new FrameoutEntry[_screenItems.size()];
 
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
 		reg_t planeObject = it->object;
 		uint16 planeLastPriority = it->lastPriority;
 
-		Common::Rect planeRect;
-		planeRect.top = readSelectorValue(_segMan, planeObject, SELECTOR(top));
-		planeRect.left = readSelectorValue(_segMan, planeObject, SELECTOR(left));
-		planeRect.bottom = readSelectorValue(_segMan, planeObject, SELECTOR(bottom)) + 1;
-		planeRect.right = readSelectorValue(_segMan, planeObject, SELECTOR(right)) + 1;
-
 		// Update priority here, sq6 sets it w/o UpdatePlane
 		uint16 planePriority = it->priority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
-
-		Common::Rect screenRect(_screen->getWidth(), _screen->getHeight());
-		planeRect.top = (planeRect.top * screenRect.height()) / scriptsRunningHeight;
-		planeRect.left = (planeRect.left * screenRect.width()) / scriptsRunningWidth;
-		planeRect.bottom = (planeRect.bottom * screenRect.height()) / scriptsRunningHeight;
-		planeRect.right = (planeRect.right * screenRect.width()) / scriptsRunningWidth;
-
-		int16 planeOffsetX = 0;
-
-		// We get negative left in kq7 in scrolling rooms
-		if (planeRect.left < 0) {
-			planeOffsetX = -planeRect.left;
-			planeRect.left = 0;
-		}
-		if (planeRect.top < 0)
-			planeRect.top = 0;
-		// We get bad plane-bottom in sq6
-		if (planeRect.right > _screen->getWidth())
-			planeRect.right = _screen->getWidth();
-		if (planeRect.bottom > _screen->getHeight())
-			planeRect.bottom = _screen->getHeight();
 
 		it->lastPriority = planePriority;
 		if (planePriority == 0xffff) { // Plane currently not meant to be shown
 			// If plane was shown before, delete plane rect
 			if (planePriority != planeLastPriority)
-				_paint32->fillRect(planeRect, 0);
+				_paint32->fillRect(it->planeRect, 0);
 			continue;
 		}
 
-		Common::Rect planeClipRect(planeRect.width(), planeRect.height());
-
-		Common::Rect upscaledPlaneRect = planeRect;
-		Common::Rect upscaledPlaneClipRect = planeClipRect;
-		if (_screen->getUpscaledHires()) {
-			_screen->adjustToUpscaledCoordinates(upscaledPlaneRect.top, upscaledPlaneRect.left);
-			_screen->adjustToUpscaledCoordinates(upscaledPlaneRect.bottom, upscaledPlaneRect.right);
-			_screen->adjustToUpscaledCoordinates(upscaledPlaneClipRect.top, upscaledPlaneClipRect.left);
-			_screen->adjustToUpscaledCoordinates(upscaledPlaneClipRect.bottom, upscaledPlaneClipRect.right);
-		}
-
-		byte planeBack = readSelectorValue(_segMan, planeObject, SELECTOR(back));
-		if (planeBack)
-			_paint32->fillRect(planeRect, planeBack);
+		if (it->planeBack)
+			_paint32->fillRect(it->planeRect, it->planeBack);
 
 		GuiResourceId planeMainPictureId = it->pictureId;
 
-		bool planePictureMirrored = false;
-		if (readSelectorValue(_segMan, planeObject, SELECTOR(mirrored)))
-			planePictureMirrored = true;
-
-		_coordAdjuster->pictureSetDisplayArea(planeRect);
+		_coordAdjuster->pictureSetDisplayArea(it->planeRect);
 		_palette->drewPicture(planeMainPictureId);
 
 		// Fill our itemlist for this plane
@@ -360,25 +365,25 @@ void GfxFrameout::kernelFrameout() {
 				// Out of view
 				int16 pictureCelStartX = itemEntry->picStartX + itemEntry->x;
 				int16 pictureCelEndX = pictureCelStartX + itemEntry->picture->getSci32celWidth(itemEntry->celNo);
-				int16 planeStartX = planeOffsetX;
-				int16 planeEndX = planeStartX + planeRect.width();
+				int16 planeStartX = it->planeOffsetX;
+				int16 planeEndX = planeStartX + it->planeRect.width();
 				if (pictureCelEndX < planeStartX)
 					continue;
 				if (pictureCelStartX > planeEndX)
 					continue;
 
-				int16 pictureOffsetX = planeOffsetX;
+				int16 pictureOffsetX = it->planeOffsetX;
 				int16 pictureX = itemEntry->x;
-				if ((planeOffsetX) || (itemEntry->picStartX)) {
-					if (planeOffsetX <= itemEntry->picStartX) {
-						pictureX += itemEntry->picStartX - planeOffsetX;
+				if ((it->planeOffsetX) || (itemEntry->picStartX)) {
+					if (it->planeOffsetX <= itemEntry->picStartX) {
+						pictureX += itemEntry->picStartX - it->planeOffsetX;
 						pictureOffsetX = 0;
 					} else {
-						pictureOffsetX = planeOffsetX - itemEntry->picStartX;
+						pictureOffsetX = it->planeOffsetX - itemEntry->picStartX;
 					}
 				}
 
-				itemEntry->picture->drawSci32Vga(itemEntry->celNo, pictureX, itemEntry->y, pictureOffsetX, planePictureMirrored);
+				itemEntry->picture->drawSci32Vga(itemEntry->celNo, pictureX, itemEntry->y, pictureOffsetX, it->planePictureMirrored);
 //				warning("picture cel %d %d", itemEntry->celNo, itemEntry->priority);
 
 			} else if (itemEntry->viewId != 0xFFFF) {
@@ -403,7 +408,7 @@ void GfxFrameout::kernelFrameout() {
 					break;
 				}
 				// Adjust according to current scroll position
-				itemEntry->x -= planeOffsetX;
+				itemEntry->x -= it->planeOffsetX;
 
 				uint16 useInsetRect = readSelectorValue(_segMan, itemEntry->object, SELECTOR(useInsetRect));
 				if (useInsetRect) {
@@ -426,7 +431,7 @@ void GfxFrameout::kernelFrameout() {
 
 					Common::Rect nsRect = itemEntry->celRect;
 					// Translate back to actual coordinate within scrollable plane
-					nsRect.translate(planeOffsetX, 0);
+					nsRect.translate(it->planeOffsetX, 0);
 					switch (getSciVersion()) {
 					case SCI_VERSION_2:
 						if (view->isSci2Hires()) {
@@ -465,13 +470,13 @@ void GfxFrameout::kernelFrameout() {
 				Common::Rect clipRect, translatedClipRect;
 				clipRect = itemEntry->celRect;
 				if (view->isSci2Hires()) {
-					clipRect.clip(upscaledPlaneClipRect);
+					clipRect.clip(it->upscaledPlaneClipRect);
 					translatedClipRect = clipRect;
-					translatedClipRect.translate(upscaledPlaneRect.left, upscaledPlaneRect.top);
+					translatedClipRect.translate(it->upscaledPlaneRect.left, it->upscaledPlaneRect.top);
 				} else {
-					clipRect.clip(planeClipRect);
+					clipRect.clip(it->planeClipRect);
 					translatedClipRect = clipRect;
-					translatedClipRect.translate(planeRect.left, planeRect.top);
+					translatedClipRect.translate(it->planeRect.left, it->planeRect.top);
 				}
 
 				if (!clipRect.isEmpty()) {
@@ -501,8 +506,8 @@ void GfxFrameout::kernelFrameout() {
 					itemEntry->y = ((itemEntry->y * _screen->getHeight()) / scriptsRunningHeight);
 					itemEntry->x = ((itemEntry->x * _screen->getWidth()) / scriptsRunningWidth);
 
-					uint16 curX = itemEntry->x + planeRect.left;
-					uint16 curY = itemEntry->y + planeRect.top;
+					uint16 curX = itemEntry->x + it->planeRect.left;
+					uint16 curY = itemEntry->y + it->planeRect.top;
 					for (uint32 i = 0; i < text.size(); i++) {
 						unsigned char curChar = text[i];
 						// TODO: proper text splitting... this is a hack
