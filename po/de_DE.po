@@ -1,14 +1,14 @@
 # German translation for ScummVM.
 # Copyright (C) 2010 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+# Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki <SimSaw@gmx.de>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-15 23:40+0100\n"
-"PO-Revision-Date: 2010-09-13 12:28+0100\n"
+"POT-Creation-Date: 2010-09-19 18:45+0100\n"
+"PO-Revision-Date: 2010-09-17 08:05+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
 "<SimSaw@gmx.de>\n"
@@ -45,7 +45,7 @@ msgid "Go up"
 msgstr "Pfad hoch"
 
 #: gui/browser.cpp:73 gui/chooser.cpp:49 gui/KeysDialog.cpp:46
-#: gui/launcher.cpp:316 gui/massadd.cpp:95 gui/options.cpp:1084
+#: gui/launcher.cpp:319 gui/massadd.cpp:95 gui/options.cpp:1084
 #: gui/saveload.cpp:65 gui/saveload.cpp:157 gui/themebrowser.cpp:56
 #: backends/platform/wii/options.cpp:48
 msgid "Cancel"
@@ -75,8 +75,8 @@ msgstr "Tasten neu zuweisen"
 msgid "Map"
 msgstr "Zuweisen"
 
-#: gui/KeysDialog.cpp:45 gui/launcher.cpp:317 gui/launcher.cpp:938
-#: gui/launcher.cpp:942 gui/massadd.cpp:92 gui/options.cpp:1085
+#: gui/KeysDialog.cpp:45 gui/launcher.cpp:320 gui/launcher.cpp:941
+#: gui/launcher.cpp:945 gui/massadd.cpp:92 gui/options.cpp:1085
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "OK"
@@ -129,19 +129,25 @@ msgctxt "lowres"
 msgid "ID:"
 msgstr "ID:"
 
-#: gui/launcher.cpp:182
+#: gui/launcher.cpp:183
 msgid "Name:"
 msgstr "Name:"
 
-#: gui/launcher.cpp:182 gui/launcher.cpp:183
+#: gui/launcher.cpp:183 gui/launcher.cpp:185 gui/launcher.cpp:186
 msgid "Full title of the game"
 msgstr "Voller Name des Spiels"
 
-#: gui/launcher.cpp:186
+#: gui/launcher.cpp:185
+#, fuzzy
+msgctxt "lowres"
+msgid "Name:"
+msgstr "Name:"
+
+#: gui/launcher.cpp:189
 msgid "Language:"
 msgstr "Sprache:"
 
-#: gui/launcher.cpp:186 gui/launcher.cpp:187
+#: gui/launcher.cpp:189 gui/launcher.cpp:190
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
@@ -149,145 +155,145 @@ msgstr ""
 "Sprache des Spiels. Diese Funktion wird nicht eine spanische Version des "
 "Spiels in eine deutsche verwandeln."
 
-#: gui/launcher.cpp:188 gui/launcher.cpp:202 gui/options.cpp:80
+#: gui/launcher.cpp:191 gui/launcher.cpp:205 gui/options.cpp:80
 #: gui/options.cpp:638 gui/options.cpp:648 gui/options.cpp:1055
 #: sound/null.cpp:42
 msgid "<default>"
 msgstr "<Standard>"
 
-#: gui/launcher.cpp:198
+#: gui/launcher.cpp:201
 msgid "Platform:"
 msgstr "Plattform:"
 
-#: gui/launcher.cpp:198 gui/launcher.cpp:200 gui/launcher.cpp:201
+#: gui/launcher.cpp:201 gui/launcher.cpp:203 gui/launcher.cpp:204
 msgid "Platform the game was originally designed for"
 msgstr "Plattform, für die das Spiel ursprünglich erstellt wurde"
 
-#: gui/launcher.cpp:200
+#: gui/launcher.cpp:203
 msgctxt "lowres"
 msgid "Platform:"
 msgstr "Plattform:"
 
-#: gui/launcher.cpp:212 gui/options.cpp:924 gui/options.cpp:941
+#: gui/launcher.cpp:215 gui/options.cpp:924 gui/options.cpp:941
 msgid "Graphics"
 msgstr "Grafik"
 
-#: gui/launcher.cpp:212 gui/options.cpp:924 gui/options.cpp:941
+#: gui/launcher.cpp:215 gui/options.cpp:924 gui/options.cpp:941
 msgid "GFX"
 msgstr "GFX"
 
-#: gui/launcher.cpp:215
+#: gui/launcher.cpp:218
 msgid "Override global graphic settings"
 msgstr "Globale Grafikeinstellungen übergehen"
 
-#: gui/launcher.cpp:217
+#: gui/launcher.cpp:220
 msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Globale Grafikeinstellungen übergehen"
 
-#: gui/launcher.cpp:224 gui/options.cpp:947
+#: gui/launcher.cpp:227 gui/options.cpp:947
 msgid "Audio"
 msgstr "Audio"
 
-#: gui/launcher.cpp:227
+#: gui/launcher.cpp:230
 msgid "Override global audio settings"
 msgstr "Globale Audioeinstellungen übergehen"
 
-#: gui/launcher.cpp:229
+#: gui/launcher.cpp:232
 msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Globale Audioeinstellungen übergehen"
 
-#: gui/launcher.cpp:238 gui/options.cpp:952
+#: gui/launcher.cpp:241 gui/options.cpp:952
 msgid "Volume"
 msgstr "Lautstärke"
 
-#: gui/launcher.cpp:240 gui/options.cpp:954
+#: gui/launcher.cpp:243 gui/options.cpp:954
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Lautst."
 
-#: gui/launcher.cpp:243
+#: gui/launcher.cpp:246
 msgid "Override global volume settings"
 msgstr "Globale Lautstärke-Einstellungen übergehen"
 
-#: gui/launcher.cpp:245
+#: gui/launcher.cpp:248
 msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Globale Lautstärkeeinstellungen übergehen"
 
-#: gui/launcher.cpp:252 gui/options.cpp:962
+#: gui/launcher.cpp:255 gui/options.cpp:962
 msgid "MIDI"
 msgstr "MIDI"
 
-#: gui/launcher.cpp:255
+#: gui/launcher.cpp:258
 msgid "Override global MIDI settings"
 msgstr "Globale MIDI-Einstellungen übergehen"
 
-#: gui/launcher.cpp:257
+#: gui/launcher.cpp:260
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Globale MIDI-Einstellungen übergehen"
 
-#: gui/launcher.cpp:267 gui/options.cpp:968
+#: gui/launcher.cpp:270 gui/options.cpp:968
 msgid "MT-32"
 msgstr "MT-32"
 
-#: gui/launcher.cpp:270
+#: gui/launcher.cpp:273
 msgid "Override global MT-32 settings"
 msgstr "Globale MT-32-Einstellungen übergehen"
 
-#: gui/launcher.cpp:272
+#: gui/launcher.cpp:275
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Globale MT-32-Einstellungen übergehen"
 
-#: gui/launcher.cpp:283 gui/options.cpp:975
+#: gui/launcher.cpp:286 gui/options.cpp:975
 msgid "Paths"
 msgstr "Pfade"
 
-#: gui/launcher.cpp:285 gui/options.cpp:977
+#: gui/launcher.cpp:288 gui/options.cpp:977
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Pfade"
 
-#: gui/launcher.cpp:292
+#: gui/launcher.cpp:295
 msgid "Game Path:"
 msgstr "Spielpfad:"
 
-#: gui/launcher.cpp:294
+#: gui/launcher.cpp:297
 msgctxt "context"
 msgid "Game Path:"
 msgstr "Spielpfad:"
 
-#: gui/launcher.cpp:299 gui/options.cpp:997
+#: gui/launcher.cpp:302 gui/options.cpp:997
 msgid "Extra Path:"
 msgstr "Extrapfad:"
 
-#: gui/launcher.cpp:299 gui/launcher.cpp:301 gui/launcher.cpp:302
+#: gui/launcher.cpp:302 gui/launcher.cpp:304 gui/launcher.cpp:305
 msgid "Specifies path to additional data used the game"
 msgstr "Legt das Verzeichnis für zusätzliche Spieldateien fest."
 
-#: gui/launcher.cpp:301 gui/options.cpp:999
+#: gui/launcher.cpp:304 gui/options.cpp:999
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Extrapfad:"
 
-#: gui/launcher.cpp:306 gui/options.cpp:985
+#: gui/launcher.cpp:309 gui/options.cpp:985
 msgid "Save Path:"
 msgstr "Spielstände:"
 
-#: gui/launcher.cpp:306 gui/launcher.cpp:308 gui/launcher.cpp:309
+#: gui/launcher.cpp:309 gui/launcher.cpp:311 gui/launcher.cpp:312
 #: gui/options.cpp:985 gui/options.cpp:987 gui/options.cpp:988
 msgid "Specifies where your savegames are put"
 msgstr "Legt fest, wo die Spielstände abgelegt werden."
 
-#: gui/launcher.cpp:308 gui/options.cpp:987
+#: gui/launcher.cpp:311 gui/options.cpp:987
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Speichern:"
 
-#: gui/launcher.cpp:325 gui/launcher.cpp:405 gui/launcher.cpp:454
+#: gui/launcher.cpp:328 gui/launcher.cpp:408 gui/launcher.cpp:457
 #: gui/options.cpp:994 gui/options.cpp:1000 gui/options.cpp:1007
 #: gui/options.cpp:1108 gui/options.cpp:1114 gui/options.cpp:1120
 #: gui/options.cpp:1128 gui/options.cpp:1152 gui/options.cpp:1156
@@ -296,137 +302,137 @@ msgctxt "path"
 msgid "None"
 msgstr "Keiner"
 
-#: gui/launcher.cpp:330 gui/launcher.cpp:409
+#: gui/launcher.cpp:333 gui/launcher.cpp:412
 #: backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Standard"
 
-#: gui/launcher.cpp:447 gui/options.cpp:1262
+#: gui/launcher.cpp:450 gui/options.cpp:1262
 msgid "Select SoundFont"
 msgstr "SoundFont auswählen"
 
-#: gui/launcher.cpp:466 gui/launcher.cpp:613
+#: gui/launcher.cpp:469 gui/launcher.cpp:616
 msgid "Select directory with game data"
 msgstr "Verzeichnis mit Spieldateien auswählen"
 
-#: gui/launcher.cpp:484
+#: gui/launcher.cpp:487
 msgid "Select additional game directory"
 msgstr "Verzeichnis mit zusätzlichen Dateien auswählen"
 
-#: gui/launcher.cpp:496
+#: gui/launcher.cpp:499
 msgid "Select directory for saved games"
 msgstr "Verzeichnis für Spielstände auswählen"
 
-#: gui/launcher.cpp:515
+#: gui/launcher.cpp:518
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Diese Spielkennung ist schon vergeben. Bitte eine andere wählen."
 
-#: gui/launcher.cpp:556 engines/dialogs.cpp:116
+#: gui/launcher.cpp:559 engines/dialogs.cpp:116
 msgid "~Q~uit"
 msgstr "~B~eenden"
 
-#: gui/launcher.cpp:556
+#: gui/launcher.cpp:559
 msgid "Quit ScummVM"
 msgstr "ScummVM beenden"
 
-#: gui/launcher.cpp:557
+#: gui/launcher.cpp:560
 msgid "A~b~out..."
 msgstr "Übe~r~"
 
-#: gui/launcher.cpp:557
+#: gui/launcher.cpp:560
 msgid "About ScummVM"
 msgstr "Über ScummVM"
 
-#: gui/launcher.cpp:558
+#: gui/launcher.cpp:561
 msgid "~O~ptions..."
 msgstr "~O~ptionen"
 
-#: gui/launcher.cpp:558
+#: gui/launcher.cpp:561
 msgid "Change global ScummVM options"
 msgstr "Globale ScummVM-Einstellungen bearbeiten"
 
-#: gui/launcher.cpp:560
+#: gui/launcher.cpp:563
 msgid "~S~tart"
 msgstr "~S~tarten"
 
-#: gui/launcher.cpp:560
+#: gui/launcher.cpp:563
 msgid "Start selected game"
 msgstr "Ausgewähltes Spiel starten"
 
-#: gui/launcher.cpp:563
+#: gui/launcher.cpp:566
 msgid "~L~oad..."
 msgstr "~L~aden..."
 
-#: gui/launcher.cpp:563
+#: gui/launcher.cpp:566
 msgid "Load savegame for selected game"
 msgstr "Spielstand für ausgewähltes Spiel laden"
 
-#: gui/launcher.cpp:568
+#: gui/launcher.cpp:571
 msgid "~A~dd Game..."
 msgstr "Spiel ~h~inzufügen"
 
-#: gui/launcher.cpp:568 gui/launcher.cpp:575
+#: gui/launcher.cpp:571 gui/launcher.cpp:578
 msgid "Hold Shift for Mass Add"
 msgstr ""
 "Umschalttaste (Shift) gedrückt halten, um Verzeichnisse nach Spielen zu "
 "durchsuchen"
 
-#: gui/launcher.cpp:570
+#: gui/launcher.cpp:573
 msgid "~E~dit Game..."
 msgstr "Spielo~p~tionen"
 
-#: gui/launcher.cpp:570 gui/launcher.cpp:577
+#: gui/launcher.cpp:573 gui/launcher.cpp:580
 msgid "Change game options"
 msgstr "Spieloptionen ändern"
 
-#: gui/launcher.cpp:572
+#: gui/launcher.cpp:575
 msgid "~R~emove Game"
 msgstr "Spiel ~e~ntfernen"
 
-#: gui/launcher.cpp:572 gui/launcher.cpp:579
+#: gui/launcher.cpp:575 gui/launcher.cpp:582
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Spiel aus der Liste entfernen. Die Spieldateien bleiben erhalten."
 
-#: gui/launcher.cpp:575
+#: gui/launcher.cpp:578
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~H~inzufügen"
 
-#: gui/launcher.cpp:577
+#: gui/launcher.cpp:580
 msgctxt "lowres"
 msgid "~E~dit Game..."
 msgstr "Spielo~p~tion"
 
-#: gui/launcher.cpp:579
+#: gui/launcher.cpp:582
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~E~ntfernen"
 
-#: gui/launcher.cpp:587
+#: gui/launcher.cpp:590
 msgid "Search in game list"
 msgstr "In Spieleliste suchen"
 
-#: gui/launcher.cpp:591 gui/launcher.cpp:1104
+#: gui/launcher.cpp:594 gui/launcher.cpp:1107
 msgid "Search:"
 msgstr "Suchen:"
 
-#: gui/launcher.cpp:594 gui/options.cpp:743
+#: gui/launcher.cpp:597 gui/options.cpp:743
 msgid "Clear value"
 msgstr "Wert löschen"
 
-#: gui/launcher.cpp:616 engines/dialogs.cpp:120 engines/mohawk/myst.cpp:222
+#: gui/launcher.cpp:619 engines/dialogs.cpp:120 engines/mohawk/myst.cpp:222
 #: engines/mohawk/riven.cpp:655 engines/cruise/menu.cpp:218
 msgid "Load game:"
 msgstr "Spiel laden:"
 
-#: gui/launcher.cpp:616 engines/dialogs.cpp:120 engines/mohawk/myst.cpp:222
+#: gui/launcher.cpp:619 engines/dialogs.cpp:120 engines/mohawk/myst.cpp:222
 #: engines/mohawk/riven.cpp:655 engines/cruise/menu.cpp:218
 #: backends/platform/wince/CEActionsPocket.cpp:263
 #: backends/platform/wince/CEActionsSmartphone.cpp:225
 msgid "Load"
 msgstr "Laden"
 
-#: gui/launcher.cpp:725
+#: gui/launcher.cpp:728
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -434,7 +440,7 @@ msgstr ""
 "Möchten Sie wirklich den PC nach Spielen durchsuchen? Möglicherweise wird "
 "dabei eine größere Menge an Spielen hinzugefügt."
 
-#: gui/launcher.cpp:726 gui/launcher.cpp:875
+#: gui/launcher.cpp:729 gui/launcher.cpp:878
 #: backends/platform/symbian/src/SymbianOS.cpp:446
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
@@ -442,7 +448,7 @@ msgstr ""
 msgid "Yes"
 msgstr "Ja"
 
-#: gui/launcher.cpp:726 gui/launcher.cpp:875
+#: gui/launcher.cpp:729 gui/launcher.cpp:878
 #: backends/platform/symbian/src/SymbianOS.cpp:446
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
@@ -450,46 +456,46 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: gui/launcher.cpp:773
+#: gui/launcher.cpp:776
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM kann das gewählte Verzeichnis nicht öffnen!"
 
-#: gui/launcher.cpp:785
+#: gui/launcher.cpp:788
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM kann in dem gewählten Verzeichnis kein Spiel finden!"
 
-#: gui/launcher.cpp:799
+#: gui/launcher.cpp:802
 msgid "Pick the game:"
 msgstr "Spiel auswählen:"
 
-#: gui/launcher.cpp:875
+#: gui/launcher.cpp:878
 msgid "Do you really want to remove this game configuration?"
 msgstr "Möchten Sie wirklich diese Spielkonfiguration entfernen?"
 
-#: gui/launcher.cpp:938
+#: gui/launcher.cpp:941
 msgid "This game does not support loading games from the launcher."
 msgstr ""
 "Für dieses Spiel wird das Laden aus der Spieleliste heraus nicht unterstützt."
 
-#: gui/launcher.cpp:942
+#: gui/launcher.cpp:945
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM konnte keine Engine finden, um das Spiel zu starten!"
 
-#: gui/launcher.cpp:1056
+#: gui/launcher.cpp:1059
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Durchsuchen"
 
-#: gui/launcher.cpp:1056
+#: gui/launcher.cpp:1059
 msgid "Mass Add..."
 msgstr "Durchsuchen"
 
-#: gui/launcher.cpp:1057
+#: gui/launcher.cpp:1060
 msgctxt "lowres"
 msgid "Add Game..."
 msgstr "Hinzufügen"
 
-#: gui/launcher.cpp:1057
+#: gui/launcher.cpp:1060
 msgid "Add Game..."
 msgstr "Spiel hinzufügen"
 
@@ -1118,29 +1124,38 @@ msgstr "~W~eiter"
 msgid "~C~lose"
 msgstr "~S~chließen"
 
-#: engines/scumm/scumm.cpp:2171 engines/agos/saveload.cpp:192
+#: engines/scumm/scumm.cpp:2181 engines/agos/saveload.cpp:192
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
 "\n"
 "%s"
 msgstr ""
+"Konnte Spielstand nicht in folgender Datei speichern:\n"
+"\n"
+"%s"
 
-#: engines/scumm/scumm.cpp:2178 engines/agos/saveload.cpp:157
+#: engines/scumm/scumm.cpp:2188 engines/agos/saveload.cpp:157
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
 "\n"
 "%s"
 msgstr ""
+"Konnte Spielstand nicht aus folgender Datei laden:\n"
+"\n"
+"%s"
 
-#: engines/scumm/scumm.cpp:2190 engines/agos/saveload.cpp:200
+#: engines/scumm/scumm.cpp:2200 engines/agos/saveload.cpp:200
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
 "\n"
 "%s"
 msgstr ""
+"Spielstand erfolgreich in folgender Datei gespeichert:\n"
+"\n"
+"%s"
 
 #: engines/mohawk/dialogs.cpp:81 engines/mohawk/dialogs.cpp:115
 msgid "~Z~ip Mode Activated"
