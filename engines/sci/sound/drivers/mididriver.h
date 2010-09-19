@@ -32,13 +32,26 @@
 
 namespace Sci {
 
+// Music patches in SCI games:
+// ===========================
+// 1.pat - MT-32 driver music patch
+// 2.pat - Yamaha FB01 driver music patch
+// 3.pat - Adlib driver music patch
+// 4.pat - Casio MT-540 (in earlier SCI0 games)
+// 4.pat - GM driver music patch (in later games that support GM)
+// 7.pat (newer) / patch.200 (older) - Mac driver music patch / Casio CSM-1
+// 9.pat (newer) / patch.005 (older) - Amiga driver music patch
+// 98.pat - Unknown, found in later SCI1.1 games. A MIDI format patch
+// 101.pat - CMS/PCjr driver music patch.
+//           Only later PCjr drivers use this patch, earlier ones don't use a patch
+// bank.001 - older SCI0 Amiga instruments
+
 class ResourceManager;
 
 enum {
 	MIDI_CHANNELS = 16,
 	MIDI_PROP_MASTER_VOLUME = 0
 };
-
 
 #define MIDI_RHYTHM_CHANNEL 9
 
