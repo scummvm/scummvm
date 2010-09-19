@@ -107,6 +107,12 @@ public:
 	 * @return              Returns a vector containing all of the found filenames
 	 */
 	virtual Common::StringArray GetFilesInDirectory(const Common::String &Path) = 0;
+	/**
+	 * Gets the filename from a path and filename
+	 * @param Filename		The full path and filename
+	 * @return				Returns just the filename
+	 */
+	virtual Common::String GetPathFilename(const Common::String &Path) = 0;
 };
 
 } // End of namespace Sword25

@@ -88,6 +88,7 @@ GraphicEngine::GraphicEngine(Kernel *pKernel) :
 	m_TimerActive(true),
 	m_FrameTimeSampleSlot(0),
 	m_RepaintedPixels(0),
+	_thumbnail(NULL),
 	ResourceService(pKernel) {
 	m_FrameTimeSamples.resize(FRAMETIME_SAMPLE_COUNT);
 
@@ -99,6 +100,8 @@ GraphicEngine::GraphicEngine(Kernel *pKernel) :
 
 GraphicEngine::~GraphicEngine() {
 	_backSurface.free();
+	_frameBuffer.free();
+	delete _thumbnail;
 }
 
 Service *GraphicEngine_CreateObject(Kernel *pKernel) {
@@ -129,6 +132,7 @@ bool GraphicEngine::Init(int Width, int Height, int BitDepth, int BackbufferCoun
 	m_ScreenRect.bottom = m_Height;
 
 	_backSurface.create(Width, Height, 4);
+	_frameBuffer.create(Width, Height, 4);
 
 	// Standardmäßig ist Vsync an.
 	SetVsync(true);
@@ -162,6 +166,15 @@ bool GraphicEngine::StartFrame(bool UpdateAll) {
 bool GraphicEngine::EndFrame() {
 	// Scene zeichnen
 	_renderObjectManagerPtr->render();
+
+	// FIXME: The frame buffer surface is only used as the base for creating thumbnails when saving the
+	// game, since the _backSurface is blanked. Currently I'm doing a slightly hacky check and only
+	// copying the back surface if line 50 (the first line after the interface area) is non-blank
+	if (READ_LE_UINT32((byte *)_backSurface.pixels + (_backSurface.pitch * 50)) & 0xffffff) {
+		// Make a copy of the current frame into the frame buffer
+		Common::copy((byte *)_backSurface.pixels, (byte *)_backSurface.pixels + 
+			(_backSurface.pitch * _backSurface.h), (byte *)_frameBuffer.pixels); 
+	}
 
 	g_system->updateScreen();
 
@@ -236,55 +249,8 @@ bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 
 // -----------------------------------------------------------------------------
 
-bool GraphicEngine::GetScreenshot(uint &Width, uint &Height, byte **Data) {
-	if (!ReadFramebufferContents(m_Width, m_Height, Data))
-		return false;
-
-	// Die Größe des Framebuffers zurückgeben.
-	Width = m_Width;
-	Height = m_Height;
-
-	// Bilddaten vom OpenGL-Format in unser eigenes Format umwandeln.
-	ReverseRGBAComponentOrder(*Data, Width * Height);
-	FlipImagedataVertical(Width, Height, *Data);
-
-	return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool GraphicEngine::ReadFramebufferContents(uint Width, uint Height, byte **Data) {
-    *Data = (byte *)malloc(Width * Height * 4);
-	
-	return true;
-}
-
-// -----------------------------------------------------------------------------
-
-void GraphicEngine::ReverseRGBAComponentOrder(byte *Data, uint size) {
-	uint32 *ptr = (uint32 *)Data;
-
-	for (uint i = 0; i < size; i++) {
-		uint Pixel = *ptr;
-		*ptr = (Pixel & 0xff00ff00) | ((Pixel >> 16) & 0xff) | ((Pixel & 0xff) << 16);
-		++ptr;
-	}
-}
-
-// -----------------------------------------------------------------------------
-
-void GraphicEngine::FlipImagedataVertical(uint Width, uint Height, byte *Data) {
-#if 0 // TODO
-	vector<uint> LineBuffer(Width);
-
-	for (uint Y = 0; Y < Height / 2; ++Y) {
-		vector<uint>::iterator Line1It = Data.begin() + Y * Width;
-		vector<uint>::iterator Line2It = Data.begin() + (Height - 1 - Y) * Width;
-		copy(Line1It, Line1It + Width, LineBuffer.begin());
-		copy(Line2It, Line2It + Width, Line1It);
-		copy(LineBuffer.begin(), LineBuffer.end(), Line2It);
-	}
-#endif
+Graphics::Surface *GraphicEngine::GetScreenshot() {
+	return &_frameBuffer;
 }
 
 // -----------------------------------------------------------------------------
@@ -432,28 +398,37 @@ void  GraphicEngine::UpdateLastFrameDuration() {
 }
 
 namespace {
-bool DoSaveScreenshot(GraphicEngine &GraphicEngine, const Common::String &Filename, bool Thumbnail) {
-	uint Width;
-	uint Height;
-	byte *Data;
-	if (!GraphicEngine.GetScreenshot(Width, Height, &Data)) {
+bool DoSaveScreenshot(GraphicEngine &GraphicEngine, const Common::String &Filename) {
+	Graphics::Surface *data = GraphicEngine.GetScreenshot();
+	if (!data) {
 		BS_LOG_ERRORLN("Call to GetScreenshot() failed. Cannot save screenshot.");
 		return false;
 	}
 
-	if (Thumbnail)
-		return Screenshot::SaveThumbnailToFile(Width, Height, Data, Filename);
-	else
-		return Screenshot::SaveToFile(Width, Height, Data, Filename);
+	Common::FSNode f(Filename);
+	Common::WriteStream *stream = f.createWriteStream();
+	if (!stream) {
+		BS_LOG_ERRORLN("Call to GetScreenshot() failed. Cannot save screenshot.");
+		return false;
+	}
+
+	bool result = Screenshot::SaveToFile(data, stream);
+	delete stream;
+
+	return result;
 }
 }
 
 bool GraphicEngine::SaveScreenshot(const Common::String &Filename) {
-	return DoSaveScreenshot(*this, Filename, false);
+	return DoSaveScreenshot(*this, Filename);
 }
 
 bool GraphicEngine::SaveThumbnailScreenshot(const Common::String &Filename) {
-	return DoSaveScreenshot(*this, Filename, true);
+	// Note: In ScumMVM, rather than saivng the thumbnail to a file, we store it in memory 
+	// until needed when creating savegame files
+	delete _thumbnail;
+	_thumbnail = Screenshot::createThumbnail(&_frameBuffer);
+	return true;
 }
 
 void GraphicEngine::ARGBColorToLuaColor(lua_State *L, uint Color) {

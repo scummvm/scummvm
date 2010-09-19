@@ -41,6 +41,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "sword25/kernel/filesystemutil.h"
+#include "sword25/kernel/persistenceservice.h"
 
 namespace Sword25 {
 
@@ -113,7 +114,13 @@ public:
 
 	virtual bool FileExists(const Common::String &Filename) {
 		Common::File f;
-		return f.exists(Filename);
+		if (f.exists(Filename))
+			return true;
+
+		// Check if the file exists in the save folder
+		Common::FSNode folder(PersistenceService::GetSavegameDirectory());
+		Common::FSNode fileNode = folder.getChild(FileSystemUtil::GetInstance().GetPathFilename(Filename));
+		return fileNode.exists();
 	}
 
 	virtual bool CreateDirectory(const Common::String &DirectoryName) {
@@ -127,6 +134,16 @@ public:
 		Common::StringArray filenames = sfm->listSavefiles("*");
 		sort(filenames.begin(), filenames.end());
 		return filenames;
+	}
+
+	virtual Common::String GetPathFilename(const Common::String &Path) {
+		for (int i = Path.size() - 1; i >= 0; --i) {
+			if ((Path[i] == '/') || (Path[i] == '\\')) {
+				return Common::String(&Path.c_str()[i + 1]);
+			}
+		}
+
+		return Path;
 	}
 };
 

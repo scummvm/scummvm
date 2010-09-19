@@ -39,6 +39,7 @@
 // Includes
 // -----------------------------------------------------------------------------
 
+#include "graphics/surface.h"
 #include "sword25/kernel/common.h"
 
 namespace Sword25 {
@@ -49,8 +50,8 @@ namespace Sword25 {
 
 class Screenshot {
 public:
-	static bool SaveToFile(uint Width, uint Height, const byte *Data, const Common::String &Filename);
-	static bool SaveThumbnailToFile(uint Width, uint Height, const byte *Data, const Common::String &Filename);
+	static bool SaveToFile(Graphics::Surface *Data, Common::WriteStream *Stream);
+	static Common::MemoryReadStream *createThumbnail(Graphics::Surface *Data);
 };
 
 } // End of namespace Sword25

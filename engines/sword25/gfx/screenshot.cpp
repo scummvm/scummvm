@@ -38,175 +38,152 @@
 // Includes
 // -----------------------------------------------------------------------------
 
+#include "common/system.h"
+#include "common/savefile.h"
 #include "sword25/gfx/screenshot.h"
+#include "sword25/kernel/filesystemutil.h"
 #include <png.h>
 
 namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 
+#include "common/pack-start.h"
 struct RGB_PIXEL {
-	RGB_PIXEL(byte _Red, byte _Green, byte _Blue) :
-		Red(_Red),
-		Green(_Green),
-		Blue(_Blue)
-	{};
-
 	byte Red;
 	byte Green;
 	byte Blue;
-};
+} PACKED_STRUCT;
+#include "common/pack-end.h"
 
-bool Screenshot::SaveToFile(uint Width, uint Height, const byte *Data, const Common::String &Filename) {
-#if 0
-	BS_ASSERT(Data.size() == Width * Height);
+void userWriteFn(png_structp png_ptr, png_bytep data, png_size_t length) {
+	static_cast<Common::WriteStream *>(png_ptr->io_ptr)->write(data, length);
+}
 
-	// Buffer für Bildschirminhalt in RGB reservieren
-	vector<RGB_PIXEL> PixelBuffer;
-	PixelBuffer.reserve(Width * Height);
+void userFlushFn(png_structp png_ptr) {
+}
 
-	// Framebufferdaten pixelweise von RGBA nach RGB konvertieren
-	vector<uint>::const_iterator it = Data.begin();
-	for (uint y = 0; y < Height; y++) {
-		for (uint x = 0; x < Width; x++) {
-			uint SrcPixel = *it++;
-			PixelBuffer.push_back(RGB_PIXEL((SrcPixel >> 16) & 0xff, (SrcPixel >> 8) & 0xff, SrcPixel & 0xff));
+
+bool Screenshot::SaveToFile(Graphics::Surface *Data, Common::WriteStream *Stream) {
+	// Reserve buffer space
+	RGB_PIXEL *pixelBuffer = new RGB_PIXEL[Data->w * Data->h];
+
+	// Convert the RGBA data to RGB
+	const byte *pSrc = (const byte *)Data->getBasePtr(0, 0);
+	RGB_PIXEL *pDest = pixelBuffer;
+
+	for (uint y = 0; y < Data->h; y++) {
+		for (uint x = 0; x < Data->w; x++) {
+			uint32 srcPixel = READ_LE_UINT32(pSrc);
+			pSrc += sizeof(uint32);
+			pDest->Red = (srcPixel >> 16) & 0xff;
+			pDest->Green = (srcPixel >> 8) & 0xff;
+			pDest->Blue = srcPixel & 0xff;
+			++pDest;
 		}
 	}
-	BS_ASSERT(it == Data.end());
-	BS_ASSERT(Data.size() == PixelBuffer.size());
 
-	// Variablen für die PNG-Erstellung
-	FILE *OutFile = 0;
-	png_structp png_ptr = 0;
-	png_infop info_ptr = 0;
+	png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	if (!png_ptr)
+		error("Could not create PNG write-struct.");
 
-	try {
-		OutFile = fopen(Filename.c_str(), "wb");
-		if (!OutFile) {
-			BS_LOG_ERRORLN("Could not create screenshot-file \"%s\".", Filename.c_str());
-			throw(0);
-		}
+	png_infop info_ptr = png_create_info_struct(png_ptr);
+	if (!info_ptr)
+		error("Could not create PNG info-struct.");
 
-		png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-		if (!png_ptr) {
-			BS_LOG_ERRORLN("Could not create PNG write-struct.");
-			throw(0);
-		}
+	//  The compression buffer must be large enough to the entire image.
+	// This ensures that only an IDAT chunk is created.
+	// When buffer size is used 110% of the raw data size to be sure.
+	png_set_compression_buffer_size(png_ptr, (Data->w * Data->h * 3 * 110) / 100);
 
-		png_infop info_ptr = png_create_info_struct(png_ptr);
-		if (!info_ptr) {
-			BS_LOG_ERRORLN("Could not create PNG info-struct.");
-			throw(0);
-		}
+	// Initialise PNG-Info structure
+	png_set_IHDR(png_ptr, info_ptr,
+	             Data->w,                        // Width
+	             Data->h,                        // Height
+	             8,                             // Bits depth
+	             PNG_COLOR_TYPE_RGB,             // Colour type
+	             PNG_INTERLACE_NONE,             // No interlacing
+	             PNG_COMPRESSION_TYPE_DEFAULT,   // Compression type
+	             PNG_FILTER_TYPE_DEFAULT);       // Filter Type
 
-		// Der Kompressionsbuffer muss groß genug sein um das gesamte Bild zu beinhalten.
-		// Dieses stellt sicher, dass nur ein IDAT Chunk erstellt wird.
-		// Als Buffergröße wird 110% der Rohdatengröße verwandt, um sicher zu gehen.
-		png_set_compression_buffer_size(png_ptr, (Width * Height * 3 * 110) / 100);
-
-		// PNG-Info Struktur initialisieren
-		png_set_IHDR(png_ptr, info_ptr,
-		             Width,                          // Breite
-		             Height,                         // Höhe
-		             8,                              // Bittiefe pro Kanal
-		             PNG_COLOR_TYPE_RGB,             // Farbformat
-		             PNG_INTERLACE_NONE,             // Interlacing-Typ
-		             PNG_COMPRESSION_TYPE_DEFAULT,   // Kompressions-Typ
-		             PNG_FILTER_TYPE_DEFAULT);       // Filter-Typ
-
-		// Rowpointer erstellen
-		vector<png_bytep> RowPointers;
-		RowPointers.reserve(Height);
-		for (uint i = 0; i < Height; i++) {
-			RowPointers.push_back((png_bytep)(&PixelBuffer[Width * i]));
-		}
-		png_set_rows(png_ptr, info_ptr, &RowPointers[0]);
-
-		png_init_io(png_ptr, OutFile);
-
-		// Bild schreiben
-		png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
-
-		png_destroy_write_struct(&png_ptr, &info_ptr);
-		fclose(OutFile);
+	// Rowpointer erstellen
+	png_bytep *rowPointers = new png_bytep[Data->h];
+	for (uint i = 0; i < Data->h; i++) {
+		rowPointers[i] = (png_bytep)&pixelBuffer[Data->w * i];
 	}
+	png_set_rows(png_ptr, info_ptr, &rowPointers[0]);
 
-	catch (int) {
-		// Wenn die Datei bereits erstellt wurde, Datei schließen und löschen.
-		if (OutFile) {
-			fclose(OutFile);
-			remove(Filename.c_str());
-		}
+	// Write out the png data to the file
+	png_set_write_fn(png_ptr, (void *)Stream, userWriteFn, userFlushFn);
+	png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
 
-		if (info_ptr) png_destroy_write_struct(0, &info_ptr);
-		if (png_ptr) png_destroy_write_struct(&png_ptr, (png_infopp) 0);
+	png_destroy_write_struct(&png_ptr, &info_ptr);
 
-		BS_LOG_ERRORLN("Could not create screenshot (\"%s\").", Filename.c_str());
-		return false;
-	}
-#else
-	warning("STUB: BS_Screenshot::SaveToFile(%d, %d, .., %s)", Width, Height, Filename.c_str());
-#endif
+	delete[] pixelBuffer;
+	delete[] rowPointers;
 
 	return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool Screenshot::SaveThumbnailToFile(uint Width, uint Height, const byte *Data, const Common::String &Filename) {
-#if 0
-	//
-	// Diese Methode nimmt ein Screenshot mit den Maßen von 800x600 und erzeugt einen Screenshot mit den Maßen von 200x125.
-	// Dabei werden je 50 Pixel oben und unten abgeschnitten (die Interface-Leisten im Spiel). Das verbleibende Bild von 800x500 wird auf
-	// ein 16tel seiner Größe reduziert, indem es in 4x4 Pixelblöcke ausgeteilt wird und der Durchschnitt jedes Blockes einen Pixel des Zielbildes generiert.
-	// Abschließend wird das Ergebnis als PNG-Datei unter dem übergebenen Dateinamen gespeichert.
-	//
+Common::MemoryReadStream *Screenshot::createThumbnail(Graphics::Surface *Data) {
+	// This method takes a screen image with a dimension of 800x600, and creates a screenshot with a dimension of 200x125.
+	// First 50 pixels are cut off the top and bottom (the interface boards in the game). The remaining image of 800x500 
+	// will be on a 16th of its size, reduced by being handed out in 4x4 pixel blocks and the average of each block 
+	// generates a pixel of the target image. Finally, the result as a PNG file is stored as a file.
 
-	// Die Ausgangsgröße muss 800x600 sein.
-	if (Width != 800 || Height != 600) {
+	// The source image must be 800x600.
+	if (Data->w != 800 || Data->h != 600 || Data->bytesPerPixel != 4) {
 		BS_LOG_ERRORLN("The sreenshot dimensions have to be 800x600 in order to be saved as a thumbnail.");
 		return false;
 	}
 
-	// Buffer für die Zieldaten erstellen (RGBA Bild mit den Maßen 200x125).
-	vector<uint> ThumbnailData(200 * 125);
+	// Buffer for the output thumbnail
+	Graphics::Surface thumbnail;
+	thumbnail.create(200, 125, 4);
 
 	// Über das Zielbild iterieren und einen Pixel zur Zeit berechnen.
 	uint x, y;
 	x = y = 0;
-	for (vector<uint>::iterator Iter = ThumbnailData.begin(); Iter != ThumbnailData.end(); ++Iter) {
-		// Durchschnitt über 4x4 Pixelblock im Quellbild bilden.
-		uint Alpha, Red, Green, Blue;
-		Alpha = Red = Green = Blue = 0;
-		for (uint j = 0; j < 4; ++j) {
-			for (uint i = 0; i < 4; ++i) {
-				uint Pixel = Data[((y * 4) + j + 50) * 800 + ((x * 4) + i)];
-				Alpha += (Pixel >> 24);
-				Red += (Pixel >> 16) & 0xff;
-				Green += (Pixel >> 8) & 0xff;
-				Blue += Pixel & 0xff;
+	
+	for (byte *pDest = (byte *)thumbnail.pixels; pDest < ((byte *)thumbnail.pixels + thumbnail.pitch * thumbnail.h); ) {
+		// Get an average over a 4x4 pixel block in the source image
+		int alpha, red, green, blue;
+		alpha = red = green = blue = 0;
+		for (int j = 0; j < 4; ++j) {
+			const uint32 *srcP = (const uint32 *)Data->getBasePtr(x * 4, y * 4 + j + 50);
+			for (int i = 0; i < 4; ++i) {
+				uint32 pixel = READ_LE_UINT32(srcP + i);
+				alpha += (pixel >> 24);
+				red += (pixel >> 16) & 0xff;
+				green += (pixel >> 8) & 0xff;
+				blue += pixel & 0xff;
 			}
 		}
 
-		// Zielpixel schreiben.
-		*Iter = ((Alpha / 16) << 24) | ((Red / 16) << 16) | ((Green / 16) << 8) | (Blue / 16);
+		// Write target pixel
+		*pDest++ = blue / 16;
+		*pDest++ = green / 16;
+		*pDest++ = red / 16;
+		*pDest++ = alpha / 16;
 
-		// Mitzählen an welcher Stelle im Zielbild wir uns befinden.
+		// Move to next block
 		++x;
-		if (x == 200) {
+		if (x == thumbnail.w) {
 			x = 0;
 			++y;
 		}
 	}
 
-	// Bild als PNG Speichern.
-	return SaveToFile(200, 125, ThumbnailData, Filename);
-#else
-	warning("STUB: BS_Screenshot::SaveThumbnailToFile(%d, %d, .., %s)", Width, Height, Filename.c_str());
+	// Create a PNG representation of the thumbnail data
+	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
+	SaveToFile(&thumbnail, stream);
 
-	return true;
-#endif
+	// Output a MemoryReadStream that encompasses the written data
+	Common::MemoryReadStream *result = new Common::MemoryReadStream(stream->getData(), stream->size(),
+		DisposeAfterUse::YES);
+	return result;
 }
 
 } // End of namespace Sword25

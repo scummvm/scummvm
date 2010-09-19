@@ -62,7 +62,7 @@ const char         *SAVEGAME_DIRECTORY = "saves";
 const char         *FILE_MARKER = "BS25SAVEGAME";
 const uint  SLOT_COUNT = 18;
 const uint  FILE_COPY_BUFFER_SIZE = 1024 * 10;
-const char *VERSIONID = "5";
+const char *VERSIONID = "SCUMMVM1";
 
 // -------------------------------------------------------------------------
 
@@ -194,8 +194,8 @@ struct PersistenceService::Impl {
 				// Die Beschreibung des Spielstandes besteht aus einer textuellen Darstellung des Änderungsdatums der Spielstanddatei.
 				CurSavegameInfo.Description = FormatTimestamp(FileSystemUtil::GetInstance().GetFileTime(Filename));
 				// Den Offset zu den gespeicherten Spieldaten innerhalb der Datei speichern.
-				// Dieses entspricht der aktuellen Position + 1, da nach der letzten Headerinformation noch ein Leerzeichen als trenner folgt.
-				CurSavegameInfo.GamedataOffset = static_cast<uint>(File->pos()) + 1;
+				// Dieses entspricht der aktuellen Position, da nach der letzten Headerinformation noch ein Leerzeichen als trenner folgt.
+				CurSavegameInfo.GamedataOffset = static_cast<uint>(File->pos());
 			}
 
 			delete File;
@@ -357,17 +357,18 @@ bool PersistenceService::SaveGame(uint SlotID, const Common::String &ScreenshotF
 		error("Unable to write game data to savegame file \"%s\".", Filename.c_str());
 	}
 
-	// Screenshotdatei an die Datei anfügen.
-	if (FileSystemUtil::GetInstance().FileExists(ScreenshotFilename)) {
-		Common::File ScreenshotFile;
-		if (!ScreenshotFile.open(ScreenshotFilename.c_str()))
-			error("Unable to load screenshot file");
+	// Get the screenshot
+	Common::MemoryReadStream *thumbnail = (static_cast<GraphicEngine *>(
+		Kernel::GetInstance()->GetService("gfx")))->getThumbnail();
 
+	if (thumbnail) {
 		byte *Buffer = new Byte[FILE_COPY_BUFFER_SIZE];
-		while (!ScreenshotFile.eos()) {
-			int bytesRead = ScreenshotFile.read(&Buffer[0], FILE_COPY_BUFFER_SIZE);
+		while (!thumbnail->eos()) {
+			int bytesRead = thumbnail->read(&Buffer[0], FILE_COPY_BUFFER_SIZE);
 			File->write(&Buffer[0], bytesRead);
 		}
+
+		delete[] Buffer;
 	} else {
 		BS_LOG_WARNINGLN("The screenshot file \"%s\" does not exist. Savegame is written without a screenshot.", Filename.c_str());
 	}
@@ -416,7 +417,7 @@ bool PersistenceService::LoadGame(uint SlotID) {
 	byte *CompressedDataBuffer = new byte[CurSavegameInfo.GamedataLength];
 	byte *UncompressedDataBuffer = new Bytef[CurSavegameInfo.GamedataUncompressedLength];
 
-	File = sfm->openForLoading(GenerateSavegamePath(SlotID));
+	File = sfm->openForLoading(GenerateSavegameFilename(SlotID));
 
 	File->seek(CurSavegameInfo.GamedataOffset);
 	File->read(reinterpret_cast<char *>(&CompressedDataBuffer[0]), CurSavegameInfo.GamedataLength);

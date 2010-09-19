@@ -181,7 +181,7 @@ public:
 	 * @param Height    Returns the height of the frame buffer
 	 * @param Data      Returns the raw data of the frame buffer as an array of 32-bit colour values.
 	*/
-	bool GetScreenshot(uint &Width, uint &Height, byte **Data);
+	Graphics::Surface *GetScreenshot();
 
 
 	RenderObjectPtr<Panel> GetMainPanel();
@@ -285,6 +285,12 @@ public:
 	Graphics::Surface _backSurface;
 	Graphics::Surface *getSurface() { return &_backSurface; }
 
+	Graphics::Surface _frameBuffer;
+	Graphics::Surface *getFrameBuffer() { return &_frameBuffer; }
+
+	Common::MemoryReadStream *_thumbnail;
+	Common::MemoryReadStream *getThumbnail() { return _thumbnail; }
+
 	// Access methods
 
 	/**
@@ -385,10 +391,6 @@ private:
 	};
 
 	Common::Array<DebugLine> m_DebugLines;
-
-	static bool ReadFramebufferContents(uint Width, uint Height, byte **Data);
-	static void ReverseRGBAComponentOrder(byte *Data, uint size);
-	static void FlipImagedataVertical(uint Width, uint Height, byte *Data);
 };
 
 } // End of namespace Sword25
