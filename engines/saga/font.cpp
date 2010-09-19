@@ -123,7 +123,7 @@ void Font::loadFont(uint32 fontResourceId) {
 	}
 
 	if (readS.pos() != FONT_DESCSIZE) {
-		error("Invalid font resource size.");
+		error("Invalid font resource size");
 	}
 
 	font->normal.font = (byte*)malloc(fontResourceLength - FONT_DESCSIZE);
@@ -610,7 +610,7 @@ void Font::textDrawRect(FontId fontId, const char *text, const Common::Rect &rec
 			}
 			w_total = 0;
 			len_total = 0;
-			if (wc == 0) {
+			if (wc == 0 && measurePointer) {
 				searchPointer = measurePointer + 1;
 			}
 			wc = 0;
