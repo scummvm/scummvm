@@ -36,8 +36,11 @@
 
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/savefile.h"
 #include "common/str-array.h"
+#include "common/system.h"
 #include "common/unzip.h"
+#include "sword25/kernel/filesystemutil.h"
 #include "sword25/package/packagemanager.h"
 
 namespace Sword25 {
@@ -142,7 +145,29 @@ bool PackageManager::LoadDirectoryAsPackage(const Common::String &directoryName,
 }
 
 byte *PackageManager::GetFile(const Common::String &fileName, uint *fileSizePtr) {
+	const Common::String B25S_EXTENSION(".b25s");
 	Common::SeekableReadStream *in;
+
+	if (fileName.hasSuffix(B25S_EXTENSION)) {
+		// Savegame loading logic
+		Common::SaveFileManager *sfm = g_system->getSavefileManager();
+		Common::InSaveFile *file = sfm->openForLoading(
+			FileSystemUtil::GetInstance().GetPathFilename(fileName));
+		if (!file) {
+			BS_LOG_ERRORLN("Could not load savegame \"%s\".", fileName.c_str());
+			return 0;
+		}
+
+		if (*fileSizePtr)
+			*fileSizePtr = file->size();
+
+		byte *buffer = new byte[file->size()];
+		file->read(buffer, file->size());
+		
+		delete file;
+		return buffer;
+	}
+
 	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(fileName, _currentDirectory));
 	if (!fileNode)
 		return 0;

@@ -46,30 +46,36 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 namespace {
+static Common::String LoadString(Common::ReadStream &In, uint MaxSize = 999) {
+	Common::String Result;
+
+	char ch = (char)In.readByte();
+	while ((ch != '\0') && (ch != ' ')) {
+		Result += ch;
+		if (Result.size() >= MaxSize) break;
+		ch = (char)In.readByte();
+	}
+
+	return Result;
+}
+
 uint FindEmbeddedPNG(const byte *FileDataPtr, uint FileSize) {
 	if (memcmp(FileDataPtr, "BS25SAVEGAME", 12))
 		return 0;
 
-#if 0
-	// Einen Stringstream mit dem Anfang der Datei intialisieren. 512 Byte sollten hierfür genügen.
-	istringstream StringStream(string(FileDataPtr, FileDataPtr + min(static_cast<uint>(512), FileSize)));
+	// Read in the header
+	Common::MemoryReadStream stream(FileDataPtr, FileSize);
 
 	// Headerinformationen der Spielstandes einlesen.
-	string Marker, VersionID;
-	uint CompressedGamedataSize, UncompressedGamedataSize;
-	StringStream >> Marker >> VersionID >> CompressedGamedataSize >> UncompressedGamedataSize;
-	if (!StringStream.good()) return 0;
+	uint compressedGamedataSize;
+	LoadString(stream);
+	LoadString(stream);
+	Common::String gameSize = LoadString(stream);
+	compressedGamedataSize = atoi(gameSize.c_str());
+	LoadString(stream);
 
-	// Testen, ob wir tatsächlich einen Spielstand haben.
-	if (Marker == "BS25SAVEGAME") {
-		// Offset zum PNG innerhalb des Spielstandes berechnen und zurückgeben.
-		return static_cast<uint>(StringStream.tellg()) + CompressedGamedataSize + 1;
-	}
-#else
-	warning("STUB:FindEmbeddedPNG()");
-#endif
-
-	return 0;
+	// Return the offset of where the thumbnail starts
+	return static_cast<uint>(stream.pos() + compressedGamedataSize);
 }
 }
 
