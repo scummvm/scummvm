@@ -81,6 +81,13 @@ int LoLEngine::processPrologue() {
 		}
 
 		switch (selection) {
+		case -1:
+			// This is sent on RTL for example, if we would not have any
+			// special case for this the default path would call quitGame
+			// and thus make the next game launched from the launcher
+			// quit instantly.
+			break;
+
 		case 0:		// New game
 			processSelection = 0;
 			break;
