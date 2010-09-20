@@ -37,23 +37,6 @@
 
 //#define TEST_MEMORY_COPY
 
-extern "C" {
-
-#ifdef TEST_MEMORY_COPY		/* we won't be able to run in this case b/c of printouts */
-extern void *__real_memcpy(void *dst, void *src, size_t bytes);
-#endif
-
-void *__wrap_memcpy(void *dst, void *src, size_t bytes) {
-#ifdef TEST_MEMORY_COPY		/* we won't be able to run in this case */
-	return __real_memcpy(dst, src, bytes);
-#else
-	PspMemory::fastCopy((byte *)dst, (byte *)src, bytes);
-	return dst;
-#endif
-}
-
-}
-
 void PspMemory::copy(byte *dst, const byte *src, uint32 bytes) {
 	DEBUG_ENTER_FUNC();
 
