@@ -326,9 +326,11 @@ void Sword2Engine::registerDefaultSettings() {
 }
 
 void Sword2Engine::syncSoundSettings() {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	bool mute = ConfMan.getBool("mute");
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, mute ? 0 : ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mute ? 0 : ConfMan.getInt("speech_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mute ? 0 : ConfMan.getInt("sfx_volume"));
 	setSubtitles(ConfMan.getBool("subtitles"));
 
 	// Our own settings dialog can mute the music, speech and sound effects
@@ -339,7 +341,7 @@ void Sword2Engine::syncSoundSettings() {
 		ConfMan.setBool("speech_mute", ConfMan.getBool("mute"));
 		ConfMan.setBool("sfx_mute", ConfMan.getBool("mute"));
 
-		if (!ConfMan.getBool("mute")) // it is false
+		if (!mute) // it is false
 			// So remove it in order to let individual volumes work
 			ConfMan.removeKey("mute", ConfMan.getActiveDomainName());
 	}
