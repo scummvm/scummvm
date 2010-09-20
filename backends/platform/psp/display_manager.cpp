@@ -59,6 +59,71 @@ const OSystem::GraphicsMode DisplayManager::_supportedModes[] = {
 	{0, 0, 0}
 };
 
+
+// Class VramAllocator -----------------------------------
+
+DECLARE_SINGLETON(VramAllocator)
+
+//#define __PSP_DEBUG_FUNCS__	/* For debugging the stack */
+//#define __PSP_DEBUG_PRINT__
+
+#include "backends/platform/psp/trace.h"
+
+
+void *VramAllocator::allocate(int32 size, bool smallAllocation /* = false */) {
+	DEBUG_ENTER_FUNC();
+	assert(size > 0);
+
+	byte *lastAddress = smallAllocation ? (byte *)VRAM_SMALL_ADDRESS : (byte *)VRAM_START_ADDRESS;
+	Common::List<Allocation>::iterator i;
+
+	// Find a block that fits, starting from the beginning
+	for (i = _allocList.begin(); i != _allocList.end(); ++i) {
+		byte *currAddress = (*i).address;
+
+		if (currAddress - lastAddress >= size) // We found a match
+			break;
+
+		if ((*i).getEnd() > lastAddress)
+			lastAddress = (byte *)(*i).getEnd();
+	}
+
+	if (lastAddress + size > (byte *)VRAM_END_ADDRESS) {
+		PSP_DEBUG_PRINT("No space for allocation of %d bytes. %d bytes already allocated.\n",
+		                size, _bytesAllocated);
+		return NULL;
+	}
+
+	_allocList.insert(i, Allocation(lastAddress, size));
+	_bytesAllocated += size;
+
+	PSP_DEBUG_PRINT("Allocated in VRAM, size %u at %p.\n", size, lastAddress);
+	PSP_DEBUG_PRINT("Total allocated %u, remaining %u.\n", _bytesAllocated, (2 * 1024 * 1024) - _bytesAllocated);
+
+	return lastAddress;
+}
+
+// Deallocate a block from VRAM
+void VramAllocator::deallocate(void *address) {
+	DEBUG_ENTER_FUNC();
+	address = (byte *)CACHED(address);	// Make sure all addresses are the same
+
+	Common::List<Allocation>::iterator i;
+
+	// Find the Allocator to deallocate
+	for (i = _allocList.begin(); i != _allocList.end(); ++i) {
+		if ((*i).address == address) {
+			_bytesAllocated -= (*i).size;
+			_allocList.erase(i);
+			PSP_DEBUG_PRINT("Deallocated address[%p], size[%u]\n", (*i).address, (*i).size);
+			return;
+		}
+	}
+
+	PSP_DEBUG_PRINT("Address[%p] not allocated.\n", address);
+}
+
+
 // Class MasterGuRenderer ----------------------------------------------
 
 void MasterGuRenderer::setupCallbackThread() {
