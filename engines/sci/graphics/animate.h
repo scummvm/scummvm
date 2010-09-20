@@ -53,7 +53,8 @@ enum ViewSignals {
 enum ViewScaleSignals {
 	kScaleSignalDoScaling		= 0x0001, // enables scaling when drawing that cel (involves scaleX and scaleY)
 	kScaleSignalGlobalScaling	= 0x0002, // means that global scaling shall get applied on that cel (sets scaleX/scaleY)
-	kScaleSignalUnknown2		= 0x0004 // really unknown
+	kScaleSignalDontSetNsrect	= 0x0004  // do not set nsRect inside kAnimate(); for a test case see bug #3038424 
+
 };
 
 struct AnimateEntry {
