@@ -75,6 +75,16 @@ void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y,
 	uint16 data;
 
 	const byte *src = font.getCharData(item);
+
+	// This happens for me at the mountain (World 6) in Gobliins 2, if I
+	// move the cursor over the "!" part of the ledge while trying to use
+	// an object.
+
+	if (!src) {
+		warning("drawLetter: getCharData() returned NULL");
+		return;
+	}
+
 	byte *dst = dest.getVidMem() + x + dest.getWidth() * y;
 
 	int nWidth = font.getCharWidth();
