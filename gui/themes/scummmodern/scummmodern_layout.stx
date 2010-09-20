@@ -53,7 +53,7 @@
 		<def var = 'Tooltip.YDelta' value = '32'/>
 
 		<widget name = 'OptionsLabel'
-				size = '110, Globals.Line.Height'
+				size = '115, Globals.Line.Height'
 				textalign = 'right'
 		/>
 		<widget name = 'SmallLabel'
