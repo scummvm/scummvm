@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2010-09-19 18:13+0100\n"
-"PO-Revision-Date: 2010-08-11 22:14+0100\n"
+"PO-Revision-Date: 2010-09-19 23:54+0100\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.sf.net>\n"
 "Language: Francais\n"
@@ -741,10 +741,9 @@ msgid "Subs"
 msgstr "Subs"
 
 #: gui/options.cpp:810
-#, fuzzy
 msgctxt "lowres"
 msgid "Both"
-msgstr "Les deux"
+msgstr "V&S"
 
 #: gui/options.cpp:810
 msgid "Show subtitles and play speech"

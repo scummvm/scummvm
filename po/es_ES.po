@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2010-09-19 18:13+0100\n"
-"PO-Revision-Date: 2010-09-16 13:01+0100\n"
+"PO-Revision-Date: 2010-09-20 15:31+0100\n"
 "Last-Translator: Tomás Maidagan\n"
 "Language-Team: \n"
 "Language: Espanol\n"
@@ -136,10 +136,9 @@ msgid "Full title of the game"
 msgstr "Título completo del juego"
 
 #: gui/launcher.cpp:185
-#, fuzzy
 msgctxt "lowres"
 msgid "Name:"
-msgstr "Nombre:"
+msgstr "Nom.:"
 
 #: gui/launcher.cpp:189
 msgid "Language:"
@@ -170,7 +169,7 @@ msgstr "Plataforma para la que se diseñó el juego"
 #: gui/launcher.cpp:203
 msgctxt "lowres"
 msgid "Platform:"
-msgstr "Plataforma:"
+msgstr "Plat.:"
 
 #: gui/launcher.cpp:215 gui/options.cpp:924 gui/options.cpp:941
 msgid "Graphics"
@@ -307,7 +306,7 @@ msgstr "Por defecto"
 
 #: gui/launcher.cpp:450 gui/options.cpp:1262
 msgid "Select SoundFont"
-msgstr "Selecciona SoundFont"
+msgstr "Selecciona un SoundFont"
 
 #: gui/launcher.cpp:469 gui/launcher.cpp:616
 msgid "Select directory with game data"
@@ -371,7 +370,7 @@ msgstr "~A~ñadir juego..."
 
 #: gui/launcher.cpp:571 gui/launcher.cpp:578
 msgid "Hold Shift for Mass Add"
-msgstr "Mantén pulsado Mayús para añadir varios juegos"
+msgstr "Mantener pulsado Mayús para añadir varios juegos"
 
 #: gui/launcher.cpp:573
 msgid "~E~dit Game..."
@@ -387,7 +386,7 @@ msgstr "E~l~iminar juego"
 
 #: gui/launcher.cpp:575 gui/launcher.cpp:582
 msgid "Remove game from the list. The game data files stay intact"
-msgstr "Elimina el juego de la lista. Los archivos no se borran"
+msgstr "Eliminar el juego de la lista. Los archivos no se borran"
 
 #: gui/launcher.cpp:578
 msgctxt "lowres"
@@ -489,7 +488,7 @@ msgstr "Añadir varios..."
 #: gui/launcher.cpp:1060
 msgctxt "lowres"
 msgid "Add Game..."
-msgstr "Añadir juego..."
+msgstr "Añadir..."
 
 #: gui/launcher.cpp:1060
 msgid "Add Game..."
@@ -619,7 +618,7 @@ msgstr "Disp. de música:"
 
 #: gui/options.cpp:695
 msgid "AdLib emulator:"
-msgstr "Emulador AdLib:"
+msgstr "Emul. de AdLib:"
 
 #: gui/options.cpp:695 gui/options.cpp:696
 msgid "AdLib is used for music in many games"
@@ -697,7 +696,7 @@ msgstr ""
 #: gui/options.cpp:766
 msgctxt "lowres"
 msgid "True Roland MT-32 (disable GM emulation)"
-msgstr "Roland MT-32 real (desact. emulación GM)"
+msgstr "Roland MT-32 real (desact. emul. GM)"
 
 #: gui/options.cpp:769
 msgid "Enable Roland GS Mode"
@@ -738,12 +737,12 @@ msgstr "Voz"
 
 #: gui/options.cpp:809
 msgid "Subs"
-msgstr "Subt."
+msgstr "Subt"
 
 #: gui/options.cpp:810
 msgctxt "lowres"
 msgid "Both"
-msgstr "Ambos"
+msgstr "Ambs"
 
 #: gui/options.cpp:810
 msgid "Show subtitles and play speech"
@@ -813,12 +812,12 @@ msgstr "Plugins:"
 
 #: gui/options.cpp:1015
 msgid "Misc"
-msgstr "Otros"
+msgstr "Otras"
 
 #: gui/options.cpp:1017
 msgctxt "lowres"
 msgid "Misc"
-msgstr "Otros"
+msgstr "Otras"
 
 #: gui/options.cpp:1019
 msgid "Theme:"
@@ -1171,11 +1170,11 @@ msgstr "Cargar"
 
 #: sound/fmopl.cpp:51
 msgid "MAME OPL emulator"
-msgstr "Emulador de MAME OPL"
+msgstr "Emulador OPL de MAME"
 
 #: sound/fmopl.cpp:53
 msgid "DOSBox OPL emulator"
-msgstr "Emulador de DOSBox OPL"
+msgstr "Emulador OPL de DOSBox"
 
 #: sound/null.h:45
 msgid "No music"

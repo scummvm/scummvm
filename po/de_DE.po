@@ -138,7 +138,6 @@ msgid "Full title of the game"
 msgstr "Voller Name des Spiels"
 
 #: gui/launcher.cpp:185
-#, fuzzy
 msgctxt "lowres"
 msgid "Name:"
 msgstr "Name:"
