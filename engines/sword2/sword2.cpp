@@ -334,10 +334,14 @@ void Sword2Engine::syncSoundSettings() {
 	// Our own settings dialog can mute the music, speech and sound effects
 	// individually. ScummVM's settings dialog has one master mute setting.
 
-	if (ConfMan.getBool("mute")) {
-		ConfMan.setBool("music_mute", true);
-		ConfMan.setBool("speech_mute", true);
-		ConfMan.setBool("sfx_mute", true);
+	if (ConfMan.hasKey("mute")) {
+		ConfMan.setBool("music_mute", ConfMan.getBool("mute"));
+		ConfMan.setBool("speech_mute", ConfMan.getBool("mute"));
+		ConfMan.setBool("sfx_mute", ConfMan.getBool("mute"));
+
+		if (!ConfMan.getBool("mute")) // it is false
+			// So remove it in order to let individual volumes work
+			ConfMan.removeKey("mute", ConfMan.getActiveDomainName());
 	}
 
 	_sound->muteMusic(ConfMan.getBool("music_mute"));
