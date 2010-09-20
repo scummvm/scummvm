@@ -275,6 +275,10 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 				int a = in[3];
 				in += inStep;
 
+				if (ca != 255) {
+					a = a * ca >> 8;
+				}
+
 				switch (a) {
 				case 0: // Full transparency
 					out += 4;
