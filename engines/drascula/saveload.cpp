@@ -210,7 +210,7 @@ bool DrasculaEngine::loadGame(const char *gameName) {
 	curY = sav->readSint32LE();
 	trackProtagonist = sav->readSint32LE();
 
-	for (l = 1; l < 43; l++) {
+	for (l = 1; l < ARRAYSIZE(inventoryObjects); l++) {
 		inventoryObjects[l] = sav->readSint32LE();
 	}
 
@@ -241,7 +241,7 @@ void DrasculaEngine::saveGame(char gameName[]) {
 	out->writeSint32LE(curY);
 	out->writeSint32LE(trackProtagonist);
 
-	for (l = 1; l < 43; l++) {
+	for (l = 1; l < ARRAYSIZE(inventoryObjects); l++) {
 		out->writeSint32LE(inventoryObjects[l]);
 	}
 
