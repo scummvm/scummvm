@@ -173,12 +173,12 @@ SoundMgr::SoundMgr(AgiEngine *agi, Audio::Mixer *pMixer) {
 	_playingSound = -1;
 
 	switch (_vm->_soundemu) {
+	case SOUND_EMU_NONE:
 	case SOUND_EMU_AMIGA:
 	case SOUND_EMU_MAC:
+	case SOUND_EMU_PC:
 		_soundGen = new SoundGenSarien(_vm, pMixer);
 		break;
-	case SOUND_EMU_NONE:
-	case SOUND_EMU_PC:
 	case SOUND_EMU_PCJR:
 		_soundGen = new SoundGenPCJr(_vm, pMixer);
 		break;
