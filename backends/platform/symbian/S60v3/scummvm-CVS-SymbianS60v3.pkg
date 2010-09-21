@@ -68,6 +68,7 @@
 "..\..\..\..\dists\engine-data\m4.dat"-"c:\data\scummvm\m4.dat"
 "..\..\..\..\dists\engine-data\teenagent.dat"-"c:\data\scummvm\teenagent.dat"
 "..\..\..\vkeybd\packs\vkeybd_default.zip"-"c:\data\scummvm\vkeybd_default.zip"
+"..\..\..\..\gui\themes\translations.dat"-"c:\data\scummvm\translations.dat"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"c:\data\scummvm\scummvm.ini",FILENULL
