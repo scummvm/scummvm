@@ -577,18 +577,19 @@ void AgiEngine::initialize() {
 		_soundemu = SOUND_EMU_APPLE2GS;
 	} else if (getPlatform() == Common::kPlatformCoCo3) {
 		_soundemu = SOUND_EMU_COCO3;
+	} else if (ConfMan.get("music_driver") == "auto") {
+		// Default sound is the proper PCJr emulation
+		_soundemu = SOUND_EMU_PCJR;
 	} else {
 		switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK|MDT_AMIGA|MDT_ADLIB|MDT_PCJR|MDT_MIDI))) {
 		case MT_PCSPK:
 			_soundemu = SOUND_EMU_PC;
 			break;
 		case MT_ADLIB:
-			// Default sound is the proper PCJr emulation
-			_soundemu = SOUND_EMU_PCJR;
+			_soundemu = SOUND_EMU_NONE;
 			break;
 		case MT_PCJR:
-			// Under PCJr Sarien emu is disguised
-			_soundemu = SOUND_EMU_NONE;
+			_soundemu = SOUND_EMU_PCJR;
 			break;
 		case MT_AMIGA:
 			_soundemu = SOUND_EMU_AMIGA;
