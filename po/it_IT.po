@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-19 18:45+0100\n"
-"PO-Revision-Date: 2010-09-14 19:25+0100\n"
+"POT-Creation-Date: 2010-09-19 18:13+0100\n"
+"PO-Revision-Date: 2010-09-21 19:33+0100\n"
 "Last-Translator: Matteo 'Maff' Angelino <matteo.maff at gmail dot com>\n"
 "Language-Team: Italian\n"
 "Language: Italiano\n"
@@ -136,7 +136,6 @@ msgid "Full title of the game"
 msgstr "Titolo completo del gioco"
 
 #: gui/launcher.cpp:185
-#, fuzzy
 msgctxt "lowres"
 msgid "Name:"
 msgstr "Nome:"
@@ -1124,6 +1123,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Impossibile salvare il gioco nel file:\n"
+"\n"
+"%s"
 
 #: engines/scumm/scumm.cpp:2188 engines/agos/saveload.cpp:157
 #, c-format
@@ -1132,6 +1134,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Impossibile caricare il gioco dal file:\n"
+"\n"
+"%s"
 
 #: engines/scumm/scumm.cpp:2200 engines/agos/saveload.cpp:200
 #, c-format
@@ -1140,6 +1145,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Gioco salvato con successo nel file:\n"
+"\n"
+"%s"
 
 #: engines/mohawk/dialogs.cpp:81 engines/mohawk/dialogs.cpp:115
 msgid "~Z~ip Mode Activated"
