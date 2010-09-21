@@ -712,7 +712,7 @@
 				<layout type = 'vertical' padding = '24, 24, 24, 24' center = 'true'>
 					<widget name = 'vcMuteCheckbox'
 							type = 'Checkbox'
-							width = '80'   <!-- FIXME: Why this is needed? -->
+							width = '120'   <!-- FIXME: Why this is needed? -->
 					/>
 				</layout>
 			</layout>
