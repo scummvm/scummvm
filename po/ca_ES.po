@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.2.0svn\n"
+"Project-Id-Version: ScummVM 1.2.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2010-09-19 18:13+0100\n"
-"PO-Revision-Date: 2010-09-08 19:38+0100\n"
+"PO-Revision-Date: 2010-09-21 23:37+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@jvprat.com>\n"
 "Language-Team: Catalan <scummvm-devel@lists.sf.net>\n"
 "Language: Catalan\n"
@@ -136,7 +136,6 @@ msgid "Full title of the game"
 msgstr "Títol complet del joc"
 
 #: gui/launcher.cpp:185
-#, fuzzy
 msgctxt "lowres"
 msgid "Name:"
 msgstr "Nom:"
@@ -1127,6 +1126,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"No s'ha pogut desar l'estat del joc al fitxer:\n"
+"\n"
+"%s"
 
 #: engines/scumm/scumm.cpp:2188 engines/agos/saveload.cpp:157
 #, c-format
@@ -1135,6 +1137,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"No s'ha pogut carregar l'estat del joc del fitxer:\n"
+"\n"
+"%s"
 
 #: engines/scumm/scumm.cpp:2200 engines/agos/saveload.cpp:200
 #, c-format
@@ -1143,6 +1148,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"S'ha desat l'estat del joc en el fitxer:\n"
+"\n"
+"%s"
 
 #: engines/mohawk/dialogs.cpp:81 engines/mohawk/dialogs.cpp:115
 msgid "~Z~ip Mode Activated"
@@ -1614,109 +1622,3 @@ msgstr "Pantalla "
 #: backends/platform/wince/CELauncherDialog.cpp:104
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Voleu fer una cerca automàtica?"
-
-#~ msgid "Save Path: "
-#~ msgstr "Camí de les partides: "
-
-#, fuzzy
-#~ msgctxt "lowres"
-#~ msgid "Save Path: "
-#~ msgstr "Camí de les partides: "
-
-#~ msgctxt "lowres"
-#~ msgid "Standard Renderer (16bpp)"
-#~ msgstr "Pintat estàndard (16bpp)"
-
-#~ msgctxt "lowres"
-#~ msgid "Antialiased Renderer (16bpp)"
-#~ msgstr "Pintat amb antialias (16bpp)"
-
-#, fuzzy
-#~ msgctxt "lowres"
-#~ msgid "Special sound effects volume"
-#~ msgstr "Volum dels sons d'efectes especials"
-
-#~ msgid "English"
-#~ msgstr "Anglès"
-
-#~ msgid "Failed to load any GUI theme, aborting"
-#~ msgstr "No s'ha pogut carregar cap tema de la interfície d'usuari, avortant"
-
-#, fuzzy
-#~ msgid "User picked target '%s' (gameid '%s')...\n"
-#~ msgstr ""
-#~ "L'usuari ha seleccionat el target '%s' (identificador de joc '%s')...\n"
-
-#~ msgid "  Looking for a plugin supporting this gameid... "
-#~ msgstr "  Cercant un connector que suporti aquest identificador de joc... "
-
-#~ msgid "failed\n"
-#~ msgstr "ha fallat\n"
-
-#~ msgid ""
-#~ "%s is an invalid gameid. Use the --list-games option to list supported "
-#~ "gameid"
-#~ msgstr ""
-#~ "%s és un identificador de joc invàlid. Utilitzeu l'opció --list-games per "
-#~ "llistar els identificadors de joc suportats"
-
-#~ msgid "  Starting '%s'\n"
-#~ msgstr "  Iniciant '%s'\n"
-
-#, fuzzy
-#~ msgid "%s failed to instantiate engine: %s (target '%s', path '%s')"
-#~ msgstr "%s ha fallat l'iniciat del motor: %s (target '%s', camí '%s')"
-
-#~ msgid "Chinese (Taiwan)"
-#~ msgstr "Xinès (Taiwan)"
-
-#~ msgid "Czech"
-#~ msgstr "Txec"
-
-#~ msgid "Dutch"
-#~ msgstr "Danès"
-
-#~ msgid "English (GB)"
-#~ msgstr "Anglès (GB)"
-
-#~ msgid "English (US)"
-#~ msgstr "Anglès (EUA)"
-
-#~ msgid "French"
-#~ msgstr "Francès"
-
-#~ msgid "German"
-#~ msgstr "Alemany"
-
-#~ msgid "Hebrew"
-#~ msgstr "Hebreu"
-
-#~ msgid "Italian"
-#~ msgstr "Italià"
-
-#~ msgid "Japanese"
-#~ msgstr "Japonès"
-
-#~ msgid "Korean"
-#~ msgstr "Coreà"
-
-#~ msgid "Polish"
-#~ msgstr "Polac"
-
-#~ msgid "Portuguese"
-#~ msgstr "Portuguès"
-
-#~ msgid "Russian"
-#~ msgstr "Rus"
-
-#~ msgid "Spanish"
-#~ msgstr "Espanyol"
-
-#~ msgid "Swedish"
-#~ msgstr "Suís"
-
-#~ msgid "Failed to load MT32_CONTROL.ROM"
-#~ msgstr "No s'ha pogut carregar el fitxer MT32_CONTROL.ROM"
-
-#~ msgid "Failed to load MT32_PCM.ROM"
-#~ msgstr "No s'ha pogut carregar el fitxer MT32_PCM.ROM"
