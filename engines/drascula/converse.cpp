@@ -211,6 +211,7 @@ void DrasculaEngine::converse(int index) {
 		}
 
 		updateEvents();
+		flushKeyBuffer();
 
 		phrase1_bottom = 8 * print_abc_opc(phrase1, 2, game1);
 		phrase2_bottom = phrase1_bottom + 8 * print_abc_opc(phrase2, phrase1_bottom + 2, game2);
