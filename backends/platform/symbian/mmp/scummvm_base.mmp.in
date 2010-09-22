@@ -59,6 +59,9 @@ SYSTEMINCLUDE	\epoc32\include\ZLIB // before \epoc32\include because symbian alr
 SYSTEMINCLUDE   \epoc32\include\libc
 SYSTEMINCLUDE   \epoc32\include\tremor
 SYSTEMINCLUDE   \epoc32\include
+SYSTEMINCLUDE   \epoc32\include\mw
+SYSTEMINCLUDE   \epoc32\include\platform
+SYSTEMINCLUDE   \epoc32\include\platform\mw
 SYSTEMINCLUDE   ..\src // for portdefs.h
 
 // *** SOURCE files
