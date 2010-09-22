@@ -312,7 +312,7 @@ void TownsPC98_MusicChannel::processEvents() {
 void TownsPC98_MusicChannel::processFrequency() {
 	if (_flags & CHS_RECALCFREQ) {
 
-		_frequency = (((const uint16 *)_drv->_opnFreqTable)[_frqBlockMSB & 0x0f] + _frqLSB) | (((_frqBlockMSB & 0x70) >> 1) << 8);
+		_frequency = (READ_LE_UINT16(&_drv->_opnFreqTable[(_frqBlockMSB & 0x0f) << 1]) + _frqLSB) | (((_frqBlockMSB & 0x70) >> 1) << 8);
 
 		_drv->writeReg(_part, _regOffset + 0xa4, (_frequency >> 8));
 		_drv->writeReg(_part, _regOffset + 0xa0, (_frequency & 0xff));
@@ -709,7 +709,7 @@ void TownsPC98_MusicChannelSSG::processFrequency() {
 
 	if (_flags & CHS_RECALCFREQ) {
 		_block = _frqBlockMSB >> 4;
-		_frequency = ((const uint16 *)_drv->_opnFreqTableSSG)[_frqBlockMSB & 0x0f] + _frqLSB;
+		_frequency = READ_LE_UINT16(&_drv->_opnFreqTableSSG[(_frqBlockMSB & 0x0f) << 1]) + _frqLSB;
 
 		uint16 f = _frequency >> _block;
 		_drv->writeReg(_part, _regOffset << 1, f & 0xff);
