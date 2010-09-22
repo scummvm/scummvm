@@ -139,17 +139,6 @@ void Screen::setBackgroundColor(long color) {
 	// How???  Translate existing pixels in dib before objects rendered?
 }
 
-// Write the supplied character in the supplied color to x,y pixel coords
-void Screen::writeChar(int16 x, int16 y, char c, byte color) {
-	debugC(1, kDebugDisplay, "writeChar(%d, %d, %c, %d)", x, y, c, color);
-
-	warning("STUB: writeChar()");
-	// x = (int16)((long) x * config.cx / XPIX);
-	// y = (int16)((long) y * config.cy / YPIX);
-	// SetTextColor(hDC, GetPalIndex(color));
-	// TextOut(hDC, x, y, &c, 1);
-}
-
 // Return the overlay state (Foreground/Background) of the currently
 // processed object by looking down the current column for an overlay
 // base bit set (in which case the object is foreground).

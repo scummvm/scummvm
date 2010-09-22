@@ -109,9 +109,15 @@ bool intro_v3w::introPlay() {
 //TODO : Add proper check of story mode
 //#if STORY
 //	SetBkMode(TRANSPARENT);
+
+// FIXME: This initialization shouldn't be there, as all the fonts should be loaded directly
+	_vm.screen().loadFont(0);
+
 	if (introTicks < introSize) {
 		// Scale viewport x_intro,y_intro to screen (offsetting y)
-		_vm.screen().writeChar(_vm._introX[introTicks], _vm._introY[introTicks] - DIBOFF_Y, 'x', _TBRIGHTWHITE);
+		_vm.screen().writeStr(_vm._introX[introTicks], _vm._introY[introTicks] - DIBOFF_Y, "x", _TBRIGHTWHITE);
+		_vm.screen().displayBackground();
+
 
 		// Text boxes at various times
 		switch (introTicks) {
