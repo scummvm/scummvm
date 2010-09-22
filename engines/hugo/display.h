@@ -43,7 +43,7 @@ public:
 	virtual ~Screen();
 
 	int16    fontHeight();
-	int16    stringLength(char *s);
+	int16    stringLength(const char *s);
 
 	void     displayBackground();
 	void     displayFrame(int sx, int sy, seq_t *seq, bool foreFl);
@@ -56,10 +56,10 @@ public:
 	void     restorePal(Common::SeekableReadStream *f);
 	void     savePal(Common::WriteStream *f);
 	void     setBackgroundColor(long color);
-	void     shadowStr(int16 sx, int16 sy, char *s, byte color);
+	void     shadowStr(int16 sx, int16 sy, const char *s, byte color);
 	void     userHelp();
 	void     writeChr(int sx, int sy, byte color, char *local_fontdata);
-	void     writeStr(int16 sx, int16 sy, char *s, byte color);
+	void     writeStr(int16 sx, int16 sy, const char *s, byte color);
 
 	icondib_t &getIconBuffer() {
 		return _iconBuffer;
@@ -96,7 +96,7 @@ private:
 	overlayState_t findOvl(seq_t *seq_p, image_pt dst_p, uint16 y);
 	void merge(rect_t *rectA, rect_t *rectB);
 	int16 mergeLists(rect_t *list, rect_t *blist, int16 len, int16 blen, int16 bmax);
-	int16 center(char *s);
+	int16 center(const char *s);
 };
 
 class Screen_v1d : public Screen {

@@ -349,7 +349,7 @@ int16 Screen::fontHeight() {
 
 
 // Returns length of supplied string in pixels
-int16 Screen::stringLength(char *s) {
+int16 Screen::stringLength(const char *s) {
 	int16 sum;
 	byte **fontArr = _font[_fnt];
 
@@ -362,7 +362,7 @@ int16 Screen::stringLength(char *s) {
 }
 
 // Return x which would center supplied string
-int16 Screen::center(char *s) {
+int16 Screen::center(const char *s) {
 	debugC(1, kDebugDisplay, "center(%s)", s);
 
 	return ((int16)((XPIX - stringLength(s)) >> 1));
@@ -370,7 +370,7 @@ int16 Screen::center(char *s) {
 
 // Write string at sx,sy in supplied color in current font
 // If sx == CENTER, center it
-void Screen::writeStr(int16 sx, int16 sy, char *s, byte color) {
+void Screen::writeStr(int16 sx, int16 sy, const char *s, byte color) {
 	byte **font = _font[_fnt];
 
 	debugC(2, kDebugDisplay, "writeStr(%d, %d, %s, %d)", sx, sy, s, color);
@@ -385,7 +385,7 @@ void Screen::writeStr(int16 sx, int16 sy, char *s, byte color) {
 }
 
 // Shadowed version of writestr
-void Screen::shadowStr(int16 sx, int16 sy, char *s, byte color) {
+void Screen::shadowStr(int16 sx, int16 sy, const char *s, byte color) {
 	debugC(1, kDebugDisplay, "shadowStr(%d, %d, %s, %d)", sx, sy, s, color);
 
 	if (sx == CENTER)
