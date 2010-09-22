@@ -1,14 +1,14 @@
 # Ukrainian translation for ScummVM.
 # Copyright (C) 2010 ScummVM
 # This file is distributed under the same license as the ScummVM package.
-# Lubomyr Lisen , 2010.
+# Lubomyr Lisen, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2010-09-19 18:13+0100\n"
-"PO-Revision-Date: 2010-07-30 22:19+0100\n"
+"PO-Revision-Date: 2010-09-21 18:46+0200\n"
 "Last-Translator: Lubomyr Lisen\n"
 "Language-Team: Ukrainian\n"
 "Language: Ukrainian\n"
@@ -40,7 +40,6 @@ msgid "Go to previous directory level"
 msgstr "Перейти на папку рівнем вище"
 
 #: gui/browser.cpp:72
-#, fuzzy
 msgctxt "lowres"
 msgid "Go up"
 msgstr "Вверх"
@@ -126,7 +125,6 @@ msgstr ""
 "запуску з командної стрічки"
 
 #: gui/launcher.cpp:178
-#, fuzzy
 msgctxt "lowres"
 msgid "ID:"
 msgstr "ID:"
@@ -140,7 +138,6 @@ msgid "Full title of the game"
 msgstr "Повна назва гри"
 
 #: gui/launcher.cpp:185
-#, fuzzy
 msgctxt "lowres"
 msgid "Name:"
 msgstr "Назва:"
@@ -172,7 +169,6 @@ msgid "Platform the game was originally designed for"
 msgstr "Платформа, для якої гра була спочатку розроблена"
 
 #: gui/launcher.cpp:203
-#, fuzzy
 msgctxt "lowres"
 msgid "Platform:"
 msgstr "Платформа:"
@@ -190,7 +186,6 @@ msgid "Override global graphic settings"
 msgstr "Перекрити глобальні установки графіки"
 
 #: gui/launcher.cpp:220
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Перекрити глобальні установки графіки"
@@ -204,7 +199,6 @@ msgid "Override global audio settings"
 msgstr "Перекрити глобальні установки аудіо"
 
 #: gui/launcher.cpp:232
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Перекрити глобальні установки аудіо"
@@ -214,7 +208,6 @@ msgid "Volume"
 msgstr "Гучність"
 
 #: gui/launcher.cpp:243 gui/options.cpp:954
-#, fuzzy
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Гучність"
@@ -224,7 +217,6 @@ msgid "Override global volume settings"
 msgstr "Перекрити глобальні установки гучності"
 
 #: gui/launcher.cpp:248
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Перекрити глобальні установки гучності"
@@ -238,23 +230,19 @@ msgid "Override global MIDI settings"
 msgstr "Перекрити глобальні установки MIDI"
 
 #: gui/launcher.cpp:260
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Перекрити глобальні установки MIDI"
 
 #: gui/launcher.cpp:270 gui/options.cpp:968
-#, fuzzy
 msgid "MT-32"
 msgstr "MT-32"
 
 #: gui/launcher.cpp:273
-#, fuzzy
 msgid "Override global MT-32 settings"
 msgstr "Перекрити глобальні установки MT-32"
 
 #: gui/launcher.cpp:275
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Перекрити глобальні установки MT-32"
@@ -264,7 +252,6 @@ msgid "Paths"
 msgstr "Шляхи"
 
 #: gui/launcher.cpp:288 gui/options.cpp:977
-#, fuzzy
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Шляхи"
@@ -274,21 +261,19 @@ msgid "Game Path:"
 msgstr "Шлях до гри: "
 
 #: gui/launcher.cpp:297
-#, fuzzy
 msgctxt "context"
 msgid "Game Path:"
 msgstr "Шлях до гри: "
 
 #: gui/launcher.cpp:302 gui/options.cpp:997
 msgid "Extra Path:"
-msgstr "Дод. шлях:"
+msgstr "Додатк. шлях:"
 
 #: gui/launcher.cpp:302 gui/launcher.cpp:304 gui/launcher.cpp:305
 msgid "Specifies path to additional data used the game"
 msgstr "Вказує шлях до додаткових файлів даних для гри"
 
 #: gui/launcher.cpp:304 gui/options.cpp:999
-#, fuzzy
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Дод. шлях:"
@@ -303,7 +288,6 @@ msgid "Specifies where your savegames are put"
 msgstr "Вказує шлях до збережень гри"
 
 #: gui/launcher.cpp:311 gui/options.cpp:987
-#, fuzzy
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Шлях збер.: "
@@ -313,7 +297,6 @@ msgstr "Шлях збер.: "
 #: gui/options.cpp:1108 gui/options.cpp:1114 gui/options.cpp:1120
 #: gui/options.cpp:1128 gui/options.cpp:1152 gui/options.cpp:1156
 #: gui/options.cpp:1162 gui/options.cpp:1169 gui/options.cpp:1268
-#, fuzzy
 msgctxt "path"
 msgid "None"
 msgstr "Не заданий"
@@ -408,19 +391,16 @@ msgid "Remove game from the list. The game data files stay intact"
 msgstr "Видалити гру зі списку. Не видаляє гру з жорсткого диска"
 
 #: gui/launcher.cpp:578
-#, fuzzy
 msgctxt "lowres"
 msgid "~A~dd Game..."
-msgstr "~Д~од. гру..."
+msgstr "~Д~одати гру..."
 
 #: gui/launcher.cpp:580
-#, fuzzy
 msgctxt "lowres"
 msgid "~E~dit Game..."
 msgstr "Реда~г~. гру..."
 
 #: gui/launcher.cpp:582
-#, fuzzy
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~В~идалити гру"
@@ -498,7 +478,6 @@ msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM не зміг знайти движок для запуску вибраної гри!"
 
 #: gui/launcher.cpp:1059
-#, fuzzy
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Дод. багато..."
@@ -508,14 +487,13 @@ msgid "Mass Add..."
 msgstr "Дод. багато..."
 
 #: gui/launcher.cpp:1060
-#, fuzzy
 msgctxt "lowres"
 msgid "Add Game..."
-msgstr "Дод. гру..."
+msgstr "Додати гру..."
 
 #: gui/launcher.cpp:1060
 msgid "Add Game..."
-msgstr "Дод. гру..."
+msgstr "Додати гру..."
 
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
@@ -582,18 +560,17 @@ msgstr "48 кГц"
 
 #: gui/options.cpp:230 gui/options.cpp:399 gui/options.cpp:497
 #: gui/options.cpp:555 gui/options.cpp:742
-#, fuzzy
 msgctxt "soundfont"
 msgid "None"
 msgstr "Не заданий"
 
 #: gui/options.cpp:635
 msgid "Graphics mode:"
-msgstr "Графічний режим:"
+msgstr "Графічн. режим:"
 
 #: gui/options.cpp:646
 msgid "Render mode:"
-msgstr "Режим растрування:"
+msgstr "Режим раструв.:"
 
 #: gui/options.cpp:646 gui/options.cpp:647
 msgid "Special dithering modes supported by some games"
@@ -613,12 +590,11 @@ msgstr "Коригувати співвідношення сторін для ігор з графікою 320x200"
 
 #: gui/options.cpp:667
 msgid "Preferred Device:"
-msgstr "Пристрій якому віддається перевага:"
+msgstr "Головн. пристрій:"
 
 #: gui/options.cpp:667
-#, fuzzy
 msgid "Music Device:"
-msgstr "Музичний Пристрій:"
+msgstr "Музич. Пристрій:"
 
 #: gui/options.cpp:667 gui/options.cpp:669
 msgid "Specifies preferred sound device or sound card emulator"
@@ -629,13 +605,11 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Вказує вихідний звуковий пристрій або емулятор звукової карти"
 
 #: gui/options.cpp:669
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred Device:"
 msgstr "Пристрій якому віддається перевага:"
 
 #: gui/options.cpp:669
-#, fuzzy
 msgctxt "lowres"
 msgid "Music Device:"
 msgstr "Музичний Пристрій:"
@@ -678,7 +652,6 @@ msgstr ""
 "SoundFont підтримується деякими звуковими картами, Fluidsynth і Timidity"
 
 #: gui/options.cpp:741
-#, fuzzy
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "SoundFont:"
@@ -696,7 +669,6 @@ msgid "MIDI gain:"
 msgstr "Посилення MIDI:"
 
 #: gui/options.cpp:759
-#, fuzzy
 msgid "MT-32 Device:"
 msgstr "Пристрій MT-32:"
 
@@ -719,7 +691,6 @@ msgstr ""
 "хочете його використати"
 
 #: gui/options.cpp:766
-#, fuzzy
 msgctxt "lowres"
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Справжній Roland MT-32 (вимкнути емуляцию GM)"
@@ -735,11 +706,11 @@ msgstr ""
 
 #: gui/options.cpp:794
 msgid "Text and Speech:"
-msgstr "Текст і озвучення:"
+msgstr "Текст і озвучка:"
 
 #: gui/options.cpp:798 gui/options.cpp:808
 msgid "Speech"
-msgstr "Озвучення"
+msgstr "Озвучка"
 
 #: gui/options.cpp:799 gui/options.cpp:809
 msgid "Subtitles"
@@ -751,13 +722,12 @@ msgstr "Все"
 
 #: gui/options.cpp:802
 msgid "Subtitle speed:"
-msgstr "Швидкість субтитрів:"
+msgstr "Швид. субтитрів:"
 
 #: gui/options.cpp:804
-#, fuzzy
 msgctxt "lowres"
 msgid "Text and Speech:"
-msgstr "Текст і озвучення:"
+msgstr "Текст і озвучка:"
 
 #: gui/options.cpp:808
 msgid "Spch"
@@ -768,7 +738,6 @@ msgid "Subs"
 msgstr "Суб"
 
 #: gui/options.cpp:810
-#, fuzzy
 msgctxt "lowres"
 msgid "Both"
 msgstr "Все"
@@ -778,7 +747,6 @@ msgid "Show subtitles and play speech"
 msgstr "Показувати субтитри і відтворювати мову"
 
 #: gui/options.cpp:812
-#, fuzzy
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "Швидкість субтитрів:"
@@ -788,14 +756,13 @@ msgid "Music volume:"
 msgstr "Гучність музики:"
 
 #: gui/options.cpp:830
-#, fuzzy
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "Гучність музики:"
 
 #: gui/options.cpp:837
 msgid "Mute All"
-msgstr "Вимкнути усе"
+msgstr "Вимкнути все"
 
 #: gui/options.cpp:840
 msgid "SFX volume:"
@@ -806,27 +773,24 @@ msgid "Special sound effects volume"
 msgstr "Гучність спеціальних звукових ефектів"
 
 #: gui/options.cpp:842
-#, fuzzy
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "Гучність ефектів:"
 
 #: gui/options.cpp:850
 msgid "Speech volume:"
-msgstr "Гучність озвучення:"
+msgstr "Гучність озвучки:"
 
 #: gui/options.cpp:852
-#, fuzzy
 msgctxt "lowres"
 msgid "Speech volume:"
-msgstr "Гучність озвучення:"
+msgstr "Гучність озвучки:"
 
 #: gui/options.cpp:991
 msgid "Theme Path:"
 msgstr "Шлях до тем:"
 
 #: gui/options.cpp:993
-#, fuzzy
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Шлях до тем:"
@@ -842,7 +806,6 @@ msgid "Plugins Path:"
 msgstr "Шлях до плагінів:"
 
 #: gui/options.cpp:1006
-#, fuzzy
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Шлях до плагінів:"
@@ -852,7 +815,6 @@ msgid "Misc"
 msgstr "Різне"
 
 #: gui/options.cpp:1017
-#, fuzzy
 msgctxt "lowres"
 msgid "Misc"
 msgstr "Різне"
@@ -863,14 +825,13 @@ msgstr "Тема:"
 
 #: gui/options.cpp:1023
 msgid "GUI Renderer:"
-msgstr "Растеризатор GUI:"
+msgstr "Растеризат. GUI:"
 
 #: gui/options.cpp:1035
 msgid "Autosave:"
 msgstr "Автозбереження:"
 
 #: gui/options.cpp:1037
-#, fuzzy
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Автозбереження:"
@@ -956,7 +917,6 @@ msgid "Disabled GFX"
 msgstr "Без графіки"
 
 #: gui/ThemeEngine.cpp:334
-#, fuzzy
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Без графіки"
@@ -966,7 +926,6 @@ msgid "Standard Renderer (16bpp)"
 msgstr "Стандартний растеризатор (16bpp)"
 
 #: gui/ThemeEngine.cpp:335
-#, fuzzy
 msgid "Standard (16bpp)"
 msgstr "Стандартний растеризатор (16bpp)"
 
@@ -975,7 +934,6 @@ msgid "Antialiased Renderer (16bpp)"
 msgstr "Растеризатор зі згладжуванням (16bpp)"
 
 #: gui/ThemeEngine.cpp:337
-#, fuzzy
 msgid "Antialiased (16bpp)"
 msgstr "Растеризатор зі згладжуванням (16bpp)"
 
@@ -1072,13 +1030,11 @@ msgid "Hercules Amber"
 msgstr "Hercules Янтарний"
 
 #: common/util.cpp:262
-#, fuzzy
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Hercules Зелений"
 
 #: common/util.cpp:263
-#, fuzzy
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Янтарний"
@@ -1109,10 +1065,9 @@ msgstr "Про про~г~раму"
 
 #: engines/dialogs.cpp:110
 msgid "~R~eturn to Launcher"
-msgstr "~П~овернутись в головне меню"
+msgstr "~П~овер. в головне меню"
 
 #: engines/dialogs.cpp:112
-#, fuzzy
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~П~овернутись в головне меню"
@@ -1166,6 +1121,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Не вдалося зберегти стан гри в файл:\n"
+"\n"
+"%s"
 
 #: engines/scumm/scumm.cpp:2188 engines/agos/saveload.cpp:157
 #, c-format
@@ -1174,6 +1132,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Не вдалося завантажити стан гри з файлу:\n"
+"\n"
+"%s"
 
 #: engines/scumm/scumm.cpp:2200 engines/agos/saveload.cpp:200
 #, c-format
@@ -1182,6 +1143,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Успішно збержено стан гри у файлі:\n"
+"\n"
+"%s"
 
 #: engines/mohawk/dialogs.cpp:81 engines/mohawk/dialogs.cpp:115
 msgid "~Z~ip Mode Activated"
@@ -1196,13 +1160,12 @@ msgid "~W~ater Effect Enabled"
 msgstr "Ефекти води включені"
 
 #: engines/sci/engine/kfile.cpp:677
-#, fuzzy
 msgid "Restore game:"
-msgstr "Зберегти гру: "
+msgstr "Відновити гру: "
 
 #: engines/sci/engine/kfile.cpp:677
 msgid "Restore"
-msgstr ""
+msgstr "Відновити"
 
 #: sound/fmopl.cpp:51
 msgid "MAME OPL emulator"
@@ -1217,9 +1180,8 @@ msgid "No music"
 msgstr "Без музики"
 
 #: sound/mods/paula.cpp:192
-#, fuzzy
 msgid "Amiga Audio Emulator"
-msgstr "Емулятор AdLib"
+msgstr "Аміга Аудіо Емулятор"
 
 #: sound/softsynth/adlib.cpp:1590
 msgid "AdLib Emulator"
@@ -1227,12 +1189,11 @@ msgstr "Емулятор AdLib"
 
 #: sound/softsynth/appleiigs.cpp:36
 msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
-msgstr ""
+msgstr "Apple II GS Емулятор (НЕ РЕАЛІЗОВАНО)"
 
 #: sound/softsynth/sid.cpp:1434
-#, fuzzy
 msgid "C64 Audio Emulator"
-msgstr "Емулятор AdLib"
+msgstr "C64 Аудіо Емулятор"
 
 #: sound/softsynth/mt32.cpp:327
 msgid "Initialising MT-32 Emulator"
@@ -1361,7 +1322,6 @@ msgid "Normal (no scaling)"
 msgstr "Без збільшення"
 
 #: backends/platform/sdl/graphics.cpp:59
-#, fuzzy
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Без збільшення"
@@ -1571,7 +1531,7 @@ msgid "Timeout while initialising network"
 msgstr "Час підключення до мережі витік"
 
 #: backends/platform/wii/options.cpp:186
-#, fuzzy, c-format
+#, c-format
 msgid "Network not initialised (%d)"
 msgstr "Мережа не налагоджена (%d)"
 
