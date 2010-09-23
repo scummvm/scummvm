@@ -35,7 +35,6 @@ NAME SCUM
 #include <eikon.rh>
 #include "..\src\Scummvm.hrh"
 // Include the standard Eikon resource ids
-#include <eikon.rsg>
 
 
 RESOURCE RSS_SIGNATURE
