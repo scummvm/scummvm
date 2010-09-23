@@ -415,10 +415,13 @@ bool Mp3PspStream::seek(const Timestamp &where) {
 	mad_timer_t destination;
 	mad_timer_set(&destination, time / 1000, time % 1000, 1000);
 
+	// Important to release and re-init the ME
+	releaseStreamME();
+	initStreamME();
+	
 	// Check if we need to rewind
 	if (_state != MP3_STATE_READY || mad_timer_compare(destination, _totalTime) < 0) {
 		initStream();
-		initStreamME();
 	}
 
 	// Skip ahead
