@@ -566,26 +566,32 @@ void GfxPalette::palVarySaveLoadPalette(Common::Serializer &s, Palette *palette)
 }
 
 void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
-	if (s.getVersion() < 24)
-		return;
-
-	if (s.isLoading() && _palVaryResourceId != -1)
-		palVaryRemoveTimer();
-
-	s.syncAsSint32LE(_palVaryResourceId);
-	if (_palVaryResourceId != -1) {
-		palVarySaveLoadPalette(s, &_palVaryOriginPalette);
-		palVarySaveLoadPalette(s, &_palVaryTargetPalette);
-		s.syncAsSint16LE(_palVaryStep);
-		s.syncAsSint16LE(_palVaryStepStop);
-		s.syncAsSint16LE(_palVaryDirection);
-		s.syncAsUint16LE(_palVaryTicks);
-		s.syncAsSint32LE(_palVaryPaused);
+	if (s.getVersion() >= 25) {
+		// We need to save intensity of the _sysPalette at least for kq6 when entering the dark cave (room 390)
+		//  from room 340. scripts will set intensity to 60 for this room and restore them when leaving.
+		//  Sierra SCI is also doing this (although obviously not for SCI0->SCI01 games, still it doesn't hurt
+		//  to save it everywhere). ffs. bug #3072868
+		s.syncBytes(_sysPalette.intensity, 256);
 	}
+	if (s.getVersion() >= 24) {
+		if (s.isLoading() && _palVaryResourceId != -1)
+			palVaryRemoveTimer();
 
-	if (s.isLoading() && _palVaryResourceId != -1) {
-		_palVarySignal = 0;
-		palVaryInstallTimer();
+		s.syncAsSint32LE(_palVaryResourceId);
+		if (_palVaryResourceId != -1) {
+			palVarySaveLoadPalette(s, &_palVaryOriginPalette);
+			palVarySaveLoadPalette(s, &_palVaryTargetPalette);
+			s.syncAsSint16LE(_palVaryStep);
+			s.syncAsSint16LE(_palVaryStepStop);
+			s.syncAsSint16LE(_palVaryDirection);
+			s.syncAsUint16LE(_palVaryTicks);
+			s.syncAsSint32LE(_palVaryPaused);
+		}
+
+		if (s.isLoading() && _palVaryResourceId != -1) {
+			_palVarySignal = 0;
+			palVaryInstallTimer();
+		}
 	}
 }
 
