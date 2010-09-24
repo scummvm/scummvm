@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="ScummVM_Global"
+	OutputDirectory="$(ConfigurationName)32"
+	IntermediateDirectory="$(ConfigurationName)32/$(ProjectName)"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		DisableLanguageExtensions="true"
+		DisableSpecificWarnings="4068;4100;4103;4127;4244;4250;4310;4351;4512;4702;4706;4800;4996"
+		AdditionalIncludeDirectories="..\..;..\..\engines;$(SCUMMVM_LIBS)\include"
+		PreprocessorDefinitions="USE_ZLIB;USE_MAD;USE_VORBIS;USE_FLAC;USE_SCALERS;USE_HQ_SCALERS;USE_RGB_COLOR;USE_MT32EMU;USE_NASM;USE_TRANSLATION;USE_DETECTLANG;ENABLE_SCUMM;ENABLE_SCUMM_7_8;ENABLE_HE;ENABLE_AGI;ENABLE_AGOS;ENABLE_AGOS2;ENABLE_CINE;ENABLE_CRUISE;ENABLE_DRACI;ENABLE_DRASCULA;ENABLE_GOB;ENABLE_GROOVIE;ENABLE_KYRA;ENABLE_LURE;ENABLE_MADE;ENABLE_PARALLACTION;ENABLE_QUEEN;ENABLE_SAGA;ENABLE_IHNM;ENABLE_SCI;ENABLE_SKY;ENABLE_SWORD1;ENABLE_SWORD2;ENABLE_TEENAGENT;ENABLE_TINSEL;ENABLE_TOUCHE;ENABLE_TUCKER"
+		ExceptionHandling="0"
+		RuntimeTypeInfo="false"
+		WarningLevel="4"
+		WarnAsError="false"
+		CompileAs="0"
+		/>
+	<Tool
+		Name="VCLibrarianTool"
+		IgnoreDefaultLibraryNames=""
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		IgnoreDefaultLibraryNames=""
+		SubSystem="1"
+		EntryPointSymbol="WinMainCRTStartup"
+		AdditionalLibraryDirectories="$(SCUMMVM_LIBS)\libs\x86"
+	/>
+	<Tool
+		Name="VCResourceCompilerTool"
+		PreprocessorDefinitions="HAS_INCLUDE_SET"
+		AdditionalIncludeDirectories="..\.."
+	/>
+</VisualStudioPropertySheet>
