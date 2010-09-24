@@ -315,12 +315,16 @@
 #elif defined(__PSP__)
 
 	#include <malloc.h>
+	#include "backends/platform/psp/memory.h"
 
 	#define scumm_stricmp strcasecmp
 	#define scumm_strnicmp strncasecmp
 
 	#define	SCUMM_LITTLE_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
+	
+	/* to make an efficient, inlined memcpy implementation */
+	#define memcpy(dst, src, size)   psp_memcpy(dst, src, size)
 
 #elif defined(__amigaos4__)
 
