@@ -33,6 +33,9 @@
 
 namespace Sci {
 
+// FIXME: We don't seem to be sending the polyphony init data, so disable this for now
+#define CMS_DISABLE_VOICE_MAPPING
+
 class MidiDriver_CMS : public MidiDriver_Emulated {
 public:
 	MidiDriver_CMS(Audio::Mixer *mixer, ResourceManager *resMan)
@@ -123,6 +126,12 @@ private:
 	void noteOff(int channel, int note);
 	void controlChange(int channel, int control, int value);
 	void pitchWheel(int channel, int value);
+
+	void voiceMapping(int channel, int value);
+	void bindVoices(int channel, int voices);
+	void unbindVoices(int channel, int voices);
+	void donateVoices();
+	int findVoice(int channel);
 
 	int findVoiceBasic(int channel);
 
@@ -383,7 +392,11 @@ void MidiDriver_CMS::noteOn(int channel, int note, int velocity) {
 		}
 	}
 
+#ifdef CMS_DISABLE_VOICE_MAPPING
 	int voice = findVoiceBasic(channel);
+#else
+	int voice = findVoice(channel);
+#endif
 	if (voice != -1)
 		voiceOn(voice, note, velocity);
 }
@@ -464,7 +477,9 @@ void MidiDriver_CMS::controlChange(int channel, int control, int value) {
 		break;
 
 	case 75:
-		//ChannelMapping
+#ifndef CMS_DISABLE_VOICE_MAPPING
+		voiceMapping(channel, value);
+#endif
 		break;
 
 	case 123:
@@ -495,6 +510,172 @@ void MidiDriver_CMS::pitchWheel(int channelNr, int value) {
 	for (uint i = 0; i < ARRAYSIZE(_voice); ++i) {
 		if (_voice[i].channel == channelNr && _voice[i].note != 0xFF)
 			noteSend(i);
+	}
+}
+
+void MidiDriver_CMS::voiceMapping(int channelNr, int value) {
+	int curVoices = 0;
+
+	for (uint i = 0; i < ARRAYSIZE(_voice); ++i) {
+		if (_voice[i].channel == channelNr)
+			++curVoices;
+	}
+
+	curVoices += _channel[channelNr].extraVoices;
+
+	if (curVoices == value) {
+		return;
+	} else if (curVoices < value) {
+		bindVoices(channelNr, value - curVoices);
+	} else {
+		unbindVoices(channelNr, curVoices - value);
+		donateVoices();
+	}
+}
+
+void MidiDriver_CMS::bindVoices(int channel, int voices) {
+	for (uint i = 0; i < ARRAYSIZE(_voice); ++i) {
+		if (_voice[i].channel == 0xFF)
+			continue;
+
+		Voice &voice = _voice[i];
+		voice.channel = channel;
+
+		if (voice.note != 0xFF)
+			voiceOff(i);
+
+		--voices;
+		if (voices == 0)
+			break;
+	}
+
+	_channel[channel].extraVoices += voices;
+
+	// The original called "PatchChange" here, since this just
+	// copies the value of _channel[channel].patch to itself
+	// it is left out here though.
+}
+
+void MidiDriver_CMS::unbindVoices(int channelNr, int voices) {
+	Channel &channel = _channel[channelNr];
+
+	if (channel.extraVoices >= voices) {
+		channel.extraVoices -= voices;
+	} else {
+		voices -= channel.extraVoices;
+		channel.extraVoices = 0;
+
+		for (uint i = 0; i < ARRAYSIZE(_voice); ++i) {
+			if (_voice[i].channel == channelNr
+			    && _voice[i].note == 0xFF) {
+				--voices;
+				if (voices == 0)
+					return;
+			}
+		}
+
+		do {
+			uint16 voiceTime = 0;
+			uint voiceNr = 0;
+
+			for (uint i = 0; i < ARRAYSIZE(_voice); ++i) {
+				if (_voice[i].channel != channelNr)
+					continue;
+
+				uint16 curTime = _voice[i].turnOffTicks;
+				if (curTime)
+					curTime += 0x8000;
+				else
+					curTime = _voice[i].ticks;
+
+				if (curTime >= voiceTime) {
+					voiceNr = i;
+					voiceTime = curTime;
+				}
+			}
+
+			_voice[voiceNr].sustained = 0;
+			voiceOff(voiceNr);
+			_voice[voiceNr].channel = 0xFF;
+			--voices;
+		} while (voices != 0);
+	}
+}
+
+void MidiDriver_CMS::donateVoices() {
+	int freeVoices = 0;
+
+	for (uint i = 0; i < ARRAYSIZE(_voice); ++i) {
+		if (_voice[i].channel == 0xFF)
+			++freeVoices;
+	}
+
+	if (!freeVoices)
+		return;
+
+	for (uint i = 0; i < ARRAYSIZE(_channel); ++i) {
+		Channel &channel = _channel[i];
+
+		if (!channel.extraVoices) {
+			continue;
+		} else if (channel.extraVoices < freeVoices) {
+			freeVoices -= channel.extraVoices;
+			channel.extraVoices = 0;
+			bindVoices(i, channel.extraVoices);
+		} else {
+			channel.extraVoices -= freeVoices;
+			bindVoices(i, freeVoices);
+			return;
+		}
+	}
+}
+
+int MidiDriver_CMS::findVoice(int channelNr) {
+	Channel &channel = _channel[channelNr];
+	int voiceNr = channel.lastVoiceUsed;
+
+	int newVoice = 0;
+	uint16 newVoiceTime = 0;
+
+	bool loopDone = false;
+	do {
+		++voiceNr;
+
+		if (voiceNr == 12)
+			voiceNr = 0;
+
+		Voice &voice = _voice[voiceNr];
+
+		if (voiceNr == channel.lastVoiceUsed)
+			loopDone = true;
+
+		if (voice.channel == channelNr) {
+			if (voice.note == 0xFF) {
+				channel.lastVoiceUsed = voiceNr;
+				return voiceNr;
+			}
+
+			uint16 curTime = voice.turnOffTicks;
+			if (curTime)
+				curTime += 0x8000;
+			else
+				curTime = voice.ticks;
+
+			if (curTime >= newVoiceTime) {
+				newVoice = voiceNr;
+				newVoiceTime = curTime;
+			}
+		}
+	} while (!loopDone);
+
+	if (newVoiceTime > 0) {
+		voiceNr = newVoice;
+		_voice[voiceNr].sustained = 0;
+		voiceOff(voiceNr);
+		channel.lastVoiceUsed = voiceNr;
+		return voiceNr;
+	} else {
+		return -1;
 	}
 }
 
