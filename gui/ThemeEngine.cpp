@@ -579,7 +579,7 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 			if (_texts[textId]->_fontPtr)
 				FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
 
-			// Fallback to non-localized font
+			// Fallback to non-localized font and default translation
 			else {
 				// Try built-in fonts
 				_texts[textId]->_fontPtr = FontMan.getFontByName(file);
@@ -593,7 +593,8 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 					
 					FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
 				}
-				warning("Failed to load localized font '%s'. Using non-localized font instead", file.c_str());
+				TransMan.setLanguage("C");
+				warning("Failed to load localized font '%s'. Using non-localized font and default GUI language instead", file.c_str());
 			}
 		}
 	}

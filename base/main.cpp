@@ -362,9 +362,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	setupGraphics(system);
 
-	// Enable translation
-	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
-
 	// Init the event manager. As the virtual keyboard is loaded here, it must
 	// take place after the backend is initiated and the screen has been setup
 	system.getEventManager()->init();
