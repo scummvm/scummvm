@@ -2124,6 +2124,7 @@ void ScummEngine::scummLoop_updateScummVars() {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 		VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
 	} else if (_game.platform == Common::kPlatformNES) {
+#if 0
 		// WORKAROUND:
 		// Since there are 2 2-stripes wide borders in MM NES screen,
 		// we have to compensate for it here. This fixes paning effects.
@@ -2133,6 +2134,7 @@ void ScummEngine::scummLoop_updateScummVars() {
 		if (VAR(VAR_CAMERA_POS_X) < (camera._cur.x >> V12_X_SHIFT) + 2)
 			VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT) + 2;
 		else
+#endif
 			VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT);
 	} else if (_game.version <= 2) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x >> V12_X_SHIFT;
