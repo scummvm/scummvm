@@ -84,7 +84,7 @@ public:
 	}
 
 	virtual Common::String GetPathSeparator() {
-		return Common::String("//");
+		return Common::String("/");
 	}
 
 	virtual int64 GetFileSize(const Common::String &Filename) {
