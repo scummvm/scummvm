@@ -121,6 +121,9 @@ Common::Error Sword25Engine::appStart() {
 		return Common::kUnknownError;
 	}
 
+	Common::StringArray commandParameters;
+	scriptPtr->SetCommandLine(commandParameters);
+
 	return Common::kNoError;
 }
 
