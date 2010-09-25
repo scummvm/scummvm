@@ -24,9 +24,18 @@
  */
 
 /*
- * This code is based on Broken Sword 2.5 engine
+ * This code contains portions of Libart_LGPL - library of basic graphic primitives
  *
- * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
+ * Copyright (c) 1998 Raph Levien
+ *
+ * Licensed under GNU LGPL v2
+ *
+ */
+
+/*
+ * This code contains portions of Swfdec
+ *
+ * Copyright (c) 2004-2006 David Schleef <ds@schleef.org>
  *
  * Licensed under GNU GPL v2
  *
