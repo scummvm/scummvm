@@ -42,7 +42,6 @@
 
 namespace Hugo {
 
-#define CENTER          -1                  // Used to center text in x
 #define NUM_COLORS  16              // Num colors to save in palette
 #define DMAX            16              // Size of add/restore rect lists
 #define BMAX                (DMAX * 2)  // Size of dirty rect blit list

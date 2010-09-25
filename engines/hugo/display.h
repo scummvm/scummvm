@@ -64,6 +64,7 @@ public:
 	icondib_t &getIconBuffer() {
 		return _iconBuffer;
 	}
+
 	viewdib_t &getBackBuffer() {
 		return _backBuffer;
 	}

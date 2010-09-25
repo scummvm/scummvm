@@ -139,7 +139,7 @@ bool intro_v3w::introPlay() {
 //#endif //STORY
 }
 
-intro_v1d::intro_v1d(HugoEngine &vm) : IntroHandler(_vm) {
+intro_v1d::intro_v1d(HugoEngine &vm) : IntroHandler(vm) {
 }
 
 intro_v1d::~intro_v1d() {
@@ -156,7 +156,7 @@ bool intro_v1d::introPlay() {
 	return true;
 }
 //TODO : Add code for intro H2 DOS
-intro_v2d::intro_v2d(HugoEngine &vm) : IntroHandler(_vm) {
+intro_v2d::intro_v2d(HugoEngine &vm) : IntroHandler(vm) {
 }
 
 intro_v2d::~intro_v2d() {
@@ -173,7 +173,7 @@ bool intro_v2d::introPlay() {
 }
 
 //TODO : Add code for intro H3 DOS
-intro_v3d::intro_v3d(HugoEngine &vm) : IntroHandler(_vm) {
+intro_v3d::intro_v3d(HugoEngine &vm) : IntroHandler(vm) {
 }
 
 intro_v3d::~intro_v3d() {
@@ -183,10 +183,65 @@ void intro_v3d::preNewGame() {
 }
 
 void intro_v3d::introInit() {
+	_vm.file().readBackground(25); // display splash screen
+	_vm.screen().displayBackground();
+
+	_vm.screen().loadFont(0);
+
+	char buffer[128];
+	if (_boot.registered)
+		sprintf(buffer, "%s  Registered Version", COPYRIGHT);
+	else
+		sprintf(buffer,"%s  Shareware Version", COPYRIGHT);
+
+//	Center_text (190, buffer);
+	_vm.screen().writeStr(CENTER, 190, buffer, _TBRIGHTWHITE);
+
+	if (stricmp(_boot.distrib, "David P. Gray")) {
+//		Center_text (0, buffer);
+		sprintf(buffer, "Distributed by %s.", _boot.distrib);
+		_vm.screen().writeStr(CENTER, 0, buffer, _TBRIGHTWHITE);
+	}
+
+	_vm.screen().displayBackground();
+	g_system->updateScreen();
+	g_system->delayMillis(5000);
+	
+	_vm.file().readBackground(22); // display screen MAP_3d
+	_vm.screen().displayBackground();
+	introTicks = 0;
 }
 
 bool intro_v3d::introPlay() {
-	return true;
+	byte introSize = _vm.getIntroSize();
+
+// Hugo 3 - Preamble screen before going into game.  Draws path of Hugo's plane.
+// Called every tick.  Returns TRUE when complete
+//TODO : Add proper check of story mode
+//#if STORY
+	if (introTicks < introSize) {
+		_vm.screen().writeStr(_vm._introX[introTicks], _vm._introY[introTicks] - DIBOFF_Y, "x", _TBRIGHTWHITE);
+		_vm.screen().displayBackground();
+
+
+		// Text boxes at various times
+		switch (introTicks) {
+		case 4:
+			Utils::Box(BOX_OK, "%s", _vm._textIntro[kIntro1]);
+			break;
+		case 9:
+			Utils::Box(BOX_OK, "%s", _vm._textIntro[kIntro2]);
+			break;
+		case 35:
+			Utils::Box(BOX_OK, "%s", _vm._textIntro[kIntro3]);
+			break;
+		}
+	}
+
+	return (++introTicks >= introSize);
+//#else //STORY
+//	return true;
+//#endif //STORY
 }
 
 } // End of namespace Hugo

@@ -223,8 +223,6 @@ Common::Error HugoEngine::run() {
 	while (!doQuitFl) {
 		g_system->updateScreen();
 
-		// WORKAROUND: Force the mouse cursor to be displayed. This fixes the disappearing mouse cursor issue.
-		g_system->showMouse(true);
 		runMachine();
 		// Handle input
 		Common::Event event;
@@ -295,6 +293,7 @@ void HugoEngine::runMachine() {
 		break;
 	case V_INTROINIT:                               // Initialization before intro begins
 		intro().introInit();
+		g_system->showMouse(false);
 		gameStatus.viewState = V_INTRO;
 		break;
 	case V_INTRO:                                   // Do any game-dependant preamble
@@ -304,6 +303,7 @@ void HugoEngine::runMachine() {
 		}
 		break;
 	case V_PLAY:                                    // Playing game
+		g_system->showMouse(true);
 		parser().charHandler();                     // Process user cmd input
 		moveObjects();                              // Process object movement
 		scheduler().runScheduler();                 // Process any actions

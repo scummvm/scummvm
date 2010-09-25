@@ -48,7 +48,7 @@ namespace Hugo {
 // Copy helpedit\hugow_?.hlp to .\hugowin?.hlp
 // Type "PPG" in the game to enter cheat mode.
 
-#define COPYRIGHT   "Copyright © 1995-97, David P. Gray"
+#define COPYRIGHT   "Copyright 1989-1997 David P Gray, All Rights Reserved."
 // Started code on 04/01/95
 // Don't forget to update Hugowin.rc2 with version info
 //#define VER "1.0" // 10/01/95 Initial Release
@@ -89,6 +89,7 @@ namespace Hugo {
 #define WARNLEN        512
 #define ERRLEN         512
 #define STEP_DY        8                            // Pixels per step movement
+#define CENTER         -1                           // Used to center text in x
 
 // Only for non-database
 #define BKGEXT         ".PCX"                       // Extension of background files
