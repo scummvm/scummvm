@@ -149,7 +149,7 @@ bool OSystem_SDL_Dingux::remapKey(SDL_Event &ev, Common::Event &event) {
 		}
 
 		return true;
-	} else if (ev.key.keysym.sym == BUT_A) { // virtual keyboard
+	} else if (ev.key.keysym.sym == BUT_A) { // key '0'
 		ev.key.keysym.sym = SDLK_0;
 
 		event.kbd.keycode = Common::KEYCODE_0;
