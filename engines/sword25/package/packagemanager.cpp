@@ -106,6 +106,8 @@ Common::ArchiveMemberPtr PackageManager::GetArchiveMember(const Common::String &
 }
 
 bool PackageManager::LoadPackage(const Common::String &fileName, const Common::String &mountPosition) {
+	debug(0, "LoadPackage(%s, %s)", fileName.c_str(), mountPosition.c_str());
+
 	Common::Archive *zipFile = Common::makeZipArchive(fileName);
 	if (zipFile == NULL) {
 		BS_LOG_ERRORLN("Unable to mount file \"%s\" to \"%s\"", fileName.c_str(), mountPosition.c_str());
@@ -119,7 +121,7 @@ bool PackageManager::LoadPackage(const Common::String &fileName, const Common::S
 		for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); ++it)
 			debug(3, "%s", (*it)->getName().c_str());
 
-		_archiveList.push_back(new ArchiveEntry(zipFile, mountPosition));
+		_archiveList.push_front(new ArchiveEntry(zipFile, mountPosition));
 
 		return true;
 	}
@@ -271,7 +273,18 @@ int PackageManager::doSearch(Common::ArchiveMemberList &list, const Common::Stri
 		for (Common::ArchiveMemberList::iterator it = memberList.begin(); it != memberList.end(); ++it) {
 			if (((typeFilter & PackageManager::FT_DIRECTORY) && (*it)->getName().hasSuffix("/")) ||
 				((typeFilter & PackageManager::FT_FILE) && !(*it)->getName().hasSuffix("/"))) {
-				list.push_back(*it);
+
+				// Do not add duplicate files
+				bool found = false;
+				for (Common::ArchiveMemberList::iterator it1 = list.begin(); it1 != list.end(); ++it1) {
+					if ((*it1)->getName() == (*it)->getName()) {
+						found = true;
+						break;
+					}
+				}
+
+				if (!found)
+					list.push_back(*it);
 				num++;
 			}
 		}

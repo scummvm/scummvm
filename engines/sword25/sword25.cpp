@@ -155,8 +155,14 @@ bool Sword25Engine::LoadPackages() {
 	if (!PackageManagerPtr->LoadPackage("data.b25c", "/")) return false;
 
 	// Get the contents of the main program directory and sort them alphabetically
-	Common::StringArray Filenames = FileSystemUtil::GetInstance().GetFilesInDirectory(".");
-	Common::sort(Filenames.begin(), Filenames.end());
+	Common::FSNode dir(ConfMan.get("path"));
+	Common::FSList files;
+	if (!dir.isDirectory() || !dir.getChildren(files, Common::FSNode::kListAll)) {
+		warning("Game data path does not exist or is not a directory");
+		return false;
+	}
+
+	Common::sort(files.begin(), files.end());
 
 	// Identity all patch packages
 	// The filename of patch packages must have the form patch??.b25c, with the question marks
@@ -164,45 +170,18 @@ bool Sword25Engine::LoadPackages() {
 	// Since the filenames have been sorted, patches are mounted with low numbers first, through
 	// to ones with high numbers. This is important, because newly mount packages overwrite
 	// existing files in the virtual file system, if they include files with the same name.
-	for (Common::StringArray::const_iterator it = Filenames.begin(); it != Filenames.end(); ++it) {
-		const Common::String &CurFilename = *it;
-
-		// Is the current file a patch package?
-		static const Common::String PatchPattern = "patch???.b25c";
-		if (CurFilename.size() == PatchPattern.size()) {
-			// Check the file against the patch pattern character by character
-			Common::String::const_iterator PatchPatternIt = PatchPattern.begin();
-			Common::String::const_iterator CurFilenameIt = CurFilename.begin();
-			for (; PatchPatternIt != PatchPattern.end(); ++PatchPatternIt, ++CurFilenameIt) {
-				if (*PatchPatternIt == '?') {
-					if (*CurFilenameIt < '0' || *CurFilenameIt > '9') break;
-				} else {
-					if (*PatchPatternIt != *CurFilenameIt) break;
-				}
-			}
-
-			if (PatchPatternIt == PatchPattern.end()) {
-				// The pattern fits, so the file should be mounted
-				if (!PackageManagerPtr->LoadPackage(CurFilename, "/")) return false;
-			}
-		}
+	for (Common::FSList::const_iterator it = files.begin(); it != files.end(); ++it) {
+		if (it->getName().matchString("patch???.b25c", true))
+			if (!PackageManagerPtr->LoadPackage(it->getName(), "/"))
+				return false;
 	}
 
 	// Identity and mount all language packages
 	// The filename of the packages have the form lang_*.b25c (eg. lang_de.b25c)
-	for (Common::StringArray::const_iterator it = Filenames.begin(); it != Filenames.end(); ++it) {
-		const Common::String &CurFilename = *it;
-
-		static const Common::String Prefix = "lang_";
-		static const Common::String Suffix = ".b25c";
-
-		// Make sure the filename prefix and suffix has characters between them
-		if ((CurFilename.size() >= Prefix.size() && Common::String(CurFilename.begin(), CurFilename.begin() + Prefix.size()) == Prefix) &&  // Prefix test
-		        (CurFilename.size() >= Suffix.size() && Common::String(CurFilename.end() - Suffix.size(), CurFilename.end()) == Suffix) &&      // Suffix test
-		        (CurFilename.size() > Prefix.size() + Suffix.size())) {
-			// Pattern matches - the file should be mounted
-			if (!PackageManagerPtr->LoadPackage(CurFilename, "/")) return false;
-		}
+	for (Common::FSList::const_iterator it = files.begin(); it != files.end(); ++it) {
+		if (it->getName().matchString("lang_*.b25c", true))
+			if (!PackageManagerPtr->LoadPackage(it->getName(), "/"))
+				return false;
 	}
 
 	return true;
