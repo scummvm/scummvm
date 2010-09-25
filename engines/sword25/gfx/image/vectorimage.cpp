@@ -414,14 +414,6 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 						numLineBits = 0;
 				}
 
-				if (stateNewStyles) {
-					// An dieser Stelle werden in Flash die alten Style-Definitionen verworfen und mit den neuen überschrieben.
-					// Es wird ein neues Element begonnen.
-					_elements.resize(_elements.size() + 1);
-					if (!parseStyles(shapeType, bs, numFillBits, numLineBits))
-						return false;
-				}
-
 				// Ein neuen Pfad erzeugen, es sei denn, es wurden nur neue Styles definiert
 				if (stateLineStyle || stateFillStyle0 || stateFillStyle1 || stateMoveTo) {
 					// Store previous curve if any
@@ -435,6 +427,14 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 					bez[0].x3 = curX;
 					bez[0].y3 = curY;
 					bezNodes = 0;
+				}
+
+				if (stateNewStyles) {
+					// An dieser Stelle werden in Flash die alten Style-Definitionen verworfen und mit den neuen überschrieben.
+					// Es wird ein neues Element begonnen.
+					_elements.resize(_elements.size() + 1);
+					if (!parseStyles(shapeType, bs, numFillBits, numLineBits))
+						return false;
 				}
 			}
 		} else {
