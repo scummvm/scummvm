@@ -180,9 +180,6 @@ byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr)
 	if (fileSizePtr)
 		*fileSizePtr = in->size();
 
-	if (in->size() > 204800)
-		warning("UGLY: UGLY: Sucking >200kb file into memory (%d bytes)", in->size());
-
 	// Read the file
 	byte *buffer = new byte[in->size()];
 	int bytesRead = in->read(buffer, in->size());
