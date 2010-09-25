@@ -283,16 +283,19 @@ void OSystem_IPHONE::drawMouseCursorOnRectUpdate(const Common::Rect& updatedRect
 			srcY -= top;
 			top = 0;
 		}
-			//int right = left + _mouseWidth;
+
 		int bottom = top + _mouseHeight;
 		if (bottom > _screenWidth)
 			bottom = _screenWidth;
-			int displayWidth = _mouseWidth;
+
+		int displayWidth = _mouseWidth;
 		if (_mouseWidth + left > _screenWidth)
 			displayWidth = _screenWidth - left;
-			int displayHeight = _mouseHeight;
+
+		int displayHeight = _mouseHeight;
 		if (_mouseHeight + top > _screenHeight)
 			displayHeight = _screenHeight - top;
+
 		byte *src = &_mouseBuf[srcY * _mouseWidth + srcX];
 		uint16 *dst = &_fullscreen[top * _screenWidth + left];
 		for (int y = displayHeight; y > srcY; y--) {
