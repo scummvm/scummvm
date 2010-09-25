@@ -36,6 +36,8 @@
 
 #include "art.h"
 
+namespace Sword25 {
+
 /**
  * art_die: Print the error message to stderr and exit with a return code of 1.
  * @fmt: The printf-style format for the error message.
@@ -2645,3 +2647,5 @@ void art_svp_render_aa(const ArtSVP *svp,
 
 	art_svp_render_aa_iter_done(iter);
 }
+
+} // End of namespace Sword25

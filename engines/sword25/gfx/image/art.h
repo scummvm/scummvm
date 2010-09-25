@@ -35,10 +35,12 @@
 /* Simple macros to set up storage allocation and basic types for libart
    functions. */
 
-#ifndef __ART_MISC_H__
-#define __ART_MISC_H__
+#ifndef __ART_H__
+#define __ART_H__
 
 #include "common/scummsys.h"
+
+namespace Sword25 {
 
 typedef byte art_u8;
 typedef uint16 art_u16;
@@ -272,5 +274,6 @@ art_svp_render_aa(const ArtSVP *svp,
                                    ArtSVPRenderAAStep *steps, int n_steps),
                   void *callback_data);
 
+} // End of namespace Sword25
 
-#endif /* __ART_MISC_H__ */
+#endif /* __ART_H__ */
