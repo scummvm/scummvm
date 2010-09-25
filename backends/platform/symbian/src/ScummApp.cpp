@@ -27,7 +27,7 @@
 
 #define _PAGESIZE_ 0x1000
 
-#if defined (__WINS__) && !defined (__SERIES60_30__) && !defined (UIQ3)
+#if defined (__WINS__) && !defined (S60V3) && !defined (UIQ3)
 extern "C" int _chkstk(int /*a*/) {
 _asm {
 	push ecx

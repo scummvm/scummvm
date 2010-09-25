@@ -61,6 +61,8 @@ public:
 
 	// Returns reference to File session
 	RFs& FsSession();
+
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 protected:
 	//
 	// The mixer callback function.
