@@ -41,9 +41,7 @@
  *
  */
 
-#include "art_svp_vpath.h"
-#include "art_svp_vpath_stroke.h"
-#include "art_svp_render_aa.h"
+#include "art.h"
 
 #include "sword25/gfx/image/vectorimage.h"
 #include "graphics/colormasks.h"

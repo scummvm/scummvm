@@ -35,11 +35,6 @@ MODULE_OBJS := \
 	gfx/image/vectorimage.o \
 	gfx/image/vectorimagerenderer.o \
 	gfx/image/art.o \
-	gfx/image/art_svp_intersect.o \
-	gfx/image/art_svp_render_aa.o \
-	gfx/image/art_svp_vpath.o \
-	gfx/image/art_svp_vpath_stroke.o \
-	gfx/image/art_vpath_bpath.o \
 	input/inputengine.o \
 	input/inputengine_script.o \
 	kernel/callbackregistry.o \
