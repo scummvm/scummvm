@@ -265,7 +265,7 @@ void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 			}
 		}
 
-		//warning("%s view %d, loop %d, cel %d", _s->_segMan->getObjectName(curObject), it->viewId, it->loopNo, it->celNo);
+		//warning("%s view %d, loop %d, cel %d, signal %x", _s->_segMan->getObjectName(curObject), it->viewId, it->loopNo, it->celNo, it->signal);
 
 		bool setNsRect = maySetNsRect;
 
@@ -543,19 +543,6 @@ void GfxAnimate::reAnimate(Common::Rect rect) {
 	}
 }
 
-void GfxAnimate::preprocessAddToPicList() {
-	AnimateList::iterator it;
-	const AnimateList::iterator end = _list.end();
-
-	for (it = _list.begin(); it != end; ++it) {
-		if (it->priority == -1)
-			it->priority = _ports->kernelCoordinateToPriority(it->y);
-
-		// Do not allow priority to get changed by fill()
-		it->signal |= kSignalFixedPriority;
-	}
-}
-
 void GfxAnimate::addToPicDrawCels() {
 	reg_t curObject;
 	GfxView *view = NULL;
@@ -567,6 +554,28 @@ void GfxAnimate::addToPicDrawCels() {
 
 		// Get the corresponding view
 		view = _cache->getView(it->viewId);
+
+		// kAddToPic does not do loop/cel-number fixups, it also doesn't support global scaling
+
+		if (it->priority == -1)
+			it->priority = _ports->kernelCoordinateToPriority(it->y);
+
+		if (!view->isScaleable()) {
+			// Laura Bow 2 specific - ffs. fill()
+			it->scaleSignal = 0;
+			it->scaleY = it->scaleX = 128;
+		}
+
+		// Create rect according to coordinates and given cel
+		if (it->scaleSignal & kScaleSignalDoScaling) {
+			view->getCelScaledRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->scaleX, it->scaleY, it->celRect);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), it->celRect.left);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop), it->celRect.top);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsRight), it->celRect.right);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsBottom), it->celRect.bottom);
+		} else {
+			view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
+		}
 
 		// draw corresponding cel
 		_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
@@ -714,7 +723,6 @@ void GfxAnimate::addToPicSetPicNotValid() {
 
 void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) {
 	List *list;
-	byte tempPicNotValid = 0;
 
 	_ports->setPort((Port *)_ports->_picWind);
 
@@ -723,8 +731,6 @@ void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) 
 		error("kAddToPic called with non-list as parameter");
 
 	makeSortedList(list);
-	preprocessAddToPicList();
-	fill(tempPicNotValid, getSciVersion() >= SCI_VERSION_1_1 ? true : false);
 	addToPicDrawCels();
 
 	addToPicSetPicNotValid();
