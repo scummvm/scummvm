@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-19 18:45+0100\n"
-"PO-Revision-Date: 2010-09-20 15:31+0100\n"
+"POT-Creation-Date: 2010-09-19 18:13+0100\n"
+"PO-Revision-Date: 2010-09-25 17:11+0100\n"
 "Last-Translator: Tomás Maidagan\n"
 "Language-Team: \n"
 "Language: Espanol\n"
@@ -479,7 +479,7 @@ msgstr ""
 #: gui/launcher.cpp:1059
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr "Añadir varios..."
+msgstr "Añad. varios"
 
 #: gui/launcher.cpp:1059
 msgid "Mass Add..."
@@ -696,7 +696,7 @@ msgstr ""
 #: gui/options.cpp:766
 msgctxt "lowres"
 msgid "True Roland MT-32 (disable GM emulation)"
-msgstr "Roland MT-32 real (desact. emul. GM)"
+msgstr "Roland MT-32 real (sin emulación GM)"
 
 #: gui/options.cpp:769
 msgid "Enable Roland GS Mode"
@@ -742,7 +742,7 @@ msgstr "Subt"
 #: gui/options.cpp:810
 msgctxt "lowres"
 msgid "Both"
-msgstr "Ambs"
+msgstr "V&S"
 
 #: gui/options.cpp:810
 msgid "Show subtitles and play speech"
@@ -895,15 +895,15 @@ msgstr "¿Seguro que quieres borrar esta partida?"
 
 #: gui/saveload.cpp:265
 msgid "Date: "
-msgstr "Fecha:"
+msgstr "Fecha: "
 
 #: gui/saveload.cpp:268
 msgid "Time: "
-msgstr "Hora:"
+msgstr "Hora: "
 
 #: gui/saveload.cpp:273
 msgid "Playtime: "
-msgstr "Tiempo de juego:"
+msgstr "Tiempo: "
 
 #: gui/saveload.cpp:286 gui/saveload.cpp:353
 msgid "Untitled savestate"

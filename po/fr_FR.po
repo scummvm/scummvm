@@ -900,15 +900,15 @@ msgstr "Voulez-vous vraiment supprimer cette sauvegarde?"
 
 #: gui/saveload.cpp:265
 msgid "Date: "
-msgstr "Date:"
+msgstr "Date: "
 
 #: gui/saveload.cpp:268
 msgid "Time: "
-msgstr "Heure:"
+msgstr "Heure: "
 
 #: gui/saveload.cpp:273
 msgid "Playtime: "
-msgstr "Durée de jeu:"
+msgstr "Durée de jeu: "
 
 #: gui/saveload.cpp:286 gui/saveload.cpp:353
 msgid "Untitled savestate"
