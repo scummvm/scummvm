@@ -129,13 +129,6 @@ public:
 		return false;
 	}
 
-	virtual Common::StringArray GetFilesInDirectory(const Common::String &Directory) {
-		Common::SaveFileManager *sfm = g_system->getSavefileManager();
-		Common::StringArray filenames = sfm->listSavefiles("*");
-		sort(filenames.begin(), filenames.end());
-		return filenames;
-	}
-
 	virtual Common::String GetPathFilename(const Common::String &Path) {
 		for (int i = Path.size() - 1; i >= 0; --i) {
 			if ((Path[i] == '/') || (Path[i] == '\\')) {

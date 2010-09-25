@@ -51,7 +51,6 @@
 #define BS_ACTIVATE_LOGGING // When defined, logging is activated
 
 // Engine Includes
-#include "sword25/kernel/memleaks.h"
 #include "sword25/kernel/log.h"
 
 #include "common/debug.h"

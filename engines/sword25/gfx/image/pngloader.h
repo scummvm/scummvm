@@ -53,9 +53,7 @@ namespace Sword25 {
 class PNGLoader : public ImageLoader {
 public:
 	static ImageLoader *CreateInstance() {
-#include "sword25/kernel/memlog_off.h"
 		return (ImageLoader *) new PNGLoader();
-#include "sword25/kernel/memlog_on.h"
 	}
 
 	// Alle virtuellen Methoden von BS_ImageLoader sind hier als static-Methode implementiert, damit sie von BS_B25SLoader aufgerufen werden können.

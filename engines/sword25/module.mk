@@ -48,7 +48,6 @@ MODULE_OBJS := \
 	kernel/kernel.o \
 	kernel/kernel_script.o \
 	kernel/log.o \
-	kernel/memleaks.o \
 	kernel/outputpersistenceblock.o \
 	kernel/persistenceservice.o \
 	kernel/resmanager.o \

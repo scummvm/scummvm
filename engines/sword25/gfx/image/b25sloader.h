@@ -51,9 +51,7 @@ namespace Sword25 {
 class B25SLoader : public ImageLoader {
 public:
 	static ImageLoader *CreateInstance() {
-#include "sword25/kernel/memlog_off.h"
 		return static_cast<ImageLoader *>(new B25SLoader());
-#include "sword25/kernel/memlog_on.h"
 	}
 
 protected:

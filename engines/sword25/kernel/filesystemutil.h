@@ -102,12 +102,6 @@ public:
 	 */
 	virtual bool CreateDirectory(const Common::String &DirectoryName) = 0;
 	/**
-	 * Creates a list of filenames in a given directory.
-	 * @param Directory     The directory to search
-	 * @return              Returns a vector containing all of the found filenames
-	 */
-	virtual Common::StringArray GetFilesInDirectory(const Common::String &Path) = 0;
-	/**
 	 * Gets the filename from a path and filename
 	 * @param Filename		The full path and filename
 	 * @return				Returns just the filename
