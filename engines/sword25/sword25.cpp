@@ -49,7 +49,7 @@ namespace Sword25 {
 const char *const PACKAGE_MANAGER = "archiveFS";
 const char *const DEFAULT_SCRIPT_FILE = "/system/boot.lua";
 
-void LogToStdout(const char *Message) {
+void logToStdout(const char *Message) {
 	debugN(0, "%s", Message);
 }
 
@@ -67,25 +67,24 @@ Sword25Engine::~Sword25Engine() {
 
 Common::Error Sword25Engine::run() {
 	// Engine initialisation
-	Common::StringArray commandParameters;
-	Common::Error errorCode = AppStart(commandParameters);
+	Common::Error errorCode = appStart();
 	if (errorCode != Common::kNoError) {
-		AppEnd();
+		appEnd();
 		return errorCode;
 	}
 
 	// Run the game
-	bool RunSuccess = AppMain();
+	bool runSuccess = appMain();
 
 	// Engine de-initialisation
-	bool DeinitSuccess = AppEnd();
+	bool deinitSuccess = appEnd();
 
-	return (RunSuccess && DeinitSuccess) ? Common::kNoError : Common::kUnknownError;
+	return (runSuccess && deinitSuccess) ? Common::kNoError : Common::kUnknownError;
 }
 
-Common::Error Sword25Engine::AppStart(const Common::StringArray &CommandParameters) {
+Common::Error Sword25Engine::appStart() {
 	// All log messages will be sent to StdOut
-	BS_Log::RegisterLogListener(LogToStdout);
+	BS_Log::RegisterLogListener(logToStdout);
 
 	// Initialise the graphics mode to ARGB8888
 	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
@@ -100,44 +99,41 @@ Common::Error Sword25Engine::AppStart(const Common::StringArray &CommandParamete
 	}
 
 	// Package-Manager starten, damit die Packfiles geladen werden können.
-	PackageManager *PackageManagerPtr = static_cast<PackageManager *>(Kernel::GetInstance()->NewService("package", PACKAGE_MANAGER));
-	if (!PackageManagerPtr) {
-		BS_LOG_ERRORLN("Packagemanager initialization failed.");
+	PackageManager *packageManagerPtr = static_cast<PackageManager *>(Kernel::GetInstance()->NewService("package", PACKAGE_MANAGER));
+	if (!packageManagerPtr) {
+		BS_LOG_ERRORLN("PackageManager initialization failed.");
 		return Common::kUnknownError;
 	}
 
 	// Packages laden oder das aktuelle Verzeichnis mounten, wenn das über Kommandozeile angefordert wurde.
 	if (getGameFlags() & GF_EXTRACTED) {
-		if (!PackageManagerPtr->LoadDirectoryAsPackage(ConfMan.get("path"), "/"))
+		if (!packageManagerPtr->loadDirectoryAsPackage(ConfMan.get("path"), "/"))
 			return Common::kUnknownError;
 	} else {
-		if (!LoadPackages())
+		if (!loadPackages())
 			return Common::kUnknownError;
 	}
 
 	// Einen Pointer auf den Skript-Engine holen.
-	ScriptEngine *ScriptPtr = static_cast<ScriptEngine *>(Kernel::GetInstance()->GetService("script"));
-	if (!ScriptPtr) {
+	ScriptEngine *scriptPtr = static_cast<ScriptEngine *>(Kernel::GetInstance()->GetService("script"));
+	if (!scriptPtr) {
 		BS_LOG_ERRORLN("Script intialization failed.");
 		return Common::kUnknownError;
 	}
 
-	// Die Kommandozeilen-Parameter der Skriptumgebung zugänglich machen.
-	ScriptPtr->SetCommandLine(CommandParameters);
-
 	return Common::kNoError;
 }
 
-bool Sword25Engine::AppMain() {
+bool Sword25Engine::appMain() {
 	// The main script start. This script loads all the other scripts and starts the actual game.
-	ScriptEngine *ScriptPtr = static_cast<ScriptEngine *>(Kernel::GetInstance()->GetService("script"));
-	BS_ASSERT(ScriptPtr);
-	ScriptPtr->ExecuteFile(DEFAULT_SCRIPT_FILE);
+	ScriptEngine *scriptPtr = static_cast<ScriptEngine *>(Kernel::GetInstance()->GetService("script"));
+	BS_ASSERT(scriptPtr);
+	scriptPtr->ExecuteFile(DEFAULT_SCRIPT_FILE);
 
 	return true;
 }
 
-bool Sword25Engine::AppEnd() {
+bool Sword25Engine::appEnd() {
 	// The kernel is shutdown, and un-initialises all subsystems
 	Kernel::DeleteInstance();
 
@@ -147,12 +143,12 @@ bool Sword25Engine::AppEnd() {
 	return true;
 }
 
-bool Sword25Engine::LoadPackages() {
-	PackageManager *PackageManagerPtr = reinterpret_cast<PackageManager *>(Kernel::GetInstance()->GetService("package"));
-	BS_ASSERT(PackageManagerPtr);
+bool Sword25Engine::loadPackages() {
+	PackageManager *packageManagerPtr = reinterpret_cast<PackageManager *>(Kernel::GetInstance()->GetService("package"));
+	BS_ASSERT(packageManagerPtr);
 
 	// Load the main package
-	if (!PackageManagerPtr->LoadPackage("data.b25c", "/")) return false;
+	if (!packageManagerPtr->loadPackage("data.b25c", "/")) return false;
 
 	// Get the contents of the main program directory and sort them alphabetically
 	Common::FSNode dir(ConfMan.get("path"));
@@ -172,7 +168,7 @@ bool Sword25Engine::LoadPackages() {
 	// existing files in the virtual file system, if they include files with the same name.
 	for (Common::FSList::const_iterator it = files.begin(); it != files.end(); ++it) {
 		if (it->getName().matchString("patch???.b25c", true))
-			if (!PackageManagerPtr->LoadPackage(it->getName(), "/"))
+			if (!packageManagerPtr->loadPackage(it->getName(), "/"))
 				return false;
 	}
 
@@ -180,7 +176,7 @@ bool Sword25Engine::LoadPackages() {
 	// The filename of the packages have the form lang_*.b25c (eg. lang_de.b25c)
 	for (Common::FSList::const_iterator it = files.begin(); it != files.end(); ++it) {
 		if (it->getName().matchString("lang_*.b25c", true))
-			if (!PackageManagerPtr->LoadPackage(it->getName(), "/"))
+			if (!packageManagerPtr->loadPackage(it->getName(), "/"))
 				return false;
 	}
 

@@ -91,7 +91,7 @@ private:
 	Common::FSNode _rootFolder;
 	Common::List<ArchiveEntry *> _archiveList;
 
-	Common::ArchiveMemberPtr GetArchiveMember(const Common::String &fileName);
+	Common::ArchiveMemberPtr getArchiveMember(const Common::String &fileName);
 
 public:
 	PackageManager(Kernel *pKernel);
@@ -108,14 +108,14 @@ public:
 	 * @param MountPosition The directory name under which the package should be mounted
 	 * @return              Returns true if the mount was successful, otherwise false.
 	 */
-	bool LoadPackage(const Common::String &FileName, const Common::String &MountPosition);
+	bool loadPackage(const Common::String &fileName, const Common::String &mountPosition);
 	/**
 	 * Mounts the contents of a directory in the specified directory in the directory tree.
 	 * @param               The name of the directory to mount
 	 * @param MountPosition The directory name under which the package should be mounted
 	 * @return              Returns true if the mount was successful, otherwise false.
 	 */
-	bool LoadDirectoryAsPackage(const Common::String &DirectoryName, const Common::String &MountPosition);
+	bool loadDirectoryAsPackage(const Common::String &directoryName, const Common::String &mountPosition);
 	/**
 	 * Downloads a file from the directory tree
 	 * @param FileName      The filename of the file to load
@@ -123,14 +123,14 @@ public:
 	 * @return              Specifies a pointer to the loaded data of the file
 	 * @remark              The client must not forget to release the data of the file using BE_DELETE_A.
 	 */
-	byte *GetFile(const Common::String &FileName, uint *pFileSize = NULL);
+	byte *getFile(const Common::String &fileName, uint *pFileSize = NULL);
 
 	/**
 	 * Returns a stream from file file from the directory tree
 	 * @param FileName      The filename of the file to load
 	 * @return              Pointer to the stream object
 	 */
-	Common::SeekableReadStream *GetStream(const Common::String &fileName);
+	Common::SeekableReadStream *getStream(const Common::String &fileName);
 	/**
 	 * Downloads an XML file and prefixes it with an XML Version key, since the XML files don't contain it,
 	 * and it is required for ScummVM to correctly parse the XML.
@@ -139,17 +139,19 @@ public:
 	 * @return              Specifies a pointer to the loaded data of the file
 	 * @remark              The client must not forget to release the data of the file using BE_DELETE_A.
 	 */
-	char *GetXmlFile(const Common::String &FileName, uint *pFileSize = NULL) {
+	char *getXmlFile(const Common::String &fileName, uint *pFileSize = NULL) {
 		const char *versionStr = "<?xml version=\"1.0\"?>";
 		uint fileSize;
-		char *data = (char *)GetFile(FileName, &fileSize);
+		char *data = (char *)getFile(fileName, &fileSize);
 		char *result = (char *)malloc(fileSize + strlen(versionStr) + 1);
 		strcpy(result, versionStr);
 		Common::copy(data, data + fileSize, result + strlen(versionStr));
 		result[fileSize + strlen(versionStr)] = '\0';
 
 		delete[] data;
-		if (pFileSize) *pFileSize = fileSize + strlen(versionStr);
+		if (pFileSize)
+			*pFileSize = fileSize + strlen(versionStr);
+
 		return result;
 	}
 	
@@ -159,14 +161,14 @@ public:
 	 * If the path could not be determined, an empty string is returned.
 	 * @remark              For cutting path elements '\' is used rather than '/' elements.
 	 */
-	Common::String GetCurrentDirectory();
+	Common::String getCurrentDirectory();
 	/**
 	 * Changes the current directory.
 	 * @param Directory     The path to the new directory. The path can be relative.
 	 * @return              Returns true if the operation was successful, otherwise false.
 	 * @remark              For cutting path elements '\' is used rather than '/' elements.
 	 */
-	bool ChangeDirectory(const Common::String &Directory);
+	bool changeDirectory(const Common::String &directory);
 	/**
 	 * Returns the absolute path to a file in the directory tree.
 	 * @param FileName      The filename of the file whose absolute path is to be determined.
@@ -174,7 +176,7 @@ public:
 	 * @return              Returns an absolute path to the given file.
 	 * @remark              For cutting path elements '\' is used rather than '/' elements.
 	 */
-	Common::String GetAbsolutePath(const Common::String &FileName);
+	Common::String getAbsolutePath(const Common::String &fileName);
 	/**
 	 * Creates a BS_PackageManager::FileSearch object to search for files
 	 * @param Filter        Specifies the search string. Wildcards of '*' and '?' are allowed
@@ -185,7 +187,7 @@ public:
 	 * @return              Specifies a pointer to a BS_PackageManager::FileSearch object, or NULL if no file was found.
 	 * @remark              Do not forget to delete the object after use.
 	*/
-	int doSearch(Common::ArchiveMemberList &list, const Common::String &Filter, const Common::String &Path, uint TypeFilter = FT_DIRECTORY | FT_FILE);
+	int doSearch(Common::ArchiveMemberList &list, const Common::String &filter, const Common::String &path, uint typeFilter = FT_DIRECTORY | FT_FILE);
 
 	/**
 	 * Returns a file's size
@@ -193,7 +195,7 @@ public:
 	 * @return              The file size. If an error occurs, then 0xffffffff is returned.
 	 * @remarks             For files in packages, then uncompressed size is returned.
 	 **/
-	uint GetFileSize(const Common::String &FileName);
+	uint getFileSize(const Common::String &fileName);
 
 	/**
 	 * Returns the type of a file.
@@ -202,17 +204,17 @@ public:
 	 * or BS_PackageManager::FT_FILE).
 	 * If the file was not found, then 0 is returned.
 	 */
-	uint GetFileType(const Common::String &FileName);
+	uint getFileType(const Common::String &fileName);
 
 	/**
 	 * Determines whether a file exists
 	 * @param FileName      The filename
 	 * @return              Returns true if the file exists, otherwise false.
 	 */
-	bool FileExists(const Common::String &FileName);
+	bool fileExists(const Common::String &FileName);
 
 private:
-	bool _RegisterScriptBindings();
+	bool registerScriptBindings();
 };
 
 } // End of namespace Sword25

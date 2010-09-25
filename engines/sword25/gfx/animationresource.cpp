@@ -73,15 +73,15 @@ AnimationResource::AnimationResource(const Common::String &filename) :
 	BS_ASSERT(_pPackage);
 
 	// Switch to the folder the specified Xml fiile is in
-	Common::String oldDirectory = _pPackage->GetCurrentDirectory();
+	Common::String oldDirectory = _pPackage->getCurrentDirectory();
 	if (getFileName().contains('/')) {
 		Common::String dir = Common::String(getFileName().c_str(), strrchr(getFileName().c_str(), '/'));
-		_pPackage->ChangeDirectory(dir);
+		_pPackage->changeDirectory(dir);
 	}
 
 	// Load the contents of the file
 	uint fileSize;
-	char *xmlData = _pPackage->GetXmlFile(getFileName(), &fileSize);
+	char *xmlData = _pPackage->getXmlFile(getFileName(), &fileSize);
 	if (!xmlData) {
 		BS_LOG_ERRORLN("Could not read \"%s\".", getFileName().c_str());
 		return; 
@@ -96,7 +96,7 @@ AnimationResource::AnimationResource(const Common::String &filename) :
 	free(xmlData);
 
 	// Switch back to the previous folder
-	_pPackage->ChangeDirectory(oldDirectory);
+	_pPackage->changeDirectory(oldDirectory);
 
 	// Give an error message if there weren't any frames specified
 	if (_frames.empty()) {
@@ -172,7 +172,7 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 		BS_LOG_ERRORLN("<frame> tag without file attribute occurred in \"%s\".", getFileName().c_str());
 		return false;
 	}
-	frame.FileName = _pPackage->GetAbsolutePath(fileString);
+	frame.FileName = _pPackage->getAbsolutePath(fileString);
 	if (frame.FileName.empty()) {
 		BS_LOG_ERRORLN("Could not create absolute path for file specified in <frame> tag in \"%s\": \"%s\".", 
 			getFileName().c_str(), fileString);

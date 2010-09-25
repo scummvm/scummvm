@@ -62,7 +62,7 @@ MoviePlayer::~MoviePlayer() {
 
 bool MoviePlayer::LoadMovie(const Common::String &filename, uint z) {
 	// Get the file and load it into the decoder
-	Common::SeekableReadStream *in = Kernel::GetInstance()->GetPackage()->GetStream(filename);
+	Common::SeekableReadStream *in = Kernel::GetInstance()->GetPackage()->getStream(filename);
 	_decoder.load(in);
 
 	// Ausgabebitmap erstellen

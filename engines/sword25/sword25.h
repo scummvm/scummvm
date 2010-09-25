@@ -56,11 +56,12 @@ enum GameFlags {
 
 class Sword25Engine : public Engine {
 private:
-	Common::Error AppStart(const Common::StringArray &CommandParameters);
-	bool AppMain();
-	bool AppEnd();
+	Common::Error appStart();
+	bool appMain();
+	bool appEnd();
 
-	bool LoadPackages();
+	bool loadPackages();
+
 protected:
 	virtual Common::Error run();
 	void shutdown();

@@ -182,7 +182,7 @@ bool LuaScriptEngine::ExecuteFile(const Common::String &FileName) {
 
 	// File read
 	uint FileSize;
-	byte *FileData = pPackage->GetFile(FileName, &FileSize);
+	byte *FileData = pPackage->getFile(FileName, &FileSize);
 	if (!FileData) {
 		BS_LOG_ERRORLN("Couldn't read \"%s\".", FileName.c_str());
 #ifdef DEBUG
@@ -192,7 +192,7 @@ bool LuaScriptEngine::ExecuteFile(const Common::String &FileName) {
 	}
 
 	// Run the file content
-	if (!ExecuteBuffer(FileData, FileSize, "@" + pPackage->GetAbsolutePath(FileName))) {
+	if (!ExecuteBuffer(FileData, FileSize, "@" + pPackage->getAbsolutePath(FileName))) {
 		// Release file buffer
 		delete[] FileData;
 #ifdef DEBUG

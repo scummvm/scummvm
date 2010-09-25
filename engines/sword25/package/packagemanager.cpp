@@ -61,7 +61,7 @@ static Common::String normalizePath(const Common::String &path, const Common::St
 PackageManager::PackageManager(Kernel *pKernel) : Service(pKernel),
 	_currentDirectory(PATH_SEPARATOR),
 	_rootFolder(ConfMan.get("path")) {
-	if (!_RegisterScriptBindings())
+	if (!registerScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else
 		BS_LOGLN("Script bindings registered.");
@@ -82,7 +82,7 @@ Service *PackageManager_CreateObject(Kernel *kernelPtr) {
 /**
  * Scans through the archive list for a specified file
  */
-Common::ArchiveMemberPtr PackageManager::GetArchiveMember(const Common::String &fileName) {
+Common::ArchiveMemberPtr PackageManager::getArchiveMember(const Common::String &fileName) {
 	// Loop through checking each archive
 	Common::List<ArchiveEntry *>::iterator i;
 	for (i = _archiveList.begin(); i != _archiveList.end(); ++i) {
@@ -105,8 +105,8 @@ Common::ArchiveMemberPtr PackageManager::GetArchiveMember(const Common::String &
 	return Common::ArchiveMemberPtr();
 }
 
-bool PackageManager::LoadPackage(const Common::String &fileName, const Common::String &mountPosition) {
-	debug(0, "LoadPackage(%s, %s)", fileName.c_str(), mountPosition.c_str());
+bool PackageManager::loadPackage(const Common::String &fileName, const Common::String &mountPosition) {
+	debug(3, "loadPackage(%s, %s)", fileName.c_str(), mountPosition.c_str());
 
 	Common::Archive *zipFile = Common::makeZipArchive(fileName);
 	if (zipFile == NULL) {
@@ -116,7 +116,7 @@ bool PackageManager::LoadPackage(const Common::String &fileName, const Common::S
 		BS_LOGLN("Package '%s' mounted as '%s'.", fileName.c_str(), mountPosition.c_str());
 		Common::ArchiveMemberList files;
 		zipFile->listMembers(files);
-		debug(0, "Capacity %d", files.size());
+		debug(3, "Capacity %d", files.size());
 
 		for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); ++it)
 			debug(3, "%s", (*it)->getName().c_str());
@@ -127,7 +127,7 @@ bool PackageManager::LoadPackage(const Common::String &fileName, const Common::S
 	}
 }
 
-bool PackageManager::LoadDirectoryAsPackage(const Common::String &directoryName, const Common::String &mountPosition) {
+bool PackageManager::loadDirectoryAsPackage(const Common::String &directoryName, const Common::String &mountPosition) {
 	Common::FSNode directory(directoryName);
 	Common::Archive *folderArchive = new Common::FSDirectory(directory, 6);
 	if (!directory.exists() || (folderArchive == NULL)) {
@@ -146,7 +146,7 @@ bool PackageManager::LoadDirectoryAsPackage(const Common::String &directoryName,
 	}
 }
 
-byte *PackageManager::GetFile(const Common::String &fileName, uint *fileSizePtr) {
+byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr) {
 	const Common::String B25S_EXTENSION(".b25s");
 	Common::SeekableReadStream *in;
 
@@ -170,7 +170,7 @@ byte *PackageManager::GetFile(const Common::String &fileName, uint *fileSizePtr)
 		return buffer;
 	}
 
-	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(fileName, _currentDirectory));
+	Common::ArchiveMemberPtr fileNode = getArchiveMember(normalizePath(fileName, _currentDirectory));
 	if (!fileNode)
 		return 0;
 	if (!(in = fileNode->createReadStream()))
@@ -196,9 +196,9 @@ byte *PackageManager::GetFile(const Common::String &fileName, uint *fileSizePtr)
 	return buffer;
 }
 
-Common::SeekableReadStream *PackageManager::GetStream(const Common::String &fileName) {
+Common::SeekableReadStream *PackageManager::getStream(const Common::String &fileName) {
 	Common::SeekableReadStream *in;
-	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(fileName, _currentDirectory));
+	Common::ArchiveMemberPtr fileNode = getArchiveMember(normalizePath(fileName, _currentDirectory));
 	if (!fileNode)
 		return 0;
 	if (!(in = fileNode->createReadStream()))
@@ -207,23 +207,23 @@ Common::SeekableReadStream *PackageManager::GetStream(const Common::String &file
 	return in;
 }
 
-Common::String PackageManager::GetCurrentDirectory() {
+Common::String PackageManager::getCurrentDirectory() {
 	return _currentDirectory;
 }
 
-bool PackageManager::ChangeDirectory(const Common::String &directory) {
+bool PackageManager::changeDirectory(const Common::String &directory) {
 	// Get the path elements for the file
 	_currentDirectory = normalizePath(directory, _currentDirectory);
 	return true;
 }
 
-Common::String PackageManager::GetAbsolutePath(const Common::String &fileName) {
+Common::String PackageManager::getAbsolutePath(const Common::String &fileName) {
 	return normalizePath(fileName, _currentDirectory);
 }
 
-uint PackageManager::GetFileSize(const Common::String &fileName) {
+uint PackageManager::getFileSize(const Common::String &fileName) {
 	Common::SeekableReadStream *in;
-	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(fileName, _currentDirectory));
+	Common::ArchiveMemberPtr fileNode = getArchiveMember(normalizePath(fileName, _currentDirectory));
 	if (!fileNode)
 		return 0;
 	if (!(in = fileNode->createReadStream()))
@@ -234,15 +234,15 @@ uint PackageManager::GetFileSize(const Common::String &fileName) {
 	return fileSize;
 }
 
-uint PackageManager::GetFileType(const Common::String &fileName) {
+uint PackageManager::getFileType(const Common::String &fileName) {
 	warning("STUB: BS_PackageManager::GetFileType(%s)", fileName.c_str());
 
 	//return fileNode.isDirectory() ? BS_PackageManager::FT_DIRECTORY : BS_PackageManager::FT_FILE;
 	return PackageManager::FT_FILE;
 }
 
-bool PackageManager::FileExists(const Common::String &fileName) {
-	Common::ArchiveMemberPtr fileNode = GetArchiveMember(normalizePath(fileName, _currentDirectory));
+bool PackageManager::fileExists(const Common::String &fileName) {
+	Common::ArchiveMemberPtr fileNode = getArchiveMember(normalizePath(fileName, _currentDirectory));
 	return fileNode;
 }
 

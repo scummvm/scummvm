@@ -263,7 +263,7 @@ Common::String ResourceManager::GetUniqueFileName(const Common::String &FileName
 	}
 
 	// Absoluten Pfad der Datei bekommen und somit die Eindeutigkeit des Dateinamens sicherstellen
-	Common::String UniqueFileName = pPackage->GetAbsolutePath(FileName);
+	Common::String UniqueFileName = pPackage->getAbsolutePath(FileName);
 	if (UniqueFileName == "")
 		BS_LOG_ERRORLN("Could not create absolute file name for \"%s\".", FileName.c_str());
 

@@ -70,7 +70,7 @@ FontResource::FontResource(Kernel *pKernel, const Common::String &FileName) :
 
 	// Load the contents of the file
 	uint fileSize;
-	char *xmlData = pPackage->GetXmlFile(getFileName(), &fileSize);
+	char *xmlData = pPackage->getXmlFile(getFileName(), &fileSize);
 	if (!xmlData) {
 		BS_LOG_ERRORLN("Could not read \"%s\".", getFileName().c_str());
 		return;
@@ -109,7 +109,7 @@ bool FontResource::parserCallback_font(ParserNode *node) {
 	BS_ASSERT(pPackage);
 
 	// Get the full path and filename for the bitmap resource
-	_BitmapFileName = pPackage->GetAbsolutePath(bitmapFilename);
+	_BitmapFileName = pPackage->getAbsolutePath(bitmapFilename);
 	if (_BitmapFileName == "") {
 		BS_LOG_ERRORLN("Image file \"%s\" was specified in <font> tag of \"%s\" but could not be found.",
 		               _BitmapFileName.c_str(), getFileName().c_str());
