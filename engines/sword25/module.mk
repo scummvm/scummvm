@@ -27,6 +27,7 @@ MODULE_OBJS := \
 	gfx/staticbitmap.o \
 	gfx/text.o \
 	gfx/timedrenderobject.o \
+	gfx/image/art.o \
 	gfx/image/b25sloader.o \
 	gfx/image/imageloader.o \
 	gfx/image/pngloader.o \
@@ -34,7 +35,6 @@ MODULE_OBJS := \
 	gfx/image/swimage.o \
 	gfx/image/vectorimage.o \
 	gfx/image/vectorimagerenderer.o \
-	gfx/image/art.o \
 	input/inputengine.o \
 	input/inputengine_script.o \
 	kernel/callbackregistry.o \

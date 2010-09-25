@@ -34,7 +34,7 @@
 
 /* Various utility functions RLL finds useful. */
 
-#include "art.h"
+#include "sword25/gfx/image/art.h"
 
 namespace Sword25 {
 
