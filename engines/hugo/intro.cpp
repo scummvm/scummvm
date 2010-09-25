@@ -194,13 +194,11 @@ void intro_v3d::introInit() {
 	else
 		sprintf(buffer,"%s  Shareware Version", COPYRIGHT);
 
-//	Center_text (190, buffer);
-	_vm.screen().writeStr(CENTER, 190, buffer, _TBRIGHTWHITE);
+	_vm.screen().writeStr(CENTER, 190, buffer, _TBROWN);
 
-	if (stricmp(_boot.distrib, "David P. Gray")) {
-//		Center_text (0, buffer);
+	if (scumm_stricmp(_boot.distrib, "David P. Gray")) {
 		sprintf(buffer, "Distributed by %s.", _boot.distrib);
-		_vm.screen().writeStr(CENTER, 0, buffer, _TBRIGHTWHITE);
+		_vm.screen().writeStr(CENTER, 0, buffer, _TBROWN);
 	}
 
 	_vm.screen().displayBackground();
