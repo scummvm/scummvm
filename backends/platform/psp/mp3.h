@@ -61,6 +61,7 @@ protected:
 
 	Timestamp _length;
 	uint32 _sampleRate;
+	bool _stereo;
 
 	mad_timer_t _totalTime;
 	mad_stream _stream;		//
@@ -110,7 +111,7 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool endOfData() const		{ return _state == MP3_STATE_EOS; }
-	bool isStereo() const		{ return MAD_NCHANNELS(&_header) == 2; }
+	bool isStereo() const		{ return _stereo; }
 	int getRate() const			{ return _sampleRate; }
 
 	bool seek(const Timestamp &where);

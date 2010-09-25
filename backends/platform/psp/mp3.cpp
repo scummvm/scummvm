@@ -190,6 +190,7 @@ Mp3PspStream::Mp3PspStream(Common::SeekableReadStream *inStream, DisposeAfterUse
 	findValidHeader();	// get a first header so we can read basic stuff
 	
 	_sampleRate = _header.samplerate;	// copy it before it gets destroyed
+	_stereo = (MAD_NCHANNELS(&_header) == 2);
 		
 	while (_state != MP3_STATE_EOS)
 		findValidHeader();	// get a first header so we can read basic stuff
