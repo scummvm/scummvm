@@ -361,17 +361,11 @@ get_system_exe_extension() {
 	arm-riscos)
 		_exeext=",ff8"
 		;;
-	caanoo-linux)
-		_exeext=".caanoo"
-		;;		
 	dreamcast | ds | gamecube | n64 | ps2 | psp | wii)
 		_exeext=".elf"
 		;;
-	gp2x-linux)
-		_exeext=".gp2x"
-		;;
-	gp2xwiz-linux)
-		_exeext=".wiz"
+	gph-linux)
+		_exeext=".gph"
 		;;
 	mingw* | *os2-emx | wince)
 		_exeext=".exe"
