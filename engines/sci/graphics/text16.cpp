@@ -491,6 +491,32 @@ void GfxText16::Draw_String(const char *text) {
 	_ports->penColor(previousPenColor);
 }
 
+// we need to have a separate status drawing code
+//  In KQ4 the IV char is actually 0xA, which would otherwise get considered as linebreak and not printed
+void GfxText16::Draw_Status(const char *text) {
+	uint16 curChar, charWidth;
+	uint16 textLen = strlen(text);
+	Common::Rect rect;
+
+	GetFont();
+	if (!_font)
+		return;
+
+	rect.top = _ports->_curPort->curTop;
+	rect.bottom = rect.top + _ports->_curPort->fontHeight;
+	while (textLen--) {
+		curChar = (*(const byte *)text++);
+		switch (curChar) {
+		case 0:
+			break;
+		default:
+			charWidth = _font->getCharWidth(curChar);
+			_font->draw(curChar, _ports->_curPort->top + _ports->_curPort->curTop, _ports->_curPort->left + _ports->_curPort->curLeft, _ports->_curPort->penClr, _ports->_curPort->greyedOutput);
+			_ports->_curPort->curLeft += charWidth;
+		}
+	}
+}
+
 // Sierra did this in their PC98 interpreter only, they identify a text as being
 // sjis and then switch to font 900
 bool GfxText16::SwitchToFont900OnSjis(const char *text) {
