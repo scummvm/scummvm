@@ -50,6 +50,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added Android port.
    - Added Dingux port.
    - Added Caanoo port (based on the GP2XWiz port).
+   - Added OpenPandora port.
 
  General:
    - Removed the outdated PalmOS port.
@@ -109,7 +110,14 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for DVDs with the ISO9660 file system.
 
  GP2X port:
-   - Added support for dynamic engine plugins.
+   - Added support for dynamic engine plugins (experimental).
+   - Reworked control system and better touchscreen support.
+
+ GP2XWiz/Caanoo port:
+   - Improved downscale code to minimise 'tearing' corruption.
+   - Reworked control system and better touchscreen support.
+   - Renamed backend from GP2XWIZ to GPH to better reflect
+     the supported devices.
 
 1.1.1 (2010-05-02)
  New Ports:
