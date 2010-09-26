@@ -64,6 +64,7 @@ public:
 	void Show(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
 	void Box(const char *text, int16 bshow, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId);
 	void Draw_String(const char *text);
+	void Draw_Status(const char *text);
 
 	GfxFont *_font;
 
