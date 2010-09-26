@@ -926,10 +926,10 @@ AGOSEngine::~AGOSEngine() {
 	free(_textMem);
 	free(_xtblList);
 
-	free(_backGroundBuf);
-	free(_backBuf);
+	delete _backGroundBuf;
+	delete _backBuf;
 	free(_planarBuf);
-	free(_scaleBuf);
+	delete _scaleBuf;
 	free(_zoneBuffers);
 
 	free(_window4BackScn);
