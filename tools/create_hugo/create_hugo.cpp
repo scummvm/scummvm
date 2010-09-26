@@ -308,13 +308,48 @@ int main(int argc, char *argv[]) {
 	writeTextArray(outFile, textEngine, NUM_ENGINE_TEXT);
 
 	// Write textIntro
-	writeTextArray(outFile, textIntro, NUM_INTRO_TEXT);
+	writeTextArray(outFile, textIntro_dummy, NUM_INTRO_TEXT_DUMMY);
+	writeTextArray(outFile, textIntro_dummy, NUM_INTRO_TEXT_DUMMY);
+	writeTextArray(outFile, textIntro_v3, NUM_INTRO_TEXT_V3);
+	writeTextArray(outFile, textIntro_dummy, NUM_INTRO_TEXT_DUMMY);
+	writeTextArray(outFile, textIntro_dummy, NUM_INTRO_TEXT_DUMMY);
+	writeTextArray(outFile, textIntro_v3, NUM_INTRO_TEXT_V3);
 
 	// Write x_intro and y_intro
-	writeUint16BE(outFile, NUM_INTRO_TICK);
-	for (i = 0; i < NUM_INTRO_TICK; i++) {
-		writeByte(outFile, x_intro[i]);
-		writeByte(outFile, y_intro[i]);
+	writeUint16BE(outFile, NUM_INTRO_TICK_DUMMY);
+	for (i = 0; i < NUM_INTRO_TICK_DUMMY; i++) {
+		writeByte(outFile, x_intro_dummy[i]);
+		writeByte(outFile, y_intro_dummy[i]);
+	}
+
+	writeUint16BE(outFile, NUM_INTRO_TICK_DUMMY);
+	for (i = 0; i < NUM_INTRO_TICK_DUMMY; i++) {
+		writeByte(outFile, x_intro_dummy[i]);
+		writeByte(outFile, y_intro_dummy[i]);
+	}
+
+	writeUint16BE(outFile, NUM_INTRO_TICK_V3);
+	for (i = 0; i < NUM_INTRO_TICK_V3; i++) {
+		writeByte(outFile, x_intro_v3[i]);
+		writeByte(outFile, y_intro_v3[i]);
+	}
+
+	writeUint16BE(outFile, NUM_INTRO_TICK_V1D);
+	for (i = 0; i < NUM_INTRO_TICK_V1D; i++) {
+		writeByte(outFile, x_intro_v1d[i]);
+		writeByte(outFile, y_intro_v1d[i]);
+	}
+
+	writeUint16BE(outFile, NUM_INTRO_TICK_DUMMY);
+	for (i = 0; i < NUM_INTRO_TICK_DUMMY; i++) {
+		writeByte(outFile, x_intro_dummy[i]);
+		writeByte(outFile, y_intro_dummy[i]);
+	}
+
+	writeUint16BE(outFile, NUM_INTRO_TICK_V3);
+	for (i = 0; i < NUM_INTRO_TICK_V3; i++) {
+		writeByte(outFile, x_intro_v3[i]);
+		writeByte(outFile, y_intro_v3[i]);
 	}
 
 	// Write textMouse
