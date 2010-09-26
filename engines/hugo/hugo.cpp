@@ -543,9 +543,9 @@ bool HugoEngine::loadHugoDat() {
 			for (int i = 0; i < numElem; i++) {
 				numSubElem = in.readUint16BE();
 				for (int j = 0; j < numSubElem; j++) {
-					in.readUint16BE();;
-					in.readUint16BE();;
-					in.readSint16BE();;
+					in.readUint16BE();
+					in.readUint16BE();
+					in.readSint16BE();
 					in.readByte();
 					in.readByte();
 					in.readByte();
