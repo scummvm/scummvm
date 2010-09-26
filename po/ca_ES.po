@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-19 18:13+0100\n"
+"POT-Creation-Date: 2010-09-26 22:00+0100\n"
 "PO-Revision-Date: 2010-09-21 23:37+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@jvprat.com>\n"
 "Language-Team: Catalan <scummvm-devel@lists.sf.net>\n"
@@ -53,21 +53,25 @@ msgstr "Cancel·la"
 msgid "Choose"
 msgstr "Escull"
 
-#: gui/GuiManager.cpp:103 backends/keymapper/remap-dialog.cpp:54
+#: gui/GuiManager.cpp:106 backends/keymapper/remap-dialog.cpp:54
 msgid "Close"
 msgstr "Tanca"
 
-#: gui/GuiManager.cpp:106
+#: gui/GuiManager.cpp:109
 msgid "Mouse click"
 msgstr "Clic del ratolí"
 
-#: gui/GuiManager.cpp:109 base/main.cpp:285
+#: gui/GuiManager.cpp:112 base/main.cpp:285
 msgid "Display keyboard"
 msgstr "Mostra el teclat"
 
-#: gui/GuiManager.cpp:112 base/main.cpp:288
+#: gui/GuiManager.cpp:115 base/main.cpp:288
 msgid "Remap keys"
 msgstr "Remapeja les tecles"
+
+#: gui/KeysDialog.h:39 gui/KeysDialog.cpp:148
+msgid "Choose an action to map"
+msgstr "Sel·leccioneu una acció a mapejar"
 
 #: gui/KeysDialog.cpp:44
 msgid "Map"
@@ -101,10 +105,6 @@ msgstr "Seleccioneu una acció"
 #: gui/KeysDialog.cpp:109
 msgid "Press the key to associate"
 msgstr "Premeu la tecla a associar"
-
-#: gui/KeysDialog.cpp:148
-msgid "Choose an action to map"
-msgstr "Sel·leccioneu una acció a mapejar"
 
 #: gui/launcher.cpp:172
 msgid "Game"
@@ -439,7 +439,7 @@ msgstr ""
 "una gran quantitat de jocs."
 
 #: gui/launcher.cpp:729 gui/launcher.cpp:878
-#: backends/platform/symbian/src/SymbianOS.cpp:446
+#: backends/platform/symbian/src/SymbianOS.cpp:450
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
 #: backends/platform/wince/CELauncherDialog.cpp:104
@@ -447,7 +447,7 @@ msgid "Yes"
 msgstr "Sí"
 
 #: gui/launcher.cpp:729 gui/launcher.cpp:878
-#: backends/platform/symbian/src/SymbianOS.cpp:446
+#: backends/platform/symbian/src/SymbianOS.cpp:450
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
 #: backends/platform/wince/CELauncherDialog.cpp:104
@@ -966,11 +966,11 @@ msgstr "Pausa"
 msgid "Skip line"
 msgstr "Salta la línia"
 
-#: base/main.cpp:404
+#: base/main.cpp:401
 msgid "Error running game:"
 msgstr "Error al executar el joc:"
 
-#: base/main.cpp:430 base/main.cpp:431
+#: base/main.cpp:427 base/main.cpp:428
 msgid "Could not find any engine capable of running the selected game"
 msgstr "No s'ha pogut trobar cap motor capaç d'executar el joc seleccionat"
 
@@ -1119,7 +1119,7 @@ msgstr "~S~egüent"
 msgid "~C~lose"
 msgstr "~T~anca"
 
-#: engines/scumm/scumm.cpp:2181 engines/agos/saveload.cpp:192
+#: engines/scumm/scumm.cpp:2183 engines/agos/saveload.cpp:192
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1130,7 +1130,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2188 engines/agos/saveload.cpp:157
+#: engines/scumm/scumm.cpp:2190 engines/agos/saveload.cpp:157
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1141,7 +1141,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2200 engines/agos/saveload.cpp:200
+#: engines/scumm/scumm.cpp:2202 engines/agos/saveload.cpp:200
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1407,7 +1407,7 @@ msgstr "Teclat virtual"
 msgid "Key mapper"
 msgstr "Mapejador de tecles"
 
-#: backends/platform/symbian/src/SymbianOS.cpp:446
+#: backends/platform/symbian/src/SymbianOS.cpp:450
 msgid "Do you want to quit ?"
 msgstr "Vols sortir?"
 
