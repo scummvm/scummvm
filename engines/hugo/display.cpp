@@ -440,7 +440,7 @@ void Screen::drawRectangle(bool filledFl, uint16 x1, uint16 y1, uint16 x2, uint1
 	} else {
 		warning("STUB: drawRectangle()");
 	}
-};
+}
 
 Screen_v1d::Screen_v1d(HugoEngine &vm) : Screen(vm) {
 }
