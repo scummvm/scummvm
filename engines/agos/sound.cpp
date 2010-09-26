@@ -776,7 +776,7 @@ void Sound::playVoiceData(byte *soundData, uint sound) {
 }
 
 void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint sound, int pan, int vol, bool loop) {
-	int size = READ_LE_UINT32(soundData + 4);
+	int size = READ_LE_UINT32(soundData + 4) + 8;
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundData, size);
 	Audio::RewindableAudioStream *sndStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
