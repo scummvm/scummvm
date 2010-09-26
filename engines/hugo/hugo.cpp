@@ -388,15 +388,25 @@ bool HugoEngine::loadHugoDat() {
 	_textEngine = loadTexts(in);
 
 	// Read textIntro
-	_textIntro = loadTexts(in);
+	_textIntro = loadTextsVariante(in, 0);
 
 	// Read x_intro and y_intro
-	_introXSize = in.readUint16BE();
-	_introX = (byte *)malloc(sizeof(byte) * _introXSize);
-	_introY = (byte *)malloc(sizeof(byte) * _introXSize);
-	for (int i = 0; i < _introXSize; i++) {
-		_introX[i] = in.readByte();
-		_introY[i] = in.readByte();
+	for (int varnt = 0; varnt < _numVariant; varnt++) {
+		int numRows = in.readUint16BE();
+		if (varnt == _gameVariant) {
+			_introXSize = numRows;
+			_introX = (byte *)malloc(sizeof(byte) * _introXSize);
+			_introY = (byte *)malloc(sizeof(byte) * _introXSize);
+			for (int i = 0; i < _introXSize; i++) {
+				_introX[i] = in.readByte();
+				_introY[i] = in.readByte();
+			}
+		} else {
+			for (int i = 0; i < numRows; i++) {
+				in.readByte();
+				in.readByte();
+			}
+		}
 	}
 
 	// Read textMouse

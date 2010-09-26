@@ -410,6 +410,38 @@ void Screen::userHelp() {
 	           "ESC - Return to game");
 }
 
+void Screen::drawShape(int x, int y, int color1, int color2) {
+#define shapeSize 24
+
+	for (int i = 0; i < shapeSize; i++) {
+		for (int j = 0; j < i; j++) {
+			_backBuffer[320 * (y + i) + (x + shapeSize + j - i)] = color1;
+			_frontBuffer[320 * (y + i) + (x + shapeSize + j - i)] = color1;
+			_backBuffer[320 * (y + i) + (x + shapeSize + j)] = color2;
+			_frontBuffer[320 * (y + i) + (x + shapeSize + j)] = color2;
+			_backBuffer[320 * (y + (2 * shapeSize - 1) - i) + (x + shapeSize + j - i)] = color1;
+			_frontBuffer[320 * (y + (2 * shapeSize - 1) - i) + (x + shapeSize + j - i)] = color1;
+			_backBuffer[320 * (y + (2 * shapeSize - 1) - i) + (x + shapeSize + j)] = color2;
+			_frontBuffer[320 * (y + (2 * shapeSize - 1) - i) + (x + shapeSize + j)] = color2;
+		}
+	}		
+}
+
+void Screen::drawRectangle(bool filledFl, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int color) {
+	assert(x1 <= x2);
+	assert(y1 <= y2);
+
+	if (filledFl) {
+		for (int i = y1; i < y2; i++)
+			for (int j = x1; j < x2; j++) {
+				_backBuffer[320 * i + j] = color;
+				_frontBuffer[320 * i + j] = color;
+			}
+	} else {
+		warning("STUB: drawRectangle()");
+	}
+};
+
 Screen_v1d::Screen_v1d(HugoEngine &vm) : Screen(vm) {
 }
 

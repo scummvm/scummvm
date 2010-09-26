@@ -49,6 +49,8 @@ public:
 	void     displayFrame(int sx, int sy, seq_t *seq, bool foreFl);
 	void     displayList(dupdate_t update, ...);
 	void     displayRect(int16 x, int16 y, int16 dx, int16 dy);
+	void     drawRectangle(bool filledFl, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int color);
+	void     drawShape(int x, int y, int color1, int color2);
 	void     initDisplay();
 	virtual void loadFont(int16 fontId) = 0;
 	void     moveImage(image_pt srcImage, uint16 x1, uint16 y1, uint16 dx, uint16 dy, uint16 width1, image_pt dstImage, uint16 x2, uint16 y2, uint16 width2);
@@ -68,12 +70,15 @@ public:
 	viewdib_t &getBackBuffer() {
 		return _backBuffer;
 	}
+
 	viewdib_t &getBackBufferBackup() {
 		return _backBufferBackup;
 	}
+
 	viewdib_t &getFrontBuffer() {
 		return _frontBuffer;
 	}
+
 	viewdib_t &getGUIBuffer() {
 		return _GUIBuffer;
 	}

@@ -98,6 +98,7 @@ void intro_v3w::introInit() {
 	_vm.file().readBackground(22); // display screen MAP_3w
 	_vm.screen().displayBackground();
 	introTicks = 0;
+	_vm.screen().loadFont(0);
 //#endif
 }
 
@@ -108,11 +109,6 @@ bool intro_v3w::introPlay() {
 // Called every tick.  Returns TRUE when complete
 //TODO : Add proper check of story mode
 //#if STORY
-//	SetBkMode(TRANSPARENT);
-
-// FIXME: This initialization shouldn't be there, as all the fonts should be loaded directly
-	_vm.screen().loadFont(0);
-
 	if (introTicks < introSize) {
 		// Scale viewport x_intro,y_intro to screen (offsetting y)
 		_vm.screen().writeStr(_vm._introX[introTicks], _vm._introY[introTicks] - DIBOFF_Y, "x", _TBRIGHTWHITE);
@@ -149,13 +145,128 @@ void intro_v1d::preNewGame() {
 }
 
 void intro_v1d::introInit() {
+	introTicks = 0;
 }
 
 bool intro_v1d::introPlay() {
-	warning("STUB: intro_v1d::introPlay()");
-	return true;
+	byte introSize = _vm.getIntroSize();
+	static int state = 0;
+
+	if (introTicks < introSize) {
+		switch (state++) {
+		case 0:
+			_vm.screen().drawRectangle(true, 0, 0, 319, 199, _TMAGENTA);
+			_vm.screen().drawRectangle(true, 10, 10, 309, 189, _TBLACK);
+			break;
+
+		case 1:
+			_vm.screen().drawShape(20, 92,_TLIGHTMAGENTA,_TMAGENTA);
+			_vm.screen().drawShape(250,92,_TLIGHTMAGENTA,_TMAGENTA);
+
+			// HACK: use of TROMAN, size 10-5
+			_vm.screen().loadFont(0);
+
+			char buffer[80];
+			if (_boot.registered)
+				strcpy(buffer, "Registered Version");
+			else
+				strcpy(buffer, "Shareware Version");
+			_vm.screen().writeStr(CENTER, 163, buffer, _TLIGHTMAGENTA);
+			_vm.screen().writeStr(CENTER, 176, COPYRIGHT, _TLIGHTMAGENTA);
+
+			if (scumm_stricmp(_boot.distrib, "David P. Gray")) {
+				sprintf(buffer, "Distributed by %s.", _boot.distrib);
+				_vm.screen().writeStr(CENTER, 75, buffer, _TMAGENTA);
+			}
+
+			// HACK: use of SCRIPT size 24-16
+			_vm.screen().loadFont(2);
+
+			strcpy(buffer, "Hugo's");
+			_vm.screen().writeStr(CENTER, 20, buffer, _TMAGENTA);
+
+			//HACK: use of TROMAN, size 30-24
+			strcpy(buffer, "House of Horrors !");
+			_vm.screen().writeStr(CENTER, 50, buffer, _TLIGHTMAGENTA);
+			break;
+		case 2:
+			_vm.screen().drawRectangle(true, 82, 92, 237, 138, _TBLACK);
+			// HACK: use of TROMAN, size 16-9
+			_vm.screen().loadFont(2);
+
+			strcpy(buffer, "S t a r r i n g :");
+			_vm.screen().writeStr(CENTER, 95, buffer, _TMAGENTA);
+			break;
+		case 3:
+			// HACK: use of TROMAN size 20-9
+			_vm.screen().loadFont(2);
+
+			strcpy(buffer, "Hugo !");
+			_vm.screen().writeStr(CENTER, 115, buffer, _TLIGHTMAGENTA);
+			break;
+		case 4:
+			_vm.screen().drawRectangle(true, 82, 92, 237, 138, _TBLACK);
+			// HACK: use of TROMAN size 16-9
+			_vm.screen().loadFont(2);
+
+			strcpy(buffer, "P r o d u c e d  b y :");
+			_vm.screen().writeStr(CENTER, 95, buffer, _TMAGENTA);
+			break;
+		case 5:
+			// HACK: use of TROMAN size 16-9
+			_vm.screen().loadFont(2);
+
+			strcpy(buffer, "David P Gray !");
+			_vm.screen().writeStr(CENTER, 115, buffer, _TLIGHTMAGENTA);
+			break;
+		case 6:
+			_vm.screen().drawRectangle(true, 82, 92, 237, 138, _TBLACK);
+			// HACK: use of TROMAN size 16-9
+			_vm.screen().loadFont(2);
+
+			strcpy(buffer, "D i r e c t e d   b y :");
+			_vm.screen().writeStr(CENTER, 95, buffer, _TMAGENTA);
+			break;
+		case 7:
+			// HACK: use of TROMAN size 16-9
+			_vm.screen().loadFont(2);
+
+			strcpy(buffer, "David P Gray !");
+			_vm.screen().writeStr(CENTER, 115, buffer, _TLIGHTMAGENTA);
+			break;
+		case 8:
+			_vm.screen().drawRectangle(true, 82, 92, 237, 138, _TBLACK);
+			// HACK: use of TROMAN size 16-9
+			_vm.screen().loadFont(2);
+
+			strcpy(buffer, "M u s i c   b y :");
+			_vm.screen().writeStr(CENTER, 95, buffer, _TMAGENTA);
+			break;
+		case 9:
+			// HACK: use of TROMAN size 16-9
+			_vm.screen().loadFont(2);
+
+			strcpy(buffer, "David P Gray !");
+			_vm.screen().writeStr(CENTER, 115, buffer, _TLIGHTMAGENTA);
+			break;
+		case 10:
+			_vm.screen().drawRectangle(true, 82, 92, 237, 138, _TBLACK);
+			// HACK: use of TROMAN size 20-14
+			_vm.screen().loadFont(2);
+
+			strcpy(buffer, "E n j o y !");
+			_vm.screen().writeStr(CENTER, 100, buffer, _TLIGHTMAGENTA);
+			break;
+		}
+
+		_vm.screen().displayBackground();
+		g_system->updateScreen();
+		g_system->delayMillis(1000);
+	}
+
+	return (++introTicks >= introSize);
 }
-//TODO : Add code for intro H2 DOS
+
 intro_v2d::intro_v2d(HugoEngine &vm) : IntroHandler(vm) {
 }
 
@@ -237,7 +348,6 @@ bool intro_v3d::introPlay() {
 	if (introTicks < introSize) {
 		_vm.screen().writeStr(_vm._introX[introTicks], _vm._introY[introTicks] - DIBOFF_Y, "x", _TBRIGHTWHITE);
 		_vm.screen().displayBackground();
-
 
 		// Text boxes at various times
 		switch (introTicks) {
