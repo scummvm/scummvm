@@ -51,11 +51,14 @@ enum seqTextUtil {
 namespace Utils {
 int      firstBit(byte data);
 int      lastBit(byte data);
-void     reverseByte(byte *data);
-void     Warn(bool technote, const char *format, ...) GCC_PRINTF(2, 3);
-void     Error(int code, const char *format, ...) GCC_PRINTF(2, 3);
+
 void     gameOverMsg();
+void     reverseByte(byte *data);
+void     Error(int code, const char *format, ...) GCC_PRINTF(2, 3);
+void     Warn(bool technote, const char *format, ...) GCC_PRINTF(2, 3);
+
 char    *Box(box_t, const char *, ...) GCC_PRINTF(2, 3);
+char    *strlwr(char *buffer);
 }
 
 } // End of namespace Hugo

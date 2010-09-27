@@ -175,4 +175,17 @@ void Utils::gameOverMsg(void) {
 	warning("STUB: Gameover_msg(): %s", HugoEngine::get()._textUtil[kGameOver]);
 }
 
+char *Utils::strlwr(char *buffer) {
+	char *result = buffer;
+
+	while (*buffer != '\0') {
+		if (isupper(*buffer))
+			*buffer = tolower(*buffer);
+		buffer++;
+	}
+
+	return result;
+}
+
+
 } // End of namespace Hugo

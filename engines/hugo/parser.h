@@ -69,7 +69,6 @@ private:
 
 	char *findNoun(char *line);
 	char *findVerb(char *line);
-	char *strlwr(char *buffer);
 
 	void  dropObject(object_t *obj);
 	void  showDosInventory();

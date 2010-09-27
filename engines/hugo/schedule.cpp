@@ -230,7 +230,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 
 		for (found = false, dx = 0; !found && (action->a3.responsePtr[dx] != -1); dx++) {
 			tmpStr = _vm.file().Fetch_string(action->a3.responsePtr[dx]);
-			if (strstr(_vm.parser().strlwr(response) , tmpStr))
+			if (strstr(Utils::strlwr(response) , tmpStr))
 				found = true;
 		}
 

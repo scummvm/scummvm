@@ -199,29 +199,14 @@ void Parser::charHandler() {
 // Perform an immediate command.  Takes parameters a la sprintf
 // Assumes final string will not overrun line[] length
 void Parser::command(const char *format, ...) {
-	va_list marker;
-
 	debugC(1, kDebugParser, "Command(%s, ...)", format);
 
+	va_list marker;
 	va_start(marker, format);
 	vsprintf(_line, format, marker);
 	va_end(marker);
 
 	lineHandler();
-}
-
-char *Parser::strlwr(char *buffer) {
-	char *result = buffer;
-
-	debugC(1, kDebugParser, "strlwr(%s)", buffer);
-
-	while (*buffer != '\0') {
-		if (isupper(*buffer))
-			*buffer = tolower(*buffer);
-		buffer++;
-	}
-
-	return result;
 }
 
 // Parse the user's line of text input.  Generate events as necessary
@@ -243,7 +228,7 @@ void Parser::lineHandler() {
 		return;
 	}
 
-	strlwr(_line);                                  // Convert to lower case
+	Utils::strlwr(_line);                           // Convert to lower case
 
 	// God Mode cheat commands:
 	// goto <screen>                                Takes hero to named screen
