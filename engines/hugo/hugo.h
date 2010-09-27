@@ -145,6 +145,9 @@ public:
 	char      _initFilename[20];
 	char      _saveFilename[20];
 
+	command_t _statusLine;
+	command_t _scoreLine;
+
 	const HugoGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 

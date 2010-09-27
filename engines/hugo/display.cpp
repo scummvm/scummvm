@@ -410,6 +410,25 @@ void Screen::userHelp() {
 	           "ESC - Return to game");
 }
 
+void Screen::drawStatusText() {
+	debugC(4, kDebugDisplay, "drawStatusText");
+
+	loadFont(U_FONT8);
+	uint16 sdx = stringLength(_vm._statusLine);
+	uint16 sdy = fontHeight() + 1;                 // + 1 for shadow
+	uint16 posX = 0;
+	uint16 posY = YPIX - sdy;
+
+	// Display the string and add rect to display list
+	writeStr(posX, posY, _vm._statusLine, _TLIGHTYELLOW);
+	displayList(D_ADD, posX, posY, sdx, sdy);
+
+	sdx = stringLength(_vm._scoreLine);
+	posY = 0;
+	writeStr(posX, posY, _vm._scoreLine, _TCYAN);
+	displayList(D_ADD, posX, posY, sdx, sdy);
+}
+
 void Screen::drawShape(int x, int y, int color1, int color2) {
 #define shapeSize 24
 

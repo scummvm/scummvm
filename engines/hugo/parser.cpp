@@ -98,10 +98,12 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 		_vm.sound().toggleMusic();
 		break;
 	case Common::KEYCODE_F3:                        // Repeat last line
+		gameStatus.recallFl = true;
+		break;
 	case Common::KEYCODE_F4:                        // Save game
 	case Common::KEYCODE_F5:                        // Restore game
 	case Common::KEYCODE_F9:                        // Boss button
-		warning("STUB: KeyHandler() - F3-F9 (DOS)");
+		warning("STUB: KeyHandler() - F4-F5-F9 (DOS)");
 		break;
 	default:                                        // Any other key
 		if (!gameStatus.storyModeFl) {              // Keyboard disabled
@@ -184,32 +186,14 @@ void Parser::charHandler() {
 		lineIndex = strlen(cmdLine);
 	}
 
-	sprintf(_statusLine, ">%s%c", cmdLine, cursor);
-	sprintf(_scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_config.turboFl) ? "T" : " ", _vm.getScore(), _vm.getMaxScore(), (_config.soundFl) ? "On" : "Off");
+	sprintf(_vm._statusLine, ">%s%c", cmdLine, cursor);
+	sprintf(_vm._scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_config.turboFl) ? "T" : " ", _vm.getScore(), _vm.getMaxScore(), (_config.soundFl) ? "On" : "Off");
 
 	// See if "look" button pressed
 	if (gameStatus.lookFl) {
 		command("look around");
 		gameStatus.lookFl = false;
 	}
-}
-
-void Parser::drawStatusText() {
-	debugC(4, kDebugParser, "drawStatusText");
-
-	_vm.screen().loadFont(U_FONT8);
-	uint16 sdx = _vm.screen().stringLength(_statusLine);
-	uint16 sdy = _vm.screen().fontHeight() + 1;                 // + 1 for shadow
-	uint16 posX = 0;
-	uint16 posY = YPIX - sdy;
-	// Display the string and add rect to display list
-	_vm.screen().writeStr(posX, posY, _statusLine, _TLIGHTYELLOW);
-	_vm.screen().displayList(D_ADD, posX, posY, sdx, sdy);
-
-	sdx = _vm.screen().stringLength(_scoreLine);
-	posY = 0;
-	_vm.screen().writeStr(posX, posY, _scoreLine, _TCYAN);
-	_vm.screen().displayList(D_ADD, posX, posY, sdx, sdy);
 }
 
 // Perform an immediate command.  Takes parameters a la sprintf

@@ -310,7 +310,7 @@ void HugoEngine::runMachine() {
 		screen().displayList(D_RESTORE);            // Restore previous background
 		updateImages();                             // Draw into _frontBuffer, compile display list
 		mouse().mouseHandler();                     // Mouse activity - adds to display list
-		parser().drawStatusText();
+		screen().drawStatusText();
 		screen().displayList(D_DISPLAY);            // Blit the display list to screen
 		break;
 	case V_INVENT:                                  // Accessing inventory
@@ -629,7 +629,6 @@ bool HugoEngine::loadHugoDat() {
 					in.readUint16BE();
 			}
 		}
-
 	}
 
 // TODO: For Hugo3, if not in story mode, set _objects[2].state to 3
