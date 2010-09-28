@@ -1819,7 +1819,7 @@ if test -n "$_host"; then
 		openpandora)
 			DEFINES="$DEFINES -DOPENPANDORA -DREDUCE_MEMORY_USAGE"
 			# Disable DOSBOX OPL for now.
-			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"			
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
 			if test "$_release_build" = no; then
 				DEFINES="$DEFINES -DOP_DEBUG"
 			else
@@ -2563,8 +2563,16 @@ test "x$prefix" = xNONE && prefix=/usr/local
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
 DEFINES="$DEFINES -DDATA_PATH=\\\"$datadir\\\""
-DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir/scummvm\\\""
 
+case $_backend in
+	openpandora)
+		# Add ../plugins as a path so plugins can be found when running from a .PND.
+		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"../plugins\\\""
+		;;
+	*)
+		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir/scummvm\\\""
+		;;
+esac
 
 #
 # Set variables for profiling.
