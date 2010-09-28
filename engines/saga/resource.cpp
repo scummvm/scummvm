@@ -225,7 +225,7 @@ bool Resource::createContexts() {
 
 
 	// If the Wyrmkeep credits file is found, set the Wyrmkeep version flag to true
-	if (Common::File::exists("graphics/credit3n.dlt")) {
+	if (Common::File::exists("credit3n.dlt")) {
 		_vm->_gf_wyrmkeep = true;
 	}
 
