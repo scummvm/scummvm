@@ -1923,6 +1923,24 @@
 		DF895C41124C271F0077F6E8 /* icon4.png in Resources */ = {isa = PBXBuildFile; fileRef = DF895C40124C271F0077F6E8 /* icon4.png */; };
 		DF895C42124C271F0077F6E8 /* icon4.png in Resources */ = {isa = PBXBuildFile; fileRef = DF895C40124C271F0077F6E8 /* icon4.png */; };
 		DF895C43124C271F0077F6E8 /* icon4.png in Resources */ = {isa = PBXBuildFile; fileRef = DF895C40124C271F0077F6E8 /* icon4.png */; };
+		DF895CB8124E58980077F6E8 /* indeo3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CAB124E58980077F6E8 /* indeo3.cpp */; };
+		DF895CB9124E58980077F6E8 /* mjpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CAD124E58980077F6E8 /* mjpeg.cpp */; };
+		DF895CBA124E58980077F6E8 /* qdm2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CAF124E58980077F6E8 /* qdm2.cpp */; };
+		DF895CBB124E58980077F6E8 /* qtrle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CB2124E58980077F6E8 /* qtrle.cpp */; };
+		DF895CBC124E58980077F6E8 /* rpza.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CB4124E58980077F6E8 /* rpza.cpp */; };
+		DF895CBD124E58990077F6E8 /* smc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CB6124E58980077F6E8 /* smc.cpp */; };
+		DF895CBE124E58990077F6E8 /* indeo3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CAB124E58980077F6E8 /* indeo3.cpp */; };
+		DF895CBF124E58990077F6E8 /* mjpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CAD124E58980077F6E8 /* mjpeg.cpp */; };
+		DF895CC0124E58990077F6E8 /* qdm2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CAF124E58980077F6E8 /* qdm2.cpp */; };
+		DF895CC1124E58990077F6E8 /* qtrle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CB2124E58980077F6E8 /* qtrle.cpp */; };
+		DF895CC2124E58990077F6E8 /* rpza.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CB4124E58980077F6E8 /* rpza.cpp */; };
+		DF895CC3124E58990077F6E8 /* smc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CB6124E58980077F6E8 /* smc.cpp */; };
+		DF895CC4124E58990077F6E8 /* indeo3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CAB124E58980077F6E8 /* indeo3.cpp */; };
+		DF895CC5124E58990077F6E8 /* mjpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CAD124E58980077F6E8 /* mjpeg.cpp */; };
+		DF895CC6124E58990077F6E8 /* qdm2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CAF124E58980077F6E8 /* qdm2.cpp */; };
+		DF895CC7124E58990077F6E8 /* qtrle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CB2124E58980077F6E8 /* qtrle.cpp */; };
+		DF895CC8124E58990077F6E8 /* rpza.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CB4124E58980077F6E8 /* rpza.cpp */; };
+		DF895CC9124E58990077F6E8 /* smc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF895CB6124E58980077F6E8 /* smc.cpp */; };
 		DF89C2880F62D55C00D756B6 /* sprites_lol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF89C2870F62D55C00D756B6 /* sprites_lol.cpp */; };
 		DF89C2A40F62D79E00D756B6 /* script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF89C2A30F62D79E00D756B6 /* script.cpp */; };
 		DF89C2BB0F62D91000D756B6 /* timestamp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF89C2B80F62D91000D756B6 /* timestamp.cpp */; };
@@ -4416,6 +4434,19 @@
 		DF895C29124C25350077F6E8 /* script_patches.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = script_patches.cpp; sourceTree = "<group>"; };
 		DF895C33124C26660077F6E8 /* icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-72.png"; sourceTree = "<group>"; };
 		DF895C40124C271F0077F6E8 /* icon4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon4.png; sourceTree = "<group>"; };
+		DF895CAB124E58980077F6E8 /* indeo3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = indeo3.cpp; sourceTree = "<group>"; };
+		DF895CAC124E58980077F6E8 /* indeo3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = indeo3.h; sourceTree = "<group>"; };
+		DF895CAD124E58980077F6E8 /* mjpeg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mjpeg.cpp; sourceTree = "<group>"; };
+		DF895CAE124E58980077F6E8 /* mjpeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mjpeg.h; sourceTree = "<group>"; };
+		DF895CAF124E58980077F6E8 /* qdm2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qdm2.cpp; sourceTree = "<group>"; };
+		DF895CB0124E58980077F6E8 /* qdm2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qdm2.h; sourceTree = "<group>"; };
+		DF895CB1124E58980077F6E8 /* qdm2data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qdm2data.h; sourceTree = "<group>"; };
+		DF895CB2124E58980077F6E8 /* qtrle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qtrle.cpp; sourceTree = "<group>"; };
+		DF895CB3124E58980077F6E8 /* qtrle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qtrle.h; sourceTree = "<group>"; };
+		DF895CB4124E58980077F6E8 /* rpza.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rpza.cpp; sourceTree = "<group>"; };
+		DF895CB5124E58980077F6E8 /* rpza.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rpza.h; sourceTree = "<group>"; };
+		DF895CB6124E58980077F6E8 /* smc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smc.cpp; sourceTree = "<group>"; };
+		DF895CB7124E58980077F6E8 /* smc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smc.h; sourceTree = "<group>"; };
 		DF89C2870F62D55C00D756B6 /* sprites_lol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sprites_lol.cpp; sourceTree = "<group>"; };
 		DF89C2A30F62D79E00D756B6 /* script.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = script.cpp; sourceTree = "<group>"; };
 		DF89C2B80F62D91000D756B6 /* timestamp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = timestamp.cpp; sourceTree = "<group>"; };
@@ -6506,6 +6537,19 @@
 		DF90EABF10B023F300C8F93F /* codecs */ = {
 			isa = PBXGroup;
 			children = (
+				DF895CAB124E58980077F6E8 /* indeo3.cpp */,
+				DF895CAC124E58980077F6E8 /* indeo3.h */,
+				DF895CAD124E58980077F6E8 /* mjpeg.cpp */,
+				DF895CAE124E58980077F6E8 /* mjpeg.h */,
+				DF895CAF124E58980077F6E8 /* qdm2.cpp */,
+				DF895CB0124E58980077F6E8 /* qdm2.h */,
+				DF895CB1124E58980077F6E8 /* qdm2data.h */,
+				DF895CB2124E58980077F6E8 /* qtrle.cpp */,
+				DF895CB3124E58980077F6E8 /* qtrle.h */,
+				DF895CB4124E58980077F6E8 /* rpza.cpp */,
+				DF895CB5124E58980077F6E8 /* rpza.h */,
+				DF895CB6124E58980077F6E8 /* smc.cpp */,
+				DF895CB7124E58980077F6E8 /* smc.h */,
 				DFB0579611B7549C0015AE65 /* cinepak.cpp */,
 				DFB0579711B7549C0015AE65 /* cinepak.h */,
 				DFCDC6FC11662AD700A7D2A0 /* msrle.cpp */,
@@ -8213,6 +8257,12 @@
 				DF895C18124C24C10077F6E8 /* towns_pc98_fmsynth.cpp in Sources */,
 				DF895C25124C25150077F6E8 /* init_fascin.cpp in Sources */,
 				DF895C2A124C25350077F6E8 /* script_patches.cpp in Sources */,
+				DF895CB8124E58980077F6E8 /* indeo3.cpp in Sources */,
+				DF895CB9124E58980077F6E8 /* mjpeg.cpp in Sources */,
+				DF895CBA124E58980077F6E8 /* qdm2.cpp in Sources */,
+				DF895CBB124E58980077F6E8 /* qtrle.cpp in Sources */,
+				DF895CBC124E58980077F6E8 /* rpza.cpp in Sources */,
+				DF895CBD124E58990077F6E8 /* smc.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9183,6 +9233,12 @@
 				DF895C1C124C24C10077F6E8 /* towns_pc98_fmsynth.cpp in Sources */,
 				DF895C26124C25150077F6E8 /* init_fascin.cpp in Sources */,
 				DF895C2B124C25350077F6E8 /* script_patches.cpp in Sources */,
+				DF895CBE124E58990077F6E8 /* indeo3.cpp in Sources */,
+				DF895CBF124E58990077F6E8 /* mjpeg.cpp in Sources */,
+				DF895CC0124E58990077F6E8 /* qdm2.cpp in Sources */,
+				DF895CC1124E58990077F6E8 /* qtrle.cpp in Sources */,
+				DF895CC2124E58990077F6E8 /* rpza.cpp in Sources */,
+				DF895CC3124E58990077F6E8 /* smc.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10154,6 +10210,12 @@
 				DF895C20124C24C10077F6E8 /* towns_pc98_fmsynth.cpp in Sources */,
 				DF895C27124C25150077F6E8 /* init_fascin.cpp in Sources */,
 				DF895C2C124C25350077F6E8 /* script_patches.cpp in Sources */,
+				DF895CC4124E58990077F6E8 /* indeo3.cpp in Sources */,
+				DF895CC5124E58990077F6E8 /* mjpeg.cpp in Sources */,
+				DF895CC6124E58990077F6E8 /* qdm2.cpp in Sources */,
+				DF895CC7124E58990077F6E8 /* qtrle.cpp in Sources */,
+				DF895CC8124E58990077F6E8 /* rpza.cpp in Sources */,
+				DF895CC9124E58990077F6E8 /* smc.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10176,7 +10238,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GCC_THUMB_SUPPORT = NO;
@@ -10199,7 +10261,7 @@
 				PRODUCT_NAME = ScummVM;
 				PROVISIONING_PROFILE = "EF590570-5FAC-4346-9071-D609DE2B28D8";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos3.2;
+				SDKROOT = iphoneos4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -10260,6 +10322,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_INPUT_FILETYPE = automatic;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					XCODE,
 					IPHONE_OFFICIAL,
@@ -10315,7 +10378,7 @@
 				PREBINDING = NO;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphonesimulator3.2;
+				SDKROOT = iphoneos4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -10589,7 +10652,7 @@
 					../../,
 					/opt/local/include,
 				);
-				INFOPLIST_FILE = "/Users/oystein/iphone/scummvm/dists/iphone/Info copy 2.plist";
+				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\\\"$(SRCROOT)/../../sound/softsynth/mt32\\\"",
@@ -10626,7 +10689,7 @@
 					../../,
 					/opt/local/include,
 				);
-				INFOPLIST_FILE = "/Users/oystein/iphone/scummvm/dists/iphone/Info copy 2.plist";
+				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\\\"$(SRCROOT)/../../sound/softsynth/mt32\\\"",
