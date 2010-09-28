@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef CEGUI_PANELKEYBOARD
-#define CEGUI_PANELKEYBOARD
+#ifndef CEGUI_PANELKEYBOARD_H
+#define CEGUI_PANELKEYBOARD_H
 
 #include "common/scummsys.h"
 #include "common/system.h"

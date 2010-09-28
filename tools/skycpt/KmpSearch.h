@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef __KmpSearch__
-#define __KmpSearch__
+#ifndef SKYCPT_KMPSEARCH_H
+#define SKYCPT_KMPSEARCH_H
 
 class KmpSearch {
 public:

@@ -27,8 +27,8 @@
 // oder projektspezifische Includedateien, die h‰ufig benutzt, aber
 // in unregelm‰ﬂigen Abst‰nden ge‰ndert werden.
 //
-#ifndef __STDAFX_H__
-#define __STDAFX_H__
+#ifndef SKYCPT_STDAFX_H
+#define SKYCPT_STDAFX_H
 
 #ifdef _MSC_VER
 #pragma once

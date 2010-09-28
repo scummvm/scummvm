@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef SDLSYMBIANH
-#define SDLSYMBIANH
+#ifndef SDLSYMBIAN_H
+#define SDLSYMBIAN_H
 
 #include "backends/platform/sdl/sdl.h"
 

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef CESCALER
-#define CESCALER
+#ifndef CESCALER_H
+#define CESCALER_H
 
 #include "common/scummsys.h"
 #include "common/system.h"

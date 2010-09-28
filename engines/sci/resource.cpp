@@ -92,7 +92,7 @@ const char *getSciVersionDesc(SciVersion version) {
 
 #undef SCI_REQUIRE_RESOURCE_FILES
 
-//#define SCI_VERBOSE_resMan 1
+//#define SCI_VERBOSE_RESMAN 1
 
 static const char *sci_error_types[] = {
 	"No error",
@@ -908,7 +908,7 @@ void ResourceManager::addToLRU(Resource *res) {
 	}
 	_LRU.push_front(res);
 	_memoryLRU += res->size;
-#if SCI_VERBOSE_resMan
+#if SCI_VERBOSE_RESMAN
 	debug("Adding %s.%03d (%d bytes) to lru control: %d bytes total",
 	      getResourceTypeName(res->type), res->number, res->size,
 	      mgr->_memoryLRU);
@@ -939,7 +939,7 @@ void ResourceManager::freeOldResources() {
 		Resource *goner = *_LRU.reverse_begin();
 		removeFromLRU(goner);
 		goner->unalloc();
-#ifdef SCI_VERBOSE_resMan
+#ifdef SCI_VERBOSE_RESMAN
 		printf("resMan-debug: LRU: Freeing %s.%03d (%d bytes)\n", getResourceTypeName(goner->type), goner->number, goner->size);
 #endif
 	}

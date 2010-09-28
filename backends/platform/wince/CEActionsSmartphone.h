@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef CEACTIONSSMARTPHONE
-#define CEACTIONSSMARTPHONE
+#ifndef CEACTIONSSMARTPHONE_H
+#define CEACTIONSSMARTPHONE_H
 
 #include "common/scummsys.h"
 #include "common/system.h"

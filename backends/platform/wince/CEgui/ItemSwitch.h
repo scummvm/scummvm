@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef CEGUI_ITEMSWITCH
-#define CEGUI_ITEMSWITCH
+#ifndef CEGUI_ITEMSWITCH_H
+#define CEGUI_ITEMSWITCH_H
 
 #include "common/scummsys.h"
 #include "common/system.h"

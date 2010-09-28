@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef CEGUI_PANELITEM
-#define CEGUI_PANELITEM
+#ifndef CEGUI_PANELITEM_H
+#define CEGUI_PANELITEM_H
 
 #include "common/scummsys.h"
 #include "common/system.h"
