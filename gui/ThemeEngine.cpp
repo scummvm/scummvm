@@ -44,8 +44,6 @@
 #include "gui/ThemeEval.h"
 #include "gui/ThemeParser.h"
 
-#define GUI_ENABLE_BUILTIN_THEME
-
 namespace GUI {
 
 const char * const ThemeEngine::kImageLogo = "logo.bmp";
@@ -714,7 +712,7 @@ bool ThemeEngine::loadDefaultXML() {
 	// file inside the themes directory.
 	// Use the Python script "makedeftheme.py" to convert a normal XML theme
 	// into the "default.inc" file, which is ready to be included in the code.
-#ifdef GUI_ENABLE_BUILTIN_THEME
+#ifndef DISABLE_GUI_BUILTIN_THEME
 	const char *defaultXML =
 #include "themes/default.inc"
 	;
@@ -1595,7 +1593,7 @@ struct TDComparator {
 } // end of anonymous namespace
 
 void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
-#ifdef GUI_ENABLE_BUILTIN_THEME
+#ifndef DISABLE_GUI_BUILTIN_THEME
 	ThemeDescriptor th;
 	th.name = "ScummVM Classic Theme (Builtin Version)";
 	th.id = "builtin";
