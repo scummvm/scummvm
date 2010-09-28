@@ -212,7 +212,6 @@ void Parser::command(const char *format, ...) {
 // Parse the user's line of text input.  Generate events as necessary
 void Parser::lineHandler() {
 	char     *noun, *verb;                          // ptrs to noun and verb strings
-//	int       i;
 	object_t *obj;
 	char      farComment[XBYTES * 5] = "";          // hold 5 line comment if object not nearby
 	char      contextComment[XBYTES * 5] = "";      // Unused comment for context objects
@@ -305,7 +304,7 @@ void Parser::lineHandler() {
 	for (int i = 0; i < _vm._numObj; i++) {
 		obj = &_vm._objects[i];
 		if (isWordPresent(_vm._arrayNouns[obj->nounIndex]))
-			if (isObjectVerb(obj, _line, farComment) || isGenericVerb(obj, _line, farComment))
+			if (isObjectVerb(obj, farComment) || isGenericVerb(obj, farComment))
 				return;
 	}
 
@@ -314,18 +313,18 @@ void Parser::lineHandler() {
 	for (int i = 0; i < _vm._numObj; i++) {
 		obj = &_vm._objects[i];
 		if (obj->verbOnlyFl)
-			if (isObjectVerb(obj, _line, contextComment) || isGenericVerb(obj, _line, contextComment))
+			if (isObjectVerb(obj, contextComment) || isGenericVerb(obj, contextComment))
 				return;
 	}
 
 	// No objects match command line, try background and catchall commands
-	if (isBackgroundWord(_vm._backgroundObjects[*_vm._screen_p], _line))
+	if (isBackgroundWord(_vm._backgroundObjects[*_vm._screen_p]))
 		return;
-	if (isCatchallVerb(_vm._backgroundObjects[*_vm._screen_p], _line))
+	if (isCatchallVerb(_vm._backgroundObjects[*_vm._screen_p]))
 		return;
-	if (isBackgroundWord(_vm._catchallList, _line))
+	if (isBackgroundWord(_vm._catchallList))
 		return;
-	if (isCatchallVerb(_vm._catchallList, _line))
+	if (isCatchallVerb(_vm._catchallList))
 		return;
 
 	// If a not-near comment was generated, print it
@@ -335,8 +334,8 @@ void Parser::lineHandler() {
 	}
 
 	// Nothing matches.  Report recognition success to user.
-	verb = findVerb(_line);
-	noun = findNoun(_line);
+	verb = findVerb();
+	noun = findNoun();
 	if (verb == _vm._arrayVerbs[_vm._look][0] && _maze.enabledFl) {
 		Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBMaze]);
 		showTakeables();
@@ -352,8 +351,8 @@ void Parser::lineHandler() {
 
 // Search for matching verb/noun pairs in background command list
 // Print text for possible background object.  Return TRUE if match found
-bool Parser::isBackgroundWord(objectList_t obj, char *line) {
-	debugC(1, kDebugParser, "isBackgroundWord(object_list_t obj, %s)", line);
+bool Parser::isBackgroundWord(objectList_t obj) {
+	debugC(1, kDebugParser, "isBackgroundWord(object_list_t obj)");
 
 	for (int i = 0; obj[i].verbIndex != 0; i++)
 		if (isWordPresent(_vm._arrayVerbs[obj[i].verbIndex]) &&
@@ -371,12 +370,12 @@ bool Parser::isBackgroundWord(objectList_t obj, char *line) {
 // Noun is not required.  Return TRUE if match found
 // Note that if the background command list has match set TRUE then do not
 // print text if there are any recognizable nouns in the command line
-bool Parser::isCatchallVerb(objectList_t obj, char *line) {
-	debugC(1, kDebugParser, "isCatchallVerb(object_list_t obj, %s)", line);
+bool Parser::isCatchallVerb(objectList_t obj) {
+	debugC(1, kDebugParser, "isCatchallVerb(object_list_t obj)");
 
 	for (int i = 0; obj[i].verbIndex != 0; i++)
 		if (isWordPresent(_vm._arrayVerbs[obj[i].verbIndex]) && obj[i].nounIndex == 0 &&
-		        (!obj[i].matchFl || !findNoun(line)) &&
+		        (!obj[i].matchFl || !findNoun()) &&
 		        ((obj[i].roomState == DONT_CARE) ||
 		         (obj[i].roomState == _vm._screenStates[*_vm._screen_p]))) {
 			Utils::Box(BOX_ANY, "%s", _vm.file().fetchString(obj[i].commentIndex));
@@ -460,23 +459,23 @@ bool Parser::isWordPresent(char **wordArr) {
 }
 
 // Locate word in list of nouns and return ptr to first string in noun list
-char *Parser::findNoun(char *line) {
-	debugC(1, kDebugParser, "findNoun(%s)", line);
+char *Parser::findNoun() {
+	debugC(1, kDebugParser, "findNoun()");
 
 	for (int i = 0; _vm._arrayNouns[i]; i++)
 		for (int j = 0; strlen(_vm._arrayNouns[i][j]); j++)
-			if (strstr(line, _vm._arrayNouns[i][j]))
+			if (strstr(_line, _vm._arrayNouns[i][j]))
 				return(_vm._arrayNouns[i][0]);
 	return NULL;
 }
 
 // Locate word in list of verbs and return ptr to first string in verb list
-char *Parser::findVerb(char *line) {
-	debugC(1, kDebugParser, "findVerb(%s)", line);
+char *Parser::findVerb() {
+	debugC(1, kDebugParser, "findVerb()");
 
 	for (int i = 0; _vm._arrayVerbs[i]; i++)
 		for (int j = 0; strlen(_vm._arrayVerbs[i][j]); j++)
-			if (strstr(line, _vm._arrayVerbs[i][j]))
+			if (strstr(_line, _vm._arrayVerbs[i][j]))
 				return(_vm._arrayVerbs[i][0]);
 	return NULL;
 }
@@ -533,8 +532,8 @@ void Parser::dropObject(object_t *obj) {
 }
 
 // Test whether command line contains one of the generic actions
-bool Parser::isGenericVerb(object_t *obj, char *line, char *comment) {
-	debugC(1, kDebugParser, "isGenericVerb(object_t *obj, %s, %s)", line, comment);
+bool Parser::isGenericVerb(object_t *obj, char *comment) {
+	debugC(1, kDebugParser, "isGenericVerb(object_t *obj, %s)", comment);
 
 	if (!obj->genericCmd)
 		return false;
@@ -593,14 +592,14 @@ bool Parser::isCarrying(uint16 wordIndex) {
 // Test whether command line contains a verb allowed by this object.
 // If it does, and the object is near and passes the tests in the command
 // list then carry out the actions in the action list and return TRUE
-bool Parser::isObjectVerb(object_t *obj, char *line, char *comment) {
+bool Parser::isObjectVerb(object_t *obj, char *comment) {
 	int     i;
 	cmd    *cmnd;
 	char   *verb;
 	uint16 *reqs;
 	uint16  cmdIndex;
 
-	debugC(1, kDebugParser, "isObjectVerb(object_t *obj, %s, %s)", line, comment);
+	debugC(1, kDebugParser, "isObjectVerb(object_t *obj, %s)", comment);
 
 	// First, find matching verb in cmd list
 	cmdIndex = obj->cmdIndex;                       // ptr to list of commands
@@ -643,7 +642,7 @@ bool Parser::isObjectVerb(object_t *obj, char *line, char *comment) {
 
 	// See if any additional generic actions
 	if ((verb == _vm._arrayVerbs[_vm._look][0]) || (verb == _vm._arrayVerbs[_vm._take][0]) || (verb == _vm._arrayVerbs[_vm._drop][0]))
-		isGenericVerb(obj, line, comment);
+		isGenericVerb(obj, comment);
 	return true;
 }
 

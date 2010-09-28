@@ -52,23 +52,24 @@ public:
 	void  keyHandler(uint16 nChar, uint16 nFlags);
 	void  lineHandler();
 
-private:
+protected:
 	HugoEngine &_vm;
 
+private:
 	char   _ringBuffer[32];                         // Ring buffer
 	uint16 _putIndex;
 	uint16 _getIndex;                               // Index into ring buffer
 	bool   _checkDoubleF1Fl;                        // Flag used to display user help or instructions
 
-	bool  isBackgroundWord(objectList_t obj, char *line);
+	bool  isBackgroundWord(objectList_t obj);
 	bool  isCarrying(uint16 wordIndex);
-	bool  isCatchallVerb(objectList_t obj, char *line);
-	bool  isGenericVerb(object_t *obj, char *line, char *comment);
+	bool  isCatchallVerb(objectList_t obj);
+	bool  isGenericVerb(object_t *obj, char *comment);
 	bool  isNear(object_t *obj, char *verb, char *comment);
-	bool  isObjectVerb(object_t *obj, char *line, char *comment);
+	bool  isObjectVerb(object_t *obj, char *comment);
 
-	char *findNoun(char *line);
-	char *findVerb(char *line);
+	char *findNoun();
+	char *findVerb();
 
 	void  dropObject(object_t *obj);
 	void  showDosInventory();
