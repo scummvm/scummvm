@@ -28,13 +28,14 @@
 
 TextFile::TextFile(const char *name) {
 	FILE *inf = fopen(name, "r");
+	_lines = NULL;
 	if (!inf) {
 		printf("Unable to open file %s\n", name);
 		getchar();
+	} else {
+		read(inf);
+		fclose(inf);
 	}
-	_lines = NULL;
-	read(inf);
-	fclose(inf);
 }
 
 uint32 crop(char *line) {
