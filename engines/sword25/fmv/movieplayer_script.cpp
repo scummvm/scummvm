@@ -32,10 +32,6 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/script/script.h"
@@ -45,133 +41,113 @@
 
 namespace Sword25 {
 
-int LoadMovie(lua_State *L) {
+int loadMovie(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
-	lua_pushbooleancpp(L, FMVPtr->LoadMovie(luaL_checkstring(L, 1), lua_gettop(L) == 2 ? static_cast<uint>(luaL_checknumber(L, 2)) : 10));
+	lua_pushbooleancpp(L, FMVPtr->loadMovie(luaL_checkstring(L, 1), lua_gettop(L) == 2 ? static_cast<uint>(luaL_checknumber(L, 2)) : 10));
 
 	return 1;
 }
 
-// -------------------------------------------------------------------------
-
-int UnloadMovie(lua_State *L) {
+int unloadMovie(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
-	lua_pushbooleancpp(L, FMVPtr->UnloadMovie());
+	lua_pushbooleancpp(L, FMVPtr->unloadMovie());
 
 	return 1;
 }
 
-// -------------------------------------------------------------------------
-
-int Play(lua_State *L) {
+int play(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
-	lua_pushbooleancpp(L, FMVPtr->Play());
+	lua_pushbooleancpp(L, FMVPtr->play());
 
 	return 1;
 }
 
-// -------------------------------------------------------------------------
-
-int Pause(lua_State *L) {
+int pause(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
-	lua_pushbooleancpp(L, FMVPtr->Pause());
+	lua_pushbooleancpp(L, FMVPtr->pause());
 
 	return 1;
 }
 
-// -------------------------------------------------------------------------
-
-int Update(lua_State *L) {
+int update(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
-	FMVPtr->Update();
+	FMVPtr->update();
 
 	return 0;
 }
 
-// -------------------------------------------------------------------------
-
-int IsMovieLoaded(lua_State *L) {
+int isMovieLoaded(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
-	lua_pushbooleancpp(L, FMVPtr->IsMovieLoaded());
+	lua_pushbooleancpp(L, FMVPtr->isMovieLoaded());
 
 	return 1;
 }
 
-// -------------------------------------------------------------------------
-
-int IsPaused(lua_State *L) {
+int isPaused(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
-	lua_pushbooleancpp(L, FMVPtr->IsPaused());
+	lua_pushbooleancpp(L, FMVPtr->isPaused());
 
 	return 1;
 }
 
-// -------------------------------------------------------------------------
-
-int GetScaleFactor(lua_State *L) {
+int getScaleFactor(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
-	lua_pushnumber(L, FMVPtr->GetScaleFactor());
+	lua_pushnumber(L, FMVPtr->getScaleFactor());
 
 	return 1;
 }
 
-// -------------------------------------------------------------------------
-
-int SetScaleFactor(lua_State *L) {
+int setScaleFactor(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
-	FMVPtr->SetScaleFactor(static_cast<float>(luaL_checknumber(L, 1)));
+	FMVPtr->setScaleFactor(static_cast<float>(luaL_checknumber(L, 1)));
 
 	return 0;
 }
 
-// -------------------------------------------------------------------------
-
-int GetTime(lua_State *L) {
+int getTime(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
-	lua_pushnumber(L, FMVPtr->GetTime());
+	lua_pushnumber(L, FMVPtr->getTime());
 
 	return 1;
 }
-
-// -------------------------------------------------------------------------
 
 const char *LIBRARY_NAME = "Movieplayer";
 
 const luaL_reg LIBRARY_FUNCTIONS[] = {
-	{ "LoadMovie", LoadMovie },
-	{ "UnloadMovie", UnloadMovie },
-	{ "Play", Play },
-	{ "Pause", Pause },
-	{ "Update", Update },
-	{ "IsMovieLoaded", IsMovieLoaded },
-	{ "IsPaused", IsPaused },
-	{ "GetScaleFactor", GetScaleFactor },
-	{ "SetScaleFactor", SetScaleFactor },
-	{ "GetTime", GetTime },
+	{ "LoadMovie", loadMovie },
+	{ "UnloadMovie", unloadMovie },
+	{ "Play", play },
+	{ "Pause", pause },
+	{ "Update", update },
+	{ "IsMovieLoaded", isMovieLoaded },
+	{ "IsPaused", isPaused },
+	{ "GetScaleFactor", getScaleFactor },
+	{ "SetScaleFactor", setScaleFactor },
+	{ "GetTime", getTime },
 	{ 0, 0 }
 };
 
-bool MoviePlayer::_RegisterScriptBindings() {
+bool MoviePlayer::registerScriptBindings() {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));

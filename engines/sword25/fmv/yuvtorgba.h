@@ -35,23 +35,15 @@
 #ifndef SWORD25_YUVTORGBA_H
 #define SWORD25_YUVTORGBA_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include <theora/theora.h>
 #include <theora/codec.h>
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Class definitions
-// -----------------------------------------------------------------------------
-
 class YUVtoBGRA {
 public:
-	static void translate(th_ycbcr_buffer &YUVBuffer, const th_info &TheoraInfo, byte *PixelData, int PixelsSize);
+	static void translate(th_ycbcr_buffer &YUVBuffer, const th_info &theoraInfo, byte *pixelData, int pixelsSize);
 };
 
 } // End of namespace Sword25

@@ -35,20 +35,12 @@
 #ifndef SWORD25_MOVIEPLAYER_H
 #define SWORD25_MOVIEPLAYER_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/service.h"
 #include "sword25/fmv/theora_decoder.h"
 #include "sword25/gfx/bitmap.h"
 
 namespace Sword25 {
-
-// -----------------------------------------------------------------------------
-// Class definitions
-// -----------------------------------------------------------------------------
 
 class MoviePlayer : public Service {
 public:
@@ -73,14 +65,14 @@ public:
 	 * @param Z             Z indicates the position of the film on the main graphics layer
 	 * @return              Returns false if an error occured while loading, otherwise true.
 	*/
-	bool LoadMovie(const Common::String &Filename, uint Z);
+	bool loadMovie(const Common::String &filename, uint z);
 
 	/**
 	 * Unloads the currently loaded movie file.
 	 * @return              Returns false if an error occurred while unloading, otherwise true.
 	 * @remark              This method can only be called when IsMovieLoaded() returns true.
 	 */
-	bool UnloadMovie();
+	bool unloadMovie();
 
 	/**
 	 * Plays the loaded movie.
@@ -90,7 +82,7 @@ public:
 	 * @return              Returns false if an error occurred while starting, otherwise true.
 	 * @remark              This method can only be called when IsMovieLoaded() returns true.
 	 */
-	bool Play();
+	bool play();
 
 	/**
 	 * Pauses movie playback.
@@ -99,23 +91,23 @@ public:
 	 * @return              Returns false if an error occurred while pausing, otherwise true.
 	 * @remark              This method can only be called when IsMovieLoaded() returns true.
 	 */
-	bool Pause();
+	bool pause();
 
 	/**
 	 * This function must be called once per frame.
 	 */
-	void Update();
+	void update();
 
 	/**
 	 * Returns whether a film is loaded for playback.
 	 */
-	bool IsMovieLoaded();
+	bool isMovieLoaded();
 
 	/**
 	 * Returns whether the movie playback is paused.
 	 * @remark              This method can only be called when IsMovieLoaded() returns true.
 	*/
-	bool IsPaused();
+	bool isPaused();
 
 	/**
 	 * Returns the scaling factor for the loaded film.
@@ -125,22 +117,23 @@ public:
 	 * @return              Returns the scaling factor of the film.
 	 * @remark              This method can only be called when IsMovieLoaded() returns true.
 	 */
-	float GetScaleFactor();
+	float getScaleFactor();
 
 	/**
 	 * Sets the factor by which the loaded film is to be scaled.
 	 * @param ScaleFactor   The desired scale factor.
 	 * @remark              This method can only be called when IsMovieLoaded() returns true.
 	 */
-	void SetScaleFactor(float ScaleFactor);
+	void setScaleFactor(float scaleFactor);
 
 	/**
 	 * Returns the current playing position in seconds.
 	 * @remark              This method can only be called when IsMovieLoaded() returns true.
 	 */
-	double GetTime();
+	double getTime();
+
 private:
-	bool _RegisterScriptBindings();
+	bool registerScriptBindings();
 
 	TheoraDecoder _decoder;
 

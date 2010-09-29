@@ -32,14 +32,9 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/fmv/yuvtorgba.h"
 
 namespace Sword25 {
-// -----------------------------------------------------------------------------
 
 static const int PRECISION = 32768;
 static const int COEFFS_Y[256] = {
@@ -167,7 +162,7 @@ static const int CLAMP_TAB[1024] = {
 	255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 
 };
 
-void YUVtoBGRA::translate(th_ycbcr_buffer &YUVBuffer, const th_info &TheoraInfo, byte *PixelData, int PixelsSize) {
+void YUVtoBGRA::translate(th_ycbcr_buffer &YUVBuffer, const th_info &theoraInfo, byte *pixelData, int pixelsSize) {
 
 	// Width and height of all buffers have to be divisible by 2.
 	BS_ASSERT((YUVBuffer[0].width & 1)   == 0);
@@ -187,8 +182,8 @@ void YUVtoBGRA::translate(th_ycbcr_buffer &YUVBuffer, const th_info &TheoraInfo,
 	const byte *ySrc1 = YUVBuffer[0].data + YUVBuffer[0].stride;
 	const byte *uSrc  = YUVBuffer[1].data;
 	const byte *vSrc  = YUVBuffer[2].data;
-	byte *dst0  = &PixelData[0];
-	byte *dst1  = &PixelData[0] + YUVBuffer[0].width * 4;
+	byte *dst0  = &pixelData[0];
+	byte *dst1  = &pixelData[0] + YUVBuffer[0].width * 4;
 
 	for (int h = 0; h < YUVBuffer[0].height / 2; ++h) {
 		for (int w = 0; w < YUVBuffer[0].width / 2; ++w) {

@@ -50,7 +50,7 @@ Service *OggTheora_CreateObject(Kernel *pKernel) {
 }
 
 MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel), _decoder(g_system->getMixer()) {
-	if (!_RegisterScriptBindings())
+	if (!registerScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else
 		BS_LOGLN("Script bindings registered.");
@@ -60,7 +60,7 @@ MoviePlayer::~MoviePlayer() {
 	_decoder.close();
 }
 
-bool MoviePlayer::LoadMovie(const Common::String &filename, uint z) {
+bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
 	// Get the file and load it into the decoder
 	Common::SeekableReadStream *in = Kernel::GetInstance()->GetPackage()->getStream(filename);
 	_decoder.load(in);
@@ -93,24 +93,24 @@ bool MoviePlayer::LoadMovie(const Common::String &filename, uint z) {
 	return true;
 }
 
-bool MoviePlayer::UnloadMovie() {
+bool MoviePlayer::unloadMovie() {
 	_decoder.close();
 	_outputBitmap.erase();
 
 	return true;
 }
 
-bool MoviePlayer::Play() {
+bool MoviePlayer::play() {
 	_decoder.pauseVideo(false);
 	return true;
 }
 
-bool MoviePlayer::Pause() {
+bool MoviePlayer::pause() {
 	_decoder.pauseVideo(true);
 	return true;
 }
 
-void MoviePlayer::Update() {
+void MoviePlayer::update() {
 	if (_decoder.isVideoLoaded()) {
 		Graphics::Surface *s = _decoder.decodeNextFrame();
 
@@ -121,22 +121,22 @@ void MoviePlayer::Update() {
 	}
 }
 
-bool MoviePlayer::IsMovieLoaded() {
+bool MoviePlayer::isMovieLoaded() {
 	return _decoder.isVideoLoaded();
 }
 
-bool MoviePlayer::IsPaused() {
+bool MoviePlayer::isPaused() {
 	return _decoder.isPaused();
 }
 
-float MoviePlayer::GetScaleFactor() {
+float MoviePlayer::getScaleFactor() {
 	if (_decoder.isVideoLoaded())
 		return _outputBitmap->getScaleFactorX();
 	else
 		return 0;
 }
 
-void MoviePlayer::SetScaleFactor(float scaleFactor) {
+void MoviePlayer::setScaleFactor(float scaleFactor) {
 	if (_decoder.isVideoLoaded()) {
 		_outputBitmap->setScaleFactor(scaleFactor);
 
@@ -147,7 +147,7 @@ void MoviePlayer::SetScaleFactor(float scaleFactor) {
 	}
 }
 
-double MoviePlayer::GetTime() {
+double MoviePlayer::getTime() {
 	return _decoder.getElapsedTime() / 1000.0;
 }
 
