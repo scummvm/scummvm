@@ -103,15 +103,26 @@ int main(int argc, char** argv) {
 	[NSThread detachNewThreadSelector:@selector(mainLoop:) toTarget:self withObject:nil];
 }
 
+- (void)applicationDidResume
+{
+}
+
+- (void)applicationWillSuspend
+{
+}
+
+- (void)applicationWillTerminate
+{
+}
+
 - (void)applicationSuspend:(struct __GSEvent *)event {
 	//[self setApplicationBadge:NSLocalizedString(@"ON", nil)];
 	[_view applicationSuspend];
 }
 
 - (void)applicationResume:(struct __GSEvent *)event {
-	[self removeApplicationBadge];
 	[_view applicationResume];
-
+	
 	// Workaround, need to "hide" and unhide the statusbar to properly remove it,
 	// since the Springboard has put it back without apparently flagging our application.
     [self setStatusBarHidden:YES animated:YES];
