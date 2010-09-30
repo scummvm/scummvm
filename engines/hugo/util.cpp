@@ -100,12 +100,31 @@ char *Utils::Box(box_t dismiss, const char *s, ...) {
 	vsprintf(buffer, s, marker);                    // Format string into buffer
 	va_end(marker);
 
-	//Warn(false, "BOX: %s", buffer);
-	int boxTime = strlen(buffer) * 30;
-	GUI::TimedMessageDialog dialog(buffer, MAX(1500, boxTime));
-	dialog.runModal();
+	if (buffer[0] == '\0')
+		return(NULL);
 
+	switch(dismiss) {
+	case BOX_ANY:
+	case BOX_OK: {
+		GUI::MessageDialog dialog(buffer, "OK");
+		dialog.runModal();
+		break;
+		}
+	case BOX_YESNO: {
+		GUI::MessageDialog dialog(buffer, "YES", "NO");
+		if (dialog.runModal() == GUI::kMessageOK)
+			return(buffer);
+		return 0;
+		break;
+		}
+	case BOX_PROMPT:
+		warning("Box: unhandled BOX_PROMPT");
+		int boxTime = strlen(buffer) * 30;
+		GUI::TimedMessageDialog dialog(buffer, MAX(1500, boxTime));
+		dialog.runModal();
 	// TODO: Some boxes (i.e. the combination code for the shed), needs to return an input.
+	}
+
 	return buffer;
 }
 
