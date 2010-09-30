@@ -297,10 +297,10 @@ void DemoPlayer::evaluateVideoMode(const char *mode) {
 	_doubleMode = false;
 
 	// Only applicable when we actually can double
-	if (_vm->is640()) {
-		if (!scumm_strnicmp(mode, "AUTO", 4))
+	if (_vm->is640x480() || _vm->is800x600()) {
+		if      (!scumm_strnicmp(mode, "AUTO", 4))
 			_autoDouble = true;
-		else if (!scumm_strnicmp(mode, "VGA", 3) && _vm->is640())
+		else if (!scumm_strnicmp(mode, "VGA", 3))
 			_doubleMode = true;
 	}
 }

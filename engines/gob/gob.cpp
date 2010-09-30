@@ -209,10 +209,6 @@ bool GobEngine::isEGA() const {
 	return (_features & kFeaturesEGA) != 0;
 }
 
-bool GobEngine::is640() const {
-	return (_features & kFeatures640) != 0;
-}
-
 bool GobEngine::hasAdLib() const {
 	return (_features & kFeaturesAdLib) != 0;
 }
@@ -223,6 +219,10 @@ bool GobEngine::isSCNDemo() const {
 
 bool GobEngine::isBATDemo() const {
 	return (_features & kFeaturesBATDemo) != 0;
+}
+
+bool GobEngine::is640x480() const {
+	return (_features & kFeatures640x480) != 0;
 }
 
 bool GobEngine::is800x600() const {
@@ -239,7 +239,7 @@ Common::Error GobEngine::run() {
 		return Common::kUnknownError;
 	}
 
-	_video->setSize(is640());
+	_video->setSize(is640x480());
 	_video->init();
 
 	// On some systems it's not safe to run CD audio games from the CD.
@@ -518,7 +518,7 @@ bool GobEngine::initGameParts() {
 
 	_inter->setupOpcodes();
 
-	if (is640()) {
+	if (is640x480()) {
 		_video->_surfWidth = _width = 640;
 		_video->_surfHeight = _video->_splitHeight1 = _height = 480;
 		_global->_mouseMaxX = 640;
