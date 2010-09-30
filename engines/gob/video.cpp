@@ -229,7 +229,6 @@ void Video::retrace(bool mouse) {
 	if (mouse)
 		CursorMan.showMouse((_vm->_draw->_showCursor & 2) != 0);
 	if (_vm->_global->_primarySurfDesc) {
-		int screenOffset = _scrollOffsetY * _surfWidth + _scrollOffsetX;
 		int screenX = _screenDeltaX;
 		int screenY = _screenDeltaY;
 		int screenWidth = MIN<int>(_surfWidth - _scrollOffsetX, _vm->_width);
@@ -240,7 +239,6 @@ void Video::retrace(bool mouse) {
 
 		if (_splitSurf) {
 
-			screenOffset = 0;
 			screenX = 0;
 			screenY = _vm->_height - _splitSurf->getHeight();
 			screenWidth = MIN<int>(_vm->_width, _splitSurf->getWidth());
@@ -250,7 +248,6 @@ void Video::retrace(bool mouse) {
 
 		} else if (_splitHeight2 > 0) {
 
-			screenOffset = _splitStart * _surfWidth;
 			screenX = 0;
 			screenY = _vm->_height - _splitHeight2;
 			screenWidth = MIN<int>(_surfWidth, _vm->_width);
