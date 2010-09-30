@@ -164,6 +164,8 @@ private:
 	bool initGameParts();
 	void deinitGameParts();
 
+	bool initGraphics();
+
 public:
 	static const Common::Language _gobToScummVMLang[];
 
@@ -173,6 +175,8 @@ public:
 	uint16 _width;
 	uint16 _height;
 	uint8 _mode;
+
+	Graphics::PixelFormat _pixelFormat;
 
 	Common::String _startStk;
 	Common::String _startTot;

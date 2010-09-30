@@ -230,6 +230,11 @@ bool GobEngine::is800x600() const {
 }
 
 bool GobEngine::isTrueColor() const {
+	if (_features & kFeaturesTrueColor) {
+		warning("TODO: _features & kFeaturesTrueColor");
+		return false;
+	}
+
 	return (_features & kFeaturesTrueColor) != 0;
 }
 
@@ -243,8 +248,10 @@ Common::Error GobEngine::run() {
 		return Common::kUnknownError;
 	}
 
-	_video->setSize(is640x480());
-	_video->init();
+	if (!initGraphics()) {
+		GUIErrorMessage("GobEngine::init(): Failed to set up graphics");
+		return Common::kUnknownError;
+	}
 
 	// On some systems it's not safe to run CD audio games from the CD.
 	if (isCD())
@@ -522,22 +529,6 @@ bool GobEngine::initGameParts() {
 
 	_inter->setupOpcodes();
 
-	if (is640x480()) {
-		_video->_surfWidth = _width = 640;
-		_video->_surfHeight = _video->_splitHeight1 = _height = 480;
-		_global->_mouseMaxX = 640;
-		_global->_mouseMaxY = 480;
-		_mode = 0x18;
-		_global->_primarySurfDesc = SurfaceDescPtr(new SurfaceDesc(0x18, 640, 480));
-	} else {
-		_video->_surfWidth = _width = 320;
-		_video->_surfHeight = _video->_splitHeight1 = _height = 200;
-		_global->_mouseMaxX = 320;
-		_global->_mouseMaxY = 200;
-		_mode = 0x14;
-		_global->_primarySurfDesc = SurfaceDescPtr(new SurfaceDesc(0x14, 320, 200));
-	}
-
 	return true;
 }
 
@@ -558,6 +549,38 @@ void GobEngine::deinitGameParts() {
 	delete _video;     _video = 0;
 	delete _sound;     _sound = 0;
 	delete _dataIO;    _dataIO = 0;
+}
+
+bool GobEngine::initGraphics() {
+	if        (is800x600()) {
+		warning("GobEngine::initGraphics(): 800x600 games currently unsupported");
+		return false;
+	} else if (is640x480()) {
+		_width  = 640;
+		_height = 480;
+		_mode   = 0x18;
+	} else {
+		_width  = 320;
+		_height = 200;
+		_mode   = 0x14;
+	}
+
+	_video->setSize(is640x480());
+
+	_pixelFormat = g_system->getScreenFormat();
+
+	_video->_surfWidth    = _width;
+	_video->_surfHeight   = _height;
+	_video->_splitHeight1 = _height;
+
+	_global->_mouseMaxX = _width;
+	_global->_mouseMaxY = _height;
+
+	_global->_primarySurfDesc = SurfaceDescPtr(new SurfaceDesc(_mode, _width, _height));
+
+	_video->init();
+
+	return true;
 }
 
 } // End of namespace Gob
