@@ -270,6 +270,11 @@ Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *stream) {
 	const byte *srcV = _cur_frame->Vbuf;
 	byte *dest = (byte *)_surface->pixels;
 
+	const byte *srcUP = srcU;
+	const byte *srcVP = srcV;
+	const byte *srcUN = srcU + chromaWidth;
+	const byte *srcVN = srcV + chromaWidth;
+
 	uint32 scaleWidth  = _surface->w / fWidth;
 	uint32 scaleHeight = _surface->h / fHeight;
 
@@ -278,9 +283,38 @@ Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *stream) {
 
 		for (uint32 sH = 0; sH < scaleHeight; sH++) {
 			for (uint32 x = 0; x < fWidth; x++) {
-				const byte cY = srcY[x];
-				const byte cU = srcU[x >> 2];
-				const byte cV = srcV[x >> 2];
+				uint32 xP = MAX<int32>((x >> 2) - 1, 0);
+				uint32 xN = MIN<int32>((x >> 2) + 1, chromaWidth - 1);
+
+				byte cY = srcY[x];
+				byte cU = srcU[x >> 2];
+				byte cV = srcV[x >> 2];
+
+				if        (((x % 4) == 0) && ((y % 4) == 0)) {
+					cU = (((uint32) cU) + ((uint32) srcUP[xP])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcVP[xP])) / 2;
+				} else if (((x % 4) == 3) && ((y % 4) == 0)) {
+					cU = (((uint32) cU) + ((uint32) srcUP[xN])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcVP[xN])) / 2;
+				} else if (((x % 4) == 0) && ((y % 4) == 3)) {
+					cU = (((uint32) cU) + ((uint32) srcUN[xP])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcVN[xP])) / 2;
+				} else if (((x % 4) == 3) && ((y % 4) == 3)) {
+					cU = (((uint32) cU) + ((uint32) srcUN[xN])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcVN[xN])) / 2;
+				} else if ( (x % 4) == 0) {
+					cU = (((uint32) cU) + ((uint32) srcU[xP])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcV[xP])) / 2;
+				} else if ( (x % 4) == 3) {
+					cU = (((uint32) cU) + ((uint32) srcU[xN])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcV[xN])) / 2;
+				} else if ( (y % 4) == 0) {
+					cU = (((uint32) cU) + ((uint32) srcUP[x >> 2])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcVP[x >> 2])) / 2;
+				} else if ( (y % 4) == 3) {
+					cU = (((uint32) cU) + ((uint32) srcUN[x >> 2])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcVN[x >> 2])) / 2;
+				}
 
 				byte r = 0, g = 0, b = 0;
 				YUV2RGB(cY, cU, cV, r, g, b);
@@ -303,6 +337,15 @@ Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *stream) {
 		if ((y & 3) == 3) {
 			srcU += chromaWidth;
 			srcV += chromaWidth;
+
+			if (y > 0) {
+				srcUP += chromaWidth;
+				srcVP += chromaWidth;
+			}
+			if (y < (fHeight - 4)) {
+				srcUN += chromaWidth;
+				srcVN += chromaWidth;
+			}
 		}
 	}
 
