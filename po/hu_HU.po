@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-19 18:45+0100\n"
+"POT-Creation-Date: 2010-09-26 22:02+0100\n"
 "PO-Revision-Date: 2009-11-25 07:42-0500\n"
 "Last-Translator: Alex Bevilacqua <alexbevi@gmail.com>\n"
 "Language-Team: Hungarian\n"
@@ -54,20 +54,24 @@ msgstr ""
 msgid "Choose"
 msgstr ""
 
-#: gui/GuiManager.cpp:103 backends/keymapper/remap-dialog.cpp:54
+#: gui/GuiManager.cpp:106 backends/keymapper/remap-dialog.cpp:54
 msgid "Close"
 msgstr ""
 
-#: gui/GuiManager.cpp:106
+#: gui/GuiManager.cpp:109
 msgid "Mouse click"
 msgstr ""
 
-#: gui/GuiManager.cpp:109 base/main.cpp:285
+#: gui/GuiManager.cpp:112 base/main.cpp:285
 msgid "Display keyboard"
 msgstr ""
 
-#: gui/GuiManager.cpp:112 base/main.cpp:288
+#: gui/GuiManager.cpp:115 base/main.cpp:288
 msgid "Remap keys"
+msgstr ""
+
+#: gui/KeysDialog.h:39 gui/KeysDialog.cpp:148
+msgid "Choose an action to map"
 msgstr ""
 
 #: gui/KeysDialog.cpp:44
@@ -101,10 +105,6 @@ msgstr ""
 
 #: gui/KeysDialog.cpp:109
 msgid "Press the key to associate"
-msgstr ""
-
-#: gui/KeysDialog.cpp:148
-msgid "Choose an action to map"
 msgstr ""
 
 #: gui/launcher.cpp:172
@@ -440,7 +440,7 @@ msgid ""
 msgstr ""
 
 #: gui/launcher.cpp:729 gui/launcher.cpp:878
-#: backends/platform/symbian/src/SymbianOS.cpp:446
+#: backends/platform/symbian/src/SymbianOS.cpp:450
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
 #: backends/platform/wince/CELauncherDialog.cpp:104
@@ -448,7 +448,7 @@ msgid "Yes"
 msgstr ""
 
 #: gui/launcher.cpp:729 gui/launcher.cpp:878
-#: backends/platform/symbian/src/SymbianOS.cpp:446
+#: backends/platform/symbian/src/SymbianOS.cpp:450
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
 #: backends/platform/wince/CELauncherDialog.cpp:104
@@ -970,11 +970,11 @@ msgstr "Ösvények"
 msgid "Skip line"
 msgstr ""
 
-#: base/main.cpp:404
+#: base/main.cpp:401
 msgid "Error running game:"
 msgstr ""
 
-#: base/main.cpp:430 base/main.cpp:431
+#: base/main.cpp:427 base/main.cpp:428
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 
@@ -1125,7 +1125,7 @@ msgstr ""
 msgid "~C~lose"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2181 engines/agos/saveload.cpp:192
+#: engines/scumm/scumm.cpp:2183 engines/agos/saveload.cpp:192
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1133,7 +1133,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2188 engines/agos/saveload.cpp:157
+#: engines/scumm/scumm.cpp:2190 engines/agos/saveload.cpp:157
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1141,7 +1141,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2200 engines/agos/saveload.cpp:200
+#: engines/scumm/scumm.cpp:2202 engines/agos/saveload.cpp:200
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1411,7 +1411,7 @@ msgstr ""
 msgid "Key mapper"
 msgstr ""
 
-#: backends/platform/symbian/src/SymbianOS.cpp:446
+#: backends/platform/symbian/src/SymbianOS.cpp:450
 msgid "Do you want to quit ?"
 msgstr ""
 
@@ -1629,6 +1629,35 @@ msgstr ""
 
 #: backends/platform/wince/CELauncherDialog.cpp:104
 msgid "Do you want to perform an automatic scan ?"
+msgstr ""
+
+#: backends/platform/wince/wince-sdl.cpp:990
+msgid "Map right click action"
+msgstr ""
+
+#: backends/platform/wince/wince-sdl.cpp:994
+msgid "You must map a key to the 'Right Click' action to play this game"
+msgstr ""
+
+#: backends/platform/wince/wince-sdl.cpp:1003
+msgid "Map hide toolbar action"
+msgstr ""
+
+#: backends/platform/wince/wince-sdl.cpp:1007
+msgid "You must map a key to the 'Hide toolbar' action to play this game"
+msgstr ""
+
+#: backends/platform/wince/wince-sdl.cpp:1016
+msgid "Map Zoom Up action (optional)"
+msgstr ""
+
+#: backends/platform/wince/wince-sdl.cpp:1019
+msgid "Map Zoom Down action (optional)"
+msgstr ""
+
+#: backends/platform/wince/wince-sdl.cpp:1027
+msgid ""
+"Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
 
 #, fuzzy

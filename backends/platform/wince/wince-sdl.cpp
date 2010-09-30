@@ -987,11 +987,11 @@ void OSystem_WINCE3::check_mappings() {
 
 	// Some games need to map the right click button, signal it here if it wasn't done
 	if (instance->needsRightClickMapping()) {
-		GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map right click action");
+		GUI::KeysDialog *keysDialog = new GUI::KeysDialog(_("Map right click action"));
 		while (!instance->getMapping(POCKET_ACTION_RIGHTCLICK)) {
 			keysDialog->runModal();
 			if (!instance->getMapping(POCKET_ACTION_RIGHTCLICK)) {
-				GUI::MessageDialog alert("You must map a key to the 'Right Click' action to play this game");
+				GUI::MessageDialog alert(_("You must map a key to the 'Right Click' action to play this game"));
 				alert.runModal();
 			}
 		}
@@ -1000,11 +1000,11 @@ void OSystem_WINCE3::check_mappings() {
 
 	// Map the "hide toolbar" action if needed
 	if (instance->needsHideToolbarMapping()) {
-		GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map hide toolbar action");
+		GUI::KeysDialog *keysDialog = new GUI::KeysDialog(_("Map hide toolbar action"));
 		while (!instance->getMapping(POCKET_ACTION_HIDE)) {
 			keysDialog->runModal();
 			if (!instance->getMapping(POCKET_ACTION_HIDE)) {
-				GUI::MessageDialog alert("You must map a key to the 'Hide toolbar' action to play this game");
+				GUI::MessageDialog alert(_("You must map a key to the 'Hide toolbar' action to play this game"));
 				alert.runModal();
 			}
 		}
@@ -1013,10 +1013,10 @@ void OSystem_WINCE3::check_mappings() {
 
 	// Map the "zoom" actions if needed
 	if (instance->needsZoomMapping()) {
-		GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map Zoom Up action (optional)");
+		GUI::KeysDialog *keysDialog = new GUI::KeysDialog(_("Map Zoom Up action (optional)"));
 		keysDialog->runModal();
 		delete keysDialog;
-		keysDialog = new GUI::KeysDialog("Map Zoom Down action (optional)");
+		keysDialog = new GUI::KeysDialog(_("Map Zoom Down action (optional)"));
 		keysDialog->runModal();
 		delete keysDialog;
 	}
@@ -1024,7 +1024,7 @@ void OSystem_WINCE3::check_mappings() {
 	// Extra warning for Zak Mc Kracken
 	if (strncmp(gameid.c_str(), "zak", 3) == 0 &&
 		!GUI_Actions::Instance()->getMapping(POCKET_ACTION_HIDE)) {
-		GUI::MessageDialog alert("Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory");
+		GUI::MessageDialog alert(_("Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"));
 		alert.runModal();
 	}
 

@@ -5,6 +5,7 @@ gui/browser.cpp
 gui/chooser.cpp
 gui/error.cpp
 gui/GuiManager.cpp
+gui/KeysDialog.h
 gui/KeysDialog.cpp
 gui/launcher.cpp
 gui/massadd.cpp
