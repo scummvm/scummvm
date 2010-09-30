@@ -209,7 +209,7 @@ SurfacePtr Video::initSurfDesc(int16 vidMode, int16 width, int16 height, int16 f
 		if (!(flags & SCUMMVM_CURSOR))
 			width = (width + 7) & 0xFFF8;
 
-		descPtr = SurfacePtr(new Surface(width, height, 1));
+		descPtr = SurfacePtr(new Surface(width, height, _vm->getPixelFormat().bytesPerPixel));
 	}
 	return descPtr;
 }

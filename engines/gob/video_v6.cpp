@@ -26,6 +26,8 @@
 #include "common/endian.h"
 #include "common/savefile.h"
 
+#include "graphics/conversion.h"
+
 #include "gob/gob.h"
 #include "gob/video.h"
 #include "gob/util.h"
@@ -192,39 +194,42 @@ void Video_v6::drawYUV(Surface &destDesc, int16 x, int16 y,
 		int16 dataWidth, int16 dataHeight, int16 width, int16 height,
 		const byte *dataY, const byte *dataU, const byte *dataV) {
 
-	warning("TODO: Video_v6::drawYUV");
-
-	/*
-	byte *vidMem = destDesc.getVidMem() + y * destDesc.getWidth() + x;
+	const Graphics::PixelFormat &pixelFormat = _vm->getPixelFormat();
 
 	if ((x + width - 1) >= destDesc.getWidth())
 		width = destDesc.getWidth() - x;
 	if ((y + height - 1) >= destDesc.getHeight())
 		height = destDesc.getHeight() - y;
 
-	Graphics::SierraLight *dither =
-		new Graphics::SierraLight(width, _palLUT);
+	Pixel dst = destDesc.get(x, y);
 
 	for (int i = 0; i < height; i++) {
-		byte *dest = vidMem;
+		Pixel dstRow = dst;
+
 		const byte *srcY = dataY +  i       *  dataWidth;
 		const byte *srcU = dataU + (i >> 2) * (dataWidth >> 2);
 		const byte *srcV = dataV + (i >> 2) * (dataWidth >> 2);
 
 		for (int j = 0; j < (width >> 2); j++, srcU++, srcV++) {
-			for (int n = 0; n < 4; n++, dest++, srcY++) {
+			for (int n = 0; n < 4; n++, dstRow++, srcY++) {
 				byte dY = *srcY << 1, dU = *srcU << 1, dV = *srcV << 1;
 
-				*dest = (dY == 0) ? 0 : dither->dither(dY, dU, dV, j * 4 + n);
+				byte r, g, b;
+				Graphics::YUV2RGB(dY, dU, dV, r, g, b);
+
+				if (dY != 0) {
+					uint32 c = pixelFormat.RGBToColor(r, g, b);
+
+					dstRow.set((c == 0) ? 1 : c);
+				} else
+					dstRow.set(0);
+
 			}
 		}
 
-		dither->nextLine();
-		vidMem += destDesc.getWidth();
+		dst += destDesc.getWidth();
 	}
 
-	delete dither;
-	*/
 }
 
 } // End of namespace Gob

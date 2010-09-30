@@ -230,11 +230,6 @@ bool GobEngine::is800x600() const {
 }
 
 bool GobEngine::isTrueColor() const {
-	if (_features & kFeaturesTrueColor) {
-		warning("TODO: _features & kFeaturesTrueColor");
-		return false;
-	}
-
 	return (_features & kFeaturesTrueColor) != 0;
 }
 
@@ -580,7 +575,7 @@ bool GobEngine::initGraphics() {
 	_global->_mouseMaxX = _width;
 	_global->_mouseMaxY = _height;
 
-	_global->_primarySurfDesc = SurfacePtr(new Surface(_width, _height, 1));
+	_global->_primarySurfDesc = SurfacePtr(new Surface(_width, _height, _pixelFormat.bytesPerPixel));
 
 	return true;
 }
