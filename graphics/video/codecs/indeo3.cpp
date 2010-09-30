@@ -342,7 +342,7 @@ Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *stream) {
 				srcUP += chromaWidth;
 				srcVP += chromaWidth;
 			}
-			if (y < (fHeight - 4)) {
+			if (y < (fHeight - 4U)) {
 				srcUN += chromaWidth;
 				srcVN += chromaWidth;
 			}
