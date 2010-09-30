@@ -119,14 +119,15 @@ enum GameType {
 };
 
 enum Features {
-	kFeaturesNone    =      0,
-	kFeaturesCD      = 1 << 0,
-	kFeaturesEGA     = 1 << 1,
-	kFeaturesAdLib   = 1 << 2,
-	kFeaturesSCNDemo = 1 << 3,
-	kFeaturesBATDemo = 1 << 4,
-	kFeatures640x480 = 1 << 5,
-	kFeatures800x600 = 1 << 6
+	kFeaturesNone      =      0,
+	kFeaturesCD        = 1 << 0,
+	kFeaturesEGA       = 1 << 1,
+	kFeaturesAdLib     = 1 << 2,
+	kFeaturesSCNDemo   = 1 << 3,
+	kFeaturesBATDemo   = 1 << 4,
+	kFeatures640x480   = 1 << 5,
+	kFeatures800x600   = 1 << 6,
+	kFeaturesTrueColor = 1 << 7
 };
 
 enum {
@@ -213,6 +214,7 @@ public:
 	bool isBATDemo() const;
 	bool is640x480() const;
 	bool is800x600() const;
+	bool isTrueColor() const;
 	bool isDemo() const;
 
 	GobEngine(OSystem *syst);

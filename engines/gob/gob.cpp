@@ -229,6 +229,10 @@ bool GobEngine::is800x600() const {
 	return (_features & kFeatures800x600) != 0;
 }
 
+bool GobEngine::isTrueColor() const {
+	return (_features & kFeaturesTrueColor) != 0;
+}
+
 bool GobEngine::isDemo() const {
 	return (isSCNDemo() || isBATDemo());
 }
