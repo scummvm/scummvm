@@ -269,31 +269,40 @@ Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *stream) {
 	const byte *srcU = _cur_frame->Ubuf;
 	const byte *srcV = _cur_frame->Vbuf;
 	byte *dest = (byte *)_surface->pixels;
+
+	uint32 scaleWidth  = _surface->w / fWidth;
+	uint32 scaleHeight = _surface->h / fHeight;
+
 	for (uint32 y = 0; y < fHeight; y++) {
 		byte *rowDest = dest;
 
-		for (uint32 x = 0; x < fWidth; x++, rowDest += _surface->bytesPerPixel) {
-			const byte cY = srcY[x];
-			const byte cU = srcU[x >> 2];
-			const byte cV = srcV[x >> 2];
+		for (uint32 sH = 0; sH < scaleHeight; sH++) {
+			for (uint32 x = 0; x < fWidth; x++) {
+				const byte cY = srcY[x];
+				const byte cU = srcU[x >> 2];
+				const byte cV = srcV[x >> 2];
 
-			byte r = 0, g = 0, b = 0;
-			YUV2RGB(cY, cU, cV, r, g, b);
+				byte r = 0, g = 0, b = 0;
+				YUV2RGB(cY, cU, cV, r, g, b);
 
-			const uint32 color = _pixelFormat.RGBToColor(r, g, b);
+				const uint32 color = _pixelFormat.RGBToColor(r, g, b);
 
-			if      (_surface->bytesPerPixel == 1)
-				*((uint8 *)rowDest) = (uint8)color;
-			else if (_surface->bytesPerPixel == 2)
-				*((uint16 *)rowDest) = (uint16)color;
+				for (uint32 sW = 0; sW < scaleWidth; sW++, rowDest += _surface->bytesPerPixel) {
+					if      (_surface->bytesPerPixel == 1)
+						*((uint8 *)rowDest) = (uint8)color;
+					else if (_surface->bytesPerPixel == 2)
+						*((uint16 *)rowDest) = (uint16)color;
+				}
+			}
+
+			dest += _surface->pitch;
 		}
 
-		dest += _surface->pitch;
 		srcY += fWidth;
 
 		if ((y & 3) == 3) {
-			srcU += fWidth >> 2;
-			srcV += fWidth >> 2;
+			srcU += chromaWidth;
+			srcV += chromaWidth;
 		}
 	}
 
