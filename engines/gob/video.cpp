@@ -30,7 +30,6 @@
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
-#include "graphics/dither.h"
 
 #include "gob/gob.h"
 #include "gob/video.h"
@@ -186,8 +185,6 @@ Video::Video(GobEngine *vm) : _vm(vm) {
 	_lastSparse = 0xFFFFFFFF;
 
 	_dirtyAll = false;
-
-	_palLUT = new Graphics::PaletteLUT(5, Graphics::PaletteLUT::kPaletteYUV);
 }
 
 char Video::initDriver(int16 vidMode) {
@@ -199,7 +196,6 @@ char Video::initDriver(int16 vidMode) {
 }
 
 Video::~Video() {
-	delete _palLUT;
 }
 
 void Video::freeDriver() {
@@ -524,7 +520,8 @@ void Video::setPalElem(int16 index, char red, char green, char blue,
 	_vm->_global->_bluePalette[index] = blue;
 	setPalColor(pal, red, green, blue);
 
-	g_system->setPalette(pal, index, 1);
+	if (_vm->getPixelFormat().bytesPerPixel == 1)
+		g_system->setPalette(pal, index, 1);
 }
 
 void Video::setPalette(PalDesc *palDesc) {
@@ -537,7 +534,8 @@ void Video::setPalette(PalDesc *palDesc) {
 	for (int i = 0; i < numcolors; i++)
 		setPalColor(pal + i * 4, palDesc->vgaPal[i]);
 
-	g_system->setPalette(pal, 0, numcolors);
+	if (_vm->getPixelFormat().bytesPerPixel == 1)
+		g_system->setPalette(pal, 0, numcolors);
 }
 
 void Video::setFullPalette(PalDesc *palDesc) {
@@ -552,7 +550,8 @@ void Video::setFullPalette(PalDesc *palDesc) {
 			setPalColor(pal + i * 4, colors[i]);
 		}
 
-		g_system->setPalette(pal, 0, 256);
+		if (_vm->getPixelFormat().bytesPerPixel == 1)
+			g_system->setPalette(pal, 0, 256);
 	} else
 		Video::setPalette(palDesc);
 }
@@ -617,34 +616,6 @@ void Video::dirtyRectsApply(int left, int top, int width, int height, int x, int
 
 		g_system->copyRectToScreen(v, _surfWidth, x + (l - left), y + (t - top), w, h);
 	}
-}
-
-void Video::initOSD() {
-	const byte palOSD[] = {
-		0, 0, 0, 0,
-		0, 0, 171, 0,
-		0, 171, 0, 0,
-		0, 171, 171, 0,
-		171, 0, 0, 0
-	};
-
-	g_system->setPalette(palOSD, 0, 5);
-}
-
-void Video::drawOSDText(const char *text) {
-	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kOSDFont));
-	uint32 color = 0x2;
-	Graphics::Surface surf;
-
-	surf.create(g_system->getWidth(), font.getFontHeight(), 1);
-
-	font.drawString(&surf, text, 0, 0, surf.w, color, Graphics::kTextAlignCenter);
-
-	int y = g_system->getHeight() / 2 - font.getFontHeight() / 2;
-	g_system->copyRectToScreen((byte *)surf.pixels, surf.pitch, 0, y, surf.w, surf.h);
-	g_system->updateScreen();
-
-	surf.free();
 }
 
 } // End of namespace Gob

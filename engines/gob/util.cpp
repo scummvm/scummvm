@@ -316,8 +316,11 @@ void Util::clearPalette() {
 	_vm->validateVideoMode(_vm->_global->_videoMode);
 
 	if (_vm->_global->_setAllPalette) {
-		memset(colors, 0, 1024);
-		g_system->setPalette(colors, 0, 256);
+		if (_vm->getPixelFormat().bytesPerPixel == 1) {
+			memset(colors, 0, 1024);
+			g_system->setPalette(colors, 0, 256);
+		}
+
 		return;
 	}
 

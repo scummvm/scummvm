@@ -542,7 +542,6 @@ protected:
 
 	bool o6_loadCursor(OpFuncParams &params);
 	bool o6_assign(OpFuncParams &params);
-	bool o6_palLoad(OpFuncParams &params);
 	bool o6_removeHotspot(OpFuncParams &params);
 	bool o6_fillRect(OpFuncParams &params);
 

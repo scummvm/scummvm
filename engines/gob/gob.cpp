@@ -242,6 +242,10 @@ bool GobEngine::isDemo() const {
 	return (isSCNDemo() || isBATDemo());
 }
 
+const Graphics::PixelFormat &GobEngine::getPixelFormat() const {
+	return _pixelFormat;
+}
+
 Common::Error GobEngine::run() {
 	if (!initGameParts()) {
 		GUIErrorMessage("GobEngine::init(): Unknown version of game engine");
@@ -577,8 +581,6 @@ bool GobEngine::initGraphics() {
 	_global->_mouseMaxY = _height;
 
 	_global->_primarySurfDesc = SurfaceDescPtr(new SurfaceDesc(_mode, _width, _height));
-
-	_video->init();
 
 	return true;
 }

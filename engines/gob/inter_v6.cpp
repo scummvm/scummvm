@@ -65,7 +65,6 @@ void Inter_v6::setupOpcodesFunc() {
 
 	OPCODEFUNC(0x03, o6_loadCursor);
 	OPCODEFUNC(0x09, o6_assign);
-	OPCODEFUNC(0x13, o6_palLoad);
 	OPCODEFUNC(0x19, o6_removeHotspot);
 	OPCODEFUNC(0x33, o6_fillRect);
 }
@@ -354,17 +353,6 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 		}
 	}
 
-	return false;
-}
-
-bool Inter_v6::o6_palLoad(OpFuncParams &params) {
-	o1_palLoad(params);
-
-	if (_gotFirstPalette)
-		_vm->_video->_palLUT->setPalette((const byte *)_vm->_global->_pPaletteDesc->vgaPal,
-				Graphics::PaletteLUT::kPaletteRGB, 6, 0);
-
-	_gotFirstPalette = true;
 	return false;
 }
 

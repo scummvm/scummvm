@@ -32,10 +32,6 @@
 
 #include "gob/gob.h"
 
-namespace Graphics {
-	class PaletteLUT;
-}
-
 namespace Gob {
 
 class Font {
@@ -140,8 +136,6 @@ public:
 	int16 _screenDeltaX;
 	int16 _screenDeltaY;
 
-	Graphics::PaletteLUT *_palLUT;
-
 	void freeDriver();
 	void initPrimary(int16 mode);
 	SurfaceDescPtr initSurfDesc(int16 vidMode, int16 width,
@@ -198,10 +192,6 @@ public:
 			int16 srcHeight, int16 x, int16 y, int16 transp,
 			SurfaceDesc &destDesc) = 0;
 
-	virtual void init() {}
-
-	virtual void setPrePalette() { }
-
 	Video(class GobEngine *vm);
 	virtual ~Video();
 
@@ -217,9 +207,6 @@ protected:
 	GobEngine *_vm;
 
 	char initDriver(int16 vidMode);
-
-	void initOSD();
-	void drawOSDText(const char *text);
 };
 
 class Video_v1 : public Video {
@@ -247,10 +234,6 @@ public:
 
 	virtual void fillRect(SurfaceDesc &dest, int16 left, int16 top,
 			int16 right, int16 bottom, int16 color);
-
-	virtual void init();
-
-	virtual void setPrePalette();
 
 	Video_v6(GobEngine *vm);
 	virtual ~Video_v6() {}

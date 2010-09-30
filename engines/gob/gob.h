@@ -221,6 +221,8 @@ public:
 	bool isTrueColor() const;
 	bool isDemo() const;
 
+	const Graphics::PixelFormat &getPixelFormat() const;
+
 	GobEngine(OSystem *syst);
 	virtual ~GobEngine();
 
