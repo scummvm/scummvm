@@ -9,7 +9,6 @@ MODULE_OBJS := \
 	draw_bargon.o \
 	draw_fascin.o \
 	draw_playtoons.o \
-	driver_vga.o \
 	expression.o \
 	game.o \
 	global.o \

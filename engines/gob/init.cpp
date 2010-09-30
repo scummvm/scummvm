@@ -53,7 +53,6 @@ Init::~Init() {
 }
 
 void Init::cleanup() {
-	_vm->_video->freeDriver();
 	_vm->_global->_primarySurfDesc.reset();
 
 	_vm->_sound->speakerOff();

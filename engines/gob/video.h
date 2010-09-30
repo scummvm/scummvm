@@ -107,7 +107,6 @@ public:
 	int16 _screenDeltaX;
 	int16 _screenDeltaY;
 
-	void freeDriver();
 	void initPrimary(int16 mode);
 	SurfacePtr initSurfDesc(int16 vidMode, int16 width,
 			int16 height, int16 flags);
@@ -151,8 +150,6 @@ public:
 	virtual ~Video();
 
 protected:
-	class VideoDriver *_videoDriver;
-
 	bool _dirtyAll;
 	Common::List<Common::Rect> _dirtyRects;
 
@@ -160,8 +157,6 @@ protected:
 	uint32 _lastSparse;
 
 	GobEngine *_vm;
-
-	char initDriver(int16 vidMode);
 
 	void drawPacked(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, Surface &dest);
 };
@@ -206,19 +201,6 @@ private:
 	void drawYUV(Surface &destDesc, int16 x, int16 y,
 			int16 dataWidth, int16 dataHeight, int16 width, int16 height,
 			const byte *dataY, const byte *dataU, const byte *dataV);
-};
-
-class VideoDriver {
-public:
-	VideoDriver() {}
-	virtual ~VideoDriver() {}
-	virtual void drawSprite(Surface &source, Surface &dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
-	virtual void drawSpriteDouble(Surface &source, Surface &dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
-	virtual void fillRect(Surface &dest, int16 left, int16 top, int16 right, int16 bottom, byte color) = 0;
-	virtual void putPixel(int16 x, int16 y, byte color, Surface &dest) = 0;
-	virtual void drawLetter(unsigned char item, int16 x, int16 y, const Font &font, byte color1, byte color2, byte transp, Surface &dest) = 0;
-	virtual void drawLine(Surface &dest, int16 x0, int16 y0, int16 x1, int16 y1, byte color) = 0;
-	virtual void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, Surface &dest) = 0;
 };
 
 } // End of namespace Gob

@@ -38,8 +38,6 @@
 #include "gob/dataio.h"
 #include "gob/draw.h"
 
-#include "gob/driver_vga.h"
-
 namespace Gob {
 
 Font::Font(const byte *data) : _dataPtr(data) {
@@ -151,7 +149,6 @@ const byte *Font::getCharData(uint8 c) const {
 
 Video::Video(GobEngine *vm) : _vm(vm) {
 	_doRangeClamp = false;
-	_videoDriver = 0;
 
 	_surfWidth = 320;
 	_surfHeight = 200;
@@ -172,19 +169,7 @@ Video::Video(GobEngine *vm) : _vm(vm) {
 	_dirtyAll = false;
 }
 
-char Video::initDriver(int16 vidMode) {
-	if (_videoDriver)
-		return 1;
-
-	_videoDriver = new VGAVideoDriver();
-	return 1;
-}
-
 Video::~Video() {
-}
-
-void Video::freeDriver() {
-	delete _videoDriver;
 }
 
 void Video::initPrimary(int16 mode) {
@@ -195,9 +180,6 @@ void Video::initPrimary(int16 mode) {
 	if (mode == -1)
 		mode = 3;
 	_vm->_global->_oldMode = mode;
-
-	if (mode != 3)
-		Video::initDriver(mode);
 
 	if (mode != 3) {
 		initSurfDesc(mode, _surfWidth, _surfHeight, PRIMARY_SURFACE);
