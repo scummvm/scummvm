@@ -93,14 +93,14 @@ public:
 	ConstPixel get(uint16 x = 0, uint16 y = 0) const;
 
 	void blit(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
-	          int16 x, int16 y, int16 transp = -1);
-	void blit(const Surface &from, int16 x, int16 y, int16 transp = -1);
-	void blit(const Surface &from, int16 transp = -1);
+	          int16 x, int16 y, int32 transp = -1);
+	void blit(const Surface &from, int16 x, int16 y, int32 transp = -1);
+	void blit(const Surface &from, int32 transp = -1);
 
 	void blitScaled(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
-	                int16 x, int16 y, Common::Rational scale, int16 transp = -1);
-	void blitScaled(const Surface &from, int16 x, int16 y, Common::Rational scale, int16 transp = -1);
-	void blitScaled(const Surface &from, Common::Rational scale, int16 transp = -1);
+	                int16 x, int16 y, Common::Rational scale, int32 transp = -1);
+	void blitScaled(const Surface &from, int16 x, int16 y, Common::Rational scale, int32 transp = -1);
+	void blitScaled(const Surface &from, Common::Rational scale, int32 transp = -1);
 
 	void fillRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint32 color);
 	void fill(uint32 color);

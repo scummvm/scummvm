@@ -259,7 +259,7 @@ bool Surface::clipBlitRect(int16 &left, int16 &top, int16 &right, int16 &bottom,
 }
 
 void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
-		int16 x, int16 y, int16 transp) {
+		int16 x, int16 y, int32 transp) {
 
 	// Color depths have to fit
 	assert(_bpp == from._bpp);
@@ -276,19 +276,23 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		// Nothing to do
 		return;
 
-	// Pointers to the blit destination and source start points
-	      byte *dst =      getData(x   , y);
-	const byte *src = from.getData(left, top);
-
-	if ((left == 0) && (_width == from._width) && (_width == width) && ((_bpp != 1) || (transp < 0))) {
+	if ((left == 0) && (_width == from._width) && (_width == width) && (transp == -1)) {
 		// If these conditions are met, we can directly use memcpy
+
+		// Pointers to the blit destination and source start points
+		      byte *dst =      getData(x   , y);
+		const byte *src = from.getData(left, top);
 
 		memcpy(dst, src, width * height * _bpp);
 		return;
 	}
 
-	if ((_bpp != 1) || (transp < 0)) {
+	if (transp == -1) {
 		// We don't have to look for transparency => we can use memcpy line-wise
+
+		// Pointers to the blit destination and source start points
+		      byte *dst =      getData(x   , y);
+		const byte *src = from.getData(left, top);
 
 		while (height-- > 0) {
 			memcpy(dst, src, width * _bpp);
@@ -300,33 +304,35 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		return;
 	}
 
-	assert(_bpp == 1);
-
 	// Otherwise, we have to copy by pixel
 
+	// Pointers to the blit destination and source start points
+	     Pixel dst =      get(x   , y);
+	ConstPixel src = from.get(left, top);
+
 	while (height-- > 0) {
-		      byte *dstRow = dst;
-		const byte *srcRow = src;
+		     Pixel dstRow = dst;
+		ConstPixel srcRow = src;
 
 		for (uint16 i = 0; i < width; i++, dstRow++, srcRow++)
-			if (*srcRow != transp)
-				*dstRow = *srcRow;
+			if (srcRow.get() != ((uint32) transp))
+				dstRow.set(srcRow.get());
 
 		dst +=      _width;
 		src += from._width;
 	}
 }
 
-void Surface::blit(const Surface &from, int16 x, int16 y, int16 transp) {
+void Surface::blit(const Surface &from, int16 x, int16 y, int32 transp) {
 	blit(from, 0, 0, from._width - 1, from._height - 1, x, y, transp);
 }
 
-void Surface::blit(const Surface &from, int16 transp) {
+void Surface::blit(const Surface &from, int32 transp) {
 	blit(from, 0, 0, from._width - 1, from._height - 1, 0, 0, transp);
 }
 
 void Surface::blitScaled(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
-		int16 x, int16 y, Common::Rational scale, int16 transp) {
+		int16 x, int16 y, Common::Rational scale, int32 transp) {
 
 	if (scale == 1) {
 		// Yeah, "scaled"
@@ -390,11 +396,11 @@ void Surface::blitScaled(const Surface &from, int16 left, int16 top, int16 right
 
 }
 
-void Surface::blitScaled(const Surface &from, int16 x, int16 y, Common::Rational scale, int16 transp) {
+void Surface::blitScaled(const Surface &from, int16 x, int16 y, Common::Rational scale, int32 transp) {
 	blitScaled(from, 0, 0, from._width - 1, from._height - 1, x, y, scale, transp);
 }
 
-void Surface::blitScaled(const Surface &from, Common::Rational scale, int16 transp) {
+void Surface::blitScaled(const Surface &from, Common::Rational scale, int32 transp) {
 	blitScaled(from, 0, 0, from._width - 1, from._height - 1, 0, 0, scale, transp);
 }
 
