@@ -1295,7 +1295,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 	uint32 funcEnter = 0, funcLeave = 0;
 
 	if ((windowNum != 0) && (type != 0) && (type != 2))
-		warning("evaluateNew - type %d, win %d\n",type, windowNum);
+		warning("evaluateNew - type %d, win %d",type, windowNum);
 
 	// Evaluate parameters for the new hotspot
 	switch (type) {
@@ -1392,7 +1392,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		flags  = _vm->_game->_script->readInt16();
 
 		if (flags > 3)
-			warning("evaluateNew: Warning, use of type 2 or 20. flags = %d, should be %d\n", flags, flags&3);
+			warning("evaluateNew: Warning, use of type 2 or 20. flags = %d, should be %d", flags, flags&3);
 
 		funcEnter = 0;
 
