@@ -66,7 +66,7 @@ public:
 		int16 top;
 		int16 width;
 		int16 height;
-		SurfaceDescPtr savedSurface;
+		SurfacePtr savedSurface;
 	};
 
 	int16 _renderFlags;
@@ -98,7 +98,7 @@ public:
 	FontToSprite _fontToSprite[4];
 	Font *_fonts[kFontCount];
 
-	Common::Array<SurfaceDescPtr> _spritesArray;
+	Common::Array<SurfacePtr> _spritesArray;
 
 	int16 _invalidatedCount;
 	int16 _invalidatedLefts[30];
@@ -112,8 +112,8 @@ public:
 	bool _paletteCleared;
 	bool _applyPal;
 
-	SurfaceDescPtr _backSurface;
-	SurfaceDescPtr _frontSurface;
+	SurfacePtr _backSurface;
+	SurfacePtr _frontSurface;
 
 	int16 _unusedPalette1[18];
 	int16 _unusedPalette2[16];
@@ -137,9 +137,9 @@ public:
 	int32 _cursorHotspotXVar;
 	int32 _cursorHotspotYVar;
 
-	SurfaceDescPtr _cursorSprites;
-	SurfaceDescPtr _cursorSpritesBack;
-	SurfaceDescPtr _scummvmCursor;
+	SurfacePtr _cursorSprites;
+	SurfacePtr _cursorSpritesBack;
+	SurfacePtr _scummvmCursor;
 
 	int16 _cursorAnim;
 	int8 _cursorAnimLow[40];
@@ -174,7 +174,7 @@ public:
 	void clearPalette();
 
 	void dirtiedRect(int16 surface, int16 left, int16 top, int16 right, int16 bottom);
-	void dirtiedRect(SurfaceDescPtr surface, int16 left, int16 top, int16 right, int16 bottom);
+	void dirtiedRect(SurfacePtr surface, int16 left, int16 top, int16 right, int16 bottom);
 
 	void initSpriteSurf(int16 index, int16 width, int16 height, int16 flags);
 	void freeSprite(int16 index) {
@@ -187,7 +187,7 @@ public:
 	}
 	int stringLength(const char *str, int16 fontIndex);
 	void drawString(const char *str, int16 x, int16 y, int16 color1, int16 color2,
-			int16 transp, SurfaceDesc &dest, const Font &font);
+			int16 transp, Surface &dest, const Font &font);
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, const char *str, int16 fontIndex, int16 color);
 	void oPlaytoons_sub_F_1B( uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *paramStr, int16 var3, int16 var4, int16 shortId);
@@ -196,7 +196,7 @@ public:
 	void forceBlit(bool backwards = false);
 
 	static const int16 _wobbleTable[360];
-	void wobble(SurfaceDesc &surfDesc);
+	void wobble(Surface &surfDesc);
 
 	Font *loadFont(const char *path) const;
 	bool loadFont(int fontIndex, const char *path);
@@ -267,7 +267,7 @@ public:
 	virtual ~Draw_Fascination() {}
 	virtual void spriteOperation(int16 operation);
 
-	void decompWin(int16 x, int16 y, SurfaceDescPtr destPtr);
+	void decompWin(int16 x, int16 y, SurfacePtr destPtr);
 	void drawWin(int16 fct);
 	void saveWin(int16 id);
 	void restoreWin(int16 id);

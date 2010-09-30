@@ -134,8 +134,8 @@ void Inter_v4::o4_initScreen() {
 	_vm->_util->setScrollOffset();
 
 	if (offY > 0) {
-		_vm->_draw->_spritesArray[24] = SurfaceDescPtr(new SurfaceDesc(videoMode, _vm->_width, offY));
-		_vm->_draw->_spritesArray[25] = SurfaceDescPtr(new SurfaceDesc(videoMode, _vm->_width, offY));
+		_vm->_draw->_spritesArray[24] = SurfacePtr(new Surface(_vm->_width, offY, 1));
+		_vm->_draw->_spritesArray[25] = SurfacePtr(new Surface(_vm->_width, offY, 1));
 		_vm->_video->_splitSurf = _vm->_draw->_spritesArray[25];
 	}
 }

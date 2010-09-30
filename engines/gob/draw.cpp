@@ -263,10 +263,10 @@ void Draw::blitInvalidated() {
 
 	_vm->_video->_doRangeClamp = false;
 	for (int i = 0; i < _invalidatedCount; i++) {
-		_vm->_video->drawSprite(*_backSurface, *_frontSurface,
+		_frontSurface->blit(*_backSurface,
 		    _invalidatedLefts[i], _invalidatedTops[i],
 		    _invalidatedRights[i], _invalidatedBottoms[i],
-		    _invalidatedLefts[i], _invalidatedTops[i], 0);
+		    _invalidatedLefts[i], _invalidatedTops[i]);
 		_vm->_video->dirtyRectsAdd(_invalidatedLefts[i], _invalidatedTops[i],
 				_invalidatedRights[i], _invalidatedBottoms[i]);
 	}
@@ -300,7 +300,7 @@ void Draw::dirtiedRect(int16 surface,
 	dirtiedRect(_spritesArray[surface], left, top, right, bottom);
 }
 
-void Draw::dirtiedRect(SurfaceDescPtr surface,
+void Draw::dirtiedRect(SurfacePtr surface,
 		int16 left, int16 top, int16 right, int16 bottom) {
 
 	if (surface == _backSurface)
@@ -316,7 +316,7 @@ void Draw::initSpriteSurf(int16 index, int16 width, int16 height,
 
 	_spritesArray[index] =
 		_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, flags);
-	_vm->_video->clearSurf(*_spritesArray[index]);
+	_spritesArray[index]->clear();
 }
 
 void Draw::adjustCoords(char adjust, int16 *coord1, int16 *coord2) {
@@ -381,14 +381,14 @@ int Draw::stringLength(const char *str, int16 fontIndex) {
 }
 
 void Draw::drawString(const char *str, int16 x, int16 y, int16 color1, int16 color2,
-		int16 transp, SurfaceDesc &dest, const Font &font) {
+		int16 transp, Surface &dest, const Font &font) {
 
 	while (*str != '\0') {
 		const int16 charRight  = x + font.getCharWidth(*str);
 		const int16 charBottom = y + font.getCharHeight();
 
 		if ((charRight <= dest.getWidth()) && (charBottom <= dest.getHeight()))
-			_vm->_video->drawLetter(*str, x, y, font, transp, color1, color2, dest);
+			font.drawLetter(dest, *str, x, y, color1, color2, transp);
 
 		x += font.getCharWidth(*str);
 		str++;
@@ -548,14 +548,10 @@ void Draw::forceBlit(bool backwards) {
 		return;
 
 	if (!backwards) {
-		_vm->_video->drawSprite(*_backSurface, *_frontSurface, 0, 0,
-				_backSurface->getWidth() - 1, _backSurface->getHeight() - 1,
-				0, 0, 0);
+		_frontSurface->blit(*_backSurface);
 		_vm->_video->dirtyRectsAll();
 	} else
-		_vm->_video->drawSprite(*_frontSurface, *_backSurface, 0, 0,
-				_frontSurface->getWidth() - 1, _frontSurface->getHeight() - 1,
-				0, 0, 0);
+		_backSurface->blit(*_frontSurface);
 
 }
 
@@ -602,7 +598,7 @@ const int16 Draw::_wobbleTable[360] = {
 	-0x0A03, -0x08E8, -0x07CC, -0x06B0, -0x0593, -0x0476, -0x0359, -0x023B, -0x011D
 };
 
-void Draw::wobble(SurfaceDesc &surfDesc) {
+void Draw::wobble(Surface &surfDesc) {
 	int16 amplitude = 32;
 	uint16 curFrame = 0;
 	uint16 frameWobble = 0;
@@ -626,16 +622,14 @@ void Draw::wobble(SurfaceDesc &surfDesc) {
 			amplitude--;
 
 		for (uint16 y = 0; y < _vm->_height; y++)
-			_vm->_video->drawSprite(surfDesc, *_frontSurface,
-					0, y, _vm->_width - 1, y, offsets[y], y, 0);
+			_frontSurface->blit(surfDesc, 0, y, _vm->_width - 1, y, offsets[y], y);
 
 		_vm->_palAnim->fadeStep(0);
 		_vm->_video->dirtyRectsAll();
 		_vm->_video->waitRetrace();
 	}
 
-	_vm->_video->drawSprite(surfDesc, *_frontSurface,
-			0, 0, _vm->_width - 1, _vm->_height - 1, 0, 0, 0);
+	_frontSurface->blit(surfDesc);
 
 	_applyPal = false;
 	_invalidatedCount = 0;

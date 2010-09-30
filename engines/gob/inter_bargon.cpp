@@ -120,16 +120,16 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 	int16 mouseX;
 	int16 mouseY;
 	MouseButtons buttons;
-	SurfaceDescPtr surface;
+	SurfacePtr surface;
 	SoundDesc samples[4];
 	int16 comp[5] = { 0, 1, 2, 3, -1 };
 	static const char *sndFiles[] = {"1INTROII.snd", "2INTROII.snd", "1INTRO3.snd", "2INTRO3.snd"};
 
 	surface = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 320, 200, 0);
 	_vm->_video->drawPackedSprite("2ille.ims", *surface);
-	_vm->_video->drawSprite(*surface, *_vm->_draw->_frontSurface, 0, 0, 319, 199, 0, 0, 0);
+	_vm->_draw->_frontSurface->blit(*surface, 0, 0, 319, 199, 0, 0);
 	_vm->_video->drawPackedSprite("2ille4.ims", *surface);
-	_vm->_video->drawSprite(*surface, *_vm->_draw->_frontSurface, 0, 0, 319, 199, 320, 0, 0);
+	_vm->_draw->_frontSurface->blit(*surface, 0, 0, 319, 199, 320, 0);
 	_vm->_util->setScrollOffset(320, 0);
 	_vm->_video->dirtyRectsAll();
 	_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
@@ -140,7 +140,7 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 		if ((_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, 0) == kKeyEscape) ||
 				_vm->shouldQuit()) {
 			_vm->_palAnim->fade(0, -2, 0);
-			_vm->_video->clearSurf(*_vm->_draw->_frontSurface);
+			_vm->_draw->_frontSurface->clear();
 			memset((char *)_vm->_draw->_vgaPalette, 0, 768);
 			WRITE_VAR(4, buttons);
 			WRITE_VAR(0, kKeyEscape);
@@ -161,7 +161,7 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 	_vm->_sound->blasterPlayComposition(comp, 0, samples, 4);
 	_vm->_sound->blasterWaitEndPlay(true, false);
 	_vm->_palAnim->fade(0, 0, 0);
-	_vm->_video->clearSurf(*_vm->_draw->_frontSurface);
+	_vm->_draw->_frontSurface->clear();
 }
 
 void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
@@ -192,7 +192,7 @@ void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 				_vm->shouldQuit()) {
 			_vm->_sound->blasterStop(10);
 			_vm->_palAnim->fade(0, -2, 0);
-			_vm->_video->clearSurf(*_vm->_draw->_frontSurface);
+			_vm->_draw->_frontSurface->clear();
 			memset(_vm->_draw->_vgaPalette, 0, 768);
 			WRITE_VAR(4, buttons);
 			WRITE_VAR(0, kKeyEscape);

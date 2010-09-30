@@ -582,9 +582,8 @@ void Mult_v2::playMultInit() {
 		_vm->_draw->initSpriteSurf(Draw::kAnimSurface, width, height, 0);
 		_animSurf = _vm->_draw->_spritesArray[Draw::kAnimSurface];
 
-		_vm->_video->drawSprite(*_vm->_draw->_spritesArray[Draw::kBackSurface],
-				*_vm->_draw->_spritesArray[Draw::kAnimSurface], 0, 0,
-				_vm->_video->_surfWidth, _vm->_video->_surfHeight, 0, 0, 0);
+		_vm->_draw->_spritesArray[Draw::kAnimSurface]->blit(*_vm->_draw->_spritesArray[Draw::kBackSurface],
+				0, 0, _vm->_video->_surfWidth, _vm->_video->_surfHeight, 0, 0);
 
 		for (_counter = 0; _counter < _objCount; _counter++)
 			_multData->palAnimIndices[_counter] = _counter;
@@ -639,9 +638,8 @@ void Mult_v2::drawStatics(bool &stop) {
 			_vm->_scenery->_curStatic = -1;
 		}
 
-		_vm->_video->drawSprite(*_vm->_draw->_spritesArray[Draw::kBackSurface],
-				*_vm->_draw->_spritesArray[Draw::kAnimSurface], 0, 0,
-				_vm->_video->_surfWidth, _vm->_video->_surfHeight, 0, 0, 0);
+		_vm->_draw->_spritesArray[Draw::kAnimSurface]->blit(*_vm->_draw->_spritesArray[Draw::kBackSurface],
+				0, 0, _vm->_video->_surfWidth, _vm->_video->_surfHeight, 0, 0);
 	}
 }
 

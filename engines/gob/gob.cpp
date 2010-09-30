@@ -580,7 +580,7 @@ bool GobEngine::initGraphics() {
 	_global->_mouseMaxX = _width;
 	_global->_mouseMaxY = _height;
 
-	_global->_primarySurfDesc = SurfaceDescPtr(new SurfaceDesc(_mode, _width, _height));
+	_global->_primarySurfDesc = SurfacePtr(new Surface(_width, _height, 1));
 
 	return true;
 }

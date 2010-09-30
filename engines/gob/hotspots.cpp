@@ -1236,18 +1236,18 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		_vm->_draw->_invalidatedBottoms[0] = 199;
 		_vm->_draw->_invalidatedCount = 1;
 		if (windowNum == 0) {
-			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left + width - 1, top, left + width - 1, top + height - 1, 0);
-			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left, top + height - 1, 0);
-			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left + width - 1, top, 0);
-			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top + height - 1, left + width - 1, top + height - 1, 0);
+			_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left + width - 1, top, left + width - 1, top + height - 1, 0);
+			_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left, top, left, top + height - 1, 0);
+			_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left, top, left + width - 1, top, 0);
+			_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left, top + height - 1, left + width - 1, top + height - 1, 0);
 		} else {
 			if ((_vm->_draw->_fascinWin[windowNum].id != -1) && (_vm->_draw->_fascinWin[windowNum].id == _vm->_draw->_winCount - 1)) {
 				left += _vm->_draw->_fascinWin[windowNum].left;
 				top  += _vm->_draw->_fascinWin[windowNum].top;
-				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left + width - 1, top, left + width - 1, top + height - 1, 0);
-				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left, top + height - 1, 0);
-				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left + width - 1, top, 0);
-				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top + height - 1, left + width - 1, top + height - 1, 0);
+				_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left + width - 1, top, left + width - 1, top + height - 1, 0);
+				_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left, top, left, top + height - 1, 0);
+				_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left, top, left + width - 1, top, 0);
+				_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left, top + height - 1, left + width - 1, top + height - 1, 0);
 				left -= _vm->_draw->_fascinWin[windowNum].left;
 				top  -= _vm->_draw->_fascinWin[windowNum].top;
 			}

@@ -30,28 +30,30 @@
 
 namespace Gob {
 
+/*
 static void plotPixel(int x, int y, int color, void *data) {
-	SurfaceDesc *dest = (SurfaceDesc *)data;
+	Surface *dest = (Surface *)data;
 
 	if ((x >= 0) && (x < dest->getWidth()) &&
 	    (y >= 0) && (y < dest->getHeight()))
 		dest->getVidMem()[(y * dest->getWidth()) + x] = color;
 }
+*/
 
-void VGAVideoDriver::putPixel(int16 x, int16 y, byte color, SurfaceDesc &dest) {
+void VGAVideoDriver::putPixel(int16 x, int16 y, byte color, Surface &dest) { /*
 	if ((x >= 0) && (x < dest.getWidth()) &&
 	    (y >= 0) && (y < dest.getHeight()))
 		dest.getVidMem()[(y * dest.getWidth()) + x] = color;
-}
+*/ }
 
-void VGAVideoDriver::drawLine(SurfaceDesc &dest, int16 x0, int16 y0, int16 x1,
-		int16 y1, byte color) {
+void VGAVideoDriver::drawLine(Surface &dest, int16 x0, int16 y0, int16 x1,
+		int16 y1, byte color) { /*
 
 	Graphics::drawLine(x0, y0, x1, y1, color, &plotPixel, &dest);
-}
+*/ }
 
-void VGAVideoDriver::fillRect(SurfaceDesc &dest, int16 left, int16 top,
-		int16 right, int16 bottom, byte color) {
+void VGAVideoDriver::fillRect(Surface &dest, int16 left, int16 top,
+		int16 right, int16 bottom, byte color) { /*
 
 	if ((left >= dest.getWidth()) || (right >= dest.getWidth()) ||
 	    (top >= dest.getHeight()) || (bottom >= dest.getHeight()))
@@ -67,11 +69,11 @@ void VGAVideoDriver::fillRect(SurfaceDesc &dest, int16 left, int16 top,
 
 		pos += dest.getWidth();
 	}
-}
+*/ }
 
 void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y,
 		const Font &font, byte color1, byte color2,
-		byte transp, SurfaceDesc &dest) {
+		byte transp, Surface &dest) { /*
 	uint16 data;
 
 	const byte *src = font.getCharData(item);
@@ -116,11 +118,11 @@ void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y,
 
 		dst += dest.getWidth() - font.getCharWidth();
 	}
-}
+*/ }
 
-void VGAVideoDriver::drawSprite(SurfaceDesc &source, SurfaceDesc &dest,
+void VGAVideoDriver::drawSprite(Surface &source, Surface &dest,
 		int16 left, int16 top, int16 right, int16 bottom,
-		int16 x, int16 y, int16 transp) {
+		int16 x, int16 y, int16 transp) { /*
 
 	if ((x >= dest.getWidth()) || (x < 0) ||
 	    (y >= dest.getHeight()) || (y < 0))
@@ -169,11 +171,11 @@ void VGAVideoDriver::drawSprite(SurfaceDesc &source, SurfaceDesc &dest,
 		}
 
 	}
-}
+*/ }
 
-void VGAVideoDriver::drawSpriteDouble(SurfaceDesc &source, SurfaceDesc &dest,
+void VGAVideoDriver::drawSpriteDouble(Surface &source, Surface &dest,
 		int16 left, int16 top, int16 right, int16 bottom,
-		int16 x, int16 y, int16 transp) {
+		int16 x, int16 y, int16 transp) { /*
 
 	if ((x >= dest.getWidth()) || (x < 0) ||
 	    (y >= dest.getHeight()) || (y < 0))
@@ -206,10 +208,10 @@ void VGAVideoDriver::drawSpriteDouble(SurfaceDesc &source, SurfaceDesc &dest,
 
 		srcPos = srcBak + source.getWidth();
 	}
-}
+*/ }
 
 void VGAVideoDriver::drawPackedSprite(byte *sprBuf, int16 width, int16 height,
-		int16 x, int16 y, byte transp, SurfaceDesc &dest) {
+		int16 x, int16 y, byte transp, Surface &dest) { /*
 	int destRight = x + width;
 	int destBottom = y + height;
 
@@ -248,7 +250,7 @@ void VGAVideoDriver::drawPackedSprite(byte *sprBuf, int16 width, int16 height,
 
 	}
 
-}
+*/ }
 
 }
 

@@ -38,8 +38,7 @@ Video_v6::Video_v6(GobEngine *vm) : Video_v2(vm) {
 }
 
 char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-	    int16 x, int16 y, int16 transp, SurfaceDesc &destDesc) {
-	_vm->validateVideoMode(destDesc._vidMode);
+	    int16 x, int16 y, int16 transp, Surface &destDesc) {
 
 	if ((sprBuf[0] == 1) && (sprBuf[1] == 3)) {
 		drawPacked(sprBuf, x, y, destDesc);
@@ -55,9 +54,7 @@ char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		if (Video_v2::spriteUncompressor(sprBuf, srcWidth, srcHeight, x, y, transp, destDesc))
 			return 1;
 
-		_vm->validateVideoMode(destDesc._vidMode);
-
-		_videoDriver->drawPackedSprite(sprBuf, srcWidth, srcHeight, x, y, transp, destDesc);
+		Video::drawPacked(sprBuf, srcWidth, srcHeight, x, y, transp, destDesc);
 		return 1;
 	}
 
@@ -66,7 +63,8 @@ char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	return 1;
 }
 
-void Video_v6::fillRect(SurfaceDesc &dest,
+/*
+void Video_v6::fillRect(Surface &dest,
 		int16 left, int16 top, int16 right, int16 bottom, int16 color) {
 
 	if (!(color & 0xFF00)) {
@@ -98,8 +96,9 @@ void Video_v6::fillRect(SurfaceDesc &dest,
 	byte strength = 16 - (((uint16) color) >> 12);
 	shadeRect(dest, left, top, right, bottom, color, strength);
 }
+*/
 
-void Video_v6::shadeRect(SurfaceDesc &dest,
+void Video_v6::shadeRect(Surface &dest,
 		int16 left, int16 top, int16 right, int16 bottom, byte color, byte strength) {
 
 	warning("TODO: Video_v6::shadeRect()");
@@ -144,7 +143,7 @@ void Video_v6::shadeRect(SurfaceDesc &dest,
 	*/
 }
 
-void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, SurfaceDesc &surfDesc) {
+void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, Surface &surfDesc) {
 	const byte *data = sprBuf + 2;
 
 	int16 width = READ_LE_UINT16(data);
@@ -170,7 +169,7 @@ void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, SurfaceDesc &sur
 	delete[] uncBuf;
 }
 
-void Video_v6::drawYUVData(const byte *srcData, SurfaceDesc &destDesc,
+void Video_v6::drawYUVData(const byte *srcData, Surface &destDesc,
 		int16 width, int16 height, int16 x, int16 y) {
 
 	int16 dataWidth = width;
@@ -189,7 +188,7 @@ void Video_v6::drawYUVData(const byte *srcData, SurfaceDesc &destDesc,
 
 }
 
-void Video_v6::drawYUV(SurfaceDesc &destDesc, int16 x, int16 y,
+void Video_v6::drawYUV(Surface &destDesc, int16 x, int16 y,
 		int16 dataWidth, int16 dataHeight, int16 width, int16 height,
 		const byte *dataY, const byte *dataU, const byte *dataV) {
 
