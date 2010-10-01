@@ -8,11 +8,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0pre\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-26 22:00+0100\n"
+"POT-Creation-Date: 2010-10-01 22:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -853,6 +852,12 @@ msgstr ""
 
 #: gui/options.cpp:1251
 msgid "Select directory for plugins"
+msgstr ""
+
+#: gui/options.cpp:1293
+msgid ""
+"The theme you selected does not support your current language. If you want "
+"to use this theme you need to switch to another language first."
 msgstr ""
 
 #: gui/saveload.cpp:60 gui/saveload.cpp:241

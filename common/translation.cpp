@@ -213,6 +213,12 @@ const char *TranslationManager::getCurrentCharset() {
 	return _currentCharset.c_str();
 }
 
+const char *TranslationManager::getCurrentLanguage() {
+	if (_currentLang == -1)
+		return "C";
+	return _langs[_currentLang].c_str();
+}
+
 String TranslationManager::getTranslation(const String &message) {
 	return getTranslation(message.c_str());
 }
@@ -470,6 +476,10 @@ const TLangArray TranslationManager::getSupportedLanguageNames() const {
 	
 const char *TranslationManager::getCurrentCharset() {
 	return "ASCII";
+}
+
+const char *TranslationManager::getCurrentLanguage() {
+	return "C";
 }
 
 #endif // USE_TRANSLATION

@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-26 22:00+0100\n"
+"POT-Creation-Date: 2010-10-01 22:29+0100\n"
 "PO-Revision-Date: 2010-09-21 23:37+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@jvprat.com>\n"
 "Language-Team: Catalan <scummvm-devel@lists.sf.net>\n"
-"Language: Catalan\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: Catalan\n"
 
 #: gui/about.cpp:96
 #, c-format
@@ -876,6 +876,12 @@ msgstr "Seleccioneu el directori dels fitxers extra"
 #: gui/options.cpp:1251
 msgid "Select directory for plugins"
 msgstr "Seleccioneu el directori dels connectors"
+
+#: gui/options.cpp:1293
+msgid ""
+"The theme you selected does not support your current language. If you want "
+"to use this theme you need to switch to another language first."
+msgstr ""
 
 #: gui/saveload.cpp:60 gui/saveload.cpp:241
 msgid "No date saved"
