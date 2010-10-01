@@ -817,8 +817,6 @@ struct config_t {                                   // User's config (saved)
 	bool musicFl;                                   // State of Music button/menu item
 	bool soundFl;                                   // State of Sound button/menu item
 	bool turboFl;                                   // State of Turbo button/menu item
-//	int16 wx, wy;                                    // Position of viewport
-	int16 cx, cy;                                   // Size of viewport
 	bool  backgroundMusicFl;                        // Continue music when task inactive
 	byte  musicVolume;                              // Music volume percentage
 	byte  soundVolume;                              // Sound volume percentage

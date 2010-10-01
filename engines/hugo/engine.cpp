@@ -110,9 +110,6 @@ void HugoEngine::initStatus() {
 // Initialize default config values.  Must be done before Initialize().
 // Reset needed to save config.cx,cy which get splatted during OnFileNew()
 void HugoEngine::initConfig(inst_t action) {
-	static int16 cx, cy;                    // Save window size, pos
-	int16        i;
-
 	debugC(1, kDebugEngine, "initConfig(%d)", action);
 
 	switch (action) {
@@ -121,24 +118,15 @@ void HugoEngine::initConfig(inst_t action) {
 		_config.soundFl = true;                     // Sound state initially on
 		_config.turboFl = false;                    // Turbo state initially off
 		_config.backgroundMusicFl = false;          // No music when inactive
-		_config.cx = VIEW_DX * 2;                   // Window view size
-		_config.cy = VIEW_DY * 2;
-
 		_config.musicVolume = 85;                   // Music volume %
 		_config.soundVolume = 100;                  // Sound volume %
 		initPlaylist(_config.playlist);             // Initialize default tune playlist
 
 		file().readBootFile();    // Read startup structure
-
-		cx = _config.cx;                            // Save these around OnFileNew()
-		cy = _config.cy;
 		break;
 	case RESET:
-		_config.cx = cx;                            // Restore cx, cy
-		_config.cy = cy;
-
 		// Find first tune and play it
-		for (i = 0; i < MAX_TUNES; i++)
+		for (int16 i = 0; i < MAX_TUNES; i++)
 			if (_config.playlist[i]) {
 				sound().playMusic(i);
 				break;
@@ -151,6 +139,7 @@ void HugoEngine::initConfig(inst_t action) {
 		break;
 	}
 }
+
 void HugoEngine::initialize() {
 	debugC(1, kDebugEngine, "initialize");
 
