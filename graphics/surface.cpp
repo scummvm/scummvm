@@ -185,6 +185,9 @@ void Surface::move(int dx, int dy, int height) {
 	if ((dx == 0 && dy == 0) || height <= 0)
 		return;
 
+	if (bytesPerPixel != 1 && bytesPerPixel != 2)
+		error("Surface::move: bytesPerPixel must be 1 or 2");
+
 	byte *src, *dst;
 	int x, y;
 
