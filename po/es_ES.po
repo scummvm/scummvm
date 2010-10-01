@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-26 22:02+0100\n"
+"POT-Creation-Date: 2010-10-01 22:28+0100\n"
 "PO-Revision-Date: 2010-09-25 17:11+0100\n"
 "Last-Translator: Tomás Maidagan\n"
 "Language-Team: \n"
@@ -873,6 +873,12 @@ msgstr "Selecciona el directorio adicional"
 msgid "Select directory for plugins"
 msgstr "Selecciona el directorio de plugins"
 
+#: gui/options.cpp:1293
+msgid ""
+"The theme you selected does not support your current language. If you want "
+"to use this theme you need to switch to another language first."
+msgstr ""
+
 #: gui/saveload.cpp:60 gui/saveload.cpp:241
 msgid "No date saved"
 msgstr "No hay fecha guardada"
@@ -913,28 +919,28 @@ msgstr "Partida sin nombre"
 msgid "Select a Theme"
 msgstr "Selecciona un tema"
 
-#: gui/ThemeEngine.cpp:334
+#: gui/ThemeEngine.cpp:332
 msgid "Disabled GFX"
 msgstr "GFX desactivados"
 
-#: gui/ThemeEngine.cpp:334
+#: gui/ThemeEngine.cpp:332
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX desactivados"
 
-#: gui/ThemeEngine.cpp:335
+#: gui/ThemeEngine.cpp:333
 msgid "Standard Renderer (16bpp)"
 msgstr "Estándar (16bpp)"
 
-#: gui/ThemeEngine.cpp:335
+#: gui/ThemeEngine.cpp:333
 msgid "Standard (16bpp)"
 msgstr "Estándar (16bpp)"
 
-#: gui/ThemeEngine.cpp:337
+#: gui/ThemeEngine.cpp:335
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Suavizado (16bpp)"
 
-#: gui/ThemeEngine.cpp:337
+#: gui/ThemeEngine.cpp:335
 msgid "Antialiased (16bpp)"
 msgstr "Suavizado (16bpp)"
 
@@ -1308,11 +1314,11 @@ msgstr "Sonido de alta calidad (más lento) (reinicio)"
 msgid "Disable power off"
 msgstr "Desactivar apagado"
 
-#: backends/platform/iphone/osys_events.cpp:339
+#: backends/platform/iphone/osys_events.cpp:357
 msgid "Touchpad mode enabled."
 msgstr "Modo Touchpad activado."
 
-#: backends/platform/iphone/osys_events.cpp:341
+#: backends/platform/iphone/osys_events.cpp:359
 msgid "Touchpad mode disabled."
 msgstr "Modo Touchpad desactivado."
 

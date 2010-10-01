@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-26 22:02+0100\n"
+"POT-Creation-Date: 2010-10-01 22:28+0100\n"
 "PO-Revision-Date: 2009-11-25 07:42-0500\n"
 "Last-Translator: Alex Bevilacqua <alexbevi@gmail.com>\n"
 "Language-Team: Hungarian\n"
@@ -879,6 +879,12 @@ msgstr ""
 msgid "Select directory for plugins"
 msgstr ""
 
+#: gui/options.cpp:1293
+msgid ""
+"The theme you selected does not support your current language. If you want "
+"to use this theme you need to switch to another language first."
+msgstr ""
+
 #: gui/saveload.cpp:60 gui/saveload.cpp:241
 msgid "No date saved"
 msgstr ""
@@ -920,28 +926,28 @@ msgstr ""
 msgid "Select a Theme"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:334
+#: gui/ThemeEngine.cpp:332
 msgid "Disabled GFX"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:334
+#: gui/ThemeEngine.cpp:332
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:335
+#: gui/ThemeEngine.cpp:333
 msgid "Standard Renderer (16bpp)"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:335
+#: gui/ThemeEngine.cpp:333
 msgid "Standard (16bpp)"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:337
+#: gui/ThemeEngine.cpp:335
 msgid "Antialiased Renderer (16bpp)"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:337
+#: gui/ThemeEngine.cpp:335
 msgid "Antialiased (16bpp)"
 msgstr ""
 
@@ -1314,11 +1320,11 @@ msgstr ""
 msgid "Disable power off"
 msgstr ""
 
-#: backends/platform/iphone/osys_events.cpp:339
+#: backends/platform/iphone/osys_events.cpp:357
 msgid "Touchpad mode enabled."
 msgstr ""
 
-#: backends/platform/iphone/osys_events.cpp:341
+#: backends/platform/iphone/osys_events.cpp:359
 msgid "Touchpad mode disabled."
 msgstr ""
 

@@ -151,6 +151,11 @@ public:
 	 */
 	const char *getCurrentCharset();
 
+	/**
+	 * Returns currently selected translation language
+	 */
+	const char *getCurrentLanguage();
+
 private:
 #ifdef USE_TRANSLATION
 	/**

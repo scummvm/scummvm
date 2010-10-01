@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-26 22:02+0100\n"
+"POT-Creation-Date: 2010-10-01 22:28+0100\n"
 "PO-Revision-Date: 2010-06-13 20:55+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -883,6 +883,12 @@ msgstr "Выберите директорию с дополнительными файлами"
 msgid "Select directory for plugins"
 msgstr "Выберите директорию с плагинами"
 
+#: gui/options.cpp:1293
+msgid ""
+"The theme you selected does not support your current language. If you want "
+"to use this theme you need to switch to another language first."
+msgstr ""
+
 #: gui/saveload.cpp:60 gui/saveload.cpp:241
 msgid "No date saved"
 msgstr "Дата не записана"
@@ -923,30 +929,30 @@ msgstr "Сохранение без имени"
 msgid "Select a Theme"
 msgstr "Выберите тему"
 
-#: gui/ThemeEngine.cpp:334
+#: gui/ThemeEngine.cpp:332
 msgid "Disabled GFX"
 msgstr "Без графики"
 
-#: gui/ThemeEngine.cpp:334
+#: gui/ThemeEngine.cpp:332
 #, fuzzy
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Без графики"
 
-#: gui/ThemeEngine.cpp:335
+#: gui/ThemeEngine.cpp:333
 msgid "Standard Renderer (16bpp)"
 msgstr "Стандартный растеризатор (16bpp)"
 
-#: gui/ThemeEngine.cpp:335
+#: gui/ThemeEngine.cpp:333
 #, fuzzy
 msgid "Standard (16bpp)"
 msgstr "Стандартный растеризатор (16bpp)"
 
-#: gui/ThemeEngine.cpp:337
+#: gui/ThemeEngine.cpp:335
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Растеризатор со сглаживанием (16bpp)"
 
-#: gui/ThemeEngine.cpp:337
+#: gui/ThemeEngine.cpp:335
 #, fuzzy
 msgid "Antialiased (16bpp)"
 msgstr "Растеризатор со сглаживанием (16bpp)"
@@ -1313,11 +1319,11 @@ msgstr "Высокое качество звука (медленнее) (ребут)"
 msgid "Disable power off"
 msgstr "Запретить выключение"
 
-#: backends/platform/iphone/osys_events.cpp:339
+#: backends/platform/iphone/osys_events.cpp:357
 msgid "Touchpad mode enabled."
 msgstr "Режим тачпада включен."
 
-#: backends/platform/iphone/osys_events.cpp:341
+#: backends/platform/iphone/osys_events.cpp:359
 msgid "Touchpad mode disabled."
 msgstr "Режим тачпада выключен."
 

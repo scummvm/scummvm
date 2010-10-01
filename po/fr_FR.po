@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-09-26 22:02+0100\n"
-"PO-Revision-Date: 2010-09-19 23:54+0100\n"
+"POT-Creation-Date: 2010-10-01 22:28+0100\n"
+"PO-Revision-Date: 2010-10-01 22:12+0100\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.sf.net>\n"
 "Language: Francais\n"
@@ -878,6 +878,14 @@ msgstr "Sélectionner le répertoire pour les fichiers suplémentaires"
 msgid "Select directory for plugins"
 msgstr "Sélectionner le répertoire des plugins"
 
+#: gui/options.cpp:1293
+msgid ""
+"The theme you selected does not support your current language. If you want "
+"to use this theme you need to switch to another language first."
+msgstr ""
+"Le thème que vous avez sélectioné ne support pas la langue française. Si "
+"vous voulez l'utiliser vous devez d'abord changer de langue."
+
 #: gui/saveload.cpp:60 gui/saveload.cpp:241
 msgid "No date saved"
 msgstr "Date inconnue"
@@ -918,28 +926,28 @@ msgstr "Sauvegarde sans nom"
 msgid "Select a Theme"
 msgstr "Sélectionnez un Thème"
 
-#: gui/ThemeEngine.cpp:334
+#: gui/ThemeEngine.cpp:332
 msgid "Disabled GFX"
 msgstr "GFX désactivé"
 
-#: gui/ThemeEngine.cpp:334
+#: gui/ThemeEngine.cpp:332
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX désactivé"
 
-#: gui/ThemeEngine.cpp:335
+#: gui/ThemeEngine.cpp:333
 msgid "Standard Renderer (16bpp)"
 msgstr "Rendu Standard (16bpp)"
 
-#: gui/ThemeEngine.cpp:335
+#: gui/ThemeEngine.cpp:333
 msgid "Standard (16bpp)"
 msgstr "Standard (16bpp)"
 
-#: gui/ThemeEngine.cpp:337
+#: gui/ThemeEngine.cpp:335
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Rendu Anti-crénelé (16 bpp)"
 
-#: gui/ThemeEngine.cpp:337
+#: gui/ThemeEngine.cpp:335
 msgid "Antialiased (16bpp)"
 msgstr "Anti-crénelé (16 bpp)"
 
@@ -1313,11 +1321,11 @@ msgstr "Audio haute qualité (plus lent) (redémarrer)"
 msgid "Disable power off"
 msgstr "Désactivé l'extinction"
 
-#: backends/platform/iphone/osys_events.cpp:339
+#: backends/platform/iphone/osys_events.cpp:357
 msgid "Touchpad mode enabled."
 msgstr "Mode touchpad activé"
 
-#: backends/platform/iphone/osys_events.cpp:341
+#: backends/platform/iphone/osys_events.cpp:359
 msgid "Touchpad mode disabled."
 msgstr "Mode touchpad désactivé"
 
@@ -1625,34 +1633,39 @@ msgid "Do you want to perform an automatic scan ?"
 msgstr "Voulez-vous exécuter une recherche automatique?"
 
 #: backends/platform/wince/wince-sdl.cpp:990
-#, fuzzy
 msgid "Map right click action"
-msgstr "Clic droit"
+msgstr "Affecter l'action 'Clic Droit'"
 
 #: backends/platform/wince/wince-sdl.cpp:994
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr ""
+"Vous devez affecter une touche à l'action de 'Clic Droit' pour pouvoir jouer "
+"à ce jeu"
 
 #: backends/platform/wince/wince-sdl.cpp:1003
 msgid "Map hide toolbar action"
-msgstr ""
+msgstr "Affecter l'action 'Cacher Bar d'Outils'"
 
 #: backends/platform/wince/wince-sdl.cpp:1007
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
+"Vous devez affecter une touche à l'action 'Cacher Bar d'Outils' pour pouvoir "
+"jouer à ce jeu"
 
 #: backends/platform/wince/wince-sdl.cpp:1016
 msgid "Map Zoom Up action (optional)"
-msgstr ""
+msgstr "Affecter l'action 'Dézoomer' (optionnelle)"
 
 #: backends/platform/wince/wince-sdl.cpp:1019
 msgid "Map Zoom Down action (optional)"
-msgstr ""
+msgstr "Affecter l'action 'Zoomer' (optionnelle)"
 
 #: backends/platform/wince/wince-sdl.cpp:1027
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
+"Noubliez pas d'affecter une touche à l'action 'Cacher Bar d'Outils' pour "
+"pouvoir voir entièrement l'inventaire"
 
 #~ msgid "Save Path: "
 #~ msgstr "Sauvegardes:"
