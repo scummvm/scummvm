@@ -180,11 +180,6 @@ void Surface::frameRect(const Common::Rect &r, uint32 color) {
 	vLine(r.right-1, r.top, r.bottom-1, color);
 }
 
-// FIXME: LordHoto asks why is this in Surface, since this
-// just supports 8bpp surfaces. Looks like someone wants
-// to subclass Surface to add this or it should be extended
-// to support 16bpp (or marked as just working for 8bpp
-// surfaces).
 void Surface::move(int dx, int dy, int height) {
 	// Short circuit check - do we have to do anything anyway?
 	if ((dx == 0 && dy == 0) || height <= 0)
@@ -224,7 +219,7 @@ void Surface::move(int dx, int dy, int height) {
 				if (bytesPerPixel == 1) {
 					*dst-- = *src--;
 				} else if (bytesPerPixel == 2) {
-					WRITE_LE_UINT16(dst, READ_LE_UINT16(src));
+					*(uint16 *)dst = *(const uint16 *)src;
 					src -= 2;
 					dst -= 2;
 				}
@@ -241,7 +236,7 @@ void Surface::move(int dx, int dy, int height) {
 				if (bytesPerPixel == 1) {
 					*dst++ = *src++;
 				} else if (bytesPerPixel == 2) {
-					WRITE_LE_UINT16(dst, READ_LE_UINT16(src));
+					*(uint16 *)dst = *(const uint16 *)src;
 					src += 2;
 					dst += 2;
 				}
