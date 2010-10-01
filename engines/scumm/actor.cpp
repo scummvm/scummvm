@@ -2159,7 +2159,10 @@ void ScummEngine::stopTalk() {
 		((ScummEngine_v7 *)this)->clearSubtitleQueue();
 #endif
 	} else {
-		restoreCharsetBg();
+		if (_game.platform == Common::kPlatformFMTowns)
+			towns_restoreCharsetBg();
+		else
+			restoreCharsetBg();
 	}
 }
 

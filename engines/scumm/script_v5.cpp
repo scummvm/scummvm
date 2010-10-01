@@ -1617,7 +1617,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 
 void ScummEngine_v5::o5_roomOps() {
 	int a = 0, b = 0, c, d, e;
-	const bool paramsBeforeOpcode = (_game.version == 3 && _game.platform != Common::kPlatformPCEngine);
+	const bool paramsBeforeOpcode = (_game.version == 3 && (_game.platform != Common::kPlatformPCEngine || _game.platform != Common::kPlatformFMTowns));
 
 	if (paramsBeforeOpcode) {
 		a = getVarOrDirectWord(PARAM_1);
@@ -1714,21 +1714,51 @@ void ScummEngine_v5::o5_roomOps() {
 		if (a) {
 			if (_game.platform == Common::kPlatformFMTowns) {
 				switch (a) {
-				case 8: // compose kMainVirtScreen over a screen buffer
-				case 9: // call 0x110:0x20 _ax=0x601 _edx=2
-				case 10: // call 0x110:0x20 _ax=0x601 _edx=3
-				case 11: // clear screen 0x1C:0x45000 sizeof(640 * 320)
-				case 12: // call 0x110:0x20 _ax=0x601 _edx=0
-				case 13: // call 0x110:0x20 _ax=0x601 _edx=1
-				case 16: // enable clearing of a screen buffer in drawBitmap()
-				case 17: // disable clearing of a screen buffer in drawBitmap()
-				case 18: // clear a screen buffer
+				case 8:
+					towns_drawStripToScreen(&_virtscr[kMainVirtScreen], 0, _virtscr[kMainVirtScreen].topline, 0, 0, _virtscr[kMainVirtScreen].w, _virtscr[kMainVirtScreen].topline + _virtscr[kMainVirtScreen].h);
+					_townsScreen->update();
+					return;
+				case 9:
+					_townsActiveLayerFlags = 2;
+					_townsScreen->toggleLayers(_townsActiveLayerFlags);
+					return;
+				case 10:
+					_townsActiveLayerFlags = 3;
+					_townsScreen->toggleLayers(_townsActiveLayerFlags);
+					return;
+				case 11:
+					_townsScreen->clearLayer(1);
+					return;
+				case 12:
+					_townsActiveLayerFlags = 0;
+					_townsScreen->toggleLayers(_townsActiveLayerFlags);
+					return;
+				case 13:
+					_townsActiveLayerFlags = 1;
+					_townsScreen->toggleLayers(_townsActiveLayerFlags);
+					return;
+				case 16: // enable clearing of layer 2 buffer in drawBitmap()
+					_townsPaletteFlags |= 2;
+					return;
+				case 17: // disable clearing of layer 2 buffer in drawBitmap()
+					_townsPaletteFlags &= ~2;
+					return;
+				case 18: // clear kMainVirtScreen layer 2 buffer
+					_textSurface.fillRect(Common::Rect(0, _virtscr[kMainVirtScreen].topline * _textSurfaceMultiplier, _textSurface.pitch, (_virtscr[kMainVirtScreen].topline + _virtscr[kMainVirtScreen].h) * _textSurfaceMultiplier), 0);
 				case 19: // enable palette operations (palManipulate(), cyclePalette() etc.)
+					_townsPaletteFlags |= 1;
+					return;
 				case 20: // disable palette operations
-				case 21: // disable clearing of screen 0x1C:0x5000 sizeof(640 * 320) in initScreens()
-				case 22: // enable clearing of screen 0x1C:0x5000 sizeof(640 * 320) in initScreens()
+					_townsPaletteFlags &= ~1;
+					return;
+				case 21: // disable clearing of layer 0 in initScreens()
+					_townsClearLayerFlag = 1;
+					return;
+				case 22: // enable clearing of layer 0 in initScreens()
+					_townsClearLayerFlag = 0;
+					return;
 				case 30:
-					debug(0, "o5_roomOps: unhandled FM-TOWNS fadeEffect %d", a);
+					_townsOverrideShadowColor = 3;
 					return;
 				}
 			}

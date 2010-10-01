@@ -258,7 +258,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_switchRoomEffect2 = 0;
 	_switchRoomEffect = 0;
 
-	_bytesPerPixel = 1;
+	_bytesPerPixelOutput = _bytesPerPixel = 1;
 	_doEffect = false;
 	_snapScroll = false;
 	_currentLights = 0;
@@ -278,6 +278,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_hePalettes = NULL;
 	_hePaletteSlot = 0;
 	_16BitPalette = NULL;
+	_townsScreen = 0;
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
@@ -318,6 +319,13 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	_skipDrawObject = 0;
 
+	_townsPaletteFlags = 0;
+	_townsClearLayerFlag = 1;
+	_townsActiveLayerFlags = 3;
+	memset(&_curStringRect, -1, sizeof(Common::Rect));
+	memset(&_cyclRects, 0, 16 * sizeof(Common::Rect));
+	_numCyclRects = 0;
+	
 	//
 	// Init all VARS to 0xFF
 	//
@@ -533,15 +541,18 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_screenHeight = 200;
 	}
 
-	_bytesPerPixel = (_game.features & GF_16BIT_COLOR) ? 2 : 1;
+	_bytesPerPixelOutput = _bytesPerPixel = (_game.features & GF_16BIT_COLOR) ? 2 : 1;
+
+#ifdef USE_RGB_COLOR
+	if (_game.platform == Common::kPlatformFMTowns)
+		_bytesPerPixelOutput = 2;
+#endif
 
 	// Allocate gfx compositing buffer (not needed for V7/V8 games).
 	if (_game.version < 7)
-		_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight * _bytesPerPixel);
+		_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight * _bytesPerPixelOutput);
 	else
 		_compositeBuf = 0;
-
-	_fmtownsBuf = 0;
 
 	_herculesBuf = 0;
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
@@ -608,7 +619,10 @@ ScummEngine::~ScummEngine() {
 
 	free(_compositeBuf);
 	free(_herculesBuf);
-	free(_fmtownsBuf);
+
+	free(_16BitPalette);
+
+	delete _townsScreen;
 
 	delete _debugger;
 
@@ -1116,14 +1130,19 @@ Common::Error ScummEngine::init() {
 			screenWidth *= _textSurfaceMultiplier;
 			screenHeight *= _textSurfaceMultiplier;
 		}
-		if (_game.features & GF_16BIT_COLOR) {
+		if (_game.features & GF_16BIT_COLOR || _game.platform == Common::kPlatformFMTowns) {
 #ifdef USE_RGB_COLOR
 			Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 			initGraphics(screenWidth, screenHeight, screenWidth > 320, &format);
 			if (format != _system->getScreenFormat())
 				return Common::kUnsupportedColorMode;
 #else
-			error("16bit color support is required for this game");
+			if (_game.platform == Common::kPlatformFMTowns) {
+				warning("Starting game without the required 16bit color support.\nYou will experience severe color glitches");
+				initGraphics(screenWidth, screenHeight, (screenWidth > 320));
+			} else {
+				error("16bit color support is required for this game");
+			}
 #endif
 		} else {
 			initGraphics(screenWidth, screenHeight, (screenWidth > 320));
@@ -1241,13 +1260,8 @@ void ScummEngine::setupScumm() {
 
 	_res->setHeapThreshold(400000, maxHeapThreshold);
 
-	if (_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) {
-		free(_fmtownsBuf);
-		_fmtownsBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier);
-	}
-
 	free(_compositeBuf);
-	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier * _bytesPerPixel);
+	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier * _bytesPerPixelOutput);
 }
 
 #ifdef ENABLE_SCUMM_7_8
@@ -1324,6 +1338,18 @@ void ScummEngine::resetScumm() {
 	int i;
 
 	debug(9, "resetScumm");
+
+#ifdef USE_RGB_COLOR
+	if (_game.features & GF_16BIT_COLOR || _game.platform == Common::kPlatformFMTowns)
+		_16BitPalette = (uint16 *)calloc(512, sizeof(uint16));
+#endif
+
+	if (_game.platform == Common::kPlatformFMTowns) {
+		delete _townsScreen;
+		_townsScreen = new TownsScreen(_system, _screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, _bytesPerPixelOutput);
+		_townsScreen->setupLayer(0, _screenWidth, _screenHeight, (_bytesPerPixelOutput == 2) ? 32767 : 256);
+		_townsScreen->setupLayer(1, _screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, 16, _textPalette);
+	}
 
 	if (_game.version == 0) {
 		initScreens(8, 144);
@@ -1517,8 +1543,6 @@ void ScummEngine_v3::resetScumm() {
 
 
 	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
-		_16BitPalette = (uint16 *)calloc(512, sizeof(uint16));
-
 		// Load tile set and palette for the distaff
 		byte *roomptr = getResourceAddress(rtRoom, 90);
 		assert(roomptr);
@@ -1928,6 +1952,10 @@ void ScummEngine::waitForTimer(int msec_delay) {
 	while (!shouldQuit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
 		parseEvents();
+
+		if (_townsScreen)
+			_townsScreen->update();
+
 		_system->updateScreen();
 		if (_system->getMillis() >= start_time + msec_delay)
 			break;
@@ -2054,6 +2082,8 @@ load_game:
 	if (_saveLoadFlag && _saveLoadFlag != 1) {
 		goto load_game;
 	}
+
+	towns_processPalCycleField();
 
 	if (_currentRoom == 0) {
 		if (_game.version > 3)
@@ -2442,6 +2472,10 @@ void ScummEngine::pauseEngineIntern(bool pause) {
 	} else {
 		// Update the screen to make it less likely that the player will see a
 		// brief cursor palette glitch when the GUI is disabled.
+
+		if (_townsScreen)
+			_townsScreen->update();
+
 		_system->updateScreen();
 
 		// Resume sound & video

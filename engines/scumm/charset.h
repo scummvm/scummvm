@@ -79,6 +79,7 @@ public:
 	int getStringWidth(int a, const byte *str);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	void translateColor();
+	void processTownsCharsetColors(uint8 bytesPerPixel);
 
 	virtual void setCurID(int32 id) = 0;
 	int getCurID() { return _curId; }

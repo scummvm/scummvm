@@ -655,6 +655,12 @@ void CharsetRendererV3::setColor(byte color) {
 	} else
 		useShadow = false;
 
+	if (_vm->_game.platform == Common::kPlatformFMTowns) {
+		_color = (_color & 0x0f) | ((_color & 0x0f) << 4);
+		if (_color == 0)
+			_color = 0x88;
+	}
+
 	enableShadow(useShadow);
 
 	translateColor();
@@ -672,7 +678,7 @@ void CharsetRendererPCE::setColor(byte color) {
 void CharsetRendererCommon::enableShadow(bool enable) {
 	if (enable) {
 		if (_vm->_game.platform == Common::kPlatformFMTowns) {
-			_shadowColor = 8;
+			_shadowColor = _vm->_game.version == 5 ? _vm->_townsCharsetColorMap[0] : 0x88;
 			_shadowMode = kFMTOWNSShadowMode;
 		} else {
 			_shadowColor = 0;
@@ -682,7 +688,6 @@ void CharsetRendererCommon::enableShadow(bool enable) {
 		_shadowMode = kNoShadowMode;
 	}
 }
-
 
 void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	// WORKAROUND for bug #1509509: Indy3 Mac does not show black
@@ -724,8 +729,8 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	origHeight = height;
 
 	if (_shadowMode != kNoShadowMode) {
-		width++;
-		height++;
+		width += _vm->_textSurfaceMultiplier;
+		height += _vm->_textSurfaceMultiplier;
 	}
 
 	if (_firstChar) {
@@ -744,7 +749,8 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		_hasMask = true;
 		_textScreenID = vs->number;
 	}
-	if ((ignoreCharsetMask || !vs->hasTwoBuffers) && !(_vm->_useCJKMode && _vm->_textSurfaceMultiplier == 2)) {
+
+	if ((_vm->_game.platform != Common::kPlatformFMTowns || (_vm->_game.id == GID_LOOM && !is2byte)) && (ignoreCharsetMask || !vs->hasTwoBuffers)) {
 		dst = vs->getPixels(_left, drawTop);
 		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->bytesPerPixel);
 	} else {
@@ -801,6 +807,27 @@ void CharsetRenderer::translateColor() {
 	}
 }
 
+void CharsetRenderer::processTownsCharsetColors(uint8 bytesPerPixel) {
+	if (_vm->_game.platform == Common::kPlatformFMTowns) {
+		for (int i = 0; i < (1 << bytesPerPixel); i++) {
+			uint8 c = _vm->_charsetColorMap[i];
+						
+			if (c > 16) {
+				uint8 t = (_vm->_currentPalette[c * 3] < 32) ? 4 : 12;
+				t |= ((_vm->_currentPalette[c * 3 + 1] < 32) ? 2 : 10);
+				t |= ((_vm->_currentPalette[c * 3 + 1] < 32) ? 1 : 9);
+				c = t;
+			}
+			
+			if (c == 0)
+				c = _vm->_townsOverrideShadowColor;
+			
+			c = ((c & 0x0f) << 4) | (c & 0x0f);
+			_vm->_townsCharsetColorMap[i] = c;
+		}
+	}
+}
+
 void CharsetRenderer::saveLoadWithSerializer(Serializer *ser) {
 	static const SaveLoadEntry charsetRendererEntries[] = {
 		MKLINE_OLD(CharsetRenderer, _curId, sleByte, VER(73), VER(73)),
@@ -836,6 +863,8 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 	_vm->_charsetColorMap[1] = _color;
 
+	processTownsCharsetColors(_bytesPerPixel);
+
 	if (is2byte) {
 		enableShadow(true);
 		charPtr = _vm->get2byteCharPtr(chr);
@@ -851,7 +880,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 		width = charPtr[0];
 		height = charPtr[1];
-
+	
 		if (_disableOffsX) {
 			offsX = 0;
 		} else {
@@ -866,8 +895,8 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	origHeight = height;
 
 	if (_shadowMode != kNoShadowMode) {
-		width++;
-		height++;
+		width += _vm->_textSurfaceMultiplier;
+		height += _vm->_textSurfaceMultiplier;
 	}
 	if (_firstChar) {
 		_str.left = 0;
@@ -905,7 +934,9 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height);
 
-	if (!ignoreCharsetMask) {
+	// This check for kPlatformFMTowns and kMainVirtScreen is at least required for the chat with
+	// the navigator's head in front of the ghost ship in Monkey Island 1
+	if (!ignoreCharsetMask || (_vm->_game.platform == Common::kPlatformFMTowns && vs->number == kMainVirtScreen)) {
 		_hasMask = true;
 		_textScreenID = vs->number;
 	}
@@ -961,7 +992,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 	} else {
 		Graphics::Surface dstSurface;
 		Graphics::Surface backSurface;
-		if ((ignoreCharsetMask || !vs->hasTwoBuffers) && !(_vm->_useCJKMode && _vm->_textSurfaceMultiplier == 2)) {
+		if (_vm->_game.platform != Common::kPlatformFMTowns && (ignoreCharsetMask || !vs->hasTwoBuffers) && !(_vm->_useCJKMode && _vm->_textSurfaceMultiplier == 2)) {
 			dstSurface = *vs;
 			dstPtr = vs->getPixels(_left, drawTop);
 		} else {
@@ -1064,13 +1095,14 @@ void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, co
 	assert(bpp == 1 || bpp == 2 || bpp == 4 || bpp == 8);
 	bits = *src++;
 	numbits = 8;
+	byte *cmap = (_vm->_game.platform == Common::kPlatformFMTowns) ? _vm->_townsCharsetColorMap : _vm->_charsetColorMap;
 
 	for (y = 0; y < height && y + drawTop < s.h; y++) {
 		for (x = 0; x < width; x++) {
 			color = (bits >> (8 - bpp)) & 0xFF;
 
 			if (color && y + drawTop >= 0) {
-				*dst = _vm->_charsetColorMap[color];
+				*dst = cmap[color];
 			}
 			dst++;
 			bits <<= bpp;
@@ -1087,6 +1119,7 @@ void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, co
 void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth) {
 	int y, x;
 	byte bits = 0;
+	uint8 col = (_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 5) ? _vm->_townsCharsetColorMap[1] : _color;
 
 	for (y = 0; y < height && y + drawTop < s.h; y++) {
 		for (x = 0; x < width; x++) {
@@ -1108,7 +1141,7 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 						if (_shadowMode != kFMTOWNSShadowMode)
 							*(dst + s.pitch + 1) = _shadowColor;
 					}
-					*dst = _color;
+					*dst = col;
 				}
 			}
 			dst += bitDepth;

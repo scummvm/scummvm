@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	dialogs.o \
 	file.o \
 	file_nes.o \
+	gfx_towns.o \
 	gfx.o \
 	he/resource_he.o \
 	he/script_v60he.o \

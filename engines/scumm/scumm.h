@@ -972,6 +972,7 @@ public:
 
 	Common::RenderMode _renderMode;
 	uint8 _bytesPerPixel;
+	uint8 _bytesPerPixelOutput;
 
 protected:
 	ColorCycle _colorCycle[16];	// Palette cycles
@@ -1044,6 +1045,7 @@ protected:
 	void setRoomPalette(int pal, int room);
 	void setPCEPaletteFromPtr(const byte *ptr);
 	virtual void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
+
 	virtual void setPalColor(int index, int r, int g, int b);
 	void setDirtyColors(int min, int max);
 	const byte *findPalInPals(const byte *pal, int index);
@@ -1077,7 +1079,7 @@ protected:
 	// Screen rendering
 	byte *_compositeBuf;
 	byte *_herculesBuf;
-	byte *_fmtownsBuf;
+	
 	virtual void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
@@ -1221,7 +1223,7 @@ protected:
 	void restoreCharsetBg();
 	void clearCharsetMask();
 	void clearTextSurface();
-
+	
 	virtual void initCharset(int charset);
 
 	virtual void printString(int m, const byte *msg);
@@ -1397,6 +1399,36 @@ public:
 
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS;
+
+	// FM-Towns specific
+public:
+	bool towns_isRectInStringBox(int x1, int y1, int x2, int y2);
+	byte _townsPaletteFlags;
+	byte _townsCharsetColorMap[16];
+
+protected:
+	void towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, int srcX, int srcY, int w, int h);
+#ifdef USE_RGB_COLOR
+	void towns_setPaletteFromPtr(const byte *ptr, int numcolor = -1);
+	void towns_setTextPaletteFromPtr(const byte *ptr);
+#endif
+	void towns_setupPalCycleField(int x1, int y1, int x2, int y2);
+	void towns_processPalCycleField();
+	void towns_resetPalCycleFields();
+	void towns_restoreCharsetBg();
+
+	Common::Rect _cyclRects[16];
+	int _numCyclRects;
+	
+	Common::Rect _curStringRect;
+
+	byte _townsOverrideShadowColor;	
+	byte _textPalette[48];
+	byte _townsClearLayerFlag;
+	byte _townsActiveLayerFlags;
+	static const uint8 _townsLayer2Mask[];
+
+	TownsScreen *_townsScreen;
 };
 
 } // End of namespace Scumm
