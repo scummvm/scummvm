@@ -770,12 +770,10 @@ bool HugoEngine::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 // Search background command list for this screen for supplied object.
 // Return first associated verb (not "look") or NULL if none found.
 char *HugoEngine::useBG(char *name) {
-	int i;
-	objectList_t p = _backgroundObjects[*_screen_p];
-
 	debugC(1, kDebugEngine, "useBG(%s)", name);
 
-	for (i = 0; *_arrayVerbs[p[i].verbIndex]; i++)
+	objectList_t p = _backgroundObjects[*_screen_p];
+	for (int i = 0; *_arrayVerbs[p[i].verbIndex]; i++)
 		if ((name == _arrayNouns[p[i].nounIndex][0] &&
 		        p[i].verbIndex != _look) &&
 		        ((p[i].roomState == DONT_CARE) || (p[i].roomState == _screenStates[*_screen_p])))
@@ -799,12 +797,16 @@ void HugoEngine::useObject(int16 objId) {
 		// Get or use objid directly
 		if ((obj->genericCmd & TAKE) || obj->objValue)  // Get collectible item
 			sprintf(_line, "%s %s", _arrayVerbs[_take][0], _arrayNouns[obj->nounIndex][0]);
-		else if (obj->cmdIndex != 0)            // Use non-collectible item if able
+		else if (obj->genericCmd & LOOK)            // Look item
+			sprintf(_line, "%s %s", _arrayVerbs[_look][0], _arrayNouns[obj->nounIndex][0]);
+		else if (obj->genericCmd & DROP)            // Drop item
+			sprintf(_line, "%s %s", _arrayVerbs[_drop][0], _arrayNouns[obj->nounIndex][0]);
+		else if (obj->cmdIndex != 0)                // Use non-collectible item if able
 			sprintf(_line, "%s %s", _arrayVerbs[_cmdList[obj->cmdIndex][1].verbIndex][0], _arrayNouns[obj->nounIndex][0]);
 		else if ((verb = useBG(_arrayNouns[obj->nounIndex][0])) != NULL)
 			sprintf(_line, "%s %s", verb, _arrayNouns[obj->nounIndex][0]);
 		else
-			return;                         // Can't use object directly
+			return;                                 // Can't use object directly
 	} else {
 		// Use status.objid on objid
 		// Default to first cmd verb
