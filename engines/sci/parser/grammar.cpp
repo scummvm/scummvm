@@ -445,6 +445,7 @@ static int _vbpt_append(ParseTreeNode *nodes, int *pos, int base, int value) {
 	nodes[base].left = &nodes[++(*pos)];
 	nodes[*pos].type = kParseTreeLeafNode;
 	nodes[*pos].value = value;
+	nodes[*pos].right = 0;
 	nodes[base].right = &nodes[++(*pos)];
 	nodes[*pos].type = kParseTreeBranchNode;
 	nodes[*pos].left = 0;
@@ -456,6 +457,7 @@ static int _vbpt_terminate(ParseTreeNode *nodes, int *pos, int base, int value) 
 	// Terminates, overwriting a nextwrite forknode
 	nodes[base].type = kParseTreeLeafNode;
 	nodes[base].value = value;
+	nodes[base].right = 0;
 	return *pos;
 }
 
@@ -570,6 +572,7 @@ int Vocabulary::parseGNF(const ResultWordList &words, bool verbose) {
 
 		_parserNodes[1].type = kParseTreeLeafNode;
 		_parserNodes[1].value = 0x141;
+		_parserNodes[1].right = 0;
 
 		_parserNodes[2].type = kParseTreeBranchNode;
 		_parserNodes[2].left = 0;

@@ -40,6 +40,7 @@ Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan),
 	// Mark parse tree as unused
 	_parserNodes[0].type = kParseTreeLeafNode;
 	_parserNodes[0].value = 0;
+	_parserNodes[0].right = 0;
 
 	_synonyms.clear(); // No synonyms
 
@@ -578,6 +579,7 @@ int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const c
 	if (type == kParseNumber) {
 		_parserNodes[*pos += 1].type = kParseTreeLeafNode;
 		_parserNodes[*pos].value = nr;
+		_parserNodes[*pos].right = 0;
 		return *pos;
 	}
 	if (type == kParseEndOfInput) {
