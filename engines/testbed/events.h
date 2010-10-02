@@ -35,9 +35,9 @@ namespace EventTests {
 char keystrokeToChar();
 Common::Rect drawFinishZone();
 // will contain function declarations for Event tests
-bool mouseEvents();
-bool kbdEvents();
-bool showMainMenu();
+TestExitStatus mouseEvents();
+TestExitStatus kbdEvents();
+TestExitStatus showMainMenu();
 // add more here
 
 } // End of namespace EventTests

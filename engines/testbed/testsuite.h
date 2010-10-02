@@ -31,6 +31,8 @@
 
 #include "graphics/fontman.h"
 
+#include "testbed/config-params.h"
+
 namespace Testbed {
 
 enum {
@@ -53,7 +55,13 @@ enum {
 	kEventHandlingTime = 50
 };
 
-typedef bool (*InvokingFunction)();
+enum TestExitStatus {
+	kTestPassed = 0,
+	kTestSkipped,
+	kTestFailed
+};
+
+typedef TestExitStatus (*InvokingFunction)();
 
 /**
  * This represents a feature to be tested
@@ -85,6 +93,7 @@ public:
 	virtual ~Testsuite();
 	int getNumTests() const { return _testsToExecute.size(); }
 	int getNumTestsPassed() const { return _numTestsPassed; }
+	int getNumTestsSkipped() const { return _numTestsSkipped; }
 	int getNumTestsFailed() const { return _numTestsExecuted - _numTestsPassed; }
 	void genReport() const;
 	bool isEnabled() const { return _isTsEnabled; }
@@ -93,7 +102,7 @@ public:
 	}
 	bool enableTest(const Common::String &testName, bool enable);
 	void reset();
-	
+
 	/**
 	 * Prompts for User Input in form of "Yes" or "No" for interactive tests
 	 * e.g: "Is this like you expect?" "Yes" or "No"
@@ -136,20 +145,9 @@ public:
 
 	static void logPrintf(const char *s, ...) GCC_PRINTF(1, 2);
 	static void logDetailedPrintf(const char *s, ...) GCC_PRINTF(1, 2);
-	/**
-	 * Note: To enable logging, this function must be called once first.
-	 */
-	static void initLogging(const char *dirname, const char *filename, bool enable = true);
-	static void initLogging(bool enable = true);
-	static void setLogDir(const char *dirname);
-	static void setLogFile(const char *filename);
-	static Common::String getLogDir() { return _logDirectory; }
-	static Common::String getLogFile() { return _logFilename; }
-
-	static void deleteWriteStream();
-
+	
 	// Progress bar (Information Display) related methods.
-	/** 
+	/**
 	 * Display region is in the bottom. Probably 1/4th of the game screen.
 	 * It contains:
 	 * 1) Information about executing testsuite.
@@ -162,15 +160,13 @@ public:
 		// start from bottom
 		pt.y = g_system->getHeight();
 		// Will Contain 3 lines
-		pt.y -= (FontMan.getFontByUsage(_displayFont)->getFontHeight() * 3 + 15); // Buffer of 5 pixels per line
+		pt.y -= (FontMan.getFontByUsage(ConfParams.getCurrentFontUsageType())->getFontHeight() * 3 + 15); // Buffer of 5 pixels per line
 		return pt;
 	}
 
 	static uint getLineSeparation() {
-		return FontMan.getFontByUsage(_displayFont)->getFontHeight() + 5;
+		return FontMan.getFontByUsage(ConfParams.getCurrentFontUsageType())->getFontHeight() + 5;
 	}
-	static Graphics::FontManager::FontUsage getCurrentFontUsageType() { return _displayFont; }
-	static void setCurrentFontUsageType(Graphics::FontManager::FontUsage f) { _displayFont = f; }
 
 	static void updateStats(const char *prefix, const char *info, uint numTests, uint testNum, Common::Point pt);
 	const Common::Array<Test *>& getTestList() { return _testsToExecute; }
@@ -180,33 +176,15 @@ protected:
 	Common::Array<Test *> _testsToExecute;			///< List of tests to be executed
 	int		    _numTestsPassed;					///< Number of tests passed
 	int			_numTestsExecuted;					///< Number of tests executed
+	int			_numTestsSkipped;
 	bool		_isTsEnabled;
 
-public:
-
-	/**
-	 * Static variable of this class that determines if the user initiated testing session is interactive or not.
-	 * Used by various tests to respond accordingly
-	 */
-	static bool isSessionInteractive;
-
+private:
+	
 	/**
 	 * Used from the code to decide if the engine needs to exit
 	 */
-	static uint	toQuit;
-
-private:
-	/**
-	 * Private variables related to logging files
-	 */
-	static Common::String _logDirectory;
-	static Common::String _logFilename;
-	static Common::WriteStream *_ws;
-
-	/**
-	 * Private variable used for font
-	 */
-	static Graphics::FontManager::FontUsage	_displayFont;
+	uint _toQuit;
 };
 
 } // End of namespace Testbed

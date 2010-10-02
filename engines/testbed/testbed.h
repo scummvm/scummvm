@@ -38,7 +38,7 @@ class TestbedConfigManager;
 
 enum {
 	kTestbedLogOutput = 1 << 0,
-	kTestbedEngineDebug = 1 << 2, 
+	kTestbedEngineDebug = 1 << 2,
 	kCmdRerunTestbed = 'crtb'
 };
 
@@ -55,28 +55,20 @@ public:
 	void invokeTestsuites(TestbedConfigManager &cfMan);
 
 	bool hasFeature(EngineFeature f) const;
-	
+
 private:
 	Common::Array<Testsuite *> _testsuiteList;
 };
 
 class TestbedExitDialog : public TestbedInteractionDialog {
 public:
-	TestbedExitDialog(Common::Array<Testsuite *> &testsuiteList) : TestbedInteractionDialog(80, 60, 500, 320), _rerun(false), 
+	TestbedExitDialog(Common::Array<Testsuite *> &testsuiteList) : TestbedInteractionDialog(80, 40, 500, 330),
 	_testsuiteList(testsuiteList) {}
 	~TestbedExitDialog() {}
 	void init();
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	void run() { runModal(); }
-	bool rerunRequired() {
-		if (_rerun) {
-			_rerun = false;
-			return true;
-		}
-		return false;
-	}
 private:
-	bool _rerun;
 	Common::Array<Testsuite *> &_testsuiteList;
 };
 

@@ -37,52 +37,6 @@
 
 namespace Testbed {
 
-// Static public variable of Testsuite
-bool Testsuite::isSessionInteractive = true;
-
-// Static private variable of Testsuite
-Common::String Testsuite::_logDirectory = "";
-Common::String Testsuite::_logFilename = "";
-Graphics::FontManager::FontUsage Testsuite::_displayFont = Graphics::FontManager::kGUIFont;
-Common::WriteStream *Testsuite::_ws = 0;
-uint Testsuite::toQuit = kLoopNormal;
-
-void Testsuite::setLogDir(const char *dirname) {
-	_logDirectory = dirname;
-}
-
-void Testsuite::setLogFile(const char *filename) {
-	_logFilename = filename;
-}
-
-void Testsuite::deleteWriteStream() {
-	if (_ws) {
-		delete _ws;
-	}
-}
-
-void Testsuite::initLogging(const char *logdir, const char *filename, bool enable) {
-	setLogDir(logdir);
-	setLogFile(filename);
-
-	if (enable) {
-		_ws = Common::FSNode(_logDirectory).getChild(_logFilename).createWriteStream();
-	} else {
-		_ws = 0;
-	}
-}
-
-void Testsuite::initLogging(bool enable) {
-	setLogDir(ConfMan.get("path").c_str());
-	setLogFile("testbed.log");
-
-	if (enable) {
-		_ws = Common::FSNode(_logDirectory).getChild(_logFilename).createWriteStream();
-	} else {
-		_ws = 0;
-	}
-}
-
 void Testsuite::logPrintf(const char *fmt, ...) {
 	// Assuming log message size to be not greater than STRINGBUFLEN i.e 256
 	char buffer[STRINGBUFLEN];
@@ -90,9 +44,11 @@ void Testsuite::logPrintf(const char *fmt, ...) {
 	va_start(vl, fmt);
 	vsnprintf(buffer, STRINGBUFLEN, fmt, vl);
 	va_end(vl);
+	Common::WriteStream *ws = ConfigParams::instance().getLogWriteStream();
 
-	if (_ws) {
-		_ws->writeString(buffer);
+	if (ws) {
+		ws->writeString(buffer);
+		ws->flush();
 		debugCN(kTestbedLogOutput, "%s", buffer);
 	} else {
 		debugCN(kTestbedLogOutput, "%s", buffer);
@@ -107,9 +63,11 @@ void Testsuite::logDetailedPrintf(const char *fmt, ...) {
 	va_start(vl, fmt);
 	vsnprintf(buffer, STRINGBUFLEN, fmt, vl);
 	va_end(vl);
+	Common::WriteStream *ws = ConfigParams::instance().getLogWriteStream();
 
-	if (_ws) {
-		_ws->writeString(buffer);
+	if (ws) {
+		ws->writeString(buffer);
+		ws->flush();
 		debugCN(1, kTestbedLogOutput, "%s", buffer);
 	} else {
 		debugCN(1, kTestbedLogOutput, "%s", buffer);
@@ -119,6 +77,8 @@ void Testsuite::logDetailedPrintf(const char *fmt, ...) {
 Testsuite::Testsuite() {
 	_numTestsPassed = 0;
 	_numTestsExecuted = 0;
+	_numTestsSkipped = 0;
+	_toQuit = kLoopNormal;
 	// Initially all testsuites are enabled, disable them by calling enableTestSuite(name, false)
 	_isTsEnabled = true;
 	// Set custom color for progress bar
@@ -134,7 +94,7 @@ Testsuite::~Testsuite() {
 void Testsuite::reset() {
 	_numTestsPassed = 0;
 	_numTestsExecuted = 0;
-	toQuit = kLoopNormal;
+	_toQuit = kLoopNormal;
 	for (Common::Array<Test *>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
 		(*i)->passed = false;
 	}
@@ -146,6 +106,7 @@ void Testsuite::genReport() const {
 	logPrintf("Subsystem: %s ", getName());
 	logPrintf("(Tests Executed: %d)\n", _numTestsExecuted);
 	logPrintf("Passed: %d ", _numTestsPassed);
+	logPrintf("Skipped: %d ", _numTestsSkipped);
 	logPrintf("Failed: %d\n", getNumTestsFailed());
 	logPrintf("\n");
 }
@@ -199,7 +160,7 @@ void Testsuite::clearScreen(const Common::Rect &rect) {
 void Testsuite::clearScreen() {
 	int numBytesPerLine = g_system->getWidth() * g_system->getScreenFormat().bytesPerPixel;
 	int height = getDisplayRegionCoordinates().y;
-	
+
 	// Don't clear test info display region
 	int size =  height * numBytesPerLine;
 	byte *buffer = new byte[size];
@@ -274,7 +235,7 @@ uint Testsuite::parseEvents() {
 void Testsuite::updateStats(const char *prefix, const char *info, uint testNum, uint numTests, Common::Point pt) {
 	Common::String text = Common::String::printf(" Running %s: %s (%d of %d) ", prefix, info, testNum, numTests);
 	writeOnScreen(text, pt);
-	uint barColor = kColorSpecial; 
+	uint barColor = kColorSpecial;
 	// below the text a rectangle denoting the progress in the testsuite can be drawn.
 	int separation = getLineSeparation();
 	pt.y += separation;
@@ -289,7 +250,7 @@ void Testsuite::updateStats(const char *prefix, const char *info, uint testNum, 
 	// draw the boundary
 	memset(buffer, barColor, sizeof(byte) * wRect);
 	memset(buffer + (wRect * (lRect - 1)) , barColor, sizeof(byte) * wRect);
-	
+
 	for (int i = 0; i < lRect; i++) {
 		for (int j = 0; j < wRect; j++) {
 			if (j < wShaded) {
@@ -318,11 +279,6 @@ bool Testsuite::enableTest(const Common::String &testName, bool toEnable) {
 void Testsuite::execute() {
 	// Main Loop for a testsuite
 
-	// Do nothing if meant to exit
-	if (toQuit == kEngineQuit) {
-		return;
-	}
-
 	uint count = 0;
 	Common::Point pt = getDisplayRegionCoordinates();
 	pt.y += getLineSeparation();
@@ -331,41 +287,45 @@ void Testsuite::execute() {
 	for (Common::Array<Test *>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
 		if (!(*i)->enabled) {
 			logPrintf("Info! Skipping Test: %s, Skipped by configuration.\n", ((*i)->featureName).c_str());
-			continue;	
-		}
-
-		if (toQuit == kSkipNext) {
-			logPrintf("Info! Skipping Test: %s, Skipped by user.\n", ((*i)->featureName).c_str());
-			toQuit = kLoopNormal;
+			_numTestsSkipped++;
 			continue;
 		}
 
-		if((*i)->isInteractive && !isSessionInteractive) {
+		if((*i)->isInteractive && !ConfParams.isSessionInteractive()) {
 			logPrintf("Info! Skipping Test: %s, non-interactive environment is selected\n", ((*i)->featureName).c_str());
+			_numTestsSkipped++;
 			continue;
 		}
 
 		logPrintf("Info! Executing Test: %s\n", ((*i)->featureName).c_str());
 		updateStats("Test", ((*i)->featureName).c_str(), count++, numEnabledTests, pt);
-		_numTestsExecuted++;
-		if ((*i)->driver()) {
+
+		// Run the test and capture exit status.
+		TestExitStatus eStatus = (*i)->driver();
+		if (kTestPassed == eStatus) {
 			logPrintf("Result: Passed\n");
+			_numTestsExecuted++;
 			_numTestsPassed++;
+		} else if (kTestSkipped == eStatus){
+			logPrintf("Result: Skipped\n");
+			_numTestsSkipped++;
 		} else {
+			_numTestsExecuted++;
 			logPrintf("Result: Failed\n");
 		}
+
 		updateStats("Test", ((*i)->featureName).c_str(), count, numEnabledTests, pt);
 		// TODO: Display a screen here to user with details of upcoming test, he can skip it or Quit or RTL
 		// Check if user wants to quit/RTL/Skip next test by parsing events.
 		// Quit directly if explicitly requested
 
 		if (Engine::shouldQuit()) {
-			toQuit = kEngineQuit;
+			_toQuit = kEngineQuit;
 			genReport();
 			return;
 		}
 
-		toQuit = parseEvents();
+		_toQuit = parseEvents();
 	}
 	genReport();
 }

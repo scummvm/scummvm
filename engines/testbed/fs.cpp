@@ -63,14 +63,14 @@ bool FStests::readDataFromFile(Common::FSDirectory *directory, const char *file)
 	return true;
 }
 
-bool FStests::testReadFile() {
+TestExitStatus FStests::testReadFile() {
 	const Common::String &path = ConfMan.get("path");
 	Common::FSDirectory gameRoot(path);
 	int numFailed = 0;
 
-	if (!gameRoot.getFSNode().isDirectory()) {
-		Testsuite::logDetailedPrintf("game Path should be a directory");
-		return false;
+	if (!gameRoot.getFSNode().exists() || !gameRoot.getFSNode().isDirectory()) {
+		Testsuite::logDetailedPrintf("game Path should be an existing directory");
+		 return kTestFailed;
 	}
 
 	const char *dirList[] = {"test1" ,"Test2", "TEST3" , "tEST4", "test5"};
@@ -80,6 +80,11 @@ bool FStests::testReadFile() {
 		Common::String dirName = dirList[i];
 		Common::String fileName = file[i];
 		Common::FSDirectory *directory = gameRoot.getSubDirectory(dirName);
+
+		if (!directory) {
+			Testsuite::logDetailedPrintf("Failed to open directory %s during FS tests\n", dirName.c_str());
+			 return kTestFailed;
+		}
 
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
@@ -91,6 +96,11 @@ bool FStests::testReadFile() {
 		delete directory;
 		directory = gameRoot.getSubDirectory(dirName);
 
+		if (!directory) {
+			Testsuite::logDetailedPrintf("Failed to open directory %s during FS tests\n", dirName.c_str());
+			 return kTestFailed;
+		}
+
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
 			numFailed++;
@@ -101,6 +111,11 @@ bool FStests::testReadFile() {
 		delete directory;
 		directory = gameRoot.getSubDirectory(dirName);
 
+		if (!directory) {
+			Testsuite::logDetailedPrintf("Failed to open directory %s during FS tests\n", dirName.c_str());
+			 return kTestFailed;
+		}
+
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
 			numFailed++;
@@ -109,16 +124,24 @@ bool FStests::testReadFile() {
 	}
 
 	Testsuite::logDetailedPrintf("Failed %d out of 15\n", numFailed);
-	return false;
+	if (numFailed) {
+		return kTestFailed;
+	} else {
+		return kTestPassed;
+	}
 }
 
 /**
  * This test creates a file testbed.out, writes a sample data and confirms if
  * it is same by reading the file again.
  */
-bool FStests::testWriteFile() {
+TestExitStatus FStests::testWriteFile() {
 	const Common::String &path = ConfMan.get("path");
 	Common::FSNode gameRoot(path);
+	if (!gameRoot.exists()) {
+		Testsuite::logPrintf("Couldn't open the game data directory %s", path.c_str());
+		 return kTestFailed;
+	}
 
 	Common::FSNode fileToWrite = gameRoot.getChild("testbed.out");
 
@@ -126,7 +149,7 @@ bool FStests::testWriteFile() {
 
 	if (!ws) {
 		Testsuite::logDetailedPrintf("Can't open writable file in game data dir\n");
-		return false;
+		 return kTestFailed;
 	}
 
 	ws->writeString("ScummVM Rocks!");
@@ -134,36 +157,42 @@ bool FStests::testWriteFile() {
 	delete ws;
 
 	Common::SeekableReadStream *rs = fileToWrite.createReadStream();
+	if (!rs) {
+		Testsuite::logDetailedPrintf("Can't open recently written file testbed.out in game data dir\n");
+		 return kTestFailed;
+	}
 	Common::String readFromFile = rs->readLine();
 	delete rs;
 
 	if (readFromFile.equals("ScummVM Rocks!")) {
 		// All good
 		Testsuite::logDetailedPrintf("Data written and read correctly\n");
-		return true;
+		 return kTestPassed;
 	}
 
-	return false;
+	 return kTestFailed;
 }
 
 
 
 FSTestSuite::FSTestSuite() {
-	addTest("ReadingFile", &FStests::testReadFile, false);
-	addTest("WritingFile", &FStests::testWriteFile, false);
-}
-
-void FSTestSuite::enable(bool flag) {
+	// FS tests depend on Game Data files.
+	// If those are not found. Disable this testsuite.
 	const Common::String &path = ConfMan.get("path");
 	Common::FSNode gameRoot(path);
 
 	Common::FSNode gameIdentificationFile = gameRoot.getChild("TESTBED");
 	if (!gameIdentificationFile.exists()) {
 		logPrintf("WARNING! : Game Data not found. Skipping FS tests\n");
+		ConfParams.setGameDataFound(false);
 		Testsuite::enable(false);
-		return;
 	}
-	Testsuite::enable(flag);
+	addTest("ReadingFile", &FStests::testReadFile, false);
+	addTest("WritingFile", &FStests::testWriteFile, false);
+}
+
+void FSTestSuite::enable(bool flag) {
+	Testsuite::enable(ConfParams.isGameDataFound() & flag);
 }
 
 } // End of namespace Testbed

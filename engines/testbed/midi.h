@@ -22,62 +22,56 @@
  * $Id$
  */
 
-#ifndef TESTBED_SOUND_H
-#define TESTBED_SOUND_H
+#ifndef TESTBED_MIDI_H
+#define TESTBED_MIDI_H
 
-#include "gui/dialog.h"
-#include "sound/mixer.h"
-#include "testbed/config.h"
+#include "common/stream.h"
+#include "sound/midiparser.h"
 #include "testbed/testsuite.h"
+
+// This file can be used as template for header files of other newer testsuites.
 
 namespace Testbed {
 
-class SoundSubsystemDialog : public TestbedInteractionDialog {
-public:
-	SoundSubsystemDialog();
-	~SoundSubsystemDialog() {}
-	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	Audio::Mixer *_mixer;
-	Audio::SoundHandle _h1, _h2, _h3;
-};
+namespace MidiTests {
 
-namespace SoundSubsystem {
+// Helper functions for MIDI tests
+bool loadMusicInMemory(Common::MemoryWriteStreamDynamic *ws);
+void waitForMusicToPlay(MidiParser *parser);
 
-// Helper functions for SoundSubsystem tests
+// will contain function declarations for MIDI tests
+// add more here
+TestExitStatus playMidiMusic();
 
-// will contain function declarations for SoundSubsystem tests
-TestExitStatus playBeeps();
-TestExitStatus mixSounds();
-TestExitStatus audiocdOutput();
-TestExitStatus sampleRates();
-}
+} // End of namespace MIDItests
 
-class SoundSubsystemTestSuite : public Testsuite {
+class MidiTestSuite : public Testsuite {
 public:
 	/**
-	 * The constructor for the SoundSubsystemTestSuite
+	 * The constructor for the XXXTestSuite
 	 * For every test to be executed one must:
 	 * 1) Create a function that would invoke the test
 	 * 2) Add that test to list by executing addTest()
 	 *
 	 * @see addTest()
 	 */
-	SoundSubsystemTestSuite();
-	~SoundSubsystemTestSuite() {}
-
+	MidiTestSuite();
+	~MidiTestSuite() {}
 	const char *getName() const {
-		return "SoundSubsystem";
+		return "MIDI";
 	}
 
 	const char *getDescription() const {
-		return "Sound Subsystem";
+		return "Midi Music";
 	}
 
+	void enable(bool flag);
+
 private:
-	bool _isTestDataFound;
+	bool _isMidiDataFound;
 
 };
 
 } // End of namespace Testbed
 
-#endif // TESTBED_SOUND_H
+#endif // TESTBED_MIDI_H

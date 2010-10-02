@@ -22,16 +22,18 @@
  * $Id$
  */
 
-#include "common/fs.h"
 #include "common/stream.h"
 #include "common/config-manager.h"
+
 #include "engines/engine.h"
+
 #include "testbed/config.h"
+#include "testbed/fs.h"
 
 namespace Testbed {
 
 TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan) : GUI::Dialog("Browser"), _testbedConfMan(tsConfMan) {
-	
+
 	new GUI::StaticTextWidget(this, "Browser.Headline", "Select Testsuites to Execute");
 	new GUI::StaticTextWidget(this, "Browser.Path", "Use Doubleclick to select/deselect");
 
@@ -52,7 +54,7 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 			_colors.push_back(GUI::ThemeEngine::kFontColorAlternate);
 		}
 	}
-	
+
 	_testListDisplay = new TestbedListWidget(this, "Browser.List", _testSuiteArray);
 	_testListDisplay->setNumberingMode(GUI::kListNumberingOff);
 	_testListDisplay->setList(_testSuiteDescArray, &_colors);
@@ -78,12 +80,18 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 	case GUI::kListItemDoubleClickedCmd:
 		ts  = _testSuiteArray[_testListDisplay->getSelected()];
 		if (ts) {
+			// Toggle status
 			if (ts->isEnabled()) {
 				ts->enable(false);
-				_testListDisplay->markAsDeselected(_testListDisplay->getSelected());
 			} else {
 				ts->enable(true);
+			}
+
+			// Now render status
+			if (ts->isEnabled()) {
 				_testListDisplay->markAsSelected(_testListDisplay->getSelected());
+			} else {
+				_testListDisplay->markAsDeselected(_testListDisplay->getSelected());
 			}
 		}
 		break;
@@ -123,7 +131,7 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 		delete ws;
 	default:
 		GUI::Dialog::handleCommand(sender, cmd, data);
-	
+
 	}
 }
 
@@ -145,16 +153,16 @@ void TestbedInteractionDialog::addButton(uint w, uint h, const Common::String na
 	_yOffset += h;
 }
 
-void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, Common::Array<Common::String> &strArray, uint yPadding) {
+void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, Common::Array<Common::String> &strArray, GUI::ListWidget::ColorList *colors, uint yPadding) {
 	_yOffset += yPadding;
 	GUI::ListWidget *list = new GUI::ListWidget(this, x, y, w, h);
 	list->setEditable(false);
 	list->setNumberingMode(GUI::kListNumberingOff);
-	list->setList(strArray);
+	list->setList(strArray, colors);
 	_yOffset += h;
 }
 
-void TestbedInteractionDialog::addButtonXY(uint x, uint y, uint w, uint h, const Common::String name, uint32 cmd) {	
+void TestbedInteractionDialog::addButtonXY(uint x, uint y, uint w, uint h, const Common::String name, uint32 cmd) {
 	_buttonArray.push_back(new GUI::ButtonWidget(this, x, _yOffset, w, h, name, 0, cmd));
 }
 
@@ -178,15 +186,12 @@ void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {
 		}
 	}
 	_configFileInterface.saveToStream(*ws);
-	_configFileInterface.clear();
 	ws->flush();
 }
 
 Common::SeekableReadStream *TestbedConfigManager::getConfigReadStream() {
-	// Look for config file in game-path
-	const Common::String &path = ConfMan.get("path");
-	Common::FSDirectory gameRoot(path);
-	Common::SeekableReadStream *rs = gameRoot.createReadStreamForMember(_configFileName);
+	// Look for config file using SearchMan
+	Common::SeekableReadStream *rs = SearchMan.createReadStreamForMember(_configFileName);
 	return rs;
 }
 
@@ -200,9 +205,9 @@ Common::WriteStream *TestbedConfigManager::getConfigWriteStream() {
 	return ws;
 }
 
-void TestbedConfigManager::parseConfigFile() {	
+void TestbedConfigManager::parseConfigFile() {
 	Common::SeekableReadStream *rs = getConfigReadStream();
-	
+
 	if (!rs) {
 		Testsuite::logPrintf("Info! No config file found, using default configuration.\n");
 		initDefaultConfiguration();
@@ -214,13 +219,14 @@ void TestbedConfigManager::parseConfigFile() {
 
 	for (Common::ConfigFile::SectionList::const_iterator i = sections.begin(); i != sections.end(); i++) {
 		if (i->name.equalsIgnoreCase("Global")) {
-			// Global params may be directly queried, ignore them	
+			// Global params may be directly queried, ignore them
 		} else {
 			// A testsuite, process it.
 			currTS = getTestsuiteByName(i->name);
 			Common::ConfigFile::SectionKeyList kList = i->getKeys();
 			if (!currTS) {
 				Testsuite::logPrintf("Warning! Error in config: Testsuite %s not found\n", i->name.c_str());
+				continue;
 			}
 
 			for (Common::ConfigFile::SectionKeyList::const_iterator j = kList.begin(); j != kList.end(); j++) {
@@ -259,14 +265,14 @@ Testsuite *TestbedConfigManager::getTestsuiteByName(const Common::String &name) 
 void TestbedConfigManager::selectTestsuites() {
 
 	parseConfigFile();
-	
+
 	if (_configFileInterface.hasKey("isSessionInteractive", "Global")) {
 		Common::String in;
 		_configFileInterface.getKey("isSessionInteractive", "Global", in);
-		Testsuite::isSessionInteractive = stringToBool(in);
+		ConfParams.setSessionAsInteractive(stringToBool(in));
 	}
 
-	if (!Testsuite::isSessionInteractive) {
+	if (!ConfParams.isSessionInteractive()) {
 		// Non interactive sessions don't need to go beyond
 		return;
 	}
@@ -275,15 +281,28 @@ void TestbedConfigManager::selectTestsuites() {
 	// Testsuite::isSessionInteractive = false;
 	Common::String prompt("Welcome to the ScummVM testbed!\n"
 						"It is a framework to test the various ScummVM subsystems namely GFX, Sound, FS, events etc.\n"
-						"If you see this, it means interactive tests would run on this system :)");
+						"If you see this, it means interactive tests would run on this system :)\n");
+
+	if (!ConfParams.isGameDataFound()) {
+		prompt += "\nSeems like Game data files are not configured properly.\n"
+		"Create Game data files using script ./create-testbed-data.sh in dists/engine-data\n"
+		"Next, Configure the game path in launcher / command-line.\n"
+		"Currently a few testsuites namely FS/AudioCD/MIDI would be disabled\n";
+	}
 
 	Testsuite::logPrintf("Info! : Interactive tests are also being executed.\n");
-	
+
 	if (Testsuite::handleInteractiveInput(prompt, "Proceed?", "Customize", kOptionRight)) {
+		if (Engine::shouldQuit()) {
+			return;
+		}
 		// Select testsuites using checkboxes
 		TestbedOptionsDialog tbd(_testsuiteList, this);
 		tbd.runModal();
 	}
+
+	// Clear it to remove entries before next rerun
+	_configFileInterface.clear();
 }
 
 }	// End of namespace Testbed

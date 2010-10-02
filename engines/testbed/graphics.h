@@ -40,19 +40,19 @@ void HSVtoRGB(int &rComp, int &gComp, int &bComp, int hue, int sat, int val);
 Common::Rect drawCursor(bool cursorPaletteDisabled = false, const char *gfxModeName = "", int cursorTargetScale = 1);
 
 // will contain function declarations for GFX tests
-bool cursorTrails();
-bool fullScreenMode();
-bool aspectRatio();
-bool palettizedCursors();
-bool mouseMovements();
-bool copyRectToScreen();
-bool iconifyWindow();
-bool scaledCursors();
-bool shakingEffect();
-bool focusRectangle();
-bool overlayGraphics();
-bool paletteRotation();
-bool pixelFormats();
+TestExitStatus cursorTrails();
+TestExitStatus fullScreenMode();
+TestExitStatus aspectRatio();
+TestExitStatus palettizedCursors();
+TestExitStatus mouseMovements();
+TestExitStatus copyRectToScreen();
+TestExitStatus iconifyWindow();
+TestExitStatus scaledCursors();
+TestExitStatus shakingEffect();
+TestExitStatus focusRectangle();
+TestExitStatus overlayGraphics();
+TestExitStatus paletteRotation();
+TestExitStatus pixelFormats();
 // add more here
 
 } // End of namespace GFXtests

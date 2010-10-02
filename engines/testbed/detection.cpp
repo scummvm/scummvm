@@ -41,7 +41,7 @@ static const ADGameDescription testbedDescriptions[] = {
 	{
 		"testbed",
 		"",
-		AD_ENTRY1("TESTBED", 0),  // Game-data file for detection.
+		AD_ENTRY1("TESTBED", 0),	// Game-data file for detection
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
@@ -70,7 +70,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Testbed: The Backend Testing Framework";
+		return "TestBed: The Backend Testing Framework";
 	}
 
 	virtual const char *getOriginalCopyright() const {

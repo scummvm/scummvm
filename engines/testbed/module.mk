@@ -2,10 +2,12 @@ MODULE := engines/testbed
 
 MODULE_OBJS := \
 	config.o \
+	config-params.o \
 	detection.o \
 	events.o \
 	fs.o \
 	graphics.o \
+	midi.o \
 	misc.o \
 	savegame.o \
 	sound.o \

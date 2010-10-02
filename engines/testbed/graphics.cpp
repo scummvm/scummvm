@@ -62,7 +62,7 @@ GFXTestSuite::GFXTestSuite() {
 	// Mouse Layer tests (Palettes and movements)
 	addTest("PalettizedCursors", &GFXtests::palettizedCursors);
 	addTest("MouseMovements", &GFXtests::mouseMovements);
-	// FIXME: Scaled cursor crsh with odd dimmensions
+	// FIXME: Scaled cursor crash with odd dimmensions
 	addTest("ScaledCursors", &GFXtests::scaledCursors);
 
 	// Effects
@@ -82,7 +82,7 @@ void GFXTestSuite::setCustomColor(uint r, uint g, uint b) {
 	_palette[8] = r;
 	_palette[9] = g;
 	_palette[10] = b;
-	
+
 	// Set colorNum kColorSpecial with a special color.
 	int absIndx = kColorSpecial * 4;
 	_palette[absIndx + 1] = 173;
@@ -270,7 +270,7 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
 		if (!gfxScalarMode.equals("")) {
 			info = "The cursor size (yellow) should match the red rectangle.";
 		}
-		
+
 		Testsuite::writeOnScreen(info, pt);
 
 		info = "GFX Mode";
@@ -346,7 +346,7 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
  * Used by aspectRatio()
  */
 void GFXtests::drawEllipse(int cx, int cy, int a, int b) {
-	
+
 	// Take a buffer of screen size
 	int width = g_system->getWidth();
 	int height = Testsuite::getDisplayRegionCoordinates().y;
@@ -397,22 +397,22 @@ void GFXtests::drawEllipse(int cx, int cy, int a, int b) {
 /**
  * Tests the fullscreen mode by: toggling between fullscreen and windowed mode
  */
-bool GFXtests::fullScreenMode() {
+TestExitStatus GFXtests::fullScreenMode() {
 	Testsuite::clearScreen();
 	Common::String info = "Fullscreen test. Here you should expect a toggle between windowed and fullscreen states depending "
 	"upon your initial state.";
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing fullscreen mode", pt);
-	
+
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : FullScreenMode\n");
-		return true;
+		return kTestSkipped;
 	}
 
 	bool isFeaturePresent;
 	bool isFeatureEnabled;
-	bool passed = true;
+	TestExitStatus passed = kTestPassed;
 	Common::String prompt;
 	OptionSelected shouldSelect;
 
@@ -435,7 +435,7 @@ bool GFXtests::fullScreenMode() {
 
 		if (!Testsuite::handleInteractiveInput(prompt, "Fullscreen", "Windowed", shouldSelect)) {
 			// User selected incorrect current state
-			passed = false;
+			passed = kTestFailed;
 			Testsuite::logDetailedPrintf("g_system->getFeatureState() failed\n");
 		}
 
@@ -453,7 +453,7 @@ bool GFXtests::fullScreenMode() {
 
 		if (!Testsuite::handleInteractiveInput(prompt, "Fullscreen", "Windowed", shouldSelect)) {
 			// User selected incorrect mode
-			passed = false;
+			passed = kTestFailed;
 			Testsuite::logDetailedPrintf("g_system->setFeatureState() failed\n");
 		}
 
@@ -468,7 +468,7 @@ bool GFXtests::fullScreenMode() {
 		if (!Testsuite::handleInteractiveInput(prompt, "Yes, it is", "Nopes", shouldSelect)) {
 			// User selected incorrect mode
 			Testsuite::logDetailedPrintf("switching back to initial state failed\n");
-			passed = false;
+			passed = kTestFailed;
 		}
 
 	} else {
@@ -481,22 +481,22 @@ bool GFXtests::fullScreenMode() {
 /**
  * Tests the aspect ratio correction by: drawing an ellipse, when corrected the ellipse should render to a circle
  */
-bool GFXtests::aspectRatio() {
-	
+TestExitStatus GFXtests::aspectRatio() {
+
 	Testsuite::clearScreen();
 	Common::String info = "Aspect Ratio Correction test. If aspect ratio correction is enabled you should expect a circle on screen,"
 	" an ellipse otherwise.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Aspect Ratio\n");
-		return true;
+		return kTestSkipped;
 	}
 	// Draw an ellipse on the screen
 	drawEllipse(80, 160, 72, 60);
 
 	bool isFeaturePresent;
 	bool isFeatureEnabled;
-	bool passed = true;
+	TestExitStatus passed = kTestPassed;
 	Common::String prompt;
 	OptionSelected shouldSelect;
 
@@ -510,7 +510,7 @@ bool GFXtests::aspectRatio() {
 		prompt = " What does the curve on screen appears to you ?";
 		if (!Testsuite::handleInteractiveInput(prompt, "Circle", "Ellipse", shouldSelect)) {
 			// User selected incorrect option
-			passed = false;
+			passed = kTestFailed;
 			Testsuite::logDetailedPrintf("Aspect Ratio Correction failed\n");
 		}
 
@@ -524,7 +524,7 @@ bool GFXtests::aspectRatio() {
 		prompt = " What does the curve on screen appears to you ?";
 		if (!Testsuite::handleInteractiveInput(prompt, "Circle", "Ellipse", shouldSelect)) {
 			// User selected incorrect option
-			passed = false;
+			passed = kTestFailed;
 			Testsuite::logDetailedPrintf("Aspect Ratio Correction failed\n");
 		}
 
@@ -540,7 +540,7 @@ bool GFXtests::aspectRatio() {
 	if (Testsuite::handleInteractiveInput("This should definetely be your initial state?", "Yes, it is", "Nopes", kOptionRight)) {
 		// User selected incorrect mode
 		Testsuite::logDetailedPrintf("Switching back to initial state failed\n");
-		passed = false;
+		passed = kTestFailed;
 	}
 
 	return passed;
@@ -550,7 +550,7 @@ bool GFXtests::aspectRatio() {
  * Tests Palettized cursors.
  * Method: Create a yellow colored cursor, should be able to move it. Once you click test terminates
  */
-bool GFXtests::palettizedCursors() {
+TestExitStatus GFXtests::palettizedCursors() {
 
 	Testsuite::clearScreen();
 	Common::String info = "Palettized Cursors test.\n "
@@ -562,17 +562,17 @@ bool GFXtests::palettizedCursors() {
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Palettized Cursors\n");
-		return true;
+		return kTestSkipped;
 	}
-	
-	bool passed = true;
+
+	TestExitStatus passed = kTestPassed;
 
 	// Testing with cursor Palette
 	setupMouseLoop();
-	
+
 	if (Testsuite::handleInteractiveInput("Which color did the cursor appeared to you?", "Yellow", "Any other", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Couldn't use cursor palette for rendering cursor\n");
-		passed = false;
+		passed = kTestFailed;
 	}
 
 	// Testing with game Palette
@@ -581,11 +581,11 @@ bool GFXtests::palettizedCursors() {
 
 	if (Testsuite::handleInteractiveInput("Which color did the cursor appeared to you?", "Red", "Any other", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Couldn't use Game palette for rendering cursor\n");
-		passed = false;
+		passed = kTestFailed;
 	}
 
-	if (!Testsuite::handleInteractiveInput("Did test run as was described?")) {
-		passed = false;
+	if (!Testsuite::handleInteractiveInput("     Did test run as was described?     ")) {
+		passed = kTestFailed;
 	}
 
 	// re-enable cursor palette
@@ -599,22 +599,24 @@ bool GFXtests::palettizedCursors() {
  * Tests automated mouse movements. "Warp" functionality provided by the backend.
  */
 
-bool GFXtests::mouseMovements() {
+TestExitStatus GFXtests::mouseMovements() {
 	Testsuite::clearScreen();
-	// Make mouse visible
+	// Ensure that the cursor is visible
 	CursorMan.showMouse(true);
-	
+
 	Common::String info = "Testing Automated Mouse movements.\n"
 						"You should expect cursor hotspot(top-left corner) to automatically move from (0, 0) to (100, 100).\n"
 						"There we have a rectangle drawn, finally the cursor would lie centred in that rectangle.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Mouse Movements\n");
-		return true;
+		return kTestSkipped;
 	}
-	
+
 	// Draw Rectangle
 	Graphics::Surface *screen = g_system->lockScreen();
+	// Ensure that 2 represents red in current palette
+	GFXTestSuite::setCustomColor(255, 0, 0);
 	screen->fillRect(Common::Rect::center(106, 106, 14, 14), 2);
 	g_system->unlockScreen();
 
@@ -635,11 +637,11 @@ bool GFXtests::mouseMovements() {
 	g_system->delayMillis(1500);
 	CursorMan.showMouse(false);
 
-	if (Testsuite::handleInteractiveInput("Was the cursor symmetrically contained in the rectangle at (100, 100)?", "Yes", "No", kOptionRight)) {
-		return false;
+	if (Testsuite::handleInteractiveInput("Was the cursor centred in the rectangle at (100, 100)?", "Yes", "No", kOptionRight)) {
+		return kTestFailed;
 	}
 
-	return true;
+	return kTestPassed;
 }
 
 
@@ -648,17 +650,17 @@ bool GFXtests::mouseMovements() {
  * This basically blits the screen by the contents of its buffer.
  *
  */
-bool GFXtests::copyRectToScreen() {
-	
+TestExitStatus GFXtests::copyRectToScreen() {
+
 	Testsuite::clearScreen();
 	Common::String info = "Testing Blitting a Bitmap to screen.\n"
 		"You should expect to see a 20x40 yellow horizontal rectangle centred at the screen.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Blitting Bitmap\n");
-		return true;
+		return kTestSkipped;
 	}
-	
+
 	GFXTestSuite::setCustomColor(255, 255, 0);
 	byte buffer[20 * 40];
 	memset(buffer, 2, 20 * 40);
@@ -670,28 +672,28 @@ bool GFXtests::copyRectToScreen() {
 	g_system->updateScreen();
 	g_system->delayMillis(1000);
 
-	if (Testsuite::handleInteractiveInput("Did you see yellow rectangle?", "Yes", "No", kOptionRight)) {
-		return false;
+	if (Testsuite::handleInteractiveInput("      Did you see yellow rectangle ?       ", "Yes", "No", kOptionRight)) {
+		return kTestFailed;
 	}
 
-	return true;
+	return kTestPassed;
 }
 
 /**
  * Testing feature : Iconifying window
  * It is expected the screen minimizes when this feature is enabled
  */
-bool GFXtests::iconifyWindow() {
-	
+TestExitStatus GFXtests::iconifyWindow() {
+
 	Testsuite::clearScreen();
 	Common::String info = "Testing Iconify Window mode.\n If the feature is supported by the backend, "
 		"you should expect the window to be minimized.\n However you would manually need to de-iconify.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Iconifying window\n");
-		return true;
+		return kTestSkipped;
 	}
-	
+
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing Iconifying window", pt);
 
@@ -718,32 +720,45 @@ bool GFXtests::iconifyWindow() {
 		Testsuite::displayMessage("feature not supported");
 	}
 
-	if (Testsuite::handleInteractiveInput("Did you see window minimized?", "Yes", "No", kOptionRight)) {
-		return false;
+	if (Testsuite::handleInteractiveInput("  Did you see the window minimized?  ", "Yes", "No", kOptionRight)) {
+		return kTestFailed;
 	}
 
-	return true;
+	return kTestPassed;
 }
 
 /**
  * Testing feature: Scaled cursors
  */
-bool GFXtests::scaledCursors() {
+TestExitStatus GFXtests::scaledCursors() {
 
 	Testsuite::clearScreen();
 	Common::String info = "Testing : Scaled cursors\n"
 		"Here every graphics mode is tried with a cursorTargetScale of 1, 2 and 3.\n"
-		"The expected cursor size is drawn as a rectangle, the cursor should entirely cover that rectangle.\n"
+		"The expected cursor size is drawn as a rectangle.\n The cursor should approximately match that rectangle.\n"
 		"This may take time, You may skip the later scalers and just examine the first three i.e 1x, 2x and 3x";
 
+	bool isAspectRatioCorrected = g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection);
+
+	if (isAspectRatioCorrected) {
+		info += "\nDisabling Aspect ratio correction, for letting cusors match exactly, will be restored after this test.";
+	}
+	
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Scaled Cursors\n");
-		return true;
+		return kTestSkipped;
 	}
 
 	int maxLimit = 1000;
 	if (!Testsuite::handleInteractiveInput("Do You want to restrict scalers to 1x, 2x and 3x only?", "Yes", "No", kOptionRight)) {
 		maxLimit = 3;
+	}
+
+
+	if (isAspectRatioCorrected) {	
+		g_system->beginGFXTransaction();
+		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, false);
+		g_system->endGFXTransaction();
 	}
 
 	const int currGFXMode = g_system->getGraphicsMode();
@@ -753,6 +768,20 @@ bool GFXtests::scaledCursors() {
 		// for every graphics mode display cursors for cursorTargetScale 1, 2 and 3
 		// Switch Graphics mode
 		// FIXME: Crashes with "3x" mode now.:
+		
+		info = Common::String::printf("Testing : Scaled cursors with GFX Mode %s\n", gfxMode->name);
+		if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+			Testsuite::logPrintf("\tInfo! Skipping sub-test : Scaled Cursors :: GFX Mode %s\n", gfxMode->name);
+			gfxMode++;
+			maxLimit--;
+			continue;
+		}
+		if (Engine::shouldQuit()) {
+			// Explicit exit requested
+			Testsuite::logPrintf("Info! Explicit exit requested during scaling test, this test may be incomplete\n");
+			return kTestSkipped;
+		}
+		
 		g_system->beginGFXTransaction();
 
 		bool isGFXModeSet = g_system->setGraphicsMode(gfxMode->id);
@@ -771,67 +800,86 @@ bool GFXtests::scaledCursors() {
 			Testsuite::clearScreen();
 		} else {
 			Testsuite::logDetailedPrintf("Switching to graphics mode %s failed\n", gfxMode->name);
-			return false;
+			return kTestFailed;
 		}
 		gfxMode++;
 		maxLimit--;
+
+		info = "Did the expected cursor size and the actual cursor size matched?";
+		if (Testsuite::handleInteractiveInput(info, "Yes", "No", kOptionRight)) {
+			Testsuite::logPrintf("\tInfo! Failed sub-test : Scaled Cursors :: GFX Mode %s\n", gfxMode->name);
+		}
+		
+		if (Engine::shouldQuit()) {
+			// Explicit exit requested
+			Testsuite::logPrintf("Info! Explicit exit requested during scaling test, this test may be incomplete\n");
+			return kTestSkipped;
+		}
+
 	}
 
 	// Restore Original State
 	g_system->beginGFXTransaction();
 	bool isGFXModeSet = g_system->setGraphicsMode(currGFXMode);
 	g_system->initSize(320, 200);
+
+	if (isAspectRatioCorrected) {
+		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, true);
+	}
+	
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 	if (gfxError != OSystem::kTransactionSuccess || !isGFXModeSet) {
 		Testsuite::logDetailedPrintf("Switcing to initial state failed\n");
-		return false;
+		return kTestFailed;
 	}
 
 	// Done with cursors, Make them invisible, any other test may enable and use it.
 	CursorMan.showMouse(false);
-	return true;
+	return kTestPassed;
 }
 
-bool GFXtests::shakingEffect() {
-	
+TestExitStatus GFXtests::shakingEffect() {
+
 	Testsuite::clearScreen();
 	Common::String info = "Shaking test. You should expect the graphics(text/bars etc) drawn on the screen to shake!";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Shaking Effect\n");
-		return true;
+		return kTestSkipped;
 	}
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("If Shaking Effect works, this should shake!", pt);
-	int times = 35;
+	int times = 15;
 	while (times--) {
 		g_system->setShakePos(25);
+		g_system->delayMillis(50);
 		g_system->updateScreen();
 		g_system->setShakePos(0);
+		g_system->delayMillis(50);
 		g_system->updateScreen();
 	}
 	g_system->delayMillis(1500);
 
 	if (Testsuite::handleInteractiveInput("Did the Shaking test worked as you were expecting?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Shaking Effect didn't worked");
-		return false;
+		return kTestFailed;
 	}
-	return true;
+	return kTestPassed;
 }
 
-bool GFXtests::focusRectangle() {
-	
+TestExitStatus GFXtests::focusRectangle() {
+
 	Testsuite::clearScreen();
 	Common::String info = "Testing : Setting and hiding Focus \n"
 		"If this feature is implemented, the focus should be toggled between the two rectangles on the corners";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : focus Rectangle\n");
-		return true;
+		return kTestSkipped;
 	}
-	
+
 	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont));
 
 	Graphics::Surface *screen = g_system->lockScreen();
@@ -867,18 +915,18 @@ bool GFXtests::focusRectangle() {
 		Testsuite::logDetailedPrintf("Focus Rectangle feature doesn't works. Check platform.\n");
 	}
 
-	return true;
+	return kTestPassed;
 }
 
-bool GFXtests::overlayGraphics() {
+TestExitStatus GFXtests::overlayGraphics() {
 	Testsuite::clearScreen();
 	Common::String info = "Overlay Graphics. You should expect to see a green colored rectangle on the screen";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Overlay Graphics\n");
-		return true;
+		return kTestSkipped;
 	}
-	
+
 	Graphics::PixelFormat pf = g_system->getOverlayFormat();
 
 	OverlayColor buffer[50 * 100];
@@ -899,22 +947,24 @@ bool GFXtests::overlayGraphics() {
 
 	if (Testsuite::handleInteractiveInput("Did you see a green overlayed rectangle?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Overlay Rectangle feature doesn't works\n");
-		return false;
+		return kTestFailed;
 	}
 
-	return true;
+	return kTestPassed;
 }
 
-bool GFXtests::paletteRotation() {
-	
+TestExitStatus GFXtests::paletteRotation() {
+
 	Common::String info = "Palette rotation. Here we draw a full 256 colored rainbow and then rotate it.\n"
 						"Note that the screen graphics change without having to draw anything.\n"
-						"The palette should appear to rotate, Click the mouse button to exit.";
+						"The palette should appear to rotate, as a result, the background will change its color too.\n"
+						"Click the mouse button to exit.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : palette Rotation\n");
-		return true;
+		return kTestSkipped;
 	}
+	Common::Point pt(0, 10);
 	Testsuite::clearEntireScreen();
 
 	// Use 256 colors
@@ -951,7 +1001,7 @@ bool GFXtests::paletteRotation() {
 	}
 
 	g_system->copyRectToScreen(buffer, 256, 22, 50, 256, 30);
-	
+
 	// Show mouse
 	CursorMan.showMouse(true);
 	g_system->updateScreen();
@@ -959,7 +1009,7 @@ bool GFXtests::paletteRotation() {
 
 	bool toRotate = true;
 	Common::Event event;
-	
+
 	while (toRotate) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
@@ -979,41 +1029,41 @@ bool GFXtests::paletteRotation() {
 	GFXTestSuite::setCustomColor(255, 0, 0);
 	Testsuite::clearScreen();
 
-	if(Testsuite::handleInteractiveInput("Did you saw a rotation in colors of rectangles displayed on screen?", "Yes", "No", kOptionRight)) {
-		return false;
+	if(Testsuite::handleInteractiveInput("Did you see a rotation in colors of rectangles displayed on screen?", "Yes", "No", kOptionRight)) {
+		return kTestFailed;
 	}
 
-	return true;
+	return kTestPassed;
 }
 
-bool GFXtests::cursorTrails() {
+TestExitStatus GFXtests::cursorTrails() {
 	Common::String info = "With some shake offset the cursor was known to leave trails in the GUI\n"
 						"Here we set some offset and ask user to check for mouse trails, \n"
 						"the test is passed when there are no trails";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Cursor Trails\n");
-		return true;
+		return kTestSkipped;
 	}
-	bool passed = false;
+	TestExitStatus passed = kTestFailed;
 	g_system->setShakePos(25);
 	g_system->updateScreen();
 	if (Testsuite::handleInteractiveInput("Does the cursor leaves trails while moving?", "Yes", "No", kOptionRight)) {
-		passed = true;
+		passed = kTestPassed;
 	}
 	g_system->setShakePos(0);
 	g_system->updateScreen();
 	return passed;
 }
 
-bool GFXtests::pixelFormats() {
+TestExitStatus GFXtests::pixelFormats() {
 	Testsuite::clearScreen();
 	Common::String info = "Testing pixel formats. Here we iterate over all the supported pixel formats and display some colors using them\n"
 		"This may take long, especially if the backend supports many pixel formats";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : focus Rectangle\n");
-		return true;
+		Testsuite::logPrintf("Info! Skipping test : Pixel Formats\n");
+		return kTestSkipped;
 	}
 
 	Common::List<Graphics::PixelFormat> pfList = g_system->getSupportedFormats();
@@ -1054,7 +1104,6 @@ bool GFXtests::pixelFormats() {
 
 		Common::Point pt(0, 170);
 		Common::String msg;
-		// XXX: Can use snprintf?
 		msg = Common::String::printf("Testing Pixel Formats, %d of %d", numFormatsTested, pfList.size());
 		Testsuite::writeOnScreen(msg, pt, true);
 
@@ -1091,11 +1140,11 @@ bool GFXtests::pixelFormats() {
 	Testsuite::clearScreen();
 
 	if (numFailed) {
-		Testsuite::logDetailedPrintf("Pixel Format test: Failed : %d, Passed : %d, Ignored %d\n", numFailed, numPassed, numFormatsTested - (numPassed + numFailed));
-		return false;
+		Testsuite::logDetailedPrintf("Pixel Format test: Failed : %d, Passed : %d, Ignored %d\n",numFailed, numPassed, numFormatsTested - (numPassed + numFailed));
+		return kTestFailed;
 	}
 
-	return true;
+	return kTestPassed;
 }
 
 } // End of namespace Testbed

@@ -55,7 +55,7 @@ public:
 	const char *getName() const {
 		return "Dummy Template";
 	}
-	
+
 	const char *getDescription() const {
 		return "Some Arbit description";
 	}
