@@ -225,6 +225,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	}
 
 	Common::SeekableReadStream& readS = *file;
+	bool uncompressedSound = false;
 
 	if (soundResourceLength >= 8) {
 		byte header[8];
@@ -242,7 +243,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			resourceType = kSoundShorten;
 		}
 
-		bool uncompressedSound = false;
 		// If patch data exists for sound resource 4 (used in ITE intro), don't treat this sound as compressed
 		// Patch data for this resource is in file p2_a.iaf or p2_a.voc
 		if (_vm->getGameId() == GID_ITE && resourceId == 4 && context->getResourceData(resourceId)->patchData != NULL)
@@ -277,7 +277,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			buffer.flags &= ~Audio::FLAG_16BITS;
 		} else {
 			// Voice files in newer ITE demo versions are OKI ADPCM (VOX) encoded
-			if (!scumm_stricmp(context->fileName(), "voicesd.rsc"))
+			if (!uncompressedSound && !scumm_stricmp(context->fileName(), "voicesd.rsc"))
 				resourceType = kSoundVOX;
 		}
 	}
