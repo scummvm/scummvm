@@ -326,7 +326,7 @@ void ScummEngine::initScreens(int b, int h) {
 		if (!_townsClearLayerFlag && (h - b != _virtscr[kMainVirtScreen].h))
 			_townsScreen->clearLayer(0);
 
-		if (_game.id == GID_MONKEY2 || _game.id == GID_INDY4) {
+		if (_game.id != GID_MONKEY) {
 			_textSurface.fillRect(Common::Rect(0, 0, _textSurface.w * _textSurfaceMultiplier, _textSurface.h * _textSurfaceMultiplier), 0);
 			_townsScreen->clearLayer(1);
 		}
@@ -3678,17 +3678,16 @@ void ScummEngine::fadeOut(int effect) {
 	if (_game.version < 7)
 		camera._last.x = camera._cur.x;
 
+	if (_game.version == 3 && _game.platform == Common::kPlatformFMTowns)
+		_textSurface.fillRect(Common::Rect(0, vs->topline * _textSurfaceMultiplier, _textSurface.pitch, (vs->topline + vs->h) * _textSurfaceMultiplier), 0);
+
 	// TheDig can disable fadeIn(), and may call fadeOut() several times
 	// successively. Disabling the _screenEffectFlag check forces the screen
 	// to get cleared. This fixes glitches, at least, in the first cutscenes
 	// when bypassed of FT and TheDig.
 	if ((_game.version == 7 || _screenEffectFlag) && effect != 0) {
-
 		// Fill screen 0 with black
 		memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
-
-		if (_game.version == 3 && _game.platform == Common::kPlatformFMTowns)
-			_textSurface.fillRect(Common::Rect(0, vs->topline * _textSurfaceMultiplier, _textSurface.pitch, (vs->topline + vs->h) * _textSurfaceMultiplier), 0);
 
 		// Fade to black with the specified effect, if any.
 		switch (effect) {

@@ -49,7 +49,7 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 	int sp1 = vs->pitch - (width * vs->bytesPerPixel);
 	int sp2 = _textSurface.pitch - width * m;
 				
-	if (vs->number == kMainVirtScreen) {
+	if (vs->number == kMainVirtScreen || _game.id == GID_INDY3 || _game.id == GID_ZAK) {
 		for (int h = 0; h < height; ++h) {
 			if (_bytesPerPixelOutput == 2) {
 				for (int w = 0; w < width; ++w) {
