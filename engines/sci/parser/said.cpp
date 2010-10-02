@@ -1107,7 +1107,7 @@ True
 said put washer on shaft & 455 , ( 3fa < cb ) / 8c6
 True
 
-said depth correct & [!*] < 8b1 / 22
+said depth correct & [!*] < 8b1 / 22b
 True
 
 said depth acknowledged & / 46d , 460 , 44d < 8b1
