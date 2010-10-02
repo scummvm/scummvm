@@ -901,6 +901,16 @@ uint16 Script::execute(uint16 startOffset) {
 	uint16 offset = startOffset;
 	bool breakFlag = false;
 
+	// WORKAROUND: Prevents the Weregate door closing prematurely
+	if (startOffset == 3941) {
+		Hotspot *goewinHotspot = r.getActiveHotspot(GOEWIN_ID);
+		if (!goewinHotspot->doorCloseCheck(10025)) {
+			// Goewin is still blocking the door, so reschedule the closing
+			r.delayList().add(1, startOffset, false);
+			return 0;
+		}
+	}
+
 	param = 0;
 	fields.setField(SEQUENCE_RESULT, 0);
 
