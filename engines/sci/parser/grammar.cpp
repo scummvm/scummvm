@@ -277,10 +277,8 @@ static ParseRuleList *_vocab_add_rule(ParseRuleList *list, ParseRule *rule) {
 		while (seeker->next/* && seeker->next->terminal <= term*/) {
 			if (seeker->next->terminal == term) {
 				if (*(seeker->next->rule) == *rule) {
-					delete rule;
-					// FIXME: not sure about this change, fixes pq2 crashing when having opened the cabinet
-					//  and typing "go to bains" - delete rule deletes part of new_elem
-					//delete new_elem;
+					delete new_elem; // NB: This also deletes 'rule'
+
 					return list; // No duplicate rules
 				}
 			}
