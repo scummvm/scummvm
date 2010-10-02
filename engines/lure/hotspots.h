@@ -236,7 +236,6 @@ private:
 	BarPlaceResult getBarPlace();
 	bool findClearBarPlace();
 	bool characterWalkingCheck(uint16 id);
-	bool doorCloseCheck(uint16 doorId);
 	void resetDirection();
 
 	// Action set
@@ -450,6 +449,7 @@ public:
 	void updateMovement();
 	void updateMovement2(CharacterMode value);
 	void resetPosition();
+	bool doorCloseCheck(uint16 doorId);
 
 	void doAction();
 	void doAction(Action action, HotspotData *hotspot);
