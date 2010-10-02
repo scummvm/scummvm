@@ -1137,8 +1137,8 @@ Common::Error ScummEngine::init() {
 			if (format != _system->getScreenFormat())
 				return Common::kUnsupportedColorMode;
 #else
-			if (_game.platform == Common::kPlatformFMTowns) {
-				warning("Starting game without the required 16bit color support.\nYou will experience severe color glitches");
+			if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {
+				warning("Starting game without the required 16bit color support.\nYou may experience color glitches");
 				initGraphics(screenWidth, screenHeight, (screenWidth > 320));
 			} else {
 				error("16bit color support is required for this game");
