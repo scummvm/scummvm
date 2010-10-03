@@ -468,6 +468,7 @@ private:
 
 		uint16 *bltInternX;
 		uint8 **bltInternY;
+		uint16 *bltTmpPal;
 	} _layers[2];
 	
 	uint8 *_outBuffer;

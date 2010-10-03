@@ -215,6 +215,8 @@ TownsScreen::~TownsScreen() {
 	delete[] _layers[1].bltInternX;
 	delete[] _layers[0].bltInternY;
 	delete[] _layers[1].bltInternY;
+	delete[] _layers[0].bltTmpPal;
+	delete[] _layers[1].bltTmpPal;
 	delete[] _outBuffer;
 	_dirtyRects.clear();
 }
@@ -265,6 +267,9 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 	for (int i = 0; i < _height; ++i)
 		l->bltInternY[i] = l->pixels + (i / l->scaleH) * l->pitch;
 
+	delete[] l->bltTmpPal;
+	l->bltTmpPal = (l->bpp == 1 && _bpp == 2) ? new uint16[l->numCol] : 0;
+	
 	l->enabled = true;
 	l->onBottom = (!layer || !_layers[0].enabled);
 	l->ready = true;
@@ -448,6 +453,11 @@ void TownsScreen::updateOutputBuffer() {
 			uint8 *dst = _outBuffer + r->top * _pitch + r->left * _bpp;
 			int ptch = _pitch - (r->right - r->left + 1) * _bpp;
 
+			if (_bpp == 2 && l->bpp == 1) {
+				for (int ic = 0; ic < l->numCol; ic++)
+					l->bltTmpPal[ic] = calc16BitColor(&l->palette[ic * 3]);
+			}
+
 			for (int y = r->top; y <= r->bottom; ++y) {
 				if (l->bpp == _bpp && l->scaleW == 1 && l->onBottom) {
 					memcpy(dst, l->bltInternY[y] + l->bltInternX[r->left], (r->right + 1 - r->left) * _bpp);
@@ -461,7 +471,7 @@ void TownsScreen::updateOutputBuffer() {
 							if (col || l->onBottom) {
 								if (l->numCol == 16)
 									col = (col >> 4) & (col & 0x0f);
-								WRITE_LE_UINT16(dst, calc16BitColor(&l->palette[col * 3]));
+								WRITE_LE_UINT16(dst, l->bltTmpPal[col]);
 							}
 						} else {
 							WRITE_LE_UINT16(dst, READ_LE_UINT16(src));
