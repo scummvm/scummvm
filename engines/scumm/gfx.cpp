@@ -1311,7 +1311,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 				byte *mask = (byte *)_textSurface.getBasePtr(x * _textSurfaceMultiplier, (y - _screenTop + vs->topline) * _textSurfaceMultiplier);
 				fill(mask, _textSurface.pitch, color, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, _textSurface.bytesPerPixel);
 				
-				if (_game.id == GID_MONKEY2 || _game.id == GID_INDY4)
+				if (_game.id == GID_MONKEY2 || _game.id == GID_INDY4 || ((_game.id == GID_INDY3 || _game.id == GID_ZAK) && vs->number != kTextVirtScreen) || (_game.id == GID_LOOM && vs->number == kMainVirtScreen))
 					return;
 			}
 			
