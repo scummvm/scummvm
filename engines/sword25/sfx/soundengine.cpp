@@ -56,7 +56,7 @@ private:
 
 
 SoundEngine::SoundEngine(Kernel *pKernel) : ResourceService(pKernel) {
-	if (!_RegisterScriptBindings())
+	if (!registerScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else
 		BS_LOGLN("Script bindings registered.");
@@ -71,42 +71,42 @@ Service *SoundEngine_CreateObject(Kernel *pKernel) {
 	return new SoundEngine(pKernel);
 }
 
-bool SoundEngine::Init(uint sampleRate, uint channels) {
-	warning("STUB: SoundEngine::Init(%d, %d)", sampleRate, channels);
+bool SoundEngine::init(uint sampleRate, uint channels) {
+	warning("STUB: SoundEngine::init(%d, %d)", sampleRate, channels);
 
 	return true;
 }
 
-void SoundEngine::Update() {
+void SoundEngine::update() {
 }
 
-void SoundEngine::SetVolume(float volume, SOUND_TYPES type) {
-	warning("STUB: SoundEngine::SetVolume(%f, %d)", volume, type);
+void SoundEngine::setVolume(float volume, SOUND_TYPES type) {
+	warning("STUB: SoundEngine::setVolume(%f, %d)", volume, type);
 }
 
-float SoundEngine::GetVolume(SOUND_TYPES type) {
-	warning("STUB: SoundEngine::GetVolume(%d)", type);
+float SoundEngine::getVolume(SOUND_TYPES type) {
+	warning("STUB: SoundEngine::getVolume(%d)", type);
 	return 0;
 }
 
-void SoundEngine::PauseAll() {
-	debugC(1, kDebugSound, "SoundEngine::PauseAll()");
+void SoundEngine::pauseAll() {
+	debugC(1, kDebugSound, "SoundEngine::pauseAll()");
 
 	_mixer->pauseAll(true);
 }
 
-void SoundEngine::ResumeAll() {
-	debugC(1, kDebugSound, "SoundEngine::ResumeAll()");
+void SoundEngine::resumeAll() {
+	debugC(1, kDebugSound, "SoundEngine::resumeAll()");
 
 	_mixer->pauseAll(false);
 }
 
-void SoundEngine::PauseLayer(uint layer) {
-	warning("STUB: SoundEngine::PauseLayer(%d)", layer);
+void SoundEngine::pauseLayer(uint layer) {
+	warning("STUB: SoundEngine::pauseLayer(%d)", layer);
 }
 
-void SoundEngine::ResumeLayer(uint layer) {
-	warning("STUB: SoundEngine::ResumeLayer(%d)", layer);
+void SoundEngine::resumeLayer(uint layer) {
+	warning("STUB: SoundEngine::resumeLayer(%d)", layer);
 }
 
 SndHandle *SoundEngine::getHandle(uint *id) {
@@ -148,109 +148,109 @@ Audio::Mixer::SoundType getType(SoundEngine::SOUND_TYPES type) {
 	return Audio::Mixer::kPlainSoundType;
 }
 
-bool SoundEngine::PlaySound(const Common::String &fileName, SOUND_TYPES type, float volume, float pan, bool loop, int loopStart, int loopEnd, uint layer) {
-	debugC(1, kDebugSound, "SoundEngine::PlaySound(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
+bool SoundEngine::playSound(const Common::String &fileName, SOUND_TYPES type, float volume, float pan, bool loop, int loopStart, int loopEnd, uint layer) {
+	debugC(1, kDebugSound, "SoundEngine::playSound(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
 
-	PlaySoundEx(fileName, type, volume, pan, loop, loopStart, loopEnd, layer);
+	playSoundEx(fileName, type, volume, pan, loop, loopStart, loopEnd, layer);
 
 	return true;
 }
 
-uint SoundEngine::PlaySoundEx(const Common::String &fileName, SOUND_TYPES type, float volume, float pan, bool loop, int loopStart, int loopEnd, uint layer) {
+uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, float volume, float pan, bool loop, int loopStart, int loopEnd, uint layer) {
 	Common::SeekableReadStream *in = Kernel::GetInstance()->GetPackage()->getStream(fileName);
 	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(in, DisposeAfterUse::YES);
 	uint id;
 	SndHandle *handle = getHandle(&id);
 
-	debugC(1, kDebugSound, "SoundEngine::PlaySoundEx(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
+	debugC(1, kDebugSound, "SoundEngine::playSoundEx(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
 
 	_mixer->playStream(getType(type), &(handle->handle), stream, -1, (byte)(volume * 255), (int8)(pan * 127));
 
 	return id;
 }
 
-void SoundEngine::SetSoundVolume(uint handle, float volume) {
+void SoundEngine::setSoundVolume(uint handle, float volume) {
 	assert(handle < SOUND_HANDLES);
 
-	debugC(1, kDebugSound, "SoundEngine::SetSoundVolume(%d, %f)", handle, volume);
+	debugC(1, kDebugSound, "SoundEngine::setSoundVolume(%d, %f)", handle, volume);
 
 	_mixer->setChannelVolume(_handles[handle].handle, (byte)(volume * 255));
 }
 
-void SoundEngine::SetSoundPanning(uint handle, float pan) {
+void SoundEngine::setSoundPanning(uint handle, float pan) {
 	assert(handle < SOUND_HANDLES);
 
-	debugC(1, kDebugSound, "SoundEngine::SetSoundPanning(%d, %f)", handle, pan);
+	debugC(1, kDebugSound, "SoundEngine::setSoundPanning(%d, %f)", handle, pan);
 
 	_mixer->setChannelBalance(_handles[handle].handle, (int8)(pan * 127));
 }
 
-void SoundEngine::PauseSound(uint handle) {
+void SoundEngine::pauseSound(uint handle) {
 	assert(handle < SOUND_HANDLES);
 
-	debugC(1, kDebugSound, "SoundEngine::PauseSound(%d)", handle);
+	debugC(1, kDebugSound, "SoundEngine::pauseSound(%d)", handle);
 
 	_mixer->pauseHandle(_handles[handle].handle, true);
 }
 
-void SoundEngine::ResumeSound(uint handle) {
+void SoundEngine::resumeSound(uint handle) {
 	assert(handle < SOUND_HANDLES);
 
-	debugC(1, kDebugSound, "SoundEngine::ResumeSound(%d)", handle);
+	debugC(1, kDebugSound, "SoundEngine::resumeSound(%d)", handle);
 
 	_mixer->pauseHandle(_handles[handle].handle, false);
 }
 
-void SoundEngine::StopSound(uint handle) {
+void SoundEngine::stopSound(uint handle) {
 	assert(handle < SOUND_HANDLES);
 
-	debugC(1, kDebugSound, "SoundEngine::StopSound(%d)", handle);
+	debugC(1, kDebugSound, "SoundEngine::stopSound(%d)", handle);
 
 	_mixer->stopHandle(_handles[handle].handle);
 }
 
-bool SoundEngine::IsSoundPaused(uint handle) {
-	warning("STUB: SoundEngine::IsSoundPaused(%d)", handle);
+bool SoundEngine::isSoundPaused(uint handle) {
+	warning("STUB: SoundEngine::isSoundPaused(%d)", handle);
 
 	return false;
 }
 
-bool SoundEngine::IsSoundPlaying(uint handle) {
+bool SoundEngine::isSoundPlaying(uint handle) {
 	assert(handle < SOUND_HANDLES);
 
-	debugC(1, kDebugSound, "SoundEngine::IsSoundPlaying(%d)", handle);
+	debugC(1, kDebugSound, "SoundEngine::isSoundPlaying(%d)", handle);
 
 	return _mixer->isSoundHandleActive(_handles[handle].handle);
 }
 
-float SoundEngine::GetSoundVolume(uint handle) {
-	warning("STUB: SoundEngine::GetSoundVolume(%d)", handle);
+float SoundEngine::getSoundVolume(uint handle) {
+	warning("STUB: SoundEngine::getSoundVolume(%d)", handle);
 
 	return 0;
 }
 
-float SoundEngine::GetSoundPanning(uint handle) {
-	warning("STUB: SoundEngine::GetSoundPanning(%d)", handle);
+float SoundEngine::getSoundPanning(uint handle) {
+	warning("STUB: SoundEngine::getSoundPanning(%d)", handle);
 
 	return 0;
 }
 
-float SoundEngine::GetSoundTime(uint handle) {
-	warning("STUB: SoundEngine::GetSoundTime(%d)", handle);
+float SoundEngine::getSoundTime(uint handle) {
+	warning("STUB: SoundEngine::getSoundTime(%d)", handle);
 
 	return 0;
 }
 
-Resource *SoundEngine::LoadResource(const Common::String &fileName) {
-	warning("STUB: SoundEngine::LoadResource(%s)", fileName.c_str());
+Resource *SoundEngine::loadResource(const Common::String &fileName) {
+	warning("STUB: SoundEngine::loadResource(%s)", fileName.c_str());
 
 	return new SoundResource(fileName);
 }
 
-bool SoundEngine::CanLoadResource(const Common::String &fileName) {
+bool SoundEngine::canLoadResource(const Common::String &fileName) {
 	Common::String fname = fileName;
 
-	debugC(1, kDebugSound, "SoundEngine::CanLoadResource(%s)", fileName.c_str());
+	debugC(1, kDebugSound, "SoundEngine::canLoadResource(%s)", fileName.c_str());
 
 	fname.toLowercase();
 

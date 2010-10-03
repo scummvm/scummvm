@@ -328,8 +328,8 @@ public:
 
 	// Resource-Managing Methods
 	// --------------------------
-	virtual Resource    *LoadResource(const Common::String &FileName);
-	virtual bool            CanLoadResource(const Common::String &FileName);
+	virtual Resource    *loadResource(const Common::String &fileName);
+	virtual bool        canLoadResource(const Common::String &fileName);
 
 	// Persistence Methods
 	// -------------------

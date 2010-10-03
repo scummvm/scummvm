@@ -162,7 +162,7 @@ Resource *ResourceManager::RequestResource(const Common::String &FileName) {
 	if (m_LogCacheMiss) BS_LOG_WARNINGLN("\"%s\" was not precached.", UniqueFileName.c_str());
 
 	Resource *pResource;
-	if ((pResource = LoadResource(UniqueFileName))) {
+	if ((pResource = loadResource(UniqueFileName))) {
 		pResource->AddReference();
 		return pResource;
 	}
@@ -194,7 +194,7 @@ bool ResourceManager::PrecacheResource(const Common::String &FileName, bool Forc
 		}
 	}
 
-	if (!ResourcePtr && LoadResource(UniqueFileName) == NULL) {
+	if (!ResourcePtr && loadResource(UniqueFileName) == NULL) {
 		BS_LOG_ERRORLN("Could not precache \"%s\",", FileName.c_str());
 		return false;
 	}
@@ -221,17 +221,17 @@ void ResourceManager::MoveToFront(Resource *pResource) {
  * The resource must not already be loaded
  * @param FileName      The unique filename of the resource to be loaded
  */
-Resource *ResourceManager::LoadResource(const Common::String &FileName) {
+Resource *ResourceManager::loadResource(const Common::String &fileName) {
 	// ResourceService finden, der die Resource laden kann.
 	for (uint i = 0; i < m_ResourceServices.size(); ++i) {
-		if (m_ResourceServices[i]->CanLoadResource(FileName)) {
+		if (m_ResourceServices[i]->canLoadResource(fileName)) {
 			// If more memory is desired, memory must be released
 			DeleteResourcesIfNecessary();
 
 			// Load the resource
 			Resource *pResource;
-			if (!(pResource = m_ResourceServices[i]->LoadResource(FileName))) {
-				BS_LOG_ERRORLN("Responsible service could not load resource \"%s\".", FileName.c_str());
+			if (!(pResource = m_ResourceServices[i]->loadResource(fileName))) {
+				BS_LOG_ERRORLN("Responsible service could not load resource \"%s\".", fileName.c_str());
 				return NULL;
 			}
 
@@ -246,7 +246,7 @@ Resource *ResourceManager::LoadResource(const Common::String &FileName) {
 		}
 	}
 
-	BS_LOG_ERRORLN("Could not find a service that can load \"%s\".", FileName.c_str());
+	BS_LOG_ERRORLN("Could not find a service that can load \"%s\".", fileName.c_str());
 	return NULL;
 }
 

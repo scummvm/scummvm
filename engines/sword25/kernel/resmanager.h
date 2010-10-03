@@ -155,7 +155,7 @@ private:
 	 * The resource must not already be loaded
 	 * @param FileName      The unique filename of the resource to be loaded
 	 */
-	Resource *LoadResource(const Common::String &FileName);
+	Resource *loadResource(const Common::String &fileName);
 
 	/**
 	 * Returns the full path of a given resource filename.

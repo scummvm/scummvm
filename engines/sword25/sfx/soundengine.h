@@ -98,7 +98,7 @@ public:
 	 * @remark              Calls to other methods may take place only if this
 	 * method was called successfully.
 	 */
-	bool Init(uint SampleRate, uint Channels = 32);
+	bool init(uint sampleRate, uint channels = 32);
 
 	/**
 	 * Performs a "tick" of the sound engine
@@ -107,14 +107,14 @@ public:
 	 * of the sound engine that are not running in their own thread, or to perform
 	 * additional administrative tasks that are needed.
 	 */
-	void Update();
+	void update();
 
 	/**
 	 * Sets the default volume for the different sound types
 	 * @param Volume        The default volume level (0 = off, 1 = full volume)
 	 * @param Type          The SoundType whose volume is to be changed
 	 */
-	void SetVolume(float Volume, SOUND_TYPES Type);
+	void setVolume(float volume, SOUND_TYPES type);
 
 	/**
 	 * Specifies the default volume of different sound types
@@ -122,30 +122,29 @@ public:
 	 * @return              Returns the standard sound volume for the given type
 	 * (0 = off, 1 = full volume).
 	*/
-	float GetVolume(SOUND_TYPES Type);
+	float getVolume(SOUND_TYPES type);
 
 	/**
 	 * Pauses all the sounds that are playing.
 	 */
-	void PauseAll();
+	void pauseAll();
 
 	/**
 	 * Resumes all currently stopped sounds
 	 */
-	void ResumeAll();
+	void resumeAll();
 
 	/**
 	 * Pauses all sounds of a given layer.
 	 * @param Layer         The Sound Layer
 	*/
-	void PauseLayer(uint Layer);
+	void pauseLayer(uint layer);
 
 	/**
 	 * Resumes all the sounds in a layer that was previously stopped with PauseLayer()
 	 * @param Layer         The Sound Layer
 	*/
-	void ResumeLayer(uint Layer);
-
+	void resumeLayer(uint layer);
 
 	/**
 	 * Plays a sound
@@ -163,7 +162,7 @@ public:
 	 * @remark              If more control is needed over the playing, eg. changing the sound parameters
 	 * for Volume and Panning, then PlaySoundEx should be used.
 	*/
-	bool PlaySound(const Common::String &FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, uint Layer = 0);
+	bool playSound(const Common::String &fileName, SOUND_TYPES type, float volume = 1.0f, float pan = 0.0f, bool loop = false, int loopStart = -1, int loopEnd = -1, uint layer = 0);
 
 	/**
 	 * Plays a sound
@@ -180,78 +179,78 @@ public:
 	 * @remark              If more control is needed over the playing, eg. changing the sound parameters
 	 * for Volume and Panning, then PlaySoundEx should be used.
 	 */
-	uint PlaySoundEx(const Common::String &FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, uint Layer = 0);
+	uint playSoundEx(const Common::String &fileName, SOUND_TYPES type, float volume = 1.0f, float pan = 0.0f, bool loop = false, int loopStart = -1, int loopEnd = -1, uint layer = 0);
 
 	/**
 	 * Sets the volume of a playing sound
 	 * @param Handle        The sound handle
 	 * @param Volume        The volume of the sound (0 = off, 1 = full volume)
 	 */
-	void SetSoundVolume(uint Handle, float Volume);
+	void setSoundVolume(uint handle, float volume);
 
 	/**
 	 * Sets the panning of a playing sound
 	 * @param Handle        The sound handle
 	 * @param Pan           Panning (-1 = full left, 1 = right)
 	 */
-	void SetSoundPanning(uint Handle, float Pan);
+	void setSoundPanning(uint handle, float pan);
 
 	/**
 	 * Pauses a playing sound
 	 * @param Handle        The sound handle
 	 */
-	void PauseSound(uint Handle);
+	void pauseSound(uint handle);
 
 	/**
 	 * Resumes a paused sound
 	 * @param Handle        The sound handle
 	 */
-	void ResumeSound(uint Handle);
+	void resumeSound(uint handle);
 
 	/**
 	 * Stops a playing sound
 	 * @param Handle        The sound handle
 	 * @remark              Calling this method invalidates the passed handle; it can no longer be used.
 	 */
-	void StopSound(uint Handle);
+	void stopSound(uint handle);
 
 	/**
 	 * Returns whether a sound is paused
 	 * @param Handle        The sound handle
 	 * @return              Returns true if the sound is paused, false otherwise.
 	 */
-	bool IsSoundPaused(uint Handle);
+	bool isSoundPaused(uint handle);
 
 	/**
 	 * Returns whether a sound is still playing.
 	 * @param Handle        The sound handle
 	 * @return              Returns true if the sound is playing, false otherwise.
 	*/
-	bool IsSoundPlaying(uint Handle);
+	bool isSoundPlaying(uint handle);
 
 	/**
 	 * Returns the volume of a playing sound (0 = off, 1 = full volume)
 	 */
-	float GetSoundVolume(uint Handle);
+	float getSoundVolume(uint handle);
 
 	/**
 	 * Returns the panning of a playing sound (-1 = full left, 1 = right)
 	 */
-	float GetSoundPanning(uint Handle);
+	float getSoundPanning(uint handle);
 
 	/**
 	 * Returns the position within a playing sound in seconds
 	 */
-	float GetSoundTime(uint Handle);
+	float getSoundTime(uint handle);
 
-	Resource    *LoadResource(const Common::String &FileName);
-	bool         CanLoadResource(const Common::String &FileName);
+	Resource    *loadResource(const Common::String &fileName);
+	bool         canLoadResource(const Common::String &fileName);
 
 	bool persist(OutputPersistenceBlock &writer);
 	bool unpersist(InputPersistenceBlock &reader);
 
 private:
-	bool _RegisterScriptBindings();
+	bool registerScriptBindings();
 	SndHandle *getHandle(uint *id);
 
 private:

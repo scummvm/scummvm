@@ -257,8 +257,8 @@ Graphics::Surface *GraphicEngine::GetScreenshot() {
 // RESOURCE MANAGING
 // -----------------------------------------------------------------------------
 
-Resource *GraphicEngine::LoadResource(const Common::String &FileName) {
-	BS_ASSERT(CanLoadResource(FileName));
+Resource *GraphicEngine::loadResource(const Common::String &FileName) {
+	BS_ASSERT(canLoadResource(FileName));
 
 	// Bild für den Softwarebuffer laden
 	if (FileName.hasSuffix(PNG_S_EXTENSION)) {
@@ -360,7 +360,7 @@ Resource *GraphicEngine::LoadResource(const Common::String &FileName) {
 
 // -----------------------------------------------------------------------------
 
-bool GraphicEngine::CanLoadResource(const Common::String &FileName) {
+bool GraphicEngine::canLoadResource(const Common::String &FileName) {
 	return FileName.hasSuffix(PNG_EXTENSION) ||
 		FileName.hasSuffix(ANI_EXTENSION) ||
 		FileName.hasSuffix(FNT_EXTENSION) ||
