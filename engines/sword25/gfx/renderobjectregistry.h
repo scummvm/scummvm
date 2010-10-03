@@ -58,18 +58,19 @@ class RenderObject;
 
 class RenderObjectRegistry : public ObjectRegistry<RenderObject> {
 public:
-	static RenderObjectRegistry &GetInstance() {
-		if (!m_InstancePtr.get()) m_InstancePtr.reset(new RenderObjectRegistry);
-		return *m_InstancePtr.get();
+	static RenderObjectRegistry &getInstance() {
+		if (!_instancePtr.get())
+			_instancePtr.reset(new RenderObjectRegistry);
+		return *_instancePtr.get();
 	}
 
 	virtual ~RenderObjectRegistry() {}
 
 private:
-	virtual void LogErrorLn(const char *Message) const;
-	virtual void LogWarningLn(const char *Message) const;
+	virtual void logErrorLn(const char *message) const;
+	virtual void logWarningLn(const char *message) const;
 
-	static Common::ScopedPtr<RenderObjectRegistry> m_InstancePtr;
+	static Common::ScopedPtr<RenderObjectRegistry> _instancePtr;
 };
 
 } // End of namespace Sword25

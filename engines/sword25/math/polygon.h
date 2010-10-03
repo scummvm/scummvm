@@ -42,10 +42,6 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Forward Declarations
-// -----------------------------------------------------------------------------
-
 class Vertex;
 
 /**
@@ -63,12 +59,12 @@ public:
 	/**
 	 * Copy constructor
 	 */
-	Polygon(const Polygon &Other);
+	Polygon(const Polygon &other);
 
 	/**
 	 * Creates a polygon using persisted data
 	 */
-	Polygon(InputPersistenceBlock &Reader);
+	Polygon(InputPersistenceBlock &reader);
 
 	/**
 	 * Creaes an object of type #BS_Polygon, and assigns Vertices to it
@@ -77,7 +73,7 @@ public:
 	 * @remark                  The Vertecies that define a polygon must not have any self-intersections.
 	 * If the polygon does have self-intersections, then an empty polygon object is created.
 	 */
-	Polygon(int VertexCount, const Vertex *Vertecies);
+	Polygon(int vertexCount_, const Vertex *vertices_);
 
 	/**
 	 * Deletes the BS_Polygon object
@@ -95,7 +91,7 @@ public:
 	 * @return                  Returns false if the Vertecies have self-intersections. In this case,
 	 * the object is not initialised.
 	 */
-	bool Init(int VertexCount, const Vertex *Vertecies);
+	bool init(int vertexCount_, const Vertex *vertices_);
 
 	//
 	// ** Exploratory methods **
@@ -107,7 +103,7 @@ public:
 	 * Returns false if the Vertecies of the polygon are arrange counter-clockwise.
 	 * @remark                  This method only returns a meaningful result if the polygon has at least three Vertecies.
 	 */
-	bool IsCW() const;
+	bool isCW() const;
 
 	/**
 	 * Checks whether the Vertices of the polygon are arranged in a counter-clockwise direction.
@@ -115,21 +111,21 @@ public:
 	 * Returns false if the Vertecies of the polygon are arranged clockwise or co-planar.
 	 * @remark                  This method only returns a meaningful result if the polygon has at least three Vertecies.
 	 */
-	bool IsCCW() const;
+	bool isCCW() const;
 
 	/**
 	 * Checks whether the polygon is convex.
 	 * @return                  Returns true if the polygon is convex. Returns false if the polygon is concave.
 	 * @remark                  This method only returns a meaningful result if the polygon has at least three Vertecies.
 	 */
-	bool IsConvex() const;
+	bool isConvex() const;
 
 	/**
 	 * Checks whether the polygon is concave.
 	 * @return                  Returns true if the polygon is concave. Returns false if the polygon is convex.
 	 * @remark                  This method only returns a meaningful result if the polygon has at least three Vertecies.
 	 */
-	bool IsConcave() const;
+	bool isConcave() const;
 
 	/**
 	 * Checks whether a point is inside the polygon
@@ -137,7 +133,7 @@ public:
 	 * @param BorderBelongsToPolygon    Specifies whether the edge of the polygon should be considered
 	 * @return                  Returns true if the point is inside the polygon, false if it is outside.
 	 */
-	bool IsPointInPolygon(const Vertex &Vertex, bool BorderBelongsToPolygon = true) const;
+	bool isPointInPolygon(const Vertex &vertex, bool borderBelongsToPolygon = true) const;
 
 	/**
 	 * Checks whether a point is inside the polygon
@@ -146,19 +142,19 @@ public:
 	 * @param BorderBelongsToPolygon    Specifies whether the edge of the polygon should be considered
 	 * @return                  Returns true if the point is inside the polygon, false if it is outside.
 	 */
-	bool IsPointInPolygon(int X, int Y, bool BorderBelongsToPolygon = true) const;
+	bool isPointInPolygon(int x, int y, bool borderBelongsToPolygon = true) const;
 
 	/**
 	 * Returns the focus/centroid of the polygon
 	 */
-	Vertex GetCentroid() const;
+	Vertex getCentroid() const;
 
 	// Edge belongs to the polygon
 	// Polygon must be CW
-	bool IsLineInterior(const Vertex &a, const Vertex &b) const;
+	bool isLineInterior(const Vertex &a, const Vertex &b) const;
 	// Edge does not belong to the polygon
 	// Polygon must be CW
-	bool IsLineExterior(const Vertex &a, const Vertex &b) const;
+	bool isLineExterior(const Vertex &a, const Vertex &b) const;
 
 	//
 	// Manipulation methods
@@ -167,58 +163,58 @@ public:
 	/**
 	 * Ensures that the Vertecies of the polygon are arranged in a clockwise direction
 	 */
-	void EnsureCWOrder();
+	void ensureCWOrder();
 
 	/**
 	 * Ensures that the Vertecies of the polygon are arranged in a counter-clockwise direction
 	 */
-	void EnsureCCWOrder();
+	void ensureCCWOrder();
 
 	/**
 	 * Reverses the Vertecies order.
 	 */
-	void ReverseVertexOrder();
+	void reverseVertexOrder();
 
 	/**
 	 * Moves the polygon.
 	 * @param Delta             The vertex around the polygon to be moved.
 	 */
-	void operator+=(const Vertex &Delta);
+	void operator+=(const Vertex &delta);
 
 	//
 	//------------------
 	//
 
 	/// Specifies the number of Vertecies in the Vertecies array.
-	int VertexCount;
+	int vertexCount;
 	/// COntains the Vertecies of the polygon
-	Vertex *Vertecies;
+	Vertex *vertices;
 
 	virtual bool persist(OutputPersistenceBlock &writer);
 	virtual bool unpersist(InputPersistenceBlock &reader);
 
 private:
-	bool m_IsCW;
-	bool m_IsConvex;
-	Vertex m_Centroid;
+	bool _isCW;
+	bool _isConvex;
+	Vertex _centroid;
 
 	/**
 	 * Computes the centroid of the polygon.
 	 */
-	Vertex ComputeCentroid() const;
+	Vertex computeCentroid() const;
 
 	/**
 	 * Determines how the Vertecies of the polygon are arranged.
 	 * @return                  Returns true if the Vertecies are arranged in a clockwise
 	 * direction, otherwise false.
 	 */
-	bool ComputeIsCW() const;
+	bool computeIsCW() const;
 
 	/**
 	 * Determines whether the polygon is convex or concave.
 	 * @return                  Returns true if the polygon is convex, otherwise false.
 	 */
-	bool ComputeIsConvex() const;
+	bool computeIsConvex() const;
 
 	/**
 	 * Calculates the cross product of three Vertecies
@@ -228,7 +224,7 @@ private:
 	 * @return                  Returns the cross-product of the three vertecies
 	 * @todo                    This method would be better as a method of the BS_Vertex class
 	 */
-	int CrossProduct(const Vertex &V1, const Vertex &V2, const Vertex &V3) const;
+	int crossProduct(const Vertex &v1, const Vertex &v2, const Vertex &v3) const;
 
 	/**
 	 * Computes the scalar product of two vectors spanning three vertecies
@@ -241,14 +237,14 @@ private:
 	 * @return                  Returns the dot product of the three Vertecies.
 	 * @todo                    This method would be better as a method of the BS_Vertex class
 	 */
-	int DotProduct(const Vertex &V1, const Vertex &V2, const Vertex &V3) const;
+	int dotProduct(const Vertex &v1, const Vertex &v2, const Vertex &v3) const;
 
 	/**
 	 * Checks whether the polygon is self-intersecting
 	 * @return                  Returns true if the polygon is self-intersecting.
 	 * Returns false if the polygon is not self-intersecting.
 	 */
-	bool CheckForSelfIntersection() const;
+	bool checkForSelfIntersection() const;
 
 	/**
 	 * Find the vertex of the polygon that is located below the right-most point,
@@ -256,9 +252,9 @@ private:
 	 * @return                  Returns the index of the vertex at the bottom-right of the polygon.
 	 * Returns -1 if the vertex list is empty.
 	 */
-	int FindLRVertexIndex() const;
+	int findLRVertexIndex() const;
 
-	bool IsLineInCone(int StartVertexIndex, const Vertex &EndVertex, bool IncludeEdges) const;
+	bool isLineInCone(int startVertexIndex, const Vertex &endVertex, bool includeEdges) const;
 };
 
 } // End of namespace Sword25

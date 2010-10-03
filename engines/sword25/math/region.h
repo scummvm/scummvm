@@ -62,7 +62,7 @@ protected:
 	 */
 	Region();
 
-	Region(InputPersistenceBlock &Reader, uint Handle);
+	Region(InputPersistenceBlock &reader, uint handle);
 
 public:
 	enum REGION_TYPE {
@@ -70,8 +70,8 @@ public:
 		RT_WALKREGION
 	};
 
-	static uint Create(REGION_TYPE Type);
-	static uint Create(InputPersistenceBlock &Reader, uint Handle = 0);
+	static uint create(REGION_TYPE type);
+	static uint create(InputPersistenceBlock &reader, uint handle = 0);
 
 	virtual ~Region();
 
@@ -83,7 +83,7 @@ public:
 	 * @return              Returns true if the initialisation was successful, otherwise false.
 	 * @remark              If the region was already initialised, the old state will be deleted.
 	 */
-	virtual bool Init(const Polygon &Contour, const Common::Array<Polygon> *pHoles = NULL);
+	virtual bool init(const Polygon &contour, const Common::Array<Polygon> *pHoles = NULL);
 
 	//
 	// Exploratory Methods
@@ -94,29 +94,29 @@ public:
 	 * @return              Returns true if the object is in a valid state, otherwise false.
 	 * @remark              Invalid objects can be made valid by calling Init with a valid state.
 	 */
-	bool IsValid() const {
-		return m_Valid;
+	bool isValid() const {
+		return _valid;
 	}
 
 	/**
 	 * Returns the position of the region
 	 */
-	const Vertex &GetPosition() const {
-		return m_Position;
+	const Vertex &getPosition() const {
+		return _position;
 	}
 
 	/**
 	 * Returns the X position of the region
 	 */
-	int GetPosX() const {
-		return m_Position.X;
+	int getPosX() const {
+		return _position.x;
 	}
 
 	/**
 	 * Returns the Y position of the region
 	 */
-	int GetPosY() const {
-		return m_Position.Y;
+	int getPosY() const {
+		return _position.y;
 	}
 
 	/**
@@ -124,7 +124,7 @@ public:
 	 * @param Vertex        A verex with the co-ordinates of the test point
 	 * @return              Returns true if the point is within the region, otherwise false.
 	 */
-	bool IsPointInRegion(const Vertex &Vertex) const;
+	bool isPointInRegion(const Vertex &vertex) const;
 
 	/**
 	 * Indicates whether a point is inside the region
@@ -132,20 +132,20 @@ public:
 	 * @param Y             The Y position
 	 * @return              Returns true if the point is within the region, otherwise false.
 	 */
-	bool IsPointInRegion(int X, int Y) const;
+	bool isPointInRegion(int x, int y) const;
 
 	/**
 	 * Returns the countour of the region
 	 */
-	const Polygon &GetContour() const {
-		return m_Polygons[0];
+	const Polygon &getContour() const {
+		return _polygons[0];
 	}
 
 	/**
 	 * Returns the number of polygons in the hole region
 	 */
-	int GetHoleCount() const {
-		return static_cast<int>(m_Polygons.size() - 1);
+	int getHoleCount() const {
+		return static_cast<int>(_polygons.size() - 1);
 	}
 
 	/**
@@ -154,7 +154,7 @@ public:
 	 * The index must be between 0 and GetHoleCount() - 1.
 	 * @return              Returns the desired hole polygon
 	 */
-	inline const Polygon &GetHole(uint i) const;
+	inline const Polygon &getHole(uint i) const;
 
 	/**
 	 * For a point outside the region, finds the closest point inside the region
@@ -164,14 +164,14 @@ public:
 	 * One should not therefore rely on the fact that there is really no point in
 	 * the region which is closer to the given point.
 	 */
-	Vertex FindClosestRegionPoint(const Vertex &Point) const;
+	Vertex findClosestRegionPoint(const Vertex &point) const;
 
 	/**
 	 * Returns the centroid for the region
 	 */
-	Vertex GetCentroid() const;
+	Vertex getCentroid() const;
 
-	bool IsLineOfSight(const Vertex &a, const Vertex &b) const;
+	bool isLineOfSight(const Vertex &a, const Vertex &b) const;
 
 	//
 	// Manipulation Methods
@@ -182,19 +182,19 @@ public:
 	 * @param X             The new X psoition of the region
 	 * @param Y             The new Y psoition of the region
 	 */
-	virtual void SetPos(int X, int Y);
+	virtual void setPos(int x, int y);
 
 	/**
 	 * Sets the X position of the region
 	 * @param X             The new X position of the region
 	 */
-	void SetPosX(int X);
+	void setPosX(int x);
 
 	/**
 	 * Sets the Y position of the region
 	 * @param Y             The new Y position of the region
 	 */
-	void SetPosY(int Y);
+	void setPosY(int y);
 
 	//
 	// Manipulation Methods
@@ -205,21 +205,21 @@ public:
 
 protected:
 	/// This specifies the type of object
-	REGION_TYPE m_Type;
+	REGION_TYPE _type;
 	/// This variable indicates whether the current object state is valid
-	bool m_Valid;
+	bool _valid;
 	/// This vertex is the position of the region
-	Vertex m_Position;
+	Vertex _position;
 	/// This array contains all the polygons that define the region. The first element of
 	// the array is the contour, all others are the holes
-	Common::Array<Polygon> m_Polygons;
+	Common::Array<Polygon> _polygons;
 	/// The bounding box for the region
-	Common::Rect m_BoundingBox;
+	Common::Rect _boundingBox;
 
 	/**
 	 * Updates the bounding box of the region.
 	 */
-	void UpdateBoundingBox();
+	void updateBoundingBox();
 
 	/**
 	 * Find the point on a line which is closest to another point
@@ -228,17 +228,12 @@ protected:
 	 * @param Point         The point to be compared against
 	 * @return              Returns the point on the line which is cloest to the passed point.
 	 */
-	Vertex FindClosestPointOnLine(const Vertex &LineStart, const Vertex &LineEnd, const Vertex Point) const;
+	Vertex findClosestPointOnLine(const Vertex &lineStart, const Vertex &lineEnd, const Vertex point) const;
 };
 
-
-// -----------------------------------------------------------------------------
-// Inlines
-// -----------------------------------------------------------------------------
-
-inline const Polygon &Region::GetHole(uint i) const {
-	BS_ASSERT(i < m_Polygons.size() - 1);
-	return m_Polygons[i + 1];
+inline const Polygon &Region::getHole(uint i) const {
+	BS_ASSERT(i < _polygons.size() - 1);
+	return _polygons[i + 1];
 }
 
 } // End of namespace Sword25

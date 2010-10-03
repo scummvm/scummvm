@@ -48,7 +48,7 @@ public:
 	virtual ~Geometry() {}
 
 private:
-	bool _RegisterScriptBindings();
+	bool registerScriptBindings();
 };
 
 } // End of namespace Sword25

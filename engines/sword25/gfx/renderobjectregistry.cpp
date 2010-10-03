@@ -32,32 +32,22 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/gfx/renderobjectregistry.h"
 
 #include "common/ptr.h"
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Logging
-// -----------------------------------------------------------------------------
-
 #define BS_LOG_PREFIX "RENDEROBJECTREGISTRY"
 
-Common::ScopedPtr<RenderObjectRegistry> RenderObjectRegistry::m_InstancePtr;
+Common::ScopedPtr<RenderObjectRegistry> RenderObjectRegistry::_instancePtr;
 
-void RenderObjectRegistry::LogErrorLn(const char *Message) const {
-	BS_LOG_ERRORLN(Message);
+void RenderObjectRegistry::logErrorLn(const char *message) const {
+	BS_LOG_ERRORLN(message);
 }
 
-// -----------------------------------------------------------------------------
-
-void RenderObjectRegistry::LogWarningLn(const char *Message) const {
-	BS_LOG_WARNINGLN(Message);
+void RenderObjectRegistry::logWarningLn(const char *message) const {
+	BS_LOG_WARNINGLN(message);
 }
 
 } // End of namespace Sword25

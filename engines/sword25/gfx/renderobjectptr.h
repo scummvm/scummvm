@@ -44,15 +44,7 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Forward Declarations
-// -----------------------------------------------------------------------------
-
 class RenderObject;
-
-// -----------------------------------------------------------------------------
-// Klassendeklaration
-// -----------------------------------------------------------------------------
 
 template<class T>
 class RenderObjectPtr {
@@ -62,7 +54,7 @@ public:
 	RenderObjectPtr(uint handle) : _handle(handle) {}
 
 	T *operator->() const {
-		return static_cast<T *>(RenderObjectRegistry::GetInstance().resolveHandle(_handle));
+		return static_cast<T *>(RenderObjectRegistry::getInstance().resolveHandle(_handle));
 	}
 
 	bool operator==(const RenderObjectPtr<T> & other) {
@@ -70,11 +62,11 @@ public:
 	}
 
 	bool isValid() const {
-		return RenderObjectRegistry::GetInstance().resolveHandle(_handle) != 0;
+		return RenderObjectRegistry::getInstance().resolveHandle(_handle) != 0;
 	}
 
 	void erase() {
-		delete static_cast<T *>(RenderObjectRegistry::GetInstance().resolveHandle(_handle));
+		delete static_cast<T *>(RenderObjectRegistry::getInstance().resolveHandle(_handle));
 		_handle = 0;
 	}
 

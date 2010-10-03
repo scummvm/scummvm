@@ -43,165 +43,142 @@
 
 namespace Sword25 {
 
-// Constructor / Destructor
-// ------------------------
-
-Region::Region() : m_Valid(false), m_Type(RT_REGION) {
-	RegionRegistry::GetInstance().RegisterObject(this);
+Region::Region() : _valid(false), _type(RT_REGION) {
+	RegionRegistry::getInstance().registerObject(this);
 }
 
-// -----------------------------------------------------------------------------
-
-Region::Region(InputPersistenceBlock &Reader, uint Handle) : m_Valid(false), m_Type(RT_REGION) {
-	RegionRegistry::GetInstance().RegisterObject(this, Handle);
-	unpersist(Reader);
+Region::Region(InputPersistenceBlock &reader, uint handle) : _valid(false), _type(RT_REGION) {
+	RegionRegistry::getInstance().registerObject(this, handle);
+	unpersist(reader);
 }
 
-// -----------------------------------------------------------------------------
-
-uint Region::Create(REGION_TYPE Type) {
-	Region *RegionPtr = NULL;
-	switch (Type) {
+uint Region::create(REGION_TYPE type) {
+	Region *regionPtr = NULL;
+	switch (type) {
 	case RT_REGION:
-		RegionPtr = new Region();
+		regionPtr = new Region();
 		break;
 
 	case RT_WALKREGION:
-		RegionPtr = new WalkRegion();
+		regionPtr = new WalkRegion();
 		break;
 
 	default:
 		BS_ASSERT(true);
 	}
 
-	return RegionRegistry::GetInstance().ResolvePtr(RegionPtr);
+	return RegionRegistry::getInstance().resolvePtr(regionPtr);
 }
 
-// -----------------------------------------------------------------------------
-
-uint Region::Create(InputPersistenceBlock &reader, uint Handle) {
+uint Region::create(InputPersistenceBlock &reader, uint handle) {
 	// Read type
-	uint Type;
-	reader.read(Type);
+	uint type;
+	reader.read(type);
 
 	// Depending on the type, create a new BS_Region or BS_WalkRegion object
-	Region *RegionPtr = NULL;
-	if (Type == RT_REGION) {
-		RegionPtr = new Region(reader, Handle);
-	} else if (Type == RT_WALKREGION) {
-		RegionPtr = new WalkRegion(reader, Handle);
+	Region *regionPtr = NULL;
+	if (type == RT_REGION) {
+		regionPtr = new Region(reader, handle);
+	} else if (type == RT_WALKREGION) {
+		regionPtr = new WalkRegion(reader, handle);
 	} else {
 		BS_ASSERT(false);
 	}
 
-	return RegionRegistry::GetInstance().ResolvePtr(RegionPtr);
+	return RegionRegistry::getInstance().resolvePtr(regionPtr);
 }
-
-// -----------------------------------------------------------------------------
 
 Region::~Region() {
-	RegionRegistry::GetInstance().DeregisterObject(this);
+	RegionRegistry::getInstance().deregisterObject(this);
 }
 
-// -----------------------------------------------------------------------------
-
-bool Region::Init(const Polygon &Contour, const Common::Array<Polygon> *pHoles) {
+bool Region::init(const Polygon &contour, const Common::Array<Polygon> *pHoles) {
 	// Reset object state
-	m_Valid = false;
-	m_Position = Vertex(0, 0);
-	m_Polygons.clear();
+	_valid = false;
+	_position = Vertex(0, 0);
+	_polygons.clear();
 
 	// Reserve sufficient  space for countour and holes in the polygon list
 	if (pHoles)
-		m_Polygons.reserve(1 + pHoles->size());
+		_polygons.reserve(1 + pHoles->size());
 	else
-		m_Polygons.reserve(1);
+		_polygons.reserve(1);
 
 	// The first polygon will be the contour
-	m_Polygons.push_back(Polygon());
-	m_Polygons[0].Init(Contour.VertexCount, Contour.Vertecies);
+	_polygons.push_back(Polygon());
+	_polygons[0].init(contour.vertexCount, contour.vertices);
 	// Make sure that the Vertecies in the Contour are arranged in a clockwise direction
-	m_Polygons[0].EnsureCWOrder();
+	_polygons[0].ensureCWOrder();
 
 	// Place the hole polygons in the following positions
 	if (pHoles) {
 		for (uint i = 0; i < pHoles->size(); ++i) {
-			m_Polygons.push_back(Polygon());
-			m_Polygons[i + 1].Init((*pHoles)[i].VertexCount, (*pHoles)[i].Vertecies);
-			m_Polygons[i + 1].EnsureCWOrder();
+			_polygons.push_back(Polygon());
+			_polygons[i + 1].init((*pHoles)[i].vertexCount, (*pHoles)[i].vertices);
+			_polygons[i + 1].ensureCWOrder();
 		}
 	}
 
 
 	// Initialise bounding box
-	UpdateBoundingBox();
+	updateBoundingBox();
 
-	m_Valid = true;
+	_valid = true;
 	return true;
 }
 
-// -----------------------------------------------------------------------------
+void Region::updateBoundingBox() {
+	if (_polygons[0].vertexCount) {
+		int minX = _polygons[0].vertices[0].x;
+		int maxX = _polygons[0].vertices[0].x;
+		int minY = _polygons[0].vertices[0].y;
+		int maxY = _polygons[0].vertices[0].y;
 
-void Region::UpdateBoundingBox() {
-	if (m_Polygons[0].VertexCount) {
-		int MinX = m_Polygons[0].Vertecies[0].X;
-		int MaxX = m_Polygons[0].Vertecies[0].X;
-		int MinY = m_Polygons[0].Vertecies[0].Y;
-		int MaxY = m_Polygons[0].Vertecies[0].Y;
-
-		for (int i = 1; i < m_Polygons[0].VertexCount; i++) {
-			if (m_Polygons[0].Vertecies[i].X < MinX) MinX = m_Polygons[0].Vertecies[i].X;
-			else if (m_Polygons[0].Vertecies[i].X > MaxX) MaxX = m_Polygons[0].Vertecies[i].X;
-			if (m_Polygons[0].Vertecies[i].Y < MinY) MinY = m_Polygons[0].Vertecies[i].Y;
-			else if (m_Polygons[0].Vertecies[i].Y > MaxY) MaxY = m_Polygons[0].Vertecies[i].Y;
+		for (int i = 1; i < _polygons[0].vertexCount; i++) {
+			if (_polygons[0].vertices[i].x < minX) minX = _polygons[0].vertices[i].x;
+			else if (_polygons[0].vertices[i].x > maxX) maxX = _polygons[0].vertices[i].x;
+			if (_polygons[0].vertices[i].y < minY) minY = _polygons[0].vertices[i].y;
+			else if (_polygons[0].vertices[i].y > maxY) maxY = _polygons[0].vertices[i].y;
 		}
 
-		m_BoundingBox = Common::Rect(MinX, MinY, MaxX + 1, MaxY + 1);
+		_boundingBox = Common::Rect(minX, minY, maxX + 1, maxY + 1);
 	}
 }
 
 // Position Changes
-// ----------------
-
-void Region::SetPos(int X, int Y) {
+void Region::setPos(int x, int y) {
 	// Calculate the difference between the old and new position
-	Vertex Delta(X - m_Position.X, Y - m_Position.Y);
+	Vertex delta(x - _position.x, y - _position.y);
 
 	// Save the new position
-	m_Position = Vertex(X, Y);
+	_position = Vertex(x, y);
 
 	// Move all the vertecies
-	for (uint i = 0; i < m_Polygons.size(); ++i) {
-		m_Polygons[i] += Delta;
+	for (uint i = 0; i < _polygons.size(); ++i) {
+		_polygons[i] += delta;
 	}
 
 	// Update the bounding box
-	UpdateBoundingBox();
+	updateBoundingBox();
 }
 
-// -----------------------------------------------------------------------------
-
-void Region::SetPosX(int X) {
-	SetPos(X, m_Position.Y);
+void Region::setPosX(int x) {
+	setPos(x, _position.y);
 }
 
-// -----------------------------------------------------------------------------
-
-void Region::SetPosY(int Y) {
-	SetPos(m_Position.X, Y);
+void Region::setPosY(int y) {
+	setPos(_position.x, y);
 }
 
 // Point-Region Tests
-// ------------------
-
-bool Region::IsPointInRegion(int X, int Y) const {
+bool Region::isPointInRegion(int x, int y) const {
 	// Test whether the point is in the bounding box
-	if (m_BoundingBox.contains(X, Y)) {
+	if (_boundingBox.contains(x, y)) {
 		// Test whether the point is in the contour
-		if (m_Polygons[0].IsPointInPolygon(X, Y, true)) {
+		if (_polygons[0].isPointInPolygon(x, y, true)) {
 			// Test whether the point is in a hole
-			for (uint i = 1; i < m_Polygons.size(); i++) {
-				if (m_Polygons[i].IsPointInPolygon(X, Y, false))
+			for (uint i = 1; i < _polygons.size(); i++) {
+				if (_polygons[i].isPointInPolygon(x, y, false))
 					return false;
 			}
 
@@ -212,178 +189,164 @@ bool Region::IsPointInRegion(int X, int Y) const {
 	return false;
 }
 
-// -----------------------------------------------------------------------------
-
-bool Region::IsPointInRegion(const Vertex &Vertex) const {
-	return IsPointInRegion(Vertex.X, Vertex.Y);
+bool Region::isPointInRegion(const Vertex &vertex) const {
+	return isPointInRegion(vertex.x, vertex.y);
 }
 
-// -----------------------------------------------------------------------------
-
-Vertex Region::FindClosestRegionPoint(const Vertex &Point) const {
+Vertex Region::findClosestRegionPoint(const Vertex &point) const {
 	// Determine whether the point is inside a hole. If that is the case, the closest
 	// point on the edge of the hole is determined
-	int PolygonIdx = 0;
+	int polygonIdx = 0;
 	{
-		for (uint i = 1; i < m_Polygons.size(); ++i) {
-			if (m_Polygons[i].IsPointInPolygon(Point)) {
-				PolygonIdx = i;
+		for (uint i = 1; i < _polygons.size(); ++i) {
+			if (_polygons[i].isPointInPolygon(point)) {
+				polygonIdx = i;
 				break;
 			}
 		}
 	}
 
-	const Polygon &Polygon = m_Polygons[PolygonIdx];
+	const Polygon &polygon = _polygons[polygonIdx];
 
-	BS_ASSERT(Polygon.VertexCount > 1);
+	BS_ASSERT(polygon.vertexCount > 1);
 
 	// For each line of the polygon, calculate the point that is cloest to the given point
 	// The point of this set with the smallest distance to the given point is the result.
-	Vertex ClosestVertex = FindClosestPointOnLine(Polygon.Vertecies[0], Polygon.Vertecies[1], Point);
-	int ClosestVertexDistance2 = ClosestVertex.Distance(Point);
-	for (int i = 1; i < Polygon.VertexCount; ++i) {
-		int j = (i + 1) % Polygon.VertexCount;
+	Vertex closestVertex = findClosestPointOnLine(polygon.vertices[0], polygon.vertices[1], point);
+	int closestVertexDistance2 = closestVertex.distance(point);
+	for (int i = 1; i < polygon.vertexCount; ++i) {
+		int j = (i + 1) % polygon.vertexCount;
 
-		Vertex CurVertex = FindClosestPointOnLine(Polygon.Vertecies[i], Polygon.Vertecies[j], Point);
-		if (CurVertex.Distance(Point) < ClosestVertexDistance2) {
-			ClosestVertex = CurVertex;
-			ClosestVertexDistance2 = CurVertex.Distance(Point);
+		Vertex curVertex = findClosestPointOnLine(polygon.vertices[i], polygon.vertices[j], point);
+		if (curVertex.distance(point) < closestVertexDistance2) {
+			closestVertex = curVertex;
+			closestVertexDistance2 = curVertex.distance(point);
 		}
 	}
 
 	// Determine whether the point is really within the region. This must not be so, as a result of rounding
 	// errors can occur at the edge of polygons
-	if (IsPointInRegion(ClosestVertex))
-		return ClosestVertex;
+	if (isPointInRegion(closestVertex))
+		return closestVertex;
 	else {
 		// Try to construct a point within the region - 8 points are tested in the immediate vacinity
 		// of the point
-		if (IsPointInRegion(ClosestVertex + Vertex(-2, -2)))
-			return ClosestVertex + Vertex(-2, -2);
-		else if (IsPointInRegion(ClosestVertex + Vertex(0, -2)))
-			return ClosestVertex + Vertex(0, -2);
-		else if (IsPointInRegion(ClosestVertex + Vertex(2, -2)))
-			return ClosestVertex + Vertex(2, -2);
-		else if (IsPointInRegion(ClosestVertex + Vertex(-2, 0)))
-			return ClosestVertex + Vertex(-2, 0);
-		else if (IsPointInRegion(ClosestVertex + Vertex(0, 2)))
-			return ClosestVertex + Vertex(0, 2);
-		else if (IsPointInRegion(ClosestVertex + Vertex(-2, 2)))
-			return ClosestVertex + Vertex(-2, 2);
-		else if (IsPointInRegion(ClosestVertex + Vertex(-2, 0)))
-			return ClosestVertex + Vertex(2, 2);
-		else if (IsPointInRegion(ClosestVertex + Vertex(2, 2)))
-			return ClosestVertex + Vertex(2, 2);
+		if (isPointInRegion(closestVertex + Vertex(-2, -2)))
+			return closestVertex + Vertex(-2, -2);
+		else if (isPointInRegion(closestVertex + Vertex(0, -2)))
+			return closestVertex + Vertex(0, -2);
+		else if (isPointInRegion(closestVertex + Vertex(2, -2)))
+			return closestVertex + Vertex(2, -2);
+		else if (isPointInRegion(closestVertex + Vertex(-2, 0)))
+			return closestVertex + Vertex(-2, 0);
+		else if (isPointInRegion(closestVertex + Vertex(0, 2)))
+			return closestVertex + Vertex(0, 2);
+		else if (isPointInRegion(closestVertex + Vertex(-2, 2)))
+			return closestVertex + Vertex(-2, 2);
+		else if (isPointInRegion(closestVertex + Vertex(-2, 0)))
+			return closestVertex + Vertex(2, 2);
+		else if (isPointInRegion(closestVertex + Vertex(2, 2)))
+			return closestVertex + Vertex(2, 2);
 
 		// If no point could be found that way that lies within the region, find the next point
-		ClosestVertex = Polygon.Vertecies[0];
-		int ShortestVertexDistance2 = Polygon.Vertecies[0].Distance2(Point);
+		closestVertex = polygon.vertices[0];
+		int shortestVertexDistance2 = polygon.vertices[0].distance2(point);
 		{
-			for (int i = 1; i < Polygon.VertexCount; i++) {
-				int CurDistance2 = Polygon.Vertecies[i].Distance2(Point);
-				if (CurDistance2 < ShortestVertexDistance2) {
-					ClosestVertex = Polygon.Vertecies[i];
-					ShortestVertexDistance2 = CurDistance2;
+			for (int i = 1; i < polygon.vertexCount; i++) {
+				int curDistance2 = polygon.vertices[i].distance2(point);
+				if (curDistance2 < shortestVertexDistance2) {
+					closestVertex = polygon.vertices[i];
+					shortestVertexDistance2 = curDistance2;
 				}
 			}
 		}
 
 		BS_LOG_WARNINGLN("Clostest vertex forced because edgepoint was outside region.");
-		return ClosestVertex;
+		return closestVertex;
 	}
 }
 
-// -----------------------------------------------------------------------------
+Vertex Region::findClosestPointOnLine(const Vertex &lineStart, const Vertex &lineEnd, const Vertex point) const {
+	float vector1X = static_cast<float>(point.x - lineStart.x);
+	float vector1Y = static_cast<float>(point.y - lineStart.y);
+	float vector2X = static_cast<float>(lineEnd.x - lineStart.x);
+	float vector2Y = static_cast<float>(lineEnd.y - lineStart.y);
+	float vector2Length = sqrtf(vector2X * vector2X + vector2Y * vector2Y);
+	vector2X /= vector2Length;
+	vector2Y /= vector2Length;
+	float distance = sqrtf(static_cast<float>((lineStart.x - lineEnd.x) * (lineStart.x - lineEnd.x) +
+	                       (lineStart.y - lineEnd.y) * (lineStart.y - lineEnd.y)));
+	float dot = vector1X * vector2X + vector1Y * vector2Y;
 
-Vertex Region::FindClosestPointOnLine(const Vertex &LineStart, const Vertex &LineEnd, const Vertex Point) const {
-	float Vector1X = static_cast<float>(Point.X - LineStart.X);
-	float Vector1Y = static_cast<float>(Point.Y - LineStart.Y);
-	float Vector2X = static_cast<float>(LineEnd.X - LineStart.X);
-	float Vector2Y = static_cast<float>(LineEnd.Y - LineStart.Y);
-	float Vector2Length = sqrtf(Vector2X * Vector2X + Vector2Y * Vector2Y);
-	Vector2X /= Vector2Length;
-	Vector2Y /= Vector2Length;
-	float Distance = sqrtf(static_cast<float>((LineStart.X - LineEnd.X) * (LineStart.X - LineEnd.X) +
-	                       (LineStart.Y - LineEnd.Y) * (LineStart.Y - LineEnd.Y)));
-	float Dot = Vector1X * Vector2X + Vector1Y * Vector2Y;
+	if (dot <= 0)
+		return lineStart;
+	if (dot >= distance)
+		return lineEnd;
 
-	if (Dot <= 0) return LineStart;
-	if (Dot >= Distance) return LineEnd;
-
-	Vertex Vector3(static_cast<int>(Vector2X * Dot + 0.5f), static_cast<int>(Vector2Y * Dot + 0.5f));
-	return LineStart + Vector3;
+	Vertex vector3(static_cast<int>(vector2X * dot + 0.5f), static_cast<int>(vector2Y * dot + 0.5f));
+	return lineStart + vector3;
 }
 
-// -----------------------------------------------------------------------------
 // Line of Sight
-// -----------------------------------------------------------------------------
-
-bool Region::IsLineOfSight(const Vertex &a, const Vertex &b) const {
-	BS_ASSERT(m_Polygons.size());
+bool Region::isLineOfSight(const Vertex &a, const Vertex &b) const {
+	BS_ASSERT(_polygons.size());
 
 	// The line must be within the contour polygon, and outside of any hole polygons
-	Common::Array<Polygon>::const_iterator iter = m_Polygons.begin();
-	if (!(*iter).IsLineInterior(a, b)) return false;
-	for (iter++; iter != m_Polygons.end(); iter++)
-		if (!(*iter).IsLineExterior(a, b)) return false;
+	Common::Array<Polygon>::const_iterator iter = _polygons.begin();
+	if (!(*iter).isLineInterior(a, b)) return false;
+	for (iter++; iter != _polygons.end(); iter++)
+		if (!(*iter).isLineExterior(a, b)) return false;
 
 	return true;
 }
 
-// -----------------------------------------------------------------------------
 // Persistence
-// -----------------------------------------------------------------------------
-
 bool Region::persist(OutputPersistenceBlock &writer) {
 	bool Result = true;
 
-	writer.write(static_cast<uint>(m_Type));
-	writer.write(m_Valid);
-	writer.write(m_Position.X);
-	writer.write(m_Position.Y);
+	writer.write(static_cast<uint>(_type));
+	writer.write(_valid);
+	writer.write(_position.x);
+	writer.write(_position.y);
 
-	writer.write(m_Polygons.size());
-	Common::Array<Polygon>::iterator It = m_Polygons.begin();
-	while (It != m_Polygons.end()) {
+	writer.write(_polygons.size());
+	Common::Array<Polygon>::iterator It = _polygons.begin();
+	while (It != _polygons.end()) {
 		Result &= It->persist(writer);
 		++It;
 	}
 
-	writer.write(m_BoundingBox.left);
-	writer.write(m_BoundingBox.top);
-	writer.write(m_BoundingBox.right);
-	writer.write(m_BoundingBox.bottom);
+	writer.write(_boundingBox.left);
+	writer.write(_boundingBox.top);
+	writer.write(_boundingBox.right);
+	writer.write(_boundingBox.bottom);
 
 	return Result;
 }
 
-// -----------------------------------------------------------------------------
-
 bool Region::unpersist(InputPersistenceBlock &reader) {
-	reader.read(m_Valid);
-	reader.read(m_Position.X);
-	reader.read(m_Position.Y);
+	reader.read(_valid);
+	reader.read(_position.x);
+	reader.read(_position.y);
 
-	m_Polygons.clear();
+	_polygons.clear();
 	uint PolygonCount;
 	reader.read(PolygonCount);
 	for (uint i = 0; i < PolygonCount; ++i) {
-		m_Polygons.push_back(Polygon(reader));
+		_polygons.push_back(Polygon(reader));
 	}
 
-	reader.read(m_BoundingBox.left);
-	reader.read(m_BoundingBox.top);
-	reader.read(m_BoundingBox.right);
-	reader.read(m_BoundingBox.bottom);
+	reader.read(_boundingBox.left);
+	reader.read(_boundingBox.top);
+	reader.read(_boundingBox.right);
+	reader.read(_boundingBox.bottom);
 
 	return reader.isGood();
 }
 
-// -----------------------------------------------------------------------------
-
-Vertex Region::GetCentroid() const {
-	if (m_Polygons.size() > 0)
-		return m_Polygons[0].GetCentroid();
+Vertex Region::getCentroid() const {
+	if (_polygons.size() > 0)
+		return _polygons[0].getCentroid();
 	return
 	    Vertex();
 }

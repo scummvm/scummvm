@@ -32,15 +32,7 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Logging
-// -----------------------------------------------------------------------------
-
 #define BS_LOG_PREFIX "ANIMATIONTEMPLATEREGISTRY"
-
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
 
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
@@ -49,71 +41,67 @@
 
 namespace Sword25 {
 
-Common::ScopedPtr<AnimationTemplateRegistry> AnimationTemplateRegistry::m_InstancePtr;
+Common::ScopedPtr<AnimationTemplateRegistry> AnimationTemplateRegistry::_instancePtr;
 
-void AnimationTemplateRegistry::LogErrorLn(const char *Message) const {
-	BS_LOG_ERRORLN(Message);
+void AnimationTemplateRegistry::logErrorLn(const char *message) const {
+	BS_LOG_ERRORLN(message);
 }
 
-// -----------------------------------------------------------------------------
-
-void AnimationTemplateRegistry::LogWarningLn(const char *Message) const {
-	BS_LOG_WARNINGLN(Message);
+void AnimationTemplateRegistry::logWarningLn(const char *message) const {
+	BS_LOG_WARNINGLN(message);
 }
-
-// -----------------------------------------------------------------------------
 
 bool AnimationTemplateRegistry::persist(OutputPersistenceBlock &writer) {
-	bool Result = true;
+	bool result = true;
 
 	// Das nächste zu vergebene Handle schreiben.
-	writer.write(m_NextHandle);
+	writer.write(_nextHandle);
 
 	// Anzahl an BS_AnimationTemplates schreiben.
-	writer.write(m_Handle2PtrMap.size());
+	writer.write(_handle2PtrMap.size());
 
 	// Alle BS_AnimationTemplates persistieren.
-	HANDLE2PTR_MAP::const_iterator Iter = m_Handle2PtrMap.begin();
-	while (Iter != m_Handle2PtrMap.end()) {
+	HANDLE2PTR_MAP::const_iterator iter = _handle2PtrMap.begin();
+	while (iter != _handle2PtrMap.end()) {
 		// Handle persistieren.
-		writer.write(Iter->_key);
+		writer.write(iter->_key);
 
 		// Objekt persistieren.
-		Result &= Iter->_value->persist(writer);
+		result &= iter->_value->persist(writer);
 
-		++Iter;
+		++iter;
 	}
 
-	return Result;
+	return result;
 }
 
 // -----------------------------------------------------------------------------
 
 bool AnimationTemplateRegistry::unpersist(InputPersistenceBlock &reader) {
-	bool Result = true;
+	bool result = true;
 
 	// Das nächste zu vergebene Handle wieder herstellen.
-	reader.read(m_NextHandle);
+	reader.read(_nextHandle);
 
 	// Alle vorhandenen BS_AnimationTemplates zerstören.
-	while (!m_Handle2PtrMap.empty())
-		delete m_Handle2PtrMap.begin()->_value;
+	while (!_handle2PtrMap.empty())
+		delete _handle2PtrMap.begin()->_value;
 
 	// Anzahl an BS_AnimationTemplates einlesen.
-	uint AnimationTemplateCount;
-	reader.read(AnimationTemplateCount);
+	uint animationTemplateCount;
+	reader.read(animationTemplateCount);
 
 	// Alle gespeicherten BS_AnimationTemplates wieder herstellen.
-	for (uint i = 0; i < AnimationTemplateCount; ++i) {
+	for (uint i = 0; i < animationTemplateCount; ++i) {
 		// Handle lesen.
-		uint Handle;
-		reader.read(Handle);
+		uint handle;
+		reader.read(handle);
 
 		// BS_AnimationTemplate wieder herstellen.
-		Result &= (AnimationTemplate::Create(reader, Handle) != 0);
+		result &= (AnimationTemplate::Create(reader, handle) != 0);
 	}
 
-	return reader.isGood() && Result;
+	return reader.isGood() && result;
 }
 
 } // End of namespace Sword25

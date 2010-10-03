@@ -44,30 +44,28 @@ extern "C"
 
 }
 
-// -----------------------------------------------------------------------------
-
 namespace Sword25 {
 
-Vertex &Vertex::LuaVertexToVertex(lua_State *L, int StackIndex, Vertex &vertex) {
+Vertex &Vertex::luaVertexToVertex(lua_State *L, int stackIndex, Vertex &vertex) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
 
 	// Ensure that we actually consider a table
-	luaL_checktype(L, StackIndex, LUA_TTABLE);
+	luaL_checktype(L, stackIndex, LUA_TTABLE);
 
 	// Read X Component
 	lua_pushstring(L, "X");
-	lua_gettable(L, StackIndex);
-	if (!lua_isnumber(L, -1)) luaL_argcheck(L, 0, StackIndex, "the X component has to be a number");
-	vertex.X = static_cast<int>(lua_tonumber(L, -1));
+	lua_gettable(L, stackIndex);
+	if (!lua_isnumber(L, -1)) luaL_argcheck(L, 0, stackIndex, "the X component has to be a number");
+	vertex.x = static_cast<int>(lua_tonumber(L, -1));
 	lua_pop(L, 1);
 
 	// Read Y Component
 	lua_pushstring(L, "Y");
-	lua_gettable(L, StackIndex);
-	if (!lua_isnumber(L, -1)) luaL_argcheck(L, 0, StackIndex, "the Y component has to be a number");
-	vertex.Y = static_cast<int>(lua_tonumber(L, -1));
+	lua_gettable(L, stackIndex);
+	if (!lua_isnumber(L, -1)) luaL_argcheck(L, 0, stackIndex, "the Y component has to be a number");
+	vertex.y = static_cast<int>(lua_tonumber(L, -1));
 	lua_pop(L, 1);
 
 #ifdef DEBUG
@@ -77,20 +75,18 @@ Vertex &Vertex::LuaVertexToVertex(lua_State *L, int StackIndex, Vertex &vertex) 
 	return vertex;
 }
 
-// -----------------------------------------------------------------------------
-
-void Vertex::VertexToLuaVertex(lua_State *L, const Vertex &vertex) {
+void Vertex::vertexToLuaVertex(lua_State *L, const Vertex &vertex) {
 	// Create New Table
 	lua_newtable(L);
 
 	// X value is written to table
 	lua_pushstring(L, "X");
-	lua_pushnumber(L, vertex.X);
+	lua_pushnumber(L, vertex.x);
 	lua_settable(L, -3);
 
 	// Y value is written to table
 	lua_pushstring(L, "Y");
-	lua_pushnumber(L, vertex.Y);
+	lua_pushnumber(L, vertex.y);
 	lua_settable(L, -3);
 }
 

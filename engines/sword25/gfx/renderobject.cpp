@@ -76,9 +76,9 @@ RenderObject::RenderObject(RenderObjectPtr<RenderObject> parentPtr, TYPES type, 
 
 	// Renderobject registrieren, abhängig vom Handle-Parameter entweder mit beliebigem oder vorgegebenen Handle.
 	if (handle == 0)
-		_handle = RenderObjectRegistry::GetInstance().RegisterObject(this);
+		_handle = RenderObjectRegistry::getInstance().registerObject(this);
 	else
-		_handle = RenderObjectRegistry::GetInstance().RegisterObject(this, handle);
+		_handle = RenderObjectRegistry::getInstance().registerObject(this, handle);
 
 	if (_handle == 0)
 		return;
@@ -110,7 +110,7 @@ RenderObject::~RenderObject() {
 	deleteAllChildren();
 
 	// Objekt deregistrieren.
-	RenderObjectRegistry::GetInstance().DeregisterObject(this);
+	RenderObjectRegistry::getInstance().deregisterObject(this);
 }
 
 // Rendern

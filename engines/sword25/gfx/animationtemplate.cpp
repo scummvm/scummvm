@@ -57,7 +57,7 @@ uint AnimationTemplate::Create(const Common::String &SourceAnimation) {
 	AnimationTemplate *AnimationTemplatePtr = new AnimationTemplate(SourceAnimation);
 
 	if (AnimationTemplatePtr->isValid()) {
-		return AnimationTemplateRegistry::GetInstance().ResolvePtr(AnimationTemplatePtr);
+		return AnimationTemplateRegistry::getInstance().resolvePtr(AnimationTemplatePtr);
 	} else {
 		delete AnimationTemplatePtr;
 		return 0;
@@ -70,7 +70,7 @@ uint AnimationTemplate::Create(const AnimationTemplate &Other) {
 	AnimationTemplate *AnimationTemplatePtr = new AnimationTemplate(Other);
 
 	if (AnimationTemplatePtr->isValid()) {
-		return AnimationTemplateRegistry::GetInstance().ResolvePtr(AnimationTemplatePtr);
+		return AnimationTemplateRegistry::getInstance().resolvePtr(AnimationTemplatePtr);
 	} else {
 		delete AnimationTemplatePtr;
 		return 0;
@@ -83,7 +83,7 @@ uint AnimationTemplate::Create(InputPersistenceBlock &Reader, uint Handle) {
 	AnimationTemplate *AnimationTemplatePtr = new AnimationTemplate(Reader, Handle);
 
 	if (AnimationTemplatePtr->isValid()) {
-		return AnimationTemplateRegistry::GetInstance().ResolvePtr(AnimationTemplatePtr);
+		return AnimationTemplateRegistry::getInstance().resolvePtr(AnimationTemplatePtr);
 	} else {
 		delete AnimationTemplatePtr;
 		return 0;
@@ -94,7 +94,7 @@ uint AnimationTemplate::Create(InputPersistenceBlock &Reader, uint Handle) {
 
 AnimationTemplate::AnimationTemplate(const Common::String &SourceAnimation) {
 	// Objekt registrieren.
-	AnimationTemplateRegistry::GetInstance().RegisterObject(this);
+	AnimationTemplateRegistry::getInstance().registerObject(this);
 
 	_valid = false;
 
@@ -109,7 +109,7 @@ AnimationTemplate::AnimationTemplate(const Common::String &SourceAnimation) {
 
 AnimationTemplate::AnimationTemplate(const AnimationTemplate &Other) : AnimationDescription(){
 	// Objekt registrieren.
-	AnimationTemplateRegistry::GetInstance().RegisterObject(this);
+	AnimationTemplateRegistry::getInstance().registerObject(this);
 
 	_valid = false;
 
@@ -135,7 +135,7 @@ AnimationTemplate::AnimationTemplate(const AnimationTemplate &Other) : Animation
 
 AnimationTemplate::AnimationTemplate(InputPersistenceBlock &Reader, uint Handle) {
 	// Objekt registrieren.
-	AnimationTemplateRegistry::GetInstance().RegisterObject(this, Handle);
+	AnimationTemplateRegistry::getInstance().registerObject(this, Handle);
 
 	// Objekt laden.
 	_valid = unpersist(Reader);
@@ -162,7 +162,7 @@ AnimationTemplate::~AnimationTemplate() {
 	}
 
 	// Objekt deregistrieren
-	AnimationTemplateRegistry::GetInstance().DeregisterObject(this);
+	AnimationTemplateRegistry::getInstance().deregisterObject(this);
 }
 
 // -----------------------------------------------------------------------------

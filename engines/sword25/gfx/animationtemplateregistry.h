@@ -35,10 +35,6 @@
 #ifndef SWORD25_ANIMATIONTEMPLATEREGISTRY_H
 #define SWORD25_ANIMATIONTEMPLATEREGISTRY_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistable.h"
 #include "sword25/kernel/objectregistry.h"
@@ -47,31 +43,24 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Forward Deklarationen
-// -----------------------------------------------------------------------------
-
 class AnimationTemplate;
-
-// -----------------------------------------------------------------------------
-// Klassendeklaration
-// -----------------------------------------------------------------------------
 
 class AnimationTemplateRegistry : public ObjectRegistry<AnimationTemplate>, public Persistable {
 public:
-	static AnimationTemplateRegistry &GetInstance() {
-		if (!m_InstancePtr.get()) m_InstancePtr.reset(new AnimationTemplateRegistry);
-		return *m_InstancePtr.get();
+	static AnimationTemplateRegistry &getInstance() {
+		if (!_instancePtr.get())
+			_instancePtr.reset(new AnimationTemplateRegistry);
+		return *_instancePtr.get();
 	}
 
-	virtual bool persist(OutputPersistenceBlock &Writer);
-	virtual bool unpersist(InputPersistenceBlock &Reader);
+	virtual bool persist(OutputPersistenceBlock &writer);
+	virtual bool unpersist(InputPersistenceBlock &reader);
 
 private:
-	virtual void LogErrorLn(const char *Message) const;
-	virtual void LogWarningLn(const char *Message) const;
+	virtual void logErrorLn(const char *message) const;
+	virtual void logWarningLn(const char *message) const;
 
-	static Common::ScopedPtr<AnimationTemplateRegistry> m_InstancePtr;
+	static Common::ScopedPtr<AnimationTemplateRegistry> _instancePtr;
 };
 
 } // End of namespace Sword25

@@ -797,7 +797,7 @@ bool Animation::unpersist(InputPersistenceBlock &reader) {
 
 AnimationDescription *Animation::GetAnimationDescription() const {
 	if (m_AnimationResourcePtr) return m_AnimationResourcePtr;
-	else return AnimationTemplateRegistry::GetInstance().resolveHandle(m_AnimationTemplateHandle);
+	else return AnimationTemplateRegistry::getInstance().resolveHandle(m_AnimationTemplateHandle);
 }
 
 } // End of namespace Sword25

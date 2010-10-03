@@ -32,10 +32,6 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/gfx/renderobjectmanager.h"
 
 #include "sword25/kernel/kernel.h"
@@ -52,26 +48,16 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "RENDEROBJECTMANAGER"
 
-// -----------------------------------------------------------------------------
-// Konstruktion / Desktruktion
-// -----------------------------------------------------------------------------
-
 RenderObjectManager::RenderObjectManager(int width, int height, int framebufferCount) :
 	_frameStarted(false) {
 	// Wurzel des BS_RenderObject-Baumes erzeugen.
 	_rootPtr = (new RootRenderObject(this, width, height))->getHandle();
 }
 
-// -----------------------------------------------------------------------------
-
 RenderObjectManager::~RenderObjectManager() {
 	// Die Wurzel des Baumes löschen, damit werden alle BS_RenderObjects mitgelöscht.
 	_rootPtr.erase();
 }
-
-// -----------------------------------------------------------------------------
-// Interface
-// -----------------------------------------------------------------------------
 
 void RenderObjectManager::startFrame() {
 	_frameStarted = true;
@@ -84,8 +70,6 @@ void RenderObjectManager::startFrame() {
 	for (; iter != _timedRenderObjects.end(); ++iter)
 		(*iter)->frameNotification(timeElapsed);
 }
-
-// -----------------------------------------------------------------------------
 
 bool RenderObjectManager::render() {
 	// Den Objekt-Status des Wurzelobjektes aktualisieren. Dadurch werden rekursiv alle Baumelemente aktualisiert.
@@ -100,13 +84,9 @@ bool RenderObjectManager::render() {
 	return _rootPtr->render();
 }
 
-// -----------------------------------------------------------------------------
-
 void RenderObjectManager::attatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> renderObjectPtr) {
 	_timedRenderObjects.push_back(renderObjectPtr);
 }
-
-// -----------------------------------------------------------------------------
 
 void RenderObjectManager::detatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> renderObjectPtr) {
 	for (uint i = 0; i < _timedRenderObjects.size(); i++)
@@ -115,10 +95,6 @@ void RenderObjectManager::detatchTimedRenderObject(RenderObjectPtr<TimedRenderOb
 			break;
 		}
 }
-
-// -----------------------------------------------------------------------------
-// Persistenz
-// -----------------------------------------------------------------------------
 
 bool RenderObjectManager::persist(OutputPersistenceBlock &writer) {
 	bool result = true;
@@ -137,12 +113,10 @@ bool RenderObjectManager::persist(OutputPersistenceBlock &writer) {
 	}
 
 	// Alle BS_AnimationTemplates persistieren.
-	result &= AnimationTemplateRegistry::GetInstance().persist(writer);
+	result &= AnimationTemplateRegistry::getInstance().persist(writer);
 
 	return result;
 }
-
-// -----------------------------------------------------------------------------
 
 bool RenderObjectManager::unpersist(InputPersistenceBlock &reader) {
 	bool result = true;
@@ -169,7 +143,7 @@ bool RenderObjectManager::unpersist(InputPersistenceBlock &reader) {
 	}
 
 	// Alle BS_AnimationTemplates wieder herstellen.
-	result &= AnimationTemplateRegistry::GetInstance().unpersist(reader);
+	result &= AnimationTemplateRegistry::getInstance().unpersist(reader);
 
 	return result;
 }

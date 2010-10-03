@@ -41,15 +41,7 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Type definitions
-// -----------------------------------------------------------------------------
-
 typedef Common::Array<Vertex> BS_Path;
-
-// -----------------------------------------------------------------------------
-// Class definitions
-// -----------------------------------------------------------------------------
 
 /**
  * This class represents the region in which the main character can move
@@ -59,12 +51,12 @@ class WalkRegion : public Region {
 
 protected:
 	WalkRegion();
-	WalkRegion(InputPersistenceBlock &Reader, uint Handle);
+	WalkRegion(InputPersistenceBlock &Reader, uint handle);
 
 public:
 	virtual ~WalkRegion();
 
-	virtual bool Init(const Polygon &Contour, const Common::Array<Polygon> *pHoles = 0);
+	virtual bool init(const Polygon &contour, const Common::Array<Polygon> *pHoles = 0);
 
 	/**
 	 * Get the shortest path between two points in the region
@@ -80,8 +72,8 @@ public:
 	 * @param Path          An empty BS_Path that will be set to the resulting path
 	 * @return              Returns false if the result is invalid, otherwise returns true.
 	 */
-	bool QueryPath(int X1, int Y1, int X2, int Y2, BS_Path &Path) {
-		return QueryPath(Vertex(X1, Y1), Vertex(X2, Y2), Path);
+	bool queryPath(int x1, int y1, int x2, int y2, BS_Path &path) {
+		return queryPath(Vertex(x1, y1), Vertex(x2, y2), path);
 	}
 
 	/**
@@ -92,28 +84,28 @@ public:
 	 * @param Path          An empty BS_Path that will be set to the resulting path
 	 * @return              Returns false if the result is invalid, otherwise returns true.
 	*/
-	bool QueryPath(Vertex StartPoint, Vertex EndPoint, BS_Path &Path);
+	bool queryPath(Vertex startPoint, Vertex endPoint, BS_Path &path);
 
-	virtual void SetPos(int X, int Y);
+	virtual void setPos(int x, int y);
 
-	const Common::Array<Vertex> &GetNodes() const {
-		return m_Nodes;
+	const Common::Array<Vertex> &getNodes() const {
+		return _nodes;
 	}
-	const Common::Array< Common::Array<int> > &GetVisibilityMatrix() const {
-		return m_VisibilityMatrix;
+	const Common::Array< Common::Array<int> > &getVisibilityMatrix() const {
+		return _visibilityMatrix;
 	}
 
 	virtual bool persist(OutputPersistenceBlock &writer);
 	virtual bool unpersist(InputPersistenceBlock &reader);
 
 private:
-	Common::Array<Vertex> m_Nodes;
-	Common::Array< Common::Array<int> > m_VisibilityMatrix;
+	Common::Array<Vertex> _nodes;
+	Common::Array< Common::Array<int> > _visibilityMatrix;
 
-	void InitNodeVector();
-	void ComputeVisibilityMatrix();
-	bool CheckAndPrepareStartAndEnd(Vertex &Start, Vertex &End) const;
-	bool FindPath(const Vertex &Start, const Vertex &End, BS_Path &Path) const;
+	void initNodeVector();
+	void computeVisibilityMatrix();
+	bool checkAndPrepareStartAndEnd(Vertex &start, Vertex &end) const;
+	bool findPath(const Vertex &start, const Vertex &end, BS_Path &path) const;
 };
 
 } // End of namespace Sword25

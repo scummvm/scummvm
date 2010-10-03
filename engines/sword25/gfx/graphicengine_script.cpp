@@ -144,7 +144,7 @@ static AnimationTemplate *CheckAnimationTemplate(lua_State *L, int idx = 1) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable der Klasse Gfx.AnimationTemplate
 	uint AnimationTemplateHandle;
 	if ((AnimationTemplateHandle = *reinterpret_cast<uint *>(my_checkudata(L, idx, ANIMATION_TEMPLATE_CLASS_NAME))) != 0) {
-		AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::GetInstance().resolveHandle(AnimationTemplateHandle);
+		AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::getInstance().resolveHandle(AnimationTemplateHandle);
 		if (!AnimationTemplatePtr)
 			luaL_error(L, "The animation template with the handle %d does no longer exist.", AnimationTemplateHandle);
 		return AnimationTemplatePtr;
@@ -159,7 +159,7 @@ static AnimationTemplate *CheckAnimationTemplate(lua_State *L, int idx = 1) {
 
 static int NewAnimationTemplate(lua_State *L) {
 	uint AnimationTemplateHandle = AnimationTemplate::Create(luaL_checkstring(L, 1));
-	AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::GetInstance().resolveHandle(AnimationTemplateHandle);
+	AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::getInstance().resolveHandle(AnimationTemplateHandle);
 	if (AnimationTemplatePtr && AnimationTemplatePtr->isValid()) {
 		NewUintUserData(L, AnimationTemplateHandle);
 		//luaL_getmetatable(L, ANIMATION_TEMPLATE_CLASS_NAME);
@@ -348,8 +348,8 @@ static int DrawDebugLine(lua_State *L) {
 
 	Vertex Start;
 	Vertex End;
-	Vertex::LuaVertexToVertex(L, 1, Start);
-	Vertex::LuaVertexToVertex(L, 2, End);
+	Vertex::luaVertexToVertex(L, 1, Start);
+	Vertex::luaVertexToVertex(L, 2, End);
 	pGE->DrawDebugLine(Start, End, GraphicEngine::LuaColorToARGBColor(L, 3));
 
 	return 0;
@@ -539,8 +539,8 @@ static int RO_SetPos(lua_State *L) {
 	RenderObjectPtr<RenderObject> ROPtr = CheckRenderObject(L);
 	BS_ASSERT(ROPtr.isValid());
 	Vertex Pos;
-	Vertex::LuaVertexToVertex(L, 2, Pos);
-	ROPtr->setPos(Pos.X, Pos.Y);
+	Vertex::luaVertexToVertex(L, 2, Pos);
+	ROPtr->setPos(Pos.x, Pos.y);
 	return 0;
 }
 
@@ -968,8 +968,8 @@ static int B_GetPixel(lua_State *L) {
 	RenderObjectPtr<Bitmap> BitmapPtr = CheckBitmap(L);
 	BS_ASSERT(BitmapPtr.isValid());
 	Vertex Pos;
-	Vertex::LuaVertexToVertex(L, 2, Pos);
-	GraphicEngine::ARGBColorToLuaColor(L, BitmapPtr->getPixel(Pos.X, Pos.Y));
+	Vertex::luaVertexToVertex(L, 2, Pos);
+	GraphicEngine::ARGBColorToLuaColor(L, BitmapPtr->getPixel(Pos.x, Pos.y));
 	return 1;
 }
 

@@ -42,193 +42,177 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Constants
-// -----------------------------------------------------------------------------
-
-static const int infinity = 0x7fffffff;
-
-// -----------------------------------------------------------------------------
-// Constructor / Destructor
-// -----------------------------------------------------------------------------
+static const int Infinity = 0x7fffffff;
 
 WalkRegion::WalkRegion() {
-	m_Type = RT_WALKREGION;
+	_type = RT_WALKREGION;
 }
 
-// -----------------------------------------------------------------------------
-
-WalkRegion::WalkRegion(InputPersistenceBlock &Reader, uint Handle) :
-	Region(Reader, Handle) {
-	m_Type = RT_WALKREGION;
-	unpersist(Reader);
+WalkRegion::WalkRegion(InputPersistenceBlock &reader, uint handle) :
+	Region(reader, handle) {
+	_type = RT_WALKREGION;
+	unpersist(reader);
 }
-
-// -----------------------------------------------------------------------------
 
 WalkRegion::~WalkRegion() {
 }
 
-// -----------------------------------------------------------------------------
-
-bool WalkRegion::Init(const Polygon &Contour, const Common::Array<Polygon> *pHoles) {
+bool WalkRegion::init(const Polygon &contour, const Common::Array<Polygon> *pHoles) {
 	// Default initialisation of the region
-	if (!Region::Init(Contour, pHoles)) return false;
+	if (!Region::init(contour, pHoles)) return false;
 
 	// Prepare structures for pathfinding
-	InitNodeVector();
-	ComputeVisibilityMatrix();
+	initNodeVector();
+	computeVisibilityMatrix();
 
 	// Signal success
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
-bool WalkRegion::QueryPath(Vertex StartPoint, Vertex EndPoint, BS_Path &Path) {
-	BS_ASSERT(Path.empty());
+bool WalkRegion::queryPath(Vertex startPoint, Vertex endPoint, BS_Path &path) {
+	BS_ASSERT(path.empty());
 
 	// If the start and finish are identical, no path can be found trivially
-	if (StartPoint == EndPoint) return true;
+	if (startPoint == endPoint)
+		return true;
 
 	// Ensure that the start and finish are valid and find new start points if either
 	// are outside the polygon
-	if (!CheckAndPrepareStartAndEnd(StartPoint, EndPoint)) return false;
+	if (!checkAndPrepareStartAndEnd(startPoint, endPoint)) return false;
 
 	// If between the start and point a line of sight exists, then it can be returned.
-	if (IsLineOfSight(StartPoint, EndPoint)) {
-		Path.push_back(StartPoint);
-		Path.push_back(EndPoint);
+	if (isLineOfSight(startPoint, endPoint)) {
+		path.push_back(startPoint);
+		path.push_back(endPoint);
 		return true;
 	}
 
-	return FindPath(StartPoint, EndPoint, Path);
+	return findPath(startPoint, endPoint, path);
 }
-
-// -----------------------------------------------------------------------------
 
 struct DijkstraNode {
 	typedef Common::Array<DijkstraNode> Container;
 	typedef Container::iterator Iter;
 	typedef Container::const_iterator ConstIter;
 
-	DijkstraNode() : Cost(infinity), Chosen(false) {};
-	ConstIter   ParentIter;
-	int         Cost;
-	bool        Chosen;
+	DijkstraNode() : cost(Infinity), chosen(false) {};
+	ConstIter   parentIter;
+	int         cost;
+	bool        chosen;
 };
 
-static void InitDijkstraNodes(DijkstraNode::Container &DijkstraNodes, const Region &Region,
-                              const Vertex &Start, const Common::Array<Vertex> &Nodes) {
+static void initDijkstraNodes(DijkstraNode::Container &dijkstraNodes, const Region &region,
+                              const Vertex &start, const Common::Array<Vertex> &nodes) {
 	// Allocate sufficient space in the array
-	DijkstraNodes.resize(Nodes.size());
+	dijkstraNodes.resize(nodes.size());
 
 	// Initialise all the nodes which are visible from the starting node
-	DijkstraNode::Iter DijkstraIter = DijkstraNodes.begin();
-	for (Common::Array<Vertex>::const_iterator NodesIter = Nodes.begin();
-	        NodesIter != Nodes.end(); NodesIter++, DijkstraIter++) {
-		(*DijkstraIter).ParentIter = DijkstraNodes.end();
-		if (Region.IsLineOfSight(*NodesIter, Start))(*DijkstraIter).Cost = (*NodesIter).Distance(Start);
+	DijkstraNode::Iter dijkstraIter = dijkstraNodes.begin();
+	for (Common::Array<Vertex>::const_iterator nodesIter = nodes.begin();
+	        nodesIter != nodes.end(); nodesIter++, dijkstraIter++) {
+		(*dijkstraIter).parentIter = dijkstraNodes.end();
+		if (region.isLineOfSight(*nodesIter, start))(*dijkstraIter).cost = (*nodesIter).distance(start);
 	}
-	BS_ASSERT(DijkstraIter == DijkstraNodes.end());
+	BS_ASSERT(dijkstraIter == dijkstraNodes.end());
 }
 
-static DijkstraNode::Iter ChooseClosestNode(DijkstraNode::Container &Nodes) {
-	DijkstraNode::Iter ClosestNodeInter = Nodes.end();
-	int MinCost = infinity;
+static DijkstraNode::Iter chooseClosestNode(DijkstraNode::Container &nodes) {
+	DijkstraNode::Iter closestNodeInter = nodes.end();
+	int minCost = Infinity;
 
-	for (DijkstraNode::Iter iter = Nodes.begin(); iter != Nodes.end(); iter++) {
-		if (!(*iter).Chosen && (*iter).Cost < MinCost) {
-			MinCost = (*iter).Cost;
-			ClosestNodeInter = iter;
+	for (DijkstraNode::Iter iter = nodes.begin(); iter != nodes.end(); iter++) {
+		if (!(*iter).chosen && (*iter).cost < minCost) {
+			minCost = (*iter).cost;
+			closestNodeInter = iter;
 		}
 	}
 
-	return ClosestNodeInter;
+	return closestNodeInter;
 }
 
-static void RelaxNodes(DijkstraNode::Container &Nodes,
-                       const Common::Array< Common::Array<int> > &VisibilityMatrix,
-                       const DijkstraNode::ConstIter &CurNodeIter) {
+static void relaxNodes(DijkstraNode::Container &nodes,
+                       const Common::Array< Common::Array<int> > &visibilityMatrix,
+                       const DijkstraNode::ConstIter &curNodeIter) {
 	// All the successors of the current node that have not been chosen will be
 	// inserted into the boundary node list, and the cost will be updated if
 	// a shorter path has been found to them.
 
-	int CurNodeIndex = CurNodeIter - Nodes.begin();
-	for (uint i = 0; i < Nodes.size(); i++) {
-		int Cost = VisibilityMatrix[CurNodeIndex][i];
-		if (!Nodes[i].Chosen && Cost != infinity) {
-			int TotalCost = (*CurNodeIter).Cost + Cost;
-			if (TotalCost < Nodes[i].Cost) {
-				Nodes[i].ParentIter = CurNodeIter;
-				Nodes[i].Cost = TotalCost;
+	int curNodeIndex = curNodeIter - nodes.begin();
+	for (uint i = 0; i < nodes.size(); i++) {
+		int cost = visibilityMatrix[curNodeIndex][i];
+		if (!nodes[i].chosen && cost != Infinity) {
+			int totalCost = (*curNodeIter).cost + cost;
+			if (totalCost < nodes[i].cost) {
+				nodes[i].parentIter = curNodeIter;
+				nodes[i].cost = totalCost;
 			}
 		}
 	}
 }
 
-static void RelaxEndPoint(const Vertex &CurNodePos,
-                          const DijkstraNode::ConstIter &CurNodeIter,
-                          const Vertex &EndPointPos,
-                          DijkstraNode &EndPoint,
-                          const Region &Region) {
-	if (Region.IsLineOfSight(CurNodePos, EndPointPos)) {
-		int TotalCost = (*CurNodeIter).Cost + CurNodePos.Distance(EndPointPos);
-		if (TotalCost < EndPoint.Cost) {
-			EndPoint.ParentIter = CurNodeIter;
-			EndPoint.Cost = TotalCost;
+static void relaxEndPoint(const Vertex &curNodePos,
+                          const DijkstraNode::ConstIter &curNodeIter,
+                          const Vertex &endPointPos,
+                          DijkstraNode &endPoint,
+                          const Region &region) {
+	if (region.isLineOfSight(curNodePos, endPointPos)) {
+		int totalCost = (*curNodeIter).cost + curNodePos.distance(endPointPos);
+		if (totalCost < endPoint.cost) {
+			endPoint.parentIter = curNodeIter;
+			endPoint.cost = totalCost;
 		}
 	}
 }
 
-bool WalkRegion::FindPath(const Vertex &Start, const Vertex &End, BS_Path &Path) const {
+bool WalkRegion::findPath(const Vertex &start, const Vertex &end, BS_Path &path) const {
 	// This is an implementation of Dijkstra's algorithm
 
 	// Initialise edge node list
-	DijkstraNode::Container DijkstraNodes;
-	InitDijkstraNodes(DijkstraNodes, *this, Start, m_Nodes);
+	DijkstraNode::Container dijkstraNodes;
+	initDijkstraNodes(dijkstraNodes, *this, start, _nodes);
 
 	// The end point is treated separately, since it does not exist in the visibility graph
-	DijkstraNode EndPoint;
+	DijkstraNode endPoint;
 
 	// Since a node is selected each round from the node list, and can never be selected again
 	// after that, the maximum number of loop iterations is limited by the number of nodes
-	for (uint i = 0; i < m_Nodes.size(); i++) {
+	for (uint i = 0; i < _nodes.size(); i++) {
 		// Determine the nearest edge node in the node list
-		DijkstraNode::Iter NodeInter = ChooseClosestNode(DijkstraNodes);
+		DijkstraNode::Iter nodeInter = chooseClosestNode(dijkstraNodes);
 
 		// If no free nodes are absent from the edge node list, there is no path from start
 		// to end node. This case should never occur, since the number of loop passes is
 		// limited, but etter safe than sorry
-		if (NodeInter == DijkstraNodes.end()) return false;
+		if (nodeInter == dijkstraNodes.end())
+			return false;
 
 		// If the destination point is closer than the point cost, scan can stop
-		(*NodeInter).Chosen = true;
-		if (EndPoint.Cost <= (*NodeInter).Cost) {
+		(*nodeInter).chosen = true;
+		if (endPoint.cost <= (*nodeInter).cost) {
 			// Insert the end point in the list
-			Path.push_back(End);
+			path.push_back(end);
 
 			// The list is done in reverse order and inserted into the path
-			DijkstraNode::ConstIter CurNode = EndPoint.ParentIter;
-			while (CurNode != DijkstraNodes.end()) {
-				BS_ASSERT((*CurNode).Chosen);
-				Path.push_back(m_Nodes[CurNode - DijkstraNodes.begin()]);
-				CurNode = (*CurNode).ParentIter;
+			DijkstraNode::ConstIter curNode = endPoint.parentIter;
+			while (curNode != dijkstraNodes.end()) {
+				BS_ASSERT((*curNode).chosen);
+				path.push_back(_nodes[curNode - dijkstraNodes.begin()]);
+				curNode = (*curNode).parentIter;
 			}
 
 			// The starting point is inserted into the path
-			Path.push_back(Start);
+			path.push_back(start);
 
 			// The nodes of the path must be untwisted, as they were extracted in reverse order.
 			// This step could be saved if the path from end to the beginning was desired
-			ReverseArray<Vertex>(Path);
+			ReverseArray<Vertex>(path);
 
 			return true;
 		}
 
 		// Relaxation step for nodes of the graph, and perform the end nodes
-		RelaxNodes(DijkstraNodes, m_VisibilityMatrix, NodeInter);
-		RelaxEndPoint(m_Nodes[NodeInter - DijkstraNodes.begin()], NodeInter, End, EndPoint, *this);
+		relaxNodes(dijkstraNodes, _visibilityMatrix, nodeInter);
+		relaxEndPoint(_nodes[nodeInter - dijkstraNodes.begin()], nodeInter, end, endPoint, *this);
 	}
 
 	// If the loop has been completely run through, all the nodes have been chosen, and still
@@ -236,109 +220,100 @@ bool WalkRegion::FindPath(const Vertex &Start, const Vertex &End, BS_Path &Path)
 	return false;
 }
 
-// -----------------------------------------------------------------------------
-
-void WalkRegion::InitNodeVector() {
+void WalkRegion::initNodeVector() {
 	// Empty the Node list
-	m_Nodes.clear();
+	_nodes.clear();
 
 	// Determine the number of nodes
-	int NodeCount = 0;
+	int nodeCount = 0;
 	{
-		for (uint i = 0; i < m_Polygons.size(); i++)
-			NodeCount += m_Polygons[i].VertexCount;
+		for (uint i = 0; i < _polygons.size(); i++)
+			nodeCount += _polygons[i].vertexCount;
 	}
 
 	// Knoten-Vector füllen
-	m_Nodes.reserve(NodeCount);
+	_nodes.reserve(nodeCount);
 	{
-		for (uint j = 0; j < m_Polygons.size(); j++)
-			for (int i = 0; i < m_Polygons[j].VertexCount; i++)
-				m_Nodes.push_back(m_Polygons[j].Vertecies[i]);
+		for (uint j = 0; j < _polygons.size(); j++)
+			for (int i = 0; i < _polygons[j].vertexCount; i++)
+				_nodes.push_back(_polygons[j].vertices[i]);
 	}
 }
 
-// -----------------------------------------------------------------------------
-
-void WalkRegion::ComputeVisibilityMatrix() {
+void WalkRegion::computeVisibilityMatrix() {
 	// Initialise visibility matrix
-	m_VisibilityMatrix = Common::Array< Common::Array <int> >();
-	for (uint idx = 0; idx < m_Nodes.size(); ++idx) {
+	_visibilityMatrix = Common::Array< Common::Array <int> >();
+	for (uint idx = 0; idx < _nodes.size(); ++idx) {
 		Common::Array<int> arr;
-		for (uint idx2 = 0; idx2 < m_Nodes.size(); ++idx2)
-			arr.push_back(infinity);
+		for (uint idx2 = 0; idx2 < _nodes.size(); ++idx2)
+			arr.push_back(Infinity);
 
-		m_VisibilityMatrix.push_back(arr);
+		_visibilityMatrix.push_back(arr);
 	}
 
 	// Calculate visibility been vertecies
-	for (uint j = 0; j < m_Nodes.size(); ++j) {
-		for (uint i = j; i < m_Nodes.size(); ++i)   {
-			if (IsLineOfSight(m_Nodes[i], m_Nodes[j])) {
+	for (uint j = 0; j < _nodes.size(); ++j) {
+		for (uint i = j; i < _nodes.size(); ++i)   {
+			if (isLineOfSight(_nodes[i], _nodes[j])) {
 				// There is a line of sight, so save the distance between the two
-				int Distance = m_Nodes[i].Distance(m_Nodes[j]);
-				m_VisibilityMatrix[i][j] = Distance;
-				m_VisibilityMatrix[j][i] = Distance;
+				int distance = _nodes[i].distance(_nodes[j]);
+				_visibilityMatrix[i][j] = distance;
+				_visibilityMatrix[j][i] = distance;
 			} else {
-				// There is no line of sight, so save infinity as the distance
-				m_VisibilityMatrix[i][j] = infinity;
-				m_VisibilityMatrix[j][i] = infinity;
+				// There is no line of sight, so save Infinity as the distance
+				_visibilityMatrix[i][j] = Infinity;
+				_visibilityMatrix[j][i] = Infinity;
 			}
 		}
 	}
 }
 
-// -----------------------------------------------------------------------------
-
-bool WalkRegion::CheckAndPrepareStartAndEnd(Vertex &Start, Vertex &End) const {
-	if (!IsPointInRegion(Start)) {
-		Vertex NewStart = FindClosestRegionPoint(Start);
+bool WalkRegion::checkAndPrepareStartAndEnd(Vertex &start, Vertex &end) const {
+	if (!isPointInRegion(start)) {
+		Vertex newStart = findClosestRegionPoint(start);
 
 		// Check to make sure the point is really in the region. If not, stop with an error
-		if (!IsPointInRegion(NewStart)) {
+		if (!isPointInRegion(newStart)) {
 			BS_LOG_ERRORLN("Constructed startpoint ((%d,%d) from (%d,%d)) is not inside the region.",
-			               NewStart.X, NewStart.Y,
-			               Start.X, Start.Y);
+			               newStart.x, newStart.y,
+			               start.x, start.y);
 			return false;
 		}
 
-		Start = NewStart;
+		start = newStart;
 	}
 
 	// If the destination is outside the region, a point is determined that is within the region,
 	// and that is used as an endpoint instead
-	if (!IsPointInRegion(End)) {
-		Vertex NewEnd = FindClosestRegionPoint(End);
+	if (!isPointInRegion(end)) {
+		Vertex newEnd = findClosestRegionPoint(end);
 
 		// Make sure that the determined point is really within the region
-		if (!IsPointInRegion(NewEnd)) {
+		if (!isPointInRegion(newEnd)) {
 			BS_LOG_ERRORLN("Constructed endpoint ((%d,%d) from (%d,%d)) is not inside the region.",
-			               NewEnd.X, NewEnd.Y,
-			               End.X, End.Y);
+			               newEnd.x, newEnd.y,
+			               end.x, end.y);
 			return false;
 		}
 
-		End = NewEnd;
+		end = newEnd;
 	}
 
 	// Signal success
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
-void WalkRegion::SetPos(int X, int Y) {
+void WalkRegion::setPos(int x, int y) {
 	// Calculate the difference between old and new position
-	Vertex Delta(X - m_Position.X, Y - m_Position.Y);
+	Vertex Delta(x - _position.x, y - _position.y);
 
 	// Move all the nodes
-	for (uint i = 0; i < m_Nodes.size(); i++) m_Nodes[i] += Delta;
+	for (uint i = 0; i < _nodes.size(); i++)
+		_nodes[i] += Delta;
 
 	// Move regions
-	Region::SetPos(X, Y);
+	Region::setPos(x, y);
 }
-
-// -----------------------------------------------------------------------------
 
 bool WalkRegion::persist(OutputPersistenceBlock &writer) {
 	bool result = true;
@@ -347,32 +322,30 @@ bool WalkRegion::persist(OutputPersistenceBlock &writer) {
 	result &= Region::persist(writer);
 
 	// Persist the nodes
-	writer.write(m_Nodes.size());
-	Common::Array<Vertex>::const_iterator It = m_Nodes.begin();
-	while (It != m_Nodes.end()) {
-		writer.write(It->X);
-		writer.write(It->Y);
-		++It;
+	writer.write(_nodes.size());
+	Common::Array<Vertex>::const_iterator it = _nodes.begin();
+	while (it != _nodes.end()) {
+		writer.write(it->x);
+		writer.write(it->y);
+		++it;
 	}
 
 	// Persist the visibility matrix
-	writer.write(m_VisibilityMatrix.size());
-	Common::Array< Common::Array<int> >::const_iterator RowIter = m_VisibilityMatrix.begin();
-	while (RowIter != m_VisibilityMatrix.end()) {
-		writer.write(RowIter->size());
-		Common::Array<int>::const_iterator ColIter = RowIter->begin();
-		while (ColIter != RowIter->end()) {
-			writer.write(*ColIter);
-			++ColIter;
+	writer.write(_visibilityMatrix.size());
+	Common::Array< Common::Array<int> >::const_iterator rowIter = _visibilityMatrix.begin();
+	while (rowIter != _visibilityMatrix.end()) {
+		writer.write(rowIter->size());
+		Common::Array<int>::const_iterator colIter = rowIter->begin();
+		while (colIter != rowIter->end()) {
+			writer.write(*colIter);
+			++colIter;
 		}
 
-		++RowIter;
+		++rowIter;
 	}
 
 	return result;
 }
-
-// -----------------------------------------------------------------------------
 
 bool WalkRegion::unpersist(InputPersistenceBlock &reader) {
 	bool result = true;
@@ -381,34 +354,34 @@ bool WalkRegion::unpersist(InputPersistenceBlock &reader) {
 	// this point only the additional data from BS_WalkRegion needs to be loaded
 
 	// Node load
-	uint NodeCount;
-	reader.read(NodeCount);
-	m_Nodes.clear();
-	m_Nodes.resize(NodeCount);
-	Common::Array<Vertex>::iterator It = m_Nodes.begin();
-	while (It != m_Nodes.end()) {
-		reader.read(It->X);
-		reader.read(It->Y);
-		++It;
+	uint nodeCount;
+	reader.read(nodeCount);
+	_nodes.clear();
+	_nodes.resize(nodeCount);
+	Common::Array<Vertex>::iterator it = _nodes.begin();
+	while (it != _nodes.end()) {
+		reader.read(it->x);
+		reader.read(it->y);
+		++it;
 	}
 
 	// Visibility matrix load
-	uint RowCount;
-	reader.read(RowCount);
-	m_VisibilityMatrix.clear();
-	m_VisibilityMatrix.resize(RowCount);
-	Common::Array< Common::Array<int> >::iterator RowIter = m_VisibilityMatrix.begin();
-	while (RowIter != m_VisibilityMatrix.end()) {
-		uint ColCount;
-		reader.read(ColCount);
-		RowIter->resize(ColCount);
-		Common::Array<int>::iterator ColIter = RowIter->begin();
-		while (ColIter != RowIter->end()) {
-			reader.read(*ColIter);
-			++ColIter;
+	uint rowCount;
+	reader.read(rowCount);
+	_visibilityMatrix.clear();
+	_visibilityMatrix.resize(rowCount);
+	Common::Array< Common::Array<int> >::iterator rowIter = _visibilityMatrix.begin();
+	while (rowIter != _visibilityMatrix.end()) {
+		uint colCount;
+		reader.read(colCount);
+		rowIter->resize(colCount);
+		Common::Array<int>::iterator colIter = rowIter->begin();
+		while (colIter != rowIter->end()) {
+			reader.read(*colIter);
+			++colIter;
 		}
 
-		++RowIter;
+		++rowIter;
 	}
 
 	return result && reader.isGood();

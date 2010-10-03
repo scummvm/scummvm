@@ -42,114 +42,107 @@
 
 namespace Sword25 {
 
-#define max(a,b) (((a) > (b)) ? (a) : (b))
-
-// Constructor / Destructor
-// --------------------------
-
-Polygon::Polygon() : VertexCount(0), Vertecies(NULL) {
+Polygon::Polygon() : vertexCount(0), vertices(NULL) {
 }
 
-Polygon::Polygon(int VertexCount_, const Vertex *Vertecies_) : VertexCount(0), Vertecies(NULL) {
-	Init(VertexCount_, Vertecies_);
+Polygon::Polygon(int vertexCount_, const Vertex *vertices_) : vertexCount(0), vertices(NULL) {
+	init(vertexCount_, vertices_);
 }
 
-Polygon::Polygon(const Polygon &Other) : VertexCount(0), Vertecies(NULL) {
-	Init(Other.VertexCount, Other.Vertecies);
+Polygon::Polygon(const Polygon &other) : vertexCount(0), vertices(NULL) {
+	init(other.vertexCount, other.vertices);
 }
 
-Polygon::Polygon(InputPersistenceBlock &Reader) : VertexCount(0), Vertecies(NULL) {
+Polygon::Polygon(InputPersistenceBlock &Reader) : vertexCount(0), vertices(NULL) {
 	unpersist(Reader);
 }
 
 Polygon::~Polygon() {
-	delete[] Vertecies;
+	delete[] vertices;
 }
 
-// Initialisation
-// ---------------
-
-bool Polygon::Init(int VertexCount_, const Vertex *Vertecies_) {
+bool Polygon::init(int vertexCount_, const Vertex *vertices_) {
 	// Rember the old obstate to restore it if an error occurs whilst initialising it with the new data
-	int OldVertexCount = this->VertexCount;
-	Vertex *OldVertecies = this->Vertecies;
+	int oldvertexCount = this->vertexCount;
+	Vertex *oldvertices = this->vertices;
 
-	this->VertexCount = VertexCount_;
-	this->Vertecies = new Vertex[VertexCount_ + 1];
-	memcpy(this->Vertecies, Vertecies_, sizeof(Vertex) * VertexCount_);
+	this->vertexCount = vertexCount_;
+	this->vertices = new Vertex[vertexCount_ + 1];
+	memcpy(this->vertices, vertices_, sizeof(Vertex) * vertexCount_);
 	// TODO:
 	// Duplicate and remove redundant vertecies (Superflous = 3 co-linear verts)
-	// _WeedRepeatedVertecies();
+	// _WeedRepeatedvertices();
 	// The first vertex is repeated at the end of the vertex array; this simplifies
 	// some algorithms, running through the edges and thus can save the overflow control.
-	this->Vertecies[VertexCount_] = this->Vertecies[0];
+	this->vertices[vertexCount_] = this->vertices[0];
 
 	// If the polygon is self-intersecting, the object state is restore, and an error signalled
-	if (CheckForSelfIntersection()) {
-		delete[] this->Vertecies;
-		this->Vertecies = OldVertecies;
-		this->VertexCount = OldVertexCount;
+	if (checkForSelfIntersection()) {
+		delete[] this->vertices;
+		this->vertices = oldvertices;
+		this->vertexCount = oldvertexCount;
 
 		// BS_LOG_ERROR("POLYGON: Tried to create a self-intersecting polygon.\n");
 		return false;
 	}
 
 	// Release old vertex list
-	delete[] OldVertecies;
+	delete[] oldvertices;
 
 	// Calculate properties of the polygon
-	m_IsCW = ComputeIsCW();
-	m_IsConvex = ComputeIsConvex();
-	m_Centroid = ComputeCentroid();
+	_isCW = computeIsCW();
+	_isConvex = computeIsConvex();
+	_centroid = computeCentroid();
 
 	return true;
 }
 
-// Review the order of the Vertecies
+// Review the order of the vertices
 // ---------------------------------
 
-bool Polygon::IsCW() const {
-	return m_IsCW;
+bool Polygon::isCW() const {
+	return _isCW;
 }
 
-bool Polygon::IsCCW() const {
-	return !IsCW();
+bool Polygon::isCCW() const {
+	return !isCW();
 }
 
-bool Polygon::ComputeIsCW() const {
-	if (VertexCount) {
+bool Polygon::computeIsCW() const {
+	if (vertexCount) {
 		// Find the vertex on extreme bottom right
-		int V2Index = FindLRVertexIndex();
+		int v2Index = findLRVertexIndex();
 
 		// Find the vertex before and after it
-		int V1Index = (V2Index + (VertexCount - 1)) % VertexCount;
-		int V3Index = (V2Index + 1) % VertexCount;
+		int v1Index = (v2Index + (vertexCount - 1)) % vertexCount;
+		int v3Index = (v2Index + 1) % vertexCount;
 
 		// Cross product form
 		// If the cross product of the vertex lying fartherest bottom left is positive,
 		// the vertecies arrranged in a clockwise order. Otherwise counter-clockwise
-		if (CrossProduct(Vertecies[V1Index], Vertecies[V2Index], Vertecies[V3Index]) >= 0) return true;
+		if (crossProduct(vertices[v1Index], vertices[v2Index], vertices[v3Index]) >= 0)
+			return true;
 	}
 
 	return false;
 }
 
-int Polygon::FindLRVertexIndex() const {
-	if (VertexCount) {
-		int CurIndex = 0;
-		int MaxX = Vertecies[0].X;
-		int MaxY = Vertecies[0].Y;
+int Polygon::findLRVertexIndex() const {
+	if (vertexCount) {
+		int curIndex = 0;
+		int maxX = vertices[0].x;
+		int maxY = vertices[0].y;
 
-		for (int i = 1; i < VertexCount; i++) {
-			if (Vertecies[i].Y > MaxY ||
-			        (Vertecies[i].Y == MaxY && Vertecies[i].X > MaxX)) {
-				MaxX = Vertecies[i].X;
-				MaxY = Vertecies[i].Y;
-				CurIndex = i;
+		for (int i = 1; i < vertexCount; i++) {
+			if (vertices[i].y > maxY ||
+			        (vertices[i].y == maxY && vertices[i].x > maxX)) {
+				maxX = vertices[i].x;
+				maxY = vertices[i].y;
+				curIndex = i;
 			}
 		}
 
-		return CurIndex;
+		return curIndex;
 	}
 
 	return -1;
@@ -158,40 +151,41 @@ int Polygon::FindLRVertexIndex() const {
 // Testing for Convex / Concave
 // ------------------------
 
-bool Polygon::IsConvex() const {
-	return m_IsConvex;
+bool Polygon::isConvex() const {
+	return _isConvex;
 }
 
-bool Polygon::IsConcave() const {
-	return !IsConvex();
+bool Polygon::isConcave() const {
+	return !isConvex();
 }
 
-bool Polygon::ComputeIsConvex() const {
-	// Polygons with three or less Vertecies can only be convex
-	if (VertexCount <= 3) return true;
+bool Polygon::computeIsConvex() const {
+	// Polygons with three or less vertices can only be convex
+	if (vertexCount <= 3) return true;
 
 	// All angles in the polygon computed will have the same direction sign if the polygon is convex
-	int Flag = 0;
-	for (int i = 0; i < VertexCount; i++) {
+	int flag = 0;
+	for (int i = 0; i < vertexCount; i++) {
 		// Determine the next two vertecies to check
-		int j = (i + 1) % VertexCount;
-		int k = (i + 2) % VertexCount;
+		int j = (i + 1) % vertexCount;
+		int k = (i + 2) % vertexCount;
 
 		// Calculate the cross product of the three vertecies
-		int Cross = CrossProduct(Vertecies[i], Vertecies[j], Vertecies[k]);
+		int cross = crossProduct(vertices[i], vertices[j], vertices[k]);
 
 		// The lower two bits of the flag represent the following:
 		// 0: negative angle occurred
 		// 1: positive angle occurred
 
 		// The sign of the current angle is recorded in Flag
-		if (Cross < 0)
-			Flag |= 1;
-		else if (Cross > 0)
-			Flag |= 2;
+		if (cross < 0)
+			flag |= 1;
+		else if (cross > 0)
+			flag |= 2;
 
 		// If flag is 3, there are both positive and negative angles; so the polygon is concave
-		if (Flag == 3) return false;
+		if (flag == 3)
+			return false;
 	}
 
 	// Polygon is convex
@@ -201,65 +195,65 @@ bool Polygon::ComputeIsConvex() const {
 // Make a determine vertex order
 // -----------------------------
 
-void Polygon::EnsureCWOrder() {
-	if (!IsCW())
-		ReverseVertexOrder();
+void Polygon::ensureCWOrder() {
+	if (!isCW())
+		reverseVertexOrder();
 }
 
-void Polygon::EnsureCCWOrder() {
-	if (!IsCCW())
-		ReverseVertexOrder();
+void Polygon::ensureCCWOrder() {
+	if (!isCCW())
+		reverseVertexOrder();
 }
 
 // Reverse the order of vertecies
 // ------------------------------
 
-void Polygon::ReverseVertexOrder() {
-	// Vertecies are exchanged in pairs, until the list has been completely reversed
-	for (int i = 0; i < VertexCount / 2; i++) {
-		Vertex tempVertex = Vertecies[i];
-		Vertecies[i] = Vertecies[VertexCount - i - 1];
-		Vertecies[VertexCount - i - 1] = tempVertex;
+void Polygon::reverseVertexOrder() {
+	// vertices are exchanged in pairs, until the list has been completely reversed
+	for (int i = 0; i < vertexCount / 2; i++) {
+		Vertex tempVertex = vertices[i];
+		vertices[i] = vertices[vertexCount - i - 1];
+		vertices[vertexCount - i - 1] = tempVertex;
 	}
 
 	// Vertexordnung neu berechnen.
-	m_IsCW = ComputeIsCW();
+	_isCW = computeIsCW();
 }
 
 // Cross Product
 // -------------
 
-int Polygon::CrossProduct(const Vertex &V1, const Vertex &V2, const Vertex &V3) const {
-	return (V2.X - V1.X) * (V3.Y - V2.Y) -
-	       (V2.Y - V1.Y) * (V3.X - V2.X);
+int Polygon::crossProduct(const Vertex &v1, const Vertex &v2, const Vertex &v3) const {
+	return (v2.x - v1.x) * (v3.y - v2.y) -
+	       (v2.y - v1.y) * (v3.x - v2.x);
 }
 
 // Scalar Product
 // --------------
 
-int Polygon::DotProduct(const Vertex &V1, const Vertex &V2, const Vertex &V3) const {
-	return (V1.X - V2.X) * (V3.X - V2.X) +
-	       (V1.Y - V2.Y) * (V3.X - V2.Y);
+int Polygon::dotProduct(const Vertex &v1, const Vertex &v2, const Vertex &v3) const {
+	return (v1.x - v2.x) * (v3.x - v2.x) +
+	       (v1.y - v2.y) * (v3.x - v2.y);
 }
 
 // Check for self-intersections
 // ----------------------------
 
-bool Polygon::CheckForSelfIntersection() const {
+bool Polygon::checkForSelfIntersection() const {
 	// TODO: Finish this
 	/*
 	float AngleSum = 0.0f;
-	for (int i = 0; i < VertexCount; i++) {
-	    int j = (i + 1) % VertexCount;
-	    int k = (i + 2) % VertexCount;
+	for (int i = 0; i < vertexCount; i++) {
+	    int j = (i + 1) % vertexCount;
+	    int k = (i + 2) % vertexCount;
 
-	    float Dot = DotProduct(Vertecies[i], Vertecies[j], Vertecies[k]);
+	    float Dot = DotProduct(vertices[i], vertices[j], vertices[k]);
 
 	    // Skalarproduct normalisieren
-	    float Length1 = sqrt((Vertecies[i].X - Vertecies[j].X) * (Vertecies[i].X - Vertecies[j].X) +
-	                         (Vertecies[i].Y - Vertecies[j].Y) * (Vertecies[i].Y - Vertecies[j].Y));
-	    float Length2 = sqrt((Vertecies[k].X - Vertecies[j].X) * (Vertecies[k].X - Vertecies[j].X) +
-	                         (Vertecies[k].Y - Vertecies[j].Y) * (Vertecies[k].Y - Vertecies[j].Y));
+	    float Length1 = sqrt((vertices[i].x - vertices[j].x) * (vertices[i].x - vertices[j].x) +
+	                         (vertices[i].y - vertices[j].y) * (vertices[i].y - vertices[j].y));
+	    float Length2 = sqrt((vertices[k].x - vertices[j].x) * (vertices[k].x - vertices[j].x) +
+	                         (vertices[k].y - vertices[j].y) * (vertices[k].y - vertices[j].y));
 	    float Norm = Length1 * Length2;
 
 	    if (Norm > 0.0f) {
@@ -275,168 +269,190 @@ bool Polygon::CheckForSelfIntersection() const {
 // Move
 // ----
 
-void Polygon::operator+=(const Vertex &Delta) {
+void Polygon::operator+=(const Vertex &delta) {
 	// Move all vertecies
-	for (int i = 0; i < VertexCount; i++)
-		Vertecies[i] += Delta;
+	for (int i = 0; i < vertexCount; i++)
+		vertices[i] += delta;
 
 	// Shift the focus
-	m_Centroid += Delta;
+	_centroid += delta;
 }
 
 // Line of Sight
 // -------------
 
-bool Polygon::IsLineInterior(const Vertex &a, const Vertex &b) const {
+bool Polygon::isLineInterior(const Vertex &a, const Vertex &b) const {
 	// Both points have to be in the polygon
-	if (!IsPointInPolygon(a, true) || !IsPointInPolygon(b, true)) return false;
+	if (!isPointInPolygon(a, true) || !isPointInPolygon(b, true))
+		return false;
 
 	// If the points are identical, the line is trivially within the polygon
-	if (a == b) return true;
+	if (a == b)
+		return true;
 
 	// Test whether the line intersects a line segment strictly (proper intersection)
-	for (int i = 0; i < VertexCount; i++) {
-		int j = (i + 1) % VertexCount;
-		const Vertex &VS = Vertecies[i];
-		const Vertex &VE = Vertecies[j];
+	for (int i = 0; i < vertexCount; i++) {
+		int j = (i + 1) % vertexCount;
+		const Vertex &vs = vertices[i];
+		const Vertex &ve = vertices[j];
 
 		// If the line intersects a line segment strictly (proper cross section) the line is not in the polygon
-		if (Line::DoesIntersectProperly(a, b, VS, VE)) return false;
+		if (Line::doesIntersectProperly(a, b, vs, ve))
+			return false;
 
 		// If one of the two line items is on the edge and the other is to the right of the edge,
 		// then the line is not completely within the polygon
-		if (Line::IsOnLineStrict(VS, VE, a) && Line::IsVertexRight(VS, VE, b)) return false;
-		if (Line::IsOnLineStrict(VS, VE, b) && Line::IsVertexRight(VS, VE, a)) return false;
+		if (Line::isOnLineStrict(vs, ve, a) && Line::isVertexRight(vs, ve, b))
+			return false;
+		if (Line::isOnLineStrict(vs, ve, b) && Line::isVertexRight(vs, ve, a))
+			return false;
 
 		// If one of the two line items is on a vertex, the line traces into the polygon
-		if ((a == VS) && !IsLineInCone(i, b, true)) return false;
-		if ((b == VS) && !IsLineInCone(i, a, true)) return false;
+		if ((a == vs) && !isLineInCone(i, b, true))
+			return false;
+		if ((b == vs) && !isLineInCone(i, a, true))
+			return false;
 	}
 
 	return true;
 }
 
-bool Polygon::IsLineExterior(const Vertex &a, const Vertex &b) const {
+bool Polygon::isLineExterior(const Vertex &a, const Vertex &b) const {
 	// Neither of the two points must be strictly in the polygon (on the edge is allowed)
-	if (IsPointInPolygon(a, false) || IsPointInPolygon(b, false)) return false;
+	if (isPointInPolygon(a, false) || isPointInPolygon(b, false))
+		return false;
 
 	// If the points are identical, the line is trivially outside of the polygon
-	if (a == b) return true;
+	if (a == b)
+		return true;
 
 	// Test whether the line intersects a line segment strictly (proper intersection)
-	for (int i = 0; i < VertexCount; i++) {
-		int j = (i + 1) % VertexCount;
-		const Vertex &VS = Vertecies[i];
-		const Vertex &VE = Vertecies[j];
+	for (int i = 0; i < vertexCount; i++) {
+		int j = (i + 1) % vertexCount;
+		const Vertex &vs = vertices[i];
+		const Vertex &ve = vertices[j];
 
 		// If the line intersects a line segment strictly (proper intersection), then
 		// the line is partially inside the polygon
-		if (Line::DoesIntersectProperly(a, b, VS, VE)) return false;
+		if (Line::doesIntersectProperly(a, b, vs, ve))
+			return false;
 
 		// If one of the two line items is on the edge and the other is to the right of the edge,
 		// the line is not completely outside the polygon
-		if (Line::IsOnLineStrict(VS, VE, a) && Line::IsVertexLeft(VS, VE, b)) return false;
-		if (Line::IsOnLineStrict(VS, VE, b) && Line::IsVertexLeft(VS, VE, a)) return false;
+		if (Line::isOnLineStrict(vs, ve, a) && Line::isVertexLeft(vs, ve, b))
+			return false;
+		if (Line::isOnLineStrict(vs, ve, b) && Line::isVertexLeft(vs, ve, a))
+			return false;
 
 		// If one of the lwo line items is on a vertex, the line must not run into the polygon
-		if ((a == VS) && IsLineInCone(i, b, false)) return false;
-		if ((b == VS) && IsLineInCone(i, a, false)) return false;
+		if ((a == vs) && isLineInCone(i, b, false))
+			return false;
+		if ((b == vs) && isLineInCone(i, a, false))
+			return false;
 
-		// If the vertex with start and end point is collinear, (a VS) and (b, VS) is not in the polygon
-		if (Line::IsOnLine(a, b, VS)) {
-			if (IsLineInCone(i, a, false)) return false;
-			if (IsLineInCone(i, b, false)) return false;
+		// If the vertex with start and end point is collinear, (a vs) and (b, vs) is not in the polygon
+		if (Line::isOnLine(a, b, vs)) {
+			if (isLineInCone(i, a, false))
+				return false;
+			if (isLineInCone(i, b, false))
+				return false;
 		}
 	}
 
 	return true;
 }
 
-bool Polygon::IsLineInCone(int StartVertexIndex, const Vertex &EndVertex, bool IncludeEdges) const {
-	const Vertex &StartVertex = Vertecies[StartVertexIndex];
-	const Vertex &NextVertex = Vertecies[(StartVertexIndex + 1) % VertexCount];
-	const Vertex &PrevVertex = Vertecies[(StartVertexIndex + VertexCount - 1) % VertexCount];
+bool Polygon::isLineInCone(int startVertexIndex, const Vertex &endVertex, bool includeEdges) const {
+	const Vertex &startVertex = vertices[startVertexIndex];
+	const Vertex &nextVertex = vertices[(startVertexIndex + 1) % vertexCount];
+	const Vertex &prevVertex = vertices[(startVertexIndex + vertexCount - 1) % vertexCount];
 
-	if (Line::IsVertexLeftOn(PrevVertex, StartVertex, NextVertex)) {
-		if (IncludeEdges)
-			return Line::IsVertexLeftOn(EndVertex, StartVertex, NextVertex) &&
-			       Line::IsVertexLeftOn(StartVertex, EndVertex, PrevVertex);
+	if (Line::isVertexLeftOn(prevVertex, startVertex, nextVertex)) {
+		if (includeEdges)
+			return Line::isVertexLeftOn(endVertex, startVertex, nextVertex) &&
+			       Line::isVertexLeftOn(startVertex, endVertex, prevVertex);
 		else
-			return Line::IsVertexLeft(EndVertex, StartVertex, NextVertex) &&
-			       Line::IsVertexLeft(StartVertex, EndVertex, PrevVertex);
+			return Line::isVertexLeft(endVertex, startVertex, nextVertex) &&
+			       Line::isVertexLeft(startVertex, endVertex, prevVertex);
 	} else {
-		if (IncludeEdges)
-			return !(Line::IsVertexLeft(EndVertex, StartVertex, PrevVertex) &&
-			         Line::IsVertexLeft(StartVertex, EndVertex, NextVertex));
+		if (includeEdges)
+			return !(Line::isVertexLeft(endVertex, startVertex, prevVertex) &&
+			         Line::isVertexLeft(startVertex, endVertex, nextVertex));
 		else
-			return !(Line::IsVertexLeftOn(EndVertex, StartVertex, PrevVertex) &&
-			         Line::IsVertexLeftOn(StartVertex, EndVertex, NextVertex));
+			return !(Line::isVertexLeftOn(endVertex, startVertex, prevVertex) &&
+			         Line::isVertexLeftOn(startVertex, endVertex, nextVertex));
 	}
 }
 
 // Point-Polygon Tests
 // -------------------
 
-bool Polygon::IsPointInPolygon(int X, int Y, bool BorderBelongsToPolygon) const {
-	return IsPointInPolygon(Vertex(X, Y), BorderBelongsToPolygon);
+bool Polygon::isPointInPolygon(int x, int y, bool borderBelongsToPolygon) const {
+	return isPointInPolygon(Vertex(x, y), borderBelongsToPolygon);
 }
 
-bool Polygon::IsPointInPolygon(const Vertex &Point, bool EdgesBelongToPolygon) const {
-	int Rcross = 0; // Number of right-side overlaps
-	int Lcross = 0; // Number of left-side overlaps
+bool Polygon::isPointInPolygon(const Vertex &point, bool edgesBelongToPolygon) const {
+	int rcross = 0; // Number of right-side overlaps
+	int lcross = 0; // Number of left-side overlaps
 
 	// Each edge is checked whether it cuts the outgoing stream from the point
-	for (int i = 0; i < VertexCount; i++) {
-		const Vertex &EdgeStart = Vertecies[i];
-		const Vertex &EdgeEnd = Vertecies[(i + 1) % VertexCount];
+	for (int i = 0; i < vertexCount; i++) {
+		const Vertex &edgeStart = vertices[i];
+		const Vertex &edgeEnd = vertices[(i + 1) % vertexCount];
 
 		// A vertex is a point? Then it lies on one edge of the polygon
-		if (Point == EdgeStart) return EdgesBelongToPolygon;
+		if (point == edgeStart)
+			return edgesBelongToPolygon;
 
-		if ((EdgeStart.Y > Point.Y) != (EdgeEnd.Y > Point.Y)) {
-			int Term1 = (EdgeStart.X - Point.X) * (EdgeEnd.Y - Point.Y) - (EdgeEnd.X - Point.X) * (EdgeStart.Y - Point.Y);
-			int Term2 = (EdgeEnd.Y - Point.Y) - (EdgeStart.Y - EdgeEnd.Y);
-			if ((Term1 > 0) == (Term2 >= 0)) Rcross++;
+		if ((edgeStart.y > point.y) != (edgeEnd.y > point.y)) {
+			int term1 = (edgeStart.x - point.x) * (edgeEnd.y - point.y) - (edgeEnd.x - point.x) * (edgeStart.y - point.y);
+			int term2 = (edgeEnd.y - point.y) - (edgeStart.y - edgeEnd.y);
+			if ((term1 > 0) == (term2 >= 0))
+				rcross++;
 		}
 
-		if ((EdgeStart.Y < Point.Y) != (EdgeEnd.Y < Point.Y)) {
-			int Term1 = (EdgeStart.X - Point.X) * (EdgeEnd.Y - Point.Y) - (EdgeEnd.X - Point.X) * (EdgeStart.Y - Point.Y);
-			int Term2 = (EdgeEnd.Y - Point.Y) - (EdgeStart.Y - EdgeEnd.Y);
-			if ((Term1 < 0) == (Term2 <= 0)) Lcross++;
+		if ((edgeStart.y < point.y) != (edgeEnd.y < point.y)) {
+			int term1 = (edgeStart.x - point.x) * (edgeEnd.y - point.y) - (edgeEnd.x - point.x) * (edgeStart.y - point.y);
+			int term2 = (edgeEnd.y - point.y) - (edgeStart.y - edgeEnd.y);
+			if ((term1 < 0) == (term2 <= 0))
+				lcross++;
 		}
 	}
 
 	// The point is on an adge, if the number of left and right intersections have the same even numbers
-	if ((Rcross % 2) != (Lcross % 2)) return EdgesBelongToPolygon;
+	if ((rcross % 2) != (lcross % 2))
+		return edgesBelongToPolygon;
 
 	// The point is strictly inside the polygon if and only if the number of overlaps is odd
-	if ((Rcross % 2) == 1) return true;
-	else return false;
+	if ((rcross % 2) == 1)
+		return true;
+	else
+		return false;
 }
 
 bool Polygon::persist(OutputPersistenceBlock &writer) {
-	writer.write(VertexCount);
-	for (int i = 0; i < VertexCount; ++i) {
-		writer.write(Vertecies[i].X);
-		writer.write(Vertecies[i].Y);
+	writer.write(vertexCount);
+	for (int i = 0; i < vertexCount; ++i) {
+		writer.write(vertices[i].x);
+		writer.write(vertices[i].y);
 	}
 
 	return true;
 }
 
 bool Polygon::unpersist(InputPersistenceBlock &reader) {
-	int StoredVertexCount;
-	reader.read(StoredVertexCount);
+	int storedvertexCount;
+	reader.read(storedvertexCount);
 
-	Common::Array<Vertex> StoredVertecies;
-	for (int i = 0; i < StoredVertexCount; ++i) {
+	Common::Array<Vertex> storedvertices;
+	for (int i = 0; i < storedvertexCount; ++i) {
 		int x, y;
 		reader.read(x);
 		reader.read(y);
-		StoredVertecies.push_back(Vertex(x, y));
+		storedvertices.push_back(Vertex(x, y));
 	}
 
-	Init(StoredVertexCount, &StoredVertecies[0]);
+	init(storedvertexCount, &storedvertices[0]);
 
 	return reader.isGood();
 }
@@ -444,31 +460,32 @@ bool Polygon::unpersist(InputPersistenceBlock &reader) {
 // Main Focus
 // ----------
 
-Vertex Polygon::GetCentroid() const {
-	return m_Centroid;
+Vertex Polygon::getCentroid() const {
+	return _centroid;
 }
 
-Vertex Polygon::ComputeCentroid() const {
+Vertex Polygon::computeCentroid() const {
 	// Area of the polygon is calculated
-	int DoubleArea = 0;
-	for (int i = 0; i < VertexCount; ++i) {
-		DoubleArea += Vertecies[i].X * Vertecies[i + 1].Y - Vertecies[i + 1].X * Vertecies[i].Y;
+	int doubleArea = 0;
+	for (int i = 0; i < vertexCount; ++i) {
+		doubleArea += vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y;
 	}
 
 	// Avoid division by zero in the next step
-	if (DoubleArea == 0) return Vertex();
+	if (doubleArea == 0)
+		return Vertex();
 
 	// Calculate centroid
-	Vertex Centroid;
-	for (int i = 0; i < VertexCount; ++i) {
-		int Area = Vertecies[i].X * Vertecies[i + 1].Y - Vertecies[i + 1].X * Vertecies[i].Y;
-		Centroid.X += (Vertecies[i].X + Vertecies[i + 1].X) * Area;
-		Centroid.Y += (Vertecies[i].Y + Vertecies[i + 1].Y) * Area;
+	Vertex centroid;
+	for (int i = 0; i < vertexCount; ++i) {
+		int area = vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y;
+		centroid.x += (vertices[i].x + vertices[i + 1].x) * area;
+		centroid.y += (vertices[i].y + vertices[i + 1].y) * area;
 	}
-	Centroid.X /= 3 * DoubleArea;
-	Centroid.Y /= 3 * DoubleArea;
+	centroid.x /= 3 * doubleArea;
+	centroid.y /= 3 * doubleArea;
 
-	return Centroid;
+	return centroid;
 }
 
 } // End of namespace Sword25

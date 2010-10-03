@@ -35,10 +35,6 @@
 #ifndef SWORD25_OBJECTREGISTRY_H
 #define SWORD25_OBJECTREGISTRY_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "common/func.h"
 #include "common/hashmap.h"
 #include "sword25/kernel/bs_stdint.h"
@@ -46,105 +42,92 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Klassendeklaration
-// -----------------------------------------------------------------------------
-
 template<typename T>
 class ObjectRegistry {
 public:
-	ObjectRegistry() : m_NextHandle(1) {}
+	ObjectRegistry() : _nextHandle(1) {}
 	virtual ~ObjectRegistry() {}
 
-	// -------------------------------------------------------------------------
-
-	uint RegisterObject(T *ObjectPtr) {
+	uint registerObject(T *objectPtr) {
 		// Null-Pointer können nicht registriert werden.
-		if (ObjectPtr == 0) {
-			LogErrorLn("Cannot register a null pointer.");
+		if (objectPtr == 0) {
+			logErrorLn("Cannot register a null pointer.");
 			return 0;
 		}
 
 		// Falls das Objekt bereits registriert wurde, wird eine Warnung ausgeben und das Handle zurückgeben.
-		uint Handle = FindHandleByPtr(ObjectPtr);
-		if (Handle != 0) {
-			LogWarningLn("Tried to register a object that was already registered.");
-			return Handle;
+		uint handle = findHandleByPtr(objectPtr);
+		if (handle != 0) {
+			logWarningLn("Tried to register a object that was already registered.");
+			return handle;
 		}
 		// Ansonsten wird das Objekt in beide Maps eingetragen und das neue Handle zurückgeben.
 		else {
-			m_Handle2PtrMap[m_NextHandle] = ObjectPtr;
-			m_Ptr2HandleMap[ObjectPtr] = m_NextHandle;
+			_handle2PtrMap[_nextHandle] = objectPtr;
+			_ptr2HandleMap[objectPtr] = _nextHandle;
 
-			return m_NextHandle++;
+			return _nextHandle++;
 		}
 	}
 
-	// -----------------------------------------------------------------------------
-
-	uint RegisterObject(T *ObjectPtr, uint Handle) {
+	uint registerObject(T *objectPtr, uint handle) {
 		// Null-Pointer und Null-Handle können nicht registriert werden.
-		if (ObjectPtr == 0 || Handle == 0) {
-			LogErrorLn("Cannot register a null pointer or a null handle.");
+		if (objectPtr == 0 || handle == 0) {
+			logErrorLn("Cannot register a null pointer or a null handle.");
 			return 0;
 		}
 
 		// Falls das Objekt bereits registriert wurde, wird ein Fehler ausgegeben und 0 zurückgeben.
-		uint HandleTest = FindHandleByPtr(ObjectPtr);
-		if (HandleTest != 0) {
-			LogErrorLn("Tried to register a object that was already registered.");
+		uint handleTest = findHandleByPtr(objectPtr);
+		if (handleTest != 0) {
+			logErrorLn("Tried to register a object that was already registered.");
 			return 0;
 		}
 		// Falls das Handle bereits vergeben ist, wird ein Fehler ausgegeben und 0 zurückgegeben.
-		else if (FindPtrByHandle(Handle) != 0) {
-			LogErrorLn("Tried to register a handle that is already taken.");
+		else if (findPtrByHandle(handle) != 0) {
+			logErrorLn("Tried to register a handle that is already taken.");
 			return 0;
 		}
 		// Ansonsten wird das Objekt in beide Maps eingetragen und das gewünschte Handle zurückgeben.
 		else {
-			m_Handle2PtrMap[Handle] = ObjectPtr;
-			m_Ptr2HandleMap[ObjectPtr] = Handle;
+			_handle2PtrMap[handle] = objectPtr;
+			_ptr2HandleMap[objectPtr] = handle;
 
 			// Falls das vergebene Handle größer oder gleich dem nächsten automatische vergebenen Handle ist, wird das nächste automatisch
 			// vergebene Handle erhöht.
-			if (Handle >= m_NextHandle) m_NextHandle = Handle + 1;
+			if (handle >= _nextHandle)
+				_nextHandle = handle + 1;
 
-			return Handle;
+			return handle;
 		}
 	}
 
-	// -----------------------------------------------------------------------------
+	void deregisterObject(T *objectPtr) {
+		uint handle = findHandleByPtr(objectPtr);
 
-	void DeregisterObject(T *ObjectPtr) {
-		uint Handle = FindHandleByPtr(ObjectPtr);
-
-		if (Handle != 0) {
+		if (handle != 0) {
 			// Registriertes Objekt aus beiden Maps entfernen.
-			m_Handle2PtrMap.erase(FindHandleByPtr(ObjectPtr));
-			m_Ptr2HandleMap.erase(ObjectPtr);
+			_handle2PtrMap.erase(findHandleByPtr(objectPtr));
+			_ptr2HandleMap.erase(objectPtr);
 		} else {
-			LogWarningLn("Tried to remove a object that was not registered.");
+			logWarningLn("Tried to remove a object that was not registered.");
 		}
 	}
 
-	// -----------------------------------------------------------------------------
-
-	T *resolveHandle(uint Handle) {
+	T *resolveHandle(uint handle) {
 		// Zum Handle gehöriges Objekt in der Hash-Map finden.
-		T *ObjectPtr = FindPtrByHandle(Handle);
+		T *objectPtr = findPtrByHandle(handle);
 
 		// Pointer zurückgeben. Im Fehlerfall ist dieser 0.
-		return ObjectPtr;
+		return objectPtr;
 	}
 
-	// -----------------------------------------------------------------------------
-
-	uint ResolvePtr(T *ObjectPtr) {
+	uint resolvePtr(T *objectPtr) {
 		// Zum Pointer gehöriges Handle in der Hash-Map finden.
-		uint Handle = FindHandleByPtr(ObjectPtr);
+		uint handle = findHandleByPtr(objectPtr);
 
 		// Handle zurückgeben. Im Fehlerfall ist dieses 0.
-		return Handle;
+		return handle;
 	}
 
 protected:
@@ -163,34 +146,28 @@ protected:
 	typedef Common::HashMap<uint, T *>  HANDLE2PTR_MAP;
 	typedef Common::HashMap<T *, uint, ClassPointer_Hash, ClassPointer_EqualTo> PTR2HANDLE_MAP;
 
-	HANDLE2PTR_MAP  m_Handle2PtrMap;
-	PTR2HANDLE_MAP  m_Ptr2HandleMap;
-	uint    m_NextHandle;
+	HANDLE2PTR_MAP  _handle2PtrMap;
+	PTR2HANDLE_MAP  _ptr2HandleMap;
+	uint    _nextHandle;
 
-	// -----------------------------------------------------------------------------
-
-	T *FindPtrByHandle(uint Handle) {
+	T *findPtrByHandle(uint handle) {
 		// Zum Handle gehörigen Pointer finden.
-		typename HANDLE2PTR_MAP::const_iterator it = m_Handle2PtrMap.find(Handle);
+		typename HANDLE2PTR_MAP::const_iterator it = _handle2PtrMap.find(handle);
 
 		// Pointer zurückgeben, oder, falls keiner gefunden wurde, 0 zurückgeben.
-		return (it != m_Handle2PtrMap.end()) ? it->_value : 0;
+		return (it != _handle2PtrMap.end()) ? it->_value : 0;
 	}
 
-	// -----------------------------------------------------------------------------
-
-	uint FindHandleByPtr(T *ObjectPtr) {
+	uint findHandleByPtr(T *objectPtr) {
 		// Zum Pointer gehöriges Handle finden.
-		typename PTR2HANDLE_MAP::const_iterator it = m_Ptr2HandleMap.find(ObjectPtr);
+		typename PTR2HANDLE_MAP::const_iterator it = _ptr2HandleMap.find(objectPtr);
 
 		// Handle zurückgeben, oder, falls keines gefunden wurde, 0 zurückgeben.
-		return (it != m_Ptr2HandleMap.end()) ? it->_value : 0;
+		return (it != _ptr2HandleMap.end()) ? it->_value : 0;
 	}
 
-	// -----------------------------------------------------------------------------
-
-	virtual void LogErrorLn(const char *Message) const = 0;
-	virtual void LogWarningLn(const char *Message) const = 0;
+	virtual void logErrorLn(const char *message) const = 0;
+	virtual void logWarningLn(const char *message) const = 0;
 };
 
 } // End of namespace Sword25
