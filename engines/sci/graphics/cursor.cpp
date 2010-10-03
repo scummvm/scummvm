@@ -52,11 +52,12 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 
 	_zoomZoneActive = false;
 	_zoomZone = Common::Rect();
-	_zoomColor = 0;
 	_zoomCursorView = 0;
 	_zoomCursorLoop = 0;
 	_zoomCursorCel = 0;
 	_zoomPicView = 0;
+	_zoomBitmap = 0;
+	_zoomColor = 0;
 	_zoomMultiplier = 0;
 }
 
