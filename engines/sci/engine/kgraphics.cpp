@@ -129,8 +129,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 			g_sci->_gfxCursor->kernelHide();
 			break;
 		case -1:
-			// TODO: Special case at least in kq6, check disassembly
-			//  Does something with magCursor, which is set on argc = 10, which we don't support
+			g_sci->_gfxCursor->kernelClearZoomZone();
 			break;
 		case -2:
 			g_sci->_gfxCursor->kernelResetMoveZone();
@@ -184,15 +183,10 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		break;
 	case 10:
 		// Freddy pharkas, when using the whiskey glass to read the prescription (bug #3034973)
-		// magnifier support, disabled using argc == 1, argv == -1
-		warning("kSetCursor: unsupported magnifier");
-		// we just set the view cursor currently
-		g_sci->_gfxCursor->kernelSetView(argv[5].toUint16(), argv[6].toUint16(), argv[7].toUint16(), hotspot);
-		// argv[0] -> 1, 2, 4 -> maybe magnification multiplier
-		// argv[1-4] -> rect for magnification
-		// argv[5, 6, 7] -> view resource for cursor
-		// argv[8] -> picture resource for mag
-		// argv[9] -> color for magnifier replacement
+		g_sci->_gfxCursor->kernelSetZoomZone(argv[0].toUint16(), 
+			Common::Rect(argv[1].toUint16(), argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16()),
+			argv[5].toUint16(), argv[6].toUint16(), argv[7].toUint16(),
+			argv[8].toUint16(), argv[9].toUint16());
 		break;
 	default :
 		error("kSetCursor: Unhandled case: %d arguments given", argc);
