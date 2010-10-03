@@ -1277,6 +1277,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformFMTowns, 0, GUIO_NONE	},
 
+	// King's Quest 5 - Japanese PC-98 Floppy 0.000.015 (supplied by omer_mor in bug report #3073583)
+	{"kq5", "", {
+		{"resource.map", 0, "3bca188108ec5b6ad91612483a6cbc27", 7875},
+		{"resource.000", 0, "70d6a2ec17fd49a63217992fc4347cd9", 493681},
+		{"resource.001", 0, "a504e91327a4d51ee4818eb72026dbe9", 950364},
+		{"resource.002", 0, "0750a84ece1d89d3a952e2a2b90b525c", 911833},
+		{"resource.003", 0, "6f8d552b60ec82a165619a99e19c509d", 1078032},
+		{"resource.004", 0, "e114ce8f884601c43308fb5cbbea4874", 1174129},
+		{"resource.005", 0, "349ad9438172265d00680075c5a988d0", 1019669},
+		AD_LISTEND},
+		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO_NOSPEECH	},
+
 	// King's Quest 6 - English DOS Non-Interactive Demo
 	// Executable scanning reports "1.001.055", VERSION file reports "1.000.000"
 	// SCI interpreter version 1.001.055
