@@ -159,6 +159,8 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 		error("kEditControl called on object that doesnt have a text reference");
 	text = _segMan->getString(textReference);
 
+	uint16 oldCursorPos = cursorPos;
+
 	if (!eventObject.isNull()) {
 		textSize = text.size();
 		eventType = readSelectorValue(_segMan, eventObject, SELECTOR(type));
@@ -223,6 +225,11 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 		}
 	}
 
+	if (!textChanged && oldCursorPos != cursorPos) {
+		assert(!textAddChar);
+		textChanged = g_sci->getVocabulary()->checkAltInput(text, cursorPos);
+	}
+
 	if (textChanged) {
 		GuiResourceId oldFontId = _text16->GetFontId();
 		GuiResourceId fontId = readSelectorValue(_segMan, controlObject, SELECTOR(font));
@@ -230,18 +237,27 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 							  readSelectorValue(_segMan, controlObject, SELECTOR(nsRight)), readSelectorValue(_segMan, controlObject, SELECTOR(nsBottom)));
 		_text16->SetFont(fontId);
 		if (textAddChar) {
-			// We check, if we are really able to add the new char
-			uint16 textWidth = 0;
+
 			const char *textPtr = text.c_str();
+
+			// We check if we are really able to add the new char
+			uint16 textWidth = 0;
 			while (*textPtr)
 				textWidth += _text16->_font->getCharWidth((byte)*textPtr++);
 			textWidth += _text16->_font->getCharWidth(eventKey);
+
+			// Does it fit?
 			if (textWidth >= rect.width()) {
 				_text16->SetFont(oldFontId);
 				return;
 			}
+
 			text.insertChar(eventKey, cursorPos++);
+
+			// Note: the following checkAltInput call might make the text
+			// too wide to fit, but SSCI fails to check that too.
 		}
+		g_sci->getVocabulary()->checkAltInput(text, cursorPos);
 		texteditCursorErase();
 		_paint16->eraseRect(rect);
 		_text16->Box(text.c_str(), 0, rect, SCI_TEXT16_ALIGNMENT_LEFT, -1);

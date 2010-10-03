@@ -73,6 +73,8 @@ Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan),
 		_parserRules = NULL;
 	}
 
+	loadAltInputs();
+
 	parser_base = NULL_REG;
 	parser_event = NULL_REG;
 	parserIsValid = false;
@@ -81,6 +83,7 @@ Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan),
 Vocabulary::~Vocabulary() {
 	freeRuleList(_parserRules);
 	freeSuffixes();
+	freeAltInputs();
 }
 
 void Vocabulary::reset() {
@@ -270,6 +273,104 @@ bool Vocabulary::loadBranches() {
 		_parserBranches.remove_at(branches_nr - 1);
 
 	return true;
+}
+
+bool Vocabulary::loadAltInputs() {
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_ALT_INPUTS), 1);
+
+	if (!resource)
+		return true; // it's not a problem if this resource doesn't exist
+
+	const char *data = (const char*)resource->data;
+	const char *data_end = data + resource->size;
+
+	_altInputs.clear();
+	_altInputs.resize(256);
+
+	while (data < data_end && *data) {
+		AltInput t;
+		t._input = data;
+
+		unsigned int l = strlen(data);
+		t._inputLength = l;
+		data += l + 1;
+
+		t._replacement = data;
+		l = strlen(data);
+		data += l + 1;
+
+		if (data < data_end && strncmp(data, t._input, t._inputLength) == 0)
+			t._prefix = true;
+		else
+			t._prefix = false;
+
+		unsigned char firstChar = t._input[0];
+		_altInputs[firstChar].push_front(t);
+	}
+
+	return true;
+}
+
+void Vocabulary::freeAltInputs() {
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_ALT_INPUTS), 0);
+	if (resource)
+		_resMan->unlockResource(resource);
+
+	_altInputs.clear();
+}
+
+bool Vocabulary::checkAltInput(Common::String& text, uint16& cursorPos) {
+	if (_altInputs.empty())
+		return false;
+	if (SELECTOR(parseLang) == -1)
+		return false;
+	if (readSelectorValue(g_sci->getEngineState()->_segMan, g_sci->getGameObject(), SELECTOR(parseLang)) == 1)
+		return false;
+
+	bool ret = false;
+	unsigned int loopCount = 0;
+	bool changed;
+	do {
+		changed = false;
+
+		const char* t = text.c_str();
+		unsigned int tlen = text.size();
+
+		for (unsigned int p = 0; p < tlen && !changed; ++p) {
+			unsigned char s = t[p];
+			if (s >= _altInputs.size() || _altInputs[s].empty())
+				continue;
+			Common::List<AltInput>::iterator i;
+			for (i = _altInputs[s].begin(); i != _altInputs[s].end(); ++i) {
+				if (p + i->_inputLength > tlen)
+					continue;
+				if (i->_prefix && cursorPos > p && cursorPos <= p + i->_inputLength)
+					continue;
+				if (strncmp(i->_input, t+p, i->_inputLength) == 0) {
+					// replace
+					if (cursorPos > p + i->_inputLength) {
+						cursorPos += strlen(i->_replacement) - i->_inputLength;
+					} else if (cursorPos > p) {
+						cursorPos = p + strlen(i->_replacement);
+					}
+
+					for (unsigned int j = 0; j < i->_inputLength; ++j)
+						text.deleteChar(p);
+					const char *r = i->_replacement;
+					while (*r)
+						text.insertChar(*r++, p++);
+
+					assert(cursorPos <= text.size());
+
+					changed = true;
+					ret = true;
+					break;
+				}
+			}
+		}
+	} while (changed && loopCount < 10);
+
+	return ret;
 }
 
 // we assume that *word points to an already lowercased word

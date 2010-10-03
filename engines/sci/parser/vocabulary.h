@@ -49,7 +49,9 @@ enum {
 
 	VOCAB_RESOURCE_SCI1_MAIN_VOCAB = 900,
 	VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES = 901,
-	VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB = 902
+	VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB = 902,
+
+	VOCAB_RESOURCE_ALT_INPUTS = 913
 };
 
 
@@ -146,6 +148,15 @@ struct synonym_t {
 };
 
 typedef Common::List<synonym_t> SynonymList;
+
+
+struct AltInput {
+	const char *_input;
+	const char *_replacement;
+	unsigned int _inputLength;
+	bool _prefix;
+};
+
 
 struct parse_tree_branch_t {
 	int id;
@@ -273,6 +284,14 @@ public:
 
 	int parseNodes(int *i, int *pos, int type, int nr, int argc, const char **argv);
 
+	/**
+	 * Check text input against alternative inputs.
+	 * @param text The text to process. It will be modified in-place
+	 * @param cursorPos The cursor position
+	 * @return true if anything changed
+	 */
+	bool checkAltInput(Common::String& text, uint16& cursorPos);
+
 private:
 	/**
 	 * Loads all words from the main vocabulary.
@@ -305,6 +324,20 @@ private:
 	 */
 	void freeRuleList(ParseRuleList *rule_list);
 
+
+	/**
+	 * Retrieves all alternative input combinations from vocab 913.
+	 * @return true on success, false on error
+	 */
+	bool loadAltInputs();
+
+	/**
+	 * Frees all alternative input combinations.
+	 */
+	void freeAltInputs();
+
+
+
 	ResourceManager *_resMan;
 	VocabularyVersions _vocabVersion;
 
@@ -319,6 +352,7 @@ private:
 	Common::Array<parse_tree_branch_t> _parserBranches;
 	WordMap _parserWords;
 	SynonymList _synonyms; /**< The list of synonyms */
+	Common::Array<Common::List<AltInput> > _altInputs;
 
 public:
 	// Accessed by said()
