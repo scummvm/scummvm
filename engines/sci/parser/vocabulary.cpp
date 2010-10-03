@@ -502,32 +502,6 @@ void Vocabulary::printParserWords() const {
 	con->DebugPrintf("\n");
 }
 
-void _vocab_recursive_ptree_dump_treelike(ParseTreeNode *tree) {
-	assert(tree);
-
-	if (tree->type == kParseTreeLeafNode)
-		printf("%x", tree->value);
-	else {
-		ParseTreeNode* lbranch = tree->left;
-		ParseTreeNode* rbranch = tree->right;
-		printf("<");
-
-		if (lbranch)
-			_vocab_recursive_ptree_dump_treelike(lbranch);
-		else
-			printf("NULL");
-
-		printf(",");
-
-		if (rbranch)
-			_vocab_recursive_ptree_dump_treelike(rbranch);
-		else
-			printf("NULL");
-
-		printf(">");
-	}
-}
-
 void _vocab_recursive_ptree_dump(ParseTreeNode *tree, int blanks) {
 	assert(tree);
 
@@ -569,14 +543,12 @@ void _vocab_recursive_ptree_dump(ParseTreeNode *tree, int blanks) {
 }
 
 void vocab_dump_parse_tree(const char *tree_name, ParseTreeNode *nodes) {
-	//_vocab_recursive_ptree_dump_treelike(nodes, 0, 0);
 	printf("(setq %s \n'(", tree_name);
 	_vocab_recursive_ptree_dump(nodes, 1);
 	printf("))\n");
 }
 
 void Vocabulary::dumpParseTree() {
-	//_vocab_recursive_ptree_dump_treelike(nodes, 0, 0);
 	printf("(setq parse-tree \n'(");
 	_vocab_recursive_ptree_dump(_parserNodes, 1);
 	printf("))\n");
