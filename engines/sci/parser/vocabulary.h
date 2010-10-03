@@ -117,8 +117,9 @@ struct ResultWord {
 };
 
 typedef Common::List<ResultWord> ResultWordList;
+typedef Common::List<ResultWordList> ResultWordListList;
 
-typedef Common::HashMap<Common::String, ResultWord, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> WordMap;
+typedef Common::HashMap<Common::String, ResultWordList, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> WordMap;
 
 
 struct ParseRuleList;
@@ -161,7 +162,7 @@ struct ParseTreeNode {
 	ParseTypes type;  /**< leaf or branch */
 	int value; /**< For leaves */
 	ParseTreeNode* left; /**< Left child, for branches */
-	ParseTreeNode* right; /**< Right child, for branches */
+	ParseTreeNode* right; /**< Right child, for branches (and word leaves) */
 };
 
 enum VocabularyVersions {
@@ -186,11 +187,11 @@ public:
 
 	/**
 	 * Looks up a single word in the words and suffixes list.
+	 * @param retval	the list of matches
 	 * @param word		pointer to the word to look up
 	 * @param word_len	length of the word to look up
-	 * @return the matching word (or (-1,-1) if there was no match)
 	 */
-	ResultWord lookupWord(const char *word, int word_len);
+	void lookupWord(ResultWordList &retval, const char *word, int word_len);
 
 
 	/**
@@ -204,7 +205,7 @@ public:
 	 * contain any useful words; if not, *error points to a malloc'd copy of
 	 * the offending word. The returned list may contain anywords.
 	 */
-	bool tokenizeString(ResultWordList &retval, const char *sentence, char **error);
+	bool tokenizeString(ResultWordListList &retval, const char *sentence, char **error);
 
 	/**
 	 * Builds a parse tree from a list of words, using a set of Greibach Normal
@@ -215,7 +216,7 @@ public:
 	 *			nodes or if the sentence structure in 'words' is not part of the
 	 *			language described by the grammar passed in 'rules'.
 	 */
-	int parseGNF(const ResultWordList &words, bool verbose = false);
+	int parseGNF(const ResultWordListList &words, bool verbose = false);
 
 	/**
 	 * Constructs the Greibach Normal Form of the grammar supplied in 'branches'.
@@ -262,9 +263,9 @@ public:
 
 	/**
 	 * Synonymizes a token list
-	 * Parameters: (ResultWordList &) words: The word list to synonymize
+	 * Parameters: (ResultWordListList &) words: The word list to synonymize
 	 */
-	void synonymizeTokens(ResultWordList &words);
+	void synonymizeTokens(ResultWordListList &words);
 
 	void printParserNodes(int num);
 

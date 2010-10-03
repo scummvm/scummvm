@@ -1204,7 +1204,6 @@ bool Console::cmdParse(int argc, const char **argv) {
 		return true;
 	}
 
-	ResultWordList words;
 	char *error;
 	char string[1000];
 
@@ -1216,6 +1215,8 @@ bool Console::cmdParse(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Parsing '%s'\n", string);
+
+	ResultWordListList words;
 	bool res = _engine->getVocabulary()->tokenizeString(words, string, &error);
 	if (res && !words.empty()) {
 		int syntax_fail = 0;
@@ -1224,8 +1225,13 @@ bool Console::cmdParse(int argc, const char **argv) {
 
 		DebugPrintf("Parsed to the following blocks:\n");
 
-		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
-			DebugPrintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
+		for (ResultWordListList::const_iterator i = words.begin(); i != words.end(); ++i) {
+			DebugPrintf("   ");
+			for (ResultWordList::const_iterator j = i->begin(); j != i->end(); ++j) {
+				DebugPrintf("%sType[%04x] Group[%04x]", j == i->begin() ? "" : " / ", j->_class, j->_group);
+			}
+			DebugPrintf("\n");
+		}
 
 		if (_engine->getVocabulary()->parseGNF(words, true))
 			syntax_fail = 1; // Building a tree failed
@@ -1252,7 +1258,6 @@ bool Console::cmdSaid(int argc, const char **argv) {
 		return true;
 	}
 
-	ResultWordList words;
 	char *error;
 	char string[1000];
 	byte spec[1000];
@@ -1326,6 +1331,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 	_engine->getVocabulary()->debugDecipherSaidBlock(spec);
 	printf("\n");
 
+	ResultWordListList words;
 	bool res = _engine->getVocabulary()->tokenizeString(words, string, &error);
 	if (res && !words.empty()) {
 		int syntax_fail = 0;
@@ -1334,8 +1340,15 @@ bool Console::cmdSaid(int argc, const char **argv) {
 
 		DebugPrintf("Parsed to the following blocks:\n");
 
-		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
-			DebugPrintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
+		for (ResultWordListList::const_iterator i = words.begin(); i != words.end(); ++i) {
+			DebugPrintf("   ");
+			for (ResultWordList::const_iterator j = i->begin(); j != i->end(); ++j) {
+				DebugPrintf("%sType[%04x] Group[%04x]", j == i->begin() ? "" : " / ", j->_class, j->_group);
+			}
+			DebugPrintf("\n");
+		}
+
+
 
 		if (_engine->getVocabulary()->parseGNF(words, true))
 			syntax_fail = 1; // Building a tree failed
