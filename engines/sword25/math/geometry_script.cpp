@@ -71,7 +71,7 @@ static void *my_checkudata(lua_State *L, int ud, const char *tname) {
 	if (p != NULL) { /* value is a userdata? */
 		if (lua_getmetatable(L, ud)) { /* does it have a metatable? */
 			// lua_getfield(L, LUA_REGISTRYINDEX, tname);  /* get correct metatable */
-			LuaBindhelper::GetMetatable(L, tname);
+			LuaBindhelper::getMetatable(L, tname);
 			/* does it have the correct mt? */
 			if (lua_rawequal(L, -1, -2)) {
 				lua_settop(L, top);
@@ -273,7 +273,7 @@ static void NewUserdataRegion(lua_State *L, const char *ClassName) {
 
 	NewUintUserData(L, RegionHandle);
 	// luaL_getmetatable(L, ClassName);
-	LuaBindhelper::GetMetatable(L, ClassName);
+	LuaBindhelper::getMetatable(L, ClassName);
 	BS_ASSERT(!lua_isnil(L, -1));
 	lua_setmetatable(L, -2);
 }
@@ -540,17 +540,17 @@ bool Geometry::_RegisterScriptBindings() {
 	BS_ASSERT(pKernel);
 	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);
-	lua_State *L = static_cast< lua_State *>(pScript->GetScriptObject());
+	lua_State *L = static_cast< lua_State *>(pScript->getScriptObject());
 	BS_ASSERT(L);
 
-	if (!LuaBindhelper::AddMethodsToClass(L, REGION_CLASS_NAME, REGION_METHODS)) return false;
-	if (!LuaBindhelper::AddMethodsToClass(L, WALKREGION_CLASS_NAME, REGION_METHODS)) return false;
-	if (!LuaBindhelper::AddMethodsToClass(L, WALKREGION_CLASS_NAME, WALKREGION_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, REGION_CLASS_NAME, REGION_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, WALKREGION_CLASS_NAME, REGION_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, WALKREGION_CLASS_NAME, WALKREGION_METHODS)) return false;
 
-	if (!LuaBindhelper::SetClassGCHandler(L, REGION_CLASS_NAME, R_Delete)) return false;
-	if (!LuaBindhelper::SetClassGCHandler(L, WALKREGION_CLASS_NAME, R_Delete)) return false;
+	if (!LuaBindhelper::setClassGCHandler(L, REGION_CLASS_NAME, R_Delete)) return false;
+	if (!LuaBindhelper::setClassGCHandler(L, WALKREGION_CLASS_NAME, R_Delete)) return false;
 
-	if (!LuaBindhelper::AddFunctionsToLib(L, GEO_LIBRARY_NAME, GEO_FUNCTIONS)) return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, GEO_LIBRARY_NAME, GEO_FUNCTIONS)) return false;
 
 	return true;
 }

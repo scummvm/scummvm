@@ -35,10 +35,6 @@
 #ifndef SWORD25_SCRIPT_H
 #define SWORD25_SCRIPT_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "common/array.h"
 #include "common/str.h"
 #include "sword25/kernel/common.h"
@@ -47,24 +43,12 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Forward declarations
-// -----------------------------------------------------------------------------
-
 class Kernel;
 class OutputPersistenceBlock;
 class BS_InputPersistenceBlock;
 
-// -----------------------------------------------------------------------------
-// Class declaration
-// -----------------------------------------------------------------------------
-
 class ScriptEngine : public Service, public Persistable {
 public:
-	// -----------------------------------------------------------------------------
-	// Constructor / destructor
-	// -----------------------------------------------------------------------------
-
 	ScriptEngine(Kernel *KernelPtr) : Service(KernelPtr) {};
 	virtual ~ScriptEngine() {};
 
@@ -75,25 +59,25 @@ public:
 	/**
 	 * Initialises the scrip tengine. Returns true if successful, false otherwise.
 	 */
-	virtual bool Init() = 0;
+	virtual bool init() = 0;
 
 	/**
 	 * Loads a script file and executes it.
 	 * @param FileName      The script filename
 	*/
-	virtual bool ExecuteFile(const Common::String &FileName) = 0;
+	virtual bool executeFile(const Common::String &fileName) = 0;
 
 	/**
 	 * Executes a specified script fragment
 	 * @param Code      String of script code
 	 */
-	virtual bool ExecuteString(const Common::String &Code) = 0;
+	virtual bool executeString(const Common::String &code) = 0;
 
 	/**
 	 * Returns a pointer to the main object of the script engine
 	 * Note: Using this method breaks the encapsulation of the language from the rest of the engine.
 	 */
-	virtual void *GetScriptObject() = 0;
+	virtual void *getScriptObject() = 0;
 
 	/**
 	 * Makes the command line parameters for the script environment available
@@ -101,7 +85,7 @@ public:
 	 * particular implementation.
 	 * @param CommandLineParameters     List containing the command line parameters
 	*/
-	virtual void SetCommandLine(const Common::Array<Common::String> &CommandLineParameters) = 0;
+	virtual void setCommandLine(const Common::Array<Common::String> &commandLineParameters) = 0;
 
 	virtual bool persist(OutputPersistenceBlock &writer) = 0;
 	virtual bool unpersist(InputPersistenceBlock &reader) = 0;

@@ -353,11 +353,11 @@ bool SoundEngine::registerScriptBindings() {
 	BS_ASSERT(pKernel);
 	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);
-	lua_State *L = static_cast<lua_State *>(pScript->GetScriptObject());
+	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	BS_ASSERT(L);
 
-	if (!LuaBindhelper::AddFunctionsToLib(L, SFX_LIBRARY_NAME, SFX_FUNCTIONS)) return false;
-	if (!LuaBindhelper::AddConstantsToLib(L, SFX_LIBRARY_NAME, SFX_CONSTANTS)) return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, SFX_LIBRARY_NAME, SFX_FUNCTIONS)) return false;
+	if (!LuaBindhelper::addConstantsToLib(L, SFX_LIBRARY_NAME, SFX_CONSTANTS)) return false;
 
 	return true;
 }

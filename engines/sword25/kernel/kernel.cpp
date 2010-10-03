@@ -86,7 +86,7 @@ Kernel::Kernel() :
 
 	// Initialise the script engine
 	ScriptEngine *pScript = static_cast<ScriptEngine *>(NewService("script", "lua"));
-	if (!pScript || !pScript->Init()) {
+	if (!pScript || !pScript->init()) {
 		_InitSuccess = false;
 		return;
 	}

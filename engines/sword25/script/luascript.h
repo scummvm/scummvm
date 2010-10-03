@@ -35,18 +35,10 @@
 #ifndef SWORD25_LUASCRIPT_H
 #define SWORD25_LUASCRIPT_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "common/str.h"
 #include "common/str-array.h"
 #include "sword25/kernel/common.h"
 #include "sword25/script/script.h"
-
-// -----------------------------------------------------------------------------
-// Forward declarations
-// -----------------------------------------------------------------------------
 
 namespace Lua {
 
@@ -60,16 +52,8 @@ namespace Sword25 {
 
 class Kernel;
 
-// -----------------------------------------------------------------------------
-// Class declaration
-// -----------------------------------------------------------------------------
-
 class LuaScriptEngine : public ScriptEngine {
 public:
-	// -----------------------------------------------------------------------------
-	// Constructor / Destructor
-	// -----------------------------------------------------------------------------
-
 	LuaScriptEngine(Kernel *KernelPtr);
 	virtual ~LuaScriptEngine();
 
@@ -77,28 +61,28 @@ public:
 	 * Initialises the scripting engine
 	 * @return              Returns true if successful, otherwise false.
 	*/
-	virtual bool Init();
+	virtual bool init();
 
 	/**
 	 * Loads a script file and executes it
 	 * @param FileName      The filename of the script
 	 * @return              Returns true if successful, otherwise false.
 	 */
-	virtual bool ExecuteFile(const Common::String &FileName);
+	virtual bool executeFile(const Common::String &fileName);
 
 	/**
 	 * Execute a string of script code
 	 * @param Code          A string of script code
 	 * @return              Returns true if successful, otherwise false.
 	 */
-	virtual bool ExecuteString(const Common::String &Code);
+	virtual bool executeString(const Common::String &code);
 
 	/**
 	 * Returns a pointer to the main object of the scripting language
 	 * @remark              Using this method breaks the encapsulation of the language
 	 */
-	virtual void *GetScriptObject() {
-		return m_State;
+	virtual void *getScriptObject() {
+		return _state;
 	}
 
 	/**
@@ -107,7 +91,7 @@ public:
 	 * @remark              How the command line parameters will be used by scripts is
 	 * dependant on the particular implementation.
 	 */
-	virtual void SetCommandLine(const Common::StringArray &CommandLineParameters);
+	virtual void setCommandLine(const Common::StringArray &commandLineParameters);
 
 	/**
 	 * @remark              The Lua stack is cleared by this method
@@ -119,12 +103,12 @@ public:
 	virtual bool unpersist(InputPersistenceBlock &reader);
 
 private:
-	lua_State *m_State;
-	int m_PcallErrorhandlerRegistryIndex;
+	lua_State *_state;
+	int _pcallErrorhandlerRegistryIndex;
 
-	bool RegisterStandardLibs();
-	bool RegisterStandardLibExtensions();
-	bool ExecuteBuffer(const byte *Data, uint Size, const Common::String &Name) const;
+	bool registerStandardLibs();
+	bool registerStandardLibExtensions();
+	bool executeBuffer(const byte *data, uint size, const Common::String &name) const;
 };
 
 } // End of namespace Sword25

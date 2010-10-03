@@ -32,18 +32,12 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/script/luascript.h"
 #include "sword25/script/luabindhelper.h"
 
-// -----------------------------------------------------------------------------
-
 namespace Sword25 {
 
-static int Warning(lua_State *L) {
+static int warning(lua_State *L) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
@@ -63,20 +57,17 @@ static int Warning(lua_State *L) {
 	return 0;
 }
 
-// -----------------------------------------------------------------------------
-
 static const luaL_reg GLOBAL_FUNCTIONS[] = {
-	{"warning", Warning},
+	{"warning", warning},
 	{0, 0}
 };
 
-// -----------------------------------------------------------------------------
+bool LuaScriptEngine::registerStandardLibExtensions() {
+	lua_State *L = _state;
+	BS_ASSERT(_state);
 
-bool LuaScriptEngine::RegisterStandardLibExtensions() {
-	lua_State *L = m_State;
-	BS_ASSERT(m_State);
-
-	if (!LuaBindhelper::AddFunctionsToLib(L, "", GLOBAL_FUNCTIONS)) return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, "", GLOBAL_FUNCTIONS))
+		return false;
 
 	return true;
 }

@@ -119,7 +119,7 @@ static void *my_checkudata(lua_State *L, int ud, const char *tname) {
 	if (p != NULL) { /* value is a userdata? */
 		if (lua_getmetatable(L, ud)) { /* does it have a metatable? */
 			// lua_getfield(L, LUA_REGISTRYINDEX, tname);  /* get correct metatable */
-			LuaBindhelper::GetMetatable(L, tname);
+			LuaBindhelper::getMetatable(L, tname);
 			if (lua_rawequal(L, -1, -2)) { /* does it have the correct mt? */
 				lua_settop(L, top);
 				return p;
@@ -163,7 +163,7 @@ static int NewAnimationTemplate(lua_State *L) {
 	if (AnimationTemplatePtr && AnimationTemplatePtr->isValid()) {
 		NewUintUserData(L, AnimationTemplateHandle);
 		//luaL_getmetatable(L, ANIMATION_TEMPLATE_CLASS_NAME);
-		LuaBindhelper::GetMetatable(L, ANIMATION_TEMPLATE_CLASS_NAME);
+		LuaBindhelper::getMetatable(L, ANIMATION_TEMPLATE_CLASS_NAME);
 		BS_ASSERT(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 	} else {
@@ -301,7 +301,7 @@ static int Init(lua_State *L) {
 	NewUintUserData(L, MainPanelPtr->getHandle());
 	BS_ASSERT(!lua_isnil(L, -1));
 	// luaL_getmetatable(L, PANEL_CLASS_NAME);
-	LuaBindhelper::GetMetatable(L, PANEL_CLASS_NAME);
+	LuaBindhelper::getMetatable(L, PANEL_CLASS_NAME);
 	BS_ASSERT(!lua_isnil(L, -1));
 	lua_setmetatable(L, -2);
 
@@ -671,7 +671,7 @@ static int RO_AddPanel(lua_State *L) {
 	if (PanelPtr.isValid()) {
 		NewUintUserData(L, PanelPtr->getHandle());
 		// luaL_getmetatable(L, PANEL_CLASS_NAME);
-		LuaBindhelper::GetMetatable(L, PANEL_CLASS_NAME);
+		LuaBindhelper::getMetatable(L, PANEL_CLASS_NAME);
 		BS_ASSERT(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 	} else
@@ -689,7 +689,7 @@ static int RO_AddBitmap(lua_State *L) {
 	if (BitmaPtr.isValid()) {
 		NewUintUserData(L, BitmaPtr->getHandle());
 		// luaL_getmetatable(L, BITMAP_CLASS_NAME);
-		LuaBindhelper::GetMetatable(L, BITMAP_CLASS_NAME);
+		LuaBindhelper::getMetatable(L, BITMAP_CLASS_NAME);
 		BS_ASSERT(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 	} else
@@ -711,7 +711,7 @@ static int RO_AddText(lua_State *L) {
 	if (TextPtr.isValid()) {
 		NewUintUserData(L, TextPtr->getHandle());
 		// luaL_getmetatable(L, TEXT_CLASS_NAME);
-		LuaBindhelper::GetMetatable(L, TEXT_CLASS_NAME);
+		LuaBindhelper::getMetatable(L, TEXT_CLASS_NAME);
 		BS_ASSERT(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 	} else
@@ -735,7 +735,7 @@ static int RO_AddAnimation(lua_State *L) {
 	if (AnimationPtr.isValid()) {
 		NewUintUserData(L, AnimationPtr->getHandle());
 		// luaL_getmetatable(L, ANIMATION_CLASS_NAME);
-		LuaBindhelper::GetMetatable(L, ANIMATION_CLASS_NAME);
+		LuaBindhelper::getMetatable(L, ANIMATION_CLASS_NAME);
 		BS_ASSERT(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 
@@ -1246,8 +1246,8 @@ static int A_IsPlaying(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static bool AnimationLoopPointCallback(uint Handle) {
-	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->GetScriptObject());
-	LoopPointCallbackPtr->InvokeCallbackFunctions(L, Handle);
+	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->getScriptObject());
+	LoopPointCallbackPtr->invokeCallbackFunctions(L, Handle);
 
 	return true;
 }
@@ -1260,7 +1260,7 @@ static int A_RegisterLoopPointCallback(lua_State *L) {
 	luaL_checktype(L, 2, LUA_TFUNCTION);
 
 	lua_pushvalue(L, 2);
-	LoopPointCallbackPtr->RegisterCallbackFunction(L, AnimationPtr->getHandle());
+	LoopPointCallbackPtr->registerCallbackFunction(L, AnimationPtr->getHandle());
 
 	return 0;
 }
@@ -1273,7 +1273,7 @@ static int A_UnregisterLoopPointCallback(lua_State *L) {
 	luaL_checktype(L, 2, LUA_TFUNCTION);
 
 	lua_pushvalue(L, 2);
-	LoopPointCallbackPtr->UnregisterCallbackFunction(L, AnimationPtr->getHandle());
+	LoopPointCallbackPtr->unregisterCallbackFunction(L, AnimationPtr->getHandle());
 
 	return 0;
 }
@@ -1284,8 +1284,8 @@ static bool AnimationActionCallback(uint Handle) {
 	RenderObjectPtr<Animation> AnimationPtr(Handle);
 	if (AnimationPtr.isValid()) {
 		ActionCallbackPtr->Action = AnimationPtr->GetCurrentAction();
-		lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->GetScriptObject());
-		ActionCallbackPtr->InvokeCallbackFunctions(L, AnimationPtr->getHandle());
+		lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->getScriptObject());
+		ActionCallbackPtr->invokeCallbackFunctions(L, AnimationPtr->getHandle());
 	}
 
 	return true;
@@ -1299,7 +1299,7 @@ static int A_RegisterActionCallback(lua_State *L) {
 	luaL_checktype(L, 2, LUA_TFUNCTION);
 
 	lua_pushvalue(L, 2);
-	ActionCallbackPtr->RegisterCallbackFunction(L, AnimationPtr->getHandle());
+	ActionCallbackPtr->registerCallbackFunction(L, AnimationPtr->getHandle());
 
 	return 0;
 }
@@ -1312,7 +1312,7 @@ static int A_UnregisterActionCallback(lua_State *L) {
 	luaL_checktype(L, 2, LUA_TFUNCTION);
 
 	lua_pushvalue(L, 2);
-	ActionCallbackPtr->UnregisterCallbackFunction(L, AnimationPtr->getHandle());
+	ActionCallbackPtr->unregisterCallbackFunction(L, AnimationPtr->getHandle());
 
 	return 0;
 }
@@ -1320,8 +1320,8 @@ static int A_UnregisterActionCallback(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static bool AnimationDeleteCallback(uint Handle) {
-	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->GetScriptObject());
-	LoopPointCallbackPtr->RemoveAllObjectCallbacks(L, Handle);
+	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->getScriptObject());
+	LoopPointCallbackPtr->removeAllObjectCallbacks(L, Handle);
 
 	return true;
 }
@@ -1527,22 +1527,22 @@ bool GraphicEngine::RegisterScriptBindings() {
 	BS_ASSERT(pKernel);
 	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);
-	lua_State *L = static_cast<lua_State *>(pScript->GetScriptObject());
+	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	BS_ASSERT(L);
 
-	if (!LuaBindhelper::AddMethodsToClass(L, BITMAP_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
-	if (!LuaBindhelper::AddMethodsToClass(L, ANIMATION_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
-	if (!LuaBindhelper::AddMethodsToClass(L, PANEL_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
-	if (!LuaBindhelper::AddMethodsToClass(L, TEXT_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, BITMAP_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, ANIMATION_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, PANEL_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, TEXT_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
 
-	if (!LuaBindhelper::AddMethodsToClass(L, PANEL_CLASS_NAME, PANEL_METHODS)) return false;
-	if (!LuaBindhelper::AddMethodsToClass(L, BITMAP_CLASS_NAME, BITMAP_METHODS)) return false;
-	if (!LuaBindhelper::AddMethodsToClass(L, TEXT_CLASS_NAME, TEXT_METHODS)) return false;
-	if (!LuaBindhelper::AddMethodsToClass(L, ANIMATION_CLASS_NAME, ANIMATION_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, PANEL_CLASS_NAME, PANEL_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, BITMAP_CLASS_NAME, BITMAP_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, TEXT_CLASS_NAME, TEXT_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, ANIMATION_CLASS_NAME, ANIMATION_METHODS)) return false;
 
-	if (!LuaBindhelper::AddMethodsToClass(L, ANIMATION_TEMPLATE_CLASS_NAME, ANIMATION_TEMPLATE_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, ANIMATION_TEMPLATE_CLASS_NAME, ANIMATION_TEMPLATE_METHODS)) return false;
 
-	if (!LuaBindhelper::AddFunctionsToLib(L, GFX_LIBRARY_NAME, GFX_FUNCTIONS)) return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, GFX_LIBRARY_NAME, GFX_FUNCTIONS)) return false;
 
 	LoopPointCallbackPtr.reset(new LuaCallback(L));
 	ActionCallbackPtr.reset(new ActionCallback(L));

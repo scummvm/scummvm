@@ -152,10 +152,10 @@ bool MoviePlayer::registerScriptBindings() {
 	BS_ASSERT(pKernel);
 	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);
-	lua_State *L = static_cast<lua_State *>(pScript->GetScriptObject());
+	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	BS_ASSERT(L);
 
-	if (!LuaBindhelper::AddFunctionsToLib(L, LIBRARY_NAME, LIBRARY_FUNCTIONS)) return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, LIBRARY_NAME, LIBRARY_FUNCTIONS)) return false;
 
 	return true;
 }

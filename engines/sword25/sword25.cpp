@@ -122,7 +122,7 @@ Common::Error Sword25Engine::appStart() {
 	}
 
 	Common::StringArray commandParameters;
-	scriptPtr->SetCommandLine(commandParameters);
+	scriptPtr->setCommandLine(commandParameters);
 
 	return Common::kNoError;
 }
@@ -131,7 +131,7 @@ bool Sword25Engine::appMain() {
 	// The main script start. This script loads all the other scripts and starts the actual game.
 	ScriptEngine *scriptPtr = static_cast<ScriptEngine *>(Kernel::GetInstance()->GetService("script"));
 	BS_ASSERT(scriptPtr);
-	scriptPtr->ExecuteFile(DEFAULT_SCRIPT_FILE);
+	scriptPtr->executeFile(DEFAULT_SCRIPT_FILE);
 
 	return true;
 }

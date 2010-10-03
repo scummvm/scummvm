@@ -245,15 +245,15 @@ static int SetMouseY(lua_State *L) {
 
 static void TheCharacterCallback(int Character) {
 	CharacterCallbackPtr->Character = static_cast<byte>(Character);
-	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->GetScriptObject());
-	CharacterCallbackPtr->InvokeCallbackFunctions(L, 1);
+	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->getScriptObject());
+	CharacterCallbackPtr->invokeCallbackFunctions(L, 1);
 }
 
 // -----------------------------------------------------------------------------
 
 static int RegisterCharacterCallback(lua_State *L) {
 	luaL_checktype(L, 1, LUA_TFUNCTION);
-	CharacterCallbackPtr->RegisterCallbackFunction(L, 1);
+	CharacterCallbackPtr->registerCallbackFunction(L, 1);
 
 	return 0;
 }
@@ -262,7 +262,7 @@ static int RegisterCharacterCallback(lua_State *L) {
 
 static int UnregisterCharacterCallback(lua_State *L) {
 	luaL_checktype(L, 1, LUA_TFUNCTION);
-	CharacterCallbackPtr->UnregisterCallbackFunction(L, 1);
+	CharacterCallbackPtr->unregisterCallbackFunction(L, 1);
 
 	return 0;
 }
@@ -271,15 +271,15 @@ static int UnregisterCharacterCallback(lua_State *L) {
 
 static void TheCommandCallback(int Command) {
 	CommandCallbackPtr->Command = static_cast<InputEngine::KEY_COMMANDS>(Command);
-	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->GetScriptObject());
-	CommandCallbackPtr->InvokeCallbackFunctions(L, 1);
+	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->getScriptObject());
+	CommandCallbackPtr->invokeCallbackFunctions(L, 1);
 }
 
 // -----------------------------------------------------------------------------
 
 static int RegisterCommandCallback(lua_State *L) {
 	luaL_checktype(L, 1, LUA_TFUNCTION);
-	CommandCallbackPtr->RegisterCallbackFunction(L, 1);
+	CommandCallbackPtr->registerCallbackFunction(L, 1);
 
 	return 0;
 }
@@ -288,7 +288,7 @@ static int RegisterCommandCallback(lua_State *L) {
 
 static int UnregisterCommandCallback(lua_State *L) {
 	luaL_checktype(L, 1, LUA_TFUNCTION);
-	CommandCallbackPtr->UnregisterCallbackFunction(L, 1);
+	CommandCallbackPtr->unregisterCallbackFunction(L, 1);
 
 	return 0;
 }
@@ -340,11 +340,11 @@ bool InputEngine::registerScriptBindings() {
 	BS_ASSERT(pKernel);
 	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);
-	lua_State *L = static_cast<lua_State *>(pScript->GetScriptObject());
+	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	BS_ASSERT(L);
 
-	if (!LuaBindhelper::AddFunctionsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_FUNCTIONS)) return false;
-	if (!LuaBindhelper::AddConstantsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_CONSTANTS)) return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_FUNCTIONS)) return false;
+	if (!LuaBindhelper::addConstantsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_CONSTANTS)) return false;
 
 	CharacterCallbackPtr = Common::SharedPtr<CharacterCallbackClass>(new CharacterCallbackClass(L));
 	CommandCallbackPtr = Common::SharedPtr<CommandCallbackClass>(new CommandCallbackClass(L));

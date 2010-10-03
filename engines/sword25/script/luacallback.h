@@ -35,15 +35,7 @@
 #ifndef SWORD25_LUACALLBACK_H
 #define SWORD25_LUACALLBACK_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
-
-// -----------------------------------------------------------------------------
-// Forward Declarations
-// -----------------------------------------------------------------------------
 
 namespace Lua {
 
@@ -55,34 +47,30 @@ using namespace Lua;
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Class definitions
-// -----------------------------------------------------------------------------
-
 class LuaCallback {
 public:
 	LuaCallback(lua_State *L);
 	virtual ~LuaCallback();
 
 	// Funktion muss auf dem Lua-Stack liegen.
-	void RegisterCallbackFunction(lua_State *L, uint ObjectHandle);
+	void registerCallbackFunction(lua_State *L, uint objectHandle);
 
 	// Funktion muss auf dem Lua-Stack liegen.
-	void UnregisterCallbackFunction(lua_State *L, uint ObjectHandle);
+	void unregisterCallbackFunction(lua_State *L, uint objectHandle);
 
-	void RemoveAllObjectCallbacks(lua_State *L, uint ObjectHandle);
+	void removeAllObjectCallbacks(lua_State *L, uint objectHandle);
 
-	void InvokeCallbackFunctions(lua_State *L, uint ObjectHandle);
+	void invokeCallbackFunctions(lua_State *L, uint objectHandle);
 
 protected:
-	virtual int PreFunctionInvokation(lua_State *L) {
+	virtual int preFunctionInvokation(lua_State *L) {
 		return 0;
 	}
 
 private:
-	void EnsureObjectCallbackTableExists(lua_State *L, uint ObjectHandle);
-	void PushCallbackTable(lua_State *L);
-	void PushObjectCallbackTable(lua_State *L, uint ObjectHandle);
+	void ensureObjectCallbackTableExists(lua_State *L, uint objectHandle);
+	void pushCallbackTable(lua_State *L);
+	void pushObjectCallbackTable(lua_State *L, uint objectHandle);
 };
 
 } // End of namespace Sword25
