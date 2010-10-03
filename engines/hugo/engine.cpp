@@ -48,14 +48,14 @@
 
 namespace Hugo {
 
-#define EDGE           10                       // Closest object can get to edge of screen
-#define EDGE2          (EDGE * 2)           // Push object further back on edge collision
+#define EDGE           10                           // Closest object can get to edge of screen
+#define EDGE2          (EDGE * 2)                   // Push object further back on edge collision
 #define SHIFT          8                            // Place hero this far inside bounding box
-#define MAX_OBJECTS    128              // Used in Update_images()
+#define MAX_OBJECTS    128                          // Used in Update_images()
 #define BOUND(X, Y)   ((_boundary[Y * XBYTES + X / 8] & (0x80 >> X % 8)) != 0)  // Boundary bit set
 
 config_t    _config;                                // User's config
-maze_t      _maze = {false, 0, 0, 0, 0, 0, 0, 0, 0}; // Default to not in maze
+maze_t      _maze = {false, 0, 0, 0, 0, 0, 0, 0, 0};// Default to not in maze
 hugo_boot_t _boot;                                  // Boot info structure file
 char        _textBoxBuffer[MAX_BOX];                // Buffer for text box
 command_t   _line = "";                             // Line of user text input
@@ -126,11 +126,12 @@ void HugoEngine::initConfig(inst_t action) {
 		break;
 	case RESET:
 		// Find first tune and play it
-		for (int16 i = 0; i < MAX_TUNES; i++)
+		for (int16 i = 0; i < MAX_TUNES; i++) {
 			if (_config.playlist[i]) {
 				sound().playMusic(i);
 				break;
 			}
+		}
 
 		file().initSavedGame();   // Initialize saved game
 		break;
@@ -210,12 +211,6 @@ void HugoEngine::readScreenFiles(int screenNum) {
 // Update all object positions.  Process object 'local' events
 // including boundary events and collisions
 void HugoEngine::moveObjects() {
-	object_t *obj;
-	seq_t    *currImage;
-	int       x1, x2, y1, y2;                       // object coordinates
-	int       dx, dy;                               // Allowable motion wrt boundary
-	int8      radius;                               // Radius for chase (8 bit signed)
-
 	debugC(4, kDebugEngine, "moveObjects");
 
 	// If route mode enabled, do special route processing
@@ -226,18 +221,19 @@ void HugoEngine::moveObjects() {
 	// and store all (visible) object baselines into the boundary file.
 	// Don't store foreground or background objects
 	for (int i = 0; i < _numObj; i++) {
-		obj = &_objects[i];                         // Get pointer to object
-		currImage = obj->currImagePtr;              // Get ptr to current image
+		object_t *obj = &_objects[i];               // Get pointer to object
+		seq_t *currImage = obj->currImagePtr;       // Get ptr to current image
 		if (obj->screenIndex == *_screen_p) {
 			switch (obj->pathType) {
 			case CHASE:
-			case CHASE2:
-				radius = obj->radius;               // Default to object's radius
+			case CHASE2: {
+				int8 radius = obj->radius;          // Default to object's radius
 				if (radius < 0)                     // If radius infinity, use closer value
 					radius = DX;
 
-				dx = _hero->x + _hero->currImagePtr->x1 - obj->x - currImage->x1;
-				dy = _hero->y + _hero->currImagePtr->y2 - obj->y - currImage->y2 - 1;
+				// Allowable motion wrt boundary
+				int dx = _hero->x + _hero->currImagePtr->x1 - obj->x - currImage->x1;
+				int dy = _hero->y + _hero->currImagePtr->y2 - obj->y - currImage->y2 - 1;
 				if (abs(dx) <= radius)
 					obj->vx = 0;
 				else
@@ -266,7 +262,7 @@ void HugoEngine::moveObjects() {
 					break;
 				case 3:
 				case 2:
-					if (obj->vx != obj->oldvx) {     // vx just stopped
+					if (obj->vx != obj->oldvx) {    // vx just stopped
 						if (dx > 0)                 // Left & right only
 							obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
 						else
@@ -285,6 +281,7 @@ void HugoEngine::moveObjects() {
 				obj->oldvy = obj->vy;
 				currImage = obj->currImagePtr;      // Get (new) ptr to current image
 				break;
+				}
 			case WANDER2:
 			case WANDER:
 				if (!_rnd->getRandomNumber(3 * NORMAL_TPS)) {       // Kick on random interval
@@ -325,29 +322,31 @@ void HugoEngine::moveObjects() {
 
 	// Move objects, allowing for boundaries
 	for (int i = 0; i < _numObj; i++) {
-		obj = &_objects[i];                         // Get pointer to object
+		object_t *obj = &_objects[i];                         // Get pointer to object
 		if ((obj->screenIndex == *_screen_p) && (obj->vx || obj->vy)) {
 			// Only process if it's moving
 
 			// Do object movement.  Delta_x,y return allowed movement in x,y
-			//  to move as close to a boundary as possible without crossing it.
-			currImage = obj->currImagePtr;          // Get ptr to current image
-			x1 = obj->x + currImage->x1;            // Left edge of object
-			x2 = obj->x + currImage->x2;            // Right edge
-			y1 = obj->y + currImage->y1;            // Top edge
-			y2 = obj->y + currImage->y2;            // Bottom edge
+			// to move as close to a boundary as possible without crossing it.
+			seq_t *currImage = obj->currImagePtr;   // Get ptr to current image
+			// object coordinates
+			int x1 = obj->x + currImage->x1;        // Left edge of object
+			int x2 = obj->x + currImage->x2;        // Right edge
+			int y1 = obj->y + currImage->y1;        // Top edge
+			int y2 = obj->y + currImage->y2;        // Bottom edge
 
 			if ((obj->cycling > ALMOST_INVISIBLE) && (obj->priority == FLOATING))
 				clearBoundary(x1, x2, y2);          // Clear our own boundary
-			dx = deltaX(x1, x2, obj->vx, y2);
+
+			// Allowable motion wrt boundary
+			int dx = deltaX(x1, x2, obj->vx, y2);
 			if (dx != obj->vx) {
 				// An object boundary collision!
 				boundaryCollision(obj);
 				obj->vx = 0;
 			}
 
-			dy = deltaY(x1, x2, obj->vy, y2);
-
+			int dy = deltaY(x1, x2, obj->vy, y2);
 			if (dy != obj->vy) {
 				// An object boundary collision!
 				boundaryCollision(obj);
@@ -377,8 +376,8 @@ void HugoEngine::moveObjects() {
 
 	// Clear all object baselines from the boundary file.
 	for (int i = 0; i < _numObj; i++) {
-		obj = &_objects[i];                         // Get pointer to object
-		currImage = obj->currImagePtr;              // Get ptr to current image
+		object_t *obj = &_objects[i];               // Get pointer to object
+		seq_t *currImage = obj->currImagePtr;       // Get ptr to current image
 		if ((obj->screenIndex == *_screen_p) && (obj->cycling > ALMOST_INVISIBLE) && (obj->priority == FLOATING))
 			clearBoundary(obj->oldx + currImage->x1, obj->oldx + currImage->x2, obj->oldy + currImage->y2);
 	}
@@ -405,70 +404,72 @@ int HugoEngine::deltaX(int x1, int x2, int vx, int y) {
 // by comparing the intersection with half the object width pos. If the
 // intersection is in the other half wrt the intended direction, use the
 // desired vx, else use the computed delta.  i.e. believe the desired vx
-	int b;
 
 	debugC(3, kDebugEngine, "deltaX(%d, %d, %d, %d)", x1, x2, vx, y);
 
 	if (vx == 0)
-		return(0);                                  // Object stationary
+		return 0 ;                                  // Object stationary
 
 	y *= XBYTES;                                    // Offset into boundary file
 	if (vx > 0) {
 		// Moving to right
-		for (int i = x1 >> 3; i <= (x2 + vx) >> 3; i++) // Search by byte
-			if ((b = Utils::firstBit((byte)(_boundary[y + i] | _objBound[y + i]))) < 8) {   // b is index or 8
+		for (int i = x1 >> 3; i <= (x2 + vx) >> 3; i++) {// Search by byte
+			int b = Utils::firstBit((byte)(_boundary[y + i] | _objBound[y + i]));
+			if (b < 8) {   // b is index or 8
 				// Compute x of boundary and test if intersection
 				b += i << 3;
 				if ((b >= x1) && (b <= x2 + vx))
-					return((b < x1 + ((x2 - x1) >> 1)) ? vx : b - x2 - 1); // return dx
+					return (b < x1 + ((x2 - x1) >> 1)) ? vx : b - x2 - 1; // return dx
 			}
+		}
 	} else {
 		// Moving to left
-		for (int i = x2 >> 3; i >= (x1 + vx) >> 3; i--)// Search by byte
-			if ((b = Utils::lastBit((byte)(_boundary[y + i] | _objBound[y + i]))) < 8) {    // b is index or 8
+		for (int i = x2 >> 3; i >= (x1 + vx) >> 3; i--) {// Search by byte
+			int b = Utils::lastBit((byte)(_boundary[y + i] | _objBound[y + i]));
+			if (b < 8) {    // b is index or 8
 				// Compute x of boundary and test if intersection
 				b += i << 3;
 				if ((b >= x1 + vx) && (b <= x2))
-					return((b > x1 + ((x2 - x1) >> 1)) ? vx : b - x1 + 1); // return dx
+					return (b > x1 + ((x2 - x1) >> 1)) ? vx : b - x1 + 1; // return dx
 			}
+		}
 	}
-	return(vx);
+	return vx;
 }
 
 // Similar to Delta_x, but for movement in y direction.  Special case of
 // bytes at end of line segment; must only count boundary bits falling on
 // line segment.
 int HugoEngine::deltaY(int x1, int x2, int vy, int y) {
-	int inc, i, j, b;
-
 	debugC(3, kDebugEngine, "deltaY(%d, %d, %d, %d)", x1, x2, vy, y);
 
 	if (vy == 0)
-		return(0);                                  // Object stationary
+		return 0;                                   // Object stationary
 
-	inc = (vy > 0) ? 1 : -1;
-	for (j = y + inc; j != (y + vy + inc); j += inc) //Search by byte
-		for (i = x1 >> 3; i <= x2 >> 3; i++)
-			if ((b = _boundary[j * XBYTES + i] | _objBound[j * XBYTES + i]) != 0) {    // Any bit set
+	int inc = (vy > 0) ? 1 : -1;
+	for (int j = y + inc; j != (y + vy + inc); j += inc) { //Search by byte
+		for (int i = x1 >> 3; i <= x2 >> 3; i++) {
+			int b = _boundary[j * XBYTES + i] | _objBound[j * XBYTES + i];
+			if (b != 0) {                           // Any bit set
 				// Make sure boundary bits fall on line segment
 				if (i == (x2 >> 3))                 // Adjust right end
 					b &= 0xff << ((i << 3) + 7 - x2);
 				else if (i == (x1 >> 3))            // Adjust left end
 					b &= 0xff >> (x1 - (i << 3));
 				if (b)
-					return(j - y - inc);
+					return j - y - inc;
 			}
-	return(vy);
+		}
+	}
+	return vy;
 }
 
 // Store a horizontal line segment in the object boundary file
 void HugoEngine::storeBoundary(int x1, int x2, int y) {
-	byte *b;                                        // ptr to boundary byte
-
 	debugC(5, kDebugEngine, "storeBoundary(%d, %d, %d)", x1, x2, y);
 
 	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
-		b = &_objBound[y * XBYTES + i];             // get boundary byte
+		byte *b = &_objBound[y * XBYTES + i];       // get boundary byte
 		if (i == x2 >> 3)                           // Adjust right end
 			*b |= 0xff << ((i << 3) + 7 - x2);
 		else if (i == x1 >> 3)                      // Adjust left end
@@ -480,13 +481,10 @@ void HugoEngine::storeBoundary(int x1, int x2, int y) {
 
 // Clear a horizontal line segment in the object boundary file
 void HugoEngine::clearBoundary(int x1, int x2, int y) {
-	int  i;
-	byte *b;                                        // ptr to boundary byte
-
 	debugC(5, kDebugEngine, "clearBoundary(%d, %d, %d)", x1, x2, y);
 
-	for (i = x1 >> 3; i <= x2 >> 3; i++) {          // For each byte in line
-		b = &_objBound[y * XBYTES + i];             // get boundary byte
+	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
+		byte *b = &_objBound[y * XBYTES + i];       // get boundary byte
 		if (i == x2 >> 3)                           // Adjust right end
 			*b &= ~(0xff << ((i << 3) + 7 - x2));
 		else if (i == x1 >> 3)                      // Adjust left end
@@ -499,16 +497,15 @@ void HugoEngine::clearBoundary(int x1, int x2, int y) {
 // Maze mode is enabled.  Check to see whether hero has crossed the maze
 // bounding box, if so, go to the next room */
 void HugoEngine::processMaze() {
-	seq_t      *currImage;
-	int         x1, x2, y1, y2;                     // hero coordinates
-
 	debugC(1, kDebugEngine, "processMaze");
 
-	currImage = _hero->currImagePtr;                // Get ptr to current image
-	x1 = _hero->x + currImage->x1;                  // Left edge of object
-	x2 = _hero->x + currImage->x2;                  // Right edge
-	y1 = _hero->y + currImage->y1;                  // Top edge
-	y2 = _hero->y + currImage->y2;                  // Bottom edge
+	seq_t *currImage = _hero->currImagePtr;         // Get ptr to current image
+
+	// hero coordinates
+	int x1 = _hero->x + currImage->x1;              // Left edge of object
+	int x2 = _hero->x + currImage->x2;              // Right edge
+	int y1 = _hero->y + currImage->y1;              // Top edge
+	int y2 = _hero->y + currImage->y2;              // Bottom edge
 
 	if (x1 < _maze.x1) {
 		// Exit west
@@ -545,8 +542,6 @@ void HugoEngine::processMaze() {
 // increasing vertical position, using y+y2 as the baseline
 // Returns -1 if ay2 < by2 else 1 if ay2 > by2 else 0
 int HugoEngine::y2comp(const void *a, const void *b) {
-	int       ay2, by2;
-
 	debugC(6, kDebugEngine, "y2comp");
 
 	const object_t *p1 = &s_Engine->_objects[*(const byte *)a];
@@ -554,24 +549,24 @@ int HugoEngine::y2comp(const void *a, const void *b) {
 
 	if (p1 == p2)
 		// Why does qsort try the same indexes?
-		return (0);
+		return 0;
 
 	if (p1->priority == BACKGROUND)
-		return (-1);
+		return -1;
 
 	if (p2->priority == BACKGROUND)
-		return (1);
+		return 1;
 
 	if (p1->priority == FOREGROUND)
-		return (1);
+		return 1;
 
 	if (p2->priority == FOREGROUND)
-		return (-1);
+		return -1;
 
-	ay2 = p1->y + p1->currImagePtr->y2;
-	by2 = p2->y + p2->currImagePtr->y2;
+	int ay2 = p1->y + p1->currImagePtr->y2;
+	int by2 = p2->y + p2->currImagePtr->y2;
 
-	return(ay2 - by2);
+	return ay2 - by2;
 }
 
 // Draw all objects on screen as follows:
@@ -579,16 +574,14 @@ int HugoEngine::y2comp(const void *a, const void *b) {
 // 2. Display new object frames/positions in dib
 // Finally, cycle any animating objects to next frame
 void HugoEngine::updateImages() {
-	int       i, j, num_objs;
-	object_t *obj;                                  // Pointer to object
-	seq_t    *seqPtr;                               // Save curr_seq_p
-	byte      objindex[MAX_OBJECTS];                // Array of indeces to objects
-
 	debugC(5, kDebugEngine, "updateImages");
 
 	// Initialise the index array to visible objects in current screen
-	for (i = 0, num_objs = 0; i < _numObj; i++) {
-		obj = &_objects[i];
+	int  num_objs = 0;
+	byte objindex[MAX_OBJECTS];                // Array of indeces to objects
+
+	for (int i = 0; i < _numObj; i++) {
+		object_t *obj = &_objects[i];
 		if ((obj->screenIndex == *_screen_p) && (obj->cycling >= ALMOST_INVISIBLE))
 			objindex[num_objs++] = i;
 	}
@@ -597,13 +590,13 @@ void HugoEngine::updateImages() {
 	qsort(objindex, num_objs, sizeof(objindex[0]), y2comp);
 
 	// Add each visible object to display list
-	for (i = 0; i < num_objs; i++) {
-		obj = &_objects[objindex[i]];
+	for (int i = 0; i < num_objs; i++) {
+		object_t *obj = &_objects[objindex[i]];
 		// Count down inter-frame timer
 		if (obj->frameTimer)
 			obj->frameTimer--;
 
-		if (obj->cycling > ALMOST_INVISIBLE)        // Only if visible
+		if (obj->cycling > ALMOST_INVISIBLE) {      // Only if visible
 			switch (obj->cycling) {
 			case NOT_CYCLING:
 				screen().displayFrame(obj->x, obj->y, obj->currImagePtr, obj->priority == OVEROVL);
@@ -614,21 +607,24 @@ void HugoEngine::updateImages() {
 				else
 					screen().displayFrame(obj->x, obj->y, obj->currImagePtr->nextSeqPtr, obj->priority == OVEROVL);
 				break;
-			case CYCLE_BACKWARD:
-				seqPtr = obj->currImagePtr;
-				if (!obj->frameTimer)               // Show next frame
+			case CYCLE_BACKWARD: {
+				seq_t *seqPtr = obj->currImagePtr;
+				if (!obj->frameTimer) {             // Show next frame
 					while (seqPtr->nextSeqPtr != obj->currImagePtr)
 						seqPtr = seqPtr->nextSeqPtr;
+				}
 				screen().displayFrame(obj->x, obj->y, seqPtr, obj->priority == OVEROVL);
 				break;
+				}
 			default:
 				break;
 			}
+		}
 	}
 
 	// Cycle any animating objects
-	for (i = 0; i < num_objs; i++) {
-		obj = &_objects[objindex[i]];
+	for (int i = 0; i < num_objs; i++) {
+		object_t *obj = &_objects[objindex[i]];
 		if (obj->cycling != INVISIBLE) {
 			// Only if it's visible
 			if (obj->cycling == ALMOST_INVISIBLE)
@@ -646,32 +642,39 @@ void HugoEngine::updateImages() {
 					// If so, reset frame_timer and decrement n_cycle
 					if (obj->frameInterval || obj->cycleNumb) {
 						obj->frameTimer = obj->frameInterval;
-						for (j = 0; j < obj->seqNumb; j++)
-							if (obj->currImagePtr->nextSeqPtr == obj->seqList[j].seqPtr)
-								if (obj->cycleNumb)     // Decr cycleNumb if Non-continous
+						for (int j = 0; j < obj->seqNumb; j++) {
+							if (obj->currImagePtr->nextSeqPtr == obj->seqList[j].seqPtr) {
+								if (obj->cycleNumb) { // Decr cycleNumb if Non-continous
 									if (!--obj->cycleNumb)
 										obj->cycling = NOT_CYCLING;
+								}
+							}
+						}
 					}
 				}
 				break;
-			case CYCLE_BACKWARD:
+			case CYCLE_BACKWARD: {
 				if (!obj->frameTimer) {
 					// Time to step to prev frame
-					seqPtr = obj->currImagePtr;
+					seq_t *seqPtr = obj->currImagePtr;
 					while (obj->currImagePtr->nextSeqPtr != seqPtr)
 						obj->currImagePtr = obj->currImagePtr->nextSeqPtr;
 					// Find out if this is first frame of sequence
 					// If so, reset frame_timer and decrement n_cycle
 					if (obj->frameInterval || obj->cycleNumb) {
 						obj->frameTimer = obj->frameInterval;
-						for (j = 0; j < obj->seqNumb; j++)
-							if (obj->currImagePtr == obj->seqList[j].seqPtr)
-								if (obj->cycleNumb)     // Decr cycleNumb if Non-continous
+						for (int j = 0; j < obj->seqNumb; j++) {
+							if (obj->currImagePtr == obj->seqList[j].seqPtr) {
+								if (obj->cycleNumb){ // Decr cycleNumb if Non-continous
 									if (!--obj->cycleNumb)
 										obj->cycling = NOT_CYCLING;
+								}
+							}
+						}
 					}
 				}
 				break;
+				}
 			default:
 				break;
 			}
@@ -684,39 +687,39 @@ void HugoEngine::updateImages() {
 // Return object index of the topmost object under the cursor, or -1 if none
 // Objects are filtered if not "useful"
 int16 HugoEngine::findObject(uint16 x, uint16 y) {
-	object_t *obj;
-	seq_t    *curImage;
-	int16     objIndex = -1;                        // Index of found object
-	uint16    y2Max = 0;                            // Greatest y2
-	int       i;
-
 	debugC(3, kDebugEngine, "findObject(%d, %d)", x, y);
 
+	int16     objIndex = -1;                        // Index of found object
+	uint16    y2Max = 0;                            // Greatest y2
+	object_t *obj = _objects;
 	// Check objects on screen
-	for (i = 0, obj = _objects; i < _numObj; i++, obj++)    {
+	for (int i = 0; i < _numObj; i++, obj++) {
 		// Object must be in current screen and "useful"
 		if (obj->screenIndex == *_screen_p && (obj->genericCmd || obj->objValue || obj->cmdIndex)) {
-			curImage = obj->currImagePtr;
+			seq_t *curImage = obj->currImagePtr;
 			// Object must have a visible image...
-			if (curImage != NULL && obj->cycling != INVISIBLE) {
+			if (curImage != 0 && obj->cycling != INVISIBLE) {
 				// If cursor inside object
-				if (x >= (uint16)obj->x && x <= obj->x + curImage->x2 && y >= (uint16)obj->y && y <= obj->y + curImage->y2)
+				if (x >= (uint16)obj->x && x <= obj->x + curImage->x2 && y >= (uint16)obj->y && y <= obj->y + curImage->y2) {
 					// If object is closest so far
 					if (obj->y + curImage->y2 > y2Max) {
 						y2Max = obj->y + curImage->y2;
 						objIndex = i;               // Found an object!
 					}
-			} else
+				}
+			} else {
 				// ...or a dummy object that has a hotspot rectangle
-				if (curImage == NULL && obj->vxPath != 0 && !obj->carriedFl) {
+				if (curImage == 0 && obj->vxPath != 0 && !obj->carriedFl) {
 					// If cursor inside special rectangle
-					if ((int16)x >= obj->oldx && (int16)x < obj->oldx + obj->vxPath && (int16)y >= obj->oldy && (int16)y < obj->oldy + obj->vyPath)
+					if ((int16)x >= obj->oldx && (int16)x < obj->oldx + obj->vxPath && (int16)y >= obj->oldy && (int16)y < obj->oldy + obj->vyPath) {
 						// If object is closest so far
 						if (obj->oldy + obj->vyPath - 1 > (int16)y2Max) {
 							y2Max = obj->oldy + obj->vyPath - 1;
 							objIndex = i;           // Found an object!
 						}
+					}
 				}
+			}
 		}
 	}
 	return objIndex;
@@ -724,64 +727,70 @@ int16 HugoEngine::findObject(uint16 x, uint16 y) {
 
 // Find a clear space around supplied object that hero can walk to
 bool HugoEngine::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
-//	bool   found = false;                            // TRUE if we found a clear space
-	bool   foundFl;
-	seq_t *curImage = obj->currImagePtr;
-	int16  x;
-	int16  y  = obj->y + curImage->y2 - 1;
-
 	debugC(1, kDebugEngine, "findObjectSpace(obj, %d, %d)", *destx, *desty);
 
-//	if (!found)                                      // Try left rear corner
-	for (foundFl = true, *destx = x = obj->x + curImage->x1; x < *destx + HERO_MAX_WIDTH; x++)
+	seq_t *curImage = obj->currImagePtr;
+	int16 y = obj->y + curImage->y2 - 1;
+
+	bool foundFl = true;
+	// Try left rear corner
+	for (int16 x = *destx = obj->x + curImage->x1; x < *destx + HERO_MAX_WIDTH; x++) {
 		if (BOUND(x, y))
 			foundFl = false;
+	}
 
-	if (!foundFl)                                       // Try right rear corner
-		for (foundFl = true, *destx = x = obj->x + curImage->x2 - HERO_MAX_WIDTH + 1; x <= obj->x + (int16)curImage->x2; x++)
+	if (!foundFl) {                                 // Try right rear corner
+		foundFl = true;
+		for (int16 x = *destx = obj->x + curImage->x2 - HERO_MAX_WIDTH + 1; x <= obj->x + (int16)curImage->x2; x++) {
 			if (BOUND(x, y))
 				foundFl = false;
+		}
+	}
 
-	if (!foundFl)                                       // Try left front corner
-		for (foundFl = true, y += 2, *destx = x = obj->x + curImage->x1; x < *destx + HERO_MAX_WIDTH; x++)
+	if (!foundFl) {                                 // Try left front corner
+		foundFl = true;
+		y += 2;
+		for (int16 x = *destx = obj->x + curImage->x1; x < *destx + HERO_MAX_WIDTH; x++) {
 			if (BOUND(x, y))
 				foundFl = false;
+		}
+	}
 
-	if (!foundFl)                                       // Try right rear corner
-		for (foundFl = true, *destx = x = obj->x + curImage->x2 - HERO_MAX_WIDTH + 1; x <= obj->x + (int16)curImage->x2; x++)
+	if (!foundFl) {                                 // Try right rear corner
+		foundFl = true;
+		for (int16 x = *destx = obj->x + curImage->x2 - HERO_MAX_WIDTH + 1; x <= obj->x + (int16)curImage->x2; x++) {
 			if (BOUND(x, y))
 				foundFl = false;
+		}
+	}
 
 	*desty = y;
-	return(foundFl);
+	return foundFl;
 }
 
 // Search background command list for this screen for supplied object.
-// Return first associated verb (not "look") or NULL if none found.
+// Return first associated verb (not "look") or 0 if none found.
 char *HugoEngine::useBG(char *name) {
 	debugC(1, kDebugEngine, "useBG(%s)", name);
 
 	objectList_t p = _backgroundObjects[*_screen_p];
-	for (int i = 0; *_arrayVerbs[p[i].verbIndex]; i++)
+	for (int i = 0; *_arrayVerbs[p[i].verbIndex]; i++) {
 		if ((name == _arrayNouns[p[i].nounIndex][0] &&
-		        p[i].verbIndex != _look) &&
-		        ((p[i].roomState == DONT_CARE) || (p[i].roomState == _screenStates[*_screen_p])))
-			return (_arrayVerbs[p[i].verbIndex][0]);
+		     p[i].verbIndex != _look) &&
+		    ((p[i].roomState == DONT_CARE) || (p[i].roomState == _screenStates[*_screen_p])))
+			return _arrayVerbs[p[i].verbIndex][0];
+	}
 
-	return (NULL);
+	return 0;
 }
 
 // If status.objid = -1, pick up objid, else use status.objid on objid,
 // if objid can't be picked up, use it directly
 void HugoEngine::useObject(int16 objId) {
-	object_t *obj = &_objects[objId];               // Ptr to object
-	uses_t *use;                                    // Ptr to use entry
-	target_t *target;                               // Ptr to target entry
-	bool foundFl;                                   // TRUE if found target entry
-	char *verb;                                     // Background verb to use directly
-
 	debugC(1, kDebugEngine, "useObject(%d)", objId);
 
+	char *verb;                                     // Background verb to use directly
+	object_t *obj = &_objects[objId];               // Ptr to object
 	if (_status.inventoryObjId == -1) {
 		// Get or use objid directly
 		if ((obj->genericCmd & TAKE) || obj->objValue)  // Get collectible item
@@ -792,7 +801,7 @@ void HugoEngine::useObject(int16 objId) {
 			sprintf(_line, "%s %s", _arrayVerbs[_drop][0], _arrayNouns[obj->nounIndex][0]);
 		else if (obj->cmdIndex != 0)                // Use non-collectible item if able
 			sprintf(_line, "%s %s", _arrayVerbs[_cmdList[obj->cmdIndex][1].verbIndex][0], _arrayNouns[obj->nounIndex][0]);
-		else if ((verb = useBG(_arrayNouns[obj->nounIndex][0])) != NULL)
+		else if ((verb = useBG(_arrayNouns[obj->nounIndex][0])) != 0)
 			sprintf(_line, "%s %s", verb, _arrayNouns[obj->nounIndex][0]);
 		else
 			return;                                 // Can't use object directly
@@ -802,10 +811,11 @@ void HugoEngine::useObject(int16 objId) {
 		sprintf(_line, "%s %s %s", _arrayVerbs[_cmdList[_objects[_status.inventoryObjId].cmdIndex][1].verbIndex][0], _arrayNouns[_objects[_status.inventoryObjId].nounIndex][0], _arrayNouns[obj->nounIndex][0]);
 
 		// Check valid use of objects and override verb if necessary
-		for (use = _uses; use->objId != _numObj; use++)
+		for (uses_t *use = _uses; use->objId != _numObj; use++) {
 			if (_status.inventoryObjId == use->objId) {
 				// Look for secondary object, if found use matching verb
-				for (foundFl = false, target = use->targets; _arrayNouns[target->nounIndex] != NULL; target++)
+				bool foundFl = false;
+				for (target_t *target = use->targets; _arrayNouns[target->nounIndex] != 0; target++)
 					if (_arrayNouns[target->nounIndex][0] == _arrayNouns[obj->nounIndex][0]) {
 						foundFl = true;
 						sprintf(_line, "%s %s %s", _arrayVerbs[target->verbIndex][0], _arrayNouns[_objects[_status.inventoryObjId].nounIndex][0], _arrayNouns[obj->nounIndex][0]);
@@ -820,6 +830,7 @@ void HugoEngine::useObject(int16 objId) {
 					return;
 				}
 			}
+		}
 	}
 
 	if (_status.inventoryState == I_ACTIVE)         // If inventory active, remove it
@@ -833,30 +844,27 @@ void HugoEngine::useObject(int16 objId) {
 void HugoEngine::lookObject(object_t *obj) {
 	debugC(1, kDebugEngine, "lookObject");
 
-	if (obj == _hero) {
+	if (obj == _hero)
 		// Hero swapped - look at other
 		obj = &_objects[_heroImage];
-	}
+
 	parser().command("%s %s", _arrayVerbs[_look][0], _arrayNouns[obj->nounIndex][0]);
 }
 
 // Free all object images
 void HugoEngine::freeObjects() {
-	object_t *obj;
-	seq_t *seq;
-
 	debugC(1, kDebugEngine, "freeObjects");
 
 	// Nothing to do if not allocated yet
-	if (_hero->seqList[0].seqPtr == NULL)
+	if (_hero->seqList[0].seqPtr == 0)
 		return;
 
 	// Free all sequence lists and image data
 	for (int i = 0; i < _numObj; i++) {
-		obj = &_objects[i];
-		for (int j = 0; j < obj->seqNumb; j++) {        // for each sequence
-			seq = obj->seqList[j].seqPtr;           // Free image
-			if (seq == NULL)                        // Failure during database load
+		object_t *obj = &_objects[i];
+		for (int j = 0; j < obj->seqNumb; j++) {    // for each sequence
+			seq_t *seq = obj->seqList[j].seqPtr;    // Free image
+			if (seq == 0)                           // Failure during database load
 				break;
 			do {
 				free(seq->imagePtr);
@@ -869,10 +877,9 @@ void HugoEngine::freeObjects() {
 
 // Add action lists for this screen to event queue
 void HugoEngine::screenActions(int screenNum) {
-	uint16 *screenAct = _screenActs[screenNum];
-
 	debugC(1, kDebugEngine, "screenActions(%d)", screenNum);
 
+	uint16 *screenAct = _screenActs[screenNum];
 	if (screenAct) {
 		for (int i = 0; screenAct[i]; i++)
 			scheduler().insertActionList(screenAct[i]);
@@ -884,29 +891,27 @@ void HugoEngine::setNewScreen(int screenNum) {
 	debugC(1, kDebugEngine, "setNewScreen(%d)", screenNum);
 
 	*_screen_p = screenNum;                             // HERO object
-	for (int i = HERO + 1; i < _numObj; i++)            // Any others
+	for (int i = HERO + 1; i < _numObj; i++) {          // Any others
 		if (_objects[i].carriedFl)                      // being carried
 			_objects[i].screenIndex = screenNum;
+	}
 }
 
 // An object has collided with a boundary.  See if any actions are required
 void HugoEngine::boundaryCollision(object_t *obj) {
-	int         x, y, dx, dy;
-	int8        radius;                             // 8 bits signed
-	hotspot_t   *hotspot;
-
 	debugC(1, kDebugEngine, "boundaryCollision");
 
 	if (obj == _hero) {
 		// Hotspots only relevant to HERO
+		int x;
 		if (obj->vx > 0)
 			x = obj->x + obj->currImagePtr->x2;
 		else
 			x = obj->x + obj->currImagePtr->x1;
-		y = obj->y + obj->currImagePtr->y2;
+		int y = obj->y + obj->currImagePtr->y2;
 
 		for (int i = 0; _hotspots[i].screenIndex >= 0; i++) {
-			hotspot = &_hotspots[i];
+			hotspot_t *hotspot = &_hotspots[i];
 			if (hotspot->screenIndex == obj->screenIndex)
 				if ((x >= hotspot->x1) && (x <= hotspot->x2) && (y >= hotspot->y1) && (y <= hotspot->y2)) {
 					scheduler().insertActionList(hotspot->actIndex);
@@ -915,10 +920,10 @@ void HugoEngine::boundaryCollision(object_t *obj) {
 		}
 	} else {
 		// Check whether an object collided with HERO
-		dx = _hero->x + _hero->currImagePtr->x1 - obj->x - obj->currImagePtr->x1;
-		dy = _hero->y + _hero->currImagePtr->y2 - obj->y - obj->currImagePtr->y2;
+		int dx = _hero->x + _hero->currImagePtr->x1 - obj->x - obj->currImagePtr->x1;
+		int dy = _hero->y + _hero->currImagePtr->y2 - obj->y - obj->currImagePtr->y2;
 		// If object's radius is infinity, use a closer value
-		radius = obj->radius;
+		int8 radius = obj->radius;
 		if (radius < 0)
 			radius = DX * 2;
 		if ((abs(dx) <= radius) && (abs(dy) <= radius))
@@ -940,14 +945,12 @@ void HugoEngine::initNewScreenDisplay() {
 
 // Add up all the object values and all the bonus points
 void HugoEngine::calcMaxScore() {
-	int i;
-
 	debugC(1, kDebugEngine, "calcMaxScore");
 
-	for (i = 0; i < _numObj; i++)
+	for (int i = 0; i < _numObj; i++)
 		_maxscore += _objects[i].objValue;
 
-	for (i = 0; i < _numBonuses; i++)
+	for (int i = 0; i < _numBonuses; i++)
 		_maxscore += _points[i].score;
 }
 

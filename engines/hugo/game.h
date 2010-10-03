@@ -841,7 +841,7 @@ extern hugo_boot_t _boot;                           // Boot info structure
 extern char        _textBoxBuffer[];                // Useful box text buffer
 extern command_t   _line;                           // Line of user text input
 
-/* Structure of scenery file lookup entry */
+// Structure of scenery file lookup entry
 struct sceneBlock_t {
 	uint32 scene_off;
 	uint32 scene_len;
@@ -853,7 +853,7 @@ struct sceneBlock_t {
 	uint32 ob_len;
 };
 
-/* Structure of object file lookup entry */
+// Structure of object file lookup entry
 struct objBlock_t {
 	uint32 objOffset;
 	uint32 objLength;

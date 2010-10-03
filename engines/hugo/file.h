@@ -35,7 +35,23 @@
 
 // TODO get rid of those defines
 #define HELPFILE "help.dat"
-#define EOP '#' /* Marks end of a page in help file */
+#define EOP '#'                                     // Marks end of a page in help file
+
+struct PCC_header_t {                               // Structure of PCX file header
+	byte   mfctr, vers, enc, bpx;
+	uint16  x1, y1, x2, y2;                         // bounding box
+	uint16  xres, yres;
+	byte   palette[48];                             // EGA color palette
+	byte   vmode, planes;
+	uint16 bytesPerLine;                            // Bytes per line
+	byte   fill2[60];
+};                                                  // Header of a PCC file
+
+// Record and playback handling stuff:
+struct pbdata_t {
+//	int    key;                                     // Character
+	uint32 time;                                    // Time at which character was pressed
+};
 
 namespace Hugo {
 
@@ -70,15 +86,18 @@ public:
 protected:
 	HugoEngine &_vm;
 
-	Common::File _stringArchive;                        /* Handle for string file */
-	Common::File _sceneryArchive1;                      /* Handle for scenery file */
-	Common::File _objectsArchive;                       /* Handle for objects file */
+	Common::File _stringArchive;                    // Handle for string file
+	Common::File _sceneryArchive1;                  // Handle for scenery file
+	Common::File _objectsArchive;                   // Handle for objects file
 
 	seq_t *readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool firstFl, const char *name);
 private:
 
 	byte *convertPCC(byte *p, uint16 y, uint16 bpl, image_pt data_p);
 	uif_hdr_t *getUIFHeader(uif_t id);
+
+	pbdata_t pbdata;
+	FILE *fpb;
 
 //Strangerke : Not used?
 	void     openPlaybackFile(bool playbackFl, bool recordFl);
@@ -121,7 +140,7 @@ public:
 	void readBackground(int screenIndex);
 	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
 private:
-	Common::File _sceneryArchive2;                      /* Handle for scenery file */
+	Common::File _sceneryArchive2;                  // Handle for scenery file
 };
 
 class FileManager_v1w : public FileManager_v2d {

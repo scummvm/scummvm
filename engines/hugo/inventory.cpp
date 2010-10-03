@@ -54,8 +54,6 @@ InventoryHandler::InventoryHandler(HugoEngine &vm) : _vm(vm) {
 // scrollFl is TRUE if scroll arrows required
 // firstObjId is index of first (scrolled) inventory object to display
 void InventoryHandler::constructInventory(int16 imageTotNumb, int displayNumb, bool scrollFl, int16 firstObjId) {
-	int16 ux, uy, ix;                           // Coordinates of icons
-
 	debugC(1, kDebugInventory, "constructInventory(%d, %d, %d, %d)", imageTotNumb, displayNumb, (scrollFl) ? 0 : 1, firstObjId);
 
 	// Clear out icon buffer
@@ -77,11 +75,11 @@ void InventoryHandler::constructInventory(int16 imageTotNumb, int displayNumb, b
 			// Check still room to display and past first scroll index
 			if (displayed < displayNumb && carried >= firstObjId) {
 				// Compute source coordinates in dib_u
-				ux = (i + NUM_ARROWS) * INV_DX % XPIX;
-				uy = (i + NUM_ARROWS) * INV_DX / XPIX * INV_DY;
+				int16 ux = (i + NUM_ARROWS) * INV_DX % XPIX;
+				int16 uy = (i + NUM_ARROWS) * INV_DX / XPIX * INV_DY;
 
 				// Compute dest coordinates in dib_i
-				ix = ((scrollFl) ? displayed + 1 : displayed) * INV_DX;
+				int16 ix = ((scrollFl) ? displayed + 1 : displayed) * INV_DX;
 				displayed++;        // Count number displayed
 
 				// Copy the icon
@@ -95,24 +93,23 @@ void InventoryHandler::constructInventory(int16 imageTotNumb, int displayNumb, b
 // Process required action for inventory
 // Returns objId under cursor (or -1) for INV_GET
 int16 InventoryHandler::processInventory(invact_t action, ...) {
-	static int16 firstIconId = 0;                   // Index of first icon to display
-	int16 i, j;
-	int16 objId = -1;                               // Return objid under cursor
-	int16 imageNumb;                                // Total number of inventory items
-	int displayNumb;                                // Total number displayed/carried
-	int16 cursorx, cursory;                         // Current cursor position
-	bool scrollFl;                                  // TRUE if scroll arrows needed
-	va_list marker;                                 // Args used for D_ADD operation
-
 	debugC(1, kDebugInventory, "processInventory(invact_t action, ...)");
 
+	static int16 firstIconId = 0;                   // Index of first icon to display
+
+	int16 imageNumb;                                // Total number of inventory items
+	int displayNumb;                                // Total number displayed/carried
 	// Compute total number and number displayed, i.e. number carried
-	for (imageNumb = 0, displayNumb = 0; imageNumb < _vm._maxInvent && _vm._invent[imageNumb] != -1; imageNumb++)
+	for (imageNumb = 0, displayNumb = 0; imageNumb < _vm._maxInvent && _vm._invent[imageNumb] != -1; imageNumb++) {
 		if (_vm._objects[_vm._invent[imageNumb]].carriedFl)
 			displayNumb++;
+	}
 
 	// Will we need the scroll arrows?
-	scrollFl = displayNumb > MAX_DISP;
+	bool scrollFl = displayNumb > MAX_DISP;
+	va_list marker;                                 // Args used for D_ADD operation
+	int16 cursorx, cursory;                         // Current cursor position
+	int16 objId = -1;								// Return objid under cursor
 
 	switch (action) {
 	case INV_INIT:                                  // Initialize inventory display
@@ -135,11 +132,11 @@ int16 InventoryHandler::processInventory(invact_t action, ...) {
 
 		cursory -= DIBOFF_Y;                        // Icon bar is at true zero
 		if (cursory > 0 && cursory < INV_DY) {      // Within icon bar?
-			i = cursorx / INV_DX;                   // Compute icon index
-			if (scrollFl) {                          // Scroll buttons displayed
-				if (i == 0)                         // Left scroll button
+			int16 i = cursorx / INV_DX;             // Compute icon index
+			if (scrollFl) {                         // Scroll buttons displayed
+				if (i == 0) {                       // Left scroll button
 					objId = LEFT_ARROW;
-				else {
+				} else {
 					if (i == MAX_DISP - 1)          // Right scroll button
 						objId = RIGHT_ARROW;
 					else                            // Adjust for scroll
@@ -148,12 +145,16 @@ int16 InventoryHandler::processInventory(invact_t action, ...) {
 			}
 
 			// If not an arrow, find object id - limit to valid range
-			if (objId == -1 && i < displayNumb)
+			if (objId == -1 && i < displayNumb) {
 				// Find objid by counting # carried objects == i+1
-				for (j = 0, i++; i > 0 && j < _vm._numObj; j++)
-					if (_vm._objects[j].carriedFl)
+				int16 j;
+				for (j = 0, i++; i > 0 && j < _vm._numObj; j++) {
+					if (_vm._objects[j].carriedFl) {
 						if (--i == 0)
 							objId = j;
+					}
+				}
+			}
 		}
 		break;
 	}

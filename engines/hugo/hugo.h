@@ -157,7 +157,7 @@ public:
 
 	// Temporary, until the engine is fully objectified.
 	static HugoEngine &get() {
-		assert(s_Engine != NULL);
+		assert(s_Engine != 0);
 		return *s_Engine;
 	}
 

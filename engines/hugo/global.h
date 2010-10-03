@@ -34,18 +34,19 @@ namespace Hugo {
 
 #define HERO 0 // In all enums, HERO is the first element
 
-#define DESCRIPLEN     32                           /* Length of description string */
-#define MAX_SOUNDS     64                           /* Max number of sounds */
-#define BOOTFILE       "HUGO.BSF"                   /* Name of boot structure file */
-#define LEN_MASK       0x3F                         /* Lower 6 bits are length */
+#define DESCRIPLEN     32                           // Length of description string
+#define MAX_SOUNDS     64                           // Max number of sounds
+#define BOOTFILE       "HUGO.BSF"                   // Name of boot structure file
+#define LEN_MASK       0x3F                         // Lower 6 bits are length
 #define PBFILE         "playback.dat"
 
-/* Name scenery and objects picture databases */
+// Name scenery and objects picture databases
 #define OBJECTS_FILE   "objects.dat"
 #define STRING_FILE    "strings.dat"
 #define SOUND_FILE     "sounds.dat"
 
-/* User interface database (Windows Only) */
+// User interface database (Windows Only)
+// This file contains, between others, the bitmaps of the fonts used in the application
 #define UIF_FILE   "uif.dat"
 
 static const int kSavegameVersion = 1;

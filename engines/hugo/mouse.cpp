@@ -64,7 +64,6 @@ MouseHandler::MouseHandler(HugoEngine &vm) : _vm(vm) {
 
 // Shadow-blit supplied string into dib_a at cx,cy and add to display list
 void MouseHandler::cursorText(char *buffer, int16 cx, int16 cy, uif_t fontId, int16 color) {
-
 	debugC(1, kDebugMouse, "cursorText(%s, %d, %d, %d, %d)", buffer, cx, cy, fontId, color);
 
 	_vm.screen().loadFont(fontId);
@@ -80,28 +79,23 @@ void MouseHandler::cursorText(char *buffer, int16 cx, int16 cy, uif_t fontId, in
 	_vm.screen().displayList(D_ADD, sx, sy, sdx, sdy);
 }
 
-
 // Find the exit hotspot containing cx, cy.
 // Return hotspot index or -1 if not found.
 int16 MouseHandler::findExit(int16 cx, int16 cy) {
-	int i;
-	hotspot_t *hotspot;
-
 	debugC(2, kDebugMouse, "findExit(%d, %d)", cx, cy);
 
-	for (i = 0, hotspot = _vm._hotspots; hotspot->screenIndex >= 0; i++, hotspot++)
-		if (hotspot->screenIndex == *_vm._screen_p)
+	int i = 0;
+	for (hotspot_t *hotspot = _vm._hotspots; hotspot->screenIndex >= 0; i++, hotspot++) {
+		if (hotspot->screenIndex == *_vm._screen_p) {
 			if (cx >= hotspot->x1 && cx <= hotspot->x2 && cy >= hotspot->y1 && cy <= hotspot->y2)
-				return(i);
-	return(-1);
+				return i;
+		}
+	}
+	return -1;
 }
 
 // Process a mouse right click at coord cx, cy over object objid
 void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
-	object_t *obj;
-	int16     x, y;
-	bool      foundFl = false;                      // TRUE if route found to object
-
 	debugC(1, kDebugMouse, "Process_rclick(%d, %d, %d)", objId, cx, cy);
 
 	status_t &gameStatus = _vm.getGameStatus();
@@ -109,21 +103,23 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 	if (gameStatus.storyModeFl || _vm._hero->pathType == QUIET)     // Make sure user has control
 		return;
 
+	bool foundFl = false;                           // TRUE if route found to object
 	// Check if this was over iconbar
 	if (gameStatus.inventoryState == I_ACTIVE && cy < INV_DY + DIBOFF_Y) { // Clicked over iconbar object
 		if (gameStatus.inventoryObjId == -1)
 			gameStatus.inventoryObjId = objId;      // Not using so select new object
 		else if (gameStatus.inventoryObjId == objId)
-			gameStatus.inventoryObjId = -1;     // Same icon - deselect it
+			gameStatus.inventoryObjId = -1;         // Same icon - deselect it
 		else
-			_vm.useObject(objId);               // Use status.objid on object
+			_vm.useObject(objId);                   // Use status.objid on object
 	} else {                                        // Clicked over viewport object
-		obj = &_vm._objects[objId];
+		object_t *obj = &_vm._objects[objId];
+		int16 x, y;
 		switch (obj->viewx) {                       // Where to walk to
 		case -1:                                    // Walk to object position
 			if (_vm.findObjectSpace(obj, &x, &y))
 				foundFl = _vm.route().startRoute(GO_GET, objId, x, y);
-			if (!foundFl)                               // Can't get there, try to use from here
+			if (!foundFl)                           // Can't get there, try to use from here
 				_vm.useObject(objId);
 			break;
 		case 0:                                     // Immediate use
@@ -131,7 +127,7 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 			break;
 		default:                                    // Walk to view point if possible
 			if (!_vm.route().startRoute(GO_GET, objId, obj->viewx, obj->viewy)) {
-				if (_vm._hero->cycling == INVISIBLE)    // If invisible do
+				if (_vm._hero->cycling == INVISIBLE)// If invisible do
 					_vm.useObject(objId);           // immediate use
 				else
 					Utils::Box(BOX_ANY, "%s", _vm._textMouse[kMsNoWayText]);      // Can't get there
@@ -148,11 +144,10 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 // 4.  Nothing - attempt to walk there
 // 5.  Exit - walk to exit hotspot
 void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
+	debugC(1, kDebugMouse, "Process_lclick(%d, %d, %d)", objId, cx, cy);
+
 	int16 i, x, y;
 	object_t *obj;
-	bool foundFl = false;                               // TRUE if route found to object
-
-	debugC(1, kDebugMouse, "Process_lclick(%d, %d, %d)", objId, cx, cy);
 
 	status_t &gameStatus = _vm.getGameStatus();
 
@@ -202,11 +197,12 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 		if (gameStatus.inventoryState == I_ACTIVE && cy < INV_DY + DIBOFF_Y)
 			_vm.lookObject(obj);
 		else {
+			bool foundFl = false;                   // TRUE if route found to object
 			switch (obj->viewx) {                   // Clicked over viewport object
 			case -1:                                // Walk to object position
 				if (_vm.findObjectSpace(obj, &x, &y))
 					foundFl = _vm.route().startRoute(GO_LOOK, objId, x, y);
-				if (!foundFl)                           // Can't get there, immediate description
+				if (!foundFl)                       // Can't get there, immediate description
 					_vm.lookObject(obj);
 				break;
 			case 0:                                 // Immediate description
@@ -215,7 +211,7 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 			default:                                // Walk to view point if possible
 				if (!_vm.route().startRoute(GO_LOOK, objId, obj->viewx, obj->viewy)) {
 					if (_vm._hero->cycling == INVISIBLE)    // If invisible do
-						_vm.lookObject(obj);            // immediate decription
+						_vm.lookObject(obj);        // immediate decription
 					else
 						Utils::Box(BOX_ANY, "%s", _vm._textMouse[kMsNoWayText]);  // Can't get there
 				}
@@ -228,12 +224,6 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 
 // Process mouse activity
 void MouseHandler::mouseHandler() {
-	int16 iconId;                                   // Find index of dragged icon
-	int   iconx, icony;                             // Icon position (in dib_a)
-	int16 ux, uy;                                   // Icon position (in dib_u)
-	int16 objId = -1;                               // Current source object
-	char *name;                                     // Name of object to display
-
 	debugC(2, kDebugMouse, "mouseHandler");
 
 	int16 cx = _vm.getMouseX();
@@ -241,7 +231,7 @@ void MouseHandler::mouseHandler() {
 
 	status_t &gameStatus = _vm.getGameStatus();
 
-	gameStatus.cx = cx;                                 // Save cursor coords
+	gameStatus.cx = cx;                             // Save cursor coords
 	gameStatus.cy = cy;
 
 	// Don't process if outside client area
@@ -251,17 +241,19 @@ void MouseHandler::mouseHandler() {
 	// Display dragged inventory icon if one currently selected
 	if (gameStatus.inventoryObjId != -1) {
 		// Find index of icon
-		for (iconId = 0; iconId < _vm._maxInvent; iconId++)
+		int16 iconId;                               // Find index of dragged icon
+		for (iconId = 0; iconId < _vm._maxInvent; iconId++) {
 			if (gameStatus.inventoryObjId == _vm._invent[iconId])
 				break;
+		}
 
 		// Compute source coordinates in dib_u
-		ux = (iconId + NUM_ARROWS) * INV_DX % XPIX;
-		uy = (iconId + NUM_ARROWS) * INV_DX / XPIX * INV_DY;
+		int16 ux = (iconId + NUM_ARROWS) * INV_DX % XPIX;
+		int16 uy = (iconId + NUM_ARROWS) * INV_DX / XPIX * INV_DY;
 
 		// Compute destination coordinates in dib_a
-		iconx = cx + IX_OFF;
-		icony = cy + IY_OFF;
+		int iconx = cx + IX_OFF;
+		int icony = cy + IY_OFF;
 		iconx = MAX(iconx, 0);                      // Keep within dib_a bounds
 		iconx = MIN(iconx, XPIX - INV_DX);
 		icony = MAX(icony, 0);
@@ -272,6 +264,7 @@ void MouseHandler::mouseHandler() {
 		_vm.screen().displayList(D_ADD, iconx, icony, INV_DX, INV_DY);
 	}
 
+	int16 objId = -1;                               // Current source object
 	// Process cursor over an object or icon
 	if (gameStatus.inventoryState == I_ACTIVE)      // Check inventory icon bar first
 		objId = _vm.inventory().processInventory(INV_GET, cx, cy);
@@ -280,7 +273,7 @@ void MouseHandler::mouseHandler() {
 	if (objId >= 0) {                               // Got a match
 		// Display object name next to cursor (unless CURSOR_NOCHAR)
 		// Note test for swapped hero name
-		name = _vm._arrayNouns[_vm._objects[(objId == HERO) ? _vm._heroImage : objId].nounIndex][CURSOR_NAME];
+		char *name = _vm._arrayNouns[_vm._objects[(objId == HERO) ? _vm._heroImage : objId].nounIndex][CURSOR_NAME];
 		if (name[0] != CURSOR_NOCHAR)
 			cursorText(name, cx, cy, U_FONT8, _TBRIGHTWHITE);
 

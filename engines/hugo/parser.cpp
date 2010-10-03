@@ -57,10 +57,10 @@ Parser::Parser(HugoEngine &vm) :
 }
 
 void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
+	debugC(1, kDebugParser, "keyHandler(%d, %d)", nChar, nFlags);
+
 	status_t &gameStatus = _vm.getGameStatus();
 	bool repeatedFl = (nFlags & 0x4000);            // TRUE if key is a repeat
-
-	debugC(1, kDebugParser, "keyHandler(%d, %d)", nChar, nFlags);
 
 // Process key down event - called from OnKeyDown()
 	switch (nChar)  {                               // Set various toggle states
@@ -126,21 +126,17 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 // Add any new chars to line buffer and display them.
 // If CR pressed, pass line to Line_handler()
 void Parser::charHandler() {
+	debugC(4, kDebugParser, "charHandler");
+
 	static int16  lineIndex = 0;                    // Index into line
 	static uint32 tick = 0;                         // For flashing cursor
 	static char   cursor = '_';
-	char          c;
 	static        command_t cmdLine;                // Build command line
 	status_t     &gameStatus = _vm.getGameStatus();
-// Strangerke : Useless ?
-//	bool          updateFl = (_getIndex != _putIndex);  // TRUE if any chars processed
-//	command_t    status_line;                     // Includes prompt, cursor
-
-	debugC(4, kDebugParser, "charHandler");
 
 	// Check for one or more characters in ring buffer
 	while (_getIndex != _putIndex) {
-		c = _ringBuffer[_getIndex++];
+		char c = _ringBuffer[_getIndex++];
 		if (_getIndex >= sizeof(_ringBuffer))
 			_getIndex = 0;
 
@@ -172,11 +168,8 @@ void Parser::charHandler() {
 	}
 
 	// See if time to blink cursor, set cursor character
-	if ((tick++ % (TPS / BLINKS)) == 0) {
-// Strangerke : Useless ?
-//		updateFl = true;                            // Force an update
+	if ((tick++ % (TPS / BLINKS)) == 0)
 		cursor = (cursor == '_') ? ' ' : '_';
-	}
 
 	// See if recall button pressed
 	if (gameStatus.recallFl) {
@@ -211,14 +204,9 @@ void Parser::command(const char *format, ...) {
 
 // Parse the user's line of text input.  Generate events as necessary
 void Parser::lineHandler() {
-	char     *noun, *verb;                          // ptrs to noun and verb strings
-	object_t *obj;
-	char      farComment[XBYTES * 5] = "";          // hold 5 line comment if object not nearby
-	char      contextComment[XBYTES * 5] = "";      // Unused comment for context objects
-	status_t &gameStatus = _vm.getGameStatus();
-
-
 	debugC(1, kDebugParser, "lineHandler");
+
+	status_t &gameStatus = _vm.getGameStatus();
 
 	// Toggle God Mode
 	if (!strncmp(_line, "PPG", 3)) {
@@ -236,36 +224,42 @@ void Parser::lineHandler() {
 	// find <object name>                           Takes hero to screen containing named object
 	if (gameStatus.godModeFl) {
 		// Special code to allow me to go straight to any screen
-		if (strstr(_line, "goto"))
-			for (int i = 0; i < _vm._numScreens; i++)
+		if (strstr(_line, "goto")) {
+			for (int i = 0; i < _vm._numScreens; i++) {
 				if (!strcmp(&_line[strlen("goto") + 1], _vm._screenNames[i])) {
 					_vm.scheduler().newScreen(i);
 					return;
 				}
+			}
+		}
 
 		// Special code to allow me to get objects from anywhere
 		if (strstr(_line, "fetch all")) {
-			for (int i = 0; i < _vm._numObj; i++)
+			for (int i = 0; i < _vm._numObj; i++) {
 				if (_vm._objects[i].genericCmd & TAKE)
 					takeObject(&_vm._objects[i]);
+			}
 			return;
 		}
 
 		if (strstr(_line, "fetch")) {
-			for (int i = 0; i < _vm._numObj; i++)
+			for (int i = 0; i < _vm._numObj; i++) {
 				if (!strcmp(&_line[strlen("fetch") + 1], _vm._arrayNouns[_vm._objects[i].nounIndex][0])) {
 					takeObject(&_vm._objects[i]);
 					return;
 				}
+			}
 		}
 
 		// Special code to allow me to goto objects
-		if (strstr(_line, "find"))
-			for (int i = 0; i < _vm._numObj; i++)
+		if (strstr(_line, "find")) {
+			for (int i = 0; i < _vm._numObj; i++) {
 				if (!strcmp(&_line[strlen("find") + 1], _vm._arrayNouns[_vm._objects[i].nounIndex][0])) {
 					_vm.scheduler().newScreen(_vm._objects[i].screenIndex);
 					return;
 				}
+			}
+		}
 	}
 
 	// Special meta commands
@@ -300,21 +294,26 @@ void Parser::lineHandler() {
 		return;
 	}
 
+	char farComment[XBYTES * 5] = "";               // hold 5 line comment if object not nearby
+
 	// Test for nearby objects referenced explicitly
 	for (int i = 0; i < _vm._numObj; i++) {
-		obj = &_vm._objects[i];
-		if (isWordPresent(_vm._arrayNouns[obj->nounIndex]))
+		object_t *obj = &_vm._objects[i];
+		if (isWordPresent(_vm._arrayNouns[obj->nounIndex])) {
 			if (isObjectVerb(obj, farComment) || isGenericVerb(obj, farComment))
 				return;
+		}
 	}
 
 	// Test for nearby objects that only require a verb
 	// Note comment is unused if not near.
 	for (int i = 0; i < _vm._numObj; i++) {
-		obj = &_vm._objects[i];
-		if (obj->verbOnlyFl)
+		object_t *obj = &_vm._objects[i];
+		if (obj->verbOnlyFl) {
+			char contextComment[XBYTES * 5] = "";   // Unused comment for context objects
 			if (isObjectVerb(obj, contextComment) || isGenericVerb(obj, contextComment))
 				return;
+		}
 	}
 
 	// No objects match command line, try background and catchall commands
@@ -334,19 +333,20 @@ void Parser::lineHandler() {
 	}
 
 	// Nothing matches.  Report recognition success to user.
-	verb = findVerb();
-	noun = findNoun();
+	char *verb = findVerb();
+	char *noun = findNoun();
 	if (verb == _vm._arrayVerbs[_vm._look][0] && _maze.enabledFl) {
 		Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBMaze]);
 		showTakeables();
-	} else if (verb && noun)                          // A combination I didn't think of
+	} else if (verb && noun) {                      // A combination I didn't think of
 		Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBNoPoint]);
-	else if (noun)
+	} else if (noun) {
 		Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBNoun]);
-	else if (verb)
+	} else if (verb) {
 		Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBVerb]);
-	else
+	} else {
 		Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBEh]);
+	}
 }
 
 // Search for matching verb/noun pairs in background command list
@@ -354,15 +354,16 @@ void Parser::lineHandler() {
 bool Parser::isBackgroundWord(objectList_t obj) {
 	debugC(1, kDebugParser, "isBackgroundWord(object_list_t obj)");
 
-	for (int i = 0; obj[i].verbIndex != 0; i++)
+	for (int i = 0; obj[i].verbIndex != 0; i++) {
 		if (isWordPresent(_vm._arrayVerbs[obj[i].verbIndex]) &&
-		        isWordPresent(_vm._arrayNouns[obj[i].nounIndex]) &&
-		        ((obj[i].roomState == DONT_CARE) ||
-		         (obj[i].roomState == _vm._screenStates[*_vm._screen_p]))) {
+		    isWordPresent(_vm._arrayNouns[obj[i].nounIndex]) &&
+		    ((obj[i].roomState == DONT_CARE) ||
+		     (obj[i].roomState == _vm._screenStates[*_vm._screen_p]))) {
 			Utils::Box(BOX_ANY, "%s", _vm.file().fetchString(obj[i].commentIndex));
 			_vm.scheduler().processBonus(obj[i].bonusIndex);
 			return true;
 		}
+	}
 	return false;
 }
 
@@ -373,7 +374,7 @@ bool Parser::isBackgroundWord(objectList_t obj) {
 bool Parser::isCatchallVerb(objectList_t obj) {
 	debugC(1, kDebugParser, "isCatchallVerb(object_list_t obj)");
 
-	for (int i = 0; obj[i].verbIndex != 0; i++)
+	for (int i = 0; obj[i].verbIndex != 0; i++) {
 		if (isWordPresent(_vm._arrayVerbs[obj[i].verbIndex]) && obj[i].nounIndex == 0 &&
 		        (!obj[i].matchFl || !findNoun()) &&
 		        ((obj[i].roomState == DONT_CARE) ||
@@ -385,8 +386,9 @@ bool Parser::isCatchallVerb(objectList_t obj) {
 			if (*(_vm._arrayVerbs[obj[i].verbIndex]) == _vm._arrayVerbs[_vm._look][0])
 				showTakeables();
 
-			return(true);
+			return true;
 		}
+	}
 	return false;
 }
 
@@ -398,7 +400,7 @@ bool Parser::isNear(object_t *obj, char *verb, char *comment) {
 	debugC(1, kDebugParser, "isNear(object_t *obj, %s, %s)", verb, comment);
 
 	if (obj->carriedFl)                             // Object is being carried
-		return(true);
+		return true;
 
 	if (obj->screenIndex != *_vm._screen_p) {
 		// Not in same screen
@@ -406,41 +408,42 @@ bool Parser::isNear(object_t *obj, char *verb, char *comment) {
 			strcpy(comment, _vm._textParser[kCmtAny1]);
 		else
 			strcpy(comment, _vm._textParser[kCmtAny2]);
-		return(false);
+		return false;
 	}
 
 	if (obj->cycling == INVISIBLE) {
 		if (obj->seqNumb) {
 			// There is an image
 			strcpy(comment, _vm._textParser[kCmtAny3]);
-			return(false);
-		} else
+			return false;
+		} else {
 			// No image, assume visible
 			if ((obj->radius < 0) ||
 			        ((abs(obj->x - _vm._hero->x) <= obj->radius) &&
-			         (abs(obj->y - _vm._hero->y - _vm._hero->currImagePtr->y2) <= obj->radius)))
-				return(true);
-			else {
+					(abs(obj->y - _vm._hero->y - _vm._hero->currImagePtr->y2) <= obj->radius))) {
+				return true;
+			} else {
 				// User is not close enough
 				if (obj->objValue && (verb != _vm._arrayVerbs[_vm._take][0]))
 					strcpy(comment, _vm._textParser[kCmtAny1]);
 				else
 					strcpy(comment, _vm._textParser[kCmtClose]);
-				return(false);
+				return false;
 			}
+		}
 	}
 
 	if ((obj->radius < 0) ||
 	        ((abs(obj->x - _vm._hero->x) <= obj->radius) &&
-	         (abs(obj->y + obj->currImagePtr->y2 - _vm._hero->y - _vm._hero->currImagePtr->y2) <= obj->radius)))
-		return(true);
-	else {
+			(abs(obj->y + obj->currImagePtr->y2 - _vm._hero->y - _vm._hero->currImagePtr->y2) <= obj->radius))) {
+		return true;
+	} else {
 		// User is not close enough
 		if (obj->objValue && (verb != _vm._arrayVerbs[_vm._take][0]))
 			strcpy(comment, _vm._textParser[kCmtAny1]);
 		else
 			strcpy(comment, _vm._textParser[kCmtClose]);
-		return(false);
+		return false;
 	}
 	return true;
 }
@@ -449,12 +452,12 @@ bool Parser::isNear(object_t *obj, char *verb, char *comment) {
 bool Parser::isWordPresent(char **wordArr) {
 	debugC(1, kDebugParser, "isWordPresent(%s)", wordArr[0]);
 
-	if (wordArr != NULL) {
-		for (int i = 0; strlen(wordArr[i]); i++)
+	if (wordArr != 0) {
+		for (int i = 0; strlen(wordArr[i]); i++) {
 			if (strstr(_line, wordArr[i]))
-				return(true);
+				return true;
+		}
 	}
-
 	return false;
 }
 
@@ -462,36 +465,37 @@ bool Parser::isWordPresent(char **wordArr) {
 char *Parser::findNoun() {
 	debugC(1, kDebugParser, "findNoun()");
 
-	for (int i = 0; _vm._arrayNouns[i]; i++)
-		for (int j = 0; strlen(_vm._arrayNouns[i][j]); j++)
+	for (int i = 0; _vm._arrayNouns[i]; i++) {
+		for (int j = 0; strlen(_vm._arrayNouns[i][j]); j++) {
 			if (strstr(_line, _vm._arrayNouns[i][j]))
-				return(_vm._arrayNouns[i][0]);
-	return NULL;
+				return _vm._arrayNouns[i][0];
+		}
+	}
+	return 0;
 }
 
 // Locate word in list of verbs and return ptr to first string in verb list
 char *Parser::findVerb() {
 	debugC(1, kDebugParser, "findVerb()");
 
-	for (int i = 0; _vm._arrayVerbs[i]; i++)
-		for (int j = 0; strlen(_vm._arrayVerbs[i][j]); j++)
+	for (int i = 0; _vm._arrayVerbs[i]; i++) {
+		for (int j = 0; strlen(_vm._arrayVerbs[i][j]); j++) {
 			if (strstr(_line, _vm._arrayVerbs[i][j]))
-				return(_vm._arrayVerbs[i][0]);
-	return NULL;
+				return _vm._arrayVerbs[i][0];
+		}
+	}
+	return 0;
 }
 
 // Describe any takeable objects visible in this screen
 void Parser::showTakeables() {
-	object_t *obj;
-
 	debugC(1, kDebugParser, "showTakeables");
 
 	for (int j = 0; j < _vm._numObj; j++) {
-		obj = &_vm._objects[j];
+		object_t *obj = &_vm._objects[j];
 		if ((obj->cycling != INVISIBLE) &&
 		        (obj->screenIndex == *_vm._screen_p) &&
 		        (((TAKE & obj->genericCmd) == TAKE) || obj->objValue)) {
-//			sprintf(_textBoxBuffer, "You can also see:\n%s.", _vm._arrayNouns[obj->nounIndex][LOOK_NAME]);
 			Utils::Box(BOX_ANY, "You can also see:\n%s.", _vm._arrayNouns[obj->nounIndex][LOOK_NAME]);
 		}
 	}
@@ -545,13 +549,14 @@ bool Parser::isGenericVerb(object_t *obj, char *comment) {
 			Utils::Box(BOX_ANY, "%s", _vm._textData[obj->stateDataIndex[obj->state]]);
 			warning("isGenericVerb: use of state dependant look - To be validated");
 		} else {
-			if ((LOOK & obj->genericCmd) == LOOK)
+			if ((LOOK & obj->genericCmd) == LOOK) {
 				if (_vm._textData[obj->dataIndex])
 					Utils::Box(BOX_ANY, "%s", _vm._textData[obj->dataIndex]);
 				else
-					return(false);
-			else
+					return false;
+			} else {
 				Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBUnusual]);
+			}
 		}
 	} else if (isWordPresent(_vm._arrayVerbs[_vm._take]) && isNear(obj, _vm._arrayVerbs[_vm._take][0], comment)) {
 		if (obj->carriedFl)
@@ -573,8 +578,9 @@ bool Parser::isGenericVerb(object_t *obj, char *comment) {
 			Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBNeed]);
 		else
 			return false;
-	} else                                  // It was not a generic cmd
+	} else {                                        // It was not a generic cmd
 		return false;
+	}
 
 	return true;
 }
@@ -583,9 +589,10 @@ bool Parser::isGenericVerb(object_t *obj, char *comment) {
 bool Parser::isCarrying(uint16 wordIndex) {
 	debugC(1, kDebugParser, "isCarrying(%d)", wordIndex);
 
-	for (int i = 0; i < _vm._numObj; i++)
+	for (int i = 0; i < _vm._numObj; i++) {
 		if ((wordIndex == _vm._objects[i].nounIndex) && _vm._objects[i].carriedFl)
 			return true;
+	}
 	return false;
 }
 
@@ -593,39 +600,37 @@ bool Parser::isCarrying(uint16 wordIndex) {
 // If it does, and the object is near and passes the tests in the command
 // list then carry out the actions in the action list and return TRUE
 bool Parser::isObjectVerb(object_t *obj, char *comment) {
-	int     i;
-	cmd    *cmnd;
-	char   *verb;
-	uint16 *reqs;
-	uint16  cmdIndex;
-
 	debugC(1, kDebugParser, "isObjectVerb(object_t *obj, %s)", comment);
 
 	// First, find matching verb in cmd list
-	cmdIndex = obj->cmdIndex;                       // ptr to list of commands
+	uint16 cmdIndex = obj->cmdIndex;                // ptr to list of commands
 	if (cmdIndex == 0)                              // No commands for this obj
 		return false;
 
-	for (i = 0; _vm._cmdList[cmdIndex][i].verbIndex != 0; i++)                  // For each cmd
+	int i;
+	for (i = 0; _vm._cmdList[cmdIndex][i].verbIndex != 0; i++) {                 // For each cmd
 		if (isWordPresent(_vm._arrayVerbs[_vm._cmdList[cmdIndex][i].verbIndex]))        // Was this verb used?
 			break;
+	}
+
 	if (_vm._cmdList[cmdIndex][i].verbIndex == 0)   // No verbs used.
 		return false;
 
 	// Verb match found.  Check if object is Near
-	verb = *_vm._arrayVerbs[_vm._cmdList[cmdIndex][i].verbIndex];
+	char *verb = *_vm._arrayVerbs[_vm._cmdList[cmdIndex][i].verbIndex];
 	if (!isNear(obj, verb, comment))
-		return(false);
+		return false;
 
 	// Check all required objects are being carried
-	cmnd = &_vm._cmdList[cmdIndex][i];              // ptr to struct cmd
+	cmd *cmnd = &_vm._cmdList[cmdIndex][i];         // ptr to struct cmd
 	if (cmnd->reqIndex) {                           // At least 1 thing in list
-		reqs = _vm._arrayReqs[cmnd->reqIndex];      // ptr to list of required objects
-		for (i = 0; reqs[i]; i++)                   // for each obj
+		uint16 *reqs = _vm._arrayReqs[cmnd->reqIndex];      // ptr to list of required objects
+		for (i = 0; reqs[i]; i++) {                 // for each obj
 			if (!isCarrying(reqs[i])) {
 				Utils::Box(BOX_ANY, "%s", _vm._textData[cmnd->textDataNoCarryIndex]);
 				return true;
 			}
+		}
 	}
 
 	// Required objects are present, now check state is correct
@@ -649,27 +654,27 @@ bool Parser::isObjectVerb(object_t *obj, char *comment) {
 void Parser::showDosInventory() {
 // Show user all objects being carried in a variable width 2 column format
 	static const char *blanks = "                                        ";
-	uint16 index, len, len1 = 0, len2 = 0;
-	char buffer[XBYTES *NUM_ROWS] = "\0";
+	uint16 index = 0, len1 = 0, len2 = 0;
 
-	index = 0;
-	for (int i = 0; i < _vm._numObj; i++)     /* Find widths of 2 columns */
+	for (int i = 0; i < _vm._numObj; i++) {         // Find widths of 2 columns
 		if (_vm._objects[i].carriedFl) {
-			len = strlen(_vm._arrayNouns[_vm._objects[i].nounIndex][1]);
-			if (index++ & 1)                    /* Right hand column */
+			uint16 len = strlen(_vm._arrayNouns[_vm._objects[i].nounIndex][1]);
+			if (index++ & 1)                        // Right hand column
 				len2 = (len > len2) ? len : len2;
 			else
 				len1 = (len > len1) ? len : len1;
 		}
-	len1 += 1;                                  /* For gap between columns */
+	}
+	len1 += 1;                                      // For gap between columns
 
 	if (len1 + len2 < (uint16)strlen(_vm._textParser[kTBOutro]))
 		len1 = strlen(_vm._textParser[kTBOutro]);
 
+	char buffer[XBYTES *NUM_ROWS] = "\0";
 	strncat(buffer, blanks, (len1 + len2 - strlen(_vm._textParser[kTBIntro])) / 2);
 	strcat(strcat(buffer, _vm._textParser[kTBIntro]), "\n");
 	index = 0;
-	for (int i = 0; i < _vm._numObj; i++) {     /* Assign strings */
+	for (int i = 0; i < _vm._numObj; i++) {         // Assign strings
 		if (_vm._objects[i].carriedFl) {
 			if (index++ & 1)
 				strcat(strcat(buffer, _vm._arrayNouns[_vm._objects[i].nounIndex][1]), "\n");

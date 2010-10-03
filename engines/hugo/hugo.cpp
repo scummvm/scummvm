@@ -44,7 +44,7 @@
 
 namespace Hugo {
 
-HugoEngine *HugoEngine::s_Engine = NULL;
+HugoEngine *HugoEngine::s_Engine = 0;
 
 overlay_t HugoEngine::_boundary;
 overlay_t HugoEngine::_overlay;
@@ -273,7 +273,6 @@ void HugoEngine::runMachine() {
 	static uint32 lastTime;
 
 	status_t &gameStatus = getGameStatus();
-
 	// Don't process if we're in a textbox
 	if (gameStatus.textBoxFl)
 		return;
@@ -324,10 +323,6 @@ void HugoEngine::runMachine() {
 
 bool HugoEngine::loadHugoDat() {
 	Common::File in;
-	int numElem, numSubElem, numSubAct;
-	char buf[256];
-	int majVer, minVer;
-
 	in.open("hugo.dat");
 
 	if (!in.isOpen()) {
@@ -338,6 +333,7 @@ bool HugoEngine::loadHugoDat() {
 	}
 
 	// Read header
+	char buf[256];
 	in.read(buf, 4);
 	buf[4] = '\0';
 
@@ -348,8 +344,8 @@ bool HugoEngine::loadHugoDat() {
 		return false;
 	}
 
-	majVer = in.readByte();
-	minVer = in.readByte();
+	int majVer = in.readByte();
+	int minVer = in.readByte();
 
 	if ((majVer != HUGO_DAT_VER_MAJ) || (minVer != HUGO_DAT_VER_MIN)) {
 		snprintf(buf, 256, "File 'hugo.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from the ScummVM website", HUGO_DAT_VER_MAJ, HUGO_DAT_VER_MIN, majVer, minVer);
@@ -380,9 +376,8 @@ bool HugoEngine::loadHugoDat() {
 	// Read palette
 	_paletteSize = in.readUint16BE();
 	_palette = (byte *)malloc(sizeof(byte) * _paletteSize);
-	for (int i = 0; i < _paletteSize; i++) {
+	for (int i = 0; i < _paletteSize; i++)
 		_palette[i] = in.readByte();
-	}
 
 	// Read textEngine
 	_textEngine = loadTexts(in);
@@ -455,6 +450,7 @@ bool HugoEngine::loadHugoDat() {
 		}
 	}
 
+	int numElem, numSubElem, numSubAct;
 	//Read _invent
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
@@ -614,9 +610,9 @@ bool HugoEngine::loadHugoDat() {
 			_screenActs = (uint16 **)malloc(sizeof(uint16 *) * numElem);
 			for (int i = 0; i < numElem; i++) {
 				numSubElem = in.readUint16BE();
-				if (numSubElem == 0)
+				if (numSubElem == 0) {
 					_screenActs[i] = 0;
-				else {
+				} else {
 					_screenActs[i] = (uint16 *)malloc(sizeof(uint16) * numSubElem);
 					for (int j = 0; j < numSubElem; j++)
 						_screenActs[i][j] = in.readUint16BE();
@@ -1432,25 +1428,23 @@ char **HugoEngine::loadTextsVariante(Common::File &in, uint16 *arraySize) {
 
 uint16 **HugoEngine::loadLongArray(Common::File &in) {
 	uint16 **resArray = 0;
-	uint16 *resRow = 0;
-	uint16 dummy, numRows, numElems;
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numRows = in.readUint16BE();
+		uint16 numRows = in.readUint16BE();
 		if (varnt == _gameVariant) {
 			resArray = (uint16 **)malloc(sizeof(uint16 *) * (numRows + 1));
 			resArray[numRows] = 0;
 		}
 		for (int i = 0; i < numRows; i++) {
-			numElems = in.readUint16BE();
+			uint16 numElems = in.readUint16BE();
 			if (varnt == _gameVariant) {
-				resRow = (uint16 *)malloc(sizeof(uint16) * numElems);
+				uint16 *resRow = (uint16 *)malloc(sizeof(uint16) * numElems);
 				for (int j = 0; j < numElems; j++)
 					resRow[j] = in.readUint16BE();
 				resArray[i] = resRow;
 			} else {
 				for (int j = 0; j < numElems; j++)
-					dummy = in.readUint16BE();
+					in.readUint16BE();
 			}
 		}
 	}
@@ -1458,24 +1452,19 @@ uint16 **HugoEngine::loadLongArray(Common::File &in) {
 }
 
 char ***HugoEngine::loadTextsArray(Common::File &in) {
-	int  numNouns;
-	int  numTexts;
-	int  entryLen;
-	int  len;
 	char ***resArray = 0;
-	char **res = 0;
-	char *pos = 0;
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numNouns = in.readUint16BE();
+		int numNouns = in.readUint16BE();
 		if (varnt == _gameVariant) {
 			resArray = (char ** *)malloc(sizeof(char **) * (numNouns + 1));
 			resArray[numNouns] = 0;
 		}
 		for (int i = 0; i < numNouns; i++) {
-			numTexts = in.readUint16BE();
-			entryLen = in.readUint16BE();
-			pos = (char *)malloc(entryLen);
+			int numTexts = in.readUint16BE();
+			int entryLen = in.readUint16BE();
+			char *pos = (char *)malloc(entryLen);
+			char **res = 0;
 			if (varnt == _gameVariant) {
 				res = (char **)malloc(sizeof(char *) * numTexts);
 				res[0] = pos;
@@ -1492,7 +1481,7 @@ char ***HugoEngine::loadTextsArray(Common::File &in) {
 					res[j] = pos;
 
 				pos -= 2;
-				len = READ_BE_UINT16(pos);
+				int len = READ_BE_UINT16(pos);
 				pos += 2 + len;
 			}
 
@@ -1507,12 +1496,8 @@ char ***HugoEngine::loadTextsArray(Common::File &in) {
 char **HugoEngine::loadTexts(Common::File &in) {
 	int numTexts = in.readUint16BE();
 	char **res = (char **)malloc(sizeof(char *) * numTexts);
-	int entryLen;
-	char *pos = 0;
-	int len;
-
-	entryLen = in.readUint16BE();
-	pos = (char *)malloc(entryLen);
+	int entryLen = in.readUint16BE();
+	char *pos = (char *)malloc(entryLen);
 
 	in.read(pos, entryLen);
 
@@ -1521,7 +1506,7 @@ char **HugoEngine::loadTexts(Common::File &in) {
 
 	for (int i = 1; i < numTexts; i++) {
 		pos -= 2;
-		len = READ_BE_UINT16(pos);
+		int len = READ_BE_UINT16(pos);
 		pos += 2 + len;
 		res[i] = pos;
 	}

@@ -32,10 +32,17 @@
 
 #ifndef HUGO_DISPLAY_H
 #define HUGO_DISPLAY_H
-namespace Hugo {
 
-enum overlayState_t {UNDEF, FG, BG};                        // Overlay state
-struct rect_t;
+namespace Hugo {
+#define shapeSize 24
+
+enum overlayState_t {UNDEF, FG, BG};                // Overlay state
+struct rect_t {                                     // Rectangle used in Display list
+	int16 x;                                        // Position in dib
+	int16 y;                                        // Position in dib
+	int16 dx;                                       // width
+	int16 dy;                                       // height
+};
 
 class Screen {
 public:

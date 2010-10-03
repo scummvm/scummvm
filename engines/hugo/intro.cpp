@@ -149,8 +149,8 @@ void intro_v1d::introInit() {
 }
 
 bool intro_v1d::introPlay() {
-	byte introSize = _vm.getIntroSize();
 	static int state = 0;
+	byte introSize = _vm.getIntroSize();
 
 	if (introTicks < introSize) {
 		switch (state++) {

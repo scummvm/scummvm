@@ -35,14 +35,14 @@
 
 namespace Hugo {
 
-#define kMaxEvents     50                           /* Max events in event queue */
+#define kMaxEvents     50                           // Max events in event queue
 
 struct event_t {
-	act            *action;                         /* Ptr to action to perform */
-	bool            localActionFl;                  /* TRUE if action is only for this screen */
-	uint32          time;                           /* (absolute) time to perform action */
-	struct event_t *prevEvent;                      /* Chain to previous event */
-	struct event_t *nextEvent;                      /* Chain to next event */
+	act            *action;                         // Ptr to action to perform
+	bool            localActionFl;                  // true if action is only for this screen
+	uint32          time;                           // (absolute) time to perform action
+	struct event_t *prevEvent;                      // Chain to previous event
+	struct event_t *nextEvent;                      // Chain to next event
 };
 
 class Scheduler {
@@ -71,11 +71,11 @@ private:
 
 	HugoEngine &_vm;
 
-	event_t _events[kMaxEvents];                        /* Statically declare event structures */
+	event_t _events[kMaxEvents];                        // Statically declare event structures
 
-	event_t *_freeEvent;                                /* Free list of event structures */
-	event_t *_headEvent;                                /* Head of list (earliest time) */
-	event_t *_tailEvent;                                /* Tail of list (latest time) */
+	event_t *_freeEvent;                                // Free list of event structures
+	event_t *_headEvent;                                // Head of list (earliest time)
+	event_t *_tailEvent;                                // Tail of list (latest time)
 
 	event_t *getQueue();
 	void     delQueue(event_t *curEvent);

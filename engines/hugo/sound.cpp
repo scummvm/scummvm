@@ -184,11 +184,11 @@ int MidiPlayer::open() {
 void MidiPlayer::close() {
 	stop();
 	_mutex.lock();
-	_driver->setTimerCallback(NULL, NULL);
+	_driver->setTimerCallback(0, 0);
 	_driver->close();
 	delete _driver;
 	_driver = 0;
-	_parser->setMidiDriver(NULL);
+	_parser->setMidiDriver(0);
 	delete _parser;
 	_mutex.unlock();
 }
@@ -314,7 +314,7 @@ void SoundHandler::playSound(int16 sound, stereo_t channel, byte priority) {
 	curPriority = priority;
 	//
 	/* Get sound data */
-	if ((sound_p = _vm.file().getSound(sound, &size)) == NULL)
+	if ((sound_p = _vm.file().getSound(sound, &size)) == 0)
 		return;
 
 	Audio::AudioStream *stream = Audio::makeRawStream(sound_p, size, 11025, Audio::FLAG_UNSIGNED);

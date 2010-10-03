@@ -76,11 +76,10 @@ void Scheduler::initEventQueue() {
 // Return a ptr to an event structure from the free list
 event_t *Scheduler::getQueue() {
 	debugC(4, kDebugSchedule, "getQueue");
-	event_t *resEvent;
 
 	if (!_freeEvent)                                // Error: no more events available
 		Utils::Error(EVNT_ERR, "%s", "getQueue");
-	resEvent = _freeEvent;
+	event_t *resEvent = _freeEvent;
 	_freeEvent = _freeEvent->nextEvent;
 	resEvent->nextEvent = 0;
 	return resEvent;
@@ -94,10 +93,11 @@ event_t *Scheduler::getQueue() {
 // was modified to allow deletes anywhere in the list, and the DEL_EVENT
 // action was modified to perform the actual delete.
 void Scheduler::delQueue(event_t *curEvent) {
-	debugC(4, kDebugSchedule, "delQueue");
-	if (curEvent == _headEvent)                     // If p was the head ptr
+	debugC(4, kDebugSchedule, "delQueue()");
+
+	if (curEvent == _headEvent) {                   // If p was the head ptr
 		_headEvent = curEvent->nextEvent;           // then make new head_p
-	else {                                          // Unlink p
+	} else {                                        // Unlink p
 		curEvent->prevEvent->nextEvent = curEvent->nextEvent;
 		if (curEvent->nextEvent)
 			curEvent->nextEvent->prevEvent = curEvent->prevEvent;
@@ -119,7 +119,7 @@ void Scheduler::delQueue(event_t *curEvent) {
 // Insert the action pointed to by p into the timer event queue
 // The queue goes from head (earliest) to tail (latest) timewise
 void Scheduler::insertAction(act *action) {
-	debugC(1, kDebugSchedule, "insertAction - Action type A%d", action->a0.actType);
+	debugC(1, kDebugSchedule, "insertAction() - Action type A%d", action->a0.actType);
 
 	// First, get and initialise the event structure
 	event_t *curEvent = getQueue();
@@ -138,7 +138,7 @@ void Scheduler::insertAction(act *action) {
 	// Now find the place to insert the event
 	if (!_tailEvent) {                              // Empty queue
 		_tailEvent = _headEvent = curEvent;
-		curEvent->nextEvent = curEvent->prevEvent = NULL;
+		curEvent->nextEvent = curEvent->prevEvent = 0;
 	} else {
 		event_t *wrkEvent = _tailEvent;             // Search from latest time back
 		bool found = false;
@@ -160,7 +160,7 @@ void Scheduler::insertAction(act *action) {
 		if (!found) {                               // Must be earliest in list
 			_headEvent->prevEvent = curEvent;       // So insert as new head
 			curEvent->nextEvent = _headEvent;
-			curEvent->prevEvent = NULL;
+			curEvent->prevEvent = 0;
 			_headEvent = curEvent;
 		}
 	}
@@ -170,16 +170,17 @@ void Scheduler::insertActionList(uint16 actIndex) {
 // Call Insert_action for each action in the list supplied
 	debugC(1, kDebugSchedule, "insertActionList(%d)", actIndex);
 
-	if (_vm._actListArr[actIndex])
+	if (_vm._actListArr[actIndex]) {
 		for (int i = 0; _vm._actListArr[actIndex][i].a0.actType != ANULL; i++)
 			insertAction(&_vm._actListArr[actIndex][i]);
+	}
 }
 
 void Scheduler::decodeString(char *line) {
 // Decode a string
 	debugC(1, kDebugSchedule, "decodeString(%s)", line);
 
-	const char *cypher = getCypher();
+	static const char *cypher = getCypher();
 
 	for (uint16 i = 0; i < strlen(line); i++)
 		line[i] -= cypher[i % strlen(cypher)];
@@ -190,18 +191,16 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 // This function performs the action in the event structure pointed to by p
 // It dequeues the event and returns it to the free list.  It returns a ptr
 // to the next action in the list, except special case of NEW_SCREEN
-	event_t  *wrkEvent;                             // Save ev_p->next_p for return
-	event_t  *saveEvent;                            // Used in DEL_EVENTS
+	debugC(1, kDebugSchedule, "doAction - Event action type : %d", curEvent->action->a0.actType);
+
+	status_t &gameStatus = _vm.getGameStatus();
+	act *action = curEvent->action;
 	char     *response;                             // User's response string
 	object_t *obj1;
 	object_t *obj2;
 	int       dx, dy;
-	act      *action;                               // Ptr to action structure
-
-	status_t &gameStatus = _vm.getGameStatus();
-
-	action = curEvent->action;
-	debugC(1, kDebugSchedule, "doAction - Event action type : %d", action->a0.actType);
+	event_t  *wrkEvent;                             // Save ev_p->next_p for return
+	event_t  *saveEvent;                            // Used in DEL_EVENTS
 
 	switch (action->a0.actType) {
 	case ANULL:                                     // Big NOP from DEL_EVENTS
@@ -217,7 +216,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		_vm._objects[action->a2.objNumb].x = action->a2.x;          // Coordinates
 		_vm._objects[action->a2.objNumb].y = action->a2.y;
 		break;
-	case PROMPT:                                    // act3: Prompt user for key phrase
+	case PROMPT: {                                  // act3: Prompt user for key phrase
 // TODO : Add specific code for Hugo 1 DOS, which is handled differently,
 		response = Utils::Box(BOX_PROMPT, "%s", _vm.file().fetchString(action->a3.promptIndex));
 
@@ -243,6 +242,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 //HACK: As the answer is not read, currently it's always considered correct
 		insertActionList(action->a3.actPassIndex);
 		break;
+		}
 	case BKGD_COLOR:                                // act4: Set new background color
 		_vm.screen().setBackgroundColor(action->a4.newBackgroundColor);
 		break;
@@ -443,7 +443,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		break;
 	case YESNO:                                     // act43: Prompt user for Yes or No
 		warning("doAction(act43) - Yes/No Box");
-		if (Utils::Box(BOX_YESNO, "%s", _vm.file().fetchString(action->a43.promptIndex)) != NULL)
+		if (Utils::Box(BOX_YESNO, "%s", _vm.file().fetchString(action->a43.promptIndex)) != 0)
 			insertActionList(action->a43.actYesIndex);
 		else
 			insertActionList(action->a43.actNoIndex);
@@ -486,12 +486,12 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		break;
 	}
 
-	if (action->a0.actType == NEW_SCREEN)           // New_screen() deletes entire list
-		return (NULL);                              // next_p = NULL since list now empty
-	else {
+	if (action->a0.actType == NEW_SCREEN) {         // New_screen() deletes entire list
+		return 0;                                   // next_p = 0 since list now empty
+	} else {
 		wrkEvent = curEvent->nextEvent;
 		delQueue(curEvent);                         // Return event to free list
-		return(wrkEvent);                           // Return next event ptr
+		return wrkEvent;                            // Return next event ptr
 	}
 }
 
@@ -502,8 +502,8 @@ void Scheduler::runScheduler() {
 	debugC(6, kDebugSchedule, "runScheduler");
 
 	status_t &gameStatus = _vm.getGameStatus();
-
 	event_t *curEvent = _headEvent;                 // The earliest event
+
 	while (curEvent && curEvent->time <= gameStatus.tick) // While mature events found
 		curEvent = doAction(curEvent);              // Perform the action (returns next_p)
 	gameStatus.tick++;                              // Accessed elsewhere via getTicks()
@@ -573,45 +573,39 @@ void Scheduler::newScreen(int screenIndex) {
 // using -1 for NULL.  We can't convert the action ptrs to indexes
 // so we save address of first dummy action ptr to compare on restore.
 void Scheduler::saveEvents(Common::WriteStream *f) {
-	uint32   curTime;
-	event_t  saveEvents_[kMaxEvents];                // Convert event ptrs to indexes
-	event_t *wrkEvent;                              // Event ptr
-	int16    freeIndex;                             // Free list index
-	int16    headIndex;                             // Head of list index
-	int16    tailIndex;                             // Tail of list index
+	debugC(1, kDebugSchedule, "saveEvents()");
 
-	debugC(1, kDebugSchedule, "saveEvents");
-
-	curTime = getTicks();
+	uint32 curTime = getTicks();
+	event_t  saveEventArr[kMaxEvents];              // Convert event ptrs to indexes
 
 	// Convert event ptrs to indexes
 	for (int16 i = 0; i < kMaxEvents; i++) {
-		wrkEvent = &_events[i];
-		saveEvents_[i] = *wrkEvent;
-		saveEvents_[i].prevEvent = (wrkEvent->prevEvent == NULL) ? (event_t *) - 1 : (event_t *)(wrkEvent->prevEvent - _events);
-		saveEvents_[i].nextEvent = (wrkEvent->nextEvent == NULL) ? (event_t *) - 1 : (event_t *)(wrkEvent->nextEvent - _events);
+		event_t *wrkEvent = &_events[i];
+		saveEventArr[i] = *wrkEvent;
+		saveEventArr[i].prevEvent = (wrkEvent->prevEvent == 0) ? (event_t *) - 1 : (event_t *)(wrkEvent->prevEvent - _events);
+		saveEventArr[i].nextEvent = (wrkEvent->nextEvent == 0) ? (event_t *) - 1 : (event_t *)(wrkEvent->nextEvent - _events);
 	}
-	freeIndex = (_freeEvent == 0) ? -1 : _freeEvent - _events;
-	headIndex = (_headEvent == 0) ? -1 : _headEvent - _events;
-	tailIndex = (_tailEvent == 0) ? -1 : _tailEvent - _events;
+
+	int16 freeIndex = (_freeEvent == 0) ? -1 : _freeEvent - _events;
+	int16 headIndex = (_headEvent == 0) ? -1 : _headEvent - _events;
+	int16 tailIndex = (_tailEvent == 0) ? -1 : _tailEvent - _events;
 
 	f->write(&curTime,   sizeof(curTime));
 	f->write(&freeIndex, sizeof(freeIndex));
 	f->write(&headIndex, sizeof(headIndex));
 	f->write(&tailIndex, sizeof(tailIndex));
-	f->write(saveEvents_, sizeof(saveEvents_));
+	f->write(saveEventArr, sizeof(saveEventArr));
 }
 
 // Restore the event list from file with handle f
 void Scheduler::restoreEvents(Common::SeekableReadStream *f) {
-	uint32   curTime, saveTime;
-	event_t *wrkEvent;                              // Event ptr
-	event_t  savedEvents[kMaxEvents];               // Convert event ptrs to indexes
+	debugC(1, kDebugSchedule, "restoreEvents");
+
+	uint32   saveTime;
 	int16    freeIndex;                             // Free list index
 	int16    headIndex;                             // Head of list index
 	int16    tailIndex;                             // Tail of list index
-
-	debugC(1, kDebugSchedule, "restoreEvents");
+	event_t  savedEvents[kMaxEvents];               // Convert event ptrs to indexes
 
 	f->read(&saveTime,  sizeof(saveTime));          // time of save
 	f->read(&freeIndex, sizeof(freeIndex));
@@ -619,6 +613,7 @@ void Scheduler::restoreEvents(Common::SeekableReadStream *f) {
 	f->read(&tailIndex, sizeof(tailIndex));
 	f->read(savedEvents, sizeof(savedEvents));
 
+	event_t *wrkEvent;
 	// Restore events indexes to pointers
 	for (int i = 0; i < kMaxEvents; i++) {
 		wrkEvent = &savedEvents[i];
@@ -626,12 +621,12 @@ void Scheduler::restoreEvents(Common::SeekableReadStream *f) {
 		_events[i].prevEvent = (wrkEvent->prevEvent == (event_t *) - 1) ? (event_t *)0 : &_events[(size_t)wrkEvent->prevEvent ];
 		_events[i].nextEvent = (wrkEvent->nextEvent == (event_t *) - 1) ? (event_t *)0 : &_events[(size_t)wrkEvent->nextEvent ];
 	}
-	_freeEvent = (freeIndex == -1) ? NULL : &_events[freeIndex];
-	_headEvent = (headIndex == -1) ? NULL : &_events[headIndex];
-	_tailEvent = (tailIndex == -1) ? NULL : &_events[tailIndex];
+	_freeEvent = (freeIndex == -1) ? 0 : &_events[freeIndex];
+	_headEvent = (headIndex == -1) ? 0 : &_events[headIndex];
+	_tailEvent = (tailIndex == -1) ? 0 : &_events[tailIndex];
 
 	// Adjust times to fit our time
-	curTime = getTicks();
+	uint32 curTime = getTicks();
 	wrkEvent = _headEvent;                              // The earliest event
 	while (wrkEvent) {                              // While mature events found
 		wrkEvent->time = wrkEvent->time - saveTime + curTime;
@@ -661,12 +656,13 @@ void Scheduler::swapImages(int objNumb1, int objNumb2) {
 // Swap all the images of one object with another.  Set hero_image (we make
 // the assumption for now that the first obj is always the HERO) to the object
 // number of the swapped image
-	seqList_t tmpSeqList[MAX_SEQUENCES];
-	int seqListSize = sizeof(seqList_t) * MAX_SEQUENCES;
-
 	debugC(1, kDebugSchedule, "swapImages(%d, %d)", objNumb1, objNumb2);
 
 	_vm.file().saveSeq(&_vm._objects[objNumb1]);
+
+	seqList_t tmpSeqList[MAX_SEQUENCES];
+	int seqListSize = sizeof(seqList_t) * MAX_SEQUENCES;
+
 	memcpy(tmpSeqList, _vm._objects[objNumb1].seqList, seqListSize);
 	memcpy(_vm._objects[objNumb1].seqList, _vm._objects[objNumb2].seqList, seqListSize);
 	memcpy(_vm._objects[objNumb2].seqList, tmpSeqList, seqListSize);
