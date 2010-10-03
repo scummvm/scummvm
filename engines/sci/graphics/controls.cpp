@@ -225,7 +225,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 		}
 	}
 
-	if (!textChanged && oldCursorPos != cursorPos) {
+	if (g_sci->getVocabulary() && !textChanged && oldCursorPos != cursorPos) {
 		assert(!textAddChar);
 		textChanged = g_sci->getVocabulary()->checkAltInput(text, cursorPos);
 	}
@@ -257,7 +257,8 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 			// Note: the following checkAltInput call might make the text
 			// too wide to fit, but SSCI fails to check that too.
 		}
-		g_sci->getVocabulary()->checkAltInput(text, cursorPos);
+		if (g_sci->getVocabulary())
+			g_sci->getVocabulary()->checkAltInput(text, cursorPos);
 		texteditCursorErase();
 		_paint16->eraseRect(rect);
 		_text16->Box(text.c_str(), 0, rect, SCI_TEXT16_ALIGNMENT_LEFT, -1);
