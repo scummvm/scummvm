@@ -32,7 +32,9 @@
 
 class TownsPC98_FmSynthOperator;
 class TownsPC98_FmSynthSquareSineSource;
+#ifndef __DS__
 class TownsPC98_FmSynthPercussionSource;
+#endif
 
 enum EnvelopeState {
 	kEnvReady,
@@ -128,7 +130,9 @@ private:
 	};
 
 	TownsPC98_FmSynthSquareSineSource *_ssg;
+#ifndef __DS__
 	TownsPC98_FmSynthPercussionSource *_prc;
+#endif
 	ChanInternal *_chanInternal;
 
 	uint8 *_oprRates;
@@ -168,7 +172,9 @@ private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 
+#ifndef __DS__
 	static const uint8 _percussionData[];
+#endif
 	static const uint32 _adtStat[];
 	static const uint8 _detSrc[];
 	static const int _ssgTables[];
