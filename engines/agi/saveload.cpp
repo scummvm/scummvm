@@ -809,12 +809,11 @@ int AgiEngine::saveGameDialog() {
 		printText("Select a slot in which you wish to\nsave the game:",
 				0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 		slot = selectSlot();
-		if (slot == 0)
+		if (slot + _firstSlot == 0)
 			messageBox("That slot is for Autosave only.");
 		else if (slot < 0)
 			return errOK;
-	}
-	while (slot == 0);
+	} while (slot + _firstSlot == 0);
 
 	drawWindow(hp, vp + 5 * CHAR_LINES, GFX_WIDTH - hp,
 			GFX_HEIGHT - vp - 9 * CHAR_LINES);
