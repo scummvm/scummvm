@@ -560,7 +560,6 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 			colorPCEToRGB(default_pce_cursor_colors[idx], &r, &g, &b);
 			color = get16BitColor(r, g, b);
 		} else if (_game.platform == Common::kPlatformFMTowns) {
-			//uint8 tmp = (default_cursor_colors[idx] << 4) | default_cursor_colors[idx];
 			byte *palEntry = &_textPalette[default_cursor_colors[idx] * 3];
 			color = get16BitColor(palEntry[0], palEntry[1], palEntry[2]);
 		} else {
@@ -588,8 +587,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 				byte *dst2 = (_textSurfaceMultiplier == 2) ? dst1 + 16 * scl : dst1;
 				if (_bytesPerPixelOutput == 2) {
 					for (int b = 0; b < scl; b += 2) {
-						WRITE_LE_UINT16(dst1, color);
-						WRITE_LE_UINT16(dst2, color);
+						*((uint16*)dst1) = *((uint16*)dst2) = color;
 						dst1 += 2;
 						dst2 += 2;
 					}
