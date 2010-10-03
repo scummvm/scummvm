@@ -24,9 +24,19 @@
  */
 
 #include "backends/platform/openpandora/op-sdl.h"
+#include "common/mutex.h"
+#include "common/translation.h"
+#include "common/util.h"
+
+#include "graphics/scaler/aspect.h"
+#include "graphics/surface.h"
 
 bool OSystem_OP::loadGFXMode() {
-	_videoMode.overlayWidth = 800;
+	/* FIXME: For now we just cheat and set the overlay to 640*480 not 800*480 and let SDL
+	   deal with the boarders (it saves cleaning up the overlay when the game screen is
+	   smaller than the overlay ;)
+	*/
+	_videoMode.overlayWidth = 640;
 	_videoMode.overlayHeight = 480;
 	_videoMode.fullscreen = true;
 

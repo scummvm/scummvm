@@ -23,37 +23,20 @@
  *
  */
 
-#ifndef OP_SDL_H
-#define OP_SDL_H
+/*
+ * OpenPandora: Options, custom code and hardware stuff.
+ *
+ */
 
-#include "backends/platform/sdl/sdl.h"
+#ifndef OP_OPTIONS_H
+#define OP_OPTIONS_H
 
-#define __OPENPANDORA__
-#define MIXER_DOUBLE_BUFFERING 1
+namespace OP {
 
-#ifndef PATH_MAX
-	#define PATH_MAX 255
-#endif
+extern int tapmodeLevel;
 
-class OSystem_OP : public OSystem_SDL {
-public:
-	OSystem_OP() {}
+extern void	ToggleTapMode();
 
-	/* Events */
-	bool handleKeyDown(SDL_Event &ev, Common::Event &event);
-	bool handleKeyUp(SDL_Event &ev, Common::Event &event);
-	bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
-	bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
+} /* namespace OP */
 
-	/* Graphics */
-	bool loadGFXMode();
-
-	/* Platform Setup Stuff */
-	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
-	void initBackend();
-	void quit();
-
-protected:
-
-};
-#endif
+#endif //OP_OPTIONS_H
