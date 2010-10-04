@@ -79,9 +79,6 @@ public:
 	 */
 	void kernelSetMoveZone(Common::Rect zone);
 
-	void kernelClearZoomZone();
-	void kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourceId viewNum, int loopNum, int celNum, GuiResourceId picNum, byte zoomColor);
-
 	void kernelSetPos(Common::Point pos);
 	void kernelMoveCursor(Common::Point pos);
 
@@ -98,15 +95,6 @@ private:
 
 	bool _moveZoneActive;
 	Common::Rect _moveZone; // Rectangle in which the pointer can move
-
-	bool _zoomZoneActive;
-	Common::Rect _zoomZone;
-	GfxView *_zoomCursorView;
-	byte _zoomCursorLoop;
-	byte _zoomCursorCel;
-	GfxView *_zoomPicView;
-	byte _zoomColor;
-	byte _zoomMultiplier;
 
 	CursorCache _cachedCursors;
 
