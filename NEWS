@@ -1,6 +1,9 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.svn.sourceforge.net/viewvc/scummvm/?view=log
 1.3.0 (????-??-??)
+ SCI:
+   - Improved support for non-English versions of games.
+
  SCUMM:
    - Improved support for FM-TOWNS versions of games.
 
