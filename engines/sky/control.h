@@ -50,7 +50,14 @@ struct Compact;
 struct DataFileHeader;
 struct MegaSet;
 
+#ifdef __DS__
+// Fix out of memory crash on the DS in SkyMetaEngine::listSaves() when saving or loading
+// from GMM.
+#define MAX_SAVE_GAMES 50
+#else
 #define MAX_SAVE_GAMES 999
+#endif
+
 #define MAX_TEXT_LEN 80
 #define PAN_LINE_WIDTH 184
 #define PAN_CHAR_HEIGHT 12
