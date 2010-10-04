@@ -411,6 +411,8 @@ void GfxCursor::kernelClearZoomZone() {
 	_zoomColor = 0;
 	_zoomMultiplier = 0;
 	_zoomZoneActive = false;
+	delete _zoomCursorView;
+	delete _zoomPicView;
 }
 
 void GfxCursor::kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourceId viewNum, int loopNum, int celNum, GuiResourceId picNum, byte zoomColor) {
@@ -421,20 +423,10 @@ void GfxCursor::kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourc
 
 	_zoomMultiplier = multiplier;
 
-	if (_cachedCursors.size() >= MAX_CACHED_CURSORS)
-		purgeCache();
-
-	if (!_cachedCursors.contains(viewNum))
-		_cachedCursors[viewNum] = new GfxView(_resMan, _screen, _palette, viewNum);
-	if (!_cachedCursors.contains(picNum))
-		_cachedCursors[picNum] = new GfxView(_resMan, _screen, _palette, picNum);
-
-	_zoomCursorView = _cachedCursors[viewNum];
+	_zoomCursorView = new GfxView(_resMan, _screen, _palette, viewNum);
 	_zoomCursorLoop = (byte)loopNum;
 	_zoomCursorCel = (byte)celNum;
-	_zoomPicView = _cachedCursors[picNum];
-
-	kernelSetView(viewNum, loopNum, celNum, NULL);
+	_zoomPicView = new GfxView(_resMan, _screen, _palette, picNum);
 
 	_zoomZone = zone;
 	kernelSetMoveZone(_zoomZone);
