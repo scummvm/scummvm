@@ -234,7 +234,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 			uint16 textWidth = 0;
 			const char *textPtr = text.c_str();
 			while (*textPtr)
-				textWidth += _text16->_font->getCharWidth(*textPtr++);
+				textWidth += _text16->_font->getCharWidth((byte)*textPtr++);
 			textWidth += _text16->_font->getCharWidth(eventKey);
 			if (textWidth >= rect.width()) {
 				_text16->SetFont(oldFontId);
