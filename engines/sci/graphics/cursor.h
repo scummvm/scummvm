@@ -105,7 +105,6 @@ private:
 	byte _zoomCursorLoop;
 	byte _zoomCursorCel;
 	GfxView *_zoomPicView;
-	byte *_zoomBitmap;
 	byte _zoomColor;
 	byte _zoomMultiplier;
 
