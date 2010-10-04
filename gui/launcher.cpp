@@ -722,6 +722,8 @@ void LauncherDialog::updateListing() {
 
 void LauncherDialog::addGame() {
 	int modifiers = g_system->getEventManager()->getModifierState();
+
+#ifndef DISABLE_MASS_ADD
 	const bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
 
 	if (massAdd) {
@@ -750,6 +752,7 @@ void LauncherDialog::addGame() {
 		updateButtons();
 		return;
 	}
+#endif
 
 	// Allow user to add a new game to the list.
 	// 1) show a dir selection dialog which lets the user pick the directory

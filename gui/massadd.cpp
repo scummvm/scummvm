@@ -36,6 +36,8 @@
 #include "gui/ListWidget.h"
 
 
+#ifndef DISABLE_MASS_ADD
+
 namespace GUI {
 
 /*
@@ -265,3 +267,5 @@ void MassAddDialog::handleTickle() {
 
 } // End of namespace GUI
 
+
+#endif // DISABLE_MASS_ADD
