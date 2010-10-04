@@ -53,7 +53,7 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 		for (int h = 0; h < height; ++h) {
 			if (_bytesPerPixelOutput == 2) {
 				for (int w = 0; w < width; ++w) {
-					WRITE_UINT16(dst1, _16BitPalette[*src1++]);
+					*(uint16*)dst1 = _16BitPalette[*src1++];
 					dst1 += _bytesPerPixelOutput;
 				}
 
@@ -304,7 +304,7 @@ void TownsScreen::fillLayerRect(int layer, int x, int y, int w, int h, int col) 
 	for (int i = 0; i < h; ++i) {
 		if (l->bpp == 2) {
 			for (int ii = 0; ii < w; ++ii) {			
-				WRITE_UINT16(pos, col);
+				*(uint16*)pos = col;
 				pos += 2;
 			}
 			pos += (l->pitch - w * 2);
@@ -471,10 +471,10 @@ void TownsScreen::updateOutputBuffer() {
 							if (col || l->onBottom) {
 								if (l->numCol == 16)
 									col = (col >> 4) & (col & 0x0f);
-								WRITE_LE_UINT16(dst, l->bltTmpPal[col]);
+								*(uint16*)dst = l->bltTmpPal[col];
 							}
 						} else {
-							WRITE_LE_UINT16(dst, READ_LE_UINT16(src));
+							*(uint16*)dst = *(uint16*)src;
 						}
 						dst += 2;
 					}
