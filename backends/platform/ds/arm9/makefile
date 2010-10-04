@@ -241,7 +241,7 @@ ifdef USE_MAD
 	DEFINES += -DUSE_MAD
 endif
 
-DEFINES += -DREDUCE_MEMORY_USAGE
+DEFINES += -DREDUCE_MEMORY_USAGE -DDISABLE_DEBUGGER -DUSE_TEXT_CONSOLE -DDISABLE_MASS_ADD
 
 LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections
 
