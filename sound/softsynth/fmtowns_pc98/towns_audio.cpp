@@ -260,9 +260,9 @@ bool TownsAudioInterface::init() {
 
 	setVolumeChannelMasks(-1, 0);
 
+	_ready = true;
 	callback(0);
 
-	_ready = true;
 	return true;
 }
 
