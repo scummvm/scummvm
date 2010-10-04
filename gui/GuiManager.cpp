@@ -72,6 +72,12 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _tooltipCheck(false),
 	ConfMan.registerDefault("gui_renderer", ThemeEngine::findModeConfigName(ThemeEngine::_defaultRendererMode));
 	ThemeEngine::GraphicsMode gfxMode = (ThemeEngine::GraphicsMode)ThemeEngine::findMode(ConfMan.get("gui_renderer"));
 
+#ifdef __DS__
+	if (!loadNewTheme("builtin", gfxMode)) {
+		// Loading the built-in theme failed as well. Bail out
+		error("Failed to load any GUI theme, aborting");
+	}
+#else
 	// Try to load the theme
 	if (!loadNewTheme(themefile, gfxMode)) {
 		// Loading the theme failed, try to load the built-in theme
@@ -80,7 +86,7 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _tooltipCheck(false),
 			error("Failed to load any GUI theme, aborting");
 		}
 	}
-
+#endif
 	_tooltip = 0;
 }
 
