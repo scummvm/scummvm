@@ -31,13 +31,17 @@
 class TownsPC98_MusicChannel;
 class TownsPC98_MusicChannelSSG;
 class TownsPC98_SfxChannel;
+#ifndef __DS__
 class TownsPC98_MusicChannelPCM;
+#endif
 
 class TownsPC98_AudioDriver : public TownsPC98_FmSynth {
 friend class TownsPC98_MusicChannel;
 friend class TownsPC98_MusicChannelSSG;
 friend class TownsPC98_SfxChannel;
+#ifndef __DS__
 friend class TownsPC98_MusicChannelPCM;
+#endif
 public:
 	TownsPC98_AudioDriver(Audio::Mixer *mixer, EmuType type);
 	~TownsPC98_AudioDriver();
@@ -84,7 +88,9 @@ protected:
 	TownsPC98_MusicChannel **_channels;
 	TownsPC98_MusicChannelSSG **_ssgChannels;
 	TownsPC98_SfxChannel **_sfxChannels;
+#ifndef __DS__
 	TownsPC98_MusicChannelPCM *_rhythmChannel;
+#endif
 
 	const uint8 *_opnCarrier;
 	const uint8 *_opnFreqTable;
