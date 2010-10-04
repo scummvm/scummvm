@@ -77,7 +77,7 @@ public:
 		else
 			_rate = rate;
 	}
-	virtual ~AudioStreamWrapper() {
+	~AudioStreamWrapper() {
 		delete _stream;
 	}
 	int readBuffer(int16 *buffer, const int numSamples) {
@@ -119,7 +119,6 @@ public:
 	MP3Sound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
-		consolePrintf("Mp3 sound\n");
 		Common::MemoryReadStream *tmp = f->readStream(size);
 		assert(tmp);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeMP3Stream(tmp, DisposeAfterUse::YES)));
@@ -133,7 +132,6 @@ public:
 	OGGSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
-		consolePrintf("Ogg sound\n");
 		Common::MemoryReadStream *tmp = f->readStream(size);
 		assert(tmp);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeVorbisStream(tmp, DisposeAfterUse::YES)));
@@ -147,7 +145,6 @@ public:
 	FLACSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
-		consolePrintf("Flac sound\n");
 		Common::MemoryReadStream *tmp = f->readStream(size);
 		assert(tmp);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeFLACStream(tmp, DisposeAfterUse::YES)));
@@ -272,7 +269,6 @@ void PCSound::stopSong() {
 }
 
 void PCSound::playSpeech(const char *base) {
-	consolePrintf("Playing speech\n");
 	if (speechOn()) {
 		playSound(base, true);
 	}
@@ -293,18 +289,15 @@ void PCSound::playSound(const char *base, bool isSpeech) {
 	}
 	strcat(name, ".SB");
 	if (isSpeech) {
-		consolePrintf("Another speech saple...\n");
 		while (_mixer->isSoundHandleActive(_speechHandle)) {
 			_vm->input()->delay(10);
 		}
 	} else {
-		consolePrintf("Stopping sfx\n");
 		_mixer->stopHandle(_sfxHandle);
 	}
 	uint32 size;
 	Common::File *f = _vm->resource()->findSound(name, &size);
 	if (f) {
-		consolePrintf("Playing sound %d\n", size);
 		playSoundData(f, size, isSpeech ? &_speechHandle : &_sfxHandle);
 		_speechSfxExists = isSpeech;
 	} else {
@@ -336,7 +329,6 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 	if (sound) {
 		f->read(sound, size);
 		Audio::Mixer::SoundType type = (soundHandle == &_speechHandle) ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
-		consolePrintf("Playing sound data %d\n", size);
 
 		Audio::AudioStream *stream = Audio::makeRawStream(sound, size, 11840, Audio::FLAG_UNSIGNED);
 		_mixer->playStream(type, soundHandle, stream);
