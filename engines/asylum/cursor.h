@@ -78,11 +78,12 @@ public:
 	 * scene, where it originally was
 	 */
 	//void update(WorldStats *ws, int32 currentAction);
+
 	/**
 	 * Get the next logical frame from the currently loaded
 	 * cursorResource and draw it
 	 */
-	//void animate();
+	void animate();
 
 	void update();
 

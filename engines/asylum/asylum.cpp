@@ -67,7 +67,7 @@ AsylumEngine::~AsylumEngine() {
 
 	delete _console;
 	delete _scene;
-	//delete _mainMenu;
+	delete _mainMenu;
 	delete _video;
 	delete _sound;
 	delete _screen;
@@ -93,7 +93,7 @@ Common::Error AsylumEngine::init() {
 	_video     = new Video(_mixer);
 	_console   = new Console(this);
 	_text      = new Text(_screen);
-	//_mainMenu  = 0;
+	_mainMenu  = 0;
 	_scene     = 0;
 	//_encounter = 0;
 
@@ -120,15 +120,15 @@ Common::Error AsylumEngine::go() {
     _video->playVideo(0, Config.showMovieSubtitles);
 #endif
 
-    // Set up main menu
-	//_mainMenu = new MainMenu(this);
+	// Set up main menu
+	_mainMenu = new MainMenu(this);
 
 	// TODO: if savegame not exists on folder, than start game()
-    //if(0) { //SearchMan.hasArchive
-        startGame();
-    //} else {
-    //    _mainMenu->openMenu();
-    //}
+	//if(0) { //SearchMan.hasArchive
+		startGame();
+	//} else {
+	//    _mainMenu->openMenu();
+	//}
 
 	while (!shouldQuit()) {
 		checkForEvent(true);
@@ -143,26 +143,26 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 
 	while (_system->getMillis() < start_time + msec_delay) {
 		checkForEvent(false);
-        if (_scene) {
-		    processDelayedEvents();
-        }
+		if (_scene) {
+			processDelayedEvents();
+		}
 		_system->updateScreen();
 	}
 }
 
 void AsylumEngine::startGame() {
-    // TODO: reset what need to be reset for a new game
-    
-    if (_scene) {
-        delete _scene;    
-    }
+	// TODO: reset what need to be reset for a new game
 
-    _scene = new Scene(5, this);
-    
+	if (_scene) {
+		delete _scene;
+	}
+
+	_scene = new Scene(5, this);
+
 #ifndef SKIP_INTRO
-    playIntro();
+	playIntro();
 #endif
-    _scene->initialize();
+	_scene->initialize();
 
 	// FIXME This is just here for testing purposes. It is also defined
 	// in the processActionList() method when the necessary action is fired.
@@ -173,18 +173,18 @@ void AsylumEngine::startGame() {
 	// XXX Testing
 	//_encounter = new Encounter(_scene);
 
-    // Enter first scene
-    if(!_introPlaying)
-    {
+	// Enter first scene
+	if(!_introPlaying)
+	{
 		setGameFlag(4);
-	    setGameFlag(12);
-	    _scene->enterScene();
-    }
+		setGameFlag(12);
+		_scene->enterScene();
+	}
 }
 
 void AsylumEngine::playIntro() {
-    _introPlaying = true;
-    g_system->showMouse(false);
+	_introPlaying = true;
+	g_system->showMouse(false);
 
 	_video->playVideo(1, Config.showMovieSubtitles);
 
@@ -234,14 +234,15 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 		if (ev.type == Common::EVENT_KEYDOWN) {
 			if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				// Toggle menu
-				/* FIXME reimplement later
 				if (_mainMenu->isActive()) {
-                    if (_scene) {
-                        _mainMenu->closeMenu();
-					    _scene->enterScene();
-                    }
+					if (_scene) {
+						_mainMenu->closeMenu();
+						_scene->enterScene();
+					}
 				} else if (_scene && _scene->isActive()) {
 					_mainMenu->openMenu();
+				}
+				/* FIXME
 				} else if (_scene && _scene->getBlowUpPuzzle()->isActive()) {
 					_scene->getBlowUpPuzzle()->closeBlowUp();
 					_scene->enterScene();
@@ -253,9 +254,9 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 			// XXX: TEST ONLY
 			/*
 			if (ev.kbd.keycode == Common::KEYCODE_b) {
-                if (_scene) {
-				    _scene->getBlowUpPuzzle()->openBlowUp();
-                }
+				if (_scene) {
+					_scene->getBlowUpPuzzle()->openBlowUp();
+				}
 			}
 			*/
 			if (ev.kbd.flags == Common::KBD_CTRL) {
@@ -267,8 +268,8 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 	}
 
 	if (doUpdate) {
-		if (_scene && _scene->isActive())
-		//if (_mainMenu->isActive() || (_scene && _scene->isActive()) || (_scene && _scene->getBlowUpPuzzle()->isActive()))
+		if (_mainMenu->isActive() ||
+			(_scene && _scene->isActive())) //|| (_scene && _scene->getBlowUpPuzzle()->isActive()))
 			// Copy background image
 			_screen->copyBackBufferToScreen();
 
@@ -276,20 +277,18 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 			_console->onFrame();
 	}
 
-	/* FIXME reimplement
+
 	if (_mainMenu->isActive())
 		// Main menu active, pass events to it
 		_mainMenu->handleEvent(&ev, doUpdate);
 	else if (_scene && _scene->isActive())
 		// Pass events to the game
 		_scene->handleEvent(&ev, doUpdate);
+	/* FIXME reimplement
 	else if (_scene && _scene->getBlowUpPuzzle()->isActive())
 		// Pass events to BlowUp Puzzles
 		_scene->getBlowUpPuzzle()->handleEvent(&ev, doUpdate);
 	*/
-	if (_scene && _scene->isActive())
-		// Pass events to the game
-		_scene->handleEvent(&ev, doUpdate);
 }
 
 void AsylumEngine::processDelayedEvents() {
@@ -301,13 +300,10 @@ void AsylumEngine::processDelayedEvents() {
 		_video->playVideo(videoIdx, kSubtitlesOn);
 		_scene->actions()->delayedVideoIndex = -1;
 
-		/* FIXME reimplement
+
 		if (_mainMenu->isActive())
 			_mainMenu->openMenu();
 		else if (_scene->isActive())
-			_scene->enterScene();
-		*/
-		if (_scene->isActive())
 			_scene->enterScene();
 	}
 

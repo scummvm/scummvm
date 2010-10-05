@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	cursor.o \
 	detection.o \
 	graphics.o \
+	menu.o \
 	polygons.o \
 	respack.o \
 	scene.o \
