@@ -4032,12 +4032,14 @@ void HotspotTickHandlers::npcRoomChange(Hotspot &h) {
 
 		if (!h.currentActions().isEmpty()) {
 			if (h.startRoomNumber() != 0) {
-				// If character isn't already returning to starting room, start them doing so
+				// If character isn't already returning to starting room, redirect them to the
+				// player's current room
 				if (!h.currentActions().bottom().hasSupportData() ||
 					(h.currentActions().bottom().supportData().action() != RETURN)) {
 					// Start follower returning
+					Hotspot *playerHotspot = res.getActiveHotspot(PLAYER_ID);
 					h.currentActions().clear();
-					h.currentActions().addFront(RETURN, h.startRoomNumber(), 0, 0);
+					h.currentActions().addFront(RETURN, playerHotspot->roomNumber(), 0, 0);
 				}
 			}
 
