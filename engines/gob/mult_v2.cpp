@@ -272,9 +272,9 @@ void Mult_v2::loadImds(Common::SeekableReadStream &data) {
 	memcpy(_multData->imdFiles,
 			_vm->_game->_script->getData() + _vm->_game->_script->pos(), size * 14);
 
-	// WORKAROUND: The Windows version of Lost in Time has VMD not IMD files,
-	//             but they are still referenced as IMD.
-	if ((_vm->getGameType() == kGameTypeLostInTime) &&
+	// WORKAROUND: The Windows versions of Lost in Time and Gob3 have VMD not
+	//             IMD files, but they are still referenced as IMD.
+	if (((_vm->getGameType() == kGameTypeLostInTime) || (_vm->getGameType() == kGameTypeGob3)) &&
 	    (_vm->getPlatform() == Common::kPlatformWindows)) {
 
 		for (int i = 0; i < size; i++) {
