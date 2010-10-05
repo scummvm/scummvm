@@ -147,7 +147,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	curTalkNPC2        = stream->readSint32LE();
 	font1              = stream->readSint32LE();
 	font2              = stream->readSint32LE();
-	font3	             = stream->readSint32LE();
+	font3              = stream->readSint32LE();
 	palette            = stream->readSint32LE();
 	cellShadeMask1     = stream->readSint32LE();
 	cellShadeMask2     = stream->readSint32LE();
