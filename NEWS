@@ -97,6 +97,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  LURE:
    - Fixed bug where Goewin could get stuck in the Weregate
    - Fixed issue with Ratpouch repeatedly moving between two rooms
+   - Fix for Goewin losing her schedule after Were-cave
 
  Parallaction:
    - Made part one of The Big Red Adventure completable.
