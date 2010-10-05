@@ -240,6 +240,23 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 	},
+	
+	{
+		// Drascula French version (ScummVM repacked files)
+		{
+			"drascula",
+			0,
+			{
+				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
+				{"packet.002", 1, "7b83cedb9bb326ed5143e5c459508d43", 722383},
+				{NULL, 0, NULL, 0}
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			GF_PACKED,
+			GUIO_NONE
+		},
+	},
 
 	{ AD_TABLE_END_MARKER }
 };

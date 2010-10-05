@@ -1,6 +1,11 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.svn.sourceforge.net/viewvc/scummvm/?view=log
 1.3.0 (????-??-??)
+ Drascula:
+   - Added German and French subtitles in the Von Braun cutscene (#3069981:
+     no subtitles in scene with "von Braun").
+   - Improved French translation of the game.
+
  SCI:
    - Improved support for non-English versions of games.
 
