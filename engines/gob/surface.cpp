@@ -344,8 +344,8 @@ void Surface::blitScaled(const Surface &from, int16 left, int16 top, int16 right
 	// Color depths have to fit
 	assert(_bpp == from._bpp);
 
-	uint16 dWidth  = floor((_width  / scale).toDouble());
-	uint16 dHeight = floor((_height / scale).toDouble());
+	uint16 dWidth  = (uint16) floor((_width  / scale).toDouble());
+	uint16 dHeight = (uint16) floor((_height / scale).toDouble());
 
 	// Clip
 	if (!clipBlitRect(left, top, right, bottom, x, y, dWidth, dHeight, from._width, from._height))
@@ -359,8 +359,8 @@ void Surface::blitScaled(const Surface &from, int16 left, int16 top, int16 right
 		// Nothing to do
 		return;
 
-	width  = MIN<int32>(floor((width  * scale).toDouble()), _width);
-	height = MIN<int32>(floor((height * scale).toDouble()), _height);
+	width  = MIN<int32>((int32) floor((width  * scale).toDouble()), _width);
+	height = MIN<int32>((int32) floor((height * scale).toDouble()), _height);
 
 	// Pointers to the blit destination and source start points
 	      byte *dst =      getData(x   , y);
