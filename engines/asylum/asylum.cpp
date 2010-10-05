@@ -272,7 +272,7 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 			// Copy background image
 			_screen->copyBackBufferToScreen();
 
-		if (_console->isAttached())
+		if (_console->isActive())
 			_console->onFrame();
 	}
 
