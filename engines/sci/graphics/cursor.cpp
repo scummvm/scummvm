@@ -58,10 +58,12 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 	_zoomPicView = 0;
 	_zoomColor = 0;
 	_zoomMultiplier = 0;
+	_cursorSurface = 0;
 }
 
 GfxCursor::~GfxCursor() {
 	purgeCache();
+	kernelClearZoomZone();
 }
 
 void GfxCursor::init(GfxCoordAdjuster *coordAdjuster, EventManager *event) {
@@ -368,14 +370,11 @@ void GfxCursor::refreshPosition() {
 		// Cursor
 		const CelInfo *cursorCelInfo = _zoomCursorView->getCelInfo(_zoomCursorLoop, _zoomCursorCel);
 		const byte *cursorBitmap = _zoomCursorView->getBitmap(_zoomCursorLoop, _zoomCursorCel);
-		byte *finalBitmap = new byte[cursorCelInfo->width * cursorCelInfo->height];
 		// Pic
 		const CelInfo *picCelInfo = _zoomPicView->getCelInfo(0, 0);
 		const byte *rawPicBitmap = _zoomPicView->getBitmap(0, 0);
 		// Compute hotspot from xoffset/yoffset
 		Common::Point cursorHotspot = Common::Point((cursorCelInfo->width >> 1) - cursorCelInfo->displaceX, cursorCelInfo->height - cursorCelInfo->displaceY - 1);
-
-		memcpy(finalBitmap, cursorBitmap, cursorCelInfo->width * cursorCelInfo->height);
 
 		uint16 targetX = CLIP<int>((mousePoint.x - _zoomZone.left) * _zoomMultiplier, 0, picCelInfo->width - cursorCelInfo->width);
 		uint16 targetY =  CLIP<int>((mousePoint.y - _zoomZone.top) * _zoomMultiplier, 0, picCelInfo->height - cursorCelInfo->height);
@@ -384,15 +383,13 @@ void GfxCursor::refreshPosition() {
 		for (int x = 0; x < cursorCelInfo->width; x++) {
 			for (int y = 0; y < cursorCelInfo->height; y++) {
 				int curPos = cursorCelInfo->width * y + x;
-				if (finalBitmap[curPos] == _zoomColor) {
-					finalBitmap[curPos] = rawPicBitmap[picCelInfo->width * (targetY + y) + (targetX + x)];
+				if (cursorBitmap[curPos] == _zoomColor) {
+					_cursorSurface[curPos] = rawPicBitmap[picCelInfo->width * (targetY + y) + (targetX + x)];
 				}
 			}
 		}
 
-		CursorMan.replaceCursor((const byte *)finalBitmap, cursorCelInfo->width, cursorCelInfo->height, cursorHotspot.x, cursorHotspot.y, cursorCelInfo->clearKey);
-
-		delete[] finalBitmap;
+		CursorMan.replaceCursor((const byte *)_cursorSurface, cursorCelInfo->width, cursorCelInfo->height, cursorHotspot.x, cursorHotspot.y, cursorCelInfo->clearKey);
 	}
 }
 
@@ -413,13 +410,11 @@ void GfxCursor::kernelClearZoomZone() {
 	_zoomZoneActive = false;
 	delete _zoomCursorView;
 	delete _zoomPicView;
+	delete[] _cursorSurface;
 }
 
 void GfxCursor::kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourceId viewNum, int loopNum, int celNum, GuiResourceId picNum, byte zoomColor) {
-	if (multiplier != 1 && multiplier != 2) {
-		warning("kernelSetZoomZone: Unsupported magnifier %d", multiplier);
-		return;
-	}
+	kernelClearZoomZone();
 
 	_zoomMultiplier = multiplier;
 
@@ -427,6 +422,10 @@ void GfxCursor::kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourc
 	_zoomCursorLoop = (byte)loopNum;
 	_zoomCursorCel = (byte)celNum;
 	_zoomPicView = new GfxView(_resMan, _screen, _palette, picNum);
+	const CelInfo *cursorCelInfo = _zoomCursorView->getCelInfo(_zoomCursorLoop, _zoomCursorCel);
+	const byte *cursorBitmap = _zoomCursorView->getBitmap(_zoomCursorLoop, _zoomCursorCel);
+	_cursorSurface = new byte[cursorCelInfo->width * cursorCelInfo->height];
+	memcpy(_cursorSurface, cursorBitmap, cursorCelInfo->width * cursorCelInfo->height);
 
 	_zoomZone = zone;
 	kernelSetMoveZone(_zoomZone);

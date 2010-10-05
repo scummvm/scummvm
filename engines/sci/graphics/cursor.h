@@ -107,6 +107,7 @@ private:
 	GfxView *_zoomPicView;
 	byte _zoomColor;
 	byte _zoomMultiplier;
+	byte *_cursorSurface;
 
 	CursorCache _cachedCursors;
 
