@@ -1712,6 +1712,7 @@ void ScummEngine_v5::o5_roomOps() {
 	case 10:	// SO_ROOM_FADE
 		a = getVarOrDirectWord(PARAM_1);
 		if (a) {
+	#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_game.platform == Common::kPlatformFMTowns) {
 				switch (a) {
 				case 8:
@@ -1762,6 +1763,7 @@ void ScummEngine_v5::o5_roomOps() {
 					return;
 				}
 			}
+#endif // DISABLE_TOWNS_DUAL_LAYER_MODE
 			_switchRoomEffect = (byte)(a & 0xFF);
 			_switchRoomEffect2 = (byte)(a >> 8);
 		} else {

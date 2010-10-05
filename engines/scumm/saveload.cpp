@@ -1298,6 +1298,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		s->saveLoadArrayOf(_16BitPalette, 512, sizeof(_16BitPalette[0]), sleUint16);
 	}
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	// FM-Towns specific (extra palette data, color cycle data, etc.)
 	if (s->getVersion() >= VER(82)) {
 		const SaveLoadEntry townsFields[] = {
@@ -1323,6 +1324,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		s->saveLoadArrayOf(_townsCharsetColorMap, 16, sizeof(_townsCharsetColorMap[0]), sleUint8);		
 		s->saveLoadEntries(this, townsExtraEntries);
 	}
+#endif
 
 	if (_shadowPaletteSize) {
 		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);

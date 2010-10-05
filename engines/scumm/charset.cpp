@@ -52,6 +52,9 @@ void ScummEngine::loadCJKFont() {
 	_newLineCharacter = 0;
 
 	if (_game.version <= 5 && _game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) { // FM-TOWNS v3 / v5 Kanji
+#ifdef DISABLE_TOWNS_DUAL_LAYER_MODE
+		error("FM-Towns Kanji font drawing requires dual graphics layer support which is disabled in this build");
+#endif
 		int numChar = 256 * 32;
 		_2byteWidth = 16;
 		_2byteHeight = 16;
@@ -655,11 +658,13 @@ void CharsetRendererV3::setColor(byte color) {
 	} else
 		useShadow = false;
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_vm->_game.platform == Common::kPlatformFMTowns) {
 		_color = (_color & 0x0f) | ((_color & 0x0f) << 4);
 		if (_color == 0)
 			_color = 0x88;
 	}
+#endif
 
 	enableShadow(useShadow);
 
@@ -678,7 +683,12 @@ void CharsetRendererPCE::setColor(byte color) {
 void CharsetRendererCommon::enableShadow(bool enable) {
 	if (enable) {
 		if (_vm->_game.platform == Common::kPlatformFMTowns) {
-			_shadowColor = _vm->_game.version == 5 ? _vm->_townsCharsetColorMap[0] : 0x88;
+			_shadowColor =
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+				_vm->_game.version == 5 ? _vm->_townsCharsetColorMap[0] : 0x88;
+#else
+				8;
+#endif
 			_shadowMode = kFMTOWNSShadowMode;
 		} else {
 			_shadowColor = 0;
@@ -750,7 +760,11 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		_textScreenID = vs->number;
 	}
 
-	if ((_vm->_game.platform != Common::kPlatformFMTowns || (_vm->_game.id == GID_LOOM && !is2byte)) && (ignoreCharsetMask || !vs->hasTwoBuffers)) {
+	if (
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		(_vm->_game.platform != Common::kPlatformFMTowns || (_vm->_game.id == GID_LOOM && !is2byte)) &&
+#endif		
+		(ignoreCharsetMask || !vs->hasTwoBuffers)) {
 		dst = vs->getPixels(_left, drawTop);
 		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->bytesPerPixel);
 	} else {
@@ -807,6 +821,7 @@ void CharsetRenderer::translateColor() {
 	}
 }
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 void CharsetRenderer::processTownsCharsetColors(uint8 bytesPerPixel) {
 	if (_vm->_game.platform == Common::kPlatformFMTowns) {
 		for (int i = 0; i < (1 << bytesPerPixel); i++) {
@@ -827,6 +842,7 @@ void CharsetRenderer::processTownsCharsetColors(uint8 bytesPerPixel) {
 		}
 	}
 }
+#endif
 
 void CharsetRenderer::saveLoadWithSerializer(Serializer *ser) {
 	static const SaveLoadEntry charsetRendererEntries[] = {
@@ -863,7 +879,9 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 	_vm->_charsetColorMap[1] = _color;
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	processTownsCharsetColors(_bytesPerPixel);
+#endif
 
 	if (is2byte) {
 		enableShadow(true);
@@ -936,7 +954,11 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 	// This check for kPlatformFMTowns and kMainVirtScreen is at least required for the chat with
 	// the navigator's head in front of the ghost ship in Monkey Island 1
-	if (!ignoreCharsetMask || (_vm->_game.platform == Common::kPlatformFMTowns && vs->number == kMainVirtScreen)) {
+	if (!ignoreCharsetMask
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		|| (_vm->_game.platform == Common::kPlatformFMTowns && vs->number == kMainVirtScreen)
+#endif
+		) {
 		_hasMask = true;
 		_textScreenID = vs->number;
 	}
@@ -992,7 +1014,11 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 	} else {
 		Graphics::Surface dstSurface;
 		Graphics::Surface backSurface;
-		if (_vm->_game.platform != Common::kPlatformFMTowns && (ignoreCharsetMask || !vs->hasTwoBuffers) && !(_vm->_useCJKMode && _vm->_textSurfaceMultiplier == 2)) {
+		if (
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+			_vm->_game.platform != Common::kPlatformFMTowns && 
+#endif
+			(ignoreCharsetMask || !vs->hasTwoBuffers) && !(_vm->_useCJKMode && _vm->_textSurfaceMultiplier == 2)) {
 			dstSurface = *vs;
 			dstPtr = vs->getPixels(_left, drawTop);
 		} else {
@@ -1095,7 +1121,11 @@ void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, co
 	assert(bpp == 1 || bpp == 2 || bpp == 4 || bpp == 8);
 	bits = *src++;
 	numbits = 8;
-	byte *cmap = (_vm->_game.platform == Common::kPlatformFMTowns) ? _vm->_townsCharsetColorMap : _vm->_charsetColorMap;
+	byte *cmap =
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		(_vm->_game.platform == Common::kPlatformFMTowns) ? _vm->_townsCharsetColorMap :
+#endif
+		_vm->_charsetColorMap;
 
 	for (y = 0; y < height && y + drawTop < s.h; y++) {
 		for (x = 0; x < width; x++) {
@@ -1119,7 +1149,11 @@ void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, co
 void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth) {
 	int y, x;
 	byte bits = 0;
-	uint8 col = (_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 5) ? _vm->_townsCharsetColorMap[1] : _color;
+	uint8 col = 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		(_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 5) ? _vm->_townsCharsetColorMap[1] : 
+#endif
+		_color;
 
 	for (y = 0; y < height && y + drawTop < s.h; y++) {
 		for (x = 0; x < width; x++) {

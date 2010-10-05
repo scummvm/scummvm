@@ -29,6 +29,8 @@
 #include "scumm/util.h"
 #include "scumm/resource.h"
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+
 namespace Scumm {
 
 void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, int srcX, int srcY, int width, int height) {
@@ -516,3 +518,5 @@ uint16 TownsScreen::calc16BitColor(const uint8 *palEntry) {
 #undef FULL_REDRAW
 
 } // End of namespace Scumm
+
+#endif // DISABLE_TOWNS_DUAL_LAYER_MODE

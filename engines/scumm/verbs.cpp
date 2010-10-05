@@ -1451,7 +1451,11 @@ void ScummEngine::restoreVerbBG(int verb) {
 	VerbSlot *vs;
 
 	vs = &_verbs[verb];
-	uint8 col = ((_game.platform == Common::kPlatformFMTowns) && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4) && (vs->bkcolor == _townsOverrideShadowColor)) ? 0 : vs->bkcolor;
+	uint8 col = 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		((_game.platform == Common::kPlatformFMTowns) && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4) && (vs->bkcolor == _townsOverrideShadowColor)) ? 0 : 
+#endif
+		vs->bkcolor;
 
 	if (vs->oldRect.left != -1) {
 		restoreBackground(vs->oldRect, col);

@@ -559,9 +559,11 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 			byte r, g, b;
 			colorPCEToRGB(default_pce_cursor_colors[idx], &r, &g, &b);
 			color = get16BitColor(r, g, b);
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		} else if (_game.platform == Common::kPlatformFMTowns) {
 			byte *palEntry = &_textPalette[default_cursor_colors[idx] * 3];
 			color = get16BitColor(palEntry[0], palEntry[1], palEntry[2]);
+#endif
 		} else {
 			color = _16BitPalette[default_cursor_colors[idx]];
 		}

@@ -29,205 +29,15 @@
 
 namespace Scumm {
 
-Player_Towns::Player_Towns(ScummEngine *vm, Audio::Mixer *mixer) : _vm(vm) {
-	_cdaCurrentSound = _eupCurrentSound = _cdaNumLoops = 0;
-	_cdaForceRestart = 0;
+Player_Towns::Player_Towns(ScummEngine *vm) : _vm(vm) {
 	memset(_pcmCurrentSound, 0, sizeof(_pcmCurrentSound));
-	_cdaVolLeft = _cdaVolRight = 0;
-
-	_eupVolLeft = _eupVolRight = 0;
 	memset(&_ovrCur, 0, sizeof(SoundOvrParameters));
 	_soundOverride = 0;
-
-	if (_vm->_game.version == 3) {
-		_soundOverride = new SoundOvrParameters[200];
-		memset(_soundOverride, 0, 200 * sizeof(SoundOvrParameters));
-	}
-
-	_eupLooping = false;
 	_unkFlags = 0x33;
-
-	_driver = new TownsEuphonyDriver(mixer);
-}
-
-Player_Towns::~Player_Towns() {
-	delete[] _soundOverride;
-	delete _driver;
-}
-
-bool Player_Towns::init() {
-	if (!_driver)
-		return false;
-	
-	if (!_driver->init())
-		return false;
-
-	_driver->reserveSoundEffectChannels(8);
-
-	// Treat all 6 fm channels and all 8 pcm channels as sound effect channels
-	// since music seems to exist as CD audio only in the games which use this
-	// MusicEngine implementation.
-	_driver->intf()->setSoundEffectChanMask(-1);
-
-	setVolumeCD(255, 255);
-
-	return true;
-}
-
-void Player_Towns::setMusicVolume(int vol) {
-	_driver->setMusicVolume(vol);
-}
-
-void Player_Towns::setSfxVolume(int vol) {
-	_driver->setSoundEffectVolume(vol);
-}
-
-void Player_Towns::startSound(int sound) {
-	uint8 *ptr = _vm->getResourceAddress(rtSound, sound);
-	if (_vm->_game.version != 3) {
-		ptr += 2;
-	} else if (_soundOverride && sound > 0 && sound < 200) {
-		memcpy(&_ovrCur, &_soundOverride[sound], sizeof(SoundOvrParameters));
-		memset(&_soundOverride[sound], 0, sizeof(SoundOvrParameters));
-	}
-
-	int type = ptr[13];
-
-	if (type == 0) {
-		playPcmTrack(sound, ptr + 6);
-	} else if (type == 1) {
-		playEuphonyTrack(sound, ptr + 6);
-	} else if (type == 2) {
-		playCdaTrack(sound, ptr + 6);
-	}
-	memset(&_ovrCur, 0, sizeof(SoundOvrParameters));
-}
-
-void Player_Towns::stopSound(int sound) {
-	if (sound == 0 || sound == _cdaCurrentSound) {
-		_cdaCurrentSound = 0;
-		_vm->_sound->stopCD();
-		_vm->_sound->stopCDTimer();
-	}
-
-	if (sound != 0 && sound == _eupCurrentSound) {
-		_eupCurrentSound = 0;
-		_eupLooping = false;
-		_driver->stopParser();
-	}
-	
-	stopPcmTrack(sound);
-}
-
-void Player_Towns::stopAllSounds() {
-	_cdaCurrentSound = 0;
-	_vm->_sound->stopCD();
-	_vm->_sound->stopCDTimer();
-
-	_eupCurrentSound = 0;
-	_eupLooping = false;
-	_driver->stopParser();
-
-	stopPcmTrack(0);
-}
-
-int Player_Towns::getSoundStatus(int sound) const {
-	if (sound == _cdaCurrentSound)
-		return _vm->_sound->pollCD();
-	if (sound == _eupCurrentSound)
-		return _driver->parserIsPlaying() ? 1 : 0;
-	for (int i = 1; i < 9; i++) {
-		if (_pcmCurrentSound[i].index == sound)
-			return _driver->soundEffectIsPlaying(i + 0x3f) ? 1 : 0;
-	}
-	return 0;
-}
-
-int32 Player_Towns::doCommand(int numargs, int args[]) {
-	int32 res = 0;
-	
-	switch (args[0]) {
-	case 2:
-		_driver->intf()->callback(73, 0);
-		break;
-
-	case 3:
-		restartLoopingSounds();
-		break;
-
-	case 8:
-		startSound(args[1]);
-		break;
-
-	case 9:
-		_vm->_sound->stopSound(args[1]);
-		break;
-
-	case 11:
-		stopPcmTrack(0);
-		break;
-
-	case 14:
-		startSoundEx(args[1], args[2], args[3], args[4]);
-		break;
-
-	case 15:
-		stopSoundSuspendLooping(args[1]);
-		break;
-
-	default:
-		warning("Player_Towns::doCommand: Unknown command %d", args[0]);
-		break;
-	}
-
-	return res;
-}
-
-void Player_Towns::setVolumeCD(int left, int right) {
-	_cdaVolLeft = left & 0xff;
-	_cdaVolRight = right & 0xff;
-	_driver->setOutputVolume(1, left >> 1, right >> 1);
-}
-
-void Player_Towns::setSoundVolume(int sound, int left, int right) {
-	if (_soundOverride && sound > 0 && sound < 200) {
-		_soundOverride[sound].vLeft = left;
-		_soundOverride[sound].vRight = right;
-	}
-}
-
-void Player_Towns::setSoundNote(int sound, int note) {
-	if (_soundOverride && sound > 0 && sound < 200)
-		_soundOverride[sound].note = note;
+	_intf = 0;
 }
 
 void Player_Towns::saveLoadWithSerializer(Serializer *ser) {
-	_cdaCurrentSoundTemp = (_vm->_sound->pollCD() && _cdaNumLoops > 1) ? _cdaCurrentSound & 0xff : 0;
-	_cdaNumLoopsTemp = _cdaNumLoops & 0xff;
-
-	static const SaveLoadEntry cdEntries[] = {
-		MKLINE(Player_Towns, _cdaCurrentSoundTemp, sleUint8, VER(81)),
-		MKLINE(Player_Towns, _cdaNumLoopsTemp, sleUint8, VER(81)),
-		MKLINE(Player_Towns, _cdaVolLeft, sleUint8, VER(81)),
-		MKLINE(Player_Towns, _cdaVolRight, sleUint8, VER(81)),
-		MKEND()
-	};
-
-	ser->saveLoadEntries(this, cdEntries);
-
-	if (!_eupLooping && !_driver->parserIsPlaying())
-		_eupCurrentSound = 0;
-
-	static const SaveLoadEntry eupEntries[] = {
-		MKLINE(Player_Towns, _eupCurrentSound, sleUint8, VER(81)),
-		MKLINE(Player_Towns, _eupLooping, sleUint8, VER(81)),
-		MKLINE(Player_Towns, _eupVolLeft, sleUint8, VER(81)),
-		MKLINE(Player_Towns, _eupVolRight, sleUint8, VER(81)),
-		MKEND()
-	};
-
-	ser->saveLoadEntries(this, eupEntries);
-
 	static const SaveLoadEntry pcmEntries[] = {
 		MKLINE(PcmCurrentSound, index, sleInt16, VER(81)),
 		MKLINE(PcmCurrentSound, chan, sleInt16, VER(81)),
@@ -244,10 +54,10 @@ void Player_Towns::saveLoadWithSerializer(Serializer *ser) {
 		if (!_pcmCurrentSound[i].index)
 			continue;
 
-		if (_driver->soundEffectIsPlaying(i + 0x3f))
+		if (_intf->callback(40, i + 0x3f))
 			continue;
 
-		_driver->stopSoundEffect(i + 0x3f);
+		_intf->callback(39, i + 0x3f);
 
 		_pcmCurrentSound[i].index = 0;
 	}
@@ -256,31 +66,6 @@ void Player_Towns::saveLoadWithSerializer(Serializer *ser) {
 }
 
 void Player_Towns::restoreAfterLoad() {
-	setVolumeCD(_cdaVolLeft, _cdaVolRight);
-	
-	if (_cdaCurrentSoundTemp) {
-		uint8 *ptr = _vm->getResourceAddress(rtSound, _cdaCurrentSoundTemp) + 6;
-		if (_vm->_game.version != 3)
-			ptr += 2;
-		
-		if (ptr[7] == 2) {
-			playCdaTrack(_cdaCurrentSoundTemp, ptr, true);
-			_cdaCurrentSound = _cdaCurrentSoundTemp;
-			_cdaNumLoops = _cdaNumLoopsTemp;
-		}
-	}
-
-	if (_eupCurrentSound) {
-		uint8 *ptr = _vm->getResourceAddress(rtSound, _eupCurrentSound) + 6;
-		if (_vm->_game.version != 3)
-			ptr += 2;
-		
-		if (ptr[7] == 1) {
-			setSoundVolume(_eupCurrentSound, _eupVolLeft, _eupVolRight);
-			playEuphonyTrack(_eupCurrentSound, ptr);
-		}
-	}
-
 	for (int i = 1; i < 9; i++) {
 		if (!_pcmCurrentSound[i].index)
 			continue;
@@ -299,6 +84,56 @@ void Player_Towns::restoreAfterLoad() {
 	}
 }
 
+void Player_Towns::playPcmTrack(int sound, const uint8 *data, int velo, int pan, int note) {
+	const uint8 *ptr = data;
+	const uint8 *sfxData = ptr + 16;
+	
+	int note2, velocity;
+
+	if (velo)
+		velocity = velo;
+	else if (_ovrCur.vLeft + _ovrCur.vRight)
+		velocity = (_ovrCur.vLeft + _ovrCur.vRight) >> 2;
+	else
+		velocity = ptr[8] >> 1;
+
+	int numChan = ptr[14];
+	for (int i = 0; i < numChan; i++) {
+		int chan = getNextFreePcmChannel(sound, i);
+		if (!chan)
+			return;
+		
+		_intf->callback(70, _unkFlags);
+		_intf->callback(3, chan + 0x3f, pan);
+		
+		if (note)
+			note2 = note;
+		else if (_ovrCur.note)
+			note2 = _ovrCur.note;
+		else
+			note2 = sfxData[28];
+		
+		_intf->callback(37, chan + 0x3f, note2, velocity, sfxData);
+		
+		_pcmCurrentSound[chan].note = note2;
+		_pcmCurrentSound[chan].velo = velocity;
+		_pcmCurrentSound[chan].pan = pan;
+		_pcmCurrentSound[chan].paused = 0;
+		_pcmCurrentSound[chan].looping = READ_LE_UINT32(&sfxData[20]) ? 1 : 0;
+
+		sfxData += (READ_LE_UINT32(&sfxData[12]) + 32);
+	}
+}
+
+void Player_Towns::stopPcmTrack(int sound) {
+	for (int i = 1; i < 9; i++) {
+		if (sound == _pcmCurrentSound[i].index || !sound) {
+			_intf->callback(39, i + 0x3f);
+			_pcmCurrentSound[i].index = 0;
+		}
+	}
+}
+
 int Player_Towns::getNextFreePcmChannel(int sound, int sfxChanRelIndex) {
 	int chan = 0;
 	for (int i = 8; i; i--) {
@@ -307,7 +142,7 @@ int Player_Towns::getNextFreePcmChannel(int sound, int sfxChanRelIndex) {
 			continue;
 		}
 
-		if (_driver->soundEffectIsPlaying(i + 0x3f))
+		if (_intf->callback(40, i + 0x3f))
 			continue;
 
 		chan = i;
@@ -341,7 +176,237 @@ int Player_Towns::getNextFreePcmChannel(int sound, int sfxChanRelIndex) {
 	return chan;
 }
 
-void Player_Towns::restartLoopingSounds() {
+Player_Towns_v1::Player_Towns_v1(ScummEngine *vm, Audio::Mixer *mixer) : Player_Towns(vm) {
+	_cdaCurrentSound = _eupCurrentSound = _cdaNumLoops = 0;
+	_cdaForceRestart = 0;
+	_cdaVolLeft = _cdaVolRight = 0;
+
+	_eupVolLeft = _eupVolRight = 0;
+
+	if (_vm->_game.version == 3) {
+		_soundOverride = new SoundOvrParameters[200];
+		memset(_soundOverride, 0, 200 * sizeof(SoundOvrParameters));
+	}
+
+	_eupLooping = false;
+
+	_driver = new TownsEuphonyDriver(mixer);
+}
+
+Player_Towns_v1::~Player_Towns_v1() {
+	delete[] _soundOverride;
+	delete _driver;
+}
+
+bool Player_Towns_v1::init() {
+	if (!_driver)
+		return false;
+	
+	if (!_driver->init())
+		return false;
+
+	_driver->reserveSoundEffectChannels(8);
+	_intf = _driver->intf();
+
+	// Treat all 6 fm channels and all 8 pcm channels as sound effect channels
+	// since music seems to exist as CD audio only in the games which use this
+	// MusicEngine implementation.
+	_intf->setSoundEffectChanMask(-1);
+
+	setVolumeCD(255, 255);
+
+	return true;
+}
+
+void Player_Towns_v1::setMusicVolume(int vol) {
+	_driver->setMusicVolume(vol);
+}
+
+void Player_Towns_v1::setSfxVolume(int vol) {
+	_driver->setSoundEffectVolume(vol);
+}
+
+void Player_Towns_v1::startSound(int sound) {
+	uint8 *ptr = _vm->getResourceAddress(rtSound, sound);
+	if (_vm->_game.version != 3) {
+		ptr += 2;
+	} else if (_soundOverride && sound > 0 && sound < 200) {
+		memcpy(&_ovrCur, &_soundOverride[sound], sizeof(SoundOvrParameters));
+		memset(&_soundOverride[sound], 0, sizeof(SoundOvrParameters));
+	}
+
+	int type = ptr[13];
+
+	if (type == 0) {
+		playPcmTrack(sound, ptr + 6);
+	} else if (type == 1) {
+		playEuphonyTrack(sound, ptr + 6);
+	} else if (type == 2) {
+		playCdaTrack(sound, ptr + 6);
+	}
+	memset(&_ovrCur, 0, sizeof(SoundOvrParameters));
+}
+
+void Player_Towns_v1::stopSound(int sound) {
+	if (sound == 0 || sound == _cdaCurrentSound) {
+		_cdaCurrentSound = 0;
+		_vm->_sound->stopCD();
+		_vm->_sound->stopCDTimer();
+	}
+
+	if (sound != 0 && sound == _eupCurrentSound) {
+		_eupCurrentSound = 0;
+		_eupLooping = false;
+		_driver->stopParser();
+	}
+	
+	stopPcmTrack(sound);
+}
+
+void Player_Towns_v1::stopAllSounds() {
+	_cdaCurrentSound = 0;
+	_vm->_sound->stopCD();
+	_vm->_sound->stopCDTimer();
+
+	_eupCurrentSound = 0;
+	_eupLooping = false;
+	_driver->stopParser();
+
+	stopPcmTrack(0);
+}
+
+int Player_Towns_v1::getSoundStatus(int sound) const {
+	if (sound == _cdaCurrentSound)
+		return _vm->_sound->pollCD();
+	if (sound == _eupCurrentSound)
+		return _driver->parserIsPlaying() ? 1 : 0;
+	for (int i = 1; i < 9; i++) {
+		if (_pcmCurrentSound[i].index == sound)
+			return _driver->soundEffectIsPlaying(i + 0x3f) ? 1 : 0;
+	}
+	return 0;
+}
+
+int32 Player_Towns_v1::doCommand(int numargs, int args[]) {
+	int32 res = 0;
+	
+	switch (args[0]) {
+	case 2:
+		_driver->intf()->callback(73, 0);
+		break;
+
+	case 3:
+		restartLoopingSounds();
+		break;
+
+	case 8:
+		startSound(args[1]);
+		break;
+
+	case 9:
+		_vm->_sound->stopSound(args[1]);
+		break;
+
+	case 11:
+		stopPcmTrack(0);
+		break;
+
+	case 14:
+		startSoundEx(args[1], args[2], args[3], args[4]);
+		break;
+
+	case 15:
+		stopSoundSuspendLooping(args[1]);
+		break;
+
+	default:
+		warning("Player_Towns_v1::doCommand: Unknown command %d", args[0]);
+		break;
+	}
+
+	return res;
+}
+
+void Player_Towns_v1::setVolumeCD(int left, int right) {
+	_cdaVolLeft = left & 0xff;
+	_cdaVolRight = right & 0xff;
+	_driver->setOutputVolume(1, left >> 1, right >> 1);
+}
+
+void Player_Towns_v1::setSoundVolume(int sound, int left, int right) {
+	if (_soundOverride && sound > 0 && sound < 200) {
+		_soundOverride[sound].vLeft = left;
+		_soundOverride[sound].vRight = right;
+	}
+}
+
+void Player_Towns_v1::setSoundNote(int sound, int note) {
+	if (_soundOverride && sound > 0 && sound < 200)
+		_soundOverride[sound].note = note;
+}
+
+void Player_Towns_v1::saveLoadWithSerializer(Serializer *ser) {
+	_cdaCurrentSoundTemp = (_vm->_sound->pollCD() && _cdaNumLoops > 1) ? _cdaCurrentSound & 0xff : 0;
+	_cdaNumLoopsTemp = _cdaNumLoops & 0xff;
+
+	static const SaveLoadEntry cdEntries[] = {
+		MKLINE(Player_Towns_v1, _cdaCurrentSoundTemp, sleUint8, VER(81)),
+		MKLINE(Player_Towns_v1, _cdaNumLoopsTemp, sleUint8, VER(81)),
+		MKLINE(Player_Towns_v1, _cdaVolLeft, sleUint8, VER(81)),
+		MKLINE(Player_Towns_v1, _cdaVolRight, sleUint8, VER(81)),
+		MKEND()
+	};
+
+	ser->saveLoadEntries(this, cdEntries);
+
+	if (!_eupLooping && !_driver->parserIsPlaying())
+		_eupCurrentSound = 0;
+
+	static const SaveLoadEntry eupEntries[] = {
+		MKLINE(Player_Towns_v1, _eupCurrentSound, sleUint8, VER(81)),
+		MKLINE(Player_Towns_v1, _eupLooping, sleUint8, VER(81)),
+		MKLINE(Player_Towns_v1, _eupVolLeft, sleUint8, VER(81)),
+		MKLINE(Player_Towns_v1, _eupVolRight, sleUint8, VER(81)),
+		MKEND()
+	};
+
+	ser->saveLoadEntries(this, eupEntries);
+
+	Player_Towns::saveLoadWithSerializer(ser);
+}
+
+void Player_Towns_v1::restoreAfterLoad() {
+	setVolumeCD(_cdaVolLeft, _cdaVolRight);
+	
+	if (_cdaCurrentSoundTemp) {
+		uint8 *ptr = _vm->getResourceAddress(rtSound, _cdaCurrentSoundTemp) + 6;
+		if (_vm->_game.version != 3)
+			ptr += 2;
+		
+		if (ptr[7] == 2) {
+			playCdaTrack(_cdaCurrentSoundTemp, ptr, true);
+			_cdaCurrentSound = _cdaCurrentSoundTemp;
+			_cdaNumLoops = _cdaNumLoopsTemp;
+		}
+	}
+
+	if (_eupCurrentSound) {
+		uint8 *ptr = _vm->getResourceAddress(rtSound, _eupCurrentSound) + 6;
+		if (_vm->_game.version != 3)
+			ptr += 2;
+		
+		if (ptr[7] == 1) {
+			setSoundVolume(_eupCurrentSound, _eupVolLeft, _eupVolRight);
+			playEuphonyTrack(_eupCurrentSound, ptr);
+		}
+	}
+
+	Player_Towns::restoreAfterLoad();
+}
+
+
+
+void Player_Towns_v1::restartLoopingSounds() {
 	if (_cdaNumLoops && !_cdaForceRestart)
 		_cdaForceRestart = 1;
 
@@ -368,7 +433,7 @@ void Player_Towns::restartLoopingSounds() {
 	_driver->intf()->callback(73, 1);
 }
 
-void Player_Towns::startSoundEx(int sound, int velo, int pan, int note) {
+void Player_Towns_v1::startSoundEx(int sound, int velo, int pan, int note) {
 	uint8 *ptr = _vm->getResourceAddress(rtSound, sound) + 2;
 
 	if (pan > 99)
@@ -405,7 +470,7 @@ void Player_Towns::startSoundEx(int sound, int velo, int pan, int note) {
 	}
 }
 
-void Player_Towns::stopSoundSuspendLooping(int sound) {
+void Player_Towns_v1::stopSoundSuspendLooping(int sound) {
 	if (!sound) {
 		return;
 	} else if (sound == _cdaCurrentSound) {
@@ -426,7 +491,7 @@ void Player_Towns::stopSoundSuspendLooping(int sound) {
 	}
 }
 
-void Player_Towns::playEuphonyTrack(int sound, const uint8 *data) {
+void Player_Towns_v1::playEuphonyTrack(int sound, const uint8 *data) {
 	const uint8 *pos = data + 16;
 	const uint8 *src = pos + data[14] * 48;
 	const uint8 *trackData = src + 150;
@@ -474,48 +539,7 @@ void Player_Towns::playEuphonyTrack(int sound, const uint8 *data) {
 	_eupCurrentSound = sound;
 }
 
-void Player_Towns::playPcmTrack(int sound, const uint8 *data, int velo, int pan, int note) {
-	const uint8 *ptr = data;
-	const uint8 *sfxData = ptr + 16;
-	
-	int note2, velocity;
-
-	if (velo)
-		velocity = velo;
-	else if (_ovrCur.vLeft + _ovrCur.vRight)
-		velocity = (_ovrCur.vLeft + _ovrCur.vRight) >> 2;
-	else
-		velocity = ptr[8] >> 1;
-
-	int numChan = ptr[14];
-	for (int i = 0; i < numChan; i++) {
-		int chan = getNextFreePcmChannel(sound, i);
-		if (!chan)
-			return;
-		
-		_driver->intf()->callback(70, _unkFlags);
-		_driver->chanPanPos(chan + 0x3f, pan);
-		
-		if (note)
-			note2 = note;
-		else if (_ovrCur.note)
-			note2 = _ovrCur.note;
-		else
-			note2 = sfxData[28];
-		
-		_driver->playSoundEffect(chan + 0x3f, note2, velocity, sfxData);
-		
-		_pcmCurrentSound[chan].note = note2;
-		_pcmCurrentSound[chan].velo = velocity;
-		_pcmCurrentSound[chan].pan = pan;
-		_pcmCurrentSound[chan].paused = 0;
-		_pcmCurrentSound[chan].looping = READ_LE_UINT32(&sfxData[20]) ? 1 : 0;
-
-		sfxData += (READ_LE_UINT32(&sfxData[12]) + 32);
-	}
-}
-
-void Player_Towns::playCdaTrack(int sound, const uint8 *data, bool skipTrackVelo) {
+void Player_Towns_v1::playCdaTrack(int sound, const uint8 *data, bool skipTrackVelo) {
 	const uint8 *ptr = data;
 
 	if (!sound)
@@ -541,15 +565,6 @@ void Player_Towns::playCdaTrack(int sound, const uint8 *data, bool skipTrackVelo
 	_vm->_sound->playCDTrack(track, _cdaNumLoops == 0xff ? -1 : _cdaNumLoops, start, end <= start ? 0 : end - start);
 	_cdaForceRestart = 0;
 	_cdaCurrentSound = sound;
-}
-
-void Player_Towns::stopPcmTrack(int sound) {
-	for (int i = 1; i < 9; i++) {
-		if (sound == _pcmCurrentSound[i].index || !sound) {
-			_driver->stopSoundEffect(i + 0x3f);
-			_pcmCurrentSound[i].index = 0;
-		}
-	}
 }
 
 } // End of namespace Scumm

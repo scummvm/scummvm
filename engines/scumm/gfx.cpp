@@ -322,6 +322,7 @@ void ScummEngine::initScreens(int b, int h) {
 		_res->nukeResource(rtBuffer, i + 5);
 	}
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_townsScreen) {
 		if (!_townsClearLayerFlag && (h - b != _virtscr[kMainVirtScreen].h))
 			_townsScreen->clearLayer(0);
@@ -331,6 +332,7 @@ void ScummEngine::initScreens(int b, int h) {
 			_townsScreen->clearLayer(1);
 		}
 	}
+#endif
 
 	if (!getResourceAddress(rtBuffer, 4)) {
 		// Since the size of screen 3 is fixed, there is no need to reallocate
@@ -643,10 +645,13 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 #ifdef USE_ARM_GFX_ASM
 		asmDrawStripToScreen(height, width, text, src, _compositeBuf, vs->pitch, width, _textSurface.pitch);
 #else
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (_game.platform == Common::kPlatformFMTowns) {
 			towns_drawStripToScreen(vs, x, y, x, top, width, height);
 			return;	
-		} else if (_bytesPerPixelOutput == 2) {
+		} else
+#endif	
+		if (_bytesPerPixelOutput == 2) {
 			const byte *srcPtr = (const byte *)src;
 			const byte *textPtr = (byte *)_textSurface.getBasePtr(x * m, y * m);
 			byte *dstPtr = _compositeBuf;
@@ -1009,8 +1014,10 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 	if (rect.left > vs->w)
 		return;
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns && _game.id == GID_MONKEY && vs->number == kVerbVirtScreen && rect.bottom <= 154)
 		rect.right = 320;
+#endif
 	
 	// Convert 'rect' to local (virtual screen) coordinates
 	rect.top -= vs->topline;
@@ -1031,20 +1038,25 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 	if (vs->hasTwoBuffers && _currentRoom != 0 && isLightOn()) {
 		blit(screenBuf, vs->pitch, vs->getBackPixels(rect.left, rect.top), vs->pitch, width, height, vs->bytesPerPixel);
 		if (vs->number == kMainVirtScreen && _charset->_hasMask) {
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_game.platform == Common::kPlatformFMTowns) {
 				byte *mask = (byte *)_textSurface.getBasePtr(rect.left * _textSurfaceMultiplier, (rect.top + vs->topline) * _textSurfaceMultiplier);
 				fill(mask, _textSurface.pitch, 0, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, _textSurface.bytesPerPixel);
-			} else {
+			} else
+#endif
+			{
 				byte *mask = (byte *)_textSurface.getBasePtr(rect.left, rect.top - _screenTop);
 				fill(mask, _textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, _textSurface.bytesPerPixel);
 			}
 		}
 	} else {
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (_game.platform == Common::kPlatformFMTowns) {
 			backColor |= (backColor << 4);
 			byte *mask = (byte *)_textSurface.getBasePtr(rect.left * _textSurfaceMultiplier, (rect.top + vs->topline) * _textSurfaceMultiplier);
 			fill(mask, _textSurface.pitch, backColor, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, _textSurface.bytesPerPixel);
 		}
+#endif
 			
 		if (_game.features & GF_16BIT_COLOR)
 			fill(screenBuf, vs->pitch, _16BitPalette[backColor], width, height, vs->bytesPerPixel);
@@ -1097,10 +1109,16 @@ void ScummEngine::clearCharsetMask() {
 }
 
 void ScummEngine::clearTextSurface() {
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_townsScreen)
 		_townsScreen->fillLayerRect(1, 0, 0, _textSurface.w, _textSurface.h, 0);
+#endif
 
-	fill((byte*)_textSurface.pixels,  _textSurface.pitch,  _game.platform == Common::kPlatformFMTowns ? 0 : CHARSET_MASK_TRANSPARENCY,  _textSurface.w, _textSurface.h, _textSurface.bytesPerPixel);
+	fill((byte*)_textSurface.pixels,  _textSurface.pitch,
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		_game.platform == Common::kPlatformFMTowns ? 0 :
+#endif		
+		CHARSET_MASK_TRANSPARENCY,  _textSurface.w, _textSurface.h, _textSurface.bytesPerPixel);
 }
 
 byte *ScummEngine::getMaskBuffer(int x, int y, int z) {
@@ -1258,13 +1276,20 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	// is definitely not capable of passing a parameter of -1 (color range is 0 - 255).
 	// Just to make sure I don't break anything I restrict the code change to FM-Towns
 	// version 5 games where this change is necessary to fix certain long standing bugs.
-	if (color == -1 || (color >= 254 && _game.platform == Common::kPlatformFMTowns && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4))) {
+	if (color == -1
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		|| (color >= 254 && _game.platform == Common::kPlatformFMTowns && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4))
+#endif
+		) {
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (_game.platform == Common::kPlatformFMTowns) {
 			if (color == 254) {
 				color = color;
 				towns_setupPalCycleField(x, y, x2, y2);
 			}
-		} else {
+		} else
+#endif
+		{
 			if (vs->number != kMainVirtScreen)
 				error("can only copy bg to main window");
 
@@ -1306,6 +1331,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 		if (_game.features & GF_16BIT_COLOR) {
 			fill(backbuff, vs->pitch, _16BitPalette[color], width, height, vs->bytesPerPixel);
 		} else {
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_game.platform == Common::kPlatformFMTowns) {
 				color = ((color & 0x0f) << 4) | (color & 0x0f);
 				byte *mask = (byte *)_textSurface.getBasePtr(x * _textSurfaceMultiplier, (y - _screenTop + vs->topline) * _textSurfaceMultiplier);
@@ -1314,6 +1340,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 				if (_game.id == GID_MONKEY2 || _game.id == GID_INDY4 || ((_game.id == GID_INDY3 || _game.id == GID_ZAK) && vs->number != kTextVirtScreen) || (_game.id == GID_LOOM && vs->number == kMainVirtScreen))
 					return;
 			}
+#endif
 			
 			fill(backbuff, vs->pitch, color, width, height, vs->bytesPerPixel);
 		}
@@ -1723,10 +1750,12 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", y + height, vs->h);
 	}
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_vm->_townsPaletteFlags & 2) {
 		int cx = (x - _vm->_screenStartStrip) << 3;
 		_vm->_textSurface.fillRect(Common::Rect(cx * _vm->_textSurfaceMultiplier, y * _vm->_textSurfaceMultiplier, (cx  + width - 1) * _vm->_textSurfaceMultiplier, (y + height - 1) * _vm->_textSurfaceMultiplier), 0);
 	}
+#endif
 
 	_vertStripNextInc = height * vs->pitch - 1 * vs->bytesPerPixel;
 
@@ -3678,8 +3707,10 @@ void ScummEngine::fadeOut(int effect) {
 	if (_game.version < 7)
 		camera._last.x = camera._cur.x;
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.version == 3 && _game.platform == Common::kPlatformFMTowns)
 		_textSurface.fillRect(Common::Rect(0, vs->topline * _textSurfaceMultiplier, _textSurface.pitch, (vs->topline + vs->h) * _textSurfaceMultiplier), 0);
+#endif
 
 	// TheDig can disable fadeIn(), and may call fadeOut() several times
 	// successively. Disabling the _screenEffectFlag check forces the screen
@@ -3883,9 +3914,11 @@ void ScummEngine::dissolveEffect(int width, int height) {
 		x = offsets[i] % vs->pitch;
 		y = offsets[i] / vs->pitch;
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (_game.platform == Common::kPlatformFMTowns)
 			towns_drawStripToScreen(vs, x, y + vs->topline, x, y, width, height);
 		else
+#endif
 			_system->copyRectToScreen(vs->getPixels(x, y), vs->pitch, x, y + vs->topline, width, height);
 
 
@@ -3926,10 +3959,12 @@ void ScummEngine::scrollEffect(int dir) {
 		y = 1 + step;
 		while (y < vs->h) {
 			moveScreen(0, -step, vs->h);
-			
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE	
 			if (_townsScreen) {
 				towns_drawStripToScreen(vs, 0, vs->topline + vs->h - step, 0, y - step, vs->w, step);
-			} else {
+			} else
+#endif
+			{
 				src = vs->getPixels(0, y - step);
 				_system->copyRectToScreen(src,
 					vsPitch,
@@ -3947,10 +3982,12 @@ void ScummEngine::scrollEffect(int dir) {
 		y = 1 + step;
 		while (y < vs->h) {
 			moveScreen(0, step, vs->h);
-
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_townsScreen) {
 				towns_drawStripToScreen(vs, 0, vs->topline, 0, vs->h - y, vs->w, step);
-			} else {
+			} else
+#endif
+			{
 				src = vs->getPixels(0, vs->h - y);
 				_system->copyRectToScreen(src,
 					vsPitch,
@@ -3968,10 +4005,13 @@ void ScummEngine::scrollEffect(int dir) {
 		x = 1 + step;
 		while (x < vs->w) {
 			moveScreen(-step, 0, vs->h);
-			
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_townsScreen) {
 				towns_drawStripToScreen(vs, vs->w - step, vs->topline, x - step, 0, step, vs->h);
-			} else {
+			} else
+#endif
+			{
 				src = vs->getPixels(x - step, 0);
 				_system->copyRectToScreen(src,
 					vsPitch,
@@ -3990,9 +4030,12 @@ void ScummEngine::scrollEffect(int dir) {
 		while (x < vs->w) {
 			moveScreen(step, 0, vs->h);
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_townsScreen) {
 				towns_drawStripToScreen(vs, 0, vs->topline, vs->w - x, 0, step, vs->h);
-			} else {
+			} else
+#endif
+			{
 				src = vs->getPixels(vs->w - x, 0);
 				_system->copyRectToScreen(src,
 					vsPitch,

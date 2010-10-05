@@ -424,9 +424,9 @@ public:
 };
 #endif
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 // Helper class for FM-Towns output (required for specific hardware effects like
 // switching graphics layers on and off).
-
 class TownsScreen {
 public:
 	TownsScreen(OSystem *system, int width, int height, int bpp);
@@ -482,6 +482,7 @@ private:
 	Common::List<Common::Rect> _dirtyRects;	
 	OSystem *_system;
 };
+#endif // DISABLE_TOWNS_DUAL_LAYER_MODE
 
 } // End of namespace Scumm
 

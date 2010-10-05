@@ -278,7 +278,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_hePalettes = NULL;
 	_hePaletteSlot = 0;
 	_16BitPalette = NULL;
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	_townsScreen = 0;
+#endif
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
@@ -319,12 +321,14 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	_skipDrawObject = 0;
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	_townsPaletteFlags = 0;
 	_townsClearLayerFlag = 1;
 	_townsActiveLayerFlags = 3;
 	memset(&_curStringRect, -1, sizeof(Common::Rect));
 	memset(&_cyclRects, 0, 16 * sizeof(Common::Rect));
 	_numCyclRects = 0;
+#endif
 	
 	//
 	// Init all VARS to 0xFF
@@ -544,8 +548,10 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_bytesPerPixelOutput = _bytesPerPixel = (_game.features & GF_16BIT_COLOR) ? 2 : 1;
 
 #ifdef USE_RGB_COLOR
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns)
 		_bytesPerPixelOutput = 2;
+#endif
 #endif
 
 	// Allocate gfx compositing buffer (not needed for V7/V8 games).
@@ -622,7 +628,9 @@ ScummEngine::~ScummEngine() {
 
 	free(_16BitPalette);
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	delete _townsScreen;
+#endif
 
 	delete _debugger;
 
@@ -1130,7 +1138,11 @@ Common::Error ScummEngine::init() {
 			screenWidth *= _textSurfaceMultiplier;
 			screenHeight *= _textSurfaceMultiplier;
 		}
-		if (_game.features & GF_16BIT_COLOR || _game.platform == Common::kPlatformFMTowns) {
+		if (_game.features & GF_16BIT_COLOR 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+			|| _game.platform == Common::kPlatformFMTowns
+#endif
+			) {
 #ifdef USE_RGB_COLOR
 			Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 			initGraphics(screenWidth, screenHeight, screenWidth > 320, &format);
@@ -1145,6 +1157,10 @@ Common::Error ScummEngine::init() {
 			}
 #endif
 		} else {
+#ifdef DISABLE_TOWNS_DUAL_LAYER_MODE
+		if (_game.platform == Common::kPlatformFMTowns && _game.version == 5)
+			error("This game requires dual graphics layer support which is disabled in this build");
+#endif
 			initGraphics(screenWidth, screenHeight, (screenWidth > 320));
 		}
 	}
@@ -1340,16 +1356,22 @@ void ScummEngine::resetScumm() {
 	debug(9, "resetScumm");
 
 #ifdef USE_RGB_COLOR
-	if (_game.features & GF_16BIT_COLOR || _game.platform == Common::kPlatformFMTowns)
+	if (_game.features & GF_16BIT_COLOR
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		|| _game.platform == Common::kPlatformFMTowns
+#endif
+		)
 		_16BitPalette = (uint16 *)calloc(512, sizeof(uint16));
 #endif
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns) {
 		delete _townsScreen;
 		_townsScreen = new TownsScreen(_system, _screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, _bytesPerPixelOutput);
 		_townsScreen->setupLayer(0, _screenWidth, _screenHeight, (_bytesPerPixelOutput == 2) ? 32767 : 256);
 		_townsScreen->setupLayer(1, _screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, 16, _textPalette);
 	}
+#endif
 
 	if (_game.version == 0) {
 		initScreens(8, 144);
@@ -1789,7 +1811,7 @@ void ScummEngine::setupMusic(int midi) {
 	} else if (_game.platform == Common::kPlatform3DO && _game.heversion <= 62) {
 		// 3DO versions use digital music and sound samples.
 	} else if (_game.platform == Common::kPlatformFMTowns && (_game.version == 3 || _game.id == GID_MONKEY)) {
-		_musicEngine = _townsPlayer = new Player_Towns(this, _mixer);
+		_musicEngine = _townsPlayer = new Player_Towns_v1(this, _mixer);
 		if (!_townsPlayer->init())
 			error("Failed to initialize FM-Towns audio driver");
 	} else if (_game.version >= 3 && _game.heversion <= 62) {
@@ -1953,8 +1975,10 @@ void ScummEngine::waitForTimer(int msec_delay) {
 		_sound->updateCD(); // Loop CD Audio if needed
 		parseEvents();
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (_townsScreen)
 			_townsScreen->update();
+#endif
 
 		_system->updateScreen();
 		if (_system->getMillis() >= start_time + msec_delay)
@@ -2083,7 +2107,9 @@ load_game:
 		goto load_game;
 	}
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	towns_processPalCycleField();
+#endif
 
 	if (_currentRoom == 0) {
 		if (_game.version > 3)
@@ -2473,8 +2499,10 @@ void ScummEngine::pauseEngineIntern(bool pause) {
 		// Update the screen to make it less likely that the player will see a
 		// brief cursor palette glitch when the GUI is disabled.
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (_townsScreen)
 			_townsScreen->update();
+#endif
 
 		_system->updateScreen();
 

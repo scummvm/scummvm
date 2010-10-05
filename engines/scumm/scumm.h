@@ -43,6 +43,17 @@
 
 #include "sound/mididrv.h"
 
+#ifdef __DS__
+/* This disables the dual layer mode which is used in FM-Towns versions
+ * of SCUMM games and which emulates the behaviour of the original code.
+ * The only purpose is code size reduction for certain backends.
+ * SCUMM 3 (FM-Towns) games will run in normal (DOS VGA) mode, which should
+ * work just fine in most situations. Some glitches might occur. SCUMM 5 games
+ * will not work without dual layer (and 16 bit color) support.
+ */
+#define DISABLE_TOWNS_DUAL_LAYER_MODE
+#endif
+
 namespace GUI {
 	class Dialog;
 }
@@ -70,7 +81,7 @@ class CharsetRenderer;
 class IMuse;
 class IMuseDigital;
 class MusicEngine;
-class Player_Towns;
+class Player_Towns_v1;
 class ScummEngine;
 class ScummDebugger;
 class Serializer;
@@ -427,7 +438,7 @@ public:
 	IMuse *_imuse;
 	IMuseDigital *_imuseDigital;
 	MusicEngine *_musicEngine;
-	Player_Towns *_townsPlayer;
+	Player_Towns_v1 *_townsPlayer;
 	Sound *_sound;
 
 	VerbSlot *_verbs;
@@ -1401,6 +1412,7 @@ public:
 	byte VAR_NUM_GLOBAL_OBJS;
 
 	// FM-Towns specific
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 public:
 	bool towns_isRectInStringBox(int x1, int y1, int x2, int y2);
 	byte _townsPaletteFlags;
@@ -1429,6 +1441,7 @@ protected:
 	static const uint8 _townsLayer2Mask[];
 
 	TownsScreen *_townsScreen;
+#endif // DISABLE_TOWNS_DUAL_LAYER_MODE
 };
 
 } // End of namespace Scumm

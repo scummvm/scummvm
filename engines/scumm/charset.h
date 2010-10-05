@@ -79,7 +79,10 @@ public:
 	int getStringWidth(int a, const byte *str);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	void translateColor();
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	void processTownsCharsetColors(uint8 bytesPerPixel);
+#endif
 
 	virtual void setCurID(int32 id) = 0;
 	int getCurID() { return _curId; }
