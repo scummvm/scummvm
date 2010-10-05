@@ -31,7 +31,7 @@
 class TownsPC98_MusicChannel;
 class TownsPC98_MusicChannelSSG;
 class TownsPC98_SfxChannel;
-#ifndef __DS__
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 class TownsPC98_MusicChannelPCM;
 #endif
 
@@ -39,7 +39,7 @@ class TownsPC98_AudioDriver : public TownsPC98_FmSynth {
 friend class TownsPC98_MusicChannel;
 friend class TownsPC98_MusicChannelSSG;
 friend class TownsPC98_SfxChannel;
-#ifndef __DS__
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 friend class TownsPC98_MusicChannelPCM;
 #endif
 public:
@@ -88,7 +88,7 @@ protected:
 	TownsPC98_MusicChannel **_channels;
 	TownsPC98_MusicChannelSSG **_ssgChannels;
 	TownsPC98_SfxChannel **_sfxChannels;
-#ifndef __DS__
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	TownsPC98_MusicChannelPCM *_rhythmChannel;
 #endif
 
