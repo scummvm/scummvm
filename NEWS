@@ -87,6 +87,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Implemented formerly missing recreation of some in game items.
    - Added support for playing Kyrandia 3 with the original CD file layout.
 
+ LURE:
+   - Fixed bug where Goewin could get stuck in the Weregate
+   - Fixed issue with Ratpouch repeatedly moving between two rooms
+
  Parallaction:
    - Made part one of The Big Red Adventure completable.
 
