@@ -106,7 +106,7 @@ void MainMenu::openMenu() {
 	                                bg->surface.h);
 
 	// Set mouse cursor
-	_cursor->load(2);
+	Cursor::create(_cursor, _resPack, 2);
 	_cursor->show();
 
 	// Stop all sounds
@@ -137,7 +137,7 @@ void MainMenu::handleEvent(Common::Event *event, bool doUpdate) {
 
 	switch (_ev->type) {
 	case Common::EVENT_MOUSEMOVE:
-		_cursor->setCoords(_ev->mouse.x, _ev->mouse.y);
+		_cursor->move(_ev->mouse.x, _ev->mouse.y);
 		break;
 	case Common::EVENT_LBUTTONUP:
 		_leftClick = true;
@@ -170,7 +170,7 @@ void MainMenu::update() {
 			_activeMenuScreen = (MenuScreen) _activeIcon;
 
 			// Set the cursor
-			_cursor->load(3);
+			Cursor::create(_cursor, _resPack, 3);
 		}
 
 		switch (_activeIcon) {
@@ -233,24 +233,24 @@ void MainMenu::updateEyesAnimation() {
 	// Get the appropriate eye resource depending on the mouse position
 	int32 eyeFrameNum = kEyesFront;
 
-	if (_cursor->x() <= 200) {
-		if (_cursor->y() <= 160)
+	if (_cursor->position().x <= 200) {
+		if (_cursor->position().y <= 160)
 			eyeFrameNum = kEyesTopLeft;
-		else if (_cursor->y() > 160 && _cursor->y() <= 320)
+		else if (_cursor->position().y > 160 && _cursor->position().y <= 320)
 			eyeFrameNum = kEyesLeft;
 		else
 			eyeFrameNum = kEyesBottomLeft;
-	} else if (_cursor->x() > 200 && _cursor->x() <= 400) {
-		if (_cursor->y() <= 160)
+	} else if (_cursor->position().x > 200 && _cursor->position().x <= 400) {
+		if (_cursor->position().y <= 160)
 			eyeFrameNum = kEyesTop;
-		else if (_cursor->y() > 160 && _cursor->y() <= 320)
+		else if (_cursor->position().y > 160 && _cursor->position().y <= 320)
 			eyeFrameNum = kEyesFront;
 		else
 			eyeFrameNum = kEyesBottom;
-	} else if (_cursor->x() > 400) {
-		if (_cursor->y() <= 160)
+	} else if (_cursor->position().x > 400) {
+		if (_cursor->position().y <= 160)
 			eyeFrameNum = kEyesTopRight;
-		else if (_cursor->y() > 160 && _cursor->y() <= 320)
+		else if (_cursor->position().y > 160 && _cursor->position().y <= 320)
 			eyeFrameNum = kEyesRight;
 		else
 			eyeFrameNum = kEyesBottomRight;
@@ -264,9 +264,9 @@ void MainMenu::updateEyesAnimation() {
 void MainMenu::updateMainMenu() {
 	int32 rowId = 0;
 
-	if (_cursor->y() >= 20 && _cursor->y() <= 20 + 48) {
+	if (_cursor->position().y >= 20 && _cursor->position().y <= 20 + 48) {
 		rowId = 0; // Top row
-	} else if (_cursor->y() >= 400 && _cursor->y() <= 400 + 48) {
+	} else if (_cursor->position().y >= 400 && _cursor->position().y <= 400 + 48) {
 		rowId = 1; // Bottom row
 	} else {
 		// No row selected
@@ -280,7 +280,7 @@ void MainMenu::updateMainMenu() {
 	// Icon animation
 	for (int32 i = 0; i <= 5; i++) {
 		int32 curX = 40 + i * 100;
-		if (_cursor->x() >= curX && _cursor->x() <= curX + 55) {
+		if (_cursor->position().x >= curX && _cursor->position().x <= curX + 55) {
 			int32 iconNum = i + 6 * rowId;
 			_activeIcon = iconNum;
 
@@ -377,25 +377,25 @@ void MainMenu::updateSubMenuNewGame() {
 	_vm->text()->drawResTextCentered(10, 100, 620, 0x80000529);
 
 	// Yes
-	switchFont(_cursor->x() < 247 || _cursor->x() > 247 + _vm->text()->getResTextWidth(0x8000052A) || _cursor->y() < 273 || _cursor->y() > 273 + 24);
+	switchFont(_cursor->position().x < 247 || _cursor->position().x > 247 + _vm->text()->getResTextWidth(0x8000052A) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
 	_vm->text()->setTextPos(247, 273);
 	_vm->text()->drawResText(0x8000052A);
 
 	// No
-	switchFont(_cursor->x() < 369 || _cursor->x() > 369 + _vm->text()->getResTextWidth(0x8000052B) || _cursor->y() < 273 ||	_cursor->y() > 273 + 24);
+	switchFont(_cursor->position().x < 369 || _cursor->position().x > 369 + _vm->text()->getResTextWidth(0x8000052B) || _cursor->position().y < 273 ||	_cursor->position().y > 273 + 24);
 	_vm->text()->setTextPos(369, 273);
 	_vm->text()->drawResText(0x8000052B);
 
 	// action
 	if (_leftClick) {
 		// Yes
-		if (_cursor->x() >= 247 && _cursor->x() <= 247 + 24 && _cursor->y() >= 273 && _cursor->y() <= 273 + _vm->text()->getResTextWidth(0x8000052A)) {
+		if (_cursor->position().x >= 247 && _cursor->position().x <= 247 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getResTextWidth(0x8000052A)) {
 			_leftClick = false;
             closeMenu();
             _vm->startGame();
 		}
 		// No
-		if (_cursor->x() >= 369 && _cursor->x() <= 369 + 24 && _cursor->y() >= 273 && _cursor->y() <= 273 + _vm->text()->getResTextWidth(0x8000052B))
+		if (_cursor->position().x >= 369 && _cursor->position().x <= 369 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getResTextWidth(0x8000052B))
 			exitSubMenu();
 	}
 }
@@ -406,7 +406,7 @@ void MainMenu::updateSubMenuCinematics() {
 	_vm->text()->setTextPos(30, 340);
 	_vm->text()->drawResText(0x80000549);	// Prev Page
 
-	if (_cursor->x() >= 280 && _cursor->x() <= 400 && _cursor->y() >= 340 && _cursor->y() <= 360) {
+	if (_cursor->position().x >= 280 && _cursor->position().x <= 400 && _cursor->position().y >= 340 && _cursor->position().y <= 360) {
 		loadFont(kFontBlue);
 		if (_leftClick)
 			exitSubMenu();
@@ -434,11 +434,11 @@ void MainMenu::updateSubMenuSettings() {
 
 	// gamma correction
 	_vm->text()->drawResTextAlignRight(320, 150, 0x80000599);
-	switchFont(_cursor->x() < 350 || _cursor->x() > sizeMinus + 350 || _cursor->y() < 150 || _cursor->y() > 174);
+	switchFont(_cursor->position().x < 350 || _cursor->position().x > sizeMinus + 350 || _cursor->position().y < 150 || _cursor->position().y > 174);
 	_vm->text()->setTextPos(350, 150);
 	_vm->text()->drawText("-");
 
-	switchFont(_cursor->x() < sizeMinus + 360 || _cursor->x() > sizeMinus + sizePlus + 360 || _cursor->y() < 150 || _cursor->y() > 174);
+	switchFont(_cursor->position().x < sizeMinus + 360 || _cursor->position().x > sizeMinus + sizePlus + 360 || _cursor->position().y < 150 || _cursor->position().y > 174);
 	_vm->text()->setTextPos(sizeMinus + 360, 150);
 	_vm->text()->drawText("+");
 
@@ -456,11 +456,11 @@ void MainMenu::updateSubMenuSettings() {
 	// performance
 	loadFont(kFontYellow);
 	_vm->text()->drawResTextAlignRight(320, 179, 0x8000059A);
-	switchFont(_cursor->x() < 350 || _cursor->x() > sizeMinus + 350 || _cursor->y() < 179 || _cursor->y() > 203);
+	switchFont(_cursor->position().x < 350 || _cursor->position().x > sizeMinus + 350 || _cursor->position().y < 179 || _cursor->position().y > 203);
 	_vm->text()->setTextPos(350, 179);
 	_vm->text()->drawText("-");
 
-	switchFont(_cursor->x() < sizeMinus + 360 || _cursor->x() > sizeMinus + sizePlus + 360 || _cursor->y() < 179 || _cursor->y() > 203);
+	switchFont(_cursor->position().x < sizeMinus + 360 || _cursor->position().x > sizeMinus + sizePlus + 360 || _cursor->position().y < 179 || _cursor->position().y > 203);
 	_vm->text()->setTextPos(sizeMinus + 360, 179);
 	_vm->text()->drawText("+");
 
@@ -477,27 +477,27 @@ void MainMenu::updateSubMenuSettings() {
 	}
 
 	// back to main menu
-	switchFont(_cursor->x() < 300 || _cursor->x() > 300 + sizeMainMenu || _cursor->y() < 340 || _cursor->y() > 340 + 24);
+	switchFont(_cursor->position().x < 300 || _cursor->position().x > 300 + sizeMainMenu || _cursor->position().y < 340 || _cursor->position().y > 340 + 24);
 	_vm->text()->setTextPos(300, 340);
 	_vm->text()->drawResText(0x8000059D);
 
 	// action
 	if (_leftClick) {
 		// back to main menu
-		if (_cursor->x() >= 300 && _cursor->x() <= 300 + sizeMainMenu && _cursor->y() >= 340 && _cursor->y() <= 340 + 24) {
+		if (_cursor->position().x >= 300 && _cursor->position().x <= 300 + sizeMainMenu && _cursor->position().y >= 340 && _cursor->position().y <= 340 + 24) {
 			// TODO: save new configurations
 			exitSubMenu();
 		}
 
 		// gamma level minus
-		if (_cursor->x() >= 350 && _cursor->x() <= sizeMinus + 350 && _cursor->y() >= 150 && _cursor->y() <= 174) {
+		if (_cursor->position().x >= 350 && _cursor->position().x <= sizeMinus + 350 && _cursor->position().y >= 150 && _cursor->position().y <= 174) {
 			if (Config.gammaLevel) {
 				Config.gammaLevel -= 1;
 				// TODO: setResGammaLevel(0x80010011, 0);
 			}
 		}
 		// gamma level plus
-		if (_cursor->x() >= sizeMinus + 360 && _cursor->x() <= sizeMinus + sizePlus + 360 && _cursor->y() >= 150 && _cursor->y() <= 174) {
+		if (_cursor->position().x >= sizeMinus + 360 && _cursor->position().x <= sizeMinus + sizePlus + 360 && _cursor->position().y >= 150 && _cursor->position().y <= 174) {
 			if (Config.gammaLevel < 8) {
 				Config.gammaLevel += 1;
 				// TODO: setResGammaLevel(0x80010011, 0);
@@ -505,14 +505,14 @@ void MainMenu::updateSubMenuSettings() {
 		}
 
 		// performance minus
-		if (_cursor->x() >= 350 && _cursor->x() <= sizeMinus + 350 && _cursor->y() >= 179 && _cursor->y() <= 203) {
+		if (_cursor->position().x >= 350 && _cursor->position().x <= sizeMinus + 350 && _cursor->position().y >= 179 && _cursor->position().y <= 203) {
 			if (Config.performance) {
 				Config.performance -= 1;
 				// TODO: change quality settings
 			}
 		}
 		// performance plus
-		if (_cursor->x() >= sizeMinus + 360 && _cursor->x() <= sizeMinus + sizePlus + 360 && _cursor->y() >= 179 && _cursor->y() <= 203) {
+		if (_cursor->position().x >= sizeMinus + 360 && _cursor->position().x <= sizeMinus + sizePlus + 360 && _cursor->position().y >= 179 && _cursor->position().y <= 203) {
 			if (Config.performance < 5) {
 				Config.performance += 1;
 				// TODO: change quality settings
@@ -528,19 +528,19 @@ void MainMenu::updateSubMenuQuitGame() {
 	_vm->text()->drawResTextCentered(10, 100, 620, 0x80000580);
 
 	// Yes
-	switchFont(_cursor->x() < 247 || _cursor->x() > 247 + _vm->text()->getResTextWidth(0x80000581) || _cursor->y() < 273 || _cursor->y() > 273 + 24);
+	switchFont(_cursor->position().x < 247 || _cursor->position().x > 247 + _vm->text()->getResTextWidth(0x80000581) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
 	_vm->text()->setTextPos(247, 273);
 	_vm->text()->drawResText(0x80000581);
 
 	// No
-	switchFont(_cursor->x() < 369 || _cursor->x() > 369 + _vm->text()->getResTextWidth(0x80000582) || _cursor->y() < 273 || _cursor->y() > 273 + 24);
+	switchFont(_cursor->position().x < 369 || _cursor->position().x > 369 + _vm->text()->getResTextWidth(0x80000582) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
 	_vm->text()->setTextPos(369, 273);
 	_vm->text()->drawResText(0x80000582);
 
 	// action
 	if (_leftClick) {
 		// Yes
-		if (_cursor->x() >= 247 && _cursor->x() <= 247 + 24 && _cursor->y() >= 273 && _cursor->y() <= 273 + _vm->text()->getResTextWidth(0x80000581)) {
+		if (_cursor->position().x >= 247 && _cursor->position().x <= 247 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getResTextWidth(0x80000581)) {
 			_leftClick = false;
 
 			// User clicked on quit, so push a quit event
@@ -549,7 +549,7 @@ void MainMenu::updateSubMenuQuitGame() {
 			g_system->getEventManager()->pushEvent(event);
 		}
 		// No
-		if (_cursor->x() >= 369 && _cursor->x() <= 369 + 24 && _cursor->y() >= 273 && _cursor->y() <= 273 + _vm->text()->getResTextWidth(0x80000582))
+		if (_cursor->position().x >= 369 && _cursor->position().x <= 369 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getResTextWidth(0x80000582))
 			exitSubMenu();
 	}
 }
@@ -624,24 +624,24 @@ void MainMenu::exitSubMenu() {
 	_vm->screen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
 
 	// Set the cursor
-	_cursor->load(2);
+	Cursor::create(_cursor, _resPack, 2);
 }
 
 void MainMenu::updateSubMenuReturnToGame() {
-    loadFont(kFontYellow);
+	loadFont(kFontYellow);
 
 	// no game loaded
 	_vm->text()->drawResTextCentered(10, 100, 620, 0x80000712);
 
-    // Main menu
-    switchFont(_cursor->x() < 285 || _cursor->x() > 285 + _vm->text()->getResTextWidth(0x80000713) || _cursor->y() < 273 || _cursor->y() > 273 + 24);
+	// Main menu
+	switchFont(_cursor->position().x < 285 || _cursor->position().x > 285 + _vm->text()->getResTextWidth(0x80000713) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
 	_vm->text()->setTextPos(285, 273);
 	_vm->text()->drawResText(0x80000713);
 
-    // action
+	// action
 	if (_leftClick) { 
-        // Main menu
-		if (_cursor->x() >= 285 && _cursor->x() <= 285 + _vm->text()->getResTextWidth(0x80000713) && _cursor->y() >= 273 && _cursor->y() <= 273 + 24)
+		// Main menu
+		if (_cursor->position().x >= 285 && _cursor->position().x <= 285 + _vm->text()->getResTextWidth(0x80000713) && _cursor->position().y >= 273 && _cursor->position().y <= 273 + 24)
 			exitSubMenu();
 	}
 }

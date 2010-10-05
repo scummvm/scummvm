@@ -132,8 +132,9 @@ void Cursor::move(int16 x, int16 y) {
 	_pos.y = y;
 }
 
-/*
+
 void Cursor::animate() {
+	/*
 	_curFrame += _cursorStep;
 	if (_curFrame == 0)
 		_cursorStep = 1;
@@ -141,8 +142,8 @@ void Cursor::animate() {
 		_cursorStep = -1;
 
 	set(_curFrame);
+	*/
 }
-*/
 
 /*
 void Cursor::update(WorldStats *ws, int32 currentAction) {

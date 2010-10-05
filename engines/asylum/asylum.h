@@ -33,7 +33,7 @@
 #include "asylum/staticres.h"
 #include "asylum/console.h"
 #include "asylum/scene.h"
-//#include "asylum/menu.h"
+#include "asylum/menu.h"
 #include "asylum/screen.h"
 #include "asylum/sound.h"
 #include "asylum/video.h"
@@ -67,7 +67,7 @@ namespace Asylum {
 
 class Console;
 class Scene;
-//class MainMenu;
+class MainMenu;
 class Scene;
 class Screen;
 class Sound;
@@ -97,18 +97,18 @@ public:
 	 * Initalize the game environment
 	 */
 	Common::Error init();
-   
-    /** .text:0041A500
+
+	/** .text:0041A500
 	 * Start the game environment
 	 */
 	Common::Error go();
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 
-    /** .text:00415830
+	/** .text:00415830
 	 * Start a new the game
 	 */
-    void startGame();
+	void startGame();
 
 	void setGameFlag(int flag);
 	void clearGameFlag(int flag);
@@ -133,8 +133,8 @@ public:
 	Screen* screen() { return _screen; }
 	Scene* scene() { return _scene;}
 	Text* text() { return _text; }
-        
-        Common::RandomSource _rnd;
+
+	Common::RandomSource _rnd;
 
 private:
 	void checkForEvent(bool doUpdate);
@@ -142,18 +142,18 @@ private:
 	void updateMouseCursor();
 	void processDelayedEvents();
 
-    /** .text:0041B630
+	/** .text:0041B630
 	 * Start a new the game
 	 */
 	void playIntro();
 
-	Common::Language     _language;
+	Common::Language _language;
 
 	bool _introPlaying;
 
 	Console   *_console;
 	Scene     *_scene;
-	//MainMenu  *_mainMenu;
+	MainMenu  *_mainMenu;
 	Screen    *_screen;
 	Sound     *_sound;
 	Video     *_video;
