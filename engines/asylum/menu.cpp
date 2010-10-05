@@ -31,28 +31,28 @@
 namespace Asylum {
 
 MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
-	_leftClick			= false;
-	_activeIcon			= -1;
+	_leftClick          = false;
+	_activeIcon         = -1;
 	_previousActiveIcon = -1;
-	_curIconFrame		= 0;
-	_curMouseCursor		= 0;
-	_cursorStep			= 1;
-	_creditsBgFrame		= 0;
-	_creditsTextScroll	= 0x1E0 - 30;
-	_activeMenuScreen	= kMainMenu;
-	_active				= false;
+	_curIconFrame       = 0;
+	_curMouseCursor     = 0;
+	_cursorStep         = 1;
+	_creditsBgFrame     = 0;
+	_creditsTextScroll  = 0x1E0 - 30;
+	_activeMenuScreen   = kMainMenu;
+	_active             = false;
 
 	Config.gammaLevel  = 2;
 	Config.performance = 5;
 
-	_resPack		= new ResourcePack(1);
-	_bgResource		= new GraphicResource(_resPack, 0);
-	_eyeResource	= new GraphicResource(_resPack, 1);
+	_resPack     = new ResourcePack(1);
+	_bgResource  = new GraphicResource(_resPack, 0);
+	_eyeResource = new GraphicResource(_resPack, 1);
 
 	_cursor = new Cursor(_resPack);
 
-	_iconResource		 = 0;
-	_creditsResource	 = 0;
+	_iconResource        = 0;
+	_creditsResource     = 0;
 	_creditsFadeResource = 0;
 
 	loadFont(kFontYellow);
@@ -82,17 +82,15 @@ void MainMenu::loadFont(Fonts font) {
 }
 
 void MainMenu::switchFont(bool condition) {
-	if (condition)
-		loadFont(kFontYellow);
-	else
-		loadFont(kFontBlue);
+	loadFont((condition) ? kFontYellow : kFontBlue);
 }
 
 void MainMenu::openMenu() {
 	_active = true;
-    if (_vm->scene()) {
-    	_vm->scene()->deactivate();
-    }
+
+	if (_vm->scene()) {
+		_vm->scene()->deactivate();
+	}
 
 	loadFont(kFontYellow);
 
@@ -221,10 +219,10 @@ void MainMenu::update() {
 			_vm->sound()->playMusic(_resPack, 38);
 			break;
 		case kReturnToGame:
-            if (_vm->scene()) { // FIXME: do this properly
-                closeMenu();
-			    _vm->scene()->enterScene();
-            }
+			if (_vm->scene()) { // FIXME: do this properly
+				closeMenu();
+				_vm->scene()->enterScene();
+			}
 			break;
 		}
 	}
