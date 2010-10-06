@@ -3,51 +3,69 @@ ScummVM-PSP 1.3.0svn README
 
 Installation
 ============
- - Copy the relevant game datafiles to your memory stick (location
-   doesn't matter).
- - Install ScummVM like any other homebrew
- - Run ScummVM and use the launcher to add games and run them
-
+ - Copy the relevant game datafiles to your memory stick (location doesn't matter).
+ - Install ScummVM like any other homebrew.
+ - Run ScummVM and use the launcher to add games and run them.
 
 Controls
 ========
-
-Left trigger			- ESC
 Right trigger			- Modifier key (see below for uses)
+Left trigger			- ESC (Usually skips cutscenes. Depends on game)
 Analog					- Mouse movement
-Right trigger + Analog	- Fine control mouse
-Directions				- Arrow keys
-Directions + Right Trigger - Diagonal arrow keys
-Triangle				- Enter
-Cross					- Mouse button 1
-Circle					- Mouse button 2
-Square					- '.' (skip dialogue in some games)
-Start					- F5 (Main Menu)
-Right trigger + Start	- Return-To-Launcher menu
+Right trigger + Analog	- Fine mouse movement
+D-Pad					- Arrow keys (useful mostly in SCI and AGI games)
+D-Pad + Right Trigger 	- Diagonal arrow keys (it's hard to input diagonals on some PSPs)
+Triangle				- Enter (useful for some dialogs)
+Cross					- Left Mouse Button (usually the main button)
+Circle					- Right Mouse Button (secondary button in some games)
+Square					- '.' (skip dialogue in some games e.g. Scumm)
+Right trigger + Square	- Spacebar (useful in Gobli*ns and SCI games)
+Start					- Global Menu. Allows you to 'Return To Launcher' to play another game
+Right trigger + Start	- F5 (Main Menu in some games)
+Select					- Show/Hide Virtual Keyboard. Hold down to move keyboard onscreen (with D-Pad).
 
-Virtual Keyboard
-================
+Virtual Keyboard Mode
+=====================
+Start					- Enter key. Also exits virtual keyboard mode
+Select					- Exit the virtual keyboard mode
+Right trigger			- Input letters: lowercase/uppercase (press to toggle)
+Left trigger			- Input numbers/symbols (press to toggle)
+D-Pad					- Select square of characters (up, down, left or right)
+Buttons/Triggers		- Choose a specific character in the square. The four center characters are chosen
+						  by the button in the corresponding position. The 2 top characters are chosen by the 
+						  triggers.
+Analog					- Moves in a direction (left/right/up/down) (Useful to keep moving 
+						  while typing in AGI games among other things)
 
-Select					- Show/Hide Virtual Keyboard. Hold down to move keyboard onscreen.
-Start					- Enter
-Right trigger			- Switch to/between letter modes
-Left trigger			- Switch to/between numbers and symbols
-D-Pad					- Select square of characters
-Buttons/Triggers		- Choose a specific character
+1st Person Game Mode (Can be ignored by most users)
+====================
+This is a special mode built for 1st person games like Lands of Lore. If you don't have these games you can
+safely ignore this mode. To enter or leave this mode, use the combo:
 
+Right Trigger + Left Trigger + Square
+
+Some buttons have been switched around to make these games more playable:
+Square					- Is the modifier key instead of Right Trigger.
+Left/Right Trigger		- Strafe left/right
+D-Pad Left/Right		- Turn left/right
+Square + D-Pad			- F1/F2/F3/F4
+Square + Start			- Esc (shows game menu)		  
+
+						  
 Notes
 =====
+- Notice that you can switch between games! This is much faster than quitting
+  and having to start ScummVM all over again. Go to the global menu and choose 'Return To Launcher'.
+  (Some games may not have the Return To Launcher option available yet.)
 
-- Plugin files are NOT interchangeable between versions! You must copy ALL the
-  plugin files that come with every version of scummvm. They sit in the /plugin
+- The PSP version of ScummVM uses the Media Engine to accelerate decoding of MP3 files. This means
+  that if you have the choice of compressing using Ogg files or MP3 files, choose MP3 -- the game
+  will generally run faster.
+  
+- Plugin files are NOT interchangeable between ScummVM versions! You must copy ALL the
+  plugin files that come with every version of ScummVM. They sit in the /plugin
   subdirectory. If you get a crash upon startup, try deleting all the existing
   plugin files in the plugin directory and copying the new ones over again.
-
-- While it's possible to compress certain game resources to reduce their size,
-  this can (and usually will) cause games (especially animation) to be choppy
-  sometimes, as it ofcourse needs extra CPU power to decode these files.
-  As such, it is recommended to play games in their original, uncompressed,
-  form whenever possible.
 
 - This README may be outdated, for more up-to-date instructions and notes see
   the PSP Port Wiki: http://wiki.scummvm.org/index.php/PlayStation_Portable
@@ -55,27 +73,25 @@ Notes
 Frequently Asked Questions
 ==========================
 
-Q:  Pressing select doesn't make the virtual keyboard show up on screen!
-A:  You need to make sure that the kbd.zip file is in the same directory as the scummvm executable.
-
 Q:  Scummvm crashes upon starting up!
 A:  See the first note above.
 
+Q:  Pressing select doesn't make the virtual keyboard show up on screen!
+A:  You need to make sure that the kbd.zip file is in the same directory as the ScummVM executable.
+
 Q:  What do I need to run the games?
-A:  A 1.00 or 1.50 firmware PSP (or an EBOOT loader on firmware 2.00 or
-    higher), and the necessary datafiles for the game you want to play and
-    obviously this ScummVM port.
+A:  A PSP that can run homebrew and the necessary datafiles for the game you want to play.
 
 Q:  Can I run game X with this?
 A:  You can find the list of supported games on the compatibility page
-    on http://www.scummvm.org.
-    Note that ScummVM is NOT a 'DOS (game) emulator', but written
-    specifically for certain games/engines.
+    at http://www.scummvm.org
+    Note that ScummVM is NOT an emulator. The supported games engines have been painstakingly rewritten. 
+	It's not easy to add support for a game you want that currently isn't supported.
 
 Q:  My Monkey Island 1 doesn't have any music, what gives?
 A:  If your version of Monkey Island came on a CD then it has the music
-    as CD Audio tracks. You need to rip those to MP3/Ogg and copy them
-    to the same directory as the game datafiles for music to work.
+    as CD Audio tracks. You need to rip those to MP3/Ogg (MP3 is preferred), naming them track1.mp3 track2.mp3
+	etc. and copy them to the same directory as the game datafiles for music to work.
 
 Q:  Game X crashes, or feature Y doesn't work. Can you fix this?
 A:  Possibly.
@@ -83,21 +99,23 @@ A:  Possibly.
     played them all start-to-finish on the PSP, so it's possible there
     are bugs or issues that we're not aware of.
     When you encounter such a bug, please use the "Bug Tracker" you find linked
-    on the ScummVM website, and mention all relevant info (i.e. that you're
+    on the ScummVM website, and mention all relevant info i.e. that you're
     using the PSP version, which ScummVM version it is, if the problem exists
-    in a recent PC SVN version, a detailed description of the problem,
-    and if at all possible a nearby savegame), this will make it much easier
+    in a recent PC version, a detailed description of the problem,
+    and if at all possible a nearby savegame. This will make it much easier
     for us to reproduce (and hopefully fix) the problem.
 
 Building the source code
 ========================
 To build ScummVM for PSP you need:
 
+- ScummVM source code (svn co https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk)
+
 - PSP toolchain	(svn co svn://svn.pspdev.org/psp/trunk/psptoolchain)
 
 - PSPSDK	(svn co svn://svn.pspdev.org/psp/trunk/pspsdk)
-		Note: This usually gets installed by the PSP toolchain,
-		so you don't have to do it manually.
+			Note: This usually gets installed by the PSP toolchain,
+			so you don't have to do it manually.
 
 - zlib		(svn co svn://svn.pspdev.org/psp/trunk/zlib)
 
@@ -107,21 +125,15 @@ To build ScummVM for PSP you need:
 
 - libTremor(*)	(svn co svn://svn.pspdev.org/psp/trunk/libTremor)
 
-
-
 (*) = optional
 
-When you've installed these libraries (read their README.PSP for instructions),
-type "make" in the backends/platform/psp directory to build a 1.00 firmware
-EBOOT.PBP, or "make kxploit" to build the 1.50/kxploit EBOOT.PBPs
-
-You can control most of the build process (engines and libraries used) from
-the Makefile.
-
+Once you've installed these libraries (read their README.PSP for instructions),
+create a subdirectory in your ScummVM folder called 'builds/psp'. Then, in this folder, type 
+'../../configure --host=psp --enable-plugins --default-dynamic'. If everything is installed
+correctly, ScummVM will inform you as it finds the right components. Finally type 'make' to build.
 
 Port Authors
 ============
-
 Joost Peters   (joostp@scummvm.org)
 Paolo Costabel (paoloc@pacbell.net)
 Thomas Mayer   (tommybear@internode.on.net)

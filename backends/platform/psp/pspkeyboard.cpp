@@ -26,7 +26,7 @@
 //#define PSP_KB_SHELL	/* Need a hack to properly load the keyboard from the PSP shell */
 
 #ifdef PSP_KB_SHELL
-#define PSP_KB_SHELL_PATH 	"ms0:/psp/game4xx/scummvm-solid/"	/* path to kbd.zip */
+#define PSP_KB_SHELL_PATH 	"ms0:/psp/game5xx/scummvm-solid/"	/* path to kbd.zip */
 #endif
 
 
@@ -36,6 +36,7 @@
 
 #include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/pspkeyboard.h"
+#include "backends/platform/psp/input.h"
 #include "common/keyboard.h"
 #include "common/fs.h"
 #include "common/unzip.h"
@@ -508,10 +509,11 @@ int PSPKeyboard::loadPngImage(Common::SeekableReadStream *file, Buffer &buffer, 
  *  Uses the state machine.
  *  returns whether we have an event
  */
-bool PSPKeyboard::processInput(Common::Event &event, SceCtrlData &pad) {
+bool PSPKeyboard::processInput(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad) {
 	DEBUG_ENTER_FUNC();
 
 	bool haveEvent = false;		// Whether we have an event for the event manager to process
+	bool havePspEvent = false;
 	event.kbd.flags = 0;
 
 	_buttonsChanged = _prevButtons ^ pad.Buttons;
@@ -529,12 +531,12 @@ bool PSPKeyboard::processInput(Common::Event &event, SceCtrlData &pad) {
 		event.type = DOWN(PSP_CTRL_START) ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
 		haveEvent = true;
 		_dirty = true;
-		if (UP(PSP_CTRL_START))
-			_state = kInvisible;			// Make us invisible if unpressed
+		if (UP(PSP_CTRL_START)) 
+			havePspEvent = true;
 	}
 	// Check for being in state of moving the keyboard onscreen or pressing select
 	else if (_state == kMove)
-		handleMoveState(pad);
+		havePspEvent = handleMoveState(pad);
 	else if (_state == kDefault)
 		haveEvent = handleDefaultState(event, pad);
 	else if (_state == kCornersSelected)
@@ -544,12 +546,16 @@ bool PSPKeyboard::processInput(Common::Event &event, SceCtrlData &pad) {
 	else if (_state == kLTriggerDown)
 		handleLTriggerDownState(pad);	// Deal with trigger states
 
+	if (havePspEvent) {	
+		pspEvent.type = PSP_EVENT_SHOW_VIRTUAL_KB;	// tell the input handler we're off
+		pspEvent.data = false;
+	}		
 	_prevButtons = pad.Buttons;
 
 	return haveEvent;
 }
 
-void PSPKeyboard::handleMoveState(SceCtrlData &pad) {
+bool PSPKeyboard::handleMoveState(SceCtrlData &pad) {
 	DEBUG_ENTER_FUNC();
 	if (UP(PSP_CTRL_SELECT)) {
 		// Toggle between visible and invisible
@@ -559,6 +565,9 @@ void PSPKeyboard::handleMoveState(SceCtrlData &pad) {
 		if (_moved) {					// We moved the keyboard. Keep the keyboard onscreen anyway
 			_state = kDefault;
 			_moved = false;				// reset moved flag
+		}
+		if (_state == kInvisible) {
+			return true;				// we become invisible
 		}
 	} else if (DOWN(PSP_DPAD)) {		// How we move the KB onscreen
 		_moved = true;
@@ -573,6 +582,7 @@ void PSPKeyboard::handleMoveState(SceCtrlData &pad) {
 		else  /* DOWN(PSP_CTRL_RIGHT) */
 			increaseKeyboardLocationX(5);
 	}
+	return false;
 }
 
 bool PSPKeyboard::handleDefaultState(Common::Event &event, SceCtrlData &pad) {

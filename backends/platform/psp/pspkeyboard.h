@@ -29,11 +29,14 @@
 #include "common/events.h"
 #include "common/stream.h"
 #include "backends/platform/psp/display_client.h"
+//#include "backends/platform/psp/input.h"
 #include <pspctrl.h>
 
 //number of modes
 #define MODE_COUNT 4
 #define guiStringsSize 8 /* size of guistrings array */
+
+class PspEvent;
 
 class PSPKeyboard : public DisplayClient {
 
@@ -58,10 +61,9 @@ public:
 	void setClean() { _dirty = false; }
 	bool isVisible() const { return _state != kInvisible; }			// Check if visible
 	void setVisible(bool val);
-	bool processInput(Common::Event &event, SceCtrlData &pad);	// Process input
+	bool processInput(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad);	// Process input
 	void moveTo(const int newX, const int newY);				// Move keyboard
 	void render();												// Draw the keyboard onscreen
-
 private:
 	enum CursorDirections {
 		kUp = 0,
@@ -82,7 +84,7 @@ private:
 	void increaseKeyboardLocationY(int amount);
 	void convertCursorToXY(CursorDirections cur, int &x, int &y);
 
-	void handleMoveState(SceCtrlData &pad);
+	bool handleMoveState(SceCtrlData &pad);
 	bool handleDefaultState(Common::Event &event, SceCtrlData &pad);
 	bool handleCornersSelectedState(Common::Event &event, SceCtrlData &pad);
 	bool getInputChoice(Common::Event &event, SceCtrlData &pad);
