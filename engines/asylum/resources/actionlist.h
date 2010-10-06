@@ -30,7 +30,7 @@
 #include "common/stack.h"
 #include "common/stream.h"
 
-#include "asylum/scene.h"
+#include "asylum/views/scene.h"
 
 namespace Asylum {
 

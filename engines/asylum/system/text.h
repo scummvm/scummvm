@@ -26,7 +26,7 @@
 #ifndef ASYLUM_TEXT_H_
 #define ASYLUM_TEXT_H_
 
-#include "asylum/screen.h"
+#include "asylum/system/screen.h"
 #include "asylum/respack.h"
 
 namespace Asylum {

@@ -23,7 +23,7 @@
  *
  */
 
-#include "asylum/screen.h"
+#include "asylum/system/screen.h"
 
 namespace Asylum {
 

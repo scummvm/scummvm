@@ -1,26 +1,26 @@
 MODULE := engines/asylum
 
 MODULE_OBJS := \
-	actionarea.o \
-	actionlist.o \
-	actor.o \
+	resources/actionarea.o \
+	resources/actionlist.o \
+	resources/actor.o \
+	resources/barrier.o \
+	resources/polygons.o \
+	resources/worldstats.o \
+	system/config.o \
+	system/cursor.o \
+	system/graphics.o \
+	system/screen.o \
+	system/sound.o \
+	system/speech.o \
+	system/text.o \
+	system/video.o \
+	views/menu.o \
+	views/scene.o \
 	asylum.o \
-	barrier.o \
-	console.o \
-	cursor.o \
 	detection.o \
-	graphics.o \
-	menu.o \
-	polygons.o \
-	respack.o \
-	scene.o \
-	screen.o \
-	sound.o \
-	text.o \
-	video.o \
-	worldstats.o \
-	speech.o \
-	config.o
+	console.o \
+	respack.o 
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ASYLUM), DYNAMIC_PLUGIN)

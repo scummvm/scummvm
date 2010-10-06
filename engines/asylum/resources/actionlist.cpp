@@ -23,8 +23,8 @@
  *
  */
 
-#include "asylum/actionlist.h"
-#include "asylum/config.h"
+#include "asylum/resources/actionlist.h"
+#include "asylum/system/config.h"
 
 namespace Asylum {
 

@@ -24,7 +24,8 @@
  */
 
 #include "graphics/cursorman.h"
-#include "asylum/cursor.h"
+
+#include "asylum/system/cursor.h"
 
 namespace Asylum {
 

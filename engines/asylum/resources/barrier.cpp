@@ -23,7 +23,7 @@
  *
  */
 
-#include "asylum/barrier.h"
+#include "asylum/resources/barrier.h"
 
 namespace Asylum {
 

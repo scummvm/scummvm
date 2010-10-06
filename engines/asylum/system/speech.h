@@ -27,7 +27,7 @@
 #define ASYLUM_SPEECH_H_
 
 #include "asylum/respack.h"
-#include "asylum/scene.h"
+#include "asylum/views/scene.h"
 
 namespace Asylum {
 

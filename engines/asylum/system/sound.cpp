@@ -23,11 +23,12 @@
  *
  */
 
-#include "asylum/sound.h"
 #include "asylum/asylum.h"
-#include "asylum/config.h"
+#include "asylum/system/config.h"
+#include "asylum/system/sound.h"
 
 #include "common/stream.h"
+
 #include "sound/audiostream.h"
 #include "sound/decoders/adpcm.h"
 #include "sound/decoders/wave.h"

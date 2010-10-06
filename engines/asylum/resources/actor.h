@@ -27,7 +27,7 @@
 #define ASYLUM_ACTOR_H_
 
 #include "asylum/respack.h"
-#include "asylum/graphics.h"
+#include "asylum/system/graphics.h"
 
 namespace Asylum {
 

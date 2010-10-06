@@ -23,7 +23,8 @@
  *
  */
 
-#include "asylum/text.h"
+#include "asylum/system/text.h"
+
 #include "common/endian.h"
 
 namespace Asylum {

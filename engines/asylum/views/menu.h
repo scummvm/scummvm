@@ -30,10 +30,10 @@
 
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
-#include "asylum/scene.h"
-#include "asylum/graphics.h"
-#include "asylum/text.h"
-#include "asylum/cursor.h"
+#include "asylum/views/scene.h"
+#include "asylum/system/graphics.h"
+#include "asylum/system/text.h"
+#include "asylum/system/cursor.h"
 
 namespace Asylum {
 
