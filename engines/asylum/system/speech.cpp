@@ -23,10 +23,10 @@
  *
  */
 
-#include "asylum/speech.h"
-#include "asylum/actor.h"
-#include "asylum/config.h"
-#include "asylum/text.h"
+#include "asylum/resources/actor.h"
+#include "asylum/system/speech.h"
+#include "asylum/system/config.h"
+#include "asylum/system/text.h"
 
 namespace Asylum {
 

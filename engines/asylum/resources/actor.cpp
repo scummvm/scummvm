@@ -25,9 +25,9 @@
 
 #include "common/endian.h"
 
-#include "asylum/actor.h"
-#include "asylum/screen.h"
-#include "asylum/config.h"
+#include "asylum/resources/actor.h"
+#include "asylum/system/screen.h"
+#include "asylum/system/config.h"
 
 namespace Asylum {
 

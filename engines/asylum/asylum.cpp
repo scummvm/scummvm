@@ -35,7 +35,7 @@
 
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
-#include "asylum/config.h"
+#include "asylum/system/config.h"
 
 namespace Asylum {
 

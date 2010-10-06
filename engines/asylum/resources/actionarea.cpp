@@ -23,7 +23,7 @@
  *
  */
 
-#include "asylum/actionarea.h"
+#include "asylum/resources/actionarea.h"
 
 namespace Asylum {
 

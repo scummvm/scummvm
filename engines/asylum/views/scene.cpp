@@ -23,9 +23,9 @@
  *
  */
 
-#include "asylum/scene.h"
-#include "asylum/actor.h"
-#include "asylum/config.h"
+#include "asylum/views/scene.h"
+#include "asylum/resources/actor.h"
+#include "asylum/system/config.h"
 
 namespace Asylum {
 

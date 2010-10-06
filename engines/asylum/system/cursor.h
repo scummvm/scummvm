@@ -26,7 +26,7 @@
 #ifndef ASYLUM_CURSOR_H_
 #define ASYLUM_CURSOR_H_
 
-#include "asylum/graphics.h"
+#include "asylum/system/graphics.h"
 
 namespace Asylum {
 

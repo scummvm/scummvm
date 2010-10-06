@@ -23,10 +23,10 @@
  *
  */
 
-#include "asylum/menu.h"
 #include "asylum/respack.h"
-#include "asylum/graphics.h"
-#include "asylum/config.h"
+#include "asylum/views/menu.h"
+#include "asylum/system/graphics.h"
+#include "asylum/system/config.h"
 
 namespace Asylum {
 

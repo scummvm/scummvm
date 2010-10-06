@@ -23,7 +23,7 @@
  *
  */
 
-#include "asylum/polygons.h"
+#include "asylum/resources/polygons.h"
 
 namespace Asylum {
 

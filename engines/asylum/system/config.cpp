@@ -23,7 +23,7 @@
  *
  */
 
-#include "asylum/config.h"
+#include "asylum/system/config.h"
 
 DECLARE_SINGLETON(Asylum::ConfigurationManager)
 

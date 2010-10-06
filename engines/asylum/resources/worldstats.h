@@ -29,11 +29,11 @@
 #include "common/rect.h"
 #include "common/array.h"
 
-#include "asylum/actor.h"
-#include "asylum/barrier.h"
-#include "asylum/actionarea.h"
-#include "asylum/scene.h"
-#include "asylum/sound.h"
+#include "asylum/resources/actor.h"
+#include "asylum/resources/barrier.h"
+#include "asylum/resources/actionarea.h"
+#include "asylum/views/scene.h"
+#include "asylum/system/sound.h"
 
 namespace Asylum {
 

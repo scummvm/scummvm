@@ -32,14 +32,14 @@
 
 #include "asylum/staticres.h"
 #include "asylum/console.h"
-#include "asylum/scene.h"
-#include "asylum/menu.h"
-#include "asylum/screen.h"
-#include "asylum/sound.h"
-#include "asylum/video.h"
+#include "asylum/views/scene.h"
+#include "asylum/views/menu.h"
+#include "asylum/system/screen.h"
+#include "asylum/system/sound.h"
+#include "asylum/system/video.h"
 //#include "asylum/blowuppuzzle.h"
 //#include "asylum/encounters.h"
-#include "asylum/text.h"
+#include "asylum/system/text.h"
 
 namespace Asylum {
 

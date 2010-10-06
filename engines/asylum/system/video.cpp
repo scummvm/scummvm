@@ -23,7 +23,7 @@
  *
  */
 
-#include "asylum/video.h"
+#include "asylum/system/video.h"
 
 namespace Asylum {
 	

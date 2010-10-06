@@ -26,7 +26,7 @@
 #ifndef ASYLUM_BARRIER_H_
 #define ASYLUM_BARRIER_H_
 
-#include "asylum/sound.h"
+#include "asylum/system/sound.h"
 
 namespace Asylum {
 
