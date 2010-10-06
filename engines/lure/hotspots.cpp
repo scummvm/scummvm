@@ -3133,8 +3133,14 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 				const RoomTranslationRecord *p = &roomTranslations[0];
 				while ((p->srcRoom != 0) && (p->srcRoom != player->roomNumber()))
 					++p;
-				h.currentActions().addFront(DISPATCH_ACTION,
-					(p->srcRoom != 0) ? p->destRoom : player->roomNumber());
+
+				if (p->destRoom == h.roomNumber())
+					// Character is already in destination room, so set a random dest
+					h.setRandomDest();
+				else
+					// Move character to either the player's room, or found alternate destination
+					h.currentActions().addFront(DISPATCH_ACTION,
+						(p->srcRoom != 0) ? p->destRoom : player->roomNumber());
 			}
 		}
 	}
