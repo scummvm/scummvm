@@ -59,7 +59,7 @@ protected:
 	void playPcmTrack(int sound, const uint8 *data, int velo = 0, int pan = 64, int note = 0, int priority = 0);
 	void stopPcmTrack(int sound);
 
-	int getNextFreePcmChannel(int sound, int sfxChanRelIndex, int priority);
+	int getNextFreePcmChannel(int sound, int sfxChanRelIndex, uint32 priority);
 
 	struct PcmCurrentSound {
 		uint16 index;

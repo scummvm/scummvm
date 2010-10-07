@@ -156,7 +156,7 @@ void Player_Towns::stopPcmTrack(int sound) {
 	}
 }
 
-int Player_Towns::getNextFreePcmChannel(int sound, int sfxChanRelIndex, int priority) {
+int Player_Towns::getNextFreePcmChannel(int sound, int sfxChanRelIndex, uint32 priority) {
 	if (!_intf)
 		return 0;
 
@@ -693,7 +693,6 @@ int32 Player_Towns_v2::doCommand(int numargs, int args[]) {
 				_soundOverride2[args[1]].type = 7;
 		}
 		if (_soundOverride2[args[1]].type == 7)	{
-			int p = CLIP<int>(args[2], -63, 63);
 			_soundOverride2[args[1]].pan = 64 - CLIP<int>(args[2], -63, 63);
 			res = 0;
 		}
@@ -733,7 +732,7 @@ void Player_Towns_v2::playPcmTrackSBL(const uint8 *data) {
 
 	const uint8 *src = data + 6;
 	uint8 *dst = _sblData + 32;
-	for (int i = 0; i < len; i++)
+	for (uint32 i = 0; i < len; i++)
 		*dst++ = *src & 0x80 ? (*src++ & 0x7f) : -*src++;
 
 	_intf->callback(37, 0x3f + chan, 60, 127, _sblData);
