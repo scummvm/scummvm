@@ -623,6 +623,16 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 		if (frame >= (int32)_vm->_vidPlayer->getFrameCount(obj.videoSlot - 1))
 			frame = _vm->_vidPlayer->getFrameCount(obj.videoSlot - 1) - 1;
 
+		if (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) >= 255) {
+			// Allow for object videos with more than 255 frames, although the
+			// object frame counter is just a byte.
+
+			uint32 curFrame  = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) + 1;
+			uint16 frameWrap = curFrame / 256;
+
+			frame = ((frame + 1) % 256) + frameWrap * 256;
+		}
+
 		if (frame != (int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1)) {
 			// Seek to frame
 
