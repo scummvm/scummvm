@@ -243,9 +243,6 @@ bool TownsAudioInterface::init() {
 	if (_ready)
 		return true;
 
-	if (!_drv)
-		return false;
-
 	if (!TownsPC98_FmSynth::init())
 		return false;
 
@@ -359,8 +356,9 @@ void TownsAudioInterface::timerCallbackA() {
 
 void TownsAudioInterface::timerCallbackB() {
 	Common::StackLock lock(_mutex);
-	if (_drv && _ready) {
-		_drv->timerCallback(1);
+	if (_ready) {
+		if (_drv)
+			_drv->timerCallback(1);
 		callback(80);
 	}
 }
@@ -665,7 +663,7 @@ int TownsAudioInterface::intf_pcmEffectPlaying(va_list &args) {
 	if (chan < 0x40 || chan > 0x47)
 		return 1;
 	chan -= 0x40;
-	return (_pcmChanEffectPlaying & _chanFlags[chan]) ? true : false;
+	return (_pcmChanEffectPlaying & _chanFlags[chan]) ? 1 : 0;
 }
 
 int TownsAudioInterface::intf_fmKeyOn(va_list &args) {

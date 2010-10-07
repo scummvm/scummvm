@@ -245,7 +245,7 @@ void Sound::playSound(int soundID) {
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
-	else if (READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
+	else if (_vm->_game.platform != Common::kPlatformFMTowns && READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
 		debugC(DEBUG_SOUND, "Using SBL sound effect");
 
 		// SBL resources essentially contain VOC sound data.
@@ -314,7 +314,7 @@ void Sound::playSound(int soundID) {
 		sound = (byte *)malloc(size);
 		memcpy(sound, ptr + 6, size);
 		stream = Audio::makeRawStream(sound, size, rate, Audio::FLAG_UNSIGNED);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);			
 	}
 	else if (_vm->_game.platform != Common::kPlatformFMTowns && READ_BE_UINT32(ptr) == MKID_BE('SOUN')) {
 		if (_vm->_game.version != 3)

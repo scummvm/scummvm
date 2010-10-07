@@ -27,24 +27,39 @@
 #define SCUMM_PLAYER_TOWNS_H
 
 #include "scumm/scumm.h"
-#include "scumm/music.h"
+#include "scumm/imuse/imuse.h"
 #include "sound/softsynth/fmtowns_pc98/towns_euphony.h"
 
 namespace Scumm {
 
-class Player_Towns {
+class Player_Towns : public MusicEngine {
 public:
-	Player_Towns(ScummEngine *vm);
+	Player_Towns(ScummEngine *vm, bool isVersion2);
 	virtual ~Player_Towns() {}
+
+	virtual bool init() = 0;
+
+	void setSfxVolume(int vol);
+
+	int getSoundStatus(int sound) const;
+
+	virtual int32 doCommand(int numargs, int args[]) = 0;
 
 	virtual void saveLoadWithSerializer(Serializer *ser);
 	virtual void restoreAfterLoad();
 
+	// version 1 specific
+	virtual int getCurrentCdaSound() { return 0; } 
+	virtual int getCurrentCdaVolume() { return 0; } 
+	virtual void setVolumeCD(int left, int right) {}
+	virtual void setSoundVolume(int sound, int left, int right) {}
+	virtual void setSoundNote(int sound, int note) {}
+
 protected:
-	void playPcmTrack(int sound, const uint8 *data, int velo = 0, int pan = 64, int note = 0);
+	void playPcmTrack(int sound, const uint8 *data, int velo = 0, int pan = 64, int note = 0, int priority = 0);
 	void stopPcmTrack(int sound);
 
-	int getNextFreePcmChannel(int sound, int sfxChanRelIndex);
+	int getNextFreePcmChannel(int sound, int sfxChanRelIndex, int priority);
 
 	struct PcmCurrentSound {
 		uint16 index;
@@ -63,24 +78,34 @@ protected:
 		uint8 note;
 	};
 
-	uint8 _unkFlags;
-
 	SoundOvrParameters *_soundOverride;
 	SoundOvrParameters _ovrCur;
 
+	struct SoundOvrParameters2 {
+		uint8 velo;
+		uint8 pan;
+		uint8 type;
+	};
+
+	SoundOvrParameters2 *_soundOverride2;
+
+	uint8 _unkFlags;
+
 	TownsAudioInterface *_intf;
 	ScummEngine *_vm;
+
+	const int _numSoundMax;
+	const bool _v2;
 };
 
-class Player_Towns_v1 : public Player_Towns, public MusicEngine {
+class Player_Towns_v1 : public Player_Towns {
 public:
 	Player_Towns_v1(ScummEngine *vm, Audio::Mixer *mixer);
-	virtual ~Player_Towns_v1();
+	~Player_Towns_v1();
 
 	bool init();
 
 	void setMusicVolume(int vol);
-	void setSfxVolume(int vol);
 	void startSound(int sound);
 	void stopSound(int sound);
 	void stopAllSounds();
@@ -124,6 +149,32 @@ private:
 	uint8 _cdaNumLoopsTemp;
 
 	TownsEuphonyDriver *_driver;
+};
+
+class Player_Towns_v2 : public Player_Towns {
+public:
+	Player_Towns_v2(ScummEngine *vm, IMuse *imuse, Audio::Mixer *mixer, bool disposeIMuse);
+	~Player_Towns_v2();
+
+	bool init();
+
+	void setMusicVolume(int vol);
+
+	int getSoundStatus(int sound) const;
+	void startSound(int sound);
+	void stopSound(int sound);
+	void stopAllSounds();
+
+	int32 doCommand(int numargs, int args[]);
+
+	void saveLoadWithSerializer(Serializer *ser);
+
+private:
+	void playPcmTrackSBL(int sound, const uint8 *data);
+
+	uint8 *_sblData;
+	IMuse *_imuse;
+	const bool _imuseDispose;
 };
 
 } // End of namespace Scumm

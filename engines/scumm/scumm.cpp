@@ -1828,7 +1828,16 @@ void ScummEngine::setupMusic(int midi) {
 			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
 		}
 
-		_musicEngine = _imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
+		_imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
+		
+		if (_game.platform == Common::kPlatformFMTowns) {
+			_musicEngine = _townsPlayer = new Player_Towns_v2(this, _imuse, _mixer, true);
+			if (!_townsPlayer->init())
+				error("Failed to initialize FM-Towns audio driver");
+		} else {
+			_musicEngine = _imuse;
+		}
+
 		if (_imuse) {
 			_imuse->addSysexHandler
 				(/*IMUSE_SYSEX_ID*/ 0x7D,
@@ -1837,17 +1846,17 @@ void ScummEngine::setupMusic(int midi) {
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
 			// YM2162 driver can't handle midi->getPercussionChannel(), NULL shouldn't init MT-32/GM/GS
-			if ((midi != MDT_TOWNS) && (midi != MDT_NONE)) {
+			if (/*(midi != MDT_TOWNS) && (*/midi != MDT_NONE/*)*/) {
 				_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
 				if (MidiDriver::getMusicType(dev) != MT_MT32) // MT-32 Emulation shouldn't be GM/GS initialized
 					_imuse->property(IMuse::PROP_GS, _enable_gs);
 			}
-			if (_game.heversion >= 60 || midi == MDT_TOWNS) {
+			if (_game.heversion >= 60 /*|| midi == MDT_TOWNS*/) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
 			}
-			if (midi == MDT_TOWNS)
-				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);
+			/*if (midi == MDT_TOWNS)
+				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);*/
 		}
 	}
 }
