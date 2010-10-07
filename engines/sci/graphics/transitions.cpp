@@ -37,6 +37,8 @@
 
 namespace Sci {
 
+//#define DISABLE_TRANSITIONS	// uncomment to disable room transitions (for development only! helps in testing games quickly)
+
 GfxTransitions::GfxTransitions(GfxScreen *screen, GfxPalette *palette, bool isVGA)
 	: _screen(screen), _palette(palette), _isVGA(isVGA) {
 	init();
@@ -116,7 +118,11 @@ void GfxTransitions::init() {
 
 void GfxTransitions::setup(int16 number, bool blackoutFlag) {
 	if (number != -1) {
+#ifndef DISABLE_TRANSITIONS
 		_number = number;
+#else
+		_number = SCI_TRANSITIONS_NONE;
+#endif
 		_blackoutFlag = blackoutFlag;
 	}
 }
