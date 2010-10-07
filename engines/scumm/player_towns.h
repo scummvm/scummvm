@@ -170,7 +170,7 @@ public:
 	void saveLoadWithSerializer(Serializer *ser);
 
 private:
-	void playPcmTrackSBL(int sound, const uint8 *data);
+	void playPcmTrackSBL(const uint8 *data);
 
 	uint8 *_sblData;
 	IMuse *_imuse;

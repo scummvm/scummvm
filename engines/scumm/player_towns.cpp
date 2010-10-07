@@ -630,7 +630,7 @@ void Player_Towns_v2::startSound(int sound) {
 		playPcmTrack(sound, ptr + 8, velo, pan, 0, pri);
 	} else if (READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
 		_soundOverride2[sound].type = 5;
-		playPcmTrackSBL(sound, ptr + 27);
+		playPcmTrackSBL(ptr + 27);
 	} else {
 		_soundOverride2[sound].type = 3;
 		_imuse->startSound(sound);
@@ -714,7 +714,7 @@ void Player_Towns_v2::saveLoadWithSerializer(Serializer *ser) {
 		Player_Towns::saveLoadWithSerializer(ser);
 }
 
-void Player_Towns_v2::playPcmTrackSBL(int sound, const uint8 *data) {
+void Player_Towns_v2::playPcmTrackSBL(const uint8 *data) {
 	static const uint8 header[] = {
 		0x54, 0x61, 0x6C, 0x6B, 0x69, 0x65, 0x20, 0x20,
 		0x78, 0x56, 0x34, 0x12, 0x00, 0x00, 0x00, 0x00,
