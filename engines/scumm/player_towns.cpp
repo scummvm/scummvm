@@ -584,7 +584,7 @@ void Player_Towns_v1::playCdaTrack(int sound, const uint8 *data, bool skipTrackV
 Player_Towns_v2::Player_Towns_v2(ScummEngine *vm, IMuse *imuse, Audio::Mixer *mixer, bool disposeIMuse) : Player_Towns(vm, true), _imuse(imuse), _imuseDispose(disposeIMuse) {
 	_soundOverride2 = new SoundOvrParameters2[_numSoundMax];
 	memset(_soundOverride2, 0, _numSoundMax * sizeof(SoundOvrParameters2));
-	_sblData = new uint8[0x4000];
+	_sblData = 0;
 	_intf = new TownsAudioInterface(mixer, 0);
 }
 
@@ -726,6 +726,9 @@ void Player_Towns_v2::playPcmTrackSBL(const uint8 *data) {
 	int chan = getNextFreePcmChannel(0xffff, 0, 0x1000);
 	if (!chan)
 		return;
+
+	delete[] _sblData;
+	_sblData = new uint8[len + 32];
 
 	memcpy(_sblData, header, 32);
 	WRITE_LE_UINT32(_sblData + 12, len);
