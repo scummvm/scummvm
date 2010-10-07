@@ -41,6 +41,10 @@ Visit the main ScummVM website <http://www.scummvm.org>
       What's New?
       ------------------------------------------------------------------------
 
+ScummVM DS 1.2.0
+
+ * New game supported: Fascination
+
 ScummVM DS 1.1.1
 
  * Bugfix release: no new features
@@ -323,7 +327,7 @@ CANNOT DO THIS.
       ------------------------------------------------------------------------
 
 I'm glad you asked. Here is a list of the compatible games in version
-1.1.1. Demo versions of the games listed should work too.
+1.2.0. Demo versions of the games listed should work too.
 
 Flight of the Amazon Queen, Beneath a Steel Sky, and Lure of the
 Temptress have generously been released as freeware by the original
@@ -391,6 +395,8 @@ Gobliiins                                 D
 Gobliins 2                                D
 
 Goblins 3                                 D
+
+Fascination 				  D     This game is untested on the DS
 
 Ween: The Prophecy                        D
 
