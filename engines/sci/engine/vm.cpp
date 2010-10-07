@@ -210,6 +210,10 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 				if (solution.type == WORKAROUND_NONE) {
 #ifdef RELEASE_BUILD
 					// If we are running an official ScummVM release -> fake 0 in unknown cases
+					warning("Uninitialized read for temp %d from method %s::%s (script %d, room %d, localCall %x)", 
+					index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, 
+					g_sci->getEngineState()->currentRoomNumber(), originReply.localCallOffset);
+
 					r[index] = NULL_REG;
 					break;
 #else
