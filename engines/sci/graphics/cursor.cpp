@@ -409,8 +409,11 @@ void GfxCursor::kernelClearZoomZone() {
 	_zoomMultiplier = 0;
 	_zoomZoneActive = false;
 	delete _zoomCursorView;
+	_zoomCursorView = 0;
 	delete _zoomPicView;
+	_zoomPicView = 0;
 	delete[] _cursorSurface;
+	_cursorSurface = 0;
 }
 
 void GfxCursor::kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourceId viewNum, int loopNum, int celNum, GuiResourceId picNum, byte zoomColor) {
