@@ -30,11 +30,11 @@
 #ifdef ENABLE_AGI
 
 namespace DS {
-// Default dictionary is about 64Kb, so 128Kb should be enough for future expansion
-#define WORD_BUFFER_SIZE (128 * 1024)
+// Default dictionary is about 64Kb, so 96Kb should be enough for future expansion
+#define WORD_BUFFER_SIZE (96 * 1024)
 
 // Default dictionary has ~8000 words
-#define MAX_WORD_COUNT 16000
+#define MAX_WORD_COUNT 12000
 
 char wordBuffer[WORD_BUFFER_SIZE];
 int wordBufferPos = 0;
