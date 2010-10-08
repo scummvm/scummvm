@@ -190,6 +190,34 @@ void GfxAnimate::makeSortedList(List *list) {
 	Common::sort(_list.begin(), _list.end(), sortHelper);
 }
 
+void GfxAnimate::applyGlobalScaling(AnimateList::iterator entry, GfxView *view) {
+	reg_t curObject = entry->object;
+
+	// Global scaling uses global var 2 and some other stuff to calculate scaleX/scaleY
+	int16 maxScale = readSelectorValue(_s->_segMan, curObject, SELECTOR(maxScale));
+	int16 celHeight = view->getHeight(entry->loopNo, entry->celNo);
+	int16 maxCelHeight = (maxScale * celHeight) >> 7;
+	reg_t globalVar2 = _s->variables[VAR_GLOBAL][2]; // current room object
+	int16 vanishingY = readSelectorValue(_s->_segMan, globalVar2, SELECTOR(vanishingY));
+
+	int16 fixedPortY = _ports->getPort()->rect.bottom - vanishingY;
+	int16 fixedEntryY = entry->y - vanishingY;
+	if (!fixedEntryY)
+		fixedEntryY = 1;
+
+	if ((celHeight == 0) || (fixedPortY == 0))
+		error("global scaling panic");
+
+	entry->scaleY = ( maxCelHeight * fixedEntryY ) / fixedPortY;
+	entry->scaleY = (entry->scaleY * 128) / celHeight;
+
+	entry->scaleX = entry->scaleY;
+
+	// and set objects scale selectors
+	writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX), entry->scaleX);
+	writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), entry->scaleY);
+}
+
 void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 	reg_t curObject;
 	uint16 signal;
@@ -238,29 +266,7 @@ void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 			// Process global scaling, if needed
 			if (it->scaleSignal & kScaleSignalDoScaling) {
 				if (it->scaleSignal & kScaleSignalGlobalScaling) {
-					// Global scaling uses global var 2 and some other stuff to calculate scaleX/scaleY
-					int16 maxScale = readSelectorValue(_s->_segMan, curObject, SELECTOR(maxScale));
-					int16 celHeight = view->getHeight(it->loopNo, it->celNo);
-					int16 maxCelHeight = (maxScale * celHeight) >> 7;
-					reg_t globalVar2 = _s->variables[VAR_GLOBAL][2]; // current room object
-					int16 vanishingY = readSelectorValue(_s->_segMan, globalVar2, SELECTOR(vanishingY));
-
-					int16 fixedPortY = _ports->getPort()->rect.bottom - vanishingY;
-					int16 fixedEntryY = it->y - vanishingY;
-					if (!fixedEntryY)
-						fixedEntryY = 1;
-
-					if ((celHeight == 0) || (fixedPortY == 0))
-						error("global scaling panic");
-
-					it->scaleY = ( maxCelHeight * fixedEntryY ) / fixedPortY;
-					it->scaleY = (it->scaleY * 128) / celHeight;
-
-					it->scaleX = it->scaleY;
-
-					// and set objects scale selectors
-					writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX), it->scaleX);
-					writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), it->scaleY);
+					applyGlobalScaling(it, view);
 				}
 			}
 		}
@@ -568,6 +574,7 @@ void GfxAnimate::addToPicDrawCels() {
 
 		// Create rect according to coordinates and given cel
 		if (it->scaleSignal & kScaleSignalDoScaling) {
+			applyGlobalScaling(it, view);
 			view->getCelScaledRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->scaleX, it->scaleY, it->celRect);
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), it->celRect.left);
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop), it->celRect.top);
