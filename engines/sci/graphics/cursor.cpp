@@ -441,6 +441,9 @@ void GfxCursor::kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourc
 
 	_zoomMultiplier = multiplier;
 
+	if (_zoomMultiplier != 1 && _zoomMultiplier != 2 && _zoomMultiplier != 4)
+		error("Unexpected zoom multiplier (expected 1, 2 or 4)");
+
 	_zoomCursorView = new GfxView(_resMan, _screen, _palette, viewNum);
 	_zoomCursorLoop = (byte)loopNum;
 	_zoomCursorCel = (byte)celNum;
