@@ -37,7 +37,6 @@ Tools for compressing ScummVM datafiles and other related tools.
 (cd libmad-0.15.1b; grep -v 'force-\(mem\|addr\)' configure > configure.new; mv -f configure.new configure; chmod 700 configure; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
 ./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp
 make
-echo -e "                This script is installed as\n                "%{_datadir}/scummvm-tools/convert_dxa.sh.sample >> README
 
 %install
 install -m755 -d %{buildroot}%{_bindir}
@@ -45,7 +44,6 @@ install -m755 -D create_sjisfnt %{buildroot}%{_bindir}
 install -m755 -D scummvm-tools{,-cli} %{buildroot}%{_bindir}
 install -m755 -D de{cine,gob,kyra,riven,scumm,sword2} %{buildroot}%{_bindir}
 install -m755 -D {construct,extract}_mohawk %{buildroot}%{_bindir}
-install -m644 -D convert_dxa.sh %{buildroot}%{_datadir}/scummvm-tools/convert_dxa.sh.sample
 
 %clean
 rm -Rf ${RPM_BUILD_ROOT}
@@ -60,7 +58,6 @@ rm -Rf ${RPM_BUILD_ROOT}
 %attr(0755,root,root)%{_bindir}/de*
 %attr(0755,root,root)%{_bindir}/extract_*
 %attr(0755,root,root)%{_bindir}/construct_*
-%attr(0644,root,root)%{_datadir}/scummvm-tools/convert_dxa.sh.sample
 
 #------------------------------------------------------------------------------
 #   Change Log
