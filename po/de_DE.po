@@ -5,17 +5,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.2.0svn\n"
+"Project-Id-Version: ScummVM 1.2.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-10-01 22:29+0100\n"
+"POT-Creation-Date: 2010-10-08 02:05+0200\n"
 "PO-Revision-Date: 2010-10-01 17:37+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
 "<SimSaw@gmx.de>\n"
+"Language: Deutsch\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: Deutsch\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #: gui/about.cpp:96
@@ -45,7 +45,7 @@ msgid "Go up"
 msgstr "Pfad hoch"
 
 #: gui/browser.cpp:73 gui/chooser.cpp:49 gui/KeysDialog.cpp:46
-#: gui/launcher.cpp:319 gui/massadd.cpp:95 gui/options.cpp:1084
+#: gui/launcher.cpp:319 gui/massadd.cpp:97 gui/options.cpp:1084
 #: gui/saveload.cpp:65 gui/saveload.cpp:157 gui/themebrowser.cpp:56
 #: backends/platform/wii/options.cpp:48
 msgid "Cancel"
@@ -55,19 +55,19 @@ msgstr "Abbrechen"
 msgid "Choose"
 msgstr "Auswählen"
 
-#: gui/GuiManager.cpp:106 backends/keymapper/remap-dialog.cpp:54
+#: gui/GuiManager.cpp:112 backends/keymapper/remap-dialog.cpp:54
 msgid "Close"
 msgstr "Schließen"
 
-#: gui/GuiManager.cpp:109
+#: gui/GuiManager.cpp:115
 msgid "Mouse click"
 msgstr "Mausklick"
 
-#: gui/GuiManager.cpp:112 base/main.cpp:285
+#: gui/GuiManager.cpp:118 base/main.cpp:285
 msgid "Display keyboard"
 msgstr "Tastatur anzeigen"
 
-#: gui/GuiManager.cpp:115 base/main.cpp:288
+#: gui/GuiManager.cpp:121 base/main.cpp:288
 msgid "Remap keys"
 msgstr "Tasten neu zuweisen"
 
@@ -79,8 +79,8 @@ msgstr "Eine Aktion zum Zuweisen auswählen"
 msgid "Map"
 msgstr "Zuweisen"
 
-#: gui/KeysDialog.cpp:45 gui/launcher.cpp:320 gui/launcher.cpp:941
-#: gui/launcher.cpp:945 gui/massadd.cpp:92 gui/options.cpp:1085
+#: gui/KeysDialog.cpp:45 gui/launcher.cpp:320 gui/launcher.cpp:944
+#: gui/launcher.cpp:948 gui/massadd.cpp:94 gui/options.cpp:1085
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "OK"
@@ -261,7 +261,7 @@ msgid "Game Path:"
 msgstr "Spielpfad:"
 
 #: gui/launcher.cpp:297
-msgctxt "context"
+msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Spielpfad:"
 
@@ -411,7 +411,7 @@ msgstr "~E~ntfernen"
 msgid "Search in game list"
 msgstr "In Spieleliste suchen"
 
-#: gui/launcher.cpp:594 gui/launcher.cpp:1107
+#: gui/launcher.cpp:594 gui/launcher.cpp:1110
 msgid "Search:"
 msgstr "Suchen:"
 
@@ -431,7 +431,7 @@ msgstr "Spiel laden:"
 msgid "Load"
 msgstr "Laden"
 
-#: gui/launcher.cpp:728
+#: gui/launcher.cpp:730
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -439,7 +439,7 @@ msgstr ""
 "Möchten Sie wirklich den PC nach Spielen durchsuchen? Möglicherweise wird "
 "dabei eine größere Menge an Spielen hinzugefügt."
 
-#: gui/launcher.cpp:729 gui/launcher.cpp:878
+#: gui/launcher.cpp:731 gui/launcher.cpp:881
 #: backends/platform/symbian/src/SymbianOS.cpp:450
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
@@ -447,7 +447,7 @@ msgstr ""
 msgid "Yes"
 msgstr "Ja"
 
-#: gui/launcher.cpp:729 gui/launcher.cpp:878
+#: gui/launcher.cpp:731 gui/launcher.cpp:881
 #: backends/platform/symbian/src/SymbianOS.cpp:450
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
@@ -455,68 +455,68 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: gui/launcher.cpp:776
+#: gui/launcher.cpp:779
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM konnte das gewählte Verzeichnis nicht öffnen!"
 
-#: gui/launcher.cpp:788
+#: gui/launcher.cpp:791
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM konnte im gewählten Verzeichnis kein Spiel finden!"
 
-#: gui/launcher.cpp:802
+#: gui/launcher.cpp:805
 msgid "Pick the game:"
 msgstr "Spiel auswählen:"
 
-#: gui/launcher.cpp:878
+#: gui/launcher.cpp:881
 msgid "Do you really want to remove this game configuration?"
 msgstr "Möchten Sie wirklich diese Spielkonfiguration entfernen?"
 
-#: gui/launcher.cpp:941
+#: gui/launcher.cpp:944
 msgid "This game does not support loading games from the launcher."
 msgstr ""
 "Für dieses Spiel wird das Laden aus der Spieleliste heraus nicht unterstützt."
 
-#: gui/launcher.cpp:945
+#: gui/launcher.cpp:948
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM konnte keine Engine finden, um das Spiel zu starten!"
 
-#: gui/launcher.cpp:1059
+#: gui/launcher.cpp:1062
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Durchsuchen"
 
-#: gui/launcher.cpp:1059
+#: gui/launcher.cpp:1062
 msgid "Mass Add..."
 msgstr "Durchsuchen"
 
-#: gui/launcher.cpp:1060
+#: gui/launcher.cpp:1063
 msgctxt "lowres"
 msgid "Add Game..."
 msgstr "Hinzufügen"
 
-#: gui/launcher.cpp:1060
+#: gui/launcher.cpp:1063
 msgid "Add Game..."
 msgstr "Spiel hinzufügen"
 
-#: gui/massadd.cpp:79 gui/massadd.cpp:82
+#: gui/massadd.cpp:81 gui/massadd.cpp:84
 msgid "... progress ..."
 msgstr "... läuft..."
 
-#: gui/massadd.cpp:244
+#: gui/massadd.cpp:246
 msgid "Scan complete!"
 msgstr "Suchlauf abgeschlossen!"
 
-#: gui/massadd.cpp:247
+#: gui/massadd.cpp:249
 #, c-format
 msgid "Discovered %d new games."
 msgstr "%d neue Spiele gefunden."
 
-#: gui/massadd.cpp:251
+#: gui/massadd.cpp:253
 #, c-format
 msgid "Scanned %d directories ..."
 msgstr "%d Ordner durchsucht..."
 
-#: gui/massadd.cpp:254
+#: gui/massadd.cpp:256
 #, c-format
 msgid "Discovered %d new games ..."
 msgstr "%d neue Spiele gefunden..."
@@ -611,7 +611,7 @@ msgstr "Legt das Musikwiedergabe-Gerät oder den Soundkarten-Emulator fest."
 
 #: gui/options.cpp:669
 msgctxt "lowres"
-msgid "Preferred Device:"
+msgid "Preferred Dev.:"
 msgstr "Standard-Gerät:"
 
 #: gui/options.cpp:669
@@ -698,7 +698,7 @@ msgstr ""
 
 #: gui/options.cpp:766
 msgctxt "lowres"
-msgid "True Roland MT-32 (disable GM emulation)"
+msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Echte Roland-MT-32-Emulation (kein GM)"
 
 #: gui/options.cpp:769
@@ -1632,99 +1632,3 @@ msgstr "Anzeige"
 #: backends/platform/wince/CELauncherDialog.cpp:104
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Möchten Sie eine automatische Durchsuchung vornehmen?"
-
-#~ msgid "Save Path: "
-#~ msgstr "Spielstände: "
-
-#~ msgctxt "lowres"
-#~ msgid "Save Path: "
-#~ msgstr "Speichern: "
-
-#~ msgctxt "lowres"
-#~ msgid "Standard Renderer (16bpp)"
-#~ msgstr "Standard-Renderer(16bpp)"
-
-#~ msgctxt "lowres"
-#~ msgid "Antialiased Renderer (16bpp)"
-#~ msgstr "Kantenglättung (16bpp)"
-
-#~ msgctxt "lowres"
-#~ msgid "Special sound effects volume"
-#~ msgstr "Lautstärke spezieller Soundeffekte"
-
-#~ msgid "English"
-#~ msgstr "English"
-
-#~ msgid "Failed to load any GUI theme, aborting"
-#~ msgstr "Fehler: Konnte kein Benutzeroberflächen-Thema laden. Abbruch..."
-
-#~ msgid "User picked target '%s' (gameid '%s')...\n"
-#~ msgstr "Gewähltes Ziel: \"%s\" (Spielkennung \"%s\")...\n"
-
-#~ msgid "  Looking for a plugin supporting this gameid... "
-#~ msgstr ""
-#~ " Suche nach einer Erweiterung, die diese Spielkennung unterstützt..."
-
-#~ msgid "failed\n"
-#~ msgstr "fehlgeschlagen\n"
-
-#~ msgid ""
-#~ "%s is an invalid gameid. Use the --list-games option to list supported "
-#~ "gameid"
-#~ msgstr ""
-#~ "%s ist eine ungültige Spielkennung. Benutzen Sie die Option --list-games "
-#~ "zum Anzeigen der unterstützten Spielkennungen."
-
-#~ msgid "  Starting '%s'\n"
-#~ msgstr "  Starte \"%s\"\n"
-
-#~ msgid "%s failed to instantiate engine: %s (target '%s', path '%s')"
-#~ msgstr "%s konnte Engine nicht starten: %s (Ziel \"%s\", Pfad \"%s\")"
-
-#~ msgid "Ok"
-#~ msgstr "OK"
-
-#~ msgid "Music driver:"
-#~ msgstr "Musiktreiber:"
-
-#~ msgid "ALSA"
-#~ msgstr "ALSA"
-
-#~ msgid "Atari ST MIDI"
-#~ msgstr "Atari ST MIDI"
-
-#~ msgid "SEQ"
-#~ msgstr "SEQ"
-
-#~ msgid "DMedia"
-#~ msgstr "DMedia"
-
-#~ msgid "CAMD"
-#~ msgstr "CAMD"
-
-#~ msgid "CoreAudio"
-#~ msgstr "CoreAudio"
-
-#~ msgid "CoreMIDI"
-#~ msgstr "CoreMIDI"
-
-#~ msgid "Yamaha Pa1"
-#~ msgstr "Yamaha Pa1"
-
-#~ msgid "Tapwave Zodiac"
-#~ msgstr "Tapwave Zodiac"
-
-#~ msgid "FluidSynth"
-#~ msgstr "FluidSynth"
-
-#~ msgid "AdLib"
-#~ msgstr "AdLib"
-
-#~ msgid "IBM PCjr"
-#~ msgstr "IBM PCjr"
-
-#~ msgid "Creative Music System"
-#~ msgstr "Creative-Musik-System"
-
-#~ msgid "TiMidity"
-#~ msgstr "TiMidity"

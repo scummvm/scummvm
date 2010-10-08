@@ -1,5 +1,5 @@
 # Catalan translation for ScummVM.
-# Copyright (C) 2007-2010 ScummVM
+# Copyright (C) 2007-2010 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Jordi Vilalta Prat <jvprat@jvprat.com>, 2007-2010.
 #
@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-10-07 23:54+0200\n"
+"POT-Creation-Date: 2010-10-08 02:05+0200\n"
 "PO-Revision-Date: 2010-09-21 23:37+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@jvprat.com>\n"
 "Language-Team: Catalan <scummvm-devel@lists.sf.net>\n"
@@ -259,7 +259,7 @@ msgid "Game Path:"
 msgstr "Camí del joc:"
 
 #: gui/launcher.cpp:297
-msgctxt "context"
+msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Camí joc:"
 
@@ -608,7 +608,7 @@ msgstr "Especifica el dispositiu de so o l'emulador de tarja de so de sortida"
 
 #: gui/options.cpp:669
 msgctxt "lowres"
-msgid "Preferred Device:"
+msgid "Preferred Dev.:"
 msgstr "Disp. preferit:"
 
 #: gui/options.cpp:669
@@ -694,7 +694,7 @@ msgstr ""
 
 #: gui/options.cpp:766
 msgctxt "lowres"
-msgid "True Roland MT-32 (disable GM emulation)"
+msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 real (sense emulació GM)"
 
 #: gui/options.cpp:769

@@ -1,13 +1,13 @@
 # Russian translation for ScummVM.
-# Copyright (C) 2010 ScummVM
+# Copyright (C) 2010 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Eugene Sandulenko <sev@scummvm.org>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM VERSION\n"
+"Project-Id-Version: ScummVM 1.2.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-10-01 22:28+0100\n"
+"POT-Creation-Date: 2010-10-08 02:05+0200\n"
 "PO-Revision-Date: 2010-06-13 20:55+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -45,7 +45,7 @@ msgid "Go up"
 msgstr "Вверх"
 
 #: gui/browser.cpp:73 gui/chooser.cpp:49 gui/KeysDialog.cpp:46
-#: gui/launcher.cpp:319 gui/massadd.cpp:95 gui/options.cpp:1084
+#: gui/launcher.cpp:319 gui/massadd.cpp:97 gui/options.cpp:1084
 #: gui/saveload.cpp:65 gui/saveload.cpp:157 gui/themebrowser.cpp:56
 #: backends/platform/wii/options.cpp:48
 msgid "Cancel"
@@ -55,19 +55,19 @@ msgstr "Отмена"
 msgid "Choose"
 msgstr "Выбрать"
 
-#: gui/GuiManager.cpp:106 backends/keymapper/remap-dialog.cpp:54
+#: gui/GuiManager.cpp:112 backends/keymapper/remap-dialog.cpp:54
 msgid "Close"
 msgstr "Закрыть"
 
-#: gui/GuiManager.cpp:109
+#: gui/GuiManager.cpp:115
 msgid "Mouse click"
 msgstr "Клик мышью"
 
-#: gui/GuiManager.cpp:112 base/main.cpp:285
+#: gui/GuiManager.cpp:118 base/main.cpp:285
 msgid "Display keyboard"
 msgstr "Показать клавиатуру"
 
-#: gui/GuiManager.cpp:115 base/main.cpp:288
+#: gui/GuiManager.cpp:121 base/main.cpp:288
 msgid "Remap keys"
 msgstr "Переназначить клавиши"
 
@@ -79,8 +79,8 @@ msgstr "Выберите действие для назначения"
 msgid "Map"
 msgstr "Назначить"
 
-#: gui/KeysDialog.cpp:45 gui/launcher.cpp:320 gui/launcher.cpp:941
-#: gui/launcher.cpp:945 gui/massadd.cpp:92 gui/options.cpp:1085
+#: gui/KeysDialog.cpp:45 gui/launcher.cpp:320 gui/launcher.cpp:944
+#: gui/launcher.cpp:948 gui/massadd.cpp:94 gui/options.cpp:1085
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "OK"
@@ -261,7 +261,7 @@ msgid "Game Path:"
 msgstr "Путь к игре: "
 
 #: gui/launcher.cpp:297
-msgctxt "context"
+msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Где игра: "
 
@@ -409,7 +409,7 @@ msgstr "~У~далить игру"
 msgid "Search in game list"
 msgstr "Поиск в списке игр"
 
-#: gui/launcher.cpp:594 gui/launcher.cpp:1107
+#: gui/launcher.cpp:594 gui/launcher.cpp:1110
 msgid "Search:"
 msgstr "Поиск:"
 
@@ -429,7 +429,7 @@ msgstr "Загрузить игру:"
 msgid "Load"
 msgstr "Загрузить"
 
-#: gui/launcher.cpp:728
+#: gui/launcher.cpp:730
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -437,7 +437,7 @@ msgstr ""
 "Вы действительно хотите запустить детектор всех игр? Это потенциально может "
 "добавить большое количество игр."
 
-#: gui/launcher.cpp:729 gui/launcher.cpp:878
+#: gui/launcher.cpp:731 gui/launcher.cpp:881
 #: backends/platform/symbian/src/SymbianOS.cpp:450
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
@@ -445,7 +445,7 @@ msgstr ""
 msgid "Yes"
 msgstr "Да"
 
-#: gui/launcher.cpp:729 gui/launcher.cpp:878
+#: gui/launcher.cpp:731 gui/launcher.cpp:881
 #: backends/platform/symbian/src/SymbianOS.cpp:450
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
@@ -453,67 +453,67 @@ msgstr "Да"
 msgid "No"
 msgstr "Нет"
 
-#: gui/launcher.cpp:776
+#: gui/launcher.cpp:779
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM не может открыть указанную директорию!"
 
-#: gui/launcher.cpp:788
+#: gui/launcher.cpp:791
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM не может найти игру в указанной директории!"
 
-#: gui/launcher.cpp:802
+#: gui/launcher.cpp:805
 msgid "Pick the game:"
 msgstr "Выберите игру:"
 
-#: gui/launcher.cpp:878
+#: gui/launcher.cpp:881
 msgid "Do you really want to remove this game configuration?"
 msgstr "Вы действительно хотите удалить установки для этой игры?"
 
-#: gui/launcher.cpp:941
+#: gui/launcher.cpp:944
 msgid "This game does not support loading games from the launcher."
 msgstr "Эта игра не поддерживает загрузку сохранений через главное меню."
 
-#: gui/launcher.cpp:945
+#: gui/launcher.cpp:948
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM не смог найти движок для запуска выбранной игры!"
 
-#: gui/launcher.cpp:1059
+#: gui/launcher.cpp:1062
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Много игр..."
 
-#: gui/launcher.cpp:1059
+#: gui/launcher.cpp:1062
 msgid "Mass Add..."
 msgstr "Много игр..."
 
-#: gui/launcher.cpp:1060
+#: gui/launcher.cpp:1063
 msgctxt "lowres"
 msgid "Add Game..."
 msgstr "Новая игра"
 
-#: gui/launcher.cpp:1060
+#: gui/launcher.cpp:1063
 msgid "Add Game..."
 msgstr "Новая игра..."
 
-#: gui/massadd.cpp:79 gui/massadd.cpp:82
+#: gui/massadd.cpp:81 gui/massadd.cpp:84
 msgid "... progress ..."
 msgstr "... ищу ..."
 
-#: gui/massadd.cpp:244
+#: gui/massadd.cpp:246
 msgid "Scan complete!"
 msgstr "Поиск закончен!"
 
-#: gui/massadd.cpp:247
+#: gui/massadd.cpp:249
 #, c-format
 msgid "Discovered %d new games."
 msgstr "Найдено %d новых игр."
 
-#: gui/massadd.cpp:251
+#: gui/massadd.cpp:253
 #, c-format
 msgid "Scanned %d directories ..."
 msgstr "Просмотрено %d директорий ..."
 
-#: gui/massadd.cpp:254
+#: gui/massadd.cpp:256
 #, c-format
 msgid "Discovered %d new games ..."
 msgstr "Найдено %d новых игр ..."
@@ -598,7 +598,8 @@ msgstr "Звуковое уст-во:"
 
 #: gui/options.cpp:667 gui/options.cpp:669
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr "Указывает предпочитаемое звуковое устройство или эмулятор звуковой карты"
+msgstr ""
+"Указывает предпочитаемое звуковое устройство или эмулятор звуковой карты"
 
 #: gui/options.cpp:667 gui/options.cpp:669 gui/options.cpp:670
 msgid "Specifies output sound device or sound card emulator"
@@ -606,7 +607,7 @@ msgstr "Указывает выходное звуковое устройство или эмулятор звуковой карты"
 
 #: gui/options.cpp:669
 msgctxt "lowres"
-msgid "Preferred Device:"
+msgid "Preferred Dev.:"
 msgstr "Предпочитаемое:"
 
 #: gui/options.cpp:669
@@ -693,7 +694,7 @@ msgstr ""
 
 #: gui/options.cpp:766
 msgctxt "lowres"
-msgid "True Roland MT-32 (disable GM emulation)"
+msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Настоящий Roland MT-32 (запретить GM)"
 
 #: gui/options.cpp:769
@@ -921,28 +922,28 @@ msgstr "Сохранение без имени"
 msgid "Select a Theme"
 msgstr "Выберите тему"
 
-#: gui/ThemeEngine.cpp:332
+#: gui/ThemeEngine.cpp:334
 msgid "Disabled GFX"
 msgstr "Без графики"
 
-#: gui/ThemeEngine.cpp:332
+#: gui/ThemeEngine.cpp:334
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Без графики"
 
-#: gui/ThemeEngine.cpp:333
+#: gui/ThemeEngine.cpp:335
 msgid "Standard Renderer (16bpp)"
 msgstr "Стандартный растеризатор (16bpp)"
 
-#: gui/ThemeEngine.cpp:333
+#: gui/ThemeEngine.cpp:335
 msgid "Standard (16bpp)"
 msgstr "Стандартный растеризатор (16bpp)"
 
-#: gui/ThemeEngine.cpp:335
+#: gui/ThemeEngine.cpp:337
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Растеризатор со сглаживанием (16bpp)"
 
-#: gui/ThemeEngine.cpp:335
+#: gui/ThemeEngine.cpp:337
 msgid "Antialiased (16bpp)"
 msgstr "Растеризатор со сглаживанием (16bpp)"
 
@@ -1316,11 +1317,11 @@ msgstr "Высокое качество звука (медленнее) (ребут)"
 msgid "Disable power off"
 msgstr "Запретить выключение"
 
-#: backends/platform/iphone/osys_events.cpp:357
+#: backends/platform/iphone/osys_events.cpp:339
 msgid "Touchpad mode enabled."
 msgstr "Режим тачпада включен."
 
-#: backends/platform/iphone/osys_events.cpp:359
+#: backends/platform/iphone/osys_events.cpp:341
 msgid "Touchpad mode disabled."
 msgstr "Режим тачпада выключен."
 
@@ -1626,33 +1627,3 @@ msgstr "Показать "
 #: backends/platform/wince/CELauncherDialog.cpp:104
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Вы хотите произвести автоматический поиск?"
-
-#: backends/platform/wince/wince-sdl.cpp:990
-msgid "Map right click action"
-msgstr "Назначить действие по правому щелчку"
-
-#: backends/platform/wince/wince-sdl.cpp:994
-msgid "You must map a key to the 'Right Click' action to play this game"
-msgstr "Вы должны назначить клавишу на действие 'Right Click' для этой игры"
-
-#: backends/platform/wince/wince-sdl.cpp:1003
-msgid "Map hide toolbar action"
-msgstr "Назначить действие 'спрятать панель инструментов'"
-
-#: backends/platform/wince/wince-sdl.cpp:1007
-msgid "You must map a key to the 'Hide toolbar' action to play this game"
-msgstr "Вы должны назначить клавишу на дейтствие 'Hide toolbar' для этой игры"
-
-#: backends/platform/wince/wince-sdl.cpp:1016
-msgid "Map Zoom Up action (optional)"
-msgstr "Назначить действие Увеличить Масштаб (необязательно)"
-
-#: backends/platform/wince/wince-sdl.cpp:1019
-msgid "Map Zoom Down action (optional)"
-msgstr "Назначить действие Уменьшить Масштаб (необязательно)"
-
-#: backends/platform/wince/wince-sdl.cpp:1027
-msgid ""
-"Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
-msgstr ""
-"Не забудьте назначить клавишу для действия 'Hide Toolbar' чтобы увидеть весь инвентарь в игре"
