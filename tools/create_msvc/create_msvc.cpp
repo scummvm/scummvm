@@ -1715,7 +1715,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 	if (isRelease) {
 		properties << "\t\tEnableIntrinsicFunctions=\"true\"\n"
 		              "\t\tWholeProgramOptimization=\"true\"\n"
-		              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
+		              "\t\tPreprocessorDefinitions=\"WIN32;RELEASE_BUILD\"\n"
 		              "\t\tStringPooling=\"true\"\n"
 		              "\t\tBufferSecurityCheck=\"false\"\n"
 		              "\t\tDebugInformationFormat=\"0\"\n"
@@ -2111,7 +2111,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 	if (isRelease) {
 		properties << "\t\t\t<IntrinsicFunctions>true</IntrinsicFunctions>\n"
 		              "\t\t\t<WholeProgramOptimization>true</WholeProgramOptimization>\n"
-		              "\t\t\t<PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
+		              "\t\t\t<PreprocessorDefinitions>WIN32;RELEASE_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 		              "\t\t\t<StringPooling>true</StringPooling>\n"
 		              "\t\t\t<BufferSecurityCheck>false</BufferSecurityCheck>\n"
 		              "\t\t\t<DebugInformationFormat></DebugInformationFormat>\n"
