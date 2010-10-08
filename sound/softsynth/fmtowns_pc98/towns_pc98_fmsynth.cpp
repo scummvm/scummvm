@@ -907,6 +907,7 @@ bool TownsPC98_FmSynth::init() {
 }
 
 void TownsPC98_FmSynth::reset() {
+	Common::StackLock lock(_mutex);
 	for (int i = 0; i < _numChan; i++) {
 		for (int ii = 0; ii < 4; ii++)
 			_chanInternal[i].opr[ii]->reset();

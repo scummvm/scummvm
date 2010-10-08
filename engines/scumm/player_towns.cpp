@@ -164,7 +164,7 @@ int Player_Towns::allocatePcmChannel(int sound, int sfxChanRelIndex, uint32 prio
 
 	if (_v2 && priority > 255) {
 		chan = 8;
-		if (_intf->callback(40, 0x47))
+		if (_intf->callback(40, 0x47) && _pcmCurrentSound[chan].index != 0xffff)
 			_vm->_sound->stopSound(_pcmCurrentSound[chan].index);
 	} else {
 		for (int i = 8; i; i--) {
@@ -218,8 +218,8 @@ Player_Towns_v1::Player_Towns_v1(ScummEngine *vm, Audio::Mixer *mixer) : Player_
 }
 
 Player_Towns_v1::~Player_Towns_v1() {
-	delete[] _soundOverride;
 	delete _driver;
+	delete[] _soundOverride;
 }
 
 bool Player_Towns_v1::init() {
@@ -590,11 +590,13 @@ Player_Towns_v2::Player_Towns_v2(ScummEngine *vm, IMuse *imuse, Audio::Mixer *mi
 }
 
 Player_Towns_v2::~Player_Towns_v2() {
-	delete[] _sblData;
-	delete[] _soundOverride;
 	delete _intf;
+
 	if (_imuseDispose)
 		delete _imuse;
+
+	delete[] _sblData;
+	delete[] _soundOverride;
 }
 
 bool Player_Towns_v2::init() {
@@ -725,6 +727,8 @@ void Player_Towns_v2::playPcmTrackSBL(const uint8 *data) {
 	uint32 len = (READ_LE_UINT32(data) >> 8) - 2;
 	
 	int chan = allocatePcmChannel(0xffff, 0, 0x1000);
+	if (!chan)
+		return;
 
 	delete[] _sblData;
 	_sblData = new uint8[len + 32];
