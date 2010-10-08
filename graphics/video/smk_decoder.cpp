@@ -389,12 +389,13 @@ bool SmackerDecoder::load(Common::SeekableReadStream *stream) {
 	_frameCount = _fileStream->readUint32LE();
 	int32 frameRate = _fileStream->readSint32LE();
 
+	// framerate contains 2 digits after the comma, so 1497 is actually 14.97 fps
 	if (frameRate > 0)
 		_frameRate = Common::Rational(1000, frameRate);
 	else if (frameRate < 0)
 		_frameRate = Common::Rational(100000, -frameRate);
 	else
-		_frameRate = 10;
+		_frameRate = 1000;
 
 	// Flags are determined by which bit is set, which can be one of the following:
 	// 0 - set to 1 if file contains a ring frame.
@@ -540,53 +541,18 @@ Surface *SmackerDecoder::decodeNextFrame() {
 		chunkSize = _fileStream->readUint32LE();
 		chunkSize -= 4;    // subtract the first 4 bytes (chunk size)
 
-		if (_header.audioInfo[i].compression != kCompressionNone) {
+		if (_header.audioInfo[i].compression == kCompressionNone) {
+			dataSizeUnpacked = chunkSize;		
+		} else {
 			dataSizeUnpacked = _fileStream->readUint32LE();
 			chunkSize -= 4;    // subtract the next 4 bytes (unpacked data size)
-		} else {
-			dataSizeUnpacked = 0;
-		}
-
-		if (_header.audioInfo[i].hasAudio && chunkSize > 0 && i == 0) {
-			// If it's track 0, play the audio data
-			byte *soundBuffer = (byte *)malloc(chunkSize);
-
-			_fileStream->read(soundBuffer, chunkSize);
-
-			if (_header.audioInfo[i].compression == kCompressionRDFT || _header.audioInfo[i].compression == kCompressionDCT) {
-				// TODO: Compressed audio (Bink RDFT/DCT encoded)
-				free(soundBuffer);
-				continue;
-			} else if (_header.audioInfo[i].compression == kCompressionDPCM) {
-				// Compressed audio (Huffman DPCM encoded)
-				queueCompressedBuffer(soundBuffer, chunkSize, dataSizeUnpacked, i);
-				free(soundBuffer);
-			} else {
-				// Uncompressed audio (PCM)
-				byte flags = 0;
-				if (_header.audioInfo[0].is16Bits)
-					flags = flags | Audio::FLAG_16BITS;
-				if (_header.audioInfo[0].isStereo)
-					flags = flags | Audio::FLAG_STEREO;
-
-				_audioStream->queueBuffer(soundBuffer, chunkSize, DisposeAfterUse::YES, flags);
-				// The sound buffer will be deleted by QueuingAudioStream
-			}
-
-			if (!_audioStarted) {
-				_mixer->playStream(_soundType, &_audioHandle, _audioStream, -1, 255);
-				_audioStarted = true;
-			}
-		} else {
-			// Ignore the rest of the audio tracks, if they exist
-			// TODO: Are there any Smacker videos with more than one audio stream?
-			// If yes, we should play the rest of the audio streams as well
-			if (chunkSize > 0)
-				_fileStream->skip(chunkSize);
-		}
+		} 
+		
+		handleAudioTrack(i, chunkSize, dataSizeUnpacked);
 	}
 
 	uint32 frameSize = _frameSizes[_curFrame] & ~3;
+//	uint32 remainder =  _frameSizes[_curFrame] & 3;
 
 	if (_fileStream->pos() - startPos > frameSize)
 		error("Smacker actual frame size exceeds recorded frame size");
@@ -746,6 +712,46 @@ Surface *SmackerDecoder::decodeNextFrame() {
 	return _surface;
 }
 
+void SmackerDecoder::handleAudioTrack(const byte &track, const uint32 &chunkSize, const uint32 &unpackedSize) {
+	if (_header.audioInfo[track].hasAudio && chunkSize > 0 && track == 0) {
+		// If it's track 0, play the audio data
+		byte *soundBuffer = (byte *)malloc(chunkSize);
+
+		_fileStream->read(soundBuffer, chunkSize);
+
+		if (_header.audioInfo[track].compression == kCompressionRDFT || _header.audioInfo[track].compression == kCompressionDCT) {
+			// TODO: Compressed audio (Bink RDFT/DCT encoded)
+			free(soundBuffer);
+			return;
+		} else if (_header.audioInfo[track].compression == kCompressionDPCM) {
+			// Compressed audio (Huffman DPCM encoded)
+			queueCompressedBuffer(soundBuffer, chunkSize, unpackedSize, track);
+			free(soundBuffer);
+		} else {
+			// Uncompressed audio (PCM)
+			byte flags = 0;
+			if (_header.audioInfo[track].is16Bits)
+				flags = flags | Audio::FLAG_16BITS;
+			if (_header.audioInfo[track].isStereo)
+				flags = flags | Audio::FLAG_STEREO;
+
+			_audioStream->queueBuffer(soundBuffer, chunkSize, DisposeAfterUse::YES, flags);
+			// The sound buffer will be deleted by QueuingAudioStream
+		}
+
+		if (!_audioStarted) {
+			_mixer->playStream(_soundType, &_audioHandle, _audioStream, -1, 255);
+			_audioStarted = true;
+		}
+	} else {
+		// Ignore the rest of the audio tracks, if they exist
+		// TODO: Are there any Smacker videos with more than one audio stream?
+		// If yes, we should play the rest of the audio streams as well
+		if (chunkSize > 0)
+			_fileStream->skip(chunkSize);
+	}
+}
+
 void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 		uint32 unpackedSize, int streamNum) {
 
@@ -808,7 +814,7 @@ void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 				bases[k] += (int16) (audioTrees[k * 2]->getCode(audioBS) |
 				                    (audioTrees[k * 2 + 1]->getCode(audioBS) << 8));
 
-				WRITE_BE_UINT16(curPointer, CLIP<int32>(bases[k], -32768, 32767));
+				WRITE_BE_UINT16(curPointer, bases[k]);
 				curPointer += 2;
 				curPos += 2;
 			}
