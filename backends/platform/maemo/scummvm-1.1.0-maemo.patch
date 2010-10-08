@@ -1,6 +1,6 @@
-diff -Naur scummvm-1.1.orig/debian/changelog scummvm-1.1/debian/changelog
---- scummvm-1.1.orig/debian/changelog	1970-01-01 01:00:00.000000000 +0100
-+++ scummvm-1.1/debian/changelog	2010-03-24 15:40:44.000000000 +0100
+diff -Naur branch-1-2-0.orig/debian/changelog branch-1-2-0/debian/changelog
+--- branch-1-2-0.orig/debian/changelog	1970-01-01 01:00:00.000000000 +0100
++++ branch-1-2-0/debian/changelog	2010-10-08 20:59:27.000000000 +0200
 @@ -0,0 +1,211 @@
 +scummvm (1.1.0~pre) unstable; urgency=low
 +
@@ -213,14 +213,14 @@ diff -Naur scummvm-1.1.orig/debian/changelog scummvm-1.1/debian/changelog
 +  * 0.9.0 upstream release
 +
 + -- Frantisek Dufka <dufkaf@seznam.cz>  Tue, 27 Jun 2006 20:30:54 +0200
-diff -Naur scummvm-1.1.orig/debian/compat scummvm-1.1/debian/compat
---- scummvm-1.1.orig/debian/compat	1970-01-01 01:00:00.000000000 +0100
-+++ scummvm-1.1/debian/compat	2010-03-24 00:14:36.000000000 +0100
+diff -Naur branch-1-2-0.orig/debian/compat branch-1-2-0/debian/compat
+--- branch-1-2-0.orig/debian/compat	1970-01-01 01:00:00.000000000 +0100
++++ branch-1-2-0/debian/compat	2010-10-08 20:59:27.000000000 +0200
 @@ -0,0 +1 @@
 +4
-diff -Naur scummvm-1.1.orig/debian/control scummvm-1.1/debian/control
---- scummvm-1.1.orig/debian/control	1970-01-01 01:00:00.000000000 +0100
-+++ scummvm-1.1/debian/control	2010-03-24 00:14:36.000000000 +0100
+diff -Naur branch-1-2-0.orig/debian/control branch-1-2-0/debian/control
+--- branch-1-2-0.orig/debian/control	1970-01-01 01:00:00.000000000 +0100
++++ branch-1-2-0/debian/control	2010-10-08 20:59:27.000000000 +0200
 @@ -0,0 +1,51 @@
 +Source: scummvm
 +Section: user/games
@@ -273,9 +273,9 @@ diff -Naur scummvm-1.1.orig/debian/control scummvm-1.1/debian/control
 +  axAYH5+RATQrPtZHk5udA+Z2cIpQN3Hy8vOwMVLmYGTidoenDSawLAsnJz8L
 +  kMUiY4ySpviYoKmKRVAcIyXKyIiLyygi+ADqVqrAkApevwAAAABJRU5ErkJg
 +  gg==
-diff -Naur scummvm-1.1.orig/debian/copyright scummvm-1.1/debian/copyright
---- scummvm-1.1.orig/debian/copyright	1970-01-01 01:00:00.000000000 +0100
-+++ scummvm-1.1/debian/copyright	2010-03-24 00:14:36.000000000 +0100
+diff -Naur branch-1-2-0.orig/debian/copyright branch-1-2-0/debian/copyright
+--- branch-1-2-0.orig/debian/copyright	1970-01-01 01:00:00.000000000 +0100
++++ branch-1-2-0/debian/copyright	2010-10-08 20:59:27.000000000 +0200
 @@ -0,0 +1,20 @@
 +ScummVM was debianized by Bastien Nocera <hadess@hadess.net> the 5th Apr 2002.
 +It was adopted by Tore Anderson <tore@linpro.no> the 4th Oct 2002.
@@ -297,9 +297,9 @@ diff -Naur scummvm-1.1.orig/debian/copyright scummvm-1.1/debian/copyright
 + Public License can be found in `/usr/share/common-licenses/GPL'.
 +
 +This copyright also applies to the Debian-related build scripts.
-diff -Naur scummvm-1.1.orig/debian/postinst scummvm-1.1/debian/postinst
---- scummvm-1.1.orig/debian/postinst	1970-01-01 01:00:00.000000000 +0100
-+++ scummvm-1.1/debian/postinst	2010-03-24 00:14:36.000000000 +0100
+diff -Naur branch-1-2-0.orig/debian/postinst branch-1-2-0/debian/postinst
+--- branch-1-2-0.orig/debian/postinst	1970-01-01 01:00:00.000000000 +0100
++++ branch-1-2-0/debian/postinst	2010-10-08 20:59:27.000000000 +0200
 @@ -0,0 +1,19 @@
 +#! /bin/sh
 +if [ "$1" = "configure"  ] ; then
@@ -320,9 +320,9 @@ diff -Naur scummvm-1.1.orig/debian/postinst scummvm-1.1/debian/postinst
 +	[ -x /usr/bin/maemo-select-menu-location -a -z "$2" ] && /usr/bin/maemo-select-menu-location scummvm.desktop  tana_fi_games
 +fi
 +exit 0
-diff -Naur scummvm-1.1.orig/debian/rules scummvm-1.1/debian/rules
---- scummvm-1.1.orig/debian/rules	1970-01-01 01:00:00.000000000 +0100
-+++ scummvm-1.1/debian/rules	2010-03-24 13:39:46.000000000 +0100
+diff -Naur branch-1-2-0.orig/debian/rules branch-1-2-0/debian/rules
+--- branch-1-2-0.orig/debian/rules	1970-01-01 01:00:00.000000000 +0100
++++ branch-1-2-0/debian/rules	2010-10-08 20:59:27.000000000 +0200
 @@ -0,0 +1,72 @@
 +#!/usr/bin/make -f
 +
@@ -396,9 +396,9 @@ diff -Naur scummvm-1.1.orig/debian/rules scummvm-1.1/debian/rules
 +binary-indep:
 +
 +.PHONY: build clean binary install binary-arch binary-indep
-diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
---- scummvm-1.1.orig/debian/scummvm.dirs	1970-01-01 01:00:00.000000000 +0100
-+++ scummvm-1.1/debian/scummvm.dirs	2010-03-24 00:14:36.000000000 +0100
+diff -Naur branch-1-2-0.orig/debian/scummvm.dirs branch-1-2-0/debian/scummvm.dirs
+--- branch-1-2-0.orig/debian/scummvm.dirs	1970-01-01 01:00:00.000000000 +0100
++++ branch-1-2-0/debian/scummvm.dirs	2010-10-08 20:59:27.000000000 +0200
 @@ -0,0 +1,8 @@
 +usr/games
 +usr/share/icons
@@ -409,37 +409,29 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
 +usr/share/applications/hildon
 +usr/share/dbus-1/services
 \ No newline at end of file
---- scummvm-1.1.orig/configure	2010-03-24 21:25:00.000000000 +0100
-+++ scummvm-1.1/configure	2010-03-24 21:24:28.000000000 +0100
-@@ -1355,6 +1355,9 @@
- 			_need_memalign=yes
- 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
- 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-+			add_line_to_config_mk 'ARM_USE_GFX_ASM = 1'
-+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
- 			;;
- 		arm-riscos|linupy)
- 			DEFINES="$DEFINES -DUNIX -DLINUPY"
-@@ -2205,11 +2208,11 @@
- #
- test -z "$_bindir" && _bindir="$_prefix/bin"
- test -z "$_mandir" && _mandir="$_prefix/share/man"
--test -z "$_datadir" && _datadir="$_prefix/share"
--test -z "$_libdir" && _libdir="$_prefix/lib"
-+test -z "$_datadir" && _datadir="$_prefix/share/scummvm"
-+test -z "$_libdir" && _libdir="$_prefix/lib/scummvm"
+--- branch-1-2-0.orig/configure	2010-10-08 00:43:16.000000000 +0200
++++ branch-1-2-0/configure	2010-10-08 21:06:36.000000000 +0200
+@@ -180,7 +180,7 @@
+ datarootdir='${prefix}/share'
+ datadir='${datarootdir}/scummvm'
+ docdir='${datarootdir}/doc/scummvm'
+-libdir='${exec_prefix}/lib'
++libdir='${exec_prefix}/lib/scummvm'
+ #localedir='${datarootdir}/locale'
+ mandir='${datarootdir}/man'
  
--DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir/scummvm\\\""
--DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$_libdir/scummvm\\\""
-+DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir\\\""
-+DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$_libdir\\\""
+@@ -2571,7 +2571,7 @@
+ 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"../plugins\\\""
+ 		;;
+ 	*)
+-		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir/scummvm\\\""
++		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir\\\""
+ 		;;
+ esac
  
- 
- echo_n "Backend... "
---- scummvm-1.1.orig/engines/kyra/module.mk	2010-03-21 22:01:04.000000000 +0100
-+++ scummvm-1.1/engines/kyra/module.mk	2010-03-24 00:14:36.000000000 +0100
-@@ -95,3 +95,9 @@
+--- branch-1-2-0.orig/engines/kyra/module.mk	2010-10-08 00:36:19.000000000 +0200
++++ branch-1-2-0/engines/kyra/module.mk	2010-10-08 20:59:27.000000000 +0200
+@@ -96,3 +96,9 @@
  
  # Include common rules
  include $(srcdir)/rules.mk
@@ -449,8 +441,8 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
 +	$(MKDIR) $(*D)/$(DEPDIR)
 +	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) -O3 $(CPPFLAGS) -c $(<) -o $*.o
 +
---- scummvm-1.1.orig/engines/gob/util.cpp	2010-03-21 22:01:08.000000000 +0100
-+++ scummvm-1.1/engines/gob/util.cpp	2010-03-24 00:17:52.000000000 +0100
+--- branch-1-2-0.orig/engines/gob/util.cpp	2010-10-08 00:36:33.000000000 +0200
++++ branch-1-2-0/engines/gob/util.cpp	2010-10-08 20:59:27.000000000 +0200
 @@ -114,6 +114,10 @@
  			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) & ~((uint32) kMouseButtonsRight));
  			break;
@@ -473,8 +465,8 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  			break;
  		default:
  			break;
---- scummvm-1.1.orig/engines/queen/input.cpp	2010-03-21 22:01:14.000000000 +0100
-+++ scummvm-1.1/engines/queen/input.cpp	2010-03-24 00:14:36.000000000 +0100
+--- branch-1-2-0.orig/engines/queen/input.cpp	2010-10-08 00:36:50.000000000 +0200
++++ branch-1-2-0/engines/queen/input.cpp	2010-10-08 20:59:27.000000000 +0200
 @@ -176,7 +176,11 @@
  		}
  		break;
@@ -487,9 +479,9 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  		if (_cutawayRunning) {
  			if (_canQuit) {
  				_keyVerb = VERB_USE_JOURNAL;
---- scummvm-1.1.orig/engines/sword1/sword1.cpp	2010-03-21 22:01:22.000000000 +0100
-+++ scummvm-1.1/engines/sword1/sword1.cpp	2010-03-24 00:14:36.000000000 +0100
-@@ -697,8 +697,21 @@
+--- branch-1-2-0.orig/engines/sword1/sword1.cpp	2010-10-08 00:37:07.000000000 +0200
++++ branch-1-2-0/engines/sword1/sword1.cpp	2010-10-08 20:59:27.000000000 +0200
+@@ -708,8 +708,21 @@
  		while (_eventMan->pollEvent(event)) {
  			switch (event.type) {
  			case Common::EVENT_KEYDOWN:
@@ -511,9 +503,9 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  			case Common::EVENT_MOUSEMOVE:
  				_mouseCoord = event.mouse;
  				break;
---- scummvm-1.1.orig/engines/sword2/sword2.cpp	2010-03-21 22:01:23.000000000 +0100
-+++ scummvm-1.1/engines/sword2/sword2.cpp	2010-03-24 00:14:36.000000000 +0100
-@@ -662,11 +662,27 @@
+--- branch-1-2-0.orig/engines/sword2/sword2.cpp	2010-10-08 00:37:21.000000000 +0200
++++ branch-1-2-0/engines/sword2/sword2.cpp	2010-10-08 20:59:27.000000000 +0200
+@@ -682,11 +682,27 @@
  						_gameSpeed = 1;
  				}
  			}
@@ -541,8 +533,8 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  		case Common::EVENT_LBUTTONDOWN:
  			if (!(_inputEventFilter & RD_LEFTBUTTONDOWN)) {
  				_mouseEvent.pending = true;
---- scummvm-1.1.orig/engines/scumm/input.cpp	2010-03-21 22:01:31.000000000 +0100
-+++ scummvm-1.1/engines/scumm/input.cpp	2010-03-24 00:19:14.000000000 +0100
+--- branch-1-2-0.orig/engines/scumm/input.cpp	2010-10-08 00:38:18.000000000 +0200
++++ branch-1-2-0/engines/scumm/input.cpp	2010-10-08 20:59:27.000000000 +0200
 @@ -135,7 +135,20 @@
  			// Normal key press, pass on to the game.
  			_keyPressed = event.kbd;
@@ -598,9 +590,9 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  	} else if (pauseKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_SPACE && lastKeyHit.hasFlags(0))) {
  		pauseGame();
  
---- scummvm-1.1.orig/engines/scumm/dialogs.cpp	2010-03-21 22:01:31.000000000 +0100
-+++ scummvm-1.1/engines/scumm/dialogs.cpp	2010-03-24 00:14:36.000000000 +0100
-@@ -633,7 +633,11 @@
+--- branch-1-2-0.orig/engines/scumm/dialogs.cpp	2010-10-08 00:38:18.000000000 +0200
++++ branch-1-2-0/engines/scumm/dialogs.cpp	2010-10-08 20:59:27.000000000 +0200
+@@ -466,7 +466,11 @@
  }
  
  void PauseDialog::handleKeyDown(Common::KeyState state) {
@@ -612,7 +604,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  		close();
  	else
  		ScummDialog::handleKeyDown(state);
-@@ -695,12 +699,19 @@
+@@ -539,12 +543,19 @@
  }
  
  void ValueDisplayDialog::handleKeyDown(Common::KeyState state) {
@@ -631,11 +623,11 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
 -
 +#endif
  		setResult(_value);
- 		_timer = getMillis() + kDisplayDelay;
+ 		_timer = g_system->getMillis() + kDisplayDelay;
  		draw();
---- scummvm-1.1.orig/engines/touche/touche.cpp	2010-03-21 22:01:32.000000000 +0100
-+++ scummvm-1.1/engines/touche/touche.cpp	2010-03-24 00:25:29.000000000 +0100
-@@ -294,6 +294,13 @@
+--- branch-1-2-0.orig/engines/touche/touche.cpp	2010-10-08 00:38:22.000000000 +0200
++++ branch-1-2-0/engines/touche/touche.cpp	2010-10-08 20:59:27.000000000 +0200
+@@ -302,6 +302,13 @@
  	while (_eventMan->pollEvent(event)) {
  		switch (event.type) {
  		case Common::EVENT_KEYDOWN:
@@ -649,7 +641,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  			if (!handleKeyEvents) {
  				break;
  			}
-@@ -304,10 +311,18 @@
+@@ -312,10 +319,18 @@
  						quitGame();
  					}
  				}
@@ -668,7 +660,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  			} else if (event.kbd.keycode == Common::KEYCODE_F9) {
  				_fastWalkMode = true;
  			} else if (event.kbd.keycode == Common::KEYCODE_F10) {
-@@ -332,12 +347,22 @@
+@@ -340,12 +355,22 @@
  		case Common::EVENT_LBUTTONDOWN:
  			_inp_leftMouseButtonPressed = true;
  			break;
@@ -691,9 +683,9 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  		default:
  			break;
  		}
---- scummvm-1.1.orig/engines/sky/sky.cpp	2010-03-21 22:01:39.000000000 +0100
-+++ scummvm-1.1/engines/sky/sky.cpp	2010-03-24 00:14:36.000000000 +0100
-@@ -406,6 +406,17 @@
+--- branch-1-2-0.orig/engines/sky/sky.cpp	2010-10-08 00:39:08.000000000 +0200
++++ branch-1-2-0/engines/sky/sky.cpp	2010-10-08 20:59:27.000000000 +0200
+@@ -408,6 +408,17 @@
  			switch (event.type) {
  			case Common::EVENT_KEYDOWN:
  				_keyPressed = event.kbd;
@@ -711,8 +703,8 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  				break;
  			case Common::EVENT_MOUSEMOVE:
  				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
---- scummvm-1.1.orig/engines/lure/menu.cpp	2010-03-21 22:01:40.000000000 +0100
-+++ scummvm-1.1/engines/lure/menu.cpp	2010-03-24 00:14:36.000000000 +0100
+--- branch-1-2-0.orig/engines/lure/menu.cpp	2010-10-08 00:39:16.000000000 +0200
++++ branch-1-2-0/engines/lure/menu.cpp	2010-10-08 20:59:27.000000000 +0200
 @@ -34,7 +34,7 @@
  #include "lure/events.h"
  #include "lure/lure.h"
@@ -722,8 +714,8 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  #define LURE_CLICKABLE_MENUS
  #endif
  
---- scummvm-1.1.orig/engines/cine/main_loop.cpp	2010-03-21 22:01:43.000000000 +0100
-+++ scummvm-1.1/engines/cine/main_loop.cpp	2010-03-24 00:14:36.000000000 +0100
+--- branch-1-2-0.orig/engines/cine/main_loop.cpp	2010-10-08 00:39:39.000000000 +0200
++++ branch-1-2-0/engines/cine/main_loop.cpp	2010-10-08 20:59:27.000000000 +0200
 @@ -75,18 +75,27 @@
  				mouseRight = 1;
  			}
@@ -832,9 +824,9 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  		case Common::KEYCODE_KP2:
  			moveUsingKeyboard(0, -1); // Down
  			break;
---- scummvm-1.1.orig/backends/platform/sdl/graphics.cpp	2010-03-21 22:01:52.000000000 +0100
-+++ scummvm-1.1/backends/platform/sdl/graphics.cpp	2010-03-24 09:34:28.000000000 +0100
-@@ -520,6 +520,56 @@
+--- branch-1-2-0.orig/backends/platform/sdl/graphics.cpp	2010-10-08 00:41:46.000000000 +0200
++++ branch-1-2-0/backends/platform/sdl/graphics.cpp	2010-10-08 20:59:27.000000000 +0200
+@@ -535,6 +535,56 @@
  	height = bestMode->h;
  }
  
@@ -891,7 +883,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  bool OSystem_SDL::loadGFXMode() {
  	assert(_inited);
  	_forceFull = true;
-@@ -560,6 +610,9 @@
+@@ -575,6 +625,9 @@
  		error("allocating _screen failed");
  #endif
  
@@ -901,7 +893,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  	//
  	// Create the surface that contains the scaled graphics in 16 bit mode
  	//
-@@ -939,6 +992,14 @@
+@@ -959,6 +1012,14 @@
  		_videoMode.fullscreen = enable;
  		_transactionDetails.needHotswap = true;
  	}
@@ -916,9 +908,9 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  }
  
  void OSystem_SDL::setAspectRatioCorrection(bool enable) {
---- scummvm-1.1.orig/backends/platform/sdl/sdl.cpp	2010-03-21 22:01:52.000000000 +0100
-+++ scummvm-1.1/backends/platform/sdl/sdl.cpp	2010-03-24 00:14:36.000000000 +0100
-@@ -47,6 +47,10 @@
+--- branch-1-2-0.orig/backends/platform/sdl/sdl.cpp	2010-10-08 00:41:46.000000000 +0200
++++ branch-1-2-0/backends/platform/sdl/sdl.cpp	2010-10-08 20:59:27.000000000 +0200
+@@ -48,6 +48,10 @@
  #include "icons/scummvm.xpm"
  
  #include <time.h>	// for getTimeAndDate()
@@ -929,7 +921,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  
  //#define SAMPLES_PER_SEC 11025
  #define SAMPLES_PER_SEC 22050
-@@ -212,7 +216,15 @@
+@@ -214,7 +218,15 @@
  		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
  	}
  
@@ -946,7 +938,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  	OSystem::initBackend();
  
  	_inited = true;
-@@ -429,6 +441,23 @@
+@@ -427,6 +439,23 @@
  	return file.createWriteStream();
  }
  
@@ -970,7 +962,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  void OSystem_SDL::setWindowCaption(const char *caption) {
  	Common::String cap;
  	byte c;
-@@ -445,6 +474,11 @@
+@@ -443,6 +472,11 @@
  	}
  
  	SDL_WM_SetCaption(cap.c_str(), cap.c_str());
@@ -982,7 +974,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  }
  
  bool OSystem_SDL::hasFeature(Feature f) {
-@@ -529,6 +563,14 @@
+@@ -519,6 +553,14 @@
  #endif
  }
  
@@ -997,7 +989,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  void OSystem_SDL::setupIcon() {
  	int x, y, w, h, ncols, nbytes, i;
  	unsigned int rgba[256];
-@@ -580,6 +622,7 @@
+@@ -570,6 +612,7 @@
  	SDL_FreeSurface(sdl_surf);
  	free(icon);
  }
@@ -1005,20 +997,20 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  
  OSystem::MutexRef OSystem_SDL::createMutex() {
  	return (MutexRef) SDL_CreateMutex();
---- scummvm-1.1.orig/backends/platform/sdl/events.cpp	2010-04-02 22:45:24.000000000 +0200
-+++ scummvm-1.1/backends/platform/sdl/events.cpp	2010-04-02 22:44:04.000000000 +0200
-@@ -26,7 +26,9 @@
+--- branch-1-2-0.orig/backends/platform/sdl/events.cpp	2010-10-08 00:41:46.000000000 +0200
++++ branch-1-2-0/backends/platform/sdl/events.cpp	2010-10-08 21:09:34.000000000 +0200
+@@ -26,6 +26,10 @@
  #include "backends/platform/sdl/sdl.h"
  #include "common/util.h"
  #include "common/events.h"
--
 +#ifdef MAEMO_SDL
 +#include "common/config-manager.h"
 +#endif
++
+ #include "graphics/scaler/aspect.h"	// for aspect2Real
+ 
  // FIXME move joystick defines out and replace with confile file options
- // we should really allow users to map any key to a joystick button
- #define JOY_DEADZONE 3200
-@@ -232,8 +234,13 @@
+@@ -234,8 +238,13 @@
  
  bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
  
@@ -1033,7 +1025,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  	// Handle scroll lock as a key modifier
  	if (ev.key.keysym.sym == SDLK_SCROLLOCK)
  		_scrollLock = !_scrollLock;
-@@ -241,8 +248,13 @@
+@@ -243,8 +252,13 @@
  	if (_scrollLock)
  		event.kbd.flags |= Common::KBD_SCRL;
  
@@ -1047,7 +1039,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  		beginGFXTransaction();
  			setFullscreenMode(!_videoMode.fullscreen);
  		endGFXTransaction();
-@@ -276,11 +288,15 @@
+@@ -278,11 +292,15 @@
  		return false;
  	}
  
@@ -1063,7 +1055,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  
  #if defined(MACOSX)
  	// On Macintosh', Cmd-Q quits
-@@ -313,7 +329,11 @@
+@@ -315,7 +333,11 @@
  			return false;
  	}
  
@@ -1075,7 +1067,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  		return true;
  
  	event.type = Common::EVENT_KEYDOWN;
-@@ -332,7 +352,12 @@
+@@ -334,7 +356,12 @@
  	event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
  
  	// Ctrl-Alt-<key> will change the GFX mode
@@ -1088,7 +1080,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  
  	// Set the scroll lock sticky flag
  	if (_scrollLock)
-@@ -355,8 +380,20 @@
+@@ -356,8 +383,20 @@
  }
  
  bool OSystem_SDL::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
@@ -1109,7 +1101,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  	else if (ev.button.button == SDL_BUTTON_RIGHT)
  		event.type = Common::EVENT_RBUTTONDOWN;
  #if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
-@@ -372,14 +409,33 @@
+@@ -373,14 +412,33 @@
  	else
  		return false;
  
@@ -1143,7 +1135,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  	else if (ev.button.button == SDL_BUTTON_RIGHT)
  		event.type = Common::EVENT_RBUTTONUP;
  #if defined(SDL_BUTTON_MIDDLE)
-@@ -503,7 +559,203 @@
+@@ -504,7 +562,203 @@
  	return true;
  }
  
@@ -1347,9 +1339,9 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  #ifdef LINUPY
  	// On Yopy map the End button to quit
  	if ((ev.key.keysym.sym == 293)) {
---- scummvm-1.1.orig/backends/platform/sdl/sdl.h	2010-03-21 22:01:52.000000000 +0100
-+++ scummvm-1.1/backends/platform/sdl/sdl.h	2010-03-24 00:14:36.000000000 +0100
-@@ -230,6 +230,9 @@
+--- branch-1-2-0.orig/backends/platform/sdl/sdl.h	2010-10-08 00:41:46.000000000 +0200
++++ branch-1-2-0/backends/platform/sdl/sdl.h	2010-10-08 20:59:27.000000000 +0200
+@@ -232,6 +232,9 @@
  	virtual int getGraphicsMode() const;
  
  	virtual void setWindowCaption(const char *caption);
@@ -1359,7 +1351,7 @@ diff -Naur scummvm-1.1.orig/debian/scummvm.dirs scummvm-1.1/debian/scummvm.dirs
  	virtual bool openCD(int drive);
  
  	virtual bool hasFeature(Feature f);
-@@ -418,6 +421,9 @@
+@@ -416,6 +419,9 @@
  	// joystick
  	SDL_Joystick *_joystick;
  
