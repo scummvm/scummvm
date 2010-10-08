@@ -386,8 +386,14 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			if (pSnd->status == kSoundStopped) {
 				pSnd->pMidiParser->jumpToTick(0);
 			} else {
+				// Disable sound looping before fast forwarding to the last position,
+				// when loading a saved game. Fixes bug #3083151.
+				uint16 prevLoop = pSnd->loop;
+				pSnd->loop = 0;
 				// Fast forward to the last position and perform associated events when loading
 				pSnd->pMidiParser->jumpToTick(pSnd->ticker, true);
+				// Restore looping
+				pSnd->loop = prevLoop;
 			}
 			pSnd->pMidiParser->mainThreadEnd();
 			_mutex.unlock();
