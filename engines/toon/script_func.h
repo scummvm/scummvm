@@ -27,7 +27,7 @@
 #define SCRIPT_FUNC_H
 
 #include "common/array.h"
-#include "script.h"
+#include "toon/script.h"
 
 namespace Toon {
 

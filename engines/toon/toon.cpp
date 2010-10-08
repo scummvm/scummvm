@@ -35,14 +35,14 @@
 #include "gui/saveload.h"
 #include "gui/about.h"
 #include "gui/message.h"
-#include "resource.h"
-#include "toon.h"
-#include "anim.h"
-#include "picture.h"
-#include "hotspot.h"
-#include "flux.h"
-#include "drew.h"
-#include "path.h"
+#include "toon/resource.h"
+#include "toon/toon.h"
+#include "toon/anim.h"
+#include "toon/picture.h"
+#include "toon/hotspot.h"
+#include "toon/flux.h"
+#include "toon/drew.h"
+#include "toon/path.h"
 
 namespace Toon {
 

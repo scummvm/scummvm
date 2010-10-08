@@ -29,7 +29,7 @@
 #include "common/system.h"
 #include "base/plugins.h"
 #include "graphics/thumbnail.h"
-#include "toon.h"
+#include "toon/toon.h"
 
 static const PlainGameDescriptor ToonGames[] = {
 	{ "toon", "Toonstruck" },

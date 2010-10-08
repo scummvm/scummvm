@@ -28,7 +28,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
-#include "toon.h"
+#include "toon/toon.h"
 
 namespace Toon {
 

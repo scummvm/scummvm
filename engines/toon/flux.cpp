@@ -23,7 +23,7 @@
 *
 */
 
-#include "flux.h"
+#include "toon/flux.h"
 
 namespace Toon {
 

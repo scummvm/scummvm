@@ -26,7 +26,7 @@
 #ifndef TOON_FONT_H
 #define TOON_FONT_H
 
-#include "toon.h"
+#include "toon/toon.h"
 
 namespace Toon {
 

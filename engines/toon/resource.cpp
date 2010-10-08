@@ -23,9 +23,9 @@
 *
 */
 
-#include "resource.h"
+#include "toon/resource.h"
 #include "common/file.h"
-#include "toon.h"
+#include "toon/toon.h"
 
 
 namespace Toon {

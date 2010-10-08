@@ -23,8 +23,8 @@
 *
 */
 
-#include "hotspot.h"
-#include "tools.h"
+#include "toon/hotspot.h"
+#include "toon/tools.h"
 
 namespace Toon {
 

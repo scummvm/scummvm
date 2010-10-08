@@ -26,7 +26,7 @@
 #ifndef TOON_PATH_H
 #define TOON_PATH_H
 
-#include "toon.h"
+#include "toon/toon.h"
 
 namespace Toon {
 

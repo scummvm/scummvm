@@ -23,9 +23,9 @@
  *
  */
 
-#include "anim.h"
-#include "toon.h"
-#include "tools.h"
+#include "toon/anim.h"
+#include "toon/toon.h"
+#include "toon/tools.h"
 
 namespace Toon {
 

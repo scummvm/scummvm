@@ -23,8 +23,8 @@
 *
 */
 
-#include "tools.h"
-#include "toon.h"
+#include "toon/tools.h"
+#include "toon/toon.h"
 
 namespace Toon {
 

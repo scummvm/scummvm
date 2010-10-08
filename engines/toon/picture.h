@@ -31,7 +31,7 @@
 #include "common/func.h"
 #include "common/str.h"
 
-#include "toon.h"
+#include "toon/toon.h"
 
 namespace Toon {
 

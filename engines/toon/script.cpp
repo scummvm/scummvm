@@ -29,8 +29,8 @@
 #include "common/util.h"
 #include "common/system.h"
 
-#include "toon.h"
-#include "script.h"
+#include "toon/toon.h"
+#include "toon/script.h"
 
 namespace Toon {
 EMCInterpreter::EMCInterpreter(ToonEngine *vm) : _vm(vm), _scriptData(0), _filename(0) {

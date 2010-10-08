@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 #include "common/stream.h"
+
 namespace Toon {
 
 class Conversation {

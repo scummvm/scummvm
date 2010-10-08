@@ -23,7 +23,7 @@
 *
 */
 
-#include "conversation.h"
+#include "toon/conversation.h"
 
 namespace Toon {
 

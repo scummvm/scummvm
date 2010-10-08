@@ -26,8 +26,8 @@
 #ifndef TOON_HOTSPOT_H
 #define TOON_HOTSPOT_H
 
-#include "toon.h"
-#include "tools.h"
+#include "toon/toon.h"
+#include "toon/tools.h"
 
 namespace Toon {
 

@@ -28,7 +28,8 @@
 
 #include "common/file.h"
 #include "common/str.h"
-#include "conversation.h"
+#include "toon/conversation.h"
+
 namespace Toon {
 
 struct Location {

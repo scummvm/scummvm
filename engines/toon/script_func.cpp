@@ -23,14 +23,14 @@
 *
 */
 
-#include "script_func.h"
-#include "script.h"
-#include "state.h"
-#include "toon.h"
-#include "anim.h"
-#include "hotspot.h"
-#include "drew.h"
-#include "flux.h"
+#include "toon/script_func.h"
+#include "toon/script.h"
+#include "toon/state.h"
+#include "toon/toon.h"
+#include "toon/anim.h"
+#include "toon/hotspot.h"
+#include "toon/drew.h"
+#include "toon/flux.h"
 
 namespace Toon {
 

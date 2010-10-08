@@ -31,7 +31,7 @@
 #include "common/func.h"
 #include "graphics/surface.h"
 
-#include "script.h"
+#include "toon/script.h"
 
 namespace Toon {
 

@@ -23,7 +23,7 @@
 *
 */
 
-#include "text.h"
+#include "toon/text.h"
 
 namespace Toon {
 

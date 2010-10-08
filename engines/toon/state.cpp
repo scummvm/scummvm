@@ -23,8 +23,8 @@
 *
 */
 
-#include "state.h"
-#include "toon.h"
+#include "toon/state.h"
+#include "toon/toon.h"
 
 namespace Toon {
 

@@ -26,7 +26,7 @@
 #ifndef TOON_DREW_H
 #define TOON_DREW_H
 
-#include "character.h"
+#include "toon/character.h"
 
 
 namespace Toon {

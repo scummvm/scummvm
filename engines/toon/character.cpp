@@ -23,9 +23,9 @@
 *
 */
 
-#include "character.h"
-#include "drew.h"
-#include "path.h"
+#include "toon/character.h"
+#include "toon/drew.h"
+#include "toon/path.h"
 
 namespace Toon {
 

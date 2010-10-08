@@ -26,7 +26,7 @@
 #ifndef TOON_MOVIE_H
 #define TOON_MOVIE_H
 
-#include "toon.h"
+#include "toon/toon.h"
 #include "graphics/video/smk_decoder.h"
 
 namespace Toon {
