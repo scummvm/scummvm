@@ -373,18 +373,38 @@ void GfxCursor::refreshPosition() {
 		// Pic
 		const CelInfo *picCelInfo = _zoomPicView->getCelInfo(0, 0);
 		const byte *rawPicBitmap = _zoomPicView->getBitmap(0, 0);
-		// Compute hotspot from xoffset/yoffset
+
+		// Compute hotspot of cursor
 		Common::Point cursorHotspot = Common::Point((cursorCelInfo->width >> 1) - cursorCelInfo->displaceX, cursorCelInfo->height - cursorCelInfo->displaceY - 1);
 
-		uint16 targetX = CLIP<int>((mousePoint.x - _zoomZone.left) * _zoomMultiplier, 0, picCelInfo->width - cursorCelInfo->width);
-		uint16 targetY =  CLIP<int>((mousePoint.y - _zoomZone.top) * _zoomMultiplier, 0, picCelInfo->height - cursorCelInfo->height);
+		int16 targetX = ((mousePoint.x - _moveZone.left) * _zoomMultiplier);
+		int16 targetY = ((mousePoint.y - _moveZone.top) * _zoomMultiplier);
+		if (targetX < 0)
+			targetX = 0;
+		if (targetY < 0)
+			targetY = 0;
+
+		targetX -= cursorHotspot.x;
+		targetY -= cursorHotspot.y;
+
+		// Sierra SCI actually drew only within zoom area, thus removing the need to fill any other pixels with upmost/left
+		//  color of the picture cel. This also made the cursor not appear on top of everything. They actually drew the
+		//  cursor manually within kAnimate processing and used a hidden cursor for moving.
+		//  TODO: we should also do this
 
 		// Replace the special magnifier color with the associated magnified pixels
 		for (int x = 0; x < cursorCelInfo->width; x++) {
 			for (int y = 0; y < cursorCelInfo->height; y++) {
 				int curPos = cursorCelInfo->width * y + x;
 				if (cursorBitmap[curPos] == _zoomColor) {
-					_cursorSurface[curPos] = rawPicBitmap[picCelInfo->width * (targetY + y) + (targetX + x)];
+					int16 rawY = targetY + y;
+					int16 rawX = targetX + x;
+					if ((rawY >= 0) && (rawY < picCelInfo->height) && (rawX >= 0) && (rawX < picCelInfo->width)) {
+						int rawPos = picCelInfo->width * rawY + rawX;
+						_cursorSurface[curPos] = rawPicBitmap[rawPos];
+					} else {
+						_cursorSurface[curPos] = rawPicBitmap[0]; // use left and upmost pixel color
+					}
 				}
 			}
 		}
