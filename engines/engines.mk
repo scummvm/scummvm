@@ -156,6 +156,11 @@ DEFINES += -DENABLE_TINSEL=$(ENABLE_TINSEL)
 MODULES += engines/tinsel
 endif
 
+ifdef ENABLE_TOON
+DEFINES += -DENABLE_TOON=$(ENABLE_TOON)
+MODULES += engines/toon
+endif
+
 ifdef ENABLE_TOUCHE
 DEFINES += -DENABLE_TOUCHE=$(ENABLE_TOUCHE)
 MODULES += engines/touche
