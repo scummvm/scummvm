@@ -84,6 +84,7 @@ class GfxPaint16;
 class GfxScreen;
 class GfxPalette;
 class GfxTransitions;
+class GfxView;
 /**
  * Animate class, kAnimate and relevant functions for SCI16 (SCI0-SCI1.1) games
  */
@@ -95,6 +96,7 @@ public:
 	void disposeLastCast();
 	bool invoke(List *list, int argc, reg_t *argv);
 	void makeSortedList(List *list);
+	void applyGlobalScaling(AnimateList::iterator entry, GfxView *view);
 	void fill(byte &oldPicNotValid, bool maySetNsRect);
 	void update();
 	void drawCels();
