@@ -23,8 +23,8 @@
 *
 */
 
-#ifndef STATE_H
-#define STATE_H
+#ifndef TOON_STATE_H
+#define TOON_STATE_H
 
 #include "common/file.h"
 #include "common/str.h"

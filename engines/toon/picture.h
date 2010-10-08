@@ -23,8 +23,8 @@
 *
 */
 
-#ifndef PICTURE_H
-#define PICTURE_H
+#ifndef TOON_PICTURE_H
+#define TOON_PICTURE_H
 
 #include "common/stream.h"
 #include "common/array.h"
