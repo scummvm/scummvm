@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>603A04C6-D3E2-4E49-96B8-B67264E08A85</ProjectGuid>
+		<ProjectGuid>8792234F-A70A-40A0-846C-52A861448227</ProjectGuid>
 		<RootNamespace>cruise</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

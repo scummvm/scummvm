@@ -12,7 +12,7 @@
 		<ClCompile>
 			<IntrinsicFunctions>true</IntrinsicFunctions>
 			<WholeProgramOptimization>true</WholeProgramOptimization>
-			<PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<PreprocessorDefinitions>WIN32;RELEASE_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 			<StringPooling>true</StringPooling>
 			<BufferSecurityCheck>false</BufferSecurityCheck>
 			<DebugInformationFormat></DebugInformationFormat>

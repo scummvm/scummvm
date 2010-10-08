@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="tinsel"
-	ProjectGUID="{49621752-3C67-4298-8C86-7742F1E3C4AB}"
+	ProjectGUID="{589251E9-FC8E-4214-8DD8-3F7F892FD8EA}"
 	RootNamespace="tinsel"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

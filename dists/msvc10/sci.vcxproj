@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>8E48623A-ED56-4985-A567-F23513838DFD</ProjectGuid>
+		<ProjectGuid>9126A747-BD8C-49AF-8322-D11ACEE30606</ProjectGuid>
 		<RootNamespace>sci</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

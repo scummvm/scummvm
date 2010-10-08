@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="saga"
-	ProjectGUID="{3C4B7760-0462-4BD6-AA1D-713A3E7A29A5}"
+	ProjectGUID="{D42233DE-919F-4711-91EF-AFE5D68C8967}"
 	RootNamespace="saga"
 	Keyword="Win32Proj"
 	>

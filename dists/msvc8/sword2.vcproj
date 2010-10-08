@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="sword2"
-	ProjectGUID="{865D62F1-097E-49D3-8B5A-DB12D68AD6F9}"
+	ProjectGUID="{36E7BF01-104D-4C29-8A9F-1A54EB725D1F}"
 	RootNamespace="sword2"
 	Keyword="Win32Proj"
 	>

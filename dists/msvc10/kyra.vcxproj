@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>AAD076FB-267B-41E6-8598-AFE9EAE4243D</ProjectGuid>
+		<ProjectGuid>06A225F3-8F5C-4CA8-BE58-92B297D48CED</ProjectGuid>
 		<RootNamespace>kyra</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

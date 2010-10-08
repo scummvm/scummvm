@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="scummvm"
-	ProjectGUID="{BE798353-0272-464A-A2DA-CFD2CF1A5EA8}"
+	ProjectGUID="{DD767410-C4EE-47A3-B2F1-21964273C2A7}"
 	RootNamespace="scummvm"
 	Keyword="Win32Proj"
 	>

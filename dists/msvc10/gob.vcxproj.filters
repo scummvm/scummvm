@@ -2,13 +2,13 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ItemGroup>
 		<Filter Include="demos">
-			<UniqueIdentifier>A0E2B63D-73B4-4194-B60E-6FB21BB646AA</UniqueIdentifier>
+			<UniqueIdentifier>2933FAE7-8B00-44D6-A1D6-4DA3DD867838</UniqueIdentifier>
 		</Filter>
 		<Filter Include="save">
-			<UniqueIdentifier>5C9B982D-ED53-4BFA-BA14-7F3440F6BBE1</UniqueIdentifier>
+			<UniqueIdentifier>9C8F6CAA-17B6-49E2-9F27-5B35CDBE42F7</UniqueIdentifier>
 		</Filter>
 		<Filter Include="sound">
-			<UniqueIdentifier>D9721F4D-2871-425E-BF52-119B0A584667</UniqueIdentifier>
+			<UniqueIdentifier>F13EE07E-3FB5-4560-8CA2-046B297DA4C5</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 	<ItemGroup>

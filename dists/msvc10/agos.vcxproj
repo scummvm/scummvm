@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>C9C1A31B-6598-4DD7-B432-196D5BAA2A18</ProjectGuid>
+		<ProjectGuid>B6E46B63-C614-45A1-B7B9-7BB1E2F3F1D9</ProjectGuid>
 		<RootNamespace>agos</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

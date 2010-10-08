@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="tucker"
-	ProjectGUID="{21C07E5D-2801-45B5-886D-F87A52BE270F}"
+	ProjectGUID="{5FB0745D-3F76-414D-90B0-CDD9E0A6C5DC}"
 	RootNamespace="tucker"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

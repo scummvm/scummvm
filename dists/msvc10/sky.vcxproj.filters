@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ItemGroup>
 		<Filter Include="music">
-			<UniqueIdentifier>81A950E6-9C32-482E-A160-B95DC4B8111D</UniqueIdentifier>
+			<UniqueIdentifier>5F6F8656-B827-4FD0-BCEC-AC7E0D047695</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 	<ItemGroup>

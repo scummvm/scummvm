@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>E93600CC-2489-4C0C-BEDE-16D7C7EDE220</ProjectGuid>
+		<ProjectGuid>37410989-3C47-43F3-8059-E8A47B215622</ProjectGuid>
 		<RootNamespace>saga</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

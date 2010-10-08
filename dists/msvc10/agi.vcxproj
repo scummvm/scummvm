@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>BB7490F7-669B-4039-ADD6-636994F82F08</ProjectGuid>
+		<ProjectGuid>F5D1592D-07BF-4FA4-9278-4D536447B0F0</ProjectGuid>
 		<RootNamespace>agi</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

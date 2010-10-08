@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>72D0929A-51A3-43C1-B1DB-5341F72991BB</ProjectGuid>
+		<ProjectGuid>8C6F3379-ABE1-4882-99E2-D3D8B829783F</ProjectGuid>
 		<RootNamespace>scumm</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

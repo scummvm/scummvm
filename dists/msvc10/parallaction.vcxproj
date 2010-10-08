@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>083FA5A7-E1EC-4820-A775-F00AD7E8D60B</ProjectGuid>
+		<ProjectGuid>548A301E-52FA-4D0A-B638-C4F3232238B1</ProjectGuid>
 		<RootNamespace>parallaction</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

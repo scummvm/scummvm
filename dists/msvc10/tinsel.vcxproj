@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>B11B33F2-A9D8-4A3B-B003-BCDCBBBD6659</ProjectGuid>
+		<ProjectGuid>96EE4D1A-EE85-4B2F-BC16-D1C72E694D0B</ProjectGuid>
 		<RootNamespace>tinsel</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

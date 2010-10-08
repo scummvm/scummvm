@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="lure"
-	ProjectGUID="{DA352A4D-A639-4F1A-851A-5D68C5450E6E}"
+	ProjectGUID="{C56D6D06-638A-46B2-AE0F-04201E644D3E}"
 	RootNamespace="lure"
 	Keyword="Win32Proj"
 	>

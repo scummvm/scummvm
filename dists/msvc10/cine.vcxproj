@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>20BA1087-5621-4005-B724-6F8D1E9E96E7</ProjectGuid>
+		<ProjectGuid>C54B08CD-0B57-429D-90C0-F13508A227BF</ProjectGuid>
 		<RootNamespace>cine</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

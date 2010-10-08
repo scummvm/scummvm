@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="agi"
-	ProjectGUID="{E512A498-0CD9-43AC-9A3B-402ECF74C0B7}"
+	ProjectGUID="{8BFC605B-A837-4947-A98F-3DD569B1182B}"
 	RootNamespace="agi"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="drascula"
-	ProjectGUID="{16BAD927-336F-4AAC-BB33-5B660B254447}"
+	ProjectGUID="{C786E2D3-0892-4AE7-ACB2-0BB3AFFCA412}"
 	RootNamespace="drascula"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

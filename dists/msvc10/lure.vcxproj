@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>4B487283-9EA1-46DF-BDF9-ECD02261F6CC</ProjectGuid>
+		<ProjectGuid>BDB36641-C9C6-4A1F-B6BB-F9BA3CEA5D43</ProjectGuid>
 		<RootNamespace>lure</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

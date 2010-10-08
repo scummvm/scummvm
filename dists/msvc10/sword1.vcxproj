@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>1DE2B90B-3A43-4020-AB84-55BE09E3BDC3</ProjectGuid>
+		<ProjectGuid>FAC33BB8-50D5-48D4-B83B-EEC71FF5CD44</ProjectGuid>
 		<RootNamespace>sword1</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

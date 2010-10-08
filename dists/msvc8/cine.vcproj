@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="cine"
-	ProjectGUID="{A002D081-BCA1-494F-939A-2384CFEE582A}"
+	ProjectGUID="{5860A74B-F003-4A78-B27E-825263295BA2}"
 	RootNamespace="cine"
 	Keyword="Win32Proj"
 	>

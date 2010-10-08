@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>79FA3078-2228-44CD-B690-82A8B9FA4F6B</ProjectGuid>
+		<ProjectGuid>3C8C38E5-343B-4717-ADF1-1A152B6204C1</ProjectGuid>
 		<RootNamespace>touche</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

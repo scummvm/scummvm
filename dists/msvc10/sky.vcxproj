@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>B98ECADE-19B7-4A19-9602-F05FEFD3807F</ProjectGuid>
+		<ProjectGuid>25108F62-5824-47D8-BD40-7DF962D31CF3</ProjectGuid>
 		<RootNamespace>sky</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>9CBA94D6-FE26-46AB-AB4D-6BB4322978A5</ProjectGuid>
+		<ProjectGuid>DBD23E2D-A8A7-42A1-A2F1-6902E73847ED</ProjectGuid>
 		<RootNamespace>teenagent</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

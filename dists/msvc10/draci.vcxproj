@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>9B9A0DF2-BCCD-48B5-B269-431209D9FA6A</ProjectGuid>
+		<ProjectGuid>8F8BF49B-E268-4AB4-A92C-E932CF12F257</ProjectGuid>
 		<RootNamespace>draci</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

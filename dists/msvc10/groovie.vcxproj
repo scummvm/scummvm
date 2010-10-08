@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>51662335-3856-4FC2-809B-B20C92287426</ProjectGuid>
+		<ProjectGuid>56E82778-8215-4F88-95EF-F0DA0380EFA1</ProjectGuid>
 		<RootNamespace>groovie</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

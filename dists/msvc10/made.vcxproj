@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>326DC859-E90A-40B0-A3F0-9B8ED5BFCB22</ProjectGuid>
+		<ProjectGuid>8D82371D-DE44-465E-9D5A-1235309F23ED</ProjectGuid>
 		<RootNamespace>made</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

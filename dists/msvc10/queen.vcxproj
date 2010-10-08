@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>57A06442-AAA5-424E-968E-DD6D4FAA8F58</ProjectGuid>
+		<ProjectGuid>A56FCF85-B496-4352-B1F6-872296AB11EA</ProjectGuid>
 		<RootNamespace>queen</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="parallaction"
-	ProjectGUID="{29E9C6CF-23B7-49A9-9248-12998E2008EE}"
+	ProjectGUID="{547E78B8-0A6F-4B78-BF70-989DD4E5DBA3}"
 	RootNamespace="parallaction"
 	Keyword="Win32Proj"
 	>

@@ -2,124 +2,124 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ItemGroup>
 		<Filter Include="backends">
-			<UniqueIdentifier>BCC91EC7-C4CA-4CA6-9A77-BB30AEBCDC30</UniqueIdentifier>
+			<UniqueIdentifier>1064B5B3-81B3-416D-A065-748C147AC174</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\events">
-			<UniqueIdentifier>662E1804-6140-4343-A1EC-A066A6B28463</UniqueIdentifier>
+			<UniqueIdentifier>E948CBA3-702B-442E-9821-AC262524BC36</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\events\default">
-			<UniqueIdentifier>7CA32C41-6E29-474A-A0A3-7B4F605880C7</UniqueIdentifier>
+			<UniqueIdentifier>8872E90B-26AC-4908-92ED-952769579C53</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\fs">
-			<UniqueIdentifier>8798CCE8-D900-4D7C-ADCE-E3948168F8FD</UniqueIdentifier>
+			<UniqueIdentifier>A068F712-946C-40AD-8EEC-D3B41190EA9A</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\fs\amigaos4">
-			<UniqueIdentifier>0C253F7B-4E28-46EF-8C42-402E9AC0F623</UniqueIdentifier>
+			<UniqueIdentifier>03D5A62A-8221-4295-90C7-BC791F5ACDC0</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\fs\posix">
-			<UniqueIdentifier>5AC30C34-C339-40B1-8994-478AFD40880B</UniqueIdentifier>
+			<UniqueIdentifier>C2C5D258-3313-46C1-81D9-76136A62AD6D</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\fs\symbian">
-			<UniqueIdentifier>65C887B4-F04E-45BE-90E6-EC2CA7E34F03</UniqueIdentifier>
+			<UniqueIdentifier>385597BB-76C9-4186-920F-01B269CE732D</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\fs\windows">
-			<UniqueIdentifier>A75C386C-96E8-4F9F-BE66-2A7DA7B3880D</UniqueIdentifier>
+			<UniqueIdentifier>944685C7-5A8C-495B-A601-6ED0631D3F9C</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\keymapper">
-			<UniqueIdentifier>7C10C26E-5F69-4DEF-901B-1DF8FE6DFBA7</UniqueIdentifier>
+			<UniqueIdentifier>73D658E9-A1AA-4135-BA72-E725415B52D6</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\midi">
-			<UniqueIdentifier>C9341460-1E33-419D-9A2B-1B42DFA4505C</UniqueIdentifier>
+			<UniqueIdentifier>A2D89EFC-6529-49CC-ABC8-9D8EE5DC2B59</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\platform">
-			<UniqueIdentifier>B513CB15-7DF8-46CD-9423-C61491C2BB5B</UniqueIdentifier>
+			<UniqueIdentifier>B4844457-30B6-4DEA-A975-106BD1634274</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\platform\sdl">
-			<UniqueIdentifier>F7D0BC16-04BE-439E-AACF-E1CA7432272A</UniqueIdentifier>
+			<UniqueIdentifier>3CE172A2-0CCC-4F37-950E-C67CEBF2D6A0</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\plugins">
-			<UniqueIdentifier>46F240C3-EC46-4102-AA59-16FB1DD25815</UniqueIdentifier>
+			<UniqueIdentifier>771CF8A8-D286-43FC-BCA3-68CF07AB4544</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\plugins\posix">
-			<UniqueIdentifier>A3162CA8-D4E0-48BF-B02A-8A265CB250A3</UniqueIdentifier>
+			<UniqueIdentifier>8EB7E69B-8557-421B-A59A-98518D6FF206</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\plugins\sdl">
-			<UniqueIdentifier>A5916793-D7F9-4543-93AC-407080988625</UniqueIdentifier>
+			<UniqueIdentifier>8CEBAE5F-7342-4C71-A6C5-41EE72863402</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\plugins\win32">
-			<UniqueIdentifier>AEB2CD83-9417-4445-81CE-6B9E81BC4228</UniqueIdentifier>
+			<UniqueIdentifier>3F1B9DC4-7271-40D8-8C7A-2A9AEA1DA077</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\saves">
-			<UniqueIdentifier>4EAABB27-A452-4AF8-BEAA-6A8043F0A5F2</UniqueIdentifier>
+			<UniqueIdentifier>0A50D67E-9334-407A-B932-6A6DB99E6FF9</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\saves\default">
-			<UniqueIdentifier>A4747739-8BBB-4FCD-8AEB-6D0DA8B035F6</UniqueIdentifier>
+			<UniqueIdentifier>BA0DBE2E-7EA0-478B-9C31-26074FC77E59</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\saves\posix">
-			<UniqueIdentifier>5BF11F01-4489-4A44-B465-C478576B6CFC</UniqueIdentifier>
+			<UniqueIdentifier>1856D8AB-8AC9-4785-BB91-F3B63063B0EA</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\timer">
-			<UniqueIdentifier>E0E3376D-9FB6-4B2B-A3A9-384C5A6E44B6</UniqueIdentifier>
+			<UniqueIdentifier>71701AF0-1221-4C2E-93A3-36A26BB4FC83</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\timer\default">
-			<UniqueIdentifier>6063B8A4-EDB3-4922-99AF-9B711B086EFB</UniqueIdentifier>
+			<UniqueIdentifier>0CD53097-9F57-4D9C-A812-531A750505E6</UniqueIdentifier>
 		</Filter>
 		<Filter Include="backends\vkeybd">
-			<UniqueIdentifier>ECA6698D-5EA5-4802-90F1-4EAA619362C1</UniqueIdentifier>
+			<UniqueIdentifier>751FD787-4155-4694-B8EC-3765A234E9AE</UniqueIdentifier>
 		</Filter>
 		<Filter Include="base">
-			<UniqueIdentifier>F61B67E4-CF51-48E9-82A4-5B1DADCA1A9A</UniqueIdentifier>
+			<UniqueIdentifier>0B1A47AA-7165-485A-B79B-74ECA17AD417</UniqueIdentifier>
 		</Filter>
 		<Filter Include="common">
-			<UniqueIdentifier>718428D0-2BE1-427B-9422-2736B589F7AD</UniqueIdentifier>
+			<UniqueIdentifier>9AAD9FDC-0356-41FC-84A9-62E7DD4D97E8</UniqueIdentifier>
 		</Filter>
 		<Filter Include="dists">
-			<UniqueIdentifier>A5609375-B29B-4FB4-81BA-D2EE86ED8AF8</UniqueIdentifier>
+			<UniqueIdentifier>67DE94D8-44DC-44BB-B9A9-A81B257E33BF</UniqueIdentifier>
 		</Filter>
 		<Filter Include="engines">
-			<UniqueIdentifier>72B3C99D-969C-496B-BE41-A174CA9A2370</UniqueIdentifier>
+			<UniqueIdentifier>2CD29C2F-2A0F-4D6F-B88F-5797DDEE8145</UniqueIdentifier>
 		</Filter>
 		<Filter Include="graphics">
-			<UniqueIdentifier>FAB6E5AE-5345-4394-8137-848825108198</UniqueIdentifier>
+			<UniqueIdentifier>CD161F12-F353-4D6D-BD77-8923F5BCE322</UniqueIdentifier>
 		</Filter>
 		<Filter Include="graphics\fonts">
-			<UniqueIdentifier>C34B365B-E750-46A7-9169-1D5D0440CD00</UniqueIdentifier>
+			<UniqueIdentifier>908152BA-907F-4B4A-9082-E1ED71633340</UniqueIdentifier>
 		</Filter>
 		<Filter Include="graphics\scaler">
-			<UniqueIdentifier>F6B4AF4B-FA13-4FFC-8B65-857075070939</UniqueIdentifier>
+			<UniqueIdentifier>7A52526F-A621-4DA4-9967-C88F25ACB2B5</UniqueIdentifier>
 		</Filter>
 		<Filter Include="graphics\video">
-			<UniqueIdentifier>5240943B-915C-4223-8500-81CA4150CA39</UniqueIdentifier>
+			<UniqueIdentifier>2E0571BF-849C-4A94-A0EB-839150B6D2CA</UniqueIdentifier>
 		</Filter>
 		<Filter Include="graphics\video\codecs">
-			<UniqueIdentifier>057B8401-8F64-4DDA-8984-4C3F8B5679DE</UniqueIdentifier>
+			<UniqueIdentifier>0A253BB1-4719-46E0-8020-71A5CC245CFA</UniqueIdentifier>
 		</Filter>
 		<Filter Include="gui">
-			<UniqueIdentifier>960F1A28-6CFD-4C32-BECD-FD401FC87924</UniqueIdentifier>
+			<UniqueIdentifier>29CDBAAE-6BC4-448B-B1C7-1E027FF0CD8A</UniqueIdentifier>
 		</Filter>
 		<Filter Include="icons">
-			<UniqueIdentifier>45FD26D4-6324-4F2E-A9FB-6E3552E815E9</UniqueIdentifier>
+			<UniqueIdentifier>17093C5E-2293-40A3-B3B1-4A80D5A67C00</UniqueIdentifier>
 		</Filter>
 		<Filter Include="sound">
-			<UniqueIdentifier>F7301364-2E5F-472E-AE95-6E4D5FE872A4</UniqueIdentifier>
+			<UniqueIdentifier>7538AFE1-FDF3-4DAF-BC8C-B13D7E80C795</UniqueIdentifier>
 		</Filter>
 		<Filter Include="sound\decoders">
-			<UniqueIdentifier>E798794C-BD2A-4A67-A6E9-9D79D2B263CB</UniqueIdentifier>
+			<UniqueIdentifier>8A04F4AC-9835-414D-A69B-CDBD424BBEB8</UniqueIdentifier>
 		</Filter>
 		<Filter Include="sound\mods">
-			<UniqueIdentifier>E2763112-D6C9-4006-9FAF-54BF98C76581</UniqueIdentifier>
+			<UniqueIdentifier>836E9A81-6309-4220-95E4-5D146526AAEF</UniqueIdentifier>
 		</Filter>
 		<Filter Include="sound\softsynth">
-			<UniqueIdentifier>61DECD1F-0949-4730-B425-AA07D80ED2BC</UniqueIdentifier>
+			<UniqueIdentifier>2B9F9DC3-D4EE-41BC-8ADF-7BCD2B3A86AF</UniqueIdentifier>
 		</Filter>
 		<Filter Include="sound\softsynth\fmtowns_pc98">
-			<UniqueIdentifier>8505CF5D-CE10-442E-80B9-EE5A8154DBE2</UniqueIdentifier>
+			<UniqueIdentifier>A821320C-2A64-4DC0-898B-D5AEB1809FDC</UniqueIdentifier>
 		</Filter>
 		<Filter Include="sound\softsynth\mt32">
-			<UniqueIdentifier>34AA033D-F48A-4E29-B019-318A280448AE</UniqueIdentifier>
+			<UniqueIdentifier>203DA0F5-2DB2-43B7-922F-85BE6A0D6F14</UniqueIdentifier>
 		</Filter>
 		<Filter Include="sound\softsynth\opl">
-			<UniqueIdentifier>0A180CD8-2971-48E9-ABF6-44AC4C219080</UniqueIdentifier>
+			<UniqueIdentifier>2EA12159-064E-4A50-99F0-008C719F6992</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 	<ItemGroup>

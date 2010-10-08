@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="draci"
-	ProjectGUID="{D12C7B8E-CE25-4EE2-8002-6790F1C0BB2B}"
+	ProjectGUID="{0AAD1AFB-B164-45A5-A2F7-F7472154EAFD}"
 	RootNamespace="draci"
 	Keyword="Win32Proj"
 	>

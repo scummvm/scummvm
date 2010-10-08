@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>15FE32E8-E2D0-42F8-8AE9-6CEECAF67467</ProjectGuid>
+		<ProjectGuid>A417A64D-2298-4DE6-8640-8F6784138F15</ProjectGuid>
 		<RootNamespace>drascula</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>17825EC0-5C2A-4CCD-ADB9-AAE9781243F1</ProjectGuid>
+		<ProjectGuid>5252DC41-D8F7-4016-8F43-DD3EAC2B49E9</ProjectGuid>
 		<RootNamespace>tucker</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>

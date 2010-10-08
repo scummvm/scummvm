@@ -19,7 +19,7 @@
 		</ProjectConfiguration>
 	</ItemGroup>
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>0D746B2F-9C90-4D13-A180-BCDA7B0C4693</ProjectGuid>
+		<ProjectGuid>B882CFEC-BD58-45EB-8A20-0275820738D4</ProjectGuid>
 		<RootNamespace>scummvm</RootNamespace>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>
@@ -801,73 +801,73 @@
 	</ItemGroup>
 	<ItemGroup>
 	<ProjectReference Include="agi.vcxproj">
-		<Project>{BB7490F7-669B-4039-ADD6-636994F82F08}</Project>
+		<Project>{F5D1592D-07BF-4FA4-9278-4D536447B0F0}</Project>
 	</ProjectReference>
 	<ProjectReference Include="agos.vcxproj">
-		<Project>{C9C1A31B-6598-4DD7-B432-196D5BAA2A18}</Project>
+		<Project>{B6E46B63-C614-45A1-B7B9-7BB1E2F3F1D9}</Project>
 	</ProjectReference>
 	<ProjectReference Include="cine.vcxproj">
-		<Project>{20BA1087-5621-4005-B724-6F8D1E9E96E7}</Project>
+		<Project>{C54B08CD-0B57-429D-90C0-F13508A227BF}</Project>
 	</ProjectReference>
 	<ProjectReference Include="cruise.vcxproj">
-		<Project>{603A04C6-D3E2-4E49-96B8-B67264E08A85}</Project>
+		<Project>{8792234F-A70A-40A0-846C-52A861448227}</Project>
 	</ProjectReference>
 	<ProjectReference Include="draci.vcxproj">
-		<Project>{9B9A0DF2-BCCD-48B5-B269-431209D9FA6A}</Project>
+		<Project>{8F8BF49B-E268-4AB4-A92C-E932CF12F257}</Project>
 	</ProjectReference>
 	<ProjectReference Include="drascula.vcxproj">
-		<Project>{15FE32E8-E2D0-42F8-8AE9-6CEECAF67467}</Project>
+		<Project>{A417A64D-2298-4DE6-8640-8F6784138F15}</Project>
 	</ProjectReference>
 	<ProjectReference Include="gob.vcxproj">
-		<Project>{92825B4F-5155-4544-BF49-57C824523439}</Project>
+		<Project>{9E84B182-EDEC-4718-9922-4BE8343E41D8}</Project>
 	</ProjectReference>
 	<ProjectReference Include="groovie.vcxproj">
-		<Project>{51662335-3856-4FC2-809B-B20C92287426}</Project>
+		<Project>{56E82778-8215-4F88-95EF-F0DA0380EFA1}</Project>
 	</ProjectReference>
 	<ProjectReference Include="kyra.vcxproj">
-		<Project>{AAD076FB-267B-41E6-8598-AFE9EAE4243D}</Project>
+		<Project>{06A225F3-8F5C-4CA8-BE58-92B297D48CED}</Project>
 	</ProjectReference>
 	<ProjectReference Include="lure.vcxproj">
-		<Project>{4B487283-9EA1-46DF-BDF9-ECD02261F6CC}</Project>
+		<Project>{BDB36641-C9C6-4A1F-B6BB-F9BA3CEA5D43}</Project>
 	</ProjectReference>
 	<ProjectReference Include="made.vcxproj">
-		<Project>{326DC859-E90A-40B0-A3F0-9B8ED5BFCB22}</Project>
+		<Project>{8D82371D-DE44-465E-9D5A-1235309F23ED}</Project>
 	</ProjectReference>
 	<ProjectReference Include="parallaction.vcxproj">
-		<Project>{083FA5A7-E1EC-4820-A775-F00AD7E8D60B}</Project>
+		<Project>{548A301E-52FA-4D0A-B638-C4F3232238B1}</Project>
 	</ProjectReference>
 	<ProjectReference Include="queen.vcxproj">
-		<Project>{57A06442-AAA5-424E-968E-DD6D4FAA8F58}</Project>
+		<Project>{A56FCF85-B496-4352-B1F6-872296AB11EA}</Project>
 	</ProjectReference>
 	<ProjectReference Include="saga.vcxproj">
-		<Project>{E93600CC-2489-4C0C-BEDE-16D7C7EDE220}</Project>
+		<Project>{37410989-3C47-43F3-8059-E8A47B215622}</Project>
 	</ProjectReference>
 	<ProjectReference Include="sci.vcxproj">
-		<Project>{8E48623A-ED56-4985-A567-F23513838DFD}</Project>
+		<Project>{9126A747-BD8C-49AF-8322-D11ACEE30606}</Project>
 	</ProjectReference>
 	<ProjectReference Include="scumm.vcxproj">
-		<Project>{72D0929A-51A3-43C1-B1DB-5341F72991BB}</Project>
+		<Project>{8C6F3379-ABE1-4882-99E2-D3D8B829783F}</Project>
 	</ProjectReference>
 	<ProjectReference Include="sky.vcxproj">
-		<Project>{B98ECADE-19B7-4A19-9602-F05FEFD3807F}</Project>
+		<Project>{25108F62-5824-47D8-BD40-7DF962D31CF3}</Project>
 	</ProjectReference>
 	<ProjectReference Include="sword1.vcxproj">
-		<Project>{1DE2B90B-3A43-4020-AB84-55BE09E3BDC3}</Project>
+		<Project>{FAC33BB8-50D5-48D4-B83B-EEC71FF5CD44}</Project>
 	</ProjectReference>
 	<ProjectReference Include="sword2.vcxproj">
-		<Project>{7388A28C-408E-45D7-9096-38816BB80188}</Project>
+		<Project>{065EA75E-82FE-4801-80B5-FAA28A179685}</Project>
 	</ProjectReference>
 	<ProjectReference Include="teenagent.vcxproj">
-		<Project>{9CBA94D6-FE26-46AB-AB4D-6BB4322978A5}</Project>
+		<Project>{DBD23E2D-A8A7-42A1-A2F1-6902E73847ED}</Project>
 	</ProjectReference>
 	<ProjectReference Include="tinsel.vcxproj">
-		<Project>{B11B33F2-A9D8-4A3B-B003-BCDCBBBD6659}</Project>
+		<Project>{96EE4D1A-EE85-4B2F-BC16-D1C72E694D0B}</Project>
 	</ProjectReference>
 	<ProjectReference Include="touche.vcxproj">
-		<Project>{79FA3078-2228-44CD-B690-82A8B9FA4F6B}</Project>
+		<Project>{3C8C38E5-343B-4717-ADF1-1A152B6204C1}</Project>
 	</ProjectReference>
 	<ProjectReference Include="tucker.vcxproj">
-		<Project>{17825EC0-5C2A-4CCD-ADB9-AAE9781243F1}</Project>
+		<Project>{5252DC41-D8F7-4016-8F43-DD3EAC2B49E9}</Project>
 	</ProjectReference>
 	</ItemGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

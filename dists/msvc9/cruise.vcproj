@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="cruise"
-	ProjectGUID="{36288803-1178-45F1-B90B-19ADEAD7C8DC}"
+	ProjectGUID="{3D25E94D-0B81-4EE6-9E1A-F72206FBF1F0}"
 	RootNamespace="cruise"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

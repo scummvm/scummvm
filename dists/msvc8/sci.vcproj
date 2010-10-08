@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="sci"
-	ProjectGUID="{BCA603E6-F6E1-4C63-ACAF-6EE903F2913F}"
+	ProjectGUID="{3EE5D2B4-5A17-42E5-95C6-1D7B1DC6F5F1}"
 	RootNamespace="sci"
 	Keyword="Win32Proj"
 	>

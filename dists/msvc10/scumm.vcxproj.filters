@@ -2,19 +2,19 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ItemGroup>
 		<Filter Include="he">
-			<UniqueIdentifier>786CC991-CBB1-423D-8420-A2B61D4DE175</UniqueIdentifier>
+			<UniqueIdentifier>B609D439-BE2D-403A-88D3-9D4F294C4F75</UniqueIdentifier>
 		</Filter>
 		<Filter Include="imuse">
-			<UniqueIdentifier>B7118DBC-4D1A-483C-9A9E-CCF6F8CA2B72</UniqueIdentifier>
+			<UniqueIdentifier>E409A469-C946-4F4D-91CD-F284C32D927B</UniqueIdentifier>
 		</Filter>
 		<Filter Include="imuse_digi">
-			<UniqueIdentifier>38F40504-A707-42AB-A8E5-62453345BBEB</UniqueIdentifier>
+			<UniqueIdentifier>3668B4F4-9596-4FDD-ABCD-2E941A7E0BFE</UniqueIdentifier>
 		</Filter>
 		<Filter Include="insane">
-			<UniqueIdentifier>564AA8A3-65F1-4040-91AE-388B7A63FDB3</UniqueIdentifier>
+			<UniqueIdentifier>87B06852-F649-4008-9794-8CDBC12057F7</UniqueIdentifier>
 		</Filter>
 		<Filter Include="smush">
-			<UniqueIdentifier>5803B700-0BFA-4C34-A00F-7A15553601AB</UniqueIdentifier>
+			<UniqueIdentifier>880CEC1F-A21D-4D0E-AA2D-A306ABAE0634</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 	<ItemGroup>
