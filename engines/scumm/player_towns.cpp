@@ -118,7 +118,7 @@ void Player_Towns::playPcmTrack(int sound, const uint8 *data, int velo, int pan,
 
 	int numChan = _v2 ? 1 : ptr[14];
 	for (int i = 0; i < numChan; i++) {
-		int chan = getNextFreePcmChannel(sound, i, priority);
+		int chan = allocatePcmChannel(sound, i, priority);
 		if (!chan)
 			return;
 		
@@ -156,7 +156,7 @@ void Player_Towns::stopPcmTrack(int sound) {
 	}
 }
 
-int Player_Towns::getNextFreePcmChannel(int sound, int sfxChanRelIndex, uint32 priority) {
+int Player_Towns::allocatePcmChannel(int sound, int sfxChanRelIndex, uint32 priority) {
 	if (!_intf)
 		return 0;
 
@@ -177,7 +177,8 @@ int Player_Towns::getNextFreePcmChannel(int sound, int sfxChanRelIndex, uint32 p
 				continue;
 
 			chan = i;
-			_vm->_sound->stopSound(_pcmCurrentSound[chan].index);
+			if (_pcmCurrentSound[chan].index != 0xffff)
+				_vm->_sound->stopSound(_pcmCurrentSound[chan].index);
 		}
 
 		if (!chan) {
@@ -185,7 +186,7 @@ int Player_Towns::getNextFreePcmChannel(int sound, int sfxChanRelIndex, uint32 p
 				if (priority >= _pcmCurrentSound[i].priority)
 					chan = i;
 			}				
-			if (chan)
+			if (chan && _pcmCurrentSound[chan].index != 0xffff)
 				_vm->_sound->stopSound(_pcmCurrentSound[chan].index);
 		}
 	}
@@ -723,9 +724,7 @@ void Player_Towns_v2::playPcmTrackSBL(const uint8 *data) {
 	
 	uint32 len = (READ_LE_UINT32(data) >> 8) - 2;
 	
-	int chan = getNextFreePcmChannel(0xffff, 0, 0x1000);
-	if (!chan)
-		return;
+	int chan = allocatePcmChannel(0xffff, 0, 0x1000);
 
 	delete[] _sblData;
 	_sblData = new uint8[len + 32];
