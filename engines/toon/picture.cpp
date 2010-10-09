@@ -137,7 +137,7 @@ void Picture::setupPalette() {
 	debugC(1, kDebugPicture, "setupPalette()");
 
 	if (_useFullPalette)
-		_vm->setPaletteEntries(_palette, 0, 255);
+		_vm->setPaletteEntries(_palette, 0, 256);
 	else
 		_vm->setPaletteEntries(_palette, 1, 128);
 }
