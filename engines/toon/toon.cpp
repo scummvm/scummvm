@@ -1501,7 +1501,7 @@ void ToonEngine::fadeIn(int32 numFrames) {
 		}
 		_system->setPalette(vmpalette, 0, 256);
 		_system->updateScreen();
-		_system->delayMillis(_tickLength);;
+		_system->delayMillis(_tickLength);
 	}
 }
 
@@ -1517,7 +1517,7 @@ void ToonEngine::fadeOut(int32 numFrames) {
 		}
 		_system->setPalette(vmpalette, 0, 256);
 		_system->updateScreen();
-		_system->delayMillis(_tickLength);;
+		_system->delayMillis(_tickLength);
 	}
 }
 
@@ -3186,7 +3186,7 @@ int32 ToonEngine::handleInventoryOnInventory(int32 itemDest, int32 itemSrc) {
 			characterTalk(1296);
 			replaceItemFromInventory(107, 109);
 			_gameState->_mouseState = -1;
-			setCursor(0, false, 0, 0);;
+			setCursor(0, false, 0, 0);
 			rearrangeInventory();
 			return 1;
 		case 108:
@@ -3501,7 +3501,7 @@ int32 ToonEngine::handleInventoryOnInventory(int32 itemDest, int32 itemSrc) {
 			characterTalk(1296);
 			replaceItemFromInventory(107, 108);
 			_gameState->_mouseState = -1;
-			setCursor(0, false, 0, 0);;
+			setCursor(0, false, 0, 0);
 			rearrangeInventory();
 			return 1;
 		case 109:
