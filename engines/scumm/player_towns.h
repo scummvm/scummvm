@@ -72,23 +72,6 @@ protected:
 		uint32 priority;
 	} _pcmCurrentSound[9];
 
-	struct SoundOvrParameters {
-		uint8 vLeft;
-		uint8 vRight;
-		uint8 note;
-	};
-
-	SoundOvrParameters *_soundOverride;
-	SoundOvrParameters _ovrCur;
-
-	struct SoundOvrParameters2 {
-		uint8 velo;
-		uint8 pan;
-		uint8 type;
-	};
-
-	SoundOvrParameters2 *_soundOverride2;
-
 	uint8 _unkFlags;
 
 	TownsAudioInterface *_intf;
@@ -133,6 +116,14 @@ private:
 	void playEuphonyTrack(int sound, const uint8 *data);
 	void playCdaTrack(int sound, const uint8 *data, bool skipTrackVelo = false);
 
+	struct SoundOvrParameters {
+		uint8 vLeft;
+		uint8 vRight;
+		uint8 note;
+	};
+
+	SoundOvrParameters *_soundOverride;
+
 	uint8 _cdaVolLeft;
 	uint8 _cdaVolRight;
 	
@@ -170,7 +161,15 @@ public:
 	void saveLoadWithSerializer(Serializer *ser);
 
 private:
-	void playPcmTrackSBL(const uint8 *data);
+	void playVocTrack(const uint8 *data);
+
+	struct SoundOvrParameters {
+		uint8 velo;
+		uint8 pan;
+		uint8 type;
+	};
+
+	SoundOvrParameters *_soundOverride;
 
 	uint8 *_sblData;
 	IMuse *_imuse;

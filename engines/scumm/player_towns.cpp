@@ -31,8 +31,6 @@ namespace Scumm {
 
 Player_Towns::Player_Towns(ScummEngine *vm, bool isVersion2) : _vm(vm), _v2(isVersion2), _numSoundMax(isVersion2 ? 256 : 200) {
 	memset(_pcmCurrentSound, 0, sizeof(_pcmCurrentSound));
-	memset(&_ovrCur, 0, sizeof(SoundOvrParameters));
-	_soundOverride = 0;
 	_unkFlags = 0x33;
 	_intf = 0;
 }
@@ -107,15 +105,6 @@ void Player_Towns::playPcmTrack(int sound, const uint8 *data, int velo, int pan,
 	const uint8 *ptr = data;
 	const uint8 *sfxData = ptr + 16;
 	
-	int note2, velocity;
-
-	if (velo)
-		velocity = velo;
-	else if (_ovrCur.vLeft + _ovrCur.vRight)
-		velocity = (_ovrCur.vLeft + _ovrCur.vRight) >> 2;
-	else
-		velocity = ptr[8] >> 1;
-
 	int numChan = _v2 ? 1 : ptr[14];
 	for (int i = 0; i < numChan; i++) {
 		int chan = allocatePcmChannel(sound, i, priority);
@@ -124,18 +113,10 @@ void Player_Towns::playPcmTrack(int sound, const uint8 *data, int velo, int pan,
 		
 		_intf->callback(70, _unkFlags);
 		_intf->callback(3, chan + 0x3f, pan);
+		_intf->callback(37, chan + 0x3f, note, velo, sfxData);
 		
-		if (note)
-			note2 = note;
-		else if (_ovrCur.note)
-			note2 = _ovrCur.note;
-		else
-			note2 = sfxData[28];
-		
-		_intf->callback(37, chan + 0x3f, note2, velocity, sfxData);
-		
-		_pcmCurrentSound[chan].note = note2;
-		_pcmCurrentSound[chan].velo = velocity;
+		_pcmCurrentSound[chan].note = note;
+		_pcmCurrentSound[chan].velo = velo;
 		_pcmCurrentSound[chan].pan = pan;
 		_pcmCurrentSound[chan].paused = 0;
 		_pcmCurrentSound[chan].looping = READ_LE_UINT32(&sfxData[20]) ? 1 : 0;
@@ -201,18 +182,18 @@ int Player_Towns::allocatePcmChannel(int sound, int sfxChanRelIndex, uint32 prio
 }
 
 Player_Towns_v1::Player_Towns_v1(ScummEngine *vm, Audio::Mixer *mixer) : Player_Towns(vm, false) {
+	_soundOverride = 0;
 	_cdaCurrentSound = _eupCurrentSound = _cdaNumLoops = 0;
 	_cdaForceRestart = 0;
 	_cdaVolLeft = _cdaVolRight = 0;
 
 	_eupVolLeft = _eupVolRight = 0;
+	_eupLooping = false;
 
 	if (_vm->_game.version == 3) {
 		_soundOverride = new SoundOvrParameters[_numSoundMax];
 		memset(_soundOverride, 0, _numSoundMax * sizeof(SoundOvrParameters));
-	}
-
-	_eupLooping = false;
+	}	
 
 	_driver = new TownsEuphonyDriver(mixer);
 }
@@ -248,23 +229,32 @@ void Player_Towns_v1::setMusicVolume(int vol) {
 
 void Player_Towns_v1::startSound(int sound) {
 	uint8 *ptr = _vm->getResourceAddress(rtSound, sound);
-	if (_vm->_game.version != 3) {
+	if (_vm->_game.version != 3)
 		ptr += 2;
-	} else if (_soundOverride && sound > 0 && sound < _numSoundMax) {
-		memcpy(&_ovrCur, &_soundOverride[sound], sizeof(SoundOvrParameters));
-		memset(&_soundOverride[sound], 0, sizeof(SoundOvrParameters));
-	}
 
 	int type = ptr[13];
 
 	if (type == 0) {
-		playPcmTrack(sound, ptr + 6, 0, 64, 0, READ_LE_UINT16(ptr + 10));
+		uint8 velocity = 0;
+		uint8 note = 0;
+		
+		if (_vm->_game.version == 3) {
+			velocity = (_soundOverride[sound].vLeft + _soundOverride[sound].vRight);
+			note = _soundOverride[sound].note;
+		}
+
+		velocity = velocity ? velocity >> 2 : ptr[14] >> 1;		
+		playPcmTrack(sound, ptr + 6, velocity, 64, note ? note : ptr[50], READ_LE_UINT16(ptr + 10));
+
 	} else if (type == 1) {
 		playEuphonyTrack(sound, ptr + 6);
+
 	} else if (type == 2) {
 		playCdaTrack(sound, ptr + 6);
 	}
-	memset(&_ovrCur, 0, sizeof(SoundOvrParameters));
+
+	if (_vm->_game.version == 3)
+		_soundOverride[sound].vLeft = _soundOverride[sound].vRight = _soundOverride[sound].note = 0;
 }
 
 void Player_Towns_v1::stopSound(int sound) {
@@ -465,7 +455,7 @@ void Player_Towns_v1::startSoundEx(int sound, int velo, int pan, int note) {
 
 		pan = pan ? (((pan << 7) - pan) + 50) / 100 : 64;
 
-		playPcmTrack(sound, ptr + 6, velo, pan, note, pri);
+		playPcmTrack(sound, ptr + 6, velo ? velo : ptr[14] >> 1, pan, note ? note : ptr[50], pri);
 
 	} else if (ptr[13] == 2) {
 		int volLeft = velo;
@@ -531,9 +521,9 @@ void Player_Towns_v1::playEuphonyTrack(int sound, const uint8 *data) {
 		_driver->intf()->callback(4, i, i);
 	}
 
-	_eupVolLeft = _ovrCur.vLeft;
-	_eupVolRight = _ovrCur.vRight;
-	int lvl = _ovrCur.vLeft + _ovrCur.vRight;
+	_eupVolLeft = _soundOverride[sound].vLeft;
+	_eupVolRight = _soundOverride[sound].vRight;
+	int lvl = _soundOverride[sound].vLeft + _soundOverride[sound].vRight;
 	if (!lvl)
 		lvl = data[8] + data[9];
 	lvl >>= 2;
@@ -561,10 +551,14 @@ void Player_Towns_v1::playCdaTrack(int sound, const uint8 *data, bool skipTrackV
 		return;
 
 	if (!skipTrackVelo) {
-		if (_ovrCur.vLeft + _ovrCur.vRight)
-			setVolumeCD(_ovrCur.vLeft, _ovrCur.vRight);
-		else
+		if (_vm->_game.version == 3) {
+			if (_soundOverride[sound].vLeft + _soundOverride[sound].vRight)
+				setVolumeCD(_soundOverride[sound].vLeft, _soundOverride[sound].vRight);
+			else
+				setVolumeCD(ptr[8], ptr[9]);
+		} else {
 			setVolumeCD(ptr[8], ptr[9]);
+		}
 	}
 
 	if (sound == _cdaCurrentSound && _vm->_sound->pollCD() == 1)			
@@ -583,8 +577,8 @@ void Player_Towns_v1::playCdaTrack(int sound, const uint8 *data, bool skipTrackV
 }
 
 Player_Towns_v2::Player_Towns_v2(ScummEngine *vm, IMuse *imuse, Audio::Mixer *mixer, bool disposeIMuse) : Player_Towns(vm, true), _imuse(imuse), _imuseDispose(disposeIMuse) {
-	_soundOverride2 = new SoundOvrParameters2[_numSoundMax];
-	memset(_soundOverride2, 0, _numSoundMax * sizeof(SoundOvrParameters2));
+	_soundOverride = new SoundOvrParameters[_numSoundMax];
+	memset(_soundOverride, 0, _numSoundMax * sizeof(SoundOvrParameters));
 	_sblData = 0;
 	_intf = new TownsAudioInterface(mixer, 0);
 }
@@ -617,31 +611,37 @@ void Player_Towns_v2::setMusicVolume(int vol) {
 }
 
 int Player_Towns_v2::getSoundStatus(int sound) const {
-	if (_soundOverride2[sound].type == 7)
+	if (_soundOverride[sound].type == 7)
 		return Player_Towns::getSoundStatus(sound);
 	return _imuse->getSoundStatus(sound);
 }
 
 void Player_Towns_v2::startSound(int sound) {
 	uint8 *ptr = _vm->getResourceAddress(rtSound, sound);
+
 	if (READ_BE_UINT32(ptr) == MKID_BE('TOWS')) {
-		_soundOverride2[sound].type = 7;
-		uint8 velo = _soundOverride2[sound].velo ? _soundOverride2[sound].velo - 1: (ptr[10] + ptr[11] + 1) >> 1;
-		uint8 pan = _soundOverride2[sound].pan ? _soundOverride2[sound].pan - 1 : 64;
+		_soundOverride[sound].type = 7;
+		uint8 velo = _soundOverride[sound].velo ? _soundOverride[sound].velo - 1: (ptr[10] + ptr[11] + 1) >> 1;
+		uint8 pan = _soundOverride[sound].pan ? _soundOverride[sound].pan - 1 : 64;
 		uint8 pri = ptr[9];
-		_soundOverride2[sound].velo = _soundOverride2[sound].pan = 0;
-		playPcmTrack(sound, ptr + 8, velo, pan, 0, pri);
+		_soundOverride[sound].velo = _soundOverride[sound].pan = 0;
+
+		playPcmTrack(sound, ptr + 8, velo, pan, ptr[52], pri);
+
 	} else if (READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
-		_soundOverride2[sound].type = 5;
-		playPcmTrackSBL(ptr + 27);
+		_soundOverride[sound].type = 5;
+
+		playVocTrack(ptr + 27);
+
 	} else {
-		_soundOverride2[sound].type = 3;
+		_soundOverride[sound].type = 3;
+
 		_imuse->startSound(sound);
 	}
 }
 
 void Player_Towns_v2::stopSound(int sound) {
-	if (_soundOverride2[sound].type == 7) {
+	if (_soundOverride[sound].type == 7) {
 		stopPcmTrack(sound);		
 	} else {
 		_imuse->stopSound(sound);
@@ -678,25 +678,25 @@ int32 Player_Towns_v2::doCommand(int numargs, int args[]) {
 		break;
 
 	case 258:
-		if (_soundOverride2[args[1]].type == 0) {
+		if (_soundOverride[args[1]].type == 0) {
 			ptr = _vm->getResourceAddress(rtSound, args[1]);
 			if (READ_BE_UINT32(ptr) == MKID_BE('TOWS')) 
-				_soundOverride2[args[1]].type = 7;
+				_soundOverride[args[1]].type = 7;
 		}
-		if (_soundOverride2[args[1]].type == 7)	{
-			_soundOverride2[args[1]].velo = args[2] + 1;
+		if (_soundOverride[args[1]].type == 7)	{
+			_soundOverride[args[1]].velo = args[2] + 1;
 			res = 0;
 		}
 		break;
 	
 	case 259:
-		if (_soundOverride2[args[1]].type == 0) {
+		if (_soundOverride[args[1]].type == 0) {
 			ptr = _vm->getResourceAddress(rtSound, args[1]);
 			if (READ_BE_UINT32(ptr) == MKID_BE('TOWS')) 
-				_soundOverride2[args[1]].type = 7;
+				_soundOverride[args[1]].type = 7;
 		}
-		if (_soundOverride2[args[1]].type == 7)	{
-			_soundOverride2[args[1]].pan = 64 - CLIP<int>(args[2], -63, 63);
+		if (_soundOverride[args[1]].type == 7)	{
+			_soundOverride[args[1]].pan = 64 - CLIP<int>(args[2], -63, 63);
 			res = 0;
 		}
 		break;
@@ -716,7 +716,7 @@ void Player_Towns_v2::saveLoadWithSerializer(Serializer *ser) {
 		Player_Towns::saveLoadWithSerializer(ser);
 }
 
-void Player_Towns_v2::playPcmTrackSBL(const uint8 *data) {
+void Player_Towns_v2::playVocTrack(const uint8 *data) {
 	static const uint8 header[] = {
 		0x54, 0x61, 0x6C, 0x6B, 0x69, 0x65, 0x20, 0x20,
 		0x78, 0x56, 0x34, 0x12, 0x00, 0x00, 0x00, 0x00,
