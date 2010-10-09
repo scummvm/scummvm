@@ -712,7 +712,7 @@ Surface *SmackerDecoder::decodeNextFrame() {
 	return _surface;
 }
 
-void SmackerDecoder::handleAudioTrack(const byte &track, const uint32 &chunkSize, const uint32 &unpackedSize) {
+void SmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize) {
 	if (_header.audioInfo[track].hasAudio && chunkSize > 0 && track == 0) {
 		// If it's track 0, play the audio data
 		byte *soundBuffer = (byte *)malloc(chunkSize);

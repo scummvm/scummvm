@@ -27,7 +27,7 @@
 
 namespace Toon {
 
-void ToonstruckSmackerDecoder::handleAudioTrack(const byte &track, const uint32 &chunkSize, const uint32 &unpackedSize) {
+void ToonstruckSmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize) {
 	debugC(6, kDebugMovie, "handleAudioTrack(%d, %d, %d)", track, chunkSize, unpackedSize);
 
 	if (track == 1 && chunkSize == 4) {

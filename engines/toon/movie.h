@@ -34,7 +34,7 @@ namespace Toon {
 class ToonstruckSmackerDecoder : public Graphics::SmackerDecoder {
 public:
 	ToonstruckSmackerDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
-	void handleAudioTrack(const byte &track, const uint32 &chunkSize, const uint32 &unpackedSize);
+	void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
 	bool loadFile(const Common::String &filename, int forcedflags) ;
 };
 
