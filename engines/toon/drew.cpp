@@ -115,7 +115,7 @@ void CharacterDrew::update(int32 timeIncrement) {
 int32 CharacterDrew::getRandomIdleAnim() {
 	debugC(3, kDebugCharacter, "getRandomIdleAnim()");
 
-	static int32 idle[] = { 6, 9, 10, 11, 12 };
+	static const int32 idle[] = { 6, 9, 10, 11, 12 };
 	return idle[_vm->randRange(0, 4)];
 }
 } // End of namespace Toon

@@ -102,7 +102,7 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 
 } // End of namespace Toon
 
-static const char *directoryGlobs[] = {
+static const char * const directoryGlobs[] = {
 	"misc",
 	"act1",
 	"arcaddbl",

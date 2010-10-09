@@ -899,7 +899,7 @@ const SpecialCharacterAnimation *Character::getSpecialAnimation(int32 characterI
 		{ "BRTKB1", 17, 0, 0, 0, 0, 255, 255, 255, 255, 2, 14, 0, 255 }
 	};
 
-	static int32 characterAnims[] = {
+	static const int32 characterAnims[] = {
 		0,   39,  81,  89,  91,  108, 117, 124, 138, 146,
 		148, 156, 164, 169, 174, 179, 184, 193, 197, 207,
 		213, 218, 233, 235, 244, 245, 246, 246, 246, 246,

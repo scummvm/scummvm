@@ -1532,8 +1532,8 @@ void ToonEngine::drawInfoLine() {
 		if (_currentHotspotItem >= 0 && _currentHotspotItem < 2000) {
 			infoTool = _roomTexts->getText(_currentHotspotItem);
 		} else if (_currentHotspotItem <= -1) {
-//			static char *specialInfoLine[] = { "Exit non defined", "Bottomless Bag", "Flux", "Drew Blanc" };
-			infoTool = _specialInfoLine[-1-_currentHotspotItem ];
+//			static const char * const specialInfoLine[] = { "Exit non defined", "Bottomless Bag", "Flux", "Drew Blanc" };
+			infoTool = _specialInfoLine[-1 - _currentHotspotItem];
 		} else {
 			int32 loc = _currentHotspotItem - 2000;
 			// location names are hardcoded ...
