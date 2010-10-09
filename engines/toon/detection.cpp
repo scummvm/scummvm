@@ -33,7 +33,6 @@
 
 static const PlainGameDescriptor ToonGames[] = {
 	{ "toon", "Toonstruck" },
-	{ "toondemo", "Toonstruck Demo" },
 	{ 0, 0 }
 };
 
@@ -70,7 +69,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
 	},
-	{ "toondemo", "", {
+	{ "toon", "", {
 		{"local.pak", 0, "bf5da4c03f78ffbd643f12122319366e", 3250841},
 		{"wacexdbl.emc", 0, "cfbc2156a31b294b038204888407ebc8", 6974},
 		{"generic.svl", 0, "5eb99850ada22f0b8cf6392262d4dd07", 9404599},
