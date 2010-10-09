@@ -29,26 +29,26 @@
 namespace Toon {
 
 void Location::save(Common::WriteStream *stream) {
-	stream->write(_cutaway,64);
-	stream->write(_music,64);
-	stream->write(_name,64);
+	stream->write(_cutaway, 64);
+	stream->write(_music, 64);
+	stream->write(_name, 64);
 	stream->writeSint16BE(_numRifBoxes);
 	stream->writeSint16BE(_numSceneAnimations);
 	stream->writeSByte(_visited);
 
-	for (int32 i = 0; i < _numRifBoxes*2; i++) {
+	for (int32 i = 0; i < _numRifBoxes * 2; i++) {
 		stream->writeSint16BE(_rifBoxesFlags[i]);
 	}
 }
 void Location::load(Common::ReadStream *stream) {
-	stream->read(_cutaway,64);
-	stream->read(_music,64);
-	stream->read(_name,64);
+	stream->read(_cutaway, 64);
+	stream->read(_music, 64);
+	stream->read(_name, 64);
 	_numRifBoxes = stream->readSint16BE();
 	_numSceneAnimations = stream->readSint16BE();
 	_visited = stream->readSByte();
 
-	for (int32 i = 0; i < _numRifBoxes*2; i++) {
+	for (int32 i = 0; i < _numRifBoxes * 2; i++) {
 		_rifBoxesFlags[i] = stream->readSint16BE();
 	}
 }
@@ -135,7 +135,7 @@ bool State::hasItemInInventory(int32 item) {
 	return false;
 }
 
-void State::save(Common::WriteStream * stream) {
+void State::save(Common::WriteStream *stream) {
 
 	for (int32 i = 0; i < 256; i++) {
 		_locations[i].save(stream);
@@ -191,7 +191,7 @@ void State::save(Common::WriteStream * stream) {
 	stream->writeSint32BE(_timerDelay[1]);
 }
 
-void State::load(Common::ReadStream* stream) {
+void State::load(Common::ReadStream *stream) {
 	for (int32 i = 0; i < 256; i++) {
 		_locations[i].load(stream);
 	}

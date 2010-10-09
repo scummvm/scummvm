@@ -41,39 +41,54 @@ namespace Toon {
 using Common::GUIO_NONE;
 
 static const ADGameDescription gameDescriptions[] = {
-	{ "toon", "", {
-		{"local.pak", 0, "3290209ef9bc92692108dd2f45df0736", 3237611},
-		{"arcaddbl.svl", 0, "c418478cd2833c7c983799f948af41ac", 7844688},
-		{"study.svl", 0, "281efa3f33f6712c0f641a605f4d40fd", 2511090},
-		AD_LISTEND},
+	{
+		"toon", "",
+		{
+			{"local.pak", 0, "3290209ef9bc92692108dd2f45df0736", 3237611},
+			{"arcaddbl.svl", 0, "c418478cd2833c7c983799f948af41ac", 7844688},
+			{"study.svl", 0, "281efa3f33f6712c0f641a605f4d40fd", 2511090},
+			AD_LISTEND
+		},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
 	},
-	{ "toon", "", {
-		{"local.pak", 0, "517132c3575b38806d1e7b6f59848072", 3224044},
-		{"arcaddbl.svl", 0, "ff74008827b62fbef1f46f104c438e44", 9699256},
-		{"study.svl", 0, "df056b94ea83f1ed92a539cf636053ab", 2542668},
-		AD_LISTEND},
+	{
+		"toon", "",
+		{
+			{"local.pak", 0, "517132c3575b38806d1e7b6f59848072", 3224044},
+			{"arcaddbl.svl", 0, "ff74008827b62fbef1f46f104c438e44", 9699256},
+			{"study.svl", 0, "df056b94ea83f1ed92a539cf636053ab", 2542668},
+			AD_LISTEND
+		},
 		Common::FR_FRA, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
 	},
-	{ "toon", "", {
-		{"local.pak", 0, "bf5da4c03f78ffbd643f12122319366e", 3250841},
-		{"arcaddbl.svl", 0, "7a0d74f4d66d1c722b946abbeb0834ef", 9122249},
-		{"study.svl", 0, "72fe96a9e10967d3138e918295babc42", 2910283},
-		AD_LISTEND},
+	{
+		"toon", "",
+		{
+			{"local.pak", 0, "bf5da4c03f78ffbd643f12122319366e", 3250841},
+			{"arcaddbl.svl", 0, "7a0d74f4d66d1c722b946abbeb0834ef", 9122249},
+			{"study.svl", 0, "72fe96a9e10967d3138e918295babc42", 2910283},
+			AD_LISTEND
+		},
 		Common::DE_DEU, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
 	},
-	{ "toon", "", {
-		{"local.pak", 0, "e8645168a247e2abdbfc2f9fa9d1c0fa", 3232222},
-		{"arcaddbl.svl", 0, "7893ac4cc78d51356baa058bbee7aa28", 8275016},
-		{"study.svl", 0, "b6b1ee2d9d94d53d305856039ab7bde7", 2634620},
-		AD_LISTEND},
+	{
+		"toon", "",
+		{
+			{"local.pak", 0, "e8645168a247e2abdbfc2f9fa9d1c0fa", 3232222},
+			{"arcaddbl.svl", 0, "7893ac4cc78d51356baa058bbee7aa28", 8275016},
+			{"study.svl", 0, "b6b1ee2d9d94d53d305856039ab7bde7", 2634620},
+			AD_LISTEND
+		},
 		Common::ES_ESP, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
 	},
-	{ "toon", "", {
-		{"local.pak", 0, "bf5da4c03f78ffbd643f12122319366e", 3250841},
-		{"wacexdbl.emc", 0, "cfbc2156a31b294b038204888407ebc8", 6974},
-		{"generic.svl", 0, "5eb99850ada22f0b8cf6392262d4dd07", 9404599},
-		AD_LISTEND},
+	{
+		"toon", "",
+		{
+			{"local.pak", 0, "bf5da4c03f78ffbd643f12122319366e", 3250841},
+			{"wacexdbl.emc", 0, "cfbc2156a31b294b038204888407ebc8", 6974},
+			{"generic.svl", 0, "5eb99850ada22f0b8cf6392262d4dd07", 9404599},
+			AD_LISTEND
+		},
 		Common::DE_DEU, Common::kPlatformPC, ADGF_DEMO, GUIO_NONE
 	},
 
@@ -135,12 +150,12 @@ public:
 
 bool ToonMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves) ||
-//		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate);
+	    (f == kSupportsListSaves) ||
+//	    (f == kSupportsLoadingDuringStartup) ||
+	    (f == kSupportsDeleteSave) ||
+	    (f == kSavesSupportMetaInfo) ||
+	    (f == kSavesSupportThumbnail) ||
+	    (f == kSavesSupportCreationDate);
 }
 
 int ToonMetaEngine::getMaximumSaveSlot() const { return 99; }
@@ -152,7 +167,7 @@ SaveStateList ToonMetaEngine::listSaves(const char *target) const {
 	pattern += ".???";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	int slotNum = 0;

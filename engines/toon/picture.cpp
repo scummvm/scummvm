@@ -220,7 +220,7 @@ uint8 Picture::getData(int32 x, int32 y) {
 }
 
 // use original work from johndoe
-void Picture::floodFillNotWalkableOnMask( int32 x, int32 y ) {
+void Picture::floodFillNotWalkableOnMask(int32 x, int32 y) {
 	debugC(1, kDebugPicture, "floodFillNotWalkableOnMask(%d, %d)", x, y);
 
 	// Stack-based floodFill algorithm based on
@@ -254,7 +254,7 @@ void Picture::floodFillNotWalkableOnMask( int32 x, int32 y ) {
 	}
 }
 
-void Picture::drawLineOnMask( int32 x, int32 y, int32 x2, int32 y2, bool walkable ) {
+void Picture::drawLineOnMask(int32 x, int32 y, int32 x2, int32 y2, bool walkable) {
 	debugC(1, kDebugPicture, "drawLineOnMask(%d, %d, %d, %d, %d)", x, y, x2, y2, (walkable) ? 1 : 0);
 
 	static int32 lastX = 0;
@@ -291,7 +291,7 @@ void Picture::drawLineOnMask( int32 x, int32 y, int32 x2, int32 y2, bool walkabl
 			_data[_width * (by >> 16) + (bx >> 16)] = v;
 			_data[_width * (by >> 16) + (bx >> 16)+1] = v;
 		}
-	
+
 		bx += cdx;
 		by += cdy;
 		i--;

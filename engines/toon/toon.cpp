@@ -89,7 +89,7 @@ void ToonEngine::init() {
 	_saveBufferStream = new Common::MemoryWriteStreamDynamic();
 
 	_firstFrame = false;
-	
+
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "misc");
 
@@ -182,11 +182,10 @@ void ToonEngine::parseInput() {
 					if (saveGame(slotNum)) {
 						// ok
 						char buf[256];
-						snprintf(buf, 256, "Saved game in slot #%d ",slotNum);
+						snprintf(buf, 256, "Saved game in slot #%d ", slotNum);
 						GUI::TimedMessageDialog dialog(buf, 1000);
 						dialog.runModal();
-					}
-					else {
+					} else {
 						char buf[256];
 						snprintf(buf, 256, "Could not quick save into slot #%d", slotNum);
 						GUI::MessageDialog dialog2(buf, "OK", 0);
@@ -206,8 +205,7 @@ void ToonEngine::parseInput() {
 						snprintf(buf, 256, "Savegame #%d quick loaded", slotNum);
 						GUI::TimedMessageDialog dialog(buf, 1000);
 						dialog.runModal();
-					}
-					else {
+					} else {
 						char buf[256];
 						snprintf(buf, 256, "Could not quick load the savegame #%d", slotNum);
 						GUI::MessageDialog dialog(buf, "OK", 0);
@@ -257,7 +255,7 @@ void ToonEngine::updateTimers() {
 		if (_gameState->_timerEnabled[i]) {
 			if (_gameState->_timerDelay[i] > -1 && getOldMilli() > _gameState->_timerTimeout[i]) {
 				if (i == 0) {
-					
+
 					EMCState *status = &_scriptState[_currentScriptRegion];
 					_script->init(status, &_scriptData);
 
@@ -275,7 +273,7 @@ void ToonEngine::updateTimers() {
 					_currentScriptRegion--;
 
 					_gameState->_timerTimeout[i] = getOldMilli() + _gameState->_timerDelay[i] * getTickLength();
-	
+
 					return;
 
 				}
@@ -291,7 +289,7 @@ void ToonEngine::updateScrolling(bool force, int32 timeIncrement) {
 			if (_drew->getFacing() <= 4)
 				lastScrollOffset = 200;
 			else
-				lastScrollOffset = 440;	
+				lastScrollOffset = 440;
 		}
 
 		if (_gameState->_inCutaway || _gameState->_inInventory || _gameState->_inCloseUp)
@@ -302,7 +300,7 @@ void ToonEngine::updateScrolling(bool force, int32 timeIncrement) {
 		if ((_gameState->_locations[_gameState->_currentScene]._flags & 0x80) == 0) {
 			if (desiredScrollValue < 0)
 				desiredScrollValue = 0;
-			if (desiredScrollValue >= _currentPicture->getWidth() - 640) 
+			if (desiredScrollValue >= _currentPicture->getWidth() - 640)
 				desiredScrollValue = _currentPicture->getWidth() - 640;
 
 			if (force) {
@@ -327,14 +325,14 @@ void ToonEngine::updateScrolling(bool force, int32 timeIncrement) {
 
 void ToonEngine::update(int32 timeIncrement) {
 	// to make sure we're updating the game at 5fps at least
-	if (timeIncrement > 200) 
+	if (timeIncrement > 200)
 		timeIncrement = 200;
 
 	updateAnimationSceneScripts(timeIncrement);
 	updateCharacters(timeIncrement);
 	updateTimer(timeIncrement);
 	updateTimers();
-	updateScrolling(false,timeIncrement);
+	updateScrolling(false, timeIncrement);
 	_animationManager->update(timeIncrement);
 	_cursorAnimationInstance->update(timeIncrement);
 
@@ -346,7 +344,7 @@ void ToonEngine::update(int32 timeIncrement) {
 
 void ToonEngine::updateTimer(int32 timeIncrement) {
 	if (_gameState->_gameTimer > 0) {
-		debugC(0, 0xfff,"updateTimer(%d)", timeIncrement);
+		debugC(0, 0xfff, "updateTimer(%d)", timeIncrement);
 		_gameState->_gameTimer -= timeIncrement;
 		if (_gameState->_gameTimer < 0)
 			_gameState->_gameTimer = 0;
@@ -371,10 +369,10 @@ void ToonEngine::render() {
 #if 0
 	char test[256];
 	if (_mouseX > 0 && _mouseX < 640 && _mouseY > 0 && _mouseY < 400) {
-		sprintf(test, "%d %d / mask %d layer %d z %d", _mouseX, _mouseY, getMask()->getData(_mouseX,_mouseY), getLayerAtPoint(_mouseX,_mouseY), getZAtPoint(_mouseX,_mouseY));
+		sprintf(test, "%d %d / mask %d layer %d z %d", _mouseX, _mouseY, getMask()->getData(_mouseX, _mouseY), getLayerAtPoint(_mouseX, _mouseY), getZAtPoint(_mouseX, _mouseY));
 
-		int32 c = *(uint8*)_mainSurface->getBasePtr(_mouseX,_mouseY);
-		sprintf(test, "%d %d / color id %d %d,%d,%d", _mouseX, _mouseY, c, _finalPalette[c*3+0],_finalPalette[c*3+1],_finalPalette[c*3+2]);
+		int32 c = *(uint8 *)_mainSurface->getBasePtr(_mouseX, _mouseY);
+		sprintf(test, "%d %d / color id %d %d,%d,%d", _mouseX, _mouseY, c, _finalPalette[c*3+0], _finalPalette[c*3+1], _finalPalette[c*3+2]);
 
 		_fontRenderer->setFont(_fontToon);
 		_fontRenderer->renderText(40, 150, Common::String(test), 0);
@@ -397,7 +395,7 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 		_cursorAnimationInstance->render();
 	}
 	_system->copyRectToScreen((byte *)_mainSurface->pixels + state()->_currentScrollValue, 1280, 0, 0, 640, 400);
-	if (updateScreen) 
+	if (updateScreen)
 		_system->updateScreen();
 }
 
@@ -411,7 +409,7 @@ void ToonEngine::doFrame() {
 		int32 currentTimer = _system->getMillis();
 // Strangerke - Commented (not used)
 //		int32 elapsedTime = currentTimer - _oldTimer;
-	
+
 		update(currentTimer - _oldTimer);
 		_oldTimer = currentTimer;
 		_oldTimer2 = currentTimer;
@@ -470,7 +468,7 @@ struct MainMenuEntry {
 	int activeFrame;
 };
 
-bool ToonEngine::showMainmenu(bool& loadedGame) {
+bool ToonEngine::showMainmenu(bool &loadedGame) {
 	Picture *mainmenuPicture = new Picture(this);
 	mainmenuPicture->loadPicture("TITLESCR.CPS", true);
 	mainmenuPicture->setupPalette();
@@ -529,7 +527,7 @@ bool ToonEngine::showMainmenu(bool& loadedGame) {
 					entries[entryNr].animation->drawFrame(*_mainSurface, frameNr, 0, 0);
 				}
 			}
-			
+
 			parseInput();
 			copyToVirtualScreen(true);
 			_system->delayMillis(17);
@@ -576,7 +574,7 @@ bool ToonEngine::showMainmenu(bool& loadedGame) {
 			musicPlaying = false;
 		}
 
-	
+
 
 		switch (clickingOn) {
 		case MAINMENUHOTSPOT_START:
@@ -624,7 +622,7 @@ Common::Error ToonEngine::run() {
 
 	// show mainmenu
 	bool loadedGame = false;
-	if(!showMainmenu(loadedGame)) {
+	if (!showMainmenu(loadedGame)) {
 		return Common::kNoError;
 	}
 
@@ -683,10 +681,10 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 		_gameVariant = 3;
 		break;
 	default:
-	// 0 - english
+		// 0 - english
 		_gameVariant = 0;
 		break;
-	}	
+	}
 }
 
 ToonEngine::~ToonEngine() {
@@ -756,14 +754,14 @@ void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
 
 	do {
 		if (_sceneAnimationScripts[_lastProcessedSceneScript]._lastTimer <= _system->getMillis() &&
-		    !_sceneAnimationScripts[_lastProcessedSceneScript]._frozen) {
+		        !_sceneAnimationScripts[_lastProcessedSceneScript]._frozen) {
 			_animationSceneScriptRunFlag = true;
 
 			while (_animationSceneScriptRunFlag && _sceneAnimationScripts[_lastProcessedSceneScript]._lastTimer <= _system->getMillis() && !shouldQuit()) {
 				if (!_script->run(&_sceneAnimationScripts[_lastProcessedSceneScript]._state))
 					_animationSceneScriptRunFlag = false;
 
-				if (_sceneAnimationScripts[_lastProcessedSceneScript]._frozen) 
+				if (_sceneAnimationScripts[_lastProcessedSceneScript]._frozen)
 					break;
 			}
 
@@ -813,7 +811,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 		do {
 			_gameState->_currentChapter++;
 			flag >>= 1;
-		} while((flag & 1) == 0);
+		} while ((flag & 1) == 0);
 	}
 
 	for (int32 i = 0; i < 8; i++) {
@@ -823,7 +821,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	_drew->setVisible(true);
 
 	// hide flux in chapter 2
-	if ( _gameState->_currentChapter == 1) {
+	if (_gameState->_currentChapter == 1) {
 		_flux->playStandingAnim();
 		_flux->setVisible(true);
 	} else {
@@ -841,7 +839,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	_gameState->_currentScrollValue = 0;
 	_gameState->_currentScrollLock = false;
 	_gameState->_inCloseUp = false;
-	
+
 
 	if (_gameState->_mouseState >= 0)
 		addItemToInventory(_gameState->_mouseState);
@@ -976,7 +974,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 
 
 	if (!forGameLoad) {
-	
+
 		_script->start(&_scriptState[0], 0);
 
 		while (_script->run(&_scriptState[0]))
@@ -1084,10 +1082,10 @@ void ToonEngine::loadCursor() {
 
 void ToonEngine::setCursor(int32 type, bool inventory, int32 offsetX, int32 offsetY) {
 
-	static int32 offsets[] = {
-		0,   1,  1,  6,  7,  1,  8,   10, 18,  10, 
-		28,  8,  36, 10, 46, 10, 56,  10, 66,  10, 
-		76,  10, 86, 10, 96, 10, 106, 10, 116, 10, 
+	static const int32 offsets[] = {
+		0,   1,  1,  6,  7,  1,  8,   10, 18,  10,
+		28,  8,  36, 10, 46, 10, 56,  10, 66,  10,
+		76,  10, 86, 10, 96, 10, 106, 10, 116, 10,
 		126, 10
 	};
 
@@ -1245,8 +1243,7 @@ void ToonEngine::clickEvent() {
 					// walk was canceled ?
 					return;
 				}
-			}
-			else {
+			} else {
 				if (!_drew->walkTo(_mouseX, _mouseY)) {
 					// walk was canceled ?
 					return;
@@ -1275,7 +1272,7 @@ void ToonEngine::clickEvent() {
 		break;
 	case 6:
 		createMouseItem(argument);
-		currentHot->setData(7,-1);
+		currentHot->setData(7, -1);
 		break;
 	case 7:
 		// switch to CloseUp
@@ -1313,7 +1310,7 @@ void ToonEngine::clickEvent() {
 		int32 val = _scriptState[_currentScriptRegion].regs[4];
 		currentHot->setData(4, currentHot->getData(4) & val);
 	}
- 
+
 }
 
 void ToonEngine::selectHotspot() {
@@ -1447,14 +1444,13 @@ void ToonEngine::exitScene() {
 				delete _characters[i];
 				_characters[i] = 0;
 			}
-		} 
-		else {
+		} else {
 			_characters[i]->stopSpecialAnim();
 		}
 	}
 
 	for (int32 i = 0; i < 2; i++) {
-		_gameState->_timerEnabled[i] = false; 
+		_gameState->_timerEnabled[i] = false;
 	}
 
 	// put back our item if inventory if needed
@@ -1641,7 +1637,7 @@ void ToonEngine::sayLines(int numLines, int dialogId) {
 		if (currentLine < 1000)
 			currentLine = _roomTexts->getNext(currentLine);
 		else
-			currentLine = _genericTexts->getNext(currentLine-1000) + 1000;
+			currentLine = _genericTexts->getNext(currentLine - 1000) + 1000;
 	}
 
 #if 0
@@ -1664,7 +1660,7 @@ int32 ToonEngine::simpleCharacterTalk(int32 dialogid) {
 		myLine = _genericTexts->getText(dialogid - 1000);
 		myId = dialogid - 1000;
 	}
-	debugC(0, 0xfff, "Talker = %d will say '%s' \n", READ_LE_UINT16(c-2), myLine);
+	debugC(0, 0xfff, "Talker = %d will say '%s' \n", READ_LE_UINT16(c - 2), myLine);
 #endif
 
 	if (_audioManager->voiceStillPlaying())
@@ -1689,17 +1685,17 @@ void ToonEngine::playTalkAnimOnCharacter(int32 animID, int32 characterId, bool t
 			if (talker) {
 				// character talks
 			}
-		} else 
+		} else
 #endif
 		if (characterId == 0) {
 			_drew->playAnim(animID, 0, (talker ? 8 : 0) + 2);
 		} else if (characterId == 1) {
 			// stop flux if he is walking
-			if(_flux->getFlag() & 1) {
+			if (_flux->getFlag() & 1) {
 				_flux->stopWalk();
 			}
 			_flux->playAnim(animID, 0, (talker ? 8 : 0) + 2);
-			_flux->setFlag( _flux->getFlag() | 1 );
+			_flux->setFlag(_flux->getFlag() | 1);
 		} else {
 			Character *character = getCharacterById(characterId);
 			if (character) {
@@ -1714,7 +1710,7 @@ void ToonEngine::playTalkAnimOnCharacter(int32 animID, int32 characterId, bool t
 }
 
 int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
-	if(blocking == false && _audioManager->voiceStillPlaying()) {
+	if (blocking == false && _audioManager->voiceStillPlaying()) {
 		// someone is already talking, and this voice is not important
 		// skip it
 		return 0;
@@ -1890,7 +1886,7 @@ void ToonEngine::haveAConversation(int32 convId) {
 				a++;
 			}
 		}
-		if(shouldQuit()) return;
+		if (shouldQuit()) return;
 		_gameState->_showConversationIcons = false;
 		_gameState->_mouseHidden = 1;
 
@@ -2226,12 +2222,12 @@ int ToonEngine::runConversationCommand(int16 **command) {
 		break;
 		//
 	case 105:
-		if ( getConversationFlag( _gameState->_currentScene, v4)) {
-			result = *(int16*)(*command + 4);
+		if (getConversationFlag(_gameState->_currentScene, v4)) {
+			result = *(int16 *)(*command + 4);
 			*command = (int16 *)((char *)_conversationData + result);
 			*command = (int16 *)((char *)_conversationData + result - 4);
 		} else {
-			int16* newPtr = *command + 1;
+			int16 *newPtr = *command + 1;
 			*command = newPtr;
 		}
 		break;
@@ -2324,9 +2320,9 @@ int32 ToonEngine::showInventory() {
 			for (int32 i = 0; i < _gameState->_numInventoryItems; i++) {
 				int32 x = 57 * (i % 7) + 114;
 				int32 y = ((9 * (i % 7)) & 0xf) + 56 * (i / 7) + 80;
-				if (_mouseX >= (_gameState->_currentScrollValue + x - 6) && 
-				    _mouseX <= (_gameState->_currentScrollValue + x + 44 + 7) && 
-				    _mouseY >= y - 6 && _mouseY <= y + 50) {
+				if (_mouseX >= (_gameState->_currentScrollValue + x - 6) &&
+				        _mouseX <= (_gameState->_currentScrollValue + x + 44 + 7) &&
+				        _mouseY >= y - 6 && _mouseY <= y + 50) {
 					foundObj = i;
 					break;
 				}
@@ -2380,7 +2376,7 @@ int32 ToonEngine::showInventory() {
 		}
 
 		renderInventory();
-		
+
 	}
 
 	_gameState->_currentScrollValue = oldScrollValue;
@@ -2390,8 +2386,7 @@ int32 ToonEngine::showInventory() {
 	if (_gameState->_inCloseUp) {
 		_gameState->_inCloseUp = false;
 		flipScreens();
-	}
-	else if (_gameState->_inCutaway) {
+	} else if (_gameState->_inCutaway) {
 		_currentCutaway->setupPalette();
 		setupGeneralPalette();
 	} else {
@@ -2515,7 +2510,7 @@ void ToonEngine::rearrangeInventory() {
 }
 
 void ToonEngine::newGame() {
-	
+
 	if (_isDemo) {
 		addItemToInventory(59);
 		addItemToInventory(67);
@@ -2637,8 +2632,7 @@ bool ToonEngine::saveGame(int32 slot) {
 		savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
 		savegameDescription = dialog->getResultString();
 		delete dialog;
-	} 
-	else {
+	} else {
 		savegameId = slot;
 		savegameDescription = Common::String::printf("Quick save #%d", slot);
 	}
@@ -2654,13 +2648,13 @@ bool ToonEngine::saveGame(int32 slot) {
 
 	// save savegame header
 	saveFile->writeSint32BE(TOON_SAVEGAME_VERSION);
-	
+
 	if (savegameDescription == "") {
 		savegameDescription = "Untitled savegame";
 	}
 
-	saveFile->writeSint16BE(savegameDescription.size()+1);
-	saveFile->write(savegameDescription.c_str(), savegameDescription.size()+1);
+	saveFile->writeSint16BE(savegameDescription.size() + 1);
+	saveFile->write(savegameDescription.c_str(), savegameDescription.size() + 1);
 
 	Graphics::saveThumbnail(*saveFile);
 
@@ -2673,7 +2667,7 @@ bool ToonEngine::saveGame(int32 slot) {
 	saveFile->writeUint32BE(saveDate);
 	saveFile->writeUint16BE(saveTime);
 
-	
+
 	// save global state
 	_gameState->save(saveFile);
 	_gameState->saveConversations(saveFile);
@@ -2712,8 +2706,8 @@ bool ToonEngine::saveGame(int32 slot) {
 	// save "command buffer"
 	saveFile->writeSint16BE(_saveBufferStream->pos());
 	if (_saveBufferStream->pos() > 0) {
-	saveFile->write(_saveBufferStream->getData(), _saveBufferStream->pos());
-	saveFile->writeSint16BE(0);
+		saveFile->write(_saveBufferStream->getData(), _saveBufferStream->pos());
+		saveFile->writeSint16BE(0);
 	}
 
 	delete saveFile;
@@ -2731,8 +2725,7 @@ bool ToonEngine::loadGame(int32 slot) {
 		dialog->setSaveMode(false);
 		savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
 		delete dialog;
-	}
-	else {
+	} else {
 		savegameId = slot;
 	}
 	if (savegameId < 0)
@@ -2800,13 +2793,13 @@ bool ToonEngine::loadGame(int32 slot) {
 			// we have to fix up our pointers...
 			for (int32 a = 0; a < 10; a++) {
 				if (_gameState->_conversationState[i].state[a]._data4)
-					_gameState->_conversationState[i].state[a]._data4 = (int16*)_gameState->_conversationState[i].state[a]._data4 + diff;
+					_gameState->_conversationState[i].state[a]._data4 = (int16 *)_gameState->_conversationState[i].state[a]._data4 + diff;
 			}
 		}
 	}
 	*/
 
-	_gameState->_conversationData = _conversationData; 
+	_gameState->_conversationData = _conversationData;
 	_firstFrame = true;
 
 	// read characters info
@@ -2817,7 +2810,7 @@ bool ToonEngine::loadGame(int32 slot) {
 
 		if (!_characters[c]) {
 			_characters[c] = new Character(this);
-		}	
+		}
 		_characters[c]->load(loadFile);
 		//_characters[c]->setVisible(true);
 		_characters[c]->update(0);
@@ -2826,60 +2819,60 @@ bool ToonEngine::loadGame(int32 slot) {
 	// load "command buffer"
 	int32 size = loadFile->readSint16BE();
 	if (size) {
-		uint8* buf = new uint8[size+2];
-		loadFile->read(buf, size+2);
+		uint8 *buf = new uint8[size+2];
+		loadFile->read(buf, size + 2);
 
-		Common::MemoryReadStream rStr(buf, size+2);
+		Common::MemoryReadStream rStr(buf, size + 2);
 		while (1) {
 			int16 command = rStr.readSint16BE();
 			if (!command) break;
 			switch (command) {
-				case 1: {
-						int16 frame = rStr.readSint16BE();
-						int16 animLen = rStr.readSint16BE();
-						char animName[32];
-						rStr.read(animName,animLen);
-						int16 x = rStr.readSint16BE();
-						int16 y = rStr.readSint16BE();
-//						int16 z = rStr.readSint16BE();
-//						int16 layerZ = rStr.readSint16BE();
-						rStr.readSint16BE();
-						rStr.readSint16BE();
+			case 1: {
+				int16 frame = rStr.readSint16BE();
+				int16 animLen = rStr.readSint16BE();
+				char animName[32];
+				rStr.read(animName, animLen);
+				int16 x = rStr.readSint16BE();
+				int16 y = rStr.readSint16BE();
+//				int16 z = rStr.readSint16BE();
+//				int16 layerZ = rStr.readSint16BE();
+				rStr.readSint16BE();
+				rStr.readSint16BE();
 
-						Animation* anim = new Animation(this);
-						anim->loadAnimation(animName);
-						anim->drawFrameOnPicture(frame,x,y);
-						delete anim;
-						break;
-					}
-				case 2: {
-						int16 x =  rStr.readSint16BE();
-						int16 y = rStr.readSint16BE();
-						int16 x1 = rStr.readSint16BE();
-						int16 y1 = rStr.readSint16BE();
-						makeLineNonWalkable(x,y,x1,y1);
-						break;
-					}
-				case 3: {
-						int16 x =  rStr.readSint16BE();
-						int16 y = rStr.readSint16BE();
-						int16 x1 = rStr.readSint16BE();
-						int16 y1 = rStr.readSint16BE();
-						makeLineWalkable(x,y,x1,y1);
-						break;
-					}
-				case 4: {
-						int16 x = rStr.readSint16BE();
-						int16 y = rStr.readSint16BE();
-						getMask()->floodFillNotWalkableOnMask(x,y);
-						break;
-					}
-				default:
-					break;
+				Animation *anim = new Animation(this);
+				anim->loadAnimation(animName);
+				anim->drawFrameOnPicture(frame, x, y);
+				delete anim;
+				break;
+			}
+			case 2: {
+				int16 x =  rStr.readSint16BE();
+				int16 y = rStr.readSint16BE();
+				int16 x1 = rStr.readSint16BE();
+				int16 y1 = rStr.readSint16BE();
+				makeLineNonWalkable(x, y, x1, y1);
+				break;
+			}
+			case 3: {
+				int16 x =  rStr.readSint16BE();
+				int16 y = rStr.readSint16BE();
+				int16 x1 = rStr.readSint16BE();
+				int16 y1 = rStr.readSint16BE();
+				makeLineWalkable(x, y, x1, y1);
+				break;
+			}
+			case 4: {
+				int16 x = rStr.readSint16BE();
+				int16 y = rStr.readSint16BE();
+				getMask()->floodFillNotWalkableOnMask(x, y);
+				break;
+			}
+			default:
+				break;
 			}
 		}
 
-		_saveBufferStream->write(buf,size);
+		_saveBufferStream->write(buf, size);
 		delete loadFile;
 	}
 	return true;
@@ -2934,7 +2927,7 @@ void ToonEngine::initCharacter(int32 characterId, int32 animScriptId, int32 scen
 
 // Strangerke - Commented (not used)
 //	if (_characters[characterIndex])
-		//delete current char
+//		delete current char
 
 	_characters[characterIndex] = new Character(this);
 	_characters[characterIndex]->setId(characterId);
@@ -2984,7 +2977,7 @@ void ToonEngine::viewInventoryItem(Common::String str, int32 lineId, int32 itemD
 	storePalette();
 	fadeOut(5);
 
-	Picture* pic = new Picture(this);
+	Picture *pic = new Picture(this);
 	pic->loadPicture(str, false);
 	pic->setupPalette();
 	flushPalette();
@@ -3024,14 +3017,14 @@ void ToonEngine::viewInventoryItem(Common::String str, int32 lineId, int32 itemD
 			_firstFrame = false;
 			fadeIn(5);
 		}
-		
+
 		copyToVirtualScreen();
 	}
 
 	fadeOut(5);
 	restorePalette();
 	_firstFrame = true;
-	_gameState->_currentScrollValue= oldScrollValue;
+	_gameState->_currentScrollValue = oldScrollValue;
 	delete pic;
 
 }
@@ -4204,40 +4197,38 @@ char **ToonEngine::loadTextsVariante(Common::File &in) {
 	return res;
 }
 
-void ToonEngine::makeLineNonWalkable( int32 x, int32 y, int32 x2, int32 y2 ) {
-	_currentMask->drawLineOnMask(x,y,x2,y2,false);
+void ToonEngine::makeLineNonWalkable(int32 x, int32 y, int32 x2, int32 y2) {
+	_currentMask->drawLineOnMask(x, y, x2, y2, false);
 }
 
-void ToonEngine::makeLineWalkable( int32 x, int32 y, int32 x2, int32 y2 ) {
-	_currentMask->drawLineOnMask(x,y,x2,y2,true);
+void ToonEngine::makeLineWalkable(int32 x, int32 y, int32 x2, int32 y2) {
+	_currentMask->drawLineOnMask(x, y, x2, y2, true);
 }
 
-void SceneAnimation::save(ToonEngine* vm, Common::WriteStream *stream) {
+void SceneAnimation::save(ToonEngine *vm, Common::WriteStream *stream) {
 	stream->writeByte(_active);
 	stream->writeSint32BE(_id);
 
-	if (!_active) 
+	if (!_active)
 		return;
 
 	if (_animInstance) {
 		stream->writeByte(1);
 		_animInstance->save(stream);
-	} 
-	else {
+	} else {
 		stream->writeByte(0);
 	}
 
 	if (!_animation) {
 		stream->writeByte(0);
-	} 
-	else {
-		stream->writeByte(strlen(_animation->_name)+1);
-		stream->write(_animation->_name, strlen(_animation->_name)+1);
+	} else {
+		stream->writeByte(strlen(_animation->_name) + 1);
+		stream->write(_animation->_name, strlen(_animation->_name) + 1);
 	}
 }
-void SceneAnimation::load(ToonEngine* vm,Common::ReadStream *stream) {
-	
-	_active = stream->readByte(); 
+void SceneAnimation::load(ToonEngine *vm, Common::ReadStream *stream) {
+
+	_active = stream->readByte();
 	_id = stream->readSint32BE();
 
 
@@ -4256,21 +4247,20 @@ void SceneAnimation::load(ToonEngine* vm,Common::ReadStream *stream) {
 	int8 strSize = stream->readByte();
 	if (!strSize) {
 		_animation = 0;
-		if(_animInstance) 
+		if (_animInstance)
 			_animInstance->setAnimation(0);
-	} 
-	else {
+	} else {
 		stream->read(animationName, strSize);
 		animationName[strSize] = 0;
 
 		_animation = new Animation(vm);
 		_animation->loadAnimation(animationName);
 
-		if(_animInstance)
+		if (_animInstance)
 			_animInstance->setAnimation(_animation, false);
 
 		printf("load animation instance %d / %s / visible %d \n", _id, _animation->_name, _animInstance->getVisible());
 	}
-}	
+}
 
 } // End of namespace Toon

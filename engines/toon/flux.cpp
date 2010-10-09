@@ -52,8 +52,7 @@ void CharacterFlux::playStandingAnim() {
 void CharacterFlux::setVisible(bool visible) {
 	if (_vm->state()->_currentChapter == 2) {
 		Character::setVisible(false);
-	}
-	else {
+	} else {
 		Character::setVisible(visible);
 	}
 }

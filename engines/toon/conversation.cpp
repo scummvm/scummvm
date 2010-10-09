@@ -27,16 +27,16 @@
 
 namespace Toon {
 
-void Conversation::save(Common::WriteStream *stream, int16* conversationDataBase) {
+void Conversation::save(Common::WriteStream *stream, int16 *conversationDataBase) {
 	stream->writeSint32BE(_enable);
 	for (int32 i = 0; i < 10; i++) {
 		stream->writeSint32BE(state[i]._data2);
 		stream->writeSint16BE(state[i]._data3);
-		stream->writeSint32BE((int16*)state[i]._data4 - conversationDataBase);
+		stream->writeSint32BE((int16 *)state[i]._data4 - conversationDataBase);
 	}
 }
 
-void Conversation::load(Common::ReadStream *stream, int16* conversationDataBase) {
+void Conversation::load(Common::ReadStream *stream, int16 *conversationDataBase) {
 	_enable = stream->readSint32BE();
 	for (int32 i = 0; i < 10; i++) {
 		state[i]._data2 = stream->readSint32BE();

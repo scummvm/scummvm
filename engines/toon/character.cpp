@@ -55,7 +55,7 @@ Character::Character(ToonEngine *vm) : _vm(vm) {
 	_currentPathNodeCount = 0;
 	_currentPathNode = 0;
 	_visible = true;
-	_speed = 150;	// 150 = nominal drew speed
+	_speed = 150;   // 150 = nominal drew speed
 	_lastWalkTime = 0;
 	_numPixelToWalk = 0;
 	_nextIdleTime = _vm->getSystem()->getMillis() + (_vm->randRange(0, 600) + 300) * _vm->getTickLength();
@@ -75,7 +75,7 @@ void Character::setFacing(int32 facing) {
 
 void Character::setPosition(int32 x, int32 y) {
 	debugC(5, kDebugCharacter, "setPosition(%d, %d)", x, y);
-	
+
 	_x = x;
 	_y = y;
 	if (_animationInstance)
@@ -86,7 +86,7 @@ void Character::setPosition(int32 x, int32 y) {
 bool Character::walkTo(int32 newPosX, int32 newPosY) {
 	debugC(1, kDebugCharacter, "walkTo(%d, %d)", newPosX, newPosY);
 
-	if (!_visible) 
+	if (!_visible)
 		return true;
 
 	if (_x == newPosX && _y == newPosY)
@@ -95,13 +95,13 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 	_vm->getPathFinding()->resetBlockingRects();
 
 	if (_id == 1) {
-		int32 sizeX = MAX(5,40 * _vm->getDrew()->getScale() / 1024);
-		int32 sizeY = MAX(2,20 * _vm->getDrew()->getScale() / 1024);
-		_vm->getPathFinding()->addBlockingEllipse(_vm->getDrew()->getFinalX(),_vm->getDrew()->getFinalY(),sizeX,sizeY );
+		int32 sizeX = MAX(5, 40 * _vm->getDrew()->getScale() / 1024);
+		int32 sizeY = MAX(2, 20 * _vm->getDrew()->getScale() / 1024);
+		_vm->getPathFinding()->addBlockingEllipse(_vm->getDrew()->getFinalX(), _vm->getDrew()->getFinalY(), sizeX, sizeY);
 	}
 
 	_vm->getPathFinding()->findClosestWalkingPoint(newPosX, newPosY, &_finalX, &_finalY, _x, _y);
-	if (_x == _finalX && _y == _finalY) 
+	if (_x == _finalX && _y == _finalY)
 		return true;
 
 
@@ -131,19 +131,19 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 					setFacing(getFacingFromDirection(dx, dy));
 					playWalkAnim(0, 0);
 				}
-				
+
 				// in 1/1000 pixels
 				_numPixelToWalk += _speed * (_vm->getSystem()->getMillis() - _lastWalkTime) * _scale / 1024;
 				_lastWalkTime =  _vm->getSystem()->getMillis();
 
-				while(_numPixelToWalk >= 1000  && _currentPathNode < _currentPathNodeCount) {
+				while (_numPixelToWalk >= 1000 && _currentPathNode < _currentPathNodeCount) {
 					_x = _currentPathX[_currentPathNode];
 					_y = _currentPathY[_currentPathNode];
 					_currentPathNode += 1;
 					_numPixelToWalk -= 1000;
 				}
 				setPosition(_x, _y);
-			
+
 				_vm->doFrame();
 			}
 			playStandingAnim();
@@ -256,7 +256,7 @@ void Character::stopSpecialAnim() {
 	if (_animFlags & 0x40) {
 		playStandingAnim();
 	}
-	
+
 #if 0
 	_animationInstance->setFrame(0);
 	playStandingAnim();
@@ -279,7 +279,7 @@ void Character::update(int32 timeIncrement) {
 			_numPixelToWalk += _speed * (_vm->getSystem()->getMillis() - _lastWalkTime) * _scale / 1024;
 			_lastWalkTime =  _vm->getSystem()->getMillis();
 
-			while(_numPixelToWalk > 1000 && _currentPathNode < _currentPathNodeCount) {
+			while (_numPixelToWalk > 1000 && _currentPathNode < _currentPathNodeCount) {
 				_x = _currentPathX[_currentPathNode];
 				_y = _currentPathY[_currentPathNode];
 				_currentPathNode += 1;
@@ -357,7 +357,7 @@ void Character::update(int32 timeIncrement) {
 	}
 
 	if ((_animFlags & 3) == 2) {
-		if (_vm->getCurrentLineToSay() != _lineToSayId || !_vm->getAudioManager()->voiceStillPlaying() ) // || (_flags & 8)) && _vm->getAudioManager()->voiceStillPlaying() )
+		if (_vm->getCurrentLineToSay() != _lineToSayId || !_vm->getAudioManager()->voiceStillPlaying())  // || (_flags & 8)) && _vm->getAudioManager()->voiceStillPlaying())
 			_animFlags |= 1;
 
 // Strangerke - Commented (not used)
@@ -564,12 +564,12 @@ void Character::load(Common::ReadStream *stream) {
 	_finalY = stream->readSint32LE();
 	_scale = stream->readSint32LE();
 	_id = stream->readSint32LE();
-	
+
 	_animScriptId = stream->readSint32LE();
 	_animFlags = stream->readSint32LE();
 	_animSpecialDefaultId = stream->readSint32LE();
 	_sceneAnimationId = stream->readSint32LE();
-	
+
 	if (_sceneAnimationId > -1) {
 		setAnimationInstance(_vm->getSceneAnimation(_sceneAnimationId)->_animInstance);
 	}
@@ -986,7 +986,7 @@ int32 Character::getSceneAnimationId() {
 	return _sceneAnimationId;
 }
 
-void Character::setDefaultSpecialAnimationId( int32 defaultAnimationId ) {
+void Character::setDefaultSpecialAnimationId(int32 defaultAnimationId) {
 	_animSpecialDefaultId = defaultAnimationId;
 }
 
@@ -1003,16 +1003,16 @@ void Character::updateIdle() {
 
 	// only flux and drew
 	if (_id > 1)
-		return; 
+		return;
 
 	if (_vm->state()->_mouseHidden)
-		_nextIdleTime = _vm->getOldMilli() + (300 + _vm->randRange(0,600)) * _vm->getTickLength();
+		_nextIdleTime = _vm->getOldMilli() + (300 + _vm->randRange(0, 600)) * _vm->getTickLength();
 
 	if (_vm->getOldMilli() > _nextIdleTime) {
-		if ( ((_flags & 1) == 0) || ((_flags & 2) != 0) ) {
+		if (((_flags & 1) == 0) || ((_flags & 2) != 0)) {
 			if (!_vm->state()->_inCloseUp && !_vm->state()->_inCutaway && _animSpecialId == -1) {
 				if (!_vm->state()->_mouseHidden) {
-					_nextIdleTime = _vm->getOldMilli() + (300 + _vm->randRange(0,600)) * _vm->getTickLength();
+					_nextIdleTime = _vm->getOldMilli() + (300 + _vm->randRange(0, 600)) * _vm->getTickLength();
 					playAnim(getRandomIdleAnim(), 0, 0x40);
 					_flags |= 0x4;
 				}

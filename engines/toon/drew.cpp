@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #include "toon/drew.h"
 
 namespace Toon {

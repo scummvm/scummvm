@@ -41,8 +41,8 @@ public:
 		void *_data4; // 10
 	} state[10];
 
-	void save(Common::WriteStream *stream, int16* conversationDataBase);
-	void load(Common::ReadStream *stream, int16* conversationDataBase);
+	void save(Common::WriteStream *stream, int16 *conversationDataBase);
+	void load(Common::ReadStream *stream, int16 *conversationDataBase);
 };
 
 } // End of namespace Toon

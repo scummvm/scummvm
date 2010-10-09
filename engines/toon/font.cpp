@@ -132,7 +132,7 @@ void FontRenderer::setFontColorByCharacter(int32 characterId) {
 	debugC(5, kDebugFont, "setFontColorByCharacter(%d)", characterId);
 
 	// unfortunately this table was hardcoded in the original executable
-	static const byte colorsByCharacters[] = { 
+	static const byte colorsByCharacters[] = {
 		0xe0, 0xdc, 0xc8,   0xd6, 0xc1, 0xc8,   0xe9, 0xde, 0xc8,   0xeb, 0xe8, 0xc8,
 		0xd1, 0xcf, 0xc8,   0xd8, 0xd5, 0xc8,   0xfb, 0xfa, 0xc8,   0xd9, 0xd7, 0xc8,
 		0xe8, 0xe4, 0xc8,   0xe9, 0xfa, 0xc8,   0xeb, 0xe4, 0xc8,   0xeb, 0xe4, 0xc8,
@@ -247,7 +247,7 @@ void FontRenderer::renderMultiLineText(int32 x, int32 y, Common::String origText
 	// adapt x
 	if (x - 30 - maxWidth / 2 < 0)
 		x = maxWidth / 2 + 30;
-	
+
 	if (x + 30 + (maxWidth / 2) > 640)
 		x = 640 - (maxWidth / 2) - 30;
 

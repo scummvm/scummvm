@@ -144,8 +144,7 @@ bool PathFinding::isWalkable(int32 x, int32 y) {
 		if (_blockingRects[i][4] == 0) {
 			if (x >= _blockingRects[i][0] && x <= _blockingRects[i][2] && y >= _blockingRects[i][1] && y < _blockingRects[i][3])
 				return false;
-		} 
-		else {
+		} else {
 			int32 dx = abs(_blockingRects[i][0] - x);
 			int32 dy = abs(_blockingRects[i][1] - y);
 			if ((dx << 8) / _blockingRects[i][2] < (1 << 8) && (dy << 8) / _blockingRects[i][3] < (1 << 8)) {
@@ -200,7 +199,7 @@ int PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 		_gridPathCount = 0;
 		return true;
 	}
-	
+
 	memset(_gridTemp , 0, _width * _height * sizeof(int32));
 	_heap->clear();
 	int32 curX = x;

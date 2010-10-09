@@ -42,7 +42,7 @@ void Hotspots::load(Common::ReadStream *Stream) {
 
 	for (int32 i = 0; i < _numItems; i++) {
 		for (int32 a = 0; a < 256; a++)
-			_items[i].setData(a,Stream->readSint16BE());
+			_items[i].setData(a, Stream->readSint16BE());
 	}
 }
 
@@ -104,7 +104,7 @@ bool Hotspots::LoadRif(Common::String rifName, Common::String additionalRifName)
 
 	uint32 size = 0;
 	uint8 *rifData = _vm->resources()->getFileData(rifName, &size);
-	if (!rifData) 
+	if (!rifData)
 		return false;
 
 	uint32 size2 = 0;
@@ -121,7 +121,7 @@ bool Hotspots::LoadRif(Common::String rifName, Common::String additionalRifName)
 
 	_numItems = (rifsize + rifsize2) / 512;
 
-	if (_items) 
+	if (_items)
 		delete[] _items;
 
 	_items = new HotspotData[_numItems];

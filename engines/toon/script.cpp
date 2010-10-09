@@ -214,8 +214,8 @@ bool EMCInterpreter::run(EMCState *script) {
 		error("Unknown script opcode: %d in file '%s' at offset 0x%.08X", opcode, script->dataPtr->filename, instOffset);
 	} else {
 		static bool EMCDebug = false;
-		if (EMCDebug )
-			debugC(5, 0, "[0x%.08X] EMCInterpreter::%s([%d/%u])", instOffset*2, _opcodes[opcode].desc, _parameter, (uint)_parameter);
+		if (EMCDebug)
+			debugC(5, 0, "[0x%.08X] EMCInterpreter::%s([%d/%u])", instOffset * 2, _opcodes[opcode].desc, _parameter, (uint)_parameter);
 		//debug(0, "[0x%.08X] EMCInterpreter::%s([%d/%u])", instOffset, _opcodes[opcode].desc, _parameter, (uint)_parameter);
 
 		(this->*(_opcodes[opcode].proc))(script);
@@ -457,16 +457,15 @@ void EMCInterpreter::op_setRetAndJmp(EMCState *script) {
 	}
 }
 
-void EMCInterpreter::saveState(EMCState* script, Common::WriteStream * stream) {
+void EMCInterpreter::saveState(EMCState *script, Common::WriteStream *stream) {
 	stream->writeSint16LE(script->bp);
 	stream->writeSint16LE(script->sp);
 	if (!script->ip) {
 		stream->writeSint16LE(-1);
-	}
-	else {
+	} else {
 		stream->writeSint16LE(script->ip - script->dataPtr->data);
 	}
-	
+
 	for (int32 i = 0; i < EMCState::kStackSize; i++) {
 		stream->writeSint16LE(script->stack[i]);
 	}
@@ -478,18 +477,17 @@ void EMCInterpreter::saveState(EMCState* script, Common::WriteStream * stream) {
 	stream->writeSint16LE(script->retValue);
 	stream->writeByte(script->running);
 }
-void EMCInterpreter::loadState(EMCState* script, Common::ReadStream* stream) {
+void EMCInterpreter::loadState(EMCState *script, Common::ReadStream *stream) {
 	script->bp = stream->readSint16LE();
 	script->sp = stream->readSint16LE();
 
 	int16 scriptIp = stream->readSint16LE();
-	if(scriptIp == -1) {
+	if (scriptIp == -1) {
 		script->ip = 0;
-	}
-	else {
+	} else {
 		script->ip = scriptIp + script->dataPtr->data;
 	}
-	
+
 	for (int32 i = 0; i < EMCState::kStackSize; i++) {
 		script->stack[i] = stream->readSint16LE();
 	}

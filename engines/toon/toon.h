@@ -53,7 +53,7 @@ enum ToonGameType {
 
 enum ToonDebugChannels {
 	kDebugAnim      = 1 <<  0,
-	kDebugCharacter = 1 <<  1,	
+	kDebugCharacter = 1 <<  1,
 	kDebugAudio     = 1 <<  2,
 	kDebugHotspot   = 1 <<  3,
 	kDebugFont      = 1 <<  4,
@@ -91,7 +91,7 @@ public:
 	char **_specialInfoLine;
 
 	virtual Common::Error run();
-	virtual bool showMainmenu(bool& loadedGame);
+	virtual bool showMainmenu(bool &loadedGame);
 	virtual void init();
 	bool loadToonDat();
 	char **loadTextsVariante(Common::File &in);
@@ -367,7 +367,7 @@ protected:
 
 	AudioManager *_audioManager;
 
-	Common::MemoryWriteStreamDynamic* _saveBufferStream;
+	Common::MemoryWriteStreamDynamic *_saveBufferStream;
 
 	int16 *_conversationData;
 

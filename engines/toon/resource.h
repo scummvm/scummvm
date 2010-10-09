@@ -42,7 +42,7 @@ public:
 	uint8 *getFileData(Common::String fileName, uint32 *fileSize);
 	Common::String getPackName() { return _packName; }
 	Common::SeekableReadStream *createReadStream(Common::String fileName);
-	void close(); 
+	void close();
 
 protected:
 	struct File {
@@ -68,7 +68,7 @@ class Resources {
 public:
 	Resources(ToonEngine *vm);
 	void openPackage(Common::String file, bool preloadEntirePackage);
-	void closePackage(Common::String fileName); 
+	void closePackage(Common::String fileName);
 	Common::SeekableReadStream *openFile(Common::String file);
 	uint8 *getFileData(Common::String fileName, uint32 *fileSize);
 

@@ -176,8 +176,8 @@ public:
 	int32 _id;
 	bool _active;
 
-	void load(ToonEngine* vm,Common::ReadStream *stream);
-	void save(ToonEngine* vm,Common::WriteStream *stream);
+	void load(ToonEngine *vm, Common::ReadStream *stream);
+	void save(ToonEngine *vm, Common::WriteStream *stream);
 };
 
 class SceneAnimationScript {

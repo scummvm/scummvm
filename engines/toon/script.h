@@ -104,8 +104,8 @@ public:
 	void init(EMCState *scriptState, const EMCData *data);
 	bool start(EMCState *script, int function);
 
-	void saveState(EMCState* script, Common::WriteStream * stream);
-	void loadState(EMCState* script, Common::ReadStream* stream);
+	void saveState(EMCState *script, Common::WriteStream *stream);
+	void loadState(EMCState *script, Common::ReadStream *stream);
 
 	bool isValid(EMCState *script);
 

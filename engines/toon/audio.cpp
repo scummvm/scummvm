@@ -332,7 +332,7 @@ void AudioStreamInstance::decodeADPCM(uint8 *comp, int16 *dest, int32 packetSize
 	_lastADPCMval2 = v19;
 }
 
-void AudioStreamInstance::play(bool fade, Audio::Mixer::SoundType soundType ) {
+void AudioStreamInstance::play(bool fade, Audio::Mixer::SoundType soundType) {
 	debugC(1, kDebugAudio, "play(%d)", (fade) ? 1 : 0);
 
 	Audio::SoundHandle soundHandle;

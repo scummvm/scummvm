@@ -680,8 +680,8 @@ void AnimationManager::render() {
 		changed = false;
 		for (uint32 i = 0; i < _instances.size() - 1; i++) {
 			if ((_instances[i]->getLayerZ() > _instances[i + 1]->getLayerZ()) ||
-			    ((_instances[i]->getLayerZ() == _instances[i + 1]->getLayerZ()) && 
-			     (_instances[i]->getId() < _instances[i+1]->getId()))) {
+			    ((_instances[i]->getLayerZ() == _instances[i + 1]->getLayerZ()) &&
+			    (_instances[i]->getId() < _instances[i+1]->getId()))) {
 				AnimationInstance *instance = _instances[i];
 				_instances[i] = _instances[i + 1];
 				_instances[i + 1] = instance;

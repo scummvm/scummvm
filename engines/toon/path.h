@@ -63,7 +63,7 @@ public:
 
 	void resetBlockingRects();
 	void addBlockingRect(int32 x1, int32 y1, int32 x2, int32 y2);
-	void addBlockingEllipse(int32 x1, int32 y1, int32 w, int32 h); 
+	void addBlockingEllipse(int32 x1, int32 y1, int32 w, int32 h);
 
 	int32 getPathNodeCount() const;
 	int32 getPathNodeX(int32 nodeId) const;

@@ -388,7 +388,7 @@ int32 ScriptFunc::sys_Cmd_Set_Initial_Location(EMCState *state) {
 }
 
 int32 ScriptFunc::sys_Cmd_Make_Line_Non_Walkable(EMCState *state) {
-	_vm->makeLineNonWalkable(stackPos(0),stackPos(1),stackPos(2),stackPos(3));
+	_vm->makeLineNonWalkable(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 
 	// we have to store some info for savegame
 	_vm->getSaveBufferStream()->writeSint16BE(2); // 2 = sys_Cmd_Make_Line_Non_Walkable
@@ -400,7 +400,7 @@ int32 ScriptFunc::sys_Cmd_Make_Line_Non_Walkable(EMCState *state) {
 }
 
 int32 ScriptFunc::sys_Cmd_Make_Line_Walkable(EMCState *state) {
-	_vm->makeLineWalkable(stackPos(0),stackPos(1),stackPos(2),stackPos(3));
+	_vm->makeLineWalkable(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 
 	// we have to store some info for savegame
 	_vm->getSaveBufferStream()->writeSint16BE(3); // 3 = sys_Cmd_Make_Line_Walkable
@@ -784,7 +784,7 @@ int32 ScriptFunc::sys_Cmd_Get_Mouse_Y(EMCState *state) {
 }
 
 int32 ScriptFunc::sys_Cmd_Fade_Palette(EMCState *state) {
-	debugC(0,0xfff, "fadePalette %d %d", stackPos(0),stackPos(1));
+	debugC(0, 0xfff, "fadePalette %d %d", stackPos(0), stackPos(1));
 	return 0;
 }
 
@@ -829,8 +829,8 @@ int32 ScriptFunc::sys_Cmd_Draw_Scene_Anim_WSA_Frame_To_Back(EMCState *state) {
 		// we have to store some info for savegame
 		_vm->getSaveBufferStream()->writeSint16BE(1); // 1 = Draw_Scene_Anim_WSA_Frame_To_Back
 		_vm->getSaveBufferStream()->writeSint16BE(frame);
-		_vm->getSaveBufferStream()->writeSint16BE(strlen(sceneAnim->_animInstance->getAnimation()->_name)+1);
-		_vm->getSaveBufferStream()->write(sceneAnim->_animInstance->getAnimation()->_name, strlen(sceneAnim->_animInstance->getAnimation()->_name)+1);
+		_vm->getSaveBufferStream()->writeSint16BE(strlen(sceneAnim->_animInstance->getAnimation()->_name) + 1);
+		_vm->getSaveBufferStream()->write(sceneAnim->_animInstance->getAnimation()->_name, strlen(sceneAnim->_animInstance->getAnimation()->_name) + 1);
 		_vm->getSaveBufferStream()->writeSint16BE(sceneAnim->_animInstance->getX());
 		_vm->getSaveBufferStream()->writeSint16BE(sceneAnim->_animInstance->getY());
 		_vm->getSaveBufferStream()->writeSint16BE(sceneAnim->_animInstance->getZ());
@@ -905,7 +905,6 @@ int32 ScriptFunc::sys_Cmd_Init_Scene_Anim(EMCState *state) {
 
 	_vm->getAnimationManager()->addInstance(sceneAnim->_animInstance);
 
-
 	debugC(0, 0xfff, "Init Anim %s %d %d %d %d %d %d %d %d %d %d %d %d %d\n", GetText(12, state), stackPos(0), stackPos(1), stackPos(2), stackPos(3),
 	       stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9), stackPos(10), stackPos(11),  stackPos(12));
 
@@ -979,7 +978,7 @@ int32 ScriptFunc::sys_Cmd_Draw_Scene_Anim_WSA_Frame(EMCState *state) {
 		else if (animId == 20 || animId == 15 || animId == 21 || animId == 16 || animId == 17 || animId == 18)
 			_vm->pauseSceneAnimationScript(_vm->getCurrentUpdatingSceneAnimation(), 1);
 	}
-	
+
 	if (_vm->state()->_currentScene == 29) {
 		if (animId == 16 || animId == 26 || animId == 36)
 			_vm->pauseSceneAnimationScript(_vm->getCurrentUpdatingSceneAnimation(), 2);
@@ -1004,7 +1003,7 @@ int32 ScriptFunc::sys_Cmd_Run_Actor_Default_Script(EMCState *state) {
 int32 ScriptFunc::sys_Cmd_Set_Location_Data(EMCState *state) {
 	// initial setup of locations
 	int32 locationId = stackPos(0);
-	debugC(0,0, "setlocationdata(%d) %s %x %s %s %d %d", locationId, GetText(1,state), stackPos(2), GetText(3,state), GetText(4,state), stackPos(5),stackPos(6));
+	debugC(0, 0, "setlocationdata(%d) %s %x %s %s %d %d", locationId, GetText(1, state), stackPos(2), GetText(3, state), GetText(4, state), stackPos(5), stackPos(6));
 	strcpy(_vm->state()->_locations[locationId]._name, GetText(1, state));
 	strcpy(_vm->state()->_locations[locationId]._music, GetText(3, state));
 	strcpy(_vm->state()->_locations[locationId]._cutaway, GetText(4, state));
@@ -1092,7 +1091,7 @@ int32 ScriptFunc::sys_Cmd_Say_Line(EMCState *state) {
 }
 
 int32 ScriptFunc::sys_Cmd_Knight_Puzzle_Get_Coord(EMCState *state) {
-	static uint16 knightCoords[] = { 
+	static const uint16 knightCoords[] = {
 		0x327, 0x0fa, 0x354, 0x0f8, 0x383, 0x0f4, 0x3a4, 0x0f0, 0x3d3, 0x0ed,
 		0x3fd, 0x0ef, 0x2fe, 0x12d, 0x2fe, 0x12d, 0x310, 0x109, 0x349, 0x103,
 		0x378, 0x103, 0x3a4, 0x102, 0x3d5, 0x102, 0x403, 0x103, 0x2fe, 0x12d,

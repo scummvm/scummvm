@@ -45,7 +45,7 @@ public:
 	void draw(Graphics::Surface &surface, int32 x, int32 y, int32 dx, int32 dy);
 	void drawMask(Graphics::Surface &surface, int32 x, int32 y, int32 dx, int32 dy);
 	void drawLineOnMask(int32 x, int32 y, int32 x2, int32 y2, bool walkable);
-	void floodFillNotWalkableOnMask( int32 x, int32 y );
+	void floodFillNotWalkableOnMask(int32 x, int32 y);
 	uint8 getData(int32 x, int32 y);
 	uint8 *getDataPtr() { return _data; }
 	int32 getWidth() const { return _width; }
