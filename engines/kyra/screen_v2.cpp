@@ -64,9 +64,9 @@ uint8 *Screen_v2::generateOverlay(const Palette &pal, uint8 *buffer, int opColor
 	}
 
 	for (int i = 1; i != 256; ++i) {
-		const byte curR = pal[i * 3 + 0] - ((((pal[i * 3 + 0] - opR) * weight) >> 7) & 0x7F);
-		const byte curG = pal[i * 3 + 1] - ((((pal[i * 3 + 1] - opG) * weight) >> 7) & 0x7F);
-		const byte curB = pal[i * 3 + 2] - ((((pal[i * 3 + 2] - opB) * weight) >> 7) & 0x7F);
+		const byte curR = pal[i * 3 + 0] - (((pal[i * 3 + 0] - opR) * weight) >> 7);
+		const byte curG = pal[i * 3 + 1] - (((pal[i * 3 + 1] - opG) * weight) >> 7);
+		const byte curB = pal[i * 3 + 2] - (((pal[i * 3 + 2] - opB) * weight) >> 7);
 
 		uint16 idxSum = _use16ColorMode ? 0xFFFF : 0x7FFF;
 		byte index = opColor;
