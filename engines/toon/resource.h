@@ -40,7 +40,7 @@ public:
 
 	void open(Common::SeekableReadStream *rs, Common::String packName, bool preloadEntirePackage);
 	uint8 *getFileData(Common::String fileName, uint32 *fileSize);
-	Common::String getPackName() { return _packName; };
+	Common::String getPackName() { return _packName; }
 	Common::SeekableReadStream *createReadStream(Common::String fileName);
 	void close(); 
 

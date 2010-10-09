@@ -94,7 +94,7 @@ public:
 	virtual void stopWalk();
 	virtual void stopSpecialAnim();
 	virtual void updateIdle();
-	virtual int32 getRandomIdleAnim() { return 0; };
+	virtual int32 getRandomIdleAnim() { return 0; }
 
 	int32 getFacingFromDirection(int32 dx, int32 dy);
 	static const SpecialCharacterAnimation *getSpecialAnimation(int32 characterId, int32 animationId);

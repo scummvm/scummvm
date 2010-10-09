@@ -57,13 +57,13 @@ protected:
 	int32 readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const {
 		return false;
-	};
+	}
 	int getRate() const {
 		return 22100;
-	};
+	}
 	bool endOfData() const {
 		return _stopped;
-	};
+	}
 	void handleFade(int32 numSamples);
 	void stopNow();
 

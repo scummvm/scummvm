@@ -108,19 +108,19 @@ public:
 	void setUseMask(bool useMask);
 	void moveRelative(int32 dx, int32 dy, int32 dz);
 	void getRect(int32 *x1, int32 *y1, int32 *x2, int32 *y2) const;
-	int32 getX() const { return _x; };
-	int32 getY() const { return _y; };
-	int32 getZ() const { return _z; };
+	int32 getX() const { return _x; }
+	int32 getY() const { return _y; }
+	int32 getZ() const { return _z; }
 	int32 getX2() const;
 	int32 getY2() const;
 	int32 getZ2() const;
-	int32 getFrame() const { return _currentFrame; };
+	int32 getFrame() const { return _currentFrame; }
 	void reset();
 	void save(Common::WriteStream *stream);
 	void load(Common::ReadStream *stream);
 
-	void setId(int32 id) { _id = id; };
-	int32 getId() const { return _id; };
+	void setId(int32 id) { _id = id; }
+	int32 getId() const { return _id; }
 
 	void setX(int32 x, bool relative = false);
 	void setY(int32 y, bool relative = false);

@@ -42,7 +42,7 @@ public:
 	int16 getPriority() const { return READ_LE_INT16(_data + 7); }
 	int16 getType() const { return READ_LE_INT16(_data + 8); }
 	int16 getData(int32 id) const { return READ_LE_INT16(_data + id); }
-	void setData(int32 id, int16 val) { WRITE_LE_UINT16(&_data[id], val); };
+	void setData(int32 id, int16 val) { WRITE_LE_UINT16(&_data[id], val); }
 
 private:
 	int16 _data[256];
@@ -57,7 +57,7 @@ public:
 	int32 Find(int32 x, int32 y);
 	int32 FindBasedOnCorner(int32 x, int32 y);
 	HotspotData *Get(int32 id);
-	int32 getCount() const { return _numItems; };
+	int32 getCount() const { return _numItems; }
 
 	void load(Common::ReadStream *Stream);
 	void save(Common::WriteStream *Stream);
