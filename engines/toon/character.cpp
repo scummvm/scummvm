@@ -314,7 +314,7 @@ void Character::update(int32 timeIncrement) {
 
 	int32 currentFrame = _animationInstance->getFrame();
 
-	SpecialCharacterAnimation *anim = getSpecialAnimation(_id, animId);
+	const SpecialCharacterAnimation *anim = getSpecialAnimation(_id, animId);
 
 	if ((_animFlags & 0x10) == 0) {
 		if (_animScriptId != -1 && currentFrame > 0 && !_vm->getSceneAnimationScript(_animScriptId)->_frozen) {
@@ -601,11 +601,11 @@ void Character::stopWalk() {
 	_currentPathNodeCount = 0;
 }
 
-SpecialCharacterAnimation *Character::getSpecialAnimation(int32 characterId, int32 animationId) {
+const SpecialCharacterAnimation *Character::getSpecialAnimation(int32 characterId, int32 animationId) {
 	debugC(6, kDebugCharacter, "getSpecialAnimation(%d, %d)", characterId, animationId);
 
 	// very nice animation list hardcoded in the executable...
-	static SpecialCharacterAnimation anims[] = {
+	static const SpecialCharacterAnimation anims[] = {
 		{ "TLK547_?", 9, 0, 0, 0, 0, 0, 1, 5, 8, 1, 8, 0, 255 },
 		{ "TLK555_?", 16, 0, 0, 0, 0, 6, 8, 10, 255, 6, 11, 2, 255 },
 		{ "LST657_?", 14, 0, 0, 0, 0, 255, 255, 255, 255, 5, 11, 0, 255 },
@@ -934,7 +934,7 @@ void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 		animId = _animSpecialDefaultId;
 
 	// get the anim to load
-	SpecialCharacterAnimation *anim = getSpecialAnimation(_id, animId);
+	const SpecialCharacterAnimation *anim = getSpecialAnimation(_id, animId);
 
 	char animName[20];
 	strcpy(animName, anim->_filename);
