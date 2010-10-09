@@ -183,13 +183,13 @@ void ToonEngine::parseInput() {
 						// ok
 						char buf[256];
 						snprintf(buf, 256, "Saved game in slot #%d ",slotNum);
-						GUI::TimedMessageDialog dialog(Common::String(buf), 1000);
+						GUI::TimedMessageDialog dialog(buf, 1000);
 						dialog.runModal();
 					}
 					else {
 						char buf[256];
 						snprintf(buf, 256, "Could not quick save into slot #%d", slotNum);
-						GUI::MessageDialog dialog2(Common::String(buf), "OK", 0);
+						GUI::MessageDialog dialog2(buf, "OK", 0);
 						//warning("%s", buf);
 						dialog2.runModal();
 
@@ -204,13 +204,13 @@ void ToonEngine::parseInput() {
 						// ok
 						char buf[256];
 						snprintf(buf, 256, "Savegame #%d quick loaded", slotNum);
-						GUI::TimedMessageDialog dialog(Common::String(buf), 1000);
+						GUI::TimedMessageDialog dialog(buf, 1000);
 						dialog.runModal();
 					}
 					else {
 						char buf[256];
 						snprintf(buf, 256, "Could not quick load the savegame #%d", slotNum);
-						GUI::MessageDialog dialog(Common::String(buf), "OK", 0);
+						GUI::MessageDialog dialog(buf, "OK", 0);
 						warning("%s", buf);
 						dialog.runModal();
 					}

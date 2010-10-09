@@ -67,7 +67,7 @@ void FontRenderer::renderText(int32 x, int32 y, Common::String origText, int32 m
 	int32 curY = y;
 	int32 height = 0;
 
-	const byte *text = (byte *)origText.c_str();
+	const byte *text = (const byte *)origText.c_str();
 	while (*text) {
 		byte curChar = *text;
 		if (curChar == 13) {
@@ -93,7 +93,7 @@ void FontRenderer::computeSize(Common::String origText, int32 *retX, int32 *retY
 	int32 totalHeight = 0;
 	int32 totalWidth = 0;
 
-	const byte *text = (byte *)origText.c_str();
+	const byte *text = (const byte *)origText.c_str();
 	while (*text) {
 		byte curChar = *text;
 		if (curChar < 32) {
