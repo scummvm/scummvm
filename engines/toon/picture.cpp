@@ -65,7 +65,6 @@ bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 			_palette = 0;
 		}
 		return true;
-		break;
 	}
 	case kCompSPCN: {
 		uint32 decSize = READ_LE_UINT32(fileData + 10);
@@ -89,7 +88,6 @@ bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 		// decompress the picture into our buffer
 		decompressSPCN(fileData + 16 + _paletteEntries * 3, _data, decSize);
 		return true;
-		break;
 	}
 	case kCompRNC1: {
 		Toon::RncDecoder rnc;
@@ -108,7 +106,6 @@ bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 
 		_height = 400;
 		return true;
-		break;
 	}
 	case kCompRNC2: {
 		Toon::RncDecoder rnc;
@@ -127,7 +124,6 @@ bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 
 		_height = 400;
 		return true;
-		break;
 	}
 	}
 	return false;
