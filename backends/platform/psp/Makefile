@@ -148,6 +148,7 @@ OBJS := powerman.o \
 	thread.o \
 	rtc.o \
 	mp3.o \
+	png_loader.o \
 	tests.o
 
 BACKEND := psp
