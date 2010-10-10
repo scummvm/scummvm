@@ -1092,12 +1092,10 @@
 		DF45B1D4116628A5009B85CC /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B18B116628A5009B85CC /* menu.cpp */; };
 		DF45B1D5116628A5009B85CC /* paint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B18D116628A5009B85CC /* paint.cpp */; };
 		DF45B1D6116628A5009B85CC /* paint16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B18F116628A5009B85CC /* paint16.cpp */; };
-		DF45B1D7116628A5009B85CC /* paint32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B191116628A5009B85CC /* paint32.cpp */; };
 		DF45B1D8116628A5009B85CC /* palette.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B193116628A5009B85CC /* palette.cpp */; };
 		DF45B1D9116628A5009B85CC /* picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B195116628A5009B85CC /* picture.cpp */; };
 		DF45B1DA116628A5009B85CC /* portrait.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B197116628A5009B85CC /* portrait.cpp */; };
 		DF45B1DB116628A5009B85CC /* ports.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B199116628A5009B85CC /* ports.cpp */; };
-		DF45B1DC116628A5009B85CC /* robot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B19B116628A5009B85CC /* robot.cpp */; };
 		DF45B1DD116628A5009B85CC /* screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B19D116628A5009B85CC /* screen.cpp */; };
 		DF45B1DE116628A5009B85CC /* text16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B19F116628A5009B85CC /* text16.cpp */; };
 		DF45B1DF116628A5009B85CC /* transitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B1A1116628A5009B85CC /* transitions.cpp */; };
@@ -1124,12 +1122,10 @@
 		DF45B1FE116628A5009B85CC /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B18B116628A5009B85CC /* menu.cpp */; };
 		DF45B1FF116628A5009B85CC /* paint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B18D116628A5009B85CC /* paint.cpp */; };
 		DF45B200116628A5009B85CC /* paint16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B18F116628A5009B85CC /* paint16.cpp */; };
-		DF45B201116628A5009B85CC /* paint32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B191116628A5009B85CC /* paint32.cpp */; };
 		DF45B202116628A5009B85CC /* palette.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B193116628A5009B85CC /* palette.cpp */; };
 		DF45B203116628A5009B85CC /* picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B195116628A5009B85CC /* picture.cpp */; };
 		DF45B204116628A5009B85CC /* portrait.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B197116628A5009B85CC /* portrait.cpp */; };
 		DF45B205116628A5009B85CC /* ports.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B199116628A5009B85CC /* ports.cpp */; };
-		DF45B206116628A5009B85CC /* robot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B19B116628A5009B85CC /* robot.cpp */; };
 		DF45B207116628A5009B85CC /* screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B19D116628A5009B85CC /* screen.cpp */; };
 		DF45B208116628A5009B85CC /* text16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B19F116628A5009B85CC /* text16.cpp */; };
 		DF45B209116628A5009B85CC /* transitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B1A1116628A5009B85CC /* transitions.cpp */; };
@@ -1156,12 +1152,10 @@
 		DF45B228116628A5009B85CC /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B18B116628A5009B85CC /* menu.cpp */; };
 		DF45B229116628A5009B85CC /* paint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B18D116628A5009B85CC /* paint.cpp */; };
 		DF45B22A116628A5009B85CC /* paint16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B18F116628A5009B85CC /* paint16.cpp */; };
-		DF45B22B116628A5009B85CC /* paint32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B191116628A5009B85CC /* paint32.cpp */; };
 		DF45B22C116628A5009B85CC /* palette.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B193116628A5009B85CC /* palette.cpp */; };
 		DF45B22D116628A5009B85CC /* picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B195116628A5009B85CC /* picture.cpp */; };
 		DF45B22E116628A5009B85CC /* portrait.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B197116628A5009B85CC /* portrait.cpp */; };
 		DF45B22F116628A5009B85CC /* ports.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B199116628A5009B85CC /* ports.cpp */; };
-		DF45B230116628A5009B85CC /* robot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B19B116628A5009B85CC /* robot.cpp */; };
 		DF45B231116628A5009B85CC /* screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B19D116628A5009B85CC /* screen.cpp */; };
 		DF45B232116628A5009B85CC /* text16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B19F116628A5009B85CC /* text16.cpp */; };
 		DF45B233116628A5009B85CC /* transitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF45B1A1116628A5009B85CC /* transitions.cpp */; };
@@ -1354,9 +1348,6 @@
 		DF7E8C110ED5FCC2001CB19F /* xmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7E8C0F0ED5FCC2001CB19F /* xmlparser.cpp */; };
 		DF7E8C530ED60067001CB19F /* game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7E8C510ED60067001CB19F /* game.cpp */; };
 		DF7E8C810ED60271001CB19F /* scummmodern.zip in Resources */ = {isa = PBXBuildFile; fileRef = DF7E8C7A0ED601E5001CB19F /* scummmodern.zip */; };
-		DF7F285D11FF23B700159131 /* frameout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7F285C11FF23B700159131 /* frameout.cpp */; };
-		DF7F285E11FF23B700159131 /* frameout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7F285C11FF23B700159131 /* frameout.cpp */; };
-		DF7F285F11FF23B700159131 /* frameout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7F285C11FF23B700159131 /* frameout.cpp */; };
 		DF7F286111FF23D500159131 /* amigamac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7F286011FF23D500159131 /* amigamac.cpp */; };
 		DF7F286211FF23D500159131 /* amigamac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7F286011FF23D500159131 /* amigamac.cpp */; };
 		DF7F286311FF23D500159131 /* amigamac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7F286011FF23D500159131 /* amigamac.cpp */; };
@@ -8518,12 +8509,10 @@
 				DF45B1D4116628A5009B85CC /* menu.cpp in Sources */,
 				DF45B1D5116628A5009B85CC /* paint.cpp in Sources */,
 				DF45B1D6116628A5009B85CC /* paint16.cpp in Sources */,
-				DF45B1D7116628A5009B85CC /* paint32.cpp in Sources */,
 				DF45B1D8116628A5009B85CC /* palette.cpp in Sources */,
 				DF45B1D9116628A5009B85CC /* picture.cpp in Sources */,
 				DF45B1DA116628A5009B85CC /* portrait.cpp in Sources */,
 				DF45B1DB116628A5009B85CC /* ports.cpp in Sources */,
-				DF45B1DC116628A5009B85CC /* robot.cpp in Sources */,
 				DF45B1DD116628A5009B85CC /* screen.cpp in Sources */,
 				DF45B1DE116628A5009B85CC /* text16.cpp in Sources */,
 				DF45B1DF116628A5009B85CC /* transitions.cpp in Sources */,
@@ -8562,7 +8551,6 @@
 				DFB0578B11B754570015AE65 /* maciconbar.cpp in Sources */,
 				DFB0579211B7547D0015AE65 /* pict.cpp in Sources */,
 				DFB0579911B7549C0015AE65 /* cinepak.cpp in Sources */,
-				DF7F285E11FF23B700159131 /* frameout.cpp in Sources */,
 				DF7F286211FF23D500159131 /* amigamac.cpp in Sources */,
 				DF7F286911FF23EF00159131 /* kvideo.cpp in Sources */,
 				DF7F286A11FF23EF00159131 /* workarounds.cpp in Sources */,
@@ -9532,12 +9520,10 @@
 				DF45B1FE116628A5009B85CC /* menu.cpp in Sources */,
 				DF45B1FF116628A5009B85CC /* paint.cpp in Sources */,
 				DF45B200116628A5009B85CC /* paint16.cpp in Sources */,
-				DF45B201116628A5009B85CC /* paint32.cpp in Sources */,
 				DF45B202116628A5009B85CC /* palette.cpp in Sources */,
 				DF45B203116628A5009B85CC /* picture.cpp in Sources */,
 				DF45B204116628A5009B85CC /* portrait.cpp in Sources */,
 				DF45B205116628A5009B85CC /* ports.cpp in Sources */,
-				DF45B206116628A5009B85CC /* robot.cpp in Sources */,
 				DF45B207116628A5009B85CC /* screen.cpp in Sources */,
 				DF45B208116628A5009B85CC /* text16.cpp in Sources */,
 				DF45B209116628A5009B85CC /* transitions.cpp in Sources */,
@@ -9576,7 +9562,6 @@
 				DFB0578C11B754570015AE65 /* maciconbar.cpp in Sources */,
 				DFB0579311B7547D0015AE65 /* pict.cpp in Sources */,
 				DFB0579A11B7549C0015AE65 /* cinepak.cpp in Sources */,
-				DF7F285F11FF23B700159131 /* frameout.cpp in Sources */,
 				DF7F286311FF23D500159131 /* amigamac.cpp in Sources */,
 				DF7F286B11FF23EF00159131 /* kvideo.cpp in Sources */,
 				DF7F286C11FF23EF00159131 /* workarounds.cpp in Sources */,
@@ -10547,12 +10532,10 @@
 				DF45B228116628A5009B85CC /* menu.cpp in Sources */,
 				DF45B229116628A5009B85CC /* paint.cpp in Sources */,
 				DF45B22A116628A5009B85CC /* paint16.cpp in Sources */,
-				DF45B22B116628A5009B85CC /* paint32.cpp in Sources */,
 				DF45B22C116628A5009B85CC /* palette.cpp in Sources */,
 				DF45B22D116628A5009B85CC /* picture.cpp in Sources */,
 				DF45B22E116628A5009B85CC /* portrait.cpp in Sources */,
 				DF45B22F116628A5009B85CC /* ports.cpp in Sources */,
-				DF45B230116628A5009B85CC /* robot.cpp in Sources */,
 				DF45B231116628A5009B85CC /* screen.cpp in Sources */,
 				DF45B232116628A5009B85CC /* text16.cpp in Sources */,
 				DF45B233116628A5009B85CC /* transitions.cpp in Sources */,
@@ -10591,7 +10574,6 @@
 				DFB0578A11B754570015AE65 /* maciconbar.cpp in Sources */,
 				DFB0579111B7547D0015AE65 /* pict.cpp in Sources */,
 				DFB0579811B7549C0015AE65 /* cinepak.cpp in Sources */,
-				DF7F285D11FF23B700159131 /* frameout.cpp in Sources */,
 				DF7F286111FF23D500159131 /* amigamac.cpp in Sources */,
 				DF7F286711FF23EF00159131 /* kvideo.cpp in Sources */,
 				DF7F286811FF23EF00159131 /* workarounds.cpp in Sources */,
@@ -10830,6 +10812,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_EXCEPTIONS = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					CONFIG_H,
@@ -10872,7 +10855,12 @@
 				);
 				GCC_THUMB_SUPPORT = NO;
 				GCC_USE_GCC3_PFE_SUPPORT = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				HEADER_SEARCH_PATHS = (
+					/opt/local/include/SDL,
+					/opt/local/include,
+					/sw/include/SDL,
+					/sw/include,
 					../../engines/,
 					../../,
 				);
@@ -10946,6 +10934,8 @@
 				HEADER_SEARCH_PATHS = (
 					/opt/local/include/SDL,
 					/opt/local/include,
+					/sw/include/SDL,
+					/sw/include,
 					include/,
 					../../engines/,
 					../../,
@@ -11031,7 +11021,8 @@
 				HEADER_SEARCH_PATHS = (
 					/opt/local/include/SDL,
 					/opt/local/include,
-					include/,
+					/sw/include/SDL,
+					/sw/include,
 					../../engines/,
 					../../,
 				);
@@ -11080,9 +11071,12 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_UNROLL_LOOPS = YES;
 				HEADER_SEARCH_PATHS = (
+					/opt/local/include/SDL,
+					/opt/local/include,
+					/sw/include/SDL,
+					/sw/include,
 					../../engines/,
 					../../,
-					/opt/local/include,
 				);
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
@@ -11114,9 +11108,12 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_UNROLL_LOOPS = YES;
 				HEADER_SEARCH_PATHS = (
+					/opt/local/include/SDL,
+					/opt/local/include,
+					/sw/include/SDL,
+					/sw/include,
 					../../engines/,
 					../../,
-					/opt/local/include,
 				);
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
