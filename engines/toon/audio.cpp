@@ -203,6 +203,8 @@ AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer,
 	_currentReadSize = 8;
 	_man = man;
 	_looping = looping;
+	_musicAttenuation = 1000;
+
 	// preload one packet
 	if (_totalSize > 0) {
 		_file->skip(8);
@@ -341,12 +343,20 @@ void AudioStreamInstance::play(bool fade, Audio::Mixer::SoundType soundType) {
 	_stopped = false;
 	_fadingIn = fade;
 	_fadeTime = 0;
+	_soundType = soundType;
+	_musicAttenuation = 1000; // max volume
 	_mixer->playStream(soundType, &_handle, this);
 	handleFade(0);
 }
 
 void AudioStreamInstance::handleFade(int numSamples) {
 	debugC(5, kDebugAudio, "handleFade(%d)", numSamples);
+
+	// Fading enabled only for music
+	if (_soundType != Audio::Mixer::kMusicSoundType) 
+		return;
+
+	int32 finalVolume = _volume;
 
 	if (_fadingOut) {
 		_fadeTime += numSamples;
@@ -356,8 +366,7 @@ void AudioStreamInstance::handleFade(int numSamples) {
 			stopNow();
 			_fadingOut = false;
 		}
-
-		_mixer->setChannelVolume(_handle, _volume - _fadeTime * _volume / 40960);
+		finalVolume = _volume - _fadeTime * _volume / 40960;
 	} else {
 		if (_fadingIn) {
 			_fadeTime += numSamples;
@@ -366,9 +375,25 @@ void AudioStreamInstance::handleFade(int numSamples) {
 				_fadingIn = false;
 			}
 
-			_mixer->setChannelVolume(_handle, _volume * _fadeTime / 40960);
+			finalVolume = _volume * _fadeTime / 40960;
 		}
 	}
+
+	// the music is too loud when someone is talking
+	// smoothing to avoid big volume changes
+	if (_man->voiceStillPlaying()) {
+		_musicAttenuation -= numSamples >> 4;
+		if (_musicAttenuation < 250)
+			_musicAttenuation = 250;
+	} else {
+		_musicAttenuation += numSamples >> 5;
+		if (_musicAttenuation > 1000) 
+			_musicAttenuation = 1000;
+	}
+
+
+	_mixer->setChannelVolume(_handle, finalVolume * _musicAttenuation / 1000);
+
 }
 
 void AudioStreamInstance::stop(bool fade /*= false*/) {
@@ -400,6 +425,10 @@ AudioStreamPackage::AudioStreamPackage(ToonEngine *vm) : _vm(vm) {
 	_indexBuffer = 0;
 }
 
+AudioStreamPackage::~AudioStreamPackage() {
+	delete [] _indexBuffer;
+}
+
 bool AudioStreamPackage::loadAudioPackage(Common::String indexFile, Common::String streamFile) {
 	debugC(4, kDebugAudio, "loadAudioPackage(%s, %s)", indexFile.c_str(), streamFile.c_str());
 
@@ -407,6 +436,8 @@ bool AudioStreamPackage::loadAudioPackage(Common::String indexFile, Common::Stri
 	uint8 *fileData = _vm->resources()->getFileData(indexFile, &size);
 	if (!fileData)
 		return false;
+
+	delete[] _indexBuffer;
 
 	_indexBuffer = new uint32[size / 4];
 	memcpy(_indexBuffer, fileData, size);

@@ -81,6 +81,7 @@ protected:
 	int32 _bufferOffset;
 	int32 _compBufferSize;
 	Audio::SoundHandle _handle;
+	Audio::Mixer::SoundType _soundType;
 	Audio::Mixer *_mixer;
 	int32 _lastADPCMval1;
 	int32 _lastADPCMval2;
@@ -90,12 +91,15 @@ protected:
 	int32 _currentReadSize;
 	bool _looping;
 	int32 _volume;
+	int32 _musicAttenuation;
 };
 
 class AudioStreamPackage {
 
 public:
 	AudioStreamPackage(ToonEngine *vm);
+	~AudioStreamPackage();
+
 	bool loadAudioPackage(Common::String indexFile, Common::String streamFile);
 	void getInfo(int32 id, int32 *offset, int32 *size);
 	Common::SeekableReadStream *getStream(int32 id, bool ownMemory = false);
