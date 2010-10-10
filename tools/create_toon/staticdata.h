@@ -266,11 +266,11 @@ const char *locationDirVisited_SP[] = {
 	"Sady's", "Establo", "Wacme", "Laboratorio "
 };
 
-const char *specialInfoLine_EN[] = { "Exit non defined", "Bottomless Bag", "Flux Wildlie", "Drew Blanc" };
-const char *specialInfoLine_FR[] = { "Exit non defined", "Inventaire", "Flux Radieux", "Marc Blanc" };
-const char *specialInfoLine_DE[] = { "Exit non defined", "Bodenloser Beutel", "Flux W. Wild", "Mal Block" };
-const char *specialInfoLine_RU[] = { "Exit non defined", "   Fdjcmrf    ", "  :bdxbr   ", "Lhe <k'yr " };
-const char *specialInfoLine_SP[] = { "Exit non defined", "Saco sin fondo", "Flux Tarambana", "Andr\351s Truido" };
+const char *specialInfoLine_EN[] = { "Exit not defined", "Bottomless Bag", "Flux Wildly", "Drew Blanc" };
+const char *specialInfoLine_FR[] = { "Exit not defined", "Inventaire", "Flux Radieux", "Marc Blanc" };
+const char *specialInfoLine_DE[] = { "Exit not defined", "Bodenloser Beutel", "Flux W. Wild", "Mal Block" };
+const char *specialInfoLine_RU[] = { "Exit not defined", "   Fdjcmrf    ", "  :bdxbr   ", "Lhe <k'yr " };
+const char *specialInfoLine_SP[] = { "Exit not defined", "Saco sin fondo", "Flux Tarambana", "Andr\351s Truido" };
 
 // Those are not yet in the DAT file. They'll be added as soon as they are really used.
 const char *miscTexts_EN[] = {
