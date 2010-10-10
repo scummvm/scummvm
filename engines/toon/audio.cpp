@@ -70,6 +70,10 @@ void AudioManager::playMusic(Common::String dir, Common::String music) {
 
 	_currentMusicName = music;
 
+	Common::SeekableReadStream *srs = _vm->resources()->openFile(path);
+	if (!srs)
+		return;
+
 	// see what channel to take
 	if (_channels[0] && _channels[0]->isPlaying() && _channels[1] && _channels[1]->isPlaying()) {
 		// take the one that is fading
@@ -91,7 +95,7 @@ void AudioManager::playMusic(Common::String dir, Common::String music) {
 		_currentMusicChannel = 0;
 	}
 
-	Common::SeekableReadStream *srs = _vm->resources()->openFile(path);
+	
 	//if (!_channels[_currentMusicChannel])
 	//	delete _channels[_currentMusicChannel];
 	_channels[_currentMusicChannel] = new AudioStreamInstance(this, _mixer, srs, true);

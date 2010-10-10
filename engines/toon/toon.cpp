@@ -2982,14 +2982,15 @@ void ToonEngine::restorePalette() {
 
 const char *ToonEngine::getSpecialConversationMusic(int32 conversationId) {
 	static const char * const specialMusic[] = {
-		"BR091013", "BR091013",
 		0, 0,
+		"BR091013", "BR091013",
 		"NET1214", "NET1214",
 		0, 0,
 		"CAR1365B", "CAR1365B",
 		0, 0,
 		0, 0,
 		"CAR14431", "CAR14431",
+		0, 0,
 		0, 0,
 		"SCD16520", "SCD16520",
 		"SCD16520", "SCD16520",
@@ -3048,7 +3049,7 @@ const char *ToonEngine::getSpecialConversationMusic(int32 conversationId) {
 		0, 0
 	};
 
-	return specialMusic[randRange(0, 1) + conversationId * 2];
+	return specialMusic[randRange(0, 1) + conversationId * 2]; 
 }
 
 void ToonEngine::viewInventoryItem(Common::String str, int32 lineId, int32 itemDest) {
