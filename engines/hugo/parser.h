@@ -104,7 +104,7 @@ protected:
 	bool isGenericVerb(char *word, object_t *obj);
 	bool isObjectVerb(char *word, object_t *obj);
 	bool isBackgroundWord(char *noun, char *verb, objectList_t obj);
-	bool isCatchallVerb(bool test_noun, char *noun, char *verb, objectList_t obj);
+	bool isCatchallVerb(bool testNounFl, char *noun, char *verb, objectList_t obj);
 
 };
 

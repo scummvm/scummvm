@@ -417,7 +417,7 @@ bool Parser_v1w::isBackgroundWord(objectList_t obj) {
 
 // Parse the user's line of text input.  Generate events as necessary
 void Parser_v1w::lineHandler() {
-	debugC(1, kDebugParser, "lineHandler");
+	debugC(1, kDebugParser, "lineHandler()");
 
 	status_t &gameStatus = _vm.getGameStatus();
 
@@ -660,8 +660,9 @@ bool Parser::isCarrying(uint16 wordIndex) {
 	return false;
 }
 
-void Parser::showDosInventory() {
 // Show user all objects being carried in a variable width 2 column format
+void Parser::showDosInventory() {
+	debugC(1, kDebugParser, "showDosInventory()");
 	static const char *blanks = "                                        ";
 	uint16 index = 0, len1 = 0, len2 = 0;
 
@@ -706,15 +707,17 @@ Parser_v1d::~Parser_v1d() {
 
 // Locate word in list of nouns and return ptr to string in noun list
 // If n is NULL, start at beginning of list, else with n
-char *Parser_v1d::findNextNoun(char *n) {
-	int k = -1;
-	if (n) {                                        // If n not NULL, find index
-		for (k = 0; _vm._arrayNouns[k]; k++) {
-			if (n == _vm._arrayNouns[k][0])
+char *Parser_v1d::findNextNoun(char *noun) {
+	debugC(1, kDebugParser, "findNextNoun(%s)", noun);
+
+	int currNounIndex = -1;
+	if (noun) {                                        // If noun not NULL, find index
+		for (currNounIndex = 0; _vm._arrayNouns[currNounIndex]; currNounIndex++) {
+			if (noun == _vm._arrayNouns[currNounIndex][0])
 				break;
 		}
 	}
-	for (int i = k + 1; _vm._arrayNouns[i]; i++) {
+	for (int i = currNounIndex + 1; _vm._arrayNouns[i]; i++) {
 		for (int j = 0; strlen(_vm._arrayNouns[i][j]); j++) {
 			if (strstr(_line, _vm._arrayNouns[i][j]))
 				return _vm._arrayNouns[i][0];
@@ -728,6 +731,8 @@ char *Parser_v1d::findNextNoun(char *n) {
 // If object not near, return suitable string; may be similar object closer
 // If radius is -1, treat radius as infinity
 bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) {
+	debugC(1, kDebugParser, "isNear(%s, %s, obj, %s)", verb, noun, comment);
+
 	if (!noun && !obj->verbOnlyFl) {                // No noun specified & object not context senesitive
 		return false;
 	} else if (noun && (noun != _vm._arrayNouns[obj->nounIndex][0])) { // Noun specified & not same as object
@@ -786,6 +791,8 @@ bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) {
 // say_ok needed for special case of take/drop which may be handled not only
 // here but also in a cmd_list with a donestr string simultaneously
 bool Parser_v1d::isGenericVerb(char *word, object_t *obj) {
+	debugC(1, kDebugParser, "isGenericVerb(%s, object_t *obj)", word);
+
 	if (!obj->genericCmd)
 		return false;
 
@@ -823,7 +830,7 @@ bool Parser_v1d::isGenericVerb(char *word, object_t *obj) {
 // and if it passes, perform the actions in the action list.  If the verb
 // is catered for, return TRUE
 bool Parser_v1d::isObjectVerb(char *word, object_t *obj) {
-//actlist  *actions;
+	debugC(1, kDebugParser, "isObjectVerb(%s, object_t *obj)", word);
 
 	// First, find matching verb in cmd list
 	uint16 cmdIndex = obj->cmdIndex;                // ptr to list of commands
@@ -871,6 +878,8 @@ bool Parser_v1d::isObjectVerb(char *word, object_t *obj) {
 // Print text for possible background object.  Return TRUE if match found
 // Only match if both verb and noun found.  Test_ca will match verb-only
 bool Parser_v1d::isBackgroundWord(char *noun, char *verb, objectList_t obj) {
+	debugC(1, kDebugParser, "isBackgroundWord(%s, %s, object_list_t obj)", noun, verb);
+
 	if (!noun)
 		return false;
 
@@ -885,8 +894,10 @@ bool Parser_v1d::isBackgroundWord(char *noun, char *verb, objectList_t obj) {
 
 // Print text for possible background object.  Return TRUE if match found
 // If test_noun TRUE, must have a noun given
-bool Parser_v1d::isCatchallVerb(bool test_noun, char *noun, char *verb, objectList_t obj) {
-	if (test_noun && !noun)
+bool Parser_v1d::isCatchallVerb(bool testNounFl, char *noun, char *verb, objectList_t obj) {
+	debugC(1, kDebugParser, "isCatchallVerb(%d, %s, %s, object_list_t obj)", (testNounFl) ? 1 : 0, noun, verb);
+
+	if (testNounFl && !noun)
 		return false;
 
 	for (int i = 0; obj[i].verbIndex; i++) {
@@ -900,6 +911,8 @@ bool Parser_v1d::isCatchallVerb(bool test_noun, char *noun, char *verb, objectLi
 
 // Parse the user's line of text input.  Generate events as necessary
 void Parser_v1d::lineHandler() {
+	debugC(1, kDebugParser, "lineHandler()");
+
 	object_t    *obj;
 	status_t &gameStatus = _vm.getGameStatus();
 	char        farComment[XBYTES * 5] = "";        // hold 5 line comment if object not nearby
@@ -977,6 +990,8 @@ Parser_v2d::~Parser_v2d() {
 
 // Parse the user's line of text input.  Generate events as necessary
 void Parser_v2d::lineHandler() {
+	debugC(1, kDebugParser, "lineHandler()");
+
 	object_t    *obj;
 	status_t &gameStatus = _vm.getGameStatus();
 	char        farComment[XBYTES * 5] = "";        // hold 5 line comment if object not nearby
