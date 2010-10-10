@@ -246,21 +246,17 @@ void Character::stopSpecialAnim() {
 	if (_sceneAnimationId != -1)
 		_animationInstance->setAnimation(_vm->getSceneAnimation(_sceneAnimationId)->_animation);
 
+	bool needStandingAnim = (_animFlags & 0x40) != 0;
+
 	_animSpecialId = -1;
 	_time = 0;
 	_animFlags = 0;
 	_flags &= ~1;
 	_flags &= ~4;
-
-	// end of idle animation
-	if (_animFlags & 0x40) {
+	
+	if (needStandingAnim) {
 		playStandingAnim();
 	}
-
-#if 0
-	_animationInstance->setFrame(0);
-	playStandingAnim();
-#endif
 }
 
 void Character::update(int32 timeIncrement) {
