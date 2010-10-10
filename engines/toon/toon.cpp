@@ -1121,7 +1121,8 @@ int32 ToonEngine::randRange(int32 minStart, int32 maxStart) {
 
 int32 ToonEngine::runEventScript(int32 x, int32 y, int32 mode, int32 id, int32 scriptId) {
 
-	assert(_currentScriptRegion < 4);
+	if (_currentScriptRegion >= 4)
+		return 0;
 
 	EMCState *status = &_scriptState[_currentScriptRegion];
 	_script->init(status, &_scriptData);
@@ -1228,6 +1229,7 @@ void ToonEngine::clickEvent() {
 		commandId = 2 * (_gameState->_mouseState - 1) + 16;
 	}
 
+	_drew->stopWalk();
 
 	int16 command = currentHot->getData(commandId);
 	int16 argument = currentHot->getData(commandId + 1);
