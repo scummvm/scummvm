@@ -227,8 +227,8 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 
 TownsAudioInterface::~TownsAudioInterface() {
 	reset();
-	deinit();
 	_ready = false;
+	deinit();	
 
 	delete[] _fmSaveReg[0];
 	delete[] _fmSaveReg[1];
