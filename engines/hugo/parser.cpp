@@ -736,13 +736,13 @@ bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) {
 		return true;
 	} else if (obj->screenIndex != *_vm._screen_p) { // Not in same screen
 		if (obj->objValue)
-			strcpy (comment, "You don't have it!");
+			strcpy (comment, _vm._textParser[kCmtAny4]);
 		return false;
 	}
 
 	if (obj->cycling == INVISIBLE) {
 		if (obj->seqNumb) {                         // There is an image
-			strcpy(comment, "I don't see it anywhere");
+			strcpy(comment, _vm._textParser[kCmtAny5]);
 			return false;
 		} else {                                    // No image, assume visible
 			if ((obj->radius < 0) ||
@@ -754,10 +754,10 @@ bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) {
 				// or is not carrying it (small, portable objects of value)
 				if (noun) {                         // Don't say unless object specified
 					if (obj->objValue && (verb != _vm._arrayVerbs[_vm._take][0]))
-						strcpy(comment, "You don't have it!");
+						strcpy(comment, _vm._textParser[kCmtAny4]);
 					else
-						strcpy(comment, "You're not close enough!");
-				}
+						strcpy(comment, _vm._textParser[kCmtClose]);
+					}
 				return false;
 			}
 		}
@@ -772,9 +772,9 @@ bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) {
 		// or is not carrying it (small, portable objects of value)
 		if (noun) {                                 // Don't say unless object specified
 			if (obj->objValue && (verb != _vm._arrayVerbs[_vm._take][0]))
-				strcpy(comment, "You don't have it!");
+				strcpy(comment, _vm._textParser[kCmtAny4]);
 			else
-				strcpy(comment, "You're not close enough!");
+				strcpy(comment, _vm._textParser[kCmtClose]);
 		}
 		return false;
 	}
@@ -794,23 +794,23 @@ bool Parser_v1d::isGenericVerb(char *word, object_t *obj) {
 		if ((LOOK & obj->genericCmd) == LOOK)
 			Utils::Box(BOX_ANY, "%s", _vm._textData[obj->dataIndex]);
 		else
-			Utils::Box(BOX_ANY, "I see nothing special about it");
+			Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBUnusual_1d]);
 	} else if (word == _vm._arrayVerbs[_vm._take][0]) {
 		if (obj->carriedFl)
-			Utils::Box(BOX_ANY, "You already have it");
+			Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBHave]);
 		else if ((TAKE & obj->genericCmd) == TAKE)
 			takeObject(obj);
 		else if (!obj->verbOnlyFl)                  // Make sure not taking object in context!
-			Utils::Box(BOX_ANY, "It is of no use to you");
+			Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBNoUse]);
 		else
 			return false;
 	} else if (word == _vm._arrayVerbs[_vm._drop][0]) {
 		if (!obj->carriedFl)
-			Utils::Box(BOX_ANY, "You don't have it");
+			Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBDontHave]);
 		else if ((DROP & obj->genericCmd) == DROP)
 			dropObject(obj);
 		else
-			Utils::Box(BOX_ANY, "No! You'll be needing it");
+			Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBNeed]);
 	} else {                                        // It was not a generic cmd
 		return false;
 	}
@@ -908,7 +908,7 @@ void Parser_v1d::lineHandler() {
 	Utils::strlwr(_line);                           // Convert to lower case
 
 	if (!strcmp("exit", _line) || strstr(_line, "quit")) {
-		if (Utils::Box(BOX_YESNO, "Are you sure you want to QUIT?") != 0)
+		if (Utils::Box(BOX_YESNO, "%s", _vm._textParser[kTBExit_1d]) != 0)
 			_vm.endGame();
 		else
 			return;
@@ -969,9 +969,7 @@ void Parser_v1d::lineHandler() {
 	else if (!isCatchallVerb(true, noun, verb, _vm._catchallList) &&
 		     !isCatchallVerb(false, noun, verb, _vm._backgroundObjects[*_vm._screen_p])  &&
 			 !isCatchallVerb(false, noun, verb, _vm._catchallList))
-		Utils::Box(BOX_ANY, "Apparently our hero either doesn't\n"
-				   "understand what you mean or doesn't\n"
-				   "think that would be very useful!");
+		Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBEh_1d]);
 }
 
 Parser_v2d::Parser_v2d(HugoEngine &vm) : Parser_v1d(vm) {
@@ -990,7 +988,7 @@ void Parser_v2d::lineHandler() {
 	Utils::strlwr(_line);                           // Convert to lower case
 
 	if (!strcmp("exit", _line) || strstr(_line, "quit")) {
-		if (Utils::Box(BOX_YESNO, "Are you sure you want to QUIT?") != 0)
+		if (Utils::Box(BOX_YESNO, "%s", _vm._textParser[kTBExit_1d]) != 0)
 			_vm.endGame();
 		else
 			return;
@@ -1054,17 +1052,14 @@ void Parser_v2d::lineHandler() {
 		if (*farComment != '\0') {                  // An object matched but not near enough
 			Utils::Box(BOX_ANY, "%s", farComment);
 		} else if (_maze.enabledFl && (verb == _vm._arrayVerbs[_vm._look][0])) {
-			Utils::Box(BOX_ANY, "You are in a maze of\n"
-					   "twisty little paths,\n"
-					   "which are all alike!");
+			Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBMaze]);
 			showTakeables();
 		} else if (verb && noun) {                  // A combination I didn't think of
-			Utils::Box(BOX_ANY, "I don't think that would\n"
-					   "accomplish much, somehow!");
+			Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBNoUse_2d]);
 		} else if (verb || noun) {
-			Utils::Box(BOX_ANY, "I don't fully understand!");
+			Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBNoun]);
 		} else {
-			Utils::Box(BOX_ANY, "I find that befuddling!");
+			Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBEh_2d]);
 		}
 	}
 }
