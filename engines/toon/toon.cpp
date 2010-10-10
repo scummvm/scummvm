@@ -962,7 +962,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	SoundManager.PlayMusic();
 #endif
 
-	_audioManager->playMusic(_gameState->_locations[SceneId]._name, _gameState->_locations[SceneId]._music);
+	playRoomMusic();
 
 	_lastProcessedSceneScript = 0;
 	_gameState->_locations[SceneId]._visited = true;
@@ -1838,11 +1838,12 @@ void ToonEngine::haveAConversation(int32 convId) {
 	_gameState->_showConversationIcons = false;
 	_gameState->_exitConversation = false;
 	_gameState->_sackVisible = false;
-
-	// in conversation = 12
-	// exit conversation state = 0
 	Conversation *conv = &state()->_conversationState[convId];
 	_gameState->_currentConversationId = convId;
+
+	// change the music to the "conversation" music if needed.
+	playRoomMusic();	
+
 	if (conv->_enable) {
 		// fix dialog script based on new flags
 		for (int32 i = 0; i < 10; i++) {
@@ -1919,6 +1920,9 @@ void ToonEngine::haveAConversation(int32 convId) {
 	_gameState->_currentConversationId = -1;
 	_gameState->_mouseHidden = false;
 	_gameState->_sackVisible = true;
+
+	// switch back to original music
+	playRoomMusic();	
 
 }
 
@@ -2973,6 +2977,74 @@ void ToonEngine::storePalette() {
 void ToonEngine::restorePalette() {
 	memcpy(_finalPalette, _backupPalette, 768);
 	flushPalette();
+}
+
+const char* ToonEngine::getSpecialConversationMusic(int32 conversationId) {
+	const char* specialMusic[] = {	"BR091013", "BR091013",
+									0, 0,
+									"NET1214", "NET1214",
+									0, 0,
+									"CAR1365B", "CAR1365B",
+									0, 0,
+									0, 0,
+									"CAR14431", "CAR14431",
+									0, 0,
+									"SCD16520", "SCD16520",
+									"SCD16520", "SCD16520",
+									"SCD16522", "SCD16522",
+									0, 0,
+									"KPM8719", "KPM8719",
+									0, 0,
+									"CAR1368B", "CAR1368B",
+									0, 0,
+									0, 0,
+									"KPM6337", "KPM6337",
+									"CAR20471", "CAR20471",
+									"CAR136_1", "KPM87_57",
+									0, 0,
+									"CAR13648", "CAR13648",
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									"SCD16526", "SCD16526",
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0,
+									0, 0 };
+	return specialMusic[randRange(0, 1) + conversationId * 2];
 }
 
 void ToonEngine::viewInventoryItem(Common::String str, int32 lineId, int32 itemDest) {
@@ -4205,6 +4277,18 @@ void ToonEngine::makeLineNonWalkable(int32 x, int32 y, int32 x2, int32 y2) {
 
 void ToonEngine::makeLineWalkable(int32 x, int32 y, int32 x2, int32 y2) {
 	_currentMask->drawLineOnMask(x, y, x2, y2, true);
+}
+
+void ToonEngine::playRoomMusic() {
+	if(_gameState->_inConversation) {
+		const char* music = getSpecialConversationMusic(_gameState->_currentConversationId);
+		if (music) {
+			_audioManager->playMusic(_gameState->_locations[_gameState->_currentScene]._name, music);
+			return;
+		}
+	}
+
+	_audioManager->playMusic(_gameState->_locations[_gameState->_currentScene]._name, _gameState->_locations[_gameState->_currentScene]._music);
 }
 
 void SceneAnimation::save(ToonEngine *vm, Common::WriteStream *stream) {
