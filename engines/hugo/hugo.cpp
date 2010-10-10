@@ -154,7 +154,6 @@ Common::Error HugoEngine::run() {
 
 	_mouseHandler = new MouseHandler(*this);
 	_inventoryHandler = new InventoryHandler(*this);
-	_parser = new Parser(*this);
 	_route = new Route(*this);
 	_soundHandler = new SoundHandler(*this);
 
@@ -164,36 +163,42 @@ Common::Error HugoEngine::run() {
 		_scheduler = new Scheduler_v3d(*this);
 		_introHandler = new intro_v1w(*this);
 		_screen = new Screen_v1w(*this);
+		_parser = new Parser_v1w(*this);
 		break;
 	case 1:
 		_fileManager = new FileManager_v2d(*this);
 		_scheduler = new Scheduler_v3d(*this);
 		_introHandler = new intro_v2w(*this);
 		_screen = new Screen_v1w(*this);
+		_parser = new Parser_v1w(*this);
 		break;
 	case 2:
 		_fileManager = new FileManager_v2d(*this);
 		_scheduler = new Scheduler_v3d(*this);
 		_introHandler = new intro_v3w(*this);
 		_screen = new Screen_v1w(*this);
+		_parser = new Parser_v1w(*this);
 		break;
 	case 3: // H1 DOS
 		_fileManager = new FileManager_v1d(*this);
 		_scheduler = new Scheduler_v1d(*this);
 		_introHandler = new intro_v1d(*this);
 		_screen = new Screen_v1d(*this);
+		_parser = new Parser_v1d(*this);
 		break;
 	case 4:
 		_fileManager = new FileManager_v2d(*this);
 		_scheduler = new Scheduler_v1d(*this);
 		_introHandler = new intro_v2d(*this);
 		_screen = new Screen_v1d(*this);
+		_parser = new Parser_v2d(*this);
 		break;
 	case 5:
 		_fileManager = new FileManager_v3d(*this);
 		_scheduler = new Scheduler_v3d(*this);
 		_introHandler = new intro_v3d(*this);
 		_screen = new Screen_v1d(*this);
+		_parser = new Parser_v1w(*this);
 		break;
 	}
 
