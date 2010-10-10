@@ -553,6 +553,8 @@ void Character::load(Common::ReadStream *stream) {
 	debugC(1, kDebugCharacter, "read(stream)");
 
 	_flags = stream->readSint32LE();
+	_flags &= ~1; // characters are not walking when restoring.
+
 	_x = stream->readSint32LE();
 	_y = stream->readSint32LE();
 	_z = stream->readSint32LE();

@@ -2779,7 +2779,8 @@ bool ToonEngine::loadGame(int32 slot) {
 	for (int32 i = 0; i < state()->_locations[_gameState->_currentScene]._numSceneAnimations; i++) {
 		_sceneAnimationScripts[i]._active = loadFile->readByte();
 		_sceneAnimationScripts[i]._frozen = loadFile->readByte();
-		_sceneAnimationScripts[i]._lastTimer = loadFile->readSint32BE() + timerDiff;
+		int32 oldTimer = loadFile->readSint32BE();
+		_sceneAnimationScripts[i]._lastTimer = MAX(0,oldTimer + timerDiff);
 		_script->loadState(&_sceneAnimationScripts[i]._state, loadFile);
 	}
 
