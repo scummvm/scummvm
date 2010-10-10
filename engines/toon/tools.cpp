@@ -499,8 +499,10 @@ int32 RncDecoder::unpackM2(const void *input, void *output) {
 
 		ofs_lo = *_srcPtr++;
 		ofs = (ofs_hi << 8) | ofs_lo;
-		while (len--)
-			*_dstPtr++ = *(byte *)(_dstPtr - ofs - 1);
+		while (len--) {
+			*_dstPtr = *(byte *)(_dstPtr - ofs - 1);
+			_dstPtr++;
+		}
 
 	}
 
