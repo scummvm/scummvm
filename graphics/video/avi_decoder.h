@@ -221,11 +221,6 @@ private:
 	Audio::SoundHandle *_audHandle;
 	Audio::QueuingAudioStream *_audStream;
 	Audio::QueuingAudioStream *createAudioStream();
-
-	// Helper functions
-	static byte char2num(char c);
-	static byte getStreamNum(uint32 tag);
-	static uint16 getStreamType(uint32 tag);
 };
 
 } // End of namespace Graphics
