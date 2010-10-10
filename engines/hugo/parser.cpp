@@ -372,6 +372,38 @@ bool Parser_v1w::isNear(object_t *obj, char *verb, char *comment) {
 	return true;
 }
 
+// Do all things necessary to carry an object
+void Parser_v1w::takeObject(object_t *obj) {
+	debugC(1, kDebugParser, "takeObject(object_t *obj)");
+
+	obj->carriedFl = true;
+	if (obj->seqNumb) {                             // Don't change if no image to display
+		obj->cycling = INVISIBLE;
+	}
+	_vm.adjustScore(obj->objValue);
+
+	if (obj->seqNumb > 0)                               // If object has an image, force walk to dropped
+		obj->viewx = -1;                                // (possibly moved) object next time taken!
+	Utils::Box(BOX_ANY, TAKE_TEXT, _vm._arrayNouns[obj->nounIndex][TAKE_NAME]);
+}
+
+// Do all necessary things to drop an object
+void Parser_v1w::dropObject(object_t *obj) {
+	debugC(1, kDebugParser, "dropObject(object_t *obj)");
+
+	obj->carriedFl = false;
+	obj->screenIndex = *_vm._screen_p;
+	if ((obj->seqNumb > 1) || (obj->seqList[0].imageNbr > 1))
+		obj->cycling = CYCLE_FORWARD;
+	else
+		obj->cycling = NOT_CYCLING;
+	obj->x = _vm._hero->x - 1;
+	obj->y = _vm._hero->y + _vm._hero->currImagePtr->y2 - 1;
+	obj->y = (obj->y + obj->currImagePtr->y2 < YPIX) ? obj->y : YPIX - obj->currImagePtr->y2 - 10;
+	_vm.adjustScore(-obj->objValue);
+	Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBOk]);
+}
+
 // Search for matching verbs in background command list.
 // Noun is not required.  Return TRUE if match found
 // Note that if the background command list has match set TRUE then do not
@@ -615,40 +647,6 @@ void Parser::showTakeables() {
 	}
 }
 
-// Do all things necessary to carry an object
-void Parser::takeObject(object_t *obj) {
-	debugC(1, kDebugParser, "takeObject(object_t *obj)");
-
-	obj->carriedFl = true;
-	if (obj->seqNumb) {                             // Don't change if no image to display
-		obj->cycling = INVISIBLE;
-		if (_vm.getPlatform() != Common::kPlatformWindows)
-			warning("takeObject : DOS version should use ALMOST_INVISIBLE");
-	}
-	_vm.adjustScore(obj->objValue);
-
-	if (obj->seqNumb > 0)                               // If object has an image, force walk to dropped
-		obj->viewx = -1;                                // (possibly moved) object next time taken!
-	Utils::Box(BOX_ANY, TAKE_TEXT, _vm._arrayNouns[obj->nounIndex][TAKE_NAME]);
-}
-
-// Do all necessary things to drop an object
-void Parser::dropObject(object_t *obj) {
-	debugC(1, kDebugParser, "dropObject(object_t *obj)");
-
-	obj->carriedFl = false;
-	obj->screenIndex = *_vm._screen_p;
-	if ((obj->seqNumb > 1) || (obj->seqList[0].imageNbr > 1))
-		obj->cycling = CYCLE_FORWARD;
-	else
-		obj->cycling = NOT_CYCLING;
-	obj->x = _vm._hero->x - 1;
-	obj->y = _vm._hero->y + _vm._hero->currImagePtr->y2 - 1;
-	obj->y = (obj->y + obj->currImagePtr->y2 < YPIX) ? obj->y : YPIX - obj->currImagePtr->y2 - 10;
-	_vm.adjustScore(-obj->objValue);
-	Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBOk]);
-}
-
 // Return TRUE if object being carried by hero
 bool Parser::isCarrying(uint16 wordIndex) {
 	debugC(1, kDebugParser, "isCarrying(%d)", wordIndex);
@@ -890,6 +888,33 @@ bool Parser_v1d::isBackgroundWord(char *noun, char *verb, objectList_t obj) {
 		}
 	}
 	return false;
+}
+
+// Do all things necessary to carry an object
+void Parser_v1d::takeObject(object_t *obj) {
+	debugC(1, kDebugParser, "takeObject(object_t *obj)");
+
+	obj->carriedFl = true;
+	if (obj->seqNumb)                               // Don't change if no image to display
+		obj->cycling = ALMOST_INVISIBLE;
+
+	_vm.adjustScore(obj->objValue);
+
+	Utils::Box(BOX_ANY, TAKE_TEXT, _vm._arrayNouns[obj->nounIndex][TAKE_NAME]);
+}
+
+// Do all necessary things to drop an object
+void Parser_v1d::dropObject(object_t *obj) {
+	debugC(1, kDebugParser, "dropObject(object_t *obj)");
+
+	obj->carriedFl = false;
+	obj->screenIndex = *_vm._screen_p;
+	if (obj->seqNumb)                               // Don't change if no image to display
+		obj->cycling = NOT_CYCLING;
+	obj->x = _vm._hero->x - 1;
+	obj->y = _vm._hero->y + _vm._hero->currImagePtr->y2 - 1;
+	_vm.adjustScore(-obj->objValue);
+	Utils::Box(BOX_ANY, "%s", _vm._textParser[kTBOk]);
 }
 
 // Print text for possible background object.  Return TRUE if match found

@@ -63,8 +63,6 @@ protected:
 	char *findNoun();
 	char *findVerb();
 
-	void  dropObject(object_t *obj);
-	void  takeObject(object_t *obj);
 	void  showTakeables();
 
 private:
@@ -89,6 +87,8 @@ private:
 	bool  isGenericVerb(object_t *obj, char *comment);
 	bool  isNear(object_t *obj, char *verb, char *comment);
 	bool  isObjectVerb(object_t *obj, char *comment);
+	void  dropObject(object_t *obj);
+	void  takeObject(object_t *obj);
 };
 
 class Parser_v1d : public Parser {
@@ -99,13 +99,14 @@ public:
 	void lineHandler();
 
 protected:
-	char *findNextNoun(char *noun);
 	bool isNear(char *verb, char *noun, object_t *obj, char *comment);
 	bool isGenericVerb(char *word, object_t *obj);
 	bool isObjectVerb(char *word, object_t *obj);
 	bool isBackgroundWord(char *noun, char *verb, objectList_t obj);
 	bool isCatchallVerb(bool testNounFl, char *noun, char *verb, objectList_t obj);
-
+	char *findNextNoun(char *noun);
+	void  dropObject(object_t *obj);
+	void  takeObject(object_t *obj);
 };
 
 class Parser_v2d : public Parser_v1d {
