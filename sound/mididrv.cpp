@@ -247,10 +247,10 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			tp = MT_PC98;
 		else if (flags & MDT_ADLIB)
 			tp = MT_ADLIB;
-		else if (flags & MDT_PCSPK)
-			tp = MT_PCSPK;
 		else if (flags & MDT_PCJR)
 			tp = MT_PCJR;
+		else if (flags & MDT_PCSPK)
+			tp = MT_PCSPK;
 		else if (flags & MDT_C64)
 			tp = MT_C64;
 		else if (flags & MDT_AMIGA)
