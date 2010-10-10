@@ -426,7 +426,7 @@ AudioStreamPackage::AudioStreamPackage(ToonEngine *vm) : _vm(vm) {
 }
 
 AudioStreamPackage::~AudioStreamPackage() {
-	delete [] _indexBuffer;
+	delete[] _indexBuffer;
 }
 
 bool AudioStreamPackage::loadAudioPackage(Common::String indexFile, Common::String streamFile) {

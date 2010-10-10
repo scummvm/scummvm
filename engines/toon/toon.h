@@ -183,7 +183,7 @@ public:
 	virtual void viewInventoryItem(Common::String str, int32 lineId, int32 itemDest);
 	virtual void storePalette();
 	virtual void restorePalette();
-	virtual const char* getSpecialConversationMusic(int32 locationId); 
+	virtual const char *getSpecialConversationMusic(int32 locationId); 
 	virtual void playRoomMusic();
 
 	Resources *resources() {
