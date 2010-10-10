@@ -580,7 +580,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 	_cursor.width = 16 * _textSurfaceMultiplier;
 	_cursor.height = 16 * _textSurfaceMultiplier;
 
-	int scl = (_game.platform == Common::kPlatformFMTowns) ? (_bytesPerPixelOutput * _textSurfaceMultiplier) : 1;
+	int scl = _bytesPerPixelOutput * _textSurfaceMultiplier;
 
 	for (i = 0; i < 16; i++) {
 		for (j = 0; j < 16; j++) {
