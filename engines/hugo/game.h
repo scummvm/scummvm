@@ -796,6 +796,7 @@ struct status_t {                                   // Game status (not saved)
 	bool     jumpExitFl;                            // Allowed to jump to a screen exit
 	bool     godModeFl;                             // Allow DEBUG features in live version
 	bool     helpFl;                                // Calling WinHelp (don't disable music)
+	bool     doQuitFl;
 	uint32   tick;                                  // Current time in ticks
 	uint32   saveTick;                              // Time of last save in ticks
 	vstate_t viewState;                             // View state machine

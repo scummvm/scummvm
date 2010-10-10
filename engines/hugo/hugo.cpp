@@ -223,9 +223,9 @@ Common::Error HugoEngine::run() {
 	// Start the state machine
 	_status.viewState = V_INTROINIT;
 
-	bool doQuitFl = false;
+	_status.doQuitFl = false;
 
-	while (!doQuitFl) {
+	while (!_status.doQuitFl) {
 		g_system->updateScreen();
 
 		runMachine();
@@ -253,7 +253,7 @@ Common::Error HugoEngine::run() {
 				_status.rightButtonFl = false;
 				break;
 			case Common::EVENT_QUIT:
-				doQuitFl = true;
+				_status.doQuitFl = true;
 				break;
 			default:
 				break;
@@ -322,6 +322,7 @@ void HugoEngine::runMachine() {
 		break;
 	case V_EXIT:                                    // Game over or user exited
 		gameStatus.viewState = V_IDLE;
+		_status.doQuitFl = true;
 		break;
 	}
 }

@@ -910,8 +910,7 @@ void Parser_v1d::lineHandler() {
 	if (!strcmp("exit", _line) || strstr(_line, "quit")) {
 		if (Utils::Box(BOX_YESNO, "%s", _vm._textParser[kTBExit_1d]) != 0)
 			_vm.endGame();
-		else
-			return;
+		return;
 	}
 
 	// SAVE/RESTORE

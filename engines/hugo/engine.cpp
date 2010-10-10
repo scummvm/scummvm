@@ -91,6 +91,7 @@ void HugoEngine::initStatus() {
 	_status.jumpExitFl    = false;                  // Can't jump to a screen exit
 	_status.godModeFl     = false;                  // No special cheats allowed
 	_status.helpFl        = false;                  // Not calling WinHelp()
+	_status.doQuitFl      = false;
 	_status.path[0]       = 0;                      // Path to write files
 	_status.saveSlot      = 0;                      // Slot to save/restore game
 	_status.screenWidth   = 0;                      // Desktop screen width
