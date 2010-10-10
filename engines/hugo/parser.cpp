@@ -916,7 +916,6 @@ void Parser_v1d::lineHandler() {
 
 	// SAVE/RESTORE
 	if (!strcmp("save", _line)) {
-		_config.soundFl = false;
 		if (gameStatus.gameOverFl)
 			Utils::gameOverMsg();
 		else
@@ -926,7 +925,6 @@ void Parser_v1d::lineHandler() {
 	}
 
 	if (!strcmp("restore", _line)) {
-		_config.soundFl = false;
 //		_vm.file().saveOrRestore(false);
 		warning("STUB: saveOrRestore()");
 		return;
