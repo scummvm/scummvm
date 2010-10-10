@@ -23,8 +23,8 @@
 *
 */
 
-#ifndef TOON_H
-#define TOON_H
+#ifndef TOON_TOON_H
+#define TOON_TOON_H
 
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
