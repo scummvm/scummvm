@@ -7,6 +7,33 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8CB5A9C11253FD6900CB6BC7 /* m4_scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9B71253FD6800CB6BC7 /* m4_scene.cpp */; };
+		8CB5A9C21253FD6900CB6BC7 /* mads_logic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9B91253FD6800CB6BC7 /* mads_logic.cpp */; };
+		8CB5A9C31253FD6900CB6BC7 /* mads_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9BB1253FD6800CB6BC7 /* mads_player.cpp */; };
+		8CB5A9C41253FD6900CB6BC7 /* mads_scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9BD1253FD6800CB6BC7 /* mads_scene.cpp */; };
+		8CB5A9C51253FD6900CB6BC7 /* mads_views.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9BF1253FD6900CB6BC7 /* mads_views.cpp */; };
+		8CB5A9C61253FD6900CB6BC7 /* m4_scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9B71253FD6800CB6BC7 /* m4_scene.cpp */; };
+		8CB5A9C71253FD6900CB6BC7 /* mads_logic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9B91253FD6800CB6BC7 /* mads_logic.cpp */; };
+		8CB5A9C81253FD6900CB6BC7 /* mads_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9BB1253FD6800CB6BC7 /* mads_player.cpp */; };
+		8CB5A9C91253FD6900CB6BC7 /* mads_scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9BD1253FD6800CB6BC7 /* mads_scene.cpp */; };
+		8CB5A9CA1253FD6900CB6BC7 /* mads_views.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9BF1253FD6900CB6BC7 /* mads_views.cpp */; };
+		8CB5A9CB1253FD6900CB6BC7 /* m4_scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9B71253FD6800CB6BC7 /* m4_scene.cpp */; };
+		8CB5A9CC1253FD6900CB6BC7 /* mads_logic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9B91253FD6800CB6BC7 /* mads_logic.cpp */; };
+		8CB5A9CD1253FD6900CB6BC7 /* mads_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9BB1253FD6800CB6BC7 /* mads_player.cpp */; };
+		8CB5A9CE1253FD6900CB6BC7 /* mads_scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9BD1253FD6800CB6BC7 /* mads_scene.cpp */; };
+		8CB5A9CF1253FD6900CB6BC7 /* mads_views.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB5A9BF1253FD6900CB6BC7 /* mads_views.cpp */; };
+		8CB5A9D91253FDF500CB6BC7 /* drascula.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CB5A9D51253FDF400CB6BC7 /* drascula.dat */; };
+		8CB5A9DA1253FDF500CB6BC7 /* hugo.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CB5A9D61253FDF500CB6BC7 /* hugo.dat */; };
+		8CB5A9DB1253FDF500CB6BC7 /* m4.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CB5A9D71253FDF500CB6BC7 /* m4.dat */; };
+		8CB5A9DC1253FDF500CB6BC7 /* teenagent.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CB5A9D81253FDF500CB6BC7 /* teenagent.dat */; };
+		8CB5A9DD1253FDF500CB6BC7 /* drascula.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CB5A9D51253FDF400CB6BC7 /* drascula.dat */; };
+		8CB5A9DE1253FDF500CB6BC7 /* hugo.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CB5A9D61253FDF500CB6BC7 /* hugo.dat */; };
+		8CB5A9DF1253FDF500CB6BC7 /* m4.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CB5A9D71253FDF500CB6BC7 /* m4.dat */; };
+		8CB5A9E01253FDF500CB6BC7 /* teenagent.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CB5A9D81253FDF500CB6BC7 /* teenagent.dat */; };
+		8CB5A9E11253FDF500CB6BC7 /* drascula.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CB5A9D51253FDF400CB6BC7 /* drascula.dat */; };
+		8CB5A9E21253FDF500CB6BC7 /* hugo.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CB5A9D61253FDF500CB6BC7 /* hugo.dat */; };
+		8CB5A9E31253FDF500CB6BC7 /* m4.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CB5A9D71253FDF500CB6BC7 /* m4.dat */; };
+		8CB5A9E41253FDF500CB6BC7 /* teenagent.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CB5A9D81253FDF500CB6BC7 /* teenagent.dat */; };
 		DF093E5F0F63CAD4002D821E /* pn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF093E5C0F63CAD4002D821E /* pn.cpp */; };
 		DF093E600F63CAD4002D821E /* script_pn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF093E5D0F63CAD4002D821E /* script_pn.cpp */; };
 		DF093E610F63CAD4002D821E /* vga_pn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF093E5E0F63CAD4002D821E /* vga_pn.cpp */; };
@@ -3015,6 +3042,20 @@
 
 /* Begin PBXFileReference section */
 		1D6058910D05DD3D006BFB54 /* ScummVM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScummVM.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8CB5A9B71253FD6800CB6BC7 /* m4_scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = m4_scene.cpp; sourceTree = "<group>"; };
+		8CB5A9B81253FD6800CB6BC7 /* m4_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m4_scene.h; sourceTree = "<group>"; };
+		8CB5A9B91253FD6800CB6BC7 /* mads_logic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mads_logic.cpp; sourceTree = "<group>"; };
+		8CB5A9BA1253FD6800CB6BC7 /* mads_logic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mads_logic.h; sourceTree = "<group>"; };
+		8CB5A9BB1253FD6800CB6BC7 /* mads_player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mads_player.cpp; sourceTree = "<group>"; };
+		8CB5A9BC1253FD6800CB6BC7 /* mads_player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mads_player.h; sourceTree = "<group>"; };
+		8CB5A9BD1253FD6800CB6BC7 /* mads_scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mads_scene.cpp; sourceTree = "<group>"; };
+		8CB5A9BE1253FD6800CB6BC7 /* mads_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mads_scene.h; sourceTree = "<group>"; };
+		8CB5A9BF1253FD6900CB6BC7 /* mads_views.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mads_views.cpp; sourceTree = "<group>"; };
+		8CB5A9C01253FD6900CB6BC7 /* mads_views.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mads_views.h; sourceTree = "<group>"; };
+		8CB5A9D51253FDF400CB6BC7 /* drascula.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = drascula.dat; sourceTree = "<group>"; };
+		8CB5A9D61253FDF500CB6BC7 /* hugo.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = hugo.dat; sourceTree = "<group>"; };
+		8CB5A9D71253FDF500CB6BC7 /* m4.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = m4.dat; sourceTree = "<group>"; };
+		8CB5A9D81253FDF500CB6BC7 /* teenagent.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = teenagent.dat; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DF093E5C0F63CAD4002D821E /* pn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pn.cpp; sourceTree = "<group>"; };
 		DF093E5D0F63CAD4002D821E /* script_pn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = script_pn.cpp; sourceTree = "<group>"; };
@@ -4725,10 +4766,10 @@
 		DFE478220D81F4E900B6D1FB /* pcspk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcspk.h; sourceTree = "<group>"; };
 		DFE478230D81F4E900B6D1FB /* ym2612.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ym2612.cpp; sourceTree = "<group>"; };
 		DFE478240D81F4E900B6D1FB /* ym2612.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ym2612.h; sourceTree = "<group>"; };
-		DFE47C810D81F86900B6D1FB /* kyra.dat */ = {isa = PBXFileReference; lastKnownFileType = file; name = kyra.dat; path = "../engine-data/kyra.dat"; sourceTree = "<group>"; };
-		DFE47C820D81F86900B6D1FB /* lure.dat */ = {isa = PBXFileReference; lastKnownFileType = file; name = lure.dat; path = "../engine-data/lure.dat"; sourceTree = "<group>"; };
-		DFE47C830D81F86900B6D1FB /* queen.tbl */ = {isa = PBXFileReference; lastKnownFileType = file; name = queen.tbl; path = "../engine-data/queen.tbl"; sourceTree = "<group>"; };
-		DFE47C850D81F86900B6D1FB /* sky.cpt */ = {isa = PBXFileReference; lastKnownFileType = file; name = sky.cpt; path = "../engine-data/sky.cpt"; sourceTree = "<group>"; };
+		DFE47C810D81F86900B6D1FB /* kyra.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = kyra.dat; sourceTree = "<group>"; };
+		DFE47C820D81F86900B6D1FB /* lure.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = lure.dat; sourceTree = "<group>"; };
+		DFE47C830D81F86900B6D1FB /* queen.tbl */ = {isa = PBXFileReference; lastKnownFileType = file; path = queen.tbl; sourceTree = "<group>"; };
+		DFE47C850D81F86900B6D1FB /* sky.cpt */ = {isa = PBXFileReference; lastKnownFileType = file; path = sky.cpt; sourceTree = "<group>"; };
 		DFE88C440F874A1100C555C5 /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sound.cpp; sourceTree = "<group>"; };
 		DFE88C450F874A1100C555C5 /* sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sound.h; sourceTree = "<group>"; };
 		DFEC5D0A1166C5CF00C90552 /* random.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = random.cpp; sourceTree = "<group>"; };
@@ -4863,16 +4904,13 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8CB5A9D21253FD9100CB6BC7 /* engine-data */,
 				DF895C40124C271F0077F6E8 /* icon4.png */,
 				DF895C33124C26660077F6E8 /* icon-72.png */,
 				DF0944B00F6430ED002D821E /* scummvm.icns */,
 				DFF4DFFC0F4B449F00C50BC7 /* Info.plist.in */,
 				DF2FFD290F48717F0006E566 /* Default.png */,
 				DF2FFD2A0F48717F0006E566 /* icon.png */,
-				DFE47C810D81F86900B6D1FB /* kyra.dat */,
-				DFE47C820D81F86900B6D1FB /* lure.dat */,
-				DFE47C830D81F86900B6D1FB /* queen.tbl */,
-				DFE47C850D81F86900B6D1FB /* sky.cpt */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 			);
 			name = Resources;
@@ -4885,6 +4923,22 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8CB5A9D21253FD9100CB6BC7 /* engine-data */ = {
+			isa = PBXGroup;
+			children = (
+				8CB5A9D51253FDF400CB6BC7 /* drascula.dat */,
+				8CB5A9D61253FDF500CB6BC7 /* hugo.dat */,
+				DFE47C810D81F86900B6D1FB /* kyra.dat */,
+				DFE47C820D81F86900B6D1FB /* lure.dat */,
+				8CB5A9D71253FDF500CB6BC7 /* m4.dat */,
+				DFE47C830D81F86900B6D1FB /* queen.tbl */,
+				DFE47C850D81F86900B6D1FB /* sky.cpt */,
+				8CB5A9D81253FDF500CB6BC7 /* teenagent.dat */,
+			);
+			name = "engine-data";
+			path = "../engine-data";
 			sourceTree = "<group>";
 		};
 		DF09422F0F63CB9A002D821E /* sdl */ = {
@@ -5810,12 +5864,22 @@
 				DF8422970E7BA6A900F5680E /* m4.h */,
 				DF8422990E7BA6A900F5680E /* m4_menus.cpp */,
 				DF84229A0E7BA6A900F5680E /* m4_menus.h */,
+				8CB5A9B71253FD6800CB6BC7 /* m4_scene.cpp */,
+				8CB5A9B81253FD6800CB6BC7 /* m4_scene.h */,
 				DF84229C0E7BA6A900F5680E /* m4_views.cpp */,
 				DF84229D0E7BA6A900F5680E /* m4_views.h */,
 				DF84229F0E7BA6A900F5680E /* mads_anim.cpp */,
 				DF8422A00E7BA6A900F5680E /* mads_anim.h */,
+				8CB5A9B91253FD6800CB6BC7 /* mads_logic.cpp */,
+				8CB5A9BA1253FD6800CB6BC7 /* mads_logic.h */,
 				DF8422A20E7BA6A900F5680E /* mads_menus.cpp */,
 				DF8422A30E7BA6A900F5680E /* mads_menus.h */,
+				8CB5A9BB1253FD6800CB6BC7 /* mads_player.cpp */,
+				8CB5A9BC1253FD6800CB6BC7 /* mads_player.h */,
+				8CB5A9BD1253FD6800CB6BC7 /* mads_scene.cpp */,
+				8CB5A9BE1253FD6800CB6BC7 /* mads_scene.h */,
+				8CB5A9BF1253FD6900CB6BC7 /* mads_views.cpp */,
+				8CB5A9C01253FD6900CB6BC7 /* mads_views.h */,
 				DF8422A50E7BA6A900F5680E /* midi.cpp */,
 				DF8422A60E7BA6A900F5680E /* midi.h */,
 				DF8422A90E7BA6A900F5680E /* rails.cpp */,
@@ -7235,7 +7299,14 @@
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "scummvm" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -7262,6 +7333,10 @@
 				DF2FFD2C0F48717F0006E566 /* icon.png in Resources */,
 				DF895C34124C26660077F6E8 /* icon-72.png in Resources */,
 				DF895C41124C271F0077F6E8 /* icon4.png in Resources */,
+				8CB5A9E11253FDF500CB6BC7 /* drascula.dat in Resources */,
+				8CB5A9E21253FDF500CB6BC7 /* hugo.dat in Resources */,
+				8CB5A9E31253FDF500CB6BC7 /* m4.dat in Resources */,
+				8CB5A9E41253FDF500CB6BC7 /* teenagent.dat in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7278,6 +7353,10 @@
 				DF0944B10F6430ED002D821E /* scummvm.icns in Resources */,
 				DF895C35124C26660077F6E8 /* icon-72.png in Resources */,
 				DF895C42124C271F0077F6E8 /* icon4.png in Resources */,
+				8CB5A9DD1253FDF500CB6BC7 /* drascula.dat in Resources */,
+				8CB5A9DE1253FDF500CB6BC7 /* hugo.dat in Resources */,
+				8CB5A9DF1253FDF500CB6BC7 /* m4.dat in Resources */,
+				8CB5A9E01253FDF500CB6BC7 /* teenagent.dat in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7295,6 +7374,10 @@
 				DFF959150FB22D5700A3EC78 /* icon.png in Resources */,
 				DF895C36124C26660077F6E8 /* icon-72.png in Resources */,
 				DF895C43124C271F0077F6E8 /* icon4.png in Resources */,
+				8CB5A9D91253FDF500CB6BC7 /* drascula.dat in Resources */,
+				8CB5A9DA1253FDF500CB6BC7 /* hugo.dat in Resources */,
+				8CB5A9DB1253FDF500CB6BC7 /* m4.dat in Resources */,
+				8CB5A9DC1253FDF500CB6BC7 /* teenagent.dat in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8277,6 +8360,11 @@
 				DF895CBD124E58990077F6E8 /* smc.cpp in Sources */,
 				DF0E303B1252C5BD0082D593 /* cms.cpp in Sources */,
 				DF0E30421252C6090082D593 /* cms.cpp in Sources */,
+				8CB5A9CB1253FD6900CB6BC7 /* m4_scene.cpp in Sources */,
+				8CB5A9CC1253FD6900CB6BC7 /* mads_logic.cpp in Sources */,
+				8CB5A9CD1253FD6900CB6BC7 /* mads_player.cpp in Sources */,
+				8CB5A9CE1253FD6900CB6BC7 /* mads_scene.cpp in Sources */,
+				8CB5A9CF1253FD6900CB6BC7 /* mads_views.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9255,6 +9343,11 @@
 				DF895CC3124E58990077F6E8 /* smc.cpp in Sources */,
 				DF0E303C1252C5BD0082D593 /* cms.cpp in Sources */,
 				DF0E30431252C6090082D593 /* cms.cpp in Sources */,
+				8CB5A9C61253FD6900CB6BC7 /* m4_scene.cpp in Sources */,
+				8CB5A9C71253FD6900CB6BC7 /* mads_logic.cpp in Sources */,
+				8CB5A9C81253FD6900CB6BC7 /* mads_player.cpp in Sources */,
+				8CB5A9C91253FD6900CB6BC7 /* mads_scene.cpp in Sources */,
+				8CB5A9CA1253FD6900CB6BC7 /* mads_views.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10234,6 +10327,11 @@
 				DF895CC9124E58990077F6E8 /* smc.cpp in Sources */,
 				DF0E303A1252C5BD0082D593 /* cms.cpp in Sources */,
 				DF0E30411252C6090082D593 /* cms.cpp in Sources */,
+				8CB5A9C11253FD6900CB6BC7 /* m4_scene.cpp in Sources */,
+				8CB5A9C21253FD6900CB6BC7 /* mads_logic.cpp in Sources */,
+				8CB5A9C31253FD6900CB6BC7 /* mads_player.cpp in Sources */,
+				8CB5A9C41253FD6900CB6BC7 /* mads_scene.cpp in Sources */,
+				8CB5A9C51253FD6900CB6BC7 /* mads_views.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10269,9 +10367,6 @@
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../sound/softsynth/mt32\"",
-					"\"$(SRCROOT)/../../engines/cruise\"",
-					"\"$(SRCROOT)/../../engines/m4\"",
 					"\"$(SRCROOT)/lib\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
@@ -10312,9 +10407,6 @@
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../sound/softsynth/mt32\"",
-					"\"$(SRCROOT)/../../engines/cruise\"",
-					"\"$(SRCROOT)/../../engines/m4\"",
 					"\"$(SRCROOT)/lib\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
@@ -10538,9 +10630,6 @@
 					/sw/lib,
 					/opt/local/lib,
 					"$(inherited)",
-					"\\\"$(SRCROOT)/../../sound/softsynth/mt32\\\"",
-					"\\\"$(SRCROOT)/../../engines/cruise\\\"",
-					"\\\"$(SRCROOT)/../../engines/m4\\\"",
 					"\\\"$(SRCROOT)/lib\\\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
@@ -10625,9 +10714,6 @@
 					/sw/lib,
 					/opt/local/lib,
 					"$(inherited)",
-					"\\\"$(SRCROOT)/../../sound/softsynth/mt32\\\"",
-					"\\\"$(SRCROOT)/../../engines/cruise\\\"",
-					"\\\"$(SRCROOT)/../../engines/m4\\\"",
 					"\\\"$(SRCROOT)/lib\\\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
@@ -10675,9 +10761,6 @@
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\\\"$(SRCROOT)/../../sound/softsynth/mt32\\\"",
-					"\\\"$(SRCROOT)/../../engines/cruise\\\"",
-					"\\\"$(SRCROOT)/../../engines/m4\\\"",
 					"\\\"$(SRCROOT)/lib\\\"",
 				);
 				PREBINDING = NO;
@@ -10712,9 +10795,6 @@
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\\\"$(SRCROOT)/../../sound/softsynth/mt32\\\"",
-					"\\\"$(SRCROOT)/../../engines/cruise\\\"",
-					"\\\"$(SRCROOT)/../../engines/m4\\\"",
 					"\\\"$(SRCROOT)/lib\\\"",
 				);
 				PREBINDING = NO;
