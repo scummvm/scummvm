@@ -189,21 +189,14 @@ REGISTER_PLUGIN_STATIC(HUGO, PLUGIN_TYPE_ENGINE, Hugo::HugoMetaEngine);
 namespace Hugo {
 
 void HugoEngine::initGame(const HugoGameDescription *gd) {
-	char tmpStr[8];
-
 	_gameType = gd->gameType;
 	_platform = gd->desc.platform;
 	_packedFl = (getFeatures() & GF_PACKED);
 	_gameVariant = _gameType - 1 + ((_platform == Common::kPlatformWindows) ? 0 : 3);
 
-//Generate filenames
-	if (gd->desc.platform == Common::kPlatformWindows)
-		sprintf(tmpStr, "%s%c", gd->desc.gameid, 'w');
-	else
-		sprintf(tmpStr, "%s%c", gd->desc.gameid, 'd');
-
-	sprintf(_initFilename, "%s-00.SAV", tmpStr);
-	sprintf(_saveFilename, "%s-%s.SAV", tmpStr, "%d");
+	// Generate filenames
+	_initFilename = _targetName + "-00.SAV";
+	_saveFilename = _targetName + "-%d.SAV";
 }
 
 } // End of namespace Hugo

@@ -318,15 +318,16 @@ void FileManager::saveGame(int16 slot, const char *descrip) {
 	debugC(1, kDebugFile, "saveGame(%d, %s)", slot, descrip);
 
 	// Get full path of saved game file - note test for INITFILE
-	char    path[256];                                  // Full path of saved game
-	if (slot == -1)
-		sprintf(path, "%s", _vm._initFilename);
-	else
-		sprintf(path, _vm._saveFilename, slot);
+	Common::String path; // Full path of saved game
 
-	Common::WriteStream *out = 0;
-	if (!(out = _vm.getSaveFileManager()->openForSaving(path))) {
-		warning("Can't create file '%s', game not saved", path);
+	if (slot == -1)
+		path = _vm._initFilename;
+	else
+		path = Common::String::printf(_vm._saveFilename.c_str(), slot);
+
+	Common::WriteStream *out = _vm.getSaveFileManager()->openForSaving(path);
+	if (!out) {
+		warning("Can't create file '%s', game not saved", path.c_str());
 		return;
 	}
 
@@ -389,14 +390,15 @@ void FileManager::restoreGame(int16 slot) {
 	_vm.initStatus();
 
 	// Get full path of saved game file - note test for INITFILE
-	char path[256];                                    // Full path of saved game
-	if (slot == -1)
-		sprintf(path, "%s", _vm._initFilename);
-	else
-		sprintf(path, _vm._saveFilename, slot);
+	Common::String path; // Full path of saved game
 
-	Common::SeekableReadStream *in = 0;
-	if (!(in = _vm.getSaveFileManager()->openForLoading(path)))
+	if (slot == -1)
+		path = _vm._initFilename;
+	else
+		path = Common::String::printf(_vm._saveFilename.c_str(), slot);
+
+	Common::SeekableReadStream *in = _vm.getSaveFileManager()->openForLoading(path);
+	if (!in)
 		return;
 
 	// Check version, can't restore from different versions
@@ -473,20 +475,17 @@ void FileManager::initSavedGame() {
 // The net result is a valid INITFILE, with status.savesize initialized.
 	debugC(1, kDebugFile, "initSavedGame");
 
-	// Get full path of INITFILE
-	char path[256];                                 // Full path of INITFILE
-	sprintf(path, "%s", _vm._initFilename);
-
 	// Force save of initial game
 	if (_vm.getGameStatus().initSaveFl)
 		saveGame(-1, "");
 
 	// If initial game doesn't exist, create it
-	Common::SeekableReadStream *in = 0;
-	if (!(in = _vm.getSaveFileManager()->openForLoading(path))) {
+	Common::SeekableReadStream *in = _vm.getSaveFileManager()->openForLoading(_vm._initFilename);
+	if (!in) {
 		saveGame(-1, "");
-		if (!(in = _vm.getSaveFileManager()->openForLoading(path))) {
-			Utils::Error(WRITE_ERR, "%s", path);
+		in = _vm.getSaveFileManager()->openForLoading(_vm._initFilename);
+		if (!in) {
+			Utils::Error(WRITE_ERR, "%s", _vm._initFilename.c_str());
 			return;
 		}
 	}
@@ -497,7 +496,7 @@ void FileManager::initSavedGame() {
 
 	// Check sanity - maybe disk full or path set to read-only drive?
 	if (_vm.getGameStatus().saveSize == -1)
-		Utils::Error(WRITE_ERR, "%s", path);
+		Utils::Error(WRITE_ERR, "%s", _vm._initFilename.c_str());
 }
 
 void FileManager::openPlaybackFile(bool playbackFl, bool recordFl) {

@@ -142,8 +142,7 @@ public:
 	const char *_episode;
 	const char *_picDir;
 
-	char      _initFilename[20];
-	char      _saveFilename[20];
+	Common::String _initFilename, _saveFilename;
 
 	command_t _statusLine;
 	command_t _scoreLine;
