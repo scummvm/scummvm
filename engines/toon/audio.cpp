@@ -245,6 +245,8 @@ bool AudioStreamInstance::readPacket() {
 		if (_looping) {
 			_file->seek(8);
 			_currentReadSize = 8;
+			_lastADPCMval1 = 0;
+			_lastADPCMval2 = 0;
 		} else {
 			_bufferSize = 0;
 			stopNow();
@@ -325,7 +327,7 @@ void AudioStreamInstance::decodeADPCM(uint8 *comp, int16 *dest, int32 packetSize
 
 		*dest = v18;
 		comp += v29;
-		dest ++;
+		dest++;
 	}
 
 	_lastADPCMval1 = v18;
