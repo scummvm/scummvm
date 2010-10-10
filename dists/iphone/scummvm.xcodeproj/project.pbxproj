@@ -133,6 +133,63 @@
 		8CD1ED881262030100FA198C /* toon.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CD1ED871262030100FA198C /* toon.dat */; };
 		8CD1ED891262030100FA198C /* toon.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CD1ED871262030100FA198C /* toon.dat */; };
 		8CD1ED8A1262030100FA198C /* toon.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8CD1ED871262030100FA198C /* toon.dat */; };
+		8CD80C8B126271A9001C6C87 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80C89126271A9001C6C87 /* surface.cpp */; };
+		8CD80C8C126271A9001C6C87 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80C89126271A9001C6C87 /* surface.cpp */; };
+		8CD80C8D126271A9001C6C87 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80C89126271A9001C6C87 /* surface.cpp */; };
+		8CD80C91126271BD001C6C87 /* gfx_towns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80C90126271BD001C6C87 /* gfx_towns.cpp */; };
+		8CD80C92126271BD001C6C87 /* gfx_towns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80C90126271BD001C6C87 /* gfx_towns.cpp */; };
+		8CD80C93126271BD001C6C87 /* gfx_towns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80C90126271BD001C6C87 /* gfx_towns.cpp */; };
+		8CD80CE0126272A0001C6C87 /* actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CBF1262729F001C6C87 /* actor.cpp */; };
+		8CD80CE1126272A0001C6C87 /* animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC11262729F001C6C87 /* animation.cpp */; };
+		8CD80CE2126272A0001C6C87 /* callbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC31262729F001C6C87 /* callbacks.cpp */; };
+		8CD80CE3126272A0001C6C87 /* console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC41262729F001C6C87 /* console.cpp */; };
+		8CD80CE4126272A0001C6C87 /* detection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC61262729F001C6C87 /* detection.cpp */; };
+		8CD80CE5126272A0001C6C87 /* dialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC71262729F001C6C87 /* dialog.cpp */; };
+		8CD80CE6126272A0001C6C87 /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC91262729F001C6C87 /* font.cpp */; };
+		8CD80CE7126272A0001C6C87 /* inventory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CCB1262729F001C6C87 /* inventory.cpp */; };
+		8CD80CE9126272A0001C6C87 /* music.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CCE1262729F001C6C87 /* music.cpp */; };
+		8CD80CEA126272A0001C6C87 /* objects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD01262729F001C6C87 /* objects.cpp */; };
+		8CD80CEB126272A0001C6C87 /* pack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD21262729F001C6C87 /* pack.cpp */; };
+		8CD80CEC126272A0001C6C87 /* resources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD4126272A0001C6C87 /* resources.cpp */; };
+		8CD80CED126272A0001C6C87 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD6126272A0001C6C87 /* scene.cpp */; };
+		8CD80CEE126272A0001C6C87 /* segment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD8126272A0001C6C87 /* segment.cpp */; };
+		8CD80CEF126272A0001C6C87 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CDA126272A0001C6C87 /* surface.cpp */; };
+		8CD80CF0126272A0001C6C87 /* surface_list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CDC126272A0001C6C87 /* surface_list.cpp */; };
+		8CD80CF1126272A0001C6C87 /* teenagent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CDE126272A0001C6C87 /* teenagent.cpp */; };
+		8CD80CF2126272A0001C6C87 /* actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CBF1262729F001C6C87 /* actor.cpp */; };
+		8CD80CF3126272A0001C6C87 /* animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC11262729F001C6C87 /* animation.cpp */; };
+		8CD80CF4126272A0001C6C87 /* callbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC31262729F001C6C87 /* callbacks.cpp */; };
+		8CD80CF5126272A0001C6C87 /* console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC41262729F001C6C87 /* console.cpp */; };
+		8CD80CF6126272A0001C6C87 /* detection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC61262729F001C6C87 /* detection.cpp */; };
+		8CD80CF7126272A0001C6C87 /* dialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC71262729F001C6C87 /* dialog.cpp */; };
+		8CD80CF8126272A0001C6C87 /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC91262729F001C6C87 /* font.cpp */; };
+		8CD80CF9126272A0001C6C87 /* inventory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CCB1262729F001C6C87 /* inventory.cpp */; };
+		8CD80CFB126272A0001C6C87 /* music.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CCE1262729F001C6C87 /* music.cpp */; };
+		8CD80CFC126272A0001C6C87 /* objects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD01262729F001C6C87 /* objects.cpp */; };
+		8CD80CFD126272A0001C6C87 /* pack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD21262729F001C6C87 /* pack.cpp */; };
+		8CD80CFE126272A0001C6C87 /* resources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD4126272A0001C6C87 /* resources.cpp */; };
+		8CD80CFF126272A0001C6C87 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD6126272A0001C6C87 /* scene.cpp */; };
+		8CD80D00126272A0001C6C87 /* segment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD8126272A0001C6C87 /* segment.cpp */; };
+		8CD80D01126272A0001C6C87 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CDA126272A0001C6C87 /* surface.cpp */; };
+		8CD80D02126272A0001C6C87 /* surface_list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CDC126272A0001C6C87 /* surface_list.cpp */; };
+		8CD80D03126272A0001C6C87 /* teenagent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CDE126272A0001C6C87 /* teenagent.cpp */; };
+		8CD80D04126272A0001C6C87 /* actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CBF1262729F001C6C87 /* actor.cpp */; };
+		8CD80D05126272A0001C6C87 /* animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC11262729F001C6C87 /* animation.cpp */; };
+		8CD80D06126272A0001C6C87 /* callbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC31262729F001C6C87 /* callbacks.cpp */; };
+		8CD80D07126272A0001C6C87 /* console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC41262729F001C6C87 /* console.cpp */; };
+		8CD80D08126272A0001C6C87 /* detection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC61262729F001C6C87 /* detection.cpp */; };
+		8CD80D09126272A0001C6C87 /* dialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC71262729F001C6C87 /* dialog.cpp */; };
+		8CD80D0A126272A0001C6C87 /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CC91262729F001C6C87 /* font.cpp */; };
+		8CD80D0B126272A0001C6C87 /* inventory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CCB1262729F001C6C87 /* inventory.cpp */; };
+		8CD80D0D126272A0001C6C87 /* music.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CCE1262729F001C6C87 /* music.cpp */; };
+		8CD80D0E126272A0001C6C87 /* objects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD01262729F001C6C87 /* objects.cpp */; };
+		8CD80D0F126272A0001C6C87 /* pack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD21262729F001C6C87 /* pack.cpp */; };
+		8CD80D10126272A0001C6C87 /* resources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD4126272A0001C6C87 /* resources.cpp */; };
+		8CD80D11126272A0001C6C87 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD6126272A0001C6C87 /* scene.cpp */; };
+		8CD80D12126272A0001C6C87 /* segment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CD8126272A0001C6C87 /* segment.cpp */; };
+		8CD80D13126272A0001C6C87 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CDA126272A0001C6C87 /* surface.cpp */; };
+		8CD80D14126272A0001C6C87 /* surface_list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CDC126272A0001C6C87 /* surface_list.cpp */; };
+		8CD80D15126272A0001C6C87 /* teenagent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD80CDE126272A0001C6C87 /* teenagent.cpp */; };
 		DF093E5F0F63CAD4002D821E /* pn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF093E5C0F63CAD4002D821E /* pn.cpp */; };
 		DF093E600F63CAD4002D821E /* script_pn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF093E5D0F63CAD4002D821E /* script_pn.cpp */; };
 		DF093E610F63CAD4002D821E /* vga_pn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF093E5E0F63CAD4002D821E /* vga_pn.cpp */; };
@@ -3208,6 +3265,41 @@
 		8CD1ED09126202AA00FA198C /* toon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = toon.cpp; sourceTree = "<group>"; };
 		8CD1ED0A126202AA00FA198C /* toon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = toon.h; sourceTree = "<group>"; };
 		8CD1ED871262030100FA198C /* toon.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = toon.dat; sourceTree = "<group>"; };
+		8CD80C89126271A9001C6C87 /* surface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = surface.cpp; sourceTree = "<group>"; };
+		8CD80C8A126271A9001C6C87 /* surface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = surface.h; sourceTree = "<group>"; };
+		8CD80C90126271BD001C6C87 /* gfx_towns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gfx_towns.cpp; sourceTree = "<group>"; };
+		8CD80CBF1262729F001C6C87 /* actor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = actor.cpp; sourceTree = "<group>"; };
+		8CD80CC01262729F001C6C87 /* actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = actor.h; sourceTree = "<group>"; };
+		8CD80CC11262729F001C6C87 /* animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = animation.cpp; sourceTree = "<group>"; };
+		8CD80CC21262729F001C6C87 /* animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = animation.h; sourceTree = "<group>"; };
+		8CD80CC31262729F001C6C87 /* callbacks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = callbacks.cpp; sourceTree = "<group>"; };
+		8CD80CC41262729F001C6C87 /* console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = console.cpp; sourceTree = "<group>"; };
+		8CD80CC51262729F001C6C87 /* console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = console.h; sourceTree = "<group>"; };
+		8CD80CC61262729F001C6C87 /* detection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = detection.cpp; sourceTree = "<group>"; };
+		8CD80CC71262729F001C6C87 /* dialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dialog.cpp; sourceTree = "<group>"; };
+		8CD80CC81262729F001C6C87 /* dialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dialog.h; sourceTree = "<group>"; };
+		8CD80CC91262729F001C6C87 /* font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font.cpp; sourceTree = "<group>"; };
+		8CD80CCA1262729F001C6C87 /* font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = font.h; sourceTree = "<group>"; };
+		8CD80CCB1262729F001C6C87 /* inventory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = inventory.cpp; sourceTree = "<group>"; };
+		8CD80CCC1262729F001C6C87 /* inventory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inventory.h; sourceTree = "<group>"; };
+		8CD80CCE1262729F001C6C87 /* music.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = music.cpp; sourceTree = "<group>"; };
+		8CD80CCF1262729F001C6C87 /* music.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music.h; sourceTree = "<group>"; };
+		8CD80CD01262729F001C6C87 /* objects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = objects.cpp; sourceTree = "<group>"; };
+		8CD80CD11262729F001C6C87 /* objects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objects.h; sourceTree = "<group>"; };
+		8CD80CD21262729F001C6C87 /* pack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pack.cpp; sourceTree = "<group>"; };
+		8CD80CD3126272A0001C6C87 /* pack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pack.h; sourceTree = "<group>"; };
+		8CD80CD4126272A0001C6C87 /* resources.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resources.cpp; sourceTree = "<group>"; };
+		8CD80CD5126272A0001C6C87 /* resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resources.h; sourceTree = "<group>"; };
+		8CD80CD6126272A0001C6C87 /* scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene.cpp; sourceTree = "<group>"; };
+		8CD80CD7126272A0001C6C87 /* scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene.h; sourceTree = "<group>"; };
+		8CD80CD8126272A0001C6C87 /* segment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = segment.cpp; sourceTree = "<group>"; };
+		8CD80CD9126272A0001C6C87 /* segment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = segment.h; sourceTree = "<group>"; };
+		8CD80CDA126272A0001C6C87 /* surface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = surface.cpp; sourceTree = "<group>"; };
+		8CD80CDB126272A0001C6C87 /* surface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = surface.h; sourceTree = "<group>"; };
+		8CD80CDC126272A0001C6C87 /* surface_list.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = surface_list.cpp; sourceTree = "<group>"; };
+		8CD80CDD126272A0001C6C87 /* surface_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = surface_list.h; sourceTree = "<group>"; };
+		8CD80CDE126272A0001C6C87 /* teenagent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = teenagent.cpp; sourceTree = "<group>"; };
+		8CD80CDF126272A0001C6C87 /* teenagent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = teenagent.h; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DF093E5C0F63CAD4002D821E /* pn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pn.cpp; sourceTree = "<group>"; };
 		DF093E5D0F63CAD4002D821E /* script_pn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = script_pn.cpp; sourceTree = "<group>"; };
@@ -5170,6 +5262,45 @@
 			path = toon;
 			sourceTree = "<group>";
 		};
+		8CD80CBE1262729F001C6C87 /* teenagent */ = {
+			isa = PBXGroup;
+			children = (
+				8CD80CBF1262729F001C6C87 /* actor.cpp */,
+				8CD80CC01262729F001C6C87 /* actor.h */,
+				8CD80CC11262729F001C6C87 /* animation.cpp */,
+				8CD80CC21262729F001C6C87 /* animation.h */,
+				8CD80CC31262729F001C6C87 /* callbacks.cpp */,
+				8CD80CC41262729F001C6C87 /* console.cpp */,
+				8CD80CC51262729F001C6C87 /* console.h */,
+				8CD80CC61262729F001C6C87 /* detection.cpp */,
+				8CD80CC71262729F001C6C87 /* dialog.cpp */,
+				8CD80CC81262729F001C6C87 /* dialog.h */,
+				8CD80CC91262729F001C6C87 /* font.cpp */,
+				8CD80CCA1262729F001C6C87 /* font.h */,
+				8CD80CCB1262729F001C6C87 /* inventory.cpp */,
+				8CD80CCC1262729F001C6C87 /* inventory.h */,
+				8CD80CCE1262729F001C6C87 /* music.cpp */,
+				8CD80CCF1262729F001C6C87 /* music.h */,
+				8CD80CD01262729F001C6C87 /* objects.cpp */,
+				8CD80CD11262729F001C6C87 /* objects.h */,
+				8CD80CD21262729F001C6C87 /* pack.cpp */,
+				8CD80CD3126272A0001C6C87 /* pack.h */,
+				8CD80CD4126272A0001C6C87 /* resources.cpp */,
+				8CD80CD5126272A0001C6C87 /* resources.h */,
+				8CD80CD6126272A0001C6C87 /* scene.cpp */,
+				8CD80CD7126272A0001C6C87 /* scene.h */,
+				8CD80CD8126272A0001C6C87 /* segment.cpp */,
+				8CD80CD9126272A0001C6C87 /* segment.h */,
+				8CD80CDA126272A0001C6C87 /* surface.cpp */,
+				8CD80CDB126272A0001C6C87 /* surface.h */,
+				8CD80CDC126272A0001C6C87 /* surface_list.cpp */,
+				8CD80CDD126272A0001C6C87 /* surface_list.h */,
+				8CD80CDE126272A0001C6C87 /* teenagent.cpp */,
+				8CD80CDF126272A0001C6C87 /* teenagent.h */,
+			);
+			path = teenagent;
+			sourceTree = "<group>";
+		};
 		DF09422F0F63CB9A002D821E /* sdl */ = {
 			isa = PBXGroup;
 			children = (
@@ -5475,6 +5606,7 @@
 				DF8424200E7BA6AB00F5680E /* sky */,
 				DF84244E0E7BA6AB00F5680E /* sword1 */,
 				DF8424770E7BA6AB00F5680E /* sword2 */,
+				8CD80CBE1262729F001C6C87 /* teenagent */,
 				DF8424AA0E7BA6AB00F5680E /* tinsel */,
 				8CD1ECE3126202AA00FA198C /* toon */,
 				DF8424FC0E7BA6AB00F5680E /* touche */,
@@ -5828,6 +5960,8 @@
 				DF7585CA100CB66E00CC3324 /* script.cpp */,
 				DF7585CB100CB66E00CC3324 /* script.h */,
 				DF84215B0E7BA6A700F5680E /* sound */,
+				8CD80C89126271A9001C6C87 /* surface.cpp */,
+				8CD80C8A126271A9001C6C87 /* surface.h */,
 				DF7585CC100CB66E00CC3324 /* totfile.cpp */,
 				DF7585CD100CB66E00CC3324 /* totfile.h */,
 				DF84216F0E7BA6A700F5680E /* util.cpp */,
@@ -6359,6 +6493,7 @@
 				DF8423970E7BA6AA00F5680E /* file_nes.h */,
 				DF8423980E7BA6AA00F5680E /* gfx.cpp */,
 				DF8423990E7BA6AA00F5680E /* gfx.h */,
+				8CD80C90126271BD001C6C87 /* gfx_towns.cpp */,
 				DF84239B0E7BA6AA00F5680E /* he */,
 				DF8423B50E7BA6AA00F5680E /* help.cpp */,
 				DF8423B60E7BA6AA00F5680E /* help.h */,
@@ -8617,6 +8752,25 @@
 				8CD1ED74126202AB00FA198C /* text.cpp in Sources */,
 				8CD1ED75126202AB00FA198C /* tools.cpp in Sources */,
 				8CD1ED76126202AB00FA198C /* toon.cpp in Sources */,
+				8CD80C8D126271A9001C6C87 /* surface.cpp in Sources */,
+				8CD80C93126271BD001C6C87 /* gfx_towns.cpp in Sources */,
+				8CD80D04126272A0001C6C87 /* actor.cpp in Sources */,
+				8CD80D05126272A0001C6C87 /* animation.cpp in Sources */,
+				8CD80D06126272A0001C6C87 /* callbacks.cpp in Sources */,
+				8CD80D07126272A0001C6C87 /* console.cpp in Sources */,
+				8CD80D08126272A0001C6C87 /* detection.cpp in Sources */,
+				8CD80D09126272A0001C6C87 /* dialog.cpp in Sources */,
+				8CD80D0A126272A0001C6C87 /* font.cpp in Sources */,
+				8CD80D0B126272A0001C6C87 /* inventory.cpp in Sources */,
+				8CD80D0D126272A0001C6C87 /* music.cpp in Sources */,
+				8CD80D0E126272A0001C6C87 /* objects.cpp in Sources */,
+				8CD80D0F126272A0001C6C87 /* pack.cpp in Sources */,
+				8CD80D10126272A0001C6C87 /* resources.cpp in Sources */,
+				8CD80D11126272A0001C6C87 /* scene.cpp in Sources */,
+				8CD80D12126272A0001C6C87 /* segment.cpp in Sources */,
+				8CD80D13126272A0001C6C87 /* surface.cpp in Sources */,
+				8CD80D14126272A0001C6C87 /* surface_list.cpp in Sources */,
+				8CD80D15126272A0001C6C87 /* teenagent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9628,6 +9782,25 @@
 				8CD1ED50126202AB00FA198C /* text.cpp in Sources */,
 				8CD1ED51126202AB00FA198C /* tools.cpp in Sources */,
 				8CD1ED52126202AB00FA198C /* toon.cpp in Sources */,
+				8CD80C8C126271A9001C6C87 /* surface.cpp in Sources */,
+				8CD80C92126271BD001C6C87 /* gfx_towns.cpp in Sources */,
+				8CD80CF2126272A0001C6C87 /* actor.cpp in Sources */,
+				8CD80CF3126272A0001C6C87 /* animation.cpp in Sources */,
+				8CD80CF4126272A0001C6C87 /* callbacks.cpp in Sources */,
+				8CD80CF5126272A0001C6C87 /* console.cpp in Sources */,
+				8CD80CF6126272A0001C6C87 /* detection.cpp in Sources */,
+				8CD80CF7126272A0001C6C87 /* dialog.cpp in Sources */,
+				8CD80CF8126272A0001C6C87 /* font.cpp in Sources */,
+				8CD80CF9126272A0001C6C87 /* inventory.cpp in Sources */,
+				8CD80CFB126272A0001C6C87 /* music.cpp in Sources */,
+				8CD80CFC126272A0001C6C87 /* objects.cpp in Sources */,
+				8CD80CFD126272A0001C6C87 /* pack.cpp in Sources */,
+				8CD80CFE126272A0001C6C87 /* resources.cpp in Sources */,
+				8CD80CFF126272A0001C6C87 /* scene.cpp in Sources */,
+				8CD80D00126272A0001C6C87 /* segment.cpp in Sources */,
+				8CD80D01126272A0001C6C87 /* surface.cpp in Sources */,
+				8CD80D02126272A0001C6C87 /* surface_list.cpp in Sources */,
+				8CD80D03126272A0001C6C87 /* teenagent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10640,6 +10813,25 @@
 				8CD1ED2C126202AB00FA198C /* text.cpp in Sources */,
 				8CD1ED2D126202AB00FA198C /* tools.cpp in Sources */,
 				8CD1ED2E126202AB00FA198C /* toon.cpp in Sources */,
+				8CD80C8B126271A9001C6C87 /* surface.cpp in Sources */,
+				8CD80C91126271BD001C6C87 /* gfx_towns.cpp in Sources */,
+				8CD80CE0126272A0001C6C87 /* actor.cpp in Sources */,
+				8CD80CE1126272A0001C6C87 /* animation.cpp in Sources */,
+				8CD80CE2126272A0001C6C87 /* callbacks.cpp in Sources */,
+				8CD80CE3126272A0001C6C87 /* console.cpp in Sources */,
+				8CD80CE4126272A0001C6C87 /* detection.cpp in Sources */,
+				8CD80CE5126272A0001C6C87 /* dialog.cpp in Sources */,
+				8CD80CE6126272A0001C6C87 /* font.cpp in Sources */,
+				8CD80CE7126272A0001C6C87 /* inventory.cpp in Sources */,
+				8CD80CE9126272A0001C6C87 /* music.cpp in Sources */,
+				8CD80CEA126272A0001C6C87 /* objects.cpp in Sources */,
+				8CD80CEB126272A0001C6C87 /* pack.cpp in Sources */,
+				8CD80CEC126272A0001C6C87 /* resources.cpp in Sources */,
+				8CD80CED126272A0001C6C87 /* scene.cpp in Sources */,
+				8CD80CEE126272A0001C6C87 /* segment.cpp in Sources */,
+				8CD80CEF126272A0001C6C87 /* surface.cpp in Sources */,
+				8CD80CF0126272A0001C6C87 /* surface_list.cpp in Sources */,
+				8CD80CF1126272A0001C6C87 /* teenagent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10867,7 +11059,16 @@
 				LIBRARY_SEARCH_PATHS = "";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-lz";
+				OTHER_LDFLAGS = (
+					"-lSDLmain",
+					"-logg",
+					"-lvorbisfile",
+					"-lvorbis",
+					"-lmad",
+					"-lFLAC",
+					"-lSDL",
+					"-lz",
+				);
 				PREBINDING = NO;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
@@ -10945,7 +11146,6 @@
 					/sw/lib,
 					/opt/local/lib,
 					"$(inherited)",
-					"\\\"$(SRCROOT)/lib\\\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
@@ -11031,7 +11231,6 @@
 					/sw/lib,
 					/opt/local/lib,
 					"$(inherited)",
-					"\\\"$(SRCROOT)/lib\\\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
@@ -11080,8 +11279,19 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
+					/sw/lib,
+					/opt/local/lib,
 					"$(inherited)",
-					"\\\"$(SRCROOT)/lib\\\"",
+				);
+				OTHER_LDFLAGS = (
+					"-lSDLmain",
+					"-logg",
+					"-lvorbisfile",
+					"-lvorbis",
+					"-lmad",
+					"-lFLAC",
+					"-lSDL",
+					"-lz",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = ScummVM;
@@ -11117,8 +11327,19 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
+					/sw/lib,
+					/opt/local/lib,
 					"$(inherited)",
-					"\\\"$(SRCROOT)/lib\\\"",
+				);
+				OTHER_LDFLAGS = (
+					"-lSDLmain",
+					"-logg",
+					"-lvorbisfile",
+					"-lvorbis",
+					"-lmad",
+					"-lFLAC",
+					"-lSDL",
+					"-lz",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = ScummVM;
