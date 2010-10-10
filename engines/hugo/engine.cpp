@@ -74,7 +74,7 @@ void HugoEngine::initPlaylist(bool playlist[MAX_TUNES]) {
 // Initialize the dynamic game status
 void HugoEngine::initStatus() {
 	debugC(1, kDebugEngine, "initStatus");
-	_status.initSaveFl    = false;                  // Don't force initial save
+	_status.initSaveFl    = true;                   // Force initial save
 	_status.storyModeFl   = false;                  // Not in story mode
 	_status.gameOverFl    = false;                  // Hero not knobbled yet
 	_status.recordFl      = false;                  // Not record mode
