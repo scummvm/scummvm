@@ -628,17 +628,14 @@ void Player_Towns_v2::startSound(int sound) {
 		uint8 pan = _soundOverride[sound].pan ? _soundOverride[sound].pan - 1 : 64;
 		uint8 pri = ptr[9];
 		_soundOverride[sound].velo = _soundOverride[sound].pan = 0;
-
 		playPcmTrack(sound, ptr + 8, velo, pan, ptr[52], pri);
 
 	} else if (READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
 		_soundOverride[sound].type = 5;
-
 		playVocTrack(ptr + 27);
 
 	} else {
 		_soundOverride[sound].type = 3;
-
 		_imuse->startSound(sound);
 	}
 }

@@ -1617,7 +1617,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 
 void ScummEngine_v5::o5_roomOps() {
 	int a = 0, b = 0, c, d, e;
-	const bool paramsBeforeOpcode = (_game.version == 3 && (_game.platform != Common::kPlatformPCEngine || _game.platform != Common::kPlatformFMTowns));
+	const bool paramsBeforeOpcode = ((_game.version == 3) && (_game.platform != Common::kPlatformPCEngine));
 
 	if (paramsBeforeOpcode) {
 		a = getVarOrDirectWord(PARAM_1);
