@@ -174,15 +174,15 @@ NASM=""
 # to make it possible to change e.g. the location of the
 # man pages independently of that of the engine data files,
 # which are placed inside $datadir/scummvm
-exec_prefix=NONE
 prefix=NONE
+exec_prefix=NONE
 bindir='${exec_prefix}/bin'
+libdir='${exec_prefix}/lib'
 datarootdir='${prefix}/share'
 datadir='${datarootdir}/scummvm'
-docdir='${datarootdir}/doc/scummvm'
-libdir='${exec_prefix}/lib'
-#localedir='${datarootdir}/locale'
 mandir='${datarootdir}/man'
+docdir='${datarootdir}/doc/scummvm'
+#localedir='${datarootdir}/locale'
 
 # For cross compiling
 _host=""
@@ -761,8 +761,8 @@ for ac_option in $@; do
 	--disable-hq-scalers)     _build_hq_scalers=no ;;
 	--enable-alsa)            _alsa=yes       ;;
 	--disable-alsa)           _alsa=no        ;;
-	--enable-seq-midi)        _seq_midi=yes        ;;
-	--disable-seq-midi)       _seq_midi=no         ;;
+	--enable-seq-midi)        _seq_midi=yes   ;;
+	--disable-seq-midi)       _seq_midi=no    ;;
 	--enable-vorbis)          _vorbis=yes     ;;
 	--disable-vorbis)         _vorbis=no      ;;
 	--enable-tremor)          _tremor=yes     ;;
@@ -879,17 +879,17 @@ for ac_option in $@; do
 	--host=*)
 		_host=`echo $ac_option | cut -d '=' -f 2`
 		;;
-	--exec-prefix=*)
-		exec_prefix=`echo $ac_option | cut -d '=' -f 2`
-		;;
 	--prefix=*)
 		prefix=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--exec-prefix=*)
+		exec_prefix=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--bindir=*)
 		bindir=`echo $ac_option | cut -d '=' -f 2`
 		;;
-	--mandir=*)
-		mandir=`echo $ac_option | cut -d '=' -f 2`
+	--libdir=*)
+		libdir=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--datarootdir=*)
 		datarootdir=`echo $ac_option | cut -d '=' -f 2`
@@ -897,8 +897,11 @@ for ac_option in $@; do
 	--datadir=*)
 		datadir=`echo $ac_option | cut -d '=' -f 2`
 		;;
-	--libdir=*)
-		libdir=`echo $ac_option | cut -d '=' -f 2`
+	--mandir=*)
+		mandir=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--docdir=*)
+		docdir=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--enable-all-engines)
 		engine_enable_all
@@ -2939,11 +2942,11 @@ NASMFLAGS := $NASMFLAGS
 prefix = $prefix
 exec_prefix = $exec_prefix
 bindir = $bindir
+libdir = $libdir
 datarootdir = $datarootdir
 datadir = $datadir
-docdir = $docdir
-libdir = $libdir
 mandir = $mandir
+docdir = $docdir
 
 $_config_mk_data
 
