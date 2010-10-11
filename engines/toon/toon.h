@@ -185,6 +185,7 @@ public:
 	void restorePalette();
 	const char *getSpecialConversationMusic(int32 locationId); 
 	void playRoomMusic();
+	void waitForScriptStep();
 
 	Resources *resources() {
 		return _resources;
@@ -286,6 +287,10 @@ public:
 		return _saveBufferStream;
 	}
 
+	bool shouldQuitGame() const {
+		return _shouldQuit;
+	}
+
 protected:
 	OSystem *_system;
 	int32 _tickLength;
@@ -349,6 +354,8 @@ protected:
 	Hotspots *_hotspots;
 	int32 _currentHotspotItem;
 
+	bool _shouldQuit;
+	int32 _scriptStep;
 
 	int32 _mouseX;
 	int32 _mouseY;

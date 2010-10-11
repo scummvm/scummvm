@@ -76,6 +76,9 @@ void ToonEngine::init() {
 	_conversationData = new int16[4096];
 	memset(_conversationData, 0, 4096 * sizeof(int16));
 
+	_shouldQuit = false;
+	_scriptStep = 0;
+
 	_cursorOffsetX = 0;
 	_cursorOffsetY = 0;
 	_currentHotspotItem = 0;
@@ -152,6 +155,15 @@ void ToonEngine::init() {
 
 	_lastMouseButton = 0;
 	_mouseButton = 0;
+}
+
+void ToonEngine::waitForScriptStep() {
+	// Wait after a specified number of script steps when executing a script
+	// to lower CPU usage
+	if (++_scriptStep >= 40) {
+		g_system->delayMillis(10);
+		_scriptStep = 0;
+	}
 }
 
 void ToonEngine::parseInput() {
@@ -268,7 +280,7 @@ void ToonEngine::updateTimers() {
 
 					_script->start(status, 7);
 					while (_script->run(status))
-						;
+						waitForScriptStep();
 
 					_currentScriptRegion--;
 
@@ -395,8 +407,10 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 		_cursorAnimationInstance->render();
 	}
 	_system->copyRectToScreen((byte *)_mainSurface->pixels + state()->_currentScrollValue, 1280, 0, 0, 640, 400);
-	if (updateScreen)
+	if (updateScreen) {
 		_system->updateScreen();
+		_shouldQuit = shouldQuit();	// update game quit flag - this shouldn't be called all the time, as it's a virtual function
+	}
 }
 
 void ToonEngine::doFrame() {
@@ -548,7 +562,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 				if (clickingOn != MAINMENUHOTSPOT_NONE)
 					clickRelease = true;
 			}
-			if (shouldQuit()) {
+			if (_shouldQuit) {
 				clickingOn = MAINMENUHOTSPOT_NONE;
 				clickRelease = true;
 				doExit = true;
@@ -634,7 +648,7 @@ Common::Error ToonEngine::run() {
 
 // Strangerke - Commented (not used)
 //	int32 oldTimer = _system->getMillis();
-	while (!shouldQuit() && _gameState->_currentScene != -1)
+	while (!_shouldQuit && _gameState->_currentScene != -1)
 		doFrame();
 	return Common::kNoError;
 }
@@ -757,9 +771,11 @@ void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
 		        !_sceneAnimationScripts[_lastProcessedSceneScript]._frozen) {
 			_animationSceneScriptRunFlag = true;
 
-			while (_animationSceneScriptRunFlag && _sceneAnimationScripts[_lastProcessedSceneScript]._lastTimer <= _system->getMillis() && !shouldQuit()) {
+			while (_animationSceneScriptRunFlag && _sceneAnimationScripts[_lastProcessedSceneScript]._lastTimer <= _system->getMillis() && !_shouldQuit) {
 				if (!_script->run(&_sceneAnimationScripts[_lastProcessedSceneScript]._state))
 					_animationSceneScriptRunFlag = false;
+
+				waitForScriptStep();
 
 				if (_sceneAnimationScripts[_lastProcessedSceneScript]._frozen)
 					break;
@@ -776,7 +792,7 @@ void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
 		if (_lastProcessedSceneScript >= state()->_locations[state()->_currentScene]._numSceneAnimations)
 			_lastProcessedSceneScript = 0;
 
-	} while (_lastProcessedSceneScript != startScript && !shouldQuit());
+	} while (_lastProcessedSceneScript != startScript && !_shouldQuit);
 
 
 	_updatingSceneScriptRunFlag = false;
@@ -978,12 +994,12 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 		_script->start(&_scriptState[0], 0);
 
 		while (_script->run(&_scriptState[0]))
-			;
+			waitForScriptStep();
 
 		_script->start(&_scriptState[0], 8);
 
 		while (_script->run(&_scriptState[0]))
-			;
+			waitForScriptStep();
 
 		if (_gameState->_nextSpecialEnterX != -1 && _gameState->_nextSpecialEnterY != -1) {
 			_drew->setPosition(_gameState->_nextSpecialEnterX, _gameState->_nextSpecialEnterY);
@@ -994,12 +1010,12 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 		_script->start(&_scriptState[0], 3);
 
 		while (_script->run(&_scriptState[0]))
-			;
+			waitForScriptStep();
 
 		_script->start(&_scriptState[0], 4);
 
 		while (_script->run(&_scriptState[0]))
-			;
+			waitForScriptStep();
 
 	}
 
@@ -1061,7 +1077,7 @@ void ToonEngine::initChapter() {
 	_script->init(&status, &data);
 	_script->start(&status, 0);
 	while (_script->run(&status))
-		;
+		waitForScriptStep();
 
 	setupGeneralPalette();
 
@@ -1142,7 +1158,7 @@ int32 ToonEngine::runEventScript(int32 x, int32 y, int32 mode, int32 id, int32 s
 
 	_script->start(status, 1);
 	while (_script->run(status))
-		;
+		waitForScriptStep();
 
 	_currentScriptRegion--;
 
@@ -1632,7 +1648,7 @@ void ToonEngine::sayLines(int numLines, int dialogId) {
 		if (!characterTalk(currentLine))
 			break;
 
-		while (_audioManager->voiceStillPlaying() && !shouldQuit())
+		while (_audioManager->voiceStillPlaying() && !_shouldQuit)
 			doFrame();
 
 		// find next line
@@ -1757,7 +1773,7 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 
 	// if one voice is still playing, wait !
 	if (blocking) {
-		while (_audioManager->voiceStillPlaying() && !shouldQuit())
+		while (_audioManager->voiceStillPlaying() && !_shouldQuit)
 			doFrame();
 
 		char *cc = c;
@@ -1768,7 +1784,7 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 			cc -= 4;
 			waitChar = getCharacterById(listenerId);
 			if (waitChar) {
-				while ((waitChar->getAnimFlag() & 0x10) == 0x10 && !shouldQuit())
+				while ((waitChar->getAnimFlag() & 0x10) == 0x10 && !_shouldQuit)
 					doFrame();
 			}
 
@@ -1777,7 +1793,7 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 
 		waitChar = getCharacterById(talkerId);
 		if (waitChar && !_gameState->_inInventory) {
-			while ((waitChar->getAnimFlag() & 0x10) == 0x10 && !shouldQuit())
+			while ((waitChar->getAnimFlag() & 0x10) == 0x10 && !_shouldQuit)
 				doFrame();
 		}
 	} else {
@@ -1822,7 +1838,7 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 	}
 
 	if (blocking) {
-		while (_audioManager->voiceStillPlaying() && !shouldQuit())
+		while (_audioManager->voiceStillPlaying() && !_shouldQuit)
 			doFrame();
 		_gameState->_mouseHidden = oldMouseHidden && _gameState->_mouseHidden;
 	}
@@ -1864,11 +1880,11 @@ void ToonEngine::haveAConversation(int32 convId) {
 	_mouseButton = 0;
 	_gameState->_firstConverstationLine = true;
 
-	while (!_gameState->_exitConversation && !shouldQuit()) {
+	while (!_gameState->_exitConversation && !_shouldQuit) {
 		_gameState->_mouseHidden = false;
 		_gameState->_showConversationIcons = true;
 		int32 oldMouseButton = _mouseButton;
-		while (!shouldQuit()) {
+		while (!_shouldQuit) {
 			doFrame();
 
 			if (_mouseButton != 0) {
@@ -1889,7 +1905,7 @@ void ToonEngine::haveAConversation(int32 convId) {
 				a++;
 			}
 		}
-		if (shouldQuit()) return;
+		if (_shouldQuit) return;
 		_gameState->_showConversationIcons = false;
 		_gameState->_mouseHidden = 1;
 
@@ -2314,7 +2330,7 @@ int32 ToonEngine::showInventory() {
 	int32 justPressedButton = 0;
 	_firstFrame = true;
 
-	while (!shouldQuit()) {
+	while (!_shouldQuit) {
 		getMouseEvent();
 
 		justPressedButton = _mouseButton & ~oldMouseButton;
@@ -2409,7 +2425,7 @@ void ToonEngine::getMouseEvent() {
 	Common::EventManager *_event = _system->getEventManager();
 
 	Common::Event event;
-	while (_event->pollEvent(event) && !shouldQuit())
+	while (_event->pollEvent(event) && !_shouldQuit)
 		;
 
 	_mouseX = _event->getMousePos().x;
@@ -3072,7 +3088,7 @@ void ToonEngine::viewInventoryItem(Common::String str, int32 lineId, int32 itemD
 	int32 oldScrollValue = _gameState->_currentScrollValue;
 	_gameState->_currentScrollValue = 0;
 
-	while (!shouldQuit()) {
+	while (!_shouldQuit) {
 		getMouseEvent();
 
 		justPressedButton = _mouseButton & ~oldMouseButton;

@@ -123,7 +123,7 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 		_numPixelToWalk = 0;
 
 		if (_blockingWalk) {
-			while ((_x != newPosX || _y != newPosY) && _currentPathNode < _currentPathNodeCount && !_vm->shouldQuit()) {
+			while ((_x != newPosX || _y != newPosY) && _currentPathNode < _currentPathNodeCount && !_vm->shouldQuitGame()) {
 				if (_currentPathNode < _currentPathNodeCount - 10) {
 					int32 delta = MIN(10, _currentPathNodeCount - _currentPathNode);
 					int32 dx = _currentPathX[_currentPathNode+delta] - _x;
