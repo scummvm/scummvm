@@ -30,17 +30,23 @@
  *
  */
 
+// This module contains all the scheduling and timing stuff
+
 #include "common/system.h"
 
 #include "hugo/hugo.h"
-#include "hugo/intro.h"
+#include "hugo/schedule.h"
 
 namespace Hugo {
 
-IntroHandler::IntroHandler(HugoEngine &vm) : _vm(vm) {
+Scheduler_v1d::Scheduler_v1d(HugoEngine &vm) : Scheduler(vm) {
 }
 
-IntroHandler::~IntroHandler() {
+Scheduler_v1d::~Scheduler_v1d() {
+}
+
+const char *Scheduler_v1d::getCypher() {
+	return "Copyright 1991, Gray Design Associates"; 
 }
 
 } // End of namespace Hugo

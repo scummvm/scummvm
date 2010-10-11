@@ -34,13 +34,28 @@
 
 #include "hugo/hugo.h"
 #include "hugo/intro.h"
+#include "hugo/file.h"
+
+
 
 namespace Hugo {
-
-IntroHandler::IntroHandler(HugoEngine &vm) : _vm(vm) {
+intro_v1w::intro_v1w(HugoEngine &vm) : IntroHandler(vm) {
 }
 
-IntroHandler::~IntroHandler() {
+intro_v1w::~intro_v1w() {
+}
+
+void intro_v1w::preNewGame() {
+	// Auto-start a new game
+	_vm.file().restoreGame(-1);
+	_vm.getGameStatus().viewState = V_INTROINIT;
+}
+
+void intro_v1w::introInit() {
+}
+
+bool intro_v1w::introPlay() {
+	return true;
 }
 
 } // End of namespace Hugo

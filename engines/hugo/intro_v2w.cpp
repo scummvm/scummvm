@@ -35,12 +35,23 @@
 #include "hugo/hugo.h"
 #include "hugo/intro.h"
 
+
 namespace Hugo {
 
-IntroHandler::IntroHandler(HugoEngine &vm) : _vm(vm) {
+intro_v2w::intro_v2w(HugoEngine &vm) : IntroHandler(vm) {
 }
 
-IntroHandler::~IntroHandler() {
+intro_v2w::~intro_v2w() {
+}
+
+void intro_v2w::preNewGame() {
+}
+
+void intro_v2w::introInit() {
+}
+
+bool intro_v2w::introPlay() {
+	return true;
 }
 
 } // End of namespace Hugo

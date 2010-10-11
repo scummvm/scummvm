@@ -34,13 +34,44 @@
 
 #include "hugo/hugo.h"
 #include "hugo/intro.h"
+#include "hugo/file.h"
+#include "hugo/display.h"
 
 namespace Hugo {
 
-IntroHandler::IntroHandler(HugoEngine &vm) : _vm(vm) {
+intro_v2d::intro_v2d(HugoEngine &vm) : IntroHandler(vm) {
 }
 
-IntroHandler::~IntroHandler() {
+intro_v2d::~intro_v2d() {
+}
+
+void intro_v2d::preNewGame() {
+}
+
+void intro_v2d::introInit() {
+	_vm.screen().loadFont(0);
+	_vm.file().readBackground(_vm._numScreens - 1); // display splash screen
+
+	char buffer[128];
+
+	if (_boot.registered)
+		sprintf(buffer, "%s  Registered Version", COPYRIGHT);
+	else
+		sprintf(buffer, "%s  Shareware Version", COPYRIGHT);
+	_vm.screen().writeStr(CENTER, 186, buffer, _TLIGHTRED);
+
+	if (scumm_stricmp(_boot.distrib, "David P. Gray")) {
+		sprintf(buffer, "Distributed by %s.", _boot.distrib);
+		_vm.screen().writeStr(CENTER, 1, buffer, _TLIGHTRED);
+	}
+
+	_vm.screen().displayBackground();
+	g_system->updateScreen();
+	g_system->delayMillis(5000);
+}
+
+bool intro_v2d::introPlay() {
+	return true;
 }
 
 } // End of namespace Hugo
