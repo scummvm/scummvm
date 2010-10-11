@@ -127,6 +127,7 @@ PathFinding::PathFinding(ToonEngine *vm) : _vm(vm) {
 	_height = 0;
 	_heap = new PathFindingHeap();
 	_gridTemp = 0;
+	_numBlockingRects = 0;
 }
 
 PathFinding::~PathFinding(void) {
