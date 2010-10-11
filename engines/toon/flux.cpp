@@ -67,6 +67,39 @@ void CharacterFlux::playWalkAnim(int32 start, int32 end) {
 	_animationInstance->setLooping(true);
 }
 
+int32 CharacterFlux::fixFacingForAnimation(int32 originalFacing, int32 animationId) {
+
+	static const byte fixFluxAnimationFacing[] = {
+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xee, 0xff, 0xff, 0xff,
+		0xff, 0xff, 0xff, 0xff, 0xee, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x55,
+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+
+	byte animFacingFlag = fixFluxAnimationFacing[animationId];
+	int32 v5 = 1 << originalFacing;
+	int32 v6 = 1 << originalFacing;
+	int32 facingMask = 0;
+	do {
+		if ( v6 & animFacingFlag) {
+			facingMask = v6;
+		} else if (v5 & animFacingFlag) {
+			facingMask = v5;
+		}
+		v5 >>= 1;
+		v6 <<= 1;
+	}
+	while (!facingMask);
+
+	int32 finalFacing = 0;
+	for (finalFacing = 0; ; ++finalFacing ) {
+		facingMask >>= 1;
+		if ( !facingMask )
+			break;
+	}
+	
+	return finalFacing;
+}
+
 void CharacterFlux::setPosition(int32 x, int32 y) {
 	debugC(5, kDebugCharacter, "setPosition(%d, %d)", x, y);
 

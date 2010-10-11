@@ -44,6 +44,7 @@ public:
 	void update(int32 timeIncrement);
 	int32 getRandomIdleAnim();
 	void setVisible(bool visible);
+	static int32 fixFacingForAnimation(int32 originalFacing, int32 animationId);
 };
 
 } // End of namespace Toon

@@ -25,6 +25,7 @@
 
 #include "toon/character.h"
 #include "toon/drew.h"
+#include "toon/flux.h"
 #include "toon/path.h"
 
 namespace Toon {
@@ -936,8 +937,15 @@ void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 
 	char animName[20];
 	strcpy(animName, anim->_filename);
+
+	int32 facing = _facing;
+	if (_id == 1) {
+		// flux special case... some animations are not for every facing
+		facing = CharacterFlux::fixFacingForAnimation(facing, animId);
+	}
+
 	if (strchr(animName, '?'))
-		*strchr(animName, '?') = '0' + _facing;
+		*strchr(animName, '?') = '0' + facing;
 	strcat(animName, ".CAF");
 
 
