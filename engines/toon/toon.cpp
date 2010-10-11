@@ -729,17 +729,20 @@ void ToonEngine::setPaletteEntries(uint8 *palette, int32 offset, int32 num) {
 }
 
 void ToonEngine::simpleUpdate() {
-	updateCharacters(_tickLength);
-	updateAnimationSceneScripts(_tickLength);
-	updateTimer(getTickLength());
+	int32 elapsedTime = _system->getMillis() - _oldTimer2;
+	_oldTimer2 = _system->getMillis();
+	_oldTimer = _oldTimer2;
+
+	updateCharacters(elapsedTime);
+	updateAnimationSceneScripts(elapsedTime);
+	updateTimer(elapsedTime);
+	_animationManager->update(elapsedTime);
 	render();
 
 	if (!_audioManager->voiceStillPlaying()) {
 		_currentTextLine = 0;
 		_currentTextLineId = -1;
 	}
-	_oldTimer2 = _system->getMillis();
-	_oldTimer = _oldTimer2;
 }
 
 void ToonEngine::fixPaletteEntries(uint8 *palette, int num) {
@@ -775,7 +778,7 @@ void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
 				if (!_script->run(&_sceneAnimationScripts[_lastProcessedSceneScript]._state))
 					_animationSceneScriptRunFlag = false;
 
-				waitForScriptStep();
+				//waitForScriptStep();
 
 				if (_sceneAnimationScripts[_lastProcessedSceneScript]._frozen)
 					break;
@@ -3065,7 +3068,7 @@ const char *ToonEngine::getSpecialConversationMusic(int32 conversationId) {
 		0, 0
 	};
 
-	return specialMusic[randRange(0, 1) + conversationId * 2]; 
+	return specialMusic[randRange(0, 1) + conversationId * 2];
 }
 
 void ToonEngine::viewInventoryItem(Common::String str, int32 lineId, int32 itemDest) {
