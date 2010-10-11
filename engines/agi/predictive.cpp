@@ -461,9 +461,8 @@ bool AgiEngine::predictiveDialog() {
 	}
 
  press:
-	strncpy(_predictiveResult, prefix.c_str(), 40);
-	strncat(_predictiveResult, _currentWord.c_str(), 40);
-	_predictiveResult[prefix.size() + _currentCode.size() + 1] = 0;
+	Common::strlcpy(_predictiveResult, prefix.c_str(), sizeof(_predictiveResult));
+	Common::strlcat(_predictiveResult, _currentWord.c_str(), sizeof(_predictiveResult));
 
  getout:
 	// if another window was shown, bring it up again
