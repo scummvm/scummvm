@@ -210,13 +210,12 @@ bool AgiEngine::predictiveDialog() {
 				}
 			}
 
-			temp[MAXWORDLEN] = 0;
-
-			strncpy(temp, prefix.c_str(), MAXWORDLEN);
-			strncat(temp, _currentWord.c_str(), MAXWORDLEN);
+			Common::strlcpy(temp, prefix.c_str(), sizeof(temp));
+			Common::strlcat(temp, _currentWord.c_str(), sizeof(temp));
 
 			for (int i = prefix.size() + _currentCode.size(); i < MAXWORDLEN; i++)
 				temp[i] = ' ';
+			temp[MAXWORDLEN] = 0;
 
 			printText(temp, 0, 8, 7, MAXWORDLEN, 15, 0);
 			_gfx->flushBlock(62, 54, 249, 66);
