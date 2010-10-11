@@ -642,10 +642,9 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (caanoo, dc, gp2x, gp2xwiz, iphone,
-                          linuxmoto, ds, null, openpandora, ps2, psp, sdl, wii,
-                          wince)
-                          [sdl]
+  --backend=BACKEND       backend to build (android, dc, dingux, ds, gp2x, gph,
+                          iphone, linuxmoto, maemo, n64, null, openpandora, ps2,
+                          psp, samsungtv, sdl, symbian, wii, wince) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -671,13 +670,23 @@ Fine tuning of the installation directories:
 
 Special configuration feature:
   --host=HOST             cross-compile to target HOST (arm-linux, ...)
-                          special targets: dreamcast for Sega Dreamcast
+                          special targets: android for Android
+                                           caanoo for GP2X Caanoo
+                                           dingux for Dingux
+                                           dreamcast for Sega Dreamcast
+                                           ds for Nintendo DS
                                            gamecube for Nintendo GameCube
+                                           gp2x for GP2X
+                                           gp2xwiz for GP2X Wiz
                                            iphone for Apple iPhone
                                            linupy for Yopy PDA
-                                           ds for Nintendo DS
+                                           motoezx for MotoEZX
+                                           motomagx for MotoMAGX
+                                           n64 for Nintendo 64
+                                           openpandora for OpenPandora
                                            ps2 for PlayStation 2
                                            psp for PlayStation Portable
+                                           samsungtv for Samsung TV
                                            wii for Nintendo Wii
                                            wince for Windows CE
 
@@ -1989,7 +1998,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	dreamcast | dingux | gph | openpandora | samsungtv | sdl | wii | psp)
+	dingux | dreamcast | gph | openpandora | psp | samsungtv | sdl | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -2507,14 +2516,14 @@ if test "$_have_x86" = yes ; then
 			_nasm=no
 		else
 			case $_host_os in
-				os2-emx*)
-					NASMFLAGS="$NASMFLAGS -f aout"
+				darwin*)
+					NASMFLAGS="$NASMFLAGS -f macho"
 				;;
 				mingw*)
 					NASMFLAGS="$NASMFLAGS -f win32"
 				;;
-				darwin*)
-					NASMFLAGS="$NASMFLAGS -f macho"
+				os2-emx*)
+					NASMFLAGS="$NASMFLAGS -f aout"
 				;;
 				*)
 					NASMFLAGS="$NASMFLAGS -f elf"
@@ -2771,7 +2780,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		amigaos* | android | ds | dreamcast | gamecube | mingw* | n64 | psp | wii | wince )
+		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | wii | wince )
 			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 			;;
 		*)
