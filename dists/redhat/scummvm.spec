@@ -60,6 +60,7 @@ install -m644 -D icons/scummvm.svg %{buildroot}%{_datadir}/icons/hicolor/scalabl
 install -m644 -D dists/redhat/scummvm48.png %{buildroot}%{_datadir}/icons/hicolor/48x48/apps/scummvm.png
 install -m644 -D gui/themes/scummclassic.zip %{buildroot}%{_datadir}/scummvm/scummclassic.zip
 install -m644 -D gui/themes/scummmodern.zip %{buildroot}%{_datadir}/scummvm/scummmodern.zip
+install -m644 -D gui/themes/translations.dat %{buildroot}%{_datadir}/scummvm/translations.dat
 install -m644 -D dists/pred.dic %{buildroot}%{_datadir}/scummvm/pred.dic
 install -m644 -D dists/engine-data/kyra.dat %{buildroot}%{_datadir}/scummvm/kyra.dat
 install -m644 -D dists/engine-data/lure.dat %{buildroot}%{_datadir}/scummvm/lure.dat
@@ -89,13 +90,14 @@ fi
 #------------------------------------------------------------------------------
 %files
 %defattr(0644,root,root,0755)
-%doc AUTHORS README NEWS COPYING COPYING.LGPL COPYRIGHT
+%doc AUTHORS README NEWS COPYING COPYING.LGPL COPYING.BSD COPYRIGHT
 %attr(0755,root,root)%{_bindir}/scummvm
 %{_datadir}/applications/*
 %{_datadir}/pixmaps/scummvm.xpm
 %{_datadir}/icons/hicolor/48x48/apps/scummvm.png
 %{_datadir}/icons/hicolor/scalable/apps/scummvm.svg
 %{_datadir}/scummvm/scumm*.zip
+%{_datadir}/scummvm/translations.dat
 %{_datadir}/scummvm/pred.dic
 %{_datadir}/scummvm/kyra.dat
 %{_datadir}/scummvm/queen.tbl
