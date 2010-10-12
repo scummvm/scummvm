@@ -578,6 +578,10 @@ static void listTargets() {
 	using namespace Common;
 	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 	ConfigManager::DomainMap::const_iterator iter;
+
+	Common::Array<Common::String> targets;
+	targets.reserve(domains.size());
+
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::String name(iter->_key);
 		Common::String description(iter->_value.getVal("description"));
@@ -592,9 +596,13 @@ static void listTargets() {
 				description = g.description();
 		}
 
-		printf("%-20s %s\n", name.c_str(), description.c_str());
-
+		targets.push_back(Common::String::printf("%-20s %s", name.c_str(), description.c_str()));
 	}
+
+	Common::sort(targets.begin(), targets.end());
+
+	for (Common::Array<Common::String>::const_iterator i = targets.begin(), end = targets.end(); i != end; ++i)
+		printf("%s\n", i->c_str());
 }
 
 /** List all saves states for the given target. */
