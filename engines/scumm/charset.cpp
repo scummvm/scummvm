@@ -456,21 +456,51 @@ void CharsetRendererV3::setCurID(int32 id) {
 }
 
 int CharsetRendererCommon::getFontHeight() {
-	if (_vm->_useCJKMode)
-		return MAX(_vm->_2byteHeight + 1, _fontHeight);
-	else
+	if (_vm->_useCJKMode) {
+		if (_vm->_game.platform == Common::kPlatformFMTowns) {
+			static const uint8 sjisFontHeightM1[] = { 0, 9, 10, 9, 10, 9, 10, 0, 0 };
+			static const uint8 sjisFontHeightM2[] = { 8, 8, 9, 9, 9, 8, 9, 9, 9, 8 };
+			static const uint8 sjisFontHeightI4[] = { 8, 8, 9, 9, 9, 8, 8, 8, 8, 8 };
+			const uint8 *htbl = (_vm->_game.id == GID_MONKEY) ? sjisFontHeightM1 : ((_vm->_game.id == GID_INDY4) ? sjisFontHeightI4 : sjisFontHeightM2);
+			return htbl[_curId];			
+		} else {
+			return MAX(_vm->_2byteHeight + 1, _fontHeight);
+		}
+	} else
 		return _fontHeight;
 }
 
 // do spacing for variable width old-style font
-int CharsetRendererClassic::getCharWidth(byte chr) {
-	if (chr >= 0x80 && _vm->_useCJKMode)
-		return _vm->_2byteWidth / 2;
+int CharsetRendererClassic::getCharWidth(uint16 chr) {
 	int spacing = 0;
 
-	int offs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
-	if (offs) {
-		spacing = _fontPtr[offs] + (signed char)_fontPtr[offs + 2];
+	if (_vm->_game.platform == Common::kPlatformFMTowns) {
+		if (_vm->_useCJKMode) {
+			if ((chr & 0xff00) == 0xfd00) {
+				chr &= 0xff;
+			} else if (chr >= 256) {
+				spacing = 9;
+			} else if (chr >= 128) {
+				spacing = 5;
+			}
+
+			if (spacing) {
+				static const uint8 sjisWidthM1[] = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
+				static const uint8 sjisWidthM2[] = { 0, 1, 1, 1, 1, 0, 1, 1, 1, 0 };
+				static const uint8 sjisWidthI4[] = { 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 };
+				const uint8 *wtbl = (_vm->_game.id == GID_MONKEY) ? sjisWidthM1 : ((_vm->_game.id == GID_INDY4) ? sjisWidthI4 : sjisWidthM2);
+				spacing += wtbl[_curId];
+			}
+		}
+	} else if (chr >= 0x80 && _vm->_useCJKMode) {
+		return _vm->_2byteWidth / 2;
+	}
+
+	if (!spacing) {
+		int offs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
+		if (offs) {
+			spacing = _fontPtr[offs] + (signed char)_fontPtr[offs + 2];
+		}
 	}
 
 	return spacing;
@@ -479,7 +509,7 @@ int CharsetRendererClassic::getCharWidth(byte chr) {
 int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int pos = 0;
 	int width = 1;
-	byte chr;
+	uint16 chr;
 	int oldID = getCurID();
 	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
 
@@ -537,12 +567,18 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 				}
 			}
 		}
-		if ((chr & 0x80) && _vm->_useCJKMode) {
-			pos++;
-			width += _vm->_2byteWidth;
-		} else {
-			width += getCharWidth(chr);
+
+		if (_vm->_useCJKMode) {
+			if (_vm->_game.platform == Common::kPlatformFMTowns) {
+				if ((chr >= 0x80 && chr <= 0x9f) || (chr >= 0xe0 && chr <= 0xfd))
+					chr = (chr << 8) | text[pos++];
+			} else if (chr & 0x80) {
+				pos++;
+				width += _vm->_2byteWidth;
+				continue;
+			}
 		}
+		width += getCharWidth(chr);
 	}
 
 	setCurID(oldID);
@@ -634,7 +670,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	setCurID(oldID);
 }
 
-int CharsetRendererV3::getCharWidth(byte chr) {
+int CharsetRendererV3::getCharWidth(uint16 chr) {
 	if (chr & 0x80 && _vm->_useCJKMode)
 		return _vm->_2byteWidth / 2;
 	int spacing = 0;
@@ -1258,7 +1294,7 @@ int CharsetRendererNut::getCharHeight(byte chr) {
 	return _current->getCharHeight(chr);
 }
 
-int CharsetRendererNut::getCharWidth(byte chr) {
+int CharsetRendererNut::getCharWidth(uint16 chr) {
 	assert(_current);
 	return _current->getCharWidth(chr);
 }

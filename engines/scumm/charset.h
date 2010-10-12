@@ -89,7 +89,7 @@ public:
 
 	virtual int getFontHeight() = 0;
 	virtual int getCharHeight(byte chr) { return getFontHeight(); }
-	virtual int getCharWidth(byte chr) = 0;
+	virtual int getCharWidth(uint16 chr) = 0;
 
 	virtual void setColor(byte color) { _color = color; translateColor(); }
 
@@ -134,7 +134,7 @@ public:
 	void printChar(int chr, bool ignoreCharsetMask);
 	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
 
-	int getCharWidth(byte chr);
+	int getCharWidth(uint16 chr);
 };
 
 class CharsetRendererNES : public CharsetRendererCommon {
@@ -151,7 +151,7 @@ public:
 	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
 
 	int getFontHeight() { return 8; }
-	int getCharWidth(byte chr) { return 8; }
+	int getCharWidth(uint16 chr) { return 8; }
 };
 
 class CharsetRendererV3 : public CharsetRendererCommon {
@@ -165,7 +165,7 @@ public:
 	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
 	void setCurID(int32 id);
 	void setColor(byte color);
-	int getCharWidth(byte chr);
+	int getCharWidth(uint16 chr);
 };
 
 #ifdef USE_RGB_COLOR
@@ -189,7 +189,7 @@ public:
 	~CharsetRendererV2();
 
 	void setCurID(int32 id) {}
-	int getCharWidth(byte chr) { return 8; }
+	int getCharWidth(uint16 chr) { return 8; }
 };
 
 #ifdef ENABLE_SCUMM_7_8
@@ -208,7 +208,7 @@ public:
 
 	int getFontHeight();
 	int getCharHeight(byte chr);
-	int getCharWidth(byte chr);
+	int getCharWidth(uint16 chr);
 };
 #endif
 
