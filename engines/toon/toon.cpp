@@ -1183,7 +1183,14 @@ void ToonEngine::clickEvent() {
 
 	if (_gameState->_sackVisible) {
 		if (_mouseX > 0 && _mouseX < 40 && _mouseY > 356 && _mouseY < 396) {
-			showInventory();
+			if (_gameState->_mouseState >= 0 && !rightButton) {
+				addItemToInventory(_gameState->_mouseState);
+				setCursor(0, false, 0, 0);
+				_currentHotspotItem = -1;
+				return;
+			} else {
+				showInventory();
+			}
 			return;
 		}
 	}
@@ -2320,11 +2327,17 @@ int32 ToonEngine::showInventory() {
 	_inventoryPicture->loadPicture("SACK128.CPS", true);
 	_inventoryPicture->setupPalette();
 
-	if (_gameState->_mouseState >= 0)
+	if (_gameState->_mouseState >= 0) {
 		setCursor(_gameState->_mouseState, true, -18, -14);
-	else
-		setCursor(0);
 
+		// make sure we have a free spot
+		if (!_gameState->hasItemInInventory(0)) {
+			_gameState->_inventory[_gameState->_numInventoryItems] = 0;
+			_gameState->_numInventoryItems++;
+		}
+	} else {
+		setCursor(0);
+	}
 
 	_gameState->_inInventory = true;
 	_gameState->_currentScrollValue = 0;
@@ -2365,8 +2378,13 @@ int32 ToonEngine::showInventory() {
 							if (modItem == -1) {
 								_gameState->_mouseState = item;
 								_gameState->_inventory[foundObj] = 0;
-							} else
+							} else {
 								_gameState->_mouseState = modItem;
+								if (!_gameState->hasItemInInventory(0)) {
+									_gameState->_inventory[_gameState->_numInventoryItems] = 0;
+									_gameState->_numInventoryItems++;
+								}
+							}
 
 							setCursor(_gameState->_mouseState, true, -18, -14);
 						}
@@ -3166,7 +3184,9 @@ int32 ToonEngine::handleInventoryOnInventory(int32 itemDest, int32 itemSrc) {
 	case 11:
 		if (itemSrc == 0xb) {
 			_gameState->_mouseState = -1;
+			replaceItemFromInventory(11,12);
 			setCursor(0, false, 0, 0);
+			rearrangeInventory();
 			return 1;
 			//
 		} else if (itemSrc == 24) {
