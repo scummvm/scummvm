@@ -449,6 +449,9 @@ Special thanks to
    Patrick Combet   - For the original Gobliiins ADL player
    Ivan Dubrov      - For contributing the initial version of the Gobliiins
                       engine
+   Henrik Engqvist  - For generously providing hosting for our buildbot, SVN
+                      repository, planet and doxygen sites as well as tons of
+                      HD space
    DOSBox Team      - For their awesome OPL2 and OPL3 emulator
    Till Kresslein   - For design of modern ScummVM GUI
    Jezar            - For his freeverb filter implementation
