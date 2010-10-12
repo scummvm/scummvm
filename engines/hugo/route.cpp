@@ -111,18 +111,22 @@ void Route::setWalk(uint16 direction) {
 			break;
 		case Common::KEYCODE_HOME:
 			obj->vx = -DX;
+			// Note: in v1 Dos and v2 Dos, obj->vy is set to DY
 			obj->vy = -DY / 2;
 			break;
 		case Common::KEYCODE_END:
 			obj->vx = -DX;
+			// Note: in v1 Dos and v2 Dos, obj->vy is set to -DY
 			obj->vy =  DY / 2;
 			break;
 		case Common::KEYCODE_PAGEUP:
 			obj->vx =  DX;
+			// Note: in v1 Dos and v2 Dos, obj->vy is set to -DY
 			obj->vy = -DY / 2;
 			break;
 		case Common::KEYCODE_PAGEDOWN:
 			obj->vx =  DX;
+			// Note: in v1 Dos and v2 Dos, obj->vy is set to DY
 			obj->vy =  DY / 2;
 			break;
 		}

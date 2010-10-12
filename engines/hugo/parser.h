@@ -81,14 +81,16 @@ public:
 
 	virtual void  lineHandler();
 
-private:
+protected:
 	bool  isBackgroundWord(objectList_t obj);
 	bool  isCatchallVerb(objectList_t obj);
 	bool  isGenericVerb(object_t *obj, char *comment);
-	bool  isNear(object_t *obj, char *verb, char *comment);
 	bool  isObjectVerb(object_t *obj, char *comment);
-	void  dropObject(object_t *obj);
 	void  takeObject(object_t *obj);
+
+private:
+	bool  isNear(object_t *obj, char *verb, char *comment);
+	void  dropObject(object_t *obj);
 };
 
 class Parser_v1d : public Parser {
@@ -96,7 +98,7 @@ public:
 	Parser_v1d(HugoEngine &vm);
 	~Parser_v1d();
 
-	void lineHandler();
+	virtual void lineHandler();
 
 protected:
 	bool isNear(char *verb, char *noun, object_t *obj, char *comment);
@@ -117,6 +119,14 @@ public:
 	void lineHandler();
 };
 	
+class Parser_v3d : public Parser_v1w {
+public:
+	Parser_v3d(HugoEngine &vm);
+	~Parser_v3d();
+
+	void lineHandler();
+};
+
 } // End of namespace Hugo
 
 #endif //HUGO_PARSER_H

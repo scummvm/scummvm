@@ -121,7 +121,7 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 }
 
 // Add any new chars to line buffer and display them.
-// If CR pressed, pass line to Line_handler()
+// If CR pressed, pass line to LineHandler()
 void Parser::charHandler() {
 	debugC(4, kDebugParser, "charHandler");
 

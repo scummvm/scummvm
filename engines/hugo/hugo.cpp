@@ -198,7 +198,7 @@ Common::Error HugoEngine::run() {
 		_scheduler = new Scheduler_v3d(*this);
 		_introHandler = new intro_v3d(*this);
 		_screen = new Screen_v1d(*this);
-		_parser = new Parser_v1w(*this);
+		_parser = new Parser_v3d(*this);
 		break;
 	}
 

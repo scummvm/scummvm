@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	parser_v1w.o \
 	parser_v1d.o \
 	parser_v2d.o \
+	parser_v3d.o \
 	route.o \
 	schedule.o \
 	schedule_v1d.o \
