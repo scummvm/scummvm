@@ -35,10 +35,6 @@
 #ifndef SWORD25_ANIMATIONRESOURCE_H
 #define SWORD25_ANIMATIONRESOURCE_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "common/xmlparser.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/resource.h"
@@ -47,16 +43,8 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Forward Declarations
-// -----------------------------------------------------------------------------
-
 class Kernel;
 class PackageManager;
-
-// -----------------------------------------------------------------------------
-// Class Definition
-// -----------------------------------------------------------------------------
 
 class AnimationResource : public Resource, public AnimationDescription, public Common::XMLParser {
 public:
@@ -97,15 +85,15 @@ public:
 	}
 
 private:
-	bool                            _valid;
+	bool _valid;
 
-	Common::Array<Frame>            _frames;
+	Common::Array<Frame> _frames;
 
-	PackageManager *				_pPackage;
+	PackageManager *_pPackage;
 
 
-	bool ComputeFeatures();
-	bool PrecacheAllFrames() const;
+	bool computeFeatures();
+	bool precacheAllFrames() const;
 
 	// Parser
 	CUSTOM_XML_PARSER(AnimationResource) {

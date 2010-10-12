@@ -65,10 +65,10 @@ public:
 
 	virtual ~Animation();
 
-	void Play();
-	void Pause();
-	void Stop();
-	void SetFrame(uint Nr);
+	void play();
+	void pause();
+	void stop();
+	void setFrame(uint nr);
 
 	virtual void setPos(int x, int y);
 	virtual void setX(int x);
@@ -141,85 +141,85 @@ public:
 	bool                isScalingAllowed() const;
 	bool                isAlphaAllowed() const;
 	bool                isColorModulationAllowed() const;
-	uint        GetCurrentFrame() const {
-		return m_CurrentFrame;
+	uint getCurrentFrame() const {
+		return _currentFrame;
 	}
-	const Common::String   &GetCurrentAction() const ;
-	bool                IsRunning() const {
-		return m_Running;
+	const Common::String   &getCurrentAction() const;
+	bool isRunning() const {
+		return _running;
 	}
 
 	typedef bool (*ANIMATION_CALLBACK)(uint);
 
-	void RegisterLoopPointCallback(ANIMATION_CALLBACK Callback, uint Data = 0);
-	void RegisterActionCallback(ANIMATION_CALLBACK Callback, uint Data = 0);
-	void RegisterDeleteCallback(ANIMATION_CALLBACK Callback, uint Data = 0);
+	void registerLoopPointCallback(ANIMATION_CALLBACK callback, uint data = 0);
+	void registerActionCallback(ANIMATION_CALLBACK callback, uint data = 0);
+	void registerDeleteCallback(ANIMATION_CALLBACK Callback, uint Data = 0);
 
 protected:
 	virtual bool doRender();
 
 private:
-	enum DIRECTION {
+	enum Direction {
 		FORWARD,
 		BACKWARD
 	};
 
-	int                         _relX;
-	int                         _relY;
-	float                       _scaleFactorX;
-	float                       _scaleFactorY;
-	uint                _modulationColor;
-	uint                m_CurrentFrame;
-	int                         m_CurrentFrameTime;
-	bool                        m_Running;
-	bool                        m_Finished;
-	DIRECTION                   m_Direction;
-	AnimationResource       *m_AnimationResourcePtr;
-	uint                m_AnimationTemplateHandle;
-	bool                        m_FramesLocked;
+	int _relX;
+	int _relY;
+	float _scaleFactorX;
+	float _scaleFactorY;
+	uint _modulationColor;
+	uint _currentFrame;
+	int  _currentFrameTime;
+	bool _running;
+	bool _finished;
+	Direction _direction;
+	AnimationResource *_animationResourcePtr;
+	uint _animationTemplateHandle;
+	bool _framesLocked;
 
 	struct ANIMATION_CALLBACK_DATA {
 		ANIMATION_CALLBACK  Callback;
 		uint        Data;
 	};
-	Common::Array<ANIMATION_CALLBACK_DATA> m_LoopPointCallbacks;
-	Common::Array<ANIMATION_CALLBACK_DATA> m_ActionCallbacks;
-	Common::Array<ANIMATION_CALLBACK_DATA> m_DeleteCallbacks;
+	Common::Array<ANIMATION_CALLBACK_DATA> _loopPointCallbacks;
+	Common::Array<ANIMATION_CALLBACK_DATA> _actionCallbacks;
+	Common::Array<ANIMATION_CALLBACK_DATA> _deleteCallbacks;
 
 	/**
 	    @brief Lockt alle Frames.
 	    @return Gibt false zurück, falls nicht alle Frames gelockt werden konnten.
 	*/
-	bool LockAllFrames();
+	bool lockAllFrames();
 
 	/**
 	    @brief Unlockt alle Frames.
 	    @return Gibt false zurück, falls nicht alles Frames freigegeben werden konnten.
 	*/
-	bool UnlockAllFrames();
+	bool unlockAllFrames();
 
 	/**
 	    @brief Diese Methode aktualisiert die Parameter (Größe, Position) der Animation anhand des aktuellen Frames.
 
 	    Diese Methode muss bei jedem Framewechsel aufgerufen werden damit der RenderObject-Manager immer aktuelle Daten hat.
 	*/
-	void ComputeCurrentCharacteristics();
+	void computeCurrentCharacteristics();
 
 	/**
 	    @brief Berechnet den Abstand zwischen dem linken Rand und dem Hotspot auf X-Achse in der aktuellen Darstellung.
 	*/
-	int ComputeXModifier() const;
+	int computeXModifier() const;
 
 	/**
 	    @brief Berechnet den Abstand zwischen dem linken Rand und dem Hotspot auf X-Achse in der aktuellen Darstellung.
 	*/
-	int ComputeYModifier() const;
+	int computeYModifier() const;
 
-	void InitMembers();
-	void PersistCallbackVector(OutputPersistenceBlock &Writer, const Common::Array<ANIMATION_CALLBACK_DATA> & Vector);
-	void UnpersistCallbackVector(InputPersistenceBlock &Reader, Common::Array<ANIMATION_CALLBACK_DATA> & Vector);
-	AnimationDescription *GetAnimationDescription() const;
-	void InitializeAnimationResource(const Common::String &FileName);
+	void initMembers();
+	void persistCallbackVector(OutputPersistenceBlock &writer, const Common::Array<ANIMATION_CALLBACK_DATA> &vector);
+	void unpersistCallbackVector(InputPersistenceBlock &reader, Common::Array<ANIMATION_CALLBACK_DATA> &vector);
+	AnimationDescription *getAnimationDescription() const;
+	void initializeAnimationResource(const Common::String &fileName);
 };
 
 } // End of namespace Sword25

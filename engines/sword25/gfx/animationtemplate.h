@@ -45,34 +45,26 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Forward declarations
-// -----------------------------------------------------------------------------
-
 class AnimationResource;
-
-// -----------------------------------------------------------------------------
-// Klassendefinition
-// -----------------------------------------------------------------------------
 
 class AnimationTemplate : public AnimationDescription {
 public:
-	static uint Create(const Common::String &SourceAnimation);
-	static uint Create(const AnimationTemplate &Other);
-	static uint Create(InputPersistenceBlock &Reader, uint Handle);
-	AnimationTemplate *ResolveHandle(uint Handle) const;
+	static uint create(const Common::String &sourceAnimation);
+	static uint create(const AnimationTemplate &other);
+	static uint create(InputPersistenceBlock &reader, uint handle);
+	AnimationTemplate *resolveHandle(uint handle) const;
 
 private:
-	AnimationTemplate(const Common::String &SourceAnimation);
-	AnimationTemplate(const AnimationTemplate &Other);
-	AnimationTemplate(InputPersistenceBlock &Reader, uint Handle);
+	AnimationTemplate(const Common::String &sourceAnimation);
+	AnimationTemplate(const AnimationTemplate &other);
+	AnimationTemplate(InputPersistenceBlock &reader, uint handle);
 
 public:
 	~AnimationTemplate();
 
-	virtual const Frame    &getFrame(uint Index) const {
-		BS_ASSERT(Index < _frames.size());
-		return _frames[Index];
+	virtual const Frame    &getFrame(uint index) const {
+		BS_ASSERT(index < _frames.size());
+		return _frames[index];
 	}
 	virtual uint    getFrameCount() const {
 		return _frames.size();
@@ -92,28 +84,28 @@ public:
 
 	    @param Index der Index des Frames in der Quellanimation
 	*/
-	void AddFrame(int Index);
+	void addFrame(int index);
 
 	/**
 	    @brief Ändert einen bereits in der Animation vorhandenen Frame.
 	    @param DestIndex der Index des Frames der überschrieben werden soll
 	    @param SrcIndex der Index des einzufügenden Frames in der Quellanimation
 	*/
-	void SetFrame(int DestIndex, int SrcIndex);
+	void setFrame(int destIndex, int srcIndex);
 
 	/**
 	    @brief Setzt den Animationstyp.
 	    @param Type der Typ der Animation. Muss aus den enum BS_Animation::ANIMATION_TYPES sein.
 	*/
-	void SetAnimationType(Animation::ANIMATION_TYPES Type) {
-		_animationType = Type;
+	void setAnimationType(Animation::ANIMATION_TYPES type) {
+		_animationType = type;
 	}
 
 	/**
 	    @brief Setzt die Abspielgeschwindigkeit.
 	    @param FPS die Abspielgeschwindigkeit in Frames pro Sekunde.
 	*/
-	void SetFPS(int FPS);
+	void setFPS(int FPS);
 
 	virtual bool persist(OutputPersistenceBlock &writer);
 	virtual bool unpersist(InputPersistenceBlock &reader);
@@ -123,9 +115,9 @@ private:
 	AnimationResource    *_sourceAnimationPtr;
 	bool                  _valid;
 
-	AnimationResource *RequestSourceAnimation(const Common::String &SourceAnimation) const;
-	bool ValidateSourceIndex(uint Index) const;
-	bool ValidateDestIndex(uint Index) const;
+	AnimationResource *requestSourceAnimation(const Common::String &sourceAnimation) const;
+	bool validateSourceIndex(uint index) const;
+	bool validateDestIndex(uint index) const;
 };
 
 } // End of namespace Sword25

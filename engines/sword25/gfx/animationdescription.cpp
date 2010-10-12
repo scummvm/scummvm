@@ -32,19 +32,11 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/gfx/animationdescription.h"
 
 namespace Sword25 {
-
-// -----------------------------------------------------------------------------
-// Persistenz
-// -----------------------------------------------------------------------------
 
 bool AnimationDescription::persist(OutputPersistenceBlock &writer) {
 	writer.write(static_cast<uint>(_animationType));
@@ -56,8 +48,6 @@ bool AnimationDescription::persist(OutputPersistenceBlock &writer) {
 
 	return true;
 }
-
-// -----------------------------------------------------------------------------
 
 bool AnimationDescription::unpersist(InputPersistenceBlock &reader) {
 	uint animationType;

@@ -35,19 +35,11 @@
 #ifndef SWORD25_ANIMATIONDESCRIPTION_H
 #define SWORD25_ANIMATIONDESCRIPTION_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistable.h"
 #include "sword25/gfx/animation.h"
 
 namespace Sword25 {
-
-// -----------------------------------------------------------------------------
-// Klassendefinition
-// -----------------------------------------------------------------------------
 
 class AnimationDescription : public Persistable {
 protected:
@@ -63,25 +55,17 @@ protected:
 public:
 	struct Frame {
 		// Die Hotspot-Angabe bezieht sich auf das ungeflippte Bild!!
-		int         HotspotX;
-		int         HotspotY;
-		bool        FlipV;
-		bool        FlipH;
-		Common::String  FileName;
-		Common::String  Action;
+		int         hotspotX;
+		int         hotspotY;
+		bool        flipV;
+		bool        flipH;
+		Common::String  fileName;
+		Common::String  action;
 	};
-
-	// -----------------------------------------------------------------------------
-	// Abstrakte Methoden
-	// -----------------------------------------------------------------------------
 
 	virtual const Frame    &getFrame(uint index) const = 0;
 	virtual uint  getFrameCount() const = 0;
 	virtual void  unlock() = 0;
-
-	// -----------------------------------------------------------------------------
-	// Getter Methoden
-	// -----------------------------------------------------------------------------
 
 	Animation::ANIMATION_TYPES   getAnimationType() const {
 		return _animationType;

@@ -98,7 +98,7 @@ bool AnimationTemplateRegistry::unpersist(InputPersistenceBlock &reader) {
 		reader.read(handle);
 
 		// BS_AnimationTemplate wieder herstellen.
-		result &= (AnimationTemplate::Create(reader, handle) != 0);
+		result &= (AnimationTemplate::create(reader, handle) != 0);
 	}
 
 	return reader.isGood() && result;

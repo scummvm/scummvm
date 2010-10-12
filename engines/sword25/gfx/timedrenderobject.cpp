@@ -38,10 +38,6 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Konstruktion / Destruktion
-// -----------------------------------------------------------------------------
-
 TimedRenderObject::TimedRenderObject(RenderObjectPtr<RenderObject> pParent, TYPES type, uint handle) :
 	RenderObject(pParent, type, handle) {
 	BS_ASSERT(getManager());

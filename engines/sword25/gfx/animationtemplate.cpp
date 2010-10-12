@@ -34,10 +34,6 @@
 
 #define BS_LOG_PREFIX "ANIMATIONTEMPLATE"
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/resource.h"
 #include "sword25/kernel/outputpersistenceblock.h"
@@ -49,111 +45,94 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Konstruktion / Destruktion
-// -----------------------------------------------------------------------------
+uint AnimationTemplate::create(const Common::String &sourceAnimation) {
+	AnimationTemplate *animationTemplatePtr = new AnimationTemplate(sourceAnimation);
 
-uint AnimationTemplate::Create(const Common::String &SourceAnimation) {
-	AnimationTemplate *AnimationTemplatePtr = new AnimationTemplate(SourceAnimation);
-
-	if (AnimationTemplatePtr->isValid()) {
-		return AnimationTemplateRegistry::getInstance().resolvePtr(AnimationTemplatePtr);
+	if (animationTemplatePtr->isValid()) {
+		return AnimationTemplateRegistry::getInstance().resolvePtr(animationTemplatePtr);
 	} else {
-		delete AnimationTemplatePtr;
+		delete animationTemplatePtr;
 		return 0;
 	}
 }
 
-// -----------------------------------------------------------------------------
+uint AnimationTemplate::create(const AnimationTemplate &other) {
+	AnimationTemplate *animationTemplatePtr = new AnimationTemplate(other);
 
-uint AnimationTemplate::Create(const AnimationTemplate &Other) {
-	AnimationTemplate *AnimationTemplatePtr = new AnimationTemplate(Other);
-
-	if (AnimationTemplatePtr->isValid()) {
-		return AnimationTemplateRegistry::getInstance().resolvePtr(AnimationTemplatePtr);
+	if (animationTemplatePtr->isValid()) {
+		return AnimationTemplateRegistry::getInstance().resolvePtr(animationTemplatePtr);
 	} else {
-		delete AnimationTemplatePtr;
+		delete animationTemplatePtr;
 		return 0;
 	}
 }
 
-// -----------------------------------------------------------------------------
+uint AnimationTemplate::create(InputPersistenceBlock &reader, uint handle) {
+	AnimationTemplate *animationTemplatePtr = new AnimationTemplate(reader, handle);
 
-uint AnimationTemplate::Create(InputPersistenceBlock &Reader, uint Handle) {
-	AnimationTemplate *AnimationTemplatePtr = new AnimationTemplate(Reader, Handle);
-
-	if (AnimationTemplatePtr->isValid()) {
-		return AnimationTemplateRegistry::getInstance().resolvePtr(AnimationTemplatePtr);
+	if (animationTemplatePtr->isValid()) {
+		return AnimationTemplateRegistry::getInstance().resolvePtr(animationTemplatePtr);
 	} else {
-		delete AnimationTemplatePtr;
+		delete animationTemplatePtr;
 		return 0;
 	}
 }
 
-// -----------------------------------------------------------------------------
-
-AnimationTemplate::AnimationTemplate(const Common::String &SourceAnimation) {
+AnimationTemplate::AnimationTemplate(const Common::String &sourceAnimation) {
 	// Objekt registrieren.
 	AnimationTemplateRegistry::getInstance().registerObject(this);
 
 	_valid = false;
 
 	// Die Animations-Resource wird für die gesamte Lebensdauer des Objektes gelockt
-	_sourceAnimationPtr = RequestSourceAnimation(SourceAnimation);
+	_sourceAnimationPtr = requestSourceAnimation(sourceAnimation);
 
 	// Erfolg signalisieren
 	_valid = (_sourceAnimationPtr != 0);
 }
 
-// -----------------------------------------------------------------------------
-
-AnimationTemplate::AnimationTemplate(const AnimationTemplate &Other) : AnimationDescription(){
+AnimationTemplate::AnimationTemplate(const AnimationTemplate &other) : AnimationDescription() {
 	// Objekt registrieren.
 	AnimationTemplateRegistry::getInstance().registerObject(this);
 
 	_valid = false;
 
 	// Die Animations-Resource wird für die gesamte Lebensdauer des Objektes gelockt.
-	if (!Other._sourceAnimationPtr) return;
-	_sourceAnimationPtr = RequestSourceAnimation(Other._sourceAnimationPtr->getFileName());
+	if (!other._sourceAnimationPtr)
+		return;
+	_sourceAnimationPtr = requestSourceAnimation(other._sourceAnimationPtr->getFileName());
 
 	// Alle Member kopieren.
-	_animationType = Other._animationType;
-	_FPS = Other._FPS;
-	_millisPerFrame = Other._millisPerFrame;
-	_scalingAllowed = Other._scalingAllowed;
-	_alphaAllowed = Other._alphaAllowed;
-	_colorModulationAllowed = Other._colorModulationAllowed;
-	_frames = Other._frames;
-	_sourceAnimationPtr = Other._sourceAnimationPtr;
-	_valid = Other._valid;
+	_animationType = other._animationType;
+	_FPS = other._FPS;
+	_millisPerFrame = other._millisPerFrame;
+	_scalingAllowed = other._scalingAllowed;
+	_alphaAllowed = other._alphaAllowed;
+	_colorModulationAllowed = other._colorModulationAllowed;
+	_frames = other._frames;
+	_sourceAnimationPtr = other._sourceAnimationPtr;
+	_valid = other._valid;
 
 	_valid &= (_sourceAnimationPtr != 0);
 }
 
-// -----------------------------------------------------------------------------
-
-AnimationTemplate::AnimationTemplate(InputPersistenceBlock &Reader, uint Handle) {
+AnimationTemplate::AnimationTemplate(InputPersistenceBlock &reader, uint handle) {
 	// Objekt registrieren.
-	AnimationTemplateRegistry::getInstance().registerObject(this, Handle);
+	AnimationTemplateRegistry::getInstance().registerObject(this, handle);
 
 	// Objekt laden.
-	_valid = unpersist(Reader);
+	_valid = unpersist(reader);
 }
 
-// -----------------------------------------------------------------------------
-
-AnimationResource *AnimationTemplate::RequestSourceAnimation(const Common::String &SourceAnimation) const {
+AnimationResource *AnimationTemplate::requestSourceAnimation(const Common::String &sourceAnimation) const {
 	ResourceManager *RMPtr = Kernel::GetInstance()->GetResourceManager();
-	Resource *ResourcePtr;
-	if (NULL == (ResourcePtr = RMPtr->RequestResource(SourceAnimation)) || ResourcePtr->GetType() != Resource::TYPE_ANIMATION) {
-		BS_LOG_ERRORLN("The resource \"%s\" could not be requested or is has an invalid type. The animation template can't be created.", SourceAnimation.c_str());
+	Resource *resourcePtr;
+	if (NULL == (resourcePtr = RMPtr->RequestResource(sourceAnimation)) || resourcePtr->GetType() != Resource::TYPE_ANIMATION) {
+		BS_LOG_ERRORLN("The resource \"%s\" could not be requested or is has an invalid type. The animation template can't be created.", sourceAnimation.c_str());
 		return 0;
 	}
-	return static_cast<AnimationResource *>(ResourcePtr);
+	return static_cast<AnimationResource *>(resourcePtr);
 }
-
-// -----------------------------------------------------------------------------
 
 AnimationTemplate::~AnimationTemplate() {
 	// Animations-Resource freigeben
@@ -165,52 +144,40 @@ AnimationTemplate::~AnimationTemplate() {
 	AnimationTemplateRegistry::getInstance().deregisterObject(this);
 }
 
-// -----------------------------------------------------------------------------
-
-void AnimationTemplate::AddFrame(int Index) {
-	if (ValidateSourceIndex(Index)) {
-		_frames.push_back(_sourceAnimationPtr->getFrame(Index));
+void AnimationTemplate::addFrame(int index) {
+	if (validateSourceIndex(index)) {
+		_frames.push_back(_sourceAnimationPtr->getFrame(index));
 	}
 }
 
-// -----------------------------------------------------------------------------
-
-void AnimationTemplate::SetFrame(int DestIndex, int SrcIndex) {
-	if (ValidateDestIndex(DestIndex) && ValidateSourceIndex(SrcIndex)) {
-		_frames[DestIndex] = _sourceAnimationPtr->getFrame(SrcIndex);
+void AnimationTemplate::setFrame(int destIndex, int srcIndex) {
+	if (validateDestIndex(destIndex) && validateSourceIndex(srcIndex)) {
+		_frames[destIndex] = _sourceAnimationPtr->getFrame(srcIndex);
 	}
 }
 
-// -----------------------------------------------------------------------------
-
-bool AnimationTemplate::ValidateSourceIndex(uint Index) const {
-	if (Index > _sourceAnimationPtr->getFrameCount()) {
+bool AnimationTemplate::validateSourceIndex(uint index) const {
+	if (index > _sourceAnimationPtr->getFrameCount()) {
 		BS_LOG_WARNINGLN("Tried to insert a frame (\"%d\") that does not exist in the source animation (\"%s\"). Ignoring call.",
-		                 Index, _sourceAnimationPtr->getFileName().c_str());
+		                 index, _sourceAnimationPtr->getFileName().c_str());
 		return false;
 	} else
 		return true;
 }
 
-// -----------------------------------------------------------------------------
-
-bool AnimationTemplate::ValidateDestIndex(uint Index) const {
-	if (Index > _frames.size()) {
+bool AnimationTemplate::validateDestIndex(uint index) const {
+	if (index > _frames.size()) {
 		BS_LOG_WARNINGLN("Tried to change a nonexistent frame (\"%d\") in a template animation. Ignoring call.",
-		                 Index);
+		                 index);
 		return false;
 	} else
 		return true;
 }
 
-// -----------------------------------------------------------------------------
-
-void AnimationTemplate::SetFPS(int FPS) {
+void AnimationTemplate::setFPS(int FPS) {
 	_FPS = FPS;
 	_millisPerFrame = 1000000 / _FPS;
 }
-
-// -----------------------------------------------------------------------------
 
 bool AnimationTemplate::persist(OutputPersistenceBlock &writer) {
 	bool Result = true;
@@ -224,12 +191,12 @@ bool AnimationTemplate::persist(OutputPersistenceBlock &writer) {
 	// Frames einzeln persistieren.
 	Common::Array<const Frame>::const_iterator Iter = _frames.begin();
 	while (Iter != _frames.end()) {
-		writer.write(Iter->HotspotX);
-		writer.write(Iter->HotspotY);
-		writer.write(Iter->FlipV);
-		writer.write(Iter->FlipH);
-		writer.write(Iter->FileName);
-		writer.write(Iter->Action);
+		writer.write(Iter->hotspotX);
+		writer.write(Iter->hotspotY);
+		writer.write(Iter->flipV);
+		writer.write(Iter->flipH);
+		writer.write(Iter->fileName);
+		writer.write(Iter->action);
 		++Iter;
 	}
 
@@ -240,39 +207,37 @@ bool AnimationTemplate::persist(OutputPersistenceBlock &writer) {
 	return Result;
 }
 
-// -----------------------------------------------------------------------------
-
 bool AnimationTemplate::unpersist(InputPersistenceBlock &reader) {
-	bool Result = true;
+	bool result = true;
 
 	// Parent wieder herstellen.
-	Result &= AnimationDescription::unpersist(reader);
+	result &= AnimationDescription::unpersist(reader);
 
 	// Frameanzahl lesen.
-	uint FrameCount;
-	reader.read(FrameCount);
+	uint frameCount;
+	reader.read(frameCount);
 
 	// Frames einzeln wieder herstellen.
-	for (uint i = 0; i < FrameCount; ++i) {
+	for (uint i = 0; i < frameCount; ++i) {
 		Frame frame;
-		reader.read(frame.HotspotX);
-		reader.read(frame.HotspotY);
-		reader.read(frame.FlipV);
-		reader.read(frame.FlipH);
-		reader.read(frame.FileName);
-		reader.read(frame.Action);
+		reader.read(frame.hotspotX);
+		reader.read(frame.hotspotY);
+		reader.read(frame.flipV);
+		reader.read(frame.flipH);
+		reader.read(frame.fileName);
+		reader.read(frame.action);
 
 		_frames.push_back(frame);
 	}
 
 	// Die Animations-Resource wird für die gesamte Lebensdauer des Objektes gelockt
-	Common::String SourceAnimation;
-	reader.read(SourceAnimation);
-	_sourceAnimationPtr = RequestSourceAnimation(SourceAnimation);
+	Common::String sourceAnimation;
+	reader.read(sourceAnimation);
+	_sourceAnimationPtr = requestSourceAnimation(sourceAnimation);
 
 	reader.read(_valid);
 
-	return _sourceAnimationPtr && reader.isGood() && Result;
+	return _sourceAnimationPtr && reader.isGood() && result;
 }
 
 } // End of namespace Sword25

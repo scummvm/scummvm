@@ -32,10 +32,6 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/gfx/animationresource.h"
 
 #include "sword25/kernel/kernel.h"
@@ -45,23 +41,13 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-
 #define BS_LOG_PREFIX "ANIMATIONRESOURCE"
-
-// -----------------------------------------------------------------------------
-// Constants
-// -----------------------------------------------------------------------------
 
 namespace {
 const int   DEFAULT_FPS = 10;
 const int   MIN_FPS     = 1;
 const int   MAX_FPS     = 200;
 }
-
-// -----------------------------------------------------------------------------
-// Construction / Destruction
-// -----------------------------------------------------------------------------
 
 AnimationResource::AnimationResource(const Common::String &filename) :
 		Resource(filename, Resource::TYPE_ANIMATION),
@@ -105,21 +91,19 @@ AnimationResource::AnimationResource(const Common::String &filename) :
 	}
 
 	// Pre-cache all the frames
-	if (!PrecacheAllFrames()) {
+	if (!precacheAllFrames()) {
 		BS_LOG_ERRORLN("Could not precache all frames of \"%s\".", getFileName().c_str());
 		return;
 	}
 
 	// Post processing to compute animation features
-	if (!ComputeFeatures()) {
+	if (!computeFeatures()) {
 		BS_LOG_ERRORLN("Could not determine the features of \"%s\".", getFileName().c_str());
 		return;
 	}
 
 	_valid = true;
 }
-
-// -----------------------------------------------------------------------------
 
 bool AnimationResource::parseBooleanKey(Common::String s, bool &result) {
 	s.toLowercase();
@@ -131,8 +115,6 @@ bool AnimationResource::parseBooleanKey(Common::String s, bool &result) {
 		return false;
 	return true;
 }
-
-// -----------------------------------------------------------------------------
 
 bool AnimationResource::parserCallback_animation(ParserNode *node) {
 	if (!parseIntegerKey(node->values["fps"].c_str(), 1, &_FPS) || (_FPS < MIN_FPS) || (_FPS > MAX_FPS)) {
@@ -162,8 +144,6 @@ bool AnimationResource::parserCallback_animation(ParserNode *node) {
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
 bool AnimationResource::parserCallback_frame(ParserNode *node) {
 	Frame frame;
 
@@ -172,8 +152,8 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 		BS_LOG_ERRORLN("<frame> tag without file attribute occurred in \"%s\".", getFileName().c_str());
 		return false;
 	}
-	frame.FileName = _pPackage->getAbsolutePath(fileString);
-	if (frame.FileName.empty()) {
+	frame.fileName = _pPackage->getAbsolutePath(fileString);
+	if (frame.fileName.empty()) {
 		BS_LOG_ERRORLN("Could not create absolute path for file specified in <frame> tag in \"%s\": \"%s\".", 
 			getFileName().c_str(), fileString);
 		return false;
@@ -181,7 +161,7 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 
 	const char *actionString = node->values["action"].c_str();
 	if (actionString)
-		frame.Action = actionString;
+		frame.action = actionString;
 
 	const char *hotspotxString = node->values["hotspotx"].c_str();
 	const char *hotspotyString = node->values["hotspoty"].c_str();
@@ -192,52 +172,48 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 		                 !hotspotyString ? "hotspoty" : "hotspotx",
 		                 getFileName().c_str());
 
-	frame.HotspotX = 0;
-	if (hotspotxString && !parseIntegerKey(hotspotxString, 1, &frame.HotspotX))
+	frame.hotspotX = 0;
+	if (hotspotxString && !parseIntegerKey(hotspotxString, 1, &frame.hotspotX))
 		BS_LOG_WARNINGLN("Illegal hotspotx value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
-		                 hotspotxString, getFileName().c_str(), frame.HotspotX);
+		                 hotspotxString, getFileName().c_str(), frame.hotspotX);
 
-	frame.HotspotY = 0;
-	if (hotspotyString && !parseIntegerKey(hotspotyString, 1, &frame.HotspotY))
+	frame.hotspotY = 0;
+	if (hotspotyString && !parseIntegerKey(hotspotyString, 1, &frame.hotspotY))
 		BS_LOG_WARNINGLN("Illegal hotspoty value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
-		                 hotspotyString, getFileName().c_str(), frame.HotspotY);
+		                 hotspotyString, getFileName().c_str(), frame.hotspotY);
 
 	Common::String flipVString = node->values["flipv"];
 	if (!flipVString.empty()) {
-		if (!parseBooleanKey(flipVString, frame.FlipV)) {
+		if (!parseBooleanKey(flipVString, frame.flipV)) {
 			BS_LOG_WARNINGLN("Illegal flipv value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
 			                 flipVString.c_str(), getFileName().c_str());
-			frame.FlipV = false;
+			frame.flipV = false;
 		}
 	} else
-		frame.FlipV = false;
+		frame.flipV = false;
 
 	Common::String flipHString = node->values["fliph"];
 	if (!flipHString.empty()) {
-		if (!parseBooleanKey(flipVString, frame.FlipV)) {
+		if (!parseBooleanKey(flipVString, frame.flipV)) {
 			BS_LOG_WARNINGLN("Illegal fliph value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
 			                 flipHString.c_str(), getFileName().c_str());
-			frame.FlipH = false;
+			frame.flipH = false;
 		}
 	} else
-		frame.FlipH = false;
+		frame.flipH = false;
 
 	_frames.push_back(frame);
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
 AnimationResource::~AnimationResource() {
 }
 
-// -----------------------------------------------------------------------------
-
-bool AnimationResource::PrecacheAllFrames() const {
+bool AnimationResource::precacheAllFrames() const {
 	Common::Array<Frame>::const_iterator iter = _frames.begin();
 	for (; iter != _frames.end(); ++iter) {
-		if (!Kernel::GetInstance()->GetResourceManager()->PrecacheResource((*iter).FileName)) {
-			BS_LOG_ERRORLN("Could not precache \"%s\".", (*iter).FileName.c_str());
+		if (!Kernel::GetInstance()->GetResourceManager()->PrecacheResource((*iter).fileName)) {
+			BS_LOG_ERRORLN("Could not precache \"%s\".", (*iter).fileName.c_str());
 			return false;
 		}
 	}
@@ -245,9 +221,7 @@ bool AnimationResource::PrecacheAllFrames() const {
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
-bool AnimationResource::ComputeFeatures() {
+bool AnimationResource::computeFeatures() {
 	BS_ASSERT(_frames.size());
 
 	// Alle Features werden als vorhanden angenommen
@@ -256,11 +230,11 @@ bool AnimationResource::ComputeFeatures() {
 	_colorModulationAllowed = true;
 
 	// Alle Frame durchgehen und alle Features deaktivieren, die auch nur von einem Frame nicht unterstützt werden.
-	Common::Array<Frame>::const_iterator Iter = _frames.begin();
-	for (; Iter != _frames.end(); ++Iter) {
+	Common::Array<Frame>::const_iterator iter = _frames.begin();
+	for (; iter != _frames.end(); ++iter) {
 		BitmapResource *pBitmap;
-		if (!(pBitmap = static_cast<BitmapResource *>(Kernel::GetInstance()->GetResourceManager()->RequestResource((*Iter).FileName)))) {
-			BS_LOG_ERRORLN("Could not request \"%s\".", (*Iter).FileName.c_str());
+		if (!(pBitmap = static_cast<BitmapResource *>(Kernel::GetInstance()->GetResourceManager()->RequestResource((*iter).fileName)))) {
+			BS_LOG_ERRORLN("Could not request \"%s\".", (*iter).fileName.c_str());
 			return false;
 		}
 

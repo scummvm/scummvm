@@ -158,7 +158,7 @@ static AnimationTemplate *CheckAnimationTemplate(lua_State *L, int idx = 1) {
 // -----------------------------------------------------------------------------
 
 static int NewAnimationTemplate(lua_State *L) {
-	uint AnimationTemplateHandle = AnimationTemplate::Create(luaL_checkstring(L, 1));
+	uint AnimationTemplateHandle = AnimationTemplate::create(luaL_checkstring(L, 1));
 	AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::getInstance().resolveHandle(AnimationTemplateHandle);
 	if (AnimationTemplatePtr && AnimationTemplatePtr->isValid()) {
 		NewUintUserData(L, AnimationTemplateHandle);
@@ -177,7 +177,7 @@ static int NewAnimationTemplate(lua_State *L) {
 
 static int AT_AddFrame(lua_State *L) {
 	AnimationTemplate *pAT = CheckAnimationTemplate(L);
-	pAT->AddFrame(static_cast<int>(luaL_checknumber(L, 2)));
+	pAT->addFrame(static_cast<int>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -185,7 +185,7 @@ static int AT_AddFrame(lua_State *L) {
 
 static int AT_SetFrame(lua_State *L) {
 	AnimationTemplate *pAT = CheckAnimationTemplate(L);
-	pAT->SetFrame(static_cast<int>(luaL_checknumber(L, 2)), static_cast<int>(luaL_checknumber(L, 3)));
+	pAT->setFrame(static_cast<int>(luaL_checknumber(L, 2)), static_cast<int>(luaL_checknumber(L, 3)));
 	return 0;
 }
 
@@ -211,7 +211,7 @@ static int AT_SetAnimationType(lua_State *L) {
 	AnimationTemplate *pAT = CheckAnimationTemplate(L);
 	Animation::ANIMATION_TYPES AnimationType;
 	if (AnimationTypeStringToNumber(luaL_checkstring(L, 2), AnimationType)) {
-		pAT->SetAnimationType(AnimationType);
+		pAT->setAnimationType(AnimationType);
 	} else {
 		luaL_argcheck(L, 0, 2, "Invalid animation type");
 	}
@@ -223,7 +223,7 @@ static int AT_SetAnimationType(lua_State *L) {
 
 static int AT_SetFPS(lua_State *L) {
 	AnimationTemplate *pAT = CheckAnimationTemplate(L);
-	pAT->SetFPS(static_cast<int>(luaL_checknumber(L, 2)));
+	pAT->setFPS(static_cast<int>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -740,9 +740,9 @@ static int RO_AddAnimation(lua_State *L) {
 		lua_setmetatable(L, -2);
 
 		// Alle Animationscallbacks registrieren.
-		AnimationPtr->RegisterDeleteCallback(AnimationDeleteCallback, AnimationPtr->getHandle());
-		AnimationPtr->RegisterLoopPointCallback(AnimationLoopPointCallback, AnimationPtr->getHandle());
-		AnimationPtr->RegisterActionCallback(AnimationActionCallback, AnimationPtr->getHandle());
+		AnimationPtr->registerDeleteCallback(AnimationDeleteCallback, AnimationPtr->getHandle());
+		AnimationPtr->registerLoopPointCallback(AnimationLoopPointCallback, AnimationPtr->getHandle());
+		AnimationPtr->registerActionCallback(AnimationActionCallback, AnimationPtr->getHandle());
 	} else
 		lua_pushnil(L);
 
@@ -1056,7 +1056,7 @@ static RenderObjectPtr<Animation> CheckAnimation(lua_State *L) {
 static int A_Play(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
 	BS_ASSERT(AnimationPtr.isValid());
-	AnimationPtr->Play();
+	AnimationPtr->play();
 	return 0;
 }
 
@@ -1065,7 +1065,7 @@ static int A_Play(lua_State *L) {
 static int A_Pause(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
 	BS_ASSERT(AnimationPtr.isValid());
-	AnimationPtr->Pause();
+	AnimationPtr->pause();
 	return 0;
 }
 
@@ -1074,7 +1074,7 @@ static int A_Pause(lua_State *L) {
 static int A_Stop(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
 	BS_ASSERT(AnimationPtr.isValid());
-	AnimationPtr->Stop();
+	AnimationPtr->stop();
 	return 0;
 }
 
@@ -1083,7 +1083,7 @@ static int A_Stop(lua_State *L) {
 static int A_SetFrame(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
 	BS_ASSERT(AnimationPtr.isValid());
-	AnimationPtr->SetFrame(static_cast<uint>(luaL_checknumber(L, 2)));
+	AnimationPtr->setFrame(static_cast<uint>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
@@ -1221,7 +1221,7 @@ static int A_IsTintingAllowed(lua_State *L) {
 static int A_GetCurrentFrame(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
 	BS_ASSERT(AnimationPtr.isValid());
-	lua_pushnumber(L, AnimationPtr->GetCurrentFrame());
+	lua_pushnumber(L, AnimationPtr->getCurrentFrame());
 	return 1;
 }
 
@@ -1230,7 +1230,7 @@ static int A_GetCurrentFrame(lua_State *L) {
 static int A_GetCurrentAction(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
 	BS_ASSERT(AnimationPtr.isValid());
-	lua_pushstring(L, AnimationPtr->GetCurrentAction().c_str());
+	lua_pushstring(L, AnimationPtr->getCurrentAction().c_str());
 	return 1;
 }
 
@@ -1239,7 +1239,7 @@ static int A_GetCurrentAction(lua_State *L) {
 static int A_IsPlaying(lua_State *L) {
 	RenderObjectPtr<Animation> AnimationPtr = CheckAnimation(L);
 	BS_ASSERT(AnimationPtr.isValid());
-	lua_pushbooleancpp(L, AnimationPtr->IsRunning());
+	lua_pushbooleancpp(L, AnimationPtr->isRunning());
 	return 1;
 }
 
@@ -1283,7 +1283,7 @@ static int A_UnregisterLoopPointCallback(lua_State *L) {
 static bool AnimationActionCallback(uint Handle) {
 	RenderObjectPtr<Animation> AnimationPtr(Handle);
 	if (AnimationPtr.isValid()) {
-		ActionCallbackPtr->Action = AnimationPtr->GetCurrentAction();
+		ActionCallbackPtr->Action = AnimationPtr->getCurrentAction();
 		lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->getScriptObject());
 		ActionCallbackPtr->invokeCallbackFunctions(L, AnimationPtr->getHandle());
 	}
