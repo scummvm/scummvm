@@ -122,7 +122,7 @@ Common::SeekableReadStream *PakFile::createReadStream(Common::String fileName) {
 	debugC(1, kDebugResource, "createReadStream(%s)", fileName.c_str());
 
 	int32 offset = 0;
-	int32 size = 0 ;
+	int32 size = 0;
 	for (uint32 i = 0; i < _numFiles; i++) {
 		if (fileName.compareToIgnoreCase(_files[i]._name) == 0) {
 			size = _files[i]._size;

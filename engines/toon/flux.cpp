@@ -80,7 +80,7 @@ int32 CharacterFlux::fixFacingForAnimation(int32 originalFacing, int32 animation
 	int32 v6 = 1 << originalFacing;
 	int32 facingMask = 0;
 	do {
-		if ( v6 & animFacingFlag) {
+		if (v6 & animFacingFlag) {
 			facingMask = v6;
 		} else if (v5 & animFacingFlag) {
 			facingMask = v5;
@@ -91,9 +91,9 @@ int32 CharacterFlux::fixFacingForAnimation(int32 originalFacing, int32 animation
 	while (!facingMask);
 
 	int32 finalFacing = 0;
-	for (finalFacing = 0; ; ++finalFacing ) {
+	for (finalFacing = 0; ; ++finalFacing) {
 		facingMask >>= 1;
-		if ( !facingMask )
+		if (!facingMask)
 			break;
 	}
 	

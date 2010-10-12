@@ -1134,7 +1134,7 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 }
 
 bool Console::cmdRestartGame(int argc, const char **argv) {
-	_engine->_gamestate->abortScriptProcessing = kAbortRestartGame;;
+	_engine->_gamestate->abortScriptProcessing = kAbortRestartGame;
 
 	return Cmd_Exit(0, 0);
 }

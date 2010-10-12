@@ -161,7 +161,7 @@ void Picture::drawMask(Graphics::Surface &surface, int32 x, int32 y, int32 dx, i
 
 	int32 destPitch = surface.pitch;
 	int32 srcPitch = _width;
-	uint8 *c = _data + _width * dy + dx ;
+	uint8 *c = _data + _width * dy + dx;
 	uint8 *curRow = (uint8 *)surface.pixels + y * destPitch + x;
 
 	for (int32 yy = 0; yy < ry; yy++) {
@@ -190,14 +190,14 @@ void Picture::draw(Graphics::Surface &surface, int32 x, int32 y, int32 dx, int32
 
 	int32 destPitch = surface.pitch;
 	int32 srcPitch = _width;
-	uint8 *c = _data + _width * dy + dx ;
+	uint8 *c = _data + _width * dy + dx;
 	uint8 *curRow = (uint8 *)surface.pixels + y * destPitch + x;
 
 	for (int32 yy = 0; yy < ry; yy++) {
 		uint8 *curSrc = c;
 		uint8 *cur = curRow;
 		for (int32 xx = 0; xx < rx; xx++) {
-			*cur = *curSrc ;
+			*cur = *curSrc;
 			curSrc++;
 			cur++;
 		}

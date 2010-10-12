@@ -435,7 +435,8 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSList &fsl
 
 			// If there's game last edit date in the *.wag file, add it to extra
 			if (wagGameLastEdit != NULL) {
-				if (!_extra.empty() ) _extra += " ";
+				if (!_extra.empty())
+					_extra += " ";
 				_extra += wagGameLastEdit->getData();
 				debug(3, "Agi::fallbackDetector: Game's last edit date (%s) from WAG file", wagGameLastEdit->getData());
 			}

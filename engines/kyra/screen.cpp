@@ -787,7 +787,7 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 	}
 
 	if (y2 < 0) {
-		if (y2 <= -h )
+		if (y2 <= -h)
 			return;
 		h += y2;
 		y1 -= y2;

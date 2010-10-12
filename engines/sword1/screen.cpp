@@ -366,7 +366,7 @@ void Screen::draw() {
 
 	if (_currentScreen == 54) {
 		// rm54 has a BACKGROUND parallax layer in parallax[0]
-		if (_parallax[0] && !SwordEngine::isPsx() ) //Avoid drawing this parallax on PSX edition, it gets occluded by background
+		if (_parallax[0] && !SwordEngine::isPsx()) //Avoid drawing this parallax on PSX edition, it gets occluded by background
 			renderParallax(_parallax[0]);
 		uint8 *src = _layerBlocks[0];
 		uint8 *dest = _screenBuf;
@@ -539,7 +539,7 @@ void Screen::processImage(uint32 id) {
 		|| (compact->o_resource == LVSFLY) || (!(compact->o_resource == GEORGE_MEGA) && (sprSizeX < 260))))
 			drawSprite(sprData + incr, spriteX, spriteY, sprSizeX, sprSizeY, sprPitch);
 		else if (((sprSizeX >= 260) && (sprSizeX < 450)) || ((compact->o_resource == GMWRITH) && (sprSizeX < 515))  // a psx shrinked sprite (1/2 width)
-				|| ((compact->o_resource == GMPOWER) && (sprSizeX < 515)) )                                         // some needs to be hardcoded, headers don't give useful infos
+				|| ((compact->o_resource == GMPOWER) && (sprSizeX < 515)))                                         // some needs to be hardcoded, headers don't give useful infos
 			drawPsxHalfShrinkedSprite(sprData + incr, spriteX, spriteY, sprSizeX / 2, sprSizeY, sprPitch / 2);
 		else if (sprSizeX >= 450) // A PSX double shrinked sprite (1/3 width)
 			drawPsxFullShrinkedSprite(sprData + incr, spriteX, spriteY, sprSizeX / 3, sprSizeY, sprPitch / 3);
@@ -1187,7 +1187,7 @@ void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, u
 			gridW *= 2; // and masking problems when sprites are stretched in width
 
 			uint16 bottomSprPos = (*pSprY + (*pSprHeight) * 2); //Position of bottom line of sprite
-			if ( bottomSprPos > _scrnSizeY ) { //Check that resized psx sprite isn't drawn outside of screen boundaries
+			if (bottomSprPos > _scrnSizeY) { //Check that resized psx sprite isn't drawn outside of screen boundaries
 				uint16 outScreen = bottomSprPos - _scrnSizeY;
 				*pSprHeight -= (outScreen % 2) ? (outScreen + 1) / 2 : outScreen / 2;
 			}

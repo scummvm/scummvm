@@ -65,7 +65,7 @@ Scenery::Scenery(GobEngine *vm) : _vm(vm) {
 
 	_pCaptureCounter = 0;
 
-	for (int i = 0; i < 70; i++ ) {
+	for (int i = 0; i < 70; i++) {
 		_staticPictToSprite[i] = 0;
 		_animPictToSprite[i]   = 0;
 	}

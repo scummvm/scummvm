@@ -878,7 +878,7 @@ void KyraEngine_LoK::loadItems() {
 
 	_shapes[323] = 0;
 
-	for (shape = 1; shape < 6; shape++ )
+	for (shape = 1; shape < 6; shape++)
 		_shapes[323 + shape] = _screen->encodeShape((shape - 1) * 32, 0, 32, 17, 0);
 
 	for (shape = 330; shape <= 334; shape++)

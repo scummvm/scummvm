@@ -86,7 +86,7 @@ void ToonEngine::init() {
 	_currentTextLine = 0;
 	_currentTextLineId = -1;
 	_currentTextLineX = 0;
-	_currentTextLineY = 0 ;
+	_currentTextLineY = 0;
 	_currentTextLineCharacterId = 0;
 
 	_saveBufferStream = new Common::MemoryWriteStreamDynamic();

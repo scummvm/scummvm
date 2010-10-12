@@ -1516,7 +1516,7 @@ void Hotspots::evaluate() {
 	int16 duration           = _vm->_game->_script->peekByte(1);
 
 	byte leaveWindowIndex = 0;
-	if ( _vm->getGameType() == kGameTypeFascination )
+	if (_vm->getGameType() == kGameTypeFascination)
 		leaveWindowIndex = _vm->_game->_script->peekByte(2);
 
 	byte hotspotIndex1       = _vm->_game->_script->peekByte(3);
@@ -1642,7 +1642,7 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 	int16 deltax = 0;
 	int16 deltay = 0;
 
-	if ( _vm->getGameType() == kGameTypeFascination )
+	if (_vm->getGameType() == kGameTypeFascination)
 		cursor = curWindow(deltax, deltay);
 
 	if (cursor == 0) {
@@ -2106,7 +2106,7 @@ void Hotspots::fillRect(uint16 x, uint16 y, uint16 width, uint16 height, uint16 
 	_vm->_draw->_spriteBottom = height;
 	_vm->_draw->_backColor    = color;
 
-	_vm->_draw->spriteOperation(DRAW_FILLRECT | 0x10 );
+	_vm->_draw->spriteOperation(DRAW_FILLRECT | 0x10);
 }
 
 void Hotspots::printText(uint16 x, uint16 y, const char *str, uint16 fontIndex, uint16 color) const {

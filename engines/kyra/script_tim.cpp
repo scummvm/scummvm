@@ -259,7 +259,7 @@ int TIMInterpreter::exec(TIM *tim, bool loop) {
 				if (cur.ip) {
 					cur.ip += cur.ip[0];
 					cur.lastTime = cur.nextTime;
-					cur.nextTime += (cur.ip[1] ) * _vm->tickLength();
+					cur.nextTime += cur.ip[1] * _vm->tickLength();
 				}
 			}
 		}

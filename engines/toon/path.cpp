@@ -99,7 +99,7 @@ int32 PathFindingHeap::pop(int32 *x, int32 *y, int32 *weight) {
 	int32 lT = 1;
 
 	while (1) {
-		lT = lMin << 1 ;
+		lT = lMin << 1;
 		if (lT <= _count) {
 			if (lT < _count) {
 				if (_data[lT + 1]._weight < _data[lT]._weight)
@@ -169,7 +169,7 @@ int32 PathFinding::findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32
 		origY = yy;
 
 	for (int y = 0; y < _height; y++) {
-		for (int x = 0; x < _width ; x++) {
+		for (int x = 0; x < _width; x++) {
 			if (isWalkable(x, y)) {
 				int32 ndist = (x - xx) * (x - xx) + (y - yy) * (y - yy);
 				int32 ndist2 = (x - origX) * (x - origX) + (y - origY) * (y - origY);

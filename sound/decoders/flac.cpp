@@ -140,7 +140,7 @@ public:
 	bool seek(const Timestamp &where);
 	Timestamp getLength() const { return _length; }
 
-	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC ; }
+	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC; }
 protected:
 	uint getChannels() const { return MIN<uint>(_streaminfo.channels, MAX_OUTPUT_CHANNELS); }
 
@@ -553,7 +553,7 @@ void FLACStream::convertBuffersGeneric(SampleType* bufDestination, const FLAC__i
 
 		for (; numSamples > 0; numSamples -= numChannels) {
 			for (uint i = 0; i < numChannels; ++i)
-				*bufDestination++ = static_cast<SampleType>(*(inChannels[i]++) >> kPower) ;
+				*bufDestination++ = static_cast<SampleType>(*(inChannels[i]++) >> kPower);
 		}
 	} else {
 		for (; numSamples > 0; numSamples -= numChannels) {

@@ -117,7 +117,7 @@ void AudioManager::playVoice(int32 id, bool genericVoice) {
 		_channels[2]->stop(false);
 	}
 
-	Common::SeekableReadStream *stream ;
+	Common::SeekableReadStream *stream;
 	if (genericVoice)
 		stream = _audioPacks[0]->getStream(id);
 	else
@@ -132,7 +132,7 @@ void AudioManager::playSFX(int32 id, int32 volume , bool genericSFX) {
 	debugC(4, kDebugAudio, "playSFX(%d, %d)", id, (genericSFX) ? 1 : 0);
 
 	// find a free SFX channel
-	Common::SeekableReadStream *stream ;
+	Common::SeekableReadStream *stream;
 
 	if (genericSFX)
 		stream = _audioPacks[2]->getStream(id, true);
@@ -288,7 +288,7 @@ bool AudioStreamInstance::readPacket() {
 void AudioStreamInstance::decodeADPCM(uint8 *comp, int16 *dest, int32 packetSize) {
 	debugC(5, kDebugAudio, "decodeADPCM(comp, dest, %d)", packetSize);
 
-	int32 numSamples = 2 * packetSize ;
+	int32 numSamples = 2 * packetSize;
 	int32 v18 = _lastADPCMval1;
 	int32 v19 = _lastADPCMval2;
 	for (int32 i = 0; i < numSamples; i++) {

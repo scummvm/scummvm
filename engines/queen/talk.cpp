@@ -551,11 +551,11 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 		return personWalking;
 	}
 
-	if (0 == strcmp(person->name, "FAYE-H" ) ||
+	if (0 == strcmp(person->name, "FAYE-H") ||
 		0 == strcmp(person->name, "FRANK-H") ||
 		0 == strcmp(person->name, "AZURA-H") ||
 		0 == strcmp(person->name, "X3_RITA") ||
-		(0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == FAYE_HEAD ) ||
+		(0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == FAYE_HEAD) ||
 		(0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == AZURA_HEAD) ||
 		(0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == FRANK_HEAD))
 		_talkHead = true;

@@ -1398,7 +1398,7 @@ void Interface::setSave(PanelButton *panelButton) {
 	char *fileName;
 	switch (panelButton->id) {
 		case kTextSave:
-			if (_textInputStringLength == 0 ) {
+			if (_textInputStringLength == 0) {
 				break;
 			}
 			if (!_vm->isSaveListFull() && (_optionSaveFileTitleNumber == 0)) {
@@ -2166,43 +2166,43 @@ void Interface::drawButtonBox(const Rect& rect, ButtonKind kind, bool down) {
 	byte solidColor;
 	byte odl, our, idl, iur;
 
-	switch (kind ) {
-		case kSlider:
-			cornerColor = 0x8b;
-			frameColor = _vm->KnownColor2ColorId(kKnownColorBlack);
-			fillColor = kITEColorLightBlue96;
-			odl = kITEColorDarkBlue8a;
-			our = kITEColorLightBlue92;
-			idl = 0x89;
-			iur = 0x94;
-			solidColor = down ? kITEColorLightBlue94 : kITEColorLightBlue96;
-			break;
-		case kEdit:
-			if (_vm->getGameId() == GID_ITE) {
-				cornerColor = frameColor = fillColor = kITEColorLightBlue96;
-				our = kITEColorDarkBlue8a;
-				odl = kITEColorLightBlue94;
-				solidColor = down ? kITEColorBlue : kITEColorDarkGrey0C;
-			} else {
-				cornerColor = frameColor = fillColor = _vm->KnownColor2ColorId(kKnownColorBlack);
-				our = odl = solidColor = _vm->KnownColor2ColorId(kKnownColorBlack);
-			}
-			iur = 0x97;
-			idl = 0x95;
-			break;
-		default:
-			cornerColor = 0x8b;
-			frameColor = _vm->KnownColor2ColorId(kKnownColorBlack);
-			solidColor = fillColor = kITEColorLightBlue96;
-			odl = kITEColorDarkBlue8a;
-			our = kITEColorLightBlue94;
-			idl = 0x97;
-			iur = 0x95;
-			if (down) {
-				SWAP(odl, our);
-				SWAP(idl, iur);
-			}
-			break;
+	switch (kind) {
+	case kSlider:
+		cornerColor = 0x8b;
+		frameColor = _vm->KnownColor2ColorId(kKnownColorBlack);
+		fillColor = kITEColorLightBlue96;
+		odl = kITEColorDarkBlue8a;
+		our = kITEColorLightBlue92;
+		idl = 0x89;
+		iur = 0x94;
+		solidColor = down ? kITEColorLightBlue94 : kITEColorLightBlue96;
+		break;
+	case kEdit:
+		if (_vm->getGameId() == GID_ITE) {
+			cornerColor = frameColor = fillColor = kITEColorLightBlue96;
+			our = kITEColorDarkBlue8a;
+			odl = kITEColorLightBlue94;
+			solidColor = down ? kITEColorBlue : kITEColorDarkGrey0C;
+		} else {
+			cornerColor = frameColor = fillColor = _vm->KnownColor2ColorId(kKnownColorBlack);
+			our = odl = solidColor = _vm->KnownColor2ColorId(kKnownColorBlack);
+		}
+		iur = 0x97;
+		idl = 0x95;
+		break;
+	default:
+		cornerColor = 0x8b;
+		frameColor = _vm->KnownColor2ColorId(kKnownColorBlack);
+		solidColor = fillColor = kITEColorLightBlue96;
+		odl = kITEColorDarkBlue8a;
+		our = kITEColorLightBlue94;
+		idl = 0x97;
+		iur = 0x95;
+		if (down) {
+			SWAP(odl, our);
+			SWAP(idl, iur);
+		}
+		break;
 	}
 
 	int x = rect.left;

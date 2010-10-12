@@ -65,7 +65,7 @@ int32 Hotspots::FindBasedOnCorner(int32 x, int32 y) {
 				if (_items[i].getMode() == -1)
 					return _items[i].getRef();
 
-				return i ;
+				return i;
 			}
 		}
 	}

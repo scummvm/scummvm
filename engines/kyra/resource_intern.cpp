@@ -514,7 +514,7 @@ void FileExpanderSource::advSrcBitsBy1() {
 	_key >>= 1;
 	if (!--_bitsLeft) {
 		if (_dataPtr < _endofBuffer)
-			_key = ((*_dataPtr++) << 8 ) | (_key & 0xff);
+			_key = ((*_dataPtr++) << 8) | (_key & 0xff);
 		_bitsLeft = 8;
 	}
 }

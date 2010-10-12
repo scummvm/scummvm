@@ -158,7 +158,7 @@ void Animation::drawFrame(Graphics::Surface &surface, int32 frame, int32 xx, int
 
 	int32 destPitch = surface.pitch;
 	uint8 *srcRow = _frames[frame]._data;
-	uint8 *curRow = (uint8 *)surface.pixels + (yy + _frames[frame]._y1 + _y1) * destPitch + (xx + _x1 + _frames[frame]._x1) ;
+	uint8 *curRow = (uint8 *)surface.pixels + (yy + _frames[frame]._y1 + _y1) * destPitch + (xx + _x1 + _frames[frame]._x1);
 	for (int32 y = 0; y < rectY; y++) {
 		uint8 *cur = curRow;
 		uint8 *c = srcRow + y * (_frames[frame]._x2 - _frames[frame]._x1);
@@ -344,20 +344,20 @@ void Animation::drawFrameOnPicture(int32 frame, int32 xx, int32 yy) {
 		return;
 
 	if (rectX + xx + _x1 + _frames[frame]._x1 >= pic->getWidth())
-		rectX = pic->getWidth() - xx - _x1 - _frames[frame]._x1 ;
+		rectX = pic->getWidth() - xx - _x1 - _frames[frame]._x1;
 
 	if (rectX < 0)
 		return;
 
 	if (rectY + yy + _y1 + _frames[frame]._y1 >= pic->getHeight())
-		rectY = pic->getHeight() - yy - _y1 - _frames[frame]._y1 ;
+		rectY = pic->getHeight() - yy - _y1 - _frames[frame]._y1;
 
 	if (rectY < 0)
 		return;
 
 	int32 destPitch = pic->getWidth();
 	uint8 *c = _frames[frame]._data;
-	uint8 *curRow = (uint8 *)pic->getDataPtr() + (yy + _frames[frame]._y1 + _y1) * destPitch + (xx + _x1 + _frames[frame]._x1) ;
+	uint8 *curRow = (uint8 *)pic->getDataPtr() + (yy + _frames[frame]._y1 + _y1) * destPitch + (xx + _x1 + _frames[frame]._x1);
 	for (int32 y = 0; y < rectY; y++) {
 		unsigned char *cur = curRow;
 		for (int32 x = 0; x < rectX; x++) {
@@ -477,7 +477,7 @@ void AnimationInstance::setPosition(int32 x, int32 y, int32 z, bool relative) {
 		_y = y;
 		_z = z;
 	} else {
-		_x = x - _animation->_x1 ;
+		_x = x - _animation->_x1;
 		_y = y - _animation->_y1;
 		_z = z;
 	}
@@ -547,7 +547,7 @@ void AnimationInstance::setX(int32 x, bool relative) {
 	if (relative || !_animation)
 		_x = x;
 	else
-		_x = x - _animation->_x1 ;
+		_x = x - _animation->_x1;
 }
 
 void AnimationInstance::setY(int32 y, bool relative) {
@@ -555,7 +555,7 @@ void AnimationInstance::setY(int32 y, bool relative) {
 	if (relative || !_animation)
 		_y = y;
 	else
-		_y = y - _animation->_y1 ;
+		_y = y - _animation->_y1;
 }
 
 void AnimationInstance::setZ(int32 z, bool relative) {
@@ -572,15 +572,15 @@ int32 AnimationInstance::getLayerZ() const {
 }
 
 int32 AnimationInstance::getX2() const {
-	return _x + _animation->_x1 ;
+	return _x + _animation->_x1;
 }
 
 int32 AnimationInstance::getY2() const {
-	return _y + _animation->_y1 ;
+	return _y + _animation->_y1;
 }
 
 int32 AnimationInstance::getZ2() const {
-	return _z ;
+	return _z;
 }
 
 void AnimationInstance::save(Common::WriteStream *stream) {
@@ -659,7 +659,7 @@ void AnimationManager::removeInstance(AnimationInstance *instance) {
 
 void AnimationManager::removeAllInstances(AnimationInstanceType type) {
 	debugC(1, kDebugAnim, "removeInstance(type)");
-	for (int32 i = (int32)_instances.size(); i >= 0 ; i--) {
+	for (int32 i = (int32)_instances.size(); i >= 0; i--) {
 		if (_instances[i]->getType() & type)
 			_instances.remove_at(i);
 	}
