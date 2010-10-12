@@ -105,6 +105,7 @@ add_engine sci32 "SCI32 games" no
 add_engine sky "Beneath a Steel Sky" yes
 add_engine sword1 "Broken Sword" yes
 add_engine sword2 "Broken Sword II" yes
+add_engine sword25 "Broken Sword 2.5" no
 add_engine teenagent "Teen Agent" yes
 add_engine testbed "TestBed: the Testing framework" no
 add_engine tinsel "Tinsel" yes
@@ -125,6 +126,8 @@ _alsa=auto
 _seq_midi=auto
 _zlib=auto
 _mpeg2=no
+_png=auto
+_theoradec=auto
 _fluidsynth=auto
 _16bit=auto
 _readline=auto
@@ -736,6 +739,12 @@ Optional Libraries:
 
   --disable-indeo3         disable Indeo3 decoder [autodetect]
 
+  --with-png-prefix=DIR    Prefix where libpng is installed (optional)
+  --disable-png            disable PNG decoder [autodetect]
+
+  --with-theoradec-prefix=DIR Prefix where libtheoraec is installed (optional)
+  --disable-theoradec      disable Theora decoder [autodetect]
+
   --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
@@ -788,6 +797,10 @@ for ac_option in $@; do
 	--enable-mpeg2)           _mpeg2=yes      ;;
 	--disable-indeo3)         _indeo3=no      ;;
 	--enable-indeo3)          _indeo3=yes     ;;
+	--disable-png)            _png=no         ;;
+	--enable-png)             _png=yes        ;;
+	--disable-theoradec)      _png=no         ;;
+	--enable-theoradec)       _theoradec=yes        ;;
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
@@ -843,6 +856,16 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		MAD_CFLAGS="-I$arg/include"
 		MAD_LIBS="-L$arg/lib"
+		;;
+	--with-png-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		PNG_CFLAGS="-I$arg/include"
+		PNG_LIBS="-L$arg/lib"
+		;;
+	--with-theoradec-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		THEORADEC_CFLAGS="-I$arg/include"
+		THEORADEC_LIBS="-L$arg/lib"
 		;;
 	--with-zlib-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2337,6 +2360,62 @@ if test "$_alsa" = yes ; then
 fi
 define_in_config_h_if_yes "$_alsa" 'USE_ALSA'
 echo "$_alsa"
+
+#
+# Check for PNG
+#
+echocheck "PNG >= 1.2.8"
+if test "$_png" = auto ; then
+	_png=no
+	cat > $TMPC << EOF
+#include <png.h>
+int main(void) { if (PNG_LIBPNG_VER >= 10208) { return 0; } return 1; }
+EOF
+	cc_check_no_clean $PNG_CFLAGS $PNG_LIBS -lpng && $TMPO$HOSTEXEEXT && _png=yes
+	cc_check_clean
+fi
+if test "$_png" = yes ; then
+	LIBS="$LIBS $PNG_LIBS -lpng"
+	INCLUDES="$INCLUDES $PNG_CFLAGS"
+fi
+define_in_config_h_if_yes "$_png" 'USE_PNG'
+echo "$_png"
+
+if test `get_engine_build sword25` = yes && test ! "$_png" = yes ; then
+	echo "...disabling Broken Sword 2.5 engine. PNG is required"
+	engine_disable sword25
+fi
+
+#
+# Check for Theora Decoder
+#
+echocheck "libtheoradec >= 1.0"
+if test "$_vorbis" = no ; then
+	echo "skipping. no vorbis"
+	_theoradec=notsupported
+fi
+if test "$_theoradec" = auto ; then
+	_theoradec=no
+	cat > $TMPC << EOF
+#include <theora/theoradec.h>
+#include <vorbis/codec.h>
+int main(void) { th_ycbcr_buffer yuv; th_decode_ycbcr_out(NULL, yuv);  }
+EOF
+	cc_check $THEORADEC_CFLAGS $THEORADEC_LIBS -ltheoradec && _theoradec=yes
+fi
+if test "$_theoradec" = yes ; then
+	LIBS="$LIBS $THEORADEC_LIBS -ltheoradec"
+	INCLUDES="$INCLUDES $THEORADEC_CFLAGS"
+fi
+define_in_config_h_if_yes "$_theoradec" 'USE_THEORADEC'
+if test ! "$_theoradec" = notsupported ; then
+	echo "$_theoradec"
+fi
+
+if test `get_engine_build sword25` = yes && test ! "$_theoradec" = yes ; then
+	echo "...disabling Broken Sword 2.5 engine. libtheoradec is required"
+	engine_disable sword25
+fi
 
 #
 # Check for SEQ MIDI
