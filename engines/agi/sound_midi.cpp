@@ -82,7 +82,7 @@ SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, p
 	}
 
 	memset(_channel, 0, sizeof(_channel));
-	memset(_channelVolume, 255, sizeof(_channelVolume));
+	memset(_channelVolume, 127, sizeof(_channelVolume));
 	_masterVolume = 0;
 	this->open();
 	_smfParser = MidiParser::createParser_SMF();
