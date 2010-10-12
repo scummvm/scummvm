@@ -39,8 +39,6 @@ If you still want to waste your time by creating this file:
 6) Start each of the BASS versions with this patched version, enjoy the intro
    over and over again.
 	Afterwards, it'll automatically show the load/save dialog where you save the game.
-	Except for Demo (v0.00356) which lacks the dialog, so this will autosave to slot 1
-	at the end of the intro.
 7) Rename the Savegame files you created (SKY-VM.000 etc., not the ASD or SAV
    file) to "RESET.*", depending on the version.
 	e.g. RESET.288 for v.0.00288
