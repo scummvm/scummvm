@@ -45,7 +45,7 @@ protected:
 	int _physicalPos;	// physical position in file
 	int _pos;			// position. Sometimes virtual
 	bool _eos;			// EOS flag
-	
+
 	enum {
 		SuspendError = 2,
 		ResumeError = 3
@@ -58,9 +58,9 @@ protected:
 	int _errorPos;
 	SceUID _errorHandle;
 	int _suspendCount;
-	
+
 	bool physicalSeekFromCur(int32 offset);
-	
+
 public:
 
 	/**
@@ -85,7 +85,7 @@ public:
 	virtual int32 size() const;
 	virtual bool seek(int32 offs, int whence = SEEK_SET);
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
-	
+
 	// for suspending
 	int suspend();		/* Suspendable interface (power manager) */
 	int resume();		/* " " */

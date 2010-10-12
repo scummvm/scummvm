@@ -542,12 +542,12 @@ Surface *SmackerDecoder::decodeNextFrame() {
 		chunkSize -= 4;    // subtract the first 4 bytes (chunk size)
 
 		if (_header.audioInfo[i].compression == kCompressionNone) {
-			dataSizeUnpacked = chunkSize;		
+			dataSizeUnpacked = chunkSize;
 		} else {
 			dataSizeUnpacked = _fileStream->readUint32LE();
 			chunkSize -= 4;    // subtract the next 4 bytes (unpacked data size)
-		} 
-		
+		}
+
 		handleAudioTrack(i, chunkSize, dataSizeUnpacked);
 	}
 

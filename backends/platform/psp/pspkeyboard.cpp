@@ -299,7 +299,7 @@ bool PSPKeyboard::load() {
 		}
 
 		PngLoader image(file, _buffers[i], _palettes[i]);
-		
+
 		if (image.allocate() != PngLoader::OK) {
 			PSP_ERROR("Failed to allocate memory for keyboard image %s\n", _guiStrings[i]);
 			goto ERROR;
@@ -308,7 +308,7 @@ bool PSPKeyboard::load() {
 			PSP_ERROR("Failed to load image from file %s\n", _guiStrings[i]);
 			goto ERROR;
 		}
-		
+
 		delete file;
 	} /* for loop */
 
@@ -370,7 +370,7 @@ bool PSPKeyboard::processInput(Common::Event &event, PspEvent &pspEvent, SceCtrl
 		event.type = DOWN(PSP_CTRL_START) ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
 		haveEvent = true;
 		_dirty = true;
-		if (UP(PSP_CTRL_START)) 
+		if (UP(PSP_CTRL_START))
 			havePspEvent = true;
 	}
 	// Check for being in state of moving the keyboard onscreen or pressing select
@@ -385,10 +385,10 @@ bool PSPKeyboard::processInput(Common::Event &event, PspEvent &pspEvent, SceCtrl
 	else if (_state == kLTriggerDown)
 		handleLTriggerDownState(pad);	// Deal with trigger states
 
-	if (havePspEvent) {	
+	if (havePspEvent) {
 		pspEvent.type = PSP_EVENT_SHOW_VIRTUAL_KB;	// tell the input handler we're off
 		pspEvent.data = false;
-	}		
+	}
 	_prevButtons = pad.Buttons;
 
 	return haveEvent;

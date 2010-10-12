@@ -859,7 +859,7 @@ void OSystem_N64::getTimeAndDate(TimeDate &t) const {
 	// No RTC inside the N64, read mips timer to simulate
 	// passing of time, not a perfect solution, but can't think
 	// of anything better.
-	
+
 	uint32 now = getMilliTick();
 
 	t.tm_sec  = (now / 1000) % 60;

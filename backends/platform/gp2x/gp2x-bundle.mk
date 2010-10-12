@@ -6,7 +6,7 @@ gp2x-bundle: $(EXECUTABLE)
 	$(MKDIR) "$(bundle_name)"
 	$(MKDIR) "$(bundle_name)/saves"
 	$(MKDIR) "$(bundle_name)/engine-data"
-	
+
 	echo "Please put your save games in this dir" >> "$(bundle_name)/saves/PUT_SAVES_IN_THIS_DIR"
 
 	$(CP) $(srcdir)/backends/platform/gp2x/build/scummvm.gpe $(bundle_name)/
@@ -28,13 +28,13 @@ ifdef DYNAMIC_MODULES
 endif
 
 	tar -C $(bundle_name) -cvjf $(bundle_name).tar.bz2 .
-	rm -R ./$(bundle_name)	
+	rm -R ./$(bundle_name)
 
 gp2x-bundle-debug: $(EXECUTABLE)
 	$(MKDIR) "$(bundle_name)"
 	$(MKDIR) "$(bundle_name)/saves"
 	$(MKDIR) "$(bundle_name)/engine-data"
-	
+
 	echo "Please put your save games in this dir" >> "$(bundle_name)/saves/PUT_SAVES_IN_THIS_DIR"
 
 	$(CP) $(srcdir)/backends/platform/gp2x/build/scummvm.gpe $(bundle_name)/
@@ -46,15 +46,15 @@ gp2x-bundle-debug: $(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)/
 	$(INSTALL) -c -m 644 $(DIST_FILES_ENGINEDATA) $(bundle_name)/engine-data
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip $(bundle_name)/
-	
+
 	$(INSTALL) -c -m 777 $(srcdir)/$(EXECUTABLE) $(bundle_name)/$(EXECUTABLE)
 
 ifdef DYNAMIC_MODULES
 	$(INSTALL) -d "$(bundle_name)/scummvm/plugins"
 	$(INSTALL) -c -m 644 $(PLUGINS) "$(bundle_name)/scummvm/plugins"
 endif
-	
+
 	tar -C $(bundle_name) -cvjf $(bundle_name)-debug.tar.bz2 .
-	rm -R ./$(bundle_name)	
+	rm -R ./$(bundle_name)
 
 .PHONY: gp2x-bundle gp2x-bundle-debug

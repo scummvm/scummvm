@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
 
 - (void)applicationResume:(struct __GSEvent *)event {
 	[_view applicationResume];
-	
+
 	// Workaround, need to "hide" and unhide the statusbar to properly remove it,
 	// since the Springboard has put it back without apparently flagging our application.
     [self setStatusBarHidden:YES animated:YES];

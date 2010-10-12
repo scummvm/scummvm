@@ -40,7 +40,7 @@ inline void lwl_copy(byte *dst, const byte *src) {
 	asm volatile ("lwr %0,0(%1)\n\t"
 		 "lwl %0,3(%1)\n\t"
 		 : "=&r" (data) : "r" (src), "m" (*src));
-		 
+
 	asm volatile ("swr %1,0(%2)\n\t"
 		 "swl %1,3(%2)\n\t"
 		 : "=m" (*dst) : "r" (data), "r" (dst));
@@ -55,7 +55,7 @@ private:
 	static void copy(byte *dst, const byte *src, uint32 bytes);
 	static void copy32Aligned(uint32 *dst32, const uint32 *src32, uint32 bytes);
 	static void copy32Misaligned(uint32 *dst32, const byte *src, uint32 bytes, uint32 alignSrc);
-	
+
 	static inline void copy8(byte *dst, const byte *src, int32 bytes) {
 		//PSP_DEBUG_PRINT("copy8 called with dst[%p], src[%p], bytes[%d]\n", dst, src, bytes);
 		uint32 words = bytes >> 2;
@@ -71,18 +71,18 @@ private:
 		}
 	}
 
-public:	
+public:
 	// This is the interface to the outside world
 	static void *fastCopy(void *dstv, const void *srcv, int32 bytes) {
 		byte *dst = (byte *)dstv;
 		byte *src = (byte *)srcv;
-		
+
 		if (bytes < MIN_AMOUNT_FOR_COMPLEX_COPY) {
 			copy8(dst, src, bytes);
 		} else {	// go to more powerful copy
 			copy(dst, src, bytes);
 		}
-		
+
 		return dstv;
 	}
 };

@@ -162,7 +162,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	case MT_AMIGA:
 		if (flags & MDT_AMIGA)
 			return hdl;
-		break;        
+		break;
 
 	case MT_APPLEIIGS:
 		if (flags & MDT_APPLEIIGS)

@@ -540,7 +540,7 @@ protected:
 public:
 	BufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
 	virtual ~BufferedWriteStream();
-	
+
 	virtual uint32 write(const void *dataPtr, uint32 dataSize);
 	virtual bool flush();
 };

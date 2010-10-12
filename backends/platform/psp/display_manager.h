@@ -81,7 +81,7 @@ public:
 	void guPostRender();
 	void guShutDown();
 	bool isRenderFinished() { return _renderFinished; }
-	void setupCallbackThread();	
+	void setupCallbackThread();
 private:
 	virtual void threadFunction();			// for the display callback thread
 	static uint32 _displayList[];
@@ -89,7 +89,7 @@ private:
 	void guProgramDisplayBufferSizes();
 	static int guCallback(int, int, void *__this);	// for the display callback
 	bool _renderFinished;					// for sync with render callback
-	int _callbackId;						// to keep track of render callback	
+	int _callbackId;						// to keep track of render callback
 };
 
 class Screen;

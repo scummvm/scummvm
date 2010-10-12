@@ -50,17 +50,17 @@ inline void Button::clear() {
 	_ascii = 0;
 	_flag = 0;
 	_pspEventDown.clear();
-	_pspEventUp.clear();	
+	_pspEventUp.clear();
 }
 
-inline bool Button::getEvent(Common::Event &event, PspEvent &pspEvent, bool down) {	
+inline bool Button::getEvent(Common::Event &event, PspEvent &pspEvent, bool down) {
 	if (down) {
 		if (!_pspEventDown.isEmpty())
 			pspEvent = _pspEventDown;
 	} else { // up
 		if (!_pspEventUp.isEmpty())
 			pspEvent = _pspEventUp;
-	}	
+	}
 	if (_key != Common::KEYCODE_INVALID) {
 		event.type = down ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
 		event.kbd.keycode = _key;
@@ -79,19 +79,19 @@ void Button::setPspEvent(PspEventType typeDown, uint32 dataDown, PspEventType ty
 	_pspEventDown.type = typeDown;
 	_pspEventDown.data = dataDown;
 	_pspEventUp.type = typeUp;
-	_pspEventUp.data = dataUp;	
-}		
+	_pspEventUp.data = dataUp;
+}
 
 // Translates bitfields to our constants
 // We put combined bitfields first to make sure we pick up diagonals
 const uint32 ButtonPad::_buttonMap[] = {
-	PSP_CTRL_UP | PSP_CTRL_LEFT, 
-	PSP_CTRL_UP | PSP_CTRL_RIGHT, 
+	PSP_CTRL_UP | PSP_CTRL_LEFT,
+	PSP_CTRL_UP | PSP_CTRL_RIGHT,
 	PSP_CTRL_DOWN | PSP_CTRL_RIGHT,
 	PSP_CTRL_DOWN | PSP_CTRL_LEFT,
 	PSP_CTRL_RIGHT, PSP_CTRL_DOWN, PSP_CTRL_LEFT, PSP_CTRL_UP,
-	PSP_CTRL_CROSS, PSP_CTRL_CIRCLE, PSP_CTRL_TRIANGLE, PSP_CTRL_SQUARE, 
-	PSP_CTRL_LTRIGGER, PSP_CTRL_RTRIGGER, PSP_CTRL_START, PSP_CTRL_SELECT 
+	PSP_CTRL_CROSS, PSP_CTRL_CIRCLE, PSP_CTRL_TRIANGLE, PSP_CTRL_SQUARE,
+	PSP_CTRL_LTRIGGER, PSP_CTRL_RTRIGGER, PSP_CTRL_START, PSP_CTRL_SELECT
 };
 
 ButtonPad::ButtonPad() : _prevButtonState(0), _shifted(UNSHIFTED), _padMode(PAD_MODE_NORMAL),
@@ -125,7 +125,7 @@ void ButtonPad::initButtonsNormalMode() {
 	DEBUG_ENTER_FUNC();
 	PSP_DEBUG_PRINT("initializing buttons for normal mode\n");
 	clearButtons();
-	
+
 	// Dpad
 	_button[BTN_UP_LEFT][UNSHIFTED].setKey(Common::KEYCODE_KP7, '7');
 	_button[BTN_LEFT][SHIFTED].setKey(Common::KEYCODE_KP7, '7');		// same as up_left
@@ -139,7 +139,7 @@ void ButtonPad::initButtonsNormalMode() {
 	_button[BTN_DOWN][UNSHIFTED].setKey(Common::KEYCODE_KP2, '2');
 	_button[BTN_DOWN_RIGHT][UNSHIFTED].setKey(Common::KEYCODE_KP3, '3');
 	_button[BTN_RIGHT][SHIFTED].setKey(Common::KEYCODE_KP3, '3');		// same as down_right
-	
+
 	// Other buttons
 	_button[BTN_CROSS][UNSHIFTED].setPspEvent(PSP_EVENT_LBUTTON, true, PSP_EVENT_LBUTTON, false);
 	_button[BTN_CIRCLE][UNSHIFTED].setPspEvent(PSP_EVENT_RBUTTON, true, PSP_EVENT_RBUTTON, false);
@@ -153,8 +153,8 @@ void ButtonPad::initButtonsNormalMode() {
 	_button[BTN_RTRIGGER][UNSHIFTED].setKey(Common::KEYCODE_INVALID, 0, Common::KBD_SHIFT);
 	_button[BTN_START][SHIFTED].setKey(Common::KEYCODE_F5, Common::ASCII_F5);
 	_button[BTN_START][UNSHIFTED].setKey(Common::KEYCODE_F5, Common::ASCII_F5, Common::KBD_CTRL);
-	_button[BTN_SELECT][UNSHIFTED].setPspEvent(PSP_EVENT_SHOW_VIRTUAL_KB, true, PSP_EVENT_NONE, 0);			
-}  
+	_button[BTN_SELECT][UNSHIFTED].setPspEvent(PSP_EVENT_SHOW_VIRTUAL_KB, true, PSP_EVENT_NONE, 0);
+}
 
 void ButtonPad::initButtonsLolMode() {
 	DEBUG_ENTER_FUNC();
@@ -166,12 +166,12 @@ void ButtonPad::initButtonsLolMode() {
 	_button[BTN_SQUARE][UNSHIFTED].setPspEvent(PSP_EVENT_SHIFT, true, PSP_EVENT_SHIFT, false);
 	_button[BTN_SQUARE][SHIFTED].clear();
 	_button[BTN_SQUARE][SHIFTED].setPspEvent(PSP_EVENT_SHIFT, true, PSP_EVENT_SHIFT, false);
-	
+
 	// Dpad
 	_button[BTN_LEFT][UNSHIFTED].clear();
 	_button[BTN_LEFT][UNSHIFTED].setKey(Common::KEYCODE_KP7, '7');
 	_button[BTN_LEFT][SHIFTED].clear();
-	_button[BTN_LEFT][SHIFTED].setKey(Common::KEYCODE_F1, Common::ASCII_F1);	
+	_button[BTN_LEFT][SHIFTED].setKey(Common::KEYCODE_F1, Common::ASCII_F1);
 	_button[BTN_UP][SHIFTED].clear();
 	_button[BTN_UP][SHIFTED].setKey(Common::KEYCODE_F2, Common::ASCII_F2);
 	_button[BTN_RIGHT][UNSHIFTED].clear();
@@ -194,13 +194,13 @@ void ButtonPad::initButtonsLolMode() {
 
 bool ButtonPad::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad) {
 	DEBUG_ENTER_FUNC();
-	
+
 	//PSP_DEBUG_PRINT("buttons[%x]\n", pad.Buttons);
 
 	uint32 curButtonState = PSP_ALL_BUTTONS & pad.Buttons;	// we only care about these
-	
-	modifyButtonsForCombos(pad);						// change buttons for combos	
-	
+
+	modifyButtonsForCombos(pad);						// change buttons for combos
+
 	return getEventFromButtonState(event, pspEvent, curButtonState);
 }
 
@@ -208,13 +208,13 @@ bool ButtonPad::getEventFromButtonState(Common::Event &event, PspEvent &pspEvent
 	DEBUG_ENTER_FUNC();
 	_buttonsChanged[_shifted] |= buttonState ^ _prevButtonState;	// add any buttons that changed
 	_prevButtonState = buttonState;
-	
+
 	for (int shiftState = UNSHIFTED; shiftState < SHIFTED_MODE_LAST; shiftState++) {
 		if (_buttonsChanged[shiftState]) {	// any button to address?
 			PSP_DEBUG_PRINT("found changed buttons\n");
-			ButtonType buttonType = BTN_LAST; 
+			ButtonType buttonType = BTN_LAST;
 			bool buttonDown = false;		// normally we release a button (as in when we're in a different shiftmode)
-		
+
 			for (int i = BTN_UP_LEFT; i < BTN_LAST; i++) {
 				uint32 buttonCode = _buttonMap[i];
 				if ((_buttonsChanged[shiftState] & buttonCode) == buttonCode) { // check for this changed button
@@ -222,23 +222,23 @@ bool ButtonPad::getEventFromButtonState(Common::Event &event, PspEvent &pspEvent
 					_buttonsChanged[shiftState] &= ~buttonCode;	// save the fact that we treated this button
 					if (shiftState == _shifted)
 						buttonDown = buttonState & buttonCode ? true : false; // pressed or released?
-					
-					PSP_DEBUG_PRINT("button[%i] pressed\n", i);	
+
+					PSP_DEBUG_PRINT("button[%i] pressed\n", i);
 					break;
 				}
 			}
-			
+
 			assert (buttonType < BTN_LAST);
 			bool haveEvent = _button[buttonType][shiftState].getEvent(event, pspEvent, buttonDown);
 			if (haveEvent)
 				PSP_DEBUG_PRINT("have event. key[%d] flag[%x] %s\n", event.kbd.ascii, event.kbd.flags, buttonDown ? "down" : "up");
 			return haveEvent;
 		}
-	}	
-	
+	}
+
 	return false;
 }
-	
+
 void ButtonPad::modifyButtonsForCombos(SceCtrlData &pad) {
 	if (DOWN(PSP_CTRL_RTRIGGER | PSP_CTRL_LTRIGGER)) {
 		if (!_comboMode) {  // we're entering combo mode
@@ -262,24 +262,24 @@ void ButtonPad::modifyButtonsForCombos(SceCtrlData &pad) {
 			initButtons();		// reset the button configuration
 			_comboMode = false;
 		}
-	}	
+	}
 }
-	
+
 bool Nub::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad) {
 	DEBUG_ENTER_FUNC();
-	
+
 	if (_dpadMode) {	// Convert the nub to a D-Pad
 		uint32 buttonState;
 		translateToDpadState(pad.Lx, pad.Ly, buttonState);
 		return _buttonPad.getEventFromButtonState(event, pspEvent, buttonState);
 	}
-	
+
 	int32 analogStepX = pad.Lx;		// Goes up to 255.
 	int32 analogStepY = pad.Ly;
 
 	analogStepX = modifyNubAxisMotion(analogStepX);
 	analogStepY = modifyNubAxisMotion(analogStepY);
-	
+
 	int32 oldX = _cursor->getX();
 	int32 oldY = _cursor->getY();
 
@@ -316,7 +316,7 @@ bool Nub::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad) {
 			event.mouse.x = newX;
 			event.mouse.y = newY;
 			PSP_DEBUG_PRINT("Nub event. X[%d], Y[%d]\n", newX, newY);
-			return true;			
+			return true;
 		}
 	}
 	return false;
@@ -325,12 +325,12 @@ bool Nub::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad) {
 void Nub::translateToDpadState(int dpadX, int dpadY, uint32 &buttonState) {
 	#define MIN_NUB_POSITION 70
 	buttonState = 0;
-	
+
 	if (dpadX > 127 + MIN_NUB_POSITION)
 		buttonState |= PSP_CTRL_RIGHT;
 	else if (dpadX < 127 - MIN_NUB_POSITION)
 		buttonState |= PSP_CTRL_LEFT;
-	
+
 	if (dpadY > 127 + MIN_NUB_POSITION)
 		buttonState |= PSP_CTRL_DOWN;
 	else if (dpadY < 127 - MIN_NUB_POSITION)
@@ -353,11 +353,11 @@ inline int32 Nub::modifyNubAxisMotion(int32 input) {
 	return input;
 }
 
-inline bool Nub::isButtonDown() { 
+inline bool Nub::isButtonDown() {
 	if (_dpadMode) 		// only relevant in dpad mode
 		return _buttonPad.isButtonDown();
 	return false;
-}	
+}
 
 const char *InputHandler::_padModeText[] = {
 	"Normal Button Mode",
@@ -367,7 +367,7 @@ const char *InputHandler::_padModeText[] = {
 void InputHandler::init() {
 	sceCtrlSetSamplingCycle(0);	// set sampling to vsync. n = n usecs
 	sceCtrlSetSamplingMode(1);  // analog
-	
+
 	_buttonPad.initButtons();
 }
 
@@ -386,7 +386,7 @@ bool InputHandler::getAllInputs(Common::Event &event) {
 
 	bool haveEvent;
 	//memset(&event, 0, sizeof(event));
-	
+
 	haveEvent = getEvent(event, pad);
 
 	if (haveEvent) {
@@ -407,7 +407,7 @@ bool InputHandler::getEvent(Common::Event &event, SceCtrlData &pad) {
 	} else {	// only process buttonpad if keyboard invisible
 		haveEvent = _buttonPad.getEvent(event, pspEvent, pad);
 	}
-	
+
 	if (!haveEvent && pspEvent.isEmpty())
 		haveEvent = _nub.getEvent(event, pspEvent, pad);
 
@@ -417,20 +417,20 @@ bool InputHandler::getEvent(Common::Event &event, SceCtrlData &pad) {
 			pspEvent = _pendingPspEvent;
 			_pendingPspEvent.clear();
 		}
-	}	
-	
+	}
+
 	// handle any PSP events we might have
 	if (!pspEvent.isEmpty())
 		haveEvent |= handlePspEvent(event, pspEvent);	// overrides any event we might have
-		
+
 	return haveEvent;
 }
 
 bool InputHandler::handlePspEvent(Common::Event &event, PspEvent &pspEvent) {
 	bool haveEvent = false;
-	
+
 	PSP_DEBUG_PRINT("have pspEvent[%d] data[%d]\n", pspEvent.type, pspEvent.data);
-	
+
 	switch (pspEvent.type) {
 	case PSP_EVENT_SHIFT:
 		handleShiftEvent((ShiftMode)pspEvent.data);
@@ -449,11 +449,11 @@ bool InputHandler::handlePspEvent(Common::Event &event, PspEvent &pspEvent) {
 		break;
 	case PSP_EVENT_RBUTTON:
 		haveEvent = true;
-		if (pspEvent.data) // down	
+		if (pspEvent.data) // down
 			handleMouseEvent(event, Common::EVENT_RBUTTONDOWN, "RButtonDown");
 		else
 			handleMouseEvent(event, Common::EVENT_RBUTTONUP, "RButtonUp");
-		break;	
+		break;
 	case PSP_EVENT_MODE_SWITCH:
 		handleModeSwitchEvent();
 		break;
@@ -464,7 +464,7 @@ bool InputHandler::handlePspEvent(Common::Event &event, PspEvent &pspEvent) {
 		PSP_ERROR("Unhandled PSP Event[%d]\n", pspEvent.type);
 		break;
 	}
-	
+
 	return haveEvent;
 }
 
@@ -490,10 +490,10 @@ void InputHandler::handleModeSwitchEvent() {
 		_padMode = (PspPadMode)(_padMode + 1);
 		if (_padMode >= PAD_MODE_LAST)
 			_padMode = PAD_MODE_NORMAL;
-		
+
 		GUI::TimedMessageDialog dialog(_padModeText[_padMode], 1500);
 		dialog.runModal();
-		
+
 		_buttonPad.setPadMode(_padMode);
 		_buttonPad.initButtons();
 	}
@@ -502,10 +502,10 @@ void InputHandler::handleModeSwitchEvent() {
 /*
 void InputHandler::handleSpeedChange(bool up) {
 	char *dialogMsg;
-	
+
 	if (up) {
 		dialogMsg = "
-	
+
 	GUI::TimedMessageDialog dialog(_padModeText[_padMode], 1500);
 	dialog.runModal();
 }*/

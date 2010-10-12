@@ -228,7 +228,7 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 TownsAudioInterface::~TownsAudioInterface() {
 	reset();
 	_ready = false;
-	deinit();	
+	deinit();
 
 	delete[] _fmSaveReg[0];
 	delete[] _fmSaveReg[1];
@@ -495,7 +495,7 @@ int TownsAudioInterface::intf_enableTimerB(va_list &args) {
 int TownsAudioInterface::intf_loadSamples(va_list &args) {
 	uint32 dest = va_arg(args, uint32);
 	int size = va_arg(args, int);
-	uint8 *src = va_arg(args, uint8*);	
+	uint8 *src = va_arg(args, uint8*);
 
 	if (dest >= 65536 || size == 0 || size > 65536)
 		return 3;
@@ -567,7 +567,7 @@ int TownsAudioInterface::intf_loadWaveTable(va_list &args) {
 
 	TownsAudio_WaveTable *s = &_waveTables[_numWaveTables++];
 	s->readHeader(data);
-	
+
 	_waveTablesTotalDataSize += s->size;
 	callback(32, _waveTablesTotalDataSize, s->size, data + 32);
 
@@ -723,11 +723,11 @@ int TownsAudioInterface::intf_setOutputVolume(va_list &args) {
 	static const uint8 flags[] = { 0x0C, 0x30, 0x40, 0x80 };
 
 	uint8 chan = (chanType & 0x40) ? 8 : 12;
-	
+
 	chanType &= 3;
 	left = (left & 0x7e) >> 1;
 	right = (right & 0x7e) >> 1;
-	
+
 	if (chan)
 		_outputVolumeFlags |= flags[chanType];
 	else
@@ -1399,13 +1399,13 @@ void TownsAudioInterface::updateOutputVolume() {
 	// FM Towns seems to support volumes of 0 - 63 for each channel.
 	// We recalculate sane values for our 0 to 255 volume range and
 	// balance values for our -128 to 127 volume range
-	
+
 	// CD-AUDIO
 	uint32 maxVol = MAX(_outputLevel[12], _outputLevel[13]);
-	
+
 	int volume = (int)(((float)(maxVol * 255) / 63.0f));
 	int balance = maxVol ? (int)( ( ((int)_outputLevel[13] - _outputLevel[12]) * 127) / (float)maxVol) : 0;
-	
+
 	AudioCD.setVolume(volume);
 	AudioCD.setBalance(balance);
 }

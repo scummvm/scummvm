@@ -15,7 +15,7 @@ dingux-dist: all
 	$(MKDIR) $(bundle_name)
 	$(MKDIR) $(bundle_name)/saves
 	$(STRIP) $(EXECUTABLE) -o $(bundle_name)/scummvm.elf
-	$(CP) $(DIST_FILES_THEMES) $(bundle_name)/ 
+	$(CP) $(DIST_FILES_THEMES) $(bundle_name)/
 ifdef DIST_FILES_ENGINEDATA
 	$(CP) $(DIST_FILES_ENGINEDATA) $(bundle_name)/
 endif

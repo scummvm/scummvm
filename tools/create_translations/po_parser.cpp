@@ -356,13 +356,13 @@ char *stripLine(char *line) {
 				break;
 			case 't':
 				line[i++] = '\t';
-				break;				
+				break;
 			case '\"':
 				line[i++] = '\"';
 				break;
 			case '\'':
 				line[i++] = '\'';
-				break;				
+				break;
 			case '\\':
 				line[i++] = '\\';
 				break;

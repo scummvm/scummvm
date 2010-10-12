@@ -15,7 +15,7 @@ AR = $(GCCN64PREFIX)ar cru
 RANLIB = $(GCCN64PREFIX)ranlib
 
 DEFINES += -D__N64__ -DLIMIT_FPS -DNONSTANDARD_PORT -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_FANCY_THEMES -DDISABLE_DOSBOX_OPL -DENABLE_VKEYBD -DUSE_ZLIB
-LIBS += -lpakfs -lframfs -ln64 -ln64utils -lromfs 
+LIBS += -lpakfs -lframfs -ln64 -ln64utils -lromfs
 
 #DEFINES += -D_ENABLE_DEBUG_
 
@@ -31,7 +31,7 @@ DEFINES += -DUSE_VORBIS -DUSE_TREMOR
 LIBS	+= -lvorbisidec
 endif
 
-LIBS += -lm -lstdc++ -lc -lgcc -lz -lnosys 
+LIBS += -lm -lstdc++ -lc -lgcc -lz -lnosys
 
 CXXFLAGS = -g -mno-extern-sdata -O2 --param max-inline-insns-auto=20 -fomit-frame-pointer -march=vr4300 -mtune=vr4300 -mhard-float -fno-rtti -fno-exceptions -Wno-multichar -Wshadow -I$(LIBN64PATH) -I$(TOOLPATH)/include -I./ -I$(srcdir) -I$(srcdir)/engines
 LDFLAGS = -g -march=vr4300 -mtune=vr4300 -nodefaultlibs -nostartfiles -mno-crt0 -L$(LIBN64PATH) -L$(TOOLPATH)/lib $(LIBS) -T n64ld_cpp.x -Xlinker -Map -Xlinker scummvm.map

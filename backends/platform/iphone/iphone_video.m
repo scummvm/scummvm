@@ -233,7 +233,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 	if (_screenTexture)
 		free(_textureBuffer);
-	
+
 	free(_overlayTexBuffer);
 }
 
@@ -265,9 +265,9 @@ bool getLocalMouseCoords(CGPoint *point) {
 	}
 
 	[self updateMainSurface];
-	
+
 	if (_overlayIsEnabled) {
-		[self updateOverlaySurface];		
+		[self updateOverlaySurface];
 		[self updateMouseSurface];
 	}
 
@@ -350,7 +350,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 }
 
 - (void)updateMouseSurface {
-	
+
 	int width = _mouseCursorWidth / (float)_backingWidth * _backingHeight;
 	int height = _mouseCursorHeight / (float)_backingHeight * _backingWidth;
 
@@ -378,7 +378,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
 	glEnable(GL_BLEND);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();	
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
 - (void)initSurface {

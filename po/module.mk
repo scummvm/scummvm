@@ -39,7 +39,7 @@ updatepot:
 translations-dat: tools/create_translations
 	tools/create_translations/create_translations $(POFILES)
 	mv translations.dat $(srcdir)/gui/themes/
- 
+
 update-translations: updatepot $(POFILES) translations-dat
 
 update-translations: updatepot $(POFILES)

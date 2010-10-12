@@ -243,7 +243,7 @@
 	#define SCUMM_NEED_ALIGNMENT
 	#endif
 
-	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library 
+	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
 	// "toupper" when pressing keyboard function keys.
 	#if defined(DINGUX)
 	#undef toupper
@@ -322,7 +322,7 @@
 
 	#define	SCUMM_LITTLE_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
-	
+
 	/* to make an efficient, inlined memcpy implementation */
 	#define memcpy(dst, src, size)   psp_memcpy(dst, src, size)
 

@@ -816,7 +816,7 @@ int main(int argc, char *argv[]) {
 	writeUint16BE(outFile, kALnewscr_2d);
 	writeUint16BE(outFile, 0);
 
-	// The following fonts info have been added to avoid temporarly the .FON 
+	// The following fonts info have been added to avoid temporarly the .FON
 	// used in the DOS version
 	// font5
 	nbrElem = sizeof(font5) / sizeof(byte);

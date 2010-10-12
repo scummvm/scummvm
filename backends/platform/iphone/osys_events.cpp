@@ -74,7 +74,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 					y = (int)((1.0 - xUnit) * _overlayHeight);
 				} else {
 					x = (int)(yUnit * _screenWidth);
-					y = (int)((1.0 - xUnit) * _screenHeight);					
+					y = (int)((1.0 - xUnit) * _screenHeight);
 				}
 				break;
 			case kScreenOrientationFlippedLandscape:
@@ -279,7 +279,7 @@ bool OSystem_IPHONE::handleEvent_mouseDragged(Common::Event &event, int x, int y
 
 		int widthCap = _overlayVisible ? _overlayWidth : _screenWidth;
 		int heightCap = _overlayVisible ? _overlayHeight : _screenHeight;
-		
+
 		if (mouseNewPosX < 0)
 			mouseNewPosX = 0;
 		else if (mouseNewPosX > widthCap)

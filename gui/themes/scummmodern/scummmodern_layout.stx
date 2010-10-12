@@ -344,7 +344,7 @@
 				<widget name = 'auPrefGmPopup'
 						type = 'PopUp'
 				/>
-			</layout>			
+			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'mcFontButton'
 						type = 'Button'

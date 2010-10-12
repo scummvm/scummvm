@@ -845,7 +845,7 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 	memset(&_timers[1], 0, sizeof(ChipTimer));
 
 	_timers[0].cb = _timers[1].cb = &TownsPC98_FmSynth::idleTimerCallback;
-	_timerbase = (uint32)(_baserate * 1000000.0f);	
+	_timerbase = (uint32)(_baserate * 1000000.0f);
 }
 
 TownsPC98_FmSynth::~TownsPC98_FmSynth() {
@@ -1179,7 +1179,7 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 
 void TownsPC98_FmSynth::deinit() {
 	_ready = false;
-	_mixer->stopHandle(_soundHandle);	
+	_mixer->stopHandle(_soundHandle);
 	Common::StackLock lock(_mutex);
 	_timers[0].cb = _timers[1].cb = &TownsPC98_FmSynth::idleTimerCallback;
 }

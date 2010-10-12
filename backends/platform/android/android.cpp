@@ -1330,7 +1330,7 @@ static void ScummVM_enableZoning(JNIEnv* env, jobject self, jboolean enable) {
 static void ScummVM_setSurfaceSize(JNIEnv* env, jobject self,
 								   jint width, jint height) {
 	OSystem_Android* cpp_obj = OSystem_Android::fromJavaObject(env, self);
-	cpp_obj->setSurfaceSize(width, height);	
+	cpp_obj->setSurfaceSize(width, height);
 }
 
 const static JNINativeMethod gMethods[] = {

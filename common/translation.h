@@ -116,7 +116,7 @@ public:
 	 * it returns the original untranslated message.
 	 */
 	String getTranslation(const String &message);
-	
+
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
@@ -127,7 +127,7 @@ public:
 	 * massage without a context or with a different context.
 	 */
 	const char *getTranslation(const char *message, const char *context);
-	
+
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
@@ -213,6 +213,6 @@ private:
 
 #define _s(str) str
 #define _sc(str, ctxt) str
-#define DECLARE_TRANSLATION_ADDITIONAL_CONTEXT(str, ctxt) 
+#define DECLARE_TRANSLATION_ADDITIONAL_CONTEXT(str, ctxt)
 
 #endif

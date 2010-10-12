@@ -33,7 +33,7 @@ class Tooltip : public Dialog {
 public:
 	Tooltip();
 	~Tooltip() {}
-	
+
 	void drawDialog();
 	bool tooltipModal(int x, int y);
 	void mustClose();
@@ -44,7 +44,8 @@ protected:
 	int _xdelta, _ydelta;
 
 	Common::StringArray _wrappedLines;
-}; 
-}
+};
 
-#endif
+} // End of namespace GUI
+
+#endif // GUI_TOOLTIP_H

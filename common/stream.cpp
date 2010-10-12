@@ -286,7 +286,7 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 		// Satisfy the request from the buffer
 		memcpy(dataPtr, _buf + _pos, dataSize);
 		_pos += dataSize;
-	}	
+	}
 	return alreadyRead + dataSize;
 }
 
@@ -301,7 +301,7 @@ bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 	// Note: We could try to handle SEEK_END and SEEK_SET, too, but
 	// since they are rarely used, it seems not worth the effort.
 	_eos = false;	// seeking always cancels EOS
-	
+
 	if (whence == SEEK_CUR && (int)_pos + offset >= 0 && _pos + offset <= _bufSize) {
 		_pos += offset;
 
@@ -332,10 +332,10 @@ BufferedWriteStream::BufferedWriteStream(WriteStream *parentStream, uint32 bufSi
 
 BufferedWriteStream::~BufferedWriteStream() {
 	assert(flush());
-	
+
 	if (_disposeParentStream)
 		delete _parentStream;
-		
+
 	delete[] _buf;
 }
 
@@ -343,7 +343,7 @@ uint32 BufferedWriteStream::write(const void *dataPtr, uint32 dataSize) {
 	// check if we have enough space for writing to the buffer
 	if (_bufSize - _pos >= dataSize) {
 		memcpy(_buf + _pos, dataPtr, dataSize);
-		_pos += dataSize;			
+		_pos += dataSize;
 	} else if (_bufSize >= dataSize) {	// check if we can flush the buffer and load the data
 		// flush the buffer
 		assert(flushBuffer());
@@ -351,7 +351,7 @@ uint32 BufferedWriteStream::write(const void *dataPtr, uint32 dataSize) {
 		_pos += dataSize;
 	} else	{	// too big for our buffer
 		// flush the buffer
-		assert(flushBuffer());			
+		assert(flushBuffer());
 		return _parentStream->write(dataPtr, dataSize);
 	}
 	return dataSize;
@@ -359,7 +359,7 @@ uint32 BufferedWriteStream::write(const void *dataPtr, uint32 dataSize) {
 
 bool BufferedWriteStream::flushBuffer() {
 	uint32 bytesToWrite = _pos;
-	
+
 	if (bytesToWrite) {
 		_pos = 0;
 		if (_parentStream->write(_buf, bytesToWrite) != bytesToWrite)

@@ -318,7 +318,7 @@ protected:
 
 	// Scroll lock state - since SDL doesn't track it
 	bool _scrollLock;
-	
+
 	// joystick
 	SDL_Joystick *_joystick;
 	bool _stickBtn[32];

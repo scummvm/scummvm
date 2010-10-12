@@ -131,7 +131,7 @@ void TownsEuphonyDriver::unloadWaveTable(int id) {
 void TownsEuphonyDriver::reserveSoundEffectChannels(int num) {
 	_intf->callback(33, num);
 	uint32 volMask = 0;
-	
+
 	if (num > 8)
 		return;
 
@@ -139,7 +139,7 @@ void TownsEuphonyDriver::reserveSoundEffectChannels(int num) {
 		volMask |= v;
 		v >>= 1;
 	}
-	
+
 	_intf->setSoundEffectChanMask(volMask);
 }
 

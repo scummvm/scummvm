@@ -1343,17 +1343,17 @@ const char *vBolt_1w[]      = {"bolt", "~", "bolt", ""};
 const char *vHero_1w[]      = {"hero", "self", "Hugo", "hugo", ""};
 
 const char **arrayVerbs_1w[]  = {
-	vDummy,     vMakeUseOf_1w, vMagic_1w,     vOpen_1w,   vClose_1w,     
-	vUnlock_1w, vLock_1w,      vPush_1w,      vGive_1w,   vRude_1w,   
-	vOff_1w,    vInto_1w,      vOutof_1w,     vCrap_1w,   vRide_1w,      
-	vTake_1w,   vDrop_1w,      vAttack_1w,    vBreak_1w,  vThrowit_1w,   
-	vWear_1w,   vRub_1w,       vOil_1w,       vMove_1w,   vLift_1w,      
-	vDig_1w,    vUnder_1w,     vLook_1w,      vEat_1w,    vBlow_1w,      
-	vUntie_1w,  vCut_1w,       vTalk_1w,      vPlug_1w,   vShout_1w,     
-	vQuery_1w,  vJump_1w,      vGo_1w,        vEnter_1w,  vClimb_1w,     
-	vSwitch_1w, vListen_1w,    vKnock_1w,     vSmell_1w,  vSit_1w,       
-	vKiss_1w,   vUnbolt_1w,    vLakeverbs_1w, vHelp_1w,   vDrink_1w,     
-	vSweep_1w,  vFeed_1w,      vWash_1w,      vStroke_1w, vHide_1w,      
+	vDummy,     vMakeUseOf_1w, vMagic_1w,     vOpen_1w,   vClose_1w,
+	vUnlock_1w, vLock_1w,      vPush_1w,      vGive_1w,   vRude_1w,
+	vOff_1w,    vInto_1w,      vOutof_1w,     vCrap_1w,   vRide_1w,
+	vTake_1w,   vDrop_1w,      vAttack_1w,    vBreak_1w,  vThrowit_1w,
+	vWear_1w,   vRub_1w,       vOil_1w,       vMove_1w,   vLift_1w,
+	vDig_1w,    vUnder_1w,     vLook_1w,      vEat_1w,    vBlow_1w,
+	vUntie_1w,  vCut_1w,       vTalk_1w,      vPlug_1w,   vShout_1w,
+	vQuery_1w,  vJump_1w,      vGo_1w,        vEnter_1w,  vClimb_1w,
+	vSwitch_1w, vListen_1w,    vKnock_1w,     vSmell_1w,  vSit_1w,
+	vKiss_1w,   vUnbolt_1w,    vLakeverbs_1w, vHelp_1w,   vDrink_1w,
+	vSweep_1w,  vFeed_1w,      vWash_1w,      vStroke_1w, vHide_1w,
 	vBolt_1w,   vHero_1w
 };
 
@@ -1369,7 +1369,7 @@ const char *vFire_2w[]      = {"fire", "shoot", ""};
 
 const char *vSwitch_2w[]    = {"switch", "~", "switch", ""};
 const char *vHello_2w[]     = {"hello", "hi ", " hi", ""};
-const char *vRude_2w[]      = {"fuck", "fart", "screw ", ""};// Must come before off 
+const char *vRude_2w[]      = {"fuck", "fart", "screw ", ""};// Must come before off
 const char *vScribble_2w[]  = {"scribble", ""};
 
 const char **arrayVerbs_2w[] = {
@@ -1413,7 +1413,7 @@ const char *vDouse_3w[]    = {"douse", "extinguish", "put out", ""};
 const char *vExorcise_3w[] = {"exorcise", "banish", "frighten", "scare", ""};
 
 const char *vHello_3w[]    = {"hello", "hi ", " hi", "howd", ""};
-const char *vRude_3w[]     = {"fuck", "fart", "screw ", "shit", ""};  // Must come before off 
+const char *vRude_3w[]     = {"fuck", "fart", "screw ", "shit", ""};  // Must come before off
 const char *vNaughty_3w[]  = {"fondle", "breasts", "tits", "fanny", "kiss", ""};
 const char *vPut_3w[]      = {"put ", ""};
 const char *vSwim_3w[]     = {"swim", "wade", ""};
@@ -1535,7 +1535,7 @@ const char *vWind_2d[]     = {"wind", "turn", "rotate", "winch", ""};  // As in 
 const char *vTie_2d[]      = {"tie ", "attach", ""};
 const char *vStroke_2d[]   = {"stroke", "pet ", ""};
 const char *vUnscrew_2d[]  = {"unscrew", ""};               // Must come before rude
-const char *vRude_2d[]     = {"fuck", "fart", "screw ", ""};  // Must come before off 
+const char *vRude_2d[]     = {"fuck", "fart", "screw ", ""};  // Must come before off
 const char *vUndress_2d[]  = {"undress", ""};               // Must come before take
 const char *vPlay_2d[]     = {"play", ""};
 const char *vWish_2d[]     = {"wish", ""};
@@ -3290,7 +3290,7 @@ background_t catchall_1d[] = { // Generally applicable phrases
 	{kVRude_1d,   0,            kSTnorude_1d, false, 0, 0},
 	{kVKnock_1d,  0,            kSTnoknock_1d, false, 0, 0},
 	{kVTake_1d,   kNPicture_1d, kSTnopurps_1d, false, 0, 0},
-	{0, 0, 0, false, 0, 0} 
+	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen0_desc_1d[] = {      // Outside house
@@ -3682,7 +3682,7 @@ background_t screen10_desc_2d[] = {      // Venus fly traps
 	{0, 0, 0, false, 0, 0}
 };
 
-background_t screen11_desc_2d[] = {      // Gates kVOpen_2d, 
+background_t screen11_desc_2d[] = {      // Gates kVOpen_2d,
 	{kVLook_2d,  0,      kSTS11look_2d, true, 0, 0},
 	{kVClose_2d, kNDoor_2d, kSTNopurps_2d, false, 0, 0},
 	{0, 0, 0, false, 0, 0}

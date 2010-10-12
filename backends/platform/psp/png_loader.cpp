@@ -33,7 +33,7 @@ PngLoader::Status PngLoader::allocate() {
 	if (!findImageDimensions()) {
 		PSP_ERROR("failed to get image dimensions\n");
 		return BAD_FILE;
-	}	
+	}
 
 	PSP_DEBUG_PRINT("width[%d], height[%d], paletteSize[%d], bitDepth[%d]\n", _width, _height, _paletteSize, _bitDepth);
 	_buffer->setSize(_width, _height, _sizeBy);
@@ -65,7 +65,7 @@ PngLoader::Status PngLoader::allocate() {
 		return OUT_OF_MEMORY;
 	}
 	return OK;
-}	
+}
 
 bool PngLoader::load() {
 	// Try to load the image
@@ -74,8 +74,8 @@ bool PngLoader::load() {
 	if (!loadImageIntoBuffer()) {
 		PSP_DEBUG_PRINT("failed to load image\n");
 		return false;
-	} 
-	
+	}
+
 	PSP_DEBUG_PRINT("succeded in loading image\n");
 
 	if (_paletteSize == 16)		// 4-bit
@@ -99,11 +99,11 @@ void PngLoader::libReadFunc(png_structp pngPtr, png_bytep data, png_size_t lengt
 
 bool PngLoader::basicImageLoad() {
 	_pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (!_pngPtr) 
+	if (!_pngPtr)
 		return false;
-		
+
 	png_set_error_fn(_pngPtr, (png_voidp) NULL, (png_error_ptr) NULL, warningFn);
-	
+
 	_infoPtr = png_create_info_struct(_pngPtr);
 	if (!_infoPtr) {
 		png_destroy_read_struct(&_pngPtr, png_infopp_NULL, png_infopp_NULL);
@@ -113,16 +113,16 @@ bool PngLoader::basicImageLoad() {
 	png_set_read_fn(_pngPtr, (void *)_file, libReadFunc);
 
 	unsigned int sig_read = 0;
-	
+
 	png_set_sig_bytes(_pngPtr, sig_read);
 	png_read_info(_pngPtr, _infoPtr);
 	int interlaceType;
-	png_get_IHDR(_pngPtr, _infoPtr, (png_uint_32 *)&_width, (png_uint_32 *)&_height, &_bitDepth, 
+	png_get_IHDR(_pngPtr, _infoPtr, (png_uint_32 *)&_width, (png_uint_32 *)&_height, &_bitDepth,
 		&_colorType, &interlaceType, int_p_NULL, int_p_NULL);
 
 	if (_colorType & PNG_COLOR_MASK_PALETTE)
 		_paletteSize = _infoPtr->num_palette;
-		
+
 	return true;
 }
 
@@ -132,7 +132,7 @@ bool PngLoader::findImageDimensions() {
 
 	if (!basicImageLoad())
 		return false;
-	
+
 	png_destroy_read_struct(&_pngPtr, &_infoPtr, png_infopp_NULL);
 	return true;
 }
@@ -145,7 +145,7 @@ bool PngLoader::loadImageIntoBuffer() {
 
 	if (!basicImageLoad())
 		return false;
-	
+
 	// Strip off 16 bit channels. Not really needed but whatever
 	png_set_strip_16(_pngPtr);
 
@@ -158,11 +158,11 @@ bool PngLoader::loadImageIntoBuffer() {
 			srcPal++;
 		}
 	} else {	// Not a palettized image
-		if (_colorType == PNG_COLOR_TYPE_GRAY && _bitDepth < 8) 
+		if (_colorType == PNG_COLOR_TYPE_GRAY && _bitDepth < 8)
 			png_set_gray_1_2_4_to_8(_pngPtr);	// Round up grayscale images
-		if (png_get_valid(_pngPtr, _infoPtr, PNG_INFO_tRNS)) 
+		if (png_get_valid(_pngPtr, _infoPtr, PNG_INFO_tRNS))
 			png_set_tRNS_to_alpha(_pngPtr);		// Convert trans channel to alpha for 32 bits
-		
+
 		png_set_filler(_pngPtr, 0xff, PNG_FILLER_AFTER);	// Filler for alpha?
 	}
 
@@ -172,7 +172,7 @@ bool PngLoader::loadImageIntoBuffer() {
 		PSP_ERROR("Couldn't allocate line\n");
 		return false;
 	}
-	
+
 	for (size_t y = 0; y < _height; y++) {
 		png_read_row(_pngPtr, line, png_bytep_NULL);
 		_buffer->copyFromRect(line, _infoPtr->rowbytes, 0, y, _width, 1);	// Copy into buffer

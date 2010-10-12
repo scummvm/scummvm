@@ -6,7 +6,7 @@ MODULE_OBJS := \
 	osys_n64_events.o \
 	osys_n64_utilities.o \
 	pakfs_save_manager.o \
-	framfs_save_manager.o 
+	framfs_save_manager.o
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))

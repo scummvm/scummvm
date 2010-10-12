@@ -27,7 +27,7 @@
 #
 # Table of email addresse of contributors: Sometimes we need to add new
 #   information to this table, or need to verify the correctness of an
-#   entry. To do this, it is vital that we (1) record from who a given 
+#   entry. To do this, it is vital that we (1) record from who a given
 #   piece of information comes, and (2) how to reach that person.
 #   Hopefully, this table will help a bit. Please extend it as needed.
 #

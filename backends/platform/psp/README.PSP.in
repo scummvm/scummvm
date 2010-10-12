@@ -32,9 +32,9 @@ Right trigger			- Input letters: lowercase/uppercase (press to toggle)
 Left trigger			- Input numbers/symbols (press to toggle)
 D-Pad					- Select square of characters (up, down, left or right)
 Buttons/Triggers		- Choose a specific character in the square. The four center characters are chosen
-						  by the button in the corresponding position. The 2 top characters are chosen by the 
+						  by the button in the corresponding position. The 2 top characters are chosen by the
 						  triggers.
-Analog					- Moves in a direction (left/right/up/down) (Useful to keep moving 
+Analog					- Moves in a direction (left/right/up/down) (Useful to keep moving
 						  while typing in AGI games among other things)
 
 1st Person Game Mode (Can be ignored by most users)
@@ -49,9 +49,9 @@ Square					- Is the modifier key instead of Right Trigger.
 Left/Right Trigger		- Strafe left/right
 D-Pad Left/Right		- Turn left/right
 Square + D-Pad			- F1/F2/F3/F4
-Square + Start			- Esc (shows game menu)		  
+Square + Start			- Esc (shows game menu)
 
-						  
+
 Notes
 =====
 - Notice that you can switch between games! This is much faster than quitting
@@ -61,7 +61,7 @@ Notes
 - The PSP version of ScummVM uses the Media Engine to accelerate decoding of MP3 files. This means
   that if you have the choice of compressing using Ogg files or MP3 files, choose MP3 -- the game
   will generally run faster.
-  
+
 - Plugin files are NOT interchangeable between ScummVM versions! You must copy ALL the
   plugin files that come with every version of ScummVM. They sit in the /plugin
   subdirectory. If you get a crash upon startup, try deleting all the existing
@@ -85,7 +85,7 @@ A:  A PSP that can run homebrew and the necessary datafiles for the game you wan
 Q:  Can I run game X with this?
 A:  You can find the list of supported games on the compatibility page
     at http://www.scummvm.org
-    Note that ScummVM is NOT an emulator. The supported games engines have been painstakingly rewritten. 
+    Note that ScummVM is NOT an emulator. The supported games engines have been painstakingly rewritten.
 	It's not easy to add support for a game you want that currently isn't supported.
 
 Q:  My Monkey Island 1 doesn't have any music, what gives?
@@ -128,7 +128,7 @@ To build ScummVM for PSP you need:
 (*) = optional
 
 Once you've installed these libraries (read their README.PSP for instructions),
-create a subdirectory in your ScummVM folder called 'builds/psp'. Then, in this folder, type 
+create a subdirectory in your ScummVM folder called 'builds/psp'. Then, in this folder, type
 '../../configure --host=psp --enable-plugins --default-dynamic'. If everything is installed
 correctly, ScummVM will inform you as it finds the right components. Finally type 'make' to build.
 

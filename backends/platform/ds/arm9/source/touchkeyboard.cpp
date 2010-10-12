@@ -177,7 +177,7 @@ void drawText(int tx, int ty, const char *string, bool highlight) {
 			baseAddress[ty * 32 + tx + p] = baseValue | tile;
 		}
 	}
-	
+
 }
 
 
@@ -292,7 +292,7 @@ void drawAutoComplete() {
 		// When there's no completions on the bottom of the screen, it acts like a mouse pad
 		// so this text indicates that
 		drawText(11, 18, "MOUSE AREA", true);
-		
+
 
 	} else {
 
@@ -303,10 +303,10 @@ void drawAutoComplete() {
 		for (int r = 0; r < autoCompleteCount; r++) {
 			int y = 12 + (r % 6) * 2;
 			int x = 0 + ((r / 6) * 16);
-	
+
 			drawText(x, y, autoCompleteWord[r], selectedCompletion == r);
 		}
-	
+
 	}
 }
 

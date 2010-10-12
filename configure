@@ -361,7 +361,7 @@ get_system_exe_extension() {
 	case $1 in
 	arm-riscos)
 		_exeext=",ff8"
-		;;	
+		;;
 	dreamcast | ds | gamecube | n64 | ps2 | psp | wii)
 		_exeext=".elf"
 		;;
@@ -736,7 +736,7 @@ Optional Libraries:
 
   --disable-indeo3         disable Indeo3 decoder [autodetect]
 
-  --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is 
+  --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
@@ -957,7 +957,7 @@ caanoo)
 	if test "$_release_build" = auto; then
 		# Enable release build by default.
 		_release_build=yes
-	fi	
+	fi
 	;;
 dingux)
 	_host_os=linux
@@ -993,7 +993,7 @@ gp2x)
 	if test "$_release_build" = auto; then
 		# Enable release build by default.
 		_release_build=yes
-	fi	
+	fi
 	;;
 gp2xwiz)
 	_host_os=gph-linux
@@ -1007,7 +1007,7 @@ gp2xwiz)
 	if test "$_release_build" = auto; then
 		# Enable release build by default.
 		_release_build=yes
-	fi	
+	fi
 	;;
 i586-mingw32msvc)
 	_host_os=mingw32msvc
@@ -1032,7 +1032,7 @@ motomagx)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
-n64)	
+n64)
 	_host_os=n64
 	_host_cpu=mips
 	_host_alias=mips64
@@ -1053,7 +1053,7 @@ openpandora)
 	if test "$_release_build" = auto; then
 		# Enable release build by default.
 		_release_build=yes
-	fi	
+	fi
 	;;
 ppc-amigaos)
 	_host_os=amigaos
@@ -1601,7 +1601,7 @@ if test -n "$_host"; then
 		caanoo)
 			DEFINES="$DEFINES -DCAANOO -DREDUCE_MEMORY_USAGE"
 			# Disable DOSBOX OPL for now.
-			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"	
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
 			if test "$_debug_build" = yes; then
 				DEFINES="$DEFINES -DGPH_DEBUG"
 			else
@@ -1623,7 +1623,7 @@ if test -n "$_host"; then
 			_vkeybd=yes
 			_seq_midi=no
 			_port_mk="backends/platform/gph/caanoo-bundle.mk"
-			;;			
+			;;
 		*darwin*)
 			_ranlib=$_host-ranlib
 			_strip=$_host-strip
@@ -1692,7 +1692,7 @@ if test -n "$_host"; then
 		gp2x)
 			DEFINES="$DEFINES -DGP2X -DREDUCE_MEMORY_USAGE"
 			# Disable DOSBOX OPL for now.
-			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"	
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
 			if test "$_debug_build" = yes; then
 				DEFINES="$DEFINES -DGPH_DEBUG"
 			fi
@@ -1833,7 +1833,7 @@ if test -n "$_host"; then
 		openpandora)
 			DEFINES="$DEFINES -DOPENPANDORA -DREDUCE_MEMORY_USAGE"
 			# Disable DOSBOX OPL for now.
-			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"			
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
 			if test "$_release_build" = no; then
 				DEFINES="$DEFINES -DOP_DEBUG"
 			else
@@ -1855,7 +1855,7 @@ if test -n "$_host"; then
 			_vkeybd=no
 			_seq_midi=no
 			_port_mk="backends/platform/openpandora/op-bundle.mk"
-			;;	
+			;;
 		ppc-amigaos)
 			_endian=big
 			_need_memalign=yes

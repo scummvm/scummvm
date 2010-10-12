@@ -1054,7 +1054,7 @@ void LauncherDialog::updateButtons() {
 	int modifiers = g_system->getEventManager()->getModifierState();
 	const bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
 	const bool lowRes = g_system->getOverlayWidth() <= 320;
-	
+
 	const char *newAddButtonLabel = massAdd
 		? (lowRes ? _c("Mass Add...", "lowres") : _("Mass Add..."))
 		: (lowRes ? _c("Add Game...", "lowres") : _("Add Game..."));

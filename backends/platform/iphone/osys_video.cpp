@@ -266,7 +266,7 @@ void OSystem_IPHONE::drawDirtyRect(const Common::Rect& dirtyRect) {
 
 void OSystem_IPHONE::drawDirtyOverlayRect(const Common::Rect& dirtyRect) {
 	// int h = dirtyRect.bottom - dirtyRect.top;
-	// 
+	//
 	// uint16 *src = (uint16 *)&_overlayBuffer[dirtyRect.top * _screenWidth + dirtyRect.left];
 	// uint16 *dst = &_fullscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
 	// int x = (dirtyRect.right - dirtyRect.left) * 2;
@@ -275,7 +275,7 @@ void OSystem_IPHONE::drawDirtyOverlayRect(const Common::Rect& dirtyRect) {
 	// 	src += _screenWidth;
 	// 	dst += _screenWidth;
 	// }
-	iPhone_updateOverlayRect(_overlayBuffer, dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom );	
+	iPhone_updateOverlayRect(_overlayBuffer, dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom);
 }
 
 void OSystem_IPHONE::drawMouseCursorOnRectUpdate(const Common::Rect& updatedRect, const Common::Rect& mouseRect) {

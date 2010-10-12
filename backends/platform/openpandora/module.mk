@@ -6,7 +6,7 @@ MODULE_OBJS := \
 	op-main.o
 
 MODULE_DIRS += \
-	backends/platform/openpandora/ 
+	backends/platform/openpandora/
 
 # We don't use the rules.mk here on purpose
 OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS)) $(OBJS)

@@ -11,14 +11,14 @@ gp2xwiz-bundle: $(EXECUTABLE)
 	$(MKDIR) "$(bundle_name)/scummvm/saves"
 	$(MKDIR) "$(bundle_name)/scummvm/engine-data"
 	$(MKDIR) "$(bundle_name)/scummvm/lib"
-	
+
 	echo "Please put your save games in this dir" >> "$(bundle_name)/scummvm/saves/PUT_SAVES_IN_THIS_DIR"
 
 	$(CP) $(srcdir)/backends/platform/gph/build/scummvm.gpe $(bundle_name)/scummvm/
 	$(CP) $(srcdir)/backends/platform/gph/build/scummvm.png $(bundle_name)/scummvm/
 	$(CP) $(srcdir)/backends/platform/gph/build/scummvmb.png $(bundle_name)/scummvm/
 	$(CP) $(srcdir)/backends/platform/gph/build/README-GP2XWIZ $(bundle_name)/scummvm/
-	$(CP) $(srcdir)/backends/platform/gph/build/scummvm.ini $(bundle_name)/	
+	$(CP) $(srcdir)/backends/platform/gph/build/scummvm.ini $(bundle_name)/
 
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) $(bundle_name)/scummvm/
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)/scummvm/
@@ -32,12 +32,12 @@ ifdef DYNAMIC_MODULES
 	$(INSTALL) -c -m 644 $(PLUGINS) "$(bundle_name)/scummvm/plugins"
 	$(STRIP) $(bundle_name)/scummvm/plugins/*
 endif
-	
+
 	$(CP) $(libloc)/../lib/libz.so.1.2.3 $(bundle_name)/scummvm/lib/libz.so.1
 	$(CP) $(libloc)/../lib/libvorbisidec.so.1.0.2 $(bundle_name)/scummvm/lib/libvorbisidec.so.1
 
 	tar -C $(bundle_name) -cvjf $(bundle_name).tar.bz2 .
-	rm -R ./$(bundle_name)	
+	rm -R ./$(bundle_name)
 
 gp2xwiz-bundle-debug: $(EXECUTABLE)
 	$(MKDIR) "$(bundle_name)"
@@ -45,14 +45,14 @@ gp2xwiz-bundle-debug: $(EXECUTABLE)
 	$(MKDIR) "$(bundle_name)/scummvm/saves"
 	$(MKDIR) "$(bundle_name)/scummvm/engine-data"
 	$(MKDIR) "$(bundle_name)/scummvm/lib"
-	
+
 	echo "Please put your save games in this dir" >> "$(bundle_name)/scummvm/saves/PUT_SAVES_IN_THIS_DIR"
 
 	$(CP) $(srcdir)/backends/platform/gph/build/scummvm-gdb.gpe $(bundle_name)/scummvm/scummvm.gpe
 	$(CP) $(srcdir)/backends/platform/gph/build/scummvm.png $(bundle_name)/scummvm/
 	$(CP) $(srcdir)/backends/platform/gph/build/scummvmb.png $(bundle_name)/scummvm/
 	$(CP) $(srcdir)/backends/platform/gph/build/README-GP2XWIZ $(bundle_name)/scummvm/
-	$(CP) $(srcdir)/backends/platform/gph/build/scummvm.ini $(bundle_name)/	
+	$(CP) $(srcdir)/backends/platform/gph/build/scummvm.ini $(bundle_name)/
 
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) $(bundle_name)/scummvm/
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)/scummvm/
@@ -65,11 +65,11 @@ ifdef DYNAMIC_MODULES
 	$(INSTALL) -d "$(bundle_name)/scummvm/plugins"
 	$(INSTALL) -c -m 644 $(PLUGINS) "$(bundle_name)/scummvm/plugins"
 endif
-	
+
 	$(CP) $(libloc)/../lib/libz.so.1.2.3 $(bundle_name)/scummvm/lib/libz.so.1
 	$(CP) $(libloc)/../lib/libvorbisidec.so.1.0.2 $(bundle_name)/scummvm/lib/libvorbisidec.so.1
 
 	tar -C $(bundle_name) -cvjf $(bundle_name)-debug.tar.bz2 .
-	rm -R ./$(bundle_name)	
+	rm -R ./$(bundle_name)
 
 .PHONY: gp2xwiz-bundle gp2xwiz-bundle-debug

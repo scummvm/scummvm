@@ -42,8 +42,8 @@
 #define NUM_INTRO_TICK_V3 36
 
 // We use intro_tick as an index into the following coordinate list for the plane path.
-// This is only used in v3. 
-// v1 Dos uses TICKS too, for displaying the texts at a specific pace. x and y arrays 
+// This is only used in v3.
+// v1 Dos uses TICKS too, for displaying the texts at a specific pace. x and y arrays
 // are dummy
 const byte x_intro_dummy[] = { 0 };
 

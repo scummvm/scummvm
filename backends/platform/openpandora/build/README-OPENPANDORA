@@ -19,10 +19,10 @@ Contents:
 
 Please refer to the:
 
-ScummVM Forum: <http://forums.scummvm.org/> 
-WiKi: <http://wiki.scummvm.org/index.php/OpenPandora> 
+ScummVM Forum: <http://forums.scummvm.org/>
+WiKi: <http://wiki.scummvm.org/index.php/OpenPandora>
 
-for the most current information on the port and any updates to this 
+for the most current information on the port and any updates to this
 documentation.
 
 ------------------------------------------------------------------------
@@ -112,7 +112,7 @@ Fancy button combos:
 
 NOTE: To use button combos press and hold the Left Trigger then...
 
-Right Trigger: Display Virtual Keyboard 
+Right Trigger: Display Virtual Keyboard
 Menu: Bring up the Global main menu for ScummVM
 Select: Exit ScummVM completely (and gracefully)
 

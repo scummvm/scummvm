@@ -48,11 +48,11 @@ struct PspEvent {
 	PspEventType type;
 	uint32 data;
 	PspEvent() { clear(); }
-	void clear() { 
+	void clear() {
 		type = PSP_EVENT_NONE;
 		data = 0;
 	}
-	bool isEmpty() { return type == PSP_EVENT_NONE; }	
+	bool isEmpty() { return type == PSP_EVENT_NONE; }
 };
 
 enum PspPadMode {
@@ -75,7 +75,7 @@ private:
 	uint32 _flag;
 	PspEvent _pspEventDown;	// event when we press
 	PspEvent _pspEventUp;	// event when we release
-public:	
+public:
 	Button();
 	void clear();
 	bool getEvent(Common::Event &event, PspEvent &pspEvent, bool buttonDown);
@@ -105,7 +105,7 @@ public:
 		BTN_LAST
 	};
 
-private:	
+private:
 	Button _button[BTN_LAST][SHIFTED_MODE_LAST];
 	uint32 _buttonsChanged[SHIFTED_MODE_LAST];		// normal and shifted
 	uint32 _prevButtonState;
@@ -128,7 +128,7 @@ public:
 	bool isButtonDown() { return _prevButtonState; }
 	void initButtons();
 };
-	
+
 class Nub {
 private:
 	Cursor *_cursor;		// to enable changing/getting cursor position
@@ -137,35 +137,35 @@ private:
 	ShiftMode _shifted;
 	bool _dpadMode;
 
-public:	
+public:
 	Nub() : _shifted(UNSHIFTED), _dpadMode(false) { _buttonPad.initButtons(); }
 
-	void setCursor(Cursor *cursor) { _cursor = cursor; }	
+	void setCursor(Cursor *cursor) { _cursor = cursor; }
 	void setDpadMode(bool active) { _dpadMode = active; }
 	void setShifted(ShiftMode shifted) { _shifted = shifted; }
 	bool isButtonDown();
-	
+
 	bool getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad);
 	int32 modifyNubAxisMotion(int32 input);
 	void translateToDpadState(int dpadX, int dpadY, uint32 &buttonState);	// convert nub data to dpad data
-};	
+};
 
 class InputHandler {
 public:
 	InputHandler() : _keyboard(0), _cursor(0), _padMode(PAD_MODE_NORMAL), _lastPadCheckTime(0) {}
 	void setKeyboard(PSPKeyboard *keyboard) { _keyboard = keyboard; }
 	void setCursor(Cursor *cursor) { _cursor = cursor; _nub.setCursor(cursor); }
-	
-	void init();	
+
+	void init();
 	bool getAllInputs(Common::Event &event);
-	
+
 private:
 	PSPKeyboard *_keyboard;
 	Cursor *_cursor;
-	
-	Nub _nub;	
+
+	Nub _nub;
 	ButtonPad _buttonPad;
-	
+
 	PspPadMode _padMode;				// whice mode we're in
 	PspEvent _pendingPspEvent;			// an event that can't be handled yet
 	uint32	_lastPadCheckTime;
