@@ -69,12 +69,12 @@ void Route::setDirection(uint16 keyCode) {
 	case Common::KEYCODE_END:
 		obj->currImagePtr = obj->seqList[LEFT].seqPtr;
 		break;
-//	case Common::KEYCODE_PRIOR:
-//		obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
-//		break;
-//	case Common::KEYCODE_NEXT:
-//		obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
-//		break;
+	case Common::KEYCODE_PAGEUP:
+		obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
+		break;
+	case Common::KEYCODE_PAGEDOWN:
+		obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
+		break;
 	}
 }
 
@@ -117,14 +117,14 @@ void Route::setWalk(uint16 direction) {
 			obj->vx = -DX;
 			obj->vy =  DY / 2;
 			break;
-//		case Common::KEYCODE_PRIOR:
-//			obj->vx =  DX;
-//			obj->vy = -DY / 2;
-//			break;
-//		case Common::KEYCODE_NEXT:
-//			obj->vx =  DX;
-//			obj->vy =  DY / 2;
-//			break;
+		case Common::KEYCODE_PAGEUP:
+			obj->vx =  DX;
+			obj->vy = -DY / 2;
+			break;
+		case Common::KEYCODE_PAGEDOWN:
+			obj->vx =  DX;
+			obj->vy =  DY / 2;
+			break;
 		}
 		oldDirection = direction;
 		obj->cycling = CYCLE_FORWARD;
