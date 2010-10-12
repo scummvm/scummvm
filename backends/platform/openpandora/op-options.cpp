@@ -23,37 +23,34 @@
  *
  */
 
-#ifndef OP_SDL_H
-#define OP_SDL_H
+/*
+ * OpenPandora: Options, custom code and hardware stuff.
+ *
+ */
 
-#include "backends/platform/sdl/sdl.h"
+#include "backends/platform/openpandora/op-options.h"
 
-#define __OPENPANDORA__
-#define MIXER_DOUBLE_BUFFERING 1
+namespace OP {
 
-#ifndef PATH_MAX
-	#define PATH_MAX 255
-#endif
-
-class OSystem_OP : public OSystem_SDL {
-public:
-	OSystem_OP() {}
-
-	/* Events */
-	bool handleKeyDown(SDL_Event &ev, Common::Event &event);
-	bool handleKeyUp(SDL_Event &ev, Common::Event &event);
-	bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
-	bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
-
-	/* Graphics */
-	bool loadGFXMode();
-
-	/* Platform Setup Stuff */
-	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
-	void initBackend();
-	void quit();
-
-protected:
-
+enum {
+	/* Touchscreen TapMode */
+	TAPMODE_LEFT		= 0,
+	TAPMODE_RIGHT		= 1,
+	TAPMODE_HOVER		= 2
 };
-#endif
+
+int tapmodeLevel = TAPMODE_LEFT;
+
+void ToggleTapMode() {
+	if (tapmodeLevel == TAPMODE_LEFT) {
+		tapmodeLevel = TAPMODE_RIGHT;
+	} else if (tapmodeLevel == TAPMODE_RIGHT) {
+		tapmodeLevel = TAPMODE_HOVER;
+	} else if (tapmodeLevel == TAPMODE_HOVER) {
+		tapmodeLevel = TAPMODE_LEFT;
+	} else {
+		tapmodeLevel = TAPMODE_LEFT;
+    }
+}
+
+} /* namespace OP */

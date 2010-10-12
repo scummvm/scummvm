@@ -29,16 +29,104 @@
  */
 
 #include "backends/platform/openpandora/op-sdl.h"
+#include "backends/platform/openpandora/op-options.h"
+
+/* Quick default button states for modifiers. */
+int BUTTON_STATE_L					=	false;
+
+enum {
+	/* Touchscreen TapMode */
+	TAPMODE_LEFT		= 0,
+	TAPMODE_RIGHT		= 1,
+	TAPMODE_HOVER		= 2
+};
+
+/* On the OpenPandora by default the ABXY and L/R Trigger buttons are returned by SDL as
+   (A): SDLK_HOME (B): SDLK_END (X): SDLK_PAGEDOWN (Y): SDLK_PAGEUP (L): SDLK_RSHIFT (R): SDLK_RCTRL
+*/
+
+bool OSystem_OP::handleKeyDown(SDL_Event &ev, Common::Event &event) {
+	switch (ev.key.keysym.sym) {
+	case SDLK_HOME:
+		event.type = Common::EVENT_LBUTTONDOWN;
+		fillMouseEvent(event, _km.x, _km.y);
+		return true;
+		break;
+	case SDLK_END:
+		event.type = Common::EVENT_RBUTTONDOWN;
+		fillMouseEvent(event, _km.x, _km.y);
+		return true;
+		break;
+	case SDLK_PAGEDOWN:
+		event.type = Common::EVENT_MAINMENU;
+		return true;
+		break;
+	case SDLK_PAGEUP:
+		OP::ToggleTapMode();
+		if (OP::tapmodeLevel == TAPMODE_LEFT) {
+			displayMessageOnOSD("Touchscreen 'Tap Mode' - Left Click");
+		} else if (OP::tapmodeLevel == TAPMODE_RIGHT) {
+			displayMessageOnOSD("Touchscreen 'Tap Mode' - Right Click");
+		} else if (OP::tapmodeLevel == TAPMODE_HOVER) {
+			displayMessageOnOSD("Touchscreen 'Tap Mode' - Hover (No Click)");
+		}
+		break;
+	case SDLK_RSHIFT:
+		BUTTON_STATE_L = true;
+		break;
+	case SDLK_RCTRL:
+		break;
+	default:
+		return OSystem_SDL::handleKeyDown(ev, event);
+		break;
+	}
+	return false;
+}
+
+bool OSystem_OP::handleKeyUp(SDL_Event &ev, Common::Event &event) {
+	switch (ev.key.keysym.sym) {
+	case SDLK_HOME:
+		event.type = Common::EVENT_LBUTTONUP;
+		fillMouseEvent(event, _km.x, _km.y);
+		return true;
+		break;
+	case SDLK_END:
+		event.type = Common::EVENT_RBUTTONUP;
+		fillMouseEvent(event, _km.x, _km.y);
+		return true;
+		break;
+	case SDLK_PAGEDOWN:
+		event.type = Common::EVENT_MAINMENU;
+		return true;
+		break;
+	case SDLK_PAGEUP:
+		break;
+	case SDLK_RSHIFT:
+		BUTTON_STATE_L = false;
+		break;
+	case SDLK_RCTRL:
+		break;
+	default:
+		return OSystem_SDL::handleKeyUp(ev, event);
+		break;
+	}
+	return false;
+}
+
+/* Custom handleMouseButtonDown/handleMouseButtonUp to deal with 'Tap Mode' for the touchscreen */
 
 bool OSystem_OP::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT){
-		SDLMod mod=SDL_GetModState();
-		if (mod & KMOD_RCTRL) /* KMOD_RCTRL = Right Trigger */
+		if (BUTTON_STATE_L == true) /* BUTTON_STATE_L = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONDOWN;
-		else if ( mod & KMOD_RSHIFT) /* KMOD_RSHIFT = Left Trigger */
+		else if (OP::tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
+			event.type = Common::EVENT_LBUTTONDOWN;
+		else if (OP::tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
+			event.type = Common::EVENT_RBUTTONDOWN;
+		else if (OP::tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
 			event.type = Common::EVENT_MOUSEMOVE;
 		else
-			event.type = Common::EVENT_LBUTTONDOWN;
+			event.type = Common::EVENT_LBUTTONDOWN; /* For normal mice etc. */
 	}
 	else if (ev.button.button == SDL_BUTTON_RIGHT)
 		event.type = Common::EVENT_RBUTTONDOWN;
@@ -55,10 +143,6 @@ bool OSystem_OP::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	else
 		return false;
 
-	// People can use the touchscreen so may have no mouse motion events between taps.
-	// Not sure if this fixes anything ;).
-	// setMousePos(event.mouse.x, event.mouse.y);
-
 	fillMouseEvent(event, ev.button.x, ev.button.y);
 
 	return true;
@@ -66,13 +150,16 @@ bool OSystem_OP::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 
 bool OSystem_OP::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT){
-		SDLMod mod=SDL_GetModState();
-		if (mod & KMOD_RCTRL) /* KMOD_RCTRL = Right Trigger */
+		if (BUTTON_STATE_L == true) /* BUTTON_STATE_L = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONUP;
-		else if ( mod & KMOD_RSHIFT) /* KMOD_RSHIFT = Left Trigger */
+		else if (OP::tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
+			event.type = Common::EVENT_LBUTTONUP;
+		else if (OP::tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
+			event.type = Common::EVENT_RBUTTONUP;
+		else if (OP::tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
 			event.type = Common::EVENT_MOUSEMOVE;
 		else
-			event.type = Common::EVENT_LBUTTONUP;
+			event.type = Common::EVENT_LBUTTONUP; /* For normal mice etc. */
 	}
 	else if (ev.button.button == SDL_BUTTON_RIGHT)
 		event.type = Common::EVENT_RBUTTONUP;
@@ -86,97 +173,4 @@ bool OSystem_OP::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	fillMouseEvent(event, ev.button.x, ev.button.y);
 
 	return true;
-}
-
-
-bool OSystem_OP::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
-	event.type = Common::EVENT_MOUSEMOVE;
-	fillMouseEvent(event, ev.motion.x, ev.motion.y);
-
-	setMousePos(event.mouse.x, event.mouse.y);
-	return true;
-}
-
-void OSystem_OP::warpMouse(int x, int y) {
-	if (_mouseCurState.x != x || _mouseCurState.y != y) {
-		SDL_WarpMouse(x, y);
-
-		// SDL_WarpMouse() generates a mouse movement event, so
-		// set_mouse_pos() would be called eventually. However, the
-		// cannon script in CoMI calls this function twice each time
-		// the cannon is reloaded. Unless we update the mouse position
-		// immediately the second call is ignored, causing the cannon
-		// to change its aim.
-
-		setMousePos(x, y);
-	}
-}
-
-void OSystem_OP::handleKbdMouse() {
-	uint32 curTime = getMillis();
-	if (curTime >= _km.last_time + _km.delay_time) {
-		_km.last_time = curTime;
-		if (_km.x_down_count == 1) {
-			_km.x_down_time = curTime;
-			_km.x_down_count = 2;
-		}
-		if (_km.y_down_count == 1) {
-			_km.y_down_time = curTime;
-			_km.y_down_count = 2;
-		}
-
-		if (_km.x_vel || _km.y_vel) {
-			if (_km.x_down_count) {
-				if (curTime > _km.x_down_time + _km.delay_time * 12) {
-					if (_km.x_vel > 0)
-						_km.x_vel++;
-					else
-						_km.x_vel--;
-				} else if (curTime > _km.x_down_time + _km.delay_time * 8) {
-					if (_km.x_vel > 0)
-						_km.x_vel = 5;
-					else
-						_km.x_vel = -5;
-				}
-			}
-			if (_km.y_down_count) {
-				if (curTime > _km.y_down_time + _km.delay_time * 12) {
-					if (_km.y_vel > 0)
-						_km.y_vel++;
-					else
-						_km.y_vel--;
-				} else if (curTime > _km.y_down_time + _km.delay_time * 8) {
-					if (_km.y_vel > 0)
-						_km.y_vel = 5;
-					else
-						_km.y_vel = -5;
-				}
-			}
-
-			_km.x += _km.x_vel;
-			_km.y += _km.y_vel;
-
-			if (_km.x < 0) {
-				_km.x = 0;
-				_km.x_vel = -1;
-				_km.x_down_count = 1;
-			} else if (_km.x > _km.x_max) {
-				_km.x = _km.x_max;
-				_km.x_vel = 1;
-				_km.x_down_count = 1;
-			}
-
-			if (_km.y < 0) {
-				_km.y = 0;
-				_km.y_vel = -1;
-				_km.y_down_count = 1;
-			} else if (_km.y > _km.y_max) {
-				_km.y = _km.y_max;
-				_km.y_vel = 1;
-				_km.y_down_count = 1;
-			}
-
-			warpMouse((Uint16)_km.x, (Uint16)_km.y);
-		}
-	}
 }
