@@ -1,13 +1,13 @@
 # French translation for ScummVM.
 # Copyright (C) 2010 ScummVM Team
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the ScummVM package.
 # Thierry Crozat <criezy@scummvm.org>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.2.0svn\n"
+"Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-10-01 22:28+0100\n"
+"POT-Creation-Date: 2010-10-12 01:50+0200\n"
 "PO-Revision-Date: 2010-10-01 22:12+0100\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.sf.net>\n"
@@ -260,7 +260,7 @@ msgid "Game Path:"
 msgstr "Chemin du Jeu:"
 
 #: gui/launcher.cpp:297
-msgctxt "context"
+msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Chemin du Jeu:"
 
@@ -609,7 +609,7 @@ msgstr "Spécifie le périphérique de sortie audio ou l'émulateur de carte audio"
 
 #: gui/options.cpp:669
 msgctxt "lowres"
-msgid "Preferred Device:"
+msgid "Preferred Dev.:"
 msgstr "Sortie Préféré:"
 
 #: gui/options.cpp:669
@@ -696,7 +696,7 @@ msgstr ""
 
 #: gui/options.cpp:766
 msgctxt "lowres"
-msgid "True Roland MT-32 (disable GM emulation)"
+msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 exacte (pas d'ému GM)"
 
 #: gui/options.cpp:769
@@ -1128,7 +1128,7 @@ msgstr "~S~uivant"
 msgid "~C~lose"
 msgstr "~F~ermer"
 
-#: engines/scumm/scumm.cpp:2183 engines/agos/saveload.cpp:192
+#: engines/scumm/scumm.cpp:2248 engines/agos/saveload.cpp:192
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1139,7 +1139,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2190 engines/agos/saveload.cpp:157
+#: engines/scumm/scumm.cpp:2255 engines/agos/saveload.cpp:157
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1150,7 +1150,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2202 engines/agos/saveload.cpp:200
+#: engines/scumm/scumm.cpp:2267 engines/agos/saveload.cpp:200
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1667,28 +1667,6 @@ msgstr ""
 "Noubliez pas d'affecter une touche à l'action 'Cacher Bar d'Outils' pour "
 "pouvoir voir entièrement l'inventaire"
 
-#~ msgid "Save Path: "
-#~ msgstr "Sauvegardes:"
-
-#~ msgctxt "lowres"
-#~ msgid "Save Path: "
-#~ msgstr "Sauvegardes:"
-
-#~ msgctxt "lowres"
-#~ msgid "Standard Renderer (16bpp)"
-#~ msgstr "Standard (16bpp)"
-
-#~ msgctxt "lowres"
-#~ msgid "Antialiased Renderer (16bpp)"
-#~ msgstr "Anti-crénelé (16 bpp)"
-
-#~ msgctxt "lowres"
-#~ msgid "Special sound effects volume"
-#~ msgstr "Volume des effets spéciaux sonores"
-
-#~ msgid "English"
-#~ msgstr "Anglais"
-
 #~ msgid "Failed to load any GUI theme, aborting"
 #~ msgstr "Aucun thème GUI n'a pu être chargé; abandon"
 
@@ -1716,53 +1694,11 @@ msgstr ""
 #~ "Le plugin %s a échoué dans l'instanciation du moteur de jeu: %s (cible "
 #~ "'%s', chemin '%s')"
 
-#~ msgid "Ok"
-#~ msgstr "Ok"
-
 #~ msgid "Music driver:"
 #~ msgstr "Pilote audio:"
 
-#~ msgid "ALSA"
-#~ msgstr "ALSA"
-
 #~ msgid "Atari ST MIDI"
 #~ msgstr "MIDI Atari ST"
-
-#~ msgid "SEQ"
-#~ msgstr "SEQ"
-
-#~ msgid "DMedia"
-#~ msgstr "DMedia"
-
-#~ msgid "CAMD"
-#~ msgstr "CAMD"
-
-#~ msgid "CoreAudio"
-#~ msgstr "CoreAudio"
-
-#~ msgid "CoreMIDI"
-#~ msgstr "CoreMIDI"
-
-#~ msgid "Yamaha Pa1"
-#~ msgstr "Yamaha Pa1"
-
-#~ msgid "Tapwave Zodiac"
-#~ msgstr "Tapwave Zodiac"
-
-#~ msgid "FluidSynth"
-#~ msgstr "FluidSynth"
-
-#~ msgid "AdLib"
-#~ msgstr "AdLib"
-
-#~ msgid "IBM PCjr"
-#~ msgstr "IBM PCjr"
-
-#~ msgid "Creative Music System"
-#~ msgstr "Creative Music System"
-
-#~ msgid "TiMidity"
-#~ msgstr "TiMidity"
 
 #~ msgid "About..."
 #~ msgstr "A propos..."

@@ -1,13 +1,13 @@
 # Russian translation for ScummVM.
-# Copyright (C) 2010 ScummVM
+# Copyright (C) 2010 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Eugene Sandulenko <sev@scummvm.org>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM VERSION\n"
+"Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-10-01 22:28+0100\n"
+"POT-Creation-Date: 2010-10-12 01:50+0200\n"
 "PO-Revision-Date: 2010-06-13 20:55+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -261,7 +261,7 @@ msgid "Game Path:"
 msgstr "Путь к игре: "
 
 #: gui/launcher.cpp:297
-msgctxt "context"
+msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Где игра: "
 
@@ -598,7 +598,8 @@ msgstr "Звуковое уст-во:"
 
 #: gui/options.cpp:667 gui/options.cpp:669
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr "Указывает предпочитаемое звуковое устройство или эмулятор звуковой карты"
+msgstr ""
+"Указывает предпочитаемое звуковое устройство или эмулятор звуковой карты"
 
 #: gui/options.cpp:667 gui/options.cpp:669 gui/options.cpp:670
 msgid "Specifies output sound device or sound card emulator"
@@ -606,7 +607,7 @@ msgstr "Указывает выходное звуковое устройство или эмулятор звуковой карты"
 
 #: gui/options.cpp:669
 msgctxt "lowres"
-msgid "Preferred Device:"
+msgid "Preferred Dev.:"
 msgstr "Предпочитаемое:"
 
 #: gui/options.cpp:669
@@ -693,7 +694,7 @@ msgstr ""
 
 #: gui/options.cpp:766
 msgctxt "lowres"
-msgid "True Roland MT-32 (disable GM emulation)"
+msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Настоящий Roland MT-32 (запретить GM)"
 
 #: gui/options.cpp:769
@@ -1123,7 +1124,7 @@ msgstr "~С~лед"
 msgid "~C~lose"
 msgstr "~З~акрыть"
 
-#: engines/scumm/scumm.cpp:2183 engines/agos/saveload.cpp:192
+#: engines/scumm/scumm.cpp:2248 engines/agos/saveload.cpp:192
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1134,7 +1135,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2190 engines/agos/saveload.cpp:157
+#: engines/scumm/scumm.cpp:2255 engines/agos/saveload.cpp:157
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1145,7 +1146,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2202 engines/agos/saveload.cpp:200
+#: engines/scumm/scumm.cpp:2267 engines/agos/saveload.cpp:200
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1655,4 +1656,5 @@ msgstr "Назначить действие Уменьшить Масштаб (необязательно)"
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
-"Не забудьте назначить клавишу для действия 'Hide Toolbar' чтобы увидеть весь инвентарь в игре"
+"Не забудьте назначить клавишу для действия 'Hide Toolbar' чтобы увидеть весь "
+"инвентарь в игре"

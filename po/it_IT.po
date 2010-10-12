@@ -1,13 +1,13 @@
 # Italian translation for ScummVM.
-# Copyright (C) YEAR ScummVM Team
+# Copyright (C) 2010 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Matteo 'Maff' Angelino <matteo.maff at gmail dot com>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.2.0svn\n"
+"Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-10-01 22:28+0100\n"
+"POT-Creation-Date: 2010-10-12 01:50+0200\n"
 "PO-Revision-Date: 2010-09-21 19:33+0100\n"
 "Last-Translator: Matteo 'Maff' Angelino <matteo.maff at gmail dot com>\n"
 "Language-Team: Italian\n"
@@ -258,7 +258,7 @@ msgid "Game Path:"
 msgstr "Percorso gioco:"
 
 #: gui/launcher.cpp:297
-msgctxt "context"
+msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Perc. gioco:"
 
@@ -609,7 +609,7 @@ msgstr ""
 
 #: gui/options.cpp:669
 msgctxt "lowres"
-msgid "Preferred Device:"
+msgid "Preferred Dev.:"
 msgstr "Disp. preferito:"
 
 #: gui/options.cpp:669
@@ -694,7 +694,7 @@ msgstr ""
 
 #: gui/options.cpp:766
 msgctxt "lowres"
-msgid "True Roland MT-32 (disable GM emulation)"
+msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 effettivo (disat.emul.GM)"
 
 #: gui/options.cpp:769
@@ -1122,7 +1122,7 @@ msgstr "~S~uccessivi"
 msgid "~C~lose"
 msgstr "~C~hiudi"
 
-#: engines/scumm/scumm.cpp:2183 engines/agos/saveload.cpp:192
+#: engines/scumm/scumm.cpp:2248 engines/agos/saveload.cpp:192
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1133,7 +1133,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2190 engines/agos/saveload.cpp:157
+#: engines/scumm/scumm.cpp:2255 engines/agos/saveload.cpp:157
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1144,7 +1144,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2202 engines/agos/saveload.cpp:200
+#: engines/scumm/scumm.cpp:2267 engines/agos/saveload.cpp:200
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1655,21 +1655,3 @@ msgstr ""
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
-
-#~ msgid "Save Path: "
-#~ msgstr "Salvataggi:"
-
-#~ msgctxt "lowres"
-#~ msgid "Save Path: "
-#~ msgstr "Salvataggi:"
-
-#~ msgctxt "lowres"
-#~ msgid "Standard Renderer (16bpp)"
-#~ msgstr "Rend. standard (16bpp)"
-
-#~ msgctxt "lowres"
-#~ msgid "Antialiased Renderer (16bpp)"
-#~ msgstr "Rend. antialiasing (16bpp)"
-
-#~ msgid "English"
-#~ msgstr "Inglese"

@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.2.0svn\n"
+"Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-10-01 22:28+0100\n"
+"POT-Creation-Date: 2010-10-12 01:50+0200\n"
 "PO-Revision-Date: 2010-10-01 17:37+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
@@ -261,7 +261,7 @@ msgid "Game Path:"
 msgstr "Spielpfad:"
 
 #: gui/launcher.cpp:297
-msgctxt "context"
+msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Spielpfad:"
 
@@ -611,7 +611,7 @@ msgstr "Legt das Musikwiedergabe-Gerät oder den Soundkarten-Emulator fest."
 
 #: gui/options.cpp:669
 msgctxt "lowres"
-msgid "Preferred Device:"
+msgid "Preferred Dev.:"
 msgstr "Standard-Gerät:"
 
 #: gui/options.cpp:669
@@ -698,7 +698,7 @@ msgstr ""
 
 #: gui/options.cpp:766
 msgctxt "lowres"
-msgid "True Roland MT-32 (disable GM emulation)"
+msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Echte Roland-MT-32-Emulation (kein GM)"
 
 #: gui/options.cpp:769
@@ -1129,7 +1129,7 @@ msgstr "~W~eiter"
 msgid "~C~lose"
 msgstr "~S~chließen"
 
-#: engines/scumm/scumm.cpp:2183 engines/agos/saveload.cpp:192
+#: engines/scumm/scumm.cpp:2248 engines/agos/saveload.cpp:192
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1140,7 +1140,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2190 engines/agos/saveload.cpp:157
+#: engines/scumm/scumm.cpp:2255 engines/agos/saveload.cpp:157
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1151,7 +1151,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2202 engines/agos/saveload.cpp:200
+#: engines/scumm/scumm.cpp:2267 engines/agos/saveload.cpp:200
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1667,6 +1667,18 @@ msgid ""
 msgstr ""
 "Vergessen Sie nicht, der Aktion \"Werkzeugleiste verbergen\" eine Taste "
 "zuzuweisen, um das ganze Inventar sehen zu können."
+
+#~ msgctxt "context"
+#~ msgid "Game Path:"
+#~ msgstr "Spielpfad:"
+
+#~ msgctxt "lowres"
+#~ msgid "Preferred Device:"
+#~ msgstr "Standard-Gerät:"
+
+#~ msgctxt "lowres"
+#~ msgid "True Roland MT-32 (disable GM emulation)"
+#~ msgstr "Echte Roland-MT-32-Emulation (kein GM)"
 
 #~ msgid "Save Path: "
 #~ msgstr "Spielstände: "

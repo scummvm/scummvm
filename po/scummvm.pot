@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-10-01 22:28+0100\n"
+"POT-Creation-Date: 2010-10-12 01:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -256,7 +256,7 @@ msgid "Game Path:"
 msgstr ""
 
 #: gui/launcher.cpp:297
-msgctxt "context"
+msgctxt "lowres"
 msgid "Game Path:"
 msgstr ""
 
@@ -599,7 +599,7 @@ msgstr ""
 
 #: gui/options.cpp:669
 msgctxt "lowres"
-msgid "Preferred Device:"
+msgid "Preferred Dev.:"
 msgstr ""
 
 #: gui/options.cpp:669
@@ -678,7 +678,7 @@ msgstr ""
 
 #: gui/options.cpp:766
 msgctxt "lowres"
-msgid "True Roland MT-32 (disable GM emulation)"
+msgid "True Roland MT-32 (no GM emulation)"
 msgstr ""
 
 #: gui/options.cpp:769
@@ -1103,7 +1103,7 @@ msgstr ""
 msgid "~C~lose"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2183 engines/agos/saveload.cpp:192
+#: engines/scumm/scumm.cpp:2248 engines/agos/saveload.cpp:192
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1111,7 +1111,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2190 engines/agos/saveload.cpp:157
+#: engines/scumm/scumm.cpp:2255 engines/agos/saveload.cpp:157
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1119,7 +1119,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2202 engines/agos/saveload.cpp:200
+#: engines/scumm/scumm.cpp:2267 engines/agos/saveload.cpp:200
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
