@@ -1227,7 +1227,9 @@ void ToonEngine::clickEvent() {
 	if (_currentHotspotItem == -4) {
 		if (_gameState->_mouseState >= 0) {
 			if (leftButton)
-				handleInventoryOnInventory(0, _gameState->_mouseState);
+				if (!handleInventoryOnInventory(0, _gameState->_mouseState)) {
+					playSoundWrong();
+				}
 			return;
 		}
 	}
@@ -1323,6 +1325,9 @@ void ToonEngine::clickEvent() {
 	case 11:
 		sayLines(3, argument);
 		break;
+	default:
+		playSoundWrong();
+		return;
 	}
 
 	if (result == 3) {
