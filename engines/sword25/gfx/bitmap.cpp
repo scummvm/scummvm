@@ -134,6 +134,8 @@ void Bitmap::setScaleFactorX(float scaleFactorX) {
 		_width = static_cast<int>(_originalWidth * _scaleFactorX);
 		if (_scaleFactorX <= 0.0f)
 			_scaleFactorX = 0.001f;
+		if (_width <= 0)
+			_width = 1;
 		forceRefresh();
 	}
 }
@@ -156,6 +158,8 @@ void Bitmap::setScaleFactorY(float scaleFactorY) {
 		_height = static_cast<int>(_originalHeight * scaleFactorY);
 		if (_scaleFactorY <= 0.0f)
 			_scaleFactorY = 0.001f;
+		if (_height <= 0)
+			_height = 1;
 		forceRefresh();
 	}
 }
