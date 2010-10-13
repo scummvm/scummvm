@@ -1033,6 +1033,10 @@ begin_credits("Credits");
   "David P. Gray from Gray Design Associate for sharing the source code ".
   "of the Hugo trilogy.");
 
+  add_paragraph(
+  "Broken Sword 2.5 team for providing sources of their engine and their great ".
+  "support.");
+
   end_section();
 
 end_credits();

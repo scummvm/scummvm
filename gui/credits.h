@@ -580,5 +580,7 @@ static const char *credits[] = {
 "C0""",
 "C0""David P. Gray from Gray Design Associate for sharing the source code of the Hugo trilogy.",
 "C0""",
+"C0""Broken Sword 2.5 team for providing sources of their engine and their great support.",
+"C0""",
 "",
 };
