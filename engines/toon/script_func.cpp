@@ -34,13 +34,12 @@
 
 namespace Toon {
 
-typedef Common::Functor1Mem<EMCState *, int32, ScriptFunc> OpcodeV2;
 #define SetOpcodeTable(x) table = &x;
 #define Opcode(x) table->push_back(new OpcodeV2(this, &ScriptFunc::x))
 #define OpcodeUnImpl() table->push_back(new OpcodeV2(this, 0))
 
 ScriptFunc::ScriptFunc(ToonEngine *vm) {
-	Common::Array<const Opcode *> *table = 0;
+	Common::Array<const OpcodeV2 *> *table = 0;
 
 	_vm = vm;
 	_opcodes.reserve(176);

@@ -96,8 +96,8 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 	_vm->getPathFinding()->resetBlockingRects();
 
 	if (_id == 1) {
-		int32 sizeX = MAX(5, 40 * _vm->getDrew()->getScale() / 1024);
-		int32 sizeY = MAX(2, 20 * _vm->getDrew()->getScale() / 1024);
+		int32 sizeX = MAX<int32>(5, 40 * _vm->getDrew()->getScale() / 1024);
+		int32 sizeY = MAX<int32>(2, 20 * _vm->getDrew()->getScale() / 1024);
 		_vm->getPathFinding()->addBlockingEllipse(_vm->getDrew()->getFinalX(), _vm->getDrew()->getFinalY(), sizeX, sizeY);
 	}
 
@@ -126,7 +126,7 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 		if (_blockingWalk) {
 			while ((_x != newPosX || _y != newPosY) && _currentPathNode < _currentPathNodeCount && !_vm->shouldQuitGame()) {
 				if (_currentPathNode < _currentPathNodeCount - 10) {
-					int32 delta = MIN(10, _currentPathNodeCount - _currentPathNode);
+					int32 delta = MIN<int32>(10, _currentPathNodeCount - _currentPathNode);
 					int32 dx = _currentPathX[_currentPathNode+delta] - _x;
 					int32 dy = _currentPathY[_currentPathNode+delta] - _y;
 					setFacing(getFacingFromDirection(dx, dy));
@@ -265,7 +265,7 @@ void Character::update(int32 timeIncrement) {
 	if ((_flags & 0x1) && _currentPathNodeCount > 0) {
 		if (_currentPathNode < _currentPathNodeCount) {
 			if (_currentPathNode < _currentPathNodeCount - 10) {
-				int32 delta = MIN(10, _currentPathNodeCount - _currentPathNode);
+				int32 delta = MIN<int32>(10, _currentPathNodeCount - _currentPathNode);
 				int32 dx = _currentPathX[_currentPathNode+delta] - _x;
 				int32 dy = _currentPathY[_currentPathNode+delta] - _y;
 				setFacing(getFacingFromDirection(dx, dy));

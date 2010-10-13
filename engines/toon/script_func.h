@@ -31,12 +31,15 @@
 
 namespace Toon {
 
+class ScriptFunc;
+
+typedef Common::Functor1Mem<EMCState *, int32, ScriptFunc> OpcodeV2;
 
 class ScriptFunc {
 public:
 	ScriptFunc(ToonEngine *vm);
 	~ScriptFunc(void);
-	Common::Array<const Opcode *> _opcodes;
+	Common::Array<const OpcodeV2 *> _opcodes;
 	ToonEngine *_vm;
 
 #define SYSFUNC(x)  int32 x(EMCState*)

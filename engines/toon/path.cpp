@@ -37,13 +37,13 @@ int32 PathFindingHeap::init(int32 size) {
 	return size;
 }
 
-int PathFindingHeap::unload() {
+int32 PathFindingHeap::unload() {
 	if (_data)
 		delete[] _data;
 	return 0;
 }
 
-int PathFindingHeap::clear() {
+int32 PathFindingHeap::clear() {
 	//debugC(1, kDebugPath, "clear()");
 
 	_count = 0;
@@ -51,7 +51,7 @@ int PathFindingHeap::clear() {
 	return 1;
 }
 
-int PathFindingHeap::push(int x, int y, int weight) {
+int32 PathFindingHeap::push(int32 x, int32 y, int32 weight) {
 	//debugC(6, kDebugPath, "push(%d, %d, %d)", x, y, weight);
 
 	_count++;
@@ -193,7 +193,7 @@ int32 PathFinding::findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32
 	}
 }
 
-int PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
+int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	debugC(1, kDebugPath, "findPath(%d, %d, %d, %d)", x, y, destx, desty);
 
 	if (x == destx && y == desty) {
@@ -220,10 +220,10 @@ int PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 		_heap->pop(&curX, &curY, &curWeight);
 		int curNode = curX + curY * _width;
 
-		int32 endX = MIN(curX + 1, _width - 1);
-		int32 endY = MIN(curY + 1, _height - 1);
-		int32 startX = MAX(curX - 1, 0);
-		int32 startY = MAX(curY - 1, 0);
+		int32 endX = MIN<int32>(curX + 1, _width - 1);
+		int32 endY = MIN<int32>(curY + 1, _height - 1);
+		int32 startX = MAX<int32>(curX - 1, 0);
+		int32 startY = MAX<int32>(curY - 1, 0);
 
 		for (int32 px = startX; px <= endX; px++) {
 			for (int py = startY; py <= endY; py++) {
@@ -271,10 +271,10 @@ next:
 		int32 bestX = -1;
 		int32 bestY = -1;
 
-		int32 endX = MIN(curX + 1, _width - 1);
-		int32 endY = MIN(curY + 1, _height - 1);
-		int32 startX = MAX(curX - 1, 0);
-		int32 startY = MAX(curY - 1, 0);
+		int32 endX = MIN<int32>(curX + 1, _width - 1);
+		int32 endY = MIN<int32>(curY + 1, _height - 1);
+		int32 startX = MAX<int32>(curX - 1, 0);
+		int32 startY = MAX<int32>(curY - 1, 0);
 
 		for (int32 px = startX; px <= endX; px++) {
 			for (int32 py = startY; py <= endY; py++) {

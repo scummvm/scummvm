@@ -54,7 +54,7 @@ public:
 
 	void setVolume(int32 volume);
 protected:
-	int32 readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const {
 		return false;
 	}

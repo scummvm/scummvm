@@ -128,7 +128,7 @@ void AudioManager::playVoice(int32 id, bool genericVoice) {
 
 }
 
-void AudioManager::playSFX(int32 id, int32 volume , bool genericSFX) {
+void AudioManager::playSFX(int32 id, int volume , bool genericSFX) {
 	debugC(4, kDebugAudio, "playSFX(%d, %d)", id, (genericSFX) ? 1 : 0);
 
 	// find a free SFX channel
@@ -218,7 +218,7 @@ AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer,
 	}
 }
 
-int32 AudioStreamInstance::readBuffer(int16 *buffer, const int numSamples) {
+int AudioStreamInstance::readBuffer(int16 *buffer, const int numSamples) {
 	debugC(5, kDebugAudio, "readBuffer(buffer, %d)", numSamples);
 
 	handleFade(numSamples);
@@ -353,7 +353,7 @@ void AudioStreamInstance::play(bool fade, Audio::Mixer::SoundType soundType) {
 	handleFade(0);
 }
 
-void AudioStreamInstance::handleFade(int numSamples) {
+void AudioStreamInstance::handleFade(int32 numSamples) {
 	debugC(5, kDebugAudio, "handleFade(%d)", numSamples);
 
 	// Fading enabled only for music

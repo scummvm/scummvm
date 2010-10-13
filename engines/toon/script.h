@@ -36,7 +36,8 @@
 namespace Toon {
 
 struct EMCState;
-typedef Common::Functor1<EMCState *, int> Opcode;
+class ScriptFunc;
+typedef Common::Functor1Mem<EMCState *, int32, ScriptFunc> OpcodeV2;
 
 struct EMCData {
 	char filename[13];
@@ -46,7 +47,7 @@ struct EMCData {
 	uint16 *ordr;
 	uint16 dataSize;
 
-	const Common::Array<const Opcode *> *sysFuncs;
+	const Common::Array<const OpcodeV2 *> *sysFuncs;
 };
 
 struct EMCState {
@@ -98,7 +99,7 @@ class EMCInterpreter {
 public:
 	EMCInterpreter(ToonEngine *vm);
 
-	bool load(const char *filename, EMCData *data, const Common::Array<const Opcode *> *opcodes);
+	bool load(const char *filename, EMCData *data, const Common::Array<const OpcodeV2 *> *opcodes);
 	void unload(EMCData *data);
 
 	void init(EMCState *scriptState, const EMCData *data);

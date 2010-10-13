@@ -1099,7 +1099,7 @@ void ToonEngine::loadCursor() {
 	setCursor(5);
 }
 
-void ToonEngine::setCursor(int32 type, bool inventory, int32 offsetX, int32 offsetY) {
+void ToonEngine::setCursor(int32 type, bool inventory, int32 offsetX, int offsetY) {
 
 	static const int32 offsets[] = {
 		0,   1,  1,  6,  7,  1,  8,   10, 18,  10,
@@ -2234,7 +2234,7 @@ int32 ToonEngine::getConversationFlag(int32 locationId, int32 param) {
 	return 1;
 }
 
-int ToonEngine::runConversationCommand(int16 **command) {
+int32 ToonEngine::runConversationCommand(int16 **command) {
 
 // Strangerke - Commented (not used)
 //	int16 com = **command;
@@ -2822,7 +2822,7 @@ bool ToonEngine::loadGame(int32 slot) {
 		_sceneAnimationScripts[i]._active = loadFile->readByte();
 		_sceneAnimationScripts[i]._frozen = loadFile->readByte();
 		int32 oldTimer = loadFile->readSint32BE();
-		_sceneAnimationScripts[i]._lastTimer = MAX(0,oldTimer + timerDiff);
+		_sceneAnimationScripts[i]._lastTimer = MAX<int32>(0,oldTimer + timerDiff);
 		_script->loadState(&_sceneAnimationScripts[i]._state, loadFile);
 	}
 
