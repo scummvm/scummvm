@@ -171,7 +171,7 @@ private:
 	Common::Array<LINE> m_Lines;
 
 	void UpdateFormat();
-	void UpdateMetrics(FontResource &FontResource);
+	void UpdateMetrics(FontResource &fontResource);
 	ResourceManager *GetResourceManager();
 	FontResource *LockFontResource();
 };

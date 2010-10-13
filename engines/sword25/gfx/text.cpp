@@ -317,14 +317,14 @@ void Text::UpdateFormat() {
 
 // -----------------------------------------------------------------------------
 
-void Text::UpdateMetrics(FontResource &FontResource) {
+void Text::UpdateMetrics(FontResource &fontResource) {
 	_width = 0;
 	_height = 0;
 
 	for (uint i = 0; i < m_Text.size(); ++i) {
-		const Common::Rect &CurRect = FontResource.GetCharacterRect((byte)m_Text[i]);
+		const Common::Rect &CurRect = fontResource.GetCharacterRect((byte)m_Text[i]);
 		_width += CurRect.width();
-		if (i != m_Text.size() - 1) _width += FontResource.GetGapWidth();
+		if (i != m_Text.size() - 1) _width += fontResource.GetGapWidth();
 		if (_height < CurRect.height()) _height = CurRect.height();
 	}
 }

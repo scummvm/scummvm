@@ -400,8 +400,8 @@ void  GraphicEngine::UpdateLastFrameDuration() {
 }
 
 namespace {
-bool DoSaveScreenshot(GraphicEngine &GraphicEngine, const Common::String &Filename) {
-	Graphics::Surface *data = GraphicEngine.GetScreenshot();
+bool DoSaveScreenshot(GraphicEngine &graphicEngine, const Common::String &Filename) {
+	Graphics::Surface *data = graphicEngine.GetScreenshot();
 	if (!data) {
 		BS_LOG_ERRORLN("Call to GetScreenshot() failed. Cannot save screenshot.");
 		return false;
