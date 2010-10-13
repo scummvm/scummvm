@@ -1149,7 +1149,7 @@ static int art_svp_writer_rewind_add_segment(ArtSvpWriter *self, int wind_left,
 	ArtSvpWriterRewind *swr = (ArtSvpWriterRewind *)self;
 	ArtSVP *svp;
 	ArtSVPSeg *seg;
-	art_boolean left_filled, right_filled;
+	art_boolean left_filled = 0, right_filled = 0;
 	int wind_right = wind_left + delta_wind;
 	int seg_num;
 	const int init_n_points_max = 4;
