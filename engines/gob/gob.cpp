@@ -136,6 +136,8 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 
 	_copyProtection = ConfMan.getBool("copy_protection");
 
+	_console = new GobConsole(this);
+
 	DebugMan.addDebugChannel(kDebugFuncOp, "FuncOpcodes", "Script FuncOpcodes debug level");
 	DebugMan.addDebugChannel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
 	DebugMan.addDebugChannel(kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level");
@@ -153,6 +155,8 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 }
 
 GobEngine::~GobEngine() {
+	delete _console;
+
 	deinitGameParts();
 }
 

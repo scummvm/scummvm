@@ -32,6 +32,8 @@
 
 #include "engines/engine.h"
 
+#include "gob/console.h"
+
 namespace GUI {
 	class StaticTextWidget;
 }
@@ -62,6 +64,7 @@ class PalAnim;
 class Scenery;
 class Util;
 class SaveLoad;
+class GobConsole;
 
 #define WRITE_VAR_UINT32(var, val)  _vm->_inter->_variables->writeVar32(var, val)
 #define WRITE_VAR_UINT16(var, val)  _vm->_inter->_variables->writeVar16(var, val)
@@ -152,6 +155,7 @@ private:
 	GameType _gameType;
 	int32 _features;
 	Common::Platform _platform;
+	GobConsole *_console;
 
 	uint32 _pauseStart;
 
@@ -220,6 +224,8 @@ public:
 	bool is800x600() const;
 	bool isTrueColor() const;
 	bool isDemo() const;
+
+	GUI::Debugger *getDebugger() { return _console; }
 
 	const Graphics::PixelFormat &getPixelFormat() const;
 
