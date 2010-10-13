@@ -51,7 +51,7 @@ void PrisonerEngine::loadInventoryItemText(int16 inventoryItemIndex) {
 
 int16 PrisonerEngine::addInventoryItemCombination(int16 inventoryItem1, int16 inventoryItem2, int16 scriptIndex) {
 
-	debug("PrisonerEngine::addInventoryItemCombination(%d, %d, %d)", inventoryItem1, inventoryItem2, scriptIndex);
+	debug(1, "PrisonerEngine::addInventoryItemCombination(%d, %d, %d)", inventoryItem1, inventoryItem2, scriptIndex);
 
 	int16 combinationIndex = _inventoryItemCombinations.getFreeSlot();
 	InventoryItemCombination *inventoryItemCombination = &_inventoryItemCombinations[combinationIndex];

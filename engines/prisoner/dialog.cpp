@@ -175,8 +175,6 @@ void PrisonerEngine::updateDialog(int16 x, int16 y) {
 	setFontColors(_textFont, _dialogFontColor.outlineColor, _dialogFontColor.inkColor);
 	setActiveFont(_textFont);
 
-	debug("(%d, %d, %d, %d)", _dialogRectX1, _dialogRectY1, _dialogRectX2, _dialogRectY2);
-
 	_screen->drawTransparentRect(_dialogRectX1, _dialogRectY1, _dialogRectX2, _dialogRectY2);
 
 	// TODO: cseg02:00029654 - cseg02:000296E0

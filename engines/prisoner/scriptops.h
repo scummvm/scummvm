@@ -157,7 +157,7 @@ protected:
 	int16 op_interactActorMessage(Script *script);
 	int16 op_setScriptZoneEnterLeaveFlag(Script *script);
 	int16 op_setMouseAddXY(Script *script);
-	int16 op_playBackgroundSound(Script *script);
+	int16 op_playLoopingSound(Script *script);
 	int16 op_removeActorFrameSound(Script *script);
 	int16 op_setActorFrameSound(Script *script);
 	int16 op_playActorAnimationAtPos(Script *script);

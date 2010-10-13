@@ -174,7 +174,7 @@ void ScriptProgram::save(PrisonerEngine *vm, Common::WriteStream *out) {
 			out->writeByte(script->status);
 			if (script->status != kScriptStatusPaused) {
 				out->writeUint32LE(script->ip - script->code);
-				out->writeUint16LE(script->soundItemIndex);
+				out->writeUint16LE(script->soundIndex);
 				out->writeUint16LE(script->zoneIndex);
 				out->writeByte(script->zoneEnterLeaveFlag);
 				out->writeUint16LE(script->screenTextIndex);
@@ -205,7 +205,7 @@ void ScriptProgram::load(PrisonerEngine *vm, Common::ReadStream *in) {
 				codeOffs = in->readUint32LE();
 				script->code = scriptResource->getScript(i);
 				script->ip = script->code + codeOffs;
-				script->soundItemIndex = in->readUint16LE();
+				script->soundIndex = in->readUint16LE();
 				script->zoneIndex = in->readUint16LE();
 				script->zoneEnterLeaveFlag = in->readByte();
 				script->screenTextIndex = in->readUint16LE();
@@ -440,9 +440,7 @@ void AltActorAnimation::load(PrisonerEngine *vm, Common::ReadStream *in) {
 	resourceCacheSlot = in->readUint16LE();
 	if (resourceCacheSlot != -1) {
 		value = in->readByte();
-		debug("AltActorAnimation::load>");
 		resourceCacheSlot = loadResourceCacheSlotInfo<AnimationResource>(vm->_res, in);
-		debug("AltActorAnimation::load<");
 	}
 }
 

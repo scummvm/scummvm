@@ -216,11 +216,14 @@ class BaseSoundResource : public BaseResource {
 public:
 	BaseSoundResource();
 	~BaseSoundResource();
-	Audio::RewindableAudioStream *getAudioStream() { return audioStream; }
+	Audio::AudioStream *createAudioStream();
+	Audio::AudioStream *createLoopingAudioStream(uint loops);
 	int16 getDuration() const { return _duration; }
 protected:
-	Audio::RewindableAudioStream *audioStream;
+	byte *_data;
+	int _size;
 	int16 _duration;
+	void loadWaveData(Common::MemoryReadStream &stream, int size);
 };
 
 /* SoundResource */

@@ -90,7 +90,7 @@ enum {
 struct Script {
 	byte status;
 	byte *ip, *code;
-	int16 soundItemIndex;
+	int16 soundIndex;
 	int16 zoneIndex;
 	bool zoneEnterLeaveFlag;
 	int16 screenTextIndex;
@@ -107,7 +107,7 @@ struct Script {
 	void clear() {
 		status = kScriptStatusPaused;
 		ip = NULL;
-		soundItemIndex = -1;
+		soundIndex = -1;
 		zoneIndex = -1;
 		screenTextIndex = -1;
 		syncScriptNumber = -1;
@@ -175,7 +175,7 @@ struct DialogKeyword {
 	byte _used;
 	DialogKeyword() {}
 	DialogKeyword(const Common::String &keyword) : _keyword(keyword), _used(0) {
-		debug("keyword = [%s]", keyword.c_str());
+		debug(1, "keyword = [%s]", keyword.c_str());
 	}
 };
 
@@ -496,6 +496,23 @@ struct PaletteTask {
 
 const int16 kMaxPaletteTasks = 5;
 
+/* Sounds */
+
+struct SoundSlot {
+	Audio::SoundHandle handle;
+	int16 resourceCacheSlot;
+	bool volumeFlag;
+	uint volume;
+	Common::String pakName;
+	int16 pakSlot;
+	bool shouldResume;
+	bool moduleWide;
+	bool isEmpty() const { return resourceCacheSlot == -1; }
+	void clear() { resourceCacheSlot = -1; }
+};
+
+const int16 kMaxSounds = 25;
+
 /* Input low-level */
 
 enum {
@@ -529,9 +546,6 @@ public:
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
-	void update_events();
-
-	Audio::SoundHandle _soundHandle;
 
 //private:
 public:
@@ -732,8 +746,8 @@ public:
 	bool _talkieSpeechActive;
 	Audio::SoundHandle _talkieSoundHandle;
 	int16 _talkieDataResourceCacheSlot;
-	bool _talkieSpeechDataPlayNow;
-	Audio::RewindableAudioStream *_talkieSpeechData;
+	bool _talkieSpeechPlayNow;
+	Audio::AudioStream *_talkieSpeechAudioStream;
 
 	/* LipSync */
 	int16 _lipSyncScriptNumber;
@@ -1057,6 +1071,17 @@ public:
 
 	void updateEvents();
 	uint32 getTicks();
+
+	/* Sounds */
+	ObjectStorage<SoundSlot, kMaxSounds> _sounds;
+	void playSound(int16 soundIndex);
+	void playLoopingSound(int16 soundIndex, int16 loops);
+	void stopSound(int16 soundIndex);
+	bool isSoundPlaying(int16 soundIndex);
+	void setSoundVolume(int16 soundIndex, uint volume);
+	int16 loadSound(Common::String &pakName, int16 pakSlot, bool moduleWide);
+	void unloadSound(int16 soundIndex);
+	void unloadSounds(bool all);
 
 	/* Music */
 	void initializeMidi();

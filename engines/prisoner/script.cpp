@@ -70,7 +70,7 @@ void PrisonerEngine::clearScriptProgram(int16 programIndex) {
 		script->status = kScriptStatusPaused;
 		script->actorIndex = -1;
 		script->actorIndex2 = -1;
-		script->soundItemIndex = -1;
+		script->soundIndex = -1;
 		script->ip = NULL;
 		script->code = NULL;
 	}
@@ -94,7 +94,7 @@ void PrisonerEngine::startScript(int16 programIndex, int16 scriptIndex) {
 	script->status = kScriptStatusRunCode;
 	script->actorIndex2 = -1;
 	script->altAnimationIndex = -1;
-	script->soundItemIndex = -1;
+	script->soundIndex = -1;
 	script->frameIndex = -1;
 	script->zoneIndex = -1;
 	script->zoneEnterLeaveFlag = 0;
@@ -124,15 +124,15 @@ void PrisonerEngine::stopScript(int16 programIndex, int16 scriptIndex) {
 		script->actorIndex2 = -1;
 	}
 
-	if (script->soundItemIndex != -1) {
-		// TODO: stopSoundItem(script->soundItemIndex);
-		script->soundItemIndex = -1;
+	if (script->soundIndex != -1) {
+		stopSound(script->soundIndex);
+		script->soundIndex = -1;
 	}
 
 }
 
 void PrisonerEngine::stopScriptProgram(int16 programIndex) {
-	debug("PrisonerEngine::stopScriptProgram(%d)", programIndex);
+	debug(1, "PrisonerEngine::stopScriptProgram(%d)", programIndex);
 	ScriptProgram *scriptProgram = &_scriptPrograms[programIndex];
 	for (int16 scriptIndex = 0; scriptIndex <= scriptProgram->scriptCount; scriptIndex++) {
 		stopScript(programIndex, scriptIndex);
@@ -246,7 +246,10 @@ void PrisonerEngine::runCurrentScript() {
 			break;
 
 		case kScriptStatusSound:
-			// TODO
+			if (!isSoundPlaying(_currScript->soundIndex)) {
+				_currScript->status = kScriptStatusRunCode;
+				_currScript->soundIndex = -1;
+			}
 			break;
 
 		case kScriptStatus12:
@@ -318,7 +321,7 @@ void PrisonerEngine::startLocalScript(int16 scriptIndex) {
 }
 
 void PrisonerEngine::stopLocalScript(int16 scriptIndex) {
-	debug("stopLocalScript(%d)", scriptIndex);
+	debug(1, "stopLocalScript(%d)", scriptIndex);
 	stopScript(_currScriptProgramIndex, scriptIndex);
 	if (_queuedZoneAction.scriptIndex1 == _currScriptIndex) {
 		_queuedZoneAction.used = 0;
@@ -326,7 +329,7 @@ void PrisonerEngine::stopLocalScript(int16 scriptIndex) {
 		_queuedZoneAction.zoneActionIndex = -1;
 		_exitZoneActionFlag = true;
 	}
-	debug("stopLocalScript(%d) OK", scriptIndex);
+	debug(1, "stopLocalScript(%d) OK", scriptIndex);
 }
 
 } // End of namespace Prisoner

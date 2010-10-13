@@ -126,6 +126,8 @@ void PrisonerEngine::enterScene(int16 moduleIndex, int16 sceneIndex) {
 
 	debug("PrisonerEngine::enterScene(%d, %d)", moduleIndex, sceneIndex);
 
+	if (moduleIndex == 2 && sceneIndex == 33) gDebugLevel = 8; else gDebugLevel = 0;
+
 	Common::String modulePakName = Common::String::printf("SM%02d", moduleIndex);
 
 	_userInputCounter = 0;
@@ -219,7 +221,7 @@ void PrisonerEngine::leaveScene() {
 	clearZones();
 	unloadScreenTexts();
 	clearZoneActions();
-	// TODO: unloadSoundItems(_newModuleIndex != _currModuleIndex);
+	unloadSounds(_newModuleIndex != _currModuleIndex);
 	unloadActors();
 	// TODO: updatePalStucts();
 	// TODO: clearPaletteValues
@@ -246,7 +248,7 @@ void PrisonerEngine::leaveScene() {
 }
 
 void PrisonerEngine::gotoScene(int16 moduleIndex, int16 sceneIndex) {
-	debug("PrisonerEngine::gotoScene(%d, %d)", moduleIndex, sceneIndex);
+	debug(1, "PrisonerEngine::gotoScene(%d, %d)", moduleIndex, sceneIndex);
 	_newModuleIndex = moduleIndex;
 	_newSceneIndex = sceneIndex;
 	stopScriptProgram(_currScriptProgramIndex);

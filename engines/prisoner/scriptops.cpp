@@ -149,7 +149,7 @@ void ScriptOpcodes::setupOpcodes() {
 	Opcode(op_interactActorMessage);
 	Opcode(op_setScriptZoneEnterLeaveFlag);
 	Opcode(op_setMouseAddXY);
-	Opcode(op_playBackgroundSound);
+	Opcode(op_playLoopingSound);
 	Opcode(op_removeActorFrameSound);
 	Opcode(op_setActorFrameSound);
 	Opcode(op_playActorAnimationAtPos);
@@ -409,14 +409,13 @@ int16 ScriptOpcodes::op_clearBackground(Script *script) {
 int16 ScriptOpcodes::op_loadSceneSound(Script *script) {
 	ARG_PAKNAME(pakName, false);
 	ARG_EVALUATE(pakSlot);
-	// TODO
-	return -1;
+	return _vm->loadSound(pakName, pakSlot, false);
 }
 
 int16 ScriptOpcodes::op_setSoundVolume(Script *script) {
 	ARG_EVALUATE(soundIndex);
 	ARG_EVALUATE(volume);
-	// TODO
+	_vm->setSoundVolume(soundIndex, volume);
 	return volume;
 }
 
@@ -973,14 +972,14 @@ int16 ScriptOpcodes::op_resetMessageValues(Script *script) {
 
 int16 ScriptOpcodes::op_playSound(Script *script) {
 	ARG_EVALUATE(soundIndex);
- 	// TODO
-	return 0;
+	_vm->playSound(soundIndex);
+	return soundIndex;
 }
 
 int16 ScriptOpcodes::op_unloadSound(Script *script) {
 	ARG_EVALUATE(soundIndex);
- 	// TODO
-	return 0;
+	_vm->unloadSound(soundIndex);
+	return soundIndex;
 }
 
 int16 ScriptOpcodes::op_togglePathSystem(Script *script) {
@@ -1002,7 +1001,7 @@ int16 ScriptOpcodes::op_unloadMusic(Script *script) {
 
 int16 ScriptOpcodes::op_stopSound(Script *script) {
 	ARG_EVALUATE(soundIndex);
- 	// TODO
+	_vm->stopSound(soundIndex);
 	return soundIndex;
 }
 
@@ -1013,8 +1012,7 @@ int16 ScriptOpcodes::op_stopMusic(Script *script) {
 
 int16 ScriptOpcodes::op_isSoundPlaying(Script *script) {
 	ARG_EVALUATE(soundIndex);
-	// TODO
-	return 0;
+	return _vm->isSoundPlaying(soundIndex) ? 1 : 0;
 }
 
 int16 ScriptOpcodes::op_isMusicPlaying(Script *script) {
@@ -1075,11 +1073,11 @@ int16 ScriptOpcodes::op_setMouseAddXY(Script *script) {
 	return 0;
 }
 
-int16 ScriptOpcodes::op_playBackgroundSound(Script *script) {
+int16 ScriptOpcodes::op_playLoopingSound(Script *script) {
 	ARG_EVALUATE(soundIndex);
-	ARG_EVALUATE(flag);
- 	// TODO; 225BF
-	return 0;
+	ARG_EVALUATE(loops);
+	_vm->playLoopingSound(soundIndex, loops);
+	return soundIndex;
 }
 
 int16 ScriptOpcodes::op_removeActorFrameSound(Script *script) {
@@ -1275,14 +1273,15 @@ int16 ScriptOpcodes::op_death(Script *script) {
 int16 ScriptOpcodes::op_loadModuleSound(Script *script) {
 	ARG_PAKNAME(pakName, false);
 	ARG_EVALUATE(pakSlot);
- 	// TODO
-	return 0;
+	return _vm->loadSound(pakName, pakSlot, true);
 }
 
 int16 ScriptOpcodes::op_playSoundSync(Script *script) {
 	ARG_EVALUATE(soundIndex);
- 	// TODO
-	return 0;
+ 	_vm->playSound(soundIndex);
+ 	script->status = kScriptStatusSound;
+ 	script->soundIndex = soundIndex;
+	return soundIndex;
 }
 
 int16 ScriptOpcodes::op_setActorFontColors(Script *script) {
@@ -1357,7 +1356,7 @@ int16 ScriptOpcodes::op_unloadActorAltAnimation(Script *script) {
 }
 
 int16 ScriptOpcodes::op_sub_21D2D(Script *script) {
- debug("ARGS!"); // TODO
+	debug("ARGS!"); // TODO
 	return 0;
 }
 
@@ -1423,7 +1422,7 @@ int16 ScriptOpcodes::op_actor21E0D(Script *script) {
 }
 
 int16 ScriptOpcodes::op_addZoneAction91(Script *script) {
- debug("ARGS!"); // TODO; Unused?
+	debug("ARGS!"); // TODO; Unused?
 	return 0;
 }
 
@@ -1434,12 +1433,12 @@ int16 ScriptOpcodes::op_setUpdateDirtyRectsFlag(Script *script) {
 }
 
 int16 ScriptOpcodes::op_sub_21FD9(Script *script) {
- debug("ARGS!"); // TODO; Unused?
+	debug("ARGS!"); // TODO; Unused?
 	return 0;
 }
 
 int16 ScriptOpcodes::op_sub_220B8(Script *script) {
- debug("ARGS!"); // TODO; Unused?
+	debug("ARGS!"); // TODO; Unused?
 	return 0;
 }
 

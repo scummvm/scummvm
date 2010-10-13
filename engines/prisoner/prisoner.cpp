@@ -173,6 +173,7 @@ Common::Error PrisonerEngine::run() {
 	_menuMouseCursor = -1;
 	_updateDirtyRectsFlag = true;
 	_autoSaveRequested = false;
+	_mainMenuRequested = false;
 	_dialogRunning = false;
 	_screenTextShowing = false;
 	_userInputCounter = 0;
@@ -223,7 +224,7 @@ Common::Error PrisonerEngine::run() {
 	/* Talkie init */
 	_talkieSpeechActive = false;
 	_talkieDataResourceCacheSlot = -1;
-	_talkieSpeechDataPlayNow = false;
+	_talkieSpeechPlayNow = false;
 
 	/* Scene init */
 	_enterSceneScriptIndex = -1;

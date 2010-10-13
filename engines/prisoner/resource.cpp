@@ -54,7 +54,7 @@ PictureResource::~PictureResource() {
 void PictureResource::load(Common::MemoryReadStream &stream) {
 	uint32 width = stream.readUint16LE();
 	uint32 height = stream.readUint16LE();
-	debug("PictureResource::load() width = %d; height = %d", width, height);
+	debug(1, "PictureResource::load() width = %d; height = %d", width, height);
 	_picture = new Graphics::Surface();
 	_picture->create(width, height, 1);
 	stream.read(_picture->pixels, width * height);
@@ -367,18 +367,34 @@ AnimationFrameList *AnimationResource::loadAnimationFrameList(Common::SeekableRe
 
 /* BaseSoundResource */
 
-BaseSoundResource::BaseSoundResource() : audioStream(NULL), _duration(0) {
+BaseSoundResource::BaseSoundResource() : _data(NULL), _size(0), _duration(0) {
 }
 
 BaseSoundResource::~BaseSoundResource() {
-	delete audioStream;
+	delete _data;
+}
+
+Audio::AudioStream *BaseSoundResource::createAudioStream() {
+	Common::MemoryReadStream *wavStream = new Common::MemoryReadStream(_data, _size);
+	return Audio::makeWAVStream(wavStream, DisposeAfterUse::YES);
+}
+
+Audio::AudioStream *BaseSoundResource::createLoopingAudioStream(uint loops) {
+	Common::MemoryReadStream *wavStream = new Common::MemoryReadStream(_data, _size);
+	return makeLoopingAudioStream(Audio::makeWAVStream(wavStream, DisposeAfterUse::YES), loops);
+}
+
+void BaseSoundResource::loadWaveData(Common::MemoryReadStream &stream, int size) {
+	_size = size;
+	_data = new byte[_size];
+	stream.read(_data, _size);
+	_duration = (stream.size() + 22049) * 100 / 22050;
 }
 
 /* SoundResource */
 
 void SoundResource::load(Common::MemoryReadStream &stream) {
-	audioStream = Audio::makeWAVStream(&stream, DisposeAfterUse::NO);
-	_duration = (stream.size() + 22049) * 100 / 22050;
+	loadWaveData(stream, stream.size());
 }
 
 /* LipSyncSoundResource */
@@ -387,12 +403,10 @@ void LipSyncSoundResource::load(Common::MemoryReadStream &stream) {
 
 	while (stream.readByte() != 0);
 
-	uint32 channelOffset = stream.pos() + stream.readUint32LE();
+	uint32 wavDataSize = stream.readUint32LE();
+	uint32 channelOffset = stream.pos() + wavDataSize - 4;
 
-	audioStream = Audio::makeWAVStream(&stream, DisposeAfterUse::NO);
-	_duration = (stream.size() + 22049) * 100 / 22050;
-
-	debug(8, "_duration = %d", _duration);
+    loadWaveData(stream, wavDataSize);
 
 	stream.seek(channelOffset);
 

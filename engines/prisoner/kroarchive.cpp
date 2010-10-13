@@ -72,7 +72,7 @@ byte *KroArchive::load(uint index) {
 	byte *data = NULL;
 	KroArchiveEntry *entry = &_entries[index];
 
-	debug("index = %08X", index);
+	debug("KroArchive::load(%08X)", index);
 
 	_fd->seek(entry->offset);
 
@@ -133,7 +133,7 @@ void PakDirectory::load(const char *filename, uint32 offset, bool isEncrypted) {
 		entry.baseIndex = stream->readUint32LE();
 		_directory.push_back(entry);
 
-		debug("pakName = %s; baseIndex = %d", entry.pakName.c_str(), entry.baseIndex);
+		debug(1, "pakName = %s; baseIndex = %d", entry.pakName.c_str(), entry.baseIndex);
 
 	}
 	delete stream;

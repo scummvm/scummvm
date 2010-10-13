@@ -79,7 +79,7 @@ void PrisonerEngine::startPaletteTask(int16 type, int16 value1, int16 value2, in
 		_paletteTasks[1].active = true;
 		_paletteTasks[1].positionIncr = value3;
 		_paletteTasks[1].updateTicks = value3;
-		debug("alarm: %d, %d, %d", value1, value2, value3);
+		debug(1, "alarm: %d, %d, %d", value1, value2, value3);
 		break;
 	case 4:
 		_paletteTasks[1].active = false;

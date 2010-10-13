@@ -24,6 +24,7 @@ MODULE_OBJS = \
 	screentext.o \
 	script.o \
 	scriptops.o \
+	sound.o \
 	speech.o \
 	zone.o
 

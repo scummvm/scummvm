@@ -231,7 +231,7 @@ void PrisonerEngine::checkQueuedZoneAction() {
 			_queuedZoneAction.zoneActionIndex = -1;
 			_exitZoneActionFlag = true;
 		} else {
-			debug("checkQueuedZoneAction() startScript(%d, %d)",
+			debug(1, "checkQueuedZoneAction() startScript(%d, %d)",
 				_queuedZoneAction.scriptProgIndex, _queuedZoneAction.scriptIndex1);
 			startScript(_queuedZoneAction.scriptProgIndex, _queuedZoneAction.scriptIndex1);
 			_queuedZoneAction.used = 2;
@@ -328,7 +328,7 @@ int16 PrisonerEngine::checkZoneAction(int16 zoneActionType) {
 
 	int16 zoneActionIndex = updateZoneActions(zoneActionType);
 
-	debug("zoneActionIndex = %d; zoneActionType = %d", zoneActionIndex, zoneActionType);
+	debug(1, "zoneActionIndex = %d; zoneActionType = %d", zoneActionIndex, zoneActionType);
 
 	_queuedZoneAction.used = 0;
 	_queuedZoneAction.scriptIndex1 = -1;

@@ -36,20 +36,20 @@ void PrisonerEngine::startTalkieSpeech(int16 pakSlot, uint32 &finishedTime, int1
 	makeLanguageString(soundPakName);
 
 	_talkieDataResourceCacheSlot = -1;
-	_talkieSpeechDataPlayNow = false;
+	_talkieSpeechPlayNow = false;
 
 	// TODO: Check if sound and speech are enabled
 
 	if (_lipSyncScriptNumber == -1) {
 		_talkieDataResourceCacheSlot = _res->load<SoundResource>(soundPakName, pakSlot, 16);
 		SoundResource *soundResource = _res->get<SoundResource>(_talkieDataResourceCacheSlot);
-		_talkieSpeechData = soundResource->getAudioStream();
+		_talkieSpeechAudioStream = soundResource->createAudioStream();
 		finishedTime = getTicks() + soundResource->getDuration();
-		_talkieSpeechDataPlayNow = true;
+		_talkieSpeechPlayNow = true;
 	} else {
 		_talkieDataResourceCacheSlot = _res->load<LipSyncSoundResource>(soundPakName, pakSlot, 16);
 		LipSyncSoundResource *lipSyncSoundResource = _res->get<LipSyncSoundResource>(_talkieDataResourceCacheSlot);
-		_talkieSpeechData = lipSyncSoundResource->getAudioStream();
+		_talkieSpeechAudioStream = lipSyncSoundResource->createAudioStream();
 		finishedTime = getTicks() + lipSyncSoundResource->getDuration();
 		if (_lipSyncChannelStatusRestored) {
 			_lipSyncChannelStatusRestored = false;
@@ -59,7 +59,7 @@ void PrisonerEngine::startTalkieSpeech(int16 pakSlot, uint32 &finishedTime, int1
 			for (uint i = 0; i < lipSyncSoundResource->getChannelCount(); i++)
 				_lipSyncChannelStatus.push_back(LipSyncChannelStatus());
 		}
-		_talkieSpeechDataPlayNow = true;
+		_talkieSpeechPlayNow = true;
 	}
 
 }
@@ -115,11 +115,10 @@ void PrisonerEngine::updateTalkieSpeech(int16 &pakSlot, uint32 &finishedTime, in
 		}
 	}
 
-	if (!_loadingSavegame && _talkieSpeechDataPlayNow) {
-		_talkieSpeechDataPlayNow = false;
-		_talkieSpeechData->rewind();
+	if (!_loadingSavegame && _talkieSpeechPlayNow) {
+		_talkieSpeechPlayNow = false;
 		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_talkieSoundHandle,
-			_talkieSpeechData, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+			_talkieSpeechAudioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 	}
 
 }

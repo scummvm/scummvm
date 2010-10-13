@@ -129,7 +129,7 @@ ResourceManager::~ResourceManager() {
 }
 
 void ResourceManager::purge() {
-	debug("ResourceManager::purge()");
+	debug(1, "ResourceManager::purge()");
 	for (int16 slotIndex = 0; slotIndex < kMaxResourceSlots; slotIndex++) {
 		if (_slots[slotIndex].resource && _slots[slotIndex].refCount == 0) {
 			delete _slots[slotIndex].resource;
