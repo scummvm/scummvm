@@ -86,7 +86,6 @@ MODULE_OBJS := \
 	util/lua/ltable.o \
 	util/lua/ltablib.o \
 	util/lua/ltm.o \
-	util/lua/lua.o \
 	util/lua/lundump.o \
 	util/lua/lvm.o \
 	util/lua/lzio.o \
