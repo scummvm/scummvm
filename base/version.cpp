@@ -111,5 +111,9 @@ const char *gScummVMFeatures = ""
 #ifdef USE_FLUIDSYNTH
 	"FluidSynth "
 #endif
+
+#ifdef USE_THEORADEC
+	"Theora "
+#endif
 	;
 
