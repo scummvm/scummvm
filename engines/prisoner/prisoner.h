@@ -79,7 +79,7 @@ enum {
 	kScriptStatusText		= 5,
 	kScriptStatusDialog		= 6,
 	kScriptStatusWalking	= 7,
-	kScriptStatus8			= 8,
+	kScriptStatusSyncResume	= 8,
 	kScriptStatusActorZone	= 9,
 	kScriptStatus10			= 10,
 	kScriptStatusSound		= 11,
@@ -550,6 +550,7 @@ public:
 	int16 _userInputCounter;
 	bool _clearBackgroundFlag;
 	bool _sceneFlag;
+	bool _mainMenuRequested;
 
 	Common::String _muxFilename;
 	bool _muxClearScreenAfter, _muxClearScreenBefore;
@@ -780,6 +781,9 @@ public:
 	int16 getSysVar(int16 varIndex);
 	bool isScreenTextShowing() const { return _screenTextShowing; }
 
+	void death();
+	bool waitForInput();
+
 	/* Frame time */
 	void resetFrameValues();
 	void initFrameTime();
@@ -927,8 +931,8 @@ public:
 	void removeZone(int16 zoneIndex);
 	void clearZones();
 	int16 getFreeZoneIndex();
-	int16 addZone(int16 x1, int16 y1, int16 x2, int16 y2, int16 mouseCursor, Common::String &pakName,
-		int16 pakSlot, Common::String &identifier);
+	int16 addZone(int16 x1, int16 y1, int16 x2, int16 y2, int16 mouseCursor, Common::String *pakName,
+		int16 pakSlot, Common::String *identifier);
 	int16 addActorZone(int16 actorIndex, int16 mouseCursor, Common::String &pakName,
 		int16 pakSlot, Common::String &identifier);
 	int16 addItemZone(int16 sceneItemIndex, int16 mouseCursor, Common::String &pakName,

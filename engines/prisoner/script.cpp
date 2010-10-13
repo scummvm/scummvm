@@ -160,9 +160,7 @@ void PrisonerEngine::runCurrentScript() {
 		case kScriptStatusRunCode:
 		{
 			int16 opcode = _currScript->readInt16();
-			//debug(1, "opcode = %d", opcode);
 			_scriptOpcodes->execOpcode(_currScript, opcode);
-			//debug(5, "------------------------------------------------------");
 			if (_currScriptIndex == _leaveSceneScriptIndex &&
 				_currScriptProgramIndex == _leaveSceneScriptProgramIndex &&
 				_currScript->status == kScriptStatusPaused) {
@@ -183,8 +181,8 @@ void PrisonerEngine::runCurrentScript() {
 		{
 			Script *otherScript = &_scriptPrograms[_currScriptProgramIndex].scripts[_currScript->syncScriptNumber];
 			if (otherScript->status == kScriptStatusSync && otherScript->syncScriptNumber == _currScriptIndex) {
-				otherScript->status = kScriptStatus8;
-				_currScript->status = kScriptStatus8;
+				otherScript->status = kScriptStatusSyncResume;
+				_currScript->status = kScriptStatusSyncResume;
 			}
 			break;
 		}
@@ -221,7 +219,7 @@ void PrisonerEngine::runCurrentScript() {
 			}
 			break;
 
-		case kScriptStatus8:
+		case kScriptStatusSyncResume:
 			_currScript->status = kScriptStatusRunCode;
 			_currScript->syncScriptNumber = 0;
 			break;

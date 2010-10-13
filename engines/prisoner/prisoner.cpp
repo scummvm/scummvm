@@ -138,11 +138,6 @@ Common::Error PrisonerEngine::run() {
 #endif
 
 #if 0
-	Common::String n = "E_X02R24";
-	int16 r = _res->load<LipSyncSoundResource>(n, 2, 16);
-#endif
-
-#if 0
 	//Common::String pakName = "E_TCETXT";
 	//_res->dump(pakName, 1, 3);
 	Common::String pakName = "E_M02R06";
@@ -153,21 +148,6 @@ Common::Error PrisonerEngine::run() {
 	Common::String pakName = "MUS02";
 	int16 slot = _res->load<MidiResource>(pakName, 0, 13);
 	_midi->playMusic(_res->get<MidiResource>(slot), 200, false);
-#endif
-
-#if 0
-	Common::String pakName = "SA02";
-	int16 slot = _res->load<AnimationResource>(pakName, 0, 11);
-	AnimationResource *a = _res->get<AnimationResource>(slot);
-	AnimationCel *cel = a->_cels[0];
-	FILE *x = fopen("dump.0", "wb");
-	fwrite(cel->data, cel->dataSize, 1, x);
-	fclose(x);
-	AnimationCel outCel;
-	buildScaledSprite(*cel, outCel, 25);
-	x = fopen("dump.1", "wb");
-	fwrite(outCel.data, outCel.dataSize, 1, x);
-	fclose(x);
 #endif
 
 #if 1
@@ -219,13 +199,13 @@ Common::Error PrisonerEngine::run() {
 
 	clearScriptPrograms();
 
-	for (uint i = 0; i < 250; i++)
-		_globalScriptVars[i] = 0;
 	_globalScriptVars[0] = -1;
+	for (uint i = 1; i < 250; i++)
+		_globalScriptVars[i] = 0;
 
-	for (uint i = 0; i < 300; i++)
-		_moduleScriptVars[i] = 0;
 	_moduleScriptVars[0] = -1;
+	for (uint i = 1; i < 300; i++)
+		_moduleScriptVars[i] = 0;
 
 	_animationFrameTimeFlag = false;
 	_animationSpeed = 100;
@@ -308,11 +288,6 @@ Common::Error PrisonerEngine::run() {
 #endif
 
 #if 0
-	_newModuleIndex = 12;
-	_newSceneIndex = 1;//script opcode 21d9b etc. -> OK; skull room
-#endif
-
-#if 0
 	_newModuleIndex = 2;
 	_newSceneIndex = 33;//radar
 #endif
@@ -324,12 +299,17 @@ Common::Error PrisonerEngine::run() {
 		_inventoryBoxResourceCacheSlot = _res->load<AnimationResource>(pakName, 12, 11);
 	}
 
-	// Test-Main-Loop
+	// TODO: Check here for save_slot
+
 	bool done = false;
 	while (!done) {
-	//_moduleScriptVars[49] = 2;
 
 		updateEvents();
+
+		if (_mainMenuRequested) {
+			warning("Player died");
+			break;
+		}
 
 		updateFrameTime();
 		updateAnimationFrameTicks();
@@ -479,6 +459,19 @@ uint32 PrisonerEngine::getTicks() {
 void PrisonerEngine::addDirtyRect(int16 x1, int16 y1, int16 x2, int16 y2, int16 flag) {
 	// TODO
 	// Just a dummy until the real code is done
+}
+
+void PrisonerEngine::death() {
+	_mainMenuRequested = true;
+	_newModuleIndex = -1;
+	leaveScene();
+	//resetDirtyRects();
+	_screen->clear();
+}
+
+bool PrisonerEngine::waitForInput() {
+	// TODO: Check for keyboard
+	return !_paletteTasks[3].active && _buttonState != 0;
 }
 
 void PrisonerEngine::resetFrameValues() {
@@ -663,28 +656,15 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 
 	case kCursorDialog:
 		if (buttonState != 0) {
-			bool cancelDialog = false, dialogDone = false;
-			if (buttonState & kLeftButton) {
-				if (isPointInDialogRect(_mouseX, _mouseY)) {
-					_dialogRunning = false;
-					dialogDone = true;
-					inpMouseSetWaitRelease(true);
-				} else
-					cancelDialog = true;
-			} else if (buttonState & kRightButton)
-				cancelDialog = true;
-			if (cancelDialog) {
-				_dialogRunning = false;
-				dialogDone = true;
-				inpMouseSetWaitRelease(true);
+			if (!((buttonState & kLeftButton) && isPointInDialogRect(_mouseX, _mouseY))) {
 				_selectedDialogKeywordIndex = -1;
 			}
-			if (dialogDone) {
-				_screen->fillRect(0, 0, 639, 81, 0);
-				_screen->fillRect(0, 398, 639, 479, 0);
-				addDirtyRect(0, 0, 640, 82, 1);
-				addDirtyRect(0, 398, 640, 82, 1);
-			}
+			_dialogRunning = false;
+			inpMouseSetWaitRelease(true);
+			_screen->fillRect(0, 0, 639, 81, 0);
+			_screen->fillRect(0, 398, 639, 479, 0);
+			addDirtyRect(0, 0, 640, 82, 1);
+			addDirtyRect(0, 398, 640, 82, 1);
 		}
 		break;
 

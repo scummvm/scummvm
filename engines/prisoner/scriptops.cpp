@@ -71,7 +71,7 @@ void ScriptOpcodes::setupOpcodes() {
 	Opcode(op_setMusicVolume);
 	Opcode(op_gotoScene);
 	Opcode(op_sub_22310);
-	Opcode(op_waitAfterPaletteFade);
+	Opcode(op_waitForInput);
 	Opcode(op_sub_2234D);
 	Opcode(op_random);
 	Opcode(op_paletteFunc);
@@ -167,7 +167,7 @@ void ScriptOpcodes::setupOpcodes() {
 	Opcode(op_actorText21704);
 	Opcode(op_actorAnimation218A1);
 	Opcode(op_startModuleScript);
-	Opcode(op_quit);
+	Opcode(op_death);
 	Opcode(op_loadModuleSound);
 	Opcode(op_playSoundSync);
 	Opcode(op_setActorFontColors);
@@ -449,18 +449,18 @@ int16 ScriptOpcodes::op_gotoScene(Script *script) {
 }
 
 int16 ScriptOpcodes::op_sub_22310(Script *script) {
- debug("ARGS!"); // TODO; Unused?
+	debug("ARGS!"); // TODO; Unused?
 	return 0;
 }
 
-int16 ScriptOpcodes::op_waitAfterPaletteFade(Script *script) {
-	// TODO
-	// NOTE: No args
+int16 ScriptOpcodes::op_waitForInput(Script *script) {
+	if (!_vm->waitForInput())
+		script->ip -= 2;
 	return 0;
 }
 
 int16 ScriptOpcodes::op_sub_2234D(Script *script) {
- debug("ARGS!"); // TODO; Unused?
+	debug("ARGS!"); // TODO; Unused?
 	return 0;
 }
 
@@ -470,12 +470,12 @@ int16 ScriptOpcodes::op_random(Script *script) {
 }
 
 int16 ScriptOpcodes::op_paletteFunc(Script *script) {
- debug("ARGS!"); // TODO; Unused?
+	debug("ARGS!"); // TODO; Unused?
 	return 0;
 }
 
 int16 ScriptOpcodes::op_copyPalette(Script *script) {
- debug("ARGS!"); // TODO; Unused?
+	debug("ARGS!"); // TODO; Unused?
 	return 0;
 }
 
@@ -490,7 +490,7 @@ int16 ScriptOpcodes::op_clearScriptContinueFlag(Script *script) {
 }
 
 int16 ScriptOpcodes::op_setSomeArrayValue(Script *script) {
- debug("ARGS!"); // TODO; Unused?
+	debug("ARGS!"); // TODO; Unused?
 	return 0;
 }
 
@@ -636,7 +636,7 @@ int16 ScriptOpcodes::op_addTextZone(Script *script) {
 	ARG_PAKNAME(pakName, true);
 	ARG_EVALUATE(pakSlot);
 	ARG_STRING(identifier);
-	int16 zoneIndex = _vm->addZone(x1, y1, x2, y2, mouseCursor, pakName, pakSlot, identifier);
+	int16 zoneIndex = _vm->addZone(x1, y1, x2, y2, mouseCursor, &pakName, pakSlot, &identifier);
 	return zoneIndex;
 }
 
@@ -693,7 +693,7 @@ int16 ScriptOpcodes::op_addInventoryItemCombination(Script *script) {
 }
 
 int16 ScriptOpcodes::op_getSomeArrayValue(Script *script) {
- debug("ARGS!"); // TODO; Unused?
+	debug("ARGS!"); // TODO; Unused?
 	return 0;
 }
 
@@ -725,12 +725,12 @@ int16 ScriptOpcodes::op_disableDialogKeyword(Script *script) {
 }
 
 int16 ScriptOpcodes::op_sub_23259(Script *script) {
- debug("ARGS!"); // TODO; Unused?
+	debug("ARGS!"); // TODO; Unused?
 	return 0;
 }
 
 int16 ScriptOpcodes::op_sub_2328A(Script *script) {
- debug("ARGS!"); // TODO; Unused?
+	debug("ARGS!"); // TODO; Unused?
 	return 0;
 }
 
@@ -891,8 +891,7 @@ int16 ScriptOpcodes::op_addZone(Script *script) {
 	ARG_EVALUATE(y1);
 	ARG_EVALUATE(x2);
 	ARG_EVALUATE(y2);
-	Common::String nullString; // TODO: Func param becomes pointer
-	int16 zoneIndex = _vm->addZone(x1, y1, x2, y2, -1, nullString, -1, nullString);
+	int16 zoneIndex = _vm->addZone(x1, y1, x2, y2, -1, NULL, -1, NULL);
 	return zoneIndex;
 }
 
@@ -915,7 +914,6 @@ int16 ScriptOpcodes::op_actorAssignPathWalker(Script *script) {
 }
 
 int16 ScriptOpcodes::op_setUserInput(Script *script) {
-	// TODO: Find a better mechanism if opcodes shouldn't be executed yet
 	if (_vm->_screenTextShowing) {
 		script->ip -= 2;
 		return 0;
@@ -992,7 +990,7 @@ int16 ScriptOpcodes::op_togglePathSystem(Script *script) {
 }
 
 int16 ScriptOpcodes::op_startMusicE(Script *script) {
- debug("ARGS!"); // TODO
+	debug("ARGS!"); // TODO
 	return 0;
 }
 
@@ -1009,17 +1007,19 @@ int16 ScriptOpcodes::op_stopSound(Script *script) {
 }
 
 int16 ScriptOpcodes::op_stopMusic(Script *script) {
- debug("ARGS!"); // TODO
+	debug("ARGS!"); // TODO
 	return 0;
 }
 
 int16 ScriptOpcodes::op_isSoundPlaying(Script *script) {
- debug("ARGS!"); // TODO; 22601
+	ARG_EVALUATE(soundIndex);
+	// TODO
 	return 0;
 }
 
 int16 ScriptOpcodes::op_isMusicPlaying(Script *script) {
- debug("ARGS!"); // TODO; 22500
+	ARG_EVALUATE(musicIndex);
+	debug("ARGS!"); // TODO; 22500
 	return 0;
 }
 
@@ -1267,8 +1267,8 @@ int16 ScriptOpcodes::op_startModuleScript(Script *script) {
 	return 0;
 }
 
-int16 ScriptOpcodes::op_quit(Script *script) {
- debug("ARGS!"); // TODO
+int16 ScriptOpcodes::op_death(Script *script) {
+	_vm->death();
 	return 0;
 }
 

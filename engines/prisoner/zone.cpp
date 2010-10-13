@@ -62,21 +62,23 @@ void PrisonerEngine::clearZones() {
 	}
 }
 
-int16 PrisonerEngine::addZone(int16 x1, int16 y1, int16 x2, int16 y2, int16 mouseCursor, Common::String &pakName,
-	int16 pakSlot, Common::String &identifier) {
+int16 PrisonerEngine::addZone(int16 x1, int16 y1, int16 x2, int16 y2, int16 mouseCursor, Common::String *pakName,
+	int16 pakSlot, Common::String *identifier) {
 
 	int16 zoneIndex = _zones.getFreeSlot();
 	Zone *zone = &_zones[zoneIndex];
 
-	if (pakName.size() > 0) {
-		zone->resourceCacheSlot = loadTextResource(pakName, pakSlot);
+	if (pakName) {
+		zone->resourceCacheSlot = loadTextResource(*pakName, pakSlot);
 		TextResource *textResource = _res->get<TextResource>(zone->resourceCacheSlot);
-		zone->textIndex = textResource->getIndex(identifier);
+		zone->textIndex = textResource->getIndex(*identifier);
 		zone->hasText = true;
+		zone->identifier = *identifier;
 	} else {
 		zone->textIndex = 0;
 		zone->hasText = false;
 		zone->resourceCacheSlot = -1;
+		zone->identifier.clear();
 	}
 
 	zone->used = 1;
@@ -87,7 +89,6 @@ int16 PrisonerEngine::addZone(int16 x1, int16 y1, int16 x2, int16 y2, int16 mous
 	zone->type = -1;
 	zone->actorIndex = -1;
 	zone->mouseCursor = mouseCursor;
-	zone->identifier = identifier;
 
 	return zoneIndex;
 }

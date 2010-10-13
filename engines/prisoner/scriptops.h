@@ -81,7 +81,7 @@ protected:
 	int16 op_setMusicVolume(Script *script);
 	int16 op_gotoScene(Script *script);
 	int16 op_sub_22310(Script *script);
-	int16 op_waitAfterPaletteFade(Script *script);
+	int16 op_waitForInput(Script *script);
 	int16 op_sub_2234D(Script *script);
 	int16 op_random(Script *script);
 	int16 op_paletteFunc(Script *script);
@@ -174,7 +174,7 @@ protected:
 	int16 op_actorText21704(Script *script);
 	int16 op_actorAnimation218A1(Script *script);
 	int16 op_startModuleScript(Script *script);
-	int16 op_quit(Script *script);
+	int16 op_death(Script *script);
 	int16 op_loadModuleSound(Script *script);
 	int16 op_playSoundSync(Script *script);
 	int16 op_setActorFontColors(Script *script);
