@@ -49,7 +49,7 @@ Polygon::Polygon(int vertexCount_, const Vertex *vertices_) : vertexCount(0), ve
 	init(vertexCount_, vertices_);
 }
 
-Polygon::Polygon(const Polygon &other) : vertexCount(0), vertices(NULL) {
+Polygon::Polygon(const Polygon &other) : Persistable(other), vertexCount(0), vertices(NULL) {
 	init(other.vertexCount, other.vertices);
 }
 
