@@ -4,7 +4,7 @@
 	@WorkingEngines = qw(
 		scumm agos sky queen gob groovie saga drascula
 		kyra lure agi touche parallaction cine
-		cruise made m4 tinsel tucker sword1 sword2 draci sci teenagent mohawk hugo
+		cruise made m4 tinsel tucker sword1 sword2 draci sci teenagent mohawk hugo toon
 	);
 
 	@WorkingEngines_1st = qw(
@@ -16,7 +16,7 @@
 	@WorkingEngines_2nd = qw(
 		agos sky gob
 		kyra lure agi tinsel
-		sword1 sword2 draci sci teenagent hugo
+		sword1 sword2 draci sci teenagent hugo toon
 	);
 
 	@TestingEngines = qw(
@@ -302,8 +302,8 @@
 		# the first one includes all SDKs & release-ready engines
 
 			$VariationSets{'ALL'}{'all'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
-			$VariationSets{'ALL'}{'1St'} = "$DefaultFeatures @WorkingEngines_1st @EnablableSubEngines";
-			$VariationSets{'ALL'}{'2nd'} = "$DefaultFeatures @WorkingEngines_2nd @EnablableSubEngines";
+#			$VariationSets{'ALL'}{'1St'} = "$DefaultFeatures @WorkingEngines_1st @EnablableSubEngines";
+#			$VariationSets{'ALL'}{'2nd'} = "$DefaultFeatures @WorkingEngines_2nd @EnablableSubEngines";
 		# now one for each ready-for-release engine
 		if (0)
 		{
