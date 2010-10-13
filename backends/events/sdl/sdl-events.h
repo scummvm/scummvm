@@ -37,7 +37,7 @@
 /**
  * The SDL event source.
  */
-class SdlEventSource : public virtual Common::EventSource {
+class SdlEventSource : public Common::EventSource {
 public: 
 	SdlEventSource();
 	virtual ~SdlEventSource();
