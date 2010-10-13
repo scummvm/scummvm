@@ -743,7 +743,7 @@ Optional Libraries:
   --with-png-prefix=DIR    Prefix where libpng is installed (optional)
   --disable-png            disable PNG decoder [autodetect]
 
-  --with-theoradec-prefix=DIR Prefix where libtheoraec is installed (optional)
+  --with-theoradec-prefix=DIR Prefix where libtheoradec is installed (optional)
   --disable-theoradec      disable Theora decoder [autodetect]
 
   --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is
