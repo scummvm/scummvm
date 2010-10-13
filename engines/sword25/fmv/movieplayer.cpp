@@ -46,14 +46,14 @@ namespace Sword25 {
 #define FLT_EPSILON     1.192092896e-07F        /* smallest such that 1.0+FLT_EPSILON != 1.0 */
 
 Service *OggTheora_CreateObject(Kernel *pKernel) {
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 	return new MoviePlayer(pKernel);
 #else
 	return NULL;
 #endif
 }
 
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel), _decoder(g_system->getMixer()) {
 	if (!registerScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");

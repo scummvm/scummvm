@@ -36,9 +36,8 @@
 #define SWORD25_YUVTORGBA_H
 
 #include "sword25/kernel/common.h"
-#include "sword25/fmv/theora_decoder.h"	// for ENABLE_THEORA
 
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 #include <theora/theora.h>
 #include <theora/codec.h>
 

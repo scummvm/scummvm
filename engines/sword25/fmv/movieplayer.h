@@ -40,7 +40,7 @@
 #include "sword25/fmv/theora_decoder.h"
 #include "sword25/gfx/bitmap.h"
 
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 
 namespace Sword25 {
 

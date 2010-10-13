@@ -34,7 +34,7 @@
 
 #include "sword25/fmv/yuvtorgba.h"
 
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 
 namespace Sword25 {
 

@@ -38,7 +38,7 @@
 
 #include "sword25/fmv/theora_decoder.h"
 
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 #include "sword25/fmv/yuvtorgba.h"
 #include "common/system.h"
 #include "sound/decoders/raw.h"

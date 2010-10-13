@@ -26,9 +26,7 @@
 #ifndef SWORD25_THEORADECODER_H
 #define SWORD25_THEORADECODER_H
 
-#define ENABLE_THEORA	// comment out to disable the Theora decoder, which effectively disables the game's videos
-
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 
 #include "graphics/video/video_decoder.h"
 #include "sound/audiostream.h"

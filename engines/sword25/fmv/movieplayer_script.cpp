@@ -42,7 +42,7 @@
 namespace Sword25 {
 
 int loadMovie(lua_State *L) {
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
@@ -55,7 +55,7 @@ int loadMovie(lua_State *L) {
 }
 
 int unloadMovie(lua_State *L) {
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
@@ -68,7 +68,7 @@ int unloadMovie(lua_State *L) {
 }
 
 int play(lua_State *L) {
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
@@ -81,7 +81,7 @@ int play(lua_State *L) {
 }
 
 int pause(lua_State *L) {
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
@@ -94,7 +94,7 @@ int pause(lua_State *L) {
 }
 
 int update(lua_State *L) {
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
@@ -105,7 +105,7 @@ int update(lua_State *L) {
 }
 
 int isMovieLoaded(lua_State *L) {
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
@@ -118,7 +118,7 @@ int isMovieLoaded(lua_State *L) {
 }
 
 int isPaused(lua_State *L) {
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
@@ -131,7 +131,7 @@ int isPaused(lua_State *L) {
 }
 
 int getScaleFactor(lua_State *L) {
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
@@ -144,7 +144,7 @@ int getScaleFactor(lua_State *L) {
 }
 
 int setScaleFactor(lua_State *L) {
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
@@ -155,7 +155,7 @@ int setScaleFactor(lua_State *L) {
 }
 
 int getTime(lua_State *L) {
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
@@ -183,7 +183,7 @@ const luaL_reg LIBRARY_FUNCTIONS[] = {
 	{ 0, 0 }
 };
 
-#ifdef ENABLE_THEORA
+#ifdef ENABLE_THEORADEC
 bool MoviePlayer::registerScriptBindings() {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
