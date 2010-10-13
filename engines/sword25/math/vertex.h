@@ -59,6 +59,8 @@
 #define powf(x,y)	((float)pow(x,y))
 #define floorf(x)	((float)floor(x))
 #define fabsf(x)	((float)fabs(x))
+#define sqrtf(x)	((float)sqrt(x))
+#define atan2f(x)	((float)atan2(x))
 #endif
 
 namespace Lua {
