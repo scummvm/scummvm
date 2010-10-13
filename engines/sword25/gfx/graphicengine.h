@@ -46,6 +46,7 @@
 // Includes
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/ptr.h"
 #include "common/str.h"
 #include "graphics/surface.h"
 #include "sword25/kernel/common.h"

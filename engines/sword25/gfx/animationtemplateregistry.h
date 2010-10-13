@@ -39,19 +39,17 @@
 #include "sword25/kernel/persistable.h"
 #include "sword25/kernel/objectregistry.h"
 
-#include "common/ptr.h"
+#include "common/singleton.h"
 
 namespace Sword25 {
 
 class AnimationTemplate;
 
-class AnimationTemplateRegistry : public ObjectRegistry<AnimationTemplate>, public Persistable {
+class AnimationTemplateRegistry :
+			public ObjectRegistry<AnimationTemplate>,
+			public Persistable,
+			public Common::Singleton<AnimationTemplateRegistry> {
 public:
-	static AnimationTemplateRegistry &instance() {
-		if (!_instancePtr.get())
-			_instancePtr.reset(new AnimationTemplateRegistry);
-		return *_instancePtr.get();
-	}
 
 	virtual bool persist(OutputPersistenceBlock &writer);
 	virtual bool unpersist(InputPersistenceBlock &reader);
@@ -59,8 +57,6 @@ public:
 private:
 	virtual void logErrorLn(const char *message) const;
 	virtual void logWarningLn(const char *message) const;
-
-	static Common::ScopedPtr<AnimationTemplateRegistry> _instancePtr;
 };
 
 } // End of namespace Sword25

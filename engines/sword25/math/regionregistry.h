@@ -35,7 +35,8 @@
 #ifndef SWORD25_REGIONREGISTRY_H
 #define SWORD25_REGIONREGISTRY_H
 
-#include "common/ptr.h"
+#include "common/singleton.h"
+
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistable.h"
 #include "sword25/kernel/objectregistry.h"
@@ -44,21 +45,17 @@ namespace Sword25 {
 
 class Region;
 
-class RegionRegistry : public ObjectRegistry<Region>, public Persistable {
+class RegionRegistry :
+			public ObjectRegistry<Region>,
+			public Persistable,
+			public Common::Singleton<RegionRegistry> {
 public:
-	static RegionRegistry &instance() {
-		if (!_instancePtr.get()) _instancePtr = Common::SharedPtr<RegionRegistry>(new RegionRegistry());
-		return *_instancePtr.get();
-	}
-
 	virtual bool persist(OutputPersistenceBlock &writer);
 	virtual bool unpersist(InputPersistenceBlock &reader);
 
 private:
 	virtual void logErrorLn(const char *message) const;
 	virtual void logWarningLn(const char *message) const;
-
-	static Common::SharedPtr<RegionRegistry> _instancePtr;
 };
 
 } // End of namespace Sword25

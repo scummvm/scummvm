@@ -34,13 +34,14 @@
 
 #include "sword25/gfx/renderobjectregistry.h"
 
-#include "common/ptr.h"
+// TODO: Destroy the singletons when closing the engine;
+// even better, turn them into non-singleton members of
+// e.g. Sword25Engine.
+DECLARE_SINGLETON(Sword25::RenderObjectRegistry)
 
 namespace Sword25 {
 
 #define BS_LOG_PREFIX "RENDEROBJECTREGISTRY"
-
-Common::ScopedPtr<RenderObjectRegistry> RenderObjectRegistry::_instancePtr;
 
 void RenderObjectRegistry::logErrorLn(const char *message) const {
 	BS_LOG_ERRORLN(message);

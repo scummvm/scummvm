@@ -39,9 +39,12 @@
 #include "sword25/math/regionregistry.h"
 #include "sword25/math/region.h"
 
-namespace Sword25 {
+// TODO: Destroy the singletons when closing the engine;
+// even better, turn them into non-singleton members of
+// e.g. Sword25Engine.
+DECLARE_SINGLETON(Sword25::RegionRegistry)
 
-Common::SharedPtr<RegionRegistry> RegionRegistry::_instancePtr;
+namespace Sword25 {
 
 void RegionRegistry::logErrorLn(const char *message) const {
 	BS_LOG_ERRORLN(message);

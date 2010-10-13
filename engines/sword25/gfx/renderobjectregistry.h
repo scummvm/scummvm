@@ -42,7 +42,7 @@
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/objectregistry.h"
 
-#include "common/ptr.h"
+#include "common/singleton.h"
 
 namespace Sword25 {
 
@@ -56,21 +56,12 @@ class RenderObject;
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-class RenderObjectRegistry : public ObjectRegistry<RenderObject> {
-public:
-	static RenderObjectRegistry &instance() {
-		if (!_instancePtr.get())
-			_instancePtr.reset(new RenderObjectRegistry);
-		return *_instancePtr.get();
-	}
-
-	virtual ~RenderObjectRegistry() {}
-
+class RenderObjectRegistry :
+			public ObjectRegistry<RenderObject>,
+			public Common::Singleton<RenderObjectRegistry> {
 private:
 	virtual void logErrorLn(const char *message) const;
 	virtual void logWarningLn(const char *message) const;
-
-	static Common::ScopedPtr<RenderObjectRegistry> _instancePtr;
 };
 
 } // End of namespace Sword25

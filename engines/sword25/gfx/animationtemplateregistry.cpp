@@ -39,9 +39,12 @@
 #include "sword25/gfx/animationtemplateregistry.h"
 #include "sword25/gfx/animationtemplate.h"
 
-namespace Sword25 {
+// TODO: Destroy the singletons when closing the engine;
+// even better, turn them into non-singleton members of
+// e.g. Sword25Engine.
+DECLARE_SINGLETON(Sword25::AnimationTemplateRegistry)
 
-Common::ScopedPtr<AnimationTemplateRegistry> AnimationTemplateRegistry::_instancePtr;
+namespace Sword25 {
 
 void AnimationTemplateRegistry::logErrorLn(const char *message) const {
 	BS_LOG_ERRORLN(message);
