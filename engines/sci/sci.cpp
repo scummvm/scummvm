@@ -514,7 +514,7 @@ void SciEngine::initGraphics() {
 	_gfxPaint32 = 0;
 #endif
 
-	if (_resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1)
+	if (hasMacIconBar())
 		_gfxMacIconBar = new GfxMacIconBar();
 
 	bool paletteMerging = true;
@@ -662,6 +662,10 @@ Common::Platform SciEngine::getPlatform() const {
 
 bool SciEngine::isDemo() const {
 	return _gameDescription->flags & ADGF_DEMO;
+}
+
+bool SciEngine::hasMacIconBar() const {
+	return _resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1 && getGameId() != GID_HOYLE4;
 }
 
 Common::String SciEngine::getSavegameName(int nr) const {

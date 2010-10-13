@@ -854,14 +854,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-	// Hoyle 4 - English DOS Demo
+	// Hoyle 4 (Hoyle Classic Card Games) - English DOS Demo
 	{"hoyle4", "Demo", {
 		{"resource.map", 0, "60f764020a6b788bbbe415dbc2ccb9f3", 931},
 		{"resource.000", 0, "5fe3670e3ddcd4f85c10013b5453141a", 615522},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
-	// Hoyle 4 - English DOS Demo
+	// Hoyle 4 (Hoyle Classic Card Games) - English DOS Demo
 	// SCI interpreter version 1.001.200 (just a guess)
 	// Does anyone have this version? -clone2727
 	{"hoyle4", "Demo", {
@@ -871,13 +871,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
 	// Hoyle 4 (Hoyle Classic Card Games) - English DOS/Win
-	// SCI1.1
 	// Supplied by abevi in bug report #3039291
 	{"hoyle4", "", {
 		{"resource.map", 0, "2b577c975cc8d8d43f61b6a756129fe3", 4352},
 		{"resource.000", 0, "43e2c15ce436aab611a462ad0603e12d", 2000132},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// Hoyle 4 (Hoyle Classic Card Games) - English Macintosh Floppy
+	// VERSION file reports "2.0"
+	{"hoyle4", "", {
+		{"Data1", 0, "afad082944d36ce4d2a9e646efc49da1", 7731536},
+		{"Data2", 0, "615ed2efe969f845cd8f0686af0b06f2", 1543825},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_NOSPEECH	},
 
 	// Jones in the Fast Lane EGA - English DOS
 	// SCI interpreter version 1.000.172 (not 100% sure FIXME)
