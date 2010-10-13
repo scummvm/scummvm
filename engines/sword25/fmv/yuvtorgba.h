@@ -37,7 +37,7 @@
 
 #include "sword25/kernel/common.h"
 
-#ifdef ENABLE_THEORADEC
+#ifdef USE_THEORADEC
 #include <theora/theora.h>
 #include <theora/codec.h>
 

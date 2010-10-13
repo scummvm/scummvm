@@ -26,7 +26,7 @@
 #ifndef SWORD25_THEORADECODER_H
 #define SWORD25_THEORADECODER_H
 
-#ifdef ENABLE_THEORADEC
+#ifdef USE_THEORADEC
 
 #include "graphics/video/video_decoder.h"
 #include "sound/audiostream.h"

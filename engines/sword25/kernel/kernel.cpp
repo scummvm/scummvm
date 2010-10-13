@@ -430,7 +430,7 @@ ScriptEngine *Kernel::GetScript() {
 
 // -----------------------------------------------------------------------------
 
-#ifdef ENABLE_THEORADEC
+#ifdef USE_THEORADEC
 /**
  * Returns a pointer to the movie player, or NULL if it is not active
  */
