@@ -196,7 +196,8 @@ int BS_Log::_WriteLog(const char *Message) {
 }
 
 void BS_Log::_FlushLog() {
-	_LogFile->flush();
+	if (_LogFile)
+		_LogFile->flush();
 }
 
 void (*BS_LogPtr)(const char *, ...) = BS_Log::Log;
