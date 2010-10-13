@@ -50,7 +50,7 @@ protected:
 		_scalingAllowed(true),
 		_alphaAllowed(true),
 		_colorModulationAllowed(true)
-	{};
+	{}
 
 public:
 	struct Frame {

@@ -63,7 +63,7 @@ protected:
 	bool _CloseWanted;
 
 public:
-	virtual ~Window() {};
+	virtual ~Window() {}
 
 	/**
 	 * Returns the visibility of the window.

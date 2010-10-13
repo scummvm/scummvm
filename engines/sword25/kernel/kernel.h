@@ -342,7 +342,7 @@ public:
 		this->SuperclassIdentifier = SuperclassIdentifier_;
 		this->ServiceIdentifier = ServiceIdentifier_;
 		this->CreateMethod = CreateMethod_;
-	};
+	}
 
 	Common::String  SuperclassIdentifier;
 	Common::String  ServiceIdentifier;

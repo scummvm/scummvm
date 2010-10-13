@@ -352,7 +352,7 @@ public:
 	*/
 	void forceRefresh() {
 		_refreshForced = true;
-	};
+	}
 	/**
 	    @brief Gibt das Handle des Objekte zurück.
 	*/

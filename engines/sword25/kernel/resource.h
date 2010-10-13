@@ -103,7 +103,7 @@ public:
 	}
 
 protected:
-	virtual ~Resource() {};
+	virtual ~Resource() {}
 
 private:
 	Common::String                      _fileName;          ///< The absolute filename

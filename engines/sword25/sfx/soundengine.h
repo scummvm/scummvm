@@ -88,7 +88,7 @@ public:
 	typedef void (*DynamicSoundReadCallback)(void *UserData, void *Data, uint DataLength);
 
 	SoundEngine(Kernel *pKernel);
-	~SoundEngine() {};
+	~SoundEngine() {}
 
 	/**
 	 * Initialises the sound engine

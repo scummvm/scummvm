@@ -51,7 +51,7 @@ namespace Sword25 {
 
 class Image {
 public:
-	virtual ~Image() {};
+	virtual ~Image() {}
 
 	// Enums
 	/**

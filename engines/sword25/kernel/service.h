@@ -60,14 +60,14 @@ private:
 	Kernel  *_pKernel;
 
 protected:
-	Service(Kernel *pKernel) : _pKernel(pKernel) {};
+	Service(Kernel *pKernel) : _pKernel(pKernel) {}
 
 	Kernel *GetKernel() const {
 		return _pKernel;
 	}
 
 public:
-	virtual ~Service() {};
+	virtual ~Service() {}
 };
 
 } // End of namespace Sword25

@@ -49,8 +49,8 @@ class BS_InputPersistenceBlock;
 
 class ScriptEngine : public Service, public Persistable {
 public:
-	ScriptEngine(Kernel *KernelPtr) : Service(KernelPtr) {};
-	virtual ~ScriptEngine() {};
+	ScriptEngine(Kernel *KernelPtr) : Service(KernelPtr) {}
+	virtual ~ScriptEngine() {}
 
 	// -----------------------------------------------------------------------------
 	// This method must be implemented by the script engine

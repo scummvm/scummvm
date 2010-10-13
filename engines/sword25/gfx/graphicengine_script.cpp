@@ -70,7 +70,7 @@ namespace {
 
 class ActionCallback : public LuaCallback {
 public:
-	ActionCallback(lua_State *L) : LuaCallback(L) {};
+	ActionCallback(lua_State *L) : LuaCallback(L) {}
 
 	Common::String Action;
 

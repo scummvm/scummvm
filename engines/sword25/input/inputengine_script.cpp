@@ -63,7 +63,7 @@ static void TheCommandCallback(int Command);
 namespace {
 class CharacterCallbackClass : public LuaCallback {
 public:
-	CharacterCallbackClass(lua_State *L) : LuaCallback(L) {};
+	CharacterCallbackClass(lua_State *L) : LuaCallback(L) {}
 
 	Common::String Character;
 

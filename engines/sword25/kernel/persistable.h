@@ -42,7 +42,7 @@ class InputPersistenceBlock;
 
 class Persistable {
 public:
-	virtual ~Persistable() {};
+	virtual ~Persistable() {}
 
 	virtual bool persist(OutputPersistenceBlock &writer) = 0;
 	virtual bool unpersist(InputPersistenceBlock &reader) = 0;

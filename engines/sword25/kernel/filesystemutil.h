@@ -62,7 +62,7 @@ namespace Sword25 {
 class FileSystemUtil {
 public:
 	static FileSystemUtil &GetInstance();
-	virtual ~FileSystemUtil() {};
+	virtual ~FileSystemUtil() {}
 
 	/**
 	 * This function returns the name of the directory in which all user data is to be stored.

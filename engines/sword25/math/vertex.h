@@ -79,7 +79,7 @@ namespace Sword25 {
  */
 class Vertex {
 public:
-	Vertex() : x(0), y(0) {};
+	Vertex() : x(0), y(0) {}
 	Vertex(int x_, int y_) {
 		this->x = x_;
 		this->y = y_;

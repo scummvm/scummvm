@@ -136,7 +136,7 @@ private:
 		m_KernelPtr(pKernel),
 		m_MaxMemoryUsage(100000000),
 		m_LogCacheMiss(false)
-	{};
+	{}
 	virtual ~ResourceManager();
 
 	enum {
