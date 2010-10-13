@@ -136,8 +136,8 @@ protected:
 		}
 	};
 	struct ClassPointer_Hash {
-		uint operator()(const T *x) const {
-			return (uint)x;
+		unsigned long long operator()(const T *x) const {
+			return (unsigned long long)x;
 		}
 	};
 
