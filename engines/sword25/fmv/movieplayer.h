@@ -40,6 +40,8 @@
 #include "sword25/fmv/theora_decoder.h"
 #include "sword25/gfx/bitmap.h"
 
+#ifdef ENABLE_THEORA
+
 namespace Sword25 {
 
 class MoviePlayer : public Service {
@@ -141,5 +143,7 @@ private:
 };
 
 } // End of namespace Sword25
+
+#endif
 
 #endif

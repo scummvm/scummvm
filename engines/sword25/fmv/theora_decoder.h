@@ -26,6 +26,10 @@
 #ifndef SWORD25_THEORADECODER_H
 #define SWORD25_THEORADECODER_H
 
+#define ENABLE_THEORA	// comment out to disable the Theora decoder, which effectively disables the game's videos
+
+#ifdef ENABLE_THEORA
+
 #include "graphics/video/video_decoder.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
@@ -148,5 +152,7 @@ private:
 };
 
 } // End of namespace Sword25
+
+#endif
 
 #endif

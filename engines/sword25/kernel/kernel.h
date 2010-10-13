@@ -55,6 +55,7 @@
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/window.h"
 #include "sword25/kernel/resmanager.h"
+#include "sword25/fmv/theora_decoder.h"	// for ENABLE_THEORA
 
 namespace Sword25 {
 
@@ -200,10 +201,13 @@ public:
 	 * Returns a pointer to the script engine, or NULL if it is not active
 	 */
 	ScriptEngine *GetScript();
+
+#ifdef ENABLE_THEORA
 	/**
 	 * Returns a pointer to the movie player, or NULL if it is not active
 	 */
 	MoviePlayer *GetFMV();
+#endif
 
 	/**
 	 * Pauses for the specified amount of time

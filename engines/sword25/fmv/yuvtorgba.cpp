@@ -34,6 +34,8 @@
 
 #include "sword25/fmv/yuvtorgba.h"
 
+#ifdef ENABLE_THEORA
+
 namespace Sword25 {
 
 static const int PRECISION = 32768;
@@ -241,3 +243,5 @@ void YUVtoBGRA::translate(th_ycbcr_buffer &YUVBuffer, const th_info &theoraInfo,
 }
 
 } // End of namespace Sword25
+
+#endif

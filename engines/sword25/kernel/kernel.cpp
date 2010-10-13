@@ -430,12 +430,14 @@ ScriptEngine *Kernel::GetScript() {
 
 // -----------------------------------------------------------------------------
 
+#ifdef ENABLE_THEORA
 /**
  * Returns a pointer to the movie player, or NULL if it is not active
  */
 MoviePlayer *Kernel::GetFMV() {
 	return static_cast<MoviePlayer *>(GetService("fmv"));
 }
+#endif
 
 // -----------------------------------------------------------------------------
 

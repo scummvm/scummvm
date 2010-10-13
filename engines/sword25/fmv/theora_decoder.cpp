@@ -37,6 +37,8 @@
  */
 
 #include "sword25/fmv/theora_decoder.h"
+
+#ifdef ENABLE_THEORA
 #include "sword25/fmv/yuvtorgba.h"
 #include "common/system.h"
 #include "sound/decoders/raw.h"
@@ -490,3 +492,5 @@ Audio::QueuingAudioStream *TheoraDecoder::createAudioStream() {
 }
 
 } // End of namespace Sword25
+
+#endif

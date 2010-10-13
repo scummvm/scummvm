@@ -42,91 +42,127 @@
 namespace Sword25 {
 
 int loadMovie(lua_State *L) {
+#ifdef ENABLE_THEORA
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->loadMovie(luaL_checkstring(L, 1), lua_gettop(L) == 2 ? static_cast<uint>(luaL_checknumber(L, 2)) : 10));
+#else
+	lua_pushbooleancpp(L, true);
+#endif
 
 	return 1;
 }
 
 int unloadMovie(lua_State *L) {
+#ifdef ENABLE_THEORA
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->unloadMovie());
+#else
+	lua_pushbooleancpp(L, true);
+#endif
 
 	return 1;
 }
 
 int play(lua_State *L) {
+#ifdef ENABLE_THEORA
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->play());
+#else
+	lua_pushbooleancpp(L, true);
+#endif
 
 	return 1;
 }
 
 int pause(lua_State *L) {
+#ifdef ENABLE_THEORA
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->pause());
+#else
+	lua_pushbooleancpp(L, true);
+#endif
 
 	return 1;
 }
 
 int update(lua_State *L) {
+#ifdef ENABLE_THEORA
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	FMVPtr->update();
+#endif
 
 	return 0;
 }
 
 int isMovieLoaded(lua_State *L) {
+#ifdef ENABLE_THEORA
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->isMovieLoaded());
+#else
+	lua_pushbooleancpp(L, true);
+#endif
 
 	return 1;
 }
 
 int isPaused(lua_State *L) {
+#ifdef ENABLE_THEORA
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->isPaused());
+#else
+	lua_pushbooleancpp(L, false);
+#endif
 
 	return 1;
 }
 
 int getScaleFactor(lua_State *L) {
+#ifdef ENABLE_THEORA
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushnumber(L, FMVPtr->getScaleFactor());
+#else
+	lua_pushnumber(L, 1);
+#endif
 
 	return 1;
 }
 
 int setScaleFactor(lua_State *L) {
+#ifdef ENABLE_THEORA
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	FMVPtr->setScaleFactor(static_cast<float>(luaL_checknumber(L, 1)));
+#endif
 
 	return 0;
 }
 
 int getTime(lua_State *L) {
+#ifdef ENABLE_THEORA
 	MoviePlayer *FMVPtr = Kernel::GetInstance()->GetFMV();
 	BS_ASSERT(FMVPtr);
 
 	lua_pushnumber(L, FMVPtr->getTime());
+#else
+	lua_pushnumber(L, 0);
+#endif
 
 	return 1;
 }
@@ -147,6 +183,7 @@ const luaL_reg LIBRARY_FUNCTIONS[] = {
 	{ 0, 0 }
 };
 
+#ifdef ENABLE_THEORA
 bool MoviePlayer::registerScriptBindings() {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
@@ -159,5 +196,6 @@ bool MoviePlayer::registerScriptBindings() {
 
 	return true;
 }
+#endif
 
 } // End of namespace Sword25
