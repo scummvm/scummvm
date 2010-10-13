@@ -26,6 +26,8 @@
 #ifndef SWORD25_THEORADECODER_H
 #define SWORD25_THEORADECODER_H
 
+#include "common/scummsys.h"	// for USE_THEORADEC
+
 #ifdef USE_THEORADEC
 
 #include "graphics/video/video_decoder.h"

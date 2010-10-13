@@ -35,12 +35,13 @@
 #ifndef SWORD25_MOVIEPLAYER_H
 #define SWORD25_MOVIEPLAYER_H
 
+#include "common/scummsys.h"	// for USE_THEORADEC
+
+#ifdef USE_THEORADEC
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/service.h"
 #include "sword25/fmv/theora_decoder.h"
 #include "sword25/gfx/bitmap.h"
-
-#ifdef USE_THEORADEC
 
 namespace Sword25 {
 

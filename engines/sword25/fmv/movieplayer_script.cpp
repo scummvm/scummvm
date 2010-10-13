@@ -32,6 +32,8 @@
  *
  */
 
+#include "common/scummsys.h"	// for USE_THEORADEC
+
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/script/script.h"

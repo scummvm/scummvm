@@ -35,9 +35,10 @@
 #ifndef SWORD25_YUVTORGBA_H
 #define SWORD25_YUVTORGBA_H
 
-#include "sword25/kernel/common.h"
+#include "common/scummsys.h"	// for USE_THEORADEC
 
 #ifdef USE_THEORADEC
+#include "sword25/kernel/common.h"
 #include <theora/theora.h>
 #include <theora/codec.h>
 
