@@ -394,9 +394,9 @@ in the previous paragraph.
 
 3.3) Maniac Mansion NES notes:
 ---- -------------------------
-Supported versions are English GB (E), French (F), German (G), Swedish
-(SW) and English US (U). ScummVM requires just the PRG section to run
-and not the whole ROM.
+Supported versions are English GB (E), French (F), German (G), Italian (I),
+Swedish (SW) and English US (U). ScummVM requires just the PRG section 
+to run and not the whole ROM.
 
 In order to get the game working, you will have to strip out the first
 16 bytes from the ROM you are trying to work with. Any hex editor will
@@ -404,7 +404,7 @@ work as long as you are able to copy/paste.  After you open the ROM with
 the hex editor, copy everything from the second row (17th byte) to the
 end. After you do this, paste it to a new hex file. Name the new file
 "Maniac Mansion (XX).prg" while XX stands for the version you are
-working with (E, F, G, SW, or U).  The final size should be exactly
+working with (E, F, G, I, SW, or U).  The final size should be exactly
 262144 bytes.
 
 If you add the game manually make sure that the platform is set to NES.
