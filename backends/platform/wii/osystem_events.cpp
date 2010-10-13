@@ -300,6 +300,9 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 		return true;
 	}
 
+	if (needsScreenUpdate())
+		updateScreen();
+
 	u32 bd = 0, bh = 0, bu = 0;
 
 	if (PAD_ScanPads() & 1) {

@@ -535,7 +535,7 @@ void Sound::calcWaveVolume(int16 *data, uint32 length) {
 	_waveVolPos = 0;
 	for (uint32 blkCnt = 1; blkCnt < length / 918; blkCnt++) {
 		if (blkCnt >= WAVE_VOL_TAB_LENGTH) {
-			warning("Wave vol tab too small.");
+			warning("Wave vol tab too small");
 			return;
 		}
 		int32 average = 0;

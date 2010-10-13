@@ -53,9 +53,10 @@ public:
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
 	bool hasRhythmChannel() const { return true; }
-	byte getPlayId();
+	byte getPlayId() const;
 	int getPolyphony() const { return kVoices; }
-	int getFirstChannel();
+	int getFirstChannel() const;
+	int getLastChannel() const;
 	void setVolume(byte volume);
 	int getVolume();
 	void setReverb(byte reverb);
@@ -97,7 +98,7 @@ private:
 	};
 
 	bool _isMt32;
-	bool _isOldPatchFormat;
+	bool _useMT32Track;
 	bool _hasReverb;
 	bool _playSwitch;
 	int _masterVolume;
@@ -119,7 +120,7 @@ private:
 	byte _sysExBuf[kMaxSysExSize];
 };
 
-MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _isMt32(false), _hasReverb(false), _isOldPatchFormat(true) {
+MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _isMt32(false), _hasReverb(false), _useMT32Track(true) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
 	_driver = createMidi(dev);
 
@@ -138,6 +139,10 @@ MidiPlayer_Midi::~MidiPlayer_Midi() {
 
 void MidiPlayer_Midi::noteOn(int channel, int note, int velocity) {
 	uint8 patch = _channels[channel].mappedPatch;
+
+	assert(channel <= 15);
+	assert(note <= 127);
+	assert(velocity <= 127);
 
 	if (channel == MIDI_RHYTHM_CHANNEL) {
 		if (_percussionMap[note] == MIDI_UNMAPPED) {
@@ -175,6 +180,7 @@ void MidiPlayer_Midi::noteOn(int channel, int note, int velocity) {
 
 		// We assume that velocity 0 maps to 0 (for note off)
 		int mapIndex = _channels[channel].velocityMapIdx;
+		assert(velocity <= 127);
 		velocity = _velocityMap[mapIndex][velocity];
 	}
 
@@ -183,6 +189,8 @@ void MidiPlayer_Midi::noteOn(int channel, int note, int velocity) {
 }
 
 void MidiPlayer_Midi::controlChange(int channel, int control, int value) {
+	assert(channel <= 15);
+
 	switch (control) {
 	case 0x07:
 		_channels[channel].volume = value;
@@ -231,6 +239,8 @@ void MidiPlayer_Midi::controlChange(int channel, int control, int value) {
 
 void MidiPlayer_Midi::setPatch(int channel, int patch) {
 	bool resetVol = false;
+
+	assert(channel <= 15);
 
 	if ((channel == MIDI_RHYTHM_CHANNEL) || (_channels[channel].patch == patch))
 		return;
@@ -319,10 +329,17 @@ void MidiPlayer_Midi::send(uint32 b) {
 }
 
 // We return 1 for mt32, because if we remap channels to 0 for mt32, those won't get played at all
-int MidiPlayer_Midi::getFirstChannel() {
+// NOTE: SSCI uses channels 1 through 8 for General MIDI as well, in the drivers I checked
+int MidiPlayer_Midi::getFirstChannel() const {
 	if (_isMt32)
 		return 1;
 	return 0;
+}
+
+int MidiPlayer_Midi::getLastChannel() const {
+	if (_isMt32)
+		return 8;
+	return 15;
 }
 
 void MidiPlayer_Midi::setVolume(byte volume) {
@@ -772,6 +789,9 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		_percussionMap[i] = i;
 		_patchMap[i] = i;
 		_velocityMap[0][i] = i;
+		_velocityMap[1][i] = i;
+		_velocityMap[2][i] = i;
+		_velocityMap[3][i] = i;
 		_keyShift[i] = 0;
 		_volAdjust[i] = 0;
 		_velocityMapIdx[i] = 0;
@@ -808,17 +828,35 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 			// Detect the format of patch 1, so that we know what play mask to use
 			res = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
 			if (!res)
-				_isOldPatchFormat = false;
+				_useMT32Track = false;
 			else
-				_isOldPatchFormat = !isMt32GmPatch(res->data, res->size);
+				_useMT32Track = !isMt32GmPatch(res->data, res->size);
+
+			// Check if the songs themselves have a GM track
+			if (!_useMT32Track) {
+				if (!resMan->isGMTrackIncluded())
+					_useMT32Track = true;
+			}
 		} else {
 			// No GM patch found, map instruments using MT-32 patch
 
 			warning("Game has no native support for General MIDI, applying auto-mapping");
 
+			// TODO: The MT-32 <-> GM mapping hasn't been worked on for SCI1 games. Throw
+			// a warning to the user
+			if (getSciVersion() >= SCI_VERSION_1_EGA)
+				warning("The automatic mapping for General MIDI hasn't been worked on for "
+						"SCI1 games. Music might sound wrong or broken. Please choose another "
+						"music driver for this game (e.g. Adlib or MT-32) if you are "
+						"experiencing issues with music");
+
 			// Modify velocity map to make low velocity notes a little louder
-			for (uint i = 1; i < 0x40; i++)
+			for (uint i = 1; i < 0x40; i++) {
 				_velocityMap[0][i] = 0x20 + (i - 1) / 2;
+				_velocityMap[1][i] = 0x20 + (i - 1) / 2;
+				_velocityMap[2][i] = 0x20 + (i - 1) / 2;
+				_velocityMap[3][i] = 0x20 + (i - 1) / 2;
+			}
 
 			res = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
 
@@ -872,7 +910,7 @@ void MidiPlayer_Midi::sysEx(const byte *msg, uint16 length) {
 	g_system->updateScreen();
 }
 
-byte MidiPlayer_Midi::getPlayId() {
+byte MidiPlayer_Midi::getPlayId() const {
 	switch (_version) {
 	case SCI_VERSION_0_EARLY:
 	case SCI_VERSION_0_LATE:
@@ -881,7 +919,7 @@ byte MidiPlayer_Midi::getPlayId() {
 		if (_isMt32)
 			return 0x0c;
 		else
-			return _isOldPatchFormat ? 0x0c : 0x07;
+			return _useMT32Track ? 0x0c : 0x07;
 	}
 }
 

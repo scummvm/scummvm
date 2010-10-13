@@ -501,8 +501,7 @@ AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(sys
 AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
 
 	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	syncSoundSettings();
 
 	parseFeatures();
 
@@ -578,18 +577,25 @@ void AgiEngine::initialize() {
 		_soundemu = SOUND_EMU_APPLE2GS;
 	} else if (getPlatform() == Common::kPlatformCoCo3) {
 		_soundemu = SOUND_EMU_COCO3;
+	} else if (ConfMan.get("music_driver") == "auto") {
+		// Default sound is the proper PCJr emulation
+		_soundemu = SOUND_EMU_PCJR;
 	} else {
-		switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK|MDT_ADLIB|MDT_PCJR|MDT_MIDI))) {
+		switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK|MDT_AMIGA|MDT_ADLIB|MDT_PCJR|MDT_MIDI))) {
 		case MT_PCSPK:
 			_soundemu = SOUND_EMU_PC;
-			break;
-		case MT_PCJR:
-			_soundemu = SOUND_EMU_PCJR;
 			break;
 		case MT_ADLIB:
 			_soundemu = SOUND_EMU_NONE;
 			break;
+		case MT_PCJR:
+			_soundemu = SOUND_EMU_PCJR;
+			break;
+		case MT_AMIGA:
+			_soundemu = SOUND_EMU_AMIGA;
+			break;
 		default:
+			debug(0, "DEF");
 			_soundemu = SOUND_EMU_MIDI;
 			break;
 		}
@@ -707,18 +713,6 @@ Common::Error AgiEngine::go() {
 	runGame();
 
 	return Common::kNoError;
-}
-
-void AgiEngine::syncSoundSettings() {
-	// FIXME/TODO: Please explain why we are using "music_volume" for all
-	// three different entries here.
-	int soundVolumeMusic = ConfMan.getInt("music_volume");
-	int soundVolumeSFX = ConfMan.getInt("music_volume");
-	int soundVolumeSpeech = ConfMan.getInt("music_volume");
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 }
 
 void AgiEngine::parseFeatures() {

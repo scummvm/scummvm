@@ -49,7 +49,9 @@ enum {
 
 	VOCAB_RESOURCE_SCI1_MAIN_VOCAB = 900,
 	VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES = 901,
-	VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB = 902
+	VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB = 902,
+
+	VOCAB_RESOURCE_ALT_INPUTS = 913
 };
 
 
@@ -117,8 +119,9 @@ struct ResultWord {
 };
 
 typedef Common::List<ResultWord> ResultWordList;
+typedef Common::List<ResultWordList> ResultWordListList;
 
-typedef Common::HashMap<Common::String, ResultWord, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> WordMap;
+typedef Common::HashMap<Common::String, ResultWordList, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> WordMap;
 
 
 struct ParseRuleList;
@@ -146,6 +149,15 @@ struct synonym_t {
 
 typedef Common::List<synonym_t> SynonymList;
 
+
+struct AltInput {
+	const char *_input;
+	const char *_replacement;
+	unsigned int _inputLength;
+	bool _prefix;
+};
+
+
 struct parse_tree_branch_t {
 	int id;
 	int data[10];
@@ -161,7 +173,7 @@ struct ParseTreeNode {
 	ParseTypes type;  /**< leaf or branch */
 	int value; /**< For leaves */
 	ParseTreeNode* left; /**< Left child, for branches */
-	ParseTreeNode* right; /**< Right child, for branches */
+	ParseTreeNode* right; /**< Right child, for branches (and word leaves) */
 };
 
 enum VocabularyVersions {
@@ -186,11 +198,11 @@ public:
 
 	/**
 	 * Looks up a single word in the words and suffixes list.
+	 * @param retval	the list of matches
 	 * @param word		pointer to the word to look up
 	 * @param word_len	length of the word to look up
-	 * @return the matching word (or (-1,-1) if there was no match)
 	 */
-	ResultWord lookupWord(const char *word, int word_len);
+	void lookupWord(ResultWordList &retval, const char *word, int word_len);
 
 
 	/**
@@ -204,7 +216,7 @@ public:
 	 * contain any useful words; if not, *error points to a malloc'd copy of
 	 * the offending word. The returned list may contain anywords.
 	 */
-	bool tokenizeString(ResultWordList &retval, const char *sentence, char **error);
+	bool tokenizeString(ResultWordListList &retval, const char *sentence, char **error);
 
 	/**
 	 * Builds a parse tree from a list of words, using a set of Greibach Normal
@@ -215,7 +227,7 @@ public:
 	 *			nodes or if the sentence structure in 'words' is not part of the
 	 *			language described by the grammar passed in 'rules'.
 	 */
-	int parseGNF(const ResultWordList &words, bool verbose = false);
+	int parseGNF(const ResultWordListList &words, bool verbose = false);
 
 	/**
 	 * Constructs the Greibach Normal Form of the grammar supplied in 'branches'.
@@ -262,15 +274,23 @@ public:
 
 	/**
 	 * Synonymizes a token list
-	 * Parameters: (ResultWordList &) words: The word list to synonymize
+	 * Parameters: (ResultWordListList &) words: The word list to synonymize
 	 */
-	void synonymizeTokens(ResultWordList &words);
+	void synonymizeTokens(ResultWordListList &words);
 
 	void printParserNodes(int num);
 
 	void dumpParseTree();
 
 	int parseNodes(int *i, int *pos, int type, int nr, int argc, const char **argv);
+
+	/**
+	 * Check text input against alternative inputs.
+	 * @param text The text to process. It will be modified in-place
+	 * @param cursorPos The cursor position
+	 * @return true if anything changed
+	 */
+	bool checkAltInput(Common::String& text, uint16& cursorPos);
 
 private:
 	/**
@@ -304,6 +324,20 @@ private:
 	 */
 	void freeRuleList(ParseRuleList *rule_list);
 
+
+	/**
+	 * Retrieves all alternative input combinations from vocab 913.
+	 * @return true on success, false on error
+	 */
+	bool loadAltInputs();
+
+	/**
+	 * Frees all alternative input combinations.
+	 */
+	void freeAltInputs();
+
+
+
 	ResourceManager *_resMan;
 	VocabularyVersions _vocabVersion;
 
@@ -318,6 +352,7 @@ private:
 	Common::Array<parse_tree_branch_t> _parserBranches;
 	WordMap _parserWords;
 	SynonymList _synonyms; /**< The list of synonyms */
+	Common::Array<Common::List<AltInput> > _altInputs;
 
 public:
 	// Accessed by said()

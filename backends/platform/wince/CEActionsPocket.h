@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef CEACTIONSPOCKET
-#define CEACTIONSPOCKET
+#ifndef CEACTIONSPOCKET_H
+#define CEACTIONSPOCKET_H
 
 #include "common/scummsys.h"
 #include "common/system.h"

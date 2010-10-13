@@ -59,7 +59,7 @@ public:
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
 	bool hasRhythmChannel() const { return false; }
-	byte getPlayId();
+	byte getPlayId() const;
 	int getPolyphony() const { return kVoices; } // 9 in SCI1?
 	void setVolume(byte volume);
 	int getVolume();
@@ -633,7 +633,7 @@ void MidiPlayer_Fb01::sysEx(const byte *msg, uint16 length) {
 	g_system->updateScreen();
 }
 
-byte MidiPlayer_Fb01::getPlayId() {
+byte MidiPlayer_Fb01::getPlayId() const {
 	switch (_version) {
 	case SCI_VERSION_0_EARLY:
 		return 0x01;

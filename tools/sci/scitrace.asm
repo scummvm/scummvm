@@ -113,7 +113,7 @@ valid_open:     mov     bx, ax
                 mov     ah, 3Eh
                 int     21h
 
-NowInstallTSR:  
+NowInstallTSR:
                 mov     ax, 2590h
                 mov     dx, offset inthandler
                 int     21h                     ; int 90h pointer <- ds:dx

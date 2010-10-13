@@ -179,7 +179,7 @@ Common::Error KyraEngine_v1::init() {
 #ifdef ENABLE_LOL
 			_flags.gameID = GI_LOL;
 #else
-			error("Lands of Lore demo is not supported in this build.");
+			error("Lands of Lore demo is not supported in this build");
 #endif // !ENABLE_LOL
 	}
 

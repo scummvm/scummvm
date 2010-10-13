@@ -78,8 +78,13 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 	// a relevant audio resource, play it, otherwise switch to synthesized
 	// effects. If the resource exists, play it using map 65535 (sound
 	// effects map)
+	bool checkAudioResource = getSciVersion() >= SCI_VERSION_1_1;
+	if (g_sci->getGameId() == GID_HOYLE4)
+		checkAudioResource = false; // hoyle 4 has garbled audio resources in place of the sound resources
+	// if we play those, we will only make the user deaf and break speakers. Sierra SCI doesn't play anything
+	// on soundblaster. FIXME: check, why this is
 
-	if (getSciVersion() >= SCI_VERSION_1_1 && _resMan->testResource(ResourceId(kResourceTypeAudio, resourceId))) {
+	if (checkAudioResource && _resMan->testResource(ResourceId(kResourceTypeAudio, resourceId))) {
 		// Found a relevant audio resource, play it
 		int sampleLen;
 		newSound->pStreamAud = _audio->getAudioStream(resourceId, 65535, &sampleLen);
@@ -284,8 +289,8 @@ reg_t SoundCommandParser::kDoSoundMasterVolume(int argc, reg_t *argv, reg_t acc)
 
 	if (argc > 0) {
 		debugC(2, kDebugLevelSound, "kDoSound(masterVolume): %d", argv[0].toSint16());
-		int vol = CLIP<int16>(argv[0].toSint16(), 0, kMaxSciVolume);
-		vol = vol * Audio::Mixer::kMaxMixerVolume / kMaxSciVolume;
+		int vol = CLIP<int16>(argv[0].toSint16(), 0, MUSIC_MASTERVOLUME_MAX);
+		vol = vol * Audio::Mixer::kMaxMixerVolume / MUSIC_MASTERVOLUME_MAX;
 		ConfMan.setInt("music_volume", vol);
 		ConfMan.setInt("sfx_volume", vol);
 		g_engine->syncSoundSettings();
@@ -298,7 +303,7 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("kDoSound(fade): Slot not found (%04x:%04x)", PRINT_REG(obj));
+		debugC(2, kDebugLevelSound, "kDoSound(fade): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return acc;
 	}
 
@@ -402,7 +407,7 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		}
 		// We get a flag from MusicEntry::doFade() here to set volume for the stream
 		if (musicSlot->fadeSetVolume) {
-			_music->soundSetVolume(musicSlot, musicSlot->volume);
+			_music->soundSetSampleVolume(musicSlot, musicSlot->volume);
 			musicSlot->fadeSetVolume = false;
 		}
 	} else if (musicSlot->pMidiParser) {
@@ -688,11 +693,17 @@ void SoundCommandParser::startNewSound(int number) {
 }
 
 void SoundCommandParser::setMasterVolume(int vol) {
+	// 0...15
 	_music->soundSetMasterVolume(vol);
 }
 
 void SoundCommandParser::pauseAll(bool pause) {
 	_music->pauseAll(pause);
+}
+
+MusicType SoundCommandParser::getMusicType() const {
+	assert(_music);
+	return _music->soundGetMusicType();
 }
 
 } // End of namespace Sci

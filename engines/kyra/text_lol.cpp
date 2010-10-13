@@ -204,10 +204,12 @@ void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, 
 }
 
 void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
-	static uint8 textColors256[] = { 0xfe, 0xa2, 0x84, 0x97, 0x9F };
-	static uint8 textColors16[] = { 0x33, 0xaa, 0x88, 0x55, 0x99 };
-	static uint8 soundEffect[] = { 0x0B, 0x00, 0x2B, 0x1B, 0x00 };
+	static const uint8 textColors256[] = { 0xfe, 0xa2, 0x84, 0x97, 0x9F };
+	static const uint8 textColors16[] = { 0x33, 0xaa, 0x88, 0x55, 0x99 };
+	static const uint8 soundEffect[] = { 0x0B, 0x00, 0x2B, 0x1B, 0x00 };
+
 	const uint8 *textColors = _vm->gameFlags().use16ColorMode ? textColors16 : textColors256;
+
 	if (type & 4)
 		type ^= 4;
 	else

@@ -49,10 +49,21 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 	// center mouse cursor
 	setPosition(Common::Point(_screen->getWidth() / 2, _screen->getHeight() / 2));
 	_moveZoneActive = false;
+
+	_zoomZoneActive = false;
+	_zoomZone = Common::Rect();
+	_zoomCursorView = 0;
+	_zoomCursorLoop = 0;
+	_zoomCursorCel = 0;
+	_zoomPicView = 0;
+	_zoomColor = 0;
+	_zoomMultiplier = 0;
+	_cursorSurface = 0;
 }
 
 GfxCursor::~GfxCursor() {
 	purgeCache();
+	kernelClearZoomZone();
 }
 
 void GfxCursor::init(GfxCoordAdjuster *coordAdjuster, EventManager *event) {
@@ -266,6 +277,16 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 	kernelShow();
 }
 
+// this list contains all mandatory set cursor changes, that need special handling
+//  ffs. GfxCursor::setPosition (below)
+//    Game,            newPosition, validRect
+static const SciCursorSetPositionWorkarounds setPositionWorkarounds[] = {
+    { GID_ISLANDBRAIN, 84, 109,     46, 76, 174, 243 }, // island of dr. brain / game menu
+    { GID_LSL5,        23, 171,     0, 0, 26, 320 },    // larry 5 / skip forward helper
+    { GID_QFG1VGA,     64, 174,     40, 37, 74, 284 },  // Quest For Glory 1 VGA / run/walk/sleep sub-menu
+    { (SciGameId)0,    -1, -1,     -1, -1, -1, -1 }
+};
+
 void GfxCursor::setPosition(Common::Point pos) {
 	// Don't set position, when cursor is not visible.
 	// This fixes eco quest 1 (floppy) right at the start, which is setting
@@ -282,6 +303,31 @@ void GfxCursor::setPosition(Common::Point pos) {
 		_screen->adjustToUpscaledCoordinates(pos.y, pos.x);
 		g_system->warpMouse(pos.x, pos.y);
 	}
+
+	// Some games display a new menu, set mouse position somewhere within and
+	//  expect it to be in there. This is fine for a real mouse, but on wii using
+	//  wii-mote or touch interfaces this won't work. In fact on those platforms
+	//  the menus will close immediately because of that behaviour.
+	// We identify those cases and set a reaction-rect. If the mouse it outside
+	//  of that rect, we won't report the position back to the scripts.
+	//  As soon as the mouse was inside once, we will revert to normal behaviour
+	// Currently this code is enabled for all platforms, especially because we can't
+	//  differentiate between e.g. Windows used via mouse and Windows used via touchscreen
+	// The workaround won't hurt real-mouse platforms
+	const SciGameId gameId = g_sci->getGameId();
+	const SciCursorSetPositionWorkarounds *workaround;
+	workaround = setPositionWorkarounds;
+	while (workaround->newPositionX != -1) {
+		if (workaround->gameId == gameId
+			&& ((workaround->newPositionX == pos.x) && (workaround->newPositionY == pos.y))) {
+			EngineState *s = g_sci->getEngineState();
+			s->_cursorWorkaroundActive = true;
+			s->_cursorWorkaroundPoint = pos;
+			s->_cursorWorkaroundRect = Common::Rect(workaround->rectLeft, workaround->rectTop, workaround->rectRight, workaround->rectBottom);
+			return;
+		}
+		workaround++;
+	}
 }
 
 Common::Point GfxCursor::getPosition() {
@@ -294,9 +340,10 @@ Common::Point GfxCursor::getPosition() {
 }
 
 void GfxCursor::refreshPosition() {
+	Common::Point mousePoint = getPosition();
+
 	if (_moveZoneActive) {
 		bool clipped = false;
-		Common::Point mousePoint = getPosition();
 
 		if (mousePoint.x < _moveZone.left) {
 			mousePoint.x = _moveZone.left;
@@ -318,6 +365,52 @@ void GfxCursor::refreshPosition() {
 		if (clipped)
 			setPosition(mousePoint);
 	}
+
+	if (_zoomZoneActive) {
+		// Cursor
+		const CelInfo *cursorCelInfo = _zoomCursorView->getCelInfo(_zoomCursorLoop, _zoomCursorCel);
+		const byte *cursorBitmap = _zoomCursorView->getBitmap(_zoomCursorLoop, _zoomCursorCel);
+		// Pic
+		const CelInfo *picCelInfo = _zoomPicView->getCelInfo(0, 0);
+		const byte *rawPicBitmap = _zoomPicView->getBitmap(0, 0);
+
+		// Compute hotspot of cursor
+		Common::Point cursorHotspot = Common::Point((cursorCelInfo->width >> 1) - cursorCelInfo->displaceX, cursorCelInfo->height - cursorCelInfo->displaceY - 1);
+
+		int16 targetX = ((mousePoint.x - _moveZone.left) * _zoomMultiplier);
+		int16 targetY = ((mousePoint.y - _moveZone.top) * _zoomMultiplier);
+		if (targetX < 0)
+			targetX = 0;
+		if (targetY < 0)
+			targetY = 0;
+
+		targetX -= cursorHotspot.x;
+		targetY -= cursorHotspot.y;
+
+		// Sierra SCI actually drew only within zoom area, thus removing the need to fill any other pixels with upmost/left
+		//  color of the picture cel. This also made the cursor not appear on top of everything. They actually drew the
+		//  cursor manually within kAnimate processing and used a hidden cursor for moving.
+		//  TODO: we should also do this
+
+		// Replace the special magnifier color with the associated magnified pixels
+		for (int x = 0; x < cursorCelInfo->width; x++) {
+			for (int y = 0; y < cursorCelInfo->height; y++) {
+				int curPos = cursorCelInfo->width * y + x;
+				if (cursorBitmap[curPos] == _zoomColor) {
+					int16 rawY = targetY + y;
+					int16 rawX = targetX + x;
+					if ((rawY >= 0) && (rawY < picCelInfo->height) && (rawX >= 0) && (rawX < picCelInfo->width)) {
+						int rawPos = picCelInfo->width * rawY + rawX;
+						_cursorSurface[curPos] = rawPicBitmap[rawPos];
+					} else {
+						_cursorSurface[curPos] = rawPicBitmap[0]; // use left and upmost pixel color
+					}
+				}
+			}
+		}
+
+		CursorMan.replaceCursor((const byte *)_cursorSurface, cursorCelInfo->width, cursorCelInfo->height, cursorHotspot.x, cursorHotspot.y, cursorCelInfo->clearKey);
+	}
 }
 
 void GfxCursor::kernelResetMoveZone() {
@@ -327,6 +420,44 @@ void GfxCursor::kernelResetMoveZone() {
 void GfxCursor::kernelSetMoveZone(Common::Rect zone) {
 	_moveZone = zone;
 	_moveZoneActive = true;
+}
+
+void GfxCursor::kernelClearZoomZone() {
+	kernelResetMoveZone();
+	_zoomZone = Common::Rect();
+	_zoomColor = 0;
+	_zoomMultiplier = 0;
+	_zoomZoneActive = false;
+	delete _zoomCursorView;
+	_zoomCursorView = 0;
+	delete _zoomPicView;
+	_zoomPicView = 0;
+	delete[] _cursorSurface;
+	_cursorSurface = 0;
+}
+
+void GfxCursor::kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourceId viewNum, int loopNum, int celNum, GuiResourceId picNum, byte zoomColor) {
+	kernelClearZoomZone();
+
+	_zoomMultiplier = multiplier;
+
+	if (_zoomMultiplier != 1 && _zoomMultiplier != 2 && _zoomMultiplier != 4)
+		error("Unexpected zoom multiplier (expected 1, 2 or 4)");
+
+	_zoomCursorView = new GfxView(_resMan, _screen, _palette, viewNum);
+	_zoomCursorLoop = (byte)loopNum;
+	_zoomCursorCel = (byte)celNum;
+	_zoomPicView = new GfxView(_resMan, _screen, _palette, picNum);
+	const CelInfo *cursorCelInfo = _zoomCursorView->getCelInfo(_zoomCursorLoop, _zoomCursorCel);
+	const byte *cursorBitmap = _zoomCursorView->getBitmap(_zoomCursorLoop, _zoomCursorCel);
+	_cursorSurface = new byte[cursorCelInfo->width * cursorCelInfo->height];
+	memcpy(_cursorSurface, cursorBitmap, cursorCelInfo->width * cursorCelInfo->height);
+
+	_zoomZone = zone;
+	kernelSetMoveZone(_zoomZone);
+
+	_zoomColor = zoomColor;
+	_zoomZoneActive = true;
 }
 
 void GfxCursor::kernelSetPos(Common::Point pos) {

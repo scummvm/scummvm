@@ -165,18 +165,21 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 		if ((patchDescription->fileType & _fileType) != 0) {
 			if (patchDescription->resourceId < _table.size()) {
 				resourceData = &_table[patchDescription->resourceId];
-				resourceData->patchData = new PatchData(patchDescription->fileName);
-				if (resourceData->patchData->_patchFile->open(patchDescription->fileName)) {
-					resourceData->offset = 0;
-					resourceData->size = resourceData->patchData->_patchFile->size();
-					// ITE uses several patch files which are loaded and then not needed
-					// anymore (as they're in memory), so close them here. IHNM uses only
-					// 1 patch file, which is reused, so don't close it
-					if (vm->getGameId() == GID_ITE)
-						resourceData->patchData->_patchFile->close();
-				} else {
-					delete resourceData->patchData;
-					resourceData->patchData = NULL;
+				// Check if we've already found a patch for this resource. One is enough.
+				if (!resourceData->patchData) {
+					resourceData->patchData = new PatchData(patchDescription->fileName);
+					if (resourceData->patchData->_patchFile->open(patchDescription->fileName)) {
+						resourceData->offset = 0;
+						resourceData->size = resourceData->patchData->_patchFile->size();
+						// ITE uses several patch files which are loaded and then not needed
+						// anymore (as they're in memory), so close them here. IHNM uses only
+						// 1 patch file, which is reused, so don't close it
+						if (vm->getGameId() == GID_ITE)
+							resourceData->patchData->_patchFile->close();
+					} else {
+						delete resourceData->patchData;
+						resourceData->patchData = NULL;
+					}
 				}
 			}
 		}
@@ -222,7 +225,7 @@ bool Resource::createContexts() {
 
 
 	// If the Wyrmkeep credits file is found, set the Wyrmkeep version flag to true
-	if (Common::File::exists("graphics/credit3n.dlt")) {
+	if (Common::File::exists("credit3n.dlt")) {
 		_vm->_gf_wyrmkeep = true;
 	}
 

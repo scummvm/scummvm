@@ -71,7 +71,7 @@ void Sprites::setupSceneAnims() {
 		if (_anims[i].script != 0) {
 			data = _anims[i].script;
 
-			assert( READ_LE_UINT16(data) == 0xFF86 );
+			assert(READ_LE_UINT16(data) == 0xFF86);
 			data += 4;
 
 			_anims[i].disable = READ_LE_UINT16(data) != 0;
@@ -509,7 +509,7 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 }
 
 void Sprites::freeSceneShapes() {
-	for (int i = 0; i < ARRAYSIZE(_sceneShapes); i++ ) {
+	for (int i = 0; i < ARRAYSIZE(_sceneShapes); i++) {
 		delete[] _sceneShapes[i];
 		_sceneShapes[i] = 0;
 	}

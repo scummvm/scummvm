@@ -93,13 +93,13 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 	reg_t stringpos = argv[0];
 	Common::String string = s->_segMan->getString(stringpos);
 	char *error;
-	ResultWordList words;
 	reg_t event = argv[1];
 	g_sci->checkVocabularySwitch();
 	Vocabulary *voc = g_sci->getVocabulary();
 	voc->parser_event = event;
 	reg_t params[2] = { voc->parser_base, stringpos };
 
+	ResultWordListList words;
 	bool res = voc->tokenizeString(words, string.c_str(), &error);
 	voc->parserIsValid = false; /* not valid */
 
@@ -109,10 +109,15 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 		s->r_acc = make_reg(0, 1);
 
 #ifdef DEBUG_PARSER
-			debugC(2, kDebugLevelParser, "Parsed to the following blocks:");
+		debugC(2, kDebugLevelParser, "Parsed to the following blocks:");
 
-			for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
-				debugC(2, kDebugLevelParser, "   Type[%04x] Group[%04x]", i->_class, i->_group);
+		for (ResultWordListList::const_iterator i = words.begin(); i != words.end(); ++i) {
+			debugCN(2, kDebugLevelParser, "   ");
+			for (ResultWordList::const_iterator j = i->begin(); j != i->end(); ++j) {
+				debugCN(2, kDebugLevelParser, "%sType[%04x] Group[%04x]", j == i->begin() ? "" : " / ", j->_class, j->_group);
+			}
+			debugCN(2, kDebugLevelParser, "\n");
+		}
 #endif
 
 		int syntax_fail = voc->parseGNF(words);
@@ -138,6 +143,15 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 	} else {
 
 		s->r_acc = make_reg(0, 0);
+		// FIXME: When typing something wrong in the fanmade game Demo Quest,
+		// after the error dialog, the game checks for claimed to be 0 before
+		// showing a subsequent dialog. The following selector change causes
+		// it to be 1, thus causing the game to hang in an endless loop (bug
+		// #3038870. Thus, this seems to be wrong (since fanmade games use
+		// the original SCI interpreter), but we need to check against
+		// dissassembly. Since kParse is in the process of being dissassembled
+		// again, I'm leaving this FIXME in for now, so that it won't be
+		// forgotten :)
 		writeSelectorValue(segMan, event, SELECTOR(claimed), 1);
 		if (error) {
 			s->_segMan->strcpy(voc->parser_base, error);

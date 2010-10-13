@@ -387,6 +387,8 @@ int AgiEngine::runGame() {
 
 		if (_restartGame) {
 			setflag(fRestartGame, true);
+			_game.lastController = 0;
+			setvar(vTimeDelay, 2);	// "normal" speed
 			_restartGame = false;
 		}
 

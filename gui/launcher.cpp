@@ -172,11 +172,17 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	tab->addTab(_("Game"));
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, "GameOptions_Game.Id", _("ID:"), _("Short game identifier used for referring to savegames and running the game from the command line"));
+	if (g_system->getOverlayWidth() > 320)
+		new StaticTextWidget(tab, "GameOptions_Game.Id", _("ID:"), _("Short game identifier used for referring to savegames and running the game from the command line"));
+	else
+		new StaticTextWidget(tab, "GameOptions_Game.Id", _c("ID:", "lowres"), _("Short game identifier used for referring to savegames and running the game from the command line"));
 	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain, _("Short game identifier used for referring to savegames and running the game from the command line"));
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, "GameOptions_Game.Name", _("Name:"), _("Full title of the game"));
+	if (g_system->getOverlayWidth() > 320)
+		new StaticTextWidget(tab, "GameOptions_Game.Name", _("Name:"), _("Full title of the game"));
+	else
+		new StaticTextWidget(tab, "GameOptions_Game.Name", _c("Name:", "lowres"), _("Full title of the game"));
 	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description, _("Full title of the game"));
 
 	// Language popup
@@ -191,7 +197,10 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// Platform popup
-	_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", _("Platform:"), _("Platform the game was originally designed for"));
+	if (g_system->getOverlayWidth() > 320)
+		_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", _("Platform:"), _("Platform the game was originally designed for"));
+	else
+		_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", _c("Platform:", "lowres"), _("Platform the game was originally designed for"));
 	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.PlatformPopup", _("Platform the game was originally designed for"));
 	_platformPopUp->appendEntry(_("<default>"));
 	_platformPopUp->appendEntry("");
@@ -205,7 +214,10 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 
-	_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", _("Override global graphic settings"), 0, kCmdGlobalGraphicsOverride);
+	if (g_system->getOverlayWidth() > 320)
+		_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", _("Override global graphic settings"), 0, kCmdGlobalGraphicsOverride);
+	else
+		_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), 0, kCmdGlobalGraphicsOverride);
 
 	addGraphicControls(tab, "GameOptions_Graphics.");
 
@@ -214,7 +226,10 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	tab->addTab(_("Audio"));
 
-	_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _("Override global audio settings"), 0, kCmdGlobalAudioOverride);
+	if (g_system->getOverlayWidth() > 320)
+		_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _("Override global audio settings"), 0, kCmdGlobalAudioOverride);
+	else
+		_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _c("Override global audio settings", "lowres"), 0, kCmdGlobalAudioOverride);
 
 	addAudioControls(tab, "GameOptions_Audio.");
 	addSubtitleControls(tab, "GameOptions_Audio.");
@@ -222,9 +237,15 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 4) The volume tab
 	//
-	tab->addTab(_("Volume"));
+	if (g_system->getOverlayWidth() > 320)
+		tab->addTab(_("Volume"));
+	else
+		tab->addTab(_c("Volume", "lowres"));
 
-	_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _("Override global volume settings"), 0, kCmdGlobalVolumeOverride);
+	if (g_system->getOverlayWidth() > 320)
+		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _("Override global volume settings"), 0, kCmdGlobalVolumeOverride);
+	else
+		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _c("Override global volume settings", "lowres"), 0, kCmdGlobalVolumeOverride);
 
 	addVolumeControls(tab, "GameOptions_Volume.");
 
@@ -233,7 +254,10 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	tab->addTab(_("MIDI"));
 
-	_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _("Override global MIDI settings"), 0, kCmdGlobalMIDIOverride);
+	if (g_system->getOverlayWidth() > 320)
+		_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _("Override global MIDI settings"), 0, kCmdGlobalMIDIOverride);
+	else
+		_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _c("Override global MIDI settings", "lowres"), 0, kCmdGlobalMIDIOverride);
 
 	if (_guioptions & Common::GUIO_NOMIDI)
 		_globalMIDIOverride->setEnabled(false);
@@ -245,7 +269,10 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	tab->addTab(_("MT-32"));
 
-	_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _("Override global MT-32 settings"), 0, kCmdGlobalMT32Override);
+	if (g_system->getOverlayWidth() > 320)
+		_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _("Override global MT-32 settings"), 0, kCmdGlobalMT32Override);
+	else
+		_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _c("Override global MT-32 settings", "lowres"), 0, kCmdGlobalMT32Override);
 
 	//if (_guioptions & Common::GUIO_NOMIDI)
 	//	_globalMT32Override->setEnabled(false);
@@ -255,21 +282,33 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 7) The Paths tab
 	//
-	tab->addTab(_("Paths"));
+	if (g_system->getOverlayWidth() > 320)
+		tab->addTab(_("Paths"));
+	else
+		tab->addTab(_c("Paths", "lowres"));
 
 	// These buttons have to be extra wide, or the text will be truncated
 	// in the small version of the GUI.
 
 	// GUI:  Button + Label for the game path
-	new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), 0, kCmdGameBrowser);
+	if (g_system->getOverlayWidth() > 320)
+		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), 0, kCmdGameBrowser);
+	else
+		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _c("Game Path:", "lowres"), 0, kCmdGameBrowser);
 	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
-	new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _("Extra Path:"), _("Specifies path to additional data used the game"), kCmdExtraBrowser);
+	if (g_system->getOverlayWidth() > 320)
+		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _("Extra Path:"), _("Specifies path to additional data used the game"), kCmdExtraBrowser);
+	else
+		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _c("Extra Path:", "lowres"), _("Specifies path to additional data used the game"), kCmdExtraBrowser);
 	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath, _("Specifies path to additional data used the game"));
 
 	// GUI:  Button + Label for the save path
-	new ButtonWidget(tab, "GameOptions_Paths.Savepath", _("Save Path:"), _("Specifies where your savegames are put"), kCmdSaveBrowser);
+	if (g_system->getOverlayWidth() > 320)
+		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _("Save Path:"), _("Specifies where your savegames are put"), kCmdSaveBrowser);
+	else
+		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _c("Save Path:", "lowres"), _("Specifies where your savegames are put"), kCmdSaveBrowser);
 	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath, _("Specifies where your savegames are put"));
 
 	// Activate the first tab
@@ -286,7 +325,7 @@ void EditGameDialog::open() {
 
 	String extraPath(ConfMan.get("extrapath", _domain));
 	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
-		_extraPathWidget->setLabel(_("None"));
+		_extraPathWidget->setLabel(_c("None", "path"));
 	}
 
 	String savePath(ConfMan.get("savepath", _domain));
@@ -366,7 +405,7 @@ void EditGameDialog::close() {
 			ConfMan.set("path", gamePath, _domain);
 
 		String extraPath(_extraPathWidget->getLabel());
-		if (!extraPath.empty() && (extraPath != _("None")))
+		if (!extraPath.empty() && (extraPath != _c("None", "path")))
 			ConfMan.set("extrapath", extraPath, _domain);
 
 		String savePath(_savePathWidget->getLabel());
@@ -415,7 +454,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			Common::FSNode file(browser.getResult());
 			_soundFont->setLabel(file.getPath());
 
-			if (!file.getPath().empty() && (file.getPath() != _("None")))
+			if (!file.getPath().empty() && (file.getPath() != _c("None", "path")))
 				_soundFontClearButton->setEnabled(true);
 			else
 				_soundFontClearButton->setEnabled(false);
@@ -527,12 +566,21 @@ LauncherDialog::LauncherDialog()
 		new ButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), _("Load savegame for selected game"), kLoadGameCmd);
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
-	_addButton =
-		new ButtonWidget(this, "Launcher.AddGameButton", _("~A~dd Game..."), _("Hold Shift for Mass Add"), kAddGameCmd);
-	_editButton =
-		new ButtonWidget(this, "Launcher.EditGameButton", _("~E~dit Game..."), _("Change game options"), kEditGameCmd);
-	_removeButton =
-		new ButtonWidget(this, "Launcher.RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
+	if (g_system->getOverlayWidth() > 320) {
+		_addButton =
+			new ButtonWidget(this, "Launcher.AddGameButton", _("~A~dd Game..."), _("Hold Shift for Mass Add"), kAddGameCmd);
+		_editButton =
+			new ButtonWidget(this, "Launcher.EditGameButton", _("~E~dit Game..."), _("Change game options"), kEditGameCmd);
+		_removeButton =
+			new ButtonWidget(this, "Launcher.RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
+	} else {
+		_addButton =
+		new ButtonWidget(this, "Launcher.AddGameButton", _c("~A~dd Game...", "lowres"), _("Hold Shift for Mass Add"), kAddGameCmd);
+		_editButton =
+		new ButtonWidget(this, "Launcher.EditGameButton", _c("~E~dit Game...", "lowres"), _("Change game options"), kEditGameCmd);
+		_removeButton =
+		new ButtonWidget(this, "Launcher.RemoveGameButton", _c("~R~emove Game", "lowres"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
+	}
 
 	// Search box
 	_searchDesc = 0;
@@ -1005,9 +1053,11 @@ void LauncherDialog::updateButtons() {
 	// Update the label of the "Add" button depending on whether shift is pressed or not
 	int modifiers = g_system->getEventManager()->getModifierState();
 	const bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
+	const bool lowRes = g_system->getOverlayWidth() <= 320;
+
 	const char *newAddButtonLabel = massAdd
-		? _("Mass Add...")
-		: _("Add Game...");
+		? (lowRes ? _c("Mass Add...", "lowres") : _("Mass Add..."))
+		: (lowRes ? _c("Add Game...", "lowres") : _("Add Game..."));
 
 	if (_addButton->getLabel() != newAddButtonLabel)
 		_addButton->setLabel(newAddButtonLabel);

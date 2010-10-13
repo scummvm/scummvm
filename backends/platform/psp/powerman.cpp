@@ -84,7 +84,7 @@ bool PowerManager::unregisterForSuspend(Suspendable *item) {
 
 	// Unregister from stream list
 	_listMutex.lock();
-	
+
 	_suspendList.remove(item);
 	_listCounter--;
 
@@ -114,11 +114,11 @@ PowerManager::~PowerManager() {
 ********************************************/
 void PowerManager::pollPauseEngine() {
 	DEBUG_ENTER_FUNC();
-	
-	
+
+
 	bool pause = _pauseFlag;		// We copy so as not to have multiple values
 
-	if (pause != _pauseFlagOld) { 
+	if (pause != _pauseFlagOld) {
 		if (g_engine) { // Check to see if we have an engine
 			if (pause && _pauseClientState == UNPAUSED) {
 				_pauseClientState = PAUSING;		// Tell PM we're in the middle of pausing
@@ -147,7 +147,7 @@ bool PowerManager::beginCriticalSection() {
 	DEBUG_ENTER_FUNC();
 
 	bool ret = false;
-	
+
 	_flagMutex.lock();
 
 	// Check the access flag
@@ -156,7 +156,7 @@ bool PowerManager::beginCriticalSection() {
 
 		PSP_DEBUG_PRINT("I got blocked. ThreadId[%x]\n", sceKernelGetThreadId());
 		debugPM();
-		
+
 		_threadSleep.wait(_flagMutex);
 
 		PSP_DEBUG_PRINT_FUNC("I got released. ThreadId[%x]\n", sceKernelGetThreadId());
@@ -184,11 +184,11 @@ void PowerManager::endCriticalSection() {
 		if (_suspendFlag) {		// If the PM is sleeping, this flag must be set
 				PSP_DEBUG_PRINT_FUNC("PM is asleep. Waking it up.\n");
 				debugPM();
-				
+
 				_pmSleep.releaseAll();
-				
+
 				PSP_DEBUG_PRINT_FUNC("Woke up the PM\n");
-			
+
 				debugPM();
 		}
 
@@ -198,7 +198,7 @@ void PowerManager::endCriticalSection() {
 		}
 	}
 
-	_flagMutex.unlock();	
+	_flagMutex.unlock();
 }
 
 /*******************************************
@@ -209,7 +209,7 @@ void PowerManager::endCriticalSection() {
 void PowerManager::suspend() {
 	DEBUG_ENTER_FUNC();
 
-	if (_pauseFlag) 
+	if (_pauseFlag)
 		return;					// Very important - make sure we only suspend once
 
 	scePowerLock(0);			// Also critical to make sure PSP doesn't suspend before we're done
@@ -232,9 +232,9 @@ void PowerManager::suspend() {
 			PspThread::delayMicros(50000);	// We wait 50 msec at a time
 	}
 
-	// It's possible that the polling thread missed our pause event, but there's 
+	// It's possible that the polling thread missed our pause event, but there's
 	// nothing we can do about that.
-	// We can't know if there's polling going on or not. 
+	// We can't know if there's polling going on or not.
 	// It's usually not a critical thing anyway.
 
 	_PMStatus = kGettingFlagMutexSuspend;
@@ -249,12 +249,12 @@ void PowerManager::suspend() {
 	// Check if anyone is in a critical section. If so, we'll wait for them
 	if (_criticalCounter > 0) {
 		_PMStatus = kWaitCritSectionSuspend;
-		
+
 		_pmSleep.wait(_flagMutex);
-		
+
 		_PMStatus = kDoneWaitingCritSectionSuspend;
-	} 
-		
+	}
+
 	_flagMutex.unlock();
 
 	_PMStatus = kGettingListMutexSuspend;
@@ -275,7 +275,7 @@ void PowerManager::suspend() {
 	_PMStatus = kDoneSuspend;
 
 	scePowerUnlock(0);				// Allow the PSP to go to sleep now
-	
+
 	_PMStatus = kDonePowerUnlock;
 }
 
@@ -286,22 +286,22 @@ void PowerManager::suspend() {
 ********************************************/
 void PowerManager::resume() {
 	DEBUG_ENTER_FUNC();
-	
+
 	_PMStatus = kBeginResume;
 
 	// Make sure we can't get another suspend
 	scePowerLock(0);
 
 	_PMStatus = kCheckingPauseFlag;
-	
-	if (!_pauseFlag) 
+
+	if (!_pauseFlag)
 		return;						// Make sure we can only resume once
 
 	_PMStatus = kGettingListMutexResume;
 
 	// First we notify our Suspendables. Loop over list, calling resume()
 	_listMutex.lock();
-	
+
 	_PMStatus = kIteratingListResume;
 
 	// Iterate
@@ -314,12 +314,12 @@ void PowerManager::resume() {
 	_PMStatus = kDoneIteratingListResume;
 
 	_listMutex.unlock();
-	
+
 	_PMStatus = kGettingFlagMutexResume;
 
 	// Now we set the suspend flag to false
 	_flagMutex.lock();
-	
+
 	_PMStatus = kGotFlagMutexResume;
 
 	_suspendFlag = false;
@@ -328,11 +328,11 @@ void PowerManager::resume() {
 
 	// Signal the threads to wake up
 	_threadSleep.releaseAll();
-	
+
 	_PMStatus = kDoneSignallingSuspendedThreadsResume;
 
 	_flagMutex.unlock();
-	
+
 	_PMStatus = kDoneResume;
 
 	_pauseFlag = false;	// Signal engine to unpause -- no mutex needed

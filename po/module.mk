@@ -2,8 +2,9 @@ POTFILE := $(srcdir)/po/scummvm.pot
 POFILES := $(wildcard $(srcdir)/po/*.po)
 
 updatepot:
-	xgettext -f $(srcdir)/po/POTFILES -D $(srcdir) -d scummvm --c++ -k_ -k_s -o $(POTFILE) \
-		"--copyright-holder=ScummVM Team" --package-name=ScummVM \
+	xgettext -f $(srcdir)/po/POTFILES -D $(srcdir) -d scummvm --c++ -k_ -k_s -k_c:1,2c -k_sc:1,2c \
+		-kDECLARE_TRANSLATION_ADDITIONAL_CONTEXT:1,2c -o $(POTFILE) \
+		--copyright-holder="ScummVM Team" --package-name=ScummVM \
 		--package-version=$(VERSION) --msgid-bugs-address=scummvm-devel@lists.sf.net -o $(POTFILE)_
 
 	sed -e 's/SOME DESCRIPTIVE TITLE/LANGUAGE translation for ScummVM/' \
@@ -35,9 +36,14 @@ updatepot:
 #$(srcdir)/common/messages.cpp: $(POFILES)
 #	perl $(srcdir)/tools/po2c $^ > $(srcdir)/common/messages.cpp
 
+translations-dat: tools/create_translations
+	tools/create_translations/create_translations $(POFILES)
+	mv translations.dat $(srcdir)/gui/themes/
+
+update-translations: updatepot $(POFILES) translations-dat
+
 update-translations: updatepot $(POFILES)
 	@$(foreach file, $(POFILES), echo -n $(notdir $(basename $(file)))": ";msgfmt --statistic $(file);)
 	@rm -f messages.mo
-	perl $(srcdir)/tools/po2c $(POFILES) > $(srcdir)/common/messages.cpp
 
-.PHONY: updatepot update-translations
+.PHONY: updatepot translations-dat update-translations

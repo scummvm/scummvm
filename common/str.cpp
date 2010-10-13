@@ -30,11 +30,6 @@
 
 #include <stdarg.h>
 
-#if !defined(__SYMBIAN32__)
-#include <new>
-#endif
-
-
 namespace Common {
 
 MemoryPool *g_refCountPool = 0; // FIXME: This is never freed right now
@@ -421,7 +416,7 @@ void String::trim() {
 
 	// Trim leading whitespace
 	char *t = _str;
-	while (isspace(*t))
+	while (isspace((unsigned char)*t))
 		t++;
 
 	if (t != _str) {
@@ -444,12 +439,20 @@ String String::printf(const char *fmt, ...) {
 	int len = vsnprintf(output._str, _builtinCapacity, fmt, va);
 	va_end(va);
 
-	if (len == -1) {
-		// MSVC doesn't return the size the full string would take up.
-		// Try increasing the size of the string until it fits.
+	if (len == -1 || len == _builtinCapacity - 1) {
+		// MSVC and IRIX don't return the size the full string would take up.
+		// MSVC returns -1, IRIX returns the number of characters actually written,
+		// which is at the most the size of the buffer minus one, as the string is
+		// truncated to fit.
 
 		// We assume MSVC failed to output the correct, null-terminated string
 		// if the return value is either -1 or size.
+		// For IRIX, because we lack a better mechanism, we assume failure
+		// if the return value equals size - 1.
+		// The downside to this is that whenever we try to format a string where the
+		// size is 1 below the built-in capacity, the size is needlessly increased.
+
+		// Try increasing the size of the string until it fits.
 		int size = _builtinCapacity;
 		do {
 			size *= 2;
@@ -460,7 +463,7 @@ String String::printf(const char *fmt, ...) {
 			va_start(va, fmt);
 			len = vsnprintf(output._str, size, fmt, va);
 			va_end(va);
-		} while (len == -1 || len >= size);
+		} while (len == -1 || len >= size - 1);
 		output._size = len;
 	} else if (len < (int)_builtinCapacity) {
 		// vsnprintf succeeded
@@ -626,7 +629,7 @@ Common::String lastPathComponent(const Common::String &path, const char sep) {
 
 	// Now scan the whole component
 	const char *first = last - 1;
-	while (first >= str && *first != sep)
+	while (first > str && *first != sep)
 		--first;
 
 	if (*first == sep)
@@ -696,9 +699,18 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMod
 
 		switch (*pat) {
 		case '*':
-			// Record pattern / string position for backtracking
-			p = ++pat;
-			q = str;
+			if (*str) {
+				// Record pattern / string position for backtracking
+				p = ++pat;
+				q = str;
+			} else {
+				// If we've reached the end of str, we can't backtrack further
+				// NB: We can't simply check if pat also ended here, because
+				// the pattern might end with any number of *s.
+				++pat;
+				p = 0;
+				q = 0;
+			}
 			// If pattern ended with * -> match
 			if (!*pat)
 				return true;

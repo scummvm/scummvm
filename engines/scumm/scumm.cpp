@@ -29,6 +29,7 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "engines/util.h"
 
@@ -48,6 +49,7 @@
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/smush_player.h"
+#include "scumm/player_towns.h"
 #include "scumm/insane/insane.h"
 #include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
@@ -146,6 +148,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_imuse = NULL;
 	_imuseDigital = NULL;
 	_musicEngine = NULL;
+	_townsPlayer = NULL;
 	_verbs = NULL;
 	_objs = NULL;
 	_sound = NULL;
@@ -255,7 +258,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_switchRoomEffect2 = 0;
 	_switchRoomEffect = 0;
 
-	_bytesPerPixel = 1;
+	_bytesPerPixelOutput = _bytesPerPixel = 1;
 	_doEffect = false;
 	_snapScroll = false;
 	_currentLights = 0;
@@ -275,6 +278,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_hePalettes = NULL;
 	_hePaletteSlot = 0;
 	_16BitPalette = NULL;
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	_townsScreen = 0;
+#endif
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
@@ -315,6 +321,15 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	_skipDrawObject = 0;
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	_townsPaletteFlags = 0;
+	_townsClearLayerFlag = 1;
+	_townsActiveLayerFlags = 3;
+	memset(&_curStringRect, -1, sizeof(Common::Rect));
+	memset(&_cyclRects, 0, 16 * sizeof(Common::Rect));
+	_numCyclRects = 0;
+#endif
+	
 	//
 	// Init all VARS to 0xFF
 	//
@@ -530,15 +545,20 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_screenHeight = 200;
 	}
 
-	_bytesPerPixel = (_game.features & GF_16BIT_COLOR) ? 2 : 1;
+	_bytesPerPixelOutput = _bytesPerPixel = (_game.features & GF_16BIT_COLOR) ? 2 : 1;
+
+#ifdef USE_RGB_COLOR
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	if (_game.platform == Common::kPlatformFMTowns)
+		_bytesPerPixelOutput = 2;
+#endif
+#endif
 
 	// Allocate gfx compositing buffer (not needed for V7/V8 games).
 	if (_game.version < 7)
-		_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight * _bytesPerPixel);
+		_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight * _bytesPerPixelOutput);
 	else
 		_compositeBuf = 0;
-
-	_fmtownsBuf = 0;
 
 	_herculesBuf = 0;
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
@@ -605,7 +625,12 @@ ScummEngine::~ScummEngine() {
 
 	free(_compositeBuf);
 	free(_herculesBuf);
-	free(_fmtownsBuf);
+
+	free(_16BitPalette);
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	delete _townsScreen;
+#endif
 
 	delete _debugger;
 
@@ -695,6 +720,10 @@ ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	_activeObject2Inv = false;
 	_activeObjectObtained = false;
 	_activeObject2Obtained = false;
+
+	VAR_ACTIVE_ACTOR = 0xFF;
+	VAR_IS_SOUND_RUNNING = 0xFF;
+	VAR_ACTIVE_VERB = 0xFF;
 }
 
 ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
@@ -1109,16 +1138,29 @@ Common::Error ScummEngine::init() {
 			screenWidth *= _textSurfaceMultiplier;
 			screenHeight *= _textSurfaceMultiplier;
 		}
-		if (_game.features & GF_16BIT_COLOR) {
+		if (_game.features & GF_16BIT_COLOR 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+			|| _game.platform == Common::kPlatformFMTowns
+#endif
+			) {
 #ifdef USE_RGB_COLOR
 			Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 			initGraphics(screenWidth, screenHeight, screenWidth > 320, &format);
 			if (format != _system->getScreenFormat())
 				return Common::kUnsupportedColorMode;
 #else
-			error("16bit color support is required for this game");
+			if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {
+				warning("Starting game without the required 16bit color support.\nYou may experience color glitches");
+				initGraphics(screenWidth, screenHeight, (screenWidth > 320));
+			} else {
+				error("16bit color support is required for this game");
+			}
 #endif
 		} else {
+#ifdef DISABLE_TOWNS_DUAL_LAYER_MODE
+		if (_game.platform == Common::kPlatformFMTowns && _game.version == 5)
+			error("This game requires dual graphics layer support which is disabled in this build");
+#endif
 			initGraphics(screenWidth, screenHeight, (screenWidth > 320));
 		}
 	}
@@ -1234,13 +1276,8 @@ void ScummEngine::setupScumm() {
 
 	_res->setHeapThreshold(400000, maxHeapThreshold);
 
-	if (_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) {
-		free(_fmtownsBuf);
-		_fmtownsBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier);
-	}
-
 	free(_compositeBuf);
-	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier * _bytesPerPixel);
+	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier * _bytesPerPixelOutput);
 }
 
 #ifdef ENABLE_SCUMM_7_8
@@ -1317,6 +1354,24 @@ void ScummEngine::resetScumm() {
 	int i;
 
 	debug(9, "resetScumm");
+
+#ifdef USE_RGB_COLOR
+	if (_game.features & GF_16BIT_COLOR
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		|| _game.platform == Common::kPlatformFMTowns
+#endif
+		)
+		_16BitPalette = (uint16 *)calloc(512, sizeof(uint16));
+#endif
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	if (_game.platform == Common::kPlatformFMTowns) {
+		delete _townsScreen;
+		_townsScreen = new TownsScreen(_system, _screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, _bytesPerPixelOutput);
+		_townsScreen->setupLayer(0, _screenWidth, _screenHeight, (_bytesPerPixelOutput == 2) ? 32767 : 256);
+		_townsScreen->setupLayer(1, _screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, 16, _textPalette);
+	}
+#endif
 
 	if (_game.version == 0) {
 		initScreens(8, 144);
@@ -1510,8 +1565,6 @@ void ScummEngine_v3::resetScumm() {
 
 
 	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
-		_16BitPalette = (uint16 *)calloc(512, sizeof(uint16));
-
 		// Load tile set and palette for the distaff
 		byte *roomptr = getResourceAddress(rtRoom, 90);
 		assert(roomptr);
@@ -1757,6 +1810,10 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V2CMS(this, _mixer);
 	} else if (_game.platform == Common::kPlatform3DO && _game.heversion <= 62) {
 		// 3DO versions use digital music and sound samples.
+	} else if (_game.platform == Common::kPlatformFMTowns && (_game.version == 3 || _game.id == GID_MONKEY)) {
+		_musicEngine = _townsPlayer = new Player_Towns_v1(this, _mixer);
+		if (!_townsPlayer->init())
+			error("Failed to initialize FM-Towns audio driver");
 	} else if (_game.version >= 3 && _game.heversion <= 62) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
@@ -1771,7 +1828,16 @@ void ScummEngine::setupMusic(int midi) {
 			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
 		}
 
-		_musicEngine = _imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
+		_imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
+		
+		if (_game.platform == Common::kPlatformFMTowns) {
+			_musicEngine = _townsPlayer = new Player_Towns_v2(this, _imuse, _mixer, true);
+			if (!_townsPlayer->init())
+				error("Failed to initialize FM-Towns audio driver");
+		} else {
+			_musicEngine = _imuse;
+		}
+
 		if (_imuse) {
 			_imuse->addSysexHandler
 				(/*IMUSE_SYSEX_ID*/ 0x7D,
@@ -1780,17 +1846,17 @@ void ScummEngine::setupMusic(int midi) {
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
 			// YM2162 driver can't handle midi->getPercussionChannel(), NULL shouldn't init MT-32/GM/GS
-			if ((midi != MDT_TOWNS) && (midi != MDT_NONE)) {
+			if (/*(midi != MDT_TOWNS) && (*/midi != MDT_NONE/*)*/) {
 				_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
 				if (MidiDriver::getMusicType(dev) != MT_MT32) // MT-32 Emulation shouldn't be GM/GS initialized
 					_imuse->property(IMuse::PROP_GS, _enable_gs);
 			}
-			if (_game.heversion >= 60 || midi == MDT_TOWNS) {
+			if (_game.heversion >= 60 /*|| midi == MDT_TOWNS*/) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
 			}
-			if (midi == MDT_TOWNS)
-				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);
+			/*if (midi == MDT_TOWNS)
+				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);*/
 		}
 	}
 }
@@ -1802,8 +1868,21 @@ void ScummEngine::syncSoundSettings() {
 	int soundVolumeSfx = ConfMan.getInt("sfx_volume");
 	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
 
+	bool mute = false;
+
+	if (ConfMan.hasKey("mute")) {
+		mute = ConfMan.getBool("mute");
+
+		if (mute)
+			soundVolumeMusic = soundVolumeSfx = soundVolumeSpeech = 0;
+	}
+
 	if (_musicEngine) {
 		_musicEngine->setMusicVolume(soundVolumeMusic);
+	}
+
+	if (_townsPlayer) {
+		_townsPlayer->setSfxVolume(soundVolumeSfx);
 	}
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSfx);
@@ -1904,11 +1983,23 @@ void ScummEngine::waitForTimer(int msec_delay) {
 	while (!shouldQuit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
 		parseEvents();
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		if (_townsScreen)
+			_townsScreen->update();
+#endif
+
 		_system->updateScreen();
 		if (_system->getMillis() >= start_time + msec_delay)
 			break;
 		_system->delayMillis(10);
 	}
+}
+
+void ScummEngine_v0::scummLoop(int delta) {
+	VAR(VAR_IS_SOUND_RUNNING) = (_sound->_lastSound && _sound->isSoundRunning(_sound->_lastSound) != 0);
+
+	ScummEngine::scummLoop(delta);
 }
 
 void ScummEngine::scummLoop(int delta) {
@@ -2025,6 +2116,10 @@ load_game:
 		goto load_game;
 	}
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	towns_processPalCycleField();
+#endif
+
 	if (_currentRoom == 0) {
 		if (_game.version > 3)
 			CHARSET_1();
@@ -2094,11 +2189,18 @@ void ScummEngine::scummLoop_updateScummVars() {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 		VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
 	} else if (_game.platform == Common::kPlatformNES) {
+#if 0
 		// WORKAROUND:
 		// Since there are 2 2-stripes wide borders in MM NES screen,
 		// we have to compensate for it here. This fixes paning effects.
 		// Fixes bug #1328120: "MANIACNES: Screen width incorrect, camera halts sometimes"
-		VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT) + 2;
+		// But do not do it when only scrolling right to left, since otherwise Ed will not show
+		// up on the doorbell (Bug #3039004)
+		if (VAR(VAR_CAMERA_POS_X) < (camera._cur.x >> V12_X_SHIFT) + 2)
+			VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT) + 2;
+		else
+#endif
+			VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT);
 	} else if (_game.version <= 2) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x >> V12_X_SHIFT;
 	} else {
@@ -2143,14 +2245,14 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		if (_saveLoadFlag == 1) {
 			success = saveState(_saveLoadSlot, _saveTemporaryState);
 			if (!success)
-				errMsg = "Failed to save game state to file:\n\n%s";
+				errMsg = _("Failed to save game state to file:\n\n%s");
 
 			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF && _game.version <= 7)
 				VAR(VAR_GAME_LOADED) = 201;
 		} else {
 			success = loadState(_saveLoadSlot, _saveTemporaryState);
 			if (!success)
-				errMsg = "Failed to load game state from file:\n\n%s";
+				errMsg = _("Failed to load game state from file:\n\n%s");
 
 			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF)
 				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : 203;
@@ -2162,7 +2264,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
 			// Display "Save successful" message, except for auto saves
 			char buf[256];
-			snprintf(buf, sizeof(buf), "Successfully saved game state in file:\n\n%s", filename.c_str());
+			snprintf(buf, sizeof(buf), _("Successfully saved game state in file:\n\n%s"), filename.c_str());
 
 			GUI::TimedMessageDialog dialog(buf, 1500);
 			runDialog(dialog);
@@ -2405,6 +2507,12 @@ void ScummEngine::pauseEngineIntern(bool pause) {
 	} else {
 		// Update the screen to make it less likely that the player will see a
 		// brief cursor palette glitch when the GUI is disabled.
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		if (_townsScreen)
+			_townsScreen->update();
+#endif
+
 		_system->updateScreen();
 
 		// Resume sound & video

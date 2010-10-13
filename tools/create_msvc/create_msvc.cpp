@@ -1722,7 +1722,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 	if (isRelease) {
 		properties << "\t\tEnableIntrinsicFunctions=\"true\"\n"
 		              "\t\tWholeProgramOptimization=\"true\"\n"
-		              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
+		              "\t\tPreprocessorDefinitions=\"WIN32;RELEASE_BUILD\"\n"
 		              "\t\tStringPooling=\"true\"\n"
 		              "\t\tBufferSecurityCheck=\"false\"\n"
 		              "\t\tDebugInformationFormat=\"0\"\n"
@@ -2052,7 +2052,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	project << "\t</ItemDefinitionGroup>\n";
 }
 
-void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix, bool isWin32) {	
+void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix, bool isWin32) {
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	              "\t<PropertyGroup>\n"
@@ -2118,7 +2118,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 	if (isRelease) {
 		properties << "\t\t\t<IntrinsicFunctions>true</IntrinsicFunctions>\n"
 		              "\t\t\t<WholeProgramOptimization>true</WholeProgramOptimization>\n"
-		              "\t\t\t<PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
+		              "\t\t\t<PreprocessorDefinitions>WIN32;RELEASE_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 		              "\t\t\t<StringPooling>true</StringPooling>\n"
 		              "\t\t\t<BufferSecurityCheck>false</BufferSecurityCheck>\n"
 		              "\t\t\t<DebugInformationFormat></DebugInformationFormat>\n"

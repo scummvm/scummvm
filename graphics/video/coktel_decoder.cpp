@@ -399,11 +399,11 @@ void CoktelDecoder::renderBlockWhole(const byte *src, Common::Rect &rect) {
 
 	rect.clip(_surface.w, _surface.h);
 
-	byte *dst = (byte *)_surface.pixels + (rect.top * _surface.pitch) + rect.left;
+	byte *dst = (byte *)_surface.pixels + (rect.top * _surface.pitch) + rect.left * _surface.bytesPerPixel;
 	for (int i = 0; i < rect.height(); i++) {
-		memcpy(dst, src, rect.width());
+		memcpy(dst, src, rect.width() * _surface.bytesPerPixel);
 
-		src += srcRect.width();
+		src += srcRect.width() * _surface.bytesPerPixel;
 		dst += _surface.pitch;
 	}
 }
@@ -581,7 +581,7 @@ uint32 CoktelDecoder::getTimeToNextFrame() const {
 	// the middle of a long video.
 
 	if (!hasSound())
-		return Common::Rational(1000, _frameRate).toInt();
+		return (1000 / _frameRate).toInt();
 
 	// If there /is/ audio, we do need to keep video and audio
 	// in sync, though.
@@ -1589,12 +1589,6 @@ bool VMDDecoder::load(Common::SeekableReadStream *stream) {
 	if (_version & 4)
 		_bytesPerPixel = handle + 1;
 
-	if (_bytesPerPixel != 1) {
-		warning("TODO: _bytesPerPixel = %d", _bytesPerPixel);
-		close();
-		return false;
-	}
-
 	if (_bytesPerPixel > 3) {
 		warning("VMDDecoder::load(): Requested %d bytes per pixel (%d, %d, %d)",
 				_bytesPerPixel, headerLength, handle, _version);
@@ -1694,6 +1688,11 @@ bool VMDDecoder::assessVideoProperties() {
 
 		_blitMode      = n - 1;
 		_bytesPerPixel = n;
+	}
+
+	if ((_bytesPerPixel > 1) && !_externalCodec) {
+		warning("VMDDecoder::assessVideoProperties(): TODO: Internal _bytesPerPixel == %d", _bytesPerPixel);
+		return false;
 	}
 
 	if (_hasVideo) {
@@ -1837,7 +1836,7 @@ bool VMDDecoder::readFiles() {
 				break;
 
 			if (_frames[i].parts[j].type == kPartTypeFile) {
-				File file;;
+				File file;
 
 				file.offset   = _stream->pos() + 20;
 				file.size     = _frames[i].parts[j].size;
@@ -2087,9 +2086,19 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 		return false;
 
 	if (_externalCodec) {
-		// TODO
-		warning("_external codec");
-		return false;
+		if (!_codec)
+			return false;
+
+		Common::MemoryReadStream frameStream(_frameData, _frameDataLen);
+		Surface *codecSurf = _codec->decodeImage(&frameStream);
+		if (!codecSurf)
+			return false;
+
+		rect = Common::Rect(_x, _y, _x + codecSurf->w, _y + codecSurf->h);
+		rect.clip(Common::Rect(_x, _y, _x + _width, _y + _height));
+
+		renderBlockWhole((const byte *) codecSurf->pixels, rect);
+		return true;
 	}
 
 	if (_blitMode > 0) {
@@ -2376,6 +2385,9 @@ byte *VMDDecoder::deADPCM(const byte *data, uint32 &size, int32 init, int32 inde
 }
 
 PixelFormat VMDDecoder::getPixelFormat() const {
+	if (_externalCodec && _codec)
+		return _codec->getPixelFormat();
+
 	return PixelFormat::createFormatCLUT8();
 }
 

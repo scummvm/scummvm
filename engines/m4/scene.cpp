@@ -51,6 +51,7 @@ Scene::Scene(MadsM4Engine *vm, SceneResources *res): View(vm, Common::Rect(0, 0,
 	_interfacePal = NULL;
 	_interfaceSurface = NULL;
 	_vm->_rails->setCodeSurface(_walkSurface);
+	_currentScene = -1;
 }
 
 Scene::~Scene() {

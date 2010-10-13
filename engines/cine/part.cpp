@@ -164,7 +164,7 @@ void CineEngine::readVolCnf() {
 		// All file name blocks' sizes were divisible by either 11 or 13, but not with both.
 		fileNameLength = (fileNameLenMod11 ? 11 : 13);
 	} else {
-		warning("Couldn't deduce file name length from data in 'vol.cnf', using a backup deduction scheme.");
+		warning("Couldn't deduce file name length from data in 'vol.cnf', using a backup deduction scheme");
 		// Here we use the former file name length detection method
 		// if we couldn't deduce the file name length from the data.
 		fileNameLength = (compressed ? 11 : 13);

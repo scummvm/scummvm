@@ -55,6 +55,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"laurabow",        "Laura Bow: The Colonel's Bequest"},
 	{"lsl2",            "Leisure Suit Larry 2: Goes Looking for Love (in Several Wrong Places)"},
 	{"lsl3",            "Leisure Suit Larry 3: Passionate Patti in Pursuit of the Pulsating Pectorals"},
+	{"mothergoose",     "Mixed-Up Mother Goose"},
 	{"pq2",             "Police Quest II: The Vengeance"},
 	{"qfg1",            "Quest for Glory I: So You Want to Be a Hero"},
 	{"sq3",             "Space Quest III: The Pirates of Pestulon"},
@@ -77,6 +78,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"longbow",         "Conquests of the Longbow: The Adventures of Robin Hood"},
 	{"lsl1sci",         "Leisure Suit Larry in the Land of the Lounge Lizards"},
 	{"lsl5",            "Leisure Suit Larry 5: Passionate Patti Does a Little Undercover Work"},
+	{"mothergoose256",  "Mixed-Up Mother Goose"},
 	{"msastrochicken",  "Ms. Astro Chicken"},
 	{"pq1sci",          "Police Quest: In Pursuit of the Death Angel"},
 	{"pq3",             "Police Quest III: The Kindred"},
@@ -94,7 +96,6 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"sq5",             "Space Quest V: The Next Mutation"},
 	{"islandbrain",     "The Island of Dr. Brain"},
 	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
-	{"mothergoose",     "Mixed-Up Mother Goose"},
 	{"pepper",          "Pepper's Adventure in Time"},
 	{"slater",          "Slater & Charlie Go Camping"},
 	// === SCI2 games =========================================================
@@ -170,6 +171,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "lsl6hires",       GID_LSL6HIRES },
 	{ "lsl7",            GID_LSL7 },
 	{ "mothergoose",     GID_MOTHERGOOSE },
+	{ "mothergoose256",  GID_MOTHERGOOSE256 },
 	{ "mothergoosehires",GID_MOTHERGOOSEHIRES },
 	{ "msastrochicken",  GID_MSASTROCHICKEN },
 	{ "pepper",          GID_PEPPER },
@@ -514,6 +516,15 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	resMan->init();
 	// TODO: Add error handling.
 
+#ifndef ENABLE_SCI32
+	// Is SCI32 compiled in? If not, and this is a SCI32 game,
+	// stop here
+	if (getSciVersion() >= SCI_VERSION_2) {
+		delete resMan;
+		return (const ADGameDescription *)&s_fallbackDesc;
+	}
+#endif
+
 	ViewType gameViews = resMan->getViewType();
 
 	// Have we identified the game views? If not, stop here
@@ -523,15 +534,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		delete resMan;
 		return 0;
 	}
-
-#ifndef ENABLE_SCI32
-	// Is SCI32 compiled in? If not, and this is a SCI32 game,
-	// stop here
-	if (getSciVersion() >= SCI_VERSION_2) {
-		delete resMan;
-		return (const ADGameDescription *)&s_fallbackDesc;
-	}
-#endif
 
 	// EGA views
 	if (gameViews == kViewEga && s_fallbackDesc.platform != Common::kPlatformAmiga)
@@ -654,7 +656,7 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(file->c_str() + file->size() - 3);
 
-		if (slotNum >= 0 && slotNum < 999) {
+		if (slotNum >= 0 && slotNum <= 99) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				SavegameMetadata meta;
@@ -721,7 +723,7 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 	return SaveStateDescriptor();
 }
 
-int SciMetaEngine::getMaximumSaveSlot() const { return 999; }
+int SciMetaEngine::getMaximumSaveSlot() const { return 99; }
 
 void SciMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::printf("%s.%03d", target, slot);
@@ -763,7 +765,7 @@ Common::Error SciEngine::saveGameState(int slot, const char *desc) {
 	} else {
 		out->finalize();
 		if (out->err()) {
-			warning("Writing the savegame failed.");
+			warning("Writing the savegame failed");
 			return Common::kWritingFailed;
 		}
 		delete out;

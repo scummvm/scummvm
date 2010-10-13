@@ -224,7 +224,7 @@ private:
 			uint16 &inputId, bool &hasInput, uint16 &inputCount);
 	/** Find the hotspot requested by script commands. */
 	bool evaluateFind(uint16 key, int16 timeVal, const uint16 *ids,
-			uint16 leaveWindowIndex, uint16 hotspotIndex1, uint16 hotspotIndex2, 
+			uint16 leaveWindowIndex, uint16 hotspotIndex1, uint16 hotspotIndex2,
 			uint16 endIndex, int16 &duration, uint16 &id, uint16 &index, bool &finished);
 
 	// Finding specific hotspots

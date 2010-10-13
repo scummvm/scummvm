@@ -95,7 +95,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 	_textDisplayed = false;
 	_textAreaBuffer = new uint8[320*40];
 	assert(_textAreaBuffer);
-	if ((_vm->gameFlags().platform == Common::kPlatformPC98 || _vm->gameFlags().isDemo) && _vm->gameFlags().gameID == GI_LOL)
+	if ((_vm->gameFlags().platform == Common::kPlatformPC98 || _vm->gameFlags().isDemo) && _vm->game() == GI_LOL)
 		_drawPage2 = 0;
 	else
 		_drawPage2 = 8;
@@ -176,7 +176,7 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 
 	Common::strlcpy(_tim->filename, filename, 13);
 
-	_tim->isLoLOutro = (_vm->gameFlags().gameID == GI_LOL) && !scumm_stricmp(filename, "LOLFINAL.TIM");
+	_tim->isLoLOutro = (_vm->game() == GI_LOL) && !scumm_stricmp(filename, "LOLFINAL.TIM");
 	_tim->lolCharacter = 0;
 
 	TIM *r = _tim;
@@ -259,7 +259,7 @@ int TIMInterpreter::exec(TIM *tim, bool loop) {
 				if (cur.ip) {
 					cur.ip += cur.ip[0];
 					cur.lastTime = cur.nextTime;
-					cur.nextTime += (cur.ip[1] ) * _vm->tickLength();
+					cur.nextTime += cur.ip[1] * _vm->tickLength();
 				}
 			}
 		}
@@ -467,7 +467,7 @@ void TIMInterpreter::setupTextPalette(uint index, int fadePalette) {
 int TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags) {
 	Movie *wsa = 0;
 
-	const bool isLoLDemo = _vm->gameFlags().isDemo && _vm->gameFlags().gameID == GI_LOL;
+	const bool isLoLDemo = _vm->gameFlags().isDemo && _vm->game() == GI_LOL;
 
 	if (isLoLDemo || _vm->gameFlags().platform == Common::kPlatformPC98 || _currentTim->isLoLOutro)
 		_drawPage2 = 0;
@@ -755,7 +755,7 @@ int TIMInterpreter::cmd_loadSoundFile(const uint16 *param) {
 	const char *file = (const char *)(_currentTim->text + READ_LE_UINT16(_currentTim->text + (param[0]<<1)));
 
 	_vm->sound()->loadSoundFile(file);
-	if (_vm->gameFlags().gameID == GI_LOL)
+	if (_vm->game() == GI_LOL)
 		_vm->sound()->loadSfxFile(file);
 
 	return 1;

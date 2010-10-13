@@ -24,10 +24,10 @@ I_DelDrv
 iomanX_IMPORTS_end
 
 sifcmd_IMPORTS_start
-I_sceSifInitRpc 
-I_sceSifSetRpcQueue 
-I_sceSifRegisterRpc 
-I_sceSifRpcLoop 
+I_sceSifInitRpc
+I_sceSifSetRpcQueue
+I_sceSifRegisterRpc
+I_sceSifRpcLoop
 sifcmd_IMPORTS_end
 
 stdio_IMPORTS_start
@@ -59,7 +59,7 @@ thbase_IMPORTS_start
 I_CreateThread
 I_StartThread
 I_GetThreadId
-I_DelayThread 
+I_DelayThread
 thbase_IMPORTS_end
 
 

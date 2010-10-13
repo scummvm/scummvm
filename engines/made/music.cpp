@@ -40,7 +40,6 @@ namespace Made {
 MusicPlayer::MusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false) {
 	memset(_channel, 0, sizeof(_channel));
 	_masterVolume = 0;
-	this->open();
 	_xmidiParser = MidiParser::createParser_XMIDI();
 	_smfParser = MidiParser::createParser_SMF();
 }
@@ -80,6 +79,11 @@ int MusicPlayer::open() {
 	int ret = _driver->open();
 	if (ret)
 		return ret;
+
+	if (_nativeMT32)
+		_driver->sendMT32Reset();
+	else
+		_driver->sendGMReset();
 
 	_driver->setTimerCallback(this, &onTimer);
 	return 0;

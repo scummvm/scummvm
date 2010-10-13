@@ -3133,8 +3133,14 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 				const RoomTranslationRecord *p = &roomTranslations[0];
 				while ((p->srcRoom != 0) && (p->srcRoom != player->roomNumber()))
 					++p;
-				h.currentActions().addFront(DISPATCH_ACTION,
-					(p->srcRoom != 0) ? p->destRoom : player->roomNumber());
+
+				if (p->destRoom == h.roomNumber())
+					// Character is already in destination room, so set a random dest
+					h.setRandomDest();
+				else
+					// Move character to either the player's room, or found alternate destination
+					h.currentActions().addFront(DISPATCH_ACTION,
+						(p->srcRoom != 0) ? p->destRoom : player->roomNumber());
 			}
 		}
 	}
@@ -4032,12 +4038,14 @@ void HotspotTickHandlers::npcRoomChange(Hotspot &h) {
 
 		if (!h.currentActions().isEmpty()) {
 			if (h.startRoomNumber() != 0) {
-				// If character isn't already returning to starting room, start them doing so
+				// If character isn't already returning to starting room, redirect them to the
+				// player's current room
 				if (!h.currentActions().bottom().hasSupportData() ||
 					(h.currentActions().bottom().supportData().action() != RETURN)) {
 					// Start follower returning
+					Hotspot *playerHotspot = res.getActiveHotspot(PLAYER_ID);
 					h.currentActions().clear();
-					h.currentActions().addFront(RETURN, h.startRoomNumber(), 0, 0);
+					h.currentActions().addFront(RETURN, playerHotspot->roomNumber(), 0, 0);
 				}
 			}
 

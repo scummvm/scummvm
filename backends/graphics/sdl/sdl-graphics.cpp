@@ -61,6 +61,8 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
+DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Normal (no scaling)", "lowres")
+
 // Table of relative scalers magnitudes
 // [definedScale - 1][scaleFactor - 1]
 static ScalerProc *scalersMagn[3][3] = {
@@ -397,7 +399,7 @@ void SdlGraphicsManager::detectSupportedFormats() {
 	// available format, it will get one that is "cheap" to
 	// use.
 	const Graphics::PixelFormat RGBList[] = {
-#ifdef ENABLE_32BIT
+#ifdef USE_RGB_COLOR
 		// RGBA8888, ARGB8888, RGB888
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24),
@@ -411,7 +413,7 @@ void SdlGraphicsManager::detectSupportedFormats() {
 		Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)
 	};
 	const Graphics::PixelFormat BGRList[] = {
-#ifdef ENABLE_32BIT
+#ifdef USE_RGB_COLOR
 		// ABGR8888, BGRA8888, BGR888
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0),
@@ -685,7 +687,7 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 	}
 
 	if (!bestMode) {
-		warning("Unable to enforce the desired aspect ratio!");
+		warning("Unable to enforce the desired aspect ratio");
 		return;
 	}
 	width = bestMode->w;
@@ -940,7 +942,7 @@ void SdlGraphicsManager::internUpdateScreen() {
 #endif
 
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos || 
+	if (_currentShakePos != _newShakePos ||
 		(_mouseNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
 		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor};
 
@@ -1561,9 +1563,11 @@ void SdlGraphicsManager::setMousePos(int x, int y) {
 void SdlGraphicsManager::warpMouse(int x, int y) {
 	int y1 = y;
 
-	// Don't change mouse position, when mouse is outside of our window (in case of windowed mode)
-	if (!(SDL_GetAppState( ) & SDL_APPMOUSEFOCUS))
+	// Don't change actual mouse position, when mouse is outside of our window (in case of windowed mode)
+	if (!(SDL_GetAppState( ) & SDL_APPMOUSEFOCUS)) {
+		setMousePos(x, y); // but change game cursor position
 		return;
+	}
 
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 		y1 = real2Aspect(y);

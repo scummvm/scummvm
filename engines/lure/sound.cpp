@@ -63,8 +63,12 @@ SoundManager::SoundManager() {
 		_driver = NULL;
 
 	} else {
-		if (_nativeMT32)
+		if (_nativeMT32) {
 			_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+			_driver->sendMT32Reset();
+		} else {
+			_driver->sendGMReset();
+		}
 
 		for (index = 0; index < NUM_CHANNELS; ++index) {
 			_channelsInner[index].midiChannel = _driver->allocateChannel();

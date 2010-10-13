@@ -47,7 +47,6 @@ namespace Scumm {
 #define PERCUSSION_CHANNEL 9
 
 extern MidiParser *MidiParser_createRO();
-extern MidiParser *MidiParser_createEUP();
 
 uint16 Player::_active_notes[128];
 
@@ -193,9 +192,6 @@ int Player::start_seq_sound(int sound, bool reset_vars) {
 	if (!memcmp(ptr, "RO", 2)) {
 		// Old style 'RO' resource
 		_parser = MidiParser_createRO();
-	} else if (!memcmp(ptr, "SO", 2)) {
-		// Euphony (FM-TOWNS) resource
-		_parser = MidiParser_createEUP();
 	} else if (!memcmp(ptr, "FORM", 4)) {
 		// Humongous Games XMIDI resource
 		_parser = MidiParser::createParser_XMIDI();

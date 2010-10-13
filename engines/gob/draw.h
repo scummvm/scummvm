@@ -66,7 +66,7 @@ public:
 		int16 top;
 		int16 width;
 		int16 height;
-		SurfaceDescPtr savedSurface;
+		SurfacePtr savedSurface;
 	};
 
 	int16 _renderFlags;
@@ -98,7 +98,7 @@ public:
 	FontToSprite _fontToSprite[4];
 	Font *_fonts[kFontCount];
 
-	Common::Array<SurfaceDescPtr> _spritesArray;
+	Common::Array<SurfacePtr> _spritesArray;
 
 	int16 _invalidatedCount;
 	int16 _invalidatedLefts[30];
@@ -112,8 +112,8 @@ public:
 	bool _paletteCleared;
 	bool _applyPal;
 
-	SurfaceDescPtr _backSurface;
-	SurfaceDescPtr _frontSurface;
+	SurfacePtr _backSurface;
+	SurfacePtr _frontSurface;
 
 	int16 _unusedPalette1[18];
 	int16 _unusedPalette2[16];
@@ -137,9 +137,9 @@ public:
 	int32 _cursorHotspotXVar;
 	int32 _cursorHotspotYVar;
 
-	SurfaceDescPtr _cursorSprites;
-	SurfaceDescPtr _cursorSpritesBack;
-	SurfaceDescPtr _scummvmCursor;
+	SurfacePtr _cursorSprites;
+	SurfacePtr _cursorSpritesBack;
+	SurfacePtr _scummvmCursor;
 
 	int16 _cursorAnim;
 	int8 _cursorAnimLow[40];
@@ -174,7 +174,7 @@ public:
 	void clearPalette();
 
 	void dirtiedRect(int16 surface, int16 left, int16 top, int16 right, int16 bottom);
-	void dirtiedRect(SurfaceDescPtr surface, int16 left, int16 top, int16 right, int16 bottom);
+	void dirtiedRect(SurfacePtr surface, int16 left, int16 top, int16 right, int16 bottom);
 
 	void initSpriteSurf(int16 index, int16 width, int16 height, int16 flags);
 	void freeSprite(int16 index) {
@@ -187,31 +187,16 @@ public:
 	}
 	int stringLength(const char *str, int16 fontIndex);
 	void drawString(const char *str, int16 x, int16 y, int16 color1, int16 color2,
-			int16 transp, SurfaceDesc &dest, const Font &font);
+			int16 transp, Surface &dest, const Font &font);
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, const char *str, int16 fontIndex, int16 color);
 	void oPlaytoons_sub_F_1B( uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *paramStr, int16 var3, int16 var4, int16 shortId);
-
-	int16 openWin(int16 id);
-	int16 handleCurWin();
-	bool winOverlap(int16 idWin1, int16 idWin2);
-	void winDecomp(int16 x, int16 y, SurfaceDescPtr destPtr);
-	void activeWin(int16 id);
-	void closeWin(int16 id);
-	void closeAllWin();
-	void restoreWin(int16 i);
-	void saveWin(int16 id);
-	void winMove(int16 id);
-	void handleWinBorder(int16 id);
-	void winDraw(int16 fct);
-	void winTrace(int16 left, int16 top, int16 width, int16 height);
-	int16 isOverWin(int16 &dx, int16 &dy);
 
 	int32 getSpriteRectSize(int16 index);
 	void forceBlit(bool backwards = false);
 
 	static const int16 _wobbleTable[360];
-	void wobble(SurfaceDesc &surfDesc);
+	void wobble(Surface &surfDesc);
 
 	Font *loadFont(const char *path) const;
 	bool loadFont(int fontIndex, const char *path);
@@ -222,6 +207,15 @@ public:
 	virtual void animateCursor(int16 cursor) = 0;
 	virtual void printTotText(int16 id) = 0;
 	virtual void spriteOperation(int16 operation) = 0;
+
+	virtual int16 openWin(int16 id) { return 0; }
+	virtual void closeWin(int16 id) {}
+	virtual int16 handleCurWin() { return 0; }
+	virtual int16 getWinFromCoord(int16 &dx, int16 &dy) { return -1; }
+	virtual void moveWin(int16 id) {}
+	virtual bool overlapWin(int16 idWin1, int16 idWin2) { return false; }
+	virtual void closeAllWin() {}
+	virtual void activeWin(int16 id) {}
 
 	Draw(GobEngine *vm);
 	virtual ~Draw();
@@ -272,6 +266,23 @@ public:
 	Draw_Fascination(GobEngine *vm);
 	virtual ~Draw_Fascination() {}
 	virtual void spriteOperation(int16 operation);
+
+	void decompWin(int16 x, int16 y, SurfacePtr destPtr);
+	void drawWin(int16 fct);
+	void saveWin(int16 id);
+	void restoreWin(int16 id);
+	void handleWinBorder(int16 id);
+	void drawWinTrace(int16 left, int16 top, int16 width, int16 height);
+
+	virtual int16 openWin(int16 id);
+	virtual void closeWin(int16 id);
+	virtual int16 getWinFromCoord(int16 &dx, int16 &dy);
+	virtual int16 handleCurWin();
+	virtual void activeWin(int16 id);
+	virtual void moveWin(int16 id);
+	virtual bool overlapWin(int16 idWin1, int16 idWin2);
+	virtual void closeAllWin();
+
 };
 
 class Draw_Playtoons: public Draw_v2 {

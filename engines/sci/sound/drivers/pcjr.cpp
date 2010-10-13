@@ -234,13 +234,13 @@ class MidiPlayer_PCJr : public MidiPlayer {
 public:
 	MidiPlayer_PCJr(SciVersion version) : MidiPlayer(version) { _driver = new MidiDriver_PCJr(g_system->getMixer()); }
 	int open(ResourceManager *resMan) { return static_cast<MidiDriver_PCJr *>(_driver)->open(getPolyphony()); }
-	byte getPlayId();
+	byte getPlayId() const;
 	int getPolyphony() const { return 3; }
 	bool hasRhythmChannel() const { return false; }
 	void setVolume(byte volume) { static_cast<MidiDriver_PCJr *>(_driver)->_global_volume = volume; }
 };
 
-byte MidiPlayer_PCJr::getPlayId() {
+byte MidiPlayer_PCJr::getPlayId() const {
 	switch (_version) {
 	case SCI_VERSION_0_EARLY:
 		return 0x02;
@@ -259,11 +259,11 @@ class MidiPlayer_PCSpeaker : public MidiPlayer_PCJr {
 public:
 	MidiPlayer_PCSpeaker(SciVersion version) : MidiPlayer_PCJr(version) { }
 
-	byte getPlayId();
+	byte getPlayId() const;
 	int getPolyphony() const { return 1; }
 };
 
-byte MidiPlayer_PCSpeaker::getPlayId() {
+byte MidiPlayer_PCSpeaker::getPlayId() const {
 	switch (_version) {
 	case SCI_VERSION_0_EARLY:
 		return 0x04;

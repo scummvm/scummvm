@@ -40,6 +40,16 @@ class GfxPalette;
 
 typedef Common::HashMap<int, GfxView *> CursorCache;
 
+struct SciCursorSetPositionWorkarounds {
+	SciGameId gameId;
+	int16 newPositionY;
+	int16 newPositionX;
+	int16 rectTop;
+	int16 rectLeft;
+	int16 rectBottom;
+	int16 rectRight;
+};
+
 class GfxCursor {
 public:
 	GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen);
@@ -69,6 +79,9 @@ public:
 	 */
 	void kernelSetMoveZone(Common::Rect zone);
 
+	void kernelClearZoomZone();
+	void kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourceId viewNum, int loopNum, int celNum, GuiResourceId picNum, byte zoomColor);
+
 	void kernelSetPos(Common::Point pos);
 	void kernelMoveCursor(Common::Point pos);
 
@@ -85,6 +98,16 @@ private:
 
 	bool _moveZoneActive;
 	Common::Rect _moveZone; // Rectangle in which the pointer can move
+
+	bool _zoomZoneActive;
+	Common::Rect _zoomZone;
+	GfxView *_zoomCursorView;
+	byte _zoomCursorLoop;
+	byte _zoomCursorCel;
+	GfxView *_zoomPicView;
+	byte _zoomColor;
+	byte _zoomMultiplier;
+	byte *_cursorSurface;
 
 	CursorCache _cachedCursors;
 

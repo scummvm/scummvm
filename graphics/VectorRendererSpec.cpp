@@ -164,7 +164,7 @@ inline frac_t fp_sqroot(uint32 x) {
 		x--; px -= pitch; \
 	} \
 	a2 = (T >> 8); \
-	a1 = ~a2; \
+	a1 = ~a2 >> 4;   \
 }
 
 
@@ -255,7 +255,7 @@ void VectorRendererSpec<PixelType>::
 fillSurface() {
 	byte *ptr = (byte *)_activeSurface->getBasePtr(0, 0);
 
-	int h = _activeSurface->h ;
+	int h = _activeSurface->h;
 	int pitch = _activeSurface->pitch;
 
 	if (Base::_fillMode == kFillBackground) {

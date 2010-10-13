@@ -65,7 +65,7 @@ Scenery::Scenery(GobEngine *vm) : _vm(vm) {
 
 	_pCaptureCounter = 0;
 
-	for (int i = 0; i < 70; i++ ) {
+	for (int i = 0; i < 70; i++) {
 		_staticPictToSprite[i] = 0;
 		_animPictToSprite[i]   = 0;
 	}
@@ -80,6 +80,10 @@ Scenery::~Scenery() {
 
 void Scenery::init() {
 	for (int i = 0; i < 10; i++) {
+		if (_vm->getGameType() == kGameTypeFascination) {
+			freeAnim(i);
+			freeStatic(i);
+		}
 		_animPictCount[i]   =  0;
 		_staticPictCount[i] = -1;
 	}
@@ -192,7 +196,7 @@ int16 Scenery::loadStatic(char search) {
 			_spriteResId[sprIndex] = sprResId;
 			_vm->_draw->initSpriteSurf(sprIndex, width, height, 2);
 
-			_vm->_video->clearSurf(*_vm->_draw->_spritesArray[sprIndex]);
+			_vm->_draw->_spritesArray[sprIndex]->clear();
 			_vm->_draw->_destSurface  = sprIndex;
 			_vm->_draw->_spriteLeft   = sprResId;
 			_vm->_draw->_transparency = 0;
@@ -522,7 +526,7 @@ int16 Scenery::loadAnim(char search) {
 			_spriteResId[sprIndex] = sprResId;
 			_vm->_draw->initSpriteSurf(sprIndex, width, height, 2);
 
-			_vm->_video->clearSurf(*_vm->_draw->_spritesArray[sprIndex]);
+			_vm->_draw->_spritesArray[sprIndex]->clear();
 			_vm->_draw->_destSurface  = sprIndex;
 			_vm->_draw->_spriteLeft   = sprResId;
 			_vm->_draw->_transparency = 0;
@@ -618,6 +622,16 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 
 		if (frame >= (int32)_vm->_vidPlayer->getFrameCount(obj.videoSlot - 1))
 			frame = _vm->_vidPlayer->getFrameCount(obj.videoSlot - 1) - 1;
+
+		if (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) >= 255) {
+			// Allow for object videos with more than 255 frames, although the
+			// object frame counter is just a byte.
+
+			uint32 curFrame  = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) + 1;
+			uint16 frameWrap = curFrame / 256;
+
+			frame = ((frame + 1) % 256) + frameWrap * 256;
+		}
 
 		if (frame != (int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1)) {
 			// Seek to frame
@@ -719,7 +733,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 				_vm->_draw->_spriteLeft = _vm->_vidPlayer->getWidth(obj.videoSlot - 1)  -
 					(destX + _vm->_draw->_spriteRight);
 
-			_vm->_vidPlayer->copyFrame(obj.videoSlot - 1, _vm->_draw->_backSurface->getVidMem(),
+			_vm->_vidPlayer->copyFrame(obj.videoSlot - 1, _vm->_draw->_backSurface->getData(),
 					_vm->_draw->_spriteLeft,  _vm->_draw->_spriteTop,
 					_vm->_draw->_spriteRight, _vm->_draw->_spriteBottom,
 					_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY,
@@ -919,13 +933,24 @@ void Scenery::writeAnimLayerInfo(uint16 index, uint16 layer,
 		int16 varDX, int16 varDY, int16 varUnk0, int16 varFrames) {
 
 	assert(index < 10);
-	assert(layer < _animations[index].layersCount);
 
-	AnimLayer &animLayer = _animations[index].layers[layer];
-	WRITE_VAR_OFFSET(varDX, animLayer.animDeltaX);
-	WRITE_VAR_OFFSET(varDY, animLayer.animDeltaY);
-	WRITE_VAR_OFFSET(varUnk0, animLayer.unknown0);
-	WRITE_VAR_OFFSET(varFrames, animLayer.framesCount);
+// WORKAROUND - Fascination Hebrew is using scripts from the CD versions, but of course
+// no CD track, so the anim syncing failed, and the anims were suppressed. But they
+// didn't updated the scripts. Skipping the wrong anims is a solution.
+	if ((_vm->getGameType() == kGameTypeFascination) && (layer >= _animations[index].layersCount)) {
+		WRITE_VAR_OFFSET(varDX, 0);
+		WRITE_VAR_OFFSET(varDY, 0);
+		WRITE_VAR_OFFSET(varUnk0, 0);
+		WRITE_VAR_OFFSET(varFrames, 0);
+	} else {
+		assert(layer < _animations[index].layersCount);
+
+		AnimLayer &animLayer = _animations[index].layers[layer];
+		WRITE_VAR_OFFSET(varDX, animLayer.animDeltaX);
+		WRITE_VAR_OFFSET(varDY, animLayer.animDeltaY);
+		WRITE_VAR_OFFSET(varUnk0, animLayer.unknown0);
+		WRITE_VAR_OFFSET(varFrames, animLayer.framesCount);
+	}
 }
 
 int16 Scenery::getStaticLayersCount(uint16 index) {

@@ -508,6 +508,11 @@ void ScummEngine::CHARSET_1() {
 	if (_game.version >= 5)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	if (_keepText && _game.platform == Common::kPlatformFMTowns)
+		memcpy(&_charset->_str, &_curStringRect, sizeof(Common::Rect));
+#endif
+
 	if (_talkDelay)
 		return;
 
@@ -539,7 +544,12 @@ void ScummEngine::CHARSET_1() {
 			_nextTop = _string[0].ypos + _screenTop;
 #endif
 		} else {
-			restoreCharsetBg();
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+			if (_game.platform == Common::kPlatformFMTowns)
+				towns_restoreCharsetBg();
+			else
+#endif
+				restoreCharsetBg();
 		}
 	}
 
@@ -659,6 +669,11 @@ void ScummEngine::CHARSET_1() {
 			_talkDelay += (int)VAR(VAR_CHARINC);
 		}
 	}
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	if (_game.platform == Common::kPlatformFMTowns && (c == 0 || c == 2 || c == 3))
+		memcpy(&_curStringRect, &_charset->_str, sizeof(Common::Rect));
+#endif
 
 #ifdef ENABLE_SCUMM_7_8
 	if (_game.version >= 7 && subtitleLine != subtitleBuffer) {

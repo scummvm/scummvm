@@ -53,6 +53,7 @@ class Console;
 class AudioPlayer;
 class SoundCommandParser;
 class EventManager;
+class SegManager;
 
 class GfxAnimate;
 class GfxCache;
@@ -143,8 +144,9 @@ enum SciGameId {
 	GID_LSL6,
 	GID_LSL6HIRES, // We have a separate ID for LSL6 SCI32, because it's actually a completely different game
 	GID_LSL7,
-	GID_MOTHERGOOSE,
-	GID_MOTHERGOOSEHIRES, // We have a separate ID for Mother Goose SCI32, because it's actually a completely different game
+	GID_MOTHERGOOSE, // this one is the SCI0 version
+	GID_MOTHERGOOSE256, // this one handles SCI1 and SCI1.1 variants, at least those 2 share a bit in common
+	GID_MOTHERGOOSEHIRES, // this one is the SCI2.1 hires version, completely different from the other ones
 	GID_MSASTROCHICKEN,
 	GID_PEPPER,
 	GID_PHANTASMAGORIA,
@@ -232,7 +234,8 @@ public:
 	inline EngineState *getEngineState() const { return _gamestate; }
 	inline Vocabulary *getVocabulary() const { return _vocabulary; }
 	inline EventManager *getEventManager() const { return _eventMan; }
-	inline reg_t getGameObject() const { return _gameObj; }
+	inline reg_t getGameObject() const { return _gameObjectAddress; }
+	inline reg_t getGameSuperClassAddress() const { return _gameSuperClassAddress; }
 
 	Common::RandomSource &getRNG() { return _rng; }
 
@@ -247,11 +250,19 @@ public:
 	/** Remove the 'TARGET-' prefix of the given filename, if present. */
 	Common::String unwrapFilename(const Common::String &name) const;
 
+	/**
+	 * Checks if we are in a QfG import screen, where special handling
+	 * of file-listings is performed.
+	 */
+	int inQfGImportRoom() const;
+
 	void sleep(uint32 msecs);
 
 	void scriptDebug();
 	bool checkExportBreakpoint(uint16 script, uint16 pubfunct);
-	bool checkSelectorBreakpoint(reg_t send_obj, int selector);
+	bool checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector);
+
+	void patchGameSaveRestore(SegManager *segMan);
 
 public:
 
@@ -341,7 +352,8 @@ private:
 	Vocabulary *_vocabulary;
 	int16 _vocabularyLanguage;
 	EventManager *_eventMan;
-	reg_t _gameObj; /**< Pointer to the game object */
+	reg_t _gameObjectAddress; /**< Pointer to the game object */
+	reg_t _gameSuperClassAddress; // Address of the super class of the game object
 	Console *_console;
 	Common::RandomSource _rng;
 };

@@ -602,7 +602,7 @@ begin_credits("Credits");
 		  add_person("Benjamin Haisch", "john_doe", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
 	  end_section();
-	  
+
 	  begin_section("MADE");
 		  add_person("Benjamin Haisch", "john_doe", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
@@ -614,7 +614,7 @@ begin_credits("Credits");
 		  add_person("Eugene Sandulenko", "sev", "");
 		  add_person("David Turner", "digitall", "");
 	  end_section();
-	  
+
 	  begin_section("Parallaction");
 		  add_person("", "peres", "");
 	  end_section();
@@ -851,7 +851,7 @@ begin_credits("Credits");
 		  add_person("Johannes Schickel", "LordHoto", "");
 	  end_section();
 	end_section();
-	
+
 	begin_section("Translations");
 		begin_persons();
 			add_person("Thierry Crozat", "criezy", "Translation Lead");
@@ -982,6 +982,7 @@ begin_credits("Credits");
 	  add_person("Curt Coder", "", "For the original TrollVM (preAGI) code");
 	  add_person("Patrick Combet", "Dorian Gray", "For the original Gobliiins ADL player");
 	  add_person("Ivan Dubrov", "", "For contributing the initial version of the Gobliiins engine");
+	  add_person("Henrik Engqvist", "qvist", "For generously providing hosting for our buildbot, SVN repository, planet and doxygen sites as well as tons of HD space");
 	  add_person("DOSBox Team", "", "For their awesome OPL2 and OPL3 emulator");
 	  add_person("Till Kresslein", "Krest", "For design of modern ScummVM GUI");
 	  add_person("", "Jezar", "For his freeverb filter implementation");
@@ -1022,6 +1023,15 @@ begin_credits("Credits");
   add_paragraph(
   "John Young, Colin Smythe and especially Terry Pratchett himself for ".
   "sharing the source code of Discworld I &amp; II with us.");
+
+  add_paragraph(
+  "Emilio de Paz Arag&oacute;n from Alcachofa Soft for sharing the source code ".
+  "of Drascula: The Vampire Strikes Back with us and his generosity with ".
+  "freewaring the game.");
+
+  add_paragraph(
+  "David P. Gray from Gray Design Associate for sharing the source code ".
+  "of the Hugo trilogy.");
 
   end_section();
 

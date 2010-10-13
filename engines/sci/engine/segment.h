@@ -227,8 +227,12 @@ enum ObjectOffsets {
 class Object {
 public:
 	Object() {
-		_flags = 0;
 		_offset = getSciVersion() < SCI_VERSION_1_1 ? 0 : 5;
+		_flags = 0;
+		_baseObj = 0;
+		_baseVars = 0;
+		_baseMethod = 0;
+		_methodCount = 0;
 	}
 
 	~Object() { }
@@ -285,9 +289,6 @@ public:
 
 	bool isClass() const { return (getInfoSelector().offset & kInfoFlagClass); }
 	const Object *getClass(SegManager *segMan) const;
-
-	void markAsClone() { setInfoSelector(make_reg(0, kInfoFlagClone)); }
-	bool isClone() const { return (getInfoSelector().offset & kInfoFlagClone); }
 
 	void markAsFreed() { _flags |= OBJECT_FLAG_FREED; }
 	bool isFreed() const { return _flags & OBJECT_FLAG_FREED; }

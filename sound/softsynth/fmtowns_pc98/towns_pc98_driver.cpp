@@ -160,6 +160,7 @@ public:
 	void reset();
 };
 
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 class TownsPC98_MusicChannelPCM : public TownsPC98_MusicChannel {
 public:
 	TownsPC98_MusicChannelPCM(TownsPC98_AudioDriver *driver, uint8 regOffs,
@@ -178,6 +179,7 @@ private:
 	typedef bool (TownsPC98_MusicChannelPCM::*ControlEventFunc)(uint8 para);
 	const ControlEventFunc *controlEvents;
 };
+#endif
 
 TownsPC98_MusicChannel::TownsPC98_MusicChannel(TownsPC98_AudioDriver *driver, uint8 regOffs, uint8 flgs, uint8 num,
         uint8 key, uint8 prt, uint8 id) : _drv(driver), _regOffset(regOffs), _flags(flgs), _chanNum(num), _keyNum(key),
@@ -312,7 +314,7 @@ void TownsPC98_MusicChannel::processEvents() {
 void TownsPC98_MusicChannel::processFrequency() {
 	if (_flags & CHS_RECALCFREQ) {
 
-		_frequency = (((const uint16 *)_drv->_opnFreqTable)[_frqBlockMSB & 0x0f] + _frqLSB) | (((_frqBlockMSB & 0x70) >> 1) << 8);
+		_frequency = (READ_LE_UINT16(&_drv->_opnFreqTable[(_frqBlockMSB & 0x0f) << 1]) + _frqLSB) | (((_frqBlockMSB & 0x70) >> 1) << 8);
 
 		_drv->writeReg(_part, _regOffset + 0xa4, (_frequency >> 8));
 		_drv->writeReg(_part, _regOffset + 0xa0, (_frequency & 0xff));
@@ -709,7 +711,7 @@ void TownsPC98_MusicChannelSSG::processFrequency() {
 
 	if (_flags & CHS_RECALCFREQ) {
 		_block = _frqBlockMSB >> 4;
-		_frequency = ((const uint16 *)_drv->_opnFreqTableSSG)[_frqBlockMSB & 0x0f] + _frqLSB;
+		_frequency = READ_LE_UINT16(&_drv->_opnFreqTableSSG[(_frqBlockMSB & 0x0f) << 1]) + _frqLSB;
 
 		uint16 f = _frequency >> _block;
 		_drv->writeReg(_part, _regOffset << 1, f & 0xff);
@@ -928,6 +930,7 @@ void TownsPC98_SfxChannel::reset() {
 	_drv->_ssgPatches[i + 12] = src[i + 12];
 }
 
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 TownsPC98_MusicChannelPCM::TownsPC98_MusicChannelPCM(TownsPC98_AudioDriver *driver, uint8 regOffs,
         uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id) :
 	TownsPC98_MusicChannel(driver, regOffs, flgs, num, key, prt, id), controlEvents(0) {
@@ -1016,9 +1019,13 @@ bool TownsPC98_MusicChannelPCM::control_ff_endOfTrack(uint8 para) {
 		return false;
 	}
 }
+#endif // DISABLE_PC98_RHYTHM_CHANNEL
 
 TownsPC98_AudioDriver::TownsPC98_AudioDriver(Audio::Mixer *mixer, EmuType type) : TownsPC98_FmSynth(mixer, type),
-	_channels(0), _ssgChannels(0), _sfxChannels(0), _rhythmChannel(0),
+	_channels(0), _ssgChannels(0), _sfxChannels(0),
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
+	_rhythmChannel(0),
+#endif
 	_trackPtr(0), _sfxData(0), _sfxOffs(0), _ssgPatches(0),
 	_patches(0), _sfxBuffer(0), _musicBuffer(0),
 
@@ -1027,7 +1034,13 @@ TownsPC98_AudioDriver::TownsPC98_AudioDriver(Audio::Mixer *mixer, EmuType type) 
 
 	_updateChannelsFlag(type == kType26 ? 0x07 : 0x3F), _finishedChannelsFlag(0),
 	_updateSSGFlag(type == kTypeTowns ? 0x00 : 0x07), _finishedSSGFlag(0),
-	_updateRhythmFlag(type == kType86 ? 0x01 : 0x00), _finishedRhythmFlag(0),
+	_updateRhythmFlag(type == kType86 ?
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
+	0x01
+#else
+	0x00
+#endif
+	: 0x00), _finishedRhythmFlag(0),
 	_updateSfxFlag(0), _finishedSfxFlag(0),
 
 	_musicTickCounter(0),
@@ -1041,6 +1054,8 @@ TownsPC98_AudioDriver::TownsPC98_AudioDriver(Audio::Mixer *mixer, EmuType type) 
 
 TownsPC98_AudioDriver::~TownsPC98_AudioDriver() {
 	reset();
+	_ready = false;
+	deinit();
 
 	if (_channels) {
 		for (int i = 0; i < _numChan; i++)
@@ -1059,8 +1074,9 @@ TownsPC98_AudioDriver::~TownsPC98_AudioDriver() {
 			delete _sfxChannels[i];
 		delete[] _sfxChannels;
 	}
-
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	delete _rhythmChannel;
+#endif
 
 	delete[] _ssgPatches;
 }
@@ -1104,10 +1120,12 @@ bool TownsPC98_AudioDriver::init() {
 		}
 	}
 
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	if (_hasPercussion) {
 		_rhythmChannel = new TownsPC98_MusicChannelPCM(this, 0, 0, 0, 0, 0, 1);
 		_rhythmChannel->init();
 	}
+#endif
 
 	setMusicTempo(84);
 	setSfxTempo(654);
@@ -1149,7 +1167,9 @@ void TownsPC98_AudioDriver::loadMusicData(uint8 *data, bool loadPaused) {
 	}
 
 	if (_hasPercussion) {
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 		_rhythmChannel->loadData(data + READ_LE_UINT16(src_a));
+#endif
 		src_a += 2;
 	}
 
@@ -1209,8 +1229,10 @@ void TownsPC98_AudioDriver::reset() {
 		memcpy(_ssgPatches, _drvTables + 156, 256);
 	}
 
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	if (_rhythmChannel)
 		_rhythmChannel->reset();
+#endif
 }
 
 void TownsPC98_AudioDriver::fadeStep() {
@@ -1230,10 +1252,12 @@ void TownsPC98_AudioDriver::fadeStep() {
 
 	if (!_fading) {
 		_fading = 19;
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 		if (_hasPercussion) {
 			if (_updateRhythmFlag & _rhythmChannel->_idFlag)
 				_rhythmChannel->reset();
 		}
+#endif
 	} else {
 		if (!--_fading)
 			reset();
@@ -1260,9 +1284,11 @@ void TownsPC98_AudioDriver::timerCallbackB() {
 			}
 		}
 
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 		if (_hasPercussion)
 			if (_updateRhythmFlag & _rhythmChannel->_idFlag)
 				_rhythmChannel->processEvents();
+#endif
 	}
 
 	toggleRegProtection(false);

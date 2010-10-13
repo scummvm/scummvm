@@ -38,7 +38,7 @@ Draw_Playtoons::Draw_Playtoons(GobEngine *vm) : Draw_v2(vm) {
 void Draw_Playtoons::spriteOperation(int16 operation) {
 	int16 len;
 	int16 x, y;
-	SurfaceDescPtr sourceSurf, destSurf;
+	SurfacePtr sourceSurf, destSurf;
 	bool deltaVeto;
 	int16 left;
 	int16 ratio;
@@ -139,12 +139,11 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		if (!sourceSurf || !destSurf)
 			break;
 
-		_vm->_video->drawSprite(*_spritesArray[_sourceSurface],
-				*_spritesArray[_destSurface],
+		_spritesArray[_destSurface]->blit(*_spritesArray[_sourceSurface],
 				_spriteLeft, spriteTop,
 				_spriteLeft + _spriteRight - 1,
 				_spriteTop + _spriteBottom - 1,
-				_destSpriteX, _destSpriteY, _transparency);
+				_destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
@@ -156,22 +155,22 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 			warning("oPlaytoons_spriteOperation: operation DRAW_PUTPIXEL, pattern -1");
 			break;
 		case 1:
-			_vm->_video->fillRect(*_spritesArray[_destSurface], destSpriteX,
+			_spritesArray[_destSurface]->fillRect(destSpriteX,
 					_destSpriteY, _destSpriteX + 1,
 					_destSpriteY + 1, _frontColor);
 			break;
 		case 2:
-			_vm->_video->fillRect(*_spritesArray[_destSurface], destSpriteX - 1,
+			_spritesArray[_destSurface]->fillRect(destSpriteX - 1,
 					_destSpriteY - 1, _destSpriteX + 1,
 					_destSpriteY + 1, _frontColor);
 			break;
 		case 3:
-			_vm->_video->fillRect(*_spritesArray[_destSurface], destSpriteX - 1,
+			_spritesArray[_destSurface]->fillRect(destSpriteX - 1,
 					_destSpriteY - 1, _destSpriteX + 2,
 					_destSpriteY + 2, _frontColor);
 			break;
 		default:
-			_vm->_video->putPixel(_destSpriteX, _destSpriteY, _frontColor, *_spritesArray[_destSurface]);
+			_spritesArray[_destSurface]->putPixel(_destSpriteX, _destSpriteY, _frontColor);
 			break;
 		}
 		dirtiedRect(_destSurface, _destSpriteX - (_pattern / 2),
@@ -188,7 +187,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 			warning("oPlaytoons_spriteOperation: operation DRAW_FILLRECT, pattern %d", _pattern & 0xFF);
 			break;
 		case 0:
-			_vm->_video->fillRect(*_spritesArray[_destSurface], destSpriteX,
+			_spritesArray[_destSurface]->fillRect(destSpriteX,
 					_destSpriteY, _destSpriteX + _spriteRight - 1,
 					_destSpriteY + _spriteBottom - 1, _backColor);
 
@@ -204,23 +203,18 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 	case DRAW_DRAWLINE:
 		if ((_needAdjust != 2) && (_needAdjust < 10)) {
 			warning ("oPlaytoons_spriteOperation: operation DRAW_DRAWLINE, draw multiple lines");
-				_vm->_video->drawLine(*_spritesArray[_destSurface],
-					_destSpriteX, _destSpriteY,
+				_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
 					_spriteRight, _spriteBottom, _frontColor);
-				_vm->_video->drawLine(*_spritesArray[_destSurface],
-					_destSpriteX + 1, _destSpriteY,
+				_spritesArray[_destSurface]->drawLine(_destSpriteX + 1, _destSpriteY,
 					_spriteRight + 1, _spriteBottom, _frontColor);
-				_vm->_video->drawLine(*_spritesArray[_destSurface],
-					_destSpriteX, _destSpriteY + 1,
+				_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY + 1,
 					_spriteRight, _spriteBottom + 1, _frontColor);
-				_vm->_video->drawLine(*_spritesArray[_destSurface],
-					_destSpriteX + 1, _destSpriteY + 1,
+				_spritesArray[_destSurface]->drawLine(_destSpriteX + 1, _destSpriteY + 1,
 					_spriteRight + 1, _spriteBottom + 1, _frontColor);
 		} else {
 			switch (_pattern & 0xFF) {
 			case 0:
-				_vm->_video->drawLine(*_spritesArray[_destSurface],
-					_destSpriteX, _destSpriteY,
+				_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
 					_spriteRight, _spriteBottom, _frontColor);
 
 				break;
@@ -228,7 +222,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 				warning("oPlaytoons_spriteOperation: operation DRAW_DRAWLINE, draw %d lines", (_pattern & 0xFF) * (_pattern & 0xFF));
 				for (int16 i = 0; i <= _pattern ; i++)
 					for (int16 j = 0; j <= _pattern ; j++)
-						_vm->_video->drawLine(*_spritesArray[_destSurface],
+						_spritesArray[_destSurface]->drawLine(
 								_destSpriteX  - (_pattern / 2) + i,
 								_destSpriteY  - (_pattern / 2) + j,
 								_spriteRight  - (_pattern / 2) + i,
@@ -247,7 +241,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		if ((_pattern & 0xFF) != 0)
 			warning("oPlaytoons_spriteOperation: operation DRAW_INVALIDATE, pattern %d", _pattern & 0xFF);
 
-		_vm->_video->drawCircle(*_spritesArray[_destSurface], _destSpriteX,
+		_spritesArray[_destSurface]->drawCircle(_destSpriteX,
 				_destSpriteY, _spriteRight, _frontColor);
 
 		dirtiedRect(_destSurface, _destSpriteX - _spriteRight, _destSpriteY - _spriteBottom,
@@ -289,9 +283,8 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 					byte *dataBuf = _vm->_game->_resources->getTexts() + _textToPrint[1] + 1;
 					len = *dataBuf++;
 					for (int i = 0; i < len; i++, dataBuf += 2) {
-						_vm->_video->drawLetter(READ_LE_UINT16(dataBuf), _destSpriteX,
-								_destSpriteY, *font, _transparency, _frontColor,
-								_backColor, *_spritesArray[_destSurface]);
+						font->drawLetter(*_spritesArray[_destSurface], READ_LE_UINT16(dataBuf),
+								_destSpriteX, _destSpriteY, _frontColor, _backColor, _transparency);
 					}
 				} else {
 					drawString(_textToPrint, _destSpriteX, _destSpriteY, _frontColor,
@@ -300,9 +293,8 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 				}
 			} else {
 				for (int i = 0; i < len; i++) {
-					_vm->_video->drawLetter(_textToPrint[i], _destSpriteX,
-							_destSpriteY, *font, _transparency,
-							_frontColor, _backColor, *_spritesArray[_destSurface]);
+					font->drawLetter(*_spritesArray[_destSurface], _textToPrint[i],
+							_destSpriteX, _destSpriteY, _frontColor, _backColor, _transparency);
 					_destSpriteX += font->getCharWidth(_textToPrint[i]);
 				}
 			}
@@ -317,11 +309,10 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 					* _fontToSprite[_fontIndex].height;
 				x = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) % ratio)
 					* _fontToSprite[_fontIndex].width;
-				_vm->_video->drawSprite(*_spritesArray[_fontToSprite[_fontIndex].sprite],
-						*_spritesArray[_destSurface], x, y,
+				_spritesArray[_destSurface]->blit(*_spritesArray[_fontToSprite[_fontIndex].sprite], x, y,
 						x + _fontToSprite[_fontIndex].width - 1,
 						y + _fontToSprite[_fontIndex].height - 1,
-						_destSpriteX, _destSpriteY, _transparency);
+						_destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
 				_destSpriteX += _fontToSprite[_fontIndex].width;
 			}
 		}
@@ -332,36 +323,28 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 
 	case DRAW_DRAWBAR:
 		if ((_needAdjust != 2) && (_needAdjust < 10)){
-			_vm->_video->fillRect(*_spritesArray[_destSurface],
-					_destSpriteX, _spriteBottom - 1,
+			_spritesArray[_destSurface]->fillRect(_destSpriteX, _spriteBottom - 1,
 					_spriteRight, _spriteBottom, _frontColor);
 
-			_vm->_video->fillRect(*_spritesArray[_destSurface],
-					_destSpriteX, _destSpriteY,
+			_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
 					_destSpriteX + 1, _spriteBottom, _frontColor);
 
-			_vm->_video->fillRect(*_spritesArray[_destSurface],
-					_spriteRight - 1, _destSpriteY,
+			_spritesArray[_destSurface]->fillRect(_spriteRight - 1, _destSpriteY,
 					_spriteRight, _spriteBottom, _frontColor);
 
-			_vm->_video->fillRect(*_spritesArray[_destSurface],
-					_destSpriteX, _destSpriteY,
+			_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
 					_spriteRight, _destSpriteY + 1, _frontColor);
 		} else {
-			_vm->_video->drawLine(*_spritesArray[_destSurface],
-					_destSpriteX, _spriteBottom,
+			_spritesArray[_destSurface]->drawLine(_destSpriteX, _spriteBottom,
 					_spriteRight, _spriteBottom, _frontColor);
 
-			_vm->_video->drawLine(*_spritesArray[_destSurface],
-					_destSpriteX, _destSpriteY,
+			_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
 					_destSpriteX, _spriteBottom, _frontColor);
 
-			_vm->_video->drawLine(*_spritesArray[_destSurface],
-					_spriteRight, _destSpriteY,
+			_spritesArray[_destSurface]->drawLine(_spriteRight, _destSpriteY,
 					_spriteRight, _spriteBottom, _frontColor);
 
-			_vm->_video->drawLine(*_spritesArray[_destSurface],
-					_destSpriteX, _destSpriteY,
+			_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
 					_spriteRight, _destSpriteY, _frontColor);
 		}
 
@@ -371,8 +354,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 	case DRAW_CLEARRECT:
 		warning ("oPlaytoons_spriteOperation: DRAW_CLEARRECT uses _backColor %d", _backColor);
 		if (_backColor != -1) {
-			_vm->_video->fillRect(*_spritesArray[_destSurface],
-			    _destSpriteX, _destSpriteY,
+			_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
 			    _spriteRight, _spriteBottom,
 			    _backColor);
 		}
@@ -381,8 +363,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_FILLRECTABS:
-		_vm->_video->fillRect(*_spritesArray[_destSurface],
-		    _destSpriteX, _destSpriteY,
+		_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
 		    _spriteRight, _spriteBottom, _backColor);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);

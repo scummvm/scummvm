@@ -219,6 +219,8 @@ public:
 	 */
 	void writeToStream(Common::WriteStream *stream) const;
 
+	const Common::String &getResourceLocation() const;
+
 	// FIXME: This audio specific method is a hack. After all, why should a
 	// Resource have audio specific methods? But for now we keep this, as it
 	// eases transition.
@@ -315,6 +317,7 @@ public:
 
 	void setAudioLanguage(int language);
 	int getAudioLanguage() const;
+	bool isGMTrackIncluded();
 	bool isVGA() const { return (_viewType == kViewVga) || (_viewType == kViewVga11); }
 	bool isAmiga32color() const { return _viewType == kViewAmiga; }
 	bool isSci11Mac() const { return _volVersion == kResVersionSci11Mac; }
@@ -344,6 +347,8 @@ public:
 	bool detectFontExtended();
 	// Detects, if SCI1.1 game uses palette merging
 	bool detectForPaletteMergingForSci11();
+	// Detects, if SCI0EARLY game also has SCI0EARLY sound resources
+	bool detectEarlySound();
 
 	/**
 	 * Finds the internal Sierra ID of the current game from script 0.

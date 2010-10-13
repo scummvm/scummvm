@@ -473,14 +473,25 @@ void PauseDialog::handleKeyDown(Common::KeyState state) {
 }
 
 ConfirmDialog::ConfirmDialog(ScummEngine *scumm, int res)
-	: InfoDialog(scumm, res) {
+	: InfoDialog(scumm, res), _yesKey('y'), _noKey('n') {
+
+	if (_message.lastChar() != ')') {
+		_yesKey = _message.lastChar();
+		_message.deleteLastChar();
+
+		if (_yesKey >= 'A' && _yesKey <= 'Z')
+			_yesKey += 'a' - 'A';
+
+		_text->setLabel(_message);
+		reflowLayout();
+	}
 }
 
 void ConfirmDialog::handleKeyDown(Common::KeyState state) {
-	if (state.keycode == Common::KEYCODE_n) {
+	if (state.keycode == Common::KEYCODE_n || state.ascii == _noKey) {
 		setResult(0);
 		close();
-	} else if (state.keycode == Common::KEYCODE_y) {
+	} else if (state.keycode == Common::KEYCODE_y || state.ascii == _yesKey) {
 		setResult(1);
 		close();
 	} else

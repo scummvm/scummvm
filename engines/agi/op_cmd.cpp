@@ -497,6 +497,7 @@ void AgiEngine::cmd_script_size(uint8 *p) {
 
 void AgiEngine::cmd_cancel_line(uint8 *p) {
 	_game.inputBuffer[0] = 0;
+	_game.cursorPos = 0;
 	writePrompt();
 }
 

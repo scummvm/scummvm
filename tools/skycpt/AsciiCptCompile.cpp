@@ -56,8 +56,8 @@ int main(int argc, char* argv[])
 		printf("Sorry, this program only works on little endian systems.\nGoodbye.\n");
 		return 0;
 	}
-	TextFile *cptDef = new TextFile("compact.txt");
-	FILE *inf = fopen("compact.txt", "r");
+	TextFile *cptDef = new TextFile("COMPACT.TXT");
+	FILE *inf = fopen("COMPACT.TXT", "r");
 	FILE *dbg = fopen("compact.dbg", "wb");
 	FILE *out = fopen("compact.bin", "wb");
 	FILE *sve = fopen("savedata.txt", "r");
@@ -70,7 +70,3 @@ int main(int argc, char* argv[])
 	printf("done\n");
 	return 0;
 }
-
-
-
-

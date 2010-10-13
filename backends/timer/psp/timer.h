@@ -24,8 +24,8 @@
  */
 
 #ifndef PSP_TIMER_H
-#define PSP_TIMER_H 
- 
+#define PSP_TIMER_H
+
 class PspTimer {
 public:
 	typedef void (* CallbackFunc)(void);
@@ -44,4 +44,4 @@ private:
 	bool _init;
 };
 
-#endif
+#endif // PSP_TIMER_H

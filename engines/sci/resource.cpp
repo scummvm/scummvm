@@ -92,7 +92,7 @@ const char *getSciVersionDesc(SciVersion version) {
 
 #undef SCI_REQUIRE_RESOURCE_FILES
 
-//#define SCI_VERBOSE_resMan 1
+//#define SCI_VERBOSE_RESMAN 1
 
 static const char *sci_error_types[] = {
 	"No error",
@@ -142,7 +142,6 @@ static const ResourceType s_resTypeMapSci0[] = {
 	kResourceTypeTranslation                                                              // 0x14
 };
 
-#ifdef ENABLE_SCI32
 // TODO: 12 should be "Wave", but SCI seems to just store it in Audio resources
 static const ResourceType s_resTypeMapSci21[] = {
 	kResourceTypeView, kResourceTypePic, kResourceTypeScript, kResourceTypeText,          // 0x00-0x03
@@ -152,7 +151,6 @@ static const ResourceType s_resTypeMapSci21[] = {
 	kResourceTypeMap, kResourceTypeHeap, kResourceTypeChunk, kResourceTypeAudio36,        // 0x10-0x13
 	kResourceTypeSync36, kResourceTypeTranslation, kResourceTypeRobot, kResourceTypeVMD   // 0x14-0x17
 };
-#endif
 
 ResourceType ResourceManager::convertResType(byte type) {
 	type &= 0x7f;
@@ -163,7 +161,6 @@ ResourceType ResourceManager::convertResType(byte type) {
 			return s_resTypeMapSci0[type];
 	} else {
 		// SCI2.1+
-#ifdef ENABLE_SCI32
 		if (type < ARRAYSIZE(s_resTypeMapSci21)) {
 			// LSL6 hires doesn't have the chunk resource type, to match
 			// the resource types of the lowres version, thus we use the
@@ -173,9 +170,6 @@ ResourceType ResourceManager::convertResType(byte type) {
 			else
 				return s_resTypeMapSci21[type];
 		}
-#else
-		error("SCI32 support not compiled in");
-#endif
 	}
 
 	return kResourceTypeInvalid;
@@ -490,8 +484,9 @@ void ResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 
 	int error = res->decompress(resMan->getVolVersion(), fileStream);
 	if (error) {
-		warning("Error %d occurred while reading %s from resource file: %s",
-				error, res->_id.toString().c_str(), sci_error_types[error]);
+		warning("Error %d occurred while reading %s from resource file %s: %s",
+				error, res->_id.toString().c_str(), res->getResourceLocation().c_str(),
+				sci_error_types[error]);
 		res->unalloc();
 	}
 
@@ -852,7 +847,16 @@ void ResourceManager::init() {
 		debugC(1, kDebugLevelResMan, "resMan: Detected Amiga graphic resources");
 		break;
 	default:
+#ifdef ENABLE_SCI32
 		error("resMan: Couldn't determine view type");
+#else
+		if (getSciVersion() >= SCI_VERSION_2) {
+			// SCI support isn't built in, thus the view type won't be determined for
+			// SCI2+ games. This will be handled further up, so throw no error here
+		} else {
+			error("resMan: Couldn't determine view type");
+		}
+#endif
 	}
 
 #ifdef ENABLE_SCI32
@@ -904,7 +908,7 @@ void ResourceManager::addToLRU(Resource *res) {
 	}
 	_LRU.push_front(res);
 	_memoryLRU += res->size;
-#if SCI_VERBOSE_resMan
+#if SCI_VERBOSE_RESMAN
 	debug("Adding %s.%03d (%d bytes) to lru control: %d bytes total",
 	      getResourceTypeName(res->type), res->number, res->size,
 	      mgr->_memoryLRU);
@@ -935,7 +939,7 @@ void ResourceManager::freeOldResources() {
 		Resource *goner = *_LRU.reverse_begin();
 		removeFromLRU(goner);
 		goner->unalloc();
-#ifdef SCI_VERBOSE_resMan
+#ifdef SCI_VERBOSE_RESMAN
 		printf("resMan-debug: LRU: Freeing %s.%03d (%d bytes)\n", getResourceTypeName(goner->type), goner->number, goner->size);
 #endif
 	}
@@ -1518,7 +1522,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	} while (type != 0x1F); // the last entry is FF
 
 	// reading each type's offsets
-	uint32 off = 0;
+	uint32 fileOffset = 0;
 	for (type = 0; type < 32; type++) {
 		if (resMap[type].wOffset == 0) // this resource does not exist in map
 			continue;
@@ -1528,15 +1532,15 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			int volume_nr = 0;
 			if (_mapVersion == kResVersionSci11) {
 				// offset stored in 3 bytes
-				off = fileStream->readUint16LE();
-				off |= fileStream->readByte() << 16;
-				off <<= 1;
+				fileOffset = fileStream->readUint16LE();
+				fileOffset |= fileStream->readByte() << 16;
+				fileOffset <<= 1;
 			} else {
 				// offset/volume stored in 4 bytes
-				off = fileStream->readUint32LE();
+				fileOffset = fileStream->readUint32LE();
 				if (_mapVersion < kResVersionSci11) {
-					volume_nr = off >> 28; // most significant 4 bits
-					off &= 0x0FFFFFFF;     // least significant 28 bits
+					volume_nr = fileOffset >> 28; // most significant 4 bits
+					fileOffset &= 0x0FFFFFFF;     // least significant 28 bits
 				} else {
 					// in SCI32 it's a plain offset
 				}
@@ -1547,19 +1551,30 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}
 			resId = ResourceId(convertResType(type), number);
-			// adding new resource only if it does not exist
-			if (_resMap.contains(resId) == false) {
-				// NOTE: We add the map's volume number here to the specified volume number
-				// for SCI2.1 and SCI3 maps that are not resmap.000. The resmap.* files' numbers
-				// need to be used in concurrence with the volume specified in the map to get
-				// the actual resource file.
-				int mapVolumeNr = volume_nr + map->_volumeNumber;
-				ResourceSource *source = findVolume(map, mapVolumeNr);
-				// FIXME: this code has serious issues with multiple RESMAP.* files (like in unmodified gk2)
-				//         adding a resource with source == NULL would crash later on
-				if (!source)
-					error("Unable to find volume for map %s volumeNr %d", map->getLocationName().c_str(), mapVolumeNr);
-				addResource(resId, source, off);
+			// NOTE: We add the map's volume number here to the specified volume number
+			// for SCI2.1 and SCI3 maps that are not resmap.000. The resmap.* files' numbers
+			// need to be used in concurrence with the volume specified in the map to get
+			// the actual resource file.
+			int mapVolumeNr = volume_nr + map->_volumeNumber;
+			ResourceSource *source = findVolume(map, mapVolumeNr);
+			// FIXME: this code has serious issues with multiple RESMAP.* files (like in unmodified gk2)
+			//         adding a resource with source == NULL would crash later on
+			if (!source)
+				error("Unable to find volume for map %s volumeNr %d", map->getLocationName().c_str(), mapVolumeNr);
+
+			Resource *resource = _resMap.getVal(resId, NULL);
+			if (!resource) {
+				addResource(resId, source, fileOffset);
+			} else {
+				// if resource is already present, change it to new content
+				//  this is needed at least for pharkas/german. This version
+				//  contains several duplicate resources INSIDE the resource
+				//  data files like fonts, views, scripts, etc. And if we use
+				//  the first entries, half of the game will be english and
+				//  umlauts will also be missing :P
+				resource->_source = source;
+				resource->_fileOffset = fileOffset;
+				resource->size = 0;
 			}
 		}
 	}
@@ -1934,7 +1949,18 @@ void ResourceManager::detectSciVersion() {
 	s_sciVersion = SCI_VERSION_0_EARLY;
 	bool oldDecompressors = true;
 
-	ResourceCompression viewCompression = getViewCompression();
+	ResourceCompression viewCompression;
+#ifdef ENABLE_SCI32	
+	viewCompression = getViewCompression();
+#else
+	if (_volVersion == kResVersionSci32) {
+		// SCI32 support isn't built in, thus view detection will fail
+		viewCompression = kCompUnknown;
+	} else {
+		viewCompression = getViewCompression();
+	}
+#endif
+
 	if (viewCompression != kCompLZW) {
 		// If it's a different compression type from kCompLZW, the game is probably
 		// SCI_VERSION_1_EGA or later. If the views are uncompressed, it is
@@ -1955,8 +1981,18 @@ void ResourceManager::detectSciVersion() {
 		// SCI1.1 VGA views
 		_viewType = kViewVga11;
 	} else {
+#ifdef ENABLE_SCI32
 		// Otherwise we detect it from a view
 		_viewType = detectViewType();
+#else
+		if (_volVersion == kResVersionSci32 && viewCompression == kCompUnknown) {
+			// A SCI32 game, but SCI32 support is disabled. Force the view type
+			// to kViewVga11, as we can't read from the game's resource files
+			_viewType = kViewVga11;
+		} else {
+			_viewType = detectViewType();
+		}
+#endif
 	}
 	
 	if (_volVersion == kResVersionSci11Mac) {
@@ -2062,7 +2098,7 @@ void ResourceManager::detectSciVersion() {
 		//  is increment here, but ignore for all the regular sci1late games
 		//  the problem is, we dont have access to that detection till later
 		//  so maybe (part of?) that detection should get moved in here
-		if ((g_sci->getGameId() == GID_LSL1) && (g_sci->getLanguage() == Common::ES_ESP)) {
+		if (g_sci && (g_sci->getGameId() == GID_LSL1) && (g_sci->getLanguage() == Common::ES_ESP)) {
 			s_sciVersion = SCI_VERSION_1_MIDDLE;
 			return;
 		}
@@ -2135,6 +2171,19 @@ bool ResourceManager::detectForPaletteMergingForSci11() {
 		return false;
 	}
 	return false;
+}
+
+// is called on SCI0EARLY games to make sure that sound resources are in fact also SCI0EARLY
+bool ResourceManager::detectEarlySound() {
+	Resource *res = findResource(ResourceId(kResourceTypeSound, 1), 0);
+	if (res) {
+		if (res->size >= 0x22) {
+			if (READ_LE_UINT16(res->data + 0x1f) == 0) // channel 15 voice count + play mask is 0 in SCI0LATE
+				if (res->data[0x21] == 0) // last byte right before actual data is 0 as well
+					return false;
+		}
+	}
+	return true;
 }
 
 // Functions below are based on PD code by Brian Provinciano (SCI Studio)
@@ -2327,6 +2376,10 @@ Common::String ResourceManager::findSierraGameId() {
 	sierraId += (const char *)seeker;
 
 	return sierraId;
+}
+
+const Common::String &Resource::getResourceLocation() const {
+	return _source->getLocationName();
 }
 
 } // End of namespace Sci

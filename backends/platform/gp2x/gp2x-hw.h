@@ -54,4 +54,12 @@ extern void gp2x_video_wait_vsync(void);
 
 } /* namespace GP2X_HW */
 
+namespace GPH {
+
+extern int tapmodeLevel;
+
+extern void	ToggleTapMode();
+
+} /* namespace GPH */
+
 #endif //GP2X_HW_H

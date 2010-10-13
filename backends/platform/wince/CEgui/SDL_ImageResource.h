@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef CEGUI_SDL_IMAGERESOURCE
-#define CEGUI_SDL_IMAGERESOURCE
+#ifndef CEGUI_SDL_IMAGERESOURCE_H
+#define CEGUI_SDL_IMAGERESOURCE_H
 
 #include "common/scummsys.h"
 #include "common/system.h"

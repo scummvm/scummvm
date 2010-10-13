@@ -53,7 +53,8 @@ enum ViewSignals {
 enum ViewScaleSignals {
 	kScaleSignalDoScaling		= 0x0001, // enables scaling when drawing that cel (involves scaleX and scaleY)
 	kScaleSignalGlobalScaling	= 0x0002, // means that global scaling shall get applied on that cel (sets scaleX/scaleY)
-	kScaleSignalUnknown2		= 0x0004 // really unknown
+	kScaleSignalDontSetNsrect	= 0x0004  // do not set nsRect inside kAnimate(); for a test case see bug #3038424 
+
 };
 
 struct AnimateEntry {
@@ -83,6 +84,7 @@ class GfxPaint16;
 class GfxScreen;
 class GfxPalette;
 class GfxTransitions;
+class GfxView;
 /**
  * Animate class, kAnimate and relevant functions for SCI16 (SCI0-SCI1.1) games
  */
@@ -94,13 +96,13 @@ public:
 	void disposeLastCast();
 	bool invoke(List *list, int argc, reg_t *argv);
 	void makeSortedList(List *list);
+	void applyGlobalScaling(AnimateList::iterator entry, GfxView *view);
 	void fill(byte &oldPicNotValid, bool maySetNsRect);
 	void update();
 	void drawCels();
 	void updateScreen(byte oldPicNotValid);
 	void restoreAndDelete(int argc, reg_t *argv);
 	void reAnimate(Common::Rect rect);
-	void preprocessAddToPicList();
 	void addToPicDrawCels();
 	void addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 

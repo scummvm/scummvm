@@ -9,7 +9,6 @@ MODULE_OBJS := \
 	draw_bargon.o \
 	draw_fascin.o \
 	draw_playtoons.o \
-	driver_vga.o \
 	expression.o \
 	game.o \
 	global.o \
@@ -23,6 +22,7 @@ MODULE_OBJS := \
 	init.o \
 	init_v1.o \
 	init_v2.o \
+	init_fascin.o \
 	init_v3.o \
 	init_v4.o \
 	init_v6.o \
@@ -48,6 +48,7 @@ MODULE_OBJS := \
 	scenery_v1.o \
 	scenery_v2.o \
 	script.o \
+	surface.o \
 	totfile.o \
 	util.o \
 	variables.o \

@@ -94,6 +94,8 @@ public:
 	VideoHandle findVideoHandle(uint16 id);
 	int32 getCurFrame(const VideoHandle &handle);
 	uint32 getFrameCount(const VideoHandle &handle);
+	uint32 getElapsedTime(const VideoHandle &handle);
+	bool endOfVideo(const VideoHandle &handle);
 
 private:
 	MohawkEngine *_vm;

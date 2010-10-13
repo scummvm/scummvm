@@ -30,6 +30,7 @@
 #include "sci/sci.h"
 #include "sci/console.h"
 #include "sci/resource.h"
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/sound/midiparser_sci.h"
@@ -65,9 +66,20 @@ void SciMusic::init() {
 
 	// Default to MIDI in SCI2.1+ games, as many don't have AdLib support.
 	Common::Platform platform = g_sci->getPlatform();
-	uint32 dev = MidiDriver::detectDevice((getSciVersion() >= SCI_VERSION_2_1) ? (MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM) : (MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI));
 
-	switch (MidiDriver::getMusicType(dev)) {
+	uint32 deviceFlags = MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI;
+
+	if (getSciVersion() >= SCI_VERSION_2_1)
+		deviceFlags |= MDT_PREFER_GM;
+
+	// Currently our CMS implementation only supports SCI1(.1)
+	if (getSciVersion() >= SCI_VERSION_1_EGA && getSciVersion() <= SCI_VERSION_1_1)
+		deviceFlags |= MDT_CMS;
+
+	uint32 dev = MidiDriver::detectDevice(deviceFlags);
+	_musicType = MidiDriver::getMusicType(dev);
+
+	switch (_musicType) {
 	case MT_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
 		if (g_sci->getPlatform() == Common::kPlatformAmiga || platform == Common::kPlatformMacintosh)
@@ -81,8 +93,11 @@ void SciMusic::init() {
 	case MT_PCSPK:
 		_pMidiDrv = MidiPlayer_PCSpeaker_create(_soundVersion);
 		break;
+	case MT_CMS:
+		_pMidiDrv = MidiPlayer_CMS_create(_soundVersion);
+		break;
 	default:
-		if (ConfMan.getBool("enable_fb01"))
+		if (ConfMan.getBool("native_fb01"))
 			_pMidiDrv = MidiPlayer_Fb01_create(_soundVersion);
 		else
 			_pMidiDrv = MidiPlayer_Midi_create(_soundVersion);
@@ -100,6 +115,7 @@ void SciMusic::init() {
 	// Find out what the first possible channel is (used, when doing channel
 	// remapping).
 	_driverFirstChannel = _pMidiDrv->getFirstChannel();
+	_driverLastChannel = _pMidiDrv->getLastChannel();
 }
 
 void SciMusic::miditimerCallback(void *p) {
@@ -260,6 +276,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				pSnd->pMidiParser = new MidiParser_SCI(_soundVersion, this);
 				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
 				pSnd->pMidiParser->setTimerRate(_dwTempo);
+				pSnd->pMidiParser->setMasterVolume(_masterVolume);
 			}
 
 			pSnd->pauseCounter = 0;
@@ -288,6 +305,8 @@ int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
 	}
 	// otherwise look for unused channel
 	for (int channelNr = _driverFirstChannel; channelNr < 15; channelNr++) {
+		if (channelNr == 9) // never map to channel 9 (precussion)
+			continue;
 		if (!_usedChannel[channelNr]) {
 			_usedChannel[channelNr] = caller;
 			return channelNr;
@@ -349,20 +368,25 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		}
 	}
 
-	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
-		if (pSnd->loop > 1) {
-			pSnd->pLoopStream = new Audio::LoopingAudioStream(pSnd->pStreamAud,
-			                                                  pSnd->loop, DisposeAfterUse::NO);
-			_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
-			                         pSnd->pLoopStream, -1, pSnd->volume, 0,
-			                         DisposeAfterUse::NO);
-		} else {
-			// Rewind in case we play the same sample multiple times
-			// (non-looped) like in pharkas right at the start
-			pSnd->pStreamAud->rewind();
-			_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
-			                         pSnd->pStreamAud, -1, pSnd->volume, 0,
-			                         DisposeAfterUse::NO);
+	if (pSnd->pStreamAud) {
+		if (!_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
+			// Sierra SCI ignores volume set when playing samples via kDoSound
+			//  At least freddy pharkas/CD has a script bug that sets volume to 0
+			//  when playing the "score" sample
+			if (pSnd->loop > 1) {
+				pSnd->pLoopStream = new Audio::LoopingAudioStream(pSnd->pStreamAud,
+																pSnd->loop, DisposeAfterUse::NO);
+				_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
+										pSnd->pLoopStream, -1, _pMixer->kMaxChannelVolume, 0,
+										DisposeAfterUse::NO);
+			} else {
+				// Rewind in case we play the same sample multiple times
+				// (non-looped) like in pharkas right at the start
+				pSnd->pStreamAud->rewind();
+				_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
+										pSnd->pStreamAud, -1, _pMixer->kMaxChannelVolume, 0,
+										DisposeAfterUse::NO);
+			}
 		}
 	} else {
 		if (pSnd->pMidiParser) {
@@ -375,8 +399,14 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			if (pSnd->status == kSoundStopped) {
 				pSnd->pMidiParser->jumpToTick(0);
 			} else {
+				// Disable sound looping before fast forwarding to the last position,
+				// when loading a saved game. Fixes bug #3083151.
+				uint16 prevLoop = pSnd->loop;
+				pSnd->loop = 0;
 				// Fast forward to the last position and perform associated events when loading
 				pSnd->pMidiParser->jumpToTick(pSnd->ticker, true);
+				// Restore looping
+				pSnd->loop = prevLoop;
 			}
 			pSnd->pMidiParser->mainThreadEnd();
 			_mutex.unlock();
@@ -412,7 +442,8 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 	assert(volume <= MUSIC_VOLUME_MAX);
 	if (pSnd->pStreamAud) {
-		_pMixer->setChannelVolume(pSnd->hCurrentAud, volume * 2); // Mixer is 0-255, SCI is 0-127
+		// we simply ignore volume changes for samples, because sierra sci also
+		//  doesn't support volume for samples via kDoSound
 	} else if (pSnd->pMidiParser) {
 		_mutex.lock();
 		pSnd->pMidiParser->mainThreadBegin();
@@ -420,6 +451,13 @@ void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 		pSnd->pMidiParser->mainThreadEnd();
 		_mutex.unlock();
 	}
+}
+
+// this is used to set volume of the sample, used for fading only!
+void SciMusic::soundSetSampleVolume(MusicEntry *pSnd, byte volume) {
+	assert(volume <= MUSIC_VOLUME_MAX);
+	assert(pSnd->pStreamAud);
+	_pMixer->setChannelVolume(pSnd->hCurrentAud, volume * 2); // Mixer is 0-255, SCI is 0-127
 }
 
 void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
@@ -525,8 +563,11 @@ void SciMusic::soundSetMasterVolume(uint16 vol) {
 
 	Common::StackLock lock(_mutex);
 
-	if (_pMidiDrv)
-		_pMidiDrv->setVolume(vol);
+	const MusicList::iterator end = _playList.end();
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+		if ((*i)->pMidiParser)
+			(*i)->pMidiParser->setMasterVolume(vol);
+	}
 }
 
 void SciMusic::sendMidiCommand(uint32 cmd) {
@@ -678,6 +719,25 @@ void MusicEntry::doFade() {
 		}
 
 		fadeSetVolume = true; // set flag so that SoundCommandParser::cmdUpdateCues will set the volume of the stream
+	}
+}
+
+void MusicEntry::setSignal(int newSignal) {
+	// For SCI0, we cache the signals to set, as some songs might
+	// update their signal faster than kGetEvent is called (which is where
+	// we manually invoke kDoSoundUpdateCues for SCI0 games). SCI01 and
+	// newer handle signalling inside kDoSoundUpdateCues. Refer to bug #3042981
+	if (g_sci->_features->detectDoSoundType() <= SCI_VERSION_0_LATE) {
+		if (!signal) {
+			signal = newSignal;
+		} else {
+			// signal already set and waiting for getting to scripts, queue new one
+			signalQueue.push_back(newSignal);
+		}
+	} else {
+		// Set the signal directly for newer games, otherwise the sound
+		// object might be deleted already later on (refer to bug #3045913)
+		signal = newSignal;
 	}
 }
 

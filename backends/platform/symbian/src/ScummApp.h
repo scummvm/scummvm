@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef ScummAPPH
-#define ScummAPPH
+#ifndef SCUMMAPP_H
+#define SCUMMAPP_H
 
 #include <eikapp.h>
 #include <e32base.h>

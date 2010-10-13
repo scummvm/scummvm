@@ -42,7 +42,7 @@ enum OplEmulator {
 
 OPL::OPL() {
 	if (_hasInstance)
-		error("There are multiple OPL output instances running.");
+		error("There are multiple OPL output instances running");
 	_hasInstance = true;
 }
 
@@ -91,7 +91,7 @@ Config::DriverId Config::detect(OplType type) {
 		} else {
 			// Else we will output a warning and just
 			// return that no valid driver is found.
-			warning("Your selected OPL driver \"%s\" does not support type %d emulation, which is requested by your game.", _drivers[drv].description, type);
+			warning("Your selected OPL driver \"%s\" does not support type %d emulation, which is requested by your game", _drivers[drv].description, type);
 			return -1;
 		}
 	}
@@ -138,7 +138,7 @@ OPL *Config::create(DriverId driver, OplType type) {
 		if (type == kOpl2)
 			return new MAME::OPL();
 		else
-			warning("MAME OPL emulator only supports OPL2 emulation.");
+			warning("MAME OPL emulator only supports OPL2 emulation");
 			return 0;
 
 #ifndef DISABLE_DOSBOX_OPL

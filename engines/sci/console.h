@@ -70,7 +70,7 @@ private:
 	bool cmdDiskDump(int argc, const char **argv);
 	bool cmdHexDump(int argc, const char **argv);
 	bool cmdResourceId(int argc, const char **argv);
-	bool cmdResourceSize(int argc, const char **argv);
+	bool cmdResourceInfo(int argc, const char **argv);
 	bool cmdResourceTypes(int argc, const char **argv);
 	bool cmdList(int argc, const char **argv);
 	bool cmdHexgrep(int argc, const char **argv);
@@ -135,6 +135,8 @@ private:
 	bool cmdBreakpointList(int argc, const char **argv);
 	bool cmdBreakpointDelete(int argc, const char **argv);
 	bool cmdBreakpointMethod(int argc, const char **argv);
+	bool cmdBreakpointRead(int argc, const char **argv);
+	bool cmdBreakpointWrite(int argc, const char **argv);
 	bool cmdBreakpointKernel(int argc, const char **argv);
 	bool cmdBreakpointFunction(int argc, const char **argv);
 	// VM

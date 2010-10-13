@@ -35,19 +35,21 @@ reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 
 	case 2: { // get random number
-		int fromNumber = argv[0].toUint16();
-		int toNumber = argv[1].toUint16();
+		// numbers are definitely unsigned, for example lsl5 door code in k rap radio is random
+		//  and 5-digit - we get called kRandom(10000, 65000)
+		//  some codes in sq4 are also random and 5 digit (if i remember correctly)
+		const uint16 fromNumber = argv[0].toUint16();
+		const uint16 toNumber = argv[1].toUint16();
+		uint16 range = toNumber - fromNumber + 1;
+		// calculating range is exactly how sierra sci did it and is required for hoyle 4
+		//  where we get called with kRandom(0, -1) and we are supposed to give back values from 0 to 0
+		//  the returned value will be used as displace-offset for a background cel
+		//  note: i assume that the hoyle4 code is actually buggy and it was never fixed because of
+		//         the way sierra sci handled it - "it just worked". It should have called kRandom(0, 0)
+		if (range)
+			range--; // the range value was never returned, our random generator gets 0->range, so fix it
 
-		// TODO/CHECKME: It is propbably not required to check whether
-		// toNumber is greater than fromNumber, at least not when one
-		// goes by their names, but let us be on the safe side and
-		// allow toNumber to be smaller than fromNumber too.
-		if (fromNumber > toNumber)
-			SWAP(fromNumber, toNumber);
-
-		const uint diff = (uint)(toNumber - fromNumber);
-
-		const int randomNumber = fromNumber + (int)g_sci->getRNG().getRandomNumber(diff);
+		const int randomNumber = fromNumber + (int)g_sci->getRNG().getRandomNumber(range);
 		return make_reg(0, randomNumber);
 	}
 
@@ -70,30 +72,24 @@ reg_t kSqrt(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, (int16) sqrt((float) ABS(argv[0].toSint16())));
 }
 
-reg_t kGetAngle(EngineState *s, int argc, reg_t *argv) {
-	// Based on behavior observed with a test program created with
-	// SCI Studio.
-	int x1 = argv[0].toSint16();
-	int y1 = argv[1].toSint16();
-	int x2 = argv[2].toSint16();
-	int y2 = argv[3].toSint16();
-	int xrel = x2 - x1;
-	int yrel = y1 - y2; // y-axis is mirrored.
-	int angle;
+uint16 kGetAngleWorker(int16 x1, int16 y1, int16 x2, int16 y2) {
+	int16 xRel = x2 - x1;
+	int16 yRel = y1 - y2; // y-axis is mirrored.
+	int16 angle;
 
 	// Move (xrel, yrel) to first quadrant.
 	if (y1 < y2)
-		yrel = -yrel;
+		yRel = -yRel;
 	if (x2 < x1)
-		xrel = -xrel;
+		xRel = -xRel;
 
 	// Compute angle in grads.
-	if (yrel == 0 && xrel == 0)
-		angle = 0;
+	if (yRel == 0 && xRel == 0)
+		return 0;
 	else
-		angle = 100 * xrel / (xrel + yrel);
+		angle = 100 * xRel / (xRel + yRel);
 
-	// Fix up angle for actual quadrant of (xrel, yrel).
+	// Fix up angle for actual quadrant of (xRel, yRel).
 	if (y1 < y2)
 		angle = 200 - angle;
 	if (x2 < x1)
@@ -103,8 +99,18 @@ reg_t kGetAngle(EngineState *s, int argc, reg_t *argv) {
 	// grad 10 with grad 11, grad 20 with grad 21, etc. This leads to
 	// "degrees" that equal either one or two grads.
 	angle -= (angle + 9) / 10;
+	return angle;
+}
 
-	return make_reg(0, angle);
+reg_t kGetAngle(EngineState *s, int argc, reg_t *argv) {
+	// Based on behavior observed with a test program created with
+	// SCI Studio.
+	int x1 = argv[0].toSint16();
+	int y1 = argv[1].toSint16();
+	int x2 = argv[2].toSint16();
+	int y2 = argv[3].toSint16();
+
+	return make_reg(0, kGetAngleWorker(x1, y1, x2, y2));
 }
 
 reg_t kGetDistance(EngineState *s, int argc, reg_t *argv) {

@@ -610,9 +610,14 @@ void Sound::cdPlayMultMusic() {
 void Sound::cdPlay(const char *trackName) {
 	if (!_cdrom)
 		return;
-
 	debugC(1, kDebugSound, "CDROM: Playing track \"%s\"", trackName);
-	_cdrom->startTrack(trackName);
+
+// WORKAROUND - In Fascination CD, in the storage room, a track has the wrong
+// name in the scripts, and therefore doesn't play. This fixes the problem.
+	if ((_vm->getGameType() == kGameTypeFascination) && !scumm_stricmp(trackName, "boscle"))
+		_cdrom->startTrack("bosscle");
+	else
+		_cdrom->startTrack(trackName);
 }
 
 void Sound::cdStop() {

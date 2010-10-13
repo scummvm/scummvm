@@ -528,8 +528,11 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 				decompData = decompressHIF(s->data, tempBuf);
 
 				// Check that we correctly decompressed data
-				if (!decompData)
+				if (!decompData) {
+					free(tempBuf);
+
 					return RDERR_DECOMPRESSION;
+				}
 
 				s->w = (decompData / (s->h / 2)) * 2;
 				byte *tempBuf2 = (byte *)malloc(s->w * s->h * 10);
@@ -571,8 +574,11 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 					uint32 decompData = decompressHIF(s->data, tempBuf);
 
 					// Check that we correctly decompressed data
-					if (!decompData)
+					if (!decompData) {
+						free(tempBuf);
+
 						return RDERR_DECOMPRESSION;
+					}
 
 					s->w = (decompData / (s->h / 2));
 					sprite = (byte *)malloc(s->w * s->h);

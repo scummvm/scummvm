@@ -55,7 +55,7 @@ public:
 	bool reset();
 
 	bool loadPakFile(Common::String filename);
-	bool loadPakFile(Common::String name, Common::SharedPtr<Common::ArchiveMember> file);
+	bool loadPakFile(Common::String name, Common::ArchiveMemberPtr file);
 
 	void unloadPakFile(Common::String filename, bool remFromCache = false);
 
@@ -86,7 +86,7 @@ protected:
 	Common::SearchSet _archiveFiles;
 	Common::SearchSet _protectedFiles;
 
-	Common::Archive *loadArchive(const Common::String &name, Common::SharedPtr<Common::ArchiveMember> member);
+	Common::Archive *loadArchive(const Common::String &name, Common::ArchiveMemberPtr member);
 	Common::Archive *loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset);
 
 	bool loadProtectedFiles(const char * const * list);

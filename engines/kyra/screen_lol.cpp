@@ -637,7 +637,7 @@ void Screen_LoL::copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, in
 				d++;
 			}
 
-			for (int ii = (i & 1) ^ 1; ii < ibw_2; ii += 2 ) {
+			for (int ii = (i & 1) ^ 1; ii < ibw_2; ii += 2) {
 				*d = *s;
 				d += 2;
 				s += 2;

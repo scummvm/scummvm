@@ -110,7 +110,7 @@ void DefaultAudioCDManager::setVolume(byte volume) {
 			_mixer->setChannelVolume(_handle, _cd.volume);
 	} else {
 		// Real Audio CD
-		
+
 		// Unfortunately I can't implement this atm
 		// since SDL doesn't seem to offer an interface method for this.
 
@@ -126,7 +126,7 @@ void DefaultAudioCDManager::setBalance(int8 balance) {
 			_mixer->setChannelBalance(_handle, _cd.balance);
 	} else {
 		// Real Audio CD
-		
+
 		// Unfortunately I can't implement this atm
 		// since SDL doesn't seem to offer an interface method for this.
 

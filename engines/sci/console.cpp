@@ -98,7 +98,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("diskdump",			WRAP_METHOD(Console, cmdDiskDump));
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
 	DCmd_Register("resource_id",		WRAP_METHOD(Console, cmdResourceId));
-	DCmd_Register("resource_size",		WRAP_METHOD(Console, cmdResourceSize));
+	DCmd_Register("resource_info",		WRAP_METHOD(Console, cmdResourceInfo));
 	DCmd_Register("resource_types",		WRAP_METHOD(Console, cmdResourceTypes));
 	DCmd_Register("list",				WRAP_METHOD(Console, cmdList));
 	DCmd_Register("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
@@ -178,6 +178,10 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("bc",					WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
 	DCmd_Register("bp_method",			WRAP_METHOD(Console, cmdBreakpointMethod));
 	DCmd_Register("bpx",				WRAP_METHOD(Console, cmdBreakpointMethod));			// alias
+	DCmd_Register("bp_read",			WRAP_METHOD(Console, cmdBreakpointRead));
+	DCmd_Register("bpr",				WRAP_METHOD(Console, cmdBreakpointRead));			// alias
+	DCmd_Register("bp_write",			WRAP_METHOD(Console, cmdBreakpointWrite));
+	DCmd_Register("bpw",				WRAP_METHOD(Console, cmdBreakpointWrite));			// alias
 	DCmd_Register("bp_kernel",			WRAP_METHOD(Console, cmdBreakpointKernel));
 	DCmd_Register("bpk",				WRAP_METHOD(Console, cmdBreakpointKernel));			// alias
 	DCmd_Register("bp_function",		WRAP_METHOD(Console, cmdBreakpointFunction));
@@ -323,7 +327,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" diskdump - Dumps the specified resource to disk as a patch file\n");
 	DebugPrintf(" hexdump - Dumps the specified resource to standard output\n");
 	DebugPrintf(" resource_id - Identifies a resource number by splitting it up in resource type and resource number\n");
-	DebugPrintf(" resource_size - Shows the size of a resource\n");
+	DebugPrintf(" resource_info - Shows info about a resource\n");
 	DebugPrintf(" resource_types - Shows the valid resource types\n");
 	DebugPrintf(" list - Lists all the resources of a given type\n");
 	DebugPrintf(" hexgrep - Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers\n");
@@ -389,7 +393,9 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("Breakpoints:\n");
 	DebugPrintf(" bp_list / bplist / bl - Lists the current breakpoints\n");
 	DebugPrintf(" bp_del / bpdel / bc - Deletes a breakpoint with the specified index\n");
-	DebugPrintf(" bp_method / bpx - Sets a breakpoint on the execution or access of a specified method/selector\n");
+	DebugPrintf(" bp_method / bpx - Sets a breakpoint on the execution of a specified method/selector\n");
+	DebugPrintf(" bp_read / bpr - Sets a breakpoint on reading of a specified selector\n");
+	DebugPrintf(" bp_write / bpw - Sets a breakpoint on writing to a specified selector\n");
 	DebugPrintf(" bp_kernel / bpk - Sets a breakpoint on execution of a kernel function\n");
 	DebugPrintf(" bp_function / bpe - Sets a breakpoint on the execution of the specified exported function\n");
 	DebugPrintf("\n");
@@ -641,7 +647,7 @@ bool Console::cmdDiskDump(int argc, const char **argv) {
 			outFile->finalize();
 			outFile->close();
 			delete outFile;
-			DebugPrintf("Resource %s.%03d has been dumped to disk\n", argv[1], resNum);
+			DebugPrintf("Resource %s.%03d (located in %s) has been dumped to disk\n", argv[1], resNum, resource->getResourceLocation().c_str());
 		} else {
 			DebugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
 		}
@@ -718,9 +724,9 @@ bool Console::cmdRoomNumber(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdResourceSize(int argc, const char **argv) {
+bool Console::cmdResourceInfo(int argc, const char **argv) {
 	if (argc != 3) {
-		DebugPrintf("Shows the size of a resource\n");
+		DebugPrintf("Shows information about a resource\n");
 		DebugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
 		return true;
 	}
@@ -734,6 +740,7 @@ bool Console::cmdResourceSize(int argc, const char **argv) {
 		Resource *resource = _engine->getResMan()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
 			DebugPrintf("Resource size: %d\n", resource->size);
+			DebugPrintf("Resource location: %s\n", resource->getResourceLocation().c_str());
 		} else {
 			DebugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
 		}
@@ -1095,7 +1102,7 @@ bool Console::cmdSaveGame(int argc, const char **argv) {
 	} else {
 		out->finalize();
 		if (out->err()) {
-			warning("Writing the savegame failed.");
+			warning("Writing the savegame failed");
 		}
 		delete out;
 	}
@@ -1127,7 +1134,7 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 }
 
 bool Console::cmdRestartGame(int argc, const char **argv) {
-	_engine->_gamestate->abortScriptProcessing = kAbortRestartGame;;
+	_engine->_gamestate->abortScriptProcessing = kAbortRestartGame;
 
 	return Cmd_Exit(0, 0);
 }
@@ -1135,10 +1142,12 @@ bool Console::cmdRestartGame(int argc, const char **argv) {
 bool Console::cmdClassTable(int argc, const char **argv) {
 	DebugPrintf("Available classes:\n");
 	for (uint i = 0; i < _engine->_gamestate->_segMan->classTableSize(); i++) {
-		if (_engine->_gamestate->_segMan->_classTable[i].reg.segment) {
-			DebugPrintf(" Class 0x%x at %04x:%04x (script 0x%x)\n", i,
-					PRINT_REG(_engine->_gamestate->_segMan->_classTable[i].reg),
-					_engine->_gamestate->_segMan->_classTable[i].script);
+		Class temp = _engine->_gamestate->_segMan->_classTable[i];
+		if (temp.reg.segment) {
+			DebugPrintf(" Class 0x%x (%s) at %04x:%04x (script 0x%x)\n", i,
+					_engine->_gamestate->_segMan->getObjectName(temp.reg),
+					PRINT_REG(temp.reg),
+					temp.script);
 		}
 	}
 
@@ -1195,7 +1204,6 @@ bool Console::cmdParse(int argc, const char **argv) {
 		return true;
 	}
 
-	ResultWordList words;
 	char *error;
 	char string[1000];
 
@@ -1207,6 +1215,8 @@ bool Console::cmdParse(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Parsing '%s'\n", string);
+
+	ResultWordListList words;
 	bool res = _engine->getVocabulary()->tokenizeString(words, string, &error);
 	if (res && !words.empty()) {
 		int syntax_fail = 0;
@@ -1215,8 +1225,13 @@ bool Console::cmdParse(int argc, const char **argv) {
 
 		DebugPrintf("Parsed to the following blocks:\n");
 
-		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
-			DebugPrintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
+		for (ResultWordListList::const_iterator i = words.begin(); i != words.end(); ++i) {
+			DebugPrintf("   ");
+			for (ResultWordList::const_iterator j = i->begin(); j != i->end(); ++j) {
+				DebugPrintf("%sType[%04x] Group[%04x]", j == i->begin() ? "" : " / ", j->_class, j->_group);
+			}
+			DebugPrintf("\n");
+		}
 
 		if (_engine->getVocabulary()->parseGNF(words, true))
 			syntax_fail = 1; // Building a tree failed
@@ -1243,7 +1258,6 @@ bool Console::cmdSaid(int argc, const char **argv) {
 		return true;
 	}
 
-	ResultWordList words;
 	char *error;
 	char string[1000];
 	byte spec[1000];
@@ -1317,6 +1331,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 	_engine->getVocabulary()->debugDecipherSaidBlock(spec);
 	printf("\n");
 
+	ResultWordListList words;
 	bool res = _engine->getVocabulary()->tokenizeString(words, string, &error);
 	if (res && !words.empty()) {
 		int syntax_fail = 0;
@@ -1325,8 +1340,15 @@ bool Console::cmdSaid(int argc, const char **argv) {
 
 		DebugPrintf("Parsed to the following blocks:\n");
 
-		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
-			DebugPrintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
+		for (ResultWordListList::const_iterator i = words.begin(); i != words.end(); ++i) {
+			DebugPrintf("   ");
+			for (ResultWordList::const_iterator j = i->begin(); j != i->end(); ++j) {
+				DebugPrintf("%sType[%04x] Group[%04x]", j == i->begin() ? "" : " / ", j->_class, j->_group);
+			}
+			DebugPrintf("\n");
+		}
+
+
 
 		if (_engine->getVocabulary()->parseGNF(words, true))
 			syntax_fail = 1; // Building a tree failed
@@ -2741,8 +2763,14 @@ bool Console::cmdBreakpointList(int argc, const char **argv) {
 	for (; bp != end; ++bp) {
 		DebugPrintf("  #%i: ", i);
 		switch (bp->type) {
-		case BREAK_SELECTOR:
+		case BREAK_SELECTOREXEC:
 			DebugPrintf("Execute %s\n", bp->name.c_str());
+			break;
+		case BREAK_SELECTORREAD:
+			DebugPrintf("Read %s\n", bp->name.c_str());
+			break;
+		case BREAK_SELECTORWRITE:
+			DebugPrintf("Write %s\n", bp->name.c_str());
 			break;
 		case BREAK_EXPORT:
 			bpdata = bp->address;
@@ -2803,7 +2831,7 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 
 bool Console::cmdBreakpointMethod(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Sets a breakpoint on execution/access of a specified method/selector.\n");
+		DebugPrintf("Sets a breakpoint on execution of a specified method/selector.\n");
 		DebugPrintf("Usage: %s <name>\n", argv[0]);
 		DebugPrintf("Example: %s ego::doit\n", argv[0]);
 		DebugPrintf("May also be used to set a breakpoint that applies whenever an object\n");
@@ -2815,12 +2843,45 @@ bool Console::cmdBreakpointMethod(int argc, const char **argv) {
 	   Thus, we can't check whether the command argument is a valid method name.
 	   A breakpoint set on an invalid method name will just never trigger. */
 	Breakpoint bp;
-	bp.type = BREAK_SELECTOR;
+	bp.type = BREAK_SELECTOREXEC;
 	bp.name = argv[1];
 
 	_debugState._breakpoints.push_back(bp);
-	_debugState._activeBreakpointTypes |= BREAK_SELECTOR;
+	_debugState._activeBreakpointTypes |= BREAK_SELECTOREXEC;
+	return true;
+}
 
+bool Console::cmdBreakpointRead(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Sets a breakpoint on reading of a specified selector.\n");
+		DebugPrintf("Usage: %s <name>\n", argv[0]);
+		DebugPrintf("Example: %s ego::view\n", argv[0]);
+		return true;
+	}
+
+	Breakpoint bp;
+	bp.type = BREAK_SELECTORREAD;
+	bp.name = argv[1];
+
+	_debugState._breakpoints.push_back(bp);
+	_debugState._activeBreakpointTypes |= BREAK_SELECTORREAD;
+	return true;
+}
+
+bool Console::cmdBreakpointWrite(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Sets a breakpoint on writing of a specified selector.\n");
+		DebugPrintf("Usage: %s <name>\n", argv[0]);
+		DebugPrintf("Example: %s ego::view\n", argv[0]);
+		return true;
+	}
+
+	Breakpoint bp;
+	bp.type = BREAK_SELECTORWRITE;
+	bp.name = argv[1];
+
+	_debugState._breakpoints.push_back(bp);
+	_debugState._activeBreakpointTypes |= BREAK_SELECTORWRITE;
 	return true;
 }
 

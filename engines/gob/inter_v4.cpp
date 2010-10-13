@@ -134,8 +134,8 @@ void Inter_v4::o4_initScreen() {
 	_vm->_util->setScrollOffset();
 
 	if (offY > 0) {
-		_vm->_draw->_spritesArray[24] = SurfaceDescPtr(new SurfaceDesc(videoMode, _vm->_width, offY));
-		_vm->_draw->_spritesArray[25] = SurfaceDescPtr(new SurfaceDesc(videoMode, _vm->_width, offY));
+		_vm->_draw->_spritesArray[24] = SurfacePtr(new Surface(_vm->_width, offY, _vm->getPixelFormat().bytesPerPixel));
+		_vm->_draw->_spritesArray[25] = SurfacePtr(new Surface(_vm->_width, offY, _vm->getPixelFormat().bytesPerPixel));
 		_vm->_video->_splitSurf = _vm->_draw->_spritesArray[25];
 	}
 }
@@ -228,7 +228,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 
 	_vm->_vidPlayer->evaluateFlags(props);
 
-	int slot;
+	int slot = 0;
 	if ((fileName[0] != 0) && ((slot = _vm->_vidPlayer->openVideo(true, fileName, props)) < 0)) {
 		WRITE_VAR(11, (uint32) -1);
 		return;

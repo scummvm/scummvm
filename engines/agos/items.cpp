@@ -429,6 +429,9 @@ Item *AGOSEngine::findMaster(int16 a, int16 n) {
 
 	for (j = 1; j < _itemArraySize; j++) {
 		Item *item = derefItem(j);
+		if (item == NULL)
+			continue;
+
 		if (wordMatch(item, a, n))
 			return item;
 	}
@@ -442,6 +445,9 @@ Item *AGOSEngine::nextMaster(Item *i, int16 a, int16 n) {
 
 	for (j = first; j < _itemArraySize; j++) {
 		Item *item = derefItem(j);
+		if (item == NULL)
+			continue;
+
 		if (wordMatch(item, a, n))
 			return item;
 	}

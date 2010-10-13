@@ -1004,12 +1004,7 @@ int SegManager::instantiateScript(int scriptNum) {
 	scr->load(_resMan);
 	scr->initialiseLocals(this);
 	scr->initialiseClasses(this);
-
-	if (getSciVersion() >= SCI_VERSION_1_1) {
-		scr->initialiseObjectsSci11(this, segmentId);
-	} else {
-		scr->initialiseObjectsSci0(this, segmentId);
-	}
+	scr->initialiseObjects(this, segmentId);
 
 	return segmentId;
 }
@@ -1052,7 +1047,7 @@ void SegManager::uninstantiateScriptSci0(int script_nr) {
 	reg_t reg = make_reg(segmentId, oldScriptHeader ? 2 : 0);
 	int objType, objLength = 0;
 
-	// Make a pass over the object in order uninstantiate all superclasses
+	// Make a pass over the object in order to uninstantiate all superclasses
 
 	do {
 		reg.offset += objLength; // Step over the last checked object
@@ -1074,8 +1069,17 @@ void SegManager::uninstantiateScriptSci0(int script_nr) {
 				if (superclass_script == script_nr) {
 					if (scr->getLockers())
 						scr->decrementLockers();  // Decrease lockers if this is us ourselves
-				} else
-					uninstantiateScript(superclass_script);
+				} else {
+					if (g_sci->getGameId() == GID_HOYLE3 && (superclass_script == 0 || superclass_script >= 990)) {
+						// HACK for Hoyle 3: when exiting Checkers or Pachisi, scripts 0, 999 and some others
+						// are deleted but are never instantiated again. We ignore deletion of these scripts
+						// here for Hoyle 3 - bug #3038837
+						// TODO/FIXME: find out why this happens, seems like there is a problem with the object
+						// lock code
+					} else {
+						uninstantiateScript(superclass_script);
+					}
+				}
 				// Recurse to assure that the superclass lockers number gets decreased
 			}
 

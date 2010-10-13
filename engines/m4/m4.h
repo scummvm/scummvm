@@ -96,10 +96,10 @@ class Animation;
 
 enum M4GameType {
 	GType_Riddle = 1,
-	GType_Burger,
-	GType_RexNebular,
-	GType_DragonSphere,
-	GType_Phantom
+	GType_Burger = 2,
+	GType_RexNebular = 3, 
+	GType_DragonSphere = 4,
+	GType_Phantom = 5
 };
 
 enum Features {
@@ -224,8 +224,10 @@ public:
 	MadsGlobals *globals() { return (MadsGlobals *)_globals; }
 	MadsScene *scene() { return (MadsScene *)_scene; }
 	void startScene(int sceneNum) {
-		if (!_scene)
+		if (!_scene) {
 			_scene = new MadsScene(this);
+			((MadsScene *)_scene)->initialise();
+		}
 		_scene->show();
 		_scene->loadScene(101);
 	}

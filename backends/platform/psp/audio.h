@@ -35,9 +35,9 @@ public:
 		FREQUENCY = 44100	/* only frequency we allow */
 	};
 	typedef void (* callbackFunc)(void *userData, byte *samples, int len);	// audio callback to call
-	PspAudio() : _pspChannel(0), 
-			_numOfChannels(0), _numOfSamples(0), _callback(0), 
-			_bufferToPlay(0), _bufferToFill(0), 
+	PspAudio() : _pspChannel(0),
+			_numOfChannels(0), _numOfSamples(0), _callback(0),
+			_bufferToPlay(0), _bufferToFill(0),
 			_init(false), _paused(true) {
 		for (int i=0; i<NUM_BUFFERS; i++)
 			_buffers[i] = 0;
@@ -51,7 +51,7 @@ public:
 	void pause() { _paused = true; }
 	void unpause() { _paused = false; }
 	virtual void threadFunction();	// actual audio thread
-	
+
 private:
 	int _pspChannel;				// chosen hardware output channel
 	uint32 _numOfChannels;			// 1 for mono; 2 for stereo

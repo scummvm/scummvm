@@ -150,7 +150,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 	uint16 maxChars = readSelectorValue(_segMan, controlObject, SELECTOR(max));
 	reg_t textReference = readSelector(_segMan, controlObject, SELECTOR(text));
 	Common::String text;
-	uint16 textSize, eventType, eventKey = 0;
+	uint16 textSize, eventType, eventKey = 0, modifiers = 0;
 	bool textChanged = false;
 	bool textAddChar = false;
 	Common::Rect rect;
@@ -158,6 +158,8 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 	if (textReference.isNull())
 		error("kEditControl called on object that doesnt have a text reference");
 	text = _segMan->getString(textReference);
+
+	uint16 oldCursorPos = cursorPos;
 
 	if (!eventObject.isNull()) {
 		textSize = text.size();
@@ -169,6 +171,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 			break;
 		case SCI_EVENT_KEYBOARD:
 			eventKey = readSelectorValue(_segMan, eventObject, SELECTOR(message));
+			modifiers = readSelectorValue(_segMan, eventObject, SELECTOR(modifiers));
 			switch (eventKey) {
 			case SCI_KEY_BACKSPACE:
 				if (cursorPos > 0) {
@@ -177,8 +180,10 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 				}
 				break;
 			case SCI_KEY_DELETE:
-				text.deleteChar(cursorPos);
-				textChanged = true;
+				if (cursorPos < textSize) {
+					text.deleteChar(cursorPos);
+					textChanged = true;
+				}
 				break;
 			case SCI_KEY_HOME: // HOME
 				cursorPos = 0; textChanged = true;
@@ -196,8 +201,20 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 					cursorPos++; textChanged = true;
 				}
 				break;
+			case 3:	// returned in SCI1 late and newer when Control - C is pressed
+				if (modifiers & SCI_KEYMOD_CTRL) {
+					// Control-C erases the whole line
+					cursorPos = 0; text.clear();
+					textChanged = true;
+				}
+				break;
 			default:
-				if (eventKey > 31 && eventKey < 256 && textSize < maxChars) {
+				if ((modifiers & SCI_KEYMOD_CTRL) && eventKey == 99) {
+					// Control-C in earlier SCI games (SCI0 - SCI1 middle)
+					// Control-C erases the whole line
+					cursorPos = 0; text.clear();
+					textChanged = true;
+				} else if (eventKey > 31 && eventKey < 256 && textSize < maxChars) {
 					// insert pressed character
 					textAddChar = true;
 					textChanged = true;
@@ -208,6 +225,11 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 		}
 	}
 
+	if (g_sci->getVocabulary() && !textChanged && oldCursorPos != cursorPos) {
+		assert(!textAddChar);
+		textChanged = g_sci->getVocabulary()->checkAltInput(text, cursorPos);
+	}
+
 	if (textChanged) {
 		GuiResourceId oldFontId = _text16->GetFontId();
 		GuiResourceId fontId = readSelectorValue(_segMan, controlObject, SELECTOR(font));
@@ -215,18 +237,28 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 							  readSelectorValue(_segMan, controlObject, SELECTOR(nsRight)), readSelectorValue(_segMan, controlObject, SELECTOR(nsBottom)));
 		_text16->SetFont(fontId);
 		if (textAddChar) {
-			// We check, if we are really able to add the new char
-			uint16 textWidth = 0;
+
 			const char *textPtr = text.c_str();
+
+			// We check if we are really able to add the new char
+			uint16 textWidth = 0;
 			while (*textPtr)
-				textWidth += _text16->_font->getCharWidth(*textPtr++);
+				textWidth += _text16->_font->getCharWidth((byte)*textPtr++);
 			textWidth += _text16->_font->getCharWidth(eventKey);
+
+			// Does it fit?
 			if (textWidth >= rect.width()) {
 				_text16->SetFont(oldFontId);
 				return;
 			}
+
 			text.insertChar(eventKey, cursorPos++);
+
+			// Note: the following checkAltInput call might make the text
+			// too wide to fit, but SSCI fails to check that too.
 		}
+		if (g_sci->getVocabulary())
+			g_sci->getVocabulary()->checkAltInput(text, cursorPos);
 		texteditCursorErase();
 		_paint16->eraseRect(rect);
 		_text16->Box(text.c_str(), 0, rect, SCI_TEXT16_ALIGNMENT_LEFT, -1);

@@ -341,7 +341,7 @@ void Mouse::systemMenuMouse() {
 
 	if ((icon_list[hit] == OPTIONS_ICON || icon_list[hit] == QUIT_ICON
 		|| icon_list[hit] == SAVE_ICON || icon_list[hit] == RESTORE_ICON
-		|| icon_list[hit] == RESTART_ICON ) && Sword2Engine::isPsx() )
+		|| icon_list[hit] == RESTART_ICON) && Sword2Engine::isPsx())
 		return;
 
 	// No save when dead

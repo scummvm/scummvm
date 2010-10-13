@@ -459,9 +459,9 @@ void Puzzle::solicitHint() {
 		_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 50*1000000, this);
 
 		_vm->_interface->converseClear();
-		_vm->_interface->converseAddText(optionsStr[_lang][kROAccept], 0, 1, 0, 0 );
-		_vm->_interface->converseAddText(optionsStr[_lang][kRODecline], 0, 2, 0, 0 );
-		_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0, 0 );
+		_vm->_interface->converseAddText(optionsStr[_lang][kROAccept], 0, 1, 0, 0);
+		_vm->_interface->converseAddText(optionsStr[_lang][kRODecline], 0, 2, 0, 0);
+		_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0, 0);
 		_vm->_interface->converseDisplayText();
 		break;
 

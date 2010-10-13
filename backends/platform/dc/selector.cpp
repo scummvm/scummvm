@@ -272,7 +272,7 @@ static int findGames(Game *games, int max, bool use_ini)
 			 games[curr_game].dir,
 			 games[curr_game].language,
 			 games[curr_game].platform, games, curr_game)) {
-	    
+
 	    strcpy(games[curr_game].text, ge->description().c_str());
 #if 0
 	    printf("Registered game <%s> (l:%d p:%d) in <%s> <%s> because of <%s> <*>\n",

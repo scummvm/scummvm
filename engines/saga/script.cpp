@@ -1315,7 +1315,7 @@ void Script::setVerb(int verb) {
 	// engine did it, but it appears to work.
 	_pointerObject = ID_NOTHING;
 
-	setLeftButtonVerb( verb );
+	setLeftButtonVerb(verb);
 	showVerb();
 }
 
@@ -1549,7 +1549,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 	}
 
 	if (_pointerObject != ID_NOTHING) {
-		hitObject( leftButton );
+		hitObject(leftButton);
 	} else {
 		_pendingObject[0] = ID_NOTHING;
 		_pendingObject[1] = ID_NOTHING;
@@ -1618,7 +1618,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 				_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
 		} else {
 			if (_pendingVerb == getVerbType(kVerbLookAt)) {
-				if (objectTypeId(_pendingObject[0]) != kGameObjectActor ) {
+				if (objectTypeId(_pendingObject[0]) != kGameObjectActor) {
 					_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
 				} else {
 					doVerb();

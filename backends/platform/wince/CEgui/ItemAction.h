@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef CEGUI_ITEMACTION
-#define CEGUI_ITEMACTION
+#ifndef CEGUI_ITEMACTION_H
+#define CEGUI_ITEMACTION_H
 
 #include "common/scummsys.h"
 #include "common/system.h"

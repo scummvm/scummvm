@@ -401,8 +401,8 @@ static void composeFileHashMap(const Common::FSList &fslist, DescMap &fileMD5Map
 				continue;
 
 			bool matched = false;
-			for (const char *glob = *globs; *glob; glob++)
-				if (file->getName().matchString(glob, true)) {
+			for (const char **glob = globs; *glob; glob++)
+				if (file->getName().matchString(*glob, true)) {
 					matched = true;
 					break;
 				}

@@ -420,6 +420,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdLib,
 		0, 0, 0
 	},
+	{ // Provided by pykman in the forums.
+		{
+			"gob1cd",
+			"Polish",
+			AD_ENTRY1s("intro.stk", "97d2443948b2e367cf567fe7e101f5f2", 4049267),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesCD,
+		0, 0, 0
+	},
 	{ // CD 1.000 version.
 		{
 			"gob1cd",
@@ -1046,6 +1060,20 @@ static const GOBGameDescription gameDescriptions[] = {
 			"v1.000",
 			AD_ENTRY1("intro.stk", "9de5fbb41cf97182109e5fecc9d90347"),
 			EN_USA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by pykman in bug report #3067489
+		{
+			"gob2cd",
+			"v2.01 Polish",
+			AD_ENTRY1s("intro.stk", "3025f05482b646c18c2c79c615a3a1df", 5011726),
+			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
@@ -1798,6 +1826,22 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
+//  This version is not detected on purpose: it's a pirated version.
+//  Tagged ADGF_PIRATED! Do not re-add nor un-tag!
+	{
+		{
+			"lit",
+			"",
+			AD_ENTRY1s("intro.stk", "3712e7527ba8ce5637d2aadf62783005", 72318),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_PIRATED,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdLib,
+		0, 0, 0
+	},
 	{
 		{
 			"lit",
@@ -2220,18 +2264,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdLib,
 		"demo.stk", "demo.tot", 0
 	},
+//  This version is not detected on purpose: it's a pirated version, using a corrupted crack.
+//  Tagged ADGF_PIRATED! Do not re-add nor un-tag!
 	{
 		{
 			"fascination",
-			"CD Version (Censored)",
-			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
-			EN_ANY,
+			"",
+			AD_ENTRY1s("disk0.stk", "c14330d052fe4da5a441ac9d81bc5891", 1061955),
+			UNK_LANG,
 			kPlatformPC,
-			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES
+			ADGF_PIRATED,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeFascination,
-		kFeaturesCD,
+		kFeaturesAdLib,
 		"disk0.stk", 0, 0
 	},
 	{
@@ -2239,7 +2285,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			"fascination",
 			"VGA 3 disks edition",
 			AD_ENTRY1s("disk0.stk", "a50a8495e1b2d67699fb562cb98fc3e2", 1064387),
-			UNK_LANG,
+			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
@@ -2251,7 +2297,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"fascination",
-			"VGA 3 disks edition",
+			"Hebrew edition (censored)",
 			AD_ENTRY1s("intro.stk", "d6e45ce548598727e2b5587a99718eba", 1055909),
 			HE_ISR,
 			kPlatformPC,
@@ -2261,20 +2307,6 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypeFascination,
 		kFeaturesAdLib,
 		"intro.stk", 0, 0
-	},
-	{ // Supplied by sanguine
-		{
-			"fascination",
-			"VGA 3 disks edition",
-			AD_ENTRY1s("disk0.stk", "c14330d052fe4da5a441ac9d81bc5891", 1061955),
-			UNK_LANG,
-			kPlatformPC,
-			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
-		},
-		kGameTypeFascination,
-		kFeaturesAdLib,
-		"disk0.stk", 0, 0
 	},
 	{ // Supplied by windlepoons in bug report #2809247
 		{
@@ -2373,6 +2405,76 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypeFascination,
 		kFeaturesNone,
 		"disk0.stk", 0, 0
+	},
+	{
+		{
+			"fascination",
+			"CD Version (Censored)",
+			AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
+			EN_ANY,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES
+		},
+		kGameTypeFascination,
+		kFeaturesCD,
+		"intro.stk", 0, 0
+	},
+	{
+		{
+			"fascination",
+			"CD Version (Censored)",
+			AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES
+		},
+		kGameTypeFascination,
+		kFeaturesCD,
+		"intro.stk", 0, 0
+	},
+	{
+		{
+			"fascination",
+			"CD Version (Censored)",
+			AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES
+		},
+		kGameTypeFascination,
+		kFeaturesCD,
+		"intro.stk", 0, 0
+	},
+	{
+		{
+			"fascination",
+			"CD Version (Censored)",
+			AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
+			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES
+		},
+		kGameTypeFascination,
+		kFeaturesCD,
+		"intro.stk", 0, 0
+	},
+	{
+		{
+			"fascination",
+			"CD Version (Censored)",
+			AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
+			ES_ESP,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES
+		},
+		kGameTypeFascination,
+		kFeaturesCD,
+		"intro.stk", 0, 0
 	},
 	{
 		{
@@ -2716,6 +2818,20 @@ static const GOBGameDescription gameDescriptions[] = {
 			"v1.000",
 			AD_ENTRY1("intro.stk", "6f2c226c62dd7ab0ab6f850e89d3fc47"),
 			EN_USA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob3,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by pykman in bug report #3067489
+		{
+			"gob3cd",
+			"v1.02 Polish",
+			AD_ENTRY1s("intro.stk", "978afddcac81bb95a04757b61f78471c", 619825),
+			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
@@ -3126,7 +3242,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3140,7 +3256,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3154,7 +3270,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3168,7 +3284,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3182,7 +3298,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3196,7 +3312,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3210,7 +3326,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3224,7 +3340,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3238,7 +3354,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3252,7 +3368,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3266,7 +3382,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ // Supplied by jvprat on #scummvm
@@ -3280,7 +3396,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ // Supplied by jvprat on #scummvm
@@ -3294,7 +3410,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ // Supplied by jvprat on #scummvm
@@ -3308,7 +3424,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ // Supplied by jvprat on #scummvm
@@ -3322,7 +3438,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ // Supplied by jvprat on #scummvm
@@ -3336,7 +3452,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ // Supplied by Hkz on #scummvm
@@ -3350,7 +3466,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ // Supplied by Hkz on #scummvm
@@ -3364,7 +3480,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ // Supplied by Hkz on #scummvm
@@ -3378,7 +3494,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ // Supplied by DjDiabolik in bug report #1971294
@@ -3392,7 +3508,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ // Supplied by DjDiabolik in bug report #1971294
@@ -3406,7 +3522,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ // Supplied by DjDiabolik in bug report #1971294
@@ -3420,7 +3536,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ // Supplied by DjDiabolik in bug report #1971294
@@ -3434,7 +3550,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ // Supplied by DjDiabolik in bug report #1971294
@@ -3448,7 +3564,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ // Supplied by goodoldgeorg in bug report #2098838
@@ -3462,7 +3578,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3480,7 +3596,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640 | kFeaturesSCNDemo,
+		kFeatures640x480 | kFeaturesSCNDemo,
 		0, 0, 1
 	},
 	{
@@ -3494,7 +3610,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeDynasty,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3508,7 +3624,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeDynasty,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3522,7 +3638,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeDynasty,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3536,7 +3652,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeDynasty,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3550,7 +3666,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeDynasty,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3564,7 +3680,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeDynasty,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -3578,7 +3694,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeDynasty,
-		kFeatures640,
+		kFeatures640x480,
 		"lda1.stk", 0, 0
 	},
 	{
@@ -3592,7 +3708,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeDynasty,
-		kFeatures640,
+		kFeatures640x480,
 		"lda1.stk", 0, 0
 	},
 	{
@@ -3606,7 +3722,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeUrban,
-		kFeatures640,
+		kFeatures640x480 | kFeaturesTrueColor,
 		0, 0, 0
 	},
 	{ // Supplied by gamin in the forums
@@ -3620,7 +3736,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeUrban,
-		kFeatures640,
+		kFeatures640x480 | kFeaturesTrueColor,
 		0, 0, 0
 	},
 	{ // Supplied by jvprat on #scummvm
@@ -3634,7 +3750,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeUrban,
-		kFeatures640,
+		kFeatures640x480 | kFeaturesTrueColor,
 		0, 0, 0
 	},
 	{ // Supplied by goodoldgeorg in bug report #2770340
@@ -3648,7 +3764,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeUrban,
-		kFeatures640,
+		kFeatures640x480 | kFeaturesTrueColor,
 		0, 0, 0
 	},
 	{
@@ -3667,7 +3783,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeUrban,
-		kFeatures640 | kFeaturesSCNDemo,
+		kFeatures640x480 | kFeaturesTrueColor | kFeaturesSCNDemo,
 		0, 0, 2
 	},
 	{
@@ -3685,7 +3801,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -3703,7 +3819,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -3721,7 +3837,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{ // Supplied by scoriae in the forums
@@ -3739,7 +3855,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -3762,7 +3878,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640 | kFeaturesSCNDemo,
+		kFeatures640x480 | kFeaturesSCNDemo,
 		0, 0, 3
 	},
 	{
@@ -3780,7 +3896,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640 | kFeaturesSCNDemo,
+		kFeatures640x480 | kFeaturesSCNDemo,
 		0, 0, 4
 	},
 	{
@@ -3802,7 +3918,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640 | kFeaturesSCNDemo,
+		kFeatures640x480 | kFeaturesSCNDemo,
 		0, 0, 5
 	},
 	{
@@ -3823,7 +3939,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640 | kFeaturesSCNDemo,
+		kFeatures640x480 | kFeaturesSCNDemo,
 		0, 0, 6
 	},
 	{
@@ -3841,7 +3957,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -3859,7 +3975,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -3877,7 +3993,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{ // Supplied by scoriae in the forums
@@ -3895,7 +4011,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -3913,7 +4029,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -3931,7 +4047,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -3949,7 +4065,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -3967,7 +4083,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{ // Supplied by Hkz on #scummvm
@@ -3985,7 +4101,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -4003,7 +4119,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{ //Supplied by goodoldgeorg in bug report #2820006
@@ -4021,7 +4137,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -4039,7 +4155,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -4057,7 +4173,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeBambou,
-		kFeatures640,
+		kFeatures640x480,
 		"intro.stk", "intro.tot", 0
 	},
 	{
@@ -4075,7 +4191,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -4093,7 +4209,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -4111,7 +4227,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
 	{
@@ -4139,7 +4255,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi2,
-		kFeatures640,
+		kFeatures640x480,
 		"adi2.stk", "ediintro.tot", 0
 	},
 	{ // Found in french ADI 2 Francais-Maths CE2. Exact version not specified.
@@ -4153,7 +4269,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi2,
-		kFeatures640,
+		kFeatures640x480,
 		"adi2.stk", "ediintro.tot", 0
 	},
 	{
@@ -4181,7 +4297,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi2,
-		kFeatures640,
+		kFeatures640x480,
 		"adi2.stk", "ediintro.tot", 0
 	},
 	{
@@ -4195,7 +4311,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi2,
-		kFeatures640,
+		kFeatures640x480,
 		"adi2.stk", "ediintro.tot", 0
 	},
 	{
@@ -4209,7 +4325,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi2,
-		kFeatures640,
+		kFeatures640x480,
 		"adi2.stk", "ediintro.tot", 0
 	},
 	{
@@ -4223,7 +4339,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi2,
-		kFeatures640,
+		kFeatures640x480,
 		"adi2.stk", "ediintro.tot", 0
 	},
 	{
@@ -4237,7 +4353,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi2,
-		kFeatures640,
+		kFeatures640x480,
 		"adi2.stk", "ediintro.tot", 0
 	},
 	{
@@ -4251,7 +4367,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi2,
-		kFeatures640,
+		kFeatures640x480,
 		"adi2.stk", "ediintro.tot", 0
 	},
 	{
@@ -4271,7 +4387,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeAdi2,
-		kFeatures640 | kFeaturesSCNDemo,
+		kFeatures640x480 | kFeaturesSCNDemo,
 		0, 0, 1
 	},
 	{
@@ -4285,7 +4401,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi4,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -4299,7 +4415,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi4,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -4313,7 +4429,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi4,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -4327,7 +4443,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi4,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -4341,7 +4457,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi4,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -4355,7 +4471,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi4,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -4411,7 +4527,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi4,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -4439,7 +4555,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi4,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -4453,7 +4569,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		kGameTypeAdi4,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{
@@ -4751,7 +4867,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ //9
@@ -4807,7 +4923,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeUrban,
-		kFeaturesCD,
+		kFeaturesCD | kFeaturesTrueColor,
 		0, 0, 0
 	},
 	{ //13
@@ -4821,7 +4937,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ //14
@@ -4835,7 +4951,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ //15
@@ -4849,7 +4965,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ //16
@@ -4863,7 +4979,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ //17
@@ -4877,7 +4993,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ //18
@@ -4891,7 +5007,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypePlaytoons,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ //19
@@ -4905,7 +5021,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeBambou,
-		kFeatures640,
+		kFeatures640x480,
 		0, 0, 0
 	},
 	{ //20
@@ -4947,7 +5063,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeAdi2,
-		kFeatures640,
+		kFeatures640x480,
 		"adi2.stk", 0, 0
 	},
 	{ //23
@@ -4961,7 +5077,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeAdi4,
-		kFeatures640,
+		kFeatures640x480,
 		"adif41.stk", 0, 0
 	},
 	{ //24
@@ -4975,7 +5091,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NONE
 		},
 		kGameTypeUrban,
-		kFeaturesAdLib | kFeatures640 | kFeaturesSCNDemo,
+		kFeaturesAdLib | kFeatures640x480 | kFeaturesSCNDemo,
 		"", "", 8
 	}
 };

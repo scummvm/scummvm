@@ -69,12 +69,13 @@ public:
 	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
 	byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }
+	virtual void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
 
 protected:
 	Common::Rational getFrameRate() const { return _frameRate; }
 	Common::SeekableReadStream *_fileStream;
 
-private:
+protected:
 	void unpackPalette();
 	// Possible runs of blocks
 	uint getBlockRun(int index) { return (index <= 58) ? index + 1 : 128 << (index - 59); }
@@ -120,7 +121,7 @@ private:
 	byte *_palette;
 	bool _dirtyPalette;
 
-	uint32 _frameRate;
+	Common::Rational _frameRate;
 	uint32 _frameCount;
 	Surface *_surface;
 

@@ -30,9 +30,21 @@
 #include "sound/mixer.h"
 #include "common/list.h"
 
+#ifdef __DS__
+/* This disables the rhythm channel when emulating the PC-98 type 86 sound card.
+ * The only purpose is code size reduction for certain backends.
+ * At the moment the only games which make use of the rhythm channel are the
+ * (very rare) PC-98 versions of Legend of Kyrandia 2 and Lands of Lore. Music will
+ * still be okay, just missing a couple of rhythm instruments.
+ */
+#define DISABLE_PC98_RHYTHM_CHANNEL
+#endif
+
 class TownsPC98_FmSynthOperator;
 class TownsPC98_FmSynthSquareSineSource;
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 class TownsPC98_FmSynthPercussionSource;
+#endif
 
 enum EnvelopeState {
 	kEnvReady,
@@ -71,6 +83,8 @@ public:
 	}
 
 protected:
+	void deinit();
+
 	// Implement this in your inherited class if your driver generates
 	// additional output that has to be inserted into the buffer.
 	virtual void nextTickEx(int32 *buffer, uint32 bufferSize) {}
@@ -126,7 +140,9 @@ private:
 	};
 
 	TownsPC98_FmSynthSquareSineSource *_ssg;
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	TownsPC98_FmSynthPercussionSource *_prc;
+#endif
 	ChanInternal *_chanInternal;
 
 	uint8 *_oprRates;
@@ -140,6 +156,7 @@ private:
 	bool _regProtectionFlag;
 
 	typedef void (TownsPC98_FmSynth::*ChipTimerProc)();
+	void idleTimerCallback() {}
 
 	struct ChipTimer {
 		bool enabled;
@@ -165,7 +182,9 @@ private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	static const uint8 _percussionData[];
+#endif
 	static const uint32 _adtStat[];
 	static const uint8 _detSrc[];
 	static const int _ssgTables[];

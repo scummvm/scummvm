@@ -394,14 +394,21 @@ int MadsSpriteSlots::addSprites(const char *resName, bool suppressErrors, int fl
 			return -1;
 	}
 
+	// Append on a '.SS' suffix if the resource doesn't already have an extension
+	char buffer[100];
+	strncpy(buffer, resName, 95);
+	buffer[95] = '\0';
+	if (!strchr(buffer, '.'))
+		strcat(buffer, ".SS");
+
 	// Get the sprite set
-	Common::SeekableReadStream *data = _vm->res()->get(resName);
-	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName, false, flags);
+	Common::SeekableReadStream *data = _vm->res()->get(buffer);
+	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), buffer, false, flags);
 	spriteSet->translate(_madsVm->_palette);
 	assert(spriteSet != NULL);
 
 	_sprites.push_back(spriteSet);
-	_vm->res()->toss(resName);
+	_vm->res()->toss(buffer);
 
 	return _sprites.size() - 1;
 }

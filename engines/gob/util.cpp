@@ -316,8 +316,11 @@ void Util::clearPalette() {
 	_vm->validateVideoMode(_vm->_global->_videoMode);
 
 	if (_vm->_global->_setAllPalette) {
-		memset(colors, 0, 1024);
-		g_system->setPalette(colors, 0, 256);
+		if (_vm->getPixelFormat().bytesPerPixel == 1) {
+			memset(colors, 0, 1024);
+			g_system->setPalette(colors, 0, 256);
+		}
+
 		return;
 	}
 
@@ -435,7 +438,7 @@ void Util::cleanupStr(char *str) {
 		cutFromStr(str, 0, 1);
 
 	// Trim spaces right
-	while ((strlen(str) > 0) && (str[strlen(str) - 1] == ' '))
+	while ((*str != '\0') && (str[strlen(str) - 1] == ' '))
 		cutFromStr(str, strlen(str) - 1, 1);
 
 	// Merge double spaces

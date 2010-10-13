@@ -92,8 +92,8 @@ static const uint16 FREQ_TBL[97] = {
 static const int SONG_CHANNEL_OFFSET[3] = { 6, 8, 10 };
 static const int RES_ID_CHANNEL[3] = { 3, 4, 5 };
 
-#define LOBYTE(a) ((a) & 0xFF)
-#define HIBYTE(a) (((a) >> 8) & 0xFF)
+#define LOBYTE_(a) ((a) & 0xFF)
+#define HIBYTE_(a) (((a) >> 8) & 0xFF)
 
 #define GETBIT(var, pos) ((var) & (1<<(pos)))
 
@@ -176,14 +176,14 @@ void Player_SID::handleMusicBuffer() { // $33cd
 				l_chanBuf[19] = phaseBit[channel];
 				l_chanBuf[10] |= 0x01; // attack phase
 			}
-			l_chanBuf[11] = LOBYTE(l_freq);
-			l_chanBuf[12] = HIBYTE(l_freq);
+			l_chanBuf[11] = LOBYTE_(l_freq);
+			l_chanBuf[12] = HIBYTE_(l_freq);
 			releasePhase[channel] = false;
 		}
 
 		// set counter value for frequency update (freqDeltaCounter)
-		l_chanBuf[13] = LOBYTE(curStepSum);
-		l_chanBuf[14] = HIBYTE(curStepSum);
+		l_chanBuf[13] = LOBYTE_(curStepSum);
+		l_chanBuf[14] = HIBYTE_(curStepSum);
 
 		_soundQueue[channel] = RES_ID_CHANNEL[channel];
 		processSongData(channel);
@@ -340,8 +340,8 @@ void Player_SID::processSongData(int channel) { // $4939
 	if (songFileOrChanBufData == NULL) { // chanBuf (4C1C)
 		/*
 		// TODO: do we need this?
-		LOBYTE(vec20[channel]) = 0;
-		LOBYTE(songPosPtr[channel]) = LOBYTE(songFileOrChanBufOffset[channel]);
+		LOBYTE_(vec20[channel]) = 0;
+		LOBYTE_(songPosPtr[channel]) = LOBYTE_(songFileOrChanBufOffset[channel]);
 		*/
 		releaseResourceUnk(channel);
 		return;
@@ -551,8 +551,8 @@ void Player_SID::setSIDFreqAS(int channel) { // $4be6
 	if (swapVarLoaded)
 		return;
 	int reg = SID_REG_OFFSET[channel];
-	SID_Write(reg,   LOBYTE(freqReg[channel]));   // freq/pulseWidth voice 1/2/3
-	SID_Write(reg+1, HIBYTE(freqReg[channel]));
+	SID_Write(reg,   LOBYTE_(freqReg[channel]));   // freq/pulseWidth voice 1/2/3
+	SID_Write(reg+1, HIBYTE_(freqReg[channel]));
 	if (channel < 3) {
 		SID_Write(reg+5, attackReg[channel]); // attack
 		SID_Write(reg+6, sustainReg[channel]); // sustain
@@ -839,8 +839,8 @@ void Player_SID::useSwapVars(int channel) { // $5342
 		SID_Write(24, SIDReg24);
 
 		// filter freq.
-		SID_Write(21, LOBYTE(freqReg[3]));
-		SID_Write(22, HIBYTE(freqReg[3]));
+		SID_Write(21, LOBYTE_(freqReg[3]));
+		SID_Write(22, HIBYTE_(freqReg[3]));
 	} else {
 		SIDReg23 = SIDReg23Stuff & BITMASK_INV[channel];
 		SID_Write(23, SIDReg23);

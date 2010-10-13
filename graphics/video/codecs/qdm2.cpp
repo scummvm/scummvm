@@ -1775,7 +1775,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadS
 	tmp = extraData->readUint32BE();
 	debug(1, "QDM2Stream::QDM2Stream() extraType: %d", tmp);
 	if (tmp == MKID_BE('QDMC'))
-		warning("QDM2Stream::QDM2Stream() QDMC stream type not supported.");
+		warning("QDM2Stream::QDM2Stream() QDMC stream type not supported");
 	else if (tmp != MKID_BE('QDM2'))
 		error("QDM2Stream::QDM2Stream() Unsupported stream type");
 

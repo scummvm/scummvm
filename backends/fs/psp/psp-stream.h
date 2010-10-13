@@ -26,58 +26,51 @@
 #ifndef PSPSTREAM_H_
 #define PSPSTREAM_H_
 
-#include "backends/fs/stdiostream.h"
+#include <pspkerneltypes.h>
 #include "backends/platform/psp/powerman.h"
-#include "common/list.h"
+//#include "common/list.h"
+#include "common/noncopyable.h"
+#include "common/stream.h"
+#include "common/str.h"
 
-/*
+/**
  *  Class to handle special suspend/resume needs of PSP IO Streams
  */
-class PSPIoStream : public StdioStream, public Suspendable {
+class PspIoStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable, public Suspendable {
 protected:
+	SceUID _handle;		// file handle
 	Common::String _path;
 	int _fileSize;
 	bool _writeMode;	// for resuming in the right mode
-	int _physicalPos;	// position in the real file
+	int _physicalPos;	// physical position in file
 	int _pos;			// position. Sometimes virtual
-	bool _inCache;		// whether we're in cache (virtual) mode
 	bool _eos;			// EOS flag
-	
+
 	enum {
 		SuspendError = 2,
 		ResumeError = 3
 	};
 
-	enum {
-		CACHE_SIZE = 1024,
-		MIN_READ_SIZE = 1024	// reading less than 1024 takes exactly the same time as 1024
-	};
-	
-	// For caching
-	char *_cache;
-	int _cacheStartOffset;		// starting offset of the cache. -1 when cache is invalid
-	
-	mutable int _ferror;		// file error state
+	// debug stuff
+	mutable int _error;		// file error state
 	int _errorSuspend;			// for debugging
 	mutable int _errorSource;
 	int _errorPos;
-	void * _errorHandle;
+	SceUID _errorHandle;
 	int _suspendCount;
 
-	bool synchronizePhysicalPos();		// synchronize the physical and virtual positions
-	bool isOffsetInCache(uint32 pos);	// check if an offset is found in cache
-	bool isCacheValid() { return _cacheStartOffset != -1; }
-	
+	bool physicalSeekFromCur(int32 offset);
+
 public:
 
 	/**
 	 * Given a path, invoke fopen on that path and wrap the result in a
-	 * PSPIoStream instance.
+	 * PspIoStream instance.
 	 */
-	static PSPIoStream *makeFromPath(const Common::String &path, bool writeMode);
+	static PspIoStream *makeFromPath(const Common::String &path, bool writeMode);
 
-	PSPIoStream(const Common::String &path, bool writeMode);
-	virtual ~PSPIoStream();
+	PspIoStream(const Common::String &path, bool writeMode);
+	virtual ~PspIoStream();
 
 	void * open();		// open the file pointed to by the file path
 
@@ -93,6 +86,7 @@ public:
 	virtual bool seek(int32 offs, int whence = SEEK_SET);
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 
+	// for suspending
 	int suspend();		/* Suspendable interface (power manager) */
 	int resume();		/* " " */
 };

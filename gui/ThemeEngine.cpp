@@ -44,8 +44,6 @@
 #include "gui/ThemeEval.h"
 #include "gui/ThemeParser.h"
 
-#define GUI_ENABLE_BUILTIN_THEME
-
 namespace GUI {
 
 const char * const ThemeEngine::kImageLogo = "logo.bmp";
@@ -331,10 +329,10 @@ ThemeEngine::~ThemeEngine() {
  *	Rendering mode management
  *********************************************************/
 const ThemeEngine::Renderer ThemeEngine::_rendererModes[] = {
-	{ _s("Disabled GFX"), "none", kGfxDisabled },
-	{ _s("Standard Renderer (16bpp)"), "normal_16bpp", kGfxStandard16bit },
+	{ _s("Disabled GFX"), _sc("Disabled GFX", "lowres"), "none", kGfxDisabled },
+	{ _s("Standard Renderer (16bpp)"), _s("Standard (16bpp)"), "normal_16bpp", kGfxStandard16bit },
 #ifndef DISABLE_FANCY_THEMES
-	{ _s("Antialiased Renderer (16bpp)"), "aa_16bpp", kGfxAntialias16bit }
+	{ _s("Antialiased Renderer (16bpp)"), _s("Antialiased (16bpp)"), "aa_16bpp", kGfxAntialias16bit }
 #endif
 };
 
@@ -576,14 +574,26 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 			// First try to load localized font
 			_texts[textId]->_fontPtr = loadFont(localized);
 
-			// Fallback to non-localized font
-			if (!_texts[textId]->_fontPtr)
-				_texts[textId]->_fontPtr = loadFont(file);
+			if (_texts[textId]->_fontPtr)
+				FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
 
-			if (!_texts[textId]->_fontPtr)
-				error("Couldn't load font '%s'", file.c_str());
+			// Fallback to non-localized font and default translation
+			else {
+				// Try built-in fonts
+				_texts[textId]->_fontPtr = FontMan.getFontByName(file);
 
-			FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
+				// Try to load it
+				if (!_texts[textId]->_fontPtr) {
+					_texts[textId]->_fontPtr = loadFont(file);
+
+					if (!_texts[textId]->_fontPtr)
+						error("Couldn't load font '%s'", file.c_str());
+
+					FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
+				}
+				TransMan.setLanguage("C");
+				warning("Failed to load localized font '%s'. Using non-localized font and default GUI language instead", file.c_str());
+			}
 		}
 	}
 
@@ -702,7 +712,7 @@ bool ThemeEngine::loadDefaultXML() {
 	// file inside the themes directory.
 	// Use the Python script "makedeftheme.py" to convert a normal XML theme
 	// into the "default.inc" file, which is ready to be included in the code.
-#ifdef GUI_ENABLE_BUILTIN_THEME
+#ifndef DISABLE_GUI_BUILTIN_THEME
 	const char *defaultXML =
 #include "themes/default.inc"
 	;
@@ -1178,70 +1188,6 @@ void ThemeEngine::debugWidgetPosition(const char *name, const Common::Rect &r) {
 	_screen.vLine(r.right, r.top, r.bottom, 0xFFFF);
 }
 
-ThemeEngine::StoredState *ThemeEngine::storeState(const Common::Rect &r) {
-	StoredState *state = new StoredState;
-	byte *dst;
-	byte *src;
-
-	state->r.top = r.top;
-	state->r.bottom = r.bottom;
-	state->r.left = r.left;
-	state->r.right = r.right;
-
-	state->r.clip(_screen.w, _screen.h);
-
-	state->screen.create(state->r.width(), state->r.height(), _screen.bytesPerPixel);
-	state->backBuffer.create(state->r.width(), state->r.height(), _backBuffer.bytesPerPixel);
-
-	src = (byte *)_screen.getBasePtr(state->r.left, state->r.top);
-	dst = (byte *)state->screen.getBasePtr(0, 0);
-
-	for (int i = state->r.height(); i > 0; i--) {
-		memcpy(dst, src, state->r.width() * _screen.bytesPerPixel);
-		src += _screen.pitch;
-		dst += state->screen.pitch;
-	}
-
-	src = (byte *)_backBuffer.getBasePtr(state->r.left, state->r.top);
-	dst = (byte *)state->backBuffer.getBasePtr(0, 0);
-
-	for (int i = state->r.height(); i > 0; i--) {
-		memcpy(dst, src, state->r.width() * _backBuffer.bytesPerPixel);
-		src += _backBuffer.pitch;
-		dst += state->backBuffer.pitch;
-	}
-
-	return state;
-}
-
-void ThemeEngine::restoreState(StoredState *state) {
-	byte *dst;
-	byte *src;
-
-	if (!state)
-		return;
-
-	src = (byte *)state->screen.getBasePtr(0, 0);
-	dst = (byte *)_screen.getBasePtr(state->r.left, state->r.top);
-
-	for (int i = state->r.height(); i > 0; i--) {
-		memcpy(dst, src, state->r.width() * _screen.bytesPerPixel);
-		src += state->screen.pitch;
-		dst += _screen.pitch;
-	}
-
-	src = (byte *)state->backBuffer.getBasePtr(0, 0);
-	dst = (byte *)_backBuffer.getBasePtr(state->r.left, state->r.top);
-
-	for (int i = state->r.height(); i > 0; i--) {
-		memcpy(dst, src, state->r.width() * _backBuffer.bytesPerPixel);
-		src += state->backBuffer.pitch;
-		dst += _backBuffer.pitch;
-	}
-
-	addDirtyRect(state->r);
-}
-
 /**********************************************************
  *	Screen/overlay management
  *********************************************************/
@@ -1647,7 +1593,7 @@ struct TDComparator {
 } // end of anonymous namespace
 
 void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
-#ifdef GUI_ENABLE_BUILTIN_THEME
+#ifndef DISABLE_GUI_BUILTIN_THEME
 	ThemeDescriptor th;
 	th.name = "ScummVM Classic Theme (Builtin Version)";
 	th.id = "builtin";

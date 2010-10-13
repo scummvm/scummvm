@@ -34,7 +34,7 @@
 namespace GUI {
 
 
-Tooltip::Tooltip() : 
+Tooltip::Tooltip() :
 	Dialog(-1, -1, -1, -1), _maxWidth(-1) {
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundTooltip;
@@ -69,7 +69,7 @@ bool Tooltip::tooltipModal(int x, int y) {
 	_h = (tooltipFont->getFontHeight() + 2) * _wrappedLines.size();
 
 	_x = MIN<int16>(g_gui.getTopDialog()->_x + x + _xdelta, g_gui.getWidth() - _w - 3);
-	_y = MIN<int16>(g_gui.getTopDialog()->_y + y + _ydelta, g_gui.getHeight() - _h - 3); 
+	_y = MIN<int16>(g_gui.getTopDialog()->_y + y + _ydelta, g_gui.getHeight() - _h - 3);
 
 	open();
 	g_gui.runLoop();
@@ -85,14 +85,14 @@ void Tooltip::drawDialog() {
 
 	for (Common::StringArray::const_iterator i = _wrappedLines.begin(); i != _wrappedLines.end(); ++i, ++num) {
 		g_gui.theme()->drawText(
-			Common::Rect(_x + 1, _y + 1 + num * h, _x + 1 +_w, _y + 1+ (num + 1) * h), *i, 
-			ThemeEngine::kStateEnabled, 
-			Graphics::kTextAlignLeft, 
-			ThemeEngine::kTextInversionNone, 
+			Common::Rect(_x + 1, _y + 1 + num * h, _x + 1 +_w, _y + 1+ (num + 1) * h), *i,
+			ThemeEngine::kStateEnabled,
+			Graphics::kTextAlignLeft,
+			ThemeEngine::kTextInversionNone,
 			0,
-			false, 
-			ThemeEngine::kFontStyleTooltip, 
-			ThemeEngine::kFontColorNormal, 
+			false,
+			ThemeEngine::kFontStyleTooltip,
+			ThemeEngine::kFontColorNormal,
 			false
 		);
 	}

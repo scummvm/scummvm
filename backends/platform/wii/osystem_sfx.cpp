@@ -25,7 +25,7 @@
 
 #define SFX_THREAD_STACKSIZE (1024 * 128)
 #define SFX_THREAD_PRIO 80
-#define SFX_THREAD_FRAG_SIZE 2048
+#define SFX_THREAD_FRAG_SIZE (1024 * 8)
 #define SFX_BUFFERS 3
 
 static lwpq_t sfx_queue;
@@ -56,9 +56,9 @@ static void * sfx_thread_func(void *arg) {
 		// the hardware uses two buffers: a front and a back buffer
 		// we use 3 buffers here: two are beeing pushed to the DSP,
 		// and the free one is where our mixer writes to
-		// thus the latency of our steam is:
-		// 2048 [frag size] / 48000 / 2 [16bit] / 2 [stereo] * 2 [hw buffers]
-		// -> 21.3ms
+		// thus the latency of our stream is:
+		// 8192 [frag size] / 48000 / 2 [16bit] / 2 [stereo] * 2 [hw buffers]
+		// -> 85.3ms
 		sb_sw = (sb_hw + 1) % SFX_BUFFERS;
 		mixer->mixCallback(sound_buffer[sb_sw], SFX_THREAD_FRAG_SIZE);
 		DCFlushRange(sound_buffer[sb_sw], SFX_THREAD_FRAG_SIZE);

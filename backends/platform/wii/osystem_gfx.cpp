@@ -441,6 +441,22 @@ void OSystem_Wii::copyRectToScreen(const byte *buf, int pitch, int x, int y,
 	_gameDirty = true;
 }
 
+bool OSystem_Wii::needsScreenUpdate() {
+	if (getMillis() - _lastScreenUpdate < 1000 / MAX_FPS)
+		return false;
+
+	if (_gameRunning && _gameDirty)
+		return true;
+
+	if (_overlayVisible && _overlayDirty)
+		return true;
+
+	if (_mouseVisible && _texMouse.palette && _cursorPaletteDirty)
+		return true;
+
+	return false;
+}
+
 void OSystem_Wii::updateScreen() {
 	static f32 ar;
 	static gfx_screen_coords_t cc;

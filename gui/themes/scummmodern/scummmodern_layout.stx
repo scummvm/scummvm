@@ -53,7 +53,7 @@
 		<def var = 'Tooltip.YDelta' value = '32'/>
 
 		<widget name = 'OptionsLabel'
-				size = '110, Globals.Line.Height'
+				size = '115, Globals.Line.Height'
 				textalign = 'right'
 		/>
 		<widget name = 'SmallLabel'
@@ -344,7 +344,7 @@
 				<widget name = 'auPrefGmPopup'
 						type = 'PopUp'
 				/>
-			</layout>			
+			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'mcFontButton'
 						type = 'Button'
@@ -712,7 +712,7 @@
 				<layout type = 'vertical' padding = '24, 24, 24, 24' center = 'true'>
 					<widget name = 'vcMuteCheckbox'
 							type = 'Checkbox'
-							width = '80'   <!-- FIXME: Why this is needed? -->
+							width = '120'   <!-- FIXME: Why this is needed? -->
 					/>
 				</layout>
 			</layout>

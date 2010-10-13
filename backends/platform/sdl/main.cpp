@@ -25,7 +25,7 @@
 
 // Several SDL based ports use a custom main, and hence do not want to compile
 // of this file. The following "#if" ensures that.
-#if !defined(UNIX) && !defined(WIN32) && !defined(__MAEMO__) && !defined(__SYMBIAN32__) && !defined(__amigaos4__)
+#if !defined(UNIX) && !defined(WIN32) && !defined(__MAEMO__) && !defined(__SYMBIAN32__) && !defined(__amigaos4__) && !defined(DINGUX) && !defined(CAANOO) && !defined(OPENPANDORA)
 
 #include "backends/platform/sdl/sdl.h"
 #include "backends/plugins/sdl/sdl-provider.h"

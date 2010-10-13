@@ -207,10 +207,21 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 				//  We need to find correct replacements for each situation manually
 				SciTrackOriginReply originReply;
 				SciWorkaroundSolution solution = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, &originReply);
-				if (solution.type == WORKAROUND_NONE)
+				if (solution.type == WORKAROUND_NONE) {
+#ifdef RELEASE_BUILD
+					// If we are running an official ScummVM release -> fake 0 in unknown cases
+					warning("Uninitialized read for temp %d from method %s::%s (script %d, room %d, localCall %x)", 
+					index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, 
+					g_sci->getEngineState()->currentRoomNumber(), originReply.localCallOffset);
+
+					r[index] = NULL_REG;
+					break;
+#else
 					error("Uninitialized read for temp %d from method %s::%s (script %d, room %d, localCall %x)", 
 					index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, 
 					g_sci->getEngineState()->currentRoomNumber(), originReply.localCallOffset);
+#endif
+				}
 				assert(solution.type == WORKAROUND_FAKE);
 				r[index] = make_reg(0, solution.value);
 				break;
@@ -295,7 +306,7 @@ bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
 				_console->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
 				_debugState.debugging = true;
 				_debugState.breakpointWasHit = true;
-				return true;;
+				return true;
 			}
 		}
 	}
@@ -318,10 +329,10 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 		// HACK: Temporarily switch to a warning in SCI32 games until we can figure out why Torin has
 		// an invalid exported function.
 		if (getSciVersion() >= SCI_VERSION_2)
-			warning("Request for invalid exported function 0x%x of script 0x%x", pubfunct, script);
+			warning("Request for invalid exported function 0x%x of script %d", pubfunct, script);
 		else
 #endif
-			error("Request for invalid exported function 0x%x of script 0x%x", pubfunct, script);
+			error("Request for invalid exported function 0x%x of script %d", pubfunct, script);
 		return NULL;
 	}
 
@@ -366,27 +377,24 @@ struct CallsStruct {
 	int type; /**< Same as ExecStack.type */
 };
 
-bool SciEngine::checkSelectorBreakpoint(reg_t send_obj, int selector) {
-	if (_debugState._activeBreakpointTypes & BREAK_SELECTOR) {
-		char method_name[256];
+bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector) {
+	char method_name[256];
 
-		sprintf(method_name, "%s::%s", _gamestate->_segMan->getObjectName(send_obj), getKernel()->getSelectorName(selector).c_str());
+	sprintf(method_name, "%s::%s", _gamestate->_segMan->getObjectName(send_obj), getKernel()->getSelectorName(selector).c_str());
 
-		Common::List<Breakpoint>::const_iterator bp;
-		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
-			int cmplen = bp->name.size();
-			if (bp->name.lastChar() != ':')
-				cmplen = 256;
+	Common::List<Breakpoint>::const_iterator bp;
+	for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+		int cmplen = bp->name.size();
+		if (bp->name.lastChar() != ':')
+			cmplen = 256;
 
-			if (bp->type == BREAK_SELECTOR && !strncmp(bp->name.c_str(), method_name, cmplen)) {
-				_console->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
-				_debugState.debugging = true;
-				_debugState.breakpointWasHit = true;
-				return true;
-			}
+		if (bp->type == breakpointType && !strncmp(bp->name.c_str(), method_name, cmplen)) {
+			_console->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
+			_debugState.debugging = true;
+			_debugState.breakpointWasHit = true;
+			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -399,11 +407,12 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	int selector;
 	int argc;
 	int origin = s->_executionStack.size()-1; // Origin: Used for debugging
-	bool printSendActions = false;
 	// We return a pointer to the new active ExecStack
 
 	// The selector calls we catch are stored below:
 	Common::Stack<CallsStruct> sendCalls;
+
+	int activeBreakpointTypes = g_sci->_debugState._activeBreakpointTypes;
 
 	while (framesize > 0) {
 		selector = validate_arithmetic(*argp++);
@@ -412,9 +421,6 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		if (argc > 0x800) { // More arguments than the stack could possibly accomodate for
 			error("send_selector(): More than 0x800 arguments to function call");
 		}
-
-		// Check if a breakpoint is set on this method
-		printSendActions = g_sci->checkSelectorBreakpoint(send_obj, selector);
 
 #ifdef VM_DEBUG_SEND
 		printf("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj), 
@@ -439,18 +445,23 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 			// argc == 0: read selector
 			// argc != 0: write selector
-			if (printSendActions && !argc) {	// read selector
-				debug("[read selector]\n");
-				printSendActions = false;
-			}
-
-			if (printSendActions && argc) {
-				reg_t oldReg = *varp.getPointer(s->_segMan);
-				reg_t newReg = argp[1];
-				warning("[write to selector (%s:%s): change %04x:%04x to %04x:%04x]\n", 
-					s->_segMan->getObjectName(send_obj), g_sci->getKernel()->getSelectorName(selector).c_str(), 
-					PRINT_REG(oldReg), PRINT_REG(newReg));
-				printSendActions = false;
+			if (!argc) {
+				// read selector
+				if (activeBreakpointTypes & BREAK_SELECTORREAD) {
+					if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORREAD, send_obj, selector))
+						debug("[read selector]\n");
+				}
+			} else {
+				// write selector
+				if (activeBreakpointTypes & BREAK_SELECTORWRITE) {
+					if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORWRITE, send_obj, selector)) {
+						reg_t oldReg = *varp.getPointer(s->_segMan);
+						reg_t newReg = argp[1];
+						warning("[write to selector (%s:%s): change %04x:%04x to %04x:%04x]\n", 
+							s->_segMan->getObjectName(send_obj), g_sci->getKernel()->getSelectorName(selector).c_str(), 
+							PRINT_REG(oldReg), PRINT_REG(newReg));
+					}
+				}
 			}
 
 			if (argc > 1) {
@@ -482,7 +493,35 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 		case kSelectorMethod:
 
-#ifdef VM_DEBUG_SEND
+#ifndef VM_DEBUG_SEND
+			if (activeBreakpointTypes & BREAK_SELECTOREXEC) {
+				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector)) {
+					printf("[execute selector]");
+
+					int displaySize = 0;
+					for (int argNr = 1; argNr <= argc; argNr++) {
+						if (argNr == 1)
+							printf(" - ");
+						reg_t curParam = argp[argNr];
+						if (curParam.segment) {
+							printf("[%04x:%04x] ", PRINT_REG(curParam));
+							displaySize += 12;
+						} else {
+							printf("[%04x] ", curParam.offset);
+							displaySize += 7;
+						}
+						if (displaySize > 50) {
+							if (argNr < argc)
+								printf("...");
+							break;
+						}
+					}
+					printf("\n");
+				}
+			}
+#else // VM_DEBUG_SEND
+			if (activeBreakpointTypes & BREAK_SELECTOREXEC)
+				g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector);
 			printf("Funcselector(");
 			for (int i = 0; i < argc; i++) {
 				printf("%04x:%04x", PRINT_REG(argp[i+1]));
@@ -491,31 +530,6 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			}
 			printf(") at %04x:%04x\n", PRINT_REG(funcp));
 #endif // VM_DEBUG_SEND
-			if (printSendActions) {
-				printf("[invoke selector]");
-#ifndef VM_DEBUG_SEND
-				int displaySize = 0;
-				for (int argNr = 1; argNr <= argc; argNr++) {
-					if (argNr == 1)
-						printf(" - ");
-					reg_t curParam = argp[argNr];
-					if (curParam.segment) {
-						printf("[%04x:%04x] ", PRINT_REG(curParam));
-						displaySize += 12;
-					} else {
-						printf("[%04x] ", curParam.offset);
-						displaySize += 7;
-					}
-					if (displaySize > 50) {
-						if (argNr < argc)
-							printf("...");
-						break;
-					}
-				}
-#endif
-				printf("\n");
-				printSendActions = false;
-			}
 
 			{
 				CallsStruct call;
@@ -817,7 +831,7 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 
 	for (int i = 0; g_opcode_formats[opcode][i]; ++i) {
 		//printf("Opcode: 0x%x, Opnumber: 0x%x, temp: %d\n", opcode, opcode, temp);
-		assert(i < 4);
+		assert(i < 3);
 		switch (g_opcode_formats[opcode][i]) {
 
 		case Script_Byte:
@@ -911,7 +925,7 @@ void run_vm(EngineState *s) {
 		g_sci->_debugState.old_pc_offset = s->xs->addr.pc.offset;
 		g_sci->_debugState.old_sp = s->xs->sp;
 
-		if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+		if (s->abortScriptProcessing != kAbortNone)
 			return; // Stop processing
 
 		if (s->_executionStackPosChanged) {
@@ -942,7 +956,7 @@ void run_vm(EngineState *s) {
 			s->variables[VAR_PARAM] = s->xs->variables_argp;
 		}
 
-		if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+		if (s->abortScriptProcessing != kAbortNone)
 			return; // Stop processing
 
 		// Debug if this has been requested:
@@ -1319,7 +1333,7 @@ void run_vm(EngineState *s) {
 				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
 					s->r_acc = make_reg(0, compare1 < compare2);
 				else
-					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+					s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeUltWorkarounds, r_temp, s->r_acc);
 			}
 			break;
 
@@ -1442,7 +1456,7 @@ void run_vm(EngineState *s) {
 			s->_executionStackPosChanged = true;
 
 			// If a game is being loaded, stop processing
-			if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+			if (s->abortScriptProcessing != kAbortNone)
 				return; // Stop processing
 
 			break;

@@ -208,7 +208,7 @@ SECTIONS
   .debug_varnames  0 : { *(.debug_varnames) }
   /DISCARD/ : { *(.comment) *(.pdr) }
   /DISCARD/ : { *(.note.GNU-stack) }
-  
+
   . = __plugin_hole_start;
   .got            : { *(.got.plt) *(.got) } : shorts
   /* We want the small data sections together, so single-instruction offsets
@@ -235,5 +235,5 @@ SECTIONS
     PROVIDE (___sbss_end = .);
   }
 
-  
+
 }

@@ -377,6 +377,7 @@ private:
 	bool _ready;
 };
 
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 class TownsPC98_FmSynthPercussionSource {
 public:
 	TownsPC98_FmSynthPercussionSource(const uint32 timerbase, const uint32 rtt);
@@ -442,6 +443,7 @@ private:
 
 	bool _ready;
 };
+#endif // DISABLE_PC98_RHYTHM_CHANNEL
 
 TownsPC98_FmSynthSquareSineSource::TownsPC98_FmSynthSquareSineSource(const uint32 timerbase, const uint32 rtt) : _tlTable(0),
 	_rtt(rtt), _tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _ready(0), _reg(0), _rand(1), _outN(1),
@@ -627,6 +629,7 @@ void TownsPC98_FmSynthSquareSineSource::updateRegs() {
 	_updateRequest = -1;
 }
 
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 TownsPC98_FmSynthPercussionSource::TownsPC98_FmSynthPercussionSource(const uint32 timerbase, const uint32 rtt) :
 	_rtt(rtt), _tickLength(timerbase * 2), _timer(0), _ready(false), _volMaskA(0), _volMaskB(0), _volumeA(Audio::Mixer::kMaxMixerVolume), _volumeB(Audio::Mixer::kMaxMixerVolume) {
 
@@ -823,11 +826,16 @@ void TownsPC98_FmSynthPercussionSource::advanceInput(RhtChannel *ins) {
 		cur >>= 4;
 	}
 }
+#endif // DISABLE_PC98_RHYTHM_CHANNEL
 
 TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 	_mixer(mixer),
-	_chanInternal(0), _ssg(0), _prc(0),
-	_numChan(type == kType26 ? 3 : 6), _numSSG(type == kTypeTowns ? 0 : 3), _hasPercussion(type == kType86 ? true : false),
+	_chanInternal(0), _ssg(0),
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
+	_prc(0),
+#endif
+	_numChan(type == kType26 ? 3 : 6), _numSSG(type == kTypeTowns ? 0 : 3),
+	_hasPercussion(type == kType86 ? true : false),
 	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0), _oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0),
 	 _rtt(type == kTypeTowns ? 0x514767 : 0x5B8D80), _baserate(55125.0f / (float)mixer->getOutputRate()),
 	_volMaskA(0), _volMaskB(0), _volumeA(255), _volumeB(255),
@@ -835,16 +843,19 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 
 	memset(&_timers[0], 0, sizeof(ChipTimer));
 	memset(&_timers[1], 0, sizeof(ChipTimer));
-	_timers[0].cb = &TownsPC98_FmSynth::timerCallbackA;
-	_timers[1].cb = &TownsPC98_FmSynth::timerCallbackB;
-	_timerbase = (uint32)(_baserate * 1000000.0f);	
+
+	_timers[0].cb = _timers[1].cb = &TownsPC98_FmSynth::idleTimerCallback;
+	_timerbase = (uint32)(_baserate * 1000000.0f);
 }
 
 TownsPC98_FmSynth::~TownsPC98_FmSynth() {
-	Common::StackLock lock(_mutex);
-	_mixer->stopHandle(_soundHandle);
+	if (_ready)
+		deinit();
+
 	delete _ssg;
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	delete _prc;
+#endif
 	delete[] _chanInternal;
 
 	delete[] _oprRates;
@@ -876,10 +887,15 @@ bool TownsPC98_FmSynth::init() {
 		_ssg->init(&_ssgTables[0], &_ssgTables[16]);
 	}
 
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	if (_hasPercussion) {
 		_prc = new TownsPC98_FmSynthPercussionSource(_timerbase, _rtt);
 		_prc->init(_percussionData);
 	}
+#endif
+
+	_timers[0].cb = &TownsPC98_FmSynth::timerCallbackA;
+	_timers[1].cb = &TownsPC98_FmSynth::timerCallbackB;
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType,
 	                   &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
@@ -890,6 +906,7 @@ bool TownsPC98_FmSynth::init() {
 }
 
 void TownsPC98_FmSynth::reset() {
+	Common::StackLock lock(_mutex);
 	for (int i = 0; i < _numChan; i++) {
 		for (int ii = 0; ii < 4; ii++)
 			_chanInternal[i].opr[ii]->reset();
@@ -905,8 +922,10 @@ void TownsPC98_FmSynth::reset() {
 	if (_ssg)
 		_ssg->reset();
 
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	if (_prc)
 		_prc->reset();
+#endif
 }
 
 void TownsPC98_FmSynth::writeReg(uint8 part, uint8 regAddress, uint8 value) {
@@ -940,9 +959,11 @@ void TownsPC98_FmSynth::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 			_ssg->writeReg(l, value);
 		break;
 	case 0x10:
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 		// pcm rhythm channel
 		if (_prc)
 			_prc->writeReg(l, value);
+#endif
 		break;
 	case 0x20:
 		if (l == 8) {
@@ -1103,7 +1124,7 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 	memset(tmp, 0, sizeof(int32) * numSamples);
 	int32 samplesLeft = numSamples >> 1;
 
-	while (samplesLeft) {
+	while (_ready && samplesLeft) {
 		int32 render = samplesLeft;
 
 		for (int i = 0; i < 2; i++) {
@@ -1134,8 +1155,10 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 
 		if (_ssg)
 			_ssg->nextTick(tmp, render);
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 		if (_prc)
 			_prc->nextTick(tmp, render);
+#endif
 
 		nextTickEx(tmp, render);
 
@@ -1154,6 +1177,13 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 	return numSamples;
 }
 
+void TownsPC98_FmSynth::deinit() {
+	_ready = false;
+	_mixer->stopHandle(_soundHandle);
+	Common::StackLock lock(_mutex);
+	_timers[0].cb = _timers[1].cb = &TownsPC98_FmSynth::idleTimerCallback;
+}
+
 uint8 TownsPC98_FmSynth::readSSGStatus() {
 	return _ssg->chanEnable();
 }
@@ -1164,8 +1194,10 @@ void TownsPC98_FmSynth::setVolumeIntern(int volA, int volB) {
 	_volumeB = CLIP<uint16>(volB, 0, Audio::Mixer::kMaxMixerVolume);
 	if (_ssg)
 		_ssg->setVolumeIntern(_volumeA, _volumeB);
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	if (_prc)
 		_prc->setVolumeIntern(_volumeA, _volumeB);
+#endif
 }
 
 void TownsPC98_FmSynth::setVolumeChannelMasks(int channelMaskA, int channelMaskB) {
@@ -1174,8 +1206,10 @@ void TownsPC98_FmSynth::setVolumeChannelMasks(int channelMaskA, int channelMaskB
 	_volMaskB = channelMaskB;
 	if (_ssg)
 		_ssg->setVolumeChannelMasks(_volMaskA >> _numChan, _volMaskB >> _numChan);
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	if (_prc)
 		_prc->setVolumeChannelMasks(_volMaskA >> (_numChan + _numSSG), _volMaskB >> (_numChan + _numSSG));
+#endif
 }
 
 void TownsPC98_FmSynth::generateTables() {
@@ -1388,6 +1422,7 @@ const int TownsPC98_FmSynth::_ssgTables[] = {
 	0x000575, 0x000463, 0x00039D, 0x0002FA, 0x000242, 0x0001B6, 0x00014C, 0x0000FB
 };
 
+#ifndef DISABLE_PC98_RHYTHM_CHANNEL
 const uint8 TownsPC98_FmSynth::_percussionData[] = {
 	0, 24, 1, 192, 1, 216, 2, 128, 4, 88, 23, 64, 27, 152, 1, 128, 29, 24, 2, 128, 31, 152, 0, 128, 136, 128, 128, 128, 0, 136, 97, 103, 153, 139, 34, 163, 72, 195, 27, 69, 1, 154, 137, 35, 8, 51, 169, 122, 164, 75, 133, 203, 81, 146, 168, 121, 185, 68, 202, 8, 33, 237, 49, 177, 12, 133, 140, 17, 160, 42, 161, 10, 0, 137, 176, 57,
 	233, 41, 160, 136, 235, 65, 177, 137, 128, 26, 164, 28, 3, 157, 51, 137, 1, 152, 113, 161, 40, 146, 115, 192, 56, 5, 169, 66, 161, 56, 1, 50, 145, 59, 39, 168, 97, 1, 160, 57, 7, 153, 50, 153, 32, 2, 25, 129, 32, 20, 186, 66, 129, 24, 153, 164, 142, 130, 169, 153, 26, 242, 138, 217, 9, 128, 204, 58, 209, 172, 40, 176, 141,
@@ -1502,6 +1537,7 @@ const uint8 TownsPC98_FmSynth::_percussionData[] = {
 	45, 136, 18, 144, 105, 138, 1, 160, 14, 128, 132, 145, 186, 37, 138, 41, 192, 48, 145, 46, 160, 33, 44, 24, 225, 16, 13, 132, 136, 137, 16, 148, 25, 170, 194, 82, 152, 136, 91, 24, 42, 169, 33, 233, 131, 179, 24, 185, 149, 16, 57, 172, 164, 18, 10, 211, 160, 147, 211, 33, 138, 243, 129, 16, 41, 193, 0, 43, 132, 155, 73,
 	58, 145, 244, 145, 43, 35, 9, 171, 16, 110, 25, 8, 28, 74, 162, 128, 26, 27, 82, 45, 136, 153, 18, 8, 136, 8
 };
+#endif // DISABLE_PC98_RHYTHM_CHANNEL
 
 TownsPC98_FmSynth::ChanInternal::ChanInternal() {
 	memset(this, 0, sizeof(ChanInternal));

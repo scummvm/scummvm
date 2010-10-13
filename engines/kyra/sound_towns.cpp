@@ -47,6 +47,7 @@ SoundTowns::SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 SoundTowns::~SoundTowns() {
 	g_system->getAudioCDManager()->stop();
 	haltTrack();
+	delete _driver;
 	delete[] _musicTrackData;
 	delete[] _sfxFileData;
 }
@@ -585,13 +586,13 @@ void SoundTownsPC98_v2::beginFadeOut() {
 }
 
 int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle, uint8, bool) {
-	//static const uint16 rates[] =	{ 0x10E1, 0x0CA9, 0x0870, 0x0654, 0x0438, 0x032A, 0x021C, 0x0194 };
+	static const uint16 rates[] = { 0x10E1, 0x0CA9, 0x0870, 0x0654, 0x0438, 0x032A, 0x021C, 0x0194 };
 	static const char patternHOF[] = "%s.PCM";
 	static const char patternLOL[] = "%s.VOC";
 
 	int h = 0;
 	if (_currentSFX) {
-		while (_mixer->isSoundHandleActive(_soundChannels[h]) && h < kNumChannelHandles)
+		while (h < kNumChannelHandles && _mixer->isSoundHandleActive(_soundChannels[h]))
 			h++;
 		if (h >= kNumChannelHandles)
 			return 0;
@@ -606,7 +607,7 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 	if (!src)
 		return 0;
 
-	//uint16 sfxRate = rates[READ_LE_UINT16(src)];
+	uint16 sfxRate = rates[READ_LE_UINT16(src)];
 	src += 2;
 	bool compressed = (READ_LE_UINT16(src) & 1) ? true : false;
 	src += 2;
@@ -646,8 +647,7 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 		sfx[i] = cmd;
 	}
 
-	_currentSFX = Audio::makeRawStream(sfx, outsize, 11025,
-							Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN);
+	_currentSFX = Audio::makeRawStream(sfx, outsize, sfxRate * 10, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundChannels[h], _currentSFX);
 	if (handle)
 		*handle = _soundChannels[h];

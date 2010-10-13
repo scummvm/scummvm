@@ -38,7 +38,7 @@ namespace Mohawk {
 RivenScript::RivenScript(MohawkEngine_Riven *vm, Common::SeekableReadStream *stream, uint16 scriptType, uint16 parentStack, uint16 parentCard)
 	: _vm(vm), _stream(stream), _scriptType(scriptType), _parentStack(parentStack), _parentCard(parentCard) {
 	setupOpcodes();
-	_isRunning = false;
+	_isRunning = _continueRunning = false;
 }
 
 RivenScript::~RivenScript() {
@@ -227,7 +227,7 @@ void RivenScript::dumpCommands(Common::StringArray varNames, Common::StringArray
 }
 
 void RivenScript::runScript() {
-	_isRunning = true;
+	_isRunning = _continueRunning = true;
 
 	if (_stream->pos() != 0)
 		_stream->seek(0);
@@ -242,7 +242,7 @@ void RivenScript::processCommands(bool runCommands) {
 
 	uint16 commandCount = _stream->readUint16BE();
 
-	for (uint16 j = 0; j < commandCount && !_vm->shouldQuit() && _stream->pos() < _stream->size(); j++) {
+	for (uint16 j = 0; j < commandCount && !_vm->shouldQuit() && _stream->pos() < _stream->size() && _continueRunning; j++) {
 		uint16 command = _stream->readUint16BE();
 
 		if (command == 8) {
@@ -346,9 +346,14 @@ void RivenScript::playScriptSLST(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->_activatedSLST = true;
 }
 
-// Command 4: play local tWAV resource (twav_id, volume, u1)
+// Command 4: play local tWAV resource (twav_id, volume, block)
 void RivenScript::playSound(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_sound->playSound(argv[0], false);
+	byte volume = Sound::convertRivenVolume(argv[1]);
+
+	if (argv[2] == 1)
+		_vm->_sound->playSoundBlocking(argv[0], volume);
+	else
+		_vm->_sound->playSound(argv[0], volume);
 }
 
 // Command 7: set variable value (variable, value)
@@ -398,7 +403,7 @@ void RivenScript::changeCursor(uint16 op, uint16 argc, uint16 *argv) {
 void RivenScript::delay(uint16 op, uint16 argc, uint16 *argv) {
 	debug(2, "Delay %dms", argv[0]);
 	if (argv[0] > 0)
-		_vm->_system->delayMillis(argv[0]);
+		_vm->delayAndUpdate(argv[0]);
 }
 
 // Command 17: call external command
@@ -572,7 +577,8 @@ void RivenScript::activateFLST(uint16 op, uint16 argc, uint16 *argv) {
 	for (uint16 i = 0; i < recordCount; i++) {
 		uint16 index = flst->readUint16BE();
 		uint16 sfxeID = flst->readUint16BE();
-		if(flst->readUint16BE() != 0)
+
+		if (flst->readUint16BE() != 0)
 			warning("FLST u0 non-zero");
 
 		if (index == argv[0]) {
@@ -630,6 +636,11 @@ RivenScriptList RivenScriptManager::readScripts(Common::SeekableReadStream *stre
 	}
 
 	return scriptList;
+}
+
+void RivenScriptManager::stopAllScripts() {
+	for (uint32 i = 0; i < _currentScripts.size(); i++)
+		_currentScripts[i]->stopRunning();
 }
 
 void RivenScriptManager::unloadUnusedScripts() {

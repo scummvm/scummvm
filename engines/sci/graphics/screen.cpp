@@ -345,11 +345,11 @@ byte GfxScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, byt
 	int offset = y * _width + x;
 	byte match = 0;
 
-	if (screenMask & GFX_SCREEN_MASK_VISUAL && *(_visualScreen + offset) == t_color)
+	if ((screenMask & GFX_SCREEN_MASK_VISUAL) && *(_visualScreen + offset) == t_color)
 		match |= GFX_SCREEN_MASK_VISUAL;
-	if (screenMask & GFX_SCREEN_MASK_PRIORITY && *(_priorityScreen + offset) == t_pri)
+	if ((screenMask & GFX_SCREEN_MASK_PRIORITY) && *(_priorityScreen + offset) == t_pri)
 		match |= GFX_SCREEN_MASK_PRIORITY;
-	if (screenMask & GFX_SCREEN_MASK_CONTROL && *(_controlScreen + offset) == t_con)
+	if ((screenMask & GFX_SCREEN_MASK_CONTROL) && *(_controlScreen + offset) == t_con)
 		match |= GFX_SCREEN_MASK_CONTROL;
 	return match;
 }

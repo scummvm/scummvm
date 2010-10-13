@@ -77,9 +77,6 @@ void OSystem_SDL_Symbian::init() {
 }
 
 void OSystem_SDL_Symbian::initBackend() {
-	// First set the extrapath (for installed dat files etc)
-	ConfMan.set("extrapath", Symbian::GetExecutablePath());
-
 	// Calculate the default savepath
 	Common::String savePath;
 	savePath = Symbian::GetExecutablePath();
@@ -131,6 +128,13 @@ void OSystem_SDL_Symbian::initBackend() {
 
 	actions->initInstanceMain(this);
 	actions->loadMapping();
+}
+
+void OSystem_SDL_Symbian::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+	Common::FSNode pluginsNode(Symbian::GetExecutablePath());
+	if (pluginsNode.exists() && pluginsNode.isDirectory()) {
+			s.add("SYMBIAN_DATAFOLDER", new Common::FSDirectory(Symbian::GetExecutablePath()), priority);
+		}
 }
 
 void OSystem_SDL_Symbian::quitWithErrorMsg(const char * /*aMsg*/) {

@@ -125,7 +125,7 @@ bool LinuxmotoSdlEventManager::remapKey(SDL_Event &ev, Common::Event &event) {
 	// VirtualKeyboard - Right Soft key
 	else if (ev.key.keysym.sym == SDLK_F11) {
 		ev.key.keysym.sym = SDLK_F7;
-	}      
+	}
 #endif
 
 // Joystick to Mouse

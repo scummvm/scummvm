@@ -29,6 +29,7 @@
 #include "scumm/scumm_v3.h"
 #include "scumm/scumm_v5.h"
 #include "scumm/sound.h"
+#include "scumm/player_towns.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
 
@@ -375,6 +376,25 @@ int ScummEngine_v5::getVarOrDirectWord(byte mask) {
 	if (_opcode & mask)
 		return getVar();
 	return fetchScriptWordSigned();
+}
+
+void ScummEngine_v5::getResultPos() {
+	int a;
+
+	_resultVarNumber = fetchScriptWord();
+	if (_resultVarNumber & 0x2000) {
+		a = fetchScriptWord();
+		if (a & 0x2000) {
+			_resultVarNumber += readVar(a & ~0x2000);
+		} else {
+			_resultVarNumber += a & 0xFFF;
+		}
+		_resultVarNumber &= ~0x2000;
+	}
+}
+
+void ScummEngine_v5::setResult(int value) {
+	writeVar(_resultVarNumber, value);
 }
 
 void ScummEngine_v5::jumpRelative(bool cond) {
@@ -980,17 +1000,6 @@ void ScummEngine_v5::o5_getActorRoom() {
 void ScummEngine_v5::o5_getActorScale() {
 	Actor *a;
 
-	// INDY3 uses this opcode for waitForActor
-	if (_game.id == GID_INDY3) {
-		const byte *oldaddr = _scriptPointer - 1;
-		a = derefActor(getVarOrDirectByte(PARAM_1), "o5_getActorScale (wait)");
-		if (a->_moving) {
-			_scriptPointer = oldaddr;
-			o5_breakHere();
-		}
-		return;
-	}
-
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	a = derefActor(act, "o5_getActorScale");
@@ -1587,21 +1596,18 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, vm.slot[_currentScript].number);
 		break;
 	case 35:
-		// TODO: Might be used to set CD volume in FM-TOWNS Loom
-		foo = getVarOrDirectByte(PARAM_2);
-		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, vm.slot[_currentScript].number);
+		if (_townsPlayer)
+			_townsPlayer->setVolumeCD(getVarOrDirectByte(PARAM_2), resid);
 		break;
 	case 36:
-		// TODO: Sets the loudness of a sound resource. Used in Indy3 and Zak.
 		foo = getVarOrDirectByte(PARAM_2);
 		bar = fetchScriptByte();
-		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, vm.slot[_currentScript].number);
+		if (_townsPlayer)
+			_townsPlayer->setSoundVolume(resid, foo, bar);		
 		break;
 	case 37:
-		// TODO: Sets the pitch of a sound resource (pitch = foo - center semitones.
-		// "center" is at 0x32 in the sfx resource (always 0x3C in zak256, but sometimes different in Indy3).
-		foo = getVarOrDirectByte(PARAM_2);
-		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, vm.slot[_currentScript].number);
+		if (_townsPlayer)
+			_townsPlayer->setSoundNote(resid, getVarOrDirectByte(PARAM_2));
 		break;
 
 	default:
@@ -1611,7 +1617,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 
 void ScummEngine_v5::o5_roomOps() {
 	int a = 0, b = 0, c, d, e;
-	const bool paramsBeforeOpcode = (_game.version == 3 && _game.platform != Common::kPlatformPCEngine);
+	const bool paramsBeforeOpcode = ((_game.version == 3) && (_game.platform != Common::kPlatformPCEngine));
 
 	if (paramsBeforeOpcode) {
 		a = getVarOrDirectWord(PARAM_1);
@@ -1706,26 +1712,58 @@ void ScummEngine_v5::o5_roomOps() {
 	case 10:	// SO_ROOM_FADE
 		a = getVarOrDirectWord(PARAM_1);
 		if (a) {
+	#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_game.platform == Common::kPlatformFMTowns) {
 				switch (a) {
-				case 8: // compose kMainVirtScreen over a screen buffer
-				case 9: // call 0x110:0x20 _ax=0x601 _edx=2
-				case 10: // call 0x110:0x20 _ax=0x601 _edx=3
-				case 11: // clear screen 0x1C:0x45000 sizeof(640 * 320)
-				case 12: // call 0x110:0x20 _ax=0x601 _edx=0
-				case 13: // call 0x110:0x20 _ax=0x601 _edx=1
-				case 16: // enable clearing of a screen buffer in drawBitmap()
-				case 17: // disable clearing of a screen buffer in drawBitmap()
-				case 18: // clear a screen buffer
+				case 8:
+					towns_drawStripToScreen(&_virtscr[kMainVirtScreen], 0, _virtscr[kMainVirtScreen].topline, 0, 0, _virtscr[kMainVirtScreen].w, _virtscr[kMainVirtScreen].topline + _virtscr[kMainVirtScreen].h);
+					_townsScreen->update();
+					return;
+				case 9:
+					_townsActiveLayerFlags = 2;
+					_townsScreen->toggleLayers(_townsActiveLayerFlags);
+					return;
+				case 10:
+					_townsActiveLayerFlags = 3;
+					_townsScreen->toggleLayers(_townsActiveLayerFlags);
+					return;
+				case 11:
+					_townsScreen->clearLayer(1);
+					return;
+				case 12:
+					_townsActiveLayerFlags = 0;
+					_townsScreen->toggleLayers(_townsActiveLayerFlags);
+					return;
+				case 13:
+					_townsActiveLayerFlags = 1;
+					_townsScreen->toggleLayers(_townsActiveLayerFlags);
+					return;
+				case 16: // enable clearing of layer 2 buffer in drawBitmap()
+					_townsPaletteFlags |= 2;
+					return;
+				case 17: // disable clearing of layer 2 buffer in drawBitmap()
+					_townsPaletteFlags &= ~2;
+					return;
+				case 18: // clear kMainVirtScreen layer 2 buffer
+					_textSurface.fillRect(Common::Rect(0, _virtscr[kMainVirtScreen].topline * _textSurfaceMultiplier, _textSurface.pitch, (_virtscr[kMainVirtScreen].topline + _virtscr[kMainVirtScreen].h) * _textSurfaceMultiplier), 0);
 				case 19: // enable palette operations (palManipulate(), cyclePalette() etc.)
+					_townsPaletteFlags |= 1;
+					return;
 				case 20: // disable palette operations
-				case 21: // disable clearing of screen 0x1C:0x5000 sizeof(640 * 320) in initScreens()
-				case 22: // enable clearing of screen 0x1C:0x5000 sizeof(640 * 320) in initScreens()
+					_townsPaletteFlags &= ~1;
+					return;
+				case 21: // disable clearing of layer 0 in initScreens()
+					_townsClearLayerFlag = 1;
+					return;
+				case 22: // enable clearing of layer 0 in initScreens()
+					_townsClearLayerFlag = 0;
+					return;
 				case 30:
-					debug(0, "o5_roomOps: unhandled FM-TOWNS fadeEffect %d", a);
+					_townsOverrideShadowColor = 3;
 					return;
 				}
 			}
+#endif // DISABLE_TOWNS_DUAL_LAYER_MODE
 			_switchRoomEffect = (byte)(a & 0xFF);
 			_switchRoomEffect2 = (byte)(a >> 8);
 		} else {
@@ -1972,7 +2010,7 @@ void ScummEngine_v5::o5_startMusic() {
 			result = _sound->getCurrentCDSound();
 			break;
 		case 0xFF:
-			// TODO: Might return current CD volume in FM-TOWNS Loom. See also bug #805691.
+			result = _townsPlayer->getCurrentCdaVolume();
 			break;
 		default:
 			// TODO: return track length in seconds. We'll have to extend Sound and OSystem for this.
@@ -2025,19 +2063,6 @@ void ScummEngine_v5::o5_isSoundRunning() {
 
 void ScummEngine_v5::o5_soundKludge() {
 	int items[16];
-
-	if (_game.features & GF_SMALL_HEADER) {	// Is WaitForSentence in SCUMM V3
-		if (_sentenceNum) {
-			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
-				return;
-		} else if (!isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
-			return;
-
-		_scriptPointer--;
-		o5_breakHere();
-		return;
-	}
-
 	int num = getWordVararg(items);
 	_sound->soundKludge(items, num);
 }

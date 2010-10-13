@@ -387,7 +387,7 @@
 				RelativePath=".\asmSrc\9compact.inc">
 			</File>
 			<File
-				RelativePath=".\Compact.txt">
+				RelativePath=".\COMPACT.TXT">
 			</File>
 			<File
 				RelativePath=".\savedata.txt">

@@ -54,6 +54,8 @@
 	GLint _visibleWidth;
 	GLint _visibleHeight;
 	GLuint _screenTexture;
+	GLuint _overlayTexture;
+	GLuint _mouseCursorTexture;
 }
 
 - (id)initWithFrame:(struct CGRect)frame;
@@ -65,6 +67,11 @@
 - (void)initSurface;
 
 - (void)updateSurface;
+- (void)updateMainSurface;
+- (void)updateOverlaySurface;
+- (void)updateMouseSurface;
+
+-(void)updateMouseCursor;
 
 - (id)getEvent;
 

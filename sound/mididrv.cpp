@@ -58,7 +58,7 @@ const byte MidiDriver::_gmToMt32[128] = {
 
 static const uint32 GUIOMapping[] = {
 	MT_PCSPK,		Common::GUIO_MIDIPCSPK,
-	/*MDT_CMS,		Common::GUIO_MIDICMS,*/
+	MT_CMS,			Common::GUIO_MIDICMS,
 	MT_PCJR,		Common::GUIO_MIDIPCJR,
 	MT_ADLIB,		Common::GUIO_MIDIADLIB,
 	MT_C64,		    Common::GUIO_MIDIC64,
@@ -162,7 +162,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	case MT_AMIGA:
 		if (flags & MDT_AMIGA)
 			return hdl;
-		break;        
+		break;
 
 	case MT_APPLEIIGS:
 		if (flags & MDT_APPLEIIGS)
@@ -247,10 +247,10 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			tp = MT_PC98;
 		else if (flags & MDT_ADLIB)
 			tp = MT_ADLIB;
-		else if (flags & MDT_PCSPK)
-			tp = MT_PCSPK;
 		else if (flags & MDT_PCJR)
 			tp = MT_PCJR;
+		else if (flags & MDT_PCSPK)
+			tp = MT_PCSPK;
 		else if (flags & MDT_C64)
 			tp = MT_C64;
 		else if (flags & MDT_AMIGA)
@@ -306,3 +306,16 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 
 	return 0;
 }
+
+void MidiDriver::sendMT32Reset() {
+	static const byte resetSysEx[] = { 0x41, 0x10, 0x16, 0x12, 0x7F, 0x00, 0x00, 0x01, 0x00 };
+	sysEx(resetSysEx, sizeof(resetSysEx));
+	g_system->delayMillis(100);
+}
+
+void MidiDriver::sendGMReset() {
+	static const byte resetSysEx[] = { 0x7E, 0x7F, 0x09, 0x01 };
+	sysEx(resetSysEx, sizeof(resetSysEx));
+	g_system->delayMillis(100);
+}
+

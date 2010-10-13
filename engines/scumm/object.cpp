@@ -714,7 +714,7 @@ void ScummEngine_v70he::storeFlObject(int slot) {
 	memcpy(&_storedFlObjects[_numStoredFlObjects], &_objs[slot], sizeof(_objs[slot]));
 	_numStoredFlObjects++;
 	if (_numStoredFlObjects > 100)
-		error("Too many flobjects saved on room transition.");
+		error("Too many flobjects saved on room transition");
 }
 
 void ScummEngine_v70he::restoreFlObjects() {

@@ -50,6 +50,8 @@ public:
 
 	void quitWithErrorMsg(const char *msg);
 
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
+
 	// Vibration support
 #ifdef USE_VIBRA_SE_PXXX
 	/**

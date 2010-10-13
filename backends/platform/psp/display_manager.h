@@ -27,6 +27,48 @@
 #define PSP_DISPLAY_MAN_H
 
 #include "backends/platform/psp/thread.h"
+#include "common/list.h"
+
+#define UNCACHED(x)		((byte *)(((uint32)(x)) | 0x40000000))	/* make an uncached access */
+#define CACHED(x)		((byte *)(((uint32)(x)) & 0xBFFFFFFF))	/* make an uncached access into a cached one */
+
+/**
+ *	Class that allocates memory in the VRAM
+ */
+class VramAllocator : public Common::Singleton<VramAllocator> {
+public:
+	VramAllocator() : _bytesAllocated(0) {}
+	void *allocate(int32 size, bool smallAllocation = false);	// smallAllocation e.g. palettes
+	void deallocate(void *pointer);
+
+	static inline bool isAddressInVram(void *address) {
+		if ((uint32)(CACHED(address)) >= VRAM_START_ADDRESS && (uint32)(CACHED(address)) < VRAM_END_ADDRESS)
+			return true;
+		return false;
+	}
+
+
+private:
+	/**
+	 *	Used to allocate in VRAM
+	 */
+	struct Allocation {
+		byte *address;
+		uint32 size;
+		void *getEnd() { return address + size; }
+		Allocation(void *Address, uint32 Size) : address((byte *)Address), size(Size) {}
+		Allocation() : address(0), size(0) {}
+	};
+
+	enum {
+		VRAM_START_ADDRESS = 0x04000000,
+		VRAM_END_ADDRESS   = 0x04200000,
+		VRAM_SMALL_ADDRESS = VRAM_END_ADDRESS - (4 * 1024)	// 4K in the end for small allocations
+	};
+	Common::List <Allocation> _allocList;		// List of allocations
+	uint32 _bytesAllocated;
+};
+
 
 /**
  *	Class used only by DisplayManager to start/stop GU rendering
@@ -39,7 +81,7 @@ public:
 	void guPostRender();
 	void guShutDown();
 	bool isRenderFinished() { return _renderFinished; }
-	void setupCallbackThread();	
+	void setupCallbackThread();
 private:
 	virtual void threadFunction();			// for the display callback thread
 	static uint32 _displayList[];
@@ -47,7 +89,7 @@ private:
 	void guProgramDisplayBufferSizes();
 	static int guCallback(int, int, void *__this);	// for the display callback
 	bool _renderFinished;					// for sync with render callback
-	int _callbackId;						// to keep track of render callback	
+	int _callbackId;						// to keep track of render callback
 };
 
 class Screen;
@@ -61,10 +103,9 @@ class PSPKeyboard;
 class DisplayManager {
 public:
 	enum GraphicsModeID {			///> Possible output formats onscreen
-		CENTERED_320X200,
-		CENTERED_435X272,
-		STRETCHED_480X272,
-		CENTERED_362X272
+		ORIGINAL_RESOLUTION,
+		KEEP_ASPECT_RATIO,
+		STRETCHED_FULL_SCREEN
 	};
 	DisplayManager() : _screen(0), _cursor(0), _overlay(0), _keyboard(0), _lastUpdateTime(0), _graphicsMode(0) {}
 	~DisplayManager();
@@ -74,7 +115,7 @@ public:
 	bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);
 	int getGraphicsMode() const { return _graphicsMode; }
-	uint32 getDefaultGraphicsMode() const { return STRETCHED_480X272; }
+	uint32 getDefaultGraphicsMode() const { return STRETCHED_FULL_SCREEN; }
 	const OSystem::GraphicsMode* getSupportedGraphicsModes() const { return _supportedModes; }
 
 	// Setters

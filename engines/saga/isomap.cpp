@@ -303,8 +303,8 @@ void IsoMap::adjustScroll(bool jump) {
 			_viewScroll.x = maxScrollPos.x;
 		}
 	} else {
-		_viewScroll.y = smoothSlide( _viewScroll.y, minScrollPos.y, maxScrollPos.y );
-		_viewScroll.x = smoothSlide( _viewScroll.x, minScrollPos.x, maxScrollPos.x );
+		_viewScroll.y = smoothSlide(_viewScroll.y, minScrollPos.y, maxScrollPos.y);
+		_viewScroll.x = smoothSlide(_viewScroll.x, minScrollPos.x, maxScrollPos.x);
 	}
 
 	if (_vm->_scene->currentSceneResourceId() == ITE_SCENE_OVERMAP) {
@@ -429,7 +429,7 @@ void IsoMap::drawTiles(const Location *location) {
 	workAreaWidth = _vm->getDisplayInfo().width + 128;
 	workAreaHeight = _vm->_scene->getHeight() + 128 + 80;
 
-	for (u1 = u0, v1 = v0; metaTileY.y < workAreaHeight; u1--, v1-- ) {
+	for (u1 = u0, v1 = v0; metaTileY.y < workAreaHeight; u1--, v1--) {
 		metaTileX = metaTileY;
 
 		for (u2 = u1, v2 = v1; metaTileX.x < workAreaWidth; u2++, v2--, metaTileX.x += 256) {
@@ -611,7 +611,7 @@ void IsoMap::drawSpritePlatform(uint16 platformIndex, const Point &point, const 
 		for (u = SAGA_PLATFORM_W - 1,
 			copyLocation.u() = location.u() - ((SAGA_PLATFORM_W - 1) << 4);
 			 u >= 0 && s.x + 32 > _tileClip.left && s.y - SAGA_MAX_TILE_H < _tileClip.bottom;
-			 u--, copyLocation.u() += 16, s.x -= 16, s.y += 8 ) {
+			 u--, copyLocation.u() += 16, s.x -= 16, s.y += 8) {
 			if (s.x < _tileClip.right && s.y > _tileClip.top) {
 
 				tileIndex = tilePlatform->tiles[u][v];
@@ -663,7 +663,7 @@ void IsoMap::drawPlatform(uint16 platformIndex, const Point &point, int16 absU, 
 
 		for (u = SAGA_PLATFORM_W - 1;
 			u >= 0 && s.x + 32 > _tileClip.left && s.y - SAGA_MAX_TILE_H < _tileClip.bottom;
-			u--, s.x -= 16, s.y += 8 ) {
+			u--, s.x -= 16, s.y += 8) {
 			if (s.x < _tileClip.right && s.y > _tileClip.top) {
 
 				tileIndex = tilePlatform->tiles[u][v];
@@ -955,7 +955,7 @@ void IsoMap::pushPoint(int16 u, int16 v, uint16 cost, uint16 direction) {
 		}
 	}
 
-	if (mid < _queueCount ) {
+	if (mid < _queueCount) {
 		memmove(tilePoint + 1, tilePoint, (_queueCount - mid) * sizeof (*tilePoint));
 	}
 	_queueCount++;
@@ -1211,7 +1211,7 @@ void IsoMap::placeOnTileMap(const Location &start, Location &result, int16 dista
 		for (dir = 0; dir < 8; dir++) {
 			terrainMask = terraComp[dir];
 
-			if (terrainMask & SAGA_IMPASSABLE ) {
+			if (terrainMask & SAGA_IMPASSABLE) {
 				continue;
 			}
 
@@ -1352,11 +1352,11 @@ void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Lo
 				continue;
 			}
 
-			tile = getTile(u1, v1, _platformHeight );
+			tile = getTile(u1, v1, _platformHeight);
 			if (tile != NULL) {
 				mask = tile->terrainMask;
 				if (((mask != 0) && (tile->GetFGDAttr() >= kTerrBlock)) ||
-					((mask != 0xFFFF) && (tile->GetBGDAttr() >= kTerrBlock)) ) {
+					((mask != 0xFFFF) && (tile->GetBGDAttr() >= kTerrBlock))) {
 					pcell->visited = 1;
 				}
 			} else {
@@ -1453,7 +1453,7 @@ void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Lo
 	actor->_walkStepsCount = i;
 	if (i) {
 		actor->setTileDirectionsSize(i, false);
-		memcpy(actor->_tileDirections, res, i );
+		memcpy(actor->_tileDirections, res, i);
 	}
 
 }
@@ -1586,7 +1586,7 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 	actor->_walkStepsCount = i;
 	if (i) {
 		actor->setTileDirectionsSize(i, false);
-		memcpy(actor->_tileDirections, res, i );
+		memcpy(actor->_tileDirections, res, i);
 	}
 }
 

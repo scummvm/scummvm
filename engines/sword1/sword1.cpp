@@ -214,12 +214,20 @@ void SwordEngine::syncSoundSettings() {
 		sfxVolL = 255;
 	}
 
-	_music->setVolume(musicVolL, musicVolR);
-	_sound->setSpeechVol(speechVolL, speechVolR);
-	_sound->setSfxVol(sfxVolL, sfxVolR);
+	bool mute = ConfMan.getBool("mute");
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	if (mute) {
+		_music->setVolume(0, 0);
+		_sound->setSpeechVol(0, 0);
+		_sound->setSfxVol(0, 0);
+	} else {
+		_music->setVolume(musicVolL, musicVolR);
+		_sound->setSpeechVol(speechVolL, speechVolR);
+		_sound->setSfxVol(sfxVolL, sfxVolR);
+	}
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mute ? 0 : ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mute ? 0 : ConfMan.getInt("speech_volume"));
 }
 
 void SwordEngine::flagsToBool(bool *dest, uint8 flags) {

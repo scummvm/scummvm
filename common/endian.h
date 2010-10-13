@@ -189,22 +189,22 @@
 #elif defined(__GNUC__) && (__GNUC__ >= 4)
 
 	FORCEINLINE uint16 READ_UINT16(const void *ptr) {
-		struct Unaligned16 { uint16 val; } __attribute__ ((__packed__));
+		struct Unaligned16 { uint16 val; } __attribute__ ((__packed__, __may_alias__));
 		return ((const Unaligned16 *)ptr)->val;
 	}
 
 	FORCEINLINE uint32 READ_UINT32(const void *ptr) {
-		struct Unaligned32 { uint32 val; } __attribute__ ((__packed__));
+		struct Unaligned32 { uint32 val; } __attribute__ ((__packed__, __may_alias__));
 		return ((const Unaligned32 *)ptr)->val;
 	}
 
 	FORCEINLINE void WRITE_UINT16(void *ptr, uint16 value) {
-		struct Unaligned16 { uint16 val; } __attribute__ ((__packed__));
+		struct Unaligned16 { uint16 val; } __attribute__ ((__packed__, __may_alias__));
 		((Unaligned16 *)ptr)->val = value;
 	}
 
 	FORCEINLINE void WRITE_UINT32(void *ptr, uint32 value) {
-		struct Unaligned32 { uint32 val; } __attribute__ ((__packed__));
+		struct Unaligned32 { uint32 val; } __attribute__ ((__packed__, __may_alias__));
 		((Unaligned32 *)ptr)->val = value;
 	}
 

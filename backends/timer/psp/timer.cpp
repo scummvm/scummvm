@@ -23,7 +23,7 @@
  *
  */
 
-#if defined (__PSP__) 
+#if defined (__PSP__)
 #include <pspthreadman.h>
 
 #include "common/scummsys.h"
@@ -38,7 +38,7 @@
 
 bool PspTimer::start() {
 	DEBUG_ENTER_FUNC();
-	
+
 	if (!_interval || !_callback)
 		return false;
 
@@ -48,31 +48,31 @@ bool PspTimer::start() {
 		PSP_ERROR("failed to create timer thread. Error code %d\n", _threadId);
 		return false;
 	}
-	
+
 	PspTimer *_this = this;	// trick to get into context when the thread starts
 	_init = true;
-	
+
 	if (sceKernelStartThread(_threadId, sizeof(uint32 *), &_this) < 0) {
 		PSP_ERROR("failed to start thread %d\n", _threadId);
 		return false;
 	}
-	
+
 	PSP_DEBUG_PRINT("created timer thread[%x]\n", _threadId);
-	
+
 	return true;
 }
 
 int PspTimer::thread(SceSize, void *__this) {
 	DEBUG_ENTER_FUNC();
 	PspTimer *_this = *(PspTimer **)__this;		// get our this for the context
-	
+
 	_this->timerThread();
 	return 0;
 };
 
 void PspTimer::timerThread() {
 	DEBUG_ENTER_FUNC();
-	
+
 	while (_init) {
 		sceKernelDelayThread(_interval);
 		PSP_DEBUG_PRINT("calling callback!\n");

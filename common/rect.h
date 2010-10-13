@@ -90,6 +90,9 @@ struct Rect {
 	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {
 		assert(isValidRect());
 	}
+	bool operator==(const Rect &rhs) const { return equals(rhs); }
+	bool operator!=(const Rect &rhs) const { return !equals(rhs); }
+
 	int16 width() const { return right - left; }
 	int16 height() const { return bottom - top; }
 

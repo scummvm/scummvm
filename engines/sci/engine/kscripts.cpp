@@ -143,56 +143,72 @@ reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kClone(EngineState *s, int argc, reg_t *argv) {
-	reg_t parent_addr = argv[0];
-	const Object *parent_obj = s->_segMan->getObject(parent_addr);
-	reg_t clone_addr;
-	Clone *clone_obj; // same as Object*
+	reg_t parentAddr = argv[0];
+	const Object *parentObj = s->_segMan->getObject(parentAddr);
+	reg_t cloneAddr;
+	Clone *cloneObj; // same as Object*
 
-	if (!parent_obj) {
-		error("Attempt to clone non-object/class at %04x:%04x failed", PRINT_REG(parent_addr));
+	if (!parentObj) {
+		error("Attempt to clone non-object/class at %04x:%04x failed", PRINT_REG(parentAddr));
 		return NULL_REG;
 	}
 
-	debugC(2, kDebugLevelMemory, "Attempting to clone from %04x:%04x", PRINT_REG(parent_addr));
+	debugC(2, kDebugLevelMemory, "Attempting to clone from %04x:%04x", PRINT_REG(parentAddr));
 
-	clone_obj = s->_segMan->allocateClone(&clone_addr);
+	uint16 infoSelector = readSelectorValue(s->_segMan, parentAddr, SELECTOR(_info_));
+	cloneObj = s->_segMan->allocateClone(&cloneAddr);
 
-	if (!clone_obj) {
-		error("Cloning %04x:%04x failed-- internal error", PRINT_REG(parent_addr));
+	if (!cloneObj) {
+		error("Cloning %04x:%04x failed-- internal error", PRINT_REG(parentAddr));
 		return NULL_REG;
 	}
 
-	*clone_obj = *parent_obj;
+	// In case the parent object is a clone itself we need to refresh our
+	// pointer to it here. This is because calling allocateClone might
+	// invalidate all pointers, references and iterators to data in the clones
+	// segment.
+	//
+	// The reason why it might invalidate those is, that the segment code
+	// (Table) uses Common::Array for internal storage. Common::Array now
+	// might invalidate references to its contained data, when it has to
+	// extend the internal storage size.
+	if (infoSelector & kInfoFlagClone)
+		parentObj = s->_segMan->getObject(parentAddr);
+
+	*cloneObj = *parentObj;
 
 	// Mark as clone
-	clone_obj->markAsClone();
-	clone_obj->setSpeciesSelector(clone_obj->getPos());
-	if (parent_obj->isClass())
-		clone_obj->setSuperClassSelector(parent_obj->getPos());
-	s->_segMan->getScript(parent_obj->getPos().segment)->incrementLockers();
-	s->_segMan->getScript(clone_obj->getPos().segment)->incrementLockers();
+	infoSelector &= ~kInfoFlagClass; // remove class bit
+	writeSelectorValue(s->_segMan, cloneAddr, SELECTOR(_info_), infoSelector | kInfoFlagClone);
 
-	return clone_addr;
+	cloneObj->setSpeciesSelector(cloneObj->getPos());
+	if (parentObj->isClass())
+		cloneObj->setSuperClassSelector(parentObj->getPos());
+	s->_segMan->getScript(parentObj->getPos().segment)->incrementLockers();
+	s->_segMan->getScript(cloneObj->getPos().segment)->incrementLockers();
+
+	return cloneAddr;
 }
 
 extern void _k_view_list_mark_free(EngineState *s, reg_t off);
 
 reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
-	reg_t victim_addr = argv[0];
-	Clone *victim_obj = s->_segMan->getObject(victim_addr);
+	reg_t obj = argv[0];
+	Clone *object = s->_segMan->getObject(obj);
 
-	if (!victim_obj) {
+	if (!object) {
 		error("Attempt to dispose non-class/object at %04x:%04x",
-		         PRINT_REG(victim_addr));
+		         PRINT_REG(obj));
 		return s->r_acc;
 	}
 
-	if (!victim_obj->isClone()) {
-		// SCI silently ignores this behaviour; some games actually depend on it
-		return s->r_acc;
-	}
-
-	victim_obj->markAsFreed();
+	// SCI uses this technique to find out, if it's a clone and if it's supposed to get freed
+	//  At least kq4early relies on this behaviour. The scripts clone "Sound", then set bit 1 manually
+	//  and call kDisposeClone later. In that case we may not free it, otherwise we will run into issues
+	//  later, because kIsObject would then return false and Sound object wouldn't get checked.
+	uint16 infoSelector = readSelectorValue(s->_segMan, obj, SELECTOR(_info_));
+	if ((infoSelector & 3) == kInfoFlagClone)
+		object->markAsFreed();
 
 	return s->r_acc;
 }

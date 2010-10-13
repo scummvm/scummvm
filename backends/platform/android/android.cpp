@@ -400,7 +400,7 @@ static void ScummVM_audioMixCallback(JNIEnv* env, jobject self,
 	jsize len = env->GetArrayLength(jbuf);
 	jbyte* buf = env->GetByteArrayElements(jbuf, NULL);
 	if (buf == NULL) {
-		warning("Unable to get Java audio byte array. Skipping.");
+		warning("Unable to get Java audio byte array. Skipping");
 		return;
 	}
 	Audio::MixerImpl* mixer =
@@ -1135,7 +1135,7 @@ OSystem::MutexRef OSystem_Android::createMutex() {
 
 	pthread_mutex_t *mutex = new pthread_mutex_t;
 	if (pthread_mutex_init(mutex, &attr) != 0) {
-		warning("pthread_mutex_init() failed!");
+		warning("pthread_mutex_init() failed");
 		delete mutex;
 		return NULL;
 	}
@@ -1144,18 +1144,18 @@ OSystem::MutexRef OSystem_Android::createMutex() {
 
 void OSystem_Android::lockMutex(MutexRef mutex) {
 	if (pthread_mutex_lock((pthread_mutex_t*)mutex) != 0)
-		warning("pthread_mutex_lock() failed!");
+		warning("pthread_mutex_lock() failed");
 }
 
 void OSystem_Android::unlockMutex(MutexRef mutex) {
 	if (pthread_mutex_unlock((pthread_mutex_t*)mutex) != 0)
-		warning("pthread_mutex_unlock() failed!");
+		warning("pthread_mutex_unlock() failed");
 }
 
 void OSystem_Android::deleteMutex(MutexRef mutex) {
 	pthread_mutex_t* m = (pthread_mutex_t*)mutex;
 	if (pthread_mutex_destroy(m) != 0)
-		warning("pthread_mutex_destroy() failed!");
+		warning("pthread_mutex_destroy() failed");
 	else
 		delete m;
 }
@@ -1330,7 +1330,7 @@ static void ScummVM_enableZoning(JNIEnv* env, jobject self, jboolean enable) {
 static void ScummVM_setSurfaceSize(JNIEnv* env, jobject self,
 								   jint width, jint height) {
 	OSystem_Android* cpp_obj = OSystem_Android::fromJavaObject(env, self);
-	cpp_obj->setSurfaceSize(width, height);	
+	cpp_obj->setSurfaceSize(width, height);
 }
 
 const static JNINativeMethod gMethods[] = {

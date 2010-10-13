@@ -27,7 +27,7 @@
 #define _PSP_RTC_H_
 
 #include "common/singleton.h"
- 
+
 class PspRtc : public Common::Singleton<PspRtc> {
 private:
 	uint32 _startMillis;

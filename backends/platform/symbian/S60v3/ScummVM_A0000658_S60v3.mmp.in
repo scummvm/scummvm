@@ -97,6 +97,9 @@ SYSTEMINCLUDE	\epoc32\include\ESDL
 SYSTEMINCLUDE	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
 SYSTEMINCLUDE   \epoc32\include\libc
 SYSTEMINCLUDE   \epoc32\include
+SYSTEMINCLUDE   \epoc32\include\mw
+SYSTEMINCLUDE   \epoc32\include\platform
+SYSTEMINCLUDE   \epoc32\include\platform\mw
 SYSTEMINCLUDE   ..\src // for portdefs.h
 
 // *** SOURCE files
@@ -125,7 +128,7 @@ SOURCE gui\KeysDialog.cpp
 SOURCE gui\Actions.cpp
 SOURCE gui\Dialog.cpp
 
-// Common error 
+// Common error
 source common\error.cpp
 
 // Special for graphics

@@ -48,6 +48,7 @@ void EditableWidget::init() {
 	_editScrollOffset = 0;
 
 	_font = ThemeEngine::kFontStyleBold;
+	_inversion = ThemeEngine::kTextInversionNone;
 }
 
 EditableWidget::~EditableWidget() {
@@ -237,7 +238,7 @@ void EditableWidget::drawCaret(bool erase) {
 	Common::Rect editRect = getEditRect();
 
 	int x = editRect.left;
-	int y = editRect.top + 1;
+	int y = editRect.top;
 
 	x += getCaretOffset();
 
@@ -253,7 +254,7 @@ void EditableWidget::drawCaret(bool erase) {
 		if ((uint)_caretPos < _editString.size()) {
 			GUI::EditableWidget::String chr(_editString[_caretPos]);
 			int chrWidth = g_gui.getCharWidth(_editString[_caretPos], _font);
-			g_gui.theme()->drawText(Common::Rect(x, y, x + chrWidth, y + editRect.height() - 2), chr, _state, Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, 0, false, _font);
+			g_gui.theme()->drawText(Common::Rect(x, y, x + chrWidth, y + editRect.height() - 2), chr, _state, Graphics::kTextAlignLeft, _inversion, 0, false, _font);
 		}
 	}
 

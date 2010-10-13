@@ -449,6 +449,9 @@ Special thanks to
    Patrick Combet   - For the original Gobliiins ADL player
    Ivan Dubrov      - For contributing the initial version of the Gobliiins
                       engine
+   Henrik Engqvist  - For generously providing hosting for our buildbot, SVN
+                      repository, planet and doxygen sites as well as tons of
+                      HD space
    DOSBox Team      - For their awesome OPL2 and OPL3 emulator
    Till Kresslein   - For design of modern ScummVM GUI
    Jezar            - For his freeverb filter implementation
@@ -481,4 +484,11 @@ Special thanks to
 
    John Young, Colin Smythe and especially Terry Pratchett himself for
    sharing the source code of Discworld I & II with us.
+
+   Emilio de Paz Aragon from Alcachofa Soft for sharing the source code of
+   Drascula: The Vampire Strikes Back with us and his generosity with
+   freewaring the game.
+
+   David P. Gray from Gray Design Associate for sharing the source code of
+   the Hugo trilogy.
 

@@ -32,6 +32,7 @@
 #include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/display_client.h"
 #include "backends/platform/psp/display_manager.h"
+#define PSP_INCLUDE_SWAP
 #include "backends/platform/psp/memory.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging the stack */
@@ -341,14 +342,14 @@ void Buffer::copyFromRect(const byte *buf, uint32 pitch, int destX, int destY, u
 	if (pitch == realWidthInBytes && pitch == recWidthInBytes) {
 		//memcpy(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth));
 		if (_pixelFormat.swapRB)
-			PspMemory::fastSwap(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth), _pixelFormat);
+			PspMemorySwap::fastSwap(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth), _pixelFormat);
 		else
 			PspMemory::fastCopy(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth));
 	} else {
 		do {
 			//memcpy(dst, buf, recWidthInBytes);
 			if (_pixelFormat.swapRB)
-				PspMemory::fastSwap(dst, buf, recWidthInBytes, _pixelFormat);
+				PspMemorySwap::fastSwap(dst, buf, recWidthInBytes, _pixelFormat);
 			else
 				PspMemory::fastCopy(dst, buf, recWidthInBytes);
 			buf += pitch;
@@ -370,7 +371,7 @@ void Buffer::copyToArray(byte *dst, int pitch) {
 	do {
 		//memcpy(dst, src, sourceWidthInBytes);
 		if (_pixelFormat.swapRB)
-			PspMemory::fastSwap(dst, src, sourceWidthInBytes, _pixelFormat);
+			PspMemorySwap::fastSwap(dst, src, sourceWidthInBytes, _pixelFormat);
 		else
 			PspMemory::fastCopy(dst, src, sourceWidthInBytes);
 		src += realWidthInBytes;
@@ -698,14 +699,14 @@ void GuRenderer::fillVertices(Vertex *vertices) {
 	// Save scaled offset on screen
 	float scaledOffsetOnScreenX = scaleSourceToOutputX(_offsetOnScreen.x);
 	float scaledOffsetOnScreenY = scaleSourceToOutputY(_offsetOnScreen.y);
-	
+
 	float imageStartX, imageStartY, imageEndX, imageEndY;
 
 	imageStartX = gapX + scaledOffsetOnScreenX + (scaleSourceToOutputX(_maxTextureOffset.x));
 	imageStartY = gapY + scaledOffsetOnScreenY;
 
 	if (_fullScreen) { // shortcut
-		imageEndX = PSP_SCREEN_WIDTH - gapX + scaledOffsetOnScreenX; 
+		imageEndX = PSP_SCREEN_WIDTH - gapX + scaledOffsetOnScreenX;
 		imageEndY = PSP_SCREEN_HEIGHT - gapY + scaledOffsetOnScreenY; // needed for screen shake
 	} else { /* !fullScreen */
 		imageEndX = imageStartX + scaleSourceToOutputX(_drawSize.width);

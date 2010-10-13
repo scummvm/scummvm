@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef CELAUNCHERDIALOG
-#define CELAUNCHERDIALOG
+#ifndef CELAUNCHERDIALOG_H
+#define CELAUNCHERDIALOG_H
 
 #include "base/plugins.h"
 #include "common/fs.h"

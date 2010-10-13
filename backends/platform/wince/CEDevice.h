@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef CEDEVICE
-#define CEDEVICE
+#ifndef CEDEVICE_H
+#define CEDEVICE_H
 
 #include "common/scummsys.h"
 #include "common/system.h"

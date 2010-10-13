@@ -78,6 +78,36 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array.size(), (unsigned int)5);
 	}
 
+	void test_insert_at_array() {
+		Common::Array<int> array;
+		Common::Array<int> array2;
+
+		// First of all some data
+		array.push_back(-12);
+		array.push_back(17);
+		array.push_back(25);
+		array.push_back(-11);
+
+		array2.push_back(42);
+		array2.push_back(105);
+		array2.push_back(-1);
+
+		// Insert some data
+		array.insert_at(2, array2);
+
+		TS_ASSERT_EQUALS(array.size(), (unsigned int)7);
+
+		TS_ASSERT_EQUALS(array[0], -12);
+		TS_ASSERT_EQUALS(array[1], 17);
+		TS_ASSERT_EQUALS(array[2], 42);
+		TS_ASSERT_EQUALS(array[3], 105);
+		TS_ASSERT_EQUALS(array[4], -1);
+		TS_ASSERT_EQUALS(array[5], 25);
+		TS_ASSERT_EQUALS(array[6], -11);
+
+	}
+
+
 	void test_remove_at() {
 		Common::Array<int> array;
 

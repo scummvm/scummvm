@@ -88,7 +88,7 @@ void PathWalker_NS::correctPathPoint(Common::Point &to) {
 	} while ((top > 0) && !IS_PATH_CLEAR(to.x, top));
 	do {
 		bottom++;
-	} while ((bottom < maxY) && !IS_PATH_CLEAR(to.x, bottom) );
+	} while ((bottom < maxY) && !IS_PATH_CLEAR(to.x, bottom));
 	top = (top == 0) ? 1000 : to.y - top;
 	bottom = (bottom == maxY) ? 1000 : bottom - to.y;
 

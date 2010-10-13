@@ -149,7 +149,7 @@ SciEvent EventManager::getScummVMEvent() {
 		found = em->pollEvent(ev);
 	}
 
-	if (found && !ev.synthetic && ev.type != Common::EVENT_MOUSEMOVE) {
+	if (found && ev.type != Common::EVENT_MOUSEMOVE) {
 		int modifiers = em->getModifierState();
 
 		// We add the modifier key status to buckybits
@@ -214,6 +214,11 @@ SciEvent EventManager::getScummVMEvent() {
 						input.character = SCI_KEY_SHIFT_TAB;
 					else
 						input.character = SCI_KEY_TAB;
+				}
+				if (input.data == Common::KEYCODE_DELETE) {
+					// Delete key
+					input.type = SCI_EVENT_KEYBOARD;
+					input.data = input.character = SCI_KEY_DELETE;
 				}
 			} else if ((input.data >= Common::KEYCODE_F1) && input.data <= Common::KEYCODE_F10) {
 				// F1-F10
@@ -346,9 +351,17 @@ SciEvent EventManager::getScummVMEvent() {
 void EventManager::updateScreen() {
 	// Update the screen here, since it's called very often.
 	// Throttle the screen update rate to 60fps.
-	if (g_system->getMillis() - g_sci->getEngineState()->_screenUpdateTime >= 1000 / 60) {
+	EngineState *s = g_sci->getEngineState();
+	if (g_system->getMillis() - s->_screenUpdateTime >= 1000 / 60) {
 		g_system->updateScreen();
-		g_sci->getEngineState()->_screenUpdateTime = g_system->getMillis();
+		s->_screenUpdateTime = g_system->getMillis();
+		// Throttle the checking of shouldQuit() to 60fps as well, since 
+		// Engine::shouldQuit() invokes 2 virtual functions
+		// (EventManager::shouldQuit() and EventManager::shouldRTL()),
+		// which is very expensive to invoke constantly without any
+		// throttling at all.
+		if (g_engine->shouldQuit())
+			s->abortScriptProcessing = kAbortQuitGame;
 	}
 }
 

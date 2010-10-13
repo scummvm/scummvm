@@ -94,6 +94,7 @@ static ParseTreeNode* said_next_node() {
 static ParseTreeNode* said_leaf_node(ParseTreeNode* pos, int value) {
 	pos->type = kParseTreeLeafNode;
 	pos->value = value;
+	pos->right = 0;
 
 	return pos;
 }
@@ -101,6 +102,7 @@ static ParseTreeNode* said_leaf_node(ParseTreeNode* pos, int value) {
 static ParseTreeNode* said_word_node(ParseTreeNode* pos, int value) {
 	pos->type = kParseTreeWordNode;
 	pos->value = value;
+	pos->right = 0;
 
 	return pos;
 }
@@ -780,17 +782,39 @@ static int matchTrees(ParseTreeNode* parseT, ParseTreeNode* saidT)
 		// both saidT and parseT are terminals
 
 		int said_val = node_terminal_value(saidT);
-		int parse_val = node_terminal_value(parseT);
 
-		if (said_val != WORD_NONE &&
-		       (said_val == parse_val || said_val == WORD_ANY ||
-		        parse_val == WORD_ANY))
+#ifdef SCI_DEBUG_PARSE_TREE_AUGMENTATION
+		scidprintf("%*smatchTrees matching terminals: %03x", outputDepth, "", node_terminal_value(parseT));
+		ParseTreeNode* t = parseT->right->right;
+		while (t) {
+			scidprintf(",%03x", t->value);
+			t = t->right;
+		}
+		scidprintf(" vs %03x", said_val);
+#endif
+
+		if (said_val == WORD_NONE) {
+			ret = -1;
+		} else if (said_val == WORD_ANY) {
 			ret = 1;
-		else
+		} else {
 			ret = -1;
 
-		scidprintf("%*smatchTrees matching terminals: %03x vs %03x (%d)\n",
-		           outputDepth, "", parse_val, said_val, ret);
+			// scan through the word group ids in the parse tree leaf to see if
+			// one matches the word group in the said tree
+			parseT = parseT->right->right;
+			do {
+				assert(parseT->type != kParseTreeBranchNode);
+				int parse_val = parseT->value;
+				if (parse_val == WORD_ANY || parse_val == said_val) {
+					ret = 1;
+					break;
+				}
+				parseT = parseT->right;
+			} while (parseT);
+		}
+
+		scidprintf(" (ret %d)\n", ret);
 
 	} else if (node_is_terminal(saidT) && !node_is_terminal(parseT)) {
 
@@ -1107,7 +1131,7 @@ True
 said put washer on shaft & 455 , ( 3fa < cb ) / 8c6
 True
 
-said depth correct & [!*] < 8b1 / 22
+said depth correct & [!*] < 8b1 / 22b
 True
 
 said depth acknowledged & / 46d , 460 , 44d < 8b1

@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#include "common/debug.h"
 #include "common/rational.h"
 #include "common/util.h"
 #include "common/algorithm.h"
@@ -207,7 +208,7 @@ bool Rational::operator==(int right) const {
 }
 
 bool Rational::operator!=(int right) const {
-	return (_denom == 1) && (_num != right);
+	return (_denom != 1) || (_num != right);
 }
 
 bool Rational::operator>(int right) const {
@@ -257,36 +258,32 @@ frac_t Rational::toFrac() const {
 	return (_num * FRAC_ONE) / _denom;
 }
 
-Rational::operator int() const {
-	return toInt();
-}
-
-Rational::operator double() const {
-	return toDouble();
-}
-
 const Rational operator+(int left, const Rational &right) {
-	Rational tmp = right;
-	tmp += left;
+	Rational tmp(left);
+	tmp += right;
 	return tmp;
 }
 
 const Rational operator-(int left, const Rational &right) {
-	Rational tmp = right;
-	tmp -= left;
+	Rational tmp(left);
+	tmp -= right;
 	return tmp;
 }
 
 const Rational operator*(int left, const Rational &right) {
-	Rational tmp = right;
-	tmp *= left;
+	Rational tmp(left);
+	tmp *= right;
 	return tmp;
 }
 
 const Rational operator/(int left, const Rational &right) {
-	Rational tmp = right;
-	tmp /= left;
+	Rational tmp(left);
+	tmp /= right;
 	return tmp;
+}
+
+void Rational::debugPrint(int debuglevel, const char *caption) const {
+	debug(debuglevel, "%s %d/%d", caption, _num, _denom);
 }
 
 bool operator==(int left, const Rational &right) {

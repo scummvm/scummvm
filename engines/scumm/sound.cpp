@@ -31,6 +31,7 @@
 #include "scumm/file.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
+#include "scumm/player_towns.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
@@ -76,6 +77,7 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer)
 	_curSoundPos(0),
 	_currentCDSound(0),
 	_currentMusic(0),
+	_lastSound(0),
 	_soundsPaused(false),
 	_sfxMode(0) {
 
@@ -93,6 +95,7 @@ Sound::~Sound() {
 void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {
 	if (_vm->VAR_LAST_SOUND != 0xFF)
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
+	_lastSound = sound;
 
 	// HE music resources are in separate file
 	if (sound <= _vm->_numSounds)
@@ -149,9 +152,10 @@ void Sound::processSoundQueues() {
 						data[0] >> 8, data[0] & 0xFF,
 						data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
 
-			if (_vm->_imuse) {
+			if (_vm->_townsPlayer)
+				_vm->VAR(_vm->VAR_SOUNDRESULT) = (short)_vm->_townsPlayer->doCommand(num, data);
+			else if (_vm->_imuse)
 				_vm->VAR(_vm->VAR_SOUNDRESULT) = (short)_vm->_imuse->doCommand(num, data);
-			}
 		}
 	}
 	_soundQuePos = 0;
@@ -240,7 +244,7 @@ void Sound::playSound(int soundID) {
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
-	else if (READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
+	else if (_vm->_game.platform != Common::kPlatformFMTowns && READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
 		debugC(DEBUG_SOUND, "Using SBL sound effect");
 
 		// SBL resources essentially contain VOC sound data.
@@ -309,91 +313,30 @@ void Sound::playSound(int soundID) {
 		sound = (byte *)malloc(size);
 		memcpy(sound, ptr + 6, size);
 		stream = Audio::makeRawStream(sound, size, rate, Audio::FLAG_UNSIGNED);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);			
 	}
-	else if ((_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 3) || READ_BE_UINT32(ptr) == MKID_BE('SOUN') || READ_BE_UINT32(ptr) == MKID_BE('TOWS')) {
-
-		bool tows = READ_BE_UINT32(ptr) == MKID_BE('TOWS');
-		if (_vm->_game.version == 3) {
-			size = READ_LE_UINT32(ptr);
-		} else {
-			size = READ_BE_UINT32(ptr + 4) - 2;
-			if (tows)
-				size += 8;
+	else if (_vm->_game.platform != Common::kPlatformFMTowns && READ_BE_UINT32(ptr) == MKID_BE('SOUN')) {
+		if (_vm->_game.version != 3)
 			ptr += 2;
-		}
 
-		rate = 11025;
 		int type = *(ptr + 0x0D);
-		int numInstruments;
 
-		if (tows)
-			type = 0;
-
-		switch (type) {
-		case 0:	// Sound effect
-			numInstruments = *(ptr + 0x14);
-			if (tows)
-				numInstruments = 1;
+		if (type == 2) {
+			// CD track resource
 			ptr += 0x16;
-			size -= 0x16;
-
-			while (numInstruments--) {
-				int waveSize = READ_LE_UINT32(ptr + 0x0C);
-				int loopStart = READ_LE_UINT32(ptr + 0x10) * 2;
-				int loopEnd = READ_LE_UINT32(ptr + 0x14) - 1;
-				rate = READ_LE_UINT32(ptr + 0x18) * 1000 / 0x62;
-				ptr += 0x20;
-				size -= 0x20;
-				if (size < waveSize) {
-					warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
-					waveSize = size;
-				}
-				sound = (byte *)malloc(waveSize);
-				for (int x = 0; x < waveSize; x++) {
-					byte b = *ptr++;
-					if (b < 0x80)
-						sound[x] = 0x7F - b;
-					else
-						sound[x] = b;
-				}
-				size -= waveSize;
-
-				if (loopEnd > 0) {
-					Audio::SeekableAudioStream *s = Audio::makeRawStream(sound, waveSize, rate, Audio::FLAG_UNSIGNED);
-					stream = new Audio::SubLoopingAudioStream(s, 0, Audio::Timestamp(0, loopStart, rate), Audio::Timestamp(0, loopEnd, rate));
-				} else {
-					stream = Audio::makeRawStream(sound, waveSize, rate, Audio::FLAG_UNSIGNED);
-				}
-				_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, 255, 0);
-			}
-			break;
-		case 1:
-			// Music (Euphony format)
-			if (_vm->_musicEngine)
-				_vm->_musicEngine->startSound(soundID);
-			break;
-		case 2: // CD track resource
-			ptr += 0x16;
-
-			if (soundID == _currentCDSound && pollCD() == 1) {
+			if (soundID == _currentCDSound && pollCD() == 1)
 				return;
-			}
 
-			{
-				int track = ptr[0];
-				int loops = ptr[1];
-				int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
-				int end = (ptr[5] * 60 + ptr[6]) * 75 + ptr[7];
+			int track = ptr[0];
+			int loops = ptr[1];
+			int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
+			int end = (ptr[5] * 60 + ptr[6]) * 75 + ptr[7];
 
-				playCDTrack(track, loops == 0xff ? -1 : loops, start, end <= start ? 0 : end - start);
-			}
-
+			playCDTrack(track, loops == 0xff ? -1 : loops, start, end <= start ? 0 : end - start);
 			_currentCDSound = soundID;
-			break;
-		default:
+		} else {
 			// All other sound types are ignored
-			break;
+			warning("Scumm::Sound::playSound: encountered audio resoure with chunk type 'SOUN' and sound type %d", type);
 		}
 	}
 	else if ((_vm->_game.id == GID_LOOM) && (_vm->_game.platform == Common::kPlatformMacintosh))  {
@@ -479,6 +422,9 @@ void Sound::playSound(int soundID) {
 		if (_vm->_musicEngine) {
 			_vm->_musicEngine->startSound(soundID);
 		}
+
+		if (_vm->_townsPlayer)
+			_currentCDSound = _vm->_townsPlayer->getCurrentCdaSound();
 	}
 }
 
@@ -844,6 +790,7 @@ void Sound::stopAllSounds() {
 	}
 
 	// Clear the (secondary) sound queue
+	_lastSound = 0;
 	_soundQue2Pos = 0;
 	memset(_soundQue2, 0, sizeof(_soundQue2));
 

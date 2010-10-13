@@ -76,15 +76,14 @@ public:
 	bool operator>=(int right) const;
 	bool operator<=(int right) const;
 
-	operator int() const;
-	operator double() const;
-
 	void invert();
 	Rational getInverse() const;
 
 	int toInt() const;
 	double toDouble() const;
 	frac_t toFrac() const;
+
+	void debugPrint(int debuglevel = 0, const char *caption = "Rational:") const;
 
 private:
 	int _num;

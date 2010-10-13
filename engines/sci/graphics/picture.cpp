@@ -120,10 +120,6 @@ void GfxPicture::drawSci11Vga() {
 	// [priorityBandData:WORD] * priorityBandCount
 	// [priority:BYTE] [unknown:BYTE]
 
-	// Create palette and set it
-	_palette->createFromData(inbuffer + palette_data_ptr, size - palette_data_ptr, &palette);
-	_palette->set(&palette, true);
-
 	// priority bands are supposed to be 14 for sci1.1 pictures
 	assert(priorityBandsCount == 14);
 
@@ -132,8 +128,13 @@ void GfxPicture::drawSci11Vga() {
 	}
 
 	// display Cel-data
-	if (has_cel)
+	if (has_cel) {
+		// Create palette and set it
+		_palette->createFromData(inbuffer + palette_data_ptr, size - palette_data_ptr, &palette);
+		_palette->set(&palette, true);
+
 		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, 0);
+	}
 
 	// process vector data
 	drawVectorData(inbuffer + vector_dataPos, vector_size);
@@ -852,11 +853,11 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 
 	// Now remove screens, that already got the right color/priority/control
 	if ((screenMask & GFX_SCREEN_MASK_VISUAL) && (searchColor == color))
-		screenMask ^= GFX_SCREEN_MASK_VISUAL;
+		screenMask &= ~GFX_SCREEN_MASK_VISUAL;
 	if ((screenMask & GFX_SCREEN_MASK_PRIORITY) && (searchPriority == priority))
-		screenMask ^= GFX_SCREEN_MASK_PRIORITY;
+		screenMask &= ~GFX_SCREEN_MASK_PRIORITY;
 	if ((screenMask & GFX_SCREEN_MASK_CONTROL) && (searchControl == control))
-		screenMask ^= GFX_SCREEN_MASK_CONTROL;
+		screenMask &= ~GFX_SCREEN_MASK_CONTROL;
 
 	// Exit, if no screens left
 	if (!screenMask)

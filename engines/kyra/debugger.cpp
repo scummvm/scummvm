@@ -76,7 +76,7 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 		return true;
 	}
 
-	if (_vm->gameFlags().gameID != GI_KYRA1 && _vm->resource()->getFileSize(argv[1]) != 768) {
+	if (_vm->game() != GI_KYRA1 && _vm->resource()->getFileSize(argv[1]) != 768) {
 		uint8 buffer[320*200];
 		_vm->screen()->copyRegionToBuffer(5, 0, 0, 320, 200, buffer);
 		_vm->screen()->loadBitmap(argv[1], 5, 5, 0);

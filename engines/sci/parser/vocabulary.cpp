@@ -40,6 +40,7 @@ Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan),
 	// Mark parse tree as unused
 	_parserNodes[0].type = kParseTreeLeafNode;
 	_parserNodes[0].value = 0;
+	_parserNodes[0].right = 0;
 
 	_synonyms.clear(); // No synonyms
 
@@ -72,6 +73,8 @@ Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan),
 		_parserRules = NULL;
 	}
 
+	loadAltInputs();
+
 	parser_base = NULL_REG;
 	parser_event = NULL_REG;
 	parserIsValid = false;
@@ -80,6 +83,7 @@ Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan),
 Vocabulary::~Vocabulary() {
 	freeRuleList(_parserRules);
 	freeSuffixes();
+	freeAltInputs();
 }
 
 void Vocabulary::reset() {
@@ -165,8 +169,14 @@ bool Vocabulary::loadParserWords() {
 		newWord._class = ((resource->data[seeker]) << 4) | ((c & 0xf0) >> 4);
 		newWord._group = (resource->data[seeker + 2]) | ((c & 0x0f) << 8);
 
-		// Add the word to the list
-		_parserWords[currentWord] = newWord;
+		// SCI01 was the first version to support multiple class/group pairs
+		// per word, so we clear the list in earlier versions
+		// in earlier versions.
+		if (getSciVersion() < SCI_VERSION_01)
+			_parserWords[currentWord].clear();
+
+		// Add this to the list of possible class,group pairs for this word
+		_parserWords[currentWord].push_back(newWord);
 
 		seeker += 3;
 	}
@@ -181,8 +191,9 @@ const char *Vocabulary::getAnyWordFromGroup(int group) {
 		return "{nothing}";
 
 	for (WordMap::const_iterator i = _parserWords.begin(); i != _parserWords.end(); ++i) {
-		if (i->_value._group == group)
-			return i->_key.c_str();
+		for (ResultWordList::const_iterator j = i->_value.begin(); j != i->_value.end(); ++j)
+			if (j->_group == group)
+				return i->_key.c_str();
 	}
 
 	return "{invalid}";
@@ -264,8 +275,108 @@ bool Vocabulary::loadBranches() {
 	return true;
 }
 
+bool Vocabulary::loadAltInputs() {
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_ALT_INPUTS), 1);
+
+	if (!resource)
+		return true; // it's not a problem if this resource doesn't exist
+
+	const char *data = (const char*)resource->data;
+	const char *data_end = data + resource->size;
+
+	_altInputs.clear();
+	_altInputs.resize(256);
+
+	while (data < data_end && *data) {
+		AltInput t;
+		t._input = data;
+
+		unsigned int l = strlen(data);
+		t._inputLength = l;
+		data += l + 1;
+
+		t._replacement = data;
+		l = strlen(data);
+		data += l + 1;
+
+		if (data < data_end && strncmp(data, t._input, t._inputLength) == 0)
+			t._prefix = true;
+		else
+			t._prefix = false;
+
+		unsigned char firstChar = t._input[0];
+		_altInputs[firstChar].push_front(t);
+	}
+
+	return true;
+}
+
+void Vocabulary::freeAltInputs() {
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_ALT_INPUTS), 0);
+	if (resource)
+		_resMan->unlockResource(resource);
+
+	_altInputs.clear();
+}
+
+bool Vocabulary::checkAltInput(Common::String& text, uint16& cursorPos) {
+	if (_altInputs.empty())
+		return false;
+	if (SELECTOR(parseLang) == -1)
+		return false;
+	if (readSelectorValue(g_sci->getEngineState()->_segMan, g_sci->getGameObject(), SELECTOR(parseLang)) == 1)
+		return false;
+
+	bool ret = false;
+	unsigned int loopCount = 0;
+	bool changed;
+	do {
+		changed = false;
+
+		const char* t = text.c_str();
+		unsigned int tlen = text.size();
+
+		for (unsigned int p = 0; p < tlen && !changed; ++p) {
+			unsigned char s = t[p];
+			if (s >= _altInputs.size() || _altInputs[s].empty())
+				continue;
+			Common::List<AltInput>::iterator i;
+			for (i = _altInputs[s].begin(); i != _altInputs[s].end(); ++i) {
+				if (p + i->_inputLength > tlen)
+					continue;
+				if (i->_prefix && cursorPos > p && cursorPos <= p + i->_inputLength)
+					continue;
+				if (strncmp(i->_input, t+p, i->_inputLength) == 0) {
+					// replace
+					if (cursorPos > p + i->_inputLength) {
+						cursorPos += strlen(i->_replacement) - i->_inputLength;
+					} else if (cursorPos > p) {
+						cursorPos = p + strlen(i->_replacement);
+					}
+
+					for (unsigned int j = 0; j < i->_inputLength; ++j)
+						text.deleteChar(p);
+					const char *r = i->_replacement;
+					while (*r)
+						text.insertChar(*r++, p++);
+
+					assert(cursorPos <= text.size());
+
+					changed = true;
+					ret = true;
+					break;
+				}
+			}
+		}
+	} while (changed && loopCount < 10);
+
+	return ret;
+}
+
 // we assume that *word points to an already lowercased word
-ResultWord Vocabulary::lookupWord(const char *word, int word_len) {
+void Vocabulary::lookupWord(ResultWordList& retval, const char *word, int word_len) {
+	retval.clear();
+
 	Common::String tempword(word, word_len);
 
 	// Remove all dashes from tempword
@@ -277,15 +388,22 @@ ResultWord Vocabulary::lookupWord(const char *word, int word_len) {
 	}
 
 	// Look it up:
-	WordMap::iterator dict_word = _parserWords.find(tempword);
+	WordMap::iterator dict_words = _parserWords.find(tempword);
 
 	// Match found? Return it!
-	if (dict_word != _parserWords.end()) {
-		return dict_word->_value;
+	if (dict_words != _parserWords.end()) {
+		retval = dict_words->_value;
+
+		// SCI01 was the first version to support
+		// multiple matches, so no need to look further
+		// in earlier versions.
+		if (getSciVersion() < SCI_VERSION_01)
+			return;
+
 	}
 
 	// Now try all suffixes
-	for (SuffixList::const_iterator suffix = _parserSuffixes.begin(); suffix != _parserSuffixes.end(); ++suffix)
+	for (SuffixList::const_iterator suffix = _parserSuffixes.begin(); suffix != _parserSuffixes.end(); ++suffix) {
 		if (suffix->alt_suffix_length <= word_len) {
 
 			int suff_index = word_len - suffix->alt_suffix_length;
@@ -298,27 +416,38 @@ ResultWord Vocabulary::lookupWord(const char *word, int word_len) {
 				// ...and append "correct" suffix
 				tempword2 += Common::String(suffix->word_suffix, suffix->word_suffix_length);
 
-				dict_word = _parserWords.find(tempword2);
+				dict_words = _parserWords.find(tempword2);
 
-				if ((dict_word != _parserWords.end()) && (dict_word->_value._class & suffix->class_mask)) { // Found it?
-					// Use suffix class
-					ResultWord tmp = dict_word->_value;
-					tmp._class = suffix->result_class;
-					return tmp;
+				if (dict_words != _parserWords.end()) {
+					for (ResultWordList::const_iterator j = dict_words->_value.begin(); j != dict_words->_value.end(); ++j) {
+						if (j->_class & suffix->class_mask) { // Found it?
+							// Use suffix class
+							ResultWord tmp = *j;
+							tmp._class = suffix->result_class;
+							retval.push_back(tmp);
+
+							// SCI01 was the first version to support
+							// multiple matches, so no need to look further
+							// in earlier versions.
+							if (getSciVersion() < SCI_VERSION_01)
+								return;
+						}
+					}
 				}
 			}
 		}
+	}
+
+	if (!retval.empty())
+		return;
 
 	// No match so far? Check if it's a number.
 
-	ResultWord retval = { -1, -1 };
 	char *tester;
 	if ((strtol(tempword.c_str(), &tester, 10) >= 0) && (*tester == '\0')) { // Do we have a complete number here?
 		ResultWord tmp = { VOCAB_CLASS_NUMBER, VOCAB_MAGIC_NUMBER_GROUP };
-		retval = tmp;
+		retval.push_back(tmp);
 	}
-
-	return retval;
 }
 
 void Vocabulary::debugDecipherSaidBlock(const byte *addr) {
@@ -397,7 +526,7 @@ static const byte lowerCaseMap[256] = {
 	0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff  // 0xf0
 };
 
-bool Vocabulary::tokenizeString(ResultWordList &retval, const char *sentence, char **error) {
+bool Vocabulary::tokenizeString(ResultWordListList &retval, const char *sentence, char **error) {
 	char currentWord[VOCAB_MAX_WORDLENGTH] = "";
 	int pos_in_sentence = 0;
 	unsigned char c;
@@ -418,10 +547,12 @@ bool Vocabulary::tokenizeString(ResultWordList &retval, const char *sentence, ch
 		else {
 			if (wordLen) { // Finished a word?
 
-				ResultWord lookup_result = lookupWord(currentWord, wordLen);
-				// Look it up
+				ResultWordList lookup_result;
 
-				if (lookup_result._class == -1) { // Not found?
+				// Look it up
+				lookupWord(lookup_result, currentWord, wordLen);
+
+				if (lookup_result.empty()) { // Not found?
 					*error = (char *)calloc(wordLen + 1, 1);
 					strncpy(*error, currentWord, wordLen); // Set the offending word
 					retval.clear();
@@ -459,41 +590,17 @@ void Vocabulary::printSuffixes() const {
 void Vocabulary::printParserWords() const {
 	Console *con = g_sci->getSciDebugger();
 
-	int j = 0;
+	int n = 0;
 	for (WordMap::iterator i = _parserWords.begin(); i != _parserWords.end(); ++i) {
-		con->DebugPrintf("%4d: %03x [%03x] %20s |", j, i->_value._class, i->_value._group, i->_key.c_str());
-		if (j % 3 == 0)
-			con->DebugPrintf("\n");
-		j++;
+		for (ResultWordList::iterator j = i->_value.begin(); j != i->_value.end(); ++j) {
+			con->DebugPrintf("%4d: %03x [%03x] %20s |", n, j->_class, j->_group, i->_key.c_str());
+			if (n % 3 == 0)
+				con->DebugPrintf("\n");
+			n++;
+		}
 	}
 
 	con->DebugPrintf("\n");
-}
-
-void _vocab_recursive_ptree_dump_treelike(ParseTreeNode *tree) {
-	assert(tree);
-
-	if (tree->type == kParseTreeLeafNode)
-		printf("%x", tree->value);
-	else {
-		ParseTreeNode* lbranch = tree->left;
-		ParseTreeNode* rbranch = tree->right;
-		printf("<");
-
-		if (lbranch)
-			_vocab_recursive_ptree_dump_treelike(lbranch);
-		else
-			printf("NULL");
-
-		printf(",");
-
-		if (rbranch)
-			_vocab_recursive_ptree_dump_treelike(rbranch);
-		else
-			printf("NULL");
-
-		printf(">");
-	}
 }
 
 void _vocab_recursive_ptree_dump(ParseTreeNode *tree, int blanks) {
@@ -526,33 +633,37 @@ void _vocab_recursive_ptree_dump(ParseTreeNode *tree, int blanks) {
 	if (rbranch) {
 		if (rbranch->type == kParseTreeBranchNode)
 			_vocab_recursive_ptree_dump(rbranch, blanks);
-		else
+		else {
 			printf("%x", rbranch->value);
+			while (rbranch->right) {
+				rbranch = rbranch->right;
+				printf("/%x", rbranch->value);
+			}
+		}
 	}/* else printf("nil");*/
 }
 
 void vocab_dump_parse_tree(const char *tree_name, ParseTreeNode *nodes) {
-	//_vocab_recursive_ptree_dump_treelike(nodes, 0, 0);
 	printf("(setq %s \n'(", tree_name);
 	_vocab_recursive_ptree_dump(nodes, 1);
 	printf("))\n");
 }
 
 void Vocabulary::dumpParseTree() {
-	//_vocab_recursive_ptree_dump_treelike(nodes, 0, 0);
 	printf("(setq parse-tree \n'(");
 	_vocab_recursive_ptree_dump(_parserNodes, 1);
 	printf("))\n");
 }
 
-void Vocabulary::synonymizeTokens(ResultWordList &words) {
+void Vocabulary::synonymizeTokens(ResultWordListList &words) {
 	if (_synonyms.empty())
 		return; // No synonyms: Nothing to check
 
-	for (ResultWordList::iterator i = words.begin(); i != words.end(); ++i)
-		for (SynonymList::const_iterator sync = _synonyms.begin(); sync != _synonyms.end(); ++sync)
-			if (i->_group == sync->replaceant)
-				i->_group = sync->replacement;
+	for (ResultWordListList::iterator i = words.begin(); i != words.end(); ++i)
+		for (ResultWordList::iterator j = i->begin(); j != i->end(); ++j)
+			for (SynonymList::const_iterator sync = _synonyms.begin(); sync != _synonyms.end(); ++sync)
+				if (j->_group == sync->replaceant)
+					j->_group = sync->replacement;
 }
 
 void Vocabulary::printParserNodes(int num) {
@@ -578,6 +689,7 @@ int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const c
 	if (type == kParseNumber) {
 		_parserNodes[*pos += 1].type = kParseTreeLeafNode;
 		_parserNodes[*pos].value = nr;
+		_parserNodes[*pos].right = 0;
 		return *pos;
 	}
 	if (type == kParseEndOfInput) {

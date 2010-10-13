@@ -45,8 +45,6 @@
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
 
-#include "gui/message.h"
-
 namespace Sci {
 
 
@@ -568,26 +566,32 @@ void GfxPalette::palVarySaveLoadPalette(Common::Serializer &s, Palette *palette)
 }
 
 void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
-	if (s.getVersion() < 24)
-		return;
-
-	if (s.isLoading() && _palVaryResourceId != -1)
-		palVaryRemoveTimer();
-
-	s.syncAsSint32LE(_palVaryResourceId);
-	if (_palVaryResourceId != -1) {
-		palVarySaveLoadPalette(s, &_palVaryOriginPalette);
-		palVarySaveLoadPalette(s, &_palVaryTargetPalette);
-		s.syncAsSint16LE(_palVaryStep);
-		s.syncAsSint16LE(_palVaryStepStop);
-		s.syncAsSint16LE(_palVaryDirection);
-		s.syncAsUint16LE(_palVaryTicks);
-		s.syncAsSint32LE(_palVaryPaused);
+	if (s.getVersion() >= 25) {
+		// We need to save intensity of the _sysPalette at least for kq6 when entering the dark cave (room 390)
+		//  from room 340. scripts will set intensity to 60 for this room and restore them when leaving.
+		//  Sierra SCI is also doing this (although obviously not for SCI0->SCI01 games, still it doesn't hurt
+		//  to save it everywhere). ffs. bug #3072868
+		s.syncBytes(_sysPalette.intensity, 256);
 	}
+	if (s.getVersion() >= 24) {
+		if (s.isLoading() && _palVaryResourceId != -1)
+			palVaryRemoveTimer();
 
-	if (s.isLoading() && _palVaryResourceId != -1) {
-		_palVarySignal = 0;
-		palVaryInstallTimer();
+		s.syncAsSint32LE(_palVaryResourceId);
+		if (_palVaryResourceId != -1) {
+			palVarySaveLoadPalette(s, &_palVaryOriginPalette);
+			palVarySaveLoadPalette(s, &_palVaryTargetPalette);
+			s.syncAsSint16LE(_palVaryStep);
+			s.syncAsSint16LE(_palVaryStepStop);
+			s.syncAsSint16LE(_palVaryDirection);
+			s.syncAsUint16LE(_palVaryTicks);
+			s.syncAsSint32LE(_palVaryPaused);
+		}
+
+		if (s.isLoading() && _palVaryResourceId != -1) {
+			_palVarySignal = 0;
+			palVaryInstallTimer();
+		}
 	}
 }
 
@@ -701,6 +705,8 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savenam
 	return true;
 }
 
+extern void showScummVMDialog(const Common::String &message);
+
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	SavegameMetadata meta;
 
@@ -708,7 +714,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	sync_SavegameMetadata(ser, meta);
 
 	if (fh->eos()) {
-		s->r_acc = make_reg(0, 1);	// signal failure
+		s->r_acc = TRUE_REG;	// signal failure
 		return;
 	}
 
@@ -721,10 +727,9 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 			warning("Savegame version is %d, maximum supported is %0d", meta.savegame_version, CURRENT_SAVEGAME_VERSION);
 		*/
 
-		GUI::MessageDialog dialog("The format of this saved game is obsolete, unable to load it", "OK");
-		dialog.runModal();
+		showScummVMDialog("The format of this saved game is obsolete, unable to load it");
 
-		s->r_acc = make_reg(0, 1);	// signal failure
+		s->r_acc = TRUE_REG;	// signal failure
 		return;
 	}
 
@@ -733,10 +738,9 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		if (script0->size != meta.script0_size || g_sci->getGameObject().offset != meta.game_object_offset) {
 			//warning("This saved game was created with a different version of the game, unable to load it");
 
-			GUI::MessageDialog dialog("This saved game was created with a different version of the game, unable to load it", "OK");
-			dialog.runModal();
+			showScummVMDialog("This saved game was created with a different version of the game, unable to load it");
 
-			s->r_acc = make_reg(0, 1);	// signal failure
+			s->r_acc = TRUE_REG;	// signal failure
 			return;
 		}
 	}

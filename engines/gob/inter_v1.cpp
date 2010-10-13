@@ -492,10 +492,10 @@ void Inter_v1::o1_initMult() {
 		_vm->_mult->_animSurf = _vm->_draw->_spritesArray[Draw::kAnimSurface];
 	}
 
-	_vm->_video->drawSprite(*_vm->_draw->_backSurface, *_vm->_mult->_animSurf,
+	_vm->_mult->_animSurf->blit(*_vm->_draw->_backSurface,
 	    _vm->_mult->_animLeft, _vm->_mult->_animTop,
 	    _vm->_mult->_animLeft + _vm->_mult->_animWidth - 1,
-	    _vm->_mult->_animTop + _vm->_mult->_animHeight - 1, 0, 0, 0);
+	    _vm->_mult->_animTop + _vm->_mult->_animHeight - 1, 0, 0);
 
 	debugC(4, kDebugGraphics, "o1_initMult: x = %d, y = %d, w = %d, h = %d",
 		  _vm->_mult->_animLeft, _vm->_mult->_animTop,
@@ -707,8 +707,7 @@ bool Inter_v1::o1_loadCursor(OpFuncParams &params) {
 	if (!resource)
 		return false;
 
-	_vm->_video->fillRect(*_vm->_draw->_cursorSprites,
-			index * _vm->_draw->_cursorWidth, 0,
+	_vm->_draw->_cursorSprites->fillRect(index * _vm->_draw->_cursorWidth, 0,
 			index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
 			_vm->_draw->_cursorHeight - 1, 0);
 
@@ -1075,7 +1074,7 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 			}
 		}
 		if (!allZero) {
-			_vm->_video->clearSurf(*_vm->_draw->_frontSurface);
+			_vm->_draw->_frontSurface->clear();
 			_vm->_draw->_noInvalidated57 = true;
 			_vm->_game->_script->skip(48);
 			return false;
@@ -1189,6 +1188,9 @@ bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	int16 cmd;
 	int16 key;
 	uint32 now;
+
+	_vm->_draw->forceBlit();
+	_vm->_video->retrace();
 
 	cmd = _vm->_game->_script->readInt16();
 	animPalette();

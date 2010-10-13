@@ -138,9 +138,9 @@ bool GameFeatures::autoDetectSoundType() {
 SciVersion GameFeatures::detectDoSoundType() {
 	if (_doSoundType == SCI_VERSION_NONE) {
 		if (getSciVersion() == SCI_VERSION_0_EARLY) {
-			// This game is using early SCI0 sound code (different headers than
-			// SCI0 late)
-			_doSoundType = SCI_VERSION_0_EARLY;
+			// Almost all of the SCI0EARLY games use different sound resources than
+			//  SCI0LATE. Although the last SCI0EARLY game (lsl2) uses SCI0LATE resources
+			_doSoundType = g_sci->getResMan()->detectEarlySound() ? SCI_VERSION_0_EARLY : SCI_VERSION_0_LATE;
 #ifdef ENABLE_SCI32
 		} else if (getSciVersion() >= SCI_VERSION_2_1) {
 			_doSoundType = SCI_VERSION_2_1;
@@ -275,15 +275,8 @@ SciVersion GameFeatures::detectLofsType() {
 			return _lofsType;
 		}
 
-		// Find the "Game" object, super class of the actual game-object
-		const reg_t game = g_sci->getGameObject();
-		const Object *gameObject = _segMan->getObject(game);
-		reg_t gameSuperClass = NULL_REG;
-		if (gameObject) {
-			gameSuperClass = gameObject->getSuperClassSelector();
-		}
-
-		// Find a function of the game object which invokes lofsa/lofss
+		// Find a function of the "Game" object (which is the game super class) which invokes lofsa/lofss
+		reg_t gameSuperClass = g_sci->getGameSuperClassAddress();
 		bool found = false;
 		if (!gameSuperClass.isNull()) {
 			Common::String gameSuperClassName = _segMan->getObjectName(gameSuperClass);

@@ -66,13 +66,7 @@ namespace Tinsel {
 
 #define PREFETCH	(NUM_SLOTS/2)	// For initial test
 
-#ifndef _Windows
-//#define ADVANCE_SOUND		12	// 1 second
-#define ADVANCE_SOUND		18	// 1 1/2 second
-//#define MAX_ADVANCE_SOUND	36	// 3 seconds
-#else
 #define ADVANCE_SOUND		18	// 1 1/2 seconds
-#endif
 #define SUBSEQUENT_SOUND	6	// 1/2 second
 
 

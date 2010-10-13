@@ -451,8 +451,8 @@ public:
 	void cmdActorWalkTo(int argc, const char **argv);
 
 	bool validActorId(uint16 id) { return (id == ID_PROTAG) || ((id >= objectIndexToId(kGameObjectActor, 0)) && (id < objectIndexToId(kGameObjectActor, _actorsCount))); }
-	int actorIdToIndex(uint16 id) { return (id == ID_PROTAG ) ? 0 : objectIdToIndex(id); }
-	uint16 actorIndexToId(int index) { return (index == 0 ) ? ID_PROTAG : objectIndexToId(kGameObjectActor, index); }
+	int actorIdToIndex(uint16 id) { return (id == ID_PROTAG) ? 0 : objectIdToIndex(id); }
+	uint16 actorIndexToId(int index) { return (index == 0) ? ID_PROTAG : objectIndexToId(kGameObjectActor, index); }
 	ActorData *getActor(uint16 actorId);
 	ActorData *getFirstActor() { return _actors[0]; }
 

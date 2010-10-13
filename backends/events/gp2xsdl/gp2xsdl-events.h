@@ -50,8 +50,11 @@ protected:
 	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
+	virtual bool GP2XSdlEventManager::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
 
 	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
+
+	virtual bool GP2XSdlEventManager::remapKey(SDL_Event &ev, Common::Event &event);
 };
 
 #endif

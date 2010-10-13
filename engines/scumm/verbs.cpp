@@ -651,6 +651,50 @@ void ScummEngine_v2::checkExecVerbs() {
 			}
 		}
 
+		// Simulate inventory picking and scrolling keys
+		int object = -1;
+
+		switch (_mouseAndKeyboardStat) {
+		case 'u': // arrow up
+			if (_inventoryOffset >= 2) {
+				_inventoryOffset -= 2;
+				redrawV2Inventory();
+			}
+			return;
+		case 'j': // arrow down
+			if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
+				_inventoryOffset += 2;
+				redrawV2Inventory();
+			}
+			return;
+		case 'i': // object
+			object = 0;
+			break;
+		case 'o':
+			object = 1;
+			break;
+		case 'k':
+			object = 2;
+			break;
+		case 'l':
+			object = 3;
+			break;
+		}
+
+		if (object != -1) {
+			object = findInventory(_scummVars[VAR_EGO], object + 1 + _inventoryOffset);
+
+			if (object > 0) {
+				if (_game.version == 0) {
+					_activeInventory = object;
+
+				} else {
+					runInputScript(kInventoryClickArea, object, 0);
+				}
+			}
+			return;
+		}
+
 		// Generic keyboard input
 		runInputScript(kKeyClickArea, _mouseAndKeyboardStat, 1);
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
@@ -701,28 +745,15 @@ void ScummEngine_v0::runObject(int obj, int entry) {
 		runObjectScript(obj, entry, false, false, NULL);
 	} else if (entry != 13 && entry != 15) {
 		if (_activeVerb != 3) {
-			VAR(9) = entry;
+			VAR(VAR_ACTIVE_VERB) = entry;
 			runScript(3, 0, 0, 0);
 
 		// For some reasons, certain objects don't have a "give" script
-		} else if (VAR(5) > 0 && VAR(5) < 8) {
+		} else if (VAR(VAR_ACTIVE_ACTOR) > 0 && VAR(VAR_ACTIVE_ACTOR) < 8) {
 			if (_activeInventory)
-				setOwnerOf(_activeInventory, VAR(5));
+				setOwnerOf(_activeInventory, VAR(VAR_ACTIVE_ACTOR));
 		}
 	}
-}
-
-void ScummEngine_v2::runObject(int obj, int entry) {
-	if (getVerbEntrypoint(obj, entry) != 0) {
-		runObjectScript(obj, entry, false, false, NULL);
-	} else if (entry != 13 && entry != 15) {
-		VAR(9) = entry;
-		runScript(3, 0, 0, 0);
-	}
-
-	_activeInventory = 0;
-	_activeObject = 0;
-	_activeVerb = 13;
 }
 
 bool ScummEngine_v0::verbMoveToActor(int actor) {
@@ -911,7 +942,7 @@ bool ScummEngine_v0::verbExec() {
 			return true;
 		}
 		_v0ObjectInInventory = true;
-		VAR(5) = _activeActor;
+		VAR(VAR_ACTIVE_ACTOR) = _activeActor;
 		runObject(_activeInventory , 3);
 		_v0ObjectInInventory = false;
 
@@ -1420,9 +1451,14 @@ void ScummEngine::restoreVerbBG(int verb) {
 	VerbSlot *vs;
 
 	vs = &_verbs[verb];
+	uint8 col = 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		((_game.platform == Common::kPlatformFMTowns) && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4) && (vs->bkcolor == _townsOverrideShadowColor)) ? 0 : 
+#endif
+		vs->bkcolor;
 
 	if (vs->oldRect.left != -1) {
-		restoreBackground(vs->oldRect, vs->bkcolor);
+		restoreBackground(vs->oldRect, col);
 		vs->oldRect.left = -1;
 	}
 }

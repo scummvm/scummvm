@@ -105,16 +105,9 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	case GID_CNICK_KQ:
 		offTop = 0;
 		break;
-	case GID_MOTHERGOOSE:
-		// TODO: if mother goose EGA also uses offTop we can simply remove this check altogether
-		switch (getSciVersion()) {
-		case SCI_VERSION_1_EARLY:
-		case SCI_VERSION_1_1:
-			offTop = 0;
-			break;
-		default:
-			break;
-		}
+	case GID_MOTHERGOOSE256:
+		// only the SCI1 and SCI1.1 (VGA) versions need this
+		offTop = 0;
 		break;
 	case GID_FAIRYTALES:
 		// Mixed-Up Fairy Tales (& its demo) uses -w 26 0 200 320. If we don't
@@ -308,7 +301,7 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	Common::Rect r;
 
 	if (!pwnd) {
-		error("Can't open window!");
+		error("Can't open window");
 		return 0;
 	}
 
@@ -376,6 +369,20 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	if (draw)
 		drawWindow(pwnd);
 	setPort((Port *)pwnd);
+
+	// FIXME: changing setOrigin to not clear the rightmost bit fixes the display of windows
+	// in some fanmade games (e.g. New Year's Mystery (Updated)). Since the fanmade games
+	// use an unmodified SCI interpreter, this leads me to believe that there either is some
+	// off-by-one error in the window drawing code, or there is another place where the
+	// rightmost bit should be cleeared. New Year's Mystery is a good test case for this, as
+	// it draws dialogs and then draws cels on top of them, for fancier dialog corners (like,
+	// for example, KQ5). KQ5 has a custom window style, however, whereas New Year's mystery
+	// has a "classic" style with only SCI_WINDOWMGR_STYLE_NOFRAME set. If
+	// SCI_WINDOWMGR_STYLE_NOFRAME is removed, the window is cleared correctly, because it
+	// grows slightly, covering the view pixels on the left. In any case, the views and the
+	// window have a difference of one pixel when they're drawn via kNewWindow and kDrawCel,
+	// which causes the glitch to appear when the window is closed.
+
 	// All SCI0 games till kq4 .502 (not including) did not adjust against _wmgrPort, we set _wmgrPort->top to 0 in that case
 	setOrigin(pwnd->rect.left, pwnd->rect.top + _wmgrPort->top);
 	pwnd->rect.moveTo(0, 0);

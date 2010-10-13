@@ -54,6 +54,8 @@ protected:
 
 	ThemeEngine::FontStyle  _font;
 
+	ThemeEngine::TextInversionState  _inversion;
+
 public:
 	EditableWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = 0, uint32 cmd = 0);
 	EditableWidget(GuiObject *boss, const String &name, const char *tooltip = 0, uint32 cmd = 0);

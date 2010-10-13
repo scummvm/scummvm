@@ -57,7 +57,7 @@ public:
 	void setGM(bool isGM) { _isGM = isGM; }
 
 	//MidiDriver interface implementation
-	int open() { return _driver->open(); }
+	int open();
 	void close() { _driver->close(); }
 	void send(uint32 b);
 

@@ -233,9 +233,9 @@ void Goblin::drawObjects() {
 		if (objDesc->toRedraw == 0)
 			continue;
 
-		_vm->_video->drawSprite(*_vm->_mult->_animSurf, *_vm->_draw->_backSurface,
+		_vm->_draw->_backSurface->blit(*_vm->_mult->_animSurf,
 		    objDesc->left, objDesc->top, objDesc->right,
-		    objDesc->bottom, objDesc->left, objDesc->top, 0);
+		    objDesc->bottom, objDesc->left, objDesc->top);
 
 		_vm->_draw->invalidateRect(objDesc->left, objDesc->top,
 		    objDesc->right, objDesc->bottom);

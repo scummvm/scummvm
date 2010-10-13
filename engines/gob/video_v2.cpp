@@ -34,9 +34,9 @@ Video_v2::Video_v2(GobEngine *vm) : Video_v1(vm) {
 }
 
 char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-	    int16 x, int16 y, int16 transp, SurfaceDesc &destDesc) {
+	    int16 x, int16 y, int16 transp, Surface &destDesc) {
 	byte *memBuffer;
-	byte *srcPtr, *destPtr, *linePtr;
+	byte *srcPtr;
 	byte temp;
 	uint32 sourceLeft;
 	uint16 cmdVar;
@@ -47,7 +47,7 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	int16 strLen;
 	int16 lenCmd;
 
-	_vm->validateVideoMode(destDesc._vidMode);
+	//_vm->validateVideoMode(destDesc._vidMode);
 
 	if (sprBuf[0] != 1)
 		return 0;
@@ -56,9 +56,8 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		return 0;
 
 	if (sprBuf[2] == 2) {
-		SurfaceDesc sourceDesc(0x13, srcWidth, srcHeight, sprBuf + 3);
-		Video::drawSprite(sourceDesc, destDesc, 0, 0, srcWidth - 1,
-		    srcHeight - 1, x, y, transp);
+		Surface sourceDesc(srcWidth, srcHeight, 1, sprBuf + 3);
+		destDesc.blit(sourceDesc, 0, 0, srcWidth - 1, srcHeight - 1, x, y, (transp == 0) ? -1 : 0);
 		return 1;
 	} else if (sprBuf[2] == 1) {
 		memBuffer = new byte[4370];
@@ -70,12 +69,12 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 
 		sourceLeft = READ_LE_UINT32(srcPtr);
 
-		destPtr = destDesc.getVidMem() + destDesc.getWidth() * y + x;
+		Pixel destPtr = destDesc.get(x, y);
 
 		curWidth  = 0;
 		curHeight = 0;
 
-		linePtr = destPtr;
+		Pixel linePtr = destPtr;
 		srcPtr += 4;
 
 		if ((READ_LE_UINT16(srcPtr) == 0x1234) && (READ_LE_UINT16(srcPtr + 2) == 0x5678)) {
@@ -99,7 +98,7 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 				temp = *srcPtr++;
 
 				if ((temp != 0) || (transp == 0))
-					*destPtr = temp;
+					destPtr.set(temp);
 
 				destPtr++;
 				curWidth++;
@@ -133,7 +132,7 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 					temp = memBuffer[(offset + counter2) % 4096];
 
 					if ((temp != 0) || (transp == 0))
-						*destPtr = temp;
+						destPtr.set(temp);
 
 					destPtr++;
 					curWidth++;

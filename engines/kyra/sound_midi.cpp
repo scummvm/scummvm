@@ -134,10 +134,14 @@ MidiOutput::MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool de
 	static const byte sysEx2[] = { 3, 4, 3, 4, 3, 4, 3, 4, 4 };
 	static const byte sysEx3[] = { 0, 3, 2 };
 
-	sendSysEx(0x7F, 0x00, 0x00, sysEx1, 1);
-	sendSysEx(0x10, 0x00, 0x0D, sysEx1, 9);
-	sendSysEx(0x10, 0x00, 0x04, sysEx2, 9);
-	sendSysEx(0x10, 0x00, 0x01, sysEx3, 3);
+	if (_isMT32) {
+		sendSysEx(0x7F, 0x00, 0x00, sysEx1, 1);
+		sendSysEx(0x10, 0x00, 0x0D, sysEx1, 9);
+		sendSysEx(0x10, 0x00, 0x04, sysEx2, 9);
+		sendSysEx(0x10, 0x00, 0x01, sysEx3, 3);
+	} else {
+		_output->sendGMReset();
+	}
 
 	memset(_channels, 0, sizeof(_channels));
 	for (int i = 0; i < 16; ++i) {
@@ -519,12 +523,12 @@ bool SoundMidiPC::init() {
 	if (_nativeMT32 && _type == kMidiMT32) {
 		const char *midiFile = 0;
 		const char *pakFile = 0;
-		if (_vm->gameFlags().gameID == GI_KYRA1) {
+		if (_vm->game() == GI_KYRA1) {
 			midiFile = "INTRO";
-		} else if (_vm->gameFlags().gameID == GI_KYRA2) {
+		} else if (_vm->game() == GI_KYRA2) {
 			midiFile = "HOF_SYX";
 			pakFile = "AUDIO.PAK";
-		} else if (_vm->gameFlags().gameID == GI_LOL) {
+		} else if (_vm->game() == GI_LOL) {
 			midiFile = "LOREINTR";
 
 			if (_vm->gameFlags().isDemo) {
@@ -618,7 +622,7 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 
 	// Since KYRA1 uses the same file for SFX and Music
 	// we setup sfx to play from music file as well
-	if (_vm->gameFlags().gameID == GI_KYRA1) {
+	if (_vm->game() == GI_KYRA1) {
 		for (int i = 0; i < 3; ++i) {
 			_output->setSoundSource(i+1);
 			_sfx[i]->loadMusic(_musicFile, fileSize);
@@ -631,7 +635,7 @@ void SoundMidiPC::loadSfxFile(Common::String file) {
 	Common::StackLock lock(_mutex);
 
 	// Kyrandia 1 doesn't use a special sfx file
-	if (_vm->gameFlags().gameID == GI_KYRA1)
+	if (_vm->game() == GI_KYRA1)
 		return;
 
 	file = getFileName(file);

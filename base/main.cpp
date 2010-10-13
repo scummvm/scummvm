@@ -320,9 +320,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
 
-	// Enable translation
-	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
-
 	// Load and setup the debuglevel and the debug flags. We do this at the
 	// soonest possible moment to ensure debug output starts early on, if
 	// requested.

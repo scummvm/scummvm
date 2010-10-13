@@ -24,9 +24,13 @@
  */
 
 #include "common/archive.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/str.h"
 #include "common/savefile.h"
+#include "common/translation.h"
+
+#include "gui/saveload.h"
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
@@ -37,7 +41,7 @@
 namespace Sci {
 
 struct SavegameDesc {
-	uint id;
+	int16 id;
 	int virtualId; // straight numbered, according to id but w/o gaps
 	int date;
 	int time;
@@ -98,13 +102,9 @@ enum {
 
 
 
-reg_t file_open(EngineState *s, const char *filename, int mode) {
-	// QfG3 character import prepends /\ to the filenames.
-	if (filename[0] == '/' && filename[1] == '\\')
-		filename += 2;
-
+reg_t file_open(EngineState *s, const char *filename, int mode, bool unwrapFilename) {
 	Common::String englishName = g_sci->getSciLanguageString(filename, K_LANG_ENGLISH);
-	const Common::String wrappedName = g_sci->wrapFilename(englishName);
+	Common::String wrappedName = unwrapFilename ? g_sci->wrapFilename(englishName) : englishName;
 	Common::SeekableReadStream *inFile = 0;
 	Common::WriteStream *outFile = 0;
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
@@ -180,7 +180,7 @@ reg_t kFOpen(EngineState *s, int argc, reg_t *argv) {
 	int mode = argv[1].toUint16();
 
 	debugC(2, kDebugLevelFile, "kFOpen(%s,0x%x)", name.c_str(), mode);
-	return file_open(s, name.c_str(), mode);
+	return file_open(s, name.c_str(), mode, true);
 }
 
 static FileHandle *getFileFromHandle(EngineState *s, uint handle) {
@@ -218,29 +218,31 @@ reg_t kFPuts(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
+static int fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (!f)
-		return;
+		return 0;
 
 	if (!f->_in) {
 		error("fgets_wrapper: Trying to read from file '%s' opened for writing", f->_name.c_str());
-		return;
+		return 0;
 	}
+	int readBytes = 0;
 	if (maxsize > 1) {
 		memset(dest, 0, maxsize);
 		f->_in->readLine(dest, maxsize);
+		readBytes = strlen(dest); // FIXME: sierra sci returned byte count and didn't react on NUL characters
 		// The returned string must not have an ending LF
-		int strSize = strlen(dest);
-		if (strSize > 0) {
-			if (dest[strSize - 1] == 0x0A)
-				dest[strSize - 1] = 0;
+		if (readBytes > 0) {
+			if (dest[readBytes - 1] == 0x0A)
+				dest[readBytes - 1] = 0;
 		}
 	} else {
-		*dest = f->_in->readByte();
+		*dest = 0;
 	}
 
 	debugC(2, kDebugLevelFile, "  -> FGets'ed \"%s\"", dest);
+	return readBytes;
 }
 
 reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
@@ -249,9 +251,9 @@ reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
 	int handle = argv[2].toUint16();
 
 	debugC(2, kDebugLevelFile, "kFGets(%d, %d)", handle, maxsize);
-	fgets_wrapper(s, buf, maxsize, handle);
+	int readBytes = fgets_wrapper(s, buf, maxsize, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
-	return argv[0];
+	return readBytes ? argv[0] : NULL_REG;
 }
 
 /**
@@ -269,7 +271,7 @@ reg_t kGetCWD(EngineState *s, int argc, reg_t *argv) {
 }
 
 static void listSavegames(Common::Array<SavegameDesc> &saves);
-static int findSavegame(Common::Array<SavegameDesc> &saves, uint saveId);
+static int findSavegame(Common::Array<SavegameDesc> &saves, int16 saveId);
 
 enum {
 	K_DEVICE_INFO_GET_DEVICE = 0,
@@ -452,7 +454,7 @@ static void listSavegames(Common::Array<SavegameDesc> &saves) {
 }
 
 // Find a savedgame according to virtualId and return the position within our array
-static int findSavegame(Common::Array<SavegameDesc> &saves, uint savegameId) {
+static int findSavegame(Common::Array<SavegameDesc> &saves, int16 savegameId) {
 	for (uint saveNr = 0; saveNr < saves.size(); saveNr++) {
 		if (saves[saveNr].id == savegameId)
 			return saveNr;
@@ -460,7 +462,7 @@ static int findSavegame(Common::Array<SavegameDesc> &saves, uint savegameId) {
 	return -1;
 }
 
-// The scripts get IDs ranging from 1000->1999, because the scripts require us to assign unique ids THAT EVEN STAY BETWEEN
+// The scripts get IDs ranging from 100->199, because the scripts require us to assign unique ids THAT EVEN STAY BETWEEN
 //  SAVES and the scripts also use "saves-count + 1" to create a new savedgame slot.
 //  SCI1.1 actually recycles ids, in that case we will currently get "0".
 // This behaviour is required especially for LSL6. In this game, it's possible to quick save. The scripts will use
@@ -494,7 +496,7 @@ reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 
 	// Find saved-game
 	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
-		error("kCheckSaveGame: called with invalid savegameId!");
+		error("kCheckSaveGame: called with invalid savegameId");
 	uint savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
 	int savegameNr = findSavegame(saves, savegameId);
 	if (savegameNr == -1)
@@ -548,14 +550,14 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
-	Common::String game_id = s->_segMan->getString(argv[0]);
-	uint virtualId = argv[1].toUint16();
-	Common::String game_description = s->_segMan->getString(argv[2]);
+	Common::String game_id;
+ 	int16 virtualId = argv[1].toSint16();
+	int16 savegameId = -1;
+	Common::String game_description;
 	Common::String version;
+
 	if (argc > 3)
 		version = s->_segMan->getString(argv[3]);
-
-	debug(3, "kSaveGame(%s,%d,%s,%s)", game_id.c_str(), virtualId, game_description.c_str(), version.c_str());
 
 	// We check here, we don't want to delete a users save in case we are within a kernel function
 	if (s->executionStackBase) {
@@ -563,63 +565,95 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	Common::Array<SavegameDesc> saves;
-	listSavegames(saves);
+	if (argv[0].isNull()) {
+		// Direct call, from a patched Game::save
+		if ((argv[1] != SIGNAL_REG) || (!argv[2].isNull()))
+			error("kSaveGame: assumed patched call isn't accurate");
 
-	uint savegameId;
-	if ((virtualId >= SAVEGAMEID_OFFICIALRANGE_START) && (virtualId <= SAVEGAMEID_OFFICIALRANGE_END)) {
-		// savegameId is an actual Id, so search for it just to make sure
-		savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
-		if (findSavegame(saves, savegameId) == -1)
+		// we are supposed to show a dialog for the user and let him choose where to save
+		g_sci->_soundCmd->pauseAll(true); // pause music
+		const EnginePlugin *plugin = NULL;
+		EngineMan.findGame(g_sci->getGameIdStr(), &plugin);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
+		dialog->setSaveMode(true);
+		savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
+		game_description = dialog->getResultString();
+		if (game_description.empty()) {
+			// create our own description for the saved game, the user didnt enter it
+			TimeDate curTime;
+			g_system->getTimeAndDate(curTime);
+			curTime.tm_year += 1900; // fixup year
+			curTime.tm_mon++; // fixup month
+			game_description = Common::String::printf("%02d.%02d.%04d / %02d:%02d:%02d", curTime.tm_mday, curTime.tm_mon, curTime.tm_year, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+		}
+		delete dialog;
+		g_sci->_soundCmd->pauseAll(false); // unpause music ( we can't have it paused during save)
+		if (savegameId < 0)
 			return NULL_REG;
-	} else if (virtualId < SAVEGAMEID_OFFICIALRANGE_START) {
-		// virtualId is low, we assume that scripts expect us to create new slot
-		if (virtualId == s->_lastSaveVirtualId) {
-			// if last virtual id is the same as this one, we assume that caller wants to overwrite last save
-			savegameId = s->_lastSaveNewId;
-		} else {
-			uint savegameNr;
-			// savegameId is in lower range, scripts expect us to create a new slot
-			for (savegameId = 0; savegameId < SAVEGAMEID_OFFICIALRANGE_START; savegameId++) {
-				for (savegameNr = 0; savegameNr < saves.size(); savegameNr++) {
-					if (savegameId == saves[savegameNr].id)
+
+	} else {
+		// Real call from script
+		game_id = s->_segMan->getString(argv[0]);
+		if (argv[2].isNull())
+			error("kSaveGame: called with description being NULL");
+		game_description = s->_segMan->getString(argv[2]);
+
+		debug(3, "kSaveGame(%s,%d,%s,%s)", game_id.c_str(), virtualId, game_description.c_str(), version.c_str());
+
+		Common::Array<SavegameDesc> saves;
+		listSavegames(saves);
+
+		if ((virtualId >= SAVEGAMEID_OFFICIALRANGE_START) && (virtualId <= SAVEGAMEID_OFFICIALRANGE_END)) {
+			// savegameId is an actual Id, so search for it just to make sure
+			savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
+			if (findSavegame(saves, savegameId) == -1)
+				return NULL_REG;
+		} else if (virtualId < SAVEGAMEID_OFFICIALRANGE_START) {
+			// virtualId is low, we assume that scripts expect us to create new slot
+			if (virtualId == s->_lastSaveVirtualId) {
+				// if last virtual id is the same as this one, we assume that caller wants to overwrite last save
+				savegameId = s->_lastSaveNewId;
+			} else {
+				uint savegameNr;
+				// savegameId is in lower range, scripts expect us to create a new slot
+				for (savegameId = 0; savegameId < SAVEGAMEID_OFFICIALRANGE_START; savegameId++) {
+					for (savegameNr = 0; savegameNr < saves.size(); savegameNr++) {
+						if (savegameId == saves[savegameNr].id)
+							break;
+					}
+					if (savegameNr == saves.size())
 						break;
 				}
-				if (savegameNr == saves.size())
-					break;
+				if (savegameId == SAVEGAMEID_OFFICIALRANGE_START)
+					error("kSavegame: no more savegame slots available");
 			}
-			if (savegameId == SAVEGAMEID_OFFICIALRANGE_START)
-				error("kSavegame: no more savegame slots available");
+		} else {
+			error("kSaveGame: invalid savegameId used");
 		}
-	} else {
-		error("kSaveGame: invalid savegameId used");
+
+		// Save in case caller wants to overwrite last newly created save
+		s->_lastSaveVirtualId = virtualId;
+		s->_lastSaveNewId = savegameId;
 	}
 
-	// Save in case caller wants to overwrite last newly created save
-	s->_lastSaveVirtualId = virtualId;
-	s->_lastSaveNewId = savegameId;
+	s->r_acc = NULL_REG;
 
 	Common::String filename = g_sci->getSavegameName(savegameId);
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::OutSaveFile *out;
 	if (!(out = saveFileMan->openForSaving(filename))) {
 		warning("Error opening savegame \"%s\" for writing", filename.c_str());
-		s->r_acc = NULL_REG;
-		return NULL_REG;
-	}
-
-	if (!gamestate_save(s, out, game_description.c_str(), version.c_str())) {
-		warning("Saving the game failed.");
-		s->r_acc = NULL_REG;
 	} else {
-		out->finalize();
-		if (out->err()) {
-			delete out;
-			warning("Writing the savegame failed.");
-			s->r_acc = NULL_REG;
+		if (!gamestate_save(s, out, game_description.c_str(), version.c_str())) {
+			warning("Saving the game failed");
 		} else {
+			out->finalize();
+			if (out->err()) {
+				warning("Writing the savegame failed");
+			} else {
+				s->r_acc = TRUE_REG; // success
+			}
 			delete out;
-			s->r_acc = make_reg(0, 1);
 		}
 	}
 
@@ -628,41 +662,75 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = !argv[0].isNull() ? s->_segMan->getString(argv[0]) : "";
-	uint savegameId = argv[1].toUint16();
+	int16 savegameId = argv[1].toSint16();
+	bool pausedMusic = false;
 
 	debug(3, "kRestoreGame(%s,%d)", game_id.c_str(), savegameId);
 
 	if (argv[0].isNull()) {
-		// Loading from the launcher, don't adjust the ID of the saved game
+		// Direct call, either from launcher or from a patched Game::restore
+		if (savegameId == -1) {
+			// we are supposed to show a dialog for the user and let him choose a saved game
+			g_sci->_soundCmd->pauseAll(true); // pause music
+			const EnginePlugin *plugin = NULL;
+			EngineMan.findGame(g_sci->getGameIdStr(), &plugin);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"));
+			dialog->setSaveMode(false);
+			savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
+			delete dialog;
+			if (savegameId < 0) {
+				g_sci->_soundCmd->pauseAll(false); // unpause music
+				return s->r_acc;
+			}
+			pausedMusic = true;
+		}
+		// don't adjust ID of the saved game, it's already correct
 	} else {
-		if ((savegameId < 1000) || (savegameId > 1999)) {
+		if (argv[2].isNull())
+			error("kRestoreGame: called with parameter 2 being NULL");
+		// Real call from script, we need to adjust ID
+		if ((savegameId < SAVEGAMEID_OFFICIALRANGE_START) || (savegameId > SAVEGAMEID_OFFICIALRANGE_END)) {
 			warning("Savegame ID %d is not allowed", savegameId);
 			return TRUE_REG;
 		}
-		savegameId -= 1000;
+		savegameId -= SAVEGAMEID_OFFICIALRANGE_START;
 	}
+
+	s->r_acc = NULL_REG; // signals success
 
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 	if (findSavegame(saves, savegameId) == -1) {
+		s->r_acc = TRUE_REG;
 		warning("Savegame ID %d not found", savegameId);
-		return TRUE_REG;
+	} else {
+		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+		Common::String filename = g_sci->getSavegameName(savegameId);
+		Common::SeekableReadStream *in;
+		if ((in = saveFileMan->openForLoading(filename))) {
+			// found a savegame file
+
+			gamestate_restore(s, in);
+			delete in;
+
+			if (g_sci->getGameId() == GID_MOTHERGOOSE256) {
+				// WORKAROUND: Mother Goose SCI1/SCI1.1 does some weird things for
+				//  saving a previously restored game.
+				// We set the current savedgame-id directly and remove the script
+				//  code concerning this via script patch.
+				s->variables[VAR_GLOBAL][0xB3].offset = SAVEGAMEID_OFFICIALRANGE_START + savegameId;
+			}
+		} else {
+			s->r_acc = TRUE_REG;
+			warning("Savegame #%d not found", savegameId);
+		}
 	}
 
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	Common::String filename = g_sci->getSavegameName(savegameId);
-	Common::SeekableReadStream *in;
-	if ((in = saveFileMan->openForLoading(filename))) {
-		// found a savegame file
-
-		gamestate_restore(s, in);
-		delete in;
-
-		return s->r_acc;
+	if (!s->r_acc.isNull()) {
+		// no success?
+		if (pausedMusic)
+			g_sci->_soundCmd->pauseAll(false); // unpause music
 	}
-
-	s->r_acc = TRUE_REG;
-	warning("Savegame #%d not found", savegameId);
 
 	return s->r_acc;
 }
@@ -674,45 +742,6 @@ reg_t kValidPath(EngineState *s, int argc, reg_t *argv) {
 
 	// Always return true
 	return make_reg(0, 1);
-}
-
-reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager *segMan) {
-	// Verify that we are given a valid buffer
-	if (!buffer.segment) {
-		error("DirSeeker::firstFile('%s') invoked with invalid buffer", mask.c_str());
-		return NULL_REG;
-	}
-	_outbuffer = buffer;
-
-	// Prefix the mask
-	const Common::String wrappedMask = g_sci->wrapFilename(mask);
-
-	// Obtain a list of all savefiles matching the given mask
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	_savefiles = saveFileMan->listSavefiles(wrappedMask);
-
-	// Reset the list iterator and write the first match to the output buffer,
-	// if any.
-	_iter = _savefiles.begin();
-	return nextFile(segMan);
-}
-
-reg_t DirSeeker::nextFile(SegManager *segMan) {
-	if (_iter == _savefiles.end()) {
-		return NULL_REG;
-	}
-
-	const Common::String wrappedString = *_iter;
-
-	// Strip the prefix
-	Common::String string = g_sci->unwrapFilename(wrappedString);
-	if (string.size() > 12)
-		string = Common::String(string.c_str(), 12);
-	segMan->strcpy(_outbuffer, string.c_str());
-
-	// Return the result and advance the list iterator :)
-	++_iter;
-	return _outbuffer;
 }
 
 reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
@@ -727,6 +756,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	// SCI32 can call K_FILEIO_OPEN with only one argument. It seems to
 	// just be checking if it exists.
 	int mode = (argc < 2) ? (int)_K_FILE_MODE_OPEN_OR_FAIL : argv[1].toUint16();
+	bool unwrapFilename = true;
 
 	// SQ4 floppy prepends /\ to the filenames
 	if (name.hasPrefix("/\\")) {
@@ -744,11 +774,21 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (name.empty()) {
-		warning("Attempted to open a file with an empty filename");
+		// Happens many times during KQ1 (e.g. when typing something)
+		debugC(2, kDebugLevelFile, "Attempted to open a file with an empty filename");
 		return SIGNAL_REG;
 	}
 	debugC(2, kDebugLevelFile, "kFileIO(open): %s, 0x%x", name.c_str(), mode);
-	return file_open(s, name.c_str(), mode);
+
+	// QFG import rooms get a virtual filelisting instead of an actual one
+	if (g_sci->inQfGImportRoom()) {
+		// we need to find out what the user actually selected, "savedHeroes" is already destroyed
+		//  when we get here. That's why we need to remember selection via kDrawControl
+		name = s->_dirseeker.getVirtualFilename(s->_chosenQfGImportItem);
+		unwrapFilename = false;
+	}
+
+	return file_open(s, name.c_str(), mode, unwrapFilename);
 }
 
 reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
@@ -840,10 +880,10 @@ reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
 	int handle = argv[2].toUint16();
 	debugC(2, kDebugLevelFile, "kFileIO(readString): %d, %d", handle, size);
 
-	fgets_wrapper(s, buf, size, handle);
+	int readBytes = fgets_wrapper(s, buf, size, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, size);
 	delete[] buf;
-	return argv[0];
+	return readBytes ? argv[0] : NULL_REG;
 }
 
 reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
@@ -852,9 +892,12 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelFile, "kFileIO(writeString): %d", handle);
 
 	FileHandle *f = getFileFromHandle(s, handle);
-	if (f)
+
+	if (f) {
 		f->_out->write(str.c_str(), str.size());
 		return NULL_REG;
+	}
+
 	return make_reg(0, 6); // DOS - invalid handle
 }
 
@@ -865,9 +908,109 @@ reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
 		
 	FileHandle *f = getFileFromHandle(s, handle);
+
 	if (f)
 		s->r_acc = make_reg(0, f->_in->seek(offset, whence));
+
 	return SIGNAL_REG;
+}
+
+void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask) {
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::StringArray foundFiles = saveFileMan->listSavefiles(fileMask);
+	if (!foundFiles.empty()) {
+		_files.push_back(title);
+		_virtualFiles.push_back("");
+		Common::StringArray::iterator it;
+		Common::StringArray::iterator it_end = foundFiles.end();
+
+		for (it = foundFiles.begin(); it != it_end; it++) {
+			Common::String regularFilename = *it;
+			Common::String wrappedFilename = Common::String(regularFilename.c_str() + fileMask.size() - 1);
+
+			Common::SeekableReadStream *testfile = saveFileMan->openForLoading(regularFilename);
+			int32 testfileSize = testfile->size();
+			delete testfile;
+			if (testfileSize > 1024) // check, if larger than 1k. in that case its a saved game.
+				continue; // and we dont want to have those in the list
+			// We need to remove the prefix for display purposes
+			_files.push_back(wrappedFilename);
+			// but remember the actual name as well
+			_virtualFiles.push_back(regularFilename);
+		}
+	}
+}
+
+Common::String DirSeeker::getVirtualFilename(uint fileNumber) {
+	if (fileNumber >= _virtualFiles.size())
+		error("invalid virtual filename access");
+	return _virtualFiles[fileNumber];
+}
+
+reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager *segMan) {
+	// Verify that we are given a valid buffer
+	if (!buffer.segment) {
+		error("DirSeeker::firstFile('%s') invoked with invalid buffer", mask.c_str());
+		return NULL_REG;
+	}
+	_outbuffer = buffer;
+	_files.clear();
+	_virtualFiles.clear();
+
+	int QfGImport = g_sci->inQfGImportRoom();
+	if (QfGImport) {
+		_files.clear();
+		addAsVirtualFiles("-QfG1-", "qfg1-*");
+		addAsVirtualFiles("-QfG1VGA-", "qfg1vga-*");
+		if (QfGImport > 2)
+			addAsVirtualFiles("-QfG2-", "qfg2-*");
+		if (QfGImport > 3)
+			addAsVirtualFiles("-QfG3-", "qfg3-*");
+
+		if (QfGImport == 3) {
+			// QfG3 sorts the filelisting itself, we can't let that happen otherwise our
+			//  virtual list would go out-of-sync
+			reg_t savedHeros = segMan->findObjectByName("savedHeros");
+			if (!savedHeros.isNull())
+				writeSelectorValue(segMan, savedHeros, SELECTOR(sort), 0);
+		}
+
+	} else {
+		// Prefix the mask
+		const Common::String wrappedMask = g_sci->wrapFilename(mask);
+
+		// Obtain a list of all files matching the given mask
+		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+		_files = saveFileMan->listSavefiles(wrappedMask);
+	}
+
+	// Reset the list iterator and write the first match to the output buffer,
+	// if any.
+	_iter = _files.begin();
+	return nextFile(segMan);
+}
+
+reg_t DirSeeker::nextFile(SegManager *segMan) {
+	if (_iter == _files.end()) {
+		return NULL_REG;
+	}
+
+	Common::String string;
+
+	if (_virtualFiles.empty()) {
+		// Strip the prefix, if we don't got a virtual filelisting
+		const Common::String wrappedString = *_iter;
+		string = g_sci->unwrapFilename(wrappedString);
+	} else {
+		string = *_iter;
+	}
+	if (string.size() > 12)
+		string = Common::String(string.c_str(), 12);
+	segMan->strcpy(_outbuffer, string.c_str());
+
+	// Return the result and advance the list iterator :)
+	++_iter;
+	return _outbuffer;
 }
 
 reg_t kFileIOFindFirst(EngineState *s, int argc, reg_t *argv) {
@@ -875,12 +1018,6 @@ reg_t kFileIOFindFirst(EngineState *s, int argc, reg_t *argv) {
 	reg_t buf = argv[1];
 	int attr = argv[2].toUint16(); // We won't use this, Win32 might, though...
 	debugC(2, kDebugLevelFile, "kFileIO(findFirst): %s, 0x%x", mask.c_str(), attr);
-
-	// QfG3 uses "/\*.*" for the character import, QfG4 uses "/\*"
-	if (mask.hasPrefix("/\\")) {
-		mask.deleteChar(0);
-		mask.deleteChar(0);
-	}
 
 	// We remove ".*". mask will get prefixed, so we will return all additional files for that gameid
 	if (mask == "*.*")
@@ -960,7 +1097,7 @@ reg_t kFileIOWriteByte(EngineState *s, int argc, reg_t *argv) {
 	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
 	if (f)
 		f->_out->writeByte(argv[1].toUint16() & 0xff);
-	return s->r_acc; // FIXME: does this really doesn't return anything?
+	return s->r_acc; // FIXME: does this really not return anything?
 }
 
 reg_t kFileIOReadWord(EngineState *s, int argc, reg_t *argv) {
@@ -974,7 +1111,7 @@ reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv) {
 	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
 	if (f)
 		f->_out->writeUint16LE(argv[1].toUint16());
-	return s->r_acc; // FIXME: does this really doesn't return anything?
+	return s->r_acc; // FIXME: does this really not return anything?
 }
 
 reg_t kCD(EngineState *s, int argc, reg_t *argv) {

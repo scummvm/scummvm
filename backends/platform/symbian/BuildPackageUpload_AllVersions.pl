@@ -17,7 +17,7 @@ $SDK_BuildDirs{'S60v3'}	= "S60v3";
 $SDK_BuildDirs{'S80'}	= "S80";
 $SDK_BuildDirs{'S90'}	= "S90";
 
-# the target name inserted here: 'abld BUILD $SDK_TargetName UREL' 
+# the target name inserted here: 'abld BUILD $SDK_TargetName UREL'
 $SDK_TargetName{'UIQ2'}	= "armi";
 $SDK_TargetName{'UIQ3'}	= "gcce";
 $SDK_TargetName{'S60v1'}= "armi";
@@ -117,7 +117,7 @@ foreach $Library (sort keys(%PresentLibs))
 #					push @Packages, sprintf($file_tpl_sis, $version_tpl_sis, $SDK2, $Extra);
 #					$PackagesQueued++;
 #				}
-#			}	
+#			}
 #		}
 #		else
 #		{
@@ -144,7 +144,7 @@ while( ($SDK, $Value) = each(%VariationSets) )
 					push @Packages, sprintf($file_tpl_sis, $version_tpl_sis, $SDK2, $Extra);
 					$PackagesQueued++;
 				}
-			}	
+			}
 		}
 		else
 		{
@@ -170,7 +170,7 @@ Preparing to Build, Package & Upload $PackagesQueued SymbianOS ScummVM variation
 
 	SDKs inst'd  \t$SDKs	".(	%SDK_LibraryDirs ? "
 	LIBs inst'd  \t$LIBs	" : "" )."
-	$PackagesQueued Variations \t$PackagesStr	
+	$PackagesQueued Variations \t$PackagesStr
 	DIR base     \t$base_dir
 	    build    \t$build_dir
 	    output   \t$output_dir
@@ -178,7 +178,7 @@ Preparing to Build, Package & Upload $PackagesQueued SymbianOS ScummVM variation
 	FTP host     \t$FTP_Host
 	    user     \t$FTP_User
 	    pass     \t"."*" x length($FTP_Pass)."
-	    dir      \t$FTP_Dir	
+	    dir      \t$FTP_Dir
 " : "" )."
 =======================================================================================
 Press Ctrl-C to abort or enter to continue Build, Package & Upload $PackagesQueued Variations...
@@ -194,7 +194,7 @@ unlink($build_log_out);
 unlink($build_log_err);
 
 # init _base.mmp now, so we can start changing it without affecting the CVS version _base.mmp.in!
-my $name = "mmp/scummvm_base.mmp";	
+my $name = "mmp/scummvm_base.mmp";
 my $file  = "$build_dir/$name";
 open FILE, "$file.in";	@lines = <FILE>; close FILE;
 my $onestr = join("",@lines);
@@ -219,7 +219,7 @@ while( ($SDK, $Value) = each(%SDK_LibraryDirs) )
 					$LibrariesQueued++;
 					DoLibrary($SDK2, $Library, $Path);
 				}
-			}	
+			}
 		}
 		else
 		{
@@ -252,7 +252,7 @@ while( ($SDK, $VariationsHash) = each(%SDK_Variations) )
 				{
 					DoVariation($SDK2, $Variation, $MacroBlock);
 				}
-			}	
+			}
 		}
 		else
 		{
@@ -277,7 +277,7 @@ while( ($SDK, $VariationsHash) = each(%VariationSets) )
 				{
 					DoVariation($SDK2, $Variation, $MacroBlock);
 				}
-			}	
+			}
 		}
 		else
 		{
@@ -335,7 +335,7 @@ print "       SumthinWicked wishes you a ridiculously good and optimally happy d
 sub MakeMppMacroDefs
 {
 	my ($features) = @_;
-	
+
 	my %EnabledFeatures = ();
 	foreach (split(/\W|\r|\n/, $features))
 	{
@@ -398,14 +398,14 @@ sub MakeMppMacroDefs
 			$MacroDefs .= "//MACRO		ENABLE_$E\n";
 		}
 	}
-	
+
 #print "\n\n'$features' ==> $MacroDefs\n\n\n";
 	return $MacroDefs;
 }
 
 ##################################################################################################################
 
-# Build, Package & Upload a single Variation 
+# Build, Package & Upload a single Variation
 sub DoLibrary
 {
 	my ($SDK, $Library, $Path) = @_;
@@ -435,23 +435,23 @@ my $header = "
 	my $OK = 1;
 
 	PrepSdkPaths($SDK);
-	
+
 	chdir($Path) or $OK=0;
 	PrintErrorMessage("Changing to $Path failed!") if (!$OK);
-	return 0 if (!$OK);	
+	return 0 if (!$OK);
 
 	PrintMessage("Cleaning for $Target") if (!$ReallyQuiet);
 	system("bldmake bldfiles > NUL 2> NUL");
 	PrintErrorMessage("'bldmake bldfiles' exited with value " . ($? >> 8)) if ($? >> 8);
 
 	system("abld MAKEFILE $TargetName > NUL 2> NUL");
-	PrintErrorMessage("'abld MAKEFILE $TargetName' exited with value " . ($? >> 8)) if ($? >> 8);	
+	PrintErrorMessage("'abld MAKEFILE $TargetName' exited with value " . ($? >> 8)) if ($? >> 8);
 
 	system("abld CLEAN $TargetName UREL > NUL 2> NUL");
-	PrintErrorMessage("'abld CLEAN $TargetName urel' exited with value " . ($? >> 8)) if ($? >> 8);	
+	PrintErrorMessage("'abld CLEAN $TargetName urel' exited with value " . ($? >> 8)) if ($? >> 8);
 	# remove file so we are sure that after .lib generation we have a fresh copy!
 	if (-e $TargetFilePath) { unlink($TargetFilePath) or PrintErrorMessage("Removing $TargetFilePath"); }
-	
+
 	my $Redirection = "OUT:file, ERR:".($RedirectSTDERR ? "file" : "screen");
 	my $Message = "Building $Target ($Redirection)";
 	PrintMessage($Message) if (!$ReallyQuiet);
@@ -463,14 +463,14 @@ my $header = "
 	$OK = 0 if ($? >> 8);
 #	print "  STDERR: ".((-s $build_log_err)-$OldSize)." bytes output written to $build_log_err\n+--------------------------------------------------------------------------------------\n" if ($OldSize != (-s $build_log_err));
 	PrintErrorMessage("'abld TARGET $TargetName UREL' exited with value " . ($? >> 8)) if ($? >> 8);
-	return 0 if (!$OK); # ABLD always returns ok :( grr	
+	return 0 if (!$OK); # ABLD always returns ok :( grr
 	PrintMessage("Done.") if (!$ReallyQuiet);
 
 	# did it work? :)
 	if (-e $TargetFilePath)
 	{
 		$LibrariesSucceeded++;
-		
+
 		if ($TargetIntermediatePath ne '' && $TargetIntermediatePath =~ /\\EPOC32\\BUILD\\/i) # make really sure it's a valid path!
 		{
 			system("del /S /Q $TargetIntermediatePath > NUL");
@@ -491,12 +491,12 @@ my $header = "
 
 ##################################################################################################################
 
-# Build, Package & Upload a single Variation 
+# Build, Package & Upload a single Variation
 sub DoVariation
 {
 	my ($SDK, $Variation, $MacroBlock) = @_;
 	my $Extra = ($Variation ne '' ? "_$Variation" : "");
-	my $Package = sprintf($file_tpl_sis, $version_tpl_sis, $SDK, $Extra);	
+	my $Package = sprintf($file_tpl_sis, $version_tpl_sis, $SDK, $Extra);
 
 	if ($SkipExistingPackages && -f "$output_dir/$Package")
 	{
@@ -527,7 +527,7 @@ my $header = "
 	if ($OK)
 	{
 		$OK = BuildVariation($SDK, $Variation, $Package, $MacroBlock);
-	
+
 		if ($OK && $FTP_Host ne '')
 		{
 			UploadVariation($SDK, $Variation, $Package);
@@ -543,17 +543,17 @@ sub PrepVariation()
 	my $OK = 1;
 
 	PrepSdkPaths($SDK);
-	
+
 	chdir($build_dir) or $OK=0;
 	PrintErrorMessage("Changing to $build_dir failed!") if (!$OK);
-	return 0 if (!$OK);	
+	return 0 if (!$OK);
 
 	# insert $MacroBlock into AUTO_MACRO_MASTER in scummvm_base.mmp
 	PrintMessage("Setting new AUTO_MACROS_MASTER in scummvm_base.mmp for '$Variation'") if (!$ReallyQuiet);
 	my $n = "AUTO_MACROS_MASTER";
 	my $a = "\/\/START_$n\/\/";
 	my $b = "\/\/STOP_$n\/\/";
-	my $name = "scummvm_base.mmp";	
+	my $name = "scummvm_base.mmp";
 	my $file = "$build_dir/mmp/$name";
 	my $updated = " Updated @ ".localtime();
 
@@ -562,11 +562,11 @@ sub PrepVariation()
 	return 0 if (!$OK);
 	my @lines = <FILE>;
 	close FILE;
-	
+
 	my $onestr = join("",@lines);
 	$MacroBlock =~ s/^\s*//gm;
 	$onestr =~ s/$a(.*)$b/$a$updated\n$ExtraMacros$MacroBlock$b/s;
-	
+
 	open FILE, ">$file" or $OK=0;
 	PrintErrorMessage("Writing file '$file'") if (!$OK);
 	return 0 if (!$OK);
@@ -579,7 +579,7 @@ sub PrepVariation()
 	$OK = 0 if ($? >> 8);
 	PrintErrorMessage("'AdaptAllMMPs.pl' exited with value " . ($? >> 8)) if ($? >> 8);
 	return 0 if (!$OK);
-	
+
 	# we are here: so all is ok :)
 	return 1;
 }
@@ -592,7 +592,7 @@ sub BuildVariation()
 	my $TargetName = $SDK_TargetName{$SDK};
 	my $TargetDir  = $SDK_TargetDir{$SDK};
 	my $OK = 1;
-	
+
 	my $dir = $build_dir."/".$SDK_BuildDirs{$SDK};
 	$dir =~ s#/#\\#g;
 	chdir($dir);
@@ -617,8 +617,8 @@ sub BuildVariation()
 	PrintErrorMessage("'bldmake bldfiles' exited with value " . ($? >> 8)) if ($? >> 8);
 
 	system("abld CLEAN $TargetName UREL 2> NUL > NUL");
-	PrintErrorMessage("'abld CLEAN $TargetName UREL' exited with value " . ($? >> 8)) if ($? >> 8);	
-	
+	PrintErrorMessage("'abld CLEAN $TargetName UREL' exited with value " . ($? >> 8)) if ($? >> 8);
+
 	my $Redirection = "OUT:file, ERR:".($RedirectSTDERR ? "file" : "screen");
 	my $Message = "Building $Package ($Redirection)";
 	PrintMessage($Message) if (!$ReallyQuiet);
@@ -630,7 +630,7 @@ sub BuildVariation()
 	$OK = 0 if ($? >> 8);
 	print "  STDERR: ".((-s $build_log_err)-$OldSize)." bytes output written to $build_log_err\n+--------------------------------------------------------------------------------------\n" if ($OldSize != (-s $build_log_err) && !$ReallyQuiet);
 	PrintErrorMessage("'abld BUILD $TargetName UREL' exited with value " . ($? >> 8)) if ($? >> 8);
-	return 0 if (!$OK); # ABLD always returns ok :( grr	
+	return 0 if (!$OK); # ABLD always returns ok :( grr
 	PrintMessage("Done.") if (!$ReallyQuiet);
 
 	# do we have an override suffix for the package name?
@@ -654,7 +654,7 @@ sub BuildVariation()
 	if (-e "$output_dir/$Package")
 	{
 		$PackagesCreated++;
-		
+
 		if ($TargetIntermediatePath ne '' && $TargetIntermediatePath =~ /\\EPOC32\\BUILD\\/i) # make really sure it's a valid path!
 		{
 			#PrintMessage("Cleaning $TargetIntermediatePath");
@@ -677,7 +677,7 @@ sub UploadVariation()
 
 	use Net::FTP;
 	my $newerr;
-	
+
 	PrintMessage("Connecting to FTP $FTP_Host") if (!$ReallyQuiet);
 
 	$ftp = Net::FTP->new($FTP_Host,Timeout=>240) or $newerr=1;
@@ -692,7 +692,7 @@ sub UploadVariation()
 			{
 				PrintMessage("Changing to dir $FTP_Dir");
 				$ftp->cwd($FTP_Dir) or $newerr=1;
-				
+
 				if ($newerr)
 				{
 					PrintErrorMessage("Changing to dir $FTP_Dir! Aborting!");
@@ -704,20 +704,20 @@ sub UploadVariation()
 # leave this for possible auto-deletion of old files?
 #			@files = $ftp->dir or $newerr=1;
 #			  push @ERRORS, "Can't get file list $!\n" if $newerr;
-#			print "Got  file list\n";   
+#			print "Got  file list\n";
 #			foreach(@files) {
 #			  print "$_\n";
 #			}
-		
+
 			PrintMessage("Uploading $Package (".(-s "$output_dir/$Package")." bytes)");
-			
+
 			$ftp->binary;
 			$ftp->put("$output_dir/$Package") or $newerr=1;
 			PrintErrorMessage("Uploading package! Aborting!") if $newerr;
 			$PackagesUploaded++ if (!$newerr);
-		}		
+		}
 
-		$ftp->quit;	
+		$ftp->quit;
 	}
 }
 
@@ -758,7 +758,7 @@ sub CleanupPath()
 	{
 		$path =~ s/\"\Q$ECompXL_BinDir\E\";//g;
 	}
-	
+
 	while( ($SDK, $RootDir) = each(%SDK_RootDirs) )
 	{
 		if ($SDK_RootDirs{$SDK} ne '')
@@ -766,8 +766,8 @@ sub CleanupPath()
 			my $path_component = "\"".$SDK_RootDirs{$SDK}."\\epoc32\\";
 			$path =~ s/\Q$path_component\E.*?\";//g;
 		}
-	}	
-	
+	}
+
 	return $path;
 }
 
@@ -798,5 +798,5 @@ sub PrintMessage()
 }
 
 ##################################################################################################################
- 
+
 

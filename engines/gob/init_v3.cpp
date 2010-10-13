@@ -39,10 +39,11 @@ Init_v3::~Init_v3() {
 }
 
 void Init_v3::updateConfig() {
-// In the CD version of Goblins3, some texts are flagged 'subtitles' 
-// incorrectly and therefore should be displayed in all cases.
+// In the CD and Windows version of Goblins3, some texts are flagged
+// 'subtitles' incorrectly and therefore should be displayed in all cases.
 // The first obvious example is just after Death level.
-	if ((_vm->getGameType() == kGameTypeGob3) && _vm->isCD())
+	if ((_vm->getGameType() == kGameTypeGob3) &&
+			(_vm->isCD() || (_vm->getPlatform() == Common::kPlatformWindows)))
 		_vm->_global->_doSubtitles = true;
 }
 

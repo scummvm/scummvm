@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GUI_THEME_EVAL
-#define GUI_THEME_EVAL
+#ifndef GUI_THEME_EVAL_H
+#define GUI_THEME_EVAL_H
 
 #include "common/scummsys.h"
 #include "common/hashmap.h"

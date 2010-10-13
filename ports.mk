@@ -66,7 +66,7 @@ endif
 	chmod 755 scummvm
 	cp scummvm $(bundle_name)/ScummVM
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/
-	cp $(srcdir)/dists/iphone/icon-72.png $(bundle_name)/	
+	cp $(srcdir)/dists/iphone/icon-72.png $(bundle_name)/
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/
 
 # Location of static libs for the iPhone

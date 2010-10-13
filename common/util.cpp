@@ -259,6 +259,9 @@ const RenderModeDescription g_renderModes[] = {
 	{0, 0, kRenderDefault}
 };
 
+DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Hercules Green", "lowres")
+DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Hercules Amber", "lowres")
+
 RenderMode parseRenderMode(const String &str) {
 	if (str.empty())
 		return kRenderDefault;

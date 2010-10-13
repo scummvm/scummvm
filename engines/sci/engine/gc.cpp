@@ -28,6 +28,8 @@
 
 namespace Sci {
 
+//#define GC_DEBUG_CODE
+
 struct WorklistManager {
 	Common::Array<reg_t> _worklist;
 	AddrSet _map;
@@ -153,10 +155,12 @@ void run_gc(EngineState *s) {
 
 	// Some debug stuff
 	debugC(2, kDebugLevelGC, "[GC] Running...");
+#ifdef GC_DEBUG_CODE
 	const char *segnames[SEG_TYPE_MAX + 1];
 	int segcount[SEG_TYPE_MAX + 1];
 	memset(segnames, 0, sizeof(segnames));
 	memset(segcount, 0, sizeof(segcount));
+#endif
 
 	// Compute the set of all segments references currently in use.
 	AddrSet *activeRefs = findAllActiveReferences(s);
@@ -166,10 +170,13 @@ void run_gc(EngineState *s) {
 	const Common::Array<SegmentObj *> &heap = segMan->getSegments();
 	for (uint seg = 1; seg < heap.size(); seg++) {
 		SegmentObj *mobj = heap[seg];
+
 		if (mobj != NULL) {
+#ifdef GC_DEBUG_CODE
 			const SegmentType type = mobj->getType();
 			segnames[type] = SegmentObj::getSegmentTypeName(type);
-			
+#endif
+
 			// Get a list of all deallocatable objects in this segment,
 			// then free any which are not referenced from somewhere.
 			const Common::Array<reg_t> tmp = mobj->listAllDeallocatable(seg);
@@ -179,7 +186,9 @@ void run_gc(EngineState *s) {
 					// Not found -> we can free it
 					mobj->freeAtAddress(segMan, addr);
 					debugC(2, kDebugLevelGC, "[GC] Deallocating %04x:%04x", PRINT_REG(addr));
+#ifdef GC_DEBUG_CODE
 					segcount[type]++;
+#endif
 				}
 			}
 
@@ -188,11 +197,13 @@ void run_gc(EngineState *s) {
 
 	delete activeRefs;
 
+#ifdef GC_DEBUG_CODE
 	// Output debug summary of garbage collection
 	debugC(2, kDebugLevelGC, "[GC] Summary:");
 	for (int i = 0; i <= SEG_TYPE_MAX; i++)
 		if (segcount[i])
 			debugC(2, kDebugLevelGC, "\t%d\t* %s", segcount[i], segnames[i]);
+#endif
 }
 
 } // End of namespace Sci

@@ -17,8 +17,17 @@ public:
 		Common::Rational r6 = r5 - 1;
 
 		TS_ASSERT(r4 == r5);
+		TS_ASSERT(!(r4 != r5));
+
+		TS_ASSERT(r4 != r6);
+		TS_ASSERT(!(r4 == r6));
 
 		TS_ASSERT(-r4 == -r5);
+
+		TS_ASSERT(r0 == 2);
+		TS_ASSERT(!(r0 != 2));
+		TS_ASSERT(!(r3 == 2));
+		TS_ASSERT(r3 != 2);
 
 		TS_ASSERT(  r4 >  r6);
 		TS_ASSERT(  r4 >= r6);
@@ -70,6 +79,11 @@ public:
 		TS_ASSERT_EQUALS(r1 + r0, Common::Rational(5, 2));
 		TS_ASSERT_EQUALS(r0 - r1, Common::Rational(3, 2));
 		TS_ASSERT_EQUALS(r1 - r0, Common::Rational(-3, 2));
+
+		TS_ASSERT_EQUALS(1 + r1, Common::Rational(3, 2));
+		TS_ASSERT_EQUALS(r1 + 1, Common::Rational(3, 2));
+		TS_ASSERT_EQUALS(1 - r1, Common::Rational(1, 2));
+		TS_ASSERT_EQUALS(r1 - 1, Common::Rational(-1, 2));
 	}
 
 	void test_mul() {
@@ -86,6 +100,9 @@ public:
 		TS_ASSERT_EQUALS((-r2) * r3, -r4);
 		TS_ASSERT_EQUALS(r2 * (-r3), -r4);
 		TS_ASSERT_EQUALS((-r2) * (-r3), r4);
+
+		TS_ASSERT_EQUALS(r1 * 2, 1);
+		TS_ASSERT_EQUALS(2 * r1, 1);
 	}
 
 	void test_div() {
@@ -93,5 +110,8 @@ public:
 		Common::Rational r1(1, 2);
 
 		TS_ASSERT_EQUALS(r0 / r1, 4);
+
+		TS_ASSERT_EQUALS(r1 / 2, Common::Rational(1, 4));
+		TS_ASSERT_EQUALS(2 / r1, Common::Rational(4, 1));
 	}
 };

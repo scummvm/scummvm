@@ -119,14 +119,15 @@ enum GameType {
 };
 
 enum Features {
-	kFeaturesNone    =      0,
-	kFeaturesCD      = 1 << 0,
-	kFeaturesEGA     = 1 << 1,
-	kFeaturesAdLib   = 1 << 2,
-	kFeatures640     = 1 << 3,
-	kFeaturesSCNDemo = 1 << 4,
-	kFeaturesBATDemo = 1 << 5,
-	kFeatures800x600 = 1 << 6
+	kFeaturesNone      =      0,
+	kFeaturesCD        = 1 << 0,
+	kFeaturesEGA       = 1 << 1,
+	kFeaturesAdLib     = 1 << 2,
+	kFeaturesSCNDemo   = 1 << 3,
+	kFeaturesBATDemo   = 1 << 4,
+	kFeatures640x480   = 1 << 5,
+	kFeatures800x600   = 1 << 6,
+	kFeaturesTrueColor = 1 << 7
 };
 
 enum {
@@ -163,6 +164,8 @@ private:
 	bool initGameParts();
 	void deinitGameParts();
 
+	bool initGraphics();
+
 public:
 	static const Common::Language _gobToScummVMLang[];
 
@@ -172,6 +175,8 @@ public:
 	uint16 _width;
 	uint16 _height;
 	uint8 _mode;
+
+	Graphics::PixelFormat _pixelFormat;
 
 	Common::String _startStk;
 	Common::String _startTot;
@@ -208,12 +213,15 @@ public:
 	GameType getGameType() const;
 	bool isCD() const;
 	bool isEGA() const;
-	bool is640() const;
 	bool hasAdLib() const;
 	bool isSCNDemo() const;
 	bool isBATDemo() const;
+	bool is640x480() const;
 	bool is800x600() const;
+	bool isTrueColor() const;
 	bool isDemo() const;
+
+	const Graphics::PixelFormat &getPixelFormat() const;
 
 	GobEngine(OSystem *syst);
 	virtual ~GobEngine();

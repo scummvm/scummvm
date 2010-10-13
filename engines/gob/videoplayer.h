@@ -137,7 +137,7 @@ private:
 		Graphics::CoktelDecoder *decoder;
 		Common::String fileName;
 
-		SurfaceDescPtr surface;
+		SurfacePtr surface;
 
 		Video();
 

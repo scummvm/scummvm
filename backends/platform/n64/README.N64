@@ -97,19 +97,20 @@ A                           - '.' / Skip dialogues in some games
 C buttons                   - Numeric keypad keys
 
 * Using a N64 Mouse:
-Used like a normal PC mouse. 
+Used like a normal PC mouse.
 
 Notes
 =====
 
-- If virtual keyboard doesn't show up, you need to make sure you included 
+- If virtual keyboard doesn't show up, you need to make sure you included
   'vkeybd_default.zip' in the root of your romfs image.
 
-- In some games (mostly gob) cursor movement might be choppy, it's a known 
+- In some games (mostly gob) cursor movement might be choppy, it's a known
   problem and related on how N64 port manages screen updates.
 
 
 ** TODO **
 ==========
+
 Write the rest of this README.
 

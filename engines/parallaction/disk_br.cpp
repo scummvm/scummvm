@@ -191,7 +191,7 @@ GfxObj* DosDisk_br::loadTalk(const char *name) {
 Script* DosDisk_br::loadLocation(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadLocation");
 
-	static const Common::String langs[4] = { "it/", "fr/", "en/", "ge/" };
+	static const char * const langs[4] = { "it/", "fr/", "en/", "ge/" };
 
 	Common::String fullName(name);
 	if (!fullName.hasSuffix(".slf")) {

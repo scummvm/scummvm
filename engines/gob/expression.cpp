@@ -1002,7 +1002,6 @@ int16 Expression::parseExpr(byte stopToken, byte *type) {
 	Stack stack;
 	StackFrame stackFrame(stack);
 	byte operation;
-	bool escape;
 	int16 brackStart;
 	uint32 varBase;
 
@@ -1037,7 +1036,6 @@ int16 Expression::parseExpr(byte stopToken, byte *type) {
 		if ((operation == stopToken) || (operation == OP_OR) ||
 				(operation == OP_AND) || (operation == OP_END_EXPR)) {
 			while (stackFrame.pos >= 2) {
-				escape = false;
 				if ((stackFrame.opers[-2] == OP_BEGIN_EXPR) &&
 						((operation == OP_END_EXPR) || (operation == stopToken))) {
 					stackFrame.opers[-2] = stackFrame.opers[-1];

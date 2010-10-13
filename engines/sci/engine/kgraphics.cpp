@@ -57,48 +57,46 @@
 
 namespace Sci {
 
-void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
+void showScummVMDialog(const Common::String &message) {
+	GUI::MessageDialog dialog(message, "OK");
+	dialog.runModal();
+}
+
+void kDirLoopWorker(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
 	uint16 signal = readSelectorValue(s->_segMan, object, SELECTOR(signal));
-	int16 loopNo;
-	int16 maxLoops;
-	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	if (signal & kSignalDoesntTurn)
 		return;
 
-	angle %= 360;
-
-	if (!oldScriptHeader) {
-		if (angle < 45)
-			loopNo = 3;
-		else if (angle < 136)
-			loopNo = 0;
-		else if (angle < 225)
-			loopNo = 2;
-		else if (angle < 316)
-			loopNo = 1;
-		else
-			loopNo = 3;
+	int16 useLoop = -1;
+	if (getSciVersion() > SCI_VERSION_0_EARLY) {
+		if ((angle > 315) || (angle < 45)) {
+			useLoop = 3;
+		} else if ((angle > 135) && (angle < 225)) {
+			useLoop = 2;
+		}
 	} else {
-		if (angle >= 330 || angle <= 30)
-			loopNo = 3;
-		else if (angle <= 150)
-			loopNo = 0;
-		else if (angle <= 210)
-			loopNo = 2;
-		else if (angle < 330)
-			loopNo = 1;
-		else loopNo = -1;
+		// SCI0EARLY
+		if ((angle > 330) || (angle < 30)) {
+			useLoop = 3;
+		} else if ((angle > 150) && (angle < 210)) {
+			useLoop = 2;
+		}
+	}
+	if (useLoop == -1) {
+		if (angle >= 180) {
+			useLoop = 1;
+		} else {
+			useLoop = 0;
+		}
+	} else {
+		int16 loopCount = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
+		if (loopCount < 4)
+			return;
 	}
 
-	maxLoops = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
-		
-
-	if ((loopNo > 1) && (maxLoops < 4))
-		return;
-
-	writeSelectorValue(s->_segMan, object, SELECTOR(loop), loopNo);
+	writeSelectorValue(s->_segMan, object, SELECTOR(loop), useLoop);
 }
 
 static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
@@ -131,8 +129,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 			g_sci->_gfxCursor->kernelHide();
 			break;
 		case -1:
-			// TODO: Special case at least in kq6, check disassembly
-			//  Does something with magCursor, which is set on argc = 10, which we don't support
+			g_sci->_gfxCursor->kernelClearZoomZone();
 			break;
 		case -2:
 			g_sci->_gfxCursor->kernelResetMoveZone();
@@ -186,15 +183,10 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		break;
 	case 10:
 		// Freddy pharkas, when using the whiskey glass to read the prescription (bug #3034973)
-		// magnifier support, disabled using argc == 1, argv == -1
-		warning("kSetCursor: unsupported magnifier");
-		// we just set the view cursor currently
-		g_sci->_gfxCursor->kernelSetView(argv[5].toUint16(), argv[6].toUint16(), argv[7].toUint16(), hotspot);
-		// argv[0] -> 1, 2, 4 -> maybe magnification multiplier
-		// argv[1-4] -> rect for magnification
-		// argv[5, 6, 7] -> view resource for cursor
-		// argv[8] -> picture resource for mag
-		// argv[9] -> color for magnifier replacement
+		g_sci->_gfxCursor->kernelSetZoomZone(argv[0].toUint16(), 
+			Common::Rect(argv[1].toUint16(), argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16()),
+			argv[5].toUint16(), argv[6].toUint16(), argv[7].toUint16(),
+			argv[8].toUint16(), argv[9].toUint16());
 		break;
 	default :
 		error("kSetCursor: Unhandled case: %d arguments given", argc);
@@ -264,7 +256,9 @@ reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv) {
 	int16 priority = (argc > 5) ? argv[5].toSint16() : -1;
 	int16 control = (argc > 6) ? argv[6].toSint16() : -1;
 
-	// TODO: Find out why we get >15 for color in EGA
+	// TODO: Find out why we get > 15 for color in EGA
+	// FIXME: EGA? Which EGA? SCI0 or SCI1? Check the
+	// workarounds inside kGraphFillBoxAny and kNewWindow
 	if (!g_sci->getResMan()->isVGA() && !g_sci->getResMan()->isAmiga32color())
 		color &= 0x0F;
 
@@ -302,6 +296,13 @@ reg_t kGraphFillBoxAny(EngineState *s, int argc, reg_t *argv) {
 	int16 color = argv[5].toSint16();
 	int16 priority = argv[6].toSint16(); // yes, we may read from stack sometimes here
 	int16 control = argv[7].toSint16(); // sierra did the same
+
+	// WORKAROUND: PQ3 EGA is setting invalid colors (above 0 - 15).
+	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
+	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
+	// for the undithering algorithm in EGA games - bug #3048908.
+	if (g_sci->getResMan()->getViewType() == kViewEga && getSciVersion() >= SCI_VERSION_1_EARLY)
+		color &= 0x0F;
 
 	g_sci->_gfxPaint16->kernelGraphFillBox(rect, colorMask, color, priority, control);
 	return s->r_acc;
@@ -397,7 +398,7 @@ reg_t kPriCoord(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDirLoop(EngineState *s, int argc, reg_t *argv) {
-	_k_dirloop(argv[0], argv[1].toUint16(), s, argc, argv);
+	kDirLoopWorker(argv[0], argv[1].toUint16(), s, argc, argv);
 
 	return s->r_acc;
 }
@@ -801,6 +802,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		alignment = readSelectorValue(s->_segMan, controlObject, SELECTOR(mode));
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
 		g_sci->_gfxControls->kernelDrawText(rect, controlObject, g_sci->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
+		s->r_acc = g_sci->_gfxText16->allocAndFillReferenceRectArray();
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXTEDIT:
@@ -896,6 +898,10 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t controlObject = argv[0];
 	Common::String objName = s->_segMan->getObjectName(controlObject);
 
+	// Most of the time, we won't return anything to the caller
+	//  but |r| textcodes will trigger creation of rects in memory and will then set s->r_acc
+	s->r_acc = NULL_REG;
+
 	// Disable the "Change Directory" button, as we don't allow the game engine to
 	// change the directory where saved games are placed
 	// "changeDirItem" is used in the import windows of QFG2&3
@@ -922,20 +928,19 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 		if (!changeDirButton.isNull()) {
 			// check if checkDirButton is still enabled, in that case we are called the first time during that room
 			if (!(readSelectorValue(s->_segMan, changeDirButton, SELECTOR(state)) & SCI_CONTROLS_STYLE_DISABLED)) {
-				GUI::MessageDialog dialog("Characters saved inside ScummVM are shown "
+				showScummVMDialog("Characters saved inside ScummVM are shown "
 						"automatically. Character files saved in the original "
 						"interpreter need to be put inside ScummVM's saved games "
 						"directory and a prefix needs to be added depending on which "
 						"game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
-						"for Quest for Glory 2. Example: 'qfg2-thief.sav'.",
-						"OK");
-				dialog.runModal();
+						"for Quest for Glory 2. Example: 'qfg2-thief.sav'.");
 			}
 		}
+		s->_chosenQfGImportItem = readSelectorValue(s->_segMan, controlObject, SELECTOR(mark));
 	}
 
 	_k_GenericDrawControl(s, controlObject, false);
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kHiliteControl(EngineState *s, int argc, reg_t *argv) {
@@ -1078,6 +1083,15 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 	int colorPen = (argc > 7 + argextra) ? argv[7 + argextra].toSint16() : 0;
 	int colorBack = (argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255;
 
+	// WORKAROUND: PQ3 EGA is setting invalid colors (above 0 - 15).
+	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
+	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
+	// for the undithering algorithm in EGA games - bug #3048908.
+	if (g_sci->getResMan()->getViewType() == kViewEga && getSciVersion() >= SCI_VERSION_1_EARLY) {
+		colorPen &= 0x0F;
+		colorBack &= 0x0F;
+	}
+
 	//	const char *title = argv[4 + argextra].segment ? kernel_dereference_char_pointer(s, argv[4 + argextra], 0) : NULL;
 	if (argc>=13) {
 		rect2 = Common::Rect (argv[5].toSint16(), argv[4].toSint16(), argv[7].toSint16(), argv[6].toSint16());
@@ -1152,6 +1166,81 @@ reg_t kTextColors(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+/**
+ * Debug command, used by the SCI builtin debugger
+ */
+reg_t kShow(EngineState *s, int argc, reg_t *argv) {
+	uint16 map = argv[0].toUint16();
+
+	switch (map) {
+	case 1:	// Visual, substituted by display for us
+		g_sci->_gfxScreen->debugShowMap(3);
+		break;
+	case 2:	// Priority
+		g_sci->_gfxScreen->debugShowMap(1);
+		break;
+	case 3:	// Control
+	case 4:	// Control
+		g_sci->_gfxScreen->debugShowMap(2);
+		break;
+	default:
+		warning("Map %d is not available", map);
+	}
+
+	return s->r_acc;
+}
+
+reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
+	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
+	kStub(s, argc, argv);
+
+	uint16 operation = argv[0].toUint16();
+
+	switch (operation) {
+	case 0:	{ // Initialize remapping to base. 0 turns remapping off.
+		//int16 unk1 = (argc >= 2) ? argv[1].toSint16() : 0;
+		}
+		break;
+	case 1:	{ // unknown
+		// The demo of QFG4 calls this with 1+3 parameters, thus there are differences here
+		//int16 unk1 = argv[1].toSint16();
+		//int16 unk2 = argv[2].toSint16();
+		//int16 unk3 = argv[3].toSint16();
+		//uint16 unk4 = argv[4].toUint16();
+		//uint16 unk5 = (argc >= 6) ? argv[5].toUint16() : 0;
+		}
+		break;
+	case 2:	{ // remap by percent
+		//int16 unk1 = argv[1].toSint16();
+		//uint16 percent = argv[2].toUint16();
+		//uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
+		}
+		break;
+	case 3:	{ // remap to gray
+		//int16 unk1 = argv[1].toSint16();
+		//int16 percent = argv[2].toSint16();	// 0 - 100
+		//uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
+		}
+		break;
+	case 4:	{ // unknown
+		//int16 unk1 = argv[1].toSint16();
+		//uint16 unk2 = argv[2].toUint16();
+		//uint16 unk3 = argv[3].toUint16();
+		//uint16 unk4 = (argc >= 5) ? argv[4].toUint16() : 0;
+		}
+		break;
+	case 5:	{ // increment color
+		//int16 unk1 = argv[1].toSint16();
+		//uint16 unk2 = argv[2].toUint16();
+		}
+		break;
+	default:
+		break;
+	}
+
+	return s->r_acc;
+}
+
 #ifdef ENABLE_SCI32
 
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
@@ -1172,69 +1261,38 @@ reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
-	reg_t viewObj = argv[0];
-
-	g_sci->_gfxFrameout->kernelAddScreenItem(viewObj);
-	return NULL_REG;
+	g_sci->_gfxFrameout->kernelAddScreenItem(argv[0]);
+	return s->r_acc;
 }
 
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
-	//reg_t viewObj = argv[0];
-
-	//warning("kUpdateScreenItem, object %04x:%04x, view %d, loop %d, cel %d, pri %d", PRINT_REG(viewObj), viewId, loopNo, celNo, priority);
-	return NULL_REG;
+	g_sci->_gfxFrameout->kernelUpdateScreenItem(argv[0]);
+	return s->r_acc;
 }
 
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
-	reg_t viewObj = argv[0];
-
-	g_sci->_gfxFrameout->kernelDeleteScreenItem(viewObj);
-
-	/*
-	reg_t viewObj = argv[0];
-	uint16 viewId = readSelectorValue(s->_segMan, viewObj, SELECTOR(view));
-	int16 loopNo = readSelectorValue(s->_segMan, viewObj, SELECTOR(loop));
-	int16 celNo = readSelectorValue(s->_segMan, viewObj, SELECTOR(cel));
-	//int16 leftPos = 0;
-	//int16 topPos = 0;
-	int16 priority = readSelectorValue(s->_segMan, viewObj, SELECTOR(priority));
-	//int16 control = 0;
-	*/
-
-	// TODO
-
-	//warning("kDeleteScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
-	return NULL_REG;
+	g_sci->_gfxFrameout->kernelDeleteScreenItem(argv[0]);
+	return s->r_acc;
 }
 
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
-	reg_t planeObj = argv[0];
-
-	g_sci->_gfxFrameout->kernelAddPlane(planeObj);
-	return NULL_REG;
+	g_sci->_gfxFrameout->kernelAddPlane(argv[0]);
+	return s->r_acc;
 }
 
 reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
-	reg_t planeObj = argv[0];
-
-	g_sci->_gfxFrameout->kernelDeletePlane(planeObj);
-	return NULL_REG;
+	g_sci->_gfxFrameout->kernelDeletePlane(argv[0]);
+	return s->r_acc;
 }
 
 reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
-	reg_t planeObj = argv[0];
-
-	g_sci->_gfxFrameout->kernelUpdatePlane(planeObj);
+	g_sci->_gfxFrameout->kernelUpdatePlane(argv[0]);
 	return s->r_acc;
 }
 
 reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
-	reg_t picObj = argv[0];
-
-	// TODO
-
-	warning("kRepaintPlane object %04x:%04x", PRINT_REG(picObj));
-	return NULL_REG;
+	g_sci->_gfxFrameout->kernelRepaintPlane(argv[0]);
+	return s->r_acc;
 }
 
 reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv) {
@@ -1261,9 +1319,8 @@ reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
-	// Tests if the cursor is on the passed object
-
+// Tests if the coordinate is on the passed object
+reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 	uint16 x = argv[0].toUint16();
 	uint16 y = argv[1].toUint16();
 	reg_t targetObject = argv[2];
@@ -1296,73 +1353,7 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 		if (g_sci->_gfxCompare->kernelIsItSkip(viewId, loopNo, celNo, Common::Point(x - nsRect.left, y - nsRect.top)))
 			contained = false;
 	}
-// these hacks shouldn't be needed anymore
-//	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
-//	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
-
-	// If top and left are negative, we need to adjust coordinates by
-	// the item's x and y (e.g. happens in GK1, day 1, with detective
-	// Mosely's hotspot in his office)
-
-//	if (nsRect.left < 0)
-//		nsRect.translate(itemX, 0);
-//	
-//	if (nsRect.top < 0)
-//		nsRect.translate(0, itemY);
-
-//	// HACK: nsLeft and nsTop can be invalid, so try and fix them here
-//	// using x and y (e.g. with the inventory screen in GK1)
-//	if (nsRect.left == itemY && nsRect.top == itemX) {
-//		// Swap the values, as they're inversed (eh???)
-//		nsRect.left = itemX;
-//		nsRect.top = itemY;
-//	}
-
 	return make_reg(0, contained);
-}
-
-reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
-	// Tests if the cursor is on the passed object, after adjusting the
-	// coordinates of the object according to the object's plane
-
-	uint16 x = argv[0].toUint16();
-	uint16 y = argv[1].toUint16();
-	reg_t targetObject = argv[2];
-	// TODO: argv[3] - it's usually 0
-	Common::Rect nsRect;
-
-	// Get the bounding rectangle of the object
-	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
-	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
-	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
-	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
-
-	// Get the object's plane
-#if 0
-	reg_t planeObject = readSelector(s->_segMan, targetObject, SELECTOR(plane));
-	if (!planeObject.isNull()) {
-		//uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
-		//uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
-		uint16 planeResY = readSelectorValue(s->_segMan, planeObject, SELECTOR(resY));
-		uint16 planeResX = readSelectorValue(s->_segMan, planeObject, SELECTOR(resX));
-		uint16 planeTop = readSelectorValue(s->_segMan, planeObject, SELECTOR(top));
-		uint16 planeLeft = readSelectorValue(s->_segMan, planeObject, SELECTOR(left));
-		planeTop = (planeTop * g_sci->_gfxScreen->getHeight()) / planeResY;
-		planeLeft = (planeLeft * g_sci->_gfxScreen->getWidth()) / planeResX;
-
-		// Adjust the bounding rectangle of the object by the object's
-		// actual X, Y coordinates
-		nsRect.top = ((nsRect.top * g_sci->_gfxScreen->getHeight()) / planeResY);
-		nsRect.left = ((nsRect.left * g_sci->_gfxScreen->getWidth()) / planeResX);
-		nsRect.bottom = ((nsRect.bottom * g_sci->_gfxScreen->getHeight()) / planeResY);
-		nsRect.right = ((nsRect.right * g_sci->_gfxScreen->getWidth()) / planeResX);
-
-		nsRect.translate(planeLeft, planeTop);
-	}
-#endif
-	//warning("kIsOnMe: (%d, %d) on object %04x:%04x, parameter %d", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), argv[3].toUint16());
-
-	return make_reg(0, nsRect.contains(x, y));
 }
 
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
@@ -1416,6 +1407,61 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 		default:
 			warning("kRobot(%d)", subop);
 			break;
+	}
+
+	return s->r_acc;
+}
+
+reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv) {
+	uint16 windowsOption = argv[0].toUint16();
+	switch (windowsOption) {
+	case 0:
+		// Title bar on/off in Phantasmagoria, we return 0 (off)
+		return NULL_REG;
+	default:
+		warning("GetWindowsOption: Unknown option %d", windowsOption);
+		return NULL_REG;
+	}
+}
+
+reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case 1:
+		// Load a help file
+		// Maybe in the future we can implement this, but for now this message should suffice
+		showScummVMDialog("Please use an external viewer to open the game's help file: " + s->_segMan->getString(argv[1]));
+		break;
+	case 2:
+		// Looks like some init function
+		break;
+	default:
+		warning("Unknown kWinHelp subop %d", argv[0].toUint16());
+	}
+
+	return s->r_acc;
+}
+
+/**
+ * Used to programmatically mass set properties of the target plane
+ */
+reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
+	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
+	kStub(s, argc, argv);
+
+	// showStyle matches the style selector of the associated plane object
+	uint16 showStyle = argv[0].toUint16();	// 0 - 15
+	reg_t planeObj = argv[1];
+	//argv[2]
+	//int16 priority = argv[3].toSint16();
+	//argv[4]
+	//argv[5]
+	//argv[6]
+	//argv[7]
+	//int16 unk8 = (argc >= 9) ? argv[8].toSint16() : 0;
+
+	if (showStyle > 15) {
+		warning("kSetShowStyle: Illegal style %d for plane %04x:%04x", showStyle, PRINT_REG(planeObj));
+		return s->r_acc;
 	}
 
 	return s->r_acc;

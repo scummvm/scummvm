@@ -32,13 +32,26 @@
 
 namespace Sci {
 
+// Music patches in SCI games:
+// ===========================
+// 1.pat - MT-32 driver music patch
+// 2.pat - Yamaha FB01 driver music patch
+// 3.pat - Adlib driver music patch
+// 4.pat - Casio MT-540 (in earlier SCI0 games)
+// 4.pat - GM driver music patch (in later games that support GM)
+// 7.pat (newer) / patch.200 (older) - Mac driver music patch / Casio CSM-1
+// 9.pat (newer) / patch.005 (older) - Amiga driver music patch
+// 98.pat - Unknown, found in later SCI1.1 games. A MIDI format patch
+// 101.pat - CMS/PCjr driver music patch.
+//           Only later PCjr drivers use this patch, earlier ones don't use a patch
+// bank.001 - older SCI0 Amiga instruments
+
 class ResourceManager;
 
 enum {
 	MIDI_CHANNELS = 16,
 	MIDI_PROP_MASTER_VOLUME = 0
 };
-
 
 #define MIDI_RHYTHM_CHANNEL 9
 
@@ -69,7 +82,7 @@ protected:
 	byte _reverb;
 
 public:
-	MidiPlayer(SciVersion version) : _reverb(0), _version(version) { }
+	MidiPlayer(SciVersion version) : _driver(0), _reverb(0), _version(version) { }
 
 	int open() {
 		ResourceManager *resMan = g_sci->getResMan();	// HACK
@@ -84,9 +97,10 @@ public:
 	MidiChannel *getPercussionChannel() { return _driver->getPercussionChannel(); }
 	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) { _driver->setTimerCallback(timer_param, timer_proc); }
 
-	virtual byte getPlayId() = 0;
+	virtual byte getPlayId() const = 0;
 	virtual int getPolyphony() const = 0;
-	virtual int getFirstChannel() { return 0; }
+	virtual int getFirstChannel() const { return 0; }
+	virtual int getLastChannel() const { return 15; }
 
 	virtual void setVolume(byte volume) {
 		if(_driver)
@@ -97,7 +111,7 @@ public:
 		return _driver ? _driver->property(MIDI_PROP_MASTER_VOLUME, 0xffff) : 0;
 	}
 
-	virtual byte getReverb() { return _reverb; }
+	virtual byte getReverb() const { return _reverb; }
 	virtual void setReverb(byte reverb) { _reverb = reverb; }
 
 	virtual void playSwitch(bool play) {
@@ -116,6 +130,7 @@ extern MidiPlayer *MidiPlayer_AdLib_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_AmigaMac_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_PCJr_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_PCSpeaker_create(SciVersion version);
+extern MidiPlayer *MidiPlayer_CMS_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_Midi_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_Fb01_create(SciVersion version);
 

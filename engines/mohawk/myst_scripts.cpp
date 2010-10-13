@@ -709,10 +709,7 @@ void MystScriptParser::playSoundBlocking(uint16 op, uint16 var, uint16 argc, uin
 		debugC(kDebugScript, "Opcode %d: playSoundBlocking", op);
 		debugC(kDebugScript, "\tsoundId: %d", soundId);
 
-		Audio::SoundHandle *handle = _vm->_sound->playSound(soundId);
-
-		while (_vm->_mixer->isSoundHandleActive(*handle))
-			_vm->_system->delayMillis(10);
+		_vm->_sound->playSoundBlocking(soundId);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -870,7 +867,7 @@ void MystScriptParser::opcode_30(uint16 op, uint16 var, uint16 argc, uint16 *arg
 			_vm->_sound->stopSound();
 			// TODO: Need to keep sound handle and add function to change volume of
 			// looped running sound for kMystSoundActionChangeVolume type
-			_vm->_sound->playSound(soundAction, true, soundVolume);
+			_vm->_sound->playSound(soundAction, soundVolume);
 		} else {
 			debugC(kDebugScript, "Unknown");
 			warning("Unknown sound control value in opcode %d", op);
@@ -2458,7 +2455,7 @@ void MystScriptParser::opcode_120(uint16 op, uint16 var, uint16 argc, uint16 *ar
 			if (var8 != 0xFFFF)
 				_vm->_varStore->setVar(var8, !_vm->_varStore->getVar(var8));
 			else
-				warning("Opcode 120: No invoking Resource Var 8 found!");
+				warning("Opcode 120: No invoking Resource Var 8 found");
 		} else
 			unknown(op, var, argc, argv);
 		break;

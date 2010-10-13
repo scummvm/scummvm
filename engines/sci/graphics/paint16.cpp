@@ -380,6 +380,14 @@ void GfxPaint16::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, b
 		drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
 		_transitions->setup(animationNr, animationBlackoutFlag);
 	} else {
+		// We need to set it for SCI1EARLY+ (sierra sci also did so), otherwise we get at least the following issues:
+		//  LSL5 (english) - last wakeup (taj mahal flute dream)
+		//  SQ5 (english v1.03) - during the scene following the scrubbing
+		//   in both situations a window is shown when kDrawPic is called, which would result otherwise in
+		//   no showpic getting called from kAnimate and we would get graphic corruption
+		// XMAS1990 EGA did not set it in this case, VGA did
+		if (getSciVersion() >= SCI_VERSION_1_EARLY)
+			_screen->_picNotValid = 1;
 		_ports->beginUpdate(_ports->_picWind);
 		drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
 		_ports->endUpdate(_ports->_picWind);

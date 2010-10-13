@@ -795,7 +795,6 @@ class AgiEngine : public AgiBase {
 protected:
 	// Engine APIs
 	virtual Common::Error go();
-	virtual void syncSoundSettings();
 
 	void initialize();
 

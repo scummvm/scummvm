@@ -194,8 +194,8 @@ void Inter_v5::o5_initScreen() {
 	_vm->_util->setScrollOffset();
 
 	if (offY > 0) {
-		_vm->_draw->_spritesArray[24] = SurfaceDescPtr(new SurfaceDesc(videoMode, _vm->_width, offY));
-		_vm->_draw->_spritesArray[25] = SurfaceDescPtr(new SurfaceDesc(videoMode, _vm->_width, offY));
+		_vm->_draw->_spritesArray[24] = SurfacePtr(new Surface(_vm->_width, offY, _vm->getPixelFormat().bytesPerPixel));
+		_vm->_draw->_spritesArray[25] = SurfacePtr(new Surface(_vm->_width, offY, _vm->getPixelFormat().bytesPerPixel));
 		_vm->_video->_splitSurf = _vm->_draw->_spritesArray[25];
 	}
 }

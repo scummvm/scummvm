@@ -66,7 +66,7 @@ else
 	# TODO: Inherit the earth uses so much RAM that I have removed libmad in order to
 	# claw some back.
 
-	
+
 
 	else
 		ifdef DS_BUILD_I
@@ -236,7 +236,7 @@ CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor -Wno-unknown-pragmas -Wno-reorder  \
 
 
 ASFLAGS = -mcpu=arm9tdmi -mthumb-interwork
-DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555 -DDISABLE_DOSBOX_OPL -DDISABLE_DEFAULT_SAVEFILEMANAGER -DARM
+DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_TEXT_CONSOLE -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555 -DDISABLE_DOSBOX_OPL -DDISABLE_DEFAULT_SAVEFILEMANAGER -DARM
 ifdef USE_MAD
 	DEFINES += -DUSE_MAD
 endif

@@ -27,6 +27,7 @@
 // them. This includes the King's Quest IV Demo and LSL3 Demo.
 
 #include "sci/engine/kernel.h"
+#include "sci/engine/seg_manager.h"
 
 namespace Sci {
 
@@ -118,6 +119,7 @@ static const SelectorRemap sciSelectorRemap[] = {
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,   "maxScale", 106 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "vanishingX", 107 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "vanishingY", 108 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,     "-info-",4103 },
 	{ SCI_VERSION_NONE,             SCI_VERSION_NONE,            0,   0 }
 };
 
@@ -133,8 +135,12 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 
 	// Resize the list of selector names and fill in the SCI 0 names.
 	names.resize(count);
-	for (int i = 0; i < offset; i++)
-		names[i].clear();
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		// Fill selectors 0 - 2 for SCI0 - SCI1 late
+		names[0] = "species";
+		names[1] = "superClass";
+		names[2] = "-info-";
+	}
 
 	if (getSciVersion() <= SCI_VERSION_1_1) {
 		// SCI0 - SCI11
@@ -149,14 +155,82 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 				names[i] = sci1Selectors[i - count];
 		}
 
-		for (const SelectorRemap *selectorRemap = sciSelectorRemap; selectorRemap->slot; ++selectorRemap) {
-			if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
-				const uint32 slot = selectorRemap->slot;
-				if (slot >= names.size())
-					names.resize(slot + 1);
-				names[slot] = selectorRemap->name;
+		// Now, we need to find out selectors which keep changing place...
+		// We do that by dissecting game objects, and looking for selectors at
+		// specified locations.
+
+		// We need to initialize script 0 here, to make sure that it's always
+		// located at segment 1.
+		_segMan->instantiateScript(0);
+
+		// The Actor class contains the init, xLast and yLast selectors, which
+		// we reference directly. It's always in script 998, so we need to
+		// explicitly load it here.
+		if (_resMan->testResource(ResourceId(kResourceTypeScript, 998))) {
+			_segMan->instantiateScript(998);
+
+			const Object *actorClass = _segMan->getObject(_segMan->findObjectByName("Actor"));
+
+			if (actorClass) {
+				// The init selector is always the first function
+				int initSelectorPos = actorClass->getFuncSelector(0);
+
+				if (names.size() < (uint32)initSelectorPos + 2)
+					names.resize((uint32)initSelectorPos + 2);
+
+				names[initSelectorPos] = "init";
+				// dispose comes right after init
+				names[initSelectorPos + 1] = "dispose";
+
+				if ((getSciVersion() >= SCI_VERSION_1_EGA)) {
+					// Find the xLast and yLast selectors, used in kDoBresen
+
+					// xLast and yLast always come between illegalBits and xStep
+					int illegalBitsSelectorPos = actorClass->locateVarSelector(_segMan, 15 + offset);	// illegalBits
+					int xStepSelectorPos = actorClass->locateVarSelector(_segMan, 51 + offset);	// xStep
+					if (xStepSelectorPos - illegalBitsSelectorPos != 3) {
+						error("illegalBits and xStep selectors aren't found in "
+							  "known locations. illegalBits = %d, xStep = %d",
+							  illegalBitsSelectorPos, xStepSelectorPos);
+					}
+
+					int xLastSelectorPos = actorClass->getVarSelector(illegalBitsSelectorPos + 1);
+					int yLastSelectorPos = actorClass->getVarSelector(illegalBitsSelectorPos + 2);
+
+					if (names.size() < (uint32)yLastSelectorPos + 1)
+						names.resize((uint32)yLastSelectorPos + 1);
+
+					names[xLastSelectorPos] = "xLast";
+					names[yLastSelectorPos] = "yLast";
+				}	// if ((getSciVersion() >= SCI_VERSION_1_EGA))
+			}	// if (actorClass)
+
+			_segMan->uninstantiateScript(998);
+		}	// if (_resMan->testResource(ResourceId(kResourceTypeScript, 998)))
+
+		if (_resMan->testResource(ResourceId(kResourceTypeScript, 981))) {
+			// The SysWindow class contains the open selectors, which we
+			// reference directly. It's always in script 981, so we need to
+			// explicitly load it here
+			_segMan->instantiateScript(981);
+
+			const Object *sysWindowClass = _segMan->getObject(_segMan->findObjectByName("SysWindow"));
+
+			if (sysWindowClass) {
+				if (sysWindowClass->getMethodCount() < 2)
+					error("The SysWindow class has less than 2 methods");
+
+				// The open selector is always the second function
+				int openSelectorPos = sysWindowClass->getFuncSelector(1);
+
+				if (names.size() < (uint32)openSelectorPos + 1)
+					names.resize((uint32)openSelectorPos + 1);
+
+				names[openSelectorPos] = "open";
 			}
-		}
+
+			_segMan->uninstantiateScript(981);
+		}	// if (_resMan->testResource(ResourceId(kResourceTypeScript, 981)))
 
 		if (g_sci->getGameId() == GID_HOYLE4) {
 			// The demo of Hoyle 4 is one of the few demos with lip syncing and no selector vocabulary.
@@ -168,21 +242,26 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 
 			names[274] = "syncTime";
 			names[275] = "syncCue";
-		} else if (g_sci->getGameId() == GID_ISLANDBRAIN) {
-			// The demo of Island of Dr. Brain needs the init selector set to match up with the full
-			// game's workaround - bug #3035033
-			if (names.size() < 111)
-				names.resize(111);
+		} else if (g_sci->getGameId() == GID_PEPPER) {
+			// Same as above for the non-interactive demo of Pepper
+			if (names.size() < 539)
+				names.resize(539);
 
-			names[110] = "init";
+			names[263] = "syncTime";
+			names[264] = "syncCue";
+			names[538] = "startText";
 		} else if (g_sci->getGameId() == GID_LAURABOW2) {
-			// The floppy of version needs the open and changeState selectors set to match up with the
-			// CD version's workarounds - bugs #3035694 and #3036291
-			if (names.size() < 190)
-				names.resize(190);
+			// The floppy of version needs the changeState selector set to match up with the
+			// CD version's workarounds.
+			if (names.size() < 251)
+				names.resize(251);
 
 			names[144] = "changeState";
-			names[189] = "open";
+		} else if (g_sci->getGameId() == GID_CNICK_KQ) {
+			if (names.size() < 447)
+				names.resize(447);
+
+			names[446] = "say";
 		}
 
 #ifdef ENABLE_SCI32
@@ -191,6 +270,15 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 		for (int i = 0; i < count; i++)
 			names[i] = sci2Selectors[i];
 #endif
+	}
+
+	for (const SelectorRemap *selectorRemap = sciSelectorRemap; selectorRemap->slot; ++selectorRemap) {
+		if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
+			const uint32 slot = selectorRemap->slot;
+			if (slot >= names.size())
+				names.resize(slot + 1);
+			names[slot] = selectorRemap->name;
+		}
 	}
 
 	return names;

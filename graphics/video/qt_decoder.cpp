@@ -67,6 +67,8 @@ QuickTimeDecoder::QuickTimeDecoder() : VideoDecoder() {
 	_numStreams = 0;
 	_fd = 0;
 	_scaledSurface = 0;
+	_scaleFactorX = 1;
+	_scaleFactorY = 1;
 	_dirtyPalette = false;
 	_resFork = new Common::MacResManager();
 
@@ -82,14 +84,14 @@ uint16 QuickTimeDecoder::getWidth() const {
 	if (_videoStreamIndex < 0)
 		return 0;
 
-	return _streams[_videoStreamIndex]->width / getScaleMode();
+	return (Common::Rational(_streams[_videoStreamIndex]->width) / getScaleFactorX()).toInt();
 }
 
 uint16 QuickTimeDecoder::getHeight() const {
 	if (_videoStreamIndex < 0)
 		return 0;
 
-	return _streams[_videoStreamIndex]->height / getScaleMode();
+	return (Common::Rational(_streams[_videoStreamIndex]->height) / getScaleFactorY()).toInt();
 }
 
 uint32 QuickTimeDecoder::getFrameCount() const {
@@ -113,11 +115,18 @@ uint32 QuickTimeDecoder::getCodecTag() {
 	return _streams[_videoStreamIndex]->codec_tag;
 }
 
-ScaleMode QuickTimeDecoder::getScaleMode() const {
+Common::Rational QuickTimeDecoder::getScaleFactorX() const {
 	if (_videoStreamIndex < 0)
-		return kScaleNormal;
+		return 1;
 
-	return (ScaleMode)(_scaleMode * _streams[_videoStreamIndex]->scaleMode);
+	return (_scaleFactorX * _streams[_videoStreamIndex]->scaleFactorX);
+}
+
+Common::Rational QuickTimeDecoder::getScaleFactorY() const {
+	if (_videoStreamIndex < 0)
+		return 1;
+
+	return (_scaleFactorY * _streams[_videoStreamIndex]->scaleFactorY);
 }
 
 uint32 QuickTimeDecoder::getFrameDuration() {
@@ -231,14 +240,14 @@ Surface *QuickTimeDecoder::decodeNextFrame() {
 }
 
 Surface *QuickTimeDecoder::scaleSurface(Surface *frame) {
-	if (getScaleMode() == kScaleNormal)
+	if (getScaleFactorX() == 1 && getScaleFactorY() == 1)
 		return frame;
 
 	assert(_scaledSurface);
 
-	for (uint32 j = 0; j < _scaledSurface->h; j++)
-		for (uint32 k = 0; k < _scaledSurface->w; k++)
-			memcpy(_scaledSurface->getBasePtr(k, j), frame->getBasePtr(k * getScaleMode(), j * getScaleMode()), frame->bytesPerPixel);
+	for (int32 j = 0; j < _scaledSurface->h; j++)
+		for (int32 k = 0; k < _scaledSurface->w; k++)
+			memcpy(_scaledSurface->getBasePtr(k, j), frame->getBasePtr((k * getScaleFactorX()).toInt() , (j * getScaleFactorY()).toInt()), frame->bytesPerPixel);
 
 	return _scaledSurface;
 }
@@ -376,7 +385,7 @@ void QuickTimeDecoder::init() {
 	if (_videoStreamIndex >= 0) {
 		_videoCodec = createCodec(getCodecTag(), getBitsPerPixel());
 
-		if (getScaleMode() != kScaleNormal) {
+		if (getScaleFactorX() != 1 || getScaleFactorY() != 1) {
 			// We have to initialize the scaled surface
 			_scaledSurface = new Surface();
 			_scaledSurface->create(getWidth(), getHeight(), getPixelFormat().bytesPerPixel);
@@ -593,17 +602,11 @@ int QuickTimeDecoder::readMVHD(MOVatom atom) {
 	uint32 yMod = _fd->readUint32BE();
 	_fd->skip(16);
 
-	if (xMod != yMod)
-		error("X and Y resolution modifiers differ");
+	_scaleFactorX = Common::Rational(0x10000, xMod);
+	_scaleFactorY = Common::Rational(0x10000, yMod);
 
-	if (xMod == 0x8000)
-		_scaleMode = kScaleHalf;
-	else if (xMod == 0x4000)
-		_scaleMode = kScaleQuarter;
-	else
-		_scaleMode = kScaleNormal;
-
-	debug(1, "readMVHD(): scaleMode = %d", (int)_scaleMode);
+	_scaleFactorX.debugPrint(1, "readMVHD(): scaleFactorX =");
+	_scaleFactorY.debugPrint(1, "readMVHD(): scaleFactorY =");
 
 	_fd->readUint32BE(); // preview time
 	_fd->readUint32BE(); // preview duration
@@ -688,17 +691,11 @@ int QuickTimeDecoder::readTKHD(MOVatom atom) {
 	uint32 yMod = _fd->readUint32BE();
 	_fd->skip(16);
 
-	if (xMod != yMod)
-		error("X and Y resolution modifiers differ");
+	st->scaleFactorX = Common::Rational(0x10000, xMod);
+	st->scaleFactorY = Common::Rational(0x10000, yMod);
 
-	if (xMod == 0x8000)
-		st->scaleMode = kScaleHalf;
-	else if (xMod == 0x4000)
-		st->scaleMode = kScaleQuarter;
-	else
-		st->scaleMode = kScaleNormal;
-
-	debug(1, "readTKHD(): scaleMode = %d", (int)_scaleMode);
+	st->scaleFactorX.debugPrint(1, "readTKHD(): scaleFactorX =");
+	st->scaleFactorY.debugPrint(1, "readTKHD(): scaleFactorY =");
 
 	// these are fixed-point, 16:16
 	// uint32 tkWidth = _fd->readUint32BE() >> 16; // track width
@@ -814,6 +811,17 @@ int QuickTimeDecoder::readSTSD(MOVatom atom) {
 		_fd->readUint16BE(); // index
 
 		debug(0, "size=%d 4CC= %s codec_type=%d", size, tag2str(format), st->codec_type);
+
+		if (st->codec_tag && st->codec_tag != format) {
+			// HACK: Multiple FourCC, skip this. FFmpeg does this too and also
+			// skips it with a TODO. However, we really don't need to support
+			// multiple codec tags since the only two videos in Riven DVD that
+			// do this just have a fake second stream (or so it seems).
+			debug(3, "Multiple FourCC not supported");
+			_fd->seek(start_pos + size);
+			continue;
+		}
+
 		st->codec_tag = format;
 
 		if (st->codec_type == CODEC_TYPE_VIDEO) {

@@ -103,7 +103,8 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 	_fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
 	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver),
 	_pcmSfxChanMask(0),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
-	_outputVolumeFlags(0), _outputMuteFlags(0), _ready(false) {
+	_outputVolumeFlags(0), _outputMuteFlags(0), _pcmChanOut(0), _pcmChanReserved(0), _pcmChanKeyPressed(0),
+	_pcmChanEffectPlaying(0), _pcmChanKeyPlaying(0), _ready(false) {
 
 #define INTCB(x) &TownsAudioInterface::intf_##x
 	static const TownsAudioIntfCallback intfCb[] = {
@@ -199,7 +200,7 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 		INTCB(notImpl),
 		// 72
 		INTCB(notImpl),
-		INTCB(notImpl),
+		INTCB(cdaToggle),
 		INTCB(notImpl),
 		INTCB(notImpl),
 		// 76
@@ -224,6 +225,10 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 }
 
 TownsAudioInterface::~TownsAudioInterface() {
+	reset();
+	_ready = false;
+	deinit();
+
 	delete[] _fmSaveReg[0];
 	delete[] _fmSaveReg[1];
 	delete[] _fmInstruments;
@@ -235,9 +240,6 @@ TownsAudioInterface::~TownsAudioInterface() {
 bool TownsAudioInterface::init() {
 	if (_ready)
 		return true;
-
-	if (!_drv)
-		return false;
 
 	if (!TownsPC98_FmSynth::init())
 		return false;
@@ -253,9 +255,9 @@ bool TownsAudioInterface::init() {
 
 	setVolumeChannelMasks(-1, 0);
 
+	_ready = true;
 	callback(0);
 
-	_ready = true;
 	return true;
 }
 
@@ -352,8 +354,9 @@ void TownsAudioInterface::timerCallbackA() {
 
 void TownsAudioInterface::timerCallbackB() {
 	Common::StackLock lock(_mutex);
-	if (_drv && _ready) {
-		_drv->timerCallback(1);
+	if (_ready) {
+		if (_drv)
+			_drv->timerCallback(1);
 		callback(80);
 	}
 }
@@ -491,7 +494,7 @@ int TownsAudioInterface::intf_enableTimerB(va_list &args) {
 int TownsAudioInterface::intf_loadSamples(va_list &args) {
 	uint32 dest = va_arg(args, uint32);
 	int size = va_arg(args, int);
-	uint8 *src = va_arg(args, uint8*);	
+	uint8 *src = va_arg(args, uint8*);
 
 	if (dest >= 65536 || size == 0 || size > 65536)
 		return 3;
@@ -563,7 +566,7 @@ int TownsAudioInterface::intf_loadWaveTable(va_list &args) {
 
 	TownsAudio_WaveTable *s = &_waveTables[_numWaveTables++];
 	s->readHeader(data);
-	
+
 	_waveTablesTotalDataSize += s->size;
 	callback(32, _waveTablesTotalDataSize, s->size, data + 32);
 
@@ -658,7 +661,7 @@ int TownsAudioInterface::intf_pcmEffectPlaying(va_list &args) {
 	if (chan < 0x40 || chan > 0x47)
 		return 1;
 	chan -= 0x40;
-	return (_pcmChanEffectPlaying & _chanFlags[chan]) ? true : false;
+	return (_pcmChanEffectPlaying & _chanFlags[chan]) ? 1 : 0;
 }
 
 int TownsAudioInterface::intf_fmKeyOn(va_list &args) {
@@ -719,11 +722,11 @@ int TownsAudioInterface::intf_setOutputVolume(va_list &args) {
 	static const uint8 flags[] = { 0x0C, 0x30, 0x40, 0x80 };
 
 	uint8 chan = (chanType & 0x40) ? 8 : 12;
-	
+
 	chanType &= 3;
 	left = (left & 0x7e) >> 1;
 	right = (right & 0x7e) >> 1;
-	
+
 	if (chan)
 		_outputVolumeFlags |= flags[chanType];
 	else
@@ -755,6 +758,12 @@ int TownsAudioInterface::intf_updateOutputVolume(va_list &args) {
 	int flags = va_arg(args, int);
 	_outputMuteFlags = flags & 3;
 	updateOutputVolume();
+	return 0;
+}
+
+int TownsAudioInterface::intf_cdaToggle(va_list &args) {
+	//int mode = va_arg(args, int);
+	//_unkMask = mode ? 0x7f : 0x3f;
 	return 0;
 }
 
@@ -1389,10 +1398,13 @@ void TownsAudioInterface::updateOutputVolume() {
 	// FM Towns seems to support volumes of 0 - 63 for each channel.
 	// We recalculate sane values for our 0 to 255 volume range and
 	// balance values for our -128 to 127 volume range
-	
+
 	// CD-AUDIO
-	int volume = (int)(((float)MAX(_outputLevel[12], _outputLevel[13]) * 255.0f) / 63.0f);
-	int balance = (int)((float)((_outputLevel[13] - _outputLevel[12]) * 127.0f) / (float)MAX(_outputLevel[12], _outputLevel[13]));
+	uint32 maxVol = MAX(_outputLevel[12], _outputLevel[13]);
+
+	int volume = (int)(((float)(maxVol * 255) / 63.0f));
+	int balance = maxVol ? (int)( ( ((int)_outputLevel[13] - _outputLevel[12]) * 127) / (float)maxVol) : 0;
+
 	g_system->getAudioCDManager()->setVolume(volume);
 	g_system->getAudioCDManager()->setBalance(balance);
 }

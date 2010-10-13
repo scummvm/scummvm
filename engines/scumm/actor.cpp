@@ -2159,7 +2159,12 @@ void ScummEngine::stopTalk() {
 		((ScummEngine_v7 *)this)->clearSubtitleQueue();
 #endif
 	} else {
-		restoreCharsetBg();
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		if (_game.platform == Common::kPlatformFMTowns)
+			towns_restoreCharsetBg();
+		else
+#endif
+			restoreCharsetBg();
 	}
 }
 

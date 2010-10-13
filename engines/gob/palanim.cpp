@@ -88,7 +88,7 @@ bool PalAnim::fadeStep(int16 oper) {
 	if (oper == 0) {
 		if (_vm->_global->_setAllPalette) {
 			if (_vm->_global->_inVM != 0)
-				error("PalAnim::fadeStep(): _vm->_global->_inVM != 0 not supported.");
+				error("PalAnim::fadeStep(): _vm->_global->_inVM != 0 not supported");
 
 			for (int i = 0; i < 256; i++) {
 				newRed = fadeColor(_vm->_global->_redPalette[i], _toFadeRed[i]);

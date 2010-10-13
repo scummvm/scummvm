@@ -127,7 +127,7 @@ public:
 	bool _setAllPalette;
 	bool _dontSetPalette;
 
-	SurfaceDescPtr _primarySurfDesc;
+	SurfacePtr _primarySurfDesc;
 
 	int16 _debugFlag;
 	int16 _inVM;

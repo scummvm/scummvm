@@ -149,7 +149,6 @@ public:
 	void writeString(const String &str);
 };
 
-
 /**
  * Generic interface for a readable data stream.
  */
@@ -495,16 +494,17 @@ protected:
 	DisposeAfterUse::Flag _disposeParentStream;
 	byte *_buf;
 	uint32 _pos;
+	bool _eos; // end of stream
 	uint32 _bufSize;
 	uint32 _realBufSize;
 
 public:
 	BufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
-	~BufferedReadStream();
+	virtual ~BufferedReadStream();
 
-	virtual bool eos() const { return (_pos == _bufSize) && _parentStream->eos(); }
+	virtual bool eos() const { return _eos; }
 	virtual bool err() const { return _parentStream->err(); }
-	virtual void clearErr() { _parentStream->clearErr(); }
+	virtual void clearErr() { _eos = false; _parentStream->clearErr(); }
 
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
@@ -525,7 +525,25 @@ public:
 	virtual bool seek(int32 offset, int whence = SEEK_SET);
 };
 
+/**
+ * Wrapper class which adds buffering to any WriteStream.
+ */
+class BufferedWriteStream : public WriteStream {
+protected:
+	WriteStream *_parentStream;
+	DisposeAfterUse::Flag _disposeParentStream;
+	byte *_buf;
+	uint32 _pos;
+	uint32 _bufSize;
+	bool flushBuffer();						// write out the data in the buffer
 
+public:
+	BufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
+	virtual ~BufferedWriteStream();
+
+	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+	virtual bool flush();
+};
 
 /**
  * Simple memory based 'stream', which implements the ReadStream interface for

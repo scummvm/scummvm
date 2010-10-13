@@ -159,14 +159,7 @@ public:
 	 * @param segMan	A reference to the segment manager
 	 * @param segmentId	The script's segment id
 	 */
-	void initialiseObjectsSci0(SegManager *segMan, SegmentId segmentId);
-
-	/**
-	 * Initializes the script's objects (SCI1.1+)
-	 * @param segMan	A reference to the segment manager
-	 * @param segmentId	The script's segment id
-	 */
-	void initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId);
+	void initialiseObjects(SegManager *segMan, SegmentId segmentId);
 
 	// script lock operations
 
@@ -260,6 +253,20 @@ private:
 	void relocate(reg_t block);
 
 	bool relocateLocal(SegmentId segment, int location);
+
+	/**
+	 * Initializes the script's objects (SCI0)
+	 * @param segMan	A reference to the segment manager
+	 * @param segmentId	The script's segment id
+	 */
+	void initialiseObjectsSci0(SegManager *segMan, SegmentId segmentId);
+
+	/**
+	 * Initializes the script's objects (SCI1.1+)
+	 * @param segMan	A reference to the segment manager
+	 * @param segmentId	The script's segment id
+	 */
+	void initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId);
 };
 
 } // End of namespace Sci

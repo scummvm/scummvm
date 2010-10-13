@@ -25,6 +25,7 @@
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/translation.h"
 
 #include "mohawk/graphics.h"
 #include "mohawk/myst.h"
@@ -218,7 +219,7 @@ Common::Error MohawkEngine_Myst::run() {
 	_varStore = new MystVar(this);
 	_saveLoad = new MystSaveLoad(this, _saveFileMan);
 	_scriptParser = new MystScriptParser(this);
-	_loadDialog = new GUI::SaveLoadChooser("Load Game:", "Load");
+	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"));
 	_loadDialog->setSaveMode(false);
 	_optionsDialog = new MystOptionsDialog(this);
 
@@ -427,7 +428,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 
 		// NOTE: All sounds are looped when played via the sound section of the
 		// VIEW resources.
-		_sound->playSound(soundAction, true, soundActionVolume, true);
+		_sound->playSound(soundAction, soundActionVolume, true);
 	} else {
 		error("Unknown sound action %d", soundAction);
 	}

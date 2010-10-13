@@ -24,6 +24,7 @@
  */
 
 #include "scumm/scumm_v3.h"
+#include "scumm/actor.h"
 
 namespace Scumm {
 
@@ -36,6 +37,11 @@ void ScummEngine_v3::setupOpcodes() {
 		OPCODE(0x30, o3_setBoxFlags);
 		OPCODE(0xb0, o3_setBoxFlags);
 	}
+
+	OPCODE(0x3b, o3_waitForActor);
+	OPCODE(0xbb, o3_waitForActor);
+
+	OPCODE(0x4c, o3_waitForSentence);
 }
 
 void ScummEngine_v3::o3_setBoxFlags() {
@@ -45,5 +51,39 @@ void ScummEngine_v3::o3_setBoxFlags() {
 	b = fetchScriptByte();
 	setBoxFlags(a, b);
 }
+
+void ScummEngine_v3::o3_waitForActor() {
+	// This opcode was a NOP in LOOM. Also, we cannot directly use
+	// o2_waitForActor because there the _scriptPointer is different (it
+	// assumes that getVar reads only a single byte, which is correct
+	// for v2 but not for v3). Of course we could copy the code here to
+	// o2_waitForActor and then merge the two, but right now I am
+	// keeping this as it is.
+	if (_game.id == GID_INDY3) {
+		const byte *oldaddr = _scriptPointer - 1;
+		Actor *a = derefActor(getVarOrDirectByte(PARAM_1), "o3_waitForActor");
+		if (a->_moving) {
+			_scriptPointer = oldaddr;
+			o5_breakHere();
+		}
+	}
+}
+
+void ScummEngine_v3::o3_waitForSentence() {
+	// FIXME/TODO: Can we merge this with o2_waitForSentence? I think
+	// the code here is actually incorrect, and the code in
+	// o2_waitForSentence correct, but somebody should check the
+	// disassembly for Indy and Loom.
+	if (_sentenceNum) {
+		if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
+			return;
+	} else if (!isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
+		return;
+
+	_scriptPointer--;
+	o5_breakHere();
+}
+
+
 
 } // End of namespace Scumm

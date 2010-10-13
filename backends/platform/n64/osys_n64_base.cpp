@@ -346,8 +346,7 @@ int16 OSystem_N64::getWidth() {
 }
 
 void OSystem_N64::setPalette(const byte *colors, uint start, uint num) {
-	for (int i = 0; i < num; ++i) {
-		uint8 c[4];
+	for (uint i = 0; i < num; ++i) {
 		_screenPalette[start + i] = colRGB888toBGR555(colors[2], colors[1], colors[0]);
 		colors += 4;
 	}
@@ -413,7 +412,7 @@ void OSystem_N64::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void OSystem_N64::setCursorPalette(const byte *colors, uint start, uint num) {
-	for (int i = 0; i < num; ++i) {
+	for (uint i = 0; i < num; ++i) {
 		_cursorPalette[start + i] = colRGB888toBGR555(colors[2], colors[1], colors[0]);
 		colors += 4;
 	}
@@ -860,7 +859,7 @@ void OSystem_N64::getTimeAndDate(TimeDate &t) const {
 	// No RTC inside the N64, read mips timer to simulate
 	// passing of time, not a perfect solution, but can't think
 	// of anything better.
-	
+
 	uint32 now = getMilliTick();
 
 	t.tm_sec  = (now / 1000) % 60;
@@ -868,7 +867,7 @@ void OSystem_N64::getTimeAndDate(TimeDate &t) const {
 	t.tm_hour = (((now / 1000) / 60) / 60) % 24;
 	t.tm_mday = 1;
 	t.tm_mon  = 0;
-	t.tm_year = 1900;
+	t.tm_year = 110;
 
 	return;
 }
@@ -878,6 +877,8 @@ FilesystemFactory *OSystem_N64::getFilesystemFactory() {
 }
 
 void OSystem_N64::setTimerCallback(TimerProc callback, int interval) {
+	assert (interval > 0);
+
 	if (callback != NULL) {
 		_timerCallbackTimer = interval;
 		_timerCallbackNext = getMillis() + interval;

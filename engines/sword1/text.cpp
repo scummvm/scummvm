@@ -49,7 +49,7 @@ Text::Text(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
 	_fontId = (czechVersion) ? CZECH_GAME_FONT : GAME_FONT;
 	_font = (uint8*)_resMan->openFetchRes(_fontId);
 
-	_joinWidth = charWidth( SPACE ) - 2 * OVERLAP;
+	_joinWidth = charWidth(SPACE) - 2 * OVERLAP;
 	_charHeight = _resMan->getUint16(_resMan->fetchFrame(_font, 0)->height); // all chars have the same height
 	for (int i = 0; i < MAX_TEXT_OBS; i++)
 		_textBlocks[i] = NULL;
@@ -145,12 +145,12 @@ uint16 Text::analyzeSentence(uint8 *text, uint16 maxWidth, LineInfo *line) {
 			// (with a separating space character - also overlapped)
 			uint16 spaceNeeded = _joinWidth + wordWidth;
 
-			if (line[lineNo].width + spaceNeeded <= maxWidth ) {
+			if (line[lineNo].width + spaceNeeded <= maxWidth) {
 				line[lineNo].width += spaceNeeded;
 				line[lineNo].length += 1 + wordLength; // NB. space+word characters
 			} else {	// put word (without separating SPACE) at start of next line
 				lineNo++;
-				assert( lineNo < MAX_LINES );
+				assert(lineNo < MAX_LINES);
 				line[lineNo].width = wordWidth;
 				line[lineNo].length = wordLength;
 			}

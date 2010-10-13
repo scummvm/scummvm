@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef CEKEYS_EVENTSBUFFER
-#define CEKEYS_EVENTSBUFFER
+#ifndef CEKEYS_EVENTSBUFFER_H
+#define CEKEYS_EVENTSBUFFER_H
 
 #include "common/scummsys.h"
 #include "common/system.h"

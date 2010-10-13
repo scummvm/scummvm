@@ -120,7 +120,7 @@ void DrasculaEngine::showMenu() {
 	x = whichObject();
 	strcpy(textIcon, iconName[x]);
 
-	for (n = 1; n < 43; n++) {
+	for (n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
 		h = inventoryObjects[n];
 
 		if (h != 0) {
@@ -194,11 +194,10 @@ void DrasculaEngine::enterName() {
 }
 
 bool DrasculaEngine::checkMenuFlags() {
-	for (int n = 0; n < 43; n++) {
-		if (whichObject() == n) {
-			if (inventoryObjects[n] != 0 && checkAction(inventoryObjects[n]))
-				return true;
-		}
+	int n = whichObject();
+	if (n != 0) {
+		if (inventoryObjects[n] != 0 && checkAction(inventoryObjects[n]))
+			return true;
 	}
 
 	return false;

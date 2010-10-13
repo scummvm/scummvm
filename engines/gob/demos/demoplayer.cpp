@@ -123,7 +123,7 @@ void DemoPlayer::init() {
 
 void DemoPlayer::clearScreen() {
 	debugC(1, kDebugDemo, "Clearing the screen");
-	_vm->_video->clearSurf(*_vm->_draw->_backSurface);
+	_vm->_draw->_backSurface->clear();
 	_vm->_draw->forceBlit();
 	_vm->_video->retrace();
 }
@@ -244,10 +244,11 @@ void DemoPlayer::playVideoDoubled(int slot) {
 				int16 wD = (rect->left * 2) + (w * 2);
 				int16 hD = (rect->top  * 2) + (h * 2);
 
-			_vm->_video->drawSpriteDouble(*_vm->_draw->_spritesArray[0], *_vm->_draw->_frontSurface,
-					rect->left, rect->top, rect->right - 1, rect->bottom - 1, rect->left, rect->top, 0);
-			_vm->_draw->dirtiedRect(_vm->_draw->_frontSurface,
-					rect->left * 2, rect->top * 2, wD, hD);
+				_vm->_draw->_frontSurface->blitScaled(*_vm->_draw->_spritesArray[0],
+						rect->left, rect->top, rect->right - 1, rect->bottom - 1, rect->left * 2, rect->top * 2, 2);
+
+				_vm->_draw->dirtiedRect(_vm->_draw->_frontSurface,
+						rect->left * 2, rect->top * 2, wD, hD);
 			}
 		}
 
@@ -297,10 +298,10 @@ void DemoPlayer::evaluateVideoMode(const char *mode) {
 	_doubleMode = false;
 
 	// Only applicable when we actually can double
-	if (_vm->is640()) {
-		if (!scumm_strnicmp(mode, "AUTO", 4))
+	if (_vm->is640x480() || _vm->is800x600()) {
+		if      (!scumm_strnicmp(mode, "AUTO", 4))
 			_autoDouble = true;
-		else if (!scumm_strnicmp(mode, "VGA", 3) && _vm->is640())
+		else if (!scumm_strnicmp(mode, "VGA", 3))
 			_doubleMode = true;
 	}
 }

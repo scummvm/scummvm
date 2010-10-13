@@ -211,6 +211,7 @@ void DrasculaEngine::converse(int index) {
 		}
 
 		updateEvents();
+		flushKeyBuffer();
 
 		phrase1_bottom = 8 * print_abc_opc(phrase1, 2, game1);
 		phrase2_bottom = phrase1_bottom + 8 * print_abc_opc(phrase2, phrase1_bottom + 2, game2);
@@ -287,8 +288,12 @@ void DrasculaEngine::response(int function) {
 		playTalkSequence(function);
 
 	if (currentChapter == 2) {
-		if (function == 16 || function == 20 || function == 23 || function == 29 || function == 31)
+		bool reloadConversationCharset = false;
+
+		if (function == 16 || function == 20 || function == 23 || function == 29 || function == 31) {
+			reloadConversationCharset = true;
 			loadPic(menuBackground, backSurface);
+		}
 
 		if (function == 16)
 			animation_16_2();
@@ -300,6 +305,9 @@ void DrasculaEngine::response(int function) {
 			animation_29_2();
 		else if (function == 31)
 			animation_31_2();
+
+		if (reloadConversationCharset)
+			loadPic("car.alg", backSurface);
 	} else if (currentChapter == 3) {
 		grr();
 	}

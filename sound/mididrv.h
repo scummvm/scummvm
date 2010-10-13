@@ -216,6 +216,16 @@ public:
 	}
 
 	/**
+	 * Send a Roland MT-32 reset sysEx to the midi device.
+	 */
+	void sendMT32Reset();
+
+	/**
+	 * Send a General MIDI reset sysEx to the midi device.
+	 */
+	void sendGMReset();
+
+	/**
 	 * Transmit a sysEx to the midi device.
 	 *
 	 * The given msg MUST NOT contain the usual SysEx frame, i.e.

@@ -130,7 +130,7 @@ void MidiParser_MSC::parseMidiEvent(EventInfo &info) {
 		break;
 
 	default:
-		warning("Unexpected midi event 0x%02X in midi data.", info.event);
+		warning("Unexpected midi event 0x%02X in midi data", info.event);
 	}
 
 	//if ((type == 0xB) && (info.basic.param1 == 64)) info.basic.param2 = 127;
@@ -173,7 +173,7 @@ bool MidiParser_MSC::loadMusic(byte *data, uint32 size) {
 	byte *pos = data;
 
 	if (memcmp("MSCt", pos, 4)) {
-		warning("Expected header not found in music file.");
+		warning("Expected header not found in music file");
 		return false;
 	}
 	pos += 4;

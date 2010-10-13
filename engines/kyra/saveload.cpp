@@ -137,7 +137,7 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 	kReadSaveHeaderError errorCode = KyraEngine_v1::readSaveHeader(in, false, header);
 	if (errorCode != kRSHENoError) {
 		if (errorCode == kRSHEInvalidType)
-			warning("No ScummVM Kyra engine savefile header.");
+			warning("No ScummVM Kyra engine savefile header");
 		else if (errorCode == kRSHEInvalidVersion)
 			warning("Savegame is not the right version (%u, '%s')", header.version, header.oldHeader ? "true" : "false");
 		else if (errorCode == kRSHEIoError)
@@ -224,9 +224,8 @@ Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, con
 }
 
 const char *KyraEngine_v1::getSavegameFilename(int num) {
-	static Common::String filename;
-	filename = getSavegameFilename(_targetName, num);
-	return filename.c_str();
+	_savegameFilename = getSavegameFilename(_targetName, num);
+	return _savegameFilename.c_str();
 }
 
 Common::String KyraEngine_v1::getSavegameFilename(const Common::String &target, int num) {

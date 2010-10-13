@@ -562,7 +562,7 @@ void PictureMgr::drawPicture() {
 	_patCode = 0;
 	_patNum = 0;
 	_priOn = _scrOn = false;
-	_scrColor = 0xf;
+	_scrColor = (_pictureVersion == AGIPIC_C64) ? 0x0 : 0xf;
 	_priColor = 0x4;
 
 	drawing = 1;

@@ -708,25 +708,6 @@ void ScummEngine::writeVar(uint var, int value) {
 	error("Illegal varbits (w)");
 }
 
-void ScummEngine_v5::getResultPos() {
-	int a;
-
-	_resultVarNumber = fetchScriptWord();
-	if (_resultVarNumber & 0x2000) {
-		a = fetchScriptWord();
-		if (a & 0x2000) {
-			_resultVarNumber += readVar(a & ~0x2000);
-		} else {
-			_resultVarNumber += a & 0xFFF;
-		}
-		_resultVarNumber &= ~0x2000;
-	}
-}
-
-void ScummEngine_v5::setResult(int value) {
-	writeVar(_resultVarNumber, value);
-}
-
 void ScummEngine::push(int a) {
 	assert(_scummStackPos >= 0 && _scummStackPos < ARRAYSIZE(_vmStack));
 	_vmStack[_scummStackPos++] = a;

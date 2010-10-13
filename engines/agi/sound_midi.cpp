@@ -74,8 +74,15 @@ SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, p
 	DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
 	_driver = MidiDriver::createMidi(dev);
 
+	if (ConfMan.getBool("native_mt32") || MidiDriver::getMusicType(dev) == MT_MT32) {
+		_nativeMT32 = true;
+		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+	} else {
+		_nativeMT32 = false;
+	}
+
 	memset(_channel, 0, sizeof(_channel));
-	memset(_channelVolume, 255, sizeof(_channelVolume));
+	memset(_channelVolume, 127, sizeof(_channelVolume));
 	_masterVolume = 0;
 	this->open();
 	_smfParser = MidiParser::createParser_SMF();
@@ -121,6 +128,12 @@ int SoundGenMIDI::open() {
 		return ret;
 
 	_driver->setTimerCallback(this, &onTimer);
+
+	if (_nativeMT32)
+		_driver->sendMT32Reset();
+	else
+		_driver->sendGMReset();
+
 	return 0;
 }
 

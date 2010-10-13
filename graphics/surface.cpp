@@ -24,6 +24,7 @@
 
 #include "common/algorithm.h"
 #include "common/util.h"
+#include "common/endian.h"
 #include "graphics/primitives.h"
 #include "graphics/surface.h"
 
@@ -143,8 +144,10 @@ void Surface::fillRect(Common::Rect r, uint32 color) {
 		lineLen *= 2;
 		if ((uint16)color != ((color & 0xff) | (color & 0xff) << 8))
 			useMemset = false;
+	} else if (bytesPerPixel == 4) {
+		useMemset = false;
 	} else if (bytesPerPixel != 1) {
-		error("Surface::fillRect: bytesPerPixel must be 1 or 2");
+		error("Surface::fillRect: bytesPerPixel must be 1, 2 or 4");
 	}
 
 	if (useMemset) {
@@ -154,10 +157,18 @@ void Surface::fillRect(Common::Rect r, uint32 color) {
 			ptr += pitch;
 		}
 	} else {
-		uint16 *ptr = (uint16 *)getBasePtr(r.left, r.top);
-		while (height--) {
-			Common::set_to(ptr, ptr + width, (uint16)color);
-			ptr += pitch/2;
+		if (bytesPerPixel == 2) {
+			uint16 *ptr = (uint16 *)getBasePtr(r.left, r.top);
+			while (height--) {
+				Common::set_to(ptr, ptr + width, (uint16)color);
+				ptr += pitch/2;
+			}
+		} else {
+			uint32 *ptr = (uint32 *)getBasePtr(r.left, r.top);
+			while (height--) {
+				Common::set_to(ptr, ptr + width, color);
+				ptr += pitch / 4;
+			}
 		}
 	}
 }
@@ -169,18 +180,13 @@ void Surface::frameRect(const Common::Rect &r, uint32 color) {
 	vLine(r.right-1, r.top, r.bottom-1, color);
 }
 
-// FIXME: LordHoto asks why is this in Surface, since this
-// just supports 8bpp surfaces. Looks like someone wants
-// to subclass Surface to add this or it should be extended
-// to support 16bpp (or marked as just working for 8bpp
-// surfaces).
 void Surface::move(int dx, int dy, int height) {
-	// This function currently just works with 8bpp surfaces
-	assert(bytesPerPixel == 1);
-
 	// Short circuit check - do we have to do anything anyway?
 	if ((dx == 0 && dy == 0) || height <= 0)
 		return;
+
+	if (bytesPerPixel != 1 && bytesPerPixel != 2)
+		error("Surface::move: bytesPerPixel must be 1 or 2");
 
 	byte *src, *dst;
 	int x, y;
@@ -188,46 +194,58 @@ void Surface::move(int dx, int dy, int height) {
 	// vertical movement
 	if (dy > 0) {
 		// move down - copy from bottom to top
-		dst = (byte *)pixels + (height - 1) * w;
-		src = dst - dy * w;
+		dst = (byte *)pixels + (height - 1) * pitch;
+		src = dst - dy * pitch;
 		for (y = dy; y < height; y++) {
-			memcpy(dst, src, w);
-			src -= w;
-			dst -= w;
+			memcpy(dst, src, pitch);
+			src -= pitch;
+			dst -= pitch;
 		}
 	} else if (dy < 0) {
 		// move up - copy from top to bottom
 		dst = (byte *)pixels;
-		src = dst - dy * w;
+		src = dst - dy * pitch;
 		for (y = -dy; y < height; y++) {
-			memcpy(dst, src, w);
-			src += w;
-			dst += w;
+			memcpy(dst, src, pitch);
+			src += pitch;
+			dst += pitch;
 		}
 	}
 
 	// horizontal movement
 	if (dx > 0) {
 		// move right - copy from right to left
-		dst = (byte *)pixels + (w - 1);
-		src = dst - dx;
+		dst = (byte *)pixels + (pitch - bytesPerPixel);
+		src = dst - (dx * bytesPerPixel);
 		for (y = 0; y < height; y++) {
 			for (x = dx; x < w; x++) {
-				*dst-- = *src--;
+				if (bytesPerPixel == 1) {
+					*dst-- = *src--;
+				} else if (bytesPerPixel == 2) {
+					*(uint16 *)dst = *(const uint16 *)src;
+					src -= 2;
+					dst -= 2;
+				}
 			}
-			src += w + (w - dx);
-			dst += w + (w - dx);
+			src += pitch + (pitch - dx * bytesPerPixel);
+			dst += pitch + (pitch - dx * bytesPerPixel);
 		}
 	} else if (dx < 0)  {
 		// move left - copy from left to right
 		dst = (byte *)pixels;
-		src = dst - dx;
+		src = dst - (dx * bytesPerPixel);
 		for (y = 0; y < height; y++) {
 			for (x = -dx; x < w; x++) {
-				*dst++ = *src++;
+				if (bytesPerPixel == 1) {
+					*dst++ = *src++;
+				} else if (bytesPerPixel == 2) {
+					*(uint16 *)dst = *(const uint16 *)src;
+					src += 2;
+					dst += 2;
+				}
 			}
-			src += w - (w + dx);
-			dst += w - (w + dx);
+			src += pitch - (pitch + dx * bytesPerPixel);
+			dst += pitch - (pitch + dx * bytesPerPixel);
 		}
 	}
 }

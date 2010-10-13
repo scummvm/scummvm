@@ -668,8 +668,10 @@ void RexDialogView::loadBackground() {
 		break;
 	case 8:
 		screenId = 924;
+		break;
 	case 9:
 		screenId = 920;
+		break;
 	default:
 		error("Unknown scene number");
 	}
