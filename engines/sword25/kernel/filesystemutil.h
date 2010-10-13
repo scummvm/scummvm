@@ -38,7 +38,7 @@
  * operations that do not have equivalents in the C/C++ libraries.
  *
  * Each supported platform must implement this interface, and the method
- * BS_FileSystemUtil Singleton::getInstance()
+ * BS_FileSystemUtil Singleton::instance()
  */
 
 #ifndef SWORD25_FILESYSTEMUTIL_H

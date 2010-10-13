@@ -88,9 +88,9 @@ Common::ScopedPtr<ActionCallback> ActionCallbackPtr;
 
 struct CallbackfunctionRegisterer {
 	CallbackfunctionRegisterer() {
-		CallbackRegistry::getInstance().registerCallbackFunction("LuaLoopPointCB", (void ( *)(int))AnimationLoopPointCallback);
-		CallbackRegistry::getInstance().registerCallbackFunction("LuaActionCB", (void ( *)(int))AnimationActionCallback);
-		CallbackRegistry::getInstance().registerCallbackFunction("LuaDeleteCB", (void ( *)(int))AnimationDeleteCallback);
+		CallbackRegistry::instance().registerCallbackFunction("LuaLoopPointCB", (void ( *)(int))AnimationLoopPointCallback);
+		CallbackRegistry::instance().registerCallbackFunction("LuaActionCB", (void ( *)(int))AnimationActionCallback);
+		CallbackRegistry::instance().registerCallbackFunction("LuaDeleteCB", (void ( *)(int))AnimationDeleteCallback);
 	}
 };
 static CallbackfunctionRegisterer Instance;
@@ -144,7 +144,7 @@ static AnimationTemplate *CheckAnimationTemplate(lua_State *L, int idx = 1) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable der Klasse Gfx.AnimationTemplate
 	uint AnimationTemplateHandle;
 	if ((AnimationTemplateHandle = *reinterpret_cast<uint *>(my_checkudata(L, idx, ANIMATION_TEMPLATE_CLASS_NAME))) != 0) {
-		AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::getInstance().resolveHandle(AnimationTemplateHandle);
+		AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::instance().resolveHandle(AnimationTemplateHandle);
 		if (!AnimationTemplatePtr)
 			luaL_error(L, "The animation template with the handle %d does no longer exist.", AnimationTemplateHandle);
 		return AnimationTemplatePtr;
@@ -159,7 +159,7 @@ static AnimationTemplate *CheckAnimationTemplate(lua_State *L, int idx = 1) {
 
 static int NewAnimationTemplate(lua_State *L) {
 	uint AnimationTemplateHandle = AnimationTemplate::create(luaL_checkstring(L, 1));
-	AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::getInstance().resolveHandle(AnimationTemplateHandle);
+	AnimationTemplate *AnimationTemplatePtr = AnimationTemplateRegistry::instance().resolveHandle(AnimationTemplateHandle);
 	if (AnimationTemplatePtr && AnimationTemplatePtr->isValid()) {
 		NewUintUserData(L, AnimationTemplateHandle);
 		//luaL_getmetatable(L, ANIMATION_TEMPLATE_CLASS_NAME);

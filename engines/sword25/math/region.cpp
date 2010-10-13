@@ -44,11 +44,11 @@
 namespace Sword25 {
 
 Region::Region() : _valid(false), _type(RT_REGION) {
-	RegionRegistry::getInstance().registerObject(this);
+	RegionRegistry::instance().registerObject(this);
 }
 
 Region::Region(InputPersistenceBlock &reader, uint handle) : _valid(false), _type(RT_REGION) {
-	RegionRegistry::getInstance().registerObject(this, handle);
+	RegionRegistry::instance().registerObject(this, handle);
 	unpersist(reader);
 }
 
@@ -67,7 +67,7 @@ uint Region::create(REGION_TYPE type) {
 		BS_ASSERT(true);
 	}
 
-	return RegionRegistry::getInstance().resolvePtr(regionPtr);
+	return RegionRegistry::instance().resolvePtr(regionPtr);
 }
 
 uint Region::create(InputPersistenceBlock &reader, uint handle) {
@@ -85,11 +85,11 @@ uint Region::create(InputPersistenceBlock &reader, uint handle) {
 		BS_ASSERT(false);
 	}
 
-	return RegionRegistry::getInstance().resolvePtr(regionPtr);
+	return RegionRegistry::instance().resolvePtr(regionPtr);
 }
 
 Region::~Region() {
-	RegionRegistry::getInstance().deregisterObject(this);
+	RegionRegistry::instance().deregisterObject(this);
 }
 
 bool Region::init(const Polygon &contour, const Common::Array<Polygon> *pHoles) {

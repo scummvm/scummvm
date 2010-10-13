@@ -113,7 +113,7 @@ bool RenderObjectManager::persist(OutputPersistenceBlock &writer) {
 	}
 
 	// Alle BS_AnimationTemplates persistieren.
-	result &= AnimationTemplateRegistry::getInstance().persist(writer);
+	result &= AnimationTemplateRegistry::instance().persist(writer);
 
 	return result;
 }
@@ -143,7 +143,7 @@ bool RenderObjectManager::unpersist(InputPersistenceBlock &reader) {
 	}
 
 	// Alle BS_AnimationTemplates wieder herstellen.
-	result &= AnimationTemplateRegistry::getInstance().unpersist(reader);
+	result &= AnimationTemplateRegistry::instance().unpersist(reader);
 
 	return result;
 }

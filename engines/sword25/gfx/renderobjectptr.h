@@ -54,7 +54,7 @@ public:
 	RenderObjectPtr(uint handle) : _handle(handle) {}
 
 	T *operator->() const {
-		return static_cast<T *>(RenderObjectRegistry::getInstance().resolveHandle(_handle));
+		return static_cast<T *>(RenderObjectRegistry::instance().resolveHandle(_handle));
 	}
 
 	bool operator==(const RenderObjectPtr<T> & other) {
@@ -62,11 +62,11 @@ public:
 	}
 
 	bool isValid() const {
-		return RenderObjectRegistry::getInstance().resolveHandle(_handle) != 0;
+		return RenderObjectRegistry::instance().resolveHandle(_handle) != 0;
 	}
 
 	void erase() {
-		delete static_cast<T *>(RenderObjectRegistry::getInstance().resolveHandle(_handle));
+		delete static_cast<T *>(RenderObjectRegistry::instance().resolveHandle(_handle));
 		_handle = 0;
 	}
 

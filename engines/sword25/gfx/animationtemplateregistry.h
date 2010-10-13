@@ -47,7 +47,7 @@ class AnimationTemplate;
 
 class AnimationTemplateRegistry : public ObjectRegistry<AnimationTemplate>, public Persistable {
 public:
-	static AnimationTemplateRegistry &getInstance() {
+	static AnimationTemplateRegistry &instance() {
 		if (!_instancePtr.get())
 			_instancePtr.reset(new AnimationTemplateRegistry);
 		return *_instancePtr.get();

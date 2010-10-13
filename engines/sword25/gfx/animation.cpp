@@ -583,7 +583,7 @@ void Animation::persistCallbackVector(OutputPersistenceBlock &writer, const Comm
 	// Alle Callbacks einzeln persistieren.
 	Common::Array<ANIMATION_CALLBACK_DATA>::const_iterator it = vector.begin();
 	while (it != vector.end()) {
-		writer.write(CallbackRegistry::getInstance().resolveCallbackPointer((void (*)(int))it->Callback));
+		writer.write(CallbackRegistry::instance().resolveCallbackPointer((void (*)(int))it->Callback));
 		writer.write(it->Data);
 
 		++it;
@@ -604,7 +604,7 @@ void Animation::unpersistCallbackVector(InputPersistenceBlock &reader, Common::A
 
 		Common::String callbackFunctionName;
 		reader.read(callbackFunctionName);
-		callbackData.Callback = reinterpret_cast<ANIMATION_CALLBACK>(CallbackRegistry::getInstance().resolveCallbackFunction(callbackFunctionName));
+		callbackData.Callback = reinterpret_cast<ANIMATION_CALLBACK>(CallbackRegistry::instance().resolveCallbackFunction(callbackFunctionName));
 
 		reader.read(callbackData.Data);
 
@@ -705,7 +705,7 @@ AnimationDescription *Animation::getAnimationDescription() const {
 	if (_animationResourcePtr)
 		return _animationResourcePtr;
 	else
-		return AnimationTemplateRegistry::getInstance().resolveHandle(_animationTemplateHandle);
+		return AnimationTemplateRegistry::instance().resolveHandle(_animationTemplateHandle);
 }
 
 } // End of namespace Sword25

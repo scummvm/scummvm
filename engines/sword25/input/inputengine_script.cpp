@@ -97,8 +97,8 @@ Common::SharedPtr<CommandCallbackClass> CommandCallbackPtr;
 
 struct CallbackfunctionRegisterer {
 	CallbackfunctionRegisterer() {
-		CallbackRegistry::getInstance().registerCallbackFunction("LuaCommandCB", TheCommandCallback);
-		CallbackRegistry::getInstance().registerCallbackFunction("LuaCharacterCB", TheCharacterCallback);
+		CallbackRegistry::instance().registerCallbackFunction("LuaCommandCB", TheCommandCallback);
+		CallbackRegistry::instance().registerCallbackFunction("LuaCharacterCB", TheCharacterCallback);
 	}
 };
 static CallbackfunctionRegisterer Instance;

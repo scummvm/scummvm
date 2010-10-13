@@ -326,7 +326,7 @@ bool PersistenceService::SaveGame(uint SlotID, const Common::String &ScreenshotF
 	OutputPersistenceBlock Writer;
 	bool Success = true;
 	Success &= Kernel::GetInstance()->GetScript()->persist(Writer);
-	Success &= RegionRegistry::getInstance().persist(Writer);
+	Success &= RegionRegistry::instance().persist(Writer);
 	Success &= Kernel::GetInstance()->GetGfx()->persist(Writer);
 	Success &= Kernel::GetInstance()->GetSfx()->persist(Writer);
 	Success &= Kernel::GetInstance()->GetInput()->persist(Writer);
@@ -445,7 +445,7 @@ bool PersistenceService::LoadGame(uint SlotID) {
 	bool Success = true;
 	Success &= Kernel::GetInstance()->GetScript()->unpersist(Reader);
 	// Muss unbedingt nach Script passieren. Da sonst die bereits wiederhergestellten Regions per Garbage-Collection gekillt werden.
-	Success &= RegionRegistry::getInstance().unpersist(Reader);
+	Success &= RegionRegistry::instance().unpersist(Reader);
 	Success &= Kernel::GetInstance()->GetGfx()->unpersist(Reader);
 	Success &= Kernel::GetInstance()->GetSfx()->unpersist(Reader);
 	Success &= Kernel::GetInstance()->GetInput()->unpersist(Reader);

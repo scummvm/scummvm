@@ -55,7 +55,7 @@ typedef void (*CallbackPtr)(int command);
 
 class CallbackRegistry {
 public:
-	static CallbackRegistry &getInstance() {
+	static CallbackRegistry &instance() {
 		static CallbackRegistry _instance;
 		return _instance;
 	}

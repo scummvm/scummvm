@@ -46,7 +46,7 @@ class Region;
 
 class RegionRegistry : public ObjectRegistry<Region>, public Persistable {
 public:
-	static RegionRegistry &getInstance() {
+	static RegionRegistry &instance() {
 		if (!_instancePtr.get()) _instancePtr = Common::SharedPtr<RegionRegistry>(new RegionRegistry());
 		return *_instancePtr.get();
 	}

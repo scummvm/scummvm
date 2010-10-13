@@ -339,7 +339,7 @@ bool InputEngine::persist(OutputPersistenceBlock &writer) {
 	{
 		Common::List<CommandCallback>::const_iterator It = m_CommandCallbacks.begin();
 		while (It != m_CommandCallbacks.end()) {
-			writer.write(CallbackRegistry::getInstance().resolveCallbackPointer(*It));
+			writer.write(CallbackRegistry::instance().resolveCallbackPointer(*It));
 			++It;
 		}
 	}
@@ -351,7 +351,7 @@ bool InputEngine::persist(OutputPersistenceBlock &writer) {
 	{
 		Common::List<CharacterCallback>::const_iterator It = m_CharacterCallbacks.begin();
 		while (It != m_CharacterCallbacks.end()) {
-			writer.write(CallbackRegistry::getInstance().resolveCallbackPointer(*It));
+			writer.write(CallbackRegistry::instance().resolveCallbackPointer(*It));
 			++It;
 		}
 	}
@@ -375,7 +375,7 @@ bool InputEngine::unpersist(InputPersistenceBlock &reader) {
 		reader.read(CallbackFunctionName);
 
 		m_CommandCallbacks.push_back(reinterpret_cast<CommandCallback>(
-		                                 CallbackRegistry::getInstance().resolveCallbackFunction(CallbackFunctionName)));
+		                                 CallbackRegistry::instance().resolveCallbackFunction(CallbackFunctionName)));
 	}
 
 	// Character-Callbackliste leeren.
@@ -390,7 +390,7 @@ bool InputEngine::unpersist(InputPersistenceBlock &reader) {
 		Common::String CallbackFunctionName;
 		reader.read(CallbackFunctionName);
 
-		m_CharacterCallbacks.push_back(reinterpret_cast<CharacterCallback>(CallbackRegistry::getInstance().resolveCallbackFunction(CallbackFunctionName)));
+		m_CharacterCallbacks.push_back(reinterpret_cast<CharacterCallback>(CallbackRegistry::instance().resolveCallbackFunction(CallbackFunctionName)));
 	}
 
 	return reader.isGood();

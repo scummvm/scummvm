@@ -58,7 +58,7 @@ class RenderObject;
 
 class RenderObjectRegistry : public ObjectRegistry<RenderObject> {
 public:
-	static RenderObjectRegistry &getInstance() {
+	static RenderObjectRegistry &instance() {
 		if (!_instancePtr.get())
 			_instancePtr.reset(new RenderObjectRegistry);
 		return *_instancePtr.get();
