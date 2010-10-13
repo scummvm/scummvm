@@ -3,7 +3,7 @@
 #endif
 
 #ifndef SCUMMVM_SVN_REVISION
-#define SCUMMVM_SVN_REVISION
+#define SCUMMVM_SVN_REVISION ""
 #endif
 
 #ifdef RELEASE_BUILD
