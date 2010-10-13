@@ -108,7 +108,7 @@ void OutputPersistenceBlock::write(const Common::String &String) {
 void OutputPersistenceBlock::write(const void *BufferPtr, size_t Size) {
 	WriteMarker(BLOCK_MARKER);
 
-	write(Size);
+	write((int) Size);
 	RawWrite(BufferPtr, Size);
 }
 
