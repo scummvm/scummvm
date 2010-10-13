@@ -31,6 +31,8 @@
 #include "common/events.h"
 #include "common/system.h"
 
+#include "backends/events/sdl/sdl-events.h"
+
 #if defined(__SYMBIAN32__)
 #include <esdl\SDL.h>
 #else
@@ -75,7 +77,7 @@ public:
  */
 class SdlGraphicsManager : public GraphicsManager, public Common::EventObserver {
 public:
-	SdlGraphicsManager();
+	SdlGraphicsManager(SdlEventSource *sdlEventSource);
 	virtual ~SdlGraphicsManager();
 
 	virtual void initEventObserver();
@@ -136,6 +138,8 @@ public:
 	bool notifyEvent(const Common::Event &event);
 
 protected:
+	SdlEventSource *_sdlEventSource;
+
 #ifdef USE_OSD
 	/** Surface containing the OSD message */
 	SDL_Surface *_osdSurface;

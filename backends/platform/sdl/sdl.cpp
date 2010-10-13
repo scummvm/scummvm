@@ -104,7 +104,7 @@ void OSystem_SDL::initBackend() {
 		}
 #endif
 		if (_graphicsManager == 0) {
-			_graphicsManager = new SdlGraphicsManager();
+			_graphicsManager = new SdlGraphicsManager(this);
 			graphicsManagerType = 0;
 		}
 	}
@@ -352,7 +352,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 			// manager, delete and create the new mode graphics manager
 			if (_graphicsMode >= _sdlModesCount && mode < _sdlModesCount) {
 				delete _graphicsManager;
-				_graphicsManager = new SdlGraphicsManager();
+				_graphicsManager = new SdlGraphicsManager(this);
 				((SdlGraphicsManager *)_graphicsManager)->initEventObserver();
 				_graphicsManager->beginGFXTransaction();
 			} else if (_graphicsMode < _sdlModesCount && mode >= _sdlModesCount) {
