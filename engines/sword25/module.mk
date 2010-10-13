@@ -103,6 +103,11 @@ MODULE_OBJS += \
 	fmv/yuvtorgba.o
 endif
 
+# HACK. Use proper CC compiler here
+%.o: %.c
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_CXX)gcc  $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	
 # This module can be built as a plugin
 ifeq ($(ENABLE_SWORD25), DYNAMIC_PLUGIN)
 PLUGIN := 1
