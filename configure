@@ -1788,6 +1788,8 @@ if test -n "$_host"; then
 			_ranlib=$_host-ranlib
 			;;
 		mips-sgi*)
+			LDFLAGS="$LDFLAGS -static-libgcc"
+			LIBS="$LIBS -laudio"
 			_endian=big
 			_need_memalign=yes
 			;;
