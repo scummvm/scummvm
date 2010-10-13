@@ -2372,10 +2372,15 @@ if test "$_png" = auto ; then
 	_png=no
 	cat > $TMPC << EOF
 #include <png.h>
-int main(void) { if (PNG_LIBPNG_VER >= 10208) { return 0; } return 1; }
+int main(void) {
+#if PNG_LIBPNG_VER >= 10208
+#else
+  syntax error
+#endif
+  return 0;
+}
 EOF
-	cc_check_no_clean $PNG_CFLAGS $PNG_LIBS -lpng && $TMPO$HOSTEXEEXT && _png=yes
-	cc_check_clean
+	cc_check $PNG_CFLAGS $PNG_LIBS -lpng && _png=yes
 fi
 if test "$_png" = yes ; then
 	LIBS="$LIBS $PNG_LIBS -lpng"
