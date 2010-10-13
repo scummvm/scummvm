@@ -74,8 +74,8 @@ private:
 		}
 	};
 	struct CallbackPtr_Hash {
-		unsigned long long operator()(CallbackPtr x) const {
-			return (unsigned long long)x;
+		uint operator()(CallbackPtr x) const {
+			return *(uint *)&x;
 		}
 	};
 
