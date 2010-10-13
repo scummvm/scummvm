@@ -2417,7 +2417,7 @@ if test "$_theoradec" = yes ; then
 	LIBS="$LIBS $THEORADEC_LIBS -ltheoradec"
 	INCLUDES="$INCLUDES $THEORADEC_CFLAGS"
 fi
-define_in_config_h_if_yes "$_theoradec" 'USE_THEORADEC'
+define_in_config_if_yes "$_theoradec" 'USE_THEORADEC'
 if test ! "$_theoradec" = notsupported ; then
 	echo "$_theoradec"
 fi

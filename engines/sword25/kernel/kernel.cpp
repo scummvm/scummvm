@@ -34,7 +34,9 @@
 
 #include "common/system.h"
 #include "sword25/gfx/graphicengine.h"
+#ifdef USE_THEORADEC
 #include "sword25/fmv/movieplayer.h"
+#endif
 #include "sword25/input/inputengine.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/persistenceservice.h"

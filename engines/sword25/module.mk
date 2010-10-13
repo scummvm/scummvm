@@ -3,10 +3,6 @@ MODULE := engines/sword25
 MODULE_OBJS := \
 	detection.o \
 	sword25.o \
-	fmv/movieplayer.o \
-	fmv/movieplayer_script.o \
-	fmv/theora_decoder.o \
-	fmv/yuvtorgba.o \
 	gfx/animation.o \
 	gfx/animationdescription.o \
 	gfx/animationresource.o \
@@ -98,6 +94,14 @@ MODULE_OBJS := \
 	util/pluto/pdep.o \
 	util/pluto/pluto.o \
 	util/pluto/plzio.o
+
+ifdef USE_THEORADEC
+MODULE_OBJS += \
+	fmv/movieplayer.o \
+	fmv/movieplayer_script.o \
+	fmv/theora_decoder.o \
+	fmv/yuvtorgba.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SWORD25), DYNAMIC_PLUGIN)
