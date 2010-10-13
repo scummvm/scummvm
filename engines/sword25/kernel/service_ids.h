@@ -55,7 +55,11 @@ Service *InputEngine_CreateObject(Kernel *pKernel);
 Service *SoundEngine_CreateObject(Kernel *pKernel);
 Service *LuaScriptEngine_CreateObject(Kernel *pKernel);
 Service *Geometry_CreateObject(Kernel *pKernel);
+#ifndef USE_THEORADEC
 Service *OggTheora_CreateObject(Kernel *pKernel);
+#else
+Service *OggTheora_CreateObject(Kernel *pKernel) { return NULL; }
+#endif
 
 // Services are recorded in this table
 const BS_ServiceInfo BS_SERVICE_TABLE[] = {

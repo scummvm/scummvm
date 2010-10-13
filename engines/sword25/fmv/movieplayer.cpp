@@ -39,6 +39,8 @@
 #include "sword25/package/packagemanager.h"
 #include "sword25/sfx/soundengine.h"
 
+#ifdef USE_THEORADEC
+
 namespace Sword25 {
 
 #define BS_LOG_PREFIX "MOVIEPLAYER"
@@ -46,14 +48,9 @@ namespace Sword25 {
 #define FLT_EPSILON     1.192092896e-07F        /* smallest such that 1.0+FLT_EPSILON != 1.0 */
 
 Service *OggTheora_CreateObject(Kernel *pKernel) {
-#ifdef USE_THEORADEC
 	return new MoviePlayer(pKernel);
-#else
-	return NULL;
-#endif
 }
 
-#ifdef USE_THEORADEC
 MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel), _decoder(g_system->getMixer()) {
 	if (!registerScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
@@ -156,6 +153,7 @@ double MoviePlayer::getTime() {
 	return _decoder.getElapsedTime() / 1000.0;
 }
 
+} // End of namespace Sword25
+
 #endif
 
-} // End of namespace Sword25
