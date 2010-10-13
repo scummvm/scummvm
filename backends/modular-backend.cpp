@@ -40,22 +40,13 @@ ModularBackend::ModularBackend()
 }
 
 ModularBackend::~ModularBackend() {
-	// Delete all managers if they have not been already
-	// freed by a subclass
-	if (_eventManager != 0)
-		delete _eventManager;
-	if (_graphicsManager != 0)
-		delete _graphicsManager;
-	if (_mixer != 0)
-		delete _mixer;
-	if (_audiocdManager != 0)
-		delete _audiocdManager;
-	if (_savefileManager != 0)
-		delete _savefileManager;
-	if (_timerManager != 0)
-		delete _timerManager;
-	if (_mutexManager != 0)
-		delete _mutexManager;
+	delete _eventManager;
+	delete _graphicsManager;
+	delete _mixer;
+	delete _audiocdManager;
+	delete _savefileManager;
+	delete _timerManager;
+	delete _mutexManager;
 }
 
 bool ModularBackend::hasFeature(Feature f) {
