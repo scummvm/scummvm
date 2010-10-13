@@ -60,7 +60,7 @@
 #define floorf(x)	((float)floor(x))
 #define fabsf(x)	((float)fabs(x))
 #define sqrtf(x)	((float)sqrt(x))
-#define atan2f(x)	((float)atan2(x))
+#define atan2f(x,y)	((float)atan2(x,y))
 #endif
 
 namespace Lua {
