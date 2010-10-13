@@ -4170,6 +4170,7 @@ PathFinderResult PathFinder::process() {
 		_inProgress = true;
 		initVars();
 
+		Common::Point diff(_destX - _xCurrent, _destY - _yCurrent);
 		_xCurrent >>= 3; _yCurrent >>= 3;
 		_xDestCurrent >>= 3; _yDestCurrent >>= 3;
 		if ((_xCurrent == _xDestCurrent) && (_yCurrent == _yDestCurrent)) {
@@ -4178,6 +4179,10 @@ PathFinderResult PathFinder::process() {
 				add(RIGHT, _xDestPos);
 			else if (_xDestPos < 0)
 				add(LEFT, -_xDestPos);
+			else if (diff.y > 0)
+				add(DOWN, diff.y);
+			else
+				add(UP, -diff.y);
 
 			_inProgress = false;
 			result = PF_OK;
@@ -4353,7 +4358,7 @@ PathFinderResult PathFinder::process() {
 			break;
 	}
 
-	// Add a final move if necessary
+	// Add final movement if necessary
 
 	if (result == PF_OK) {
 		if (_xDestPos < 0)
