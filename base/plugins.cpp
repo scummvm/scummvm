@@ -219,7 +219,7 @@ public:
 		LINK_PLUGIN(AMIGA)
 		LINK_PLUGIN(APPLEIIGS)
 		LINK_PLUGIN(TOWNS)
-		#if defined (UNIX)
+		#if defined(USE_TIMIDITY)
 		LINK_PLUGIN(TIMIDITY)
 		#endif
 

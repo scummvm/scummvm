@@ -124,6 +124,7 @@ _flac=auto
 _mad=auto
 _alsa=auto
 _seq_midi=auto
+_timidity=auto
 _zlib=auto
 _mpeg2=no
 _png=auto
@@ -782,6 +783,8 @@ for ac_option in $@; do
 	--disable-alsa)           _alsa=no        ;;
 	--enable-seq-midi)        _seq_midi=yes   ;;
 	--disable-seq-midi)       _seq_midi=no    ;;
+	--enable-timidity)        _timidity=yes   ;;
+	--disable-timidity)       _timidity=no    ;;
 	--enable-vorbis)          _vorbis=yes     ;;
 	--disable-vorbis)         _vorbis=no      ;;
 	--enable-tremor)          _tremor=yes     ;;
@@ -2429,6 +2432,19 @@ if test "$_seq_midi" = auto ; then
 fi
 define_in_config_h_if_yes "$_seq_midi" 'USE_SEQ_MIDI'
 echo "$_seq_midi"
+
+#
+# Check for TiMidity(++)
+#
+echocheck "TiMidity"
+if test "$_timidity" = auto ; then
+	# TODO: Is there a good possibility of auto detecting whether we
+	# should include TiMidity support? It can only be used on Unix
+	# currently so we use that as "detection" for now.
+	_timidity="$_unix"
+fi
+define_in_config_h_if_yes "$_timidity" 'USE_TIMIDITY'
+echo "$_timidity"
 
 #
 # Check for ZLib

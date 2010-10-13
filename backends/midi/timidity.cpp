@@ -34,7 +34,9 @@
  *
  */
 
-#if defined (UNIX)
+#include "common/scummsys.h"
+
+#if defined(USE_TIMIDITY)
 
 #include "common/util.h"
 #include "common/endian.h"
