@@ -48,13 +48,8 @@
 #define JOY_BUT_SPACE 4
 #define JOY_BUT_F5 5
 
-SdlEventManager::SdlEventManager(Common::EventSource *boss)
-	:
-	_scrollLock(false),
-	_joystick(0),
-	_lastScreenID(0),
-	DefaultEventManager(boss) {
-
+SdlEventSource::SdlEventSource()
+    : _scrollLock(false), _joystick(0), _lastScreenID(0), EventSource() {
 	// Reset mouse state
 	memset(&_km, 0, sizeof(_km));
 
@@ -73,12 +68,12 @@ SdlEventManager::SdlEventManager(Common::EventSource *boss)
 	}
 }
 
-SdlEventManager::~SdlEventManager() {
+SdlEventSource::~SdlEventSource() {
 	if (_joystick)
 		SDL_JoystickClose(_joystick);
 }
 
-int SdlEventManager::mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
+int SdlEventSource::mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
 		return key - SDLK_F1 + Common::ASCII_F1;
 	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
@@ -95,7 +90,7 @@ int SdlEventManager::mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	return key;
 }
 
-void SdlEventManager::fillMouseEvent(Common::Event &event, int x, int y) {
+void SdlEventSource::fillMouseEvent(Common::Event &event, int x, int y) {
 	event.mouse.x = x;
 	event.mouse.y = y;
 
@@ -104,7 +99,7 @@ void SdlEventManager::fillMouseEvent(Common::Event &event, int x, int y) {
 	_km.y = y;
 }
 
-void SdlEventManager::handleKbdMouse() {
+void SdlEventSource::handleKbdMouse() {
 	uint32 curTime = g_system->getMillis();
 	if (curTime >= _km.last_time + _km.delay_time) {
 		_km.last_time = curTime;
@@ -173,7 +168,7 @@ void SdlEventManager::handleKbdMouse() {
 	}
 }
 
-void SdlEventManager::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
+void SdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 
 	event.kbd.flags = 0;
 
@@ -198,7 +193,7 @@ void SdlEventManager::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) 
 		event.kbd.flags |= Common::KBD_CAPS;
 }
 
-bool SdlEventManager::pollSdlEvent(Common::Event &event) {
+bool SdlEventSource::pollEvent(Common::Event &event) {
 	handleKbdMouse();
 
 	// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
@@ -219,7 +214,7 @@ bool SdlEventManager::pollSdlEvent(Common::Event &event) {
 	return false;
 }
 
-bool SdlEventManager::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 	switch (ev.type) {
 	case SDL_KEYDOWN:
 		return handleKeyDown(ev, event);
@@ -260,7 +255,7 @@ bool SdlEventManager::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 }
 
 
-bool SdlEventManager::handleKeyDown(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	SDLModToOSystemKeyFlags(SDL_GetModState(), event);
 
@@ -312,7 +307,7 @@ bool SdlEventManager::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool SdlEventManager::handleKeyUp(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (remapKey(ev, event))
 		return true;
 
@@ -330,14 +325,14 @@ bool SdlEventManager::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool SdlEventManager::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
 	fillMouseEvent(event, ev.motion.x, ev.motion.y);
 
 	return true;
 }
 
-bool SdlEventManager::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT)
 		event.type = Common::EVENT_LBUTTONDOWN;
 	else if (ev.button.button == SDL_BUTTON_RIGHT)
@@ -360,7 +355,7 @@ bool SdlEventManager::handleMouseButtonDown(SDL_Event &ev, Common::Event &event)
 	return true;
 }
 
-bool SdlEventManager::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT)
 		event.type = Common::EVENT_LBUTTONUP;
 	else if (ev.button.button == SDL_BUTTON_RIGHT)
@@ -376,7 +371,7 @@ bool SdlEventManager::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool SdlEventManager::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONDOWN;
 		fillMouseEvent(event, _km.x, _km.y);
@@ -407,7 +402,7 @@ bool SdlEventManager::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool SdlEventManager::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONUP;
 		fillMouseEvent(event, _km.x, _km.y);
@@ -438,7 +433,7 @@ bool SdlEventManager::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool SdlEventManager::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	int axis = ev.jaxis.value;
 	if ( axis > JOY_DEADZONE) {
 		axis -= JOY_DEADZONE;
@@ -486,7 +481,7 @@ bool SdlEventManager::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool SdlEventManager::remapKey(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 #ifdef LINUPY
 	// On Yopy map the End button to quit
 	if ((ev.key.keysym.sym == 293)) {
@@ -554,14 +549,14 @@ bool SdlEventManager::remapKey(SDL_Event &ev, Common::Event &event) {
 	return false;
 }
 
-void SdlEventManager::toggleMouseGrab() {
+void SdlEventSource::toggleMouseGrab() {
 	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF)
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 	else
 		SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
-void SdlEventManager::resetKeyboadEmulation(int16 x_max, int16 y_max) {
+void SdlEventSource::resetKeyboadEmulation(int16 x_max, int16 y_max) {
 	_km.x_max = x_max;
 	_km.y_max = y_max;
 	_km.delay_time = 25;

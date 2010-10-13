@@ -52,7 +52,7 @@
  * And, it should also initialize all the managers variables
  * declared in this class, or override their related functions.
  */
-class ModularBackend : public OSystem, public Common::EventSource {
+class ModularBackend : public OSystem, public virtual Common::EventSource {
 public:
 	ModularBackend();
 	virtual ~ModularBackend();

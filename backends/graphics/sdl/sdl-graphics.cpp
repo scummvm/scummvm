@@ -821,7 +821,7 @@ bool SdlGraphicsManager::loadGFXMode() {
 	SDL_SetColorKey(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kOSDColorKey);
 #endif
 
-	((SdlEventManager *)g_system->getEventManager())->resetKeyboadEmulation(
+	((SdlEventSource *)g_system)->resetKeyboadEmulation(
 		_videoMode.screenWidth * _videoMode.scaleFactor - 1,
 		effectiveScreenHeight() - 1);
 

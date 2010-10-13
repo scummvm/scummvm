@@ -34,11 +34,12 @@
 
 #include "backends/modular-backend.h"
 #include "backends/mixer/sdl/sdl-mixer.h"
+#include "backends/events/sdl/sdl-events.h"
 
 /** 
  * Base OSystem class for all SDL ports.
  */
-class OSystem_SDL : public ModularBackend {
+class OSystem_SDL : public ModularBackend, public SdlEventSource {
 public:
 	OSystem_SDL();
 	virtual ~OSystem_SDL();
@@ -66,7 +67,6 @@ public:
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
-	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &td) const;

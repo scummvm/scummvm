@@ -35,17 +35,17 @@
 #endif
 
 /**
- * The SDL event manager class.
+ * The SDL event source.
  */
-class SdlEventManager : public DefaultEventManager {
-public:
-	SdlEventManager(Common::EventSource *boss);
-	virtual ~SdlEventManager();
+class SdlEventSource : public virtual Common::EventSource {
+public: 
+	SdlEventSource();
+	virtual ~SdlEventSource();
 
 	/**
-	 * Gets and proccess SDL events
+	 * Gets and processes SDL events.
 	 */
-	virtual bool pollSdlEvent(Common::Event &event);
+	virtual bool pollEvent(Common::Event &event);
 
 	/**
 	 * Resets keyboard emulation after a video screen change

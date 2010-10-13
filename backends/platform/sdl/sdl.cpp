@@ -112,7 +112,7 @@ void OSystem_SDL::initBackend() {
 	// Creates the backend managers, if they don't exist yet (we check
 	// for this to allow subclasses to provide their own).
 	if (_eventManager == 0)
-		_eventManager = new SdlEventManager(this);
+		_eventManager = new DefaultEventManager(this);
 
 	// We have to initialize the graphics manager before the event manager
 	// so the virtual keyboard can be initialized, but we have to add the
@@ -287,11 +287,6 @@ void OSystem_SDL::setupIcon() {
 	SDL_WM_SetIcon(sdl_surf, NULL);
 	SDL_FreeSurface(sdl_surf);
 	free(icon);
-}
-
-bool OSystem_SDL::pollEvent(Common::Event &event) {
-	assert(_eventManager);
-	return ((SdlEventManager *)_eventManager)->pollSdlEvent(event);
 }
 
 uint32 OSystem_SDL::getMillis() {
