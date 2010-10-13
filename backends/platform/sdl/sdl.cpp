@@ -226,7 +226,7 @@ void OSystem_SDL::deinit() {
 	_mutexManager = 0;
 
 #ifdef USE_OPENGL
-	free((void *)_graphicsModes),
+	delete[] _graphicsModes;
 #endif
 
 	SDL_Quit();
@@ -388,12 +388,12 @@ void OSystem_SDL::setupGraphicsModes() {
 	}
 	srcMode = openglGraphicsModes;
 	while (srcMode->name) {
-		_glModesCount ++;
+		_glModesCount++;
 		srcMode++;
 	}
 
 	// Allocate enough space for merged array of modes
-	_graphicsModes = (OSystem::GraphicsMode *)malloc(sizeof(OSystem::GraphicsMode) * (_glModesCount  + _sdlModesCount + 1));
+	_graphicsModes = new OSystem::GraphicsMode[_glModesCount  + _sdlModesCount + 1];
 
 	// Copy SDL graphics modes
 	memcpy((void *)_graphicsModes, sdlGraphicsModes, _sdlModesCount * sizeof(OSystem::GraphicsMode));
@@ -406,7 +406,7 @@ void OSystem_SDL::setupGraphicsModes() {
 
 	// Set new internal ids for all modes
 	int i = 0;
-	OSystem::GraphicsMode * mode = _graphicsModes;
+	OSystem::GraphicsMode *mode = _graphicsModes;
 	while (mode->name) {
 		mode->id = i++;
 		mode++;
