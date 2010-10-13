@@ -132,7 +132,7 @@ static int GetTimer(lua_State *L) {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 
-	lua_pushnumber(L, static_cast<lua_Number>(pKernel->GetMicroTicks()) / 1000000.0);
+	lua_pushnumber(L, static_cast<lua_Number>(pKernel->GetMilliTicks()) / 1000.0);
 
 	return 1;
 }

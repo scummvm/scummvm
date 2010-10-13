@@ -83,7 +83,7 @@ GraphicEngine::GraphicEngine(Kernel *pKernel) :
 	m_Height(0),
 	m_BitDepth(0),
 	m_Windowed(0),
-	m_LastTimeStamp((uint64) - 1), // max. BS_INT64 um beim ersten Aufruf von _UpdateLastFrameDuration() einen Reset zu erzwingen
+	m_LastTimeStamp((uint) -1), // max. BS_INT64 um beim ersten Aufruf von _UpdateLastFrameDuration() einen Reset zu erzwingen
 	m_LastFrameDuration(0),
 	m_TimerActive(true),
 	m_FrameTimeSampleSlot(0),
@@ -378,23 +378,25 @@ void GraphicEngine::DrawDebugLine(const Vertex &Start, const Vertex &End, uint C
 }
 
 void  GraphicEngine::UpdateLastFrameDuration() {
-	// Aktuelle Zeit holen
-	uint64_t CurrentTime = Kernel::GetInstance()->GetMicroTicks();
+	// Record current time
+	const uint currentTime = Kernel::GetInstance()->GetMilliTicks();
 
-	// Verstrichene Zeit seit letztem Frame berechnen und zu große Zeitsprünge ( > 250 msek.) unterbinden
-	// (kann vorkommen bei geladenen Spielständen, während des Debuggings oder Hardwareungenauigkeiten)
-	m_FrameTimeSamples[m_FrameTimeSampleSlot] = static_cast<uint>(CurrentTime - m_LastTimeStamp);
-	if (m_FrameTimeSamples[m_FrameTimeSampleSlot] > 250000) m_FrameTimeSamples[m_FrameTimeSampleSlot] = 250000;
+	// Compute the elapsed time since the last frame and prevent too big ( > 250 msecs) time jumps.
+	// These can occur when loading save states, during debugging or due to hardware inaccuracies.
+	m_FrameTimeSamples[m_FrameTimeSampleSlot] = static_cast<uint>(currentTime - m_LastTimeStamp);
+	if (m_FrameTimeSamples[m_FrameTimeSampleSlot] > 250000)
+		m_FrameTimeSamples[m_FrameTimeSampleSlot] = 250000;
 	m_FrameTimeSampleSlot = (m_FrameTimeSampleSlot + 1) % FRAMETIME_SAMPLE_COUNT;
 
-	// Die Framezeit wird über mehrere Frames gemittelt um Ausreisser zu eliminieren
+	// Compute the average frame duration over multiple frames to eliminate outliers.
 	Common::Array<uint>::const_iterator it = m_FrameTimeSamples.begin();
-	uint Sum = *it;
-	for (it++; it != m_FrameTimeSamples.end(); it++) Sum += *it;
-	m_LastFrameDuration = Sum / FRAMETIME_SAMPLE_COUNT;
+	uint sum = *it;
+	for (it++; it != m_FrameTimeSamples.end(); it++)
+		sum += *it;
+	m_LastFrameDuration = sum * 1000 / FRAMETIME_SAMPLE_COUNT;
 
-	// _LastTimeStamp auf die Zeit des aktuellen Frames setzen
-	m_LastTimeStamp = CurrentTime;
+	// Update m_LastTimeStamp with the current frame's timestamp
+	m_LastTimeStamp = currentTime;
 }
 
 namespace {

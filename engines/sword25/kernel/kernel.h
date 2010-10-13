@@ -160,12 +160,6 @@ public:
 	uint GetMilliTicks();
 
 	/**
-	 * Returns the elapsed time since the system start in microseconds.
-	 * This method should be used only if GetMilliTick() for the desired application is inaccurate.
-	 */
-	uint64 GetMicroTicks();
-
-	/**
 	 * Specifies whether the kernel was successfully initialised
 	 */
 	bool GetInitSuccess() {

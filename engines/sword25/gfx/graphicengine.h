@@ -189,17 +189,19 @@ public:
 	/**
 	 * Specifies the time (in microseconds) since the last frame has passed
 	 */
-	int GetLastFrameDurationMicro() {
-		if (m_TimerActive) return m_LastFrameDuration;
-		else return 0;
+	int GetLastFrameDurationMicro() const {
+		if (!m_TimerActive)
+			return 0;
+		return m_LastFrameDuration;
 	}
 
 	/**
 	 * Specifies the time (in microseconds) the previous frame took
 	*/
-	float GetLastFrameDuration() {
-		if (m_TimerActive) return static_cast<float>(m_LastFrameDuration) / 1000000.0f;
-		else return 0;
+	float GetLastFrameDuration() const {
+		if (!m_TimerActive)
+			return 0;
+		return static_cast<float>(m_LastFrameDuration) / 1000000.0f;
 	}
 
 	void StopMainTimer() {
@@ -208,7 +210,7 @@ public:
 	void ResumeMainTimer() {
 		m_TimerActive = true;
 	}
-	float GetSecondaryFrameDuration() {
+	float GetSecondaryFrameDuration() const {
 		return static_cast<float>(m_LastFrameDuration) / 1000000.0f;
 	}
 
@@ -217,14 +219,14 @@ public:
 	/**
 	 * Returns the width of the output buffer in pixels
 	 */
-	int         GetDisplayWidth() {
+	int         GetDisplayWidth() const {
 		return m_Width;
 	}
 
 	/**
 	 * Returns the height of the output buffer in pixels
 	 */
-	int         GetDisplayHeight() {
+	int         GetDisplayHeight() const {
 		return m_Height;
 	}
 
@@ -365,7 +367,7 @@ private:
 
 	// LastFrameDuration Variables
 	// ---------------------------
-	uint64                      m_LastTimeStamp;
+	uint                      m_LastTimeStamp;
 	uint                m_LastFrameDuration;
 	bool                        m_TimerActive;
 	Common::Array<uint> m_FrameTimeSamples;

@@ -362,14 +362,6 @@ uint Kernel::GetMilliTicks() {
 	return g_system->getMillis();
 }
 
-/**
- * Returns the elapsed time since the system start in microseconds.
- * This method should be used only if GetMilliTick() for the desired application is inaccurate.
- */
-uint64 Kernel::GetMicroTicks() {
-	return g_system->getMillis() * 1000;
-}
-
 // Other methods
 // -----------------
 
