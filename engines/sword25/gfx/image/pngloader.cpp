@@ -56,8 +56,9 @@ PNGLoader::PNGLoader() {
 // -----------------------------------------------------------------------------
 
 static void png_user_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
-	memcpy(data, (char *)png_ptr->io_ptr, length);
-	png_ptr->io_ptr = (void *)((png_size_t)png_ptr->io_ptr + length);
+	const byte **ref = (const byte **)png_get_io_ptr(png_ptr);
+	memcpy(data, *ref, length);
+	*ref += length;
 }
 
 // -----------------------------------------------------------------------------
@@ -97,7 +98,8 @@ bool PNGLoader::DoDecodeImage(const byte *FileDataPtr, uint FileSize,  GraphicEn
 	}
 
 	// Alternative Lesefunktion benutzen
-	png_set_read_fn(png_ptr, (void *)FileDataPtr, png_user_read_data);
+	const byte **ref = &FileDataPtr;
+	png_set_read_fn(png_ptr, (void *)ref, png_user_read_data);
 
 	// PNG Header einlesen
 	png_read_info(png_ptr, info_ptr);
@@ -234,7 +236,8 @@ bool PNGLoader::DoImageProperties(const byte *FileDataPtr, uint FileSize, Graphi
 	}
 
 	// Alternative Lesefunktion benutzen
-	png_set_read_fn(png_ptr, (void *)FileDataPtr, png_user_read_data);
+	const byte **ref = &FileDataPtr;
+	png_set_read_fn(png_ptr, (void *)ref, png_user_read_data);
 
 	// PNG Header einlesen
 	png_read_info(png_ptr, info_ptr);

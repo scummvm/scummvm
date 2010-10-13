@@ -57,7 +57,7 @@ struct RGB_PIXEL {
 #include "common/pack-end.h"
 
 void userWriteFn(png_structp png_ptr, png_bytep data, png_size_t length) {
-	static_cast<Common::WriteStream *>(png_ptr->io_ptr)->write(data, length);
+	static_cast<Common::WriteStream *>(png_get_io_ptr(png_ptr))->write(data, length);
 }
 
 void userFlushFn(png_structp png_ptr) {
