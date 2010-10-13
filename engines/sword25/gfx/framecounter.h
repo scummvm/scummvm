@@ -37,15 +37,21 @@
 
 // Includes
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/bs_stdint.h"
 
 namespace Sword25 {
+
 
 /**
  * A simple class that implements a frame counter
  */
 class Framecounter {
 private:
+
+	// TODO: This class should be rewritten based on Audio::Timestamp,
+	// which provides higher accuracy and avoids using 64 bit data types.
+	typedef unsigned long long uint64;
+	typedef signed long long int64;
+
 	enum {
 		DEFAULT_UPDATE_FREQUENCY = 10
 	};
@@ -79,8 +85,8 @@ public:
 private:
 	int m_FPS;
 	int m_FPSCount;
-	int64_t m_LastUpdateTime;
-	uint64_t m_UpdateDelay;
+	int64 m_LastUpdateTime;
+	uint64 m_UpdateDelay;
 };
 
 // Inlines

@@ -52,7 +52,6 @@
 #include "common/str.h"
 #include "common/str-array.h"
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/bs_stdint.h"
 
 namespace Sword25 {
 
@@ -81,7 +80,7 @@ public:
 	 * @return              Returns the size of the specified file. If the size could not be
 	 * determined, or the file does not exist, returns -1
 	 */
-	virtual int64 GetFileSize(const Common::String &Filename) = 0;
+	virtual uint32 GetFileSize(const Common::String &Filename) = 0;
 	/**
 	 * @param Filename      The path to a file.
 	 * @return              Returns the timestamp of the specified file.

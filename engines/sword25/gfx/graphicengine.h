@@ -49,7 +49,6 @@
 #include "common/str.h"
 #include "graphics/surface.h"
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/bs_stdint.h"
 #include "sword25/kernel/resservice.h"
 #include "sword25/kernel/persistable.h"
 #include "sword25/gfx/framecounter.h"

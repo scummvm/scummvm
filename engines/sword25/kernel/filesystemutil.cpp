@@ -87,7 +87,7 @@ public:
 		return Common::String("/");
 	}
 
-	virtual int64 GetFileSize(const Common::String &Filename) {
+	virtual uint32 GetFileSize(const Common::String &Filename) {
 		Common::FSNode node(Filename);
 
 		// If the file does not exist, return -1 as a result

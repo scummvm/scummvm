@@ -43,7 +43,6 @@
 #include "common/str.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
-#include "sword25/kernel/bs_stdint.h"
 #include "sword25/kernel/common.h"
 
 namespace Sword25 {
@@ -76,7 +75,7 @@ private:
 	};
 	struct CallbackPtr_Hash {
 		uint operator()(CallbackPtr x) const {
-			return static_cast<uint>((int64)x % ((int64)1 << sizeof(uint)));
+			return (uint)x;
 		}
 	};
 

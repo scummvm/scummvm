@@ -36,7 +36,6 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "sword25/kernel/bs_stdint.h"
 #include "sword25/gfx/image/art.h"
 #include "sword25/gfx/image/vectorimage.h"
 #include "sword25/gfx/image/renderedimage.h"

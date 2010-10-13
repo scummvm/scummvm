@@ -46,7 +46,7 @@ Framecounter::Framecounter(int UpdateFrequency) :
 
 void Framecounter::Update() {
 	// Aktuellen Systemtimerstand auslesen
-	uint64_t Timer = g_system->getMillis() * 1000;
+	uint64 Timer = g_system->getMillis() * 1000;
 
 	// Falls m_LastUpdateTime == -1 ist, wird der Frame-Counter zum ersten Mal aufgerufen und der aktuelle Systemtimer als erster
 	// Messzeitpunkt genommen.
@@ -58,7 +58,7 @@ void Framecounter::Update() {
 
 		// Falls der Messzeitraum verstrichen ist, wird die durchschnittliche Framerate berechnet und ein neuer Messzeitraum begonnen.
 		if (Timer - m_LastUpdateTime >= m_UpdateDelay) {
-			m_FPS = static_cast<int>((1000000 * (uint64_t)m_FPSCount) / (Timer - m_LastUpdateTime));
+			m_FPS = static_cast<int>((1000000 * (uint64)m_FPSCount) / (Timer - m_LastUpdateTime));
 			m_LastUpdateTime = Timer;
 			m_FPSCount = 0;
 		}

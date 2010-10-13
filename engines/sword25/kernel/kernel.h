@@ -53,7 +53,6 @@
 #include "engines/engine.h"
 
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/bs_stdint.h"
 #include "sword25/kernel/window.h"
 #include "sword25/kernel/resmanager.h"
 

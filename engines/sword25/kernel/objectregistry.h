@@ -37,7 +37,6 @@
 
 #include "common/func.h"
 #include "common/hashmap.h"
-#include "sword25/kernel/bs_stdint.h"
 #include "sword25/kernel/common.h"
 
 namespace Sword25 {
@@ -131,7 +130,6 @@ public:
 	}
 
 protected:
-	// FIXME: I'm not entirely sure my current hash function is legitimate
 	struct ClassPointer_EqualTo {
 		bool operator()(const T *x, const T *y) const {
 			return x == y;
@@ -139,7 +137,7 @@ protected:
 	};
 	struct ClassPointer_Hash {
 		uint operator()(const T *x) const {
-			return static_cast<uint>((int64)x % ((int64)1 << sizeof(uint)));
+			return (uint)x;
 		}
 	};
 

@@ -43,7 +43,6 @@
 #define SWORD25_IMAGELOADER_H
 
 // Includes
-#include "sword25/kernel/bs_stdint.h"
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/graphicengine.h"
 
