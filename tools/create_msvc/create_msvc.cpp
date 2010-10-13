@@ -1602,6 +1602,17 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		           "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\">\n"
 		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableSpecificWarnings=\"" << warnings->second << "\" />\n"
 		           "\t\t</Configuration>\n";
+	} else if (name == "sword25") {
+		// Win32
+		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\">\n"
+		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\" />\n";
+		// x64
+		project << "\t\t<Configuration Name=\"Debug|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug64.vsprops\">\n"
+		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\" />\n";
 	} else if (name == "tinsel") {
 		// Win32
 		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\">\n"
@@ -2023,6 +2034,9 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	} else {
 		if (name == "tinsel" && !isRelease)
 			project << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
+
+		if (name == "sword25")
+			project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
 
 		if (warnings != _projectWarnings.end())
 			project << "\t\t\t<DisableSpecificWarnings>" << warnings->second << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n";
