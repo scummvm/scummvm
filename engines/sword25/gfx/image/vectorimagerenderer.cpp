@@ -248,9 +248,9 @@ void art_rgb_svp_alpha1(const ArtSVP *svp,
 }
 
 static int art_vpath_len(ArtVpath *a) {
-	int i;
-
-	for (i = 0; a[i].code != ART_END; i++);
+	int i = 0;
+	while (a[i].code != ART_END)
+		i++;
 	return i;
 }
 

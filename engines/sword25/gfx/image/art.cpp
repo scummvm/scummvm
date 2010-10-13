@@ -551,11 +551,11 @@ static void art_svp_vpath_stroke_arc(ArtVpath **p_vpath, int *pn, int *pn_max,
 	if (radius > 0) {
 		/* curve to the left */
 		if (th_0 < th_1) th_0 += M_PI * 2;
-		n_pts = ceil((th_0 - th_1) / theta);
+		n_pts = (int)ceil((th_0 - th_1) / theta);
 	} else {
 		/* curve to the right */
 		if (th_1 < th_0) th_1 += M_PI * 2;
-		n_pts = ceil((th_1 - th_0) / theta);
+		n_pts = (int)ceil((th_1 - th_0) / theta);
 	}
 	art_vpath_add_point(p_vpath, pn, pn_max,
 	                    ART_LINETO, xc + x0, yc + y0);
@@ -769,7 +769,7 @@ static void render_cap(ArtVpath **p_result, int *pn_result, int *pn_result_max,
 		                    ART_LINETO, vpath[i1].x + dlx0, vpath[i1].y + dly0);
 		break;
 	case ART_PATH_STROKE_CAP_ROUND:
-		n_pts = ceil(M_PI / (2.0 * M_SQRT2 * sqrt(flatness / line_width)));
+		n_pts = (int)ceil(M_PI / (2.0 * M_SQRT2 * sqrt(flatness / line_width)));
 		art_vpath_add_point(p_result, pn_result, pn_result_max,
 		                    ART_LINETO, vpath[i1].x - dlx0, vpath[i1].y - dly0);
 		for (i = 1; i < n_pts; i++) {
@@ -2281,7 +2281,8 @@ static void art_svp_render_insert_active(int i, int *active_segs, int n_active_s
 
 	/* this is a cheap hack to get ^'s sorted correctly */
 	x = seg_x[i] + 0.001 * seg_dx[i];
-	for (j = 0; j < n_active_segs && seg_x[active_segs[j]] < x; j++);
+	for (j = 0; j < n_active_segs && seg_x[active_segs[j]] < x; j++)
+		;
 
 	tmp1 = i;
 	while (j < n_active_segs) {
@@ -2438,7 +2439,8 @@ void art_svp_render_aa_iter_step(ArtSVPRenderAAIter *iter, int *p_start,
 		        svp->segs[i].bbox.x0 < x1) {
 			seg = &svp->segs[i];
 			/* move cursor to topmost vector which overlaps [y,y+1) */
-			for (curs = 0; seg->points[curs + 1].y < y; curs++);
+			for (curs = 0; seg->points[curs + 1].y < y; curs++)
+				;
 			cursor[i] = curs;
 			dy = seg->points[curs + 1].y - seg->points[curs].y;
 			if (fabs(dy) >= EPSILON_6)
@@ -2491,12 +2493,12 @@ void art_svp_render_aa_iter_step(ArtSVPRenderAAIter *iter, int *p_start,
 					start += (int)delta;
 				else if (ix_min == ix_max) {
 					/* case 1, antialias a single pixel */
-					xdelta = (ix_min + 1 - (x_min + x_max) * 0.5) * delta;
+					xdelta = (int)((ix_min + 1 - (x_min + x_max) * 0.5) * delta);
 
 					ADD_STEP(ix_min, xdelta)
 
 					if (ix_min + 1 < x1) {
-						xdelta = delta - xdelta;
+						xdelta = (int)(delta - xdelta);
 
 						ADD_STEP(ix_min + 1, xdelta)
 					}
@@ -2505,8 +2507,8 @@ void art_svp_render_aa_iter_step(ArtSVPRenderAAIter *iter, int *p_start,
 					rslope = 1.0 / fabs(seg_dx[seg_index]);
 					drslope = delta * rslope;
 					last =
-					    drslope * 0.5 *
-					    (ix_min + 1 - x_min) * (ix_min + 1 - x_min);
+					    (int)(drslope * 0.5 *
+					    (ix_min + 1 - x_min) * (ix_min + 1 - x_min));
 					xdelta = last;
 					if (ix_min >= x0) {
 						ADD_STEP(ix_min, xdelta)
@@ -2519,25 +2521,25 @@ void art_svp_render_aa_iter_step(ArtSVPRenderAAIter *iter, int *p_start,
 					if (ix_max > x1)
 						ix_max = x1;
 					for (; x < ix_max; x++) {
-						this_ = (seg->dir ? 16711680.0 : -16711680.0) * rslope *
-						        (x + 0.5 - x_min);
+						this_ = (int)((seg->dir ? 16711680.0 : -16711680.0) * rslope *
+						        (x + 0.5 - x_min));
 						xdelta = this_ - last;
 						last = this_;
 
 						ADD_STEP(x, xdelta)
 					}
 					if (x < x1) {
-						this_ =
-						    delta * (1 - 0.5 *
+						this_ = 
+						    (int)(delta * (1 - 0.5 *
 						             (x_max - ix_max) * (x_max - ix_max) *
-						             rslope);
+						             rslope));
 						xdelta = this_ - last;
 						last = this_;
 
 						ADD_STEP(x, xdelta)
 
 						if (x + 1 < x1) {
-							xdelta = delta - last;
+							xdelta = (int)(delta - last);
 
 							ADD_STEP(x + 1, xdelta)
 						}
