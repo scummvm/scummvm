@@ -172,7 +172,6 @@ void PrisonerEngine::runCurrentScript() {
 
 		case kScriptStatusSleeping:
 			_currScript->sleepCounter -= _frameTicks;
-			//debug(1, "kScriptStatusSleeping: sleepCounter = %d", _currScript->sleepCounter);
 			if (_currScript->sleepCounter <= 0)
 				_currScript->status = kScriptStatusRunCode;
 			break;

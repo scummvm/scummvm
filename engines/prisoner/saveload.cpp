@@ -460,10 +460,10 @@ void ActorFrameSound::save(PrisonerEngine *vm, Common::WriteStream *out) {
 	out->writeUint16LE(actorIndex);
 	if (actorIndex != -1) {
 		out->writeUint16LE(soundIndex);
-		out->writeUint16LE(frameNum);
-		out->writeUint16LE(unk1);
+		out->writeUint16LE(frameListIndex);
+		out->writeUint16LE(frameIndex);
 		out->writeUint16LE(volume);
-		out->writeByte(unk2);
+		out->writeByte(flag);
 	}
 }
 
@@ -471,10 +471,10 @@ void ActorFrameSound::load(PrisonerEngine *vm, Common::ReadStream *in) {
 	actorIndex = in->readUint16LE();
 	if (actorIndex != -1) {
 		soundIndex = in->readUint16LE();
-		frameNum = in->readUint16LE();
-		unk1 = in->readUint16LE();
+		frameListIndex = in->readUint16LE();
+		frameIndex = in->readUint16LE();
 		volume = in->readUint16LE();
-		unk2 = in->readByte();
+		flag = in->readByte() == 1;
 	}
 }
 
@@ -764,7 +764,7 @@ void PrisonerEngine::savegame(const char *filename, const char *description) {
 	out->writeByte(_dialogFlag);
 
 	// User input counter
-	out->writeUint16LE(_userInputCounter);
+	out->writeUint16LE(_lockUserInputRefCounter);
 
 	// Text colors
 	_screenTextFontColor.save(this, out);
@@ -784,8 +784,19 @@ void PrisonerEngine::savegame(const char *filename, const char *description) {
 	// TODO: Music
 	out->writeByte(0);
 
-	// TODO: Sound
-	out->writeByte(0);
+	// Sound
+	out->writeByte(1);
+	for (int16 soundIndex = 0; soundIndex < kMaxSounds; soundIndex++) {
+		SoundSlot &soundSlot = _sounds[soundIndex];
+		out->writeUint16LE(soundSlot.resourceCacheSlot);
+		if (soundSlot.resourceCacheSlot != -1) {
+			writeResourceCacheSlotInfo(soundSlot.resourceCacheSlot, _res, out);
+			out->writeByte(soundSlot.volumeFlag);
+			out->writeUint16LE(soundSlot.volume);
+			out->writeByte(soundSlot.shouldResume);
+			out->writeByte(soundSlot.moduleWide);
+		}
+	}
 
 	// TODO...
 
@@ -1007,8 +1018,8 @@ void PrisonerEngine::loadgame(const char *filename) {
 	if (_dialogRunning)
 		startDialog(_currDialogIndex);
 
-	// User input counter
-	_userInputCounter = in->readUint16LE();
+	// User input locking
+	_lockUserInputRefCounter = in->readUint16LE();
 
 	// Text colors
 	_screenTextFontColor.load(this, in);
@@ -1028,8 +1039,26 @@ void PrisonerEngine::loadgame(const char *filename) {
 	// TODO: Music
 	in->readByte();
 
-	// TODO: Sound
-	in->readByte();
+	// Sound
+	// TODO: REMOVEME (don't read/write the flag byte later)
+	if (in->readByte() == 1) {
+		for (int16 soundIndex = 0; soundIndex < kMaxSounds; soundIndex++) {
+			SoundSlot &soundSlot = _sounds[soundIndex];
+			soundSlot.resourceCacheSlot = in->readUint16LE();
+			if (soundSlot.resourceCacheSlot != -1) {
+				soundSlot.resourceCacheSlot = loadResourceCacheSlotInfo<SoundResource>(_res, in);
+				soundSlot.volumeFlag = in->readByte() != 0;
+				soundSlot.volume = in->readUint16LE();
+				soundSlot.shouldResume = in->readByte() != 0;
+				soundSlot.moduleWide = in->readByte() != 0;
+				if (soundSlot.shouldResume) {
+					// Restart the sound
+					setSoundVolume(soundIndex, soundSlot.volume);
+					playLoopingSound(soundIndex, 0);
+				}
+			}
+		}
+	}
 
 	// TODO: ...
 

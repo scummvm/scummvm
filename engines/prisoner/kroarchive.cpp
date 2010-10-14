@@ -72,7 +72,7 @@ byte *KroArchive::load(uint index) {
 	byte *data = NULL;
 	KroArchiveEntry *entry = &_entries[index];
 
-	debug("KroArchive::load(%08X)", index);
+	debug(1, "KroArchive::load(%08X)", index);
 
 	_fd->seek(entry->offset);
 

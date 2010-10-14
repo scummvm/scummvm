@@ -1025,9 +1025,9 @@ int16 ScriptOpcodes::op_addActorFrameSound(Script *script) {
 	ARG_EVALUATE(actorIndex);
 	ARG_EVALUATE(soundIndex);
 	ARG_EVALUATE(volume);
-	ARG_EVALUATE(frameNum);
-	ARG_EVALUATE(unk);
-	int16 frameSoundIndex = _vm->addActorFrameSound(actorIndex, soundIndex, volume, frameNum, unk);
+	ARG_EVALUATE(frameListIndex);
+	ARG_EVALUATE(frameIndex);
+	int16 frameSoundIndex = _vm->addActorFrameSound(actorIndex, soundIndex, volume, frameListIndex, frameIndex);
 	return frameSoundIndex;
 }
 

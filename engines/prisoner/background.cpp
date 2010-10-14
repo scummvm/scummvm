@@ -207,10 +207,7 @@ void PrisonerEngine::updateScreen(bool fullRedraw, int16 x, int16 y) {
 	drawSprites(_cameraX, _cameraY);
 	_screen->setClipRect(0, 0, 639, 479);
 	updatePaletteTasks();
-	/* TODO:
-	if (_soundEnabled)
-		updateActorFrameSounds();
-	*/
+	updateActorFrameSounds();
 	updateScreenTexts();
 	if (x != -1 && y != -1)
 		updateCurrZone(x, y);

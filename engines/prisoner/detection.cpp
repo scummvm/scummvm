@@ -167,7 +167,7 @@ public:
 bool PrisonerMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
-//		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsLoadingDuringStartup) ||
 //		(f == kSupportsDeleteSave) ||
 	   	(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail);

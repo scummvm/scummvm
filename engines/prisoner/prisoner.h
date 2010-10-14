@@ -364,10 +364,10 @@ const int16 kMaxSceneItems = 10;
 struct ActorFrameSound {
 	int16 actorIndex;
 	int16 soundIndex;
-	int16 frameNum;
-	int16 unk1;
+	int16 frameListIndex;
+	int16 frameIndex;
 	int16 volume;
-	byte unk2;
+	bool flag;
 	bool isEmpty() const { return actorIndex == -1; }
 	void clear() { actorIndex = -1; }
 	void save(PrisonerEngine *vm, Common::WriteStream *out);
@@ -503,8 +503,8 @@ struct SoundSlot {
 	int16 resourceCacheSlot;
 	bool volumeFlag;
 	uint volume;
-	Common::String pakName;
-	int16 pakSlot;
+	//Common::String pakName;
+	//int16 pakSlot;
 	bool shouldResume;
 	bool moduleWide;
 	bool isEmpty() const { return resourceCacheSlot == -1; }
@@ -561,7 +561,7 @@ public:
 
 	char _languageChar;
 	int16 _animationSpeed;
-	int16 _userInputCounter;
+	int16 _lockUserInputRefCounter;
 	bool _clearBackgroundFlag;
 	bool _sceneFlag;
 	bool _mainMenuRequested;
@@ -983,7 +983,7 @@ public:
 
 	/* ActorFrameSounds */
 	void updateActorFrameSounds();
-	int16 addActorFrameSound(int16 actorIndex, int16 soundIndex, int16 volume, int16 frameNum, int16 unk1);
+	int16 addActorFrameSound(int16 actorIndex, int16 soundIndex, int16 volume, int16 frameListIndex, int16 frameIndex);
 	void removeActorFrameSound(int16 actorFrameSoundIndex);
 	void clearActorFrameSoundsBySoundIndex(int16 soundIndex);
 	void clearActorFrameSoundsByActorIndex(int16 actorIndex);

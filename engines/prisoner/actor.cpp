@@ -942,20 +942,34 @@ void PrisonerEngine::setActorAltAnimationAtPos(int16 actorIndex, int16 altAnimat
 /* ActorFrameSounds */
 
 void PrisonerEngine::updateActorFrameSounds() {
-	// TODO
+	for (int16 actorFrameSoundIndex = 0; actorFrameSoundIndex < kMaxActorFrameSounds; actorFrameSoundIndex++) {
+		ActorFrameSound *actorFrameSound = &_actorFrameSounds[actorFrameSoundIndex];
+		if (actorFrameSound->actorIndex != -1) {
+			ActorSprite *actorSprite = _actors[actorFrameSound->actorIndex].actorSprite;
+			if (actorFrameSound->frameIndex == actorSprite->frameIndex && !actorFrameSound->flag) {
+				if (actorFrameSound->frameListIndex == -1 || actorFrameSound->frameListIndex == actorSprite->frameListIndex) {
+					setSoundVolume(actorFrameSound->soundIndex, actorFrameSound->volume);
+					playSound(actorFrameSound->soundIndex);
+					actorFrameSound->flag = true;
+				}
+			} else if (actorFrameSound->frameIndex == actorSprite->prevFrameIndex) {
+				actorFrameSound->flag = false;
+			}
+		}
+	}
 }
 
-int16 PrisonerEngine::addActorFrameSound(int16 actorIndex, int16 soundIndex, int16 volume, int16 frameNum, int16 unk1) {
+int16 PrisonerEngine::addActorFrameSound(int16 actorIndex, int16 soundIndex, int16 volume, int16 frameListIndex, int16 frameIndex) {
 
 	int16 actorFrameSoundIndex = _actorFrameSounds.getFreeSlot();
 	ActorFrameSound *actorFrameSound = &_actorFrameSounds[actorFrameSoundIndex];
 
 	actorFrameSound->actorIndex = actorIndex;
 	actorFrameSound->soundIndex = soundIndex;
-	actorFrameSound->frameNum = frameNum;
-	actorFrameSound->unk1 = unk1;
+	actorFrameSound->frameListIndex = frameListIndex;
+	actorFrameSound->frameIndex = frameIndex;
 	actorFrameSound->volume = volume;
-	actorFrameSound->unk2 = 0;
+	actorFrameSound->flag = false;
 
 	_actorFrameSoundItemsCount++;
 

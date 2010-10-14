@@ -167,7 +167,7 @@ void PrisonerEngine::updateMouseCursor() {
 			doSetCursor = true;
 			doClearTextArea = true;
 		}
-	} else if (_userInputCounter > 0) {
+	} else if (_lockUserInputRefCounter > 0) {
 		if (_currMouseCursor != kCursorAutomatic) {
 			resetMouseCursorValues();
 			_currMouseCursor = kCursorAutomatic;

@@ -126,11 +126,11 @@ void PrisonerEngine::enterScene(int16 moduleIndex, int16 sceneIndex) {
 
 	debug("PrisonerEngine::enterScene(%d, %d)", moduleIndex, sceneIndex);
 
-	if (moduleIndex == 2 && sceneIndex == 33) gDebugLevel = 8; else gDebugLevel = 0;
+	//if (moduleIndex == 2 && sceneIndex == 33) gDebugLevel = 8; else gDebugLevel = 0;
 
 	Common::String modulePakName = Common::String::printf("SM%02d", moduleIndex);
 
-	_userInputCounter = 0;
+	_lockUserInputRefCounter = 0;
 	_cameraFollowsActorIndex = -1;
 	_updateDirtyRectsFlag = true;
 	_muxClearScreenBefore = true;

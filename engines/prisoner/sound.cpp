@@ -64,7 +64,7 @@ void PrisonerEngine::playLoopingSound(int16 soundIndex, int16 loops) {
 void PrisonerEngine::stopSound(int16 soundIndex) {
 	if (soundIndex >= 0) {
 		SoundSlot &soundSlot = _sounds[soundIndex];
-	    if (_mixer->isSoundHandleActive(soundSlot.handle))
+		if (_mixer->isSoundHandleActive(soundSlot.handle))
 			_mixer->stopHandle(soundSlot.handle);
 		soundSlot.shouldResume = false;
 	}
@@ -94,8 +94,8 @@ int16 PrisonerEngine::loadSound(Common::String &pakName, int16 pakSlot, bool mod
 	int16 soundIndex = _sounds.getFreeSlot();
 	SoundSlot &soundSlot = _sounds[soundIndex];
 	soundSlot.resourceCacheSlot = _res->load<SoundResource>(pakName, pakSlot, 12);
-	soundSlot.pakName = pakName;
-	soundSlot.pakSlot = pakSlot;
+	//soundSlot.pakName = pakName;
+	//soundSlot.pakSlot = pakSlot;
 	soundSlot.moduleWide = moduleWide;
 	soundSlot.shouldResume = false;
 	soundSlot.volumeFlag = false;

@@ -135,6 +135,7 @@ Common::Error PrisonerEngine::run() {
 	mux.open("Vin1.mux");
 	mux.play();
 	mux.close();
+	return Common::kNoError;
 #endif
 
 #if 0
@@ -176,7 +177,7 @@ Common::Error PrisonerEngine::run() {
 	_mainMenuRequested = false;
 	_dialogRunning = false;
 	_screenTextShowing = false;
-	_userInputCounter = 0;
+	_lockUserInputRefCounter = 0;
 	_zoneMouseCursorActive = false;
 	_inventoryItemCursor = -1;
 	_currMouseCursor = -1;
@@ -300,7 +301,13 @@ Common::Error PrisonerEngine::run() {
 		_inventoryBoxResourceCacheSlot = _res->load<AnimationResource>(pakName, 12, 11);
 	}
 
-	// TODO: Check here for save_slot
+	// Check here for save_slot
+	if (ConfMan.hasKey("save_slot")) {
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0 && saveSlot <= 99) {
+			loadGameState(saveSlot);
+		}
+	}
 
 	bool done = false;
 	while (!done) {
@@ -699,10 +706,10 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 
 void PrisonerEngine::setUserInput(bool enabled) {
 	if (enabled) {
-		if (_userInputCounter > 0)
-			_userInputCounter--;
+		if (_lockUserInputRefCounter > 0)
+			_lockUserInputRefCounter--;
 	} else {
-		_userInputCounter++;
+		_lockUserInputRefCounter++;
 	}
 	_inputFlag = false;
 }
