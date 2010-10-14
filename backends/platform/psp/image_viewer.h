@@ -29,6 +29,22 @@
 class InputHandler;
 
 class ImageViewer : public DisplayClient {
+public:
+	enum Event {
+		EVENT_NONE = -1,
+		EVENT_HIDE = 0,
+		EVENT_SHOW = 1,
+		EVENT_ZOOM_IN,
+		EVENT_ZOOM_OUT,
+		EVENT_MOVE_LEFT,
+		EVENT_MOVE_UP,
+		EVENT_MOVE_RIGHT,
+		EVENT_MOVE_DOWN,
+		EVENT_MOVE_STOP,
+		EVENT_NEXT_IMAGE,
+		EVENT_LAST_IMAGE,
+	};
+
 private:
 	Buffer *_buffer;
 	Palette *_palette;
@@ -40,6 +56,7 @@ private:
 	float _zoomFactor;	// how much we're zooming in/out on the image
 	float _visibleHeight, _visibleWidth;
 	float _centerX, _centerY;
+	Event _movement;
 	
 	InputHandler *_inputHandler;
 	
@@ -59,29 +76,20 @@ private:
 	void setVisible(bool visible);
 	
 public:
-	enum Events {
-		EVENT_HIDE = 0,
-		EVENT_SHOW = 1,
-		EVENT_ZOOM_IN,
-		EVENT_ZOOM_OUT,
-		EVENT_MOVE_LEFT,
-		EVENT_MOVE_UP,
-		EVENT_MOVE_RIGHT,
-		EVENT_MOVE_DOWN,
-		EVENT_NEXT_IMAGE,
-		EVENT_LAST_IMAGE,
-	};
 
-	ImageViewer() : _buffer(0), _palette(0), _visible(false), _dirty(false), _init(false), _imageNum(0),
+	ImageViewer() : _buffer(0), _palette(0), _visible(false), 
+					_dirty(false), _init(false), _imageNum(0), 
 					_zoomFactor(0.0f), _visibleHeight(0.0f), _visibleWidth(0.0f), 
-					_centerX(0.0f), _centerY(0.0f) {}
+					_centerX(0.0f), _centerY(0.0f), _movement(EVENT_MOVE_STOP) {}
 	~ImageViewer() { unload(); }	// deallocate images
 	bool load();
 	void render();
 	bool isVisible() { return _visible; }
 	bool isDirty() { return _dirty; }
 	void setDirty() { _dirty = true; }
-	void setClean() { _dirty = false; }	
+	void setClean() { if (_movement == EVENT_MOVE_STOP) // otherwise we want to keep rendering
+							_dirty = false; 
+	}	
 	void resetOnEngineDone();
 	
 	void handleEvent(uint32 event);

@@ -561,13 +561,13 @@ void InputHandler::setButtonsForImageViewer() {
 	//Nub
 	_nub.getPad().clearButtons();
 	_nub.getPad().getButton(ButtonPad::BTN_UP, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_UP, 
-		PSP_EVENT_NONE, false);
+		PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
 	_nub.getPad().getButton(ButtonPad::BTN_DOWN, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_DOWN, 
-		PSP_EVENT_NONE, false);
+		PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
 	_nub.getPad().getButton(ButtonPad::BTN_LEFT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_LEFT, 
-		PSP_EVENT_NONE, false);
+		PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
 	_nub.getPad().getButton(ButtonPad::BTN_RIGHT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_RIGHT, 
-		PSP_EVENT_NONE, false);
+		PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
 }
 
 

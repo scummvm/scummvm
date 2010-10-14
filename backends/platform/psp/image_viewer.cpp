@@ -159,6 +159,7 @@ void ImageViewer::loadNextImage() {
 		if (!load(_imageNum))		// we failed, so reload the current image
 			setVisible(false);		// just hide
 	}
+	setDirty();
 }
 
 void ImageViewer::loadLastImage() {
@@ -167,6 +168,7 @@ void ImageViewer::loadLastImage() {
 			if (!load(_imageNum))
 				setVisible(false);	// we can't even show the old image so hide
 	}		
+	setDirty();
 }
 
 void ImageViewer::setFullScreenImageParams() {
@@ -188,7 +190,24 @@ void ImageViewer::setFullScreenImageParams() {
 void ImageViewer::render() {
 	assert(_buffer);
 	assert(_renderer);
-	
+
+	// move the image slightly. Note that we count on the renderer's timing
+	switch (_movement) {
+	case EVENT_MOVE_LEFT:
+		moveImageX(-2);
+		break;
+	case EVENT_MOVE_UP:
+		moveImageY(-2);
+		break;
+	case EVENT_MOVE_RIGHT:
+		moveImageX(2);
+		break;
+	case EVENT_MOVE_DOWN:
+		moveImageY(2);
+		break;
+	default:
+		break;
+	}
 	_renderer->render();
 }
 
@@ -239,6 +258,7 @@ void ImageViewer::setOffsetParams() {
 	int offsetY = _centerY - (int)(_visibleHeight * 0.5f);
 	
 	_renderer->setOffsetOnScreen(offsetX, offsetY);
+	setDirty();
 }
 
 //	Handler events coming in from the inputHandler
@@ -260,16 +280,11 @@ void ImageViewer::handleEvent(uint32 event) {
 		modifyZoom(false);
 		break;
 	case EVENT_MOVE_LEFT:
-		moveImageX(-5);
-		break;
 	case EVENT_MOVE_UP:
-		moveImageY(-5);
-		break;
 	case EVENT_MOVE_RIGHT:
-		moveImageX(5);
-		break;
 	case EVENT_MOVE_DOWN:
-		moveImageY(5);
+	case EVENT_MOVE_STOP:
+		_movement = (Event)event;
 		break;
 	case EVENT_NEXT_IMAGE:
 		loadNextImage();
