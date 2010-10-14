@@ -174,8 +174,13 @@ protected:
 class GuRenderer {
 public:
 	// Constructors
-	GuRenderer() : _useGlobalScaler(false), _buffer(0), _palette(0), _blending(false), _alphaReverse(false), _colorTest(false), _keyColor(0), _fullScreen(false) {}
-	GuRenderer(Buffer *buffer, Palette *palette) : _useGlobalScaler(false), _buffer(buffer), _palette(palette), _blending(false), _alphaReverse(false), _colorTest(false), _keyColor(0), _fullScreen(false) {}
+	GuRenderer() : _useGlobalScaler(false), _buffer(0), _palette(0), 
+					_blending(false), _alphaReverse(false), _colorTest(false), 
+					_keyColor(0), _fullScreen(false), _stretch(false), _stretchX(1.0f), _stretchY(1.0f) {}
+	GuRenderer(Buffer *buffer, Palette *palette) : 
+					_useGlobalScaler(false), _buffer(buffer), _palette(palette), 
+					_blending(false), _alphaReverse(false), _colorTest(false), 
+					_keyColor(0), _fullScreen(false), _stretch(false), _stretchX(1.0f), _stretchY(1.0f) {}
 	static void setDisplayManager(DisplayManager *dm) { _displayManager = dm; } // Called by the Display Manager
 
 	// Setters
@@ -190,8 +195,7 @@ public:
 	}
 	void setBuffer(Buffer *buffer) { _buffer = buffer; }
 	void setPalette(Palette *palette) { _palette = palette; }
-	void setMaxTextureOffsetByIndex(uint32 x, uint32 y);	// For drawing multiple textures
-	void setOffsetOnScreen(uint32 x, uint32 y) { _offsetOnScreen.x = x; _offsetOnScreen.y = y; }
+	void setOffsetOnScreen(int x, int y) { _offsetOnScreen.x = x; _offsetOnScreen.y = y; }
 	void setOffsetInBuffer(uint32 x, uint32 y) { _offsetInBuffer.x = x; _offsetInBuffer.y = y; }
 	void setColorTest(bool value) { _colorTest = value; }
 	void setKeyColor(uint32 value) { _keyColor = _buffer->_pixelFormat.convertTo32BitColor(value); }
@@ -199,6 +203,8 @@ public:
 	void setAlphaReverse(bool value) { _alphaReverse = value; }
 	void setFullScreen(bool value) { _fullScreen = value; }		// Shortcut for rendering
 	void setUseGlobalScaler(bool value) { _useGlobalScaler = value; }	// Scale to screen
+	void setStretch(bool active) { _stretch = active; }
+	void setStretchXY(float x, float y) { _stretchX = x; _stretchY = y; }
 
 	static void cacheInvalidate(void *pointer, uint32 size);
 
@@ -216,11 +222,11 @@ protected:
 	void guDrawVertices(Vertex *vertices);
 
 	uint32 convertToGuPixelFormat(PSPPixelFormat::Type format);
-	float scaleSourceToOutputX(float offset);
-	float scaleSourceToOutputY(float offset);
+	float scaleSourceToOutput(bool x, float offset);
+	float stretch(bool x, float size);
 
 	friend class MasterGuRenderer;
-	Point _maxTextureOffset;		///> For rendering textures > 512 pixels
+	Point _textureLoadOffset;		///> For rendering textures > 512 pixels
 	Point _offsetOnScreen;			///> Where on screen to draw
 	Point _offsetInBuffer;			///> Where in the texture to draw
 	bool _useGlobalScaler;			///> Scale to the output size on screen
@@ -233,6 +239,8 @@ protected:
 	bool _colorTest;
 	uint32 _keyColor;				///> Color to test against for color test. in 32 bits.
 	bool _fullScreen;				///> Speeds up for fullscreen rendering
+	bool _stretch;					///> Whether zooming is activated
+	float _stretchX, _stretchY;
 };
 
 #endif /* PSP_SCREEN_H */

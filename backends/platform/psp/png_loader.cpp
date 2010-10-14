@@ -29,13 +29,19 @@
 #include "backends/platform/psp/display_client.h"
 #include "backends/platform/psp/png_loader.h"
 
+//#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
+//#define __PSP_DEBUG_PRINT__	/* For debug printouts */
+
+#include "backends/platform/psp/trace.h"
+
 PngLoader::Status PngLoader::allocate() {
+	DEBUG_ENTER_FUNC();
 	if (!findImageDimensions()) {
 		PSP_ERROR("failed to get image dimensions\n");
 		return BAD_FILE;
 	}
 
-	PSP_DEBUG_PRINT("width[%d], height[%d], paletteSize[%d], bitDepth[%d]\n", _width, _height, _paletteSize, _bitDepth);
+	
 	_buffer->setSize(_width, _height, _sizeBy);
 
 	if (_paletteSize) {	// 8 or 4-bit image
@@ -60,7 +66,7 @@ PngLoader::Status PngLoader::allocate() {
 		PSP_ERROR("failed to allocate buffer\n");
 		return OUT_OF_MEMORY;
 	}
-	if (!_palette->allocate()) {
+	if (_buffer->hasPalette() && !_palette->allocate()) {
 		PSP_ERROR("failed to allocate palette\n");
 		return OUT_OF_MEMORY;
 	}
@@ -68,6 +74,7 @@ PngLoader::Status PngLoader::allocate() {
 }
 
 bool PngLoader::load() {
+	DEBUG_ENTER_FUNC();
 	// Try to load the image
 	_file->seek(0);	// Go back to start
 
@@ -98,6 +105,7 @@ void PngLoader::libReadFunc(png_structp pngPtr, png_bytep data, png_size_t lengt
 }
 
 bool PngLoader::basicImageLoad() {
+	DEBUG_ENTER_FUNC();
 	_pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!_pngPtr)
 		return false;
@@ -130,11 +138,11 @@ bool PngLoader::basicImageLoad() {
 bool PngLoader::findImageDimensions() {
 	DEBUG_ENTER_FUNC();
 
-	if (!basicImageLoad())
-		return false;
+	bool status = basicImageLoad(); 
 
+	PSP_DEBUG_PRINT("width[%d], height[%d], paletteSize[%d], bitDepth[%d], rowBytes[%d]\n", _width, _height, _paletteSize, _bitDepth, _infoPtr->rowbytes);
 	png_destroy_read_struct(&_pngPtr, &_infoPtr, png_infopp_NULL);
-	return true;
+	return status;
 }
 
 //
@@ -143,11 +151,11 @@ bool PngLoader::findImageDimensions() {
 bool PngLoader::loadImageIntoBuffer() {
 	DEBUG_ENTER_FUNC();
 
-	if (!basicImageLoad())
+	if (!basicImageLoad()) {
+		png_destroy_read_struct(&_pngPtr, &_infoPtr, png_infopp_NULL);
 		return false;
-
-	// Strip off 16 bit channels. Not really needed but whatever
-	png_set_strip_16(_pngPtr);
+	}	
+	png_set_strip_16(_pngPtr);		// Strip off 16 bit channels in case they occur
 
 	if (_paletteSize) {
 		// Copy the palette
@@ -163,10 +171,23 @@ bool PngLoader::loadImageIntoBuffer() {
 		if (png_get_valid(_pngPtr, _infoPtr, PNG_INFO_tRNS))
 			png_set_tRNS_to_alpha(_pngPtr);		// Convert trans channel to alpha for 32 bits
 
-		png_set_filler(_pngPtr, 0xff, PNG_FILLER_AFTER);	// Filler for alpha?
+		//png_set_filler(_pngPtr, 0xff, PNG_FILLER_AFTER);	// Filler for alpha if none exists
+		png_set_add_alpha(_pngPtr, 0xff, PNG_FILLER_AFTER);		// Filler for alpha if none exists
 	}
 
-	unsigned char *line = (unsigned char*) malloc(_infoPtr->rowbytes);
+	uint32 rowBytes = png_get_rowbytes(_pngPtr, _infoPtr);
+	uint32 channels = png_get_channels(_pngPtr, _infoPtr);
+	
+	// there seems to be a bug in libpng where it doesn't increase the rowbytes or the channel even after we add the
+	// alpha channel
+	if (channels == 3 && (rowBytes / _width) == 3) {
+		channels = 4;
+		rowBytes = _width * channels;		
+	}	
+	
+	PSP_DEBUG_PRINT("rowBytes[%d], channels[%d]\n", rowBytes, channels);
+	
+	unsigned char *line = (unsigned char*) malloc(rowBytes);
 	if (!line) {
 		png_destroy_read_struct(&_pngPtr, png_infopp_NULL, png_infopp_NULL);
 		PSP_ERROR("Couldn't allocate line\n");
@@ -175,11 +196,9 @@ bool PngLoader::loadImageIntoBuffer() {
 
 	for (size_t y = 0; y < _height; y++) {
 		png_read_row(_pngPtr, line, png_bytep_NULL);
-		_buffer->copyFromRect(line, _infoPtr->rowbytes, 0, y, _width, 1);	// Copy into buffer
+		_buffer->copyFromRect(line, rowBytes, 0, y, _width, 1);	// Copy into buffer
 	}
-
 	free(line);
-
 	png_read_end(_pngPtr, _infoPtr);
 	png_destroy_read_struct(&_pngPtr, &_infoPtr, png_infopp_NULL);
 
