@@ -149,6 +149,7 @@ public:
 	Common::SaveFileManager *getSavefileManager() { return _savefile; }
 	FilesystemFactory *getFilesystemFactory() { return &PSPFilesystemFactory::instance(); }
 	void getTimeAndDate(TimeDate &t) const;
+	virtual void engineDone();
 
 	void quit();
 

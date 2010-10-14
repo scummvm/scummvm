@@ -82,6 +82,7 @@ public:
 	bool isDirty() { return _dirty; }
 	void setDirty() { _dirty = true; }
 	void setClean() { _dirty = false; }	
+	void resetOnEngineDone();
 	
 	void handleEvent(uint32 event);
 	

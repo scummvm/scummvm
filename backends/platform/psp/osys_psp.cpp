@@ -102,6 +102,12 @@ void OSystem_PSP::initBackend() {
 	OSystem::initBackend();
 }
 
+// Let's us know an engine
+void OSystem_PSP::engineDone() {
+	// for now, all we need is to reset the image number on the viewer
+	_imageViewer.resetOnEngineDone();
+}
+
 bool OSystem_PSP::hasFeature(Feature f) {
 	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorHasPalette);
 }

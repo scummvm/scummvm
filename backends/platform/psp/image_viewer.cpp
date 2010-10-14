@@ -118,6 +118,10 @@ void ImageViewer::unload() {
 	_init = false;
 }
 
+void ImageViewer::resetOnEngineDone() {
+	_imageNum = 0;
+}
+
 void ImageViewer::setVisible(bool visible) {
 	DEBUG_ENTER_FUNC();
 	if (_visible == visible)
