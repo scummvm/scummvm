@@ -41,6 +41,8 @@
 
 #ifdef USE_THEORADEC
 
+#define INDIRECTRENDERING 1
+
 namespace Sword25 {
 
 #define BS_LOG_PREFIX "MOVIEPLAYER"
@@ -69,6 +71,8 @@ bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
 
 	// Ausgabebitmap erstellen
 	GraphicEngine *pGfx = Kernel::GetInstance()->GetGfx();
+
+#if INDIRECTRENDERING
 	_outputBitmap = pGfx->GetMainPanel()->addDynamicBitmap(_decoder.getWidth(), _decoder.getHeight());
 	if (!_outputBitmap.isValid()) {
 		BS_LOG_ERRORLN("Output bitmap for movie playback could not be created.");
@@ -91,6 +95,17 @@ bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
 	// Ausgabebitmap auf dem Bildschirm zentrieren
 	_outputBitmap->setX((pGfx->GetDisplayWidth() - _outputBitmap->getWidth()) / 2);
 	_outputBitmap->setY((pGfx->GetDisplayHeight() - _outputBitmap->getHeight()) / 2);
+#else
+	_backSurface = pGfx->getSurface();
+
+	_outX = (pGfx->GetDisplayWidth() - _decoder.getWidth()) / 2;
+	_outY = (pGfx->GetDisplayHeight() - _decoder.getHeight()) / 2;
+
+	if (_outX < 0)
+		_outX = 0;
+	if (_outY < 0)
+		_outY = 0;
+#endif
 
 	return true;
 }
@@ -118,8 +133,14 @@ void MoviePlayer::update() {
 
 		// Transfer the next frame
 		assert(s->bytesPerPixel == 4);
+
+#if INDIRECTRENDERING
 		byte *frameData = (byte *)s->getBasePtr(0, 0);
 		_outputBitmap->setContent(frameData, s->pitch * s->h, 0, s->pitch);
+#else
+		g_system->copyRectToScreen((byte *)s->getBasePtr(0, 0), s->pitch, _outX, _outY, MIN(s->w, _backSurface->w), MIN(s->h, _backSurface->h));
+		g_system->updateScreen();
+#endif
 	}
 }
 

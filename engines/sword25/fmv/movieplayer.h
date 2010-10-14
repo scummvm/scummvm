@@ -140,6 +140,9 @@ private:
 
 	TheoraDecoder _decoder;
 
+	Graphics::Surface *_backSurface;
+	int _outX, _outY;
+
 	RenderObjectPtr<Bitmap>	_outputBitmap;
 };
 
