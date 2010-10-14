@@ -140,9 +140,26 @@ void Animation::drawFrame(Graphics::Surface &surface, int32 frame, int32 xx, int
 
 	int32 rectX = _frames[frame]._x2 - _frames[frame]._x1;
 	int32 rectY = _frames[frame]._y2 - _frames[frame]._y1;
+	int32 offsX = 0;
+	int32 offsY = 0;
 
-	if ((xx + _x1 + _frames[frame]._x1 < 0) || (yy + _y1 + _frames[frame]._y1 < 0))
+	if (xx + _x1 + _frames[frame]._x1 < 0) {
+		offsX = -(xx + _x1 + _frames[frame]._x1);
+	}
+
+	if (offsX >= rectX)
 		return;
+	else
+		rectX -= offsX;
+
+	if (yy + _y1 + _frames[frame]._y1 < 0) {
+		offsY = -(yy + _y1 + _frames[frame]._y1);
+	}
+
+	if (offsY >= rectY)
+		return;
+	else
+		rectY -= offsY;
 
 	if (rectX + xx + _x1 + _frames[frame]._x1 >= surface.w)
 		rectX = surface.w - xx - _x1 - _frames[frame]._x1;
@@ -157,8 +174,8 @@ void Animation::drawFrame(Graphics::Surface &surface, int32 frame, int32 xx, int
 		return;
 
 	int32 destPitch = surface.pitch;
-	uint8 *srcRow = _frames[frame]._data;
-	uint8 *curRow = (uint8 *)surface.pixels + (yy + _frames[frame]._y1 + _y1) * destPitch + (xx + _x1 + _frames[frame]._x1);
+	uint8 *srcRow = _frames[frame]._data + offsX + (_frames[frame]._x2 - _frames[frame]._x1) * offsY;
+	uint8 *curRow = (uint8 *)surface.pixels + (yy + _frames[frame]._y1 + _y1 + offsY) * destPitch + (xx + _x1 + _frames[frame]._x1 + offsX);
 	for (int32 y = 0; y < rectY; y++) {
 		uint8 *cur = curRow;
 		uint8 *c = srcRow + y * (_frames[frame]._x2 - _frames[frame]._x1);
