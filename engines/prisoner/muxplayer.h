@@ -38,12 +38,12 @@ namespace Prisoner {
 class MuxPlayer {
 public:
 
-	MuxPlayer(OSystem *system, Audio::Mixer *mixer);
+	MuxPlayer(PrisonerEngine *vm);
 	~MuxPlayer();
 
 	bool open(const char *filename);
 	void close();
-	void play();
+	bool play();
 
 protected:
 
@@ -68,9 +68,8 @@ protected:
 		uint16 width, height;
 	};
 
-	OSystem *_system;
+	PrisonerEngine *_vm;
 
-	Audio::Mixer *_mixer;
 	Audio::QueuingAudioStream *_stream;
 	Audio::SoundHandle _sound;
 
@@ -84,7 +83,7 @@ protected:
 	uint32 *_chunkTable;
 	int _chunkTableCount;
 
-	void handleChunk();
+	void handleFrame();
 	void handleEndOfChunk(uint32 chunkSize);
 	void handleAudio(uint32 chunkSize);
 	void handleVideo(uint32 chunkSize);

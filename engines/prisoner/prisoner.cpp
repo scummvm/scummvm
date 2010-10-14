@@ -131,8 +131,10 @@ Common::Error PrisonerEngine::run() {
 //	initializeMidi();
 
 #if 0
-	MuxPlayer mux(_system, _mixer);
-	mux.open("Vin1.mux");
+	initInput();
+	MuxPlayer mux(this);
+	mux.open("Sin1.mux");
+	//mux.open("Vintro.mux");
 	mux.play();
 	mux.close();
 	return Common::kNoError;
@@ -307,6 +309,10 @@ Common::Error PrisonerEngine::run() {
 		if (saveSlot >= 0 && saveSlot <= 99) {
 			loadGameState(saveSlot);
 		}
+		_mainMenuRequested = false;
+	} else {
+		playIntroVideos();
+		// TODO: Later: _mainMenuRequested = true;
 	}
 
 	bool done = false;
@@ -369,6 +375,7 @@ Common::Error PrisonerEngine::run() {
 	delete _res;
 	delete _resLoader;
 
+	debug("Exit ok");
 	return Common::kNoError;
 }
 
@@ -467,6 +474,24 @@ uint32 PrisonerEngine::getTicks() {
 void PrisonerEngine::addDirtyRect(int16 x1, int16 y1, int16 x2, int16 y2, int16 flag) {
 	// TODO
 	// Just a dummy until the real code is done
+}
+
+void PrisonerEngine::playIntroVideos() {
+	_muxEasterEggCount = 0;
+	_muxClearScreenBefore = true;
+	_muxClearScreenAfter = true;
+	playMux("vintro.mux");
+	if (_muxEasterEggKey == Common::KEYCODE_i)
+		_muxEasterEggCount++;
+	playMux("vcredits.mux");
+	if (_muxEasterEggKey == Common::KEYCODE_c)
+		_muxEasterEggCount++;
+	playMux("vtitre.mux");
+	if (_muxEasterEggKey == Common::KEYCODE_e)
+		_muxEasterEggCount++;
+	if (_muxEasterEggCount == 3)
+		playMux("vice.mux");
+	_muxEasterEggCount = 0;
 }
 
 void PrisonerEngine::death() {
@@ -714,14 +739,30 @@ void PrisonerEngine::setUserInput(bool enabled) {
 	_inputFlag = false;
 }
 
-void PrisonerEngine::playMux(Common::String &filename) {
+void PrisonerEngine::playMux(Common::String filename) {
 	debug("playMux('%s')", filename.c_str());
+	// TODO
 #if 0
-	MuxPlayer mux(_system, _mixer);
+	MuxPlayer mux(this);
 	mux.open(filename.c_str());
 	mux.play();
 	mux.close();
 #endif
+}
+
+bool PrisonerEngine::handleMuxInput() {
+	bool aborted = false;
+	Common::KeyCode keyState;
+	uint16 buttonState;
+	updateEvents();
+	getInputStatus(keyState, buttonState);
+	debug("keyState = %d; buttonState = %d", keyState, buttonState);
+	if (_muxEasterEggCount != 3 && (keyState != Common::KEYCODE_INVALID || buttonState != 0)) {
+		_muxEasterEggKey = keyState;
+		aborted = true;
+		inpSetWaitRelease(true);
+	}
+	return aborted;
 }
 
 void PrisonerEngine::playMuxSoon(Common::String &filename, bool clearScreenAfter, bool clearScreenBefore) {

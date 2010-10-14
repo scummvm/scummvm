@@ -568,6 +568,8 @@ public:
 
 	Common::String _muxFilename;
 	bool _muxClearScreenAfter, _muxClearScreenBefore;
+	Common::KeyCode _muxEasterEggKey;
+	uint _muxEasterEggCount;
 
 	int16 _textFont, _menuFont;
 
@@ -795,6 +797,7 @@ public:
 	int16 getSysVar(int16 varIndex);
 	bool isScreenTextShowing() const { return _screenTextShowing; }
 
+	void playIntroVideos();
 	void death();
 	bool waitForInput();
 
@@ -1062,7 +1065,8 @@ public:
 	void updatePaletteTasks();
 	void clearPaletteTasks();
 
-	void playMux(Common::String &filename);
+	void playMux(Common::String filename);
+	bool handleMuxInput();
 	void playMuxSoon(Common::String &filename, bool clearScreenAfter, bool clearScreenBefore);
 	void requestAutoSave(Common::String &pakName, int16 pakSlot, Common::String &identifier);
 

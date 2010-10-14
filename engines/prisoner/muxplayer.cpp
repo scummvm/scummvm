@@ -34,6 +34,7 @@
 #include "sound/mixer.h"
 #include "sound/decoders/raw.h"
 
+#include "prisoner/prisoner.h"
 #include "prisoner/muxplayer.h"
 
 namespace Prisoner {
@@ -60,10 +61,7 @@ int MemoryBitReadStream::readBit() {
 	return theBit;
 }
 
-MuxPlayer::MuxPlayer(OSystem *system, Audio::Mixer *mixer) {
-	_system = system;
-	_mixer = mixer;
-	_opened = false;
+MuxPlayer::MuxPlayer(PrisonerEngine *vm) : _vm(vm), _opened(false) {
 }
 
 MuxPlayer::~MuxPlayer() {
@@ -90,6 +88,7 @@ bool MuxPlayer::open(const char *filename) {
 	_header.height = _fd.readUint16LE();
 
 	debug("width = %d; height = %d", _header.width, _header.height);
+	debug("u3 = %d; u4 = %d; u5 = %d; u6 = %d; u7 = %d; u8 = %d", _header.u3, _header.u4, _header.u5, _header.u6, _header.u7, _header.u8);
 
 	_frameBuffer = new byte[_header.width * _header.height];
 
@@ -108,76 +107,63 @@ bool MuxPlayer::open(const char *filename) {
 
 void MuxPlayer::close() {
 	if (_opened) {
-		if (_mixer->isSoundHandleActive(_sound)) {
-			_mixer->stopHandle(_sound);
+		if (_vm->_mixer->isSoundHandleActive(_sound)) {
+			_vm->_mixer->stopHandle(_sound);
 		}
 		delete[] _chunkTable;
 		delete[] _frameBuffer;
-		delete _stream;
 		_fd.close();
 		_opened = false;
 	}
 }
 
-void MuxPlayer::play() {
+bool MuxPlayer::play() {
 
 	uint32 startTick;
+	bool aborted = false;
 
 	if (!_opened)
-		return;
+		return true;
 
-	startTick = _system->getMillis();
+	startTick = _vm->_system->getMillis();
 
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sound, _stream);
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sound, _stream);
 
-	for (uint curFrame = 0; curFrame < _header.frameCount; curFrame++) {
+	for (uint curFrame = 0; curFrame < _header.frameCount && !aborted; curFrame++) {
 
 		if (_chunkTable[curFrame] != 0x3FFFFFFF) {
 			_fd.seek(_chunkTable[curFrame]);
-			handleChunk();
+			handleFrame();
 		}
 
 		// TODO: Implement frame skipping?
-#if 0
-		while (1) {
+
+		while (!aborted) {
 			uint32 elapsedTime;
 
-			if (_mixer->isSoundHandleActive(_sound)) {
-				elapsedTime = _mixer->getSoundElapsedTime(_sound);
+			if (_vm->_mixer->isSoundHandleActive(_sound)) {
+				elapsedTime = _vm->_mixer->getSoundElapsedTime(_sound);
 			} else {
-				elapsedTime = _system->getMillis() - startTick;
+				elapsedTime = _vm->_system->getMillis() - startTick;
 			}
 
 			// TODO: Figure out real framerate from header, 12fps is a good guess
 			if (elapsedTime >= (curFrame * 1000) / 12)
 				break;
 
-			Common::Event event;
-
-			Common::EventManager *eventMan = _system->getEventManager();
-			while (eventMan->pollEvent(event)) {
-				switch (event.type) {
-				case Common::EVENT_KEYDOWN:
-					if (event.kbd.ascii == 27)
-						return;
-					break;
-				case Common::EVENT_QUIT:
-					//_vm->quitGame();
-					return;
-				default:
-					break;
-				}
-			}
+			aborted = _vm->handleMuxInput();
 
 		}
-#endif
+
 	}
 
 	debug("Mux playback done.");
 
+	return !aborted;
+
 }
 
-void MuxPlayer::handleChunk() {
+void MuxPlayer::handleFrame() {
 	uint16 chunkType;
 	uint32 chunkSize;
 
@@ -219,8 +205,8 @@ void MuxPlayer::handleChunk() {
 
 void MuxPlayer::handleEndOfChunk(uint32 chunkSize) {
 	_fd.seek(chunkSize, SEEK_CUR);
-	_system->copyRectToScreen(_frameBuffer, _header.width, 0, 0, _header.width, _header.height);
-	_system->updateScreen();
+	_vm->_system->copyRectToScreen(_frameBuffer, _header.width, 0, 0, _header.width, _header.height);
+	_vm->_system->updateScreen();
 }
 
 void MuxPlayer::handleAudio(uint32 chunkSize) {
@@ -243,21 +229,30 @@ void MuxPlayer::handleVideo(uint32 chunkSize) {
 	chunkSize -= 13;
 
 	flags = _fd.readByte();
+
+	debug("flags = %02X", flags);
+
 	_fd.readUint32LE();
 	bufSize1 = _fd.readUint32LE();
 	bufSize2 = _fd.readUint32LE();
+
+	debug("chunkSize = %d; bufSize1 = %d; bufSize2 = %d", chunkSize, bufSize1, bufSize2);
 
 	buffer = new byte[chunkSize];
 	_fd.read(buffer, chunkSize);
 
 	if (flags & 4) {
-	  byte *compBuffer = buffer;
-	  buffer = new byte[bufSize1 + bufSize2];
-	  decompress(compBuffer, buffer, chunkSize, bufSize1 + bufSize2);
-	  delete[] compBuffer;
+		byte *compBuffer = buffer;
+		buffer = new byte[bufSize1 + bufSize2];
+		debug("deompress...");
+		decompress(compBuffer, buffer, chunkSize, bufSize1 + bufSize2);
+		debug("deompress ok");
+		delete[] compBuffer;
 	}
 
+	debug("decodeFrame...");
 	decodeFrame(buffer, buffer + bufSize1, _frameBuffer, bufSize1, bufSize2, !(flags & 2));
+	debug("decodeFrame ok");
 
 	delete[] buffer;
 
@@ -273,7 +268,7 @@ void MuxPlayer::handlePalette(uint32 chunkSize) {
 		colors[i * 4 + 2] = _palette[i * 3 + 2];
 		colors[i * 4 + 3] = 0;
 	}
-	_system->setPalette(colors, 0, 256);
+	_vm->_system->setPalette(colors, 0, 256);
 
 }
 
@@ -291,7 +286,7 @@ void MuxPlayer::decompress(byte *source, byte *dest, uint32 sourceSize, uint32 d
 				length = (lengthTmp & 0x0F) + 2;
 			}
 			bitCounter ^= 1;
-			while (length--)
+			while (length-- && dst < dstEnd)
 				*dst++ = *(dst - ofs);
 		} else {
 			if (bitCounter & 1) {
@@ -301,7 +296,7 @@ void MuxPlayer::decompress(byte *source, byte *dest, uint32 sourceSize, uint32 d
 				length = (lengthTmp & 0x0F) + 1;
 			}
 			bitCounter ^= 1;
-			while (length--)
+			while (length-- && dst < dstEnd)
 				*dst++ = src.readByte();
 		}
 	}
