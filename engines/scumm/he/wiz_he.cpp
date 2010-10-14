@@ -363,7 +363,7 @@ void Wiz::writeColor(uint8 *dstPtr, int dstType, uint16 color) {
 		break;
 	case kDstMemory:
 	case kDstResource:
-		WRITE_LE_UINT16(dstPtr, color);
+		WRITE_UINT16(dstPtr, color);
 		break;
 	default:
 		error("writeColor: Unknown dstType %d", dstType);
