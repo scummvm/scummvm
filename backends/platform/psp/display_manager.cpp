@@ -34,6 +34,7 @@
 #include "backends/platform/psp/default_display_client.h"
 #include "backends/platform/psp/cursor.h"
 #include "backends/platform/psp/pspkeyboard.h"
+#include "backends/platform/psp/image_viewer.h"
 
 #define USE_DISPLAY_CALLBACK	// to use callback for finishing the render
 #include "backends/platform/psp/display_manager.h"
@@ -385,10 +386,12 @@ bool DisplayManager::renderAll() {
 #endif /* USE_DISPLAY_CALLBACK */
 
 	// This is cheaper than checking time, so we do it first
+	// Any one of these being dirty causes everything to draw
 	if (!_screen->isDirty() &&
-	        (!_overlay->isDirty()) &&
-	        (!_cursor->isDirty()) &&
-	        (!_keyboard->isDirty())) {
+		!_overlay->isDirty() &&
+		!_cursor->isDirty() &&
+		!_keyboard->isDirty() &&
+		!_imageViewer->isDirty()) {
 		PSP_DEBUG_PRINT("Nothing dirty\n");
 		return true;	// nothing to render
 	}
@@ -396,34 +399,35 @@ bool DisplayManager::renderAll() {
 	if (!isTimeToUpdate())
 		return false;	// didn't render
 
-	PSP_DEBUG_PRINT("screen[%s], overlay[%s], cursor[%s], keyboard[%s]\n",
+	PSP_DEBUG_PRINT("dirty: screen[%s], overlay[%s], cursor[%s], keyboard[%s], imageViewer[%s]\n",
 	                _screen->isDirty() ? "true" : "false",
 	                _overlay->isDirty() ? "true" : "false",
 	                _cursor->isDirty() ? "true" : "false",
-	                _keyboard->isDirty() ? "true" : "false"
+	                _keyboard->isDirty() ? "true" : "false",
+					_imageViewer->isDirty() ? "true" : "false",
 	               );
 
 	_masterGuRenderer.guPreRender();	// Set up rendering
 
 	_screen->render();
-
 	_screen->setClean();				// clean out dirty bit
+	
+	if (_imageViewer->isVisible())
+		_imageViewer->render();
+	_imageViewer->setClean();
 
 	if (_overlay->isVisible())
-		_overlay->render();
-
+		_overlay->render();		
 	_overlay->setClean();
 
 	if (_cursor->isVisible())
 		_cursor->render();
-
 	_cursor->setClean();
 
 	if (_keyboard->isVisible())
 		_keyboard->render();
-
 	_keyboard->setClean();
-
+	
 	_masterGuRenderer.guPostRender();
 
 	return true;	// rendered successfully

@@ -95,7 +95,7 @@ const uint32 ButtonPad::_buttonMap[] = {
 };
 
 ButtonPad::ButtonPad() : _prevButtonState(0), _shifted(UNSHIFTED), _padMode(PAD_MODE_NORMAL),
-						_comboMode(false) {
+						_comboMode(false), _combosEnabled(true) {
 	for (int i = UNSHIFTED; i < SHIFTED_MODE_LAST; i++)
 		_buttonsChanged[i] = 0;
 	clearButtons();
@@ -154,6 +154,7 @@ void ButtonPad::initButtonsNormalMode() {
 	_button[BTN_START][SHIFTED].setKey(Common::KEYCODE_F5, Common::ASCII_F5);
 	_button[BTN_START][UNSHIFTED].setKey(Common::KEYCODE_F5, Common::ASCII_F5, Common::KBD_CTRL);
 	_button[BTN_SELECT][UNSHIFTED].setPspEvent(PSP_EVENT_SHOW_VIRTUAL_KB, true, PSP_EVENT_NONE, 0);
+	_button[BTN_SELECT][SHIFTED].setPspEvent(PSP_EVENT_IMAGE_VIEWER, true, PSP_EVENT_NONE, 0);
 }
 
 void ButtonPad::initButtonsLolMode() {
@@ -199,7 +200,8 @@ bool ButtonPad::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &
 
 	uint32 curButtonState = PSP_ALL_BUTTONS & pad.Buttons;	// we only care about these
 
-	modifyButtonsForCombos(pad);						// change buttons for combos
+	if (_combosEnabled)
+		modifyButtonsForCombos(pad);						// change buttons for combos	
 
 	return getEventFromButtonState(event, pspEvent, curButtonState);
 }
@@ -369,6 +371,7 @@ void InputHandler::init() {
 	sceCtrlSetSamplingMode(1);  // analog
 
 	_buttonPad.initButtons();
+	_nub.init();
 }
 
 bool InputHandler::getAllInputs(Common::Event &event) {
@@ -460,6 +463,12 @@ bool InputHandler::handlePspEvent(Common::Event &event, PspEvent &pspEvent) {
 	/*case PSP_EVENT_CHANGE_SPEED:
 		handleSpeedChange(pspEvent.data);
 		break;*/
+	case PSP_EVENT_IMAGE_VIEWER:	
+		_imageViewer->handleEvent(pspEvent.data);
+		break;
+	case PSP_EVENT_IMAGE_VIEWER_SET_BUTTONS:
+		setImageViewerMode(pspEvent.data);
+		break;
 	default:
 		PSP_ERROR("Unhandled PSP Event[%d]\n", pspEvent.type);
 		break;
@@ -509,3 +518,56 @@ void InputHandler::handleSpeedChange(bool up) {
 	GUI::TimedMessageDialog dialog(_padModeText[_padMode], 1500);
 	dialog.runModal();
 }*/
+
+void InputHandler::setImageViewerMode(bool active) {
+	if (_buttonPad.isButtonDown() || _nub.isButtonDown()) {	// can't switch yet
+		PSP_DEBUG_PRINT("postponing image viewer on event\n");
+		_pendingPspEvent.type = PSP_EVENT_IMAGE_VIEWER_SET_BUTTONS;		// queue it to be done later
+		_pendingPspEvent.data = active;
+	} else if (active) {
+		_nub.setDpadMode(true);
+		_buttonPad.enableCombos(false);	// disable combos
+		setButtonsForImageViewer();
+	} else {	// deactivate
+		_nub.setDpadMode(false);
+		_nub.init();
+		_buttonPad.enableCombos(true);	// re-enable combos
+		_buttonPad.initButtons();
+	} 	
+}
+
+void InputHandler::setButtonsForImageViewer() {
+	DEBUG_ENTER_FUNC();
+
+	// Dpad
+	_buttonPad.clearButtons();
+	_buttonPad.getButton(ButtonPad::BTN_UP, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_ZOOM_IN, 
+		PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_DOWN, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_ZOOM_OUT, 
+		PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_LEFT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_LAST_IMAGE, 
+		PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_RIGHT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_NEXT_IMAGE, 
+		PSP_EVENT_NONE, false);	
+	_buttonPad.getButton(ButtonPad::BTN_LTRIGGER, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE, 
+		PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_RTRIGGER, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE, 
+		PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_START, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE, 
+		PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_SELECT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE, 
+		PSP_EVENT_NONE, false);
+
+	//Nub
+	_nub.getPad().clearButtons();
+	_nub.getPad().getButton(ButtonPad::BTN_UP, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_UP, 
+		PSP_EVENT_NONE, false);
+	_nub.getPad().getButton(ButtonPad::BTN_DOWN, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_DOWN, 
+		PSP_EVENT_NONE, false);
+	_nub.getPad().getButton(ButtonPad::BTN_LEFT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_LEFT, 
+		PSP_EVENT_NONE, false);
+	_nub.getPad().getButton(ButtonPad::BTN_RIGHT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_RIGHT, 
+		PSP_EVENT_NONE, false);
+}
+
+

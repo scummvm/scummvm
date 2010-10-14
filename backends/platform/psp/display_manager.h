@@ -96,6 +96,7 @@ class Screen;
 class Overlay;
 class Cursor;
 class PSPKeyboard;
+class ImageViewer;
 
 /**
  *	Class that manages all display clients
@@ -107,7 +108,8 @@ public:
 		KEEP_ASPECT_RATIO,
 		STRETCHED_FULL_SCREEN
 	};
-	DisplayManager() : _screen(0), _cursor(0), _overlay(0), _keyboard(0), _lastUpdateTime(0), _graphicsMode(0) {}
+	DisplayManager() : _screen(0), _cursor(0), _overlay(0), _keyboard(0), 
+					  _imageViewer(0), _lastUpdateTime(0), _graphicsMode(0) {}
 	~DisplayManager();
 
 	void init();
@@ -118,11 +120,13 @@ public:
 	uint32 getDefaultGraphicsMode() const { return STRETCHED_FULL_SCREEN; }
 	const OSystem::GraphicsMode* getSupportedGraphicsModes() const { return _supportedModes; }
 
-	// Setters
+	// Setters for pointers
 	void setScreen(Screen *screen) { _screen = screen; }
 	void setCursor(Cursor *cursor) { _cursor = cursor; }
 	void setOverlay(Overlay *overlay) { _overlay = overlay; }
 	void setKeyboard(PSPKeyboard *keyboard) { _keyboard = keyboard; }
+	void setImageViewer(ImageViewer *imageViewer) { _imageViewer = imageViewer; }
+	
 	void setSizeAndPixelFormat(uint width, uint height, const Graphics::PixelFormat *format);
 
 	// Getters
@@ -148,6 +152,7 @@ private:
 	Cursor *_cursor;
 	Overlay *_overlay;
 	PSPKeyboard *_keyboard;
+	ImageViewer *_imageViewer;
 
 	MasterGuRenderer _masterGuRenderer;
 	uint32 _lastUpdateTime;					// For limiting FPS

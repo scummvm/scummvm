@@ -76,12 +76,17 @@ void OSystem_PSP::initBackend() {
 	_displayManager.setScreen(&_screen);
 	_displayManager.setOverlay(&_overlay);
 	_displayManager.setKeyboard(&_keyboard);
+	_displayManager.setImageViewer(&_imageViewer);
 	_displayManager.init();
 
 	// Set pointers for input handler
 	_inputHandler.setCursor(&_cursor);
 	_inputHandler.setKeyboard(&_keyboard);
+	_inputHandler.setImageViewer(&_imageViewer);
 	_inputHandler.init();
+	
+	// Set pointers for image viewer
+	_imageViewer.setInputHandler(&_inputHandler);
 
 	_savefile = new PSPSaveFileManager;
 

@@ -32,10 +32,12 @@
 #include "sound/mixer_intern.h"
 #include "backends/base-backend.h"
 #include "backends/fs/psp/psp-fs-factory.h"
+
 #include "backends/platform/psp/display_client.h"
 #include "backends/platform/psp/default_display_client.h"
 #include "backends/platform/psp/cursor.h"
 #include "backends/platform/psp/pspkeyboard.h"
+#include "backends/platform/psp/image_viewer.h"
 #include "backends/platform/psp/display_manager.h"
 #include "backends/platform/psp/input.h"
 #include "backends/platform/psp/audio.h"
@@ -60,6 +62,7 @@ private:
 	InputHandler _inputHandler;
 	PspAudio _audio;
 	PspTimer _pspTimer;
+	ImageViewer _imageViewer;
 
 public:
 	OSystem_PSP() : _savefile(0), _mixer(0), _timer(0), _pendingUpdate(false), _pendingUpdateCounter(0) {}

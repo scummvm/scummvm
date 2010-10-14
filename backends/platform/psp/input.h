@@ -30,6 +30,7 @@
 #include "common/events.h"
 #include "backends/platform/psp/pspkeyboard.h"
 #include "backends/platform/psp/cursor.h"
+#include "backends/platform/psp/image_viewer.h"
 #include <pspctrl.h>
 
 enum PspEventType {
@@ -40,9 +41,10 @@ enum PspEventType {
 	PSP_EVENT_RBUTTON,
 	PSP_EVENT_MODE_SWITCH,
 	PSP_EVENT_CHANGE_SPEED,
+	PSP_EVENT_IMAGE_VIEWER,
+	PSP_EVENT_IMAGE_VIEWER_SET_BUTTONS,
 	PSP_EVENT_LAST
 };
-
 
 struct PspEvent {
 	PspEventType type;
@@ -112,59 +114,77 @@ private:
 	ShiftMode _shifted;
 	PspPadMode _padMode;
 	bool _comboMode;								// are we in the middle of combos
-	static const uint32 _buttonMap[];						// maps the buttons to their values
+	bool _combosEnabled;							// can we do combos
+	static const uint32 _buttonMap[];				// maps the buttons to their values
 
 	void initButtonsNormalMode();
 	void initButtonsLolMode();
 	void modifyButtonsForCombos(SceCtrlData &pad);
-	void clearButtons();
 
 public:
 	ButtonPad();
+	void initButtons();		// set the buttons to the mode that's selected
+	void clearButtons();	// empty the buttons of all events
+	
 	bool getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad);
 	bool getEventFromButtonState(Common::Event &event, PspEvent &pspEvent, uint32 buttonState);
+	
 	void setShifted(ShiftMode shifted) { _shifted = shifted; }
 	void setPadMode(PspPadMode mode) { _padMode = mode; }
 	bool isButtonDown() { return _prevButtonState; }
-	void initButtons();
+	
+	void enableCombos(bool value) { _combosEnabled = value; }
+	Button &getButton(ButtonType type, ShiftMode mode) { return _button[type][mode]; }	
 };
 
 class Nub {
 private:
 	Cursor *_cursor;		// to enable changing/getting cursor position
 
-	ButtonPad _buttonPad;	// private buttonpad for dpad mode
 	ShiftMode _shifted;
 	bool _dpadMode;
-
-public:
-	Nub() : _shifted(UNSHIFTED), _dpadMode(false) { _buttonPad.initButtons(); }
-
-	void setCursor(Cursor *cursor) { _cursor = cursor; }
-	void setDpadMode(bool active) { _dpadMode = active; }
-	void setShifted(ShiftMode shifted) { _shifted = shifted; }
-	bool isButtonDown();
-
-	bool getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad);
+	
+	ButtonPad _buttonPad;	// private buttonpad for dpad mode
+	
 	int32 modifyNubAxisMotion(int32 input);
 	void translateToDpadState(int dpadX, int dpadY, uint32 &buttonState);	// convert nub data to dpad data
+public:
+	Nub() : _shifted(UNSHIFTED), _dpadMode(false) { }
+	void init() { _buttonPad.initButtons(); }	
+
+	void setCursor(Cursor *cursor) { _cursor = cursor; }
+	
+	// setters
+	void setDpadMode(bool active) { _dpadMode = active; }
+	void setShifted(ShiftMode shifted) { _shifted = shifted; }
+
+	// getters
+	bool isButtonDown();
+	bool getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad);
+	ButtonPad &getPad() { return _buttonPad; }
 };
 
 class InputHandler {
 public:
-	InputHandler() : _keyboard(0), _cursor(0), _padMode(PAD_MODE_NORMAL), _lastPadCheckTime(0) {}
+	InputHandler() : _keyboard(0), _cursor(0), _imageViewer(0), _padMode(PAD_MODE_NORMAL), 
+					 _lastPadCheckTime(0) {}
+	// pointer setters
 	void setKeyboard(PSPKeyboard *keyboard) { _keyboard = keyboard; }
 	void setCursor(Cursor *cursor) { _cursor = cursor; _nub.setCursor(cursor); }
+	void setImageViewer(ImageViewer *imageViewer) { _imageViewer = imageViewer; }
 
 	void init();
 	bool getAllInputs(Common::Event &event);
+	void setImageViewerMode(bool active);
 
 private:
+	Nub _nub;	
+	ButtonPad _buttonPad;
+
+	// Pointers to relevant other classes
 	PSPKeyboard *_keyboard;
 	Cursor *_cursor;
-
-	Nub _nub;
-	ButtonPad _buttonPad;
+	ImageViewer *_imageViewer;
 
 	PspPadMode _padMode;				// whice mode we're in
 	PspEvent _pendingPspEvent;			// an event that can't be handled yet
@@ -176,6 +196,7 @@ private:
 	void handleMouseEvent(Common::Event &event, Common::EventType type, const char *string);
 	void handleShiftEvent(ShiftMode shifted);
 	void handleModeSwitchEvent();
+	void setButtonsForImageViewer();
 };
 
 #endif /* PSP_INPUT_H */
