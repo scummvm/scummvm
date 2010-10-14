@@ -37,15 +37,31 @@ FontRenderer::FontRenderer(ToonEngine *vm) : _vm(vm) {
 
 // mapping extended characters required for foreign versions to font (animation)
 static const byte map_textToFont[0x80] = {
-	'?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x8x
-	'?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x9x
-	'?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0xAx
-	'?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0xBx
-	'?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0xCx
-	'?', 0x0b,  '?',  '?',  '?',  '?', 0x1e,  '?',  '?',  '?',  '?',  '?', 0x1f,  '?',  '?',  0x19, // 0xDx
+	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x8x
+	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x9x
+	 '?', 0x09,  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0xAx
+	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', 0x0a, // 0xBx
+	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0xCx
+	 '?', 0x0b,  '?',  '?',  '?',  '?', 0x1e,  '?',  '?',  '?',  '?',  '?', 0x1f,  '?',  '?', 0x19, // 0xDx
 	0x0d, 0x04, 0x0e,  '?', 0x1a,  '?',  '?', 0x18, 0x10, 0x0f, 0x12, 0x11, 0x09, 0x05, 0x14, 0x13, // 0xEx
 	0x23, 0x08, 0x23, 0x06, 0x15, 0x23, 0x1b, 0x23, 0x23, 0x16, 0x07, 0x17, 0x1c, 0x23, 0x23, 0x23  // 0xFx
 };
+
+byte FontRenderer::textToFont(byte c) {
+	// No need to remap simple characters.
+	if (c < 0x80)
+		return c;
+
+	// The Spanish version shows grave accent over the 'e' when it should
+	// be acute. This happens both in the original interpreter and when
+	// using the common map which works for other languages, so we add a
+	// special case for it.
+	if (_vm->_language == Common::ES_ESP && c == 0xe9)
+		return 0x10;
+
+	// Use the common map to convert the extended characters.
+	return map_textToFont[c - 0x80];
+}
 
 void FontRenderer::renderText(int32 x, int32 y, Common::String origText, int32 mode) {
 	debugC(5, kDebugFont, "renderText(%d, %d, %s, %d)", x, y, origText.c_str(), mode);
@@ -75,8 +91,7 @@ void FontRenderer::renderText(int32 x, int32 y, Common::String origText, int32 m
 			height = 0;
 			curX = x;
 		} else {
-			if (curChar >= 0x80)
-				curChar = map_textToFont[curChar - 0x80];
+			curChar = textToFont(curChar);
 			_currentFont->drawFontFrame(_vm->getMainSurface(), curChar, curX, curY, _currentFontColor);
 			curX = curX + _currentFont->getFrameWidth(curChar) - 1;
 			height = MAX(height, _currentFont->getFrameHeight(curChar));
@@ -105,8 +120,7 @@ void FontRenderer::computeSize(Common::String origText, int32 *retX, int32 *retY
 			lineHeight = 0;
 			lineWidth = 0;
 		} else {
-			if (curChar >= 0x80)
-				curChar = map_textToFont[curChar - 0x80];
+			curChar = textToFont(curChar);
 			int32 charWidth = _currentFont->getFrameWidth(curChar) - 1;
 			int32 charHeight = _currentFont->getFrameHeight(curChar);
 			lineWidth += charWidth;
@@ -192,9 +206,8 @@ void FontRenderer::renderMultiLineText(int32 x, int32 y, Common::String origText
 			if (curChar == 32) {
 				lastSpace = it;
 				lastSpaceX = curWidth;
-			} else if (curChar >= 0x80) {
-				curChar = map_textToFont[curChar - 0x80];
-			}
+			} else
+				curChar = textToFont(curChar);
 
 			int width = _currentFont->getFrameWidth(curChar);
 			curWidth += width - 2;
@@ -259,9 +272,7 @@ void FontRenderer::renderMultiLineText(int32 x, int32 y, Common::String origText
 		const byte *line = lines[i];
 		curX = x - lineSize[i] / 2;
 		while (*line) {
-			byte curChar = *line;
-			if (curChar >= 0x80)
-				curChar = map_textToFont[curChar - 0x80];
+			byte curChar = textToFont(*line);
 			if (curChar != 32) _currentFont->drawFontFrame(_vm->getMainSurface(), curChar, curX + _vm->state()->_currentScrollValue, curY, _currentFontColor);
 			curX = curX + _currentFont->getFrameWidth(curChar) - 2;
 			//height = MAX(height, _currentFont->getFrameHeight(curChar));

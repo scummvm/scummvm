@@ -45,6 +45,7 @@ protected:
 	Animation *_currentFont;
 	ToonEngine *_vm;
 	byte _currentFontColor[4];
+	byte textToFont(byte c);
 };
 
 } // End of namespace Toon
