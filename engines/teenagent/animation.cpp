@@ -112,7 +112,7 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 	//fixme: do not reload the same animation each time
 	free();
 
-	if (s == NULL && s->size() <= 1) {
+	if (s == NULL || s->size() <= 1) {
 		debug(1, "empty animation");
 		return;
 	}
