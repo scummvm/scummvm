@@ -595,9 +595,10 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 			if (unditherTable[color]) {
 				// Some color with black? Turn colors around, otherwise it won't
 				// be the right color at all.
+				byte unditheredColor = color;
 				if ((color & 0xF0) == 0)
-					color = (color << 4) | (color >> 4);
-				curPtr[0] = color; curPtr[1] = color;
+					unditheredColor = (color << 4) | (color >> 4);
+				curPtr[0] = unditheredColor; curPtr[1] = unditheredColor;
 			}
 			curPtr++;
 		}
