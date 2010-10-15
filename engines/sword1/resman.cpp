@@ -332,10 +332,13 @@ Common::File *ResMan::resFile(uint32 id) {
 			Clu *closeClu = _openCluStart;
 			_openCluStart = _openCluStart->nextOpen;
 
-			closeClu->file->close();
-			delete closeClu->file;
-			closeClu->file = NULL;
-			closeClu->nextOpen = NULL;
+			if (closeClu) {
+				if (closeClu->file)
+					closeClu->file->close();
+				delete closeClu->file;
+				closeClu->file = NULL;
+				closeClu->nextOpen = NULL;
+			}
 			_openClus--;
 		}
 	}

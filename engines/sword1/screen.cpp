@@ -886,8 +886,8 @@ uint8* Screen::psxBackgroundToIndexed(uint8 *psxBackground, uint32 bakXres, uint
 
 // needed because some psx backgrounds are half width and half height
 uint8* Screen::psxShrinkedBackgroundToIndexed(uint8 *psxBackground, uint32 bakXres, uint32 bakYres) {
-	uint32 xresInTiles = (bakXres / 2) % 16 ? (bakXres / 32) + 1 : (bakXres / 32);
-	uint32 yresInTiles =  (bakYres / 2) % 16 ? (bakYres / 32) + 1 : (bakYres / 32);
+	uint32 xresInTiles = ((bakXres / 2) % 16) ? (bakXres / 32) + 1 : (bakXres / 32);
+	uint32 yresInTiles = ((bakYres / 2) % 16) ? (bakYres / 32) + 1 : (bakYres / 32);
 	uint32 totTiles = xresInTiles * yresInTiles;
 	uint32 tileYpos = 0; //tile position in a virtual xresInTiles * yresInTiles grid
 	uint32 tileXpos = 0;
