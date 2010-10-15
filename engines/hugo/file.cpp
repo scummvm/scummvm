@@ -203,6 +203,7 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 				}
 			}
 		}
+		assert(seqPtr);
 		seqPtr->nextSeqPtr = objPtr->seqList[j].seqPtr; // loop linked list to head
 	}
 
