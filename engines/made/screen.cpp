@@ -204,7 +204,7 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 	for (int16 yc = 0; yc < clipHeight; yc++) {
 		linePtr = source + sourceAdd;
 		for (int16 xc = 0; xc < clipWidth; xc++) {
-			if (*linePtr && (_vm->getGameID() == GID_RTZ || (mask == 0 || maskp[xc] == 0))) {
+			if (*linePtr && (_vm->getGameID() == GID_RTZ || (mask == 0 || (maskp && maskp[xc] == 0)))) {
 				if (*linePtr)
 					dest[xc] = *linePtr;
 			}
