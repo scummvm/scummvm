@@ -543,7 +543,8 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 	memset(&bitmapMemorial, 0, sizeof(bitmapMemorial));
 
 	// Count all seemingly dithered pixel-combinations as soon as at least 4
-	// pixels are adjacent
+	// pixels are adjacent and check pixels in the following line as well to
+	// be the reverse pixel combination
 	int16 checkHeight = height - 1;
 	curPtr = bitmapPtr;
 	byte *nextPtr = curPtr + width;
