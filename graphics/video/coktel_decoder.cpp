@@ -2301,12 +2301,15 @@ byte *VMDDecoder::deDPCM(const byte *data, uint32 &size, int32 init[2]) {
 	uint32 outSize = size + channels;
 
 	int16 *out   = (int16 *)malloc(outSize * 2);
-	byte  *sound = (byte *) out;
+	byte  *sound = (byte *)out;
+
+	if (!out)
+		return 0;
 
 	int channel = 0;
 
 	for (int i = 0; i < channels; i++) {
-		*out++        = TO_BE_16(init[channel]);
+		*out++ = TO_BE_16(init[channel]);
 
 		channel = (channel + 1) % channels;
 	}
@@ -2464,6 +2467,7 @@ Common::MemoryReadStream *VMDDecoder::getEmbeddedFile(const Common::String &file
 		free(data);
 		warning("VMDDecoder::getEmbeddedFile(): Couldn't read %d bytes (file \"%s\")",
 				file->realSize, fileName.c_str());
+		return 0;
 	}
 
 	Common::MemoryReadStream *stream =
