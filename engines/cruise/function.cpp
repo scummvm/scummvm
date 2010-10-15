@@ -58,9 +58,9 @@ int16 Op_LoadOverlay() {
 
 	updateAllScriptsImports();
 
-	strcpy(nextOverlay, overlayName);
+	strncpy(nextOverlay, overlayName, 38);
 
-	return(overlayLoadResult);
+	return overlayLoadResult;
 }
 
 int16 Op_Strcpy() {

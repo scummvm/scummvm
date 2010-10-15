@@ -185,8 +185,9 @@ int32 opcodeType1()	{
 			return 0;
 		}
 		case 2: {
+			assert (ptr);
 			*(ptr + var_A + offset) = var;
-			return (0);
+			return 0;
 		}
 		default:
 			error("Unsupported code in opcodeType1 case 1");

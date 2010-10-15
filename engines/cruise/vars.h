@@ -154,8 +154,8 @@ extern int32 volumeDataLoaded;
 
 extern int16 numOfDisks;
 
-extern char lastOverlay[15];
-extern char nextOverlay[15];
+extern char lastOverlay[38];
+extern char nextOverlay[38];
 
 extern int16 currentActiveMenu;
 extern int16 autoMsg;
