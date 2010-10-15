@@ -556,8 +556,8 @@ struct AgiGame {
 	int lineUserInput;	/**< line to put user input on */
 	int lineMinPrint;		/**< num lines to print on */
 	int cursorPos;			/**< column where the input cursor is */
-	uint8 inputBuffer[40]; /**< buffer for user input */
-	uint8 echoBuffer[40];	/**< buffer for echo.line */
+	byte inputBuffer[40]; /**< buffer for user input */
+	byte echoBuffer[40];	/**< buffer for echo.line */
 	int keypress;
 
 	InputMode inputMode;			/**< keyboard input mode */
