@@ -890,7 +890,7 @@ int AGOSEngine_PN::doline(int needsave) {
 	int myTag = ++_tagOfActiveDoline;	// Obtain a unique tag for this doline invocation
 	_dolineReturnVal = 0;
 
-	if (needsave)
+	if (_stackbase && needsave)
 		_stackbase->tagOfParentDoline = myTag;
 
 	do {
