@@ -658,12 +658,12 @@ void MadsSceneLogic::execute(uint32 subOffset) {
 
 		case OP_NOT:			// logical nots top item on stack
 			param = stack.pop().get();
-			stack.push(ScriptVar((uint32)!(param & 0xffff)));
+			stack.push(ScriptVar((uint32)(!param) & 0xffff));
 			break;
 
 		case OP_COMP:			// complements top item on stack
 			param = stack.pop().get();
-			stack.push(ScriptVar(~(param & 0xffff)));
+			stack.push(ScriptVar((~param) & 0xffff));
 			break;
 
 		case OP_NEG:			// negates top item on stack
