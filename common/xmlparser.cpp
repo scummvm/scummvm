@@ -451,5 +451,61 @@ bool XMLParser::parse() {
 	return true;
 }
 
+bool XMLParser::skipSpaces() {
+	if (!isspace(_char))
+		return false;
+
+	while (_char && isspace(_char))
+		_char = _stream->readByte();
+
+	return true;
 }
 
+bool XMLParser::skipComments() {
+	if (_char == '<') {
+		_char = _stream->readByte();
+
+		if (_char != '!') {
+			_stream->seek(-1, SEEK_CUR);
+			_char = '<';
+			return false;
+		}
+
+		if (_stream->readByte() != '-' || _stream->readByte() != '-')
+			return parserError("Malformed comment syntax.");
+
+		_char = _stream->readByte();
+
+		while (_char) {
+			if (_char == '-') {
+				if (_stream->readByte() == '-') {
+
+					if (_stream->readByte() != '>')
+						return parserError("Malformed comment (double-hyphen inside comment body).");
+
+					_char = _stream->readByte();
+					return true;
+				}
+			}
+
+			_char = _stream->readByte();
+		}
+
+		return parserError("Comment has no closure.");
+	}
+
+	return false;
+}
+
+bool XMLParser::parseToken() {
+	_token.clear();
+
+	while (isValidNameChar(_char)) {
+		_token += _char;
+		_char = _stream->readByte();
+	}
+
+	return isspace(_char) != 0 || _char == '>' || _char == '=' || _char == '/';
+}
+
+} // End of namespace Common
