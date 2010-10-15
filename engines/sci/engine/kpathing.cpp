@@ -1312,7 +1312,7 @@ static void AStar(PathfindingState *s) {
 		}
 
 		// Check if we are done
-		if (vertex_min == s->vertex_end)
+		if (vertex_min == s->vertex_end || !vertex_min)
 			break;
 
 		// Move vertex from set open to set closed
