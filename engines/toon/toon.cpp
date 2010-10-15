@@ -850,15 +850,17 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	_lastMouseButton = 0;
 	_mouseButton = 0;
 	_currentHotspotItem = -1;
-	_gameState->_sackVisible = true;
-	_gameState->_inCloseUp = false;
-	_gameState->_inConversation = false;
-	_gameState->_inInventory = false;
-	_gameState->_inCutaway = false;
-	_gameState->_currentScrollValue = 0;
-	_gameState->_currentScrollLock = false;
-	_gameState->_inCloseUp = false;
 
+	if (!forGameLoad) {
+		_gameState->_sackVisible = true;
+		_gameState->_inCloseUp = false;
+		_gameState->_inConversation = false;
+		_gameState->_inInventory = false;
+		_gameState->_inCutaway = false;
+		_gameState->_currentScrollValue = 0;
+		_gameState->_currentScrollLock = false;
+		_gameState->_inCloseUp = false;
+	}
 
 	if (_gameState->_mouseState >= 0)
 		addItemToInventory(_gameState->_mouseState);
