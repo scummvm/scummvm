@@ -37,6 +37,14 @@ namespace Common {
 	class SeekableReadStream;
 }
 
+/**
+ * This is the namespace of the Mohawk engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Mohawk {
 
 enum MohawkGameType {

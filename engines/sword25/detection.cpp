@@ -68,7 +68,7 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-} // end of namespace Sword25
+} // End of namespace Sword25
 
 static const char *directoryGlobs[] = {
 	"system", // Used by extracted dats

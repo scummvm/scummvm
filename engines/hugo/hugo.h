@@ -45,7 +45,16 @@ namespace Common {
 class RandomSource;
 }
 
+/**
+ * This is the namespace of the Hugo engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Hugo {
+
 enum GameType {
 	kGameTypeNone  = 0,
 	kGameTypeHugo1,

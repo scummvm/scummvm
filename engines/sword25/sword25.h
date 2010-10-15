@@ -35,6 +35,14 @@
 
 struct ADGameDescription;
 
+/**
+ * This is the namespace of the Sword25 engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Sword25 {
 
 enum {

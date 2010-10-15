@@ -46,7 +46,16 @@
 #define TOON_SAVEGAME_VERSION 4
 #define DATAALIGNMENT 4
 
+/**
+ * This is the namespace of the Toon engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Toon {
+
 enum ToonGameType {
 	GType_TOON = 1
 };
