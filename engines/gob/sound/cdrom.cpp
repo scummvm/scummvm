@@ -30,7 +30,6 @@
 
 #include "gob/gob.h"
 #include "gob/sound/cdrom.h"
-#include "gob/helper.h"
 #include "gob/dataio.h"
 
 namespace Gob {

@@ -27,7 +27,6 @@
 
 #include "gob/hotspots.h"
 #include "gob/global.h"
-#include "gob/helper.h"
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/script.h"
