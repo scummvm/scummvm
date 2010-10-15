@@ -1104,7 +1104,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		if (is2byte) {
 			drawBits1(dstSurface, dstPtr, charPtr, drawTop, origWidth, origHeight, dstSurface.bytesPerPixel);
 		} else {
-			drawBitsN(dstSurface, dstPtr, charPtr, *_fontPtr, drawTop, origWidth, origHeight);
+			drawBitsN(dstSurface, dstPtr, charPtr, *_fontPtr, drawTop, origWidth, origHeight, _vm->_useCJKMode);
 		}
 
 		if (_blitAlso && vs->hasTwoBuffers) {
@@ -1177,19 +1177,33 @@ void CharsetRendererClassic::drawChar(int chr, const Graphics::Surface &s, int x
 	}
 }
 
-void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height) {
+void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height,
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	bool scale2x) {
+#else
+	bool) {
+#endif
+
 	int y, x;
 	int color;
 	byte numbits, bits;
 
+	byte *dst2 = dst;
+	int pitch = s.pitch - width;
+
 	assert(bpp == 1 || bpp == 2 || bpp == 4 || bpp == 8);
 	bits = *src++;
 	numbits = 8;
-	byte *cmap =
+	byte *cmap = _vm->_charsetColorMap;
+
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-		(_vm->_game.platform == Common::kPlatformFMTowns) ? _vm->_townsCharsetColorMap :
+	if (_vm->_game.platform == Common::kPlatformFMTowns)
+		cmap = _vm->_townsCharsetColorMap;
+	if (scale2x) {
+		dst2 += s.pitch;
+		pitch <<= 1;
+	}
 #endif
-		_vm->_charsetColorMap;
 
 	for (y = 0; y < height && y + drawTop < s.h; y++) {
 		for (x = 0; x < width; x++) {
@@ -1197,8 +1211,21 @@ void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, co
 
 			if (color && y + drawTop >= 0) {
 				*dst = cmap[color];
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+				if (scale2x)
+					dst[1] = dst2[0] = dst2[1] = dst[0];
+#endif
 			}
 			dst++;
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+			if (scale2x) {
+				dst++;
+				dst2 += 2;
+			}
+#endif
+
 			bits <<= bpp;
 			numbits -= bpp;
 			if (numbits == 0) {
@@ -1206,7 +1233,10 @@ void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, co
 				numbits = 8;
 			}
 		}
-		dst += s.pitch - width;
+		dst += pitch;
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		dst2 += pitch;
+#endif
 	}
 }
 
