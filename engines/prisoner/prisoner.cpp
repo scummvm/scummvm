@@ -185,6 +185,9 @@ Common::Error PrisonerEngine::run() {
 	_currMouseCursor = -1;
 	_currAnimatedMouseCursor = -1;
 
+	_screensaverRunning = false;
+	_screensaverAborted = false;
+
 	_cameraFollowsActorIndex = -1;
 	_backgroundResourceCacheSlot = -1;
 	_backgroundResource = NULL;
@@ -553,7 +556,6 @@ void PrisonerEngine::initInput() {
 void PrisonerEngine::getInputStatus(Common::KeyCode &keyState, uint16 &buttonState) {
 
 	buttonState = _buttonState;
-
 	if (_inpMouseWaitRelease) {
 		if (buttonState == 0) {
 			_inpMouseWaitRelease = false;
@@ -564,6 +566,7 @@ void PrisonerEngine::getInputStatus(Common::KeyCode &keyState, uint16 &buttonSta
 			buttonState = 0;
 		}
 	} else if (buttonState != 0) {
+		// TODO: Only used in the menu
 		/* TODO...
 		_inpMouseDblClickTime = getTicks();
 		if (_inpMouseDblClickLastClickTime - _inpMouseDblClickTime < 50)
@@ -572,19 +575,33 @@ void PrisonerEngine::getInputStatus(Common::KeyCode &keyState, uint16 &buttonSta
 		*/
 	}
 
-	// TODO: The same for keyboard input...
-	keyState = Common::KEYCODE_INVALID;
+	keyState = _keyState;
+	if (_inpKeybWaitRelease) {
+		if (keyState == Common::KEYCODE_INVALID) {
+			_inpKeybWaitRelease = false;
+			_inpKeybPulseRelease = false;
+		} else if (_inpKeybPulseRelease && getTicks() - _inpKeybPulseTime > _inpKeybPulseTicks) {
+			_inpKeybPulseTime = getTicks();
+			_inpKeybPulseTicks = 10;
+		} else
+			keyState = Common::KEYCODE_INVALID;
+	}
 
 }
 
 void PrisonerEngine::inpSetWaitRelease(bool value) {
 	inpMouseSetWaitRelease(value);
-	// TODO: inpKeybSetWaitRelease(value);
+	inpKeybSetWaitRelease(value);
 }
 
 void PrisonerEngine::inpMouseSetWaitRelease(bool value) {
 	_inpMouseWaitRelease = value;
 	_inpMousePulseRelease = false;
+}
+
+void PrisonerEngine::inpKeybSetWaitRelease(bool value) {
+	_inpKeybWaitRelease = value;
+	_inpKeybPulseRelease = false;
 }
 
 /* Input */
@@ -740,14 +757,56 @@ void PrisonerEngine::setUserInput(bool enabled) {
 }
 
 void PrisonerEngine::playMux(Common::String filename) {
+	// TODO: bool oldVoicesEnabled = ???;
+	MuxPlayer *muxPlayer;
+
 	debug("playMux('%s')", filename.c_str());
-	// TODO
-#if 0
-	MuxPlayer mux(this);
-	mux.open(filename.c_str());
-	mux.play();
-	mux.close();
-#endif
+	// TODO: Make language-specific filename if required
+	// Set char for the SVGA videos
+	filename.setChar('S', 0);
+	_screensaverAborted = false;
+	if (_moduleScriptCalled) {
+		_newModuleIndex = -1;
+		leaveScene();
+	}
+	if (!_screensaverRunning) {
+		// TODO: stopMusicItems();
+		// TODO: pauseSoundItems();
+		// TODO: oldVoicesEnabled = ???;
+		// TODO: updateVoicesVolume(false);
+	}
+	_system->showMouse(false);
+	// TODO: resetDirtyRects();
+	if (_muxClearScreenBefore) {
+		_screen->clear();
+		addDirtyRect(0, 0, 640, 480, 1);
+		// TODO: drawDirtyRects(0);
+	}
+	muxPlayer = new MuxPlayer(this);
+	muxPlayer->open(filename.c_str());
+	muxPlayer->play();
+	muxPlayer->close();
+	delete muxPlayer;
+	// TODO: resetDirtyRects();
+	if (_muxClearScreenAfter) {
+		_backgroundFlag = 0;
+		_screen->clear();
+		addDirtyRect(0, 0, 640, 480, 1);
+		// TODO: drawDirtyRects(0);
+	}
+	if (!_screensaverRunning) {
+		// TODO: resumeSoundItems();
+		// TODO: resumeMusicItems();
+		// TODO: updateVoicesVolume(oldVoicesEnabled)
+	}
+	if (_moduleScriptCalled) {
+		_mainMenuRequested = true;
+		// TODO: resetDirtyRects();
+		_screen->clear();
+	}
+	_screen->setFullPalette(_scenePalette);
+	_system->showMouse(true);
+	resetFrameValues();
 }
 
 bool PrisonerEngine::handleMuxInput() {

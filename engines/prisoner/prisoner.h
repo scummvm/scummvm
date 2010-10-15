@@ -592,6 +592,10 @@ public:
 	Common::String _autoSavePakName, _autoSaveIdentifier;
 	int16 _autoSavePakSlot;
 
+	/* Screensaver */
+	bool _screensaverRunning;
+	bool _screensaverAborted;
+
 	/* Frame time */
 	uint32 _lastFrameTime;
 	int16 _frameTicks;
@@ -605,7 +609,7 @@ public:
 	uint32 _inpMouseDblClickTime, _inpMouseDblClickLastClickTime;
 	bool _inpKeybWaitRelease, _inpKeybPulseRelease;
 	uint32 _inpKeybPulseTime;
-	int16 _inpKeybPulseTicks;
+	uint16 _inpKeybPulseTicks;
 
 	/* Input */
 	int16 _optionsTextTicksCounter;
@@ -813,6 +817,7 @@ public:
 	void getInputStatus(Common::KeyCode &keyState, uint16 &buttonState);
 	void inpSetWaitRelease(bool value);
 	void inpMouseSetWaitRelease(bool value);
+	void inpKeybSetWaitRelease(bool value);
 
 	/* Input */
 	int16 handleInput(int16 x, int16 y);
