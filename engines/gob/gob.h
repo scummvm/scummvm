@@ -43,8 +43,14 @@ namespace GUI {
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Gobliiins
+ * - Gobliins 2
+ * - Goblins 3
+ * - Ween: The Prophecy
+ * - Bargon Attack
+ * - Lost in Time
+ * - The Bizarre Adventures of Woodruff and the Schnibble
  */
 namespace Gob {
 

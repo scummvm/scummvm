@@ -93,7 +93,7 @@ class KyraMetaEngine;
  * is pretty minor priority though, since the benefit would be mostly nicer code). The biggest
  * task left is the kyra.dat handling, which is currently being revised by LordHoto.
  *
- * Supported games:
+ * Games using this engine:
  * - The Legend of Kyrandia (fully supported, except for Macintosh port, which lacks sound)
  * - (The) Hand of Fate (fully supported)
  * - Malcolm's Revenge (fully supported)

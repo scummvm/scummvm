@@ -46,10 +46,10 @@
 /**
  * This is the namespace of the Lure engine.
  *
- * Status of this engine: ???
+ * Status of this engine: Complete
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Lure of the Temptress
  */
 namespace Lure {
 

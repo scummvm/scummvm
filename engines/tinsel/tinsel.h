@@ -48,7 +48,7 @@
  *
  * Status of this engine: Complete
  *
- * Supported games:
+ * Games using this engine:
  * - Discworld
  * - Discworld 2: Missing Presumed ...!?
  */

@@ -40,8 +40,8 @@ struct ADGameDescription;
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Broken Sword 2.5
  */
 namespace Sword25 {
 

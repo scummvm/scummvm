@@ -42,7 +42,7 @@
  *
  * Status of this engine: Game is completable, engine needs objectifying
  *
- * Supported games:
+ * Games using this engine:
  * - Cruise for a Corpse
  */
 namespace Cruise {

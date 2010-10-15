@@ -40,7 +40,7 @@ struct ADGameDescription;
  *
  * Status of this engine: Complete
  *
- * Supported games:
+ * Games using this engine:
  * - Teen Agent
  */
 namespace TeenAgent {

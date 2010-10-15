@@ -36,8 +36,8 @@
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Broken Sword: The Shadow of the Templars
  */
 namespace Sword1 {
 

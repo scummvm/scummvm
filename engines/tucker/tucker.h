@@ -44,7 +44,7 @@
  *
  * Status of this engine: Complete
  *
- * Supported games:
+ * Games using this engine:
  * - Bud Tucker in Double Trouble
  */
 namespace Tucker {

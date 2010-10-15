@@ -42,8 +42,9 @@ namespace Common {
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Myst
+ * - Riven: The Sequel to Myst
  */
 namespace Mohawk {
 

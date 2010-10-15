@@ -66,10 +66,14 @@ namespace Common {
 /**
  * This is the namespace of the SCUMM engine.
  *
- * Status of this engine: ???
+ * Status of this engine:
+ * Complete support for all SCUMM based LucasArts adventures.
+ * Complete support for many Humongous Entertainment games,
+ * but for some of the newer ones, this is still work in progress.
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Classic 2D LucasArts adventures
+ * - numerous Humongous Entertainment games
  */
 namespace Scumm {
 

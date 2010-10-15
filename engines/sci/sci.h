@@ -39,8 +39,11 @@ struct ADGameDescription;
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Newer Sierra adventure games (based on FreeSCI) 
+ *
+ * @todo give a concrete list of supported games. Could also
+ * list future games, with status for each.
  */
 namespace Sci {
 

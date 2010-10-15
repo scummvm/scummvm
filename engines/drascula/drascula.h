@@ -47,8 +47,8 @@
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Drascula: The Vampire Strikes Back
  */
 namespace Drascula {
 

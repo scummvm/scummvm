@@ -50,8 +50,10 @@ class RandomSource;
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Hugo's House of Horror
+ * - Whodunit?
+ * - Jungle of Doom
  */
 namespace Hugo {
 

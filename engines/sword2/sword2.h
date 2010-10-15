@@ -53,8 +53,8 @@ class OSystem;
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Broken Sword II: The Smoking Mirror
  */
 namespace Sword2 {
 

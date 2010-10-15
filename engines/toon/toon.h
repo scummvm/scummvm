@@ -51,8 +51,8 @@
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Toonstruck
  */
 namespace Toon {
 

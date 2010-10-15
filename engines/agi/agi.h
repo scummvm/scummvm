@@ -52,8 +52,12 @@ namespace Common { class RandomSource; }
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Early Sierra adventure games
+ * - many fan made games
+ * - Mickey's Space Adventure (Pre-AGI)
+ * - Winnie the Pooh in the Hundred Acre Wood (Pre-AGI)
+ * - Troll's Tale (Pre-AGI)
  */
 namespace Agi {
 

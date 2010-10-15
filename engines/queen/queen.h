@@ -56,8 +56,8 @@ FORCEINLINE int16 READ_BE_INT16(const void *ptr) {
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Flight of the Amazon Queen
  */
 namespace Queen {
 

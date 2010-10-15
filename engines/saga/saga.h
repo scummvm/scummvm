@@ -49,7 +49,7 @@ struct ADGameFileDescription;
  * SAGA2 status: in early stages of development, no recent activity. Contact sev
  *  if you want to work on it, since we have some original source codes.
  *
- * Supported games:
+ * Games using this engine:
  *
  * SAGA:
  * - Inherit the Earth
