@@ -148,7 +148,11 @@ void ActorData::setTileDirectionsSize(int size, bool forceRealloc) {
 		return;
 	}
 	_tileDirectionsAlloced = size;
-	_tileDirections = (byte*)realloc(_tileDirections, _tileDirectionsAlloced * sizeof(*_tileDirections));
+	byte *tmp = (byte*)realloc(_tileDirections, _tileDirectionsAlloced * sizeof(*_tileDirections));
+	if (tmp)
+		_tileDirections = tmp;
+	else
+		error("ActorData::setTileDirectionsSize(): Error while reallocating memory");
 }
 
 void ActorData::cycleWrap(int cycleLimit) {
@@ -161,7 +165,11 @@ void ActorData::setWalkStepsPointsSize(int size, bool forceRealloc) {
 		return;
 	}
 	_walkStepsAlloced = size;
-	_walkStepsPoints = (Point*)realloc(_walkStepsPoints, _walkStepsAlloced * sizeof(*_walkStepsPoints));
+	Point *tmp = (Point*)realloc(_walkStepsPoints, _walkStepsAlloced * sizeof(*_walkStepsPoints));
+	if (tmp)
+		_walkStepsPoints = tmp;
+	else
+		error("ActorData::setWalkStepsPointsSize(): Error while reallocating memory");
 }
 
 void ActorData::addWalkStepPoint(const Point &point) {
