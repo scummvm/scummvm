@@ -525,6 +525,10 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 	if (width <= 3)
 		return;
 
+	// We need at least 2 pixel lines
+	if (height < 2)
+		return;
+
 	// If EGA mapping is used for this view, dont do undithering as well
 	if (_EGAmapping)
 		return;
@@ -533,20 +537,27 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 	int16 bitmapMemorial[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
 	byte *curPtr;
 	byte color1, color2;
+	byte nextColor1, nextColor2;
 	int16 y, x;
 
 	memset(&bitmapMemorial, 0, sizeof(bitmapMemorial));
 
 	// Count all seemingly dithered pixel-combinations as soon as at least 4
 	// pixels are adjacent
+	int16 checkHeight = height - 1;
 	curPtr = bitmapPtr;
-	for (y = 0; y < height; y++) {
+	byte *nextPtr = curPtr + width;
+	for (y = 0; y < checkHeight; y++) {
 		color1 = curPtr[0]; color2 = (curPtr[1] << 4) | curPtr[2];
+		nextColor1 = nextPtr[0] << 4; nextColor2 = (nextPtr[2] << 4) | nextPtr[1];
 		curPtr += 3;
+		nextPtr += 3;
 		for (x = 3; x < width; x++) {
 			color1 = (color1 << 4) | (color2 >> 4);
 			color2 = (color2 << 4) | *curPtr++;
-			if (color1 == color2)
+			nextColor1 = (nextColor1 >> 4) | (nextColor2 << 4);
+			nextColor2 = (nextColor2 >> 4) | *nextPtr++ << 4;
+			if ((color1 == color2) && (color1 == nextColor1) && (color1 == nextColor2))
 				bitmapMemorial[color1]++;
 		}
 	}
