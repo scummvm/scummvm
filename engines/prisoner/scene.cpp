@@ -159,7 +159,7 @@ void PrisonerEngine::enterScene(int16 moduleIndex, int16 sceneIndex) {
 		_zoneMouseCursorActive = false;
 		_zoneMouseCursor = -1;
 		updateMouseCursor();
-		setFontDefaultColors();
+		setDefaultTextDisplayColors();
 	}
 
 	clearScriptProgram(kSceneScriptProgram);
@@ -231,7 +231,7 @@ void PrisonerEngine::leaveScene() {
 	if (_newModuleIndex != _currModuleIndex) {
 		// TODO: unloadMusicItems
 		stopModuleScript();
-		// -> resetModuleScriptVars();
+		// Reset module script vars
 		for (uint i = 0; i < 300; i++)
 			_moduleScriptVars[i] = -1;
 		unloadDialogPanel();

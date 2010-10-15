@@ -63,7 +63,6 @@ protected:
 	int16 op_sub(Script *script);
 	int16 op_mul(Script *script);
 	int16 op_execTwo(Script *script);
-	int16 op_nop_0(Script *script);
 	int16 op_getModuleVar(Script *script);
 	int16 op_loadConstWord(Script *script);
 	int16 op_if(Script *script);
@@ -178,7 +177,7 @@ protected:
 	int16 op_loadModuleSound(Script *script);
 	int16 op_playSoundSync(Script *script);
 	int16 op_setActorFontColors(Script *script);
-	int16 op_setFontColor(Script *script);
+	int16 op_setTextDisplayColor(Script *script);
 	int16 op_loadInventoryItemsAnimation(Script *script);
 	int16 op_playMux(Script *script);
 	int16 op_setCameraFollowsActor(Script *script);

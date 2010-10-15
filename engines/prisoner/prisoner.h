@@ -1097,7 +1097,8 @@ public:
 	void shutdownMidi();
 
 	/* Font colors */
-	void setFontDefaultColors();
+	void setDefaultTextDisplayColors();
+	void setTextDisplayColor(int16 textDisplayNum, int16 outlineColor, int16 inkColor);
 
 	/* Save/load */
 

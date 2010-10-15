@@ -53,7 +53,7 @@ void ScriptOpcodes::setupOpcodes() {
 	Opcode(op_sub);
 	Opcode(op_mul);
 	Opcode(op_execTwo);
-	Opcode(op_nop_0);
+	Opcode(op_nop);
 	Opcode(op_getModuleVar);
 	Opcode(op_loadConstWord);
 	Opcode(op_if);
@@ -171,7 +171,7 @@ void ScriptOpcodes::setupOpcodes() {
 	Opcode(op_loadModuleSound);
 	Opcode(op_playSoundSync);
 	Opcode(op_setActorFontColors);
-	Opcode(op_setFontColor);
+	Opcode(op_setTextDisplayColor);
 	Opcode(op_loadInventoryItemsAnimation);
 	Opcode(op_playMux);
 	Opcode(op_setCameraFollowsActor);
@@ -314,10 +314,6 @@ int16 ScriptOpcodes::op_mul(Script *script) {
 int16 ScriptOpcodes::op_execTwo(Script *script) {
 	ARG_EVALUATE(value1);
 	ARG_EVALUATE(value2);
-	return 0;
-}
-
-int16 ScriptOpcodes::op_nop_0(Script *script) {
 	return 0;
 }
 
@@ -1017,7 +1013,7 @@ int16 ScriptOpcodes::op_isSoundPlaying(Script *script) {
 
 int16 ScriptOpcodes::op_isMusicPlaying(Script *script) {
 	ARG_EVALUATE(musicIndex);
-	debug("ARGS!"); // TODO; 22500
+	// TODO
 	return 0;
 }
 
@@ -1292,11 +1288,11 @@ int16 ScriptOpcodes::op_setActorFontColors(Script *script) {
 	return 0;
 }
 
-int16 ScriptOpcodes::op_setFontColor(Script *script) {
-	ARG_EVALUATE(fontNum);
+int16 ScriptOpcodes::op_setTextDisplayColor(Script *script) {
+	ARG_EVALUATE(textDisplayNum);
 	ARG_EVALUATE(outlineColor);
 	ARG_EVALUATE(inkColor);
-	// TODO
+	_vm->setTextDisplayColor(textDisplayNum, outlineColor, inkColor);
 	return 0;
 }
 

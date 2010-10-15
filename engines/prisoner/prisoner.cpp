@@ -163,7 +163,7 @@ Common::Error PrisonerEngine::run() {
 		_textFont = addFont(pakName, 1, 96, 255);
 	}
 
-	setFontDefaultColors();
+	setDefaultTextDisplayColors();
 
 	initInput();
 
@@ -1150,8 +1150,7 @@ int16 PrisonerEngine::calcDirection(int16 x1, int16 y1, int16 x2, int16 y2) {
 	return direction;
 }
 
-void PrisonerEngine::setFontDefaultColors() {
-	// TODO: More colors
+void PrisonerEngine::setDefaultTextDisplayColors() {
 	_screenTextFontColor.outlineColor = 131;
 	_screenTextFontColor.inkColor = 124;
 	_zoneFontColor.outlineColor = 32;
@@ -1164,6 +1163,19 @@ void PrisonerEngine::setFontDefaultColors() {
 	_dialogFontColor.inkColor = 63;
 	_dialogHoverFontColor.outlineColor = 80;
 	_dialogHoverFontColor.inkColor = 79;
+}
+
+void PrisonerEngine::setTextDisplayColor(int16 textDisplayNum, int16 outlineColor, int16 inkColor) {
+	#define CASE(NUM, S) case NUM: S.outlineColor = outlineColor; S.inkColor = inkColor; break;
+	switch (textDisplayNum) {
+		CASE(0, _dialogFontColor);
+		CASE(1, _zoneFontColor);
+		CASE(2, _screenTextFontColor);
+		CASE(3, _dialogHoverFontColor);
+		CASE(4, _inventoryScreenTextFontColor);
+		CASE(5, _inventoryFontColor);
+	}
+	#undef CASE
 }
 
 } // End of namespace Prisoner
