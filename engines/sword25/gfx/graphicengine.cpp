@@ -60,16 +60,10 @@ extern "C"
 }
 }
 
-namespace {
-const int BIT_DEPTH = 32;
-const int BACKBUFFER_COUNT = 1;
-const Common::String PNG_EXTENSION(".png");
-const Common::String PNG_S_EXTENSION("_s.png");
-const Common::String ANI_EXTENSION("_ani.xml");
-const Common::String FNT_EXTENSION("_fnt.xml");
-const Common::String SWF_EXTENSION(".swf");
-const Common::String B25S_EXTENSION(".b25s");
-}
+enum {
+	BIT_DEPTH = 32,
+	BACKBUFFER_COUNT = 1
+};
 
 
 namespace Sword25 {
@@ -261,7 +255,7 @@ Resource *GraphicEngine::loadResource(const Common::String &FileName) {
 	BS_ASSERT(canLoadResource(FileName));
 
 	// Bild für den Softwarebuffer laden
-	if (FileName.hasSuffix(PNG_S_EXTENSION)) {
+	if (FileName.hasSuffix("_s.png")) {
 		bool Result = false;
 		SWImage *pImage = new SWImage(FileName, Result);
 		if (!Result) {
@@ -279,7 +273,7 @@ Resource *GraphicEngine::loadResource(const Common::String &FileName) {
 	}
 
 	// Sprite-Bild laden
-	if (FileName.hasSuffix(PNG_EXTENSION) || FileName.hasSuffix(B25S_EXTENSION)) {
+	if (FileName.hasSuffix(".png") || FileName.hasSuffix(".b25s")) {
 		bool Result = false;
 		RenderedImage *pImage = new RenderedImage(FileName, Result);
 		if (!Result) {
@@ -298,7 +292,7 @@ Resource *GraphicEngine::loadResource(const Common::String &FileName) {
 
 
 	// Vectorgraphik laden
-	if (FileName.hasSuffix(SWF_EXTENSION)) {
+	if (FileName.hasSuffix(".swf")) {
 		debug(2, "VectorImage: %s", FileName.c_str());
 
 		// Pointer auf Package-Manager holen
@@ -333,7 +327,7 @@ Resource *GraphicEngine::loadResource(const Common::String &FileName) {
 	}
 
 	// Animation laden
-	if (FileName.hasSuffix(ANI_EXTENSION)) {
+	if (FileName.hasSuffix("_ani.xml")) {
 		AnimationResource *pResource = new AnimationResource(FileName);
 		if (pResource->isValid())
 			return pResource;
@@ -344,7 +338,7 @@ Resource *GraphicEngine::loadResource(const Common::String &FileName) {
 	}
 
 	// Font laden
-	if (FileName.hasSuffix(FNT_EXTENSION)) {
+	if (FileName.hasSuffix("_fnt.xml")) {
 		FontResource *pResource = new FontResource(Kernel::GetInstance(), FileName);
 		if (pResource->IsValid())
 			return pResource;
@@ -361,11 +355,11 @@ Resource *GraphicEngine::loadResource(const Common::String &FileName) {
 // -----------------------------------------------------------------------------
 
 bool GraphicEngine::canLoadResource(const Common::String &FileName) {
-	return FileName.hasSuffix(PNG_EXTENSION) ||
-		FileName.hasSuffix(ANI_EXTENSION) ||
-		FileName.hasSuffix(FNT_EXTENSION) ||
-		FileName.hasSuffix(SWF_EXTENSION) ||
-		FileName.hasSuffix(B25S_EXTENSION);
+	return FileName.hasSuffix(".png") ||
+		FileName.hasSuffix("_ani.xml") ||
+		FileName.hasSuffix("_fnt.xml") ||
+		FileName.hasSuffix(".swf") ||
+		FileName.hasSuffix(".b25s");
 }
 
 
