@@ -723,7 +723,7 @@ static const luaL_reg PERSISTENCE_FUNCTIONS[] = {
 // -----------------------------------------------------------------------------
 
 bool Kernel::_RegisterScriptBindings() {
-	ScriptEngine *pScript = Kernel::GetInstance()->GetScript();
+	ScriptEngine *pScript = GetScript();
 	BS_ASSERT(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	BS_ASSERT(L);
