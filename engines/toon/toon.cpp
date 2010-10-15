@@ -849,7 +849,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 
 	_lastMouseButton = 0;
 	_mouseButton = 0;
-	_currentHotspotItem = -1;
+	_currentHotspotItem = 0;
 
 	if (!forGameLoad) {
 		_gameState->_sackVisible = true;
@@ -1188,7 +1188,7 @@ void ToonEngine::clickEvent() {
 			if (_gameState->_mouseState >= 0 && !rightButton) {
 				addItemToInventory(_gameState->_mouseState);
 				setCursor(0, false, 0, 0);
-				_currentHotspotItem = -1;
+				_currentHotspotItem = 0;
 				return;
 			} else {
 				showInventory();
@@ -1201,7 +1201,7 @@ void ToonEngine::clickEvent() {
 	if (rightButton && _gameState->_mouseState >= 0) {
 		addItemToInventory(_gameState->_mouseState);
 		setCursor(0, false, 0, 0);
-		_currentHotspotItem = -1;
+		_currentHotspotItem = 0;
 		return;
 	}
 
