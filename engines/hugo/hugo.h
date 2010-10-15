@@ -32,9 +32,14 @@
 // This include is here temporarily while the engine is being refactored.
 #include "hugo/game.h"
 
-#define HUGO_DAT_VER_MAJ 0  // 1 byte
-#define HUGO_DAT_VER_MIN 25 // 1 byte
-#define DATAALIGNMENT 4
+#define HUGO_DAT_VER_MAJ 0                          // 1 byte
+#define HUGO_DAT_VER_MIN 25                         // 1 byte
+#define DATAALIGNMENT    4
+#define EDGE             10                         // Closest object can get to edge of screen
+#define EDGE2            (EDGE * 2)                 // Push object further back on edge collision
+#define SHIFT            8                          // Place hero this far inside bounding box
+#define MAX_OBJECTS      128                        // Used in Update_images()
+#define BOUND(X, Y)      ((_boundary[Y * XBYTES + X / 8] & (0x80 >> X % 8)) != 0)  // Boundary bit set
 
 namespace Common {
 class RandomSource;
@@ -72,6 +77,10 @@ enum HugoGameFeatures {
 	GF_PACKED = (1 << 0) // Database
 };
 
+// Strings used by the engine
+enum seqTextEngine {
+	kEsAdvertise = 0
+};
 struct HugoGameDescription;
 
 class FileManager;
@@ -83,6 +92,7 @@ class Parser;
 class Route;
 class SoundHandler;
 class IntroHandler;
+
 
 class HugoEngine : public Engine {
 public:
@@ -213,7 +223,6 @@ public:
 	void endGame();
 	void readScreenFiles(int screen);
 	void setNewScreen(int screen);
-	void initNewScreenDisplay();
 	void screenActions(int screen);
 	void shutdown();
 
@@ -229,11 +238,9 @@ public:
 	overlay_t &getFirstOverlay() {
 		return _overlay;
 	}
-
 	status_t &getGameStatus() {
 		return _status;
 	}
-
 	int getScore() const {
 		return _score;
 	}

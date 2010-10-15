@@ -60,6 +60,7 @@ public:
 	void     drawShape(int x, int y, int color1, int color2);
 	void     drawStatusText();
 	void     initDisplay();
+	void     initNewScreenDisplay();
 	virtual void loadFont(int16 fontId) = 0;
 	void     moveImage(image_pt srcImage, uint16 x1, uint16 y1, uint16 dx, uint16 dy, uint16 width1, image_pt dstImage, uint16 x2, uint16 y2, uint16 width2);
 	void     remapPal(uint16 oldIndex, uint16 newIndex);

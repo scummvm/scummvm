@@ -440,5 +440,14 @@ void Screen::drawRectangle(bool filledFl, uint16 x1, uint16 y1, uint16 x2, uint1
 	}
 }
 
+// Initialize screen components and display results
+void Screen::initNewScreenDisplay() {
+	displayList(D_INIT);
+	setBackgroundColor(_TBLACK);
+	displayBackground();
+
+	// Stop premature object display in Display_list(D_DISPLAY)
+	_vm.getGameStatus().newScreenFl = true;
+}
 } // End of namespace Hugo
 

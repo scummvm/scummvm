@@ -564,7 +564,7 @@ void Scheduler::newScreen(int screenIndex) {
 	_vm.screenActions(screenIndex);
 
 	// 5. Initialise prompt line and status line
-	_vm.initNewScreenDisplay();
+	_vm.screen().initNewScreenDisplay();
 }
 
 // Write the event queue to the file with handle f
@@ -648,7 +648,7 @@ void Scheduler::restoreScreen(int screenIndex) {
 	_vm.readScreenFiles(screenIndex);
 
 	// 3. Initialise prompt line and status line
-	_vm.initNewScreenDisplay();
+	_vm.screen().initNewScreenDisplay();
 }
 
 void Scheduler::swapImages(int objNumb1, int objNumb2) {

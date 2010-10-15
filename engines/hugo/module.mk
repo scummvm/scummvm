@@ -5,7 +5,6 @@ MODULE_OBJS := \
 	display.o \
 	display_v1d.o \
 	display_v1w.o \
-	engine.o \
 	file.o \
 	file_v1d.o \
 	file_v2d.o \
