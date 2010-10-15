@@ -304,10 +304,11 @@ int KyraEngine_LoK::processItemDrop(uint16 sceneId, uint8 item, int x, int y, in
 	int itemHeight = _itemTable[item].height;
 	_lastProcessedItemHeight = itemHeight;
 
-	if (x == -1 && x == -1) {
+	if (x == -1)
 		x = _rnd.getRandomNumberRng(16, 304);
+
+	if (y == -1)
 		y = _rnd.getRandomNumberRng(_northExitHeight & 0xFF, 135);
-	}
 
 	int xpos = x;
 	int ypos = y;
