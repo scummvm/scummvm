@@ -240,7 +240,7 @@ void AdLib::setKey(byte voice, byte note, bool on, bool spec) {
 	freq = _freqs[_notLin[voice]][note - octa * 12];
 
 	writeOPL(0xA0 + voice,  freq & 0xFF);
-	writeOPL(0xB0 + voice, (freq >> 8) | (octa << 2) | 0x20 * on);
+	writeOPL(0xB0 + voice, (freq >> 8) | (octa << 2) | (0x20 * (on ? 1 : 0)));
 
 	if (!freq)
 		warning("AdLib::setKey Voice %d, note %02X unknown", voice, note);

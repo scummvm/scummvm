@@ -319,10 +319,12 @@ void Game::playTot(int16 skipPlay) {
 
 			_vm->_inter->renewTimeInVars();
 
-			WRITE_VAR(13, _vm->_global->_useMouse);
-			WRITE_VAR(14, _vm->_global->_soundFlags);
-			WRITE_VAR(15, _vm->_global->_fakeVideoMode);
-			WRITE_VAR(16, _vm->_global->_language);
+			if (_vm->_inter->_variables) {
+				WRITE_VAR(13, _vm->_global->_useMouse);
+				WRITE_VAR(14, _vm->_global->_soundFlags);
+				WRITE_VAR(15, _vm->_global->_fakeVideoMode);
+				WRITE_VAR(16, _vm->_global->_language);
+			}
 
 			_vm->_inter->callSub(2);
 
@@ -335,8 +337,9 @@ void Game::playTot(int16 skipPlay) {
 
 			_resources->unload();
 
-			for (int i = 0; i < *_vm->_scenery->_pCaptureCounter; i++)
-				capturePop(0);
+			if (_vm->_scenery->_pCaptureCounter)
+				for (int i = 0; i < *_vm->_scenery->_pCaptureCounter; i++)
+					capturePop(0);
 
 			if (skipPlay != -1) {
 				_vm->_goblin->freeObjects();
@@ -357,7 +360,9 @@ void Game::playTot(int16 skipPlay) {
 			if (_totToLoad[0] == 0)
 				break;
 
-			strcpy(_curTotFile, _totToLoad);
+			strncpy(_curTotFile, _totToLoad, 14);
+			_curTotFile[13] = '\0';
+
 		}
 	} else {
 		_vm->_inter->initControlVars(0);
@@ -370,7 +375,8 @@ void Game::playTot(int16 skipPlay) {
 			_vm->_inter->_terminate = 2;
 	}
 
-	strcpy(_curTotFile, savedTotName);
+	strncpy(_curTotFile, savedTotName, 14);
+	_curTotFile[13] = '\0';
 
 	_vm->_inter->_nestLevel = oldNestLevel;
 	_vm->_inter->_breakFromLevel = oldBreakFrom;

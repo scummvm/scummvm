@@ -151,7 +151,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 
 	case DRAW_PUTPIXEL:
 		switch (_pattern & 0xFF) {
-		case -1:
+		case 0xFF:
 			warning("oPlaytoons_spriteOperation: operation DRAW_PUTPIXEL, pattern -1");
 			break;
 		case 1:
