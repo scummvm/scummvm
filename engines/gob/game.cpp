@@ -247,7 +247,7 @@ void Game::playTot(int16 skipPlay) {
 	int16 *oldCaptureCounter;
 	int16 *oldBreakFrom;
 	int16 *oldNestLevel;
-	int16 _captureCounter;
+	int16 captureCounter = 0;
 	int16 breakFrom;
 	int16 nestLevel;
 
@@ -259,7 +259,7 @@ void Game::playTot(int16 skipPlay) {
 
 	_vm->_inter->_nestLevel = &nestLevel;
 	_vm->_inter->_breakFromLevel = &breakFrom;
-	_vm->_scenery->_pCaptureCounter = &_captureCounter;
+	_vm->_scenery->_pCaptureCounter = &captureCounter;
 	strcpy(savedTotName, _curTotFile);
 
 	if (skipPlay <= 0) {
@@ -337,9 +337,8 @@ void Game::playTot(int16 skipPlay) {
 
 			_resources->unload();
 
-			if (_vm->_scenery->_pCaptureCounter)
-				for (int i = 0; i < *_vm->_scenery->_pCaptureCounter; i++)
-					capturePop(0);
+			for (int i = 0; i < *_vm->_scenery->_pCaptureCounter; i++)
+				capturePop(0);
 
 			if (skipPlay != -1) {
 				_vm->_goblin->freeObjects();
