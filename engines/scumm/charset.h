@@ -27,6 +27,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "graphics/sjis.h"
 #include "scumm/gfx.h"
 #include "scumm/saveload.h"
 
@@ -112,7 +113,7 @@ protected:
 	ShadowMode _shadowMode;
 
 	void enableShadow(bool enable);
-	virtual void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth);
+	virtual void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth, bool scale2x = false);
 
 public:
 	CharsetRendererCommon(ScummEngine *vm);
@@ -141,7 +142,7 @@ class CharsetRendererNES : public CharsetRendererCommon {
 protected:
 	byte *_trTable;
 
-	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth);
+	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth, bool scale2x = false);
 
 public:
 	CharsetRendererNES(ScummEngine *vm) : CharsetRendererCommon(vm) {}
@@ -171,7 +172,7 @@ public:
 #ifdef USE_RGB_COLOR
 class CharsetRendererPCE : public CharsetRendererV3 {
 protected:
-	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth);
+	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth, bool scale2x = false);
 
 public:
 	CharsetRendererPCE(ScummEngine *vm) : CharsetRendererV3(vm) {}
