@@ -43,7 +43,7 @@ class MemoryBitReadStream : public Common::MemoryReadStream {
 public:
 	MemoryBitReadStream(const byte *dataPtr, uint32 dataSize, int bitSize)
 		: MemoryReadStream(dataPtr, dataSize),
-		_bitsLeft(0), _bitSize(bitSize) {};
+		_bitsLeft(0), _bitSize(bitSize), _bitBuf(0) {};
 	int readBit();
 protected:
 	uint32 _bitBuf;

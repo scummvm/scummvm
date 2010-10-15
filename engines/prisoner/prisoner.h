@@ -121,7 +121,7 @@ struct ScriptProgram {
 	ScriptResource *scriptResource;
 	int16 scriptCount;
 	Script scripts[kMaxScripts];
-	ScriptProgram() : scriptCount(0) {}
+	ScriptProgram() : resourceCacheSlot(-1), scriptCount(0), scriptResource(NULL) {}
 	void save(PrisonerEngine *vm, Common::WriteStream *out);
 	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
@@ -173,7 +173,7 @@ const int16 kMaxZoneActions = 70;
 struct DialogKeyword {
 	Common::String _keyword;
 	byte _used;
-	DialogKeyword() {}
+	DialogKeyword() : _used(0) {}
 	DialogKeyword(const Common::String &keyword) : _keyword(keyword), _used(0) {
 		debug(1, "keyword = [%s]", keyword.c_str());
 	}
