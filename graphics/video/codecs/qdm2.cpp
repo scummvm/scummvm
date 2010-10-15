@@ -1350,15 +1350,20 @@ static int getVlc2(GetBitContext *s, int16 (*table)[2], int bits, int maxDepth) 
 
 static int allocTable(VLC *vlc, int size, int use_static) {
 	int index;
+	int16 (*temp)[2] = NULL;
 	index = vlc->table_size;
 	vlc->table_size += size;
 	if (vlc->table_size > vlc->table_allocated) {
 		if(use_static)
 			error("QDM2 cant do anything, init_vlc() is used with too little memory");
 		vlc->table_allocated += (1 << vlc->bits);
-		vlc->table = (int16 (*)[2])realloc(vlc->table, sizeof(int16 *) * 2 * vlc->table_allocated);
-		if (!vlc->table)
+		temp = (int16 (*)[2])realloc(vlc->table, sizeof(int16 *) * 2 * vlc->table_allocated);
+		if (!temp) {
+			free(vlc->table);
+			vlc->table = NULL;
 			return -1;
+		}
+		vlc->table = temp;
 	}
 	return index;
 }
@@ -3112,7 +3117,6 @@ void QDM2Stream::qdm2_fft_tone_synthesizer(uint8 sub_packet) {
 }
 
 void QDM2Stream::qdm2_calculate_fft(int channel) {
-	const float gain = (_channels == 1 && _channels == 2) ? 0.5f : 1.0f;
 	int i;
 
 	_fft.complex[channel][0].re *= 2.0f;
@@ -3122,7 +3126,7 @@ void QDM2Stream::qdm2_calculate_fft(int channel) {
 
 	// add samples to output buffer
 	for (i = 0; i < ((_fftFrameSize + 15) & ~15); i++)
-		_outputBuffer[_channels * i + channel] += ((float *) _fft.complex[channel])[i] * gain;
+		_outputBuffer[_channels * i + channel] += ((float *) _fft.complex[channel])[i];
 }
 
 /**
