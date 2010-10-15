@@ -93,13 +93,13 @@ bool FontResource::parserCallback_font(ParserNode *node) {
 	// Get the attributes of the font
 	Common::String bitmapFilename = node->values["bitmap"];
 
-	if (!parseIntegerKey(node->values["lineheight"].c_str(), 1, &_LineHeight)) {
+	if (!parseIntegerKey(node->values["lineheight"], 1, &_LineHeight)) {
 		BS_LOG_WARNINGLN("Illegal or missing lineheight attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
 		                 getFileName().c_str(), DEFAULT_LINEHEIGHT);
 		_LineHeight = DEFAULT_LINEHEIGHT;
 	}
 
-	if (!parseIntegerKey(node->values["gap"].c_str(), 1, &_GapWidth)) {
+	if (!parseIntegerKey(node->values["gap"], 1, &_GapWidth)) {
 		BS_LOG_WARNINGLN("Illegal or missing gap attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
 		                 getFileName().c_str(), DEFAULT_GAPWIDTH);
 		_GapWidth = DEFAULT_GAPWIDTH;
@@ -131,20 +131,20 @@ bool FontResource::parserCallback_character(ParserNode *node) {
 	// Get the attributes of the character
 	int charCode, top, left, right, bottom;
 
-	if (!parseIntegerKey(node->values["code"].c_str(), 1, &charCode) || (charCode < 0) || (charCode >= 256)) {
+	if (!parseIntegerKey(node->values["code"], 1, &charCode) || (charCode < 0) || (charCode >= 256)) {
 		return parserError("Illegal or missing code attribute in <character> tag in \"%s\".", getFileName().c_str());
 	}
 
-	if (!parseIntegerKey(node->values["top"].c_str(), 1, &top) || (top < 0)) {
+	if (!parseIntegerKey(node->values["top"], 1, &top) || (top < 0)) {
 		return parserError("Illegal or missing top attribute in <character> tag in \"%s\".", getFileName().c_str());
 	}
-	if (!parseIntegerKey(node->values["left"].c_str(), 1, &left) || (left < 0)) {
+	if (!parseIntegerKey(node->values["left"], 1, &left) || (left < 0)) {
 		return parserError("Illegal or missing left attribute in <character> tag in \"%s\".", getFileName().c_str());
 	}
-	if (!parseIntegerKey(node->values["right"].c_str(), 1, &right) || (right < 0)) {
+	if (!parseIntegerKey(node->values["right"], 1, &right) || (right < 0)) {
 		return parserError("Illegal or missing right attribute in <character> tag in \"%s\".", getFileName().c_str());
 	}
-	if (!parseIntegerKey(node->values["bottom"].c_str(), 1, &bottom) || (bottom < 0)) {
+	if (!parseIntegerKey(node->values["bottom"], 1, &bottom) || (bottom < 0)) {
 		return parserError("Illegal or missing bottom attribute in <character> tag in \"%s\".", getFileName().c_str());
 	}
 

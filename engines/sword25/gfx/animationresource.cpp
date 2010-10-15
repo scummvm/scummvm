@@ -116,7 +116,7 @@ bool AnimationResource::parseBooleanKey(Common::String s, bool &result) {
 }
 
 bool AnimationResource::parserCallback_animation(ParserNode *node) {
-	if (!parseIntegerKey(node->values["fps"].c_str(), 1, &_FPS) || (_FPS < MIN_FPS) || (_FPS > MAX_FPS)) {
+	if (!parseIntegerKey(node->values["fps"], 1, &_FPS) || (_FPS < MIN_FPS) || (_FPS > MAX_FPS)) {
 		return parserError("Illegal or missing fps attribute in <animation> tag in \"%s\". Assuming default (\"%d\").",
 		                 getFileName().c_str(), DEFAULT_FPS);
 	}

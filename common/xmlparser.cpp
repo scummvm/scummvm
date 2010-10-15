@@ -229,6 +229,47 @@ bool XMLParser::parseKeyValue(Common::String keyName) {
 	return true;
 }
 
+bool XMLParser::parseIntegerKey(const char *key, int count, ...) {
+	bool result;
+	va_list args;
+	va_start(args, count);
+	result = vparseIntegerKey(key, count, args);
+	va_end(args);
+	return result;
+}
+
+bool XMLParser::parseIntegerKey(const Common::String &key, int count, ...) {
+	bool result;
+	va_list args;
+	va_start(args, count);
+	result = vparseIntegerKey(key.c_str(), count, args);
+	va_end(args);
+	return result;
+}
+
+bool XMLParser::vparseIntegerKey(const char *key, int count, va_list args) {
+	char *parseEnd;
+	int *num_ptr;
+
+	while (count--) {
+		while (isspace(*key))
+			key++;
+
+		num_ptr = va_arg(args, int*);
+		*num_ptr = strtol(key, &parseEnd, 10);
+
+		key = parseEnd;
+
+		while (isspace(*key))
+			key++;
+
+		if (count && *key++ != ',')
+			return false;
+	}
+
+	return (*key == 0);
+}
+
 bool XMLParser::closeKey() {
 	bool ignore = false;
 	bool result = true;

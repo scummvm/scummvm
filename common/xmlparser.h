@@ -395,32 +395,9 @@ protected:
 	 *            by reference.
 	 * @returns True if the parsing succeeded.
 	 */
-	bool parseIntegerKey(const char *key, int count, ...) {
-		char *parseEnd;
-		int *num_ptr;
-
-		va_list args;
-		va_start(args, count);
-
-		while (count--) {
-			while (isspace(*key))
-				key++;
-
-			num_ptr = va_arg(args, int*);
-			*num_ptr = strtol(key, &parseEnd, 10);
-
-			key = parseEnd;
-
-			while (isspace(*key))
-				key++;
-
-			if (count && *key++ != ',')
-				return false;
-		}
-
-		va_end(args);
-		return (*key == 0);
-	}
+	bool parseIntegerKey(const char *key, int count, ...);
+	bool parseIntegerKey(const Common::String &keyStr, int count, ...);
+	bool vparseIntegerKey(const char *key, int count, va_list args);
 
 	bool parseXMLHeader(ParserNode *node);
 
