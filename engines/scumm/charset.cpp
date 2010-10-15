@@ -826,7 +826,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->bytesPerPixel);
 	} else {
 		dst = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier);
-		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight, _vm->_textSurface.bytesPerPixel, !is2byte);
+		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight, _vm->_textSurface.bytesPerPixel, (_vm->_textSurfaceMultiplier == 2 && !is2byte));
 		if (is2byte)
 			origWidth /= _vm->_textSurfaceMultiplier;
 	}
