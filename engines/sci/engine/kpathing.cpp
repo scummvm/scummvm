@@ -1311,8 +1311,10 @@ static void AStar(PathfindingState *s) {
 			}
 		}
 
+		assert(vertex_min != 0);	// the vertex cost should never be bigger than HUGE_DISTANCE
+
 		// Check if we are done
-		if (vertex_min == s->vertex_end || !vertex_min)
+		if (vertex_min == s->vertex_end)
 			break;
 
 		// Move vertex from set open to set closed
