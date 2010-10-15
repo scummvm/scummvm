@@ -297,7 +297,7 @@ Dialog::Dialog(MadsM4Engine *vm, const char *msgData, const char *title): View(v
 	char *lineP = &dialogLine[0];
 	char *cmdP = NULL;
 
-	while (*(srcP - 1) != '\0') {
+	while (srcP && *(srcP - 1) != '\0') {
 		if ((*srcP == '\n') || (*srcP == '\0')) {
 			// Line completed
 			*lineP = '\0';
