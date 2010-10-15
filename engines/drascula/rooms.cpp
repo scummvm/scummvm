@@ -1945,7 +1945,9 @@ bool DrasculaEngine::exitRoom(int doorNumber) {
 			hare_se_ve = 1;
 
 		clearRoom();
-		sscanf(_targetSurface[doorNumber], "%d", &roomNum);
+		if (!sscanf(_targetSurface[doorNumber], "%d", &roomNum)) {
+			error("Malformed roomNum in targetSurface (%s)", _targetSurface[doorNumber]);
+		}
 		curX = -1;
 		enterRoom(roomNum);
 

@@ -92,13 +92,19 @@ void TextResourceParser::getLine(char *buf) {
 void TextResourceParser::parseInt(int &result) {
 	char buf[256];
 	getLine(buf);
-	sscanf(buf, "%d", &result);
+
+	if (!sscanf(buf, "%d", &result)) {
+		result = 0;
+	}
 }
 
 void TextResourceParser::parseString(char* result) {
 	char buf[256];
 	getLine(buf);
-	sscanf(buf, "%s", result);
+
+	if (!sscanf(buf, "%s", result)) {
+		*result = 0;
+	}
 }
 
 

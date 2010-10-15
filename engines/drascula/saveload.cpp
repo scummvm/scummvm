@@ -221,7 +221,9 @@ bool DrasculaEngine::loadGame(const char *gameName) {
 	takeObject = sav->readSint32LE();
 	pickedObject = sav->readSint32LE();
 	loadedDifferentChapter = 0;
-	sscanf(currentData, "%d.ald", &roomNum);
+	if (!sscanf(currentData, "%d.ald", &roomNum)) {
+		error("Bad save format");
+	}
 	enterRoom(roomNum);
 	selectVerb(kVerbNone);
 
