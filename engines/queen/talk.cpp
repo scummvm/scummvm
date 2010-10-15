@@ -777,7 +777,7 @@ void Talk::defaultAnimation(
 	}
 
 	// Make sure that Person closes their mouth
-	if (!isJoe && parameters->ff > 0)
+	if (!isJoe && parameters && parameters->ff > 0)
 		_vm->bankMan()->overpack(parameters->ff, startFrame, bankNum);
 }
 
