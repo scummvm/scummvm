@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 
 #include "gui/message.h"
 
@@ -530,7 +531,7 @@ void Inter_v2::o2_readLIC() {
 	char path[40];
 
 	_vm->_game->_script->evalExpr(0);
-	strncpy0(path, _vm->_game->_script->getResultStr(), 35);
+	Common::strlcpy(path, _vm->_game->_script->getResultStr(), 36);
 	strcat(path, ".LIC");
 
 	_vm->_sound->cdLoadLIC(path);
@@ -963,7 +964,7 @@ void Inter_v2::o2_playImd() {
 
 	_vm->_game->_script->evalExpr(0);
 	_vm->_game->_script->getResultStr()[8] = 0;
-	strncpy0(imd, _vm->_game->_script->getResultStr(), 127);
+	Common::strlcpy(imd, _vm->_game->_script->getResultStr(), 128);
 
 	VideoPlayer::Properties props;
 
@@ -1031,7 +1032,7 @@ void Inter_v2::o2_openItk() {
 	char fileName[32];
 
 	_vm->_game->_script->evalExpr(0);
-	strncpy0(fileName, _vm->_game->_script->getResultStr(), 27);
+	Common::strlcpy(fileName, _vm->_game->_script->getResultStr(), 28);
 	if (!strchr(fileName, '.'))
 		strcat(fileName, ".ITK");
 
@@ -1462,7 +1463,7 @@ void Inter_v2::o2_loadInfogramesIns(OpGobParams &params) {
 
 	varName = _vm->_game->_script->readInt16();
 
-	strncpy0(fileName, GET_VAR_STR(varName), 15);
+	Common::strlcpy(fileName, GET_VAR_STR(varName), 16);
 	strcat(fileName, ".INS");
 
 	_vm->_sound->infogramesLoadInstruments(fileName);
@@ -1474,7 +1475,7 @@ void Inter_v2::o2_playInfogrames(OpGobParams &params) {
 
 	varName = _vm->_game->_script->readInt16();
 
-	strncpy0(fileName, GET_VAR_STR(varName), 15);
+	Common::strlcpy(fileName, GET_VAR_STR(varName), 16);
 	strcat(fileName, ".DUM");
 
 	_vm->_sound->infogramesLoadSong(fileName);
@@ -1560,7 +1561,7 @@ int16 Inter_v2::loadSound(int16 search) {
 	if (id == -1) {
 		char sndfile[14];
 
-		strncpy0(sndfile, _vm->_game->_script->readString(9), 9);
+		Common::strlcpy(sndfile, _vm->_game->_script->readString(9), 10);
 
 		if (type == SOUND_ADL)
 			strcat(sndfile, ".ADL");

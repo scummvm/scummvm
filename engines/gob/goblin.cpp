@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/str.h"
+
 #include "gob/gob.h"
 #include "gob/goblin.h"
 #include "gob/helper.h"
@@ -1186,7 +1188,7 @@ void Goblin::loadObjects(const char *source) {
 
 	freeObjects();
 	initList();
-	strncpy0(_vm->_map->_sourceFile, source, 14);
+	Common::strlcpy(_vm->_map->_sourceFile, source, 15);
 
 	_vm->_map->_sourceFile[strlen(_vm->_map->_sourceFile) - 4] = 0;
 	_vm->_map->loadMapObjects(source);

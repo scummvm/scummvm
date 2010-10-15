@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 #include "common/file.h"
 #include "graphics/dither.h"
 
@@ -104,7 +105,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 	bool close;
 
 	_vm->_game->_script->evalExpr(0);
-	strncpy0(fileName, _vm->_game->_script->getResultStr(), 127);
+	Common::strlcpy(fileName, _vm->_game->_script->getResultStr(), 128);
 
 	VideoPlayer::Properties props;
 
@@ -187,7 +188,7 @@ void Inter_v6::o6_openItk() {
 	char fileName[32];
 
 	_vm->_game->_script->evalExpr(0);
-	strncpy0(fileName, _vm->_game->_script->getResultStr(), 27);
+	Common::strlcpy(fileName, _vm->_game->_script->getResultStr(), 28);
 	if (!strchr(fileName, '.'))
 		strcat(fileName, ".ITK");
 

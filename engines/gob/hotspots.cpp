@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/str.h"
+
 #include "gob/hotspots.h"
 #include "gob/global.h"
 #include "gob/helper.h"
@@ -880,10 +882,10 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 
 	while (1) {
 		// If we the edit field has enough space, add a space for the new character
-		strncpy0(tempStr, str, 254);
+		Common::strlcpy(tempStr, str, 255);
 		strcat(tempStr, " ");
 		if ((editSize != 0) && strlen(tempStr) > editSize)
-			strncpy0(tempStr, str, 255);
+			Common::strlcpy(tempStr, str, 256);
 
 		// Clear input area
 		fillRect(xPos, yPos,
@@ -2006,14 +2008,14 @@ void Hotspots::checkStringMatch(const Hotspot &spot, const InputDesc &input,
 	char tempStr[256];
 	char spotStr[256];
 
-	strncpy0(tempStr, GET_VARO_STR(spot.key), 255);
+	Common::strlcpy(tempStr, GET_VARO_STR(spot.key), 256);
 
 	if (spot.getType() < kTypeInput3NoLeave)
 		_vm->_util->cleanupStr(tempStr);
 
 	uint16 pos = 0;
 	do {
-		strncpy0(spotStr, str, 255);
+		Common::strlcpy(spotStr, str, 256);
 
 		pos += strlen(str) + 1;
 		str += strlen(str) + 1;
@@ -2140,7 +2142,7 @@ void Hotspots::updateAllTexts(const InputDesc *inputs) const {
 
 		// Get its text
 		char tempStr[256];
-		strncpy0(tempStr, GET_VARO_STR(spot.key), 255);
+		Common::strlcpy(tempStr, GET_VARO_STR(spot.key), 256);
 
 		// Coordinates
 		uint16 x      = spot.left;

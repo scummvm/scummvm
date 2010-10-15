@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 #include "common/util.h"
 #include "sound/audiocd.h"
 
@@ -92,7 +93,7 @@ void CDROM::startTrack(const char *trackName) {
 		return;
 	}
 
-	strncpy0(_curTrack, trackName, 15);
+	Common::strlcpy(_curTrack, trackName, 16);
 
 	stopPlaying();
 	_curTrackBuffer = matchPtr;

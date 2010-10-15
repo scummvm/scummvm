@@ -28,13 +28,6 @@
 
 namespace Gob {
 
-/** A strncpy that forces the final \0. */
-inline char *strncpy0(char *dest, const char *src, size_t n) {
-	strncpy(dest, src, n);
-	dest[n] = 0;
-	return dest;
-}
-
 } // End of namespace Gob
 
 #endif // GOB_HELPER_H

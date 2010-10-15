@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 #include "common/file.h"
 
 #include "gob/gob.h"
@@ -971,7 +972,7 @@ bool Inter_v1::o1_loadTot(OpFuncParams &params) {
 	if ((_vm->_game->_script->peekByte() & 0x80) != 0) {
 		_vm->_game->_script->skip(1);
 		_vm->_game->_script->evalExpr(0);
-		strncpy0(buf, _vm->_game->_script->getResultStr(), 15);
+		Common::strlcpy(buf, _vm->_game->_script->getResultStr(), 16);
 	} else {
 		size = _vm->_game->_script->readInt8();
 		memcpy(buf, _vm->_game->_script->readString(size), size);
@@ -1512,7 +1513,7 @@ bool Inter_v1::o1_strToLong(OpFuncParams &params) {
 	int32 res;
 
 	strVar = _vm->_game->_script->readVarIndex();
-	strncpy0(str, GET_VARO_STR(strVar), 19);
+	Common::strlcpy(str, GET_VARO_STR(strVar), 20);
 	res = atoi(str);
 
 	destVar = _vm->_game->_script->readVarIndex();

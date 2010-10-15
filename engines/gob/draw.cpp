@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 
 #include "gob/gob.h"
 #include "gob/draw.h"
@@ -470,10 +471,8 @@ void Draw::oPlaytoons_sub_F_1B(uint16 id, int16 left, int16 top, int16 right, in
 			else
 				WRITE_VAR(24, (uint32) 0);
 			WRITE_VAR(25, (uint32) shortId);
-			if (_hotspotText) {
-				strncpy(_hotspotText, paramStr, 40);
-				_hotspotText[39] = 0;
-			}
+			if (_hotspotText)
+				Common::strlcpy(_hotspotText, paramStr, 40);
 		}
 		_vm->_inter->funcBlock(0);
 		_vm->_game->_script->pop();

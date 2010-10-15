@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 #include "graphics/cursorman.h"
 
 #include "gob/gob.h"
@@ -258,7 +259,7 @@ void Draw_v1::printTotText(int16 id) {
 			} else if (cmd == 1) {
 				val = READ_LE_UINT16(ptrEnd + 18) * 4;
 
-				strncpy0(buf, GET_VARO_STR(val), 19);
+				Common::strlcpy(buf, GET_VARO_STR(val), 20);
 			} else {
 				val = READ_LE_UINT16(ptrEnd + 18) * 4;
 

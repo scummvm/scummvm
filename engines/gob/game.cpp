@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 
 #include "gob/gob.h"
 #include "gob/game.h"
@@ -360,8 +361,7 @@ void Game::playTot(int16 skipPlay) {
 			if (_totToLoad[0] == 0)
 				break;
 
-			strncpy(_curTotFile, _totToLoad, 14);
-			_curTotFile[13] = '\0';
+			Common::strlcpy(_curTotFile, _totToLoad, 14);
 
 		}
 	} else {
@@ -375,8 +375,7 @@ void Game::playTot(int16 skipPlay) {
 			_vm->_inter->_terminate = 2;
 	}
 
-	strncpy(_curTotFile, savedTotName, 14);
-	_curTotFile[13] = '\0';
+	Common::strlcpy(_curTotFile, savedTotName, 14);
 
 	_vm->_inter->_nestLevel = oldNestLevel;
 	_vm->_inter->_breakFromLevel = oldBreakFrom;
@@ -581,7 +580,7 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 	if (flags & 1)
 		_vm->_inter->_variables = 0;
 
-	strncpy0(_curTotFile, newTotFile, 9);
+	Common::strlcpy(_curTotFile, newTotFile, 10);
 	strcat(_curTotFile, ".TOT");
 
 	if (_vm->_inter->_terminate != 0) {

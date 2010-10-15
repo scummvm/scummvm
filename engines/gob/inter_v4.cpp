@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 #include "common/file.h"
 
 #include "gob/gob.h"
@@ -145,7 +146,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 	bool close;
 
 	_vm->_game->_script->evalExpr(0);
-	strncpy0(fileName, _vm->_game->_script->getResultStr(), 127);
+	Common::strlcpy(fileName, _vm->_game->_script->getResultStr(), 128);
 
 	// WORKAROUND: The nut rolling animation in the administration center
 	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".
