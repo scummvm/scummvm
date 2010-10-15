@@ -399,8 +399,7 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 	}
 
 	if (!_videobufReady && !_audiobufReady && _fileStream->eos()) {
-		close();
-		return _surface;
+		return NULL;
 	}
 
 	if (!_videobufReady || !_audiobufReady) {

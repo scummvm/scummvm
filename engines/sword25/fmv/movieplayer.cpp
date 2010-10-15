@@ -130,17 +130,21 @@ bool MoviePlayer::pause() {
 void MoviePlayer::update() {
 	if (_decoder.isVideoLoaded()) {
 		Graphics::Surface *s = _decoder.decodeNextFrame();
-
-		// Transfer the next frame
-		assert(s->bytesPerPixel == 4);
+		if (s) {
+			// Transfer the next frame
+			assert(s->bytesPerPixel == 4);
 
 #if INDIRECTRENDERING
-		byte *frameData = (byte *)s->getBasePtr(0, 0);
-		_outputBitmap->setContent(frameData, s->pitch * s->h, 0, s->pitch);
+			byte *frameData = (byte *)s->getBasePtr(0, 0);
+			_outputBitmap->setContent(frameData, s->pitch * s->h, 0, s->pitch);
 #else
-		g_system->copyRectToScreen((byte *)s->getBasePtr(0, 0), s->pitch, _outX, _outY, MIN(s->w, _backSurface->w), MIN(s->h, _backSurface->h));
-		g_system->updateScreen();
+			g_system->copyRectToScreen((byte *)s->getBasePtr(0, 0), s->pitch, _outX, _outY, MIN(s->w, _backSurface->w), MIN(s->h, _backSurface->h));
+			g_system->updateScreen();
 #endif
+		} else {
+			// Movie complete, so unload the movie
+			unloadMovie();
+		}
 	}
 }
 
