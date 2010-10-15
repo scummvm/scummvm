@@ -54,7 +54,7 @@ namespace Sword25 {
 class Kernel;
 
 // -----------------------------------------------------------------------------
-// Klassendefinition
+// Class definition
 // -----------------------------------------------------------------------------
 
 class FontResource : public Resource, Common::XMLParser {
@@ -139,14 +139,6 @@ private:
 	// Parser callback methods
 	bool parserCallback_font(ParserNode *node);
 	bool parserCallback_character(ParserNode *node);
-
-	// -----------------------------------------------------------------------------
-	// Hilfsmethoden
-	// -----------------------------------------------------------------------------
-
-//	bool _ParseXMLDocument(const Common::String &FileName, TiXmlDocument &Doc) const;
-//	bool _ParseFontTag(TiXmlElement &Tag, Common::String &BitmapFileName, int &LineHeight, int &GapWidth) const;
-//	bool _ParseCharacterTag(TiXmlElement &Tag, int &Code, Common::Rect &Rect) const;
 };
 
 } // End of namespace Sword25

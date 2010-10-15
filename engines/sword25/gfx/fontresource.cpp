@@ -47,14 +47,16 @@
 namespace Sword25 {
 
 // -----------------------------------------------------------------------------
-// Konstanten
+// Constants
 // -----------------------------------------------------------------------------
 
-static const uint DEFAULT_LINEHEIGHT = 20;
-static const uint DEFAULT_GAPWIDTH = 1;
+enum {
+	DEFAULT_LINEHEIGHT = 20,
+	DEFAULT_GAPWIDTH = 1
+};
 
 // -----------------------------------------------------------------------------
-// Konstruktion / Destruktion
+// Constructor / destructor
 // -----------------------------------------------------------------------------
 
 FontResource::FontResource(Kernel *pKernel, const Common::String &FileName) :

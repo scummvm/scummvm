@@ -163,7 +163,7 @@ bool Sword25Engine::loadPackages() {
 
 	Common::sort(files.begin(), files.end());
 
-	// Identity all patch packages
+	// Identify all patch packages
 	// The filename of patch packages must have the form patch??.b25c, with the question marks
 	// are placeholders for numbers.
 	// Since the filenames have been sorted, patches are mounted with low numbers first, through
@@ -175,7 +175,7 @@ bool Sword25Engine::loadPackages() {
 				return false;
 	}
 
-	// Identity and mount all language packages
+	// Identify and mount all language packages
 	// The filename of the packages have the form lang_*.b25c (eg. lang_de.b25c)
 	for (Common::FSList::const_iterator it = files.begin(); it != files.end(); ++it) {
 		if (it->getName().matchString("lang_*.b25c", true))
