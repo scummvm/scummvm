@@ -256,7 +256,7 @@ Resource *ResourceManager::loadResource(const Common::String &fileName) {
 */
 Common::String ResourceManager::GetUniqueFileName(const Common::String &FileName) const {
 	// Get a pointer to the package manager
-	PackageManager *pPackage = (PackageManager *)m_KernelPtr->GetService("package");
+	PackageManager *pPackage = (PackageManager *)m_KernelPtr->GetPackage();
 	if (!pPackage) {
 		BS_LOG_ERRORLN("Could not get package manager.");
 		return Common::String("");

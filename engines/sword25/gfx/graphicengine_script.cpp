@@ -251,7 +251,7 @@ static const luaL_reg ANIMATION_TEMPLATE_METHODS[] = {
 static GraphicEngine *GetGE() {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	GraphicEngine *pGE = static_cast<GraphicEngine *>(pKernel->GetService("gfx"));
+	GraphicEngine *pGE = pKernel->GetGfx();
 	BS_ASSERT(pGE);
 	return pGE;
 }
@@ -1525,7 +1525,7 @@ static const luaL_reg TEXT_METHODS[] = {
 bool GraphicEngine::RegisterScriptBindings() {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
+	ScriptEngine *pScript = pKernel->GetScript();
 	BS_ASSERT(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	BS_ASSERT(L);

@@ -114,7 +114,7 @@ bool StaticBitmap::doRender() {
 	BitmapResource *bitmapResourcePtr = static_cast<BitmapResource *>(resourcePtr);
 
 	// Framebufferobjekt holen
-	GraphicEngine *gfxPtr = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
+	GraphicEngine *gfxPtr = Kernel::GetInstance()->GetGfx();
 	BS_ASSERT(gfxPtr);
 
 	// Bitmap zeichnen

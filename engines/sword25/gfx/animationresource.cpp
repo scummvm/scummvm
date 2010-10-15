@@ -54,8 +54,7 @@ AnimationResource::AnimationResource(const Common::String &filename) :
 		Common::XMLParser(),
 		_valid(false) {
 	// Get a pointer to the package manager
-	Kernel *pKernel = Kernel::GetInstance();
-	_pPackage = static_cast<PackageManager *>(pKernel->GetService("package"));
+	_pPackage = Kernel::GetInstance()->GetPackage();
 	BS_ASSERT(_pPackage);
 
 	// Switch to the folder the specified Xml fiile is in

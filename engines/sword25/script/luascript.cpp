@@ -159,7 +159,7 @@ bool LuaScriptEngine::executeFile(const Common::String &fileName) {
 	debug(2, "LuaScriptEngine::executeFile(%s)", fileName.c_str());
 
 	// Get a pointer to the package manager
-	PackageManager *pPackage = static_cast<PackageManager *>(Kernel::GetInstance()->GetService("package"));
+	PackageManager *pPackage = Kernel::GetInstance()->GetPackage();
 	BS_ASSERT(pPackage);
 
 	// File read

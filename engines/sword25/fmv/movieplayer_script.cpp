@@ -187,9 +187,7 @@ const luaL_reg LIBRARY_FUNCTIONS[] = {
 
 #ifdef USE_THEORADEC
 bool MoviePlayer::registerScriptBindings() {
-	Kernel *pKernel = Kernel::GetInstance();
-	BS_ASSERT(pKernel);
-	ScriptEngine *pScript = static_cast<ScriptEngine *>(pKernel->GetService("script"));
+	ScriptEngine *pScript = Kernel::GetInstance()->GetScript();
 	BS_ASSERT(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	BS_ASSERT(L);

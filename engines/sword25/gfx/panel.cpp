@@ -95,7 +95,7 @@ bool Panel::doRender() {
 	if (_color >> 24 == 0)
 		return true;
 
-	GraphicEngine *gfxPtr = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
+	GraphicEngine *gfxPtr = Kernel::GetInstance()->GetGfx();
 	BS_ASSERT(gfxPtr);
 
 	return gfxPtr->fill(&_bbox, _color);

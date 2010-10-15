@@ -44,9 +44,10 @@ namespace Sword25 {
 Resource::Resource(const Common::String &fileName, RESOURCE_TYPES type) :
 	_type(type),
 	_refCount(0) {
-	BS_ASSERT(Kernel::GetInstance()->GetService("package"));
+	PackageManager *pPM = Kernel::GetInstance()->GetPackage();
+	BS_ASSERT(pPM);
 
-	_fileName = static_cast<PackageManager *>(Kernel::GetInstance()->GetService("package"))->getAbsolutePath(fileName);
+	_fileName = pPM->getAbsolutePath(fileName);
 	_fileNameHash = BS_String::GetHash(fileName);
 }
 

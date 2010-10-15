@@ -55,7 +55,7 @@ SWImage::SWImage(const Common::String &filename, bool &result) :
 	_height(0) {
 	result = false;
 
-	PackageManager *pPackage = static_cast<PackageManager *>(Kernel::GetInstance()->GetService("package"));
+	PackageManager *pPackage = Kernel::GetInstance()->GetPackage();
 	BS_ASSERT(pPackage);
 
 	// Datei laden

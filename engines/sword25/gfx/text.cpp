@@ -169,7 +169,7 @@ bool Text::doRender() {
 	}
 
 	// Framebufferobjekt holen.
-	GraphicEngine *GfxPtr = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
+	GraphicEngine *GfxPtr = Kernel::GetInstance()->GetGfx();
 	BS_ASSERT(GfxPtr);
 
 	bool Result = true;

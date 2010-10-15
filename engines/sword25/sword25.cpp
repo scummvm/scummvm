@@ -115,7 +115,7 @@ Common::Error Sword25Engine::appStart() {
 	}
 
 	// Einen Pointer auf den Skript-Engine holen.
-	ScriptEngine *scriptPtr = static_cast<ScriptEngine *>(Kernel::GetInstance()->GetService("script"));
+	ScriptEngine *scriptPtr = Kernel::GetInstance()->GetScript();
 	if (!scriptPtr) {
 		BS_LOG_ERRORLN("Script intialization failed.");
 		return Common::kUnknownError;
@@ -129,7 +129,7 @@ Common::Error Sword25Engine::appStart() {
 
 bool Sword25Engine::appMain() {
 	// The main script start. This script loads all the other scripts and starts the actual game.
-	ScriptEngine *scriptPtr = static_cast<ScriptEngine *>(Kernel::GetInstance()->GetService("script"));
+	ScriptEngine *scriptPtr = Kernel::GetInstance()->GetScript();
 	BS_ASSERT(scriptPtr);
 	scriptPtr->executeFile(DEFAULT_SCRIPT_FILE);
 
@@ -147,7 +147,7 @@ bool Sword25Engine::appEnd() {
 }
 
 bool Sword25Engine::loadPackages() {
-	PackageManager *packageManagerPtr = reinterpret_cast<PackageManager *>(Kernel::GetInstance()->GetService("package"));
+	PackageManager *packageManagerPtr = Kernel::GetInstance()->GetPackage();
 	BS_ASSERT(packageManagerPtr);
 
 	// Load the main package

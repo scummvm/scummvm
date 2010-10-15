@@ -65,7 +65,7 @@ FontResource::FontResource(Kernel *pKernel, const Common::String &FileName) :
 
 	// Get a pointer to the package manager
 	BS_ASSERT(_pKernel);
-	PackageManager *pPackage = static_cast<PackageManager *>(_pKernel->GetService("package"));
+	PackageManager *pPackage = _pKernel->GetPackage();
 	BS_ASSERT(pPackage);
 
 	// Load the contents of the file
@@ -105,7 +105,7 @@ bool FontResource::parserCallback_font(ParserNode *node) {
 	
 	// Get a reference to the package manager
 	BS_ASSERT(_pKernel);
-	PackageManager *pPackage = static_cast<PackageManager *>(_pKernel->GetService("package"));
+	PackageManager *pPackage = _pKernel->GetPackage();
 	BS_ASSERT(pPackage);
 
 	// Get the full path and filename for the bitmap resource

@@ -188,7 +188,7 @@ bool Animation::doRender() {
 	BitmapResource *pBitmapResource = static_cast<BitmapResource *>(pResource);
 
 	// Framebufferobjekt holen
-	GraphicEngine *pGfx = static_cast<GraphicEngine *>(Kernel::GetInstance()->GetService("gfx"));
+	GraphicEngine *pGfx = Kernel::GetInstance()->GetGfx();
 	BS_ASSERT(pGfx);
 
 	// Bitmap zeichnen
