@@ -990,8 +990,16 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	_top += offsY;
 	_left += offsX;
 
-	if (_left + origWidth / _vm->_textSurfaceMultiplier > _right + 1 || _left < 0) {
-		_left += origWidth / _vm->_textSurfaceMultiplier;
+	int boxWidth = origWidth;
+	int boxHeight = origHeight;
+
+	if (is2byte) {
+		boxWidth /= _vm->_textSurfaceMultiplier;
+		boxHeight /= _vm->_textSurfaceMultiplier;
+	}
+
+	if (_left + boxWidth > _right + 1 || _left < 0) {
+		_left += boxWidth;
 		_top -= offsY;
 		return;
 	}
@@ -1029,7 +1037,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 	printCharIntern(is2byte, charPtr, origWidth, origHeight, width, height, vs, ignoreCharsetMask);
 
-	_left += origWidth / _vm->_textSurfaceMultiplier;
+	_left += boxWidth;
 
 	if (_str.right < _left) {
 		_str.right = _left;
@@ -1037,8 +1045,8 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 			_str.right++;
 	}
 
-	if (_str.bottom < _top + height / _vm->_textSurfaceMultiplier)
-		_str.bottom = _top + height / _vm->_textSurfaceMultiplier;
+	if (_str.bottom < _top + boxHeight)
+		_str.bottom = _top + boxHeight;
 
 	_top -= offsY;
 }
