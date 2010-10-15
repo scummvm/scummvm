@@ -302,6 +302,8 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 			readCluIndex(cluFileNum, file);
 		}
 
+		assert(_resFiles[cluFileNum].entryTab);
+
 		uint32 pos = _resFiles[cluFileNum].entryTab[actual_res * 2 + 0];
 		uint32 len = _resFiles[cluFileNum].entryTab[actual_res * 2 + 1];
 
@@ -476,6 +478,9 @@ void ResourceManager::readCluIndex(uint16 fileNum, Common::File *file) {
 	assert((tableSize % 8) == 0);
 	_resFiles[fileNum].entryTab = (uint32 *)malloc(tableSize);
 	_resFiles[fileNum].numEntries = tableSize / 8;
+
+	assert(_resFiles[fileNum].entryTab);
+
 	file->read(_resFiles[fileNum].entryTab, tableSize);
 	if (file->eos() || file->err())
 		error("unable to read index table from file %s", _resFiles[fileNum].fileName);
