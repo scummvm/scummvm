@@ -73,9 +73,9 @@ using namespace Lua;
 static const uint FRAMETIME_SAMPLE_COUNT = 5;       // Anzahl der Framezeiten über die, die Framezeit gemittelt wird
 
 GraphicEngine::GraphicEngine(Kernel *pKernel) :
-	m_Width(0),
-	m_Height(0),
-	m_BitDepth(0),
+	_width(0),
+	_height(0),
+	_bitDepth(0),
 	m_Windowed(0),
 	m_LastTimeStamp((uint) -1), // max. BS_INT64 um beim ersten Aufruf von _UpdateLastFrameDuration() einen Reset zu erzwingen
 	m_LastFrameDuration(0),
@@ -102,41 +102,42 @@ Service *GraphicEngine_CreateObject(Kernel *pKernel) {
 	return new GraphicEngine(pKernel);
 }
 
-bool GraphicEngine::Init(int Width, int Height, int BitDepth, int BackbufferCount, bool Windowed) {
+bool GraphicEngine::Init(int width, int height, int bitDepth, int backbufferCount, bool isWindowed) {
 	// Warnung ausgeben, wenn eine nicht unterstützte Bittiefe gewählt wurde.
-	if (BitDepth != BIT_DEPTH) {
-		BS_LOG_WARNINGLN("Can't use a bit depth of %d (not supported). Falling back to %d.", BitDepth, BIT_DEPTH);
-		m_BitDepth = BIT_DEPTH;
+	if (bitDepth != BIT_DEPTH) {
+		BS_LOG_WARNINGLN("Can't use a bit depth of %d (not supported). Falling back to %d.", bitDepth, BIT_DEPTH);
+		_bitDepth = BIT_DEPTH;
 	}
 
 	// Warnung ausgeben, wenn nicht genau ein Backbuffer gewählt wurde.
-	if (BackbufferCount != BACKBUFFER_COUNT) {
-		BS_LOG_WARNINGLN("Can't use %d backbuffers (not supported). Falling back to %d.", BackbufferCount, BACKBUFFER_COUNT);
-		BackbufferCount = BACKBUFFER_COUNT;
+	if (backbufferCount != BACKBUFFER_COUNT) {
+		BS_LOG_WARNINGLN("Can't use %d backbuffers (not supported). Falling back to %d.", backbufferCount, BACKBUFFER_COUNT);
+		backbufferCount = BACKBUFFER_COUNT;
 	}
 
 	// Parameter in lokale Variablen kopieren
-	m_Width = Width;
-	m_Height = Height;
-	m_BitDepth = BitDepth;
-	m_Windowed = Windowed;
-	m_ScreenRect.left = 0;
-	m_ScreenRect.top = 0;
-	m_ScreenRect.right = m_Width;
-	m_ScreenRect.bottom = m_Height;
+	_width = width;
+	_height = height;
+	_bitDepth = bitDepth;
+	m_Windowed = isWindowed;
+	_screenRect.left = 0;
+	_screenRect.top = 0;
+	_screenRect.right = _width;
+	_screenRect.bottom = _height;
 
-	_backSurface.create(Width, Height, 4);
-	_frameBuffer.create(Width, Height, 4);
+	_backSurface.create(width, height, 4);
+	_frameBuffer.create(width, height, 4);
 
 	// Standardmäßig ist Vsync an.
 	SetVsync(true);
 
 	// Layer-Manager initialisieren.
-	_renderObjectManagerPtr.reset(new RenderObjectManager(Width, Height, BackbufferCount + 1));
+	_renderObjectManagerPtr.reset(new RenderObjectManager(width, height, backbufferCount + 1));
 
 	// Hauptpanel erstellen
-	m_MainPanelPtr = _renderObjectManagerPtr->getTreeRoot()->addPanel(Width, Height, BS_ARGB(0, 0, 0, 0));
-	if (!m_MainPanelPtr.isValid()) return false;
+	m_MainPanelPtr = _renderObjectManagerPtr->getTreeRoot()->addPanel(width, height, BS_ARGB(0, 0, 0, 0));
+	if (!m_MainPanelPtr.isValid())
+		return false;
 	m_MainPanelPtr->setVisible(true);
 
 	return true;
@@ -227,7 +228,7 @@ bool GraphicEngine::GetVsync() const {
 // -----------------------------------------------------------------------------
 
 bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
-	Common::Rect rect(m_Width - 1, m_Height - 1);
+	Common::Rect rect(_width - 1, _height - 1);
 
 	if (fillRectPtr) {
 		rect = *fillRectPtr;
@@ -251,19 +252,19 @@ Graphics::Surface *GraphicEngine::GetScreenshot() {
 // RESOURCE MANAGING
 // -----------------------------------------------------------------------------
 
-Resource *GraphicEngine::loadResource(const Common::String &FileName) {
-	BS_ASSERT(canLoadResource(FileName));
+Resource *GraphicEngine::loadResource(const Common::String &filename) {
+	BS_ASSERT(canLoadResource(filename));
 
-	// Bild für den Softwarebuffer laden
-	if (FileName.hasSuffix("_s.png")) {
+	// Load image for "software buffer" (FIXME: Whatever that means?)
+	if (filename.hasSuffix("_s.png")) {
 		bool Result = false;
-		SWImage *pImage = new SWImage(FileName, Result);
+		SWImage *pImage = new SWImage(filename, Result);
 		if (!Result) {
 			delete pImage;
 			return 0;
 		}
 
-		BitmapResource *pResource = new BitmapResource(FileName, pImage);
+		BitmapResource *pResource = new BitmapResource(filename, pImage);
 		if (!pResource->isValid()) {
 			delete pResource;
 			return 0;
@@ -272,16 +273,16 @@ Resource *GraphicEngine::loadResource(const Common::String &FileName) {
 		return pResource;
 	}
 
-	// Sprite-Bild laden
-	if (FileName.hasSuffix(".png") || FileName.hasSuffix(".b25s")) {
+	// Load sprite image
+	if (filename.hasSuffix(".png") || filename.hasSuffix(".b25s")) {
 		bool Result = false;
-		RenderedImage *pImage = new RenderedImage(FileName, Result);
+		RenderedImage *pImage = new RenderedImage(filename, Result);
 		if (!Result) {
 			delete pImage;
 			return 0;
 		}
 
-		BitmapResource *pResource = new BitmapResource(FileName, pImage);
+		BitmapResource *pResource = new BitmapResource(filename, pImage);
 		if (!pResource->isValid()) {
 			delete pResource;
 			return 0;
@@ -291,9 +292,9 @@ Resource *GraphicEngine::loadResource(const Common::String &FileName) {
 	}
 
 
-	// Vectorgraphik laden
-	if (FileName.hasSuffix(".swf")) {
-		debug(2, "VectorImage: %s", FileName.c_str());
+	// Load vector graphics
+	if (filename.hasSuffix(".swf")) {
+		debug(2, "VectorImage: %s", filename.c_str());
 
 		// Pointer auf Package-Manager holen
 		PackageManager *pPackage = Kernel::GetInstance()->GetPackage();
@@ -302,20 +303,20 @@ Resource *GraphicEngine::loadResource(const Common::String &FileName) {
 		// Datei laden
 		byte *pFileData;
 		uint FileSize;
-		if (!(pFileData = static_cast<byte *>(pPackage->getFile(FileName, &FileSize)))) {
-			BS_LOG_ERRORLN("File \"%s\" could not be loaded.", FileName.c_str());
+		if (!(pFileData = static_cast<byte *>(pPackage->getFile(filename, &FileSize)))) {
+			BS_LOG_ERRORLN("File \"%s\" could not be loaded.", filename.c_str());
 			return 0;
 		}
 
 		bool Result = false;
-		VectorImage *pImage = new VectorImage(pFileData, FileSize, Result, FileName);
+		VectorImage *pImage = new VectorImage(pFileData, FileSize, Result, filename);
 		if (!Result) {
 			delete pImage;
 			delete [] pFileData;
 			return 0;
 		}
 
-		BitmapResource *pResource = new BitmapResource(FileName, pImage);
+		BitmapResource *pResource = new BitmapResource(filename, pImage);
 		if (!pResource->isValid()) {
 			delete pResource;
 			delete[] pFileData;
@@ -326,9 +327,9 @@ Resource *GraphicEngine::loadResource(const Common::String &FileName) {
 		return pResource;
 	}
 
-	// Animation laden
-	if (FileName.hasSuffix("_ani.xml")) {
-		AnimationResource *pResource = new AnimationResource(FileName);
+	// Load animation
+	if (filename.hasSuffix("_ani.xml")) {
+		AnimationResource *pResource = new AnimationResource(filename);
 		if (pResource->isValid())
 			return pResource;
 		else {
@@ -337,9 +338,9 @@ Resource *GraphicEngine::loadResource(const Common::String &FileName) {
 		}
 	}
 
-	// Font laden
-	if (FileName.hasSuffix("_fnt.xml")) {
-		FontResource *pResource = new FontResource(Kernel::GetInstance(), FileName);
+	// Load font
+	if (filename.hasSuffix("_fnt.xml")) {
+		FontResource *pResource = new FontResource(Kernel::GetInstance(), filename);
 		if (pResource->IsValid())
 			return pResource;
 		else {
@@ -348,18 +349,18 @@ Resource *GraphicEngine::loadResource(const Common::String &FileName) {
 		}
 	}
 
-	BS_LOG_ERRORLN("Service cannot load \"%s\".", FileName.c_str());
+	BS_LOG_ERRORLN("Service cannot load \"%s\".", filename.c_str());
 	return 0;
 }
 
 // -----------------------------------------------------------------------------
 
-bool GraphicEngine::canLoadResource(const Common::String &FileName) {
-	return FileName.hasSuffix(".png") ||
-		FileName.hasSuffix("_ani.xml") ||
-		FileName.hasSuffix("_fnt.xml") ||
-		FileName.hasSuffix(".swf") ||
-		FileName.hasSuffix(".b25s");
+bool GraphicEngine::canLoadResource(const Common::String &filename) {
+	return filename.hasSuffix(".png") ||
+		filename.hasSuffix("_ani.xml") ||
+		filename.hasSuffix("_fnt.xml") ||
+		filename.hasSuffix(".swf") ||
+		filename.hasSuffix(".b25s");
 }
 
 
@@ -394,14 +395,14 @@ void  GraphicEngine::UpdateLastFrameDuration() {
 }
 
 namespace {
-bool DoSaveScreenshot(GraphicEngine &graphicEngine, const Common::String &Filename) {
+bool DoSaveScreenshot(GraphicEngine &graphicEngine, const Common::String &filename) {
 	Graphics::Surface *data = graphicEngine.GetScreenshot();
 	if (!data) {
 		BS_LOG_ERRORLN("Call to GetScreenshot() failed. Cannot save screenshot.");
 		return false;
 	}
 
-	Common::FSNode f(Filename);
+	Common::FSNode f(filename);
 	Common::WriteStream *stream = f.createWriteStream();
 	if (!stream) {
 		BS_LOG_ERRORLN("Call to GetScreenshot() failed. Cannot save screenshot.");
@@ -415,11 +416,11 @@ bool DoSaveScreenshot(GraphicEngine &graphicEngine, const Common::String &Filena
 }
 }
 
-bool GraphicEngine::SaveScreenshot(const Common::String &Filename) {
-	return DoSaveScreenshot(*this, Filename);
+bool GraphicEngine::SaveScreenshot(const Common::String &filename) {
+	return DoSaveScreenshot(*this, filename);
 }
 
-bool GraphicEngine::SaveThumbnailScreenshot(const Common::String &Filename) {
+bool GraphicEngine::SaveThumbnailScreenshot(const Common::String &filename) {
 	// Note: In ScumMVM, rather than saivng the thumbnail to a file, we store it in memory 
 	// until needed when creating savegame files
 	delete _thumbnail;

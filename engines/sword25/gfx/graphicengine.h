@@ -64,21 +64,18 @@ class Panel;
 class Screenshot;
 class RenderObjectManager;
 
-// Typen
+// Types
 typedef uint BS_COLOR;
 
-// Makros
+// Macros
 #define BS_RGB(R,G,B)       (0xFF000000 | ((R) << 16) | ((G) << 8) | (B))
 #define BS_ARGB(A,R,G,B)    (((A) << 24) | ((R) << 16) | ((G) << 8) | (B))
 
 /**
-    @brief Dies ist das Graphik-Engine Interface, dass alle Methoden und Klassen enthält, die eine Graphik-Engine implementieren muss.
-
-    Hier sind nur wenige Rumpffunktionen realisiert, wie z.B. das Abfragen der Parameter des Ausgabepuffers.
-    Die Hauptfunktionen muss eine Implementation dieses Inferfaces stellen.<br>
-    Die bisher einzige Implementation ist BS_DDrawGfx.
-*/
-
+ * This is the graphics engine. Unlike the original code, this is not
+ * an interface that needs to be subclasses, but rather already contains
+ * all required functionality.
+ */
 class GraphicEngine : public ResourceService, public Persistable {
 public:
 	// Enums
@@ -115,8 +112,10 @@ public:
 	// ---------
 
 	/**
-	 * Initialises the graphics engine and sets the screen mode. Returns true if initialisation failed.
-	 * Notes: This method should be called immediately after the initialisation of all services.
+	 * Initialises the graphics engine and sets the screen mode. Returns
+	 * true if initialisation failed.
+	 * @note This method should be called immediately after the
+	 * initialisation of all services.
 	 *
 	 * @param Height            The height of the output buffer in pixels. The default value is 600
 	 * @param BitDepth          The bit depth of the desired output buffer in bits. The default value is 16
@@ -220,28 +219,28 @@ public:
 	 * Returns the width of the output buffer in pixels
 	 */
 	int         GetDisplayWidth() const {
-		return m_Width;
+		return _width;
 	}
 
 	/**
 	 * Returns the height of the output buffer in pixels
 	 */
 	int         GetDisplayHeight() const {
-		return m_Height;
+		return _height;
 	}
 
 	/**
 	 * Returns the bounding box of the output buffer: (0, 0, Width, Height)
 	 */
 	Common::Rect    &GetDisplayRect() {
-		return m_ScreenRect;
+		return _screenRect;
 	}
 
 	/**
 	 * Returns the bit depth of the output buffer
 	 */
 	int         GetBitDepth() {
-		return m_BitDepth;
+		return _bitDepth;
 	}
 
 	/**
@@ -271,7 +270,7 @@ public:
 	 * If the rectangle falls partly off-screen, then it is automatically trimmed.
 	 * If a NULL value is passed, then the entire image is to be filled.
 	 * @param Color         The 32-bit colour with which the area is to be filled. The default is BS_RGB(0, 0, 0) (black)
-	    @remark Falls das Rechteck nicht völlig innerhalb des Bildschirms ist, wird es automatisch zurechtgestutzt.
+	 * @note FIf the rectangle is not completely inside the screen, it is automatically clipped.
 	 */
 	bool fill(const Common::Rect *FillRectPtr = 0, uint Color = BS_RGB(0, 0, 0));
 
@@ -345,10 +344,10 @@ protected:
 
 	// Display Variables
 	// -----------------
-	int     m_Width;
-	int     m_Height;
-	Common::Rect m_ScreenRect;
-	int     m_BitDepth;
+	int     _width;
+	int     _height;
+	Common::Rect _screenRect;
+	int     _bitDepth;
 	bool    m_Windowed;
 
 	// Debugging Variables
