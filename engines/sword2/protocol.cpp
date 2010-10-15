@@ -412,8 +412,8 @@ byte *Sword2Engine::fetchPsxParallax(uint32 location, uint8 level) {
 	debug(2, "fetchPsxParallax() -> %s parallax, xRes: %u, yRes: %u", (level == 0) ? "Background" : "Foreground", plxXres, plxYres);
 
 	// Calculate the number of tiles which compose the parallax grid.
-	horTiles = plxXres % 64 ? (plxXres / 64) + 1 : plxXres / 64;
-	verTiles = plxYres % 16 ? (plxYres / 16) + 1 : plxYres / 16;
+	horTiles = (plxXres % 64) ? (plxXres / 64) + 1 : plxXres / 64;
+	verTiles = (plxYres % 16) ? (plxYres / 16) + 1 : plxYres / 16;
 
 	totSize = plxSize + horTiles * verTiles * 4 + 8;
 

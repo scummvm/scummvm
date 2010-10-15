@@ -474,7 +474,7 @@ void ResourceManager::readCluIndex(uint16 fileNum, Common::File *file) {
 	file->seek(table_offset);
 
 	assert((tableSize % 8) == 0);
-	_resFiles[fileNum].entryTab = (uint32*)malloc(tableSize);
+	_resFiles[fileNum].entryTab = (uint32 *)malloc(tableSize);
 	_resFiles[fileNum].numEntries = tableSize / 8;
 	file->read(_resFiles[fileNum].entryTab, tableSize);
 	if (file->eos() || file->err())
@@ -482,7 +482,7 @@ void ResourceManager::readCluIndex(uint16 fileNum, Common::File *file) {
 
 #ifdef SCUMM_BIG_ENDIAN
 	for (int tabCnt = 0; tabCnt < _resFiles[fileNum].numEntries * 2; tabCnt++)
-	  _resFiles[fileNum].entryTab[tabCnt] = FROM_LE_32(_resFiles[fileNum].entryTab[tabCnt]);
+		_resFiles[fileNum].entryTab[tabCnt] = FROM_LE_32(_resFiles[fileNum].entryTab[tabCnt]);
 #endif
 }
 

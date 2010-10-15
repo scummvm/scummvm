@@ -496,9 +496,16 @@ int Sound::readBuffer(int16 *buffer, const int numSamples) {
 	memset(buffer, 0, 2 * numSamples);
 
 	if (!_mixBuffer || numSamples > _mixBufferLen) {
-		if (_mixBuffer)
-			_mixBuffer = (int16 *)realloc(_mixBuffer, 2 * numSamples);
-		else
+		if (_mixBuffer) {
+			int16 *newBuffer = (int16 *)realloc(_mixBuffer, 2 * numSamples);
+			if (newBuffer) {
+				_mixBuffer = newBuffer;
+			} else {
+				// We can't use the old buffer any more. It's too small.
+				free(_mixBuffer);
+				_mixBuffer = 0;
+			}
+		} else
 			_mixBuffer = (int16 *)malloc(2 * numSamples);
 
 		_mixBufferLen = numSamples;

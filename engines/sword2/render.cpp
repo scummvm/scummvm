@@ -731,8 +731,8 @@ int32 Screen::initialisePsxParallaxLayer(byte *parallax) {
 	data = parallax + xTiles * yTiles * 4;
 
 	_xBlocks[_layer] = xTiles;
-	_yBlocks[_layer] = (yTiles / 2) + (yTiles % 2 ? 1 : 0);
-	bool oddTiles = (yTiles % 2 ? true : false);
+	_yBlocks[_layer] = (yTiles / 2) + ((yTiles % 2) ? 1 : 0);
+	bool oddTiles = ((yTiles % 2) ? true : false);
 
 	_blockSurfaces[_layer] = (BlockSurface **)calloc(_xBlocks[_layer] * _yBlocks[_layer], sizeof(BlockSurface *));
 	if (!_blockSurfaces[_layer])

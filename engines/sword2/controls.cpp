@@ -180,12 +180,12 @@ void FontRendererGui::fetchText(uint32 textId, byte *buf) {
 	byte *data = _vm->fetchTextLine(_vm->_resman->openResource(textId / SIZE), textId & 0xffff);
 	int i;
 
-	for (i = 0; data[i + 2]; i++) {
-		if (buf)
+	if (buf) {
+		for (i = 0; data[i + 2]; i++)
 			buf[i] = data[i + 2];
+		buf[i] = 0;
 	}
 
-	buf[i] = 0;
 	_vm->_resman->closeResource(textId / SIZE);
 }
 
