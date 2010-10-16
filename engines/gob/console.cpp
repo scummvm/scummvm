@@ -30,7 +30,11 @@
 namespace Gob {
 
 GobConsole::GobConsole(GobEngine *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("var",				WRAP_METHOD(GobConsole, Cmd_Var));
+	DCmd_Register("varSize",   WRAP_METHOD(GobConsole, cmd_varSize));
+	DCmd_Register("var8",      WRAP_METHOD(GobConsole, cmd_var8));
+	DCmd_Register("var16",     WRAP_METHOD(GobConsole, cmd_var16));
+	DCmd_Register("var32",     WRAP_METHOD(GobConsole, cmd_var32));
+	DCmd_Register("varString", WRAP_METHOD(GobConsole, cmd_varString));
 }
 
 GobConsole::~GobConsole() {
@@ -42,20 +46,100 @@ void GobConsole::preEnter() {
 void GobConsole::postEnter() {
 }
 
-bool GobConsole::Cmd_Var(int argc, const char **argv) {
+bool GobConsole::cmd_varSize(int argc, const char **argv) {
+	DebugPrintf("Size of the variable space: %d bytes\n", _vm->_inter->_variables->getSize());
+	return true;
+}
+
+bool GobConsole::cmd_var8(int argc, const char **argv) {
 	if (argc == 1) {
-		DebugPrintf("Usage: var <var> (<value>)\n");
+		DebugPrintf("Usage: var8 <var offset> (<value>)\n");
 		return true;
 	}
 
 	uint32 varNum = atoi(argv[1]);
 
-	if (argc > 2) {
-		uint32 varVal = atoi(argv[2]);
-		_vm->_inter->_variables->writeVar32(varNum, varVal);
+	if (varNum >= _vm->_inter->_variables->getSize()) {
+		DebugPrintf("Variable offset out of range\n");
+		return true;
 	}
 
-	DebugPrintf("%d = %d\n", varNum, _vm->_inter->_variables->readVar32(varNum));
+	if (argc > 2) {
+		uint32 varVal = atoi(argv[2]);
+		_vm->_inter->_variables->writeOff8(varNum, varVal);
+	}
+
+	DebugPrintf("var8_%d = %d\n", varNum, _vm->_inter->_variables->readOff8(varNum));
+
+	return true;
+}
+
+bool GobConsole::cmd_var16(int argc, const char **argv) {
+	if (argc == 1) {
+		DebugPrintf("Usage: var16 <var offset> (<value>)\n");
+		return true;
+	}
+
+	uint32 varNum = atoi(argv[1]);
+
+	if ((varNum + 1) >= _vm->_inter->_variables->getSize()) {
+		DebugPrintf("Variable offset out of range\n");
+		return true;
+	}
+
+	if (argc > 2) {
+		uint32 varVal = atoi(argv[2]);
+		_vm->_inter->_variables->writeOff16(varNum, varVal);
+	}
+
+	DebugPrintf("var16_%d = %d\n", varNum, _vm->_inter->_variables->readOff16(varNum));
+
+	return true;
+}
+
+bool GobConsole::cmd_var32(int argc, const char **argv) {
+	if (argc == 1) {
+		DebugPrintf("Usage: var32 <var offset> (<value>)\n");
+		return true;
+	}
+
+	uint32 varNum = atoi(argv[1]);
+
+	if ((varNum + 3) >= _vm->_inter->_variables->getSize()) {
+		DebugPrintf("Variable offset out of range\n");
+		return true;
+	}
+
+	if (argc > 2) {
+		uint32 varVal = atoi(argv[2]);
+		_vm->_inter->_variables->writeOff32(varNum, varVal);
+	}
+
+	DebugPrintf("var8_%d = %d\n", varNum, _vm->_inter->_variables->readOff32(varNum));
+
+	return true;
+}
+
+bool GobConsole::cmd_varString(int argc, const char **argv) {
+	if (argc == 1) {
+		DebugPrintf("Usage: varString <var offset> (<value>)\n");
+		return true;
+	}
+
+	uint32 varNum = atoi(argv[1]);
+
+	if (varNum >= _vm->_inter->_variables->getSize()) {
+		DebugPrintf("Variable offset out of range\n");
+		return true;
+	}
+
+	if (argc > 2) {
+		uint32 maxLength = _vm->_inter->_variables->getSize() - varNum;
+
+		Common::strlcpy(_vm->_inter->_variables->getAddressOffString(varNum), argv[2], maxLength);
+	}
+
+	DebugPrintf("varString_%d = \"%s\"\n", varNum, _vm->_inter->_variables->getAddressOffString(varNum));
 
 	return true;
 }

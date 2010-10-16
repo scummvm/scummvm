@@ -44,7 +44,11 @@ protected:
 private:
 	GobEngine *_vm;
 
-	bool Cmd_Var(int argc, const char **argv);
+	bool cmd_varSize(int argc, const char **argv);
+	bool cmd_var8(int argc, const char **argv);
+	bool cmd_var16(int argc, const char **argv);
+	bool cmd_var32(int argc, const char **argv);
+	bool cmd_varString(int argc, const char **argv);
 };
 
 } // End of namespace Mohawk
