@@ -195,6 +195,7 @@ public:
 	const char *getSpecialConversationMusic(int32 locationId); 
 	void playRoomMusic();
 	void waitForScriptStep();
+	void doMagnifierEffect();
 
 	Resources *resources() {
 		return _resources;

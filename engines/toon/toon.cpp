@@ -400,9 +400,59 @@ void ToonEngine::render() {
 	}
 }
 
+void ToonEngine::doMagnifierEffect()
+{
+	int32 posX = _mouseX + state()->_currentScrollValue - _cursorOffsetX;
+	int32 posY = _mouseY - _cursorOffsetY - 2;
+
+	Graphics::Surface& surface = *_mainSurface;
+
+	// fast sqrt table lookup ( values up to 144 only)
+	static const byte intSqrt[] = {
+		0, 1, 1, 1, 2, 2, 2, 2, 2, 3,
+		3, 3, 3, 3, 3, 3, 4, 4, 4, 4,
+		4, 4, 4, 4, 4, 5, 5, 5, 5, 5,
+		5, 5, 5, 5, 5, 5, 6, 6, 6, 6,
+		6, 6, 6, 6, 6, 6, 6, 6, 6, 7,
+		7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+		7, 7, 7, 7, 8, 8, 8, 8, 8, 8,
+		8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+		8, 9, 9, 9, 9, 9, 9, 9, 9, 9,
+		9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
+		10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+		10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+		10, 11, 11, 11, 11, 11, 11, 11, 11, 11,
+		11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
+		11, 11, 11, 11, 12
+	};
+
+	byte tempBuffer[25*25];
+	for (int32 y = -12; y <= 12; y++) {
+		for (int32 x = -12; x <= 12; x++) {
+			int32 destPitch = surface.pitch;
+			uint8 *curRow = (uint8 *)surface.pixels + (posY + y) * destPitch + (posX + x);
+			tempBuffer[(y+12) * 25 + x + 12] = *curRow;
+		}
+	}
+
+	for (int32 y = -12; y <= 12; y++) {
+		for (int32 x = -12; x <= 12; x++) {
+			int32 dist = y * y + x * x;
+			if (dist > 144) 
+				continue;
+			int32 destPitch = surface.pitch;
+			uint8 *curRow = (uint8 *)surface.pixels + (posY + y) * destPitch + (posX + x);
+			int32 lerp =  (512 + intSqrt[dist] * 256 / 12) ;
+			*curRow = tempBuffer[(y*lerp/1024+12) * 25 + x*lerp/1024 + 12] ;
+		}
+	}
+}
+
 void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 	// render cursor last
 	if (!_gameState->_mouseHidden) {
+		if (_cursorAnimationInstance->getFrame() == 7) // magnifier icon needs a special effect
+			doMagnifierEffect();
 		_cursorAnimationInstance->setPosition(_mouseX - 40 + state()->_currentScrollValue - _cursorOffsetX, _mouseY - 40 - _cursorOffsetY, 0, false);
 		_cursorAnimationInstance->render();
 	}
