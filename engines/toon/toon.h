@@ -253,6 +253,10 @@ public:
 		return _currentTextLineId;
 	}
 
+	int32 getCurrentCharacterTalking() {
+		return _currentTextLineCharacterId;
+	}
+
 	CharacterDrew *getDrew() {
 		return (CharacterDrew *)_drew;
 	}

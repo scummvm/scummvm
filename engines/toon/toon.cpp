@@ -915,6 +915,8 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 		addItemToInventory(_gameState->_mouseState);
 
 	_gameState->_mouseState = -1;
+	_mouseButton = 0;
+	_lastMouseButton = 0x3;
 
 
 	// load package
@@ -1795,9 +1797,11 @@ void ToonEngine::playTalkAnimOnCharacter(int32 animID, int32 characterId, bool t
 
 int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 	if (blocking == false && _audioManager->voiceStillPlaying()) {
-		// someone is already talking, and this voice is not important
-		// skip it
-		return 0;
+		if (_currentTextLineCharacterId == 0 || _currentTextLineCharacterId == 1) {
+			// Drew or Flux is already talking, and this voice is not important
+			// skip it
+			return 0;
+		}
 	}
 
 	int32 myId = 0;

@@ -618,10 +618,7 @@ int32 ScriptFunc::sys_Cmd_In_Conversation(EMCState *state) {
 
 int32 ScriptFunc::sys_Cmd_Character_Talking(EMCState *state) {
 	int32 characterId = stackPos(0);
-	Character *character = _vm->getCharacterById(characterId);
-	if (character)
-		return (character->getFlag() & 4) && (character->getFlag() & 8);
-	return 0;
+	return (_vm->getCurrentCharacterTalking() == characterId);
 }
 
 int32 ScriptFunc::sys_Cmd_Set_Flux_Facing_Point(EMCState *state) {
@@ -870,6 +867,12 @@ int32 ScriptFunc::sys_Cmd_Set_Scene_Anim_Wait(EMCState *state) {
 	// WORKAROUND : In transformed hangar, everything is too fast..
 	if (_vm->state()->_currentScene == 19) {
 		waitTicks = 10;
+		_vm->setSceneAnimationScriptUpdate(false);
+	}
+
+	// WORKAROUND : Slow down just a little the guards dance animation so that the voices don't cut
+	if (_vm->state()->_currentScene == 2 && (sceneId == 2 || sceneId == 3)) {
+		waitTicks = 7;
 		_vm->setSceneAnimationScriptUpdate(false);
 	}
 
