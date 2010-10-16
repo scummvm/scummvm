@@ -204,7 +204,7 @@ void ToonEngine::parseInput() {
 
 			if (event.kbd.flags & Common::KBD_ALT) {
 				int32 slotNum = event.kbd.ascii - '0';
-				if (slotNum >= 0 && slotNum <= 9) {
+				if (slotNum >= 0 && slotNum <= 9 && canSaveGameStateCurrently()) {
 					if (saveGame(slotNum, Common::String())) {
 						// ok
 						char buf[256];
@@ -224,7 +224,7 @@ void ToonEngine::parseInput() {
 
 			if (event.kbd.flags & Common::KBD_CTRL) {
 				int32 slotNum = event.kbd.ascii - '0';
-				if (slotNum >= 0 && slotNum <= 9) {
+				if (slotNum >= 0 && slotNum <= 9 && canLoadGameStateCurrently()) {
 					if (loadGame(slotNum)) {
 						// ok
 						char buf[256];
