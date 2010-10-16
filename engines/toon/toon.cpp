@@ -400,14 +400,13 @@ void ToonEngine::render() {
 	}
 }
 
-void ToonEngine::doMagnifierEffect()
-{
+void ToonEngine::doMagnifierEffect() {
 	int32 posX = _mouseX + state()->_currentScrollValue - _cursorOffsetX;
 	int32 posY = _mouseY - _cursorOffsetY - 2;
 
-	Graphics::Surface& surface = *_mainSurface;
+	Graphics::Surface &surface = *_mainSurface;
 
-	// fast sqrt table lookup ( values up to 144 only)
+	// fast sqrt table lookup (values up to 144 only)
 	static const byte intSqrt[] = {
 		0, 1, 1, 1, 2, 2, 2, 2, 2, 3,
 		3, 3, 3, 3, 3, 3, 4, 4, 4, 4,
@@ -442,8 +441,8 @@ void ToonEngine::doMagnifierEffect()
 				continue;
 			int32 destPitch = surface.pitch;
 			uint8 *curRow = (uint8 *)surface.pixels + (posY + y) * destPitch + (posX + x);
-			int32 lerp =  (512 + intSqrt[dist] * 256 / 12) ;
-			*curRow = tempBuffer[(y*lerp/1024+12) * 25 + x*lerp/1024 + 12] ;
+			int32 lerp = (512 + intSqrt[dist] * 256 / 12);
+			*curRow = tempBuffer[(y*lerp/1024+12) * 25 + x*lerp/1024 + 12];
 		}
 	}
 }
@@ -2069,10 +2068,10 @@ void ToonEngine::processConversationClick(Conversation *conv, int32 status) {
 	int16 *i = (int16 *)((char *)v2->_data4 + 2);
 
 	_gameState->_firstConverstationLine = false;
-	while (*i >= 0) {
-		if (*i < 100) {
+	while (READ_LE_INT16(i) >= 0) {
+		if (READ_LE_INT16(i) < 100) {
 			if (_gameState->_exitConversation == false) {
-				characterTalk(i[1]);
+				characterTalk(READ_LE_INT16(i + 1));
 			}
 		} else {
 			runConversationCommand(&i);
@@ -2080,24 +2079,22 @@ void ToonEngine::processConversationClick(Conversation *conv, int32 status) {
 		i += 2;
 	}
 
-	int16 command = i[0];
-	int16 value = i[1];
+	int16 command = READ_LE_INT16(i);
+	int16 value = READ_LE_INT16(i + 1);
 
 	if (command == -1) {
 		v2->_data2 = 0;
 	} else if (command == -2) {
 		v2->_data4 = (char *)_conversationData + value;
-		v2->_data3 = *(int16 *)v2->_data4;
+		v2->_data3 = READ_LE_INT16(v2->_data4);
 	} else if (command == -3) {
 		v2->_data2 = 2;
 		v2->_data4 = (char *)_conversationData + value;
-		v2->_data3 = *(int16 *)v2->_data4;
+		v2->_data3 = READ_LE_INT16(v2->_data4);
 	}
 
 	int16 *v7 = i + 2;
-// Strangerke - Commented (not used)
-//	int16 v6 = conv->state[0].data2;
-	int16 v8 = *v7;
+	int16 v8 = READ_LE_INT16(v7);
 	if (v8 == -1) {
 		_gameState->_mouseHidden = false;
 	} else {
@@ -2109,14 +2106,14 @@ retry:
 			// find free dialogue slot
 			for (int j = 0; j < 10; j++) {
 				if (!conv->state[j]._data2) {
-					conv->state[j]._data3 = *v14;
+					conv->state[j]._data3 = READ_LE_INT16(v14);
 					conv->state[j]._data4 = v14;
 					if (getConversationFlag(_gameState->_currentScene, conv->state[j]._data3))
 						conv->state[j]._data2 = 1;
 					else
 						conv->state[j]._data2 = 3;
 
-					v8 = *v7;
+					v8 = READ_LE_INT16(v7);
 					if (v8 == -1)
 						return;
 
@@ -2210,31 +2207,31 @@ int32 ToonEngine::getConversationFlag(int32 locationId, int32 param) {
 	} else if (locationId == 0x10) {
 		switch (param) {
 		case 0x3e8:
-			if (!(_gameState->_gameGlobalData[83] & 1))
+			if (!(_gameState->_gameGlobalData[30] & 1))
 				return 0;
 			break;
 		case 0x3e9:
-			if (!(_gameState->_gameGlobalData[83] & 2))
+			if (!(_gameState->_gameGlobalData[30] & 2))
 				return 0;
 			break;
 		case 0x3ea:
-			if (!(_gameState->_gameGlobalData[83] & 4))
+			if (!(_gameState->_gameGlobalData[30] & 4))
 				return 0;
 			break;
 		case 0x3eb:
-			if (!(_gameState->_gameGlobalData[83] & 8))
+			if (!(_gameState->_gameGlobalData[30] & 8))
 				return 0;
 			break;
 		case 0x3ec:
-			if (!(_gameState->_gameGlobalData[83] & 16))
+			if (!(_gameState->_gameGlobalData[30] & 16))
 				return 0;
 			break;
 		case 0x3ed:
-			if (!(_gameState->_gameGlobalData[83] & 32))
+			if (!(_gameState->_gameGlobalData[30] & 32))
 				return 0;
 			break;
 		case 0x3ee:
-			if (!(_gameState->_gameGlobalData[83] & 64))
+			if (!(_gameState->_gameGlobalData[30] & 64))
 				return 0;
 			break;
 		default:
@@ -2288,12 +2285,10 @@ int32 ToonEngine::getConversationFlag(int32 locationId, int32 param) {
 
 int32 ToonEngine::runConversationCommand(int16 **command) {
 
-// Strangerke - Commented (not used)
-//	int16 com = **command;
 	int16 *v5 = *command;
 
-	int v2 = v5[0];
-	int v4 = v5[1];
+	int v2 = READ_LE_INT16(v5);
+	int v4 = READ_LE_INT16(v5+1);
 	int result = v2 - 100;
 	switch (v2) {
 	case 100:
@@ -2312,7 +2307,7 @@ int32 ToonEngine::runConversationCommand(int16 **command) {
 		//
 	case 105:
 		if (getConversationFlag(_gameState->_currentScene, v4)) {
-			result = *(int16 *)(*command + 4);
+			result = READ_LE_INT16(*command + 4);
 			*command = (int16 *)((char *)_conversationData + result);
 			*command = (int16 *)((char *)_conversationData + result - 4);
 		} else {
