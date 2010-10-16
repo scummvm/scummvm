@@ -2394,7 +2394,7 @@ int32 ToonEngine::showInventory() {
 	_gameState->_inInventory = true;
 	_gameState->_currentScrollValue = 0;
 
-	int32 oldMouseButton = 0;
+	int32 oldMouseButton = 0x3;
 	int32 justPressedButton = 0;
 	_firstFrame = true;
 
