@@ -4442,8 +4442,6 @@ void SceneAnimation::load(ToonEngine *vm, Common::ReadStream *stream) {
 
 		if (_animInstance) {
 			_animInstance->setAnimation(_animation, false);
-
-			printf("load animation instance %d / %s / visible %d \n", _id, _animation->_name, _animInstance->getVisible());
 		}
 	}
 }
