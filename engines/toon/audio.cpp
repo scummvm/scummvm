@@ -45,9 +45,29 @@ static int ADPCM_table[89] = {
 AudioManager::AudioManager(ToonEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	for (int32 i = 0; i < 16; i++)
 		_channels[i] = 0;
+
+	voiceMuted = false;
+	musicMuted = false;
+	sfxMuted = false;
 }
 
 AudioManager::~AudioManager(void) {
+}
+
+void AudioManager::muteMusic(bool muted) {
+	setMusicVolume(muted ? 0 : 255);
+	musicMuted = muted;
+}
+
+void AudioManager::muteVoice(bool muted) {
+	if(voiceStillPlaying() && _channels[2]) {
+		_channels[2]->setVolume(muted ? 0 : 255);
+	}
+	voiceMuted = muted;
+}
+
+void AudioManager::muteSfx(bool muted) {
+	sfxMuted = muted;
 }
 
 void AudioManager::removeInstance(AudioStreamInstance *inst) {
@@ -99,6 +119,7 @@ void AudioManager::playMusic(Common::String dir, Common::String music) {
 	//if (!_channels[_currentMusicChannel])
 	//	delete _channels[_currentMusicChannel];
 	_channels[_currentMusicChannel] = new AudioStreamInstance(this, _mixer, srs, true);
+	_channels[_currentMusicChannel]->setVolume(musicMuted ? 0 : 255);
 	_channels[_currentMusicChannel]->play(true, Audio::Mixer::kMusicSoundType);
 }
 
@@ -125,6 +146,7 @@ void AudioManager::playVoice(int32 id, bool genericVoice) {
 
 	_channels[2] = new AudioStreamInstance(this, _mixer, stream);
 	_channels[2]->play(false, Audio::Mixer::kSpeechSoundType);
+	_channels[2]->setVolume(voiceMuted ? 0 : 255);
 
 }
 
@@ -146,7 +168,7 @@ void AudioManager::playSFX(int32 id, int volume , bool genericSFX) {
 		if (!_channels[i]) {
 			_channels[i] = new AudioStreamInstance(this, _mixer, stream);
 			_channels[i]->play(false, Audio::Mixer::kSFXSoundType);
-			_channels[i]->setVolume(volume);
+			_channels[i]->setVolume(sfxMuted ? 0 : volume);
 			break;
 		}
 	}
@@ -349,7 +371,7 @@ void AudioStreamInstance::play(bool fade, Audio::Mixer::SoundType soundType) {
 	_fadeTime = 0;
 	_soundType = soundType;
 	_musicAttenuation = 1000; // max volume
-	_mixer->playStream(soundType, &_handle, this);
+	_mixer->playStream(soundType, &_handle, this, -1);
 	handleFade(0);
 }
 

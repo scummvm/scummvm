@@ -124,7 +124,12 @@ public:
 	void stopCurrentVoice();
 	void setMusicVolume(int32 volume);
 	void stopMusic();
-
+	void muteVoice(bool mute);
+	void muteMusic(bool mute);
+	void muteSfx(bool mute);
+	bool isVoiceMuted() { return voiceMuted; }
+	bool isMusicMuted() { return musicMuted; }	
+	bool isSfxMuted() { return sfxMuted; }
 
 	bool loadAudioPack(int32 id, Common::String indexFile, Common::String packFile);
 
@@ -140,6 +145,11 @@ public:
 	Common::String _currentMusicName;
 	ToonEngine *_vm;
 	Audio::Mixer *_mixer;
+
+protected:
+	bool voiceMuted;
+	bool musicMuted;
+	bool sfxMuted;
 };
 
 } // End of namespace Toon

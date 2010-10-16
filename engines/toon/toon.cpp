@@ -187,6 +187,18 @@ void ToonEngine::parseInput() {
 			if (event.kbd.keycode == Common::KEYCODE_F6) {
 				loadGame(-1);
 			}
+			if (event.kbd.ascii == 't') {
+				_showConversationText = !_showConversationText;
+			}
+			if (event.kbd.ascii == 'm') {
+				_audioManager->muteMusic(!_audioManager->isMusicMuted());
+			}
+			if (event.kbd.ascii == 'd') {
+				_audioManager->muteVoice(!_audioManager->isVoiceMuted());
+			}
+			if (event.kbd.ascii == 's') {
+				_audioManager->muteSfx(!_audioManager->isSfxMuted());
+			}
 
 			if (event.kbd.flags & Common::KBD_ALT) {
 				int32 slotNum = event.kbd.ascii - '0';
@@ -710,6 +722,7 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_currentPicture = 0;
 	_roomScaleData = 0;
 	_shadowLUT = 0;
+	_showConversationText = true;
 	_isDemo = _gameDescription->flags & ADGF_DEMO;
 
 	DebugMan.addDebugChannel(kDebugAnim, "Anim", "Animation debug level");
@@ -2710,7 +2723,7 @@ Character *ToonEngine::getCharacterById(int32 charId) {
 }
 
 void ToonEngine::drawConversationLine() {
-	if (_currentTextLine) {
+	if (_currentTextLine && _showConversationText) {
 		_fontRenderer->setFontColorByCharacter(_currentTextLineCharacterId);
 		_fontRenderer->setFont(_fontToon);
 		_fontRenderer->renderMultiLineText(_currentTextLineX, _currentTextLineY, Common::String(_currentTextLine), 0);

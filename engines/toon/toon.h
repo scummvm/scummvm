@@ -395,6 +395,7 @@ protected:
 
 	bool _firstFrame;
 	bool _isDemo;
+	bool _showConversationText;
 };
 
 } // End of namespace Toon
