@@ -234,6 +234,11 @@ void Character::playStandingAnim() {
 
 }
 
+void Character::updateTimers(int32 relativeAdd) {
+	_nextIdleTime += relativeAdd;
+	_lastWalkTime += relativeAdd;
+}
+
 void Character::stopSpecialAnim() {
 	debugC(4, kDebugCharacter, "stopSpecialAnim()");
 // Strangerke - Commented (not used)

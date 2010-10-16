@@ -145,17 +145,22 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	virtual SaveStateList listSaves(const char *target) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-//	virtual void removeSaveState(const char *target, int slot) const;
+	virtual void removeSaveState(const char *target, int slot) const;
 };
 
 bool ToonMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
-//	    (f == kSupportsLoadingDuringStartup) ||
+	    (f == kSupportsLoadingDuringStartup) ||
 	    (f == kSupportsDeleteSave) ||
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
 	    (f == kSavesSupportCreationDate);
+}
+
+void ToonMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String fileName = Common::String::printf("%s.%03d", target, slot);
+	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 int ToonMetaEngine::getMaximumSaveSlot() const { return 99; }

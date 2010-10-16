@@ -30,6 +30,7 @@
 #include "engines/engine.h"
 #include "graphics/surface.h"
 #include "common/random.h"
+#include "common/error.h"
 #include "toon/resource.h"
 #include "toon/script.h"
 #include "toon/script_func.h"
@@ -169,7 +170,7 @@ public:
 	Character *getCharacterById(int32 charId);
 	Common::String getSavegameName(int nr);
 	bool loadGame(int32 slot);
-	bool saveGame(int32 slot);
+	bool saveGame(int32 slot, Common::String saveGameDesc);
 	void fadeIn(int32 numFrames) ;
 	void fadeOut(int32 numFrames) ;
 	void initCharacter(int32 characterId, int32 animScriptId, int32 animToPlayId, int32 sceneAnimationId);
@@ -196,6 +197,10 @@ public:
 	void playRoomMusic();
 	void waitForScriptStep();
 	void doMagnifierEffect();
+
+	bool canSaveGameStateCurrently();
+	bool canLoadGameStateCurrently();
+	void pauseEngineIntern(bool pause);
 
 	Resources *resources() {
 		return _resources;
@@ -303,6 +308,22 @@ public:
 
 	bool shouldQuitGame() const {
 		return _shouldQuit;
+	}
+
+	Common::Error saveGameState(int slot, const char *desc) {
+		
+		return (saveGame(slot, desc) ? Common::kWritingFailed : Common::kNoError);
+	}
+
+	Common::Error loadGameState(int slot) {
+		return (loadGame(slot) ? Common::kReadingFailed : Common::kNoError);
+	}
+
+	bool hasFeature(EngineFeature f) const {
+		return
+			(f == kSupportsRTL) ||
+			(f == kSupportsLoadingDuringRuntime) ||
+			(f == kSupportsSavingDuringRuntime);
 	}
 
 protected:

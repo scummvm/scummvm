@@ -61,6 +61,7 @@ ToonstruckSmackerDecoder::ToonstruckSmackerDecoder(Audio::Mixer *mixer, Audio::M
 
 Movie::Movie(ToonEngine *vm , ToonstruckSmackerDecoder *decoder) {
 	_vm = vm;
+	_playing = false;
 	_decoder = decoder;
 }
 
@@ -73,14 +74,16 @@ void Movie::init() const {
 void Movie::play(Common::String video, int32 flags) {
 	debugC(1, kDebugMovie, "play(%s, %d)", video.c_str(), flags);
 
+	_playing = true;
 	if (flags & 1)
 		_vm->getAudioManager()->setMusicVolume(0);
 	_decoder->loadFile(video.c_str(), flags);
 	playVideo();
 	_vm->flushPalette();
 	if (flags & 1)
-		_vm->getAudioManager()->setMusicVolume(100);
+		_vm->getAudioManager()->setMusicVolume(_vm->getAudioManager()->isMusicMuted() ? 0 : 255);
 	_decoder->close();
+	_playing = false;
 }
 
 bool Movie::playVideo() {

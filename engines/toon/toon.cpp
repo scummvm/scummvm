@@ -182,10 +182,12 @@ void ToonEngine::parseInput() {
 				_audioManager->stopCurrentVoice();
 			}
 			if (event.kbd.keycode == Common::KEYCODE_F5) {
-				saveGame(-1);
+				if(canSaveGameStateCurrently())
+					saveGame(-1, Common::String());
 			}
 			if (event.kbd.keycode == Common::KEYCODE_F6) {
-				loadGame(-1);
+				if(canLoadGameStateCurrently())
+					loadGame(-1);
 			}
 			if (event.kbd.ascii == 't') {
 				_showConversationText = !_showConversationText;
@@ -203,7 +205,7 @@ void ToonEngine::parseInput() {
 			if (event.kbd.flags & Common::KBD_ALT) {
 				int32 slotNum = event.kbd.ascii - '0';
 				if (slotNum >= 0 && slotNum <= 9) {
-					if (saveGame(slotNum)) {
+					if (saveGame(slotNum, Common::String())) {
 						// ok
 						char buf[256];
 						snprintf(buf, 256, "Saved game in slot #%d ", slotNum);
@@ -692,13 +694,22 @@ Common::Error ToonEngine::run() {
 	initGraphics(640, 400, true);
 	init();
 
-	// play producer intro
-	getMoviePlayer()->play("MISC/VIELOGOM.SMK", 0x10);
-
-	// show mainmenu
+	// do we need to load directly a game?
 	bool loadedGame = false;
-	if (!showMainmenu(loadedGame)) {
-		return Common::kNoError;
+	int32 slot = ConfMan.getInt("save_slot");
+	if (slot > -1) {
+		loadedGame = loadGame(slot);
+	}
+
+	if (!loadedGame) {
+
+		// play producer intro
+		getMoviePlayer()->play("MISC/VIELOGOM.SMK", 0x10);
+
+		// show mainmenu
+		if (!showMainmenu(loadedGame)) {
+			return Common::kNoError;
+		}
 	}
 
 	//loadScene(17);
@@ -2730,11 +2741,49 @@ void ToonEngine::drawConversationLine() {
 	}
 }
 
+void ToonEngine::pauseEngineIntern(bool pause) {
+	
+	Engine::pauseEngineIntern(pause);
+
+	static int32 pauseStart = 0;
+	if (pause) {
+		pauseStart = _system->getMillis();
+
+	} else {
+		_oldTimer = _system->getMillis();
+		_oldTimer2 = _oldTimer;
+
+		int32 diff = _oldTimer - pauseStart;
+
+		// we have to add the difference between the start and the current time
+		// to all "timer based" values.
+		for (int32 i = 0; i < _gameState->_locations[_gameState->_currentScene]._numSceneAnimations; i++) {
+			_sceneAnimationScripts[i]._lastTimer += diff;
+		}
+		for (int32 i = 0; i < 8; i++) {
+			if (_characters[i]) {
+				_characters[i]->updateTimers(diff);
+			}
+		}
+
+		_gameState->_timerTimeout[0] += diff;
+		_gameState->_timerTimeout[1] += diff;
+	}
+}
+
+bool ToonEngine::canSaveGameStateCurrently() {
+	return !_gameState->_inInventory && !_gameState->_inConversation && !_gameState->_inCutaway && !_gameState->_mouseHidden && !_moviePlayer->isPlaying();
+}
+
+bool ToonEngine::canLoadGameStateCurrently() {
+	return !_gameState->_inInventory && !_gameState->_inConversation && !_gameState->_inCutaway && !_gameState->_mouseHidden && !_moviePlayer->isPlaying();
+}
+
 Common::String ToonEngine::getSavegameName(int nr) {
 	return _targetName + Common::String::printf(".%03d", nr);
 }
 
-bool ToonEngine::saveGame(int32 slot) {
+bool ToonEngine::saveGame(int32 slot, Common::String saveGameDesc) {
 	const EnginePlugin *plugin = NULL;
 	int16 savegameId;
 	Common::String savegameDescription;
@@ -2748,7 +2797,11 @@ bool ToonEngine::saveGame(int32 slot) {
 		delete dialog;
 	} else {
 		savegameId = slot;
-		savegameDescription = Common::String::printf("Quick save #%d", slot);
+		if (!saveGameDesc.empty()) {
+			savegameDescription = saveGameDesc;
+		} else {
+			savegameDescription = Common::String::printf("Quick save #%d", slot);
+		}
 	}
 
 	if (savegameId < 0)

@@ -45,12 +45,15 @@ public:
 
 	void init() const;
 	void play(Common::String video, int32 flags = 0);
+	bool isPlaying() { return _playing; }
 
 protected:
 	bool playVideo();
 	ToonEngine *_vm;
 	Audio::Mixer *_mixer;
 	ToonstruckSmackerDecoder *_decoder;
+	bool _playing;
+	
 };
 
 } // End of namespace Toon
