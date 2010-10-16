@@ -654,6 +654,10 @@ begin_credits("Credits");
 		  add_person("Joost Peters", "joostp", "");
 	  end_section();
 
+	  begin_section("Toon");
+	  	add_person("Sylvain Dupont", "SylvainTV", "");
+	  end_section();
+
 	  begin_section("Touch&eacute;");
 		  add_person("Gregory Montoir", "cyx", "");
 	  end_section();
