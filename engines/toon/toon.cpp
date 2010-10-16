@@ -1223,9 +1223,9 @@ void ToonEngine::clickEvent() {
 	bool leftButton = false;
 	bool rightButton = false;
 
-	if ((_lastMouseButton & 0x1) == 1 && (_mouseButton & 0x1) == 0)
+	if ((_lastMouseButton & 0x1) == 0 && (_mouseButton & 0x1) == 1)
 		leftButton = true;
-	if ((_lastMouseButton & 0x2) == 2 && (_mouseButton & 0x2) == 0)
+	if ((_lastMouseButton & 0x2) == 0 && (_mouseButton & 0x2) == 2)
 		rightButton = true;
 
 	_lastMouseButton = _mouseButton;
@@ -2475,7 +2475,9 @@ int32 ToonEngine::showInventory() {
 	}
 
 	_gameState->_currentScrollValue = oldScrollValue;
-	_gameState->_inInventory = false;
+	_gameState->_inInventory = false; 
+	_mouseButton = 0;
+	_lastMouseButton = 0x3;
 
 	fadeOut(5);
 	if (_gameState->_inCloseUp) {
