@@ -634,9 +634,7 @@ void ScummEngine::CHARSET_1() {
 #endif
 		} else {
 			if (c & 0x80 && _useCJKMode) {
-				if (_language == Common::JA_JPN && !checkSJISCode(c)) {
-					c = 0x20; //not in S-JIS
-				} else {
+				if (checkSJISCode(c)) {
 					byte *buffer = _charsetBuffer + _charsetBufPos;
 					c += *buffer++ * 256; //LE
 					_charsetBufPos = buffer - _charsetBuffer;
@@ -993,11 +991,8 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				}
 			}
 			if (c & 0x80 && _useCJKMode) {
-				if (_language == Common::JA_JPN && !checkSJISCode(c)) {
-					c = 0x20; //not in S-JIS
-				} else {
+				if (checkSJISCode(c))
 					c += buf[i++] * 256;
-				}
 			}
 			_charset->printChar(c, true);
 			_charset->_blitAlso = false;
@@ -1129,7 +1124,8 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 			// Skip these characters
 		} else {
 			if (!(chr == '@') || (_game.id == GID_CMI && _language == Common::ZH_TWN) ||
-				(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN))
+				(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) ||
+				(_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN))
 			{
 				*dst++ = chr;
 			}

@@ -53,7 +53,7 @@ FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 }
 
 template<typename Color>
-void FontSJISBase::blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c) const {
+void FontSJISBase::blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c1, Color c2) const {
 	for (int y = 0; y < h; ++y) {
 		Color *d = (Color *)dst;
 		dst += pitch;
@@ -63,8 +63,13 @@ void FontSJISBase::blitCharacter(const uint8 *glyph, const int w, const int h, u
 			if (!(x % 8))
 				mask = *glyph++;
 
-			if (mask & 0x80)
-				*d = c;
+			if (mask & 0x80) {
+				*d = c1;
+				if (_shadowType == kShadowTypeScumm3 ||	_shadowType == kShadowTypeScumm3Towns)
+					d[1] = d[pitch] = c2;
+				if (_shadowType == kShadowTypeScumm3)
+					d[pitch + 1] = c2;
+			}
 			++d;
 			mask <<= 1;
 		}
@@ -122,24 +127,24 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 	}
 
 	uint8 outline[18 * 18];
-	if (_outlineEnabled) {
+	if (_shadowType == kShadowTypeOutline) {
 		memset(outline, 0, sizeof(outline));
 		createOutline(outline, glyphSource, width, height);
 	}
 
 	if (bpp == 1) {
-		if (_outlineEnabled) {
+		if (_shadowType == kShadowTypeOutline) {
 			blitCharacter<uint8>(outline, width + 2, height + 2, (uint8 *)dst, pitch, c2);
 			blitCharacter<uint8>(glyphSource, width, height, (uint8 *)dst + pitch + 1, pitch, c1);
 		} else {
-			blitCharacter<uint8>(glyphSource, width, height, (uint8 *)dst, pitch, c1);
+			blitCharacter<uint8>(glyphSource, width, height, (uint8 *)dst, pitch, c1, c2);
 		}
 	} else if (bpp == 2) {
-		if (_outlineEnabled) {
+		if (_shadowType == kShadowTypeOutline) {
 			blitCharacter<uint16>(outline, width + 2, height + 2, (uint8 *)dst, pitch, c2);
 			blitCharacter<uint16>(glyphSource, width, height, (uint8 *)dst + pitch + 2, pitch, c1);
 		} else {
-			blitCharacter<uint16>(glyphSource, width, height, (uint8 *)dst, pitch, c1);
+			blitCharacter<uint16>(glyphSource, width, height, (uint8 *)dst, pitch, c1, c2);
 		}
 	} else {
 		error("FontSJISBase::drawChar: unsupported bpp: %d", bpp);
@@ -148,7 +153,7 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 
 uint FontSJISBase::getCharWidth(uint16 ch) const {
 	if (is8x16(ch))
-		return _outlineEnabled ? 10 : 8;
+		return (_shadowType == kShadowTypeOutline) ? 10 : (_shadowType == kShadowTypeNone ? 8 : 9);
 	else
 		return getMaxFontWidth();
 }

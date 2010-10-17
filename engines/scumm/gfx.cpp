@@ -1013,11 +1013,6 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 
 	if (rect.left > vs->w)
 		return;
-
-#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	if (_game.platform == Common::kPlatformFMTowns && _game.id == GID_MONKEY && vs->number == kVerbVirtScreen && rect.bottom <= 154)
-		rect.right = 320;
-#endif
 	
 	// Convert 'rect' to local (virtual screen) coordinates
 	rect.top -= vs->topline;
@@ -1025,12 +1020,17 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 
 	rect.clip(vs->w, vs->h);
 
+	const int height = rect.height();
+	const int width = rect.width();
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	if (_game.platform == Common::kPlatformFMTowns && _game.id == GID_MONKEY && vs->number == kVerbVirtScreen && rect.bottom <= 154)
+		rect.right = 320;
+#endif
+
 	markRectAsDirty(vs->number, rect, USAGE_BIT_RESTORED);
 
 	screenBuf = vs->getPixels(rect.left, rect.top);
-
-	const int height = rect.height();
-	const int width = rect.width();
 
 	if (!height)
 		return;

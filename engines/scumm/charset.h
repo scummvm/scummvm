@@ -38,9 +38,9 @@ class NutRenderer;
 struct VirtScreen;
 
 static inline bool checkSJISCode(byte c) {
-	if ((c > 0x84 && c < 0x88) || (c > 0x9f && c < 0xe0) || (c > 0xea /* && c <= 0xff */))
-		return false;
-	return true;
+	if ((c >= 0x80 && c <= 0x9f) || (c >= 0xe0 && c <= 0xfd))
+		return true;
+	return false;
 }
 
 
@@ -115,6 +115,7 @@ protected:
 	void enableShadow(bool enable);
 	virtual void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth, bool scale2x = false);
 
+
 public:
 	CharsetRendererCommon(ScummEngine *vm);
 
@@ -136,6 +137,11 @@ public:
 	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
 
 	int getCharWidth(uint16 chr);
+
+	// Some SCUMM 5 games contain hard coded logic to determine whether to use
+	// the SCUMM fonts or the FM-Towns font rom to draw a character. For the other
+	// games we will simply check for a character greater 127.
+	bool useTownsFontRomCharacter(uint16 chr);
 };
 
 class CharsetRendererNES : public CharsetRendererCommon {

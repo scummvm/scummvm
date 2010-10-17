@@ -36,6 +36,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 #include "graphics/surface.h"
+#include "graphics/sjis.h"
 
 #include "scumm/gfx.h"
 #include "scumm/detection.h"
@@ -1421,6 +1422,8 @@ public:
 	bool towns_isRectInStringBox(int x1, int y1, int x2, int y2);
 	byte _townsPaletteFlags;
 	byte _townsCharsetColorMap[16];
+	Graphics::FontSJIS *_cjkFont;
+	uint16 _cjkChar;
 
 protected:
 	void towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, int srcX, int srcY, int w, int h);

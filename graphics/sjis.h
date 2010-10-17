@@ -71,12 +71,19 @@ public:
 	virtual bool loadData() = 0;
 
 	/**
-	 * Enable outline drawing.
+	 * Enable outline/shadow drawing.
 	 *
 	 * After changing outline state, getFontHeight and getMaxFontWidth / getCharWidth might return
 	 * different values!
 	 */
-	virtual void enableOutline(bool enable) {}
+	enum ShadowType {
+		kShadowTypeNone,
+		kShadowTypeOutline,
+		kShadowTypeScumm3,
+		kShadowTypeScumm3Towns
+	};
+
+	virtual void setShadowMode(ShadowType type) {}
 
 	/**
 	 * Returns the height of the font.
@@ -122,22 +129,23 @@ public:
  */
 class FontSJISBase : public FontSJIS {
 public:
-	FontSJISBase() : _outlineEnabled(false) {}
+	FontSJISBase() : _shadowType(kShadowTypeNone) {}
 
-	void enableOutline(bool enable) { _outlineEnabled = enable; }
+	void setShadowMode(ShadowType type) { _shadowType = type; }
 
-	uint getFontHeight() const { return _outlineEnabled ? 18 : 16; }
-	uint getMaxFontWidth() const { return _outlineEnabled ? 18 : 16; }
+	uint getFontHeight() const { return (_shadowType == kShadowTypeOutline) ? 18 : (_shadowType == kShadowTypeNone ? 16 : 17); }
+	
+	uint getMaxFontWidth() const { return (_shadowType == kShadowTypeOutline) ? 18 : (_shadowType == kShadowTypeNone ? 16 : 17); }
 
 	uint getCharWidth(uint16 ch) const;
 
 	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const;
 private:
 	template<typename Color>
-	void blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c) const;
+	void blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c1, Color c2 = 0) const;
 	void createOutline(uint8 *outline, const uint8 *glyph, const int w, const int h) const;
 protected:
-	bool _outlineEnabled;
+	ShadowType _shadowType;
 
 	bool is8x16(uint16 ch) const;
 
