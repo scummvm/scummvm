@@ -1016,6 +1016,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	uint num = 0;
 	uint32 val;
 	byte chr;
+	byte lastChr = 0;
 	const byte *src;
 	byte *end;
 	byte transBuf[384];
@@ -1123,12 +1124,12 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 		} else if (_game.id == GID_DIG && (chr == 1 || chr == 2 || chr == 3 || chr == 8)) {
 			// Skip these characters
 		} else {
-			if (!(chr == '@') || (_game.id == GID_CMI && _language == Common::ZH_TWN) ||
+			if ((chr != '@') || (_game.id == GID_CMI && _language == Common::ZH_TWN) ||
 				(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) ||
-				(_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN))
-			{
+				(_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN && checkSJISCode(lastChr))) {
 				*dst++ = chr;
 			}
+			lastChr = chr;
 		}
 
 		// Check for a buffer overflow

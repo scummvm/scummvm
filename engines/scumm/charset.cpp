@@ -383,8 +383,8 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) {
 
 	if (_vm->_useCJKMode) {
 		if (_vm->_game.platform == Common::kPlatformFMTowns) {
-			if ((chr & 0xff00) == 0xfd00) {
-				chr &= 0xff;
+			if ((chr & 0x00ff) == 0x00fd) {
+				chr >>= 8;
 			} else if (chr >= 256) {
 				spacing = 8;
 			} else if (useTownsFontRomCharacter(chr)) {
@@ -496,8 +496,8 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 
 		if (_vm->_useCJKMode) {
 			if (_vm->_game.platform == Common::kPlatformFMTowns) {
-				if ((chr >= 0x80 && chr <= 0x9f) || (chr >= 0xe0 && chr <= 0xfd))
-					chr = (chr << 8) | text[pos++];
+				if (checkSJISCode(chr))
+					chr |= (text[pos++] << 8);
 			} else if (chr & 0x80) {
 				pos++;
 				width += _vm->_2byteWidth;
@@ -515,7 +515,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	int lastspace = -1;
 	int curw = 1;
-	byte chr;
+	uint16 chr;
 	int oldID = getCurID();
 	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
 
@@ -579,8 +579,8 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 
 		if (_vm->_useCJKMode) {
 			if (_vm->_game.platform == Common::kPlatformFMTowns) {
-				if ((chr >= 0x80 && chr <= 0x9f) || (chr >= 0xe0 && chr <= 0xfd))
-					chr = (chr << 8) | str[pos++];
+				if (checkSJISCode(chr))
+					chr |= (str[pos++] << 8);
 				curw += getCharWidth(chr);
 			} else if (chr & 0x80) {
 				pos++;
@@ -894,13 +894,16 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	processTownsCharsetColors(_bytesPerPixel);
+	bool noSjis = false;
 
 	if (_vm->_game.platform == Common::kPlatformFMTowns && _vm->_useCJKMode) {
-		if ((chr & 0xff00) == 0xfd00)
-			chr &= 0xff;
+		if ((chr & 0x00ff) == 0x00fd) {
+			chr >>= 8;
+			noSjis = true;
+		}
 	}
 	
-	if (useTownsFontRomCharacter(chr)) {
+	if (useTownsFontRomCharacter(chr) && !noSjis) {
 		charPtr = 0;
 		_vm->_cjkChar = chr;
 		enableShadow(true);
@@ -909,7 +912,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 		offsX = offsY = 0;
 	} else
 #endif	
-	if (_vm->_useCJKMode && (chr >= 128)) {
+	if (_vm->_useCJKMode && (chr >= 128) && !noSjis) {
 		enableShadow(true);
 		origWidth = width = _vm->_2byteWidth;
 		origHeight = height = _vm->_2byteHeight;
