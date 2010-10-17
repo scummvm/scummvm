@@ -145,7 +145,8 @@ enum {
 enum DstSurface {
 	kDstScreen   = 0,
 	kDstMemory   = 1,
-	kDstResource = 2
+	kDstResource = 2,
+ 	kDstCursor   = 3
 };
 
 class ScummEngine_v71he;
