@@ -493,6 +493,24 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 
+	// SCI2 unmapped functions - TODO!
+	// GetHighItemPri
+	// ShowStylePercent
+	// SetScroll
+	// AddMagnify	// most probably similar to the SCI1.1 functions. We need a test case
+	// DeleteMagnify
+	// InvertRect
+	// EditText
+	// InputText
+	// DisposeTextBitmap
+	// VibrateMouse
+	// MakeSaveCatName
+	// MakeSaveFileName
+	// PalCycle
+	// ObjectIntersect
+	// TextWidth
+	// PointSize
+
     // SCI2 empty functions
 
     // Purge is used by the memory manager in SSCI to ensure that X number of bytes (the so called "unmovable
@@ -513,6 +531,34 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(WinDLL),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(PrintDebug),        SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
+
+	// SCI2.1 unmapped functions - TODO!
+	// SetLanguage
+	// FindSelector
+	// FindClass
+	// CelRect
+	// BaseLineSpan
+	// CelInfo
+	// Bitmap
+	// CelLink
+	// MovePlaneItems
+	// Font
+	// ScrollWindow
+	// AddLine
+	// DeleteLine
+	// UpdateLine
+	// AddPolygon
+	// DeletePolygon
+	// UpdatePolygon
+	// GetConfig
+	// Table
+	// LoadChunk
+	// SetPalStyleRange
+	// NewRoom
+	// Priority
+	// MorphOn
+	// SetHotRectangles
+	// DeletePic
 
     // SCI2.1 empty functions
 
