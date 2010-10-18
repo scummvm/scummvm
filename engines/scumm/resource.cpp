@@ -1012,7 +1012,7 @@ void ResourceManager::freeResources() {
 
 void ScummEngine::loadPtrToResource(int type, int resindex, const byte *source) {
 	byte *alloced;
-	int i, len;
+	int len;
 
 	_res->nukeResource(type, resindex);
 
@@ -1024,12 +1024,13 @@ void ScummEngine::loadPtrToResource(int type, int resindex, const byte *source) 
 	alloced = _res->createResource(type, resindex, len);
 
 	if (!source) {
-		alloced[0] = fetchScriptByte();
-		for (i = 1; i < len; i++)
-			alloced[i] = *_scriptPointer++;
+		// Need to refresh the script pointer, since createResource may
+		// have caused the script resource to expire.
+		refreshScriptPointer();
+		memcpy(alloced, _scriptPointer, len);
+		_scriptPointer += len;
 	} else {
-		for (i = 0; i < len; i++)
-			alloced[i] = source[i];
+		memcpy(alloced, source, len);
 	}
 }
 

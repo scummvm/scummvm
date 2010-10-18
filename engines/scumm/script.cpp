@@ -440,7 +440,6 @@ void ScummEngine::getScriptBaseAddress() {
 	}
 }
 
-
 void ScummEngine::resetScriptPointer() {
 	if (_currentScript == 0xFF)
 		return;
@@ -1234,22 +1233,26 @@ bool ScummEngine::isRoomScriptRunning(int script) const {
 
 void ScummEngine::copyScriptString(byte *dst) {
 	int len = resStrLen(_scriptPointer) + 1;
-	while (len--)
-		*dst++ = fetchScriptByte();
+	memcpy(dst, _scriptPointer, len);
+	_scriptPointer += len;
+	dst += len;
 	*dst = 0;
 }
 
-//
-// Given a pointer to a Scumm string, this function returns the total byte length
-// of the string data in that resource. To do so it has to understand certain
-// special characters embedded into the string. The reason for this function is that
-// sometimes this embedded data contains zero bytes, thus we can't just use strlen.
-//
-int ScummEngine::resStrLen(const byte *src) const {
+/**
+ * Given a pointer to a Scumm string, this function returns the total
+ * byte length of the string data in that resource. To do so it has to
+ * understand certain special characters embedded into the string. The
+ * reason for this function is that sometimes this embedded data
+ * contains zero bytes, thus we can't just use strlen.
+ */
+int ScummEngine::resStrLen(const byte *src) {
 	int num = 0;
 	byte chr;
-	if (src == NULL)
+	if (src == NULL) {
+		refreshScriptPointer();
 		src = _scriptPointer;
+	}
 	while ((chr = *src++) != 0) {
 		num++;
 		if (_game.heversion <= 71 && chr == 0xFF) {

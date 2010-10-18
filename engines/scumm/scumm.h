@@ -776,7 +776,7 @@ protected:
 	void endOverride();
 
 	void copyScriptString(byte *dst);
-	int resStrLen(const byte *src) const;
+	int resStrLen(const byte *src);
 	void doSentence(int c, int b, int a);
 
 	/* Should be in Resource class */
