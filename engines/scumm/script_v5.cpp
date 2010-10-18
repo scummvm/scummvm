@@ -1840,18 +1840,12 @@ void ScummEngine_v5::o5_roomOps() {
 			Common::InSaveFile *file = _saveFileMan->openForLoading(filename);
 			if (file != NULL) {
 				byte *ptr;
-				int len = 256, cnt = 0;
-				ptr = (byte *)malloc(len);
-				while (ptr) {
-					int r = file->read(ptr + cnt, len - cnt);
-					cnt += r;
-					if (cnt < len)
-						break;
-					len *= 2;
-					ptr = (byte *)realloc(ptr, len);
-					assert(ptr);
-				}
-				ptr[cnt] = '\0';
+				const int len = file->size();
+				ptr = (byte *)malloc(len + 1);
+				assert(ptr);
+				int r = file->read(ptr, len);
+				assert(r == len);
+				ptr[len] = '\0';
 				loadPtrToResource(rtString, a, ptr);
 				free(ptr);
 				delete file;
