@@ -834,6 +834,7 @@ const Feature s_features[] = {
 	{    "vorbis",     "USE_VORBIS", "libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib", true, "Ogg Vorbis support" },
 	{      "flac",       "USE_FLAC", "libFLAC_static.lib", true, "FLAC support" },
 	{ "theoradec",  "USE_THEORADEC", "libtheora_static.lib", true, "Theora decoder support" },
+	{       "png",        "USE_PNG", "libpng.lib", true, "PNG support" },
 	{     "mpeg2",      "USE_MPEG2", "libmpeg2.lib", false, "mpeg2 codec for cutscenes" },
 
 	// ScummVM feature flags
