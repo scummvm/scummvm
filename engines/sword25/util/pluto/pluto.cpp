@@ -1470,6 +1470,7 @@ static void unpersistpermanent(int ref, UnpersistInfo *upi)
 					/* perms reftbl perm */
 }
 
+#if 0
 /* For debugging only; not called when lua_assert is empty */
 static int inreftable(lua_State *L, int ref)
 {
@@ -1485,6 +1486,7 @@ static int inreftable(lua_State *L, int ref)
 					/* perms reftbl ... */
 	return res;
 }
+#endif
 
 static void unpersist(UnpersistInfo *upi)
 {
