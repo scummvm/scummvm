@@ -1849,6 +1849,7 @@ void ScummEngine_v5::o5_roomOps() {
 						break;
 					len *= 2;
 					ptr = (byte *)realloc(ptr, len);
+					assert(ptr);
 				}
 				ptr[cnt] = '\0';
 				loadPtrToResource(rtString, a, ptr);

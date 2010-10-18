@@ -498,7 +498,7 @@ void ScummEngine::cyclePalette() {
 	int i, j;
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	if (_game.platform == Common::kPlatformFMTowns && (!_townsPaletteFlags & 1))
+	if (_game.platform == Common::kPlatformFMTowns && !(_townsPaletteFlags & 1))
 		return;
 #endif
 
@@ -544,7 +544,7 @@ void ScummEngine::moveMemInPalRes(int start, int end, byte direction) {
 
 void ScummEngine::palManipulateInit(int resID, int start, int end, int time) {
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	if (_game.platform == Common::kPlatformFMTowns && (!_townsPaletteFlags & 1))
+	if (_game.platform == Common::kPlatformFMTowns && !(_townsPaletteFlags & 1))
 		return;
 #endif
 

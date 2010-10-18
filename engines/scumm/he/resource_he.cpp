@@ -281,11 +281,13 @@ int Win32ResExtractor::extract_resources(WinLibrary *fi, WinResource *wr,
 	if ((id = strtol(type_wr->id, 0, 10)) != 0)
 		type = res_type_id_to_string(id);
 
-	debugC(DEBUG_RESOURCE, "extractCursor(). Found cursor name: %s%s%s [size=%d]",
-	  name_wr->get_resource_id_quoted(),
-	  (lang_wr->id[0] != '\0' ? " language: " : ""),
-	  lang_wr->get_resource_id_quoted(), size);
-
+	if (lang_wr != NULL && lang_wr->id[0] != '\0') {
+		debugC(DEBUG_RESOURCE, "extractCursor(). Found cursor name: %s language: %s [size=%d]",
+		  name_wr->get_resource_id_quoted(), lang_wr->get_resource_id_quoted(), size);
+	} else {
+		debugC(DEBUG_RESOURCE, "extractCursor(). Found cursor name: %s [size=%d]",
+		  name_wr->get_resource_id_quoted(), size);
+	}
 	return size;
 }
 
@@ -696,6 +698,7 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
 			return false;
 		}
 		fi->memory = (byte *)realloc(fi->memory, fi->total_size);
+		assert(fi->memory);
 
 		/* relocate memory, start from last section */
 		pe_header = PE_HEADER(fi->memory);

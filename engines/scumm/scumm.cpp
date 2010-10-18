@@ -136,7 +136,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		uint tmpVal;
 		tmpStr[0] = dr.md5[2*i];
 		tmpStr[1] = dr.md5[2*i+1];
-		sscanf(tmpStr, "%x", &tmpVal);
+		int res = sscanf(tmpStr, "%x", &tmpVal);
+		assert(res == 1);
 		_gameMD5[i] = (byte)tmpVal;
 	}
 

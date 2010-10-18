@@ -993,6 +993,7 @@ void ScummEngine::resetRoomObject(ObjectData *od, const byte *room, const byte *
 	od->flags = Gdi::dbAllowMaskOr;
 
 	if (_game.version == 8) {
+		assert(imhd);
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
 
 		od->parent = cdhd->v7.parent;
@@ -1008,6 +1009,7 @@ void ScummEngine::resetRoomObject(ObjectData *od, const byte *room, const byte *
 			od->flags = ((((byte)READ_LE_UINT32(&imhd->v8.flags)) & 16) == 0) ? Gdi::dbAllowMaskOr : 0;
 
 	} else if (_game.version == 7) {
+		assert(imhd);
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
 
 		od->parent = cdhd->v7.parent;
@@ -1020,6 +1022,7 @@ void ScummEngine::resetRoomObject(ObjectData *od, const byte *room, const byte *
 		od->actordir = (byte)READ_LE_UINT16(&imhd->v7.actordir);
 
 	} else if (_game.version == 6) {
+		assert(imhd);
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v6.obj_id));
 
 		od->width = READ_LE_UINT16(&cdhd->v6.w);

@@ -87,7 +87,7 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	if (_vm->_game.id == GID_LOOM)
 		DCmd_Register("drafts",  WRAP_METHOD(ScummDebugger, Cmd_PrintDraft));
 
-	if (_vm->_game.id == GID_MONKEY && Common::kPlatformSegaCD)
+	if (_vm->_game.id == GID_MONKEY && _vm->_game.platform == Common::kPlatformSegaCD)
 		DCmd_Register("passcode",  WRAP_METHOD(ScummDebugger, Cmd_Passcode));
 
 	DCmd_Register("loadgame",  WRAP_METHOD(ScummDebugger, Cmd_LoadGame));
