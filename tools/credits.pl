@@ -592,6 +592,12 @@ begin_credits("Credits");
 		  add_person("Johannes Schickel", "LordHoto", "");
 	  end_section();
 
+	begin_section("Last Express");
+			add_person("Matthew Hoops", "clone2727", "");
+			add_person("Jordi Vilalta Prat", "jvprat", "");
+			add_person("Julien Templier", "littleboy", "");			
+	end_section();
+
 	  begin_section("Lure");
 		  add_person("Paul Gilbert", "dreammaster", "");
 	  end_section();
