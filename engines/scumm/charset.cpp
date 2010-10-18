@@ -365,7 +365,7 @@ void CharsetRendererV3::setCurID(int32 id) {
 int CharsetRendererCommon::getFontHeight() {
 	if (_vm->_useCJKMode) {
 		if (_vm->_game.platform == Common::kPlatformFMTowns) {
-			static const uint8 sjisFontHeightM1[] = { 0, 8, 10, 9, 10, 9, 10, 0, 0 };
+			static const uint8 sjisFontHeightM1[] = { 0, 8, 9, 8, 9, 8, 9, 0, 0, 0 };
 			static const uint8 sjisFontHeightM2[] = { 0, 8, 9, 9, 9, 8, 9, 9, 9, 8 };
 			static const uint8 sjisFontHeightI4[] = { 0, 8, 9, 9, 9, 8, 8, 8, 8, 8 };
 			const uint8 *htbl = (_vm->_game.id == GID_MONKEY) ? sjisFontHeightM1 : ((_vm->_game.id == GID_INDY4) ? sjisFontHeightI4 : sjisFontHeightM2);
@@ -381,7 +381,7 @@ int CharsetRendererCommon::getFontHeight() {
 int CharsetRendererClassic::getCharWidth(uint16 chr) {
 	int spacing = 0;
 
-	if (_vm->_useCJKMode) {
+ 	if (_vm->_useCJKMode) {
 		if (_vm->_game.platform == Common::kPlatformFMTowns) {
 			if ((chr & 0x00ff) == 0x00fd) {
 				chr >>= 8;
@@ -394,8 +394,8 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) {
 			if (spacing) {
 				if (_vm->_game.id == GID_MONKEY) {
 					spacing++;
-					if (_curId == 2)
-						spacing++;
+					//if (_curId == 2)
+					//	spacing++;
 				} else if (_vm->_game.id != GID_INDY4 && _curId == 1) {
 					spacing++;
 				}
@@ -669,7 +669,7 @@ void CharsetRendererCommon::enableShadow(bool enable) {
 					if (_vm->_game.id == GID_MONKEY) {
 						_vm->_cjkFont->setShadowMode((_curId == 2 || _curId == 4 || _curId == 6) ? Graphics::FontSJIS::kShadowTypeOutline : Graphics::FontSJIS::kShadowTypeNone);
 					} else if (_vm->_game.id == GID_MONKEY2) {
-						_vm->_cjkFont->setShadowMode((_curId != 1 && _curId != 3 && _curId != 5) ? Graphics::FontSJIS::kShadowTypeOutline : Graphics::FontSJIS::kShadowTypeNone);
+						_vm->_cjkFont->setShadowMode((_curId != 1 && _curId != 5 && _curId != 9) ? Graphics::FontSJIS::kShadowTypeOutline : Graphics::FontSJIS::kShadowTypeNone);
 					} else if (_vm->_game.id == GID_INDY4) {
 						_vm->_cjkFont->setShadowMode((_curId == 2 || _curId == 3 || _curId == 4) ? Graphics::FontSJIS::kShadowTypeOutline : Graphics::FontSJIS::kShadowTypeNone);
 					}					

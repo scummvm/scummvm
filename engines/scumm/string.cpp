@@ -601,7 +601,12 @@ void ScummEngine::CHARSET_1() {
 			} else if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
 				_nextTop += _string[0].height;
 			} else {
+				bool useCJK = _useCJKMode;
+				// SCUMM5 FM-Towns doesn't use the height of the ROM font here.
+				if (_game.platform == Common::kPlatformFMTowns && _game.version == 5)
+					_useCJKMode = false;
 				_nextTop += _charset->getFontHeight();
+				_useCJKMode = useCJK;
 			}
 			if (_game.version > 3) {
 				// FIXME: is this really needed?
