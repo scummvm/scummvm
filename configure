@@ -1176,10 +1176,10 @@ HOSTEXEEXT=$_exeext
 # Determine separator used for $PATH
 #
 case $_host_os in
-os2-emx* )
+os2-emx*)
 	SEPARATOR=";"
 	;;
-* )
+*)
 	SEPARATOR=":"
 	;;
 esac
