@@ -160,7 +160,7 @@ byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr)
 			return 0;
 		}
 
-		if (*fileSizePtr)
+		if (fileSizePtr)
 			*fileSizePtr = file->size();
 
 		byte *buffer = new byte[file->size()];

@@ -49,22 +49,25 @@ namespace {
 static Common::String LoadString(Common::ReadStream &In, uint MaxSize = 999) {
 	Common::String Result;
 
-	char ch = (char)In.readByte();
-	while ((ch != '\0') && (ch != ' ')) {
+	while (!In.eos() && (Result.size() < MaxSize)) {
+		char ch = (char)In.readByte();
+		if ((ch == '\0') || (ch == ' '))
+			break;
+
 		Result += ch;
-		if (Result.size() >= MaxSize) break;
-		ch = (char)In.readByte();
 	}
 
 	return Result;
 }
 
 uint FindEmbeddedPNG(const byte *FileDataPtr, uint FileSize) {
+	assert(FileSize >= 100);
 	if (memcmp(FileDataPtr, "BS25SAVEGAME", 12))
 		return 0;
 
 	// Read in the header
 	Common::MemoryReadStream stream(FileDataPtr, FileSize);
+	stream.seek(0, SEEK_SET);
 
 	// Headerinformationen der Spielstandes einlesen.
 	uint compressedGamedataSize;
