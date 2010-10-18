@@ -91,6 +91,7 @@ add_engine groovie2 "Groovie 2 games" no
 add_engine hugo "Hugo Trilogy" no
 add_engine kyra "Legend of Kyrandia" yes "lol"
 add_engine lol "Lands of Lore" no
+add_engine lastexpress "The Last Express" no
 add_engine lure "Lure of the Temptress" yes
 add_engine m4 "M4/MADS" no
 add_engine made "MADE" yes
