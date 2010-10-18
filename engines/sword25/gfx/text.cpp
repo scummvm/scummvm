@@ -75,7 +75,13 @@ Text::Text(RenderObjectPtr<RenderObject> ParentPtr) :
 // -----------------------------------------------------------------------------
 
 Text::Text(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle) :
-	RenderObject(ParentPtr, TYPE_TEXT, Handle) {
+		RenderObject(ParentPtr, TYPE_TEXT, Handle),
+		// Temporarily set fields prior to unpersisting actual values
+		_modulationColor(0xffffffff),
+		m_AutoWrap(false),
+		m_AutoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {	
+
+	// Unpersist the fields
 	_initSuccess = unpersist(Reader);
 }
 
