@@ -276,7 +276,7 @@ int SoundHE::getSoundVar(int sound, int var) {
 			chan = i;
 	}
 
-	if (_mixer->isSoundHandleActive(_heSoundChannels[chan]) && chan != -1) {
+	if (chan != -1 && _mixer->isSoundHandleActive(_heSoundChannels[chan])) {
 		debug(5, "getSoundVar: sound %d var %d result %d", sound, var, _heChannel[chan].soundVars[var]);
 		return _heChannel[chan].soundVars[var];
 	} else {
