@@ -1053,7 +1053,6 @@ TownsPC98_AudioDriver::TownsPC98_AudioDriver(Audio::Mixer *mixer, EmuType type) 
 }
 
 TownsPC98_AudioDriver::~TownsPC98_AudioDriver() {
-	reset();
 	_ready = false;
 	deinit();
 

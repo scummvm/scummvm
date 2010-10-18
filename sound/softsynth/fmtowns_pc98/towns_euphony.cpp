@@ -36,17 +36,15 @@ TownsEuphonyDriver::TownsEuphonyDriver(Audio::Mixer *mixer) : _activeChannels(0)
 }
 
 TownsEuphonyDriver::~TownsEuphonyDriver() {
+	delete _intf;
 	delete[] _activeChannels;
 	delete[] _sustainChannels;
 	delete[] _assignedChannels;
-
 	delete[] _tEnable;
 	delete[] _tMode;
 	delete[] _tOrdr;
 	delete[] _tLevel;
 	delete[] _tTranspose;
-
-	delete _intf;
 }
 
 bool TownsEuphonyDriver::init() {

@@ -1180,7 +1180,6 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 void TownsPC98_FmSynth::deinit() {
 	_ready = false;
 	_mixer->stopHandle(_soundHandle);
-	Common::StackLock lock(_mutex);
 	_timers[0].cb = _timers[1].cb = &TownsPC98_FmSynth::idleTimerCallback;
 }
 

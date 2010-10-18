@@ -226,7 +226,6 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 }
 
 TownsAudioInterface::~TownsAudioInterface() {
-	reset();
 	_ready = false;
 	deinit();
 
