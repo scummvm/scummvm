@@ -1328,7 +1328,7 @@ void Insane::turnEnemy(bool battle) {
 	if (_actor[1].damage < _actor[1].maxdamage) {
 		_actor[1].lost = false;
 	} else {
-		if (!_actor[1].lost && !_actor[1].lost) {
+		if (!_actor[1].lost && !_actor[0].lost) {
 			_actor[1].lost = true;
 			_actor[1].act[2].state = 36;
 			_actor[1].act[1].state = 36;
