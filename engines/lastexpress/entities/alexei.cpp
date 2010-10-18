@@ -1871,7 +1871,112 @@ IMPLEMENT_FUNCTION(45, Alexei, function45)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(46, Alexei, function46)
-	error("Alexei: callback function 46 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (params->param1 == kTimeInvalid)
+			break;
+
+		if (getState()->time <= kTime2493000) {
+
+			if (getEntities()->isInSalon(kEntityPlayer) || getEntities()->isInSalon(kEntityAugust) || !params->param1)
+				params->param1 = getState()->time;
+
+			if (params->param1 >= getState()->time)
+				break;
+		}
+
+		params->param1 = kTimeInvalid;
+
+		getScenes()->loadSceneFromItemPosition(kItem22);
+
+		if (getEntities()->isInSalon(kEntityPlayer)) {
+			getSound()->excuseMe(kEntityAlexei);
+
+			getScenes()->loadSceneFromPosition(kCarRestaurant, getScenes()->get(getState()->scene)->position);
+		}
+
+		setCallback(4);
+		setup_function13();
+		break;
+
+	case kActionDefault:
+		setCallback(1);
+		setup_function16(kTime2488500, "411");
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			setCallback(2);
+			setup_function14();
+			break;
+
+		case 2:
+			setCallback(3);
+			setup_updateEntity(kCarRedSleeping, kPosition_9460);
+			break;
+
+		case 4:
+			if (getEntities()->isPlayerPosition(kCarGreenSleeping, 66))
+				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
+
+			setCallback(5);
+			setup_function16(kTime2507400, "412");
+			break;
+
+		case 5:
+			setCallback(6);
+			setup_enterExitCompartment("602Fb", kObjectCompartment2);
+			break;
+
+		case 6:
+			getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getData()->location = kLocationOutsideCompartment;
+
+			setCallback(7);
+			setup_updateEntity(kCarRedSleeping, kPosition_7500);
+			break;
+
+		case 7:
+			getEntities()->drawSequenceRight(kEntityAlexei, "602Eb");
+			getEntities()->enterCompartment(kEntityAlexei, kObjectCompartmentB);
+			getData()->location = kLocationInsideCompartment;
+
+			if (getEntities()->checkFields19(kEntityPlayer, kCarRedSleeping, kPosition_7850)) {
+				getAction()->playAnimation(isNight() ? kEventCathTurningNight : kEventCathTurningDay);
+				getSound()->playSound(kEntityPlayer, "BUMP");
+				getScenes()->loadSceneFromObject(kObjectCompartmentB);
+			}
+
+			setCallback(8);
+			setup_callbackActionOnDirection();
+			break;
+
+		case 8:
+			getEntities()->exitCompartment(kEntityAlexei, kObjectCompartmentB);
+			getEntities()->clearSequences(kEntityAlexei);
+			getData()->entityPosition = kPosition_8200;
+			getData()->location = kLocationInsideCompartment;
+			getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject48, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
+
+			setCallback(9);
+			setup_playSound("TAT4167");
+			break;
+
+		case 9:
+			getSavePoints()->push(kEntityAlexei, kEntityChapters, kAction156435676);
+			setup_function47();
+			break;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

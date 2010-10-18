@@ -104,7 +104,91 @@ IMPLEMENT_FUNCTION_NOSETUP(5, Kahina, updateFromTicks)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(6, Kahina, function6, TimeValue)
-	error("Kahina: callback function 6 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (params->param1 < getState()->time && !params->param2) {
+			params->param2 = 1;
+
+			CALLBACK_ACTION();
+			break;
+		}
+
+		if (getEntities()->isPlayerInCar(kCarGreenSleeping) || getEntities()->isPlayerInCar(kCarRedSleeping)) {
+			if (getEntities()->isInsideTrainCar(kEntityPlayer, kCarGreenSleeping)) {
+				setCallback(2);
+				setup_updateEntity2(kCarGreenSleeping, kPosition_540);
+			} else {
+				setCallback(3);
+				setup_updateEntity2(kCarRedSleeping, kPosition_9460);
+			}
+		}
+		break;
+
+	case kActionDefault:
+		ENTITY_PARAM(0, 1) = 0;
+		ENTITY_PARAM(0, 2) = 0;
+
+		setCallback(1);
+		setup_updateEntity2(kCarRedSleeping, kPosition_540);
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			if (ENTITY_PARAM(0, 1) || ENTITY_PARAM(0, 2)) {
+				CALLBACK_ACTION();
+				break;
+			}
+
+			getEntities()->clearSequences(kEntityKahina);
+			break;
+
+		case 2:
+		case 3:
+			if (ENTITY_PARAM(0, 1) || ENTITY_PARAM(0, 2)) {
+				CALLBACK_ACTION();
+				break;
+			}
+
+			getEntities()->clearSequences(kEntityKahina);
+
+			setCallback(4);
+			setup_updateFromTime(450);
+			break;
+
+		case 4:
+			if (ENTITY_PARAM(0, 2)) {
+				CALLBACK_ACTION();
+				break;
+			}
+
+			setCallback(5);
+			setup_updateEntity2(kCarRedSleeping, kPosition_540);
+			break;
+
+		case 5:
+			if (ENTITY_PARAM(0, 1) || ENTITY_PARAM(0, 2)) {
+				CALLBACK_ACTION();
+				break;
+			}
+
+			getEntities()->clearSequences(kEntityKahina);
+			break;
+		}
+		break;
+
+	case kAction137503360:
+		ENTITY_PARAM(0, 2) = 1;
+
+		CALLBACK_ACTION();
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
