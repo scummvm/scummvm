@@ -36,7 +36,7 @@ class LastExpressEngine;
 class Abbot : public Entity {
 public:
 	Abbot(LastExpressEngine *engine);
-	~Abbot() {};
+	~Abbot() {}
 
 	/**
 	 * Resets the entity

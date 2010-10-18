@@ -36,8 +36,7 @@ class LastExpressEngine;
 class Servers0 : public Entity {
 public:
 	Servers0(LastExpressEngine *engine);
-	~Servers0() {};
-
+	~Servers0() {}
 
 	/**
 	 * Call a savepoint (or draw sequence in default case)

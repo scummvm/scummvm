@@ -36,7 +36,7 @@ class LastExpressEngine;
 class Ivo : public Entity {
 public:
 	Ivo(LastExpressEngine *engine);
-	~Ivo() {};
+	~Ivo() {}
 
 	/**
 	 * Resets the entity

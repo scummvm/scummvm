@@ -36,8 +36,7 @@ class LastExpressEngine;
 class Pascale : public Entity {
 public:
 	Pascale(LastExpressEngine *engine);
-	~Pascale() {};
-
+	~Pascale() {}
 
 	/**
 	 * Draws the entity

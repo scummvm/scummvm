@@ -36,7 +36,7 @@ class LastExpressEngine;
 class Servers1 : public Entity {
 public:
 	Servers1(LastExpressEngine *engine);
-	~Servers1() {};
+	~Servers1() {}
 
 	/**
 	 * Updates parameter 2 using time value

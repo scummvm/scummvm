@@ -36,7 +36,7 @@ class LastExpressEngine;
 class MmeBoutarel : public Entity {
 public:
 	MmeBoutarel(LastExpressEngine *engine);
-	~MmeBoutarel() {};
+	~MmeBoutarel() {}
 
 	/**
 	 * Resets the entity

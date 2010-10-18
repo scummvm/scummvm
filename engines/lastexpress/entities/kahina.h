@@ -36,7 +36,7 @@ class LastExpressEngine;
 class Kahina : public Entity {
 public:
 	Kahina(LastExpressEngine *engine);
-	~Kahina() {};
+	~Kahina() {}
 
 	/**
 	 * Resets the entity

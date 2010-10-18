@@ -221,7 +221,7 @@ int Entities::getPosition(CarIndex car, Position position) {
 	if (car < 0 || car > 10)
 		error("Entities::getPosition: trying to access an invalid car (was: %d, valid:0-9)", car);
 
-	if (position < 0 || position > 100)
+	if (position > 100)
 		error("Entities::getPosition: trying to access an invalid position (was: %d, valid:0-100)", position);
 
 	return _positions[index];

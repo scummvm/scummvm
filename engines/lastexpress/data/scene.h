@@ -169,7 +169,7 @@ public:
 	bool load(Common::SeekableReadStream *stream);
 	Scene *get(SceneIndex index);
 
-	uint32 count() const { return _scenes.size() - 1; };
+	uint32 count() const { return _scenes.size() - 1; }
 
 private:
 	Common::SeekableReadStream *_stream;

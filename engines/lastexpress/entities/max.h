@@ -36,7 +36,7 @@ class LastExpressEngine;
 class Max : public Entity {
 public:
 	Max(LastExpressEngine *engine);
-	~Max() {};
+	~Max() {}
 
 	/**
 	 * Resets the entity

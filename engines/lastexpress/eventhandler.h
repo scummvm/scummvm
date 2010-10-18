@@ -44,8 +44,8 @@ public:
 	// Function pointer for event handler
 	typedef Common::Functor1<const Common::Event&, void> EventFunction;
 
-	virtual void eventMouse(const Common::Event &ev) {};    // Event type 1
-	virtual void eventTick(const Common::Event &ev) {};     // Event type 3
+	virtual void eventMouse(const Common::Event &ev) {}    // Event type 1
+	virtual void eventTick(const Common::Event &ev) {}     // Event type 3
 };
 
 } // End of namespace LastExpress

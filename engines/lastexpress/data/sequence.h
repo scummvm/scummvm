@@ -155,7 +155,7 @@ public:
 
 	bool load(Common::SeekableReadStream *stream, byte field30 = 15);
 
-	uint16 count() const { return (uint16)_frames.size(); };
+	uint16 count() const { return (uint16)_frames.size(); }
 	AnimFrame *getFrame(uint16 index = 0);
 	FrameInfo *getFrameInfo(uint16 index = 0);
 

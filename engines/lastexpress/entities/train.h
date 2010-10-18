@@ -36,7 +36,7 @@ class LastExpressEngine;
 class Train : public Entity {
 public:
 	Train(LastExpressEngine *engine);
-	~Train() {};
+	~Train() {}
 
 	/**
 	 * Saves the game

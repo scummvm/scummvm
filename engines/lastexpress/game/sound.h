@@ -273,7 +273,7 @@ private:
 			subtitle = NULL;
 
 			isStreamed = false;
-		};
+		}
 	};
 
 	// Engine

@@ -36,7 +36,7 @@ class LastExpressEngine;
 class Tables : public Entity {
 public:
 	Tables(LastExpressEngine *engine, EntityIndex id);
-	~Tables() {};
+	~Tables() {}
 
 	/**
 	 * Setup Chapter 1

@@ -36,7 +36,7 @@ class LastExpressEngine;
 class Chapters : public Entity {
 public:
 	Chapters(LastExpressEngine *engine);
-	~Chapters() {};
+	~Chapters() {}
 
 	/**
 	 * Saves the game

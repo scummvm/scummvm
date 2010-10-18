@@ -36,7 +36,7 @@ class LastExpressEngine;
 class Vesna : public Entity {
 public:
 	Vesna(LastExpressEngine *engine);
-	~Vesna() {};
+	~Vesna() {}
 
 	/**
 	 * Resets the entity
