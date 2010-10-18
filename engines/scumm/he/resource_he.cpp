@@ -697,8 +697,9 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
 			/* calc_vma_size has reported error */
 			return false;
 		}
-		fi->memory = (byte *)realloc(fi->memory, fi->total_size);
-		assert(fi->memory);
+		byte *ptr = (byte *)realloc(fi->memory, fi->total_size);
+		assert(ptr);
+		fi->memory = ptr;
 
 		/* relocate memory, start from last section */
 		pe_header = PE_HEADER(fi->memory);
