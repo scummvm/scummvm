@@ -37,13 +37,7 @@
 
 #include "sword25/kernel/common.h"
 
-namespace Lua {
-
 struct lua_State;
-
-}
-
-using namespace Lua;
 
 namespace Sword25 {
 

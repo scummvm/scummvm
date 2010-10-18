@@ -35,17 +35,10 @@
 #include "sword25/script/luacallback.h"
 #include "sword25/script/luabindhelper.h"
 
-namespace Lua {
-
-extern "C"
-{
 #include "sword25/util/lua/lua.h"
 #include "sword25/util/lua/lauxlib.h"
-}
 
 const char *CALLBACKTABLE_NAME = "__CALLBACKS";
-
-}
 
 namespace Sword25 {
 

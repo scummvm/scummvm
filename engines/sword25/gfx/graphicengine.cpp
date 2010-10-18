@@ -52,14 +52,8 @@
 
 #include "sword25/gfx/graphicengine.h"
 
-namespace Lua {
-extern "C"
-{
 #include "sword25/util/lua/lua.h"
 #include "sword25/util/lua/lauxlib.h"
-}
-}
-
 enum {
 	BIT_DEPTH = 32,
 	BACKBUFFER_COUNT = 1
@@ -67,8 +61,6 @@ enum {
 
 
 namespace Sword25 {
-
-using namespace Lua;
 
 static const uint FRAMETIME_SAMPLE_COUNT = 5;       // Anzahl der Framezeiten über die, die Framezeit gemittelt wird
 

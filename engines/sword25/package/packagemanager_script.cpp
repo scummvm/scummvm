@@ -41,8 +41,6 @@
 
 namespace Sword25 {
 
-using namespace Lua;
-
 static PackageManager *getPM() {
 	Kernel *pKernel = Kernel::GetInstance();
 	BS_ASSERT(pKernel);

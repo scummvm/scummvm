@@ -45,6 +45,7 @@
 // Includes
 #include <math.h>
 #include "sword25/kernel/common.h"
+#include "sword25/util/lua/lua.h"
 
 #if defined(MACOSX) || defined(SOLARIS) || defined(__MINGW32__)
 // Older versions of Mac OS X didn't supply a powf function, so using it
@@ -62,15 +63,6 @@
 #define sqrtf(x)	((float)sqrt(x))
 #define atan2f(x,y)	((float)atan2(x,y))
 #endif
-
-namespace Lua {
-
-// Forward declarations
-struct lua_State;
-
-}
-
-using namespace Lua;
 
 namespace Sword25 {
 

@@ -39,14 +39,7 @@
 #include "common/str-array.h"
 #include "sword25/kernel/common.h"
 #include "sword25/script/script.h"
-
-namespace Lua {
-
-struct lua_State;
-
-}
-
-using namespace Lua;
+#include "sword25/util/lua/lua.h"
 
 namespace Sword25 {
 

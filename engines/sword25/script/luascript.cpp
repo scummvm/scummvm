@@ -45,20 +45,12 @@
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 
-namespace Lua {
-
-extern "C" {
 #include "sword25/util/lua/lua.h"
 #include "sword25/util/lua/lualib.h"
 #include "sword25/util/lua/lauxlib.h"
 #include "sword25/util/pluto/pluto.h"
-}
-
-}
 
 namespace Sword25 {
-
-using namespace Lua;
 
 LuaScriptEngine::LuaScriptEngine(Kernel *KernelPtr) :
 	ScriptEngine(KernelPtr),

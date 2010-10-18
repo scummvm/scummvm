@@ -37,17 +37,8 @@
 
 #include "sword25/kernel/common.h"
 
-namespace Lua {
-
-extern "C"
-{
 #include "sword25/util/lua/lua.h"
 #include "sword25/util/lua/lauxlib.h"
-}
-
-}
-
-using namespace Lua;
 
 namespace Sword25 {
 
