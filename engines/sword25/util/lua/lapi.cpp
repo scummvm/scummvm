@@ -50,7 +50,8 @@ static TValue *index2adr (lua_State *L, int idx) {
   if (idx > 0) {
     TValue *o = L->base + (idx - 1);
     api_check(L, idx <= L->ci->top - L->base);
-    if (o >= L->top) return cast(TValue *, luaO_nilobject);
+    // FIXME: Get rid of const_cast
+    if (o >= L->top) return const_cast<TValue *>(luaO_nilobject);
     else return o;
   }
   else if (idx > LUA_REGISTRYINDEX) {
@@ -70,7 +71,8 @@ static TValue *index2adr (lua_State *L, int idx) {
       idx = LUA_GLOBALSINDEX - idx;
       return (idx <= func->c.nupvalues)
                 ? &func->c.upvalue[idx-1]
-                : cast(TValue *, luaO_nilobject);
+                // FIXME: Get rid of const_cast
+                : const_cast<TValue *>(luaO_nilobject);
     }
   }
 }

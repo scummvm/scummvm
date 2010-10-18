@@ -272,7 +272,8 @@ static void setarrayvector (lua_State *L, Table *t, int size) {
 static void setnodevector (lua_State *L, Table *t, int size) {
   int lsize;
   if (size == 0) {  /* no elements to hash part? */
-    t->node = cast(Node *, dummynode);  /* use common `dummynode' */
+    // FIXME: Get rid of const_cast
+    t->node = const_cast<Node *>(dummynode);  /* use common `dummynode' */
     lsize = 0;
   }
   else {
@@ -364,7 +365,8 @@ Table *luaH_new (lua_State *L, int narray, int nhash) {
   t->array = NULL;
   t->sizearray = 0;
   t->lsizenode = 0;
-  t->node = cast(Node *, dummynode);
+  // FIXME: Get rid of const_cast
+  t->node = const_cast<Node *>(dummynode);
   setarrayvector(L, t, narray);
   setnodevector(L, t, nhash);
   return t;
@@ -495,7 +497,8 @@ TValue *luaH_set (lua_State *L, Table *t, const TValue *key) {
   const TValue *p = luaH_get(t, key);
   t->flags = 0;
   if (p != luaO_nilobject)
-    return cast(TValue *, p);
+    // FIXME: Get rid of const_cast
+    return const_cast<TValue *>(p);
   else {
     if (ttisnil(key)) luaG_runerror(L, "table index is nil");
     else if (ttisnumber(key) && luai_numisnan(nvalue(key)))
@@ -508,7 +511,8 @@ TValue *luaH_set (lua_State *L, Table *t, const TValue *key) {
 TValue *luaH_setnum (lua_State *L, Table *t, int key) {
   const TValue *p = luaH_getnum(t, key);
   if (p != luaO_nilobject)
-    return cast(TValue *, p);
+    // FIXME: Get rid of const_cast
+    return const_cast<TValue *>(p);
   else {
     TValue k;
     setnvalue(&k, cast_num(key));
@@ -520,7 +524,8 @@ TValue *luaH_setnum (lua_State *L, Table *t, int key) {
 TValue *luaH_setstr (lua_State *L, Table *t, TString *key) {
   const TValue *p = luaH_getstr(t, key);
   if (p != luaO_nilobject)
-    return cast(TValue *, p);
+    // FIXME: Get rid of const_cast
+    return const_cast<TValue *>(p);
   else {
     TValue k;
     setsvalue(L, &k, key);
