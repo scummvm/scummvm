@@ -83,6 +83,22 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::GUIO_NONE
 	},
 
+	// The Last Express (German)
+	{
+		"lastexpress",
+		"",
+		{
+			{"HD.HPF", 0, "7cdd70fc0b1555785f1e9e8d371ea85c", 31301632},
+			{"CD1.HPF", 0, "6d74cc861d172466bc745ff8bf0e59c5", 522971136},
+			{"CD2.HPF", 0, "b71ac9391de415807c74ff078f4fab22", 655702016},
+			{"CD3.HPF", 0, "ee55d4310546dd2a38560b096d1c2771", 641144832},
+		},
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		Common::GUIO_NONE
+	},
+
 	// The Last Express (Spanish)
 	{
 		"lastexpress",
