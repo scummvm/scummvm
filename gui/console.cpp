@@ -660,7 +660,7 @@ void ConsoleDialog::updateScrollBuffer() {
 }
 
 int ConsoleDialog::printf(const char *format, ...) {
-	va_list	argptr;
+	va_list argptr;
 
 	va_start(argptr, format);
 	int count = this->vprintf(format, argptr);
@@ -669,17 +669,10 @@ int ConsoleDialog::printf(const char *format, ...) {
 }
 
 int ConsoleDialog::vprintf(const char *format, va_list argptr) {
-	char	buf[2048];
+	Common::String output = Common::String::vprintf(format, argptr);
 
-#if defined(WIN32)
-	int count = _vsnprintf(buf, sizeof(buf), format, argptr);
-#elif defined(__SYMBIAN32__)
-	int count = vsprintf(buf, format, argptr);
-#else
-	int count = vsnprintf(buf, sizeof(buf), format, argptr);
-#endif
-	print(buf);
-	return count;
+	print(output.c_str());
+	return output.size();
 }
 
 void ConsoleDialog::putchar(int c) {
