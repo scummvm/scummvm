@@ -30,18 +30,6 @@
 
 #include <stdarg.h>
 
-#ifndef VA_COPY
-#if defined(HAVE_VA_COPY) || defined(va_copy)
-#define VA_COPY(dest, src) va_copy(dest, src)
-#else
-#ifdef HAVE___VA_COPY
-#define VA_COPY(dest, src) __va_copy(dest, src)
-#else
-#define VA_COPY(dest, src) (dest) = (src)
-#endif
-#endif
-#endif
-
 namespace Common {
 
 MemoryPool *g_refCountPool = 0; // FIXME: This is never freed right now
@@ -443,22 +431,13 @@ uint String::hash() const {
 
 // static
 String String::printf(const char *fmt, ...) {
-	va_list argptr;
-
-	va_start(argptr, fmt);
-	Common::String output = vprintf(fmt, argptr);
-	va_end (argptr);
-
-	return output;
-}
-
-String String::vprintf(const char *fmt, va_list argptr) {
 	String output;
 	assert(output.isStorageIntern());
 
 	va_list va;
-	VA_COPY(va, argptr);
+	va_start(va, fmt);
 	int len = vsnprintf(output._str, _builtinCapacity, fmt, va);
+	va_end(va);
 
 	if (len == -1 || len == _builtinCapacity - 1) {
 		// MSVC and IRIX don't return the size the full string would take up.
@@ -481,7 +460,9 @@ String String::vprintf(const char *fmt, va_list argptr) {
 			assert(!output.isStorageIntern());
 			size = output._extern._capacity;
 
+			va_start(va, fmt);
 			len = vsnprintf(output._str, size, fmt, va);
+			va_end(va);
 		} while (len == -1 || len >= size - 1);
 		output._size = len;
 	} else if (len < (int)_builtinCapacity) {
@@ -490,7 +471,9 @@ String String::vprintf(const char *fmt, va_list argptr) {
 	} else {
 		// vsnprintf didn't have enough space, so grow buffer
 		output.ensureCapacity(len, false);
+		va_start(va, fmt);
 		int len2 = vsnprintf(output._str, len+1, fmt, va);
+		va_end(va);
 		assert(len == len2);
 		output._size = len2;
 	}
