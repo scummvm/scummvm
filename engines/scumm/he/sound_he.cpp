@@ -241,7 +241,7 @@ int SoundHE::isSoundCodeUsed(int sound) {
 			chan = i;
 	}
 
-	if (_mixer->isSoundHandleActive(_heSoundChannels[chan]) && chan != -1) {
+	if (chan != -1 && _mixer->isSoundHandleActive(_heSoundChannels[chan])) {
 		return _heChannel[chan].sbngBlock;
 	} else {
 		return 0;
@@ -255,7 +255,7 @@ int SoundHE::getSoundPos(int sound) {
 			chan = i;
 	}
 
-	if (_mixer->isSoundHandleActive(_heSoundChannels[chan]) && chan != -1) {
+	if (chan != -1 && _mixer->isSoundHandleActive(_heSoundChannels[chan])) {
 		int time =  _vm->getHETimer(chan + 4) * _heChannel[chan].rate / 1000;
 		return time;
 	} else {
