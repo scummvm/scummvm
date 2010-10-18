@@ -624,7 +624,12 @@ static void persist(PersistInfo *pi)
 	if(!lua_isnil(pi->L, -1)) {
 					/* perms reftbl ... obj ref */
 		int zero = 0;
-		int ref = (int)lua_touserdata(pi->L, -1);
+		// FIXME: Casting a pointer to an integer data type is a bad idea we
+		// should really get rid of this by fixing the design of this code.
+		// For now casting to ssize_t should silence most (all?) compilers,
+		// since ssize_t is supposedly the same size as a pointer on most
+		// (modern) architectures.
+		int ref = (ssize_t)lua_touserdata(pi->L, -1);
 		pi->writer(pi->L, &zero, sizeof(int), pi->ud);
 		pi->writer(pi->L, &ref, sizeof(int), pi->ud);
 		lua_pop(pi->L, 1);
