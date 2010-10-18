@@ -290,8 +290,8 @@ int Apple_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 
 class MSIma_ADPCMStream : public Ima_ADPCMStream {
 public:
-	MSIma_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
+	MSIma_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign, bool invertSamples = false)
+		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign), _invertSamples(invertSamples) {
 		if (blockAlign == 0)
 			error("ADPCMStream(): blockAlign isn't specified for MS IMA ADPCM");
 	}
@@ -305,6 +305,9 @@ public:
 
 	int readBufferMSIMA1(int16 *buffer, const int numSamples);
 	int readBufferMSIMA2(int16 *buffer, const int numSamples);
+
+private:
+	bool _invertSamples;    // Some implementations invert the way samples are decoded
 };
 
 int MSIma_ADPCMStream::readBufferMSIMA1(int16 *buffer, const int numSamples) {
@@ -324,8 +327,8 @@ int MSIma_ADPCMStream::readBufferMSIMA1(int16 *buffer, const int numSamples) {
 		for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
 			data = _stream->readByte();
 			_blockPos[0]++;
-			buffer[samples] = decodeIMA(data & 0x0f);
-			buffer[samples + 1] = decodeIMA((data >> 4) & 0x0f);
+			buffer[samples] = decodeIMA(_invertSamples ? (data >> 4) & 0x0f : data & 0x0f);
+			buffer[samples + 1] = decodeIMA(_invertSamples ? data & 0x0f : (data >> 4) & 0x0f);
 		}
 	}
 	return samples;
@@ -733,6 +736,8 @@ RewindableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, Dispo
 		return new Oki_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	case kADPCMMSIma:
 		return new MSIma_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
+	case kADPCMMSImaLastExpress:
+		return new MSIma_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign, true);
 	case kADPCMMS:
 		return new MS_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	case kADPCMTinsel4:
