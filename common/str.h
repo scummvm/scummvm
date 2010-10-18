@@ -220,6 +220,8 @@ public:
 	 */
 	static Common::String printf(const char *fmt, ...) GCC_PRINTF(1,2);
 
+	static Common::String vprintf(const char *fmt, va_list argptr);
+
 public:
 	typedef char *        iterator;
 	typedef const char *  const_iterator;
