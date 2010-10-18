@@ -2157,6 +2157,7 @@ void ScummEngine_v5::o5_stringOps() {
 	case 2:											/* copystring */
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
+		assert(a != b);
 		_res->nukeResource(rtString, a);
 		ptr = getResourceAddress(rtString, b);
 		if (ptr)
