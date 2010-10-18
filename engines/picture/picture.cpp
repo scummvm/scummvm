@@ -176,7 +176,14 @@ Common::Error PictureEngine::run() {
 
 #if 1
 	_script->loadScript(0, 0);
-	_script->runScript(0);
+	_script->setMainScript(0);
+	if (ConfMan.hasKey("save_slot")) {
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0 && saveSlot <= 99) {
+			loadGameState(saveSlot);
+		}
+	}
+	_script->runScript();
 #endif
 
 	delete _arc;

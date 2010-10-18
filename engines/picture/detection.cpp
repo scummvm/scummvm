@@ -174,7 +174,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Picture Engine (C) 1996";
+		return "Picture Engine Revistronic (C) 1996";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -188,7 +188,7 @@ public:
 bool PictureMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
-//		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsLoadingDuringStartup) ||
 //		(f == kSupportsDeleteSave) ||
 	   	(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail);

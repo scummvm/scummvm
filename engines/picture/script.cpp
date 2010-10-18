@@ -159,13 +159,11 @@ void ScriptInterpreter::loadScript(uint resIndex, uint slotIndex) {
 
 }
 
-void ScriptInterpreter::runScript(uint slotIndex) {
-
+void ScriptInterpreter::setMainScript(uint slotIndex) {
 	_switchLocalDataNear = true;
 	_switchLocalDataFar = false;
 	_switchLocalDataToStack = false;
 	_cmpBitTest = false;
-
 	_regs.reg0 = 0;
 	_regs.reg1 = 0;
 	_regs.reg2 = 0;
@@ -175,8 +173,10 @@ void ScriptInterpreter::runScript(uint slotIndex) {
 	_regs.reg6 = 0;
 	_regs.sp = 4096;
 	_regs.reg8 = 0;
-
 	_code = getSlotData(_regs.reg4);
+}
+
+void ScriptInterpreter::runScript() {
 
 	while (!_vm->shouldQuit()) {
 
