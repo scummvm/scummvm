@@ -2023,7 +2023,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	std::map<std::string, std::string>::iterator warnings = _projectWarnings.find(name);
 
 	// Nothing to add here, move along!
-	if (name != "scummvm" && name != "tinsel" && warnings == _projectWarnings.end())
+	if (name != "scummvm" && name != "sword25" && name != "tinsel" && warnings == _projectWarnings.end())
 		return;
 
 	project << "\t<ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='" << (isRelease ? "Release" : "Debug") << "|" << (isWin32 ? "Win32" : "x64") << "'\">\n"
@@ -2033,11 +2033,11 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	if (name == "scummvm") {
 		project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
 	} else {
-		if (name == "tinsel" && !isRelease)
-			project << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
-
 		if (name == "sword25")
 			project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
+
+		if (name == "tinsel" && !isRelease)
+			project << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
 
 		if (warnings != _projectWarnings.end())
 			project << "\t\t\t<DisableSpecificWarnings>" << warnings->second << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n";
