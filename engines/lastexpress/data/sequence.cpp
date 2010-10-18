@@ -468,6 +468,13 @@ FrameInfo *SequenceFrame::getInfo() {
 	return _sequence->getFrameInfo(_frame);
 }
 
+Common::String SequenceFrame::getName() {
+	if (!_sequence)
+		error("SequenceFrame::getName: Invalid sequence!");
+
+	return _sequence->getName();
+}
+
 bool SequenceFrame::equal(const SequenceFrame *other) const {
 	return _sequence->getName() == other->_sequence->getName() && _frame == other->_frame;
 }

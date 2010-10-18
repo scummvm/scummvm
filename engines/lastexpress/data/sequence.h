@@ -189,7 +189,7 @@ public:
 	uint32 getFrame() { return _frame; }
 	bool nextFrame();
 
-	Common::String getName() { return _sequence->getName(); }
+	Common::String getName();
 	FrameInfo *getInfo();
 
 	bool equal(const SequenceFrame *other) const;
