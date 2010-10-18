@@ -56,7 +56,8 @@ public:
 	~ScriptInterpreter();
 
 	void loadScript(uint resIndex, uint slotIndex);
-	void runScript(uint slotIndex);
+	void setMainScript(uint slotIndex);
+	void runScript();
 
 	byte *getSlotData(int slotIndex) const { return _slots[slotIndex].data; }
 
@@ -102,7 +103,7 @@ protected:
 	
 	ScriptRegs _regs;
 	int16 _savedSp;
-	
+
 	byte readByte();
 	int16 readInt16();
 	

@@ -172,7 +172,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Toltecs Engine (C) 1996";
+		return "Toltecs Engine Revistronic (C) 1996";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -186,7 +186,7 @@ public:
 bool ToltecsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
-//		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsLoadingDuringStartup) ||
 //		(f == kSupportsDeleteSave) ||
 	   	(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail);
