@@ -2635,43 +2635,6 @@ fi
 define_in_config_if_yes $_nasm 'USE_NASM'
 
 #
-# Check for va_copy variant
-#
-
-echocheck va_copy availability
-
-_have_va_copy=no
-_have___va_copy=no
-
-cat > $TMPC <<EOF
-#include <stdarg.h>
-va_list ap1,ap2;
-int main(void) { va_copy(ap1,ap2); }
-EOF
-cc_check && _have_va_copy=yes
-
-if test "$_have_va_copy" = yes ; then
-	echo "... yes... va_copy()"
-else
-
-cat > $TMPC <<EOF
-#include <stdarg.h>
-va_list ap1,ap2;
-int main(void) { __va_copy(ap1,ap2); }
-EOF
-cc_check && _have___va_copy=yes
-
-if test "$_have___va_copy" = yes ; then
-	echo "... yes... __va_copy()"
-else
-	echo "... no"
-fi
-fi
-
-define_in_config_h_if_yes $_have_va_copy 'HAVE_VA_COPY'
-define_in_config_h_if_yes $_have___va_copy 'HAVE___VA_COPY'
-
-#
 # Enable vkeybd / keymapper
 #
 if test "$_vkeybd" = yes ; then
