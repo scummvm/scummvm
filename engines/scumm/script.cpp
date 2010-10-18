@@ -339,7 +339,7 @@ void ScummEngine::runScriptNested(int script) {
 
 	_currentScript = script;
 	getScriptBaseAddress();
-	getScriptEntryPoint();
+	resetScriptPointer();
 	executeScript();
 
 	if (vm.numNestedScripts != 0)
@@ -354,7 +354,7 @@ void ScummEngine::runScriptNested(int script) {
 				slot->status != ssDead && slot->freezeCount == 0) {
 			_currentScript = nest->slot;
 			getScriptBaseAddress();
-			getScriptEntryPoint();
+			resetScriptPointer();
 			return;
 		}
 	}
@@ -441,10 +441,25 @@ void ScummEngine::getScriptBaseAddress() {
 }
 
 
-void ScummEngine::getScriptEntryPoint() {
+void ScummEngine::resetScriptPointer() {
 	if (_currentScript == 0xFF)
 		return;
 	_scriptPointer = _scriptOrgPointer + vm.slot[_currentScript].offs;
+}
+
+/**
+ * This method checks whether the resource that contains the active script
+ * moved, and if so, updates the script pointer accordingly.
+ *
+ * The script resource may have moved because it might have been garbage
+ * collected by ResourceManager::expireResources.
+ */
+void ScummEngine::refreshScriptPointer() {
+	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
+		long oldoffs = _scriptPointer - _scriptOrgPointer;
+		getScriptBaseAddress();
+		_scriptPointer = _scriptOrgPointer + oldoffs;
+	}
 }
 
 /** Execute a script - Read opcode, and execute it from the table */
@@ -492,20 +507,12 @@ const char *ScummEngine::getOpcodeDesc(byte i) {
 }
 
 byte ScummEngine::fetchScriptByte() {
-	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
-		long oldoffs = _scriptPointer - _scriptOrgPointer;
-		getScriptBaseAddress();
-		_scriptPointer = _scriptOrgPointer + oldoffs;
-	}
+	refreshScriptPointer();
 	return *_scriptPointer++;
 }
 
 uint ScummEngine::fetchScriptWord() {
-	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
-		long oldoffs = _scriptPointer - _scriptOrgPointer;
-		getScriptBaseAddress();
-		_scriptPointer = _scriptOrgPointer + oldoffs;
-	}
+	refreshScriptPointer();
 	uint a = READ_LE_UINT16(_scriptPointer);
 	_scriptPointer += 2;
 	return a;
@@ -516,11 +523,7 @@ int ScummEngine::fetchScriptWordSigned() {
 }
 
 uint ScummEngine::fetchScriptDWord() {
-	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
-		long oldoffs = _scriptPointer - _scriptOrgPointer;
-		getScriptBaseAddress();
-		_scriptPointer = _scriptOrgPointer + oldoffs;
-	}
+	refreshScriptPointer();
 	uint a = READ_LE_UINT32(_scriptPointer);
 	_scriptPointer += 4;
 	return a;
@@ -898,7 +901,7 @@ void ScummEngine::runAllScripts() {
 			if (vm.slot[i].cycle == cycle && vm.slot[i].status == ssRunning && !vm.slot[i].didexec) {
 				_currentScript = (byte)i;
 				getScriptBaseAddress();
-				getScriptEntryPoint();
+				resetScriptPointer();
 				executeScript();
 			}
 		}

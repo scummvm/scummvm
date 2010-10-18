@@ -753,9 +753,10 @@ protected:
 	void stopObjectScript(int script);
 
 	void getScriptBaseAddress();
-	void getScriptEntryPoint();
+	void resetScriptPointer();
 	int getVerbEntrypoint(int obj, int entry);
 
+	void refreshScriptPointer();
 	byte fetchScriptByte();
 	virtual uint fetchScriptWord();
 	virtual int fetchScriptWordSigned();
