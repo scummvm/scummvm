@@ -222,13 +222,47 @@ bool GraphicEngine::GetVsync() const {
 bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 	Common::Rect rect(_width - 1, _height - 1);
 
+	int ca = (color >> 24) & 0xff;
+
+	if (ca == 0)
+		return true;
+
+	int cr = (color >> 16) & 0xff;
+	int cg = (color >> 8) & 0xff;
+	int cb = (color >> 0) & 0xff;
+
 	if (fillRectPtr) {
 		rect = *fillRectPtr;
 	}
 
-	if (fillRectPtr->width() > 0 && fillRectPtr->height() > 0) {
-		_backSurface.fillRect(rect, color);
-		g_system->copyRectToScreen((byte *)_backSurface.getBasePtr(fillRectPtr->left, fillRectPtr->top), _backSurface.pitch, fillRectPtr->left, fillRectPtr->top, fillRectPtr->width(), fillRectPtr->height());
+	if (rect.width() == 800 && rect.height() == 600)
+		debug(0, "[%d, %d, %d, %d], 0x%08x", rect.left, rect.top, rect.right, rect.bottom, color);
+
+	if (rect.width() > 0 && rect.height() > 0) {
+		if (ca == 0xff) {
+			_backSurface.fillRect(rect, color);
+		} else {
+			byte *outo = (byte *)_backSurface.getBasePtr(rect.left, rect.top);
+			byte *out;
+
+			for (int i = rect.top; i < rect.bottom; i++) {
+				out = outo;
+				for (int j = rect.left; j < rect.right; j++) {
+					*out += (byte)(((cb - *out) * ca) >> 8);
+					out++;
+					*out += (byte)(((cg - *out) * ca) >> 8);
+					out++;
+					*out += (byte)(((cr - *out) * ca) >> 8);
+					out++;
+					*out = 255;
+					out++;
+				}
+
+				outo += _backSurface.pitch;
+			}
+		}
+
+		g_system->copyRectToScreen((byte *)_backSurface.getBasePtr(rect.left, rect.top), _backSurface.pitch, rect.left, rect.top, rect.width(), rect.height());
 	}
 
 	return true;
