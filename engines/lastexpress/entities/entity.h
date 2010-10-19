@@ -368,7 +368,7 @@ public:
 	};
 
 	struct EntityCallParameters {
-		EntityParameters* parameters[4];
+		EntityParameters *parameters[4];
 
 		EntityCallParameters() {
 			// We default to int parameters
@@ -379,10 +379,10 @@ public:
 			clear();
 		}
 
-		template <class parameter>
+		template<class T>
 		void create() {
 			for (int i = 0; i < 4; i++)
-				parameters[i] = new parameter();
+				parameters[i] = new T();
 		}
 
 		void clear() {
@@ -487,10 +487,11 @@ public:
 
 	EntityData() {}
 
-	template <class parameter>
+	template<class T>
 	void resetCurrentParameters() {
-		_parameters[_data.currentCall].clear();
-		_parameters[_data.currentCall].create<parameter>();
+		EntityCallParameters *params = &_parameters[_data.currentCall];
+		params->clear();
+		params->create<T>();
 	}
 
 	EntityCallData 	  *getCallData() { return &_data; }
@@ -545,7 +546,7 @@ public:
 	void nullfunction(const SavePoint &savepoint) {}
 
 protected:
-	LastExpressEngine* _engine;
+	LastExpressEngine *_engine;
 
 	EntityIndex				  _entityIndex;
 	EntityData 				 *_data;
