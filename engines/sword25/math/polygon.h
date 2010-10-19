@@ -193,6 +193,11 @@ public:
 	virtual bool persist(OutputPersistenceBlock &writer);
 	virtual bool unpersist(InputPersistenceBlock &reader);
 
+	Polygon &operator=(const Polygon &p) {
+		init(p.vertexCount, p.vertices);
+		return *this;
+	}
+
 private:
 	bool _isCW;
 	bool _isConvex;
