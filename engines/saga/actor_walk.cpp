@@ -199,7 +199,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
 		actor->_inScene = false;
-		actor->_spriteList.freeMem();
+		actor->_spriteList.clear();
 		if (actor->_disabled) {
 			continue;
 		}

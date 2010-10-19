@@ -48,8 +48,8 @@ ActorData::ActorData() {
 ActorData::~ActorData() {
 	if (!_shareFrames)
 		free(_frames);
-	freeSpriteList();
 }
+
 void ActorData::saveState(Common::OutSaveFile *out) {
 	uint i = 0;
 	CommonObjectData::saveState(out);
@@ -149,10 +149,6 @@ void ActorData::cycleWrap(int cycleLimit) {
 void ActorData::addWalkStepPoint(const Point &point) {
 	_walkStepsPoints.resize(_walkStepsCount + 1);
 	_walkStepsPoints[_walkStepsCount++] = point;
-}
-
-void ActorData::freeSpriteList() {
-	_spriteList.freeMem();
 }
 
 static int commonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
@@ -393,13 +389,15 @@ void Actor::freeActorList() {
 }
 
 void Actor::loadActorSpriteList(ActorData *actor) {
-	int lastFrame = 0;
+	uint lastFrame = 0;
+	uint curFrameIndex;
 	int resourceId = actor->_spriteListResourceId;
 
 	for (int i = 0; i < actor->_framesCount; i++) {
 		for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
-			if (actor->_frames[i].directions[orient].frameIndex > lastFrame) {
-				lastFrame = actor->_frames[i].directions[orient].frameIndex;
+			curFrameIndex = actor->_frames[i].directions[orient].frameIndex;
+			if (curFrameIndex > lastFrame) {
+				lastFrame = curFrameIndex;
 			}
 		}
 	}
@@ -410,7 +408,7 @@ void Actor::loadActorSpriteList(ActorData *actor) {
 
 	if (_vm->getGameId() == GID_ITE) {
 		if (actor->_flags & kExtended) {
-			while ((lastFrame >= actor->_spriteList.spriteCount)) {
+			while ((lastFrame >= actor->_spriteList.size())) {
 				resourceId++;
 				debug(9, "Appending to actor sprite list %d", resourceId);
 				_vm->_sprite->loadList(resourceId, actor->_spriteList);
@@ -1126,19 +1124,20 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 		ActorData *actor = (ActorData *)commonObjectData;
 		spriteList = &(actor->_spriteList);
 		frameNumber = actor->_frameNumber;
-		if (spriteList->infoList == NULL)
+		if (spriteList->empty()) {
 			loadActorSpriteList(actor);
+		}
 
 	} else if (validObjId(commonObjectData->_id)) {
 		spriteList = &_vm->_sprite->_mainSprites;
 		frameNumber = commonObjectData->_spriteListResourceId;
 	}
 
-	if (spriteList->spriteCount == 0) {
+	if (spriteList->empty()) {
 		return false;
 	}
 
-	if ((frameNumber < 0) || (spriteList->spriteCount <= frameNumber)) {
+	if ((frameNumber < 0) || (spriteList->size() <= uint(frameNumber))) {
 		debug(1, "Actor::getSpriteParams frameNumber invalid for %s id 0x%X (%d)",
 				validObjId(commonObjectData->_id) ? "object" : "actor",
 				commonObjectData->_id, frameNumber);

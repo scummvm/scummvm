@@ -78,12 +78,6 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 
 Sprite::~Sprite() {
 	debug(8, "Shutting down sprite subsystem...");
-	_mainSprites.freeMem();
-	if (_vm->getGameId() == GID_IHNM) {
-		_inventorySprites.freeMem();
-		_arrowSprites.freeMem();
-		_saveReminderSprites.freeMem();
-	}
 	free(_decodeBuf);
 }
 
@@ -94,7 +88,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 	uint16 oldSpriteCount;
 	uint16 newSpriteCount;
 	uint16 spriteCount;
-	int i;
+	uint i;
 	int outputLength, inputLength;
 	uint32 offset;
 	const byte *spritePointer;
@@ -112,22 +106,15 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 	debug(9, "Sprites: %d", spriteCount);
 
-	oldSpriteCount = spriteList.spriteCount;
-	newSpriteCount = spriteList.spriteCount + spriteCount;
+	oldSpriteCount = spriteList.size();
+	newSpriteCount = oldSpriteCount + spriteCount;
 
-	SpriteInfo *tmp = (SpriteInfo *)realloc(spriteList.infoList, newSpriteCount * sizeof(*spriteList.infoList));
-	if ((tmp != NULL) || (newSpriteCount == 0)) {
-		spriteList.infoList = tmp;
-	} else {
-		error("Sprite::loadList(): Error while reallocating memory");
-	}
-
-	spriteList.spriteCount = newSpriteCount;
+	spriteList.resize(newSpriteCount);
 
 	bool bigHeader = _vm->getGameId() == GID_IHNM || _vm->isMacResources();
 
-	for (i = oldSpriteCount; i < spriteList.spriteCount; i++) {
-		spriteInfo = &spriteList.infoList[i];
+	for (i = oldSpriteCount; i < spriteList.size(); i++) {
+		spriteInfo = &spriteList[i];
 		if (bigHeader)
 			offset = readS.readUint32();
 		else
@@ -136,7 +123,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		if (offset >= spriteListLength) {
 			// ITE Mac demos throw this warning
 			warning("Sprite::loadList offset exceeded");
-			spriteList.spriteCount = i;
+			spriteList.resize(i);
 			return;
 		}
 
@@ -167,10 +154,8 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		outputLength = spriteInfo->width * spriteInfo->height;
 		inputLength = spriteListLength - (spriteDataPointer - spriteListData);
 		decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);
-		spriteInfo->decodedBuffer = (byte *) malloc(outputLength);
-		if (spriteInfo->decodedBuffer == NULL) {
-			memoryError("Sprite::loadList");
-		}
+		spriteInfo->decodedBuffer.resize(outputLength);
+		byte *dst = spriteInfo->getBuffer();
 
 #ifdef ENABLE_IHNM
 		// IHNM sprites are upside-down, for reasons which i can only
@@ -179,7 +164,6 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 		if (_vm->getGameId() == GID_IHNM) {
 			byte *src = _decodeBuf + spriteInfo->width * (spriteInfo->height - 1);
-			byte *dst = spriteInfo->decodedBuffer;
 
 			for (int j = 0; j < spriteInfo->height; j++) {
 				memcpy(dst, src, spriteInfo->width);
@@ -188,36 +172,36 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 			}
 		} else
 #endif
-			memcpy(spriteInfo->decodedBuffer, _decodeBuf, outputLength);
+			memcpy(dst, _decodeBuf, outputLength);
 	}
 
 	free(spriteListData);
 }
 
-void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, int spriteNumber, int scale, int &width, int &height, int &xAlign, int &yAlign, const byte *&buffer) {
+void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, uint spriteNumber, int scale, int &width, int &height, int &xAlign, int &yAlign, const byte *&buffer) {
 	SpriteInfo *spriteInfo;
 
-	if (spriteList.spriteCount <= spriteNumber) {
+	if (spriteList.size() <= spriteNumber) {
 		// this can occur in IHNM while loading a saved game from chapter 1-5 when being in the end chapter
-		warning("spriteList.spriteCount <= spriteNumber");
+		warning("spriteList.size() <= spriteNumber");
 		return;
 	}
 
-	spriteInfo = &spriteList.infoList[spriteNumber];
+	spriteInfo = &spriteList[spriteNumber];
 
 	if (scale < 256) {
 		xAlign = (spriteInfo->xAlign * scale) >> 8;
 		yAlign = (spriteInfo->yAlign * scale) >> 8;
 		height = (spriteInfo->height * scale + 0x7f) >> 8;
 		width = (spriteInfo->width * scale + 0x7f) >> 8;
-		scaleBuffer(spriteInfo->decodedBuffer, spriteInfo->width, spriteInfo->height, scale);
+		scaleBuffer(spriteInfo->getBuffer(), spriteInfo->width, spriteInfo->height, scale);
 		buffer = _decodeBuf;
 	} else {
 		xAlign = spriteInfo->xAlign;
 		yAlign = spriteInfo->yAlign;
 		height = spriteInfo->height;
 		width = spriteInfo->width;
-		buffer = spriteInfo->decodedBuffer;
+		buffer = spriteInfo->getBuffer();
 	}
 }
 
@@ -272,7 +256,7 @@ void Sprite::drawClip(const Point &spritePointer, int width, int height, const b
 		_vm->_render->addDirtyRect(Common::Rect(x1, y1, x2, y2));
 }
 
-void Sprite::draw(SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale, bool clipToScene) {
+void Sprite::draw(SpriteList &spriteList, uint spriteNumber, const Point &screenCoord, int scale, bool clipToScene) {
 	const byte *spriteBuffer = NULL;
 	int width  = 0;
 	int height = 0;
@@ -288,7 +272,7 @@ void Sprite::draw(SpriteList &spriteList, int32 spriteNumber, const Point &scree
 	drawClip(spritePointer, width, height, spriteBuffer, clipToScene);
 }
 
-void Sprite::draw(SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale, bool clipToScene) {
+void Sprite::draw(SpriteList &spriteList, uint spriteNumber, const Rect &screenRect, int scale, bool clipToScene) {
 	const byte *spriteBuffer = NULL;
 	int width  = 0;
 	int height = 0;
@@ -312,7 +296,7 @@ void Sprite::draw(SpriteList &spriteList, int32 spriteNumber, const Rect &screen
 	drawClip(spritePointer, width, height, spriteBuffer, clipToScene);
 }
 
-bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, const Point &testPoint) {
+bool Sprite::hitTest(SpriteList &spriteList, uint spriteNumber, const Point &screenCoord, int scale, const Point &testPoint) {
 	const byte *spriteBuffer = NULL;
 	int i, j;
 	const byte *srcRowPointer;
@@ -339,7 +323,7 @@ bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &scre
 	return *srcRowPointer != 0;
 }
 
-void Sprite::drawOccluded(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth) {
+void Sprite::drawOccluded(SpriteList &spriteList, uint spriteNumber, const Point &screenCoord, int scale, int depth) {
 	const byte *spriteBuffer = NULL;
 	int x, y;
 	byte *destRowPointer;

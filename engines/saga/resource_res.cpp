@@ -139,7 +139,7 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	}
 	free(resourcePointer);
 
-	_vm->_interface->_defPortraits.freeMem();
+	_vm->_interface->_defPortraits.clear();
 	_vm->_sprite->loadList(_metaResource.protagFaceSpritesID, _vm->_interface->_defPortraits);
 
 	_vm->_actor->_actorsStrings.freeMem();
@@ -148,10 +148,10 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->loadStrings(_vm->_actor->_actorsStrings, resourcePointer, resourceLength);
 	free(resourcePointer);
 
-	_vm->_sprite->_inventorySprites.freeMem();
+	_vm->_sprite->_inventorySprites.clear();
 	_vm->_sprite->loadList(_metaResource.inventorySpritesID, _vm->_sprite->_inventorySprites);
 
-	_vm->_sprite->_mainSprites.freeMem();
+	_vm->_sprite->_mainSprites.clear();
 	_vm->_sprite->loadList(_metaResource.mainSpritesID, _vm->_sprite->_mainSprites);
 
 	_vm->_actor->loadObjList(_metaResource.objectCount, _metaResource.objectsResourceID);

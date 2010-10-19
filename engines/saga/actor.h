@@ -396,7 +396,6 @@ public:
 
 	void cycleWrap(int cycleLimit);
 	void addWalkStepPoint(const Point &point);
-	void freeSpriteList();
 };
 
 struct ProtagStateData {

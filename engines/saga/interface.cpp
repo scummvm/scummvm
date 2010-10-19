@@ -197,7 +197,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	} else {
 		_optionPanel.buttons = NULL;
 		_optionPanel.buttonsCount = 0;
-		_optionPanel.sprites.spriteCount = 0;
+		_optionPanel.sprites.clear();
 	}
 
 #ifdef ENABLE_IHNM
@@ -353,17 +353,6 @@ Interface::~Interface() {
 	free(_quitPanel.image);
 	free(_loadPanel.image);
 	free(_savePanel.image);
-
-	_mainPanel.sprites.freeMem();
-	_conversePanel.sprites.freeMem();
-	_optionPanel.sprites.freeMem();
-	_quitPanel.sprites.freeMem();
-	_loadPanel.sprites.freeMem();
-	_savePanel.sprites.freeMem();
-	_protectPanel.sprites.freeMem();
-
-	_defPortraits.freeMem();
-	_scenePortraits.freeMem();
 }
 
 void Interface::saveReminderCallback(void *refCon) {
@@ -768,7 +757,7 @@ void Interface::setStatusText(const char *text, int statusColor) {
 }
 
 void Interface::loadScenePortraits(int resourceId) {
-	_scenePortraits.freeMem();
+	_scenePortraits.clear();
 
 	_vm->_sprite->loadList(resourceId, _scenePortraits);
 }
@@ -847,7 +836,7 @@ void Interface::draw() {
 		// can tell this is what the original engine does. And it keeps
 		// ITE from crashing when entering the Elk King's court.
 
-		if (_rightPortrait >= _scenePortraits.spriteCount)
+		if (_rightPortrait >= _scenePortraits.size())
 			_rightPortrait = 0;
 
 		_vm->_sprite->draw(_scenePortraits, _rightPortrait, rightPortraitPoint, 256);
