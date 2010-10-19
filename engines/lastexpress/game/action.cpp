@@ -638,18 +638,14 @@ IMPLEMENT_ACTION(setItemLocation)
 		return kSceneInvalid;
 
 	Inventory::InventoryEntry* entry = getInventory()->get(item);
-	if (!entry->isPresent)
+	if (entry->isPresent)
 		return kSceneInvalid;
 
 	entry->location = (ObjectLocation)hotspot.param2;
 
 	if (item == kItemCorpse) {
 		ObjectLocation corpseLocation = getInventory()->get(kItemCorpse)->location;
-
-		if (corpseLocation == kObjectLocation3 || corpseLocation == kObjectLocation4)
-			getProgress().eventCorpseMovedFromFloor = true;
-		else
-			getProgress().eventCorpseMovedFromFloor = false;
+		getProgress().eventCorpseMovedFromFloor = (corpseLocation == kObjectLocation3 || corpseLocation == kObjectLocation4);
 	}
 
 	return kSceneInvalid;
@@ -1514,20 +1510,20 @@ void Action::pickCorpse(ObjectLocation bedPosition, bool process) const {
 
 	// Floor
 	case kObjectLocation1:
-		if (bedPosition != 4) {
-			playAnimation(getProgress().jacket == kJacketGreen ? kEventCorpsePickFloorGreen : kEventCorpsePickFloorOriginal);
+		// Bed is fully opened, move corpse directly there
+		if (bedPosition == 4) {
+			playAnimation(kEventCorpsePickFloorOpenedBedOriginal);
+
+			getInventory()->get(kItemCorpse)->location = kObjectLocation5;
 			break;
 		}
 
-		if (getProgress().jacket)
-			playAnimation(kEventCorpsePickFloorOpenedBedOriginal);
-
-		getInventory()->get(kItemCorpse)->location = kObjectLocation5;
+		playAnimation(getProgress().jacket == kJacketGreen ? kEventCorpsePickFloorGreen : kEventCorpsePickFloorOriginal);
 		break;
 
 	// Bed
 	case kObjectLocation2:
-		playAnimation(getProgress().jacket == kJacketGreen ? kEventCorpsePickFloorGreen : kEventCorpsePickBedOriginal);
+		playAnimation(getProgress().jacket == kJacketGreen ? kEventCorpsePickBedGreen : kEventCorpsePickBedOriginal);
 		break;
 	}
 
@@ -1535,7 +1531,7 @@ void Action::pickCorpse(ObjectLocation bedPosition, bool process) const {
 		getScenes()->processScene();
 
 	// Add corpse to inventory
-	if (bedPosition != 4) { // bed position
+	if (bedPosition != 4) { // bed is not fully opened
 		getInventory()->addItem(kItemCorpse);
 		getInventory()->selectItem(kItemCorpse);
 		_engine->getCursor()->setStyle(kCursorCorpse);
@@ -1765,7 +1761,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 			return kCursorNormal;
 
 		if ((!getInventory()->getSelectedItem() || getInventory()->getSelectedEntry()->manualSelect)
-		 && (object != kObject21 || getProgress().eventCorpseMovedFromFloor == 1))
+		 && (object != kObject21 || getProgress().eventCorpseMovedFromFloor == true))
 			return kCursorHand;
 		else
 			return kCursorNormal;
