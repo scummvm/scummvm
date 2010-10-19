@@ -42,9 +42,6 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "BITMAP"
 
-// Konstruktion / Destruktion
-// --------------------------
-
 BitmapResource::BitmapResource(const Common::String &filename, Image *pImage) :
 	_valid(false),
 	_pImage(pImage),
@@ -55,8 +52,6 @@ BitmapResource::BitmapResource(const Common::String &filename, Image *pImage) :
 BitmapResource::~BitmapResource() {
 	delete _pImage;
 }
-
-// -----------------------------------------------------------------------------
 
 uint BitmapResource::getPixel(int x, int y) const {
 	BS_ASSERT(x >= 0 && x < _pImage->getWidth());

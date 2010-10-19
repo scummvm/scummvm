@@ -36,10 +36,6 @@
 // Entweder Fontfile absolut abspeichern, oder Verzeichniswechseln verbieten
 // Eine relative Fontfile-Angabe könnte verwandt werden nachdem das Verzeichnis bereits gewechselt wurde und die Datei würde nicht mehr gefunden
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
@@ -52,64 +48,48 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "TEXT"
 
-// -----------------------------------------------------------------------------
-// Konstanten
-// -----------------------------------------------------------------------------
-
 namespace {
 const uint AUTO_WRAP_THRESHOLD_DEFAULT = 300;
 }
 
-// -----------------------------------------------------------------------------
-// Konstruktion / Destruktion
-// -----------------------------------------------------------------------------
-
-Text::Text(RenderObjectPtr<RenderObject> ParentPtr) :
-	RenderObject(ParentPtr, RenderObject::TYPE_TEXT),
+Text::Text(RenderObjectPtr<RenderObject> parentPtr) :
+	RenderObject(parentPtr, RenderObject::TYPE_TEXT),
 	_modulationColor(0xffffffff),
-	m_AutoWrap(false),
-	m_AutoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {
+	_autoWrap(false),
+	_autoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {
 
 }
 
-// -----------------------------------------------------------------------------
-
-Text::Text(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle) :
-		RenderObject(ParentPtr, TYPE_TEXT, Handle),
+Text::Text(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle) :
+		RenderObject(parentPtr, TYPE_TEXT, handle),
 		// Temporarily set fields prior to unpersisting actual values
 		_modulationColor(0xffffffff),
-		m_AutoWrap(false),
-		m_AutoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {	
+		_autoWrap(false),
+		_autoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {	
 
 	// Unpersist the fields
-	_initSuccess = unpersist(Reader);
+	_initSuccess = unpersist(reader);
 }
 
-// -----------------------------------------------------------------------------
-
-bool Text::SetFont(const Common::String &Font) {
+bool Text::setFont(const Common::String &font) {
 	// Font precachen.
-	if (GetResourceManager()->PrecacheResource(Font)) {
-		m_Font = Font;
-		UpdateFormat();
+	if (getResourceManager()->PrecacheResource(font)) {
+		_font = font;
+		updateFormat();
 		forceRefresh();
 		return true;
 	} else {
-		BS_LOG_ERRORLN("Could not precache font \"%s\". Font probably does not exist.", Font.c_str());
+		BS_LOG_ERRORLN("Could not precache font \"%s\". Font probably does not exist.", font.c_str());
 		return false;
 	}
 
 }
 
-// -----------------------------------------------------------------------------
-
-void Text::SetText(const Common::String &text) {
-	m_Text = text;
-	UpdateFormat();
+void Text::setText(const Common::String &text) {
+	_text = text;
+	updateFormat();
 	forceRefresh();
 }
-
-// -----------------------------------------------------------------------------
 
 void Text::setColor(uint modulationColor) {
 	uint newModulationColor = (modulationColor & 0x00ffffff) | (_modulationColor & 0xff000000);
@@ -118,8 +98,6 @@ void Text::setColor(uint modulationColor) {
 		forceRefresh();
 	}
 }
-
-// -----------------------------------------------------------------------------
 
 void Text::setAlpha(int alpha) {
 	BS_ASSERT(alpha >= 0 && alpha < 256);
@@ -130,214 +108,204 @@ void Text::setAlpha(int alpha) {
 	}
 }
 
-// -----------------------------------------------------------------------------
-
-void Text::SetAutoWrap(bool AutoWrap) {
-	if (AutoWrap != m_AutoWrap) {
-		m_AutoWrap = AutoWrap;
-		UpdateFormat();
+void Text::setAutoWrap(bool autoWrap) {
+	if (autoWrap != _autoWrap) {
+		_autoWrap = autoWrap;
+		updateFormat();
 		forceRefresh();
 	}
 }
 
-// -----------------------------------------------------------------------------
-
-void Text::SetAutoWrapThreshold(uint AutoWrapThreshold) {
-	if (AutoWrapThreshold != m_AutoWrapThreshold) {
-		m_AutoWrapThreshold = AutoWrapThreshold;
-		UpdateFormat();
+void Text::setAutoWrapThreshold(uint autoWrapThreshold) {
+	if (autoWrapThreshold != _autoWrapThreshold) {
+		_autoWrapThreshold = autoWrapThreshold;
+		updateFormat();
 		forceRefresh();
 	}
 }
-
-// -----------------------------------------------------------------------------
 
 bool Text::doRender() {
 	// Font-Resource locken.
-	FontResource *FontPtr = LockFontResource();
-	if (!FontPtr) return false;
+	FontResource *fontPtr = lockFontResource();
+	if (!fontPtr)
+		return false;
 
 	// Charactermap-Resource locken.
-	ResourceManager *RMPtr = GetResourceManager();
-	BitmapResource *CharMapPtr;
+	ResourceManager *rmPtr = getResourceManager();
+	BitmapResource *charMapPtr;
 	{
-		Resource *pResource = RMPtr->RequestResource(FontPtr->GetCharactermapFileName());
+		Resource *pResource = rmPtr->RequestResource(fontPtr->getCharactermapFileName());
 		if (!pResource) {
-			BS_LOG_ERRORLN("Could not request resource \"%s\".", FontPtr->GetCharactermapFileName().c_str());
+			BS_LOG_ERRORLN("Could not request resource \"%s\".", fontPtr->getCharactermapFileName().c_str());
 			return false;
 		}
 		if (pResource->GetType() != Resource::TYPE_BITMAP) {
-			BS_LOG_ERRORLN("Requested resource \"%s\" is not a bitmap.", FontPtr->GetCharactermapFileName().c_str());
+			BS_LOG_ERRORLN("Requested resource \"%s\" is not a bitmap.", fontPtr->getCharactermapFileName().c_str());
 			return false;
 		}
 
-		CharMapPtr = static_cast<BitmapResource *>(pResource);
+		charMapPtr = static_cast<BitmapResource *>(pResource);
 	}
 
 	// Framebufferobjekt holen.
-	GraphicEngine *GfxPtr = Kernel::GetInstance()->GetGfx();
-	BS_ASSERT(GfxPtr);
+	GraphicEngine *gfxPtr = Kernel::GetInstance()->GetGfx();
+	BS_ASSERT(gfxPtr);
 
-	bool Result = true;
-	Common::Array<LINE>::iterator Iter = m_Lines.begin();
-	for (; Iter != m_Lines.end(); ++Iter) {
+	bool result = true;
+	Common::Array<Line>::iterator iter = _lines.begin();
+	for (; iter != _lines.end(); ++iter) {
 		// Feststellen, ob überhaupt Buchstaben der aktuellen Zeile vom Update betroffen sind.
-		Common::Rect CheckRect = (*Iter).BBox;
-		CheckRect.translate(_absoluteX, _absoluteY);
+		Common::Rect checkRect = (*iter).bbox;
+		checkRect.translate(_absoluteX, _absoluteY);
 
 		// Jeden Buchstaben einzeln Rendern.
-		int CurX = _absoluteX + (*Iter).BBox.left;
-		int CurY = _absoluteY + (*Iter).BBox.top;
-		for (uint i = 0; i < (*Iter).Text.size(); ++i) {
-			Common::Rect CurRect = FontPtr->GetCharacterRect((byte)(*Iter).Text[i]);
+		int curX = _absoluteX + (*iter).bbox.left;
+		int curY = _absoluteY + (*iter).bbox.top;
+		for (uint i = 0; i < (*iter).text.size(); ++i) {
+			Common::Rect curRect = fontPtr->getCharacterRect((byte)(*iter).text[i]);
 
-			Common::Rect RenderRect(CurX, CurY, CurX + CurRect.width(), CurY + CurRect.height());
-			int RenderX = CurX + (RenderRect.left - RenderRect.left);
-			int RenderY = CurY + (RenderRect.top - RenderRect.top);
-			RenderRect.translate(CurRect.left - CurX, CurRect.top - CurY);
-			Result = CharMapPtr->blit(RenderX, RenderY, Image::FLIP_NONE, &RenderRect, _modulationColor);
-			if (!Result) break;
+			Common::Rect renderRect(curX, curY, curX + curRect.width(), curY + curRect.height());
+			int renderX = curX + (renderRect.left - renderRect.left);
+			int renderY = curY + (renderRect.top - renderRect.top);
+			renderRect.translate(curRect.left - curX, curRect.top - curY);
+			result = charMapPtr->blit(renderX, renderY, Image::FLIP_NONE, &renderRect, _modulationColor);
+			if (!result)
+				break;
 
-			CurX += CurRect.width() + FontPtr->GetGapWidth();
+			curX += curRect.width() + fontPtr->getGapWidth();
 		}
 	}
 
 	// Charactermap-Resource freigeben.
-	CharMapPtr->release();
+	charMapPtr->release();
 
 	// Font-Resource freigeben.
-	FontPtr->release();
+	fontPtr->release();
 
-	return Result;
+	return result;
 }
 
-// -----------------------------------------------------------------------------
-
-ResourceManager *Text::GetResourceManager() {
+ResourceManager *Text::getResourceManager() {
 	// Pointer auf den Resource-Manager holen.
 	return Kernel::GetInstance()->GetResourceManager();
 }
 
-// -----------------------------------------------------------------------------
-
-FontResource *Text::LockFontResource() {
-	ResourceManager *RMPtr = GetResourceManager();
+FontResource *Text::lockFontResource() {
+	ResourceManager *rmPtr = getResourceManager();
 
 	// Font-Resource locken.
-	FontResource *FontPtr;
+	FontResource *fontPtr;
 	{
-		Resource *ResourcePtr = RMPtr->RequestResource(m_Font);
-		if (!ResourcePtr) {
-			BS_LOG_ERRORLN("Could not request resource \"%s\".", m_Font.c_str());
+		Resource *resourcePtr = rmPtr->RequestResource(_font);
+		if (!resourcePtr) {
+			BS_LOG_ERRORLN("Could not request resource \"%s\".", _font.c_str());
 			return NULL;
 		}
-		if (ResourcePtr->GetType() != Resource::TYPE_FONT) {
-			BS_LOG_ERRORLN("Requested resource \"%s\" is not a font.", m_Font.c_str());
+		if (resourcePtr->GetType() != Resource::TYPE_FONT) {
+			BS_LOG_ERRORLN("Requested resource \"%s\" is not a font.", _font.c_str());
 			return NULL;
 		}
 
-		FontPtr = static_cast<FontResource *>(ResourcePtr);
+		fontPtr = static_cast<FontResource *>(resourcePtr);
 	}
 
-	return FontPtr;
+	return fontPtr;
 }
 
-// -----------------------------------------------------------------------------
+void Text::updateFormat() {
+	FontResource *fontPtr = lockFontResource();
+	BS_ASSERT(fontPtr);
 
-void Text::UpdateFormat() {
-	FontResource *FontPtr = LockFontResource();
-	BS_ASSERT(FontPtr);
+	updateMetrics(*fontPtr);
 
-	UpdateMetrics(*FontPtr);
-
-	m_Lines.resize(1);
-	if (m_AutoWrap && (uint) _width >= m_AutoWrapThreshold && m_Text.size() >= 2) {
+	_lines.resize(1);
+	if (_autoWrap && (uint) _width >= _autoWrapThreshold && _text.size() >= 2) {
 		_width = 0;
-		uint CurLineWidth = 0;
-		uint CurLineHeight = 0;
-		uint CurLine = 0;
-		uint TempLineWidth = 0;
-		uint LastSpace = 0; // we need at least 1 space character to start a new line...
-		m_Lines[0].Text = "";
-		for (uint i = 0; i < m_Text.size(); ++i) {
+		uint curLineWidth = 0;
+		uint curLineHeight = 0;
+		uint curLine = 0;
+		uint tempLineWidth = 0;
+		uint lastSpace = 0; // we need at least 1 space character to start a new line...
+		_lines[0].text = "";
+		for (uint i = 0; i < _text.size(); ++i) {
 			uint j;
-			TempLineWidth = 0;
-			LastSpace = 0;
-			for (j = i; j < m_Text.size(); ++j) {
-				if ((byte)m_Text[j] == ' ') LastSpace = j;
+			tempLineWidth = 0;
+			lastSpace = 0;
+			for (j = i; j < _text.size(); ++j) {
+				if ((byte)_text[j] == ' ')
+					lastSpace = j;
 
-				const Common::Rect &CurCharRect = FontPtr->GetCharacterRect((byte)m_Text[j]);
-				TempLineWidth += CurCharRect.width();
-				TempLineWidth += FontPtr->GetGapWidth();
+				const Common::Rect &curCharRect = fontPtr->getCharacterRect((byte)_text[j]);
+				tempLineWidth += curCharRect.width();
+				tempLineWidth += fontPtr->getGapWidth();
 
-				if ((TempLineWidth >= m_AutoWrapThreshold) && (LastSpace > 0))
+				if ((tempLineWidth >= _autoWrapThreshold) && (lastSpace > 0))
 					break;
 			}
 
-			if (j == m_Text.size()) LastSpace = m_Text.size(); // everything in 1 line.
+			if (j == _text.size()) // everything in 1 line.
+				lastSpace = _text.size();
 
-			CurLineWidth = 0;
-			CurLineHeight = 0;
-			for (j = i; j < LastSpace; ++j) {
-				m_Lines[CurLine].Text += m_Text[j];
+			curLineWidth = 0;
+			curLineHeight = 0;
+			for (j = i; j < lastSpace; ++j) {
+				_lines[curLine].text += _text[j];
 
-				const Common::Rect &CurCharRect = FontPtr->GetCharacterRect((byte)m_Text[j]);
-				CurLineWidth += CurCharRect.width();
-				CurLineWidth += FontPtr->GetGapWidth();
-				if ((uint) CurCharRect.height() > CurLineHeight) CurLineHeight = CurCharRect.height();
+				const Common::Rect &curCharRect = fontPtr->getCharacterRect((byte)_text[j]);
+				curLineWidth += curCharRect.width();
+				curLineWidth += fontPtr->getGapWidth();
+				if ((uint)curCharRect.height() > curLineHeight)
+					curLineHeight = curCharRect.height();
 			}
 
-			m_Lines[CurLine].BBox.right = CurLineWidth;
-			m_Lines[CurLine].BBox.bottom = CurLineHeight;
-			if ((uint) _width < CurLineWidth) _width = CurLineWidth;
+			_lines[curLine].bbox.right = curLineWidth;
+			_lines[curLine].bbox.bottom = curLineHeight;
+			if ((uint)_width < curLineWidth)
+				_width = curLineWidth;
 
-			if (LastSpace < m_Text.size()) {
-				++CurLine;
-				BS_ASSERT(CurLine == m_Lines.size());
-				m_Lines.resize(CurLine + 1);
-				m_Lines[CurLine].Text = "";
+			if (lastSpace < _text.size()) {
+				++curLine;
+				BS_ASSERT(curLine == _lines.size());
+				_lines.resize(curLine + 1);
+				_lines[curLine].text = "";
 			}
 
-			i = LastSpace;
+			i = lastSpace;
 		}
 
 		// Bounding-Box der einzelnen Zeilen relativ zur ersten festlegen (vor allem zentrieren).
 		_height = 0;
-		Common::Array<LINE>::iterator Iter = m_Lines.begin();
-		for (; Iter != m_Lines.end(); ++Iter) {
-			Common::Rect &BBox = (*Iter).BBox;
-			BBox.left = (_width - BBox.right) / 2;
-			BBox.right = BBox.left + BBox.right;
-			BBox.top = (Iter - m_Lines.begin()) * FontPtr->GetLineHeight();
-			BBox.bottom = BBox.top + BBox.bottom;
-			_height += BBox.height();
+		Common::Array<Line>::iterator iter = _lines.begin();
+		for (; iter != _lines.end(); ++iter) {
+			Common::Rect &bbox = (*iter).bbox;
+			bbox.left = (_width - bbox.right) / 2;
+			bbox.right = bbox.left + bbox.right;
+			bbox.top = (iter - _lines.begin()) * fontPtr->getLineHeight();
+			bbox.bottom = bbox.top + bbox.bottom;
+			_height += bbox.height();
 		}
 	} else {
 		// Keine automatische Formatierung, also wird der gesamte Text in nur eine Zeile kopiert.
-		m_Lines[0].Text = m_Text;
-		m_Lines[0].BBox = Common::Rect(0, 0, _width, _height);
+		_lines[0].text = _text;
+		_lines[0].bbox = Common::Rect(0, 0, _width, _height);
 	}
 
-	FontPtr->release();
+	fontPtr->release();
 }
 
-// -----------------------------------------------------------------------------
-
-void Text::UpdateMetrics(FontResource &fontResource) {
+void Text::updateMetrics(FontResource &fontResource) {
 	_width = 0;
 	_height = 0;
 
-	for (uint i = 0; i < m_Text.size(); ++i) {
-		const Common::Rect &CurRect = fontResource.GetCharacterRect((byte)m_Text[i]);
-		_width += CurRect.width();
-		if (i != m_Text.size() - 1) _width += fontResource.GetGapWidth();
-		if (_height < CurRect.height()) _height = CurRect.height();
+	for (uint i = 0; i < _text.size(); ++i) {
+		const Common::Rect &curRect = fontResource.getCharacterRect((byte)_text[i]);
+		_width += curRect.width();
+		if (i != _text.size() - 1)
+			_width += fontResource.getGapWidth();
+		if (_height < curRect.height())
+			_height = curRect.height();
 	}
 }
-
-// -----------------------------------------------------------------------------
-// Persistenz
-// -----------------------------------------------------------------------------
 
 bool Text::persist(OutputPersistenceBlock &writer) {
 	bool result = true;
@@ -345,10 +313,10 @@ bool Text::persist(OutputPersistenceBlock &writer) {
 	result &= RenderObject::persist(writer);
 
 	writer.write(_modulationColor);
-	writer.write(m_Font);
-	writer.write(m_Text);
-	writer.write(m_AutoWrap);
-	writer.write(m_AutoWrapThreshold);
+	writer.write(_font);
+	writer.write(_text);
+	writer.write(_autoWrap);
+	writer.write(_autoWrapThreshold);
 
 	result &= RenderObject::persistChildren(writer);
 
@@ -366,21 +334,21 @@ bool Text::unpersist(InputPersistenceBlock &reader) {
 	// Beim Laden der anderen Member werden die Set-Methoden benutzt statt der tatsächlichen Member.
 	// So wird das Layout automatisch aktualisiert und auch alle anderen notwendigen Methoden ausgeführt.
 
-	Common::String Font;
-	reader.read(Font);
-	SetFont(Font);
+	Common::String font;
+	reader.read(font);
+	setFont(font);
 
 	Common::String text;
 	reader.read(text);
-	SetText(text);
+	setText(text);
 
-	bool AutoWrap;
-	reader.read(AutoWrap);
-	SetAutoWrap(AutoWrap);
+	bool autoWrap;
+	reader.read(autoWrap);
+	setAutoWrap(autoWrap);
 
-	uint AutoWrapThreshold;
-	reader.read(AutoWrapThreshold);
-	SetAutoWrapThreshold(AutoWrapThreshold);
+	uint autoWrapThreshold;
+	reader.read(autoWrapThreshold);
+	setAutoWrapThreshold(autoWrapThreshold);
 
 	result &= RenderObject::unpersistChildren(reader);
 

@@ -35,18 +35,10 @@
 #ifndef SWORD25_PANEL_H
 #define SWORD25_PANEL_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobject.h"
 
 namespace Sword25 {
-
-// -----------------------------------------------------------------------------
-// Class Definition
-// -----------------------------------------------------------------------------
 
 class Panel : public RenderObject {
 	friend class RenderObject;
@@ -58,10 +50,10 @@ private:
 public:
 	virtual ~Panel();
 
-	uint    getColor() const {
+	uint getColor() const {
 		return _color;
 	}
-	void            setColor(uint color) {
+	void setColor(uint color) {
 		_color = color;
 		forceRefresh();
 	}

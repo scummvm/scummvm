@@ -35,18 +35,10 @@
 #ifndef SWORD25_STATIC_BITMAP_H
 #define SWORD25_STATIC_BITMAP_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/bitmap.h"
 
 namespace Sword25 {
-
-// -----------------------------------------------------------------------------
-// Klassendeklaration
-// -----------------------------------------------------------------------------
 
 class StaticBitmap : public Bitmap {
 	friend class RenderObject;
@@ -63,20 +55,20 @@ public:
 
 	virtual uint getPixel(int x, int y) const;
 
-	virtual bool    setContent(const byte *pixeldata, uint size, uint offset, uint stride);
+	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride);
 
-	virtual bool    isScalingAllowed() const;
-	virtual bool    isAlphaAllowed() const;
-	virtual bool    isColorModulationAllowed() const;
-	virtual bool    isSetContentAllowed() const {
+	virtual bool isScalingAllowed() const;
+	virtual bool isAlphaAllowed() const;
+	virtual bool isColorModulationAllowed() const;
+	virtual bool isSetContentAllowed() const {
 		return false;
 	}
 
-	virtual bool    persist(OutputPersistenceBlock &writer);
-	virtual bool    unpersist(InputPersistenceBlock &reader);
+	virtual bool persist(OutputPersistenceBlock &writer);
+	virtual bool unpersist(InputPersistenceBlock &reader);
 
 protected:
-	virtual bool    doRender();
+	virtual bool doRender();
 
 private:
 	Common::String _resourceFilename;

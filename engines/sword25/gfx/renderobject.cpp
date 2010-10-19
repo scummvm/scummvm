@@ -53,8 +53,6 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "RENDEROBJECT"
 
-// Konstruktion / Destruktion
-// --------------------------
 RenderObject::RenderObject(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle) :
 	_managerPtr(0),
 	_parentPtr(parentPtr),
@@ -113,8 +111,6 @@ RenderObject::~RenderObject() {
 	RenderObjectRegistry::instance().deregisterObject(this);
 }
 
-// Rendern
-// -------
 bool RenderObject::render() {
 	// Objektänderungen validieren
 	validateObject();
@@ -140,9 +136,6 @@ bool RenderObject::render() {
 
 	return true;
 }
-
-// Objektverwaltung
-// ----------------
 
 void RenderObject::validateObject() {
 	// Die Veränderungen in den Objektvariablen aufheben
@@ -222,9 +215,6 @@ int RenderObject::calcAbsoluteY() const {
 		return _y;
 }
 
-// Baumverwaltung
-// --------------
-
 void RenderObject::deleteAllChildren() {
 	// Es ist nicht notwendig die Liste zu iterieren, da jedes Kind für sich DetatchChildren an diesem Objekt aufruft und sich somit
 	// selber entfernt. Daher muss immer nur ein beliebiges Element (hier das letzte) gelöscht werden, bis die Liste leer ist.
@@ -275,17 +265,12 @@ void RenderObject::updateAbsolutePos() {
 		(*it)->updateAbsolutePos();
 }
 
-// Get-Methoden
-// ------------
-
 bool RenderObject::getObjectIntersection(RenderObjectPtr<RenderObject> pObject, Common::Rect &result) {
 	result = pObject->getBbox();
 	result.clip(_bbox);
 	return result.isValidRect();
 }
 
-// Set-Methoden
-// ------------
 void RenderObject::setPos(int x, int y) {
 	_x = x;
 	_y = y;
@@ -313,10 +298,6 @@ void RenderObject::setVisible(bool visible) {
 	_visible = visible;
 }
 
-// -----------------------------------------------------------------------------
-// Objekterzeuger
-// -----------------------------------------------------------------------------
-
 RenderObjectPtr<Animation> RenderObject::addAnimation(const Common::String &filename) {
 	RenderObjectPtr<Animation> aniPtr((new Animation(this->getHandle(), filename))->getHandle());
 	if (aniPtr.isValid() && aniPtr->getInitSuccess())
@@ -328,9 +309,6 @@ RenderObjectPtr<Animation> RenderObject::addAnimation(const Common::String &file
 	}
 }
 
-
-// -----------------------------------------------------------------------------
-
 RenderObjectPtr<Animation> RenderObject::addAnimation(const AnimationTemplate &animationTemplate) {
 	Animation *aniPtr = new Animation(this->getHandle(), animationTemplate);
 	if (aniPtr && aniPtr->getInitSuccess())
@@ -340,8 +318,6 @@ RenderObjectPtr<Animation> RenderObject::addAnimation(const AnimationTemplate &a
 		return RenderObjectPtr<Animation>();
 	}
 }
-
-// -----------------------------------------------------------------------------
 
 RenderObjectPtr<Bitmap> RenderObject::addBitmap(const Common::String &filename) {
 	RenderObjectPtr<Bitmap> bitmapPtr((new StaticBitmap(this->getHandle(), filename))->getHandle());
@@ -354,8 +330,6 @@ RenderObjectPtr<Bitmap> RenderObject::addBitmap(const Common::String &filename) 
 	}
 }
 
-// -----------------------------------------------------------------------------
-
 RenderObjectPtr<Bitmap> RenderObject::addDynamicBitmap(uint width, uint height) {
 	RenderObjectPtr<Bitmap> bitmapPtr((new DynamicBitmap(this->getHandle(), width, height))->getHandle());
 	if (bitmapPtr.isValid() && bitmapPtr->getInitSuccess())
@@ -366,8 +340,6 @@ RenderObjectPtr<Bitmap> RenderObject::addDynamicBitmap(uint width, uint height) 
 		return RenderObjectPtr<Bitmap>();
 	}
 }
-
-// -----------------------------------------------------------------------------
 
 RenderObjectPtr<Panel> RenderObject::addPanel(int width, int height, uint color) {
 	RenderObjectPtr<Panel> panelPtr((new Panel(this->getHandle(), width, height, color))->getHandle());
@@ -380,12 +352,10 @@ RenderObjectPtr<Panel> RenderObject::addPanel(int width, int height, uint color)
 	}
 }
 
-// -----------------------------------------------------------------------------
-
 RenderObjectPtr<Text> RenderObject::addText(const Common::String &font, const Common::String &text) {
 	RenderObjectPtr<Text> textPtr((new Text(this->getHandle()))->getHandle());
-	if (textPtr.isValid() && textPtr->getInitSuccess() && textPtr->SetFont(font)) {
-		textPtr->SetText(text);
+	if (textPtr.isValid() && textPtr->getInitSuccess() && textPtr->setFont(font)) {
+		textPtr->setText(text);
 		return textPtr;
 	} else {
 		if (textPtr.isValid())
@@ -393,9 +363,6 @@ RenderObjectPtr<Text> RenderObject::addText(const Common::String &font, const Co
 		return RenderObjectPtr<Text>();
 	}
 }
-
-// Persistenz-Methoden
-// -------------------
 
 bool RenderObject::persist(OutputPersistenceBlock &writer) {
 	// Typ und Handle werden als erstes gespeichert, damit beim Laden ein Objekt vom richtigen Typ mit dem richtigen Handle erzeugt werden kann.
@@ -430,8 +397,6 @@ bool RenderObject::persist(OutputPersistenceBlock &writer) {
 
 	return true;
 }
-
-// -----------------------------------------------------------------------------
 
 bool RenderObject::unpersist(InputPersistenceBlock &reader) {
 	// Typ und Handle wurden schon von RecreatePersistedRenderObject() ausgelesen. Jetzt werden die restlichen Objekteigenschaften ausgelesen.
@@ -468,8 +433,6 @@ bool RenderObject::unpersist(InputPersistenceBlock &reader) {
 	return reader.isGood();
 }
 
-// -----------------------------------------------------------------------------
-
 bool RenderObject::persistChildren(OutputPersistenceBlock &writer) {
 	bool result = true;
 
@@ -485,8 +448,6 @@ bool RenderObject::persistChildren(OutputPersistenceBlock &writer) {
 
 	return result;
 }
-
-// -----------------------------------------------------------------------------
 
 bool RenderObject::unpersistChildren(InputPersistenceBlock &reader) {
 	bool result = true;
@@ -505,8 +466,6 @@ bool RenderObject::unpersistChildren(InputPersistenceBlock &reader) {
 
 	return result && reader.isGood();
 }
-
-// -----------------------------------------------------------------------------
 
 RenderObjectPtr<RenderObject> RenderObject::recreatePersistedRenderObject(InputPersistenceBlock &reader) {
 	RenderObjectPtr<RenderObject> result;
@@ -547,8 +506,6 @@ RenderObjectPtr<RenderObject> RenderObject::recreatePersistedRenderObject(InputP
 	return result;
 }
 
-// Hilfs-Methoden
-// --------------
 bool RenderObject::greater(const RenderObjectPtr<RenderObject> lhs, const RenderObjectPtr<RenderObject> rhs) {
 	// Das Objekt mit dem kleinem Z-Wert müssen zuerst gerendert werden.
 	if (lhs->_z != rhs->_z)

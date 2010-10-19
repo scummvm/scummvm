@@ -350,7 +350,7 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 	// Load font
 	if (filename.hasSuffix("_fnt.xml")) {
 		FontResource *pResource = new FontResource(Kernel::GetInstance(), filename);
-		if (pResource->IsValid())
+		if (pResource->isValid())
 			return pResource;
 		else {
 			delete pResource;
@@ -418,7 +418,7 @@ bool doSaveScreenshot(GraphicEngine &graphicEngine, const Common::String &filena
 		return false;
 	}
 
-	bool result = Screenshot::SaveToFile(data, stream);
+	bool result = Screenshot::saveToFile(data, stream);
 	delete stream;
 
 	return result;

@@ -32,25 +32,13 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/gfx/bitmap.h"
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Logging
-// -----------------------------------------------------------------------------
-
 #define BS_LOG_PREFIX "BITMAP"
-
-// -----------------------------------------------------------------------------
-// Konstruktion / Destruktion
-// -----------------------------------------------------------------------------
 
 Bitmap::Bitmap(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle) :
 	RenderObject(parentPtr, type, handle),
@@ -61,14 +49,8 @@ Bitmap::Bitmap(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle)
 	_flipV(false) {
 }
 
-// -----------------------------------------------------------------------------
-
 Bitmap::~Bitmap() {
 }
-
-// -----------------------------------------------------------------------------
-// Darstellungsart festlegen
-// -----------------------------------------------------------------------------
 
 void Bitmap::setAlpha(int alpha) {
 	if (!isAlphaAllowed()) {
@@ -94,8 +76,6 @@ void Bitmap::setAlpha(int alpha) {
 	}
 }
 
-// -----------------------------------------------------------------------------
-
 void Bitmap::setModulationColor(uint modulationColor) {
 	if (!isColorModulationAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set modulation color of a bitmap that does not support color modulation. Call was ignored.");
@@ -109,14 +89,10 @@ void Bitmap::setModulationColor(uint modulationColor) {
 	}
 }
 
-// -----------------------------------------------------------------------------
-
 void Bitmap::setScaleFactor(float scaleFactor) {
 	setScaleFactorX(scaleFactor);
 	setScaleFactorY(scaleFactor);
 }
-
-// -----------------------------------------------------------------------------
 
 void Bitmap::setScaleFactorX(float scaleFactorX) {
 	if (!isScalingAllowed()) {
@@ -140,8 +116,6 @@ void Bitmap::setScaleFactorX(float scaleFactorX) {
 	}
 }
 
-// -----------------------------------------------------------------------------
-
 void Bitmap::setScaleFactorY(float scaleFactorY) {
 	if (!isScalingAllowed()) {
 		BS_LOG_WARNINGLN("Tried to set scale factor of a bitmap that does not support scaling. Call was ignored.");
@@ -164,23 +138,15 @@ void Bitmap::setScaleFactorY(float scaleFactorY) {
 	}
 }
 
-// -----------------------------------------------------------------------------
-
 void Bitmap::setFlipH(bool flipH) {
 	_flipH = flipH;
 	forceRefresh();
 }
 
-// -----------------------------------------------------------------------------
-
 void Bitmap::setFlipV(bool flipV) {
 	_flipV = flipV;
 	forceRefresh();
 }
-
-// -----------------------------------------------------------------------------
-// Persistenz
-// -----------------------------------------------------------------------------
 
 bool Bitmap::persist(OutputPersistenceBlock &writer) {
 	bool result = true;
@@ -196,8 +162,6 @@ bool Bitmap::persist(OutputPersistenceBlock &writer) {
 
 	return result;
 }
-
-// -----------------------------------------------------------------------------
 
 bool Bitmap::unpersist(InputPersistenceBlock &reader) {
 	bool result = true;

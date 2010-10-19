@@ -35,10 +35,6 @@
 #ifndef SWORD25_FONTRESOURCE_H
 #define SWORD25_FONTRESOURCE_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "common/xmlparser.h"
@@ -47,15 +43,7 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Forward declarations
-// -----------------------------------------------------------------------------
-
 class Kernel;
-
-// -----------------------------------------------------------------------------
-// Class definition
-// -----------------------------------------------------------------------------
 
 class FontResource : public Resource, Common::XMLParser {
 public:
@@ -65,15 +53,15 @@ public:
 	    @param FileName der Dateiname der zu ladenen Resource
 	    @remark Wenn der Konstruktor erfolgreich ausgeführt werden konnte gibt die Methode IsValid true zurück.
 	*/
-	FontResource(Kernel *pKernel, const Common::String &FileName);
+	FontResource(Kernel *pKernel, const Common::String &fileName);
 
 	/**
 	    @brief Gibt true zurück, wenn das Objekt korrekt initialisiert wurde.
 
 	    Diese Methode kann dazu benutzt werden um festzustellen, ob der Konstruktor erfolgreich ausgeführt wurde.
 	*/
-	bool    IsValid() const {
-		return _Valid;
+	bool isValid() const {
+		return _valid;
 	}
 
 	/**
@@ -81,8 +69,8 @@ public:
 
 	    Die Zeilenhöhe ist der Wert, der zur Y-Koordinate addiert wird, wenn ein Zeilenumbruch auftritt.
 	*/
-	int     GetLineHeight() const {
-		return _LineHeight;
+	int getLineHeight() const {
+		return _lineHeight;
 	}
 
 	/**
@@ -90,8 +78,8 @@ public:
 
 	    Der Buchstabenabstand ist der Wert, der zwischen zwei Buchstaben freigelassen wird.
 	*/
-	int     GetGapWidth() const {
-		return _GapWidth;
+	int getGapWidth() const {
+		return _gapWidth;
 	}
 
 	/**
@@ -99,25 +87,25 @@ public:
 	    @param Character der ASCII-Code des Zeichens
 	    @return Das Bounding-Rect des übergebenen Zeichens auf der Charactermap.
 	*/
-	const Common::Rect &GetCharacterRect(int Character) const {
-		BS_ASSERT(Character >= 0 && Character < 256);
-		return _CharacterRects[Character];
+	const Common::Rect &getCharacterRect(int character) const {
+		BS_ASSERT(character >= 0 && character < 256);
+		return _characterRects[character];
 	}
 
 	/**
 	    @brief Gibt den Dateinamen der Charactermap zurück.
 	*/
-	const Common::String &GetCharactermapFileName() const {
-		return _BitmapFileName;
+	const Common::String &getCharactermapFileName() const {
+		return _bitmapFileName;
 	}
 
 private:
 	Kernel *_pKernel;
-	bool        _Valid;
-	Common::String  _BitmapFileName;
-	int         _LineHeight;
-	int         _GapWidth;
-	Common::Rect     _CharacterRects[256];
+	bool _valid;
+	Common::String _bitmapFileName;
+	int _lineHeight;
+	int _gapWidth;
+	Common::Rect _characterRects[256];
 
 	// Parser
 	CUSTOM_XML_PARSER(FontResource) {

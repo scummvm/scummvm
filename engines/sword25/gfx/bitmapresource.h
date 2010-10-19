@@ -35,7 +35,6 @@
 #ifndef SWORD25_BITMAP_RESOURCE_H
 #define SWORD25_BITMAP_RESOURCE_H
 
-// Includes
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/resource.h"
 #include "sword25/gfx/image/image.h"
@@ -204,8 +203,8 @@ public:
 	}
 
 private:
-	Image   *_pImage;
-	bool    _valid;
+	Image *_pImage;
+	bool _valid;
 };
 
 } // End of namespace Sword25

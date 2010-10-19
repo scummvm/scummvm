@@ -35,27 +35,15 @@
 #ifndef SWORD25_TEXT_H
 #define SWORD25_TEXT_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include "common/rect.h"
 #include "sword25/gfx/renderobject.h"
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Forward Declarations
-// -----------------------------------------------------------------------------
-
 class Kernel;
 class FontResource;
 class ResourceManager;
-
-// -----------------------------------------------------------------------------
-// Klassendefinition
-// -----------------------------------------------------------------------------
 
 class Text : public RenderObject {
 	friend class RenderObject;
@@ -66,13 +54,13 @@ public:
 	    @param Font der Dateiname der Fontdatei.
 	    @return Gibt false zurück, wenn der Font nicht gefunden wurde.
 	*/
-	bool SetFont(const Common::String &Font);
+	bool setFont(const Common::String &font);
 
 	/**
 	    @brief Setzt den darzustellenden Text.
 	    @param Text der darzustellende Text
 	*/
-	void SetText(const Common::String &text);
+	void setText(const Common::String &text);
 
 	/**
 	    @brief Setzt den Alphawert des Textes.
@@ -88,27 +76,27 @@ public:
 	    @param AutoWrap gibt an, ob der automatische Umbruch aktiviert oder deaktiviert werden soll.
 	    @remark Dieses Attribut wird mit dem Wert false initialisiert.
 	*/
-	void SetAutoWrap(bool AutoWrap);
+	void setAutoWrap(bool autoWrap);
 
 	/**
 	    @brief Legt die Längengrenze des Textes in Pixeln fest, ab der ein automatischer Zeilenumbruch vorgenommen wird.
 	    @remark Dieses Attribut wird mit dem Wert 300 initialisiert.
 	    @remark Eine automatische Formatierung wird nur vorgenommen, wenn diese durch einen Aufruf von SetAutoWrap() aktiviert wurde.
 	*/
-	void SetAutoWrapThreshold(uint AutoWrapThreshold);
+	void setAutoWrapThreshold(uint autoWrapThreshold);
 
 	/**
 	    @brief Gibt den dargestellten Text zurück.
 	*/
-	const Common::String &GetText() {
-		return m_Text;
+	const Common::String &getText() {
+		return _text;
 	}
 
 	/**
 	    @brief Gibt den Namen das momentan benutzten Fonts zurück.
 	*/
-	const Common::String &GetFont() {
-		return m_Font;
+	const Common::String &getFont() {
+		return _font;
 	}
 
 	/**
@@ -136,44 +124,44 @@ public:
 	/**
 	    @brief Gibt zurück, ob die automatische Formatierung aktiviert ist.
 	*/
-	bool IsAutoWrapActive() const {
-		return m_AutoWrap;
+	bool isAutoWrapActive() const {
+		return _autoWrap;
 	}
 
 	/**
 	    @brief Gibt die Längengrenze des Textes in Pixeln zurück, ab der eine automatische Formatierung vorgenommen wird.
 	*/
-	uint GetAutoWrapThreshold() const {
-		return m_AutoWrapThreshold;
+	uint getAutoWrapThreshold() const {
+		return _autoWrapThreshold;
 	}
 
-	virtual bool    persist(OutputPersistenceBlock &writer);
-	virtual bool    unpersist(InputPersistenceBlock &reader);
+	virtual bool  persist(OutputPersistenceBlock &writer);
+	virtual bool  unpersist(InputPersistenceBlock &reader);
 
 protected:
 	virtual bool doRender();
 
 private:
-	Text(RenderObjectPtr<RenderObject> ParentPtr);
-	Text(InputPersistenceBlock &Reader, RenderObjectPtr<RenderObject> ParentPtr, uint Handle);
+	Text(RenderObjectPtr<RenderObject> parentPtr);
+	Text(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle);
 
-	uint    _modulationColor;
-	Common::String      m_Font;
-	Common::String      m_Text;
-	bool            m_AutoWrap;
-	uint    m_AutoWrapThreshold;
+	uint _modulationColor;
+	Common::String _font;
+	Common::String _text;
+	bool _autoWrap;
+	uint _autoWrapThreshold;
 
-	struct LINE {
-		Common::Rect     BBox;
-		Common::String  Text;
+	struct Line {
+		Common::Rect bbox;
+		Common::String text;
 	};
 
-	Common::Array<LINE> m_Lines;
+	Common::Array<Line> _lines;
 
-	void UpdateFormat();
-	void UpdateMetrics(FontResource &fontResource);
-	ResourceManager *GetResourceManager();
-	FontResource *LockFontResource();
+	void updateFormat();
+	void updateMetrics(FontResource &fontResource);
+	ResourceManager *getResourceManager();
+	FontResource *lockFontResource();
 };
 
 } // End of namespace Sword25

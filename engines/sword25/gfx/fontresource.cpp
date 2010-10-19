@@ -34,10 +34,6 @@
 
 #define BS_LOG_PREFIX "FONTRESOURCE"
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/string.h"
 #include "sword25/package/packagemanager.h"
@@ -46,23 +42,15 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Constants
-// -----------------------------------------------------------------------------
-
 enum {
 	DEFAULT_LINEHEIGHT = 20,
 	DEFAULT_GAPWIDTH = 1
 };
 
-// -----------------------------------------------------------------------------
-// Constructor / destructor
-// -----------------------------------------------------------------------------
-
-FontResource::FontResource(Kernel *pKernel, const Common::String &FileName) :
+FontResource::FontResource(Kernel *pKernel, const Common::String &fileName) :
 	_pKernel(pKernel),
-	_Valid(false),
-	Resource(FileName, Resource::TYPE_FONT),
+	_valid(false),
+	Resource(fileName, Resource::TYPE_FONT),
 	Common::XMLParser() {
 
 	// Get a pointer to the package manager
@@ -82,27 +70,25 @@ FontResource::FontResource(Kernel *pKernel, const Common::String &FileName) :
 	if (!loadBuffer((const byte *)xmlData, fileSize))
 		return;
 
-	_Valid = parse();
+	_valid = parse();
 	close();
 	free(xmlData);
 }
-
-// -----------------------------------------------------------------------------
 
 bool FontResource::parserCallback_font(ParserNode *node) {
 	// Get the attributes of the font
 	Common::String bitmapFilename = node->values["bitmap"];
 
-	if (!parseIntegerKey(node->values["lineheight"], 1, &_LineHeight)) {
+	if (!parseIntegerKey(node->values["lineheight"], 1, &_lineHeight)) {
 		BS_LOG_WARNINGLN("Illegal or missing lineheight attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
 		                 getFileName().c_str(), DEFAULT_LINEHEIGHT);
-		_LineHeight = DEFAULT_LINEHEIGHT;
+		_lineHeight = DEFAULT_LINEHEIGHT;
 	}
 
-	if (!parseIntegerKey(node->values["gap"], 1, &_GapWidth)) {
+	if (!parseIntegerKey(node->values["gap"], 1, &_gapWidth)) {
 		BS_LOG_WARNINGLN("Illegal or missing gap attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
 		                 getFileName().c_str(), DEFAULT_GAPWIDTH);
-		_GapWidth = DEFAULT_GAPWIDTH;
+		_gapWidth = DEFAULT_GAPWIDTH;
 	}
 	
 	// Get a reference to the package manager
@@ -111,21 +97,19 @@ bool FontResource::parserCallback_font(ParserNode *node) {
 	BS_ASSERT(pPackage);
 
 	// Get the full path and filename for the bitmap resource
-	_BitmapFileName = pPackage->getAbsolutePath(bitmapFilename);
-	if (_BitmapFileName == "") {
+	_bitmapFileName = pPackage->getAbsolutePath(bitmapFilename);
+	if (_bitmapFileName == "") {
 		BS_LOG_ERRORLN("Image file \"%s\" was specified in <font> tag of \"%s\" but could not be found.",
-		               _BitmapFileName.c_str(), getFileName().c_str());
+		               _bitmapFileName.c_str(), getFileName().c_str());
 	}
 
 	// Pre-cache the resource
-	if (!_pKernel->GetResourceManager()->PrecacheResource(_BitmapFileName)) {
-		BS_LOG_ERRORLN("Could not precache \"%s\".", _BitmapFileName.c_str());
+	if (!_pKernel->GetResourceManager()->PrecacheResource(_bitmapFileName)) {
+		BS_LOG_ERRORLN("Could not precache \"%s\".", _bitmapFileName.c_str());
 	}
 
 	return true;
 }
-
-// -----------------------------------------------------------------------------
 
 bool FontResource::parserCallback_character(ParserNode *node) {
 	// Get the attributes of the character
@@ -148,7 +132,7 @@ bool FontResource::parserCallback_character(ParserNode *node) {
 		return parserError("Illegal or missing bottom attribute in <character> tag in \"%s\".", getFileName().c_str());
 	}
 
-	this->_CharacterRects[charCode] = Common::Rect(left, top, right, bottom);
+	this->_characterRects[charCode] = Common::Rect(left, top, right, bottom);
 	return true;
 }
 

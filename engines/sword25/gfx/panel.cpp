@@ -32,10 +32,6 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/gfx/panel.h"
 
 #include "sword25/kernel/inputpersistenceblock.h"
@@ -45,13 +41,7 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-
 #define BS_LOG_PREFIX "PANEL"
-
-// -----------------------------------------------------------------------------
-// Construction/Destruction
-// -----------------------------------------------------------------------------
 
 Panel::Panel(RenderObjectPtr<RenderObject> parentPtr, int width, int height, uint color) :
 	RenderObject(parentPtr, RenderObject::TYPE_PANEL),
@@ -74,21 +64,13 @@ Panel::Panel(RenderObjectPtr<RenderObject> parentPtr, int width, int height, uin
 	_initSuccess = true;
 }
 
-// -----------------------------------------------------------------------------
-
 Panel::Panel(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle) :
 	RenderObject(parentPtr, RenderObject::TYPE_PANEL, handle) {
 	_initSuccess = unpersist(reader);
 }
 
-// -----------------------------------------------------------------------------
-
 Panel::~Panel() {
 }
-
-// -----------------------------------------------------------------------------
-// Rendern
-// -----------------------------------------------------------------------------
 
 bool Panel::doRender() {
 	// Falls der Alphawert 0 ist, ist das Panel komplett durchsichtig und es muss nichts gezeichnet werden.
@@ -101,10 +83,6 @@ bool Panel::doRender() {
 	return gfxPtr->fill(&_bbox, _color);
 }
 
-// -----------------------------------------------------------------------------
-// Persistenz
-// -----------------------------------------------------------------------------
-
 bool Panel::persist(OutputPersistenceBlock &writer) {
 	bool result = true;
 
@@ -115,8 +93,6 @@ bool Panel::persist(OutputPersistenceBlock &writer) {
 
 	return result;
 }
-
-// -----------------------------------------------------------------------------
 
 bool Panel::unpersist(InputPersistenceBlock &reader) {
 	bool result = true;

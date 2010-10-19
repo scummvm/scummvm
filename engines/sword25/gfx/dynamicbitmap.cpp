@@ -32,10 +32,6 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/gfx/dynamicbitmap.h"
 #include "sword25/gfx/bitmapresource.h"
 #include "sword25/package/packagemanager.h"
@@ -43,15 +39,7 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Logging
-// -----------------------------------------------------------------------------
-
 #define BS_LOG_PREFIX "DYNAMICBITMAP"
-
-// -----------------------------------------------------------------------------
-// Konstruktion / Destruktion
-// -----------------------------------------------------------------------------
 
 DynamicBitmap::DynamicBitmap(RenderObjectPtr<RenderObject> parentPtr, uint width, uint height) :
 	Bitmap(parentPtr, TYPE_DYNAMICBITMAP) {
@@ -61,14 +49,10 @@ DynamicBitmap::DynamicBitmap(RenderObjectPtr<RenderObject> parentPtr, uint width
 	_initSuccess = createRenderedImage(width, height);
 }
 
-// -----------------------------------------------------------------------------
-
 DynamicBitmap::DynamicBitmap(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle) :
 	Bitmap(parentPtr, TYPE_DYNAMICBITMAP, handle) {
 	_initSuccess = unpersist(reader);
 }
-
-// -----------------------------------------------------------------------------
 
 bool DynamicBitmap::createRenderedImage(uint width, uint height) {
 	// RenderedImage mit den gewünschten Maßen erstellen
@@ -81,12 +65,8 @@ bool DynamicBitmap::createRenderedImage(uint width, uint height) {
 	return result;
 }
 
-// -----------------------------------------------------------------------------
-
 DynamicBitmap::~DynamicBitmap() {
 }
-
-// -----------------------------------------------------------------------------
 
 uint DynamicBitmap::getPixel(int x, int y) const {
 	BS_ASSERT(x >= 0 && x < _width);
@@ -94,8 +74,6 @@ uint DynamicBitmap::getPixel(int x, int y) const {
 
 	return _image->getPixel(x, y);
 }
-
-// -----------------------------------------------------------------------------
 
 bool DynamicBitmap::doRender() {
 	// Framebufferobjekt holen
@@ -119,41 +97,25 @@ bool DynamicBitmap::doRender() {
 	return result;
 }
 
-// -----------------------------------------------------------------------------
-
 bool DynamicBitmap::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
 	return _image->setContent(pixeldata, size, offset, stride);
 }
-
-// -----------------------------------------------------------------------------
-// Auskunftsmethoden
-// -----------------------------------------------------------------------------
 
 bool DynamicBitmap::isScalingAllowed() const {
 	return _image->isScalingAllowed();
 }
 
-// -----------------------------------------------------------------------------
-
 bool DynamicBitmap::isAlphaAllowed() const {
 	return _image->isAlphaAllowed();
 }
-
-// -----------------------------------------------------------------------------
 
 bool DynamicBitmap::isColorModulationAllowed() const {
 	return _image->isColorModulationAllowed();
 }
 
-// -----------------------------------------------------------------------------
-
 bool DynamicBitmap::isSetContentAllowed() const {
 	return true;
 }
-
-// -----------------------------------------------------------------------------
-// Persistenz
-// -----------------------------------------------------------------------------
 
 bool DynamicBitmap::persist(OutputPersistenceBlock &writer) {
 	bool result = true;

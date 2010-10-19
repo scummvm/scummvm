@@ -35,11 +35,6 @@
 #ifndef SWORD25_DYNAMIC_BITMAP_H
 #define SWORD25_DYNAMIC_BITMAP_H
 
-
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/bitmap.h"
 #include "sword25/gfx/image/renderedimage.h"
@@ -47,10 +42,6 @@
 #include "common/ptr.h"
 
 namespace Sword25 {
-
-// -----------------------------------------------------------------------------
-// Klassendeklaration
-// -----------------------------------------------------------------------------
 
 class DynamicBitmap : public Bitmap {
 	friend class RenderObject;
@@ -60,18 +51,18 @@ public:
 
 	virtual uint getPixel(int x, int y) const;
 
-	virtual bool    setContent(const byte *pixeldata, uint size, uint offset, uint stride);
+	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride);
 
-	virtual bool    isScalingAllowed() const;
-	virtual bool    isAlphaAllowed() const;
-	virtual bool    isColorModulationAllowed() const;
-	virtual bool    isSetContentAllowed() const;
+	virtual bool isScalingAllowed() const;
+	virtual bool isAlphaAllowed() const;
+	virtual bool isColorModulationAllowed() const;
+	virtual bool isSetContentAllowed() const;
 
-	virtual bool    persist(OutputPersistenceBlock &writer);
-	virtual bool    unpersist(InputPersistenceBlock &reader);
+	virtual bool persist(OutputPersistenceBlock &writer);
+	virtual bool unpersist(InputPersistenceBlock &reader);
 
 protected:
-	virtual bool    doRender();
+	virtual bool doRender();
 
 private:
 	DynamicBitmap(RenderObjectPtr<RenderObject> parentPtr, uint width, uint height);

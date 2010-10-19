@@ -32,10 +32,6 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/gfx/staticbitmap.h"
 #include "sword25/gfx/bitmapresource.h"
 #include "sword25/package/packagemanager.h"
@@ -44,15 +40,7 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Logging
-// -----------------------------------------------------------------------------
-
 #define BS_LOG_PREFIX "STATICBITMAP"
-
-// -----------------------------------------------------------------------------
-// Konstruktion / Destruktion
-// -----------------------------------------------------------------------------
 
 StaticBitmap::StaticBitmap(RenderObjectPtr<RenderObject> parentPtr, const Common::String &filename) :
 	Bitmap(parentPtr, TYPE_STATICBITMAP) {
@@ -63,14 +51,10 @@ StaticBitmap::StaticBitmap(RenderObjectPtr<RenderObject> parentPtr, const Common
 	_initSuccess = initBitmapResource(filename);
 }
 
-// -----------------------------------------------------------------------------
-
 StaticBitmap::StaticBitmap(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle) :
 	Bitmap(parentPtr, TYPE_STATICBITMAP, handle) {
 	_initSuccess = unpersist(reader);
 }
-
-// -----------------------------------------------------------------------------
 
 bool StaticBitmap::initBitmapResource(const Common::String &filename) {
 	// Bild-Resource laden
@@ -99,12 +83,8 @@ bool StaticBitmap::initBitmapResource(const Common::String &filename) {
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
 StaticBitmap::~StaticBitmap() {
 }
-
-// -----------------------------------------------------------------------------
 
 bool StaticBitmap::doRender() {
 	// Bitmap holen
@@ -137,8 +117,6 @@ bool StaticBitmap::doRender() {
 	return result;
 }
 
-// -----------------------------------------------------------------------------
-
 uint StaticBitmap::getPixel(int x, int y) const {
 	BS_ASSERT(x >= 0 && x < _width);
 	BS_ASSERT(y >= 0 && y < _height);
@@ -151,16 +129,10 @@ uint StaticBitmap::getPixel(int x, int y) const {
 	return result;
 }
 
-// -----------------------------------------------------------------------------
-
 bool StaticBitmap::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
 	BS_LOG_ERRORLN("SetContent() ist not supported with this object.");
 	return false;
 }
-
-// -----------------------------------------------------------------------------
-// Auskunftsmethoden
-// -----------------------------------------------------------------------------
 
 bool StaticBitmap::isAlphaAllowed() const {
 	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(_resourceFilename);
@@ -170,8 +142,6 @@ bool StaticBitmap::isAlphaAllowed() const {
 	return result;
 }
 
-// -----------------------------------------------------------------------------
-
 bool StaticBitmap::isColorModulationAllowed() const {
 	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(_resourceFilename);
 	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
@@ -180,8 +150,6 @@ bool StaticBitmap::isColorModulationAllowed() const {
 	return result;
 }
 
-// -----------------------------------------------------------------------------
-
 bool StaticBitmap::isScalingAllowed() const {
 	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(_resourceFilename);
 	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
@@ -189,10 +157,6 @@ bool StaticBitmap::isScalingAllowed() const {
 	pResource->release();
 	return result;
 }
-
-// -----------------------------------------------------------------------------
-// Persistenz
-// -----------------------------------------------------------------------------
 
 bool StaticBitmap::persist(OutputPersistenceBlock &writer) {
 	bool result = true;

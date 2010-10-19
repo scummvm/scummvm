@@ -35,18 +35,10 @@
 #ifndef SWORD25_BITMAP_H
 #define SWORD25_BITMAP_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobject.h"
 
 namespace Sword25 {
-
-// -----------------------------------------------------------------------------
-// Klassendeklaration
-// -----------------------------------------------------------------------------
 
 class Bitmap : public RenderObject {
 protected:

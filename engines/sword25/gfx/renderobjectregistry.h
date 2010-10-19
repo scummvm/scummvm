@@ -35,10 +35,6 @@
 #ifndef SWORD25_RENDEROBJECTREGISTRY_H
 #define SWORD25_RENDEROBJECTREGISTRY_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/objectregistry.h"
 
@@ -46,15 +42,7 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Forward Deklarationen
-// -----------------------------------------------------------------------------
-
 class RenderObject;
-
-// -----------------------------------------------------------------------------
-// Klassendeklaration
-// -----------------------------------------------------------------------------
 
 class RenderObjectRegistry :
 			public ObjectRegistry<RenderObject>,

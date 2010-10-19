@@ -1162,14 +1162,14 @@ static RenderObjectPtr<Text> checkText(lua_State *L) {
 static int t_setFont(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
 	BS_ASSERT(textPtr.isValid());
-	textPtr->SetFont(luaL_checkstring(L, 2));
+	textPtr->setFont(luaL_checkstring(L, 2));
 	return 0;
 }
 
 static int t_setText(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
 	BS_ASSERT(textPtr.isValid());
-	textPtr->SetText(luaL_checkstring(L, 2));
+	textPtr->setText(luaL_checkstring(L, 2));
 	return 0;
 }
 
@@ -1190,28 +1190,28 @@ static int t_setColor(lua_State *L) {
 static int t_setAutoWrap(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
 	BS_ASSERT(textPtr.isValid());
-	textPtr->SetAutoWrap(lua_tobooleancpp(L, 2));
+	textPtr->setAutoWrap(lua_tobooleancpp(L, 2));
 	return 0;
 }
 
 static int t_setAutoWrapThreshold(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
 	BS_ASSERT(textPtr.isValid());
-	textPtr->SetAutoWrapThreshold(static_cast<uint>(luaL_checknumber(L, 2)));
+	textPtr->setAutoWrapThreshold(static_cast<uint>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int t_getText(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
 	BS_ASSERT(textPtr.isValid());
-	lua_pushstring(L, textPtr->GetText().c_str());
+	lua_pushstring(L, textPtr->getText().c_str());
 	return 1;
 }
 
 static int t_getFont(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
 	BS_ASSERT(textPtr.isValid());
-	lua_pushstring(L, textPtr->GetFont().c_str());
+	lua_pushstring(L, textPtr->getFont().c_str());
 	return 1;
 }
 
@@ -1232,14 +1232,14 @@ static int t_getColor(lua_State *L) {
 static int t_isAutoWrap(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
 	BS_ASSERT(textPtr.isValid());
-	lua_pushbooleancpp(L, textPtr->IsAutoWrapActive());
+	lua_pushbooleancpp(L, textPtr->isAutoWrapActive());
 	return 1;
 }
 
 static int t_getAutoWrapThreshold(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
 	BS_ASSERT(textPtr.isValid());
-	lua_pushnumber(L, textPtr->GetAutoWrapThreshold());
+	lua_pushnumber(L, textPtr->getAutoWrapThreshold());
 	return 1;
 }
 

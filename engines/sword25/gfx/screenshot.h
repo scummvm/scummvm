@@ -35,23 +35,15 @@
 #ifndef SWORD25_SCREENSHOT_H
 #define SWORD25_SCREENSHOT_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "graphics/surface.h"
 #include "sword25/kernel/common.h"
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Class declaration
-// -----------------------------------------------------------------------------
-
 class Screenshot {
 public:
-	static bool SaveToFile(Graphics::Surface *Data, Common::WriteStream *Stream);
-	static Common::MemoryReadStream *createThumbnail(Graphics::Surface *Data);
+	static bool saveToFile(Graphics::Surface *data, Common::WriteStream *stream);
+	static Common::MemoryReadStream *createThumbnail(Graphics::Surface *data);
 };
 
 } // End of namespace Sword25

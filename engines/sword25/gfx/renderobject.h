@@ -45,7 +45,6 @@
 #ifndef SWORD25_RENDEROBJECT_H
 #define SWORD25_RENDEROBJECT_H
 
-// Includes
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistable.h"
 #include "common/rect.h"
@@ -54,10 +53,6 @@
 #include "common/list.h"
 
 namespace Sword25 {
-
-// -----------------------------------------------------------------------------
-// Forward Declarations
-// -----------------------------------------------------------------------------
 
 class Kernel;
 class RenderObjectManager;
@@ -462,11 +457,11 @@ private:
 	    @param pObject ein Pointer auf das zu entfernende Objekt
 	    @return Gibt false zurück, falls das zu entfernende Objekt nicht in der Liste gefunden werden konnte.
 	 */
-	bool    detatchChildren(RenderObjectPtr<RenderObject> pObject);
+	bool detatchChildren(RenderObjectPtr<RenderObject> pObject);
 	/**
 	    @brief Berechnet die Bounding-Box und registriert das Dirty-Rect beim BS_RenderObjectManager.
 	 */
-	void    updateBoxes();
+	void updateBoxes();
 	/**
 	    @brief Berechnet die Bounding-Box des Objektes.
 	    @return Gibt die Bounding-Box des Objektes in Bildschirmkoordinaten zurück.
@@ -496,7 +491,7 @@ private:
 	/**
 	    @brief Validiert den Zustand eines Objektes nachdem die durch die Veränderung verursachten Folgen abgearbeitet wurden.
 	 */
-	void    validateObject();
+	void validateObject();
 	/**
 	    @brief Berechnet die absolute Position des Objektes und aller seiner Kinderobjekte neu.
 
@@ -508,7 +503,7 @@ private:
 	    @brief Teilt dem Objekt mit, dass sich eines seiner Kinderobjekte dahingehend verändert hat, die eine erneute Bestimmung der
 	           Rendereihenfolge verlangt.
 	*/
-	void    signalChildChange() {
+	void signalChildChange() {
 		_childChanged = true;
 	}
 	/**
@@ -517,7 +512,7 @@ private:
 	    @param Result das Ergebnisrechteck
 	    @return Gibt false zurück, falls sich die Objekte gar nicht schneiden.
 	 */
-	bool    getObjectIntersection(RenderObjectPtr<RenderObject> pObject, Common::Rect &result);
+	bool getObjectIntersection(RenderObjectPtr<RenderObject> pObject, Common::Rect &result);
 	/**
 	    @brief Vergleichsoperator der auf Objektpointern basiert statt auf Objekten.
 	    @remark Diese Methode wird fürs Sortieren der Kinderliste nach der Rendereihenfolge benutzt.
