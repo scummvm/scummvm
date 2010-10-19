@@ -108,7 +108,7 @@ bool PNGLoader::DoDecodeImage(const byte *FileDataPtr, uint FileSize,  GraphicEn
 	png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&Width, (png_uint_32 *)&Height, &BitDepth, &ColorType, &InterlaceType, NULL, NULL);
 
 	// Pitch des Ausgabebildes berechnen
-	Pitch = GraphicEngine::CalcPitch(ColorFormat, Width);
+	Pitch = GraphicEngine::calcPitch(ColorFormat, Width);
 
 	// Speicher für die endgültigen Bilddaten reservieren
 	// Dieses geschieht vor dem reservieren von Speicher für temporäre Bilddaten um die Fragmentierung des Speichers gering zu halten

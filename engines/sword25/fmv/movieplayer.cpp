@@ -73,15 +73,15 @@ bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
 	GraphicEngine *pGfx = Kernel::GetInstance()->GetGfx();
 
 #if INDIRECTRENDERING
-	_outputBitmap = pGfx->GetMainPanel()->addDynamicBitmap(_decoder.getWidth(), _decoder.getHeight());
+	_outputBitmap = pGfx->getMainPanel()->addDynamicBitmap(_decoder.getWidth(), _decoder.getHeight());
 	if (!_outputBitmap.isValid()) {
 		BS_LOG_ERRORLN("Output bitmap for movie playback could not be created.");
 		return false;
 	}
 
 	// Skalierung des Ausgabebitmaps berechnen, so dass es möglichst viel Bildschirmfläche einnimmt.
-	float screenToVideoWidth = (float)pGfx->GetDisplayWidth() / (float)_outputBitmap->getWidth();
-	float screenToVideoHeight = (float)pGfx->GetDisplayHeight() / (float)_outputBitmap->getHeight();
+	float screenToVideoWidth = (float)pGfx->getDisplayWidth() / (float)_outputBitmap->getWidth();
+	float screenToVideoHeight = (float)pGfx->getDisplayHeight() / (float)_outputBitmap->getHeight();
 	float scaleFactor = MIN(screenToVideoWidth, screenToVideoHeight);
 
 	if (abs((int)(scaleFactor - 1.0f)) < FLT_EPSILON)
@@ -93,13 +93,13 @@ bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
 	_outputBitmap->setZ(z);
 
 	// Ausgabebitmap auf dem Bildschirm zentrieren
-	_outputBitmap->setX((pGfx->GetDisplayWidth() - _outputBitmap->getWidth()) / 2);
-	_outputBitmap->setY((pGfx->GetDisplayHeight() - _outputBitmap->getHeight()) / 2);
+	_outputBitmap->setX((pGfx->getDisplayWidth() - _outputBitmap->getWidth()) / 2);
+	_outputBitmap->setY((pGfx->getDisplayHeight() - _outputBitmap->getHeight()) / 2);
 #else
 	_backSurface = pGfx->getSurface();
 
-	_outX = (pGfx->GetDisplayWidth() - _decoder.getWidth()) / 2;
-	_outY = (pGfx->GetDisplayHeight() - _decoder.getHeight()) / 2;
+	_outX = (pGfx->getDisplayWidth() - _decoder.getWidth()) / 2;
+	_outY = (pGfx->getDisplayHeight() - _decoder.getHeight()) / 2;
 
 	if (_outX < 0)
 		_outX = 0;
@@ -169,8 +169,8 @@ void MoviePlayer::setScaleFactor(float scaleFactor) {
 
 		// Ausgabebitmap auf dem Bildschirm zentrieren
 		GraphicEngine *gfxPtr = Kernel::GetInstance()->GetGfx();
-		_outputBitmap->setX((gfxPtr->GetDisplayWidth() - _outputBitmap->getWidth()) / 2);
-		_outputBitmap->setY((gfxPtr->GetDisplayHeight() - _outputBitmap->getHeight()) / 2);
+		_outputBitmap->setX((gfxPtr->getDisplayWidth() - _outputBitmap->getWidth()) / 2);
+		_outputBitmap->setY((gfxPtr->getDisplayHeight() - _outputBitmap->getHeight()) / 2);
 	}
 }
 

@@ -33,7 +33,7 @@
  */
 
 /*
- * BS_GraphicEngine
+ * GraphicEngine
  * ----------------
  * This the graphics engine interface.
  *
@@ -64,10 +64,8 @@ class Panel;
 class Screenshot;
 class RenderObjectManager;
 
-// Types
 typedef uint BS_COLOR;
 
-// Macros
 #define BS_RGB(R,G,B)       (0xFF000000 | ((R) << 16) | ((G) << 8) | (B))
 #define BS_ARGB(A,R,G,B)    (((A) << 24) | ((R) << 16) | ((G) << 8) | (B))
 
@@ -122,7 +120,7 @@ public:
 	 * @param BackbufferCount   The number of back buffers to be created. The default value is 2
 	 * @param Windowed          Indicates whether the engine is to run in windowed mode.
 	 */
-	bool        Init(int Width = 800, int Height = 600, int BitDepth = 16, int BackbufferCount = 2, bool Windowed = false);
+	bool init(int width = 800, int height = 600, int bitDepth = 16, int backbufferCount = 2, bool windowed = false);
 
 	/**
 	 * Begins rendering a new frame.
@@ -131,7 +129,7 @@ public:
 	 * @param UpdateAll         Specifies whether the renderer should redraw everything on the next frame.
 	 * This feature can be useful if the renderer with Dirty Rectangles works, but sometimes the client may
 	*/
-	bool        StartFrame(bool UpdateAll = false);
+	bool startFrame(bool updateAll = false);
 
 	/**
 	 * Ends the rendering of a frame and draws it on the screen.
@@ -139,7 +137,7 @@ public:
 	 * This method must be at the end of the main loop. After this call, no further Render method may be called.
 	 * This should only be called once for a given previous call to #StartFrame.
 	*/
-	bool        EndFrame();
+	bool endFrame();
 
 	// Debug methods
 
@@ -153,7 +151,7 @@ public:
 	* @param End        The ending point of the line
 	* @param Color      The colour of the line. The default is BS_RGB (255,255,255) (White)
 	*/
-	void        DrawDebugLine(const Vertex &Start, const Vertex &End, uint Color = BS_RGB(255, 255, 255));
+	void drawDebugLine(const Vertex &start, const Vertex &end, uint color = BS_RGB(255, 255, 255));
 
 	/**
 	 * Creates a screenshot of the current frame buffer and writes it to a graphic file in PNG format.
@@ -161,7 +159,7 @@ public:
 	 * Notes: This method should only be called after a call to EndFrame(), and before the next call to StartFrame().
 	 * @param Filename  The filename for the screenshot
 	 */
-	bool SaveScreenshot(const Common::String &Filename);
+	bool saveScreenshot(const Common::String &filename);
 
 	/**
 	 * Creates a thumbnail with the dimensions of 200x125. This will not include the top and bottom of the screen..
@@ -170,7 +168,7 @@ public:
 	 * The frame buffer must have a resolution of 800x600.
 	 * @param Filename  The filename for the screenshot
 	 */
-	bool SaveThumbnailScreenshot(const Common::String &Filename);
+	bool saveThumbnailScreenshot(const Common::String &filename);
 
 	/**
 	 * Reads the current contents of the frame buffer
@@ -180,37 +178,39 @@ public:
 	 * @param Height    Returns the height of the frame buffer
 	 * @param Data      Returns the raw data of the frame buffer as an array of 32-bit colour values.
 	*/
-	Graphics::Surface *GetScreenshot();
+	Graphics::Surface *getScreenshot();
 
 
-	RenderObjectPtr<Panel> GetMainPanel();
+	RenderObjectPtr<Panel> getMainPanel();
 
 	/**
 	 * Specifies the time (in microseconds) since the last frame has passed
 	 */
-	int GetLastFrameDurationMicro() const {
-		if (!m_TimerActive)
+	int getLastFrameDurationMicro() const {
+		if (!_timerActive)
 			return 0;
-		return m_LastFrameDuration;
+		return _lastFrameDuration;
 	}
 
 	/**
 	 * Specifies the time (in microseconds) the previous frame took
 	*/
-	float GetLastFrameDuration() const {
-		if (!m_TimerActive)
+	float getLastFrameDuration() const {
+		if (!_timerActive)
 			return 0;
-		return static_cast<float>(m_LastFrameDuration) / 1000000.0f;
+		return static_cast<float>(_lastFrameDuration) / 1000000.0f;
 	}
 
-	void StopMainTimer() {
-		m_TimerActive = false;
+	void stopMainTimer() {
+		_timerActive = false;
 	}
-	void ResumeMainTimer() {
-		m_TimerActive = true;
+
+	void resumeMainTimer() {
+		_timerActive = true;
 	}
-	float GetSecondaryFrameDuration() const {
-		return static_cast<float>(m_LastFrameDuration) / 1000000.0f;
+
+	float getSecondaryFrameDuration() const {
+		return static_cast<float>(_lastFrameDuration) / 1000000.0f;
 	}
 
 	// Accessor methods
@@ -218,28 +218,28 @@ public:
 	/**
 	 * Returns the width of the output buffer in pixels
 	 */
-	int         GetDisplayWidth() const {
+	int getDisplayWidth() const {
 		return _width;
 	}
 
 	/**
 	 * Returns the height of the output buffer in pixels
 	 */
-	int         GetDisplayHeight() const {
+	int getDisplayHeight() const {
 		return _height;
 	}
 
 	/**
 	 * Returns the bounding box of the output buffer: (0, 0, Width, Height)
 	 */
-	Common::Rect    &GetDisplayRect() {
+	Common::Rect &getDisplayRect() {
 		return _screenRect;
 	}
 
 	/**
 	 * Returns the bit depth of the output buffer
 	 */
-	int         GetBitDepth() {
+	int getBitDepth() {
 		return _bitDepth;
 	}
 
@@ -248,19 +248,19 @@ public:
 	 * Notes: In windowed mode, this setting has no effect.
 	 * @param Vsync     Indicates whether the frame buffer changes are to be synchronised with Vsync.
 	 */
-	void    SetVsync(bool Vsync);
+	void setVsync(bool vsync);
 
 	/**
 	 * Returns true if V-Sync is on.
 	 * Notes: In windowed mode, this setting has no effect.
 	 */
-	bool    GetVsync() const;
+	bool getVsync() const;
 
 	/**
 	 * Returns true if the engine is running in Windowed mode.
 	 */
-	bool    IsWindowed() {
-		return m_Windowed;
+	bool isWindowed() {
+		return _windowed;
 	}
 
 	/**
@@ -272,15 +272,15 @@ public:
 	 * @param Color         The 32-bit colour with which the area is to be filled. The default is BS_RGB(0, 0, 0) (black)
 	 * @note FIf the rectangle is not completely inside the screen, it is automatically clipped.
 	 */
-	bool fill(const Common::Rect *FillRectPtr = 0, uint Color = BS_RGB(0, 0, 0));
+	bool fill(const Common::Rect *fillRectPtr = 0, uint color = BS_RGB(0, 0, 0));
 
 	// Debugging Methods
 
-	int GetFPSCount() const {
-		return m_FPSCounter.GetFPS();
+	int getFPSCount() const {
+		return _FPSCounter.getFPS();
 	}
-	int GetRepaintedPixels() const {
-		return m_RepaintedPixels;
+	int getRepaintedPixels() const {
+		return _repaintedPixels;
 	}
 
 	Graphics::Surface _backSurface;
@@ -299,8 +299,8 @@ public:
 	 * @param ColorFormat   The desired colour format. The parameter must be of type COLOR_FORMATS
 	 * @return              Returns the size of a pixel in bytes. If the colour format is unknown, -1 is returned.
 	 */
-	static int GetPixelSize(GraphicEngine::COLOR_FORMATS ColorFormat) {
-		switch (ColorFormat) {
+	static int getPixelSize(GraphicEngine::COLOR_FORMATS colorFormat) {
+		switch (colorFormat) {
 		case GraphicEngine::CF_ARGB32:
 			return 4;
 		default:
@@ -315,10 +315,10 @@ public:
 	 * @return              Reflects the length of the line in bytes. If the colour format is
 	 * unknown, -1 is returned
 	 */
-	static int CalcPitch(GraphicEngine::COLOR_FORMATS ColorFormat, int Width) {
-		switch (ColorFormat) {
+	static int calcPitch(GraphicEngine::COLOR_FORMATS colorFormat, int width) {
+		switch (colorFormat) {
 		case GraphicEngine::CF_ARGB32:
-			return Width * 4;
+			return width * 4;
 
 		default:
 			BS_ASSERT(false);
@@ -329,69 +329,69 @@ public:
 
 	// Resource-Managing Methods
 	// --------------------------
-	virtual Resource    *loadResource(const Common::String &fileName);
-	virtual bool        canLoadResource(const Common::String &fileName);
+	virtual Resource *loadResource(const Common::String &fileName);
+	virtual bool canLoadResource(const Common::String &fileName);
 
 	// Persistence Methods
 	// -------------------
-	virtual bool persist(OutputPersistenceBlock &Writer);
-	virtual bool unpersist(InputPersistenceBlock &Reader);
+	virtual bool persist(OutputPersistenceBlock &writer);
+	virtual bool unpersist(InputPersistenceBlock &reader);
 
-	static void ARGBColorToLuaColor(lua_State *L, uint Color);
-	static uint LuaColorToARGBColor(lua_State *L, int StackIndex);
+	static void ARGBColorToLuaColor(lua_State *L, uint color);
+	static uint luaColorToARGBColor(lua_State *L, int stackIndex);
 
 protected:
 
 	// Display Variables
 	// -----------------
-	int     _width;
-	int     _height;
+	int _width;
+	int _height;
 	Common::Rect _screenRect;
-	int     _bitDepth;
-	bool    m_Windowed;
+	int _bitDepth;
+	bool _windowed;
 
 	// Debugging Variables
 	// -------------------
-	Framecounter m_FPSCounter;
+	Framecounter _FPSCounter;
 
-	uint    m_RepaintedPixels;
+	uint _repaintedPixels;
 
 	/**
 	 * Calculates the time since the last frame beginning has passed.
 	 */
-	void UpdateLastFrameDuration();
+	void updateLastFrameDuration();
 
 private:
-	bool RegisterScriptBindings();
+	bool registerScriptBindings();
 
 	// LastFrameDuration Variables
 	// ---------------------------
-	uint                      m_LastTimeStamp;
-	uint                m_LastFrameDuration;
-	bool                        m_TimerActive;
-	Common::Array<uint> m_FrameTimeSamples;
-	uint                m_FrameTimeSampleSlot;
+	uint _lastTimeStamp;
+	uint _lastFrameDuration;
+	bool _timerActive;
+	Common::Array<uint> _frameTimeSamples;
+	uint _frameTimeSampleSlot;
 
 private:
 	byte *_backBuffer;
 
-	RenderObjectPtr<Panel> m_MainPanelPtr;
+	RenderObjectPtr<Panel> _mainPanelPtr;
 
-	Common::ScopedPtr<RenderObjectManager>   _renderObjectManagerPtr;
+	Common::ScopedPtr<RenderObjectManager> _renderObjectManagerPtr;
 
 	struct DebugLine {
-		DebugLine(const Vertex &_Start, const Vertex &_End, uint _Color) :
-			Start(_Start),
-			End(_End),
-			Color(_Color) {}
+		DebugLine(const Vertex &start, const Vertex &end, uint color) :
+			_start(start),
+			_end(end),
+			_color(color) {}
 		DebugLine() {}
 
-		Vertex       Start;
-		Vertex       End;
-		uint    Color;
+		Vertex _start;
+		Vertex _end;
+		uint _color;
 	};
 
-	Common::Array<DebugLine> m_DebugLines;
+	Common::Array<DebugLine> _debugLines;
 };
 
 } // End of namespace Sword25

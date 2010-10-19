@@ -368,9 +368,9 @@ static void drawPolygon(const Polygon &polygon, uint color, const Vertex &offset
 	BS_ASSERT(pGE);
 
 	for (int i = 0; i < polygon.vertexCount - 1; i++)
-		pGE->DrawDebugLine(polygon.vertices[i] + offset, polygon.vertices[i + 1] + offset, color);
+		pGE->drawDebugLine(polygon.vertices[i] + offset, polygon.vertices[i + 1] + offset, color);
 
-	pGE->DrawDebugLine(polygon.vertices[polygon.vertexCount - 1] + offset, polygon.vertices[0] + offset, color);
+	pGE->drawDebugLine(polygon.vertices[polygon.vertexCount - 1] + offset, polygon.vertices[0] + offset, color);
 }
 
 static void drawRegion(const Region &region, uint color, const Vertex &offset) {
@@ -387,12 +387,12 @@ static int r_draw(lua_State *L) {
 	case 3: {
 		Vertex offset;
 		Vertex::luaVertexToVertex(L, 3, offset);
-		drawRegion(*pR, GraphicEngine::LuaColorToARGBColor(L, 2), offset);
+		drawRegion(*pR, GraphicEngine::luaColorToARGBColor(L, 2), offset);
 	}
 	break;
 
 	case 2:
-		drawRegion(*pR, GraphicEngine::LuaColorToARGBColor(L, 2), Vertex(0, 0));
+		drawRegion(*pR, GraphicEngine::luaColorToARGBColor(L, 2), Vertex(0, 0));
 		break;
 
 	default:

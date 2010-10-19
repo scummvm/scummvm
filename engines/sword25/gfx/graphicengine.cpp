@@ -68,17 +68,17 @@ GraphicEngine::GraphicEngine(Kernel *pKernel) :
 	_width(0),
 	_height(0),
 	_bitDepth(0),
-	m_Windowed(0),
-	m_LastTimeStamp((uint) -1), // max. BS_INT64 um beim ersten Aufruf von _UpdateLastFrameDuration() einen Reset zu erzwingen
-	m_LastFrameDuration(0),
-	m_TimerActive(true),
-	m_FrameTimeSampleSlot(0),
-	m_RepaintedPixels(0),
+	_windowed(0),
+	_lastTimeStamp((uint) -1), // max. BS_INT64 um beim ersten Aufruf von _UpdateLastFrameDuration() einen Reset zu erzwingen
+	_lastFrameDuration(0),
+	_timerActive(true),
+	_frameTimeSampleSlot(0),
+	_repaintedPixels(0),
 	_thumbnail(NULL),
 	ResourceService(pKernel) {
-	m_FrameTimeSamples.resize(FRAMETIME_SAMPLE_COUNT);
+	_frameTimeSamples.resize(FRAMETIME_SAMPLE_COUNT);
 
-	if (!RegisterScriptBindings())
+	if (!registerScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else
 		BS_LOGLN("Script bindings registered.");
@@ -94,7 +94,7 @@ Service *GraphicEngine_CreateObject(Kernel *pKernel) {
 	return new GraphicEngine(pKernel);
 }
 
-bool GraphicEngine::Init(int width, int height, int bitDepth, int backbufferCount, bool isWindowed) {
+bool GraphicEngine::init(int width, int height, int bitDepth, int backbufferCount, bool isWindowed_) {
 	// Warnung ausgeben, wenn eine nicht unterstützte Bittiefe gewählt wurde.
 	if (bitDepth != BIT_DEPTH) {
 		BS_LOG_WARNINGLN("Can't use a bit depth of %d (not supported). Falling back to %d.", bitDepth, BIT_DEPTH);
@@ -111,7 +111,7 @@ bool GraphicEngine::Init(int width, int height, int bitDepth, int backbufferCoun
 	_width = width;
 	_height = height;
 	_bitDepth = bitDepth;
-	m_Windowed = isWindowed;
+	_windowed = isWindowed_;
 	_screenRect.left = 0;
 	_screenRect.top = 0;
 	_screenRect.right = _width;
@@ -121,26 +121,24 @@ bool GraphicEngine::Init(int width, int height, int bitDepth, int backbufferCoun
 	_frameBuffer.create(width, height, 4);
 
 	// Standardmäßig ist Vsync an.
-	SetVsync(true);
+	setVsync(true);
 
 	// Layer-Manager initialisieren.
 	_renderObjectManagerPtr.reset(new RenderObjectManager(width, height, backbufferCount + 1));
 
 	// Hauptpanel erstellen
-	m_MainPanelPtr = _renderObjectManagerPtr->getTreeRoot()->addPanel(width, height, BS_ARGB(0, 0, 0, 0));
-	if (!m_MainPanelPtr.isValid())
+	_mainPanelPtr = _renderObjectManagerPtr->getTreeRoot()->addPanel(width, height, BS_ARGB(0, 0, 0, 0));
+	if (!_mainPanelPtr.isValid())
 		return false;
-	m_MainPanelPtr->setVisible(true);
+	_mainPanelPtr->setVisible(true);
 
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
-bool GraphicEngine::StartFrame(bool UpdateAll) {
+bool GraphicEngine::startFrame(bool updateAll) {
 	// Berechnen, wie viel Zeit seit dem letzten Frame vergangen ist.
 	// Dieser Wert kann über GetLastFrameDuration() von Modulen abgefragt werden, die zeitabhängig arbeiten.
-	UpdateLastFrameDuration();
+	updateLastFrameDuration();
 
 	// Den Layer-Manager auf den nächsten Frame vorbereiten
 	_renderObjectManagerPtr->startFrame();
@@ -148,9 +146,7 @@ bool GraphicEngine::StartFrame(bool UpdateAll) {
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
-bool GraphicEngine::EndFrame() {
+bool GraphicEngine::endFrame() {
 	// Scene zeichnen
 	_renderObjectManagerPtr->render();
 
@@ -166,7 +162,7 @@ bool GraphicEngine::EndFrame() {
 	g_system->updateScreen();
 
 	// Debug-Lines zeichnen
-	if (!m_DebugLines.empty()) {
+	if (!_debugLines.empty()) {
 #if 0
 		glEnable(GL_LINE_SMOOTH);
 		glBegin(GL_LINES);
@@ -188,36 +184,28 @@ bool GraphicEngine::EndFrame() {
 
 		warning("STUB: Drawing debug lines");
 
-		m_DebugLines.clear();
+		_debugLines.clear();
 	}
 
 	// Framecounter aktualisieren
-	m_FPSCounter.Update();
+	_FPSCounter.update();
 
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
-RenderObjectPtr<Panel> GraphicEngine::GetMainPanel() {
-	return m_MainPanelPtr;
+RenderObjectPtr<Panel> GraphicEngine::getMainPanel() {
+	return _mainPanelPtr;
 }
 
-// -----------------------------------------------------------------------------
-
-void GraphicEngine::SetVsync(bool Vsync) {
-	warning("STUB: SetVsync(%d)", Vsync);
+void GraphicEngine::setVsync(bool vsync) {
+	warning("STUB: SetVsync(%d)", vsync);
 }
 
-// -----------------------------------------------------------------------------
-
-bool GraphicEngine::GetVsync() const {
-	warning("STUB: GetVsync()");
+bool GraphicEngine::getVsync() const {
+	warning("STUB: getVsync()");
 
 	return true;
 }
-
-// -----------------------------------------------------------------------------
 
 bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 	Common::Rect rect(_width - 1, _height - 1);
@@ -268,9 +256,7 @@ bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
-Graphics::Surface *GraphicEngine::GetScreenshot() {
+Graphics::Surface *GraphicEngine::getScreenshot() {
 	return &_frameBuffer;
 }
 
@@ -283,9 +269,9 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 
 	// Load image for "software buffer" (FIXME: Whatever that means?)
 	if (filename.hasSuffix("_s.png")) {
-		bool Result = false;
-		SWImage *pImage = new SWImage(filename, Result);
-		if (!Result) {
+		bool result = false;
+		SWImage *pImage = new SWImage(filename, result);
+		if (!result) {
 			delete pImage;
 			return 0;
 		}
@@ -301,9 +287,9 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 
 	// Load sprite image
 	if (filename.hasSuffix(".png") || filename.hasSuffix(".b25s")) {
-		bool Result = false;
-		RenderedImage *pImage = new RenderedImage(filename, Result);
-		if (!Result) {
+		bool result = false;
+		RenderedImage *pImage = new RenderedImage(filename, result);
+		if (!result) {
 			delete pImage;
 			return 0;
 		}
@@ -328,17 +314,17 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 
 		// Datei laden
 		byte *pFileData;
-		uint FileSize;
-		if (!(pFileData = static_cast<byte *>(pPackage->getFile(filename, &FileSize)))) {
+		uint fileSize;
+		if (!(pFileData = static_cast<byte *>(pPackage->getFile(filename, &fileSize)))) {
 			BS_LOG_ERRORLN("File \"%s\" could not be loaded.", filename.c_str());
 			return 0;
 		}
 
-		bool Result = false;
-		VectorImage *pImage = new VectorImage(pFileData, FileSize, Result, filename);
-		if (!Result) {
+		bool result = false;
+		VectorImage *pImage = new VectorImage(pFileData, fileSize, result, filename);
+		if (!result) {
 			delete pImage;
-			delete [] pFileData;
+			delete[] pFileData;
 			return 0;
 		}
 
@@ -394,35 +380,35 @@ bool GraphicEngine::canLoadResource(const Common::String &filename) {
 // DEBUGGING
 // -----------------------------------------------------------------------------
 
-void GraphicEngine::DrawDebugLine(const Vertex &Start, const Vertex &End, uint Color) {
-	m_DebugLines.push_back(DebugLine(Start, End, Color));
+void GraphicEngine::drawDebugLine(const Vertex &start, const Vertex &end, uint color) {
+	_debugLines.push_back(DebugLine(start, end, color));
 }
 
-void  GraphicEngine::UpdateLastFrameDuration() {
+void  GraphicEngine::updateLastFrameDuration() {
 	// Record current time
 	const uint currentTime = Kernel::GetInstance()->GetMilliTicks();
 
 	// Compute the elapsed time since the last frame and prevent too big ( > 250 msecs) time jumps.
 	// These can occur when loading save states, during debugging or due to hardware inaccuracies.
-	m_FrameTimeSamples[m_FrameTimeSampleSlot] = static_cast<uint>(currentTime - m_LastTimeStamp);
-	if (m_FrameTimeSamples[m_FrameTimeSampleSlot] > 250000)
-		m_FrameTimeSamples[m_FrameTimeSampleSlot] = 250000;
-	m_FrameTimeSampleSlot = (m_FrameTimeSampleSlot + 1) % FRAMETIME_SAMPLE_COUNT;
+	_frameTimeSamples[_frameTimeSampleSlot] = static_cast<uint>(currentTime - _lastTimeStamp);
+	if (_frameTimeSamples[_frameTimeSampleSlot] > 250000)
+		_frameTimeSamples[_frameTimeSampleSlot] = 250000;
+	_frameTimeSampleSlot = (_frameTimeSampleSlot + 1) % FRAMETIME_SAMPLE_COUNT;
 
 	// Compute the average frame duration over multiple frames to eliminate outliers.
-	Common::Array<uint>::const_iterator it = m_FrameTimeSamples.begin();
+	Common::Array<uint>::const_iterator it = _frameTimeSamples.begin();
 	uint sum = *it;
-	for (it++; it != m_FrameTimeSamples.end(); it++)
+	for (it++; it != _frameTimeSamples.end(); it++)
 		sum += *it;
-	m_LastFrameDuration = sum * 1000 / FRAMETIME_SAMPLE_COUNT;
+	_lastFrameDuration = sum * 1000 / FRAMETIME_SAMPLE_COUNT;
 
 	// Update m_LastTimeStamp with the current frame's timestamp
-	m_LastTimeStamp = currentTime;
+	_lastTimeStamp = currentTime;
 }
 
 namespace {
-bool DoSaveScreenshot(GraphicEngine &graphicEngine, const Common::String &filename) {
-	Graphics::Surface *data = graphicEngine.GetScreenshot();
+bool doSaveScreenshot(GraphicEngine &graphicEngine, const Common::String &filename) {
+	Graphics::Surface *data = graphicEngine.getScreenshot();
 	if (!data) {
 		BS_LOG_ERRORLN("Call to GetScreenshot() failed. Cannot save screenshot.");
 		return false;
@@ -442,11 +428,11 @@ bool DoSaveScreenshot(GraphicEngine &graphicEngine, const Common::String &filena
 }
 }
 
-bool GraphicEngine::SaveScreenshot(const Common::String &filename) {
-	return DoSaveScreenshot(*this, filename);
+bool GraphicEngine::saveScreenshot(const Common::String &filename) {
+	return doSaveScreenshot(*this, filename);
 }
 
-bool GraphicEngine::SaveThumbnailScreenshot(const Common::String &filename) {
+bool GraphicEngine::saveThumbnailScreenshot(const Common::String &filename) {
 	// Note: In ScumMVM, rather than saivng the thumbnail to a file, we store it in memory 
 	// until needed when creating savegame files
 	delete _thumbnail;
@@ -454,59 +440,64 @@ bool GraphicEngine::SaveThumbnailScreenshot(const Common::String &filename) {
 	return true;
 }
 
-void GraphicEngine::ARGBColorToLuaColor(lua_State *L, uint Color) {
-	lua_Number Components[4] = {
-		(Color >> 16) & 0xff,   // Rot
-		(Color >> 8) & 0xff,    // Grün
-		Color & 0xff,          // Blau
-		Color >> 24,           // Alpha
+void GraphicEngine::ARGBColorToLuaColor(lua_State *L, uint color) {
+	lua_Number components[4] = {
+		(color >> 16) & 0xff,   // Rot
+		(color >> 8) & 0xff,    // Grün
+		color & 0xff,          // Blau
+		color >> 24,           // Alpha
 	};
 
 	lua_newtable(L);
 
 	for (uint i = 1; i <= 4; i++) {
 		lua_pushnumber(L, i);
-		lua_pushnumber(L, Components[i - 1]);
+		lua_pushnumber(L, components[i - 1]);
 		lua_settable(L, -3);
 	}
 }
 
-uint GraphicEngine::LuaColorToARGBColor(lua_State *L, int StackIndex) {
+uint GraphicEngine::luaColorToARGBColor(lua_State *L, int stackIndex) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
 
 	// Sicherstellen, dass wir wirklich eine Tabelle betrachten
-	luaL_checktype(L, StackIndex, LUA_TTABLE);
+	luaL_checktype(L, stackIndex, LUA_TTABLE);
 	// Größe der Tabelle auslesen
-	uint n = luaL_getn(L, StackIndex);
+	uint n = luaL_getn(L, stackIndex);
 	// RGB oder RGBA Farben werden unterstützt und sonst keine
-	if (n != 3 && n != 4) luaL_argcheck(L, 0, StackIndex, "at least 3 of the 4 color components have to be specified");
+	if (n != 3 && n != 4)
+		luaL_argcheck(L, 0, stackIndex, "at least 3 of the 4 color components have to be specified");
 
-	// Rote Farbkomponente auslesen
-	lua_rawgeti(L, StackIndex, 1);
-	uint Red = static_cast<uint>(lua_tonumber(L, -1));
-	if (!lua_isnumber(L, -1) || Red >= 256) luaL_argcheck(L, 0, StackIndex, "red color component must be an integer between 0 and 255");
+	// Red color component reading
+	lua_rawgeti(L, stackIndex, 1);
+	uint red = static_cast<uint>(lua_tonumber(L, -1));
+	if (!lua_isnumber(L, -1) || red >= 256)
+		luaL_argcheck(L, 0, stackIndex, "red color component must be an integer between 0 and 255");
 	lua_pop(L, 1);
 
-	// Grüne Farbkomponente auslesen
-	lua_rawgeti(L, StackIndex, 2);
-	uint Green = static_cast<uint>(lua_tonumber(L, -1));
-	if (!lua_isnumber(L, -1) || Green >= 256) luaL_argcheck(L, 0, StackIndex, "green color component must be an integer between 0 and 255");
+	// Green color component reading
+	lua_rawgeti(L, stackIndex, 2);
+	uint green = static_cast<uint>(lua_tonumber(L, -1));
+	if (!lua_isnumber(L, -1) || green >= 256)
+		luaL_argcheck(L, 0, stackIndex, "green color component must be an integer between 0 and 255");
 	lua_pop(L, 1);
 
-	// Blaue Farbkomponente auslesen
-	lua_rawgeti(L, StackIndex, 3);
-	uint Blue = static_cast<uint>(lua_tonumber(L, -1));
-	if (!lua_isnumber(L, -1) || Blue >= 256) luaL_argcheck(L, 0, StackIndex, "blue color component must be an integer between 0 and 255");
+	// Blue color component reading
+	lua_rawgeti(L, stackIndex, 3);
+	uint blue = static_cast<uint>(lua_tonumber(L, -1));
+	if (!lua_isnumber(L, -1) || blue >= 256)
+		luaL_argcheck(L, 0, stackIndex, "blue color component must be an integer between 0 and 255");
 	lua_pop(L, 1);
 
-	// Alpha Farbkomponente auslesen
-	uint Alpha = 0xff;
+	// Alpha color component reading
+	uint alpha = 0xff;
 	if (n == 4) {
-		lua_rawgeti(L, StackIndex, 4);
-		Alpha = static_cast<uint>(lua_tonumber(L, -1));
-		if (!lua_isnumber(L, -1) || Alpha >= 256) luaL_argcheck(L, 0, StackIndex, "alpha color component must be an integer between 0 and 255");
+		lua_rawgeti(L, stackIndex, 4);
+		alpha = static_cast<uint>(lua_tonumber(L, -1));
+		if (!lua_isnumber(L, -1) || alpha >= 256)
+			luaL_argcheck(L, 0, stackIndex, "alpha color component must be an integer between 0 and 255");
 		lua_pop(L, 1);
 	}
 
@@ -514,11 +505,11 @@ uint GraphicEngine::LuaColorToARGBColor(lua_State *L, int StackIndex) {
 	BS_ASSERT(__startStackDepth == lua_gettop(L));
 #endif
 
-	return (Alpha << 24) | (Red << 16) | (Green << 8) | Blue;
+	return (alpha << 24) | (red << 16) | (green << 8) | blue;
 }
 
 bool GraphicEngine::persist(OutputPersistenceBlock &writer) {
-	writer.write(m_TimerActive);
+	writer.write(_timerActive);
 
 	bool result = _renderObjectManagerPtr->persist(writer);
 
@@ -526,7 +517,7 @@ bool GraphicEngine::persist(OutputPersistenceBlock &writer) {
 }
 
 bool GraphicEngine::unpersist(InputPersistenceBlock &reader) {
-	reader.read(m_TimerActive);
+	reader.read(_timerActive);
 	_renderObjectManagerPtr->unpersist(reader);
 
 	return reader.isGood();

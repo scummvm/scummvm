@@ -63,7 +63,7 @@ void RenderObjectManager::startFrame() {
 	_frameStarted = true;
 
 	// Verstrichene Zeit bestimmen
-	int timeElapsed = Kernel::GetInstance()->GetGfx()->GetLastFrameDurationMicro();
+	int timeElapsed = Kernel::GetInstance()->GetGfx()->getLastFrameDurationMicro();
 
 	// Alle BS_TimedRenderObject Objekte über den Framestart und die verstrichene Zeit in Kenntnis setzen
 	RenderObjectList::iterator iter = _timedRenderObjects.begin();
