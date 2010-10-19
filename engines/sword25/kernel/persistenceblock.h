@@ -35,34 +35,26 @@
 #ifndef SWORD25_PERSISTENCEBLOCK_H
 #define SWORD25_PERSISTENCEBLOCK_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Class definition
-// -----------------------------------------------------------------------------
-
 class PersistenceBlock {
 public:
-	static uint GetSInt32Size() {
+	static uint getSInt32Size() {
 		return sizeof(signed int) + sizeof(byte);
 	}
-	static uint GetUInt32Size() {
+	static uint getUInt32Size() {
 		return sizeof(uint) + sizeof(byte);
 	}
-	static uint GetFloat32Size() {
+	static uint getFloat32Size() {
 		return sizeof(float) + sizeof(byte);
 	}
-	static uint GetBoolSize() {
+	static uint getBoolSize() {
 		return sizeof(byte) + sizeof(byte);
 	}
-	static uint GetStringSize(const Common::String &String) {
-		return static_cast<uint>(sizeof(uint) + String.size() + sizeof(byte));
+	static uint getStringSize(const Common::String &string) {
+		return static_cast<uint>(sizeof(uint) + string.size() + sizeof(byte));
 	}
 
 protected:
@@ -84,42 +76,40 @@ protected:
 	//
 
 	template<typename T>
-	static T ConvertEndianessFromSystemToStorage(T Value) {
-		if (IsBigEndian()) ReverseByteOrder(&Value);
-		return Value;
+	static T convertEndianessFromSystemToStorage(T value) {
+		if (isBigEndian())
+			reverseByteOrder(&value);
+		return value;
 	}
 
 	template<typename T>
-	static T ConvertEndianessFromStorageToSystem(T Value) {
-		if (IsBigEndian()) ReverseByteOrder(&Value);
-		return Value;
+	static T convertEndianessFromStorageToSystem(T value) {
+		if (isBigEndian())
+			reverseByteOrder(&value);
+		return value;
 	}
 
 private:
-	static bool IsBigEndian() {
-		uint Dummy = 1;
-		byte *DummyPtr = reinterpret_cast<byte *>(&Dummy);
-		return DummyPtr[0] == 0;
+	static bool isBigEndian() {
+		uint dummy = 1;
+		byte *dummyPtr = reinterpret_cast<byte *>(&dummy);
+		return dummyPtr[0] == 0;
 	}
 
 	template<typename T>
-	static void Swap(T &One, T &Two) {
-		T Temp = One;
-		One = Two;
-		Two = Temp;
+	static void swap(T &one, T &two) {
+		T temp = one;
+		one = two;
+		two = temp;
 	}
 
-	static void ReverseByteOrder(void *Ptr) {
+	static void reverseByteOrder(void *ptr) {
 		// Reverses the byte order of the 32-bit word pointed to by Ptr
-		byte *CharPtr = static_cast<byte *>(Ptr);
-		Swap(CharPtr[0], CharPtr[3]);
-		Swap(CharPtr[1], CharPtr[2]);
+		byte *charPtr = static_cast<byte *>(ptr);
+		swap(charPtr[0], charPtr[3]);
+		swap(charPtr[1], charPtr[2]);
 	}
 };
-
-// -----------------------------------------------------------------------------
-// Compile time asserts
-// -----------------------------------------------------------------------------
 
 #define CTASSERT(ex) typedef char ctassert_type[(ex) ? 1 : -1]
 CTASSERT(sizeof(byte) == 1);

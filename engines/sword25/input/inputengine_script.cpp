@@ -32,10 +32,6 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "common/ptr.h"
 #include "common/str.h"
 #include "sword25/kernel/common.h"
@@ -51,268 +47,218 @@
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Callback-Objekte
-// -----------------------------------------------------------------------------
-
-static void TheCharacterCallback(int Character);
-static void TheCommandCallback(int Command);
+static void theCharacterCallback(int character);
+static void theCommandCallback(int command);
 
 namespace {
 class CharacterCallbackClass : public LuaCallback {
 public:
 	CharacterCallbackClass(lua_State *L) : LuaCallback(L) {}
 
-	Common::String Character;
+	Common::String _character;
 
 protected:
 	int PreFunctionInvokation(lua_State *L) {
-		lua_pushstring(L, Character.c_str());
+		lua_pushstring(L, _character.c_str());
 		return 1;
 	}
 };
-Common::SharedPtr<CharacterCallbackClass> CharacterCallbackPtr;
-
-// -----------------------------------------------------------------------------
+Common::SharedPtr<CharacterCallbackClass> characterCallbackPtr;
 
 class CommandCallbackClass : public LuaCallback {
 public:
 	CommandCallbackClass(lua_State *L) : LuaCallback(L) {
-		Command = InputEngine::KEY_COMMAND_BACKSPACE;
+		_command = InputEngine::KEY_COMMAND_BACKSPACE;
 	}
 
-	InputEngine::KEY_COMMANDS Command;
+	InputEngine::KEY_COMMANDS _command;
 
 protected:
-	int PreFunctionInvokation(lua_State *L) {
-		lua_pushnumber(L, Command);
+	int preFunctionInvokation(lua_State *L) {
+		lua_pushnumber(L, _command);
 		return 1;
 	}
 };
-Common::SharedPtr<CommandCallbackClass> CommandCallbackPtr;
-
-// -------------------------------------------------------------------------
+Common::SharedPtr<CommandCallbackClass> commandCallbackPtr;
 
 struct CallbackfunctionRegisterer {
 	CallbackfunctionRegisterer() {
-		CallbackRegistry::instance().registerCallbackFunction("LuaCommandCB", TheCommandCallback);
-		CallbackRegistry::instance().registerCallbackFunction("LuaCharacterCB", TheCharacterCallback);
+		CallbackRegistry::instance().registerCallbackFunction("LuaCommandCB", theCommandCallback);
+		CallbackRegistry::instance().registerCallbackFunction("LuaCharacterCB", theCharacterCallback);
 	}
 };
-static CallbackfunctionRegisterer Instance;
+static CallbackfunctionRegisterer instance;
 }
 
-// -----------------------------------------------------------------------------
-
-static InputEngine *GetIE() {
-	Kernel *pKernel = Kernel::GetInstance();
+static InputEngine *getIE() {
+	Kernel *pKernel = Kernel::getInstance();
 	BS_ASSERT(pKernel);
-	InputEngine *pIE = pKernel->GetInput();
+	InputEngine *pIE = pKernel->getInput();
 	BS_ASSERT(pIE);
 	return pIE;
 }
 
-// -----------------------------------------------------------------------------
+static int init(lua_State *L) {
+	InputEngine *pIE = getIE();
 
-static int Init(lua_State *L) {
-	InputEngine *pIE = GetIE();
-
-	lua_pushbooleancpp(L, pIE->Init());
+	lua_pushbooleancpp(L, pIE->init());
 	return 1;
 }
 
-// -----------------------------------------------------------------------------
-
-static int Update(lua_State *L) {
-	InputEngine *pIE = GetIE();
+static int update(lua_State *L) {
+	InputEngine *pIE = getIE();
 
 	// Beim ersten Aufruf der Update()-Methode werden die beiden Callbacks am Input-Objekt registriert.
 	// Dieses kann nicht in _RegisterScriptBindings() passieren, da diese Funktion vom Konstruktor der abstrakten Basisklasse aufgerufen wird und die
 	// Register...()-Methoden abstrakt sind, im Konstruktor der Basisklasse also nicht aufgerufen werden können.
-	static bool FirstCall = true;
-	if (FirstCall) {
-		FirstCall = false;
-		pIE->RegisterCharacterCallback(TheCharacterCallback);
-		pIE->RegisterCommandCallback(TheCommandCallback);
+	static bool firstCall = true;
+	if (firstCall) {
+		firstCall = false;
+		pIE->registerCharacterCallback(theCharacterCallback);
+		pIE->registerCommandCallback(theCommandCallback);
 	}
 
-	pIE->Update();
+	pIE->update();
 	return 0;
 }
 
-// -----------------------------------------------------------------------------
+static int isLeftMouseDown(lua_State *L) {
+	InputEngine *pIE = getIE();
 
-static int IsLeftMouseDown(lua_State *L) {
-	InputEngine *pIE = GetIE();
-
-	lua_pushbooleancpp(L, pIE->IsLeftMouseDown());
+	lua_pushbooleancpp(L, pIE->isLeftMouseDown());
 	return 1;
 }
 
-// -----------------------------------------------------------------------------
+static int isRightMouseDown(lua_State *L) {
+	InputEngine *pIE = getIE();
 
-static int IsRightMouseDown(lua_State *L) {
-	InputEngine *pIE = GetIE();
-
-	lua_pushbooleancpp(L, pIE->IsRightMouseDown());
+	lua_pushbooleancpp(L, pIE->isRightMouseDown());
 	return 1;
 }
 
-// -----------------------------------------------------------------------------
+static int wasLeftMouseDown(lua_State *L) {
+	InputEngine *pIE = getIE();
 
-static int WasLeftMouseDown(lua_State *L) {
-	InputEngine *pIE = GetIE();
-
-	lua_pushbooleancpp(L, pIE->WasLeftMouseDown());
+	lua_pushbooleancpp(L, pIE->wasLeftMouseDown());
 	return 1;
 }
 
-// -----------------------------------------------------------------------------
+static int wasRightMouseDown(lua_State *L) {
+	InputEngine *pIE = getIE();
 
-static int WasRightMouseDown(lua_State *L) {
-	InputEngine *pIE = GetIE();
-
-	lua_pushbooleancpp(L, pIE->WasRightMouseDown());
+	lua_pushbooleancpp(L, pIE->wasRightMouseDown());
 	return 1;
 }
 
-// -----------------------------------------------------------------------------
+static int isLeftDoubleClick(lua_State *L) {
+	InputEngine *pIE = getIE();
 
-static int IsLeftDoubleClick(lua_State *L) {
-	InputEngine *pIE = GetIE();
-
-	lua_pushbooleancpp(L, pIE->IsLeftDoubleClick());
+	lua_pushbooleancpp(L, pIE->isLeftDoubleClick());
 	return 1;
 }
 
-// -----------------------------------------------------------------------------
+static int getMouseX(lua_State *L) {
+	InputEngine *pIE = getIE();
 
-static int GetMouseX(lua_State *L) {
-	InputEngine *pIE = GetIE();
-
-	lua_pushnumber(L, pIE->GetMouseX());
+	lua_pushnumber(L, pIE->getMouseX());
 	return 1;
 }
 
-// -----------------------------------------------------------------------------
+static int getMouseY(lua_State *L) {
+	InputEngine *pIE = getIE();
 
-static int GetMouseY(lua_State *L) {
-	InputEngine *pIE = GetIE();
-
-	lua_pushnumber(L, pIE->GetMouseY());
+	lua_pushnumber(L, pIE->getMouseY());
 	return 1;
 }
 
-// -----------------------------------------------------------------------------
+static int isKeyDown(lua_State *L) {
+	InputEngine *pIE = getIE();
 
-static int IsKeyDown(lua_State *L) {
-	InputEngine *pIE = GetIE();
-
-	lua_pushbooleancpp(L, pIE->IsKeyDown((uint) luaL_checknumber(L, 1)));
+	lua_pushbooleancpp(L, pIE->isKeyDown((uint)luaL_checknumber(L, 1)));
 	return 1;
 }
 
-// -----------------------------------------------------------------------------
+static int wasKeyDown(lua_State *L) {
+	InputEngine *pIE = getIE();
 
-static int WasKeyDown(lua_State *L) {
-	InputEngine *pIE = GetIE();
-
-	lua_pushbooleancpp(L, pIE->WasKeyDown((uint) luaL_checknumber(L, 1)));
+	lua_pushbooleancpp(L, pIE->wasKeyDown((uint)luaL_checknumber(L, 1)));
 	return 1;
 }
 
-// -----------------------------------------------------------------------------
+static int setMouseX(lua_State *L) {
+	InputEngine *pIE = getIE();
 
-static int SetMouseX(lua_State *L) {
-	InputEngine *pIE = GetIE();
-
-	pIE->SetMouseX((int) luaL_checknumber(L, 1));
+	pIE->setMouseX((int)luaL_checknumber(L, 1));
 	return 0;
 }
 
-// -----------------------------------------------------------------------------
+static int setMouseY(lua_State *L) {
+	InputEngine *pIE = getIE();
 
-static int SetMouseY(lua_State *L) {
-	InputEngine *pIE = GetIE();
-
-	pIE->SetMouseY((int) luaL_checknumber(L, 1));
+	pIE->setMouseY((int)luaL_checknumber(L, 1));
 	return 0;
 }
 
-// -----------------------------------------------------------------------------
-
-static void TheCharacterCallback(int Character) {
-	CharacterCallbackPtr->Character = static_cast<byte>(Character);
-	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->getScriptObject());
-	CharacterCallbackPtr->invokeCallbackFunctions(L, 1);
+static void theCharacterCallback(int character) {
+	characterCallbackPtr->_character = static_cast<byte>(character);
+	lua_State *L = static_cast<lua_State *>(Kernel::getInstance()->getScript()->getScriptObject());
+	characterCallbackPtr->invokeCallbackFunctions(L, 1);
 }
 
-// -----------------------------------------------------------------------------
-
-static int RegisterCharacterCallback(lua_State *L) {
+static int registerCharacterCallback(lua_State *L) {
 	luaL_checktype(L, 1, LUA_TFUNCTION);
-	CharacterCallbackPtr->registerCallbackFunction(L, 1);
+	characterCallbackPtr->registerCallbackFunction(L, 1);
 
 	return 0;
 }
 
-// -----------------------------------------------------------------------------
-
-static int UnregisterCharacterCallback(lua_State *L) {
+static int unregisterCharacterCallback(lua_State *L) {
 	luaL_checktype(L, 1, LUA_TFUNCTION);
-	CharacterCallbackPtr->unregisterCallbackFunction(L, 1);
+	characterCallbackPtr->unregisterCallbackFunction(L, 1);
 
 	return 0;
 }
 
-// -----------------------------------------------------------------------------
-
-static void TheCommandCallback(int Command) {
-	CommandCallbackPtr->Command = static_cast<InputEngine::KEY_COMMANDS>(Command);
-	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->getScriptObject());
-	CommandCallbackPtr->invokeCallbackFunctions(L, 1);
+static void theCommandCallback(int command) {
+	commandCallbackPtr->_command = static_cast<InputEngine::KEY_COMMANDS>(command);
+	lua_State *L = static_cast<lua_State *>(Kernel::getInstance()->getScript()->getScriptObject());
+	commandCallbackPtr->invokeCallbackFunctions(L, 1);
 }
 
-// -----------------------------------------------------------------------------
-
-static int RegisterCommandCallback(lua_State *L) {
+static int registerCommandCallback(lua_State *L) {
 	luaL_checktype(L, 1, LUA_TFUNCTION);
-	CommandCallbackPtr->registerCallbackFunction(L, 1);
+	commandCallbackPtr->registerCallbackFunction(L, 1);
 
 	return 0;
 }
 
-// -----------------------------------------------------------------------------
-
-static int UnregisterCommandCallback(lua_State *L) {
+static int unregisterCommandCallback(lua_State *L) {
 	luaL_checktype(L, 1, LUA_TFUNCTION);
-	CommandCallbackPtr->unregisterCallbackFunction(L, 1);
+	commandCallbackPtr->unregisterCallbackFunction(L, 1);
 
 	return 0;
 }
-
-// -----------------------------------------------------------------------------
 
 static const char *PACKAGE_LIBRARY_NAME = "Input";
 
 static const luaL_reg PACKAGE_FUNCTIONS[] = {
-	{"Init", Init},
-	{"Update", Update},
-	{"IsLeftMouseDown", IsLeftMouseDown},
-	{"IsRightMouseDown", IsRightMouseDown},
-	{"WasLeftMouseDown", WasLeftMouseDown},
-	{"WasRightMouseDown", WasRightMouseDown},
-	{"IsLeftDoubleClick", IsLeftDoubleClick},
-	{"GetMouseX", GetMouseX},
-	{"GetMouseY", GetMouseY},
-	{"SetMouseX", SetMouseX},
-	{"SetMouseY", SetMouseY},
-	{"IsKeyDown", IsKeyDown},
-	{"WasKeyDown", WasKeyDown},
-	{"RegisterCharacterCallback", RegisterCharacterCallback},
-	{"UnregisterCharacterCallback", UnregisterCharacterCallback},
-	{"RegisterCommandCallback", RegisterCommandCallback},
-	{"UnregisterCommandCallback", UnregisterCommandCallback},
+	{"Init", init},
+	{"Update", update},
+	{"IsLeftMouseDown", isLeftMouseDown},
+	{"IsRightMouseDown", isRightMouseDown},
+	{"WasLeftMouseDown", wasLeftMouseDown},
+	{"WasRightMouseDown", wasRightMouseDown},
+	{"IsLeftDoubleClick", isLeftDoubleClick},
+	{"GetMouseX", getMouseX},
+	{"GetMouseY", getMouseY},
+	{"SetMouseX", setMouseX},
+	{"SetMouseY", setMouseY},
+	{"IsKeyDown", isKeyDown},
+	{"WasKeyDown", wasKeyDown},
+	{"RegisterCharacterCallback", registerCharacterCallback},
+	{"UnregisterCharacterCallback", unregisterCharacterCallback},
+	{"RegisterCommandCallback", registerCommandCallback},
+	{"UnregisterCommandCallback", unregisterCommandCallback},
 	{0, 0}
 };
 
@@ -334,9 +280,9 @@ static const lua_constant_reg PACKAGE_CONSTANTS[] = {
 // -----------------------------------------------------------------------------
 
 bool InputEngine::registerScriptBindings() {
-	Kernel *pKernel = Kernel::GetInstance();
+	Kernel *pKernel = Kernel::getInstance();
 	BS_ASSERT(pKernel);
-	ScriptEngine *pScript = pKernel->GetScript();
+	ScriptEngine *pScript = pKernel->getScript();
 	BS_ASSERT(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	BS_ASSERT(L);
@@ -344,8 +290,8 @@ bool InputEngine::registerScriptBindings() {
 	if (!LuaBindhelper::addFunctionsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_FUNCTIONS)) return false;
 	if (!LuaBindhelper::addConstantsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_CONSTANTS)) return false;
 
-	CharacterCallbackPtr = Common::SharedPtr<CharacterCallbackClass>(new CharacterCallbackClass(L));
-	CommandCallbackPtr = Common::SharedPtr<CommandCallbackClass>(new CommandCallbackClass(L));
+	characterCallbackPtr = Common::SharedPtr<CharacterCallbackClass>(new CharacterCallbackClass(L));
+	commandCallbackPtr = Common::SharedPtr<CommandCallbackClass>(new CommandCallbackClass(L));
 
 	return true;
 }

@@ -40,13 +40,13 @@
 namespace Sword25 {
 
 // Erstellt ein Fenster des GUI des aktuellen Betriebssystems
-Window *Window::CreateBSWindow(int X, int Y, int Width, int Height, bool Visible) {
+Window *Window::createBSWindow(int x, int y, int width, int height, bool visible) {
 	// Fenster erstellen
-	Window *pWindow = (Window *) new ScummVMWindow(X, Y, Width, Height, Visible);
+	Window *pWindow = (Window *) new ScummVMWindow(x, y, width, height, visible);
 
 	// Falls das Fenster erfolgreich initialisiert wurde, wird ein Pointer auf das Fensterobjekt
 	// zurückgegeben
-	if (pWindow->_InitSuccess)
+	if (pWindow->_initSuccess)
 		return pWindow;
 
 	// Ansonsten wird das Fensterobjekt zerstört und NULL zurückgegeben
@@ -56,14 +56,14 @@ Window *Window::CreateBSWindow(int X, int Y, int Width, int Height, bool Visible
 
 // Gibt True zurück wenn das Fenster WM_CLOSE empfangen hat -
 // solange, bis RejectClose() aufgerufen wurde.
-bool Window::CloseWanted() {
-	bool result = _CloseWanted;
-	_CloseWanted = false;
+bool Window::closeWanted() {
+	bool result = _closeWanted;
+	_closeWanted = false;
 	return result;
 }
 
-void Window::SetCloseWanted(bool Wanted) {
-	_CloseWanted = Wanted;
+void Window::setCloseWanted(bool wanted) {
+	_closeWanted = wanted;
 }
 
 } // End of namespace Sword25

@@ -81,7 +81,6 @@ const BS_ServiceInfo BS_SERVICE_TABLE[] = {
 	{ "fmv", "oggtheora", OggTheora_CreateObject }
 };
 
-
 } // End of namespace Sword25
 
 #endif

@@ -46,50 +46,50 @@ namespace Sword25 {
 #ifdef BS_ACTIVATE_LOGGING
 
 // Logging-Makros
-#define BS_LOG              BS_Log::SetPrefix(BS_LOG_PREFIX ": "), BS_Log::LogDecorated
-#define BS_LOGLN            BS_Log::SetPrefix(BS_LOG_PREFIX ": "), BS_Log::SetAutoNewline(true), BS_Log::LogDecorated
-#define BS_LOG_WARNING      BS_Log::SetPrefix(BS_LOG_PREFIX ": WARNING - "), BS_Log::LogDecorated
-#define BS_LOG_WARNINGLN    BS_Log::SetPrefix(BS_LOG_PREFIX ": WARNING - "), BS_Log::SetAutoNewline(true), BS_Log::LogDecorated
-#define BS_LOG_ERROR        BS_Log::SetPrefix(BS_LOG_PREFIX ": ERROR - "), BS_Log::LogDecorated
-#define BS_LOG_ERRORLN      BS_Log::SetPrefix(BS_LOG_PREFIX ": ERROR - "), BS_Log::SetAutoNewline(true), BS_Log::LogDecorated
-#define BS_LOG_EXTERROR     BS_Log::SetPrefix(BS_LOG_PREFIX ": ERROR "), BS_Log::SetFile(__FILE__), BS_Log::SetLine(__LINE__), BS_Log::LogDecorated
-#define BS_LOG_EXTERRORLN   BS_Log::SetPrefix(BS_LOG_PREFIX ": ERROR "), BS_Log::SetFile(__FILE__), BS_Log::SetLine(__LINE__),  BS_Log::SetAutoNewline(true), BS_Log::LogDecorated
+#define BS_LOG              BS_Log::setPrefix(BS_LOG_PREFIX ": "), BS_Log::logDecorated
+#define BS_LOGLN            BS_Log::setPrefix(BS_LOG_PREFIX ": "), BS_Log::setAutoNewline(true), BS_Log::logDecorated
+#define BS_LOG_WARNING      BS_Log::setPrefix(BS_LOG_PREFIX ": WARNING - "), BS_Log::logDecorated
+#define BS_LOG_WARNINGLN    BS_Log::setPrefix(BS_LOG_PREFIX ": WARNING - "), BS_Log::setAutoNewline(true), BS_Log::logDecorated
+#define BS_LOG_ERROR        BS_Log::setPrefix(BS_LOG_PREFIX ": ERROR - "), BS_Log::logDecorated
+#define BS_LOG_ERRORLN      BS_Log::setPrefix(BS_LOG_PREFIX ": ERROR - "), BS_Log::setAutoNewline(true), BS_Log::logDecorated
+#define BS_LOG_EXTERROR     BS_Log::setPrefix(BS_LOG_PREFIX ": ERROR "), BS_Log::setFile(__FILE__), BS_Log::setLine(__LINE__), BS_Log::logDecorated
+#define BS_LOG_EXTERRORLN   BS_Log::setPrefix(BS_LOG_PREFIX ": ERROR "), BS_Log::setFile(__FILE__), BS_Log::setLine(__LINE__),  BS_Log::setAutoNewline(true), BS_Log::logDecorated
 
 // Die Version der Logging-Klasse mit aktiviertem Logging
 class BS_Log {
 public:
-	static void Clear();
-	static void Log(const char *Format, ...);
-	static void LogPrefix(const char *Prefix, const char *Format, ...);
-	static void LogDecorated(const char *Format, ...);
+	static void clear();
+	static void log(const char *format, ...);
+	static void logPrefix(const char *prefix, const char *format, ...);
+	static void logDecorated(const char *format, ...);
 
-	static void SetPrefix(const char *Prefix) {
-		_Prefix = Prefix;
+	static void setPrefix(const char *prefix) {
+		_prefix = prefix;
 	}
-	static void SetFile(const char *File) {
-		_File = File;
+	static void setFile(const char *file) {
+		_file = file;
 	}
-	static void SetLine(int Line) {
-		_Line = Line;
+	static void setLine(int line) {
+		_line = line;
 	}
-	static void SetAutoNewline(bool AutoNewline) {
-		_AutoNewline = AutoNewline;
+	static void setAutoNewline(bool autoNewline) {
+		_autoNewline = autoNewline;
 	}
 
-	static void _CloseLog();
+	static void closeLog();
 
 private:
-	static Common::WriteStream                 *_LogFile;
-	static bool                                 _LineBegin;
-	static const char                          *_Prefix;
-	static const char                          *_File;
-	static int                                  _Line;
-	static bool                                 _AutoNewline;
+	static Common::WriteStream *_logFile;
+	static bool _lineBegin;
+	static const char *_prefix;
+	static const char *_file;
+	static int _line;
+	static bool _autoNewline;
 
-	static bool _CreateLog();
+	static bool createLog();
 
-	static int _WriteLog(const char *Message);
-	static void _FlushLog();
+	static int writeLog(const char *message);
+	static void flushLog();
 };
 
 // Auxiliary function that allows to log C functions (needed for Lua).
@@ -112,17 +112,17 @@ private:
 class BS_Log {
 public:
 	// This version implements all the various methods as empty stubs
-	static void Log(const char *Text, ...) {};
-	static void LogPrefix(const char *Prefix, const char *Format, ...) {};
-	static void LogDecorated(const char *Format, ...) {};
+	static void log(const char *text, ...) {};
+	static void logPrefix(const char *prefix, const char *format, ...) {};
+	static void logDecorated(const char *format, ...) {};
 
-	static void SetPrefix(const char *Prefix) {};
-	static void SetFile(const char *File) {};
-	static void SetLine(int Line) {};
-	static void SetAutoNewline(bool AutoNewline) {};
+	static void setPrefix(const char *prefix) {};
+	static void setFile(const char *file) {};
+	static void setLine(int line) {};
+	static void setAutoNewline(bool autoNewline) {};
 
 	typedef void (*LOG_LISTENER_CALLBACK)(const char *);
-	static void RegisterLogListener(LOG_LISTENER_CALLBACK Callback) {};
+	static void registerLogListener(LOG_LISTENER_CALLBACK callback) {};
 };
 
 #define BS_Log_C error

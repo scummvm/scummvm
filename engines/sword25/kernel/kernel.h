@@ -45,7 +45,6 @@
 #ifndef SWORD25_KERNEL_H
 #define SWORD25_KERNEL_H
 
-// Includes
 #include "common/scummsys.h"
 #include "common/random.h"
 #include "common/stack.h"
@@ -81,7 +80,7 @@ public:
 	/**
 	 * Returns a pointer to the window object
 	 */
-	Window *GetWindow() {
+	Window *getWindow() {
 		return _pWindow;
 	}
 
@@ -97,7 +96,7 @@ public:
 	 * @param ServiceIdentifier         The name of the service
 	 *         For the superclass "sfx" an example could be "Fmod" or "directsound"
 	 */
-	Service *NewService(const Common::String &SuperclassIdentifier, const Common::String &ServiceIdentifier);
+	Service *newService(const Common::String &superclassIdentifier, const Common::String &serviceIdentifier);
 
 	/**
 	 * Ends the current service of a superclass. Returns true on success, and false if the superclass
@@ -105,14 +104,14 @@ public:
 	 * @param SuperclassIdentfier       The name of the superclass which is to be disconnected
 	 *         z.B: "sfx", "gfx", "package" ...
 	 */
-	bool DisconnectService(const Common::String &SuperclassIdentifier);
+	bool disconnectService(const Common::String &superclassIdentifier);
 
 	/**
 	 * Returns a pointer to the currently active service object of a superclass
 	 * @param SuperclassIdentfier       The name of the superclass
 	 *         z.B: "sfx", "gfx", "package" ...
 	 */
-	Service *GetService(const Common::String &SuperclassIdentifier);
+	Service *getService(const Common::String &superclassIdentifier);
 
 	/**
 	 * Returns the name of the currentl active service object of a superclass.
@@ -120,12 +119,12 @@ public:
 	 * @param SuperclassIdentfier       The name of the superclass
 	 *         z.B: "sfx", "gfx", "package" ...
 	 */
-	Common::String GetActiveServiceIdentifier(const Common::String &SuperclassIdentifier);
+	Common::String getActiveServiceIdentifier(const Common::String &superclassIdentifier);
 
 	/**
 	 * Returns the number of register superclasses
 	 */
-	uint GetSuperclassCount() const;
+	uint getSuperclassCount() const;
 
 	/**
 	 * Returns the name of a superclass with the specified index.
@@ -133,14 +132,14 @@ public:
 	 * @param Number        The number of the superclass to return the identifier for.
 	 * It should be noted that the number should be between 0 und GetSuperclassCount() - 1.
 	 */
-	Common::String GetSuperclassIdentifier(uint Number) const;
+	Common::String getSuperclassIdentifier(uint number) const;
 
 	/**
 	 * Returns the number of services registered with a given superclass
 	 * @param SuperclassIdentifier      The name of the superclass
 	 *         z.B: "sfx", "gfx", "package" ...
 	 */
-	uint GetServiceCount(const Common::String &SuperclassIdentifier) const;
+	uint getServiceCount(const Common::String &superclassIdentifier) const;
 
 	/**
 	 * Gets the identifier of a service with a given superclass.
@@ -151,73 +150,74 @@ public:
 	 *         Hierbei ist zu beachten, dass der erste Service die Nummer 0 erhält. Number muss also eine Zahl zwischen
 	 *         0 und GetServiceCount() - 1 sein.
 	 */
-	Common::String GetServiceIdentifier(const Common::String &SuperclassIdentifier, uint Number) const;
+	Common::String getServiceIdentifier(const Common::String &superclassIdentifier, uint number) const;
 
 	/**
 	 * Returns the elapsed time since startup in milliseconds
 	 */
-	uint GetMilliTicks();
+	uint getMilliTicks();
 
 	/**
 	 * Specifies whether the kernel was successfully initialised
 	 */
-	bool GetInitSuccess() const {
-		return _InitSuccess;
+	bool getInitSuccess() const {
+		return _initSuccess;
 	}
 	/**
 	 * Returns a pointer to the BS_ResourceManager
 	 */
-	ResourceManager *GetResourceManager() {
+	ResourceManager *getResourceManager() {
 		return _pResourceManager;
 	}
 	/**
 	 * Returns how much memory is being used
 	 */
-	size_t GetUsedMemory();
+	size_t getUsedMemory();
 	/**
 	 * Returns a random number
 	 * @param Min       The minimum allowed value
 	 * @param Max       The maximum allowed value
 	 */
-	int GetRandomNumber(int Min, int Max);
+	int getRandomNumber(int min, int max);
 	/**
 	 * Returns a pointer to the active Gfx Service, or NULL if no Gfx service is active
 	 */
-	GraphicEngine *GetGfx();
+	GraphicEngine *getGfx();
 	/**
 	 * Returns a pointer to the active Sfx Service, or NULL if no Sfx service is active
 	 */
-	SoundEngine *GetSfx();
+	SoundEngine *getSfx();
 	/**
 	 * Returns a pointer to the active input service, or NULL if no input service is active
 	 */
-	InputEngine *GetInput();
+	InputEngine *getInput();
 	/**
 	 * Returns a pointer to the active package manager, or NULL if no manager is active
 	 */
-	PackageManager *GetPackage();
+	PackageManager *getPackage();
 	/**
 	 * Returns a pointer to the script engine, or NULL if it is not active
 	 */
-	ScriptEngine *GetScript();
+	ScriptEngine *getScript();
 
 	/**
 	 * Returns a pointer to the movie player, or NULL if it is not active
 	 */
-	MoviePlayer *GetFMV();
+	MoviePlayer *getFMV();
 
 	/**
 	 * Pauses for the specified amount of time
 	 * @param Msecs     The amount of time in milliseconds
 	 */
-	void Sleep(uint Msecs) const;
+	void sleep(uint msecs) const;
 
 	/**
 	 * Returns the singleton instance for the kernel
 	 */
-	static Kernel *GetInstance() {
-		if (!_Instance) _Instance = new Kernel();
-		return _Instance;
+	static Kernel *getInstance() {
+		if (!_instance)
+			_instance = new Kernel();
+		return _instance;
 	}
 
 	/**
@@ -225,18 +225,18 @@ public:
 	 * This method should only be called when the game is ended. No subsequent calls to any kernel
 	 * methods should be done after calling this method.
 	 */
-	static void DeleteInstance() {
-		if (_Instance) {
-			delete _Instance;
-			_Instance = NULL;
+	static void deleteInstance() {
+		if (_instance) {
+			delete _instance;
+			_instance = NULL;
 		}
 	}
 
 	/**
 	 * Raises an error. This method is used in crashing testing.
 	 */
-	void Crash() const {
-		error("BS_Kernel::Crash");
+	void crash() const {
+		error("Kernel::Crash");
 	}
 
 private:
@@ -251,45 +251,45 @@ private:
 	// -----------------------------------------------------------------------------
 	// Singleton instance
 	// -----------------------------------------------------------------------------
-	static Kernel *_Instance;
+	static Kernel *_instance;
 
 	// Superclass class
 	// ----------------
 	class Superclass {
 	private:
 		Kernel *_pKernel;
-		uint _ServiceCount;
-		Common::String _Identifier;
-		Service *_ActiveService;
-		Common::String _ActiveServiceName;
+		uint _serviceCount;
+		Common::String _identifier;
+		Service *_activeService;
+		Common::String _activeServiceName;
 
 	public:
-		Superclass(Kernel *pKernel, const Common::String &Identifier);
+		Superclass(Kernel *pKernel, const Common::String &identifier);
 		~Superclass();
 
-		uint GetServiceCount() const {
-			return _ServiceCount;
+		uint getServiceCount() const {
+			return _serviceCount;
 		}
-		Common::String GetIdentifier() const {
-			return _Identifier;
+		Common::String getIdentifier() const {
+			return _identifier;
 		}
-		Service *GetActiveService() const {
-			return _ActiveService;
+		Service *getActiveService() const {
+			return _activeService;
 		}
-		Common::String GetActiveServiceName() const {
-			return _ActiveServiceName;
+		Common::String getActiveServiceName() const {
+			return _activeServiceName;
 		}
-		Common::String GetServiceIdentifier(uint Number);
-		Service *NewService(const Common::String &ServiceIdentifier);
-		bool DisconnectService();
+		Common::String getServiceIdentifier(uint number);
+		Service *newService(const Common::String &serviceIdentifier);
+		bool disconnectService();
 	};
 
 	Common::Array<Superclass *>  _superclasses;
-	Common::Stack<Common::String>       _ServiceCreationOrder;
-	Superclass *GetSuperclassByIdentifier(const Common::String &Identifier) const;
+	Common::Stack<Common::String> _serviceCreationOrder;
+	Superclass *getSuperclassByIdentifier(const Common::String &identifier) const;
 
-	bool _InitSuccess; // Specifies whether the engine was set up correctly
-	bool _Running;  // Specifies whether the application should keep running on the next main loop iteration
+	bool _initSuccess; // Specifies whether the engine was set up correctly
+	bool _running;  // Specifies whether the application should keep running on the next main loop iteration
 
 	// Active window
 	// -------------
@@ -299,34 +299,11 @@ private:
 	// -----------------------
 	Common::RandomSource _rnd;
 
-	/*
-	// Features variables and methods
-	// ----------------------------------
-	enum _CPU_FEATURES_BITMASKS
-	{
-	    _MMX_BITMASK        = (1 << 23),
-	    _SSE_BITMASK        = (1 << 25),
-	    _SSE2_BITMASK       = (1 << 26),
-	    _3DNOW_BITMASK      = (1 << 30),
-	    _3DNOWEXT_BITMASK   = (1 << 31)
-	};
-
-	bool        _DetectCPU();
-
-	bool        _MMXPresent;
-	bool        _SSEPresent;
-	bool        _SSE2Present;
-	bool        _3DNowPresent;
-	bool        _3DNowExtPresent;
-	CPU_TYPES   _CPUType;
-	Common::String  _CPUVendorID;
-	*/
-
 	// Resourcemanager
 	// ---------------
 	ResourceManager *_pResourceManager;
 
-	bool _RegisterScriptBindings();
+	bool registerScriptBindings();
 };
 
 } // End of namespace Sword25

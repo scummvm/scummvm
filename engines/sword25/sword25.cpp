@@ -90,13 +90,13 @@ Common::Error Sword25Engine::appStart() {
 		return Common::kUnsupportedColorMode;
 
 	// Kernel initialization
-	if (!Kernel::GetInstance()->GetInitSuccess()) {
+	if (!Kernel::getInstance()->getInitSuccess()) {
 		BS_LOG_ERRORLN("Kernel initialization failed.");
 		return Common::kUnknownError;
 	}
 
 	// Package-Manager starten, damit die Packfiles geladen werden können.
-	PackageManager *packageManagerPtr = static_cast<PackageManager *>(Kernel::GetInstance()->NewService("package", PACKAGE_MANAGER));
+	PackageManager *packageManagerPtr = static_cast<PackageManager *>(Kernel::getInstance()->newService("package", PACKAGE_MANAGER));
 	if (!packageManagerPtr) {
 		BS_LOG_ERRORLN("PackageManager initialization failed.");
 		return Common::kUnknownError;
@@ -112,7 +112,7 @@ Common::Error Sword25Engine::appStart() {
 	}
 
 	// Einen Pointer auf den Skript-Engine holen.
-	ScriptEngine *scriptPtr = Kernel::GetInstance()->GetScript();
+	ScriptEngine *scriptPtr = Kernel::getInstance()->getScript();
 	if (!scriptPtr) {
 		BS_LOG_ERRORLN("Script intialization failed.");
 		return Common::kUnknownError;
@@ -126,7 +126,7 @@ Common::Error Sword25Engine::appStart() {
 
 bool Sword25Engine::appMain() {
 	// The main script start. This script loads all the other scripts and starts the actual game.
-	ScriptEngine *scriptPtr = Kernel::GetInstance()->GetScript();
+	ScriptEngine *scriptPtr = Kernel::getInstance()->getScript();
 	BS_ASSERT(scriptPtr);
 	scriptPtr->executeFile(DEFAULT_SCRIPT_FILE);
 
@@ -135,20 +135,20 @@ bool Sword25Engine::appMain() {
 
 bool Sword25Engine::appEnd() {
 	// The kernel is shutdown, and un-initialises all subsystems
-	Kernel::DeleteInstance();
+	Kernel::deleteInstance();
 
 	AnimationTemplateRegistry::destroy();
 	RenderObjectRegistry::destroy();
 	RegionRegistry::destroy();
 
 	// Free the log file if it was used
-	BS_Log::_CloseLog();
+	BS_Log::closeLog();
 
 	return true;
 }
 
 bool Sword25Engine::loadPackages() {
-	PackageManager *packageManagerPtr = Kernel::GetInstance()->GetPackage();
+	PackageManager *packageManagerPtr = Kernel::getInstance()->getPackage();
 	BS_ASSERT(packageManagerPtr);
 
 	// Load the main package

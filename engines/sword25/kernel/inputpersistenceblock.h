@@ -35,19 +35,11 @@
 #ifndef SWORD25_INPUTPERSISTENCEBLOCK_H
 #define SWORD25_INPUTPERSISTENCEBLOCK_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "common/array.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistenceblock.h"
 
 namespace Sword25 {
-
-// -----------------------------------------------------------------------------
-// Class declaration
-// -----------------------------------------------------------------------------
 
 class InputPersistenceBlock : public PersistenceBlock {
 public:
@@ -57,32 +49,32 @@ public:
 		OUT_OF_SYNC
 	};
 
-	InputPersistenceBlock(const void *Data, uint DataLength);
+	InputPersistenceBlock(const void *data, uint dataLength);
 	virtual ~InputPersistenceBlock();
 
-	void read(int16 &Value);
-	void read(signed int &Value);
-	void read(uint &Value);
-	void read(float &Value);
-	void read(bool &Value);
-	void read(Common::String &Value);
-	void read(Common::Array<byte> &Value);
+	void read(int16 &value);
+	void read(signed int &value);
+	void read(uint &value);
+	void read(float &value);
+	void read(bool &value);
+	void read(Common::String &value);
+	void read(Common::Array<byte> &value);
 
 	bool isGood() const {
-		return m_ErrorState == NONE;
+		return _errorState == NONE;
 	}
-	ErrorState GetErrorState() const {
-		return m_ErrorState;
+	ErrorState getErrorState() const {
+		return _errorState;
 	}
 
 private:
-	bool CheckMarker(byte Marker);
-	bool CheckBlockSize(int Size);
-	void RawRead(void *DestPtr, size_t Size);
+	bool checkMarker(byte marker);
+	bool checkBlockSize(int size);
+	void rawRead(void *destPtr, size_t size);
 
-	Common::Array<byte> m_Data;
-	Common::Array<byte>::const_iterator m_Iter;
-	ErrorState m_ErrorState;
+	Common::Array<byte> _data;
+	Common::Array<byte>::const_iterator _iter;
+	ErrorState _errorState;
 };
 
 } // End of namespace Sword25

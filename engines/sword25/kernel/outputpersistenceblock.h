@@ -35,42 +35,34 @@
 #ifndef SWORD25_OUTPUTPERSISTENCEBLOCK_H
 #define SWORD25_OUTPUTPERSISTENCEBLOCK_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistenceblock.h"
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Class declaration
-// -----------------------------------------------------------------------------
-
 class OutputPersistenceBlock : public PersistenceBlock {
 public:
 	OutputPersistenceBlock();
 
-	void write(signed int Value);
-	void write(uint Value);
-	void write(float Value);
-	void write(bool Value);
-	void write(const Common::String &String);
-	void write(const void *BufferPtr, size_t Size);
+	void write(signed int value);
+	void write(uint value);
+	void write(float value);
+	void write(bool value);
+	void write(const Common::String &string);
+	void write(const void *bufferPtr, size_t size);
 
-	const void *GetData() const {
-		return &m_Data[0];
+	const void *getData() const {
+		return &_data[0];
 	}
-	uint GetDataSize() const {
-		return m_Data.size();
+	uint getDataSize() const {
+		return _data.size();
 	}
 
 private:
-	void WriteMarker(byte Marker);
-	void RawWrite(const void *DataPtr, size_t Size);
+	void writeMarker(byte marker);
+	void rawWrite(const void *dataPtr, size_t size);
 
-	Common::Array<byte> m_Data;
+	Common::Array<byte> _data;
 };
 
 } // End of namespace Sword25

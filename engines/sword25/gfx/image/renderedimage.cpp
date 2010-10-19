@@ -56,10 +56,10 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 	_height(0) {
 	result = false;
 
-	PackageManager *pPackage = Kernel::GetInstance()->GetPackage();
+	PackageManager *pPackage = Kernel::getInstance()->getPackage();
 	BS_ASSERT(pPackage);
 
-	_backSurface = Kernel::GetInstance()->GetGfx()->getSurface();
+	_backSurface = Kernel::getInstance()->getGfx()->getSurface();
 
 	// Datei laden
 	byte *pFileData;
@@ -103,7 +103,7 @@ RenderedImage::RenderedImage(uint width, uint height, bool &result) :
 	_data = new byte[width * height * 4];
 	Common::set_to(_data, &_data[width * height * 4], 0);
 
-	_backSurface = Kernel::GetInstance()->GetGfx()->getSurface();
+	_backSurface = Kernel::getInstance()->getGfx()->getSurface();
 
 	_doCleanup = true;
 
@@ -112,7 +112,7 @@ RenderedImage::RenderedImage(uint width, uint height, bool &result) :
 }
 
 RenderedImage::RenderedImage() : _width(0), _height(0), _data(0) {
-	_backSurface = Kernel::GetInstance()->GetGfx()->getSurface();
+	_backSurface = Kernel::getInstance()->getGfx()->getSurface();
 
 	_doCleanup = false;
 

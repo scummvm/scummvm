@@ -77,7 +77,7 @@ uint DynamicBitmap::getPixel(int x, int y) const {
 
 bool DynamicBitmap::doRender() {
 	// Framebufferobjekt holen
-	GraphicEngine *pGfx = Kernel::GetInstance()->GetGfx();
+	GraphicEngine *pGfx = Kernel::getInstance()->getGfx();
 	BS_ASSERT(pGfx);
 
 	// Bitmap zeichnen

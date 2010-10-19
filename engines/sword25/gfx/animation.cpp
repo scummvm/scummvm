@@ -99,8 +99,8 @@ Animation::Animation(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject
 
 void Animation::initializeAnimationResource(const Common::String &fileName) {
 	// Die Resource wird für die gesamte Lebensdauer des Animations-Objektes gelockt.
-	Resource *resourcePtr = Kernel::GetInstance()->GetResourceManager()->RequestResource(fileName);
-	if (resourcePtr && resourcePtr->GetType() == Resource::TYPE_ANIMATION)
+	Resource *resourcePtr = Kernel::getInstance()->getResourceManager()->requestResource(fileName);
+	if (resourcePtr && resourcePtr->getType() == Resource::TYPE_ANIMATION)
 		_animationResourcePtr = static_cast<AnimationResource *>(resourcePtr);
 	else {
 		BS_LOG_ERRORLN("The resource \"%s\" could not be requested. The Animation can't be created.", fileName.c_str());
@@ -182,13 +182,13 @@ bool Animation::doRender() {
 	BS_ASSERT(_currentFrame < animationDescriptionPtr->getFrameCount());
 
 	// Bitmap des aktuellen Frames holen
-	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->getFrame(_currentFrame).fileName);
+	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(animationDescriptionPtr->getFrame(_currentFrame).fileName);
 	BS_ASSERT(pResource);
-	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
+	BS_ASSERT(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmapResource = static_cast<BitmapResource *>(pResource);
 
 	// Framebufferobjekt holen
-	GraphicEngine *pGfx = Kernel::GetInstance()->GetGfx();
+	GraphicEngine *pGfx = Kernel::getInstance()->getGfx();
 	BS_ASSERT(pGfx);
 
 	// Bitmap zeichnen
@@ -315,9 +315,9 @@ void Animation::computeCurrentCharacteristics() {
 	BS_ASSERT(animationDescriptionPtr);
 	const AnimationResource::Frame &curFrame = animationDescriptionPtr->getFrame(_currentFrame);
 
-	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(curFrame.fileName);
+	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(curFrame.fileName);
 	BS_ASSERT(pResource);
-	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
+	BS_ASSERT(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
 	// Größe des Bitmaps auf die Animation übertragen
@@ -338,7 +338,7 @@ bool Animation::lockAllFrames() {
 		AnimationDescription *animationDescriptionPtr = getAnimationDescription();
 		BS_ASSERT(animationDescriptionPtr);
 		for (uint i = 0; i < animationDescriptionPtr->getFrameCount(); ++i) {
-			if (!Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->getFrame(i).fileName)) {
+			if (!Kernel::getInstance()->getResourceManager()->requestResource(animationDescriptionPtr->getFrame(i).fileName)) {
 				BS_LOG_ERRORLN("Could not lock all animation frames.");
 				return false;
 			}
@@ -356,14 +356,14 @@ bool Animation::unlockAllFrames() {
 		BS_ASSERT(animationDescriptionPtr);
 		for (uint i = 0; i < animationDescriptionPtr->getFrameCount(); ++i) {
 			Resource *pResource;
-			if (!(pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(animationDescriptionPtr->getFrame(i).fileName))) {
+			if (!(pResource = Kernel::getInstance()->getResourceManager()->requestResource(animationDescriptionPtr->getFrame(i).fileName))) {
 				BS_LOG_ERRORLN("Could not unlock all animation frames.");
 				return false;
 			}
 
 			// Zwei mal freigeben um den Request von LockAllFrames() und den jetzigen Request aufzuheben
 			pResource->release();
-			if (pResource->GetLockCount())
+			if (pResource->getLockCount())
 				pResource->release();
 		}
 
@@ -524,9 +524,9 @@ int Animation::computeXModifier() const {
 	BS_ASSERT(animationDescriptionPtr);
 	const AnimationResource::Frame &curFrame = animationDescriptionPtr->getFrame(_currentFrame);
 
-	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(curFrame.fileName);
+	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(curFrame.fileName);
 	BS_ASSERT(pResource);
-	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
+	BS_ASSERT(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
 	int result = curFrame.flipV ? - static_cast<int>((pBitmap->getWidth() - 1 - curFrame.hotspotX) * _scaleFactorX) :
@@ -542,9 +542,9 @@ int Animation::computeYModifier() const {
 	BS_ASSERT(animationDescriptionPtr);
 	const AnimationResource::Frame &curFrame = animationDescriptionPtr->getFrame(_currentFrame);
 
-	Resource *pResource = Kernel::GetInstance()->GetResourceManager()->RequestResource(curFrame.fileName);
+	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(curFrame.fileName);
 	BS_ASSERT(pResource);
-	BS_ASSERT(pResource->GetType() == Resource::TYPE_BITMAP);
+	BS_ASSERT(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
 	int result = curFrame.flipH ? - static_cast<int>((pBitmap->getHeight() - 1 - curFrame.hotspotY) * _scaleFactorY) :

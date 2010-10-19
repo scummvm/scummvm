@@ -125,9 +125,9 @@ AnimationTemplate::AnimationTemplate(InputPersistenceBlock &reader, uint handle)
 }
 
 AnimationResource *AnimationTemplate::requestSourceAnimation(const Common::String &sourceAnimation) const {
-	ResourceManager *RMPtr = Kernel::GetInstance()->GetResourceManager();
+	ResourceManager *RMPtr = Kernel::getInstance()->getResourceManager();
 	Resource *resourcePtr;
-	if (NULL == (resourcePtr = RMPtr->RequestResource(sourceAnimation)) || resourcePtr->GetType() != Resource::TYPE_ANIMATION) {
+	if (NULL == (resourcePtr = RMPtr->requestResource(sourceAnimation)) || resourcePtr->getType() != Resource::TYPE_ANIMATION) {
 		BS_LOG_ERRORLN("The resource \"%s\" could not be requested or is has an invalid type. The animation template can't be created.", sourceAnimation.c_str());
 		return 0;
 	}

@@ -34,15 +34,7 @@
 
 #define BS_LOG_PREFIX "OUTPUTPERSISTENCEBLOCK"
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/outputpersistenceblock.h"
-
-// -----------------------------------------------------------------------------
-// Constants
-// -----------------------------------------------------------------------------
 
 namespace {
 const uint INITIAL_BUFFER_SIZE = 1024 * 64;
@@ -50,81 +42,59 @@ const uint INITIAL_BUFFER_SIZE = 1024 * 64;
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Construction / Destruction
-// -----------------------------------------------------------------------------
-
 OutputPersistenceBlock::OutputPersistenceBlock() {
-	m_Data.reserve(INITIAL_BUFFER_SIZE);
+	_data.reserve(INITIAL_BUFFER_SIZE);
 }
 
-// -----------------------------------------------------------------------------
-// Writing
-// -----------------------------------------------------------------------------
-
-void OutputPersistenceBlock::write(signed int Value) {
-	WriteMarker(SINT_MARKER);
-	Value = ConvertEndianessFromSystemToStorage(Value);
-	RawWrite(&Value, sizeof(Value));
+void OutputPersistenceBlock::write(signed int value) {
+	writeMarker(SINT_MARKER);
+	value = convertEndianessFromSystemToStorage(value);
+	rawWrite(&value, sizeof(value));
 }
 
-// -----------------------------------------------------------------------------
-
-void OutputPersistenceBlock::write(uint Value) {
-	WriteMarker(UINT_MARKER);
-	Value = ConvertEndianessFromSystemToStorage(Value);
-	RawWrite(&Value, sizeof(Value));
+void OutputPersistenceBlock::write(uint value) {
+	writeMarker(UINT_MARKER);
+	value = convertEndianessFromSystemToStorage(value);
+	rawWrite(&value, sizeof(value));
 }
 
-// -----------------------------------------------------------------------------
-
-void OutputPersistenceBlock::write(float Value) {
-	WriteMarker(FLOAT_MARKER);
-	Value = ConvertEndianessFromSystemToStorage(Value);
-	RawWrite(&Value, sizeof(Value));
+void OutputPersistenceBlock::write(float value) {
+	writeMarker(FLOAT_MARKER);
+	value = convertEndianessFromSystemToStorage(value);
+	rawWrite(&value, sizeof(value));
 }
 
-// -----------------------------------------------------------------------------
+void OutputPersistenceBlock::write(bool value) {
+	writeMarker(BOOL_MARKER);
 
-void OutputPersistenceBlock::write(bool Value) {
-	WriteMarker(BOOL_MARKER);
-
-	uint UIntBool = Value ? 1 : 0;
-	UIntBool = ConvertEndianessFromSystemToStorage(UIntBool);
-	RawWrite(&UIntBool, sizeof(UIntBool));
+	uint uintBool = value ? 1 : 0;
+	uintBool = convertEndianessFromSystemToStorage(uintBool);
+	rawWrite(&uintBool, sizeof(uintBool));
 }
 
-// -----------------------------------------------------------------------------
+void OutputPersistenceBlock::write(const Common::String &string) {
+	writeMarker(STRING_MARKER);
 
-void OutputPersistenceBlock::write(const Common::String &String) {
-	WriteMarker(STRING_MARKER);
-
-	write(String.size());
-	RawWrite(String.c_str(), String.size());
+	write(string.size());
+	rawWrite(string.c_str(), string.size());
 }
 
-// -----------------------------------------------------------------------------
+void OutputPersistenceBlock::write(const void *bufferPtr, size_t size) {
+	writeMarker(BLOCK_MARKER);
 
-void OutputPersistenceBlock::write(const void *BufferPtr, size_t Size) {
-	WriteMarker(BLOCK_MARKER);
-
-	write((int) Size);
-	RawWrite(BufferPtr, Size);
+	write((int)size);
+	rawWrite(bufferPtr, size);
 }
 
-// -----------------------------------------------------------------------------
-
-void OutputPersistenceBlock::WriteMarker(byte Marker) {
-	m_Data.push_back(Marker);
+void OutputPersistenceBlock::writeMarker(byte marker) {
+	_data.push_back(marker);
 }
 
-// -----------------------------------------------------------------------------
-
-void OutputPersistenceBlock::RawWrite(const void *DataPtr, size_t Size) {
-	if (Size > 0) {
-		uint OldSize = m_Data.size();
-		m_Data.resize(OldSize + Size);
-		memcpy(&m_Data[OldSize], DataPtr, Size);
+void OutputPersistenceBlock::rawWrite(const void *dataPtr, size_t size) {
+	if (size > 0) {
+		uint oldSize = _data.size();
+		_data.resize(oldSize + size);
+		memcpy(&_data[oldSize], dataPtr, size);
 	}
 }
 

@@ -43,31 +43,31 @@
 
 namespace Sword25 {
 
-bool ScummVMWindow::_ClassRegistered = false;
+bool ScummVMWindow::_classRegistered = false;
 
 // Constructor / Destructor
 // ------------------------
-ScummVMWindow::ScummVMWindow(int X, int Y, int Width, int Height, bool Visible) {
+ScummVMWindow::ScummVMWindow(int x, int y, int width, int height, bool visible) {
 	// Presume that init will fail
-	_InitSuccess = false;
+	_initSuccess = false;
 
 	// We don't support any window creation except at the origin 0,0
-	assert(X == 0);
-	assert(Y == 0);
+	assert(x == 0);
+	assert(y == 0);
 
-	if (!_ClassRegistered) {
+	if (!_classRegistered) {
 		// Nothing here currently
 
-		_ClassRegistered = true;
+		_classRegistered = true;
 	}
 
 	// Fenstersichtbarkeit setzen
-	SetVisible(Visible);
+	setVisible(visible);
 
 	// Indicate success
-	_InitSuccess = true;
-	_WindowAlive = true;
-	_CloseWanted = false;
+	_initSuccess = true;
+	_windowAlive = true;
+	_closeWanted = false;
 }
 
 ScummVMWindow::~ScummVMWindow() {
@@ -75,86 +75,86 @@ ScummVMWindow::~ScummVMWindow() {
 
 // Get Methods
 // ------------
-int ScummVMWindow::GetX() {
+int ScummVMWindow::getX() {
 	return 0;
 }
 
-int ScummVMWindow::GetY() {
+int ScummVMWindow::getY() {
 	return 0;
 }
 
-int ScummVMWindow::GetClientX() {
+int ScummVMWindow::getClientX() {
 	return 0;
 }
 
-int ScummVMWindow::GetClientY() {
+int ScummVMWindow::getClientY() {
 	return 0;
 }
 
-int ScummVMWindow::GetWidth() {
+int ScummVMWindow::getWidth() {
 	return g_system->getWidth();
 }
 
-int ScummVMWindow::GetHeight() {
+int ScummVMWindow::getHeight() {
 	return g_system->getHeight();
 }
 
-Common::String ScummVMWindow::GetTitle() {
+Common::String ScummVMWindow::getTitle() {
 	return Common::String("");
 }
 
-bool ScummVMWindow::IsVisible() {
+bool ScummVMWindow::isVisible() {
 	return true;
 }
 
-bool ScummVMWindow::HasFocus() {
+bool ScummVMWindow::hasFocus() {
 	// FIXME: Is there a way to tell if ScummVM has the focus in Windowed mode?
 	return true;
 }
 
-uint ScummVMWindow::GetWindowHandle() {
+uint ScummVMWindow::getWindowHandle() {
 	return 0;
 }
 
-void ScummVMWindow::SetWindowAlive(bool v) {
-	_WindowAlive = v;
+void ScummVMWindow::setWindowAlive(bool v) {
+	_windowAlive = v;
 }
 
 
 // Set Methods
 // ------------
 
-void ScummVMWindow::SetX(int X) {
+void ScummVMWindow::setX(int X) {
 	// No implementation
 }
 
-void ScummVMWindow::SetY(int Y) {
+void ScummVMWindow::setY(int Y) {
 	// No implementation
 }
 
-void ScummVMWindow::SetWidth(int Width) {
+void ScummVMWindow::setWidth(int width) {
 	// No implementation
 }
 
-void ScummVMWindow::SetHeight(int Height) {
+void ScummVMWindow::setHeight(int height) {
 	// No implementation
 }
 
-void ScummVMWindow::SetVisible(bool Visible) {
+void ScummVMWindow::setVisible(bool visible) {
 	// No implementation
 }
 
-void ScummVMWindow::SetTitle(const Common::String &Title) {
+void ScummVMWindow::setTitle(const Common::String &title) {
 	// No implementation
 }
 
-bool ScummVMWindow::ProcessMessages() {
+bool ScummVMWindow::processMessages() {
 	// All messages are handled separately in the input manager. The only thing we
 	// need to do here is to keep returning whether the window/game is still alive
-	return _WindowAlive;
+	return _windowAlive;
 }
 
-bool ScummVMWindow::WaitForFocus() {
+bool ScummVMWindow::waitForFocus() {
 	// No implementation
 	return true;
 }

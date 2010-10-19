@@ -62,7 +62,7 @@ public:
 	 * Prevents the resource from being released.
 	 * @remarks             This method allows a resource to be locked multiple times.
 	 **/
-	void AddReference() {
+	void addReference() {
 		++_refCount;
 	}
 
@@ -77,7 +77,7 @@ public:
 	 * Returns the current lock count for the resource
 	 * @return              The current lock count
 	 **/
-	int GetLockCount() const {
+	int getLockCount() const {
 		return _refCount;
 	}
 
@@ -91,14 +91,14 @@ public:
 	/**
 	 * Returns the hash of the filename of a resource
 	*/
-	uint GetFileNameHash() const {
+	uint getFileNameHash() const {
 		return _fileNameHash;
 	}
 
 	/**
 	 * Returns a resource's type
 	 */
-	uint GetType() const {
+	uint getType() const {
 		return _type;
 	}
 
@@ -106,10 +106,10 @@ protected:
 	virtual ~Resource() {}
 
 private:
-	Common::String                      _fileName;          ///< The absolute filename
-	uint                        _fileNameHash;      ///< The hash value of the filename
-	uint                        _refCount;          ///< The number of locks
-	uint                        _type;              ///< The type of the resource
+	Common::String _fileName;          ///< The absolute filename
+	uint _fileNameHash;      ///< The hash value of the filename
+	uint _refCount;          ///< The number of locks
+	uint _type;              ///< The type of the resource
 	Common::List<Resource *>::iterator _iterator;        ///< Points to the resource position in the LRU list
 };
 

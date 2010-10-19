@@ -39,32 +39,31 @@
 
 namespace Sword25 {
 
-// Constants
 static const char *BF_LOG_FILENAME = "log.txt";
 static const size_t LOG_BUFFERSIZE = 1024 * 16;
 
 // Logging will take place only when it's activated
 #ifdef BS_ACTIVATE_LOGGING
 
-Common::WriteStream                            *BS_Log::_LogFile = NULL;
-bool                                            BS_Log::_LineBegin = true;
-const char                                     *BS_Log::_Prefix = NULL;
-const char                                     *BS_Log::_File = NULL;
-int                                             BS_Log::_Line = 0;
-bool                                            BS_Log::_AutoNewline = false;
+Common::WriteStream *BS_Log::_logFile = NULL;
+bool BS_Log::_lineBegin = true;
+const char *BS_Log::_prefix = NULL;
+const char *BS_Log::_file = NULL;
+int BS_Log::_line = 0;
+bool BS_Log::_autoNewline = false;
 
-bool BS_Log::_CreateLog() {
+bool BS_Log::createLog() {
 	// Open the log file
 	Common::FSNode dataDir(ConfMan.get("path"));
 	Common::FSNode file = dataDir.getChild(BF_LOG_FILENAME);
 
 	// Open the file for saving
-	_LogFile = file.createWriteStream();
+	_logFile = file.createWriteStream();
 
-	if (_LogFile) {
+	if (_logFile) {
 		// Add a title into the log file
-		Log("Broken Sword 2.5 Engine - Build: %s - %s - VersionID: %s\n", __DATE__, __TIME__, gScummVMFullVersion);
-		Log("-----------------------------------------------------------------------------------------------------\n");
+		log("Broken Sword 2.5 Engine - Build: %s - %s - VersionID: %s\n", __DATE__, __TIME__, gScummVMFullVersion);
+		log("-----------------------------------------------------------------------------------------------------\n");
 
 		return true;
 	}
@@ -73,141 +72,142 @@ bool BS_Log::_CreateLog() {
 	return false;
 }
 
-void BS_Log::_CloseLog() {
-	delete _LogFile;
-	_LogFile = NULL;
+void BS_Log::closeLog() {
+	delete _logFile;
+	_logFile = NULL;
 }
 
-void BS_Log::Log(const char *Format, ...) {
-	char Message[LOG_BUFFERSIZE];
+void BS_Log::log(const char *format, ...) {
+	char message[LOG_BUFFERSIZE];
 
 	// Create the message
-	va_list ArgList;
-	va_start(ArgList, Format);
-	vsnprintf(Message, sizeof(Message), Format, ArgList);
+	va_list argList;
+	va_start(argList, format);
+	vsnprintf(message, sizeof(message), format, argList);
 
 	// Log the message
-	_WriteLog(Message);
+	writeLog(message);
 
-	_FlushLog();
+	flushLog();
 }
 
-void BS_Log::LogPrefix(const char *Prefix, const char *Format, ...) {
-	char Message[LOG_BUFFERSIZE];
-	char ExtFormat[LOG_BUFFERSIZE];
+void BS_Log::logPrefix(const char *prefix, const char *format, ...) {
+	char message[LOG_BUFFERSIZE];
+	char extFormat[LOG_BUFFERSIZE];
 
 	// If the issue has ceased at the beginning of a new line, the new issue to begin with the prefix
-	ExtFormat[0] = 0;
-	if (_LineBegin) {
-		snprintf(ExtFormat, sizeof(ExtFormat), "%s: ", Prefix);
-		_LineBegin = false;
+	extFormat[0] = 0;
+	if (_lineBegin) {
+		snprintf(extFormat, sizeof(extFormat), "%s: ", prefix);
+		_lineBegin = false;
 	}
 	// Format String pass line by line and each line with the initial prefix
 	for (;;) {
-		const char *NextLine = strstr(Format, "\n");
-		if (!NextLine || *(NextLine + strlen("\n")) == 0) {
-			Common::strlcat(ExtFormat, Format, sizeof(ExtFormat));
-			if (NextLine) _LineBegin = true;
+		const char *nextLine = strstr(format, "\n");
+		if (!nextLine || *(nextLine + strlen("\n")) == 0) {
+			Common::strlcat(extFormat, format, sizeof(extFormat));
+			if (nextLine)
+				_lineBegin = true;
 			break;
 		} else {
-			strncat(ExtFormat, Format, (NextLine - Format) + strlen("\n"));
-			Common::strlcat(ExtFormat, Prefix, sizeof(ExtFormat));
-			Common::strlcat(ExtFormat, ": ", sizeof(ExtFormat));
+			strncat(extFormat, format, (nextLine - format) + strlen("\n"));
+			Common::strlcat(extFormat, prefix, sizeof(extFormat));
+			Common::strlcat(extFormat, ": ", sizeof(extFormat));
 		}
 
-		Format = NextLine + strlen("\n");
+		format = nextLine + strlen("\n");
 	}
 
 	// Create message
-	va_list ArgList;
-	va_start(ArgList, Format);
-	vsnprintf(Message, sizeof(Message), ExtFormat, ArgList);
+	va_list argList;
+	va_start(argList, format);
+	vsnprintf(message, sizeof(message), extFormat, argList);
 
 	// Log the message
-	_WriteLog(Message);
+	writeLog(message);
 
-	_FlushLog();
+	flushLog();
 }
 
-void BS_Log::LogDecorated(const char *Format, ...) {
+void BS_Log::logDecorated(const char *format, ...) {
 	// Nachricht erzeugen
-	char Message[LOG_BUFFERSIZE];
-	va_list ArgList;
-	va_start(ArgList, Format);
-	vsnprintf(Message, sizeof(Message), Format, ArgList);
+	char message[LOG_BUFFERSIZE];
+	va_list argList;
+	va_start(argList, format);
+	vsnprintf(message, sizeof(message), format, argList);
 
-	// Zweiten Prefix erzeugen, falls gewünscht
-	char SecondaryPrefix[1024];
-	if (_File && _Line)
-		snprintf(SecondaryPrefix, sizeof(SecondaryPrefix), "(file: %s, line: %d) - ", _File, _Line);
+	// Zweiten prefix erzeugen, falls gewünscht
+	char secondaryPrefix[1024];
+	if (_file && _line)
+		snprintf(secondaryPrefix, sizeof(secondaryPrefix), "(file: %s, line: %d) - ", _file, _line);
 
 	// Nachricht zeilenweise ausgeben und an jeden Zeilenanfang das Präfix setzen
-	char *MessageWalker = Message;
+	char *messageWalker = message;
 	for (;;) {
-		char *NextLine = strstr(MessageWalker, "\n");
-		if (NextLine) {
-			*NextLine = 0;
-			if (_LineBegin) {
-				_WriteLog(_Prefix);
-				if (_File && _Line)
-					_WriteLog(SecondaryPrefix);
+		char *nextLine = strstr(messageWalker, "\n");
+		if (nextLine) {
+			*nextLine = 0;
+			if (_lineBegin) {
+				writeLog(_prefix);
+				if (_file && _line)
+					writeLog(secondaryPrefix);
 			}
-			_WriteLog(MessageWalker);
-			_WriteLog("\n");
-			MessageWalker = NextLine + sizeof("\n") - 1;
-			_LineBegin = true;
+			writeLog(messageWalker);
+			writeLog("\n");
+			messageWalker = nextLine + sizeof("\n") - 1;
+			_lineBegin = true;
 		} else {
-			if (_LineBegin) {
-				_WriteLog(_Prefix);
-				if (_File && _Line)
-					_WriteLog(SecondaryPrefix);
+			if (_lineBegin) {
+				writeLog(_prefix);
+				if (_file && _line)
+					writeLog(secondaryPrefix);
 			}
-			_WriteLog(MessageWalker);
-			_LineBegin = false;
+			writeLog(messageWalker);
+			_lineBegin = false;
 			break;
 		}
 	}
 
 	// Falls gewünscht, wird ans Ende der Nachricht automatisch ein Newline angehängt.
-	if (_AutoNewline) {
-		_WriteLog("\n");
-		_LineBegin = true;
+	if (_autoNewline) {
+		writeLog("\n");
+		_lineBegin = true;
 	}
 
 	// Pseudoparameter zurücksetzen
-	_Prefix = NULL;
-	_File = 0;
-	_Line = 0;
-	_AutoNewline = false;
+	_prefix = NULL;
+	_file = 0;
+	_line = 0;
+	_autoNewline = false;
 
-	_FlushLog();
+	flushLog();
 }
 
-int BS_Log::_WriteLog(const char *Message) {
-	if (!_LogFile && !_CreateLog())
+int BS_Log::writeLog(const char *message) {
+	if (!_logFile && !createLog())
 		return false;
 
-	debugN(0, "%s", Message);
+	debugN(0, "%s", message);
 
-	_LogFile->writeString(Message);
+	_logFile->writeString(message);
 
 	return true;
 }
 
-void BS_Log::_FlushLog() {
-	if (_LogFile)
-		_LogFile->flush();
+void BS_Log::flushLog() {
+	if (_logFile)
+		_logFile->flush();
 }
 
-void (*BS_LogPtr)(const char *, ...) = BS_Log::Log;
+void (*BS_LogPtr)(const char *, ...) = BS_Log::log;
 
-void BS_Log_C(const char *Message) {
-	BS_LogPtr(Message);
+void BS_Log_C(const char *message) {
+	BS_LogPtr(message);
 }
 
 #else
 
-void BS_Log_C(const char *Message) {};
+void BS_Log_C(const char *message) {};
 
 #endif
 

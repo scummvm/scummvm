@@ -35,17 +35,9 @@
 #ifndef SWORD25_PERSISTENCESERVICE_H
 #define SWORD25_PERSISTENCESERVICE_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 
 namespace Sword25 {
-
-// -----------------------------------------------------------------------------
-// Class declaration
-// -----------------------------------------------------------------------------
 
 class PersistenceService {
 public:
@@ -56,27 +48,27 @@ public:
 	// Singleton Method
 	// -----------------------------------------------------------------------------
 
-	static PersistenceService &GetInstance();
+	static PersistenceService &getInstance();
 
 	// -----------------------------------------------------------------------------
 	// Interface
 	// -----------------------------------------------------------------------------
 
-	static uint GetSlotCount();
-	static Common::String GetSavegameDirectory();
+	static uint getSlotCount();
+	static Common::String getSavegameDirectory();
 
-	void            ReloadSlots();
-	bool            IsSlotOccupied(uint SlotID);
-	bool            IsSavegameCompatible(uint SlotID);
-	Common::String &GetSavegameDescription(uint SlotID);
-	Common::String &GetSavegameFilename(uint SlotID);
+	void            reloadSlots();
+	bool            isSlotOccupied(uint slotID);
+	bool            isSavegameCompatible(uint slotID);
+	Common::String &getSavegameDescription(uint slotID);
+	Common::String &getSavegameFilename(uint slotID);
 
-	bool            SaveGame(uint SlotID, const Common::String &ScreenshotFilename);
-	bool            LoadGame(uint SlotID);
+	bool            saveGame(uint slotID, const Common::String &screenshotFilename);
+	bool            loadGame(uint slotID);
 
 private:
 	struct Impl;
-	Impl *m_impl;
+	Impl *_impl;
 };
 
 } // End of namespace Sword25

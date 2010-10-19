@@ -32,10 +32,6 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "common/fs.h"
 #include "common/savefile.h"
 #include "sword25/kernel/kernel.h"
@@ -52,37 +48,27 @@
 
 #define BS_LOG_PREFIX "PERSISTENCESERVICE"
 
-// -----------------------------------------------------------------------------
-// Constants and utility functions
-// -----------------------------------------------------------------------------
-
 namespace Sword25 {
-const char         *SAVEGAME_EXTENSION = ".b25s";
-const char         *SAVEGAME_DIRECTORY = "saves";
-const char         *FILE_MARKER = "BS25SAVEGAME";
+const char *SAVEGAME_EXTENSION = ".b25s";
+const char *SAVEGAME_DIRECTORY = "saves";
+const char *FILE_MARKER = "BS25SAVEGAME";
 const uint  SLOT_COUNT = 18;
 const uint  FILE_COPY_BUFFER_SIZE = 1024 * 10;
 const char *VERSIONID = "SCUMMVM1";
 
-// -------------------------------------------------------------------------
-
-Common::String GenerateSavegameFilename(uint slotID) {
+Common::String generateSavegameFilename(uint slotID) {
 	char buffer[10];
 	sprintf(buffer, "%d%s", slotID, SAVEGAME_EXTENSION);
 	return Common::String(buffer);
 }
 
-// -------------------------------------------------------------------------
-
-Common::String GenerateSavegamePath(uint SlotID) {
-	Common::FSNode folder(PersistenceService::GetSavegameDirectory());
+Common::String generateSavegamePath(uint slotID) {
+	Common::FSNode folder(PersistenceService::getSavegameDirectory());
 	
-	return folder.getChild(GenerateSavegameFilename(SlotID)).getPath();
+	return folder.getChild(generateSavegameFilename(slotID)).getPath();
 }
 
-// -------------------------------------------------------------------------
-
-Common::String FormatTimestamp(TimeDate Time) {
+Common::String formatTimestamp(TimeDate time) {
 	// In the original BS2.5 engine, this used a local object to show the date/time as as a string.
 	// For now in ScummVM it's being hardcoded to 'dd-MON-yyyy hh:mm:ss'
 	Common::String monthList[12] = {
@@ -90,157 +76,132 @@ Common::String FormatTimestamp(TimeDate Time) {
 	};
 	char buffer[100];
 	snprintf(buffer, 100, "%.2d-%s-%.4d %.2d:%.2d:%.2d",
-	         Time.tm_mday, monthList[Time.tm_mon].c_str(), 1900 + Time.tm_year,
-	         Time.tm_hour, Time.tm_min, Time.tm_sec
+	         time.tm_mday, monthList[time.tm_mon].c_str(), 1900 + time.tm_year,
+	         time.tm_hour, time.tm_min, time.tm_sec
 	        );
 
 	return Common::String(buffer);
 }
 
-// -------------------------------------------------------------------------
+Common::String loadString(Common::InSaveFile *in, uint maxSize = 999) {
+	Common::String result;
 
-Common::String LoadString(Common::InSaveFile *In, uint MaxSize = 999) {
-	Common::String Result;
-
-	char ch = (char)In->readByte();
+	char ch = (char)in->readByte();
 	while ((ch != '\0') && (ch != ' ')) {
-		Result += ch;
-		if (Result.size() >= MaxSize) break;
-		ch = (char)In->readByte();
+		result += ch;
+		if (result.size() >= maxSize)
+			break;
+		ch = (char)in->readByte();
 	}
 
-	return Result;
+	return result;
 }
 
 }
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Private Implementation
-// -----------------------------------------------------------------------------
-
 struct SavegameInformation {
-	bool            IsOccupied;
-	bool            IsCompatible;
-	Common::String  Description;
-	Common::String  Filename;
-	uint    GamedataLength;
-	uint    GamedataOffset;
-	uint    GamedataUncompressedLength;
+	bool isOccupied;
+	bool isCompatible;
+	Common::String description;
+	Common::String filename;
+	uint gamedataLength;
+	uint gamedataOffset;
+	uint gamedataUncompressedLength;
 
 	SavegameInformation() {
-		Clear();
+		clear();
 	}
 
-	void Clear() {
-		IsOccupied = false;
-		IsCompatible = false;
-		Description = "";
-		Filename = "";
-		GamedataLength = 0;
-		GamedataOffset = 0;
-		GamedataUncompressedLength = 0;
+	void clear() {
+		isOccupied = false;
+		isCompatible = false;
+		description = "";
+		filename = "";
+		gamedataLength = 0;
+		gamedataOffset = 0;
+		gamedataUncompressedLength = 0;
 	}
 };
 
 struct PersistenceService::Impl {
-	SavegameInformation m_SavegameInformations[SLOT_COUNT];
-
-	// -----------------------------------------------------------------------------
+	SavegameInformation _savegameInformations[SLOT_COUNT];
 
 	Impl() {
-		ReloadSlots();
+		reloadSlots();
 	}
 
-	// -----------------------------------------------------------------------------
-
-	void ReloadSlots() {
+	void reloadSlots() {
 		// Über alle Spielstanddateien iterieren und deren Infos einlesen.
 		for (uint i = 0; i < SLOT_COUNT; ++i) {
-			ReadSlotSavegameInformation(i);
+			readSlotSavegameInformation(i);
 		}
 	}
 
-	void ReadSlotSavegameInformation(uint SlotID) {
+	void readSlotSavegameInformation(uint slotID) {
 		// Aktuelle Slotinformationen in den Ausgangszustand versetzen, er wird im Folgenden neu gefüllt.
-		SavegameInformation &CurSavegameInfo = m_SavegameInformations[SlotID];
-		CurSavegameInfo.Clear();
+		SavegameInformation &curSavegameInfo = _savegameInformations[slotID];
+		curSavegameInfo.clear();
 
 		// Den Dateinamen für den Spielstand des Slots generieren.
-		Common::String Filename = GenerateSavegameFilename(SlotID);
+		Common::String filename = generateSavegameFilename(slotID);
 
 		// Try to open the savegame for loading
 		Common::SaveFileManager *sfm = g_system->getSavefileManager();
-		Common::InSaveFile *File = sfm->openForLoading(Filename);
+		Common::InSaveFile *file = sfm->openForLoading(filename);
 
-		if (File) {
+		if (file) {
 			// Read in the header
-			Common::String StoredMarker = LoadString(File);
-			Common::String StoredVersionID = LoadString(File);
-			Common::String gameDataLength = LoadString(File);
-			CurSavegameInfo.GamedataLength = atoi(gameDataLength.c_str());
-			Common::String gamedataUncompressedLength = LoadString(File);
-			CurSavegameInfo.GamedataUncompressedLength = atoi(gamedataUncompressedLength.c_str());
+			Common::String storedMarker = loadString(file);
+			Common::String storedVersionID = loadString(file);
+			Common::String gameDataLength = loadString(file);
+			curSavegameInfo.gamedataLength = atoi(gameDataLength.c_str());
+			Common::String gamedataUncompressedLength = loadString(file);
+			curSavegameInfo.gamedataUncompressedLength = atoi(gamedataUncompressedLength.c_str());
 
 			// If the header can be read in and is detected to be valid, we will have a valid file
-			if (StoredMarker == FILE_MARKER) {
+			if (storedMarker == FILE_MARKER) {
 				// Der Slot wird als belegt markiert.
-				CurSavegameInfo.IsOccupied = true;
+				curSavegameInfo.isOccupied = true;
 				// Speichern, ob der Spielstand kompatibel mit der aktuellen Engine-Version ist.
-				CurSavegameInfo.IsCompatible = (StoredVersionID == Common::String(VERSIONID));
+				curSavegameInfo.isCompatible = (storedVersionID == Common::String(VERSIONID));
 				// Dateinamen des Spielstandes speichern.
-				CurSavegameInfo.Filename = GenerateSavegameFilename(SlotID);
+				curSavegameInfo.filename = generateSavegameFilename(slotID);
 				// Die Beschreibung des Spielstandes besteht aus einer textuellen Darstellung des Änderungsdatums der Spielstanddatei.
-				CurSavegameInfo.Description = FormatTimestamp(FileSystemUtil::GetInstance().GetFileTime(Filename));
+				curSavegameInfo.description = formatTimestamp(FileSystemUtil::getInstance().getFileTime(filename));
 				// Den Offset zu den gespeicherten Spieldaten innerhalb der Datei speichern.
 				// Dieses entspricht der aktuellen Position, da nach der letzten Headerinformation noch ein Leerzeichen als trenner folgt.
-				CurSavegameInfo.GamedataOffset = static_cast<uint>(File->pos());
+				curSavegameInfo.gamedataOffset = static_cast<uint>(file->pos());
 			}
 
-			delete File;
+			delete file;
 		}
 	}
 };
 
-// -----------------------------------------------------------------------------
-// Construction / Destruction
-// -----------------------------------------------------------------------------
-
-PersistenceService &PersistenceService::GetInstance() {
-	static PersistenceService Instance;
-	return Instance;
+PersistenceService &PersistenceService::getInstance() {
+	static PersistenceService instance;
+	return instance;
 }
 
-// -----------------------------------------------------------------------------
-
-PersistenceService::PersistenceService() : m_impl(new Impl) {
+PersistenceService::PersistenceService() : _impl(new Impl) {
 }
-
-// -----------------------------------------------------------------------------
 
 PersistenceService::~PersistenceService() {
-	delete m_impl;
+	delete _impl;
 }
 
-// -----------------------------------------------------------------------------
-// Implementation
-// -----------------------------------------------------------------------------
-
-void PersistenceService::ReloadSlots() {
-	m_impl->ReloadSlots();
+void PersistenceService::reloadSlots() {
+	_impl->reloadSlots();
 }
 
-// -----------------------------------------------------------------------------
-
-uint PersistenceService::GetSlotCount() {
+uint PersistenceService::getSlotCount() {
 	return SLOT_COUNT;
 }
 
-// -----------------------------------------------------------------------------
-
-Common::String PersistenceService::GetSavegameDirectory() {
-	Common::FSNode node(FileSystemUtil::GetInstance().GetUserdataDirectory());
+Common::String PersistenceService::getSavegameDirectory() {
+	Common::FSNode node(FileSystemUtil::getInstance().getUserdataDirectory());
 	Common::FSNode childNode = node.getChild(SAVEGAME_DIRECTORY);
 
 	// Try and return the path using the savegame subfolder. But if doesn't exist, fall back on the data directory
@@ -250,13 +211,11 @@ Common::String PersistenceService::GetSavegameDirectory() {
 	return node.getPath();
 }
 
-// -----------------------------------------------------------------------------
-
 namespace {
-bool CheckSlotID(uint SlotID) {
+bool checkslotID(uint slotID) {
 	// Überprüfen, ob die Slot-ID zulässig ist.
-	if (SlotID >= SLOT_COUNT) {
-		BS_LOG_ERRORLN("Tried to access an invalid slot (%d). Only slot ids from 0 to %d are allowed.", SlotID, SLOT_COUNT - 1);
+	if (slotID >= SLOT_COUNT) {
+		BS_LOG_ERRORLN("Tried to access an invalid slot (%d). Only slot ids from 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
 		return false;
 	} else {
 		return true;
@@ -264,142 +223,134 @@ bool CheckSlotID(uint SlotID) {
 }
 }
 
-// -----------------------------------------------------------------------------
-
-bool PersistenceService::IsSlotOccupied(uint SlotID) {
-	if (!CheckSlotID(SlotID)) return false;
-	return m_impl->m_SavegameInformations[SlotID].IsOccupied;
+bool PersistenceService::isSlotOccupied(uint slotID) {
+	if (!checkslotID(slotID))
+		return false;
+	return _impl->_savegameInformations[slotID].isOccupied;
 }
 
-// -----------------------------------------------------------------------------
-
-bool PersistenceService::IsSavegameCompatible(uint SlotID) {
-	if (!CheckSlotID(SlotID)) return false;
-	return m_impl->m_SavegameInformations[SlotID].IsCompatible;
+bool PersistenceService::isSavegameCompatible(uint slotID) {
+	if (!checkslotID(slotID))
+		return false;
+	return _impl->_savegameInformations[slotID].isCompatible;
 }
 
-// -----------------------------------------------------------------------------
-
-Common::String &PersistenceService::GetSavegameDescription(uint SlotID) {
-	static Common::String EmptyString;
-	if (!CheckSlotID(SlotID)) return EmptyString;
-	return m_impl->m_SavegameInformations[SlotID].Description;
+Common::String &PersistenceService::getSavegameDescription(uint slotID) {
+	static Common::String emptyString;
+	if (!checkslotID(slotID))
+		return emptyString;
+	return _impl->_savegameInformations[slotID].description;
 }
 
-// -----------------------------------------------------------------------------
-
-Common::String &PersistenceService::GetSavegameFilename(uint SlotID) {
-	static Common::String EmptyString;
-	if (!CheckSlotID(SlotID)) return EmptyString;
-	return m_impl->m_SavegameInformations[SlotID].Filename;
+Common::String &PersistenceService::getSavegameFilename(uint slotID) {
+	static Common::String emptyString;
+	if (!checkslotID(slotID))
+		return emptyString;
+	return _impl->_savegameInformations[slotID].filename;
 }
 
-// -----------------------------------------------------------------------------
-
-bool PersistenceService::SaveGame(uint SlotID, const Common::String &ScreenshotFilename) {
+bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotFilename) {
 	// Überprüfen, ob die Slot-ID zulässig ist.
-	if (SlotID >= SLOT_COUNT) {
-		BS_LOG_ERRORLN("Tried to save to an invalid slot (%d). Only slot ids form 0 to %d are allowed.", SlotID, SLOT_COUNT - 1);
+	if (slotID >= SLOT_COUNT) {
+		BS_LOG_ERRORLN("Tried to save to an invalid slot (%d). Only slot ids form 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
 		return false;
 	}
 
 	// Dateinamen erzeugen.
-	Common::String Filename = GenerateSavegameFilename(SlotID);
+	Common::String filename = generateSavegameFilename(slotID);
 
 	// Sicherstellen, dass das Verzeichnis für die Spielstanddateien existiert.
-	FileSystemUtil::GetInstance().CreateDirectory(GetSavegameDirectory());
+	FileSystemUtil::getInstance().createDirectory(getSavegameDirectory());
 
 	// Spielstanddatei öffnen und die Headerdaten schreiben.
 	Common::SaveFileManager *sfm = g_system->getSavefileManager();
-	Common::OutSaveFile *File = sfm->openForSaving(Filename);
+	Common::OutSaveFile *file = sfm->openForSaving(filename);
 
-	File->writeString(FILE_MARKER);
-	File->writeByte(' ');
-	File->writeString(VERSIONID);
-	File->writeByte(' ');
+	file->writeString(FILE_MARKER);
+	file->writeByte(' ');
+	file->writeString(VERSIONID);
+	file->writeByte(' ');
 
-	if (File->err()) {
-		error("Unable to write header data to savegame file \"%s\".", Filename.c_str());
+	if (file->err()) {
+		error("Unable to write header data to savegame file \"%s\".", filename.c_str());
 	}
 
 	// Alle notwendigen Module persistieren.
-	OutputPersistenceBlock Writer;
-	bool Success = true;
-	Success &= Kernel::GetInstance()->GetScript()->persist(Writer);
-	Success &= RegionRegistry::instance().persist(Writer);
-	Success &= Kernel::GetInstance()->GetGfx()->persist(Writer);
-	Success &= Kernel::GetInstance()->GetSfx()->persist(Writer);
-	Success &= Kernel::GetInstance()->GetInput()->persist(Writer);
-	if (!Success) {
-		error("Unable to persist modules for savegame file \"%s\".", Filename.c_str());
+	OutputPersistenceBlock writer;
+	bool success = true;
+	success &= Kernel::getInstance()->getScript()->persist(writer);
+	success &= RegionRegistry::instance().persist(writer);
+	success &= Kernel::getInstance()->getGfx()->persist(writer);
+	success &= Kernel::getInstance()->getSfx()->persist(writer);
+	success &= Kernel::getInstance()->getInput()->persist(writer);
+	if (!success) {
+		error("Unable to persist modules for savegame file \"%s\".", filename.c_str());
 	}
 
 	// Daten komprimieren.
-	uLongf CompressedLength = Writer.GetDataSize() + (Writer.GetDataSize() + 500) / 1000 + 12;
-	Bytef *CompressionBuffer = new Bytef[CompressedLength];
+	uLongf compressedLength = writer.getDataSize() + (writer.getDataSize() + 500) / 1000 + 12;
+	Bytef *compressionBuffer = new Bytef[compressedLength];
 
-	if (compress2(&CompressionBuffer[0], &CompressedLength, reinterpret_cast<const Bytef *>(Writer.GetData()), Writer.GetDataSize(), 6) != Z_OK) {
-		error("Unable to compress savegame data in savegame file \"%s\".", Filename.c_str());
+	if (compress2(&compressionBuffer[0], &compressedLength, reinterpret_cast<const Bytef *>(writer.getData()), writer.getDataSize(), 6) != Z_OK) {
+		error("Unable to compress savegame data in savegame file \"%s\".", filename.c_str());
 	}
 
 	// Länge der komprimierten Daten und der unkomprimierten Daten in die Datei schreiben.
 	char sBuffer[10];
-	snprintf(sBuffer, 10, "%ld", CompressedLength);
-	File->writeString(sBuffer);
-	File->writeByte(' ');
-	snprintf(sBuffer, 10, "%u", Writer.GetDataSize());
-	File->writeString(sBuffer);
-	File->writeByte(' ');
+	snprintf(sBuffer, 10, "%ld", compressedLength);
+	file->writeString(sBuffer);
+	file->writeByte(' ');
+	snprintf(sBuffer, 10, "%u", writer.getDataSize());
+	file->writeString(sBuffer);
+	file->writeByte(' ');
 
 	// Komprimierte Daten in die Datei schreiben.
-	File->write(reinterpret_cast<char *>(&CompressionBuffer[0]), CompressedLength);
-	if (File->err()) {
-		error("Unable to write game data to savegame file \"%s\".", Filename.c_str());
+	file->write(reinterpret_cast<char *>(&compressionBuffer[0]), compressedLength);
+	if (file->err()) {
+		error("Unable to write game data to savegame file \"%s\".", filename.c_str());
 	}
 
 	// Get the screenshot
-	Common::MemoryReadStream *thumbnail = Kernel::GetInstance()->GetGfx()->getThumbnail();
+	Common::MemoryReadStream *thumbnail = Kernel::getInstance()->getGfx()->getThumbnail();
 
 	if (thumbnail) {
-		byte *Buffer = new Byte[FILE_COPY_BUFFER_SIZE];
+		byte *buffer = new Byte[FILE_COPY_BUFFER_SIZE];
 		while (!thumbnail->eos()) {
-			int bytesRead = thumbnail->read(&Buffer[0], FILE_COPY_BUFFER_SIZE);
-			File->write(&Buffer[0], bytesRead);
+			int bytesRead = thumbnail->read(&buffer[0], FILE_COPY_BUFFER_SIZE);
+			file->write(&buffer[0], bytesRead);
 		}
 
-		delete[] Buffer;
+		delete[] buffer;
 	} else {
-		BS_LOG_WARNINGLN("The screenshot file \"%s\" does not exist. Savegame is written without a screenshot.", Filename.c_str());
+		BS_LOG_WARNINGLN("The screenshot file \"%s\" does not exist. Savegame is written without a screenshot.", filename.c_str());
 	}
 
 	// Savegameinformationen für diesen Slot aktualisieren.
-	m_impl->ReadSlotSavegameInformation(SlotID);
+	_impl->readSlotSavegameInformation(slotID);
 
-	File->finalize();
-	delete File;
-	delete[] CompressionBuffer;
+	file->finalize();
+	delete file;
+	delete[] compressionBuffer;
 
 	// Erfolg signalisieren.
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
-bool PersistenceService::LoadGame(uint SlotID) {
+bool PersistenceService::loadGame(uint slotID) {
 	Common::SaveFileManager *sfm = g_system->getSavefileManager();
-	Common::InSaveFile *File;
+	Common::InSaveFile *file;
 
 	// Überprüfen, ob die Slot-ID zulässig ist.
-	if (SlotID >= SLOT_COUNT) {
-		BS_LOG_ERRORLN("Tried to load from an invalid slot (%d). Only slot ids form 0 to %d are allowed.", SlotID, SLOT_COUNT - 1);
+	if (slotID >= SLOT_COUNT) {
+		BS_LOG_ERRORLN("Tried to load from an invalid slot (%d). Only slot ids form 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
 		return false;
 	}
 
-	SavegameInformation &CurSavegameInfo = m_impl->m_SavegameInformations[SlotID];
+	SavegameInformation &curSavegameInfo = _impl->_savegameInformations[slotID];
 
 	// Überprüfen, ob der Slot belegt ist.
-	if (!CurSavegameInfo.IsOccupied) {
-		BS_LOG_ERRORLN("Tried to load from an empty slot (%d).", SlotID);
+	if (!curSavegameInfo.isOccupied) {
+		BS_LOG_ERRORLN("Tried to load from an empty slot (%d).", slotID);
 		return false;
 	}
 
@@ -407,54 +358,54 @@ bool PersistenceService::LoadGame(uint SlotID) {
 	// Im Debug-Modus wird dieser Test übersprungen. Für das Testen ist es hinderlich auf die Einhaltung dieser strengen Bedingung zu bestehen,
 	// da sich die Versions-ID bei jeder Codeänderung mitändert.
 #ifndef DEBUG
-	if (!CurSavegameInfo.IsCompatible) {
-		BS_LOG_ERRORLN("Tried to load a savegame (%d) that is not compatible with this engine version.", SlotID);
+	if (!curSavegameInfo.isCompatible) {
+		BS_LOG_ERRORLN("Tried to load a savegame (%d) that is not compatible with this engine version.", slotID);
 		return false;
 	}
 #endif
 
-	byte *CompressedDataBuffer = new byte[CurSavegameInfo.GamedataLength];
-	byte *UncompressedDataBuffer = new Bytef[CurSavegameInfo.GamedataUncompressedLength];
+	byte *compressedDataBuffer = new byte[curSavegameInfo.gamedataLength];
+	byte *uncompressedDataBuffer = new Bytef[curSavegameInfo.gamedataUncompressedLength];
 
-	File = sfm->openForLoading(GenerateSavegameFilename(SlotID));
+	file = sfm->openForLoading(generateSavegameFilename(slotID));
 
-	File->seek(CurSavegameInfo.GamedataOffset);
-	File->read(reinterpret_cast<char *>(&CompressedDataBuffer[0]), CurSavegameInfo.GamedataLength);
-	if (File->err()) {
-		BS_LOG_ERRORLN("Unable to load the gamedata from the savegame file \"%s\".", CurSavegameInfo.Filename.c_str());
-		delete[] CompressedDataBuffer;
-		delete[] UncompressedDataBuffer;
+	file->seek(curSavegameInfo.gamedataOffset);
+	file->read(reinterpret_cast<char *>(&compressedDataBuffer[0]), curSavegameInfo.gamedataLength);
+	if (file->err()) {
+		BS_LOG_ERRORLN("Unable to load the gamedata from the savegame file \"%s\".", curSavegameInfo.filename.c_str());
+		delete[] compressedDataBuffer;
+		delete[] uncompressedDataBuffer;
 		return false;
 	}
 
 	// Spieldaten dekomprimieren.
-	uLongf UncompressedBufferSize = CurSavegameInfo.GamedataUncompressedLength;
-	if (uncompress(reinterpret_cast<Bytef *>(&UncompressedDataBuffer[0]), &UncompressedBufferSize,
-	               reinterpret_cast<Bytef *>(&CompressedDataBuffer[0]), CurSavegameInfo.GamedataLength) != Z_OK) {
-		BS_LOG_ERRORLN("Unable to decompress the gamedata from savegame file \"%s\".", CurSavegameInfo.Filename.c_str());
-		delete[] UncompressedDataBuffer;
-		delete[] CompressedDataBuffer;
-		delete File;
+	uLongf uncompressedBufferSize = curSavegameInfo.gamedataUncompressedLength;
+	if (uncompress(reinterpret_cast<Bytef *>(&uncompressedDataBuffer[0]), &uncompressedBufferSize,
+	               reinterpret_cast<Bytef *>(&compressedDataBuffer[0]), curSavegameInfo.gamedataLength) != Z_OK) {
+		BS_LOG_ERRORLN("Unable to decompress the gamedata from savegame file \"%s\".", curSavegameInfo.filename.c_str());
+		delete[] uncompressedDataBuffer;
+		delete[] compressedDataBuffer;
+		delete file;
 		return false;
 	}
 
-	InputPersistenceBlock Reader(&UncompressedDataBuffer[0], CurSavegameInfo.GamedataUncompressedLength);
+	InputPersistenceBlock reader(&uncompressedDataBuffer[0], curSavegameInfo.gamedataUncompressedLength);
 
 	// Einzelne Engine-Module depersistieren.
-	bool Success = true;
-	Success &= Kernel::GetInstance()->GetScript()->unpersist(Reader);
+	bool success = true;
+	success &= Kernel::getInstance()->getScript()->unpersist(reader);
 	// Muss unbedingt nach Script passieren. Da sonst die bereits wiederhergestellten Regions per Garbage-Collection gekillt werden.
-	Success &= RegionRegistry::instance().unpersist(Reader);
-	Success &= Kernel::GetInstance()->GetGfx()->unpersist(Reader);
-	Success &= Kernel::GetInstance()->GetSfx()->unpersist(Reader);
-	Success &= Kernel::GetInstance()->GetInput()->unpersist(Reader);
+	success &= RegionRegistry::instance().unpersist(reader);
+	success &= Kernel::getInstance()->getGfx()->unpersist(reader);
+	success &= Kernel::getInstance()->getSfx()->unpersist(reader);
+	success &= Kernel::getInstance()->getInput()->unpersist(reader);
 
-	delete[] CompressedDataBuffer;
-	delete[] UncompressedDataBuffer;
-	delete File;
+	delete[] compressedDataBuffer;
+	delete[] uncompressedDataBuffer;
+	delete file;
 
-	if (!Success) {
-		BS_LOG_ERRORLN("Unable to unpersist the gamedata from savegame file \"%s\".", CurSavegameInfo.Filename.c_str());
+	if (!success) {
+		BS_LOG_ERRORLN("Unable to unpersist the gamedata from savegame file \"%s\".", curSavegameInfo.filename.c_str());
 		return false;
 	}
 

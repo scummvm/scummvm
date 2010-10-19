@@ -360,7 +360,7 @@ static int r_setY(lua_State *L) {
 }
 
 static void drawPolygon(const Polygon &polygon, uint color, const Vertex &offset) {
-	GraphicEngine *pGE = Kernel::GetInstance()->GetGfx();
+	GraphicEngine *pGE = Kernel::getInstance()->getGfx();
 	BS_ASSERT(pGE);
 
 	for (int i = 0; i < polygon.vertexCount - 1; i++)
@@ -470,9 +470,9 @@ static const luaL_reg WALKREGION_METHODS[] = {
 };
 
 bool Geometry::registerScriptBindings() {
-	Kernel *pKernel = Kernel::GetInstance();
+	Kernel *pKernel = Kernel::getInstance();
 	BS_ASSERT(pKernel);
-	ScriptEngine *pScript = pKernel->GetScript();
+	ScriptEngine *pScript = pKernel->getScript();
 	BS_ASSERT(pScript);
 	lua_State *L = static_cast< lua_State *>(pScript->getScriptObject());
 	BS_ASSERT(L);

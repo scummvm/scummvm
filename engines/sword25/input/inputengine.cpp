@@ -51,24 +51,24 @@ namespace Sword25 {
 
 InputEngine::InputEngine(Kernel *pKernel) :
 	Service(pKernel),
-	m_CurrentState(0),
-	m_LeftMouseDown(false),
-	m_RightMouseDown(false),
-	m_MouseX(0),
-	m_MouseY(0),
-	m_LeftDoubleClick(false),
-	m_DoubleClickTime(DOUBLE_CLICK_TIME),
-	m_DoubleClickRectWidth(DOUBLE_CLICK_RECT_SIZE),
-	m_DoubleClickRectHeight(DOUBLE_CLICK_RECT_SIZE),
-	m_LastLeftClickTime(0),
-	m_LastLeftClickMouseX(0),
-	m_LastLeftClickMouseY(0) {
-	memset(m_KeyboardState[0], 0, sizeof(m_KeyboardState[0]));
-	memset(m_KeyboardState[1], 0, sizeof(m_KeyboardState[1]));
-	m_LeftMouseState[0] = false;
-	m_LeftMouseState[1] = false;
-	m_RightMouseState[0] = false;
-	m_RightMouseState[1] = false;
+	_currentState(0),
+	_leftMouseDown(false),
+	_rightMouseDown(false),
+	_mouseX(0),
+	_mouseY(0),
+	_leftDoubleClick(false),
+	_doubleClickTime(DOUBLE_CLICK_TIME),
+	_doubleClickRectWidth(DOUBLE_CLICK_RECT_SIZE),
+	_doubleClickRectHeight(DOUBLE_CLICK_RECT_SIZE),
+	_lastLeftClickTime(0),
+	_lastLeftClickMouseX(0),
+	_lastLeftClickMouseY(0) {
+	memset(_keyboardState[0], 0, sizeof(_keyboardState[0]));
+	memset(_keyboardState[1], 0, sizeof(_keyboardState[1]));
+	_leftMouseState[0] = false;
+	_leftMouseState[1] = false;
+	_rightMouseState[0] = false;
+	_rightMouseState[1] = false;
 
 	if (!registerScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
@@ -80,18 +80,14 @@ Service *InputEngine_CreateObject(Kernel *pKernel) {
 	return new InputEngine(pKernel);
 }
 
-// -----------------------------------------------------------------------------
-
-bool InputEngine::Init() {
+bool InputEngine::init() {
 	// No initialisation needed
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
-void InputEngine::Update() {
+void InputEngine::update() {
 	Common::Event event;
-	m_CurrentState ^= 1;
+	_currentState ^= 1;
 
 	// Loop through processing any pending events
 	bool handleEvents = true;
@@ -99,31 +95,31 @@ void InputEngine::Update() {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_LBUTTONUP:
-			m_LeftMouseDown = event.type == Common::EVENT_LBUTTONDOWN;
-			m_MouseX = event.mouse.x;
-			m_MouseY = event.mouse.y;
+			_leftMouseDown = event.type == Common::EVENT_LBUTTONDOWN;
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
 			handleEvents = false;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP:
-			m_RightMouseDown = event.type == Common::EVENT_RBUTTONDOWN;
-			m_MouseX = event.mouse.x;
-			m_MouseY = event.mouse.y;
+			_rightMouseDown = event.type == Common::EVENT_RBUTTONDOWN;
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
 			handleEvents = false;
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
-			m_MouseX = event.mouse.x;
-			m_MouseY = event.mouse.y;
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
 			break;
 
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
-			AlterKeyboardState(event.kbd.keycode, (event.type == Common::EVENT_KEYDOWN) ? 0x80 : 0);
+			alterKeyboardState(event.kbd.keycode, (event.type == Common::EVENT_KEYDOWN) ? 0x80 : 0);
 			break;
 
 		case Common::EVENT_QUIT:
-			Kernel::GetInstance()->GetWindow()->SetWindowAlive(false);
+			Kernel::getInstance()->getWindow()->setWindowAlive(false);
 			break;
 
 		default:
@@ -131,125 +127,97 @@ void InputEngine::Update() {
 		}
 	}
 
-	m_LeftMouseState[m_CurrentState] = m_LeftMouseDown;
-	m_RightMouseState[m_CurrentState] = m_RightMouseDown;
+	_leftMouseState[_currentState] = _leftMouseDown;
+	_rightMouseState[_currentState] = _rightMouseDown;
 
-	TestForLeftDoubleClick();
+	testForLeftDoubleClick();
 }
 
-// -----------------------------------------------------------------------------
-
-bool InputEngine::IsLeftMouseDown() {
-	return m_LeftMouseDown;
+bool InputEngine::isLeftMouseDown() {
+	return _leftMouseDown;
 }
 
-// -----------------------------------------------------------------------------
-
-bool InputEngine::IsRightMouseDown() {
-	return m_RightMouseDown;
+bool InputEngine::isRightMouseDown() {
+	return _rightMouseDown;
 }
 
-// -----------------------------------------------------------------------------
-
-void InputEngine::TestForLeftDoubleClick() {
-	m_LeftDoubleClick = false;
+void InputEngine::testForLeftDoubleClick() {
+	_leftDoubleClick = false;
 
 	// Only bother checking for a double click if the left mouse button was clicked
-	if (WasLeftMouseDown()) {
+	if (wasLeftMouseDown()) {
 		// Get the time now
-		uint Now = Kernel::GetInstance()->GetMilliTicks();
+		uint now = Kernel::getInstance()->getMilliTicks();
 
 		// A double click is signalled if
 		// 1. The two clicks are close enough together
 		// 2. The mouse cursor hasn't moved much
-		if (Now - m_LastLeftClickTime <= m_DoubleClickTime &&
-		        ABS(m_MouseX - m_LastLeftClickMouseX) <= m_DoubleClickRectWidth / 2 &&
-		        ABS(m_MouseY - m_LastLeftClickMouseY) <= m_DoubleClickRectHeight / 2) {
-			m_LeftDoubleClick = true;
+		if (now - _lastLeftClickTime <= _doubleClickTime &&
+		        ABS(_mouseX - _lastLeftClickMouseX) <= _doubleClickRectWidth / 2 &&
+		        ABS(_mouseY - _lastLeftClickMouseY) <= _doubleClickRectHeight / 2) {
+			_leftDoubleClick = true;
 
 			// Reset the time and position of the last click, so that clicking is not
 			// interpreted as the first click of a further double-click
-			m_LastLeftClickTime = 0;
-			m_LastLeftClickMouseX = 0;
-			m_LastLeftClickMouseY = 0;
+			_lastLeftClickTime = 0;
+			_lastLeftClickMouseX = 0;
+			_lastLeftClickMouseY = 0;
 		} else {
 			// There is no double click. Remember the position and time of the click,
 			// in case it's the first click of a double-click sequence
-			m_LastLeftClickTime = Now;
-			m_LastLeftClickMouseX = m_MouseX;
-			m_LastLeftClickMouseY = m_MouseY;
+			_lastLeftClickTime = now;
+			_lastLeftClickMouseX = _mouseX;
+			_lastLeftClickMouseY = _mouseY;
 		}
 	}
 }
 
-// -----------------------------------------------------------------------------
-
-void InputEngine::AlterKeyboardState(int keycode, byte newState) {
-	m_KeyboardState[m_CurrentState][keycode] = newState;
+void InputEngine::alterKeyboardState(int keycode, byte newState) {
+	_keyboardState[_currentState][keycode] = newState;
 }
 
-// -----------------------------------------------------------------------------
-
-bool InputEngine::IsLeftDoubleClick() {
-	return m_LeftDoubleClick;
+bool InputEngine::isLeftDoubleClick() {
+	return _leftDoubleClick;
 }
 
-// -----------------------------------------------------------------------------
-
-bool InputEngine::WasLeftMouseDown() {
-	return (m_LeftMouseState[m_CurrentState] == false) && (m_LeftMouseState[m_CurrentState ^ 1] == true);
+bool InputEngine::wasLeftMouseDown() {
+	return (_leftMouseState[_currentState] == false) && (_leftMouseState[_currentState ^ 1] == true);
 }
 
-// -----------------------------------------------------------------------------
-
-bool InputEngine::WasRightMouseDown() {
-	return (m_RightMouseState[m_CurrentState] == false) && (m_RightMouseState[m_CurrentState ^ 1] == true);
+bool InputEngine::wasRightMouseDown() {
+	return (_rightMouseState[_currentState] == false) && (_rightMouseState[_currentState ^ 1] == true);
 }
 
-// -----------------------------------------------------------------------------
-
-int InputEngine::GetMouseX() {
-	return m_MouseX;
+int InputEngine::getMouseX() {
+	return _mouseX;
 }
 
-// -----------------------------------------------------------------------------
-
-int InputEngine::GetMouseY() {
-	return m_MouseY;
+int InputEngine::getMouseY() {
+	return _mouseY;
 }
 
-// -----------------------------------------------------------------------------
-
-bool InputEngine::IsKeyDown(uint KeyCode) {
-	return (m_KeyboardState[m_CurrentState][KeyCode] & 0x80) != 0;
+bool InputEngine::isKeyDown(uint keyCode) {
+	return (_keyboardState[_currentState][keyCode] & 0x80) != 0;
 }
 
-// -----------------------------------------------------------------------------
-
-bool InputEngine::WasKeyDown(uint KeyCode) {
-	return ((m_KeyboardState[m_CurrentState][KeyCode] & 0x80) == 0) &&
-	       ((m_KeyboardState[m_CurrentState ^ 1][KeyCode] & 0x80) != 0);
+bool InputEngine::wasKeyDown(uint keyCode) {
+	return ((_keyboardState[_currentState][keyCode] & 0x80) == 0) &&
+	       ((_keyboardState[_currentState ^ 1][keyCode] & 0x80) != 0);
 }
 
-// -----------------------------------------------------------------------------
-
-void InputEngine::SetMouseX(int PosX) {
-	m_MouseX = PosX;
-	g_system->warpMouse(m_MouseX, m_MouseY);
+void InputEngine::setMouseX(int posX) {
+	_mouseX = posX;
+	g_system->warpMouse(_mouseX, _mouseY);
 }
 
-// -----------------------------------------------------------------------------
-
-void InputEngine::SetMouseY(int PosY) {
-	m_MouseY = PosY;
-	g_system->warpMouse(m_MouseX, m_MouseY);
+void InputEngine::setMouseY(int posY) {
+	_mouseY = posY;
+	g_system->warpMouse(_mouseX, _mouseY);
 }
 
-// -----------------------------------------------------------------------------
-
-bool InputEngine::RegisterCharacterCallback(CharacterCallback Callback) {
-	if (Common::find(m_CharacterCallbacks.begin(), m_CharacterCallbacks.end(), Callback) == m_CharacterCallbacks.end()) {
-		m_CharacterCallbacks.push_back(Callback);
+bool InputEngine::registerCharacterCallback(CharacterCallback callback) {
+	if (Common::find(_characterCallbacks.begin(), _characterCallbacks.end(), callback) == _characterCallbacks.end()) {
+		_characterCallbacks.push_back(callback);
 		return true;
 	} else {
 		BS_LOG_WARNINGLN("Tried to register an CharacterCallback that was already registered.");
@@ -257,13 +225,11 @@ bool InputEngine::RegisterCharacterCallback(CharacterCallback Callback) {
 	}
 }
 
-// -----------------------------------------------------------------------------
-
-bool InputEngine::UnregisterCharacterCallback(CharacterCallback Callback) {
-	Common::List<CharacterCallback>::iterator CallbackIter = Common::find(m_CharacterCallbacks.begin(),
-	        m_CharacterCallbacks.end(), Callback);
-	if (CallbackIter != m_CharacterCallbacks.end()) {
-		m_CharacterCallbacks.erase(CallbackIter);
+bool InputEngine::unregisterCharacterCallback(CharacterCallback callback) {
+	Common::List<CharacterCallback>::iterator callbackIter = Common::find(_characterCallbacks.begin(),
+	        _characterCallbacks.end(), callback);
+	if (callbackIter != _characterCallbacks.end()) {
+		_characterCallbacks.erase(callbackIter);
 		return true;
 	} else {
 		BS_LOG_WARNINGLN("Tried to unregister an CharacterCallback that was not previously registered.");
@@ -271,11 +237,9 @@ bool InputEngine::UnregisterCharacterCallback(CharacterCallback Callback) {
 	}
 }
 
-// -----------------------------------------------------------------------------
-
-bool InputEngine::RegisterCommandCallback(CommandCallback Callback) {
-	if (Common::find(m_CommandCallbacks.begin(), m_CommandCallbacks.end(), Callback) == m_CommandCallbacks.end()) {
-		m_CommandCallbacks.push_back(Callback);
+bool InputEngine::registerCommandCallback(CommandCallback callback) {
+	if (Common::find(_commandCallbacks.begin(), _commandCallbacks.end(), callback) == _commandCallbacks.end()) {
+		_commandCallbacks.push_back(callback);
 		return true;
 	} else {
 		BS_LOG_WARNINGLN("Tried to register an CommandCallback that was already registered.");
@@ -283,13 +247,11 @@ bool InputEngine::RegisterCommandCallback(CommandCallback Callback) {
 	}
 }
 
-// -----------------------------------------------------------------------------
-
-bool InputEngine::UnregisterCommandCallback(CommandCallback Callback) {
-	Common::List<CommandCallback>::iterator CallbackIter =
-	    Common::find(m_CommandCallbacks.begin(), m_CommandCallbacks.end(), Callback);
-	if (CallbackIter != m_CommandCallbacks.end()) {
-		m_CommandCallbacks.erase(CallbackIter);
+bool InputEngine::unregisterCommandCallback(CommandCallback callback) {
+	Common::List<CommandCallback>::iterator callbackIter =
+	    Common::find(_commandCallbacks.begin(), _commandCallbacks.end(), callback);
+	if (callbackIter != _commandCallbacks.end()) {
+		_commandCallbacks.erase(callbackIter);
 		return true;
 	} else {
 		BS_LOG_WARNINGLN("Tried to unregister an CommandCallback that was not previously registered.");
@@ -297,60 +259,52 @@ bool InputEngine::UnregisterCommandCallback(CommandCallback Callback) {
 	}
 }
 
-// -----------------------------------------------------------------------------
-
-void InputEngine::ReportCharacter(byte Character) {
-	Common::List<CharacterCallback>::const_iterator CallbackIter = m_CharacterCallbacks.begin();
-	while (CallbackIter != m_CharacterCallbacks.end()) {
+void InputEngine::reportCharacter(byte character) {
+	Common::List<CharacterCallback>::const_iterator callbackIter = _characterCallbacks.begin();
+	while (callbackIter != _characterCallbacks.end()) {
 		// Iterator vor dem Aufruf erhöhen und im Folgendem auf einer Kopie arbeiten.
 		// Dieses Vorgehen ist notwendig da der Iterator möglicherweise von der Callbackfunktion durch das Deregistrieren des Callbacks
 		// invalidiert wird.
-		Common::List<CharacterCallback>::const_iterator CurCallbackIter = CallbackIter;
-		++CallbackIter;
+		Common::List<CharacterCallback>::const_iterator curCallbackIter = callbackIter;
+		++callbackIter;
 
-		(*CurCallbackIter)(Character);
+		(*curCallbackIter)(character);
 	}
 }
 
-// -----------------------------------------------------------------------------
-
-void InputEngine::ReportCommand(KEY_COMMANDS Command) {
-	Common::List<CommandCallback>::const_iterator CallbackIter = m_CommandCallbacks.begin();
-	while (CallbackIter != m_CommandCallbacks.end()) {
+void InputEngine::reportCommand(KEY_COMMANDS command) {
+	Common::List<CommandCallback>::const_iterator callbackIter = _commandCallbacks.begin();
+	while (callbackIter != _commandCallbacks.end()) {
 		// Iterator vor dem Aufruf erhöhen und im Folgendem auf einer Kopie arbeiten.
 		// Dieses Vorgehen ist notwendig da der Iterator möglicherweise von der Callbackfunktion durch das Deregistrieren des Callbacks
 		// invalidiert wird.
-		Common::List<CommandCallback>::const_iterator CurCallbackIter = CallbackIter;
-		++CallbackIter;
+		Common::List<CommandCallback>::const_iterator curCallbackIter = callbackIter;
+		++callbackIter;
 
-		(*CurCallbackIter)(Command);
+		(*curCallbackIter)(command);
 	}
 }
-
-// -----------------------------------------------------------------------------
-// Persistenz
-// -----------------------------------------------------------------------------
 
 bool InputEngine::persist(OutputPersistenceBlock &writer) {
 	// Anzahl an Command-Callbacks persistieren.
-	writer.write(m_CommandCallbacks.size());
+	writer.write(_commandCallbacks.size());
 
 	// Alle Command-Callbacks einzeln persistieren.
 	{
-		Common::List<CommandCallback>::const_iterator It = m_CommandCallbacks.begin();
-		while (It != m_CommandCallbacks.end()) {
+		Common::List<CommandCallback>::const_iterator It = _commandCallbacks.begin();
+		while (It != _commandCallbacks.end()) {
 			writer.write(CallbackRegistry::instance().resolveCallbackPointer(*It));
 			++It;
 		}
 	}
 
 	// Anzahl an Character-Callbacks persistieren.
-	writer.write(m_CharacterCallbacks.size());
+	writer.write(_characterCallbacks.size());
 
 	// Alle Character-Callbacks einzeln persistieren.
 	{
-		Common::List<CharacterCallback>::const_iterator It = m_CharacterCallbacks.begin();
-		while (It != m_CharacterCallbacks.end()) {
+		Common::List<CharacterCallback>::const_iterator It = _characterCallbacks.begin();
+		while (It != _characterCallbacks.end()) {
 			writer.write(CallbackRegistry::instance().resolveCallbackPointer(*It));
 			++It;
 		}
@@ -359,38 +313,36 @@ bool InputEngine::persist(OutputPersistenceBlock &writer) {
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
 bool InputEngine::unpersist(InputPersistenceBlock &reader) {
 	// Command-Callbackliste leeren.
-	m_CommandCallbacks.clear();
+	_commandCallbacks.clear();
 
 	// Anzahl an Command-Callbacks lesen.
-	uint CommandCallbackCount;
-	reader.read(CommandCallbackCount);
+	uint commandCallbackCount;
+	reader.read(commandCallbackCount);
 
 	// Alle Command-Callbacks wieder herstellen.
-	for (uint i = 0; i < CommandCallbackCount; ++i) {
-		Common::String CallbackFunctionName;
-		reader.read(CallbackFunctionName);
+	for (uint i = 0; i < commandCallbackCount; ++i) {
+		Common::String callbackFunctionName;
+		reader.read(callbackFunctionName);
 
-		m_CommandCallbacks.push_back(reinterpret_cast<CommandCallback>(
-		                                 CallbackRegistry::instance().resolveCallbackFunction(CallbackFunctionName)));
+		_commandCallbacks.push_back(reinterpret_cast<CommandCallback>(
+		                                 CallbackRegistry::instance().resolveCallbackFunction(callbackFunctionName)));
 	}
 
 	// Character-Callbackliste leeren.
-	m_CharacterCallbacks.clear();
+	_characterCallbacks.clear();
 
 	// Anzahl an Character-Callbacks lesen.
-	uint CharacterCallbackCount;
-	reader.read(CharacterCallbackCount);
+	uint characterCallbackCount;
+	reader.read(characterCallbackCount);
 
 	// Alle Character-Callbacks wieder herstellen.
-	for (uint i = 0; i < CharacterCallbackCount; ++i) {
-		Common::String CallbackFunctionName;
-		reader.read(CallbackFunctionName);
+	for (uint i = 0; i < characterCallbackCount; ++i) {
+		Common::String callbackFunctionName;
+		reader.read(callbackFunctionName);
 
-		m_CharacterCallbacks.push_back(reinterpret_cast<CharacterCallback>(CallbackRegistry::instance().resolveCallbackFunction(CallbackFunctionName)));
+		_characterCallbacks.push_back(reinterpret_cast<CharacterCallback>(CallbackRegistry::instance().resolveCallbackFunction(callbackFunctionName)));
 	}
 
 	return reader.isGood();

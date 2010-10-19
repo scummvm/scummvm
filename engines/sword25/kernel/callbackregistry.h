@@ -35,10 +35,6 @@
 #ifndef SWORD25_CALLBACK_REGISTRY_H
 #define SWORD25_CALLBACK_REGISTRY_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/hash-str.h"
@@ -46,10 +42,6 @@
 #include "sword25/kernel/common.h"
 
 namespace Sword25 {
-
-// -----------------------------------------------------------------------------
-// Klassendeklaration
-// -----------------------------------------------------------------------------
 
 typedef void (*CallbackPtr)(int command);
 
@@ -60,9 +52,9 @@ public:
 		return _instance;
 	}
 
-	bool        registerCallbackFunction(const Common::String &name, CallbackPtr ptr);
-	CallbackPtr     resolveCallbackFunction(const Common::String &name) const;
-	Common::String  resolveCallbackPointer(CallbackPtr ptr) const;
+	bool registerCallbackFunction(const Common::String &name, CallbackPtr ptr);
+	CallbackPtr resolveCallbackFunction(const Common::String &name) const;
+	Common::String resolveCallbackPointer(CallbackPtr ptr) const;
 
 private:
 	typedef Common::HashMap<Common::String, CallbackPtr, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> NameToPtrMap;
@@ -82,9 +74,9 @@ private:
 	typedef Common::HashMap<CallbackPtr, Common::String, CallbackPtr_Hash, CallbackPtr_EqualTo> PtrToNameMap;
 	PtrToNameMap _ptrToNameMap;
 
-	CallbackPtr     findPtrByName(const Common::String &name) const;
-	Common::String  findNameByPtr(CallbackPtr ptr) const;
-	void        storeCallbackFunction(const Common::String &name, CallbackPtr ptr);
+	CallbackPtr findPtrByName(const Common::String &name) const;
+	Common::String findNameByPtr(CallbackPtr ptr) const;
+	void storeCallbackFunction(const Common::String &name, CallbackPtr ptr);
 };
 
 } // End of namespace Sword25

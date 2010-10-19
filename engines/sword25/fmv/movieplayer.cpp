@@ -65,11 +65,11 @@ MoviePlayer::~MoviePlayer() {
 
 bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
 	// Get the file and load it into the decoder
-	Common::SeekableReadStream *in = Kernel::GetInstance()->GetPackage()->getStream(filename);
+	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(filename);
 	_decoder.load(in);
 
 	// Ausgabebitmap erstellen
-	GraphicEngine *pGfx = Kernel::GetInstance()->GetGfx();
+	GraphicEngine *pGfx = Kernel::getInstance()->getGfx();
 
 #if INDIRECTRENDERING
 	_outputBitmap = pGfx->getMainPanel()->addDynamicBitmap(_decoder.getWidth(), _decoder.getHeight());
@@ -167,7 +167,7 @@ void MoviePlayer::setScaleFactor(float scaleFactor) {
 		_outputBitmap->setScaleFactor(scaleFactor);
 
 		// Ausgabebitmap auf dem Bildschirm zentrieren
-		GraphicEngine *gfxPtr = Kernel::GetInstance()->GetGfx();
+		GraphicEngine *gfxPtr = Kernel::getInstance()->getGfx();
 		_outputBitmap->setX((gfxPtr->getDisplayWidth() - _outputBitmap->getWidth()) / 2);
 		_outputBitmap->setY((gfxPtr->getDisplayHeight() - _outputBitmap->getHeight()) / 2);
 	}

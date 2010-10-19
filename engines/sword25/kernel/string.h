@@ -39,71 +39,75 @@
 
 namespace BS_String {
 
-inline uint GetHash(const Common::String &Str) {
-	uint Result = 0;
+inline uint getHash(const Common::String &str) {
+	uint result = 0;
 
-	for (uint i = 0; i < Str.size(); i++)
-		Result = ((Result << 5) - Result) + Str[i];
+	for (uint i = 0; i < str.size(); i++)
+		result = ((result << 5) - result) + str[i];
 
-	return Result;
+	return result;
 }
 
-inline bool ToInt(const Common::String &Str, int &Result) {
-	Common::String::const_iterator Iter = Str.begin();
+inline bool toInt(const Common::String &str, int &result) {
+	Common::String::const_iterator iter = str.begin();
 
 	// Skip whitespaces
-	while (*Iter && (*Iter == ' ' || *Iter == '\t')) {
-		++Iter;
+	while (*iter && (*iter == ' ' || *iter == '\t')) {
+		++iter;
 	}
-	if (Iter == Str.end()) return false;
+	if (iter == str.end())
+		return false;
 
 	// Read sign, if available
-	bool IsNegative = false;
-	if (*Iter == '-') {
-		IsNegative = true;
-		++Iter;
-	} else if (*Iter == '+')
-		++Iter;
+	bool isNegative = false;
+	if (*iter == '-') {
+		isNegative = true;
+		++iter;
+	} else if (*iter == '+')
+		++iter;
 
 	// Skip whitespaces
-	while (*Iter && (*Iter == ' ' || *Iter == '\t')) {
-		++Iter;
+	while (*iter && (*iter == ' ' || *iter == '\t')) {
+		++iter;
 	}
-	if (Iter == Str.end()) return false;
+	if (iter == str.end())
+		return false;
 
 	// Convert string to integer
-	Result = 0;
-	while (Iter != Str.end()) {
-		if (*Iter < '0' || *Iter > '9') {
-			while (*Iter && (*Iter == ' ' || *Iter == '\t')) {
-				++Iter;
+	result = 0;
+	while (iter != str.end()) {
+		if (*iter < '0' || *iter > '9') {
+			while (*iter && (*iter == ' ' || *iter == '\t')) {
+				++iter;
 			}
-			if (Iter != Str.end()) return false;
+			if (iter != str.end())
+				return false;
 			break;
 		}
-		Result = (Result * 10) + (*Iter - '0');
-		++Iter;
+		result = (result * 10) + (*iter - '0');
+		++iter;
 	}
 
-	if (IsNegative) Result = -Result;
+	if (isNegative)
+		result = -result;
 
 	return true;
 }
 
-inline bool ToBool(const Common::String &Str, bool &Result) {
-	if (Str == "true" || Str == "TRUE") {
-		Result = true;
+inline bool toBool(const Common::String &str, bool &result) {
+	if (str == "true" || str == "TRUE") {
+		result = true;
 		return true;
-	} else if (Str == "false" || Str == "FALSE") {
-		Result = false;
+	} else if (str == "false" || str == "FALSE") {
+		result = false;
 		return true;
 	}
 
 	return false;
 }
 
-inline void ToLower(Common::String &Str) {
-	Str.toLowercase();
+inline void toLower(Common::String &str) {
+	str.toLowercase();
 }
 
 } // End of namespace BS_String

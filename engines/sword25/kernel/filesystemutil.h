@@ -61,7 +61,7 @@ namespace Sword25 {
 
 class FileSystemUtil {
 public:
-	static FileSystemUtil &GetInstance();
+	static FileSystemUtil &getInstance();
 	virtual ~FileSystemUtil() {}
 
 	/**
@@ -70,27 +70,27 @@ public:
 	 * These are for example Screenshots, game saves, configuration files, log files, ...
 	 * @return              Returns the name of the directory for user data.
 	 */
-	virtual Common::String GetUserdataDirectory() = 0;
+	virtual Common::String getUserdataDirectory() = 0;
 	/**
 	 * @return              Returns the path seperator
 	 */
-	virtual Common::String  GetPathSeparator() = 0;
+	virtual Common::String  getPathSeparator() = 0;
 	/**
 	 * @param Filename      The path to a file.
 	 * @return              Returns the size of the specified file. If the size could not be
 	 * determined, or the file does not exist, returns -1
 	 */
-	virtual int32 GetFileSize(const Common::String &Filename) = 0;
+	virtual int32 getFileSize(const Common::String &filename) = 0;
 	/**
 	 * @param Filename      The path to a file.
 	 * @return              Returns the timestamp of the specified file.
 	 */
-	virtual TimeDate GetFileTime(const Common::String &Filename) = 0;
+	virtual TimeDate getFileTime(const Common::String &filename) = 0;
 	/**
 	 * @param Filename      The path to a file.
 	 * @return              Returns true if the file exists.
 	 */
-	virtual bool FileExists(const Common::String &Filename) = 0;
+	virtual bool fileExists(const Common::String &filename) = 0;
 	/**
 	 * This function creates a directory
 	 *
@@ -99,13 +99,13 @@ public:
 	 * @param DirectoryName The name of the directory to be created
 	 * @return              Returns true if the folder(s) could be created, otherwise false.
 	 */
-	virtual bool CreateDirectory(const Common::String &DirectoryName) = 0;
+	virtual bool createDirectory(const Common::String &directoryName) = 0;
 	/**
 	 * Gets the filename from a path and filename
 	 * @param Filename		The full path and filename
 	 * @return				Returns just the filename
 	 */
-	virtual Common::String GetPathFilename(const Common::String &Path) = 0;
+	virtual Common::String getPathFilename(const Common::String &path) = 0;
 };
 
 } // End of namespace Sword25

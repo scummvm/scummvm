@@ -44,12 +44,9 @@
 #ifndef SWORD25_WINDOW_H
 #define SWORD25_WINDOW_H
 
-// Includes
 #include "sword25/kernel/common.h"
 
 namespace Sword25 {
-
-// Class definitions
 
 /**
  * A simple window class interface
@@ -59,8 +56,8 @@ namespace Sword25 {
  */
 class Window {
 protected:
-	bool _InitSuccess;
-	bool _CloseWanted;
+	bool _initSuccess;
+	bool _closeWanted;
 
 public:
 	virtual ~Window() {}
@@ -68,97 +65,97 @@ public:
 	/**
 	 * Returns the visibility of the window.
 	 */
-	virtual bool IsVisible() = 0;
+	virtual bool isVisible() = 0;
 
 	/**
 	 * Sets the visibility of the window
 	 * @param Visible       Specifies whether the window should be visible or hidden
 	 */
-	virtual void SetVisible(bool Visible) = 0;
+	virtual void setVisible(bool visible) = 0;
 	/**
 	 * Returns the X position of the window
 	 */
-	virtual int GetX() = 0;
+	virtual int getX() = 0;
 	/**
 	 * Sets the X position of the window
 	 * @paramX      The new X position for the window, or -1 for centre aligned
 	 */
-	virtual void SetX(int X) = 0;
+	virtual void setX(int X) = 0;
 	/**
 	 * Gets the Y position of the window
 	 */
-	virtual int GetY() = 0;
+	virtual int getY() = 0;
 	/**
 	 * Sets the Y position of the window
 	 * @param Y     The new Y position for the window, or -1 for centre aligned
 	 */
-	virtual void SetY(int X) = 0;
+	virtual void setY(int X) = 0;
 	/**
 	 * Returns the X position of the window's client area
 	 */
-	virtual int GetClientX() = 0;
+	virtual int getClientX() = 0;
 	/**
 	 * Returns the Y position of the window's client area
 	 */
-	virtual int GetClientY() = 0;
+	virtual int getClientY() = 0;
 	/**
 	 * Returns the width of the window without the frame
 	 */
-	virtual int GetWidth() = 0;
+	virtual int getWidth() = 0;
 	/**
 	 * Sets the width of the window without the frame
 	 */
-	virtual void SetWidth(int Width) = 0;
+	virtual void setWidth(int width) = 0;
 	/**
 	 * Gets the height of the window without the frame
 	 */
-	virtual int GetHeight() = 0;
+	virtual int getHeight() = 0;
 	/**
 	 * Sets the height of the window without the frame
 	 */
-	virtual void SetHeight(int Height) = 0;
+	virtual void setHeight(int height) = 0;
 	/**
 	 * Returns the title of the window
 	 */
-	virtual Common::String GetTitle() = 0;
+	virtual Common::String getTitle() = 0;
 	/**
 	 * Sets the title of the window
 	 * @param Title     The new window title
 	*/
-	virtual void SetTitle(const Common::String &Title) = 0;
+	virtual void setTitle(const Common::String &title) = 0;
 	/**
 	 * Handle the processing of any pending window messages. This method should be called
 	 * during the main loop.
 	 */
-	virtual bool ProcessMessages() = 0;
+	virtual bool processMessages() = 0;
 	/**
 	 * Pauses the applicaiton until the window has focus, or has been closed.
 	 * Returns false if the window was closed.
 	 */
-	virtual bool WaitForFocus() = 0;
+	virtual bool waitForFocus() = 0;
 	/**
 	 * Returns true if the window has focus, false otherwise.
 	 */
-	virtual bool HasFocus() = 0;
+	virtual bool hasFocus() = 0;
 	/**
 	 * Returns the system handle that represents the window. Note that any use of the handle
 	 * will not be portable code.
 	 */
-	virtual uint GetWindowHandle() = 0;
+	virtual uint getWindowHandle() = 0;
 
-	virtual void SetWindowAlive(bool v) = 0;
+	virtual void setWindowAlive(bool v) = 0;
 
 	/**
 	 * Specifies whether the window is wanted to be closed. This is used together with CloseWanted()
 	 * to allow scripts to query when the main window should be closed, or the user is asking it to close
 	 **/
-	void SetCloseWanted(bool Wanted);
+	void setCloseWanted(bool wanted);
 	/**
 	 * Returns the previous value set in a call to SetCloseWanted.
 	 * Note that calling this also resets the value back to false, until such time as the SetCloseWanted()
 	 * method is called again.
 	**/
-	bool CloseWanted();
+	bool closeWanted();
 
 	/**
 	 * Creates a new window instance. Returns a pointer to the window, or NULL if the creation failed.
@@ -169,7 +166,7 @@ public:
 	 * @param Height    The height of the window without the frame
 	 * @param Visible   Specifies whether window should be visible
 	 */
-	static Window *CreateBSWindow(int X, int Y, int Width, int Height, bool Visible);
+	static Window *createBSWindow(int x, int y, int width, int height, bool visible);
 };
 
 } // End of namespace Sword25

@@ -44,11 +44,11 @@ namespace Sword25 {
 Resource::Resource(const Common::String &fileName, RESOURCE_TYPES type) :
 	_type(type),
 	_refCount(0) {
-	PackageManager *pPM = Kernel::GetInstance()->GetPackage();
+	PackageManager *pPM = Kernel::getInstance()->getPackage();
 	BS_ASSERT(pPM);
 
 	_fileName = pPM->getAbsolutePath(fileName);
-	_fileNameHash = BS_String::GetHash(fileName);
+	_fileNameHash = BS_String::getHash(fileName);
 }
 
 void Resource::release() {

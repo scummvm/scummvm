@@ -44,21 +44,11 @@
 //	  Pointer gespeichert war, stürtzt das Programm beim Äufrufen dieser Callbackfunktion ab. Durch das Auflösungverfahren wird beim Laden der
 //	  Callbackbezeichner in den neuen Funktionspointer umgewandelt und der Aufruf kann erfolgen.
 
-// -----------------------------------------------------------------------------
-// Logging
-// -----------------------------------------------------------------------------
-
 #define BS_LOG_PREFIX "CALLBACKREGISTRY"
-
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
 
 #include "sword25/kernel/callbackregistry.h"
 
 namespace Sword25 {
-
-// -----------------------------------------------------------------------------
 
 bool CallbackRegistry::registerCallbackFunction(const Common::String &name, CallbackPtr ptr) {
 	if (name == "") {
@@ -80,8 +70,6 @@ bool CallbackRegistry::registerCallbackFunction(const Common::String &name, Call
 	return true;
 }
 
-// -----------------------------------------------------------------------------
-
 CallbackPtr CallbackRegistry::resolveCallbackFunction(const Common::String &name) const {
 	CallbackPtr result = findPtrByName(name);
 
@@ -91,8 +79,6 @@ CallbackPtr CallbackRegistry::resolveCallbackFunction(const Common::String &name
 
 	return result;
 }
-
-// -----------------------------------------------------------------------------
 
 Common::String CallbackRegistry::resolveCallbackPointer(CallbackPtr ptr) const {
 	const Common::String &result = findNameByPtr(ptr);
@@ -104,23 +90,17 @@ Common::String CallbackRegistry::resolveCallbackPointer(CallbackPtr ptr) const {
 	return result;
 }
 
-// -----------------------------------------------------------------------------
-
 CallbackPtr CallbackRegistry::findPtrByName(const Common::String &name) const {
 	// Eintrag in der Map finden und den Pointer zurückgeben.
 	NameToPtrMap::const_iterator it = _nameToPtrMap.find(name);
 	return it == _nameToPtrMap.end() ? 0 : it->_value;
 }
 
-// -----------------------------------------------------------------------------
-
 Common::String CallbackRegistry::findNameByPtr(CallbackPtr ptr) const {
 	// Eintrag in der Map finden und den Namen zurückgeben.
 	PtrToNameMap::const_iterator it = _ptrToNameMap.find(ptr);
 	return it == _ptrToNameMap.end() ? "" : it->_value;
 }
-
-// -----------------------------------------------------------------------------
 
 void CallbackRegistry::storeCallbackFunction(const Common::String &name, CallbackPtr ptr) {
 	// Callback-Funktion in beide Maps eintragen.

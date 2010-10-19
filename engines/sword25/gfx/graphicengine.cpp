@@ -306,7 +306,7 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 		debug(2, "VectorImage: %s", filename.c_str());
 
 		// Pointer auf Package-Manager holen
-		PackageManager *pPackage = Kernel::GetInstance()->GetPackage();
+		PackageManager *pPackage = Kernel::getInstance()->getPackage();
 		BS_ASSERT(pPackage);
 
 		// Datei laden
@@ -349,7 +349,7 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 
 	// Load font
 	if (filename.hasSuffix("_fnt.xml")) {
-		FontResource *pResource = new FontResource(Kernel::GetInstance(), filename);
+		FontResource *pResource = new FontResource(Kernel::getInstance(), filename);
 		if (pResource->isValid())
 			return pResource;
 		else {
@@ -383,7 +383,7 @@ void GraphicEngine::drawDebugLine(const Vertex &start, const Vertex &end, uint c
 
 void  GraphicEngine::updateLastFrameDuration() {
 	// Record current time
-	const uint currentTime = Kernel::GetInstance()->GetMilliTicks();
+	const uint currentTime = Kernel::getInstance()->getMilliTicks();
 
 	// Compute the elapsed time since the last frame and prevent too big ( > 250 msecs) time jumps.
 	// These can occur when loading save states, during debugging or due to hardware inaccuracies.

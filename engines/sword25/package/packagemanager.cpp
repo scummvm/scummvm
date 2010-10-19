@@ -154,7 +154,7 @@ byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr)
 		// Savegame loading logic
 		Common::SaveFileManager *sfm = g_system->getSavefileManager();
 		Common::InSaveFile *file = sfm->openForLoading(
-			FileSystemUtil::GetInstance().GetPathFilename(fileName));
+			FileSystemUtil::getInstance().getPathFilename(fileName));
 		if (!file) {
 			BS_LOG_ERRORLN("Could not load savegame \"%s\".", fileName.c_str());
 			return 0;

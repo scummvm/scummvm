@@ -35,7 +35,6 @@
 #ifndef SWORD25_RESOURCESERVICE_H
 #define SWORD25_RESOURCESERVICE_H
 
-// Includes
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/service.h"
 #include "sword25/kernel/kernel.h"
@@ -48,8 +47,8 @@ class Resource;
 class ResourceService : public Service {
 public:
 	ResourceService(Kernel *pKernel) : Service(pKernel) {
-		ResourceManager *pResource = pKernel->GetResourceManager();
-		pResource->RegisterResourceService(this);
+		ResourceManager *pResource = pKernel->getResourceManager();
+		pResource->registerResourceService(this);
 	}
 
 	virtual ~ResourceService() {}

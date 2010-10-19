@@ -45,7 +45,6 @@
 #ifndef SWORD25_INPUTENGINE_H
 #define SWORD25_INPUTENGINE_H
 
-/// Includes
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/service.h"
 #include "sword25/kernel/persistable.h"
@@ -176,7 +175,7 @@ public:
 	 * Initialises the input engine
 	 * @return          Returns a true on success, otherwise false.
 	 */
-	bool Init();
+	bool init();
 
 	/**
 	 * Performs a "tick" of the input engine.
@@ -185,17 +184,17 @@ public:
 	 * of the input engine that are not running in their own thread, or to perform
 	 * additional administrative tasks that are needed.
 	 */
-	void Update();
+	void update();
 
 	/**
 	 * Returns true if the left mouse button is pressed
 	 */
-	bool IsLeftMouseDown();
+	bool isLeftMouseDown();
 
 	/**
 	 * Returns true if the right mouse button is pressed.
 	*/
-	bool IsRightMouseDown();
+	bool isRightMouseDown();
 
 	/**
 	 * Returns true if the left mouse button was pressed and released.
@@ -203,7 +202,7 @@ public:
 	 * The difference between this and IsLeftMouseDown() is that this only returns
 	 * true when the left mouse button is released.
 	*/
-	bool WasLeftMouseDown();
+	bool wasLeftMouseDown();
 
 	/**
 	 * Returns true if the right mouse button was pressed and released.
@@ -211,39 +210,39 @@ public:
 	 * The difference between this and IsRightMouseDown() is that this only returns
 	 * true when the right mouse button is released.
 	*/
-	bool WasRightMouseDown();
+	bool wasRightMouseDown();
 
 	/**
 	 * Returns true if the left mouse button double click was done
 	 */
-	bool IsLeftDoubleClick();
+	bool isLeftDoubleClick();
 
 	/**
 	 * Returns the X position of the cursor in pixels
 	*/
-	int GetMouseX();
+	int getMouseX();
 
 	/**
 	 * Returns the Y position of the cursor in pixels
 	 */
-	int GetMouseY();
+	int getMouseY();
 
 	/**
 	 * Sets the X position of the cursor in pixels
 	 */
-	void SetMouseX(int PosX);
+	void setMouseX(int posX);
 
 	/**
 	 * Sets the Y position of the cursor in pixels
 	 */
-	void SetMouseY(int PosY);
+	void setMouseY(int posY);
 
 	/**
 	 * Returns true if a given key was pressed
 	 * @param KeyCode       The key code to be checked
 	 * @return              Returns true if the given key is done, otherwise false.
 	 */
-	bool IsKeyDown(uint KeyCode);
+	bool isKeyDown(uint keyCode);
 
 	/**
 	 * Returns true if a certain key was pushed and released.
@@ -253,7 +252,7 @@ public:
 	 * strings that users type.
 	 * @param KeyCode       The key code to be checked
 	 */
-	bool WasKeyDown(uint KeyCode);
+	bool wasKeyDown(uint keyCode);
 
 	typedef CallbackPtr CharacterCallback;
 
@@ -269,13 +268,13 @@ public:
 	 * The input of strings by the user through use of callbacks should be implemented.
 	 * @return              Returns true if the function was registered, otherwise false.
 	*/
-	bool RegisterCharacterCallback(CallbackPtr Callback);
+	bool registerCharacterCallback(CallbackPtr callback);
 
 	/**
 	 * De-registeres a previously registered callback function.
 	 * @return              Returns true if the function could be de-registered, otherwise false.
 	 */
-	bool UnregisterCharacterCallback(CallbackPtr Callback);
+	bool unregisterCharacterCallback(CallbackPtr callback);
 
 	typedef CallbackPtr CommandCallback;
 
@@ -288,16 +287,16 @@ public:
 	 * The input of strings by the user through the use of callbacks should be implemented.
 	 * @return              Returns true if the function was registered, otherwise false.
 	 */
-	bool RegisterCommandCallback(CallbackPtr Callback);
+	bool registerCommandCallback(CallbackPtr callback);
 
 	/**
 	 * Un-register a callback function for the input of commands that can have an influence on the string input.
 	 * @return              Returns true if the function could be de-registered, otherwise false.
 	 */
-	bool UnregisterCommandCallback(CommandCallback Callback);
+	bool unregisterCommandCallback(CommandCallback callback);
 
-	void ReportCharacter(byte Character);
-	void ReportCommand(KEY_COMMANDS Command);
+	void reportCharacter(byte character);
+	void reportCommand(KEY_COMMANDS command);
 
 	bool persist(OutputPersistenceBlock &writer);
 	bool unpersist(InputPersistenceBlock &reader);
@@ -306,26 +305,26 @@ private:
 	bool registerScriptBindings();
 
 private:
-	void TestForLeftDoubleClick();
-	void AlterKeyboardState(int keycode, byte newState);
+	void testForLeftDoubleClick();
+	void alterKeyboardState(int keycode, byte newState);
 
-	byte                            m_KeyboardState[2][256];
-	bool                            m_LeftMouseState[2];
-	bool                            m_RightMouseState[2];
-	uint                    m_CurrentState;
-	int                             m_MouseX;
-	int                             m_MouseY;
-	bool                            m_LeftMouseDown;
-	bool                            m_RightMouseDown;
-	bool                            m_LeftDoubleClick;
-	uint                    m_DoubleClickTime;
-	int                             m_DoubleClickRectWidth;
-	int                             m_DoubleClickRectHeight;
-	uint                    m_LastLeftClickTime;
-	int                             m_LastLeftClickMouseX;
-	int                             m_LastLeftClickMouseY;
-	Common::List<CommandCallback>       m_CommandCallbacks;
-	Common::List<CharacterCallback> m_CharacterCallbacks;
+	byte _keyboardState[2][256];
+	bool _leftMouseState[2];
+	bool _rightMouseState[2];
+	uint _currentState;
+	int _mouseX;
+	int _mouseY;
+	bool _leftMouseDown;
+	bool _rightMouseDown;
+	bool _leftDoubleClick;
+	uint _doubleClickTime;
+	int _doubleClickRectWidth;
+	int _doubleClickRectHeight;
+	uint _lastLeftClickTime;
+	int _lastLeftClickMouseX;
+	int _lastLeftClickMouseY;
+	Common::List<CommandCallback> _commandCallbacks;
+	Common::List<CharacterCallback> _characterCallbacks;
 };
 
 } // End of namespace Sword25

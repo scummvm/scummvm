@@ -32,10 +32,6 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/savefile.h"
@@ -47,12 +43,8 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "FILESYSTEMUTIL"
 
-// -----------------------------------------------------------------------------
-// Constants and utility functions
-// -----------------------------------------------------------------------------
-
-Common::String GetAbsolutePath(const Common::String &Path) {
-	Common::FSNode node(Path);
+Common::String getAbsolutePath(const Common::String &path) {
+	Common::FSNode node(path);
 
 	if (!node.exists()) {
 		// An error has occurred finding the node
@@ -65,13 +57,9 @@ Common::String GetAbsolutePath(const Common::String &Path) {
 	return node.getPath();
 }
 
-// -----------------------------------------------------------------------------
-// Class definitions
-// -----------------------------------------------------------------------------
-
 class BS_FileSystemUtilScummVM : public FileSystemUtil {
 public:
-	virtual Common::String GetUserdataDirectory() {
+	virtual Common::String getUserdataDirectory() {
 		Common::String path = ConfMan.get("savepath");
 
 		if (path.empty()) {
@@ -83,12 +71,12 @@ public:
 		return path;
 	}
 
-	virtual Common::String GetPathSeparator() {
+	virtual Common::String getPathSeparator() {
 		return Common::String("/");
 	}
 
-	virtual int32 GetFileSize(const Common::String &Filename) {
-		Common::FSNode node(Filename);
+	virtual int32 getFileSize(const Common::String &filename) {
+		Common::FSNode node(filename);
 
 		// If the file does not exist, return -1 as a result
 		if (!node.exists())
@@ -103,7 +91,7 @@ public:
 		return size;
 	}
 
-	virtual TimeDate GetFileTime(const Common::String &Filename) {
+	virtual TimeDate getFileTime(const Common::String &filename) {
 		// TODO: There isn't any way in ScummVM to get a file's modified date/time. We will need to check
 		// what code makes use of it. If it's only the save game code, for example, we may be able to
 		// encode the date/time inside the savegame files themselves.
@@ -112,41 +100,37 @@ public:
 		return result;
 	}
 
-	virtual bool FileExists(const Common::String &Filename) {
+	virtual bool fileExists(const Common::String &filename) {
 		Common::File f;
-		if (f.exists(Filename))
+		if (f.exists(filename))
 			return true;
 
 		// Check if the file exists in the save folder
-		Common::FSNode folder(PersistenceService::GetSavegameDirectory());
-		Common::FSNode fileNode = folder.getChild(FileSystemUtil::GetInstance().GetPathFilename(Filename));
+		Common::FSNode folder(PersistenceService::getSavegameDirectory());
+		Common::FSNode fileNode = folder.getChild(FileSystemUtil::getInstance().getPathFilename(filename));
 		return fileNode.exists();
 	}
 
-	virtual bool CreateDirectory(const Common::String &DirectoryName) {
+	virtual bool createDirectory(const Common::String &sirectoryName) {
 		// ScummVM doesn't support creating folders, so this is only a stub
 		BS_LOG_ERRORLN("CreateDirectory method called");
 		return false;
 	}
 
-	virtual Common::String GetPathFilename(const Common::String &Path) {
-		for (int i = Path.size() - 1; i >= 0; --i) {
-			if ((Path[i] == '/') || (Path[i] == '\\')) {
-				return Common::String(&Path.c_str()[i + 1]);
+	virtual Common::String getPathFilename(const Common::String &path) {
+		for (int i = path.size() - 1; i >= 0; --i) {
+			if ((path[i] == '/') || (path[i] == '\\')) {
+				return Common::String(&path.c_str()[i + 1]);
 			}
 		}
 
-		return Path;
+		return path;
 	}
 };
 
-// -----------------------------------------------------------------------------
-// Singleton method of parent class
-// -----------------------------------------------------------------------------
-
-FileSystemUtil &FileSystemUtil::GetInstance() {
-	static BS_FileSystemUtilScummVM Instance;
-	return Instance;
+FileSystemUtil &FileSystemUtil::getInstance() {
+	static BS_FileSystemUtilScummVM instance;
+	return instance;
 }
 
 } // End of namespace Sword25

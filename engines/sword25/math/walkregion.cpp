@@ -165,7 +165,7 @@ static void relaxEndPoint(const Vertex &curNodePos,
 }
 
 template<class T>
-void ReverseArray(Common::Array<T> &arr) {
+void reverseArray(Common::Array<T> &arr) {
 	const uint size = arr.size();
 	if (size < 2)
 		return;
@@ -216,7 +216,7 @@ bool WalkRegion::findPath(const Vertex &start, const Vertex &end, BS_Path &path)
 
 			// The nodes of the path must be untwisted, as they were extracted in reverse order.
 			// This step could be saved if the path from end to the beginning was desired
-			ReverseArray<Vertex>(path);
+			reverseArray<Vertex>(path);
 
 			return true;
 		}

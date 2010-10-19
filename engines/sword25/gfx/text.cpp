@@ -73,7 +73,7 @@ Text::Text(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPt
 
 bool Text::setFont(const Common::String &font) {
 	// Font precachen.
-	if (getResourceManager()->PrecacheResource(font)) {
+	if (getResourceManager()->precacheResource(font)) {
 		_font = font;
 		updateFormat();
 		forceRefresh();
@@ -134,12 +134,12 @@ bool Text::doRender() {
 	ResourceManager *rmPtr = getResourceManager();
 	BitmapResource *charMapPtr;
 	{
-		Resource *pResource = rmPtr->RequestResource(fontPtr->getCharactermapFileName());
+		Resource *pResource = rmPtr->requestResource(fontPtr->getCharactermapFileName());
 		if (!pResource) {
 			BS_LOG_ERRORLN("Could not request resource \"%s\".", fontPtr->getCharactermapFileName().c_str());
 			return false;
 		}
-		if (pResource->GetType() != Resource::TYPE_BITMAP) {
+		if (pResource->getType() != Resource::TYPE_BITMAP) {
 			BS_LOG_ERRORLN("Requested resource \"%s\" is not a bitmap.", fontPtr->getCharactermapFileName().c_str());
 			return false;
 		}
@@ -148,7 +148,7 @@ bool Text::doRender() {
 	}
 
 	// Framebufferobjekt holen.
-	GraphicEngine *gfxPtr = Kernel::GetInstance()->GetGfx();
+	GraphicEngine *gfxPtr = Kernel::getInstance()->getGfx();
 	BS_ASSERT(gfxPtr);
 
 	bool result = true;
@@ -187,7 +187,7 @@ bool Text::doRender() {
 
 ResourceManager *Text::getResourceManager() {
 	// Pointer auf den Resource-Manager holen.
-	return Kernel::GetInstance()->GetResourceManager();
+	return Kernel::getInstance()->getResourceManager();
 }
 
 FontResource *Text::lockFontResource() {
@@ -196,12 +196,12 @@ FontResource *Text::lockFontResource() {
 	// Font-Resource locken.
 	FontResource *fontPtr;
 	{
-		Resource *resourcePtr = rmPtr->RequestResource(_font);
+		Resource *resourcePtr = rmPtr->requestResource(_font);
 		if (!resourcePtr) {
 			BS_LOG_ERRORLN("Could not request resource \"%s\".", _font.c_str());
 			return NULL;
 		}
-		if (resourcePtr->GetType() != Resource::TYPE_FONT) {
+		if (resourcePtr->getType() != Resource::TYPE_FONT) {
 			BS_LOG_ERRORLN("Requested resource \"%s\" is not a font.", _font.c_str());
 			return NULL;
 		}

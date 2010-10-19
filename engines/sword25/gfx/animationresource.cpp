@@ -54,7 +54,7 @@ AnimationResource::AnimationResource(const Common::String &filename) :
 		Common::XMLParser(),
 		_valid(false) {
 	// Get a pointer to the package manager
-	_pPackage = Kernel::GetInstance()->GetPackage();
+	_pPackage = Kernel::getInstance()->getPackage();
 	BS_ASSERT(_pPackage);
 
 	// Switch to the folder the specified Xml fiile is in
@@ -211,7 +211,7 @@ AnimationResource::~AnimationResource() {
 bool AnimationResource::precacheAllFrames() const {
 	Common::Array<Frame>::const_iterator iter = _frames.begin();
 	for (; iter != _frames.end(); ++iter) {
-		if (!Kernel::GetInstance()->GetResourceManager()->PrecacheResource((*iter).fileName)) {
+		if (!Kernel::getInstance()->getResourceManager()->precacheResource((*iter).fileName)) {
 			BS_LOG_ERRORLN("Could not precache \"%s\".", (*iter).fileName.c_str());
 			return false;
 		}
@@ -232,7 +232,7 @@ bool AnimationResource::computeFeatures() {
 	Common::Array<Frame>::const_iterator iter = _frames.begin();
 	for (; iter != _frames.end(); ++iter) {
 		BitmapResource *pBitmap;
-		if (!(pBitmap = static_cast<BitmapResource *>(Kernel::GetInstance()->GetResourceManager()->RequestResource((*iter).fileName)))) {
+		if (!(pBitmap = static_cast<BitmapResource *>(Kernel::getInstance()->getResourceManager()->requestResource((*iter).fileName)))) {
 			BS_LOG_ERRORLN("Could not request \"%s\".", (*iter).fileName.c_str());
 			return false;
 		}

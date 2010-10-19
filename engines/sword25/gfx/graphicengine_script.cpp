@@ -209,9 +209,9 @@ static const luaL_reg ANIMATION_TEMPLATE_METHODS[] = {
 };
 
 static GraphicEngine *getGE() {
-	Kernel *pKernel = Kernel::GetInstance();
+	Kernel *pKernel = Kernel::getInstance();
 	BS_ASSERT(pKernel);
-	GraphicEngine *pGE = pKernel->GetGfx();
+	GraphicEngine *pGE = pKernel->getGfx();
 	BS_ASSERT(pGE);
 	return pGE;
 }
@@ -1039,7 +1039,7 @@ static int a_isPlaying(lua_State *L) {
 }
 
 static bool animationLoopPointCallback(uint handle) {
-	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->getScriptObject());
+	lua_State *L = static_cast<lua_State *>(Kernel::getInstance()->getScript()->getScriptObject());
 	loopPointCallbackPtr->invokeCallbackFunctions(L, handle);
 
 	return true;
@@ -1071,7 +1071,7 @@ static bool animationActionCallback(uint Handle) {
 	RenderObjectPtr<Animation> animationPtr(Handle);
 	if (animationPtr.isValid()) {
 		actionCallbackPtr->Action = animationPtr->getCurrentAction();
-		lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->getScriptObject());
+		lua_State *L = static_cast<lua_State *>(Kernel::getInstance()->getScript()->getScriptObject());
 		actionCallbackPtr->invokeCallbackFunctions(L, animationPtr->getHandle());
 	}
 
@@ -1101,7 +1101,7 @@ static int a_unregisterActionCallback(lua_State *L) {
 }
 
 static bool animationDeleteCallback(uint Handle) {
-	lua_State *L = static_cast<lua_State *>(Kernel::GetInstance()->GetScript()->getScriptObject());
+	lua_State *L = static_cast<lua_State *>(Kernel::getInstance()->getScript()->getScriptObject());
 	loopPointCallbackPtr->removeAllObjectCallbacks(L, Handle);
 
 	return true;
@@ -1268,9 +1268,9 @@ static const luaL_reg TEXT_METHODS[] = {
 };
 
 bool GraphicEngine::registerScriptBindings() {
-	Kernel *pKernel = Kernel::GetInstance();
+	Kernel *pKernel = Kernel::getInstance();
 	BS_ASSERT(pKernel);
-	ScriptEngine *pScript = pKernel->GetScript();
+	ScriptEngine *pScript = pKernel->getScript();
 	BS_ASSERT(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	BS_ASSERT(L);

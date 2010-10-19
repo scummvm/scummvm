@@ -41,43 +41,41 @@
 #ifndef SWORD25_SCUMMVMWINDOW_H
 #define SWORD25_SCUMMVMWINDOW_H
 
-// Includes
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/window.h"
 
 namespace Sword25 {
 
-// Class definition
 class ScummVMWindow : public Window {
 public:
-	ScummVMWindow(int X, int Y, int Width, int Height, bool Visible);
+	ScummVMWindow(int x, int y, int width, int height, bool visible);
 	virtual ~ScummVMWindow();
 
-	bool IsVisible();
-	void SetVisible(bool Visible);
-	int GetX();
-	void SetX(int X);
-	int GetY();
-	void SetY(int X);
-	int GetClientX();
-	int GetClientY();
-	int GetWidth();
-	void SetWidth(int Width);
-	int GetHeight();
-	void SetHeight(int Height);
-	Common::String GetTitle();
-	void SetWindowAlive(bool v);
-	void SetTitle(const Common::String &Title);
-	bool HasFocus();
-	uint GetWindowHandle();
-	bool WaitForFocus();
-	bool ProcessMessages();
+	bool isVisible();
+	void setVisible(bool visible);
+	int getX();
+	void setX(int x);
+	int getY();
+	void setY(int x);
+	int getClientX();
+	int getClientY();
+	int getWidth();
+	void setWidth(int width);
+	int getHeight();
+	void setHeight(int height);
+	Common::String getTitle();
+	void setWindowAlive(bool v);
+	void setTitle(const Common::String &title);
+	bool hasFocus();
+	uint getWindowHandle();
+	bool waitForFocus();
+	bool processMessages();
 
 private:
-	static bool _ClassRegistered;
-	bool _WindowAlive;
-	int  _ClientXDelta;
-	int  _ClientYDelta;
+	static bool _classRegistered;
+	bool _windowAlive;
+	int  _clientXDelta;
+	int  _clientYDelta;
 };
 
 } // End of namespace Sword25
