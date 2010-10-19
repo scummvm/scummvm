@@ -372,17 +372,12 @@ public:
 
 		EntityCallParameters() {
 			// We default to int parameters
-			create<EntityParametersIIII>();
+			for (int i = 0; i < 4; i++)
+				parameters[i] = new EntityParametersIIII();
 		}
 
 		~EntityCallParameters() {
 			clear();
-		}
-
-		template<class T>
-		void create() {
-			for (int i = 0; i < 4; i++)
-				parameters[i] = new T();
 		}
 
 		void clear() {
@@ -491,7 +486,9 @@ public:
 	void resetCurrentParameters() {
 		EntityCallParameters *params = &_parameters[_data.currentCall];
 		params->clear();
-		params->create<T>();
+
+		for (int i = 0; i < 4; i++)
+			params->parameters[i] = new T();
 	}
 
 	EntityCallData 	  *getCallData() { return &_data; }
