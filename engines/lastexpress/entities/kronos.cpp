@@ -330,7 +330,7 @@ IMPLEMENT_FUNCTION(15, Kronos, function15)
 }
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(16 ,Kronos, function16)
+IMPLEMENT_FUNCTION(16, Kronos, function16)
 	switch (savepoint.action) {
 	default:
 		break;

@@ -51,7 +51,7 @@ SceneHotspot *SceneHotspot::load(Common::SeekableReadStream *stream) {
 	hs->cursor = stream->readByte();
 	hs->next = stream->readUint32LE();
 
-	debugC(10, kLastExpressDebugScenes, "\thotspot: scene=%d location=%02d action=%d param1=%02d param2=%02d param3=%02d cursor=%02d rect=(%d, %d)x(%d,%d)",
+	debugC(10, kLastExpressDebugScenes, "\thotspot: scene=%d location=%02d action=%d param1=%02d param2=%02d param3=%02d cursor=%02d rect=(%d, %d)x(%d, %d)",
 	                                   hs->scene, hs->location, hs->action, hs->param1, hs->param2, hs->param3, hs->cursor, hs->rect.left, hs->rect.top, hs->rect.right, hs->rect.bottom);
 	debugC(10, kLastExpressDebugScenes, "\t         coords=%d next=%d ", hs->coordsOffset, hs->next);
 
@@ -79,7 +79,7 @@ SceneHotspot *SceneHotspot::load(Common::SeekableReadStream *stream) {
 Common::String SceneHotspot::toString() const {
 	Common::String output = "";
 
-	output += Common::String::printf("    hotspot: scene=%d location=%02d action=%d param1=%02d param2=%02d param3=%02d cursor=%02d rect=(%d, %d)x(%d,%d)",
+	output += Common::String::printf("    hotspot: scene=%d location=%02d action=%d param1=%02d param2=%02d param3=%02d cursor=%02d rect=(%d, %d)x(%d, %d)",
 	                                   scene, location, action, param1, param2, param3, cursor, rect.left, rect.top, rect.right, rect.bottom);
 
 	return output;

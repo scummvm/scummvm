@@ -67,7 +67,7 @@ public:
 private:
 	typedef Common::Functor1<const SceneHotspot &, SceneIndex> ActionFunctor;
 
-	LastExpressEngine* _engine;
+	LastExpressEngine *_engine;
 	Common::Array<ActionFunctor *> _actions;
 
 	// Each action is of the form action_<name>(SceneHotspot *hotspot)

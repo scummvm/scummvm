@@ -192,7 +192,7 @@ IMPLEMENT_FUNCTION_I(6, Kahina, function6, TimeValue)
 }
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_II(7 ,Kahina, updateEntity2, CarIndex, EntityPosition)
+IMPLEMENT_FUNCTION_II(7, Kahina, updateEntity2, CarIndex, EntityPosition)
 	switch (savepoint.action) {
 	default:
 		break;

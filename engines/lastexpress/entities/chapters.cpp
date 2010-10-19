@@ -156,7 +156,7 @@ IMPLEMENT_FUNCTION(5, Chapters, resetMainEntities)
 }
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(6,Chapters, chapter1End)
+IMPLEMENT_FUNCTION(6, Chapters, chapter1End)
 	switch (savepoint.action) {
 	default:
 		break;

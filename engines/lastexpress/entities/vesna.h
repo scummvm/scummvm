@@ -48,7 +48,7 @@ public:
 	 *
 	 * @param filename The sound filename
 	 */
-	DECLARE_FUNCTION_1(playSound, const char* filename)
+	DECLARE_FUNCTION_1(playSound, const char *filename)
 
 	/**
 	 * Handles entering/exiting a compartment.
@@ -56,7 +56,7 @@ public:
 	 * @param sequence    The sequence to draw
 	 * @param compartment The compartment
 	 */
-	DECLARE_FUNCTION_2(enterExitCompartment, const char* sequence, ObjectIndex compartment)
+	DECLARE_FUNCTION_2(enterExitCompartment, const char *sequence, ObjectIndex compartment)
 
 
 	/**
@@ -64,7 +64,7 @@ public:
 	 *
 	 * @param sequence The sequence to draw
 	 */
-	DECLARE_FUNCTION_1(draw, const char* sequence)
+	DECLARE_FUNCTION_1(draw, const char *sequence)
 
 	/**
 	 * Updates the entity

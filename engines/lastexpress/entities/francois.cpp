@@ -733,7 +733,7 @@ IMPLEMENT_FUNCTION(20, Francois, function20)
 }
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(21 ,Francois, chapter2)
+IMPLEMENT_FUNCTION(21, Francois, chapter2)
 	switch (savepoint.action) {
 	default:
 		break;

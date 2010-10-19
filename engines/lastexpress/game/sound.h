@@ -197,7 +197,7 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &ser);
 
 private:
-	typedef int32* SoundBuffer;
+	typedef int32 *SoundBuffer;
 
 	enum SoundStatus {
 		kSoundStatus_20       = 0x20,
@@ -277,7 +277,7 @@ private:
 	};
 
 	// Engine
-	LastExpressEngine* _engine;
+	LastExpressEngine *_engine;
 
 	// State flag
 	int _state;

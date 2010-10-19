@@ -73,7 +73,7 @@ public:
 	Common::String toString();
 
 private:
-	LastExpressEngine* _engine;
+	LastExpressEngine *_engine;
 
 	Object _objects[kObjectMax];
 };

@@ -56,7 +56,7 @@ public:
 	 * @param sequence    The sequence to draw
 	 * @param compartment The compartment
 	 */
-	DECLARE_FUNCTION_2(enterExitCompartment, const char* sequence, ObjectIndex compartment)
+	DECLARE_FUNCTION_2(enterExitCompartment, const char *sequence, ObjectIndex compartment)
 
 	/**
 	 * Process callback action when the entity direction is not kDirectionRight
@@ -71,14 +71,14 @@ public:
 	* @param entityPosition1 The entity position 1
 	* @param entityPosition2 The entity position 2
 	*/
-	DECLARE_FUNCTION_4(enterExitCompartment2, const char* sequence, ObjectIndex compartment, EntityPosition entityPosition1, EntityPosition entityPosition2)
+	DECLARE_FUNCTION_4(enterExitCompartment2, const char *sequence, ObjectIndex compartment, EntityPosition entityPosition1, EntityPosition entityPosition2)
 
 	/**
 	 * Plays sound
 	 *
 	 * @param filename The sound filename
 	 */
-	DECLARE_FUNCTION_1(playSound, const char* filename)
+	DECLARE_FUNCTION_1(playSound, const char *filename)
 
 	/**
 	 * Plays sound
@@ -221,7 +221,7 @@ public:
 	DECLARE_NULL_FUNCTION()
 
 private:
-	void visitCompartment(const SavePoint &savepoint, EntityPosition position, const char* seq1, ObjectIndex compartment, const char* seq2, const char* seq3, EntityPosition sittingPosition, ObjectIndex object, const char* seq4);
+	void visitCompartment(const SavePoint &savepoint, EntityPosition position, const char *seq1, ObjectIndex compartment, const char *seq2, const char *seq3, EntityPosition sittingPosition, ObjectIndex object, const char *seq4);
 };
 
 } // End of namespace LastExpress

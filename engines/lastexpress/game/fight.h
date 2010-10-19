@@ -118,7 +118,7 @@ private:
 		Common::Functor2<Fighter *, FightAction, void> *handleAction;
 		Common::Functor1<Fighter *, void> *update;
 		Common::Functor2<Fighter const *, FightAction, bool> *canInteract;
-		Fighter* opponent;
+		Fighter *opponent;
 		Common::Array<Sequence *> sequences;
 		uint32 sequenceIndex;
 		Sequence *sequence;
@@ -186,7 +186,7 @@ private:
 		}
 	};
 
-	LastExpressEngine* _engine;
+	LastExpressEngine *_engine;
 	FightData *_data;
 	FightEndType _endType;
 	int _state;

@@ -43,14 +43,14 @@ public:
 	 *
 	 * @param sequence The sequence to draw
 	 */
-	DECLARE_FUNCTION_1(draw, const char* sequence)
+	DECLARE_FUNCTION_1(draw, const char *sequence)
 
 	/**
 	 * Plays sound
 	 *
 	 * @param filename The sound filename
 	 */
-	DECLARE_FUNCTION_1(playSound, const char* filename)
+	DECLARE_FUNCTION_1(playSound, const char *filename)
 
 	DECLARE_FUNCTION(function3)
 

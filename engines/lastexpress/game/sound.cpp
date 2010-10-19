@@ -337,7 +337,7 @@ void SoundManager::loadSoundData(SoundEntry *entry, Common::String name) {
 	}
 }
 
-void SoundManager::resetEntry(SoundEntry * entry) const {
+void SoundManager::resetEntry(SoundEntry *entry) const {
 	entry->status.status |= kSoundStatusRemoved;
 	entry->entity = kEntityPlayer;
 
@@ -517,7 +517,7 @@ void SoundManager::playSound(EntityIndex entity, Common::String filename, FlagTy
 }
 
 SoundManager::SoundType SoundManager::playSoundWithSubtitles(Common::String filename, FlagType flag, EntityIndex entity, byte a4) {
-	SoundEntry* entry = new SoundEntry();
+	SoundEntry *entry = new SoundEntry();
 	setupEntry(entry, filename, flag, 30);
 	entry->entity = entity;
 
@@ -1051,7 +1051,7 @@ void SoundManager::readText(int id){
 		error("Sound::readText - attempting to use invalid id. Valid values [1;8] - [50;64], was %d", id);
 
 	// Get proper message file (names are stored in sequence in the array but id is [1;8] - [50;64])
-	const char* text = messages[id <= 8 ? id : id - 41];
+	const char *text = messages[id <= 8 ? id : id - 41];
 
 	// Check if file is in cache for id [1;8]
 	if (id <= 8)

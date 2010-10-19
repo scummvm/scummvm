@@ -555,7 +555,7 @@ IMPLEMENT_FUNCTION(18, Alexei, chapter1Handler)
 }
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(19 ,Alexei, function19)
+IMPLEMENT_FUNCTION(19, Alexei, function19)
 	switch (savepoint.action) {
 	default:
 		break;

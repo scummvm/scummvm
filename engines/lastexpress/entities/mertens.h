@@ -65,7 +65,7 @@ public:
 	 * @param sequence    The sequence to draw
 	 * @param compartment The compartment
 	 */
-	DECLARE_FUNCTION_2(enterExitCompartment, const char* sequence, ObjectIndex compartment)
+	DECLARE_FUNCTION_2(enterExitCompartment, const char *sequence, ObjectIndex compartment)
 
 	/**
 	 * Handles entering/exiting a compartment and updates position/play animation
@@ -73,7 +73,7 @@ public:
 	 * @param sequence    The sequence to draw
 	 * @param compartment The compartment
 	 */
-	DECLARE_FUNCTION_2(enterExitCompartment2, const char* sequence, ObjectIndex compartment)
+	DECLARE_FUNCTION_2(enterExitCompartment2, const char *sequence, ObjectIndex compartment)
 
 	/**
 	 * Handles entering/exiting a compartment.
@@ -85,7 +85,7 @@ public:
 	 *
 	 * @note We are not using the shared function due to too many differences
 	 */
-	DECLARE_FUNCTION_4(enterExitCompartment3, const char* sequence, ObjectIndex compartment, EntityPosition entityPosition1, EntityPosition entityPosition2)
+	DECLARE_FUNCTION_4(enterExitCompartment3, const char *sequence, ObjectIndex compartment, EntityPosition entityPosition1, EntityPosition entityPosition2)
 
 	/**
 	 * Process callback action when the entity direction is not kDirectionRight
@@ -97,14 +97,14 @@ public:
 	 *
 	 * @param filename The sound filename
 	 */
-	DECLARE_FUNCTION_1(playSound, const char* filename)
+	DECLARE_FUNCTION_1(playSound, const char *filename)
 
 	/**
 	 * Plays sound
 	 *
 	 * @param filename The sound filename
 	 */
-	DECLARE_FUNCTION_1(playSound16, const char* filename)
+	DECLARE_FUNCTION_1(playSound16, const char *filename)
 
 	/**
 	 * Saves the game

@@ -148,7 +148,7 @@ public:
 	static Common::OutSaveFile *openForSaving(GameId id);
 
 	// Headers
-	static bool loadMainHeader(GameId id, SavegameMainHeader* header);
+	static bool loadMainHeader(GameId id, SavegameMainHeader *header);
 	SavegameEntryHeader *getEntry(uint32 index);
 	void clearEntries();
 
@@ -162,7 +162,7 @@ private:
 
 	static Common::String getSavegameName(GameId id);
 
-	static void loadEntryHeader(Common::InSaveFile *save, SavegameEntryHeader* header);
+	static void loadEntryHeader(Common::InSaveFile *save, SavegameEntryHeader *header);
 
 	static bool validateMainHeader(const SavegameMainHeader &header);
 	static bool validateEntryHeader(const SavegameEntryHeader &header);

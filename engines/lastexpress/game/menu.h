@@ -107,14 +107,14 @@ private:
 	LastExpressEngine *_engine;
 
 	// Sequences
-	Sequence* _seqTooltips;
-	Sequence* _seqEggButtons;
-	Sequence* _seqButtons;
-	Sequence* _seqAcorn;
-	Sequence* _seqCity1;
-	Sequence* _seqCity2;
-	Sequence* _seqCity3;
-	Sequence* _seqCredits;
+	Sequence *_seqTooltips;
+	Sequence *_seqEggButtons;
+	Sequence *_seqButtons;
+	Sequence *_seqAcorn;
+	Sequence *_seqCity1;
+	Sequence *_seqCity2;
+	Sequence *_seqCity3;
+	Sequence *_seqCredits;
 
 	GameId _gameId;
 
@@ -153,11 +153,11 @@ private:
 	TrainLine *_trainLine;
 
 	struct MenuOverlays_EqualTo {
-		bool operator()(const StartMenuOverlay& x, const StartMenuOverlay& y) const { return x == y; }
+		bool operator()(const StartMenuOverlay &x, const StartMenuOverlay &y) const { return x == y; }
 	};
 
 	struct MenuOverlays_Hash {
-		uint operator()(const StartMenuOverlay& x) const { return x; }
+		uint operator()(const StartMenuOverlay &x) const { return x; }
 	};
 
 	typedef Common::HashMap<StartMenuOverlay, SequenceFrame *, MenuOverlays_Hash, MenuOverlays_EqualTo> MenuFrames;

@@ -106,7 +106,7 @@ public:
 
 	// Savepoints
 	void push(EntityIndex entity2, EntityIndex entity1, ActionIndex action, uint32 param = 0);
-	void push(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const char* param);
+	void push(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const char *param);
 	void pushAll(EntityIndex entity, ActionIndex action, uint32 param = 0);
 	void process();
 	void reset();
@@ -115,7 +115,7 @@ public:
 	void addData(EntityIndex entity, ActionIndex action, uint32 param);
 
 	// Callbacks
-	void setCallback(EntityIndex index, Entity::Callback* callback);
+	void setCallback(EntityIndex index, Entity::Callback *callback);
 	Callback *getCallback(EntityIndex entity) const;
 	void call(EntityIndex entity2, EntityIndex entity1, ActionIndex action, uint32 param = 0) const;
 	void call(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const char *param) const;
@@ -138,7 +138,7 @@ private:
 
 	Common::List<SavePoint> _savepoints;    ///< could be a queue, but we need to be able to iterate on the items
 	Common::Array<SavePointData> _data;
-	Callback* _callbacks[40];
+	Callback *_callbacks[40];
 
 	SavePoint pop();
 	bool updateEntityFromData(const SavePoint &point);

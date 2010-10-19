@@ -1280,11 +1280,11 @@ void Entities::copySequenceData(EntityIndex entityIndex) const {
 //////////////////////////////////////////////////////////////////////////
 // Drawing
 //////////////////////////////////////////////////////////////////////////
-void Entities::drawSequenceLeft(EntityIndex index, const char* sequence) const {
+void Entities::drawSequenceLeft(EntityIndex index, const char *sequence) const {
 	drawSequence(index, sequence, kDirectionLeft);
 }
 
-void Entities::drawSequenceRight(EntityIndex index, const char* sequence) const {
+void Entities::drawSequenceRight(EntityIndex index, const char *sequence) const {
 	drawSequence(index, sequence, kDirectionRight);
 }
 
@@ -1315,7 +1315,7 @@ void Entities::clearSequences(EntityIndex entityIndex) const {
 	data->doProcessEntity = true;
 }
 
-void Entities::drawSequence(EntityIndex index, const char* sequence, EntityDirection direction) const {
+void Entities::drawSequence(EntityIndex index, const char *sequence, EntityDirection direction) const {
 	debugC(8, kLastExpressDebugLogic, "Drawing sequence %s for entity %s with direction %s", sequence, ENTITY_NAME(index), DIRECTION_NAME(direction));
 
 	// Copy sequence name
@@ -2329,7 +2329,7 @@ label_process_entity:
 	return true;
 }
 
-bool Entities::changeCar(EntityData::EntityCallData * data, EntityIndex entity, CarIndex car, EntityPosition position, bool increment, EntityPosition newPosition, CarIndex newCar) const {
+bool Entities::changeCar(EntityData::EntityCallData *data, EntityIndex entity, CarIndex car, EntityPosition position, bool increment, EntityPosition newPosition, CarIndex newCar) const {
 	if (getData(kEntityPlayer)->car == data->car) {
 		getSound()->playSoundEvent(entity, 36);
 		getSound()->playSoundEvent(entity, 37, 30);

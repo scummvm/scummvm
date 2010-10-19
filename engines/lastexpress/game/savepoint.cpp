@@ -61,7 +61,7 @@ void SavePoints::push(EntityIndex entity2, EntityIndex entity1, ActionIndex acti
 	_savepoints.push_back(point);
 }
 
-void SavePoints::push(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const char* param) {
+void SavePoints::push(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const char *param) {
 	if (_savepoints.size() >= _savePointsMaxSize)
 		return;
 
@@ -129,7 +129,7 @@ void SavePoints::addData(EntityIndex entity, ActionIndex action, uint32 param) {
 //////////////////////////////////////////////////////////////////////////
 // Callbacks
 //////////////////////////////////////////////////////////////////////////
-void SavePoints::setCallback(EntityIndex index, Entity::Callback* callback) {
+void SavePoints::setCallback(EntityIndex index, Entity::Callback *callback) {
 	if (index >= 40)
 		error("SavePoints::setCallback - attempting to use an invalid entity index. Valid values 0-39, was %d", index);
 

@@ -51,7 +51,7 @@ public:
 	 *
 	 * @param sequence The sequence to draw
 	 */
-	DECLARE_FUNCTION_1(draw, const char* sequence)
+	DECLARE_FUNCTION_1(draw, const char *sequence)
 
 	/**
 	 * Updates the position
@@ -75,14 +75,14 @@ public:
 	 * @param action      The action
 	 * @param sequence2   The sequence name for the savepoint
 	 */
-	DECLARE_FUNCTION_4(callSavepoint, const char* sequence1, EntityIndex entity, ActionIndex action, const char* sequence2)
+	DECLARE_FUNCTION_4(callSavepoint, const char *sequence1, EntityIndex entity, ActionIndex action, const char *sequence2)
 
 	/**
 	 * Plays sound
 	 *
 	 * @param filename The sound filename
 	 */
-	DECLARE_FUNCTION_1(playSound, const char* filename)
+	DECLARE_FUNCTION_1(playSound, const char *filename)
 
 	DECLARE_FUNCTION(function7)
 
@@ -158,8 +158,8 @@ public:
 	DECLARE_NULL_FUNCTION()
 
 private:
-	void serveTable(const SavePoint &savepoint, const char* seq1, EntityIndex entity, const char* seq2, const char* seq3, const char* seq4, uint *parameter, Position position = 0, bool updatePosition = true, uint *parameter2 = NULL);
-	void serveSalon(const SavePoint &savepoint, const char* seq1, const char* snd1, EntityIndex entity, const char* snd2, const char* seq2, ActionIndex action, const char* seq3, uint *parameter);
+	void serveTable(const SavePoint &savepoint, const char *seq1, EntityIndex entity, const char *seq2, const char *seq3, const char *seq4, uint *parameter, Position position = 0, bool updatePosition = true, uint *parameter2 = NULL);
+	void serveSalon(const SavePoint &savepoint, const char *seq1, const char *snd1, EntityIndex entity, const char *snd2, const char *seq2, ActionIndex action, const char *seq3, uint *parameter);
 };
 
 } // End of namespace LastExpress

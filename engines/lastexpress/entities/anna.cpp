@@ -1794,7 +1794,7 @@ IMPLEMENT_FUNCTION(42, Anna, chapter2)
 }
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(43 ,Anna, chapter2Handler)
+IMPLEMENT_FUNCTION(43, Anna, chapter2Handler)
 	switch (savepoint.action) {
 	default:
 		break;

@@ -68,7 +68,7 @@ private:
 		uint32 indexes[16];
 
 		uint32 offset;
-		SequenceFrame* frame;
+		SequenceFrame *frame;
 		bool isLoaded;
 		uint32 field_D5;
 		uint32 field_D9;
@@ -103,7 +103,7 @@ private:
 		}
 	};
 
-	LastExpressEngine* _engine;
+	LastExpressEngine *_engine;
 
 	BeetleData *_data;
 

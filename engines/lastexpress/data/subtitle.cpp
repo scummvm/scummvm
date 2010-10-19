@@ -72,8 +72,7 @@ void Subtitle::reset() {
 }
 
 template<typename T>
-T *newArray(size_t n)
-{
+T *newArray(size_t n) {
 	if (n <= (size_t)-1 / sizeof(T))
 		return new T[n];
 

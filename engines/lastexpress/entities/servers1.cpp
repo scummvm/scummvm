@@ -661,7 +661,7 @@ IMPLEMENT_NULL_FUNCTION(32, Servers1)
 //////////////////////////////////////////////////////////////////////////
 // Private functions
 //////////////////////////////////////////////////////////////////////////
-void Servers1::serveTable(const SavePoint &savepoint, const char* seq1, EntityIndex entity, const char* seq2, const char* seq3, const char* seq4, uint *parameter, Position position, bool shouldUpdatePosition, uint* parameter2) {
+void Servers1::serveTable(const SavePoint &savepoint, const char *seq1, EntityIndex entity, const char *seq2, const char *seq3, const char *seq4, uint *parameter, Position position, bool shouldUpdatePosition, uint *parameter2) {
 	switch (savepoint.action) {
 	default:
 		break;
@@ -715,7 +715,7 @@ void Servers1::serveTable(const SavePoint &savepoint, const char* seq1, EntityIn
 }
 
 //////////////////////////////////////////////////////////////////////////
-void Servers1::serveSalon(const SavePoint &savepoint, const char* seq1, const char* snd1, EntityIndex entity, const char* snd2, const char* seq2, ActionIndex action, const char* seq3, uint *parameter) {
+void Servers1::serveSalon(const SavePoint &savepoint, const char *seq1, const char *snd1, EntityIndex entity, const char *snd2, const char *seq2, ActionIndex action, const char *seq3, uint *parameter) {
 	switch (savepoint.action) {
 	default:
 		break;

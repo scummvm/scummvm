@@ -48,7 +48,7 @@ public:
 	 *
 	 * @param sequence The sequence to draw
 	 */
-	DECLARE_FUNCTION_1(draw, const char* sequence)
+	DECLARE_FUNCTION_1(draw, const char *sequence)
 
 	/**
 	 * Process callback action when the entity direction is not kDirectionRight
@@ -60,7 +60,7 @@ public:
 	 *
 	 * @param filename The sound filename
 	 */
-	DECLARE_FUNCTION_1(playSound, const char* filename)
+	DECLARE_FUNCTION_1(playSound, const char *filename)
 
 	/**
 	 * Plays sound
@@ -174,7 +174,7 @@ public:
 	DECLARE_FUNCTION(function42)
 
 private:
-	void talk(const SavePoint &savepoint, const char* sound1, const char* sound2);
+	void talk(const SavePoint &savepoint, const char *sound1, const char *sound2);
 };
 
 } // End of namespace LastExpress

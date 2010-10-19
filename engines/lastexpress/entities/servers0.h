@@ -46,7 +46,7 @@ public:
 	 * @param action      The action
 	 * @param sequence2   The sequence name for the savepoint
 	 */
-	DECLARE_FUNCTION_4(callSavepoint, const char* sequence1, EntityIndex entity, ActionIndex action, const char* sequence2)
+	DECLARE_FUNCTION_4(callSavepoint, const char *sequence1, EntityIndex entity, ActionIndex action, const char *sequence2)
 
 	/**
 	 * Updates parameter 2 using time value
@@ -61,7 +61,7 @@ public:
 	 *
 	 * @param sequence The sequence to draw
 	 */
-	DECLARE_FUNCTION_1(draw, const char* sequence)
+	DECLARE_FUNCTION_1(draw, const char *sequence)
 
 	/**
 	 * Updates the position
@@ -70,7 +70,7 @@ public:
 	 * @param car            The car
 	 * @param position       The position
 	 */
-	DECLARE_FUNCTION_3(updatePosition, const char* sequence1, CarIndex car, Position position)
+	DECLARE_FUNCTION_3(updatePosition, const char *sequence1, CarIndex car, Position position)
 
 	/**
 	 * Process callback action when the entity direction is not kDirectionRight
@@ -82,7 +82,7 @@ public:
 	 *
 	 * @param filename The sound filename
 	 */
-	DECLARE_FUNCTION_1(playSound, const char* filename)
+	DECLARE_FUNCTION_1(playSound, const char *filename)
 
 	DECLARE_FUNCTION(function7)
 	DECLARE_FUNCTION(function8)
@@ -163,8 +163,8 @@ public:
 	DECLARE_NULL_FUNCTION()
 
 private:
-	void handleServer(const SavePoint &savepoint, const char* name, EntityIndex entity, ActionIndex action, uint *parameter, const char* name2 = "");
-	void serveTable(const SavePoint &savepoint, const char* seq1, EntityIndex entity, const char* seq2, const char* seq3, const char* seq4, uint *parameter, bool shouldUpdatePosition = true, bool pushSavepoint = false, Position position = 0);
+	void handleServer(const SavePoint &savepoint, const char *name, EntityIndex entity, ActionIndex action, uint *parameter, const char *name2 = "");
+	void serveTable(const SavePoint &savepoint, const char *seq1, EntityIndex entity, const char *seq2, const char *seq3, const char *seq4, uint *parameter, bool shouldUpdatePosition = true, bool pushSavepoint = false, Position position = 0);
 };
 
 } // End of namespace LastExpress

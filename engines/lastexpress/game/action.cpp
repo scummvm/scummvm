@@ -637,7 +637,7 @@ IMPLEMENT_ACTION(setItemLocation)
 	if (item >= kPortraitOriginal)
 		return kSceneInvalid;
 
-	Inventory::InventoryEntry* entry = getInventory()->get(item);
+	Inventory::InventoryEntry *entry = getInventory()->get(item);
 	if (entry->isPresent)
 		return kSceneInvalid;
 
@@ -675,7 +675,7 @@ IMPLEMENT_ACTION(pickItem)
 	if (item >= kPortraitOriginal)
 		return kSceneInvalid;
 
-	Inventory::InventoryEntry* entry = getInventory()->get(item);
+	Inventory::InventoryEntry *entry = getInventory()->get(item);
 	if (!entry->location)
 		return kSceneInvalid;
 

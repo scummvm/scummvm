@@ -131,7 +131,7 @@ bool SaveLoad::isSavegameValid(GameId id) {
 //////////////////////////////////////////////////////////////////////////
 // Headers
 //////////////////////////////////////////////////////////////////////////
-bool SaveLoad::loadMainHeader(GameId id, SavegameMainHeader* header) {
+bool SaveLoad::loadMainHeader(GameId id, SavegameMainHeader *header) {
 	// Read first 32 bytes of savegame
 	Common::InSaveFile *save = openForLoading(id);
 	if (!save) {
