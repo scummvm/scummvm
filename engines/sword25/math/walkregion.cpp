@@ -164,6 +164,17 @@ static void relaxEndPoint(const Vertex &curNodePos,
 	}
 }
 
+template<class T>
+void ReverseArray(Common::Array<T> &arr) {
+	const uint size = arr.size();
+	if (size < 2)
+		return;
+
+	for (uint i = 0; i <= (size / 2 - 1); ++i) {
+		SWAP(arr[i], arr[size - i - 1]);
+	}
+}
+
 bool WalkRegion::findPath(const Vertex &start, const Vertex &end, BS_Path &path) const {
 	// This is an implementation of Dijkstra's algorithm
 
