@@ -685,8 +685,10 @@ void CharsetRendererCommon::enableShadow(bool enable) {
 			_shadowMode = kNormalShadowMode;
 		}
 	} else {
-		if (_vm->_cjkFont)
+		if (_vm->_cjkFont) {
 			_vm->_cjkFont->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
+			_vm->_cjkFont->toggleFlippedMode(false);
+		}
 		_shadowMode = kNoShadowMode;
 	}
 }
