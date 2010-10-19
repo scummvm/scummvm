@@ -75,16 +75,19 @@ bool ImageViewer::load(int imageNum) {
 		sprintf(error, "Cannot display %s. Not a proper PNG file", specificImageName.c_str());
 		GUI::TimedMessageDialog dialog(error, 4000);
 		dialog.runModal();
+		return false;
 	} else if (status == PngLoader::OUT_OF_MEMORY) {
 		sprintf(error, "Out of memory loading %s. Try making the image smaller", specificImageName.c_str());
 		GUI::TimedMessageDialog dialog(error, 4000);
 		dialog.runModal();
+		return false;
 	}
 	// try to load the image file
 	if (!image.load()) {
 		sprintf(error, "Cannot display %s. Not a proper PNG file", specificImageName.c_str());
 		GUI::TimedMessageDialog dialog(error, 4000);
 		dialog.runModal();	
+		return false;
 	}
 	
 	setConstantRendererOptions();
