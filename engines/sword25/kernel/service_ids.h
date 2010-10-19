@@ -66,9 +66,9 @@ Service *OggTheora_CreateObject(Kernel *pKernel) { return NULL; }
  * This is only a small struct that manages the data of a service.
  */
 struct BS_ServiceInfo {
-	const char *SuperclassIdentifier;
-	const char *ServiceIdentifier;
-	Service *(*CreateMethod)(Kernel *);
+	const char *superclassId;
+	const char *serviceId;
+	Service *(*create)(Kernel *);
 };
 
 // Services are recorded in this table

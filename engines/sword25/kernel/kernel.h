@@ -125,7 +125,7 @@ public:
 	/**
 	 * Returns the number of register superclasses
 	 */
-	uint GetSuperclassCount();
+	uint GetSuperclassCount() const;
 
 	/**
 	 * Returns the name of a superclass with the specified index.
@@ -133,14 +133,14 @@ public:
 	 * @param Number        The number of the superclass to return the identifier for.
 	 * It should be noted that the number should be between 0 und GetSuperclassCount() - 1.
 	 */
-	Common::String GetSuperclassIdentifier(uint Number);
+	Common::String GetSuperclassIdentifier(uint Number) const;
 
 	/**
 	 * Returns the number of services registered with a given superclass
 	 * @param SuperclassIdentifier      The name of the superclass
 	 *         z.B: "sfx", "gfx", "package" ...
 	 */
-	uint GetServiceCount(const Common::String &SuperclassIdentifier);
+	uint GetServiceCount(const Common::String &SuperclassIdentifier) const;
 
 	/**
 	 * Gets the identifier of a service with a given superclass.
@@ -151,7 +151,7 @@ public:
 	 *         Hierbei ist zu beachten, dass der erste Service die Nummer 0 erhält. Number muss also eine Zahl zwischen
 	 *         0 und GetServiceCount() - 1 sein.
 	 */
-	Common::String GetServiceIdentifier(const Common::String &SuperclassIdentifier, uint Number);
+	Common::String GetServiceIdentifier(const Common::String &SuperclassIdentifier, uint Number) const;
 
 	/**
 	 * Returns the elapsed time since startup in milliseconds
@@ -161,7 +161,7 @@ public:
 	/**
 	 * Specifies whether the kernel was successfully initialised
 	 */
-	bool GetInitSuccess() {
+	bool GetInitSuccess() const {
 		return _InitSuccess;
 	}
 	/**
@@ -286,9 +286,9 @@ private:
 		bool DisconnectService();
 	};
 
-	Common::Array<Superclass *>  _SuperclassList;
+	Common::Array<Superclass *>  _superclasses;
 	Common::Stack<Common::String>       _ServiceCreationOrder;
-	Superclass *GetSuperclassByIdentifier(const Common::String &Identifier);
+	Superclass *GetSuperclassByIdentifier(const Common::String &Identifier) const;
 
 	bool _InitSuccess; // Specifies whether the engine was set up correctly
 	bool _Running;  // Specifies whether the application should keep running on the next main loop iteration

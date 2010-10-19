@@ -66,15 +66,15 @@ Kernel::Kernel() :
 		// Is the superclass already registered?
 		Superclass *pCurSuperclass = NULL;
 		Common::Array<Superclass *>::iterator Iter;
-		for (Iter = _SuperclassList.begin(); Iter != _SuperclassList.end(); ++Iter)
-			if ((*Iter)->GetIdentifier() == BS_SERVICE_TABLE[i].SuperclassIdentifier) {
+		for (Iter = _superclasses.begin(); Iter != _superclasses.end(); ++Iter)
+			if ((*Iter)->GetIdentifier() == BS_SERVICE_TABLE[i].superclassId) {
 				pCurSuperclass = *Iter;
 				break;
 			}
 
 		// If the superclass isn't already registered, then add it in
 		if (!pCurSuperclass)
-			_SuperclassList.push_back(new Superclass(this, BS_SERVICE_TABLE[i].SuperclassIdentifier));
+			_superclasses.push_back(new Superclass(this, BS_SERVICE_TABLE[i].superclassId));
 	}
 
 	// Create window object
@@ -114,9 +114,9 @@ Kernel::~Kernel() {
 	}
 
 	// Empty the Superclass list
-	while (_SuperclassList.size()) {
-		delete _SuperclassList.back();
-		_SuperclassList.pop_back();
+	while (_superclasses.size()) {
+		delete _superclasses.back();
+		_superclasses.pop_back();
 	}
 
 	// Release the window object
@@ -138,7 +138,7 @@ Kernel::Superclass::Superclass(Kernel *pKernel, const Common::String &Identifier
 	_ServiceCount(0),
 	_ActiveService(NULL) {
 	for (uint i = 0; i < ARRAYSIZE(BS_SERVICE_TABLE); i++)
-		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier)
+		if (BS_SERVICE_TABLE[i].superclassId == _Identifier)
 			_ServiceCount++;
 }
 
@@ -149,8 +149,8 @@ Kernel::Superclass::~Superclass() {
 /**
  * Gets the identifier of a service with a given superclass.
  * The number of services in a superclass can be learned with GetServiceCount().
- * @param SuperclassIdentifier      The name of the superclass
- *         z.B: "sfx", "gfx", "package" ...
+ * @param superclassId      The name of the superclass
+ *         e.g.: "sfx", "gfx", "package" ...
  * @param Number die Nummer des Services, dessen Bezeichner man erfahren will.<br>
  *         Hierbei ist zu beachten, dass der erste Service die Nummer 0 erhält. Number muss also eine Zahl zwischen
  *         0 und GetServiceCount() - 1 sein.
@@ -160,53 +160,53 @@ Common::String Kernel::Superclass::GetServiceIdentifier(uint Number) {
 
 	uint CurServiceOrd = 0;
 	for (uint i = 0; i < ARRAYSIZE(BS_SERVICE_TABLE); i++) {
-		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier) {
+		if (BS_SERVICE_TABLE[i].superclassId == _Identifier) {
 			if (Number == CurServiceOrd)
-				return BS_SERVICE_TABLE[i].ServiceIdentifier;
+				return BS_SERVICE_TABLE[i].serviceId;
 			else
 				CurServiceOrd++;
 		}
 	}
 
-	return Common::String("");
+	return Common::String();
 }
 
 /**
  * Creates a new service with the given identifier. Returns a pointer to the service, or null if the
  * service could not be created
  * Note: All services must be registered in service_ids.h, otherwise they cannot be created here
- * @param SuperclassIdentifier      The name of the superclass of the service
- *         z.B: "sfx", "gfx", "package" ...
- * @param ServiceIdentifier         The name of the service
+ * @param superclassId      The name of the superclass of the service
+ *         e.g.: "sfx", "gfx", "package" ...
+ * @param serviceId         The name of the service
  *         For the superclass "sfx" an example could be "Fmod" or "directsound"
  */
-Service *Kernel::Superclass::NewService(const Common::String &ServiceIdentifier) {
+Service *Kernel::Superclass::NewService(const Common::String &serviceId) {
 	for (uint i = 0; i < ARRAYSIZE(BS_SERVICE_TABLE); i++)
-		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier &&
-		        BS_SERVICE_TABLE[i].ServiceIdentifier == ServiceIdentifier) {
-			Service *NewService_ = BS_SERVICE_TABLE[i].CreateMethod(_pKernel);
+		if (BS_SERVICE_TABLE[i].superclassId == _Identifier &&
+		        BS_SERVICE_TABLE[i].serviceId == serviceId) {
+			Service *newService = BS_SERVICE_TABLE[i].create(_pKernel);
 
-			if (NewService_) {
+			if (newService) {
 				DisconnectService();
-				BS_LOGLN("Service '%s' created from superclass '%s'.", ServiceIdentifier.c_str(), _Identifier.c_str());
-				_ActiveService = NewService_;
-				_ActiveServiceName = BS_SERVICE_TABLE[i].ServiceIdentifier;
+				BS_LOGLN("Service '%s' created from superclass '%s'.", serviceId.c_str(), _Identifier.c_str());
+				_ActiveService = newService;
+				_ActiveServiceName = BS_SERVICE_TABLE[i].serviceId;
 				return _ActiveService;
 			} else {
-				BS_LOG_ERRORLN("Failed to create service '%s' from superclass '%s'.", ServiceIdentifier.c_str(), _Identifier.c_str());
+				BS_LOG_ERRORLN("Failed to create service '%s' from superclass '%s'.", serviceId.c_str(), _Identifier.c_str());
 				return NULL;
 			}
 		}
 
-	BS_LOG_ERRORLN("Service '%s' is not avaliable from superclass '%s'.", ServiceIdentifier.c_str(), _Identifier.c_str());
+	BS_LOG_ERRORLN("Service '%s' is not avaliable from superclass '%s'.", serviceId.c_str(), _Identifier.c_str());
 	return NULL;
 }
 
 /**
  * Ends the current service of a superclass. Returns true on success, and false if the superclass
  * does not exist or if not service was active
- * @param SuperclassIdentfier       The name of the superclass which is to be disconnected
- *         z.B: "sfx", "gfx", "package" ...
+ * @param superclassId       The name of the superclass which is to be disconnected
+ *         e.g.: "sfx", "gfx", "package" ...
  */
 bool Kernel::Superclass::DisconnectService() {
 	if (_ActiveService) {
@@ -219,9 +219,9 @@ bool Kernel::Superclass::DisconnectService() {
 	return false;
 }
 
-Kernel::Superclass *Kernel::GetSuperclassByIdentifier(const Common::String &Identifier) {
-	Common::Array<Superclass *>::iterator Iter;
-	for (Iter = _SuperclassList.begin(); Iter != _SuperclassList.end(); ++Iter) {
+Kernel::Superclass *Kernel::GetSuperclassByIdentifier(const Common::String &Identifier) const {
+	Common::Array<Superclass *>::const_iterator Iter;
+	for (Iter = _superclasses.begin(); Iter != _superclasses.end(); ++Iter) {
 		if ((*Iter)->GetIdentifier() == Identifier)
 			return *Iter;
 	}
@@ -233,8 +233,8 @@ Kernel::Superclass *Kernel::GetSuperclassByIdentifier(const Common::String &Iden
 /**
  * Returns the number of register superclasses
  */
-uint Kernel::GetSuperclassCount() {
-	return _SuperclassList.size();
+uint Kernel::GetSuperclassCount() const {
+	return _superclasses.size();
 }
 
 /**
@@ -243,29 +243,30 @@ uint Kernel::GetSuperclassCount() {
  * @param Number        The number of the superclass to return the identifier for.
  * It should be noted that the number should be between 0 und GetSuperclassCount() - 1.
  */
-Common::String Kernel::GetSuperclassIdentifier(uint Number) {
-	if (Number > _SuperclassList.size()) return NULL;
+Common::String Kernel::GetSuperclassIdentifier(uint Number) const {
+	if (Number > _superclasses.size())
+		return NULL;
 
 	uint CurSuperclassOrd = 0;
-	Common::Array<Superclass *>::iterator Iter;
-	for (Iter = _SuperclassList.begin(); Iter != _SuperclassList.end(); ++Iter) {
+	Common::Array<Superclass *>::const_iterator Iter;
+	for (Iter = _superclasses.begin(); Iter != _superclasses.end(); ++Iter) {
 		if (CurSuperclassOrd == Number)
 			return ((*Iter)->GetIdentifier());
 
 		CurSuperclassOrd++;
 	}
 
-	return Common::String("");
+	return Common::String();
 }
 
 /**
  * Returns the number of services registered with a given superclass
- * @param SuperclassIdentifier      The name of the superclass
- *         z.B: "sfx", "gfx", "package" ...
+ * @param superclassId      The name of the superclass
+ *         e.g.: "sfx", "gfx", "package" ...
  */
-uint Kernel::GetServiceCount(const Common::String &SuperclassIdentifier) {
-	Superclass *pSuperclass;
-	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier)))
+uint Kernel::GetServiceCount(const Common::String &superclassId) const {
+	Superclass *pSuperclass = GetSuperclassByIdentifier(superclassId);
+	if (!pSuperclass)
 		return 0;
 
 	return pSuperclass->GetServiceCount();
@@ -275,15 +276,16 @@ uint Kernel::GetServiceCount(const Common::String &SuperclassIdentifier) {
 /**
  * Gets the identifier of a service with a given superclass.
  * The number of services in a superclass can be learned with GetServiceCount().
- * @param SuperclassIdentifier      The name of the superclass
- *         z.B: "sfx", "gfx", "package" ...
+ * @param superclassId      The name of the superclass
+ *         e.g.: "sfx", "gfx", "package" ...
  * @param Number die Nummer des Services, dessen Bezeichner man erfahren will.<br>
  *         Hierbei ist zu beachten, dass der erste Service die Nummer 0 erhält. Number muss also eine Zahl zwischen
  *         0 und GetServiceCount() - 1 sein.
  */
-Common::String Kernel::GetServiceIdentifier(const Common::String &SuperclassIdentifier, uint Number) {
-	Superclass *pSuperclass;
-	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) return NULL;
+Common::String Kernel::GetServiceIdentifier(const Common::String &superclassId, uint Number) const {
+	Superclass *pSuperclass = GetSuperclassByIdentifier(superclassId);
+	if (!pSuperclass)
+		return NULL;
 
 	return (pSuperclass->GetServiceIdentifier(Number));
 }
@@ -292,57 +294,61 @@ Common::String Kernel::GetServiceIdentifier(const Common::String &SuperclassIden
  * Creates a new service with the given identifier. Returns a pointer to the service, or null if the
  * service could not be created
  * Note: All services must be registered in service_ids.h, otherwise they cannot be created here
- * @param SuperclassIdentifier      The name of the superclass of the service
- *         z.B: "sfx", "gfx", "package" ...
- * @param ServiceIdentifier         The name of the service
+ * @param superclassId      The name of the superclass of the service
+ *         e.g.: "sfx", "gfx", "package" ...
+ * @param serviceId         The name of the service
  *         For the superclass "sfx" an example could be "Fmod" or "directsound"
  */
-Service *Kernel::NewService(const Common::String &SuperclassIdentifier, const Common::String &ServiceIdentifier) {
-	Superclass *pSuperclass;
-	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) return NULL;
+Service *Kernel::NewService(const Common::String &superclassId, const Common::String &serviceId) {
+	Superclass *pSuperclass = GetSuperclassByIdentifier(superclassId);
+	if (!pSuperclass)
+		return NULL;
 
 	// Die Reihenfolge merken, in der Services erstellt werden, damit sie später in umgekehrter Reihenfolge entladen werden können.
-	_ServiceCreationOrder.push(SuperclassIdentifier);
+	_ServiceCreationOrder.push(superclassId);
 
-	return pSuperclass->NewService(ServiceIdentifier);
+	return pSuperclass->NewService(serviceId);
 }
 
 /**
- * Ends the current service of a superclass. Returns true on success, and false if the superclass
- * does not exist or if not service was active
- * @param SuperclassIdentfier       The name of the superclass which is to be disconnected
- *         z.B: "sfx", "gfx", "package" ...
+ * Ends the current service of a superclass. 
+ * @param superclassId       The name of the superclass which is to be disconnected
+ *         e.g.: "sfx", "gfx", "package" ...
+ * @return true on success, and false if the superclass does not exist or if not service was active.
  */
-bool Kernel::DisconnectService(const Common::String &SuperclassIdentifier) {
-	Superclass *pSuperclass;
-	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) return false;
+bool Kernel::DisconnectService(const Common::String &superclassId) {
+	Superclass *pSuperclass = GetSuperclassByIdentifier(superclassId);
+	if (!pSuperclass)
+		return false;
 
 	return pSuperclass->DisconnectService();
 }
 
 /**
- * Returns a pointer to the currently active service object of a superclass
- * @param SuperclassIdentfier       The name of the superclass
- *         z.B: "sfx", "gfx", "package" ...
+ * Returns a pointer to the currently active service object of a superclass.
+ * @param superclassId       The name of the superclass
+ *         e.g.: "sfx", "gfx", "package" ...
  */
-Service *Kernel::GetService(const Common::String &SuperclassIdentifier) {
-	Superclass *pSuperclass;
-	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) return NULL;
+Service *Kernel::GetService(const Common::String &superclassId) {
+	Superclass *pSuperclass = GetSuperclassByIdentifier(superclassId);
+	if (!pSuperclass)
+		return NULL;
 
 	return (pSuperclass->GetActiveService());
 }
 
 /**
- * Returns the name of the currentl active service object of a superclass.
+ * Returns the name of the currently active service object of a superclass.
  * If an error occurs, then an empty string is returned
- * @param SuperclassIdentfier       The name of the superclass
- *         z.B: "sfx", "gfx", "package" ...
+ * @param superclassId       The name of the superclass
+ *         e.g.: "sfx", "gfx", "package" ...
  */
-Common::String Kernel::GetActiveServiceIdentifier(const Common::String &SuperclassIdentifier) {
-	Superclass *pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier);
-	if (!pSuperclass) return Common::String("");
+Common::String Kernel::GetActiveServiceIdentifier(const Common::String &superclassId) {
+	Superclass *pSuperclass = GetSuperclassByIdentifier(superclassId);
+	if (!pSuperclass)
+		return Common::String();
 
-	return (pSuperclass->GetActiveServiceName());
+	return pSuperclass->GetActiveServiceName();
 }
 
 // -----------------------------------------------------------------------------
@@ -389,7 +395,7 @@ size_t Kernel::GetUsedMemory() {
 // -----------------------------------------------------------------------------
 
 /**
- * Returns a pointer to the active Gfx Service, or NULL if no Gfx service is active
+ * Returns a pointer to the active Gfx Service, or NULL if no Gfx service is active.
  */
 GraphicEngine *Kernel::GetGfx() {
 	return static_cast<GraphicEngine *>(GetService("gfx"));
@@ -398,7 +404,7 @@ GraphicEngine *Kernel::GetGfx() {
 // -----------------------------------------------------------------------------
 
 /**
- * Returns a pointer to the active Sfx Service, or NULL if no Sfx service is active
+ * Returns a pointer to the active Sfx Service, or NULL if no Sfx service is active.
  */
 SoundEngine *Kernel::GetSfx() {
 	return static_cast<SoundEngine *>(GetService("sfx"));
@@ -407,7 +413,7 @@ SoundEngine *Kernel::GetSfx() {
 // -----------------------------------------------------------------------------
 
 /**
- * Returns a pointer to the active input service, or NULL if no input service is active
+ * Returns a pointer to the active input service, or NULL if no input service is active.
  */
 InputEngine *Kernel::GetInput() {
 	return static_cast<InputEngine *>(GetService("input"));
@@ -416,7 +422,7 @@ InputEngine *Kernel::GetInput() {
 // -----------------------------------------------------------------------------
 
 /**
- * Returns a pointer to the active package manager, or NULL if no manager is active
+ * Returns a pointer to the active package manager, or NULL if no manager is active.
  */
 PackageManager *Kernel::GetPackage() {
 	return static_cast<PackageManager *>(GetService("package"));
@@ -425,7 +431,7 @@ PackageManager *Kernel::GetPackage() {
 // -----------------------------------------------------------------------------
 
 /**
- * Returns a pointer to the script engine, or NULL if it is not active
+ * Returns a pointer to the script engine, or NULL if it is not active.
  */
 ScriptEngine *Kernel::GetScript() {
 	return static_cast<ScriptEngine *>(GetService("script"));
@@ -435,7 +441,7 @@ ScriptEngine *Kernel::GetScript() {
 
 #ifdef USE_THEORADEC
 /**
- * Returns a pointer to the movie player, or NULL if it is not active
+ * Returns a pointer to the movie player, or NULL if it is not active.
  */
 MoviePlayer *Kernel::GetFMV() {
 	return static_cast<MoviePlayer *>(GetService("fmv"));
