@@ -158,8 +158,10 @@ void SciMusic::sendMidiCommandsFromQueue() {
 }
 
 void SciMusic::clearPlayList() {
-	Common::StackLock lock(_mutex);
-
+	// we must NOT lock our mutex here. Playlist is modified inside soundKill() which will lock the mutex
+	//  during deletion. If we lock it here, a deadlock may occur within soundStop() because that one
+	//  calls the mixer, which will also lock the mixer mutex and if the mixer thread is active during
+	//  that time, we will get a deadlock.
 	while (!_playList.empty()) {
 		soundStop(_playList[0]);
 		soundKill(_playList[0]);
