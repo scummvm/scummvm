@@ -1452,8 +1452,8 @@ void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Lo
 
 	actor->_walkStepsCount = i;
 	if (i) {
-		actor->setTileDirectionsSize(i, false);
-		memcpy(actor->_tileDirections, res, i);
+		actor->_tileDirections.resize(i);
+		memcpy(&actor->_tileDirections.front(), res, i);
 	}
 
 }
@@ -1585,8 +1585,8 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 
 	actor->_walkStepsCount = i;
 	if (i) {
-		actor->setTileDirectionsSize(i, false);
-		memcpy(actor->_tileDirections, res, i);
+		actor->_tileDirections.resize(i);
+		memcpy(&actor->_tileDirections.front(), res, i);
 	}
 }
 

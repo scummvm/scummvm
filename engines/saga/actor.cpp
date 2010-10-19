@@ -48,12 +48,10 @@ ActorData::ActorData() {
 ActorData::~ActorData() {
 	if (!_shareFrames)
 		free(_frames);
-	free(_tileDirections);
-	free(_walkStepsPoints);
 	freeSpriteList();
 }
 void ActorData::saveState(Common::OutSaveFile *out) {
-	int i = 0;
+	uint i = 0;
 	CommonObjectData::saveState(out);
 	out->writeUint16LE(_actorFlags);
 	out->writeSint32LE(_currentAction);
@@ -74,13 +72,13 @@ void ActorData::saveState(Common::OutSaveFile *out) {
 	out->writeByte(_dragonMoveType);
 	out->writeSint32LE(_frameNumber);
 
-	out->writeSint32LE(_tileDirectionsAlloced);
-	for (i = 0; i < _tileDirectionsAlloced; i++) {
+	out->writeSint32LE(_tileDirections.size());
+	for (i = 0; i < _tileDirections.size(); i++) {
 		out->writeByte(_tileDirections[i]);
 	}
 
-	out->writeSint32LE(_walkStepsAlloced);
-	for (i = 0; i < _walkStepsAlloced; i++) {
+	out->writeSint32LE(_walkStepsPoints.size());
+	for (i = 0; i < _walkStepsPoints.size(); i++) {
 		out->writeSint16LE(_walkStepsPoints[i].x);
 		out->writeSint16LE(_walkStepsPoints[i].y);
 	}
@@ -93,7 +91,7 @@ void ActorData::saveState(Common::OutSaveFile *out) {
 }
 
 void ActorData::loadState(uint32 version, Common::InSaveFile *in) {
-	int i = 0;
+	uint i = 0;
 	CommonObjectData::loadState(in);
 	_actorFlags = in->readUint16LE();
 	_currentAction = in->readSint32LE();
@@ -125,13 +123,13 @@ void ActorData::loadState(uint32 version, Common::InSaveFile *in) {
 	_frameNumber = in->readSint32LE();
 
 
-	setTileDirectionsSize(in->readSint32LE(), true);
-	for (i = 0; i < _tileDirectionsAlloced; i++) {
+	_tileDirections.resize(in->readSint32LE());
+	for (i = 0; i < _tileDirections.size(); i++) {
 		_tileDirections[i] = in->readByte();
 	}
 
-	setWalkStepsPointsSize(in->readSint32LE(), true);
-	for (i = 0; i < _walkStepsAlloced; i++) {
+	_walkStepsPoints.resize(in->readSint32LE());
+	for (i = 0; i < _walkStepsPoints.size(); i++) {
 		_walkStepsPoints[i].x = in->readSint16LE();
 		_walkStepsPoints[i].y = in->readSint16LE();
 	}
@@ -143,47 +141,19 @@ void ActorData::loadState(uint32 version, Common::InSaveFile *in) {
 	_walkFrameSequence = in->readSint32LE();
 }
 
-void ActorData::setTileDirectionsSize(int size, bool forceRealloc) {
-	if ((size <= _tileDirectionsAlloced) && !forceRealloc) {
-		return;
-	}
-	_tileDirectionsAlloced = size;
-	byte *tmp = (byte*)realloc(_tileDirections, _tileDirectionsAlloced * sizeof(*_tileDirections));
-	if ((tmp != NULL) || (_tileDirectionsAlloced == 0)) {
-		_tileDirections = tmp;
-	} else {
-		error("ActorData::setTileDirectionsSize(): Error while reallocating memory");
-	}
-}
-
 void ActorData::cycleWrap(int cycleLimit) {
 	if (_actionCycle >= cycleLimit)
 		_actionCycle = 0;
 }
 
-void ActorData::setWalkStepsPointsSize(int size, bool forceRealloc) {
-	if ((size <= _walkStepsAlloced) && !forceRealloc) {
-		return;
-	}
-	_walkStepsAlloced = size;
-	Point *tmp = (Point*)realloc(_walkStepsPoints, _walkStepsAlloced * sizeof(*_walkStepsPoints));
-	if ((tmp != NULL) || (_walkStepsAlloced == 0)) {
-		_walkStepsPoints = tmp;
-	} else {
-		error("ActorData::setWalkStepsPointsSize(): Error while reallocating memory");
-	}
-}
-
 void ActorData::addWalkStepPoint(const Point &point) {
-	setWalkStepsPointsSize(_walkStepsCount + 1, false);
+	_walkStepsPoints.resize(_walkStepsCount + 1);
 	_walkStepsPoints[_walkStepsCount++] = point;
 }
 
 void ActorData::freeSpriteList() {
 	_spriteList.freeMem();
 }
-
-
 
 static int commonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
 	int p1 = obj1->_location.y - obj1->_location.z;

@@ -376,11 +376,9 @@ public:
 
 	int32 _frameNumber;			// current frame number
 
-	int32 _tileDirectionsAlloced;
-	byte *_tileDirections;
+	Common::Array<byte> _tileDirections;
 
-	int32 _walkStepsAlloced;
-	Point *_walkStepsPoints;
+	Common::Array<Point> _walkStepsPoints;
 
 	int32 _walkStepsCount;
 	int32 _walkStepIndex;
@@ -396,9 +394,7 @@ public:
 	void saveState(Common::OutSaveFile *out);
 	void loadState(uint32 version, Common::InSaveFile *in);
 
-	void setTileDirectionsSize(int size, bool forceRealloc);
 	void cycleWrap(int cycleLimit);
-	void setWalkStepsPointsSize(int size, bool forceRealloc);
 	void addWalkStepPoint(const Point &point);
 	void freeSpriteList();
 };

@@ -2281,14 +2281,22 @@ void Interface::drawPanelButtonText(InterfacePanel *panel, PanelButton *panelBut
 		}
 		break;
 	case kTextMusic:
-		if (_vm->_musicVolume)
+		if (_vm->_musicVolume) {
 			textId = kText10Percent + _vm->_musicVolume / 25 - 1;
+			if (textId > kTextMax) {
+				textId = kTextMax;
+			}
+		}
 		else
 			textId = kTextOff;
 		break;
 	case kTextSound:
-		if (_vm->_soundVolume)
+		if (_vm->_soundVolume) {
 			textId = kText10Percent + _vm->_soundVolume / 25  - 1;
+			if (textId > kTextMax) {
+				textId = kTextMax;
+			}
+		}
 		else
 			textId = kTextOff;
 		break;
