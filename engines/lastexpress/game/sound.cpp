@@ -354,7 +354,8 @@ void SoundManager::removeEntry(SoundEntry *entry) {
 	entry->status.status |= kSoundStatusRemoved;
 
 	// Loop until ready
-	while (!(entry->status.status1 & 4) && !(_flag & 8) && (_flag & 1));
+	while (!(entry->status.status1 & 4) && !(_flag & 8) && (_flag & 1))
+		;	// empty loop body
 
 	// The original game remove the entry from the cache here,
 	// but since we are called from within an iterator loop
