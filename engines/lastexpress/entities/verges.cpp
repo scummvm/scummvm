@@ -336,7 +336,7 @@ IMPLEMENT_FUNCTION(11, Verges, function11)
 			getData()->entityPosition = kPosition_5000;
 
 			getObjects()->update(kObject104, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
-            getObjects()->update(kObject105, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
+			getObjects()->update(kObject105, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
 
 			CALLBACK_ACTION();
 			break;

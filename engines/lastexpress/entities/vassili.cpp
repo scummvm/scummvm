@@ -350,16 +350,16 @@ IMPLEMENT_FUNCTION(10, Vassili, seizure)
 		getData()->location = kLocationInsideCompartment;
 		getAction()->playAnimation(kEventVassiliSeizure);
 
-        getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-        getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-        getProgress().field_18 = 2;
+		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getProgress().field_18 = 2;
 
-        getSavePoints()->push(kEntityVassili, kEntityAnna, kAction191477936);
-        getSavePoints()->push(kEntityVassili, kEntityVerges, kAction191477936);
-        getSavePoints()->push(kEntityVassili, kEntityCoudert, kAction191477936);
-        getScenes()->loadSceneFromObject(kObjectCompartmentA);
+		getSavePoints()->push(kEntityVassili, kEntityAnna, kAction191477936);
+		getSavePoints()->push(kEntityVassili, kEntityVerges, kAction191477936);
+		getSavePoints()->push(kEntityVassili, kEntityCoudert, kAction191477936);
+		getScenes()->loadSceneFromObject(kObjectCompartmentA);
 
-        setup_drawInBed();
+		setup_drawInBed();
 		break;
 	}
 }

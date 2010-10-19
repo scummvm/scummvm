@@ -570,7 +570,7 @@ IMPLEMENT_FUNCTION_II(13, Mertens, function13, bool, bool)
 		UPDATE_PARAM_PROC_END
 
 		getData()->inventoryItem = (getProgress().chapter == kChapter1
-		                         && !ENTITY_PARAM(2, 1)
+								 && !ENTITY_PARAM(2, 1)
 								 && !getProgress().eventCorpseFound
 								 && !getEvent(kEventMertensAskTylerCompartment)
 								 && !getEvent(kEventMertensAskTylerCompartmentD)) ? kItemMatchBox : kItemNone;

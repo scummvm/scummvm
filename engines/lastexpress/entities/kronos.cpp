@@ -160,8 +160,8 @@ IMPLEMENT_FUNCTION(9, Kronos, function9)
 		if (getCallback() == 1) {
 			getAction()->playAnimation(kEventKronosConversation);
 			getScenes()->loadSceneFromPosition(kCarKronos, 87);
-            getSavePoints()->push(kEntityKronos, kEntityKahina, kAction137685712);
-            setup_function10();
+			getSavePoints()->push(kEntityKronos, kEntityKahina, kAction137685712);
+			setup_function10();
 		}
 		break;
 	}

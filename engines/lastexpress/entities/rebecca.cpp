@@ -1345,7 +1345,7 @@ IMPLEMENT_FUNCTION(38, Rebecca, function38)
 
 		case 1:
 			getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-            getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction259921280);
+			getSavePoints()->push(kEntityRebecca, kEntitySophie, kAction259921280);
 
 			setCallback(2);
 			setup_updateEntity(kCarKronos, kPosition_9270);

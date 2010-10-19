@@ -418,7 +418,7 @@ IMPLEMENT_FUNCTION(14, MmeBoutarel, function14)
 
 		case 1:
 			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation2, kCursorNormal, kCursorNormal);
-            getObjects()->update(kObject51, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject51, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 			getEntities()->drawSequenceLeft(kEntityMmeBoutarel, "503");
 			break;
 

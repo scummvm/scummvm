@@ -206,7 +206,7 @@ IMPLEMENT_FUNCTION_II(7 ,Kahina, updateEntity2, CarIndex, EntityPosition)
 		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2)) {
 			CALLBACK_ACTION();
 		} else if (getEntities()->isDistanceBetweenEntities(kEntityKahina, kEntityPlayer, 1000)
-		        && !getEntities()->isInGreenCarEntrance(kEntityPlayer)
+				&& !getEntities()->isInGreenCarEntrance(kEntityPlayer)
 				&& !getEntities()->isInsideCompartments(kEntityPlayer)
 				&& !getEntities()->checkFields10(kEntityPlayer)) {
 

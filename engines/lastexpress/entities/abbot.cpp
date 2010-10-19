@@ -269,7 +269,7 @@ IMPLEMENT_FUNCTION(18, Abbot, chapter3Handler)
 
 	case kAction192054567:
 		setCallback(1);
-        setup_callbackActionRestaurantOrSalon();
+		setup_callbackActionRestaurantOrSalon();
 		break;
 	}
 }
@@ -406,7 +406,7 @@ IMPLEMENT_FUNCTION(21, Abbot, function21)
 		getData()->location = kLocationInsideCompartment;
 
 		setCallback(7);
-        setup_draw("029B");
+		setup_draw("029B");
 		break;
 	}
 }

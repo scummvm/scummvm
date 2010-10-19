@@ -216,7 +216,7 @@ void SceneManager::loadSceneFromItemPosition(InventoryItem item) {
 	Scene *scene = getScenes()->get(getState()->scene);
 	Position position = scene->position;
 
-    if (getState()->sceneUseBackup) {
+	if (getState()->sceneUseBackup) {
 		Scene *sceneBackup = getScenes()->get(getState()->sceneBackup);
 		position = sceneBackup->position;
 	}
@@ -228,8 +228,8 @@ void SceneManager::loadSceneFromItemPosition(InventoryItem item) {
 		if (getState()->sceneUseBackup)
 			getState()->sceneBackup = getSceneIndexFromPosition(car, position);
 		else
-           loadSceneFromPosition(car, position);
-    }
+			loadSceneFromPosition(car, position);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1176,7 +1176,7 @@ void SceneManager::postProcessScene() {
 		break;
 
 	case Scene::kTypeReadText:
-        getSound()->readText(scene->param1);
+		getSound()->readText(scene->param1);
 		break;
 
 	case Scene::kType133:
