@@ -42,6 +42,10 @@
 #include "sword25/package/packagemanager.h"
 #include "sword25/script/script.h"
 
+#include "sword25/gfx/animationtemplateregistry.h"	// Needed so we can destroy the singleton
+#include "sword25/gfx/renderobjectregistry.h"		// Needed so we can destroy the singleton
+#include "sword25/math/regionregistry.h"			// Needed so we can destroy the singleton
+
 namespace Sword25 {
 
 #define BS_LOG_PREFIX "MAIN"
@@ -139,6 +143,10 @@ bool Sword25Engine::appMain() {
 bool Sword25Engine::appEnd() {
 	// The kernel is shutdown, and un-initialises all subsystems
 	Kernel::DeleteInstance();
+
+	AnimationTemplateRegistry::destroy();
+	RenderObjectRegistry::destroy();
+	RegionRegistry::destroy();
 
 	// Free the log file if it was used
 	BS_Log::_CloseLog();
