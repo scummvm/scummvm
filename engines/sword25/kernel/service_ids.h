@@ -61,23 +61,30 @@ Service *OggTheora_CreateObject(Kernel *pKernel);
 Service *OggTheora_CreateObject(Kernel *pKernel) { return NULL; }
 #endif
 
-// Services are recorded in this table
-const BS_ServiceInfo BS_SERVICE_TABLE[] = {
-	// The first two parameters are the name of the superclass and service
-	// The third parameter is the static method of the class that creates an object
-	// of the class and returns it
-	// Example:
-	// BS_ServiceInfo("Superclass", "Service", CreateMethod)
-	BS_ServiceInfo("gfx", "opengl", GraphicEngine_CreateObject),
-	BS_ServiceInfo("package", "archiveFS", PackageManager_CreateObject),
-	BS_ServiceInfo("input", "winapi", InputEngine_CreateObject),
-	BS_ServiceInfo("sfx", "fmodex", SoundEngine_CreateObject),
-	BS_ServiceInfo("script", "lua", LuaScriptEngine_CreateObject),
-	BS_ServiceInfo("geometry", "std", Geometry_CreateObject),
-	BS_ServiceInfo("fmv", "oggtheora", OggTheora_CreateObject),
+
+/**
+ * This is only a small struct that manages the data of a service.
+ */
+struct BS_ServiceInfo {
+	const char *SuperclassIdentifier;
+	const char *ServiceIdentifier;
+	Service *(*CreateMethod)(Kernel *);
 };
 
-const uint BS_SERVICE_COUNT = sizeof(BS_SERVICE_TABLE) / sizeof(BS_ServiceInfo);
+// Services are recorded in this table
+const BS_ServiceInfo BS_SERVICE_TABLE[] = {
+	// The first two values are the name of the superclass and service.
+	// The third value is the static method of the class that creates an object
+	// of the class and returns it.
+	{ "gfx", "opengl", GraphicEngine_CreateObject },
+	{ "package", "archiveFS", PackageManager_CreateObject },
+	{ "input", "winapi", InputEngine_CreateObject },
+	{ "sfx", "fmodex", SoundEngine_CreateObject },
+	{ "script", "lua", LuaScriptEngine_CreateObject },
+	{ "geometry", "std", Geometry_CreateObject },
+	{ "fmv", "oggtheora", OggTheora_CreateObject }
+};
+
 
 } // End of namespace Sword25
 

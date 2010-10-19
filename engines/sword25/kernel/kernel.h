@@ -331,24 +331,6 @@ private:
 	bool _RegisterScriptBindings();
 };
 
-/**
- * This is only a small class that manages the data of a service. It is a little ugly, I know,
- * but with Common::String a simple struct could not be used.
- */
-class BS_ServiceInfo {
-public:
-	BS_ServiceInfo(const Common::String &SuperclassIdentifier_, const Common::String &ServiceIdentifier_,
-	               Service*(*CreateMethod_)(Kernel *)) {
-		this->SuperclassIdentifier = SuperclassIdentifier_;
-		this->ServiceIdentifier = ServiceIdentifier_;
-		this->CreateMethod = CreateMethod_;
-	}
-
-	Common::String  SuperclassIdentifier;
-	Common::String  ServiceIdentifier;
-	Service*(*CreateMethod)(Kernel *);
-};
-
 } // End of namespace Sword25
 
 #endif

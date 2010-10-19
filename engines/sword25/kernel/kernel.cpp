@@ -49,6 +49,7 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "KERNEL"
 
+
 Kernel *Kernel::_Instance = 0;
 
 Kernel::Kernel() :
@@ -61,7 +62,7 @@ Kernel::Kernel() :
 	BS_LOGLN("created.");
 
 	// Read the BS_SERVICE_TABLE and prepare kernel structures
-	for (uint i = 0; i < BS_SERVICE_COUNT; i++) {
+	for (uint i = 0; i < ARRAYSIZE(BS_SERVICE_TABLE); i++) {
 		// Is the superclass already registered?
 		Superclass *pCurSuperclass = NULL;
 		Common::Array<Superclass *>::iterator Iter;
@@ -136,7 +137,7 @@ Kernel::Superclass::Superclass(Kernel *pKernel, const Common::String &Identifier
 	_Identifier(Identifier),
 	_ServiceCount(0),
 	_ActiveService(NULL) {
-	for (uint i = 0; i < BS_SERVICE_COUNT; i++)
+	for (uint i = 0; i < ARRAYSIZE(BS_SERVICE_TABLE); i++)
 		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier)
 			_ServiceCount++;
 }
@@ -158,7 +159,7 @@ Common::String Kernel::Superclass::GetServiceIdentifier(uint Number) {
 	if (Number > _ServiceCount) return NULL;
 
 	uint CurServiceOrd = 0;
-	for (uint i = 0; i < BS_SERVICE_COUNT; i++) {
+	for (uint i = 0; i < ARRAYSIZE(BS_SERVICE_TABLE); i++) {
 		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier) {
 			if (Number == CurServiceOrd)
 				return BS_SERVICE_TABLE[i].ServiceIdentifier;
@@ -180,7 +181,7 @@ Common::String Kernel::Superclass::GetServiceIdentifier(uint Number) {
  *         For the superclass "sfx" an example could be "Fmod" or "directsound"
  */
 Service *Kernel::Superclass::NewService(const Common::String &ServiceIdentifier) {
-	for (uint i = 0; i < BS_SERVICE_COUNT; i++)
+	for (uint i = 0; i < ARRAYSIZE(BS_SERVICE_TABLE); i++)
 		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier &&
 		        BS_SERVICE_TABLE[i].ServiceIdentifier == ServiceIdentifier) {
 			Service *NewService_ = BS_SERVICE_TABLE[i].CreateMethod(_pKernel);
