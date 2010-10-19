@@ -53,8 +53,8 @@ namespace Sword25 {
 // erzeugen
 typedef ImageLoader*(*BS_IMAGELOADER_NEW)();
 const BS_IMAGELOADER_NEW BS_IMAGELOADER_IDS[] = {
-	PNGLoader::CreateInstance,
-	B25SLoader::CreateInstance,
+	PNGLoader::createInstance,
+	B25SLoader::createInstance,
 };
 const int BS_IMAGELOADER_COUNT = sizeof(BS_IMAGELOADER_IDS) / sizeof(BS_IMAGELOADER_NEW);
 

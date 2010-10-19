@@ -33,9 +33,9 @@
  */
 
 /*
-    BS_PNGLoader
+    PNGLoader
     ------------
-    BS_ImageLoader-Klasse zum Laden von PNG-Dateien
+    ImageLoader-Klasse zum Laden von PNG-Dateien
 
     Autor: Malte Thiesen
 */
@@ -52,26 +52,25 @@ namespace Sword25 {
 // Klassendefinition
 class PNGLoader : public ImageLoader {
 public:
-	static ImageLoader *CreateInstance() {
+	static ImageLoader *createInstance() {
 		return (ImageLoader *) new PNGLoader();
 	}
 
 	// Alle virtuellen Methoden von BS_ImageLoader sind hier als static-Methode implementiert, damit sie von BS_B25SLoader aufgerufen werden können.
 	// Die virtuellen Methoden rufen diese Methoden auf.
-	static bool DoIsCorrectImageFormat(const byte *FileDataPtr, uint FileSize);
-	static bool DoDecodeImage(const byte *FileDataPtr, uint FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
-	                          int &Width, int &Height, int &Pitch);
-	static bool DoImageProperties(const byte *FileDataPtr, uint FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height);
+	static bool doIsCorrectImageFormat(const byte *fileDataPtr, uint fileSize);
+	static bool doDecodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEngine::COLOR_FORMATS colorFormat, byte *&uncompressedDataPtr, int &width, int &height, int &pitch);
+	static bool doImageProperties(const byte *fileDataPtr, uint fileSize, GraphicEngine::COLOR_FORMATS &colorFormat, int &width, int &height);
 
 protected:
 	PNGLoader();
-	bool DecodeImage(const byte *pFileData, uint FileSize,
-	                 GraphicEngine::COLOR_FORMATS ColorFormat,
+	bool decodeImage(const byte *pFileData, uint fileSize,
+	                 GraphicEngine::COLOR_FORMATS colorFormat,
 	                 byte *&pUncompressedData,
-	                 int &Width, int &Height,
-	                 int &Pitch);
-	bool IsCorrectImageFormat(const byte *FileDataPtr, uint FileSize);
-	bool ImageProperties(const byte *FileDatePtr, uint FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height);
+	                 int &width, int &height,
+	                 int &pitch);
+	bool isCorrectImageFormat(const byte *fileDataPtr, uint fileSize);
+	bool imageProperties(const byte *fileDatePtr, uint fileSize, GraphicEngine::COLOR_FORMATS &colorFormat, int &width, int &height);
 };
 
 } // End of namespace Sword25

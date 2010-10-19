@@ -35,30 +35,21 @@
 #ifndef SWORD25_B25SLOADER_H
 #define SWORD25_B25SLOADER_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/image/imageloader.h"
 
 namespace Sword25 {
 
-// -----------------------------------------------------------------------------
-// Klassendeklaration
-// -----------------------------------------------------------------------------
-
 class B25SLoader : public ImageLoader {
 public:
-	static ImageLoader *CreateInstance() {
+	static ImageLoader *createInstance() {
 		return static_cast<ImageLoader *>(new B25SLoader());
 	}
 
 protected:
-	virtual bool IsCorrectImageFormat(const byte *FileDataPtr, uint FileSize);
-	virtual bool DecodeImage(const byte *FileDataPtr, uint FileSize,  GraphicEngine::COLOR_FORMATS ColorFormat, byte *&UncompressedDataPtr,
-	                         int &Width, int &Height, int &Pitch);
-	virtual bool ImageProperties(const byte *FileDataPtr, uint FileSize, GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height);
+	virtual bool isCorrectImageFormat(const byte *fileDataPtr, uint fileSize);
+	virtual bool decodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEngine::COLOR_FORMATS colorFormat, byte *&uncompressedDataPtr, int &width, int &height, int &pitch);
+	virtual bool imageProperties(const byte *fileDataPtr, uint fileSize, GraphicEngine::COLOR_FORMATS &colorFormat, int &width, int &height);
 
 };
 

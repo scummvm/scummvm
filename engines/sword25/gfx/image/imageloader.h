@@ -33,7 +33,7 @@
  */
 
 /*
-    BS_ImageLoader
+    ImageLoader
     --------------
 
     Autor: Malte Thiesen
@@ -55,11 +55,11 @@ namespace Sword25 {
 
     Außerdem stellt diese Klasse das Interface da, das alle Klassen implementieren müssen, die Bildformate einlesen.<br>
     Zur Unterstützung eines neuen Bildformates muss folgendermaßen vorgegangen werden:
-    - Erzeugen einer neuen von #BS_ImageLoader abgeleiteten Klasse, die die Methoden #IsCorrectImageFormat und #DecodeImage impelementiert.
+    - Erzeugen einer neuen von #ImageLoader abgeleiteten Klasse, die die Methoden #IsCorrectImageFormat und #DecodeImage impelementiert.
     - Die Klasse muss eine statische Methode haben, die eine Instanz von ihr erzeugt und einen Pointer darauf zurückgibt.
     - Diese Methode muss in der Liste in der Datei imageloader_ids.h eingetragen werden.
     - Die Klasse muss JEDES Eingabebild seines Bildformates in die folgenden Farbformate konvertieren können:
-        - BS_GraphicEngine::CF_ARGB32
+        - GraphicEngine::CF_ARGB32
     - Zum Konvertieren der Bilddaten können die Hilfsmethoden dieser Klasse benutzt werden, die ARGB Bilddaten in alle benötigten
       Farbformate konvertieren.
 */
@@ -80,7 +80,7 @@ public:
 	    @param FileSize die Größe der Bilddaten in Byte.
 	    @param ColorFormat gibt das gewünschte Farbformat an, in das die Bilddaten konvertiert werden sollen.<br>
 	                       Folgende Farbformate werden unterstützt:
-	                       - BS_GraphicEngine::CF_ARGB32
+	                       - GraphicEngine::CF_ARGB32
 	    @param pUncompressedData nach erfolgreichen Laden zeigt dieser Pointer auf die enpackten und konvertierten Bilddaten.
 	    @param Width gibt nach erfolgreichen Laden die Breite des geladenen Bildes an.
 	    @param Height gibt nach erfolgreichen Laden die Höhe des geladenen Bildes an.
@@ -89,11 +89,11 @@ public:
 	    @remark Die Größe der Ausgabedaten in Bytes kann wie folgt berechnet werden: Pitch * Height.
 	    @remark Es darf nicht vergessen werden, die Ausgabedaten nach erfolgter Benutzung mit delete freizugeben.
 	*/
-	static bool LoadImage(const byte *pFileData, uint FileSize,
-	                      GraphicEngine::COLOR_FORMATS ColorFormat,
+	static bool loadImage(const byte *pFileData, uint fileSize,
+	                      GraphicEngine::COLOR_FORMATS colorFormat,
 	                      byte *&pUncompressedData,
-	                      int &Width, int &Height,
-	                      int &Pitch);
+	                      int &width, int &height,
+	                      int &pitch);
 
 	/**
 	    @brief Liest die Bildeigenschaften eines Bildes aus.
@@ -106,24 +106,24 @@ public:
 	    @return Gibt false zurück, wenn die Bildeigenschaften nicht ausgelesen werden konnten.
 	    @remark Es darf nicht vergessen werden, die Ausgabedaten nach erfolgter Benutzung mit delete freizugeben.
 	*/
-	static bool ExtractImageProperties(const byte *pFileData, uint FileSize,
-	                                   GraphicEngine::COLOR_FORMATS &ColorFormat,
-	                                   int &Width, int &Height);
+	static bool extractImageProperties(const byte *pFileData, uint fileSize,
+	                                   GraphicEngine::COLOR_FORMATS &colorFormat,
+	                                   int &width, int &height);
 	//@}
 
 protected:
 
-	// Protected Konstruktor, damit Instanzen dieser Klasse nur von BS_ImageLoader-Objekten erstellt werden können
+	// Protected Konstruktor, damit Instanzen dieser Klasse nur von ImageLoader-Objekten erstellt werden können
 	/**
 	    @brief Der Standardkonstruktor.
 
-	    Dieser Konstruktor registriert alle Instanzen von #BS_ImageLoader-Klassen in einer Liste.<br>
-	    Diese Liste enthält jeweils eine Instanz jedes #BS_ImageLoader und wird benutzt um beliebige Bilddateien einem Loader zuzuordnen.
-	    @remark Dieser Konstruktor ist protected damit nur #BS_ImageLoader-Objekte diese Klasse instanziieren können.
+	    Dieser Konstruktor registriert alle Instanzen von #ImageLoader-Klassen in einer Liste.<br>
+	    Diese Liste enthält jeweils eine Instanz jedes #ImageLoader und wird benutzt um beliebige Bilddateien einem Loader zuzuordnen.
+	    @remark Dieser Konstruktor ist protected damit nur #ImageLoader-Objekte diese Klasse instanziieren können.
 	*/
 	ImageLoader() {
 		// Klasse registrieren
-		_ImageLoaderList.push_front(this);
+		_imageLoaderList.push_front(this);
 	}
 
 	virtual ~ImageLoader() {}
@@ -132,13 +132,13 @@ protected:
 	/** @name Abstrakte Methoden */
 
 	/**
-	    @brief Gibt an, ob der #BS_ImageLoader ein Bild lesen kann.
+	    @brief Gibt an, ob der #ImageLoader ein Bild lesen kann.
 	    @param pFileData ein Pointer auf die kompletten Daten des Bildes.
 	    @param FileSize die Größe der Daten in Byte.
-	    @return Gibt true zurück, wenn der #BS_ImageLoader das Bild lesen kann, ansonsten false.
-	    @remark Diese Methode muss von allen BS_ImageLoader Klassen implementiert werden.
+	    @return Gibt true zurück, wenn der #ImageLoader das Bild lesen kann, ansonsten false.
+	    @remark Diese Methode muss von allen ImageLoader Klassen implementiert werden.
 	*/
-	virtual bool IsCorrectImageFormat(const byte *pFileData, uint FileSize) = 0;
+	virtual bool isCorrectImageFormat(const byte *pFileData, uint fileSize) = 0;
 
 	/**
 	    @brief Lädt eine Bilddatei.
@@ -146,7 +146,7 @@ protected:
 	    @param FileSize die Größe der Bilddaten in Byte.
 	    @param ColorFormat gibt das gewünschte Farbformat an, in das die Bilddaten konvertiert werden sollen.<br>
 	                       Folgende Farbformate werden unterstützt:
-	                       - BS_GraphicEngine::CF_ARGB32
+	                       - GraphicEngine::CF_ARGB32
 	    @param pUncompressedData nach erfolgreichen Laden zeigt dieser Pointer auf die enpackten und konvertierten Bilddaten.
 	    @param Width gibt nach erfolgreichen Laden die Breite des geladenen Bildes an.
 	    @param Height gibt nach erfolgreichen Laden die Höhe des geladenen Bildes an.
@@ -154,13 +154,13 @@ protected:
 	    @return Gibt false zurück, falls das Laden fehlgeschlagen ist.
 	    @remark Die Größe der Ausgabedaten in Bytes kann wie folgt berechnet werden: Pitch * Height.
 	    @remark Es darf nicht vergessen werden, die Ausgabedaten nach erfolgter Benutzung mit delete freizugeben.
-	    @remark Diese Methode muss von allen BS_ImageLoader Klassen implementiert werden.
+	    @remark Diese Methode muss von allen ImageLoader Klassen implementiert werden.
 	*/
-	virtual bool DecodeImage(const byte *pFileData, uint FileSize,
-	                         GraphicEngine::COLOR_FORMATS ColorFormat,
+	virtual bool decodeImage(const byte *pFileData, uint fileSize,
+	                         GraphicEngine::COLOR_FORMATS colorFormat,
 	                         byte *&pUncompressedData,
-	                         int &Width, int &Height,
-	                         int &Pitch) = 0;
+	                         int &width, int &height,
+	                         int &pitch) = 0;
 
 	/**
 	    @brief Liest die Bildeigenschaften aus.
@@ -171,36 +171,36 @@ protected:
 	    @param Height enthält nach einem erfolgreichem Aufruf die Höhe des Bildes in Pixeln.
 	    @return Gibt false zurück, wenn die Bildeigenschaften nicht ausgelesen werden konnten.
 	    @remark Es darf nicht vergessen werden, die Ausgabedaten nach erfolgter Benutzung mit delete freizugeben.
-	    @remark Diese Methode muss von allen BS_ImageLoader Klassen implementiert werden.
+	    @remark Diese Methode muss von allen ImageLoader Klassen implementiert werden.
 	*/
-	virtual bool ImageProperties(const byte *pFileData, uint FileSize,
-	                             GraphicEngine::COLOR_FORMATS &ColorFormat,
-	                             int &Width, int &Height) = 0;
+	virtual bool imageProperties(const byte *pFileData, uint fileSize,
+	                             GraphicEngine::COLOR_FORMATS &colorFormat,
+	                             int &width, int &height) = 0;
 
 	//@}
 
 private:
 
 	/**
-	    @brief Erzeugt je eine Instanz aller BS_ImageLoader Klassen und fügt diese in eine interne Liste ein. Diese werden dann beim
+	    @brief Erzeugt je eine Instanz aller ImageLoader Klassen und fügt diese in eine interne Liste ein. Diese werden dann beim
 	           Laden von Bildern benutzt.
 	    @remark Die Klassen müssen in der Datei imageloader_ids.h eingetragen sein, damit sie an dieser Stelle berücksichtigt werden.
 	*/
-	static void _InitializeLoaderList();
+	static void initializeLoaderList();
 
 	/**
-	    @brief Zerstört alle Instanzen von BS_ImageLoader Klassen, die in dieser Klasse registriert sind.
+	    @brief Zerstört alle Instanzen von ImageLoader Klassen, die in dieser Klasse registriert sind.
 	*/
-	static void _DeinitializeLoaderList();
+	static void deinitializeLoaderList();
 
 	/**
-	    @brief Sucht zu Bilddaten ein BS_ImageLoader Objekt, dass die Bilddaten dekodieren kann.
-	    @return Gibt einen Pointer auf ein passendes BS_ImageLoader Objekt zurück, oder NULL, wenn kein passendes Objekt gefunden wurde.
+	    @brief Sucht zu Bilddaten ein ImageLoader Objekt, dass die Bilddaten dekodieren kann.
+	    @return Gibt einen Pointer auf ein passendes ImageLoader Objekt zurück, oder NULL, wenn kein passendes Objekt gefunden wurde.
 	*/
-	static ImageLoader *_FindSuitableImageLoader(const byte *pFileData, uint FileSize);
+	static ImageLoader *findSuitableImageLoader(const byte *pFileData, uint fileSize);
 
-	static Common::List<ImageLoader *>   _ImageLoaderList;              // Die Liste aller BS_ImageLoader-Objekte
-	static bool                         _ImageLoaderListInitialized;    // Gibt an, ob die Liste schon intialisiert wurde
+	static Common::List<ImageLoader *> _imageLoaderList;              // Die Liste aller ImageLoader-Objekte
+	static bool _imageLoaderListInitialized;    // Gibt an, ob die Liste schon intialisiert wurde
 };
 
 } // End of namespace Sword25
