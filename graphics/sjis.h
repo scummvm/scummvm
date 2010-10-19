@@ -37,6 +37,14 @@
 #ifndef GRAPHICS_SJIS_H
 #define GRAPHICS_SJIS_H
 
+#ifdef __DS__
+/* This disables the flipped mode which is used in FM-Towns versions
+ * of Monkey Island 1 (and maybe other SCUMM 5 games). These are not supported
+ * on the DS, so it makes sense to have a corresponding setting here.
+ */
+#define DISABLE_FLIPPED_MODE
+#endif
+
 #include "common/scummsys.h"
 #include "common/stream.h"
 #include "common/util.h"
@@ -71,19 +79,24 @@ public:
 	virtual bool loadData() = 0;
 
 	/**
-	 * Enable outline/shadow drawing.
+	 * Enable drawing with outline or shadow.
 	 *
 	 * After changing outline state, getFontHeight and getMaxFontWidth / getCharWidth might return
 	 * different values!
 	 */
-	enum ShadowType {
-		kShadowTypeNone,
-		kShadowTypeOutline,
-		kShadowTypeScumm3,
-		kShadowTypeScumm3Towns
+	enum DrawingMode {
+		kDefaultMode,
+		kOutlineMode,
+		kShadowMode,
+		kFMTownsShadowMode
 	};
 
-	virtual void setShadowMode(ShadowType type) {}
+	virtual void setDrawingMode(DrawingMode mode) {}
+
+	/**
+	 * Enable flipped character drawing (e.g. in the MI1 circus scene after Guybrush gets shot out of the cannon).
+	 */
+	virtual void toggleFlippedMode(bool enable) {}
 
 	/**
 	 * Returns the height of the font.
@@ -129,13 +142,15 @@ public:
  */
 class FontSJISBase : public FontSJIS {
 public:
-	FontSJISBase() : _shadowType(kShadowTypeNone) {}
+	FontSJISBase() : _drawMode(kDefaultMode), _flippedMode(false) {}
 
-	void setShadowMode(ShadowType type) { _shadowType = type; }
+	void setDrawingMode(DrawingMode mode) { _drawMode = mode; }
 
-	uint getFontHeight() const { return (_shadowType == kShadowTypeOutline) ? 18 : (_shadowType == kShadowTypeNone ? 16 : 17); }
+	void toggleFlippedMode(bool enable) { _flippedMode = enable; }
+
+	uint getFontHeight() const { return (_drawMode == kOutlineMode) ? 18 : (_drawMode == kDefaultMode ? 16 : 17); }
 	
-	uint getMaxFontWidth() const { return (_shadowType == kShadowTypeOutline) ? 18 : (_shadowType == kShadowTypeNone ? 16 : 17); }
+	uint getMaxFontWidth() const { return (_drawMode == kOutlineMode) ? 18 : (_drawMode == kDefaultMode ? 16 : 17); }
 
 	uint getCharWidth(uint16 ch) const;
 
@@ -144,8 +159,16 @@ private:
 	template<typename Color>
 	void blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c1, Color c2 = 0) const;
 	void createOutline(uint8 *outline, const uint8 *glyph, const int w, const int h) const;
+
+#ifndef DISABLE_FLIPPED_MODE
+	// This is used in the FM-Towns version of Monkey Island 1
+	// when Guybrush gets shot out of the cannon in the circus tent.
+	const uint8 *flipCharacter(const uint8 *glyph, const int w) const;
+	mutable uint8 _tempGlyph[32];
+#endif
 protected:
-	ShadowType _shadowType;
+	DrawingMode _drawMode;
+	bool _flippedMode;
 
 	bool is8x16(uint16 ch) const;
 

@@ -666,15 +666,16 @@ void CharsetRendererCommon::enableShadow(bool enable) {
 			_shadowColor = _vm->_game.version == 5 ? _vm->_townsCharsetColorMap[0] : 0x88;
 			if (_vm->_cjkFont) {
 				if (_vm->_game.version == 5) {
-					if (_vm->_game.id == GID_MONKEY) {
-						_vm->_cjkFont->setShadowMode((_curId == 2 || _curId == 4 || _curId == 6) ? Graphics::FontSJIS::kShadowTypeOutline : Graphics::FontSJIS::kShadowTypeNone);
-					} else if (_vm->_game.id == GID_MONKEY2) {
-						_vm->_cjkFont->setShadowMode((_curId != 1 && _curId != 5 && _curId != 9) ? Graphics::FontSJIS::kShadowTypeOutline : Graphics::FontSJIS::kShadowTypeNone);
-					} else if (_vm->_game.id == GID_INDY4) {
-						_vm->_cjkFont->setShadowMode((_curId == 2 || _curId == 3 || _curId == 4) ? Graphics::FontSJIS::kShadowTypeOutline : Graphics::FontSJIS::kShadowTypeNone);
-					}					
+					if (((_vm->_game.id == GID_MONKEY) && (_curId == 2 || _curId == 4 || _curId == 6)) ||
+						((_vm->_game.id == GID_MONKEY2) && (_curId != 1 && _curId != 5 && _curId != 9)) ||
+						((_vm->_game.id == GID_INDY4) && (_curId == 2 || _curId == 3 || _curId == 4))) {
+							_vm->_cjkFont->setDrawingMode(Graphics::FontSJIS::kOutlineMode);
+					} else {
+						_vm->_cjkFont->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
+					}
+					_vm->_cjkFont->toggleFlippedMode((_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) && _curId == 3);
 				} else {
-					_vm->_cjkFont->setShadowMode(Graphics::FontSJIS::kShadowTypeScumm3Towns);
+					_vm->_cjkFont->setDrawingMode(Graphics::FontSJIS::kShadowMode);
 				}
 			}
 #endif
@@ -685,7 +686,7 @@ void CharsetRendererCommon::enableShadow(bool enable) {
 		}
 	} else {
 		if (_vm->_cjkFont)
-			_vm->_cjkFont->setShadowMode(Graphics::FontSJIS::kShadowTypeNone);
+			_vm->_cjkFont->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
 		_shadowMode = kNoShadowMode;
 	}
 }
