@@ -223,9 +223,6 @@ bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 		rect = *fillRectPtr;
 	}
 
-	if (rect.width() == 800 && rect.height() == 600)
-		debug(0, "[%d, %d, %d, %d], 0x%08x", rect.left, rect.top, rect.right, rect.bottom, color);
-
 	if (rect.width() > 0 && rect.height() > 0) {
 		if (ca == 0xff) {
 			_backSurface.fillRect(rect, color);

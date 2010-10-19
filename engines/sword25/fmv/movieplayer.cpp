@@ -39,8 +39,6 @@
 #include "sword25/package/packagemanager.h"
 #include "sword25/sfx/soundengine.h"
 
-#ifdef USE_THEORADEC
-
 #define INDIRECTRENDERING 1
 
 namespace Sword25 {
@@ -53,6 +51,7 @@ Service *OggTheora_CreateObject(Kernel *pKernel) {
 	return new MoviePlayer(pKernel);
 }
 
+#ifdef USE_THEORADEC
 MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel), _decoder(g_system->getMixer()) {
 	if (!registerScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
@@ -178,7 +177,56 @@ double MoviePlayer::getTime() {
 	return _decoder.getElapsedTime() / 1000.0;
 }
 
+#else // USE_THEORADEC
+
+MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel) {
+	if (!registerScriptBindings())
+		BS_LOG_ERRORLN("Script bindings could not be registered.");
+	else
+		BS_LOGLN("Script bindings registered.");
+}
+
+MoviePlayer::~MoviePlayer() {
+}
+
+bool MoviePlayer::loadMovie(const Common::String &Filename, unsigned int Z) {
+	return true;
+}
+
+bool MoviePlayer::unloadMovie() {
+	return true;
+}
+
+bool MoviePlayer::play() {
+	return true;
+}
+
+bool MoviePlayer::pause() {
+	return true;
+}
+
+void MoviePlayer::update() {
+}
+
+bool MoviePlayer::isMovieLoaded() {
+	return true;
+}
+
+bool MoviePlayer::isPaused() {
+	return true;
+}
+
+float MoviePlayer::getScaleFactor() {
+	return 1.0f;
+}
+
+void MoviePlayer::setScaleFactor(float ScaleFactor) {
+}
+
+double MoviePlayer::getTime() {
+	return 1.0;
+}
+
+#endif // USE_THEORADEC
+
 } // End of namespace Sword25
-
-#endif
-

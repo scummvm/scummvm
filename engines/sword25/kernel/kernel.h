@@ -201,12 +201,10 @@ public:
 	 */
 	ScriptEngine *GetScript();
 
-#ifdef USE_THEORADEC
 	/**
 	 * Returns a pointer to the movie player, or NULL if it is not active
 	 */
 	MoviePlayer *GetFMV();
-#endif
 
 	/**
 	 * Pauses for the specified amount of time

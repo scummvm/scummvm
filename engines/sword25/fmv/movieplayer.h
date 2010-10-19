@@ -37,11 +37,13 @@
 
 #include "common/scummsys.h"	// for USE_THEORADEC
 
-#ifdef USE_THEORADEC
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/service.h"
-#include "sword25/fmv/theora_decoder.h"
 #include "sword25/gfx/bitmap.h"
+
+#ifdef USE_THEORADEC
+#include "sword25/fmv/theora_decoder.h"
+#endif
 
 namespace Sword25 {
 
@@ -138,16 +140,17 @@ public:
 private:
 	bool registerScriptBindings();
 
+
+#ifdef USE_THEORADEC
 	TheoraDecoder _decoder;
 
 	Graphics::Surface *_backSurface;
 	int _outX, _outY;
 
 	RenderObjectPtr<Bitmap>	_outputBitmap;
+#endif
 };
 
 } // End of namespace Sword25
-
-#endif
 
 #endif

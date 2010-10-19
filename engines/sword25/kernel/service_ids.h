@@ -55,11 +55,7 @@ Service *InputEngine_CreateObject(Kernel *pKernel);
 Service *SoundEngine_CreateObject(Kernel *pKernel);
 Service *LuaScriptEngine_CreateObject(Kernel *pKernel);
 Service *Geometry_CreateObject(Kernel *pKernel);
-#ifdef USE_THEORADEC
 Service *OggTheora_CreateObject(Kernel *pKernel);
-#else
-Service *OggTheora_CreateObject(Kernel *pKernel) { return NULL; }
-#endif
 
 
 /**
