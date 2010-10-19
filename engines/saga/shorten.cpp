@@ -367,10 +367,11 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 							warning("Safeguard: maxLPC < lpcNum (should never happen)");
 							maxLPC = lpcNum;
 							int32 *tmp = (int32 *) realloc(lpc, maxLPC * 4);
-							if (tmp)
+							if ((tmp != NULL) || (maxLPC == 0)) {
 								lpc = tmp;
-							else
+							} else {
 								error("loadShortenFromStream(): Error while reallocating memory");
+							}
 						}
 
 						for (i = 0; i < lpcNum; i++)
@@ -435,10 +436,11 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 					prevSize = size;
 					size += (blockSize * dataSize);
 					byte *tmp = (byte *) realloc(unpackedBuffer, size);
-					if (tmp)
+					if ((tmp != NULL) || (size == 0)) {
 						unpackedBuffer = tmp;
-					else
+					} else {
 						error("loadShortenFromStream(): Error while reallocating memory");
+					}
 					pBuf = unpackedBuffer + prevSize;
 
 					if (flags & Audio::FLAG_16BITS) {
@@ -473,10 +475,11 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 				prevSize = size;
 				size += vLen;
 				byte *tmp = (byte *) realloc(unpackedBuffer, size);
-				if (tmp)
+				if ((tmp != NULL) || (size == 0)) {
 					unpackedBuffer = tmp;
-				else
+				} else {
 					error("loadShortenFromStream(): Error while reallocating memory");
+				}
 				pBuf = unpackedBuffer + prevSize;
 
 				while (vLen--) {

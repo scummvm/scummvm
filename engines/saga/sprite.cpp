@@ -116,13 +116,10 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 	newSpriteCount = spriteList.spriteCount + spriteCount;
 
 	SpriteInfo *tmp = (SpriteInfo *)realloc(spriteList.infoList, newSpriteCount * sizeof(*spriteList.infoList));
-	if (tmp)
+	if ((tmp != NULL) || (newSpriteCount == 0)) {
 		spriteList.infoList = tmp;
-	else
+	} else {
 		error("Sprite::loadList(): Error while reallocating memory");
-
-	if (spriteList.infoList == NULL) {
-		memoryError("Sprite::loadList");
 	}
 
 	spriteList.spriteCount = newSpriteCount;

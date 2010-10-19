@@ -426,10 +426,11 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 		if (offset == stringsLength) {
 			stringsCount = i;
 			const char **tmp = (const char **)realloc(stringsTable.strings, stringsCount * sizeof(*stringsTable.strings));
-			if (tmp)
+			if ((tmp != NULL) || (stringsCount == 0)) {
 				stringsTable.strings = tmp;
-			else
+			} else {
 				error("SagaEngine::loadStrings() Error while reallocating memory");
+			}
 			break;
 		}
 		if (offset > stringsLength) {
@@ -438,10 +439,11 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 			warning("SagaEngine::loadStrings wrong strings table");
 			stringsCount = i;
 			const char **tmp = (const char **)realloc(stringsTable.strings, stringsCount * sizeof(*stringsTable.strings));
-			if (tmp)
+			if ((tmp != NULL) || (stringsCount == 0)) {
 				stringsTable.strings = tmp;
-			else
+			} else {
 				error("SagaEngine::loadStrings() Error while reallocating memory");
+			}
 			break;
 		}
 		stringsTable.strings[i] = (const char *)stringsTable.stringsPointer + offset;
