@@ -186,7 +186,7 @@ byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr)
 	delete in;
 
 	if (!bytesRead) {
-		delete buffer;
+		delete[] buffer;
 		return NULL;
 	}
 
