@@ -382,7 +382,7 @@ void drawBez(ArtBpath *bez1, ArtBpath *bez2, art_u8 *buffer, int width, int heig
 	art_rgb_svp_alpha1(svp, 0, 0, width, height, color, buffer, width * 4);
 
 	free(vect);
-	free(svp);
+	art_svp_free(svp);
 	free(vec);
 }
 
