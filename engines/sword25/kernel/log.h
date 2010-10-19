@@ -76,18 +76,6 @@ public:
 		_AutoNewline = AutoNewline;
 	}
 
-	typedef void (*LOG_LISTENER_CALLBACK)(const char *);
-	static void RegisterLogListener(LOG_LISTENER_CALLBACK Callback) {
-		_LogListener.push_back(Callback);
-	}
-	static bool IsListenerRegistered(LOG_LISTENER_CALLBACK Callback) {
-		Common::Array<LOG_LISTENER_CALLBACK>::iterator i;
-		for (i = _LogListener.begin(); i != _LogListener.end(); ++i) {
-			if (**i == Callback)
-				return true;
-		}
-		return false;
-	}
 	static void _CloseLog();
 
 private:
@@ -97,7 +85,6 @@ private:
 	static const char                          *_File;
 	static int                                  _Line;
 	static bool                                 _AutoNewline;
-	static Common::Array<LOG_LISTENER_CALLBACK> _LogListener;
 
 	static bool _CreateLog();
 

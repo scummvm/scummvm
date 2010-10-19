@@ -53,10 +53,6 @@ namespace Sword25 {
 const char *const PACKAGE_MANAGER = "archiveFS";
 const char *const DEFAULT_SCRIPT_FILE = "/system/boot.lua";
 
-void logToStdout(const char *Message) {
-	debugN(0, "%s", Message);
-}
-
 Sword25Engine::Sword25Engine(OSystem *syst, const ADGameDescription *gameDesc):
 	Engine(syst),
 	_gameDescription(gameDesc) {
@@ -87,9 +83,6 @@ Common::Error Sword25Engine::run() {
 }
 
 Common::Error Sword25Engine::appStart() {
-	// All log messages will be sent to StdOut
-	BS_Log::RegisterLogListener(logToStdout);
-
 	// Initialise the graphics mode to ARGB8888
 	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
 	initGraphics(800, 600, true, &format);

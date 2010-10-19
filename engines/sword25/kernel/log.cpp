@@ -52,7 +52,6 @@ const char                                     *BS_Log::_Prefix = NULL;
 const char                                     *BS_Log::_File = NULL;
 int                                             BS_Log::_Line = 0;
 bool                                            BS_Log::_AutoNewline = false;
-Common::Array<BS_Log::LOG_LISTENER_CALLBACK>    BS_Log::_LogListener;
 
 bool BS_Log::_CreateLog() {
 	// Open the log file
@@ -185,11 +184,10 @@ void BS_Log::LogDecorated(const char *Format, ...) {
 }
 
 int BS_Log::_WriteLog(const char *Message) {
-	if (!_LogFile) if (!_CreateLog()) return false;
+	if (!_LogFile && !_CreateLog())
+		return false;
 
-	Common::Array<LOG_LISTENER_CALLBACK>::iterator Iter = _LogListener.begin();
-	for (; Iter != _LogListener.end(); ++Iter)
-		(*Iter)(Message);
+	debugN(0, "%s", Message);
 
 	_LogFile->writeString(Message);
 
