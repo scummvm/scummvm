@@ -128,6 +128,7 @@ private:
 	bool cmdStepCallk(int argc, const char **argv);
 	bool cmdDisassemble(int argc, const char **argv);
 	bool cmdDisassembleAddress(int argc, const char **argv);
+	bool cmdFindKernelFunctionCall(int argc, const char **argv);
 	bool cmdSend(int argc, const char **argv);
 	bool cmdGo(int argc, const char **argv);
 	bool cmdLogKernel(int argc, const char **argv);

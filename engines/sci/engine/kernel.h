@@ -151,6 +151,7 @@ public:
 
 	uint getSelectorNamesSize() const;
 	const Common::String &getSelectorName(uint selector);
+	int findKernelFuncPos(Common::String kernelFuncName);
 
 	uint getKernelNamesSize() const;
 	const Common::String &getKernelName(uint number) const;

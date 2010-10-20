@@ -166,6 +166,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("snk",				WRAP_METHOD(Console, cmdStepCallk));	// alias
 	DCmd_Register("disasm",				WRAP_METHOD(Console, cmdDisassemble));
 	DCmd_Register("disasm_addr",		WRAP_METHOD(Console, cmdDisassembleAddress));
+	DCmd_Register("find_callk",			WRAP_METHOD(Console, cmdFindKernelFunctionCall));
 	DCmd_Register("send",				WRAP_METHOD(Console, cmdSend));
 	DCmd_Register("go",					WRAP_METHOD(Console, cmdGo));
 	DCmd_Register("logkernel",          WRAP_METHOD(Console, cmdLogKernel));
@@ -2637,11 +2638,88 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdFindKernelFunctionCall(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Finds the scripts and methods that call a specific kernel function.\n");
+		DebugPrintf("Usage: %s <kernel function>\n", argv[0]);
+		DebugPrintf("Example: %s Display\n", argv[0]);
+		return true;
+	}
+
+	// Find the number of the kernel function call
+	int kernelFuncNum = _engine->getKernel()->findKernelFuncPos(argv[1]);
+
+	if (kernelFuncNum < 0) {
+		DebugPrintf("Invalid kernel function requested");
+		return true;
+	}
+
+	Common::List<ResourceId> *resources = _engine->getResMan()->listResources(kResourceTypeScript);
+	Common::sort(resources->begin(), resources->end());
+	Common::List<ResourceId>::iterator itr = resources->begin();
+
+	DebugPrintf("%d scripts found, dissassembling...\n", resources->size());
+
+	int scriptSegment;
+	Script *script;
+	SegManager *segMan = _engine->getEngineState()->_segMan;
+
+	while (itr != resources->end()) {
+		// Load script
+		scriptSegment = segMan->instantiateScript(itr->getNumber());
+		script = segMan->getScript(scriptSegment);
+
+		// Iterate through all the script's objects
+		ObjMap::iterator it;
+		const ObjMap::iterator end = script->_objects.end();
+		for (it = script->_objects.begin(); it != end; ++it) {
+			const Object *obj = segMan->getObject(it->_value.getPos());
+			const char *objName = segMan->getObjectName(it->_value.getPos());
+
+			// Now dissassemble each method of the script object
+			for (uint16 i = 0; i < obj->getMethodCount(); i++) {
+				reg_t fptr = obj->getFunction(i);
+				uint16 offset = fptr.offset;
+				int16 opparams[4];
+				byte extOpcode;
+				byte opcode;
+
+				while (true) {
+					offset += readPMachineInstruction(script->getBuf(offset), extOpcode, opparams);
+					opcode = extOpcode >> 1;
+
+					if (opcode == op_callk) {
+						uint16 kFuncNum = opparams[0];
+						uint16 argc = opparams[1];
+
+						if (kFuncNum == kernelFuncNum) {
+							DebugPrintf("Called from script %d, object %s, method %s(%d) with %d parameters\n", 
+								itr->getNumber(), objName, 
+								_engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), i, argc);
+						}
+					}
+
+					// Check for end of function/script
+					if (opcode == op_ret || offset >= script->getBufSize())
+						break;
+				}	// while (true)
+			}	// for (uint16 i = 0; i < obj->getMethodCount(); i++)
+		}	// for (it = script->_objects.begin(); it != end; ++it)
+
+		segMan->uninstantiateScript(itr->getNumber());
+		++itr;
+	}
+
+	delete resources;
+
+	return true;
+}
+
 bool Console::cmdSend(int argc, const char **argv) {
 	if (argc < 3) {
 		DebugPrintf("Sends a message to an object.\n");
 		DebugPrintf("Usage: %s <object> <selector name> <param1> <param2> ... <paramn>\n", argv[0]);
-		DebugPrintf("Example: send ?fooScript cue\n");
+		DebugPrintf("Example: %s ?fooScript cue\n", argv[0]);
 		return true;
 	}
 
