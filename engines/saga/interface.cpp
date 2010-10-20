@@ -836,7 +836,7 @@ void Interface::draw() {
 		// can tell this is what the original engine does. And it keeps
 		// ITE from crashing when entering the Elk King's court.
 
-		if (_rightPortrait >= _scenePortraits.size())
+		if (_rightPortrait >= (int)_scenePortraits.size())
 			_rightPortrait = 0;
 
 		_vm->_sprite->draw(_scenePortraits, _rightPortrait, rightPortraitPoint, 256);
