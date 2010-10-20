@@ -120,7 +120,7 @@ struct FontCharEntry {
 struct FontStyle {
 	FontHeader header;
 	FontCharEntry fontCharEntry[256];
-	byte *font;
+	Common::Array<byte> font;
 };
 
 struct FontData {
@@ -170,14 +170,14 @@ class Font {
 	 void textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags);
 	 void textDraw(FontId fontId, const char *string, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
 
-	 void loadFont(uint32 fontResourceId);
+	 void loadFont(FontData *font, uint32 fontResourceId);
 	 void createOutline(FontData *font);
 	 void draw(FontId fontId, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
 	 void outFont(const FontStyle &drawFont, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags);
 
 	 FontData *getFont(FontId fontId) {
 		 validate(fontId);
-		 return _fonts[fontId];
+		 return &_fonts[fontId];
 	 }
 
 	int getHeight(FontId fontId) {
@@ -190,7 +190,7 @@ class Font {
 		 }
 	 }
 	 bool valid(FontId fontId) {
-		 return (fontId < _loadedFonts);
+		 return (uint(fontId) < _fonts.size());
 	 }
 	 int getByteLen(int numBits) const {
 		 int byteLength = numBits / 8;
@@ -207,8 +207,7 @@ class Font {
 
 	int _fontMapping;
 
-	int _loadedFonts;
-	FontData **_fonts;
+	Common::Array<FontData> _fonts;
 };
 
 } // End of namespace Saga
