@@ -17,6 +17,13 @@ export DEFINES=-DNDEBUG
 
 # Edit the configure line to suit.
 cd ../../../..
-./configure --backend=openpandora --host=openpandora --disable-nasm --with-sdl-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr/bin --with-mpeg2-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr --disable-vorbis --enable-tremor --with-tremor-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr --enable-zlib --with-zlib-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr --enable-mad --with-mad-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr --enable-all-engines --enable-plugins --default-dynamic
+./configure --backend=openpandora --host=openpandora --disable-nasm \
+  --with-sdl-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr/bin \
+  --with-mpeg2-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr \
+  --disable-vorbis --enable-tremor --with-tremor-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr \
+  --enable-zlib --with-zlib-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr \
+  --enable-mad --with-mad-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr \
+  --enable-png --with-png-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr \
+  --enable-all-engines --enable-plugins --default-dynamic
 
 echo Generating config for OpenPandora complete. Check for errors.
