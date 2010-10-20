@@ -1,19 +1,10 @@
-ScummVM - GP2X SPECIFIC README - HEAD SVN
+ScummVM - GP2X SPECIFIC README
 ------------------------------------------------------------------------
 
 Contents:
 
     * About the backend/port <#About_the_backendport>
-    * Game compatability <#Game_compatibility>
-    * Included engines <#Included_engines>
     * Supported audio options <#Supported_audio_options>
-    * Supported cut-scene options <#Supported_cut-scene_options>
-    * Recent changes <#Recent_changes>
-    * How to save <#How_to_save>
-    * Controller mappings <#Controller_mappings>
-    * Know issues <#Know_issues>
-    * TODO's <#Major_TODOs>
-    * Additional resources/links <#Additional_resourceslinks>
     * Credits <#Credits>
 
 ------------------------------------------------------------------------
@@ -26,46 +17,23 @@ WiKi: <http://wiki.scummvm.org/index.php/GP2X>
 for the most current information on the port and any updates to this
 documentation.
 
+The wiki includes detailed instructions on how to use the port and 
+control information.
+
 ------------------------------------------------------------------------
 About the backend/port
 
-This is the readme for the offficial GP2X ScummVM backend (also known as
+This is the readme for the official GP2X ScummVM backend (also known as
 the GP2X port).
 
 This is an SVN test release of ScummVM for the GP2X, it would be
 appreciated if this SVN test distribution was not mirrored and that
-people be directed to http://www.distant-earth.com/scummvm instead for
+people be directed to http://scummvm.distant-earth.com/ instead for
 updated SVN builds.
 
 Full supported official releases of the GP2X ScummVM backend are made in
 line with main official releases and are avalalble from the ScummVM
 downloads page <http://www.scummvm.org/downloads.php>.
-
-This build is in an active state of development and as such no
-?expected? behavior can be guaranteed ;).
-
-SVN builds are quickly tested with firmware 2.0.0 for reference.
-
-Please refer to the GP2X ScummVM forum
-<http://forums.scummvm.org/viewforum.php?f=14> and WiKi
-<http://wiki.scummvm.org/index.php/GP2X> for the latest information on
-the port.
-
-------------------------------------------------------------------------
-Game compatibility
-
-For information on the compatability of a specific game please refer to
-the GP2X compatability section of the ScummVM WiKi
-<http://wiki.scummvm.org/index.php/GP2X#Compatibility_List>.
-
-Please note the version and date of the ScummVM build you are running
-when reviewing the above list.
-
-------------------------------------------------------------------------
-Included engines
-
-Just because an engine is included does not mean any/all of its games
-are supported. Please check game compatability for more infomation.
 
 ------------------------------------------------------------------------
 Supported audio options
@@ -77,106 +45,6 @@ OGG Vorbis audio.
 FLAC audio is currently unsupported.
 
 For best results use uncompressed audio in games.
-
-------------------------------------------------------------------------
-Supported cut-scene options
-
-No cut scene compression options are currently supported.
-
-DXA video support will be added as soon as it is stable.
-
-------------------------------------------------------------------------
-Recent changes
-
-Refined audio hacks to reduce audio delay a little more.
-Enabled hardware scalar code.
-Now built using SDL 1.2.9 for the parts of the port that use SDL (some
-parts now hit the hardware directly).
-Enabled new launcher - (Ensure defaulttheme.zip is in the same folder as
-the executable).
-Aspect Ratio Correction can now be disabled ?per game?. When adding a
-game you can find this option on the GFX tab.
-Note: This will cause the game to run with a black border at the bottom
-as it will be rendered to a 320*200 frame.
-
-------------------------------------------------------------------------
-How to save
-
-NOTE: Everything is saved to the SD card, saves are stored in the saves
-folder under your main ScummVM executable unless you set another save
-location.
-
-The configiration file for ScummVM (.scummvmrc) is stored in the same
-place as the ScummVM executable.
-
-The save process below is for Scumm engine games but the principle is
-the same for all.
-
-In Game.
-
-1. Right Trigger
-2. Select SAVE with B
-3. Select a position with B
-4. Right trigger puts ? in the name box for some text.
-5. Press B to save
-
-Basically the emulated keys you can use are equivelent to the values
-buttons are mapped to,
-
-I have a virtual keyboard like the GP32 one (left/right on the stick to
-pick chars) to add in at some point ;-)
-
-------------------------------------------------------------------------
-Controller mappings
-
-Mouse emulation:
-
-Stick: Move Pointer
-Stick Click: ?light? Left Click
-B: Left click
-X: Right click
-
-Keyboard emulation:
-
-Start: Return
-Select: Escape
-Y: Space Bar (Pause)
-Right Trigger: Game Menu (Save, Load, Quit etc.)
-Volume Buttons: Increase and Decrease volume (5% per press)
-
-Fancy button combos:
-
-NOTE: To use button combos press and hold the Left Trigger then...
-
-Y: Toggle "zoom" mode - Try it in larger games like Broken Sword.
-Volume Buttons: Increase and Decrease subtitle speed (In SCUMM games)
-Right Trigger: 0 (For skipping the copy protection in Monkey Island 2)
-Select: Exit ScummVM completely (and gracefully)
-
-------------------------------------------------------------------------
-Know issues
-
-Possible random crash (well SegFault). I have had this happen twice and
-have not tracked down the cause.
-It happens very infrequently, both times it was in the DOTT CD intro.
-Saving often is never a bad idea anyhow.
-
-------------------------------------------------------------------------
-TODO's
-
-Fix save support when using the Sky engine (Beneath a Steel Sky) - You
-CAN'T save at the moment but auto save works.
-
-------------------------------------------------------------------------
-Additional resources/links
-
-    * ScummVM WiKi GP2X page <http://wiki.scummvm.org/index.php/GP2X>
-    * ScummVM forums GP2X forum
-      <http://forums.scummvm.org/viewforum.php?f=14>
-    * My own ScummVM page <http://scummvm.distant-earth.com/> (for
-      SVN/test builds)
-    * Main ScummVM site <http://www.scummvm.org> (for official supported
-      release builds)
 
 ------------------------------------------------------------------------
 Credits

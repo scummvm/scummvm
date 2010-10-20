@@ -13,10 +13,15 @@ export CXX=arm-open2x-linux-g++
 export CXXFLAGS="-mcpu=arm926ej-s -mtune=arm926ej-s"
 export CPPFLAGS=-I/opt/open2x/gcc-4.1.1-glibc-2.3.6/include
 export LDFLAGS=-L/opt/open2x/gcc-4.1.1-glibc-2.3.6/lib
-export DEFINES=-DNDEBUG
 
 # Edit the configure line to suit.
 cd ../../../..
-./configure --backend=gp2xwiz --disable-mt32emu --host=gp2xwiz --disable-flac --disable-nasm --disable-hq-scalers --with-sdl-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6/bin --with-mpeg2-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 --enable-tremor --with-tremor-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 --enable-zlib --with-zlib-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 --enable-mad --with-mad-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 --enable-all-engines --enable-vkeybd --enable-plugins --default-dynamic
+./configure --backend=gph --disable-mt32emu --host=gp2xwiz --disable-flac --disable-nasm --disable-hq-scalers \
+  --with-sdl-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6/bin --with-mpeg2-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 \
+  --enable-tremor --with-tremor-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 \
+  --enable-zlib   --with-zlib-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 \
+  --enable-mad --with-mad-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 \
+  --enable-png --with-png-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 \
+  --enable-vkeybd --enable-all-engines --enable-plugins --default-dynamic
 
 echo Generating config for GP2X Wiz complete. Check for errors.

@@ -539,7 +539,7 @@ bool OSystem_SDL::loadGFXMode() {
 	assert(_inited);
 	_forceFull = true;
 
-#if !defined(__MAEMO__) && !defined(GP2XWIZ) && !defined(LINUXMOTO) && !defined(DINGUX) && !defined(OPENPANDORA)
+#if !defined(__MAEMO__) && !defined(DINGUX) && !defined(GPH_DEVICE) && !defined(LINUXMOTO) && !defined(OPENPANDORA)
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 

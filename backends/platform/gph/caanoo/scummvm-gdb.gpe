@@ -6,7 +6,7 @@ export LD_LIBRARY_PATH=`pwd`/lib:$LD_LIBRARY_PATH
 
 # Run ScummVM via GDB (so make sure you have a terminal open or serial).
 # Oh, and GDB installed of course ;)
-gdb --args ./scummvm.caanoo --fullscreen --gfx-mode=1x --config=$(pwd)/.scummvmrc
+gdb --args ./scummvm.gph --fullscreen --gfx-mode=1x --config=$(pwd)/.scummvmrc
 
 # Sync the SD card to check that everything is written.
 sync

@@ -38,7 +38,7 @@
 
 // Several SDL based ports use a custom main, and hence do not want to compile
 // of this file. The following "#if" ensures that.
-#if !defined(__MAEMO__) && !defined(_WIN32_WCE) && !defined(CAANOO) && !defined(GP2XWIZ) && !defined(LINUXMOTO) && !defined(OPENPANDORA) && !defined(__SYMBIAN32__) && !defined(DINGUX)
+#if !defined(__MAEMO__) && !defined(__SYMBIAN32__) && !defined(_WIN32_WCE) && !defined(DINGUX) && !defined(GPH_DEVICE) && !defined(LINUXMOTO) && !defined(OPENPANDORA)
 
 
 #include "backends/platform/sdl/sdl.h"

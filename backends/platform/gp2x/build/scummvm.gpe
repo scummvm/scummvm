@@ -4,7 +4,7 @@
 mount -o sync,remount /dev/mmcsd/disc0/part1 /mnt/sd/
 
 # Run ScummVM, important this bit.
-./scummvm.gp2x
+./scummvm.gph
 
 # Sync the SD card to check that everything is written.
 sync
