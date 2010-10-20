@@ -19,7 +19,8 @@ MODULE_OBJS := powerman.o \
 	mp3.o \
 	png_loader.o \
 	image_viewer.o \
-	tests.o
+	tests.o \
+	dummy.o
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))

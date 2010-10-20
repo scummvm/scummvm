@@ -126,7 +126,7 @@ endif
 # PSP LIBS
 PSPLIBS =  -lpspprof -lpspvfpu -lpspdebug -lpspgu -lpspge -lpspdisplay -lpspctrl -lpspsdk \
 	-lpsputility -lpspuser -lpsppower -lpsphprm -lpspsdk -lpsprtc -lpspaudio -lpspaudiocodec \
-	-lpspkernel
+	-lpspkernel -lpspnet_inet
 
 # Add in PSPSDK includes and libraries.
 LIBS     += -lpng -lz -lstdc++ -lc -lm $(PSPLIBS)
@@ -150,7 +150,8 @@ OBJS := powerman.o \
 	mp3.o \
 	png_loader.o \
 	image_viewer.o \
-	tests.o
+	tests.o \
+	dummy.o
 
 BACKEND := psp
 
