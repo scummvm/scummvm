@@ -51,13 +51,6 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 		error("Sprite::Sprite resource context not found");
 	}
 
-	_decodeBufLen = DECODE_BUF_LEN;
-
-	_decodeBuf = (byte *)malloc(_decodeBufLen);
-	if (_decodeBuf == NULL) {
-		memoryError("Sprite::Sprite");
-	}
-
 	if (_vm->getGameId() == GID_ITE) {
 		loadList(_vm->getResourceDescription()->mainSpritesResourceId, _mainSprites);
 		_arrowSprites = _saveReminderSprites = _inventorySprites = _mainSprites;
@@ -78,7 +71,6 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 
 Sprite::~Sprite() {
 	debug(8, "Shutting down sprite subsystem...");
-	free(_decodeBuf);
 }
 
 void Sprite::loadList(int resourceId, SpriteList &spriteList) {
@@ -153,26 +145,27 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 		outputLength = spriteInfo->width * spriteInfo->height;
 		inputLength = spriteListLength - (spriteDataPointer - spriteListData);
-		decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);
 		spriteInfo->decodedBuffer.resize(outputLength);
-		byte *dst = spriteInfo->getBuffer();
-
+		if (outputLength > 0) {
+			decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);
+			byte *dst = spriteInfo->getBuffer();
 #ifdef ENABLE_IHNM
-		// IHNM sprites are upside-down, for reasons which i can only
-		// assume are perverse. To simplify things, flip them now. Not
-		// at drawing time.
+			// IHNM sprites are upside-down, for reasons which i can only
+			// assume are perverse. To simplify things, flip them now. Not
+			// at drawing time.
 
-		if (_vm->getGameId() == GID_IHNM) {
-			byte *src = _decodeBuf + spriteInfo->width * (spriteInfo->height - 1);
+			if (_vm->getGameId() == GID_IHNM) {
+				byte *src = &_decodeBuf[spriteInfo->width * (spriteInfo->height - 1)];
 
-			for (int j = 0; j < spriteInfo->height; j++) {
-				memcpy(dst, src, spriteInfo->width);
-				src -= spriteInfo->width;
-				dst += spriteInfo->width;
-			}
-		} else
+				for (int j = 0; j < spriteInfo->height; j++) {
+					memcpy(dst, src, spriteInfo->width);
+					src -= spriteInfo->width;
+					dst += spriteInfo->width;
+				}
+			} else
 #endif
-			memcpy(dst, _decodeBuf, outputLength);
+				memcpy(dst, &_decodeBuf.front(), outputLength);
+		}
 	}
 
 	free(spriteListData);
@@ -194,8 +187,13 @@ void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, uint spriteNumber, in
 		yAlign = (spriteInfo->yAlign * scale) >> 8;
 		height = (spriteInfo->height * scale + 0x7f) >> 8;
 		width = (spriteInfo->width * scale + 0x7f) >> 8;
-		scaleBuffer(spriteInfo->getBuffer(), spriteInfo->width, spriteInfo->height, scale);
-		buffer = _decodeBuf;
+		size_t outLength = width * height;
+		if (outLength > 0) {
+			scaleBuffer(spriteInfo->getBuffer(), spriteInfo->width, spriteInfo->height, scale, outLength);
+			buffer = &_decodeBuf.front();
+		} else {
+			buffer = NULL;
+		}
 	} else {
 		xAlign = spriteInfo->xAlign;
 		yAlign = spriteInfo->yAlign;
@@ -406,15 +404,11 @@ void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t ou
 	byte *outPointerEnd;
 	int c;
 
-	if (outLength > _decodeBufLen) { // TODO: may we should make dynamic growing?
-		error("Sprite::decodeRLEBuffer outLength > _decodeBufLen");
-	}
+	_decodeBuf.resize(outLength);
+	outPointer = &_decodeBuf.front();
+	outPointerEnd = &_decodeBuf.back();
 
-	outPointer = _decodeBuf;
-	outPointerEnd = _decodeBuf + outLength;
-	outPointerEnd--;
-
-	memset(outPointer, 0, outLength);
+	memset(outPointer, 0, _decodeBuf.size());
 
 	MemoryReadStream readS(inputBuffer, inLength);
 
@@ -444,10 +438,14 @@ void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t ou
 	}
 }
 
-void Sprite::scaleBuffer(const byte *src, int width, int height, int scale) {
+void Sprite::scaleBuffer(const byte *src, int width, int height, int scale, size_t outLength) {
 	byte skip = 256 - scale; // skip factor
 	byte vskip = 0x80, hskip;
-	byte *dst = _decodeBuf;
+
+	_decodeBuf.resize(outLength);
+	byte *dst = &_decodeBuf.front();
+	
+	memset(dst, 0, _decodeBuf.size());
 
 	for (int i = 0; i < height; i++) {
 		vskip += skip;

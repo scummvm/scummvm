@@ -33,8 +33,6 @@ namespace Saga {
 #define SPRITE_ZMAX  16
 #define SPRITE_ZMASK 0x0F
 
-#define DECODE_BUF_LEN 64000
-
 struct SpriteInfo {
 	Common::Array<byte> decodedBuffer;
 	int width;
@@ -86,12 +84,11 @@ public:
 
 private:
 	void decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t outLength);
-	void scaleBuffer(const byte *src, int width, int height, int scale);
+	void scaleBuffer(const byte *src, int width, int height, int scale, size_t outLength);
 
 	SagaEngine *_vm;
 	ResourceContext *_spriteContext;
-	byte *_decodeBuf;
-	size_t _decodeBufLen;
+	Common::Array<byte> _decodeBuf;
 };
 
 } // End of namespace Saga
