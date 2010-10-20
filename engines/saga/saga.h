@@ -385,7 +385,7 @@ struct StringsTable {
 	Common::Array<char *> strings;
 
 	const char *getString(uint index) const {
-		if ((strings.size() <= index) || (index < 0)) {
+		if (strings.size() <= index) {
 			// This occurs at the end of Ted's chapter, right after the ending cutscene
 			warning("StringsTable::getString wrong index 0x%X (%d)", index, strings.size());
 			return "";
