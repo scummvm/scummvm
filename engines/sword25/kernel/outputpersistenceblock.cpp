@@ -79,6 +79,13 @@ void OutputPersistenceBlock::write(const Common::String &string) {
 	rawWrite(string.c_str(), string.size());
 }
 
+void OutputPersistenceBlock::write(Common::Array<byte> &value) {
+	writeMarker(BLOCK_MARKER);
+
+	write((uint)value.size());
+	rawWrite(&value[0], value.size());
+}
+
 void OutputPersistenceBlock::write(const void *bufferPtr, size_t size) {
 	writeMarker(BLOCK_MARKER);
 

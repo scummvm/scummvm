@@ -423,7 +423,7 @@ bool LuaScriptEngine::persist(OutputPersistenceBlock &writer) {
 	pluto_persist(_state, chunkwriter, &chunkData);
 
 	// Persistenzdaten in den Writer schreiben.
-	writer.write(&chunkData[0], chunkData.size());
+	writer.write(chunkData);
 
 	// Die beiden Tabellen vom Stack nehmen.
 	lua_pop(_state, 2);

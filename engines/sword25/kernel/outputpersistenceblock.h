@@ -49,6 +49,7 @@ public:
 	void write(float value);
 	void write(bool value);
 	void write(const Common::String &string);
+	void write(Common::Array<byte> &value);
 	void write(const void *bufferPtr, size_t size);
 
 	const void *getData() const {
