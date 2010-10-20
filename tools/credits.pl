@@ -684,7 +684,7 @@ begin_credits("Credits");
 		  add_person("Marcus Comstedt", "", "");
 	  end_section();
 
-	  begin_section("GP2X");
+	  begin_section("GPH Devices (GP2X, GP2XWiz & Caanoo)");
 		  add_person("John Willis", "DJWillis", "");
 	  end_section();
 
@@ -708,6 +708,10 @@ begin_credits("Credits");
 		  add_person("Neil Millstone", "agent-q", "");
 	  end_section();
 
+	  begin_section("OpenPandora");
+		  add_person("John Willis", "DJWillis", "");
+	  end_section();
+	  
 	  begin_section("PocketPC / WinCE");
 		add_person("Nicolas Bacca", "arisme", "(retired)");
 		add_person("Kostas Nakos", "Jubanka", "");
