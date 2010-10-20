@@ -2690,12 +2690,12 @@ bool Console::cmdFindKernelFunctionCall(int argc, const char **argv) {
 
 					if (opcode == op_callk) {
 						uint16 kFuncNum = opparams[0];
-						uint16 argc = opparams[1];
+						uint16 argc2 = opparams[1];
 
 						if (kFuncNum == kernelFuncNum) {
 							DebugPrintf("Called from script %d, object %s, method %s(%d) with %d parameters\n", 
 								itr->getNumber(), objName, 
-								_engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), i, argc);
+								_engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), i, argc2);
 						}
 					}
 
