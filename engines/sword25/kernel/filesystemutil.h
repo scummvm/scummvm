@@ -83,11 +83,6 @@ public:
 	virtual int32 getFileSize(const Common::String &filename) = 0;
 	/**
 	 * @param Filename      The path to a file.
-	 * @return              Returns the timestamp of the specified file.
-	 */
-	virtual TimeDate getFileTime(const Common::String &filename) = 0;
-	/**
-	 * @param Filename      The path to a file.
 	 * @return              Returns true if the file exists.
 	 */
 	virtual bool fileExists(const Common::String &filename) = 0;

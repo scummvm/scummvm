@@ -87,7 +87,7 @@ Common::String loadString(Common::InSaveFile *in, uint maxSize = 999) {
 	Common::String result;
 
 	char ch = (char)in->readByte();
-	while ((ch != '\0') && (ch != ' ')) {
+	while (ch != '\0') {
 		result += ch;
 		if (result.size() >= maxSize)
 			break;
@@ -155,6 +155,7 @@ struct PersistenceService::Impl {
 			// Read in the header
 			Common::String storedMarker = loadString(file);
 			Common::String storedVersionID = loadString(file);
+			Common::String gameDescription = loadString(file);
 			Common::String gameDataLength = loadString(file);
 			curSavegameInfo.gamedataLength = atoi(gameDataLength.c_str());
 			Common::String gamedataUncompressedLength = loadString(file);
@@ -169,7 +170,7 @@ struct PersistenceService::Impl {
 				// Dateinamen des Spielstandes speichern.
 				curSavegameInfo.filename = generateSavegameFilename(slotID);
 				// Die Beschreibung des Spielstandes besteht aus einer textuellen Darstellung des Änderungsdatums der Spielstanddatei.
-				curSavegameInfo.description = formatTimestamp(FileSystemUtil::getInstance().getFileTime(filename));
+				curSavegameInfo.description = gameDescription;
 				// Den Offset zu den gespeicherten Spieldaten innerhalb der Datei speichern.
 				// Dieses entspricht der aktuellen Position, da nach der letzten Headerinformation noch ein Leerzeichen als trenner folgt.
 				curSavegameInfo.gamedataOffset = static_cast<uint>(file->pos());
@@ -267,9 +268,14 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 	Common::OutSaveFile *file = sfm->openForSaving(filename);
 
 	file->writeString(FILE_MARKER);
-	file->writeByte(' ');
+	file->writeByte(0);
 	file->writeString(VERSIONID);
-	file->writeByte(' ');
+	file->writeByte(0);
+
+	TimeDate dt;
+	g_system->getTimeAndDate(dt);
+	file->writeString(formatTimestamp(dt));
+	file->writeByte(0);
 
 	if (file->err()) {
 		error("Unable to write header data to savegame file \"%s\".", filename.c_str());
@@ -299,10 +305,10 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 	char sBuffer[10];
 	snprintf(sBuffer, 10, "%ld", compressedLength);
 	file->writeString(sBuffer);
-	file->writeByte(' ');
+	file->writeByte(0);
 	snprintf(sBuffer, 10, "%u", writer.getDataSize());
 	file->writeString(sBuffer);
-	file->writeByte(' ');
+	file->writeByte(0);
 
 	// Komprimierte Daten in die Datei schreiben.
 	file->write(reinterpret_cast<char *>(&compressionBuffer[0]), compressedLength);
@@ -325,12 +331,12 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 		BS_LOG_WARNINGLN("The screenshot file \"%s\" does not exist. Savegame is written without a screenshot.", filename.c_str());
 	}
 
-	// Savegameinformationen für diesen Slot aktualisieren.
-	_impl->readSlotSavegameInformation(slotID);
-
 	file->finalize();
 	delete file;
 	delete[] compressionBuffer;
+
+	// Savegameinformationen für diesen Slot aktualisieren.
+	_impl->readSlotSavegameInformation(slotID);
 
 	// Erfolg signalisieren.
 	return true;

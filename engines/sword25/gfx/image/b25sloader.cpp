@@ -45,7 +45,7 @@ static Common::String loadString(Common::ReadStream &in, uint maxSize = 999) {
 
 	while (!in.eos() && (result.size() < maxSize)) {
 		char ch = (char)in.readByte();
-		if ((ch == '\0') || (ch == ' '))
+		if (ch == '\0')
 			break;
 
 		result += ch;
@@ -65,8 +65,9 @@ uint findEmbeddedPNG(const byte *fileDataPtr, uint fileSize) {
 
 	// Headerinformationen der Spielstandes einlesen.
 	uint compressedGamedataSize;
-	loadString(stream);
-	loadString(stream);
+	loadString(stream);		// Marker
+	loadString(stream);		// Version
+	loadString(stream);		// Description
 	Common::String gameSize = loadString(stream);
 	compressedGamedataSize = atoi(gameSize.c_str());
 	loadString(stream);
