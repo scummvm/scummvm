@@ -3737,6 +3737,10 @@ void ScummEngine::fadeOut(int effect) {
 			// Just blit screen 0 to the display (i.e. display will be black)
 			vs->setDirtyRange(0, vs->h);
 			updateDirtyScreen(kMainVirtScreen);
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+			if (_townsScreen)
+				_townsScreen->update();
+#endif
 			break;
 		case 134:
 			dissolveEffect(1, 1);
