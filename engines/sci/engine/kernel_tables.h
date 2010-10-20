@@ -494,28 +494,39 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 
 	// SCI2 unmapped functions - TODO!
-	// GetHighItemPri
-	// ShowStylePercent
 	// SetScroll
 	// AddMagnify	// most probably similar to the SCI1.1 functions. We need a test case
 	// DeleteMagnify
-	// InvertRect
 	// EditText
-	// InputText
 	// DisposeTextBitmap
-	// VibrateMouse
-	// MakeSaveCatName
-	// MakeSaveFileName
+	// VibrateMouse - used in QFG4 floppy
 	// PalCycle
-	// ObjectIntersect
-	// TextWidth
-	// PointSize
+	// ObjectIntersect - used in QFG4 floppy
 
     // SCI2 empty functions
 
     // Purge is used by the memory manager in SSCI to ensure that X number of bytes (the so called "unmovable
     // memory") are available. We have our own memory manager and garbage collector, thus we ignore this call.
     { MAP_EMPTY(Purge),            SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+
+    // Unused SCI2 unused functions, always mapped to kDummy
+    { MAP_DUMMY(InspectObject),    SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    // Profiler (same as SCI0-SCI1.1)
+    // Record (same as SCI0-SCI1.1)
+    // PlayBack (same as SCI0-SCI1.1)
+    { MAP_DUMMY(MonoOut),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(SetFatalStr),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(IntegrityChecking),SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(CheckIntegrity),   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(MarkMemory),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(GetHighItemPri),   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(ShowStylePercent), SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(InvertRect),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(InputText),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(MakeSaveCatName),  SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(MakeSaveFileName), SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(TextWidth),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
     // SCI2.1 Kernel Functions
     { MAP_CALL(CD),                SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -566,16 +577,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     // the game window in Phantasmagoria 2. We ignore these settings completely.
     { MAP_EMPTY(SetWindowsOption), SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 
-    // Unimplemented SCI2.1 unused functions, always mapped to kDummy
-    { MAP_DUMMY(InspectObject),    SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-    // Profiler (same as SCI0-SCI1.1)
-    // Record (same as SCI0-SCI1.1)
-    // PlayBack (same as SCI0-SCI1.1)
-    { MAP_DUMMY(MonoOut),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-    { MAP_DUMMY(SetFatalStr),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-    { MAP_DUMMY(IntegrityChecking),SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-    { MAP_DUMMY(CheckIntegrity),   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-    { MAP_DUMMY(MarkMemory),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    // Unused SCI2.1 unused functions, always mapped to kDummy
     { MAP_DUMMY(GetSierraProfileInt),    SIG_EVERYWHERE,     "(.*)",                  NULL,            NULL },
     { MAP_DUMMY(GetSierraProfileString), SIG_EVERYWHERE,     "(.*)",                  NULL,            NULL },
 #endif
@@ -770,7 +772,7 @@ static const char *sci2_default_knames[] = {
 	/*0x21*/ "DeleteMagnify",
 	/*0x22*/ "IsHiRes",
 	/*0x23*/ "Graph",
-	/*0x24*/ "InvertRect",
+	/*0x24*/ "InvertRect",	// only in SCI2, not used in any SCI2 game
 	/*0x25*/ "TextSize",
 	/*0x26*/ "Message",
 	/*0x27*/ "TextColors",
@@ -792,8 +794,8 @@ static const char *sci2_default_knames[] = {
 	/*0x37*/ "RestoreGame",
 	/*0x38*/ "RestartGame",
 	/*0x39*/ "GameIsRestarting",
-	/*0x3a*/ "MakeSaveCatName",
-	/*0x3b*/ "MakeSaveFileName",
+	/*0x3a*/ "MakeSaveCatName",		// only in SCI2, not used in any SCI2 game
+	/*0x3b*/ "MakeSaveFileName",	// only in SCI2, not used in any SCI2 game
 	/*0x3c*/ "GetSaveFiles",
 	/*0x3d*/ "GetSaveDir",
 	/*0x3e*/ "CheckSaveGame",
@@ -871,8 +873,8 @@ static const char *sci2_default_knames[] = {
 	/*0x86*/ "CheckIntegrity",	  // for debugging
 	/*0x87*/ "ObjectIntersect",
 	/*0x88*/ "MarkMemory",	      // for debugging
-	/*0x89*/ "TextWidth",
-	/*0x8a*/ "PointSize",
+	/*0x89*/ "TextWidth",		  // for debugging(?), only in SCI2, not used in any SCI2 game
+	/*0x8a*/ "PointSize",	      // for debugging(?), only in SCI2, not used in any SCI2 game
 
 	// GK2 Demo (and similar) only kernel functions
 	/*0x8b*/ "AddLine",
