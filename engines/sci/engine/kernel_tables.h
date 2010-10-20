@@ -493,15 +493,15 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 
-	// SCI2 unmapped functions - TODO!
-	// SetScroll
-	// AddMagnify	// most probably similar to the SCI1.1 functions. We need a test case
-	// DeleteMagnify
-	// EditText
-	// DisposeTextBitmap
-	// VibrateMouse - used in QFG4 floppy
-	// PalCycle
-	// ObjectIntersect - used in QFG4 floppy
+    // SCI2 unmapped functions - TODO!
+    // SetScroll
+    // AddMagnify	// most probably similar to the SCI1.1 functions. We need a test case
+    // DeleteMagnify
+    // EditText
+    // DisposeTextBitmap
+    // VibrateMouse - used in QFG4 floppy
+    // PalCycle
+    // ObjectIntersect - used in QFG4 floppy
 
     // SCI2 empty functions
 
@@ -519,14 +519,14 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_DUMMY(IntegrityChecking),SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_DUMMY(CheckIntegrity),   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_DUMMY(MarkMemory),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(GetHighItemPri),   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(ShowStylePercent), SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(InvertRect),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(InputText),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(MakeSaveCatName),  SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(MakeSaveFileName), SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(TextWidth),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(GetHighItemPri),   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(ShowStylePercent), SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(InvertRect),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(InputText),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(MakeSaveCatName),  SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(MakeSaveFileName), SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(TextWidth),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
     // SCI2.1 Kernel Functions
     { MAP_CALL(CD),                SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -543,33 +543,33 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(WinDLL),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(PrintDebug),        SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
 
-	// SCI2.1 unmapped functions - TODO!
-	// SetLanguage
-	// FindSelector
-	// FindClass
-	// CelRect
-	// BaseLineSpan
-	// CelInfo
-	// Bitmap
-	// CelLink
-	// MovePlaneItems
-	// Font
-	// ScrollWindow
-	// AddLine
-	// DeleteLine
-	// UpdateLine
-	// AddPolygon
-	// DeletePolygon
-	// UpdatePolygon
-	// GetConfig
-	// Table
-	// LoadChunk
-	// SetPalStyleRange
-	// NewRoom
-	// Priority
-	// MorphOn
-	// SetHotRectangles
-	// DeletePic
+    // SCI2.1 unmapped functions - TODO!
+    // SetLanguage
+    // FindSelector
+    // FindClass
+    // CelRect
+    // BaseLineSpan
+    // CelInfo
+    // Bitmap
+    // CelLink
+    // MovePlaneItems
+    // Font
+    // ScrollWindow
+    // AddLine
+    // DeleteLine
+    // UpdateLine
+    // AddPolygon
+    // DeletePolygon
+    // UpdatePolygon
+    // GetConfig
+    // Table
+    // LoadChunk
+    // SetPalStyleRange
+    // NewRoom
+    // Priority
+    // MorphOn
+    // SetHotRectangles
+    // DeletePic
 
     // SCI2.1 empty functions
 
