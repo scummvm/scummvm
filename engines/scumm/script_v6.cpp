@@ -1285,7 +1285,7 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 
 void ScummEngine_v6::o6_getRandomNumber() {
 	int rnd;
-	rnd = _rnd.getRandomNumber(pop());
+	rnd = _rnd.getRandomNumber(ABS(pop()));
 	if (VAR_RANDOM_NR != 0xFF)
 		VAR(VAR_RANDOM_NR) = rnd;
 	push(rnd);
