@@ -159,7 +159,7 @@ struct ModuleData {
 	StringsTable strings;
 	VoiceLUT voiceLUT;
 	void freeMem() {
-		strings.freeMem();
+		strings.clear();
 		voiceLUT.freeMem();
 		free(moduleBase);
 		free(entryPoints);

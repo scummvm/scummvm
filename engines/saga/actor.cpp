@@ -296,7 +296,6 @@ Actor::~Actor() {
 	debug(9, "Actor::~Actor()");
 
 	free(_pathCell);
-	_actorsStrings.freeMem();
 	//release resources
 	freeProtagStates();
 	freeActorList();

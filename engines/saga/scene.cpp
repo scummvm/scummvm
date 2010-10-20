@@ -1249,7 +1249,7 @@ void Scene::endScene() {
 	_objectMap->freeMem();
 	_actionMap->freeMem();
 	_entryList.freeMem();
-	_sceneStrings.freeMem();
+	_sceneStrings.clear();
 
 	if (_vm->getGameId() == GID_ITE)
 		_vm->_isoMap->freeMem();

@@ -381,30 +381,21 @@ struct ImageHeader {
 };
 
 struct StringsTable {
-	byte *stringsPointer;
-	int stringsCount;
-	const char **strings;
+	Common::Array<char> buffer;
+	Common::Array<char *> strings;
 
-	const char *getString(int index) const {
-		if ((stringsCount <= index) || (index < 0)) {
+	const char *getString(uint index) const {
+		if ((strings.size() <= index) || (index < 0)) {
 			// This occurs at the end of Ted's chapter, right after the ending cutscene
-			warning("StringsTable::getString wrong index 0x%X (%d)", index, stringsCount);
+			warning("StringsTable::getString wrong index 0x%X (%d)", index, strings.size());
 			return "";
 		}
 		return strings[index];
 	}
 
-	void freeMem() {
-		free(strings);
-		free(stringsPointer);
-		memset(this, 0, sizeof(*this));
-	}
-
-	StringsTable() {
-		memset(this, 0, sizeof(*this));
-	}
-	~StringsTable() {
-		freeMem();
+	void clear() {
+		strings.clear();
+		buffer.clear();
 	}
 };
 

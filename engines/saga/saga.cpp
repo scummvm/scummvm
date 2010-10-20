@@ -397,24 +397,22 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 	uint16 stringsCount;
 	size_t offset;
 	size_t prevOffset = 0;
-	int i;
+	Common::Array<size_t> tempOffsets;
+	uint ui;
 
 	if (stringsLength == 0) {
 		error("SagaEngine::loadStrings() Error loading strings list resource");
 	}
 
-	stringsTable.stringsPointer = (byte*)malloc(stringsLength);
-	memcpy(stringsTable.stringsPointer, stringsPointer, stringsLength);
 
-
-	MemoryReadStreamEndian scriptS(stringsTable.stringsPointer, stringsLength, isBigEndian()); //TODO: get endianess from context
+	MemoryReadStreamEndian scriptS(stringsPointer, stringsLength, isBigEndian()); //TODO: get endianess from context
 
 	offset = scriptS.readUint16();
 	stringsCount = offset / 2;
-	stringsTable.strings = (const char **)malloc(stringsCount * sizeof(*stringsTable.strings));
-	i = 0;
+	ui = 0;
 	scriptS.seek(0);
-	while (i < stringsCount) {
+	tempOffsets.resize(stringsCount);
+	while (ui < stringsCount) {
 		offset = scriptS.readUint16();
 		// In some rooms in IHNM, string offsets can be greater than the maximum value than a 16-bit integer can hold
 		// We detect this by checking the previous offset, and if it was bigger than the current one, an overflow
@@ -424,33 +422,43 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 			offset += 65536;
 		prevOffset = offset;
 		if (offset == stringsLength) {
-			stringsCount = i;
-			const char **tmp = (const char **)realloc(stringsTable.strings, stringsCount * sizeof(*stringsTable.strings));
-			if ((tmp != NULL) || (stringsCount == 0)) {
-				stringsTable.strings = tmp;
-			} else {
-				error("SagaEngine::loadStrings() Error while reallocating memory");
-			}
+			stringsCount = ui;
+			tempOffsets.resize(stringsCount);
 			break;
 		}
 		if (offset > stringsLength) {
 			// This case should never occur, but apparently it does in the Italian fan
 			// translation of IHNM
 			warning("SagaEngine::loadStrings wrong strings table");
-			stringsCount = i;
-			const char **tmp = (const char **)realloc(stringsTable.strings, stringsCount * sizeof(*stringsTable.strings));
-			if ((tmp != NULL) || (stringsCount == 0)) {
-				stringsTable.strings = tmp;
-			} else {
-				error("SagaEngine::loadStrings() Error while reallocating memory");
-			}
+			stringsCount = ui;
+			tempOffsets.resize(stringsCount);
 			break;
 		}
-		stringsTable.strings[i] = (const char *)stringsTable.stringsPointer + offset;
-		debug(9, "string[%i]=%s", i, stringsTable.strings[i]);
-		i++;
+		tempOffsets[ui] = offset;
+		ui++;
 	}
-	stringsTable.stringsCount = stringsCount;
+
+	prevOffset = scriptS.pos();
+	int32 left = scriptS.size() - prevOffset;
+	if (left < 0) {
+		error("SagaEngine::loadStrings() Error loading strings buffer");
+	}
+
+	stringsTable.buffer.resize(left);
+	if (left > 0) {
+		scriptS.read(&stringsTable.buffer.front(), left);
+	}
+
+	stringsTable.strings.resize(tempOffsets.size());
+	for (ui = 0; ui < tempOffsets.size(); ui++) {
+		offset = tempOffsets[ui] - prevOffset;
+		if (offset >= stringsTable.buffer.size()) {
+			error("SagaEngine::loadStrings() Wrong offset");
+		}
+		stringsTable.strings[ui] = &stringsTable.buffer[offset];
+		
+		debug(9, "string[%i]=%s", ui, stringsTable.strings[ui]);
+	}
 }
 
 const char *SagaEngine::getObjectName(uint16 objectId) {

@@ -158,7 +158,6 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 SAGA1Script::~SAGA1Script() {
 	debug(8, "Shutting down scripting subsystem.");
 
-	_mainStrings.freeMem();
 	_globalVoiceLUT.freeMem();
 
 	freeModules();
