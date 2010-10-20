@@ -3180,7 +3180,7 @@ label_callback_19:
 		}
 
 		if (getEntities()->isPlayerPosition(kCarGreenSleeping, 23) && !getProgress().eventMertensKronosInvitation && !getEvent(kEventMertensLastCar) && !getEvent(kEventMertensLastCarOriginalJacket)) {
-			setCallback(1);
+			setCallback(3);
 			setup_savegame(kSavegameTypeEvent, kEventMertensLastCar);
 			break;
 		}
