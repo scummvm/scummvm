@@ -203,8 +203,8 @@ void ScummEngine_v90he::setHEPaletteFromImage(int palSlot, int resId, int state)
 	uint8 *data = getResourceAddress(rtImage, resId);
 	assert(data);
 	const uint8 *rgbs = findWrappedBlock(MKID_BE('RGBS'), data, state, 0);
-	assert(rgbs);
-	setHEPaletteFromPtr(palSlot, rgbs);
+	if (rgbs)
+		setHEPaletteFromPtr(palSlot, rgbs);
 }
 
 void ScummEngine_v90he::setHEPaletteFromRoom(int palSlot, int resId, int state) {
