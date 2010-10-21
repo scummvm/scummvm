@@ -51,7 +51,8 @@ OSystem_SDL::OSystem_SDL()
 #endif
 	_inited(false),
 	_initedSDL(false),
-	_mixerManager(0) {
+	_mixerManager(0),
+	_eventSource(0) {
 
 }
 
@@ -81,6 +82,11 @@ void OSystem_SDL::initBackend() {
 	// Check if backend has not been initialized
 	assert(!_inited);
 
+	// Create the default event source, in case a custom backend
+	// manager didn't provide one yet.
+	if (_eventSource == 0)
+		_eventSource = new SdlEventSource();
+
 	int graphicsManagerType = 0;
 
 	if (_graphicsManager == 0) {
@@ -104,7 +110,7 @@ void OSystem_SDL::initBackend() {
 		}
 #endif
 		if (_graphicsManager == 0) {
-			_graphicsManager = new SdlGraphicsManager(this);
+			_graphicsManager = new SdlGraphicsManager(_eventSource);
 			graphicsManagerType = 0;
 		}
 	}
@@ -112,7 +118,7 @@ void OSystem_SDL::initBackend() {
 	// Creates the backend managers, if they don't exist yet (we check
 	// for this to allow subclasses to provide their own).
 	if (_eventManager == 0)
-		_eventManager = new DefaultEventManager(this);
+		_eventManager = new DefaultEventManager(_eventSource);
 
 	// We have to initialize the graphics manager before the event manager
 	// so the virtual keyboard can be initialized, but we have to add the
@@ -216,6 +222,8 @@ void OSystem_SDL::deinit() {
 	_graphicsManager = 0;
 	delete _eventManager;
 	_eventManager = 0;
+	delete _eventSource;
+	_eventSource = 0;
 	delete _audiocdManager;
 	_audiocdManager = 0;
 	delete _mixerManager;
@@ -352,7 +360,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 			// manager, delete and create the new mode graphics manager
 			if (_graphicsMode >= _sdlModesCount && mode < _sdlModesCount) {
 				delete _graphicsManager;
-				_graphicsManager = new SdlGraphicsManager(this);
+				_graphicsManager = new SdlGraphicsManager(_eventSource);
 				((SdlGraphicsManager *)_graphicsManager)->initEventObserver();
 				_graphicsManager->beginGFXTransaction();
 			} else if (_graphicsMode < _sdlModesCount && mode >= _sdlModesCount) {

@@ -39,7 +39,7 @@
 /** 
  * Base OSystem class for all SDL ports.
  */
-class OSystem_SDL : public ModularBackend, public SdlEventSource {
+class OSystem_SDL : public ModularBackend {
 public:
 	OSystem_SDL();
 	virtual ~OSystem_SDL();
@@ -87,6 +87,11 @@ protected:
 	 * the wrapped Audio::Mixer, the true mixer.
 	 */
 	SdlMixerManager *_mixerManager;
+
+	/**
+	 * The event source we use for obtaining SDL events.
+	 */
+	SdlEventSource *_eventSource;
 
 	/**
 	 * Initialze the SDL library.
