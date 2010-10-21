@@ -312,7 +312,7 @@ void SoundManager::setEntryStatus(SoundEntry *entry, FlagType flag) const {
 }
 
 bool SoundManager::setupCache(SoundEntry *entry) {
-	warning("Sound::updateCache: not implemented!");
+	warning("Sound::setupCache: not implemented!");
 	return true;
 }
 
