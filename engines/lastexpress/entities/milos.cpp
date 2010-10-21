@@ -167,7 +167,67 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 		break;
 
 	case kActionNone:
-		error("Milos: callback function 11 not implemented!");
+		if (!params->param5 && params->param1 < getState()->time && !params->param7) {
+			params->param7 = 1;
+
+			CALLBACK_ACTION();
+			break;
+		}
+
+		if (params->param2) {
+			UPDATE_PARAM_PROC(params->param8,  getState()->timeTicks, 75)
+				params->param2 = 0;
+				params->param3 = 1;
+				getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorNormal, kCursorNormal);
+			UPDATE_PARAM_PROC_END
+		}
+
+		params->param8 = 0;
+
+		if (getProgress().chapter != kChapter1 || params->param5)
+			break;
+
+		if (params->param6) {
+			UPDATE_PARAM_PROC(CURRENT_PARAMS(1, 1), getState()->time, 4500)
+				params->param6 = 0;
+				CURRENT_PARAMS(1, 1) = 0;
+			UPDATE_PARAM_PROC_END
+		}
+
+		if (!getProgress().field_CC) {
+
+			if (ENTITY_PARAM(0, 3) && !getProgress().field_14 && !params->param6) {
+				getProgress().field_14 = 14;
+				getSavePoints()->push(kEntityMilos, kEntityVesna, kAction190412928);
+
+				setCallback(1);
+				setup_enterExitCompartment("609Cg", kObjectCompartmentG);
+			}
+			break;
+		}
+
+		if (!params->param4)
+			params->param4 = getState()->time + 18000;
+
+		if (CURRENT_PARAMS(1, 2) != kTimeInvalid) {
+			if (params->param4 >= getState()->time) {
+				if (!getEntities()->isDistanceBetweenEntities(kEntityPlayer, kEntityMilos, 2000) || !CURRENT_PARAMS(1, 2))
+					CURRENT_PARAMS(1, 2) = getState()->time + 150;
+
+				if (CURRENT_PARAMS(1, 2) >= getState()->time)
+					break;
+			}
+
+			CURRENT_PARAMS(1, 2) = kTimeInvalid;
+
+			if (getEntities()->isDistanceBetweenEntities(kEntityPlayer, kEntityMilos, 2000))
+				getProgress().field_98 = 1;
+
+			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
+
+			setCallback(6);
+			setup_playSound("MIL1012");
+		}
 		break;
 
 	case kActionKnock:
@@ -183,13 +243,8 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 				setup_playSound(getSound()->wrongDoorCath());
 			}
 		} else {
-			if (savepoint.action == kActionKnock) {
-				setCallback(7);
-				setup_playSound("LIB012");
-			} else {
-				setCallback(8);
-				setup_playSound("LIB013");
-			}
+			setCallback(savepoint.action == kActionKnock ? 7 : 8);
+			setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
 		}
 		break;
 
@@ -738,7 +793,182 @@ IMPLEMENT_FUNCTION(23, Milos, function23)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Milos, function24)
-	error("Milos: callback function 24 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (!params->param4)
+			params->param4 = getState()->time + 4500;
+
+		if (params->param4 < getState()->time) {
+			params->param4 = kTimeInvalid;
+			params->param3 = 1;
+		}
+
+		if (ENTITY_PARAM(0, 1)) {
+			setCallback(1);
+			setup_enterExitCompartment("609Cg", kObjectCompartmentG);
+			break;
+		}
+
+		if (params->param1) {
+			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+
+			params->param1 = 0;
+			params->param2 = 1;
+
+			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorNormal, kCursorNormal);
+		}
+
+		params->param5 = 0;
+		break;
+
+	case kActionKnock:
+		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
+
+		if (params->param1) {
+			if (getInventory()->hasItem(kItemPassengerList)) {
+				setCallback(9);
+				setup_playSound(rnd(2) ? "CAT1504" : getSound()->wrongDoorCath());
+			} else {
+				setCallback(10);
+				setup_playSound(getSound()->wrongDoorCath());
+			}
+		} else {
+			setCallback(6);
+			setup_playSound("LIB012");
+		}
+		break;
+
+	case kActionOpenDoor:
+		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
+
+		if (getEvent(kEventMilosCompartmentVisitAugust) || getState()->time >= kTime2106000) {
+			setCallback(12);
+			setup_playSound("LIB013");
+		} else {
+			getData()->location = kLocationInsideCompartment;
+
+			setCallback(11);
+			setup_savegame(kSavegameTypeEvent, kEventMilosCompartmentVisitAugust);
+		}
+		break;
+
+	case kActionDefault:
+		getData()->entityPosition = kPosition_3050;
+		getData()->location = kLocationInsideCompartment;
+		getData()->car = kCarRedSleeping;
+
+		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+		break;
+
+	case kActionDrawScene:
+		if (getEvent(kEventMilosCompartmentVisitAugust)
+		 || getEntities()->isInsideTrainCar(kEntityPlayer, kCarRedSleeping)
+		 || !params->param3
+		 || getState()->time >= kTime2106000) {
+			if (params->param1 || params->param2) {
+				getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+				params->param1 = 0;
+				params->param2 = 0;
+			}
+			break;
+		}
+
+		setup_function23();
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			getObjects()->update(kObjectCompartmentG, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			getSavePoints()->push(kEntityMilos, kEntityVesna, kAction203663744);
+			getData()->location = kLocationOutsideCompartment;
+
+			setCallback(2);
+			setup_function26(kTime2223000);
+			break;
+
+		case 2:
+			if (ENTITY_PARAM(0, 2)) {
+				setCallback(3);
+				setup_savegame(kSavegameTypeEvent, kEventMilosCorridorThanksD);
+			} else {
+				setCallback(4);
+				setup_enterCompartmentDialog(kCarRedSleeping, kPosition_3050);
+			}
+			break;
+
+		case 3:
+			getAction()->playAnimation((getData()->entityPosition < getEntityData(kEntityPlayer)->entityPosition) ? kEventMilosCorridorThanksD : kEventMilosCorridorThanks);
+
+			if (getData()->car == kCarRedSleeping && getEntities()->checkDistanceFromPosition(kEntityMilos, kPosition_3050, 500))
+				getData()->entityPosition = kPosition_3550;
+
+			getEntities()->updateEntity(kEntityMilos, kCarRedSleeping, kPosition_3050);
+			getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition + (750 * (getData()->direction == kDirectionDown ? 1 : -1))), getData()->direction != kDirectionDown);
+
+			setCallback(4);
+			setup_enterCompartmentDialog(kCarRedSleeping, kPosition_3050);
+			break;
+
+		case 4:
+			setCallback(5);
+			setup_enterExitCompartment("609BG", kObjectCompartmentG);
+			break;
+
+		case 5:
+			getEntities()->clearSequences(kEntityMilos);
+			getData()->location = kLocationInsideCompartment;
+			ENTITY_PARAM(0, 1) = 0;
+
+			setup_function25();
+			break;
+
+		case 6:
+			if (getEvent(kEventMilosCompartmentVisitAugust) || getState()->time >= kTime2106000) {
+				setCallback(8);
+				setup_playSound("Mil1117A");
+			} else {
+				setCallback(7);
+				setup_playSound("Mil1118");
+			}
+			break;
+
+		case 7:
+			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			break;
+
+		case 8:
+		case 13:
+			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorTalk, kCursorNormal);
+			params->param1 = 1;
+			break;
+
+		case 9:
+		case 10:
+			params->param1 = 0;
+			params->param2 = 1;
+			break;
+
+		case 11:
+			getAction()->playAnimation(kEventMilosCompartmentVisitAugust);
+			getScenes()->loadSceneFromPosition(kCarRedSleeping, 5);
+			getSavePoints()->push(kEntityMilos, kEntityVesna, kAction135024800);
+			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+			break;
+
+		case 12:
+			setCallback(13);
+			setup_playSound("MIL1117A");
+			break;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1065,7 +1295,102 @@ IMPLEMENT_FUNCTION(33, Milos, chapter5)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
-	error("Milos: callback function 34 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionEndSound:
+		if (!getProgress().isNightTime) {
+			setCallback(6);
+			setup_savegame(kSavegameTypeEvent, kEventTrainStopped);
+			break;
+		}
+
+		getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneGameOverTrainStopped2, true);
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			getAction()->playAnimation(isNight() ? kEventLocomotiveMilosShovelingNight : kEventLocomotiveMilosShovelingDay);
+			getScenes()->processScene();
+			break;
+
+		case 2:
+			if (getSound()->isBuffered("MUS050"))
+				getSound()->processEntry("MUS050");
+
+			if (getSound()->isBuffered("ARRIVE"))
+				getSound()->removeFromQueue("ARRIVE");
+
+			getSound()->processEntries();
+			getAction()->playAnimation(isNight() ? kEventLocomotiveMilosNight : kEventLocomotiveMilosDay);
+			getSound()->setupEntry(SoundManager::kSoundType7, kEntityMilos);
+			getScenes()->loadSceneFromPosition(kCarCoalTender, 1);
+			break;
+
+		case 3:
+			getAction()->playAnimation(kEventLocomotiveAnnaStopsTrain);
+			getLogic()->gameOver(kSavegameTypeEvent2, kEventLocomotiveMilosDay, kSceneGameOverTrainStopped, true);
+			break;
+
+		case 4:
+			getAction()->playAnimation(kEventLocomotiveRestartTrain);
+			getAction()->playAnimation(kEventLocomotiveOldBridge);
+			getSound()->resetState();
+			getState()->time = kTime2983500;
+
+			setCallback(5);
+			setup_savegame(kSavegameTypeTime, kTimeNone);
+			break;
+
+		case 5:
+			getScenes()->loadSceneFromPosition(kCarCoalTender, 2, 1);
+			getSavePoints()->push(kEntityMilos, kEntityAbbot, kAction135600432);
+
+			setup_function35();
+			break;
+
+		case 6:
+			getAction()->playAnimation(kEventTrainStopped);
+			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneGameOverTrainStopped, true);
+			break;
+		}
+		break;
+
+	case kAction168646401:
+		if (!getEvent(kEventLocomotiveMilosShovelingDay) && !getEvent(kEventLocomotiveMilosShovelingNight)) {
+			setCallback(1);
+			setup_savegame(kSavegameTypeEvent, kEventLocomotiveMilosShovelingDay);
+			break;
+		}
+
+		if (!getEvent(kEventLocomotiveMilosDay) && !getEvent(kEventLocomotiveMilosNight)) {
+			if (getProgress().isNightTime && getState()->time < kTimeTrainStopped2)
+				getState()->time = kTimeTrainStopped2;
+
+			setCallback(2);
+			setup_savegame(kSavegameTypeEvent, kEventLocomotiveMilosDay);
+		}
+		break;
+
+	case kAction169773228:
+		if (!getProgress().isNightTime) {
+			setCallback(3);
+			setup_savegame(kSavegameTypeEvent, kEventLocomotiveAnnaStopsTrain);
+		}
+
+		getSound()->processEntry(kEntityMilos);
+		if (getState()->time < kTimeTrainStopped2)
+			getState()->time = kTimeTrainStopped2;
+
+		setCallback(4);
+		setup_savegame(kSavegameTypeEvent, kEventLocomotiveRestartTrain);
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

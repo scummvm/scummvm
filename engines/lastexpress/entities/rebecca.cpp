@@ -1304,7 +1304,113 @@ IMPLEMENT_FUNCTION(35, Rebecca, function35)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(36, Rebecca, function36)
-	error("Rebecca: callback function 36 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (!params->param2)
+			params->param2 = getState()->time + 1800;
+
+		if (params->param4 != kTimeInvalid && params->param2 < getState()->time) {
+
+			if (getState()->time <= kTime2083500) {
+				if (!getEntities()->isInSalon(kEntityPlayer) || !params->param4)
+					params->param4 = getState()->time + 300;
+			}
+
+			if (params->param4 < getState()->time || getState()->time > kTime2083500) {
+				params->param4 = kTimeInvalid;
+				getSound()->playSound(kEntityRebecca, "Reb3007");
+
+				setCallback(2);
+				setup_updatePosition("118E", kCarRedSleeping, 52);
+				break;
+			}
+		}
+
+		// TODO rewrite using proper if/else blocks instead of goto
+label_callback_2:
+		if (!params->param1)
+			goto label_callback_3;
+
+		if (!params->param3)
+			params->param3 = getState()->time + 9000;
+
+		if (params->param5 == kTimeInvalid || params->param3 >= getState()->time)
+			goto label_callback_3;
+
+		if (getState()->time <= kTime2092500) {
+			if (!getEntities()->isInSalon(kEntityPlayer) || !params->param5)
+				params->param5 = getState()->time + 300;
+
+			if (params->param5 >= getState()->time) {
+label_callback_3:
+				if (getState()->time > kTime2097000 && !params->param6) {
+					params->param6 = 1;
+					getData()->inventoryItem = kItemNone;
+
+					setCallback(4);
+					setup_updatePosition("118H", kCarRestaurant, 52);
+				}
+				break;
+			}
+		}
+
+		params->param5 = kTimeInvalid;
+
+		getData()->inventoryItem = kItemNone;
+		getSound()->playSound(kEntityRebecca, "Reb3008", SoundManager::kFlagInvalid, 60);
+		getEntities()->updatePositionEnter(kEntityRebecca, kCarRestaurant, 52);
+
+		setCallback(3);
+		setup_draw2("118G1", "118G2", kEntitySophie);
+		break;
+
+	case kAction1:
+		getData()->inventoryItem = kItemNone;
+
+		setCallback(6);
+		setup_playSound("SOP3008");
+		break;
+
+	case kActionDefault:
+		setCallback(1);
+		setup_function17(true);
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			getEntities()->drawSequenceLeft(kEntityRebecca, "118D");
+			break;
+
+		case 2:
+			params->param1 = 1;
+			getData()->inventoryItem = kItemInvalid;
+			getEntities()->drawSequenceLeft(kEntityRebecca, "118F");
+			goto label_callback_2;
+
+		case 3:
+			getEntities()->clearSequences(kEntitySophie);
+			getEntities()->updatePositionExit(kEntityRebecca, kCarRestaurant, 52);
+			getEntities()->drawSequenceLeft(kEntityRebecca, "118D");
+			goto label_callback_3;
+
+		case 4:
+			setCallback(5);
+			setup_function18();
+			break;
+
+		case 5:
+			setup_function37();
+			break;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

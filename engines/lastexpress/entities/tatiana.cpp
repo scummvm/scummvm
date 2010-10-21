@@ -26,6 +26,7 @@
 #include "lastexpress/entities/tatiana.h"
 
 #include "lastexpress/entities/alexei.h"
+#include "lastexpress/entities/coudert.h"
 
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/entities.h"
@@ -1338,7 +1339,104 @@ IMPLEMENT_FUNCTION(40, Tatiana, function40)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(41, Tatiana, function41)
-	error("Tatiana: callback function 41 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (!params->param1)
+			break;
+
+		if (getEntities()->checkFields19(kEntityPlayer, kCarRedSleeping, kPosition_7850)
+		 && !getEvent(kEventVassiliCompartmentStealEgg)
+		 && (getState()->time <= kTime2133000 || getProgress().field_40)) {
+			if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_7500)) {
+
+				getSavePoints()->push(kEntityTatiana, kEntityCoudert, kAction235061888);
+				getEntities()->clearSequences(kEntityTatiana);
+				getEntities()->exitCompartment(kEntityTatiana, kObjectCompartmentB, true);
+				getData()->location = kLocationInsideCompartment;
+
+				if (getInventory()->hasItem(kItemFirebird)) {
+					getAction()->playAnimation(kEventTatianaCompartmentStealEgg);
+					getInventory()->removeItem(kItemFirebird);
+					getInventory()->get(kItemFirebird)->location = kObjectLocation2;
+				} else {
+					getAction()->playAnimation(kEventTatianaCompartment);
+				}
+
+				getScenes()->loadSceneFromObject(kObjectCompartmentB);
+
+				setCallback(4);
+				setup_updateFromTime(150);
+			}
+		} else {
+			getEntities()->exitCompartment(kEntityTatiana, kObjectCompartmentB, true);
+
+			if (getState()->time < kTime2133000 || getProgress().field_40) {
+				setCallback(3);
+				setup_function40();
+				break;
+			}
+
+			getEntities()->clearSequences(kEntityTatiana);
+			CALLBACK_ACTION();
+		}
+		break;
+
+	case kActionDefault:
+		getData()->car = kCarRedSleeping;
+		getData()->entityPosition = kPosition_7500;
+		getData()->location = kLocationOutsideCompartment;
+
+		RESET_ENTITY_STATE(kEntityCoudert, Coudert, setup_function51);
+
+		getEntities()->drawSequenceLeft(kEntityTatiana, "673Fb");
+		getEntities()->enterCompartment(kEntityTatiana, kObjectCompartmentB, true);
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			setCallback(2);
+			setup_playSound("Tat3161B");
+			break;
+
+		case 2:
+			getSavePoints()->push(kEntityTatiana, kEntityCoudert, kAction168316032);
+			params->param1 = 1;
+			break;
+
+		case 3:
+		case 6:
+			getEntities()->clearSequences(kEntityTatiana);
+
+			CALLBACK_ACTION();
+			break;
+
+		case 4:
+			setCallback(5);
+			setup_function15();
+			break;
+
+		case 5:
+			setCallback(6);
+			setup_function40();
+			break;
+		}
+		break;
+
+	case kAction154071333:
+		getObjects()->update(kObjectCompartmentB, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
+		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
+
+		setCallback(1);
+		setup_savegame(kSavegameTypeTime, kTimeNone);
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

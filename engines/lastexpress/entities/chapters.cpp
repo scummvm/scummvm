@@ -1673,7 +1673,7 @@ IMPLEMENT_FUNCTION(22, Chapters, chapter5Handler)
 		if (getState()->time > kTimeTrainStopped2 && !params->param3) {
 			params->param3 = 1;
 
-			if (!getEvent(kEventLocomotiveMilos) && !getEvent(kEventLocomotiveMilosNight)) {
+			if (!getEvent(kEventLocomotiveMilosDay) && !getEvent(kEventLocomotiveMilosNight)) {
 				getSound()->playSound(kEntityChapters, "ARRIVE", SoundManager::kFlag8);
 				getSound()->processEntries();
 			}

@@ -504,6 +504,14 @@ void class::setup_##name() { \
 	if (parameter < type) { \
 		parameter = kTimeInvalid;
 
+#define UPDATE_PARAM_PROC_TIME(timeValue, test, parameter, value) \
+	if (getState()->time <= timeValue) { \
+		if (test || !parameter) \
+			parameter = getState()->time + value; \
+	} \
+	if (parameter < getState()->time || getState()->time > timeValue) { \
+		parameter = kTimeInvalid;
+
 #define UPDATE_PARAM_PROC_END }
 
 // Updating parameter with an added check (and code inside the check)

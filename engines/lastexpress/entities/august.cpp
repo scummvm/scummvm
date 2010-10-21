@@ -1426,7 +1426,98 @@ IMPLEMENT_FUNCTION(37, August, function37)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(38, August, function38)
-	error("August: callback function 38 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		TIME_CHECK_SAVEPOINT(kTime1801800, params->param1, kEntityAugust, kEntityRebecca, kAction155980128);
+
+		TIME_CHECK_CALLBACK(kTime1820700, params->param2, 3, setup_callbackActionRestaurantOrSalon);
+		break;
+
+	case kActionDefault:
+		setCallback(1);
+		setup_callbackActionRestaurantOrSalon();
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			getData()->entityPosition = kPosition_1540;
+			getData()->location = kLocationOutsideCompartment;
+
+			setCallback(2);
+			setup_updatePosition("109A", kCarRestaurant, 56);
+			break;
+
+		case 2:
+			getScenes()->loadSceneFromItemPosition(kItem3);
+			getData()->location = kLocationInsideCompartment;
+			break;
+
+		case 3:
+			getData()->location = kLocationOutsideCompartment;
+
+			setCallback(4);
+			setup_updatePosition("109D2", kCarRestaurant, 56);
+			break;
+
+		case 4:
+			getInventory()->setLocationAndProcess(kItem3, kObjectLocation1);
+
+			setCallback(5);
+			setup_function17(kTime1849500);
+			break;
+
+		case 5:
+			setup_function39();
+			break;
+
+		case 6:
+			setCallback(7);
+			setup_playSound("AUG2114");
+			break;
+
+		case 7:
+			getEntities()->drawSequenceLeft(kEntityAugust, "108C");
+			getEntities()->updatePositionEnter(kEntityAugust, kCarRestaurant, 56);
+			getEntities()->updatePositionEnter(kEntityAugust, kCarRestaurant, 57);
+
+			setCallback(8);
+			setup_playSound("AUG2114A");
+			break;
+
+		case 8:
+			setCallback(9);
+			setup_playSound("AUG2115");
+			break;
+
+		case 9:
+			setCallback(10);
+			setup_draw2("108D1", "108D2", kEntityRebecca);
+			break;
+
+		case 10:
+			getEntities()->drawSequenceLeft(kEntityAugust, "109B");
+			getEntities()->updatePositionExit(kEntityAugust, kCarRestaurant, 56);
+			getEntities()->updatePositionExit(kEntityAugust, kCarRestaurant, 57);
+			getSavePoints()->push(kEntityAugust, kEntityRebecca, kAction125496184);
+			break;
+		}
+		break;
+
+	case kAction169358379:
+		getSavePoints()->push(kEntityAugust, kEntityRebecca, kAction155465152);
+		getEntities()->drawSequenceLeft(kEntityAugust, "108A");
+
+		setCallback(6);
+		setup_updateFromTime(900);
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -1306,7 +1306,93 @@ IMPLEMENT_FUNCTION(25, Coudert, function25)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Coudert, function26)
-	error("Coudert: callback function 26 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (params->param1) {
+			UPDATE_PARAM(params->param2, getState()->timeTicks, 75);
+
+			setCallback(3);
+			setup_enterExitCompartment2("627Zd", kObjectCompartmentD, kPosition_5790, kPosition_6130);
+		}
+		break;
+
+	case kActionDefault:
+		setCallback(1);
+		setup_updateEntity(kCarRedSleeping, kPosition_5790);
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			setCallback(2);
+			setup_enterExitCompartment("627Vd", kObjectCompartmentD);
+			break;
+
+		case 2:
+			getSavePoints()->push(kEntityCoudert, kEntityMmeBoutarel, kAction221683008);
+			getEntities()->drawSequenceLeft(kEntityCoudert, "627Wd");
+			getEntities()->enterCompartment(kEntityCoudert, kObjectCompartmentD, true);
+			break;
+
+		case 3:
+		case 7:
+			getEntities()->exitCompartment(kEntityCoudert, kObjectCompartmentD, true);
+			getData()->location = kLocationInsideCompartment;
+			getEntities()->clearSequences(kEntityCoudert);
+
+			setCallback(getCallback() == 3 ? 4 : 8);
+			setup_function20(kObjectCompartmentD, kObject51);
+			break;
+
+		case 4:
+			setCallback(5);
+			setup_enterExitCompartment("697Ad", kObjectCompartmentD);
+			break;
+
+		case 5:
+			getData()->location = kLocationOutsideCompartment;
+
+			CALLBACK_ACTION();
+			break;
+
+		case 6:
+			getSavePoints()->push(kEntityCoudert, kEntityMmeBoutarel, kAction122865568);
+			break;
+
+		case 8:
+			getSound()->playSound(kEntityCoudert, "JAC1013");
+
+			setCallback(9);
+			setup_enterExitCompartment("697Ad", kObjectCompartmentD);
+			break;
+
+		case 9:
+			getData()->location = kLocationOutsideCompartment;
+			getSavePoints()->push(kEntityCoudert, kEntityMmeBoutarel, kAction123852928);
+
+			CALLBACK_ACTION();
+			break;
+		}
+		break;
+
+	case kAction88652208:
+		setCallback(7);
+		setup_enterExitCompartment2("627Zd", kObjectCompartmentD, kPosition_5790, kPosition_6130);
+		break;
+
+	case kAction123199584:
+		params->param1 = 1;
+
+		setCallback(6);
+		setup_playSound("JAC1012");
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

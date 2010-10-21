@@ -884,7 +884,7 @@ const char *SoundManager::getDialogName(EntityIndex entity) const {
 		break;
 
 	case kEntityMilos:
-		if (getEvent(kEventLocomotiveMilos) || getEvent(kEventLocomotiveMilosNight))
+		if (getEvent(kEventLocomotiveMilosDay) || getEvent(kEventLocomotiveMilosNight))
 			return "XMIL5";
 
 		if (getEvent(kEventMilosCompartmentVisitTyler) && (getProgress().chapter == kChapter3 || getProgress().chapter == kChapter4))

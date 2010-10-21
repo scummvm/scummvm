@@ -962,7 +962,160 @@ IMPLEMENT_FUNCTION(24, Kahina, function24)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Kahina, function25)
-	error("Kahina: callback function 25 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (params->param1 == kTimeInvalid)
+			break;
+
+		if (getState()->time <= kTime2263500) {
+			if (!getEntities()->isPlayerInCar(kCarGreenSleeping) || !params->param1)
+				params->param1 = getState()->time;
+
+			if (params->param1 >= getState()->time)
+				break;
+		}
+
+		params->param1 = kTimeInvalid;
+
+		setCallback(12);
+		setup_enterExitCompartment("616Ba", kObjectCompartment1);
+		break;
+
+	case kActionDefault:
+		if (!getEvent(kEventAnnaBaggageArgument)) {
+			setCallback(1);
+			setup_function19(kCarGreenSleeping, kPosition_8200);
+			break;
+		}
+
+		switch (getInventory()->get(kItemFirebird)->location) {
+		default:
+			break;
+
+		case kObjectLocation3:
+		case kObjectLocation7:
+			if (getInventory()->get(kItemFirebird)->location == kObjectLocation3)
+				getProgress().field_7C = 1;
+			else
+				getProgress().field_80 = 1;
+
+			getScenes()->loadSceneFromItemPosition(kItemFirebird);
+			getInventory()->get(kItemFirebird)->location = kObjectLocation5;
+			getSavePoints()->push(kEntityKahina, kEntityKronos, kAction138085344);
+			break;
+		}
+
+		getInventory()->setLocationAndProcess(kItemBriefcase, kObjectLocation2);
+		getProgress().field_78 = 1;
+		ENTITY_PARAM(0, 3) = 0;
+
+		CALLBACK_ACTION();
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+		case 4:
+			if (getEntities()->isPlayerInCar(kCarGreenSleeping)) {
+				setCallback(getCallback() == 1 ? 2 : 5);
+				setup_function19(getCallback() == 1 ? kCarGreenSleeping : kCarKronos, getCallback() == 1 ? kPosition_9460 : kPosition_9270);
+				break;
+			} else {
+				if (getEntities()->checkFields19(kEntityPlayer, kCarGreenSleeping, kPosition_7850) || getEntities()->isOutsideAlexeiWindow()) {
+					setCallback(6);
+					setup_playSound("LIB013");
+				} else {
+					setCallback(8);
+					setup_enterExitCompartment("616Aa", kObjectCompartment1);
+				}
+			}
+			break;
+
+		case 2:
+			setCallback(3);
+			setup_updateFromTime(1800);
+			break;
+
+		case 3:
+			setCallback(4);
+			setup_function19(kCarGreenSleeping, kPosition_8200);
+			break;
+
+		case 5:
+		case 7:
+		case 11:
+		case 13:
+			getEntities()->clearSequences(kEntityKahina);
+
+			CALLBACK_ACTION();
+			break;
+
+		case 6:
+			setCallback(7);
+			setup_function19(kCarKronos, kPosition_9270);
+			break;
+
+		case 8:
+			getData()->location = kLocationInsideCompartment;
+			getEntities()->clearSequences(kEntityKahina);
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectHandleBathroom, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorNormal);
+
+			setCallback(9);
+			setup_updateFromTime(900);
+			break;
+
+		case 9:
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectHandleBathroom, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+
+			switch (getInventory()->get(kItemFirebird)->location) {
+			default:
+				if (ENTITY_PARAM(0, 3))
+					getInventory()->setLocationAndProcess(kItemBriefcase, kObjectLocation2);
+				break;
+
+			case kObjectLocation3:
+			case kObjectLocation7:
+				if (getInventory()->get(kItemFirebird)->location == kObjectLocation3)
+					getProgress().field_7C = 1;
+				else
+					getProgress().field_80 = 1;
+
+				getScenes()->loadSceneFromItemPosition(kItemFirebird);
+				getInventory()->get(kItemFirebird)->location = kObjectLocation5;
+				getSavePoints()->push(kEntityKahina, kEntityKronos, kAction138085344);
+				getInventory()->setLocationAndProcess(kItemBriefcase, kObjectLocation2);
+				getProgress().field_C0 = getState()->time;
+				getProgress().field_78 = 1;
+				break;
+			}
+
+			getProgress().field_78 = 1;
+			ENTITY_PARAM(0, 3) = 0;
+
+			if (getInventory()->get(kItemFirebird)->location != kObjectLocation18) {
+				setCallback(10);
+				setup_enterExitCompartment("616Ba", kObjectCompartment1);
+			}
+			break;
+
+		case 10:
+		case 12:
+			getData()->location = kLocationOutsideCompartment;
+
+			setCallback(getCallback() == 10 ? 11 : 13);
+			setup_updateEntity(kCarKronos, kPosition_9270);
+			break;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

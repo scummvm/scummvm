@@ -130,22 +130,27 @@ enum TimeValue {
 	kTime1786500              = 1786500,
 	kTime1791000              = 1791000,
 	kTime1800000              = 1800000,
+	kTime1801800              = 1801800,
 	kTime1806300              = 1806300,
 	kTime1809000              = 1809000,
 	kTimeCityAugsburg         = 1809900,
 	kTime1818000              = 1818000,
 	kTime1818900              = 1818900,
+	kTime1820700              = 1820700,
 	kTime1822500              = 1822500,
 	kTime1836000              = 1836000,
 	kTime1845000              = 1845000,
+	kTime1849500              = 1849500,
 	kTimeCityMunich           = 1852200,
 
 	// Chapter 3
 	kTimeChapter3             = 1944000,
 	kTime1953000              = 1953000,
 	kTime1966500              = 1966500,
+	kTime1969200              = 1969200,
 	kTime1971000              = 1971000,
 	kTimeEnterSalzbourg       = 1982700,
+	kTime1983600              = 1983600,
 	kTimeCitySalzbourg        = 1984500,
 	kTime1989000              = 1989000,
 	kTimeExitSalzbourg        = 1989900,
@@ -196,7 +201,9 @@ enum TimeValue {
 	kTime2196000              = 2196000,
 	kTime2200500              = 2200500,
 	kTime2218500              = 2218500,
+	kTime2223000              = 2223000,
 	kTime2241000              = 2241000,
+	kTime2248200              = 2248200,
 	kTime2250000              = 2250000,
 	kTime2254500              = 2254500,
 	kTime2259000              = 2259000,
@@ -267,6 +274,7 @@ enum TimeValue {
 	kTime2916000              = 2916000,
 	kTimeCityBelgrade         = 2952000,
 	kTimeTrainStopped2        = 2943000,
+	kTime2983500              = 2983500,
 	kTimeCityNish             = 3205800,
 	kTimeCityTzaribrod        = 3492000,
 	kTime3645000              = 3645000,
@@ -528,6 +536,7 @@ enum EntityPosition {
 	kPosition_3390  = 3390,
 	kPosition_3450  = 3450,
 	kPosition_3500  = 3500,
+	kPosition_3550  = 3550,
 	kPosition_3650  = 3650,
 	kPosition_3760  = 3760,
 	kPosition_3820  = 3820,
@@ -654,7 +663,8 @@ enum ObjectLocation {
 	kObjectLocation5    = 5,
 	kObjectLocation6    = 6,
 	kObjectLocation7    = 7,
-	kObjectLocation10   = 10
+	kObjectLocation10   = 10,
+	kObjectLocation18   = 18
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -1030,7 +1040,7 @@ enum EventIndex {
 	kEventMilosCorridorThanks = 105,
 	kEventMilosCorridorThanksD = 106,
 	kEventMilosCompartmentVisitTyler = 107,
-	kEventLocomotiveMilos = 108,
+	kEventLocomotiveMilosDay = 108,
 	kEventLocomotiveMilosNight = 109,
 	kEventAbbotIntroduction = 110,
 	kEventAbbotWrongCompartment = 111,
@@ -1203,7 +1213,7 @@ enum EventIndex {
 enum ActionIndex {
 	kActionNone            = 0,
 	kAction1               = 1,
-	kActionEndSound               = 2,
+	kActionEndSound        = 2,
 	kActionExitCompartment = 3,
 	kAction4               = 4,
 	kActionExcuseMeCath    = 5,
@@ -1319,6 +1329,7 @@ enum ActionIndex {
 	kAction157026693 = 157026693,
 	kAction168253822 = 168253822,
 	kAction168254872 = 168254872,
+	kAction168316032 = 168316032,    // Tatiana
 	kAction169557824 = 169557824,
 	kAction171394341 = 171394341,    // Mertens
 	kAction185671840 = 185671840,
@@ -1335,6 +1346,7 @@ enum ActionIndex {
 	kAction223068211 = 223068211,    // MmeBoutarel
 	kAction225932896 = 225932896,
 	kAction226031488 = 226031488,    // Verges
+	kAction235061888 = 235061888,    // Tatiana
 	kAction238358920 = 238358920,    // Anna
 	kAction253868128 = 253868128,    // Anna
 	kAction285528346 = 285528346,    // Rebecca
@@ -1528,6 +1540,7 @@ enum ActionIndex {
 	kAction69239528  = 69239528,
 	kAction123857088 = 123857088,
 	kAction124973510 = 124973510,
+	kAction154071333 = 154071333,
 	kAction156444784 = 156444784,
 	kAction169360385 = 169360385,
 	kAction191198209 = 191198209,
