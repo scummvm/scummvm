@@ -545,7 +545,7 @@ IMPLEMENT_FUNCTION(18, Alexei, chapter1Handler)
 		break;
 
 	case kAction168627977:
-		getData()->inventoryItem = (InventoryItem)LOBYTE(params->param2);
+		getData()->inventoryItem = (InventoryItem)LOW_BYTE(params->param2);
 		break;
 
 	case kAction225182640:

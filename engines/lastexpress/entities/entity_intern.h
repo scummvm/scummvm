@@ -28,7 +28,7 @@
 
 namespace LastExpress {
 
-#define LOBYTE(w)           ((unsigned char)(((unsigned long)(w)) & 0xff))
+#define LOW_BYTE(w)           ((unsigned char)(((unsigned long)(w)) & 0xff))
 
 //////////////////////////////////////////////////////////////////////////
 // Callbacks

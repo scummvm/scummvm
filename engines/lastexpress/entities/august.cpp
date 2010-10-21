@@ -1456,7 +1456,7 @@ IMPLEMENT_FUNCTION(29, August, function29)
 		if (!getProgress().eventMetAugust && getProgress().jacket == kJacketGreen)
 			params->param1 = kItemInvalid;
 
-		getData()->inventoryItem = (InventoryItem)LOBYTE(params->param1);
+		getData()->inventoryItem = (InventoryItem)LOW_BYTE(params->param1);
 
 		getEntities()->drawSequenceLeft(kEntityAugust, "010H");
 		break;
@@ -1466,7 +1466,7 @@ IMPLEMENT_FUNCTION(29, August, function29)
 		break;
 
 	case kAction168627977:
-		getData()->inventoryItem = (InventoryItem)LOBYTE(params->param1);
+		getData()->inventoryItem = (InventoryItem)LOW_BYTE(params->param1);
 		break;
 
 	case kAction189426612:

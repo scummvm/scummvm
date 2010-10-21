@@ -573,7 +573,7 @@ IMPLEMENT_FUNCTION_II(17, Anna, function17, uint32, uint32)
 		break;
 
 	case kActionNone:
-		getData()->inventoryItem = (params->param3 && getEntities()->isDistanceBetweenEntities(kEntityAnna, kEntityPlayer, 2000)) ? (InventoryItem)LOBYTE(params->param3) : kItemNone;
+		getData()->inventoryItem = (params->param3 && getEntities()->isDistanceBetweenEntities(kEntityAnna, kEntityPlayer, 2000)) ? (InventoryItem)LOW_BYTE(params->param3) : kItemNone;
 
 		if (getEntities()->updateEntity(kEntityAnna, (CarIndex)params->param1, (EntityPosition)params->param2)) {
 			getData()->inventoryItem = kItemNone;
@@ -699,7 +699,7 @@ IMPLEMENT_FUNCTION_I(18, Anna, function18, TimeValue)
 				params->param2 |= 8;
 		}
 
-		getData()->inventoryItem = (InventoryItem)LOBYTE(params->param2);
+		getData()->inventoryItem = (InventoryItem)LOW_BYTE(params->param2);
 		break;
 
 	case kActionDrawScene:
@@ -737,7 +737,7 @@ IMPLEMENT_FUNCTION_I(18, Anna, function18, TimeValue)
 				params->param2 |= 8;
 			}
 
-			getData()->inventoryItem = (InventoryItem)LOBYTE(params->param2);
+			getData()->inventoryItem = (InventoryItem)LOW_BYTE(params->param2);
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 61);
 			break;
 		}
@@ -749,7 +749,7 @@ IMPLEMENT_FUNCTION_I(18, Anna, function18, TimeValue)
 		break;
 
 	case kAction168627977:
-		getData()->inventoryItem = (InventoryItem)LOBYTE(params->param2);
+		getData()->inventoryItem = (InventoryItem)LOW_BYTE(params->param2);
 		params->param4 = 0;
 		break;
 
