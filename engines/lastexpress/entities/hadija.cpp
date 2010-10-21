@@ -116,7 +116,7 @@ IMPLEMENT_FUNCTION(10, Hadija, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CHAPTER1(setup_chapter1Handler);
+		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
 		break;
 
 	case kActionDefault:
@@ -250,7 +250,10 @@ IMPLEMENT_FUNCTION(14, Hadija, chapter2Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_POSITION(kTime1782000, params->param1, kPosition_2740);
+		if (getState()->time > kTime1782000 && !params->param1) { \
+			params->param1 = 1;
+			getData()->entityPosition = kPosition_2740;
+		}
 
 		if (params->param2 == kTimeInvalid || getState()->time <= kTime1786500) {
 			TIME_CHECK_CALLBACK(kTime1822500, params->param3, 2, setup_compartment8to6);

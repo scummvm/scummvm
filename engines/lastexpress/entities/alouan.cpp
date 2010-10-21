@@ -116,7 +116,7 @@ IMPLEMENT_FUNCTION(10, Alouan, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CHAPTER1(setup_chapter1Handler);
+		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
 		break;
 
 	case kActionDefault:
@@ -293,7 +293,7 @@ label_callback1:
 			TIME_CHECK_CAR(kTime2119500, params->param5, 5, setup_compartment8);
 
 label_callback2:
-		TIME_CHECK_PLAYSOUND(kTime2052000, params->param3, 3, "Har1005");
+		TIME_CHECK_CALLBACK_1(kTime2052000, params->param3, 3, setup_playSound, "Har1005");
 
 label_callback3:
 		TIME_CHECK_CALLBACK(kTime2133000, params->param4, 4, setup_compartment6to8);

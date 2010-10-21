@@ -322,9 +322,6 @@ void class::setup_##name() { \
 //////////////////////////////////////////////////////////////////////////
 // Time check macros
 //////////////////////////////////////////////////////////////////////////
-#define TIME_CHECK_CHAPTER1(function) \
-	TIME_CHECK(kTimeChapter1, params->param1, function)
-
 #define TIME_CHECK(timeValue, parameter, function) \
 	if (getState()->time > timeValue && !parameter) { \
 		parameter = 1; \
@@ -386,54 +383,6 @@ void class::setup_##name() { \
 		break; \
 	}
 
-#define TIME_CHECK_SAVEGAME(timeValue, parameter, callback, type, event) \
-	if (getState()->time > timeValue && !parameter) { \
-		parameter = 1; \
-		setCallback(callback); \
-		setup_savegame(type, event); \
-		break; \
-	}
-
-#define TIME_CHECK_ENTERSTATION(timeValue, parameter, callback, name, param2) \
-	if (getState()->time > timeValue && !parameter) { \
-		parameter = 1; \
-		setCallback(callback); \
-		setup_enterStation(name, param2); \
-		break; \
-	}
-
-#define TIME_CHECK_EXITSTATION(timeValue, parameter, callback, name) \
-	if (getState()->time > timeValue && !parameter) { \
-		parameter = 1; \
-		setCallback(callback); \
-		setup_exitStation(name); \
-		break; \
-	}
-
-#define TIME_CHECK_EXITSTATION_2(timeValue, parameter1, parameter2, callback, name) \
-	if (getState()->time > timeValue && !parameter1) { \
-		parameter1 = 1; \
-		parameter2 = 1; \
-		setCallback(callback); \
-		setup_exitStation(name); \
-		break; \
-	}
-
-#define TIME_CHECK_EXITSTATION_0(parameter1, parameter2, callback, name) \
-	if (parameter1 && !parameter2) { \
-		setCallback(callback); \
-		setup_exitStation(name); \
-		break; \
-	}
-
-#define TIME_CHECK_PLAYSOUND(timeValue, parameter, callback, sound) \
-	if (getState()->time > timeValue && !parameter) { \
-		parameter = 1; \
-		setCallback(callback); \
-		setup_playSound(sound); \
-		break; \
-	}
-
 #define TIME_CHECK_PLAYSOUND_UPDATEPOSITION(timeValue, parameter, callback, sound, position) \
 	if (getState()->time > timeValue && !parameter) { \
 		parameter = 1; \
@@ -447,12 +396,6 @@ void class::setup_##name() { \
 	if (getState()->time > timeValue && !parameter) { \
 		parameter = 1; \
 		getObjects()->updateLocation2(object, location); \
-	}
-
-#define TIME_CHECK_POSITION(timeValue, parameter, position) \
-	if (getState()->time > timeValue && !parameter) { \
-		parameter = 1; \
-		getData()->entityPosition = position; \
 	}
 
 #define TIME_CHECK_CAR(timeValue, parameter, callback, function) {\

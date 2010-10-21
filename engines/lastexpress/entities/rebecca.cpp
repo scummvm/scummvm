@@ -658,7 +658,7 @@ IMPLEMENT_FUNCTION(21, Rebecca, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CHAPTER1(setup_chapter1Handler);
+		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
 		break;
 
 	case kActionDefault:
@@ -686,7 +686,7 @@ IMPLEMENT_FUNCTION(22, Rebecca, chapter1Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_PLAYSOUND(kTime1084500, params->param3, 1, "REB1015");
+		TIME_CHECK_CALLBACK_1(kTime1084500, params->param3, 1, setup_playSound, "REB1015");
 
 		if (params->param4 == kTimeInvalid)
 			goto label_callback_4;

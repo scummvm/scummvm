@@ -188,7 +188,7 @@ IMPLEMENT_FUNCTION(8, Yasmin, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CHAPTER1(setup_chapter1Handler);
+		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
 		break;
 
 	case kActionDefault:
@@ -209,8 +209,8 @@ IMPLEMENT_FUNCTION(9, Yasmin, chapter1Handler)
 		TIME_CHECK_CALLBACK(kTime1093500, params->param1, 1, setup_function6);
 		TIME_CHECK_CALLBACK(kTime1161000, params->param2, 3, setup_function7);
 		TIME_CHECK_PLAYSOUND_UPDATEPOSITION(kTime1162800, params->param3, 4, "Har1102", kPosition_4070);
-		TIME_CHECK_PLAYSOUND(kTime1165500, params->param4, 5, "Har1104");
-		TIME_CHECK_PLAYSOUND(kTime1174500, params->param5, 6, "Har1106");
+		TIME_CHECK_CALLBACK_1(kTime1165500, params->param4, 5, setup_playSound, "Har1104");
+		TIME_CHECK_CALLBACK_1(kTime1174500, params->param5, 6, setup_playSound, "Har1106");
 		TIME_CHECK_CALLBACK(kTime1183500, params->param6, 7, setup_function6);
 		break;
 
@@ -234,11 +234,11 @@ IMPLEMENT_FUNCTION(9, Yasmin, chapter1Handler)
 			// Fallback to case 4
 
 		case 4:
-			TIME_CHECK_PLAYSOUND(kTime1165500, params->param4, 5, "Har1104");
+			TIME_CHECK_CALLBACK_1(kTime1165500, params->param4, 5, setup_playSound, "Har1104");
 			// Fallback to case 5
 
 		case 5:
-			TIME_CHECK_PLAYSOUND(kTime1174500, params->param5, 6, "Har1106");
+			TIME_CHECK_CALLBACK_1(kTime1174500, params->param5, 6, setup_playSound, "Har1106");
 			// Fallback to case 6
 
 		case 6:

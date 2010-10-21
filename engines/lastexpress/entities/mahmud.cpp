@@ -733,7 +733,7 @@ IMPLEMENT_FUNCTION(15, Mahmud, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CHAPTER1(setup_chaptersHandler);
+		TIME_CHECK(kTimeChapter1, params->param1, setup_chaptersHandler);
 		break;
 
 	case kActionDefault:

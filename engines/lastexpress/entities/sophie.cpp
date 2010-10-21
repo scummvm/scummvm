@@ -209,7 +209,7 @@ IMPLEMENT_FUNCTION(4, Sophie, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CHAPTER1(setup_chaptersHandler);
+		TIME_CHECK(kTimeChapter1, params->param1, setup_chaptersHandler);
 		break;
 
 	case kActionDefault:
