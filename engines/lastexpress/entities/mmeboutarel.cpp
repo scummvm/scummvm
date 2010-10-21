@@ -397,7 +397,126 @@ IMPLEMENT_FUNCTION(12, MmeBoutarel, chapter1Handler)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, MmeBoutarel, function13)
-	error("MmeBoutarel: callback function 13 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (!getSound()->isBuffered(kEntityMmeBoutarel) && params->param6 != kTimeInvalid) {
+			UPDATE_PARAM_PROC_TIME(params->param1, !getEntities()->isDistanceBetweenEntities(kEntityMmeBoutarel, kEntityPlayer, 2000), params->param6, 0)
+				getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
+				getObjects()->update(kObject51, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
+
+				if (getEntities()->isDistanceBetweenEntities(kEntityMmeBoutarel, kEntityPlayer, 2000))
+					getProgress().field_A0 = 1;
+
+				params->param5 = 1;
+
+				setCallback(1);
+				setup_playSound("MME1037");
+				break;
+			UPDATE_PARAM_PROC_END
+		}
+
+label_callback_1:
+		if (getProgress().field_24 && params->param7 != kTimeInvalid) {
+			UPDATE_PARAM_PROC_TIME(kTime1093500, (!params->param5 || !getEntities()->isPlayerInCar(kCarRedSleeping)), params->param7, 0)
+				setCallback(2);
+				setup_function11();
+				break;
+			UPDATE_PARAM_PROC_END
+		}
+
+		TIME_CHECK(kTime1094400, params->param8, setup_function14);
+
+		if (params->param4) {
+			UPDATE_PARAM(CURRENT_PARAMS(1, 1), getState()->timeTicks, 75);
+
+			params->param3 = 1;
+			params->param4 = 0;
+
+			getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
+		}
+
+		CURRENT_PARAMS(1, 1) = 0;
+		break;
+
+	case kActionKnock:
+	case kActionOpenDoor:
+		getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
+		getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
+
+		if (params->param4) {
+			if (getInventory()->hasItem(kItemPassengerList)) {
+				setCallback(7);
+				setup_playSound(rnd(2) ? "CAT1510" : getSound()->wrongDoorCath());
+			} else {
+				setCallback(8);
+				setup_playSound(getSound()->wrongDoorCath());
+			}
+		} else {
+			++params->param2;
+
+			setCallback(savepoint.action == kActionKnock ? 4 : 3);
+			setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
+		}
+		break;
+
+	case kActionDefault:
+		params->param1 = getState()->time + 900;
+		getData()->entityPosition = kPosition_5790;
+
+		getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		break;
+
+	case kActionDrawScene:
+		if (params->param3 || params->param4) {
+			getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+
+			params->param2 = 0;
+			params->param3 = 0;
+			params->param4 = 0;
+		}
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			goto label_callback_1;
+
+		case 2:
+			setup_function14();
+			break;
+
+		case 3:
+		case 4:
+			setCallback(params->param2 <= 1 ? 6 : 5);
+			setup_playSound(params->param2 <= 1 ? "MME1038" : "MME1038C");
+			break;
+
+		case 5:
+		case 6:
+			getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorTalk, kCursorNormal);
+			params->param4 = 1;
+			break;
+
+		case 7:
+		case 8:
+			params->param3 = 1;
+			params->param4 = 0;
+			break;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -453,7 +572,152 @@ IMPLEMENT_FUNCTION(14, MmeBoutarel, function14)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, MmeBoutarel, function15)
-	error("MmeBoutarel: callback function 15 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (getState()->time > kTimeEnterChalons && !params->param4) {
+			params->param4 = 1;
+
+			getData()->location = kLocationOutsideCompartment;
+			getObjects()->update(kObject51, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+
+			setCallback(1);
+			setup_enterExitCompartment("606Rd", kObjectCompartmentD);
+			break;
+		}
+
+label_callback_5:
+		if (params->param2) {
+			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+
+			params->param1 = 1;
+			params->param2 = 0;
+
+			getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
+		}
+
+		params->param5 = 0;
+		break;
+
+	case kActionKnock:
+	case kActionOpenDoor:
+		getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
+		getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
+
+		if (params->param2) {
+			if (getInventory()->hasItem(kItemPassengerList)) {
+				setCallback(10);
+				setup_playSound(rnd(2) ? "CAT1510" : getSound()->wrongDoorCath());
+			} else {
+				setCallback(11);
+				setup_playSound(getSound()->wrongDoorCath());
+			}
+			break;
+		}
+
+		++params->param3;
+
+		setCallback(savepoint.action == kActionKnock ? 7 : 6);
+		setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
+		break;
+
+	case kActionDefault:
+		getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+
+		getData()->car = kCarRedSleeping;
+		getData()->location = kLocationInsideCompartment;
+		getData()->entityPosition = kPosition_5790;
+		break;
+
+	case kActionDrawScene:
+		if (params->param1 || params->param2) {
+			getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+
+			params->param1 = 0;
+			params->param3 = 0; // BUG" why param3 when it's always param2?
+		}
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+
+			setCallback(2);
+			setup_updateEntity(kCarRedSleeping, kPosition_2000);
+			break;
+
+		case 2:
+			setCallback(3);
+			setup_function8("MME1101");
+			break;
+
+		case 3:
+			setCallback(4);
+			setup_updateEntity(kCarRedSleeping, kPosition_5790);
+			break;
+
+		case 4:
+			setCallback(5);
+			setup_enterExitCompartment2("606Td", kObjectCompartmentD);
+			break;
+
+		case 5:
+			getData()->location = kLocationInsideCompartment;
+			getData()->entityPosition = kPosition_5790;
+
+			getEntities()->clearSequences(kEntityMmeBoutarel);
+			getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			goto label_callback_5;
+
+		case 6:
+		case 7:
+			if (params->param3 <= 1) {
+				setCallback(9);
+				setup_playSound("MME1038");
+			} else {
+				setCallback(8);
+				setup_playSound("MME1038C");
+			}
+			break;
+
+		case 8:
+		case 9:
+			getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorTalk, kCursorNormal);
+			params->param2 = 1;
+			break;
+
+		case 10:
+		case 11:
+			params->param1 = 1;
+			params->param2 = 0;
+			break;
+
+		case 12:
+			getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			break;
+		}
+		break;
+
+	case kAction223068211:
+		getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
+		getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
+
+		setCallback(12);
+		setup_playSound("MME1151B");
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
