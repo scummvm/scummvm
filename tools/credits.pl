@@ -684,7 +684,7 @@ begin_credits("Credits");
 		  add_person("Marcus Comstedt", "", "");
 	  end_section();
 
-	  begin_section("GPH Devices (GP2X, GP2XWiz & Caanoo)");
+	  begin_section("GPH Devices (GP2X, GP2XWiz &amp; Caanoo)");
 		  add_person("John Willis", "DJWillis", "");
 	  end_section();
 
