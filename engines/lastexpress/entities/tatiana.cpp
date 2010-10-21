@@ -1274,7 +1274,127 @@ IMPLEMENT_FUNCTION(36, Tatiana, function36)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(37, Tatiana, function37)
-	error("Tatiana: callback function 37 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (getInventory()->get(kItemFirebird)->location != kObjectLocation1 && getInventory()->get(kItemFirebird)->location != kObjectLocation2) {
+			if(!params->param3)
+				params->param3 = getState()->time + 900;
+
+			if (params->param4 != kTimeInvalid && params->param3 < getState()->time) {
+				UPDATE_PARAM_PROC_TIME(kTime2227500, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param4, 450)
+					getProgress().field_5C = 1;
+					if (getEntities()->isInsideCompartment(kEntityAnna, kCarRedSleeping, kPosition_4070)) {
+						setup_function38();
+						break;
+					}
+				UPDATE_PARAM_PROC_END
+			}
+		}
+
+		if (params->param1) {
+			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+
+			getObjects()->update(kObjectCompartmentB, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject49, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorNormal);
+
+			params->param1 = 0;
+			params->param2 = 1;
+		}
+
+		params->param5 = 0;
+		break;
+
+	case kActionKnock:
+	case kActionOpenDoor:
+		if (params->param1) {
+			getObjects()->update(kObjectCompartmentB, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject49, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorNormal);
+
+			if (savepoint.param.intValue == 49) {
+				setCallback(4);
+				setup_playSound(getSound()->justAMinuteCath());
+				break;
+			}
+
+			if (getInventory()->hasItem(kItemPassengerList)) {
+				setCallback(5);
+				setup_playSound(rnd(2) ? "CAT1512" : getSound()->wrongDoorCath());
+				break;
+			}
+
+			setCallback(6);
+			setup_playSound(getSound()->wrongDoorCath());
+			break;
+		}
+
+		if (savepoint.param.intValue == 49) {
+
+			if (getInventory()->hasItem(kItemFirebird)) {
+				getAction()->playAnimation(kEventTatianaCompartmentStealEgg);
+				getInventory()->removeItem(kItemFirebird);
+				getInventory()->get(kItemFirebird)->location = kObjectLocation2;
+			} else {
+				getAction()->playAnimation(kEventTatianaCompartment);
+			}
+
+			getScenes()->loadSceneFromObject(kObjectCompartmentB);
+			break;
+		}
+
+		getObjects()->update(kObjectCompartmentB, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorNormal);
+		getObjects()->update(kObject49, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorNormal);
+
+		setCallback(savepoint.action == kActionKnock ? 1 : 2);
+		setup_playSound(savepoint.action == kActionKnock ?  "LIB012" : "LIB013");
+		break;
+
+	case kActionDefault:
+		getObjects()->update(kObjectCompartmentB, kEntityTatiana, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject49, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorHand);
+
+		getData()->location = kLocationInsideCompartment;
+		getEntities()->clearSequences(kEntityTatiana);
+		break;
+
+	case kActionDrawScene:
+		if (params->param1 || params->param2) {
+			getObjects()->update(kObjectCompartmentB, kEntityTatiana, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject49, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorHand);
+
+			params->param1 = 0;
+			params->param2 = 0;
+		}
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+		case 2:
+			setCallback(3);
+			setup_playSound(rnd(2) ? "TAT1133A" : "TAT1133B");
+			break;
+
+		case 3:
+			getObjects()->update(kObjectCompartmentB, kEntityTatiana, kObjectLocation1, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObject49, kEntityTatiana, kObjectLocation1, kCursorTalk, kCursorNormal);
+			params->param1 = 1;
+			break;
+
+		case 4:
+		case 5:
+		case 6:
+			params->param1 = 0;
+			params->param2 = 1;
+			break;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1632,7 +1752,136 @@ IMPLEMENT_FUNCTION(45, Tatiana, function45)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(46, Tatiana, function46)
-	error("Tatiana: callback function 46 not implemented!");
+	// Expose parameters as IIIIIS and ignore the default exposed parameters
+	EntityData::EntityParametersI5S  *parameters  = (EntityData::EntityParametersI5S*)_data->getCurrentParameters();
+
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (!parameters->param2 && !parameters->param3) {
+			parameters->param1 -= getState()->timeDelta;
+
+			if (parameters->param1 < getState()->timeDelta) {
+				getSound()->playSound(kEntityTatiana, (char *)&parameters->seq);
+
+				if (getEntities()->isDistanceBetweenEntities(kEntityTatiana, kEntityPlayer, 2000)) {
+					if (parameters->param4 == 4)
+						getProgress().field_8C = 1;
+					else if (parameters->param4 == 7)
+						getProgress().field_88 = 1;
+				}
+
+				parameters->param2 = 1;
+			}
+		}
+
+		if (CURRENT_PARAMS(1, 1) == kTimeInvalid || getState()->time <= kTime2394000)
+			break;
+
+		if (getState()->time >= kTime2398500) {
+			CURRENT_PARAMS(1, 1) = kTimeInvalid;
+		} else {
+			if (getEntities()->isInGreenCarEntrance(kEntityPlayer) || !CURRENT_PARAMS(1, 1))
+				CURRENT_PARAMS(1, 1) = getState()->time;
+
+			if (CURRENT_PARAMS(1, 1) >= getState()->time)
+				break;
+
+			CURRENT_PARAMS(1, 1) = kTimeInvalid;
+		}
+
+		if (getEntities()->isInGreenCarEntrance(kEntityPlayer)) {
+			getSound()->excuseMe(kEntityTatiana);
+
+			if (getEntities()->isPlayerPosition(kCarGreenSleeping, 62))
+				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 72);
+		}
+
+		getSavePoints()->push(kEntityTatiana, kEntityAlexei, kAction123536024);
+
+		setup_function47();
+		break;
+
+	case kActionEndSound:
+		parameters->param2 = 0;
+		++parameters->param4;
+
+		switch(parameters->param4) {
+		default:
+			parameters->param1 = 162000;
+			break;
+
+		case 1:
+			parameters->param1 = 900;
+			strcpy((char *)&parameters->seq, "Tat4165F");
+			break;
+
+		case 2:
+			parameters->param1 = 900;
+			strcpy((char *)&parameters->seq, "Tat4165B");
+			break;
+
+		case 3:
+			parameters->param1 = 1800;
+			strcpy((char *)&parameters->seq, "Tat4165G");
+			break;
+
+		case 4:
+			parameters->param1 = 900;
+			strcpy((char *)&parameters->seq, "Tat4165H");
+			break;
+
+		case 5:
+			parameters->param1 = 2700;
+			strcpy((char *)&parameters->seq, "Tat4165C");
+			break;
+
+		case 6:
+			parameters->param1 = 900;
+			strcpy((char *)&parameters->seq, "Tat4165D");
+			break;
+
+		case 7:
+			parameters->param1 = 900;
+			strcpy((char *)&parameters->seq, "Tat4165E");
+			break;
+		}
+		break;
+
+	case kActionDefault:
+		getEntities()->drawSequenceLeft(kEntityTatiana, "306E");
+		parameters->param1 = 450;
+		strcpy((char *)&parameters->seq, "Tat4165A");
+		break;
+
+	case kActionDrawScene:
+		if (getEntities()->isInGreenCarEntrance(kEntityPlayer)) {
+			parameters->param3 = 1;
+
+			if (parameters->param2) {
+				getSound()->removeFromQueue(kEntityTatiana);
+				getSavePoints()->call(kEntityTatiana, kEntityTatiana, kActionEndSound);
+			}
+		} else {
+			parameters->param3 = 0;
+			parameters->param5 = 0;
+		}
+
+		if (getEntities()->isPlayerPosition(kCarGreenSleeping, 62) && !parameters->param5) {
+			setCallback(1);
+			setup_draw("306D");
+		}
+		break;
+
+	case kActionCallback:
+		if (getCallback() == 1) {
+			getEntities()->drawSequenceLeft(kEntityTatiana, "306E");
+			parameters->param5 = 1;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1680,7 +1929,125 @@ IMPLEMENT_FUNCTION(47, Tatiana, function47)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(48, Tatiana, function48)
-	error("Tatiana: callback function 48 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (!params->param1) {
+			if (!getEvent(kEventTatianaTylerCompartment) && getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_8200)) {
+				params->param1 = 1;
+				getProgress().field_E4 = 1;
+				getObjects()->update(kObjectCompartment1, kEntityTatiana, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorHand);
+			}
+
+			if (!params->param1)
+				goto label_end;
+		}
+
+		if (!getEntities()->checkFields19(kEntityPlayer, kCarGreenSleeping, kPosition_7850)) {
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
+			params->param1 = 0;
+		}
+
+		if (!params->param1 || getSound()->isBuffered(kEntityTatiana))
+			goto label_end;
+
+		UPDATE_PARAM_GOTO(params->param2, getState()->timeTicks, 5 * (3 * rnd(5) + 30), label_end);
+
+		getSound()->playSound(kEntityTatiana, "LIB012", SoundManager::kFlagDefault);
+		params->param2 = 0;
+
+label_end:
+		if (getEvent(kEventTatianaTylerCompartment) || getState()->time > kTime2475000) {
+			if (params->param1)
+				getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
+
+			getProgress().field_E4 = 0;
+			getEntities()->exitCompartment(kEntityTatiana, kObjectCompartment2, true);
+
+			setCallback(3);
+			setup_updateEntity(kCarRedSleeping, kPosition_7500);
+		}
+		break;
+
+	case kActionOpenDoor:
+		params->param1 = 0;
+
+		getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+
+		setCallback(5);
+		setup_savegame(kSavegameTypeEvent, kEventTatianaTylerCompartment);
+		break;
+
+	case kActionDefault:
+		setCallback(1);
+		setup_enterExitCompartment("673Bb", kObjectCompartmentB);
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			getObjects()->update(kObjectCompartmentB, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getData()->location = kLocationOutsideCompartment;
+
+			setCallback(2);
+			setup_updateEntity(kCarGreenSleeping, kPosition_7500);
+			break;
+
+		case 2:
+			getEntities()->drawSequenceLeft(kEntityTatiana, "673Fb");
+			getEntities()->enterCompartment(kEntityTatiana, kObjectCompartment2, true);
+			break;
+
+		case 3:
+			setCallback(4);
+			setup_enterExitCompartment2("673Db", kObjectCompartmentB);
+			break;
+
+		case 4:
+			getData()->location = kLocationInsideCompartment;
+			getEntities()->clearSequences(kEntityTatiana);
+
+			setup_function49();
+			break;
+
+		case 5:
+			getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+			getAction()->playAnimation(kEventTatianaTylerCompartment);
+			getSound()->playSound(kEntityPlayer, "LIB015");
+			getScenes()->loadScene(kScene41);
+			break;
+
+		case 6:
+			setCallback(7);
+			setup_updateEntity(kCarGreenSleeping, kPosition_7500);
+			break;
+
+		case 7:
+			getEntities()->drawSequenceLeft(kEntityTatiana, "673Fb");
+			getEntities()->enterCompartment(kEntityTatiana, kObjectCompartment2, true);
+			break;
+		}
+		break;
+
+	case kAction238790488:
+		params->param1 = 0;
+
+		getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
+		getEntities()->exitCompartment(kEntityTatiana, kObjectCompartment2, true);
+		getEntities()->clearSequences(kEntityTatiana);
+
+		getData()->car = kCarGreenSleeping;
+		getData()->entityPosition = kPosition_9460;
+
+		setCallback(6);
+		setup_updateFromTime(1800);
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
