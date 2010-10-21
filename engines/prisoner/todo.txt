@@ -11,13 +11,16 @@ Falkland Islands:
 
 Todo:
 -------
-- Sound effects
 - Digital music
 - Midi music
-- Mux player needs bugfixing
 - Menu system
 - Finish main loop (replace current placeholder loop)
-- Load from Gui
 - Return to Gui
 - Switch savegame system to Serializer
 - Dirty rectangles
+
+Done:
+-------
+- Sound effects
+- Mux player needs bugfixing
+- Load from Gui
