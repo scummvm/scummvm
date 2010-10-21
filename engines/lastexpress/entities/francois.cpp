@@ -280,7 +280,7 @@ IMPLEMENT_FUNCTION_I(11, Francois, function11, TimeValue)
 	case kActionNone:
 		if (!getSound()->isBuffered(kEntityFrancois)) {
 
-			UPDATE_PARAM_PROC(CURRENT_PARAMS(1, 1), getState()->timeTicks, params->param6)
+			UPDATE_PARAM_PROC(CURRENT_PARAM(1, 1), getState()->timeTicks, params->param6)
 				switch (rnd(7)) {
 				default:
 					break;
@@ -312,7 +312,7 @@ IMPLEMENT_FUNCTION_I(11, Francois, function11, TimeValue)
 				}
 
 				params->param6 = 15 * rnd(7);
-				CURRENT_PARAMS(1, 1) = 0;
+				CURRENT_PARAM(1, 1) = 0;
 			UPDATE_PARAM_PROC_END
 		}
 
@@ -1105,14 +1105,14 @@ label_callback_7:
 			TIME_CHECK_CALLBACK(kTime2182500, params->param8, 8, setup_function12);
 
 label_callback_8:
-			TIME_CHECK_CALLBACK(kTime2241000, CURRENT_PARAMS(1, 1), 9, setup_function12);
+			TIME_CHECK_CALLBACK(kTime2241000, CURRENT_PARAM(1, 1), 9, setup_function12);
 
 label_callback_9:
 			if (!getInventory()->hasItem(kItemWhistle) && getInventory()->get(kItemWhistle)->location != kObjectLocation3) {
-				TIME_CHECK_CALLBACK_1(kTime2011500, CURRENT_PARAMS(1, 2), 10, setup_function11, kTime2016000);
+				TIME_CHECK_CALLBACK_1(kTime2011500, CURRENT_PARAM(1, 2), 10, setup_function11, kTime2016000);
 
 label_callback_10:
-				TIME_CHECK_CALLBACK_1(kTime2115000, CURRENT_PARAMS(1, 3), 11, setup_function11, kTime2119500);
+				TIME_CHECK_CALLBACK_1(kTime2115000, CURRENT_PARAM(1, 3), 11, setup_function11, kTime2119500);
 			}
 
 label_callback_11:
@@ -1130,13 +1130,13 @@ label_callback_11:
 				}
 
 label_callback_12:
-				TIME_CHECK_CALLBACK_3(kTime2040300, CURRENT_PARAMS(1, 5), 13, setup_function14, kObjectCompartmentE, kPosition_4840, "e");
+				TIME_CHECK_CALLBACK_3(kTime2040300, CURRENT_PARAM(1, 5), 13, setup_function14, kObjectCompartmentE, kPosition_4840, "e");
 
 label_callback_13:
-				TIME_CHECK_CALLBACK_3(kTime2040300, CURRENT_PARAMS(1, 6), 14, setup_function14, kObjectCompartmentF, kPosition_4070, "f");
+				TIME_CHECK_CALLBACK_3(kTime2040300, CURRENT_PARAM(1, 6), 14, setup_function14, kObjectCompartmentF, kPosition_4070, "f");
 
 label_callback_14:
-				TIME_CHECK_CALLBACK_3(kTime2040300, CURRENT_PARAMS(1, 7), 15, setup_function14, kObjectCompartmentB, kPosition_7500, "b");
+				TIME_CHECK_CALLBACK_3(kTime2040300, CURRENT_PARAM(1, 7), 15, setup_function14, kObjectCompartmentB, kPosition_7500, "b");
 			}
 		}
 		break;

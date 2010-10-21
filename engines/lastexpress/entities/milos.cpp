@@ -191,9 +191,9 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 			break;
 
 		if (params->param6) {
-			UPDATE_PARAM_PROC(CURRENT_PARAMS(1, 1), getState()->time, 4500)
+			UPDATE_PARAM_PROC(CURRENT_PARAM(1, 1), getState()->time, 4500)
 				params->param6 = 0;
-				CURRENT_PARAMS(1, 1) = 0;
+				CURRENT_PARAM(1, 1) = 0;
 			UPDATE_PARAM_PROC_END
 		}
 
@@ -212,16 +212,16 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 		if (!params->param4)
 			params->param4 = getState()->time + 18000;
 
-		if (CURRENT_PARAMS(1, 2) != kTimeInvalid) {
+		if (CURRENT_PARAM(1, 2) != kTimeInvalid) {
 			if (params->param4 >= getState()->time) {
-				if (!getEntities()->isDistanceBetweenEntities(kEntityPlayer, kEntityMilos, 2000) || !CURRENT_PARAMS(1, 2))
-					CURRENT_PARAMS(1, 2) = getState()->time + 150;
+				if (!getEntities()->isDistanceBetweenEntities(kEntityPlayer, kEntityMilos, 2000) || !CURRENT_PARAM(1, 2))
+					CURRENT_PARAM(1, 2) = getState()->time + 150;
 
-				if (CURRENT_PARAMS(1, 2) >= getState()->time)
+				if (CURRENT_PARAM(1, 2) >= getState()->time)
 					break;
 			}
 
-			CURRENT_PARAMS(1, 2) = kTimeInvalid;
+			CURRENT_PARAM(1, 2) = kTimeInvalid;
 
 			if (getEntities()->isDistanceBetweenEntities(kEntityPlayer, kEntityMilos, 2000))
 				getProgress().field_98 = 1;
@@ -430,13 +430,13 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 		if (params->param1) {
 
 			// TODO replace with UPDATE_PARAM_PROC (without the kTimeInvalid part)
-			if (!CURRENT_PARAMS(1, 1))
-				CURRENT_PARAMS(1, 1) = getState()->timeTicks + 45;
+			if (!CURRENT_PARAM(1, 1))
+				CURRENT_PARAM(1, 1) = getState()->timeTicks + 45;
 
-			if (CURRENT_PARAMS(1, 1) < getState()->timeTicks) {
+			if (CURRENT_PARAM(1, 1) < getState()->timeTicks) {
 
 				if (getObjects()->get(kObjectCompartment1).location == kObjectLocation1) {
-					UPDATE_PARAM(CURRENT_PARAMS(1, 2), getState()->timeTicks, 75);
+					UPDATE_PARAM(CURRENT_PARAM(1, 2), getState()->timeTicks, 75);
 
 					getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
 
@@ -444,7 +444,7 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 					switch (params->param5) {
 					default:
 						getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
-						CURRENT_PARAMS(1, 2) = 0;
+						CURRENT_PARAM(1, 2) = 0;
 						break;
 
 					case 1:
@@ -468,7 +468,7 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 						if (params->param7 < 3) {
 							params->param5 = 1;
 							getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
-							CURRENT_PARAMS(1, 2) = 0;
+							CURRENT_PARAM(1, 2) = 0;
 							break;
 						}
 
@@ -495,10 +495,10 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 		}
 
 		// TODO replace with UPDATE_PARAM_PROC (without the kTimeInvalid part)
-		if (!CURRENT_PARAMS(1, 3))
-			CURRENT_PARAMS(1, 3) = getState()->timeTicks + 75;
+		if (!CURRENT_PARAM(1, 3))
+			CURRENT_PARAM(1, 3) = getState()->timeTicks + 75;
 
-		if (CURRENT_PARAMS(1, 3) < getState()->timeTicks) {
+		if (CURRENT_PARAM(1, 3) < getState()->timeTicks) {
 
 			if (!params->param4) {
 				setCallback(12);
@@ -507,7 +507,7 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 			}
 
 label_callback_12:
-			UPDATE_PARAM(CURRENT_PARAMS(1, 4), getState()->timeTicks, 75);
+			UPDATE_PARAM(CURRENT_PARAM(1, 4), getState()->timeTicks, 75);
 
 			getEntities()->exitCompartment(kEntityMilos, kObjectCompartment1, true);
 
@@ -645,7 +645,7 @@ label_callback_12:
 		case 9:
 		case 11:
 			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
-			CURRENT_PARAMS(1, 2) = 0;
+			CURRENT_PARAM(1, 2) = 0;
 			break;
 
 		case 8:

@@ -528,8 +528,8 @@ IMPLEMENT_FUNCTION(20, Kronos, function20)
 			params->param8 = getState()->time + 13500;
 		}
 
-		if (CURRENT_PARAMS(1, 2) != kTimeInvalid && params->param7 < getState()->time) {
-			UPDATE_PARAM_PROC_TIME(params->param8, !params->param1, CURRENT_PARAMS(1, 2), 450)
+		if (CURRENT_PARAM(1, 2) != kTimeInvalid && params->param7 < getState()->time) {
+			UPDATE_PARAM_PROC_TIME(params->param8, !params->param1, CURRENT_PARAM(1, 2), 450)
 				getSavePoints()->push(kEntityKronos, kEntityKahina, kAction237555748);
 			UPDATE_PARAM_PROC_END
 		}
@@ -574,7 +574,7 @@ IMPLEMENT_FUNCTION(20, Kronos, function20)
 			params->param2 = params->param3;
 		}
 
-		if (params->param5 > 23400 || CURRENT_PARAMS(1, 1)) {
+		if (params->param5 > 23400 || CURRENT_PARAM(1, 1)) {
 			if (getEntities()->isInKronosSanctum(kEntityPlayer)) {
 				setCallback(1);
 				setup_savegame(kSavegameTypeEvent, kEventKahinaWrongDoor);
@@ -585,7 +585,7 @@ IMPLEMENT_FUNCTION(20, Kronos, function20)
 	case kActionEndSound:
 		getObjects()->update(kObjectCompartmentKronos, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
-		if (CURRENT_PARAMS(1, 1)) {
+		if (CURRENT_PARAM(1, 1)) {
 			getSound()->playSound(kEntityPlayer, "BUMP");
 			getScenes()->loadSceneFromPosition(kCarGreenSleeping, 26);
 
@@ -602,7 +602,7 @@ IMPLEMENT_FUNCTION(20, Kronos, function20)
 		if (getEntities()->isInsideTrainCar(kEntityPlayer, kCarKronos)) {
 			getSound()->playSound(kEntityKronos, "Kro3001");
 			getObjects()->update(kObjectCompartmentKronos, kEntityPlayer, kObjectLocation3, kCursorNormal, kCursorNormal);
-			CURRENT_PARAMS(1, 1) = 1;
+			CURRENT_PARAM(1, 1) = 1;
 			break;
 		}
 

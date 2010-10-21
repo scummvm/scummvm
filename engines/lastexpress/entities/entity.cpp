@@ -345,22 +345,22 @@ void Entity::callSavepoint(const SavePoint &savepoint, bool handleExcuseMe) {
 		break;
 
 	case kActionExitCompartment:
-		if (!CURRENT_PARAMS(1, 1))
+		if (!CURRENT_PARAM(1, 1))
 			getSavePoints()->call(_entityIndex, (EntityIndex)params->param4, (ActionIndex)params->param5, (char *)&params->seq2);
 		CALLBACK_ACTION();
 		break;
 
 	case kActionExcuseMeCath:
-		if (handleExcuseMe && !CURRENT_PARAMS(1, 2)) {
+		if (handleExcuseMe && !CURRENT_PARAM(1, 2)) {
 			getSound()->excuseMe(_entityIndex);
-			CURRENT_PARAMS(1, 2) = 1;
+			CURRENT_PARAM(1, 2) = 1;
 		}
 		break;
 
 	case kAction10:
-		if (!CURRENT_PARAMS(1, 1)) {
+		if (!CURRENT_PARAM(1, 1)) {
 			getSavePoints()->call(_entityIndex, (EntityIndex)params->param4, (ActionIndex)params->param5, (char *)&params->seq2);
-			CURRENT_PARAMS(1, 1) = 1;
+			CURRENT_PARAM(1, 1) = 1;
 		}
 		break;
 

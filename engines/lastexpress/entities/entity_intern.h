@@ -313,7 +313,7 @@ void class::setup_##name() { \
 //////////////////////////////////////////////////////////////////////////
 // Parameters macros (for default IIII parameters)
 //////////////////////////////////////////////////////////////////////////
-#define CURRENT_PARAMS(index, id) \
+#define CURRENT_PARAM(index, id) \
 	((EntityData::EntityParametersIIII*)_data->getCurrentParameters(index))->param##id
 
 #define ENTITY_PARAM(index, id) \

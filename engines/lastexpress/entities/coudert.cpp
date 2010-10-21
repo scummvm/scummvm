@@ -917,11 +917,11 @@ IMPLEMENT_FUNCTION_II(20, Coudert, function20, ObjectIndex, ObjectIndex)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_PROC(CURRENT_PARAMS(1, 3), getState()->time, 300)
+		UPDATE_PARAM_PROC(CURRENT_PARAM(1, 3), getState()->time, 300)
 			getSound()->playSound(kEntityPlayer, "ZFX1004", getSound()->getSoundFlag(kEntityCoudert));
 		UPDATE_PARAM_PROC_END
 
-		UPDATE_PARAM(CURRENT_PARAMS(1, 4), getState()->time, 900);
+		UPDATE_PARAM(CURRENT_PARAM(1, 4), getState()->time, 900);
 
 		getObjects()->updateLocation2((ObjectIndex)params->param1, kObjectLocation1);
 
@@ -929,7 +929,7 @@ IMPLEMENT_FUNCTION_II(20, Coudert, function20, ObjectIndex, ObjectIndex)
 			getObjects()->update((ObjectIndex)params->param1, (EntityIndex)params->param3, (ObjectLocation)params->param4, (CursorStyle)params->param5, (CursorStyle)params->param6);
 
 		if (params->param2)
-			getObjects()->update((ObjectIndex)params->param2, (EntityIndex)params->param7, (ObjectLocation)params->param8, (CursorStyle)CURRENT_PARAMS(1, 1), (CursorStyle)CURRENT_PARAMS(1, 2));
+			getObjects()->update((ObjectIndex)params->param2, (EntityIndex)params->param7, (ObjectLocation)params->param8, (CursorStyle)CURRENT_PARAM(1, 1), (CursorStyle)CURRENT_PARAM(1, 2));
 
 		CALLBACK_ACTION();
 		break;
@@ -953,8 +953,8 @@ IMPLEMENT_FUNCTION_II(20, Coudert, function20, ObjectIndex, ObjectIndex)
 		if (params->param2) {
 			params->param7 = getObjects()->get((ObjectIndex)params->param2).entity;
 			params->param8 = getObjects()->get((ObjectIndex)params->param2).location;
-			CURRENT_PARAMS(1, 1) = getObjects()->get((ObjectIndex)params->param2).cursor;
-			CURRENT_PARAMS(1, 2) = getObjects()->get((ObjectIndex)params->param2).cursor2;
+			CURRENT_PARAM(1, 1) = getObjects()->get((ObjectIndex)params->param2).cursor;
+			CURRENT_PARAM(1, 2) = getObjects()->get((ObjectIndex)params->param2).cursor2;
 
 			getObjects()->update((ObjectIndex)params->param2, kEntityCoudert, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		}
@@ -2849,7 +2849,7 @@ label_callback_19:
 		if (ENTITY_PARAM(0, 2)) {
 			TIME_CHECK_OBJECT(kTime2025000, params->param7, kObject111, kObjectLocation7);
 			TIME_CHECK_OBJECT(kTime2133000, params->param8, kObject111, kObjectLocation8);
-			TIME_CHECK_OBJECT(kTime2173500, CURRENT_PARAMS(1, 1), kObject111, kObjectLocation9);
+			TIME_CHECK_OBJECT(kTime2173500, CURRENT_PARAM(1, 1), kObject111, kObjectLocation9);
 		}
 		break;
 

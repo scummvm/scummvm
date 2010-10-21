@@ -1777,19 +1777,19 @@ IMPLEMENT_FUNCTION(46, Tatiana, function46)
 			}
 		}
 
-		if (CURRENT_PARAMS(1, 1) == kTimeInvalid || getState()->time <= kTime2394000)
+		if (CURRENT_PARAM(1, 1) == kTimeInvalid || getState()->time <= kTime2394000)
 			break;
 
 		if (getState()->time >= kTime2398500) {
-			CURRENT_PARAMS(1, 1) = kTimeInvalid;
+			CURRENT_PARAM(1, 1) = kTimeInvalid;
 		} else {
-			if (getEntities()->isInGreenCarEntrance(kEntityPlayer) || !CURRENT_PARAMS(1, 1))
-				CURRENT_PARAMS(1, 1) = getState()->time;
+			if (getEntities()->isInGreenCarEntrance(kEntityPlayer) || !CURRENT_PARAM(1, 1))
+				CURRENT_PARAM(1, 1) = getState()->time;
 
-			if (CURRENT_PARAMS(1, 1) >= getState()->time)
+			if (CURRENT_PARAM(1, 1) >= getState()->time)
 				break;
 
-			CURRENT_PARAMS(1, 1) = kTimeInvalid;
+			CURRENT_PARAM(1, 1) = kTimeInvalid;
 		}
 
 		if (getEntities()->isInGreenCarEntrance(kEntityPlayer)) {

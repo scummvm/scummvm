@@ -430,7 +430,7 @@ label_callback_1:
 		TIME_CHECK(kTime1094400, params->param8, setup_function14);
 
 		if (params->param4) {
-			UPDATE_PARAM(CURRENT_PARAMS(1, 1), getState()->timeTicks, 75);
+			UPDATE_PARAM(CURRENT_PARAM(1, 1), getState()->timeTicks, 75);
 
 			params->param3 = 1;
 			params->param4 = 0;
@@ -439,7 +439,7 @@ label_callback_1:
 			getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
 		}
 
-		CURRENT_PARAMS(1, 1) = 0;
+		CURRENT_PARAM(1, 1) = 0;
 		break;
 
 	case kActionKnock:

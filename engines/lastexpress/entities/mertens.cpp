@@ -1079,11 +1079,11 @@ IMPLEMENT_FUNCTION_II(21, Mertens, function21, ObjectIndex, ObjectIndex)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_PROC(CURRENT_PARAMS(1, 4), getState()->time, 300)
+		UPDATE_PARAM_PROC(CURRENT_PARAM(1, 4), getState()->time, 300)
 			getSound()->playSound(kEntityPlayer, "ZFX1004", getSound()->getSoundFlag(kEntityMertens));
 		UPDATE_PARAM_PROC_END
 
-		UPDATE_PARAM(CURRENT_PARAMS(1, 5), getState()->time, 900);
+		UPDATE_PARAM(CURRENT_PARAM(1, 5), getState()->time, 900);
 
 		// Update objects
 		getObjects()->updateLocation2((ObjectIndex)params->param1, kObjectLocation1);
@@ -1091,7 +1091,7 @@ IMPLEMENT_FUNCTION_II(21, Mertens, function21, ObjectIndex, ObjectIndex)
 			getObjects()->update((ObjectIndex)params->param1, (EntityIndex)params->param4, (ObjectLocation)params->param5, (CursorStyle)params->param6, (CursorStyle)params->param7);
 
 		if (params->param2)
-			getObjects()->update((ObjectIndex)params->param2, (EntityIndex)params->param8, (ObjectLocation)CURRENT_PARAMS(1, 1), (CursorStyle)CURRENT_PARAMS(1, 2), (CursorStyle)CURRENT_PARAMS(1, 3));
+			getObjects()->update((ObjectIndex)params->param2, (EntityIndex)params->param8, (ObjectLocation)CURRENT_PARAM(1, 1), (CursorStyle)CURRENT_PARAM(1, 2), (CursorStyle)CURRENT_PARAM(1, 3));
 
 		CALLBACK_ACTION();
 		break;
@@ -1115,9 +1115,9 @@ IMPLEMENT_FUNCTION_II(21, Mertens, function21, ObjectIndex, ObjectIndex)
 
 		if (params->param2) {
 			params->param8       = getObjects()->get((ObjectIndex)params->param2).entity;
-			CURRENT_PARAMS(1, 1) = getObjects()->get((ObjectIndex)params->param2).location;
-			CURRENT_PARAMS(1, 2) = getObjects()->get((ObjectIndex)params->param2).cursor;
-			CURRENT_PARAMS(1, 3) = getObjects()->get((ObjectIndex)params->param2).cursor2;
+			CURRENT_PARAM(1, 1) = getObjects()->get((ObjectIndex)params->param2).location;
+			CURRENT_PARAM(1, 2) = getObjects()->get((ObjectIndex)params->param2).cursor;
+			CURRENT_PARAM(1, 3) = getObjects()->get((ObjectIndex)params->param2).cursor2;
 
 			getObjects()->update((ObjectIndex)params->param2, kEntityMertens, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		}

@@ -494,7 +494,7 @@ IMPLEMENT_FUNCTION_ISS(16, Verges, function16, EntityIndex)
 		break;
 
 	case kActionNone:
-		if (CURRENT_PARAMS(1, 1) && params->param8) {
+		if (CURRENT_PARAM(1, 1) && params->param8) {
 			getSavePoints()->push(kEntityVerges, (EntityIndex)params->param1, kAction125499160);
 
 			if (!getEntities()->isPlayerPosition(kCarGreenSleeping, 2) && !getEntities()->isPlayerPosition(kCarRedSleeping, 2))
@@ -505,9 +505,9 @@ IMPLEMENT_FUNCTION_ISS(16, Verges, function16, EntityIndex)
 		break;
 
 	case kActionEndSound:
-		CURRENT_PARAMS(1, 1)++;
+		CURRENT_PARAM(1, 1)++;
 
-		if (CURRENT_PARAMS(1, 1) == 1)
+		if (CURRENT_PARAM(1, 1) == 1)
 			getSound()->playSound(kEntityVerges, (char *)&params->seq2);
 		break;
 
@@ -923,16 +923,16 @@ label_callback4:
 		}
 
 label_callback8:
-		TIME_CHECK_CALLBACK_1(kTime1107000, CURRENT_PARAMS(1, 1), 9, setup_function9, "TRA1001A");
+		TIME_CHECK_CALLBACK_1(kTime1107000, CURRENT_PARAM(1, 1), 9, setup_function9, "TRA1001A");
 
 label_callback9:
-		TIME_CHECK_CALLBACK_1(kTime1134000, CURRENT_PARAMS(1, 2), 10, setup_function9, "TRA1002");
+		TIME_CHECK_CALLBACK_1(kTime1134000, CURRENT_PARAM(1, 2), 10, setup_function9, "TRA1002");
 
 label_callback10:
-		TIME_CHECK_CALLBACK_1(kTime1165500, CURRENT_PARAMS(1, 3), 11, setup_function9, "TRA1003");
+		TIME_CHECK_CALLBACK_1(kTime1165500, CURRENT_PARAM(1, 3), 11, setup_function9, "TRA1003");
 
 label_callback11:
-		TIME_CHECK_CALLBACK_1(kTime1225800, CURRENT_PARAMS(1, 4), 12, setup_function9, "TRA1004");
+		TIME_CHECK_CALLBACK_1(kTime1225800, CURRENT_PARAM(1, 4), 12, setup_function9, "TRA1004");
 
 label_callback12:
 		if (ENTITY_PARAM(0, 5) && !params->param2) {

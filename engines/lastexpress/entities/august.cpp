@@ -541,9 +541,9 @@ label_continue:
 			break;
 
 		if (params->param6) {
-			UPDATE_PARAM_PROC(CURRENT_PARAMS(1, 1), getState()->time, 6300)
+			UPDATE_PARAM_PROC(CURRENT_PARAM(1, 1), getState()->time, 6300)
 				params->param6 = 0;
-				CURRENT_PARAMS(1, 1) = 0;
+				CURRENT_PARAM(1, 1) = 0;
 			UPDATE_PARAM_PROC_END
 		}
 
@@ -638,7 +638,7 @@ label_continue:
 			params->param3 = 0;
 			params->param5 = 0;
 			params->param6 = 0;
-			CURRENT_PARAMS(1, 1) = 0;
+			CURRENT_PARAM(1, 1) = 0;
 			break;
 
 		case 6:
@@ -794,10 +794,10 @@ IMPLEMENT_FUNCTION_I(23, August, function23, TimeValue)
 
 		if (!params->param2) {
 
-			if (!CURRENT_PARAMS(1, 3))
-				CURRENT_PARAMS(1, 3) = getState()->timeTicks + 45;
+			if (!CURRENT_PARAM(1, 3))
+				CURRENT_PARAM(1, 3) = getState()->timeTicks + 45;
 
-			if (CURRENT_PARAMS(1, 3) >= getState()->timeTicks)
+			if (CURRENT_PARAM(1, 3) >= getState()->timeTicks)
 				break;
 
 			if (!params->param5) {
@@ -807,7 +807,7 @@ IMPLEMENT_FUNCTION_I(23, August, function23, TimeValue)
 			}
 
 label_callback_8:
-			UPDATE_PARAM_PROC(CURRENT_PARAMS(1, 4), getState()->timeTicks, 75)
+			UPDATE_PARAM_PROC(CURRENT_PARAM(1, 4), getState()->timeTicks, 75)
 				getEntities()->exitCompartment(kEntityAugust, kObjectCompartment1, true);
 
 				if (getProgress().eventCorpseMovedFromFloor) {
@@ -826,8 +826,8 @@ label_callback_8:
 			UPDATE_PARAM_PROC_END
 
 label_callback_9:
-			if (params->param3 && params->param1 < getState()->time && !CURRENT_PARAMS(1, 5)) {
-				CURRENT_PARAMS(1, 5) = 1;
+			if (params->param3 && params->param1 < getState()->time && !CURRENT_PARAM(1, 5)) {
+				CURRENT_PARAM(1, 5) = 1;
 				getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
 				setCallback(12);
@@ -836,14 +836,14 @@ label_callback_9:
 			break;
 		}
 
-		if (!CURRENT_PARAMS(1, 1))
-			CURRENT_PARAMS(1, 1) = getState()->timeTicks + 45;
+		if (!CURRENT_PARAM(1, 1))
+			CURRENT_PARAM(1, 1) = getState()->timeTicks + 45;
 
-		if (CURRENT_PARAMS(1, 1) >= getState()->timeTicks)
+		if (CURRENT_PARAM(1, 1) >= getState()->timeTicks)
 			break;
 
 		if (getObjects()->get(kObjectCompartment1).location == kObjectLocation1) {
-			UPDATE_PARAM(CURRENT_PARAMS(1, 2), getState()->timeTicks, 75);
+			UPDATE_PARAM(CURRENT_PARAM(1, 2), getState()->timeTicks, 75);
 
 			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
 
@@ -876,7 +876,7 @@ label_callback_9:
 			}
 
 			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).location, params->param4 ? kCursorNormal : kCursorTalk, kCursorHand);
-			CURRENT_PARAMS(1, 2) = 0;
+			CURRENT_PARAM(1, 2) = 0;
 		} else {
 
 			if (getProgress().eventCorpseMovedFromFloor && getProgress().jacket != kJacketBlood) {
