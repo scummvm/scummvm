@@ -1952,13 +1952,13 @@ static int sortArrayOffset;
 
 static int compareByteArray(const void *a, const void *b) {
 	int va = *((const uint8 *)a + sortArrayOffset);
-	int vb = *((const uint8 *)a + sortArrayOffset);
+	int vb = *((const uint8 *)b + sortArrayOffset);
 	return va - vb;
 }
 
 static int compareByteArrayReverse(const void *a, const void *b) {
 	int va = *((const uint8 *)a + sortArrayOffset);
-	int vb = *((const uint8 *)a + sortArrayOffset);
+	int vb = *((const uint8 *)b + sortArrayOffset);
 	return vb - va;
 }
 
