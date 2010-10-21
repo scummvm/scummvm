@@ -1141,14 +1141,18 @@ bool Console::cmdRestartGame(int argc, const char **argv) {
 }
 
 bool Console::cmdClassTable(int argc, const char **argv) {
-	DebugPrintf("Available classes:\n");
+	DebugPrintf("Available classes (parse a parameter to filter the table by a specific class):\n");
+
 	for (uint i = 0; i < _engine->_gamestate->_segMan->classTableSize(); i++) {
 		Class temp = _engine->_gamestate->_segMan->_classTable[i];
 		if (temp.reg.segment) {
-			DebugPrintf(" Class 0x%x (%s) at %04x:%04x (script 0x%x)\n", i,
-					_engine->_gamestate->_segMan->getObjectName(temp.reg),
-					PRINT_REG(temp.reg),
-					temp.script);
+			const char *className = _engine->_gamestate->_segMan->getObjectName(temp.reg);
+			if (argc == 1 || (argc == 2 && !strcmp(className, argv[1]))) {
+				DebugPrintf(" Class 0x%x (%s) at %04x:%04x (script %d)\n", i,
+						className,
+						PRINT_REG(temp.reg),
+						temp.script);
+			}
 		}
 	}
 
