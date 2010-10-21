@@ -173,7 +173,7 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 	}
 
 	const int offset = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
-		(idx2 - FROM_LE_32(ah->dim2start)) - FROM_LE_32(ah->dim1start) + idx1;
+		(idx2 - FROM_LE_32(ah->dim2start)) + (idx1 - FROM_LE_32(ah->dim1start));
 
 	switch (FROM_LE_32(ah->type)) {
 	case kByteArray:

@@ -1986,6 +1986,13 @@ static int compareDwordArrayReverse(const void *a, const void *b) {
 	return vb - va;
 }
 
+
+/**
+ * Sort a row range in a two-dimensional array by the value in a given column.
+ *
+ * We sort the data in the row range [dim2start..dim2end], according to the value
+ * in column dim1start == dim1end.
+ */
 void ScummEngine_v90he::sortArray(int array, int dim2start, int dim2end, int dim1start, int dim1end, int sortOrder) {
 	debug(9, "sortArray(%d, [%d,%d,%d,%d], %d)", array, dim2start, dim2end, dim1start, dim1end, sortOrder);
 
@@ -1994,11 +2001,21 @@ void ScummEngine_v90he::sortArray(int array, int dim2start, int dim2end, int dim
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	assert(ah);
 
-	const int num = dim2end - dim2start + 1;
-	const int pitch = FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1;
-	const int offset = pitch * (dim2start - FROM_LE_32(ah->dim2start));
-	sortArrayOffset = dim1start - FROM_LE_32(ah->dim1start);
+	const int num = dim2end - dim2start + 1;	// number of rows to sort
+	const int pitch = FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1;	// length of a row = number of columns in it
+	const int offset = pitch * (dim2start - FROM_LE_32(ah->dim2start));	// memory offset to the first row to be sorted
+	sortArrayOffset = dim1start - FROM_LE_32(ah->dim1start);	// offset to the column by which we sort
 
+	// Now we just have to invoke qsort on the appropriate row range. We
+	// need to pass sortArrayOffset as an implicit parameter to the
+	// comparison functions, which makes it necessary to use a global
+	// (albeit local to this file) variable.
+	// This could be avoided by using qsort_r or a self-written portable
+	// analog (this function passes an additional, user determined
+	// parameter to the comparison function).
+	// Another idea would be to use Common::sort, but that only is
+	// suitable if you sort objects of fixed size, which must be known
+	// during compilation time; clearly this not the case here.
 	switch (FROM_LE_32(ah->type)) {
 	case kByteArray:
 	case kStringArray:
