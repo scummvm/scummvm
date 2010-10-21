@@ -450,6 +450,15 @@ void SoundManager::processEntries() {
 	processEntry(kSoundType2);
 }
 
+uint32 SoundManager::getEntryTime(EntityIndex index) {
+	SoundEntry *entry = getEntry(index);
+
+	if (!entry)
+		return 0;
+
+	return entry->time;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Misc
 //////////////////////////////////////////////////////////////////////////

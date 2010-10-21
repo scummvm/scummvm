@@ -391,7 +391,163 @@ IMPLEMENT_FUNCTION(14, Kahina, function14)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Kahina, function15)
-	error("Kahina: callback function 15 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (params->param2 != kTimeInvalid) {
+			UPDATE_PARAM_PROC_TIME(params->param1, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param2, 0)
+				setCallback(9);
+				setup_updateEntity(kCarRedSleeping, kPosition_4070);
+			UPDATE_PARAM_PROC_END
+		}
+		break;
+
+	case kActionDefault:
+		getProgress().field_14 = 19;
+
+		setCallback(1);
+		setup_updateEntity(kCarGreenSleeping, kPosition_8200);
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			if (getEntities()->hasValidFrame(kEntityKahina)) {
+				setCallback(2);
+				setup_updateEntity(kCarRedSleeping, kPosition_9460);
+				break;
+			}
+			// Fallback to next case
+
+		case 4:
+			if (getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_8200)
+			 || getEntities()->isOutsideAlexeiWindow()
+			 || getEntities()->isDistanceBetweenEntities(kEntityKahina, kEntityPlayer, 2000)) {
+				if (getProgress().field_14 == 19)
+					getProgress().field_14 = 0;
+
+				setCallback(8);
+				setup_updateEntity(kCarGreenSleeping, kPosition_9460);
+			} else {
+				setCallback(5);
+				setup_enterExitCompartment("616Aa", kObjectCompartment1);
+			}
+			break;
+
+		case 2:
+			setCallback(3);
+			setup_updateFromTime(1800);
+			break;
+
+		case 3:
+			setCallback(4);
+			setup_updateEntity(kCarGreenSleeping, kPosition_8200);
+			break;
+
+		case 5:
+			getData()->location = kLocationInsideCompartment;
+			getEntities()->clearSequences(kEntityKahina);
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectHandleBathroom, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorNormal);
+
+			setCallback(6);
+			setup_updateFromTime(900);
+			break;
+
+		case 6:
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectHandleBathroom, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+
+			setCallback(7);
+			setup_enterExitCompartment("616Ba", kObjectCompartment1);
+			break;
+
+		case 7:
+			getData()->location = kLocationOutsideCompartment;
+
+			if (getProgress().field_14 == 19)
+				getProgress().field_14 = 0;
+
+			setCallback(8);
+			setup_updateEntity(kCarGreenSleeping, kPosition_9460);
+			break;
+
+		case 8:
+			getEntities()->clearSequences(kEntityKahina);
+			params->param1 = getState()->time + 4500;
+			break;
+
+		case 9:
+			setCallback(10);
+			setup_function14();
+			break;
+
+		case 10:
+			setCallback(11);
+			setup_updateEntity(kCarRedSleeping, kPosition_6470);
+			break;
+
+		case 11:
+			if (getEntities()->checkFields19(kEntityPlayer, kCarRedSleeping, kPosition_6130)) {
+				setCallback(15);
+				setup_updateEntity(kCarRedSleeping, kPosition_9460);
+			} else {
+				setCallback(12);
+				setup_enterExitCompartment("616Ac", kObjectCompartmentC);
+			}
+			break;
+
+		case 12:
+			getData()->location = kLocationInsideCompartment;
+			getEntities()->clearSequences(kEntityKahina);
+
+			getObjects()->update(kObjectCompartmentC, kEntityPlayer, getObjects()->get(kObjectCompartmentC).location, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject50, kEntityPlayer, getObjects()->get(kObject50).location, kCursorNormal, kCursorNormal);
+
+			setCallback(13);
+			setup_updateFromTime(900);
+			break;
+
+		case 13:
+			getObjects()->update(kObjectCompartmentC, kEntityPlayer, getObjects()->get(kObjectCompartmentC).location, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject50, kEntityPlayer, getObjects()->get(kObject50).location, kCursorHandKnock, kCursorHand);
+
+			setCallback(14);
+			setup_enterExitCompartment("616Bc", kObjectCompartmentC);
+			break;
+
+		case 14:
+			getData()->location = kLocationOutsideCompartment;
+
+			setCallback(15);
+			setup_updateEntity(kCarRedSleeping, kPosition_9460);
+			break;
+
+		case 15:
+			getEntities()->clearSequences(kEntityKahina);
+
+			setCallback(16);
+			setup_updateFromTime(900);
+			break;
+
+		case 16:
+			setCallback(17);
+			setup_updateEntity(kCarKronos, kPosition_9270);
+			break;
+
+		case 17:
+			getEntities()->clearSequences(kEntityKahina);
+
+			CALLBACK_ACTION();
+			break;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -763,7 +919,102 @@ label_callback_2:
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Kahina, function21)
-	error("Kahina: callback function 21 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (params->param1) {
+			if (!params->param3)
+				params->param3 = getState()->time + 4500;
+
+			if (params->param6 != kTimeInvalid) {
+				UPDATE_PARAM_PROC_TIME(params->param3, (getEntities()->isPlayerPosition(kCarKronos, 80) || getEntities()->isPlayerPosition(kCarKronos, 88)), params->param5, 0)
+					setCallback(2);
+					setup_function23();
+					break;
+				UPDATE_PARAM_PROC_END
+			}
+		}
+
+label_callback_2:
+		if (params->param2) {
+
+			if (!params->param4)
+				params->param4 = getState()->time + 4500;
+
+			if (params->param6 != kTimeInvalid) {
+				UPDATE_PARAM_PROC_TIME(params->param3, (getEntities()->isPlayerPosition(kCarKronos, 80) || getEntities()->isPlayerPosition(kCarKronos, 88)), params->param6, 0)
+					getSound()->playSound(kEntityPlayer, "LIB014", getSound()->getSoundFlag(kEntityKahina));
+					getSound()->playSound(kEntityPlayer, "LIB015", getSound()->getSoundFlag(kEntityKahina));
+
+					getEntities()->drawSequenceLeft(kEntityKahina, "202a");
+
+					params->param2 = 0;
+				UPDATE_PARAM_PROC_END
+			}
+		}
+
+		if (!getProgress().field_44
+		 && getState()->time > kTime2214000) {
+
+			ObjectLocation location = getInventory()->get(kItemFirebird)->location;
+
+			if (location == kObjectLocation3 || location == kObjectLocation7) {
+				setCallback(3);
+				setup_function25();
+			} else if (location == kObjectLocation1 || location == kObjectLocation2) {
+				setCallback(4);
+				setup_function26();
+			}
+		}
+		break;
+
+	case kActionDefault:
+		getData()->car = kCarKronos;
+		getData()->entityPosition = kPosition_5000;
+		getData()->location = kLocationOutsideCompartment;
+
+		getEntities()->drawSequenceLeft(kEntityKahina, "202a");
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			params->param1 = 0;
+			params->param2 = 1;
+			break;
+
+		case 2:
+			params->param1 = 0;
+			params->param2 = 1;
+			goto label_callback_2;
+		}
+		break;
+
+	case kAction92186062:
+		if (params->param1) {
+			setCallback(1);
+			setup_function23();
+		}
+		break;
+
+	case kAction134611040:
+		if (getEvent(kEventConcertLeaveWithBriefcase))
+			setup_function24();
+		break;
+
+	case kAction137503360:
+		setup_function22();
+		break;
+
+	case kAction237555748:
+		params->param1 = 1;
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

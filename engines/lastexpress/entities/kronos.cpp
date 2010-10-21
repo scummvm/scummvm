@@ -27,6 +27,7 @@
 
 #include "lastexpress/entities/anna.h"
 #include "lastexpress/entities/august.h"
+#include "lastexpress/entities/kahina.h"
 #include "lastexpress/entities/rebecca.h"
 #include "lastexpress/entities/sophie.h"
 #include "lastexpress/entities/tatiana.h"
@@ -45,6 +46,23 @@
 #include "lastexpress/helpers.h"
 
 namespace LastExpress {
+
+static const struct {
+	uint32 time;
+	char *sequence;
+} concertData[54] = {
+	{735, "201d"},   {1395, "201a"},  {1965, "201d"},  {2205, "201a"},  {3405, "201d"},
+	{3750, "201a"},  {3975, "201d"},  {4365, "201a"},  {4650, "201d"},  {4770, "201a"},
+	{4995, "201e"},  {5085, "201d"},  {5430, "201a"},  {5685, "201d"},  {5850, "201a"},
+	{7515, "201d"},  {7620, "201a"},  {7785, "201d"},  {7875, "201a"},  {8235, "201d"},
+	{8340, "201a"},  {8745, "201d"},  {8805, "201a"},  {8925, "201d"},  {8985, "201a"},
+	{9765, "201d"},  {9930, "201a"},  {12375, "201e"}, {12450, "201d"}, {12705, "201c"},
+	{13140, "201d"}, {13305, "201a"}, {13380, "201d"}, {13560, "201a"}, {14145, "201d"},
+	{14385, "201a"}, {14445, "201c"}, {14805, "201a"}, {16485, "201d"}, {16560, "201a"},
+	{16755, "201d"}, {16845, "201a"}, {17700, "201d"}, {17865, "201a"}, {18645, "201d"},
+	{18720, "201a"}, {19410, "201e"}, {19500, "201a"}, {22020, "201d"}, {22185, "201a"},
+	{22590, "201d"}, {22785, "201a"}, {23085, "201d"}, {23265, "201a"}
+};
 
 Kronos::Kronos(LastExpressEngine *engine) : Entity(engine, kEntityKronos) {
 	ADD_CALLBACK_FUNCTION(Kronos, reset);
@@ -460,7 +478,215 @@ IMPLEMENT_FUNCTION(19, Kronos, function19)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Kronos, function20)
-	error("Kronos: callback function 20 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		params->param5 = getSound()->getEntryTime(kEntityKronos)* 2;
+
+		if (params->param6 < ARRAYSIZE(concertData) && params->param5 > concertData[params->param6].time) {
+
+			getEntities()->drawSequenceLeft(kEntityKronos, (char *)&concertData[params->param6].sequence);
+
+			if (stricmp((char *)&concertData[params->param6].sequence, "201e")) {
+
+				if (stricmp((char *)&concertData[params->param6].sequence, "201c")) {
+
+					if (!stricmp((char *)&concertData[params->param6].sequence, "201d")) {
+						if (getEntities()->isPlayerPosition(kCarKronos, 86))
+							getScenes()->loadSceneFromPosition(kCarKronos, 83);
+
+						getEntities()->updatePositionEnter(kEntityKronos, kCarKronos, 86);
+						getEntities()->updatePositionExit(kEntityKronos, kCarKronos, 85);
+					} else {
+						getEntities()->updatePositionExit(kEntityKronos, kCarKronos, 85);
+						getEntities()->updatePositionExit(kEntityKronos, kCarKronos, 86);
+					}
+				} else {
+					if (getEntities()->isPlayerPosition(kCarKronos, 85))
+						getScenes()->loadSceneFromPosition(kCarKronos, 83);
+
+					getEntities()->updatePositionEnter(kEntityKronos, kCarKronos, 85);
+					getEntities()->updatePositionExit(kEntityKronos, kCarKronos, 86);
+				}
+			} else {
+				if (getEntities()->isPlayerPosition(kCarKronos, 85) || getEntities()->isPlayerPosition(kCarKronos, 86))
+					getScenes()->loadSceneFromPosition(kCarKronos, 83);
+
+				getEntities()->updatePositionEnter(kEntityKronos, kCarKronos, 85);
+				getEntities()->updatePositionEnter(kEntityKronos, kCarKronos, 86);
+			}
+
+			++params->param6;
+		}
+
+		getObjects()->update(kObject76, kEntityKronos, kObjectLocationNone, kCursorNormal, getInventory()->hasItem(kItemBriefcase) ? kCursorHand : kCursorNormal);
+
+		if (!params->param7) {
+			params->param7 = getState()->time + 2700;
+			params->param8 = getState()->time + 13500;
+		}
+
+		if (CURRENT_PARAMS(1, 2) != kTimeInvalid && params->param7 < getState()->time) {
+			UPDATE_PARAM_PROC_TIME(params->param8, !params->param1, CURRENT_PARAMS(1, 2), 450)
+				getSavePoints()->push(kEntityKronos, kEntityKahina, kAction237555748);
+			UPDATE_PARAM_PROC_END
+		}
+
+		if (!params->param1)
+			params->param2 = params->param3;
+
+		params->param2 -= getState()->timeDelta;
+
+		if (params->param2 < getState()->timeDelta) {
+
+			getSavePoints()->push(kEntityKronos, kEntityKahina, kAction92186062);
+
+			++params->param4;
+			switch (params->param4) {
+			default:
+				break;
+
+			case 1:
+				getAction()->playAnimation(kEventCathWakingUp);
+				getScenes()->processScene();
+				params->param3 = 1800;
+				break;
+
+			case 2:
+				getAction()->playAnimation(kEventCathWakingUp);
+				getScenes()->processScene();
+				params->param3 = 3600;
+				break;
+
+			case 3:
+				getAction()->playAnimation(kEventCathFallingAsleep);
+
+				while (getSound()->isBuffered("1919.LNK"))
+					getSound()->updateQueue();
+
+				getAction()->playAnimation(kEventCathWakingUp);
+				getScenes()->processScene();
+				params->param3 = 162000;
+				break;
+			}
+			params->param2 = params->param3;
+		}
+
+		if (params->param5 > 23400 || CURRENT_PARAMS(1, 1)) {
+			if (getEntities()->isInKronosSanctum(kEntityPlayer)) {
+				setCallback(1);
+				setup_savegame(kSavegameTypeEvent, kEventKahinaWrongDoor);
+			}
+		}
+		break;
+
+	case kActionEndSound:
+		getObjects()->update(kObjectCompartmentKronos, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
+
+		if (CURRENT_PARAMS(1, 1)) {
+			getSound()->playSound(kEntityPlayer, "BUMP");
+			getScenes()->loadSceneFromPosition(kCarGreenSleeping, 26);
+
+			setup_function21();
+			break;
+		}
+
+		if (getEntities()->isInKronosSalon(kEntityPlayer)) {
+			setCallback(3);
+			setup_savegame(kSavegameTypeEvent, kEventConcertEnd);
+			break;
+		}
+
+		if (getEntities()->isInsideTrainCar(kEntityPlayer, kCarKronos)) {
+			getSound()->playSound(kEntityKronos, "Kro3001");
+			getObjects()->update(kObjectCompartmentKronos, kEntityPlayer, kObjectLocation3, kCursorNormal, kCursorNormal);
+			CURRENT_PARAMS(1, 1) = 1;
+			break;
+		}
+
+		setup_function21();
+		break;
+
+	case kActionOpenDoor:
+		setCallback(2);
+		setup_savegame(kSavegameTypeEvent, kEventConcertLeaveWithBriefcase);
+		break;
+
+	case kActionDefault:
+		getState()->time = kTime2115000;
+		getState()->timeDelta = 3;
+
+		params->param1 = (getEntities()->isPlayerPosition(kCarKronos, 88)
+		               || getEntities()->isPlayerPosition(kCarKronos, 84)
+		               || getEntities()->isPlayerPosition(kCarKronos, 85)
+		               || getEntities()->isPlayerPosition(kCarKronos, 86)
+		               || getEntities()->isPlayerPosition(kCarKronos, 83));
+
+		if (getInventory()->hasItem(kItemFirebird))
+			getObjects()->update(kObjectCompartmentKronos, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorNormal);
+		else
+			getObjects()->update(kObjectCompartmentKronos, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+
+		getObjects()->update(kObject76, kEntityKronos, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+
+		getProgress().field_40 = 1;
+		getEntities()->drawSequenceLeft(kEntityKronos, "201a");
+
+		params->param2 = 2700;
+		params->param3 = 2700;
+		break;
+
+	case kActionDrawScene:
+		params->param1 = (getEntities()->isPlayerPosition(kCarKronos, 88)
+		               || getEntities()->isPlayerPosition(kCarKronos, 84)
+		               || getEntities()->isPlayerPosition(kCarKronos, 85)
+		               || getEntities()->isPlayerPosition(kCarKronos, 86)
+		               || getEntities()->isPlayerPosition(kCarKronos, 83));
+
+		if (getInventory()->hasItem(kItemFirebird))
+			getObjects()->update(kObjectCompartmentKronos, kEntityPlayer, kObjectLocation3, kCursorNormal, kCursorNormal);
+		else
+			getObjects()->update(kObjectCompartmentKronos, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			getAction()->playAnimation(kEventKahinaWrongDoor);
+
+			if (getInventory()->hasItem(kItemBriefcase))
+				getInventory()->removeItem(kItemBriefcase);
+
+			getSound()->playSound(kEntityPlayer, "BUMP");
+			getScenes()->loadSceneFromPosition(kCarKronos, 81);
+			getObjects()->update(kObjectCompartmentKronos, kEntityPlayer, kObjectLocation3, kCursorNormal, kCursorNormal);
+			getSound()->playSound(kEntityPlayer, "LIB015");
+			break;
+
+		case 2:
+			getData()->entityPosition = kPosition_6000;
+			getAction()->playAnimation(kEventConcertLeaveWithBriefcase);
+
+			RESET_ENTITY_STATE(kEntityKahina, Kahina, setup_function21);
+
+			getScenes()->loadSceneFromPosition(kCarKronos, 87);
+			break;
+
+		case 3:
+			getAction()->playAnimation(kEventConcertEnd);
+			getSound()->playSound(kEntityPlayer, "BUMP");
+			getScenes()->loadSceneFromPosition(kCarGreenSleeping, 26);
+
+			setup_function21();
+			break;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

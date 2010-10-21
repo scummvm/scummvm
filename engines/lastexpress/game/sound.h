@@ -161,6 +161,7 @@ public:
 	void processEntries();
 	void removeFromQueue(Common::String filename);
 	void removeFromQueue(EntityIndex entity);
+	uint32 getEntryTime(EntityIndex index);
 
 	// Misc
 	void unknownFunction4();
@@ -242,7 +243,7 @@ private:
 		//int fileData;
 		//int field_18;
 		//int field_1C;
-		//int field_20;
+		uint32 time;
 		//int field_24;
 		//int field_28;
 		Common::SeekableReadStream *stream;	// int
@@ -262,8 +263,13 @@ private:
 		bool isStreamed; // TEMPORARY
 
 		SoundEntry() {
+			status.status = 0;
 			type = kSoundTypeNone;
+
+			time = 0;
+
 			stream = NULL;
+
 			field_3C = 0;
 			field_40 = 0;
 			entity = kEntityPlayer;
