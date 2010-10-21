@@ -1346,7 +1346,7 @@ IMPLEMENT_FUNCTION(26, Coudert, function26)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityCoudert);
 
-			setCallback(getCallback() == 3 ? 4 : 8);
+			setCallback(getCallback() + 1);
 			setup_function20(kObjectCompartmentD, kObject51);
 			break;
 

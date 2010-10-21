@@ -665,13 +665,13 @@ label_callback_3:
 			getObjects()->update(kObjectCompartmentKronos, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 			getScenes()->loadSceneFromPosition(kCarKronos, 80, 1);
 
-			setCallback(getCallback() == 1 ? 2 : 5);
+			setCallback(getCallback() + 1);
 			setup_updateFromTime(900);
 			break;
 
 		case 2:
 		case 5:
-			setCallback(getCallback() == 2 ? 3 : 6);
+			setCallback(getCallback() + 1);
 			setup_playSound("KRO3005");
 			break;
 
@@ -1274,7 +1274,7 @@ IMPLEMENT_FUNCTION(25, Kahina, function25)
 		case 1:
 		case 4:
 			if (getEntities()->isPlayerInCar(kCarGreenSleeping)) {
-				setCallback(getCallback() == 1 ? 2 : 5);
+				setCallback(getCallback() + 1);
 				setup_function19(getCallback() == 1 ? kCarGreenSleeping : kCarKronos, getCallback() == 1 ? kPosition_9460 : kPosition_9270);
 				break;
 			} else {
@@ -1361,7 +1361,7 @@ IMPLEMENT_FUNCTION(25, Kahina, function25)
 		case 12:
 			getData()->location = kLocationOutsideCompartment;
 
-			setCallback(getCallback() == 10 ? 11 : 13);
+			setCallback(getCallback() + 1);
 			setup_updateEntity(kCarKronos, kPosition_9270);
 			break;
 		}

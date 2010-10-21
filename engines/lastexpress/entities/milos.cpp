@@ -621,7 +621,7 @@ label_callback_12:
 				getState()->time += 1800;
 				getProgress().field_CC = 1;
 
-				setCallback(getCallback() == 4 ? 5 : 19);
+				setCallback(getCallback() + 1);
 				setup_savegame(kSavegameTypeEvent, kEventMilosTylerCompartmentDefeat);
 			}
 			break;

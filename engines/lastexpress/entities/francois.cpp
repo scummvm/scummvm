@@ -669,13 +669,13 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, function14, ObjectIndex, EntityPosition)
 
 		case 3:
 		case 5:
-			setCallback(getCallback() == 3 ? 4 : 6);
+			setCallback(getCallback() + 1);
 			setup_updateFromTime(rnd(450));
 			break;
 
 		case 4:
 		case 6:
-			setCallback(getCallback() == 4 ? 5 : 7);
+			setCallback(getCallback() + 1);
 			setup_playSound(rnd(2) ? "Fra2005B" : "Fra2005C");
 			break;
 
