@@ -831,18 +831,30 @@ void IsoMap::drawTile(uint16 tileIndex, const Point &point, const Location *loca
 				widthCount += fgRunCount;
 
 				count = 0;
-				while ((col < _tileClip.left) && (count < fgRunCount)) {
-					count++;
-					col++;
+				int colDiff = _tileClip.left - col;
+				if (colDiff > 0) {
+					if (colDiff > fgRunCount) {
+						colDiff = fgRunCount;
+					}
+					count = colDiff;
+					col += colDiff;
 				}
-				while ((col < _tileClip.right) && (count < fgRunCount)) {
-					assert(_vm->_gfx->getBackBufferPixels() <= (byte *)(drawPointer + count));
-					assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayInfo().width *
-								 _vm->getDisplayInfo().height)) > (byte *)(drawPointer + count));
-					drawPointer[count] = readPointer[count];
-					count++;
-					col++;
+				
+				colDiff = _tileClip.right - col;
+				if (colDiff > 0) {
+					int countDiff = fgRunCount - count;
+					if (colDiff > countDiff) {
+						colDiff = countDiff;
+					}
+					if (colDiff > 0) {
+						byte *dst = (byte *)(drawPointer + count);
+						assert(_vm->_gfx->getBackBufferPixels() <= dst);
+						assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayInfo().width * _vm->getDisplayInfo().height)) >= (byte *)(dst + colDiff));
+						memcpy(dst, (readPointer + count), colDiff);
+						col += colDiff;
+					}
 				}
+
 				readPointer += fgRunCount;
 				drawPointer += fgRunCount;
 			}

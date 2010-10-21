@@ -204,54 +204,86 @@ void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, uint spriteNumber, in
 }
 
 void Sprite::drawClip(const Point &spritePointer, int width, int height, const byte *spriteBuffer, bool clipToScene) {
-	int clipWidth;
-	int clipHeight;
 	Common::Rect clipRect = clipToScene ? _vm->_scene->getSceneClip() : _vm->getDisplayClip();
 
-	int i, j, jo, io;
+	int xDstOffset, yDstOffset, xSrcOffset, ySrcOffset, xDiff, yDiff, cWidth, cHeight;
 	byte *bufRowPointer;
+	byte *bufPointer;
 	const byte *srcRowPointer;
+	const byte *srcPointer;
 
-	bufRowPointer = _vm->_gfx->getBackBufferPixels() + _vm->_gfx->getBackBufferPitch() * spritePointer.y;
-	srcRowPointer = spriteBuffer;
-
-	clipWidth = CLIP(width, 0, clipRect.right - spritePointer.x);
-	clipHeight = CLIP(height, 0, clipRect.bottom - spritePointer.y);
-
-	jo = 0;
-	io = 0;
-	if (spritePointer.x < clipRect.left) {
-		jo = clipRect.left - spritePointer.x;
-	}
-	if (spritePointer.y < clipRect.top) {
-		io = clipRect.top - spritePointer.y;
-		bufRowPointer += _vm->_gfx->getBackBufferPitch() * io;
-		srcRowPointer += width * io;
+	int backBufferPitch = _vm->_gfx->getBackBufferPitch();
+	
+	//find Rects intersection
+	yDiff = clipRect.top - spritePointer.y;
+	if (yDiff > 0) {
+		ySrcOffset = yDiff;
+		yDstOffset = clipRect.top;
+		cHeight = height - yDiff;
+	} else {
+		ySrcOffset = 0;
+		yDstOffset = spritePointer.y;
+		cHeight = height;
 	}
 
-	for (i = io; i < clipHeight; i++) {
-		for (j = jo; j < clipWidth; j++) {
-			assert(_vm->_gfx->getBackBufferPixels() <= (byte *)(bufRowPointer + j + spritePointer.x));
-			assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayInfo().width *
-				 _vm->getDisplayInfo().height)) > (byte *)(bufRowPointer + j + spritePointer.x));
-			assert((const byte *)spriteBuffer <= (const byte *)(srcRowPointer + j));
-			assert(((const byte *)spriteBuffer + (width * height)) > (const byte *)(srcRowPointer + j));
+	xDiff = clipRect.left - spritePointer.x;
+	if (xDiff > 0) {
+		xSrcOffset = xDiff;
+		xDstOffset = clipRect.left;
+		cWidth = width - xDiff;
+	} else {
+		xSrcOffset = 0;
+		xDstOffset = spritePointer.x;
+		cWidth = width;
+	}
 
-			if (*(srcRowPointer + j) != 0) {
-				*(bufRowPointer + j + spritePointer.x) = *(srcRowPointer + j);
+	yDiff = yDstOffset + cHeight - clipRect.bottom;
+	if (yDiff > 0) {
+		cHeight -= yDiff;
+	}
+
+	xDiff = xDstOffset + cWidth - clipRect.right;
+	if (xDiff > 0) {
+		cWidth -= xDiff;
+	}
+
+	if ((cHeight <= 0) || (cWidth <= 0)) {
+		//no intersection
+		return;
+	}
+	bufRowPointer = _vm->_gfx->getBackBufferPixels() + backBufferPitch * yDstOffset + xDstOffset;
+	srcRowPointer = spriteBuffer + width * ySrcOffset + xSrcOffset;
+	
+	// validate src, dst buffers
+	assert(_vm->_gfx->getBackBufferPixels() <= bufRowPointer);
+	assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayInfo().width * _vm->getDisplayInfo().height)) >= 
+		(byte *)(bufRowPointer + backBufferPitch * (cHeight - 1) + cWidth));
+	assert((const byte *)spriteBuffer <= srcRowPointer);
+	assert(((const byte *)spriteBuffer + (width * height)) >= (const byte *)(srcRowPointer + width * (cHeight - 1) + cWidth));
+
+	const byte *srcPointerFinish2 = srcRowPointer + width * cHeight;
+	for (;;) {
+		srcPointer = srcRowPointer;
+		bufPointer = bufRowPointer;
+		const byte *srcPointerFinish = srcRowPointer + cWidth;
+		for (;;) {
+			if (*srcPointer != 0) {
+				*bufPointer = *srcPointer;
+			}
+			srcPointer++;
+			bufPointer++;
+			if (srcPointer == srcPointerFinish) {
+				break;
 			}
 		}
-		bufRowPointer += _vm->_gfx->getBackBufferPitch();
 		srcRowPointer += width;
+		if (srcRowPointer == srcPointerFinish2) {
+			break;
+		}
+		bufRowPointer += backBufferPitch;
 	}
 
-	int x1 = MAX<int>(spritePointer.x, 0);
-	int y1 = MAX<int>(spritePointer.y, 0);
-	int x2 = MIN<int>(MAX<int>(spritePointer.x + clipWidth, 0), clipRect.right);
-	int y2 = MIN<int>(MAX<int>(spritePointer.y + clipHeight, 0), clipRect.bottom);
-
-	if (x2 > x1 && y2 > y1)
-		_vm->_render->addDirtyRect(Common::Rect(x1, y1, x2, y2));
+	_vm->_render->addDirtyRect(Common::Rect(xDstOffset, yDstOffset, xDstOffset + cWidth, yDstOffset + cHeight));
 }
 
 void Sprite::draw(SpriteList &spriteList, uint spriteNumber, const Point &screenCoord, int scale, bool clipToScene) {
