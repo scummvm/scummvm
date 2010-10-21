@@ -48,7 +48,7 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	if (chapter < 0)
 		chapter = !_vm->isIHNMDemo() ? 8 : 7;
 
-	_vm->_script->_globalVoiceLUT.freeMem();
+	_vm->_script->_globalVoiceLUT.clear();
 
 	// TODO: close chapter context, or rather reassign it in our case
 

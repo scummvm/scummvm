@@ -782,11 +782,11 @@ void Script::sfSimulSpeech(SCRIPTFUNC_PARAMS) {
 	for (i = 0; i < actorsCount; i++)
 		actorsIds[i] = thread->pop();
 
-	if (thread->_voiceLUT->voices) {
+	if (!thread->_voiceLUT->empty()) {
 		if (_vm->getGameId() == GID_IHNM && stringId >= 338) {
 			sampleResourceId = -1;
 		} else {
-			sampleResourceId = thread->_voiceLUT->voices[stringId];
+			sampleResourceId = (*thread->_voiceLUT)[stringId];
 			if (sampleResourceId <= 0 || sampleResourceId > 4000)
 				sampleResourceId = -1;
 		}
@@ -1042,8 +1042,8 @@ void Script::sfSimulSpeech2(SCRIPTFUNC_PARAMS) {
 	for (i = 0; i < actorsCount; i++)
 		actorsIds[i] = thread->pop();
 
-	if (thread->_voiceLUT->voices) {
-		sampleResourceId = thread->_voiceLUT->voices[stringId];
+	if (!thread->_voiceLUT->empty()) {
+		sampleResourceId = (*thread->_voiceLUT)[stringId];
 		if (sampleResourceId <= 0 || sampleResourceId > 4000)
 			sampleResourceId = -1;
 	}
@@ -1527,7 +1527,7 @@ void Script::finishDialog(int strID, int replyID, int flags, int bitOffset) {
 			const char *str = _conversingThread->_strings->getString(strID);
 			if (*str != '[') {
 				int sampleResourceId = -1;
-				sampleResourceId = _conversingThread->_voiceLUT->voices[strID];
+				sampleResourceId = (*_conversingThread->_voiceLUT)[strID];
 				if (sampleResourceId < 0 || sampleResourceId > 4000)
 					sampleResourceId = -1;
 

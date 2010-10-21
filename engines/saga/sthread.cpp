@@ -39,16 +39,18 @@ namespace Saga {
 
 ScriptThread &Script::createThread(uint16 scriptModuleNumber, uint16 scriptEntryPointNumber) {
 	loadModule(scriptModuleNumber);
-	if (_modules[scriptModuleNumber].entryPointsCount <= scriptEntryPointNumber) {
+	if (_modules[scriptModuleNumber].entryPoints.size() <= scriptEntryPointNumber) {
 		error("Script::createThread wrong scriptEntryPointNumber");
 	}
 
-	ScriptThread newThread;
+	ScriptThread tmp;
+	_threadList.push_front(tmp);
+	ScriptThread &newThread = _threadList.front();
 	newThread._instructionOffset = _modules[scriptModuleNumber].entryPoints[scriptEntryPointNumber].offset;
-	newThread._commonBase = _commonBuffer;
-	newThread._staticBase = _commonBuffer + _modules[scriptModuleNumber].staticOffset;
-	newThread._moduleBase = _modules[scriptModuleNumber].moduleBase;
-	newThread._moduleBaseSize = _modules[scriptModuleNumber].moduleBaseSize;
+	newThread._commonBase = &_commonBuffer.front();
+	newThread._staticBase = &_commonBuffer.front() + _modules[scriptModuleNumber].staticOffset;
+	newThread._moduleBase = &_modules[scriptModuleNumber].moduleBase.front();
+	newThread._moduleBaseSize = _modules[scriptModuleNumber].moduleBase.size();
 	newThread._strings = &_modules[scriptModuleNumber].strings;
 
 	if (_vm->getGameId() == GID_IHNM)
@@ -56,14 +58,10 @@ ScriptThread &Script::createThread(uint16 scriptModuleNumber, uint16 scriptEntry
 	else
 		newThread._voiceLUT = &_modules[scriptModuleNumber].voiceLUT;
 
-	_threadList.push_front(newThread);
-
+	newThread._stackBuf.resize(ScriptThread::THREAD_STACK_SIZE);
+	newThread._stackTopIndex = ScriptThread::THREAD_STACK_SIZE - 2;
 	debug(3, "createThread(). Total threads: %d", _threadList.size());
-
-	ScriptThread &tmp = *_threadList.begin();
-	tmp._stackBuf = (int16 *)malloc(ScriptThread::THREAD_STACK_SIZE * sizeof(int16));
-	tmp._stackTopIndex = ScriptThread::THREAD_STACK_SIZE - 2;
-	return tmp;
+	return newThread;
 }
 
 void Script::wakeUpActorThread(int waitType, void *threadObj) {

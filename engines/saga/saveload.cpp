@@ -240,9 +240,9 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 	_actor->saveState(out);
 
-	out->writeSint16LE(_script->_commonBufferSize);
+	out->writeSint16LE(_script->_commonBuffer.size());
 
-	out->write(_script->_commonBuffer, _script->_commonBufferSize);
+	out->write(&_script->_commonBuffer.front(), _script->_commonBuffer.size());
 
 	// ISO map x, y coordinates for ITE
 	if (getGameId() == GID_ITE) {
@@ -351,7 +351,8 @@ void SagaEngine::load(const char *fileName) {
 	_actor->loadState(in);
 
 	commonBufferSize = in->readSint16LE();
-	in->read(_script->_commonBuffer, commonBufferSize);
+	_script->_commonBuffer.resize(commonBufferSize);
+	in->read(&_script->_commonBuffer.front(), commonBufferSize);
 
 	if (getGameId() == GID_ITE) {
 		mapx = in->readSint16LE();

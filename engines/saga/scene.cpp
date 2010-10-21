@@ -624,7 +624,7 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 			_vm->_interface->setLeftPortrait(0);
 
 		_vm->_anim->freeCutawayList();
-		_vm->_script->freeModules();
+		_vm->_script->clearModules();
 
 		// deleteAllScenes();
 

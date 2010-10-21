@@ -49,7 +49,8 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 	byte *resourcePointer;
 	size_t resourceLength;
 	int prevTell;
-	int i, j;
+	uint ui;
+	int j;
 	byte *stringsPointer;
 	size_t stringsLength;
 
@@ -67,9 +68,7 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 	_pointerObject = ID_NOTHING;
 
 	_staticSize = 0;
-	_commonBufferSize = COMMON_BUFFER_SIZE;
-	_commonBuffer = (byte*)malloc(_commonBufferSize);
-	memset(_commonBuffer, 0, _commonBufferSize);
+	_commonBuffer.resize(COMMON_BUFFER_SIZE);
 
 	debug(8, "Initializing scripting subsystem");
 	// Load script resource file context
@@ -98,30 +97,26 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 	}
 
 	// Calculate number of entries
-	_modulesCount = resourceLength / _modulesLUTEntryLen;
+	int modulesCount = resourceLength / _modulesLUTEntryLen;
 
-	debug(3, "LUT has %i entries", _modulesCount);
+	debug(3, "LUT has %i entries", modulesCount);
 
 	// Allocate space for logical LUT
-	_modules = (ModuleData *)malloc(_modulesCount * sizeof(*_modules));
-	if (_modules == NULL) {
-		memoryError("Script::Script()");
-	}
+	_modules.resize(modulesCount);
 
 	// Convert LUT resource to logical LUT
 	MemoryReadStreamEndian scriptS(resourcePointer, resourceLength, resourceContext->isBigEndian());
-	for (i = 0; i < _modulesCount; i++) {
-		memset(&_modules[i], 0, sizeof(ModuleData));
+	for (ui = 0; ui < _modules.size(); ui++) {
 
 		prevTell = scriptS.pos();
-		_modules[i].scriptResourceId = scriptS.readUint16();
-		_modules[i].stringsResourceId = scriptS.readUint16();
-		_modules[i].voicesResourceId = scriptS.readUint16();
+		_modules[ui].scriptResourceId = scriptS.readUint16();
+		_modules[ui].stringsResourceId = scriptS.readUint16();
+		_modules[ui].voicesResourceId = scriptS.readUint16();
 
 		// Skip the unused portion of the structure
 		for (j = scriptS.pos(); j < prevTell + _modulesLUTEntryLen; j++) {
 			if (scriptS.readByte() != 0)
-				warning("Unused scriptLUT part isn't really unused for LUT %d (pos: %d)", i, j);
+				warning("Unused scriptLUT part isn't really unused for LUT %d (pos: %d)", ui, j);
 		}
 	}
 
@@ -157,13 +152,6 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 
 SAGA1Script::~SAGA1Script() {
 	debug(8, "Shutting down scripting subsystem.");
-
-	_globalVoiceLUT.freeMem();
-
-	freeModules();
-	free(_modules);
-
-	free(_commonBuffer);
 }
 
 SAGA2Script::SAGA2Script(SagaEngine *vm) : Script(vm) {
@@ -188,9 +176,9 @@ SAGA2Script::SAGA2Script(SagaEngine *vm) : Script(vm) {
 	_modulesLUTEntryLen = sizeof(uint32);
 
 	// Calculate number of entries
-	_modulesCount = resourceLength / _modulesLUTEntryLen + 1;
+	int modulesCount = resourceLength / _modulesLUTEntryLen + 1;
 
-	debug(3, "LUT has %i entries", _modulesCount);
+	debug(3, "LUT has %i entries", modulesCount);
 
 	// Script data segment
 	/*
@@ -993,8 +981,8 @@ void Script::opSpeak(SCRIPTOP_PARAMS) {
 		}
 	} else {
 #endif
-		if (thread->_voiceLUT->voicesCount > first)
-			sampleResourceId = thread->_voiceLUT->voices[first];
+		if (thread->_voiceLUT->size() > uint16(first))
+			sampleResourceId = (*thread->_voiceLUT)[uint16(first)];
 #if 0
 	}
 #endif
@@ -1066,12 +1054,12 @@ void Script::opJmpSeedRandom(SCRIPTOP_PARAMS) {
 	warning("opJmpSeedRandom");
 }
 
-void Script::loadModule(int scriptModuleNumber) {
+void Script::loadModule(uint scriptModuleNumber) {
 	byte *resourcePointer;
 	size_t resourceLength;
 
 	// Validate script number
-	if ((scriptModuleNumber < 0) || (scriptModuleNumber >= _modulesCount)) {
+	if ((scriptModuleNumber < 0) || (scriptModuleNumber >= _modules.size())) {
 		error("Script::loadScript() Invalid script module number");
 	}
 
@@ -1101,60 +1089,56 @@ void Script::loadModule(int scriptModuleNumber) {
 
 	_modules[scriptModuleNumber].staticOffset = _staticSize;
 	_staticSize += _modules[scriptModuleNumber].staticSize;
-	if (_staticSize > _commonBufferSize) {
-		error("Script::loadModule() _staticSize > _commonBufferSize");
+	if (_staticSize > _commonBuffer.size()) {
+		error("Script::loadModule() _staticSize > _commonBuffer.size()");
 	}
 	_modules[scriptModuleNumber].loaded = true;
 }
 
-void Script::freeModules() {
-	int i;
-	for (i = 0; i < _modulesCount; i++) {
+void Script::clearModules() {
+	uint i;
+	for (i = 0; i < _modules.size(); i++) {
 		if (_modules[i].loaded) {
-			_modules[i].freeMem();
-			_modules[i].loaded = false;
+			_modules[i].clear();
 		}
 	}
 	_staticSize = 0;
 }
 
 void Script::loadModuleBase(ModuleData &module, const byte *resourcePointer, size_t resourceLength) {
-	int i;
+	uint i;
 
 	debug(3, "Loading module base...");
 
-	module.moduleBase = (byte*)malloc(resourceLength);
-	module.moduleBaseSize = resourceLength;
+	module.moduleBase.resize(resourceLength);
+	
+	memcpy(&module.moduleBase.front(), resourcePointer, resourceLength);
 
-	memcpy(module.moduleBase, resourcePointer, resourceLength);
+	MemoryReadStreamEndian scriptS(&module.moduleBase.front(), module.moduleBase.size(), _scriptContext->isBigEndian());
 
-	MemoryReadStreamEndian scriptS(module.moduleBase, module.moduleBaseSize, _scriptContext->isBigEndian());
-
-	module.entryPointsCount = scriptS.readUint16();
+	uint entryPointsCount = scriptS.readUint16();
 	scriptS.readUint16(); //skip
-	module.entryPointsTableOffset = scriptS.readUint16();
+	uint16 entryPointsTableOffset;	// offset of entrypoint table in moduleBase
+	entryPointsTableOffset = scriptS.readUint16();
 	scriptS.readUint16(); //skip
 
-	if ((module.moduleBaseSize - module.entryPointsTableOffset) < (module.entryPointsCount * SCRIPT_TBLENTRY_LEN)) {
+	if ((module.moduleBase.size() - entryPointsTableOffset) < (entryPointsCount * SCRIPT_TBLENTRY_LEN)) {
 		error("Script::loadModuleBase() Invalid table offset");
 	}
 
-	if (module.entryPointsCount > SCRIPT_MAX) {
+	if (entryPointsCount > SCRIPT_MAX) {
 		error("Script::loadModuleBase()Script limit exceeded");
 	}
 
-	module.entryPoints = (EntryPoint *)malloc(module.entryPointsCount * sizeof(*module.entryPoints));
-	if (module.entryPoints == NULL) {
-		memoryError("Script::loadModuleBase");
-	}
+	module.entryPoints.resize(entryPointsCount);
 
 	// Read in the entrypoint table
 
 	module.staticSize = scriptS.readUint16();
-	while (scriptS.pos() < module.entryPointsTableOffset)
+	while (scriptS.pos() < entryPointsTableOffset)
 		scriptS.readByte();
 
-	for (i = 0; i < module.entryPointsCount; i++) {
+	for (i = 0; i < module.entryPoints.size(); i++) {
 		// First uint16 is the offset of the entrypoint name from the start
 		// of the bytecode resource, second uint16 is the offset of the
 		// bytecode itself for said entrypoint
@@ -1162,7 +1146,7 @@ void Script::loadModuleBase(ModuleData &module, const byte *resourcePointer, siz
 		module.entryPoints[i].offset = scriptS.readUint16();
 
 		// Perform a simple range check on offset values
-		if ((module.entryPoints[i].nameOffset >= module.moduleBaseSize) || (module.entryPoints[i].offset >= module.moduleBaseSize)) {
+		if ((module.entryPoints[i].nameOffset >= module.moduleBase.size()) || (module.entryPoints[i].offset >= module.moduleBase.size())) {
 			error("Script::loadModuleBase() Invalid offset encountered in script entrypoint table");
 		}
 	}
@@ -1171,17 +1155,12 @@ void Script::loadModuleBase(ModuleData &module, const byte *resourcePointer, siz
 void Script::loadVoiceLUT(VoiceLUT &voiceLUT, const byte *resourcePointer, size_t resourceLength) {
 	uint16 i;
 
-	voiceLUT.voicesCount = resourceLength / 2;
-
-	voiceLUT.voices = (uint16 *)malloc(voiceLUT.voicesCount * sizeof(*voiceLUT.voices));
-	if (voiceLUT.voices == NULL) {
-		error("Script::loadVoiceLUT() not enough memory");
-	}
+	voiceLUT.resize(resourceLength / 2);
 
 	MemoryReadStreamEndian scriptS(resourcePointer, resourceLength, _scriptContext->isBigEndian());
 
-	for (i = 0; i < voiceLUT.voicesCount; i++) {
-		voiceLUT.voices[i] = scriptS.readUint16();
+	for (i = 0; i < voiceLUT.size(); i++) {
+		voiceLUT[i] = scriptS.readUint16();
 	}
 }
 
