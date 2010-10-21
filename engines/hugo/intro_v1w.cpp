@@ -39,7 +39,7 @@
 
 
 namespace Hugo {
-intro_v1w::intro_v1w(HugoEngine &vm) : IntroHandler(vm) {
+intro_v1w::intro_v1w(HugoEngine *vm) : IntroHandler(vm) {
 }
 
 intro_v1w::~intro_v1w() {
@@ -47,8 +47,8 @@ intro_v1w::~intro_v1w() {
 
 void intro_v1w::preNewGame() {
 	// Auto-start a new game
-	_vm.file().restoreGame(-1);
-	_vm.getGameStatus().viewState = V_INTROINIT;
+	_vm->_file->restoreGame(-1);
+	_vm->getGameStatus().viewState = V_INTROINIT;
 }
 
 void intro_v1w::introInit() {

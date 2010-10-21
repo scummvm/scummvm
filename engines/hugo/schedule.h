@@ -47,7 +47,7 @@ struct event_t {
 
 class Scheduler {
 public:
-	Scheduler(HugoEngine &vm);
+	Scheduler(HugoEngine *vm);
 	virtual ~Scheduler();
 
 	void   initEventQueue();
@@ -61,7 +61,6 @@ public:
 	void   restoreEvents(Common::SeekableReadStream *f);
 	void   saveEvents(Common::WriteStream *f);
 	void   restoreScreen(int screenIndex);
-	void   swapImages(int objNumb1, int objNumb2);
 
 private:
 	enum seqTextSchedule {
@@ -69,7 +68,7 @@ private:
 		kSsBadSaveGame  = 1
 	};
 
-	HugoEngine &_vm;
+	HugoEngine *_vm;
 
 	event_t _events[kMaxEvents];                        // Statically declare event structures
 
@@ -86,7 +85,7 @@ private:
 
 class Scheduler_v1d : public Scheduler {
 public:
-	Scheduler_v1d(HugoEngine &vm);
+	Scheduler_v1d(HugoEngine *vm);
 	~Scheduler_v1d();
 
 	const char *getCypher();
@@ -94,7 +93,7 @@ public:
 
 class Scheduler_v3d : public Scheduler {
 public:
-	Scheduler_v3d(HugoEngine &vm);
+	Scheduler_v3d(HugoEngine *vm);
 	~Scheduler_v3d();
 
 	const char *getCypher();

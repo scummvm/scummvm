@@ -41,7 +41,7 @@
 
 namespace Hugo {
 
-Screen_v1w::Screen_v1w(HugoEngine &vm) : Screen(vm) {
+Screen_v1w::Screen_v1w(HugoEngine *vm) : Screen(vm) {
 }
 
 Screen_v1w::~Screen_v1w() {
@@ -59,7 +59,7 @@ void Screen_v1w::loadFont(int16 fontId) {
 		return;
 
 	fontLoadedFl[_fnt] = true;
-	_vm.file().readUIFItem(fontId, _fontdata[_fnt]);
+	_vm->_file->readUIFItem(fontId, _fontdata[_fnt]);
 
 	// Compile font ptrs.  Note: First ptr points to height,width of font
 	_font[_fnt][0] = _fontdata[_fnt];               // Store height,width of fonts

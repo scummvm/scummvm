@@ -43,7 +43,7 @@ enum seqTextIntro {
 
 class IntroHandler {
 public:
-	IntroHandler(HugoEngine &vm);
+	IntroHandler(HugoEngine *vm);
 	virtual ~IntroHandler();
 
 	virtual void preNewGame() = 0;
@@ -51,13 +51,13 @@ public:
 	virtual bool introPlay() = 0;
 
 protected:
-	HugoEngine &_vm;
+	HugoEngine *_vm;
 	int16 introTicks;                               // Count calls to introPlay()
 };
 
 class intro_v1w : public IntroHandler {
 public:
-	intro_v1w(HugoEngine &vm);
+	intro_v1w(HugoEngine *vm);
 	~intro_v1w();
 
 	void preNewGame();
@@ -67,7 +67,7 @@ public:
 
 class intro_v1d : public IntroHandler {
 public:
-	intro_v1d(HugoEngine &vm);
+	intro_v1d(HugoEngine *vm);
 	~intro_v1d();
 
 	void preNewGame();
@@ -77,7 +77,7 @@ public:
 
 class intro_v2w : public IntroHandler {
 public:
-	intro_v2w(HugoEngine &vm);
+	intro_v2w(HugoEngine *vm);
 	~intro_v2w();
 
 	void preNewGame();
@@ -87,7 +87,7 @@ public:
 
 class intro_v2d : public IntroHandler {
 public:
-	intro_v2d(HugoEngine &vm);
+	intro_v2d(HugoEngine *vm);
 	~intro_v2d();
 
 	void preNewGame();
@@ -97,7 +97,7 @@ public:
 
 class intro_v3w : public IntroHandler {
 public:
-	intro_v3w(HugoEngine &vm);
+	intro_v3w(HugoEngine *vm);
 	~intro_v3w();
 
 	void preNewGame();
@@ -107,7 +107,7 @@ public:
 
 class intro_v3d : public IntroHandler {
 public:
-	intro_v3d(HugoEngine &vm);
+	intro_v3d(HugoEngine *vm);
 	~intro_v3d();
 
 	void preNewGame();

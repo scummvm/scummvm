@@ -42,6 +42,7 @@
 #include "hugo/util.h"
 #include "hugo/sound.h"
 #include "hugo/intro.h"
+#include "hugo/object.h"
 
 #include "engines/util.h"
 
@@ -63,8 +64,8 @@ command_t   _line;                              // Line of user text input
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd), _mouseX(0), _mouseY(0),
 	_textData(0), _stringtData(0), _screenNames(0), _textEngine(0), _textIntro(0), _textMouse(0), _textParser(0), _textSchedule(0), _textUtil(0),
 	_arrayNouns(0), _arrayVerbs(0), _arrayReqs(0), _hotspots(0), _invent(0), _uses(0), _catchallList(0), _backgroundObjects(0),
-	_points(0), _cmdList(0), _screenActs(0), _objects(0), _actListArr(0), _heroImage(0), _defltTunes(0), _palette(0), _introX(0),
-	_introY(0), _maxInvent(0), _numBonuses(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0), _screenStates(0), _numObj(0),
+	_points(0), _cmdList(0), _screenActs(0), _actListArr(0), _heroImage(0), _defltTunes(0), _palette(0), _introX(0), _introY(0), 
+	_maxInvent(0), _numBonuses(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0), _screenStates(0), _numObj(0),
 	_score(0), _maxscore(0)
 
 {
@@ -82,14 +83,15 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 }
 
 HugoEngine::~HugoEngine() {
-	delete _soundHandler;
+	delete _object;
+	delete _sound;
 	delete _route;
 	delete _parser;
-	delete _inventoryHandler;
-	delete _mouseHandler;
+	delete _inventory;
+	delete _mouse;
 	delete _screen;
 	delete _scheduler;
-	delete _fileManager;
+	delete _file;
 
 	free(_palette);
 	free(_introX);
@@ -161,53 +163,54 @@ Common::Error HugoEngine::run() {
 	s_Engine = this;
 	initGraphics(320, 200, false);
 
-	_mouseHandler = new MouseHandler(*this);
-	_inventoryHandler = new InventoryHandler(*this);
-	_route = new Route(*this);
-	_soundHandler = new SoundHandler(*this);
+	_mouse = new MouseHandler(this);
+	_inventory = new InventoryHandler(this);
+	_route = new Route(this);
+	_sound = new SoundHandler(this);
+	_object = new ObjectHandler(this);
 
 	switch (_gameVariant) {
 	case 0: // H1 Win
-		_fileManager = new FileManager_v1w(*this);
-		_scheduler = new Scheduler_v3d(*this);
-		_introHandler = new intro_v1w(*this);
-		_screen = new Screen_v1w(*this);
-		_parser = new Parser_v1w(*this);
+		_file = new FileManager_v1w(this);
+		_scheduler = new Scheduler_v3d(this);
+		_intro = new intro_v1w(this);
+		_screen = new Screen_v1w(this);
+		_parser = new Parser_v1w(this);
 		break;
 	case 1:
-		_fileManager = new FileManager_v2d(*this);
-		_scheduler = new Scheduler_v3d(*this);
-		_introHandler = new intro_v2w(*this);
-		_screen = new Screen_v1w(*this);
-		_parser = new Parser_v1w(*this);
+		_file = new FileManager_v2d(this);
+		_scheduler = new Scheduler_v3d(this);
+		_intro = new intro_v2w(this);
+		_screen = new Screen_v1w(this);
+		_parser = new Parser_v1w(this);
 		break;
 	case 2:
-		_fileManager = new FileManager_v2d(*this);
-		_scheduler = new Scheduler_v3d(*this);
-		_introHandler = new intro_v3w(*this);
-		_screen = new Screen_v1w(*this);
-		_parser = new Parser_v1w(*this);
+		_file = new FileManager_v2d(this);
+		_scheduler = new Scheduler_v3d(this);
+		_intro = new intro_v3w(this);
+		_screen = new Screen_v1w(this);
+		_parser = new Parser_v1w(this);
 		break;
 	case 3: // H1 DOS
-		_fileManager = new FileManager_v1d(*this);
-		_scheduler = new Scheduler_v1d(*this);
-		_introHandler = new intro_v1d(*this);
-		_screen = new Screen_v1d(*this);
-		_parser = new Parser_v1d(*this);
+		_file = new FileManager_v1d(this);
+		_scheduler = new Scheduler_v1d(this);
+		_intro = new intro_v1d(this);
+		_screen = new Screen_v1d(this);
+		_parser = new Parser_v1d(this);
 		break;
 	case 4:
-		_fileManager = new FileManager_v2d(*this);
-		_scheduler = new Scheduler_v1d(*this);
-		_introHandler = new intro_v2d(*this);
-		_screen = new Screen_v1d(*this);
-		_parser = new Parser_v2d(*this);
+		_file = new FileManager_v2d(this);
+		_scheduler = new Scheduler_v1d(this);
+		_intro = new intro_v2d(this);
+		_screen = new Screen_v1d(this);
+		_parser = new Parser_v2d(this);
 		break;
 	case 5:
-		_fileManager = new FileManager_v3d(*this);
-		_scheduler = new Scheduler_v3d(*this);
-		_introHandler = new intro_v3d(*this);
-		_screen = new Screen_v1d(*this);
-		_parser = new Parser_v3d(*this);
+		_file = new FileManager_v3d(this);
+		_scheduler = new Scheduler_v3d(this);
+		_intro = new intro_v3d(this);
+		_screen = new Screen_v1d(this);
+		_parser = new Parser_v3d(this);
 		break;
 	}
 
@@ -225,7 +228,7 @@ Common::Error HugoEngine::run() {
 	initialize();
 	initConfig(RESET);                              // Reset user's config
 
-	file().restoreGame(-1);
+	_file->restoreGame(-1);
 
 	initMachine();
 
@@ -243,7 +246,7 @@ Common::Error HugoEngine::run() {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				parser().keyHandler(event.kbd.keycode, 0);
+				_parser->keyHandler(event.kbd.keycode, 0);
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
@@ -276,10 +279,10 @@ void HugoEngine::initMachine() {
 	if (_gameVariant == kGameVariantH1Dos)
 		readScreenFiles(0);
 	else
-		file().readBackground(_numScreens - 1);         // Splash screen
+		_file->readBackground(_numScreens - 1);     // Splash screen
 	readObjectImages();                             // Read all object images
 	if (_platform == Common::kPlatformWindows)
-		readUIFImages();                            // Read all uif images (only in Win versions)
+		_file->readUIFImages();                     // Read all uif images (only in Win versions)
 }
 
 void HugoEngine::runMachine() {
@@ -302,32 +305,32 @@ void HugoEngine::runMachine() {
 
 	switch (gameStatus.viewState) {
 	case V_IDLE:                                    // Not processing state machine
-		intro().preNewGame();                           // Any processing before New Game selected
+		_intro->preNewGame();                       // Any processing before New Game selected
 		break;
 	case V_INTROINIT:                               // Initialization before intro begins
-		intro().introInit();
+		_intro->introInit();
 		g_system->showMouse(false);
 		gameStatus.viewState = V_INTRO;
 		break;
 	case V_INTRO:                                   // Do any game-dependant preamble
-		if (intro().introPlay())    {               // Process intro screen
-			scheduler().newScreen(0);               // Initialize first screen
+		if (_intro->introPlay())    {               // Process intro screen
+			_scheduler->newScreen(0);               // Initialize first screen
 			gameStatus.viewState = V_PLAY;
 		}
 		break;
 	case V_PLAY:                                    // Playing game
 		g_system->showMouse(true);
-		parser().charHandler();                     // Process user cmd input
-		moveObjects();                              // Process object movement
-		scheduler().runScheduler();                 // Process any actions
-		screen().displayList(D_RESTORE);            // Restore previous background
-		updateImages();                             // Draw into _frontBuffer, compile display list
-		mouse().mouseHandler();                     // Mouse activity - adds to display list
-		screen().drawStatusText();
-		screen().displayList(D_DISPLAY);            // Blit the display list to screen
+		_parser->charHandler();                     // Process user cmd input
+		_object->moveObjects();                     // Process object movement
+		_scheduler->runScheduler();                 // Process any actions
+		_screen->displayList(D_RESTORE);            // Restore previous background
+		_object->updateImages();                    // Draw into _frontBuffer, compile display list
+		_mouse->mouseHandler();                     // Mouse activity - adds to display list
+		_screen->drawStatusText();
+		_screen->displayList(D_DISPLAY);            // Blit the display list to screen
 		break;
 	case V_INVENT:                                  // Accessing inventory
-		inventory().runInventory();                 // Process Inventory state machine
+		_inventory->runInventory();                 // Process Inventory state machine
 		break;
 	case V_EXIT:                                    // Game over or user exited
 		gameStatus.viewState = V_IDLE;
@@ -642,108 +645,10 @@ bool HugoEngine::loadHugoDat() {
 		}
 	}
 
-// TODO: For Hugo3, if not in story mode, set _objects[2].state to 3
-	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numElem = in.readUint16BE();
-		if (varnt == _gameVariant) {
-			_objects = (object_t *)malloc(sizeof(object_t) * numElem);
-			for (int i = 0; i < numElem; i++) {
-				_objects[i].nounIndex = in.readUint16BE();
-				_objects[i].dataIndex = in.readUint16BE();
-				numSubElem = in.readUint16BE();
-				if (numSubElem == 0)
-					_objects[i].stateDataIndex = 0;
-				else
-					_objects[i].stateDataIndex = (uint16 *)malloc(sizeof(uint16) * numSubElem);
-				for (int j = 0; j < numSubElem; j++)
-					_objects[i].stateDataIndex[j] = in.readUint16BE();
-				_objects[i].pathType = (path_t) in.readSint16BE();
-				_objects[i].vxPath = in.readSint16BE();
-				_objects[i].vyPath = in.readSint16BE();
-				_objects[i].actIndex = in.readUint16BE();
-				_objects[i].seqNumb = in.readByte();
-				_objects[i].currImagePtr = 0;
-				if (_objects[i].seqNumb == 0) {
-					_objects[i].seqList[0].imageNbr = 0;
-					_objects[i].seqList[0].seqPtr = 0;
-				}
-				for (int j = 0; j < _objects[i].seqNumb; j++) {
-					_objects[i].seqList[j].imageNbr = in.readUint16BE();
-					_objects[i].seqList[j].seqPtr = 0;
-				}
-				_objects[i].cycling = (cycle_t)in.readByte();
-				_objects[i].cycleNumb = in.readByte();
-				_objects[i].frameInterval = in.readByte();
-				_objects[i].frameTimer = in.readByte();
-				_objects[i].radius = in.readByte();
-				_objects[i].screenIndex = in.readByte();
-				_objects[i].x = in.readSint16BE();
-				_objects[i].y = in.readSint16BE();
-				_objects[i].oldx = in.readSint16BE();
-				_objects[i].oldy = in.readSint16BE();
-				_objects[i].vx = in.readByte();
-				_objects[i].vy = in.readByte();
-				_objects[i].objValue = in.readByte();
-				_objects[i].genericCmd = in.readSint16BE();
-				_objects[i].cmdIndex = in.readUint16BE();
-				_objects[i].carriedFl = (in.readByte() != 0);
-				_objects[i].state = in.readByte();
-				_objects[i].verbOnlyFl = (in.readByte() != 0);
-				_objects[i].priority = in.readByte();
-				_objects[i].viewx = in.readSint16BE();
-				_objects[i].viewy = in.readSint16BE();
-				_objects[i].direction = in.readSint16BE();
-				_objects[i].curSeqNum = in.readByte();
-				_objects[i].curImageNum = in.readByte();
-				_objects[i].oldvx = in.readByte();
-				_objects[i].oldvy = in.readByte();
-			}
-		} else {
-			for (int i = 0; i < numElem; i++) {
-				in.readUint16BE();
-				in.readUint16BE();
-				numSubElem = in.readUint16BE();
-				for (int j = 0; j < numSubElem; j++)
-					in.readUint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readUint16BE();
-				numSubElem = in.readByte();
-				for (int j = 0; j < numSubElem; j++)
-					in.readUint16BE();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readSint16BE();
-				in.readUint16BE();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readUint16BE();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-			}
-		}
-	}
+	_object->loadObject(in);
 //#define HERO 0
-	_hero = &_objects[HERO];                        // This always points to hero
-	_screen_p = &(_objects[HERO].screenIndex);      // Current screen is hero's
+	_hero = &_object->_objects[HERO];                        // This always points to hero
+	_screen_p = &(_object->_objects[HERO].screenIndex);      // Current screen is hero's
 	_heroImage = HERO;                              // Current in use hero image
 
 //read _actListArr
@@ -1599,18 +1504,18 @@ void HugoEngine::initConfig(inst_t action) {
 		_config.soundVolume = 100;                  // Sound volume %
 		initPlaylist(_config.playlist);             // Initialize default tune playlist
 
-		file().readBootFile();    // Read startup structure
+		_file->readBootFile();    // Read startup structure
 		break;
 	case RESET:
 		// Find first tune and play it
 		for (int16 i = 0; i < MAX_TUNES; i++) {
 			if (_config.playlist[i]) {
-				sound().playMusic(i);
+				_sound->playMusic(i);
 				break;
 			}
 		}
 
-		file().initSavedGame();   // Initialize saved game
+		_file->initSavedGame();   // Initialize saved game
 		break;
 	case RESTORE:
 		warning("Unhandled action RESTORE");
@@ -1624,10 +1529,10 @@ void HugoEngine::initialize() {
 	_maze.enabledFl = false;
 	_line[0] = '\0';
 
-	sound().initSound();
-	scheduler().initEventQueue();                   // Init scheduler stuff
-	screen().initDisplay();                         // Create Dibs and palette
-	file().openDatabaseFiles();                     // Open database files
+	_sound->initSound();
+	_scheduler->initEventQueue();                   // Init scheduler stuff
+	_screen->initDisplay();                         // Create Dibs and palette
+	_file->openDatabaseFiles();                     // Open database files
 	calcMaxScore();                                 // Initialise maxscore
 
 	_rnd = new Common::RandomSource();
@@ -1657,214 +1562,28 @@ void HugoEngine::initialize() {
 void HugoEngine::shutdown() {
 	debugC(1, kDebugEngine, "shutdown");
 
-	file().closeDatabaseFiles();
+	_file->closeDatabaseFiles();
 	if (_status.recordFl || _status.playbackFl)
-		file().closePlaybackFile();
-	freeObjects();
+		_file->closePlaybackFile();
+	_object->freeObjects();
 }
 
 void HugoEngine::readObjectImages() {
 	debugC(1, kDebugEngine, "readObjectImages");
 
 	for (int i = 0; i < _numObj; i++)
-		file().readImage(i, &_objects[i]);
-}
-
-// Read the uif image file (inventory icons)
-void HugoEngine::readUIFImages() {
-	debugC(1, kDebugEngine, "readUIFImages");
-
-	file().readUIFItem(UIF_IMAGES, screen().getGUIBuffer());   // Read all uif images
+		_file->readImage(i, &_object->_objects[i]);
 }
 
 // Read scenery, overlay files for given screen number
 void HugoEngine::readScreenFiles(int screenNum) {
 	debugC(1, kDebugEngine, "readScreenFiles(%d)", screenNum);
 
-	file().readBackground(screenNum);               // Scenery file
-	memcpy(screen().getBackBuffer(), screen().getFrontBuffer(), sizeof(screen().getFrontBuffer()));// Make a copy
-	file().readOverlay(screenNum, _boundary, BOUNDARY); // Boundary file
-	file().readOverlay(screenNum, _overlay, OVERLAY);   // Overlay file
-	file().readOverlay(screenNum, _ovlBase, OVLBASE);   // Overlay base file
-}
-
-// Update all object positions.  Process object 'local' events
-// including boundary events and collisions
-void HugoEngine::moveObjects() {
-	debugC(4, kDebugEngine, "moveObjects");
-
-	// If route mode enabled, do special route processing
-	if (_status.routeIndex >= 0)
-		route().processRoute();
-
-	// Perform any adjustments to velocity based on special path types
-	// and store all (visible) object baselines into the boundary file.
-	// Don't store foreground or background objects
-	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];               // Get pointer to object
-		seq_t *currImage = obj->currImagePtr;       // Get ptr to current image
-		if (obj->screenIndex == *_screen_p) {
-			switch (obj->pathType) {
-			case CHASE:
-			case CHASE2: {
-				int8 radius = obj->radius;          // Default to object's radius
-				if (radius < 0)                     // If radius infinity, use closer value
-					radius = DX;
-
-				// Allowable motion wrt boundary
-				int dx = _hero->x + _hero->currImagePtr->x1 - obj->x - currImage->x1;
-				int dy = _hero->y + _hero->currImagePtr->y2 - obj->y - currImage->y2 - 1;
-				if (abs(dx) <= radius)
-					obj->vx = 0;
-				else
-					obj->vx = (dx > 0) ? MIN(dx, obj->vxPath) : MAX(dx, -obj->vxPath);
-				if (abs(dy) <= radius)
-					obj->vy = 0;
-				else
-					obj->vy = (dy > 0) ? MIN(dy, obj->vyPath) : MAX(dy, -obj->vyPath);
-
-				// Set first image in sequence (if multi-seq object)
-				switch (obj->seqNumb) {
-				case 4:
-					if (!obj->vx) {                 // Got 4 directions
-						if (obj->vx != obj->oldvx)  { // vx just stopped
-							if (dy >= 0)
-								obj->currImagePtr = obj->seqList[DOWN].seqPtr;
-							else
-								obj->currImagePtr = obj->seqList[_UP].seqPtr;
-						}
-					} else if (obj->vx != obj->oldvx) {
-						if (dx > 0)
-							obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
-						else
-							obj->currImagePtr = obj->seqList[LEFT].seqPtr;
-					}
-					break;
-				case 3:
-				case 2:
-					if (obj->vx != obj->oldvx) {    // vx just stopped
-						if (dx > 0)                 // Left & right only
-							obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
-						else
-							obj->currImagePtr = obj->seqList[LEFT].seqPtr;
-					}
-					break;
-				}
-
-				if (obj->vx || obj->vy)
-					obj->cycling = CYCLE_FORWARD;
-				else {
-					obj->cycling = NOT_CYCLING;
-					boundaryCollision(obj);         // Must have got hero!
-				}
-				obj->oldvx = obj->vx;
-				obj->oldvy = obj->vy;
-				currImage = obj->currImagePtr;      // Get (new) ptr to current image
-				break;
-				}
-			case WANDER2:
-			case WANDER:
-				if (!_rnd->getRandomNumber(3 * NORMAL_TPS)) {       // Kick on random interval
-					obj->vx = _rnd->getRandomNumber(obj->vxPath << 1) - obj->vxPath;
-					obj->vy = _rnd->getRandomNumber(obj->vyPath << 1) - obj->vyPath;
-
-					// Set first image in sequence (if multi-seq object)
-					if (obj->seqNumb > 1) {
-						if (!obj->vx && (obj->seqNumb >= 4)) {
-							if (obj->vx != obj->oldvx)  { // vx just stopped
-								if (obj->vy > 0)
-									obj->currImagePtr = obj->seqList[DOWN].seqPtr;
-								else
-									obj->currImagePtr = obj->seqList[_UP].seqPtr;
-							}
-						} else if (obj->vx != obj->oldvx) {
-							if (obj->vx > 0)
-								obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
-							else
-								obj->currImagePtr = obj->seqList[LEFT].seqPtr;
-						}
-					}
-					obj->oldvx = obj->vx;
-					obj->oldvy = obj->vy;
-					currImage = obj->currImagePtr;  // Get (new) ptr to current image
-				}
-				if (obj->vx || obj->vy)
-					obj->cycling = CYCLE_FORWARD;
-				break;
-			default:
-				; // Really, nothing
-			}
-			// Store boundaries
-			if ((obj->cycling > ALMOST_INVISIBLE) && (obj->priority == FLOATING))
-				storeBoundary(obj->x + currImage->x1, obj->x + currImage->x2, obj->y + currImage->y2);
-		}
-	}
-
-	// Move objects, allowing for boundaries
-	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];                         // Get pointer to object
-		if ((obj->screenIndex == *_screen_p) && (obj->vx || obj->vy)) {
-			// Only process if it's moving
-
-			// Do object movement.  Delta_x,y return allowed movement in x,y
-			// to move as close to a boundary as possible without crossing it.
-			seq_t *currImage = obj->currImagePtr;   // Get ptr to current image
-			// object coordinates
-			int x1 = obj->x + currImage->x1;        // Left edge of object
-			int x2 = obj->x + currImage->x2;        // Right edge
-			int y1 = obj->y + currImage->y1;        // Top edge
-			int y2 = obj->y + currImage->y2;        // Bottom edge
-
-			if ((obj->cycling > ALMOST_INVISIBLE) && (obj->priority == FLOATING))
-				clearBoundary(x1, x2, y2);          // Clear our own boundary
-
-			// Allowable motion wrt boundary
-			int dx = deltaX(x1, x2, obj->vx, y2);
-			if (dx != obj->vx) {
-				// An object boundary collision!
-				boundaryCollision(obj);
-				obj->vx = 0;
-			}
-
-			int dy = deltaY(x1, x2, obj->vy, y2);
-			if (dy != obj->vy) {
-				// An object boundary collision!
-				boundaryCollision(obj);
-				obj->vy = 0;
-			}
-
-			if ((obj->cycling > ALMOST_INVISIBLE) && (obj->priority == FLOATING))
-				storeBoundary(x1, x2, y2);          // Re-store our own boundary
-
-			obj->x += dx;                           // Update object position
-			obj->y += dy;
-
-			// Don't let object go outside screen
-			if (x1 < EDGE)
-				obj->x = EDGE2;
-			if (x2 > (XPIX - EDGE))
-				obj->x = XPIX - EDGE2 - (x2 - x1);
-			if (y1 < EDGE)
-				obj->y = EDGE2;
-			if (y2 > (YPIX - EDGE))
-				obj->y = YPIX - EDGE2 - (y2 - y1);
-
-			if ((obj->vx == 0) && (obj->vy == 0) && (obj->pathType != WANDER2) && (obj->pathType != CHASE2))
-				obj->cycling = NOT_CYCLING;
-		}
-	}
-
-	// Clear all object baselines from the boundary file.
-	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];               // Get pointer to object
-		seq_t *currImage = obj->currImagePtr;       // Get ptr to current image
-		if ((obj->screenIndex == *_screen_p) && (obj->cycling > ALMOST_INVISIBLE) && (obj->priority == FLOATING))
-			clearBoundary(obj->oldx + currImage->x1, obj->oldx + currImage->x2, obj->oldy + currImage->y2);
-	}
-
-	// If maze mode is enabled, do special maze processing
-	if (_maze.enabledFl)
-		processMaze();
+	_file->readBackground(screenNum);               // Scenery file
+	memcpy(_screen->getBackBuffer(), _screen->getFrontBuffer(), sizeof(_screen->getFrontBuffer()));// Make a copy
+	_file->readOverlay(screenNum, _boundary, BOUNDARY); // Boundary file
+	_file->readOverlay(screenNum, _overlay, OVERLAY);   // Overlay file
+	_file->readOverlay(screenNum, _ovlBase, OVLBASE);   // Overlay base file
 }
 
 // Return maximum allowed movement (from zero to vx) such that object does
@@ -1993,216 +1712,29 @@ void HugoEngine::processMaze() {
 		_actListArr[_alNewscrIndex][0].a2.x = _maze.x2 - SHIFT - (x2 - x1);
 		_actListArr[_alNewscrIndex][0].a2.y = _hero->y;
 		_status.routeIndex = -1;
-		scheduler().insertActionList(_alNewscrIndex);
+		_scheduler->insertActionList(_alNewscrIndex);
 	} else if (x2 > _maze.x2) {
 		// Exit east
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_screen_p + 1;
 		_actListArr[_alNewscrIndex][0].a2.x = _maze.x1 + SHIFT;
 		_actListArr[_alNewscrIndex][0].a2.y = _hero->y;
 		_status.routeIndex = -1;
-		scheduler().insertActionList(_alNewscrIndex);
+		_scheduler->insertActionList(_alNewscrIndex);
 	} else if (y1 < _maze.y1 - SHIFT) {
 		// Exit north
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_screen_p - _maze.size;
 		_actListArr[_alNewscrIndex][0].a2.x = _maze.x3;
 		_actListArr[_alNewscrIndex][0].a2.y = _maze.y2 - SHIFT - (y2 - y1);
 		_status.routeIndex = -1;
-		scheduler().insertActionList(_alNewscrIndex);
+		_scheduler->insertActionList(_alNewscrIndex);
 	} else if (y2 > _maze.y2 - SHIFT / 2) {
 		// Exit south
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_screen_p + _maze.size;
 		_actListArr[_alNewscrIndex][0].a2.x = _maze.x4;
 		_actListArr[_alNewscrIndex][0].a2.y = _maze.y1 + SHIFT;
 		_status.routeIndex = -1;
-		scheduler().insertActionList(_alNewscrIndex);
+		_scheduler->insertActionList(_alNewscrIndex);
 	}
-}
-
-// Compare function for the quicksort.  The sort is to order the objects in
-// increasing vertical position, using y+y2 as the baseline
-// Returns -1 if ay2 < by2 else 1 if ay2 > by2 else 0
-int HugoEngine::y2comp(const void *a, const void *b) {
-	debugC(6, kDebugEngine, "y2comp");
-
-	const object_t *p1 = &s_Engine->_objects[*(const byte *)a];
-	const object_t *p2 = &s_Engine->_objects[*(const byte *)b];
-
-	if (p1 == p2)
-		// Why does qsort try the same indexes?
-		return 0;
-
-	if (p1->priority == BACKGROUND)
-		return -1;
-
-	if (p2->priority == BACKGROUND)
-		return 1;
-
-	if (p1->priority == FOREGROUND)
-		return 1;
-
-	if (p2->priority == FOREGROUND)
-		return -1;
-
-	int ay2 = p1->y + p1->currImagePtr->y2;
-	int by2 = p2->y + p2->currImagePtr->y2;
-
-	return ay2 - by2;
-}
-
-// Draw all objects on screen as follows:
-// 1. Sort 'FLOATING' objects in order of y2 (base of object)
-// 2. Display new object frames/positions in dib
-// Finally, cycle any animating objects to next frame
-void HugoEngine::updateImages() {
-	debugC(5, kDebugEngine, "updateImages");
-
-	// Initialise the index array to visible objects in current screen
-	int  num_objs = 0;
-	byte objindex[MAX_OBJECTS];                // Array of indeces to objects
-
-	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];
-		if ((obj->screenIndex == *_screen_p) && (obj->cycling >= ALMOST_INVISIBLE))
-			objindex[num_objs++] = i;
-	}
-
-	// Sort the objects into increasing y+y2 (painter's algorithm)
-	qsort(objindex, num_objs, sizeof(objindex[0]), y2comp);
-
-	// Add each visible object to display list
-	for (int i = 0; i < num_objs; i++) {
-		object_t *obj = &_objects[objindex[i]];
-		// Count down inter-frame timer
-		if (obj->frameTimer)
-			obj->frameTimer--;
-
-		if (obj->cycling > ALMOST_INVISIBLE) {      // Only if visible
-			switch (obj->cycling) {
-			case NOT_CYCLING:
-				screen().displayFrame(obj->x, obj->y, obj->currImagePtr, obj->priority == OVEROVL);
-				break;
-			case CYCLE_FORWARD:
-				if (obj->frameTimer)                // Not time to see next frame yet
-					screen().displayFrame(obj->x, obj->y, obj->currImagePtr, obj->priority == OVEROVL);
-				else
-					screen().displayFrame(obj->x, obj->y, obj->currImagePtr->nextSeqPtr, obj->priority == OVEROVL);
-				break;
-			case CYCLE_BACKWARD: {
-				seq_t *seqPtr = obj->currImagePtr;
-				if (!obj->frameTimer) {             // Show next frame
-					while (seqPtr->nextSeqPtr != obj->currImagePtr)
-						seqPtr = seqPtr->nextSeqPtr;
-				}
-				screen().displayFrame(obj->x, obj->y, seqPtr, obj->priority == OVEROVL);
-				break;
-				}
-			default:
-				break;
-			}
-		}
-	}
-
-	// Cycle any animating objects
-	for (int i = 0; i < num_objs; i++) {
-		object_t *obj = &_objects[objindex[i]];
-		if (obj->cycling != INVISIBLE) {
-			// Only if it's visible
-			if (obj->cycling == ALMOST_INVISIBLE)
-				obj->cycling = INVISIBLE;
-
-			// Now Rotate to next picture in sequence
-			switch (obj->cycling) {
-			case NOT_CYCLING:
-				break;
-			case CYCLE_FORWARD:
-				if (!obj->frameTimer) {
-					// Time to step to next frame
-					obj->currImagePtr = obj->currImagePtr->nextSeqPtr;
-					// Find out if this is last frame of sequence
-					// If so, reset frame_timer and decrement n_cycle
-					if (obj->frameInterval || obj->cycleNumb) {
-						obj->frameTimer = obj->frameInterval;
-						for (int j = 0; j < obj->seqNumb; j++) {
-							if (obj->currImagePtr->nextSeqPtr == obj->seqList[j].seqPtr) {
-								if (obj->cycleNumb) { // Decr cycleNumb if Non-continous
-									if (!--obj->cycleNumb)
-										obj->cycling = NOT_CYCLING;
-								}
-							}
-						}
-					}
-				}
-				break;
-			case CYCLE_BACKWARD: {
-				if (!obj->frameTimer) {
-					// Time to step to prev frame
-					seq_t *seqPtr = obj->currImagePtr;
-					while (obj->currImagePtr->nextSeqPtr != seqPtr)
-						obj->currImagePtr = obj->currImagePtr->nextSeqPtr;
-					// Find out if this is first frame of sequence
-					// If so, reset frame_timer and decrement n_cycle
-					if (obj->frameInterval || obj->cycleNumb) {
-						obj->frameTimer = obj->frameInterval;
-						for (int j = 0; j < obj->seqNumb; j++) {
-							if (obj->currImagePtr == obj->seqList[j].seqPtr) {
-								if (obj->cycleNumb){ // Decr cycleNumb if Non-continous
-									if (!--obj->cycleNumb)
-										obj->cycling = NOT_CYCLING;
-								}
-							}
-						}
-					}
-				}
-				break;
-				}
-			default:
-				break;
-			}
-			obj->oldx = obj->x;
-			obj->oldy = obj->y;
-		}
-	}
-}
-
-// Return object index of the topmost object under the cursor, or -1 if none
-// Objects are filtered if not "useful"
-int16 HugoEngine::findObject(uint16 x, uint16 y) {
-	debugC(3, kDebugEngine, "findObject(%d, %d)", x, y);
-
-	int16     objIndex = -1;                        // Index of found object
-	uint16    y2Max = 0;                            // Greatest y2
-	object_t *obj = _objects;
-	// Check objects on screen
-	for (int i = 0; i < _numObj; i++, obj++) {
-		// Object must be in current screen and "useful"
-		if (obj->screenIndex == *_screen_p && (obj->genericCmd || obj->objValue || obj->cmdIndex)) {
-			seq_t *curImage = obj->currImagePtr;
-			// Object must have a visible image...
-			if (curImage != 0 && obj->cycling != INVISIBLE) {
-				// If cursor inside object
-				if (x >= (uint16)obj->x && x <= obj->x + curImage->x2 && y >= (uint16)obj->y && y <= obj->y + curImage->y2) {
-					// If object is closest so far
-					if (obj->y + curImage->y2 > y2Max) {
-						y2Max = obj->y + curImage->y2;
-						objIndex = i;               // Found an object!
-					}
-				}
-			} else {
-				// ...or a dummy object that has a hotspot rectangle
-				if (curImage == 0 && obj->vxPath != 0 && !obj->carriedFl) {
-					// If cursor inside special rectangle
-					if ((int16)x >= obj->oldx && (int16)x < obj->oldx + obj->vxPath && (int16)y >= obj->oldy && (int16)y < obj->oldy + obj->vyPath) {
-						// If object is closest so far
-						if (obj->oldy + obj->vyPath - 1 > (int16)y2Max) {
-							y2Max = obj->oldy + obj->vyPath - 1;
-							objIndex = i;           // Found an object!
-						}
-					}
-				}
-			}
-		}
-	}
-	return objIndex;
 }
 
 // Find a clear space around supplied object that hero can walk to
@@ -2264,97 +1796,6 @@ char *HugoEngine::useBG(char *name) {
 	return 0;
 }
 
-// If status.objid = -1, pick up objid, else use status.objid on objid,
-// if objid can't be picked up, use it directly
-void HugoEngine::useObject(int16 objId) {
-	debugC(1, kDebugEngine, "useObject(%d)", objId);
-
-	char *verb;                                     // Background verb to use directly
-	object_t *obj = &_objects[objId];               // Ptr to object
-	if (_status.inventoryObjId == -1) {
-		// Get or use objid directly
-		if ((obj->genericCmd & TAKE) || obj->objValue)  // Get collectible item
-			sprintf(_line, "%s %s", _arrayVerbs[_take][0], _arrayNouns[obj->nounIndex][0]);
-		else if (obj->genericCmd & LOOK)            // Look item
-			sprintf(_line, "%s %s", _arrayVerbs[_look][0], _arrayNouns[obj->nounIndex][0]);
-		else if (obj->genericCmd & DROP)            // Drop item
-			sprintf(_line, "%s %s", _arrayVerbs[_drop][0], _arrayNouns[obj->nounIndex][0]);
-		else if (obj->cmdIndex != 0)                // Use non-collectible item if able
-			sprintf(_line, "%s %s", _arrayVerbs[_cmdList[obj->cmdIndex][1].verbIndex][0], _arrayNouns[obj->nounIndex][0]);
-		else if ((verb = useBG(_arrayNouns[obj->nounIndex][0])) != 0)
-			sprintf(_line, "%s %s", verb, _arrayNouns[obj->nounIndex][0]);
-		else
-			return;                                 // Can't use object directly
-	} else {
-		// Use status.objid on objid
-		// Default to first cmd verb
-		sprintf(_line, "%s %s %s", _arrayVerbs[_cmdList[_objects[_status.inventoryObjId].cmdIndex][1].verbIndex][0], _arrayNouns[_objects[_status.inventoryObjId].nounIndex][0], _arrayNouns[obj->nounIndex][0]);
-
-		// Check valid use of objects and override verb if necessary
-		for (uses_t *use = _uses; use->objId != _numObj; use++) {
-			if (_status.inventoryObjId == use->objId) {
-				// Look for secondary object, if found use matching verb
-				bool foundFl = false;
-				for (target_t *target = use->targets; _arrayNouns[target->nounIndex] != 0; target++)
-					if (_arrayNouns[target->nounIndex][0] == _arrayNouns[obj->nounIndex][0]) {
-						foundFl = true;
-						sprintf(_line, "%s %s %s", _arrayVerbs[target->verbIndex][0], _arrayNouns[_objects[_status.inventoryObjId].nounIndex][0], _arrayNouns[obj->nounIndex][0]);
-					}
-
-				// No valid use of objects found, print failure string
-				if (!foundFl) {
-					// Deselect dragged icon if inventory not active
-					if (_status.inventoryState != I_ACTIVE)
-						_status.inventoryObjId  = -1;
-					Utils::Box(BOX_ANY, "%s", _textData[use->dataIndex]);
-					return;
-				}
-			}
-		}
-	}
-
-	if (_status.inventoryState == I_ACTIVE)         // If inventory active, remove it
-		_status.inventoryState = I_UP;
-	_status.inventoryObjId  = -1;                   // Deselect any dragged icon
-	parser().lineHandler();                         // and process command
-}
-
-// Issue "Look at <object>" command
-// Note special case of swapped hero image
-void HugoEngine::lookObject(object_t *obj) {
-	debugC(1, kDebugEngine, "lookObject");
-
-	if (obj == _hero)
-		// Hero swapped - look at other
-		obj = &_objects[_heroImage];
-
-	parser().command("%s %s", _arrayVerbs[_look][0], _arrayNouns[obj->nounIndex][0]);
-}
-
-// Free all object images
-void HugoEngine::freeObjects() {
-	debugC(1, kDebugEngine, "freeObjects");
-
-	// Nothing to do if not allocated yet
-	if (_hero->seqList[0].seqPtr == 0)
-		return;
-
-	// Free all sequence lists and image data
-	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];
-		for (int j = 0; j < obj->seqNumb; j++) {    // for each sequence
-			seq_t *seq = obj->seqList[j].seqPtr;    // Free image
-			if (seq == 0)                           // Failure during database load
-				break;
-			do {
-				free(seq->imagePtr);
-				seq = seq->nextSeqPtr;
-			} while (seq != obj->seqList[j].seqPtr);
-			free(seq);                              // Free sequence record
-		}
-	}
-}
-
 // Add action lists for this screen to event queue
 void HugoEngine::screenActions(int screenNum) {
 	debugC(1, kDebugEngine, "screenActions(%d)", screenNum);
@@ -2362,7 +1803,7 @@ void HugoEngine::screenActions(int screenNum) {
 	uint16 *screenAct = _screenActs[screenNum];
 	if (screenAct) {
 		for (int i = 0; screenAct[i]; i++)
-			scheduler().insertActionList(screenAct[i]);
+			_scheduler->insertActionList(screenAct[i]);
 	}
 }
 
@@ -2372,8 +1813,8 @@ void HugoEngine::setNewScreen(int screenNum) {
 
 	*_screen_p = screenNum;                             // HERO object
 	for (int i = HERO + 1; i < _numObj; i++) {          // Any others
-		if (_objects[i].carriedFl)                      // being carried
-			_objects[i].screenIndex = screenNum;
+		if (_object->isCarried(i))                      // being carried
+			_object->_objects[i].screenIndex = screenNum;
 	}
 }
 
@@ -2394,7 +1835,7 @@ void HugoEngine::boundaryCollision(object_t *obj) {
 			hotspot_t *hotspot = &_hotspots[i];
 			if (hotspot->screenIndex == obj->screenIndex)
 				if ((x >= hotspot->x1) && (x <= hotspot->x2) && (y >= hotspot->y1) && (y <= hotspot->y2)) {
-					scheduler().insertActionList(hotspot->actIndex);
+					_scheduler->insertActionList(hotspot->actIndex);
 					break;
 				}
 		}
@@ -2407,7 +1848,7 @@ void HugoEngine::boundaryCollision(object_t *obj) {
 		if (radius < 0)
 			radius = DX * 2;
 		if ((abs(dx) <= radius) && (abs(dy) <= radius))
-			scheduler().insertActionList(obj->actIndex);
+			_scheduler->insertActionList(obj->actIndex);
 	}
 }
 
@@ -2416,7 +1857,7 @@ void HugoEngine::calcMaxScore() {
 	debugC(1, kDebugEngine, "calcMaxScore");
 
 	for (int i = 0; i < _numObj; i++)
-		_maxscore += _objects[i].objValue;
+		_maxscore += _object->_objects[i].objValue;
 
 	for (int i = 0; i < _numBonuses; i++)
 		_maxscore += _points[i].score;

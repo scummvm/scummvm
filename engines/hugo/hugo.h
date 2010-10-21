@@ -38,7 +38,6 @@
 #define EDGE             10                         // Closest object can get to edge of screen
 #define EDGE2            (EDGE * 2)                 // Push object further back on edge collision
 #define SHIFT            8                          // Place hero this far inside bounding box
-#define MAX_OBJECTS      128                        // Used in Update_images()
 #define BOUND(X, Y)      ((_boundary[Y * XBYTES + X / 8] & (0x80 >> X % 8)) != 0)  // Boundary bit set
 
 namespace Common {
@@ -103,6 +102,7 @@ class Parser;
 class Route;
 class SoundHandler;
 class IntroHandler;
+class ObjectHandler;
 
 
 class HugoEngine : public Engine {
@@ -149,7 +149,6 @@ public:
 	point_t   *_points;
 	cmd       **_cmdList;
 	uint16    **_screenActs;
-	object_t  *_objects;
 	act       **_actListArr;
 	int16     *_defltTunes;
 	uint16    _look;
@@ -181,34 +180,6 @@ public:
 		return *s_Engine;
 	}
 
-	FileManager &file() {
-		return *_fileManager;
-	}
-	Scheduler &scheduler() {
-		return *_scheduler;
-	}
-	Screen &screen() {
-		return *_screen;
-	}
-	MouseHandler &mouse() {
-		return *_mouseHandler;
-	}
-	InventoryHandler &inventory() {
-		return *_inventoryHandler;
-	}
-	Parser &parser() {
-		return *_parser;
-	}
-	Route &route() {
-		return *_route;
-	}
-	SoundHandler &sound() {
-		return *_soundHandler;
-	}
-	IntroHandler &intro() {
-		return *_introHandler;
-	}
-
 	void initGame(const HugoGameDescription *gd);
 	void initGamePart(const HugoGameDescription *gd);
 	bool loadHugoDat();
@@ -220,22 +191,24 @@ public:
 		return _mouseY;
 	}
 
-	void initStatus();
-	void readObjectImages();
-	void readUIFImages();
-	void updateImages();
-	void moveObjects();
-	void useObject(int16 objId);
 	bool findObjectSpace(object_t *obj, int16 *destx, int16 *desty);
-	int16 findObject(uint16 x, uint16 y);
-	void lookObject(object_t *obj);
-	void storeBoundary(int x1, int x2, int y);
+
+	void boundaryCollision(object_t *obj); 
 	void clearBoundary(int x1, int x2, int y);
 	void endGame();
+	void initStatus();
+	void processMaze();
+	void readObjectImages();
 	void readScreenFiles(int screen);
-	void setNewScreen(int screen);
 	void screenActions(int screen);
+	void setNewScreen(int screen);
 	void shutdown();
+	void storeBoundary(int x1, int x2, int y);
+
+	char *useBG(char *name);
+
+	int deltaX(int x1, int x2, int vx, int y);
+	int deltaY(int x1, int x2, int vy, int y);
 
 	overlay_t &getBoundaryOverlay() {
 		return _boundary;
@@ -271,6 +244,17 @@ public:
 		return _introXSize;
 	}
 
+	FileManager *_file;
+	Scheduler *_scheduler;
+	Screen *_screen;
+	MouseHandler *_mouse;
+	InventoryHandler *_inventory;
+	Parser *_parser;
+	Route *_route;
+	SoundHandler *_sound;
+	IntroHandler *_intro;
+	ObjectHandler *_object;
+
 protected:
 
 	// Engine APIs
@@ -301,16 +285,6 @@ private:
 	Common::Platform _platform;
 	bool _packedFl;
 
-	FileManager *_fileManager;
-	Scheduler *_scheduler;
-	Screen *_screen;
-	MouseHandler *_mouseHandler;
-	InventoryHandler *_inventoryHandler;
-	Parser *_parser;
-	Route *_route;
-	SoundHandler *_soundHandler;
-	IntroHandler *_introHandler;
-
 	int _score;                         // Holds current score
 	int _maxscore;                      // Holds maximum score
 
@@ -323,18 +297,9 @@ private:
 	void initPlaylist(bool playlist[MAX_TUNES]);
 	void initConfig(inst_t action);
 	void initialize();
-	int deltaX(int x1, int x2, int vx, int y);
-	int deltaY(int x1, int x2, int vy, int y);
-	void processMaze();
-	//int y2comp (const void *a, const void *b);
-	char *useBG(char *name);
-	void freeObjects();
-	void boundaryCollision(object_t *obj);
 	void calcMaxScore();
 	void initMachine();
 	void runMachine();
-
-	static int y2comp(const void *a, const void *b);
 
 };
 

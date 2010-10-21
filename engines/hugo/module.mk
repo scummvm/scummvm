@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	intro_v3w.o \
 	inventory.o \
 	mouse.o \
+	object.o \
 	parser.o \
 	parser_v1w.o \
 	parser_v1d.o \

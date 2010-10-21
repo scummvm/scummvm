@@ -37,7 +37,7 @@
 
 namespace Hugo {
 
-IntroHandler::IntroHandler(HugoEngine &vm) : _vm(vm) {
+IntroHandler::IntroHandler(HugoEngine *vm) : _vm(vm) {
 }
 
 IntroHandler::~IntroHandler() {

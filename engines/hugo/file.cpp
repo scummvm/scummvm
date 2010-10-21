@@ -39,9 +39,10 @@
 #include "hugo/schedule.h"
 #include "hugo/display.h"
 #include "hugo/util.h"
+#include "hugo/object.h"
 
 namespace Hugo {
-FileManager::FileManager(HugoEngine &vm) : _vm(vm) {
+FileManager::FileManager(HugoEngine *vm) : _vm(vm) {
 }
 
 FileManager::~FileManager() {
@@ -143,7 +144,7 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 	if (!objPtr->seqNumb)                           // This object has no images
 		return;
 
-	if (_vm.isPacked()) {
+	if (_vm->isPacked()) {
 		_objectsArchive.seek((uint32)objNum * sizeof(objBlock_t), SEEK_SET);
 
 		objBlock_t objBlock;                        // Info on file within database
@@ -153,10 +154,10 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 		_objectsArchive.seek(objBlock.objOffset, SEEK_SET);
 	} else {
 		char *buf = (char *) malloc(2048 + 1);      // Buffer for file access
-		strcat(strcat(strcpy(buf, _vm._picDir), _vm._arrayNouns[objPtr->nounIndex][0]), OBJEXT);
+		strcat(strcat(strcpy(buf, _vm->_picDir), _vm->_arrayNouns[objPtr->nounIndex][0]), OBJEXT);
 		if (!_objectsArchive.open(buf)) {
-			warning("File %s not found, trying again with %s%s", buf, _vm._arrayNouns[objPtr->nounIndex][0], OBJEXT);
-			strcat(strcpy(buf, _vm._arrayNouns[objPtr->nounIndex][0]), OBJEXT);
+			warning("File %s not found, trying again with %s%s", buf, _vm->_arrayNouns[objPtr->nounIndex][0], OBJEXT);
+			strcat(strcpy(buf, _vm->_arrayNouns[objPtr->nounIndex][0]), OBJEXT);
 			if (!_objectsArchive.open(buf))
 				Utils::Error(FILE_ERR, "%s", buf);
 		}
@@ -170,12 +171,12 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 		for (int k = 0; k < objPtr->seqList[j].imageNbr; k++) { // each image
 			if (k == 0) {                           // First image
 				// Read this image - allocate both seq and image memory
-				seqPtr = readPCX(_objectsArchive, 0, 0, firstFl, _vm._arrayNouns[objPtr->nounIndex][0]);
+				seqPtr = readPCX(_objectsArchive, 0, 0, firstFl, _vm->_arrayNouns[objPtr->nounIndex][0]);
 				objPtr->seqList[j].seqPtr = seqPtr;
 				firstFl = false;
 			} else {                                // Subsequent image
 				// Read this image - allocate both seq and image memory
-				seqPtr->nextSeqPtr = readPCX(_objectsArchive, 0, 0, firstFl, _vm._arrayNouns[objPtr->nounIndex][0]);
+				seqPtr->nextSeqPtr = readPCX(_objectsArchive, 0, 0, firstFl, _vm->_arrayNouns[objPtr->nounIndex][0]);
 				seqPtr = seqPtr->nextSeqPtr;
 			}
 
@@ -222,7 +223,7 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 		warning("Unexpected cycling: %d", objPtr->cycling);
 	}
 
-	if (!_vm.isPacked())
+	if (!_vm->isPacked())
 		_objectsArchive.close();
 }
 
@@ -232,7 +233,7 @@ sound_pt FileManager::getSound(int16 sound, uint16 *size) {
 	debugC(1, kDebugFile, "getSound(%d, %d)", sound, *size);
 
 	// No more to do if SILENCE (called for cleanup purposes)
-	if (sound == _vm._soundSilence)
+	if (sound == _vm->_soundSilence)
 		return 0;
 
 	// Open sounds file
@@ -283,35 +284,6 @@ bool FileManager::fileExists(char *filename) {
 	return false;
 }
 
-void FileManager::saveSeq(object_t *obj) {
-// Save sequence number and image number in given object
-	debugC(1, kDebugFile, "saveSeq");
-
-	bool found = false;
-	for (int j = 0; !found && (j < obj->seqNumb); j++) {
-		seq_t *q = obj->seqList[j].seqPtr;
-		for (int k = 0; !found && (k < obj->seqList[j].imageNbr); k++) {
-			if (obj->currImagePtr == q) {
-				found = true;
-				obj->curSeqNum = j;
-				obj->curImageNum = k;
-			} else {
-				q = q->nextSeqPtr;
-			}
-		}
-	}
-}
-
-void FileManager::restoreSeq(object_t *obj) {
-// Set up cur_seq_p from stored sequence and image number in object
-	debugC(1, kDebugFile, "restoreSeq");
-
-	seq_t *q = obj->seqList[obj->curSeqNum].seqPtr;
-	for (int j = 0; j < obj->curImageNum; j++)
-		q = q->nextSeqPtr;
-	obj->currImagePtr = q;
-}
-
 void FileManager::saveGame(int16 slot, const char *descrip) {
 // Save game to supplied slot (-1 is INITFILE)
 	debugC(1, kDebugFile, "saveGame(%d, %s)", slot, descrip);
@@ -320,11 +292,11 @@ void FileManager::saveGame(int16 slot, const char *descrip) {
 	Common::String path; // Full path of saved game
 
 	if (slot == -1)
-		path = _vm._initFilename;
+		path = _vm->_initFilename;
 	else
-		path = Common::String::printf(_vm._saveFilename.c_str(), slot);
+		path = Common::String::printf(_vm->_saveFilename.c_str(), slot);
 
-	Common::WriteStream *out = _vm.getSaveFileManager()->openForSaving(path);
+	Common::WriteStream *out = _vm->getSaveFileManager()->openForSaving(path);
 	if (!out) {
 		warning("Can't create file '%s', game not saved", path.c_str());
 		return;
@@ -337,19 +309,19 @@ void FileManager::saveGame(int16 slot, const char *descrip) {
 	out->write(descrip, DESCRIPLEN);
 
 	// Save objects
-	for (int i = 0; i < _vm._numObj; i++) {
+	for (int i = 0; i < _vm->_numObj; i++) {
 		// Save where curr_seq_p is pointing to
-		saveSeq(&_vm._objects[i]);
-		out->write(&_vm._objects[i], sizeof(object_t));
+		_vm->_object->saveSeq(&_vm->_object->_objects[i]);
+		out->write(&_vm->_object->_objects[i], sizeof(object_t));
 	}
 
-	const status_t &gameStatus = _vm.getGameStatus();
+	const status_t &gameStatus = _vm->getGameStatus();
 
 	// Save whether hero image is swapped
-	out->write(&_vm._heroImage, sizeof(_vm._heroImage));
+	out->write(&_vm->_heroImage, sizeof(_vm->_heroImage));
 
 	// Save score
-	int score = _vm.getScore();
+	int score = _vm->getScore();
 	out->write(&score, sizeof(score));
 
 	// Save story mode
@@ -362,16 +334,16 @@ void FileManager::saveGame(int16 slot, const char *descrip) {
 	out->write(&gameStatus.gameOverFl, sizeof(gameStatus.gameOverFl));
 
 	// Save screen states
-	out->write(_vm._screenStates, sizeof(*_vm._screenStates) * _vm._numScreens);
+	out->write(_vm->_screenStates, sizeof(*_vm->_screenStates) * _vm->_numScreens);
 
 	// Save points table
-	out->write(_vm._points, sizeof(point_t) * _vm._numBonuses);
+	out->write(_vm->_points, sizeof(point_t) * _vm->_numBonuses);
 
 	// Now save current time and all current events in event queue
-	_vm.scheduler().saveEvents(out);
+	_vm->_scheduler->saveEvents(out);
 
 	// Save palette table
-	_vm.screen().savePal(out);
+	_vm->_screen->savePal(out);
 
 	// Save maze status
 	out->write(&_maze, sizeof(maze_t));
@@ -386,17 +358,17 @@ void FileManager::restoreGame(int16 slot) {
 	debugC(1, kDebugFile, "restoreGame(%d)", slot);
 
 	// Initialize new-game status
-	_vm.initStatus();
+	_vm->initStatus();
 
 	// Get full path of saved game file - note test for INITFILE
 	Common::String path; // Full path of saved game
 
 	if (slot == -1)
-		path = _vm._initFilename;
+		path = _vm->_initFilename;
 	else
-		path = Common::String::printf(_vm._saveFilename.c_str(), slot);
+		path = Common::String::printf(_vm->_saveFilename.c_str(), slot);
 
-	Common::SeekableReadStream *in = _vm.getSaveFileManager()->openForLoading(path);
+	Common::SeekableReadStream *in = _vm->getSaveFileManager()->openForLoading(path);
 	if (!in)
 		return;
 
@@ -412,13 +384,13 @@ void FileManager::restoreGame(int16 slot) {
 	in->seek(DESCRIPLEN, SEEK_CUR);
 
 	// If hero image is currently swapped, swap it back before restore
-	if (_vm._heroImage != HERO)
-		_vm.scheduler().swapImages(HERO, _vm._heroImage);
+	if (_vm->_heroImage != HERO)
+		_vm->_object->swapImages(HERO, _vm->_heroImage);
 
 	// Restore objects, retain current seqList which points to dynamic mem
 	// Also, retain cmnd_t pointers
-	for (int i = 0; i < _vm._numObj; i++) {
-		object_t *p = &_vm._objects[i];
+	for (int i = 0; i < _vm->_numObj; i++) {
+		object_t *p = &_vm->_object->_objects[i];
 		seqList_t seqList[MAX_SEQUENCES];
 		memcpy(seqList, p->seqList, sizeof(seqList_t));
 		uint16 cmdIndex = p->cmdIndex;
@@ -427,37 +399,37 @@ void FileManager::restoreGame(int16 slot) {
 		memcpy(p->seqList, seqList, sizeof(seqList_t));
 	}
 
-	in->read(&_vm._heroImage, sizeof(_vm._heroImage));
+	in->read(&_vm->_heroImage, sizeof(_vm->_heroImage));
 
 	// If hero swapped in saved game, swap it
-	int heroImg = _vm._heroImage;
+	int heroImg = _vm->_heroImage;
 	if (heroImg != HERO)
-		_vm.scheduler().swapImages(HERO, _vm._heroImage);
-	_vm._heroImage = heroImg;
+		_vm->_object->swapImages(HERO, _vm->_heroImage);
+	_vm->_heroImage = heroImg;
 
-	status_t &gameStatus = _vm.getGameStatus();
+	status_t &gameStatus = _vm->getGameStatus();
 
 	int score;
 	in->read(&score, sizeof(score));
-	_vm.setScore(score);
+	_vm->setScore(score);
 
 	in->read(&gameStatus.storyModeFl, sizeof(gameStatus.storyModeFl));
 	in->read(&gameStatus.jumpExitFl, sizeof(gameStatus.jumpExitFl));
 	in->read(&gameStatus.gameOverFl, sizeof(gameStatus.gameOverFl));
-	in->read(_vm._screenStates, sizeof(*_vm._screenStates) * _vm._numScreens);
+	in->read(_vm->_screenStates, sizeof(*_vm->_screenStates) * _vm->_numScreens);
 
 	// Restore points table
-	in->read(_vm._points, sizeof(point_t) * _vm._numBonuses);
+	in->read(_vm->_points, sizeof(point_t) * _vm->_numBonuses);
 
 	// Restore ptrs to currently loaded objects
-	for (int i = 0; i < _vm._numObj; i++)
-		restoreSeq(&_vm._objects[i]);
+	for (int i = 0; i < _vm->_numObj; i++)
+		_vm->_object->restoreSeq(&_vm->_object->_objects[i]);
 
 	// Now restore time of the save and the event queue
-	_vm.scheduler().restoreEvents(in);
+	_vm->_scheduler->restoreEvents(in);
 
 	// Restore palette and change it if necessary
-	_vm.screen().restorePal(in);
+	_vm->_screen->restorePal(in);
 
 	// Restore maze status
 	in->read(&_maze, sizeof(maze_t));
@@ -475,27 +447,27 @@ void FileManager::initSavedGame() {
 	debugC(1, kDebugFile, "initSavedGame");
 
 	// Force save of initial game
-	if (_vm.getGameStatus().initSaveFl)
+	if (_vm->getGameStatus().initSaveFl)
 		saveGame(-1, "");
 
 	// If initial game doesn't exist, create it
-	Common::SeekableReadStream *in = _vm.getSaveFileManager()->openForLoading(_vm._initFilename);
+	Common::SeekableReadStream *in = _vm->getSaveFileManager()->openForLoading(_vm->_initFilename);
 	if (!in) {
 		saveGame(-1, "");
-		in = _vm.getSaveFileManager()->openForLoading(_vm._initFilename);
+		in = _vm->getSaveFileManager()->openForLoading(_vm->_initFilename);
 		if (!in) {
-			Utils::Error(WRITE_ERR, "%s", _vm._initFilename.c_str());
+			Utils::Error(WRITE_ERR, "%s", _vm->_initFilename.c_str());
 			return;
 		}
 	}
 
 	// Must have an open saved game now
-	_vm.getGameStatus().saveSize = in->size();
+	_vm->getGameStatus().saveSize = in->size();
 	delete in;
 
 	// Check sanity - maybe disk full or path set to read-only drive?
-	if (_vm.getGameStatus().saveSize == -1)
-		Utils::Error(WRITE_ERR, "%s", _vm._initFilename.c_str());
+	if (_vm->getGameStatus().saveSize == -1)
+		Utils::Error(WRITE_ERR, "%s", _vm->_initFilename.c_str());
 }
 
 void FileManager::openPlaybackFile(bool playbackFl, bool recordFl) {
@@ -520,7 +492,7 @@ void FileManager::printBootText() {
 
 	Common::File ofp;
 	if (!ofp.open(BOOTFILE)) {
-		if (_vm._gameVariant == 3) {
+		if (_vm->_gameVariant == 3) {
 			//TODO initialize properly _boot structure
 			warning("printBootText - Skipping as H1 Dos may be a freeware");
 			return;
@@ -559,7 +531,7 @@ void FileManager::readBootFile() {
 
 	Common::File ofp;
 	if (!ofp.open(BOOTFILE)) {
-		if (_vm._gameVariant == 3) {
+		if (_vm->_gameVariant == 3) {
 			//TODO initialize properly _boot structure
 			warning("readBootFile - Skipping as H1 Dos may be a freeware");
 			return;
@@ -671,6 +643,13 @@ void FileManager::instructions() {
 		f.read(readBuf, 2);                         // Remove CRLF after EOP
 	}
 	f.close();
+}
+
+// Read the uif image file (inventory icons)
+void FileManager::readUIFImages() {
+	debugC(1, kDebugFile, "readUIFImages");
+
+	readUIFItem(UIF_IMAGES, _vm->_screen->getGUIBuffer());   // Read all uif images
 }
 
 } // End of namespace Hugo

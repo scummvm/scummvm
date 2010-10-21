@@ -38,16 +38,17 @@
 #include "hugo/game.h"
 #include "hugo/route.h"
 #include "hugo/global.h"
+#include "hugo/object.h"
 
 namespace Hugo {
-Route::Route(HugoEngine &vm) : _vm(vm) {
+Route::Route(HugoEngine *vm) : _vm(vm) {
 }
 
 // Face hero in new direction, based on cursor key input by user.
 void Route::setDirection(uint16 keyCode) {
 	debugC(1, kDebugRoute, "setDirection(%d)", keyCode);
 
-	object_t *obj = _vm._hero;                      // Pointer to hero object
+	object_t *obj = _vm->_hero;                      // Pointer to hero object
 
 	// Set first image in sequence
 	switch (keyCode) {
@@ -84,9 +85,9 @@ void Route::setWalk(uint16 direction) {
 	debugC(1, kDebugRoute, "setWalk(%d)", direction);
 
 	static uint16 oldDirection = 0;                 // Last direction char
-	object_t *obj = _vm._hero;                      // Pointer to hero object
+	object_t *obj = _vm->_hero;                      // Pointer to hero object
 
-	if (_vm.getGameStatus().storyModeFl || obj->pathType != USER)           // Make sure user has control
+	if (_vm->getGameStatus().storyModeFl || obj->pathType != USER)           // Make sure user has control
 		return;
 
 	if (!obj->vx && !obj->vy)
@@ -195,7 +196,7 @@ void Route::segment(int16 x, int16 y) {
 	if (y <= 0 || y >= YPIX - 1)
 		return;
 
-	if (_vm._hero->x < x1) {
+	if (_vm->_hero->x < x1) {
 		// Hero x not in segment, search x1..x2
 		// Find all segments above current
 		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++) {
@@ -208,7 +209,7 @@ void Route::segment(int16 x, int16 y) {
 			if (_boundaryMap[y + 1][x] == 0)
 				segment(x, y + 1);
 		}
-	} else if (_vm._hero->x + HERO_MAX_WIDTH > x2) {
+	} else if (_vm->_hero->x + HERO_MAX_WIDTH > x2) {
 		// Hero x not in segment, search x1..x2
 		// Find all segments above current
 		for (x = x2; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x >= x1; x--) {
@@ -224,22 +225,22 @@ void Route::segment(int16 x, int16 y) {
 	} else {
 		// Organize search around hero x position - this gives
 		// better chance for more direct route.
-		for (x = _vm._hero->x; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++) {
+		for (x = _vm->_hero->x; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++) {
 			if (_boundaryMap[y - 1][x] == 0)
 				segment(x, y - 1);
 		}
 
-		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x < _vm._hero->x; x++) {
+		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x < _vm->_hero->x; x++) {
 			if (_boundaryMap[y - 1][x] == 0)
 				segment(x, y - 1);
 		}
 
-		for (x = _vm._hero->x; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++) {
+		for (x = _vm->_hero->x; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++) {
 			if (_boundaryMap[y + 1][x] == 0)
 				segment(x, y + 1);
 		}
 
-		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x < _vm._hero->x; x++) {
+		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x < _vm->_hero->x; x++) {
 			if (_boundaryMap[y + 1][x] == 0)
 				segment(x, y + 1);
 		}
@@ -289,30 +290,30 @@ bool Route::findRoute(int16 cx, int16 cy) {
 	_destY = cy;                                    // Destination coords
 	_destX = cx;                                    // Destination coords
 
-	int16 herox1 = _vm._hero->x + _vm._hero->currImagePtr->x1;        // Hero baseline
-	int16 herox2 = _vm._hero->x + _vm._hero->currImagePtr->x2;        // Hero baseline
-	int16 heroy  = _vm._hero->y + _vm._hero->currImagePtr->y2;        // Hero baseline
+	int16 herox1 = _vm->_hero->x + _vm->_hero->currImagePtr->x1;        // Hero baseline
+	int16 herox2 = _vm->_hero->x + _vm->_hero->currImagePtr->x2;        // Hero baseline
+	int16 heroy  = _vm->_hero->y + _vm->_hero->currImagePtr->y2;        // Hero baseline
 
 	// Store all object baselines into objbound (except hero's = [0])
 	object_t  *obj;                                 // Ptr to object
 	int i;
-	for (i = 1, obj = &_vm._objects[i]; i < _vm._numObj; i++, obj++) {
-		if ((obj->screenIndex == *_vm._screen_p) && (obj->cycling != INVISIBLE) && (obj->priority == FLOATING))
-			_vm.storeBoundary(obj->oldx + obj->currImagePtr->x1, obj->oldx + obj->currImagePtr->x2, obj->oldy + obj->currImagePtr->y2);
+	for (i = 1, obj = &_vm->_object->_objects[i]; i < _vm->_numObj; i++, obj++) {
+		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling != INVISIBLE) && (obj->priority == FLOATING))
+			_vm->storeBoundary(obj->oldx + obj->currImagePtr->x1, obj->oldx + obj->currImagePtr->x2, obj->oldy + obj->currImagePtr->y2);
 	}
 
 	// Combine objbound and boundary bitmaps to local byte map
 	for (int16 y = 0; y < YPIX; y++) {
 		for (int16 x = 0; x < XBYTES; x++) {
 			for (i = 0; i < 8; i++)
-				_boundaryMap[y][x * 8 + i] = ((_vm.getObjectBoundaryOverlay()[y * XBYTES + x] | _vm.getBoundaryOverlay()[y * XBYTES + x]) & (0x80 >> i)) ? kMapBound : 0;
+				_boundaryMap[y][x * 8 + i] = ((_vm->getObjectBoundaryOverlay()[y * XBYTES + x] | _vm->getBoundaryOverlay()[y * XBYTES + x]) & (0x80 >> i)) ? kMapBound : 0;
 		}
 	}
 	
 	// Clear all object baselines from objbound
-	for (i = 0, obj = _vm._objects; i < _vm._numObj; i++, obj++) {
-		if ((obj->screenIndex == *_vm._screen_p) && (obj->cycling != INVISIBLE) && (obj->priority == FLOATING))
-			_vm.clearBoundary(obj->oldx + obj->currImagePtr->x1, obj->oldx + obj->currImagePtr->x2, obj->oldy + obj->currImagePtr->y2);
+	for (i = 0, obj = _vm->_object->_objects; i < _vm->_numObj; i++, obj++) {
+		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling != INVISIBLE) && (obj->priority == FLOATING))
+			_vm->clearBoundary(obj->oldx + obj->currImagePtr->x1, obj->oldx + obj->currImagePtr->x2, obj->oldy + obj->currImagePtr->y2);
 	}
 	
 	// Search from hero to destination
@@ -389,43 +390,43 @@ void Route::processRoute() {
 	static bool turnedFl = false;                   // Used to get extra cylce for turning
 
 	// Current hero position
-	int16 herox = _vm._hero->x + _vm._hero->currImagePtr->x1;
-	int16 heroy = _vm._hero->y + _vm._hero->currImagePtr->y2;
-	status_t &gameStatus = _vm.getGameStatus();
+	int16 herox = _vm->_hero->x + _vm->_hero->currImagePtr->x1;
+	int16 heroy = _vm->_hero->y + _vm->_hero->currImagePtr->y2;
+	status_t &gameStatus = _vm->getGameStatus();
 	Point *routeNode = &_route[gameStatus.routeIndex];
 
 	// Arrived at node?
 	if (abs(herox - routeNode->x) < DX + 1 && abs(heroy - routeNode->y) < DY) {
 		// DX too low
 		// Close enough - position hero exactly
-		_vm._hero->x = _vm._hero->oldx = routeNode->x - _vm._hero->currImagePtr->x1;
-		_vm._hero->y = _vm._hero->oldy = routeNode->y - _vm._hero->currImagePtr->y2;
-		_vm._hero->vx = _vm._hero->vy = 0;
-		_vm._hero->cycling = NOT_CYCLING;
+		_vm->_hero->x = _vm->_hero->oldx = routeNode->x - _vm->_hero->currImagePtr->x1;
+		_vm->_hero->y = _vm->_hero->oldy = routeNode->y - _vm->_hero->currImagePtr->y2;
+		_vm->_hero->vx = _vm->_hero->vy = 0;
+		_vm->_hero->cycling = NOT_CYCLING;
 
 		// Arrived at final node?
 		if (--gameStatus.routeIndex < 0) {
 			// See why we walked here
 			switch (gameStatus.go_for) {
 			case GO_EXIT:                           // Walked to an exit, proceed into it
-				setWalk(_vm._hotspots[gameStatus.go_id].direction);
+				setWalk(_vm->_hotspots[gameStatus.go_id].direction);
 				break;
 			case GO_LOOK:                           // Look at an object
 				if (turnedFl) {
-					_vm.lookObject(&_vm._objects[gameStatus.go_id]);
+					_vm->_object->lookObject(&_vm->_object->_objects[gameStatus.go_id]);
 					turnedFl = false;
 				} else {
-					setDirection(_vm._objects[gameStatus.go_id].direction);
+					setDirection(_vm->_object->_objects[gameStatus.go_id].direction);
 					gameStatus.routeIndex++;        // Come round again
 					turnedFl = true;
 				}
 				break;
 			case GO_GET:                            // Get (or use) an object
 				if (turnedFl) {
-					_vm.useObject(gameStatus.go_id);
+					_vm->_object->useObject(gameStatus.go_id);
 					turnedFl = false;
 				} else {
-					setDirection(_vm._objects[gameStatus.go_id].direction);
+					setDirection(_vm->_object->_objects[gameStatus.go_id].direction);
 					gameStatus.routeIndex++;        // Come round again
 					turnedFl = true;
 				}
@@ -435,7 +436,7 @@ void Route::processRoute() {
 				break;
 			}
 		}
-	} else if (_vm._hero->vx == 0 && _vm._hero->vy == 0) {
+	} else if (_vm->_hero->vx == 0 && _vm->_hero->vy == 0) {
 		// Set direction of travel if at a node
 		// Note realignment when changing to (thinner) up/down sprite,
 		// otherwise hero could bump into boundaries along route.
@@ -445,10 +446,10 @@ void Route::processRoute() {
 			setWalk(Common::KEYCODE_LEFT);
 		} else if (heroy < routeNode->y) {
 			setWalk(Common::KEYCODE_DOWN);
-			_vm._hero->x = _vm._hero->oldx = routeNode->x - _vm._hero->currImagePtr->x1;
+			_vm->_hero->x = _vm->_hero->oldx = routeNode->x - _vm->_hero->currImagePtr->x1;
 		} else if (heroy > routeNode->y) {
 			setWalk(Common::KEYCODE_UP);
-			_vm._hero->x = _vm._hero->oldx = routeNode->x - _vm._hero->currImagePtr->x1;
+			_vm->_hero->x = _vm->_hero->oldx = routeNode->x - _vm->_hero->currImagePtr->x1;
 		}
 	}
 }
@@ -460,10 +461,10 @@ bool Route::startRoute(go_t go_for, int16 id, int16 cx, int16 cy) {
 	debugC(1, kDebugRoute, "startRoute(%d, %d, %d, %d)", go_for, id, cx, cy);
 
 	// Don't attempt to walk if user does not have control
-	if (_vm._hero->pathType != USER)
+	if (_vm->_hero->pathType != USER)
 		return false;
 
-	status_t &gameStatus = _vm.getGameStatus();
+	status_t &gameStatus = _vm->getGameStatus();
 	// if inventory showing, make it go away
 	if (gameStatus.inventoryState != I_OFF)
 		gameStatus.inventoryState = I_UP;
@@ -478,7 +479,7 @@ bool Route::startRoute(go_t go_for, int16 id, int16 cx, int16 cy) {
 	bool foundFl = false;                           // TRUE if route found ok
 	if ((foundFl = findRoute(cx, cy))) {            // Found a route?
 		gameStatus.routeIndex = _routeListIndex;    // Node index
-		_vm._hero->vx = _vm._hero->vy = 0;      // Stop manual motion
+		_vm->_hero->vx = _vm->_hero->vy = 0;      // Stop manual motion
 	}
 
 	return foundFl;

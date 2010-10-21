@@ -40,7 +40,7 @@
 
 namespace Hugo {
 
-Screen_v1d::Screen_v1d(HugoEngine &vm) : Screen(vm) {
+Screen_v1d::Screen_v1d(HugoEngine *vm) : Screen(vm) {
 }
 
 Screen_v1d::~Screen_v1d() {
@@ -61,7 +61,7 @@ void Screen_v1d::loadFont(int16 fontId) {
 
 	fontLoadedFl[_fnt] = true;
 
-	memcpy(_fontdata[_fnt], _vm._arrayFont[_fnt], _vm._arrayFontSize[_fnt]);
+	memcpy(_fontdata[_fnt], _vm->_arrayFont[_fnt], _vm->_arrayFontSize[_fnt]);
 	_font[_fnt][0] = _fontdata[_fnt];               // Store height,width of fonts
 
 	int16 offset = 2;                                       // Start at fontdata[2] ([0],[1] used for height,width)

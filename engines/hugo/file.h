@@ -57,7 +57,7 @@ namespace Hugo {
 
 class FileManager {
 public:
-	FileManager(HugoEngine &vm);
+	FileManager(HugoEngine *vm);
 	virtual ~FileManager();
 
 
@@ -69,11 +69,10 @@ public:
 	void     instructions();
 	void     readBootFile();
 	void     readImage(int objNum, object_t *objPtr);
+	void     readUIFImages();
 	void     readUIFItem(short id, byte *buf);
 	void     restoreGame(short slot);
-	void     restoreSeq(object_t *obj);
 	void     saveGame(short slot, const char *descrip);
-	void     saveSeq(object_t *obj);
 
 	virtual void openDatabaseFiles() = 0;
 	virtual void closeDatabaseFiles() = 0;
@@ -84,7 +83,7 @@ public:
 	virtual char *fetchString(int index) = 0;
 
 protected:
-	HugoEngine &_vm;
+	HugoEngine *_vm;
 
 	Common::File _stringArchive;                    // Handle for string file
 	Common::File _sceneryArchive1;                  // Handle for scenery file
@@ -108,7 +107,7 @@ private:
 
 class FileManager_v1d : public FileManager {
 public:
-	FileManager_v1d(HugoEngine &vm);
+	FileManager_v1d(HugoEngine *vm);
 	~FileManager_v1d();
 
 	void openDatabaseFiles();
@@ -120,7 +119,7 @@ public:
 
 class FileManager_v2d : public FileManager {
 public:
-	FileManager_v2d(HugoEngine &vm);
+	FileManager_v2d(HugoEngine *vm);
 	~FileManager_v2d();
 
 	void openDatabaseFiles();
@@ -132,7 +131,7 @@ public:
 
 class FileManager_v3d : public FileManager_v2d {
 public:
-	FileManager_v3d(HugoEngine &vm);
+	FileManager_v3d(HugoEngine *vm);
 	~FileManager_v3d();
 
 	void openDatabaseFiles();
@@ -145,7 +144,7 @@ private:
 
 class FileManager_v1w : public FileManager_v2d {
 public:
-	FileManager_v1w(HugoEngine &vm);
+	FileManager_v1w(HugoEngine *vm);
 	~FileManager_v1w();
 
 	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);

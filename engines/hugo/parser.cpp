@@ -39,6 +39,7 @@
 #include "hugo/route.h"
 #include "hugo/util.h"
 #include "hugo/sound.h"
+#include "hugo/object.h"
 
 namespace Hugo {
 
@@ -46,7 +47,7 @@ namespace Hugo {
 #define CX(X)   LOWORD(X)
 #define CY(Y)   HIWORD(Y)
 
-Parser::Parser(HugoEngine &vm) :
+Parser::Parser(HugoEngine *vm) :
 	_vm(vm), _putIndex(0), _getIndex(0), _checkDoubleF1Fl(false) {
 }
 
@@ -56,7 +57,7 @@ Parser::~Parser() {
 void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 	debugC(1, kDebugParser, "keyHandler(%d, %d)", nChar, nFlags);
 
-	status_t &gameStatus = _vm.getGameStatus();
+	status_t &gameStatus = _vm->getGameStatus();
 	bool repeatedFl = (nFlags & 0x4000);            // TRUE if key is a repeat
 
 // Process key down event - called from OnKeyDown()
@@ -74,14 +75,14 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 	case Common::KEYCODE_DOWN:
 		if (!repeatedFl) {
 			gameStatus.routeIndex = -1;             // Stop any automatic route
-			_vm.route().setWalk(nChar);             // Direction of hero travel
+			_vm->_route->setWalk(nChar);             // Direction of hero travel
 		}
 		break;
 	case Common::KEYCODE_F1:                        // User Help (DOS)
 		if (_checkDoubleF1Fl)
-			_vm.file().instructions();
+			_vm->_file->instructions();
 		else
-			_vm.screen().userHelp();
+			_vm->_screen->userHelp();
 		_checkDoubleF1Fl = !_checkDoubleF1Fl;
 		break;
 	case Common::KEYCODE_F6:                        // Inventory
@@ -91,8 +92,8 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 		_config.turboFl = !_config.turboFl;
 		break;
 	case Common::KEYCODE_F2:                        // Toggle sound
-		_vm.sound().toggleSound();
-		_vm.sound().toggleMusic();
+		_vm->_sound->toggleSound();
+		_vm->_sound->toggleMusic();
 		break;
 	case Common::KEYCODE_F3:                        // Repeat last line
 		gameStatus.recallFl = true;
@@ -129,7 +130,7 @@ void Parser::charHandler() {
 	static uint32 tick = 0;                         // For flashing cursor
 	static char   cursor = '_';
 	static        command_t cmdLine;                // Build command line
-	status_t     &gameStatus = _vm.getGameStatus();
+	status_t     &gameStatus = _vm->getGameStatus();
 
 	// Check for one or more characters in ring buffer
 	while (_getIndex != _putIndex) {
@@ -143,7 +144,7 @@ void Parser::charHandler() {
 				cmdLine[--lineIndex] = '\0';
 			break;
 		case Common::KEYCODE_RETURN:                // EOL, pass line to line handler
-			if (lineIndex && (_vm._hero->pathType != QUIET)) {
+			if (lineIndex && (_vm->_hero->pathType != QUIET)) {
 				// Remove inventory bar if active
 				if (gameStatus.inventoryState == I_ACTIVE)
 					gameStatus.inventoryState = I_UP;
@@ -176,8 +177,8 @@ void Parser::charHandler() {
 		lineIndex = strlen(cmdLine);
 	}
 
-	sprintf(_vm._statusLine, ">%s%c", cmdLine, cursor);
-	sprintf(_vm._scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_config.turboFl) ? "T" : " ", _vm.getScore(), _vm.getMaxScore(), (_config.soundFl) ? "On" : "Off");
+	sprintf(_vm->_statusLine, ">%s%c", cmdLine, cursor);
+	sprintf(_vm->_scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_config.turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(), (_config.soundFl) ? "On" : "Off");
 
 	// See if "look" button pressed
 	if (gameStatus.lookFl) {
@@ -216,10 +217,10 @@ bool Parser::isWordPresent(char **wordArr) {
 char *Parser::findNoun() {
 	debugC(1, kDebugParser, "findNoun()");
 
-	for (int i = 0; _vm._arrayNouns[i]; i++) {
-		for (int j = 0; strlen(_vm._arrayNouns[i][j]); j++) {
-			if (strstr(_line, _vm._arrayNouns[i][j]))
-				return _vm._arrayNouns[i][0];
+	for (int i = 0; _vm->_arrayNouns[i]; i++) {
+		for (int j = 0; strlen(_vm->_arrayNouns[i][j]); j++) {
+			if (strstr(_line, _vm->_arrayNouns[i][j]))
+				return _vm->_arrayNouns[i][0];
 		}
 	}
 	return 0;
@@ -229,38 +230,13 @@ char *Parser::findNoun() {
 char *Parser::findVerb() {
 	debugC(1, kDebugParser, "findVerb()");
 
-	for (int i = 0; _vm._arrayVerbs[i]; i++) {
-		for (int j = 0; strlen(_vm._arrayVerbs[i][j]); j++) {
-			if (strstr(_line, _vm._arrayVerbs[i][j]))
-				return _vm._arrayVerbs[i][0];
+	for (int i = 0; _vm->_arrayVerbs[i]; i++) {
+		for (int j = 0; strlen(_vm->_arrayVerbs[i][j]); j++) {
+			if (strstr(_line, _vm->_arrayVerbs[i][j]))
+				return _vm->_arrayVerbs[i][0];
 		}
 	}
 	return 0;
-}
-
-// Describe any takeable objects visible in this screen
-void Parser::showTakeables() {
-	debugC(1, kDebugParser, "showTakeables");
-
-	for (int j = 0; j < _vm._numObj; j++) {
-		object_t *obj = &_vm._objects[j];
-		if ((obj->cycling != INVISIBLE) &&
-		    (obj->screenIndex == *_vm._screen_p) &&
-		    (((TAKE & obj->genericCmd) == TAKE) || obj->objValue)) {
-			Utils::Box(BOX_ANY, "You can also see:\n%s.", _vm._arrayNouns[obj->nounIndex][LOOK_NAME]);
-		}
-	}
-}
-
-// Return TRUE if object being carried by hero
-bool Parser::isCarrying(uint16 wordIndex) {
-	debugC(1, kDebugParser, "isCarrying(%d)", wordIndex);
-
-	for (int i = 0; i < _vm._numObj; i++) {
-		if ((wordIndex == _vm._objects[i].nounIndex) && _vm._objects[i].carriedFl)
-			return true;
-	}
-	return false;
 }
 
 // Show user all objects being carried in a variable width 2 column format
@@ -269,9 +245,9 @@ void Parser::showDosInventory() {
 	static const char *blanks = "                                        ";
 	uint16 index = 0, len1 = 0, len2 = 0;
 
-	for (int i = 0; i < _vm._numObj; i++) {         // Find widths of 2 columns
-		if (_vm._objects[i].carriedFl) {
-			uint16 len = strlen(_vm._arrayNouns[_vm._objects[i].nounIndex][1]);
+	for (int i = 0; i < _vm->_numObj; i++) {         // Find widths of 2 columns
+		if (_vm->_object->isCarried(i)) {
+			uint16 len = strlen(_vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][1]);
 			if (index++ & 1)                        // Right hand column
 				len2 = (len > len2) ? len : len2;
 			else
@@ -280,24 +256,24 @@ void Parser::showDosInventory() {
 	}
 	len1 += 1;                                      // For gap between columns
 
-	if (len1 + len2 < (uint16)strlen(_vm._textParser[kTBOutro]))
-		len1 = strlen(_vm._textParser[kTBOutro]);
+	if (len1 + len2 < (uint16)strlen(_vm->_textParser[kTBOutro]))
+		len1 = strlen(_vm->_textParser[kTBOutro]);
 
 	char buffer[XBYTES *NUM_ROWS] = "\0";
-	strncat(buffer, blanks, (len1 + len2 - strlen(_vm._textParser[kTBIntro])) / 2);
-	strcat(strcat(buffer, _vm._textParser[kTBIntro]), "\n");
+	strncat(buffer, blanks, (len1 + len2 - strlen(_vm->_textParser[kTBIntro])) / 2);
+	strcat(strcat(buffer, _vm->_textParser[kTBIntro]), "\n");
 	index = 0;
-	for (int i = 0; i < _vm._numObj; i++) {         // Assign strings
-		if (_vm._objects[i].carriedFl) {
+	for (int i = 0; i < _vm->_numObj; i++) {         // Assign strings
+		if (_vm->_object->isCarried(i)) {
 			if (index++ & 1)
-				strcat(strcat(buffer, _vm._arrayNouns[_vm._objects[i].nounIndex][1]), "\n");
+				strcat(strcat(buffer, _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][1]), "\n");
 			else
-				strncat(strcat(buffer, _vm._arrayNouns[_vm._objects[i].nounIndex][1]), blanks, len1 - strlen(_vm._arrayNouns[_vm._objects[i].nounIndex][1]));
+				strncat(strcat(buffer, _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][1]), blanks, len1 - strlen(_vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][1]));
 		}
 	}
 	if (index & 1)
 		strcat(buffer, "\n");
-	strcat(buffer, _vm._textParser[kTBOutro]);
+	strcat(buffer, _vm->_textParser[kTBOutro]);
 
 	Utils::Box(BOX_ANY, "%s", buffer);
 }

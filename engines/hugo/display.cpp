@@ -48,7 +48,7 @@ namespace Hugo {
 #define INY(Y, B) (Y >= B->y && Y <= B->y + B->dy)
 #define OVERLAP(A, B) ((INX(A->x, B) || INX(A->x + A->dx, B) || INX(B->x, A) || INX(B->x + B->dx, A)) && (INY(A->y, B) || INY(A->y + A->dy, B) || INY(B->y, A) || INY(B->y + B->dy, A)))
 
-Screen::Screen(HugoEngine &vm) : _vm(vm) {
+Screen::Screen(HugoEngine *vm) : _vm(vm) {
 
 }
 
@@ -58,7 +58,7 @@ Screen::~Screen() {
 void Screen::createPal() {
 	debugC(1, kDebugDisplay, "createPal");
 
-	g_system->setPalette(_vm._palette, 0, NUM_COLORS);
+	g_system->setPalette(_vm->_palette, 0, NUM_COLORS);
 }
 
 void Screen::initDisplay() {
@@ -135,7 +135,7 @@ overlayState_t Screen::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
 	debugC(4, kDebugDisplay, "findOvl");
 
 	for (; y < seq_p->lines; y++) {              // Each line in object
-		image_pt ovb_p = _vm.getBaseBoundaryOverlay() + ((uint16)(dst_p - _frontBuffer) >> 3);  // Ptr into overlay bits
+		image_pt ovb_p = _vm->getBaseBoundaryOverlay() + ((uint16)(dst_p - _frontBuffer) >> 3);  // Ptr into overlay bits
 		if (*ovb_p & (0x80 >> ((uint16)(dst_p - _frontBuffer) & 7))) // Overlay bit is set
 			return FG;                              // Found a bit - must be foreground
 		dst_p += XPIX;
@@ -151,7 +151,7 @@ void Screen::displayFrame(int sx, int sy, seq_t *seq, bool foreFl) {
 
 	image_pt image = seq->imagePtr;                 // Ptr to object image data
 	image_pt subFrontBuffer = &_frontBuffer[sy * XPIX + sx]; // Ptr to offset in _frontBuffer
-	image_pt overlay = &_vm.getFirstOverlay()[(sy * XPIX + sx) >> 3]; // Ptr to overlay data
+	image_pt overlay = &_vm->getFirstOverlay()[(sy * XPIX + sx) >> 3]; // Ptr to overlay data
 	int16 frontBufferwrap = XPIX - seq->x2 - 1;     // Wraps dest_p after each line
 	int16 imageWrap = seq->bytesPerLine8 - seq->x2 - 1;
 
@@ -159,7 +159,7 @@ void Screen::displayFrame(int sx, int sy, seq_t *seq, bool foreFl) {
 	for (uint16 y = 0; y < seq->lines; y++) {       // Each line in object
 		for (uint16 x = 0; x <= seq->x2; x++) {
 			if (*image) {                           // Non-transparent
-				overlay = _vm.getFirstOverlay() + ((uint16)(subFrontBuffer - _frontBuffer) >> 3);       // Ptr into overlay bits
+				overlay = _vm->getFirstOverlay() + ((uint16)(subFrontBuffer - _frontBuffer) >> 3);       // Ptr into overlay bits
 				if (*overlay & (0x80 >> ((uint16)(subFrontBuffer - _frontBuffer) & 7))) {   // Overlay bit is set
 					if (overlayState == UNDEF)      // Overlay defined yet?
 						overlayState = findOvl(seq, subFrontBuffer, y);// No, find it.
@@ -269,8 +269,8 @@ void Screen::displayList(dupdate_t update, ...) {
 		// Don't blit if newscreen just loaded because _frontBuffer will
 		// get blitted via InvalidateRect() at end of this cycle
 		// and blitting here causes objects to appear too soon.
-		if (_vm.getGameStatus().newScreenFl) {
-			_vm.getGameStatus().newScreenFl = false;
+		if (_vm->getGameStatus().newScreenFl) {
+			_vm->getGameStatus().newScreenFl = false;
 			break;
 		}
 
@@ -394,18 +394,18 @@ void Screen::drawStatusText() {
 	debugC(4, kDebugDisplay, "drawStatusText");
 
 	loadFont(U_FONT8);
-	uint16 sdx = stringLength(_vm._statusLine);
+	uint16 sdx = stringLength(_vm->_statusLine);
 	uint16 sdy = fontHeight() + 1;                 // + 1 for shadow
 	uint16 posX = 0;
 	uint16 posY = YPIX - sdy;
 
 	// Display the string and add rect to display list
-	writeStr(posX, posY, _vm._statusLine, _TLIGHTYELLOW);
+	writeStr(posX, posY, _vm->_statusLine, _TLIGHTYELLOW);
 	displayList(D_ADD, posX, posY, sdx, sdy);
 
-	sdx = stringLength(_vm._scoreLine);
+	sdx = stringLength(_vm->_scoreLine);
 	posY = 0;
-	writeStr(posX, posY, _vm._scoreLine, _TCYAN);
+	writeStr(posX, posY, _vm->_scoreLine, _TCYAN);
 	displayList(D_ADD, posX, posY, sdx, sdy);
 }
 
@@ -447,7 +447,7 @@ void Screen::initNewScreenDisplay() {
 	displayBackground();
 
 	// Stop premature object display in Display_list(D_DISPLAY)
-	_vm.getGameStatus().newScreenFl = true;
+	_vm->getGameStatus().newScreenFl = true;
 }
 } // End of namespace Hugo
 

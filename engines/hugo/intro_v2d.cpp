@@ -39,7 +39,7 @@
 
 namespace Hugo {
 
-intro_v2d::intro_v2d(HugoEngine &vm) : IntroHandler(vm) {
+intro_v2d::intro_v2d(HugoEngine *vm) : IntroHandler(vm) {
 }
 
 intro_v2d::~intro_v2d() {
@@ -49,8 +49,8 @@ void intro_v2d::preNewGame() {
 }
 
 void intro_v2d::introInit() {
-	_vm.screen().loadFont(0);
-	_vm.file().readBackground(_vm._numScreens - 1); // display splash screen
+	_vm->_screen->loadFont(0);
+	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
 
 	char buffer[128];
 
@@ -58,14 +58,14 @@ void intro_v2d::introInit() {
 		sprintf(buffer, "%s  Registered Version", COPYRIGHT);
 	else
 		sprintf(buffer, "%s  Shareware Version", COPYRIGHT);
-	_vm.screen().writeStr(CENTER, 186, buffer, _TLIGHTRED);
+	_vm->_screen->writeStr(CENTER, 186, buffer, _TLIGHTRED);
 
 	if (scumm_stricmp(_boot.distrib, "David P. Gray")) {
 		sprintf(buffer, "Distributed by %s.", _boot.distrib);
-		_vm.screen().writeStr(CENTER, 1, buffer, _TLIGHTRED);
+		_vm->_screen->writeStr(CENTER, 1, buffer, _TLIGHTRED);
 	}
 
-	_vm.screen().displayBackground();
+	_vm->_screen->displayBackground();
 	g_system->updateScreen();
 	g_system->delayMillis(5000);
 }

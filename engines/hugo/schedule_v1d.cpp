@@ -39,7 +39,7 @@
 
 namespace Hugo {
 
-Scheduler_v1d::Scheduler_v1d(HugoEngine &vm) : Scheduler(vm) {
+Scheduler_v1d::Scheduler_v1d(HugoEngine *vm) : Scheduler(vm) {
 }
 
 Scheduler_v1d::~Scheduler_v1d() {

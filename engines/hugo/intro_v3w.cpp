@@ -40,7 +40,7 @@
 
 namespace Hugo {
 
-intro_v3w::intro_v3w(HugoEngine &vm) : IntroHandler(vm) {
+intro_v3w::intro_v3w(HugoEngine *vm) : IntroHandler(vm) {
 }
 
 intro_v3w::~intro_v3w() {
@@ -52,15 +52,15 @@ void intro_v3w::preNewGame() {
 void intro_v3w::introInit() {
 // Hugo 3 - show map and set up for introPlay()
 //#if STORY
-	_vm.file().readBackground(22); // display screen MAP_3w
-	_vm.screen().displayBackground();
+	_vm->_file->readBackground(22); // display screen MAP_3w
+	_vm->_screen->displayBackground();
 	introTicks = 0;
-	_vm.screen().loadFont(0);
+	_vm->_screen->loadFont(0);
 //#endif
 }
 
 bool intro_v3w::introPlay() {
-	byte introSize = _vm.getIntroSize();
+	byte introSize = _vm->getIntroSize();
 
 // Hugo 3 - Preamble screen before going into game.  Draws path of Hugo's plane.
 // Called every tick.  Returns TRUE when complete
@@ -68,20 +68,20 @@ bool intro_v3w::introPlay() {
 //#if STORY
 	if (introTicks < introSize) {
 		// Scale viewport x_intro,y_intro to screen (offsetting y)
-		_vm.screen().writeStr(_vm._introX[introTicks], _vm._introY[introTicks] - DIBOFF_Y, "x", _TBRIGHTWHITE);
-		_vm.screen().displayBackground();
+		_vm->_screen->writeStr(_vm->_introX[introTicks], _vm->_introY[introTicks] - DIBOFF_Y, "x", _TBRIGHTWHITE);
+		_vm->_screen->displayBackground();
 
 
 		// Text boxes at various times
 		switch (introTicks) {
 		case 4:
-			Utils::Box(BOX_OK, "%s", _vm._textIntro[kIntro1]);
+			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro1]);
 			break;
 		case 9:
-			Utils::Box(BOX_OK, "%s", _vm._textIntro[kIntro2]);
+			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro2]);
 			break;
 		case 35:
-			Utils::Box(BOX_OK, "%s", _vm._textIntro[kIntro3]);
+			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro3]);
 			break;
 		}
 	}

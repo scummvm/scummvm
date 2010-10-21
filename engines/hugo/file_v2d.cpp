@@ -40,7 +40,7 @@
 #include "hugo/util.h"
 
 namespace Hugo {
-FileManager_v2d::FileManager_v2d(HugoEngine &vm) : FileManager(vm) {
+FileManager_v2d::FileManager_v2d(HugoEngine *vm) : FileManager(vm) {
 }
 
 FileManager_v2d::~FileManager_v2d() {
@@ -85,7 +85,7 @@ void FileManager_v2d::readBackground(int screenIndex) {
 
 	// Read the image into dummy seq and static dib_a
 	seq_t dummySeq;                                 // Image sequence structure for Read_pcx
-	readPCX(_sceneryArchive1, &dummySeq, _vm.screen().getFrontBuffer(), true, _vm._screenNames[screenIndex]);
+	readPCX(_sceneryArchive1, &dummySeq, _vm->_screen->getFrontBuffer(), true, _vm->_screenNames[screenIndex]);
 }
 
 void FileManager_v2d::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
@@ -170,7 +170,7 @@ char *FileManager_v2d::fetchString(int index) {
 
 	// Null terminate, decode and return it
 	_textBoxBuffer[off2-off1] = '\0';
-	_vm.scheduler().decodeString(_textBoxBuffer);
+	_vm->_scheduler->decodeString(_textBoxBuffer);
 	return _textBoxBuffer;
 }
 } // End of namespace Hugo

@@ -38,7 +38,7 @@
 
 namespace Hugo {
 
-intro_v2w::intro_v2w(HugoEngine &vm) : IntroHandler(vm) {
+intro_v2w::intro_v2w(HugoEngine *vm) : IntroHandler(vm) {
 }
 
 intro_v2w::~intro_v2w() {

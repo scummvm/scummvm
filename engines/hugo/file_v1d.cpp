@@ -38,7 +38,7 @@
 #include "hugo/util.h"
 
 namespace Hugo {
-FileManager_v1d::FileManager_v1d(HugoEngine &vm) : FileManager(vm) {
+FileManager_v1d::FileManager_v1d(HugoEngine *vm) : FileManager(vm) {
 }
 
 FileManager_v1d::~FileManager_v1d() {
@@ -59,7 +59,7 @@ void FileManager_v1d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 	const char *ovl_ext[] = {".b", ".o", ".ob"};
 	char *buf = (char *) malloc(2048 + 1);          // Buffer for file access
 
-	strcat(strcpy(buf, _vm._screenNames[screenNum]), ovl_ext[overlayType]);
+	strcat(strcpy(buf, _vm->_screenNames[screenNum]), ovl_ext[overlayType]);
 
 	if (!fileExists(buf)) {
 		for (uint32 i = 0; i < OVL_SIZE; i++)
@@ -81,12 +81,12 @@ void FileManager_v1d::readBackground(int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
 	char *buf = (char *) malloc(2048 + 1);          // Buffer for file access
-	strcat(strcpy(buf, _vm._screenNames[screenIndex]), ".ART");
+	strcat(strcpy(buf, _vm->_screenNames[screenIndex]), ".ART");
 	if (!_sceneryArchive1.open(buf))
 		Utils::Error(FILE_ERR, "%s", buf);
 	// Read the image into dummy seq and static dib_a
 	seq_t dummySeq;                                 // Image sequence structure for Read_pcx
-	readPCX(_sceneryArchive1, &dummySeq, _vm.screen().getFrontBuffer(), true, _vm._screenNames[screenIndex]);
+	readPCX(_sceneryArchive1, &dummySeq, _vm->_screen->getFrontBuffer(), true, _vm->_screenNames[screenIndex]);
 
 	_sceneryArchive1.close();
 }
@@ -94,7 +94,7 @@ void FileManager_v1d::readBackground(int screenIndex) {
 char *FileManager_v1d::fetchString(int index) {
 	debugC(1, kDebugFile, "fetchString(%d)", index);
 
-	return _vm._stringtData[index];
+	return _vm->_stringtData[index];
 }
 
 } // End of namespace Hugo

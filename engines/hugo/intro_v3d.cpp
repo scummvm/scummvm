@@ -40,7 +40,7 @@
 
 
 namespace Hugo {
-intro_v3d::intro_v3d(HugoEngine &vm) : IntroHandler(vm) {
+intro_v3d::intro_v3d(HugoEngine *vm) : IntroHandler(vm) {
 }
 
 intro_v3d::~intro_v3d() {
@@ -50,8 +50,8 @@ void intro_v3d::preNewGame() {
 }
 
 void intro_v3d::introInit() {
-	_vm.screen().loadFont(0);
-	_vm.file().readBackground(_vm._numScreens - 1); // display splash screen
+	_vm->_screen->loadFont(0);
+	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
 
 	char buffer[128];
 	if (_boot.registered)
@@ -59,43 +59,43 @@ void intro_v3d::introInit() {
 	else
 		sprintf(buffer,"%s  Shareware Version", COPYRIGHT);
 
-	_vm.screen().writeStr(CENTER, 190, buffer, _TBROWN);
+	_vm->_screen->writeStr(CENTER, 190, buffer, _TBROWN);
 
 	if (scumm_stricmp(_boot.distrib, "David P. Gray")) {
 		sprintf(buffer, "Distributed by %s.", _boot.distrib);
-		_vm.screen().writeStr(CENTER, 0, buffer, _TBROWN);
+		_vm->_screen->writeStr(CENTER, 0, buffer, _TBROWN);
 	}
 
-	_vm.screen().displayBackground();
+	_vm->_screen->displayBackground();
 	g_system->updateScreen();
 	g_system->delayMillis(5000);
 	
-	_vm.file().readBackground(22); // display screen MAP_3d
-	_vm.screen().displayBackground();
+	_vm->_file->readBackground(22); // display screen MAP_3d
+	_vm->_screen->displayBackground();
 	introTicks = 0;
 }
 
 bool intro_v3d::introPlay() {
-	byte introSize = _vm.getIntroSize();
+	byte introSize = _vm->getIntroSize();
 
 // Hugo 3 - Preamble screen before going into game.  Draws path of Hugo's plane.
 // Called every tick.  Returns TRUE when complete
 //TODO : Add proper check of story mode
 //#if STORY
 	if (introTicks < introSize) {
-		_vm.screen().writeStr(_vm._introX[introTicks], _vm._introY[introTicks] - DIBOFF_Y, "x", _TBRIGHTWHITE);
-		_vm.screen().displayBackground();
+		_vm->_screen->writeStr(_vm->_introX[introTicks], _vm->_introY[introTicks] - DIBOFF_Y, "x", _TBRIGHTWHITE);
+		_vm->_screen->displayBackground();
 
 		// Text boxes at various times
 		switch (introTicks) {
 		case 4:
-			Utils::Box(BOX_OK, "%s", _vm._textIntro[kIntro1]);
+			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro1]);
 			break;
 		case 9:
-			Utils::Box(BOX_OK, "%s", _vm._textIntro[kIntro2]);
+			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro2]);
 			break;
 		case 35:
-			Utils::Box(BOX_OK, "%s", _vm._textIntro[kIntro3]);
+			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro3]);
 			break;
 		}
 	}

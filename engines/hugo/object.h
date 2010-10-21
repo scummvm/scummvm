@@ -30,36 +30,61 @@
  *
  */
 
-#ifndef HUGO_SOUND_H
-#define HUGO_SOUND_H
+#ifndef HUGO_OBJECT_H
+#define HUGO_OBJECT_H
 
-#include "sound/mixer.h"
+#include "common/file.h"
+
+#define MAXOBJECTS      128                         // Used in Update_images()
 
 namespace Hugo {
 
-class MidiPlayer;
-	
-class SoundHandler {
+class ObjectHandler {
 public:
-	SoundHandler(HugoEngine *vm);
+	ObjectHandler(HugoEngine *vm);
+	~ObjectHandler();
 
-	void toggleMusic();
-	void toggleSound();
-	void setMusicVolume();
-	void playMusic(short tune);
-	void playSound(short sound, stereo_t channel, byte priority);
-	void initSound();
+	object_t  *_objects;
+	
+	bool  isCarrying(uint16 wordIndex);
 
+	int16 findObject(uint16 x, uint16 y);
+
+	void lookObject(object_t *obj);
+	void freeObjects();
+	void loadObject(Common::File &in);
+	void moveObjects();
+	void restoreSeq(object_t *obj);
+	void saveSeq(object_t *obj);
+	void showTakeables();
+	void swapImages(int objNumb1, int objNumb2);
+	void updateImages();
+	void useObject(int16 objId);
+	
+	static int y2comp(const void *a, const void *b);
+
+	bool isCarried(int objIndex) {
+		return _objects[objIndex].carriedFl;
+	}
+
+	void setCarry(int objIndex, bool val) {
+		_objects[objIndex].carriedFl = val;
+	}
+	
+	void setVelocity(int objIndex, int8 vx, int8 vy) {
+		_objects[objIndex].vx = vx;
+		_objects[objIndex].vy = vy;
+	}
+
+	void setPath(int objIndex, path_t pathType, int16 vxPath, int16 vyPath) {
+		_objects[objIndex].pathType = pathType;
+		_objects[objIndex].vxPath = vxPath;
+		_objects[objIndex].vyPath = vyPath;
+	}
 private:
 	HugoEngine *_vm;
-	Audio::SoundHandle _soundHandle;
-	MidiPlayer *_midiPlayer;
-
-	void stopSound();
-	void stopMusic();
-	void playMIDI(sound_pt seq_p, uint16 size);
 };
 
 } // End of namespace Hugo
 
-#endif //HUGO_SOUND_H
+#endif //HUGO_OBJECT_H
