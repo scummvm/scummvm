@@ -738,7 +738,9 @@ enum InventoryItem {
 	kPortraitYellow    = 36,
 
 	kItemInvalid       = 128,
+
 	kItem146           = 146,
+	kItem147           = 147,
 
 	// Toggles
 	kItemToggleHigh    = 0x7F,
