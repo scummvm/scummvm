@@ -29,6 +29,7 @@
 
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/entities.h"
+#include "lastexpress/game/fight.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
@@ -408,7 +409,310 @@ IMPLEMENT_FUNCTION(13, Milos, function13)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Milos, function14)
-	error("Milos: callback function 14 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (getProgress().field_14 == 29 || getProgress().field_14 == 3) {
+			if (params->param2) {
+				setCallback(1);
+				setup_enterExitCompartment("609Ca", kObjectCompartment1);
+			} else {
+				getEntities()->exitCompartment(kEntityMilos, kObjectCompartment1, true);
+				getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+
+				CALLBACK_ACTION();
+			}
+			break;
+		}
+
+		if (params->param1) {
+
+			// TODO replace with UPDATE_PARAM_PROC (without the kTimeInvalid part)
+			if (!CURRENT_PARAMS(1, 1))
+				CURRENT_PARAMS(1, 1) = getState()->timeTicks + 45;
+
+			if (CURRENT_PARAMS(1, 1) < getState()->timeTicks) {
+
+				if (getObjects()->get(kObjectCompartment1).location == kObjectLocation1) {
+					UPDATE_PARAM(CURRENT_PARAMS(1, 2), getState()->timeTicks, 75);
+
+					getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
+
+					++params->param5;
+					switch (params->param5) {
+					default:
+						getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
+						CURRENT_PARAMS(1, 2) = 0;
+						break;
+
+					case 1:
+						setCallback(6);
+						setup_playSound("LIB013");
+						break;
+
+					case 2:
+						setCallback(8);
+						setup_playSound("LIB012");
+						break;
+
+					case 3:
+						setCallback(10);
+						setup_playSound("LIB012");
+						break;
+
+					case 4:
+						++params->param7;
+
+						if (params->param7 < 3) {
+							params->param5 = 1;
+							getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
+							CURRENT_PARAMS(1, 2) = 0;
+							break;
+						}
+
+						getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
+
+						CALLBACK_ACTION();
+						break;
+					}
+				} else {
+					if (getProgress().eventCorpseMovedFromFloor && getProgress().jacket != kJacketBlood) {
+						params->param6 = (getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1) ? kEventMilosTylerCompartmentBedVisit : kEventMilosTylerCompartmentVisit;
+
+						setCallback(3);
+						setup_savegame(kSavegameTypeEvent, kEventMilosTylerCompartmentVisit);
+					} else {
+						getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+
+						setCallback(2);
+						setup_savegame(kSavegameTypeEvent, kEventMilosCorpseFloor);
+					}
+				}
+			}
+			break;
+		}
+
+		// TODO replace with UPDATE_PARAM_PROC (without the kTimeInvalid part)
+		if (!CURRENT_PARAMS(1, 3))
+			CURRENT_PARAMS(1, 3) = getState()->timeTicks + 75;
+
+		if (CURRENT_PARAMS(1, 3) < getState()->timeTicks) {
+
+			if (!params->param4) {
+				setCallback(12);
+				setup_playSound("MIL1030C");
+				break;
+			}
+
+label_callback_12:
+			UPDATE_PARAM(CURRENT_PARAMS(1, 4), getState()->timeTicks, 75);
+
+			getEntities()->exitCompartment(kEntityMilos, kObjectCompartment1, true);
+
+			if (getProgress().eventCorpseMovedFromFloor) {
+				setCallback(13);
+				setup_enterExitCompartment("609Ba", kObjectCompartment1);
+				break;
+			}
+
+			if (getEntities()->isInsideTrainCar(kEntityPlayer, kCarGreenSleeping)) {
+				setCallback(14);
+				setup_enterExitCompartment2("609Ba", kObjectCompartment1);
+				break;
+			}
+
+			getScenes()->loadSceneFromPosition(kCarNone, 1);
+			getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+
+			setCallback(15);
+			setup_savegame(kSavegameTypeEvent, kEventMilosCorpseFloor);
+		}
+		break;
+
+	case kActionKnock:
+		if (params->param2) {
+			getObjects()->update(kObjectCompartment1, kEntityMilos, kObjectLocationNone, kCursorNormal, kCursorNormal);
+
+			setCallback(20);
+			setup_playSound("LIB012");
+		} else if (!params->param3) {
+			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
+
+			setCallback(22);
+			setup_playSound16("MIL1032");
+		}
+		break;
+
+	case kActionOpenDoor:
+		if (getProgress().eventCorpseMovedFromFloor && getProgress().jacket != kJacketBlood) {
+			if (params->param2) {
+				getEntityData(kEntityPlayer)->location = kLocationInsideCompartment;
+				params->param6 = (getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1) ? kEventMilosTylerCompartmentBed : kEventMilosTylerCompartment;
+			} else {
+				params->param6 = (getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1) ? kEventMilosTylerCompartmentBedVisit : kEventMilosTylerCompartmentVisit;
+			}
+
+			setCallback(17);
+			setup_savegame(kSavegameTypeEvent, kEventMilosTylerCompartmentVisit);
+		} else {
+			getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+
+			setCallback(16);
+			setup_savegame(kSavegameTypeEvent, kEventMilosCorpseFloor);
+		}
+		break;
+
+	case kActionDefault:
+		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_8200)
+		 || getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_7850)
+		 || getEntities()->isOutsideAlexeiWindow()) {
+			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
+
+			if (getEntities()->isOutsideAlexeiWindow())
+				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
+
+			getSound()->playSound(kEntityPlayer, "LIB012");
+
+			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, kCursorTalk, kCursorHand);
+
+			params->param1 = 1;
+		} else {
+			getEntities()->drawSequenceLeft(kEntityMilos, "609Aa");
+			getEntities()->enterCompartment(kEntityMilos, kObjectCompartment1, true);
+		}
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			getData()->location = kLocationOutsideCompartment;
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+
+			CALLBACK_ACTION();
+			break;
+
+		case 2:
+			getSound()->playSound(kEntityPlayer, "LIB014");
+			getAction()->playAnimation(kEventMilosCorpseFloor);
+			getLogic()->gameOver(kSavegameTypeIndex, 1, getProgress().eventCorpseMovedFromFloor ? kSceneGameOverBloodJacket : kSceneGameOverPolice1, true);
+			break;
+
+		case 3:
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+			getSound()->playSound(kEntityPlayer, "LIB014");
+			getAction()->playAnimation((EventIndex)params->param6);
+
+			setCallback(4);
+			setup_savegame(kSavegameTypeTime, kTimeNone);
+			break;
+
+		case 4:
+		case 18:
+			params->param8 = getFight()->setup(kFightMilos);
+			if (params->param8) {
+				getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, params->param8  == Fight::kFightEndLost);
+			} else {
+				getState()->time += 1800;
+				getProgress().field_CC = 1;
+
+				setCallback(getCallback() == 4 ? 5 : 19);
+				setup_savegame(kSavegameTypeEvent, kEventMilosTylerCompartmentDefeat);
+			}
+			break;
+
+		case 5:
+		case 19:
+			getAction()->playAnimation(kEventMilosTylerCompartmentDefeat);
+			getSound()->playSound(kEntityPlayer, "LIB015");
+			getScenes()->loadScene(kScene41);
+			getData()->location = kLocationOutsideCompartment;
+
+			CALLBACK_ACTION();
+			break;
+
+		case 6:
+			setCallback(7);
+			setup_playSound16("MIL1031C");
+			break;
+
+		case 7:
+		case 9:
+		case 11:
+			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
+			CURRENT_PARAMS(1, 2) = 0;
+			break;
+
+		case 8:
+			setCallback(9);
+			setup_playSound16("MIL1031A");
+			break;
+
+		case 10:
+			setCallback(11);
+			setup_playSound16("MIL1031B");
+			break;
+
+		case 12:
+			params->param4 = 1;
+			goto label_callback_12;
+
+		case 13:
+			params->param2 = 1;
+			getEntities()->clearSequences(kEntityMilos);
+			getData()->location = kLocationInsideCompartment;
+			getObjects()->update(kObjectCompartment1, kEntityMilos, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			break;
+
+		case 14:
+			getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+
+			setCallback(15);
+			setup_savegame(kSavegameTypeEvent, kEventMilosCorpseFloor);
+			break;
+
+		case 15:
+			getAction()->playAnimation(kEventMilosCorpseFloor);
+			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneGameOverPolice1, true);
+			break;
+
+		case 16:
+			getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).location == kObjectLocation1 ? "LIB032" : "LIB014");
+			getAction()->playAnimation(kEventMilosCorpseFloor);
+			getLogic()->gameOver(kSavegameTypeIndex, 1, getProgress().eventCorpseMovedFromFloor ? kSceneGameOverBloodJacket : kSceneGameOverPolice1, true);
+			break;
+
+		case 17:
+			getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).location == kObjectLocation1 ? "LIB032" : "LIB014");
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+			getAction()->playAnimation((EventIndex)params->param6);
+
+			setCallback(18);
+			setup_savegame(kSavegameTypeTime, kTimeNone);
+			break;
+
+		case 20:
+			setCallback(21);
+			setup_playSound("MIL1117A");
+			break;
+
+		case 21:
+			getObjects()->update(kObjectCompartment1, kEntityMilos, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			break;
+
+		case 22:
+			params->param3 = 1;
+			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorHand);
+			break;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

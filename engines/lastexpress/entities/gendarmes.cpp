@@ -95,7 +95,7 @@ IMPLEMENT_FUNCTION_S(5, Gendarmes, arrestPlaysound16)
 }
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_I(6, Gendarmes, arrestCallback, TimeValue)
+IMPLEMENT_FUNCTION_I(6, Gendarmes, arrestCallback, uint32)
 	arrest(savepoint, true, SoundManager::kFlagInvalid, true);
 }
 
@@ -111,7 +111,133 @@ IMPLEMENT_FUNCTION_II(8, Gendarmes, arrestUpdateEntity, CarIndex, EntityPosition
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_IISS(9, Gendarmes, function9, CarIndex, EntityPosition)
-	error("Gendarmes: callback function 9 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionDefault:
+		if (params->param2 <= kPosition_3050) {
+			if (params->param2 != kPosition_3050) {
+				if (params->param2 == kPosition_2740)
+					CURRENT_PARAMS(2, 5) = kObjectCompartment8;
+			} else {
+				CURRENT_PARAMS(2, 5) = kObjectCompartment7;
+				CURRENT_PARAMS(2, 6) = true;
+			}
+		} else if (params->param2 <= kPosition_4840) {
+			if (params->param2 != kPosition_4840) {
+				if (params->param2 == kPosition_4070) {
+					CURRENT_PARAMS(2, 5) = kObjectCompartment6;
+					CURRENT_PARAMS(2, 7) = kPosition_4455;
+				}
+			} else {
+				CURRENT_PARAMS(2, 5) = kObjectCompartment5;
+				CURRENT_PARAMS(2, 6) = true;
+				CURRENT_PARAMS(2, 7) = kPosition_4455;
+			}
+		} else if (params->param2 <= kPosition_6470) {
+			if (params->param2 != kPosition_6470) {
+				if (params->param2 == kPosition_5790) {
+					CURRENT_PARAMS(2, 5) = kObjectCompartment4;
+					CURRENT_PARAMS(2, 7) = kPosition_6130;
+				}
+			} else {
+				CURRENT_PARAMS(2, 5) = kObjectCompartment3;
+				CURRENT_PARAMS(2, 6) = true;
+				CURRENT_PARAMS(2, 7) = kPosition_6130;
+			}
+		} else if (params->param2 != kPosition_7500) {
+			if (params->param2 == kPosition_8200) {
+				CURRENT_PARAMS(2, 5) = kObjectCompartment1;
+				CURRENT_PARAMS(2, 6) = true;
+				CURRENT_PARAMS(2, 7) = kPosition_7850;
+			}
+		} else {
+			CURRENT_PARAMS(2, 5) = kObjectCompartment2;
+			CURRENT_PARAMS(2, 7) = kPosition_7850;
+		}
+
+		if (params->param1 == kCarBaggageRear)
+			CURRENT_PARAMS(2, 5) += 31; // Switch to next compartment car
+
+		if (CURRENT_PARAMS(2, 6)) {
+			strcpy((char *)&CURRENT_PARAMS(1, 1), "632A");
+			strcpy((char *)&CURRENT_PARAMS(1, 4), "632B");
+			strcpy((char *)&CURRENT_PARAMS(1, 7), "632C");
+		} else {
+			strcpy((char *)&CURRENT_PARAMS(1, 1), "632D");
+			strcpy((char *)&CURRENT_PARAMS(1, 4), "632E");
+			strcpy((char *)&CURRENT_PARAMS(1, 7), "632F");
+		}
+
+		strcat((char *)&CURRENT_PARAMS(1, 1), (char *)&params->seq1);
+		strcat((char *)&CURRENT_PARAMS(1, 4), (char *)&params->seq1);
+		strcat((char *)&CURRENT_PARAMS(1, 7), (char *)&params->seq1);
+
+		if ((getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params->param1, (EntityPosition)params->param2)
+		  || getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params->param1, (EntityPosition)CURRENT_PARAMS(2, 7))
+		  || (params->param1 == kCarGreenSleeping && params->param2 == kPosition_8200 && getEntities()->isOutsideAlexeiWindow()))
+		 && !getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_7850)) {
+			setCallback(1);
+			setup_function10((CarIndex)params->param1, (EntityPosition)params->param2, (ObjectIndex)CURRENT_PARAMS(2, 5));
+		} else {
+			getEntities()->drawSequenceLeft(kEntityGendarmes, (char *)&CURRENT_PARAMS(1, 1));
+			getEntities()->enterCompartment(kEntityGendarmes, (ObjectIndex)CURRENT_PARAMS(2, 5));
+
+			setCallback(CURRENT_PARAMS(2, 6) ? 2 : 3);
+			setup_arrestPlaysound(CURRENT_PARAMS(2, 6) ? "POL1044A" : "POL1044B");
+		}
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			CALLBACK_ACTION();
+			break;
+
+		case 2:
+		case 3:
+			getEntities()->drawSequenceLeft(kEntityGendarmes, (char *)&CURRENT_PARAMS(1, 4));
+			if (getEntities()->isNobodyInCompartment((CarIndex)params->param1, (EntityPosition)params->param2) || !strcmp(params->seq2, "NODIALOG")) {
+				setCallback(4);
+				setup_arrestCallback(150);
+			} else {
+				char *arrestSound = (char *)&CURRENT_PARAMS(2, 2);
+				strcpy(arrestSound, "POL1045");
+				strcat(arrestSound, (char *)&params->seq2);
+
+				setCallback(5);
+				setup_arrestPlaysound(arrestSound);
+			}
+			break;
+
+		case 4:
+		case 5:
+			if (!getEntities()->isNobodyInCompartment((CarIndex)params->param1, (EntityPosition)params->param2) && strcmp(params->seq2, "NODIALOG")) {
+				char *arrestSound = (char *)&CURRENT_PARAMS(2, 2);
+				strcpy(arrestSound, "POL1043");
+				strcat(arrestSound, (char *)&params->seq2);
+
+				getSound()->playSound(kEntityGendarmes, arrestSound, SoundManager::kFlagInvalid, 30);
+			}
+
+			getData()->location = kLocationInsideCompartment;
+
+			setCallback(6);
+			setup_arrestDraw((char *)&CURRENT_PARAMS(1, 7));
+			break;
+
+		case 6:
+			getData()->location = kLocationOutsideCompartment;
+			getEntities()->exitCompartment(kEntityGendarmes, (ObjectIndex)CURRENT_PARAMS(2, 5));
+			CALLBACK_ACTION();
+			break;
+		}
+		break;
+}
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -53,7 +53,7 @@ public:
 	DECLARE_FUNCTION_1(arrestDraw, const char *sequence)
 	DECLARE_FUNCTION_1(arrestPlaysound, const char *soundName)
 	DECLARE_FUNCTION_1(arrestPlaysound16, const char *soundName)
-	DECLARE_FUNCTION_1(arrestCallback, TimeValue timeValue)
+	DECLARE_FUNCTION_1(arrestCallback, uint32 timeValue)
 
 	/**
 	 * Saves the game

@@ -964,7 +964,85 @@ IMPLEMENT_FUNCTION(22, Francois, chapter2Handler)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Francois, function23)
-	error("Francois: callback function 23 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (getEvent(kEventFrancoisShowBeetle) || getEvent(kEventFrancoisShowBeetleD))
+			if (!getEvent(kEventFrancoisTradeWhistle) && !getEvent(kEventFrancoisTradeWhistleD))
+				ENTITY_PARAM(0, 1) = 1;
+
+		if (ENTITY_PARAM(0, 1) && getEntities()->isPlayerInCar(kCarRedSleeping)) {
+			setCallback(1);
+			setup_function15();
+			break;
+		}
+
+label_callback_1:
+		TIME_CHECK_CALLBACK_1(kTime1764000, params->param1, 2, setup_playSound, "Fra2011");
+
+label_callback_2:
+		TIME_CHECK_CALLBACK(kTime1800000, params->param2, 3, setup_function13);
+
+label_callback_3:
+		if (!getInventory()->hasItem(kItemWhistle) && getInventory()->get(kItemWhistle)->location != kObjectLocation3) {
+			TIME_CHECK_CALLBACK_1(kTime1768500, params->param3, 4, setup_function11, kTime1773000);
+
+label_callback_4:
+			TIME_CHECK_CALLBACK_1(kTime1827000, params->param4, 5, setup_function11, kTime1831500);
+		}
+
+label_callback_5:
+		if (getInventory()->get(kItemWhistle)->location != kObjectLocation3) {
+			// TODO: do we also need to check if the whistle is in the inventory?
+			break;
+		}
+
+		if (params->param5 != kTimeInvalid) {
+			UPDATE_PARAM_PROC_TIME(kTimeEnd, !getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000), params->param5, 75);
+				setCallback(6);
+				setup_playSound("Fra2010");
+				break;
+			UPDATE_PARAM_PROC_END
+		}
+
+label_callback_6:
+		TIME_CHECK_CALLBACK_3(kTime1782000, params->param6, 7, setup_function14, kObjectCompartmentC, kPosition_6470, "c");
+
+label_callback_7:
+		TIME_CHECK_CALLBACK_3(kTime1813500, params->param7, 8, setup_function14, kObjectCompartmentF, kPosition_4070, "f");
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			goto label_callback_1;
+
+		case 2:
+			goto label_callback_2;
+
+		case 3:
+			goto label_callback_3;
+
+		case 4:
+			goto label_callback_4;
+
+		case 5:
+			goto label_callback_5;
+
+		case 6:
+			getProgress().field_9C = 1;
+			goto label_callback_6;
+
+		case 7:
+			goto label_callback_7;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
