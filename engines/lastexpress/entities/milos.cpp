@@ -25,6 +25,8 @@
 
 #include "lastexpress/entities/milos.h"
 
+#include "lastexpress/entities/vesna.h"
+
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/entities.h"
 #include "lastexpress/game/inventory.h"
@@ -973,7 +975,104 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Milos, function25)
-	error("Milos: callback function 25 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (!getEvent(kEventMilosCompartmentVisitTyler) && !getProgress().field_54 && !ENTITY_PARAM(0, 4)) {
+			UPDATE_PARAM_PROC(params->param3, getState()->time, 13500)
+				getSavePoints()->push(kEntityMilos, kEntityVesna, kAction155913424);
+				params->param3 = 0;
+			UPDATE_PARAM_PROC_END
+		}
+
+		if (params->param1) {
+			UPDATE_PARAM(params->param4, getState()->timeTicks, 75);
+
+			params->param1 = 0;
+			params->param2 = 1;
+			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorNormal, kCursorNormal);
+		}
+
+		params->param4 = 0;
+		break;
+
+	case kActionKnock:
+	case kActionOpenDoor:
+		getObjects()->update(kObjectCompartmentG, kEntityMilos, params->param1 ? kObjectLocation3 : kObjectLocation1, kCursorNormal, kCursorNormal);
+
+		if (params->param1) {
+			setCallback(5);
+			setup_playSound(rnd(2) ? "CAT1505" : "CAT1505A");
+		} else {
+			setCallback(savepoint.action == kActionKnock ? 1 : 2);
+			setup_playSound(savepoint.action == kActionKnock ?  "LIB012" : "LIB013");
+		}
+		break;
+
+	case kActionDefault:
+		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+
+		if (!getEvent(kEventMilosCompartmentVisitTyler) && !getProgress().field_54 && !ENTITY_PARAM(0, 4))
+			getSavePoints()->push(kEntityMilos, kEntityVesna, kAction155913424);
+		break;
+
+	case kActionDrawScene:
+		if (params->param1 || params->param2) {
+			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorHandKnock, kCursorHand);
+
+			params->param1 = 0;
+			params->param2 = 0;
+		}
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+		case 2:
+			if (getEntities()->isInsideCompartment(kEntityVesna, kCarRedSleeping, kPosition_3050)) {
+				setCallback(3);
+				setup_playSound("VES1015A");
+				break;
+			}
+
+			if (getEvent(kEventMilosCompartmentVisitTyler) || ENTITY_PARAM(0, 4)) {
+				getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorHandKnock, kCursorHand);
+				break;
+			}
+
+			RESET_ENTITY_STATE(kEntityVesna, Vesna, setup_chapter3Handler);
+
+			getData()->location = kLocationInsideCompartment;
+
+			setCallback(4);
+			setup_savegame(kSavegameTypeEvent, kEventMilosCompartmentVisitTyler);
+			break;
+
+		case 3:
+			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorHandKnock, kCursorHand);
+
+			params->param1 = 1;
+			break;
+
+		case 4:
+			getAction()->playAnimation(kEventMilosCompartmentVisitTyler);
+			getScenes()->loadSceneFromPosition(kCarRestaurant, 5);
+			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			break;
+
+		case 5:
+			params->param1 = 0;
+			params->param2 = 1;
+			break;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

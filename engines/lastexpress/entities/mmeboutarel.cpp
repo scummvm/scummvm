@@ -796,7 +796,105 @@ IMPLEMENT_FUNCTION(23, MmeBoutarel, chapter4Handler)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, MmeBoutarel, function24)
-	error("MmeBoutarel: callback function 24 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		TIME_CHECK(kTime2470500, params->param4, setup_function25);
+
+		if (params->param2) {
+			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+
+			params->param1 = 1;
+			params->param2 = 0;
+
+			getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		}
+
+		params->param5 = 0;
+		break;
+
+	case kActionKnock:
+	case kActionOpenDoor:
+		getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
+		getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
+
+		if (params->param2) {
+			if (getInventory()->hasItem(kItemPassengerList)) {
+				setCallback(5);
+				setup_playSound(rnd(2) ? "CAT1510" : getSound()->wrongDoorCath());
+			} else {
+				setCallback(6);
+				setup_playSound(getSound()->wrongDoorCath());
+			}
+		} else {
+			++params->param3;
+
+			setCallback(savepoint.action == kActionKnock ? 2 : 1);
+			setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
+		}
+		break;
+
+	case kActionDefault:
+		getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+		break;
+
+	case kActionDrawScene:
+		if (params->param1 || params->param2)	{
+			getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			params->param1 = 0;
+			params->param2 = 0;
+		}
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+		case 2:
+			setCallback(params->param3 > 1 ? 3 : 4);
+			setup_playSound(params->param3 > 1 ? "MME1038C" : "MME1038");
+			break;
+
+		case 3:
+		case 4:
+			getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorTalk, kCursorNormal);
+			getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorTalk, kCursorNormal);
+			params->param2 = 1;
+			break;
+
+		case 5:
+		case 6:
+			params->param1 = 1;
+			params->param2 = 0;
+			break;
+
+		case 7:
+			getSavePoints()->push(kEntityMmeBoutarel, kEntityCoudert, kAction123199584);
+			break;
+
+		case 8:
+			getSavePoints()->push(kEntityMmeBoutarel, kEntityCoudert, kAction88652208);
+			break;
+		}
+		break;
+
+	case kAction122865568:
+		setCallback(8);
+		setup_playSound("Mme1151A");
+		break;
+
+	case kAction221683008:
+		setCallback(7);
+		setup_playSound("Mme1038");
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -607,7 +607,103 @@ IMPLEMENT_FUNCTION(21, Tatiana, function21)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Tatiana, function22)
-	error("Tatiana: callback function 22 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (params->param1 == kTimeInvalid || getState()->time <= kTime1179000)
+			goto label_update;
+
+		UPDATE_PARAM_PROC_TIME(kTime1233000, (!getEvent(kEventTatianaAskMatchSpeakRussian) && !getEvent(kEventTatianaAskMatch) || getEntities()->isInGreenCarEntrance(kEntityPlayer)), params->param1, 0)
+label_update:
+			if (!getEvent(kEventTatianaAskMatchSpeakRussian)
+			 && !getEvent(kEventTatianaAskMatch)
+			 && getInventory()->hasItem(kItemMatchBox)
+			 && getEntities()->isInGreenCarEntrance(kEntityPlayer)) {
+				getObjects()->update(kObject25, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorForward);
+				getObjects()->update(kObjectTrainTimeTable, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorForward);
+			}
+		UPDATE_PARAM_PROC_END
+
+		params->param1 = kTimeInvalid;
+
+		getObjects()->update(kObject25, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+		getObjects()->update(kObjectTrainTimeTable, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+		getEntities()->updatePositionExit(kEntityTatiana, kCarGreenSleeping, 70);
+		getEntities()->updatePositionExit(kEntityTatiana, kCarGreenSleeping, 71);
+
+		if (getEntities()->isInGreenCarEntrance(kEntityPlayer)) {
+			getSound()->excuseMe(kEntityTatiana);
+
+			if (getEntities()->isPlayerPosition(kCarGreenSleeping, 62))
+				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 72);
+		}
+
+		getData()->inventoryItem = kItemNone;
+
+		setup_function23();
+		break;
+
+	case kAction1:
+		getData()->inventoryItem = kItemNone;
+
+		setCallback(4);
+		setup_savegame(kSavegameTypeEvent, kEventTatianaGivePoem);
+		break;
+
+	case kActionOpenDoor:
+		setCallback(3);
+		setup_savegame(kSavegameTypeEvent, kEventTatianaAskMatchSpeakRussian);
+		break;
+
+	case kActionDefault:
+		getSavePoints()->push(kEntityTatiana, kEntityVassili, kAction122732000);
+
+		setCallback(1);
+		setup_function15();
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			setCallback(2);
+			setup_updateEntity(kCarGreenSleeping, kPosition_540);
+			break;
+
+		case 2:
+			if (getEntities()->isInGreenCarEntrance(kEntityPlayer)) {
+				getSound()->excuseMe(kEntityTatiana);
+
+				if (getEntities()->isPlayerPosition(kCarGreenSleeping, 62))
+					getScenes()->loadSceneFromPosition(kCarGreenSleeping, 72);
+			}
+
+			getEntities()->drawSequenceLeft(kEntityTatiana, "306B");
+			getEntities()->updatePositionEnter(kEntityTatiana, kCarGreenSleeping, 70);
+			getEntities()->updatePositionEnter(kEntityTatiana, kCarGreenSleeping, 71);
+			break;
+
+		case 3:
+			getAction()->playAnimation(getEvent(kEventAlexeiSalonVassili) ? kEventTatianaAskMatchSpeakRussian : kEventTatianaAskMatch);
+			getScenes()->loadSceneFromPosition(kCarGreenSleeping, 62);
+			getData()->inventoryItem = kItemParchemin;
+
+			getObjects()->update(kObject25, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+			getObjects()->update(kObjectTrainTimeTable, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
+			break;
+
+		case 4:
+			getAction()->playAnimation(kEventTatianaGivePoem);
+			getInventory()->removeItem(kItemParchemin);
+			getScenes()->processScene();
+			break;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

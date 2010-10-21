@@ -109,7 +109,92 @@ IMPLEMENT_FUNCTION_II(7, Francois, savegame, SavegameType, uint32)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(8, Francois, updateEntity, CarIndex, EntityPosition)
-	error("Francois: callback function 8 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2)) {
+			CALLBACK_ACTION();
+		} else {
+			if (!getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000)
+			 || !getInventory()->hasItem(kItemFirebird)
+			 || getEvent(kEventFrancoisShowEgg)
+			 || getEvent(kEventFrancoisShowEggD)
+			 || getEvent(kEventFrancoisShowEggNight)
+			 || getEvent(kEventFrancoisShowEggNightD)) {
+				if (getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000)
+				 && getInventory()->get(kItemBeetle)->location == kObjectLocation1
+				 && !getEvent(kEventFrancoisShowBeetle)
+				 && !getEvent(kEventFrancoisShowBeetleD))
+				getData()->inventoryItem = kItemMatchBox;
+			} else {
+				getData()->inventoryItem = kItemFirebird;
+			}
+
+			if (ENTITY_PARAM(0, 1)
+			 && getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 1000)
+			 && !getEntities()->isInsideCompartments(kEntityPlayer)
+			 && !getEntities()->checkFields10(kEntityPlayer)) {
+				setCallback(1);
+				setup_savegame(kSavegameTypeEvent, kEventFrancoisTradeWhistle);
+			}
+		}
+		break;
+
+	case kAction1:
+		switch (savepoint.param.intValue) {
+		default:
+			break;
+
+		case 1:
+			setCallback(2);
+			setup_savegame(kSavegameTypeEvent, kEventFrancoisShowBeetle);
+			break;
+
+		case 18:
+			if (isNight())
+				getAction()->playAnimation(getData()->entityPosition < getEntityData(kEntityPlayer)->entityPosition ? kEventFrancoisShowEggNightD : kEventFrancoisShowEggNight);
+			else
+				getAction()->playAnimation(getData()->entityPosition < getEntityData(kEntityPlayer)->entityPosition ? kEventFrancoisShowEggD : kEventFrancoisShowEgg);
+
+			getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition + (750 * (getData()->direction == kDirectionUp ? -1 : 1))), getData()->direction == kDirectionUp);
+			break;
+		}
+		break;
+
+	case kActionExcuseMeCath:
+	case kActionExcuseMe:
+		getSound()->excuseMe(_entityIndex);
+		break;
+
+	case kActionDefault:
+		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2))
+			CALLBACK_ACTION();
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			getAction()->playAnimation(getData()->entityPosition < getEntityData(kEntityPlayer)->entityPosition ? kEventFrancoisTradeWhistleD : kEventFrancoisTradeWhistle);
+			getInventory()->addItem(kItemWhistle);
+			getInventory()->removeItem(kItemMatchBox);
+			getInventory()->get(kItemBeetle)->location = kObjectLocation2;
+			getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition + (750 * (getData()->direction == kDirectionUp ? -1 : 1))), getData()->direction == kDirectionUp);
+			ENTITY_PARAM(0, 1) = 0;
+			break;
+
+		case 2:
+			getAction()->playAnimation(getData()->entityPosition < getEntityData(kEntityPlayer)->entityPosition ? kEventFrancoisShowBeetleD : kEventFrancoisShowBeetle);
+			getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition + (750 * (getData()->direction == kDirectionUp ? -1 : 1))), getData()->direction == kDirectionUp);
+			getData()->inventoryItem = kItemNone;
+			break;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -539,7 +624,96 @@ IMPLEMENT_FUNCTION(13, Francois, function13)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_IIS(14, Francois, function14, ObjectIndex, EntityPosition)
-	error("Francois: callback function 14 not implemented!");
+	// Expose parameters as IISS and ignore the default exposed parameters
+	EntityData::EntityParametersIISS *parameters = (EntityData::EntityParametersIISS*)_data->getCurrentParameters();
+
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionDefault:
+		strcpy((char *)&parameters->seq2, "605H");
+		strcat((char *)&parameters->seq2, (char *)&parameters->seq1);
+
+		setCallback(1);
+		setup_function9();
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			setCallback(2);
+			setup_updateEntity(kCarRedSleeping, (EntityPosition)parameters->param2);
+			break;
+
+		case 2:
+			if (getInventory()->get(kItemBeetle)->location == kObjectLocation3) {
+				getEntities()->drawSequenceLeft(kEntityFrancois, (char *)&parameters->seq2);
+				getEntities()->enterCompartment(kEntityFrancois, (ObjectIndex)parameters->param1, true);
+
+				setCallback(3);
+				setup_playSound("Fra2005A");
+			} else {
+				if (parameters->param2 >= kPosition_5790) {
+					setCallback(10);
+					setup_updateEntity(kCarRedSleeping, kPosition_9460);
+				} else {
+					setCallback(9);
+					setup_updateEntity(kCarRedSleeping, kPosition_540);
+				}
+			}
+			break;
+
+		case 3:
+		case 5:
+			setCallback(getCallback() == 3 ? 4 : 6);
+			setup_updateFromTime(rnd(450));
+			break;
+
+		case 4:
+		case 6:
+			setCallback(getCallback() == 4 ? 5 : 7);
+			setup_playSound(rnd(2) ? "Fra2005B" : "Fra2005C");
+			break;
+
+		case 7:
+			setCallback(8);
+			setup_updateFromTime(rnd(150));
+			break;
+
+		case 8:
+			getEntities()->exitCompartment(kEntityFrancois, (ObjectIndex)parameters->param1);
+			// Fallback to next case
+
+		case 9:
+			setCallback(10);
+			setup_updateEntity(kCarRedSleeping, kPosition_9460);
+			break;
+
+		case 10:
+			setCallback(11);
+			setup_updateFromTime(900);
+			break;
+
+		case 11:
+			setCallback(12);
+			setup_updateEntity(kCarRedSleeping, kPosition_5790);
+			break;
+
+		case 12:
+			setCallback(13);
+			setup_function10();
+			break;
+
+		case 13:
+			CALLBACK_ACTION();
+			break;
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

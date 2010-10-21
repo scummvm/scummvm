@@ -85,6 +85,7 @@ enum TimeValue {
 	kTime1225800              = 1225800,
 	kTimeCityBarLeDuc         = 1228500,
 	kTimeExitBarLeDuc         = 1231200,
+	kTime1233000              = 1233000,
 	kTime1242000              = 1242000,
 	kTime1260000              = 1260000,
 	kTimeCityNancy            = 1303200,

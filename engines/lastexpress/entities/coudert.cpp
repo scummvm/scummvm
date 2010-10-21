@@ -3124,7 +3124,105 @@ IMPLEMENT_FUNCTION(50, Coudert, function50)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(51, Coudert, function51)
-	error("Coudert: callback function 51 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (getState()->time > kTime2133000 && !getProgress().field_40) {
+			getEntities()->exitCompartment(kEntityCoudert, kObjectCompartmentB);
+			getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentB, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+
+			setCallback(1);
+			setup_updateEntity(kCarRedSleeping, kPosition_2000);
+		}
+		break;
+
+	case kActionOpenDoor:
+		if (savepoint.param.intValue == kObjectCompartmentB)
+			getData()->entityPosition = kPosition_7500;
+
+		getSound()->playSound(kEntityPlayer, "LIB014");
+		getAction()->playAnimation(kEventCoudertGoingOutOfVassiliCompartment);
+		getEntities()->updateEntity(kEntityCoudert, kCarRedSleeping, kPosition_2000);
+		getScenes()->loadSceneFromObject(savepoint.param.intValue == kObjectCompartmentB ? kObjectCompartmentB : kObjectCompartmentA);
+		getEntities()->exitCompartment(kEntityCoudert, kObjectCompartmentB, true);
+		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentB, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+
+		setCallback(3);
+		setup_updateEntity(kCarRedSleeping, kPosition_2000);
+		break;
+
+	case kActionDefault:
+		getData()->car = kCarRedSleeping;
+		getData()->entityPosition = kPosition_7500;
+		getData()->location = kLocationOutsideCompartment;
+
+		getSavePoints()->push(kEntityCoudert, kEntityMax, kActionMaxFreeFromCage);
+
+		if (ENTITY_PARAM(0, 5)) {
+			ENTITY_PARAM(0, 5) = 0;
+
+			getSavePoints()->push(kEntityCoudert, kEntityMertens, kAction155853632);
+			getSavePoints()->push(kEntityCoudert, kEntityMertens, kActionEndSound);
+		}
+
+		if (ENTITY_PARAM(0, 3)) {
+			ENTITY_PARAM(0, 3) = 0;
+
+			getSavePoints()->push(kEntityCoudert, kEntityVerges, kAction155853632);
+			getSavePoints()->push(kEntityCoudert, kEntityVerges, kActionEndSound);
+		}
+
+		getEntities()->drawSequenceLeft(kEntityCoudert, "627Wb");
+		getEntities()->enterCompartment(kEntityCoudert, kObjectCompartmentB, true);
+		getSavePoints()->push(kEntityCoudert, kEntityTatiana, kAction154071333);
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			setCallback(2);
+			setup_function18();
+			break;
+
+		case 2:
+		case 4:
+		case 6:
+			setup_function45();
+			break;
+
+		case 3:
+			setCallback(4);
+			setup_function18();
+			break;
+
+		case 5:
+			setCallback(5);
+			setup_function18();
+			break;
+		}
+		break;
+
+	case kAction168316032:
+		getObjects()->update(kObjectCompartmentA, kEntityCoudert, kObjectLocationNone, kCursorNormal, kCursorHand);
+		getObjects()->update(kObjectCompartmentB, kEntityCoudert, kObjectLocation1, kCursorNormal, kCursorHand);
+		break;
+
+	case kAction235061888:
+		getEntities()->exitCompartment(kEntityCoudert, kObjectCompartmentB, true);
+		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentB, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
+
+		setCallback(5);
+		setup_updateEntity(kCarRedSleeping, kPosition_2000);
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
