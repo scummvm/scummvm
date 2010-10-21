@@ -1059,7 +1059,7 @@ void Script::loadModule(uint scriptModuleNumber) {
 	size_t resourceLength;
 
 	// Validate script number
-	if ((scriptModuleNumber < 0) || (scriptModuleNumber >= _modules.size())) {
+	if (scriptModuleNumber >= _modules.size()) {
 		error("Script::loadScript() Invalid script module number");
 	}
 
