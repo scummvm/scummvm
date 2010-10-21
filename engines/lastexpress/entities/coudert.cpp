@@ -2731,7 +2731,240 @@ IMPLEMENT_FUNCTION(44, Coudert, chapter3)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(45, Coudert, function45)
-	error("Coudert: callback function 45 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (ENTITY_PARAM(0, 8)) {
+			setCallback(1);
+			setup_function15(true);
+			break;
+		}
+
+label_callback_1:
+		if (ENTITY_PARAM(1, 1)) {
+			setCallback(2);
+			setup_function15(false);
+			break;
+		}
+
+label_callback_2:
+		if (ENTITY_PARAM(0, 3)) {
+			setCallback(3);
+			setup_function14(kEntityVerges);
+			break;
+		}
+
+label_callback_3:
+		if (ENTITY_PARAM(0, 5)) {
+			setCallback(4);
+			setup_function14(kEntityMertens);
+			break;
+		}
+
+label_callback_4:
+		if (ENTITY_PARAM(1, 3)) {
+			setCallback(5);
+			setup_function46();
+			break;
+		}
+
+label_callback_5:
+		if (ENTITY_PARAM(1, 5)) {
+			setCallback(6);
+			setup_function47(true);
+			break;
+		}
+
+label_callback_6:
+		if (ENTITY_PARAM(1, 6)) {
+			setCallback(7);
+			setup_function47(false);
+			break;
+		}
+
+label_callback_7:
+		if (ENTITY_PARAM(1, 8)) {
+			setCallback(8);
+			setup_function48();
+			break;
+		}
+
+label_callback_8:
+		if (ENTITY_PARAM(2, 4)) {
+			setCallback(9);
+			setup_function49();
+			break;
+		}
+
+label_callback_9:
+		if (ENTITY_PARAM(1, 4)) {
+			setCallback(10);
+			setup_function34(true);
+			break;
+		}
+
+label_callback_10:
+		if (ENTITY_PARAM(1, 7)) {
+			setCallback(11);
+			setup_function34(false);
+			break;
+		}
+
+label_callback_11:
+		if (ENTITY_PARAM(0, 4)) {
+			setCallback(12);
+			setup_function14(kEntityMmeBoutarel);
+			break;
+		}
+
+label_callback_12:
+		// BUG: Can never be called... FAIL!
+		if (ENTITY_PARAM(2, 5) && getState()->time > kTime2056500 && getState()->time < kTime1417500) {
+			setCallback(13);
+			setup_function50();
+			break;
+		}
+
+label_callback_13:
+		TIME_CHECK_CALLBACK(kTime2088900, params->param1, 14, setup_function32);
+
+label_callback_14:
+		TIME_CHECK_CALLBACK(kTime2119500, params->param2, 15, setup_function32);
+
+label_callback_15:
+		TIME_CHECK_CALLBACK(kTime2138400, params->param3, 16, setup_function32);
+
+label_callback_16:
+		TIME_CHECK_CALLBACK(kTime2147400, params->param4, 17, setup_function32);
+
+label_callback_17:
+		TIME_CHECK_CALLBACK(kTime2160000, params->param5, 18, setup_function32);
+
+label_callback_18:
+		TIME_CHECK_CALLBACK(kTime2205000, params->param6, 19, setup_function32);
+
+label_callback_19:
+		if (ENTITY_PARAM(0, 2)) {
+			TIME_CHECK_OBJECT(kTime2025000, params->param7, kObject111, kObjectLocation7);
+			TIME_CHECK_OBJECT(kTime2133000, params->param8, kObject111, kObjectLocation8);
+			TIME_CHECK_OBJECT(kTime2173500, CURRENT_PARAMS(1, 1), kObject111, kObjectLocation9);
+		}
+		break;
+
+	case kAction11:
+		if (!ENTITY_PARAM(2, 1)) {
+			setCallback(20);
+			setup_function13(savepoint.param.intValue, savepoint.entity2);
+		}
+		break;
+
+	case kActionDrawScene:
+		if (!ENTITY_PARAM(2, 1)) {
+			if (getEntities()->isPlayerPosition(kCarRedSleeping, 1)) {
+				setCallback(21);
+				setup_function13(true, kEntityPlayer);
+			} else if (getEntities()->isPlayerPosition(kCarRedSleeping, 23)) {
+				setCallback(22);
+				setup_function13(false, kEntityPlayer);
+			}
+		}
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			goto label_callback_1;
+
+		case 2:
+			goto label_callback_2;
+
+		case 3:
+			goto label_callback_3;
+
+		case 4:
+			goto label_callback_4;
+
+		case 5:
+			goto label_callback_5;
+
+		case 6:
+			goto label_callback_6;
+
+		case 7:
+			goto label_callback_7;
+
+		case 8:
+			goto label_callback_8;
+
+		case 9:
+			goto label_callback_9;
+
+		case 10:
+			goto label_callback_10;
+
+		case 11:
+			goto label_callback_11;
+
+		case 12:
+			getSavePoints()->push(kEntityCoudert, kEntityVerges, kAction168255788);
+			goto label_callback_12;
+
+		case 13:
+			goto label_callback_13;
+
+		case 14:
+			goto label_callback_14;
+
+		case 15:
+			goto label_callback_15;
+
+		case 16:
+			goto label_callback_16;
+
+		case 17:
+			goto label_callback_17;
+
+		case 18:
+			goto label_callback_18;
+
+		case 19:
+			goto label_callback_19;
+
+		case 23:
+			setCallback(24);
+			setup_function18();
+			break;
+		}
+		break;
+
+	case kAction225358684:
+		if (!ENTITY_PARAM(0, 1)) {
+			setCallback(25);
+			setup_function30((ObjectIndex)savepoint.param.intValue);
+		}
+		break;
+
+	case kAction226078300:
+		if (!ENTITY_PARAM(2, 1) && !ENTITY_PARAM(0, 1)) {
+			getSound()->playSound(kEntityCoudert, "JAC2020");
+
+			setCallback(23);
+			setup_bloodJacket("697D");
+		}
+		break;
+
+	case kAction305159806:
+		if (!ENTITY_PARAM(2, 1) && !ENTITY_PARAM(0, 1)) {
+			setCallback(26);
+			setup_function31(savepoint.param.intValue);
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -3276,7 +3509,158 @@ IMPLEMENT_FUNCTION(52, Coudert, chapter4)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(53, Coudert, function53)
-	error("Coudert: callback function 53 not implemented!");
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		if (ENTITY_PARAM(2, 3)) {
+			ENTITY_PARAM(1, 2) = 0;
+			ENTITY_PARAM(1, 7) = 0;
+
+			params->param1 = 1;
+
+			getObjects()->updateLocation2(kObjectCompartmentA, kObjectLocation1);
+			getObjects()->updateLocation2(kObjectCompartmentB, kObjectLocation1);
+			getObjects()->updateLocation2(kObjectCompartmentC, kObjectLocation1);
+			getObjects()->updateLocation2(kObjectCompartmentD, kObjectLocation1);
+			getObjects()->updateLocation2(kObjectCompartmentE, kObjectLocation1);
+			getObjects()->updateLocation2(kObjectCompartmentF, kObjectLocation1);
+			getObjects()->updateLocation2(kObjectCompartmentG, kObjectLocation1);
+			getObjects()->updateLocation2(kObjectCompartmentH, kObjectLocation1);
+
+			ENTITY_PARAM(2, 3) = 0;
+
+			setCallback(1);
+			setup_function54();
+			break;
+		}
+
+label_callback_1:
+		if (ENTITY_PARAM(1, 2)) {
+			if (!params->param2)
+				params->param2 = getState()->time + 4500;
+
+			if (params->param3 != kTimeInvalid) {
+				UPDATE_PARAM_PROC_TIME(params->param2, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param3, 0)
+					setCallback(2);
+					setup_function55();
+					break;
+				UPDATE_PARAM_PROC_END
+			}
+		}
+
+label_callback_2:
+		if (ENTITY_PARAM(1, 7)) {
+			setCallback(3);
+			setup_function34(false);
+			break;
+		}
+
+label_callback_3:
+		if (!params->param1) {
+			TIME_CHECK_CALLBACK(kTime2394000, params->param4, 4, setup_function56);
+
+label_callback_4:
+			TIME_CHECK_CALLBACK(kTime2434500, params->param5, 5, setup_function32);
+
+label_callback_5:
+			TIME_CHECK_CALLBACK(kTime2448000, params->param6, 6, setup_function32);
+		}
+
+label_callback_6:
+		if (getState()->time > kTime2538000 && !ENTITY_PARAM(0, 1) && !ENTITY_PARAM(2, 1)) {
+			UPDATE_PARAM(params->param7, getState()->time, 2700);
+
+			ENTITY_PARAM(0, 2) = 0;
+			ENTITY_PARAM(0, 1) = 1;
+
+			getEntities()->drawSequenceLeft(kEntityCoudert, "697F");
+
+			params->param7 = 0;
+		}
+		break;
+
+	case kAction11:
+		if (!ENTITY_PARAM(2, 1) && !ENTITY_PARAM(0, 1)) {
+			setCallback(7);
+			setup_function13(savepoint.param.intValue, savepoint.entity2);
+		}
+		break;
+
+	case kActionDefault:
+		getData()->car = kCarRedSleeping;
+		getData()->entityPosition = kPosition_1500;
+		getData()->location = kLocationOutsideCompartment;
+
+		getScenes()->loadSceneFromItemPosition(kItem5);
+		break;
+
+	case kActionDrawScene:
+		if (!ENTITY_PARAM(2, 1) && !ENTITY_PARAM(0, 1)) {
+			if (getEntities()->isPlayerPosition(kCarRedSleeping, 1)) {
+				setCallback(8);
+				setup_function13(true, kEntityPlayer);
+			} else if (getEntities()->isPlayerPosition(kCarRedSleeping, 23)) {
+				setCallback(9);
+				setup_function13(false, kEntityPlayer);
+			}
+		}
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			goto label_callback_1;
+
+		case 2:
+			goto label_callback_2;
+
+		case 3:
+			goto label_callback_3;
+
+		case 4:
+			goto label_callback_4;
+
+		case 5:
+			goto label_callback_5;
+
+		case 6:
+			goto label_callback_6;
+
+		case 10:
+			setCallback(11);
+			setup_function18();
+			break;
+		}
+		break;
+
+	case kAction225358684:
+		if (!ENTITY_PARAM(0, 1)) {
+			setCallback(12);
+			setup_function30((ObjectIndex)savepoint.param.intValue);
+		}
+		break;
+
+	case kAction226078300:
+		if (!ENTITY_PARAM(2, 1) && !ENTITY_PARAM(0, 1)) {
+			getSound()->playSound(kEntityCoudert, "JAC2020");
+
+			setCallback(10);
+			setup_bloodJacket("697D");
+		}
+		break;
+
+	case kAction305159806:
+		if (!ENTITY_PARAM(2, 1) && !ENTITY_PARAM(0, 1)) {
+			setCallback(13);
+			setup_function31(savepoint.param.intValue);
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
