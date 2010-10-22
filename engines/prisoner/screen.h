@@ -25,7 +25,6 @@ public:
 	void vLine(int x, int y, int y2, byte color);
 	void fillRect(int x1, int y1, int x2, int y2, byte color);
 	void frameRect(int x1, int y1, int x2, int y2, byte color);
-	void filledPolygonColor(Common::Array<Common::Point> &poly, byte color);
 
 	void setPartialPalette(byte *palette, int start, int count);
 	void setFullPalette(byte *palette);
