@@ -41,25 +41,23 @@
  * This is the namespace of the LastExpress engine.
  *
  * Status of this engine:
- *  The basic framework for the engine is done and you can navigate through the
- *  train and interact with objects. Some logic for characters and entities has
- *  been implemented, but characters do not appear in-game yet and background
- *  sounds and animations are missing.
+ *  The game is playable but still very buggy and missing crucial functionality:
  *    - Resources: classes for the resource formats used by the game are mostly
  *      complete (subtitles integration/cursor transparency are missing)
  *    - Display: basic graphic manager functionality is implemented (transitions
  *      and dirty rects handling are missing)
- *    - Menu/Navigation: main menu is almost complete. Navigation and hotspot
- *      handling is also mostly implemented (with remaining bugs)
- *    - Logic: the framework is in place (with helper classes mostly complete),
- *      and some logic has been implemented (it is mostly hardcoded in the original)
- *      The shared entity code for drawing/handling of entities remains to be done.
+ *    - Menu/Navigation: menu is done and navigation/hotspot handling are also
+ *      mostly implemented (with remaining bugs)
+ *    - Logic: all the hardcoded AI logic has been implemented, as well as the
+ *      shared entity code for drawing/handling of entities.
+ *    - Sound: most of the sound queue functionality is still missing
+ *    - Savegame: almost all the savegame code is still missing.
  *
  * Maintainers:
- * clone2727, jvprat, littleboy
+ *  littleboy, jvprat, clone2727
  *
  * Supported games:
- * - The Last Express
+ *  - The Last Express
  */
 namespace LastExpress {
 
