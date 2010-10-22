@@ -801,10 +801,15 @@ void ToonEngine::setPaletteEntries(uint8 *palette, int32 offset, int32 num) {
 	_system->setPalette(vmpalette, offset, num);
 }
 
-void ToonEngine::simpleUpdate() {
+void ToonEngine::simpleUpdate(bool waitCharacterToTalk) {
 	int32 elapsedTime = _system->getMillis() - _oldTimer2;
 	_oldTimer2 = _system->getMillis();
 	_oldTimer = _oldTimer2;
+
+	if (!_audioManager->voiceStillPlaying() && !waitCharacterToTalk) {
+		_currentTextLine = 0;
+		_currentTextLineId = -1;
+	}
 
 	updateCharacters(elapsedTime);
 	updateAnimationSceneScripts(elapsedTime);
@@ -812,10 +817,7 @@ void ToonEngine::simpleUpdate() {
 	_animationManager->update(elapsedTime);
 	render();
 
-	if (!_audioManager->voiceStillPlaying()) {
-		_currentTextLine = 0;
-		_currentTextLineId = -1;
-	}
+	
 }
 
 void ToonEngine::fixPaletteEntries(uint8 *palette, int num) {
@@ -1067,7 +1069,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	setupGeneralPalette();
 	createShadowLUT();
 
-
+	state()->_mouseHidden = false;
 
 	if (!forGameLoad) {
 
@@ -1086,7 +1088,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 			_gameState->_nextSpecialEnterX = -1;
 			_gameState->_nextSpecialEnterY = -1;
 		}
-
+	
 		_script->start(&_scriptState[0], 3);
 
 		while (_script->run(&_scriptState[0]))
@@ -1098,8 +1100,6 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 			waitForScriptStep();
 
 	}
-
-	state()->_mouseHidden = false;
 }
 
 void ToonEngine::setupGeneralPalette() {
@@ -1911,7 +1911,19 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 	_currentTextLineId = dialogid;
 
 	if (blocking) {
+		Character *character = getCharacterById(talkerId);
+		if (character)
+			character->setTalking(true);
+
 		playTalkAnimOnCharacter(talkerAnimId, talkerId, true);
+
+		// set once more the values, they may have been overwritten when the engine
+		// waits for the character to be ready.
+		_currentTextLine = myLine;
+		_currentTextLineCharacterId = talkerId;
+		_currentTextLineId = dialogid;
+
+
 	} else {
 		Character *character = getCharacterById(talkerId);
 		if (character)
@@ -1935,6 +1947,10 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 		while (_audioManager->voiceStillPlaying() && !_shouldQuit)
 			doFrame();
 		_gameState->_mouseHidden = oldMouseHidden && _gameState->_mouseHidden;
+
+		Character *character = getCharacterById(talkerId);
+		if (character)
+			character->setTalking(false);
 	}
 
 

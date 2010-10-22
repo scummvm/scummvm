@@ -47,6 +47,7 @@ Character::Character(ToonEngine *vm) : _vm(vm) {
 	_facing = 0;
 	_flags = 0;
 	_animFlags = 0;
+	_isTalking = false;
 	_id = 0;
 	_scale = 1024;
 	_blockingWalk = false;
@@ -249,8 +250,8 @@ void Character::stopSpecialAnim() {
 	if (_animScriptId != -1)
 		_vm->getSceneAnimationScript(_animScriptId)->_frozen = false;
 
-	if (_sceneAnimationId != -1)
-		_animationInstance->setAnimation(_vm->getSceneAnimation(_sceneAnimationId)->_animation);
+	//if (_sceneAnimationId != -1)
+	//	_animationInstance->setAnimation(_vm->getSceneAnimation(_sceneAnimationId)->_animation);
 
 	bool needStandingAnim = (_animFlags & 0x40) != 0;
 
@@ -348,10 +349,12 @@ void Character::update(int32 timeIncrement) {
 
 			if (_animScriptId != -1)
 				_vm->getSceneAnimationScript(_animScriptId)->_frozen = true;
-
+			
+			
 			// TODO setup backup //
 
 			_animFlags |= 0x10;
+			_animationInstance->setAnimation(_specialAnim);
 			_animationInstance->setFrame(0);
 			_time = _vm->getOldMilli() + 8 * _vm->getTickLength();
 		}
@@ -359,14 +362,11 @@ void Character::update(int32 timeIncrement) {
 	}
 
 	if ((_animFlags & 3) == 2) {
-		if (_vm->getCurrentLineToSay() != _lineToSayId || !_vm->getAudioManager()->voiceStillPlaying())  // || (_flags & 8)) && _vm->getAudioManager()->voiceStillPlaying())
+		if ((((_animFlags & 8) == 8) && _vm->getCurrentLineToSay() != _lineToSayId) || !_vm->getAudioManager()->voiceStillPlaying())  // || (_flags & 8)) && _vm->getAudioManager()->voiceStillPlaying())
 			_animFlags |= 1;
 
-// Strangerke - Commented (not used)
-//	} else {
 	}
 
-	// label29 :
 	if (_time > _vm->getOldMilli())
 		return;
 
@@ -439,13 +439,13 @@ void Character::update(int32 timeIncrement) {
 	// skipped all this part.
 
 	//label78
+
+	
 #if 0
 	if (_id == 0)
-		debugC(0, 0xfff, " drew animation flag %d / frame %d", _animFlags, nextFrame);
-
+		printf(" drew animation name %s / flag %d / frame %d \n", _specialAnim->_name, _animFlags, nextFrame);
 	if (_id == 1)
 		debugC(0, 0xfff, " flux animation flag %d / frame %d", _animFlags, nextFrame);
-
 	if (_id == 7)
 		debugC(0, 0xfff, " footman animation flag %d / frame %d", _animFlags, nextFrame);
 #endif
@@ -954,11 +954,8 @@ void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 	strcat(animName, ".CAF");
 
 
-	if (_animScriptId != -1)
+	if (_animScriptId != -1 && (flags & 8) == 0)
 		_vm->getSceneAnimationScript(_animScriptId)->_frozen = true;
-
-	if (_sceneAnimationId > -1)
-		setAnimationInstance(_vm->getSceneAnimation(_sceneAnimationId)->_animInstance);
 
 	stopSpecialAnim();
 
@@ -968,7 +965,18 @@ void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 
 		// make the talker busy
 		_flags |= 1;
+
+		// wait for the character to be ready
+		while (_animScriptId != -1 && _animationInstance->getFrame() > 0 && _animationInstance->getAnimation() != _specialAnim) {
+			_vm->simpleUpdate(false);
+		}
 	}
+
+
+	if (_sceneAnimationId > -1)
+		setAnimationInstance(_vm->getSceneAnimation(_sceneAnimationId)->_animInstance);
+
+
 	_animFlags |= flags;
 
 	if (_specialAnim)

@@ -96,6 +96,8 @@ public:
 	virtual void updateIdle();
 	virtual int32 getRandomIdleAnim() { return 0; }
 	virtual void updateTimers(int32 relativeAdd);
+	virtual void setTalking(bool talking) { _isTalking = true; }
+	virtual bool isTalking() { return _isTalking; }
 
 	int32 getFacingFromDirection(int32 dx, int32 dy);
 	static const SpecialCharacterAnimation *getSpecialAnimation(int32 characterId, int32 animationId);
@@ -126,6 +128,7 @@ protected:
 	int32 _speed;
 	int32 _lastWalkTime;
 	int32 _numPixelToWalk;
+	bool _isTalking;
 
 	AnimationInstance *_animationInstance;
 	AnimationInstance *_shadowAnimationInstance;

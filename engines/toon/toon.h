@@ -144,7 +144,7 @@ public:
 	int32 runConversationCommand(int16 **command);
 	void prepareConversations();
 	void drawConversationIcons();
-	void simpleUpdate();
+	void simpleUpdate(bool waitCharacterToTalk = false);
 	int32 waitTicks(int32 numTicks, bool breakOnMouseClick);
 	void copyToVirtualScreen(bool updateScreen = true);
 	void getMouseEvent();

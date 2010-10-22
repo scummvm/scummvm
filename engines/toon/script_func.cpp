@@ -618,7 +618,10 @@ int32 ScriptFunc::sys_Cmd_In_Conversation(EMCState *state) {
 
 int32 ScriptFunc::sys_Cmd_Character_Talking(EMCState *state) {
 	int32 characterId = stackPos(0);
-	return (_vm->getCurrentCharacterTalking() == characterId);
+	Character *character = _vm->getCharacterById(characterId);
+	if (character)
+		return character->isTalking();
+	return 0;
 }
 
 int32 ScriptFunc::sys_Cmd_Set_Flux_Facing_Point(EMCState *state) {
@@ -963,6 +966,7 @@ int32 ScriptFunc::sys_Cmd_Draw_Scene_Anim_WSA_Frame(EMCState *state) {
 	SceneAnimation *sceneAnim = _vm->getSceneAnimation(animId);
 
 	if (sceneAnim->_active) {
+		sceneAnim->_animInstance->setAnimation(sceneAnim->_animation);
 		sceneAnim->_animInstance->setFrame(frame);
 		sceneAnim->_animInstance->setAnimationRange(frame, frame);
 		sceneAnim->_animInstance->stopAnimation();
