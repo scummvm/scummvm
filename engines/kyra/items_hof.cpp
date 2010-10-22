@@ -413,12 +413,12 @@ bool KyraEngine_HoF::itemIsFlask(Item item) {
 	return false;
 }
 
-void KyraEngine_HoF::setMouseCursor(uint16 item) {
+void KyraEngine_HoF::setMouseCursor(Item item) {
 	int shape = 0;
 	int hotX = 1;
 	int hotY = 1;
 
-	if (item != 0xFFFF) {
+	if (item != kItemNone) {
 		hotX = 8;
 		hotY = 15;
 		shape = item+64;

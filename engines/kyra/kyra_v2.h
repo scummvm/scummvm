@@ -313,9 +313,9 @@ protected:
 	void resetItemList();
 	void resetItem(int index);
 
-	virtual void setMouseCursor(uint16 item) = 0;
+	virtual void setMouseCursor(Item item) = 0;
 
-	void setHandItem(uint16 item);
+	void setHandItem(Item item);
 	void removeHandItem();
 
 	// character

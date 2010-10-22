@@ -37,6 +37,7 @@
 #include "sound/mixer.h"
 
 #include "kyra/script.h"
+#include "kyra/item.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -339,7 +340,7 @@ protected:
 	// items
 	int _mouseState;
 
-	virtual void setHandItem(uint16 item) = 0;
+	virtual void setHandItem(Item item) = 0;
 	virtual void removeHandItem() = 0;
 
 	// game flags

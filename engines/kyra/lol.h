@@ -1209,7 +1209,7 @@ private:
 	void deleteItem(int itemIndex);
 	ItemInPlay *findObject(uint16 index);
 	void runItemScript(int charNum, int item, int flags, int next, int reg4);
-	void setHandItem(uint16 itemIndex);
+	void setHandItem(Item itemIndex);
 	bool itemEquipped(int charNum, uint16 itemType);
 
 	void setItemPosition(int item, uint16 x, uint16 y, int flyingHeight, int b);

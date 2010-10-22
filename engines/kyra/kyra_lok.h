@@ -282,7 +282,7 @@ protected:
 	void placeItemInGenericMapScene(int item, int index);
 
 	// -> mouse item
-	void setHandItem(uint16 item);
+	void setHandItem(Item item);
 	void removeHandItem();
 	void setMouseItem(Item item);
 

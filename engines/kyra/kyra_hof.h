@@ -443,7 +443,7 @@ protected:
 	bool lineIsPassable(int x, int y);
 
 	// item
-	void setMouseCursor(uint16 item);
+	void setMouseCursor(Item item);
 
 	uint8 _itemHtDat[176];
 

@@ -173,10 +173,10 @@ void KyraEngine_LoK::placeItemInGenericMapScene(int item, int index) {
 	}
 }
 
-void KyraEngine_LoK::setHandItem(uint16 item) {
+void KyraEngine_LoK::setHandItem(Item item) {
 	_screen->hideMouse();
 	setMouseItem(item);
-	_itemInHand = (Item)item;
+	_itemInHand = item;
 	_screen->showMouse();
 }
 

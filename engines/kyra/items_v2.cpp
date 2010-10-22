@@ -84,11 +84,11 @@ void KyraEngine_v2::resetItem(int index) {
 	_itemList[index].y = 0;
 }
 
-void KyraEngine_v2::setHandItem(uint16 item) {
+void KyraEngine_v2::setHandItem(Item item) {
 	Screen *scr = screen();
 	scr->hideMouse();
 
-	if (item == 0xFFFF) {
+	if (item == kItemNone) {
 		removeHandItem();
 	} else {
 		setMouseCursor(item);

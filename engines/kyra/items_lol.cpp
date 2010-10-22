@@ -270,7 +270,7 @@ void LoLEngine::runItemScript(int charNum, int item, int flags, int next, int re
 	}
 }
 
-void LoLEngine::setHandItem(uint16 itemIndex) {
+void LoLEngine::setHandItem(Item itemIndex) {
 	if (itemIndex && _itemProperties[_itemsInPlay[itemIndex].itemPropertyIndex].flags & 0x80) {
 		runItemScript(-1, itemIndex, 0x400, 0, 0);
 		if (_itemsInPlay[itemIndex].shpCurFrame_flg & 0x8000)

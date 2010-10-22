@@ -315,7 +315,7 @@ private:
 
 	// -> hand item
 	void setItemMouseCursor();
-	void setMouseCursor(uint16 item);
+	void setMouseCursor(Item item);
 
 	// shapes
 	void initMouseShapes();

@@ -76,12 +76,12 @@ int KyraEngine_MR::checkItemCollision(int x, int y) {
 	return itemIndex;
 }
 
-void KyraEngine_MR::setMouseCursor(uint16 item) {
+void KyraEngine_MR::setMouseCursor(Item item) {
 	int shape = 0;
 	int hotX = 1;
 	int hotY = 1;
 
-	if (item != 0xFFFF) {
+	if (item != kItemNone) {
 		hotX = 12;
 		hotY = 19;
 		shape = item+248;
