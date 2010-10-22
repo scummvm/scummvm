@@ -4015,12 +4015,6 @@ static void Walked(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, bool esc
 }
 
 /**
- */
-static void WalkedTag(uint16 actorId) {
-	RegisterMover(actorId);
-}
-
-/**
  * Declare a moving actor.
  */
 static void WalkingActor(uint32 id, SCNHANDLE *rp = NULL) {
