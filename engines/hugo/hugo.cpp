@@ -1737,49 +1737,6 @@ void HugoEngine::processMaze() {
 	}
 }
 
-// Find a clear space around supplied object that hero can walk to
-bool HugoEngine::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
-	debugC(1, kDebugEngine, "findObjectSpace(obj, %d, %d)", *destx, *desty);
-
-	seq_t *curImage = obj->currImagePtr;
-	int16 y = obj->y + curImage->y2 - 1;
-
-	bool foundFl = true;
-	// Try left rear corner
-	for (int16 x = *destx = obj->x + curImage->x1; x < *destx + HERO_MAX_WIDTH; x++) {
-		if (BOUND(x, y))
-			foundFl = false;
-	}
-
-	if (!foundFl) {                                 // Try right rear corner
-		foundFl = true;
-		for (int16 x = *destx = obj->x + curImage->x2 - HERO_MAX_WIDTH + 1; x <= obj->x + (int16)curImage->x2; x++) {
-			if (BOUND(x, y))
-				foundFl = false;
-		}
-	}
-
-	if (!foundFl) {                                 // Try left front corner
-		foundFl = true;
-		y += 2;
-		for (int16 x = *destx = obj->x + curImage->x1; x < *destx + HERO_MAX_WIDTH; x++) {
-			if (BOUND(x, y))
-				foundFl = false;
-		}
-	}
-
-	if (!foundFl) {                                 // Try right rear corner
-		foundFl = true;
-		for (int16 x = *destx = obj->x + curImage->x2 - HERO_MAX_WIDTH + 1; x <= obj->x + (int16)curImage->x2; x++) {
-			if (BOUND(x, y))
-				foundFl = false;
-		}
-	}
-
-	*desty = y;
-	return foundFl;
-}
-
 // Search background command list for this screen for supplied object.
 // Return first associated verb (not "look") or 0 if none found.
 char *HugoEngine::useBG(char *name) {

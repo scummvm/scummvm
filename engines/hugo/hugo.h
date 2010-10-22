@@ -38,7 +38,6 @@
 #define EDGE             10                         // Closest object can get to edge of screen
 #define EDGE2            (EDGE * 2)                 // Push object further back on edge collision
 #define SHIFT            8                          // Place hero this far inside bounding box
-#define BOUND(X, Y)      ((_boundary[Y * XBYTES + X / 8] & (0x80 >> X % 8)) != 0)  // Boundary bit set
 
 namespace Common {
 class RandomSource;
@@ -190,8 +189,6 @@ public:
 	int getMouseY() const {
 		return _mouseY;
 	}
-
-	bool findObjectSpace(object_t *obj, int16 *destx, int16 *desty);
 
 	void boundaryCollision(object_t *obj); 
 	void clearBoundary(int x1, int x2, int y);

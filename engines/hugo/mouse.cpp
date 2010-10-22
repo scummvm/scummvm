@@ -118,7 +118,7 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 		int16 x, y;
 		switch (obj->viewx) {                       // Where to walk to
 		case -1:                                    // Walk to object position
-			if (_vm->findObjectSpace(obj, &x, &y))
+			if (_vm->_object->findObjectSpace(obj, &x, &y))
 				foundFl = _vm->_route->startRoute(GO_GET, objId, x, y);
 			if (!foundFl)                           // Can't get there, try to use from here
 				_vm->_object->useObject(objId);
@@ -201,7 +201,7 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 			bool foundFl = false;                   // TRUE if route found to object
 			switch (obj->viewx) {                   // Clicked over viewport object
 			case -1:                                // Walk to object position
-				if (_vm->findObjectSpace(obj, &x, &y))
+				if (_vm->_object->findObjectSpace(obj, &x, &y))
 					foundFl = _vm->_route->startRoute(GO_LOOK, objId, x, y);
 				if (!foundFl)                       // Can't get there, immediate description
 					_vm->_object->lookObject(obj);

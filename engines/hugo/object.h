@@ -36,6 +36,7 @@
 #include "common/file.h"
 
 #define MAXOBJECTS      128                         // Used in Update_images()
+#define BOUND(X, Y)      ((_vm->getBoundaryOverlay()[Y * XBYTES + X / 8] & (0x80 >> X % 8)) != 0)  // Boundary bit set
 
 namespace Hugo {
 
@@ -46,13 +47,14 @@ public:
 
 	object_t  *_objects;
 	
-	bool  isCarrying(uint16 wordIndex);
+	bool isCarrying(uint16 wordIndex);
+	bool findObjectSpace(object_t *obj, int16 *destx, int16 *desty);
 
 	int16 findObject(uint16 x, uint16 y);
 
-	void lookObject(object_t *obj);
 	void freeObjects();
 	void loadObject(Common::File &in);
+	void lookObject(object_t *obj);
 	void moveObjects();
 	void restoreSeq(object_t *obj);
 	void saveSeq(object_t *obj);
