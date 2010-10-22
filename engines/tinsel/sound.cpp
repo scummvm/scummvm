@@ -480,8 +480,8 @@ void SoundManager::setSFXVolumes(uint8 volume) {
  * Opens and inits all sound sample files.
  */
 void SoundManager::openSampleFiles() {
-	// Floppy and demo versions have no sample files
-	if (_vm->getFeatures() & GF_FLOPPY || _vm->getFeatures() & GF_DEMO)
+	// Floppy and demo versions have no sample files, except for the Discworld 2 demo
+	if (_vm->getFeatures() & GF_FLOPPY || (IsDemo && !TinselV2))
 		return;
 
 	TinselFile f;
