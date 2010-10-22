@@ -46,12 +46,18 @@ AudioManager::AudioManager(ToonEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixe
 	for (int32 i = 0; i < 16; i++)
 		_channels[i] = 0;
 
+	for (int32 i = 0; i < 4; i++) 
+		_audioPacks[i] = 0;
+
 	voiceMuted = false;
 	musicMuted = false;
 	sfxMuted = false;
 }
 
 AudioManager::~AudioManager(void) {
+	for (int32 i = 0; i < 4; i++) {
+		closeAudioPack(i);
+	}
 }
 
 void AudioManager::muteMusic(bool muted) {
@@ -181,9 +187,18 @@ void AudioManager::stopCurrentVoice() {
 		_channels[2]->stop(false);
 }
 
+
+void AudioManager::closeAudioPack(int32 id) {
+	if(_audioPacks[id]) {
+		delete _audioPacks[id];
+		_audioPacks[id] = 0;
+	}
+}
+
 bool AudioManager::loadAudioPack(int32 id, Common::String indexFile, Common::String packFile) {
 	debugC(4, kDebugAudio, "loadAudioPack(%d, %s, %s)", id, indexFile.c_str(), packFile.c_str());
 
+	closeAudioPack(id);
 	_audioPacks[id] = new AudioStreamPackage(_vm);
 	return _audioPacks[id]->loadAudioPackage(indexFile, packFile);
 }
@@ -453,6 +468,10 @@ AudioStreamPackage::AudioStreamPackage(ToonEngine *vm) : _vm(vm) {
 
 AudioStreamPackage::~AudioStreamPackage() {
 	delete[] _indexBuffer;
+	if (_file) {
+		delete _file;
+		_file = 0;
+	}
 }
 
 bool AudioStreamPackage::loadAudioPackage(Common::String indexFile, Common::String streamFile) {

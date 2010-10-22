@@ -131,6 +131,7 @@ public:
 	bool isMusicMuted() { return musicMuted; }	
 	bool isSfxMuted() { return sfxMuted; }
 
+	void closeAudioPack(int32 id);
 	bool loadAudioPack(int32 id, Common::String indexFile, Common::String packFile);
 
 	AudioStreamInstance *_channels[16];  // 0-1 : music
