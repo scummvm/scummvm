@@ -379,7 +379,7 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&r
 	resourceOffset = resourceData->offset;
 	resourceSize = resourceData->size;
 
-	debug(8, "loadResource %d 0x%X:0x%X", resourceId, resourceOffset, resourceSize);
+	debug(8, "loadResource %d 0x%X:0x%X", resourceId, resourceOffset, uint(resourceSize));
 
 	resourceBuffer = (byte*)malloc(resourceSize);
 

@@ -419,7 +419,7 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 
 	size_t dataOffset = headerReadS.pos();
 	if (dataOffset != start) {
-		warning("Anim::load animId=%d start != dataOffset 0x%X 0x%X", animId, start, dataOffset);
+		warning("Anim::load animId=%d start != dataOffset 0x%X 0x%X", animId, uint(start), uint(dataOffset));
 	}
 
 	anim->resourceData.resize(animResourceLength - dataOffset);
