@@ -74,7 +74,7 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_mainCharX = _mainCharY = -1;
 	_drawNoShapeFlag = false;
 	_charPalEntry = 0;
-	_itemInHand = -1;
+	_itemInHand = kItemNone;
 	_unkSceneScreenFlag1 = false;
 	_noScriptEnter = true;
 	_currentChapter = 0;
@@ -790,7 +790,7 @@ void KyraEngine_HoF::updateMouse() {
 		if ((mouse.y > 145) || (mouse.x > 6 && mouse.x < 312 && mouse.y > 6 && mouse.y < 135)) {
 			_mouseState = _itemInHand;
 			_screen->hideMouse();
-			if (_itemInHand == -1)
+			if (_itemInHand == kItemNone)
 				_screen->setMouseCursor(0, 0, getShapePtr(0));
 			else
 				_screen->setMouseCursor(8, 15, getShapePtr(_itemInHand+64));

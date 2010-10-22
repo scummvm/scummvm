@@ -176,8 +176,8 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 		setNextIdleAnimTimer();
 
 		if (_itemInHand < 0) {
-			_itemInHand = -1;
-			_mouseState = -1;
+			_itemInHand = kItemNone;
+			_mouseState = kItemNone;
 			_screen->setMouseCursor(0, 0, _gameShapes[0]);
 		}
 
@@ -556,8 +556,8 @@ void KyraEngine_MR::initSceneAnims(int unk1) {
 
 	for (int i = 0; i < 50; ++i) {
 		obj = &_animObjects[i+17];
-		const Item &item = _itemList[i];
-		if (item.id != 0xFFFF && item.sceneId == _mainCharacter.sceneId) {
+		const ItemDefinition &item = _itemList[i];
+		if (item.id != kItemNone && item.sceneId == _mainCharacter.sceneId) {
 			obj->xPos1 = item.x;
 			obj->yPos1 = item.y;
 			animSetupPaletteEntry(obj);

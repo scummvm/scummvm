@@ -29,6 +29,7 @@
 #include "kyra/kyra_v1.h"
 #include "kyra/gui.h"
 #include "kyra/wsamovie.h"
+#include "kyra/item.h"
 
 #include "common/list.h"
 #include "common/hashmap.h"
@@ -41,7 +42,7 @@ struct FrameControl {
 };
 
 struct ItemAnimData_v2 {
-	int16 itemIndex;
+	Item itemIndex;
 	uint8 numFrames;
 	const FrameControl *frames;
 };
@@ -69,7 +70,7 @@ public:
 		int animScriptFrameAdd;
 
 		// Item specific
-		int maxItemId;
+		Item maxItemId;
 	};
 
 	KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc);
@@ -286,8 +287,8 @@ protected:
 	int _pathfinderPositionIndexTable[200];
 
 	// items
-	struct Item {
-		uint16 id;
+	struct ItemDefinition {
+		Item id;
 		uint16 sceneId;
 		int16 x;
 		uint8 y;
@@ -295,9 +296,9 @@ protected:
 
 	void initItemList(int size);
 
-	uint16 _hiddenItems[100];
+	Item _hiddenItems[100];
 
-	Item *_itemList;
+	ItemDefinition *_itemList;
 	int _itemListSize;
 
 	int _itemInHand;
@@ -306,8 +307,8 @@ protected:
 	int findFreeItem();
 	int countAllItems();
 
-	int findItem(uint16 sceneId, uint16 id);
-	int findItem(uint16 item);
+	int findItem(uint16 sceneId, Item id);
+	int findItem(Item item);
 
 	void resetItemList();
 	void resetItem(int index);
@@ -325,7 +326,7 @@ protected:
 		uint8 facing;
 		uint16 animFrame;
 		byte walkspeed;
-		uint16 inventory[20];
+		Item inventory[20];
 		int16 x1, y1;
 		int16 x2, y2;
 		int16 x3, y3;

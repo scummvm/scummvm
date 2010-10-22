@@ -141,7 +141,7 @@ void KyraEngine_v2::flagAnimObjsSpecialRefresh() {
 }
 
 void KyraEngine_v2::addItemToAnimList(int item) {
-	assert(item < _itemListSize);
+	assert(item >= 0 && item < _itemListSize);
 
 	restorePage3();
 

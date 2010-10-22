@@ -235,7 +235,7 @@ private:
 
 	void showMessage(const char *string, uint8 c0, uint8 c1);
 	void showMessageFromCCode(int string, uint8 c0, int);
-	void updateItemCommand(int item, int str, uint8 c0);
+	void updateItemCommand(Item item, int str, uint8 c0);
 
 	void updateCommandLine();
 	void restoreCommandLine();
@@ -262,7 +262,7 @@ private:
 	static const uint8 _inventoryY[];
 	void redrawInventory(int page);
 	void clearInventorySlot(int slot, int page);
-	void drawInventorySlot(int page, int item, int slot);
+	void drawInventorySlot(int page, Item item, int slot);
 
 	WSAMovie_v2 *_invWsa;
 	int _invWsaFrame;
@@ -284,24 +284,24 @@ private:
 	int8 *_itemBuffer1;
 	int8 *_itemBuffer2;
 
-	static const uint8 _trashItemList[];
+	static const Item _trashItemList[];
 	void removeTrashItems();
 
 	void initItems();
 
 	int checkItemCollision(int x, int y);
 
-	bool dropItem(int unk1, uint16 item, int x, int y, int unk2);
-	bool processItemDrop(uint16 sceneId, uint16 item, int x, int y, int unk1, int unk2);
-	void itemDropDown(int startX, int startY, int dstX, int dstY, int itemSlot, uint16 item, int remove);
+	bool dropItem(int unk1, Item item, int x, int y, int unk2);
+	bool processItemDrop(uint16 sceneId, Item item, int x, int y, int unk1, int unk2);
+	void itemDropDown(int startX, int startY, int dstX, int dstY, int itemSlot, Item item, int remove);
 	void exchangeMouseItem(int itemPos, int runScript);
 	bool pickUpItem(int x, int y, int runScript);
 
 	bool isDropable(int x, int y);
 
 	const uint8 *_itemMagicTable;
-	bool itemListMagic(int handItem, int itemSlot);
-	bool itemInventoryMagic(int handItem, int invSlot);
+	bool itemListMagic(Item handItem, int itemSlot);
+	bool itemInventoryMagic(Item handItem, int invSlot);
 
 	const uint8 *_itemStringMap;
 	int _itemStringMapSize;

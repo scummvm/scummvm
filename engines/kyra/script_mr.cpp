@@ -216,7 +216,7 @@ int KyraEngine_MR::o3_removeInventoryItemInstances(EMCState *script) {
 	const int item = stackPos(0);
 	for (int i = 0; i < 10; ++i) {
 		if (_mainCharacter.inventory[i] == item)
-			_mainCharacter.inventory[i] = 0xFFFF;
+			_mainCharacter.inventory[i] = kItemNone;
 	}
 	return 0;
 }
@@ -594,7 +594,7 @@ int KyraEngine_MR::o3_updateConversations(EMCState *script) {
 int KyraEngine_MR::o3_removeItemSlot(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_removeItemSlot(%p) (%d)", (const void *)script, stackPos(0));
 	deleteItemAnimEntry(stackPos(0));
-	_itemList[stackPos(0)].id = 0xFFFF;
+	_itemList[stackPos(0)].id = kItemNone;
 	return 1;
 }
 
@@ -642,7 +642,7 @@ int KyraEngine_MR::o3_removeItemInstances(EMCState *script) {
 
 	for (int i = 0; i < 10; ++i) {
 		if (_mainCharacter.inventory[i] == item) {
-			_mainCharacter.inventory[i] = 0xFFFF;
+			_mainCharacter.inventory[i] = kItemNone;
 			++deleted;
 		}
 	}
@@ -654,7 +654,7 @@ int KyraEngine_MR::o3_removeItemInstances(EMCState *script) {
 
 	for (int i = 0; i < 50; ++i) {
 		if (_itemList[i].id == item) {
-			_itemList[i].id = 0xFFFF;
+			_itemList[i].id = kItemNone;
 			++deleted;
 		}
 	}

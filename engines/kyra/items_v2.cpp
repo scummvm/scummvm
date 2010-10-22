@@ -31,9 +31,9 @@ namespace Kyra {
 void KyraEngine_v2::initItemList(int size) {
 	delete[] _itemList;
 
-	_itemList = new Item[size];
+	_itemList = new ItemDefinition[size];
 	assert(_itemList);
-	memset(_itemList, 0, sizeof(Item)*size);
+	memset(_itemList, 0, sizeof(ItemDefinition)*size);
 	_itemListSize = size;
 
 	resetItemList();
@@ -41,7 +41,7 @@ void KyraEngine_v2::initItemList(int size) {
 
 int KyraEngine_v2::findFreeItem() {
 	for (int i = 0; i < _itemListSize; ++i) {
-		if (_itemList[i].id == 0xFFFF)
+		if (_itemList[i].id == kItemNone)
 			return i;
 	}
 	return -1;
@@ -50,13 +50,13 @@ int KyraEngine_v2::findFreeItem() {
 int KyraEngine_v2::countAllItems() {
 	int num = 0;
 	for (int i = 0; i < _itemListSize; ++i) {
-		if (_itemList[i].id != 0xFFFF)
+		if (_itemList[i].id != kItemNone)
 			++num;
 	}
 	return num;
 }
 
-int KyraEngine_v2::findItem(uint16 sceneId, uint16 id) {
+int KyraEngine_v2::findItem(uint16 sceneId, Item id) {
 	for (int i = 0; i < _itemListSize; ++i) {
 		if (_itemList[i].id == id && _itemList[i].sceneId == sceneId)
 			return i;
@@ -64,7 +64,7 @@ int KyraEngine_v2::findItem(uint16 sceneId, uint16 id) {
 	return -1;
 }
 
-int KyraEngine_v2::findItem(uint16 item) {
+int KyraEngine_v2::findItem(Item item) {
 	for (int i = 0; i < _itemListSize; ++i) {
 		if (_itemList[i].id == item)
 			return i;
@@ -78,7 +78,7 @@ void KyraEngine_v2::resetItemList() {
 }
 
 void KyraEngine_v2::resetItem(int index) {
-	_itemList[index].id = 0xFFFF;
+	_itemList[index].id = kItemNone;
 	_itemList[index].sceneId = 0xFFFF;
 	_itemList[index].x = 0;
 	_itemList[index].y = 0;
@@ -102,8 +102,8 @@ void KyraEngine_v2::removeHandItem() {
 	Screen *scr = screen();
 	scr->hideMouse();
 	scr->setMouseCursor(0, 0, getShapePtr(0));
-	_itemInHand = -1;
-	_mouseState = -1;
+	_itemInHand = kItemNone;
+	_mouseState = kItemNone;
 	scr->showMouse();
 }
 

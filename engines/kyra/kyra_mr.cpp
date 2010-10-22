@@ -99,7 +99,7 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_unk5 = 0;
 	_unkSceneScreenFlag1 = false;
 	_noScriptEnter = true;
-	_itemInHand = _mouseState = -1;
+	_itemInHand = _mouseState = kItemNone;
 	_savedMouseState = -1;
 	_unk4 = 0;
 	_loadingState = false;
@@ -1167,8 +1167,8 @@ void KyraEngine_MR::updateMouse() {
 	}
 
 	if (hasItemCollision && _mouseState < -1 && _itemInHand < 0) {
-		_mouseState = -1;
-		_itemInHand = -1;
+		_mouseState = kItemNone;
+		_itemInHand = kItemNone;
 		_screen->setMouseCursor(0, 0, _gameShapes[0]);
 	}
 

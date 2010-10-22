@@ -29,7 +29,7 @@
 namespace Kyra {
 
 void KyraEngine_MR::removeTrashItems() {
-	for (int i = 0; _trashItemList[i] != 0xFF; ++i) {
+	for (int i = 0; _trashItemList[i] != kItemNone; ++i) {
 		for (int item = findItem(_trashItemList[i]); item != -1; item = findItem(_trashItemList[i])) {
 			if (_itemList[item].sceneId != _mainCharacter.sceneId)
 				resetItem(item);
@@ -41,7 +41,7 @@ void KyraEngine_MR::removeTrashItems() {
 
 int KyraEngine_MR::findFreeInventorySlot() {
 	for (int i = 0; i < 10; ++i) {
-		if (_mainCharacter.inventory[i] == 0xFFFF)
+		if (_mainCharacter.inventory[i] == kItemNone)
 			return i;
 	}
 	return -1;
@@ -52,7 +52,7 @@ int KyraEngine_MR::checkItemCollision(int x, int y) {
 	int maxItemY = -1;
 
 	for (int i = 0; i < 50; ++i) {
-		if (_itemList[i].id == 0xFFFF || _itemList[i].sceneId != _mainCharacter.sceneId)
+		if (_itemList[i].id == kItemNone || _itemList[i].sceneId != _mainCharacter.sceneId)
 			continue;
 
 		const int x1 = _itemList[i].x - 11;
@@ -94,13 +94,13 @@ void KyraEngine_MR::setMouseCursor(uint16 item) {
 
 void KyraEngine_MR::setItemMouseCursor() {
 	_mouseState = _itemInHand;
-	if (_itemInHand == -1)
+	if (_itemInHand == kItemNone)
 		_screen->setMouseCursor(0, 0, _gameShapes[0]);
 	else
 		_screen->setMouseCursor(12, 19, _gameShapes[_itemInHand+248]);
 }
 
-bool KyraEngine_MR::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
+bool KyraEngine_MR::dropItem(int unk1, Item item, int x, int y, int unk2) {
 	if (_mouseState <= -1)
 		return false;
 
@@ -123,7 +123,7 @@ bool KyraEngine_MR::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
 	return false;
 }
 
-bool KyraEngine_MR::processItemDrop(uint16 sceneId, uint16 item, int x, int y, int unk1, int unk2) {
+bool KyraEngine_MR::processItemDrop(uint16 sceneId, Item item, int x, int y, int unk1, int unk2) {
 	int itemPos = checkItemCollision(x, y);
 
 	if (unk1)
@@ -138,7 +138,7 @@ bool KyraEngine_MR::processItemDrop(uint16 sceneId, uint16 item, int x, int y, i
 
 	if (unk2 != 3) {
 		for (int i = 0; i < 50; ++i) {
-			if (_itemList[i].id == 0xFFFF) {
+			if (_itemList[i].id == kItemNone) {
 				freeItemSlot = i;
 				break;
 			}
@@ -227,7 +227,7 @@ bool KyraEngine_MR::processItemDrop(uint16 sceneId, uint16 item, int x, int y, i
 	return true;
 }
 
-void KyraEngine_MR::itemDropDown(int startX, int startY, int dstX, int dstY, int itemSlot, uint16 item, int remove) {
+void KyraEngine_MR::itemDropDown(int startX, int startY, int dstX, int dstY, int itemSlot, Item item, int remove) {
 	if (startX == dstX && startY == dstY) {
 		_itemList[itemSlot].x = dstX;
 		_itemList[itemSlot].y = dstY;
@@ -323,7 +323,7 @@ void KyraEngine_MR::exchangeMouseItem(int itemPos, int runScript) {
 	_screen->hideMouse();
 	deleteItemAnimEntry(itemPos);
 
-	int itemId = _itemList[itemPos].id;
+	Item itemId = _itemList[itemPos].id;
 	_itemList[itemPos].id = _itemInHand;
 	_itemInHand = itemId;
 
@@ -353,8 +353,8 @@ bool KyraEngine_MR::pickUpItem(int x, int y, int runScript) {
 	} else {
 		_screen->hideMouse();
 		deleteItemAnimEntry(itemPos);
-		int itemId = _itemList[itemPos].id;
-		_itemList[itemPos].id = 0xFFFF;
+		Item itemId = _itemList[itemPos].id;
+		_itemList[itemPos].id = kItemNone;
 		snd_playSoundEffect(0x0B, 0xC8);
 		setMouseCursor(itemId);
 		int itemString = 0;
@@ -387,8 +387,9 @@ bool KyraEngine_MR::isDropable(int x, int y) {
 	return true;
 }
 
-bool KyraEngine_MR::itemListMagic(int handItem, int itemSlot) {
-	uint16 item = _itemList[itemSlot].id;
+bool KyraEngine_MR::itemListMagic(Item handItem, int itemSlot) {
+	Item item = _itemList[itemSlot].id;
+
 	if (_currentChapter == 1 && handItem == 3 && item == 3 && queryGameFlag(0x76)) {
 		eelScript();
 		return true;
@@ -410,7 +411,7 @@ bool KyraEngine_MR::itemListMagic(int handItem, int itemSlot) {
 		}
 
 		deleteItemAnimEntry(itemSlot);
-		_itemList[itemSlot].id = 0xFFFF;
+		_itemList[itemSlot].id = kItemNone;
 		_screen->showMouse();
 		return true;
 	}
@@ -430,7 +431,7 @@ bool KyraEngine_MR::itemListMagic(int handItem, int itemSlot) {
 	}
 
 	for (int i = 0; _itemMagicTable[i] != 0xFF; i += 4) {
-		if (_itemMagicTable[i+0] != handItem || _itemMagicTable[i+1] != item)
+		if (_itemMagicTable[i+0] != handItem || (int8)_itemMagicTable[i+1] != item)
 			continue;
 
 		uint8 resItem = _itemMagicTable[i+2];
@@ -438,7 +439,7 @@ bool KyraEngine_MR::itemListMagic(int handItem, int itemSlot) {
 
 		snd_playSoundEffect(0x0F, 0xC8);
 
-		_itemList[itemSlot].id = (resItem == 0xFF) ? 0xFFFF : resItem;
+		_itemList[itemSlot].id = (int8)resItem;
 
 		_screen->hideMouse();
 		deleteItemAnimEntry(itemSlot);
@@ -465,8 +466,9 @@ bool KyraEngine_MR::itemListMagic(int handItem, int itemSlot) {
 	return false;
 }
 
-bool KyraEngine_MR::itemInventoryMagic(int handItem, int invSlot) {
-	uint16 item = _mainCharacter.inventory[invSlot];
+bool KyraEngine_MR::itemInventoryMagic(Item handItem, int invSlot) {
+	Item item = _mainCharacter.inventory[invSlot];
+
 	if (_currentChapter == 1 && handItem == 3 && item == 3 && queryGameFlag(0x76)) {
 		eelScript();
 		return true;
@@ -482,7 +484,7 @@ bool KyraEngine_MR::itemInventoryMagic(int handItem, int invSlot) {
 			delay(1*_tickLength, true);
 		}
 
-		_mainCharacter.inventory[invSlot] = 0xFFFF;
+		_mainCharacter.inventory[invSlot] = kItemNone;
 		clearInventorySlot(invSlot, 0);
 		_screen->showMouse();
 		return true;
@@ -497,7 +499,7 @@ bool KyraEngine_MR::itemInventoryMagic(int handItem, int invSlot) {
 
 		snd_playSoundEffect(0x0F, 0xC8);
 
-		_mainCharacter.inventory[invSlot] = (resItem == 0xFF) ? 0xFFFF : resItem;
+		_mainCharacter.inventory[invSlot] = (int8)resItem;
 
 		_screen->hideMouse();
 		clearInventorySlot(invSlot, 0);
