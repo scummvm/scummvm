@@ -238,8 +238,10 @@ void Clock::draw(uint32 time) {
 	// 54000 * 24 = 1296000 = 1 day
 
 	// Calculate each sequence index from the current time
-	uint8 hour = (uint8)((time % 1296000) / 54000);
-	uint8 minute =  (uint8)((time % 54000) / 900);
+
+	uint8 hour = 0;
+	uint8 minute = 0;
+	State::getHourMinutes(time, &hour, &minute);
 	uint32 index_date = 18 * time / 1296000;
 	if (hour == 23)
 		index_date += 18 * minute / 60;

@@ -450,6 +450,143 @@ public:
 			EXPOSE_VALUE(127, field_1FC);
 			}
 		}
+
+		Common::String toString() {
+#define PRINT_VALUE(idx, name) ret += Common::String::printf("(%03d) " #name " = %d\n", idx, name);
+
+			Common::String ret = "";
+
+			PRINT_VALUE(0, field_0);
+			PRINT_VALUE(1, jacket);
+			PRINT_VALUE(2, eventCorpseMovedFromFloor);
+			PRINT_VALUE(3, field_C);
+			PRINT_VALUE(4, eventCorpseFound);
+			PRINT_VALUE(5, field_14);
+			PRINT_VALUE(6, field_18);
+			PRINT_VALUE(7, portrait);
+			PRINT_VALUE(8, eventCorpseThrown);
+			PRINT_VALUE(9, field_24);
+			PRINT_VALUE(10, field_28);
+			PRINT_VALUE(11, chapter);
+			PRINT_VALUE(12, field_30);
+			PRINT_VALUE(13, eventMetAugust);
+			PRINT_VALUE(14, isNightTime);
+			PRINT_VALUE(15, field_3C);
+			PRINT_VALUE(16, field_40);
+			PRINT_VALUE(17, field_44);
+			PRINT_VALUE(18, field_48);
+			PRINT_VALUE(19, field_4C);
+			PRINT_VALUE(20, isTrainRunning);
+			PRINT_VALUE(21, field_54);
+			PRINT_VALUE(22, field_58);
+			PRINT_VALUE(23, field_5C);
+			PRINT_VALUE(24, field_60);
+			PRINT_VALUE(25, field_64);
+			PRINT_VALUE(26, field_68);
+			PRINT_VALUE(27, eventMertensAugustWaiting);
+			PRINT_VALUE(28, eventMertensKronosInvitation);
+			PRINT_VALUE(29, isEggOpen);
+			PRINT_VALUE(30, field_78);
+			PRINT_VALUE(31, field_7C);
+			PRINT_VALUE(32, field_80);
+			PRINT_VALUE(33, field_84);
+			PRINT_VALUE(34, field_88);
+			PRINT_VALUE(35, field_8C);
+			PRINT_VALUE(36, field_90);
+			PRINT_VALUE(37, field_94);
+			PRINT_VALUE(38, field_98);
+			PRINT_VALUE(39, field_9C);
+			PRINT_VALUE(40, field_A0);
+			PRINT_VALUE(41, field_A4);
+			PRINT_VALUE(42, field_A8);
+			PRINT_VALUE(43, field_AC);
+			PRINT_VALUE(44, field_B0);
+			PRINT_VALUE(45, field_B4);
+			PRINT_VALUE(46, field_B8);
+			PRINT_VALUE(47, field_BC);
+			PRINT_VALUE(48, field_C0);
+			PRINT_VALUE(49, field_C4);
+			PRINT_VALUE(50, field_C8);
+			PRINT_VALUE(51, field_CC);
+			PRINT_VALUE(52, eventMetBoutarel);
+			PRINT_VALUE(53, eventMetHadija);
+			PRINT_VALUE(54, eventMetYasmin);
+			PRINT_VALUE(55, field_DC);
+			PRINT_VALUE(56, field_E0);
+			PRINT_VALUE(57, field_E4);
+			PRINT_VALUE(58, field_E8);
+			PRINT_VALUE(59, field_EC);
+			PRINT_VALUE(60, field_F0);
+			PRINT_VALUE(61, field_F4);
+			PRINT_VALUE(62, field_F8);
+			PRINT_VALUE(63, field_FC);
+			PRINT_VALUE(64, field_100);
+			PRINT_VALUE(65, field_104);
+			PRINT_VALUE(66, field_108);
+			PRINT_VALUE(67, field_10C);
+			PRINT_VALUE(68, field_110);
+			PRINT_VALUE(69, field_114);
+			PRINT_VALUE(70, field_118);
+			PRINT_VALUE(71, field_11C);
+			PRINT_VALUE(72, field_120);
+			PRINT_VALUE(73, field_124);
+			PRINT_VALUE(74, field_128);
+			PRINT_VALUE(75, field_12C);
+			PRINT_VALUE(76, field_130);
+			PRINT_VALUE(77, field_134);
+			PRINT_VALUE(78, field_138);
+			PRINT_VALUE(79, field_13C);
+			PRINT_VALUE(80, field_140);
+			PRINT_VALUE(81, field_144);
+			PRINT_VALUE(82, field_148);
+			PRINT_VALUE(83, field_14C);
+			PRINT_VALUE(84, field_150);
+			PRINT_VALUE(85, field_154);
+			PRINT_VALUE(86, field_158);
+			PRINT_VALUE(87, field_15C);
+			PRINT_VALUE(88, field_160);
+			PRINT_VALUE(89, field_164);
+			PRINT_VALUE(90, field_168);
+			PRINT_VALUE(91, field_16C);
+			PRINT_VALUE(92, field_170);
+			PRINT_VALUE(93, field_174);
+			PRINT_VALUE(94, field_178);
+			PRINT_VALUE(95, field_17C);
+			PRINT_VALUE(96, field_180);
+			PRINT_VALUE(97, field_184);
+			PRINT_VALUE(98, field_188);
+			PRINT_VALUE(99, field_18C);
+			PRINT_VALUE(100, field_190);
+			PRINT_VALUE(101, field_194);
+			PRINT_VALUE(102, field_198);
+			PRINT_VALUE(103, field_19C);
+			PRINT_VALUE(104, field_1A0);
+			PRINT_VALUE(105, field_1A4);
+			PRINT_VALUE(106, field_1A8);
+			PRINT_VALUE(107, field_1AC);
+			PRINT_VALUE(108, field_1B0);
+			PRINT_VALUE(109, field_1B4);
+			PRINT_VALUE(110, field_1B8);
+			PRINT_VALUE(111, field_1BC);
+			PRINT_VALUE(112, field_1C0);
+			PRINT_VALUE(113, field_1C4);
+			PRINT_VALUE(114, field_1C8);
+			PRINT_VALUE(115, field_1CC);
+			PRINT_VALUE(116, field_1D0);
+			PRINT_VALUE(117, field_1D4);
+			PRINT_VALUE(118, field_1D8);
+			PRINT_VALUE(119, field_1DC);
+			PRINT_VALUE(120, field_1E0);
+			PRINT_VALUE(121, field_1E4);
+			PRINT_VALUE(122, field_1E8);
+			PRINT_VALUE(123, field_1EC);
+			PRINT_VALUE(124, field_1F0);
+			PRINT_VALUE(125, field_1F4);
+			PRINT_VALUE(126, field_1F8);
+			PRINT_VALUE(127, field_1FC);
+
+			return ret;
+		}
 	};
 
 	struct GameState {
@@ -542,6 +679,23 @@ public:
 			shouldRedraw = false;
 			shouldDrawEggOrHourGlass = false;
 		}
+
+		/**
+		 * Convert this object into a string representation.
+		 *
+		 * @return A string representation of this object.
+		 */
+		Common::String toString() {
+			Common::String ret = "";
+
+			ret += Common::String::printf("Unknown: 0:%02d  -  3:%02d  -  4:%02d  -  5:%02d\n", flag_0, flag_3, flag_4, flag_5);
+			ret += Common::String::printf("FrameInterval: %02d  -  ShouldRedraw:%02d  -  ShouldDrawEggOrHourGlass:%02d\n", frameInterval, shouldRedraw, shouldDrawEggOrHourGlass);
+			ret += Common::String::printf("IsGameRunning: %02d\n", isGameRunning);
+			ret += Common::String::printf("Mouse: RightClick:%02d  - LeftClick:%02d\n", mouseRightClick, mouseLeftClick);
+			ret += Common::String::printf("Entities: 0:%02d  -  1:%02d\n", flag_entities_0, flag_entities_1);
+
+			return ret;
+		}
 	};
 
 	State(LastExpressEngine *engine);
@@ -567,6 +721,7 @@ public:
 
 	// Helpers
 	static uint32 getPowerOfTwo(uint32 x);
+	static void getHourMinutes(uint32 time, uint8 *hours, uint8 *minutes);
 
 private:
 	static const uint32 _defaultBrigthness = 0x3;

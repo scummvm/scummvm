@@ -81,7 +81,8 @@ Debugger::Debugger(LastExpressEngine *engine) : _engine(engine), _command(NULL),
 
 	// Game
 	DCmd_Register("delta",     WRAP_METHOD(Debugger, cmdTimeDelta));
-	DCmd_Register("dump",      WRAP_METHOD(Debugger, cmdDump));
+	DCmd_Register("time",      WRAP_METHOD(Debugger, cmdTime));
+	DCmd_Register("show",      WRAP_METHOD(Debugger, cmdShow));
 	DCmd_Register("entity",    WRAP_METHOD(Debugger, cmdEntity));
 
 	// Misc
@@ -201,8 +202,8 @@ bool Debugger::cmdHelp(int, const char **) {
 	DebugPrintf(" beetle - start the beetle game\n");
 	DebugPrintf("\n");
 	DebugPrintf(" delta - Adjust the time delta\n");
-	DebugPrintf(" dump - Dump game data\n");
-	DebugPrintf(" entity - Dump entity data\n");
+	DebugPrintf(" show - show game data\n");
+	DebugPrintf(" entity - show entity data\n");
 	DebugPrintf("\n");
 	DebugPrintf(" loadgame - load a saved game\n");
 	DebugPrintf(" chapter - switch to a specific chapter\n");
@@ -894,7 +895,7 @@ bool Debugger::cmdBeetle(int argc, const char **argv) {
  */
 bool Debugger::cmdTimeDelta(int argc, const char **argv) {
 	if (argc == 2) {
-		int delta =  getNumber(argv[1]);
+		int delta = getNumber(argv[1]);
 
 		if (delta <= 0 || delta > 500)
 			goto label_error;
@@ -909,14 +910,43 @@ label_error:
 }
 
 /**
- * Command: dumps game logic data
+ * Command: Convert between in-game time and human readable time
  *
  * @param argc The argument count.
  * @param argv The values.
  *
  * @return true if it was handled, false otherwise
  */
-bool Debugger::cmdDump(int argc, const char **argv) {
+bool Debugger::cmdTime(int argc, const char **argv) {
+	if (argc == 2) {
+		int time =  getNumber(argv[1]);
+
+		if (time < 0)
+			goto label_error;
+
+		// Convert to human-readable form
+		uint8 hours = 0;
+		uint8 minutes = 0;
+		State::getHourMinutes(time, &hours, &minutes);
+
+		DebugPrintf("%02d:%02d\n", hours, minutes);
+	} else {
+label_error:
+		DebugPrintf("Syntax: time <time to convert> (time=0-INT_MAX)\n");
+	}
+
+	return true;
+}
+
+/**
+ * Command: show game logic data
+ *
+ * @param argc The argument count.
+ * @param argv The values.
+ *
+ * @return true if it was handled, false otherwise
+ */
+bool Debugger::cmdShow(int argc, const char **argv) {
 #define OUTPUT_DUMP(name, text) \
 	DebugPrintf(#name "\n"); \
 	DebugPrintf("--------------------------------------------------------------------\n\n"); \
@@ -924,41 +954,37 @@ bool Debugger::cmdDump(int argc, const char **argv) {
 	DebugPrintf("\n");
 
 	if (argc == 2) {
-		switch (getNumber(argv[1])) {
-		default:
-			goto label_error;
 
-		// GameState
-		case 1:
+		Common::String name(const_cast<char *>(argv[1]));
+
+		if (name == "state" || name == "st") {
 			OUTPUT_DUMP("Game state", getState()->toString().c_str());
-			break;
-
-		// Inventory
-		case 2:
+		} else if (name == "progress" || name == "pr") {
+			OUTPUT_DUMP("Progress", getProgress().toString().c_str());
+		} else if (name == "flags" || name == "fl") {
+			OUTPUT_DUMP("Flags", getFlags()->toString().c_str());
+		} else if (name == "inventory" || name == "inv") {
 			OUTPUT_DUMP("Inventory", getInventory()->toString().c_str());
-			break;
-
-		// Objects
-		case 3:
+		} else if (name == "objects" || name == "obj") {
 			OUTPUT_DUMP("Objects", getObjects()->toString().c_str());
-			break;
-
-		// SavePoints
-		case 4:
+		} else if (name == "savepoints" || name == "pt") {
 			OUTPUT_DUMP("SavePoints", getSavePoints()->toString().c_str());
-			break;
-
-		case 5:
+		} else if (name == "scene" || name == "sc") {
 			OUTPUT_DUMP("Current scene", getScenes()->get(getState()->scene)->toString().c_str());
+		} else {
+			goto label_error;
 		}
+
 	} else {
 label_error:
 		DebugPrintf("Syntax: state <option>\n");
-		DebugPrintf("              1 : Game state\n");
-		DebugPrintf("              2 : Inventory\n");
-		DebugPrintf("              3 : Objects\n");
-		DebugPrintf("              4 : SavePoints\n");
-		DebugPrintf("              5 : Current scene\n");
+		DebugPrintf("          state / st\n");
+		DebugPrintf("          progress / pr\n");
+		DebugPrintf("          flags / fl\n");
+		DebugPrintf("          inventory / inv\n");
+		DebugPrintf("          objects / obj\n");
+		DebugPrintf("          savepoints / pt\n");
+		DebugPrintf("          scene / sc\n");
 	}
 
 	return true;

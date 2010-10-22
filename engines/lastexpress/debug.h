@@ -77,7 +77,8 @@ private:
 	bool cmdBeetle(int argc, const char **argv);
 
 	bool cmdTimeDelta(int argc, const char **argv);
-	bool cmdDump(int argc, const char **argv);
+	bool cmdTime(int argc, const char **argv);
+	bool cmdShow(int argc, const char **argv);
 	bool cmdEntity(int argc, const char **argv);
 
 	bool cmdLoadGame(int argc, const char **argv);

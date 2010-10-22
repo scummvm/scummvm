@@ -58,6 +58,14 @@ bool State::isNightTime() const {
 		 || (_state->progress.chapter == kChapter5 && !_state->progress.isNightTime));
 }
 
+void State::getHourMinutes(uint32 time, uint8 *hours, uint8 *minutes) {
+	if (hours == NULL || minutes == NULL)
+		error("State::getHourMinutes: invalid parameters passed!");
+
+	*hours = (uint8)((time % 1296000) / 54000);
+	*minutes =  (uint8)((time % 54000) / 900);
+}
+
 uint32 State::getPowerOfTwo(uint32 x) {
 	if (!x || (x & 1))
 		return 0;
