@@ -186,6 +186,7 @@ public:
 	EMCState _state;
 	uint32 _lastTimer;
 	bool _frozen;
+	bool _frozenForConversation;
 	bool _active;
 };
 

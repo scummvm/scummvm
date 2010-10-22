@@ -248,7 +248,7 @@ void Character::stopSpecialAnim() {
 		delete anim
 #endif
 	if (_animScriptId != -1)
-		_vm->getSceneAnimationScript(_animScriptId)->_frozen = false;
+		_vm->getSceneAnimationScript(_animScriptId)->_frozenForConversation = false;
 
 	//if (_sceneAnimationId != -1)
 	//	_animationInstance->setAnimation(_vm->getSceneAnimation(_sceneAnimationId)->_animation);
@@ -348,7 +348,7 @@ void Character::update(int32 timeIncrement) {
 #endif
 
 			if (_animScriptId != -1)
-				_vm->getSceneAnimationScript(_animScriptId)->_frozen = true;
+				_vm->getSceneAnimationScript(_animScriptId)->_frozenForConversation = true;
 			
 			
 			// TODO setup backup //
@@ -955,7 +955,7 @@ void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 
 
 	if (_animScriptId != -1 && (flags & 8) == 0)
-		_vm->getSceneAnimationScript(_animScriptId)->_frozen = true;
+		_vm->getSceneAnimationScript(_animScriptId)->_frozenForConversation = true;
 
 	stopSpecialAnim();
 

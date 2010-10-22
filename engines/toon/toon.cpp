@@ -846,7 +846,7 @@ void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
 
 	do {
 		if (_sceneAnimationScripts[_lastProcessedSceneScript]._lastTimer <= _system->getMillis() &&
-		        !_sceneAnimationScripts[_lastProcessedSceneScript]._frozen) {
+		        !_sceneAnimationScripts[_lastProcessedSceneScript]._frozen && !_sceneAnimationScripts[_lastProcessedSceneScript]._frozenForConversation) {
 			_animationSceneScriptRunFlag = true;
 
 			while (_animationSceneScriptRunFlag && _sceneAnimationScripts[_lastProcessedSceneScript]._lastTimer <= _system->getMillis() && !_shouldQuit) {
@@ -855,7 +855,7 @@ void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
 
 				//waitForScriptStep();
 
-				if (_sceneAnimationScripts[_lastProcessedSceneScript]._frozen)
+				if (_sceneAnimationScripts[_lastProcessedSceneScript]._frozen || _sceneAnimationScripts[_lastProcessedSceneScript]._frozenForConversation)
 					break;
 			}
 
@@ -1049,6 +1049,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 			_script->start(&_sceneAnimationScripts[i]._state, 9 + i);
 			_sceneAnimationScripts[i]._lastTimer = getSystem()->getMillis();
 			_sceneAnimationScripts[i]._frozen = false;
+			_sceneAnimationScripts[i]._frozenForConversation = false;
 		}
 	}
 
@@ -2956,6 +2957,7 @@ bool ToonEngine::loadGame(int32 slot) {
 	for (int32 i = 0; i < state()->_locations[_gameState->_currentScene]._numSceneAnimations; i++) {
 		_sceneAnimationScripts[i]._active = loadFile->readByte();
 		_sceneAnimationScripts[i]._frozen = loadFile->readByte();
+		_sceneAnimationScripts[i]._frozenForConversation = false;
 		int32 oldTimer = loadFile->readSint32BE();
 		_sceneAnimationScripts[i]._lastTimer = MAX<int32>(0,oldTimer + timerDiff);
 		_script->loadState(&_sceneAnimationScripts[i]._state, loadFile);
