@@ -394,8 +394,8 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) {
 			if (spacing) {
 				if (_vm->_game.id == GID_MONKEY) {
 					spacing++;
-					//if (_curId == 2)
-					//	spacing++;
+					if (_curId == 2)
+						spacing++;
 				} else if (_vm->_game.id != GID_INDY4 && _curId == 1) {
 					spacing++;
 				}
@@ -910,7 +910,15 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 		charPtr = 0;
 		_vm->_cjkChar = chr;
 		enableShadow(true);
-		origWidth = width = getCharWidth(chr);
+		
+		width = getCharWidth(chr);
+		// For whatever reason MI1 uses a different font width
+		// for alignment calculation and for drawing when
+		// charset 2 is active. This fixes some subtle glitches.
+		if (_vm->_game.id == GID_MONKEY && _curId == 2)
+			width--;
+		origWidth = width;
+
 		origHeight = height = getFontHeight();
 		offsX = offsY = 0;
 	} else
