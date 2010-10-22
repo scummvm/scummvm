@@ -700,7 +700,7 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 		break;
 
 	case 3:
-		setHandItem(b);
+		setHandItem((Item)b);
 		break;
 
 	case 4:
@@ -1065,7 +1065,9 @@ int LoLEngine::olol_createHandItem(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_createHandItem(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	if (_itemInHand)
 		return 0;
-	setHandItem(makeItem(stackPos(0), stackPos(1), stackPos(2)));
+
+	uint16 itm = makeItem(stackPos(0), stackPos(1), stackPos(2));
+	setHandItem((Item)itm);
 	return 1;
 }
 
@@ -2085,7 +2087,7 @@ int LoLEngine::olol_placeInventoryItemInHand(EMCState *script) {
 
 	_inventoryCurItem = i;
 	int r = _itemInHand;
-	setHandItem(_inventory[i]);
+	setHandItem((Item)_inventory[i]);
 	_inventory[i] = r;
 
 	if (stackPos(1))
