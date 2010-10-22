@@ -69,13 +69,6 @@ struct Room {
 	uint8 needInit[12];
 };
 
-struct ItemDescription {
-	uint8 unk1;
-	uint8 height;
-	uint8 unk2;
-	uint8 unk3;
-};
-
 struct SeqLoop {
 	const uint8 *ptr;
 	uint16 count;
@@ -456,7 +449,7 @@ protected:
 
 	int8 *_sceneAnimTable[50];
 
-	ItemDescription _itemTable[145];
+	uint8 _itemHtDat[145];
 	int _lastProcessedItem;
 	int _lastProcessedItemHeight;
 

@@ -247,7 +247,7 @@ Common::Error KyraEngine_LoK::init() {
 	_brandonPosX = _brandonPosY = -1;
 	_poisonDeathCounter = 0;
 
-	memset(_itemTable, 0, sizeof(_itemTable));
+	memset(_itemHtDat, 0, sizeof(_itemHtDat));
 	memset(_exitList, 0xFFFF, sizeof(_exitList));
 	_exitListPtr = 0;
 	_pathfinderFlag = _pathfinderFlag2 = 0;

@@ -98,7 +98,7 @@ byte KyraEngine_LoK::findItemAtPos(int x, int y) {
 			int xpos2 = *xposOffset + 10;
 			if (x > xpos && x < xpos2) {
 				assert(*itemsTable >= 0);
-				int itemHeight = _itemTable[*itemsTable].height;
+				int itemHeight = _itemHtDat[*itemsTable];
 				int ypos = *yposOffset + 3;
 				int ypos2 = ypos - itemHeight - 3;
 
@@ -305,7 +305,7 @@ int KyraEngine_LoK::processItemDrop(uint16 sceneId, uint8 item, int x, int y, in
 		return 1;
 	}
 
-	int itemHeight = _itemTable[item].height;
+	int itemHeight = _itemHtDat[item];
 	_lastProcessedItemHeight = itemHeight;
 
 	if (x == -1)
@@ -623,7 +623,7 @@ void KyraEngine_LoK::itemSpecialFX1(int x, int y, int item) {
 void KyraEngine_LoK::itemSpecialFX2(int x, int y, int item) {
 	x -= 8;
 	y -= 15;
-	int yAdd = (int8)(((16 - _itemTable[item].height) >> 1) & 0xFF);
+	int yAdd = (int8)(((16 - _itemHtDat[item]) >> 1) & 0xFF);
 	backUpItemRect0(x, y);
 	if (item >= 80 && item <= 89)
 		snd_playSoundEffect(55);

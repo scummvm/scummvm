@@ -912,16 +912,7 @@ void KyraEngine_LoK::loadItems() {
 			_shapes[216 + i] = _screen->encodeShape( (i % 20) * 16, i/20 * 16, 16, 16, 0);
 	}
 
-	uint32 size;
-	uint8 *fileData = _res->fileData("_ITEM_HT.DAT", &size);
-	assert(fileData);
-
-	for (int i = 0; i < 107; i++) {
-		_itemTable[i].height = fileData[i];
-		_itemTable[i].unk1 = _itemTable[i].unk2 = 0;
-	}
-
-	delete[] fileData;
+	_res->loadFileToBuf("_ITEM_HT.DAT", &_itemHtDat, sizeof(_itemHtDat));
 }
 
 void KyraEngine_LoK::loadButtonShapes() {
