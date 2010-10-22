@@ -260,7 +260,7 @@ Common::Error KyraEngine_LoK::init() {
 
 	_marbleVaseItem = -1;
 	memset(_foyerItemTable, -1, sizeof(_foyerItemTable));
-	_itemInHand = -1;
+	_itemInHand = kItemNone;
 
 	_currentRoom = 0xFFFF;
 	_scenePhasingFlag = 0;
@@ -373,7 +373,7 @@ void KyraEngine_LoK::startup() {
 
 	for (int i = 0; i < _roomTableSize; ++i) {
 		for (int item = 0; item < 12; ++item) {
-			_roomTable[i].itemsTable[item] = 0xFF;
+			_roomTable[i].itemsTable[item] = kItemNone;
 			_roomTable[i].itemsXPos[item] = 0xFFFF;
 			_roomTable[i].itemsYPos[item] = 0xFF;
 			_roomTable[i].needInit[item] = 0;
@@ -672,12 +672,13 @@ void KyraEngine_LoK::processInput(int xpos, int ypos) {
 				runNpcScript(script);
 				return;
 			}
-			if (_itemInHand != -1) {
+			if (_itemInHand != kItemNone) {
 				if (ypos < 155) {
 					if (hasClickedOnExit(xpos, ypos)) {
 						handleSceneChange(xpos, ypos, 1, 1);
 						return;
 					}
+
 					dropItem(0, _itemInHand, xpos, ypos, 1);
 				}
 			} else {
@@ -691,14 +692,14 @@ void KyraEngine_LoK::processInput(int xpos, int ypos) {
 int KyraEngine_LoK::processInputHelper(int xpos, int ypos) {
 	uint8 item = findItemAtPos(xpos, ypos);
 	if (item != 0xFF) {
-		if (_itemInHand == -1) {
+		if (_itemInHand == kItemNone) {
 			_screen->hideMouse();
 			_animator->animRemoveGameItem(item);
 			snd_playSoundEffect(53);
 			assert(_currentCharacter->sceneId < _roomTableSize);
 			Room *currentRoom = &_roomTable[_currentCharacter->sceneId];
 			int item2 = currentRoom->itemsTable[item];
-			currentRoom->itemsTable[item] = 0xFF;
+			currentRoom->itemsTable[item] = kItemNone;
 			setMouseItem(item2);
 			assert(_itemList && _takenList);
 			updateSentenceCommand(_itemList[getItemListIndex(item2)], _takenList[0], 179);
@@ -830,7 +831,7 @@ void KyraEngine_LoK::updateMousePointer(bool forceUpdate) {
 			if (mouse.y > 158 || (mouse.x >= 12 && mouse.x < 308 && mouse.y < 136 && mouse.y >= 12) || forceUpdate) {
 				_mouseState = _itemInHand;
 				_screen->hideMouse();
-				if (_itemInHand == -1)
+				if (_itemInHand == kItemNone)
 					_screen->setMouseCursor(1, 1, _shapes[0]);
 				else
 					_screen->setMouseCursor(8, 15, _shapes[216+_itemInHand]);

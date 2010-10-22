@@ -80,7 +80,7 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 	}
 
 	_marbleVaseItem = in->readSint16BE();
-	_itemInHand = in->readByte();
+	_itemInHand = (int8)in->readByte();
 
 	for (int i = 0; i < 4; ++i)
 		_birthstoneGemTable[i] = in->readByte();
@@ -109,7 +109,7 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 
 	for (int i = 0; i < _roomTableSize; ++i) {
 		for (int item = 0; item < 12; ++item) {
-			_roomTable[i].itemsTable[item] = 0xFF;
+			_roomTable[i].itemsTable[item] = kItemNone;
 			_roomTable[i].itemsXPos[item] = 0xFFFF;
 			_roomTable[i].itemsYPos[item] = 0xFF;
 			_roomTable[i].needInit[item] = 0;

@@ -32,6 +32,7 @@
 #include "kyra/gui_lok.h"
 #include "kyra/timer.h"
 #include "kyra/util.h"
+#include "kyra/item.h"
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -49,9 +50,9 @@ void KyraEngine_LoK::initMainButtonList() {
 
 int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 	int itemOffset = caller->index - 2;
-	uint8 inventoryItem = _currentCharacter->inventoryItems[itemOffset];
-	if (_itemInHand == -1) {
-		if (inventoryItem == 0xFF) {
+	Item inventoryItem = (int8)_currentCharacter->inventoryItems[itemOffset];
+	if (_itemInHand == kItemNone) {
+		if (inventoryItem == kItemNone) {
 			snd_playSoundEffect(0x36);
 			return 0;
 		} else {
@@ -62,10 +63,10 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 			updateSentenceCommand(_itemList[getItemListIndex(inventoryItem)], _takenList[0], 179);
 			_itemInHand = inventoryItem;
 			_screen->showMouse();
-			_currentCharacter->inventoryItems[itemOffset] = 0xFF;
+			_currentCharacter->inventoryItems[itemOffset] = kItemNone;
 		}
 	} else {
-		if (inventoryItem != 0xFF) {
+		if (inventoryItem != kItemNone) {
 			snd_playSoundEffect(0x35);
 			_screen->hideMouse();
 			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
@@ -87,7 +88,7 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 			updateSentenceCommand(_itemList[getItemListIndex(_itemInHand)], _placedList[0], 179);
 			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = _itemInHand;
-			_itemInHand = -1;
+			_itemInHand = kItemNone;
 		}
 	}
 	_screen->updateScreen();
@@ -104,7 +105,7 @@ int KyraEngine_LoK::buttonAmuletCallback(Button *caller) {
 	}
 	if (!queryGameFlag(0x2D))
 		return 1;
-	if (_itemInHand != -1) {
+	if (_itemInHand != kItemNone) {
 		assert(_putDownFirst);
 		characterSays(2000, _putDownFirst[0], 0, -2);
 		return 1;
