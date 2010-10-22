@@ -2880,9 +2880,9 @@ IMPLEMENT_FUNCTION(59, Anna, function59)
 			}
 
 			if (!params->param3
-			 || !getEntities()->isPlayerInCar(kCarRedSleeping)
+			 || (!getEntities()->isPlayerInCar(kCarRedSleeping)
 			 && !getEntities()->isInSalon(kEntityPlayer)
-			 && !getEntities()->isInRestaurant(kEntityPlayer)
+			 && !getEntities()->isInRestaurant(kEntityPlayer))
 			 || !params->param4)
 				params->param4 = getState()->time;
 

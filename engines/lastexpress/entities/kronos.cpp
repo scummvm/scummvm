@@ -49,7 +49,7 @@ namespace LastExpress {
 
 static const struct {
 	uint32 time;
-	char *sequence;
+	const char *sequence;
 } concertData[54] = {
 	{735, "201d"},   {1395, "201a"},  {1965, "201d"},  {2205, "201a"},  {3405, "201d"},
 	{3750, "201a"},  {3975, "201d"},  {4365, "201a"},  {4650, "201d"},  {4770, "201a"},
@@ -489,11 +489,11 @@ IMPLEMENT_FUNCTION(20, Kronos, function20)
 
 			getEntities()->drawSequenceLeft(kEntityKronos, (char *)&concertData[params->param6].sequence);
 
-			if (stricmp((char *)&concertData[params->param6].sequence, "201e")) {
+			if (scumm_stricmp((char *)&concertData[params->param6].sequence, "201e")) {
 
-				if (stricmp((char *)&concertData[params->param6].sequence, "201c")) {
+				if (scumm_stricmp((char *)&concertData[params->param6].sequence, "201c")) {
 
-					if (!stricmp((char *)&concertData[params->param6].sequence, "201d")) {
+					if (!scumm_stricmp((char *)&concertData[params->param6].sequence, "201d")) {
 						if (getEntities()->isPlayerPosition(kCarKronos, 86))
 							getScenes()->loadSceneFromPosition(kCarKronos, 83);
 

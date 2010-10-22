@@ -615,7 +615,7 @@ IMPLEMENT_FUNCTION(22, Tatiana, function22)
 		if (params->param1 == kTimeInvalid || getState()->time <= kTime1179000)
 			goto label_update;
 
-		UPDATE_PARAM_PROC_TIME(kTime1233000, (!getEvent(kEventTatianaAskMatchSpeakRussian) && !getEvent(kEventTatianaAskMatch) || getEntities()->isInGreenCarEntrance(kEntityPlayer)), params->param1, 0)
+		UPDATE_PARAM_PROC_TIME(kTime1233000, ((!getEvent(kEventTatianaAskMatchSpeakRussian) && !getEvent(kEventTatianaAskMatch)) || getEntities()->isInGreenCarEntrance(kEntityPlayer)), params->param1, 0)
 label_update:
 			if (!getEvent(kEventTatianaAskMatchSpeakRussian)
 			 && !getEvent(kEventTatianaAskMatch)
