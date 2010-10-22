@@ -301,6 +301,7 @@ protected:
 	int _itemListSize;
 
 	int _itemInHand;
+	int _savedMouseState;
 
 	int findFreeItem();
 	int countAllItems();
@@ -360,7 +361,7 @@ protected:
 	virtual void randomSceneChat() = 0;
 
 	// unknown
-	int _unk3, _unk4, _unk5;
+	int _unk4, _unk5;
 	bool _unkSceneScreenFlag1;
 	bool _unkHandleSceneChangeFlag;
 

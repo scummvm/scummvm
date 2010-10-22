@@ -100,7 +100,7 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_unkSceneScreenFlag1 = false;
 	_noScriptEnter = true;
 	_itemInHand = _mouseState = -1;
-	_unk3 = -1;
+	_savedMouseState = -1;
 	_unk4 = 0;
 	_loadingState = false;
 	_noStartupChat = false;
@@ -966,7 +966,7 @@ void KyraEngine_MR::runLoop() {
 		_timer->update();
 
 		if (inputFlag == 198 || inputFlag == 199) {
-			_unk3 = _mouseState;
+			_savedMouseState = _mouseState;
 			Common::Point mouse = getMousePos();
 			handleInput(mouse.x, mouse.y);
 		}
@@ -988,7 +988,7 @@ void KyraEngine_MR::handleInput(int x, int y) {
 	if (!_screen->isMouseVisible())
 		return;
 
-	if (_unk3 == -3) {
+	if (_savedMouseState == -3) {
 		snd_playSoundEffect(0x0D, 0x80);
 		return;
 	}
@@ -997,7 +997,7 @@ void KyraEngine_MR::handleInput(int x, int y) {
 
 	int skip = 0;
 
-	if (checkCharCollision(x, y) && _unk3 >= -1 && runSceneScript2()) {
+	if (checkCharCollision(x, y) && _savedMouseState >= -1 && runSceneScript2()) {
 		return;
 	} else if (_itemInHand != 27 && pickUpItem(x, y, 1)) {
 		return;
@@ -1023,7 +1023,7 @@ void KyraEngine_MR::handleInput(int x, int y) {
 	if (checkCharCollision(x, y)) {
 		if (runSceneScript2())
 			return;
-	} else if (_itemInHand >= 0 && _unk3 >= 0) {
+	} else if (_itemInHand >= 0 && _savedMouseState >= 0) {
 		if (_itemInHand == 27) {
 			makeCharFacingMouse();
 		} else if (y <= 187) {
@@ -1033,10 +1033,10 @@ void KyraEngine_MR::handleInput(int x, int y) {
 				dropItem(0, _itemInHand, x, y, 1);
 		}
 		return;
-	} else if (_unk3 == -3) {
+	} else if (_savedMouseState == -3) {
 		return;
 	} else {
-		if (y > 187 && _unk3 > -4)
+		if (y > 187 && _savedMouseState > -4)
 			return;
 		if (_unk5) {
 			_unk5 = 0;
@@ -1052,25 +1052,25 @@ int KyraEngine_MR::inputSceneChange(int x, int y, int unk1, int unk2) {
 	_pathfinderFlag = 15;
 
 	if (!_unkHandleSceneChangeFlag) {
-		if (_unk3 == -4) {
+		if (_savedMouseState == -4) {
 			if (_sceneList[curScene].exit4 != 0xFFFF) {
 				x = 4;
 				y = _sceneEnterY4;
 				_pathfinderFlag = 7;
 			}
-		} else if (_unk3 == -6) {
+		} else if (_savedMouseState == -6) {
 			if (_sceneList[curScene].exit2 != 0xFFFF) {
 				x = 316;
 				y = _sceneEnterY2;
 				_pathfinderFlag = 7;
 			}
-		} else if (_unk3 == -7) {
+		} else if (_savedMouseState == -7) {
 			if (_sceneList[curScene].exit1 != 0xFFFF) {
 				x = _sceneEnterX1;
 				y = _sceneEnterY1 - 2;
 				_pathfinderFlag = 14;
 			}
-		} else if (_unk3 == -5) {
+		} else if (_savedMouseState == -5) {
 			if (_sceneList[curScene].exit3 != 0xFFFF) {
 				x = _sceneEnterX3;
 				y = 191;

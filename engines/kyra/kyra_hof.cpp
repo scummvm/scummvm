@@ -507,7 +507,7 @@ void KyraEngine_HoF::runLoop() {
 		update();
 
 		if (inputFlag == 198 || inputFlag == 199) {
-			_unk3 = _mouseState;
+			_savedMouseState = _mouseState;
 			handleInput(_mouseX, _mouseY);
 		}
 
@@ -528,7 +528,7 @@ void KyraEngine_HoF::handleInput(int x, int y) {
 	if (!_screen->isMouseVisible())
 		return;
 
-	if (_unk3 == -2) {
+	if (_savedMouseState == -2) {
 		snd_playSoundEffect(13);
 		return;
 	}
@@ -537,8 +537,8 @@ void KyraEngine_HoF::handleInput(int x, int y) {
 
 	if (x <= 6 || x >= 312 || y <= 6 || y >= 135) {
 		bool exitOk = false;
-		assert(_unk3 + 6 >= 0);
-		switch (_unk3 + 6) {
+		assert(_savedMouseState + 6 >= 0);
+		switch (_savedMouseState + 6) {
 		case 0:
 			if (_sceneExit1 != 0xFFFF)
 				exitOk = true;
@@ -569,7 +569,7 @@ void KyraEngine_HoF::handleInput(int x, int y) {
 		}
 	}
 
-	if (checkCharCollision(x, y) && _unk3 >= -1) {
+	if (checkCharCollision(x, y) && _savedMouseState >= -1) {
 		runSceneScript2();
 		return;
 	} else if (pickUpItem(x, y)) {
@@ -609,7 +609,7 @@ void KyraEngine_HoF::handleInput(int x, int y) {
 
 			dropItem(0, _itemInHand, x, y, 1);
 		} else {
-			if (_unk3 == -2 || y > 135)
+			if (_savedMouseState == -2 || y > 135)
 				return;
 
 			if (!_unk5) {
@@ -1169,25 +1169,25 @@ int KyraEngine_HoF::inputSceneChange(int x, int y, int unk1, int unk2) {
 	_pathfinderFlag = 15;
 
 	if (!_unkHandleSceneChangeFlag) {
-		if (_unk3 == -3) {
+		if (_savedMouseState == -3) {
 			if (_sceneList[curScene].exit4 != 0xFFFF) {
 				x = 4;
 				y = _sceneEnterY4;
 				_pathfinderFlag = 7;
 			}
-		} else if (_unk3 == -5) {
+		} else if (_savedMouseState == -5) {
 			if (_sceneList[curScene].exit2 != 0xFFFF) {
 				x = 316;
 				y = _sceneEnterY2;
 				_pathfinderFlag = 7;
 			}
-		} else if (_unk3 == -6) {
+		} else if (_savedMouseState == -6) {
 			if (_sceneList[curScene].exit1 != 0xFFFF) {
 				x = _sceneEnterX1;
 				y = _sceneEnterY1 - 2;
 				_pathfinderFlag = 14;
 			}
-		} else if (_unk3 == -4) {
+		} else if (_savedMouseState == -4) {
 			if (_sceneList[curScene].exit3 != 0xFFFF) {
 				x = _sceneEnterX3;
 				y = 147;
@@ -1200,13 +1200,13 @@ int KyraEngine_HoF::inputSceneChange(int x, int y, int unk1, int unk2) {
 	int vocH = _flags.isTalkie ? 131 : -1;
 
 	if (_pathfinderFlag) {
-		if (findItem(curScene, 13) >= 0 && _unk3 <= -3) {
+		if (findItem(curScene, 13) >= 0 && _savedMouseState <= -3) {
 			strId = 252;
 		} else if (_itemInHand == 72) {
 			strId = 257;
-		} else if (findItem(curScene, 72) >= 0 && _unk3 <= -3) {
+		} else if (findItem(curScene, 72) >= 0 && _savedMouseState <= -3) {
 			strId = 256;
-		} else if (getInventoryItemSlot(72) != -1 && _unk3 <= -3) {
+		} else if (getInventoryItemSlot(72) != -1 && _savedMouseState <= -3) {
 			strId = 257;
 		}
 	}

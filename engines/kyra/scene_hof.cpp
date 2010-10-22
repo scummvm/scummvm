@@ -241,7 +241,7 @@ void KyraEngine_HoF::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 }
 
 void KyraEngine_HoF::enterNewSceneUnk2(int unk1) {
-	_unk3 = -1;
+	_savedMouseState = -1;
 
 	if (_flags.isTalkie) {
 		if (_mainCharX == -1 && _mainCharY == -1 && _mainCharacter.sceneId != 61 &&
@@ -265,7 +265,7 @@ void KyraEngine_HoF::enterNewSceneUnk2(int unk1) {
 	}
 
 	_unk4 = 0;
-	_unk3 = -1;
+	_savedMouseState = -1;
 }
 
 int KyraEngine_HoF::trySceneChange(int *moveTable, int unk1, int updateChar) {
@@ -339,16 +339,16 @@ int KyraEngine_HoF::checkSceneChange() {
 	int facing = 0;
 	int process = 0;
 
-	if (_screen->getLayer(charX, charY) == 1 && _unk3 == -6) {
+	if (_screen->getLayer(charX, charY) == 1 && _savedMouseState == -6) {
 		facing = 0;
 		process = 1;
-	} else if (charX >= 316 && _unk3 == -5) {
+	} else if (charX >= 316 && _savedMouseState == -5) {
 		facing = 2;
 		process = 1;
-	} else if (charY >= 142 && _unk3 == -4) {
+	} else if (charY >= 142 && _savedMouseState == -4) {
 		facing = 4;
 		process = 1;
-	} else if (charX <= 4 && _unk3 == -3) {
+	} else if (charX <= 4 && _savedMouseState == -3) {
 		facing = 6;
 		process = 1;
 	}
