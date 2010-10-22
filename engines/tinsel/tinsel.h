@@ -184,7 +184,7 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	uint16 getVersion() const;
-	uint32 TinselEngine::getFlags() const;
+	uint32 getFlags() const;
 	Common::Platform getPlatform() const;
 
 	const char *getSampleIndex(LANGUAGE lang);
