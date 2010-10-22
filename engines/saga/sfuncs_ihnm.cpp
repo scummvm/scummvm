@@ -413,8 +413,8 @@ void Script::sfQueueMusic(SCRIPTFUNC_PARAMS) {
 		return;
 	}
 
-	if (param1 >= _vm->_music->_songTableLen) {
-		warning("sfQueueMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTableLen - 1);
+	if (uint(param1) >= _vm->_music->_songTable.size()) {
+		warning("sfQueueMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTable.size() - 1);
 	} else {
 		_vm->_music->setVolume(_vm->_musicVolume, 1);
 		event.type = kEvTOneshot;

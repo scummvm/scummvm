@@ -120,7 +120,7 @@ struct FontCharEntry {
 struct FontStyle {
 	FontHeader header;
 	FontCharEntry fontCharEntry[256];
-	Common::Array<byte> font;
+	ByteArray font;
 };
 
 struct FontData {

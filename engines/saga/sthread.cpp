@@ -47,9 +47,9 @@ ScriptThread &Script::createThread(uint16 scriptModuleNumber, uint16 scriptEntry
 	_threadList.push_front(tmp);
 	ScriptThread &newThread = _threadList.front();
 	newThread._instructionOffset = _modules[scriptModuleNumber].entryPoints[scriptEntryPointNumber].offset;
-	newThread._commonBase = &_commonBuffer.front();
-	newThread._staticBase = &_commonBuffer.front() + _modules[scriptModuleNumber].staticOffset;
-	newThread._moduleBase = &_modules[scriptModuleNumber].moduleBase.front();
+	newThread._commonBase = _commonBuffer.getBuffer();
+	newThread._staticBase = _commonBuffer.getBuffer() + _modules[scriptModuleNumber].staticOffset;
+	newThread._moduleBase = _modules[scriptModuleNumber].moduleBase.getBuffer();
 	newThread._moduleBaseSize = _modules[scriptModuleNumber].moduleBase.size();
 	newThread._strings = &_modules[scriptModuleNumber].strings;
 
@@ -209,7 +209,7 @@ bool Script::runThread(ScriptThread &thread) {
 		savedInstructionOffset = thread._instructionOffset;
 		operandChar = scriptS.readByte();
 
-		debug(8, "Executing thread offset: %u (%x) stack: %d", thread._instructionOffset, operandChar, thread.pushedSize());
+		debug(8, "Executing thread offset: %u (0x%X) stack: %d", thread._instructionOffset, operandChar, thread.pushedSize());
 
 		stopParsing = false;
 		debug(4, "Calling op %s", this->_scriptOpsList[operandChar].scriptOpName);

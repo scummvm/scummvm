@@ -60,8 +60,11 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(NULL), _voiceContext(NULL)
 	setVoiceBank(0);
 
 	if (_vm->getGameId() == GID_ITE) {
-		_fxTable = ITE_SfxTable;
-		_fxTableLen = ITE_SFXCOUNT;
+		_fxTable.resize(ITE_SFXCOUNT);
+		for (uint i = 0; i < _fxTable.size(); i++) {
+			_fxTable[i].res = ITE_SfxTable[i].res;
+			_fxTable[i].vol = ITE_SfxTable[i].vol;
+		}
 #ifdef ENABLE_IHNM
 	} else if (_vm->getGameId() == GID_IHNM) {
 		ResourceContext *resourceContext;
@@ -86,17 +89,14 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(NULL), _voiceContext(NULL)
 			error("Sndres::SndRes can't read SfxIDs table");
 		}
 
-		_fxTableIDsLen = resourceLength / 2;
-		_fxTableIDs = (int16 *)malloc(_fxTableIDsLen * sizeof(int16));
+		_fxTableIDs.resize(resourceLength / 2);
 
 		MemoryReadStream metaS(resourcePointer, resourceLength);
-		for (int i = 0; i < _fxTableIDsLen; i++)
+		for (uint i = 0; i < _fxTableIDs.size(); i++) {
 			_fxTableIDs[i] = metaS.readSint16LE();
+		}
 
 		free(resourcePointer);
-
-		_fxTable = 0;
-		_fxTableLen = 0;
 #endif
 #ifdef ENABLE_SAGA2
 	} else if (_vm->getGameId() == GID_DINO) {
@@ -108,12 +108,6 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(NULL), _voiceContext(NULL)
 }
 
 SndRes::~SndRes() {
-#ifdef ENABLE_IHNM
-	if (_vm->getGameId() == GID_IHNM) {
-		free(_fxTable);
-		free(_fxTableIDs);
-	}
-#endif
 }
 
 void SndRes::setVoiceBank(int serial) {

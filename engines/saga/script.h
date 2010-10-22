@@ -138,7 +138,7 @@ struct ModuleData {
 	int stringsResourceId;
 	int voicesResourceId;
 
-	Common::Array<byte> moduleBase;	// all base module
+	ByteArray moduleBase;	// all base module
 	uint16 staticSize;				// size of static data
 	uint staticOffset;				// offset of static data begining in _commonBuffer
 	Common::Array<EntryPoint> entryPoints;
@@ -354,7 +354,7 @@ protected:
 	TextListEntry *_placardTextEntry;
 
 	friend class SagaEngine;
-	Common::Array<byte> _commonBuffer;
+	ByteArray _commonBuffer;
 
 	uint _staticSize;
 	ScriptThreadList _threadList;

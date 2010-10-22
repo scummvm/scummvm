@@ -227,12 +227,12 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	if (_protagonist == NULL)
 		return;
 
-	if ((actorsEntrance >= 0) && (_vm->_scene->_entryList.entryListCount > 0)) {
-		if (_vm->_scene->_entryList.entryListCount <= actorsEntrance) {
+	if ((actorsEntrance >= 0) && (!_vm->_scene->_entryList.empty())) {
+		if (_vm->_scene->_entryList.size() <= uint(actorsEntrance)) {
 			actorsEntrance = 0; //OCEAN bug
 		}
 
-		sceneEntry = _vm->_scene->_entryList.getEntry(actorsEntrance);
+		sceneEntry = &_vm->_scene->_entryList[actorsEntrance];
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
 			_protagonist->_location = sceneEntry->location;
 		} else {
@@ -722,7 +722,7 @@ void Actor::handleActions(int msec, bool setup) {
 
 void Actor::direct(int msec) {
 
-	if (_vm->_scene->_entryList.entryListCount == 0) {
+	if (_vm->_scene->_entryList.empty()) {
 		return;
 	}
 

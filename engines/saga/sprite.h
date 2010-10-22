@@ -34,19 +34,11 @@ namespace Saga {
 #define SPRITE_ZMASK 0x0F
 
 struct SpriteInfo {
-	Common::Array<byte> decodedBuffer;
+	ByteArray decodedBuffer;
 	int width;
 	int height;
 	int xAlign;
 	int yAlign;
-
-	byte * getBuffer() {
-		if (decodedBuffer.empty()) {
-			return NULL;
-		} else {
-			return &decodedBuffer.front();
-		}
-	}
 
 	SpriteInfo() : width(0), height(0), xAlign(0), yAlign(0) {
 	}
@@ -88,7 +80,7 @@ private:
 
 	SagaEngine *_vm;
 	ResourceContext *_spriteContext;
-	Common::Array<byte> _decodeBuf;
+	ByteArray _decodeBuf;
 };
 
 } // End of namespace Saga

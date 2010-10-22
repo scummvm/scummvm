@@ -106,8 +106,7 @@ public:
 	void setVolume(int volume, int time = 1);
 	int getVolume() { return _currentVolume; }
 
-	int32 *_songTable;
-	int _songTableLen;
+	Common::Array<int32> _songTable;
 
 private:
 	SagaEngine *_vm;

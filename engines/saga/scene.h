@@ -134,29 +134,10 @@ struct SceneDescription {
 
 struct SceneEntry {
 	Location location;
-	int facing;
+	uint16 facing;
 };
 
-struct SceneEntryList {
-	SceneEntry *entryList;
-	int entryListCount;
-
-	const SceneEntry * getEntry(int index) {
-		if ((index < 0) || (index >= entryListCount)) {
-			error("SceneEntryList::getEntry wrong index (%d)", index);
-		}
-		return &entryList[index];
-	}
-	void freeMem() {
-		free(entryList);
-		memset(this, 0, sizeof(*this));
-	}
-	SceneEntryList() {
-		memset(this, 0, sizeof(*this));
-	}
-	~SceneEntryList() {
-		freeMem();
-	}
+class SceneEntryList : public Common::Array<SceneEntry> {
 };
 
 struct SceneImage {
@@ -325,7 +306,7 @@ class Scene {
 
 	bool isSceneLoaded() const { return _sceneLoaded; }
 
-	int getSceneResourceId(int sceneNumber) {
+	uint16 getSceneResourceId(int sceneNumber) {
 	#ifdef SCENE_DEBUG
 		if ((sceneNumber < 0) || (sceneNumber >= _sceneCount)) {
 			error("getSceneResourceId: wrong sceneNumber %i", sceneNumber);
@@ -385,8 +366,7 @@ class Scene {
 	SagaEngine *_vm;
 
 	ResourceContext *_sceneContext;
-	int *_sceneLUT;
-	int _sceneCount;
+	Common::Array<uint16> _sceneLUT;
 	SceneQueueList _sceneQueue;
 	bool _sceneLoaded;
 	int _currentProtag;

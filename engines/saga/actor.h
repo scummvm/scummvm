@@ -196,6 +196,8 @@ struct ActorFrameSequence {
 	ActorFrameRange directions[ACTOR_DIRECTIONS_COUNT];
 };
 
+//typedef Common::Array<ActorFrameSequence> ActorFrameSequences;
+
 uint pathLine(PointList &pointList, uint idx, const Point &point1, const Point &point2);
 
 struct Location {
@@ -376,7 +378,7 @@ public:
 
 	int32 _frameNumber;			// current frame number
 
-	Common::Array<byte> _tileDirections;
+	ByteArray _tileDirections;
 
 	Common::Array<Point> _walkStepsPoints;
 
@@ -624,7 +626,7 @@ private:
 
 	Rect _barrierList[ACTOR_BARRIERS_MAX];
 	int _barrierCount;
-	int8 *_pathCell;
+	Common::Array<int8> _pathCell;
 
 	int _xCellCount;
 	int _yCellCount;

@@ -164,7 +164,7 @@ struct InterfacePanel {
 };
 
 struct Converse {
-	char *text;
+	Common::Array<char> text;
 	int strId;
 	int stringNum;
 	int textNum;
@@ -356,7 +356,6 @@ private:
 	void processStatusTextInput(Common::KeyState keystate);
 
 public:
-	void converseInit();
 	void converseClear();
 	bool converseAddText(const char *text, int strId, int replyId, byte replyFlags, int replyBit);
 	void converseDisplayText();

@@ -77,16 +77,16 @@ struct ObjectTableData {
 	uint16 interactBits;
 };
 
-struct FxTable {
-	int res;
-	int vol;
+struct IteFxTable {
+	byte res;
+	byte vol;
 };
 
 #define ITE_OBJECTCOUNT 39
 #define ITE_SFXCOUNT 63
 
 extern ObjectTableData ITE_ObjectTable[ITE_OBJECTCOUNT];
-extern FxTable ITE_SfxTable[ITE_SFXCOUNT];
+extern IteFxTable ITE_SfxTable[ITE_SFXCOUNT];
 
 extern const char *ITEinterfaceTextStrings[][53];
 

@@ -109,7 +109,7 @@ void Font::loadFont(FontData *font, uint32 fontResourceId) {
 	}
 
 	font->normal.font.resize(fontResourceLength - FONT_DESCSIZE);
-	memcpy(&font->normal.font.front(), fontResourcePointer + FONT_DESCSIZE, fontResourceLength - FONT_DESCSIZE);
+	memcpy(font->normal.font.getBuffer(), fontResourcePointer + FONT_DESCSIZE, fontResourceLength - FONT_DESCSIZE);
 
 	free(fontResourcePointer);
 

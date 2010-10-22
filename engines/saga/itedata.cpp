@@ -269,7 +269,7 @@ ObjectTableData ITE_ObjectTable[ITE_OBJECTCOUNT] = {
 	{ 54, 281,  620,  352,  0, 80, 46, 0           }  // Orb of Storms in Dam Lab
 };
 
-FxTable ITE_SfxTable[ITE_SFXCOUNT] = {
+IteFxTable ITE_SfxTable[ITE_SFXCOUNT] = {
 	{ 14,	127 },	// Door open
 	{ 15,   127 },	// Door close
 	{ 16,    63 },	// Rush water (floppy volume: 127)

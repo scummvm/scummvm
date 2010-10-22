@@ -2420,18 +2420,9 @@ void Interface::drawVerbPanelText(PanelButton *panelButton, KnownColor textKnown
 
 
 // Converse stuff
-void Interface::converseInit() {
-	for (int i = 0; i < CONVERSE_MAX_TEXTS; i++)
-		_converseText[i].text = NULL;
-	converseClear();
-}
-
 void Interface::converseClear() {
 	for (int i = 0; i < CONVERSE_MAX_TEXTS; i++) {
-		if (_converseText[i].text != NULL) {
-			free(_converseText[i].text);
-			_converseText[i].text = NULL;
-		}
+		_converseText[i].text.clear();
 		_converseText[i].stringNum = -1;
 		_converseText[i].replyId = 0;
 		_converseText[i].replyFlags = 0;
@@ -2477,8 +2468,8 @@ bool Interface::converseAddText(const char *text, int strId, int replyId, byte r
 			return true;
 		}
 
-		_converseText[_converseTextCount].text = (char *)malloc(i + 1);
-		strncpy(_converseText[_converseTextCount].text, _converseWorkString, i);
+		_converseText[_converseTextCount].text.resize(i + 1);
+		strncpy(&_converseText[_converseTextCount].text.front(), _converseWorkString, i);
 
 		_converseText[_converseTextCount].strId = strId;
 		_converseText[_converseTextCount].text[i] = 0;
@@ -2588,7 +2579,7 @@ void Interface::converseDisplayTextLines() {
 		rect.left += 8;
 		_vm->_gfx->drawRect(rect, backgnd);
 
-		str = _converseText[relPos].text;
+		str = &_converseText[relPos].text.front();
 
 		if (_converseText[relPos].textNum == 0) { // first entry
 			textPoint.x = rect.left - 6;

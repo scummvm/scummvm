@@ -53,8 +53,7 @@ int SagaEngine::decodeBGImage(const byte *image_data, size_t image_size,
 	int modex_height;
 	const byte *RLE_data_ptr;
 	size_t RLE_data_len;
-	byte *decode_buf;
-	size_t decode_buf_len;
+	ByteArray decodeBuffer;
 	byte *out_buf;
 	size_t out_buf_len;
 
@@ -75,27 +74,22 @@ int SagaEngine::decodeBGImage(const byte *image_data, size_t image_size,
 
 	modex_height = granulate(hdr.height, 4);
 
-	decode_buf_len = hdr.width * modex_height;
-	decode_buf = (byte *)malloc(decode_buf_len);
+	decodeBuffer.resize(hdr.width * modex_height);
 
 	out_buf_len = hdr.width * hdr.height;
 	out_buf = (byte *)malloc(out_buf_len);
 
-	if (decodeBGImageRLE(RLE_data_ptr,
-		RLE_data_len, decode_buf, decode_buf_len) != SUCCESS) {
-		free(decode_buf);
+	if (decodeBGImageRLE(RLE_data_ptr, RLE_data_len, decodeBuffer) != SUCCESS) {
 		free(out_buf);
 		return FAILURE;
 	}
 
-	unbankBGImage(out_buf, decode_buf, hdr.width, hdr.height);
+	unbankBGImage(out_buf, decodeBuffer.getBuffer(), hdr.width, hdr.height);
 
 	// For some reason bg images in IHNM are upside down
 	if (getGameId() == GID_IHNM && !flip) {
 		flipImage(out_buf, hdr.width, hdr.height);
 	}
-
-	free(decode_buf);
 
 	*output_buf_len = out_buf_len;
 	*output_buf = out_buf;
@@ -106,9 +100,10 @@ int SagaEngine::decodeBGImage(const byte *image_data, size_t image_size,
 	return SUCCESS;
 }
 
-int SagaEngine::decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len) {
+int SagaEngine::decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, ByteArray &outbuf) {
 	const byte *inbuf_ptr;
 	byte *outbuf_ptr;
+	byte *outbuf_start;
 	uint32 inbuf_remain;
 
 	const byte *inbuf_end;
@@ -134,13 +129,13 @@ int SagaEngine::decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outb
 	inbuf_ptr = inbuf;
 	inbuf_remain = inbuf_len;
 
-	outbuf_ptr = outbuf;
-	outbuf_remain = outbuf_len;
+	outbuf_start = outbuf_ptr = outbuf.getBuffer();
+	outbuf_remain = outbuf.size();
+	outbuf_end = (outbuf_start + outbuf_remain) - 1;
+	memset(outbuf_start, 0, outbuf_remain);
 
 	inbuf_end = (inbuf + inbuf_len) - 1;
-	outbuf_end = (outbuf + outbuf_len) - 1;
 
-	memset(outbuf, 0, outbuf_len);
 
 	while ((inbuf_remain > 1) && (outbuf_remain > 0) && !decode_err) {
 
@@ -194,7 +189,7 @@ int SagaEngine::decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outb
 			runcount = ((mark_byte >> 3) & 0x07U) + 3;
 			backtrack_amount = *inbuf_ptr;
 
-			if (!inbuf_remain || (backtrack_amount > (outbuf_ptr - outbuf)) || (runcount > outbuf_remain)) {
+			if (!inbuf_remain || (backtrack_amount > (outbuf_ptr - outbuf_start)) || (runcount > outbuf_remain)) {
 				return FAILURE;
 			}
 
@@ -277,7 +272,7 @@ int SagaEngine::decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outb
 			inbuf_ptr++;
 			runcount = *inbuf_ptr++;
 
-			if ((backtrack_amount > (outbuf_ptr - outbuf)) || (outbuf_remain < runcount)) {
+			if ((backtrack_amount > (outbuf_ptr - outbuf_start)) || (outbuf_remain < runcount)) {
 				return FAILURE;
 			}
 
@@ -301,15 +296,17 @@ int SagaEngine::decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outb
 
 int SagaEngine::flipImage(byte *img_buf, int columns, int scanlines) {
 	int line;
-	byte *tmp_scan;
+	ByteArray tmp_scan;
 
 	byte *flip_p1;
 	byte *flip_p2;
+	byte *flip_tmp;
 
 	int flipcount = scanlines / 2;
 
-	tmp_scan = (byte *)malloc(columns);
-	if (tmp_scan == NULL) {
+	tmp_scan.resize(columns);
+	flip_tmp = tmp_scan.getBuffer();
+	if (flip_tmp == NULL) {
 		return FAILURE;
 	}
 
@@ -317,14 +314,12 @@ int SagaEngine::flipImage(byte *img_buf, int columns, int scanlines) {
 	flip_p2 = img_buf + (columns * (scanlines - 1));
 
 	for (line = 0; line < flipcount; line++) {
-		memcpy(tmp_scan, flip_p1, columns);
+		memcpy(flip_tmp, flip_p1, columns);
 		memcpy(flip_p1, flip_p2, columns);
-		memcpy(flip_p2, tmp_scan, columns);
+		memcpy(flip_p2, flip_tmp, columns);
 		flip_p1 += columns;
 		flip_p2 -= columns;
 	}
-
-	free(tmp_scan);
 
 	return SUCCESS;
 }

@@ -43,8 +43,7 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 	size_t i;
 	bool result;
 	byte tableInfo[RSC_TABLEINFO_SIZE];
-	byte *tableBuffer;
-	size_t tableSize;
+	ByteArray tableBuffer;
 	uint32 count;
 	uint32 resourceTableOffset;
 	ResourceData *resourceData;
@@ -70,17 +69,15 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 	}
 
 	// Load resource table
-	tableSize = RSC_TABLEENTRY_SIZE * count;
-
-	tableBuffer = (byte *)malloc(tableSize);
+	tableBuffer.resize(RSC_TABLEENTRY_SIZE * count);
 
 	_file.seek(resourceTableOffset + contextOffset, SEEK_SET);
 
-	result = (_file.read(tableBuffer, tableSize) == tableSize);
+	result = (_file.read(tableBuffer.getBuffer(), tableBuffer.size()) == tableBuffer.size());
 	if (result) {
 		_table.resize(count);
 
-		MemoryReadStreamEndian readS1(tableBuffer, tableSize, _isBigEndian);
+		MemoryReadStreamEndian readS1(tableBuffer.getBuffer(), tableBuffer.size(), _isBigEndian);
 
 		for (i = 0; i < count; i++) {
 			resourceData = &_table[i];
@@ -94,7 +91,6 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 		}
 	}
 
-	free(tableBuffer);
 	return result;
 }
 
@@ -375,7 +371,6 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&r
 	uint32 resourceOffset;
 	ResourceData *resourceData;
 
-	debug(8, "loadResource %d", resourceId);
 
 	resourceData = context->getResourceData(resourceId);
 
@@ -383,6 +378,8 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&r
 
 	resourceOffset = resourceData->offset;
 	resourceSize = resourceData->size;
+
+	debug(8, "loadResource %d 0x%X:0x%X", resourceId, resourceOffset, resourceSize);
 
 	resourceBuffer = (byte*)malloc(resourceSize);
 

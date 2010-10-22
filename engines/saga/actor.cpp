@@ -218,7 +218,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_yCellCount = _vm->_scene->getHeight();
 	_xCellCount = _vm->getDisplayInfo().width;
 
-	_pathCell = (int8 *)malloc(_yCellCount * _xCellCount * sizeof(*_pathCell));
+	_pathCell.resize(_yCellCount * _xCellCount);
 
 	_pathRect.left = 0;
 	_pathRect.right = _vm->getDisplayInfo().width;
@@ -295,7 +295,6 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 Actor::~Actor() {
 	debug(9, "Actor::~Actor()");
 
-	free(_pathCell);
 	//release resources
 	freeProtagStates();
 	freeActorList();
@@ -445,7 +444,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		actor = _actors[i] = new ActorData();
 		actor->_id = objectIndexToId(kGameObjectActor, i); //actorIndexToId(i);
 		actor->_index = i;
-		debug(4, "init actor id=0x%x index=%d", actor->_id, actor->_index);
+		debug(4, "init actor id=0x%X index=%d", actor->_id, actor->_index);
 		actorS.readUint32LE(); //next displayed
 		actorS.readByte(); //type
 		actor->_flags = actorS.readByte();
@@ -1162,7 +1161,7 @@ void Actor::drawActors() {
 		return;
 	}
 
-	if (_vm->_scene->_entryList.entryListCount == 0) {
+	if (_vm->_scene->_entryList.empty()) {
 		return;
 	}
 

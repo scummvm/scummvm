@@ -242,7 +242,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 	out->writeSint16LE(_script->_commonBuffer.size());
 
-	out->write(&_script->_commonBuffer.front(), _script->_commonBuffer.size());
+	out->write(_script->_commonBuffer.getBuffer(), _script->_commonBuffer.size());
 
 	// ISO map x, y coordinates for ITE
 	if (getGameId() == GID_ITE) {
@@ -282,7 +282,7 @@ void SagaEngine::load(const char *fileName) {
 		_saveHeader.version = SWAP_BYTES_32(_saveHeader.version);
 	}
 
-	debug(2, "Save version: %x", _saveHeader.version);
+	debug(2, "Save version: 0x%X", _saveHeader.version);
 
 	if (_saveHeader.version < 4)
 		warning("This savegame is not endian-safe. There may be problems");
@@ -352,7 +352,7 @@ void SagaEngine::load(const char *fileName) {
 
 	commonBufferSize = in->readSint16LE();
 	_script->_commonBuffer.resize(commonBufferSize);
-	in->read(&_script->_commonBuffer.front(), commonBufferSize);
+	in->read(_script->_commonBuffer.getBuffer(), commonBufferSize);
 
 	if (getGameId() == GID_ITE) {
 		mapx = in->readSint16LE();

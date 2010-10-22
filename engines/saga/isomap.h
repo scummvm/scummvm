@@ -95,7 +95,7 @@ enum TileMapEdgeType {
 struct IsoTileData {
 	byte height;
 	int8 attributes;
-	size_t offset;
+	byte *tilePointer;
 	uint16 terrainMask;
 	byte FGDBGDAttr;
 	int8 GetMaskRule() const {
@@ -154,14 +154,13 @@ class IsoMap {
 public:
 	IsoMap(SagaEngine *vm);
 	~IsoMap() {
-		freeMem();
 	}
 	void loadImages(const byte * resourcePointer, size_t resourceLength);
 	void loadMap(const byte * resourcePointer, size_t resourceLength);
 	void loadPlatforms(const byte * resourcePointer, size_t resourceLength);
 	void loadMetaTiles(const byte * resourcePointer, size_t resourceLength);
 	void loadMulti(const byte * resourcePointer, size_t resourceLength);
-	void freeMem();
+	void clear();
 	void draw();
 	void drawSprite(SpriteList &spriteList, int spriteNumber, const Location &location, const Point &screenPosition, int scale);
 	void adjustScroll(bool jump);
@@ -213,16 +212,14 @@ private:
 	IsoTileData *getTile(int16 u, int16 v, int16 z);
 
 
-	byte *_tileData;
-	size_t _tileDataLength;
+	ByteArray _tileData;
 	Common::Array<IsoTileData> _tilesTable;
 
 	Common::Array<TilePlatformData> _tilePlatformList;
 	Common::Array<MetaTileData> _metaTileList;
 
 	Common::Array<MultiTileEntryData> _multiTable;
-	uint16 _multiDataCount;
-	int16 *_multiTableData;
+	Common::Array<int16> _multiTableData;
 
 	TileMapData _tileMap;
 

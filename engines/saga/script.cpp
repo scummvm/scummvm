@@ -1112,9 +1112,9 @@ void Script::loadModuleBase(ModuleData &module, const byte *resourcePointer, siz
 
 	module.moduleBase.resize(resourceLength);
 	
-	memcpy(&module.moduleBase.front(), resourcePointer, resourceLength);
+	memcpy(module.moduleBase.getBuffer(), resourcePointer, resourceLength);
 
-	MemoryReadStreamEndian scriptS(&module.moduleBase.front(), module.moduleBase.size(), _scriptContext->isBigEndian());
+	MemoryReadStreamEndian scriptS(module.moduleBase.getBuffer(), module.moduleBase.size(), _scriptContext->isBigEndian());
 
 	uint entryPointsCount = scriptS.readUint16();
 	scriptS.readUint16(); //skip

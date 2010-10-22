@@ -259,7 +259,7 @@ SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int s
 			version = SWAP_BYTES_32(version);
 		}
 
-		debug(2, "Save version: %x", version);
+		debug(2, "Save version: 0x%X", version);
 
 		if (version < 4)
 			warning("This savegame is not endian-safe. There may be problems");

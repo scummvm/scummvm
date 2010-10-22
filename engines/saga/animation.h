@@ -66,8 +66,7 @@ struct Cutaway {
 
 // Animation info array member
 struct AnimationData {
-	byte *resourceData;
-	size_t resourceLength;
+	ByteArray resourceData;
 
 	uint16 magic;
 
@@ -80,10 +79,8 @@ struct AnimationData {
 	int16 maxFrame;
 	int16 loopFrame;
 
-	int16 start;
-
 	int16 currentFrame;
-	size_t *frameOffsets;
+	Common::Array<size_t> frameOffsets;
 
 	uint16 completed;
 	uint16 cycles;
@@ -93,17 +90,6 @@ struct AnimationData {
 	AnimationState state;
 	int16 linkId;
 	uint16 flags;
-
-	AnimationData(const byte *animResourceData, size_t animResourceLength) {
-		memset(this, 0, sizeof(*this));
-		resourceLength = animResourceLength;
-		resourceData = (byte*)malloc(animResourceLength);
-		memcpy(resourceData, animResourceData, animResourceLength);
-	}
-	~AnimationData() {
-		free(frameOffsets);
-		free(resourceData);
-	}
 };
 
 class Anim {
@@ -112,7 +98,7 @@ public:
 	~Anim();
 
 	void loadCutawayList(const byte *resourcePointer, size_t resourceLength);
-	void freeCutawayList();
+	void clearCutawayList();
 	int playCutaway(int cut, bool fade);
 	void endCutaway();
 	void returnFromCutaway();
@@ -154,9 +140,9 @@ public:
 
 	bool hasCutaway() { return _cutawayActive; }
 	void setCutAwayMode(int mode) { _cutAwayMode = mode; }
-	int cutawayListLength() { return _cutawayListLength; }
-	int cutawayBgResourceID(int cutaway) { return _cutawayList[cutaway].backgroundResourceId; }
-	int cutawayAnimResourceID(int cutaway) { return _cutawayList[cutaway].animResourceId; }
+//	int cutawayListLength() { return _cutawayListLength; }
+//	int cutawayBgResourceID(int cutaway) { return _cutawayList[cutaway].backgroundResourceId; }
+//	int cutawayAnimResourceID(int cutaway) { return _cutawayList[cutaway].animResourceId; }
 
 private:
 	void decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_t bufLength);
@@ -205,9 +191,8 @@ private:
 	SagaEngine *_vm;
 	AnimationData *_animations[MAX_ANIMATIONS];
 	AnimationData *_cutawayAnimations[2];
-	Cutaway *_cutawayList;
+	Common::Array<Cutaway> _cutawayList;
 	PalEntry saved_pal[PAL_ENTRIES];
-	int _cutawayListLength;
 	bool _cutawayActive;
 	int _cutAwayMode;
 	bool _cutAwayFade;

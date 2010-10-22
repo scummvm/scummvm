@@ -140,7 +140,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 	byte *sceneLUTPointer;
 	size_t sceneLUTLength;
 	uint32 resourceId;
-	int i;
+	uint i;
 
 	// Do nothing for SAGA2 games for now
 	if (_vm->isSaga2()) {
@@ -162,15 +162,11 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 	if (sceneLUTLength == 0) {
 		error("Scene::Scene() sceneLUTLength == 0");
 	}
-	_sceneCount = sceneLUTLength / 2;
-	_sceneLUT = (int *)malloc(_sceneCount * sizeof(*_sceneLUT));
-	if (_sceneLUT == NULL) {
-		memoryError("Scene::Scene()");
-	}
+	_sceneLUT.resize(sceneLUTLength / 2);
 
 	MemoryReadStreamEndian readS(sceneLUTPointer, sceneLUTLength, _sceneContext->isBigEndian());
 
-	for (i = 0; i < _sceneCount; i++) {
+	for (i = 0; i < _sceneLUT.size(); i++) {
 		_sceneLUT[i] = readS.readUint16();
 		debug(8, "sceneNumber %i has resourceId %i", i, _sceneLUT[i]);
 	}
@@ -190,7 +186,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 
 		getResourceTypes(types, typesCount);
 
-		for (i = 0; i < _sceneCount; i++) {
+		for (i = 0; i < _sceneLUT.size(); i++) {
 			gDebugLevel = -1;
 			loadSceneDescriptor(_sceneLUT[i]);
 			loadSceneResourceList(_sceneDescription.resourceListResourceId);
@@ -210,7 +206,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 	}
 #endif
 
-	debug(3, "LUT has %d entries.", _sceneCount);
+	debug(3, "LUT has %d entries.", _sceneLUT.size());
 
 	_sceneLoaded = false;
 	_sceneNumber = 0;
@@ -236,7 +232,6 @@ Scene::~Scene() {
 
 	delete _actionMap;
 	delete _objectMap;
-	free(_sceneLUT);
 }
 
 void Scene::getResourceTypes(SAGAResourceTypes *&types, int &typesCount) {
@@ -623,7 +618,7 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 		if (loadSceneParams.chapter == 6 || loadSceneParams.chapter == 8)
 			_vm->_interface->setLeftPortrait(0);
 
-		_vm->_anim->freeCutawayList();
+		_vm->_anim->clearCutawayList();
 		_vm->_script->clearModules();
 
 		// deleteAllScenes();
@@ -1244,15 +1239,15 @@ void Scene::endScene() {
 	// Free animation info list
 	_vm->_anim->reset();
 
-	_vm->_palanim->freePalAnim();
+	_vm->_palanim->clear();
 
-	_objectMap->freeMem();
-	_actionMap->freeMem();
-	_entryList.freeMem();
+	_objectMap->clear();
+	_actionMap->clear();
+	_entryList.clear();
 	_sceneStrings.clear();
 
 	if (_vm->getGameId() == GID_ITE)
-		_vm->_isoMap->freeMem();
+		_vm->_isoMap->clear();
 
 	_vm->_events->clearList();
 	_textList.clear();
@@ -1285,7 +1280,7 @@ void Scene::cmdSceneChange(int argc, const char **argv) {
 
 	scene_num = atoi(argv[1]);
 
-	if ((scene_num < 1) || (scene_num >= _sceneCount)) {
+	if ((scene_num < 1) || (uint(scene_num) >= _sceneLUT.size())) {
 		_vm->_console->DebugPrintf("Invalid scene number.\n");
 		return;
 	}
@@ -1304,26 +1299,21 @@ void Scene::cmdObjectMapInfo() {
 }
 
 void Scene::loadSceneEntryList(const byte* resourcePointer, size_t resourceLength) {
-	int i;
+	uint i;
 
-	_entryList.entryListCount = resourceLength / 8;
+	if (!_entryList.empty()) {
+		error("Scene::loadSceneEntryList entryList not empty");
+	}
+
+	_entryList.resize(resourceLength / 8);
 
 	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _sceneContext->isBigEndian());
 
-
-	if (_entryList.entryList)
-		error("Scene::loadSceneEntryList entryList != NULL");
-
-	_entryList.entryList = (SceneEntry *) malloc(_entryList.entryListCount * sizeof(*_entryList.entryList));
-	if (_entryList.entryList == NULL) {
-		memoryError("Scene::loadSceneEntryList");
-	}
-
-	for (i = 0; i < _entryList.entryListCount; i++) {
-		_entryList.entryList[i].location.x = readS.readSint16();
-		_entryList.entryList[i].location.y = readS.readSint16();
-		_entryList.entryList[i].location.z = readS.readSint16();
-		_entryList.entryList[i].facing = readS.readUint16();
+	for (i = 0; i < _entryList.size(); i++) {
+		_entryList[i].location.x = readS.readSint16();
+		_entryList[i].location.y = readS.readSint16();
+		_entryList[i].location.z = readS.readSint16();
+		_entryList[i].facing = readS.readUint16();
 	}
 }
 

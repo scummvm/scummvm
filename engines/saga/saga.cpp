@@ -291,7 +291,7 @@ Common::Error SagaEngine::run() {
 	_sound = new Sound(this, _mixer);
 
 	if (!isSaga2()) {
-		_interface->converseInit();
+		_interface->converseClear();
 		_script->setVerb(_script->getVerbType(kVerbWalkTo));
 	}
 

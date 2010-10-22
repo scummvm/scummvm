@@ -54,7 +54,7 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	ResourceContext *resourceContext;
 	ResourceContext *soundContext;
-	int i;
+	uint i;
 
 	resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (resourceContext == NULL) {
@@ -114,7 +114,7 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->loadStrings(_vm->_actor->_objectsStrings, resourcePointer, resourceLength);
 	free(resourcePointer);
 
-	if (chapter >= _vm->_sndRes->_fxTableIDsLen) {
+	if (uint(chapter) >= _vm->_sndRes->_fxTableIDs.size()) {
 		error("Chapter ID exceeds fxTableIDs length");
 	}
 
@@ -126,14 +126,11 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 		error("Resource::loadGlobalResources Can't load sound effects for current track");
 	}
 
-	free(_vm->_sndRes->_fxTable);
-
-	_vm->_sndRes->_fxTableLen = resourceLength / 4;
-	_vm->_sndRes->_fxTable = (FxTable *)malloc(sizeof(FxTable) * _vm->_sndRes->_fxTableLen);
-
+	_vm->_sndRes->_fxTable.resize(resourceLength / 4);
+	
 	MemoryReadStream fxS(resourcePointer, resourceLength);
 
-	for (i = 0; i < _vm->_sndRes->_fxTableLen; i++) {
+	for (i = 0; i < _vm->_sndRes->_fxTable.size(); i++) {
 		_vm->_sndRes->_fxTable[i].res = fxS.readSint16LE();
 		_vm->_sndRes->_fxTable[i].vol = fxS.readSint16LE();
 	}
@@ -177,14 +174,11 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 			error("Resource::loadGlobalResources Can't load songs list for current track");
 		}
 
-		free(_vm->_music->_songTable);
-
-		_vm->_music->_songTableLen = resourceLength / 4;
-		_vm->_music->_songTable = (int32 *)malloc(sizeof(int32) * _vm->_music->_songTableLen);
+		_vm->_music->_songTable.resize(resourceLength / 4);
 
 		MemoryReadStream songS(resourcePointer, resourceLength);
 
-		for (i = 0; i < _vm->_music->_songTableLen; i++)
+		for (i = 0; i < _vm->_music->_songTable.size(); i++)
 			_vm->_music->_songTable[i] = songS.readSint32LE();
 		free(resourcePointer);
 	} else {

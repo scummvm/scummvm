@@ -182,9 +182,6 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_parser->setTimerRate(_driver->getBaseTempo());
 	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 
-	_songTableLen = 0;
-	_songTable = 0;
-
 	_midiMusicData = NULL;
 	_digitalMusic = false;
 }
@@ -197,7 +194,6 @@ Music::~Music() {
 	_parser->setMidiDriver(NULL);
 	delete _parser;
 
-	free(_songTable);
 	free(_midiMusicData);
 }
 
@@ -260,7 +256,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	Audio::SeekableAudioStream *audioStream = NULL;
 	byte *resourceData;
 	size_t resourceSize;
-	uint32 loopStart;
+	uint32 loopStart = 0;
 
 	debug(2, "Music::play %d, %d", resourceId, flags);
 

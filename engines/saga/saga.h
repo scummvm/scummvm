@@ -86,7 +86,7 @@ class ResourceContext;
 using Common::MemoryReadStream;
 using Common::MemoryReadStreamEndian;
 
-//#define SAGA_DEBUG 1		// define for test functions
+// #define SAGA_DEBUG 1		// define for test functions
 #define SAGA_IMAGE_DATA_OFFSET 776
 #define SAGA_IMAGE_HEADER_LEN  8
 
@@ -458,6 +458,14 @@ inline uint16 objectIndexToId(int type, int index) {
 	return (type << OBJECT_TYPE_SHIFT) | (OBJECT_TYPE_MASK & index);
 }
 
+class ByteArray : public Common::Array<byte> {
+public:
+
+	byte * getBuffer() { // call this method instead of  "&front()" if you insure of array emptyness state
+		return empty() ? NULL : &front();
+	}
+};
+
 class SagaEngine : public Engine {
 	friend class Scene;
 
@@ -537,7 +545,7 @@ public:
 	Common::RandomSource _rnd;
 
 private:
-	int decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);
+	int decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, ByteArray &outbuf);
 	int flipImage(byte *img_buf, int columns, int scanlines);
 	int unbankBGImage(byte *dest_buf, const byte *src_buf, int columns, int scanlines);
 	uint32 _previousTicks;

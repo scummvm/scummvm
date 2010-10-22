@@ -148,7 +148,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		spriteInfo->decodedBuffer.resize(outputLength);
 		if (outputLength > 0) {
 			decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);
-			byte *dst = spriteInfo->getBuffer();
+			byte *dst = &spriteInfo->decodedBuffer.front();
 #ifdef ENABLE_IHNM
 			// IHNM sprites are upside-down, for reasons which i can only
 			// assume are perverse. To simplify things, flip them now. Not
@@ -183,13 +183,13 @@ void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, uint spriteNumber, in
 	spriteInfo = &spriteList[spriteNumber];
 
 	if (scale < 256) {
-		xAlign = (spriteInfo->xAlign * scale) >> 8;
-		yAlign = (spriteInfo->yAlign * scale) >> 8;
+		xAlign = (spriteInfo->xAlign * scale) >> 8; //TODO: do we need to take in account sprite x&y aligns ?
+		yAlign = (spriteInfo->yAlign * scale) >> 8; // ????
 		height = (spriteInfo->height * scale + 0x7f) >> 8;
 		width = (spriteInfo->width * scale + 0x7f) >> 8;
 		size_t outLength = width * height;
 		if (outLength > 0) {
-			scaleBuffer(spriteInfo->getBuffer(), spriteInfo->width, spriteInfo->height, scale, outLength);
+			scaleBuffer(&spriteInfo->decodedBuffer.front(), spriteInfo->width, spriteInfo->height, scale, outLength);
 			buffer = &_decodeBuf.front();
 		} else {
 			buffer = NULL;
@@ -199,7 +199,7 @@ void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, uint spriteNumber, in
 		yAlign = spriteInfo->yAlign;
 		height = spriteInfo->height;
 		width = spriteInfo->width;
-		buffer = spriteInfo->getBuffer();
+		buffer = spriteInfo->decodedBuffer.getBuffer();
 	}
 }
 

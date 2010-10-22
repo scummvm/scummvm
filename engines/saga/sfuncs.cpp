@@ -953,7 +953,7 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	int frameOffset = thread->pop();
 	ActorFrameRange *frameRange;
 
-	debug(1, "sfPlaceActor(id = 0x%x, x=%d, y=%d, dir=%d, frameType=%d, frameOffset=%d)", actorId, actor->_location.x,
+	debug(1, "sfPlaceActor(id = 0x%X, x=%d, y=%d, dir=%d, frameType=%d, frameOffset=%d)", actorId, actor->_location.x,
 		  actor->_location.y, actor->_facingDirection, frameType, frameOffset);
 
 	if (frameType >= 0) {
@@ -1349,8 +1349,8 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 			return;
 		}
 
-		if (param1 >= _vm->_music->_songTableLen) {
-			warning("sfPlayMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTableLen - 1);
+		if (uint(param1) >= _vm->_music->_songTable.size()) {
+			warning("sfPlayMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTable.size() - 1);
 		} else {
 			_vm->_music->setVolume(_vm->_musicVolume, 1);
 			_vm->_music->play(_vm->_music->_songTable[param1], param2 ? MUSIC_LOOP : MUSIC_NORMAL);
@@ -1440,7 +1440,7 @@ void Script::sfPlaySound(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 	int res;
 
-	if (param >= 0 && param < _vm->_sndRes->_fxTableLen) {
+	if (uint(param) < _vm->_sndRes->_fxTable.size()) {
 		res = _vm->_sndRes->_fxTable[param].res;
 		if (_vm->getGameId() == GID_ITE && !(_vm->getFeatures() & GF_ITE_FLOPPY))
 			res -= 14;
@@ -1455,7 +1455,7 @@ void Script::sfPlayLoopedSound(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 	int res;
 
-	if (param >= 0 && param < _vm->_sndRes->_fxTableLen) {
+	if (uint(param) < _vm->_sndRes->_fxTable.size()) {
 		res = _vm->_sndRes->_fxTable[param].res;
 		if (_vm->getGameId() == GID_ITE && !(_vm->getFeatures() & GF_ITE_FLOPPY))
 			res -= 14;

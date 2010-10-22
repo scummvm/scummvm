@@ -83,7 +83,7 @@ int Scene::IHNMStartProc() {
 	}
 
 	_vm->_music->setVolume(0, 1000);
-	_vm->_anim->freeCutawayList();
+	_vm->_anim->clearCutawayList();
 
 	// Queue first scene
 	firstScene.loadFlag = kLoadBySceneNumber;
@@ -114,7 +114,7 @@ int Scene::IHNMCreditsProc() {
 	}
 
 	_vm->_music->setVolume(0, 1000);
-	_vm->_anim->freeCutawayList();
+	_vm->_anim->clearCutawayList();
 
 	return SUCCESS;
 }
