@@ -78,9 +78,9 @@ enum REEL {
 typedef enum { TRANS_DEF, TRANS_CUT, TRANS_FADE } TRANSITS;
 
 // amount to shift scene handles by
-#define	SCNHANDLE_SHIFT (TinselV2 ? 25 : 23)
-#define	OFFSETMASK (TinselV2 ? 0x01ffffffL : 0x007fffffL)
-#define HANDLEMASK (TinselV2 ? 0xFE000000L : 0xFF800000L)
+#define	SCNHANDLE_SHIFT ((TinselV2 && !IsDemo) ? 25 : 23)
+#define	OFFSETMASK ((TinselV2 && !IsDemo) ? 0x01ffffffL : 0x007fffffL)
+#define HANDLEMASK ((TinselV2 && !IsDemo) ? 0xFE000000L : 0xFF800000L)
 
 void DoHailScene(SCNHANDLE scene);
 
