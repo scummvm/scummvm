@@ -1761,7 +1761,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 			return kCursorNormal;
 
 		if ((!getInventory()->getSelectedItem() || getInventory()->getSelectedEntry()->manualSelect)
-		 && (object != kObject21 || getProgress().eventCorpseMovedFromFloor == true))
+		 && (object != kObject21 || getProgress().eventCorpseMovedFromFloor))
 			return kCursorHand;
 		else
 			return kCursorNormal;

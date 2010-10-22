@@ -127,7 +127,7 @@ IMPLEMENT_FUNCTION_II(8, Francois, updateEntity, CarIndex, EntityPosition)
 				 && getInventory()->get(kItemBeetle)->location == kObjectLocation1
 				 && !getEvent(kEventFrancoisShowBeetle)
 				 && !getEvent(kEventFrancoisShowBeetleD))
-				getData()->inventoryItem = kItemMatchBox;
+					getData()->inventoryItem = kItemMatchBox;
 			} else {
 				getData()->inventoryItem = kItemFirebird;
 			}

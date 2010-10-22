@@ -250,7 +250,7 @@ IMPLEMENT_FUNCTION(14, Hadija, chapter2Handler)
 		break;
 
 	case kActionNone:
-		if (getState()->time > kTime1782000 && !params->param1) { \
+		if (getState()->time > kTime1782000 && !params->param1) {
 			params->param1 = 1;
 			getData()->entityPosition = kPosition_2740;
 		}

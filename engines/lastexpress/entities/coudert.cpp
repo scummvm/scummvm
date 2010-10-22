@@ -2856,7 +2856,7 @@ label_callback_19:
 	case kAction11:
 		if (!ENTITY_PARAM(2, 1)) {
 			setCallback(20);
-			setup_function13(savepoint.param.intValue, savepoint.entity2);
+			setup_function13((bool)savepoint.param.intValue, savepoint.entity2);
 		}
 		break;
 
@@ -3584,7 +3584,7 @@ label_callback_6:
 	case kAction11:
 		if (!ENTITY_PARAM(2, 1) && !ENTITY_PARAM(0, 1)) {
 			setCallback(7);
-			setup_function13(savepoint.param.intValue, savepoint.entity2);
+			setup_function13((bool)savepoint.param.intValue, savepoint.entity2);
 		}
 		break;
 

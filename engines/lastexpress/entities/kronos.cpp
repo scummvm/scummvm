@@ -487,13 +487,13 @@ IMPLEMENT_FUNCTION(20, Kronos, function20)
 
 		if (params->param6 < ARRAYSIZE(concertData) && params->param5 > concertData[params->param6].time) {
 
-			getEntities()->drawSequenceLeft(kEntityKronos, (char *)&concertData[params->param6].sequence);
+			getEntities()->drawSequenceLeft(kEntityKronos, concertData[params->param6].sequence);
 
-			if (scumm_stricmp((char *)&concertData[params->param6].sequence, "201e")) {
+			if (scumm_stricmp(concertData[params->param6].sequence, "201e")) {
 
-				if (scumm_stricmp((char *)&concertData[params->param6].sequence, "201c")) {
+				if (scumm_stricmp(concertData[params->param6].sequence, "201c")) {
 
-					if (!scumm_stricmp((char *)&concertData[params->param6].sequence, "201d")) {
+					if (!scumm_stricmp(concertData[params->param6].sequence, "201d")) {
 						if (getEntities()->isPlayerPosition(kCarKronos, 86))
 							getScenes()->loadSceneFromPosition(kCarKronos, 83);
 

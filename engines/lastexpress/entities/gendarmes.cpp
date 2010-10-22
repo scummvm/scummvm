@@ -111,6 +111,9 @@ IMPLEMENT_FUNCTION_II(8, Gendarmes, arrestUpdateEntity, CarIndex, EntityPosition
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_IISS(9, Gendarmes, function9, CarIndex, EntityPosition)
+	EntityData::EntityParametersSSSI *parameters1 = (EntityData::EntityParametersSSSI*)_data->getCurrentParameters(1);
+	EntityData::EntityParametersISII *parameters2 = (EntityData::EntityParametersISII*)_data->getCurrentParameters(2);
+
 	switch (savepoint.action) {
 	default:
 		break;
@@ -119,73 +122,73 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, function9, CarIndex, EntityPosition)
 		if (params->param2 <= kPosition_3050) {
 			if (params->param2 != kPosition_3050) {
 				if (params->param2 == kPosition_2740)
-					CURRENT_PARAM(2, 5) = kObjectCompartment8;
+					parameters2->param5 = kObjectCompartment8;
 			} else {
-				CURRENT_PARAM(2, 5) = kObjectCompartment7;
-				CURRENT_PARAM(2, 6) = true;
+				parameters2->param5 = kObjectCompartment7;
+				parameters2->param6 = true;
 			}
 		} else if (params->param2 <= kPosition_4840) {
 			if (params->param2 != kPosition_4840) {
 				if (params->param2 == kPosition_4070) {
-					CURRENT_PARAM(2, 5) = kObjectCompartment6;
-					CURRENT_PARAM(2, 7) = kPosition_4455;
+					parameters2->param5 = kObjectCompartment6;
+					parameters2->param7 = kPosition_4455;
 				}
 			} else {
-				CURRENT_PARAM(2, 5) = kObjectCompartment5;
-				CURRENT_PARAM(2, 6) = true;
-				CURRENT_PARAM(2, 7) = kPosition_4455;
+				parameters2->param5 = kObjectCompartment5;
+				parameters2->param6 = true;
+				parameters2->param7 = kPosition_4455;
 			}
 		} else if (params->param2 <= kPosition_6470) {
 			if (params->param2 != kPosition_6470) {
 				if (params->param2 == kPosition_5790) {
-					CURRENT_PARAM(2, 5) = kObjectCompartment4;
-					CURRENT_PARAM(2, 7) = kPosition_6130;
+					parameters2->param5 = kObjectCompartment4;
+					parameters2->param7 = kPosition_6130;
 				}
 			} else {
-				CURRENT_PARAM(2, 5) = kObjectCompartment3;
-				CURRENT_PARAM(2, 6) = true;
-				CURRENT_PARAM(2, 7) = kPosition_6130;
+				parameters2->param5 = kObjectCompartment3;
+				parameters2->param6 = true;
+				parameters2->param7 = kPosition_6130;
 			}
 		} else if (params->param2 != kPosition_7500) {
 			if (params->param2 == kPosition_8200) {
-				CURRENT_PARAM(2, 5) = kObjectCompartment1;
-				CURRENT_PARAM(2, 6) = true;
-				CURRENT_PARAM(2, 7) = kPosition_7850;
+				parameters2->param5 = kObjectCompartment1;
+				parameters2->param6 = true;
+				parameters2->param7 = kPosition_7850;
 			}
 		} else {
-			CURRENT_PARAM(2, 5) = kObjectCompartment2;
-			CURRENT_PARAM(2, 7) = kPosition_7850;
+			parameters2->param5 = kObjectCompartment2;
+			parameters2->param7 = kPosition_7850;
 		}
 
 		if (params->param1 == kCarBaggageRear)
-			CURRENT_PARAM(2, 5) += 31; // Switch to next compartment car
+			parameters2->param5 += 31; // Switch to next compartment car
 
-		if (CURRENT_PARAM(2, 6)) {
-			strcpy((char *)&CURRENT_PARAM(1, 1), "632A");
-			strcpy((char *)&CURRENT_PARAM(1, 4), "632B");
-			strcpy((char *)&CURRENT_PARAM(1, 7), "632C");
+		if (parameters2->param6) {
+			strcpy((char *)&parameters1->seq1, "632A");
+			strcpy((char *)&parameters1->seq2, "632B");
+			strcpy((char *)&parameters1->seq3, "632C");
 		} else {
-			strcpy((char *)&CURRENT_PARAM(1, 1), "632D");
-			strcpy((char *)&CURRENT_PARAM(1, 4), "632E");
-			strcpy((char *)&CURRENT_PARAM(1, 7), "632F");
+			strcpy((char *)&parameters1->seq1, "632D");
+			strcpy((char *)&parameters1->seq2, "632E");
+			strcpy((char *)&parameters1->seq3, "632F");
 		}
 
-		strcat((char *)&CURRENT_PARAM(1, 1), (char *)&params->seq1);
-		strcat((char *)&CURRENT_PARAM(1, 4), (char *)&params->seq1);
-		strcat((char *)&CURRENT_PARAM(1, 7), (char *)&params->seq1);
+		strcat((char *)&parameters1->seq1, (char *)&params->seq1);
+		strcat((char *)&parameters1->seq2, (char *)&params->seq1);
+		strcat((char *)&parameters1->seq3, (char *)&params->seq1);
 
 		if ((getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params->param1, (EntityPosition)params->param2)
-		  || getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params->param1, (EntityPosition)CURRENT_PARAM(2, 7))
+		  || getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params->param1, (EntityPosition)parameters2->param7)
 		  || (params->param1 == kCarGreenSleeping && params->param2 == kPosition_8200 && getEntities()->isOutsideAlexeiWindow()))
 		 && !getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_7850)) {
 			setCallback(1);
-			setup_function10((CarIndex)params->param1, (EntityPosition)params->param2, (ObjectIndex)CURRENT_PARAM(2, 5));
+			setup_function10((CarIndex)params->param1, (EntityPosition)params->param2, (ObjectIndex)parameters2->param5);
 		} else {
-			getEntities()->drawSequenceLeft(kEntityGendarmes, (char *)&CURRENT_PARAM(1, 1));
+			getEntities()->drawSequenceLeft(kEntityGendarmes, (char *)&parameters1->seq1);
 			getEntities()->enterCompartment(kEntityGendarmes, (ObjectIndex)CURRENT_PARAM(2, 5));
 
-			setCallback(CURRENT_PARAM(2, 6) ? 2 : 3);
-			setup_arrestPlaysound(CURRENT_PARAM(2, 6) ? "POL1044A" : "POL1044B");
+			setCallback(parameters2->param6 ? 2 : 3);
+			setup_arrestPlaysound(parameters2->param6 ? "POL1044A" : "POL1044B");
 		}
 		break;
 
@@ -200,12 +203,12 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, function9, CarIndex, EntityPosition)
 
 		case 2:
 		case 3:
-			getEntities()->drawSequenceLeft(kEntityGendarmes, (char *)&CURRENT_PARAM(1, 4));
+			getEntities()->drawSequenceLeft(kEntityGendarmes, (char *)&parameters1->seq2);
 			if (getEntities()->isNobodyInCompartment((CarIndex)params->param1, (EntityPosition)params->param2) || !strcmp(params->seq2, "NODIALOG")) {
 				setCallback(4);
 				setup_arrestCallback(150);
 			} else {
-				char *arrestSound = (char *)&CURRENT_PARAM(2, 2);
+				char *arrestSound = (char *)&parameters2->seq;
 				strcpy(arrestSound, "POL1045");
 				strcat(arrestSound, (char *)&params->seq2);
 
@@ -217,7 +220,7 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, function9, CarIndex, EntityPosition)
 		case 4:
 		case 5:
 			if (!getEntities()->isNobodyInCompartment((CarIndex)params->param1, (EntityPosition)params->param2) && strcmp(params->seq2, "NODIALOG")) {
-				char *arrestSound = (char *)&CURRENT_PARAM(2, 2);
+				char *arrestSound = (char *)&parameters2->seq;
 				strcpy(arrestSound, "POL1043");
 				strcat(arrestSound, (char *)&params->seq2);
 
@@ -227,17 +230,17 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, function9, CarIndex, EntityPosition)
 			getData()->location = kLocationInsideCompartment;
 
 			setCallback(6);
-			setup_arrestDraw((char *)&CURRENT_PARAM(1, 7));
+			setup_arrestDraw((char *)&parameters1->seq3);
 			break;
 
 		case 6:
 			getData()->location = kLocationOutsideCompartment;
-			getEntities()->exitCompartment(kEntityGendarmes, (ObjectIndex)CURRENT_PARAM(2, 5));
+			getEntities()->exitCompartment(kEntityGendarmes, (ObjectIndex)parameters2->param5);
 			CALLBACK_ACTION();
 			break;
 		}
 		break;
-}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -251,6 +251,33 @@ public:
 		}
 	};
 
+	struct EntityParametersSSSI : EntityParameters {
+		char seq1[12];
+		char seq2[12];
+		char seq3[12];
+		uint param10;
+
+		EntityParametersSSSI() {
+			memset(&seq1, 0, 12);
+			memset(&seq2, 0, 12);
+			memset(&seq3, 0, 12);
+			param10 = 0;
+		}
+
+		Common::String toString() {
+			return Common::String::printf("SSSI: %s %s %s %d\n", seq1, seq2, seq3, param10);
+		}
+
+		void update(uint32 index) {
+			switch (index) {
+			default:
+				error("EntityParametersSSSI::update: invalid index (was: %d)", index);
+
+			case 9: param10 = 1; break;			
+			}
+		}
+	};
+
 	struct EntityParametersIISS : EntityParameters {
 		uint param1;
 		uint param2;
@@ -525,7 +552,7 @@ public:
 	EntityData::EntityCallData *getData() { return _data->getCallData(); }
 
 	// Callbacks
-	int getCallback() { return _data->getCallback(_data->getCallData()->currentCall + 8); }
+	byte getCallback() { return _data->getCallback(_data->getCallData()->currentCall + 8); }
 	void setCallback(byte index) { _data->setCallback(_data->getCallData()->currentCall + 8, index); getData()->currentCall++; }
 
 	// Setup

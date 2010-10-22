@@ -851,7 +851,8 @@ bool Debugger::cmdBeetle(int argc, const char **argv) {
 			// Cleanup
 			beetle->unload();
 			delete beetle;
-			SAFE_DELETE(action);
+			if (action)
+				delete action;
 
 			// Pause for a second to be able to see the final scene
 			_engine->_system->delayMillis(1000);

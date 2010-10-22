@@ -218,7 +218,7 @@ EntityData::EntityCallData *Entities::getData(EntityIndex entity) const {
 int Entities::getPosition(CarIndex car, Position position) {
 	int index = 100 * car + position;
 
-	if (car < 0 || car > 10)
+	if (car > 10)
 		error("Entities::getPosition: trying to access an invalid car (was: %d, valid:0-9)", car);
 
 	if (position > 100)

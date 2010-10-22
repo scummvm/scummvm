@@ -1374,7 +1374,7 @@ label_callback_3:
 		case 4:
 			getData()->location = kLocationOutsideCompartment;
 
-			setCallback((byte)(getCallback() + 1));
+			setCallback(getCallback() + 1);
 			setup_updatePosition("124C", kCarRestaurant, 52);
 			break;
 

@@ -1230,12 +1230,12 @@ IMPLEMENT_FUNCTION(29, Anna, function29)
 
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 51);
 			break;
-
-		case kAction123712592:
-			getData()->inventoryItem = kItemNone;
-			setup_function30();
-			break;
 		}
+		break;
+
+	case kAction123712592:
+		getData()->inventoryItem = kItemNone;
+		setup_function30();
 		break;
 	}
 }
@@ -3479,6 +3479,7 @@ IMPLEMENT_FUNCTION(69, Anna, function69)
 	case kAction100969180:
 		getEntities()->clearSequences(kEntityAnna);
 		params->param1 = 1;
+		break;
 
 	case kAction122288808:
 		getEntities()->drawSequenceLeft(kEntityAnna, "127E");
