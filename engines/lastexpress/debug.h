@@ -64,6 +64,7 @@ private:
 	bool cmdHelp(int argc, const char **argv);
 
 	bool cmdListFiles(int argc, const char **argv);
+	bool cmdDumpFiles(int argc, const char **argv);
 
 	bool cmdShowFrame(int argc, const char **argv);
 	bool cmdShowBg(int argc, const char **argv);

@@ -63,6 +63,8 @@ private:
 	void reset();
 
 	Common::Array<HPFArchive *> _archives;
+
+	friend class Debugger;
 };
 
 } // End of namespace LastExpress

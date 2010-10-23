@@ -106,9 +106,9 @@ bool ResourceManager::loadArchive(ArchiveIndex type) {
 
 void ResourceManager::reset() {
 	// Free the loaded archives
-	for (Common::Array<HPFArchive *>::iterator it = _archives.begin(); it != _archives.end(); ++it) {
+	for (Common::Array<HPFArchive *>::iterator it = _archives.begin(); it != _archives.end(); ++it)
 		delete (*it);
-	}
+
 	_archives.clear();
 }
 

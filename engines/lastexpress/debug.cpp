@@ -53,6 +53,7 @@
 
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/md5.h"
 
 namespace LastExpress {
 
@@ -66,6 +67,7 @@ Debugger::Debugger(LastExpressEngine *engine) : _engine(engine), _command(NULL),
 
 	// Data
 	DCmd_Register("ls",        WRAP_METHOD(Debugger, cmdListFiles));
+	DCmd_Register("dump",      WRAP_METHOD(Debugger, cmdDumpFiles));
 
 	DCmd_Register("showframe", WRAP_METHOD(Debugger, cmdShowFrame));
 	DCmd_Register("showbg",    WRAP_METHOD(Debugger, cmdShowBg));
@@ -189,6 +191,7 @@ bool Debugger::cmdHelp(int, const char **) {
 	DebugPrintf("Commands\n");
 	DebugPrintf("--------\n");
 	DebugPrintf(" ls - list files in the archive\n");
+	DebugPrintf(" dump - dump a list of files in all archives\n");
 	DebugPrintf("\n");
 	DebugPrintf(" showframe - show a frame from a sequence\n");
 	DebugPrintf(" showbg - show a background\n");
@@ -239,7 +242,59 @@ bool Debugger::cmdListFiles(int argc, const char **argv) {
 		if (argc == 3)
 			restoreArchive();
 	} else {
-		DebugPrintf("Syntax: ls <filter> (use * for all)\n (<cd number>)");
+		DebugPrintf("Syntax: ls <filter> (use * for all) (<cd number>)\n");
+	}
+
+	return true;
+}
+
+/**
+ * Command: Dump the list of files in the archive
+ *
+ * @param argc The argument count.
+ * @param argv The values.
+ *
+ * @return true if it was handled, false otherwise
+ */
+bool Debugger::cmdDumpFiles(int argc, const char **argv) {
+#define OUTPUT_ARCHIVE_FILES(name, filename) { \
+	_engine->getResourceManager()->reset(); \
+	_engine->getResourceManager()->loadArchive(filename); \
+	Common::ArchiveMemberList list; \
+	int count = _engine->getResourceManager()->listMatchingMembers(list, "*"); \
+	debugC(1, kLastExpressDebugResource, "\n\n--------------------------------------------------------------------\n"); \
+	debugC(1, kLastExpressDebugResource, "-- " #name " (%d files)\n", count); \
+	debugC(1, kLastExpressDebugResource, "--------------------------------------------------------------------\n\n"); \
+	debugC(1, kLastExpressDebugResource, "Filename,Size,MD5\n"); \
+	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) { \
+		Common::SeekableReadStream *stream = getArchive((*it)->getName()); \
+		if (!stream) { \
+			DebugPrintf("ERROR: Cannot create stream for file: %s\n", (*it)->getName().c_str()); \
+			restoreArchive(); \
+			return true; \
+		} \
+		char md5str[32+1]; \
+		Common::md5_file_string(*stream, md5str, stream->size()); \
+		debugC(1, kLastExpressDebugResource, "%s, %d, %s", (*it)->getName().c_str(), stream->size(), (char *)&md5str); \
+		delete stream; \
+	} \
+}
+
+	if (argc == 1) {
+		// For each archive file, dump the list of files
+		if (_engine->isDemo()) {
+			OUTPUT_ARCHIVE_FILES("DEMO", "DEMO.HPF");
+		} else {
+			OUTPUT_ARCHIVE_FILES("HD", "HD.HPF");
+			OUTPUT_ARCHIVE_FILES("CD 1", "CD1.HPF");
+			OUTPUT_ARCHIVE_FILES("CD 2", "CD2.HPF");
+			OUTPUT_ARCHIVE_FILES("CD 3", "CD3.HPF");
+		}
+
+		// Restore current loaded archive
+		restoreArchive();
+	} else {
+		DebugPrintf("Syntax: dump");
 	}
 
 	return true;
@@ -852,8 +907,7 @@ bool Debugger::cmdBeetle(int argc, const char **argv) {
 			// Cleanup
 			beetle->unload();
 			delete beetle;
-			if (action)
-				delete action;
+			delete action;
 
 			// Pause for a second to be able to see the final scene
 			_engine->_system->delayMillis(1000);
