@@ -460,8 +460,11 @@ inline uint16 objectIndexToId(int type, int index) {
 
 class ByteArray : public Common::Array<byte> {
 public:
-
-	byte * getBuffer() { // call this method instead of  "&front()" if you insure of array emptyness state
+	/**
+	 * Return a pointer to the start of the buffer underlying this byte array,
+	 * or NULL if the buffer is empty.
+	 */
+	byte *getBuffer() {
 		return empty() ? NULL : &front();
 	}
 };
