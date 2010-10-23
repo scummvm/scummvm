@@ -76,6 +76,8 @@ int Dialog::runModal() {
 	// Start processing events
 	g_gui.runLoop();
 
+	close();	// to prevent resource leak in GUI manager
+	
 	// Return the result code
 	return _result;
 }
