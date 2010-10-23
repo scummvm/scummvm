@@ -3369,6 +3369,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::IT_ITA, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Space Quest 5 - Spanish DOS Floppy (from mirir, bug report #3090664)
+	{"sq5", "", {
+		{"resource.000", 0, "73748852548faa42927f7537b165582d", 6049994},
+		{"resource.map", 0, "5714a899033bdebf2d61ad333c8c6637", 6492},
+		{"resource.msg", 0, "46deca7ef9cf057f7d442df98c1a2ae2", 134612},
+		AD_LISTEND},
+		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 #ifdef ENABLE_SCI32
 	// Space Quest 6 - English DOS/Win3.11 CD (from the Space Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
