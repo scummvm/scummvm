@@ -383,8 +383,8 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) {
 
  	if (_vm->_useCJKMode) {
 		if (_vm->_game.platform == Common::kPlatformFMTowns) {
-			if ((chr & 0x00ff) == 0x00fd) {
-				chr >>= 8;
+			if ((chr & 0xff00) == 0xfd00) {
+				chr &= 0xff;
 			} else if (chr >= 256) {
 				spacing = 8;
 			} else if (useTownsFontRomCharacter(chr)) {
@@ -435,7 +435,7 @@ bool CharsetRendererClassic::useTownsFontRomCharacter(uint16 chr) {
 int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int pos = 0;
 	int width = 1;
-	uint16 chr;
+	int chr;
 	int oldID = getCurID();
 	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
 
@@ -497,7 +497,9 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 		if (_vm->_useCJKMode) {
 			if (_vm->_game.platform == Common::kPlatformFMTowns) {
 				if (checkSJISCode(chr))
-					chr |= (text[pos++] << 8);
+					// This strange character conversion is the exact way the original does it here.
+					// This is the only way to get an accurate text formatting in the MI1 intro.
+					chr = (int8)text[pos++] | (chr << 8);
 			} else if (chr & 0x80) {
 				pos++;
 				width += _vm->_2byteWidth;
@@ -515,7 +517,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	int lastspace = -1;
 	int curw = 1;
-	uint16 chr;
+	int chr;
 	int oldID = getCurID();
 	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
 
@@ -580,7 +582,9 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 		if (_vm->_useCJKMode) {
 			if (_vm->_game.platform == Common::kPlatformFMTowns) {
 				if (checkSJISCode(chr))
-					chr |= (str[pos++] << 8);
+					// This strange character conversion is the exact way the original does it here.
+					// This is the only way to get an accurate text formatting in the MI1 intro.
+					chr = (int8)str[pos++] | (chr << 8);
 				curw += getCharWidth(chr);
 			} else if (chr & 0x80) {
 				pos++;
