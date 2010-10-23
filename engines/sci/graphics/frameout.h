@@ -109,7 +109,7 @@ private:
 	GfxScreen *_screen;
 	GfxPaint32 *_paint32;
 
-	Common::Array<reg_t> _screenItems;
+	Common::List<FrameoutEntry *> _screenItems;
 	PlaneList _planes;
 	PlanePictureList _planePictures;
 
