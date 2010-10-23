@@ -1420,7 +1420,7 @@ void Script::doVerb() {
 		event.param4 = _pendingObject[0];	// Object
 		event.param5 = _pendingObject[1];	// With Object
 		event.param6 = (objectType == kGameObjectActor) ? _pendingObject[0] : ID_PROTAG;		// Actor
-		_vm->_events->queue(&event);
+		_vm->_events->queue(event);
 
 	} else {
 		// Show excuse text in ITE CD Versions

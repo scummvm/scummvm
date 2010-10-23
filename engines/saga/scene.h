@@ -32,6 +32,7 @@
 #include "saga/actor.h"
 #include "saga/interface.h"
 #include "saga/puzzle.h"
+#include "saga/events.h"
 
 namespace Saga {
 
@@ -54,8 +55,6 @@ namespace Saga {
 #define IHNMDEMO_DEFAULT_SCENE 144
 
 class ObjectMap;
-
-struct Event;
 
 enum SceneFlags {
 	kSceneFlagISO        = 1,
@@ -438,8 +437,8 @@ class Scene {
 	static int SC_ITEIntroFaireTentProc(int param, void *refCon);
 
  private:
-	Event *ITEQueueDialogue(Event *q_event, int n_dialogues, const IntroDialogue dialogue[]);
-	Event *ITEQueueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]);
+	EventColumns *ITEQueueDialogue(EventColumns *eventColumns, int n_dialogues, const IntroDialogue dialogue[]);
+	EventColumns *ITEQueueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]);
 	int ITEIntroAnimProc(int param);
 	int ITEIntroCave1Proc(int param);
 	int ITEIntroCave2Proc(int param);

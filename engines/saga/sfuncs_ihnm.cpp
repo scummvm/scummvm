@@ -247,7 +247,7 @@ void Script::sfScriptFade(SCRIPTFUNC_PARAMS) {
 	event.param2 = endingBrightness;
 	event.param3 = firstPalEntry;
 	event.param4 = lastPalEntry - firstPalEntry + 1;
-	_vm->_events->queue(&event);
+	_vm->_events->queue(event);
 }
 
 void Script::sfScriptStartVideo(SCRIPTFUNC_PARAMS) {
@@ -294,7 +294,7 @@ void Script::sfAddIHNMDemoHelpTextLine(SCRIPTFUNC_PARAMS) {
 	event.code = kTextEvent;
 	event.op = kEventDisplay;
 	event.data = _psychicProfileTextEntry;
-	_vm->_events->queue(&event);
+	_vm->_events->queue(event);
 
 	_ihnmDemoCurrentY += _vm->_font->getHeight(kKnownFontVerb, thread->_strings->getString(stringId), 226, kFontCentered);
 }
@@ -424,7 +424,7 @@ void Script::sfQueueMusic(SCRIPTFUNC_PARAMS) {
 		event.op = kEventPlay;
 		event.time = _vm->ticksToMSec(1000);
 
-		_vm->_events->queue(&event);
+		_vm->_events->queue(event);
 
 		if (!_vm->_scene->haveChapterPointsChanged()) {
 			_vm->_scene->setCurrentMusicTrack(param1);

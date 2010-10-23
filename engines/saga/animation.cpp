@@ -78,7 +78,7 @@ int Anim::playCutaway(int cut, bool fade) {
 	debug(0, "playCutaway(%d, %d)", cut, fade);
 
 	Event event;
-	Event *q_event = NULL;
+	EventColumns *eventColumns = NULL;
 	bool startImmediately = false;
 	byte *resourceData;
 	size_t resourceDataLength;
@@ -102,7 +102,7 @@ int Anim::playCutaway(int cut, bool fade) {
 		event.time = 0;
 		event.duration = kNormalFadeDuration;
 		event.data = cur_pal;
-		q_event = _vm->_events->queue(&event);
+		eventColumns = _vm->_events->queue(event);
 
 		// set fade mode
 		event.type = kEvTImmediate;
@@ -111,7 +111,7 @@ int Anim::playCutaway(int cut, bool fade) {
 		event.param = kNoFade;
 		event.time = 0;
 		event.duration = 0;
-		q_event = _vm->_events->chain(q_event, &event);
+		_vm->_events->chain(eventColumns, event);
 	}
 
 	// Prepare cutaway
@@ -139,7 +139,7 @@ int Anim::playCutaway(int cut, bool fade) {
 		event.time = 0;
 		event.duration = 0;
 		event.param = _cutawayList[cut].backgroundResourceId;
-		q_event = _vm->_events->chain(q_event, &event);
+		eventColumns = _vm->_events->chain(eventColumns, event);
 	} else {
 		showCutawayBg(_cutawayList[cut].backgroundResourceId);
 	}
@@ -189,9 +189,9 @@ int Anim::playCutaway(int cut, bool fade) {
 		event.time = (40 / 3) * 1000 / _cutawayList[cut].frameRate;
 
 		if (fade)
-			q_event = _vm->_events->chain(q_event, &event);
+			eventColumns = _vm->_events->chain(eventColumns, event);
 		else
-			_vm->_events->queue(&event);
+			_vm->_events->queue(event);
 	}
 
 	return MAX_ANIMATIONS + cutawaySlot;
@@ -213,7 +213,7 @@ void Anim::returnFromCutaway() {
 
 	if (_cutawayActive) {
 		Event event;
-		Event *q_event = NULL;
+		EventColumns *eventColumns = NULL;
 
 		if (_cutAwayFade) {
 			static PalEntry cur_pal[PAL_ENTRIES];
@@ -228,7 +228,7 @@ void Anim::returnFromCutaway() {
 			event.time = 0;
 			event.duration = kNormalFadeDuration;
 			event.data = cur_pal;
-			q_event = _vm->_events->queue(&event);
+			eventColumns = _vm->_events->queue(event);
 
 			// set fade mode
 			event.type = kEvTImmediate;
@@ -237,7 +237,7 @@ void Anim::returnFromCutaway() {
 			event.param = kNoFade;
 			event.time = 0;
 			event.duration = 0;
-			q_event = _vm->_events->chain(q_event, &event);
+			_vm->_events->chain(eventColumns, event);
 		}
 
 		// Clear the cutaway. Note that this sets _cutawayActive to false
@@ -248,9 +248,9 @@ void Anim::returnFromCutaway() {
 		event.duration = 0;
 
 		if (_cutAwayFade)
-			q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
+			eventColumns = _vm->_events->chain(eventColumns, event);		// chain with the other events
 		else
-			q_event = _vm->_events->queue(&event);
+			eventColumns = _vm->_events->queue(event);
 
 		_vm->_scene->restoreScene();
 
@@ -270,7 +270,7 @@ void Anim::returnFromCutaway() {
 		event.op = kEventResumeAll;
 		event.time = 0;
 		event.duration = 0;
-		q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
+		_vm->_events->chain(eventColumns, event);		// chain with the other events
 
 		// Draw the scene
 		event.type = kEvTImmediate;
@@ -278,7 +278,7 @@ void Anim::returnFromCutaway() {
 		event.op = kEventDraw;
 		event.time = 0;
 		event.duration = 0;
-		q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
+		_vm->_events->chain(eventColumns, event);		// chain with the other events
 
 		// Handle fade up, if we previously faded down
 		if (_cutAwayFade) {
@@ -288,14 +288,14 @@ void Anim::returnFromCutaway() {
 			event.time = 0;
 			event.duration = kNormalFadeDuration;
 			event.data = saved_pal;
-			q_event = _vm->_events->chain(q_event, &event);
+			_vm->_events->chain(eventColumns, event);
 		}
 
 		event.type = kEvTOneshot;
 		event.code = kScriptEvent;
 		event.op = kEventThreadWake;
 		event.param = kWaitTypeWakeUp;
-		q_event = _vm->_events->chain(q_event, &event);
+		_vm->_events->chain(eventColumns, event);
 	}
 }
 
@@ -355,7 +355,7 @@ void Anim::showCutawayBg(int bg) {
 		event.time = 0;
 		event.duration = kNormalFadeDuration;
 		event.data = pal;
-		_vm->_events->queue(&event);
+		_vm->_events->queue(event);
 	} else {
 		_vm->_gfx->setPalette(pal);
 	}
@@ -500,7 +500,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		event.op = kEventFrame;
 		event.param = animId;
 		event.time = 10;
-		_vm->_events->queue(&event);
+		_vm->_events->queue(event);
 
 		// Nothing to render here (apart from the background, which is already rendered),
 		// so return
@@ -530,7 +530,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		event.op = kEventFrame;
 		event.param = animId;
 		event.time = 0;
-		_vm->_events->queue(&event);
+		_vm->_events->queue(event);
 
 		return;
 	}
@@ -571,7 +571,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 				event.code = kSceneEvent;
 				event.op = kEventEnd;
 				event.time = anim->frameTime + vectorTime;
-				_vm->_events->queue(&event);
+				_vm->_events->queue(event);
 			}
 			return;
 		} else {
@@ -597,7 +597,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 	event.op = kEventFrame;
 	event.param = animId;
 	event.time = frameTime;
-	_vm->_events->queue(&event);
+	_vm->_events->queue(event);
 }
 
 void Anim::stop(uint16 animId) {

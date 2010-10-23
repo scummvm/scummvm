@@ -1563,7 +1563,7 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 			event.param4 = obj;	// Object
 			event.param5 = 0;	// With Object
 			event.param6 = obj;		// Actor
-			_vm->_events->queue(&event);
+			_vm->_events->queue(event);
 		}
 	}
 }

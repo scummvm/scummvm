@@ -89,7 +89,7 @@ void PalAnim::cycleStart() {
 	event.code = kPalAnimEvent;
 	event.op = kEventCycleStep;
 	event.time = PALANIM_CYCLETIME;
-	_vm->_events->queue(&event);
+	_vm->_events->queue(event);
 }
 
 void PalAnim::cycleStep(int vectortime) {
@@ -136,7 +136,7 @@ void PalAnim::cycleStep(int vectortime) {
 	event.code = kPalAnimEvent;
 	event.op = kEventCycleStep;
 	event.time = vectortime + PALANIM_CYCLETIME;
-	_vm->_events->queue(&event);
+	_vm->_events->queue(event);
 
 }
 

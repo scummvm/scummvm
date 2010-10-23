@@ -659,7 +659,7 @@ void Actor::stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, 
 		event.param5 = ID_NOTHING;		// With Object
 		event.param6 = ID_PROTAG;		// Actor
 
-		_vm->_events->queue(&event);
+		_vm->_events->queue(event);
 	}
 }
 
