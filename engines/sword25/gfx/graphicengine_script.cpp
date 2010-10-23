@@ -73,15 +73,6 @@ protected:
 
 static LuaCallback *loopPointCallbackPtr = 0;	// FIXME: should be turned into GraphicEngine member var
 static ActionCallback *actionCallbackPtr = 0;	// FIXME: should be turned into GraphicEngine member var
-
-struct CallbackfunctionRegisterer {
-	CallbackfunctionRegisterer() {
-		CallbackRegistry::instance().registerCallbackFunction("LuaLoopPointCB", (void ( *)(int))animationLoopPointCallback);
-		CallbackRegistry::instance().registerCallbackFunction("LuaActionCB", (void ( *)(int))animationActionCallback);
-		CallbackRegistry::instance().registerCallbackFunction("LuaDeleteCB", (void ( *)(int))animationDeleteCallback);
-	}
-};
-static CallbackfunctionRegisterer Instance;
 }
 
 // Die Strings werden als #defines definiert um Stringkomposition zur Compilezeit zu ermöglichen.
@@ -1294,6 +1285,10 @@ bool GraphicEngine::registerScriptBindings() {
 
 	assert(actionCallbackPtr == 0);
 	actionCallbackPtr = new ActionCallback(L);
+
+	CallbackRegistry::instance().registerCallbackFunction("LuaLoopPointCB", (void ( *)(int))animationLoopPointCallback);
+	CallbackRegistry::instance().registerCallbackFunction("LuaActionCB", (void ( *)(int))animationActionCallback);
+	CallbackRegistry::instance().registerCallbackFunction("LuaDeleteCB", (void ( *)(int))animationDeleteCallback);
 
 	return true;
 }

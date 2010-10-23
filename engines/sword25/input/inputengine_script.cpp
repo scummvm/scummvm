@@ -83,13 +83,6 @@ protected:
 
 static CommandCallbackClass *commandCallbackPtr = 0;	// FIXME: should be turned into InputEngine member var
 
-struct CallbackfunctionRegisterer {
-	CallbackfunctionRegisterer() {
-		CallbackRegistry::instance().registerCallbackFunction("LuaCommandCB", theCommandCallback);
-		CallbackRegistry::instance().registerCallbackFunction("LuaCharacterCB", theCharacterCallback);
-	}
-};
-static CallbackfunctionRegisterer instance;
 }
 
 static InputEngine *getIE() {
@@ -297,6 +290,9 @@ bool InputEngine::registerScriptBindings() {
 
 	assert(commandCallbackPtr == 0);
 	commandCallbackPtr = new CommandCallbackClass(L);
+
+	CallbackRegistry::instance().registerCallbackFunction("LuaCommandCB", theCommandCallback);
+	CallbackRegistry::instance().registerCallbackFunction("LuaCharacterCB", theCharacterCallback);
 
 	return true;
 }
