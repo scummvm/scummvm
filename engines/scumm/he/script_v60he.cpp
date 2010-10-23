@@ -283,15 +283,14 @@ void ScummEngine_v60he::o60_roomOps() {
 		break;
 	case 221:
 		byte buffer[100];
-		int len, r;
+		int len;
 
 		convertMessageToString(_scriptPointer, buffer, sizeof(buffer));
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
 
-		r = convertFilePath(buffer, sizeof(buffer));
-		memcpy(_saveLoadFileName, buffer + r, sizeof(buffer) - r);
-		debug(1, "o60_roomOps: case 221: filename %s", _saveLoadFileName);
+		_saveLoadFileName = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
+		debug(1, "o60_roomOps: case 221: filename %s", _saveLoadFileName.c_str());
 
 		_saveLoadFlag = pop();
 		_saveLoadSlot = 255;
