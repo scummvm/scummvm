@@ -643,7 +643,7 @@ protected:
 	byte _saveLoadFlag, _saveLoadSlot;
 	uint32 _lastSaveTime;
 	bool _saveTemporaryState;
-	char _saveLoadFileName[32];
+	Common::String _saveLoadFileName;
 	char _saveLoadName[32];
 
 	bool saveState(Common::OutSaveFile *out, bool writeHeader = true);

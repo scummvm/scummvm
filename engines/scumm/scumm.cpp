@@ -209,7 +209,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_saveLoadSlot = 0;
 	_lastSaveTime = 0;
 	_saveTemporaryState = false;
-	memset(_saveLoadFileName, 0, sizeof(_saveLoadFileName));
 	memset(_saveLoadName, 0, sizeof(_saveLoadName));
 	memset(_localScriptOffsets, 0, sizeof(_localScriptOffsets));
 	_scriptPointer = NULL;
