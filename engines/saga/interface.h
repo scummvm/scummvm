@@ -94,8 +94,7 @@ enum FadeModes {
 struct InterfacePanel {
 	int x;
 	int y;
-	byte *image;
-	size_t imageLength;
+	ByteArray image;
 	int imageWidth;
 	int imageHeight;
 
@@ -106,8 +105,6 @@ struct InterfacePanel {
 
 	InterfacePanel() {
 		x = y = 0;
-		image = NULL;
-		imageLength = 0;
 		imageWidth = imageHeight = 0;
 		currentButton = NULL;
 		buttonsCount = 0;

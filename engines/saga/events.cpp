@@ -177,9 +177,8 @@ int Events::handleContinuous(Event *event) {
 			// set flag of Dissolve to 1. It is a hack to simulate zero masking.
 			int w, h;
 			byte *maskBuffer;
-			size_t len;
 
-			_vm->_scene->getBGMaskInfo(w, h, maskBuffer, len);
+			_vm->_scene->getBGMaskInfo(w, h, maskBuffer);
 			rect.left = (_vm->getDisplayInfo().width - w) / 2;
 			rect.top = (_vm->getDisplayInfo().height - h) / 2;
 			rect.setWidth(w);
@@ -367,24 +366,22 @@ int Events::handleOneShot(Event *event) {
 
 		_vm->_resource->loadResource(context, _vm->getResourceDescription()->psychicProfileResourceId, resourceData, resourceDataLength);
 
-		byte *buf;
-		size_t buflen;
+		ByteArray image;
 		int width;
 		int height;
 
-		_vm->decodeBGImage(resourceData, resourceDataLength, &buf, &buflen, &width, &height);
+		_vm->decodeBGImage(resourceData, resourceDataLength, image, &width, &height);
 
 		const PalEntry *palette = (const PalEntry *)_vm->getImagePal(resourceData, resourceDataLength);
 
 		const Rect profileRect(width, height);
 
-		_vm->_render->getBackGroundSurface()->blit(profileRect, buf);
+		_vm->_render->getBackGroundSurface()->blit(profileRect, image.getBuffer());
 		_vm->_render->addDirtyRect(profileRect);
 		_vm->_frameCount++;
 
 		_vm->_gfx->setPalette(palette);
 
-		free(buf);
 		free(resourceData);
 
 		// Draw the scene. It won't be drawn by Render::drawScene(), as a placard is up

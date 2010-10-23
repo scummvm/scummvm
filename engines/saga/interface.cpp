@@ -171,8 +171,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	}
 
 	_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->mainPanelResourceId, resource, resourceLength);
-	_vm->decodeBGImage(resource, resourceLength, &_mainPanel.image,
-		&_mainPanel.imageLength, &_mainPanel.imageWidth, &_mainPanel.imageHeight);
+	_vm->decodeBGImage(resource, resourceLength, _mainPanel.image, &_mainPanel.imageWidth, &_mainPanel.imageHeight);
 
 	free(resource);
 
@@ -181,8 +180,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_conversePanel.buttonsCount = _vm->getDisplayInfo().conversePanelButtonsCount;
 
 	_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->conversePanelResourceId, resource, resourceLength);
-	_vm->decodeBGImage(resource, resourceLength, &_conversePanel.image,
-		&_conversePanel.imageLength, &_conversePanel.imageWidth, &_conversePanel.imageHeight);
+	_vm->decodeBGImage(resource, resourceLength, _conversePanel.image, &_conversePanel.imageWidth, &_conversePanel.imageHeight);
 	free(resource);
 
 	// Option panel
@@ -191,8 +189,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		_optionPanel.buttonsCount = _vm->getDisplayInfo().optionPanelButtonsCount;
 
 		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->optionPanelResourceId, resource, resourceLength);
-		_vm->decodeBGImage(resource, resourceLength, &_optionPanel.image,
-			&_optionPanel.imageLength, &_optionPanel.imageWidth, &_optionPanel.imageHeight);
+		_vm->decodeBGImage(resource, resourceLength, _optionPanel.image, &_optionPanel.imageWidth, &_optionPanel.imageHeight);
 		free(resource);
 	} else {
 		_optionPanel.buttons = NULL;
@@ -207,8 +204,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		_quitPanel.buttonsCount = _vm->getDisplayInfo().quitPanelButtonsCount;
 
 		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->warningPanelResourceId, resource, resourceLength);
-		_vm->decodeBGImage(resource, resourceLength, &_quitPanel.image,
-			&_quitPanel.imageLength, &_quitPanel.imageWidth, &_quitPanel.imageHeight);
+		_vm->decodeBGImage(resource, resourceLength, _quitPanel.image, &_quitPanel.imageWidth, &_quitPanel.imageHeight);
 		free(resource);
 	}
 
@@ -218,8 +214,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		_savePanel.buttonsCount = _vm->getDisplayInfo().savePanelButtonsCount;
 
 		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->warningPanelResourceId, resource, resourceLength);
-		_vm->decodeBGImage(resource, resourceLength, &_savePanel.image,
-			&_savePanel.imageLength, &_savePanel.imageWidth, &_savePanel.imageHeight);
+		_vm->decodeBGImage(resource, resourceLength, _savePanel.image, &_savePanel.imageWidth, &_savePanel.imageHeight);
 		free(resource);
 	}
 
@@ -229,8 +224,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		_loadPanel.buttonsCount = _vm->getDisplayInfo().loadPanelButtonsCount;
 
 		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->warningPanelResourceId, resource, resourceLength);
-		_vm->decodeBGImage(resource, resourceLength, &_loadPanel.image,
-			&_loadPanel.imageLength, &_loadPanel.imageWidth, &_loadPanel.imageHeight);
+		_vm->decodeBGImage(resource, resourceLength, _loadPanel.image, &_loadPanel.imageWidth, &_loadPanel.imageHeight);
 		free(resource);
 	}
 #endif
@@ -346,13 +340,6 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 
 Interface::~Interface() {
 	free(_inventory);
-
-	free(_mainPanel.image);
-	free(_conversePanel.image);
-	free(_optionPanel.image);
-	free(_quitPanel.image);
-	free(_loadPanel.image);
-	free(_savePanel.image);
 }
 
 void Interface::saveReminderCallback(void *refCon) {
@@ -806,7 +793,7 @@ void Interface::draw() {
 	if (_panelMode == kPanelMain || _panelMode == kPanelMap ||
 		(_panelMode == kPanelNull && _vm->isIHNMDemo())) {
 		_mainPanel.getRect(rect);
-		_vm->_gfx->drawRegion(rect, _mainPanel.image);
+		_vm->_gfx->drawRegion(rect, _mainPanel.image.getBuffer());
 
 		for (int i = 0; i < kVerbTypeIdsMax; i++) {
 			if (_verbTypeToPanelButton[i] != NULL) {
@@ -815,7 +802,7 @@ void Interface::draw() {
 		}
 	} else if (_panelMode == kPanelConverse) {
 		_conversePanel.getRect(rect);
-		_vm->_gfx->drawRegion(rect, _conversePanel.image);
+		_vm->_gfx->drawRegion(rect, _conversePanel.image.getBuffer());
 		converseDisplayTextLines();
 	}
 
@@ -949,7 +936,7 @@ void Interface::drawOption() {
 	int spritenum = 0;
 
 	_optionPanel.getRect(rect);
-	_vm->_gfx->drawRegion(rect, _optionPanel.image);
+	_vm->_gfx->drawRegion(rect, _optionPanel.image.getBuffer());
 
 	for (int i = 0; i < _optionPanel.buttonsCount; i++) {
 		panelButton = &_optionPanel.buttons[i];
@@ -1026,7 +1013,7 @@ void Interface::drawQuit() {
 	if (_vm->getGameId() == GID_ITE)
 		drawButtonBox(rect, kButton, false);
 	else
-		_vm->_gfx->drawRegion(rect, _quitPanel.image);
+		_vm->_gfx->drawRegion(rect, _quitPanel.image.getBuffer());
 
 	for (i = 0; i < _quitPanel.buttonsCount; i++) {
 		panelButton = &_quitPanel.buttons[i];
@@ -1092,7 +1079,7 @@ void Interface::drawLoad() {
 	if (_vm->getGameId() == GID_ITE)
 		drawButtonBox(rect, kButton, false);
 	else
-		_vm->_gfx->drawRegion(rect, _loadPanel.image);
+		_vm->_gfx->drawRegion(rect, _loadPanel.image.getBuffer());
 
 	for (i = 0; i < _loadPanel.buttonsCount; i++) {
 		panelButton = &_loadPanel.buttons[i];
@@ -1312,7 +1299,7 @@ void Interface::drawSave() {
 	if (_vm->getGameId() == GID_ITE)
 		drawButtonBox(rect, kButton, false);
 	else
-		_vm->_gfx->drawRegion(rect, _savePanel.image);
+		_vm->_gfx->drawRegion(rect, _savePanel.image.getBuffer());
 
 	for (i = 0; i < _savePanel.buttonsCount; i++) {
 		panelButton = &_savePanel.buttons[i];
@@ -2714,9 +2701,9 @@ void Interface::loadState(Common::InSaveFile *in) {
 void Interface::mapPanelShow() {
 	int i;
 	byte *resource;
-	size_t resourceLength, imageLength;
+	size_t resourceLength;
 	Rect rect;
-	byte *image;
+	ByteArray image;
 	int imageWidth, imageHeight;
 	const byte *pal;
 	PalEntry cPal[PAL_ENTRIES];
@@ -2741,7 +2728,7 @@ void Interface::mapPanelShow() {
 
 	_vm->_render->setFlag(RF_MAP);
 
-	_vm->decodeBGImage(resource, resourceLength, &image, &imageLength, &imageWidth, &imageHeight);
+	_vm->decodeBGImage(resource, resourceLength, image, &imageWidth, &imageHeight);
 	pal = _vm->getImagePal(resource, resourceLength);
 
 	for (i = 0; i < PAL_ENTRIES; i++) {
@@ -2753,7 +2740,7 @@ void Interface::mapPanelShow() {
 	rect.setWidth(imageWidth);
 	rect.setHeight(imageHeight);
 
-	_vm->_gfx->drawRegion(rect, image);
+	_vm->_gfx->drawRegion(rect, image.getBuffer());
 
 	// Evil Evil
 	for (i = 0; i < 6 ; i++) {
@@ -2763,7 +2750,6 @@ void Interface::mapPanelShow() {
 	}
 
 	free(resource);
-	free(image);
 
 	setSaveReminderState(false);
 
@@ -2821,9 +2807,9 @@ void Interface::keyBoss() {
 
 	int i;
 	byte *resource;
-	size_t resourceLength, imageLength;
+	size_t resourceLength;
 	Rect rect;
-	byte *image;
+	ByteArray image;
 	int imageWidth, imageHeight;
 	const byte *pal;
 	PalEntry cPal[PAL_ENTRIES];
@@ -2840,7 +2826,7 @@ void Interface::keyBoss() {
 	_bossMode = _panelMode;
 	setMode(kPanelBoss);
 
-	_vm->decodeBGImage(resource, resourceLength, &image, &imageLength, &imageWidth, &imageHeight);
+	_vm->decodeBGImage(resource, resourceLength, image, &imageWidth, &imageHeight);
 	rect.setWidth(imageWidth);
 	rect.setHeight(imageHeight);
 
@@ -2857,12 +2843,11 @@ void Interface::keyBoss() {
 		cPal[i].blue = 128;
 	}
 
-	_vm->_gfx->drawRegion(rect, image);
+	_vm->_gfx->drawRegion(rect, image.getBuffer());
 
 	_vm->_gfx->setPalette(cPal);
 
 	free(resource);
-	free(image);
 }
 
 

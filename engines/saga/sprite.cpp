@@ -372,7 +372,6 @@ void Sprite::drawOccluded(SpriteList &spriteList, uint spriteNumber, const Point
 	int maskWidth;
 	int maskHeight;
 	byte *maskBuffer;
-	size_t maskBufferLength;
 	byte *maskRowPointer;
 	int maskZ;
 
@@ -381,7 +380,7 @@ void Sprite::drawOccluded(SpriteList &spriteList, uint spriteNumber, const Point
 		return;
 	}
 
-	_vm->_scene->getBGMaskInfo(maskWidth, maskHeight, maskBuffer, maskBufferLength);
+	_vm->_scene->getBGMaskInfo(maskWidth, maskHeight, maskBuffer);
 
 	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
 

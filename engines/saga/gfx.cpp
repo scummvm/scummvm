@@ -506,8 +506,7 @@ void Gfx::setCursor(CursorType cursorType) {
 
 		byte *resource;
 		size_t resourceLength;
-		byte *image;
-		size_t imageLength;
+		ByteArray image;
 		int width, height;
 
 		if (resourceId != (uint32)-1) {
@@ -515,11 +514,11 @@ void Gfx::setCursor(CursorType cursorType) {
 
 			_vm->_resource->loadResource(context, resourceId, resource, resourceLength);
 
-			_vm->decodeBGImage(resource, resourceLength, &image, &imageLength, &width, &height);
+			_vm->decodeBGImage(resource, resourceLength, image, &width, &height);
 		} else {
 			resource = NULL;
 			width = height = 31;
-			image = (byte *)calloc(width, height);
+			image.resize(width * height);
 
 			for (int i = 0; i < 14; i++) {
 				image[15 * 31 + i] = 1;
@@ -530,9 +529,8 @@ void Gfx::setCursor(CursorType cursorType) {
 		}
 
 		// Note: Hard-coded hotspot
-		CursorMan.replaceCursor(image, width, height, 15, 15, 0);
+		CursorMan.replaceCursor(image.getBuffer(), width, height, 15, 15, 0);
 
-		free(image);
 		free(resource);
 	}
 }

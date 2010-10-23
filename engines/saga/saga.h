@@ -547,14 +547,13 @@ public:
 	Common::RandomSource _rnd;
 
 private:
-	int decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, ByteArray &outbuf);
-	int flipImage(byte *img_buf, int columns, int scanlines);
-	int unbankBGImage(byte *dest_buf, const byte *src_buf, int columns, int scanlines);
+	bool decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, ByteArray &outbuf);
+	void flipImage(byte *imageBuffer, int columns, int scanlines);
+	void unbankBGImage(byte *dest_buf, const byte *src_buf, int columns, int scanlines);
 	uint32 _previousTicks;
 
 public:
-	int decodeBGImage(const byte *image_data, size_t image_size,
-			  byte **output_buf, size_t *output_buf_len, int *w, int *h, bool flip = false);
+	bool decodeBGImage(const byte *image_data, size_t image_size, ByteArray &outputBuffer, int *w, int *h, bool flip = false);
 	const byte *getImagePal(const byte *image_data, size_t image_size);
 	void loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength);
 

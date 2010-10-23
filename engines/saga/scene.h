@@ -74,7 +74,6 @@ enum FTA2Endings {
 struct BGInfo {
 	Rect bounds;
 	byte *buffer;
-	size_t bufferLength;
 };
 
 typedef int (SceneProc) (int, void *);
@@ -141,15 +140,18 @@ class SceneEntryList : public Common::Array<SceneEntry> {
 };
 
 struct SceneImage {
-	int loaded;
+	bool loaded;
 	int w;
 	int h;
 	int p;
-	byte *buf;
-	size_t buf_len;
+	ByteArray buffer;
 	byte *res_buf;
 	size_t res_len;
 	PalEntry pal[256];
+
+	SceneImage() : loaded(false), w(0), h(0), p(0) {
+		memset(pal, 0, sizeof(pal));
+	}
 };
 
 
@@ -239,7 +241,7 @@ class Scene {
 	bool isInIntro() { return !_inGame; }
 	const Rect& getSceneClip() const { return _sceneClip; }
 
-	void getBGMaskInfo(int &width, int &height, byte *&buffer, size_t &bufferLength);
+	void getBGMaskInfo(int &width, int &height, byte *&buffer);
 	int isBGMaskPresent() { return _bgMask.loaded; }
 
 	int getBGMaskType(const Point &testPoint) {
@@ -255,7 +257,7 @@ class Scene {
 		}
 		#endif
 
-		return (_bgMask.buf[offset] >> 4) & 0x0f;
+		return (_bgMask.buffer[offset] >> 4) & 0x0f;
 	}
 
 	bool validBGMaskPoint(const Point &testPoint) {

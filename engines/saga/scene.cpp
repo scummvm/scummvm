@@ -220,8 +220,6 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 	_sceneProc = NULL;
 	_objectMap = new ObjectMap(_vm);
 	_actionMap = new ObjectMap(_vm);
-	memset(&_bg, 0, sizeof(_bg));
-	memset(&_bgMask, 0, sizeof(_bgMask));
 }
 
 Scene::~Scene() {
@@ -523,8 +521,7 @@ void Scene::getSlopes(int &beginSlope, int &endSlope) {
 }
 
 void Scene::getBGInfo(BGInfo &bgInfo) {
-	bgInfo.buffer = _bg.buf;
-	bgInfo.bufferLength = _bg.buf_len;
+	bgInfo.buffer = _bg.buffer.getBuffer();
 	bgInfo.bounds.left = 0;
 	bgInfo.bounds.top = 0;
 
@@ -576,15 +573,14 @@ bool Scene::offscreenPath(Point &testPoint) {
 }
 
 
-void Scene::getBGMaskInfo(int &width, int &height, byte *&buffer, size_t &bufferLength) {
+void Scene::getBGMaskInfo(int &width, int &height, byte *&buffer) {
 	if (!_bgMask.loaded) {
 		error("Scene::getBGMaskInfo _bgMask not loaded");
 	}
 
 	width = _bgMask.w;
 	height = _bgMask.h;
-	buffer = _bgMask.buf;
-	bufferLength = _bgMask.buf_len;
+	buffer = _bgMask.buffer.getBuffer();
 }
 
 void Scene::initDoorsState() {
@@ -1024,14 +1020,13 @@ void Scene::processSceneResources() {
 			debug(3, "Loading background resource.");
 			_bg.res_buf = resourceData;
 			_bg.res_len = resourceDataLength;
-			_bg.loaded = 1;
+			_bg.loaded = true;
 
-			if (_vm->decodeBGImage(_bg.res_buf,
+			if (!_vm->decodeBGImage(_bg.res_buf,
 				_bg.res_len,
-				&_bg.buf,
-				&_bg.buf_len,
+				_bg.buffer,
 				&_bg.w,
-				&_bg.h) != SUCCESS) {
+				&_bg.h)) {
 				error("Scene::processSceneResources() Error loading background resource %i", _resourceList[i].resourceId);
 			}
 
@@ -1045,16 +1040,15 @@ void Scene::processSceneResources() {
 			debug(3, "Loading BACKGROUND MASK resource.");
 			_bgMask.res_buf = resourceData;
 			_bgMask.res_len = resourceDataLength;
-			_bgMask.loaded = 1;
-			_vm->decodeBGImage(_bgMask.res_buf, _bgMask.res_len, &_bgMask.buf,
-							   &_bgMask.buf_len, &_bgMask.w, &_bgMask.h, true);
+			_bgMask.loaded = true;
+			_vm->decodeBGImage(_bgMask.res_buf, _bgMask.res_len, _bgMask.buffer, &_bgMask.w, &_bgMask.h, true);
 
 			// At least in ITE the mask needs to be clipped.
 
 			_bgMask.w = MIN(_bgMask.w, _vm->getDisplayInfo().width);
 			_bgMask.h = MIN(_bgMask.h, getHeight());
 
-			debug(4, "BACKGROUND MASK width=%d height=%d length=%d", _bgMask.w, _bgMask.h, (int)_bgMask.buf_len);
+			debug(4, "BACKGROUND MASK width=%d height=%d length=%d", _bgMask.w, _bgMask.h, _bgMask.buffer.size());
 			break;
 		case SAGA_STRINGS:
 			debug(3, "Loading scene strings resource...");
@@ -1217,14 +1211,14 @@ void Scene::endScene() {
 
 	// Free scene background
 	if (_bg.loaded) {
-		free(_bg.buf);
-		_bg.loaded = 0;
+		_bg.buffer.clear();
+		_bg.loaded = false;
 	}
 
 	// Free scene background mask
 	if (_bgMask.loaded) {
-		free(_bgMask.buf);
-		_bgMask.loaded = 0;
+		_bgMask.buffer.clear();
+		_bgMask.loaded = false;
 	}
 
 	// Free scene resource list

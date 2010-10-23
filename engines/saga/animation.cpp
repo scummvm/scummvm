@@ -331,20 +331,19 @@ void Anim::showCutawayBg(int bg) {
 
 	byte *resourceData;
 	size_t resourceDataLength;
-	byte *buf;
-	size_t buflen;
+	ByteArray image;
 	int width;
 	int height;
 	Event event;
 	static PalEntry pal[PAL_ENTRIES];
 
 	_vm->_resource->loadResource(context, bg, resourceData, resourceDataLength);
-	_vm->decodeBGImage(resourceData, resourceDataLength, &buf, &buflen, &width, &height);
+	_vm->decodeBGImage(resourceData, resourceDataLength, image, &width, &height);
 
 	const byte *palPointer = _vm->getImagePal(resourceData, resourceDataLength);
 	memcpy(pal, palPointer, sizeof(pal));
 	const Rect rect(width, height);
-	_vm->_render->getBackGroundSurface()->blit(rect, buf);
+	_vm->_render->getBackGroundSurface()->blit(rect, image.getBuffer());
 	_vm->_render->setFullRefresh(true);
 	_vm->_frameCount++;
 
@@ -361,7 +360,6 @@ void Anim::showCutawayBg(int bg) {
 		_vm->_gfx->setPalette(pal);
 	}
 
-	free(buf);
 	free(resourceData);
 }
 
