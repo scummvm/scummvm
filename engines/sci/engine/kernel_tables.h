@@ -27,6 +27,7 @@
 #define SCI_ENGINE_KERNEL_TABLES_H
 
 #include "sci/engine/workarounds.h"
+#include "sci/engine/vm.h"	// for opcode_formats
 
 namespace Sci {
 
