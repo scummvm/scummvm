@@ -82,7 +82,7 @@ bool SagaEngine::locateSaveFile(char *saveName, uint &titleNumber) {
 	return false;
 }
 
-uint SagaEngine::getNewSaveSlotNumber() {
+uint SagaEngine::getNewSaveSlotNumber() const {
 	uint i, j;
 	bool found;
 	for (i = 0; i < MAX_SAVES; i++) {

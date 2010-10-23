@@ -461,7 +461,7 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 	}
 }
 
-const char *SagaEngine::getObjectName(uint16 objectId) {
+const char *SagaEngine::getObjectName(uint16 objectId) const {
 	ActorData *actor;
 	ObjectData *obj;
 	const HitZone *hitZone;
@@ -616,7 +616,7 @@ void SagaEngine::setTalkspeed(int talkspeed) {
 	ConfMan.setInt("talkspeed", (talkspeed * 255 + 3 / 2) / 3);
 }
 
-int SagaEngine::getTalkspeed() {
+int SagaEngine::getTalkspeed() const {
 	return (ConfMan.getInt("talkspeed") * 3 + 255 / 2) / 255;
 }
 

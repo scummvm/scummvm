@@ -486,15 +486,14 @@ public:
 
 	void save(const char *fileName, const char *saveName);
 	void load(const char *fileName);
-	uint32 getCurrentLoadVersion() {
+	uint32 getCurrentLoadVersion() const {
 		return _saveHeader.version;
 	}
 	void fillSaveList();
 	char *calcSaveFileName(uint slotNumber);
 
 	SaveFileData *getSaveFile(uint idx);
-	uint getSaveSlotNumber(uint idx);
-	uint getNewSaveSlotNumber();
+	uint getNewSaveSlotNumber() const;
 	bool locateSaveFile(char *saveName, uint &titleNumber);
 	bool isSaveListFull() const {
 		return _saveFilesCount == MAX_SAVES;
@@ -503,7 +502,7 @@ public:
 		return isSaveListFull() ? _saveFilesCount : _saveFilesCount + 1;
 	}
 
-	bool isIHNMDemo() { return _isIHNMDemo; }
+	bool isIHNMDemo() const { return _isIHNMDemo; }
 
 	int16 _framesEsc;
 
@@ -559,12 +558,12 @@ public:
 	const byte *getImagePal(const byte *image_data, size_t image_size);
 	void loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength);
 
-	const char *getObjectName(uint16 objectId);
+	const char *getObjectName(uint16 objectId) const;
 public:
 	int processInput();
 	Point mousePos() const;
 
-	int getMouseClickCount() {
+	int getMouseClickCount() const {
 		return _mouseClickCount;
 	}
 
@@ -588,7 +587,7 @@ public:
 		return _leftMouseButtonPressed || _rightMouseButtonPressed;
 	}
 
-	inline int ticksToMSec(int tick) {
+	inline int ticksToMSec(int tick) const {
 		if (getGameId() == GID_ITE)
 			return tick * 1000 / kScriptTimeTicksPerSecond;
 		else
@@ -619,9 +618,9 @@ public:
 	bool isBigEndian() const;
 	bool isMacResources() const;
 	bool isSaga2() const { return getGameId() == GID_DINO || getGameId() == GID_FTA2; }
-	const GameResourceDescription *getResourceDescription();
+	const GameResourceDescription *getResourceDescription() const;
 
-	const GameFontDescription *getFontDescription(int index);
+	const GameFontDescription *getFontDescription(int index) const;
 	int getFontsCount() const;
 
 	int getGameId() const;
@@ -650,7 +649,7 @@ private:
 public:
 	ColorId KnownColor2ColorId(KnownColor knownColor);
 	void setTalkspeed(int talkspeed);
-	int getTalkspeed();
+	int getTalkspeed() const;
 };
 
 } // End of namespace Saga
