@@ -39,6 +39,7 @@ public:
 
 	void setScreenDim(int dim);
 	const ScreenDim *getScreenDim(int dim);
+	int screenDimTableCount() const { return _screenDimTableCount; }
 
 	// sequence player
 	void generateGrayOverlay(const Palette &pal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag);

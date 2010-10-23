@@ -46,7 +46,9 @@ TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm
 	_currentLine = new char[85];
 	memset(_currentLine, 0, 85);
 
-	for (int i = 0; i < 14; i++){
+	_textDimData = new TextDimData[_screen->screenDimTableCount()];
+
+	for (int i = 0; i < _screen->screenDimTableCount(); i++){
 		const ScreenDim *d = _screen->getScreenDim(i);
 		_textDimData[i].color1 = d->unk8;
 		_textDimData[i].color2 = d->unkA;
@@ -59,6 +61,7 @@ TextDisplayer_LoL::~TextDisplayer_LoL() {
 	delete[] _buffer;
 	delete[] _dialogueBuffer;
 	delete[] _currentLine;
+	delete[] _textDimData;
 }
 
 void TextDisplayer_LoL::setupField(bool mode) {

@@ -350,7 +350,7 @@ void LoLEngine::monsterDropItems(MonsterInPlay *monster) {
 	}
 }
 
-void LoLEngine::removeAssignedObjectFromBlock(LevelBlockProperty *l, int id) {
+void LoLEngine::removeAssignedObjectFromBlock(LevelBlockProperty *l, uint16 id) {
 	uint16 *blockItemIndex = &l->assignedObjects;
 	ItemInPlay *i = 0;
 
@@ -367,7 +367,7 @@ void LoLEngine::removeAssignedObjectFromBlock(LevelBlockProperty *l, int id) {
 	}
 }
 
-void LoLEngine::removeDrawObjectFromBlock(LevelBlockProperty *l, int id) {
+void LoLEngine::removeDrawObjectFromBlock(LevelBlockProperty *l, uint16 id) {
 	uint16 *blockItemIndex = &l->drawObjects;
 	ItemInPlay *i = 0;
 
@@ -384,7 +384,7 @@ void LoLEngine::removeDrawObjectFromBlock(LevelBlockProperty *l, int id) {
 	}
 }
 
-void LoLEngine::assignMonsterToBlock(uint16 *assignedBlockObjects, int id) {
+void LoLEngine::assignMonsterToBlock(uint16 *assignedBlockObjects, uint16 id) {
 	ItemInPlay *t = findObject(id);
 	t->nextAssignedObject = *assignedBlockObjects;
 	*assignedBlockObjects = id;
