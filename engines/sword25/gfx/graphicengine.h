@@ -363,6 +363,7 @@ protected:
 
 private:
 	bool registerScriptBindings();
+	void unregisterScriptBindings();
 
 	// LastFrameDuration Variables
 	// ---------------------------

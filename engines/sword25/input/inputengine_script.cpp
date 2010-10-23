@@ -63,7 +63,8 @@ protected:
 		return 1;
 	}
 };
-Common::SharedPtr<CharacterCallbackClass> characterCallbackPtr;
+
+static CharacterCallbackClass *characterCallbackPtr = 0;	// FIXME: should be turned into InputEngine member var
 
 class CommandCallbackClass : public LuaCallback {
 public:
@@ -79,7 +80,8 @@ protected:
 		return 1;
 	}
 };
-Common::SharedPtr<CommandCallbackClass> commandCallbackPtr;
+
+static CommandCallbackClass *commandCallbackPtr = 0;	// FIXME: should be turned into InputEngine member var
 
 struct CallbackfunctionRegisterer {
 	CallbackfunctionRegisterer() {
@@ -290,10 +292,21 @@ bool InputEngine::registerScriptBindings() {
 	if (!LuaBindhelper::addFunctionsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_FUNCTIONS)) return false;
 	if (!LuaBindhelper::addConstantsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_CONSTANTS)) return false;
 
-	characterCallbackPtr = Common::SharedPtr<CharacterCallbackClass>(new CharacterCallbackClass(L));
-	commandCallbackPtr = Common::SharedPtr<CommandCallbackClass>(new CommandCallbackClass(L));
+	assert(characterCallbackPtr == 0);
+	characterCallbackPtr = new CharacterCallbackClass(L);
+
+	assert(commandCallbackPtr == 0);
+	commandCallbackPtr = new CommandCallbackClass(L);
 
 	return true;
+}
+
+void InputEngine::unregisterScriptBindings() {
+	delete characterCallbackPtr;
+	characterCallbackPtr = 0;
+
+	delete commandCallbackPtr;
+	commandCallbackPtr = 0;
 }
 
 } // End of namespace Sword25

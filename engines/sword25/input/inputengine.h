@@ -57,7 +57,7 @@ namespace Sword25 {
 class InputEngine : public Service, public Persistable {
 public:
 	InputEngine(Kernel *pKernel);
-	~InputEngine() {}
+	~InputEngine();
 
 	// NOTE: These codes are registered in inputengine_script.cpp
 	// Any changes to these enums must also adjust the above file.
@@ -303,6 +303,7 @@ public:
 
 private:
 	bool registerScriptBindings();
+	void unregisterScriptBindings();
 
 private:
 	void testForLeftDoubleClick();

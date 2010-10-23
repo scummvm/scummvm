@@ -76,6 +76,10 @@ InputEngine::InputEngine(Kernel *pKernel) :
 		BS_LOGLN("Script bindings registered.");
 }
 
+InputEngine::~InputEngine() {
+	unregisterScriptBindings();
+}
+
 Service *InputEngine_CreateObject(Kernel *pKernel) {
 	return new InputEngine(pKernel);
 }

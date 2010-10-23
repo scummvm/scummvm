@@ -71,8 +71,8 @@ protected:
 	}
 };
 
-Common::ScopedPtr<LuaCallback> loopPointCallbackPtr;
-Common::ScopedPtr<ActionCallback> actionCallbackPtr;
+static LuaCallback *loopPointCallbackPtr = 0;	// FIXME: should be turned into GraphicEngine member var
+static ActionCallback *actionCallbackPtr = 0;	// FIXME: should be turned into GraphicEngine member var
 
 struct CallbackfunctionRegisterer {
 	CallbackfunctionRegisterer() {
@@ -1289,10 +1289,21 @@ bool GraphicEngine::registerScriptBindings() {
 
 	if (!LuaBindhelper::addFunctionsToLib(L, GFX_LIBRARY_NAME, GFX_FUNCTIONS)) return false;
 
-	loopPointCallbackPtr.reset(new LuaCallback(L));
-	actionCallbackPtr.reset(new ActionCallback(L));
+	assert(loopPointCallbackPtr == 0);
+	loopPointCallbackPtr = new LuaCallback(L);
+
+	assert(actionCallbackPtr == 0);
+	actionCallbackPtr = new ActionCallback(L);
 
 	return true;
+}
+
+void GraphicEngine::unregisterScriptBindings() {
+	delete loopPointCallbackPtr;
+	loopPointCallbackPtr = 0;
+
+	delete actionCallbackPtr;
+	actionCallbackPtr = 0;
 }
 
 } // End of namespace Sword25
