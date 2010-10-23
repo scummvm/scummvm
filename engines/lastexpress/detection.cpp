@@ -51,6 +51,22 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::GUIO_NONE
 	},
 
+	// The Last Express (English) - UK Broderbund Release
+	{
+		"lastexpress",
+		"",
+		{
+			{"HD.HPF",  0, "2d331459e0e68cf277ef4e4043750413", 29865984},
+			{"CD1.HPF", 0, "8c86db47304033fcff32c69fddd5a920", 525522944},
+			{"CD2.HPF", 0, "2672348691e1ae22d37d9f46f3683a07", 669509632},
+			{"CD3.HPF", 0, "33f5e35f51063cb90f6bed9974475aa6", 641056768},
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		Common::GUIO_NONE
+	},
+
 	// The Last Express (English) - Interplay Release
 	{
 		"lastexpress",
