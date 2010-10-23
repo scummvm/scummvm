@@ -955,6 +955,30 @@ int LogicHEsoccer::op_1021(int32 *args) {
 }
 
 /***********************
+ * Backyard Baseball 2001
+ *
+ */
+
+int LogicHEbaseball2001::versionID() {
+	return 1;
+}
+
+int32 LogicHEbaseball2001::dispatch(int op, int numArgs, int32 *args) {
+	int res = 0;
+
+	switch (op) {
+	case 3001:
+		// Check network status
+		break;
+
+	default:
+		LogicHE::dispatch(op, numArgs, args);
+	}
+
+	return res;
+}
+
+/***********************
  * Backyard Basketball
  *
  */
