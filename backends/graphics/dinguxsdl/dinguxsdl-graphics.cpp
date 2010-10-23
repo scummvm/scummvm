@@ -23,30 +23,30 @@
  *
  */
 
-#include "backends/platform/dingux/dingux.h"
-
-#include "common/mutex.h"
-#include "graphics/scaler.h"
-#include "graphics/scaler/aspect.h"
-#include "graphics/scaler/downscaler.h"
-#include "graphics/surface.h"
-
 #if defined (DINGUX)
+
+#include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
+#include "backends/events/dinguxsdl/dinguxsdl-events.h"
+#include "graphics/scaler/aspect.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Standard", GFX_NORMAL},
 	{0, 0, 0}
 };
 
-int OSystem_SDL_Dingux::getDefaultGraphicsMode() const {
-	return GFX_NORMAL;
+DINGUXSdlGraphicsManager::DINGUXSdlGraphicsManager(SdlEventSource *boss) : SdlGraphicsManager(boss) {
+	_evSrc = boss;
 }
 
-const OSystem::GraphicsMode *OSystem_SDL_Dingux::getSupportedGraphicsModes() const {
+const OSystem::GraphicsMode *DINGUXSdlGraphicsManager::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
-bool OSystem_SDL_Dingux::setGraphicsMode(int mode) {
+int DINGUXSdlGraphicsManager::getDefaultGraphicsMode() const {
+	return GFX_NORMAL;
+}
+
+bool DINGUXSdlGraphicsManager::setGraphicsMode(int mode) {
 	Common::StackLock lock(_graphicsMutex);
 
 	assert(_transactionMode == kTransactionActive);
@@ -80,7 +80,7 @@ bool OSystem_SDL_Dingux::setGraphicsMode(int mode) {
 	return true;
 }
 
-void OSystem_SDL_Dingux::setGraphicsModeIntern() {
+void DINGUXSdlGraphicsManager::setGraphicsModeIntern() {
 	Common::StackLock lock(_graphicsMutex);
 	ScalerProc *newScalerProc = 0;
 
@@ -109,7 +109,7 @@ void OSystem_SDL_Dingux::setGraphicsModeIntern() {
 	blitCursor();
 }
 
-void OSystem_SDL_Dingux::initSize(uint w, uint h) {
+void DINGUXSdlGraphicsManager::initSize(uint w, uint h) {
 	assert(_transactionMode == kTransactionActive);
 
 	// Avoid redundant res changes
@@ -121,13 +121,13 @@ void OSystem_SDL_Dingux::initSize(uint w, uint h) {
 	if (w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
-		toggleMouseGrab();
+		_evSrc->toggleMouseGrab();
 	}
 
 	_transactionDetails.sizeChanged = true;
 }
 
-void OSystem_SDL_Dingux::drawMouse() {
+void DINGUXSdlGraphicsManager::drawMouse() {
 	if (!_mouseVisible || !_mouseSurface) {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 		return;
@@ -193,7 +193,7 @@ void OSystem_SDL_Dingux::drawMouse() {
 	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 
-void OSystem_SDL_Dingux::undrawMouse() {
+void DINGUXSdlGraphicsManager::undrawMouse() {
 	const int x = _mouseBackup.x;
 	const int y = _mouseBackup.y;
 
@@ -211,7 +211,7 @@ void OSystem_SDL_Dingux::undrawMouse() {
 	}
 }
 
-void OSystem_SDL_Dingux::internUpdateScreen() {
+void DINGUXSdlGraphicsManager::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	int height, width;
 	ScalerProc *scalerProc;
@@ -409,23 +409,23 @@ void OSystem_SDL_Dingux::internUpdateScreen() {
 	_mouseNeedsRedraw = false;
 }
 
-void OSystem_SDL_Dingux::showOverlay() {
+void DINGUXSdlGraphicsManager::showOverlay() {
 	if (_videoMode.mode == GFX_HALF) {
 		_mouseCurState.x = _mouseCurState.x / 2;
 		_mouseCurState.y = _mouseCurState.y / 2;
 	}
-	OSystem_SDL::showOverlay();
+	SdlGraphicsManager::showOverlay();
 }
 
-void OSystem_SDL_Dingux::hideOverlay() {
+void DINGUXSdlGraphicsManager::hideOverlay() {
 	if (_videoMode.mode == GFX_HALF) {
 		_mouseCurState.x = _mouseCurState.x * 2;
 		_mouseCurState.y = _mouseCurState.y * 2;
 	}
-	OSystem_SDL::hideOverlay();
+	SdlGraphicsManager::hideOverlay();
 }
 
-bool OSystem_SDL_Dingux::loadGFXMode() {
+bool DINGUXSdlGraphicsManager::loadGFXMode() {
 
 	// Forcefully disable aspect ratio correction for games
 	// which starts with a native 240px height resolution.
@@ -461,8 +461,46 @@ bool OSystem_SDL_Dingux::loadGFXMode() {
 	}
 
 
-	return OSystem_SDL::loadGFXMode();
+	return SdlGraphicsManager::loadGFXMode();
+}
+
+bool DINGUXSdlGraphicsManager::hasFeature(OSystem::Feature f) {
+	return
+	    (f == OSystem::kFeatureAspectRatioCorrection) ||
+	    (f == OSystem::kFeatureCursorHasPalette);
+}
+
+void DINGUXSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+	switch (f) {
+		case OSystem::kFeatureAspectRatioCorrection:
+		setAspectRatioCorrection(enable);
+		break;
+	default:
+		break;
+	}
+}
+
+bool DINGUXSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
+	assert(_transactionMode == kTransactionNone);
+
+	switch (f) {
+		case OSystem::kFeatureAspectRatioCorrection:
+		return _videoMode.aspectRatioCorrection;
+	default:
+		return false;
+	}
+}
+
+SdlGraphicsManager::MousePos* DINGUXSdlGraphicsManager::getMouseCurState() {
+	return &_mouseCurState;
+}
+
+SdlGraphicsManager::VideoState* DINGUXSdlGraphicsManager::getVideoMode() {
+	return &_videoMode;
+}
+
+bool DINGUXSdlGraphicsManager::isOverlayVisible() {
+	return _overlayVisible;
 }
 
 #endif
-

@@ -23,31 +23,25 @@
  *
  */
 
-#include "backends/platform/dingux/dingux.h"
-#include "backends/plugins/posix/posix-provider.h"
-#include "base/main.h"
-
+#ifndef BACKENDS_EVENTS_SDL_DINGUX_H
+#define BACKENDS_EVENTS_SDL_DINGUX_H
 #if defined(DINGUX)
 
-#include <unistd.h>
+#include "backends/platform/dingux/dingux.h"
+#include "backends/events/dinguxsdl/dinguxsdl-events.h"
 
-int main(int argc, char* argv[]) {
+class DINGUXSdlEventSource : public SdlEventSource {
+public:
+	DINGUXSdlEventSource();
+	void setCurrentGraphMan(DINGUXSdlGraphicsManager *_graphicManager);
 
-	g_system = new OSystem_SDL_Dingux();
-	assert(g_system);
+protected:
+	DINGUXSdlGraphicsManager *_grpMan;
 
-	((OSystem_SDL_Dingux *)g_system)->init();
+	bool remapKey(SDL_Event &ev, Common::Event &event);
+	void fillMouseEvent(Common::Event &event, int x, int y);
+	void warpMouse(int x, int y);
+};
 
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-	((OSystem_SDL_Dingux *)g_system)->deinit();
-
-	return res;
-}
-
-#endif
-
+#endif /* DINGUX */
+#endif /* BACKENDS_EVENTS_SDL_DINGUX_H */

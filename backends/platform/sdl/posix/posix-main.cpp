@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(UNIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(LINUXMOTO) && !defined(GP2XWIZ) && !defined(GP2X)
+#if defined(UNIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(LINUXMOTO) && !defined(GP2XWIZ) && !defined(GP2X) && !defined(DINGUX)
 
 #include "backends/platform/sdl/posix/posix.h"
 #include "backends/plugins/sdl/sdl-provider.h"

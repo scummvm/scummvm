@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	audiocd/default/default-audiocd.o \
 	audiocd/sdl/sdl-audiocd.o \
 	events/default/default-events.o \
+	events/dinguxsdl/dinguxsdl-events.o \
 	events/gp2xsdl/gp2xsdl-events.o \
 	events/linuxmotosdl/linuxmotosdl-events.o \
 	events/samsungtvsdl/samsungtvsdl-events.o \
@@ -17,6 +18,7 @@ MODULE_OBJS := \
 	fs/posix/posix-fs-factory.o \
 	fs/symbian/symbian-fs-factory.o \
 	fs/windows/windows-fs-factory.o \
+	graphics/dinguxsdl/dinguxsdl-graphics.o \
 	graphics/gp2xsdl/gp2xsdl-graphics.o \
 	graphics/gp2xwizsdl/gp2xwizsdl-graphics.o \
 	graphics/linuxmotosdl/linuxmotosdl-graphics.o \

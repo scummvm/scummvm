@@ -2,9 +2,7 @@ MODULE := backends/platform/dingux
 
 MODULE_OBJS := \
 	main.o \
-	dingux.o \
-	dingux-events.o \
-	dingux-graphics.o \
+	dingux.o 
 
 MODULE_DIRS += \
 	backends/platform/dingux/
