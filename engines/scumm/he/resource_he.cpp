@@ -257,7 +257,7 @@ char *Win32ResExtractor::WinResource::get_resource_id_quoted() {
 }
 
 int Win32ResExtractor::extract_resources(WinLibrary *fi, WinResource *wr,
-                            WinResource *type_wr, WinResource *name_wr,
+							WinResource *type_wr, WinResource *name_wr,
 							WinResource *lang_wr, byte **data) {
 	int size;
 	bool free_it;
@@ -295,7 +295,7 @@ int Win32ResExtractor::extract_resources(WinLibrary *fi, WinResource *wr,
  *   Extract a resource, returning pointer to data.
  */
 byte *Win32ResExtractor::extract_resource(WinLibrary *fi, WinResource *wr, int *size,
-                  bool *free_it, char *type, char *lang, bool raw) {
+				  bool *free_it, char *type, char *lang, bool raw) {
 	char *str;
 	int32 intval;
 
@@ -335,7 +335,7 @@ byte *Win32ResExtractor::extract_resource(WinLibrary *fi, WinResource *wr, int *
  *   or cursor group.
  */
 byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinResource *wr, char *lang,
-                                   int *ressize, bool is_icon) {
+								   int *ressize, bool is_icon) {
 	Win32CursorIconDir *icondir;
 	Win32CursorIconFileDir *fileicondir;
 	byte *memory;
@@ -376,20 +376,20 @@ byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 		}
 
 		if (get_resource_entry(fi, fwr, &iconsize) != NULL) {
-		    if (iconsize == 0) {
+			if (iconsize == 0) {
 				debugC(DEBUG_RESOURCE, "%s: icon resource `%s' is empty, skipping", _fileName.c_str(), name);
 				skipped++;
 				continue;
-		    }
-		    if ((uint32)iconsize != FROM_LE_32(icondir->entries[c].bytes_in_res)) {
+			}
+			if ((uint32)iconsize != FROM_LE_32(icondir->entries[c].bytes_in_res)) {
 				debugC(DEBUG_RESOURCE, "%s: mismatch of size in icon resource `%s' and group (%d != %d)",
 					_fileName.c_str(), name, iconsize, FROM_LE_32(icondir->entries[c].bytes_in_res));
-		    }
-		    size += iconsize; /* size += FROM_LE_32(icondir->entries[c].bytes_in_res); */
+			}
+			size += iconsize; /* size += FROM_LE_32(icondir->entries[c].bytes_in_res); */
 
-		    /* cursor resources have two additional WORDs that contain
-		     * hotspot info */
-		    if (!is_icon)
+			/* cursor resources have two additional WORDs that contain
+			 * hotspot info */
+			if (!is_icon)
 			size -= sizeof(uint16)*2;
 		}
 	}
@@ -430,8 +430,8 @@ byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 			return NULL;
 		}
 		if (size == 0) {
-		    skipped++;
-		    continue;
+			skipped++;
+			continue;
 		}
 
 		/* copy ICONDIRENTRY (not including last dwImageOffset) */
@@ -748,8 +748,8 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
  *   module. Returns -1 if file was too small.
  */
 int Win32ResExtractor::calc_vma_size(WinLibrary *fi) {
-    Win32ImageSectionHeader *seg;
-    int c, segcount, size;
+	Win32ImageSectionHeader *seg;
+	int c, segcount, size;
 
 	size = 0;
 	RETURN_IF_BAD_POINTER(-1, PE_HEADER(fi->memory)->file_header.number_of_sections);
@@ -764,7 +764,7 @@ int Win32ResExtractor::calc_vma_size(WinLibrary *fi) {
 
 	seg = PE_SECTIONS(fi->memory);
 	RETURN_IF_BAD_POINTER(-1, *seg);
-    for (c = 0 ; c < segcount ; c++) {
+	for (c = 0 ; c < segcount ; c++) {
 		RETURN_IF_BAD_POINTER(0, *seg);
 		fix_win32_image_section_header(seg);
 
@@ -772,9 +772,9 @@ int Win32ResExtractor::calc_vma_size(WinLibrary *fi) {
 		/* I have no idea what misc.virtual_size is for... */
 		size = MAX((uint32)size, seg->virtual_address + seg->misc.virtual_size);
 		seg++;
-    }
+	}
 
-    return size;
+	return size;
 }
 
 Win32ResExtractor::WinResource *Win32ResExtractor::find_with_resource_array(WinLibrary *fi, WinResource *wr, const char *id) {
@@ -918,8 +918,8 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 
 				if (entries[c].dib_size	!= bitmap.size + image_size + mask_size + palette_count * sizeof(Win32RGBQuad))
 					debugC(DEBUG_RESOURCE, "incorrect total size of bitmap (%d specified; %d real)",
-					    entries[c].dib_size,
-					    (int)(bitmap.size + image_size + mask_size + palette_count * sizeof(Win32RGBQuad))
+						entries[c].dib_size,
+						(int)(bitmap.size + image_size + mask_size + palette_count * sizeof(Win32RGBQuad))
 					);
 
 				image_data = (byte *)malloc(image_size);
@@ -981,9 +981,9 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 							row[4*x+2] = (color >>  0) & 0xFF;
 						}
 						if (bitmap.bit_count == 32)
-						    row[4*x+3] = (color >> 24) & 0xFF;
+							row[4*x+3] = (color >> 24) & 0xFF;
 						else
-						    row[4*x+3] = simple_vec(mask_data, x + mmod, 1) ? 0 : 0xFF;
+							row[4*x+3] = simple_vec(mask_data, x + mmod, 1) ? 0 : 0xFF;
 						*/
 					}
 
@@ -1055,93 +1055,93 @@ uint32 Win32ResExtractor::simple_vec(byte *data, uint32 ofs, byte size) {
 }
 
 void Win32ResExtractor::fix_win32_cursor_icon_file_dir_endian(Win32CursorIconFileDir *obj) {
-    LE16(obj->reserved);
+	LE16(obj->reserved);
 	LE16(obj->type);
-    LE16(obj->count);
+	LE16(obj->count);
 }
 
 void Win32ResExtractor::fix_win32_bitmap_info_header_endian(Win32BitmapInfoHeader *obj) {
-    LE32(obj->size);
-    LE32(obj->width);
-    LE32(obj->height);
-    LE16(obj->planes);
-    LE16(obj->bit_count);
-    LE32(obj->compression);
-    LE32(obj->size_image);
-    LE32(obj->x_pels_per_meter);
-    LE32(obj->y_pels_per_meter);
-    LE32(obj->clr_used);
-    LE32(obj->clr_important);
+	LE32(obj->size);
+	LE32(obj->width);
+	LE32(obj->height);
+	LE16(obj->planes);
+	LE16(obj->bit_count);
+	LE32(obj->compression);
+	LE32(obj->size_image);
+	LE32(obj->x_pels_per_meter);
+	LE32(obj->y_pels_per_meter);
+	LE32(obj->clr_used);
+	LE32(obj->clr_important);
 }
 
 void Win32ResExtractor::fix_win32_cursor_icon_file_dir_entry_endian(Win32CursorIconFileDirEntry *obj) {
-    LE16(obj->hotspot_x);
-    LE16(obj->hotspot_y);
-    LE32(obj->dib_size);
-    LE32(obj->dib_offset);
+	LE16(obj->hotspot_x);
+	LE16(obj->hotspot_y);
+	LE32(obj->dib_size);
+	LE32(obj->dib_offset);
 }
 
 void Win32ResExtractor::fix_win32_image_section_header(Win32ImageSectionHeader *obj) {
-    LE32(obj->misc.physical_address);
-    LE32(obj->virtual_address);
-    LE32(obj->size_of_raw_data);
-    LE32(obj->pointer_to_raw_data);
-    LE32(obj->pointer_to_relocations);
-    LE32(obj->pointer_to_linenumbers);
-    LE16(obj->number_of_relocations);
-    LE16(obj->number_of_linenumbers);
-    LE32(obj->characteristics);
+	LE32(obj->misc.physical_address);
+	LE32(obj->virtual_address);
+	LE32(obj->size_of_raw_data);
+	LE32(obj->pointer_to_raw_data);
+	LE32(obj->pointer_to_relocations);
+	LE32(obj->pointer_to_linenumbers);
+	LE16(obj->number_of_relocations);
+	LE16(obj->number_of_linenumbers);
+	LE32(obj->characteristics);
 }
 
 /* fix_win32_image_header_endian:
  * NOTE: This assumes that the optional header is always available.
  */
 void Win32ResExtractor::fix_win32_image_header_endian(Win32ImageNTHeaders *obj) {
-    LE32(obj->signature);
-    LE16(obj->file_header.machine);
-    LE16(obj->file_header.number_of_sections);
-    LE32(obj->file_header.time_date_stamp);
-    LE32(obj->file_header.pointer_to_symbol_table);
-    LE32(obj->file_header.number_of_symbols);
-    LE16(obj->file_header.size_of_optional_header);
-    LE16(obj->file_header.characteristics);
+	LE32(obj->signature);
+	LE16(obj->file_header.machine);
+	LE16(obj->file_header.number_of_sections);
+	LE32(obj->file_header.time_date_stamp);
+	LE32(obj->file_header.pointer_to_symbol_table);
+	LE32(obj->file_header.number_of_symbols);
+	LE16(obj->file_header.size_of_optional_header);
+	LE16(obj->file_header.characteristics);
 
 	// FIXME: Does this assert ever trigger? If so, we should modify this function
 	// to properly deal with it.
 	assert(obj->file_header.size_of_optional_header >= sizeof(obj->optional_header));
-    LE16(obj->optional_header.magic);
-    LE32(obj->optional_header.size_of_code);
-    LE32(obj->optional_header.size_of_initialized_data);
-    LE32(obj->optional_header.size_of_uninitialized_data);
-    LE32(obj->optional_header.address_of_entry_point);
-    LE32(obj->optional_header.base_of_code);
-    LE32(obj->optional_header.base_of_data);
-    LE32(obj->optional_header.image_base);
-    LE32(obj->optional_header.section_alignment);
-    LE32(obj->optional_header.file_alignment);
-    LE16(obj->optional_header.major_operating_system_version);
-    LE16(obj->optional_header.minor_operating_system_version);
-    LE16(obj->optional_header.major_image_version);
-    LE16(obj->optional_header.minor_image_version);
-    LE16(obj->optional_header.major_subsystem_version);
-    LE16(obj->optional_header.minor_subsystem_version);
-    LE32(obj->optional_header.win32_version_value);
-    LE32(obj->optional_header.size_of_image);
-    LE32(obj->optional_header.size_of_headers);
-    LE32(obj->optional_header.checksum);
-    LE16(obj->optional_header.subsystem);
-    LE16(obj->optional_header.dll_characteristics);
-    LE32(obj->optional_header.size_of_stack_reserve);
-    LE32(obj->optional_header.size_of_stack_commit);
-    LE32(obj->optional_header.size_of_heap_reserve);
-    LE32(obj->optional_header.size_of_heap_commit);
-    LE32(obj->optional_header.loader_flags);
-    LE32(obj->optional_header.number_of_rva_and_sizes);
+	LE16(obj->optional_header.magic);
+	LE32(obj->optional_header.size_of_code);
+	LE32(obj->optional_header.size_of_initialized_data);
+	LE32(obj->optional_header.size_of_uninitialized_data);
+	LE32(obj->optional_header.address_of_entry_point);
+	LE32(obj->optional_header.base_of_code);
+	LE32(obj->optional_header.base_of_data);
+	LE32(obj->optional_header.image_base);
+	LE32(obj->optional_header.section_alignment);
+	LE32(obj->optional_header.file_alignment);
+	LE16(obj->optional_header.major_operating_system_version);
+	LE16(obj->optional_header.minor_operating_system_version);
+	LE16(obj->optional_header.major_image_version);
+	LE16(obj->optional_header.minor_image_version);
+	LE16(obj->optional_header.major_subsystem_version);
+	LE16(obj->optional_header.minor_subsystem_version);
+	LE32(obj->optional_header.win32_version_value);
+	LE32(obj->optional_header.size_of_image);
+	LE32(obj->optional_header.size_of_headers);
+	LE32(obj->optional_header.checksum);
+	LE16(obj->optional_header.subsystem);
+	LE16(obj->optional_header.dll_characteristics);
+	LE32(obj->optional_header.size_of_stack_reserve);
+	LE32(obj->optional_header.size_of_stack_commit);
+	LE32(obj->optional_header.size_of_heap_reserve);
+	LE32(obj->optional_header.size_of_heap_commit);
+	LE32(obj->optional_header.loader_flags);
+	LE32(obj->optional_header.number_of_rva_and_sizes);
 }
 
 void Win32ResExtractor::fix_win32_image_data_directory(Win32ImageDataDirectory *obj) {
-    LE32(obj->virtual_address);
-    LE32(obj->size);
+	LE32(obj->virtual_address);
+	LE32(obj->size);
 }
 
 

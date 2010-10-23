@@ -92,7 +92,7 @@ void FileManager_v2d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 // Open and read in an overlay file, close file
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
-    image_pt tmpImage = image;                  // temp ptr to overlay file
+	image_pt tmpImage = image;                  // temp ptr to overlay file
 	_sceneryArchive1.seek((uint32)screenNum * sizeof(sceneBlock_t), SEEK_SET);
 
 	sceneBlock_t sceneBlock;                        // Database header entry

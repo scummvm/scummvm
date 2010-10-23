@@ -239,7 +239,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 		return NULL;
 	}
 
-    // Get block size
+	// Get block size
 	if (version > 0) {
 		blockSize = gReader->getUint32((int) (log((double) DEFAULT_BLOCK_SIZE) / M_LN2));
 		maxLPC = gReader->getUint32(2);

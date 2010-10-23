@@ -232,7 +232,7 @@ int32 LogicHErace::op_1101(int32 *args) {
 	int32 retval;
 	float temp;
 
-    temp = args[0] / _userData[532];
+	temp = args[0] / _userData[532];
 	if (_userData[519] != temp) {
 		_userData[519] = temp;
 		op_sub3(temp);

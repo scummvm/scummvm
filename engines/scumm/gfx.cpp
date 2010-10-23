@@ -2457,7 +2457,7 @@ void ScummEngine::decodeNESBaseTiles() {
 }
 
 static const int v1MMNEScostTables[2][6] = {
-     /* desc lens offs data  gfx  pal */
+	/* desc lens offs data  gfx  pal */
 	{ 25,  27,  29,  31,  33,  35},
 	{ 26,  28,  30,  32,  34,  36}
 };

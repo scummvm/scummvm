@@ -152,7 +152,7 @@ static const uint16 sounds[13][6] = {
 // 0xB2A1
 static const byte data_table[482] = {
 	/*  0*/ 0xE2, 0x0A, 0xE1, 0x0D, 0xE6, 0xED, 0xE0, 0x0F, 0xE2, 0x00, 0xE1, 0x00,
-	        0xF2, 0xF2, 0xB2, 0xE1, 0x01, 0xF2, 0xF2, 0xB2, 0xE1, 0x02, 0xF2, 0xF2,
+			0xF2, 0xF2, 0xB2, 0xE1, 0x01, 0xF2, 0xF2, 0xB2, 0xE1, 0x02, 0xF2, 0xF2,
 			0xB2, 0xE1, 0x03, 0xF2, 0xF2, 0xB2, 0xE1, 0x04, 0xF2, 0xF2, 0xB2, 0xE1,
 			0x05, 0xF2, 0xF2, 0xB2, 0xE1, 0x06, 0xF2, 0xF2, 0xB2, 0xE1, 0x07, 0xF2,
 			0xF2, 0xB2, 0xE1, 0x08, 0xF2, 0xF2, 0xB2, 0xE1, 0x09, 0xF2, 0xF2, 0xB2,
@@ -208,10 +208,10 @@ static const byte data_table[482] = {
 
 	/*395*/	0xE2, 0x0C, 0xE1, 0x00, 0xE0, 0x04, 0xE6, 0xED, 0xD4, 0x0B, 0xE8, 0x0B, 0xFF,
 	/*408*/ 0xE2, 0x0C, 0xE1, 0x03, 0xE0, 0x04, 0xE6, 0xED, 0xD4, 0xF0, 0x0C, 0x00,
-	        0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xE8, 0x00,
-	        0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xE8, 0x00,
-	        0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xE8, 0x00,
-	        0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xFF,
+			0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xE8, 0x00,
+			0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xE8, 0x00,
+			0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xE8, 0x00,
+			0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xE8, 0x00, 0xE8, 0x10, 0xFF,
 	/*467*/ 0xE2, 0x0C, 0xE1, 0x00, 0xE0, 0x04, 0xE6, 0xED, 0xD4, 0x1B, 0xE8, 0x1B, 0xFF,
 	/*480*/ 0xFF,
 
@@ -238,11 +238,11 @@ private:
 	double _clock;
 	double _rate;
 	uint8 _select;
-    uint8 _balance;
-    channel_t _channel[8];
-    int16 _volumeTable[32];
-    uint32 _noiseFreqTable[32];
-    uint32 _waveFreqTable[4096];
+	uint8 _balance;
+	channel_t _channel[8];
+	int16 _volumeTable[32];
+	uint32 _noiseFreqTable[32];
+	uint32 _waveFreqTable[4096];
 
 public:
 	void init();
@@ -255,180 +255,180 @@ public:
 
 PSG_HuC6280::PSG_HuC6280(double clock, double samplerate) {
 	_clock = clock;
-    _rate = samplerate;
+	_rate = samplerate;
 
-    // Initialize PSG_HuC6280 emulator
-    init();
+	// Initialize PSG_HuC6280 emulator
+	init();
 }
 
 void PSG_HuC6280::init() {
-    int i;
-    double step;
+	int i;
+	double step;
 
-    // Loudest volume level for table
-    double level = 65535.0 / 6.0 / 32.0;
+	// Loudest volume level for table
+	double level = 65535.0 / 6.0 / 32.0;
 
-    // Clear context
+	// Clear context
 	reset();
 
-    // Make waveform frequency table
-    for(i = 0; i < 4096; i++) {
-        step = ((_clock / _rate) * 4096) / (i+1);
-        _waveFreqTable[(1 + i) & 0xFFF] = (uint32)step;
-    }
+	// Make waveform frequency table
+	for(i = 0; i < 4096; i++) {
+		step = ((_clock / _rate) * 4096) / (i+1);
+		_waveFreqTable[(1 + i) & 0xFFF] = (uint32)step;
+	}
 
-    // Make noise frequency table
-    for(i = 0; i < 32; i++) {
-        step = ((_clock / _rate) * 32) / (i+1);
-        _noiseFreqTable[i] = (uint32)step;
-    }
+	// Make noise frequency table
+	for(i = 0; i < 32; i++) {
+		step = ((_clock / _rate) * 32) / (i+1);
+		_noiseFreqTable[i] = (uint32)step;
+	}
 
-    // Make volume table
-    // PSG_HuC6280 has 48dB volume range spread over 32 steps
-    step = 48.0 / 32.0;
-    for(i = 0; i < 31; i++) {
-        _volumeTable[i] = (uint16)level;
-        level /= pow(10.0, step / 20.0);
-    }
-    _volumeTable[31] = 0;
+	// Make volume table
+	// PSG_HuC6280 has 48dB volume range spread over 32 steps
+	step = 48.0 / 32.0;
+	for(i = 0; i < 31; i++) {
+		_volumeTable[i] = (uint16)level;
+		level /= pow(10.0, step / 20.0);
+	}
+	_volumeTable[31] = 0;
 }
 
 void PSG_HuC6280::reset() {
 	_select = 0;
-    _balance = 0xFF;
-    memset(_channel, 0, sizeof(_channel));
-    memset(_volumeTable, 0, sizeof(_volumeTable));
-    memset(_noiseFreqTable, 0, sizeof(_noiseFreqTable));
-    memset(_waveFreqTable, 0, sizeof(_waveFreqTable));
+	_balance = 0xFF;
+	memset(_channel, 0, sizeof(_channel));
+	memset(_volumeTable, 0, sizeof(_volumeTable));
+	memset(_noiseFreqTable, 0, sizeof(_noiseFreqTable));
+	memset(_waveFreqTable, 0, sizeof(_waveFreqTable));
 }
 
 void PSG_HuC6280::write(int offset, byte data) {
-    channel_t *chan = &_channel[_select];
+	channel_t *chan = &_channel[_select];
 
-    switch(offset & 0x0F) {
-    case 0x00: // Channel select
-        _select = data & 0x07;
-        break;
+	switch(offset & 0x0F) {
+	case 0x00: // Channel select
+		_select = data & 0x07;
+		break;
 
-    case 0x01: // Global balance
-        _balance  = data;
-        break;
+	case 0x01: // Global balance
+		_balance  = data;
+		break;
 
-    case 0x02: // Channel frequency (LSB)
-        chan->frequency = (chan->frequency & 0x0F00) | data;
-        chan->frequency &= 0x0FFF;
-        break;
+	case 0x02: // Channel frequency (LSB)
+		chan->frequency = (chan->frequency & 0x0F00) | data;
+		chan->frequency &= 0x0FFF;
+		break;
 
-    case 0x03: // Channel frequency (MSB)
-        chan->frequency = (chan->frequency & 0x00FF) | (data << 8);
-        chan->frequency &= 0x0FFF;
-        break;
+	case 0x03: // Channel frequency (MSB)
+		chan->frequency = (chan->frequency & 0x00FF) | (data << 8);
+		chan->frequency &= 0x0FFF;
+		break;
 
-    case 0x04: // Channel control (key-on, DDA mode, volume)
-        // 1-to-0 transition of DDA bit resets waveform index
-        if((chan->control & 0x40) && ((data & 0x40) == 0)) {
-            chan->index = 0;
-        }
-        chan->control = data;
-        break;
+	case 0x04: // Channel control (key-on, DDA mode, volume)
+		// 1-to-0 transition of DDA bit resets waveform index
+		if((chan->control & 0x40) && ((data & 0x40) == 0)) {
+			chan->index = 0;
+		}
+		chan->control = data;
+		break;
 
-    case 0x05: // Channel balance
-        chan->balance = data;
-        break;
+	case 0x05: // Channel balance
+		chan->balance = data;
+		break;
 
-    case 0x06: // Channel waveform data
-        switch(chan->control & 0xC0) {
-        case 0x00:
-            chan->waveform[chan->index & 0x1F] = data & 0x1F;
-            chan->index = (chan->index + 1) & 0x1F;
-            break;
+	case 0x06: // Channel waveform data
+		switch(chan->control & 0xC0) {
+		case 0x00:
+			chan->waveform[chan->index & 0x1F] = data & 0x1F;
+			chan->index = (chan->index + 1) & 0x1F;
+			break;
 
-        case 0x40:
-            break;
+		case 0x40:
+			break;
 
-        case 0x80:
-            chan->waveform[chan->index & 0x1F] = data & 0x1F;
-            chan->index = (chan->index + 1) & 0x1F;
-            break;
+		case 0x80:
+			chan->waveform[chan->index & 0x1F] = data & 0x1F;
+			chan->index = (chan->index + 1) & 0x1F;
+			break;
 
-        case 0xC0:
-            chan->dda = data & 0x1F;
-            break;
-        }
+		case 0xC0:
+			chan->dda = data & 0x1F;
+			break;
+		}
 
-        break;
+		break;
 
-    case 0x07: // Noise control (enable, frequency)
-    case 0x08: // LFO frequency
-    case 0x09: // LFO control (enable, mode)
-        break;
+	case 0x07: // Noise control (enable, frequency)
+	case 0x08: // LFO frequency
+	case 0x09: // LFO control (enable, mode)
+		break;
 
-    default:
-        break;
-    }
+	default:
+		break;
+	}
 }
 
 void PSG_HuC6280::update(int16* samples, int sampleCnt) {
-    static const int scale_tab[] = {
-        0x00, 0x03, 0x05, 0x07, 0x09, 0x0B, 0x0D, 0x0F,
-        0x10, 0x13, 0x15, 0x17, 0x19, 0x1B, 0x1D, 0x1F
-    };
-    int ch;
-    int i;
+	static const int scale_tab[] = {
+		0x00, 0x03, 0x05, 0x07, 0x09, 0x0B, 0x0D, 0x0F,
+		0x10, 0x13, 0x15, 0x17, 0x19, 0x1B, 0x1D, 0x1F
+	};
+	int ch;
+	int i;
 
-    int lmal = (_balance >> 4) & 0x0F;
-    int rmal = (_balance >> 0) & 0x0F;
-    int vll, vlr;
+	int lmal = (_balance >> 4) & 0x0F;
+	int rmal = (_balance >> 0) & 0x0F;
+	int vll, vlr;
 
-    lmal = scale_tab[lmal];
-    rmal = scale_tab[rmal];
+	lmal = scale_tab[lmal];
+	rmal = scale_tab[rmal];
 
-    // Clear buffer
+	// Clear buffer
 	memset(samples, 0, 2 * sampleCnt * sizeof(int16));
 
-    for(ch = 0; ch < 6; ch++) {
-        // Only look at enabled channels
-        if(_channel[ch].control & 0x80) {
-            int lal = (_channel[ch].balance >> 4) & 0x0F;
-            int ral = (_channel[ch].balance >> 0) & 0x0F;
-            int al  = _channel[ch].control & 0x1F;
+	for(ch = 0; ch < 6; ch++) {
+		// Only look at enabled channels
+		if(_channel[ch].control & 0x80) {
+			int lal = (_channel[ch].balance >> 4) & 0x0F;
+			int ral = (_channel[ch].balance >> 0) & 0x0F;
+			int al  = _channel[ch].control & 0x1F;
 
-            lal = scale_tab[lal];
-            ral = scale_tab[ral];
+			lal = scale_tab[lal];
+			ral = scale_tab[ral];
 
-            // Calculate volume just as the patent says
-            vll = (0x1F - lal) + (0x1F - al) + (0x1F - lmal);
-            if(vll > 0x1F) vll = 0x1F;
+			// Calculate volume just as the patent says
+			vll = (0x1F - lal) + (0x1F - al) + (0x1F - lmal);
+			if(vll > 0x1F) vll = 0x1F;
 
-            vlr = (0x1F - ral) + (0x1F - al) + (0x1F - rmal);
-            if(vlr > 0x1F) vlr = 0x1F;
+			vlr = (0x1F - ral) + (0x1F - al) + (0x1F - rmal);
+			if(vlr > 0x1F) vlr = 0x1F;
 
-            vll = _volumeTable[vll];
-            vlr = _volumeTable[vlr];
+			vll = _volumeTable[vll];
+			vlr = _volumeTable[vlr];
 
-            // Check channel mode
-            if(_channel[ch].control & 0x40) {
-                /* DDA mode */
-                for(i = 0; i < sampleCnt; i++) {
-                    samples[2*i]     += (int16)(vll * (_channel[ch].dda - 16));
-                    samples[2*i + 1] += (int16)(vlr * (_channel[ch].dda - 16));
-                }
-            } else {
-                /* Waveform mode */
-                uint32 step = _waveFreqTable[_channel[ch].frequency];
-                for(i = 0; i < sampleCnt; i += 1) {
-                    int offset;
-                    int16 data;
-                    offset = (_channel[ch].counter >> 12) & 0x1F;
-                    _channel[ch].counter += step;
-                    _channel[ch].counter &= 0x1FFFF;
-                    data = _channel[ch].waveform[offset];
-                    samples[2*i]     += (int16)(vll * (data - 16));
-                    samples[2*i + 1] += (int16)(vlr * (data - 16));
-                }
-            }
-        }
-    }
+			// Check channel mode
+			if(_channel[ch].control & 0x40) {
+				/* DDA mode */
+				for(i = 0; i < sampleCnt; i++) {
+					samples[2*i]     += (int16)(vll * (_channel[ch].dda - 16));
+					samples[2*i + 1] += (int16)(vlr * (_channel[ch].dda - 16));
+				}
+			} else {
+				/* Waveform mode */
+				uint32 step = _waveFreqTable[_channel[ch].frequency];
+				for(i = 0; i < sampleCnt; i += 1) {
+					int offset;
+					int16 data;
+					offset = (_channel[ch].counter >> 12) & 0x1F;
+					_channel[ch].counter += step;
+					_channel[ch].counter &= 0x1FFFF;
+					data = _channel[ch].waveform[offset];
+					samples[2*i]     += (int16)(vll * (data - 16));
+					samples[2*i + 1] += (int16)(vlr * (data - 16));
+				}
+			}
+		}
+	}
 }
 
 
@@ -466,7 +466,7 @@ void Player_PCE::procA541(channel_t *channel) {
 	channel->controlVec24 = false;
 	channel->controlVec21 = 0;
 
-    channel->waveformCtrl = 0x80;
+	channel->waveformCtrl = 0x80;
 }
 
 // A592

@@ -1087,10 +1087,10 @@ void AkosRenderer::akos16SetupBitReader(const byte *src) {
 }
 
 #define AKOS16_FILL_BITS()                                        \
-        if (_akos16.numbits <= 8) {                                \
-          _akos16.bits |= (*_akos16.dataptr++) << _akos16.numbits;   \
-          _akos16.numbits += 8;                                    \
-        }
+		if (_akos16.numbits <= 8) {                                \
+		  _akos16.bits |= (*_akos16.dataptr++) << _akos16.numbits;   \
+		  _akos16.numbits += 8;                                    \
+		}
 
 #define AKOS16_EAT_BITS(n)                                        \
 		_akos16.numbits -= (n);                                    \

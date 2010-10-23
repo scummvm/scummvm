@@ -1618,20 +1618,20 @@ IMPLEMENT_FUNCTION(36, Anna, function36)
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(37, Anna, function37)
-  switch (savepoint.action) {
-  default:
-	break;
+	switch (savepoint.action) {
+	default:
+		break;
 
-  case kActionDefault:
-	getData()->entityPosition = kPosition_8200;
-	getData()->location = kLocationOutsideCompartment;
-	getData()->car = kCarRedSleeping;
-	break;
+	case kActionDefault:
+		getData()->entityPosition = kPosition_8200;
+		getData()->location = kLocationOutsideCompartment;
+		getData()->car = kCarRedSleeping;
+		break;
 
-  case kAction191477936:
-	setup_function38();
-	break;
-  }
+	case kAction191477936:
+		setup_function38();
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -2449,7 +2449,7 @@ IMPLEMENT_FUNCTION(53, Anna, function53)
 		}
 
 		setCallback(savepoint.action == kActionKnock ? 3 : 4);
-		setup_playSound(savepoint.action == kActionKnock ?  "LIB012" : "LIB013");
+		setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
 		break;
 
 	case kActionDefault:
@@ -2595,7 +2595,7 @@ IMPLEMENT_FUNCTION(54, Anna, function54)
 		}
 
 		setCallback(savepoint.action == kActionKnock ? 3 : 4);
-		setup_playSound(savepoint.action == kActionKnock ?  "LIB012" : "LIB013");
+		setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
 		break;
 
 	case kActionDefault:
@@ -3199,7 +3199,7 @@ IMPLEMENT_FUNCTION(64, Anna, baggage)
 
 			if (params->param1)
 				getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, params->param1 == Fight::kFightEndLost);
-			else  {
+			else {
 				getState()->time += 1800;
 
 				setCallback(3);

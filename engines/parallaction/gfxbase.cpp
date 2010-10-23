@@ -322,7 +322,7 @@ void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *sur
 	uint line = 0, col = 0;
 
 	uint xAccum = 0, yAccum = 0;
-    uint inc = width * (100 - scale);
+	uint inc = width * (100 - scale);
 	uint thr = width * 100;
 
 	for (uint16 i = 0; i < srcRect.height(); i++) {

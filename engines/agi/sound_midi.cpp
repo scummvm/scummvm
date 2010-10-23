@@ -294,7 +294,7 @@ static uint32 convertSND2MIDI(byte *snddata, byte **data) {
 
 	for (n = 0; n < 3; n++) {
 		uint16 start, end, pos;
-        
+
 		st.write("MTrk", 4);
 		lp = st.pos();
 		st.writeUint32BE(0);        /* chunklength */

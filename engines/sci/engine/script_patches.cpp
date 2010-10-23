@@ -101,8 +101,8 @@ const uint16 castlebrainPatchCipherPuzzle[] = {
 
 //    script, description,                                      magic DWORD,                             adjust
 const SciScriptSignature castlebrainSignatures[] = {
-    {    391, "cipher puzzle save/restore break",            1, PATCH_MAGICDWORD(0xa3, 0x26, 0xa3, 0x25),    -2, castlebrainSignatureCipherPuzzle, castlebrainPatchCipherPuzzle },
-    SCI_SIGNATUREENTRY_TERMINATOR
+	{    391, "cipher puzzle save/restore break",            1, PATCH_MAGICDWORD(0xa3, 0x26, 0xa3, 0x25),    -2, castlebrainSignatureCipherPuzzle, castlebrainPatchCipherPuzzle },
+	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -167,8 +167,8 @@ const uint16 ecoquest1PatchStayAndHelp[] = {
 
 //    script, description,                                      magic DWORD,                                 adjust
 const SciScriptSignature ecoquest1Signatures[] = {
-    {    660, "CD: bad messagebox and freeze",               1, PATCH_MAGICDWORD(0x38, 0x22, 0x01, 0x78),   -17, ecoquest1SignatureStayAndHelp, ecoquest1PatchStayAndHelp },
-    SCI_SIGNATUREENTRY_TERMINATOR
+	{    660, "CD: bad messagebox and freeze",               1, PATCH_MAGICDWORD(0x38, 0x22, 0x01, 0x78),   -17, ecoquest1SignatureStayAndHelp, ecoquest1PatchStayAndHelp },
+	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -229,8 +229,8 @@ const uint16 ecoquest2PatchEcorder[] = {
 
 //    script, description,                                      magic DWORD,                                 adjust
 const SciScriptSignature ecoquest2Signatures[] = {
-    {     50, "initial text not removed on ecorder",         1, PATCH_MAGICDWORD(0x39, 0x64, 0x39, 0x7d),    -8, ecoquest2SignatureEcorder, ecoquest2PatchEcorder },
-    SCI_SIGNATUREENTRY_TERMINATOR
+	{     50, "initial text not removed on ecorder",         1, PATCH_MAGICDWORD(0x39, 0x64, 0x39, 0x7d),    -8, ecoquest2SignatureEcorder, ecoquest2PatchEcorder },
+	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -322,10 +322,10 @@ const uint16 freddypharkasPatchLadderEvent[] = {
 
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature freddypharkasSignatures[] = {
-    {      0, "CD: score early disposal",                    1, PATCH_MAGICDWORD(0x39, 0x0d, 0x43, 0x75),    -3, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
-    {    235, "CD: cannister pickup hang",                   3, PATCH_MAGICDWORD(0x39, 0x07, 0x39, 0x08),    -4, freddypharkasSignatureCannisterHang, freddypharkasPatchCannisterHang },
-    {    320, "ladder event issue",                          2, PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
-    SCI_SIGNATUREENTRY_TERMINATOR
+	{      0, "CD: score early disposal",                    1, PATCH_MAGICDWORD(0x39, 0x0d, 0x43, 0x75),    -3, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
+	{    235, "CD: cannister pickup hang",                   3, PATCH_MAGICDWORD(0x39, 0x07, 0x39, 0x08),    -4, freddypharkasSignatureCannisterHang, freddypharkasPatchCannisterHang },
+	{    320, "ladder event issue",                          2, PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
+	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -396,10 +396,10 @@ const uint16 gk1PatchDay5PhoneFreeze[] = {
 
 //    script, description,                                      magic DWORD,                                 adjust
 const SciScriptSignature gk1Signatures[] = {
-    {    212, "day 5 phone freeze",                          1, PATCH_MAGICDWORD(0x35, 0x03, 0x65, 0x1a),     0, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
-    {    230, "day 6 police beignet timer issue",            1, PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),   -16, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
-    {    230, "day 6 police sleep timer issue",              1, PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),    -5, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },
-    SCI_SIGNATUREENTRY_TERMINATOR
+	{    212, "day 5 phone freeze",                          1, PATCH_MAGICDWORD(0x35, 0x03, 0x65, 0x1a),     0, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
+	{    230, "day 6 police beignet timer issue",            1, PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),   -16, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
+	{    230, "day 6 police sleep timer issue",              1, PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),    -5, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },
+	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -518,8 +518,8 @@ const uint16 kq5PatchCdHarpyVolume[] = {
 
 //    script, description,                                      magic DWORD,                                 adjust
 const SciScriptSignature kq5Signatures[] = {
-    {      0, "CD: harpy volume change",                     1, PATCH_MAGICDWORD(0x80, 0x91, 0x01, 0x18),     0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
-    SCI_SIGNATUREENTRY_TERMINATOR
+	{      0, "CD: harpy volume change",                     1, PATCH_MAGICDWORD(0x80, 0x91, 0x01, 0x18),     0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
+	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -569,8 +569,8 @@ const uint16 larry6PatchDeathDialog[] = {
 
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature larry6Signatures[] = {
-    {     82, "death dialog memory corruption",              1, PATCH_MAGICDWORD(0x3e, 0x33, 0x01, 0x35),     0, larry6SignatureDeathDialog, larry6PatchDeathDialog },
-    SCI_SIGNATUREENTRY_TERMINATOR
+	{     82, "death dialog memory corruption",              1, PATCH_MAGICDWORD(0x3e, 0x33, 0x01, 0x35),     0, larry6SignatureDeathDialog, larry6PatchDeathDialog },
+	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -600,8 +600,8 @@ const uint16 laurabow2PatchPaintingClosing[] = {
 
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature laurabow2Signatures[] = {
-    {    560, "painting closing immediately",                1, PATCH_MAGICDWORD(0x36, 0x81, 0x0b, 0x1c),    -2, laurabow2SignaturePaintingClosing, laurabow2PatchPaintingClosing },
-    SCI_SIGNATUREENTRY_TERMINATOR
+	{    560, "painting closing immediately",                1, PATCH_MAGICDWORD(0x36, 0x81, 0x0b, 0x1c),    -2, laurabow2SignaturePaintingClosing, laurabow2PatchPaintingClosing },
+	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -642,10 +642,10 @@ const uint16 mothergoose256PatchSaveLimit[] = {
 
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature mothergoose256Signatures[] = {
-    {      0, "replay save issue",                           1, PATCH_MAGICDWORD(0x20, 0x04, 0xa1, 0xb3),    -2, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
-    {      0, "save limit dialog (SCI1.1)",                  1, PATCH_MAGICDWORD(0xb3, 0x35, 0x0d, 0x20),    -1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
-    {    994, "save limit dialog (SCI1)",                    1, PATCH_MAGICDWORD(0xb3, 0x35, 0x0d, 0x20),    -1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
-    SCI_SIGNATUREENTRY_TERMINATOR
+	{      0, "replay save issue",                           1, PATCH_MAGICDWORD(0x20, 0x04, 0xa1, 0xb3),    -2, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
+	{      0, "save limit dialog (SCI1.1)",                  1, PATCH_MAGICDWORD(0xb3, 0x35, 0x0d, 0x20),    -1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
+	{    994, "save limit dialog (SCI1)",                    1, PATCH_MAGICDWORD(0xb3, 0x35, 0x0d, 0x20),    -1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
+	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -699,9 +699,9 @@ const uint16 qfg1vgaPatchFightEvents[] = {
 
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg1vgaSignatures[] = {
-    {    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents, qfg1vgaPatchFightEvents },
-    {    216, "weapon master event issue",                   1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents, qfg1vgaPatchFightEvents },
-    SCI_SIGNATUREENTRY_TERMINATOR
+	{    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents, qfg1vgaPatchFightEvents },
+	{    216, "weapon master event issue",                   1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents, qfg1vgaPatchFightEvents },
+	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -729,8 +729,8 @@ const uint16 sq4FloppyPatchEndlessFlight[] = {
 
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature sq4Signatures[] = {
-    {    298, "Floppy: endless flight",                      1, PATCH_MAGICDWORD(0x67, 0x08, 0x63, 0x44),    -3, sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
-    SCI_SIGNATUREENTRY_TERMINATOR
+	{    298, "Floppy: endless flight",                      1, PATCH_MAGICDWORD(0x67, 0x08, 0x63, 0x44),    -3, sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
+	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
@@ -777,8 +777,8 @@ const uint16 sq5PatchScrubbing[] = {
 
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature sq5Signatures[] = {
-    {    119, "scrubbing send crash",                        1, PATCH_MAGICDWORD(0x18, 0x31, 0x37, 0x78),     0, sq5SignatureScrubbing, sq5PatchScrubbing },
-    SCI_SIGNATUREENTRY_TERMINATOR
+	{    119, "scrubbing send crash",                        1, PATCH_MAGICDWORD(0x18, 0x31, 0x37, 0x78),     0, sq5SignatureScrubbing, sq5PatchScrubbing },
+	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 

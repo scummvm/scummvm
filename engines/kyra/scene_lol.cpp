@@ -1618,7 +1618,7 @@ void LoLEngine::generateBlockDrawingBuffer() {
 	_sceneDrawVarLeft = _dscBlockMap[_currentDirection + 8];
 
 	/*******************************************
-    *             _visibleBlocks map           *
+	*             _visibleBlocks map           *
 	*                                          *
 	*     |     |     |     |     |     |      *
 	*  00 |  01 |  02 |  03 |  04 |  05 |  06  *

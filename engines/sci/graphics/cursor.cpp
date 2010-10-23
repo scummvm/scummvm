@@ -281,10 +281,10 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 //  ffs. GfxCursor::setPosition (below)
 //    Game,            newPosition, validRect
 static const SciCursorSetPositionWorkarounds setPositionWorkarounds[] = {
-    { GID_ISLANDBRAIN, 84, 109,     46, 76, 174, 243 }, // island of dr. brain / game menu
-    { GID_LSL5,        23, 171,     0, 0, 26, 320 },    // larry 5 / skip forward helper
-    { GID_QFG1VGA,     64, 174,     40, 37, 74, 284 },  // Quest For Glory 1 VGA / run/walk/sleep sub-menu
-    { (SciGameId)0,    -1, -1,     -1, -1, -1, -1 }
+	{ GID_ISLANDBRAIN, 84, 109,     46, 76, 174, 243 }, // island of dr. brain / game menu
+	{ GID_LSL5,        23, 171,     0, 0, 26, 320 },    // larry 5 / skip forward helper
+	{ GID_QFG1VGA,     64, 174,     40, 37, 74, 284 },  // Quest For Glory 1 VGA / run/walk/sleep sub-menu
+	{ (SciGameId)0,    -1, -1,     -1, -1, -1, -1 }
 };
 
 void GfxCursor::setPosition(Common::Point pos) {
