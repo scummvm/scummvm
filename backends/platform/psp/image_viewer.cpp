@@ -27,13 +27,16 @@
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/archive.h"
+#include "common/events.h"
 #include "common/ptr.h"
 #include "gui/message.h"
 #include "engines/engine.h"
 #include "backends/platform/psp/input.h"
+#include "backends/platform/psp/display_manager.h"
 #include "backends/platform/psp/display_client.h"
 #include "backends/platform/psp/image_viewer.h" 
 #include "backends/platform/psp/png_loader.h" 
+#include "backends/platform/psp/thread.h"
 
 static const char *imageName = "psp_image";
 #define PSP_SCREEN_HEIGHT 272
@@ -112,13 +115,13 @@ void ImageViewer::setConstantRendererOptions() {
 }
 
 void ImageViewer::unload() {
+	_init = false;
 	delete _buffer;
 	delete _palette;
 	delete _renderer;
 	_buffer = 0;
 	_palette = 0;
 	_renderer = 0;
-	_init = false;
 }
 
 void ImageViewer::resetOnEngineDone() {
@@ -127,29 +130,44 @@ void ImageViewer::resetOnEngineDone() {
 
 void ImageViewer::setVisible(bool visible) {
 	DEBUG_ENTER_FUNC();
+	
 	if (_visible == visible)
 		return;
-
-	if (!g_engine)			// we can only run the image viewer when there's an engine
-		return;				// otherwise we won't know where to open the image
 			
 	// from here on, we're making the loader visible
-	if (visible && load(_imageNum ? _imageNum : 1))	{ // load the 1st image or the current
-		g_engine->pauseEngine(true);	
+	if (visible && g_engine) {	// we can only run the image viewer when there's an engine
+		g_engine->pauseEngine(true);
+		
+		load(_imageNum ? _imageNum : 1); 	// load the 1st image or the current
+	}
+
+	if (visible && _init) {	// we managed to load
 		_visible = true;
-		setDirty();
 		setViewerButtons(true);
 		
 		GUI::TimedMessageDialog dialog("Image Viewer", 1000);
 		dialog.runModal();
-	} else {	// all other cases
+		
+		runLoop();	// only listen to viewer events
+	} else {	// we were asked to make invisible or failed to load
 		_visible = false;
-		setDirty();
 		unload();
 		setViewerButtons(false);
 		
-		if (g_engine->isPaused())
+		if (g_engine && g_engine->isPaused())
 			g_engine->pauseEngine(false);
+	}
+	setDirty();
+}
+
+// This is the only way we can truly pause the games
+// Sad but true.
+void ImageViewer::runLoop() {
+	while (_visible) {
+		Common::Event event;
+		PspThread::delayMillis(30);
+		_inputHandler->getAllInputs(event);
+		_displayManager->renderAll();
 	}
 }
 
@@ -191,27 +209,29 @@ void ImageViewer::setFullScreenImageParams() {
 }
 
 void ImageViewer::render() {
-	assert(_buffer);
-	assert(_renderer);
+	if (_init) {
+		assert(_buffer);
+		assert(_renderer);
 
-	// move the image slightly. Note that we count on the renderer's timing
-	switch (_movement) {
-	case EVENT_MOVE_LEFT:
-		moveImageX(-2);
-		break;
-	case EVENT_MOVE_UP:
-		moveImageY(-2);
-		break;
-	case EVENT_MOVE_RIGHT:
-		moveImageX(2);
-		break;
-	case EVENT_MOVE_DOWN:
-		moveImageY(2);
-		break;
-	default:
-		break;
-	}
-	_renderer->render();
+		// move the image slightly. Note that we count on the renderer's timing
+		switch (_movement) {
+		case EVENT_MOVE_LEFT:
+			moveImageX(-2);
+			break;
+		case EVENT_MOVE_UP:
+			moveImageY(-2);
+			break;
+		case EVENT_MOVE_RIGHT:
+			moveImageX(2);
+			break;
+		case EVENT_MOVE_DOWN:
+			moveImageY(2);
+			break;
+		default:
+			break;
+		}
+		_renderer->render();
+	}	
 }
 
 void ImageViewer::modifyZoom(bool up) {

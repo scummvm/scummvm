@@ -87,6 +87,7 @@ void OSystem_PSP::initBackend() {
 	
 	// Set pointers for image viewer
 	_imageViewer.setInputHandler(&_inputHandler);
+	_imageViewer.setDisplayManager(&_displayManager);
 
 	_savefile = new PSPSaveFileManager;
 
