@@ -124,8 +124,7 @@ static const int IHNMTextStringIdsLUT[56] = {
 #define buttonRes1 0x42544E01
 
 Interface::Interface(SagaEngine *vm) : _vm(vm) {
-	byte *resource;
-	size_t resourceLength;
+	ByteArray resourceData;
 	int i;
 
 #if 0
@@ -170,27 +169,23 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		}
 	}
 
-	_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->mainPanelResourceId, resource, resourceLength);
-	_vm->decodeBGImage(resource, resourceLength, _mainPanel.image, &_mainPanel.imageWidth, &_mainPanel.imageHeight);
-
-	free(resource);
+	_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->mainPanelResourceId, resourceData);
+	_vm->decodeBGImage(resourceData, _mainPanel.image, &_mainPanel.imageWidth, &_mainPanel.imageHeight);
 
 	// Converse panel
 	_conversePanel.buttons = _vm->getDisplayInfo().conversePanelButtons;
 	_conversePanel.buttonsCount = _vm->getDisplayInfo().conversePanelButtonsCount;
 
-	_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->conversePanelResourceId, resource, resourceLength);
-	_vm->decodeBGImage(resource, resourceLength, _conversePanel.image, &_conversePanel.imageWidth, &_conversePanel.imageHeight);
-	free(resource);
+	_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->conversePanelResourceId, resourceData);
+	_vm->decodeBGImage(resourceData, _conversePanel.image, &_conversePanel.imageWidth, &_conversePanel.imageHeight);
 
 	// Option panel
 	if (!_vm->_script->isNonInteractiveDemo()) {
 		_optionPanel.buttons = _vm->getDisplayInfo().optionPanelButtons;
 		_optionPanel.buttonsCount = _vm->getDisplayInfo().optionPanelButtonsCount;
 
-		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->optionPanelResourceId, resource, resourceLength);
-		_vm->decodeBGImage(resource, resourceLength, _optionPanel.image, &_optionPanel.imageWidth, &_optionPanel.imageHeight);
-		free(resource);
+		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->optionPanelResourceId, resourceData);
+		_vm->decodeBGImage(resourceData, _optionPanel.image, &_optionPanel.imageWidth, &_optionPanel.imageHeight);
 	} else {
 		_optionPanel.buttons = NULL;
 		_optionPanel.buttonsCount = 0;
@@ -203,9 +198,8 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		_quitPanel.buttons = _vm->getDisplayInfo().quitPanelButtons;
 		_quitPanel.buttonsCount = _vm->getDisplayInfo().quitPanelButtonsCount;
 
-		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->warningPanelResourceId, resource, resourceLength);
-		_vm->decodeBGImage(resource, resourceLength, _quitPanel.image, &_quitPanel.imageWidth, &_quitPanel.imageHeight);
-		free(resource);
+		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->warningPanelResourceId, resourceData);
+		_vm->decodeBGImage(resourceData, _quitPanel.image, &_quitPanel.imageWidth, &_quitPanel.imageHeight);
 	}
 
 	// Save panel
@@ -213,9 +207,8 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		_savePanel.buttons = _vm->getDisplayInfo().savePanelButtons;
 		_savePanel.buttonsCount = _vm->getDisplayInfo().savePanelButtonsCount;
 
-		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->warningPanelResourceId, resource, resourceLength);
-		_vm->decodeBGImage(resource, resourceLength, _savePanel.image, &_savePanel.imageWidth, &_savePanel.imageHeight);
-		free(resource);
+		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->warningPanelResourceId, resourceData);
+		_vm->decodeBGImage(resourceData, _savePanel.image, &_savePanel.imageWidth, &_savePanel.imageHeight);
 	}
 
 	// Load panel
@@ -223,9 +216,8 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		_loadPanel.buttons = _vm->getDisplayInfo().loadPanelButtons;
 		_loadPanel.buttonsCount = _vm->getDisplayInfo().loadPanelButtonsCount;
 
-		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->warningPanelResourceId, resource, resourceLength);
-		_vm->decodeBGImage(resource, resourceLength, _loadPanel.image, &_loadPanel.imageWidth, &_loadPanel.imageHeight);
-		free(resource);
+		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->warningPanelResourceId, resourceData);
+		_vm->decodeBGImage(resourceData, _loadPanel.image, &_loadPanel.imageWidth, &_loadPanel.imageHeight);
 	}
 #endif
 
@@ -2695,8 +2687,7 @@ void Interface::loadState(Common::InSaveFile *in) {
 
 void Interface::mapPanelShow() {
 	int i;
-	byte *resource;
-	size_t resourceLength;
+	ByteArray resourceData;
 	Rect rect;
 	ByteArray image;
 	int imageWidth, imageHeight;
@@ -2707,9 +2698,8 @@ void Interface::mapPanelShow() {
 
 	rect.left = rect.top = 0;
 
-	_vm->_resource->loadResource(_interfaceContext,
-			 _vm->_resource->convertResourceId(RID_ITE_TYCHO_MAP), resource, resourceLength);
-	if (resourceLength == 0) {
+	_vm->_resource->loadResource(_interfaceContext, _vm->_resource->convertResourceId(RID_ITE_TYCHO_MAP), resourceData);
+	if (resourceData.empty()) {
 		error("Interface::mapPanelShow() unable to load Tycho map resource");
 	}
 
@@ -2723,8 +2713,8 @@ void Interface::mapPanelShow() {
 
 	_vm->_render->setFlag(RF_MAP);
 
-	_vm->decodeBGImage(resource, resourceLength, image, &imageWidth, &imageHeight);
-	pal = _vm->getImagePal(resource, resourceLength);
+	_vm->decodeBGImage(resourceData, image, &imageWidth, &imageHeight);
+	pal = _vm->getImagePal(resourceData);
 
 	for (i = 0; i < PAL_ENTRIES; i++) {
 		cPal[i].red = *pal++;
@@ -2744,7 +2734,6 @@ void Interface::mapPanelShow() {
 		_vm->_system->delayMillis(5);
 	}
 
-	free(resource);
 
 	setSaveReminderState(false);
 
@@ -2801,8 +2790,7 @@ void Interface::keyBoss() {
 	_vm->_music->pause();
 
 	int i;
-	byte *resource;
-	size_t resourceLength;
+	ByteArray resourceData;
 	Rect rect;
 	ByteArray image;
 	int imageWidth, imageHeight;
@@ -2813,20 +2801,20 @@ void Interface::keyBoss() {
 
 	rect.left = rect.top = 0;
 
-	_vm->_resource->loadResource(_interfaceContext, RID_IHNM_BOSS_SCREEN, resource, resourceLength);
-	if (resourceLength == 0) {
+	_vm->_resource->loadResource(_interfaceContext, RID_IHNM_BOSS_SCREEN, resourceData);
+	if (resourceData.empty()) {
 		error("Interface::bossKey() unable to load Boss image resource");
 	}
 
 	_bossMode = _panelMode;
 	setMode(kPanelBoss);
 
-	_vm->decodeBGImage(resource, resourceLength, image, &imageWidth, &imageHeight);
+	_vm->decodeBGImage(resourceData, image, &imageWidth, &imageHeight);
 	rect.setWidth(imageWidth);
 	rect.setHeight(imageHeight);
 
 	_vm->_gfx->getCurrentPal(_mapSavedPal);
-	pal = _vm->getImagePal(resource, resourceLength);
+	pal = _vm->getImagePal(resourceData);
 
 	cPal[0].red = 0;
 	cPal[0].green = 0;
@@ -2841,8 +2829,6 @@ void Interface::keyBoss() {
 	_vm->_gfx->drawRegion(rect, image.getBuffer());
 
 	_vm->_gfx->setPalette(cPal);
-
-	free(resource);
 }
 
 

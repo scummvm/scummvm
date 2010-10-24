@@ -97,7 +97,7 @@ public:
 	Anim(SagaEngine *vm);
 	~Anim();
 
-	void loadCutawayList(const byte *resourcePointer, size_t resourceLength);
+	void loadCutawayList(const ByteArray &resourceData);
 	void clearCutawayList();
 	int playCutaway(int cut, bool fade);
 	void endCutaway();
@@ -109,7 +109,7 @@ public:
 	void endVideo();
 	void returnFromVideo();
 
-	void load(uint16 animId, const byte *animResourceData, size_t animResourceLength);
+	void load(uint16 animId, const ByteArray &resourceData);
 	void freeId(uint16 animId);
 	void play(uint16 animId, int vectorTime, bool playing = true);
 	void link(int16 animId1, int16 animId2);

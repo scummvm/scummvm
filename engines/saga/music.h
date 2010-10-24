@@ -125,11 +125,12 @@ private:
 	ResourceContext *_digitalMusicContext;
 	MidiParser *_parser;
 
-	byte *_midiMusicData;
 
 	static void musicVolumeGaugeCallback(void *refCon);
 	static void onTimer(void *refCon);
 	void musicVolumeGauge();
+	ByteArray *_currentMusicBuffer;
+	ByteArray _musicBuffer[2];
 };
 
 } // End of namespace Saga

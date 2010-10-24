@@ -356,18 +356,17 @@ int Events::handleOneShot(Event *event) {
 		{
 		ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
 
-		byte *resourceData;
-		size_t resourceDataLength;
+		ByteArray resourceData;
 
-		_vm->_resource->loadResource(context, _vm->getResourceDescription()->psychicProfileResourceId, resourceData, resourceDataLength);
+		_vm->_resource->loadResource(context, _vm->getResourceDescription()->psychicProfileResourceId, resourceData);
 
 		ByteArray image;
 		int width;
 		int height;
 
-		_vm->decodeBGImage(resourceData, resourceDataLength, image, &width, &height);
+		_vm->decodeBGImage(resourceData, image, &width, &height);
 
-		const PalEntry *palette = (const PalEntry *)_vm->getImagePal(resourceData, resourceDataLength);
+		const PalEntry *palette = (const PalEntry *)_vm->getImagePal(resourceData);
 
 		const Rect profileRect(width, height);
 
@@ -376,8 +375,6 @@ int Events::handleOneShot(Event *event) {
 		_vm->_frameCount++;
 
 		_vm->_gfx->setPalette(palette);
-
-		free(resourceData);
 
 		// Draw the scene. It won't be drawn by Render::drawScene(), as a placard is up
 		_vm->_scene->draw();

@@ -92,7 +92,7 @@ class ObjectMap {
 public:
 	ObjectMap(SagaEngine *vm) : _vm(vm) {
 	}
-	void load(const byte *resourcePointer, size_t resourceLength);
+	void load(const ByteArray &resourceData);
 	void clear();
 #ifdef SAGA_DEBUG
 	void draw(const Point& testPoint, int color, int color2);	// for debugging

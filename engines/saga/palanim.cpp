@@ -37,15 +37,15 @@ namespace Saga {
 PalAnim::PalAnim(SagaEngine *vm) : _vm(vm) {
 }
 
-void PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
+void PalAnim::loadPalAnim(const ByteArray &resourceData) {
 
 	clear();
 
-	if (resdata == NULL) {
+	if (resourceData.empty()) {
 		return;
 	}
 
-	MemoryReadStreamEndian readS(resdata, resdata_len, _vm->isBigEndian());
+	ByteArrayReadStreamEndian readS(resourceData, _vm->isBigEndian());
 
 	if (_vm->getGameId() == GID_IHNM) {
 		return;

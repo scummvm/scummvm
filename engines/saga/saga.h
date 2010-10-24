@@ -464,8 +464,21 @@ public:
 	 * Return a pointer to the start of the buffer underlying this byte array,
 	 * or NULL if the buffer is empty.
 	 */
-	byte *getBuffer() {
-		return empty() ? NULL : &front();
+	byte *getBuffer() const {
+		return empty() ? NULL : (byte *)&front();
+	}
+
+	void assign(const ByteArray &src) {
+		resize(src.size());
+		if (!empty()) {
+			memcpy(&front(), &src.front(), size());
+		}
+	}
+};
+
+class ByteArrayReadStreamEndian : public MemoryReadStreamEndian {
+public:
+	ByteArrayReadStreamEndian(const ByteArray & byteArray, bool bigEndian = false) : MemoryReadStreamEndian(byteArray.getBuffer(), byteArray.size(), bigEndian) {
 	}
 };
 
@@ -553,9 +566,15 @@ private:
 	uint32 _previousTicks;
 
 public:
-	bool decodeBGImage(const byte *image_data, size_t image_size, ByteArray &outputBuffer, int *w, int *h, bool flip = false);
-	const byte *getImagePal(const byte *image_data, size_t image_size);
-	void loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength);
+	bool decodeBGImage(const ByteArray &imageData, ByteArray &outputBuffer, int *w, int *h, bool flip = false);
+	const byte *getImagePal(const ByteArray &imageData) {
+		if (imageData.size() <= SAGA_IMAGE_HEADER_LEN) {
+			return NULL;
+		}
+
+		return &imageData.front() + SAGA_IMAGE_HEADER_LEN;
+	}
+	void loadStrings(StringsTable &stringsTable, const ByteArray &stringsData);
 
 	const char *getObjectName(uint16 objectId) const;
 public:

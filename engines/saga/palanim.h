@@ -42,7 +42,7 @@ class PalAnim {
  public:
 	PalAnim(SagaEngine *vm);
 
-	void loadPalAnim(const byte *, size_t);
+	void loadPalAnim(const ByteArray &resourceData);
 	void cycleStart();
 	void cycleStep(int vectortime);
 	void clear();

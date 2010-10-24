@@ -47,18 +47,18 @@ static int granulate(int value, int granularity) {
 	}
 }
 
-bool SagaEngine::decodeBGImage(const byte *image_data, size_t image_size, ByteArray &outputBuffer, int *w, int *h, bool flip) {
+bool SagaEngine::decodeBGImage(const ByteArray &imageData, ByteArray &outputBuffer, int *w, int *h, bool flip) {
 	ImageHeader hdr;
 	int modex_height;
 	const byte *RLE_data_ptr;
 	size_t RLE_data_len;
 	ByteArray decodeBuffer;
 
-	if (image_size <= SAGA_IMAGE_DATA_OFFSET) {
-		error("decodeBGImage() Image size is way too small (%d)", (int)image_size);
+	if (imageData.size() <= SAGA_IMAGE_DATA_OFFSET) {
+		error("decodeBGImage() Image size is way too small (%d)", (int)imageData.size());
 	}
 
-	MemoryReadStreamEndian readS(image_data, image_size, isBigEndian());
+	ByteArrayReadStreamEndian readS(imageData, isBigEndian());
 
 	hdr.width = readS.readUint16();
 	hdr.height = readS.readUint16();
@@ -66,8 +66,8 @@ bool SagaEngine::decodeBGImage(const byte *image_data, size_t image_size, ByteAr
 	readS.readUint16();
 	readS.readUint16();
 
-	RLE_data_ptr = image_data + SAGA_IMAGE_DATA_OFFSET;
-	RLE_data_len = image_size - SAGA_IMAGE_DATA_OFFSET;
+	RLE_data_ptr = &imageData.front() + SAGA_IMAGE_DATA_OFFSET;
+	RLE_data_len = imageData.size() - SAGA_IMAGE_DATA_OFFSET;
 
 	modex_height = granulate(hdr.height, 4);
 
@@ -409,14 +409,6 @@ void SagaEngine::unbankBGImage(byte *dst_buf, const byte *src_buf, int columns, 
 	default:
 		break;
 	}
-}
-
-const byte *SagaEngine::getImagePal(const byte *image_data, size_t image_size) {
-	if (image_size <= SAGA_IMAGE_HEADER_LEN) {
-		return NULL;
-	}
-
-	return image_data + SAGA_IMAGE_HEADER_LEN;
 }
 
 } // End of namespace Saga

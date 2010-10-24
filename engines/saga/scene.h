@@ -110,11 +110,10 @@ enum SAGAResourceTypes {
 struct SceneResourceData {
 	uint32 resourceId;
 	int resourceType;
-	byte *buffer;
-	size_t size;
+	ByteArray buffer;
 	bool invalid;
 
-	SceneResourceData() : resourceId(0), resourceType(0), buffer(NULL), size(0), invalid(false) {
+	SceneResourceData() : resourceId(0), resourceType(0),  invalid(false) {
 	}
 };
 
@@ -151,8 +150,6 @@ struct SceneImage {
 	int h;
 	int p;
 	ByteArray buffer;
-	byte *res_buf;
-	size_t res_len;
 	PalEntry pal[256];
 
 	SceneImage() : loaded(false), w(0), h(0), p(0) {
@@ -364,7 +361,7 @@ class Scene {
 	void loadScene(LoadSceneParams &loadSceneParams);
 	void loadSceneDescriptor(uint32 resourceId);
 	void loadSceneResourceList(uint32 resourceId);
-	void loadSceneEntryList(const byte* resourcePointer, size_t resourceLength);
+	void loadSceneEntryList(const ByteArray &resourceData);
 	void processSceneResources();
 	void getResourceTypes(SAGAResourceTypes *&types, int &typesCount);
 

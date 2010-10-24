@@ -163,22 +163,22 @@ void HitZone::draw(SagaEngine *vm, int color) {
 #endif
 
 // Loads an object map resource ( objects ( clickareas ( points ) ) )
-void ObjectMap::load(const byte *resourcePointer, size_t resourceLength) {
+void ObjectMap::load(const ByteArray &resourceData) {
 	uint i;
 
 	if (!_hitZoneList.empty()) {
 		error("ObjectMap::load _hitZoneList not empty");
 	}
 
-	if (resourceLength == 0) {
+	if (resourceData.empty()) {
 		return;
 	}
 
-	if (resourceLength < 4) {
+	if (resourceData.size() < 4) {
 		error("ObjectMap::load wrong resourceLength");
 	}
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
+	ByteArrayReadStreamEndian readS(resourceData, _vm->isBigEndian());
 
 	_hitZoneList.resize(readS.readUint16());
 

@@ -102,17 +102,17 @@ IsoMap::IsoMap(SagaEngine *vm) : _vm(vm) {
 	_viewDiff = 1;
 }
 
-void IsoMap::loadImages(const byte *resourcePointer, size_t resourceLength) {
+void IsoMap::loadImages(const ByteArray &resourceData) {
 	IsoTileData *tileData;
 	uint16 i;
 	size_t offsetDiff;
 
-	if (resourceLength == 0) {
+	if (resourceData.empty()) {
 		error("IsoMap::loadImages wrong resourceLength");
 	}
 
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
+	ByteArrayReadStreamEndian readS(resourceData, _vm->isBigEndian());
 	readS.readUint16(); // skip
 	i = readS.readUint16();
 	i = i / SAGA_ISOTILEDATA_LEN;
@@ -134,25 +134,25 @@ void IsoMap::loadImages(const byte *resourcePointer, size_t resourceLength) {
 
 	offsetDiff = readS.pos();
 
-	_tileData.resize(resourceLength - offsetDiff);
-	memcpy(_tileData.getBuffer(), resourcePointer + offsetDiff, _tileData.size());
+	_tileData.resize(resourceData.size() - offsetDiff);
+	memcpy(_tileData.getBuffer(), resourceData.getBuffer() + offsetDiff, _tileData.size());
 
 	for (i = 0; i < _tilesTable.size(); i++) {
 		_tilesTable[i].tilePointer = _tileData.getBuffer() + tempOffsets[i] - offsetDiff;
 	}
 }
 
-void IsoMap::loadPlatforms(const byte * resourcePointer, size_t resourceLength) {
+void IsoMap::loadPlatforms(const ByteArray &resourceData) {
 	TilePlatformData *tilePlatformData;
 	uint16 i, x, y;
 
-	if (resourceLength == 0) {
+	if (resourceData.empty()) {
 		error("IsoMap::loadPlatforms wrong resourceLength");
 	}
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
+	ByteArrayReadStreamEndian readS(resourceData, _vm->isBigEndian());
 
-	i = resourceLength / SAGA_TILEPLATFORMDATA_LEN;
+	i = resourceData.size() / SAGA_TILEPLATFORMDATA_LEN;
 	_tilePlatformList.resize(i);
 
 	for (i = 0; i < _tilePlatformList.size(); i++) {
@@ -171,14 +171,14 @@ void IsoMap::loadPlatforms(const byte * resourcePointer, size_t resourceLength) 
 
 }
 
-void IsoMap::loadMap(const byte * resourcePointer, size_t resourceLength) {
+void IsoMap::loadMap(const ByteArray &resourceData) {
 	uint16 x, y;
 
-	if (resourceLength != SAGA_TILEMAP_LEN) {
-		error("IsoMap::loadMap wrong resourceLength");
+	if (resourceData.size() != SAGA_TILEMAP_LEN) {
+		error("IsoMap::loadMap wrong resource length %d", resourceData.size());
 	}
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
+	ByteArrayReadStreamEndian readS(resourceData, _vm->isBigEndian());
 	_tileMap.edgeType = readS.readByte();
 	readS.readByte(); //skip
 
@@ -190,16 +190,16 @@ void IsoMap::loadMap(const byte * resourcePointer, size_t resourceLength) {
 
 }
 
-void IsoMap::loadMetaTiles(const byte * resourcePointer, size_t resourceLength) {
+void IsoMap::loadMetaTiles(const ByteArray &resourceData) {
 	MetaTileData *metaTileData;
 	uint16 i, j;
 
-	if (resourceLength == 0) {
+	if (resourceData.empty()) {
 		error("IsoMap::loadMetaTiles wrong resourceLength");
 	}
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
-	i = resourceLength / SAGA_METATILEDATA_LEN;
+	ByteArrayReadStreamEndian readS(resourceData, _vm->isBigEndian());
+	i = resourceData.size() / SAGA_METATILEDATA_LEN;
 	_metaTileList.resize(i);
 
 	for (i = 0; i < _metaTileList.size(); i++) {
@@ -212,16 +212,16 @@ void IsoMap::loadMetaTiles(const byte * resourcePointer, size_t resourceLength) 
 	}
 }
 
-void IsoMap::loadMulti(const byte * resourcePointer, size_t resourceLength) {
+void IsoMap::loadMulti(const ByteArray &resourceData) {
 	MultiTileEntryData *multiTileEntryData;
 	uint16 i;
 	int16 offsetDiff;
 
-	if (resourceLength < 2) {
+	if (resourceData.size() < 2) {
 		error("IsoMap::loadMetaTiles wrong resourceLength");
 	}
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
+	ByteArrayReadStreamEndian readS(resourceData, _vm->isBigEndian());
 	i = readS.readUint16();
 	_multiTable.resize(i);
 

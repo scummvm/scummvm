@@ -393,19 +393,19 @@ Common::Error SagaEngine::run() {
 	return Common::kNoError;
 }
 
-void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength) {
+void SagaEngine::loadStrings(StringsTable &stringsTable, const ByteArray &stringsData) {
 	uint16 stringsCount;
 	size_t offset;
 	size_t prevOffset = 0;
 	Common::Array<size_t> tempOffsets;
 	uint ui;
 
-	if (stringsLength == 0) {
+	if (stringsData.empty()) {
 		error("SagaEngine::loadStrings() Error loading strings list resource");
 	}
 
 
-	MemoryReadStreamEndian scriptS(stringsPointer, stringsLength, isBigEndian()); //TODO: get endianess from context
+	ByteArrayReadStreamEndian scriptS(stringsData, isBigEndian()); //TODO: get endianess from context
 
 	offset = scriptS.readUint16();
 	stringsCount = offset / 2;
@@ -421,12 +421,12 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 		if (prevOffset > offset)
 			offset += 65536;
 		prevOffset = offset;
-		if (offset == stringsLength) {
+		if (offset == stringsData.size()) {
 			stringsCount = ui;
 			tempOffsets.resize(stringsCount);
 			break;
 		}
-		if (offset > stringsLength) {
+		if (offset > stringsData.size()) {
 			// This case should never occur, but apparently it does in the Italian fan
 			// translation of IHNM
 			warning("SagaEngine::loadStrings wrong strings table");

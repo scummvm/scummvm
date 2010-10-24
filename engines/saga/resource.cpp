@@ -103,8 +103,6 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 	uint32 subjectResourceId;
 	uint32 patchResourceId;
 	ResourceData *subjectResourceData;
-	byte *tableBuffer;
-	size_t tableSize;
 	bool isMacBinary;
 
 	if (_fileName == NULL) { // IHNM special case
@@ -141,10 +139,12 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 		if (subjectContext == NULL) {
 			error("ResourceContext::load() Subject context not found");
 		}
-		resource->loadResource(this, _table.size() - 1, tableBuffer, tableSize);
+		ByteArray tableBuffer;
 
-		MemoryReadStreamEndian readS2(tableBuffer, tableSize, _isBigEndian);
-		for (i = 0; i < tableSize / 8; i++) {
+		resource->loadResource(this, _table.size() - 1, tableBuffer);
+
+		ByteArrayReadStreamEndian readS2(tableBuffer, _isBigEndian);
+		for (i = 0; i < tableBuffer.size() / 8; i++) {
 			subjectResourceId = readS2.readUint32();
 			patchResourceId = readS2.readUint32();
 			subjectResourceData = subjectContext->getResourceData(subjectResourceId);
@@ -153,7 +153,6 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 			subjectResourceData->offset = resourceData->offset;
 			subjectResourceData->size = resourceData->size;
 		}
-		free(tableBuffer);
 	}
 
 	//process external patch files
@@ -366,7 +365,7 @@ void Resource::clearContexts() {
 	}
 }
 
-void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&resourceBuffer, size_t &resourceSize) {
+void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArray &resourceBuffer) {
 	Common::File *file;
 	uint32 resourceOffset;
 	ResourceData *resourceData;
@@ -377,15 +376,14 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&r
 	file = context->getFile(resourceData);
 
 	resourceOffset = resourceData->offset;
-	resourceSize = resourceData->size;
 
-	debug(8, "loadResource %d 0x%X:0x%X", resourceId, resourceOffset, uint(resourceSize));
+	debug(8, "loadResource %d 0x%X:0x%X", resourceId, resourceOffset, uint(resourceData->size));
+	resourceBuffer.resize(resourceData->size);
 
-	resourceBuffer = (byte*)malloc(resourceSize);
 
 	file->seek((long)resourceOffset, SEEK_SET);
 
-	if (file->read(resourceBuffer, resourceSize) != resourceSize) {
+	if (file->read(resourceBuffer.getBuffer(), resourceBuffer.size()) != resourceBuffer.size()) {
 		error("Resource::loadResource() failed to read");
 	}
 

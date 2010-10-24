@@ -74,29 +74,24 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(NULL), _voiceContext(NULL)
 			error("Resource::loadGlobalResources() resource context not found");
 		}
 
-		byte *resourcePointer;
-		size_t resourceLength;
+		ByteArray resourceData;
 
 		if (_vm->isIHNMDemo()) {
-			_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_SFX_LUT,
-									 resourcePointer, resourceLength);
+			_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_SFX_LUT, resourceData);
 		} else {
-			_vm->_resource->loadResource(resourceContext, RID_IHNM_SFX_LUT,
-									 resourcePointer, resourceLength);
+			_vm->_resource->loadResource(resourceContext, RID_IHNM_SFX_LUT, resourceData);
 		}
 
-		if (resourceLength == 0) {
+		if (resourceData.empty()) {
 			error("Sndres::SndRes can't read SfxIDs table");
 		}
 
-		_fxTableIDs.resize(resourceLength / 2);
+		_fxTableIDs.resize(resourceData.size() / 2);
 
-		MemoryReadStream metaS(resourcePointer, resourceLength);
+		ByteArrayReadStreamEndian metaS(resourceData);
 		for (uint i = 0; i < _fxTableIDs.size(); i++) {
 			_fxTableIDs[i] = metaS.readSint16LE();
 		}
-
-		free(resourcePointer);
 #endif
 #ifdef ENABLE_SAGA2
 	} else if (_vm->getGameId() == GID_DINO) {

@@ -121,8 +121,7 @@ int Scene::IHNMCreditsProc() {
 void Scene::IHNMLoadCutaways() {
 	ResourceContext *resourceContext;
 	//ResourceContext *soundContext;
-	byte *resourcePointer;
-	size_t resourceLength;
+	ByteArray resourceData;
 
 	resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (resourceContext == NULL) {
@@ -130,18 +129,16 @@ void Scene::IHNMLoadCutaways() {
 	}
 
 	if (!_vm->isIHNMDemo())
-		_vm->_resource->loadResource(resourceContext, RID_IHNM_INTRO_CUTAWAYS, resourcePointer, resourceLength);
+		_vm->_resource->loadResource(resourceContext, RID_IHNM_INTRO_CUTAWAYS, resourceData);
 	else
-		_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_INTRO_CUTAWAYS, resourcePointer, resourceLength);
+		_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_INTRO_CUTAWAYS, resourceData);
 
-	if (resourceLength == 0) {
+	if (resourceData.empty() == 0) {
 		error("Scene::IHNMStartProc() Can't load cutaway list");
 	}
 
 	// Load the cutaways for the title screens
-	_vm->_anim->loadCutawayList(resourcePointer, resourceLength);
-
-	free(resourcePointer);
+	_vm->_anim->loadCutawayList(resourceData);
 }
 
 bool Scene::checkKey() {

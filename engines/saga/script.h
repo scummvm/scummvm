@@ -392,10 +392,10 @@ public:
 	void wakeUpThreads(int waitType);
 	void wakeUpThreadsDelayed(int waitType, int sleepTime);
 
-	void loadVoiceLUT(VoiceLUT &voiceLUT, const byte *resourcePointer, size_t resourceLength);
+	void loadVoiceLUT(VoiceLUT &voiceLUT, const ByteArray &resourceData);
 
 protected:
-	void loadModuleBase(ModuleData &module, const byte *resourcePointer, size_t resourceLength);
+	void loadModuleBase(ModuleData &module, const ByteArray &resourceData);
 
 	// runThread returns true if we should break running of other threads
 	bool runThread(ScriptThread &thread);

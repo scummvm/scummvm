@@ -155,11 +155,11 @@ public:
 	IsoMap(SagaEngine *vm);
 	~IsoMap() {
 	}
-	void loadImages(const byte * resourcePointer, size_t resourceLength);
-	void loadMap(const byte * resourcePointer, size_t resourceLength);
-	void loadPlatforms(const byte * resourcePointer, size_t resourceLength);
-	void loadMetaTiles(const byte * resourcePointer, size_t resourceLength);
-	void loadMulti(const byte * resourcePointer, size_t resourceLength);
+	void loadImages(const ByteArray &resourceData);
+	void loadMap(const ByteArray &resourceData);
+	void loadPlatforms(const ByteArray &resourceData);
+	void loadMetaTiles(const ByteArray &resourceData);
+	void loadMulti(const ByteArray &resourceData);
 	void clear();
 	void draw();
 	void drawSprite(SpriteList &spriteList, int spriteNumber, const Location &location, const Point &screenPosition, int scale);

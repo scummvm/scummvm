@@ -214,8 +214,7 @@ static int tileCommonObjectCompare(const CommonObjectDataPointer& obj1, const Co
 
 Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	int i;
-	byte *stringsPointer;
-	size_t stringsLength;
+	ByteArray stringsData;
 	debug(9, "Actor::Actor()");
 	_handleActionDiv = 15;
 
@@ -251,10 +250,9 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 	if (_vm->getGameId() == GID_ITE) {
 
-		_vm->_resource->loadResource(_actorContext, _vm->getResourceDescription()->actorsStringsResourceId, stringsPointer, stringsLength);
+		_vm->_resource->loadResource(_actorContext, _vm->getResourceDescription()->actorsStringsResourceId, stringsData);
 
-		_vm->loadStrings(_actorsStrings, stringsPointer, stringsLength);
-		free(stringsPointer);
+		_vm->loadStrings(_actorsStrings, stringsData);
 	}
 
 	if (_vm->getGameId() == GID_ITE) {
@@ -310,16 +308,15 @@ Actor::~Actor() {
 }
 
 void Actor::loadFrameList(int frameListResourceId, ActorFrameSequences &frames) {
-	byte *resourcePointer;
-	size_t resourceLength;
+	ByteArray resourceData;
 
 	debug(9, "Loading frame resource id %d", frameListResourceId);
-	_vm->_resource->loadResource(_actorContext, frameListResourceId, resourcePointer, resourceLength);
+	_vm->_resource->loadResource(_actorContext, frameListResourceId, resourceData);
 
-	frames.resize(resourceLength / 16);
-	debug(9, "Frame resource contains %d frames (res length is %d)", frames.size(), (int)resourceLength);
+	frames.resize(resourceData.size() / 16);
+	debug(9, "Frame resource contains %d frames (res length is %d)", frames.size(), (int)resourceData.size());
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _actorContext->isBigEndian());
+	ByteArrayReadStreamEndian readS(resourceData, _actorContext->isBigEndian());
 
 	for (ActorFrameSequences::iterator frame = frames.begin(); frame != frames.end(); ++frame) {
 		for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
@@ -336,8 +333,6 @@ void Actor::loadFrameList(int frameListResourceId, ActorFrameSequences &frames) 
 			debug(9, "frameIndex %d frameCount %d", frame->directions[orient].frameIndex, frame->directions[orient].frameCount);
 		}
 	}
-
-	free(resourcePointer);
 }
 
 bool Actor::loadActorResources(ActorData *actor) {
@@ -398,8 +393,7 @@ void Actor::loadActorSpriteList(ActorData *actor) {
 
 void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResourceID, int protagStatesCount, int protagStatesResourceID) {
 	int i, j;
-	byte* actorListData;
-	size_t actorListLength;
+	ByteArray actorListData;
 	byte walk[128];
 	byte acv[6];
 	int movementSpeed;
@@ -407,13 +401,13 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 	int walkStepCount;
 	int stateResourceId;
 
-	_vm->_resource->loadResource(_actorContext, actorsResourceID, actorListData, actorListLength);
+	_vm->_resource->loadResource(_actorContext, actorsResourceID, actorListData);
 
-	if (actorListLength != (uint)actorCount * ACTOR_INHM_SIZE) {
+	if (actorListData.size() != (uint)actorCount * ACTOR_INHM_SIZE) {
 		error("Actor::loadActorList wrong actorlist length");
 	}
 
-	MemoryReadStream actorS(actorListData, actorListLength);
+	ByteArrayReadStreamEndian actorS(actorListData);
 
 	_actors.resize(actorCount);
 	i = 0;
@@ -483,7 +477,6 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		}
 //		actorS.seek(6, SEEK_CUR); //action vars
 	}
-	free(actorListData);
 
 	_actors[protagonistIdx]._flags |= kProtagonist | kExtended;
 
@@ -500,24 +493,21 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 	if (protagStatesResourceID) {
 		_protagStates.resize(protagStatesCount);
 
-		byte *idsResourcePointer;
-		size_t idsResourceLength;
+		ByteArray idsResourceData;
 
-		_vm->_resource->loadResource(_actorContext, protagStatesResourceID,
-									 idsResourcePointer, idsResourceLength);
+		_vm->_resource->loadResource(_actorContext, protagStatesResourceID, idsResourceData);
 
-		if (idsResourceLength < (size_t)protagStatesCount * 4) {
+		if (idsResourceData.size() < (size_t)protagStatesCount * 4) {
 			error("Wrong protagonist states resource");
 		}
 
-		MemoryReadStream statesIds(idsResourcePointer, idsResourceLength);
+		ByteArrayReadStreamEndian statesIds(idsResourceData);
 
 		for (i = 0; i < protagStatesCount; i++) {
 			stateResourceId = statesIds.readUint32LE();
 
 			loadFrameList(stateResourceId, _protagStates[i]._frames);
 		}
-		free(idsResourcePointer);
 
 		_protagonist->_frames = &_protagStates[_protagState]._frames;
 	}
@@ -527,14 +517,13 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 void Actor::loadObjList(int objectCount, int objectsResourceID) {
 	uint i;
 	int frameListResourceId;
-	byte* objectListData;
-	size_t objectListLength;
+	ByteArray objectListData;
 
-	_vm->_resource->loadResource(_actorContext, objectsResourceID, objectListData, objectListLength);
+	_vm->_resource->loadResource(_actorContext, objectsResourceID, objectListData);
 
 	_objs.resize(objectCount);
 
-	MemoryReadStream objectS(objectListData, objectListLength);
+	ByteArrayReadStreamEndian objectS(objectListData);
 
 	i = 0;
 	for (ObjectDataArray::iterator object = _objs.begin(); object != _objs.end(); ++object, i++) {
@@ -564,7 +553,6 @@ void Actor::loadObjList(int objectCount, int objectsResourceID) {
 		objectS.readUint16LE(); //BOTTOM
 		object->_interactBits = objectS.readUint16LE();
 	}
-	free(objectListData);
 }
 
 void Actor::takeExit(uint16 actorId, const HitZone *hitZone) {

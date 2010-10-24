@@ -173,21 +173,17 @@ void Gfx::initPalette() {
 		error("Resource::loadGlobalResources() resource context not found");
 	}
 
-	byte *resourcePointer;
-	size_t resourceLength;
+	ByteArray resourceData;
 
-	_vm->_resource->loadResource(resourceContext, RID_IHNM_DEFAULT_PALETTE,
-								 resourcePointer, resourceLength);
+	_vm->_resource->loadResource(resourceContext, RID_IHNM_DEFAULT_PALETTE, resourceData);
 
-	MemoryReadStream metaS(resourcePointer, resourceLength);
+	ByteArrayReadStreamEndian metaS(resourceData);
 
 	for (int i = 0; i < 256; i++) {
 		_globalPalette[i].red = metaS.readByte();
 		_globalPalette[i].green = metaS.readByte();
 		_globalPalette[i].blue = metaS.readByte();
 	}
-
-	free(resourcePointer);
 
 	setPalette(_globalPalette, true);
 }
@@ -504,19 +500,17 @@ void Gfx::setCursor(CursorType cursorType) {
 			break;
 		}
 
-		byte *resource;
-		size_t resourceLength;
+		ByteArray resourceData;
 		ByteArray image;
 		int width, height;
 
 		if (resourceId != (uint32)-1) {
 			ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
 
-			_vm->_resource->loadResource(context, resourceId, resource, resourceLength);
+			_vm->_resource->loadResource(context, resourceId, resourceData);
 
-			_vm->decodeBGImage(resource, resourceLength, image, &width, &height);
+			_vm->decodeBGImage(resourceData, image, &width, &height);
 		} else {
-			resource = NULL;
 			width = height = 31;
 			image.resize(width * height);
 
@@ -530,8 +524,6 @@ void Gfx::setCursor(CursorType cursorType) {
 
 		// Note: Hard-coded hotspot
 		CursorMan.replaceCursor(image.getBuffer(), width, height, 15, 15, 0);
-
-		free(resource);
 	}
 }
 

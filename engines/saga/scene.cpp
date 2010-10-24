@@ -137,8 +137,7 @@ const char *SAGAResourceTypesString[] = {
 };
 
 Scene::Scene(SagaEngine *vm) : _vm(vm) {
-	byte *sceneLUTPointer;
-	size_t sceneLUTLength;
+	ByteArray sceneLUTData;
 	uint32 resourceId;
 	uint i;
 
@@ -158,20 +157,18 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 	// Load scene lookup table
 	resourceId = _vm->_resource->convertResourceId(_vm->getResourceDescription()->sceneLUTResourceId);
 	debug(3, "Loading scene LUT from resource %i", resourceId);
-	_vm->_resource->loadResource(_sceneContext, resourceId, sceneLUTPointer, sceneLUTLength);
-	if (sceneLUTLength == 0) {
-		error("Scene::Scene() sceneLUTLength == 0");
+	_vm->_resource->loadResource(_sceneContext, resourceId, sceneLUTData);
+	if (sceneLUTData.empty()) {
+		error("Scene::Scene() sceneLUT is empty");
 	}
-	_sceneLUT.resize(sceneLUTLength / 2);
+	_sceneLUT.resize(sceneLUTData.size() / 2);
 
-	MemoryReadStreamEndian readS(sceneLUTPointer, sceneLUTLength, _sceneContext->isBigEndian());
+	ByteArrayReadStreamEndian readS(sceneLUTData, _sceneContext->isBigEndian());
 
 	for (i = 0; i < _sceneLUT.size(); i++) {
 		_sceneLUT[i] = readS.readUint16();
 		debug(8, "sceneNumber %i has resourceId %i", i, _sceneLUT[i]);
 	}
-
-	free(sceneLUTPointer);
 
 #ifdef SAGA_DEBUG
 
@@ -686,11 +683,11 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 	// Load resources from scene resource list
 	for (SceneResourceDataArray::iterator resource = _resourceList.begin(); resource != _resourceList.end(); ++resource) {
 		if (!resource->invalid) {
-			_vm->_resource->loadResource(_sceneContext, resource->resourceId, resource->buffer, resource->size);
+			_vm->_resource->loadResource(_sceneContext, resource->resourceId, resource->buffer);
 
 
-			if (resource->size >= 6) {
-				if (!memcmp(resource->buffer, "DUMMY!", 6)) {
+			if (resource->buffer.size() >= 6) {
+				if (!memcmp(resource->buffer.getBuffer(), "DUMMY!", 6)) {
 					resource->invalid = true;
 					warning("DUMMY resource %i", resource->resourceId);
 				}
@@ -887,8 +884,7 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 }
 
 void Scene::loadSceneDescriptor(uint32 resourceId) {
-	byte *sceneDescriptorData;
-	size_t sceneDescriptorDataLength;
+	ByteArray sceneDescriptorData;
 
 	_sceneDescription.reset();
 
@@ -896,10 +892,10 @@ void Scene::loadSceneDescriptor(uint32 resourceId) {
 		return;
 	}
 
-	_vm->_resource->loadResource(_sceneContext, resourceId, sceneDescriptorData, sceneDescriptorDataLength);
+	_vm->_resource->loadResource(_sceneContext, resourceId, sceneDescriptorData);
 
-	if (sceneDescriptorDataLength == 16) {
-		MemoryReadStreamEndian readS(sceneDescriptorData, sceneDescriptorDataLength, _sceneContext->isBigEndian());
+	if (sceneDescriptorData.size() == 16) {
+		ByteArrayReadStreamEndian readS(sceneDescriptorData, _sceneContext->isBigEndian());
 
 		_sceneDescription.flags = readS.readSint16();
 		_sceneDescription.resourceListResourceId = readS.readSint16();
@@ -910,13 +906,10 @@ void Scene::loadSceneDescriptor(uint32 resourceId) {
 		_sceneDescription.startScriptEntrypointNumber = readS.readUint16();
 		_sceneDescription.musicResourceId = readS.readSint16();
 	}
-
-	free(sceneDescriptorData);
 }
 
 void Scene::loadSceneResourceList(uint32 resourceId) {
-	byte *resourceListData;
-	size_t resourceListDataLength;
+	ByteArray resourceListData;
 
 	_resourceList.clear();
 
@@ -925,13 +918,13 @@ void Scene::loadSceneResourceList(uint32 resourceId) {
 	}
 
 	// Load the scene resource table
-	_vm->_resource->loadResource(_sceneContext, resourceId, resourceListData, resourceListDataLength);
+	_vm->_resource->loadResource(_sceneContext, resourceId, resourceListData);
 
-	if ((resourceListDataLength % SAGA_RESLIST_ENTRY_LEN) == 0) {
-		MemoryReadStreamEndian readS(resourceListData, resourceListDataLength, _sceneContext->isBigEndian());
+	if ((resourceListData.size() % SAGA_RESLIST_ENTRY_LEN) == 0) {
+		ByteArrayReadStreamEndian readS(resourceListData, _sceneContext->isBigEndian());
 
 		// Allocate memory for scene resource list
-		_resourceList.resize(resourceListDataLength / SAGA_RESLIST_ENTRY_LEN);
+		_resourceList.resize(resourceListData.size() / SAGA_RESLIST_ENTRY_LEN);
 		debug(3, "Scene resource list contains %i entries", (int)_resourceList.size());
 
 		// Load scene resource list from raw scene
@@ -946,12 +939,9 @@ void Scene::loadSceneResourceList(uint32 resourceId) {
 		}
 
 	}
-	free(resourceListData);
 }
 
 void Scene::processSceneResources() {
-	byte *resourceData;
-	size_t resourceDataLength;
 	const byte *palPointer;
 	SAGAResourceTypes *types = 0;
 	int typesCount = 0;
@@ -964,8 +954,7 @@ void Scene::processSceneResources() {
 		if (resource->invalid) {
 			continue;
 		}
-		resourceData = resource->buffer;
-		resourceDataLength = resource->size;
+		ByteArray &resourceData = resource->buffer;
 
 		if (resource->resourceType >= typesCount) {
 			error("Scene::processSceneResources() wrong resource type %i", resource->resourceType);
@@ -993,19 +982,16 @@ void Scene::processSceneResources() {
 			}
 
 			debug(3, "Loading background resource.");
-			_bg.res_buf = resourceData;
-			_bg.res_len = resourceDataLength;
-			_bg.loaded = true;
 
-			if (!_vm->decodeBGImage(_bg.res_buf,
-				_bg.res_len,
+			if (!_vm->decodeBGImage(resourceData,
 				_bg.buffer,
 				&_bg.w,
 				&_bg.h)) {
 				error("Scene::processSceneResources() Error loading background resource %i", resource->resourceId);
 			}
+			_bg.loaded = true;
 
-			palPointer = _vm->getImagePal(_bg.res_buf, _bg.res_len);
+			palPointer = _vm->getImagePal(resourceData);
 			memcpy(_bg.pal, palPointer, sizeof(_bg.pal));
 			break;
 		case SAGA_BG_MASK: // Scene background mask resource
@@ -1013,10 +999,8 @@ void Scene::processSceneResources() {
 				error("Scene::ProcessSceneResources(): Duplicate background mask resource encountered");
 			}
 			debug(3, "Loading BACKGROUND MASK resource.");
-			_bgMask.res_buf = resourceData;
-			_bgMask.res_len = resourceDataLength;
+			_vm->decodeBGImage(resourceData, _bgMask.buffer, &_bgMask.w, &_bgMask.h, true);
 			_bgMask.loaded = true;
-			_vm->decodeBGImage(_bgMask.res_buf, _bgMask.res_len, _bgMask.buffer, &_bgMask.w, &_bgMask.h, true);
 
 			// At least in ITE the mask needs to be clipped.
 
@@ -1027,15 +1011,15 @@ void Scene::processSceneResources() {
 			break;
 		case SAGA_STRINGS:
 			debug(3, "Loading scene strings resource...");
-			_vm->loadStrings(_sceneStrings, resourceData, resourceDataLength);
+			_vm->loadStrings(_sceneStrings, resourceData);
 			break;
 		case SAGA_OBJECT_MAP:
 			debug(3, "Loading object map resource...");
-			_objectMap->load(resourceData, resourceDataLength);
+			_objectMap->load(resourceData);
 			break;
 		case SAGA_ACTION_MAP:
 			debug(3, "Loading action map resource...");
-			_actionMap->load(resourceData, resourceDataLength);
+			_actionMap->load(resourceData);
 			break;
 		case SAGA_ISO_IMAGES:
 			if (!(_sceneDescription.flags & kSceneFlagISO)) {
@@ -1044,7 +1028,7 @@ void Scene::processSceneResources() {
 
 			debug(3, "Loading isometric images resource.");
 
-			_vm->_isoMap->loadImages(resourceData, resourceDataLength);
+			_vm->_isoMap->loadImages(resourceData);
 			break;
 		case SAGA_ISO_MAP:
 			if (!(_sceneDescription.flags & kSceneFlagISO)) {
@@ -1053,7 +1037,7 @@ void Scene::processSceneResources() {
 
 			debug(3, "Loading isometric map resource.");
 
-			_vm->_isoMap->loadMap(resourceData, resourceDataLength);
+			_vm->_isoMap->loadMap(resourceData);
 			break;
 		case SAGA_ISO_PLATFORMS:
 			if (!(_sceneDescription.flags & kSceneFlagISO)) {
@@ -1062,7 +1046,7 @@ void Scene::processSceneResources() {
 
 			debug(3, "Loading isometric platforms resource.");
 
-			_vm->_isoMap->loadPlatforms(resourceData, resourceDataLength);
+			_vm->_isoMap->loadPlatforms(resourceData);
 			break;
 		case SAGA_ISO_METATILES:
 			if (!(_sceneDescription.flags & kSceneFlagISO)) {
@@ -1071,7 +1055,7 @@ void Scene::processSceneResources() {
 
 			debug(3, "Loading isometric metatiles resource.");
 
-			_vm->_isoMap->loadMetaTiles(resourceData, resourceDataLength);
+			_vm->_isoMap->loadMetaTiles(resourceData);
 			break;
 		case SAGA_ANIM:
 			{
@@ -1079,12 +1063,12 @@ void Scene::processSceneResources() {
 
 				debug(3, "Loading animation resource animId=%i", animId);
 
-				_vm->_anim->load(animId, resourceData, resourceDataLength);
+				_vm->_anim->load(animId, resourceData);
 			}
 			break;
 		case SAGA_ENTRY:
 			debug(3, "Loading entry list resource...");
-			loadSceneEntryList(resourceData, resourceDataLength);
+			loadSceneEntryList(resourceData);
 			break;
 		case SAGA_ISO_MULTI:
 			if (!(_sceneDescription.flags & kSceneFlagISO)) {
@@ -1093,11 +1077,11 @@ void Scene::processSceneResources() {
 
 			debug(3, "Loading isometric multi resource.");
 
-			_vm->_isoMap->loadMulti(resourceData, resourceDataLength);
+			_vm->_isoMap->loadMulti(resourceData);
 			break;
 		case SAGA_PAL_ANIM:
 			debug(3, "Loading palette animation resource.");
-			_vm->_palanim->loadPalAnim(resourceData, resourceDataLength);
+			_vm->_palanim->loadPalAnim(resourceData);
 			break;
 		case SAGA_FACES:
 			if (_vm->getGameId() == GID_ITE)
@@ -1106,10 +1090,10 @@ void Scene::processSceneResources() {
 		case SAGA_PALETTE:
 			{
 				PalEntry pal[PAL_ENTRIES];
-				byte *palPtr = resourceData;
+				byte *palPtr = resourceData.getBuffer();
 
-				if (resourceDataLength < 3 * PAL_ENTRIES)
-					error("Too small scene palette %i", (int)resourceDataLength);
+				if (resourceData.size() < 3 * PAL_ENTRIES)
+					error("Too small scene palette %i", (int)resourceData.size());
 
 				for (uint16 c = 0; c < PAL_ENTRIES; c++) {
 					pal[c].red = *palPtr++;
@@ -1148,7 +1132,6 @@ void Scene::draw() {
 
 void Scene::endScene() {
 	Rect rect;
-	size_t i;
 
 	if (!_sceneLoaded)
 		return;
@@ -1197,10 +1180,6 @@ void Scene::endScene() {
 	}
 
 	// Free scene resource list
-	for (i = 0; i < _resourceList.size(); i++) { //!!!!!!!!!!!!!!!!!!!
-		free(_resourceList[i].buffer);
-	}
-
 	_resourceList.clear();
 
 	// Free animation info list
@@ -1265,16 +1244,16 @@ void Scene::cmdObjectMapInfo() {
 	_objectMap->cmdInfo();
 }
 
-void Scene::loadSceneEntryList(const byte* resourcePointer, size_t resourceLength) {
+void Scene::loadSceneEntryList(const ByteArray &resourceData) {
 	uint i;
 
 	if (!_entryList.empty()) {
 		error("Scene::loadSceneEntryList entryList not empty");
 	}
 
-	_entryList.resize(resourceLength / 8);
+	_entryList.resize(resourceData.size() / 8);
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _sceneContext->isBigEndian());
+	ByteArrayReadStreamEndian readS(resourceData, _sceneContext->isBigEndian());
 
 	for (i = 0; i < _entryList.size(); i++) {
 		_entryList[i].location.x = readS.readSint16();

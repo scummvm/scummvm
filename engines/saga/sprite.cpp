@@ -75,8 +75,7 @@ Sprite::~Sprite() {
 
 void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 	SpriteInfo *spriteInfo;
-	byte *spriteListData = 0;
-	size_t spriteListLength = 0;
+	ByteArray spriteListData;
 	uint16 oldSpriteCount;
 	uint16 newSpriteCount;
 	uint16 spriteCount;
@@ -86,13 +85,13 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 	const byte *spritePointer;
 	const byte *spriteDataPointer;
 
-	_vm->_resource->loadResource(_spriteContext, resourceId, spriteListData, spriteListLength);
+	_vm->_resource->loadResource(_spriteContext, resourceId, spriteListData);
 
-	if (spriteListLength == 0) {
+	if (spriteListData.empty()) {
 		return;
 	}
 
-	MemoryReadStreamEndian readS(spriteListData, spriteListLength, _spriteContext->isBigEndian());
+	ByteArrayReadStreamEndian readS(spriteListData, _spriteContext->isBigEndian());
 
 	spriteCount = readS.readUint16();
 
@@ -112,14 +111,14 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		else
 			offset = readS.readUint16();
 
-		if (offset >= spriteListLength) {
+		if (offset >= spriteListData.size()) {
 			// ITE Mac demos throw this warning
 			warning("Sprite::loadList offset exceeded");
 			spriteList.resize(i);
 			return;
 		}
 
-		spritePointer = spriteListData;
+		spritePointer = spriteListData.getBuffer();
 		spritePointer += offset;
 
 		if (bigHeader) {
@@ -144,7 +143,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		}
 
 		outputLength = spriteInfo->width * spriteInfo->height;
-		inputLength = spriteListLength - (spriteDataPointer - spriteListData);
+		inputLength = spriteListData.size() - (spriteDataPointer - spriteListData.getBuffer());
 		spriteInfo->decodedBuffer.resize(outputLength);
 		if (outputLength > 0) {
 			decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);
@@ -167,8 +166,6 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 				memcpy(dst, &_decodeBuf.front(), outputLength);
 		}
 	}
-
-	free(spriteListData);
 }
 
 void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, uint spriteNumber, int scale, int &width, int &height, int &xAlign, int &yAlign, const byte *&buffer) {

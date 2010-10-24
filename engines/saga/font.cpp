@@ -55,8 +55,7 @@ Font::~Font() {
 
 
 void Font::loadFont(FontData *font, uint32 fontResourceId) {
-	byte *fontResourcePointer;
-	size_t fontResourceLength;
+	ByteArray fontResourceData;
 	int numBits;
 	int c;
 	ResourceContext *fontContext;
@@ -69,13 +68,13 @@ void Font::loadFont(FontData *font, uint32 fontResourceId) {
 	}
 
 	// Load font resource
-	_vm->_resource->loadResource(fontContext, fontResourceId, fontResourcePointer, fontResourceLength);
+	_vm->_resource->loadResource(fontContext, fontResourceId, fontResourceData);
 
-	if (fontResourceLength < FONT_DESCSIZE) {
-		error("Font::loadFont() Invalid font length (%i < %i)", (int)fontResourceLength, FONT_DESCSIZE);
+	if (fontResourceData.size() < FONT_DESCSIZE) {
+		error("Font::loadFont() Invalid font length (%i < %i)", (int)fontResourceData.size(), FONT_DESCSIZE);
 	}
 
-	MemoryReadStreamEndian readS(fontResourcePointer, fontResourceLength, fontContext->isBigEndian());
+	ByteArrayReadStreamEndian readS(fontResourceData, fontContext->isBigEndian());
 
 	// Read font header
 	font->normal.header.charHeight = readS.readUint16();
@@ -108,10 +107,8 @@ void Font::loadFont(FontData *font, uint32 fontResourceId) {
 		error("Invalid font resource size");
 	}
 
-	font->normal.font.resize(fontResourceLength - FONT_DESCSIZE);
-	memcpy(font->normal.font.getBuffer(), fontResourcePointer + FONT_DESCSIZE, fontResourceLength - FONT_DESCSIZE);
-
-	free(fontResourcePointer);
+	font->normal.font.resize(fontResourceData.size() - FONT_DESCSIZE);
+	memcpy(font->normal.font.getBuffer(), fontResourceData.getBuffer() + FONT_DESCSIZE, fontResourceData.size() - FONT_DESCSIZE);
 
 
 	// Create outline font style

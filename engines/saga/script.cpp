@@ -46,13 +46,11 @@ namespace Saga {
 
 SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 	ResourceContext *resourceContext;
-	byte *resourcePointer;
-	size_t resourceLength;
+	ByteArray resourceData;
 	int prevTell;
 	uint ui;
 	int j;
-	byte *stringsPointer;
-	size_t stringsLength;
+	ByteArray stringsData;
 
 	//initialize member variables
 	_abortEnabled = true;
@@ -85,19 +83,19 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 	uint32 scriptResourceId = 0;
 	scriptResourceId = _vm->getResourceDescription()->moduleLUTResourceId;
 	debug(3, "Loading module LUT from resource %i", scriptResourceId);
-	_vm->_resource->loadResource(resourceContext, scriptResourceId, resourcePointer, resourceLength);
+	_vm->_resource->loadResource(resourceContext, scriptResourceId, resourceData);
 
 	// Create logical script LUT from resource
-	if (resourceLength % 22 == 0) {			// ITE CD
+	if (resourceData.size() % 22 == 0) {			// ITE CD
 		_modulesLUTEntryLen = 22;
-	} else if (resourceLength % 16 == 0) {	// ITE disk, IHNM
+	} else if (resourceData.size() % 16 == 0) {	// ITE disk, IHNM
 		_modulesLUTEntryLen = 16;
 	} else {
-		error("Script::Script() Invalid script lookup table length (%i)", (int)resourceLength);
+		error("Script::Script() Invalid script lookup table length (%i)", (int)resourceData.size());
 	}
 
 	// Calculate number of entries
-	int modulesCount = resourceLength / _modulesLUTEntryLen;
+	int modulesCount = resourceData.size() / _modulesLUTEntryLen;
 
 	debug(3, "LUT has %i entries", modulesCount);
 
@@ -105,7 +103,7 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 	_modules.resize(modulesCount);
 
 	// Convert LUT resource to logical LUT
-	MemoryReadStreamEndian scriptS(resourcePointer, resourceLength, resourceContext->isBigEndian());
+	ByteArrayReadStreamEndian scriptS(resourceData, resourceContext->isBigEndian());
 	for (ui = 0; ui < _modules.size(); ui++) {
 
 		prevTell = scriptS.pos();
@@ -120,8 +118,6 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 		}
 	}
 
-	free(resourcePointer);
-
 	// TODO
 	//
 	// In ITE, the "main strings" resource contains both the verb strings
@@ -130,10 +126,9 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 	// In IHNM, the "main strings" contains the verb strings, but not the
 	// object names. At least, I think that's the case.
 
-	_vm->_resource->loadResource(resourceContext, _vm->getResourceDescription()->mainStringsResourceId, stringsPointer, stringsLength);
+	_vm->_resource->loadResource(resourceContext, _vm->getResourceDescription()->mainStringsResourceId, stringsData);
 
-	_vm->loadStrings(_mainStrings, stringsPointer, stringsLength);
-	free(stringsPointer);
+	_vm->loadStrings(_mainStrings, stringsData);
 
 	setupScriptOpcodeList();
 
@@ -155,8 +150,7 @@ SAGA1Script::~SAGA1Script() {
 }
 
 SAGA2Script::SAGA2Script(SagaEngine *vm) : Script(vm) {
-	byte *resourcePointer;
-	size_t resourceLength;
+	ByteArray resourceData;
 
 	debug(8, "Initializing scripting subsystem");
 	// Load script resource file context
@@ -171,12 +165,12 @@ SAGA2Script::SAGA2Script(SagaEngine *vm) : Script(vm) {
 	if (entryNum < 0)
 		error("Unable to locate the script's export segment");
 	debug(3, "Loading module LUT from resource %i", entryNum);
-	_vm->_resource->loadResource(_scriptContext, (uint32)entryNum, resourcePointer, resourceLength);
+	_vm->_resource->loadResource(_scriptContext, (uint32)entryNum, resourceData);
 
 	_modulesLUTEntryLen = sizeof(uint32);
 
 	// Calculate number of entries
-	int modulesCount = resourceLength / _modulesLUTEntryLen + 1;
+	int modulesCount = resourceData.size() / _modulesLUTEntryLen + 1;
 
 	debug(3, "LUT has %i entries", modulesCount);
 
@@ -1055,8 +1049,7 @@ void Script::opJmpSeedRandom(SCRIPTOP_PARAMS) {
 }
 
 void Script::loadModule(uint scriptModuleNumber) {
-	byte *resourcePointer;
-	size_t resourceLength;
+	ByteArray resourceData;
 
 	// Validate script number
 	if (scriptModuleNumber >= _modules.size()) {
@@ -1070,21 +1063,18 @@ void Script::loadModule(uint scriptModuleNumber) {
 	// Initialize script data structure
 	debug(3, "Loading script module #%d", scriptModuleNumber);
 
-	_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].scriptResourceId, resourcePointer, resourceLength);
+	_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].scriptResourceId, resourceData);
 
-	loadModuleBase(_modules[scriptModuleNumber], resourcePointer, resourceLength);
-	free(resourcePointer);
+	loadModuleBase(_modules[scriptModuleNumber], resourceData);
 
-	_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].stringsResourceId, resourcePointer, resourceLength);
+	_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].stringsResourceId, resourceData);
 
-	_vm->loadStrings(_modules[scriptModuleNumber].strings, resourcePointer, resourceLength);
-	free(resourcePointer);
+	_vm->loadStrings(_modules[scriptModuleNumber].strings, resourceData);
 
 	if (_modules[scriptModuleNumber].voicesResourceId > 0) {
-		_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].voicesResourceId, resourcePointer, resourceLength);
+		_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].voicesResourceId, resourceData);
 
-		loadVoiceLUT(_modules[scriptModuleNumber].voiceLUT, resourcePointer, resourceLength);
-		free(resourcePointer);
+		loadVoiceLUT(_modules[scriptModuleNumber].voiceLUT, resourceData);
 	}
 
 	_modules[scriptModuleNumber].staticOffset = _staticSize;
@@ -1105,16 +1095,14 @@ void Script::clearModules() {
 	_staticSize = 0;
 }
 
-void Script::loadModuleBase(ModuleData &module, const byte *resourcePointer, size_t resourceLength) {
+void Script::loadModuleBase(ModuleData &module, const ByteArray &resourceData) {
 	uint i;
 
 	debug(3, "Loading module base...");
 
-	module.moduleBase.resize(resourceLength);
-	
-	memcpy(module.moduleBase.getBuffer(), resourcePointer, resourceLength);
+	module.moduleBase.assign(resourceData);
 
-	MemoryReadStreamEndian scriptS(module.moduleBase.getBuffer(), module.moduleBase.size(), _scriptContext->isBigEndian());
+	ByteArrayReadStreamEndian scriptS(module.moduleBase, _scriptContext->isBigEndian());
 
 	uint entryPointsCount = scriptS.readUint16();
 	scriptS.readUint16(); //skip
@@ -1152,12 +1140,12 @@ void Script::loadModuleBase(ModuleData &module, const byte *resourcePointer, siz
 	}
 }
 
-void Script::loadVoiceLUT(VoiceLUT &voiceLUT, const byte *resourcePointer, size_t resourceLength) {
+void Script::loadVoiceLUT(VoiceLUT &voiceLUT, const ByteArray &resourceData) {
 	uint16 i;
 
-	voiceLUT.resize(resourceLength / 2);
+	voiceLUT.resize(resourceData.size() / 2);
 
-	MemoryReadStreamEndian scriptS(resourcePointer, resourceLength, _scriptContext->isBigEndian());
+	ByteArrayReadStreamEndian scriptS(resourceData, _scriptContext->isBigEndian());
 
 	for (i = 0; i < voiceLUT.size(); i++) {
 		voiceLUT[i] = scriptS.readUint16();

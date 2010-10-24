@@ -57,10 +57,10 @@ Anim::~Anim() {
 
 #ifdef ENABLE_IHNM
 
-void Anim::loadCutawayList(const byte *resourcePointer, size_t resourceLength) {
-	_cutawayList.resize(resourceLength / 8);
+void Anim::loadCutawayList(const ByteArray &resourceData) {
+	_cutawayList.resize(resourceData.size() / 8);
 
-	MemoryReadStream cutawayS(resourcePointer, resourceLength);
+	ByteArrayReadStreamEndian cutawayS(resourceData);
 
 	for (uint i = 0; i < _cutawayList.size(); i++) {
 		_cutawayList[i].backgroundResourceId = cutawayS.readUint16LE();
@@ -80,8 +80,6 @@ int Anim::playCutaway(int cut, bool fade) {
 	Event event;
 	EventColumns *eventColumns = NULL;
 	bool startImmediately = false;
-	byte *resourceData;
-	size_t resourceDataLength;
 	ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
 
 	_cutAwayFade = fade;
@@ -171,9 +169,10 @@ int Anim::playCutaway(int cut, bool fade) {
 	// for the second from the left monitor in Ellen's chapter etc
 	// Therefore, skip the animation bit if animResourceId is 0 and only show the background
 	if (_cutawayList[cut].animResourceId != 0) {
-		_vm->_resource->loadResource(context, _cutawayList[cut].animResourceId, resourceData, resourceDataLength);
-		load(MAX_ANIMATIONS + cutawaySlot, resourceData, resourceDataLength);
-		free(resourceData);
+		ByteArray resourceData;
+		_vm->_resource->loadResource(context, _cutawayList[cut].animResourceId, resourceData);
+		load(MAX_ANIMATIONS + cutawaySlot, resourceData);
+		
 
 		setCycles(MAX_ANIMATIONS + cutawaySlot, _cutawayList[cut].cycles);
 		setFrameTime(MAX_ANIMATIONS + cutawaySlot, 1000 / _cutawayList[cut].frameRate);
@@ -329,18 +328,17 @@ void Anim::clearCutaway() {
 void Anim::showCutawayBg(int bg) {
 	ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
 
-	byte *resourceData;
-	size_t resourceDataLength;
+	ByteArray resourceData;
 	ByteArray image;
 	int width;
 	int height;
 	Event event;
 	static PalEntry pal[PAL_ENTRIES];
 
-	_vm->_resource->loadResource(context, bg, resourceData, resourceDataLength);
-	_vm->decodeBGImage(resourceData, resourceDataLength, image, &width, &height);
+	_vm->_resource->loadResource(context, bg, resourceData);
+	_vm->decodeBGImage(resourceData, image, &width, &height);
 
-	const byte *palPointer = _vm->getImagePal(resourceData, resourceDataLength);
+	const byte *palPointer = _vm->getImagePal(resourceData);
 	memcpy(pal, palPointer, sizeof(pal));
 	const Rect rect(width, height);
 	_vm->_render->getBackGroundSurface()->blit(rect, image.getBuffer());
@@ -359,8 +357,6 @@ void Anim::showCutawayBg(int bg) {
 	} else {
 		_vm->_gfx->setPalette(pal);
 	}
-
-	free(resourceData);
 }
 
 void Anim::startVideo(int vid, bool fade) {
@@ -386,7 +382,7 @@ void Anim::returnFromVideo() {
 
 #endif
 
-void Anim::load(uint16 animId, const byte *animResourceData, size_t animResourceLength) {
+void Anim::load(uint16 animId, const ByteArray &resourceData) {
 	AnimationData *anim;
 	uint16 temp;
 
@@ -397,7 +393,7 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 	} else
 		anim = _animations[animId] = new AnimationData();
 
-	MemoryReadStreamEndian headerReadS(animResourceData, animResourceLength, _vm->isBigEndian());
+	ByteArrayReadStreamEndian headerReadS(resourceData, _vm->isBigEndian());
 	anim->magic = headerReadS.readUint16LE(); // cause ALWAYS LE
 	anim->screenWidth = headerReadS.readUint16();
 	anim->screenHeight = headerReadS.readUint16();
@@ -420,9 +416,9 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 		warning("Anim::load animId=%d start != dataOffset 0x%X 0x%X", animId, uint(start), uint(dataOffset));
 	}
 
-	anim->resourceData.resize(animResourceLength - dataOffset);
+	anim->resourceData.resize(resourceData.size() - dataOffset);
 	
-	memcpy(anim->resourceData.getBuffer(), animResourceData + dataOffset, anim->resourceData.size());
+	memcpy(anim->resourceData.getBuffer(), resourceData.getBuffer() + dataOffset, anim->resourceData.size());
 	// Cache frame offsets
 
 	// WORKAROUND: Cutaway with background resource ID 37 (loaded as cutaway #4) is ending credits.
