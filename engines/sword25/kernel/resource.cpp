@@ -47,7 +47,6 @@ Resource::Resource(const Common::String &fileName, RESOURCE_TYPES type) :
 	BS_ASSERT(pPM);
 
 	_fileName = pPM->getAbsolutePath(fileName);
-	_fileNameHash = Common::hashit(fileName);
 }
 
 void Resource::release() {

@@ -36,6 +36,8 @@
 #define SWORD25_RESOURCEMANAGER_H
 
 #include "common/list.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
 #include "sword25/kernel/common.h"
 
@@ -137,10 +139,6 @@ private:
 	{}
 	virtual ~ResourceManager();
 
-	enum {
-		HASH_TABLE_BUCKETS = 256
-	};
-
 	/**
 	 * Moves a resource to the top of the resource list
 	 * @param pResource     The resource
@@ -169,7 +167,6 @@ private:
 	/**
 	 * Returns a pointer to a loaded resource. If any error occurs, NULL will be returned.
 	 * @param UniqueFileName        The absolute path and filename
-	 * Gibt einen Pointer auf die angeforderte Resource zurück, oder NULL, wenn die Resourcen nicht geladen ist.
 	 */
 	Resource *getResource(const Common::String &uniqueFileName) const;
 
@@ -182,7 +179,8 @@ private:
 	uint _maxMemoryUsage;
 	Common::Array<ResourceService *> _resourceServices;
 	Common::List<Resource *> _resources;
-	Common::List<Resource *> _resourceHashTable[HASH_TABLE_BUCKETS];
+	typedef Common::HashMap<Common::String, Resource *> ResMap;
+	ResMap _resourceHashMap;
 	bool _logCacheMiss;
 };
 

@@ -64,7 +64,7 @@ ResourceManager::~ResourceManager() {
 /**
  * Returns a resource by it's ordinal index. Returns NULL if any error occurs
  * Note: This method is not optimised for speed and should be used only for debugging purposes
- * @param Ord       Ordinal number of the resource. Must be between 0 and GetResourceCount() - 1.
+ * @param ord       Ordinal number of the resource. Must be between 0 and GetResourceCount() - 1.
  */
 Resource *ResourceManager::getResourceByOrdinal(int ord) const {
 	// Überprüfen ob der Index Ord innerhald der Listengrenzen liegt.
@@ -231,8 +231,8 @@ Resource *ResourceManager::loadResource(const Common::String &fileName) {
 			deleteResourcesIfNecessary();
 
 			// Load the resource
-			Resource *pResource;
-			if (!(pResource = _resourceServices[i]->loadResource(fileName))) {
+			Resource *pResource = _resourceServices[i]->loadResource(fileName);
+			if (!pResource) {
 				BS_LOG_ERRORLN("Responsible service could not load resource \"%s\".", fileName.c_str());
 				return NULL;
 			}
@@ -242,7 +242,7 @@ Resource *ResourceManager::loadResource(const Common::String &fileName) {
 			pResource->_iterator = _resources.begin();
 
 			// Also store the resource in the hash table for quick lookup
-			_resourceHashTable[pResource->getFileNameHash() % HASH_TABLE_BUCKETS].push_front(pResource);
+			_resourceHashMap[pResource->getFileName()] = pResource;
 
 			return pResource;
 		}
@@ -277,15 +277,13 @@ Common::String ResourceManager::getUniqueFileName(const Common::String &fileName
  */
 Common::List<Resource *>::iterator ResourceManager::deleteResource(Resource *pResource) {
 	// Remove the resource from the hash table
-	_resourceHashTable[pResource->getFileNameHash() % HASH_TABLE_BUCKETS].remove(pResource);
-
-	Resource *pDummy = pResource;
+	_resourceHashMap.erase(pResource->_fileName);
 
 	// Delete the resource from the resource list
 	Common::List<Resource *>::iterator result = _resources.erase(pResource->_iterator);
 
 	// Delete the resource
-	delete(pDummy);
+	delete pResource;
 
 	// Return the iterator
 	return result;
@@ -294,21 +292,14 @@ Common::List<Resource *>::iterator ResourceManager::deleteResource(Resource *pRe
 /**
  * Returns a pointer to a loaded resource. If any error occurs, NULL will be returned.
  * @param UniquefileName        The absolute path and filename
- * Gibt einen Pointer auf die angeforderte Resource zurück, oder NULL, wenn die Resourcen nicht geladen ist.
  */
 Resource *ResourceManager::getResource(const Common::String &uniquefileName) const {
 	// Determine whether the resource is already loaded
-	const Common::List<Resource *>& hashBucket = _resourceHashTable[Common::hashit(uniquefileName) % HASH_TABLE_BUCKETS];
-	{
-		Common::List<Resource *>::const_iterator iter = hashBucket.begin();
-		for (; iter != hashBucket.end(); ++iter) {
-			// Wenn die Resource gefunden wurde wird sie zurückgegeben.
-			if ((*iter)->getFileName() == uniquefileName)
-				return *iter;
-		}
-	}
+	ResMap::iterator it = _resourceHashMap.find(uniquefileName);
+	if (it != _resourceHashMap.end())
+		return it->_value;
 
-	// Resource wurde nicht gefunden, ist also nicht geladen
+	// Resource was not found, i.e. has not yet been loaded.
 	return NULL;
 }
 
