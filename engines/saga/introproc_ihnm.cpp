@@ -133,7 +133,7 @@ void Scene::IHNMLoadCutaways() {
 	else
 		_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_INTRO_CUTAWAYS, resourceData);
 
-	if (resourceData.empty() == 0) {
+	if (resourceData.empty()) {
 		error("Scene::IHNMStartProc() Can't load cutaway list");
 	}
 

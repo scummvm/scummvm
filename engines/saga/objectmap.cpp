@@ -164,7 +164,6 @@ void HitZone::draw(SagaEngine *vm, int color) {
 
 // Loads an object map resource ( objects ( clickareas ( points ) ) )
 void ObjectMap::load(const ByteArray &resourceData) {
-	uint i;
 
 	if (!_hitZoneList.empty()) {
 		error("ObjectMap::load _hitZoneList not empty");
@@ -182,8 +181,9 @@ void ObjectMap::load(const ByteArray &resourceData) {
 
 	_hitZoneList.resize(readS.readUint16());
 
-	for (i = 0; i < _hitZoneList.size(); i++) {
-		_hitZoneList[i].load(_vm, &readS, i, _vm->_scene->currentSceneNumber());
+	int idx = 0;
+	for (HitZoneArray::iterator i = _hitZoneList.begin(); i != _hitZoneList.end(); ++i) {
+		i->load(_vm, &readS, idx++, _vm->_scene->currentSceneNumber());
 	}
 }
 
@@ -193,8 +193,7 @@ void ObjectMap::clear() {
 
 #ifdef SAGA_DEBUG
 void ObjectMap::draw(const Point& testPoint, int color, int color2) {
-	uint i;
-	uint hitZoneIndex;
+	int hitZoneIndex;
 	char txtBuf[32];
 	Point pickPoint;
 	Point textPoint;
@@ -209,8 +208,8 @@ void ObjectMap::draw(const Point& testPoint, int color, int color2) {
 
 	hitZoneIndex = hitTest(pickPoint);
 
-	for (i = 0; i < _hitZoneList.size(); i++) {
-		_hitZoneList[i].draw(_vm, (hitZoneIndex == i) ? color2 : color);
+	for (HitZoneArray::iterator i = _hitZoneList.begin(); i != _hitZoneList.end(); ++i) {
+		i->draw(_vm, (hitZoneIndex == i->getIndex()) ? color2 : color);
 	}
 
 	if (hitZoneIndex != -1) {
@@ -223,12 +222,11 @@ void ObjectMap::draw(const Point& testPoint, int color, int color2) {
 #endif
 
 int ObjectMap::hitTest(const Point& testPoint) {
-	uint i;
 
 	// Loop through all scene objects
-	for (i = 0; i < _hitZoneList.size(); i++) {
-		if (_hitZoneList[i].hitTest(testPoint)) {
-			return i;
+	for (HitZoneArray::iterator i = _hitZoneList.begin(); i != _hitZoneList.end(); ++i) {
+		if (i->hitTest(testPoint)) {
+			return i->getIndex();
 		}
 	}
 

@@ -175,7 +175,6 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 #define DUMP_SCENES_LEVEL 10
 
 	if (DUMP_SCENES_LEVEL <= gDebugLevel) {
-		uint j;
 		int backUpDebugLevel = gDebugLevel;
 		SAGAResourceTypes *types;
 		int typesCount;
@@ -189,16 +188,16 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 			loadSceneResourceList(_sceneDescription.resourceListResourceId);
 			gDebugLevel = backUpDebugLevel;
 			debug(DUMP_SCENES_LEVEL, "Dump Scene: number %i, descriptor resourceId %i, resourceList resourceId %i", i, _sceneLUT[i], _sceneDescription.resourceListResourceId);
-			debug(DUMP_SCENES_LEVEL, "\tresourceListCount %i", (int)_resourceListCount);
-			for (j = 0; j < _resourceListCount; j++) {
-				if (_resourceList[j].resourceType >= typesCount) {
-					error("wrong resource type %i", _resourceList[j].resourceType);
+			debug(DUMP_SCENES_LEVEL, "\tresourceListCount %i", (int)_resourceList.size());
+			for (SceneResourceDataArray::iterator j = _resourceList.begin(); j != _resourceList.end(); ++j) {
+				if (j->resourceType >= typesCount) {
+					error("wrong resource type %i", j->resourceType);
 				}
-				resType = types[_resourceList[j].resourceType];
+				resType = types[j->resourceType];
 
-				debug(DUMP_SCENES_LEVEL, "\t%s resourceId %i", SAGAResourceTypesString[resType], _resourceList[j].resourceId);
+				debug(DUMP_SCENES_LEVEL, "\t%s resourceId %i", SAGAResourceTypesString[resType], j->resourceId);
 			}
-			free(_resourceList);
+			_resourceList.clear();
 		}
 	}
 #endif

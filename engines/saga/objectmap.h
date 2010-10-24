@@ -38,6 +38,9 @@ private:
 public:
 	void load(SagaEngine *vm, MemoryReadStreamEndian *readStream, int index, int sceneNumber);
 
+	int getIndex() const {
+		return _index;
+	}
 	int getNameIndex() const {
 		return _nameIndex;
 	}
@@ -87,6 +90,7 @@ private:
 	ClickAreas _clickAreas;
 };
 
+typedef Common::Array<HitZone> HitZoneArray;
 
 class ObjectMap {
 public:
@@ -110,7 +114,7 @@ public:
 private:
 	SagaEngine *_vm;
 
-	Common::Array<HitZone> _hitZoneList;
+	HitZoneArray _hitZoneList;
 };
 
 } // End of namespace Saga
