@@ -66,20 +66,6 @@ public:
 	bool precacheResource(const Common::String &fileName, bool forceReload = false);
 
 	/**
-	 * Returns the number of loaded resources
-	 */
-	int getResourceCount() const {
-		return static_cast<int>(_resources.size());
-	}
-
-	/**
-	 * Returns a resource by it's ordinal index. Returns NULL if any error occurs
-	 * Note: This method is not optimised for speed and should be used only for debugging purposes
-	 * @param Ord       Ordinal number of the resource. Must be between 0 and GetResourceCount() - 1.
-	*/
-	Resource *getResourceByOrdinal(int ord) const;
-
-	/**
 	 * Registers a RegisterResourceService. This method is the constructor of
 	 * BS_ResourceService, and thus helps all resource services in the ResourceManager list
 	 * @param pService      Which service

@@ -62,31 +62,6 @@ ResourceManager::~ResourceManager() {
 }
 
 /**
- * Returns a resource by it's ordinal index. Returns NULL if any error occurs
- * Note: This method is not optimised for speed and should be used only for debugging purposes
- * @param ord       Ordinal number of the resource. Must be between 0 and GetResourceCount() - 1.
- */
-Resource *ResourceManager::getResourceByOrdinal(int ord) const {
-	// Überprüfen ob der Index Ord innerhald der Listengrenzen liegt.
-	if (ord < 0 || ord >= getResourceCount()) {
-		BS_LOG_ERRORLN("Resource ordinal (%d) out of bounds (0 - %d).", ord, getResourceCount() - 1);
-		return NULL;
-	}
-
-	// Liste durchlaufen und die Resource mit dem gewünschten Index zurückgeben.
-	int curOrd = 0;
-	Common::List<Resource *>::const_iterator iter = _resources.begin();
-	for (; iter != _resources.end(); ++iter, ++curOrd) {
-		if (curOrd == ord)
-			return (*iter);
-	}
-
-	// Die Ausführung sollte nie an diesem Punkt ankommen.
-	BS_LOG_EXTERRORLN("Execution reached unexpected point.");
-	return NULL;
-}
-
-/**
  * Registers a RegisterResourceService. This method is the constructor of
  * BS_ResourceService, and thus helps all resource services in the ResourceManager list
  * @param pService      Which service
@@ -125,7 +100,7 @@ void ResourceManager::deleteResourcesIfNecessary() {
 
 /**
  * Releases all resources that are not locked.
- **/
+ */
 void ResourceManager::emptyCache() {
 	// Scan through the resource list
 	Common::List<Resource *>::iterator iter = _resources.begin();
@@ -145,7 +120,7 @@ void ResourceManager::emptyCache() {
 Resource *ResourceManager::requestResource(const Common::String &fileName) {
 	// Get the absolute path to the file
 	Common::String uniqueFileName = getUniqueFileName(fileName);
-	if (uniqueFileName == "")
+	if (uniqueFileName.empty())
 		return NULL;
 
 	// Determine whether the resource is already loaded
@@ -163,8 +138,8 @@ Resource *ResourceManager::requestResource(const Common::String &fileName) {
 	if (_logCacheMiss)
 		BS_LOG_WARNINGLN("\"%s\" was not precached.", uniqueFileName.c_str());
 
-	Resource *pResource;
-	if ((pResource = loadResource(uniqueFileName))) {
+	Resource *pResource = loadResource(uniqueFileName);
+	if (pResource) {
 		pResource->addReference();
 		return pResource;
 	}
@@ -181,7 +156,7 @@ Resource *ResourceManager::requestResource(const Common::String &fileName) {
 bool ResourceManager::precacheResource(const Common::String &fileName, bool forceReload) {
 	// Get the absolute path to the file
 	Common::String uniqueFileName = getUniqueFileName(fileName);
-	if (uniqueFileName == "")
+	if (uniqueFileName.empty())
 		return false;
 
 	Resource *resourcePtr = getResource(uniqueFileName);
@@ -261,12 +236,12 @@ Common::String ResourceManager::getUniqueFileName(const Common::String &fileName
 	PackageManager *pPackage = (PackageManager *)_kernelPtr->getPackage();
 	if (!pPackage) {
 		BS_LOG_ERRORLN("Could not get package manager.");
-		return Common::String("");
+		return Common::String();
 	}
 
 	// Absoluten Pfad der Datei bekommen und somit die Eindeutigkeit des Dateinamens sicherstellen
 	Common::String uniquefileName = pPackage->getAbsolutePath(fileName);
-	if (uniquefileName == "")
+	if (uniquefileName.empty())
 		BS_LOG_ERRORLN("Could not create absolute file name for \"%s\".", fileName.c_str());
 
 	return uniquefileName;
