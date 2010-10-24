@@ -101,11 +101,10 @@ Debugger::~Debugger() {
 	DebugMan.clearAllDebugChannels();
 
 	delete _soundStream;
+	resetCommand();
 
 	// Zero passed pointers
 	_engine = NULL;
-	_command = NULL;
-	_commandParams = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -116,7 +115,11 @@ bool Debugger::hasCommand() const {
 }
 
 void Debugger::resetCommand() {
-	_command = NULL;
+	SAFE_DELETE(_command);
+	for (int i = 0; i < _numParams; i++)
+		free(_commandParams[i]);
+
+	free(_commandParams);
 	_commandParams = NULL;
 	_numParams = 0;
 }
@@ -126,15 +129,15 @@ int Debugger::getNumber(const char *arg) const {
 }
 
 void Debugger::copyCommand(int argc, const char **argv) {
-	_commandParams = (char **)malloc((uint)argc);
+	_commandParams = (char **)malloc(sizeof(char *) * argc);
 	if (!_commandParams)
 		return;
 
 	_numParams = argc;
 
 	for (int i = 0; i < _numParams; i++) {
-		_commandParams[i] = (char *)malloc(strlen(argv[i]));
-		strcpy(_commandParams[i], "");
+		_commandParams[i] = (char *)malloc(strlen(argv[i]) + 1);
+		memset(_commandParams[i], NULL, strlen(argv[i]) + 1);
 		strcpy(_commandParams[i], argv[i]);
 	}
 
