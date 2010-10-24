@@ -679,7 +679,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 			const uint32 deviceGuiOption = MidiDriver::musicType2GUIO(d->getMusicType());
 
 			if ((_domain == Common::ConfigManager::kApplicationDomain && d->getMusicType() != MT_TOWNS  // global dialog - skip useless FM-Towns, C64, Amiga, AppleIIGS options there
-				 && d->getMusicType() != MT_C64 && d->getMusicType() != MT_AMIGA && d->getMusicType() != MT_APPLEIIGS)
+				 && d->getMusicType() != MT_C64 && d->getMusicType() != MT_AMIGA && d->getMusicType() != MT_APPLEIIGS && d->getMusicType() != MT_PC98)
 				|| (_domain != Common::ConfigManager::kApplicationDomain && !(_guioptions & allFlags)) // No flags are specified
 				|| (_guioptions & deviceGuiOption) // flag is present
 				// HACK/FIXME: For now we have to show GM devices, even when the game only has GUIO_MIDIMT32 set,
@@ -719,13 +719,25 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 
 	// Populate
 	const MusicPlugin::List p = MusicMan.getPlugins();
+	// Make sure the null device is the first one in the list to avoid undesired
+	// auto detection for users who don't have a saved setting yet.
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
 		MusicDevices i = (**m)->getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-			if (d->getMusicType() >= MT_GM || d->getMusicDriverId() == "auto") {
+			if (d->getMusicDriverId() == "null")
+				_gmDevicePopUp->appendEntry(_("Don't use General MIDI music"), d->getHandle());
+		}
+	}
+	// Now we add the other devices.
+	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
+		MusicDevices i = (**m)->getDevices();
+		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+			if (d->getMusicType() >= MT_GM) {
 				if (d->getMusicType() != MT_MT32)
 					_gmDevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
-			}
+			} else if (d->getMusicDriverId() == "auto") {
+				_gmDevicePopUp->appendEntry(_("Use first available device"), d->getHandle());
+			}		
 		}
 	}
 
@@ -769,12 +781,23 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Enable Roland GS Mode"), _("Turns off General MIDI mapping for games with Roland MT-32 soundtrack"));
 
 	const MusicPlugin::List p = MusicMan.getPlugins();
+	// Make sure the null device is the first one in the list to avoid undesired
+	// auto detection for users who don't have a saved setting yet.
+	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
+		MusicDevices i = (**m)->getDevices();		
+		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+			if (d->getMusicDriverId() == "null")
+				_mt32DevicePopUp->appendEntry(_("Don't use Roland MT-32 music"), d->getHandle());
+		}
+	}
+	// Now we add the other devices.
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
 		MusicDevices i = (**m)->getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-			if (d->getMusicType() >= MT_GM || d->getMusicDriverId() == "auto") {
+			if (d->getMusicType() >= MT_GM)
 				_mt32DevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
-			}
+			else if (d->getMusicDriverId() == "auto")
+				_mt32DevicePopUp->appendEntry(_("Use first available device"), d->getHandle());
 		}
 	}
 
