@@ -34,9 +34,6 @@
 
 #include "sword25/gfx/renderobjectregistry.h"
 
-// TODO: Destroy the singletons when closing the engine;
-// even better, turn them into non-singleton members of
-// e.g. Sword25Engine.
 DECLARE_SINGLETON(Sword25::RenderObjectRegistry)
 
 namespace Sword25 {
