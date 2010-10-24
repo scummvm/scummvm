@@ -45,6 +45,7 @@
 #include "sword25/gfx/animationtemplateregistry.h"	// Needed so we can destroy the singleton
 #include "sword25/gfx/renderobjectregistry.h"		// Needed so we can destroy the singleton
 #include "sword25/math/regionregistry.h"			// Needed so we can destroy the singleton
+#include "sword25/gfx/image/imageloader.h"			// Needed so we can destroy the singleton
 
 namespace Sword25 {
 
@@ -137,6 +138,7 @@ bool Sword25Engine::appEnd() {
 	// The kernel is shutdown, and un-initialises all subsystems
 	Kernel::deleteInstance();
 
+	ImageLoaderManager::destroy();
 	AnimationTemplateRegistry::destroy();
 	RenderObjectRegistry::destroy();
 	RegionRegistry::destroy();

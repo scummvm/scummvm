@@ -41,11 +41,7 @@
 namespace Sword25 {
 
 class B25SLoader : public ImageLoader {
-public:
-	static ImageLoader *createInstance() {
-		return static_cast<ImageLoader *>(new B25SLoader());
-	}
-
+	friend class ImageLoaderManager;
 protected:
 	virtual bool isCorrectImageFormat(const byte *fileDataPtr, uint fileSize);
 	virtual bool decodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEngine::COLOR_FORMATS colorFormat, byte *&uncompressedDataPtr, int &width, int &height, int &pitch);

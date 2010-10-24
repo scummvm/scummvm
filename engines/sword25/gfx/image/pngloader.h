@@ -51,11 +51,8 @@ namespace Sword25 {
 
 // Klassendefinition
 class PNGLoader : public ImageLoader {
+	friend class ImageLoaderManager;
 public:
-	static ImageLoader *createInstance() {
-		return (ImageLoader *) new PNGLoader();
-	}
-
 	// Alle virtuellen Methoden von BS_ImageLoader sind hier als static-Methode implementiert, damit sie von BS_B25SLoader aufgerufen werden können.
 	// Die virtuellen Methoden rufen diese Methoden auf.
 	static bool doIsCorrectImageFormat(const byte *fileDataPtr, uint fileSize);

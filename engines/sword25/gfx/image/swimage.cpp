@@ -61,14 +61,14 @@ SWImage::SWImage(const Common::String &filename, bool &result) :
 	// Bildeigenschaften bestimmen
 	GraphicEngine::COLOR_FORMATS colorFormat;
 	int pitch;
-	if (!ImageLoader::extractImageProperties(pFileData, fileSize, colorFormat, _width, _height)) {
+	if (!ImageMan.extractImageProperties(pFileData, fileSize, colorFormat, _width, _height)) {
 		BS_LOG_ERRORLN("Could not read image properties.");
 		return;
 	}
 
 	// Das Bild dekomprimieren
 	byte *pUncompressedData;
-	if (!ImageLoader::loadImage(pFileData, fileSize, GraphicEngine::CF_ARGB32, pUncompressedData, _width, _height, pitch)) {
+	if (!ImageMan.loadImage(pFileData, fileSize, GraphicEngine::CF_ARGB32, pUncompressedData, _width, _height, pitch)) {
 		BS_LOG_ERRORLN("Could not decode image.");
 		return;
 	}

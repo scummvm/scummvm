@@ -33,26 +33,24 @@
  */
 
 #include "sword25/gfx/image/imageloader.h"
-#include "sword25/gfx/image/imageloader_ids.h"
+
+#include "sword25/gfx/image/pngloader.h"
+#include "sword25/gfx/image/b25sloader.h"
+
+DECLARE_SINGLETON(Sword25::ImageLoaderManager)
 
 namespace Sword25 {
 
 #define BS_LOG_PREFIX "IMAGELOADER"
 
-// Statische Elemente der Klasse BS_ImageLoader intialisieren.
-Common::List<ImageLoader *> ImageLoader::_imageLoaderList;
-bool ImageLoader::_imageLoaderListInitialized = false;
 
-bool ImageLoader::loadImage(const byte *pFileData, uint fileSize,
+bool ImageLoaderManager::loadImage(const byte *pFileData, uint fileSize,
                             GraphicEngine::COLOR_FORMATS colorFormat,
                             byte *&pUncompressedData,
                             int &width, int &height,
                             int &pitch) {
-	// Falls die Liste der BS_ImageLoader noch nicht initialisiert wurde, wird dies getan.
-	if (!_imageLoaderListInitialized)
-		initializeLoaderList();
 
-	// Passenden BS_ImageLoader finden und Bild dekodieren
+	// Find a suitable ImageLoader and decode the image
 	ImageLoader *pLoader = findSuitableImageLoader(pFileData, fileSize);
 	if (pLoader) {
 		return pLoader->decodeImage(pFileData, fileSize,
@@ -65,14 +63,11 @@ bool ImageLoader::loadImage(const byte *pFileData, uint fileSize,
 	return false;
 }
 
-bool ImageLoader::extractImageProperties(const byte *pFileData, uint fileSize,
+bool ImageLoaderManager::extractImageProperties(const byte *pFileData, uint fileSize,
         GraphicEngine::COLOR_FORMATS &colorFormat,
         int &width, int &height) {
-	// Falls die Liste der BS_ImageLoader noch nicht initialisiert wurde, wird dies getan.
-	if (!_imageLoaderListInitialized)
-		initializeLoaderList();
 
-	// Passenden BS_ImageLoader finden und Bildeigenschaften auslesen.
+	// Find a suitable ImageLoader and extra the image properties
 	ImageLoader *pLoader = findSuitableImageLoader(pFileData, fileSize);
 	if (pLoader) {
 		return pLoader->imageProperties(pFileData, fileSize,
@@ -83,36 +78,29 @@ bool ImageLoader::extractImageProperties(const byte *pFileData, uint fileSize,
 	return false;
 }
 
-void ImageLoader::initializeLoaderList() {
-	// Von jedem BS_ImageLoader wird eine Instanz erzeugt, diese fügen sich selbständig in die BS_ImageLoader-Liste ein.
-	for (int i = 0; i < BS_IMAGELOADER_COUNT; i++)
-		BS_IMAGELOADER_IDS[i]();
-
-	// Die Liste als gefüllt markieren.
-	_imageLoaderListInitialized = true;
-
-	// Sicherstellen, dass beim Beenden alle BS_ImageLoader Instanzen zerstört werden.
-	atexit(ImageLoader::deinitializeLoaderList);
+ImageLoaderManager::ImageLoaderManager() {
+	_imageLoaderList.push_back(new PNGLoader());
+	_imageLoaderList.push_back(new B25SLoader());
 }
 
-void ImageLoader::deinitializeLoaderList() {
+ImageLoaderManager::~ImageLoaderManager() {
 	while (!_imageLoaderList.empty()) {
 		delete _imageLoaderList.back();
 		_imageLoaderList.pop_back();
 	}
 }
 
-ImageLoader *ImageLoader::findSuitableImageLoader(const byte *pFileData, uint fileSize) {
-	// Alle BS_ImageLoader-Objekte durchgehen, bis eins gefunden wurde, dass das Bild laden kann
+ImageLoader *ImageLoaderManager::findSuitableImageLoader(const byte *pFileData, uint fileSize) {
+	// Iterate over all registered ImageLoader instances until we find
+	// one that supports the image.
 	Common::List<ImageLoader *>::iterator iter = _imageLoaderList.begin();
 	for (; iter != _imageLoaderList.end(); ++iter) {
-		// Falls ein geeigneter BS-ImageLoader gefunden wurde, wird er zurückgegeben.
 		if ((*iter)->isCorrectImageFormat(pFileData, fileSize)) {
 			return (*iter);
 		}
 	}
 
-	// Es konnte kein passender BS_ImageLoader gefunden werden.
+	// No suitable ImageLoader was found :-(
 	BS_LOG_ERRORLN("Could not find suitable image loader for image data.");
 	return NULL;
 }

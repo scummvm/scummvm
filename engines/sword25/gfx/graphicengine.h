@@ -71,7 +71,7 @@ typedef uint BS_COLOR;
 
 /**
  * This is the graphics engine. Unlike the original code, this is not
- * an interface that needs to be subclasses, but rather already contains
+ * an interface that needs to be subclassed, but rather already contains
  * all required functionality.
  */
 class GraphicEngine : public ResourceService, public Persistable {
