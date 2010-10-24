@@ -49,7 +49,6 @@ Events::Events(SagaEngine *vm) : _vm(vm) {
 
 Events::~Events() {
 	debug(8, "Shutting down event subsystem...");
-	freeList();
 }
 
 // Function to process event list once per frame.

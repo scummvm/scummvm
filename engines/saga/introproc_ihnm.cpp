@@ -88,14 +88,13 @@ int Scene::IHNMStartProc() {
 	// Queue first scene
 	firstScene.loadFlag = kLoadBySceneNumber;
 	firstScene.sceneDescriptor = -1;
-	firstScene.sceneDescription = NULL;
 	firstScene.sceneSkipTarget = false;
 	firstScene.sceneProc = NULL;
 	firstScene.transitionType = kTransitionFade;
 	firstScene.actorsEntrance = 0;
 	firstScene.chapter = -1;
 
-	_vm->_scene->queueScene(&firstScene);
+	_vm->_scene->queueScene(firstScene);
 
 	return SUCCESS;
 }

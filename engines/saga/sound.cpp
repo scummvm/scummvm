@@ -36,7 +36,7 @@
 namespace Saga {
 
 Sound::Sound(SagaEngine *vm, Audio::Mixer *mixer) :
-	_vm(vm), _mixer(mixer), _voxStream(0) {
+	_vm(vm), _mixer(mixer) {
 
 	for (int i = 0; i < SOUND_HANDLES; i++)
 		_handles[i].type = kFreeHandle;
@@ -45,7 +45,6 @@ Sound::Sound(SagaEngine *vm, Audio::Mixer *mixer) :
 }
 
 Sound::~Sound() {
-	delete _voxStream;
 }
 
 SndHandle *Sound::getHandle() {

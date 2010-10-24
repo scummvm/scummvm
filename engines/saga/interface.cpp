@@ -317,16 +317,12 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_inventoryStart = 0;
 	_inventoryEnd = 0;
 	_inventoryBox = 0;
-	_inventorySize = ITE_INVENTORY_SIZE;
 	_saveReminderState = 0;
 
 	_optionSaveFileTop = 0;
 	_optionSaveFileTitleNumber = 0;
 
-	_inventory = (uint16 *)calloc(_inventorySize, sizeof(uint16));
-	if (_inventory == NULL) {
-		error("Interface::Interface(): not enough memory");
-	}
+	_inventory.resize(ITE_INVENTORY_SIZE);
 
 	_textInput = false;
 	_statusTextInput = false;
@@ -339,7 +335,6 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 }
 
 Interface::~Interface() {
-	free(_inventory);
 }
 
 void Interface::saveReminderCallback(void *refCon) {
@@ -2040,7 +2035,7 @@ void Interface::updateInventory(int pos) {
 }
 
 void Interface::addToInventory(int objectId) {
-	if (_inventoryCount >= _inventorySize) {
+	if (uint(_inventoryCount) >= _inventory.size()) {
 		return;
 	}
 

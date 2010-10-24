@@ -321,7 +321,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 #endif
 		} else if (resourceType == kSoundVOC) {
 			data = Audio::loadVOCFromStream(readS, size, rate);
-			result = (data != 0);
+			result = (data != NULL);
 			if (onlyHeader)
 				free(data);
 			buffer.flags |= Audio::FLAG_UNSIGNED;
@@ -333,11 +333,13 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			buffer.frequency = rate;
 			buffer.size = size;
 
-			if (!onlyHeader && resourceType != kSoundVOC) {
-				buffer.buffer = (byte *)malloc(size);
-				readS.read(buffer.buffer, size);
-			} else if (!onlyHeader && resourceType == kSoundVOC) {
-				buffer.buffer = data;
+			if (!onlyHeader) {
+				if (resourceType == kSoundVOC) {
+					buffer.buffer = data;
+				} else {
+					buffer.buffer = (byte *)malloc(size);
+					readS.read(buffer.buffer, size);
+				}
 			}
 		}
 		break;

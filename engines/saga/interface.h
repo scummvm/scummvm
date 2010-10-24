@@ -427,8 +427,7 @@ private:
 
 	Point _lastMousePoint;
 
-	uint16 *_inventory;
-	int _inventorySize;
+	Common::Array<uint16> _inventory;
 	int _inventoryStart;
 	int _inventoryEnd;
 	int _inventoryPos;

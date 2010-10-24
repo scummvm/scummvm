@@ -213,10 +213,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 	_chapterNumber = 0;
 	_sceneResourceId = 0;
 	_inGame = false;
-	_loadDescription = false;
-	memset(&_sceneDescription, 0, sizeof(_sceneDescription));
-	_resourceListCount = 0;
-	_resourceList = NULL;
+	_sceneDescription.reset();
 	_sceneProc = NULL;
 	_objectMap = new ObjectMap(_vm);
 	_actionMap = new ObjectMap(_vm);
@@ -588,7 +585,6 @@ void Scene::initDoorsState() {
 }
 
 void Scene::loadScene(LoadSceneParams &loadSceneParams) {
-	size_t i;
 	Event event;
 	EventColumns *eventColumns;
 	static PalEntry current_pal[PAL_ENTRIES];
@@ -650,8 +646,6 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 		error("Scene::loadScene(): Error, a scene is already loaded");
 	}
 
-	_loadDescription = true;
-
 #ifdef ENABLE_IHNM
 	if (_vm->getGameId() == GID_IHNM) {
 		if (loadSceneParams.loadFlag == kLoadBySceneNumber) // When will we get rid of it?
@@ -669,16 +663,6 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 		_sceneNumber = loadSceneParams.sceneDescriptor;
 		_sceneResourceId = getSceneResourceId(_sceneNumber);
 		break;
-	case kLoadByDescription:
-		_sceneNumber = -1;
-		_sceneResourceId = -1;
-		assert(loadSceneParams.sceneDescription != NULL);
-		assert(loadSceneParams.sceneDescription->resourceList != NULL);
-		_loadDescription = false;
-		_sceneDescription = *loadSceneParams.sceneDescription;
-		_resourceList = loadSceneParams.sceneDescription->resourceList;
-		_resourceListCount = loadSceneParams.sceneDescription->resourceListCount;
-		break;
 	}
 
 	debug(3, "Loading scene number %d:", _sceneNumber);
@@ -693,27 +677,22 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 	}
 
 	// Load scene descriptor and resource list resources
-	if (_loadDescription) {
-		debug(3, "Loading scene resource %i", _sceneResourceId);
+	debug(3, "Loading scene resource %i", _sceneResourceId);
 
-		loadSceneDescriptor(_sceneResourceId);
+	loadSceneDescriptor(_sceneResourceId);
 
-		loadSceneResourceList(_sceneDescription.resourceListResourceId);
-	} else {
-		debug(3, "Loading memory scene resource");
-	}
+	loadSceneResourceList(_sceneDescription.resourceListResourceId);
 
 	// Load resources from scene resource list
-	for (i = 0; i < _resourceListCount; i++) {
-		if (!_resourceList[i].invalid) {
-			_vm->_resource->loadResource(_sceneContext, _resourceList[i].resourceId,
-				_resourceList[i].buffer, _resourceList[i].size);
+	for (SceneResourceDataArray::iterator resource = _resourceList.begin(); resource != _resourceList.end(); ++resource) {
+		if (!resource->invalid) {
+			_vm->_resource->loadResource(_sceneContext, resource->resourceId, resource->buffer, resource->size);
 
 
-			if (_resourceList[i].size >= 6) {
-				if (!memcmp(_resourceList[i].buffer, "DUMMY!", 6)) {
-					_resourceList[i].invalid = true;
-					warning("DUMMY resource %i", _resourceList[i].resourceId);
+			if (resource->size >= 6) {
+				if (!memcmp(resource->buffer, "DUMMY!", 6)) {
+					resource->invalid = true;
+					warning("DUMMY resource %i", resource->resourceId);
 				}
 			}
 		}
@@ -911,7 +890,7 @@ void Scene::loadSceneDescriptor(uint32 resourceId) {
 	byte *sceneDescriptorData;
 	size_t sceneDescriptorDataLength;
 
-	memset(&_sceneDescription, 0, sizeof(_sceneDescription));
+	_sceneDescription.reset();
 
 	if (resourceId == 0) {
 		return;
@@ -938,10 +917,8 @@ void Scene::loadSceneDescriptor(uint32 resourceId) {
 void Scene::loadSceneResourceList(uint32 resourceId) {
 	byte *resourceListData;
 	size_t resourceListDataLength;
-	size_t i;
 
-	_resourceListCount = 0;
-	_resourceList = NULL;
+	_resourceList.clear();
 
 	if (resourceId == 0) {
 		return;
@@ -954,19 +931,18 @@ void Scene::loadSceneResourceList(uint32 resourceId) {
 		MemoryReadStreamEndian readS(resourceListData, resourceListDataLength, _sceneContext->isBigEndian());
 
 		// Allocate memory for scene resource list
-		_resourceListCount = resourceListDataLength / SAGA_RESLIST_ENTRY_LEN;
-		debug(3, "Scene resource list contains %i entries", (int)_resourceListCount);
-		_resourceList = (SceneResourceData *)calloc(_resourceListCount, sizeof(*_resourceList));
+		_resourceList.resize(resourceListDataLength / SAGA_RESLIST_ENTRY_LEN);
+		debug(3, "Scene resource list contains %i entries", (int)_resourceList.size());
 
 		// Load scene resource list from raw scene
 		// resource table
 		debug(3, "Loading scene resource list");
 
-		for (i = 0; i < _resourceListCount; i++) {
-			_resourceList[i].resourceId = readS.readUint16();
-			_resourceList[i].resourceType = readS.readUint16();
+		for (SceneResourceDataArray::iterator resource = _resourceList.begin(); resource != _resourceList.end(); ++resource) {
+			resource->resourceId = readS.readUint16();
+			resource->resourceType = readS.readUint16();
 			// demo version may contain invalid resourceId
-			_resourceList[i].invalid = !_sceneContext->validResourceId(_resourceList[i].resourceId);
+			resource->invalid = !_sceneContext->validResourceId(resource->resourceId);
 		}
 
 	}
@@ -977,7 +953,6 @@ void Scene::processSceneResources() {
 	byte *resourceData;
 	size_t resourceDataLength;
 	const byte *palPointer;
-	size_t i;
 	SAGAResourceTypes *types = 0;
 	int typesCount = 0;
 	SAGAResourceTypes resType;
@@ -985,22 +960,22 @@ void Scene::processSceneResources() {
 	getResourceTypes(types, typesCount);
 
 	// Process the scene resource list
-	for (i = 0; i < _resourceListCount; i++) {
-		if (_resourceList[i].invalid) {
+	for (SceneResourceDataArray::iterator resource = _resourceList.begin(); resource != _resourceList.end(); ++resource) {
+		if (resource->invalid) {
 			continue;
 		}
-		resourceData = _resourceList[i].buffer;
-		resourceDataLength = _resourceList[i].size;
+		resourceData = resource->buffer;
+		resourceDataLength = resource->size;
 
-		if (_resourceList[i].resourceType >= typesCount) {
-			error("Scene::processSceneResources() wrong resource type %i", _resourceList[i].resourceType);
+		if (resource->resourceType >= typesCount) {
+			error("Scene::processSceneResources() wrong resource type %i", resource->resourceType);
 		}
 
-		resType = types[_resourceList[i].resourceType];
+		resType = types[resource->resourceType];
 
 		switch (resType) {
 		case SAGA_UNKNOWN:
-			warning("UNKNOWN resourceType %i", _resourceList[i].resourceType);
+			warning("UNKNOWN resourceType %i", resource->resourceType);
 			break;
 		case SAGA_ACTOR:
 			//for (a = actorsInScene; a; a = a->nextInScene)
@@ -1027,7 +1002,7 @@ void Scene::processSceneResources() {
 				_bg.buffer,
 				&_bg.w,
 				&_bg.h)) {
-				error("Scene::processSceneResources() Error loading background resource %i", _resourceList[i].resourceId);
+				error("Scene::processSceneResources() Error loading background resource %i", resource->resourceId);
 			}
 
 			palPointer = _vm->getImagePal(_bg.res_buf, _bg.res_len);
@@ -1100,7 +1075,7 @@ void Scene::processSceneResources() {
 			break;
 		case SAGA_ANIM:
 			{
-				uint16 animId = _resourceList[i].resourceType - 14;
+				uint16 animId = resource->resourceType - 14;
 
 				debug(3, "Loading animation resource animId=%i", animId);
 
@@ -1126,7 +1101,7 @@ void Scene::processSceneResources() {
 			break;
 		case SAGA_FACES:
 			if (_vm->getGameId() == GID_ITE)
-				_vm->_interface->loadScenePortraits(_resourceList[i].resourceId);
+				_vm->_interface->loadScenePortraits(resource->resourceId);
 			break;
 		case SAGA_PALETTE:
 			{
@@ -1145,7 +1120,7 @@ void Scene::processSceneResources() {
 			}
 			break;
 		default:
-			error("Scene::ProcessSceneResources() Encountered unknown resource type %i", _resourceList[i].resourceType);
+			error("Scene::ProcessSceneResources() Encountered unknown resource type %i", resource->resourceType);
 			break;
 		}
 	}
@@ -1222,13 +1197,11 @@ void Scene::endScene() {
 	}
 
 	// Free scene resource list
-	for (i = 0; i < _resourceListCount; i++) {
+	for (i = 0; i < _resourceList.size(); i++) { //!!!!!!!!!!!!!!!!!!!
 		free(_resourceList[i].buffer);
 	}
 
-	if (_loadDescription) {
-		free(_resourceList);
-	}
+	_resourceList.clear();
 
 	// Free animation info list
 	_vm->_anim->reset();

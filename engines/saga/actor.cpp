@@ -1146,12 +1146,13 @@ void Actor::drawSpeech() {
 	ActorData *actor;
 	int width, height;
 	int stringLength = strlen(_activeSpeech.strings[0]);
-	char *outputString = (char*)calloc(stringLength + 1, 1);
+	Common::Array<char> outputString;
+	outputString.resize(stringLength + 1);
 
 	if (_activeSpeech.speechFlags & kSpeakSlow)
-		strncpy(outputString, _activeSpeech.strings[0], _activeSpeech.slowModeCharIndex + 1);
+		strncpy(&outputString.front(), _activeSpeech.strings[0], _activeSpeech.slowModeCharIndex + 1);
 	else
-		strncpy(outputString, _activeSpeech.strings[0], stringLength);
+		strncpy(&outputString.front(), _activeSpeech.strings[0], stringLength);
 
 	if (_activeSpeech.actorsCount > 1) {
 		height = _vm->_font->getHeight(kKnownFontScript);
@@ -1168,15 +1169,13 @@ void Actor::drawSpeech() {
 			else if (_vm->getGameId() == GID_IHNM)
 				textPoint.y = 10; // CLIP(actor->_screenPosition.y - 160, 10, _vm->_scene->getHeight(true) - 10 - height);
 
-			_vm->_font->textDraw(kKnownFontScript, outputString, textPoint,
+			_vm->_font->textDraw(kKnownFontScript, &outputString.front(), textPoint,
 				_activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], _activeSpeech.getFontFlags(i));
 		}
 	} else {
-		_vm->_font->textDrawRect(kKnownFontScript, outputString, _activeSpeech.drawRect, _activeSpeech.speechColor[0],
+		_vm->_font->textDrawRect(kKnownFontScript, &outputString.front(), _activeSpeech.drawRect, _activeSpeech.speechColor[0],
 			_activeSpeech.outlineColor[0], _activeSpeech.getFontFlags(0));
 	}
-
-	free(outputString);
 }
 
 void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, int sampleResourceId, int speechFlags) {

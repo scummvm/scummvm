@@ -113,7 +113,12 @@ struct SceneResourceData {
 	byte *buffer;
 	size_t size;
 	bool invalid;
+
+	SceneResourceData() : resourceId(0), resourceType(0), buffer(NULL), size(0), invalid(false) {
+	}
 };
+
+typedef Common::Array<SceneResourceData> SceneResourceDataArray;
 
 #define SAGA_SCENE_DESC_LEN 16
 
@@ -126,8 +131,10 @@ struct SceneDescription {
 	uint16 sceneScriptEntrypointNumber;
 	uint16 startScriptEntrypointNumber;
 	int16 musicResourceId;
-	SceneResourceData *resourceList;
-	size_t resourceListCount;
+	
+	void reset()  {
+		flags = resourceListResourceId = endSlope = beginSlope = scriptModuleNumber = sceneScriptEntrypointNumber = startScriptEntrypointNumber = musicResourceId = 0;
+	}
 };
 
 struct SceneEntry {
@@ -161,14 +168,12 @@ enum SceneTransitionType {
 
 enum SceneLoadFlags {
 	kLoadByResourceId,
-	kLoadBySceneNumber,
-	kLoadByDescription
+	kLoadBySceneNumber
 };
 
 struct LoadSceneParams {
 	int32 sceneDescriptor;
 	SceneLoadFlags loadFlag;
-	SceneDescription* sceneDescription;
 	SceneProc *sceneProc;
 	bool sceneSkipTarget;
 	SceneTransitionType transitionType;
@@ -230,8 +235,8 @@ class Scene {
 	void skipScene();
 	void endScene();
 	void restoreScene();
-	void queueScene(LoadSceneParams *sceneQueue) {
-		_sceneQueue.push_back(*sceneQueue);
+	void queueScene(const LoadSceneParams &sceneQueue) {
+		_sceneQueue.push_back(sceneQueue);
 	}
 
 	void draw();
@@ -379,10 +384,8 @@ class Scene {
 	int _currentMusicRepeat;
 	bool _chapterPointsChanged;
 	bool _inGame;
-	bool _loadDescription;
 	SceneDescription _sceneDescription;
-	size_t _resourceListCount;
-	SceneResourceData *_resourceList;
+	SceneResourceDataArray _resourceList;
 	SceneProc *_sceneProc;
 	SceneImage _bg;
 	SceneImage _bgMask;
