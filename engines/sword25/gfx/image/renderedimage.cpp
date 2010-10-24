@@ -37,7 +37,7 @@
 // -----------------------------------------------------------------------------
 
 #include "sword25/package/packagemanager.h"
-#include "sword25/gfx/image/imageloader.h"
+#include "sword25/gfx/image/pngloader.h"
 #include "sword25/gfx/image/renderedimage.h"
 
 #include "common/system.h"
@@ -72,14 +72,14 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 	// Bildeigenschaften bestimmen
 	GraphicEngine::COLOR_FORMATS colorFormat;
 	int pitch;
-	if (!ImageMan.extractImageProperties(pFileData, fileSize, colorFormat, _width, _height)) {
+	if (!PNGLoader::imageProperties(pFileData, fileSize, colorFormat, _width, _height)) {
 		BS_LOG_ERRORLN("Could not read image properties.");
 		delete[] pFileData;
 		return;
 	}
 
 	// Das Bild dekomprimieren
-	if (!ImageMan.loadImage(pFileData, fileSize, GraphicEngine::CF_ARGB32, _data, _width, _height, pitch)) {
+	if (!PNGLoader::decodeImage(pFileData, fileSize, GraphicEngine::CF_ARGB32, _data, _width, _height, pitch)) {
 		BS_LOG_ERRORLN("Could not decode image.");
 		delete[] pFileData;
 		return;

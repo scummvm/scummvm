@@ -26,7 +26,6 @@ MODULE_OBJS := \
 	gfx/text.o \
 	gfx/timedrenderobject.o \
 	gfx/image/art.o \
-	gfx/image/imageloader.o \
 	gfx/image/pngloader.o \
 	gfx/image/renderedimage.o \
 	gfx/image/swimage.o \

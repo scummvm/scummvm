@@ -32,41 +32,67 @@
  *
  */
 
-/*
-    PNGLoader
-    ------------
-    ImageLoader-Klasse zum Laden von PNG-Dateien
-
-    Autor: Malte Thiesen
-*/
-
 #ifndef SWORD25_PNGLOADER2_H
 #define SWORD25_PNGLOADER2_H
 
-// Includes
 #include "sword25/kernel/common.h"
-#include "sword25/gfx/image/imageloader.h"
+#include "sword25/gfx/graphicengine.h"
 
 namespace Sword25 {
 
-// Klassendefinition
-class PNGLoader : public ImageLoader {
-	friend class ImageLoaderManager;
-public:
-	// Alle virtuellen Methoden von BS_ImageLoader sind hier als static-Methode implementiert, damit sie von BS_B25SLoader aufgerufen werden können.
-	// Die virtuellen Methoden rufen diese Methoden auf.
+/**
+ * Class for loading PNG files, and PNG data embedded into savegames.
+ *
+ * Originally written by Malte Thiesen.
+ */
+class PNGLoader {
+protected:
+	PNGLoader() {}	// Protected constructor to prevent instances
+
 	static bool doIsCorrectImageFormat(const byte *fileDataPtr, uint fileSize);
 	static bool doDecodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEngine::COLOR_FORMATS colorFormat, byte *&uncompressedDataPtr, int &width, int &height, int &pitch);
 	static bool doImageProperties(const byte *fileDataPtr, uint fileSize, GraphicEngine::COLOR_FORMATS &colorFormat, int &width, int &height);
 
-protected:
-	bool decodeImage(const byte *pFileData, uint fileSize,
+public:
+	static bool isCorrectImageFormat(const byte *fileDataPtr, uint fileSize);
+
+	/**
+	 * Decode an image.
+	 * @param[in] fileDatePtr	pointer to the image data
+	 * @param[in] fileSize		size of the image data in bytes
+	 * @param[in] colorFormat	the color format to which the the data should be decoded
+	 * @param[out] pUncompressedData	if successful, this is set to a pointer containing the decoded image data
+	 * @param[out] width		if successful, this is set to the width of the image
+	 * @param[out] height		if successful, this is set to the height of the image
+	 * @param[out] pitch		if successful, this is set to the number of bytes per scanline in the image
+	 * @return false in case of an error
+	 *
+	 * @remark The size of the output data equals pitch * height.
+	 * @remark This function does not free the image buffer passed to it,
+	 *         it is the callers responsibility to do so.
+	 */
+	static bool decodeImage(const byte *pFileData, uint fileSize,
 	                 GraphicEngine::COLOR_FORMATS colorFormat,
 	                 byte *&pUncompressedData,
 	                 int &width, int &height,
 	                 int &pitch);
-	bool isCorrectImageFormat(const byte *fileDataPtr, uint fileSize);
-	bool imageProperties(const byte *fileDatePtr, uint fileSize, GraphicEngine::COLOR_FORMATS &colorFormat, int &width, int &height);
+	/**
+	 * Extract the properties of an image.
+	 * @param[in] fileDatePtr	pointer to the image data
+	 * @param[in] fileSize		size of the image data in bytes
+	 * @param[out] colorFormat	if successful, this is set to the color format of the image
+	 * @param[out] width		if successful, this is set to the width of the image
+	 * @param[out] height		if successful, this is set to the height of the image
+	 * @return returns true if extraction of the properties was successful, false in case of an error
+	 *
+	 * @remark This function does not free the image buffer passed to it,
+	 *         it is the callers responsibility to do so.
+	 */
+	static bool imageProperties(const byte *fileDatePtr,
+	                            uint fileSize,
+	                            GraphicEngine::COLOR_FORMATS &colorFormat,
+	                            int &width,
+	                            int &height);
 };
 
 } // End of namespace Sword25

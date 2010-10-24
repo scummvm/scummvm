@@ -41,8 +41,6 @@ namespace Sword25 {
 #define BS_LOG_PREFIX "PNGLOADER"
 
 
-namespace {
-
 /**
  * Load a NULL-terminated string from the given stream.
  */
@@ -66,7 +64,8 @@ static Common::String loadString(Common::ReadStream &in, uint maxSize = 999) {
  * @return offset to image data if fileDataPtr contains a savegame; 0 otherwise
  */
 static uint findEmbeddedPNG(const byte *fileDataPtr, uint fileSize) {
-	assert(fileSize >= 100);
+	if (fileSize < 100)
+		return 0;
 	if (memcmp(fileDataPtr, "BS25SAVEGAME", 12))
 		return 0;
 
@@ -85,7 +84,6 @@ static uint findEmbeddedPNG(const byte *fileDataPtr, uint fileSize) {
 
 	// Return the offset of where the thumbnail starts
 	return static_cast<uint>(stream.pos() + compressedGamedataSize);
-}
 }
 
 static void png_user_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
@@ -112,7 +110,7 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEn
 	}
 
 	// PNG Signatur überprüfen
-	if (!png_check_sig(reinterpret_cast<png_bytep>(const_cast<byte *>(fileDataPtr)), 8)) {
+	if (!doIsCorrectImageFormat(fileDataPtr, fileSize)) {
 		error("png_check_sig failed");
 	}
 
@@ -293,10 +291,7 @@ bool PNGLoader::imageProperties(const byte *fileDataPtr, uint fileSize, GraphicE
 }
 
 bool PNGLoader::doIsCorrectImageFormat(const byte *fileDataPtr, uint fileSize) {
-	if (fileSize > 8)
-		return png_check_sig(const_cast<byte *>(fileDataPtr), 8) ? true : false;
-	else
-		return false;
+	return (fileSize > 8) && png_check_sig(const_cast<byte *>(fileDataPtr), 8);
 }
 
 bool PNGLoader::isCorrectImageFormat(const byte *fileDataPtr, uint fileSize) {

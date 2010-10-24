@@ -33,7 +33,7 @@
  */
 
 #include "sword25/package/packagemanager.h"
-#include "sword25/gfx/image/imageloader.h"
+#include "sword25/gfx/image/pngloader.h"
 #include "sword25/gfx/image/swimage.h"
 
 namespace Sword25 {
@@ -61,14 +61,14 @@ SWImage::SWImage(const Common::String &filename, bool &result) :
 	// Bildeigenschaften bestimmen
 	GraphicEngine::COLOR_FORMATS colorFormat;
 	int pitch;
-	if (!ImageMan.extractImageProperties(pFileData, fileSize, colorFormat, _width, _height)) {
+	if (!PNGLoader::imageProperties(pFileData, fileSize, colorFormat, _width, _height)) {
 		BS_LOG_ERRORLN("Could not read image properties.");
 		return;
 	}
 
 	// Das Bild dekomprimieren
 	byte *pUncompressedData;
-	if (!ImageMan.loadImage(pFileData, fileSize, GraphicEngine::CF_ARGB32, pUncompressedData, _width, _height, pitch)) {
+	if (!PNGLoader::decodeImage(pFileData, fileSize, GraphicEngine::CF_ARGB32, pUncompressedData, _width, _height, pitch)) {
 		BS_LOG_ERRORLN("Could not decode image.");
 		return;
 	}

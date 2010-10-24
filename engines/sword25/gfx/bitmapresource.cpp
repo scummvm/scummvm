@@ -35,7 +35,6 @@
 #include "sword25/gfx/bitmapresource.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/gfx/graphicengine.h"
-#include "sword25/gfx/image/imageloader.h"
 #include "sword25/package/packagemanager.h"
 
 namespace Sword25 {
