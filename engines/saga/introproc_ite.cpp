@@ -485,7 +485,7 @@ int Scene::ITEIntroCave1Proc(int param) {
 		break;
 
 	default:
-		warning("Illegal scene procedure paramater");
+		warning("Illegal scene procedure parameter");
 		break;
 	}
 
@@ -589,7 +589,7 @@ int Scene::ITEIntroCave2Proc(int param) {
 	case SCENE_END:
 		break;
 	default:
-		warning("Illegal scene procedure paramater");
+		warning("Illegal scene procedure parameter");
 		break;
 	}
 
@@ -694,7 +694,7 @@ int Scene::ITEIntroCave3Proc(int param) {
 	case SCENE_END:
 		break;
 	default:
-		warning("Illegal scene procedure paramater");
+		warning("Illegal scene procedure parameter");
 		break;
 	}
 
@@ -812,7 +812,7 @@ int Scene::ITEIntroCave4Proc(int param) {
 	case SCENE_END:
 		break;
 	default:
-		warning("Illegal scene procedure paramater");
+		warning("Illegal scene procedure parameter");
 		break;
 	}
 

@@ -281,7 +281,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			continue;
 
 		case 0x04:	// Wait. Parameters: Ticks to wait(W).
-			// TODO: some unkown Parameter? (macroPtr[1] & 1)
+			// TODO: some unknown Parameter? (macroPtr[1] & 1)
 			channel.macroWait = READ_BE_UINT16(&macroPtr[2]);
 			break;
 
@@ -1154,7 +1154,7 @@ void displayMacroStep(const void * const vptr) {
 	if (macroData[0] < ARRAYSIZE(tableMacros))
 		debug("%s %02X%02X%02X", tableMacros[macroData[0]], macroData[1], macroData[2], macroData[3]);
 	else
-		debug("Unkown Macro #%02X %02X%02X%02X", macroData[0], macroData[1], macroData[2], macroData[3]);
+		debug("Unknown Macro #%02X %02X%02X%02X", macroData[0], macroData[1], macroData[2], macroData[3]);
 }
 
 void displayPatternstep(const void * const vptr) {

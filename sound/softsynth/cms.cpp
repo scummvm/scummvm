@@ -342,7 +342,7 @@ void CMSEmulator::portWriteIntern(int chip, int offset, int data) {
 		default:
 			// The CMS allows all registers to be written, so we just output some debug
 			// message here
-			debug(5, "CMS Unkown write to reg %x with %x",reg, data);
+			debug(5, "CMS Unknown write to reg %x with %x",reg, data);
 	}
 }
 

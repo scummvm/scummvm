@@ -2072,7 +2072,7 @@ void Insane::actor12Reaction(int32 buttons) {
 			setEnemyState();
 			_actor[1].act[2].tilt = 0;
 			// for some reason there is no break at this
-			// place, so tilt gets overriden on next line
+			// place, so tilt gets overridden on next line
 		}
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
 		break;

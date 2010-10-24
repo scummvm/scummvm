@@ -529,7 +529,7 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 	} else {
 		DebugPrintf("Usage: debug [+CHANNEL|-CHANNEL]\n");
 		DebugPrintf("Enables or disables the given debug channel.\n");
-		DebugPrintf("When used without parameters, lists all avaiable debug channels and their status.\n");
+		DebugPrintf("When used without parameters, lists all available debug channels and their status.\n");
 	}
 
 	return true;

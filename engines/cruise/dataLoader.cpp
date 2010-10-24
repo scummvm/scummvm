@@ -55,7 +55,7 @@ void decodeGfxUnified(dataFileEntry *pCurrentFileEntry, int16 format) {
 		break;
 
 	default:
-		error("Unkown gfx format %d", format);
+		error("Unknown gfx format %d", format);
 	}
 
 	uint8 *buffer = (uint8 *)MemAlloc(spriteSize);

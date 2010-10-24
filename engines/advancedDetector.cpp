@@ -622,7 +622,7 @@ static ADGameDescList detectGameFilebased(const FileMap &allFiles, const ADParam
 				matchedDesc = agdesc;
 				maxNumMatchedFiles = numMatchedFiles;
 
-				debug(4, "and overriden");
+				debug(4, "and overridden");
 			}
 		}
 	}
