@@ -110,7 +110,6 @@ enum SAGAResourceTypes {
 struct SceneResourceData {
 	uint32 resourceId;
 	int resourceType;
-	ByteArray buffer;
 	bool invalid;
 
 	SceneResourceData() : resourceId(0), resourceType(0),  invalid(false) {
@@ -360,9 +359,9 @@ class Scene {
  private:
 	void loadScene(LoadSceneParams &loadSceneParams);
 	void loadSceneDescriptor(uint32 resourceId);
-	void loadSceneResourceList(uint32 resourceId);
+	void loadSceneResourceList(uint32 resourceId, SceneResourceDataArray &resourceList);
 	void loadSceneEntryList(const ByteArray &resourceData);
-	void processSceneResources();
+	void processSceneResources(SceneResourceDataArray &resourceList);
 	void getResourceTypes(SAGAResourceTypes *&types, int &typesCount);
 
 
@@ -382,7 +381,6 @@ class Scene {
 	bool _chapterPointsChanged;
 	bool _inGame;
 	SceneDescription _sceneDescription;
-	SceneResourceDataArray _resourceList;
 	SceneProc *_sceneProc;
 	SceneImage _bg;
 	SceneImage _bgMask;
