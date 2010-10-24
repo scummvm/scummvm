@@ -100,8 +100,6 @@ static bool doIsCorrectImageFormat(const byte *fileDataPtr, uint fileSize) {
 bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&uncompressedDataPtr, int &width, int &height, int &pitch) {
 	png_structp png_ptr = NULL;
 	png_infop   info_ptr = NULL;
-	png_bytep   rawDataBuffer = NULL;
-	png_bytep  *pRowPtr = NULL;
 
 	int         bitDepth;
 	int         colorType;
@@ -166,59 +164,39 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&unc
 	png_read_update_info(png_ptr, info_ptr);
 	png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&width, (png_uint_32 *)&height, &bitDepth, &colorType, NULL, NULL, NULL);
 
-	// PNGs ohne Interlacing werden Zeilenweise eingelesen
 	if (interlaceType == PNG_INTERLACE_NONE) {
-		// Speicher für eine Bildzeile reservieren
-		rawDataBuffer = new png_byte[png_get_rowbytes(png_ptr, info_ptr)];
-		if (!rawDataBuffer) {
-			error("Could not allocate memory for row buffer.");
-		}
-
-		// Bilddaten zeilenweise einlesen und in das gewünschte Zielformat konvertieren
+		// PNGs without interlacing can simply be read row by row.
 		for (i = 0; i < height; i++) {
-			// Zeile einlesen
-			png_read_row(png_ptr, rawDataBuffer, NULL);
-
-			// Zeile konvertieren
-			memcpy(&uncompressedDataPtr[i * pitch], rawDataBuffer, pitch);
+			png_read_row(png_ptr, uncompressedDataPtr + i * pitch, NULL);
 		}
 	} else {
-		// PNGs mit Interlacing werden an einem Stück eingelesen
-		// Speicher für das komplette Bild reservieren
-		rawDataBuffer = new png_byte[png_get_rowbytes(png_ptr, info_ptr) * height];
-		if (!rawDataBuffer) {
-			error("Could not allocate memory for raw image buffer.");
-		}
+		// PNGs with interlacing require us to allocate an auxillary
+		// buffer with pointers to all row starts.
 
-		// Speicher für die Rowpointer reservieren
-		pRowPtr = new png_bytep[height];
+		// Allocate row pointer buffer
+		png_bytep *pRowPtr = new png_bytep[height];
 		if (!pRowPtr) {
 			error("Could not allocate memory for row pointers.");
 		}
 
-		// Alle Rowpointer mit den richtigen Offsets initialisieren
+		// Initialize row pointers
 		for (i = 0; i < height; i++)
-			pRowPtr[i] = rawDataBuffer + i * png_get_rowbytes(png_ptr, info_ptr);
+			pRowPtr[i] = uncompressedDataPtr + i * pitch;
 
-		// Bild einlesen
+		// Read image data
 		png_read_image(png_ptr, pRowPtr);
 
-		// Bilddaten zeilenweise in das gewünschte Ausgabeformat konvertieren
-		for (i = 0; i < height; i++)
-			memcpy(&uncompressedDataPtr[i * pitch], &rawDataBuffer[i * png_get_rowbytes(png_ptr, info_ptr)], pitch);
+		// Free row pointer buffer
+		delete[] pRowPtr;
 	}
 
-	// Die zusätzlichen Daten am Ende des Bildes lesen
+	// Read additional data at the end.
 	png_read_end(png_ptr, NULL);
 
-	// Die Strukturen freigeben
+	// Destroy libpng structures
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
-	// Temporäre Buffer freigeben
-	delete[] pRowPtr;
-	delete[] rawDataBuffer;
-
-	// Der Funktionsaufruf war erfolgreich
+	// Signal success
 	return true;
 }
 
