@@ -464,8 +464,12 @@ public:
 	 * Return a pointer to the start of the buffer underlying this byte array,
 	 * or NULL if the buffer is empty.
 	 */
-	byte *getBuffer() const {
-		return empty() ? NULL : (byte *)&front();
+	byte *getBuffer() {
+		return empty() ? NULL : &front();
+	}
+
+	const byte *getBuffer() const {
+		return empty() ? NULL : &front();
 	}
 
 	void assign(const ByteArray &src) {
