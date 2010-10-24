@@ -220,9 +220,12 @@ void registerDefaults() {
 	ConfMan.registerDefault("record_temp_file_name", "record.tmp");
 	ConfMan.registerDefault("record_time_file_name", "record.time");
 
+#if 0
+	// NEW CODE TO HIDE CONSOLE FOR WIN32
 #ifdef WIN32
 	// console hiding for win32
 	ConfMan.registerDefault("show_console", false);
+#endif
 #endif
 }
 
@@ -551,10 +554,13 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 #endif
 
+#if 0
+	// NEW CODE TO HIDE CONSOLE FOR WIN32
 #ifdef WIN32
 			// console hiding for win32
 			DO_LONG_OPTION_BOOL("show-console")
 			END_OPTION
+#endif
 #endif
 
 unknownOption:
