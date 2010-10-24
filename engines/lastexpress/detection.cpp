@@ -46,7 +46,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CD3.HPF", 0, "00554fbf78a2ad391d98578fbbbe1c48", 641128448},
 		},
 		Common::EN_ANY,
-		Common::kPlatformWindows,
+		Common::kPlatformUnknown,
 		ADGF_NO_FLAGS,
 		Common::GUIO_NONE
 	},
@@ -62,7 +62,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CD3.HPF", 0, "33f5e35f51063cb90f6bed9974475aa6", 641056768},
 		},
 		Common::EN_ANY,
-		Common::kPlatformWindows,
+		Common::kPlatformUnknown,
 		ADGF_NO_FLAGS,
 		Common::GUIO_NONE
 	},
@@ -78,7 +78,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CD3.HPF", 0, "00554fbf78a2ad391d98578fbbbe1c48", 641128448},
 		},
 		Common::EN_ANY,
-		Common::kPlatformWindows,
+		Common::kPlatformUnknown,
 		ADGF_NO_FLAGS,
 		Common::GUIO_NONE
 	},
@@ -94,7 +94,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CD3.HPF", 0, "411c1bab57b3e8da4fb359c5b40ef5d7", 640884736},
 		},
 		Common::FR_FRA,
-		Common::kPlatformWindows,
+		Common::kPlatformUnknown,
 		ADGF_NO_FLAGS,
 		Common::GUIO_NONE
 	},
@@ -110,7 +110,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CD3.HPF", 0, "ee55d4310546dd2a38560b096d1c2771", 641144832},
 		},
 		Common::DE_DEU,
-		Common::kPlatformWindows,
+		Common::kPlatformUnknown,
 		ADGF_NO_FLAGS,
 		Common::GUIO_NONE
 	},
@@ -126,7 +126,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CD3.HPF", 0, "0d1901662f4d063a5c250c9fbf64b771", 639504384},
 		},
 		Common::ES_ESP,
-		Common::kPlatformWindows,
+		Common::kPlatformUnknown,
 		ADGF_NO_FLAGS,
 		Common::GUIO_NONE
 	},
@@ -139,7 +139,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"Demo.HPF",  0, "baf3b1f64155d34872896e61c3d3cb78", 58191872},
 		},
 		Common::EN_ANY,
-		Common::kPlatformWindows,
+		Common::kPlatformUnknown,
 		ADGF_DEMO,
 		Common::GUIO_NONE
 	},
