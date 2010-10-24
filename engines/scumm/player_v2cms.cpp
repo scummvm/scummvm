@@ -426,8 +426,6 @@ static const byte volumeTable[] = {
 	0x33, 0x44, 0x55, 0x66, 0x88, 0xAA, 0xCC, 0xFF
 };
 
-static CMSEmulator *g_cmsEmu = 0;
-
 Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer) {
 	int i;
 
@@ -495,7 +493,7 @@ Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer) {
 	_cmsVoices[7].octaveOutput = &(_cmsChips[1].octave[1]);
 
 	// inits the CMS Emulator like in the original
-	g_cmsEmu = new CMSEmulator(_sampleRate);
+	_cmsEmu = new CMSEmulator(_sampleRate);
 	static const byte cmsInitData[13*2] = {
 		0x1C, 0x02,
 		0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x03, 0x00, 0x04, 0x00, 0x05, 0x00,
@@ -505,8 +503,8 @@ Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer) {
 	i = 0;
 	for (int cmsPort = 0x220; i < 2; cmsPort += 2, ++i) {
 		for (int off = 0; off < 13; ++off) {
-			g_cmsEmu->portWrite(cmsPort+1, cmsInitData[off*2]);
-			g_cmsEmu->portWrite(cmsPort, cmsInitData[off*2+1]);
+			_cmsEmu->portWrite(cmsPort+1, cmsInitData[off*2]);
+			_cmsEmu->portWrite(cmsPort, cmsInitData[off*2+1]);
 		}
 	}
 
@@ -517,7 +515,7 @@ Player_V2CMS::~Player_V2CMS() {
 	Common::StackLock lock(_mutex);
 
 	_mixer->stopHandle(_soundHandle);
-	delete g_cmsEmu;
+	delete _cmsEmu;
 }
 
 void Player_V2CMS::setMusicVolume(int vol) {
@@ -1061,7 +1059,7 @@ int Player_V2CMS::readBuffer(int16 *buffer, const int numSamples) {
 		step = len;
 		if (step > (_next_tick >> FIXP_SHIFT))
 			step = (_next_tick >> FIXP_SHIFT);
-		g_cmsEmu->readBuffer(buffer, step);
+		_cmsEmu->readBuffer(buffer, step);
 		buffer += 2 * step;
 		_next_tick -= step << FIXP_SHIFT;
 	} while (len -= step);
@@ -1207,8 +1205,8 @@ void Player_V2CMS::offAllChannels() {
 
 	for (int cmsPort = 0x220, i = 0; i < 2; cmsPort += 2, ++i) {
 		for (int off = 0; off < 10; ++off) {
-			g_cmsEmu->portWrite(cmsPort+1, cmsOffData[off*2]);
-			g_cmsEmu->portWrite(cmsPort, cmsOffData[off*2+1]);
+			_cmsEmu->portWrite(cmsPort+1, cmsOffData[off*2]);
+			_cmsEmu->portWrite(cmsPort, cmsOffData[off*2+1]);
 		}
 	}*/
 }
@@ -1397,32 +1395,32 @@ void Player_V2CMS::play() {
 	// with the high nibble of the volumeReg value
 	// the right channels amplitude is set
 	// with the low value the left channels amplitude
-	g_cmsEmu->portWrite(0x221, 0);
-	g_cmsEmu->portWrite(0x220, volumeReg[0]);
-	g_cmsEmu->portWrite(0x221, 1);
-	g_cmsEmu->portWrite(0x220, volumeReg[1]);
-	g_cmsEmu->portWrite(0x221, 2);
-	g_cmsEmu->portWrite(0x220, volumeReg[2]);
-	g_cmsEmu->portWrite(0x221, 3);
-	g_cmsEmu->portWrite(0x220, volumeReg[3]);
-	g_cmsEmu->portWrite(0x221, 8);
-	g_cmsEmu->portWrite(0x220, freqReg[0]);
-	g_cmsEmu->portWrite(0x221, 9);
-	g_cmsEmu->portWrite(0x220, freqReg[1]);
-	g_cmsEmu->portWrite(0x221, 10);
-	g_cmsEmu->portWrite(0x220, freqReg[2]);
-	g_cmsEmu->portWrite(0x221, 11);
-	g_cmsEmu->portWrite(0x220, freqReg[3]);
-	g_cmsEmu->portWrite(0x221, 0x10);
-	g_cmsEmu->portWrite(0x220, octaveReg[0]);
-	g_cmsEmu->portWrite(0x221, 0x11);
-	g_cmsEmu->portWrite(0x220, octaveReg[1]);
-	g_cmsEmu->portWrite(0x221, 0x14);
-	g_cmsEmu->portWrite(0x220, freqEnable);
-	g_cmsEmu->portWrite(0x221, 0x15);
-	g_cmsEmu->portWrite(0x220, noiseEnable);
-	g_cmsEmu->portWrite(0x221, 0x16);
-	g_cmsEmu->portWrite(0x220, noiseGen);
+	_cmsEmu->portWrite(0x221, 0);
+	_cmsEmu->portWrite(0x220, volumeReg[0]);
+	_cmsEmu->portWrite(0x221, 1);
+	_cmsEmu->portWrite(0x220, volumeReg[1]);
+	_cmsEmu->portWrite(0x221, 2);
+	_cmsEmu->portWrite(0x220, volumeReg[2]);
+	_cmsEmu->portWrite(0x221, 3);
+	_cmsEmu->portWrite(0x220, volumeReg[3]);
+	_cmsEmu->portWrite(0x221, 8);
+	_cmsEmu->portWrite(0x220, freqReg[0]);
+	_cmsEmu->portWrite(0x221, 9);
+	_cmsEmu->portWrite(0x220, freqReg[1]);
+	_cmsEmu->portWrite(0x221, 10);
+	_cmsEmu->portWrite(0x220, freqReg[2]);
+	_cmsEmu->portWrite(0x221, 11);
+	_cmsEmu->portWrite(0x220, freqReg[3]);
+	_cmsEmu->portWrite(0x221, 0x10);
+	_cmsEmu->portWrite(0x220, octaveReg[0]);
+	_cmsEmu->portWrite(0x221, 0x11);
+	_cmsEmu->portWrite(0x220, octaveReg[1]);
+	_cmsEmu->portWrite(0x221, 0x14);
+	_cmsEmu->portWrite(0x220, freqEnable);
+	_cmsEmu->portWrite(0x221, 0x15);
+	_cmsEmu->portWrite(0x220, noiseEnable);
+	_cmsEmu->portWrite(0x221, 0x16);
+	_cmsEmu->portWrite(0x220, noiseGen);
 }
 
 void Player_V2CMS::playMusicChips(const MusicChip *table) {
@@ -1430,30 +1428,30 @@ void Player_V2CMS::playMusicChips(const MusicChip *table) {
 
 	do {
 		cmsPort += 2;
-		g_cmsEmu->portWrite(cmsPort+1, 0);
-		g_cmsEmu->portWrite(cmsPort, table->ampl[0]);
-		g_cmsEmu->portWrite(cmsPort+1, 1);
-		g_cmsEmu->portWrite(cmsPort, table->ampl[1]);
-		g_cmsEmu->portWrite(cmsPort+1, 2);
-		g_cmsEmu->portWrite(cmsPort, table->ampl[2]);
-		g_cmsEmu->portWrite(cmsPort+1, 3);
-		g_cmsEmu->portWrite(cmsPort, table->ampl[3]);
-		g_cmsEmu->portWrite(cmsPort+1, 8);
-		g_cmsEmu->portWrite(cmsPort, table->freq[0]);
-		g_cmsEmu->portWrite(cmsPort+1, 9);
-		g_cmsEmu->portWrite(cmsPort, table->freq[1]);
-		g_cmsEmu->portWrite(cmsPort+1, 10);
-		g_cmsEmu->portWrite(cmsPort, table->freq[2]);
-		g_cmsEmu->portWrite(cmsPort+1, 11);
-		g_cmsEmu->portWrite(cmsPort, table->freq[3]);
-		g_cmsEmu->portWrite(cmsPort+1, 0x10);
-		g_cmsEmu->portWrite(cmsPort, table->octave[0]);
-		g_cmsEmu->portWrite(cmsPort+1, 0x11);
-		g_cmsEmu->portWrite(cmsPort, table->octave[1]);
-		g_cmsEmu->portWrite(cmsPort+1, 0x14);
-		g_cmsEmu->portWrite(cmsPort, 0x3F);
-		g_cmsEmu->portWrite(cmsPort+1, 0x15);
-		g_cmsEmu->portWrite(cmsPort, 0x00);
+		_cmsEmu->portWrite(cmsPort+1, 0);
+		_cmsEmu->portWrite(cmsPort, table->ampl[0]);
+		_cmsEmu->portWrite(cmsPort+1, 1);
+		_cmsEmu->portWrite(cmsPort, table->ampl[1]);
+		_cmsEmu->portWrite(cmsPort+1, 2);
+		_cmsEmu->portWrite(cmsPort, table->ampl[2]);
+		_cmsEmu->portWrite(cmsPort+1, 3);
+		_cmsEmu->portWrite(cmsPort, table->ampl[3]);
+		_cmsEmu->portWrite(cmsPort+1, 8);
+		_cmsEmu->portWrite(cmsPort, table->freq[0]);
+		_cmsEmu->portWrite(cmsPort+1, 9);
+		_cmsEmu->portWrite(cmsPort, table->freq[1]);
+		_cmsEmu->portWrite(cmsPort+1, 10);
+		_cmsEmu->portWrite(cmsPort, table->freq[2]);
+		_cmsEmu->portWrite(cmsPort+1, 11);
+		_cmsEmu->portWrite(cmsPort, table->freq[3]);
+		_cmsEmu->portWrite(cmsPort+1, 0x10);
+		_cmsEmu->portWrite(cmsPort, table->octave[0]);
+		_cmsEmu->portWrite(cmsPort+1, 0x11);
+		_cmsEmu->portWrite(cmsPort, table->octave[1]);
+		_cmsEmu->portWrite(cmsPort+1, 0x14);
+		_cmsEmu->portWrite(cmsPort, 0x3F);
+		_cmsEmu->portWrite(cmsPort+1, 0x15);
+		_cmsEmu->portWrite(cmsPort, 0x00);
 		++table;
 	} while ((cmsPort & 2) == 0);
 }

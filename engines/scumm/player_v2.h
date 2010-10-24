@@ -32,6 +32,8 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
+class CMSEmulator;
+
 namespace Scumm {
 
 class ScummEngine;
@@ -284,6 +286,8 @@ protected:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 	ScummEngine *_vm;
+
+	CMSEmulator *_cmsEmu;
 
 	int _header_len;
 
