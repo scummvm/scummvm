@@ -49,18 +49,15 @@ class PNGLoader {
 protected:
 	PNGLoader() {}	// Protected constructor to prevent instances
 
-	static bool doIsCorrectImageFormat(const byte *fileDataPtr, uint fileSize);
-	static bool doDecodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEngine::COLOR_FORMATS colorFormat, byte *&uncompressedDataPtr, int &width, int &height, int &pitch);
-	static bool doImageProperties(const byte *fileDataPtr, uint fileSize, GraphicEngine::COLOR_FORMATS &colorFormat, int &width, int &height);
+	static bool doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&uncompressedDataPtr, int &width, int &height, int &pitch);
+	static bool doImageProperties(const byte *fileDataPtr, uint fileSize, int &width, int &height);
 
 public:
-	static bool isCorrectImageFormat(const byte *fileDataPtr, uint fileSize);
 
 	/**
 	 * Decode an image.
 	 * @param[in] fileDatePtr	pointer to the image data
 	 * @param[in] fileSize		size of the image data in bytes
-	 * @param[in] colorFormat	the color format to which the the data should be decoded
 	 * @param[out] pUncompressedData	if successful, this is set to a pointer containing the decoded image data
 	 * @param[out] width		if successful, this is set to the width of the image
 	 * @param[out] height		if successful, this is set to the height of the image
@@ -72,15 +69,13 @@ public:
 	 *         it is the callers responsibility to do so.
 	 */
 	static bool decodeImage(const byte *pFileData, uint fileSize,
-	                 GraphicEngine::COLOR_FORMATS colorFormat,
-	                 byte *&pUncompressedData,
-	                 int &width, int &height,
-	                 int &pitch);
+	                        byte *&pUncompressedData,
+	                        int &width, int &height,
+	                        int &pitch);
 	/**
 	 * Extract the properties of an image.
 	 * @param[in] fileDatePtr	pointer to the image data
 	 * @param[in] fileSize		size of the image data in bytes
-	 * @param[out] colorFormat	if successful, this is set to the color format of the image
 	 * @param[out] width		if successful, this is set to the width of the image
 	 * @param[out] height		if successful, this is set to the height of the image
 	 * @return returns true if extraction of the properties was successful, false in case of an error
@@ -88,9 +83,7 @@ public:
 	 * @remark This function does not free the image buffer passed to it,
 	 *         it is the callers responsibility to do so.
 	 */
-	static bool imageProperties(const byte *fileDatePtr,
-	                            uint fileSize,
-	                            GraphicEngine::COLOR_FORMATS &colorFormat,
+	static bool imageProperties(const byte *fileDatePtr, uint fileSize,
 	                            int &width,
 	                            int &height);
 };

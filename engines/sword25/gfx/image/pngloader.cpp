@@ -92,7 +92,12 @@ static void png_user_read_data(png_structp png_ptr, png_bytep data, png_size_t l
 	*ref += length;
 }
 
-bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEngine::COLOR_FORMATS colorFormat, byte *&uncompressedDataPtr, int &width, int &height, int &pitch) {
+static bool doIsCorrectImageFormat(const byte *fileDataPtr, uint fileSize) {
+	return (fileSize > 8) && png_check_sig(const_cast<byte *>(fileDataPtr), 8);
+}
+
+
+bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&uncompressedDataPtr, int &width, int &height, int &pitch) {
 	png_structp png_ptr = NULL;
 	png_infop   info_ptr = NULL;
 	png_bytep   rawDataBuffer = NULL;
@@ -103,13 +108,7 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEn
 	int         interlaceType;
 	int         i;
 
-	// Zielfarbformat überprüfen
-	if (colorFormat != GraphicEngine::CF_ARGB32) {
-		BS_LOG_ERRORLN("Illegal or unsupported color format.");
-		return false;
-	}
-
-	// PNG Signatur überprüfen
+	// Check for valid PNG signature
 	if (!doIsCorrectImageFormat(fileDataPtr, fileSize)) {
 		error("png_check_sig failed");
 	}
@@ -136,7 +135,7 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEn
 	png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&width, (png_uint_32 *)&height, &bitDepth, &colorType, &interlaceType, NULL, NULL);
 
 	// Pitch des Ausgabebildes berechnen
-	pitch = GraphicEngine::calcPitch(colorFormat, width);
+	pitch = GraphicEngine::calcPitch(GraphicEngine::CF_ARGB32, width);
 
 	// Speicher für die endgültigen Bilddaten reservieren
 	// Dieses geschieht vor dem reservieren von Speicher für temporäre Bilddaten um die Fragmentierung des Speichers gering zu halten
@@ -181,13 +180,7 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEn
 			png_read_row(png_ptr, rawDataBuffer, NULL);
 
 			// Zeile konvertieren
-			switch (colorFormat) {
-			case GraphicEngine::CF_ARGB32:
-				memcpy(&uncompressedDataPtr[i * pitch], rawDataBuffer, pitch);
-				break;
-			default:
-				assert(0);
-			}
+			memcpy(&uncompressedDataPtr[i * pitch], rawDataBuffer, pitch);
 		}
 	} else {
 		// PNGs mit Interlacing werden an einem Stück eingelesen
@@ -211,15 +204,8 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEn
 		png_read_image(png_ptr, pRowPtr);
 
 		// Bilddaten zeilenweise in das gewünschte Ausgabeformat konvertieren
-		switch (colorFormat) {
-		case GraphicEngine::CF_ARGB32:
-			for (i = 0; i < height; i++)
-				memcpy(&uncompressedDataPtr[i * pitch], &rawDataBuffer[i * png_get_rowbytes(png_ptr, info_ptr)], pitch);
-			break;
-		default:
-			error("Unhandled case in DoDecodeImage");
-			break;
-		}
+		for (i = 0; i < height; i++)
+			memcpy(&uncompressedDataPtr[i * pitch], &rawDataBuffer[i * png_get_rowbytes(png_ptr, info_ptr)], pitch);
 	}
 
 	// Die zusätzlichen Daten am Ende des Bildes lesen
@@ -236,13 +222,13 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEn
 	return true;
 }
 
-bool PNGLoader::decodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEngine::COLOR_FORMATS colorFormat, byte *&uncompressedDataPtr, int &width, int &height, int &pitch) {
+bool PNGLoader::decodeImage(const byte *fileDataPtr, uint fileSize, byte *&uncompressedDataPtr, int &width, int &height, int &pitch) {
 	uint pngOffset = findEmbeddedPNG(fileDataPtr, fileSize);
-	return doDecodeImage(fileDataPtr + pngOffset, fileSize - pngOffset, colorFormat, uncompressedDataPtr, width, height, pitch);
+	return doDecodeImage(fileDataPtr + pngOffset, fileSize - pngOffset, uncompressedDataPtr, width, height, pitch);
 }
 
-bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, GraphicEngine::COLOR_FORMATS &colorFormat, int &width, int &height) {
-	// PNG Signatur überprüfen
+bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, int &width, int &height) {
+	// Check for valid PNG signature
 	if (!doIsCorrectImageFormat(fileDataPtr, fileSize))
 		return false;
 
@@ -272,12 +258,6 @@ bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, Graphi
 	int colorType;
 	png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&width, (png_uint_32 *)&height, &bitDepth, &colorType, NULL, NULL, NULL);
 
-	// PNG-ColorType in BS ColorFormat konvertieren.
-	if (colorType & PNG_COLOR_MASK_ALPHA || png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
-		colorFormat = GraphicEngine::CF_ARGB32;
-	else
-		colorFormat = GraphicEngine::CF_RGB24;
-
 	// Die Strukturen freigeben
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
@@ -285,18 +265,10 @@ bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, Graphi
 
 }
 
-bool PNGLoader::imageProperties(const byte *fileDataPtr, uint fileSize, GraphicEngine::COLOR_FORMATS &colorFormat, int &width, int &height) {
+bool PNGLoader::imageProperties(const byte *fileDataPtr, uint fileSize, int &width, int &height) {
 	uint pngOffset = findEmbeddedPNG(fileDataPtr, fileSize);
-	return doImageProperties(fileDataPtr + pngOffset, fileSize - pngOffset, colorFormat, width, height);
+	return doImageProperties(fileDataPtr + pngOffset, fileSize - pngOffset, width, height);
 }
 
-bool PNGLoader::doIsCorrectImageFormat(const byte *fileDataPtr, uint fileSize) {
-	return (fileSize > 8) && png_check_sig(const_cast<byte *>(fileDataPtr), 8);
-}
-
-bool PNGLoader::isCorrectImageFormat(const byte *fileDataPtr, uint fileSize) {
-	uint pngOffset = findEmbeddedPNG(fileDataPtr, fileSize);
-	return doIsCorrectImageFormat(fileDataPtr + pngOffset, fileSize - pngOffset);
-}
 
 } // End of namespace Sword25

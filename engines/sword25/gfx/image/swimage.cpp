@@ -59,16 +59,15 @@ SWImage::SWImage(const Common::String &filename, bool &result) :
 	}
 
 	// Bildeigenschaften bestimmen
-	GraphicEngine::COLOR_FORMATS colorFormat;
 	int pitch;
-	if (!PNGLoader::imageProperties(pFileData, fileSize, colorFormat, _width, _height)) {
+	if (!PNGLoader::imageProperties(pFileData, fileSize, _width, _height)) {
 		BS_LOG_ERRORLN("Could not read image properties.");
 		return;
 	}
 
 	// Das Bild dekomprimieren
 	byte *pUncompressedData;
-	if (!PNGLoader::decodeImage(pFileData, fileSize, GraphicEngine::CF_ARGB32, pUncompressedData, _width, _height, pitch)) {
+	if (!PNGLoader::decodeImage(pFileData, fileSize, pUncompressedData, _width, _height, pitch)) {
 		BS_LOG_ERRORLN("Could not decode image.");
 		return;
 	}
