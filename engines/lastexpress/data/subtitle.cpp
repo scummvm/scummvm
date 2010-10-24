@@ -96,14 +96,18 @@ bool Subtitle::load(Common::SeekableReadStream *in) {
 
 	// Create the buffers
 	if (_topLength) {
-		_topText = newArray<uint16>(_topLength);
+		_topText = newArray<uint16>(_topLength + 1);
 		if (!_topText)
 			return false;
+
+		_topText[_topLength] = 0;
 	}
 	if (_bottomLength) {
-		_bottomText = newArray<uint16>(_bottomLength);
+		_bottomText = newArray<uint16>(_bottomLength + 1);
 		if (!_bottomText)
 			return false;
+
+		_bottomText[_bottomLength] = 0;
 	}
 
 	// Read the texts
@@ -142,6 +146,7 @@ SubtitleManager::SubtitleManager(Font *font) : _font(font), _maxTime(0), _curren
 SubtitleManager::~SubtitleManager() {
 	reset();
 
+	// Zero passed pointers
 	_font = NULL;
 }
 
@@ -152,9 +157,6 @@ void SubtitleManager::reset() {
 	_subtitles.clear();
 	_currentIndex = -1;
 	_lastIndex = -1;
-
-	// Zero passed pointers
-	_font = NULL;
 }
 
 bool SubtitleManager::load(Common::SeekableReadStream *stream) {
