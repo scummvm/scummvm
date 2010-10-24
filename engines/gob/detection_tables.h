@@ -2264,16 +2264,14 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdLib,
 		"demo.stk", "demo.tot", 0
 	},
-//  This version is not detected on purpose: it's a pirated version, using a corrupted crack.
-//  Tagged ADGF_PIRATED! Do not re-add nor un-tag!
-	{
+	{ // Supplied by scoriae
 		{
 			"fascination",
-			"",
+			"VGA",
 			AD_ENTRY1s("disk0.stk", "c14330d052fe4da5a441ac9d81bc5891", 1061955),
-			UNK_LANG,
+			EN_ANY,
 			kPlatformPC,
-			ADGF_PIRATED,
+			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeFascination,

@@ -306,6 +306,21 @@ void Inter::funcBlock(int16 retFlag) {
 		} // End of workaround
 
 		cmd = _vm->_game->_script->readByte();
+
+		// WORKAROUND:
+		// A VGA version has some broken code in its scripts, this workaround skips the corrupted parts.
+		if (_vm->getGameType() == kGameTypeFascination) {
+			int addr = _vm->_game->_script->pos();
+			if ((startaddr == 0x212D) && (addr == 0x290E) && (cmd == 0x90) && !scumm_stricmp(_vm->_game->_curTotFile, "INTRO1.tot")) {
+				_vm->_game->_script->skip(2);
+				cmd = _vm->_game->_script->readByte();
+			}
+			if ((startaddr == 0x207D) && (addr == 0x22CE) && (cmd == 0x90) && !scumm_stricmp(_vm->_game->_curTotFile, "INTRO2.tot")) {
+				_vm->_game->_script->skip(2);
+				cmd = _vm->_game->_script->readByte();
+			}
+		}
+
 		if ((cmd >> 4) >= 12) {
 			cmd2 = 16 - (cmd >> 4);
 			cmd &= 0xF;
