@@ -60,7 +60,6 @@ public:
 	static bool doImageProperties(const byte *fileDataPtr, uint fileSize, GraphicEngine::COLOR_FORMATS &colorFormat, int &width, int &height);
 
 protected:
-	PNGLoader();
 	bool decodeImage(const byte *pFileData, uint fileSize,
 	                 GraphicEngine::COLOR_FORMATS colorFormat,
 	                 byte *&pUncompressedData,

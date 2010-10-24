@@ -40,7 +40,52 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "PNGLOADER"
 
-PNGLoader::PNGLoader() {
+
+namespace {
+
+/**
+ * Load a NULL-terminated string from the given stream.
+ */
+static Common::String loadString(Common::ReadStream &in, uint maxSize = 999) {
+	Common::String result;
+
+	while (!in.eos() && (result.size() < maxSize)) {
+		char ch = (char)in.readByte();
+		if (ch == '\0')
+			break;
+
+		result += ch;
+	}
+
+	return result;
+}
+
+/**
+ * Check if the given data is a savegame, and if so, locate the
+ * offset to the image data.
+ * @return offset to image data if fileDataPtr contains a savegame; 0 otherwise
+ */
+static uint findEmbeddedPNG(const byte *fileDataPtr, uint fileSize) {
+	assert(fileSize >= 100);
+	if (memcmp(fileDataPtr, "BS25SAVEGAME", 12))
+		return 0;
+
+	// Read in the header
+	Common::MemoryReadStream stream(fileDataPtr, fileSize);
+	stream.seek(0, SEEK_SET);
+
+	// Headerinformationen der Spielstandes einlesen.
+	uint compressedGamedataSize;
+	loadString(stream);		// Marker
+	loadString(stream);		// Version
+	loadString(stream);		// Description
+	Common::String gameSize = loadString(stream);
+	compressedGamedataSize = atoi(gameSize.c_str());
+	loadString(stream);
+
+	// Return the offset of where the thumbnail starts
+	return static_cast<uint>(stream.pos() + compressedGamedataSize);
+}
 }
 
 static void png_user_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
@@ -194,7 +239,8 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEn
 }
 
 bool PNGLoader::decodeImage(const byte *fileDataPtr, uint fileSize,  GraphicEngine::COLOR_FORMATS colorFormat, byte *&uncompressedDataPtr, int &width, int &height, int &pitch) {
-	return doDecodeImage(fileDataPtr, fileSize, colorFormat, uncompressedDataPtr, width, height, pitch);
+	uint pngOffset = findEmbeddedPNG(fileDataPtr, fileSize);
+	return doDecodeImage(fileDataPtr + pngOffset, fileSize - pngOffset, colorFormat, uncompressedDataPtr, width, height, pitch);
 }
 
 bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, GraphicEngine::COLOR_FORMATS &colorFormat, int &width, int &height) {
@@ -242,7 +288,8 @@ bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, Graphi
 }
 
 bool PNGLoader::imageProperties(const byte *fileDataPtr, uint fileSize, GraphicEngine::COLOR_FORMATS &colorFormat, int &width, int &height) {
-	return doImageProperties(fileDataPtr, fileSize, colorFormat, width, height);
+	uint pngOffset = findEmbeddedPNG(fileDataPtr, fileSize);
+	return doImageProperties(fileDataPtr + pngOffset, fileSize - pngOffset, colorFormat, width, height);
 }
 
 bool PNGLoader::doIsCorrectImageFormat(const byte *fileDataPtr, uint fileSize) {
@@ -253,7 +300,8 @@ bool PNGLoader::doIsCorrectImageFormat(const byte *fileDataPtr, uint fileSize) {
 }
 
 bool PNGLoader::isCorrectImageFormat(const byte *fileDataPtr, uint fileSize) {
-	return doIsCorrectImageFormat(fileDataPtr, fileSize);
+	uint pngOffset = findEmbeddedPNG(fileDataPtr, fileSize);
+	return doIsCorrectImageFormat(fileDataPtr + pngOffset, fileSize - pngOffset);
 }
 
 } // End of namespace Sword25

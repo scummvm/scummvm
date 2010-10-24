@@ -35,7 +35,6 @@
 #include "sword25/gfx/image/imageloader.h"
 
 #include "sword25/gfx/image/pngloader.h"
-#include "sword25/gfx/image/b25sloader.h"
 
 DECLARE_SINGLETON(Sword25::ImageLoaderManager)
 
@@ -80,7 +79,6 @@ bool ImageLoaderManager::extractImageProperties(const byte *pFileData, uint file
 
 ImageLoaderManager::ImageLoaderManager() {
 	_imageLoaderList.push_back(new PNGLoader());
-	_imageLoaderList.push_back(new B25SLoader());
 }
 
 ImageLoaderManager::~ImageLoaderManager() {
