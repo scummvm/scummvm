@@ -1103,27 +1103,27 @@ void Player_V2CMS::playVoice() {
 void Player_V2CMS::processChannel(Voice2 *channel) {
 	++_outputTableReady;
 	switch (channel->nextProcessState) {
-		case PROCESS_RELEASE:
-			processRelease(channel);
+	case PROCESS_RELEASE:
+		processRelease(channel);
 		break;
 
-		case PROCESS_ATTACK:
-			processAttack(channel);
+	case PROCESS_ATTACK:
+		processAttack(channel);
 		break;
 
-		case PROCESS_DECAY:
-			processDecay(channel);
+	case PROCESS_DECAY:
+		processDecay(channel);
 		break;
 
-		case PROCESS_SUSTAIN:
-			processSustain(channel);
+	case PROCESS_SUSTAIN:
+		processSustain(channel);
 		break;
 
-		case PROCESS_VIBRATO:
-			processVibrato(channel);
+	case PROCESS_VIBRATO:
+		processVibrato(channel);
 		break;
 
-		default:
+	default:
 		break;
 	}
 }

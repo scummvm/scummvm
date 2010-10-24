@@ -86,35 +86,39 @@ static const int amplitude_lookup[16] = {
 
 void CMSEmulator::portWrite(int port, int val) {
 	switch (port) {
-		case 0x220:
-			portWriteIntern(0, 1, val);
-			break;
+	case 0x220:
+		portWriteIntern(0, 1, val);
+		break;
 
-		case 0x221:
-			_saa1099[0].selected_reg = val & 0x1f;
-			if (_saa1099[0].selected_reg == 0x18 || _saa1099[0].selected_reg == 0x19) {
-				/* clock the envelope channels */
-				if (_saa1099[0].env_clock[0]) envelope(0, 0);
-				if (_saa1099[0].env_clock[1]) envelope(0, 1);
-			}
-			break;
+	case 0x221:
+		_saa1099[0].selected_reg = val & 0x1f;
+		if (_saa1099[0].selected_reg == 0x18 || _saa1099[0].selected_reg == 0x19) {
+			/* clock the envelope channels */
+			if (_saa1099[0].env_clock[0])
+				envelope(0, 0);
+			if (_saa1099[0].env_clock[1])
+				envelope(0, 1);
+		}
+		break;
 
-		case 0x222:
-			portWriteIntern(1, 1, val);
-			break;
+	case 0x222:
+		portWriteIntern(1, 1, val);
+		break;
 
-		case 0x223:
-			_saa1099[1].selected_reg = val & 0x1f;
-			if (_saa1099[1].selected_reg == 0x18 || _saa1099[1].selected_reg == 0x19) {
-				/* clock the envelope channels */
-				if (_saa1099[1].env_clock[0]) envelope(1, 0);
-				if (_saa1099[1].env_clock[1]) envelope(1, 1);
-			}
-			break;
+	case 0x223:
+		_saa1099[1].selected_reg = val & 0x1f;
+		if (_saa1099[1].selected_reg == 0x18 || _saa1099[1].selected_reg == 0x19) {
+			/* clock the envelope channels */
+			if (_saa1099[1].env_clock[0])
+				envelope(1, 0);
+			if (_saa1099[1].env_clock[1])
+				envelope(1, 1);
+		}
+		break;
 
-		default:
-			warning("CMSEmulator got port: 0x%X", port);
-			break;
+	default:
+		warning("CMSEmulator got port: 0x%X", port);
+		break;
 	}
 }
 
@@ -177,10 +181,10 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 
 	for (ch = 0; ch < 2; ch++) {
 		switch (saa->noise_params[ch]) {
-			case 0: saa->noise[ch].freq = 31250.0 * 2; break;
-			case 1: saa->noise[ch].freq = 15625.0 * 2; break;
-			case 2: saa->noise[ch].freq =  7812.5 * 2; break;
-			case 3: saa->noise[ch].freq = saa->channels[ch * 3].freq; break;
+		case 0: saa->noise[ch].freq = 31250.0 * 2; break;
+		case 1: saa->noise[ch].freq = 15625.0 * 2; break;
+		case 2: saa->noise[ch].freq =  7812.5 * 2; break;
+		case 3: saa->noise[ch].freq = saa->channels[ch * 3].freq; break;
 		}
 	}
 
@@ -254,95 +258,95 @@ void CMSEmulator::portWriteIntern(int chip, int offset, int data) {
 	int ch;
 
 	switch (reg) {
-		/* channel i amplitude */
-		case 0x00:
-		case 0x01:
-		case 0x02:
-		case 0x03:
-		case 0x04:
-		case 0x05:
-			ch = reg & 7;
-			saa->channels[ch].amplitude[LEFT] = amplitude_lookup[data & 0x0f];
-			saa->channels[ch].amplitude[RIGHT] = amplitude_lookup[(data >> 4) & 0x0f];
-			break;
+	/* channel i amplitude */
+	case 0x00:
+	case 0x01:
+	case 0x02:
+	case 0x03:
+	case 0x04:
+	case 0x05:
+		ch = reg & 7;
+		saa->channels[ch].amplitude[LEFT] = amplitude_lookup[data & 0x0f];
+		saa->channels[ch].amplitude[RIGHT] = amplitude_lookup[(data >> 4) & 0x0f];
+		break;
 
-		/* channel i frequency */
-		case 0x08:
-		case 0x09:
-		case 0x0a:
-		case 0x0b:
-		case 0x0c:
-		case 0x0d:
-			ch = reg & 7;
-			saa->channels[ch].frequency = data & 0xff;
-			break;
+	/* channel i frequency */
+	case 0x08:
+	case 0x09:
+	case 0x0a:
+	case 0x0b:
+	case 0x0c:
+	case 0x0d:
+		ch = reg & 7;
+		saa->channels[ch].frequency = data & 0xff;
+		break;
 
-		/* channel i octave */
-		case 0x10:
-		case 0x11:
-		case 0x12:
-			ch = (reg - 0x10) << 1;
-			saa->channels[ch + 0].octave = data & 0x07;
-			saa->channels[ch + 1].octave = (data >> 4) & 0x07;
-			break;
+	/* channel i octave */
+	case 0x10:
+	case 0x11:
+	case 0x12:
+		ch = (reg - 0x10) << 1;
+		saa->channels[ch + 0].octave = data & 0x07;
+		saa->channels[ch + 1].octave = (data >> 4) & 0x07;
+		break;
 
-		/* channel i frequency enable */
-		case 0x14:
-			saa->channels[0].freq_enable = data & 0x01;
-			saa->channels[1].freq_enable = data & 0x02;
-			saa->channels[2].freq_enable = data & 0x04;
-			saa->channels[3].freq_enable = data & 0x08;
-			saa->channels[4].freq_enable = data & 0x10;
-			saa->channels[5].freq_enable = data & 0x20;
-			break;
+	/* channel i frequency enable */
+	case 0x14:
+		saa->channels[0].freq_enable = data & 0x01;
+		saa->channels[1].freq_enable = data & 0x02;
+		saa->channels[2].freq_enable = data & 0x04;
+		saa->channels[3].freq_enable = data & 0x08;
+		saa->channels[4].freq_enable = data & 0x10;
+		saa->channels[5].freq_enable = data & 0x20;
+		break;
 
-		/* channel i noise enable */
-		case 0x15:
-			saa->channels[0].noise_enable = data & 0x01;
-			saa->channels[1].noise_enable = data & 0x02;
-			saa->channels[2].noise_enable = data & 0x04;
-			saa->channels[3].noise_enable = data & 0x08;
-			saa->channels[4].noise_enable = data & 0x10;
-			saa->channels[5].noise_enable = data & 0x20;
-			break;
+	/* channel i noise enable */
+	case 0x15:
+		saa->channels[0].noise_enable = data & 0x01;
+		saa->channels[1].noise_enable = data & 0x02;
+		saa->channels[2].noise_enable = data & 0x04;
+		saa->channels[3].noise_enable = data & 0x08;
+		saa->channels[4].noise_enable = data & 0x10;
+		saa->channels[5].noise_enable = data & 0x20;
+		break;
 
-		/* noise generators parameters */
-		case 0x16:
-			saa->noise_params[0] = data & 0x03;
-			saa->noise_params[1] = (data >> 4) & 0x03;
-			break;
+	/* noise generators parameters */
+	case 0x16:
+		saa->noise_params[0] = data & 0x03;
+		saa->noise_params[1] = (data >> 4) & 0x03;
+		break;
 
-		/* envelope generators parameters */
-		case 0x18:
-		case 0x19:
-			ch = reg - 0x18;
-			saa->env_reverse_right[ch] = data & 0x01;
-			saa->env_mode[ch] = (data >> 1) & 0x07;
-			saa->env_bits[ch] = data & 0x10;
-			saa->env_clock[ch] = data & 0x20;
-			saa->env_enable[ch] = data & 0x80;
-			/* reset the envelope */
-			saa->env_step[ch] = 0;
-			break;
+	/* envelope generators parameters */
+	case 0x18:
+	case 0x19:
+		ch = reg - 0x18;
+		saa->env_reverse_right[ch] = data & 0x01;
+		saa->env_mode[ch] = (data >> 1) & 0x07;
+		saa->env_bits[ch] = data & 0x10;
+		saa->env_clock[ch] = data & 0x20;
+		saa->env_enable[ch] = data & 0x80;
+		/* reset the envelope */
+		saa->env_step[ch] = 0;
+		break;
 
-		/* channels enable & reset generators */
-		case 0x1c:
-			saa->all_ch_enable = data & 0x01;
-			saa->sync_state = data & 0x02;
-			if (data & 0x02) {
-				int i;
-				/* Synch & Reset generators */
-				for (i = 0; i < 6; i++) {
-					saa->channels[i].level = 0;
-					saa->channels[i].counter = 0.0;
-				}
+	/* channels enable & reset generators */
+	case 0x1c:
+		saa->all_ch_enable = data & 0x01;
+		saa->sync_state = data & 0x02;
+		if (data & 0x02) {
+			int i;
+			/* Synch & Reset generators */
+			for (i = 0; i < 6; i++) {
+				saa->channels[i].level = 0;
+				saa->channels[i].counter = 0.0;
 			}
-			break;
+		}
+		break;
 
-		default:
-			// The CMS allows all registers to be written, so we just output some debug
-			// message here
-			debug(5, "CMS Unknown write to reg %x with %x",reg, data);
+	default:
+		// The CMS allows all registers to be written, so we just output some debug
+		// message here
+		debug(5, "CMS Unknown write to reg %x with %x",reg, data);
 	}
 }
 
