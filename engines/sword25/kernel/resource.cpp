@@ -33,7 +33,6 @@
  */
 
 #include "sword25/kernel/resource.h"
-#include "sword25/kernel/string.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/package/packagemanager.h"
 
@@ -48,7 +47,7 @@ Resource::Resource(const Common::String &fileName, RESOURCE_TYPES type) :
 	BS_ASSERT(pPM);
 
 	_fileName = pPM->getAbsolutePath(fileName);
-	_fileNameHash = BS_String::getHash(fileName);
+	_fileNameHash = Common::hashit(fileName);
 }
 
 void Resource::release() {

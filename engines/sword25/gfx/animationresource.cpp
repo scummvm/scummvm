@@ -35,7 +35,6 @@
 #include "sword25/gfx/animationresource.h"
 
 #include "sword25/kernel/kernel.h"
-#include "sword25/kernel/string.h"
 #include "sword25/package/packagemanager.h"
 #include "sword25/gfx/bitmapresource.h"
 

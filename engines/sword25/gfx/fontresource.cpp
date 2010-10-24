@@ -35,7 +35,6 @@
 #define BS_LOG_PREFIX "FONTRESOURCE"
 
 #include "sword25/kernel/kernel.h"
-#include "sword25/kernel/string.h"
 #include "sword25/package/packagemanager.h"
 
 #include "sword25/gfx/fontresource.h"

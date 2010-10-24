@@ -36,7 +36,6 @@
 
 #include "sword25/kernel/resource.h"
 #include "sword25/kernel/resservice.h"
-#include "sword25/kernel/string.h"
 #include "sword25/package/packagemanager.h"
 
 namespace Sword25 {
@@ -299,7 +298,7 @@ Common::List<Resource *>::iterator ResourceManager::deleteResource(Resource *pRe
  */
 Resource *ResourceManager::getResource(const Common::String &uniquefileName) const {
 	// Determine whether the resource is already loaded
-	const Common::List<Resource *>& hashBucket = _resourceHashTable[BS_String::getHash(uniquefileName) % HASH_TABLE_BUCKETS];
+	const Common::List<Resource *>& hashBucket = _resourceHashTable[Common::hashit(uniquefileName) % HASH_TABLE_BUCKETS];
 	{
 		Common::List<Resource *>::const_iterator iter = hashBucket.begin();
 		for (; iter != hashBucket.end(); ++iter) {
