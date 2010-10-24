@@ -116,6 +116,26 @@ static AspectRatio getDesiredAspectRatio() {
 }
 #endif
 
+#if defined(WIN32)
+	struct SdlConsoleHidingWin32 {
+		DWORD myPid;
+		DWORD myTid;
+		HWND consoleHandle;
+	};
+
+	// console hiding for win32
+	static BOOL CALLBACK initBackendFindConsoleWin32Proc(HWND hWnd, LPARAM lParam) {
+		DWORD pid, tid;
+		SdlConsoleHidingWin32 *variables = (SdlConsoleHidingWin32 *)lParam;
+		tid = GetWindowThreadProcessId(hWnd, &pid);
+		if ((tid == variables->myTid) && (pid == variables->myPid)) {
+			variables->consoleHandle = hWnd;
+			return FALSE;
+		}
+		return TRUE;
+	}
+#endif
+
 void OSystem_SDL::initBackend() {
 	assert(!_inited);
 
@@ -134,6 +154,25 @@ void OSystem_SDL::initBackend() {
 
 	if (joystick_num > -1)
 		sdlFlags |= SDL_INIT_JOYSTICK;
+
+#if 0
+	// NEW CODE TO HIDE CONSOLE FOR WIN32
+#if defined(WIN32)
+	// console hiding for win32
+	SdlConsoleHidingWin32 consoleHidingWin32;
+	consoleHidingWin32.consoleHandle = 0;
+	consoleHidingWin32.myPid = GetCurrentProcessId();
+	consoleHidingWin32.myTid = GetCurrentThreadId();
+	EnumWindows (initBackendFindConsoleWin32Proc, (LPARAM)&consoleHidingWin32);
+
+	if (!ConfMan.getBool("show_console")) {
+		if (consoleHidingWin32.consoleHandle) {
+			// We won't find a window with our TID/PID in case we were started from command-line
+			ShowWindow(consoleHidingWin32.consoleHandle, SW_HIDE);
+		}
+	}
+#endif
+#endif
 
 	if (SDL_Init(sdlFlags) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());

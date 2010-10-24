@@ -219,6 +219,11 @@ void registerDefaults() {
 	ConfMan.registerDefault("record_file_name", "record.bin");
 	ConfMan.registerDefault("record_temp_file_name", "record.tmp");
 	ConfMan.registerDefault("record_time_file_name", "record.time");
+
+#ifdef WIN32
+	// console hiding for win32
+	ConfMan.registerDefault("show_console", false);
+#endif
 }
 
 //
@@ -543,6 +548,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 #ifdef IPHONE
 			// This is automatically set when launched from the Springboard.
 			DO_LONG_OPTION_OPT("launchedFromSB", 0)
+			END_OPTION
+#endif
+
+#ifdef WIN32
+			// console hiding for win32
+			DO_LONG_OPTION_BOOL("show-console")
 			END_OPTION
 #endif
 
