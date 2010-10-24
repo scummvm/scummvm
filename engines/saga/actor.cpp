@@ -42,12 +42,38 @@
 namespace Saga {
 
 ActorData::ActorData() {
-	memset(this, 0, sizeof(*this));
-}
+	_frames = NULL;
+	_frameListResourceId = 0;
+	_speechColor = 0;
+	_inScene = false;
 
-ActorData::~ActorData() {
-	if (!_shareFrames)
-		free(_frames);
+	_actorFlags = 0;
+	_currentAction = 0;
+	_facingDirection = 0;
+	_actionDirection = 0;
+	_actionCycle = 0;
+	_targetObject = 0;
+	_lastZone = NULL;
+
+	_cycleFrameSequence = 0;
+	_cycleDelay = 0;
+	_cycleTimeCount = 0;
+	_cycleFlags = 0;
+
+	_fallVelocity = 0;
+	_fallAcceleration = 0;
+	_fallPosition = 0;
+
+	_dragonBaseFrame = 0;
+	_dragonStepCycle = 0;
+	_dragonMoveType = 0;
+
+	_frameNumber = 0;
+
+	_walkStepsCount = 0;
+	_walkStepIndex = 0;
+
+	_walkFrameSequence = 0;
 }
 
 void ActorData::saveState(Common::OutSaveFile *out) {
@@ -190,23 +216,12 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	int i;
 	byte *stringsPointer;
 	size_t stringsLength;
-	ActorData *actor;
-	ObjectData *obj;
 	debug(9, "Actor::Actor()");
 	_handleActionDiv = 15;
-
-	_actors = NULL;
-	_actorsCount = 0;
-
-	_objs = NULL;
-	_objsCount = 0;
 
 #ifdef ACTOR_DEBUG
 	_debugPointsCount = 0;
 #endif
-
-	_protagStates = NULL;
-	_protagStatesCount = 0;
 
 	_pathList.resize(600);
 	_pathListIndex = 0;
@@ -243,12 +258,11 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	}
 
 	if (_vm->getGameId() == GID_ITE) {
-		_actorsCount = ITE_ACTORCOUNT;
-		_actors = (ActorData **)malloc(_actorsCount * sizeof(*_actors));
-		for (i = 0; i < _actorsCount; i++) {
-			actor = _actors[i] = new ActorData();
-			actor->_id = actorIndexToId(i);
+		_actors.resize(ITE_ACTORCOUNT);
+		i = 0;
+		for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor, i++) {
 			actor->_index = i;
+			actor->_id = actorIndexToId(actor->_index);
 			debug(9, "init actor id=%d index=%d", actor->_id, actor->_index);
 			actor->_nameIndex = ITE_ActorTable[i].nameIndex;
 			actor->_scriptEntrypointNumber = ITE_ActorTable[i].scriptEntrypointNumber;
@@ -270,12 +284,11 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 				warning("Disabling actor Id=%d index=%d", actor->_id, actor->_index);
 			}
 		}
-		_objsCount = ITE_OBJECTCOUNT;
-		_objs = (ObjectData **)malloc(_objsCount * sizeof(*_objs));
-		for (i = 0; i < _objsCount; i++) {
-			obj = _objs[i] = new ObjectData();
-			obj->_id = objIndexToId(i);
+		_objs.resize(ITE_OBJECTCOUNT);
+		i = 0;
+		for (ObjectDataArray::iterator obj = _objs.begin(); obj != _objs.end(); ++obj, i++) {
 			obj->_index = i;
+			obj->_id = objIndexToId(obj->_index);
 			debug(9, "init obj id=%d index=%d", obj->_id, obj->_index);
 			obj->_nameIndex = ITE_ObjectTable[i].nameIndex;
 			obj->_scriptEntrypointNumber = ITE_ObjectTable[i].scriptEntrypointNumber;
@@ -294,54 +307,33 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 Actor::~Actor() {
 	debug(9, "Actor::~Actor()");
-
-	//release resources
-	freeProtagStates();
-	freeActorList();
-	freeObjList();
 }
 
-void Actor::freeProtagStates() {
-	int i;
-	for (i = 0; i < _protagStatesCount; i++) {
-		free(_protagStates[i]._frames);
-	}
-	free(_protagStates);
-	_protagStates = NULL;
-	_protagStatesCount = 0;
-}
-
-void Actor::loadFrameList(int frameListResourceId, ActorFrameSequence *&framesPointer, int &framesCount) {
+void Actor::loadFrameList(int frameListResourceId, ActorFrameSequences &frames) {
 	byte *resourcePointer;
 	size_t resourceLength;
 
 	debug(9, "Loading frame resource id %d", frameListResourceId);
 	_vm->_resource->loadResource(_actorContext, frameListResourceId, resourcePointer, resourceLength);
 
-	framesCount = resourceLength / 16;
-	debug(9, "Frame resource contains %d frames (res length is %d)", framesCount, (int)resourceLength);
-
-	framesPointer = (ActorFrameSequence *)malloc(sizeof(ActorFrameSequence) * framesCount);
-	if (framesPointer == NULL && framesCount != 0) {
-		memoryError("Actor::loadFrameList");
-	}
+	frames.resize(resourceLength / 16);
+	debug(9, "Frame resource contains %d frames (res length is %d)", frames.size(), (int)resourceLength);
 
 	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _actorContext->isBigEndian());
 
-	for (int i = 0; i < framesCount; i++) {
-		debug(9, "frameType %d", i);
+	for (ActorFrameSequences::iterator frame = frames.begin(); frame != frames.end(); ++frame) {
 		for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
 			// Load all four orientations
-			framesPointer[i].directions[orient].frameIndex = readS.readUint16();
+			frame->directions[orient].frameIndex = readS.readUint16();
 			if (_vm->getGameId() == GID_ITE) {
-				framesPointer[i].directions[orient].frameCount = readS.readSint16();
+				frame->directions[orient].frameCount = readS.readSint16();
 			} else {
-				framesPointer[i].directions[orient].frameCount = readS.readByte();
+				frame->directions[orient].frameCount = readS.readByte();
 				readS.readByte();
 			}
-			if (framesPointer[i].directions[orient].frameCount < 0)
-				warning("frameCount < 0 (%d)", framesPointer[i].directions[orient].frameCount);
-			debug(9, "frameIndex %d frameCount %d", framesPointer[i].directions[orient].frameIndex, framesPointer[i].directions[orient].frameCount);
+			if (frame->directions[orient].frameCount < 0)
+				warning("frameCount < 0 (%d)", frame->directions[orient].frameCount);
+			debug(9, "frameIndex %d frameCount %d", frame->directions[orient].frameIndex, frame->directions[orient].frameCount);
 		}
 	}
 
@@ -352,9 +344,8 @@ bool Actor::loadActorResources(ActorData *actor) {
 	bool gotSomething = false;
 
 	if (actor->_frameListResourceId) {
-		loadFrameList(actor->_frameListResourceId, actor->_frames, actor->_framesCount);
-
-		actor->_shareFrames = false;
+		loadFrameList(actor->_frameListResourceId, actor->_framesContainer);
+		actor->_frames = &actor->_framesContainer;
 
 		gotSomething = true;
 	} else {
@@ -374,28 +365,18 @@ bool Actor::loadActorResources(ActorData *actor) {
 	return gotSomething;
 }
 
-void Actor::freeActorList() {
-	int i;
-	ActorData *actor;
-	for (i = 0; i < _actorsCount; i++) {
-		actor = _actors[i];
-		delete actor;
-	}
-	free(_actors);
-	_actors = NULL;
-	_actorsCount = 0;
-}
-
 void Actor::loadActorSpriteList(ActorData *actor) {
 	uint lastFrame = 0;
 	uint curFrameIndex;
 	int resourceId = actor->_spriteListResourceId;
-
-	for (int i = 0; i < actor->_framesCount; i++) {
-		for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
-			curFrameIndex = actor->_frames[i].directions[orient].frameIndex;
-			if (curFrameIndex > lastFrame) {
-				lastFrame = curFrameIndex;
+	
+	if (actor->_frames != NULL) {
+		for (ActorFrameSequences::const_iterator i = actor->_frames->begin(); i != actor->_frames->end(); ++i) {
+			for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
+				curFrameIndex = i->directions[orient].frameIndex;
+				if (curFrameIndex > lastFrame) {
+					lastFrame = curFrameIndex;
+				}
 			}
 		}
 	}
@@ -417,7 +398,6 @@ void Actor::loadActorSpriteList(ActorData *actor) {
 
 void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResourceID, int protagStatesCount, int protagStatesResourceID) {
 	int i, j;
-	ActorData *actor;
 	byte* actorListData;
 	size_t actorListLength;
 	byte walk[128];
@@ -427,23 +407,19 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 	int walkStepCount;
 	int stateResourceId;
 
-	freeActorList();
-
 	_vm->_resource->loadResource(_actorContext, actorsResourceID, actorListData, actorListLength);
 
-	_actorsCount = actorCount;
-
-	if (actorListLength != (uint)_actorsCount * ACTOR_INHM_SIZE) {
+	if (actorListLength != (uint)actorCount * ACTOR_INHM_SIZE) {
 		error("Actor::loadActorList wrong actorlist length");
 	}
 
 	MemoryReadStream actorS(actorListData, actorListLength);
 
-	_actors = (ActorData **)malloc(_actorsCount * sizeof(*_actors));
-	for (i = 0; i < _actorsCount; i++) {
-		actor = _actors[i] = new ActorData();
-		actor->_id = objectIndexToId(kGameObjectActor, i); //actorIndexToId(i);
+	_actors.resize(actorCount);
+	i = 0;
+	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor, i++) {
 		actor->_index = i;
+		actor->_id = objectIndexToId(kGameObjectActor, actor->_index); //actorIndexToId(i);
 		debug(4, "init actor id=0x%X index=%d", actor->_id, actor->_index);
 		actorS.readUint32LE(); //next displayed
 		actorS.readByte(); //type
@@ -509,25 +485,20 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 	}
 	free(actorListData);
 
-	_actors[protagonistIdx]->_flags |= kProtagonist | kExtended;
+	_actors[protagonistIdx]._flags |= kProtagonist | kExtended;
 
-	for (i = 0; i < _actorsCount; i++) {
-		actor = _actors[i];
+	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
 		//if (actor->_flags & kProtagonist) {
 			loadActorResources(actor);
 			//break;
 		//}
 	}
 
-	_centerActor = _protagonist = _actors[protagonistIdx];
+	_centerActor = _protagonist = &_actors[protagonistIdx];
 	_protagState = 0;
 
 	if (protagStatesResourceID) {
-		if (!_protagonist->_shareFrames)
-			free(_protagonist->_frames);
-		freeProtagStates();
-
-		_protagStates = (ProtagStateData *)malloc(sizeof(ProtagStateData) * protagStatesCount);
+		_protagStates.resize(protagStatesCount);
 
 		byte *idsResourcePointer;
 		size_t idsResourceLength;
@@ -544,49 +515,31 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		for (i = 0; i < protagStatesCount; i++) {
 			stateResourceId = statesIds.readUint32LE();
 
-			loadFrameList(stateResourceId, _protagStates[i]._frames, _protagStates[i]._framesCount);
+			loadFrameList(stateResourceId, _protagStates[i]._frames);
 		}
 		free(idsResourcePointer);
 
-		_protagonist->_frames = _protagStates[_protagState]._frames;
-		_protagonist->_framesCount = _protagStates[_protagState]._framesCount;
-		_protagonist->_shareFrames = true;
+		_protagonist->_frames = &_protagStates[_protagState]._frames;
 	}
 
-	_protagStatesCount = protagStatesCount;
-}
-
-void Actor::freeObjList() {
-	int i;
-	ObjectData *object;
-	for (i = 0; i < _objsCount; i++) {
-		object = _objs[i];
-		delete object;
-	}
-	free(_objs);
-	_objs = NULL;
-	_objsCount = 0;
 }
 
 void Actor::loadObjList(int objectCount, int objectsResourceID) {
-	int i;
+	uint i;
 	int frameListResourceId;
-	ObjectData *object;
 	byte* objectListData;
 	size_t objectListLength;
-	freeObjList();
 
 	_vm->_resource->loadResource(_actorContext, objectsResourceID, objectListData, objectListLength);
 
-	_objsCount = objectCount;
+	_objs.resize(objectCount);
 
 	MemoryReadStream objectS(objectListData, objectListLength);
 
-	_objs = (ObjectData **)malloc(_objsCount * sizeof(*_objs));
-	for (i = 0; i < _objsCount; i++) {
-		object = _objs[i] = new ObjectData();
-		object->_id = objectIndexToId(kGameObjectObject, i);
+	i = 0;
+	for (ObjectDataArray::iterator object = _objs.begin(); object != _objs.end(); ++object, i++) {
 		object->_index = i;
+		object->_id = objectIndexToId(kGameObjectObject, object->_index);
 		debug(9, "init object id=%d index=%d", object->_id, object->_index);
 		objectS.readUint32LE(); //next displayed
 		objectS.readByte(); //type
@@ -669,7 +622,7 @@ ObjectData *Actor::getObj(uint16 objId) {
 	if (!validObjId(objId))
 		error("Actor::getObj Wrong objId 0x%X", objId);
 
-	obj = _objs[objIdToIndex(objId)];
+	obj = &_objs[objIdToIndex(objId)];
 
 	if (obj->_disabled)
 		error("Actor::getObj disabled objId 0x%X", objId);
@@ -692,7 +645,7 @@ ActorData *Actor::getActor(uint16 actorId) {
 		return _protagonist;
 	}
 
-	actor = _actors[actorIdToIndex(actorId)];
+	actor = &_actors[actorIdToIndex(actorId)];
 
 	if (actor->_disabled)
 		error("Actor::getActor disabled actorId 0x%X", actorId);
@@ -705,12 +658,8 @@ void Actor::setProtagState(int state) {
 
 #ifdef ENABLE_IHNM
 	if (_vm->getGameId() == GID_IHNM) {
-		if (!_protagonist->_shareFrames)
-			free(_protagonist->_frames);
 
-		_protagonist->_frames = _protagStates[state]._frames;
-		_protagonist->_framesCount = _protagStates[state]._framesCount;
-		_protagonist->_shareFrames = true;
+		_protagonist->_frames = &_protagStates[state]._frames;
 	}
 #endif
 
@@ -773,15 +722,18 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 	if ((actor->_facingDirection < kDirUp) || (actor->_facingDirection > kDirUpLeft))
 		error("Actor::getActorFrameRange Wrong direction 0x%X actorId 0x%X", actor->_facingDirection, actorId);
 
+	ActorFrameSequences *frames;
+	frames = actor->_frames;
+
 	if (_vm->getGameId() == GID_ITE) {
-		if (frameType >= actor->_framesCount) {
-			warning("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
+		if (uint(frameType) >= frames->size()) {
+			warning("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, frames->size(), actorId);
 			return &def;
 		}
 
 
 		fourDirection = actorDirectionsLUT[actor->_facingDirection];
-		return &actor->_frames[frameType].directions[fourDirection];
+		return &(*frames)[frameType].directions[fourDirection];
 	}
 
 #ifdef ENABLE_IHNM
@@ -792,12 +744,12 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 		// Both of them are invisible and immovable
 		// There is no point to keep throwing warnings about this, the original checks for
 		// a valid framecount too
-		if (actor->_framesCount == 0) {
+		if ((frames == NULL) || (frames->empty())) {
 			return &def;
 		}
-		frameType = CLIP(frameType, 0, actor->_framesCount - 1);
+		frameType = CLIP(frameType, 0, int(frames->size() - 1));
 		fourDirection = actorDirectionsLUT[actor->_facingDirection];
-		return &actor->_frames[frameType].directions[fourDirection];
+		return &(*frames)[frameType].directions[fourDirection];
 	}
 #endif
 
@@ -1061,9 +1013,6 @@ void Actor::drawOrderListAdd(const CommonObjectDataPointer& element, CompareFunc
 }
 
 void Actor::createDrawOrderList() {
-	int i;
-	ActorData *actor;
-	ObjectData *obj;
 	CompareFunction compareFunction = 0;
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
@@ -1078,8 +1027,7 @@ void Actor::createDrawOrderList() {
 	}
 
 	_drawOrderList.clear();
-	for (i = 0; i < _actorsCount; i++) {
-		actor = _actors[i];
+	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
 
 		if (!actor->_inScene)
 			continue;
@@ -1089,8 +1037,7 @@ void Actor::createDrawOrderList() {
 		}
 	}
 
-	for (i = 0; i < _objsCount; i++) {
-		obj = _objs[i];
+	for (ObjectDataArray::iterator obj = _objs.begin(); obj != _objs.end(); ++obj) {
 		if (obj->_disabled)
 			continue;
 
@@ -1279,9 +1226,9 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	// Check Script::sfDropObject for the other part of this hack
 	if (_vm->getGameId() == GID_IHNM && _vm->_scene->currentChapterNumber() == 3 &&
 		_vm->_scene->currentSceneNumber() == 59 && _activeSpeech.sampleResourceId == 286) {
-		for (i = 0; i < _objsCount; i++) {
-			if (_objs[i]->_id == 16385) {	// the compact disk
-				_objs[i]->_sceneNumber = 59;
+		for (ObjectDataArray::iterator obj = _objs.begin(); obj != _objs.end(); ++obj) {
+			if (obj->_id == 16385) {	// the compact disk
+				obj->_sceneNumber = 59;
 				break;
 			}
 		}
@@ -1353,36 +1300,31 @@ void Actor::abortSpeech() {
 }
 
 void Actor::saveState(Common::OutSaveFile *out) {
-	uint16 i;
 
 	out->writeSint16LE(getProtagState());
 
-	for (i = 0; i < _actorsCount; i++) {
-		ActorData *a = _actors[i];
-		a->saveState(out);
+	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
+		actor->saveState(out);
 	}
 
-	for (i = 0; i < _objsCount; i++) {
-		ObjectData *o = _objs[i];
-		o->saveState(out);
+	for (ObjectDataArray::iterator obj = _objs.begin(); obj != _objs.end(); ++obj) {
+		obj->saveState(out);
 	}
 }
 
 void Actor::loadState(Common::InSaveFile *in) {
-	int32 i;
 
 	int16 protagState = in->readSint16LE();
-	if (protagState != 0 || _protagonist->_shareFrames)
+	if (protagState != 0 || (_protagonist->shareFrames())) {
 		setProtagState(protagState);
-
-	for (i = 0; i < _actorsCount; i++) {
-		ActorData *a = _actors[i];
-		a->loadState(_vm->getCurrentLoadVersion(), in);
 	}
 
-	for (i = 0; i < _objsCount; i++) {
-		ObjectData *o = _objs[i];
-		o->loadState(in);
+	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
+		actor->loadState(_vm->getCurrentLoadVersion(), in);
+	}
+
+	for (ObjectDataArray::iterator obj = _objs.begin(); obj != _objs.end(); ++obj) {
+		obj->loadState(in);
 	}
 }
 

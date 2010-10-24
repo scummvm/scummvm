@@ -563,29 +563,16 @@ int Events::handleInterval(Event *event) {
 	return kEvStDelete;
 }
 
-// Schedules an event in the event list; returns a pointer to the scheduled
-// event suitable for chaining if desired.
-EventColumns *Events::queue(const Event &event) {
-	EventColumns tmp;
-
-	_eventList.push_back(tmp);
-	EventColumns *res;
-	res = &_eventList.back();
-	res->push_back(event);
-
-	initializeEvent(res->back());
-
-	return res;
-}
-
-// Places a 'add_event' on the end of an event chain given by 'head_event'
-// (head_event may be in any position in the event chain)
-EventColumns *Events::chain(EventColumns *eventColumns, const Event &addEvent) {
+EventColumns *Events::chain(EventColumns *eventColumns, const Event &event) {
+	
 	if (eventColumns == NULL) {
-		return queue(addEvent);
+		EventColumns tmp;
+
+		_eventList.push_back(tmp);
+		eventColumns = &_eventList.back();
 	}
 
-	eventColumns->push_back(addEvent);
+	eventColumns->push_back(event);
 	initializeEvent(eventColumns->back());
 
 	return eventColumns;

@@ -179,9 +179,8 @@ void Actor::actorFaceTowardsPoint(uint16 actorId, const Location &toLocation) {
 }
 
 void Actor::updateActorsScene(int actorsEntrance) {
-	int i, j;
+	int j;
 	int followerDirection;
-	ActorData *actor;
 	Location tempLocation;
 	Location possibleLocation;
 	Point delta;
@@ -196,14 +195,13 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	_activeSpeech.playing = false;
 	_protagonist = NULL;
 
-	for (i = 0; i < _actorsCount; i++) {
-		actor = _actors[i];
+	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
 		actor->_inScene = false;
 		actor->_spriteList.clear();
 		if (actor->_disabled) {
 			continue;
 		}
-		if ((actor->_flags & (kProtagonist | kFollower)) || (i == 0)) {
+		if ((actor->_flags & (kProtagonist | kFollower)) || (actor->_index == 0)) {
 			if (actor->_flags & kProtagonist) {
 				actor->_finalTarget = actor->_location;
 				_centerActor = _protagonist = actor;
@@ -266,8 +264,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	followerDirection = _protagonist->_facingDirection + 3;
 	calcScreenPosition(_protagonist);
 
-	for (i = 0; i < _actorsCount; i++) {
-		actor = _actors[i];
+	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
 		if (actor->_flags & (kFollower)) {
 			actor->_facingDirection = actor->_actionDirection = _protagonist->_facingDirection;
 			actor->_currentAction = kActionWait;
@@ -323,8 +320,6 @@ void Actor::updateActorsScene(int actorsEntrance) {
 }
 
 void Actor::handleActions(int msec, bool setup) {
-	int i;
-	ActorData *actor;
 	ActorFrameRange *frameRange;
 	int state;
 	int speed;
@@ -336,12 +331,11 @@ void Actor::handleActions(int msec, bool setup) {
 	Point hitPoint;
 	Location pickLocation;
 
-	for (i = 0; i < _actorsCount; i++) {
-		actor = _actors[i];
+	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
 		if (!actor->_inScene)
 			continue;
 
-		if ((_vm->getGameId() == GID_ITE) && (i == ACTOR_DRAGON_INDEX)) {
+		if ((_vm->getGameId() == GID_ITE) && (actor->_index == ACTOR_DRAGON_INDEX)) {
 			moveDragon(actor);
 			continue;
 		}
@@ -866,8 +860,6 @@ bool Actor::followProtagonist(ActorData *actor) {
 
 bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 	ActorData *actor;
-	ActorData *anotherActor;
-	int	i;
 
 	Rect testBox;
 	Rect testBox2;
@@ -943,7 +935,7 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 
 				int max = _vm->getGameId() == GID_ITE ? 8 : 4;
 
-				for (i = 1; i < max; i++) {
+				for (int i = 1; i < max; i++) {
 					pointAdd = pointFrom;
 					pointAdd.y += i;
 					if (_vm->_scene->canWalk(pointAdd)) {
@@ -978,9 +970,7 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 				collision.x = ACTOR_COLLISION_WIDTH * actor->_screenScale / (256 * 2);
 				collision.y = ACTOR_COLLISION_HEIGHT * actor->_screenScale / (256 * 2);
 
-
-				for (i = 0; (i < _actorsCount) && (_barrierCount < ACTOR_BARRIERS_MAX); i++) {
-					anotherActor = _actors[i];
+				for (ActorDataArray::iterator anotherActor = _actors.begin(); (anotherActor != _actors.end()) && (_barrierCount < ACTOR_BARRIERS_MAX); ++anotherActor) {
 					if (!anotherActor->_inScene)
 						continue;
 					if (anotherActor == actor)
@@ -1067,8 +1057,8 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 			return false;
 		} else {
 			if (actor->_flags & kProtagonist) {
-				_actors[1]->_actorFlags &= ~kActorNoFollow; // TODO: mark all actors with kFollower flag, not only 1 and 2
-				_actors[2]->_actorFlags &= ~kActorNoFollow;
+				_actors[1]._actorFlags &= ~kActorNoFollow; // TODO: mark all actors with kFollower flag, not only 1 and 2
+				_actors[2]._actorFlags &= ~kActorNoFollow;
 			}
 			actor->_currentAction = (actor->_walkStepsCount >= ACTOR_MAX_STEPS_COUNT) ? kActionWalkToLink : kActionWalkToPoint;
 			actor->_walkFrameSequence = getFrameType(kFrameWalk);

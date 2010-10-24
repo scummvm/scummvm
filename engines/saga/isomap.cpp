@@ -1161,8 +1161,6 @@ void IsoMap::placeOnTileMap(const Location &start, Location &result, int16 dista
 	int16 vBase;
 	int16 u;
 	int16 v;
-	int i;
-	ActorData *actor;
 	TilePoint tilePoint;
 	uint16 dir;
 	int16 dist;
@@ -1183,8 +1181,7 @@ void IsoMap::placeOnTileMap(const Location &start, Location &result, int16 dista
 
 	memset( &_searchArray, 0, sizeof(_searchArray));
 
-	for (i = 0; i < _vm->_actor->_actorsCount; i++) {
-		actor = _vm->_actor->_actors[i];
+	for (ActorDataArray::const_iterator actor = _vm->_actor->_actors.begin(); actor != _vm->_actor->_actors.end(); ++actor) {
 		if (!actor->_inScene) continue;
 
 		u = (actor->_location.u() >> 4) - uBase;
@@ -1471,7 +1468,6 @@ void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Lo
 }
 
 void IsoMap::findTilePath(ActorData* actor, const Location &start, const Location &end) {
-	ActorData *other;
 	int i;
 	int16 u;
 	int16 v;
@@ -1511,10 +1507,9 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 
 	if (!(actor->_actorFlags & kActorNoCollide) &&
 		(_vm->_scene->currentSceneResourceId() != ITE_SCENE_OVERMAP)) {
-			for (i = 0; i < _vm->_actor->_actorsCount; i++) {
-				other = _vm->_actor->_actors[i];
+			for (ActorDataArray::const_iterator other = _vm->_actor->_actors.begin(); other != _vm->_actor->_actors.end(); ++other) {
 				if (!other->_inScene) continue;
-				if (other == actor) continue;
+				if (other->_id == actor->_id) continue;
 
 				u = (other->_location.u() >> 4) - uBase;
 				v = (other->_location.v() >> 4) - vBase;

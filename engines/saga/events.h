@@ -168,8 +168,15 @@ class Events {
 	void handleEvents(long msec);
 	void clearList(bool playQueuedMusic = true);
 	void freeList();
-	EventColumns *queue(const Event &event);
-	EventColumns *chain(EventColumns *eventColumns, const Event &addEvent);
+
+	// Schedules an event in the event list; returns a pointer to the scheduled
+	// event columns suitable for chaining if desired.
+	EventColumns *queue(const Event &event) {
+		return chain(NULL, event);
+	}
+
+	// Places a 'event' on the end of an event columns given by 'eventColumns'
+	EventColumns *chain(EventColumns *eventColumns, const Event &event);
 
  private:
 	int handleContinuous(Event *event);
