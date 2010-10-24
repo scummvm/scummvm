@@ -575,7 +575,9 @@ void GfxAnimate::addToPicDrawCels() {
 
 		// Create rect according to coordinates and given cel
 		if (it->scaleSignal & kScaleSignalDoScaling) {
-			applyGlobalScaling(it, view);
+			if (it->scaleSignal & kScaleSignalGlobalScaling) {
+				applyGlobalScaling(it, view);
+			}
 			view->getCelScaledRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->scaleX, it->scaleY, it->celRect);
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), it->celRect.left);
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop), it->celRect.top);
