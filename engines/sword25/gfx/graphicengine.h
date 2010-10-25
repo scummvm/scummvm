@@ -154,14 +154,6 @@ public:
 	void drawDebugLine(const Vertex &start, const Vertex &end, uint color = BS_RGB(255, 255, 255));
 
 	/**
-	 * Creates a screenshot of the current frame buffer and writes it to a graphic file in PNG format.
-	 * Returns true if the screenshot was saved successfully.
-	 * Notes: This method should only be called after a call to EndFrame(), and before the next call to StartFrame().
-	 * @param Filename  The filename for the screenshot
-	 */
-	bool saveScreenshot(const Common::String &filename);
-
-	/**
 	 * Creates a thumbnail with the dimensions of 200x125. This will not include the top and bottom of the screen..
 	 * the interface boards the the image as a 16th of it's original size.
 	 * Notes: This method should only be called after a call to EndFrame(), and before the next call to StartFrame().

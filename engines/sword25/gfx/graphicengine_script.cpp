@@ -383,8 +383,10 @@ static int getSecondaryFrameDuration(lua_State *L) {
 }
 
 static int saveScreenshot(lua_State *L) {
-	GraphicEngine *pGE = getGE();
-	lua_pushbooleancpp(L, pGE->saveScreenshot(luaL_checkstring(L, 1)));
+	// This is used by system/debug.lua only. We do not implement this; support
+	// for taking screenshots is a backend feature.
+	lua_pushbooleancpp(L, false);
+
 	return 1;
 }
 

@@ -400,32 +400,6 @@ void  GraphicEngine::updateLastFrameDuration() {
 	_lastTimeStamp = currentTime;
 }
 
-namespace {
-bool doSaveScreenshot(GraphicEngine &graphicEngine, const Common::String &filename) {
-	Graphics::Surface *data = graphicEngine.getScreenshot();
-	if (!data) {
-		BS_LOG_ERRORLN("Call to GetScreenshot() failed. Cannot save screenshot.");
-		return false;
-	}
-
-	Common::FSNode f(filename);
-	Common::WriteStream *stream = f.createWriteStream();
-	if (!stream) {
-		BS_LOG_ERRORLN("Call to GetScreenshot() failed. Cannot save screenshot.");
-		return false;
-	}
-
-	bool result = Screenshot::saveToFile(data, stream);
-	delete stream;
-
-	return result;
-}
-}
-
-bool GraphicEngine::saveScreenshot(const Common::String &filename) {
-	return doSaveScreenshot(*this, filename);
-}
-
 bool GraphicEngine::saveThumbnailScreenshot(const Common::String &filename) {
 	// Note: In ScumMVM, rather than saivng the thumbnail to a file, we store it in memory 
 	// until needed when creating savegame files
