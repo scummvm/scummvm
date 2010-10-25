@@ -122,10 +122,6 @@ void InputEngine::update() {
 			alterKeyboardState(event.kbd.keycode, (event.type == Common::EVENT_KEYDOWN) ? 0x80 : 0);
 			break;
 
-		case Common::EVENT_QUIT:
-			Kernel::getInstance()->getWindow()->setWindowAlive(false);
-			break;
-
 		default:
 			break;
 		}

@@ -50,7 +50,6 @@ namespace Sword25 {
 Kernel *Kernel::_instance = 0;
 
 Kernel::Kernel() :
-	_pWindow(NULL),
 	_running(false),
 	_pResourceManager(NULL),
 	_initSuccess(false) {
@@ -73,13 +72,6 @@ Kernel::Kernel() :
 		if (!pCurSuperclass)
 			_superclasses.push_back(new Superclass(this, BS_SERVICE_TABLE[i].superclassId));
 	}
-
-	// Create window object
-	_pWindow = Window::createBSWindow(0, 0, 0, 0, false);
-	if (!_pWindow) {
-		BS_LOG_ERRORLN("Failed to create the window.");
-	} else
-		BS_LOGLN("Window created.");
 
 	// Create the resource manager
 	_pResourceManager = new ResourceManager(this);
@@ -116,10 +108,6 @@ Kernel::~Kernel() {
 		delete _superclasses.back();
 		_superclasses.pop_back();
 	}
-
-	// Release the window object
-	delete _pWindow;
-	BS_LOGLN("Window destroyed.");
 
 	// Resource-Manager freigeben
 	delete _pResourceManager;

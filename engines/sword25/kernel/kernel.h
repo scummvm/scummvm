@@ -52,7 +52,6 @@
 #include "engines/engine.h"
 
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/window.h"
 #include "sword25/kernel/resmanager.h"
 
 namespace Sword25 {
@@ -74,15 +73,6 @@ class MoviePlayer;
 */
 class Kernel {
 public:
-	// Window methods
-	// ----------------
-
-	/**
-	 * Returns a pointer to the window object
-	 */
-	Window *getWindow() {
-		return _pWindow;
-	}
 
 	// Service Methods
 	// ---------------
@@ -290,10 +280,6 @@ private:
 
 	bool _initSuccess; // Specifies whether the engine was set up correctly
 	bool _running;  // Specifies whether the application should keep running on the next main loop iteration
-
-	// Active window
-	// -------------
-	Window *_pWindow;
 
 	// Random number generator
 	// -----------------------

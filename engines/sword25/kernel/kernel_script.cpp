@@ -35,7 +35,6 @@
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/filesystemutil.h"
-#include "sword25/kernel/window.h"
 #include "sword25/kernel/resmanager.h"
 #include "sword25/kernel/persistenceservice.h"
 #include "sword25/script/script.h"
@@ -213,199 +212,148 @@ static const luaL_reg KERNEL_FUNCTIONS[] = {
 };
 
 static int isVisible(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	lua_pushbooleancpp(L, pWindow->isVisible());
+	// This function apparently is not used by the game scripts
+	lua_pushbooleancpp(L, true);
 
 	return 1;
 }
 
 static int setVisible(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	pWindow->setVisible(lua_tobooleancpp(L, 1));
+	// This function apparently is not used by the game scripts
+//	pWindow->setVisible(lua_tobooleancpp(L, 1));
 
 	return 0;
 }
 
 static int getX(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	lua_pushnumber(L, pWindow->getX());
+	// This function apparently is not used by the game scripts
+	lua_pushnumber(L, 0);
 
 	return 1;
 }
 
 static int getY(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	lua_pushnumber(L, pWindow->getY());
+	// This function apparently is not used by the game scripts
+	lua_pushnumber(L, 0);
 
 	return 1;
 }
 
 static int setX(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	pWindow->setX(static_cast<int>(luaL_checknumber(L, 1)));
+	// This is called by system/boot.lua with -1 as value.
+//	pWindow->setX(static_cast<int>(luaL_checknumber(L, 1)));
 
 	return 0;
 }
 
 static int setY(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	pWindow->setY(static_cast<int>(luaL_checknumber(L, 1)));
+	// This is called by system/boot.lua with -1 as value.
+//	pWindow->setY(static_cast<int>(luaL_checknumber(L, 1)));
 
 	return 0;
 }
 
 static int getClientX(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	lua_pushnumber(L, pWindow->getClientX());
+	// This function apparently is not used by the game scripts
+	lua_pushnumber(L, 0);
 
 	return 1;
 }
 
 static int getClientY(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	lua_pushnumber(L, pWindow->getClientY());
+	// This function apparently is not used by the game scripts
+	lua_pushnumber(L, 0);
 
 	return 1;
 }
 
 static int getWidth(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	lua_pushnumber(L, pWindow->getWidth());
+	// This function apparently is not used by the game scripts
+	lua_pushnumber(L, 800);
 
 	return 1;
 }
 
 static int getHeight(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	lua_pushnumber(L, pWindow->getHeight());
+	// This function apparently is not used by the game scripts
+	lua_pushnumber(L, 600);
 
 	return 1;
 }
 
 static int setWidth(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	pWindow->setWidth(static_cast<int>(luaL_checknumber(L, 1)));
+	// This is called by system/boot.lua with 800 as value.
+//	pWindow->setWidth(static_cast<int>(luaL_checknumber(L, 1)));
 
 	return 0;
 }
 
 static int setHeight(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	pWindow->setHeight(static_cast<int>(luaL_checknumber(L, 1)));
+	// This is called by system/boot.lua with 600 as value.
+//	pWindow->setHeight(static_cast<int>(luaL_checknumber(L, 1)));
 
 	return 0;
 }
 
 static int getTitle(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	lua_pushstring(L, pWindow->getTitle().c_str());
+	// This function apparently is not used by the game scripts
+	lua_pushstring(L, "");
 
 	return 1;
 }
 
 static int setTitle(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	pWindow->setTitle(luaL_checkstring(L, 1));
+	// This is called by system/boot.lua and system/menu.lua, to
+	// set the window title to the (localized) game name.
+	// FIXME: Should we call OSystem::setWindowCaption() here?
+//	pWindow->setTitle(luaL_checkstring(L, 1));
 
 	return 0;
 }
 
 static int processMessages(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
+	// This is called by the main loop in system/boot.lua,
+	// and the game keeps running as true is returned here.
+	// It terminates if we return false.
 
-	lua_pushbooleancpp(L, pWindow->processMessages());
+	// TODO: We could do more stuff here if desired...
+
+	// TODO: We could always return true here, and leave quit handling
+	// to the closeWanted() opcode; see also the TODO comment in there.
+
+	lua_pushbooleancpp(L, !Engine::shouldQuit());
 
 	return 1;
 }
 
 static int closeWanted(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
+	// This is called by system/interface.lua to determine whether the
+	// user requested the game to close (e.g. by clicking the 'close' widget
+	// of the game window). As a consequence (i.e. this function returns true),
+	// a quit confirmation dialog is shown.
 
-	lua_pushbooleancpp(L, pWindow->closeWanted());
+	// TODO: ScummVM currently has a bug / misfeature where some engines provide
+	// quit confirmation dialogs, some don't; in addition, we have a global confirmation
+	// dialog (but the user has to explicitly activate that in the config).
+	// Anyway, this can lead to *two* confirmation dialogs being shown.
+	// If it wasn't for that, we could simply check for Engine::shouldQuit() here,
+	// and then invoke EventMan::resetQuit. But currently this would result in
+	// the user seeing two confirmation dialogs. Bad.
+	lua_pushbooleancpp(L, false);
 
 	return 1;
 }
 
 static int waitForFocus(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	lua_pushbooleancpp(L, pWindow->waitForFocus());
+	// This function apparently is not used by the game scripts
+	lua_pushbooleancpp(L, true);
 
 	return 1;
 }
 
 static int hasFocus(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-	Window *pWindow = pKernel->getWindow();
-	BS_ASSERT(pWindow);
-
-	lua_pushbooleancpp(L, pWindow->hasFocus());
+	// This function apparently is not used by the game scripts
+	lua_pushbooleancpp(L, true);
 
 	return 1;
 }
