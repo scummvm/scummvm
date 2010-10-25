@@ -70,7 +70,7 @@ void ScummEngine::resetPalette() {
 		// Use 17 color table for v1 games to allow correct color for inventory and
 		// sentence line. Original games used some kind of dynamic color table
 		// remapping between rooms.
-		0xFF, 0x55, 0xFF
+		0x7F, 0x3B, 0xA6
 	};
 
 	static const byte tableNESPalette[] = {
