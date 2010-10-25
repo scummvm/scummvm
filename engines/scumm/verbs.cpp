@@ -323,7 +323,7 @@ void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
 		}
 	}
 
-	if (new_box != _mouseOverBoxV2) {
+	if ((new_box != _mouseOverBoxV2) || (_game.version == 0)) {
 		if (_mouseOverBoxV2 != -1) {
 			rect = _mouseOverBoxesV2[_mouseOverBoxV2].rect;
 
@@ -524,9 +524,8 @@ void ScummEngine_v2::handleMouseOver(bool updateInventory) {
 }
 
 void ScummEngine_v0::handleMouseOver(bool updateInventory) {
-	ScummEngine_v2::handleMouseOver(updateInventory);
-
 	drawSentence();
+	ScummEngine_v2::handleMouseOver(updateInventory);
 }
 
 #ifdef ENABLE_HE
