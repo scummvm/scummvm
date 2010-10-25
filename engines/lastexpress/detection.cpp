@@ -35,15 +35,17 @@ static const PlainGameDescriptor lastExpressGames[] = {
 
 static const ADGameDescription gameDescriptions[] = {
 
-	// The Last Express (English)
+	// The Last Express (English) - US Broderbund Release
+	//   expressw.exe 1997-02-12 17:24:44
+	//   express.exe  1997-02-12 17:29:08
 	{
 		"lastexpress",
 		"",
 		{
-			{"HD.HPF",  0, "2d331459e0e68cf277ef4e4043750413", 29865984},
-			{"CD1.HPF", 0, "8c86db47304033fcff32c69fddd5a920", 525522944},
-			{"CD2.HPF", 0, "58aa26e782d10ec5d2231e539d2fe6a2", 669581312},
-			{"CD3.HPF", 0, "00554fbf78a2ad391d98578fbbbe1c48", 641128448},
+			{"HD.HPF",  0, "2d331459e0e68cf277ef4e4043750413", 29865984},   // 1997-02-10 19:38:19
+			{"CD1.HPF", 0, "8c86db47304033fcff32c69fddd5a920", 525522944},  // 1997-02-10 17:04:40
+			{"CD2.HPF", 0, "58aa26e782d10ec5d2231e539d2fe6a2", 669581312},  // 1997-02-10 16:19:30
+			{"CD3.HPF", 0, "00554fbf78a2ad391d98578fbbbe1c48", 641128448},  // 1997-02-10 15:44:09
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
@@ -52,16 +54,16 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// The Last Express (English) - UK Broderbund Release
-	// expressw.exe 1997-04-02 14:30:32
-	// express.exe 1997-04-02 15:00:50
+	//   expressw.exe 1997-04-02 14:30:32
+	//   express.exe  1997-04-02 15:00:50
 	{
 		"lastexpress",
 		"",
 		{
-			{"HD.HPF",  0, "2d331459e0e68cf277ef4e4043750413", 29865984}, // 1997-04-10 11:03:41
-			{"CD1.HPF", 0, "8c86db47304033fcff32c69fddd5a920", 525522944}, // 1997-04-10 11:03:36
-			{"CD2.HPF", 0, "2672348691e1ae22d37d9f46f3683a07", 669509632}, // 1997-04-11 09:48:33
-			{"CD3.HPF", 0, "33f5e35f51063cb90f6bed9974475aa6", 641056768}, // 1997-04-11 09:48:55
+			{"HD.HPF",  0, "2d331459e0e68cf277ef4e4043750413", 29865984},   // 1997-04-10 11:03:41
+			{"CD1.HPF", 0, "8c86db47304033fcff32c69fddd5a920", 525522944},  // 1997-04-10 11:03:36
+			{"CD2.HPF", 0, "2672348691e1ae22d37d9f46f3683a07", 669509632},  // 1997-04-11 09:48:33
+			{"CD3.HPF", 0, "33f5e35f51063cb90f6bed9974475aa6", 641056768},  // 1997-04-11 09:48:55
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
@@ -85,15 +87,17 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::GUIO_NONE
 	},
 
-	// The Last Express (French)
+	// The Last Express (French) - Broderbund Release
+	//   expressw.exe 1997-04-02 09:31:24
+	//   express.exe  1997-04-02 10:01:12
 	{
 		"lastexpress",
 		"",
 		{
-			{"HD.HPF",  0, "c14c6d685d9bf8705d9f659062e6c5c2", 29505536},
-			{"CD1.HPF", 0, "b4277b22bc5cd6ad3b00c2ec04d4645d", 522924032},
-			{"CD2.HPF", 0, "8c9610aa4cb707ab51f61c30feb22c1a", 665710592},
-			{"CD3.HPF", 0, "411c1bab57b3e8da4fb359c5b40ef5d7", 640884736},
+			{"HD.HPF",  0, "c14c6d685d9bf8705d9f659062e6c5c2", 29505536},   // 1997-04-03 07:53:20
+			{"CD1.HPF", 0, "b4277b22bc5cd6ad3b00c2ec04d4645d", 522924032},  // 1997-04-03 07:53:14
+			{"CD2.HPF", 0, "8c9610aa4cb707ab51f61c30feb22c1a", 665710592},  // 1997-04-09 12:04:30
+			{"CD3.HPF", 0, "411c1bab57b3e8da4fb359c5b40ef5d7", 640884736},  // 1997-04-03 08:21:47
 		},
 		Common::FR_FRA,
 		Common::kPlatformUnknown,
@@ -133,12 +137,14 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::GUIO_NONE
 	},
 
-	// The Last Express (Demo)
+	// The Last Express (Demo) - Broderbund
+	//   expressw.exe 1997-08-14 14:09:42
+	//   express.exe  1997-08-14 14:19:34
 	{
 		"lastexpress",
 		"Demo",
 		{
-			{"Demo.HPF",  0, "baf3b1f64155d34872896e61c3d3cb78", 58191872},
+			{"Demo.HPF",  0, "baf3b1f64155d34872896e61c3d3cb78", 58191872},  // 1997-08-14 14:44:26
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
