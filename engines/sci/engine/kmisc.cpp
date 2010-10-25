@@ -231,14 +231,18 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case K_MEMORY_ALLOCATE_CRITICAL: {
 		int byteCount = argv[1].toUint16();
-		// WORKAROUND: pq3 (multilingual) when plotting crimes - allocates the
-		//  returned bytes from kStrLen on "W" and "E" and wants to put a
-		//  string in there, which doesn't fit of course. That's why we allocate
-		//  one byte more all the time inside that room
-		if (g_sci->getGameId() == GID_PQ3) {
-			if (s->currentRoomNumber() == 202)
-				byteCount++;
-		}
+		// WORKAROUND:
+		//  - pq3 (multilingual) room 202
+		//     when plotting crimes, allocates the returned bytes from kStrLen
+		//     on "W" and "E" and wants to put a string in there, which doesn't
+		//     fit of course.
+		//  - lsl5 (multilingual) room 280
+		//     allocates memory according to a previous kStrLen for the name of
+		//     the airport ladies (bug #3093818), which isn't enough
+
+		// We always allocate 1 byte more, because of this
+		byteCount++;
+
 		if (!s->_segMan->allocDynmem(byteCount, "kMemory() critical", &s->r_acc)) {
 			error("Critical heap allocation failed");
 		}
