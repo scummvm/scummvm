@@ -49,26 +49,24 @@
 #define BS_LOG_PREFIX "PERSISTENCESERVICE"
 
 namespace Sword25 {
-const char *SAVEGAME_EXTENSION = ".b25s";
-const char *SAVEGAME_DIRECTORY = "saves";
-const char *FILE_MARKER = "BS25SAVEGAME";
-const uint  SLOT_COUNT = 18;
-const uint  FILE_COPY_BUFFER_SIZE = 1024 * 10;
-const char *VERSIONID = "SCUMMVM1";
 
-Common::String generateSavegameFilename(uint slotID) {
+static const char *SAVEGAME_EXTENSION = ".b25s";
+static const char *SAVEGAME_DIRECTORY = "saves";
+static const char *FILE_MARKER = "BS25SAVEGAME";
+static const uint  SLOT_COUNT = 18;
+static const uint  FILE_COPY_BUFFER_SIZE = 1024 * 10;
+static const char *VERSIONID = "SCUMMVM1";
+
+static Common::String generateSavegameFilename(uint slotID) {
+	// FIXME: The savename names used here are not in accordance with
+	// our conventions; they really should be something like
+	// "GAMEID.NUM" or "TARGET.NUM".
 	char buffer[10];
 	sprintf(buffer, "%d%s", slotID, SAVEGAME_EXTENSION);
 	return Common::String(buffer);
 }
 
-Common::String generateSavegamePath(uint slotID) {
-	Common::FSNode folder(PersistenceService::getSavegameDirectory());
-	
-	return folder.getChild(generateSavegameFilename(slotID)).getPath();
-}
-
-Common::String formatTimestamp(TimeDate time) {
+static Common::String formatTimestamp(TimeDate time) {
 	// In the original BS2.5 engine, this used a local object to show the date/time as as a string.
 	// For now in ScummVM it's being hardcoded to 'dd-MON-yyyy hh:mm:ss'
 	Common::String monthList[12] = {
@@ -83,7 +81,7 @@ Common::String formatTimestamp(TimeDate time) {
 	return Common::String(buffer);
 }
 
-Common::String loadString(Common::InSaveFile *in, uint maxSize = 999) {
+static Common::String loadString(Common::InSaveFile *in, uint maxSize = 999) {
 	Common::String result;
 
 	char ch = (char)in->readByte();
@@ -96,10 +94,6 @@ Common::String loadString(Common::InSaveFile *in, uint maxSize = 999) {
 
 	return result;
 }
-
-}
-
-namespace Sword25 {
 
 struct SavegameInformation {
 	bool isOccupied;
