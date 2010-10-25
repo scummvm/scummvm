@@ -109,7 +109,7 @@ static void JNU_ThrowByName(JNIEnv* env, const char* name, const char* msg) {
 	env->DeleteLocalRef(cls);
 }
 
-// floating point.	use sparingly.
+// floating point. use sparingly.
 template <class T>
 static inline T scalef(T in, float numerator, float denominator) {
 	return static_cast<float>(in) * numerator / denominator;
@@ -177,7 +177,6 @@ private:
 	GLESPaletteTexture* _game_texture;
 	int _shake_offset;
 	Common::Rect _focus_rect;
-	bool _full_screen_dirty;
 
 	// Overlay layer
 	GLES4444Texture* _overlay_texture;
@@ -320,7 +319,6 @@ OSystem_Android::OSystem_Android(jobject am)
 	  _fsFactory(new POSIXFilesystemFactory()),
 	  _asset_archive(new AndroidAssetArchive(am)),
 	  _shake_offset(0),
-	  _full_screen_dirty(false),
 	  _event_queue_lock(createMutex()) {
 }
 
@@ -862,6 +860,9 @@ void OSystem_Android::hideOverlay() {
 void OSystem_Android::clearOverlay() {
 	ENTER("clearOverlay()");
 	_overlay_texture->fillBuffer(0);
+
+	// Shouldn't need this, but works around a 'blank screen' bug on Nexus1
+	updateScreen();
 }
 
 void OSystem_Android::grabOverlay(OverlayColor *buf, int pitch) {
@@ -887,6 +888,9 @@ void OSystem_Android::copyRectToOverlay(const OverlayColor *buf, int pitch,
 
 	// This 'pitch' is pixels not bytes
 	_overlay_texture->updateBuffer(x, y, w, h, buf, pitch * sizeof(buf[0]));
+
+	// Shouldn't need this, but works around a 'blank screen' bug on Nexus1?
+	updateScreen();
 }
 
 int16 OSystem_Android::getOverlayHeight() {
