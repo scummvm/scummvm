@@ -53,7 +53,7 @@ ObjectHandler::~ObjectHandler() {
 
 void ObjectHandler::saveSeq(object_t *obj) {
 // Save sequence number and image number in given object
-	debugC(1, kDebugFile, "saveSeq");
+	debugC(1, kDebugObject, "saveSeq");
 
 	bool found = false;
 	for (int j = 0; !found && (j < obj->seqNumb); j++) {
@@ -72,7 +72,7 @@ void ObjectHandler::saveSeq(object_t *obj) {
 
 void ObjectHandler::restoreSeq(object_t *obj) {
 // Set up cur_seq_p from stored sequence and image number in object
-	debugC(1, kDebugFile, "restoreSeq");
+	debugC(1, kDebugObject, "restoreSeq");
 
 	seq_t *q = obj->seqList[obj->curSeqNum].seqPtr;
 	for (int j = 0; j < obj->curImageNum; j++)
@@ -83,7 +83,7 @@ void ObjectHandler::restoreSeq(object_t *obj) {
 // If status.objid = -1, pick up objid, else use status.objid on objid,
 // if objid can't be picked up, use it directly
 void ObjectHandler::useObject(int16 objId) {
-	debugC(1, kDebugEngine, "useObject(%d)", objId);
+	debugC(1, kDebugObject, "useObject(%d)", objId);
 
 	char *verb;                                     // Background verb to use directly
 	object_t *obj = &_objects[objId];               // Ptr to object
@@ -142,7 +142,7 @@ void ObjectHandler::useObject(int16 objId) {
 // Return object index of the topmost object under the cursor, or -1 if none
 // Objects are filtered if not "useful"
 int16 ObjectHandler::findObject(uint16 x, uint16 y) {
-	debugC(3, kDebugEngine, "findObject(%d, %d)", x, y);
+	debugC(3, kDebugObject, "findObject(%d, %d)", x, y);
 
 	int16     objIndex = -1;                        // Index of found object
 	uint16    y2Max = 0;                            // Greatest y2
@@ -183,7 +183,7 @@ int16 ObjectHandler::findObject(uint16 x, uint16 y) {
 // Issue "Look at <object>" command
 // Note special case of swapped hero image
 void ObjectHandler::lookObject(object_t *obj) {
-	debugC(1, kDebugEngine, "lookObject");
+	debugC(1, kDebugObject, "lookObject");
 
 	if (obj == _vm->_hero)
 		// Hero swapped - look at other
@@ -194,7 +194,7 @@ void ObjectHandler::lookObject(object_t *obj) {
 
 // Free all object images
 void ObjectHandler::freeObjects() {
-	debugC(1, kDebugEngine, "freeObjects");
+	debugC(1, kDebugObject, "freeObjects");
 
 	// Nothing to do if not allocated yet
 	if (_vm->_hero->seqList[0].seqPtr == 0)
@@ -220,7 +220,7 @@ void ObjectHandler::freeObjects() {
 // increasing vertical position, using y+y2 as the baseline
 // Returns -1 if ay2 < by2 else 1 if ay2 > by2 else 0
 int ObjectHandler::y2comp(const void *a, const void *b) {
-	debugC(6, kDebugEngine, "y2comp");
+	debugC(6, kDebugObject, "y2comp");
 
 //	const object_t *p1 = &s_Engine->_objects[*(const byte *)a];
 //	const object_t *p2 = &s_Engine->_objects[*(const byte *)b];
@@ -251,7 +251,7 @@ int ObjectHandler::y2comp(const void *a, const void *b) {
 
 // Return TRUE if object being carried by hero
 bool ObjectHandler::isCarrying(uint16 wordIndex) {
-	debugC(1, kDebugParser, "isCarrying(%d)", wordIndex);
+	debugC(1, kDebugObject, "isCarrying(%d)", wordIndex);
 
 	for (int i = 0; i < _vm->_numObj; i++) {
 		if ((wordIndex == _objects[i].nounIndex) && _objects[i].carriedFl)
@@ -262,7 +262,7 @@ bool ObjectHandler::isCarrying(uint16 wordIndex) {
 
 // Describe any takeable objects visible in this screen
 void ObjectHandler::showTakeables() {
-	debugC(1, kDebugParser, "showTakeables");
+	debugC(1, kDebugObject, "showTakeables");
 
 	for (int j = 0; j < _vm->_numObj; j++) {
 		object_t *obj = &_objects[j];
@@ -276,7 +276,7 @@ void ObjectHandler::showTakeables() {
 
 // Find a clear space around supplied object that hero can walk to
 bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
-	debugC(1, kDebugEngine, "findObjectSpace(obj, %d, %d)", *destx, *desty);
+	debugC(1, kDebugObject, "findObjectSpace(obj, %d, %d)", *destx, *desty);
 
 	seq_t *curImage = obj->currImagePtr;
 	int16 y = obj->y + curImage->y2 - 1;
@@ -318,6 +318,8 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 }
 
 void ObjectHandler::loadObject(Common::File &in) {
+	debugC(6, kDebugObject, "loadObject(&in)");
+
 // TODO: For Hugo3, if not in story mode, set _objects[2].state to 3
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();

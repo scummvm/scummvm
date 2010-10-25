@@ -54,7 +54,7 @@ ObjectHandler_v3d::~ObjectHandler_v3d() {
 // Update all object positions.  Process object 'local' events
 // including boundary events and collisions
 void ObjectHandler_v3d::moveObjects() {
-	debugC(4, kDebugEngine, "moveObjects");
+	debugC(4, kDebugObject, "moveObjects");
 
 	// Added to DOS version in order to handle mouse properly
 	// If route mode enabled, do special route processing
@@ -235,7 +235,7 @@ void ObjectHandler_v3d::swapImages(int objNumb1, int objNumb2) {
 // Swap all the images of one object with another.  Set hero_image (we make
 // the assumption for now that the first obj is always the HERO) to the object
 // number of the swapped image
-	debugC(1, kDebugSchedule, "swapImages(%d, %d)", objNumb1, objNumb2);
+	debugC(1, kDebugObject, "swapImages(%d, %d)", objNumb1, objNumb2);
 
 	saveSeq(&_objects[objNumb1]);
 

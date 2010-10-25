@@ -77,6 +77,7 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	DebugMan.addDebugChannel(kDebugFile, "File", "File IO debug level");
 	DebugMan.addDebugChannel(kDebugRoute, "Route", "Route debug level");
 	DebugMan.addDebugChannel(kDebugInventory, "Inventory", "Inventory debug level");
+	DebugMan.addDebugChannel(kDebugObject, "Object", "Object debug level");
 
 	for (int j = 0; j < NUM_FONTS; j++)
 		_arrayFont[j] = 0;

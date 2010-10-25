@@ -72,14 +72,15 @@ enum GameVariant {
 };
 
 enum HugoDebugChannels {
-	kDebugSchedule   = 1 <<  0,
-	kDebugEngine     = 1 <<  1,
-	kDebugDisplay    = 1 <<  2,
-	kDebugMouse      = 1 <<  3,
-	kDebugParser     = 1 <<  4,
-	kDebugFile       = 1 <<  5,
-	kDebugRoute      = 1 <<  6,
-	kDebugInventory  = 1 <<  7
+	kDebugSchedule  = 1 <<  0,
+	kDebugEngine    = 1 <<  1,
+	kDebugDisplay   = 1 <<  2,
+	kDebugMouse     = 1 <<  3,
+	kDebugParser    = 1 <<  4,
+	kDebugFile      = 1 <<  5,
+	kDebugRoute     = 1 <<  6,
+	kDebugInventory = 1 <<  7,
+	kDebugObject    = 1 <<  8
 };
 
 enum HugoGameFeatures {

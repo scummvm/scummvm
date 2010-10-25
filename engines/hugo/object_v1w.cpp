@@ -56,7 +56,7 @@ ObjectHandler_v1w::~ObjectHandler_v1w() {
 // 2. Display new object frames/positions in dib
 // Finally, cycle any animating objects to next frame
 void ObjectHandler_v1w::updateImages() {
-	debugC(5, kDebugEngine, "updateImages");
+	debugC(5, kDebugObject, "updateImages");
 
 	// Initialise the index array to visible objects in current screen
 	int  num_objs = 0;
@@ -169,7 +169,7 @@ void ObjectHandler_v1w::updateImages() {
 // Update all object positions.  Process object 'local' events
 // including boundary events and collisions
 void ObjectHandler_v1w::moveObjects() {
-	debugC(4, kDebugEngine, "moveObjects");
+	debugC(4, kDebugObject, "moveObjects");
 
 	// If route mode enabled, do special route processing
 	if (_vm->getGameStatus().routeIndex >= 0)
@@ -349,7 +349,7 @@ void ObjectHandler_v1w::swapImages(int objNumb1, int objNumb2) {
 // Swap all the images of one object with another.  Set hero_image (we make
 // the assumption for now that the first obj is always the HERO) to the object
 // number of the swapped image
-	debugC(1, kDebugSchedule, "swapImages(%d, %d)", objNumb1, objNumb2);
+	debugC(1, kDebugObject, "swapImages(%d, %d)", objNumb1, objNumb2);
 
 	saveSeq(&_objects[objNumb1]);
 
