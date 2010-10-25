@@ -213,14 +213,8 @@ void OptionsDialog::open() {
 	}
 
 	if (_multiMidiCheckbox) {
-		if (!loadMusicDeviceSetting(_gmDevicePopUp, "gm_device")) {
-			if (_domain.equals(Common::ConfigManager::kApplicationDomain)) {
-				if (!loadMusicDeviceSetting(_gmDevicePopUp, Common::String(), MT_GM))
-					_gmDevicePopUp->setSelected(0);
-			} else {
-				_gmDevicePopUp->setSelected(0);
-			}
-		}
+		if (!loadMusicDeviceSetting(_gmDevicePopUp, "gm_device"))
+			_gmDevicePopUp->setSelected(0);
 
 		// Multi midi setting
 		_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi", _domain));
@@ -244,14 +238,8 @@ void OptionsDialog::open() {
 
 	// MT-32 options
 	if (_mt32DevicePopUp) {
-		if (!loadMusicDeviceSetting(_mt32DevicePopUp, "mt32_device")) {
-			if (_domain.equals(Common::ConfigManager::kApplicationDomain)) {
-				if (!loadMusicDeviceSetting(_mt32DevicePopUp, Common::String(), MT_MT32))
-					_mt32DevicePopUp->setSelected(0);
-			} else {
-				_mt32DevicePopUp->setSelected(0);
-			}
-		}
+		if (!loadMusicDeviceSetting(_mt32DevicePopUp, "mt32_device"))
+			_mt32DevicePopUp->setSelected(0);
 
 		// Native mt32 setting
 		_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
