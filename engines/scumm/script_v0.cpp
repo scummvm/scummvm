@@ -829,6 +829,8 @@ void ScummEngine_v0::o_setActorBitVar() {
 	// This flag causes the actor to stop moving (used by script #158, Green Tentacle 'Oomph!')
 	if (a->_miscflags & 0x40)
 		a->stopActorMoving();
+	if (a->_miscflags & 0x80)
+		a->setActorCostume(0);
 
 	debug(0, "o_setActorBitVar(%d, %d, %d)", act, mask, mod);
 }

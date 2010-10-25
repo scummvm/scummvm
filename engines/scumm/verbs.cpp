@@ -167,11 +167,6 @@ void ScummEngine_v0::switchActor(int slot) {
 	if (_currentMode == 0 || _currentMode == 1 || _currentMode == 2)
 		return;
 
-	// verbs disabled for the current actor
-	ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "switchActor");
-	if (a->_miscflags & 0x40)
-		return;
-
 	VAR(VAR_EGO) = VAR(97 + slot);
 	resetVerbs();
 	actorFollowCamera(VAR(VAR_EGO));
@@ -726,7 +721,7 @@ void ScummEngine_v2::checkExecVerbs() {
 }
 
 void ScummEngine_v0::runObject(int obj, int entry) {
-	int prev = _v0ObjectInInventory;
+	bool prev = _v0ObjectInInventory;
 
 	if (getVerbEntrypoint(obj, entry) == 0) {
 		// If nothing was found, attempt to find the 'WHAT-IS' verb script
@@ -977,6 +972,7 @@ bool ScummEngine_v0::verbExec() {
 	// We acted on an inventory item
 	if (_activeInventory && verbExecutes(_activeInventory, true) && _activeVerb != 3) {
 		_v0ObjectInInventory = true;
+		_activeObject = _activeInventory;
 		runObject(_activeInventory, _activeVerb);
 
 		_verbExecuting = false;
@@ -1035,7 +1031,7 @@ bool ScummEngine_v0::verbExec() {
 }
 
 void ScummEngine_v0::checkExecVerbs() {
-	Actor *a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
+	ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "checkExecVerbs");
 	VirtScreen *zone = findVirtScreen(_mouse.y);
 
 	// Is a verb currently executing
@@ -1150,27 +1146,28 @@ void ScummEngine_v0::checkExecVerbs() {
 				obj = 0;
 				objIdx = 0;
 			}
+			
+			if (a->_miscflags & 0x80) {
+				if (_activeVerb != 7 && over != 7) {
+					_activeVerb = 0;
+					over = 0;
+				}
+			}
 
 			// Handle New Kid verb options
 			if (_activeVerb == 7 || over == 7) {
 				// Disable New-Kid (in the secret lab)
 				if (_currentMode == 2 || _currentMode == 0)
 					return;
-				
-				if (!(((ActorC64 *)a)->_miscflags & 0x80)) {
-					if (_activeVerb != 7) {
-						_activeVerb = over;
-						over = 0;
-					}
-				}
 
-				if (over) {
+				if (_activeVerb == 7 && over) {
 					_activeVerb = 13;
 					switchActor(_verbs[over].verbid - 1);
 					return;
 				}
 
 				setNewKidVerbs();
+				_activeVerb = 7;
 
 				return;
 			}
@@ -1186,7 +1183,7 @@ void ScummEngine_v0::checkExecVerbs() {
 
 				if (zone->number == kMainVirtScreen) {
 					// Ignore verbs?
-					if (((ActorC64 *)a)->_miscflags & 0x40) {
+					if (a->_miscflags & 0x40) {
 						resetSentence(false);
 						return;
 					}
