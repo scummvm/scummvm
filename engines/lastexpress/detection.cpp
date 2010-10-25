@@ -52,14 +52,16 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// The Last Express (English) - UK Broderbund Release
+	// expressw.exe 1997-04-02 14:30:32
+	// express.exe 1997-04-02 15:00:50
 	{
 		"lastexpress",
 		"",
 		{
-			{"HD.HPF",  0, "2d331459e0e68cf277ef4e4043750413", 29865984},
-			{"CD1.HPF", 0, "8c86db47304033fcff32c69fddd5a920", 525522944},
-			{"CD2.HPF", 0, "2672348691e1ae22d37d9f46f3683a07", 669509632},
-			{"CD3.HPF", 0, "33f5e35f51063cb90f6bed9974475aa6", 641056768},
+			{"HD.HPF",  0, "2d331459e0e68cf277ef4e4043750413", 29865984}, // 1997-04-10 11:03:41
+			{"CD1.HPF", 0, "8c86db47304033fcff32c69fddd5a920", 525522944}, // 1997-04-10 11:03:36
+			{"CD2.HPF", 0, "2672348691e1ae22d37d9f46f3683a07", 669509632}, // 1997-04-11 09:48:33
+			{"CD3.HPF", 0, "33f5e35f51063cb90f6bed9974475aa6", 641056768}, // 1997-04-11 09:48:55
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
