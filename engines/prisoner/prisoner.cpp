@@ -318,6 +318,8 @@ Common::Error PrisonerEngine::run() {
 		// TODO: Later: _mainMenuRequested = true;
 	}
 
+	// TODO: Move main loop to separate method for clarity
+	// TODO: Finish main loop code
 	bool done = false;
 	while (!done) {
 
@@ -1000,97 +1002,19 @@ void PrisonerEngine::drawBackgroundObject(int16 xOffs, int16 yOffs, BackgroundOb
 
 void PrisonerEngine::drawActorSprite(int16 xOffs, int16 yOffs, ActorSprite *actorSprite) {
 	if (actorSprite->scale < 100) {
-		// This scaled drawing code is kinda ugly...
-		if (actorSprite->scale == 0)
-			return;
 		AnimationCommand *cmd = actorSprite->animationResource->_elements[actorSprite->elementIndex]->commands[0];
-		if (cmd->cmd != kActCelSprite)
-			return;
-		int16 celIndex = cmd->argAsInt16() & 0x0FFF;
-		AnimationCel *cel = actorSprite->animationResource->_cels[celIndex];
-		AnimationCel scaledCel;
-		buildScaledSprite(*cel, scaledCel, actorSprite->scale);
-		actorSprite->animationResource->_cels[celIndex] = &scaledCel;
-		_screen->drawAnimationElement(actorSprite->animationResource,
-			actorSprite->elementIndex, actorSprite->x - xOffs, actorSprite->y - yOffs, 0);
-		delete[] scaledCel.data;
-		actorSprite->animationResource->_cels[celIndex] = cel;
+		if (actorSprite->scale > 0 && cmd->cmd == kActCelSprite) {
+			int16 celIndex = cmd->argAsInt16() & 0x0FFF;
+			AnimationCel *cel = actorSprite->animationResource->_cels[celIndex];
+			cel->scale = actorSprite->scale;
+			_screen->drawAnimationElement(actorSprite->animationResource,
+				actorSprite->elementIndex, actorSprite->x - xOffs, actorSprite->y - yOffs, 0);
+			cel->scale = 100;
+		}
 	} else {
 		_screen->drawAnimationElement(actorSprite->animationResource,
 			actorSprite->elementIndex, actorSprite->x - xOffs, actorSprite->y - yOffs, 0);
 	}
-}
-
-void PrisonerEngine::buildScaledSprite(AnimationCel &inCel, AnimationCel &outCel, int16 scale) {
-
-	uint16 scaledWidth, widthIncr, widthMod;
-	uint16 scaledHeight, heightIncr, heightMod;
-	int widthErr, heightErr;
-
-	scaledWidth = inCel.width * scale / 100;
-	widthIncr = inCel.width / scaledWidth;
-	widthMod = inCel.width - widthIncr * scaledWidth;
-
-	scaledHeight = inCel.height * scale / 100;
-	heightIncr = inCel.height / scaledHeight;
-	heightMod = inCel.height - heightIncr * scaledHeight;
-
-	outCel.flags |= 0x4000;
-	outCel.width = scaledWidth;
-	outCel.height = scaledHeight;
-	outCel.dataSize = outCel.width * outCel.height;
-	outCel.data = new byte[outCel.dataSize];
-
-	byte *src = inCel.data;
-	byte *dst = outCel.data;
-
-	byte lineBuffer[640];
-	int lineSkip = 1;
-
-	heightErr = scaledHeight;
-
-	while (scaledHeight > 0) {
-
-		while (lineSkip--) {
-			// Decompress the current pixel row
-			memset(lineBuffer, 0, inCel.width);
-			byte chunks = *src++;
-			byte *lineBufferPtr = lineBuffer;
-			while (chunks--) {
-				byte skip = src[0];
-				uint count = src[1] * 4 + src[2];
-				src += 3;
-				lineBufferPtr += skip;
-				memcpy(lineBufferPtr, src, count);
-				lineBufferPtr += count;
-				src += count;
-			}
-			memset(lineBufferPtr, 0, *src++);
-		}
-
-		byte *lineBufferPtr = lineBuffer;
-		widthErr = scaledWidth;
-		for (int i = 0; i < scaledWidth; i++) {
-			*dst++ = *lineBufferPtr;
-			lineBufferPtr += widthIncr;
-			if (widthErr <= 0) {
-				lineBufferPtr++;
-				widthErr += outCel.width;
-			}
-			widthErr -= widthMod;
-		}
-
-		lineSkip = heightIncr;
-		if (heightErr <= 0) {
-			lineSkip++;
-			heightErr += outCel.height;
-		}
-		heightErr -= heightMod;
-
-		scaledHeight--;
-
-	}
-
 }
 
 bool PrisonerEngine::backupScreen() {

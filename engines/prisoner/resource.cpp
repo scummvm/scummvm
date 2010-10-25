@@ -278,6 +278,7 @@ void AnimationResource::load(Common::MemoryReadStream &stream) {
 			animationCel->height = stream.readUint16LE();
 			animationCel->dataSize = offsets[i + 1] - offsets[i] - 6;
 			animationCel->data = new byte[animationCel->dataSize];
+			animationCel->scale = 100;
 			debug(8, "AnimationResource::load() cel width = %d; height = %d; dataSize = %d", animationCel->width, animationCel->height, animationCel->dataSize);
 			stream.read(animationCel->data, animationCel->dataSize);
 			_cels.push_back(animationCel);

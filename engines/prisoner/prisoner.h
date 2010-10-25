@@ -936,7 +936,6 @@ public:
 	void buildActorSpriteDrawQueue();
 	void drawBackgroundObject(int16 xOffs, int16 yOffs, BackgroundObject *backgroundObject);
 	void drawActorSprite(int16 xOffs, int16 yOffs, ActorSprite *actorSprite);
-	void buildScaledSprite(AnimationCel &inCel, AnimationCel &outCel, int16 scale);
 
 	/* Path */
  	int16 calcDirection(int16 x1, int16 y1, int16 x2, int16 y2);

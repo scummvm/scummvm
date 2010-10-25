@@ -7,9 +7,6 @@
 
 namespace Prisoner {
 
-int *Screen::gfxPrimitivesPolyInts = NULL;
-uint Screen::gfxPrimitivesPolyAllocated = 0;
-
 Screen::Screen(PrisonerEngine *vm) : _vm(vm) {
 	_workScreen = new Graphics::Surface();
 	_workScreen->create(640, 480, 1);
@@ -81,101 +78,15 @@ void Screen::frameRect(int x1, int y1, int x2, int y2, byte color) {
 }
 
 void Screen::drawAnimationCelSprite(AnimationCel &cel, int16 x, int16 y, uint16 flags) {
-
-	byte *frameData = cel.data;
-
-	int width = cel.width;
-	int lineWidth = width;
-	int height = cel.height;
-	int skipX = 0;
-
-	flags ^= (cel.flags >> 8);
-
-	// TODO: More clipping
-	y -= height;
-	y++;
-
-	if (x + width - 1 > _clipX2)
-		width = _clipX2 - x + 1;
-
-	if (y + height - 1 > _clipY2)
-		height = _clipY2 - y + 1;
-
-	if (y < _clipY1) {
-		if (y + height - 1 < _clipY1)
-			return;
-		height -= _clipY1 - y;
-		if (cel.flags & 0x4000) {
-			while (y < _clipY1) {
-				frameData += cel.width;
-				y++;
-			}
-		} else {
-			while (y < _clipY1) {
-				// Skip the clipped RLE-compressed line
-				byte chunks = *frameData++;
-				while (chunks--)
-					frameData += 3 + frameData[1] * 4 + frameData[2];
-				frameData++;
-				y++;
-			}
-		}
+	AnimationCelReader r(&cel);
+	if (cel.scale < 100) {
+		AnimationCelScalingFilter<AnimationCelReader> f(&r, cel.scale);
+		AnimationCelDrawer<AnimationCelScalingFilter<AnimationCelReader> > d;
+		d.draw(&f, _workScreen, x, y, _clipX1, _clipY1, _clipX2, _clipY2, flags & 0x8000);
+	} else {
+		AnimationCelDrawer<AnimationCelReader> d;
+		d.draw(&r, _workScreen, x, y, _clipX1, _clipY1, _clipX2, _clipY2, flags & 0x8000);
 	}
-
-	if (x < _clipX1) {
-		if (x + width - 1 < _clipX1)
-			return;
-		skipX = _clipX1 - x;
-		x = _clipX1;
-	}
-
-	if (x > _clipX2 || y > _clipY2)
-		return;
-
-	byte *screenDestPtr = (byte*)_workScreen->getBasePtr(x, y);
-	byte *linePixels;
-	byte lineBuffer[640];
-
-	while (height--) {
-
-		if (cel.flags & 0x4000) {
-			linePixels = frameData;
-			frameData += cel.width;
-		} else {
-			// TODO: Possibly merge decompression and drawing of pixels
-			memset(lineBuffer, 0, lineWidth);
-			// Decompress the current pixel row
-			byte chunks = *frameData++;
-			byte *lineBufferPtr = lineBuffer;
-			while (chunks--) {
-				byte skip = frameData[0];
-				uint count = frameData[1] * 4 + frameData[2];
-				frameData += 3;
-				lineBufferPtr += skip;
-				memcpy(lineBufferPtr, frameData, count);
-				lineBufferPtr += count;
-				frameData += count;
-			}
-			memset(lineBufferPtr, 0, *frameData++);
-			linePixels = lineBuffer;
-		}
-
-		// Draw the decompressed pixels
-		if (flags & 0x8000) {
-			for (int xc = skipX; xc < width; xc++) {
-				if (linePixels[lineWidth-xc-1] != 0)
-					screenDestPtr[xc-skipX] = linePixels[lineWidth-xc-1];
-			}
-		} else {
-			for (int xc = skipX; xc < width; xc++) {
-				if (linePixels[xc] != 0)
-					screenDestPtr[xc-skipX] = linePixels[xc];
-			}
-		}
-
-		screenDestPtr += _workScreen->pitch;
-	}
-
 }
 
 void Screen::drawAnimationElement(AnimationResource *animation, int16 elementIndex, int16 x, int16 y, uint16 parentFlags) {
