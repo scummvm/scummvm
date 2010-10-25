@@ -43,7 +43,7 @@ namespace Hugo {
 class ObjectHandler {
 public:
 	ObjectHandler(HugoEngine *vm);
-	~ObjectHandler();
+	virtual ~ObjectHandler();
 
 	object_t  *_objects;
 
