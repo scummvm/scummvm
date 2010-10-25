@@ -113,6 +113,7 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual bool hasFeature(MetaEngineFeature f) const;
 };
 
 bool Sword25MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -121,6 +122,22 @@ bool Sword25MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 	}
 	return desc != 0;
 }
+
+bool Sword25MetaEngine::hasFeature(MetaEngineFeature f) const {
+	return false;
+	// TODO: Implement some of these features!?
+#if 0
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime);
+#endif
+}
+
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD25)
 	REGISTER_PLUGIN_DYNAMIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngine);

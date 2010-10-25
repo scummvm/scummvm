@@ -182,4 +182,17 @@ bool Sword25Engine::loadPackages() {
 	return true;
 }
 
+bool Sword25Engine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL);
+	// TODO: Implement more of these features?!
+#if 0
+	return
+		(f == kSupportsSubtitleOptions) ||
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+#endif
+}
+
 } // End of namespace Sword25
