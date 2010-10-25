@@ -35,6 +35,7 @@
 
 namespace Hugo {
 
+#define SIGN(X)       ((X < 0) ? -1 : 1)
 #define kMaxEvents     50                           // Max events in event queue
 
 struct event_t {
@@ -50,8 +51,9 @@ public:
 	Scheduler(HugoEngine *vm);
 	virtual ~Scheduler();
 
+	virtual void insertAction(act *action) = 0;
+
 	void   initEventQueue();
-	void   insertAction(act *action);
 	void   insertActionList(uint16 actIndex);
 	void   decodeString(char *line);
 	void   runScheduler();
@@ -62,25 +64,24 @@ public:
 	void   saveEvents(Common::WriteStream *f);
 	void   restoreScreen(int screenIndex);
 
-private:
+protected:
+	HugoEngine *_vm;
+
 	enum seqTextSchedule {
 		kSsNoBackground = 0,
 		kSsBadSaveGame  = 1
 	};
 
-	HugoEngine *_vm;
-
-	event_t _events[kMaxEvents];                        // Statically declare event structures
-
 	event_t *_freeEvent;                                // Free list of event structures
 	event_t *_headEvent;                                // Head of list (earliest time)
 	event_t *_tailEvent;                                // Tail of list (latest time)
-
-	event_t *getQueue();
-	void     delQueue(event_t *curEvent);
-	event_t *doAction(event_t *curEvent);
+	event_t _events[kMaxEvents];                        // Statically declare event structures
 
 	virtual const char *getCypher() = 0;
+	virtual void delQueue(event_t *curEvent) = 0;
+	virtual event_t *doAction(event_t *curEvent) = 0;
+
+	event_t *getQueue();
 };
 
 class Scheduler_v1d : public Scheduler {
@@ -88,17 +89,42 @@ public:
 	Scheduler_v1d(HugoEngine *vm);
 	~Scheduler_v1d();
 
-	const char *getCypher();
+	virtual const char *getCypher();
+	virtual void insertAction(act *action);
+protected:
+	virtual void delQueue(event_t *curEvent);
+	virtual event_t *doAction(event_t *curEvent);
 };
 
-class Scheduler_v3d : public Scheduler {
+class Scheduler_v2d : public Scheduler_v1d {
+public:
+	Scheduler_v2d(HugoEngine *vm);
+	virtual ~Scheduler_v2d();
+
+	virtual void insertAction(act *action);
+protected:
+	virtual void delQueue(event_t *curEvent);
+	virtual event_t *doAction(event_t *curEvent);
+};
+
+class Scheduler_v3d : public Scheduler_v2d {
 public:
 	Scheduler_v3d(HugoEngine *vm);
 	~Scheduler_v3d();
 
 	const char *getCypher();
+protected:
+	virtual event_t *doAction(event_t *curEvent);
+
 };
 
+class Scheduler_v1w : public Scheduler_v3d {
+public:
+	Scheduler_v1w(HugoEngine *vm);
+	~Scheduler_v1w();
+
+	virtual event_t *doAction(event_t *curEvent);
+};
 } // End of namespace Hugo
 
 #endif //HUGO_SCHEDULE_H

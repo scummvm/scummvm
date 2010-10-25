@@ -33,6 +33,8 @@ MODULE_OBJS := \
 	route.o \
 	schedule.o \
 	schedule_v1d.o \
+	schedule_v1w.o \
+	schedule_v2d.o \
 	schedule_v3d.o \
 	sound.o \
 	util.o

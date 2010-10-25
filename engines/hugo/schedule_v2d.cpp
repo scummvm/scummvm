@@ -47,17 +47,94 @@
 
 namespace Hugo {
 
-Scheduler_v3d::Scheduler_v3d(HugoEngine *vm) : Scheduler_v2d(vm) {
+Scheduler_v2d::Scheduler_v2d(HugoEngine *vm) : Scheduler_v1d(vm) {
 }
 
-Scheduler_v3d::~Scheduler_v3d() {
+Scheduler_v2d::~Scheduler_v2d() {
 }
 
-const char *Scheduler_v3d::getCypher() {
-	return "Copyright 1992, Gray Design Associates";
+// Delete an event structure (i.e. return it to the free list)
+// Historical note:  Originally event p was assumed to be at head of queue
+// (i.e. earliest) since all events were deleted in order when proceeding to
+// a new screen.  To delete an event from the middle of the queue, the action
+// was overwritten to be ANULL.  With the advent of GLOBAL events, delQueue
+// was modified to allow deletes anywhere in the list, and the DEL_EVENT
+// action was modified to perform the actual delete.
+void Scheduler_v2d::delQueue(event_t *curEvent) {
+	debugC(4, kDebugSchedule, "delQueue()");
+
+	if (curEvent == _headEvent) {                   // If p was the head ptr
+		_headEvent = curEvent->nextEvent;           // then make new head_p
+	} else {                                        // Unlink p
+		curEvent->prevEvent->nextEvent = curEvent->nextEvent;
+		if (curEvent->nextEvent)
+			curEvent->nextEvent->prevEvent = curEvent->prevEvent;
+		else
+			_tailEvent = curEvent->prevEvent;
+	}
+
+	if (_headEvent)
+		_headEvent->prevEvent = 0;                  // Mark end of list
+	else
+		_tailEvent = 0;                             // Empty queue
+
+	curEvent->nextEvent = _freeEvent;               // Return p to free list
+	if (_freeEvent)                                 // Special case, if free list was empty
+		_freeEvent->prevEvent = curEvent;
+	_freeEvent = curEvent;
 }
 
-event_t *Scheduler_v3d::doAction(event_t *curEvent) {
+// Insert the action pointed to by p into the timer event queue
+// The queue goes from head (earliest) to tail (latest) timewise
+void Scheduler_v2d::insertAction(act *action) {
+	debugC(1, kDebugSchedule, "insertAction() - Action type A%d", action->a0.actType);
+
+	// First, get and initialise the event structure
+	event_t *curEvent = getQueue();
+	curEvent->action = action;
+	switch (action->a0.actType) {                   // Assign whether local or global
+	case AGSCHEDULE:
+		curEvent->localActionFl = false;            // Lasts over a new screen
+		break;
+	default:
+		curEvent->localActionFl = true;             // Rest are for current screen only
+		break;
+	}
+
+	curEvent->time = action->a0.timer + getTicks(); // Convert rel to abs time
+
+	// Now find the place to insert the event
+	if (!_tailEvent) {                              // Empty queue
+		_tailEvent = _headEvent = curEvent;
+		curEvent->nextEvent = curEvent->prevEvent = 0;
+	} else {
+		event_t *wrkEvent = _tailEvent;             // Search from latest time back
+		bool found = false;
+
+		while (wrkEvent && !found) {
+			if (wrkEvent->time <= curEvent->time) { // Found if new event later
+				found = true;
+				if (wrkEvent == _tailEvent)         // New latest in list
+					_tailEvent = curEvent;
+				else
+					wrkEvent->nextEvent->prevEvent = curEvent;
+				curEvent->nextEvent = wrkEvent->nextEvent;
+				wrkEvent->nextEvent = curEvent;
+				curEvent->prevEvent = wrkEvent;
+			}
+			wrkEvent = wrkEvent->prevEvent;
+		}
+
+		if (!found) {                               // Must be earliest in list
+			_headEvent->prevEvent = curEvent;       // So insert as new head
+			curEvent->nextEvent = _headEvent;
+			curEvent->prevEvent = 0;
+			_headEvent = curEvent;
+		}
+	}
+}
+
+event_t *Scheduler_v2d::doAction(event_t *curEvent) {
 // This function performs the action in the event structure pointed to by p
 // It dequeues the event and returns it to the free list.  It returns a ptr
 // to the next action in the list, except special case of NEW_SCREEN
@@ -285,24 +362,6 @@ event_t *Scheduler_v3d::doAction(event_t *curEvent) {
 		_vm->_object->_objects[action->a38.lipsObjNumb].y = _vm->_object->_objects[action->a38.objNumb].y + action->a38.dyLips;
 		_vm->_object->_objects[action->a38.lipsObjNumb].screenIndex = *_vm->_screen_p; // Don't forget screen!
 		_vm->_object->_objects[action->a38.lipsObjNumb].cycling = CYCLE_FORWARD;
-		break;
-	case INIT_STORY_MODE:                           // act39: Init story_mode flag
-		// This is similar to the QUIET path mode, except that it is
-		// independant of it and it additionally disables the ">" prompt
-		gameStatus.storyModeFl = action->a39.storyModeFl;
-
-		// End the game after story if this is special vendor demo mode
-		if (gameStatus.demoFl && action->a39.storyModeFl == false)
-			_vm->endGame();
-		break;
-	case WARN:                                      // act40: Text box (CF TEXT)
-		Utils::Box(BOX_OK, "%s", _vm->_file->fetchString(action->a40.stringIndex));
-		break;
-	case COND_BONUS:                                // act41: Perform action if got bonus
-		if (_vm->_points[action->a41.BonusIndex].scoredFl)
-			insertActionList(action->a41.actPassIndex);
-		else
-			insertActionList(action->a41.actFailIndex);
 		break;
 	case OLD_SONG:
 		//TODO For Hugo 1 and Hugo2 DOS: The songs were not stored in a DAT file, but directly as

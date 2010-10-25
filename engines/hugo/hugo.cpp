@@ -172,7 +172,7 @@ Common::Error HugoEngine::run() {
 	switch (_gameVariant) {
 	case 0: // H1 Win
 		_file = new FileManager_v1w(this);
-		_scheduler = new Scheduler_v3d(this);
+		_scheduler = new Scheduler_v1w(this);
 		_intro = new intro_v1w(this);
 		_screen = new Screen_v1w(this);
 		_parser = new Parser_v1w(this);
@@ -180,7 +180,7 @@ Common::Error HugoEngine::run() {
 		break;
 	case 1:
 		_file = new FileManager_v2d(this);
-		_scheduler = new Scheduler_v3d(this);
+		_scheduler = new Scheduler_v1w(this);
 		_intro = new intro_v2w(this);
 		_screen = new Screen_v1w(this);
 		_parser = new Parser_v1w(this);
@@ -188,7 +188,7 @@ Common::Error HugoEngine::run() {
 		break;
 	case 2:
 		_file = new FileManager_v2d(this);
-		_scheduler = new Scheduler_v3d(this);
+		_scheduler = new Scheduler_v1w(this);
 		_intro = new intro_v3w(this);
 		_screen = new Screen_v1w(this);
 		_parser = new Parser_v1w(this);
@@ -204,7 +204,7 @@ Common::Error HugoEngine::run() {
 		break;
 	case 4:
 		_file = new FileManager_v2d(this);
-		_scheduler = new Scheduler_v1d(this);
+		_scheduler = new Scheduler_v2d(this);
 		_intro = new intro_v2d(this);
 		_screen = new Screen_v1d(this);
 		_parser = new Parser_v2d(this);

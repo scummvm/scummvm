@@ -47,17 +47,13 @@
 
 namespace Hugo {
 
-Scheduler_v3d::Scheduler_v3d(HugoEngine *vm) : Scheduler_v2d(vm) {
+Scheduler_v1w::Scheduler_v1w(HugoEngine *vm) : Scheduler_v3d(vm) {
 }
 
-Scheduler_v3d::~Scheduler_v3d() {
+Scheduler_v1w::~Scheduler_v1w() {
 }
 
-const char *Scheduler_v3d::getCypher() {
-	return "Copyright 1992, Gray Design Associates";
-}
-
-event_t *Scheduler_v3d::doAction(event_t *curEvent) {
+event_t *Scheduler_v1w::doAction(event_t *curEvent) {
 // This function performs the action in the event structure pointed to by p
 // It dequeues the event and returns it to the free list.  It returns a ptr
 // to the next action in the list, except special case of NEW_SCREEN
@@ -227,12 +223,12 @@ event_t *Scheduler_v3d::doAction(event_t *curEvent) {
 		else
 			insertActionList(action->a25.actFailIndex);
 		break;
-//	case SOUND:                                     // act26: Play a sound (or tune)
-//		if (action->a26.soundIndex < _vm->_tunesNbr)
-//			_vm->_sound->playMusic(action->a26.soundIndex);
-//		else
-//			_vm->_sound->playSound(action->a26.soundIndex, BOTH_CHANNELS, MED_PRI);
-//		break;
+	case SOUND:                                     // act26: Play a sound (or tune)
+		if (action->a26.soundIndex < _vm->_tunesNbr)
+			_vm->_sound->playMusic(action->a26.soundIndex);
+		else
+			_vm->_sound->playSound(action->a26.soundIndex, BOTH_CHANNELS, MED_PRI);
+		break;
 	case ADD_SCORE:                                 // act27: Add object's value to score
 		_vm->adjustScore(_vm->_object->_objects[action->a27.objNumb].objValue);
 		break;
@@ -304,11 +300,42 @@ event_t *Scheduler_v3d::doAction(event_t *curEvent) {
 		else
 			insertActionList(action->a41.actFailIndex);
 		break;
-	case OLD_SONG:
-		//TODO For Hugo 1 and Hugo2 DOS: The songs were not stored in a DAT file, but directly as
-		//strings. the current play_music should be modified to use a strings instead of reading
-		//the file, in those cases. This replaces, for those DOS versions, act26.
-		warning("STUB: doAction(act49)");
+	case TEXT_TAKE:                                 // act42: Text box with "take" message
+		Utils::Box(BOX_ANY, TAKE_TEXT, _vm->_arrayNouns[_vm->_object->_objects[action->a42.objNumb].nounIndex][TAKE_NAME]);
+		break;
+	case YESNO:                                     // act43: Prompt user for Yes or No
+		warning("doAction(act43) - Yes/No Box");
+		if (Utils::Box(BOX_YESNO, "%s", _vm->_file->fetchString(action->a43.promptIndex)) != 0)
+			insertActionList(action->a43.actYesIndex);
+		else
+			insertActionList(action->a43.actNoIndex);
+		break;
+	case STOP_ROUTE:                                // act44: Stop any route in progress
+		gameStatus.routeIndex = -1;
+		break;
+	case COND_ROUTE:                                // act45: Conditional on route in progress
+		if (gameStatus.routeIndex >= action->a45.routeIndex)
+			insertActionList(action->a45.actPassIndex);
+		else
+			insertActionList(action->a45.actFailIndex);
+		break;
+	case INIT_JUMPEXIT:                             // act46: Init status.jumpexit flag
+		// This is to allow left click on exit to get there immediately
+		// For example the plane crash in Hugo2 where hero is invisible
+		// Couldn't use INVISIBLE flag since conflicts with boat in Hugo1
+		gameStatus.jumpExitFl = action->a46.jumpExitFl;
+		break;
+	case INIT_VIEW:                                 // act47: Init object.viewx, viewy, dir
+		_vm->_object->_objects[action->a47.objNumb].viewx = action->a47.viewx;
+		_vm->_object->_objects[action->a47.objNumb].viewy = action->a47.viewy;
+		_vm->_object->_objects[action->a47.objNumb].direction = action->a47.direction;
+		break;
+	case INIT_OBJ_FRAME:                            // act48: Set seq,frame number to use
+		// Note: Don't set a sequence at time 0 of a new screen, it causes
+		// problems clearing the boundary bits of the object!  t>0 is safe
+		_vm->_object->_objects[action->a48.objNumb].currImagePtr = _vm->_object->_objects[action->a48.objNumb].seqList[action->a48.seqIndex].seqPtr;
+		for (dx = 0; dx < action->a48.frameIndex; dx++)
+			_vm->_object->_objects[action->a48.objNumb].currImagePtr = _vm->_object->_objects[action->a48.objNumb].currImagePtr->nextSeqPtr;
 		break;
 	default:
 		Utils::Error(EVNT_ERR, "%s", "doAction");
