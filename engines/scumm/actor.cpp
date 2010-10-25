@@ -2254,7 +2254,7 @@ void Actor::setActorCostume(int c) {
 	}
 }
 
-static const char* v0ActorNames[0x19] = {
+static const char* v0ActorNames_English[25] = {
 	"Syd",
 	"Razor",
 	"Dave",
@@ -2280,12 +2280,45 @@ static const char* v0ActorNames[0x19] = {
 	"Sandy"
 };
 
+static const char* v0ActorNames_German[25] = {
+	"Syd",
+	"Razor",
+	"Dave",
+	"Michael",
+	"Bernard",
+	"Wendy",
+	"Jeff",
+	"",
+	"Dr.Fred",
+	"Schwester Edna",
+	"Weird Ed",
+	"Ted",
+	"Lila Tentakel",
+	"Gr<nes Tentakel",
+	"Meteor",
+	"Pflanze",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"Sandy"
+};
+
 const byte *Actor::getActorName() {
 	const byte *ptr = NULL;
 
 	if (_vm->_game.version == 0) {
-		if (_number)
-			ptr = (const byte *)v0ActorNames[_number - 1];
+		if (_number) {
+			switch (_vm->_language) {
+			case Common::DE_DEU:
+				ptr = (const byte *)v0ActorNames_German[_number - 1];
+				break;
+			default:
+				ptr = (const byte *)v0ActorNames_English[_number - 1];
+			}
+		}
 	} else {
 		ptr = _vm->getResourceAddress(rtActorName, _number);
 	}
