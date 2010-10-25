@@ -1781,40 +1781,47 @@ void Goblin::animate(Mult::Mult_Object *obj) {
 }
 
 void Goblin::move(int16 destX, int16 destY, int16 objIndex) {
-	Mult::Mult_Object *obj;
-	Mult::Mult_AnimData *animData;
-	int16 mouseX;
-	int16 mouseY;
-	int16 gobDestX;
-	int16 gobDestY;
 
-	obj = &_vm->_mult->_objects[objIndex];
-	animData = obj->pAnimData;
+	Mult::Mult_Object   *obj      = &_vm->_mult->_objects[objIndex];
+	Mult::Mult_AnimData *animData = obj->pAnimData;
 
-	obj->gobDestX = destX;
-	obj->gobDestY = destY;
+	obj->gobDestX   = destX;
+	obj->gobDestY   = destY;
 	animData->destX = destX;
 	animData->destY = destY;
 
 	if (animData->isBusy != 0) {
 		if ((destX == -1) && (destY == -1)) {
-			mouseX = _vm->_global->_inter_mouseX;
-			mouseY = _vm->_global->_inter_mouseY;
+			int16 mouseX = _vm->_global->_inter_mouseX;
+			int16 mouseY = _vm->_global->_inter_mouseY;
+
 			if (_vm->_map->_bigTiles)
 				mouseY += ((_vm->_global->_inter_mouseY / _vm->_map->_tilesHeight) + 1) / 2;
 
-			gobDestX = mouseX / _vm->_map->_tilesWidth;
-			gobDestY = mouseY / _vm->_map->_tilesHeight;
+			int16 gobDestX = mouseX / _vm->_map->_tilesWidth;
+			int16 gobDestY = mouseY / _vm->_map->_tilesHeight;
 
 			if (_vm->_map->getPass(gobDestX, gobDestY) == 0)
 				_vm->_map->findNearestWalkable(gobDestX, gobDestY, mouseX, mouseY);
 
-			animData->destX = obj->gobDestX =
-				(gobDestX == -1) ? obj->goblinX : gobDestX;
-			animData->destY = obj->gobDestY =
-				(gobDestY == -1) ? obj->goblinY : gobDestY;
+			obj->gobDestX = (gobDestX == -1) ? obj->goblinX : gobDestX;
+			obj->gobDestY = (gobDestY == -1) ? obj->goblinY : gobDestY;
+
+			animData->destX = obj->gobDestX;
+			animData->destY = obj->gobDestY;
 		}
 	}
+
+	WRITE_VAR(56, 0);
+
+	// Prevent continous walking on wide stairs
+	if (_vm->_map->getPass(obj->gobDestX, obj->gobDestY) == 11) {
+		if (_vm->_map->_screenWidth == 640) {
+			obj->gobDestY++;
+			animData->destY++;
+		}
+	}
+
 	initiateMove(obj);
 }
 
