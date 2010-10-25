@@ -49,6 +49,8 @@ public:
 	Screen(HugoEngine *vm);
 	virtual ~Screen();
 
+	virtual void loadFont(int16 fontId) = 0;
+
 	int16    fontHeight();
 	int16    stringLength(const char *s);
 
@@ -61,7 +63,6 @@ public:
 	void     drawStatusText();
 	void     initDisplay();
 	void     initNewScreenDisplay();
-	virtual void loadFont(int16 fontId) = 0;
 	void     moveImage(image_pt srcImage, uint16 x1, uint16 y1, uint16 dx, uint16 dy, uint16 width1, image_pt dstImage, uint16 x2, uint16 y2, uint16 width2);
 	void     remapPal(uint16 oldIndex, uint16 newIndex);
 	void     restorePal(Common::SeekableReadStream *f);
@@ -119,7 +120,7 @@ public:
 	Screen_v1d(HugoEngine *vm);
 	~Screen_v1d();
 
-	virtual void loadFont(int16 fontId);
+	void loadFont(int16 fontId);
 };
 
 class Screen_v1w : public Screen {
@@ -127,7 +128,7 @@ public:
 	Screen_v1w(HugoEngine *vm);
 	~Screen_v1w();
 
-	virtual void loadFont(int16 fontId);
+	void loadFont(int16 fontId);
 };
 
 } // End of namespace Hugo

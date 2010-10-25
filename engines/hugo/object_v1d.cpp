@@ -81,13 +81,13 @@ void ObjectHandler_v1d::updateImages() {
 		if (obj->cycling > ALMOST_INVISIBLE) {      // Only if visible
 			switch (obj->cycling) {
 			case NOT_CYCLING:
-				_vm->_screen->displayFrame(obj->x, obj->y, obj->currImagePtr, true);
+				_vm->_screen->displayFrame(obj->x, obj->y, obj->currImagePtr, false);
 				break;
 			case CYCLE_FORWARD:
 				if (obj->frameTimer)                // Not time to see next frame yet
-					_vm->_screen->displayFrame(obj->x, obj->y, obj->currImagePtr, true);
+					_vm->_screen->displayFrame(obj->x, obj->y, obj->currImagePtr, false);
 				else
-					_vm->_screen->displayFrame(obj->x, obj->y, obj->currImagePtr->nextSeqPtr, true);
+					_vm->_screen->displayFrame(obj->x, obj->y, obj->currImagePtr->nextSeqPtr, false);
 				break;
 			case CYCLE_BACKWARD: {
 				seq_t *seqPtr = obj->currImagePtr;
@@ -95,7 +95,7 @@ void ObjectHandler_v1d::updateImages() {
 					while (seqPtr->nextSeqPtr != obj->currImagePtr)
 						seqPtr = seqPtr->nextSeqPtr;
 				}
-				_vm->_screen->displayFrame(obj->x, obj->y, seqPtr, true);
+				_vm->_screen->displayFrame(obj->x, obj->y, seqPtr, false);
 				break;
 				}
 			default:
