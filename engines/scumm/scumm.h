@@ -593,6 +593,7 @@ protected:
 
 	bool _v0ObjectIndex;			// V0 Use object index, instead of object number
 	bool _v0ObjectInInventory;		// V0 Use object number from inventory
+	byte _v0ObjectFlag;
 
 	/* Global resource tables */
 	int _numVariables, _numBitVariables, _numLocalObjects;

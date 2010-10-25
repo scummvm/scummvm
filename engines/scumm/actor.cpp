@@ -1052,8 +1052,16 @@ static int checkXYInBoxBounds(int boxnum, int x, int y, int &destX, int &destY) 
 	// yDist must be divided by 4, as we are using 8x2 pixels
 	// blocks for actor coordinates).
 	int xDist = ABS(x - destX);
-	int yDist = ABS(y - destY) / 4;
+	int yDist;
 	int dist;
+
+	// MM C64: This fixes the trunk bug (#3070065), as well
+	// as the fruit bowl, however im not sure if its 
+	// the proper solution or not.
+	if( g_scumm->_game.version == 0 )
+		yDist = ABS(y - destY);
+	else
+		yDist = ABS(y - destY) / 4;
 
 	if (xDist < yDist)
 		dist = (xDist >> 1) + yDist;
@@ -1082,6 +1090,7 @@ AdjustBoxResult Actor_v2::adjustXYToBeInBox(const int dstX, const int dstY) {
 			abr.x = foundX;
 			abr.y = foundY;
 			abr.box = box;
+
 			break;
 		}
 		if (dist < bestDist) {

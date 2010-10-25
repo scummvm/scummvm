@@ -987,7 +987,10 @@ void ScummEngine_v0::o_setOwnerOf() {
 void ScummEngine_v0::resetSentence(bool walking) {
 	_activeVerb = 13;
 
-	if (!walking) {
+	// If the actor is walking, or the screen is a keypad (no sentence verbs/objects are drawn)
+	// Then reset all active objects (stops the radio crash, bug #3077966)
+	if (!walking || !(_userState & 32)) {
+		_v0ObjectFlag = 0;
 		_activeInventory = 0;
 		_activeObject = 0;
 		_activeObject2 = 0;

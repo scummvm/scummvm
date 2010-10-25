@@ -146,6 +146,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	// Init all vars
 	_v0ObjectIndex = false;
 	_v0ObjectInInventory = false;
+	_v0ObjectFlag = 0;
 	_imuse = NULL;
 	_imuseDigital = NULL;
 	_musicEngine = NULL;
