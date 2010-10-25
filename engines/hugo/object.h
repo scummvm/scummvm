@@ -91,7 +91,7 @@ protected:
 class ObjectHandler_v1d : public ObjectHandler {
 public:
 	ObjectHandler_v1d(HugoEngine *vm);
-	~ObjectHandler_v1d();
+	virtual ~ObjectHandler_v1d();
 
 	void moveObjects();
 	void updateImages();
@@ -107,6 +107,24 @@ public:
 	void updateImages();
 	void swapImages(int objNumb1, int objNumb2);
 };
-} // End of namespace Hugo
 
+class ObjectHandler_v2d : public ObjectHandler_v1d {
+public:
+	ObjectHandler_v2d(HugoEngine *vm);
+	virtual ~ObjectHandler_v2d();
+
+	void moveObjects();
+	void updateImages();
+};
+
+class ObjectHandler_v3d : public ObjectHandler_v2d {
+public:
+	ObjectHandler_v3d(HugoEngine *vm);
+	~ObjectHandler_v3d();
+
+	void moveObjects();
+	void swapImages(int objNumb1, int objNumb2);
+};
+
+} // End of namespace Hugo
 #endif //HUGO_OBJECT_H

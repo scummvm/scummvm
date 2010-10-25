@@ -207,7 +207,7 @@ Common::Error HugoEngine::run() {
 		_intro = new intro_v2d(this);
 		_screen = new Screen_v1d(this);
 		_parser = new Parser_v2d(this);
-		_object = new ObjectHandler_v1d(this);
+		_object = new ObjectHandler_v2d(this);
 		break;
 	case 5:
 		_file = new FileManager_v3d(this);

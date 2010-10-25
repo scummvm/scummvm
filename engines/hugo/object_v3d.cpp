@@ -45,133 +45,16 @@
 
 namespace Hugo {
 
-ObjectHandler_v1d::ObjectHandler_v1d(HugoEngine *vm) : ObjectHandler(vm) {
+ObjectHandler_v3d::ObjectHandler_v3d(HugoEngine *vm) : ObjectHandler_v2d(vm) {
 }
 
-ObjectHandler_v1d::~ObjectHandler_v1d() {
-}
-
-// Draw all objects on screen as follows:
-// 1. Sort 'FLOATING' objects in order of y2 (base of object)
-// 2. Display new object frames/positions in dib
-// Finally, cycle any animating objects to next frame
-void ObjectHandler_v1d::updateImages() {
-	debugC(5, kDebugEngine, "updateImages");
-
-	// Initialise the index array to visible objects in current screen
-	int  num_objs = 0;
-	byte objindex[MAXOBJECTS];                      // Array of indeces to objects
-
-	for (int i = 0; i < _vm->_numObj; i++) {
-		object_t *obj = &_objects[i];
-		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling >= ALMOST_INVISIBLE))
-			objindex[num_objs++] = i;
-	}
-
-	// Sort the objects into increasing y+y2 (painter's algorithm)
-	qsort(objindex, num_objs, sizeof(objindex[0]), y2comp);
-
-	// Add each visible object to display list
-	for (int i = 0; i < num_objs; i++) {
-		object_t *obj = &_objects[objindex[i]];
-		// Count down inter-frame timer
-		if (obj->frameTimer)
-			obj->frameTimer--;
-
-		if (obj->cycling > ALMOST_INVISIBLE) {      // Only if visible
-			switch (obj->cycling) {
-			case NOT_CYCLING:
-				_vm->_screen->displayFrame(obj->x, obj->y, obj->currImagePtr, true);
-				break;
-			case CYCLE_FORWARD:
-				if (obj->frameTimer)                // Not time to see next frame yet
-					_vm->_screen->displayFrame(obj->x, obj->y, obj->currImagePtr, true);
-				else
-					_vm->_screen->displayFrame(obj->x, obj->y, obj->currImagePtr->nextSeqPtr, true);
-				break;
-			case CYCLE_BACKWARD: {
-				seq_t *seqPtr = obj->currImagePtr;
-				if (!obj->frameTimer) {             // Show next frame
-					while (seqPtr->nextSeqPtr != obj->currImagePtr)
-						seqPtr = seqPtr->nextSeqPtr;
-				}
-				_vm->_screen->displayFrame(obj->x, obj->y, seqPtr, true);
-				break;
-				}
-			default:
-				break;
-			}
-		}
-	}
-
-	// Cycle any animating objects
-	for (int i = 0; i < num_objs; i++) {
-		object_t *obj = &_objects[objindex[i]];
-		if (obj->cycling != INVISIBLE) {
-			// Only if it's visible
-			if (obj->cycling == ALMOST_INVISIBLE)
-				obj->cycling = INVISIBLE;
-
-			// Now Rotate to next picture in sequence
-			switch (obj->cycling) {
-			case NOT_CYCLING:
-				break;
-			case CYCLE_FORWARD:
-				if (!obj->frameTimer) {
-					// Time to step to next frame
-					obj->currImagePtr = obj->currImagePtr->nextSeqPtr;
-					// Find out if this is last frame of sequence
-					// If so, reset frame_timer and decrement n_cycle
-					if (obj->frameInterval || obj->cycleNumb) {
-						obj->frameTimer = obj->frameInterval;
-						for (int j = 0; j < obj->seqNumb; j++) {
-							if (obj->currImagePtr->nextSeqPtr == obj->seqList[j].seqPtr) {
-								if (obj->cycleNumb) { // Decr cycleNumb if Non-continous
-									if (!--obj->cycleNumb)
-										obj->cycling = NOT_CYCLING;
-								}
-							}
-						}
-					}
-				}
-				break;
-			case CYCLE_BACKWARD: {
-				if (!obj->frameTimer) {
-					// Time to step to prev frame
-					seq_t *seqPtr = obj->currImagePtr;
-					while (obj->currImagePtr->nextSeqPtr != seqPtr)
-						obj->currImagePtr = obj->currImagePtr->nextSeqPtr;
-					// Find out if this is first frame of sequence
-					// If so, reset frame_timer and decrement n_cycle
-					if (obj->frameInterval || obj->cycleNumb) {
-						obj->frameTimer = obj->frameInterval;
-						for (int j = 0; j < obj->seqNumb; j++) {
-							if (obj->currImagePtr == obj->seqList[j].seqPtr) {
-								if (obj->cycleNumb){ // Decr cycleNumb if Non-continous
-									if (!--obj->cycleNumb)
-										obj->cycling = NOT_CYCLING;
-								}
-							}
-						}
-					}
-				}
-				break;
-				}
-			default:
-				break;
-			}
-			obj->oldx = obj->x;
-			obj->oldy = obj->y;
-		}
-	}
+ObjectHandler_v3d::~ObjectHandler_v3d() {
 }
 
 // Update all object positions.  Process object 'local' events
 // including boundary events and collisions
-void ObjectHandler_v1d::moveObjects() {
+void ObjectHandler_v3d::moveObjects() {
 	debugC(4, kDebugEngine, "moveObjects");
-
-	static int dxOld, dyOld;                        // previous directions for CHASEing
 
 	// Added to DOS version in order to handle mouse properly
 	// If route mode enabled, do special route processing
@@ -186,48 +69,64 @@ void ObjectHandler_v1d::moveObjects() {
 		seq_t *currImage = obj->currImagePtr;       // Get ptr to current image
 		if (obj->screenIndex == *_vm->_screen_p) {
 			switch (obj->pathType) {
-			case CHASE: {
+			case CHASE:
+			case CHASE2: {
+				int8 radius = obj->radius;          // Default to object's radius
+				if (radius < 0)                     // If radius infinity, use closer value
+					radius = DX;
+
 				// Allowable motion wrt boundary
 				int dx = _vm->_hero->x + _vm->_hero->currImagePtr->x1 - obj->x - currImage->x1;
 				int dy = _vm->_hero->y + _vm->_hero->currImagePtr->y2 - obj->y - currImage->y2 - 1;
-				if (abs(dx) <= 1)
+				if (abs(dx) <= radius)
 					obj->vx = 0;
 				else
 					obj->vx = (dx > 0) ? MIN(dx, obj->vxPath) : MAX(dx, -obj->vxPath);
-				if (abs(dy) <= 1)
+				if (abs(dy) <= radius)
 					obj->vy = 0;
 				else
 					obj->vy = (dy > 0) ? MIN(dy, obj->vyPath) : MAX(dy, -obj->vyPath);
 
 				// Set first image in sequence (if multi-seq object)
-				if (obj->seqNumb == 4) {
+				switch (obj->seqNumb) {
+				case 4:
 					if (!obj->vx) {                 // Got 4 directions
-						if (obj->vx != dxOld)  {    // vx just stopped
-							if (dy > 0)
+						if (obj->vx != obj->oldvx)  { // vx just stopped
+							if (dy >= 0)
 								obj->currImagePtr = obj->seqList[DOWN].seqPtr;
 							else
 								obj->currImagePtr = obj->seqList[_UP].seqPtr;
 						}
-					} else if (obj->vx != dxOld) {
+					} else if (obj->vx != obj->oldvx) {
 						if (dx > 0)
 							obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
 						else
 							obj->currImagePtr = obj->seqList[LEFT].seqPtr;
 					}
+					break;
+				case 3:
+				case 2:
+					if (obj->vx != obj->oldvx) {    // vx just stopped
+						if (dx > 0)                 // Left & right only
+							obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
+						else
+							obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+					}
+					break;
 				}
 
 				if (obj->vx || obj->vy) {
-					if (obj->seqNumb > 1)
-						obj->cycling = CYCLE_FORWARD;
+					obj->cycling = CYCLE_FORWARD;
 				} else {
 					obj->cycling = NOT_CYCLING;
 					_vm->boundaryCollision(obj);     // Must have got hero!
 				}
-				dxOld = obj->vx;
-				dyOld = obj->vy;
+				obj->oldvx = obj->vx;
+				obj->oldvy = obj->vy;
 				currImage = obj->currImagePtr;      // Get (new) ptr to current image
 				break;
 				}
+			case WANDER2:
 			case WANDER:
 				if (!_vm->_rnd->getRandomNumber(3 * NORMAL_TPS)) {       // Kick on random interval
 					obj->vx = _vm->_rnd->getRandomNumber(obj->vxPath << 1) - obj->vxPath;
@@ -235,29 +134,26 @@ void ObjectHandler_v1d::moveObjects() {
 
 					// Set first image in sequence (if multi-seq object)
 					if (obj->seqNumb > 1) {
-						if (!obj->vx && (obj->seqNumb > 2)) {
-							if (obj->vx != dxOld)  { // vx just stopped
+						if (!obj->vx && (obj->seqNumb >= 4)) {
+							if (obj->vx != obj->oldvx)  { // vx just stopped
 								if (obj->vy > 0)
 									obj->currImagePtr = obj->seqList[DOWN].seqPtr;
 								else
 									obj->currImagePtr = obj->seqList[_UP].seqPtr;
 							}
-						} else if (obj->vx != dxOld) {
+						} else if (obj->vx != obj->oldvx) {
 							if (obj->vx > 0)
 								obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
 							else
 								obj->currImagePtr = obj->seqList[LEFT].seqPtr;
 						}
-	
-						if (obj->vx || obj->vy)
-							obj->cycling = CYCLE_FORWARD;
-						else
-							obj->cycling = NOT_CYCLING;
 					}
-					dxOld = obj->vx;
-					dyOld = obj->vy;
+					obj->oldvx = obj->vx;
+					obj->oldvy = obj->vy;
 					currImage = obj->currImagePtr;  // Get (new) ptr to current image
 				}
+				if (obj->vx || obj->vy)
+					obj->cycling = CYCLE_FORWARD;
 				break;
 			default:
 				; // Really, nothing
@@ -317,7 +213,7 @@ void ObjectHandler_v1d::moveObjects() {
 			if (y2 > (YPIX - EDGE))
 				obj->y = YPIX - EDGE2 - (y2 - y1);
 
-			if ((obj->vx == 0) && (obj->vy == 0))
+			if ((obj->vx == 0) && (obj->vy == 0) && (obj->pathType != WANDER2) && (obj->pathType != CHASE2))
 				obj->cycling = NOT_CYCLING;
 		}
 	}
@@ -335,11 +231,13 @@ void ObjectHandler_v1d::moveObjects() {
 		_vm->processMaze();
 }
 
-void ObjectHandler_v1d::swapImages(int objNumb1, int objNumb2) {
+void ObjectHandler_v3d::swapImages(int objNumb1, int objNumb2) {
 // Swap all the images of one object with another.  Set hero_image (we make
 // the assumption for now that the first obj is always the HERO) to the object
 // number of the swapped image
 	debugC(1, kDebugSchedule, "swapImages(%d, %d)", objNumb1, objNumb2);
+
+	saveSeq(&_objects[objNumb1]);
 
 	seqList_t tmpSeqList[MAX_SEQUENCES];
 	int seqListSize = sizeof(seqList_t) * MAX_SEQUENCES;
@@ -347,7 +245,7 @@ void ObjectHandler_v1d::swapImages(int objNumb1, int objNumb2) {
 	memcpy(tmpSeqList, _objects[objNumb1].seqList, seqListSize);
 	memcpy(_objects[objNumb1].seqList, _objects[objNumb2].seqList, seqListSize);
 	memcpy(_objects[objNumb2].seqList, tmpSeqList, seqListSize);
-	_objects[objNumb1].currImagePtr = _objects[objNumb1].seqList[0].seqPtr;
+	restoreSeq(&_objects[objNumb1]);
 	_objects[objNumb2].currImagePtr = _objects[objNumb2].seqList[0].seqPtr;
 	_vm->_heroImage = (_vm->_heroImage == HERO) ? objNumb2 : HERO;
 }
