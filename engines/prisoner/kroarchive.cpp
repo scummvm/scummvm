@@ -127,8 +127,9 @@ void PakDirectory::load(const char *filename, uint32 offset, bool isEncrypted) {
 	_directory.reserve(count);
 	for (uint32 i = 0; i < count; i++) {
 		PakDirectoryEntry entry;
-		char pakName[8];
+		char pakName[9];
 		stream->read(pakName, 8);
+		pakName[8] = 0;
 		entry.pakName = pakName;
 		entry.baseIndex = stream->readUint32LE();
 		_directory.push_back(entry);
