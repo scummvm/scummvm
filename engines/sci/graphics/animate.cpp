@@ -141,6 +141,7 @@ void GfxAnimate::makeSortedList(List *list) {
 		AnimateEntry listEntry;
 		const reg_t curObject = curNode->value;
 		listEntry.object = curObject;
+		listEntry.castHandle = NULL_REG;
 
 		// Get data from current object
 		listEntry.givenOrderNo = listNr;
