@@ -246,7 +246,7 @@ public:
 	reg_t getInfoSelector() const { return _variables[_offset + 2]; }
 	void setInfoSelector(reg_t value) { _variables[_offset + 2] = value; }
 
-	reg_t getNameSelector() const { return _variables[_offset + 3]; }
+	reg_t getNameSelector() const { return _offset + 3 < (uint16)_variables.size() ? _variables[_offset + 3] : NULL_REG; }
 	void setNameSelector(reg_t value) { _variables[_offset + 3] = value; }
 
 	reg_t getPropDictSelector() const { return _variables[2]; }
