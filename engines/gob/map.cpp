@@ -352,20 +352,20 @@ void Map::findNearestWalkable(int16 &gobDestX, int16 &gobDestY,
 
 int16 Map::checkDirectPath(Mult::Mult_Object *obj,
 		int16 x0, int16 y0, int16 x1, int16 y1) {
-	uint16 dir;
 
 	while (1) {
-		dir = getDirection(x0, y0, x1, y1);
+		uint16 dir = getDirection(x0, y0, x1, y1);
 
 		if (obj) {
-			if (obj->nearestWayPoint < obj->nearestDest) {
-				if (_wayPoints[obj->nearestWayPoint + 1].notWalkable == 1)
-					return 3;
-			} else if (obj->nearestWayPoint > obj->nearestDest) {
-				if (obj->nearestDest > 0)
-					if (_wayPoints[obj->nearestDest - 1].notWalkable == 1)
+			if (obj->nearestWayPoint < obj->nearestDest)
+				if ((obj->nearestWayPoint + 1) < _wayPointsCount)
+					if (_wayPoints[obj->nearestWayPoint + 1].notWalkable == 1)
 						return 3;
-			}
+
+			if (obj->nearestWayPoint > obj->nearestDest)
+				if (obj->nearestWayPoint > 0)
+					if (_wayPoints[obj->nearestWayPoint - 1].notWalkable == 1)
+						return 3;
 		}
 
 		if ((x0 == x1) && (y0 == y1))
