@@ -161,7 +161,7 @@ void ToonEngine::waitForScriptStep() {
 	// Wait after a specified number of script steps when executing a script
 	// to lower CPU usage
 	if (++_scriptStep >= 40) {
-		g_system->delayMillis(10);
+		g_system->delayMillis(1);
 		_scriptStep = 0;
 	}
 }
@@ -359,6 +359,7 @@ void ToonEngine::update(int32 timeIncrement) {
 	updateTimer(timeIncrement);
 	updateTimers();
 	updateScrolling(false, timeIncrement);
+	_audioManager->updateAmbientSFX();
 	_animationManager->update(timeIncrement);
 	_cursorAnimationInstance->update(timeIncrement);
 
@@ -815,6 +816,7 @@ void ToonEngine::simpleUpdate(bool waitCharacterToTalk) {
 	updateAnimationSceneScripts(elapsedTime);
 	updateTimer(elapsedTime);
 	_animationManager->update(elapsedTime);
+	_audioManager->updateAmbientSFX();
 	render();
 
 	
@@ -1573,6 +1575,8 @@ void ToonEngine::exitScene() {
 	char temp[256];
 	strcpy(temp, createRoomFilename(Common::String::printf("%s.pak", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
 	resources()->closePackage(temp);
+
+	_audioManager->killAllAmbientSFX();
 
 	_drew->stopWalk();
 	_flux->stopWalk();
@@ -2664,6 +2668,7 @@ void ToonEngine::newGame() {
 		loadScene(_gameState->_currentScene);
 	}
 }
+
 
 void ToonEngine::playSFX(int32 id, int32 volume) {
 	if (id < 0)
