@@ -24,7 +24,7 @@
  */
 
 #include "engines/engine.h"
-#include "scumm/player_v2.h"
+#include "scumm/player_v2cms.h"
 #include "scumm/scumm.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"

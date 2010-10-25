@@ -61,6 +61,7 @@
 #include "scumm/player_pce.h"
 #include "scumm/player_v1.h"
 #include "scumm/player_v2.h"
+#include "scumm/player_v2cms.h"
 #include "scumm/player_v2a.h"
 #include "scumm/player_v3a.h"
 #include "scumm/player_v4a.h"

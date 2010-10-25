@@ -35,7 +35,6 @@
 #include "scumm/debugger.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/object.h"
-#include "scumm/player_v2.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 

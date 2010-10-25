@@ -45,7 +45,6 @@
 #include "scumm/scumm.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
-#include "scumm/player_v2.h"
 #include "scumm/verbs.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
