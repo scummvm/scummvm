@@ -67,10 +67,6 @@ SoundEngine::SoundEngine(Kernel *pKernel) : ResourceService(pKernel) {
 		_handles[i].type = kFreeHandle;
 }
 
-Service *SoundEngine_CreateObject(Kernel *pKernel) {
-	return new SoundEngine(pKernel);
-}
-
 bool SoundEngine::init(uint sampleRate, uint channels) {
 	warning("STUB: SoundEngine::init(%d, %d)", sampleRate, channels);
 

@@ -80,10 +80,6 @@ InputEngine::~InputEngine() {
 	unregisterScriptBindings();
 }
 
-Service *InputEngine_CreateObject(Kernel *pKernel) {
-	return new InputEngine(pKernel);
-}
-
 bool InputEngine::init() {
 	// No initialisation needed
 	return true;

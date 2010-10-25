@@ -43,57 +43,43 @@
 namespace Sword25 {
 
 static int disconnectService(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-
-	lua_pushboolean(L, pKernel->disconnectService(luaL_checkstring(L, 1)));
+	// This function apparently is not used by the game scripts
+	lua_pushboolean(L, true);
 
 	return 1;
 }
 
 static int getActiveServiceIdentifier(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-
-	lua_pushstring(L, pKernel->getActiveServiceIdentifier(luaL_checkstring(L, 1)).c_str());
+	// This function apparently is not used by the game scripts
+	lua_pushstring(L, "QUUX");
 
 	return 1;
 }
 
 static int getSuperclassCount(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-
-	lua_pushnumber(L, pKernel->getSuperclassCount());
+	// This function is only used by a single function in system/kernel.lua which is never called.
+	lua_pushnumber(L, 0);
 
 	return 1;
 }
 
 static int getSuperclassIdentifier(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-
-	lua_pushstring(L, pKernel->getSuperclassIdentifier(
-	                   static_cast<uint>(luaL_checknumber(L, 1))).c_str());
+	// This function is only used by a single function in system/kernel.lua which is never called.
+	lua_pushstring(L, "FOO");
 
 	return 1;
 }
 
 static int getServiceCount(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-
-	lua_pushnumber(L, pKernel->getServiceCount(luaL_checkstring(L, 1)));
+	// This function is only used by a single function in system/kernel.lua which is never called.
+	lua_pushnumber(L, 0);
 
 	return 1;
 }
 
 static int getServiceIdentifier(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-
-	lua_pushstring(L, pKernel->getServiceIdentifier(luaL_checkstring(L, 1),
-	               static_cast<uint>(luaL_checknumber(L, 2))).c_str());
+	// This function is only used by a single function in system/kernel.lua which is never called.
+	lua_pushstring(L, "BAR");
 
 	return 1;
 }
@@ -117,10 +103,9 @@ static int getTimer(lua_State *L) {
 }
 
 static int startService(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
-
-	lua_pushbooleancpp(L, pKernel->newService(luaL_checkstring(L, 1), luaL_checkstring(L, 2)) != NULL);
+	// This function is used by system/boot.lua to init all services.
+	// However, we do nothing here, as we just hard code the init sequence.
+	lua_pushbooleancpp(L, true);
 
 	return 1;
 }

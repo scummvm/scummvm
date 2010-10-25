@@ -64,10 +64,6 @@ LuaScriptEngine::~LuaScriptEngine() {
 		lua_close(_state);
 }
 
-Service *LuaScriptEngine_CreateObject(Kernel *KernelPtr) {
-	return new LuaScriptEngine(KernelPtr);
-}
-
 namespace {
 int panicCB(lua_State *L) {
 	BS_LOG_ERRORLN("Lua panic. Error message: %s", lua_isnil(L, -1) ? "" : lua_tostring(L, -1));

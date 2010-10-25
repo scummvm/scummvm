@@ -95,14 +95,8 @@ Common::Error Sword25Engine::appStart() {
 		return Common::kUnknownError;
 	}
 
-	// Package-Manager starten, damit die Packfiles geladen werden können.
-	PackageManager *packageManagerPtr = static_cast<PackageManager *>(Kernel::getInstance()->newService("package", PACKAGE_MANAGER));
-	if (!packageManagerPtr) {
-		BS_LOG_ERRORLN("PackageManager initialization failed.");
-		return Common::kUnknownError;
-	}
-
-	// Packages laden oder das aktuelle Verzeichnis mounten, wenn das über Kommandozeile angefordert wurde.
+	// Load packages
+	PackageManager *packageManagerPtr = Kernel::getInstance()->getPackage();
 	if (getGameFlags() & GF_EXTRACTED) {
 		if (!packageManagerPtr->loadDirectoryAsPackage(ConfMan.get("path"), "/"))
 			return Common::kUnknownError;
@@ -111,7 +105,7 @@ Common::Error Sword25Engine::appStart() {
 			return Common::kUnknownError;
 	}
 
-	// Einen Pointer auf den Skript-Engine holen.
+	// Pass the command line to the script engine.
 	ScriptEngine *scriptPtr = Kernel::getInstance()->getScript();
 	if (!scriptPtr) {
 		BS_LOG_ERRORLN("Script intialization failed.");
@@ -152,7 +146,8 @@ bool Sword25Engine::loadPackages() {
 	BS_ASSERT(packageManagerPtr);
 
 	// Load the main package
-	if (!packageManagerPtr->loadPackage("data.b25c", "/")) return false;
+	if (!packageManagerPtr->loadPackage("data.b25c", "/"))
+		return false;
 
 	// Get the contents of the main program directory and sort them alphabetically
 	Common::FSNode dir(ConfMan.get("path"));

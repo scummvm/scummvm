@@ -46,8 +46,4 @@ Geometry::Geometry(Kernel *pKernel) : Service(pKernel) {
 }
 
 
-Service *Geometry_CreateObject(Kernel *pKernel) {
-	return new Geometry(pKernel);
-}
-
 } // End of namespace Sword25

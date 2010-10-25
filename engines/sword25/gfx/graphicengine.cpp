@@ -91,10 +91,6 @@ GraphicEngine::~GraphicEngine() {
 	delete _thumbnail;
 }
 
-Service *GraphicEngine_CreateObject(Kernel *pKernel) {
-	return new GraphicEngine(pKernel);
-}
-
 bool GraphicEngine::init(int width, int height, int bitDepth, int backbufferCount, bool isWindowed_) {
 	// Warnung ausgeben, wenn eine nicht unterstützte Bittiefe gewählt wurde.
 	if (bitDepth != BIT_DEPTH) {

@@ -58,6 +58,7 @@ namespace Sword25 {
 
 // Class definitions
 class Service;
+class Geometry;
 class GraphicEngine;
 class ScriptEngine;
 class SoundEngine;
@@ -74,74 +75,6 @@ class MoviePlayer;
 class Kernel {
 public:
 
-	// Service Methods
-	// ---------------
-
-	/**
-	 * Creates a new service with the given identifier. Returns a pointer to the service, or null if the
-	 * service could not be created
-	 * Note: All services must be registered in service_ids.h, otherwise they cannot be created here
-	 * @param SuperclassIdentifier      The name of the superclass of the service
-	 *         z.B: "sfx", "gfx", "package" ...
-	 * @param ServiceIdentifier         The name of the service
-	 *         For the superclass "sfx" an example could be "Fmod" or "directsound"
-	 */
-	Service *newService(const Common::String &superclassIdentifier, const Common::String &serviceIdentifier);
-
-	/**
-	 * Ends the current service of a superclass. Returns true on success, and false if the superclass
-	 * does not exist or if not service was active
-	 * @param SuperclassIdentfier       The name of the superclass which is to be disconnected
-	 *         z.B: "sfx", "gfx", "package" ...
-	 */
-	bool disconnectService(const Common::String &superclassIdentifier);
-
-	/**
-	 * Returns a pointer to the currently active service object of a superclass
-	 * @param SuperclassIdentfier       The name of the superclass
-	 *         z.B: "sfx", "gfx", "package" ...
-	 */
-	Service *getService(const Common::String &superclassIdentifier);
-
-	/**
-	 * Returns the name of the currentl active service object of a superclass.
-	 * If an error occurs, then an empty string is returned
-	 * @param SuperclassIdentfier       The name of the superclass
-	 *         z.B: "sfx", "gfx", "package" ...
-	 */
-	Common::String getActiveServiceIdentifier(const Common::String &superclassIdentifier);
-
-	/**
-	 * Returns the number of register superclasses
-	 */
-	uint getSuperclassCount() const;
-
-	/**
-	 * Returns the name of a superclass with the specified index.
-	 * Note: The number of superclasses can be retrieved using GetSuperclassCount
-	 * @param Number        The number of the superclass to return the identifier for.
-	 * It should be noted that the number should be between 0 und GetSuperclassCount() - 1.
-	 */
-	Common::String getSuperclassIdentifier(uint number) const;
-
-	/**
-	 * Returns the number of services registered with a given superclass
-	 * @param SuperclassIdentifier      The name of the superclass
-	 *         z.B: "sfx", "gfx", "package" ...
-	 */
-	uint getServiceCount(const Common::String &superclassIdentifier) const;
-
-	/**
-	 * Gets the identifier of a service with a given superclass.
-	 * The number of services in a superclass can be learned with GetServiceCount().
-	 * @param SuperclassIdentifier      The name of the superclass
-	 *         z.B: "sfx", "gfx", "package" ...
-	 * @param Number die Nummer des Services, dessen Bezeichner man erfahren will.<br>
-	 *         Hierbei ist zu beachten, dass der erste Service die Nummer 0 erhält. Number muss also eine Zahl zwischen
-	 *         0 und GetServiceCount() - 1 sein.
-	 */
-	Common::String getServiceIdentifier(const Common::String &superclassIdentifier, uint number) const;
-
 	/**
 	 * Returns the elapsed time since startup in milliseconds
 	 */
@@ -157,7 +90,7 @@ public:
 	 * Returns a pointer to the BS_ResourceManager
 	 */
 	ResourceManager *getResourceManager() {
-		return _pResourceManager;
+		return _resourceManager;
 	}
 	/**
 	 * Returns how much memory is being used
@@ -243,43 +176,7 @@ private:
 	// -----------------------------------------------------------------------------
 	static Kernel *_instance;
 
-	// Superclass class
-	// ----------------
-	class Superclass {
-	private:
-		Kernel *_pKernel;
-		uint _serviceCount;
-		Common::String _identifier;
-		Service *_activeService;
-		Common::String _activeServiceName;
-
-	public:
-		Superclass(Kernel *pKernel, const Common::String &identifier);
-		~Superclass();
-
-		uint getServiceCount() const {
-			return _serviceCount;
-		}
-		Common::String getIdentifier() const {
-			return _identifier;
-		}
-		Service *getActiveService() const {
-			return _activeService;
-		}
-		Common::String getActiveServiceName() const {
-			return _activeServiceName;
-		}
-		Common::String getServiceIdentifier(uint number);
-		Service *newService(const Common::String &serviceIdentifier);
-		bool disconnectService();
-	};
-
-	Common::Array<Superclass *>  _superclasses;
-	Common::Stack<Common::String> _serviceCreationOrder;
-	Superclass *getSuperclassByIdentifier(const Common::String &identifier) const;
-
 	bool _initSuccess; // Specifies whether the engine was set up correctly
-	bool _running;  // Specifies whether the application should keep running on the next main loop iteration
 
 	// Random number generator
 	// -----------------------
@@ -287,7 +184,15 @@ private:
 
 	// Resourcemanager
 	// ---------------
-	ResourceManager *_pResourceManager;
+	ResourceManager *_resourceManager;
+
+	GraphicEngine *_gfx;
+	SoundEngine *_sfx;
+	InputEngine *_input;
+	PackageManager *_package;
+	ScriptEngine *_script;
+	Geometry *_geometry;
+	MoviePlayer *_fmv;
 
 	bool registerScriptBindings();
 };

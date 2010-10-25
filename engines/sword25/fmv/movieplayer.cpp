@@ -47,10 +47,6 @@ namespace Sword25 {
 
 #define FLT_EPSILON     1.192092896e-07F        /* smallest such that 1.0+FLT_EPSILON != 1.0 */
 
-Service *OggTheora_CreateObject(Kernel *pKernel) {
-	return new MoviePlayer(pKernel);
-}
-
 #ifdef USE_THEORADEC
 MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel), _decoder(g_system->getMixer()) {
 	if (!registerScriptBindings())

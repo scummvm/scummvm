@@ -75,10 +75,6 @@ PackageManager::~PackageManager() {
 
 }
 
-Service *PackageManager_CreateObject(Kernel *kernelPtr) {
-	return new PackageManager(kernelPtr);
-}
-
 /**
  * Scans through the archive list for a specified file
  */
