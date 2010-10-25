@@ -173,10 +173,10 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 			_pathExistence = 0;
 		}
 
-		nextAct = _vm->_map->getDirection(_vm->_map->_curGoblinX,
+		nextAct = (int16) _vm->_map->getDirection(_vm->_map->_curGoblinX,
 				_vm->_map->_curGoblinY, _vm->_map->_destX, _vm->_map->_destY);
 
-		if (nextAct == 0)
+		if (nextAct == Map::kDirNone)
 			_pathExistence = 0;
 	} else if (_pathExistence == 3) {
 		_vm->_map->_curGoblinX = _gobPositions[_currentGoblin].x;
@@ -229,7 +229,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 					}
 				}
 			}
-			nextAct = _vm->_map->getDirection(_vm->_map->_curGoblinX,
+			nextAct = (int16) _vm->_map->getDirection(_vm->_map->_curGoblinX,
 					_vm->_map->_curGoblinY, _vm->_map->_destX, _vm->_map->_destY);
 		}
 	}

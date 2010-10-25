@@ -90,15 +90,18 @@ enum {
 	kDown  = (1 << 3)
 };
 
-int16 Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
-	int16 dir = 0;
-
+Map::Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	if ((x0 == x1) && (y0 == y1))
-		return 0;
+		// Already at the destination
+		return kDirNone;
 
 	if ((x1 < 0) || (x1 > _mapWidth) || (y1 < 0) || (y1 > _mapHeight))
-		return 0;
+		// Destination out of range
+		return kDirNone;
 
+	int16 dir = 0;
+
+	// Find the direct direction we want to move
 	if (y1 > y0)
 		dir |= kDown;
 	else if (y1 < y0)
@@ -109,124 +112,153 @@ int16 Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	else if (x1 < x0)
 		dir |= kLeft;
 
-	if ((getPass(x0, y0) == 3) && (dir & kUp)) {
-		if ((getPass(x0, y0 - 1) != 0))
-			return kDirN;
-	}
 
-	if ((getPass(x0, y0) == 3) && (dir & kDown)) {
-		if ((getPass(x0, y0 + 1) != 0))
-			return kDirS;
-	}
+	// Are we on ladders and can continue the ladder in the wanted direction?
+	if ((getPass(x0, y0) == 3) && (dir & kUp  ) && (getPass(x0, y0 - 1) != 0))
+		return kDirN;
 
-	if ((getPass(x0, y0) == 6) && (dir & kUp)) {
-		if ((getPass(x0, y0 - 1) != 0))
-			return kDirN;
-	}
+	if ((getPass(x0, y0) == 3) && (dir & kDown) && (getPass(x0, y0 + 1) != 0))
+		return kDirS;
 
-	if ((getPass(x0, y0) == 6) && (dir & kDown)) {
-		if ((getPass(x0, y0 + 1) != 0))
-			return kDirS;
-	}
+	if ((getPass(x0, y0) == 6) && (dir & kUp  ) && (getPass(x0, y0 - 1) != 0))
+		return kDirN;
 
+	if ((getPass(x0, y0) == 6) && (dir & kDown) && (getPass(x0, y0 + 1) != 0))
+		return kDirS;
+
+
+	// Want to go left
 	if (dir == kLeft) {
-		if (((x0 - 1) >= 0) && (getPass(x0 - 1, y0) != 0))
+		if (getPass(x0 - 1, y0) != 0)
+			// Can go west
 			return kDirW;
-		return 0;
+
+		// Can't go
+		return kDirNone;
 	}
 
+	// Want to go left
 	if (dir == kRight) {
-		if (((x0 + 1) < _mapWidth) && (getPass(x0 + 1, y0) != 0))
+		if (getPass(x0 + 1, y0) != 0)
+			// Can go east
 			return kDirE;
-		return 0;
+
+		// Can't go
+		return kDirNone;
 	}
 
+
+	// Want to go up
 	if (dir == kUp) {
-		if (((y0 - 1) >= 0) && (getPass(x0, y0 - 1) != 0))
+		if (getPass(x0    , y0 - 1) != 0)
+			// Can go north
 			return kDirN;
 
-		if (((y0 - 1) >= 0) && ((x0 - 1) >= 0) &&
-		    (getPass(x0 - 1, y0 - 1) != 0))
+		if (getPass(x0 - 1, y0 - 1) != 0)
+			// Can up north-west instead
 			return kDirNW;
 
-		if (((y0 - 1) >= 0) && ((x0 + 1) < _mapWidth) &&
-		    (getPass(x0 + 1, y0 - 1) != 0))
+		if (getPass(x0 + 1, y0 - 1) != 0)
+			// Can up north-east instead
 			return kDirNE;
 
-		return 0;
+		// Can't go at all
+		return kDirNone;
 	}
 
+	// Want to go down
 	if (dir == kDown) {
-		if (((y0 + 1) < _mapHeight) && (getPass(x0, y0 + 1) != 0))
+		if (getPass(x0    , y0 + 1) != 0)
+			// Can go south
 			return kDirS;
 
-		if (((y0 + 1) < _mapHeight) && ((x0 - 1) >= 0) &&
-		    (getPass(x0 - 1, y0 + 1) != 0))
+		if (getPass(x0 - 1, y0 + 1) != 0)
+			// Can up south-west instead
 			return kDirSW;
 
-		if (((y0 + 1) < _mapHeight) && ((x0 + 1) < _mapWidth) &&
-		    (getPass(x0 + 1, y0 + 1) != 0))
+		if (getPass(x0 + 1, y0 + 1) != 0)
+			// Can up south-east instead
 			return kDirSE;
 
-		return 0;
+		// Can't go at all
+		return kDirNone;
 	}
 
+
+	// Want to go up and right
 	if (dir == (kRight | kUp)) {
-		if (((y0 - 1) >= 0) && ((x0 + 1) < _mapWidth) &&
-		    (getPass(x0 + 1, y0 - 1) != 0))
+		if (getPass(x0 + 1, y0 - 1) != 0)
+			// Can go north-east
 			return kDirNE;
 
-		if (((y0 - 1) >= 0) && (getPass(x0, y0 - 1) != 0))
+		if (getPass(x0    , y0 - 1) != 0)
+			// Can only go north
 			return kDirN;
 
-		if (((x0 + 1) < _mapWidth) && (getPass(x0 + 1, y0) != 0))
+		if (getPass(x0 + 1, y0    ) != 0)
+			// Can only go east
 			return kDirE;
 
-		return 0;
+		// Can't go at all
+		return kDirNone;
 	}
 
+	// Want to go down and right
 	if (dir == (kRight | kDown)) {
-		if (((x0 + 1) < _mapWidth) && ((y0 + 1) < _mapHeight) &&
-		    (getPass(x0 + 1, y0 + 1) != 0))
+		if (getPass(x0 + 1, y0 + 1) != 0)
+			// Can go south-east
 			return kDirSE;
 
-		if (((y0 + 1) < _mapHeight) && (getPass(x0, y0 + 1) != 0))
+		if (getPass(x0    , y0 + 1) != 0)
+			// Can only go south
 			return kDirS;
 
-		if (((x0 + 1) < _mapWidth) && (getPass(x0 + 1, y0) != 0))
+		if (getPass(x0 + 1, y0    ) != 0)
+			// Can only go east
 			return kDirE;
 
-		return 0;
+		// Can't go at all
+		return kDirNone;
 	}
 
+	// Want to go up and left
 	if (dir == (kLeft | kUp)) {
-		if (((x0 - 1) >= 0) && ((y0 - 1) >= 0) &&
-		    (getPass(x0 - 1, y0 - 1) != 0))
+		if (getPass(x0 - 1, y0 - 1) != 0)
+			// Can go north-west
 			return kDirNW;
 
-		if (((y0 - 1) >= 0) && (getPass(x0, y0 - 1) != 0))
+		if (getPass(x0    , y0 - 1) != 0)
+			// Can only go north
 			return kDirN;
 
-		if (((x0 - 1) >= 0) && (getPass(x0 - 1, y0) != 0))
+		if (getPass(x0 - 1, y0    ) != 0)
+			// Can only go west
 			return kDirW;
 
-		return 0;
+		// Can't go at all
+		return kDirNone;
 	}
 
+	// Want to go left and down
 	if (dir == (kLeft | kDown)) {
-		if (((x0 - 1) >= 0) && ((y0 + 1) < _mapHeight) &&
-		    (getPass(x0 - 1, y0 + 1) != 0))
+		if (getPass(x0 - 1, y0 + 1) != 0)
+			// Can go south-west
 			return kDirSW;
 
-		if (((y0 + 1) < _mapHeight) && (getPass(x0, y0 + 1) != 0))
+		if (getPass(x0    , y0 + 1) != 0)
+			// Can only go south
 			return kDirS;
 
-		if (((x0 - 1) >= 0) && (getPass(x0 - 1, y0) != 0))
+		if (getPass(x0 - 1, y0    ) != 0)
+			// Can only go west
 			return kDirW;
 
-		return 0;
+		// Can't go at all
+		return kDirNone;
 	}
-	return -1;
+
+	warning("Map::getDirection(): Invalid direction?!?");
+	return kDirNone;
 }
 
 int16 Map::findNearestWayPoint(int16 x, int16 y) {
@@ -318,73 +350,81 @@ void Map::findNearestWalkable(int16 &gobDestX, int16 &gobDestY,
 		gobDestY -= distance;
 }
 
-int16 Map::checkDirectPath(Mult::Mult_Object *obj,
-		int16 x0, int16 y0, int16 x1, int16 y1) {
-	uint16 dir;
+void Map::moveDirection(Direction dir, int16 &x, int16 &y) {
+	switch (dir) {
+	case kDirNW:
+		x--;
+		y--;
+		break;
 
-	while (1) {
-		dir = getDirection(x0, y0, x1, y1);
+	case kDirN:
+		y--;
+		break;
 
-		if (obj) {
-			if (obj->nearestWayPoint < obj->nearestDest) {
-				if (_wayPoints[obj->nearestWayPoint + 1].notWalkable == 1)
-					return 3;
-			} else if (obj->nearestWayPoint > obj->nearestDest) {
-				if (obj->nearestDest > 0)
-					if (_wayPoints[obj->nearestDest - 1].notWalkable == 1)
-						return 3;
-			}
-		}
+	case kDirNE:
+		x++;
+		y--;
+		break;
 
-		if ((x0 == x1) && (y0 == y1))
-			return 1;
+	case kDirW:
+		x--;
+		break;
 
-		if (dir == 0)
-			return 3;
+	case kDirE:
+		x++;
+		break;
 
-		switch (dir) {
-		case kDirNW:
-			x0--;
-			y0--;
-			break;
+	case kDirSW:
+		x--;
+		y++;
+		break;
 
-		case kDirN:
-			y0--;
-			break;
+	case kDirS:
+		y++;
+		break;
 
-		case kDirNE:
-			x0++;
-			y0--;
-			break;
+	case kDirSE:
+		x++;
+		y++;
+		break;
 
-		case kDirW:
-			x0--;
-			break;
-
-		case kDirE:
-			x0++;
-			break;
-
-		case kDirSW:
-			x0--;
-			y0++;
-			break;
-
-		case kDirS:
-			y0++;
-			break;
-
-		case kDirSE:
-			x0++;
-			y0++;
-			break;
-		}
+	default:
+		break;
 	}
 }
 
-int16 Map::checkLongPath(int16 x0, int16 y0,
-		int16 x1, int16 y1, int16 i0, int16 i1) {
-	uint16 dir = 0;
+int16 Map::checkDirectPath(Mult::Mult_Object *obj, int16 x0, int16 y0, int16 x1, int16 y1) {
+
+	while (1) {
+		Direction dir = getDirection(x0, y0, x1, y1);
+
+		if (obj) {
+			// Check for a blocking waypoint
+
+			if (obj->nearestWayPoint < obj->nearestDest)
+				if ((obj->nearestWayPoint + 1) < _wayPointsCount)
+					if (_wayPoints[obj->nearestWayPoint + 1].notWalkable == 1)
+						return 3;
+
+			if (obj->nearestWayPoint > obj->nearestDest)
+				if (obj->nearestWayPoint > 0)
+					if (_wayPoints[obj->nearestWayPoint - 1].notWalkable == 1)
+						return 3;
+		}
+
+		if ((x0 == x1) && (y0 == y1))
+			// Successfully reached the destination
+			return 1;
+
+		if (dir == kDirNone)
+			// No way
+			return 3;
+
+		moveDirection(dir, x0, y0);
+	}
+}
+
+int16 Map::checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16 i1) {
 	int16 curX = x0;
 	int16 curY = y0;
 	int16 nextLink = 1;
@@ -417,47 +457,13 @@ int16 Map::checkLongPath(int16 x0, int16 y0,
 				return 1;
 			return 0;
 		}
-		dir = getDirection(x0, y0, curX, curY);
-		switch (dir) {
-		case 0:
+
+		Direction dir = getDirection(x0, y0, curX, curY);
+		if (dir == kDirNone)
+			// No way
 			return 0;
 
-		case kDirNW:
-			x0--;
-			y0--;
-			break;
-
-		case kDirN:
-			y0--;
-			break;
-
-		case kDirNE:
-			x0++;
-			y0--;
-			break;
-
-		case kDirW:
-			x0--;
-			break;
-
-		case kDirE:
-			x0++;
-			break;
-
-		case kDirSW:
-			x0--;
-			y0++;
-			break;
-
-		case kDirS:
-			y0++;
-			break;
-
-		case kDirSE:
-			x0++;
-			y0++;
-			break;
-		}
+		moveDirection(dir, x0, y0);
 	}
 }
 

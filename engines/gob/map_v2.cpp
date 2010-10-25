@@ -258,17 +258,24 @@ void Map_v2::findNearestToDest(Mult::Mult_Object *obj) {
 
 void Map_v2::optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) {
 	if (obj->nearestWayPoint < obj->nearestDest) {
+
 		for (int i = obj->nearestWayPoint; i <= obj->nearestDest; i++) {
 			if (checkDirectPath(obj, x, y, _wayPoints[i].x, _wayPoints[i].y) == 1)
 				obj->nearestWayPoint = i;
 		}
+
 	} else {
-		for (int i = obj->nearestWayPoint;
-		     i >= obj->nearestDest && (_wayPoints[i].notWalkable != 1); i--) {
+
+		for (int i = obj->nearestWayPoint; i >= obj->nearestDest; i++) {
+			if (_wayPoints[i].notWalkable == 1)
+				break;
+
 			if (checkDirectPath(obj, x, y, _wayPoints[i].x, _wayPoints[i].y) == 1)
 				obj->nearestWayPoint = i;
 		}
+
 	}
+
 }
 
 } // End of namespace Gob
