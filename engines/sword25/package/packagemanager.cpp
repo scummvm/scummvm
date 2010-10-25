@@ -150,7 +150,7 @@ byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr)
 		// Savegame loading logic
 		Common::SaveFileManager *sfm = g_system->getSavefileManager();
 		Common::InSaveFile *file = sfm->openForLoading(
-			FileSystemUtil::getInstance().getPathFilename(fileName));
+			FileSystemUtil::getPathFilename(fileName));
 		if (!file) {
 			BS_LOG_ERRORLN("Could not load savegame \"%s\".", fileName.c_str());
 			return 0;
@@ -212,26 +212,6 @@ bool PackageManager::changeDirectory(const Common::String &directory) {
 
 Common::String PackageManager::getAbsolutePath(const Common::String &fileName) {
 	return normalizePath(fileName, _currentDirectory);
-}
-
-uint PackageManager::getFileSize(const Common::String &fileName) {
-	Common::SeekableReadStream *in;
-	Common::ArchiveMemberPtr fileNode = getArchiveMember(normalizePath(fileName, _currentDirectory));
-	if (!fileNode)
-		return 0;
-	if (!(in = fileNode->createReadStream()))
-		return 0;
-
-	uint fileSize = in->size();
-
-	return fileSize;
-}
-
-uint PackageManager::getFileType(const Common::String &fileName) {
-	warning("STUB: BS_PackageManager::GetFileType(%s)", fileName.c_str());
-
-	//return fileNode.isDirectory() ? BS_PackageManager::FT_DIRECTORY : BS_PackageManager::FT_FILE;
-	return PackageManager::FT_FILE;
 }
 
 bool PackageManager::fileExists(const Common::String &fileName) {

@@ -136,22 +136,23 @@ static int executeFile(lua_State *L) {
 }
 
 static int getUserdataDirectory(lua_State *L) {
-	lua_pushstring(L, FileSystemUtil::getInstance().getUserdataDirectory().c_str());
+	lua_pushstring(L, FileSystemUtil::getUserdataDirectory().c_str());
 	return 1;
 }
 
 static int getPathSeparator(lua_State *L) {
-	lua_pushstring(L, FileSystemUtil::getInstance().getPathSeparator().c_str());
+	lua_pushstring(L, FileSystemUtil::getPathSeparator().c_str());
 	return 1;
 }
 
 static int fileExists(lua_State *L) {
-	lua_pushbooleancpp(L, FileSystemUtil::getInstance().fileExists(luaL_checkstring(L, 1)));
+	lua_pushbooleancpp(L, FileSystemUtil::fileExists(luaL_checkstring(L, 1)));
 	return 1;
 }
 
 static int createDirectory(lua_State *L) {
-	lua_pushbooleancpp(L, FileSystemUtil::getInstance().createDirectory(luaL_checkstring(L, 1)));
+	// ScummVM engines cannot create directories, so we do nothing here.
+	lua_pushbooleancpp(L, false);
 	return 1;
 }
 

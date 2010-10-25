@@ -61,8 +61,6 @@ namespace Sword25 {
 
 class FileSystemUtil {
 public:
-	static FileSystemUtil &getInstance();
-	virtual ~FileSystemUtil() {}
 
 	/**
 	 * This function returns the name of the directory in which all user data is to be stored.
@@ -70,37 +68,32 @@ public:
 	 * These are for example Screenshots, game saves, configuration files, log files, ...
 	 * @return              Returns the name of the directory for user data.
 	 */
-	virtual Common::String getUserdataDirectory() = 0;
+	static Common::String getUserdataDirectory();
+
 	/**
 	 * @return              Returns the path seperator
 	 */
-	virtual Common::String  getPathSeparator() = 0;
+	static Common::String  getPathSeparator();
+
 	/**
 	 * @param Filename      The path to a file.
 	 * @return              Returns the size of the specified file. If the size could not be
 	 * determined, or the file does not exist, returns -1
 	 */
-	virtual int32 getFileSize(const Common::String &filename) = 0;
+	static int32 getFileSize(const Common::String &filename);
+
 	/**
 	 * @param Filename      The path to a file.
 	 * @return              Returns true if the file exists.
 	 */
-	virtual bool fileExists(const Common::String &filename) = 0;
-	/**
-	 * This function creates a directory
-	 *
-	 * If the parameter is "\b\c\d\e" is passed, and "\b\c" already exists, then folder 'd'
-	 * will be created, and subdirectory 'e' under it.
-	 * @param DirectoryName The name of the directory to be created
-	 * @return              Returns true if the folder(s) could be created, otherwise false.
-	 */
-	virtual bool createDirectory(const Common::String &directoryName) = 0;
+	static bool fileExists(const Common::String &filename);
+
 	/**
 	 * Gets the filename from a path and filename
 	 * @param Filename		The full path and filename
 	 * @return				Returns just the filename
 	 */
-	virtual Common::String getPathFilename(const Common::String &path) = 0;
+	static Common::String getPathFilename(const Common::String &path);
 };
 
 } // End of namespace Sword25

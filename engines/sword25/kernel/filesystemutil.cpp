@@ -43,85 +43,45 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "FILESYSTEMUTIL"
 
-Common::String getAbsolutePath(const Common::String &path) {
-	Common::FSNode node(path);
+Common::String FileSystemUtil::getUserdataDirectory() {
+	// FIXME: This code is a hack which bypasses the savefile API,
+	// and should eventually be removed.
+	Common::String path = ConfMan.get("savepath");
 
-	if (!node.exists()) {
-		// An error has occurred finding the node
-		// We can do nothing at this pointer than return an empty string
-		BS_LOG_ERRORLN("A call to GetAbsolutePath failed.");
+	if (path.empty()) {
+		error("No save path has been defined");
 		return "";
 	}
 
-	// Return the result
-	return node.getPath();
+	// Return the path
+	return path;
 }
 
-class BS_FileSystemUtilScummVM : public FileSystemUtil {
-public:
-	virtual Common::String getUserdataDirectory() {
-		Common::String path = ConfMan.get("savepath");
+Common::String FileSystemUtil::getPathSeparator() {
+	// FIXME: This code is a hack which bypasses the savefile API,
+	// and should eventually be removed.
+	return Common::String("/");
+}
 
-		if (path.empty()) {
-			error("No save path has been defined");
-			return "";
+bool FileSystemUtil::fileExists(const Common::String &filename) {
+	Common::File f;
+	if (f.exists(filename))
+		return true;
+
+	// Check if the file exists in the save folder
+	Common::FSNode folder(PersistenceService::getSavegameDirectory());
+	Common::FSNode fileNode = folder.getChild(getPathFilename(filename));
+	return fileNode.exists();
+}
+
+Common::String FileSystemUtil::getPathFilename(const Common::String &path) {
+	for (int i = path.size() - 1; i >= 0; --i) {
+		if ((path[i] == '/') || (path[i] == '\\')) {
+			return Common::String(&path.c_str()[i + 1]);
 		}
-
-		// Return the path
-		return path;
 	}
 
-	virtual Common::String getPathSeparator() {
-		return Common::String("/");
-	}
-
-	virtual int32 getFileSize(const Common::String &filename) {
-		Common::FSNode node(filename);
-
-		// If the file does not exist, return -1 as a result
-		if (!node.exists())
-			return -1;
-
-		// Get the size of the file and return it
-		Common::File f;
-		f.open(node);
-		uint32 size = f.size();
-		f.close();
-
-		return size;
-	}
-
-	virtual bool fileExists(const Common::String &filename) {
-		Common::File f;
-		if (f.exists(filename))
-			return true;
-
-		// Check if the file exists in the save folder
-		Common::FSNode folder(PersistenceService::getSavegameDirectory());
-		Common::FSNode fileNode = folder.getChild(FileSystemUtil::getInstance().getPathFilename(filename));
-		return fileNode.exists();
-	}
-
-	virtual bool createDirectory(const Common::String &sirectoryName) {
-		// ScummVM doesn't support creating folders, so this is only a stub
-		BS_LOG_ERRORLN("CreateDirectory method called");
-		return false;
-	}
-
-	virtual Common::String getPathFilename(const Common::String &path) {
-		for (int i = path.size() - 1; i >= 0; --i) {
-			if ((path[i] == '/') || (path[i] == '\\')) {
-				return Common::String(&path.c_str()[i + 1]);
-			}
-		}
-
-		return path;
-	}
-};
-
-FileSystemUtil &FileSystemUtil::getInstance() {
-	static BS_FileSystemUtilScummVM instance;
-	return instance;
+	return path;
 }
 
 } // End of namespace Sword25

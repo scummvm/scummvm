@@ -202,7 +202,7 @@ uint PersistenceService::getSlotCount() {
 }
 
 Common::String PersistenceService::getSavegameDirectory() {
-	Common::FSNode node(FileSystemUtil::getInstance().getUserdataDirectory());
+	Common::FSNode node(FileSystemUtil::getUserdataDirectory());
 	Common::FSNode childNode = node.getChild(SAVEGAME_DIRECTORY);
 
 	// Try and return the path using the savegame subfolder. But if doesn't exist, fall back on the data directory
@@ -251,6 +251,9 @@ Common::String &PersistenceService::getSavegameFilename(uint slotID) {
 }
 
 bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotFilename) {
+	// FIXME: This code is a hack which bypasses the savefile API,
+	// and should eventually be removed.
+
 	// Überprüfen, ob die Slot-ID zulässig ist.
 	if (slotID >= SLOT_COUNT) {
 		BS_LOG_ERRORLN("Tried to save to an invalid slot (%d). Only slot ids form 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
@@ -259,9 +262,6 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 
 	// Dateinamen erzeugen.
 	Common::String filename = generateSavegameFilename(slotID);
-
-	// Sicherstellen, dass das Verzeichnis für die Spielstanddateien existiert.
-	FileSystemUtil::getInstance().createDirectory(getSavegameDirectory());
 
 	// Spielstanddatei öffnen und die Headerdaten schreiben.
 	Common::SaveFileManager *sfm = g_system->getSavefileManager();

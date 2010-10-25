@@ -190,23 +190,6 @@ public:
 	int doSearch(Common::ArchiveMemberList &list, const Common::String &filter, const Common::String &path, uint typeFilter = FT_DIRECTORY | FT_FILE);
 
 	/**
-	 * Returns a file's size
-	 * @param FileName      The filename
-	 * @return              The file size. If an error occurs, then 0xffffffff is returned.
-	 * @remarks             For files in packages, then uncompressed size is returned.
-	 **/
-	uint getFileSize(const Common::String &fileName);
-
-	/**
-	 * Returns the type of a file.
-	 * @param FileName      The filename
-	 * @return              Returns the file type, either (BS_PackageManager::FT_DIRECTORY
-	 * or BS_PackageManager::FT_FILE).
-	 * If the file was not found, then 0 is returned.
-	 */
-	uint getFileType(const Common::String &fileName);
-
-	/**
 	 * Determines whether a file exists
 	 * @param FileName      The filename
 	 * @return              Returns true if the file exists, otherwise false.

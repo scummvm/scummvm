@@ -90,17 +90,15 @@ static int getAbsolutePath(lua_State *L) {
 }
 
 static int getFileSize(lua_State *L) {
-	PackageManager *pPM = getPM();
-
-	lua_pushnumber(L, pPM->getFileSize(luaL_checkstring(L, 1)));
+	// This function apparently is not used by the game scripts
+	lua_pushnumber(L, 0);
 
 	return 1;
 }
 
 static int getFileType(lua_State *L) {
-	PackageManager *pPM = getPM();
-
-	lua_pushnumber(L, pPM->getFileType(luaL_checkstring(L, 1)));
+	// This function apparently is not used by the game scripts
+	lua_pushnumber(L, 0);
 
 	return 1;
 }
