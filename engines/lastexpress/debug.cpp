@@ -137,7 +137,7 @@ void Debugger::copyCommand(int argc, const char **argv) {
 
 	for (int i = 0; i < _numParams; i++) {
 		_commandParams[i] = (char *)malloc(strlen(argv[i]) + 1);
-		memset(_commandParams[i], NULL, strlen(argv[i]) + 1);
+		memset(_commandParams[i], 0, strlen(argv[i]) + 1);
 		strcpy(_commandParams[i], argv[i]);
 	}
 
