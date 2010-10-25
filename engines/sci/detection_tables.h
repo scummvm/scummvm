@@ -1473,20 +1473,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-	// Laura Bow - German DOS (from Tobis87, also includes english language)
-	// SCI interpreter version 0.000.631 (or 0.000.685?)
-	{"laurabow", "", {
-		{"resource.map", 0, "b1905f6aa68ff65a057b080b1eae954c", 12030},
-		{"resource.001", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 108032},
-		{"resource.002", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 354680},
-		{"resource.003", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 361815},
-		{"resource.004", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 339714},
-		{"resource.005", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 327465},
-		{"resource.006", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 328390},
-		{"resource.007", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 317687},
-		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO_NOSPEECH	},
-
 	// Laura Bow 2 - English DOS Non-Interactive Demo (from FRG)
 	// Executable scanning reports "x.yyy.zzz"
 	// SCI interpreter version 1.001.069 (just a guess)
@@ -3375,6 +3361,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "5b09168baa2f6e2e22787429b2d72f54", 6492},
 		AD_LISTEND},
 		Common::IT_ITA, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// Space Quest 5 - Spanish DOS Floppy (from mirir, bug report #3090664)
+	{"sq5", "", {
+		{"resource.000", 0, "73748852548faa42927f7537b165582d", 6049994},
+		{"resource.map", 0, "5714a899033bdebf2d61ad333c8c6637", 6492},
+		{"resource.msg", 0, "46deca7ef9cf057f7d442df98c1a2ae2", 134612},
+		AD_LISTEND},
+		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
 #ifdef ENABLE_SCI32
 	// Space Quest 6 - English DOS/Win3.11 CD (from the Space Quest Collection)
