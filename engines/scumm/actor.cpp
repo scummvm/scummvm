@@ -691,6 +691,7 @@ void Actor_v3::walkActor() {
 int Actor::remapDirection(int dir, bool is_walking) {
 	int specdir;
 	byte flags;
+	byte mask;
 	bool flipX;
 	bool flipY;
 
@@ -768,6 +769,14 @@ int Actor::remapDirection(int dir, bool is_walking) {
 			return 0;
 		case 6:
 			return 180;
+		}
+
+		// MM C64 stores flags as a part of the mask
+		if (_vm->_game.version == 0) {
+			mask = _vm->getMaskFromBox(_walkbox);
+			// face the wall if climbing/descending a ladder
+			if ((mask & 0x8C) == 0x84)
+				return 0;
 		}
 	}
 	// OR 1024 in to signal direction interpolation should be done
