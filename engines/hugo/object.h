@@ -46,7 +46,11 @@ public:
 	~ObjectHandler();
 
 	object_t  *_objects;
-	
+
+	virtual void moveObjects() = 0;
+	virtual void updateImages() = 0;
+	virtual void swapImages(int objNumb1, int objNumb2) = 0;
+
 	bool isCarrying(uint16 wordIndex);
 	bool findObjectSpace(object_t *obj, int16 *destx, int16 *desty);
 
@@ -55,12 +59,9 @@ public:
 	void freeObjects();
 	void loadObject(Common::File &in);
 	void lookObject(object_t *obj);
-	void moveObjects();
 	void restoreSeq(object_t *obj);
 	void saveSeq(object_t *obj);
 	void showTakeables();
-	void swapImages(int objNumb1, int objNumb2);
-	void updateImages();
 	void useObject(int16 objId);
 	
 	static int y2comp(const void *a, const void *b);
@@ -83,10 +84,29 @@ public:
 		_objects[objIndex].vxPath = vxPath;
 		_objects[objIndex].vyPath = vyPath;
 	}
-private:
+protected:
 	HugoEngine *_vm;
 };
 
+class ObjectHandler_v1d : public ObjectHandler {
+public:
+	ObjectHandler_v1d(HugoEngine *vm);
+	~ObjectHandler_v1d();
+
+	void moveObjects();
+	void updateImages();
+	void swapImages(int objNumb1, int objNumb2);
+};
+
+class ObjectHandler_v1w : public ObjectHandler {
+public:
+	ObjectHandler_v1w(HugoEngine *vm);
+	~ObjectHandler_v1w();
+
+	void moveObjects();
+	void updateImages();
+	void swapImages(int objNumb1, int objNumb2);
+};
 } // End of namespace Hugo
 
 #endif //HUGO_OBJECT_H

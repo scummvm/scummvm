@@ -21,6 +21,8 @@ MODULE_OBJS := \
 	inventory.o \
 	mouse.o \
 	object.o \
+	object_v1d.o \
+	object_v1w.o \
 	parser.o \
 	parser_v1w.o \
 	parser_v1d.o \

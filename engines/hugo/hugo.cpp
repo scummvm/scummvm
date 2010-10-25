@@ -167,7 +167,6 @@ Common::Error HugoEngine::run() {
 	_inventory = new InventoryHandler(this);
 	_route = new Route(this);
 	_sound = new SoundHandler(this);
-	_object = new ObjectHandler(this);
 
 	switch (_gameVariant) {
 	case 0: // H1 Win
@@ -176,6 +175,7 @@ Common::Error HugoEngine::run() {
 		_intro = new intro_v1w(this);
 		_screen = new Screen_v1w(this);
 		_parser = new Parser_v1w(this);
+		_object = new ObjectHandler_v1w(this);
 		break;
 	case 1:
 		_file = new FileManager_v2d(this);
@@ -183,6 +183,7 @@ Common::Error HugoEngine::run() {
 		_intro = new intro_v2w(this);
 		_screen = new Screen_v1w(this);
 		_parser = new Parser_v1w(this);
+		_object = new ObjectHandler_v1w(this);
 		break;
 	case 2:
 		_file = new FileManager_v2d(this);
@@ -190,6 +191,7 @@ Common::Error HugoEngine::run() {
 		_intro = new intro_v3w(this);
 		_screen = new Screen_v1w(this);
 		_parser = new Parser_v1w(this);
+		_object = new ObjectHandler_v1w(this);
 		break;
 	case 3: // H1 DOS
 		_file = new FileManager_v1d(this);
@@ -197,6 +199,7 @@ Common::Error HugoEngine::run() {
 		_intro = new intro_v1d(this);
 		_screen = new Screen_v1d(this);
 		_parser = new Parser_v1d(this);
+		_object = new ObjectHandler_v1d(this);
 		break;
 	case 4:
 		_file = new FileManager_v2d(this);
@@ -204,6 +207,7 @@ Common::Error HugoEngine::run() {
 		_intro = new intro_v2d(this);
 		_screen = new Screen_v1d(this);
 		_parser = new Parser_v2d(this);
+		_object = new ObjectHandler_v1d(this);
 		break;
 	case 5:
 		_file = new FileManager_v3d(this);
@@ -211,6 +215,7 @@ Common::Error HugoEngine::run() {
 		_intro = new intro_v3d(this);
 		_screen = new Screen_v1d(this);
 		_parser = new Parser_v3d(this);
+		_object = new ObjectHandler_v1d(this);
 		break;
 	}
 
