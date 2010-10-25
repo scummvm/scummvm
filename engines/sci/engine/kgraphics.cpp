@@ -347,6 +347,11 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	int maxwidth = (argc > 3) ? argv[3].toUint16() : 0;
 	int font_nr = argv[2].toUint16();
 
+	if (!dest) {
+		debugC(2, kDebugLevelStrings, "GetTextSize: Empty destination");
+		return s->r_acc;
+	}
+
 	Common::String sep_str;
 	const char *sep = NULL;
 	if ((argc > 4) && (argv[4].segment)) {
@@ -356,7 +361,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 
 	dest[0] = dest[1] = NULL_REG;
 
-	if (text.empty() || !dest) { // Empty text
+	if (text.empty()) { // Empty text
 		dest[2] = dest[3] = make_reg(0, 0);
 		debugC(2, kDebugLevelStrings, "GetTextSize: Empty string");
 		return s->r_acc;
