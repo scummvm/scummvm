@@ -50,7 +50,7 @@ void FileManager_v3d::readBackground(int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
 	_sceneryArchive1.seek((uint32) screenIndex * sizeof(sceneBlock_t), SEEK_SET);
-	
+
 	sceneBlock_t sceneBlock;                        // Read a database header entry
 	sceneBlock.scene_off = _sceneryArchive1.readUint32LE();
 	sceneBlock.scene_len = _sceneryArchive1.readUint32LE();
@@ -101,7 +101,7 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 
 	image_pt     tmpImage = image;                  // temp ptr to overlay file
 	_sceneryArchive1.seek((uint32)screenNum * sizeof(sceneBlock_t), SEEK_SET);
-	
+
 	sceneBlock_t sceneBlock;                        // Database header entry
 	sceneBlock.scene_off = _sceneryArchive1.readUint32LE();
 	sceneBlock.scene_len = _sceneryArchive1.readUint32LE();
@@ -113,7 +113,7 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 	sceneBlock.ob_len = _sceneryArchive1.readUint32LE();
 
 	uint32 i = 0;
-	
+
 	if (screenNum < 20) {
 		switch (overlayType) {
 		case BOUNDARY:
@@ -137,7 +137,7 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 				image[i] = 0;
 			return;
 		}
-	
+
 		// Read in the overlay file using MAC Packbits.  (We're not proud!)
 		int16 k = 0;                                // byte count
 		do {
@@ -149,7 +149,7 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 					*tmpImage++ = _sceneryArchive1.readByte();
 			} else {                            // Repeat next byte -data+1 times
 				int16 j = _sceneryArchive1.readByte();
-	
+
 				for (i = 0; i < (byte)(-data + 1); i++, k++)
 					*tmpImage++ = j;
 			}
@@ -177,7 +177,7 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 				image[i] = 0;
 			return;
 		}
-	
+
 		// Read in the overlay file using MAC Packbits.  (We're not proud!)
 		int16 k = 0;                                // byte count
 		do {
@@ -189,7 +189,7 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 					*tmpImage++ = _sceneryArchive2.readByte();
 			} else {                                // Repeat next byte -data+1 times
 				int16 j = _sceneryArchive2.readByte();
-	
+
 				for (i = 0; i < (byte)(-data + 1); i++, k++)
 					*tmpImage++ = j;
 			}

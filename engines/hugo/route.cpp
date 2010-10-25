@@ -309,13 +309,13 @@ bool Route::findRoute(int16 cx, int16 cy) {
 				_boundaryMap[y][x * 8 + i] = ((_vm->getObjectBoundaryOverlay()[y * XBYTES + x] | _vm->getBoundaryOverlay()[y * XBYTES + x]) & (0x80 >> i)) ? kMapBound : 0;
 		}
 	}
-	
+
 	// Clear all object baselines from objbound
 	for (i = 0, obj = _vm->_object->_objects; i < _vm->_numObj; i++, obj++) {
 		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling != INVISIBLE) && (obj->priority == FLOATING))
 			_vm->clearBoundary(obj->oldx + obj->currImagePtr->x1, obj->oldx + obj->currImagePtr->x2, obj->oldy + obj->currImagePtr->y2);
 	}
-	
+
 	// Search from hero to destination
 	segment(herox1, heroy);
 

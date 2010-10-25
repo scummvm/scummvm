@@ -63,7 +63,7 @@ public:
 	void saveSeq(object_t *obj);
 	void showTakeables();
 	void useObject(int16 objId);
-	
+
 	static int y2comp(const void *a, const void *b);
 
 	bool isCarried(int objIndex) {
@@ -73,7 +73,7 @@ public:
 	void setCarry(int objIndex, bool val) {
 		_objects[objIndex].carriedFl = val;
 	}
-	
+
 	void setVelocity(int objIndex, int8 vx, int8 vy) {
 		_objects[objIndex].vx = vx;
 		_objects[objIndex].vy = vy;

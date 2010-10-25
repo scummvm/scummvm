@@ -248,7 +248,7 @@ void ObjectHandler_v1d::moveObjects() {
 							else
 								obj->currImagePtr = obj->seqList[LEFT].seqPtr;
 						}
-	
+
 						if (obj->vx || obj->vy)
 							obj->cycling = CYCLE_FORWARD;
 						else

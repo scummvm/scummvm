@@ -97,7 +97,7 @@ seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool
 		if ((seqPtr = (seq_t *)malloc(sizeof(seq_t))) == 0)
 			Utils::Error(HEAP_ERR, "%s", name);
 	}
-	
+
 	// Find size of image data in 8-bit DIB format
 	// Note save of x2 - marks end of valid data before garbage
 	uint16 bytesPerLine4 = PCC_header.bytesPerLine * 4; // 4-bit bpl

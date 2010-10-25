@@ -190,7 +190,7 @@ public:
 		return _mouseY;
 	}
 
-	void boundaryCollision(object_t *obj); 
+	void boundaryCollision(object_t *obj);
 	void clearBoundary(int x1, int x2, int y);
 	void endGame();
 	void initStatus();

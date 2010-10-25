@@ -38,7 +38,7 @@
 namespace Hugo {
 
 class MidiPlayer;
-	
+
 class SoundHandler {
 public:
 	SoundHandler(HugoEngine *vm);

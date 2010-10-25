@@ -79,7 +79,7 @@ private:
 	event_t *getQueue();
 	void     delQueue(event_t *curEvent);
 	event_t *doAction(event_t *curEvent);
-	
+
 	virtual const char *getCypher() = 0;
 };
 

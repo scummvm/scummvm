@@ -69,7 +69,7 @@ void intro_v3d::introInit() {
 	_vm->_screen->displayBackground();
 	g_system->updateScreen();
 	g_system->delayMillis(5000);
-	
+
 	_vm->_file->readBackground(22); // display screen MAP_3d
 	_vm->_screen->displayBackground();
 	introTicks = 0;

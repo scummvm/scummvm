@@ -46,6 +46,6 @@ Scheduler_v3d::~Scheduler_v3d() {
 }
 
 const char *Scheduler_v3d::getCypher() {
-	return "Copyright 1992, Gray Design Associates"; 
+	return "Copyright 1992, Gray Design Associates";
 }
 } // End of namespace Hugo

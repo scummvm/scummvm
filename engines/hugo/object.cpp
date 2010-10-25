@@ -104,9 +104,9 @@ void ObjectHandler::useObject(int16 objId) {
 	} else {
 		// Use status.objid on objid
 		// Default to first cmd verb
-		sprintf(_line, "%s %s %s", _vm->_arrayVerbs[_vm->_cmdList[_objects[_vm->getGameStatus().inventoryObjId].cmdIndex][1].verbIndex][0], 
-			                       _vm->_arrayNouns[_objects[_vm->getGameStatus().inventoryObjId].nounIndex][0], 
-								   _vm->_arrayNouns[obj->nounIndex][0]);
+		sprintf(_line, "%s %s %s", _vm->_arrayVerbs[_vm->_cmdList[_objects[_vm->getGameStatus().inventoryObjId].cmdIndex][1].verbIndex][0],
+			                       _vm->_arrayNouns[_objects[_vm->getGameStatus().inventoryObjId].nounIndex][0],
+			                       _vm->_arrayNouns[obj->nounIndex][0]);
 
 		// Check valid use of objects and override verb if necessary
 		for (uses_t *use = _vm->_uses; use->objId != _vm->_numObj; use++) {
@@ -116,9 +116,9 @@ void ObjectHandler::useObject(int16 objId) {
 				for (target_t *target = use->targets; _vm->_arrayNouns[target->nounIndex] != 0; target++)
 					if (_vm->_arrayNouns[target->nounIndex][0] == _vm->_arrayNouns[obj->nounIndex][0]) {
 						foundFl = true;
-						sprintf(_line, "%s %s %s", _vm->_arrayVerbs[target->verbIndex][0], 
-							                       _vm->_arrayNouns[_objects[_vm->getGameStatus().inventoryObjId].nounIndex][0], 
-												   _vm->_arrayNouns[obj->nounIndex][0]);
+						sprintf(_line, "%s %s %s", _vm->_arrayVerbs[target->verbIndex][0],
+							                       _vm->_arrayNouns[_objects[_vm->getGameStatus().inventoryObjId].nounIndex][0],
+							                       _vm->_arrayNouns[obj->nounIndex][0]);
 					}
 
 				// No valid use of objects found, print failure string

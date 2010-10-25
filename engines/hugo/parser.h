@@ -114,7 +114,7 @@ public:
 
 	void lineHandler();
 };
-	
+
 class Parser_v3d : public Parser_v1w {
 public:
 	Parser_v3d(HugoEngine *vm);

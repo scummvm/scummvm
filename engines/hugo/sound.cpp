@@ -248,7 +248,7 @@ SoundHandler::SoundHandler(HugoEngine *vm) : _vm(vm) {
 
 void SoundHandler::setMusicVolume() {
 	/* Set the FM music volume from config.mvolume (0..100%) */
-	
+
 	_midiPlayer->setVolume(_config.musicVolume * 255 / 100);
 }
 
@@ -265,7 +265,7 @@ void SoundHandler::stopMusic() {
 void SoundHandler::toggleMusic() {
 // Turn music on and off
 	_config.musicFl = !_config.musicFl;
-	
+
 	_midiPlayer->pause(_config.musicFl);
 }
 

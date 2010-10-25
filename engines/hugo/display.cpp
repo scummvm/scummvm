@@ -213,7 +213,7 @@ int16 Screen::mergeLists(rect_t *list, rect_t *blist, int16 len, int16 blen, int
 				if (OVERLAP(list, bp))
 					coalesce[c++] = b;
 		}
-		
+
 		// Any overlapping blit rects?
 		if (c == 0) {                               // None, add a new entry
 			blist[blen++] = *list;
@@ -377,7 +377,7 @@ void Screen::shadowStr(int16 sx, int16 sy, const char *s, byte color) {
 void Screen::userHelp() {
 // Introduce user to the game
 // DOS versions Only
-	Utils::Box(BOX_ANY , "%s", 
+	Utils::Box(BOX_ANY , "%s",
 	           "F1  - Press F1 again\n"
 	           "      for instructions\n"
 	           "F2  - Sound on/off\n"
@@ -421,7 +421,7 @@ void Screen::drawShape(int x, int y, int color1, int color2) {
 			_backBuffer[320 * (y + (2 * shapeSize - 1) - i) + (x + shapeSize + j)] = color2;
 			_frontBuffer[320 * (y + (2 * shapeSize - 1) - i) + (x + shapeSize + j)] = color2;
 		}
-	}		
+	}
 }
 
 void Screen::drawRectangle(bool filledFl, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int color) {

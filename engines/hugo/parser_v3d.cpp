@@ -189,7 +189,7 @@ void Parser_v3d::lineHandler() {
 	// Nothing matches.  Report recognition success to user.
 	char *verb = findVerb();
 	char *noun = findNoun();
-	
+
 	if (verb && noun) {                             // A combination I didn't think of
 		Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBNoPoint]);
 	} else if (noun) {

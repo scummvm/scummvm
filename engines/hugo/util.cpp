@@ -78,14 +78,14 @@ void Utils::reverseByte(byte *data) {
 		if (*data & maskIn)
 			result |= maskOut;
 	}
-	
+
 	*data = result;
 }
 
 char *Utils::Box(box_t dismiss, const char *s, ...) {
 	static char buffer[MAX_STRLEN + 1];             // Format text into this
 
-	if (!s) 
+	if (!s)
 		return 0;                                   // NULL strings catered for
 
 	if (s[0] == '\0')
