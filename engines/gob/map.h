@@ -152,11 +152,17 @@ public:
 		if (!_passMap)
 			return 0;
 
+		if ((x < 0) || (y < 0) || (x >= _mapWidth) || (y >= _mapHeight))
+			return 0;
+
 		return _passMap[y * _mapWidth + x];
 	}
 
 	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) {
 		if (!_passMap)
+			return;
+
+		if ((x < 0) || (y < 0) || (x >= _mapWidth) || (y >= _mapHeight))
 			return;
 
 		_passMap[y * _mapWidth + x] = pass;
@@ -184,6 +190,9 @@ public:
 		if (!_passMap)
 			return 0;
 
+		if ((x < 0) || (y < 0) || (x >= _mapWidth) || (y >= _mapHeight))
+			return 0;
+
 		if (heightOff == -1)
 			heightOff = _passWidth;
 		return _passMap[y * heightOff + x];
@@ -191,6 +200,9 @@ public:
 
 	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) {
 		if (!_passMap)
+			return;
+
+		if ((x < 0) || (y < 0) || (x >= _mapWidth) || (y >= _mapHeight))
 			return;
 
 		if (heightOff == -1)
