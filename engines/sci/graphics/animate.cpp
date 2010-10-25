@@ -562,7 +562,7 @@ void GfxAnimate::addToPicDrawCels() {
 		// Get the corresponding view
 		view = _cache->getView(it->viewId);
 
-		// kAddToPic does not do loop/cel-number fixups, it also doesn't support global scaling
+		// kAddToPic does not do loop/cel-number fixups
 
 		if (it->priority == -1)
 			it->priority = _ports->kernelCoordinateToPriority(it->y);
