@@ -41,6 +41,7 @@ MODULE_OBJS := \
 	player_v1.o \
 	player_v2.o \
 	player_v2a.o \
+	player_v2base.o \
 	player_v2cms.o \
 	player_v3a.o \
 	player_v4a.o \

@@ -26,28 +26,26 @@
 #ifndef SCUMM_PLAYER_V2CMS_H
 #define SCUMM_PLAYER_V2CMS_H
 
-#include "scumm/player_v2.h"	// for channel_data
+#include "scumm/player_v2base.h"	// for channel_data
 
 class CMSEmulator;
 
 namespace Scumm {
 
-class ScummEngine;
-
-
 /**
  * Scumm V2 CMS/Gameblaster MIDI driver.
  */
-class Player_V2CMS : public Audio::AudioStream, public MusicEngine {
+class Player_V2CMS : public Player_V2Base {
 public:
 	Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer);
 	virtual ~Player_V2CMS();
 
+	// MusicEngine API
 	virtual void setMusicVolume(int vol);
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
+//	virtual int  getMusicTimer();
 	virtual int  getSoundStatus(int sound) const;
 
 	// AudioStream API
@@ -159,53 +157,8 @@ protected:
 
 	// from Player_V2
 protected:
-	bool _isV3Game;
-	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandle;
-	ScummEngine *_vm;
-
 	CMSEmulator *_cmsEmu;
 
-	int _header_len;
-
-	uint32 _sampleRate;
-	uint32 _next_tick;
-	uint32 _tick_len;
-
-	int _timer_count[4];
-	int _timer_output;
-
-	int   _current_nr;
-	byte *_current_data;
-	int   _next_nr;
-	byte *_next_data;
-	byte *_retaddr;
-
-	Common::Mutex _mutex;
-
-private:
-	union ChannelInfo {
-		channel_data d;
-		uint16 array[sizeof(channel_data)/2];
-	};
-
-	int _music_timer;
-	int _music_timer_ctr;
-	int _ticks_per_music_timer;
-
-	ChannelInfo _channels[5];
-
-protected:
-	virtual void nextTick();
-	virtual void clear_channel(int i);
-	virtual void chainSound(int nr, byte *data);
-	virtual void chainNextSound();
-
-private:
-	void do_mix(int16 *buf, uint len);
-
-	void execute_cmd(ChannelInfo *channel);
-	void next_freqs(ChannelInfo *channel);
 };
 
 } // End of namespace Scumm
