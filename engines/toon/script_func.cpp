@@ -701,7 +701,7 @@ int32 ScriptFunc::sys_Cmd_Place_Scene_Anim(EMCState *state) {
 	int32 frame = stackPos(5);
 
 	SceneAnimation *sceneAnim = _vm->getSceneAnimation(sceneId);
-	sceneAnim->_animInstance->setPosition(x, y, 0, false);
+	sceneAnim->_animInstance->setPosition(x, y, sceneAnim->_animInstance->getZ(), false);
 	sceneAnim->_animInstance->forceFrame(frame);
 	_vm->setSceneAnimationScriptUpdate(false);
 	return 0;
@@ -915,10 +915,14 @@ int32 ScriptFunc::sys_Cmd_Init_Scene_Anim(EMCState *state) {
 
 	int32 dx = stackPos(4);
 	int32 dy = stackPos(5);
+	int32 x = stackPos(2);
 	int32 layerZ = stackPos(3);
 
 	if (dx == -2)
 		sceneAnim->_animInstance->moveRelative(640, 0, 0);
+	else if (dx < 0) {
+		dx = sceneAnim->_animation->_x1;
+	}
 	else if (dx >= 0)
 		sceneAnim->_animInstance->setX(dx);
 
@@ -927,8 +931,10 @@ int32 ScriptFunc::sys_Cmd_Init_Scene_Anim(EMCState *state) {
 	else
 		dy = sceneAnim->_animation->_y1;
 
-	if (flags & 0x20)
-		sceneAnim->_animInstance->setZ(_vm->getLayerAtPoint(dx, dy));
+	if (flags & 0x20) {
+		sceneAnim->_animInstance->setZ(_vm->getLayerAtPoint(x, layerZ));
+		sceneAnim->_animInstance->setUseMask(true);
+	}
 
 	if (layerZ >= 0) {
 		sceneAnim->_animInstance->setLayerZ(layerZ);
