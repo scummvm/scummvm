@@ -39,10 +39,10 @@ namespace Gob {
 
 Goblin_v2::Goblin_v2(GobEngine *vm) : Goblin_v1(vm) {
 	_gobsCount = -1;
-	_rotStates[0][0] = 0; _rotStates[0][1] = 18; _rotStates[0][2] = 19; _rotStates[0][3] = 20;
-	_rotStates[1][0] = 13; _rotStates[1][1] = 2; _rotStates[1][2] = 12; _rotStates[1][3] = 14;
-	_rotStates[2][0] = 16; _rotStates[2][1] = 15; _rotStates[2][2] = 4; _rotStates[2][3] = 17;
-	_rotStates[3][0] = 23; _rotStates[3][1] = 21; _rotStates[3][2] = 22; _rotStates[3][3] = 6;
+	_rotStates[0][0] =  0; _rotStates[0][1] = 18; _rotStates[0][2] = 19; _rotStates[0][3] = 20;
+	_rotStates[1][0] = 13; _rotStates[1][1] =  2; _rotStates[1][2] = 12; _rotStates[1][3] = 14;
+	_rotStates[2][0] = 16; _rotStates[2][1] = 15; _rotStates[2][2] =  4; _rotStates[2][3] = 17;
+	_rotStates[3][0] = 23; _rotStates[3][1] = 21; _rotStates[3][2] = 22; _rotStates[3][3] =  6;
 }
 
 void Goblin_v2::freeObjects() {
@@ -142,12 +142,12 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 	animData->destY = gobDestY;
 	animData->order = gobY;
 
-	int16 dir = 0;
+	Map::Direction dir = Map::kDirNone;
 
 	if (animData->pathExistence == 1) {
 
 		dir = _vm->_map->getDirection(gobX, gobY, destX, destY);
-		if (dir == 0)
+		if (dir == Map::kDirNone)
 			animData->pathExistence = 0;
 		if ((gobX == gobDestX) && (gobY == gobDestY))
 			animData->pathExistence = 4;

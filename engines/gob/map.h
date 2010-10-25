@@ -34,15 +34,16 @@ namespace Gob {
 
 class Map {
 public:
-	enum {
-		kDirNW = 0x4700,
-		kDirN  = 0x4800,
-		kDirNE = 0x4900,
-		kDirW  = 0x4B00,
-		kDirE  = 0x4D00,
-		kDirSW = 0x4F00,
-		kDirS  = 0x5000,
-		kDirSE = 0x5100
+	enum Direction {
+		kDirNone = 0x0000,
+		kDirNW   = 0x4700,
+		kDirN    = 0x4800,
+		kDirNE   = 0x4900,
+		kDirW    = 0x4B00,
+		kDirE    = 0x4D00,
+		kDirSW   = 0x4F00,
+		kDirS    = 0x5000,
+		kDirSE   = 0x5100
 	};
 
 #include "common/pack-start.h"	// START STRUCT PACKING
@@ -94,7 +95,8 @@ public:
 
 	void placeItem(int16 x, int16 y, int16 id);
 
-	int16 getDirection(int16 x0, int16 y0, int16 x1, int16 y1);
+	Direction getDirection(int16 x0, int16 y0, int16 x1, int16 y1);
+
 	int16 checkDirectPath(Mult::Mult_Object *obj, int16 x0,
 			int16 y0, int16 x1, int16 y1);
 	int16 checkLongPath(int16 x0, int16 y0,
@@ -122,6 +124,10 @@ protected:
 	GobEngine *_vm;
 
 	int16 findNearestWayPoint(int16 x, int16 y);
+
+private:
+	// Move the x and y values according to the direction
+	void moveDirection(Direction dir, int16 &x, int16 &y);
 };
 
 class Map_v1 : public Map {
