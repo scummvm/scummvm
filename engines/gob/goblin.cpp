@@ -1814,12 +1814,34 @@ void Goblin::move(int16 destX, int16 destY, int16 objIndex) {
 
 	WRITE_VAR(56, 0);
 
+	byte passType = _vm->_map->getPass(obj->gobDestX, obj->gobDestY);
+
 	// Prevent continous walking on wide stairs
-	if (_vm->_map->getPass(obj->gobDestX, obj->gobDestY) == 11) {
+	if (passType == 11) {
 		if (_vm->_map->_screenWidth == 640) {
 			obj->gobDestY++;
 			animData->destY++;
 		}
+	}
+
+	// Prevent stopping in the middle of big ladders
+	if ((passType == 19) || (passType == 20)) {
+		int ladderTop = 0;
+		while (_vm->_map->getPass(obj->gobDestX, obj->gobDestY + ladderTop) == passType)
+			ladderTop++;
+
+		int ladderBottom = 0;
+		while (_vm->_map->getPass(obj->gobDestX, obj->gobDestY + ladderBottom) == passType)
+			ladderBottom--;
+
+		int ladderDest;
+		if (ABS(ladderBottom) <= ladderTop)
+			ladderDest = obj->gobDestY + ladderBottom;
+		else
+			ladderDest = obj->gobDestY + ladderTop;
+
+		obj->gobDestY   = ladderDest;
+		animData->destY = ladderDest;
 	}
 
 	initiateMove(obj);
