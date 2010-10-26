@@ -596,7 +596,7 @@ public:
 
 		// Game data
 		uint32 field_0;
-		uint32 time;
+		TimeValue time;
 		uint32 timeDelta;
 		uint32 timeTicks;
 		bool sceneUseBackup;       // byte
@@ -612,7 +612,7 @@ public:
 			volume = _defaultVolume;
 
 			//Game data
-			time = _defaultTime;
+			time = kTimeCityParis;
 			timeDelta = _defaultTimeDelta;
 			timeTicks = 0;
 			sceneUseBackup = false;
@@ -728,9 +728,8 @@ public:
 	static void getHourMinutes(uint32 time, uint8 *hours, uint8 *minutes);
 
 private:
-	static const uint32 _defaultBrigthness = 0x3;
-	static const uint32 _defaultVolume = 0x7;
-	static const uint32 _defaultTime = 1037700;
+	static const uint32 _defaultBrigthness = 3;
+	static const uint32 _defaultVolume = 7;
 	static const uint32 _defaultTimeDelta = 3;
 	static const uint32 _defaultPortrait = 32;
 

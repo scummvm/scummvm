@@ -1143,7 +1143,7 @@ void Menu::switchGame() {
 	if (!SaveLoad::isSavegamePresent(_gameId))
 		getSaveLoad()->create(_gameId);
 
-	getState()->time = 0;
+	getState()->time = kTimeNone;
 
 	// Clear menu elements
 	_clock->clear();

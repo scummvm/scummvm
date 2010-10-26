@@ -3200,7 +3200,7 @@ IMPLEMENT_FUNCTION(64, Anna, baggage)
 			if (params->param1)
 				getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, params->param1 == Fight::kFightEndLost);
 			else {
-				getState()->time += 1800;
+				getState()->time = (TimeValue)(getState()->time + 1800);
 
 				setCallback(3);
 				setup_savegame(kSavegameTypeEvent, kEventAnnaBagagePart2);

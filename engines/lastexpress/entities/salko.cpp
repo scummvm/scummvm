@@ -611,7 +611,7 @@ IMPLEMENT_FUNCTION(24, Salko, chapter5Handler)
 			params->param1 = getFight()->setup(kFightSalko);
 
 			if (params->param1 == Fight::kFightEndWin) {
-				getState()->time += 1800;
+				getState()->time = (TimeValue)(getState()->time + 1800);
 				setCallback(3);
 				setup_savegame(kSavegameTypeEvent, kEventCathSalkoTrainTopWin);
 			} else {

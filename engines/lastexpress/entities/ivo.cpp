@@ -802,7 +802,7 @@ IMPLEMENT_FUNCTION(33, Ivo, function33)
 		break;
 
 	case kActionDefault:
-		getState()->time += 1800;
+		getState()->time = (TimeValue)(getState()->time + 1800);
 
 		setCallback(1);
 		setup_savegame(kSavegameTypeTime, kTimeNone);

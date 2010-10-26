@@ -618,7 +618,7 @@ label_callback_12:
 			if (params->param8) {
 				getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, params->param8  == Fight::kFightEndLost);
 			} else {
-				getState()->time += 1800;
+				getState()->time = (TimeValue)(getState()->time + 1800);
 				getProgress().field_CC = 1;
 
 				setCallback(getCallback() + 1);

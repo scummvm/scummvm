@@ -1958,7 +1958,7 @@ void Action::playAnimation(EventIndex index, bool debugMode) const {
 
 	// Adjust game time
 	getState()->timeTicks += _animationList[index].time;
-	getState()->time += _animationList[index].time * getState()->timeDelta;
+	getState()->time = (TimeValue)(getState()->time + _animationList[index].time * getState()->timeDelta);
 }
 
 } // End of namespace LastExpress

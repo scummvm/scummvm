@@ -1077,7 +1077,7 @@ void SceneManager::postProcessScene() {
 	case Scene::kTypeList: {
 
 		// Adjust time
-		getState()->time += (scene->param1 + 10) * getState()->timeDelta;
+		getState()->time = (TimeValue)(getState()->time + (scene->param1 + 10) * getState()->timeDelta);
 		getState()->timeTicks += (scene->param1 + 10);
 
 		// Wait for a number of frames unless right mouse is clicked

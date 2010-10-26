@@ -1122,7 +1122,7 @@ IMPLEMENT_FUNCTION(30, Vesna, function30)
 			} else {
 				getSound()->playSound(kEntityPlayer, "TUNNEL");
 
-				getState()->time += 1800;
+				getState()->time = (TimeValue)(getState()->time + 1800);
 
 				setCallback(5);
 				setup_savegame(kSavegameTypeEvent, kEventCathVesnaTrainTopWin);
