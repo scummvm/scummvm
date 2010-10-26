@@ -473,6 +473,14 @@ int32 ScriptFunc::sys_Cmd_Empty_Inventory(EMCState *state) {
 }
 
 int32 ScriptFunc::sys_Cmd_Set_Anim_Scale_Size(EMCState *state) {
+	int32 animID = stackPos(0);
+	int32 scale = stackPos(1);
+	
+	SceneAnimation *sceneAnim = _vm->getSceneAnimation(animID);
+	if (sceneAnim) {
+		sceneAnim->_animInstance->setUseMask(true);
+		sceneAnim->_animInstance->setScale(scale,true);
+	}
 	return 0;
 }
 int32 ScriptFunc::sys_Cmd_Delete_Item_From_Inventory(EMCState *state) {

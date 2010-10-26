@@ -425,6 +425,7 @@ AnimationInstance::AnimationInstance(ToonEngine *vm, AnimationInstanceType type)
 	_playing = false;
 	_rangeEnd = 0;
 	_useMask = false;
+	_alignBottom = false;
 	_rangeStart = 0;
 	_scale = 1024;
 	_x = 0;
@@ -432,6 +433,7 @@ AnimationInstance::AnimationInstance(ToonEngine *vm, AnimationInstanceType type)
 	_z = 0;
 	_layerZ = 0;
 }
+
 
 void AnimationInstance::render() {
 	debugC(5, kDebugAnim, "render()");
@@ -443,11 +445,22 @@ void AnimationInstance::render() {
 		if (frame >= _animation->_numFrames)
 			frame = _animation->_numFrames - 1;
 
+		int32 x = _x;
+		int32 y = _y;
+
+		if (_alignBottom) {
+			int32 offsetX = (_animation->_x2 - _animation->_x1) / 2 * (_scale - 1024);
+			int32 offsetY = (_animation->_y2 - _animation->_y1) * (_scale - 1024);
+
+			x -= offsetX >> 10;
+			y -= offsetY >> 10;
+		}
+
 		if (_useMask) {
 			//if (_scale == 100) { // 100% scale
 			//	_animation->drawFrameWithMask(_vm->getMainSurface(), _currentFrame, _x, _y, _z, _vm->getMask());
 			//} else {
-			_animation->drawFrameWithMaskAndScale(_vm->getMainSurface(), frame, _x, _y, _z, _vm->getMask(), _scale);
+			_animation->drawFrameWithMaskAndScale(_vm->getMainSurface(), frame, x, y, _z, _vm->getMask(), _scale);
 			//}
 		} else {
 			_animation->drawFrame(_vm->getMainSurface(), frame, _x, _y);
@@ -534,9 +547,10 @@ void AnimationInstance::setVisible(bool visible) {
 	_visible = visible;
 }
 
-void AnimationInstance::setScale(int32 scale) {
+void AnimationInstance::setScale(int32 scale, bool align) {
 	debugC(4, kDebugAnim, "setScale(%d)", scale);
 	_scale = scale;
+	_alignBottom = align;
 }
 
 void AnimationInstance::setUseMask(bool useMask) {

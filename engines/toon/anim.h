@@ -102,7 +102,7 @@ public:
 	void forceFrame(int32 position);
 	void setPosition(int32 x, int32 y, int32 z, bool relative = false);
 	Animation *getAnimation() const { return _animation; }
-	void setScale(int32 scale);
+	void setScale(int32 scale, bool align = false);
 	void setVisible(bool visible);
 	bool getVisible() const { return _visible; }
 	void setUseMask(bool useMask);
@@ -150,6 +150,7 @@ protected:
 	bool _playing;
 	bool _looping;
 	bool _visible;
+	bool _alignBottom;
 
 	ToonEngine *_vm;
 };
