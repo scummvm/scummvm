@@ -219,7 +219,7 @@ void GfxAnimate::applyGlobalScaling(AnimateList::iterator entry, GfxView *view) 
 	writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), entry->scaleY);
 }
 
-void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
+void GfxAnimate::fill(byte &old_picNotValid) {
 	reg_t curObject;
 	uint16 signal;
 	GfxView *view = NULL;
@@ -274,7 +274,7 @@ void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 
 		//warning("%s view %d, loop %d, cel %d, signal %x", _s->_segMan->getObjectName(curObject), it->viewId, it->loopNo, it->celNo, it->signal);
 
-		bool setNsRect = maySetNsRect;
+		bool setNsRect = true;
 
 		// Create rect according to coordinates and given cel
 		if (it->scaleSignal & kScaleSignalDoScaling) {
@@ -283,17 +283,19 @@ void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 			if ((signal & kSignalHidden) && !(signal & kSignalAlwaysUpdate))
 				setNsRect = false;
 		} else {
-			view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
+			//  This special handling is not included in the other SCI1.1 interpreters and MUST NOT be
+			//  checked in those cases, otherwise we will break games (e.g. EcoQuest 2, room 200)
+			if ((g_sci->getGameId() == GID_HOYLE4) && (it->scaleSignal & kScaleSignalHoyle4SpecialHandling)) {
+				it->celRect.left = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft));
+				it->celRect.top = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop));
+				it->celRect.right = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsRight));
+				it->celRect.bottom = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsBottom));
+				view->getCelSpecialHoyle4Rect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
+				setNsRect = false;
+			} else {
+				view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
+			}
 		}
-
-		// This statement must be here for Hoyle4, otherwise cards are unclickable.
-		// This is probably one of the experimental features that were occasionally
-		// added to SCI interpreters; the corresponding check is absent in many SSCI
-		// versions. m_kiewitz knew about this flag before I (lskovlun) implemented it, 
-		// so it is possible that more test cases are known. Also, some presently open
-		// SCI1.1 bugs may be fixed by this and should be re-tested with this patch generalized.
-		if (g_sci->getGameId() == GID_HOYLE4 && it->scaleSignal & kScaleSignalDontSetNsrect)
-			setNsRect = false;
 
 		if (setNsRect) {
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), it->celRect.left);
@@ -562,7 +564,7 @@ void GfxAnimate::addToPicDrawCels() {
 		// Get the corresponding view
 		view = _cache->getView(it->viewId);
 
-		// kAddToPic does not do loop/cel-number fixups, it also doesn't support global scaling
+		// kAddToPic does not do loop/cel-number fixups
 
 		if (it->priority == -1)
 			it->priority = _ports->kernelCoordinateToPriority(it->y);
@@ -657,7 +659,7 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 	disposeLastCast();
 
 	makeSortedList(list);
-	fill(old_picNotValid, true);
+	fill(old_picNotValid);
 
 	if (old_picNotValid) {
 		// beginUpdate()/endUpdate() were introduced SCI1.
