@@ -212,10 +212,10 @@ Clock::~Clock() {
 }
 
 void Clock::clear() {
-	getScenes()->removeAndRedraw(&_frameMinutes, false);
-	getScenes()->removeAndRedraw(&_frameHour, false);
-	getScenes()->removeAndRedraw(&_frameSun, false);
-	getScenes()->removeAndRedraw(&_frameDate, false);
+	getScenes()->removeFromQueue(_frameMinutes);
+	getScenes()->removeFromQueue(_frameHour);
+	getScenes()->removeFromQueue(_frameSun);
+	getScenes()->removeFromQueue(_frameDate);
 }
 
 void Clock::draw(uint32 time) {
@@ -297,8 +297,8 @@ TrainLine::~TrainLine() {
 }
 
 void TrainLine::clear() {
-	getScenes()->removeAndRedraw(&_frameLine1, false);
-	getScenes()->removeAndRedraw(&_frameLine2, false);
+	getScenes()->removeFromQueue(_frameLine1);
+	getScenes()->removeFromQueue(_frameLine2);
 }
 
 // Draw the train line at the time
