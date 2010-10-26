@@ -78,8 +78,8 @@ event_t *Scheduler::getQueue() {
 	return resEvent;
 }
 
-void Scheduler::insertActionList(uint16 actIndex) {
 // Call Insert_action for each action in the list supplied
+void Scheduler::insertActionList(uint16 actIndex) {
 	debugC(1, kDebugSchedule, "insertActionList(%d)", actIndex);
 
 	if (_vm->_actListArr[actIndex]) {
@@ -88,8 +88,8 @@ void Scheduler::insertActionList(uint16 actIndex) {
 	}
 }
 
-void Scheduler::decodeString(char *line) {
 // Decode a string
+void Scheduler::decodeString(char *line) {
 	debugC(1, kDebugSchedule, "decodeString(%s)", line);
 
 	static const char *cypher = getCypher();
@@ -99,29 +99,42 @@ void Scheduler::decodeString(char *line) {
 	debugC(1, kDebugSchedule, "result : %s", line);
 }
 
-// This is the scheduler which runs every tick.  It examines the event queue
-// for any events whose time has come.  It dequeues these events and performs
-// the action associated with the event, returning it to the free queue
-void Scheduler::runScheduler() {
-	debugC(6, kDebugSchedule, "runScheduler");
-
-	status_t &gameStatus = _vm->getGameStatus();
-	event_t *curEvent = _headEvent;                 // The earliest event
-
-	while (curEvent && curEvent->time <= gameStatus.tick) // While mature events found
-		curEvent = doAction(curEvent);              // Perform the action (returns next_p)
-	gameStatus.tick++;                              // Accessed elsewhere via getTicks()
-}
-
-uint32 Scheduler::getTicks() {
 // Return system time in ticks.  A tick is 1/TICKS_PER_SEC mS
+uint32 Scheduler::getWinTicks() {
 	debugC(3, kDebugSchedule, "getTicks");
 
 	return _vm->getGameStatus().tick;
 }
 
-void Scheduler::processBonus(int bonusIndex) {
+// Return system time in ticks.  A tick is 1/TICKS_PER_SEC mS
+// If update FALSE, simply return last known time
+// Note that this is real time unless a processing cycle takes longer than
+// a real tick, in which case the system tick is simply incremented
+uint32 Scheduler::getDosTicks(bool updateFl) {
+	debugC(5, kDebugSchedule, "getTicks");
+
+	static  uint32 tick = 0;                        // Current system time in ticks
+	static  uint32 t_old = 0;                       // The previous wall time in ticks
+
+	uint32 t_now;                                   // Current wall time in ticks
+
+	if (!updateFl)
+		return(tick);
+
+	if (t_old == 0) 
+		t_old = (uint32) floor((double) (g_system->getMillis() * TPS / 1000));
+	/* Calculate current wall time in ticks */
+	t_now = g_system->getMillis() * TPS / 1000	;
+
+	if ((t_now - t_old) > 0) {
+		t_old = t_now;
+		tick++;
+	}
+	return(tick);
+}
+
 // Add indecated bonus to score if not added already
+void Scheduler::processBonus(int bonusIndex) {
 	debugC(1, kDebugSchedule, "processBonus(%d)", bonusIndex);
 
 	if (!_vm->_points[bonusIndex].scoredFl) {
@@ -172,78 +185,11 @@ void Scheduler::newScreen(int screenIndex) {
 	_vm->_screen->initNewScreenDisplay();
 }
 
-// Write the event queue to the file with handle f
-// Note that we convert all the event structure ptrs to indexes
-// using -1 for NULL.  We can't convert the action ptrs to indexes
-// so we save address of first dummy action ptr to compare on restore.
-void Scheduler::saveEvents(Common::WriteStream *f) {
-	debugC(1, kDebugSchedule, "saveEvents()");
-
-	uint32 curTime = getTicks();
-	event_t  saveEventArr[kMaxEvents];              // Convert event ptrs to indexes
-
-	// Convert event ptrs to indexes
-	for (int16 i = 0; i < kMaxEvents; i++) {
-		event_t *wrkEvent = &_events[i];
-		saveEventArr[i] = *wrkEvent;
-		saveEventArr[i].prevEvent = (wrkEvent->prevEvent == 0) ? (event_t *) - 1 : (event_t *)(wrkEvent->prevEvent - _events);
-		saveEventArr[i].nextEvent = (wrkEvent->nextEvent == 0) ? (event_t *) - 1 : (event_t *)(wrkEvent->nextEvent - _events);
-	}
-
-	int16 freeIndex = (_freeEvent == 0) ? -1 : _freeEvent - _events;
-	int16 headIndex = (_headEvent == 0) ? -1 : _headEvent - _events;
-	int16 tailIndex = (_tailEvent == 0) ? -1 : _tailEvent - _events;
-
-	f->write(&curTime,   sizeof(curTime));
-	f->write(&freeIndex, sizeof(freeIndex));
-	f->write(&headIndex, sizeof(headIndex));
-	f->write(&tailIndex, sizeof(tailIndex));
-	f->write(saveEventArr, sizeof(saveEventArr));
-}
-
-// Restore the event list from file with handle f
-void Scheduler::restoreEvents(Common::SeekableReadStream *f) {
-	debugC(1, kDebugSchedule, "restoreEvents");
-
-	uint32   saveTime;
-	int16    freeIndex;                             // Free list index
-	int16    headIndex;                             // Head of list index
-	int16    tailIndex;                             // Tail of list index
-	event_t  savedEvents[kMaxEvents];               // Convert event ptrs to indexes
-
-	f->read(&saveTime,  sizeof(saveTime));          // time of save
-	f->read(&freeIndex, sizeof(freeIndex));
-	f->read(&headIndex, sizeof(headIndex));
-	f->read(&tailIndex, sizeof(tailIndex));
-	f->read(savedEvents, sizeof(savedEvents));
-
-	event_t *wrkEvent;
-	// Restore events indexes to pointers
-	for (int i = 0; i < kMaxEvents; i++) {
-		wrkEvent = &savedEvents[i];
-		_events[i] = *wrkEvent;
-		_events[i].prevEvent = (wrkEvent->prevEvent == (event_t *) - 1) ? (event_t *)0 : &_events[(size_t)wrkEvent->prevEvent ];
-		_events[i].nextEvent = (wrkEvent->nextEvent == (event_t *) - 1) ? (event_t *)0 : &_events[(size_t)wrkEvent->nextEvent ];
-	}
-	_freeEvent = (freeIndex == -1) ? 0 : &_events[freeIndex];
-	_headEvent = (headIndex == -1) ? 0 : &_events[headIndex];
-	_tailEvent = (tailIndex == -1) ? 0 : &_events[tailIndex];
-
-	// Adjust times to fit our time
-	uint32 curTime = getTicks();
-	wrkEvent = _headEvent;                              // The earliest event
-	while (wrkEvent) {                              // While mature events found
-		wrkEvent->time = wrkEvent->time - saveTime + curTime;
-		wrkEvent = wrkEvent->nextEvent;
-	}
-}
-
-void Scheduler::restoreScreen(int screenIndex) {
 // Transition to a new screen as follows:
 //	1. Set the new screen (in the hero object and any carried objects)
 //	2. Read in the screen files for the new screen
 //	3. Initialise prompt line and status line
-
+void Scheduler::restoreScreen(int screenIndex) {
 	debugC(1, kDebugSchedule, "restoreScreen(%d)", screenIndex);
 
 	// 1. Set the new screen in the hero object and any being carried
@@ -254,6 +200,24 @@ void Scheduler::restoreScreen(int screenIndex) {
 
 	// 3. Initialise prompt line and status line
 	_vm->_screen->initNewScreenDisplay();
+}
+
+// Wait (if necessary) for next synchronizing tick
+// Slow machines won't make it by the end of tick, so will just plod on
+// at their own speed, not waiting here, but free running.
+// Note: DOS Versions only
+void Scheduler::waitForRefresh(void) {
+	debugC(1, kDebugSchedule, "waitForRefresh()");
+
+	static uint32 timeout = 0;
+	uint32 t;
+
+	if (timeout == 0)
+		timeout = getDosTicks(true);
+
+	while ((t = getDosTicks(true)) < timeout)
+		;
+	timeout = ++t;
 }
 
 } // End of namespace Hugo

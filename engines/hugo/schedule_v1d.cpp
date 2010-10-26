@@ -88,7 +88,7 @@ void Scheduler_v1d::insertAction(act *action) {
 
 	curEvent->localActionFl = true;             // Rest are for current screen only
 
-	curEvent->time = action->a0.timer + getTicks(); // Convert rel to abs time
+	curEvent->time = action->a0.timer + getDosTicks(false); // Convert rel to abs time
 
 	// Now find the place to insert the event
 	if (!_tailEvent) {                              // Empty queue
@@ -165,7 +165,7 @@ event_t *Scheduler_v1d::doAction(event_t *curEvent) {
 			insertActionList(action->a3.actFailIndex);
 #endif
 
-        // HACK: As the answer is not read, currently it's always considered correct
+		// HACK: As the answer is not read, currently it's always considered correct
 		insertActionList(action->a3.actPassIndex);
 		break;
 		}
@@ -320,4 +320,87 @@ event_t *Scheduler_v1d::doAction(event_t *curEvent) {
 		return wrkEvent;                            // Return next event ptr
 	}
 }
+
+// Write the event queue to the file with handle f
+// Note that we convert all the event structure ptrs to indexes
+// using -1 for NULL.  We can't convert the action ptrs to indexes
+// so we save address of first dummy action ptr to compare on restore.
+void Scheduler_v1d::saveEvents(Common::WriteStream *f) {
+	debugC(1, kDebugSchedule, "saveEvents()");
+
+	uint32 curTime = getDosTicks(false);
+	event_t  saveEventArr[kMaxEvents];              // Convert event ptrs to indexes
+
+	// Convert event ptrs to indexes
+	for (int16 i = 0; i < kMaxEvents; i++) {
+		event_t *wrkEvent = &_events[i];
+		saveEventArr[i] = *wrkEvent;
+		saveEventArr[i].prevEvent = (wrkEvent->prevEvent == 0) ? (event_t *) - 1 : (event_t *)(wrkEvent->prevEvent - _events);
+		saveEventArr[i].nextEvent = (wrkEvent->nextEvent == 0) ? (event_t *) - 1 : (event_t *)(wrkEvent->nextEvent - _events);
+	}
+
+	int16 freeIndex = (_freeEvent == 0) ? -1 : _freeEvent - _events;
+	int16 headIndex = (_headEvent == 0) ? -1 : _headEvent - _events;
+	int16 tailIndex = (_tailEvent == 0) ? -1 : _tailEvent - _events;
+
+	f->write(&curTime,   sizeof(curTime));
+	f->write(&freeIndex, sizeof(freeIndex));
+	f->write(&headIndex, sizeof(headIndex));
+	f->write(&tailIndex, sizeof(tailIndex));
+	f->write(saveEventArr, sizeof(saveEventArr));
+}
+
+// Restore the event list from file with handle f
+void Scheduler_v1d::restoreEvents(Common::SeekableReadStream *f) {
+	debugC(1, kDebugSchedule, "restoreEvents");
+
+	uint32   saveTime;
+	int16    freeIndex;                             // Free list index
+	int16    headIndex;                             // Head of list index
+	int16    tailIndex;                             // Tail of list index
+	event_t  savedEvents[kMaxEvents];               // Convert event ptrs to indexes
+
+	f->read(&saveTime,  sizeof(saveTime));          // time of save
+	f->read(&freeIndex, sizeof(freeIndex));
+	f->read(&headIndex, sizeof(headIndex));
+	f->read(&tailIndex, sizeof(tailIndex));
+	f->read(savedEvents, sizeof(savedEvents));
+
+	event_t *wrkEvent;
+	// Restore events indexes to pointers
+	for (int i = 0; i < kMaxEvents; i++) {
+		wrkEvent = &savedEvents[i];
+		_events[i] = *wrkEvent;
+		_events[i].prevEvent = (wrkEvent->prevEvent == (event_t *) - 1) ? (event_t *)0 : &_events[(size_t)wrkEvent->prevEvent ];
+		_events[i].nextEvent = (wrkEvent->nextEvent == (event_t *) - 1) ? (event_t *)0 : &_events[(size_t)wrkEvent->nextEvent ];
+	}
+	_freeEvent = (freeIndex == -1) ? 0 : &_events[freeIndex];
+	_headEvent = (headIndex == -1) ? 0 : &_events[headIndex];
+	_tailEvent = (tailIndex == -1) ? 0 : &_events[tailIndex];
+
+	// Adjust times to fit our time
+	uint32 curTime = getDosTicks(false);
+	wrkEvent = _headEvent;                              // The earliest event
+	while (wrkEvent) {                              // While mature events found
+		wrkEvent->time = wrkEvent->time - saveTime + curTime;
+		wrkEvent = wrkEvent->nextEvent;
+	}
+}
+
+// This is the scheduler which runs every tick.  It examines the event queue
+// for any events whose time has come.  It dequeues these events and performs
+// the action associated with the event, returning it to the free queue
+void Scheduler_v1d::runScheduler() {
+	debugC(6, kDebugSchedule, "runScheduler");
+
+	uint32 ticker;                                  // The time now, in ticks
+	event_t *curEvent;                              // Event ptr
+
+	ticker = getDosTicks(false);
+
+	curEvent = _headEvent;                          // The earliest event
+	while (curEvent && curEvent->time <= ticker)    // While mature events found
+		curEvent = doAction(curEvent);              // Perform the action (returns next_p)
+}
+
 } // End of namespace Hugo

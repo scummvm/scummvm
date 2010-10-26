@@ -42,6 +42,7 @@
 #include "hugo/route.h"
 #include "hugo/util.h"
 #include "hugo/parser.h"
+#include "hugo/schedule.h"
 
 namespace Hugo {
 
@@ -103,6 +104,8 @@ void ObjectHandler_v1d::updateImages() {
 			}
 		}
 	}
+
+	_vm->_scheduler->waitForRefresh();
 
 	// Cycle any animating objects
 	for (int i = 0; i < num_objs; i++) {

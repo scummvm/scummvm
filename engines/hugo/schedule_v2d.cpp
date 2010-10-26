@@ -101,7 +101,7 @@ void Scheduler_v2d::insertAction(act *action) {
 		break;
 	}
 
-	curEvent->time = action->a0.timer + getTicks(); // Convert rel to abs time
+	curEvent->time = action->a0.timer + getDosTicks(false); // Convert rel to abs time
 
 	// Now find the place to insert the event
 	if (!_tailEvent) {                              // Empty queue
@@ -134,10 +134,10 @@ void Scheduler_v2d::insertAction(act *action) {
 	}
 }
 
-event_t *Scheduler_v2d::doAction(event_t *curEvent) {
 // This function performs the action in the event structure pointed to by p
 // It dequeues the event and returns it to the free list.  It returns a ptr
 // to the next action in the list, except special case of NEW_SCREEN
+event_t *Scheduler_v2d::doAction(event_t *curEvent) {
 	debugC(1, kDebugSchedule, "doAction - Event action type : %d", curEvent->action->a0.actType);
 
 	status_t &gameStatus = _vm->getGameStatus();

@@ -91,7 +91,7 @@ void ObjectHandler_v3d::moveObjects() {
 				switch (obj->seqNumb) {
 				case 4:
 					if (!obj->vx) {                 // Got 4 directions
-						if (obj->vx != obj->oldvx)  { // vx just stopped
+						if (obj->vx != obj->oldvx) { // vx just stopped
 							if (dy >= 0)
 								obj->currImagePtr = obj->seqList[DOWN].seqPtr;
 							else
@@ -119,7 +119,7 @@ void ObjectHandler_v3d::moveObjects() {
 					obj->cycling = CYCLE_FORWARD;
 				} else {
 					obj->cycling = NOT_CYCLING;
-					_vm->boundaryCollision(obj);     // Must have got hero!
+					_vm->boundaryCollision(obj);    // Must have got hero!
 				}
 				obj->oldvx = obj->vx;
 				obj->oldvy = obj->vy;
@@ -180,7 +180,7 @@ void ObjectHandler_v3d::moveObjects() {
 			int y2 = obj->y + currImage->y2;        // Bottom edge
 
 			if ((obj->cycling > ALMOST_INVISIBLE) && (obj->priority == FLOATING))
-				_vm->clearBoundary(x1, x2, y2);          // Clear our own boundary
+				_vm->clearBoundary(x1, x2, y2);     // Clear our own boundary
 
 			// Allowable motion wrt boundary
 			int dx = _vm->deltaX(x1, x2, obj->vx, y2);
@@ -198,7 +198,7 @@ void ObjectHandler_v3d::moveObjects() {
 			}
 
 			if ((obj->cycling > ALMOST_INVISIBLE) && (obj->priority == FLOATING))
-				_vm->storeBoundary(x1, x2, y2);          // Re-store our own boundary
+				_vm->storeBoundary(x1, x2, y2);     // Re-store our own boundary
 
 			obj->x += dx;                           // Update object position
 			obj->y += dy;

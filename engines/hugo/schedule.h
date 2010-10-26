@@ -52,16 +52,18 @@ public:
 	virtual ~Scheduler();
 
 	virtual void insertAction(act *action) = 0;
+	virtual void restoreEvents(Common::SeekableReadStream *f) = 0;
+	virtual void runScheduler() = 0;
+	virtual void saveEvents(Common::WriteStream *f) = 0;
 
 	void   initEventQueue();
 	void   insertActionList(uint16 actIndex);
 	void   decodeString(char *line);
-	void   runScheduler();
-	uint32 getTicks();
+	uint32 getWinTicks();
+	uint32 getDosTicks(bool updateFl);
+	void   waitForRefresh(void);
 	void   processBonus(int bonusIndex);
 	void   newScreen(int screenIndex);
-	void   restoreEvents(Common::SeekableReadStream *f);
-	void   saveEvents(Common::WriteStream *f);
 	void   restoreScreen(int screenIndex);
 
 protected:
@@ -91,6 +93,9 @@ public:
 
 	virtual const char *getCypher();
 	virtual void insertAction(act *action);
+	virtual void restoreEvents(Common::SeekableReadStream *f);
+	virtual void saveEvents(Common::WriteStream *f);
+	virtual void runScheduler();
 protected:
 	virtual void delQueue(event_t *curEvent);
 	virtual event_t *doAction(event_t *curEvent);
@@ -124,7 +129,10 @@ public:
 	~Scheduler_v1w();
 
 	virtual event_t *doAction(event_t *curEvent);
+	void insertAction(act *action);
+	void restoreEvents(Common::SeekableReadStream *f);
+	void runScheduler();
+	void saveEvents(Common::WriteStream *f);
 };
 } // End of namespace Hugo
-
 #endif //HUGO_SCHEDULE_H
