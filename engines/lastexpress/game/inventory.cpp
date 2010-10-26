@@ -406,8 +406,13 @@ void Inventory::setLocationAndProcess(InventoryItem item, ObjectLocation locatio
 //////////////////////////////////////////////////////////////////////////
 // Serializable
 //////////////////////////////////////////////////////////////////////////
-void Inventory::saveLoadWithSerializer(Common::Serializer &) {
-	error("Inventory::saveLoadWithSerializer: not implemented!");
+void Inventory::saveLoadWithSerializer(Common::Serializer &s) {
+	for (uint i = 0; i < ARRAYSIZE(_entries); i++)
+		_entries[i].saveLoadWithSerializer(s);
+}
+
+void Inventory::saveSelectedItem(Common::Serializer &s) {
+	s.syncAsUint32LE(_selectedItem);
 }
 
 //////////////////////////////////////////////////////////////////////////

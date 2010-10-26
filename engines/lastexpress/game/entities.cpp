@@ -244,10 +244,23 @@ int Entities::getCompartments1(int index) {
 //////////////////////////////////////////////////////////////////////////
 // Savegame
 //////////////////////////////////////////////////////////////////////////
-void Entities::saveLoadWithSerializer(Common::Serializer &ser) {
-	_header->saveLoadWithSerializer(ser);
+void Entities::saveLoadWithSerializer(Common::Serializer &s) {
+	_header->saveLoadWithSerializer(s);
 	for (uint i = 1; i < _entities.size(); i++)
-		_entities[i]->saveLoadWithSerializer(ser);
+		_entities[i]->saveLoadWithSerializer(s);
+}
+
+void Entities::savePositions(Common::Serializer &s) {
+	for (uint i = 0; i < _positionsCount; i++)
+		s.syncAsUint32LE(_positions[i]);
+}
+
+void Entities::saveCompartments(Common::Serializer &s) {
+	for (uint i = 0; i < _compartmentsCount; i++)
+		s.syncAsUint32LE(_compartments[i]);
+
+	for (uint i = 0; i < _compartmentsCount; i++)
+		s.syncAsUint32LE(_compartments1[i]);
 }
 
 //////////////////////////////////////////////////////////////////////////

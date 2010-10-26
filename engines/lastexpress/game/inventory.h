@@ -56,7 +56,7 @@ class Inventory : Common::Serializable, public EventHandler {
 public:
 
 	// Entry
-	struct InventoryEntry {
+	struct InventoryEntry : Common::Serializable {
 		CursorStyle cursor;
 		SceneIndex scene;
 		byte field_2;
@@ -77,6 +77,16 @@ public:
 
 		Common::String toString() {
 			return Common::String::printf("{ %d - %d - %d - %d - %d - %d - %d }", cursor, scene, field_2, isSelectable, isPresent, manualSelect, location);
+		}
+
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			s.syncAsByte(cursor);
+			s.syncAsByte(scene);
+			s.syncAsByte(field_2);
+			s.syncAsByte(isSelectable);
+			s.syncAsByte(isPresent);
+			s.syncAsByte(manualSelect);
+			s.syncAsByte(location);
 		}
 	};
 
@@ -115,7 +125,8 @@ public:
 	bool isEggHighlighted() { return _flagEggHightlighted; }
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &s);
+	void saveSelectedItem(Common::Serializer &s);
 
 	/**
 	 * Convert this object into a string representation.

@@ -44,11 +44,13 @@ struct SavePoint;
 class EntityData : Common::Serializable {
 public:
 
-	struct EntityParameters {
+	struct EntityParameters : Common::Serializable{
 		virtual ~EntityParameters() {}
 		virtual Common::String toString() = 0;
 
 		virtual void update(uint32 index) = 0;
+
+		virtual void saveLoadWithSerializer(Common::Serializer &s) = 0;
 	};
 
 	struct EntityParametersIIII : EntityParameters {
@@ -95,6 +97,17 @@ public:
 			case 7: param8 = 1; break;
 			}
 		}
+
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			s.syncAsUint32LE(param1);
+			s.syncAsUint32LE(param2);
+			s.syncAsUint32LE(param3);
+			s.syncAsUint32LE(param4);
+			s.syncAsUint32LE(param5);
+			s.syncAsUint32LE(param6);
+			s.syncAsUint32LE(param7);
+			s.syncAsUint32LE(param8);
+		}
 	};
 
 	struct EntityParametersSIII : EntityParameters {
@@ -130,6 +143,15 @@ public:
 			case 7: param8 = 1; break;
 			}
 		}
+
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			s.syncBytes((byte *)&seq, 12);
+			s.syncAsUint32LE(param4);
+			s.syncAsUint32LE(param5);
+			s.syncAsUint32LE(param6);
+			s.syncAsUint32LE(param7);
+			s.syncAsUint32LE(param8);
+		}
 	};
 
 	struct EntityParametersSIIS : EntityParameters {
@@ -158,6 +180,13 @@ public:
 			case 4: param5 = 1; break;
 			}
 		}
+
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			s.syncBytes((byte *)&seq1, 12);
+			s.syncAsUint32LE(param4);
+			s.syncAsUint32LE(param5);
+			s.syncBytes((byte *)&seq2, 12);
+		}
 	};
 
 	struct EntityParametersISSI : EntityParameters {
@@ -185,6 +214,13 @@ public:
 			case 0: param1 = 1; break;
 			case 7: param8 = 1; break;
 			}
+		}
+
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			s.syncAsUint32LE(param1);
+			s.syncBytes((byte *)&seq1, 12);
+			s.syncBytes((byte *)&seq2, 12);
+			s.syncAsUint32LE(param8);
 		}
 	};
 
@@ -221,6 +257,15 @@ public:
 			case 7: param8 = 1; break;
 			}
 		}
+
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			s.syncAsUint32LE(param1);
+			s.syncBytes((byte *)&seq, 12);
+			s.syncAsUint32LE(param5);
+			s.syncAsUint32LE(param6);
+			s.syncAsUint32LE(param7);
+			s.syncAsUint32LE(param8);
+		}
 	};
 
 	struct EntityParametersSSII : EntityParameters {
@@ -249,32 +294,38 @@ public:
 			case 7: param8 = 1; break;
 			}
 		}
+
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			s.syncBytes((byte *)&seq1, 12);
+			s.syncBytes((byte *)&seq2, 12);
+			s.syncAsUint32LE(param7);
+			s.syncAsUint32LE(param8);
+		}
 	};
 
-	struct EntityParametersSSSI : EntityParameters {
+	struct EntityParametersSSS : EntityParameters {
 		char seq1[12];
 		char seq2[12];
-		char seq3[12];
-		uint param10;
+		char seq3[8];
 
-		EntityParametersSSSI() {
+		EntityParametersSSS() {
 			memset(&seq1, 0, 12);
 			memset(&seq2, 0, 12);
-			memset(&seq3, 0, 12);
-			param10 = 0;
+			memset(&seq3, 0, 8);
 		}
 
 		Common::String toString() {
-			return Common::String::printf("SSSI: %s %s %s %d\n", seq1, seq2, seq3, param10);
+			return Common::String::printf("SSS: %s %s %s\n", seq1, seq2, seq3);
 		}
 
 		void update(uint32 index) {
-			switch (index) {
-			default:
-				error("EntityParametersSSSI::update: invalid index (was: %d)", index);
+			error("EntityParametersSSS::update: cannot update this type of parameters", index);
+		}
 
-			case 9: param10 = 1; break;			
-			}
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			s.syncBytes((byte *)&seq1, 12);
+			s.syncBytes((byte *)&seq2, 12);
+			s.syncBytes((byte *)&seq3, 8);
 		}
 	};
 
@@ -303,6 +354,13 @@ public:
 			case 0: param1 = 1; break;
 			case 1: param2 = 1; break;
 			}
+		}
+
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			s.syncAsUint32LE(param1);
+			s.syncAsUint32LE(param2);
+			s.syncBytes((byte *)&seq1, 12);
+			s.syncBytes((byte *)&seq2, 12);
 		}
 	};
 
@@ -339,6 +397,15 @@ public:
 			case 7: param8 = 1; break;
 			}
 		}
+
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			s.syncAsUint32LE(param1);
+			s.syncAsUint32LE(param2);
+			s.syncBytes((byte *)&seq, 12);
+			s.syncAsUint32LE(param6);
+			s.syncAsUint32LE(param7);
+			s.syncAsUint32LE(param8);
+		}
 	};
 
 	struct EntityParametersIIIS : EntityParameters {
@@ -374,6 +441,15 @@ public:
 			case 7: param8 = 1; break;
 			}
 		}
+
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			s.syncAsUint32LE(param1);
+			s.syncAsUint32LE(param2);
+			s.syncAsUint32LE(param3);
+			s.syncBytes((byte *)&seq, 12);
+			s.syncAsUint32LE(param7);
+			s.syncAsUint32LE(param8);
+		}
 	};
 
 	struct EntityParametersI5S : EntityParameters {
@@ -392,9 +468,18 @@ public:
 			param5 = 0;
 			memset(&seq, 0, 12);
 		}
+
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			s.syncAsUint32LE(param1);
+			s.syncAsUint32LE(param2);
+			s.syncAsUint32LE(param3);
+			s.syncAsUint32LE(param4);
+			s.syncAsUint32LE(param5);
+			s.syncBytes((byte *)&seq, 12);
+		}
 	};
 
-	struct EntityCallParameters {
+	struct EntityCallParameters : Common::Serializable {
 		EntityParameters *parameters[4];
 
 		EntityCallParameters() {
@@ -414,9 +499,15 @@ public:
 				parameters[i] = NULL;
 			}
 		}
+
+		// Serializable
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			for (uint i = 0; i < ARRAYSIZE(parameters); i++)
+				parameters[i]->saveLoadWithSerializer(s);
+		}
 	};
 
-	struct EntityCallData {
+	struct EntityCallData : Common::Serializable {
 		byte callbacks[16];
 		byte currentCall;
 		EntityPosition entityPosition;      // word
@@ -505,6 +596,9 @@ public:
 
 			return str;
 		}
+
+		// Serializable
+		void saveLoadWithSerializer(Common::Serializer &s);
 	};
 
 	EntityData() {}

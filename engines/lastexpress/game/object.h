@@ -38,7 +38,7 @@ class LastExpressEngine;
 class Objects : Common::Serializable {
 public:
 
-	struct Object {                         // All  fields should be saved as bytes
+	struct Object : Common::Serializable {                         // All fields should be saved as bytes
 		EntityIndex entity;
 		ObjectLocation location;
 		CursorStyle cursor;
@@ -54,6 +54,15 @@ public:
 		}
 
 		Common::String toString();
+
+		// Serializable
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			s.syncAsByte(entity);
+			s.syncAsByte(location);
+			s.syncAsByte(cursor);
+			s.syncAsByte(cursor2);
+			s.syncAsByte(location2);
+		}
 	};
 
 	Objects(LastExpressEngine *engine);
@@ -63,7 +72,7 @@ public:
 	void updateLocation2(ObjectIndex index, ObjectLocation location2);
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &s);
 
 	/**
 	 * Convert this object into a string representation.

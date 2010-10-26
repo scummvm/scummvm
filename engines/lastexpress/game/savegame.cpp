@@ -25,8 +25,11 @@
 
 #include "lastexpress/game/savegame.h"
 
+#include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/menu.h"
+#include "lastexpress/game/object.h"
+#include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/debug.h"
@@ -184,11 +187,14 @@ void SaveLoad::saveGame(SavegameType type, EntityIndex entity, uint32 value) {
 		Common::Serializer ser(_savegame, NULL);
 		entry.saveLoadWithSerializer(ser);
 
-		if (!entry.isValid() || getState()->time < entry.time || (type == kSavegameTypeTickInterval && getState()->time == entry.time))
+		if (!entry.isValid()) {
+			warning("SaveLoad::saveGame: Invalid entry. This savegame might be corrupted!");
+			_savegame->seek(header.offset);
+		} else if (getState()->time < entry.time || (type == kSavegameTypeTickInterval && getState()->time == entry.time)) {
+			// Not ready to save a game, skipping!
 			return;
-
-		if ((type == kSavegameTypeTime || type == kSavegameTypeEvent)
-		 && (entry.type == kSavegameTypeTickInterval && (getState()->time - entry.time) < 450)) {
+		} else if ((type == kSavegameTypeTime || type == kSavegameTypeEvent)
+			&& (entry.type == kSavegameTypeTickInterval && (getState()->time - entry.time) < 450)) {
 			_savegame->seek(header.offsetEntry);
 			--header.count;
 		} else {
@@ -287,15 +293,64 @@ bool SaveLoad::loadMainHeader(Common::InSaveFile *stream, SavegameMainHeader *he
 	return true;
 }
 
-void SaveLoad::loadEntryHeader(SavegameEntryHeader *header) {
-	error("SaveLoad::loadEntryHeader: not implemented!");
-}
-
 //////////////////////////////////////////////////////////////////////////
 // Entries
 //////////////////////////////////////////////////////////////////////////
 void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
-	warning("SaveLoad::writeEntry: not implemented!");
+#define WRITE_ENTRY(name, func, expected) { \
+	uint32 _prevPosition = _savegame->pos(); \
+	func; \
+	uint32 _count = _savegame->pos() - _prevPosition; \
+	debugC(kLastExpressDebugSavegame, "Savegame: Writing " #name ": %d bytes", _count); \
+	if (expected != 0 && _count != expected)\
+		error("SaveLoad::writeEntry: Number of bytes written (%d) differ from expected count (%d)", _count, expected); \
+}
+
+	SavegameEntryHeader header;
+
+	header.type = type;
+	header.time = getState()->time;
+	header.chapter = getProgress().chapter;
+	header.value = value;
+
+	// Save position
+	uint32 pos = _savegame->pos();
+
+	// Write header
+	Common::Serializer ser(NULL, _savegame);
+	header.saveLoadWithSerializer(ser);
+
+	computePadding();
+
+	// Write game data
+	WRITE_ENTRY("entity index", ser.syncAsUint32LE(entity), 4);
+	WRITE_ENTRY("state", getState()->saveLoadWithSerializer(ser), 4 + 4 + 4 + 4 + 1 + 4 + 4);
+	WRITE_ENTRY("selected item", getInventory()->saveSelectedItem(ser), 4);
+	WRITE_ENTRY("positions", getEntities()->savePositions(ser), 4 * 1000);
+	WRITE_ENTRY("compartments", getEntities()->saveCompartments(ser), 4 * 16 * 2);
+	WRITE_ENTRY("progress", getProgress().saveLoadWithSerializer(ser), 4 * 128);
+	WRITE_ENTRY("events", getState()->saveEvents(ser), 512);
+	WRITE_ENTRY("inventory", getInventory()->saveLoadWithSerializer(ser), 7 * 32);
+	WRITE_ENTRY("objects", getObjects()->saveLoadWithSerializer(ser), 5 * 128);
+	WRITE_ENTRY("entities", getEntities()->saveLoadWithSerializer(ser), 1262 * 40);
+	WRITE_ENTRY("sound", getSound()->saveLoadWithSerializer(ser), 0);
+	WRITE_ENTRY("savepoints", getSavePoints()->saveLoadWithSerializer(ser), 0);
+
+	header.padding = computePadding();
+
+	// Save end position
+	uint32 endpos = _savegame->pos();
+
+	// Validate entry header
+	if (!header.isValid())
+		error("SaveLoad::writeEntry: entry header is invalid");
+
+	// Save the header with the updated info
+	_savegame->seek(pos);
+	header.saveLoadWithSerializer(ser);
+
+	// Move back to the end of the entry
+	_savegame->seek(endpos);
 }
 
 void SaveLoad::readEntry(SavegameType type, EntityIndex entity, uint32 value) {
@@ -307,6 +362,16 @@ SaveLoad::SavegameEntryHeader *SaveLoad::getEntry(uint32 index) {
 		error("SaveLoad::getEntry: invalid index (was:%d, max:%d)", index, _gameHeaders.size() - 1);
 
 	return _gameHeaders[index];
+}
+
+uint32 SaveLoad::computePadding() {
+	warning("SaveLoad::computePadding: not implemented!");
+
+	// Hack
+	while (_savegame->pos() & 15)
+		_savegame->writeByte(0);
+
+	return _savegame->pos();
 }
 
 //////////////////////////////////////////////////////////////////////////

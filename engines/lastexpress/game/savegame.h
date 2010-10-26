@@ -82,8 +82,8 @@
 namespace LastExpress {
 
 // Savegame signatures
-#define SAVEGAME_SIGNATURE 0x12001200
-#define SAVEGAME_HEADER    0xE660E660
+#define SAVEGAME_SIGNATURE       0x12001200
+#define SAVEGAME_ENTRY_SIGNATURE 0xE660E660
 
 class LastExpressEngine;
 
@@ -209,17 +209,17 @@ private:
 		uint32 signature;
 		SavegameType type;
 		TimeValue time;
-		int field_C;
+		int padding;
 		ChapterIndex chapter;
 		uint32 value;
 		int field_18;
 		int field_1C;
 
 		SavegameEntryHeader() {
-			signature = 0;
+			signature = SAVEGAME_ENTRY_SIGNATURE;
 			type = kSavegameTypeIndex;
 			time = kTimeNone;
-			field_C = 0;
+			padding = 0;
 			chapter = kChapterAll;
 			value = 0;
 			field_18 = 0;
@@ -230,7 +230,7 @@ private:
 			s.syncAsUint32LE(signature);
 			s.syncAsUint32LE(type);
 			s.syncAsUint32LE(time);
-			s.syncAsUint32LE(field_C);
+			s.syncAsUint32LE(padding);
 			s.syncAsUint32LE(chapter);
 			s.syncAsUint32LE(value);
 			s.syncAsUint32LE(field_18);
@@ -238,7 +238,7 @@ private:
 		}
 
 		bool isValid() {
-			if (signature != SAVEGAME_HEADER)
+			if (signature != SAVEGAME_ENTRY_SIGNATURE)
 				return false;
 
 			if (type < kSavegameTypeTime || type > kSavegameTypeTickInterval)
@@ -247,7 +247,7 @@ private:
 			if (time < kTimeStartGame || time > kTimeCityConstantinople)
 				return false;
 
-			if (field_C <= 0 || field_C >= 15)
+			if (padding <= 0 || padding & 15)
 				return false;
 
 			/* No check for < 0, as it cannot happen normaly */
@@ -264,12 +264,12 @@ private:
 
 	// Headers
 	static bool loadMainHeader(Common::InSaveFile *stream, SavegameMainHeader *header);
-	void loadEntryHeader(SavegameEntryHeader *header);
 
 	// Entries
 	void writeEntry(SavegameType type, EntityIndex entity, uint32 value);
 	void readEntry(SavegameType type, EntityIndex entity, uint32 value);
 	SavegameEntryHeader *getEntry(uint32 index);
+	uint32 computePadding();
 
 	// Opening save files
 	static Common::String getFilename(GameId id);

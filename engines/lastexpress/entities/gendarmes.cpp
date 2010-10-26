@@ -111,7 +111,7 @@ IMPLEMENT_FUNCTION_II(8, Gendarmes, arrestUpdateEntity, CarIndex, EntityPosition
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_IISS(9, Gendarmes, function9, CarIndex, EntityPosition)
-	EntityData::EntityParametersSSSI *parameters1 = (EntityData::EntityParametersSSSI*)_data->getCurrentParameters(1);
+	EntityData::EntityParametersSSS *parameters1 = (EntityData::EntityParametersSSS*)_data->getCurrentParameters(1);
 	EntityData::EntityParametersISII *parameters2 = (EntityData::EntityParametersISII*)_data->getCurrentParameters(2);
 
 	switch (savepoint.action) {

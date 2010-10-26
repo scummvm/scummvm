@@ -45,6 +45,55 @@ namespace LastExpress {
 //////////////////////////////////////////////////////////////////////////
 // EntityData
 //////////////////////////////////////////////////////////////////////////
+
+void EntityData::EntityCallData::saveLoadWithSerializer(Common::Serializer &s) {
+	for (uint i = 0; i < ARRAYSIZE(callbacks); i++)
+		s.syncAsByte(callbacks[i]);
+
+	s.syncAsByte(currentCall);
+	s.syncAsUint16LE(entityPosition);
+	s.syncAsUint16LE(location);
+	s.syncAsUint16LE(car);
+	s.syncAsByte(field_497);
+	s.syncAsByte(entity);
+	s.syncAsByte(inventoryItem);
+	s.syncAsByte(direction);
+	s.syncAsUint16LE(field_49B);
+	s.syncAsUint16LE(currentFrame);
+	s.syncAsUint16LE(currentFrame2);
+	s.syncAsUint16LE(field_4A1);
+	s.syncAsUint16LE(field_4A3);
+	s.syncAsByte(clothes);
+	s.syncAsByte(position);
+	s.syncAsByte(car2);
+	s.syncAsByte(doProcessEntity);
+	s.syncAsByte(field_4A9);
+	s.syncAsByte(field_4AA);
+	s.syncAsByte(directionSwitch);
+
+	// Sync strings
+#define SYNC_STRING(varName, count) { \
+	char seqName[13]; \
+	memset(&seqName, 0, count); \
+	if (s.isSaving()) strcpy((char *)&seqName, varName.c_str()); \
+	s.syncBytes((byte *)&seqName, count); \
+	if (s.isLoading()) varName = seqName; \
+}
+
+	SYNC_STRING(sequenceName, 13);
+	SYNC_STRING(sequenceName2, 13);
+	SYNC_STRING(sequenceNamePrefix, 7);
+	SYNC_STRING(sequenceNameCopy, 13);
+
+#undef SYNC_STRING
+
+	// Skip pointers to frame & sequences
+	s.skip(5 * 4);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// EntityData
+//////////////////////////////////////////////////////////////////////////
 EntityData::EntityParameters *EntityData::getParameters(uint callback, byte index) const {
 	if (callback >= 9)
 		error("EntityData::getParameters: invalid callback value (was: %d, max: 9)", callback);
@@ -82,8 +131,11 @@ void EntityData::updateParameters(uint32 index) const {
 		error("EntityData::updateParameters: invalid param index to update (was:%d, max:32)!", index);
 }
 
-void EntityData::saveLoadWithSerializer(Common::Serializer &) {
-	error("EntityData::saveLoadWithSerializer: not implemented!");
+void EntityData::saveLoadWithSerializer(Common::Serializer &s) {
+	for (uint i = 0; i < ARRAYSIZE(_parameters); i++)
+		_parameters[i].saveLoadWithSerializer(s);
+
+	_data.saveLoadWithSerializer(s);
 }
 
 //////////////////////////////////////////////////////////////////////////

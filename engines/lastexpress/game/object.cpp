@@ -89,8 +89,9 @@ void Objects::updateLocation2(ObjectIndex index, ObjectLocation location2) {
 //////////////////////////////////////////////////////////////////////////
 // Serializable
 //////////////////////////////////////////////////////////////////////////
-void Objects::saveLoadWithSerializer(Common::Serializer &) {
-	error("Objects::saveLoadWithSerializer: not implemented!");
+void Objects::saveLoadWithSerializer(Common::Serializer &s) {
+	for (int i = 0; i < ARRAYSIZE(_objects); i++)
+		_objects[i].saveLoadWithSerializer(s);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -99,7 +100,7 @@ void Objects::saveLoadWithSerializer(Common::Serializer &) {
 Common::String Objects::toString() {
 	Common::String ret = "";
 
-	for (int i = 0; i < kObjectMax; i++)
+	for (int i = 0; i < ARRAYSIZE(_objects); i++)
 		ret += Common::String::printf("%d : %s\n", i, _objects[i].toString().c_str());
 
 	return ret;

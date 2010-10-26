@@ -503,8 +503,52 @@ SoundManager::SoundEntry *SoundManager::getEntry(SoundType type) {
 //////////////////////////////////////////////////////////////////////////
 // Savegame
 //////////////////////////////////////////////////////////////////////////
-void SoundManager::saveLoadWithSerializer(Common::Serializer &ser) {
-	error("Sound::saveLoadWithSerializer: not implemented!");
+void SoundManager::saveLoadWithSerializer(Common::Serializer &s) {
+	s.syncAsUint32LE(_state);
+	s.syncAsUint32LE(_currentType);
+
+	// Compute the number of entries to save
+	uint32 count = 0;
+	if (s.isSaving()) {
+		for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i)
+			if ((*i)->name2.matchString("NISSND?"))
+				++count;
+	}
+
+	s.syncAsUint32LE(count);
+
+	// Save or load each entry data
+	if (s.isSaving()) {
+		for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
+			SoundEntry *entry = *i;
+			if (entry->name2.matchString("NISSND?") && (entry->status.status & kFlagType7) != kFlag3) {
+				s.syncAsUint32LE(entry->status.status); // status;
+				s.syncAsUint32LE(entry->type); // type;
+				s.syncAsUint32LE(entry->field_1C); // field_8;
+				s.syncAsUint32LE(entry->time); // time;
+				s.syncAsUint32LE(entry->field_34); // field_10;
+				s.syncAsUint32LE(entry->field_38); // field_14;
+				s.syncAsUint32LE(entry->entity); // entity;
+
+				uint32 field_1C = entry->field_48 - _data2;
+				if (field_1C > kFlag8)
+					field_1C = 0;
+				s.syncAsUint32LE(field_1C); // field_1C;
+
+				s.syncAsUint32LE(entry->field_4C); // field_20;
+
+				char name1[16];
+				strcpy((char *)&name1, entry->name1.c_str());
+				s.syncBytes((byte *)&name1, 16);
+
+				char name2[16];
+				strcpy((char *)&name2, entry->name2.c_str());
+				s.syncBytes((byte *)&name2, 16);
+			}
+		}
+	} else {
+		error("Sound::saveLoadWithSerializer: not implemented!");
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

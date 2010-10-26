@@ -53,6 +53,8 @@ public:
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &ser);
+	void savePositions(Common::Serializer &ser);
+	void saveCompartments(Common::Serializer &ser);
 
 	void setup(bool isFirstChapter, EntityIndex entity);
 	void setupChapter(ChapterIndex chapter);
