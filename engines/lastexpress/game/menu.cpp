@@ -1376,7 +1376,7 @@ void Menu::adjustIndex(uint32 time1, uint32 time2, bool searchEntry) {
 						}
 
 						++currentIndex;
-					} while (currentIndex >= _savegameIndex);
+					} while (currentIndex <= _savegameIndex);
 				}
 			} else {
 				index = _index + 1;
