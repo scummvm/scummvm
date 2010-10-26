@@ -753,6 +753,8 @@ void AgiEngine::parseFeatures() {
 			}
 		}
 	}
+
+	free(features);
 }
 
 } // End of namespace Agi
