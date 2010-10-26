@@ -107,8 +107,17 @@ uint32 SaveLoad::init(GameId id, bool resetHeaders) {
 		error("SaveLoad::init - Savegame seems to be corrupted (not enough data: %i bytes)", save->size());
 
 	// Load all savegame data
-	while (!save->eos() && !save->err())
-		_savegame->writeByte(save->readByte());
+	uint8* buf = new uint8[4096];
+	while (!save->eos() && !save->err()) {
+		uint32 count = save->read(buf, sizeof(buf));
+		if (count) {
+			uint32 w = _savegame->write(buf, count);
+			assert (w == count);
+		}
+	}
+	if (save->err())
+		error("SaveLoad::init - Error reading savegame");
+	delete[] buf;
 	_savegame->seek(0);
 
 	SAFE_DELETE(save);
