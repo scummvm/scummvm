@@ -406,7 +406,9 @@ SceneIndex Action::processHotspot(const SceneHotspot &hotspot) {
 //////////////////////////////////////////////////////////////////////////
 // Action 0
 IMPLEMENT_ACTION(dummy)
-	error("Action::action_dummy: Function should never be called (hotspot action: %d)!", hotspot.action);
+	warning("Action::action_dummy: Dummy action function called (hotspot action: %d)!", hotspot.action);
+
+	return kSceneInvalid;
 }
 
 //////////////////////////////////////////////////////////////////////////
