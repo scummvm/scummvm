@@ -318,8 +318,8 @@ public:
 			return Common::String::printf("SSS: %s %s %s\n", seq1, seq2, seq3);
 		}
 
-		void update(uint32 index) {
-			error("EntityParametersSSS::update: cannot update this type of parameters", index);
+		void update(uint32) {
+			error("EntityParametersSSS::update: cannot update this type of parameters");
 		}
 
 		void saveLoadWithSerializer(Common::Serializer &s) {
