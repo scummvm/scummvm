@@ -292,7 +292,10 @@ void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 		// versions. m_kiewitz knew about this flag before I (lskovlun) implemented it, 
 		// so it is possible that more test cases are known. Also, some presently open
 		// SCI1.1 bugs may be fixed by this and should be re-tested with this patch generalized.
-		if (it->scaleSignal & kScaleSignalDontSetNsrect)
+
+		// NOTE: *this* breaks at least eco quest 2. One should go through interpreters and check
+		//  the code before enabling it for more games (TODO)
+		if ((g_sci->getGameId() == GID_HOYLE4) && (it->scaleSignal & kScaleSignalDontSetNsrect))
 			setNsRect = false;
 
 		if (setNsRect) {
