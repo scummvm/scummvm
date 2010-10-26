@@ -145,7 +145,6 @@ private:
 	// Game-related
 	void startGame();
 	void switchGame();
-	bool isGameFinished() const;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Overlays & elements
@@ -183,7 +182,7 @@ private:
 	uint32 _lowerTime;    // lower time value
 
 	uint32 _index;
-	uint32 _index2;
+	uint32 _savegameIndex;
 	uint32 _time;
 	uint32 _delta;
 	bool _handleTimeDelta;

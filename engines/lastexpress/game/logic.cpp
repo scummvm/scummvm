@@ -402,7 +402,23 @@ void Logic::eventTick(const Common::Event &) {
 // Game over, Chapters & credits
 //////////////////////////////////////////////////////////////////////////
 
-// Handle game over
+/**
+ * Resets the game state.
+ */
+void Logic::resetState() {
+	getState()->scene = kSceneDefault;
+
+	warning("Logic::resetState: not implemented! You need to restart the engine until this is implemented.");
+}
+
+/**
+ * Handle game over
+ *
+ * @param type 		 The savegame type.
+ * @param value 	 The value (event, time, index, ...)
+ * @param sceneIndex Index of the scene to show.
+ * @param showScene  true to show a scene, false to return to menu directly
+ */
 void Logic::gameOver(SavegameType type, uint32 value, SceneIndex sceneIndex, bool showScene) const {
 
 	getSound()->processEntries();

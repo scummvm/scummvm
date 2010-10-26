@@ -342,6 +342,8 @@ enum SceneIndex {
 	kSceneNone                    = 0,
 	kSceneMenu                    = 1,
 
+	kSceneIntro                   = 30,
+
 	// Inventory
 	kSceneMatchbox                = 31,
 	kSceneTelegram                = 32,

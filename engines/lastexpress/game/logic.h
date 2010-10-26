@@ -54,6 +54,7 @@ public:
 	void eventMouse(const Common::Event &ev);
 	void eventTick(const Common::Event &ev);
 
+	void resetState();
 	void gameOver(SavegameType type, uint32 value, SceneIndex sceneIndex, bool showScene) const;
 	void playFinalSequence() const;
 	void updateCursor(bool redraw = true) const;
