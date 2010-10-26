@@ -805,6 +805,8 @@ public:
 	void death();
 	bool waitForInput();
 
+	void mainLoop();
+
 	/* Frame time */
 	void resetFrameValues();
 	void initFrameTime();

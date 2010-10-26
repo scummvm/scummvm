@@ -318,7 +318,29 @@ Common::Error PrisonerEngine::run() {
 		// TODO: Later: _mainMenuRequested = true;
 	}
 
-	// TODO: Move main loop to separate method for clarity
+	mainLoop();
+
+	{
+		// TODO: Move to shutdown function
+		_res->unload(_inventoryBoxResourceCacheSlot);
+		_inventoryBoxResourceCacheSlot = -1;
+	}
+
+#endif
+
+//	shutdownMidi();
+	delete _screenBackupSurface;
+	delete _pathSystem;
+	delete _scriptOpcodes;
+	delete _res;
+	delete _resLoader;
+
+	debug("Exit ok");
+	return Common::kNoError;
+}
+
+void PrisonerEngine::mainLoop() {
+
 	// TODO: Finish main loop code
 	bool done = false;
 	while (!done) {
@@ -335,8 +357,20 @@ Common::Error PrisonerEngine::run() {
 		updateActors();
 		runScripts(kSceneScriptProgram);
 		updateModuleScript();
+		if (_needToPlayMux) {
+			playMux(_muxFilename);
+			_needToPlayMux = false;
+			updateScreen(true, _cameraX + _mouseX, _cameraY + _mouseY);
+		}
 		updateScreen(true, _cameraX + _mouseX, _cameraY + _mouseY);
-		handleInput(_cameraX + _mouseX, _cameraY + _mouseY);
+
+		if (_paletteTasks[3].active || _currSceneIndex == -1 || !_sceneFlag ||
+			(_moduleScriptCalled && !_screenTextShowing)) {
+			_sceneFlag = true;
+		} else {
+			handleInput(_cameraX + _mouseX, _cameraY + _mouseY);
+		}
+
 		checkForSceneChange();
 		updateMouseCursor();
 		updateMouseCursorAnimation();
@@ -365,23 +399,8 @@ Common::Error PrisonerEngine::run() {
 		_system->delayMillis(10);
 	}
 
-	{
-		// TODO: Move to shutdown function
-		_res->unload(_inventoryBoxResourceCacheSlot);
-		_inventoryBoxResourceCacheSlot = -1;
-	}
 
-#endif
 
-//	shutdownMidi();
-	delete _screenBackupSurface;
-	delete _pathSystem;
-	delete _scriptOpcodes;
-	delete _res;
-	delete _resLoader;
-
-	debug("Exit ok");
-	return Common::kNoError;
 }
 
 int16 PrisonerEngine::loadTextResource(Common::String &pakName, int16 pakSlot) {
