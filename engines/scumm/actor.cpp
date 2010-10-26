@@ -2612,6 +2612,21 @@ void ScummEngine_v71he::queueAuxEntry(int actorNum, int subIndex) {
 #endif
 
 
+void ActorC64::saveLoadWithSerializer(Serializer *ser) {
+	Actor::saveLoadWithSerializer(ser);
+
+	static const SaveLoadEntry actorEntries[] = {
+		MKLINE(ActorC64, _costCommand, sleByte, VER(84)),
+		MKLINE(ActorC64, _costFrame, sleByte, VER(84)),
+		MKLINE(ActorC64, _miscflags, sleByte, VER(84)),
+		MKLINE(ActorC64, _speaking, sleByte, VER(84)),
+		MKLINE(ActorC64, _speakingPrev, sleByte, VER(84)),
+		MKEND()
+	};
+
+	ser->saveLoadEntries(this, actorEntries);
+}
+
 void Actor::saveLoadWithSerializer(Serializer *ser) {
 	static const SaveLoadEntry actorEntries[] = {
 		MKLINE(Actor, _pos.x, sleInt16, VER(8)),
