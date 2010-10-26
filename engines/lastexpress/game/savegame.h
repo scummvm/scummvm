@@ -209,7 +209,7 @@ private:
 		uint32 signature;
 		SavegameType type;
 		TimeValue time;
-		int padding;
+		int offset;
 		ChapterIndex chapter;
 		uint32 value;
 		int field_18;
@@ -219,7 +219,7 @@ private:
 			signature = SAVEGAME_ENTRY_SIGNATURE;
 			type = kSavegameTypeIndex;
 			time = kTimeNone;
-			padding = 0;
+			offset = 0;
 			chapter = kChapterAll;
 			value = 0;
 			field_18 = 0;
@@ -230,7 +230,7 @@ private:
 			s.syncAsUint32LE(signature);
 			s.syncAsUint32LE(type);
 			s.syncAsUint32LE(time);
-			s.syncAsUint32LE(padding);
+			s.syncAsUint32LE(offset);
 			s.syncAsUint32LE(chapter);
 			s.syncAsUint32LE(value);
 			s.syncAsUint32LE(field_18);
@@ -247,7 +247,7 @@ private:
 			if (time < kTimeStartGame || time > kTimeCityConstantinople)
 				return false;
 
-			if (padding <= 0 || padding & 15)
+			if (offset <= 0 || offset & 15)
 				return false;
 
 			/* No check for < 0, as it cannot happen normaly */
@@ -269,7 +269,7 @@ private:
 	void writeEntry(SavegameType type, EntityIndex entity, uint32 value);
 	void readEntry(SavegameType type, EntityIndex entity, uint32 value);
 	SavegameEntryHeader *getEntry(uint32 index);
-	uint32 computePadding();
+	uint32 computeOffset(uint32 originalPosition = 0);
 
 	// Opening save files
 	static Common::String getFilename(GameId id);

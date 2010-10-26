@@ -101,7 +101,7 @@ void SaveLoad::create(GameId id) {
 uint32 SaveLoad::init(GameId id, bool resetHeaders) {
 	initStream();
 
-	// Open savegame
+	// Open savegame and check size
 	Common::InSaveFile *save = openForLoading(id);
 	if (save->size() < 32)
 		error("SaveLoad::init - Savegame seems to be corrupted (not enough data: %i bytes)", save->size());
@@ -111,7 +111,7 @@ uint32 SaveLoad::init(GameId id, bool resetHeaders) {
 		_savegame->writeByte(save->readByte());
 	_savegame->seek(0);
 
-	delete save;
+	SAFE_DELETE(save);
 
 	// Load the main header
 	Common::Serializer ser(_savegame, NULL);
@@ -131,10 +131,27 @@ uint32 SaveLoad::init(GameId id, bool resetHeaders) {
 		_gameHeaders.push_back(entryHeader);
 	}
 
-	warning("SaveLoad::initSavegame: not implemented!");
+	// Read the list of entry headers
+	if (_savegame->size() > 32) {
+		while (!_savegame->eos() && !_savegame->err()) {
+
+			// Update sound queue while we go through the savegame
+			getSound()->updateQueue();
+
+			SavegameEntryHeader *entry = new SavegameEntryHeader();
+			entry->saveLoadWithSerializer(ser);
+
+			if (!entry->isValid())
+				break;
+
+			_gameHeaders.push_back(entry);
+
+			_savegame->seek(entry->offset, SEEK_CUR);
+		}
+	}
 
 	// return the index to the current save game entry (we store count + 1 entries, so we're good)
-	return 0; //header.count;
+	return mainHeader.count;
 }
 
 void SaveLoad::clear() {
@@ -314,13 +331,13 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	header.value = value;
 
 	// Save position
-	uint32 pos = _savegame->pos();
+	uint32 originalPosition = _savegame->pos();
 
 	// Write header
 	Common::Serializer ser(NULL, _savegame);
 	header.saveLoadWithSerializer(ser);
 
-	computePadding();
+	computeOffset();
 
 	// Write game data
 	WRITE_ENTRY("entity index", ser.syncAsUint32LE(entity), 4);
@@ -336,21 +353,27 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	WRITE_ENTRY("sound", getSound()->saveLoadWithSerializer(ser), 0);
 	WRITE_ENTRY("savepoints", getSavePoints()->saveLoadWithSerializer(ser), 0);
 
-	header.padding = computePadding();
+	header.offset = computeOffset(originalPosition);
+
+	// Add padding if necessary
+	while (header.offset & 0xF) {
+		_savegame->writeByte(0);
+		header.offset++;
+	}
 
 	// Save end position
-	uint32 endpos = _savegame->pos();
+	uint32 endPosition = _savegame->pos();
 
 	// Validate entry header
 	if (!header.isValid())
 		error("SaveLoad::writeEntry: entry header is invalid");
 
 	// Save the header with the updated info
-	_savegame->seek(pos);
+	_savegame->seek(originalPosition);
 	header.saveLoadWithSerializer(ser);
 
 	// Move back to the end of the entry
-	_savegame->seek(endpos);
+	_savegame->seek(endPosition);
 }
 
 void SaveLoad::readEntry(SavegameType type, EntityIndex entity, uint32 value) {
@@ -364,14 +387,10 @@ SaveLoad::SavegameEntryHeader *SaveLoad::getEntry(uint32 index) {
 	return _gameHeaders[index];
 }
 
-uint32 SaveLoad::computePadding() {
+uint32 SaveLoad::computeOffset(uint32 originalPosition) {
 	warning("SaveLoad::computePadding: not implemented!");
 
-	// Hack
-	while (_savegame->pos() & 15)
-		_savegame->writeByte(0);
-
-	return _savegame->pos();
+	return (_savegame->pos() - originalPosition - 32);
 }
 
 //////////////////////////////////////////////////////////////////////////
