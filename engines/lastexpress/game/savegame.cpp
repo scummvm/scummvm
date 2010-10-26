@@ -112,20 +112,20 @@ uint32 SaveLoad::init(GameId id, bool resetHeaders) {
 
 	// Load the main header
 	Common::Serializer ser(_savegame, NULL);
-	SavegameMainHeader header;
-	header.saveLoadWithSerializer(ser);
-	if (!header.isValid())
+	SavegameMainHeader mainHeader;
+	mainHeader.saveLoadWithSerializer(ser);
+	if (!mainHeader.isValid())
 		error("SaveLoad::init - Savegame seems to be corrupted (invalid header)");
 
 	// Reset cached entry headers if needed
 	if (resetHeaders) {
 		clear();
 
-		SavegameEntryHeader *header = new SavegameEntryHeader();
-		header->time = kTimeCityParis;
-		header->chapter = kChapter1;
+		SavegameEntryHeader *entryHeader = new SavegameEntryHeader();
+		entryHeader->time = kTimeCityParis;
+		entryHeader->chapter = kChapter1;
 
-		_gameHeaders.push_back(header);
+		_gameHeaders.push_back(entryHeader);
 	}
 
 	warning("SaveLoad::initSavegame: not implemented!");
