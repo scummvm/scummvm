@@ -422,9 +422,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// PluginManager::instance().unloadPlugins();
 			PluginManager::instance().loadPlugins();
 		} else {
-			// A dialog would be nicer, but we don't have any
-			// screen to draw on yet.
-			warning("%s", _("Could not find any engine capable of running the selected game"));
 			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
 		}
 
