@@ -51,9 +51,9 @@ enum ViewSignals {
 };
 
 enum ViewScaleSignals {
-	kScaleSignalDoScaling			= 0x0001, // enables scaling when drawing that cel (involves scaleX and scaleY)
-	kScaleSignalGlobalScaling		= 0x0002, // means that global scaling shall get applied on that cel (sets scaleX/scaleY)
-	kScaleSignalHoyle4DontSetNsrect	= 0x0004  // HOYLE4-exclusive: do not set nsRect inside kAnimate(); for a test case see bug #3038424
+	kScaleSignalDoScaling				= 0x0001, // enables scaling when drawing that cel (involves scaleX and scaleY)
+	kScaleSignalGlobalScaling			= 0x0002, // means that global scaling shall get applied on that cel (sets scaleX/scaleY)
+	kScaleSignalHoyle4SpecialHandling	= 0x0004  // HOYLE4-exclusive: special handling inside kAnimate, is used when giving out cards
 
 };
 

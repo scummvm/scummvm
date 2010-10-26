@@ -283,16 +283,20 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 			if ((signal & kSignalHidden) && !(signal & kSignalAlwaysUpdate))
 				setNsRect = false;
 		} else {
-			view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
+			//  This special handling is not included in the other SCI1.1 interpreters and MUST NOT be
+			//  checked in those cases, otherwise we will break games (e.g. EcoQuest 2, room 200)
+			if ((g_sci->getGameId() == GID_HOYLE4) && (it->scaleSignal & kScaleSignalHoyle4SpecialHandling)) {
+				view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
+				it->celRect.left = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft));
+				it->celRect.top = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop));
+				it->celRect.right = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsRight));
+				it->celRect.bottom = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsBottom));
+				view->getCelSpecialHoyle4Rect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
+				setNsRect = false;
+			} else {
+				view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
+			}
 		}
-
-		// Checking for this bit must be here for Hoyle4, otherwise cards are unclickable.
-		//  This feature is not included in the other SCI1.1 interpreters and MUST NOT be
-		//  checked in those cases, otherwise we will break games (e.g. EcoQuest 2, room 200)
-		// TODO: hoyle 4 has different code inside kAnimate and even special code, when bit 0 is not
-		//  set, but bit 2 is
-		if ((g_sci->getGameId() == GID_HOYLE4) && (it->scaleSignal & kScaleSignalHoyle4DontSetNsrect))
-			setNsRect = false;
 
 		if (setNsRect) {
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), it->celRect.left);

@@ -354,6 +354,16 @@ void GfxView::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, C
 	outRect.top = outRect.bottom - celInfo->height;
 }
 
+void GfxView::getCelSpecialHoyle4Rect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect &outRect) const {
+	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
+	int16 adjustY = y - celInfo->height + celInfo->displaceY + 1;
+	int16 adjustX = x - ((celInfo->width - 1) >> 1) + celInfo->displaceX;
+	outRect.top += adjustY;
+	outRect.bottom += adjustY;
+	outRect.left += adjustX;
+	outRect.right += adjustX;
+}
+
 void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect &outRect) const {
 	int16 scaledDisplaceX, scaledDisplaceY;
 	int16 scaledWidth, scaledHeight;
