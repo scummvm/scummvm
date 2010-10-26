@@ -584,6 +584,12 @@ begin_credits("Credits");
 		  add_person("Jordi Vilalta Prat", "jvprat", "");
 	  end_section();
 
+	  begin_section("Hugo");
+		  add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+		  add_person("Oystein Eftevaag", "vinterstum", "");
+		  add_person("Eugene Sandulenko", "sev", "");
+	  end_section();
+
 	  begin_section("Kyra");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "VQA Player");
 		  add_person("Oystein Eftevaag", "vinterstum", "");
