@@ -360,12 +360,12 @@ int AgiEngine::agiInit() {
 
 	switch (getVersion() >> 12) {
 	case 2:
-		report("Emulating Sierra AGI v%x.%03x\n",
+		debug("Emulating Sierra AGI v%x.%03x\n",
 				(int)(getVersion() >> 12) & 0xF,
 				(int)(getVersion()) & 0xFFF);
 		break;
 	case 3:
-		report("Emulating Sierra AGI v%x.002.%03x\n",
+		debug("Emulating Sierra AGI v%x.002.%03x\n",
 				(int)(getVersion() >> 12) & 0xF,
 				(int)(getVersion()) & 0xFFF);
 		break;
@@ -382,10 +382,10 @@ int AgiEngine::agiInit() {
 		_game.sbuf = _game.sbuf256c;
 
 	if (_game.gameFlags & ID_AMIGA)
-		report("Amiga padded game detected.\n");
+		debug(1, "Amiga padded game detected.");
 
 	if (_game.gameFlags & ID_AGDS)
-		report("AGDS mode enabled.\n");
+		debug(1, "AGDS mode enabled.");
 
 	ec = _loader->init();	// load vol files, etc
 
@@ -655,7 +655,7 @@ void AgiEngine::initialize() {
 		_game.state = STATE_LOADED;
 		debugC(2, kDebugLevelMain, "game loaded");
 	} else {
-		report("Could not open AGI game");
+		warning("Could not open AGI game");
 	}
 
 	debugC(2, kDebugLevelMain, "Init sound");
@@ -703,7 +703,6 @@ Common::Error AgiBase::init() {
 Common::Error AgiEngine::go() {
 	CursorMan.showMouse(true);
 
-	report(" \nAGI engine %s is ready.\n", gScummVMVersion);
 	if (_game.state < STATE_LOADED) {
 		do {
 			mainCycle();
@@ -747,7 +746,7 @@ void AgiEngine::parseFeatures() {
 	for (int i = 0; i < numFeatures; i++) {
 		for (const Flags *flag = flags; flag->name; flag++) {
 			if (!scumm_stricmp(feature[i], flag->name)) {
-				debug(0, "Added feature: %s", flag->name);
+				debug(2, "Added feature: %s", flag->name);
 
 				setFeature(flag->flag);
 				break;

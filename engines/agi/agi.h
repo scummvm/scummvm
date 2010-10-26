@@ -236,8 +236,6 @@ enum AgiMouseButton {
 	kAgiMouseButtonMiddle // Middle mouse button
 };
 
-#define report printf
-
 enum GameId {
 	GID_AGI = 1
 };

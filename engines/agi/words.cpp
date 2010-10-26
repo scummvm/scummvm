@@ -52,10 +52,10 @@ int AgiEngine::loadWords(const char *fname) {
 	words = NULL;
 
 	if (!fp.open(fname)) {
-		report("Warning: can't open %s\n", fname);
+		warning("loadWords: can't open %s", fname);
 		return errOK; // err_BadFileOpen
 	}
-	report("Loading dictionary: %s\n", fname);
+	debug(0, "Loading dictionary: %s", fname);
 
 	fp.seek(0, SEEK_END);
 	flen = fp.pos();

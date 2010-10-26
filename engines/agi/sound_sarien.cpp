@@ -95,13 +95,10 @@ SoundGenSarien::SoundGenSarien(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(v
 		break;
 	}
 
-	report("Initializing sound:\n");
-
-	report("sound: envelopes ");
 	if (_env) {
-		report("enabled (decay=%d, sustain=%d)\n", ENV_DECAY, ENV_SUSTAIN);
+		debug(0, "Initializing sound: envelopes enabled (decay=%d, sustain=%d)", ENV_DECAY, ENV_SUSTAIN);
 	} else {
-		report("disabled\n");
+		debug(0, "Initializing sound: envelopes disabled");
 	}
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);

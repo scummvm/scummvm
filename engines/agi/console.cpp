@@ -152,7 +152,7 @@ bool Console::Cmd_Flags(int argc, const char **argv) {
 		for (j = 0; j < 10; j++, i++) {
 			DebugPrintf("%c ", _vm->getflag(i) ? 'T' : 'F');
 		}
-		report("\n");
+		DebugPrintf("\n");
 	}
 
 	return true;

@@ -319,12 +319,12 @@ int AgiEngine::playGame() {
 
 	// We run AGIMOUSE always as a side effect
 	if (getFeatures() & GF_AGIMOUSE || true)
-		report("Using AGI Mouse 1.0 protocol\n");
+		debug(1, "Using AGI Mouse 1.0 protocol");
 
 	if (getFeatures() & GF_AGIPAL)
 		debug(1, "Running AGIPAL game");
 
-	report("Running AGI script.\n");
+	debug(0, "Running AGI script.\n");
 
 	setflag(fEnteredCli, false);
 	setflag(fSaidAcceptedInput, false);
