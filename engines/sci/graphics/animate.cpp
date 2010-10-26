@@ -286,16 +286,12 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 			view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
 		}
 
-		// This statement must be here for Hoyle4, otherwise cards are unclickable.
-		// This is probably one of the experimental features that were occasionally
-		// added to SCI interpreters; the corresponding check is absent in many SSCI
-		// versions. m_kiewitz knew about this flag before I (lskovlun) implemented it, 
-		// so it is possible that more test cases are known. Also, some presently open
-		// SCI1.1 bugs may be fixed by this and should be re-tested with this patch generalized.
-
-		// NOTE: *this* breaks at least eco quest 2. One should go through interpreters and check
-		//  the code before enabling it for more games (TODO)
-		if ((g_sci->getGameId() == GID_HOYLE4) && (it->scaleSignal & kScaleSignalDontSetNsrect))
+		// Checking for this bit must be here for Hoyle4, otherwise cards are unclickable.
+		//  This feature is not included in the other SCI1.1 interpreters and MUST NOT be
+		//  checked in those cases, otherwise we will break games (e.g. EcoQuest 2, room 200)
+		// TODO: hoyle 4 has different code inside kAnimate and even special code, when bit 0 is not
+		//  set, but bit 2 is
+		if ((g_sci->getGameId() == GID_HOYLE4) && (it->scaleSignal & kScaleSignalHoyle4DontSetNsrect))
 			setNsRect = false;
 
 		if (setNsRect) {
