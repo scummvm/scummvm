@@ -219,7 +219,7 @@ void GfxAnimate::applyGlobalScaling(AnimateList::iterator entry, GfxView *view) 
 	writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), entry->scaleY);
 }
 
-void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
+void GfxAnimate::fill(byte &old_picNotValid) {
 	reg_t curObject;
 	uint16 signal;
 	GfxView *view = NULL;
@@ -274,7 +274,7 @@ void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 
 		//warning("%s view %d, loop %d, cel %d, signal %x", _s->_segMan->getObjectName(curObject), it->viewId, it->loopNo, it->celNo, it->signal);
 
-		bool setNsRect = maySetNsRect;
+		bool setNsRect = true;
 
 		// Create rect according to coordinates and given cel
 		if (it->scaleSignal & kScaleSignalDoScaling) {
@@ -660,7 +660,7 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 	disposeLastCast();
 
 	makeSortedList(list);
-	fill(old_picNotValid, true);
+	fill(old_picNotValid);
 
 	if (old_picNotValid) {
 		// beginUpdate()/endUpdate() were introduced SCI1.

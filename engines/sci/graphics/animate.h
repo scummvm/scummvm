@@ -97,7 +97,7 @@ public:
 	bool invoke(List *list, int argc, reg_t *argv);
 	void makeSortedList(List *list);
 	void applyGlobalScaling(AnimateList::iterator entry, GfxView *view);
-	void fill(byte &oldPicNotValid, bool maySetNsRect);
+	void fill(byte &oldPicNotValid);
 	void update();
 	void drawCels();
 	void updateScreen(byte oldPicNotValid);
