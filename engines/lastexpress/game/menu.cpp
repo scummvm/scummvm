@@ -1150,7 +1150,7 @@ void Menu::switchGame() {
 	_trainLine->clear();
 
 	// Clear loaded savegame data
-	getSaveLoad()->clear();
+	getSaveLoad()->clearHeaders();
 
 	init(false, kSavegameTypeIndex, 0);
 }

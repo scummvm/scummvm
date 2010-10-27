@@ -94,7 +94,7 @@ public:
 
 	// Init
 	void create(GameId id);
-	void clear();
+	void clearHeaders();
 	uint32 init(GameId id, bool resetHeaders);
 
 	// Save & Load
@@ -278,6 +278,7 @@ private:
 
 	// Savegame stream
 	void initStream();
+	void loadStream(GameId id);
 	void flushStream(GameId id);
 };
 

@@ -508,14 +508,8 @@ void SoundManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint32LE(_currentType);
 
 	// Compute the number of entries to save
-	uint32 count = 0;
-	if (s.isSaving()) {
-		for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i)
-			if ((*i)->name2.matchString("NISSND?"))
-				++count;
-	}
-
-	s.syncAsUint32LE(count);
+	uint32 numEntries = count();
+	s.syncAsUint32LE(numEntries);
 
 	// Save or load each entry data
 	if (s.isSaving()) {
@@ -549,6 +543,15 @@ void SoundManager::saveLoadWithSerializer(Common::Serializer &s) {
 	} else {
 		error("Sound::saveLoadWithSerializer: not implemented!");
 	}
+}
+
+uint32 SoundManager::count() {
+	uint32 numEntries = 0;
+	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i)
+		if ((*i)->name2.matchString("NISSND?"))
+			++numEntries;
+
+	return numEntries;
 }
 
 //////////////////////////////////////////////////////////////////////////

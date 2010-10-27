@@ -61,7 +61,7 @@ SaveLoad::SaveLoad(LastExpressEngine *engine) : _engine(engine), _savegame(NULL)
 }
 
 SaveLoad::~SaveLoad() {
-	clear();
+	clearHeaders();
 
 	SAFE_DELETE(_savegame);
 
@@ -70,17 +70,19 @@ SaveLoad::~SaveLoad() {
 }
 
 void SaveLoad::initStream() {
-	SAFE_DELETE(_savegame);
-
+	delete _savegame;
 	_savegame = new SavegameStream();
 }
 
 void SaveLoad::flushStream(GameId id) {
 	Common::OutSaveFile *save = openForSaving(id);
 	if (!save)
-		error("SaveLoad::initSave: Cannot init savegame (%s)!", getFilename(id).c_str());
+		error("SaveLoad::flushStream: cannot open savegame (%s)!", getFilename(id).c_str());
 
-	save->write(_savegame->getData(), _savegame->size());
+	if (!_savegame)
+		error("SaveLoad::flushStream: savegame stream is invalid");
+
+	save->write(_savegame->getData(), (uint32)_savegame->size());
 
 	delete save;
 }
@@ -101,28 +103,10 @@ void SaveLoad::create(GameId id) {
 uint32 SaveLoad::init(GameId id, bool resetHeaders) {
 	initStream();
 
-	// Open savegame and check size
-	Common::InSaveFile *save = openForLoading(id);
-	if (save->size() < 32)
-		error("SaveLoad::init - Savegame seems to be corrupted (not enough data: %i bytes)", save->size());
+	// Load game data
+	loadStream(id);
 
-	// Load all savegame data
-	uint8* buf = new uint8[4096];
-	while (!save->eos() && !save->err()) {
-		uint32 count = save->read(buf, sizeof(buf));
-		if (count) {
-			uint32 w = _savegame->write(buf, count);
-			assert (w == count);
-		}
-	}
-	if (save->err())
-		error("SaveLoad::init - Error reading savegame");
-	delete[] buf;
-	_savegame->seek(0);
-
-	SAFE_DELETE(save);
-
-	// Load the main header
+	// Get the main header
 	Common::Serializer ser(_savegame, NULL);
 	SavegameMainHeader mainHeader;
 	mainHeader.saveLoadWithSerializer(ser);
@@ -131,7 +115,7 @@ uint32 SaveLoad::init(GameId id, bool resetHeaders) {
 
 	// Reset cached entry headers if needed
 	if (resetHeaders) {
-		clear();
+		clearHeaders();
 
 		SavegameEntryHeader *entryHeader = new SavegameEntryHeader();
 		entryHeader->time = kTimeCityParis;
@@ -163,7 +147,35 @@ uint32 SaveLoad::init(GameId id, bool resetHeaders) {
 	return mainHeader.count;
 }
 
-void SaveLoad::clear() {
+void SaveLoad::loadStream(GameId id) {
+	Common::InSaveFile *save = openForLoading(id);
+	if (save->size() < 32)
+		error("SaveLoad::init - Savegame seems to be corrupted (not enough data: %i bytes)", save->size());
+
+	if (!_savegame)
+		error("SaveLoad::loadStream: savegame stream is invalid");
+
+	// Load all savegame data
+	uint8* buf = new uint8[4096];
+	while (!save->eos() && !save->err()) {
+		uint32 count = save->read(buf, sizeof(buf));
+		if (count) {
+			uint32 w = _savegame->write(buf, count);
+			assert (w == count);
+		}
+	}
+
+	if (save->err())
+		error("SaveLoad::init - Error reading savegame");
+
+	delete[] buf;
+	delete save;
+
+	// Move back to the beginning of the stream
+	_savegame->seek(0);
+}
+
+void SaveLoad::clearHeaders() {
 	for (uint i = 0; i < _gameHeaders.size(); i++)
 		SAFE_DELETE(_gameHeaders[i]);
 
@@ -184,8 +196,6 @@ bool SaveLoad::loadGame(GameId id) {
 	// Validate header
 
 	error("SaveLoad::loadgame: not implemented!");
-
-	return false;
 }
 
 bool SaveLoad::loadGame2(GameId id) {
@@ -203,6 +213,9 @@ void SaveLoad::saveGame(SavegameType type, EntityIndex entity, uint32 value) {
 		debugC(2, kLastExpressDebugSavegame, "SaveLoad::saveGame - Cannot load main header: %s", getFilename(getMenu()->getGameId()).c_str());
 		return;
 	}
+
+	if (!_savegame)
+		error("SaveLoad::saveGame: savegame stream is invalid");
 
 	// Validate the current entry if it exists
 	if (header.count > 0) {
@@ -232,7 +245,7 @@ void SaveLoad::saveGame(SavegameType type, EntityIndex entity, uint32 value) {
 	}
 
 	if (type != kSavegameTypeEvent2 && type != kSavegameTypeAuto)
-		header.offsetEntry = _savegame->pos();
+		header.offsetEntry = (uint32)_savegame->pos();
 
 	// Write the savegame entry
 	writeEntry(type, entity, value);
@@ -244,7 +257,7 @@ void SaveLoad::saveGame(SavegameType type, EntityIndex entity, uint32 value) {
 		header.keepIndex = 1;
 	} else {
 		header.keepIndex = 0;
-		header.offset = _savegame->pos();
+		header.offset = (uint32)_savegame->pos();
 
 		// Save ticks
 		_gameTicksLastSavegame = getState()->timeTicks;
@@ -264,31 +277,6 @@ void SaveLoad::saveGame(SavegameType type, EntityIndex entity, uint32 value) {
 
 void SaveLoad::saveVolumeBrightness() {
 	warning("SaveLoad::saveVolumeBrightness: not implemented!");
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Static Members
-//////////////////////////////////////////////////////////////////////////
-
-// Check if a specific savegame exists
-bool SaveLoad::isSavegamePresent(GameId id) {
-	if (g_system->getSavefileManager()->listSavefiles(getFilename(id)).size() == 0)
-		return false;
-
-	return true;
-}
-
-// Check if the game has been started in the specific savegame
-bool SaveLoad::isSavegameValid(GameId id) {
-	if (!isSavegamePresent(id)) {
-		debugC(2, kLastExpressDebugSavegame, "SaveLoad::isSavegameValid - Savegame does not exist: %s", getFilename(id).c_str());
-		return false;
-	}
-
-	SavegameMainHeader header;
-
-	Common::InSaveFile *save = openForLoading(id);
-	return loadMainHeader(save, &header);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -323,24 +311,27 @@ bool SaveLoad::loadMainHeader(Common::InSaveFile *stream, SavegameMainHeader *he
 // Entries
 //////////////////////////////////////////////////////////////////////////
 void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
-#define WRITE_ENTRY(name, func, expected) { \
-	uint32 _prevPosition = _savegame->pos(); \
+#define WRITE_ENTRY(name, func, val) { \
+	uint32 _prevPosition = (uint32)_savegame->pos(); \
 	func; \
-	uint32 _count = _savegame->pos() - _prevPosition; \
+	uint32 _count = (uint32)_savegame->pos() - _prevPosition; \
 	debugC(kLastExpressDebugSavegame, "Savegame: Writing " #name ": %d bytes", _count); \
-	if (expected != 0 && _count != expected)\
-		error("SaveLoad::writeEntry: Number of bytes written (%d) differ from expected count (%d)", _count, expected); \
+	if (_count != val)\
+		error("SaveLoad::writeEntry: Number of bytes written (%d) differ from expected count (%d)", _count, val); \
 }
+
+	if (!_savegame)
+		error("SaveLoad::writeEntry: savegame stream is invalid");
 
 	SavegameEntryHeader header;
 
 	header.type = type;
-	header.time = getState()->time;
+	header.time = (uint32)getState()->time;
 	header.chapter = getProgress().chapter;
 	header.value = value;
 
 	// Save position
-	uint32 originalPosition = _savegame->pos();
+	uint32 originalPosition = (uint32)_savegame->pos();
 
 	// Write header
 	Common::Serializer ser(NULL, _savegame);
@@ -359,8 +350,8 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	WRITE_ENTRY("inventory", getInventory()->saveLoadWithSerializer(ser), 7 * 32);
 	WRITE_ENTRY("objects", getObjects()->saveLoadWithSerializer(ser), 5 * 128);
 	WRITE_ENTRY("entities", getEntities()->saveLoadWithSerializer(ser), 1262 * 40);
-	WRITE_ENTRY("sound", getSound()->saveLoadWithSerializer(ser), 0);
-	WRITE_ENTRY("savepoints", getSavePoints()->saveLoadWithSerializer(ser), 0);
+	WRITE_ENTRY("sound", getSound()->saveLoadWithSerializer(ser), 3 * 4 + getSound()->count() * 64);
+	WRITE_ENTRY("savepoints", getSavePoints()->saveLoadWithSerializer(ser), 128 * 16 + 4 + getSavePoints()->count() * 16);
 
 	header.offset = computeOffset(originalPosition);
 
@@ -371,7 +362,7 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	}
 
 	// Save end position
-	uint32 endPosition = _savegame->pos();
+	uint32 endPosition = (uint32)_savegame->pos();
 
 	// Validate entry header
 	if (!header.isValid())
@@ -398,13 +389,37 @@ SaveLoad::SavegameEntryHeader *SaveLoad::getEntry(uint32 index) {
 
 uint32 SaveLoad::computeOffset(uint32 originalPosition) {
 	warning("SaveLoad::computePadding: not implemented!");
+	if (!_savegame)
+		error("SaveLoad::computeOffset: savegame stream is invalid");
 
-	return (_savegame->pos() - originalPosition - 32);
+	return ((uint32)_savegame->pos() - (originalPosition + 32));
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Checks
 //////////////////////////////////////////////////////////////////////////
+
+// Check if a specific savegame exists
+bool SaveLoad::isSavegamePresent(GameId id) {
+	if (g_system->getSavefileManager()->listSavefiles(getFilename(id)).size() == 0)
+		return false;
+
+	return true;
+}
+
+// Check if the game has been started in the specific savegame
+bool SaveLoad::isSavegameValid(GameId id) {
+	if (!isSavegamePresent(id)) {
+		debugC(2, kLastExpressDebugSavegame, "SaveLoad::isSavegameValid - Savegame does not exist: %s", getFilename(id).c_str());
+		return false;
+	}
+
+	SavegameMainHeader header;
+
+	Common::InSaveFile *save = openForLoading(id);
+	return loadMainHeader(save, &header);
+}
+
 bool SaveLoad::isGameFinished(uint32 menuIndex, uint32 savegameIndex) {
 	SavegameEntryHeader *data = getEntry(menuIndex);
 

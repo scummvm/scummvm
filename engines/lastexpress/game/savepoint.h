@@ -131,6 +131,8 @@ public:
 	 */
 	Common::String toString();
 
+	uint32 count() { return _savepoints.size(); }
+
 private:
 	static const uint32 _savePointsMaxSize = 128;
 

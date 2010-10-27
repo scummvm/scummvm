@@ -196,6 +196,7 @@ public:
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &ser);
+	uint32 count();
 
 private:
 	typedef int32 *SoundBuffer;
