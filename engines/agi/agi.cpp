@@ -715,6 +715,33 @@ Common::Error AgiEngine::go() {
 }
 
 void AgiEngine::parseFeatures() {
+
+	/* FIXME: Seems this method doesn't really do anything. It might
+	   be a leftover that could be removed, except that some of its
+	   intended purpose may still need to be reimplemented.
+	   
+	[0:29] <Fingolfin> can you tell me what the point behind AgiEngine::parseFeatures() is?
+	[0:30] <_sev> when games are created with WAGI studio
+	[0:31] <_sev> it creates .wag site with game-specific features such as full game title, whether to use AGIMOUSE etc
+	[0:32] <Fingolfin> ... and the "features" config key is created by our detector based on the wag file, I guess?
+	[0:33] <_sev> yes
+	[0:33] <Fingolfin> it's just that I cant seem to find a place we do that
+	[0:33] <_sev> it is used for fallback
+	[0:34] <_sev> ah, perhaps it was not updated
+	[0:34] <Fingolfin> I only see us check the value, but never set it
+	[0:34] <Fingolfin> maybe I am grepping wrong, who knows :)
+	[0:44] <Fingolfin> _sev: so, unless I miss something, it seem that function does nothing right now
+	[0:45] <_sev> Fingolfin: it could be unfinished. It was part of GSoC 3 years ago
+	[0:45] <Fingolfin> well
+	[0:45] <_sev> I just don't remember
+	[0:45] <Fingolfin> but don't we just re-parse the wag when the game is loaded anyway?
+	[0:45] <_sev> but it documents the format
+	[0:45] <Fingolfin> the advanced meta engine would re-run the detector, wouldn't it?
+	[0:45] <_sev> yep
+	[0:47] <Fingolfin> so... shouldn't we at least add a comment to the function explaining what it does and that it's unfinished etc.? maybe add a TODO to the wiki?
+	[0:47] <Fingolfin> otherwise it might stay as it is for another 3 years :)
+	*/
+
 	if (!ConfMan.hasKey("features"))
 		return;
 
