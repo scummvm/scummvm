@@ -1927,7 +1927,7 @@ int ScummEngine::getTalkSpeed() {
 #pragma mark -
 
 Common::Error ScummEngine::go() {
-	_engineStartTime = _system->getMillis() / 1000;
+	resetTotalPlayTime();
 
 	// If requested, load a save game instead of running the boot script
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveTemporaryState)) {
@@ -2505,10 +2505,6 @@ void ScummEngine::startManiac() {
 
 void ScummEngine::pauseEngineIntern(bool pause) {
 	if (pause) {
-		// Record start of the pause, so that we can later
-		// adjust _engineStartTime accordingly.
-		_pauseStartTime = _system->getMillis();
-
 		// Pause sound & video
 		_oldSoundsPaused = _sound->_soundsPaused;
 		_sound->pauseSounds(true);
@@ -2526,10 +2522,6 @@ void ScummEngine::pauseEngineIntern(bool pause) {
 
 		// Resume sound & video
 		_sound->pauseSounds(_oldSoundsPaused);
-
-		// Adjust engine start time
-		_engineStartTime += (_system->getMillis() - _pauseStartTime) / 1000;
-		_pauseStartTime = 0;
 	}
 }
 

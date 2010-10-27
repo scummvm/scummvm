@@ -378,10 +378,10 @@ bool ScummEngine::loadState(int slot, bool compat) {
 			return false;
 		}
 
-		_engineStartTime = _system->getMillis() / 1000 - infos.playtime;
+		resetTotalPlayTime(infos.playtime * 1000);
 	} else {
 		// start time counting
-		_engineStartTime = _system->getMillis() / 1000;
+		resetTotalPlayTime();
 	}
 
 	// Due to a bug in scummvm up to and including 0.3.0, save games could be saved
@@ -797,7 +797,7 @@ void ScummEngine::saveInfos(Common::WriteStream* file) {
 
 	// still save old format for older versions
 	section.timeTValue = 0;
-	section.playtime = _system->getMillis() / 1000 - _engineStartTime;
+	section.playtime = getTotalPlayTime() / 1000;
 
 	TimeDate curTime;
 	_system->getTimeAndDate(curTime);

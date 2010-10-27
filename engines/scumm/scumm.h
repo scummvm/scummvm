@@ -700,9 +700,6 @@ protected:
 	void saveInfos(Common::WriteStream* file);
 	static bool loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff);
 
-	int32 _engineStartTime;
-	int32 _pauseStartTime;
-
 protected:
 	/* Script VM - should be in Script class */
 	uint32 _localScriptOffsets[1024];

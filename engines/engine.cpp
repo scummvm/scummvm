@@ -94,6 +94,8 @@ Engine::Engine(OSystem *syst)
 		_saveFileMan(_system->getSavefileManager()),
 		_targetName(ConfMan.getActiveDomainName()),
 		_pauseLevel(0),
+		_pauseStartTime(0),
+		_engineStartTime(_system->getMillis()),
 		_mainMenuDialog(NULL) {
 
 	g_engine = this;
@@ -380,9 +382,12 @@ void Engine::pauseEngine(bool pause) {
 		_pauseLevel--;
 
 	if (_pauseLevel == 1 && pause) {
+		_pauseStartTime = _system->getMillis();
 		pauseEngineIntern(true);
 	} else if (_pauseLevel == 0) {
 		pauseEngineIntern(false);
+		_engineStartTime += _system->getMillis() - _pauseStartTime;
+		_pauseStartTime = 0;
 	}
 }
 
@@ -396,6 +401,24 @@ void Engine::openMainMenuDialog() {
 		_mainMenuDialog = new MainMenuDialog(this);
 	runDialog(*_mainMenuDialog);
 	syncSoundSettings();
+}
+
+uint32 Engine::getTotalPlayTime() const {
+	if (!_pauseLevel)
+		return _system->getMillis() - _engineStartTime;
+	else
+		return _pauseStartTime - _engineStartTime;
+}
+
+void Engine::resetTotalPlayTime(uint32 time) {
+	const uint32 currentTime = _system->getMillis();
+
+	// We need to reset the pause start time here in case the engine is already
+	// paused to avoid any incorrect play time counting.
+	if (_pauseLevel > 0)
+		_pauseStartTime = currentTime;
+
+	_engineStartTime = currentTime - time;
 }
 
 int Engine::runDialog(GUI::Dialog &dialog) {

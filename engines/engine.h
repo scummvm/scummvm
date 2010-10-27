@@ -74,6 +74,17 @@ private:
 	 */
 	int _pauseLevel;
 
+	/**
+	 * The time when the pause was started.
+	 */
+	uint32 _pauseStartTime;
+
+	/**
+	 * The time when the engine was started. This value is used to calculate
+	 * the current play time of the game running.
+	 */
+	int32 _engineStartTime;
+
 public:
 
 
@@ -233,6 +244,20 @@ public:
 	 * Run the Global Main Menu Dialog
 	 */
 	void openMainMenuDialog();
+
+	/**
+	 * Get the total play time.
+	 *
+	 * @return How long the player has been playing in ms.
+	 */
+	uint32 getTotalPlayTime() const;
+
+	/**
+	 * Reset the game time counter to the specified time.
+	 *
+	 * @param time Play time to set up in ms.
+	 */
+	void resetTotalPlayTime(uint32 time = 0);
 
 	inline Common::TimerManager *getTimerManager() { return _timer; }
 	inline Common::EventManager *getEventManager() { return _eventMan; }
