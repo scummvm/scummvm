@@ -784,7 +784,7 @@ IMPLEMENT_FUNCTION_I(15, Mertens, function15, bool)
 			break;
 
 		case 6:
-			CALLBACK_ACTION();;
+			CALLBACK_ACTION();
 			break;
 		}
 		break;

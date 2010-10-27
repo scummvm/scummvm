@@ -123,7 +123,7 @@ Scene *Scene::load(Common::SeekableReadStream *stream) {
 
 	stream->read(&scene->_name, sizeof(scene->_name));
 	scene->_sig = stream->readByte();
-	scene->entityPosition = (EntityPosition)stream->readUint16LE();;
+	scene->entityPosition = (EntityPosition)stream->readUint16LE();
 	scene->location = (Location)stream->readUint16LE();
 	scene->car = (CarIndex)stream->readUint16LE();
 	scene->position = stream->readByte();

@@ -663,7 +663,7 @@ bool Debugger::cmdPlayNis(int argc, const char **argv) {
 bool Debugger::cmdLoadScene(int argc, const char **argv) {
 	if (argc == 2 || argc == 3) {
 		int cd = 1;
-		SceneIndex index = (SceneIndex)getNumber(argv[1]);;
+		SceneIndex index = (SceneIndex)getNumber(argv[1]);
 
 		// Check args
 		if (argc == 3)
