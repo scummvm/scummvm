@@ -249,12 +249,12 @@ void SavePoints::saveLoadWithSerializer(Common::Serializer &s) {
 	s.skip((_savePointsMaxSize - dataSize) * 16);
 
 	// Number of savepoints
-	uint32 count = _savepoints.size();
-	s.syncAsUint32LE(count);
+	uint32 numSavepoints = _savepoints.size();
+	s.syncAsUint32LE(numSavepoints);
 
 	// Savepoints
 	if (s.isLoading()) {
-		for (uint i= 0; i < count; i++) {
+		for (uint i = 0; i < numSavepoints; i++) {
 			SavePoint point;
 			s.syncAsUint32LE(point.entity1);
 			s.syncAsUint32LE(point.action);
