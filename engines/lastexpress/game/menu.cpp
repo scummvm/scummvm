@@ -692,35 +692,37 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 		getSavePoints()->reset();
 		setLogicEventHandlers();
 
-		getSound()->processEntry(SoundManager::kSoundType11);
-
-		if (!getFlags()->mouseRightClick) {
-			getScenes()->loadScene((SceneIndex)(5 * _gameId + 3));
-
+		if (_index) {
+			getSound()->processEntry(SoundManager::kSoundType11);
+		} else {
 			if (!getFlags()->mouseRightClick) {
-				getScenes()->loadScene((SceneIndex)(5 * _gameId + 4));
+				getScenes()->loadScene((SceneIndex)(5 * _gameId + 3));
 
 				if (!getFlags()->mouseRightClick) {
-					getScenes()->loadScene((SceneIndex)(5 * _gameId + 5));
+					getScenes()->loadScene((SceneIndex)(5 * _gameId + 4));
 
 					if (!getFlags()->mouseRightClick) {
-						getSound()->processEntry(SoundManager::kSoundType11);
+						getScenes()->loadScene((SceneIndex)(5 * _gameId + 5));
 
-						// Show intro
-						Animation animation;
-						if (animation.load(getArchive("1601.nis")))
-							animation.play();
+						if (!getFlags()->mouseRightClick) {
+							getSound()->processEntry(SoundManager::kSoundType11);
 
-						getEvent(kEventIntro) = 1;
+							// Show intro
+							Animation animation;
+							if (animation.load(getArchive("1601.nis")))
+								animation.play();
+
+							getEvent(kEventIntro) = 1;
+						}
 					}
 				}
 			}
-		}
 
-		if (!getEvent(kEventIntro))	{
-			getEvent(kEventIntro) = 1;
+			if (!getEvent(kEventIntro))	{
+				getEvent(kEventIntro) = 1;
 
-			getSound()->processEntry(SoundManager::kSoundType11);
+				getSound()->processEntry(SoundManager::kSoundType11);
+			}
 		}
 
 		// Setup game
