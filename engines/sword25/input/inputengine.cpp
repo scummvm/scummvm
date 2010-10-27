@@ -87,7 +87,14 @@ bool InputEngine::init() {
 
 void InputEngine::update() {
 	Common::Event event;
+
+	// We keep two sets of keyboard states: The current one, and that of
+	// the previous frame. This allows us to detect which keys changed
+	// state. Also, by keeping a single central keystate array, we
+	// ensure that all script queries for key state during a single
+	// frame get the same consistent replies.
 	_currentState ^= 1;
+	memcpy(_keyboardState[_currentState], _keyboardState[_currentState ^ 1], sizeof(_keyboardState[0]));
 
 	// Loop through processing any pending events
 	bool handleEvents = true;
