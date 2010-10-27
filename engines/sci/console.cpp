@@ -219,17 +219,11 @@ Console::~Console() {
 }
 
 void Console::preEnter() {
-	if (_engine && _engine->_soundCmd)
-		_engine->_soundCmd->pauseAll(true);
-	g_system->getMixer()->pauseAll(true);
+	_engine->pauseEngine(true);
 	_enterTime = g_system->getMillis();
 }
 
 void Console::postEnter() {
-	if (_engine && _engine->_soundCmd)
-		g_sci->_soundCmd->pauseAll(false);
-	g_system->getMixer()->pauseAll(false);
-
 	if (!_videoFile.empty()) {
 		_engine->_gfxCursor->kernelHide();
 
@@ -286,6 +280,7 @@ void Console::postEnter() {
 		_videoFrameDelay = 0;
 	}
 
+	_engine->pauseEngine(false);
 	// Subtract the time we were running the debugger from the game running time
 	_engine->_gamestate->gameStartTime += g_system->getMillis() - _enterTime;
 }
