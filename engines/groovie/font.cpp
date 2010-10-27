@@ -62,6 +62,10 @@ bool T7GFont::load(Common::SeekableReadStream &stream) {
 	delete[] _glyphs;
 	_glyphs = new Glyph[numGlyphs];
 
+	// Ensure we're ready to read the first glyph. (Most versions don't
+	// need it, but the russian one does. This fixes bug #3095031.)
+	stream.seek(glyphOffsets[0]);
+
 	// Read the glyphs
 	_maxHeight = _maxWidth = 0;
 	for (int i = 0; (i < numGlyphs) && !stream.eos(); i++) {
