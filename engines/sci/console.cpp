@@ -219,14 +219,16 @@ Console::~Console() {
 }
 
 void Console::preEnter() {
-	if (g_sci && g_sci->_soundCmd)
-		g_sci->_soundCmd->pauseAll(true);
+	if (_engine && _engine->_soundCmd)
+		_engine->_soundCmd->pauseAll(true);
+	g_system->getMixer()->pauseAll(true);
 	_enterTime = g_system->getMillis();
 }
 
 void Console::postEnter() {
-	if (g_sci && g_sci->_soundCmd)
+	if (_engine && _engine->_soundCmd)
 		g_sci->_soundCmd->pauseAll(false);
+	g_system->getMixer()->pauseAll(false);
 
 	if (!_videoFile.empty()) {
 		_engine->_gfxCursor->kernelHide();

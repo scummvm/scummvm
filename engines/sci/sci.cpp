@@ -633,8 +633,10 @@ void SciEngine::exitGame() {
 GUI::Debugger *SciEngine::getDebugger() {
 	if (_gamestate) {
 		ExecStack *xs = &(_gamestate->_executionStack.back());
-		xs->addr.pc.offset = _debugState.old_pc_offset;
-		xs->sp = _debugState.old_sp;
+		if (xs) {
+			xs->addr.pc.offset = _debugState.old_pc_offset;
+			xs->sp = _debugState.old_sp;
+		}
 	}
 
 	_debugState.runningStep = 0; // Stop multiple execution
@@ -702,6 +704,8 @@ int SciEngine::inQfGImportRoom() const {
 
 void SciEngine::pauseEngineIntern(bool pause) {
 	_mixer->pauseAll(pause);
+	if (_soundCmd)
+		_soundCmd->pauseAll(pause);
 }
 
 void SciEngine::syncSoundSettings() {
