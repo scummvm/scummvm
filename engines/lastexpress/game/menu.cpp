@@ -45,6 +45,8 @@
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
+#include "common/rational.h"
+
 #define getNextGameId() (GameId)((_gameId + 1) % 6)
 
 namespace LastExpress {
@@ -1442,17 +1444,19 @@ void Menu::adjustTime() {
 	uint32 originalTime = _time;
 
 	// Adjust time delta
-	uint32 timeDelta = (_delta >= 90) ? 9 : (9 * _delta + 89) / 90;
+	Common::Rational timeDelta(_delta >= 90 ? 9 : (9 * _delta + 89), _delta >= 90 ? 1 : 90);
 
 	if (_currentTime < _time) {
-		_time -= 900 * timeDelta;
+		timeDelta *= 900;
+		_time -= timeDelta.toInt();
 
-		if (_time >= _currentTime)
+		if (_currentTime > _time)
 			_time = _currentTime;
 	} else {
-		_time += 900 * timeDelta;
+		timeDelta *= 900;
+		_time += timeDelta.toInt();
 
-		if (_time < _currentTime)
+		if (_currentTime < _time)
 			_time = _currentTime;
 	}
 
