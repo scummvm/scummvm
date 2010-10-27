@@ -145,8 +145,10 @@ void ImageViewer::setVisible(bool visible) {
 		_visible = true;
 		setViewerButtons(true);
 		
-		GUI::TimedMessageDialog dialog("Image Viewer", 1000);
-		dialog.runModal();
+		{ // so dialog goes out of scope, destroying all allocations
+			GUI::TimedMessageDialog dialog("Image Viewer", 1000);
+			dialog.runModal();
+		}
 		
 		runLoop();	// only listen to viewer events
 	} else {	// we were asked to make invisible or failed to load
