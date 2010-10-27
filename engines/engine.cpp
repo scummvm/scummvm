@@ -410,7 +410,7 @@ uint32 Engine::getTotalPlayTime() const {
 		return _pauseStartTime - _engineStartTime;
 }
 
-void Engine::resetTotalPlayTime(uint32 time) {
+void Engine::setTotalPlayTime(uint32 time) {
 	const uint32 currentTime = _system->getMillis();
 
 	// We need to reset the pause start time here in case the engine is already
