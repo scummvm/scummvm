@@ -1114,7 +1114,12 @@ void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
 
 // Start a game (or load an existing savegame)
 void Menu::startGame() {
+	// Clear savegame headers
 	getSaveLoad()->clear();
+
+	// Hide menu elements
+	_clock->clear();
+	_trainLine->clear();
 
 	if (_lastIndex == _index) {
 		setGlobalTimer(0);
