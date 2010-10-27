@@ -309,7 +309,7 @@ private:
 	void testForLeftDoubleClick();
 	void alterKeyboardState(int keycode, byte newState);
 
-	byte _keyboardState[2][256];
+	byte _keyboardState[2][512];
 	bool _leftMouseState[2];
 	bool _rightMouseState[2];
 	uint _currentState;

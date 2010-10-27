@@ -169,6 +169,7 @@ void InputEngine::testForLeftDoubleClick() {
 }
 
 void InputEngine::alterKeyboardState(int keycode, byte newState) {
+	assert(keycode < ARRAYSIZE(_keyboardState[_currentState]));
 	_keyboardState[_currentState][keycode] = newState;
 }
 
@@ -193,10 +194,12 @@ int InputEngine::getMouseY() {
 }
 
 bool InputEngine::isKeyDown(uint keyCode) {
+	assert(keyCode < ARRAYSIZE(_keyboardState[_currentState]));
 	return (_keyboardState[_currentState][keyCode] & 0x80) != 0;
 }
 
 bool InputEngine::wasKeyDown(uint keyCode) {
+	assert(keyCode < ARRAYSIZE(_keyboardState[_currentState]));
 	return ((_keyboardState[_currentState][keyCode] & 0x80) == 0) &&
 	       ((_keyboardState[_currentState ^ 1][keyCode] & 0x80) != 0);
 }
