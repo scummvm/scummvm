@@ -16,6 +16,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  SCUMM:
    - Improved support for FM-TOWNS versions of games.
 
+1.2.1 (2010-??-??)
+ Groovie:
+   - Fixed a regression that made the Russian version of T7G crash.
 
 1.2.0 (2010-10-15)
  New Games:
@@ -84,7 +87,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support of MIDI devices.
    - Added support for accurate Tandy sound emulation. Switched to it as default.
 
- Broken Sword 2
+ Broken Sword 2:
    - Fixed missing speech in some cutscenes.
    - Fixed a memory leak that would eventually cause the game to hang.
      (#2976008 - BS2: Game lockup in British Museum)
@@ -104,10 +107,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for playing Kyrandia 3 with the original CD file layout.
 
  LURE:
-   - Fixed bug where Goewin could get stuck in the Weregate
-   - Fixed issue with Ratpouch repeatedly moving between two rooms
-   - Fix for Goewin losing her schedule after Were-cave
-   - Fix for player getting stuck in sewer exit room
+   - Fixed bug where Goewin could get stuck in the Weregate.
+   - Fixed issue with Ratpouch repeatedly moving between two rooms.
+   - Fix for Goewin losing her schedule after Were-cave.
+   - Fix for player getting stuck in sewer exit room.
 
  Parallaction:
    - Made part one of The Big Red Adventure completable.
@@ -160,7 +163,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed several memory leaks.
    - Corrected problems in the handling of followers when blocked from performing
      actions by closed doors between rooms.
-   - Solved issues with Goewin not always correctly following the player out of the caves
+   - Solved issues with Goewin not always correctly following the player out of the caves.
 
  Tinsel:
    - Fix video playback regression in Discworld 2.
@@ -214,7 +217,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      The Secret of Monkey Island. (GSoC Task)
    - Fixed some other bugs related to game versions for the Amiga.
    - Added support for original save/load dialog in MM NES.
-   - Added support for savepoint passcodes for Sega CD MI1 via debugger command 'passcode'
+   - Added support for savepoint passcodes for Sega CD MI1 via debugger command 'passcode'.
    - Added support for Kanji rendering in Japanese version of Monkey Island Sega CD.
 
 1.0.0 (2009-11-15)
