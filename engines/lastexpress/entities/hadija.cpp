@@ -146,7 +146,7 @@ label_callback2:
 			if (getState()->time <= kTime1134000) {
 
 				if (!getEntities()->isPlayerInCar(kCarGreenSleeping) || !getEntities()->isInsideCompartment(kEntityMahmud, kCarGreenSleeping, kPosition_5790) || !params->param3) {
-					params->param3 = getState()->time + 75;
+					params->param3 = (uint)getState()->time + 75;
 
 					if (!params->param3) {
 						setCallback(3);
@@ -173,7 +173,7 @@ label_callback4:
 			if (getState()->time <= kTime1188000) {
 
 				if (!getEntities()->isPlayerInCar(kCarGreenSleeping) || !getEntities()->isInsideCompartment(kEntityMahmud, kCarGreenSleeping, kPosition_5790) || !params->param5) {
-					params->param5 = getState()->time + 75;
+					params->param5 = (uint)getState()->time + 75;
 
 					if (!params->param5) {
 						setCallback(5);
@@ -263,7 +263,7 @@ IMPLEMENT_FUNCTION(14, Hadija, chapter2Handler)
 		if (getState()->time <= kTime1818000) {
 
 			if (!getEntities()->isPlayerInCar(kCarGreenSleeping) || !params->param2)
-				params->param2 = getState()->time + 75;
+				params->param2 = (uint)getState()->time + 75;
 
 			if (params->param2 >= getState()->time) {
 				TIME_CHECK_CALLBACK(kTime1822500, params->param3, 2, setup_compartment8to6);

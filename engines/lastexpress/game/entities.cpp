@@ -215,7 +215,7 @@ EntityData::EntityCallData *Entities::getData(EntityIndex entity) const {
 	return _entities[entity]->getData();
 }
 
-int Entities::getPosition(CarIndex car, Position position) {
+int Entities::getPosition(CarIndex car, Position position) const {
 	int index = 100 * car + position;
 
 	if (car > 10)
@@ -227,14 +227,14 @@ int Entities::getPosition(CarIndex car, Position position) {
 	return _positions[index];
 }
 
-int Entities::getCompartments(int index) {
+int Entities::getCompartments(int index) const {
 	if (index >= _compartmentsCount)
 		error("Entities::getCompartments: trying to access an invalid compartment (was: %d, valid:0-15)", index);
 
 	return _compartments[index];
 }
 
-int Entities::getCompartments1(int index) {
+int Entities::getCompartments1(int index) const {
 	if (index >= _compartmentsCount)
 		error("Entities::getCompartments: trying to access an invalid compartment (was: %d, valid:0-15)", index);
 
@@ -1993,7 +1993,7 @@ bool Entities::hasValidFrame(EntityIndex entity) const {
 	return (getData(entity)->frame && (getData(entity)->frame->getInfo()->subType != kFrameType3));
 }
 
-bool Entities::compare(EntityIndex entity1, EntityIndex entity2) {
+bool Entities::compare(EntityIndex entity1, EntityIndex entity2) const {
 	EntityData::EntityCallData *data1 = getData(entity1);
 	EntityData::EntityCallData *data2 = getData(entity2);
 
@@ -2051,7 +2051,7 @@ bool Entities::compare(EntityIndex entity1, EntityIndex entity2) {
 	return false;
 }
 
-bool Entities::updateEntity(EntityIndex entity, CarIndex car, EntityPosition position) {
+bool Entities::updateEntity(EntityIndex entity, CarIndex car, EntityPosition position) const {
 	EntityData::EntityCallData *data = getData(entity);
 	EntityDirection direction = kDirectionNone;
 	int delta = 0;

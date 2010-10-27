@@ -336,7 +336,7 @@ IMPLEMENT_FUNCTION(13, Kahina, function13)
 
 		if (getState()->time <= kTime1197000) {
 			if (!getEntities()->isPlayerInCar(kCarGreenSleeping) || !params->param2) {
-				params->param2 = getState()->time;
+				params->param2 = (uint)getState()->time;
 
 				if (!getState()->time)
 					goto label_callback;
@@ -360,7 +360,7 @@ label_callback:
 
 		getObjects()->update(kObjectCompartmentKronos, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
-		params->param1 = getState()->time + 1800;
+		params->param1 = (uint)getState()->time + 1800;
 		break;
 	}
 }
@@ -479,7 +479,7 @@ IMPLEMENT_FUNCTION(15, Kahina, function15)
 
 		case 8:
 			getEntities()->clearSequences(kEntityKahina);
-			params->param1 = getState()->time + 4500;
+			params->param1 = (uint)getState()->time + 4500;
 			break;
 
 		case 9:
@@ -926,7 +926,7 @@ IMPLEMENT_FUNCTION(21, Kahina, function21)
 	case kActionNone:
 		if (params->param1) {
 			if (!params->param3)
-				params->param3 = getState()->time + 4500;
+				params->param3 = (uint)getState()->time + 4500;
 
 			if (params->param6 != kTimeInvalid) {
 				UPDATE_PARAM_PROC_TIME(params->param3, (getEntities()->isPlayerPosition(kCarKronos, 80) || getEntities()->isPlayerPosition(kCarKronos, 88)), params->param5, 0)
@@ -941,7 +941,7 @@ label_callback_2:
 		if (params->param2) {
 
 			if (!params->param4)
-				params->param4 = getState()->time + 4500;
+				params->param4 = (uint)getState()->time + 4500;
 
 			if (params->param6 != kTimeInvalid) {
 				UPDATE_PARAM_PROC_TIME(params->param3, (getEntities()->isPlayerPosition(kCarKronos, 80) || getEntities()->isPlayerPosition(kCarKronos, 88)), params->param6, 0)
@@ -1223,7 +1223,7 @@ IMPLEMENT_FUNCTION(25, Kahina, function25)
 
 		if (getState()->time <= kTime2263500) {
 			if (!getEntities()->isPlayerInCar(kCarGreenSleeping) || !params->param1)
-				params->param1 = getState()->time;
+				params->param1 = (uint)getState()->time;
 
 			if (params->param1 >= getState()->time)
 				break;
@@ -1343,7 +1343,7 @@ IMPLEMENT_FUNCTION(25, Kahina, function25)
 				getInventory()->get(kItemFirebird)->location = kObjectLocation5;
 				getSavePoints()->push(kEntityKahina, kEntityKronos, kAction138085344);
 				getInventory()->setLocationAndProcess(kItemBriefcase, kObjectLocation2);
-				getProgress().field_C0 = getState()->time;
+				getProgress().field_C0 = (uint)getState()->time;
 				getProgress().field_78 = 1;
 				break;
 			}

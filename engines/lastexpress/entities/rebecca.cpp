@@ -515,7 +515,7 @@ IMPLEMENT_FUNCTION_I(20, Rebecca, function20, TimeValue)
 			if (params->param7 != kTimeInvalid && getState()->time > kTime1174500) {
 				if (getState()->time <= kTime1183500) {
 					if (!getEntities()->isDistanceBetweenEntities(kEntityRebecca, kEntityPlayer, 2000) || getSound()->isBuffered("CON1210") || !params->param7)
-						params->param7 = getState()->time;
+						params->param7 = (uint)(getState()->time);
 
 					if (params->param7 >= getState()->time)
 						goto label_callback;
@@ -537,7 +537,7 @@ IMPLEMENT_FUNCTION_I(20, Rebecca, function20, TimeValue)
 		if (getProgress().chapter == kChapter3 && !ENTITY_PARAM(0, 4) && params->param8 != kTimeInvalid && getState()->time > kTime2097000) {
 			if (getState()->time <= kTime2106000) {
 				if (!getEntities()->isDistanceBetweenEntities(kEntityRebecca, kEntityPlayer, 1000) || !params->param8)
-					params->param8 = getState()->time;
+					params->param8 = (uint)getState()->time;
 
 				if (params->param8 >= getState()->time)
 					goto label_callback;
@@ -695,7 +695,7 @@ IMPLEMENT_FUNCTION(22, Rebecca, chapter1Handler)
 			goto label_playConversation;
 
 		if (!getEntities()->isInSalon(kEntityPlayer) || !params->param4)
-			params->param4 = getState()->time + 150;
+			params->param4 = (uint)(getState()->time + 150);
 
 		if (params->param4 >= getState()->time) {
 label_callback_4:
@@ -854,7 +854,7 @@ IMPLEMENT_FUNCTION(24, Rebecca, function24)
 		if (params->param4 != kTimeInvalid) {
 			if (getState()->time <= kTime1161000) {
 				if (!getEntities()->isInRestaurant(kEntityPlayer) || !params->param4)
-					params->param4 = getState()->time + 150;
+					params->param4 = (uint)getState()->time + 150;
 
 				if (params->param4 >= getState()->time)
 					break;
@@ -1085,7 +1085,7 @@ IMPLEMENT_FUNCTION(30, Rebecca, function30)
 
 			if (getState()->time <= kTimeEnd)
 				if (!getEntities()->isInSalon(kEntityPlayer) || !params->param4)
-					params->param4 = getState()->time + 450;
+					params->param4 = (uint)getState()->time + 450;
 
 			if (params->param4 < getState()->time || getState()->time > kTimeEnd) {
 				params->param4 = kTimeInvalid;
@@ -1100,7 +1100,7 @@ IMPLEMENT_FUNCTION(30, Rebecca, function30)
 
 			if (getState()->time <= kTime10881000) {
 				if (!getEntities()->isInSalon(kEntityPlayer) || !params->param5)
-					params->param5 = getState()->time + 450;
+					params->param5 = (uint)getState()->time + 450;
 
 				if (params->param5 >= getState()->time)
 					break;
@@ -1221,7 +1221,7 @@ IMPLEMENT_FUNCTION(34, Rebecca, function34)
 		if (params->param2 == kTimeInvalid) {
 			if (getState()->time <= kTime1386000) {
 				if (!getEntities()->isInRestaurant(kEntityPlayer) || !params->param2)
-					params->param2 = getState()->time;
+					params->param2 = (uint)getState()->time;
 
 				if (params->param2 >= getState()->time) {
 					TIME_CHECK_CALLBACK(kTime2052000, params->param3, 1, setup_function19);
@@ -1310,13 +1310,13 @@ IMPLEMENT_FUNCTION(36, Rebecca, function36)
 
 	case kActionNone:
 		if (!params->param2)
-			params->param2 = getState()->time + 1800;
+			params->param2 = (uint)getState()->time + 1800;
 
 		if (params->param4 != kTimeInvalid && params->param2 < getState()->time) {
 
 			if (getState()->time <= kTime2083500) {
 				if (!getEntities()->isInSalon(kEntityPlayer) || !params->param4)
-					params->param4 = getState()->time + 300;
+					params->param4 = (uint)getState()->time + 300;
 			}
 
 			if (params->param4 < getState()->time || getState()->time > kTime2083500) {
@@ -1335,14 +1335,14 @@ label_callback_2:
 			goto label_callback_3;
 
 		if (!params->param3)
-			params->param3 = getState()->time + 9000;
+			params->param3 = (uint)getState()->time + 9000;
 
 		if (params->param5 == kTimeInvalid || params->param3 >= getState()->time)
 			goto label_callback_3;
 
 		if (getState()->time <= kTime2092500) {
 			if (!getEntities()->isInSalon(kEntityPlayer) || !params->param5)
-				params->param5 = getState()->time + 300;
+				params->param5 = (uint)getState()->time + 300;
 
 			if (params->param5 >= getState()->time) {
 label_callback_3:
@@ -1603,7 +1603,7 @@ IMPLEMENT_FUNCTION(44, Rebecca, function44)
 		if (params->param3 != kTimeInvalid) {
 			if (getState()->time <= kTime2412000) {
 				if (!getEntities()->isInRestaurant(kEntityPlayer) || !params->param3)
-					params->param3 = getState()->time;
+					params->param3 = (uint)getState()->time;
 
 				if (params->param3 >= getState()->time)
 					goto label_next;
@@ -1618,7 +1618,7 @@ label_next:
 		if (params->param1 && params->param4 != kTimeInvalid) {
 			if (getState()->time <= kTime2430000) {
 				if (!getEntities()->isInRestaurant(kEntityPlayer) || !params->param4)
-					params->param4 = getState()->time + 150;
+					params->param4 = (uint)getState()->time + 150;
 
 				if (params->param4 >= getState()->time)
 					goto label_callback_2;

@@ -505,7 +505,7 @@ IMPLEMENT_FUNCTION(20, Vesna, chapter3Handler)
 			}
 
 			if (!getEntities()->isPlayerInCar(kCarRedSleeping) || !parameters->param7)
-				parameters->param7 = getState()->time;
+				parameters->param7 = (uint)getState()->time;
 
 			if (parameters->param7 < getState()->time) {
 				parameters->param7 = kTimeInvalid;

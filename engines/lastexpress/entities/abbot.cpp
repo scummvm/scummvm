@@ -850,7 +850,7 @@ IMPLEMENT_FUNCTION(31, Abbot, function31)
 				break;
 			} else {
 				if (!getEntities()->isInSalon(kEntityPlayer) || !params->param4)
-					params->param4 = getState()->time + 450;
+					params->param4 = (uint)getState()->time + 450;
 
 				if (params->param4 < getState()->time) {
 					params->param4 = kTimeInvalid;
@@ -872,8 +872,8 @@ IMPLEMENT_FUNCTION(31, Abbot, function31)
 		break;
 
 	case kActionDefault:
-		params->param2 = getState()->time + 4500;
-		params->param3 = getState()->time + 18000;
+		params->param2 = (uint)getState()->time + 4500;
+		params->param3 = (uint)getState()->time + 18000;
 
 		getEntities()->drawSequenceLeft(kEntityAbbot, "115B");
 		break;
@@ -988,7 +988,7 @@ IMPLEMENT_FUNCTION(33, Abbot, function33)
 		if (params->param1 != kTimeInvalid && getState()->time > kTime2115000) {
 			if (getState()->time <= kTime2124000) {
 				if (!getEntities()->isDistanceBetweenEntities(kEntityAbbot, kEntityPlayer, 2000) || !params->param1)
-					params->param1 = getState()->time;
+					params->param1 = (uint)getState()->time;
 
 				if (params->param1 >= getState()->time)
 					break;
@@ -1084,7 +1084,7 @@ IMPLEMENT_FUNCTION(35, Abbot, function35)
 
 		if (params->param1 >= getState()->time) {
 			if (!getEntities()->isInSalon(kEntityPlayer) || !params->param2)
-				params->param2 = getState()->time + 450;
+				params->param2 = (uint)getState()->time + 450;
 
 			if (params->param2 >= getState()->time)
 				break;
@@ -1100,7 +1100,7 @@ IMPLEMENT_FUNCTION(35, Abbot, function35)
 
 	case kActionDefault:
 		getEntities()->drawSequenceLeft(kEntityAbbot, "115B");
-		params->param1 = getState()->time + 9000;
+		params->param1 = (uint)getState()->time + 9000;
 		break;
 
 	case kActionCallback:
@@ -1152,7 +1152,7 @@ IMPLEMENT_FUNCTION(36, Abbot, function36)
 			if (params->param1 >= getState()->time) {
 
 				if (!getEntities()->isInSalon(kEntityPlayer) || !params->param3)
-					params->param3 = getState()->time + 675;
+					params->param3 = (uint)getState()->time + 675;
 
 				if (params->param3 >= getState()->time)
 					break;
@@ -1184,7 +1184,7 @@ IMPLEMENT_FUNCTION(36, Abbot, function36)
 		break;
 
 	case kActionDefault:
-		params->param1 = getState()->time + 4500;
+		params->param1 = (uint)getState()->time + 4500;
 		getEntities()->drawSequenceLeft(kEntityAbbot, "121B");
 		break;
 
@@ -1413,7 +1413,7 @@ IMPLEMENT_FUNCTION(43, Abbot, function43)
 				break;
 			} else {
 				if (!getEntities()->isDistanceBetweenEntities(kEntityAbbot, kEntityPlayer, 1000) || getSound()->isBuffered(kEntityBoutarel) || !params->param4)
-					params->param4 = getState()->time + 450;
+					params->param4 = (uint)getState()->time + 450;
 
 				if (params->param4 < getState()->time) {
 					params->param4 = kTimeInvalid;

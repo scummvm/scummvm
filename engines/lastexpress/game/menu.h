@@ -177,17 +177,17 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Time
-	uint32 _currentIndex; // current savegame entry
 	uint32 _currentTime;  // current game time
 	uint32 _lowerTime;    // lower time value
+	uint32 _time;
 
+	uint32 _currentIndex; // current savegame entry
 	uint32 _index;
 	uint32 _savegameIndex;
-	uint32 _time;
 	uint32 _delta;
 	bool _handleTimeDelta;
 
-	void initTime(SavegameType type, uint32 time);
+	void initTime(SavegameType type, uint32 val);
 	void updateTime(uint32 time);
 	void adjustTime();
 	void adjustIndex(uint32 time1, uint32 time2, bool searchEntry);

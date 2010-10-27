@@ -3539,7 +3539,7 @@ IMPLEMENT_FUNCTION(53, Coudert, function53)
 label_callback_1:
 		if (ENTITY_PARAM(1, 2)) {
 			if (!params->param2)
-				params->param2 = getState()->time + 4500;
+				params->param2 = (uint)(getState()->time + 4500);
 
 			if (params->param3 != kTimeInvalid) {
 				UPDATE_PARAM_PROC_TIME(params->param2, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param3, 0)

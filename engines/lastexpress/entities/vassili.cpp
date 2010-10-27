@@ -110,7 +110,7 @@ IMPLEMENT_FUNCTION(5, Vassili, chapter1Handler)
 			if (params->param3 && params->param3 >= getState()->time) {
 				break;
 			}else {
-				params->param3 = getState()->time + 450;
+				params->param3 = (uint)getState()->time + 450;
 				if (params->param3 == 0)
 					break;
 			}
@@ -166,7 +166,7 @@ label_function7:
 
 				if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200) || !params->param4) {
 
-					params->param4 = getState()->time;
+					params->param4 = (uint)getState()->time;
 					if (!params->param4) {
 						setup_function7();
 						break;
@@ -218,7 +218,7 @@ IMPLEMENT_FUNCTION(7, Vassili, function7)
 
 			 if (getState()->time <= kTime1512000) {
 				 if (getEntities()->isPlayerInCar(kCarRedSleeping) || !params->param1) {
-					 params->param1 = getState()->time + 150;
+					 params->param1 = (uint)getState()->time + 150;
 					 if (params->param1) {
 						 setup_function8();
 						 break;

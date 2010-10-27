@@ -316,7 +316,7 @@ void Logic::eventTick(const Common::Event &) {
 	// Adjust time and save game if needed
 	if (getFlags()->isGameRunning) {
 		getState()->timeTicks += ticks;
-		getState()->time = (TimeValue)(getState()->time + ticks * getState()->timeDelta);
+		getState()->time = (TimeValue)(getState()->time + (TimeValue)(ticks * getState()->timeDelta));
 
 		if (getState()->timeDelta) {
 

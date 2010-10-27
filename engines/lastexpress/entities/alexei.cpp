@@ -771,7 +771,7 @@ IMPLEMENT_FUNCTION(22, Alexei, function22)
 			params->param3 = kTimeInvalid;
 		} else {
 			if (!getEntities()->isInSalon(kEntityPlayer) || getEntities()->isInSalon(kEntityPlayer) || !params->param3)
-				params->param3 = getState()->time;
+				params->param3 = (uint)getState()->time;
 
 			if (params->param3 >= getState()->time)
 				break;
@@ -1521,15 +1521,15 @@ IMPLEMENT_FUNCTION(39, Alexei, function39)
 			break;
 
 		if (!params->param4) {
-			params->param3 = getState()->time + 4500;
-			params->param4 = getState()->time + 9000;
+			params->param3 = (uint)getState()->time + 4500;
+			params->param4 = (uint)getState()->time + 9000;
 		}
 
 		if (params->param5 != kTimeInvalid && params->param3 < getState()->time) {
 
 			if (params->param4 >= getState()->time) {
 				if (getEntities()->isInGreenCarEntrance(kEntityPlayer) || !params->param5)
-					params->param5 = getState()->time;
+					params->param5 = (uint)getState()->time;
 
 				if (params->param5 >= getState()->time)
 					break;
@@ -1727,7 +1727,7 @@ IMPLEMENT_FUNCTION(43, Alexei, function43)
 	case kActionNone:
 		if (getState()->time < kTime1806300 && params->param2 < getState()->time) {
 			if (!params->param2)
-				params->param2 = getState()->time + params->param1;
+				params->param2 = (uint)getState()->time + params->param1;
 
 			if (getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 				setCallback(1);
@@ -1882,7 +1882,7 @@ IMPLEMENT_FUNCTION(46, Alexei, function46)
 		if (getState()->time <= kTime2493000) {
 
 			if (getEntities()->isInSalon(kEntityPlayer) || getEntities()->isInSalon(kEntityAugust) || !params->param1)
-				params->param1 = getState()->time;
+				params->param1 = (uint)getState()->time;
 
 			if (params->param1 >= getState()->time)
 				break;

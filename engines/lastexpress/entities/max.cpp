@@ -283,7 +283,7 @@ IMPLEMENT_FUNCTION(9, Max, function9)
 		if (params->param1 >= getState()->time) {
 			if (!getEntities()->hasValidFrame(kEntityMax) || !params->param2) {
 
-				params->param2 = getState()->time;
+				params->param2 = (uint)getState()->time;
 				if (!params->param2)
 					goto setup_functions;
 			}
@@ -312,7 +312,7 @@ setup_functions:
 		getEntities()->drawSequenceLeft(kEntityMax, "630Af");
 		getEntities()->enterCompartment(kEntityMax, kObjectCompartmentF, true);
 
-		params->param1 = getState()->time + 2700;
+		params->param1 = (uint)(getState()->time + 2700);
 		break;
 	}
 }

@@ -400,7 +400,7 @@ void class::setup_##name() { \
 
 #define TIME_CHECK_CAR(timeValue, parameter, callback, function) {\
 	if ((getState()->time <= timeValue && !getEntities()->isPlayerInCar(kCarGreenSleeping)) || !parameter) \
-		parameter = getState()->time + 75; \
+		parameter = (uint)getState()->time + 75; \
 	if (getState()->time > timeValue || parameter < getState()->time) { \
 		parameter = kTimeInvalid; \
 		setCallback(callback); \
@@ -425,7 +425,7 @@ void class::setup_##name() { \
 //////////////////////////////////////////////////////////////////////////
 #define UPDATE_PARAM(parameter, type, value) { \
 	if (!parameter) \
-		parameter = type + value; \
+		parameter = (uint)(type + value); \
 	if (parameter >= type) \
 		break; \
 	parameter = kTimeInvalid; \
@@ -434,7 +434,7 @@ void class::setup_##name() { \
 // Todo: replace with UPDATE_PARAM_PROC as appropriate
 #define UPDATE_PARAM_GOTO(parameter, type, value, label) { \
 	if (!parameter) \
-		parameter = type + value; \
+		parameter = (uint)(type + value); \
 	if (parameter >= type) \
 		goto label; \
 	parameter = kTimeInvalid; \
@@ -443,14 +443,14 @@ void class::setup_##name() { \
 // Updating parameter with code inside the check
 #define UPDATE_PARAM_PROC(parameter, type, value) \
 	if (!parameter) \
-		parameter = type + value; \
+		parameter = (uint)(type + value); \
 	if (parameter < type) { \
 		parameter = kTimeInvalid;
 
 #define UPDATE_PARAM_PROC_TIME(timeValue, test, parameter, value) \
 	if (getState()->time <= timeValue) { \
 		if (test || !parameter) \
-			parameter = getState()->time + value; \
+			parameter = (uint)(getState()->time + value); \
 	} \
 	if (parameter < getState()->time || getState()->time > timeValue) { \
 		parameter = kTimeInvalid;
@@ -461,7 +461,7 @@ void class::setup_##name() { \
 #define UPDATE_PARAM_CHECK(parameter, type, value) \
 	if (!parameter || parameter < type) { \
 		if (!parameter) \
-			parameter = type + value;
+			parameter = (uint)(type + value);
 
 //////////////////////////////////////////////////////////////////////////
 // Compartments

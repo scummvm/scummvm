@@ -360,7 +360,7 @@ Menu::Menu(LastExpressEngine *engine) : _engine(engine),
 	_gameId(kGameBlue), _hasShownStartScreen(false), _hasShownIntro(false),
 	_isShowingCredits(false), _isGameStarted(false), _isShowingMenu(false),
 	_creditsSequenceIndex(0), _checkHotspotsTicks(15),  _mouseFlags(Common::EVENT_INVALID), _lastHotspot(NULL),
-	_currentIndex(0), _currentTime(0), _lowerTime(0), _index(0), _savegameIndex(0), _time(0), _delta(0), _handleTimeDelta(false) {
+	_currentTime(kTimeNone), _lowerTime(kTimeNone), _time(kTimeNone), _currentIndex(0), _index(0), _savegameIndex(0), _delta(0), _handleTimeDelta(false) {
 
 	_clock = new Clock(_engine);
 	_trainLine = new TrainLine(_engine);
@@ -1097,12 +1097,12 @@ void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
 	if (!getProgress().chapter)
 		getProgress().chapter = kChapter1;
 
-	getState()->time = getSaveLoad()->getTime(_index);
+	getState()->time = (TimeValue)getSaveLoad()->getTime(_index);
 	getProgress().chapter = getSaveLoad()->getChapter(_index);
 
 	if (_lowerTime >= kTimeStartGame) {
-		_currentTime = getState()->time;
-		_time = getState()->time;
+		_currentTime = (uint32)getState()->time;
+		_time = (uint32)getState()->time;
 		_clock->draw(_time);
 		_trainLine->draw(_time);
 
@@ -1348,7 +1348,7 @@ void Menu::adjustIndex(uint32 time1, uint32 time2, bool searchEntry) {
 				if ((int32)_index >= 0) {
 					do {
 						// Calculate new delta
-						int32 newDelta = time1 - getSaveLoad()->getTime(currentIndex);
+						int32 newDelta = time1 - (uint32)getSaveLoad()->getTime(currentIndex);
 
 						if (newDelta >= 0 && timeDelta >= newDelta) {
 							timeDelta = newDelta;
@@ -1368,7 +1368,7 @@ void Menu::adjustIndex(uint32 time1, uint32 time2, bool searchEntry) {
 				if (_savegameIndex >= _index) {
 					do {
 						// Calculate new delta
-						int32 newDelta = getSaveLoad()->getTime(currentIndex) - time1;
+						int32 newDelta = (uint32)getSaveLoad()->getTime(currentIndex) - time1;
 
 						if (newDelta >= 0 && timeDelta > newDelta) {
 							timeDelta = newDelta;

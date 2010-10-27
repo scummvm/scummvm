@@ -290,7 +290,7 @@ IMPLEMENT_FUNCTION(8, Train, process)
 label_process:
 		if (params->param7) {
 			if (!params1->param8) {
-				params1->param8 = getState()->time + 4500;
+				params1->param8 = (uint)(getState()->time + 4500);
 
 				if (!params1->param8)
 					params->param7 = 0;

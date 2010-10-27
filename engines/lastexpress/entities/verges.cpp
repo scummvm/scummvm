@@ -1098,7 +1098,7 @@ label_callback_2:
 		}
 
 		if (!getEntities()->isPlayerInCar(kCarRedSleeping) || !params->param2) {
-			params->param2 = getState()->time;
+			params->param2 = (uint)getState()->time;
 
 			if (!params->param2) {
 				setCallback(3);

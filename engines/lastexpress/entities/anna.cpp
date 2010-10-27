@@ -1085,7 +1085,7 @@ IMPLEMENT_FUNCTION(27, Anna, function27)
 		case 1:
 		case 2:
 			if (getProgress().field_14 == 29) {
-				params->param1 = getState()->time + 900;
+				params->param1 = (uint)(getState()->time + 900);
 				setCallback(2);
 				setup_function15((TimeValue)params->param1, "NONE");
 			} else {
@@ -1253,7 +1253,7 @@ IMPLEMENT_FUNCTION(30, Anna, function30)
 				getSound()->playSound(kEntityAnna, "AUG1004");
 			} else {
 				if (!getEntities()->isInSalon(kEntityPlayer) || !params->param3)
-					params->param3 = getState()->time + 450;
+					params->param3 = (uint)(getState()->time + 450);
 
 				if (params->param3 < getState()->time) {
 					params->param3 = kTimeInvalid;
@@ -1271,7 +1271,7 @@ IMPLEMENT_FUNCTION(30, Anna, function30)
 			}
 
 			if (!getEntities()->isInSalon(kEntityPlayer) || !params->param4)
-				params->param4 = getState()->time + 150;
+				params->param4 = (uint)(getState()->time + 150);
 
 			if (params->param4 < getState()->time) {
 				params->param4 = kTimeInvalid;
@@ -1389,7 +1389,7 @@ IMPLEMENT_FUNCTION(33, Anna, function33)
 	case kActionDefault:
 		getSavePoints()->push(kEntityAnna, kEntityMax, kAction101687594);
 
-		params->param1 = getState()->time + 4500;
+		params->param1 = (uint)(getState()->time + 4500);
 		setCallback(1);
 		setup_function15((TimeValue)params->param1, "NONE");
 		break;
@@ -2102,12 +2102,12 @@ IMPLEMENT_FUNCTION(48, Anna, function48)
 label_callback_4:
 		if (ENTITY_PARAM(0, 2)) {
 			if (!params->param2)
-				params->param2 = getState()->time + 4500;
+				params->param2 = (uint)(getState()->time + 4500);
 
 			if (params->param4 != kTimeInvalid) {
 				if (params->param2 >= getState()->time) {
 					if (!getEntities()->isInRestaurant(kEntityPlayer) || !params->param4)
-						params->param4 = getState()->time + 450;
+						params->param4 = (uint)(getState()->time + 450);
 
 					if (params->param4 >= getState()->time)
 						break;
@@ -2884,7 +2884,7 @@ IMPLEMENT_FUNCTION(59, Anna, function59)
 			 && !getEntities()->isInSalon(kEntityPlayer)
 			 && !getEntities()->isInRestaurant(kEntityPlayer))
 			 || !params->param4)
-				params->param4 = getState()->time;
+				params->param4 = (uint)getState()->time;
 
 			if (params->param4 < getState()->time) {
 				params->param4 = kTimeInvalid;
@@ -3629,7 +3629,7 @@ IMPLEMENT_FUNCTION(73, Anna, function73)
 
 		if (params->param2 >= getState()->time) {
 			if (!((getEntities()->isPlayerInCar(kCarGreenSleeping) || getEntities()->isPlayerInCar(kCarRedSleeping)) && params->param3))
-				params->param3 = getState()->time;
+				params->param3 = (uint)getState()->time;
 
 			if (params->param3 >= getState()->time)
 				break;
@@ -3660,8 +3660,8 @@ IMPLEMENT_FUNCTION(73, Anna, function73)
 		getObjects()->update(kObjectCompartmentF, kEntityAnna, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 		getState()->timeDelta = 1;
 
-		params->param1 = getState()->time + 4500;
-		params->param2 = getState()->time + 9000;
+		params->param1 = (uint)(getState()->time + 4500);
+		params->param2 = (uint)(getState()->time + 9000);
 		break;
 
 	case kActionCallback:

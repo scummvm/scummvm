@@ -593,7 +593,7 @@ IMPLEMENT_FUNCTION(21, Tatiana, function21)
 		case 6:
 			if (getProgress().field_14 == 29) {
 				setCallback(6);
-				setup_function16(getState()->time + 900);
+				setup_function16((uint)getState()->time + 900);
 			} else {
 				getObjects()->update(kObject49, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
@@ -1281,7 +1281,7 @@ IMPLEMENT_FUNCTION(37, Tatiana, function37)
 	case kActionNone:
 		if (getInventory()->get(kItemFirebird)->location != kObjectLocation1 && getInventory()->get(kItemFirebird)->location != kObjectLocation2) {
 			if(!params->param3)
-				params->param3 = getState()->time + 900;
+				params->param3 = (uint)getState()->time + 900;
 
 			if (params->param4 != kTimeInvalid && params->param3 < getState()->time) {
 				UPDATE_PARAM_PROC_TIME(kTime2227500, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param4, 450)
@@ -1784,7 +1784,7 @@ IMPLEMENT_FUNCTION(46, Tatiana, function46)
 			CURRENT_PARAM(1, 1) = kTimeInvalid;
 		} else {
 			if (getEntities()->isInGreenCarEntrance(kEntityPlayer) || !CURRENT_PARAM(1, 1))
-				CURRENT_PARAM(1, 1) = getState()->time;
+				CURRENT_PARAM(1, 1) = (uint)getState()->time;
 
 			if (CURRENT_PARAM(1, 1) >= getState()->time)
 				break;

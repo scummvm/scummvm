@@ -275,7 +275,7 @@ IMPLEMENT_FUNCTION(11, MmeBoutarel, function11)
 
 		if (params->param1 >= getState()->time) {
 			if (!getEntities()->isDistanceBetweenEntities(kEntityMmeBoutarel, kEntityPlayer, 1000) || !params->param2)
-				params->param2 = getState()->time + 150;
+				params->param2 = (uint)getState()->time + 150;
 
 			if (params->param2 >= getState()->time)
 				break;
@@ -288,7 +288,7 @@ IMPLEMENT_FUNCTION(11, MmeBoutarel, function11)
 		break;
 
 	case kActionDefault:
-		params->param1 = getState()->time + 1800;
+		params->param1 = (uint)getState()->time + 1800;
 		getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorNormal, kCursorNormal);
 		break;
 
@@ -464,7 +464,7 @@ label_callback_1:
 		break;
 
 	case kActionDefault:
-		params->param1 = getState()->time + 900;
+		params->param1 = (uint)getState()->time + 900;
 		getData()->entityPosition = kPosition_5790;
 
 		getObjects()->update(kObjectCompartmentD, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
@@ -889,7 +889,7 @@ IMPLEMENT_FUNCTION(21, MmeBoutarel, chapter3Handler)
 				 || getSound()->isBuffered("FRA2012")
 				 || getSound()->isBuffered("FRA2010")
 				 ||!params->param2)
-					params->param2 = getState()->time;
+					params->param2 = (uint)getState()->time;
 
 				if (params->param2 >= getState()->time)
 					break;

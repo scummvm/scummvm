@@ -74,7 +74,7 @@ public:
 	void updateCallbacks();
 
 	EntityIndex canInteractWith(const Common::Point &point) const;
-	bool compare(EntityIndex entity1, EntityIndex entity2);
+	bool compare(EntityIndex entity1, EntityIndex entity2) const;
 
 	/**
 	 * Update an entity current sequence frame (and related fields)
@@ -92,15 +92,15 @@ public:
 	void drawSequenceRight(EntityIndex index, const char *sequence) const;
 	void clearSequences(EntityIndex index) const;
 
-	bool updateEntity(EntityIndex entity, CarIndex car, EntityPosition position);
+	bool updateEntity(EntityIndex entity, CarIndex car, EntityPosition position) const;
 	bool hasValidFrame(EntityIndex entity) const;
 
 	// Accessors
 	Entity *get(EntityIndex entity);
 	EntityData::EntityCallData *getData(EntityIndex entity) const;
-	int getPosition(CarIndex car, Position position);
-	int getCompartments(int index);
-	int getCompartments1(int index);
+	int getPosition(CarIndex car, Position position) const;
+	int getCompartments(int index) const;
+	int getCompartments1(int index) const;
 
 	// Scene
 	void loadSceneFromEntityPosition(CarIndex car, EntityPosition position, bool alternate = false) const;

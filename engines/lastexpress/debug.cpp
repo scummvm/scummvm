@@ -103,6 +103,9 @@ Debugger::~Debugger() {
 	delete _soundStream;
 	resetCommand();
 
+	_command = NULL;
+	_commandParams = NULL;
+
 	// Zero passed pointers
 	_engine = NULL;
 }
@@ -116,8 +119,10 @@ bool Debugger::hasCommand() const {
 
 void Debugger::resetCommand() {
 	SAFE_DELETE(_command);
-	for (int i = 0; i < _numParams; i++)
-		free(_commandParams[i]);
+
+	if (_commandParams)
+		for (int i = 0; i < _numParams; i++)		
+			free(_commandParams[i]);
 
 	free(_commandParams);
 	_commandParams = NULL;
@@ -129,7 +134,7 @@ int Debugger::getNumber(const char *arg) const {
 }
 
 void Debugger::copyCommand(int argc, const char **argv) {
-	_commandParams = (char **)malloc(sizeof(char *) * argc);
+	_commandParams = (char **)malloc(sizeof(char *) * (uint)argc);
 	if (!_commandParams)
 		return;
 
@@ -259,7 +264,7 @@ bool Debugger::cmdListFiles(int argc, const char **argv) {
  *
  * @return true if it was handled, false otherwise
  */
-bool Debugger::cmdDumpFiles(int argc, const char **argv) {
+bool Debugger::cmdDumpFiles(int argc, const char **) {
 #define OUTPUT_ARCHIVE_FILES(name, filename) { \
 	_engine->getResourceManager()->reset(); \
 	_engine->getResourceManager()->loadArchive(filename); \
@@ -277,7 +282,7 @@ bool Debugger::cmdDumpFiles(int argc, const char **argv) {
 			return true; \
 		} \
 		char md5str[32+1]; \
-		Common::md5_file_string(*stream, md5str, stream->size()); \
+		Common::md5_file_string(*stream, md5str, (uint32)stream->size()); \
 		debugC(1, kLastExpressDebugResource, "%s, %d, %s", (*it)->getName().c_str(), stream->size(), (char *)&md5str); \
 		delete stream; \
 	} \
@@ -976,7 +981,7 @@ label_error:
  */
 bool Debugger::cmdTime(int argc, const char **argv) {
 	if (argc == 2) {
-		int time =  getNumber(argv[1]);
+		int32 time = getNumber(argv[1]);
 
 		if (time < 0)
 			goto label_error;
@@ -984,7 +989,7 @@ bool Debugger::cmdTime(int argc, const char **argv) {
 		// Convert to human-readable form
 		uint8 hours = 0;
 		uint8 minutes = 0;
-		State::getHourMinutes(time, &hours, &minutes);
+		State::getHourMinutes((uint32)time, &hours, &minutes);
 
 		DebugPrintf("%02d:%02d\n", hours, minutes);
 	} else {

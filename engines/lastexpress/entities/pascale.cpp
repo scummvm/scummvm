@@ -816,7 +816,7 @@ IMPLEMENT_FUNCTION(26, Pascale, chapter4Handler)
 label_callback1:
 			if (ENTITY_PARAM(1, 2) && ENTITY_PARAM(1, 4)) {
 				if (!params->param3)
-					params->param3 = getState()->time + 9000;
+					params->param3 = (uint)(getState()->time + 9000);
 
 				if (params->param5 != kTimeInvalid) {
 
@@ -828,7 +828,7 @@ label_callback1:
 					}
 
 					if (!getEntities()->isInRestaurant(kEntityPlayer) || !params->param5)
-						params->param5 = getState()->time;
+						params->param5 = (uint)getState()->time;
 
 					if (params->param5 < getState()->time) {
 						params->param5 = kTimeInvalid;

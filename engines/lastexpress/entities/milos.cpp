@@ -210,12 +210,12 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 		}
 
 		if (!params->param4)
-			params->param4 = getState()->time + 18000;
+			params->param4 = (uint)getState()->time + 18000;
 
 		if (CURRENT_PARAM(1, 2) != kTimeInvalid) {
 			if (params->param4 >= getState()->time) {
 				if (!getEntities()->isDistanceBetweenEntities(kEntityPlayer, kEntityMilos, 2000) || !CURRENT_PARAM(1, 2))
-					CURRENT_PARAM(1, 2) = getState()->time + 150;
+					CURRENT_PARAM(1, 2) = (uint)getState()->time + 150;
 
 				if (CURRENT_PARAM(1, 2) >= getState()->time)
 					break;
@@ -1105,7 +1105,7 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 
 	case kActionNone:
 		if (!params->param4)
-			params->param4 = getState()->time + 4500;
+			params->param4 = (uint)getState()->time + 4500;
 
 		if (params->param4 < getState()->time) {
 			params->param4 = kTimeInvalid;

@@ -187,10 +187,10 @@ void SoundManager::clearQueue() {
 	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
 		SoundEntry *entry = (*i);
 
-		removeEntry(entry);
-
 		// Delete entry
-		SAFE_DELETE(entry);
+		removeEntry(entry);
+		delete entry;
+
 		i = _cache.reverse_erase(i);
 	}
 
@@ -530,7 +530,7 @@ void SoundManager::saveLoadWithSerializer(Common::Serializer &s) {
 				s.syncAsUint32LE(entry->field_38); // field_14;
 				s.syncAsUint32LE(entry->entity); // entity;
 
-				uint32 field_1C = entry->field_48 - _data2;
+				uint32 field_1C = (uint32)entry->field_48 - _data2;
 				if (field_1C > kFlag8)
 					field_1C = 0;
 				s.syncAsUint32LE(field_1C); // field_1C;

@@ -1431,7 +1431,7 @@ IMPLEMENT_FUNCTION(29, August, function29)
 
 			if (!getEntities()->isInRestaurant(kEntityPlayer)
 			 || getSound()->isBuffered("MRB1076") || getSound()->isBuffered("MRB1078") || getSound()->isBuffered("MRB1078A"))
-				params->param3 = getState()->time + 225;
+				params->param3 = (uint)getState()->time + 225;
 
 			if (params->param3 > getState()->time)
 				break;
@@ -1641,8 +1641,8 @@ IMPLEMENT_FUNCTION(32, August, function32)
 
 		if (params->param1 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			if (!params->param4) {
-				params->param4 = getState()->time + 1800;
-				params->param5 = getState()->time + 9000;
+				params->param4 = (uint)getState()->time + 1800;
+				params->param5 = (uint)getState()->time + 9000;
 			}
 
 			if (params->param7 != kTimeInvalid && params->param4 < getState()->time) {
@@ -3033,7 +3033,7 @@ IMPLEMENT_FUNCTION(60, August, function60)
 		bool pushSavepoint = false;
 		if (!params->param2) {
 			pushSavepoint = true;
-			params->param2 = getState()->time + 450;
+			params->param2 = (uint)getState()->time + 450;
 		}
 
 		if (params->param2 < getState()->time) {
@@ -3281,7 +3281,7 @@ IMPLEMENT_FUNCTION(64, August, function64)
 
 	case kActionNone:
 		if (!params->param1)
-			params->param1 = getState()->time + 1800;
+			params->param1 = (uint)getState()->time + 1800;
 
 		if (params->param1 >= getState()->time)
 			break;

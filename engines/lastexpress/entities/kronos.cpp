@@ -305,7 +305,7 @@ IMPLEMENT_FUNCTION(15, Kronos, function15)
 		if (params->param3 != kTimeInvalid && getState()->time > kTime2002500) {
 			if (getState()->time <= kTime2052000) {
 				if (!getEntities()->isInSalon(kEntityPlayer) || getEntities()->isInSalon(kEntityPlayer) || !params->param3)
-					params->param3 = getState()->time + 900;
+					params->param3 = (uint)getState()->time + 900;
 
 				if (params->param3 >= getState()->time)
 					break;
@@ -524,8 +524,8 @@ IMPLEMENT_FUNCTION(20, Kronos, function20)
 		getObjects()->update(kObject76, kEntityKronos, kObjectLocationNone, kCursorNormal, getInventory()->hasItem(kItemBriefcase) ? kCursorHand : kCursorNormal);
 
 		if (!params->param7) {
-			params->param7 = getState()->time + 2700;
-			params->param8 = getState()->time + 13500;
+			params->param7 = (uint)getState()->time + 2700;
+			params->param8 = (uint)getState()->time + 13500;
 		}
 
 		if (CURRENT_PARAM(1, 2) != kTimeInvalid && params->param7 < getState()->time) {

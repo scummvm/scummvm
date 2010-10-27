@@ -949,7 +949,7 @@ IMPLEMENT_FUNCTION(29, Boutarel, function29)
 
 			if (getState()->time <= kTime1998000)
 				if (!getEntities()->isInRestaurant(kEntityPlayer) || !params->param3)
-					params->param3 = getState()->time + 450;
+					params->param3 = (uint)(getState()->time + 450);
 
 			if (params->param3 < getState()->time || getState()->time > kTime1998000) {
 				params->param3 = kTimeInvalid;

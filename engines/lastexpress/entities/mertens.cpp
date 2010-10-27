@@ -3024,7 +3024,7 @@ IMPLEMENT_FUNCTION(42, Mertens, function42)
 					  || getSound()->isBuffered("REB1205")
 					  || !getEntities()->isInsideCompartment(kEntityMmeBoutarel, kCarRedSleeping, kPosition_5790)
 					  || !params->param4) {
-						params->param4 = getState()->time;
+						params->param4 = (uint)getState()->time;
 					}
 
 					if (params->param4 >= getState()->time)
@@ -3962,7 +3962,7 @@ IMPLEMENT_FUNCTION(52, Mertens, function52)
 		if (params->param1 >= getState()->time) {
 
 			if (!getEntities()->isPlayerInCar(kCarRedSleeping) || !params->param2)
-				params->param2 = getState()->time;
+				params->param2 = (uint)getState()->time;
 
 			if (params->param2 >= getState()->time)
 				break;
@@ -3981,7 +3981,7 @@ IMPLEMENT_FUNCTION(52, Mertens, function52)
 
 		getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
-		params->param1 = getState()->time + 4500;
+		params->param1 = (uint)(getState()->time + 4500);
 		break;
 
 	case kActionCallback:

@@ -612,9 +612,9 @@ void SceneManager::updateDoorsAndClock() {
 		Sequence *sequenceMinutes = loadSequence1("SCLKM-81.seq", 255);
 
 		// Compute hours and minutes indexes
-		uint16 hoursIndex = getState()->time % 1296000 % 54000 / 900;
+		uint16 hoursIndex = (uint)getState()->time % 1296000 % 54000 / 900;
 
-		uint hours = (getState()->time % 1296000) / 54000;
+		uint hours = ((uint)getState()->time % 1296000) / 54000;
 		if (hours >= 12)
 			hours -= 12;
 
@@ -1077,7 +1077,7 @@ void SceneManager::postProcessScene() {
 	case Scene::kTypeList: {
 
 		// Adjust time
-		getState()->time = (TimeValue)(getState()->time + (scene->param1 + 10) * getState()->timeDelta);
+		getState()->time = (TimeValue)(getState()->time + (TimeValue)((scene->param1 + 10) * getState()->timeDelta));
 		getState()->timeTicks += (scene->param1 + 10);
 
 		// Wait for a number of frames unless right mouse is clicked

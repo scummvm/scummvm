@@ -111,7 +111,7 @@ public:
 	bool isGameFinished(uint32 menuIndex, uint32 savegameIndex);
 
 	// Accessors
- 	TimeValue    getTime(uint32 index) { return getEntry(index)->time; }
+ 	uint32       getTime(uint32 index) { return getEntry(index)->time; }
 	ChapterIndex getChapter(uint32 index) { return getEntry(index)->chapter; }
 	uint32       getValue(uint32 index) { return getEntry(index)->value; }
 	uint32       getLastSavegameTicks() const { return _gameTicksLastSavegame; }
@@ -208,7 +208,7 @@ private:
 	struct SavegameEntryHeader : Common::Serializable {
 		uint32 signature;
 		SavegameType type;
-		TimeValue time;
+		uint32 time;
 		int offset;
 		ChapterIndex chapter;
 		uint32 value;

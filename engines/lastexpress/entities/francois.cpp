@@ -1119,7 +1119,7 @@ label_callback_11:
 			if (getInventory()->get(kItemWhistle)->location == kObjectLocation3) {
 				if (getState()->time <= kTimeEnd)
 					if (!getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000) || !params->param4)
-						params->param4 = getState()->time + 75;
+						params->param4 = (uint)(getState()->time + 75);
 
 				if (params->param4 < getState()->time || getState()->time > kTimeEnd) {
 					params->param4 = kTimeInvalid;
