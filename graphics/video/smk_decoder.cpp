@@ -252,9 +252,12 @@ BigHuffmanTree::BigHuffmanTree(BitStream &bs, int allocSize)
 	_loBytes = new SmallHuffmanTree(_bs);
 	_hiBytes = new SmallHuffmanTree(_bs);
 
-	_markers[0] = _bs.getBits8() | (_bs.getBits8() << 8);
-	_markers[1] = _bs.getBits8() | (_bs.getBits8() << 8);
-	_markers[2] = _bs.getBits8() | (_bs.getBits8() << 8);
+	_markers[0] = _bs.getBits8();
+	_markers[0] |= (_bs.getBits8() << 8);
+	_markers[1] = _bs.getBits8();
+	_markers[1] |= (_bs.getBits8() << 8);
+	_markers[2] = _bs.getBits8();
+	_markers[2] |= (_bs.getBits8() << 8);
 
 	_last[0] = _last[1] = _last[2] = 0xffffffff;
 
@@ -780,13 +783,23 @@ void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 
 	int32 bases[2];
 
-	if (isStereo)
-		bases[1] = (!is16Bits) ?   audioBS.getBits8() :
-		               ((int16) (((audioBS.getBits8() << 8) | audioBS.getBits8())));
+	if (isStereo) {
+		if (is16Bits) {
+			byte hi = audioBS.getBits8();
+			byte lo = audioBS.getBits8();
+			bases[1] = (int16) ((hi << 8) | lo);
+		} else {
+			bases[1] = audioBS.getBits8();
+		}
+	}
 
-	bases[0] = (!is16Bits) ?   audioBS.getBits8() :
-	               ((int16) (((audioBS.getBits8() << 8) | audioBS.getBits8())));
-
+	if (is16Bits) {
+		byte hi = audioBS.getBits8();
+		byte lo = audioBS.getBits8();
+		bases[0] = (int16) ((hi << 8) | lo);
+	} else {
+		bases[0] = audioBS.getBits8();
+	}
 
 	// The bases are the first samples, too
 	for (int i = 0; i < (isStereo ? 2 : 1); i++, curPointer += (is16Bits ? 2 : 1), curPos += (is16Bits ? 2 : 1)) {
@@ -811,8 +824,9 @@ void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 			}
 		} else {
 			for (int k = 0; k < (isStereo ? 2 : 1); k++) {
-				bases[k] += (int16) (audioTrees[k * 2]->getCode(audioBS) |
-				                    (audioTrees[k * 2 + 1]->getCode(audioBS) << 8));
+				byte lo = audioTrees[k * 2]->getCode(audioBS);
+				byte hi = audioTrees[k * 2 + 1]->getCode(audioBS);
+				bases[k] += (int16) (lo | (hi << 8));
 
 				WRITE_BE_UINT16(curPointer, bases[k]);
 				curPointer += 2;
