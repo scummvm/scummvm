@@ -541,7 +541,8 @@ void SoundManager::saveLoadWithSerializer(Common::Serializer &s) {
 			}
 		}
 	} else {
-		error("Sound::saveLoadWithSerializer: not implemented!");
+		warning("Sound::saveLoadWithSerializer: not implemented!");
+		s.skip(numEntries * 64);
 	}
 }
 

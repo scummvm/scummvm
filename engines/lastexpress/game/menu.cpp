@@ -360,7 +360,7 @@ Menu::Menu(LastExpressEngine *engine) : _engine(engine),
 	_gameId(kGameBlue), _hasShownStartScreen(false), _hasShownIntro(false),
 	_isShowingCredits(false), _isGameStarted(false), _isShowingMenu(false),
 	_creditsSequenceIndex(0), _checkHotspotsTicks(15),  _mouseFlags(Common::EVENT_INVALID), _lastHotspot(NULL),
-	_currentTime(kTimeNone), _lowerTime(kTimeNone), _time(kTimeNone), _currentIndex(0), _index(0), _savegameIndex(0), _delta(0), _handleTimeDelta(false) {
+	_currentTime(kTimeNone), _lowerTime(kTimeNone), _time(kTimeNone), _currentIndex(0), _index(0), _lastIndex(0), _delta(0), _handleTimeDelta(false) {
 
 	_clock = new Clock(_engine);
 	_trainLine = new TrainLine(_engine);
@@ -661,8 +661,8 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 			if (_isGameStarted) {
 				showFrame(kOverlayEggButtons, kButtonContinue, true);
 
-				if (_savegameIndex == _index) {
-					showFrame(kOverlayTooltip, getSaveLoad()->isGameFinished(_index, _savegameIndex) ? kTooltipViewGameEnding : kTooltipContinueGame, true);
+				if (_lastIndex == _index) {
+					showFrame(kOverlayTooltip, getSaveLoad()->isGameFinished(_index, _lastIndex) ? kTooltipViewGameEnding : kTooltipContinueGame, true);
 				} else {
 					showFrame(kOverlayTooltip, kTooltipContinueRewoundGame, true);
 				}
@@ -830,7 +830,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 
 	//////////////////////////////////////////////////////////////////////////
 	case kMenuForwardGame:
-		if (_savegameIndex <= _index || _currentTime > _time) {
+		if (_lastIndex <= _index || _currentTime > _time) {
 			hideOverlays();
 			break;
 		}
@@ -1087,11 +1087,11 @@ void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
 	}
 
 	// Init savegame & menu values
-	_savegameIndex = getSaveLoad()->init(_gameId, true);
-	_lowerTime = getSaveLoad()->getTime(_savegameIndex);
+	_lastIndex = getSaveLoad()->init(_gameId, true);
+	_lowerTime = getSaveLoad()->getTime(_lastIndex);
 
 	if (useSameIndex)
-		_index = _savegameIndex;
+		_index = _lastIndex;
 
 	//if (!getGlobalTimer())
 	//	_index3 = 0;
@@ -1112,26 +1112,20 @@ void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
 	}
 }
 
+// Start a game (or load an existing savegame)
 void Menu::startGame() {
-	// TODO: Clear train sequences & savegame headers
+	getSaveLoad()->clear();
 
-	if (0 /* test for temp filename */ ) {
-		if (_savegameIndex == _index)
+	if (_lastIndex == _index) {
+		setGlobalTimer(0);
+		if (_index) {
 			getSaveLoad()->loadGame(_gameId);
-		else
-			getSaveLoad()->loadGame2(_gameId);
-	} else {
-		if (_savegameIndex == _index) {
-			setGlobalTimer(0);
-			if (_index) {
-				getSaveLoad()->loadGame(_gameId);
-			} else {
-				getLogic()->resetState();
-				getEntities()->setup(true, kEntityPlayer);
-			}
 		} else {
-			getSaveLoad()->loadGame2(_gameId);
+			getLogic()->resetState();
+			getEntities()->setup(true, kEntityPlayer);
 		}
+	} else {
+		getSaveLoad()->loadGame(_gameId, _index);
 	}
 }
 
@@ -1152,7 +1146,7 @@ void Menu::switchGame() {
 	_trainLine->clear();
 
 	// Clear loaded savegame data
-	getSaveLoad()->clearHeaders();
+	getSaveLoad()->clear(true);
 
 	init(false, kSavegameTypeIndex, 0);
 }
@@ -1367,7 +1361,7 @@ void Menu::adjustIndex(uint32 time1, uint32 time2, bool searchEntry) {
 			if (searchEntry) {
 				uint32 currentIndex = _index;
 
-				if (_savegameIndex >= _index) {
+				if (_lastIndex >= _index) {
 					do {
 						// Calculate new delta
 						int32 newDelta = (uint32)getSaveLoad()->getTime(currentIndex) - time1;
@@ -1378,7 +1372,7 @@ void Menu::adjustIndex(uint32 time1, uint32 time2, bool searchEntry) {
 						}
 
 						++currentIndex;
-					} while (currentIndex <= _savegameIndex);
+					} while (currentIndex <= _lastIndex);
 				}
 			} else {
 				index = _index + 1;
@@ -1409,7 +1403,7 @@ void Menu::goToTime(uint32 time) {
 		}
 
 		++index;
-	} while (_savegameIndex >= index);
+	} while (_lastIndex >= index);
 
 	_currentIndex = entryIndex;
 	updateTime(getSaveLoad()->getTime(entryIndex));
@@ -1424,10 +1418,10 @@ void Menu::setTime() {
 }
 
 void Menu::forwardTime() {
-	if (_savegameIndex <= _index)
+	if (_lastIndex <= _index)
 		return;
 
-	_currentIndex = _savegameIndex;
+	_currentIndex = _lastIndex;
 	updateTime(getSaveLoad()->getTime(_currentIndex));
 }
 

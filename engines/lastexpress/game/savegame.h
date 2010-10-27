@@ -94,14 +94,15 @@ public:
 
 	// Init
 	void create(GameId id);
-	void clearHeaders();
+	void clear(bool clearStream = false);
 	uint32 init(GameId id, bool resetHeaders);
 
 	// Save & Load
-	bool loadGame(GameId id);
-	bool loadGame2(GameId id);
+	void loadGame(GameId id);
+	void loadGame(GameId id, uint32 index);
 	void saveGame(SavegameType type, EntityIndex entity, uint32 value);
 
+	void loadVolumeBrightness();
 	void saveVolumeBrightness();
 
 	// Getting information
@@ -266,10 +267,10 @@ private:
 	static bool loadMainHeader(Common::InSaveFile *stream, SavegameMainHeader *header);
 
 	// Entries
-	void writeEntry(SavegameType type, EntityIndex entity, uint32 value);
-	void readEntry(SavegameType type, EntityIndex entity, uint32 value);
+	void writeEntry(SavegameType type, EntityIndex entity, uint32 val);
+	void readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, bool keepIndex);
+
 	SavegameEntryHeader *getEntry(uint32 index);
-	uint32 computeOffset(uint32 originalPosition = 0);
 
 	// Opening save files
 	static Common::String getFilename(GameId id);

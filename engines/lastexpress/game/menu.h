@@ -183,7 +183,7 @@ private:
 
 	uint32 _currentIndex; // current savegame entry
 	uint32 _index;
-	uint32 _savegameIndex;
+	uint32 _lastIndex;
 	uint32 _delta;
 	bool _handleTimeDelta;
 

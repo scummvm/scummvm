@@ -544,7 +544,7 @@ public:
 			s.syncAsUint32LE(sceneBackup2);
 		}
 
-		void saveEvents(Common::Serializer &s) {
+		void syncEvents(Common::Serializer &s) {
 			for (uint i = 0; i < ARRAYSIZE(events); i++)
 				s.syncAsByte(events[i]);
 		}

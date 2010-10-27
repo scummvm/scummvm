@@ -121,7 +121,7 @@ void Debugger::resetCommand() {
 	SAFE_DELETE(_command);
 
 	if (_commandParams)
-		for (int i = 0; i < _numParams; i++)		
+		for (int i = 0; i < _numParams; i++)
 			free(_commandParams[i]);
 
 	free(_commandParams);
@@ -1109,9 +1109,7 @@ bool Debugger::cmdLoadGame(int argc, const char **argv) {
 		if (id == 0 || id > 6)
 			goto error;
 
-		if (!getSaveLoad()->loadGame((GameId)(id - 1)))
-			DebugPrintf("Error loading game with id=%d", id);
-
+		getSaveLoad()->loadGame((GameId)(id - 1));
 	} else {
 error:
 		DebugPrintf("Syntax: loadgame <id> (id=1-6)\n");

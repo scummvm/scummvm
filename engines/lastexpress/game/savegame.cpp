@@ -61,9 +61,7 @@ SaveLoad::SaveLoad(LastExpressEngine *engine) : _engine(engine), _savegame(NULL)
 }
 
 SaveLoad::~SaveLoad() {
-	clearHeaders();
-
-	SAFE_DELETE(_savegame);
+	clear(true);
 
 	//Zero passed pointers
 	_engine = NULL;
@@ -115,7 +113,7 @@ uint32 SaveLoad::init(GameId id, bool resetHeaders) {
 
 	// Reset cached entry headers if needed
 	if (resetHeaders) {
-		clearHeaders();
+		clear();
 
 		SavegameEntryHeader *entryHeader = new SavegameEntryHeader();
 		entryHeader->time = kTimeCityParis;
@@ -156,7 +154,7 @@ void SaveLoad::loadStream(GameId id) {
 		error("SaveLoad::loadStream: savegame stream is invalid");
 
 	// Load all savegame data
-	uint8* buf = new uint8[4096];
+	uint8* buf = new uint8[8192];
 	while (!save->eos() && !save->err()) {
 		uint32 count = save->read(buf, sizeof(buf));
 		if (count) {
@@ -175,11 +173,14 @@ void SaveLoad::loadStream(GameId id) {
 	_savegame->seek(0);
 }
 
-void SaveLoad::clearHeaders() {
+void SaveLoad::clear(bool clearStream) {
 	for (uint i = 0; i < _gameHeaders.size(); i++)
 		SAFE_DELETE(_gameHeaders[i]);
 
 	_gameHeaders.clear();
+
+	if (clearStream)
+		SAFE_DELETE(_savegame);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -187,19 +188,41 @@ void SaveLoad::clearHeaders() {
 //////////////////////////////////////////////////////////////////////////
 
 // Load game
-bool SaveLoad::loadGame(GameId id) {
+void SaveLoad::loadGame(GameId id) {
+	// Rewind current savegame
+	_savegame->seek(0);
 
-	if (!SaveLoad::isSavegamePresent(id))
-		return false;
+	// Validate main header
+	SavegameMainHeader header;
+	if (!loadMainHeader(_savegame, &header)) {
+		debugC(2, kLastExpressDebugSavegame, "SaveLoad::saveGame - Cannot load main header: %s", getFilename(getMenu()->getGameId()).c_str());
+		return;
+	}
 
-	//Common::InSaveFile *save = SaveLoad::openForLoading(id);
-	// Validate header
+	// Load the last entry
+	_savegame->seek(header.offsetEntry);
 
-	error("SaveLoad::loadgame: not implemented!");
+	SavegameType type = kSavegameTypeIndex;
+	EntityIndex entity = kEntityPlayer;
+	uint32 val = 0;
+	readEntry(&type, &entity, &val, header.keepIndex == 1);
+
+	// Setup last loading time
+	_gameTicksLastSavegame = getState()->timeTicks;
+
+	if (header.keepIndex) {
+		getSound()->clearQueue();
+
+		readEntry(&type, &entity, &val, false);
+	}
+
+	getEntities()->reset();
+	getEntities()->setup(false, entity);
 }
 
-bool SaveLoad::loadGame2(GameId id) {
-	error("SaveLoad::loadgame2: not implemented!");
+// Load a specific game entry
+void SaveLoad::loadGame(GameId id, uint32 index) {
+	error("SaveLoad::loadGame: not implemented! (only loading the last entry is working for now)");
 }
 
 // Save game
@@ -337,8 +360,6 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	Common::Serializer ser(NULL, _savegame);
 	header.saveLoadWithSerializer(ser);
 
-	computeOffset();
-
 	// Write game data
 	WRITE_ENTRY("entity index", ser.syncAsUint32LE(entity), 4);
 	WRITE_ENTRY("state", getState()->saveLoadWithSerializer(ser), 4 + 4 + 4 + 4 + 1 + 4 + 4);
@@ -346,14 +367,14 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	WRITE_ENTRY("positions", getEntities()->savePositions(ser), 4 * 1000);
 	WRITE_ENTRY("compartments", getEntities()->saveCompartments(ser), 4 * 16 * 2);
 	WRITE_ENTRY("progress", getProgress().saveLoadWithSerializer(ser), 4 * 128);
-	WRITE_ENTRY("events", getState()->saveEvents(ser), 512);
+	WRITE_ENTRY("events", getState()->syncEvents(ser), 512);
 	WRITE_ENTRY("inventory", getInventory()->saveLoadWithSerializer(ser), 7 * 32);
 	WRITE_ENTRY("objects", getObjects()->saveLoadWithSerializer(ser), 5 * 128);
 	WRITE_ENTRY("entities", getEntities()->saveLoadWithSerializer(ser), 1262 * 40);
 	WRITE_ENTRY("sound", getSound()->saveLoadWithSerializer(ser), 3 * 4 + getSound()->count() * 64);
 	WRITE_ENTRY("savepoints", getSavePoints()->saveLoadWithSerializer(ser), 128 * 16 + 4 + getSavePoints()->count() * 16);
 
-	header.offset = computeOffset(originalPosition);
+	header.offset = (uint32)_savegame->pos() - (originalPosition + 32);
 
 	// Add padding if necessary
 	while (header.offset & 0xF) {
@@ -376,8 +397,63 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	_savegame->seek(endPosition);
 }
 
-void SaveLoad::readEntry(SavegameType type, EntityIndex entity, uint32 value) {
-	warning("SaveLoad::readEntry: not implemented!");
+void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, bool keepIndex) {
+#define LOAD_ENTRY(name, func, val) { \
+	uint32 _prevPosition = (uint32)_savegame->pos(); \
+	func; \
+	uint32 _count = (uint32)_savegame->pos() - _prevPosition; \
+	debugC(kLastExpressDebugSavegame, "Savegame: Reading " #name ": %d bytes", _count); \
+	if (_count != val) \
+		error("SaveLoad::readEntry: Number of bytes read (%d) differ from expected count (%d)", _count, val); \
+}
+
+#define LOAD_ENTRY_ONLY(name, func) { \
+	uint32 _prevPosition = (uint32)_savegame->pos(); \
+	func; \
+	uint32 _count = (uint32)_savegame->pos() - _prevPosition; \
+	debugC(kLastExpressDebugSavegame, "Savegame: Reading " #name ": %d bytes", _count); \
+}
+
+	if (!type || !entity || !val)
+		error("SaveLoad::readEntry: Invalid parameters passed!");
+
+	// Load entry header
+	SavegameEntryHeader entry;
+	Common::Serializer ser(_savegame, NULL);
+	entry.saveLoadWithSerializer(ser);
+
+	if (!entry.isValid())
+		error("SaveLoad::readEntry: entry header is invalid!");
+
+	// Init type, entity & value
+	*type = entry.type;
+	*val = entry.value;
+
+	// Save position
+	uint32 originalPosition = (uint32)_savegame->pos();
+
+	// Load game data
+	LOAD_ENTRY("entity index", ser.syncAsUint32LE(*entity), 4);
+	LOAD_ENTRY("state", getState()->saveLoadWithSerializer(ser), 4 + 4 + 4 + 4 + 1 + 4 + 4);
+	LOAD_ENTRY("selected item", getInventory()->saveSelectedItem(ser), 4);
+	LOAD_ENTRY("positions", getEntities()->savePositions(ser), 4 * 1000);
+	LOAD_ENTRY("compartments", getEntities()->saveCompartments(ser), 4 * 16 * 2);
+	LOAD_ENTRY("progress", getProgress().saveLoadWithSerializer(ser), 4 * 128);
+	LOAD_ENTRY("events", getState()->syncEvents(ser), 512);
+	LOAD_ENTRY("inventory", getInventory()->saveLoadWithSerializer(ser), 7 * 32);
+	LOAD_ENTRY("objects", getObjects()->saveLoadWithSerializer(ser), 5 * 128);
+	LOAD_ENTRY("entities", getEntities()->saveLoadWithSerializer(ser), 1262 * 40);
+	LOAD_ENTRY_ONLY("sound", getSound()->saveLoadWithSerializer(ser));
+	LOAD_ENTRY_ONLY("savepoints", getSavePoints()->saveLoadWithSerializer(ser));
+
+	// Update chapter
+	getProgress().chapter = entry.chapter;
+
+	// Skip padding
+	uint32 offset = _savegame->pos() - originalPosition;
+	if (offset & 0xF) {
+		_savegame->seek((~offset & 0xF) + 1, SEEK_SET);
+	}
 }
 
 SaveLoad::SavegameEntryHeader *SaveLoad::getEntry(uint32 index) {
@@ -385,14 +461,6 @@ SaveLoad::SavegameEntryHeader *SaveLoad::getEntry(uint32 index) {
 		error("SaveLoad::getEntry: invalid index (was:%d, max:%d)", index, _gameHeaders.size() - 1);
 
 	return _gameHeaders[index];
-}
-
-uint32 SaveLoad::computeOffset(uint32 originalPosition) {
-	warning("SaveLoad::computePadding: not implemented!");
-	if (!_savegame)
-		error("SaveLoad::computeOffset: savegame stream is invalid");
-
-	return ((uint32)_savegame->pos() - (originalPosition + 32));
 }
 
 //////////////////////////////////////////////////////////////////////////
