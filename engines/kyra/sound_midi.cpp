@@ -683,7 +683,7 @@ void SoundMidiPC::haltTrack() {
 	_output->deinitSource(0);
 }
 
-bool SoundMidiPC::isPlaying() {
+bool SoundMidiPC::isPlaying() const {
 	Common::StackLock lock(_mutex);
 
 	return _music->isPlaying();

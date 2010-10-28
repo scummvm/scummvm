@@ -94,7 +94,7 @@ public:
 	 * @param track track number
 	 * @return true if available, false otherwise
 	 */
-	virtual bool hasSoundFile(uint file) { return (fileListEntry(file) != 0); }
+	virtual bool hasSoundFile(uint file) const { return (fileListEntry(file) != 0); }
 
 	/**
 	 * Load a specifc sound file for use of

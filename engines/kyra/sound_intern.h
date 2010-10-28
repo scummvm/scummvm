@@ -68,7 +68,7 @@ public:
 
 	void playTrack(uint8 track);
 	void haltTrack();
-	bool isPlaying();
+	bool isPlaying() const;
 
 	void playSoundEffect(uint8 track);
 	void stopAllSoundEffects();
