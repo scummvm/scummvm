@@ -1050,7 +1050,7 @@ bool Console::cmdMapInstrument(int argc, const char **argv) {
 		DebugPrintf("A value of 255 (0xff) signifies an unmapped instrument\n");
 		DebugPrintf("Please replace the spaces in the instrument name with underscores (\"_\"). They'll be converted to spaces afterwards\n\n");
 		DebugPrintf("Example: %s test_0__XX 1 255\n", argv[0]);
-		DebugPrintf("The above example will map the MT-32 instument \"test 0  XX\" to GM instrument 1\n\n");
+		DebugPrintf("The above example will map the MT-32 instrument \"test 0  XX\" to GM instrument 1\n\n");
 	} else {
 		if (Mt32dynamicMappings != NULL) {
 			Mt32ToGmMap newMapping;
