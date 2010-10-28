@@ -32,6 +32,7 @@
 #include "sound/softsynth/emumidi.h"
 
 #include "sci/resource.h"
+#include "sci/sound/drivers/gm_names.h"
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/sound/drivers/map-mt32-to-gm.h"
 
