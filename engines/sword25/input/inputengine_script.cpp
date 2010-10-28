@@ -36,7 +36,6 @@
 #include "common/str.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/kernel.h"
-#include "sword25/kernel/callbackregistry.h"
 #include "sword25/script/script.h"
 #include "sword25/script/luabindhelper.h"
 #include "sword25/script/luacallback.h"
@@ -102,16 +101,6 @@ static int init(lua_State *L) {
 
 static int update(lua_State *L) {
 	InputEngine *pIE = getIE();
-
-	// Beim ersten Aufruf der Update()-Methode werden die beiden Callbacks am Input-Objekt registriert.
-	// Dieses kann nicht in _RegisterScriptBindings() passieren, da diese Funktion vom Konstruktor der abstrakten Basisklasse aufgerufen wird und die
-	// Register...()-Methoden abstrakt sind, im Konstruktor der Basisklasse also nicht aufgerufen werden können.
-	static bool firstCall = true;
-	if (firstCall) {
-		firstCall = false;
-		pIE->registerCharacterCallback(theCharacterCallback);
-		pIE->registerCommandCallback(theCommandCallback);
-	}
 
 	pIE->update();
 	return 0;
@@ -291,8 +280,8 @@ bool InputEngine::registerScriptBindings() {
 	assert(commandCallbackPtr == 0);
 	commandCallbackPtr = new CommandCallbackClass(L);
 
-	CallbackRegistry::instance().registerCallbackFunction("LuaCommandCB", theCommandCallback);
-	CallbackRegistry::instance().registerCallbackFunction("LuaCharacterCB", theCharacterCallback);
+	setCharacterCallback(theCharacterCallback);
+	setCommandCallback(theCommandCallback);
 
 	return true;
 }

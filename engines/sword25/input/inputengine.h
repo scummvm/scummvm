@@ -50,7 +50,6 @@
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/service.h"
 #include "sword25/kernel/persistable.h"
-#include "sword25/kernel/callbackregistry.h"
 
 namespace Sword25 {
 
@@ -258,46 +257,32 @@ public:
 	 */
 	bool wasKeyDown(uint keyCode);
 
-	typedef CallbackPtr CharacterCallback;
+	typedef void (*CharacterCallback)(int command);
 
 	/**
 	 * Registers a callback function for keyboard input.
 	 *
-	 * The callbacks that are registered with this function will be called whenever an
+	 * The callback that is registered with this function will be called whenever an
 	 * input key is pressed. A letter entry is different from the query using the
-	 * methods IsKeyDown () and WasKeyDown () in the sense that are treated instead
+	 * methods isKeyDown() and wasKeyDown() in the sense that are treated instead
 	 * of actual scan-coded letters. These were taken into account, among other things:
 	 * the keyboard layout, the condition the Shift and Caps Lock keys and the repetition
 	 * of longer holding the key.
 	 * The input of strings by the user through use of callbacks should be implemented.
-	 * @return              Returns true if the function was registered, otherwise false.
 	*/
-	bool registerCharacterCallback(CallbackPtr callback);
+	void setCharacterCallback(CharacterCallback callback);
 
-	/**
-	 * De-registeres a previously registered callback function.
-	 * @return              Returns true if the function could be de-registered, otherwise false.
-	 */
-	bool unregisterCharacterCallback(CallbackPtr callback);
-
-	typedef CallbackPtr CommandCallback;
+	typedef void (*CommandCallback)(int command);
 
 	/**
 	 * Registers a callback function for the input of commands that can have influence on the string input
 	 *
-	 * The callbacks that are registered with this function will be called whenever the input service
+	 * The callback that is registered with this function will be called whenever the input service
 	 * has a key that affects the character string input. This could be the following keys:
 	 * Enter, End, Left, Right, ...
 	 * The input of strings by the user through the use of callbacks should be implemented.
-	 * @return              Returns true if the function was registered, otherwise false.
 	 */
-	bool registerCommandCallback(CallbackPtr callback);
-
-	/**
-	 * Un-register a callback function for the input of commands that can have an influence on the string input.
-	 * @return              Returns true if the function could be de-registered, otherwise false.
-	 */
-	bool unregisterCommandCallback(CommandCallback callback);
+	void setCommandCallback(CommandCallback callback);
 
 	void reportCharacter(byte character);
 	void reportCommand(KEY_COMMANDS command);
@@ -328,8 +313,8 @@ private:
 	uint _lastLeftClickTime;
 	int _lastLeftClickMouseX;
 	int _lastLeftClickMouseY;
-	Common::List<CommandCallback> _commandCallbacks;
-	Common::List<CharacterCallback> _characterCallbacks;
+	CommandCallback _commandCallback;
+	CharacterCallback _characterCallback;
 };
 
 } // End of namespace Sword25

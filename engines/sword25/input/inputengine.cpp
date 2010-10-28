@@ -39,7 +39,6 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "sword25/kernel/kernel.h"
-#include "sword25/kernel/callbackregistry.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/input/inputengine.h"
@@ -221,135 +220,62 @@ void InputEngine::setMouseY(int posY) {
 	g_system->warpMouse(_mouseX, _mouseY);
 }
 
-bool InputEngine::registerCharacterCallback(CharacterCallback callback) {
-	if (Common::find(_characterCallbacks.begin(), _characterCallbacks.end(), callback) == _characterCallbacks.end()) {
-		_characterCallbacks.push_back(callback);
-		return true;
-	} else {
-		BS_LOG_WARNINGLN("Tried to register an CharacterCallback that was already registered.");
-		return false;
-	}
+void InputEngine::setCharacterCallback(CharacterCallback callback) {
+	_characterCallback = callback;
 }
 
-bool InputEngine::unregisterCharacterCallback(CharacterCallback callback) {
-	Common::List<CharacterCallback>::iterator callbackIter = Common::find(_characterCallbacks.begin(),
-	        _characterCallbacks.end(), callback);
-	if (callbackIter != _characterCallbacks.end()) {
-		_characterCallbacks.erase(callbackIter);
-		return true;
-	} else {
-		BS_LOG_WARNINGLN("Tried to unregister an CharacterCallback that was not previously registered.");
-		return false;
-	}
-}
-
-bool InputEngine::registerCommandCallback(CommandCallback callback) {
-	if (Common::find(_commandCallbacks.begin(), _commandCallbacks.end(), callback) == _commandCallbacks.end()) {
-		_commandCallbacks.push_back(callback);
-		return true;
-	} else {
-		BS_LOG_WARNINGLN("Tried to register an CommandCallback that was already registered.");
-		return false;
-	}
-}
-
-bool InputEngine::unregisterCommandCallback(CommandCallback callback) {
-	Common::List<CommandCallback>::iterator callbackIter =
-	    Common::find(_commandCallbacks.begin(), _commandCallbacks.end(), callback);
-	if (callbackIter != _commandCallbacks.end()) {
-		_commandCallbacks.erase(callbackIter);
-		return true;
-	} else {
-		BS_LOG_WARNINGLN("Tried to unregister an CommandCallback that was not previously registered.");
-		return false;
-	}
+void InputEngine::setCommandCallback(CommandCallback callback) {
+	_commandCallback = callback;
 }
 
 void InputEngine::reportCharacter(byte character) {
-	Common::List<CharacterCallback>::const_iterator callbackIter = _characterCallbacks.begin();
-	while (callbackIter != _characterCallbacks.end()) {
-		// Iterator vor dem Aufruf erhöhen und im Folgendem auf einer Kopie arbeiten.
-		// Dieses Vorgehen ist notwendig da der Iterator möglicherweise von der Callbackfunktion durch das Deregistrieren des Callbacks
-		// invalidiert wird.
-		Common::List<CharacterCallback>::const_iterator curCallbackIter = callbackIter;
-		++callbackIter;
-
-		(*curCallbackIter)(character);
-	}
+	if (_characterCallback)
+		(*_characterCallback)(character);
 }
 
 void InputEngine::reportCommand(KEY_COMMANDS command) {
-	Common::List<CommandCallback>::const_iterator callbackIter = _commandCallbacks.begin();
-	while (callbackIter != _commandCallbacks.end()) {
-		// Iterator vor dem Aufruf erhöhen und im Folgendem auf einer Kopie arbeiten.
-		// Dieses Vorgehen ist notwendig da der Iterator möglicherweise von der Callbackfunktion durch das Deregistrieren des Callbacks
-		// invalidiert wird.
-		Common::List<CommandCallback>::const_iterator curCallbackIter = callbackIter;
-		++callbackIter;
-
-		(*curCallbackIter)(command);
-	}
+	if (_commandCallback)
+		(*_commandCallback)(command);
 }
 
 bool InputEngine::persist(OutputPersistenceBlock &writer) {
-	// Anzahl an Command-Callbacks persistieren.
-	writer.write(_commandCallbacks.size());
+	// Write out the number of command callbacks and their names.
+	// Note: We do this only for compatibility with older engines resp.
+	// the original engine.
+	writer.write((uint)1);
+	writer.write(Common::String("LuaCommandCB"));
 
-	// Alle Command-Callbacks einzeln persistieren.
-	{
-		Common::List<CommandCallback>::const_iterator It = _commandCallbacks.begin();
-		while (It != _commandCallbacks.end()) {
-			writer.write(CallbackRegistry::instance().resolveCallbackPointer(*It));
-			++It;
-		}
-	}
-
-	// Anzahl an Character-Callbacks persistieren.
-	writer.write(_characterCallbacks.size());
-
-	// Alle Character-Callbacks einzeln persistieren.
-	{
-		Common::List<CharacterCallback>::const_iterator It = _characterCallbacks.begin();
-		while (It != _characterCallbacks.end()) {
-			writer.write(CallbackRegistry::instance().resolveCallbackPointer(*It));
-			++It;
-		}
-	}
+	// Write out the number of command callbacks and their names.
+	// Note: We do this only for compatibility with older engines resp.
+	// the original engine.
+	writer.write((uint)1);
+	writer.write(Common::String("LuaCharacterCB"));
 
 	return true;
 }
 
 bool InputEngine::unpersist(InputPersistenceBlock &reader) {
-	// Command-Callbackliste leeren.
-	_commandCallbacks.clear();
+	Common::String callbackFunctionName;
 
-	// Anzahl an Command-Callbacks lesen.
+	// Read number of command callbacks and their names.
+	// Note: We do this only for compatibility with older engines resp.
+	// the original engine.
 	uint commandCallbackCount;
 	reader.read(commandCallbackCount);
+	assert(commandCallbackCount == 1);
 
-	// Alle Command-Callbacks wieder herstellen.
-	for (uint i = 0; i < commandCallbackCount; ++i) {
-		Common::String callbackFunctionName;
-		reader.read(callbackFunctionName);
+	reader.read(callbackFunctionName);
+	assert(callbackFunctionName == "LuaCommandCB");
 
-		_commandCallbacks.push_back(reinterpret_cast<CommandCallback>(
-		                                 CallbackRegistry::instance().resolveCallbackFunction(callbackFunctionName)));
-	}
-
-	// Character-Callbackliste leeren.
-	_characterCallbacks.clear();
-
-	// Anzahl an Character-Callbacks lesen.
+	// Read number of character callbacks and their names.
+	// Note: We do this only for compatibility with older engines resp.
+	// the original engine.
 	uint characterCallbackCount;
 	reader.read(characterCallbackCount);
+	assert(characterCallbackCount == 1);
 
-	// Alle Character-Callbacks wieder herstellen.
-	for (uint i = 0; i < characterCallbackCount; ++i) {
-		Common::String callbackFunctionName;
-		reader.read(callbackFunctionName);
-
-		_characterCallbacks.push_back(reinterpret_cast<CharacterCallback>(CallbackRegistry::instance().resolveCallbackFunction(callbackFunctionName)));
-	}
+	reader.read(callbackFunctionName);
+	assert(callbackFunctionName == "LuaCharacterCB");
 
 	return reader.isGood();
 }
