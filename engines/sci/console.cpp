@@ -332,7 +332,6 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" list - Lists all the resources of a given type\n");
 	DebugPrintf(" hexgrep - Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers\n");
 	DebugPrintf(" verify_scripts - Performs sanity checks on SCI1.1-SCI2.1 game scripts (e.g. if they're up to 64KB in total)\n");
-	DebugPrintf(" show_instruments - Shows the instruments of a specific song, or all songs\n");
 	DebugPrintf("\n");
 	DebugPrintf("Game:\n");
 	DebugPrintf(" save_game - Saves the current game state to the hard disk\n");
@@ -372,6 +371,8 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" is_sample - Shows information on a given sound resource, if it's a PCM sample\n");
 	DebugPrintf(" sfx01_header - Dumps the header of a SCI01 song\n");
 	DebugPrintf(" sfx01_track - Dumps a track of a SCI01 song\n");
+	DebugPrintf(" show_instruments - Shows the instruments of a specific song, or all songs\n");
+	DebugPrintf(" map_instrument - Dynamically maps an MT-32 instrument to a GM instrument\n");
 	DebugPrintf("\n");
 	DebugPrintf("Script:\n");
 	DebugPrintf(" addresses - Provides information on how to pass addresses\n");
