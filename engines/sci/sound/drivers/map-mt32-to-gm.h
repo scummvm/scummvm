@@ -167,14 +167,14 @@ static const Mt32ToGmMap Mt32PresetTimbreMaps[] = {
 	/*117*/  {"Taiko     ", 116, MIDI_UNMAPPED},
 	/*118*/  {"Taiko Rim ", 118, MIDI_UNMAPPED},
 	/*119*/  {"Cymbal    ", MIDI_MAPPED_TO_RHYTHM, 51},
-	/*120*/  {"Castanets ", MIDI_UNMAPPED, MIDI_UNMAPPED},
+	/*120*/  {"Castanets ", MIDI_MAPPED_TO_RHYTHM, 75},	// approximation
 	/*121*/  {"Triangle  ", 112, MIDI_UNMAPPED},
 	/*122*/  {"Orche Hit ", 55, MIDI_UNMAPPED},
 	/*123*/  {"Telephone ", 124, MIDI_UNMAPPED},
 	/*124*/  {"Bird Tweet", 123, MIDI_UNMAPPED},
-	/*125*/  {"OneNoteJam", MIDI_UNMAPPED, MIDI_UNMAPPED}, // ?
+	/*125*/  {"OneNoteJam", 8, MIDI_UNMAPPED}, // approximation
 	/*126*/  {"WaterBells", 98, MIDI_UNMAPPED},
-	/*127*/  {"JungleTune", MIDI_UNMAPPED, MIDI_UNMAPPED} // ?
+	/*127*/  {"JungleTune", 75, MIDI_UNMAPPED} // approximation
 };
 
 static const Mt32ToGmMap Mt32RhythmTimbreMaps[] = {
