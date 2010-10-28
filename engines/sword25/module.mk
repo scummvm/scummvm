@@ -33,7 +33,6 @@ MODULE_OBJS := \
 	gfx/image/vectorimagerenderer.o \
 	input/inputengine.o \
 	input/inputengine_script.o \
-	kernel/callbackregistry.o \
 	kernel/filesystemutil.o \
 	kernel/inputpersistenceblock.o \
 	kernel/kernel.o \

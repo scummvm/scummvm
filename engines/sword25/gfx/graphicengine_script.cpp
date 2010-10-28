@@ -34,7 +34,6 @@
 
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/kernel.h"
-#include "sword25/kernel/callbackregistry.h"
 #include "sword25/script/script.h"
 #include "sword25/script/luabindhelper.h"
 #include "sword25/script/luacallback.h"
@@ -621,13 +620,17 @@ static int ro_addAnimation(lua_State *L) {
 		lua_setmetatable(L, -2);
 
 		// Alle Animationscallbacks registrieren.
-		animationPtr->registerDeleteCallback(animationDeleteCallback, animationPtr->getHandle());
-		animationPtr->registerLoopPointCallback(animationLoopPointCallback, animationPtr->getHandle());
-		animationPtr->registerActionCallback(animationActionCallback, animationPtr->getHandle());
+		animationPtr->setCallbacks();
 	} else
 		lua_pushnil(L);
 
 	return 1;
+}
+
+void Animation::setCallbacks() {
+	_actionCallback = animationActionCallback;
+	_loopPointCallback = animationLoopPointCallback;
+	_deleteCallback = animationDeleteCallback;
 }
 
 static const luaL_reg RENDEROBJECT_METHODS[] = {
@@ -1287,10 +1290,6 @@ bool GraphicEngine::registerScriptBindings() {
 
 	assert(actionCallbackPtr == 0);
 	actionCallbackPtr = new ActionCallback(L);
-
-	CallbackRegistry::instance().registerCallbackFunction("LuaLoopPointCB", (void ( *)(int))animationLoopPointCallback);
-	CallbackRegistry::instance().registerCallbackFunction("LuaActionCB", (void ( *)(int))animationActionCallback);
-	CallbackRegistry::instance().registerCallbackFunction("LuaDeleteCB", (void ( *)(int))animationDeleteCallback);
 
 	return true;
 }

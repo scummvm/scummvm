@@ -38,7 +38,6 @@
 #include "sword25/kernel/resmanager.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/kernel/outputpersistenceblock.h"
-#include "sword25/kernel/callbackregistry.h"
 #include "sword25/package/packagemanager.h"
 #include "sword25/gfx/image/image.h"
 #include "sword25/gfx/animationtemplate.h"
@@ -133,14 +132,14 @@ Animation::~Animation() {
 		getAnimationDescription()->unlock();
 	}
 
-	// Delete Callbacks
-	Common::Array<ANIMATION_CALLBACK_DATA>::iterator it = _deleteCallbacks.begin();
-	for (; it != _deleteCallbacks.end(); it++)((*it).Callback)((*it).Data);
+	// Invoke the "delete" callback
+	if (_deleteCallback)
+		(_deleteCallback)(getHandle());
 
 }
 
 void Animation::play() {
-	// Wenn die Animation zuvor komplett durchgelaufen ist, wird sie wieder von Anfang abgespielt
+	// If the animation was completed, then play it again from the start.
 	if (_finished)
 		stop();
 
@@ -242,28 +241,20 @@ void Animation::frameNotification(int timeElapsed) {
 			BS_ASSERT(0);
 		}
 
-		// Überläufe behandeln
+		// Deal with overflows
 		if (tmpCurFrame < 0) {
-			// Loop-Point Callbacks
-			for (uint i = 0; i < _loopPointCallbacks.size();) {
-				if ((_loopPointCallbacks[i].Callback)(_loopPointCallbacks[i].Data) == false) {
-					_loopPointCallbacks.remove_at(i);
-				} else
-					i++;
-			}
+			// Loop-Point callback
+			if (_loopPointCallback && !(_loopPointCallback)(getHandle()))
+				_loopPointCallback = 0;
 
-			// Ein Unterlauf darf nur auftreten, wenn der Animationstyp JOJO ist.
+			// An underflow may only occur if the animation type is JOJO.
 			BS_ASSERT(animationDescriptionPtr->getAnimationType() == AT_JOJO);
 			tmpCurFrame = - tmpCurFrame;
 			_direction = FORWARD;
 		} else if (static_cast<uint>(tmpCurFrame) >= animationDescriptionPtr->getFrameCount()) {
-			// Loop-Point Callbacks
-			for (uint i = 0; i < _loopPointCallbacks.size();) {
-				if ((_loopPointCallbacks[i].Callback)(_loopPointCallbacks[i].Data) == false) {
-					_loopPointCallbacks.remove_at(i);
-				} else
-					i++;
-			}
+			// Loop-Point callback
+			if (_loopPointCallback && !(_loopPointCallback)(getHandle()))
+				_loopPointCallback = 0;
 
 			switch (animationDescriptionPtr->getAnimationType()) {
 			case AT_ONESHOT:
@@ -290,13 +281,9 @@ void Animation::frameNotification(int timeElapsed) {
 			forceRefresh();
 
 			if (animationDescriptionPtr->getFrame(_currentFrame).action != "") {
-				// Action Callbacks
-				for (uint i = 0; i < _actionCallbacks.size();) {
-					if ((_actionCallbacks[i].Callback)(_actionCallbacks[i].Data) == false) {
-						_actionCallbacks.remove_at(i);
-					} else
-						i++;
-				}
+				// action callback
+				if (_actionCallback && !(_actionCallback)(getHandle()))
+					_actionCallback = 0;
 			}
 		}
 
@@ -555,63 +542,6 @@ int Animation::computeYModifier() const {
 	return result;
 }
 
-void Animation::registerActionCallback(ANIMATION_CALLBACK callback, uint data) {
-	ANIMATION_CALLBACK_DATA cd;
-	cd.Callback = callback;
-	cd.Data = data;
-	_actionCallbacks.push_back(cd);
-}
-
-void Animation::registerLoopPointCallback(ANIMATION_CALLBACK callback, uint data) {
-	ANIMATION_CALLBACK_DATA cd;
-	cd.Callback = callback;
-	cd.Data = data;
-	_loopPointCallbacks.push_back(cd);
-}
-
-void Animation::registerDeleteCallback(ANIMATION_CALLBACK callback, uint data) {
-	ANIMATION_CALLBACK_DATA cd;
-	cd.Callback = callback;
-	cd.Data = data;
-	_deleteCallbacks.push_back(cd);
-}
-
-void Animation::persistCallbackVector(OutputPersistenceBlock &writer, const Common::Array<ANIMATION_CALLBACK_DATA> &vector) {
-	// Anzahl an Callbacks persistieren.
-	writer.write(vector.size());
-
-	// Alle Callbacks einzeln persistieren.
-	Common::Array<ANIMATION_CALLBACK_DATA>::const_iterator it = vector.begin();
-	while (it != vector.end()) {
-		writer.write(CallbackRegistry::instance().resolveCallbackPointer((void (*)(int))it->Callback));
-		writer.write(it->Data);
-
-		++it;
-	}
-}
-
-void Animation::unpersistCallbackVector(InputPersistenceBlock &reader, Common::Array<ANIMATION_CALLBACK_DATA> &vector) {
-	// Callbackvector leeren.
-	vector.resize(0);
-
-	// Anzahl an Callbacks einlesen.
-	uint callbackCount;
-	reader.read(callbackCount);
-
-	// Alle Callbacks einzeln wieder herstellen.
-	for (uint i = 0; i < callbackCount; ++i) {
-		ANIMATION_CALLBACK_DATA callbackData;
-
-		Common::String callbackFunctionName;
-		reader.read(callbackFunctionName);
-		callbackData.Callback = reinterpret_cast<ANIMATION_CALLBACK>(CallbackRegistry::instance().resolveCallbackFunction(callbackFunctionName));
-
-		reader.read(callbackData.Data);
-
-		vector.push_back(callbackData);
-	}
-}
-
 bool Animation::persist(OutputPersistenceBlock &writer) {
 	bool result = true;
 
@@ -644,9 +574,18 @@ bool Animation::persist(OutputPersistenceBlock &writer) {
 	//writer.write(_AnimationDescriptionPtr);
 
 	writer.write(_framesLocked);
-	persistCallbackVector(writer, _loopPointCallbacks);
-	persistCallbackVector(writer, _actionCallbacks);
-	persistCallbackVector(writer, _deleteCallbacks);
+
+	// The following is only there to for compatibility with older saves
+	// resp. the original engine.
+	writer.write((uint)1);
+	writer.write(Common::String("LuaLoopPointCB"));
+	writer.write(getHandle());
+	writer.write((uint)1);
+	writer.write(Common::String("LuaActionCB"));
+	writer.write(getHandle());
+	writer.write((uint)1);
+	writer.write(Common::String("LuaDeleteCB"));
+	writer.write(getHandle());
 
 	result &= RenderObject::persistChildren(writer);
 
@@ -690,9 +629,39 @@ bool Animation::unpersist(InputPersistenceBlock &reader) {
 	if (_framesLocked)
 		lockAllFrames();
 
-	unpersistCallbackVector(reader, _loopPointCallbacks);
-	unpersistCallbackVector(reader, _actionCallbacks);
-	unpersistCallbackVector(reader, _deleteCallbacks);
+
+	// The following is only there to for compatibility with older saves
+	// resp. the original engine.
+	uint callbackCount;
+	Common::String callbackFunctionName;
+	uint callbackData;
+
+	// loop point callback
+	reader.read(callbackCount);
+	assert(callbackCount == 1);
+	reader.read(callbackFunctionName);
+	assert(callbackFunctionName == "LuaLoopPointCB");
+	reader.read(callbackData);
+	assert(callbackData == getHandle());
+
+	// loop point callback
+	reader.read(callbackCount);
+	assert(callbackCount == 1);
+	reader.read(callbackFunctionName);
+	assert(callbackFunctionName == "LuaActionCB");
+	reader.read(callbackData);
+	assert(callbackData == getHandle());
+
+	// loop point callback
+	reader.read(callbackCount);
+	assert(callbackCount == 1);
+	reader.read(callbackFunctionName);
+	assert(callbackFunctionName == "LuaDeleteCB");
+	reader.read(callbackData);
+	assert(callbackData == getHandle());
+
+	// Set the callbacks
+	setCallbacks();
 
 	result &= RenderObject::unpersistChildren(reader);
 
