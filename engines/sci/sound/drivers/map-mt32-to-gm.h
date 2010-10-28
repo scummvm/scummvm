@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef SCI_SOUND_DRIVERS_MAP_MT32_TO_GM_H
+#define SCI_SOUND_DRIVERS_MAP_MT32_TO_GM_H
+
 namespace Sci {
 
 #include "common/list.h"
@@ -557,3 +560,5 @@ static const Mt32ToGmMap Mt32MemoryTimbreMaps[] = {
 	extern Mt32ToGmMapList *Mt32dynamicMappings;
 
 } // End of namespace Sci
+
+#endif // SCI_SOUND_DRIVERS_MAP_MT32_TO_GM_H
