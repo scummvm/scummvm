@@ -275,7 +275,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				} else {
 					char savegameName[14];
 					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - Common::KEYCODE_0);
-					saveGameState(saveLoadSlot, savegameName, 0);
+					saveGameStateIntern(saveLoadSlot, savegameName, 0);
 				}
 			} else if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 				if (event.kbd.keycode == Common::KEYCODE_d) {

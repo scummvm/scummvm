@@ -1488,7 +1488,7 @@ private:
 
 	// save
 	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail);
+	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
 
 	Graphics::Surface *generateSaveThumbnail() const;
 

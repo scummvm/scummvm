@@ -35,7 +35,7 @@
 
 namespace Kyra {
 
-Common::Error KyraEngine_HoF::saveGameState(int slot, const char *saveName, const Graphics::Surface *thumb) {
+Common::Error KyraEngine_HoF::saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumb) {
 	const char *fileName = getSavegameFilename(slot);
 
 	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName, thumb);

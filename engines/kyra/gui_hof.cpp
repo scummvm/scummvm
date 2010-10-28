@@ -998,7 +998,7 @@ int GUI_HoF::gameOptionsTalkie(Button *caller) {
 
 		Graphics::Surface thumb;
 		createScreenThumbnail(thumb);
-		_vm->saveGameState(999, "Autosave", &thumb);
+		_vm->saveGameStateIntern(999, "Autosave", &thumb);
 		thumb.free();
 
 		_vm->_lastAutosave = _vm->_system->getMillis();

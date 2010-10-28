@@ -60,7 +60,7 @@ void KyraEngine_MR::timerRunSceneScript7(int arg) {
 
 void KyraEngine_MR::timerFleaDeath(int arg) {
 	_timer->setCountdown(4, 5400);
-	saveGameState(999, "Autosave", 0);
+	saveGameStateIntern(999, "Autosave", 0);
 	_screen->hideMouse();
 	_timer->disable(4);
 	runAnimationScript("FLEADTH1.EMC", 0, 0, 1, 1);

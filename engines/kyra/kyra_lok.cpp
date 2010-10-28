@@ -420,7 +420,7 @@ void KyraEngine_LoK::startup() {
 			_gui->buttonMenuCallback(0);
 			_menuDirectlyToLoad = false;
 		} else if (!shouldQuit()) {
-			saveGameState(0, "New game", 0);
+			saveGameStateIntern(0, "New game", 0);
 		}
 	} else {
 		_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);

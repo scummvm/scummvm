@@ -915,7 +915,7 @@ protected:
 	int _dbgPass;
 
 	// save/load specific
-	Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail);
+	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
 	Common::Error loadGameState(int slot);
 };
 

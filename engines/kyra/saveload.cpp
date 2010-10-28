@@ -250,7 +250,7 @@ bool KyraEngine_v1::saveFileLoadable(int slot) {
 
 void KyraEngine_v1::checkAutosave() {
 	if (shouldPerformAutoSave(_lastAutosave)) {
-		saveGameState(999, "Autosave", 0);
+		saveGameStateIntern(999, "Autosave", 0);
 		_lastAutosave = _system->getMillis();
 	}
 }

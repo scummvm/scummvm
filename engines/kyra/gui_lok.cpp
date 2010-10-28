@@ -778,7 +778,7 @@ int GUI_LoK::saveGame(Button *button) {
 
 			Graphics::Surface thumb;
 			createScreenThumbnail(thumb);
-			_vm->saveGameState(_vm->_gameToLoad, _savegameName, &thumb);
+			_vm->saveGameStateIntern(_vm->_gameToLoad, _savegameName, &thumb);
 			thumb.free();
 		}
 	}
