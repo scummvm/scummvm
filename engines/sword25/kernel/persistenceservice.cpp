@@ -50,7 +50,7 @@
 
 namespace Sword25 {
 
-static const char *SAVEGAME_EXTENSION = ".b25s";
+//static const char *SAVEGAME_EXTENSION = ".b25s";
 static const char *SAVEGAME_DIRECTORY = "saves";
 static const char *FILE_MARKER = "BS25SAVEGAME";
 static const uint  SLOT_COUNT = 18;
