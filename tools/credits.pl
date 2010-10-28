@@ -542,6 +542,14 @@ begin_credits("Credits");
 		  add_person("Jonathan Gray", "khalek", "(retired)");
 	  end_section();
 
+	  begin_section("Broken Sword 2.5");
+		  add_person("Eugene Sandulenko", "sev", "");
+		  add_person("Filippos Karapetis", "[md5]", "");
+		  add_person("Max Horn", "Fingolfin", "");
+		  add_person("Paul Gilbert", "dreammaster", "");
+		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+	  end_section();
+
 	  begin_section("Cinematique evo 1");
 		  add_person("Vincent Hamm", "yaz0r", "(retired)");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
