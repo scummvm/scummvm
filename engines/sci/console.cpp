@@ -1046,8 +1046,12 @@ bool Console::cmdMapInstrument(int argc, const char **argv) {
 	if (argc != 4) {
 		DebugPrintf("Maps an MT-32 custom instrument to a GM instrument on the fly\n\n");
 		DebugPrintf("Usage %s <MT-32 instrument name> <GM instrument> <GM rhythm key>\n", argv[0]);
-		DebugPrintf("Each MT-32 instrument is mapped to either a GM instrument, or a GM rhythm key\n");
+		DebugPrintf("Each MT-32 instrument is always 10 characters and is mapped to either a GM instrument, or a GM rhythm key\n");
+		DebugPrintf("A value of 255 (0xff) signifies an unmapped instrument\n");
 		DebugPrintf("Please replace the spaces in the instrument name with underscores (\"_\"). They'll be converted to spaces afterwards\n\n");
+		DebugPrintf("Example: %s test_0__XX 1 255\n", argv[0]);
+		DebugPrintf("The above example will map the MT-32 instument \"test 0  XX\" to GM instrument 1\n\n");
+		Example
 	} else {
 		if (Mt32dynamicMappings != NULL) {
 			Mt32ToGmMap newMapping;

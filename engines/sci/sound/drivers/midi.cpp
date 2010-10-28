@@ -628,12 +628,6 @@ void MidiPlayer_Midi::readMt32DrvData() {
 byte MidiPlayer_Midi::lookupGmInstrument(const char *iname) {
 	int i = 0;
 
-	while (Mt32MemoryTimbreMaps[i].name) {
-		if (scumm_strnicmp(iname, Mt32MemoryTimbreMaps[i].name, 10) == 0)
-			return getGmInstrument(Mt32MemoryTimbreMaps[i]);
-		i++;
-	}
-
 	if (Mt32dynamicMappings != NULL) {
 		const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
 		for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
@@ -642,17 +636,17 @@ byte MidiPlayer_Midi::lookupGmInstrument(const char *iname) {
 		}
 	}
 
+	while (Mt32MemoryTimbreMaps[i].name) {
+		if (scumm_strnicmp(iname, Mt32MemoryTimbreMaps[i].name, 10) == 0)
+			return getGmInstrument(Mt32MemoryTimbreMaps[i]);
+		i++;
+	}
+
 	return MIDI_UNMAPPED;
 }
 
 byte MidiPlayer_Midi::lookupGmRhythmKey(const char *iname) {
 	int i = 0;
-
-	while (Mt32MemoryTimbreMaps[i].name) {
-		if (scumm_strnicmp(iname, Mt32MemoryTimbreMaps[i].name, 10) == 0)
-			return Mt32MemoryTimbreMaps[i].gmRhythmKey;
-		i++;
-	}
 
 	if (Mt32dynamicMappings != NULL) {
 		const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
@@ -660,6 +654,12 @@ byte MidiPlayer_Midi::lookupGmRhythmKey(const char *iname) {
 			if (scumm_strnicmp(iname, (*it).name, 10) == 0)
 				return (*it).gmRhythmKey;
 		}
+	}
+
+	while (Mt32MemoryTimbreMaps[i].name) {
+		if (scumm_strnicmp(iname, Mt32MemoryTimbreMaps[i].name, 10) == 0)
+			return Mt32MemoryTimbreMaps[i].gmRhythmKey;
+		i++;
 	}
 
 	return MIDI_UNMAPPED;
