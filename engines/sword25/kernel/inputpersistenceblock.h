@@ -57,8 +57,8 @@ public:
 	void read(uint &value);
 	void read(float &value);
 	void read(bool &value);
-	void read(Common::String &value);
-	void read(Common::Array<byte> &value);
+	void readString(Common::String &value);
+	void readByteArray(Common::Array<byte> &value);
 
 	bool isGood() const {
 		return _errorState == NONE;

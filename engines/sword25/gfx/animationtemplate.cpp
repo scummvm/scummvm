@@ -195,13 +195,13 @@ bool AnimationTemplate::persist(OutputPersistenceBlock &writer) {
 		writer.write(Iter->hotspotY);
 		writer.write(Iter->flipV);
 		writer.write(Iter->flipH);
-		writer.write(Iter->fileName);
-		writer.write(Iter->action);
+		writer.writeString(Iter->fileName);
+		writer.writeString(Iter->action);
 		++Iter;
 	}
 
 	// Restliche Member persistieren.
-	writer.write(_sourceAnimationPtr->getFileName());
+	writer.writeString(_sourceAnimationPtr->getFileName());
 	writer.write(_valid);
 
 	return Result;
@@ -224,15 +224,15 @@ bool AnimationTemplate::unpersist(InputPersistenceBlock &reader) {
 		reader.read(frame.hotspotY);
 		reader.read(frame.flipV);
 		reader.read(frame.flipH);
-		reader.read(frame.fileName);
-		reader.read(frame.action);
+		reader.readString(frame.fileName);
+		reader.readString(frame.action);
 
 		_frames.push_back(frame);
 	}
 
 	// Die Animations-Resource wird für die gesamte Lebensdauer des Objektes gelockt
 	Common::String sourceAnimation;
-	reader.read(sourceAnimation);
+	reader.readString(sourceAnimation);
 	_sourceAnimationPtr = requestSourceAnimation(sourceAnimation);
 
 	reader.read(_valid);

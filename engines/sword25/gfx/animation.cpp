@@ -562,7 +562,7 @@ bool Animation::persist(OutputPersistenceBlock &writer) {
 	if (_animationResourcePtr) {
 		uint marker = 0;
 		writer.write(marker);
-		writer.write(_animationResourcePtr->getFileName());
+		writer.writeString(_animationResourcePtr->getFileName());
 	} else if (_animationTemplateHandle) {
 		uint marker = 1;
 		writer.write(marker);
@@ -578,13 +578,13 @@ bool Animation::persist(OutputPersistenceBlock &writer) {
 	// The following is only there to for compatibility with older saves
 	// resp. the original engine.
 	writer.write((uint)1);
-	writer.write(Common::String("LuaLoopPointCB"));
+	writer.writeString("LuaLoopPointCB");
 	writer.write(getHandle());
 	writer.write((uint)1);
-	writer.write(Common::String("LuaActionCB"));
+	writer.writeString("LuaActionCB");
 	writer.write(getHandle());
 	writer.write((uint)1);
-	writer.write(Common::String("LuaDeleteCB"));
+	writer.writeString("LuaDeleteCB");
 	writer.write(getHandle());
 
 	result &= RenderObject::persistChildren(writer);
@@ -617,7 +617,7 @@ bool Animation::unpersist(InputPersistenceBlock &reader) {
 	reader.read(marker);
 	if (marker == 0) {
 		Common::String resourceFilename;
-		reader.read(resourceFilename);
+		reader.readString(resourceFilename);
 		initializeAnimationResource(resourceFilename);
 	} else if (marker == 1) {
 		reader.read(_animationTemplateHandle);
@@ -639,7 +639,7 @@ bool Animation::unpersist(InputPersistenceBlock &reader) {
 	// loop point callback
 	reader.read(callbackCount);
 	assert(callbackCount == 1);
-	reader.read(callbackFunctionName);
+	reader.readString(callbackFunctionName);
 	assert(callbackFunctionName == "LuaLoopPointCB");
 	reader.read(callbackData);
 	assert(callbackData == getHandle());
@@ -647,7 +647,7 @@ bool Animation::unpersist(InputPersistenceBlock &reader) {
 	// loop point callback
 	reader.read(callbackCount);
 	assert(callbackCount == 1);
-	reader.read(callbackFunctionName);
+	reader.readString(callbackFunctionName);
 	assert(callbackFunctionName == "LuaActionCB");
 	reader.read(callbackData);
 	assert(callbackData == getHandle());
@@ -655,7 +655,7 @@ bool Animation::unpersist(InputPersistenceBlock &reader) {
 	// loop point callback
 	reader.read(callbackCount);
 	assert(callbackCount == 1);
-	reader.read(callbackFunctionName);
+	reader.readString(callbackFunctionName);
 	assert(callbackFunctionName == "LuaDeleteCB");
 	reader.read(callbackData);
 	assert(callbackData == getHandle());

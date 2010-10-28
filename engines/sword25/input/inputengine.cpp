@@ -243,13 +243,13 @@ bool InputEngine::persist(OutputPersistenceBlock &writer) {
 	// Note: We do this only for compatibility with older engines resp.
 	// the original engine.
 	writer.write((uint)1);
-	writer.write(Common::String("LuaCommandCB"));
+	writer.writeString("LuaCommandCB");
 
 	// Write out the number of command callbacks and their names.
 	// Note: We do this only for compatibility with older engines resp.
 	// the original engine.
 	writer.write((uint)1);
-	writer.write(Common::String("LuaCharacterCB"));
+	writer.writeString("LuaCharacterCB");
 
 	return true;
 }
@@ -264,7 +264,7 @@ bool InputEngine::unpersist(InputPersistenceBlock &reader) {
 	reader.read(commandCallbackCount);
 	assert(commandCallbackCount == 1);
 
-	reader.read(callbackFunctionName);
+	reader.readString(callbackFunctionName);
 	assert(callbackFunctionName == "LuaCommandCB");
 
 	// Read number of character callbacks and their names.
@@ -274,7 +274,7 @@ bool InputEngine::unpersist(InputPersistenceBlock &reader) {
 	reader.read(characterCallbackCount);
 	assert(characterCallbackCount == 1);
 
-	reader.read(callbackFunctionName);
+	reader.readString(callbackFunctionName);
 	assert(callbackFunctionName == "LuaCharacterCB");
 
 	return reader.isGood();

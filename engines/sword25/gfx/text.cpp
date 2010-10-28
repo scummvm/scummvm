@@ -313,8 +313,8 @@ bool Text::persist(OutputPersistenceBlock &writer) {
 	result &= RenderObject::persist(writer);
 
 	writer.write(_modulationColor);
-	writer.write(_font);
-	writer.write(_text);
+	writer.writeString(_font);
+	writer.writeString(_text);
 	writer.write(_autoWrap);
 	writer.write(_autoWrapThreshold);
 
@@ -335,11 +335,11 @@ bool Text::unpersist(InputPersistenceBlock &reader) {
 	// So wird das Layout automatisch aktualisiert und auch alle anderen notwendigen Methoden ausgeführt.
 
 	Common::String font;
-	reader.read(font);
+	reader.readString(font);
 	setFont(font);
 
 	Common::String text;
-	reader.read(text);
+	reader.readString(text);
 	setText(text);
 
 	bool autoWrap;

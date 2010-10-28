@@ -162,7 +162,7 @@ bool StaticBitmap::persist(OutputPersistenceBlock &writer) {
 	bool result = true;
 
 	result &= Bitmap::persist(writer);
-	writer.write(_resourceFilename);
+	writer.writeString(_resourceFilename);
 
 	result &= RenderObject::persistChildren(writer);
 
@@ -174,7 +174,7 @@ bool StaticBitmap::unpersist(InputPersistenceBlock &reader) {
 
 	result &= Bitmap::unpersist(reader);
 	Common::String resourceFilename;
-	reader.read(resourceFilename);
+	reader.readString(resourceFilename);
 	result &= initBitmapResource(resourceFilename);
 
 	result &= RenderObject::unpersistChildren(reader);

@@ -419,7 +419,7 @@ bool LuaScriptEngine::persist(OutputPersistenceBlock &writer) {
 	pluto_persist(_state, chunkwriter, &chunkData);
 
 	// Persistenzdaten in den Writer schreiben.
-	writer.write(chunkData);
+	writer.writeByteArray(chunkData);
 
 	// Die beiden Tabellen vom Stack nehmen.
 	lua_pop(_state, 2);
@@ -516,7 +516,7 @@ bool LuaScriptEngine::unpersist(InputPersistenceBlock &reader) {
 
 	// Persisted Lua data
 	Common::Array<byte> chunkData;
-	reader.read(chunkData);
+	reader.readByteArray(chunkData);
 
 	// Chunk-Reader initialisation. It is used with pluto_unpersist to restore read data
 	ChunkreaderData cd;

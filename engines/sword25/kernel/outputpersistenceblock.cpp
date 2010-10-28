@@ -72,25 +72,18 @@ void OutputPersistenceBlock::write(bool value) {
 	rawWrite(&uintBool, sizeof(uintBool));
 }
 
-void OutputPersistenceBlock::write(const Common::String &string) {
+void OutputPersistenceBlock::writeString(const Common::String &string) {
 	writeMarker(STRING_MARKER);
 
 	write(string.size());
 	rawWrite(string.c_str(), string.size());
 }
 
-void OutputPersistenceBlock::write(Common::Array<byte> &value) {
+void OutputPersistenceBlock::writeByteArray(Common::Array<byte> &value) {
 	writeMarker(BLOCK_MARKER);
 
 	write((uint)value.size());
 	rawWrite(&value[0], value.size());
-}
-
-void OutputPersistenceBlock::write(const void *bufferPtr, size_t size) {
-	writeMarker(BLOCK_MARKER);
-
-	write((int)size);
-	rawWrite(bufferPtr, size);
 }
 
 void OutputPersistenceBlock::writeMarker(byte marker) {

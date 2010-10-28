@@ -93,7 +93,7 @@ void InputPersistenceBlock::read(bool &value) {
 	}
 }
 
-void InputPersistenceBlock::read(Common::String &value) {
+void InputPersistenceBlock::readString(Common::String &value) {
 	value = "";
 
 	if (checkMarker(STRING_MARKER)) {
@@ -107,7 +107,7 @@ void InputPersistenceBlock::read(Common::String &value) {
 	}
 }
 
-void InputPersistenceBlock::read(Common::Array<byte> &value) {
+void InputPersistenceBlock::readByteArray(Common::Array<byte> &value) {
 	if (checkMarker(BLOCK_MARKER)) {
 		uint size;
 		read(size);
