@@ -71,6 +71,8 @@ private:
 	Impl *_impl;
 };
 
+void setGameTarget(const char *target);
+
 } // End of namespace Sword25
 
 #endif

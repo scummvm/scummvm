@@ -24,10 +24,12 @@
  */
 
 #include "base/plugins.h"
-
+#include "common/savefile.h"
+#include "common/system.h"
 #include "engines/advancedDetector.h"
 
 #include "sword25/sword25.h"
+#include "sword25/kernel/persistenceservice.h"
 
 namespace Sword25 {
 uint32 Sword25Engine::getGameFlags() const { return _gameDescription->flags; }
@@ -114,6 +116,8 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual int getMaximumSaveSlot() const { return Sword25::PersistenceService::getSlotCount(); }
+	virtual SaveStateList listSaves(const char *target) const;
 };
 
 bool Sword25MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -124,20 +128,29 @@ bool Sword25MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 }
 
 bool Sword25MetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
-	// TODO: Implement some of these features!?
-#if 0
 	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
-#endif
+		(f == kSupportsListSaves);
 }
 
+SaveStateList Sword25MetaEngine::listSaves(const char *target) const {
+	Common::String pattern = target;
+	pattern = pattern + ".???";
+	SaveStateList saveList;
+
+	Sword25::PersistenceService ps;
+	Sword25::setGameTarget(target);
+
+	ps.reloadSlots();
+
+	for (uint i = 0; i < ps.getSlotCount(); ++i) {
+		if (ps.isSlotOccupied(i)) {
+			Common::String desc = ps.getSavegameDescription(i);
+			saveList.push_back(SaveStateDescriptor(i, desc));
+		}
+	}
+
+	return saveList;
+}
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD25)
 	REGISTER_PLUGIN_DYNAMIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngine);

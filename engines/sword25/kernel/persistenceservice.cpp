@@ -57,12 +57,17 @@ static const uint  SLOT_COUNT = 18;
 static const uint  FILE_COPY_BUFFER_SIZE = 1024 * 10;
 static const char *VERSIONID = "SCUMMVM1";
 
+#define MAX_SAVEGAME_SIZE 100
+
+char gameTarget[MAX_SAVEGAME_SIZE];
+
+void setGameTarget(const char *target) {
+	strncpy(gameTarget, target, MAX_SAVEGAME_SIZE);
+}
+
 static Common::String generateSavegameFilename(uint slotID) {
-	// FIXME: The savename names used here are not in accordance with
-	// our conventions; they really should be something like
-	// "GAMEID.NUM" or "TARGET.NUM".
-	char buffer[10];
-	sprintf(buffer, "%d%s", slotID, SAVEGAME_EXTENSION);
+	char buffer[MAX_SAVEGAME_SIZE];
+	snprintf(buffer, MAX_SAVEGAME_SIZE, "%s.%.3d", gameTarget, slotID);
 	return Common::String(buffer);
 }
 

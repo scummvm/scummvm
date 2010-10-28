@@ -39,6 +39,7 @@
 #include "sword25/sword25.h"
 #include "sword25/kernel/filesystemutil.h"
 #include "sword25/kernel/kernel.h"
+#include "sword25/kernel/persistenceservice.h"
 #include "sword25/package/packagemanager.h"
 #include "sword25/script/script.h"
 
@@ -111,6 +112,9 @@ Common::Error Sword25Engine::appStart() {
 		BS_LOG_ERRORLN("Script intialization failed.");
 		return Common::kUnknownError;
 	}
+
+	// Set the game target for use in savegames
+	setGameTarget(_targetName.c_str());
 
 	Common::StringArray commandParameters;
 	scriptPtr->setCommandLine(commandParameters);
