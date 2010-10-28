@@ -95,7 +95,11 @@ bool Animation::loadAnimation(Common::String file) {
 			} else {
 				_frames[e]._ref = -1;
 				_frames[e]._data = new uint8[decompressedSize];
-				decompressLZSS(imageData, _frames[e]._data, decompressedSize);
+				if (compressedSize < decompressedSize) {
+					decompressLZSS(imageData, _frames[e]._data, decompressedSize);
+				} else {					
+					memcpy(_frames[e]._data, imageData, compressedSize);
+				}
 			}
 
 			data += headerSize + compressedSize;
