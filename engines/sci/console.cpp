@@ -39,6 +39,7 @@
 #include "sci/sound/midiparser_sci.h"
 #include "sci/sound/music.h"
 #include "sci/sound/drivers/mididriver.h"
+#include "sci/sound/drivers/map-mt32-to-gm.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint.h"
@@ -103,7 +104,6 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("list",				WRAP_METHOD(Console, cmdList));
 	DCmd_Register("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
 	DCmd_Register("verify_scripts",		WRAP_METHOD(Console, cmdVerifyScripts));
-	DCmd_Register("show_instruments",	WRAP_METHOD(Console, cmdShowInstruments));
 	// Game
 	DCmd_Register("save_game",			WRAP_METHOD(Console, cmdSaveGame));
 	DCmd_Register("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
@@ -145,6 +145,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("stopallsounds",		WRAP_METHOD(Console, cmdStopAllSounds));
 	DCmd_Register("sfx01_header",		WRAP_METHOD(Console, cmdSfx01Header));
 	DCmd_Register("sfx01_track",		WRAP_METHOD(Console, cmdSfx01Track));
+	DCmd_Register("show_instruments",	WRAP_METHOD(Console, cmdShowInstruments));
+	DCmd_Register("map_instrument",		WRAP_METHOD(Console, cmdMapInstrument));
 	// Script
 	DCmd_Register("addresses",			WRAP_METHOD(Console, cmdAddresses));
 	DCmd_Register("registers",			WRAP_METHOD(Console, cmdRegisters));
@@ -861,6 +863,14 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 	return true;
 }
 
+// Same as in sound/drivers/midi.cpp 
+uint8 getGmInstrument(const Mt32ToGmMap &Mt32Ins) {
+	if (Mt32Ins.gmInstr == MIDI_MAPPED_TO_RHYTHM)
+		return Mt32Ins.gmRhythmKey + 0x80;
+	else
+		return Mt32Ins.gmInstr;
+}
+
 bool Console::cmdShowInstruments(int argc, const char **argv) {
 	int songNumber = -1;
 
@@ -1003,7 +1013,16 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 				DebugPrintf("%d, ", i);
 		}
 		DebugPrintf("\n\n");
+	}
 
+	DebugPrintf("Instruments not mapped in the MT32->GM map: ");
+	for (int i = 0; i < 128; i++) {
+		if (instruments[i] > 0 && getGmInstrument(Mt32MemoryTimbreMaps[i]) == MIDI_UNMAPPED)
+			DebugPrintf("%d, ", i);
+	}
+	DebugPrintf("\n\n");
+
+	if (songNumber == -1) {
 		DebugPrintf("Used instruments in songs:\n");
 		for (int i = 0; i < 128; i++) {
 			if (instruments[i] > 0) {
@@ -1020,6 +1039,40 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 	}
 
 	delete resources;
+	return true;
+}
+
+bool Console::cmdMapInstrument(int argc, const char **argv) {
+	if (argc != 4) {
+		DebugPrintf("Maps an MT-32 custom instrument to a GM instrument on the fly\n\n");
+		DebugPrintf("Usage %s <MT-32 instrument name> <GM instrument> <GM rhythm key>\n", argv[0]);
+		DebugPrintf("Each MT-32 instrument is mapped to either a GM instrument, or a GM rhythm key\n");
+		DebugPrintf("Please replace the spaces in the instrument name with underscores (\"_\"). They'll be converted to spaces afterwards\n\n");
+	} else {
+		if (Mt32dynamicMappings != NULL) {
+			Mt32ToGmMap newMapping;
+			char *instrumentName = new char[11];
+			Common::strlcpy(instrumentName, argv[1], 11);
+
+			for (uint16 i = 0; i < strlen(instrumentName); i++)
+				if (instrumentName[i] == '_')
+					instrumentName[i] = ' ';
+
+			newMapping.name = instrumentName;
+			newMapping.gmInstr = atoi(argv[2]);
+			newMapping.gmRhythmKey = atoi(argv[3]);
+			Mt32dynamicMappings->push_back(newMapping);
+		}
+	}
+
+	DebugPrintf("Current dynamic mappings:\n");
+	if (Mt32dynamicMappings != NULL) {
+		const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
+		for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
+			DebugPrintf("\"%s\" -> %d / %d\n", (*it).name, (*it).gmInstr, (*it).gmRhythmKey);
+		}
+	}
+
 	return true;
 }
 

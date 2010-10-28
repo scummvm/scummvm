@@ -25,9 +25,11 @@
 
 namespace Sci {
 
-/* Patch not mapped */
+#include "common/list.h"
+
+// Patch not mapped
 #define MIDI_UNMAPPED 0xff
-/* Patch mapped to rhythm key */
+// Patch mapped to rhythm key
 #define MIDI_MAPPED_TO_RHYTHM 0xfe
 
 struct Mt32ToGmMap {
@@ -167,13 +169,13 @@ static const char *GmInstrumentNames[] = {
 	/*127*/  "Gunshot"
 };
 
-/* The GM Percussion map is downwards compatible to the MT32 map, which is used in SCI */
+// The GM Percussion map is downwards compatible to the MT32 map, which is used in SCI
 static const char *GmPercussionNames[] = {
 	/*00*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/*10*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/*20*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/*30*/  0, 0, 0, 0, 0,
-	/* The preceeding percussions are not covered by the GM standard */
+	// The preceeding percussions are not covered by the GM standard
 	/*35*/  "Acoustic Bass Drum",
 	/*36*/  "Bass Drum 1",
 	/*37*/  "Side Stick",
@@ -344,8 +346,8 @@ static const Mt32ToGmMap Mt32PresetTimbreMaps[] = {
 	/*112*/  {"Timpani   ", 47, MIDI_UNMAPPED},
 	/*113*/  {"MelodicTom", 117, MIDI_UNMAPPED},
 	/*114*/  {"Deep Snare", MIDI_MAPPED_TO_RHYTHM, 38},
-	/*115*/  {"Elec Perc1", 115, MIDI_UNMAPPED}, /* ? */
-	/*116*/  {"Elec Perc2", 118, MIDI_UNMAPPED}, /* ? */
+	/*115*/  {"Elec Perc1", 115, MIDI_UNMAPPED}, // ?
+	/*116*/  {"Elec Perc2", 118, MIDI_UNMAPPED}, // ?
 	/*117*/  {"Taiko     ", 116, MIDI_UNMAPPED},
 	/*118*/  {"Taiko Rim ", 118, MIDI_UNMAPPED},
 	/*119*/  {"Cymbal    ", MIDI_MAPPED_TO_RHYTHM, 51},
@@ -354,9 +356,9 @@ static const Mt32ToGmMap Mt32PresetTimbreMaps[] = {
 	/*122*/  {"Orche Hit ", 55, MIDI_UNMAPPED},
 	/*123*/  {"Telephone ", 124, MIDI_UNMAPPED},
 	/*124*/  {"Bird Tweet", 123, MIDI_UNMAPPED},
-	/*125*/  {"OneNoteJam", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? */
+	/*125*/  {"OneNoteJam", MIDI_UNMAPPED, MIDI_UNMAPPED}, // ?
 	/*126*/  {"WaterBells", 98, MIDI_UNMAPPED},
-	/*127*/  {"JungleTune", MIDI_UNMAPPED, MIDI_UNMAPPED} /* ? */
+	/*127*/  {"JungleTune", MIDI_UNMAPPED, MIDI_UNMAPPED} // ?
 };
 
 static const Mt32ToGmMap Mt32RhythmTimbreMaps[] = {
@@ -414,139 +416,144 @@ static const uint8 Mt32PresetRhythmKeymap[] = {
    ?   - Where do I map this one?
    ??  - Any good ideas?
    ??? - I'm clueless?
-   R   - Rhythm... */
+   R   - Rhythm...
+*/
 static const Mt32ToGmMap Mt32MemoryTimbreMaps[] = {
-	{"AccPnoKA2 ", 1, MIDI_UNMAPPED},     /* ++ (KQ1) */
-	{"Acou BD   ", MIDI_MAPPED_TO_RHYTHM, 35},   /* R (PQ2) */
-	{"Acou SD   ", MIDI_MAPPED_TO_RHYTHM, 38},   /* R (PQ2) */
-	{"AcouPnoKA ", 0, MIDI_UNMAPPED},     /* ++ (KQ1) */
-	{"BASS      ", 32, MIDI_UNMAPPED},    /* + (LSL3) */
-	{"BASSOONPCM", 70, MIDI_UNMAPPED},    /* + (LB1) */
-	{"BEACH WAVE", 122, MIDI_UNMAPPED},   /* + (LSL3) */
+	{"AccPnoKA2 ", 1, MIDI_UNMAPPED},     // ++ (KQ1)
+	{"Acou BD   ", MIDI_MAPPED_TO_RHYTHM, 35},   // R (PQ2)
+	{"Acou SD   ", MIDI_MAPPED_TO_RHYTHM, 38},   // R (PQ2)
+	{"AcouPnoKA ", 0, MIDI_UNMAPPED},     // ++ (KQ1)
+	{"BASS      ", 32, MIDI_UNMAPPED},    // + (LSL3)
+	{"BASSOONPCM", 70, MIDI_UNMAPPED},    // + (LB1)
+	{"BEACH WAVE", 122, MIDI_UNMAPPED},   // + (LSL3)
 	{"BagPipes  ", 109, MIDI_UNMAPPED},
-	{"BassPizzMS", 45, MIDI_UNMAPPED},    /* ++ (QFG1) */
-	{"BassoonKA ", 70, MIDI_UNMAPPED},    /* ++ (KQ1) */
-	{"Bell    MS", 112, MIDI_UNMAPPED},   /* ++ (Iceman) */
-	{"Bells   MS", 112, MIDI_UNMAPPED},   /* + (QFG1) */
-	{"Big Bell  ", 14, MIDI_UNMAPPED},    /* + (LB1) */
+	{"BassPizzMS", 45, MIDI_UNMAPPED},    // ++ (QFG1)
+	{"BassoonKA ", 70, MIDI_UNMAPPED},    // ++ (KQ1)
+	{"Bell    MS", 112, MIDI_UNMAPPED},   // ++ (Iceman)
+	{"Bells   MS", 112, MIDI_UNMAPPED},   // + (QFG1)
+	{"Big Bell  ", 14, MIDI_UNMAPPED},    // + (LB1)
 	{"Bird Tweet", 123, MIDI_UNMAPPED},
-	{"BrsSect MS", 61, MIDI_UNMAPPED},    /* +++ (Iceman) */
-	{"CLAPPING  ", 126, MIDI_UNMAPPED},   /* ++ (LSL3) */
-	{"Cabasa    ", MIDI_MAPPED_TO_RHYTHM, 69},   /* R (Hoyle) */
-	{"Calliope  ", 82, MIDI_UNMAPPED},    /* +++ (QFG1) */
-	{"CelticHarp", 46, MIDI_UNMAPPED},    /* ++ (Camelot) */
-	{"Chicago MS", 1, MIDI_UNMAPPED},     /* ++ (Iceman) */
+	{"BrsSect MS", 61, MIDI_UNMAPPED},    // +++ (Iceman)
+	{"CLAPPING  ", 126, MIDI_UNMAPPED},   // ++ (LSL3)
+	{"Cabasa    ", MIDI_MAPPED_TO_RHYTHM, 69},   // R (Hoyle)
+	{"Calliope  ", 82, MIDI_UNMAPPED},    // +++ (QFG1)
+	{"CelticHarp", 46, MIDI_UNMAPPED},    // ++ (Camelot)
+	{"Chicago MS", 1, MIDI_UNMAPPED},     // ++ (Iceman)
 	{"Chop      ", 117, MIDI_UNMAPPED},
-	{"Chorale MS", 52, MIDI_UNMAPPED},    /* + (Camelot) */
+	{"Chorale MS", 52, MIDI_UNMAPPED},    // + (Camelot)
 	{"ClarinetMS", 71, MIDI_UNMAPPED},
-	{"Claves    ", MIDI_MAPPED_TO_RHYTHM, 75},   /* R (PQ2) */
-	{"Claw    MS", 118, MIDI_UNMAPPED},    /* + (QFG1) */
-	{"ClockBell ", 14, MIDI_UNMAPPED},    /* + (LB1) */
-	{"ConcertCym", MIDI_MAPPED_TO_RHYTHM, 55},   /* R ? (KQ1) */
-	{"Conga   MS", MIDI_MAPPED_TO_RHYTHM, 64},   /* R (QFG1) */
-	{"CoolPhone ", 124, MIDI_UNMAPPED},   /* ++ (LSL3) */
-	{"CracklesMS", 115, MIDI_UNMAPPED}, /* ? (Camelot, QFG1) */
-	{"CreakyD MS", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ??? (KQ1) */
-	{"Cricket   ", 120, MIDI_UNMAPPED}, /* ? (LB1) */
-	{"CrshCymbMS", MIDI_MAPPED_TO_RHYTHM, 57},   /* R +++ (Iceman) */
-	{"CstlGateMS", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? (QFG1) */
-	{"CymSwellMS", MIDI_MAPPED_TO_RHYTHM, 55},   /* R ? (Camelot, QFG1) */
-	{"CymbRollKA", MIDI_MAPPED_TO_RHYTHM, 57},   /* R ? (KQ1) */
-	{"Cymbal Lo ", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* R ? (LSL3) */
-	{"card      ", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? (Hoyle) */
-	{"DirtGtr MS", 30, MIDI_UNMAPPED},    /* + (Iceman) */
-	{"DirtGtr2MS", 29, MIDI_UNMAPPED},    /* + (Iceman) */
-	{"E Bass  MS", 33, MIDI_UNMAPPED},    /* + (SQ3) */
+	{"Claves    ", MIDI_MAPPED_TO_RHYTHM, 75},   // R (PQ2)
+	{"Claw    MS", 118, MIDI_UNMAPPED},    // + (QFG1)
+	{"ClockBell ", 14, MIDI_UNMAPPED},    // + (LB1)
+	{"ConcertCym", MIDI_MAPPED_TO_RHYTHM, 55},   // R ? (KQ1)
+	{"Conga   MS", MIDI_MAPPED_TO_RHYTHM, 64},   // R (QFG1)
+	{"CoolPhone ", 124, MIDI_UNMAPPED},   // ++ (LSL3)
+	{"CracklesMS", 115, MIDI_UNMAPPED}, // ? (Camelot, QFG1)
+	{"CreakyD MS", MIDI_UNMAPPED, MIDI_UNMAPPED}, // ??? (KQ1)
+	{"Cricket   ", 120, MIDI_UNMAPPED}, // ? (LB1)
+	{"CrshCymbMS", MIDI_MAPPED_TO_RHYTHM, 57},   // R +++ (Iceman)
+	{"CstlGateMS", MIDI_UNMAPPED, MIDI_UNMAPPED}, // ? (QFG1)
+	{"CymSwellMS", MIDI_MAPPED_TO_RHYTHM, 55},   // R ? (Camelot, QFG1)
+	{"CymbRollKA", MIDI_MAPPED_TO_RHYTHM, 57},   // R ? (KQ1)
+	{"Cymbal Lo ", MIDI_UNMAPPED, MIDI_UNMAPPED}, // R ? (LSL3)
+	{"card      ", MIDI_UNMAPPED, MIDI_UNMAPPED}, // ? (Hoyle)
+	{"DirtGtr MS", 30, MIDI_UNMAPPED},    // + (Iceman)
+	{"DirtGtr2MS", 29, MIDI_UNMAPPED},    // + (Iceman)
+	{"E Bass  MS", 33, MIDI_UNMAPPED},    // + (SQ3)
 	{"ElecBassMS", 33, MIDI_UNMAPPED},
-	{"ElecGtr MS", 27, MIDI_UNMAPPED},    /* ++ (Iceman) */
+	{"ElecGtr MS", 27, MIDI_UNMAPPED},    // ++ (Iceman)
 	{"EnglHornMS", 69, MIDI_UNMAPPED},
 	{"FantasiaKA", 88, MIDI_UNMAPPED},
-	{"Fantasy   ", 99, MIDI_UNMAPPED},    /* + (PQ2) */
-	{"Fantasy2MS", 99, MIDI_UNMAPPED},    /* ++ (Camelot, QFG1) */
-	{"Filter  MS", 95, MIDI_UNMAPPED},    /* +++ (Iceman) */
-	{"Filter2 MS", 95, MIDI_UNMAPPED},    /* ++ (Iceman) */
-	{"Flame2  MS", 121, MIDI_UNMAPPED},   /* ? (QFG1) */
-	{"Flames  MS", 121, MIDI_UNMAPPED},   /* ? (QFG1) */
-	{"Flute   MS", 73, MIDI_UNMAPPED},    /* +++ (QFG1) */
+	{"Fantasy   ", 99, MIDI_UNMAPPED},    // + (PQ2)
+	{"Fantasy2MS", 99, MIDI_UNMAPPED},    // ++ (Camelot, QFG1)
+	{"Filter  MS", 95, MIDI_UNMAPPED},    // +++ (Iceman)
+	{"Filter2 MS", 95, MIDI_UNMAPPED},    // ++ (Iceman)
+	{"Flame2  MS", 121, MIDI_UNMAPPED},   // ? (QFG1)
+	{"Flames  MS", 121, MIDI_UNMAPPED},   // ? (QFG1)
+	{"Flute   MS", 73, MIDI_UNMAPPED},    // +++ (QFG1)
 	{"FogHorn MS", 58, MIDI_UNMAPPED},
-	{"FrHorn1 MS", 60, MIDI_UNMAPPED},    /* +++ (QFG1) */
-	{"FunnyTrmp ", 56, MIDI_UNMAPPED},    /* ++ (LB1) */
+	{"FrHorn1 MS", 60, MIDI_UNMAPPED},    // +++ (QFG1)
+	{"FunnyTrmp ", 56, MIDI_UNMAPPED},    // ++ (LB1)
 	{"GameSnd MS", 80, MIDI_UNMAPPED},
-	{"Glock   MS", 9, MIDI_UNMAPPED},     /* +++ (QFG1) */
-	{"Gunshot   ", 127, MIDI_UNMAPPED},   /* +++ (LB1) */
-	{"Hammer  MS", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? (QFG1) */
-	{"Harmonica2", 22, MIDI_UNMAPPED},    /* +++ (LB1) */
-	{"Harpsi 1  ", 6, MIDI_UNMAPPED},     /* + (Hoyle) */
-	{"Harpsi 2  ", 6, MIDI_UNMAPPED},     /* +++ (LB1) */
-	{"Heart   MS", 116, MIDI_UNMAPPED},   /* ? (Iceman) */
-	{"Horse1  MS", 115, MIDI_UNMAPPED},   /* ? (Camelot, QFG1) */
-	{"Horse2  MS", 115, MIDI_UNMAPPED},   /* ? (Camelot, QFG1) */
-	{"InHale  MS", 121, MIDI_UNMAPPED},   /* ++ (Iceman) */
-	{"KNIFE     ", 120, MIDI_UNMAPPED},   /* ? (LSL3) */
-	{"KenBanjo  ", 105, MIDI_UNMAPPED},   /* +++ (LB1) */
-	{"Kiss    MS", 25, MIDI_UNMAPPED},    /* ++ (QFG1) */
-	{"KongHit   ", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ??? (KQ1) */
-	{"Koto      ", 107, MIDI_UNMAPPED},   /* +++ (PQ2) */
-	{"Laser   MS", 81, MIDI_UNMAPPED},    /* ?? (QFG1) */
-	{"Meeps   MS", 62, MIDI_UNMAPPED},    /* ? (QFG1) */
-	{"MTrak   MS", 62, MIDI_UNMAPPED},    /* ?? (Iceman) */
-	{"MachGun MS", 127, MIDI_UNMAPPED},   /* ? (Iceman) */
-	{"OCEANSOUND", 122, MIDI_UNMAPPED},   /* + (LSL3) */
-	{"Oboe 2001 ", 68, MIDI_UNMAPPED},    /* + (PQ2) */
-	{"Ocean   MS", 122, MIDI_UNMAPPED},   /* + (Iceman) */
-	{"PPG 2.3 MS", 75, MIDI_UNMAPPED},    /* ? (Iceman) */
-	{"PianoCrank", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? (LB1) */
-	{"PicSnareMS", MIDI_MAPPED_TO_RHYTHM, 40},   /* R ? (Iceman) */
-	{"PiccoloKA ", 72, MIDI_UNMAPPED},    /* +++ (KQ1) */
+	{"Glock   MS", 9, MIDI_UNMAPPED},     // +++ (QFG1)
+	{"Gunshot   ", 127, MIDI_UNMAPPED},   // +++ (LB1)
+	{"Hammer  MS", MIDI_UNMAPPED, MIDI_UNMAPPED}, // ? (QFG1)
+	{"Harmonica2", 22, MIDI_UNMAPPED},    // +++ (LB1)
+	{"Harpsi 1  ", 6, MIDI_UNMAPPED},     // + (Hoyle)
+	{"Harpsi 2  ", 6, MIDI_UNMAPPED},     // +++ (LB1)
+	{"Heart   MS", 116, MIDI_UNMAPPED},   // ? (Iceman)
+	{"Horse1  MS", 115, MIDI_UNMAPPED},   // ? (Camelot, QFG1)
+	{"Horse2  MS", 115, MIDI_UNMAPPED},   // ? (Camelot, QFG1)
+	{"InHale  MS", 121, MIDI_UNMAPPED},   // ++ (Iceman)
+	{"KNIFE     ", 120, MIDI_UNMAPPED},   // ? (LSL3)
+	{"KenBanjo  ", 105, MIDI_UNMAPPED},   // +++ (LB1)
+	{"Kiss    MS", 25, MIDI_UNMAPPED},    // ++ (QFG1)
+	{"KongHit   ", MIDI_UNMAPPED, MIDI_UNMAPPED}, // ??? (KQ1)
+	{"Koto      ", 107, MIDI_UNMAPPED},   // +++ (PQ2)
+	{"Laser   MS", 81, MIDI_UNMAPPED},    // ?? (QFG1)
+	{"Meeps   MS", 62, MIDI_UNMAPPED},    // ? (QFG1)
+	{"MTrak   MS", 62, MIDI_UNMAPPED},    // ?? (Iceman)
+	{"MachGun MS", 127, MIDI_UNMAPPED},   // ? (Iceman)
+	{"OCEANSOUND", 122, MIDI_UNMAPPED},   // + (LSL3)
+	{"Oboe 2001 ", 68, MIDI_UNMAPPED},    // + (PQ2)
+	{"Ocean   MS", 122, MIDI_UNMAPPED},   // + (Iceman)
+	{"PPG 2.3 MS", 75, MIDI_UNMAPPED},    // ? (Iceman)
+	{"PianoCrank", MIDI_UNMAPPED, MIDI_UNMAPPED}, // ? (LB1)
+	{"PicSnareMS", MIDI_MAPPED_TO_RHYTHM, 40},   // R ? (Iceman)
+	{"PiccoloKA ", 72, MIDI_UNMAPPED},    // +++ (KQ1)
 	{"PinkBassMS", 39, MIDI_UNMAPPED},
-	{"Pizz2     ", 45, MIDI_UNMAPPED},    /* ++ (LB1) */
-	{"Portcullis", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? (KQ1) */
-	{"Raspbry MS", 81, MIDI_UNMAPPED},    /* ? (QFG1) */
-	{"RatSqueek ", 72, MIDI_UNMAPPED},    /* ? (LauraBow1, Camelot) */
-	{"Record78  ", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* +++ (LB1) */
-	{"RecorderMS", 74, MIDI_UNMAPPED},    /* +++ (Camelot) */
-	{"Red Baron ", 125, MIDI_UNMAPPED},   /* ? (LB1) */
-	{"ReedPipMS ", 20, MIDI_UNMAPPED},    /* +++ (Camelot) */
+	{"Pizz2     ", 45, MIDI_UNMAPPED},    // ++ (LB1)
+	{"Portcullis", MIDI_UNMAPPED, MIDI_UNMAPPED}, // ? (KQ1)
+	{"Raspbry MS", 81, MIDI_UNMAPPED},    // ? (QFG1)
+	{"RatSqueek ", 72, MIDI_UNMAPPED},    // ? (LauraBow1, Camelot)
+	{"Record78  ", MIDI_UNMAPPED, MIDI_UNMAPPED}, // +++ (LB1)
+	{"RecorderMS", 74, MIDI_UNMAPPED},    // +++ (Camelot)
+	{"Red Baron ", 125, MIDI_UNMAPPED},   // ? (LB1)
+	{"ReedPipMS ", 20, MIDI_UNMAPPED},    // +++ (Camelot)
 	{"RevCymb MS", 119, MIDI_UNMAPPED},
-	{"RifleShot ", 127, MIDI_UNMAPPED},   /* + (LB1) */
-	{"RimShot MS", MIDI_MAPPED_TO_RHYTHM, 37},   /* R */
-	{"SHOWER    ", 52, MIDI_UNMAPPED},    /* ? (LSL3) */
-	{"SQ Bass MS", 32, MIDI_UNMAPPED},    /* + (SQ3) */
-	{"ShakuVibMS", 79, MIDI_UNMAPPED},    /* + (Iceman) */
-	{"SlapBassMS", 36, MIDI_UNMAPPED},    /* +++ (Iceman) */
-	{"Snare   MS", MIDI_MAPPED_TO_RHYTHM, 38},   /* R (QFG1) */
-	{"Some Birds", 123, MIDI_UNMAPPED},   /* + (LB1) */
-	{"Sonar   MS", 78, MIDI_UNMAPPED},    /* ? (Iceman) */
-	{"Soundtrk2 ", 97, MIDI_UNMAPPED},    /* +++ (LB1) */
-	{"Soundtrack", 97, MIDI_UNMAPPED},    /* ++ (Camelot) */
+	{"RifleShot ", 127, MIDI_UNMAPPED},   // + (LB1)
+	{"RimShot MS", MIDI_MAPPED_TO_RHYTHM, 37},   // R
+	{"SHOWER    ", 52, MIDI_UNMAPPED},    // ? (LSL3)
+	{"SQ Bass MS", 32, MIDI_UNMAPPED},    // + (SQ3)
+	{"ShakuVibMS", 79, MIDI_UNMAPPED},    // + (Iceman)
+	{"SlapBassMS", 36, MIDI_UNMAPPED},    // +++ (Iceman)
+	{"Snare   MS", MIDI_MAPPED_TO_RHYTHM, 38},   // R (QFG1)
+	{"Some Birds", 123, MIDI_UNMAPPED},   // + (LB1)
+	{"Sonar   MS", 78, MIDI_UNMAPPED},    // ? (Iceman)
+	{"Soundtrk2 ", 97, MIDI_UNMAPPED},    // +++ (LB1)
+	{"Soundtrack", 97, MIDI_UNMAPPED},    // ++ (Camelot)
 	{"SqurWaveMS", 80, MIDI_UNMAPPED},
-	{"StabBassMS", 34, MIDI_UNMAPPED},    /* + (Iceman) */
-	{"SteelDrmMS", 114, MIDI_UNMAPPED},   /* +++ (Iceman) */
-	{"StrSect1MS", 48, MIDI_UNMAPPED},    /* ++ (QFG1) */
-	{"String  MS", 45, MIDI_UNMAPPED},    /* + (Camelot) */
+	{"StabBassMS", 34, MIDI_UNMAPPED},    // + (Iceman)
+	{"SteelDrmMS", 114, MIDI_UNMAPPED},   // +++ (Iceman)
+	{"StrSect1MS", 48, MIDI_UNMAPPED},    // ++ (QFG1)
+	{"String  MS", 45, MIDI_UNMAPPED},    // + (Camelot)
 	{"Syn-Choir ", 91, MIDI_UNMAPPED},
-	{"Syn Brass4", 63, MIDI_UNMAPPED},    /* ++ (PQ2) */
+	{"Syn Brass4", 63, MIDI_UNMAPPED},    // ++ (PQ2)
 	{"SynBass MS", 38, MIDI_UNMAPPED},
-	{"SwmpBackgr", 120, MIDI_UNMAPPED},    /* ?? (LB1, QFG1) */
-	{"T-Bone2 MS", 57, MIDI_UNMAPPED},    /* +++ (QFG1) */
-	{"Taiko     ", 116, 35},      /* +++ (Camelot) */
-	{"Taiko Rim ", 118, 37},      /* +++ (LSL3) */
-	{"Timpani1  ", 47, MIDI_UNMAPPED},    /* +++ (LB1) */
-	{"Tom     MS", 117, 48},      /* +++ (Iceman) */
-	{"Toms    MS", 117, 48},      /* +++ (Camelot, QFG1) */
-	{"Tpt1prtl  ", 56, MIDI_UNMAPPED},    /* +++ (KQ1) */
-	{"TriangleMS", 112, 81},      /* R (Camelot) */
-	{"Trumpet 1 ", 56, MIDI_UNMAPPED},    /* +++ (Camelot) */
-	{"Type    MS", MIDI_MAPPED_TO_RHYTHM, 39},   /* + (Iceman) */
-	{"WaterBells", 98, MIDI_UNMAPPED},    /* + (PQ2) */
-	{"WaterFallK", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? (KQ1) */
-	{"Whiporill ", 123, MIDI_UNMAPPED},   /* + (LB1) */
-	{"Wind      ", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? (LB1) */
-	{"Wind    MS", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? (QFG1, Iceman) */
-	{"Wind2   MS", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? (Camelot) */
-	{"Woodpecker", 115, MIDI_UNMAPPED},   /* ? (LB1) */
-	{"WtrFall MS", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? (Camelot, QFG1, Iceman) */
+	{"SwmpBackgr", 120, MIDI_UNMAPPED},    // ?? (LB1, QFG1)
+	{"T-Bone2 MS", 57, MIDI_UNMAPPED},    // +++ (QFG1)
+	{"Taiko     ", 116, 35},      // +++ (Camelot)
+	{"Taiko Rim ", 118, 37},      // +++ (LSL3)
+	{"Timpani1  ", 47, MIDI_UNMAPPED},    // +++ (LB1)
+	{"Tom     MS", 117, 48},      // +++ (Iceman)
+	{"Toms    MS", 117, 48},      // +++ (Camelot, QFG1)
+	{"Tpt1prtl  ", 56, MIDI_UNMAPPED},    // +++ (KQ1)
+	{"TriangleMS", 112, 81},      // R (Camelot)
+	{"Trumpet 1 ", 56, MIDI_UNMAPPED},    // +++ (Camelot)
+	{"Type    MS", MIDI_MAPPED_TO_RHYTHM, 39},   // + (Iceman)
+	{"Warm Pad"  , 89, MIDI_UNMAPPED},	// ++ (PQ3)
+	{"WaterBells", 98, MIDI_UNMAPPED},    // + (PQ2)
+	{"WaterFallK", MIDI_UNMAPPED, MIDI_UNMAPPED}, // ? (KQ1)
+	{"Whiporill ", 123, MIDI_UNMAPPED},   // + (LB1)
+	{"Wind      ", MIDI_UNMAPPED, MIDI_UNMAPPED}, // ? (LB1)
+	{"Wind    MS", MIDI_UNMAPPED, MIDI_UNMAPPED}, // ? (QFG1, Iceman)
+	{"Wind2   MS", MIDI_UNMAPPED, MIDI_UNMAPPED}, // ? (Camelot)
+	{"Woodpecker", 115, MIDI_UNMAPPED},   // ? (LB1)
+	{"WtrFall MS", MIDI_UNMAPPED, MIDI_UNMAPPED}, // ? (Camelot, QFG1, Iceman)
 	{0, 0, 0}
 };
+
+	typedef Common::List<Mt32ToGmMap> Mt32ToGmMapList;
+	extern Mt32ToGmMapList *Mt32dynamicMappings;
 
 } // End of namespace Sci

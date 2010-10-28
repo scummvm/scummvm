@@ -37,6 +37,8 @@
 
 namespace Sci {
 
+Mt32ToGmMapList *Mt32dynamicMappings = NULL;
+
 class MidiPlayer_Midi : public MidiPlayer {
 public:
 	enum {
@@ -131,10 +133,21 @@ MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _pla
 	_sysExBuf[1] = 0x10;
 	_sysExBuf[2] = 0x16;
 	_sysExBuf[3] = 0x12;
+
+	Mt32dynamicMappings = new Mt32ToGmMapList();
 }
 
 MidiPlayer_Midi::~MidiPlayer_Midi() {
 	delete _driver;
+
+	const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
+	for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
+		delete[] (*it).name;
+		(*it).name = 0;
+	}
+
+	Mt32dynamicMappings->clear();
+	delete Mt32dynamicMappings;
 }
 
 void MidiPlayer_Midi::noteOn(int channel, int note, int velocity) {
@@ -620,6 +633,15 @@ byte MidiPlayer_Midi::lookupGmInstrument(const char *iname) {
 			return getGmInstrument(Mt32MemoryTimbreMaps[i]);
 		i++;
 	}
+
+	if (Mt32dynamicMappings != NULL) {
+		const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
+		for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
+			if (scumm_strnicmp(iname, (*it).name, 10) == 0)
+				return getGmInstrument((*it));
+		}
+	}
+
 	return MIDI_UNMAPPED;
 }
 
@@ -631,6 +653,15 @@ byte MidiPlayer_Midi::lookupGmRhythmKey(const char *iname) {
 			return Mt32MemoryTimbreMaps[i].gmRhythmKey;
 		i++;
 	}
+
+	if (Mt32dynamicMappings != NULL) {
+		const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
+		for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
+			if (scumm_strnicmp(iname, (*it).name, 10) == 0)
+				return (*it).gmRhythmKey;
+		}
+	}
+
 	return MIDI_UNMAPPED;
 }
 

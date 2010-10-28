@@ -75,7 +75,6 @@ private:
 	bool cmdList(int argc, const char **argv);
 	bool cmdHexgrep(int argc, const char **argv);
 	bool cmdVerifyScripts(int argc, const char **argv);
-	bool cmdShowInstruments(int argc, const char **argv);
 	// Game
 	bool cmdSaveGame(int argc, const char **argv);
 	bool cmdRestoreGame(int argc, const char **argv);
@@ -115,6 +114,8 @@ private:
 	bool cmdStopAllSounds(int argc, const char **argv);
 	bool cmdSfx01Header(int argc, const char **argv);
 	bool cmdSfx01Track(int argc, const char **argv);
+	bool cmdShowInstruments(int argc, const char **argv);
+	bool cmdMapInstrument(int argc, const char **argv);
 	// Script
 	bool cmdAddresses(int argc, const char **argv);
 	bool cmdRegisters(int argc, const char **argv);
