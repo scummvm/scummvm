@@ -74,7 +74,6 @@ struct SystemVars {
 	uint8	showText;
 	uint8	language;
 	bool    isDemo;
-	uint32	engineStartTime;    // Used for playtime
 	Common::Platform platform;
 };
 
