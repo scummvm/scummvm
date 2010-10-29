@@ -303,10 +303,10 @@ Common::Error SciEngine::run() {
 
 		if (buggyScript && (buggyScript->size == 12354 || buggyScript->size == 12362)) {
 			showScummVMDialog("A known buggy game script has been detected, which could "
-							  "prevent you from progressing later on in the game, during "
-							  "the sequence with the Green Man's riddles. Please, apply "
-							  "the latest patch for this game by Sierra to avoid possible "
-							  "problems");
+			                  "prevent you from progressing later on in the game, during "
+			                  "the sequence with the Green Man's riddles. Please, apply "
+			                  "the latest patch for this game by Sierra to avoid possible "
+			                  "problems");
 		}
 	}
 
@@ -325,16 +325,16 @@ Common::Error SciEngine::run() {
 			case GID_SQ4:
 			case GID_FAIRYTALES:
 				showScummVMDialog("You have selected General MIDI as a sound device. Sierra "
-								  "has provided after-market support for General MIDI for this "
-								  "game in their \"General MIDI Utility\". Please, apply this "
-								  "patch in order to enjoy MIDI music with this game. Once you "
-								  "have obtained it, you can unpack all of the included *.PAT "
-								  "files in your ScummVM extras folder and ScummVM will add the "
-								  "appropriate patch automatically. Alternatively, you can follow "
-								  "the instructions in the READ.ME file included in the patch and "
-								  "rename the associated *.PAT file to 4.PAT and place it in the "
-								  "game folder. Without this patch, General MIDI music for this "
-								  "game will sound badly distorted.");
+				                  "has provided after-market support for General MIDI for this "
+				                  "game in their \"General MIDI Utility\". Please, apply this "
+				                  "patch in order to enjoy MIDI music with this game. Once you "
+				                  "have obtained it, you can unpack all of the included *.PAT "
+				                  "files in your ScummVM extras folder and ScummVM will add the "
+				                  "appropriate patch automatically. Alternatively, you can follow "
+				                  "the instructions in the READ.ME file included in the patch and "
+				                  "rename the associated *.PAT file to 4.PAT and place it in the "
+				                  "game folder. Without this patch, General MIDI music for this "
+				                  "game will sound badly distorted.");
 				break;
 			default:
 				break;
@@ -344,10 +344,10 @@ Common::Error SciEngine::run() {
 
 	if (gameHasFanMadePatch()) {
 		showScummVMDialog("Your game is patched with a fan made script patch. Such patches have "
-						  "been reported to cause issues, as they modify game scripts extensively. "
-						  "The issues that these patches fix do not occur in ScummVM, so you are "
-						  "advised to remove this patch from your game folder in order to avoid "
-						  "having unexpected errors and/or issues later on.");
+		                  "been reported to cause issues, as they modify game scripts extensively. "
+		                  "The issues that these patches fix do not occur in ScummVM, so you are "
+		                  "advised to remove this patch from your game folder in order to avoid "
+		                  "having unexpected errors and/or issues later on.");
 	}
 
 	runGame();
@@ -407,7 +407,6 @@ bool SciEngine::gameHasFanMadePatch() {
 			Resource *targetScript = _resMan->findResource(ResourceId(kResourceTypeScript, patchInfo[curEntry].targetScript), 0);
 
 			if (targetScript && targetScript->size + 2 == patchInfo[curEntry].targetSize) {
-				byte foo = targetScript->data[patchInfo[curEntry].patchedByteOffset];
 				if (patchInfo[curEntry].patchedByteOffset == 0)
 					return true;
 				else if (targetScript->data[patchInfo[curEntry].patchedByteOffset - 2] == patchInfo[curEntry].patchedByte)
