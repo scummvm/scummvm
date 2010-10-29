@@ -348,6 +348,8 @@ private:
 
 	void initStackBaseWithSelector(Selector selector);
 
+	bool gameHasFanMadePatch();
+
 	const ADGameDescription *_gameDescription;
 	const SciGameId _gameId;
 	ResourceManager *_resMan; /**< The resource manager */

@@ -342,12 +342,83 @@ Common::Error SciEngine::run() {
 		}
 	}
 
+	if (gameHasFanMadePatch()) {
+		showScummVMDialog("Your game is patched with a fan made script patch. Such patches have "
+						  "been reported to cause issues, as they modify game scripts extensively. "
+						  "The issues that these patches fix do not occur in ScummVM, so you are "
+						  "advised to remove this patch from your game folder in order to avoid "
+						  "having unexpected errors and/or issues later on.");
+	}
 
 	runGame();
 
 	ConfMan.flushToDisk();
 
 	return Common::kNoError;
+}
+
+bool SciEngine::gameHasFanMadePatch() {
+	struct FanMadePatchInfo {
+		SciGameId gameID;
+		uint16 targetScript;
+		uint16 targetSize;
+		uint16 patchedByteOffset;
+		byte patchedByte;
+	};
+
+	const FanMadePatchInfo patchInfo[] = {
+		// game        script    size  offset   byte
+		// ** NRS Patches **************************
+		{ GID_HOYLE3,     994,   2580,    656,  0x78 },
+		{ GID_KQ1,         85,   5156,    631,  0x02 },
+		{ GID_LAURABOW2,  994,   4382,      0,  0x00 },
+		{ GID_LONGBOW,    994,   4950,   1455,  0x78 },	// English
+		{ GID_LONGBOW,    994,   5020,   1469,  0x78 },	// German
+		{ GID_LSL1,       380,   7256,      0,  0x00 },
+		{ GID_LSL3,       380,   6148,    195,  0x35 },
+		{ GID_LSL5,       994,   4810,   1342,  0x78 },	// English
+		{ GID_LSL5,       994,   4942,   1392,  0x76 },	// German
+		{ GID_PQ1,        994,   4332,   1473,  0x78 },
+		{ GID_PQ2,        200,  10614,      0,  0x00 },
+		{ GID_PQ3,        994,   4686,   1291,  0x78 },	// English
+		{ GID_PQ3,        994,   4734,   1283,  0x78 },	// German
+		{ GID_QFG1VGA,    994,   4388,      0,  0x00 },
+		{ GID_QFG3,       994,   4714,      0,  0x00 },
+		// TODO: Disabled, as it fixes a whole lot of bugs which can't be tested till SCI2.1 support is finished
+		//{ GID_QFG4,       710,  11477,      0,  0x00 },
+		{ GID_SQ1,        994,   4740,      0,  0x00 },
+		{ GID_SQ5,        994,   4142,   1496,  0x78 },	// English/German/French
+		// TODO: Disabled, till we can test the Italian version
+		//{ GID_SQ5,        994,   4148,      0,  0x00 },	// Italian - patched file is the same size as the original
+		// TODO: The bugs in SQ6 can't be tested till SCI2.1 support is finished
+		//{ GID_SQ6,        380,  16308,  15042,  0x0C },	// English
+		//{ GID_SQ6,        380,  11652,      0,  0x00 },	// German - patched file is the same size as the original
+		// ** End marker ***************************
+		{ GID_FANMADE,      0,      0,      0,  0x00 }
+	};
+
+	int curEntry = 0;
+
+	while (true) {
+		if (patchInfo[curEntry].targetSize == 0)
+			break;
+
+		if (patchInfo[curEntry].gameID == getGameId()) {
+			Resource *targetScript = _resMan->findResource(ResourceId(kResourceTypeScript, patchInfo[curEntry].targetScript), 0);
+
+			if (targetScript && targetScript->size + 2 == patchInfo[curEntry].targetSize) {
+				byte foo = targetScript->data[patchInfo[curEntry].patchedByteOffset];
+				if (patchInfo[curEntry].patchedByteOffset == 0)
+					return true;
+				else if (targetScript->data[patchInfo[curEntry].patchedByteOffset - 2] == patchInfo[curEntry].patchedByte)
+					return true;
+			}
+		}
+
+		curEntry++;
+	}
+
+	return false;
 }
 
 static byte patchGameRestoreSave[] = {
