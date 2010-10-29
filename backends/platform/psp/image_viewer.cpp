@@ -218,16 +218,16 @@ void ImageViewer::render() {
 		// move the image slightly. Note that we count on the renderer's timing
 		switch (_movement) {
 		case EVENT_MOVE_LEFT:
-			moveImageX(-2);
+			moveImageX(-_visibleWidth / 100.0f);
 			break;
 		case EVENT_MOVE_UP:
-			moveImageY(-2);
+			moveImageY(-_visibleHeight / 100.0f);
 			break;
 		case EVENT_MOVE_RIGHT:
-			moveImageX(2);
+			moveImageX(_visibleWidth / 100.0f);
 			break;
 		case EVENT_MOVE_DOWN:
-			moveImageY(2);
+			moveImageY(_visibleHeight / 100.0f);
 			break;
 		default:
 			break;
@@ -255,19 +255,19 @@ void ImageViewer::setZoom(float value) {
 	setOffsetParams();
 }
 
-void ImageViewer::moveImageX(int val) {
+void ImageViewer::moveImageX(float val) {
 	float newVal = _centerX + val;
 	
-	if (newVal < 0 || newVal > PSP_SCREEN_WIDTH)
+	if (newVal - (_visibleWidth / 2) > PSP_SCREEN_WIDTH - 4 || newVal + (_visibleWidth / 2) < 4)  
 		return;
 	_centerX = newVal;
 	setOffsetParams();
 }
 
-void ImageViewer::moveImageY(int val) {
+void ImageViewer::moveImageY(float val) {
 	float newVal = _centerY + val;
 	
-	if (newVal < 0 || newVal > PSP_SCREEN_HEIGHT)
+	if (newVal - (_visibleHeight / 2) > PSP_SCREEN_HEIGHT - 4 || newVal + (_visibleHeight / 2) < 4)  
 		return;
 	_centerY = newVal;
 	setOffsetParams();

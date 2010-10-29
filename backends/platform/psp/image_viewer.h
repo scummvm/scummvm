@@ -66,8 +66,8 @@ private:
 	void loadLastImage();
 	void setViewerButtons(bool active);
 	void setConstantRendererOptions();
-	void moveImageX(int val);
-	void moveImageY(int val);
+	void moveImageX(float val);
+	void moveImageY(float val);
 	bool load(int imageNum);
 	void unload();	
 	void runLoop(); // to get total pausing we have to do our own loop
