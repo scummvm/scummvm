@@ -489,7 +489,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(ListIndexOf),       SIG_EVERYWHERE,           "l[o0]",                 NULL,            NULL },
 	{ "OnMe", kIsOnMe,             SIG_EVERYWHERE,           "iioi",                  NULL,            NULL },
 	{ MAP_CALL(RepaintPlane),      SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-	{ MAP_CALL(SetShowStyle),      SIG_EVERYWHERE,           "ioiiiii(i)",            NULL,            NULL },
+	{ MAP_CALL(SetShowStyle),      SIG_EVERYWHERE,           "ioiiiii([ri])(i)",      NULL,            NULL },
 	{ MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
