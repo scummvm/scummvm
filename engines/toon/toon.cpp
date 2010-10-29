@@ -1572,11 +1572,17 @@ void ToonEngine::exitScene() {
 		_gameState->_mouseState = -1;
 	}
 
+	_audioManager->killAllAmbientSFX();
+	_audioManager->stopAllSfxs();
+	_audioManager->stopCurrentVoice();
+	_currentTextLine = 0;
+	_currentTextLineId = -1;
+	_currentTextLineCharacterId = 0;
+
 	char temp[256];
 	strcpy(temp, createRoomFilename(Common::String::printf("%s.pak", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
 	resources()->closePackage(temp);
 
-	_audioManager->killAllAmbientSFX();
 
 	_drew->stopWalk();
 	_flux->stopWalk();

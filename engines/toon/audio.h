@@ -132,6 +132,7 @@ public:
 	void playVoice(int32 id, bool genericVoice);
 	int32 playSFX(int32 id, int volume, bool genericSFX);
 	void stopCurrentVoice();
+	void stopAllSfxs(); 
 	void setMusicVolume(int32 volume);
 	void stopMusic();
 	void muteVoice(bool mute);

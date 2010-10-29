@@ -191,6 +191,14 @@ int32 AudioManager::playSFX(int32 id, int volume , bool genericSFX) {
 	return -1;
 }
 
+void AudioManager::stopAllSfxs() {
+	for (int32 i = 3; i < 16; i++) {
+		if (_channels[i] && _channels[i]->isPlaying()) {
+			_channels[i]->stop(false);
+		}
+	}
+}
+
 void AudioManager::stopCurrentVoice() {
 	debugC(1, kDebugAudio, "stopCurrentVoice()");
 
