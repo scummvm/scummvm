@@ -107,7 +107,6 @@ public:
 
 	Common::RandomSource _rnd;
 
-	int32 _engineStartTime;
 	int32 _pauseStartTime;
 };
 

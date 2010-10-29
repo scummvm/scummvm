@@ -403,7 +403,7 @@ DraciEngine::~DraciEngine() {
 
 Common::Error DraciEngine::run() {
 	init();
-	_engineStartTime = _system->getMillis() / 1000;
+	setTotalPlayTime(0);
 	_game->init();
 
 	// Load game from specified slot, if any
@@ -418,8 +418,6 @@ Common::Error DraciEngine::run() {
 void DraciEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 	if (pause) {
-		// Record start of the pause, so that we can later
-		// adjust _engineStartTime accordingly.
 		_pauseStartTime = _system->getMillis();
 
 		_anims->pauseAnimations();
@@ -434,7 +432,6 @@ void DraciEngine::pauseEngineIntern(bool pause) {
 
 		// Adjust engine start time
 		const int delta = _system->getMillis() - _pauseStartTime;
-		_engineStartTime += delta / 1000;
 		_game->shiftSpeechAndFadeTick(delta);
 		_pauseStartTime = 0;
 	}

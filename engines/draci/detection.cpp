@@ -202,10 +202,7 @@ SaveStateDescriptor DraciMetaEngine::querySaveMetaInfos(const char *target, int 
 	int minutes = header.time & 0xFF;
 	desc.setSaveTime(hour, minutes);
 
-	minutes = header.playtime / 60;
-	hour = minutes / 60;
-	minutes %= 60;
-	desc.setPlayTime(hour, minutes);
+	desc.setPlayTime(header.playtime * 1000);
 
 	return desc;
 }
