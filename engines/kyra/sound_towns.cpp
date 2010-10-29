@@ -83,11 +83,11 @@ void SoundTowns::playTrack(uint8 track) {
 		return;
 	track -= 2;
 
-	const int32 *const tTable = (const int32 *const)cdaData();
+	const int32 * const tTable = (const int32 *)cdaData();
 	int tTableIndex = 3 * track;
 
-	int trackNum = (int) READ_LE_UINT32(&tTable[tTableIndex + 2]);
-	int32 loop = (int32) READ_LE_UINT32(&tTable[tTableIndex + 1]);
+	int trackNum = (int)READ_LE_UINT32(&tTable[tTableIndex + 2]);
+	int32 loop = (int32)READ_LE_UINT32(&tTable[tTableIndex + 1]);
 
 	if (track == _lastTrack && _musicEnabled)
 		return;
@@ -530,7 +530,7 @@ void SoundTownsPC98_v2::playTrack(uint8 track) {
 	if (track == _lastTrack && _musicEnabled)
 		return;
 
-	const uint16 *const cdaTracks = (const uint16 *const) cdaData();
+	const uint16 * const cdaTracks = (const uint16 *)cdaData();
 
 	int trackNum = -1;
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
