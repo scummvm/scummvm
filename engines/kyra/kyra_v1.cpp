@@ -103,9 +103,13 @@ Common::Error KyraEngine_v1::init() {
 	syncSoundSettings();
 
 	if (!_flags.useDigSound) {
-		// In Kyra 1 users who have specified a MT-32 device in the launcher settings
+		// In Kyra 1 users who have specified a default MT-32 device in the launcher settings
 		// will get MT-32 music, otherwise AdLib. In Kyra 2 and LoL users who have specified a
-		// GM device in the launcher will get GM music, otherwise AdLib.
+		// default GM device in the launcher will get GM music, otherwise AdLib. Users who want
+		// MT-32 music in Kyra2 or LoL have to select this individually (since we assume that
+		// most users rather have a GM device than a MT-32 device).
+		// Users who want PC speaker sound always have to select this individually for all
+		// Kyra games.
 		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB | ((_flags.gameID == GI_KYRA2 || _flags.gameID == GI_LOL) ? MDT_PREFER_GM : MDT_PREFER_MT32));
 
 		if (_flags.platform == Common::kPlatformFMTowns) {
