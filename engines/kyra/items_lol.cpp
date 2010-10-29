@@ -154,7 +154,7 @@ Item LoLEngine::makeItem(int itemType, int curFrame, int flags) {
 			deleteItem(r);
 			slot = r;
 		} else {
-			int ii = _itemsInPlay[slot].nextAssignedObject;
+			uint16 ii = _itemsInPlay[slot].nextAssignedObject;
 			while (ii) {
 				if (testUnkItemFlags(ii)) {
 					_itemsInPlay[slot].nextAssignedObject = _itemsInPlay[ii].nextAssignedObject;
