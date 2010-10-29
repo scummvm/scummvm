@@ -1198,12 +1198,7 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 		int minutes = infos.time & 0xFF;
 
 		desc.setSaveTime(hour, minutes);
-
-		minutes = infos.playtime / 60;
-		hour = minutes / 60;
-		minutes %= 60;
-
-		desc.setPlayTime(hour, minutes);
+		desc.setPlayTime(infos.playtime * 1000);
 	}
 
 	return desc;
