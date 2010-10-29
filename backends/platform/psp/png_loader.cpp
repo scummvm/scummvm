@@ -36,25 +36,27 @@
 
 PngLoader::Status PngLoader::allocate() {
 	DEBUG_ENTER_FUNC();
+	
 	if (!findImageDimensions()) {
 		PSP_ERROR("failed to get image dimensions\n");
 		return BAD_FILE;
 	}
 
-	
 	_buffer->setSize(_width, _height, _sizeBy);
 
+	uint32 bitsPerPixel = _bitDepth * _channels;
+	
 	if (_paletteSize) {	// 8 or 4-bit image
-		if (_paletteSize <= 16) { 					// 4 bit
+		if (bitsPerPixel == 4) {
 			_buffer->setPixelFormat(PSPPixelFormat::Type_Palette_4bit);
 			_palette->setPixelFormats(PSPPixelFormat::Type_4444, PSPPixelFormat::Type_Palette_4bit);
-			_paletteSize = 16;
-		} else if (_paletteSize <= 256) {			// 8-bit image
-			_paletteSize = 256;
+			_paletteSize = 16;	// round up
+		} else if (bitsPerPixel == 8) {			// 8-bit image
 			_buffer->setPixelFormat(PSPPixelFormat::Type_Palette_8bit);
 			_palette->setPixelFormats(PSPPixelFormat::Type_4444, PSPPixelFormat::Type_Palette_8bit);
+			_paletteSize = 256; // round up
 		} else {
-			PSP_ERROR("palette of %d too big!\n", _paletteSize);
+			PSP_ERROR("too many bits per pixel[%d] for a palette\n", bitsPerPixel);
 			return BAD_FILE;
 		}
 
@@ -127,7 +129,8 @@ bool PngLoader::basicImageLoad() {
 	int interlaceType;
 	png_get_IHDR(_pngPtr, _infoPtr, (png_uint_32 *)&_width, (png_uint_32 *)&_height, &_bitDepth,
 		&_colorType, &interlaceType, int_p_NULL, int_p_NULL);
-
+	_channels = png_get_channels(_pngPtr, _infoPtr);
+		
 	if (_colorType & PNG_COLOR_MASK_PALETTE)
 		_paletteSize = _infoPtr->num_palette;
 
@@ -140,7 +143,7 @@ bool PngLoader::findImageDimensions() {
 
 	bool status = basicImageLoad(); 
 
-	PSP_DEBUG_PRINT("width[%d], height[%d], paletteSize[%d], bitDepth[%d], rowBytes[%d]\n", _width, _height, _paletteSize, _bitDepth, _infoPtr->rowbytes);
+	PSP_DEBUG_PRINT("width[%d], height[%d], paletteSize[%d], bitDepth[%d], channels[%d], rowBytes[%d]\n", _width, _height, _paletteSize, _bitDepth, _channels, _infoPtr->rowbytes);
 	png_destroy_read_struct(&_pngPtr, &_infoPtr, png_infopp_NULL);
 	return status;
 }
@@ -160,7 +163,7 @@ bool PngLoader::loadImageIntoBuffer() {
 	if (_paletteSize) {
 		// Copy the palette
 		png_colorp srcPal = _infoPtr->palette;
-		for (int i = 0; i < (int)_paletteSize; i++) {
+		for (int i = 0; i < _infoPtr->num_palette; i++) {
 			unsigned char alphaVal = (i < _infoPtr->num_trans) ? _infoPtr->trans[i] : 0xFF;	// Load alpha if it's there
 			_palette->setSingleColorRGBA(i, srcPal->red, srcPal->green, srcPal->blue, alphaVal);
 			srcPal++;
@@ -171,21 +174,19 @@ bool PngLoader::loadImageIntoBuffer() {
 		if (png_get_valid(_pngPtr, _infoPtr, PNG_INFO_tRNS))
 			png_set_tRNS_to_alpha(_pngPtr);		// Convert trans channel to alpha for 32 bits
 
-		//png_set_filler(_pngPtr, 0xff, PNG_FILLER_AFTER);	// Filler for alpha if none exists
 		png_set_add_alpha(_pngPtr, 0xff, PNG_FILLER_AFTER);		// Filler for alpha if none exists
 	}
 
 	uint32 rowBytes = png_get_rowbytes(_pngPtr, _infoPtr);
-	uint32 channels = png_get_channels(_pngPtr, _infoPtr);
 	
-	// there seems to be a bug in libpng where it doesn't increase the rowbytes or the channel even after we add the
-	// alpha channel
-	if (channels == 3 && (rowBytes / _width) == 3) {
-		channels = 4;
-		rowBytes = _width * channels;		
+	// there seems to be a bug in libpng where it doesn't increase the rowbytes or the 
+	// channel even after we add the alpha channel
+	if (_channels == 3 && (rowBytes / _width) == 3) {
+		_channels = 4;
+		rowBytes = _width * _channels;		
 	}	
 	
-	PSP_DEBUG_PRINT("rowBytes[%d], channels[%d]\n", rowBytes, channels);
+	PSP_DEBUG_PRINT("rowBytes[%d], channels[%d]\n", rowBytes, _channels);
 	
 	unsigned char *line = (unsigned char*) malloc(rowBytes);
 	if (!line) {
