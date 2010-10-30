@@ -57,18 +57,18 @@ enum Direction {
 	kDirSE   = 0x5100
 };
 
+struct WayPoint {
+	int16 x;
+	int16 y;
+	int16 notWalkable;
+};
+
+
 class Map {
 public:
 #include "common/pack-start.h"	// START STRUCT PACKING
 
-	struct Point {
-		int16 x;
-		int16 y;
-		int16 notWalkable;
-	} PACKED_STRUCT;
-
 #define szMap_ItemPos 3
-
 	struct ItemPos {
 		int8 x;
 		int8 y;
@@ -91,9 +91,6 @@ public:
 
 	bool _mapUnknownBool;
 
-	int16 _wayPointCount;
-	Point *_wayPoints;
-
 	int16 _nearestWayPoint;
 	int16 _nearestDest;
 
@@ -112,6 +109,8 @@ public:
 
 	int8 getPass(int x, int y, int width = -1) const;
 	void setPass(int x, int y, int8 pass, int width = -1);
+
+	const WayPoint &getWayPoint(int n) const;
 
 	void findNearestWalkable(int16 &gobDestX, int16 &gobDestY,
 		int16 mouseX, int16 mouseY);
@@ -142,6 +141,9 @@ protected:
 
 	int16 _passWidth;
 	int8 *_passMap; // [y * _mapWidth + x], getPass(x, y);
+
+	int16 _wayPointCount;
+	WayPoint *_wayPoints;
 
 	int16 findNearestWayPoint(int16 x, int16 y);
 

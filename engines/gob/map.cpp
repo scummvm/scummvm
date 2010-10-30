@@ -106,6 +106,13 @@ void Map::setPass(int x, int y, int8 pass, int width) {
 	_passMap[y * width + x] = pass;
 }
 
+const WayPoint &Map::getWayPoint(int n) const {
+	assert(_wayPoints);
+	assert(n < _wayPointCount);
+
+	return _wayPoints[n];
+}
+
 void Map::placeItem(int16 x, int16 y, int16 id) {
 	if ((getItem(x, y) & 0xFF00) != 0)
 		setItem(x, y, (getItem(x, y) & 0xFF00) | id);

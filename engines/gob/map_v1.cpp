@@ -58,8 +58,8 @@ void Map_v1::init() {
 	}
 
 	_wayPointCount = 40;
-	_wayPoints = new Point[40];
-	memset(_wayPoints, 0, sizeof(Point));
+	_wayPoints = new WayPoint[40];
+	memset(_wayPoints, 0, sizeof(WayPoint));
 }
 
 void Map_v1::loadMapObjects(const char *avjFile) {

@@ -121,8 +121,10 @@ void Goblin_v2::initiateMove(Mult::Mult_Object *obj) {
 	obj->pAnimData->pathExistence = _vm->_map->checkDirectPath(obj,
 			obj->goblinX, obj->goblinY, obj->gobDestX, obj->gobDestY);
 	if (obj->pAnimData->pathExistence == 3) {
-		obj->destX = _vm->_map->_wayPoints[obj->nearestWayPoint].x;
-		obj->destY = _vm->_map->_wayPoints[obj->nearestWayPoint].y;
+		const WayPoint &wayPoint = _vm->_map->getWayPoint(obj->nearestWayPoint);
+
+		obj->destX = wayPoint.x;
+		obj->destY = wayPoint.y;
 	}
 }
 
@@ -162,8 +164,12 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 
 					if (obj->nearestWayPoint > obj->nearestDest) {
 						_vm->_map->optimizePoints(obj, gobX, gobY);
-						destX = _vm->_map->_wayPoints[obj->nearestWayPoint].x;
-						destY = _vm->_map->_wayPoints[obj->nearestWayPoint].y;
+
+						const WayPoint &wayPoint = _vm->_map->getWayPoint(obj->nearestWayPoint);
+
+						destX = wayPoint.x;
+						destY = wayPoint.y;
+
 						if (_vm->_map->checkDirectPath(obj, gobX, gobY, destX, destY) == 3) {
 							WRITE_VAR(56, 1);
 							animData->pathExistence = 0;
@@ -172,8 +178,12 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 							obj->nearestWayPoint--;
 					} else if (obj->nearestWayPoint < obj->nearestDest) {
 						_vm->_map->optimizePoints(obj, gobX, gobY);
-						destX = _vm->_map->_wayPoints[obj->nearestWayPoint].x;
-						destY = _vm->_map->_wayPoints[obj->nearestWayPoint].y;
+
+						const WayPoint &wayPoint = _vm->_map->getWayPoint(obj->nearestWayPoint);
+
+						destX = wayPoint.x;
+						destY = wayPoint.y;
+
 						if (_vm->_map->checkDirectPath(obj, gobX, gobY, destX, destY) == 3) {
 							WRITE_VAR(56, 1);
 							animData->pathExistence = 0;
@@ -183,8 +193,12 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 					} else {
 						if ((_vm->_map->checkDirectPath(obj, gobX, gobY, gobDestX, gobDestY) == 3) &&
 								(_vm->_map->getPass(gobDestX, gobDestY) != 0)) {
-							destX = _vm->_map->_wayPoints[obj->nearestWayPoint].x;
-							destY = _vm->_map->_wayPoints[obj->nearestWayPoint].y;
+
+							const WayPoint &wayPoint = _vm->_map->getWayPoint(obj->nearestWayPoint);
+
+							destX = wayPoint.x;
+							destY = wayPoint.y;
+
 							WRITE_VAR(56, 1);
 						} else {
 							animData->pathExistence = 1;

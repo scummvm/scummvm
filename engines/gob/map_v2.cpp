@@ -138,7 +138,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 		wayPointsCount = _wayPointCount == 0 ? 1 : _wayPointCount;
 
 	delete[] _wayPoints;
-	_wayPoints = new Point[wayPointsCount];
+	_wayPoints = new WayPoint[wayPointsCount];
 	for (int i = 0; i < _wayPointCount; i++) {
 		_wayPoints[i].x = mapData.readSByte();
 		_wayPoints[i].y = mapData.readSByte();

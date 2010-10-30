@@ -154,8 +154,10 @@ void Goblin_v1::initiateMove(Mult::Mult_Object *obj) {
 			_vm->_map->_nearestWayPoint, _vm->_map->_nearestDest) == 0) {
 			_pathExistence = 0;
 		} else {
-			_vm->_map->_destX = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].x;
-			_vm->_map->_destY = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].y;
+			const WayPoint &wayPoint = _vm->_map->getWayPoint(_vm->_map->_nearestWayPoint);
+
+			_vm->_map->_destX = wayPoint.x;
+			_vm->_map->_destY = wayPoint.y;
 		}
 	}
 }
@@ -199,20 +201,20 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 				if (_vm->_map->_nearestWayPoint > _vm->_map->_nearestDest) {
 					_vm->_map->optimizePoints(0, 0, 0);
 
-					_vm->_map->_destX =
-					    _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].x;
-					_vm->_map->_destY =
-					    _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].y;
+					const WayPoint &wayPoint = _vm->_map->getWayPoint(_vm->_map->_nearestWayPoint);
+
+					_vm->_map->_destX = wayPoint.x;
+					_vm->_map->_destY = wayPoint.y;
 
 					if (_vm->_map->_nearestWayPoint > _vm->_map->_nearestDest)
 						_vm->_map->_nearestWayPoint--;
 				} else if (_vm->_map->_nearestWayPoint < _vm->_map->_nearestDest) {
 					_vm->_map->optimizePoints(0, 0, 0);
 
-					_vm->_map->_destX =
-					    _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].x;
-					_vm->_map->_destY =
-					    _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].y;
+					const WayPoint &wayPoint = _vm->_map->getWayPoint(_vm->_map->_nearestWayPoint);
+
+					_vm->_map->_destX = wayPoint.x;
+					_vm->_map->_destY = wayPoint.y;
 
 					if (_vm->_map->_nearestWayPoint < _vm->_map->_nearestDest)
 						_vm->_map->_nearestWayPoint++;
@@ -220,8 +222,12 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 					if ((_vm->_map->checkDirectPath(0, _vm->_map->_curGoblinX,
 						_vm->_map->_curGoblinY, _gobDestX, _gobDestY) == 3) &&
 							(_vm->_map->getPass(_pressedMapX, _pressedMapY) != 0)) {
-						_vm->_map->_destX = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].x;
-						_vm->_map->_destY = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].y;
+
+						const WayPoint &wayPoint = _vm->_map->getWayPoint(_vm->_map->_nearestWayPoint);
+
+						_vm->_map->_destX = wayPoint.x;
+						_vm->_map->_destY = wayPoint.y;
+
 					} else {
 						_pathExistence = 1;
 						_vm->_map->_destX = _pressedMapX;
