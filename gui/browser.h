@@ -29,10 +29,6 @@
 #include "common/str.h"
 #include "common/fs.h"
 
-#ifdef MACOSX
-#include <Carbon/Carbon.h>
-#endif
-
 namespace GUI {
 
 class ListWidget;
@@ -54,7 +50,7 @@ public:
 
 protected:
 #ifdef MACOSX
-	CFStringRef		_titleRef;
+	const void *_titleRef;
 #else
 	ListWidget		*_fileList;
 	StaticTextWidget	*_currentPath;
