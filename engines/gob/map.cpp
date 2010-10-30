@@ -32,12 +32,12 @@
 namespace Gob {
 
 Map::Map(GobEngine *vm) : _vm(vm) {
+	_mapVersion = 0;
+
 	_passWidth =  0;
 	_mapWidth  = -1;
 	_mapHeight = -1;
 	_passMap   =  0;
-
-	_widthByte = 0;
 
 	_screenWidth  = 0;
 	_screenHeight = 0;
@@ -80,6 +80,10 @@ Map::~Map() {
 	}
 
 	delete[] _wayPoints;
+}
+
+uint8 Map::getVersion() const {
+	return _mapVersion;
 }
 
 int8 Map::getPass(int x, int y, int width) const {

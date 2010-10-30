@@ -100,11 +100,11 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 
 	Common::SeekableReadStream &mapData = *resource->stream();
 
-	_widthByte = mapData.readByte();
-	if (_widthByte == 4) {
+	_mapVersion = mapData.readByte();
+	if (_mapVersion == 4) {
 		_screenWidth = 640;
 		_screenHeight = 400;
-	} else if (_widthByte == 3) {
+	} else if (_mapVersion == 3) {
 		_passWidth = 65;
 		_screenWidth = 640;
 		_screenHeight = 200;
@@ -121,7 +121,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 	_bigTiles = !(_tilesHeight & 0xFF00);
 	_tilesHeight &= 0xFF;
 
-	if (_widthByte == 4) {
+	if (_mapVersion == 4) {
 		_screenWidth = mapData.readSint16LE();
 		_screenHeight = mapData.readSint16LE();
 	}
@@ -145,7 +145,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 		_wayPoints[i].notWalkable = mapData.readSByte();
 	}
 
-	if (_widthByte == 4) {
+	if (_mapVersion == 4) {
 		_mapWidth  = VAR(17);
 		_passWidth = _mapWidth;
 	}

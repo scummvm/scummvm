@@ -135,7 +135,7 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 	obj->destX = destX;
 	obj->destY = destY;
 
-	if (_vm->_map->_widthByte == 4) {
+	if (_vm->_map->getVersion() == 4) {
 		switch (dir) {
 		case kDirNW:
 			animData->nextState = turnState(animData->state, kDirNW);

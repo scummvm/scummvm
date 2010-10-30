@@ -80,8 +80,6 @@ public:
 	int16 _mapWidth;
 	int16 _mapHeight;
 
-	byte _widthByte;
-
 	int16 _screenWidth;
 	int16 _screenHeight;
 	int16 _tilesWidth;
@@ -106,6 +104,8 @@ public:
 
 	Map(GobEngine *vm);
 	virtual ~Map();
+
+	uint8 getVersion() const;
 
 	int8 getPass(int x, int y, int width = -1) const;
 	void setPass(int x, int y, int8 pass, int width = -1);
@@ -138,6 +138,8 @@ protected:
 	GobEngine *_vm;
 
 	bool _loadFromAvo;
+
+	uint8 _mapVersion;
 
 	int16 _passWidth;
 	int8 *_passMap; // [y * _mapWidth + x], getPass(x, y);
