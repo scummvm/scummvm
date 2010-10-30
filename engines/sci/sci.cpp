@@ -374,7 +374,7 @@ bool SciEngine::gameHasFanMadePatch() {
 		{ GID_LAURABOW2,  994,   4382,      0,  0x00 },
 		{ GID_LONGBOW,    994,   4950,   1455,  0x78 },	// English
 		{ GID_LONGBOW,    994,   5020,   1469,  0x78 },	// German
-		{ GID_LSL1,       380,   7256,      0,  0x00 },
+		{ GID_LSL1,       803,    592,    342,  0x01 },
 		{ GID_LSL3,       380,   6148,    195,  0x35 },
 		{ GID_LSL5,       994,   4810,   1342,  0x78 },	// English
 		{ GID_LSL5,       994,   4942,   1392,  0x76 },	// German
