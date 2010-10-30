@@ -63,20 +63,15 @@ struct WayPoint {
 	int16 notWalkable;
 };
 
+struct ItemPos {
+	int8 x;
+	int8 y;
+	int8 orient;
+};
+
 
 class Map {
 public:
-#include "common/pack-start.h"	// START STRUCT PACKING
-
-#define szMap_ItemPos 3
-	struct ItemPos {
-		int8 x;
-		int8 y;
-		int8 orient;
-	} PACKED_STRUCT;
-
-#include "common/pack-end.h"	// END STRUCT PACKING
-
 	int16 _mapWidth;
 	int16 _mapHeight;
 

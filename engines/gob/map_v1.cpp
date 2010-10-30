@@ -98,7 +98,12 @@ void Map_v1::loadMapObjects(const char *avjFile) {
 			_wayPoints[i].x = mapData.readUint16LE();
 			_wayPoints[i].y = mapData.readUint16LE();
 		}
-		mapData.read(_itemPoses, szMap_ItemPos * 20);
+
+		for (int i = 0; i < 20; i++) {
+			_itemPoses[i].x      = mapData.readByte();
+			_itemPoses[i].y      = mapData.readByte();
+			_itemPoses[i].orient = mapData.readByte();
+		}
 	}
 
 	mapData.skip(32 + 76 + 4 + 20);
