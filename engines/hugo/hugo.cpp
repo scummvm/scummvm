@@ -66,7 +66,7 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	_arrayNouns(0), _arrayVerbs(0), _arrayReqs(0), _hotspots(0), _invent(0), _uses(0), _catchallList(0), _backgroundObjects(0),
 	_points(0), _cmdList(0), _screenActs(0), _actListArr(0), _heroImage(0), _defltTunes(0), _palette(0), _introX(0), _introY(0),
 	_maxInvent(0), _numBonuses(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0), _screenStates(0), _numObj(0),
-	_score(0), _maxscore(0)
+	_score(0), _maxscore(0), _backgroundObjectsSize(0), _screenActsSize(0), _actListArrSize(0), _usesSize(0)
 
 {
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
@@ -84,18 +84,8 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 }
 
 HugoEngine::~HugoEngine() {
-	free(_palette);
-	free(_introX);
-	free(_introY);
 	free(_textData);
 	free(_stringtData);
-	free(_screenNames);
-	free(_textEngine);
-	free(_textIntro);
-	free(_textMouse);
-	free(_textParser);
-	free(_textSchedule);
-	free(_textUtil);
 
 	for (int i = 0; _arrayNouns[i]; i++)
 		free(_arrayNouns[i]);
@@ -105,10 +95,24 @@ HugoEngine::~HugoEngine() {
 		free(_arrayVerbs[i]);
 	free(_arrayVerbs);
 
+	free(_screenNames);
+	free(_palette);
+	free(_textEngine);
+	free(_textIntro);
+	free(_introX);
+	free(_introY);
+	free(_textMouse);
+	free(_textParser);
+	free(_textSchedule);
+	free(_textUtil);
 	free(_arrayReqs);
 	free(_hotspots);
 	free(_invent);
+
+	for (int i = 0; i < _usesSize; i++)
+		free(_uses[i].targets);
 	free(_uses);
+
 	free(_catchallList);
 
 	for (int i = 0; i < _backgroundObjectsSize; i++)
@@ -395,10 +399,10 @@ bool HugoEngine::loadHugoDat() {
 	_stringtData = loadTextsVariante(in, 0);
 
 	// Read arrayNouns
-	_arrayNouns = loadTextsArray(in, &_arrayNounsSize);
+	_arrayNouns = loadTextsArray(in);
 
 	// Read arrayVerbs
-	_arrayVerbs = loadTextsArray(in, &_arrayVerbsSize);
+	_arrayVerbs = loadTextsArray(in);
 
 	// Read screenNames
 	_screenNames = loadTextsVariante(in, &_numScreens);
@@ -499,6 +503,7 @@ bool HugoEngine::loadHugoDat() {
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
+			_usesSize = numElem;
 			_uses = (uses_t *)malloc(sizeof(uses_t) * numElem);
 			for (int i = 0; i < numElem; i++) {
 				_uses[i].objId = in.readSint16BE();
@@ -1387,16 +1392,17 @@ uint16 **HugoEngine::loadLongArray(Common::File &in) {
 	return resArray;
 }
 
-char ***HugoEngine::loadTextsArray(Common::File &in, uint16 *arraySize) {
+char ***HugoEngine::loadTextsArray(Common::File &in) {
 	char ***resArray = 0;
+	uint16 arraySize;
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		*arraySize = in.readUint16BE();
+		arraySize = in.readUint16BE();
 		if (varnt == _gameVariant) {
-			resArray = (char ***)malloc(sizeof(char **) * (*arraySize + 1));
-			resArray[*arraySize] = 0;
+			resArray = (char ***)malloc(sizeof(char **) * (arraySize + 1));
+			resArray[arraySize] = 0;
 		}
-		for (int i = 0; i < *arraySize; i++) {
+		for (int i = 0; i < arraySize; i++) {
 			int numTexts = in.readUint16BE();
 			int entryLen = in.readUint16BE();
 			char *pos = (char *)malloc(entryLen);

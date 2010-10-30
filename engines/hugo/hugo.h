@@ -139,13 +139,12 @@ public:
 	char  **_textSchedule;
 	char  **_textUtil;
 	char  ***_arrayNouns;
-	uint16 _arrayNounsSize;
 	char  ***_arrayVerbs;
-	uint16 _arrayVerbsSize;
 	uint16    **_arrayReqs;
 	hotspot_t *_hotspots;
 	int16     *_invent;
 	uses_t    *_uses;
+	uint16     _usesSize;
 	background_t *_catchallList;
 	background_t **_backgroundObjects;
 	uint16    _backgroundObjectsSize;
@@ -293,7 +292,7 @@ private:
 	int _maxscore;                      // Holds maximum score
 
 	char **loadTextsVariante(Common::File &in, uint16 *arraySize);
-	char ***loadTextsArray(Common::File &in, uint16 *arraySize);
+	char ***loadTextsArray(Common::File &in);
 	uint16 **loadLongArray(Common::File &in);
 	char **loadTexts(Common::File &in);
 	void freeTexts(char **ptr);
