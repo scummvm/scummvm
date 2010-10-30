@@ -30,22 +30,35 @@
 
 namespace Gob {
 
+enum RelativeDirection {
+	kRelDirNone  = 0 ,
+
+	kRelDirLeft  = (1 << 0),
+	kRelDirUp    = (1 << 1),
+	kRelDirRight = (1 << 2),
+	kRelDirDown  = (1 << 3),
+
+	kRelDirLeftUp    = kRelDirLeft  | kRelDirUp,
+	kRelDirLeftDown  = kRelDirLeft  | kRelDirDown,
+	kRelDirRightUp   = kRelDirRight | kRelDirUp,
+	kRelDirRightDown = kRelDirRight | kRelDirDown
+};
+
 // The same numeric values are also used for the arrow keys.
+enum Direction {
+	kDirNone = 0x0000,
+	kDirNW   = 0x4700,
+	kDirN    = 0x4800,
+	kDirNE   = 0x4900,
+	kDirW    = 0x4B00,
+	kDirE    = 0x4D00,
+	kDirSW   = 0x4F00,
+	kDirS    = 0x5000,
+	kDirSE   = 0x5100
+};
 
 class Map {
 public:
-	enum Direction {
-		kDirNone = 0x0000,
-		kDirNW   = 0x4700,
-		kDirN    = 0x4800,
-		kDirNE   = 0x4900,
-		kDirW    = 0x4B00,
-		kDirE    = 0x4D00,
-		kDirSW   = 0x4F00,
-		kDirS    = 0x5000,
-		kDirSE   = 0x5100
-	};
-
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 	struct Point {

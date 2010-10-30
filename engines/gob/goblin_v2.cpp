@@ -142,12 +142,12 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 	animData->destY = gobDestY;
 	animData->order = gobY;
 
-	Map::Direction dir = Map::kDirNone;
+	Direction dir = kDirNone;
 
 	if (animData->pathExistence == 1) {
 
 		dir = _vm->_map->getDirection(gobX, gobY, destX, destY);
-		if (dir == Map::kDirNone)
+		if (dir == kDirNone)
 			animData->pathExistence = 0;
 		if ((gobX == gobDestX) && (gobY == gobDestY))
 			animData->pathExistence = 4;
@@ -218,7 +218,7 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 	obj->gobDestY  = gobDestY;
 
 	switch (dir) {
-	case Map::kDirNW:
+	case kDirNW:
 		animData->nextState = 1;
 		if (_vm->_map->_screenWidth == 640) {
 			if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10)
@@ -228,7 +228,7 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 		}
 		break;
 
-	case Map::kDirN:
+	case kDirN:
 		animData->nextState =
 			(animData->curLookDir == 2) ? 2 : rotateState(animData->curLookDir, 2);
 		if (_vm->_map->_screenWidth == 640) {
@@ -248,7 +248,7 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 		}
 		break;
 
-	case Map::kDirNE:
+	case kDirNE:
 		animData->nextState = 3;
 		if (_vm->_map->_screenWidth == 640) {
 			if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10)
@@ -258,15 +258,15 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 		}
 		break;
 
-	case Map::kDirW:
+	case kDirW:
 		animData->nextState = rotateState(animData->curLookDir, 0);
 		break;
 
-	case Map::kDirE:
+	case kDirE:
 		animData->nextState = rotateState(animData->curLookDir, 4);
 		break;
 
-	case Map::kDirSW:
+	case kDirSW:
 		animData->nextState = 7;
 		if (_vm->_map->_screenWidth == 640) {
 			if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10)
@@ -276,7 +276,7 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 		}
 		break;
 
-	case Map::kDirS:
+	case kDirS:
 		animData->nextState =
 			(animData->curLookDir == 6) ? 6 : rotateState(animData->curLookDir, 6);
 		if (_vm->_map->_screenWidth == 640) {
@@ -287,7 +287,7 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 		}
 		break;
 
-	case Map::kDirSE:
+	case kDirSE:
 		animData->nextState = 5;
 		if (_vm->_map->_screenWidth == 640) {
 			if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10)

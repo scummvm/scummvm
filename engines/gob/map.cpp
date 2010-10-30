@@ -83,14 +83,7 @@ void Map::placeItem(int16 x, int16 y, int16 id) {
 		setItem(x, y, (getItem(x, y) & 0x00FF) | (id << 8));
 }
 
-enum {
-	kLeft  = (1 << 0),
-	kUp    = (1 << 1),
-	kRight = (1 << 2),
-	kDown  = (1 << 3)
-};
-
-Map::Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
+Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	if ((x0 == x1) && (y0 == y1))
 		// Already at the destination
 		return kDirNone;
@@ -99,36 +92,36 @@ Map::Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 		// Destination out of range
 		return kDirNone;
 
-	int16 dir = 0;
+	RelativeDirection relDir = kRelDirNone;
 
 	// Find the direct direction we want to move
 	if (y1 > y0)
-		dir |= kDown;
+		relDir = kRelDirDown;
 	else if (y1 < y0)
-		dir |= kUp;
+		relDir = kRelDirUp;
 
 	if (x1 > x0)
-		dir |= kRight;
+		relDir = (RelativeDirection)(relDir | kRelDirRight);
 	else if (x1 < x0)
-		dir |= kLeft;
+		relDir = (RelativeDirection)(relDir | kRelDirLeft);
 
 
 	// Are we on ladders and can continue the ladder in the wanted direction?
-	if ((getPass(x0, y0) == 3) && (dir & kUp  ) && (getPass(x0, y0 - 1) != 0))
+	if ((getPass(x0, y0) == 3) && (relDir & kRelDirUp  ) && (getPass(x0, y0 - 1) != 0))
 		return kDirN;
 
-	if ((getPass(x0, y0) == 3) && (dir & kDown) && (getPass(x0, y0 + 1) != 0))
+	if ((getPass(x0, y0) == 3) && (relDir & kRelDirDown) && (getPass(x0, y0 + 1) != 0))
 		return kDirS;
 
-	if ((getPass(x0, y0) == 6) && (dir & kUp  ) && (getPass(x0, y0 - 1) != 0))
+	if ((getPass(x0, y0) == 6) && (relDir & kRelDirUp  ) && (getPass(x0, y0 - 1) != 0))
 		return kDirN;
 
-	if ((getPass(x0, y0) == 6) && (dir & kDown) && (getPass(x0, y0 + 1) != 0))
+	if ((getPass(x0, y0) == 6) && (relDir & kRelDirDown) && (getPass(x0, y0 + 1) != 0))
 		return kDirS;
 
 
 	// Want to go left
-	if (dir == kLeft) {
+	if (relDir == kRelDirLeft) {
 		if (getPass(x0 - 1, y0) != 0)
 			// Can go west
 			return kDirW;
@@ -138,7 +131,7 @@ Map::Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	}
 
 	// Want to go left
-	if (dir == kRight) {
+	if (relDir == kRelDirRight) {
 		if (getPass(x0 + 1, y0) != 0)
 			// Can go east
 			return kDirE;
@@ -149,7 +142,7 @@ Map::Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 
 
 	// Want to go up
-	if (dir == kUp) {
+	if (relDir == kRelDirUp) {
 		if (getPass(x0    , y0 - 1) != 0)
 			// Can go north
 			return kDirN;
@@ -167,7 +160,7 @@ Map::Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	}
 
 	// Want to go down
-	if (dir == kDown) {
+	if (relDir == kRelDirDown) {
 		if (getPass(x0    , y0 + 1) != 0)
 			// Can go south
 			return kDirS;
@@ -186,7 +179,7 @@ Map::Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 
 
 	// Want to go up and right
-	if (dir == (kRight | kUp)) {
+	if (relDir == kRelDirRightUp) {
 		if (getPass(x0 + 1, y0 - 1) != 0)
 			// Can go north-east
 			return kDirNE;
@@ -204,7 +197,7 @@ Map::Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	}
 
 	// Want to go down and right
-	if (dir == (kRight | kDown)) {
+	if (relDir == kRelDirRightDown) {
 		if (getPass(x0 + 1, y0 + 1) != 0)
 			// Can go south-east
 			return kDirSE;
@@ -222,7 +215,7 @@ Map::Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	}
 
 	// Want to go up and left
-	if (dir == (kLeft | kUp)) {
+	if (relDir == kRelDirLeftUp) {
 		if (getPass(x0 - 1, y0 - 1) != 0)
 			// Can go north-west
 			return kDirNW;
@@ -240,7 +233,7 @@ Map::Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	}
 
 	// Want to go left and down
-	if (dir == (kLeft | kDown)) {
+	if (relDir == kRelDirLeftDown) {
 		if (getPass(x0 - 1, y0 + 1) != 0)
 			// Can go south-west
 			return kDirSW;

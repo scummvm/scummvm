@@ -176,7 +176,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		nextAct = (int16) _vm->_map->getDirection(_vm->_map->_curGoblinX,
 				_vm->_map->_curGoblinY, _vm->_map->_destX, _vm->_map->_destY);
 
-		if (nextAct == Map::kDirNone)
+		if (nextAct == kDirNone)
 			_pathExistence = 0;
 	} else if (_pathExistence == 3) {
 		_vm->_map->_curGoblinX = _gobPositions[_currentGoblin].x;
@@ -238,11 +238,11 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		nextAct = 0x4DC8;
 
 	switch (nextAct) {
-	case Map::kDirW:
+	case kDirW:
 		gobDesc->nextState = rotateState(gobDesc->curLookDir, 0);
 		break;
 
-	case Map::kDirE:
+	case kDirE:
 		gobDesc->nextState = rotateState(gobDesc->curLookDir, 4);
 		break;
 
@@ -254,7 +254,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		gobDesc->nextState = 23;
 		break;
 
-	case Map::kDirN:
+	case kDirN:
 		if ((_vm->_map->getPass(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY - 1) == 6) &&
 		    (_currentGoblin != 1)) {
 			_pathExistence = 0;
@@ -275,7 +275,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		gobDesc->nextState = rotateState(gobDesc->curLookDir, 2);
 		break;
 
-	case Map::kDirS:
+	case kDirS:
 		if ((_vm->_map->getPass(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY + 1) == 6) &&
 		    (_currentGoblin != 1)) {
 			_pathExistence = 0;
@@ -296,7 +296,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		gobDesc->nextState = rotateState(gobDesc->curLookDir, 6);
 		break;
 
-	case Map::kDirSE:
+	case kDirSE:
 		if ((_vm->_map->getPass(_vm->_map->_curGoblinX + 1, _vm->_map->_curGoblinY + 1) == 6) &&
 		    (_currentGoblin != 1)) {
 			_pathExistence = 0;
@@ -310,7 +310,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		gobDesc->nextState = rotateState(gobDesc->curLookDir, 4);
 		break;
 
-	case Map::kDirSW:
+	case kDirSW:
 		if ((_vm->_map->getPass(_vm->_map->_curGoblinX - 1, _vm->_map->_curGoblinY + 1) == 6) &&
 		    (_currentGoblin != 1)) {
 			_pathExistence = 0;
@@ -324,7 +324,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		gobDesc->nextState = rotateState(gobDesc->curLookDir, 0);
 		break;
 
-	case Map::kDirNW:
+	case kDirNW:
 		if ((_vm->_map->getPass(_vm->_map->_curGoblinX - 1, _vm->_map->_curGoblinY - 1) == 6) &&
 		    (_currentGoblin != 1)) {
 			_pathExistence = 0;
@@ -338,7 +338,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		gobDesc->nextState = rotateState(gobDesc->curLookDir, 0);
 		break;
 
-	case Map::kDirNE:
+	case kDirNE:
 		if ((_vm->_map->getPass(_vm->_map->_curGoblinX + 1, _vm->_map->_curGoblinY - 1) == 6) &&
 		    (_currentGoblin != 1)) {
 			_pathExistence = 0;
