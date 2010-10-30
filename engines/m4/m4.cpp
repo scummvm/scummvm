@@ -267,6 +267,9 @@ void MadsM4Engine::loadMenu(MenuType menuType, bool loadSaveFromHotkey, bool cal
 }
 
 void MadsM4Engine::dumpFile(const char* filename, bool uncompress) {
+#if 0
+	// FIXME: The following code is not portable and hence has been disabled.
+	// Try replacing FILE by Common::DumpFile.
 	Common::SeekableReadStream *fileS = res()->get(filename);
 	byte buffer[256];
 	FILE *destFile = fopen(filename, "wb");
@@ -295,6 +298,7 @@ void MadsM4Engine::dumpFile(const char* filename, bool uncompress) {
 	fclose(destFile);
 	res()->toss(filename);
 	res()->purge();
+#endif
 }
 
 /*--------------------------------------------------------------------------*/
