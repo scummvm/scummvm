@@ -412,6 +412,7 @@ const SciWorkaroundEntry kUnLoad_workarounds[] = {
 	{ GID_CASTLEBRAIN,   320,   377,  0,              "SWord", "upDate",         -1,    0, { WORKAROUND_IGNORE, 0 } }, // after solving the cross-word-puzzle, trying to unload invalid reference
 	{ GID_CASTLEBRAIN,   320,   377,  0,            "theWord", "show",           -1,    0, { WORKAROUND_IGNORE, 0 } }, // 2nd word puzzle, when exiting before solving, trying to unload invalid reference - bug #3034473
 	{ GID_ECOQUEST,      380,    61,  0,              "gotIt", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // after talking to the dolphin the first time
+	{ GID_ECOQUEST,      380,    69,  0,   "lookAtBlackBoard", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // German version, when closing the blackboard closeup in the dolphin room - bug #3098353
 	{ GID_LAURABOW2,       1,     1,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident - bug #3034902
 	{ GID_LAURABOW2,       2,     2,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident - bug #3034902
 	{ GID_LAURABOW2,       4,     4,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: inside the museum, a 3rd parameter is passed by accident - bug #3034902
