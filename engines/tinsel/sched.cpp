@@ -77,6 +77,14 @@ Scheduler::Scheduler() {
 }
 
 Scheduler::~Scheduler() {
+	// Kill all running processes (i.e. free memory allocated for their state).
+	PROCESS *pProc = active->pNext;
+	while (pProc != NULL) {
+		delete pProc->state;
+		pProc->state = 0;
+		pProc = pProc->pNext;
+	}
+
 	free(processList);
 	processList = NULL;
 
@@ -392,6 +400,7 @@ void Scheduler::killProcess(PROCESS *pKillProc) {
 		(pRCfunction)(pKillProc);
 
 	delete pKillProc->state;
+	pKillProc->state = 0;
 
 	// Take the process out of the active chain list
 	pKillProc->pPrevious->pNext = pKillProc->pNext;
@@ -458,6 +467,7 @@ int Scheduler::killMatchingProcess(int pidKill, int pidMask) {
 					(pRCfunction)(pProc);
 
 				delete pProc->state;
+				pProc->state = 0;
 
 				// make prev point to next to unlink pProc
 				pPrev->pNext = pProc->pNext;
