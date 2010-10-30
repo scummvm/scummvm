@@ -514,7 +514,7 @@ void BMVPlayer::MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, CO
 	LoadSubString(stringId, 0, TextBufferAddr(), TBUFSZ);
 
 	texts[index].dieFrame = currentFrame + duration;
-	texts[index].pText = ObjectTextOut(coroParam, GetPlayfieldList(FIELD_STATUS),
+	texts[index].pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 						TextBufferAddr(),
 						0,
 						x, y,

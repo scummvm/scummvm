@@ -1949,7 +1949,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	if (TinselV2) {
 		int Loffset, Toffset;
 		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
-		_ctx->pText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS),
+		_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 			TextBufferAddr(), 0, x - Loffset, y - Toffset, GetTagFontHandle(),
 			TXT_CENTRE, 0);
 		assert(_ctx->pText);
@@ -1962,7 +1962,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	} else if (bJapDoPrintText || (!isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
 		int Loffset, Toffset;	// Screen position
 		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
-		_ctx->pText = ObjectTextOut(coroParam, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
+		_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
 					0, x - Loffset, y - Toffset,
 					TinselV2 ? GetTagFontHandle() : GetTalkFontHandle(), TXT_CENTRE);
 		assert(_ctx->pText); // string produced NULL text
@@ -2126,7 +2126,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 			else
 				LoadStringRes(hText, TextBufferAddr(), TBUFSZ);
 
-			_ctx->pText = ObjectTextOut(coroParam, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
+			_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
 						0, _ctx->textx, _ctx->texty, GetTagFontHandle(), TXT_CENTRE);
 			assert(_ctx->pText); // PrintObj() string produced NULL text
 
@@ -2178,7 +2178,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 
 						// Re-display in the same place
 						LoadStringRes(hText, TextBufferAddr(), TBUFSZ);
-						_ctx->pText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS),
+						_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 							TextBufferAddr(), 0, _ctx->textx, _ctx->texty, GetTagFontHandle(),
 							TXT_CENTRE, 0);
 						assert(_ctx->pText);
@@ -2295,7 +2295,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 
 				// Re-display in the same place
 				LoadStringRes(text, TextBufferAddr(), TBUFSZ);
-				pText = ObjectTextOut(coroParam, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
+				pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
 							0, textx, texty, GetTagFontHandle(), TXT_CENTRE);
 				assert(pText); // PrintObj() string produced NULL text
 				MultiSetZPosition(pText, Z_INV_ITEXT);
@@ -3364,7 +3364,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 				_ctx->y -= _ctx->Toffset;
 			}
 
-			_ctx->pText = ObjectTextOut(coroParam, GetPlayfieldList(FIELD_STATUS),
+			_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 					TextBufferAddr(), 0, _ctx->x - _ctx->Loffset, _ctx->y - _ctx->Toffset,
 					GetTalkFontHandle(), TXT_CENTRE);
 			assert(_ctx->pText); // talk() string produced NULL text;
