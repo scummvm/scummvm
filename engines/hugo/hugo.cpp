@@ -84,30 +84,9 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 }
 
 HugoEngine::~HugoEngine() {
-	delete _object;
-	delete _sound;
-	delete _route;
-	delete _parser;
-	delete _inventory;
-	delete _mouse;
-	delete _screen;
-	delete _scheduler;
-	delete _file;
-
 	free(_palette);
 	free(_introX);
 	free(_introY);
-
-#if 0
-	freeTexts(_textData);
-	freeTexts(_stringtData);
-	freeTexts(_textEngine);
-	freeTexts(_textIntro);
-	freeTexts(_textMouse);
-	freeTexts(_textParser);
-	freeTexts(_textSchedule);
-	freeTexts(_textUtil);
-#endif
 	free(_textData);
 	free(_stringtData);
 	free(_screenNames);
@@ -118,8 +97,13 @@ HugoEngine::~HugoEngine() {
 	free(_textSchedule);
 	free(_textUtil);
 
-	warning("Missing: free _arrayNouns");
-	warning("Missing: free _arrayVerbs");
+	for (int i = 0; _arrayNouns[i]; i++)
+		free(_arrayNouns[i]);
+	free(_arrayNouns);
+
+	for (int i = 0; _arrayVerbs[i]; i++)
+		free(_arrayVerbs[i]);
+	free(_arrayVerbs);
 
 	free(_arrayReqs);
 	free(_hotspots);
@@ -127,13 +111,25 @@ HugoEngine::~HugoEngine() {
 	free(_uses);
 	free(_catchallList);
 
-	warning("Missing: free _background_objects");
+	for (int i = 0; i < _backgroundObjectsSize; i++)
+		free(_backgroundObjects[i]);
+	free(_backgroundObjects);
 
 	free(_points);
 
-	warning("Missing: free _cmdList");
-	warning("Missing: free _screenActs");
-	warning("Missing: free _objects");
+	for (int i = 0; i < _cmdListSize; i++)
+		free(_cmdList[i]);
+	free(_cmdList);
+
+	for (int i = 0; i < _screenActsSize; i++)
+		free(_screenActs[i]);
+	free(_screenActs);
+
+	_object->freeObjectArr();
+
+	for (int i = 0; i < _actListArrSize; i++)
+		free(_actListArr[i]);
+	free(_actListArr);
 
 	free(_defltTunes);
 	free(_screenStates);
@@ -146,6 +142,16 @@ HugoEngine::~HugoEngine() {
 
 	if (_arrayFont[2])
 		free(_arrayFont[2]);
+
+	delete _object;
+	delete _sound;
+	delete _route;
+	delete _parser;
+	delete _inventory;
+	delete _mouse;
+	delete _screen;
+	delete _scheduler;
+	delete _file;
 }
 
 GameType HugoEngine::getGameType() const {
@@ -389,10 +395,10 @@ bool HugoEngine::loadHugoDat() {
 	_stringtData = loadTextsVariante(in, 0);
 
 	// Read arrayNouns
-	_arrayNouns = loadTextsArray(in);
+	_arrayNouns = loadTextsArray(in, &_arrayNounsSize);
 
 	// Read arrayVerbs
-	_arrayVerbs = loadTextsArray(in);
+	_arrayVerbs = loadTextsArray(in, &_arrayVerbsSize);
 
 	// Read screenNames
 	_screenNames = loadTextsVariante(in, &_numScreens);
@@ -546,8 +552,9 @@ bool HugoEngine::loadHugoDat() {
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
-			_backgroundObjects = (background_t **)malloc(sizeof(background_t *) * numElem);
-			for (int i = 0; i < numElem; i++) {
+			_backgroundObjectsSize = numElem;
+			_backgroundObjects = (background_t **)malloc(sizeof(background_t *) * _backgroundObjectsSize);
+			for (int i = 0; i < _backgroundObjectsSize; i++) {
 				numSubElem = in.readUint16BE();
 				_backgroundObjects[i] = (background_t *)malloc(sizeof(background_t) * numSubElem);
 				for (int j = 0; j < numSubElem; j++) {
@@ -594,8 +601,9 @@ bool HugoEngine::loadHugoDat() {
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
-			_cmdList = (cmd **)malloc(sizeof(cmd *) * numElem);
-			for (int i = 0; i < numElem; i++) {
+			_cmdListSize = numElem;
+			_cmdList = (cmd **)malloc(sizeof(cmd *) * _cmdListSize);
+			for (int i = 0; i < _cmdListSize; i++) {
 				numSubElem = in.readUint16BE();
 				_cmdList[i] = (cmd *)malloc(sizeof(cmd) * numSubElem);
 				for (int j = 0; j < numSubElem; j++) {
@@ -631,8 +639,9 @@ bool HugoEngine::loadHugoDat() {
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
-			_screenActs = (uint16 **)malloc(sizeof(uint16 *) * numElem);
-			for (int i = 0; i < numElem; i++) {
+			_screenActsSize = numElem;
+			_screenActs = (uint16 **)malloc(sizeof(uint16 *) * _screenActsSize);
+			for (int i = 0; i < _screenActsSize; i++) {
 				numSubElem = in.readUint16BE();
 				if (numSubElem == 0) {
 					_screenActs[i] = 0;
@@ -651,7 +660,7 @@ bool HugoEngine::loadHugoDat() {
 		}
 	}
 
-	_object->loadObject(in);
+	_object->loadObjectArr(in);
 //#define HERO 0
 	_hero = &_object->_objects[HERO];                        // This always points to hero
 	_screen_p = &(_object->_objects[HERO].screenIndex);      // Current screen is hero's
@@ -661,8 +670,9 @@ bool HugoEngine::loadHugoDat() {
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
-			_actListArr = (act **)malloc(sizeof(act *) * numElem);
-			for (int i = 0; i < numElem; i++) {
+			_actListArrSize = numElem;
+			_actListArr = (act **)malloc(sizeof(act *) * _actListArrSize);
+			for (int i = 0; i < _actListArrSize; i++) {
 				numSubElem = in.readUint16BE();
 				_actListArr[i] = (act *) malloc(sizeof(act) * (numSubElem + 1));
 				for (int j = 0; j < numSubElem; j++) {
@@ -1377,16 +1387,16 @@ uint16 **HugoEngine::loadLongArray(Common::File &in) {
 	return resArray;
 }
 
-char ***HugoEngine::loadTextsArray(Common::File &in) {
+char ***HugoEngine::loadTextsArray(Common::File &in, uint16 *arraySize) {
 	char ***resArray = 0;
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		int numNouns = in.readUint16BE();
+		*arraySize = in.readUint16BE();
 		if (varnt == _gameVariant) {
-			resArray = (char ** *)malloc(sizeof(char **) * (numNouns + 1));
-			resArray[numNouns] = 0;
+			resArray = (char ***)malloc(sizeof(char **) * (*arraySize + 1));
+			resArray[*arraySize] = 0;
 		}
-		for (int i = 0; i < numNouns; i++) {
+		for (int i = 0; i < *arraySize; i++) {
 			int numTexts = in.readUint16BE();
 			int entryLen = in.readUint16BE();
 			char *pos = (char *)malloc(entryLen);

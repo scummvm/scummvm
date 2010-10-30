@@ -317,13 +317,18 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 	return foundFl;
 }
 
-void ObjectHandler::loadObject(Common::File &in) {
+void ObjectHandler::freeObjectArr() {
+	free(_objects);
+}
+
+void ObjectHandler::loadObjectArr(Common::File &in) {
 	debugC(6, kDebugObject, "loadObject(&in)");
 
 // TODO: For Hugo3, if not in story mode, set _objects[2].state to 3
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant) {
+			_objCount = numElem;
 			_objects = (object_t *)malloc(sizeof(object_t) * numElem);
 			for (int i = 0; i < numElem; i++) {
 				_objects[i].nounIndex = in.readUint16BE();
