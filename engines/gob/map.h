@@ -107,6 +107,8 @@ public:
 	void findNearestWalkable(int16 &gobDestX, int16 &gobDestY,
 		int16 mouseX, int16 mouseY);
 
+	int16 getItem(int x, int y) const;
+	void setItem(int x, int y, int16 item);
 	void placeItem(int16 x, int16 y, int16 id);
 
 	Direction getDirection(int16 x0, int16 y0, int16 x1, int16 y1);
@@ -117,9 +119,6 @@ public:
 			int16 x1, int16 y1, int16 i0, int16 i1);
 
 	void loadMapsInitGobs();
-
-	virtual int16 getItem(int x, int y) = 0;
-	virtual void setItem(int x, int y, int16 item) = 0;
 
 	virtual void loadMapObjects(const char *avjFile) = 0;
 	virtual void findNearestToGob(Mult::Mult_Object *obj) = 0;
@@ -167,23 +166,6 @@ public:
 	virtual void findNearestToGob(Mult::Mult_Object *obj);
 	virtual void findNearestToDest(Mult::Mult_Object *obj);
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);
-
-	virtual int16 getItem(int x, int y) {
-		assert(_itemsMap);
-
-		x = CLIP<int>(x, 0, _mapWidth - 1);
-		y = CLIP<int>(y, 0, _mapHeight - 1);
-
-		return _itemsMap[y][x];
-	}
-	virtual void setItem(int x, int y, int16 item) {
-		assert(_itemsMap);
-
-		x = CLIP<int>(x, 0, _mapWidth - 1);
-		y = CLIP<int>(y, 0, _mapHeight - 1);
-
-		_itemsMap[y][x] = item;
-	}
 
 	Map_v1(GobEngine *vm);
 	virtual ~Map_v1();

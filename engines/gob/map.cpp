@@ -146,6 +146,24 @@ const WayPoint &Map::getWayPoint(int n) const {
 	return _wayPoints[n];
 }
 
+int16 Map::getItem(int x, int y) const {
+	assert(_itemsMap);
+
+	x = CLIP<int>(x, 0, _mapWidth - 1);
+	y = CLIP<int>(y, 0, _mapHeight - 1);
+
+	return _itemsMap[y][x];
+}
+
+void Map::setItem(int x, int y, int16 item) {
+	assert(_itemsMap);
+
+	x = CLIP<int>(x, 0, _mapWidth - 1);
+	y = CLIP<int>(y, 0, _mapHeight - 1);
+
+	_itemsMap[y][x] = item;
+}
+
 void Map::placeItem(int16 x, int16 y, int16 id) {
 	if ((getItem(x, y) & 0xFF00) != 0)
 		setItem(x, y, (getItem(x, y) & 0xFF00) | id);
