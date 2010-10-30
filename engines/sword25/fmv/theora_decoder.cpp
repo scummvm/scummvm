@@ -412,10 +412,11 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 
 	// If playback has begun, top audio buffer off immediately.
 	if (_stateFlag && _audiobufReady) {
-/* FIXME: This is currently crashing
 		_audStream->queueBuffer((byte *)_audiobuf, AUDIOFD_FRAGSIZE, DisposeAfterUse::NO, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO);
-*/
 
+		// The audio mixer is now responsible for the old audio buffer.
+		// We need to create a new one.
+		_audiobuf = (ogg_int16_t *)calloc(AUDIOFD_FRAGSIZE, sizeof(ogg_int16_t));
 		_audiobufFill = 0;
 		_audiobufReady = false;
 	}
