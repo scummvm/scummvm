@@ -180,7 +180,7 @@ Common::ArchiveMemberPtr ResourceManager::getMember(const Common::String &name) 
 }
 
 Common::SeekableReadStream *ResourceManager::createReadStreamForMember(const Common::String &name) const {
-	for (Common::Array<HPFArchive * const>::iterator it = _archives.begin(); it != _archives.end(); ++it) {
+	for (Common::Array<HPFArchive *>::const_iterator it = _archives.begin(); it != _archives.end(); ++it) {
 
 		Common::SeekableReadStream *stream = (*it)->createReadStreamForMember(name);
 
