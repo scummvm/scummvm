@@ -25,6 +25,9 @@
 
 #if defined(DYNAMIC_MODULES) && defined(SDL_BACKEND)
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/fs.h"
