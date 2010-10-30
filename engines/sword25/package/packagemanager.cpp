@@ -215,6 +215,13 @@ Common::String PackageManager::getAbsolutePath(const Common::String &fileName) {
 }
 
 bool PackageManager::fileExists(const Common::String &fileName) {
+	// FIXME: The current Zip implementation doesn't support getting a folder entry, which is needed for detecting
+	// the English voick pack
+	if (fileName == "/speech/en") {
+		// To get around this, change to detecting one of the files in the folder
+		return getArchiveMember(normalizePath(fileName + "/APO0001.ogg", _currentDirectory));
+	}
+
 	Common::ArchiveMemberPtr fileNode = getArchiveMember(normalizePath(fileName, _currentDirectory));
 	return fileNode;
 }
