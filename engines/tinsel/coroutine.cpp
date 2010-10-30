@@ -28,6 +28,10 @@
 
 namespace Tinsel {
 
+
+CoroContext nullContext = NULL;
+
+
 #if COROUTINE_DEBUG
 namespace {
 static int s_coroCount = 0;

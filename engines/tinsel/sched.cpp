@@ -45,8 +45,6 @@ struct PROCESS_STRUC {
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-CoroContext nullContext = NULL;
-
 //----------------- LOCAL GLOBAL DATA --------------------
 
 static uint32 numSceneProcess;

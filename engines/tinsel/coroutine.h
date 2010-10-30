@@ -109,9 +109,7 @@ public:
 };
 
 
-#define CORO_PARAM     CoroContext &coroParam
-
-#define CORO_SUBCTX   coroParam->_subctx
+#define CORO_PARAM    CoroContext &coroParam
 
 
 /**
@@ -159,7 +157,10 @@ public:
  * @see CORO_END_CODE
  */
 #define CORO_END_CODE \
-			if (&coroParam == &nullContext) nullContext = NULL; \
+			if (&coroParam == &nullContext) { \
+				delete nullContext; \
+				nullContext = NULL; \
+			} \
 		}
 
 /**
@@ -181,11 +182,28 @@ public:
 #define CORO_KILL_SELF() \
 		do { if (&coroParam != &nullContext) { coroParam->_sleep = -1; } return; } while (0)
 
+
+/**
+ * This macro is to be used in conjunction with CORO_INVOKE_ARGS and
+ * similar macros for calling coroutines-enabled subroutines.
+ */
+#define CORO_SUBCTX   coroParam->_subctx
+
 /**
  * Invoke another coroutine.
  *
  * What makes this tricky is that the coroutine we called my yield/sleep,
  * and we need to deal with this adequately.
+ *
+ * @param subCoro	name of the coroutine-enabled function to invoke
+ * @param ARGS		list of arguments to pass to subCoro
+ *
+ * @note ARGS must be surrounded by parentheses, and the first argument
+ *       in this list must always be CORO_SUBCTX. For example, the
+ *       regular function call
+ *          myFunc(a, b);
+ *       becomes the following:
+ *          CORO_INVOKE_ARGS(myFunc, (CORO_SUBCTX, a, b));
  */
 #define CORO_INVOKE_ARGS(subCoro, ARGS)  \
 		do {\
