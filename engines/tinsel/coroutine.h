@@ -27,6 +27,7 @@
 #define TINSEL_COROUTINE_H
 
 #include "common/scummsys.h"
+#include "common/util.h"	// for SCUMMVM_CURRENT_FUNCTION
 
 namespace Tinsel {
 
@@ -58,6 +59,10 @@ namespace Tinsel {
  */
 //@{
 
+
+// Enable this macro to enable some debugging support in the coroutine code.
+//#define COROUTINE_DEBUG	1
+
 /**
  * The core of any coroutine context which captures the 'state' of a coroutine.
  * Private use only.
@@ -66,8 +71,11 @@ struct CoroBaseContext {
 	int _line;
 	int _sleep;
 	CoroBaseContext *_subctx;
-	CoroBaseContext() : _line(0), _sleep(0), _subctx(0) {}
-	~CoroBaseContext() { delete _subctx; }
+#if COROUTINE_DEBUG
+	const char *_funcName;
+#endif
+	CoroBaseContext(const char *func);
+	~CoroBaseContext();
 };
 
 typedef CoroBaseContext *CoroContext;
@@ -123,11 +131,10 @@ public:
  *   _ctx->var = 0;
  *
  * @see CORO_END_CONTEXT
- *
- * @note We always declare a variable 'DUMMY' to allow the user to specify
- * an 'empty' context.
  */
-#define CORO_BEGIN_CONTEXT  struct CoroContextTag : CoroBaseContext { int DUMMY
+#define CORO_BEGIN_CONTEXT  \
+	struct CoroContextTag : CoroBaseContext { \
+		CoroContextTag() : CoroBaseContext(SCUMMVM_CURRENT_FUNCTION) {} \
 
 /**
  * End the declaration of a coroutine context.
