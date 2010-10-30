@@ -44,7 +44,8 @@ void Map_v1::init() {
 	if (_passMap || _itemsMap)
 		return;
 
-	_mapWidth = 26;
+	_passWidth = 26;
+	_mapWidth  = 26;
 	_mapHeight = 28;
 
 	_passMap = new int8[_mapHeight * _mapWidth];

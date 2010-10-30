@@ -103,6 +103,12 @@ public:
 	ItemPos _itemPoses[40];
 	char _sourceFile[15];
 
+	Map(GobEngine *vm);
+	virtual ~Map();
+
+	int8 getPass(int x, int y, int width = -1) const;
+	void setPass(int x, int y, int8 pass, int width = -1);
+
 	void findNearestWalkable(int16 &gobDestX, int16 &gobDestY,
 		int16 mouseX, int16 mouseY);
 
@@ -120,16 +126,10 @@ public:
 	virtual int16 getItem(int x, int y) = 0;
 	virtual void setItem(int x, int y, int16 item) = 0;
 
-	virtual int8 getPass(int x, int y, int heightOff = -1) = 0;
-	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) = 0;
-
 	virtual void loadMapObjects(const char *avjFile) = 0;
 	virtual void findNearestToGob(Mult::Mult_Object *obj) = 0;
 	virtual void findNearestToDest(Mult::Mult_Object *obj) = 0;
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) = 0;
-
-	Map(GobEngine *vm);
-	virtual ~Map();
 
 protected:
 	bool _loadFromAvo;
@@ -167,26 +167,6 @@ public:
 		_itemsMap[y][x] = item;
 	}
 
-	virtual int8 getPass(int x, int y, int heightOff = -1) {
-		if (!_passMap)
-			return 0;
-
-		if ((x < 0) || (y < 0) || (x >= _mapWidth) || (y >= _mapHeight))
-			return 0;
-
-		return _passMap[y * _mapWidth + x];
-	}
-
-	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) {
-		if (!_passMap)
-			return;
-
-		if ((x < 0) || (y < 0) || (x >= _mapWidth) || (y >= _mapHeight))
-			return;
-
-		_passMap[y * _mapWidth + x] = pass;
-	}
-
 	Map_v1(GobEngine *vm);
 	virtual ~Map_v1();
 
@@ -204,30 +184,6 @@ public:
 	virtual void findNearestToGob(Mult::Mult_Object *obj);
 	virtual void findNearestToDest(Mult::Mult_Object *obj);
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);
-
-	virtual int8 getPass(int x, int y, int heightOff = -1) {
-		if (!_passMap)
-			return 0;
-
-		if ((x < 0) || (y < 0) || (x >= _mapWidth) || (y >= _mapHeight))
-			return 0;
-
-		if (heightOff == -1)
-			heightOff = _passWidth;
-		return _passMap[y * heightOff + x];
-	}
-
-	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) {
-		if (!_passMap)
-			return;
-
-		if ((x < 0) || (y < 0) || (x >= _mapWidth) || (y >= _mapHeight))
-			return;
-
-		if (heightOff == -1)
-			heightOff = _passWidth;
-		_passMap[y * heightOff + x] = pass;
-	}
 
 	Map_v2(GobEngine *vm);
 	virtual ~Map_v2();

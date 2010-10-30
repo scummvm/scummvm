@@ -76,6 +76,30 @@ Map::~Map() {
 	delete[] _wayPoints;
 }
 
+int8 Map::getPass(int x, int y, int width) const {
+	if (!_passMap)
+		return 0;
+
+	if ((x < 0) || (y < 0) || (x >= _mapWidth) || (y >= _mapHeight))
+		return 0;
+
+	if (width == -1)
+		width = _passWidth;
+	return _passMap[y * width + x];
+}
+
+void Map::setPass(int x, int y, int8 pass, int width) {
+	if (!_passMap)
+		return;
+
+	if ((x < 0) || (y < 0) || (x >= _mapWidth) || (y >= _mapHeight))
+		return;
+
+	if (width == -1)
+		width = _passWidth;
+	_passMap[y * width + x] = pass;
+}
+
 void Map::placeItem(int16 x, int16 y, int16 id) {
 	if ((getItem(x, y) & 0xFF00) != 0)
 		setItem(x, y, (getItem(x, y) & 0xFF00) | id);
