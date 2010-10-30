@@ -3326,6 +3326,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_NOSPEECH	},
 
+	// Space Quest 4 - Russian DOS
+	// Executable scanning reports "1.000.753", VERSION file reports "1.994"
+	{"sq4", "", {
+		{"resource.map", 0, "e4f77dd99012d51e16903da07769a7bf", 5928},
+		{"resource.000", 0, "e1f46832cd2458796028e054a0466031", 186750},
+		{"resource.001", 0, "1110371c3bafbbf8968a324097c83fdb", 1283759},
+		{"resource.002", 0, "9c342cd76b421369406d6fafd7b1a285", 1234726},
+		{"resource.003", 0, "e617f09840d9f86181f7602c8bf2e8ad", 1266491},
+		{"resource.004", 0, "2763fe4f0cb74df716ec8b0c464b0988", 1217428},
+		{"resource.005", 0, "d608713197c5ba1cd8c6ed46299c3069", 1057924},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Space Quest 5 - English DOS (from the Space Quest Collection)
 	// Executable scanning reports "1.001.068", VERSION file reports "1.04"
 	{"sq5", "", {
@@ -3376,6 +3389,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.msg", 0, "46deca7ef9cf057f7d442df98c1a2ae2", 134612},
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// Space Quest 5 - Russian DOS
+	// Executable scanning reports "1.001.068", VERSION file reports "1.994"
+	{"sq5", "", {
+		{"resource.map", 0, "82e6e9b4270a4007578a119b6a51860c", 6493},
+		{"resource.000", 0, "6f9ed21e1001526b4137f6703ed476af", 6103778},
+		{"resource.msg", 0, "0a8931990cd2eac1691602391c68ab85", 147580},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
 #ifdef ENABLE_SCI32
 	// Space Quest 6 - English DOS/Win3.11 CD (from the Space Quest Collection)
