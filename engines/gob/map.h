@@ -72,22 +72,8 @@ struct ItemPos {
 
 class Map {
 public:
-	int16 _mapWidth;
-	int16 _mapHeight;
-
-	int16 _screenWidth;
-	int16 _screenHeight;
-	int16 _tilesWidth;
-	int16 _tilesHeight;
-
-	bool _bigTiles;
-
-	bool _mapUnknownBool;
-
 	int16 _nearestWayPoint;
 	int16 _nearestDest;
-
-	int16 **_itemsMap; // [y][x]
 
 	int16 _curGoblinX;
 	int16 _curGoblinY;
@@ -101,6 +87,17 @@ public:
 	virtual ~Map();
 
 	uint8 getVersion() const;
+
+	int16 getMapWidth() const;
+	int16 getMapHeight() const;
+
+	int16 getScreenWidth() const;
+	int16 getScreenHeight() const;
+
+	int16 getTilesWidth() const;
+	int16 getTilesHeight() const;
+
+	bool hasBigTiles() const;
 
 	int8 getPass(int x, int y, int width = -1) const;
 	void setPass(int x, int y, int8 pass, int width = -1);
@@ -136,11 +133,26 @@ protected:
 
 	uint8 _mapVersion;
 
+	int16 _mapWidth;
+	int16 _mapHeight;
+
+	int16 _screenWidth;
+	int16 _screenHeight;
+
+	int16 _tilesWidth;
+	int16 _tilesHeight;
+
+	bool _bigTiles;
+
+	bool _mapUnknownBool;
+
 	int16 _passWidth;
 	int8 *_passMap; // [y * _mapWidth + x], getPass(x, y);
 
 	int16 _wayPointCount;
 	WayPoint *_wayPoints;
+
+	int16 **_itemsMap; // [y][x]
 
 	int16 findNearestWayPoint(int16 x, int16 y);
 

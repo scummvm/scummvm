@@ -2562,8 +2562,8 @@ void Inter_v1::animPalette() {
 }
 
 void Inter_v1::manipulateMap(int16 xPos, int16 yPos, int16 item) {
-	for (int y = 0; y < _vm->_map->_mapHeight; y++) {
-		for (int x = 0; x < _vm->_map->_mapWidth; x++) {
+	for (int y = 0; y < _vm->_map->getMapHeight(); y++) {
+		for (int x = 0; x < _vm->_map->getMapWidth(); x++) {
 			if ((_vm->_map->getItem(x, y) & 0xFF) == item)
 				_vm->_map->setItem(x, y, _vm->_map->getItem(x, y) & 0xFF00);
 			else if (((_vm->_map->getItem(x, y) & 0xFF00) >> 8) == item)
@@ -2571,7 +2571,7 @@ void Inter_v1::manipulateMap(int16 xPos, int16 yPos, int16 item) {
 		}
 	}
 
-	if (xPos < _vm->_map->_mapWidth - 1) {
+	if (xPos < _vm->_map->getMapWidth() - 1) {
 		if (yPos > 0) {
 			if (((_vm->_map->getItem(xPos, yPos) & 0xFF00) != 0) ||
 					((_vm->_map->getItem(xPos, yPos - 1) & 0xFF00) != 0) ||
@@ -2660,7 +2660,7 @@ void Inter_v1::manipulateMap(int16 xPos, int16 yPos, int16 item) {
 		return;
 	}
 
-	if ((xPos < _vm->_map->_mapWidth - 2) &&
+	if ((xPos < _vm->_map->getMapWidth() - 2) &&
 			(_vm->_map->getPass(xPos + 2, yPos) == 1)) {
 		_vm->_map->_itemPoses[item].x = xPos + 2;
 		_vm->_map->_itemPoses[item].y = yPos;
@@ -2668,7 +2668,7 @@ void Inter_v1::manipulateMap(int16 xPos, int16 yPos, int16 item) {
 		return;
 	}
 
-	if ((xPos < _vm->_map->_mapWidth - 1) &&
+	if ((xPos < _vm->_map->getMapWidth() - 1) &&
 			(_vm->_map->getPass(xPos + 1, yPos) == 1)) {
 		_vm->_map->_itemPoses[item].x = xPos + 1;
 		_vm->_map->_itemPoses[item].y = yPos;

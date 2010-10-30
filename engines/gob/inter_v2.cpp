@@ -432,7 +432,7 @@ void Inter_v2::o2_loadMultObject() {
 		obj.gobDestY = val;
 		obj.goblinY = val;
 
-		*(obj.pPosX) *= _vm->_map->_tilesWidth;
+		*(obj.pPosX) *= _vm->_map->getTilesWidth();
 
 		layer = objAnim.layer;
 		animation = obj.goblinStates[layer][0].animation;
@@ -447,14 +447,14 @@ void Inter_v2::o2_loadMultObject() {
 		_vm->_scenery->updateAnim(layer, 0, animation, 0,
 				*(obj.pPosX), *(obj.pPosY), 0);
 
-		if (!_vm->_map->_bigTiles)
-			*(obj.pPosY) = (obj.goblinY + 1) * _vm->_map->_tilesHeight
+		if (!_vm->_map->hasBigTiles())
+			*(obj.pPosY) = (obj.goblinY + 1) * _vm->_map->getTilesHeight()
 				- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
 		else
-			*(obj.pPosY) = ((obj.goblinY + 1) * _vm->_map->_tilesHeight) -
+			*(obj.pPosY) = ((obj.goblinY + 1) * _vm->_map->getTilesHeight()) -
 				(_vm->_scenery->_animBottom - _vm->_scenery->_animTop) -
 				((obj.goblinY + 1) / 2);
-		*(obj.pPosX) = obj.goblinX * _vm->_map->_tilesWidth;
+		*(obj.pPosX) = obj.goblinX * _vm->_map->getTilesWidth();
 
 	} else if ((objAnim.animType == 101) && (objIndex < _vm->_goblin->_gobsCount)) {
 
@@ -778,14 +778,14 @@ void Inter_v2::o2_setGoblinState() {
 		_vm->_scenery->updateAnim(layer, 0, animation, 0,
 				*(obj.pPosX), *(obj.pPosY), 0);
 
-		if (_vm->_map->_bigTiles)
-			*(obj.pPosY) = ((obj.goblinY + 1) * _vm->_map->_tilesHeight) -
+		if (_vm->_map->hasBigTiles())
+			*(obj.pPosY) = ((obj.goblinY + 1) * _vm->_map->getTilesHeight()) -
 				(_vm->_scenery->_animBottom - _vm->_scenery->_animTop) -
 				((obj.goblinY + 1) / 2);
 		else
-			*(obj.pPosY) = ((obj.goblinY + 1) * _vm->_map->_tilesHeight) -
+			*(obj.pPosY) = ((obj.goblinY + 1) * _vm->_map->getTilesHeight()) -
 				(_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
-		*(obj.pPosX) = obj.goblinX * _vm->_map->_tilesWidth;
+		*(obj.pPosX) = obj.goblinX * _vm->_map->getTilesWidth();
 		break;
 	}
 }

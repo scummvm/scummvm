@@ -41,8 +41,9 @@ Map::Map(GobEngine *vm) : _vm(vm) {
 
 	_screenWidth  = 0;
 	_screenHeight = 0;
-	_tilesWidth   = 0;
-	_tilesHeight  = 0;
+
+	_tilesWidth  = 0;
+	_tilesHeight = 0;
 
 	_bigTiles = false;
 
@@ -84,6 +85,34 @@ Map::~Map() {
 
 uint8 Map::getVersion() const {
 	return _mapVersion;
+}
+
+int16 Map::getMapWidth() const {
+	return _mapWidth;
+}
+
+int16 Map::getMapHeight() const {
+	return _mapHeight;
+}
+
+int16 Map::getScreenWidth() const {
+	return _screenWidth;
+}
+
+int16 Map::getScreenHeight() const {
+	return _screenHeight;
+}
+
+int16 Map::getTilesWidth() const {
+	return _tilesWidth;
+}
+
+int16 Map::getTilesHeight() const {
+	return _tilesHeight;
+}
+
+bool Map::hasBigTiles() const {
+	return _bigTiles;
 }
 
 int8 Map::getPass(int x, int y, int width) const {
