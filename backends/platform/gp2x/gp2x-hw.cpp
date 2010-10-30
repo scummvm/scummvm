@@ -30,6 +30,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "gp2x-common.h"
 
 #include "gp2x-hw.h"
