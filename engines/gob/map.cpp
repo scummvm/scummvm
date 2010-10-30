@@ -32,33 +32,39 @@
 namespace Gob {
 
 Map::Map(GobEngine *vm) : _vm(vm) {
-	_widthByte = 0;
-	_mapWidth = -1;
+	_passWidth =  0;
+	_mapWidth  = -1;
 	_mapHeight = -1;
-	_screenWidth = 0;
-	_screenHeight = 0;
-	_tilesWidth = 0;
-	_tilesHeight = 0;
-	_passWidth = 0;
+	_passMap   =  0;
 
-	_passMap = 0;
-	_itemsMap = 0;
-	_wayPointsCount = 0;
-	_wayPoints = 0;
+	_widthByte = 0;
+
+	_screenWidth  = 0;
+	_screenHeight = 0;
+	_tilesWidth   = 0;
+	_tilesHeight  = 0;
+
 	_bigTiles = false;
 
+	_wayPointCount = 0;
+	_wayPoints = 0;
+
+	_nearestWayPoint = 0;
+	_nearestDest     = 0;
+
+	_itemsMap = 0;
+
 	for (int i = 0; i < 40; i++) {
-		_itemPoses[i].x = 0;
-		_itemPoses[i].y = 0;
+		_itemPoses[i].x      = 0;
+		_itemPoses[i].y      = 0;
 		_itemPoses[i].orient = 0;
 	}
 
-	_nearestWayPoint = 0;
-	_nearestDest = 0;
 	_curGoblinX = 0;
 	_curGoblinY = 0;
 	_destX = 0;
 	_destY = 0;
+
 	_sourceFile[0] = 0;
 
 	_loadFromAvo = false;
@@ -285,7 +291,7 @@ int16 Map::findNearestWayPoint(int16 x, int16 y) {
 
 	length = 30000;
 
-	for (int i = 0; i < _wayPointsCount; i++) {
+	for (int i = 0; i < _wayPointCount; i++) {
 		if ((_wayPoints[i].x < 0) || (_wayPoints[i].x >= _mapWidth) ||
 				(_wayPoints[i].y < 0) || (_wayPoints[i].y >= _mapHeight))
 			break;
@@ -419,7 +425,7 @@ int16 Map::checkDirectPath(Mult::Mult_Object *obj, int16 x0, int16 y0, int16 x1,
 			// Check for a blocking waypoint
 
 			if (obj->nearestWayPoint < obj->nearestDest)
-				if ((obj->nearestWayPoint + 1) < _wayPointsCount)
+				if ((obj->nearestWayPoint + 1) < _wayPointCount)
 					if (_wayPoints[obj->nearestWayPoint + 1].notWalkable == 1)
 						return 3;
 

@@ -77,23 +77,27 @@ public:
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-	byte _widthByte;
 	int16 _mapWidth;
 	int16 _mapHeight;
+
+	byte _widthByte;
+
 	int16 _screenWidth;
 	int16 _screenHeight;
 	int16 _tilesWidth;
 	int16 _tilesHeight;
-	int16 _passWidth;
+
 	bool _bigTiles;
+
 	bool _mapUnknownBool;
 
-	int8 *_passMap; // [y * _mapWidth + x], getPass(x, y);
-	int16 **_itemsMap;	// [y][x]
-	int16 _wayPointsCount;
+	int16 _wayPointCount;
 	Point *_wayPoints;
+
 	int16 _nearestWayPoint;
 	int16 _nearestDest;
+
+	int16 **_itemsMap; // [y][x]
 
 	int16 _curGoblinX;
 	int16 _curGoblinY;
@@ -132,9 +136,12 @@ public:
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) = 0;
 
 protected:
+	GobEngine *_vm;
+
 	bool _loadFromAvo;
 
-	GobEngine *_vm;
+	int16 _passWidth;
+	int8 *_passMap; // [y * _mapWidth + x], getPass(x, y);
 
 	int16 findNearestWayPoint(int16 x, int16 y);
 

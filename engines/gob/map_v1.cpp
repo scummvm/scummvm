@@ -57,7 +57,7 @@ void Map_v1::init() {
 		memset(_itemsMap[i], 0, _mapWidth * sizeof(int16));
 	}
 
-	_wayPointsCount = 40;
+	_wayPointCount = 40;
 	_wayPoints = new Point[40];
 	memset(_wayPoints, 0, sizeof(Point));
 }

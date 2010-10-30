@@ -114,7 +114,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 		_screenHeight = 200;
 	}
 
-	_wayPointsCount = mapData.readByte();
+	_wayPointCount = mapData.readByte();
 	_tilesWidth = mapData.readSint16LE();
 	_tilesHeight = mapData.readSint16LE();
 
@@ -133,13 +133,13 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 	mapData.skip(_mapWidth * _mapHeight);
 
 	if (resource->getData()[0] == 1)
-		wayPointsCount = _wayPointsCount = 40;
+		wayPointsCount = _wayPointCount = 40;
 	else
-		wayPointsCount = _wayPointsCount == 0 ? 1 : _wayPointsCount;
+		wayPointsCount = _wayPointCount == 0 ? 1 : _wayPointCount;
 
 	delete[] _wayPoints;
 	_wayPoints = new Point[wayPointsCount];
-	for (int i = 0; i < _wayPointsCount; i++) {
+	for (int i = 0; i < _wayPointCount; i++) {
 		_wayPoints[i].x = mapData.readSByte();
 		_wayPoints[i].y = mapData.readSByte();
 		_wayPoints[i].notWalkable = mapData.readSByte();
