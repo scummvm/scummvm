@@ -4282,70 +4282,70 @@ byte points_3d[] = {
 	12, 2
 };
 
-cmd blowdw_1w      = {kVBlow_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTokblow_1w,     kALblowdw_1w};
-cmd breakpkin_1w   = {kVBreak_1w,     0,        kDTnull,         0,         1, kDTnull,         kDTokgen_1w,      kALpkin_1w};
-cmd brkrope_1w     = {kVBreak_1w,     0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTsrbreak_1w,    0};
-cmd closebolt_1w   = {kVClose_1w,     0,        kDTnull,         2,         1, kDTsclosed_1w,   kDTsclosebolt_1w, 0};
-cmd closedoor1_1w  = {kVClose_1w,     0,        kDTnull,         1,         0, kDTsclosed_1w,   kDTnull,          kALclosedoor1_1w};
-cmd closedoor2_1w  = {kVClose_1w,     0,        kDTnull,         1,         0, kDTsclosed_1w,   kDTnull,          0};
-cmd closedoor3_1w  = {kVClose_1w,     0,        kDTnull,         1,         0, kDTsclosed_1w,   kDTnull,          0};
-cmd closedoor4_1w  = {kVClose_1w,     0,        kDTnull,         1,         0, kDTsclosed_1w,   kDTnull,          kALclosedoor4_1w};
-cmd closetrap_1w   = {kVClose_1w,     0,        kDTnull,         1,         0, kDTsclosed_1w,   kDTnull,          kALclosetrap_1w};
-cmd closewdoors_1w = {kVClose_1w,     0,        kDTnull,         1,         0, kDTsclosed_1w,   kDTnull,          kALclosewdoors_1w};
-cmd cutrope_1w     = {kVCut_1w,       kRknife_1w,  kDTrnoknife_1w,  0,         1, kDTsnocut_1w,    kDTscut_1w,       kALcutrope_1w};
-cmd dropmask_1w    = {kVDrop_1w,      0,        kDTnull,         0,         0, kDTsworn3_1w,    kDTnull,          kALdropmask_1w};
-cmd droppkin_1w    = {kVDrop_1w,      kRpkin_1w,   kDTnocgen_1w,    0,         1, kDTnull,         kDTnull,          kALpkin_1w};
-cmd eatchop_1w     = {kVEat_1w,       0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALeatchop2_1w};
-cmd getchop_1w     = {kVTake_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALgetchop_1w};
-cmd getdw_1w       = {kVTake_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALcupbdw_1w};
-cmd getinboat_1w   = {kVInto_1w,      0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTnull,          kALgetinboat_1w};
-cmd getknife_1w    = {kVTake_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALcupbpk_1w};
-cmd getoilcan_1w   = {kVTake_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALshedoil_1w};
-cmd getoutboat_1w  = {kVOutof_1w,     0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTnull,          kALgetoutboat_1w};
-cmd givegold_1w    = {kVGive_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALgold_1w};
-cmd hiderock_1w    = {kVHide_1w,      0,        kDTnull,         0,         1, kDTsrock_1w,     kDTnull,          kALrock_1w};
-cmd kickpkin_1w    = {kVAttack_1w,    0,        kDTnull,         0,         1, kDTnull,         kDTokgen_1w,      kALpkin_1w};
-cmd knock_1w       = {kVKnock_1w,     0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTsNobody_1w,    0};
-cmd lockbolt_1w    = {kVLock_1w,      0,        kDTnull,         2,         1, kDTsclosed_1w,   kDTsclosebolt_1w, 0};
-cmd lockdoor_1w    = {kVLock_1w,      kRkey_1w,    kDTnockey_1w,    1,         0, kDTslock_1w,     kDTokgen_1w,      kALclosedoor1_1w};
-cmd lookcupb_1w    = {kVLook_1w,      kRcandle_1w, kDTnoccandle_1w, DONT_CARE, 0, kDTnull,         kDTnull,          kALlookcupb_1w};
-cmd lookshed_1w    = {kVLook_1w,      kRcandle_1w, kDTnoccandle_1w, 0,         0, kDTsnoseeoil_1w, kDTsseeoil_1w,    kALshedoil_1w};
-cmd movecarp1_1w   = {kVMove_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTsrollrug_1w,   kALmovecarp_1w};
-cmd movecarp2_1w   = {kVLift_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTsrollrug_1w,   kALmovecarp_1w};
-cmd movecarp3_1w   = {kVUnder_1w,     0,        kDTnull,         0,         0, kDTnull,         kDTsrollrug_1w,   kALmovecarp_1w};
-cmd offmask_1w     = {kVOff_1w,       0,        kDTnull,         1,         0, kDTsworn2_1w,    kDTokgen_1w,      kALswapmask_1w};
-cmd oilbolt_1w     = {kVOil_1w,       kRoil_1w,    kDTrnooil_1w,    0,         1, kDTsoiled_1w,    kDTsoilbolt_1w,   0};
-cmd omattack_1w    = {kVAttack_1w,    0,        kDTnull,         0,         0, kDTnull,         kDTsomattack_1w,  0};
-cmd ombreak_1w     = {kVBreak_1w,     0,        kDTnull,         0,         0, kDTnull,         kDTsomattack_1w,  0};
-cmd omtalk_1w      = {kVTalk_1w,      0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTnull,          kALoldman_1w};
-cmd openbolt_1w    = {kVOpen_1w,      0,        kDTnull,         1,         2, kDTsstuck_1w,    kDTsopenbolt_1w,  0};
-cmd opendoor1_1w   = {kVOpen_1w,      kRkey_1w,    kDTslocked_1w,   0,         1, kDTsopen_1w,     kDTsunlock_1w,    kALopendoor1_1w};
-cmd opendoor2_1w   = {kVOpen_1w,      0,        kDTnull,         0,         1, kDTsopen_1w,     kDTnull,          kALopendoor2_1w};
-cmd opendoor3_1w   = {kVOpen_1w,      0,        kDTnull,         0,         1, kDTsopen_1w,     kDTnull,          kALopendoor3_1w};
-cmd opendoor4_1w   = {kVOpen_1w,      0,        kDTnull,         0,         0, kDTsopen_1w,     kDTnull,          kALopendoor4_1w};
-cmd openpkin_1w    = {kVOpen_1w,      0,        kDTnull,         0,         1, kDTnull,         kDTsopenpkin_1w,  kALpkin_1w};
-cmd opentrap_1w    = {kVOpen_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALopentrap_1w};
-cmd openwdoors_1w  = {kVOpen_1w,      0,        kDTnull,         0,         1, kDTsopen_1w,     kDTnull,          kALopenwdoors_1w};
-cmd plugbung_1w    = {kVPlug_1w,      kRbung_1w,   kDTnocgen_1w,    0,         1, kDTnull,         kDTsplug_1w,      kALplugbung_1w};
-cmd pushboat_1w    = {kVPush_1w,      0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTnull,          kALpushboat_1w};
-cmd pushigor_1w    = {kVPush_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALigor_1w};
-cmd ruboilcan_1w   = {kVRub_1w,       0,        kDTnull,         0,         0, kDTnull,         kDTsruboil_1w,    0};
-cmd talkdrac_1w    = {kVTalk_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALtalkdrac_1w};
-cmd talkfrank_1w   = {kVTalk_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALtalkfrank_1w};
-cmd talkgwen_1w    = {kVTalk_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALtalkgwen_1w};
-cmd talkhood_1w    = {kVTalk_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALtalkhood_1w};
-cmd talkpeahd_1w   = {kVTalk_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALtalkpeahd_1w};
-cmd talkslime_1w   = {kVTalk_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALtalkslime_1w};
-cmd throwchop_1w   = {kVThrowit_1w,   0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALthrowchop_1w};
-cmd unlkdoor_1w    = {kVUnlock_1w,    kRkey_1w,    kDTnockey_1w,    0,         1, kDTsunlocked_1w, kDTsunlock_1w,    kALopendoor1_1w};
-cmd unlock_1w      = {kVUnlock_1w,    0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTsUnlocked_1w,  0};
-cmd unlockbolt_1w  = {kVUnlock_1w,    0,        kDTnull,         1,         2, kDTsstuck_1w,    kDTsopenbolt_1w,  0};
-cmd untierope_1w   = {kVUntie_1w,     0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTsuntie_1w,     0};
-cmd useboat_1w     = {kVMakeUseOf_1w, 0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTnull,          kALuseboat_1w};
-cmd usemask_1w     = {kVMakeUseOf_1w, kRmask_1w,   kDTnocgen_1w,    DONT_CARE, 0, kDTnull,         kDTnull,          kALusemask_1w};
-cmd wearmask_1w    = {kVWear_1w,      kRmask_1w,   kDTnocgen_1w,    0,         1, kDTsworn1_1w,    kDTokgen_1w,      kALswapmask_1w};
+#define blowdw_1w       {kVBlow_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTokblow_1w,     kALblowdw_1w}
+#define breakpkin_1w    {kVBreak_1w,     0,        kDTnull,         0,         1, kDTnull,         kDTokgen_1w,      kALpkin_1w}
+#define brkrope_1w      {kVBreak_1w,     0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTsrbreak_1w,    0}
+#define closebolt_1w    {kVClose_1w,     0,        kDTnull,         2,         1, kDTsclosed_1w,   kDTsclosebolt_1w, 0}
+#define closedoor1_1w   {kVClose_1w,     0,        kDTnull,         1,         0, kDTsclosed_1w,   kDTnull,          kALclosedoor1_1w}
+#define closedoor2_1w   {kVClose_1w,     0,        kDTnull,         1,         0, kDTsclosed_1w,   kDTnull,          0}
+#define closedoor3_1w   {kVClose_1w,     0,        kDTnull,         1,         0, kDTsclosed_1w,   kDTnull,          0}
+#define closedoor4_1w   {kVClose_1w,     0,        kDTnull,         1,         0, kDTsclosed_1w,   kDTnull,          kALclosedoor4_1w}
+#define closetrap_1w    {kVClose_1w,     0,        kDTnull,         1,         0, kDTsclosed_1w,   kDTnull,          kALclosetrap_1w}
+#define closewdoors_1w  {kVClose_1w,     0,        kDTnull,         1,         0, kDTsclosed_1w,   kDTnull,          kALclosewdoors_1w}
+#define cutrope_1w      {kVCut_1w,       kRknife_1w,  kDTrnoknife_1w,  0,         1, kDTsnocut_1w,    kDTscut_1w,       kALcutrope_1w}
+#define dropmask_1w     {kVDrop_1w,      0,        kDTnull,         0,         0, kDTsworn3_1w,    kDTnull,          kALdropmask_1w}
+#define droppkin_1w     {kVDrop_1w,      kRpkin_1w,   kDTnocgen_1w,    0,         1, kDTnull,         kDTnull,          kALpkin_1w}
+#define eatchop_1w      {kVEat_1w,       0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALeatchop2_1w}
+#define getchop_1w      {kVTake_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALgetchop_1w}
+#define getdw_1w        {kVTake_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALcupbdw_1w}
+#define getinboat_1w    {kVInto_1w,      0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTnull,          kALgetinboat_1w}
+#define getknife_1w     {kVTake_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALcupbpk_1w}
+#define getoilcan_1w    {kVTake_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALshedoil_1w}
+#define getoutboat_1w   {kVOutof_1w,     0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTnull,          kALgetoutboat_1w}
+#define givegold_1w     {kVGive_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALgold_1w}
+#define hiderock_1w     {kVHide_1w,      0,        kDTnull,         0,         1, kDTsrock_1w,     kDTnull,          kALrock_1w}
+#define kickpkin_1w     {kVAttack_1w,    0,        kDTnull,         0,         1, kDTnull,         kDTokgen_1w,      kALpkin_1w}
+#define knock_1w        {kVKnock_1w,     0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTsNobody_1w,    0}
+#define lockbolt_1w     {kVLock_1w,      0,        kDTnull,         2,         1, kDTsclosed_1w,   kDTsclosebolt_1w, 0}
+#define lockdoor_1w     {kVLock_1w,      kRkey_1w,    kDTnockey_1w,    1,         0, kDTslock_1w,     kDTokgen_1w,      kALclosedoor1_1w}
+#define lookcupb_1w     {kVLook_1w,      kRcandle_1w, kDTnoccandle_1w, DONT_CARE, 0, kDTnull,         kDTnull,          kALlookcupb_1w}
+#define lookshed_1w     {kVLook_1w,      kRcandle_1w, kDTnoccandle_1w, 0,         0, kDTsnoseeoil_1w, kDTsseeoil_1w,    kALshedoil_1w}
+#define movecarp1_1w    {kVMove_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTsrollrug_1w,   kALmovecarp_1w}
+#define movecarp2_1w    {kVLift_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTsrollrug_1w,   kALmovecarp_1w}
+#define movecarp3_1w    {kVUnder_1w,     0,        kDTnull,         0,         0, kDTnull,         kDTsrollrug_1w,   kALmovecarp_1w}
+#define offmask_1w      {kVOff_1w,       0,        kDTnull,         1,         0, kDTsworn2_1w,    kDTokgen_1w,      kALswapmask_1w}
+#define oilbolt_1w      {kVOil_1w,       kRoil_1w,    kDTrnooil_1w,    0,         1, kDTsoiled_1w,    kDTsoilbolt_1w,   0}
+#define omattack_1w     {kVAttack_1w,    0,        kDTnull,         0,         0, kDTnull,         kDTsomattack_1w,  0}
+#define ombreak_1w      {kVBreak_1w,     0,        kDTnull,         0,         0, kDTnull,         kDTsomattack_1w,  0}
+#define omtalk_1w       {kVTalk_1w,      0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTnull,          kALoldman_1w}
+#define openbolt_1w     {kVOpen_1w,      0,        kDTnull,         1,         2, kDTsstuck_1w,    kDTsopenbolt_1w,  0}
+#define opendoor1_1w    {kVOpen_1w,      kRkey_1w,    kDTslocked_1w,   0,         1, kDTsopen_1w,     kDTsunlock_1w,    kALopendoor1_1w}
+#define opendoor2_1w    {kVOpen_1w,      0,        kDTnull,         0,         1, kDTsopen_1w,     kDTnull,          kALopendoor2_1w}
+#define opendoor3_1w    {kVOpen_1w,      0,        kDTnull,         0,         1, kDTsopen_1w,     kDTnull,          kALopendoor3_1w}
+#define opendoor4_1w    {kVOpen_1w,      0,        kDTnull,         0,         0, kDTsopen_1w,     kDTnull,          kALopendoor4_1w}
+#define openpkin_1w     {kVOpen_1w,      0,        kDTnull,         0,         1, kDTnull,         kDTsopenpkin_1w,  kALpkin_1w}
+#define opentrap_1w     {kVOpen_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALopentrap_1w}
+#define openwdoors_1w   {kVOpen_1w,      0,        kDTnull,         0,         1, kDTsopen_1w,     kDTnull,          kALopenwdoors_1w}
+#define plugbung_1w     {kVPlug_1w,      kRbung_1w,   kDTnocgen_1w,    0,         1, kDTnull,         kDTsplug_1w,      kALplugbung_1w}
+#define pushboat_1w     {kVPush_1w,      0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTnull,          kALpushboat_1w}
+#define pushigor_1w     {kVPush_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALigor_1w}
+#define ruboilcan_1w    {kVRub_1w,       0,        kDTnull,         0,         0, kDTnull,         kDTsruboil_1w,    0}
+#define talkdrac_1w     {kVTalk_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALtalkdrac_1w}
+#define talkfrank_1w    {kVTalk_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALtalkfrank_1w}
+#define talkgwen_1w     {kVTalk_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALtalkgwen_1w}
+#define talkhood_1w     {kVTalk_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALtalkhood_1w}
+#define talkpeahd_1w    {kVTalk_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALtalkpeahd_1w}
+#define talkslime_1w    {kVTalk_1w,      0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALtalkslime_1w}
+#define throwchop_1w    {kVThrowit_1w,   0,        kDTnull,         0,         0, kDTnull,         kDTnull,          kALthrowchop_1w}
+#define unlkdoor_1w     {kVUnlock_1w,    kRkey_1w,    kDTnockey_1w,    0,         1, kDTsunlocked_1w, kDTsunlock_1w,    kALopendoor1_1w}
+#define unlock_1w       {kVUnlock_1w,    0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTsUnlocked_1w,  0}
+#define unlockbolt_1w   {kVUnlock_1w,    0,        kDTnull,         1,         2, kDTsstuck_1w,    kDTsopenbolt_1w,  0}
+#define untierope_1w    {kVUntie_1w,     0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTsuntie_1w,     0}
+#define useboat_1w      {kVMakeUseOf_1w, 0,        kDTnull,         DONT_CARE, 0, kDTnull,         kDTnull,          kALuseboat_1w}
+#define usemask_1w      {kVMakeUseOf_1w, kRmask_1w,   kDTnocgen_1w,    DONT_CARE, 0, kDTnull,         kDTnull,          kALusemask_1w}
+#define wearmask_1w     {kVWear_1w,      kRmask_1w,   kDTnocgen_1w,    0,         1, kDTsworn1_1w,    kDTokgen_1w,      kALswapmask_1w}
 
-cmd emptyCmd      =  {0,           0,        kDTnull,         0,         0, kDTnull,         kDTnull,          0};
+#define emptyCmd     {0,           0,        kDTnull,         0,         0, kDTnull,         kDTnull,          0}
 
 cmd cmdDummy[]    = {emptyCmd};
 
@@ -4388,72 +4388,72 @@ const cmd *cmdList_1w[] = {
 	shed_1w,   slime_1w, trap_1w,  ward_1w,  whistle_1w
 };
 
-cmd climbdumb_2w     = {kVClimb_2w,     0,        kDTnull,       0,         0, kDTnull,         kDTnull,           kALdumb_2w};
-cmd climbrope_2w     = {kVClimb_2w,     0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALclimbrope_2w};
-cmd climbwell_2w     = {kVClimb_2w,     0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALclimbwell_2w};
-cmd closedoor1_2w    = {kVClose_2w,     0,        kDTnull,       1,         0, kDTsclose_2w,    kDTnull,           0};
-cmd closedoor2_2w    = {kVClose_2w,     0,        kDTnull,       1,         0, kDTsclose_2w,    kDTnull,           0};
-cmd closedoor3_2w    = {kVClose_2w,     0,        kDTnull,       1,         0, kDTsclose_2w,    kDTnull,           0};
-cmd closesafe_2w     = {kVClose_2w,     0,        kDTnull,       1,         0, kDTsclose_2w,    kDTokgen_2w,       0};
-cmd dialphone_2w     = {kVDial_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALphone_2w};
-cmd doorpencil_2w    = {kVMakeUseOf_2w, kRpencil_2w, kDTnocgen_2w,  0,         1, kDTspencil_2w,   kDTnull,           kALchkpap1_2w};
-cmd dropdynamite_2w  = {kVDrop_2w,      kRdyn_2w,    kDTnocgen_2w,  DONT_CARE, 0, kDTnull,         kDTnull,           kALdropdynamite_2w};
-cmd eatbanana_2w     = {kVEat_2w,       kRbanana_2w, kDTnocgen_2w,  0,         0, kDTnull,         kDTnull,           kALeatbanana_2w};
-cmd eatcatnip_2w     = {kVEat_2w,       kRcatnip_2w, kDTnocgen_2w,  0,         0, kDTnopurps_2w,   kDTseatnip_2w,     0};
-cmd eatgarlic_2w     = {kVEat_2w,       kRgarlic_2w, kDTnocgen_2w,  DONT_CARE, 0, kDTnull,         kDTnull,           kALgarlic_2w};
-cmd firegun_2w       = {kVFire_2w,      kRgun_2w,    kDTnogun_2w,   0,         1, kDTsempty_2w,    kDTnull,           kALgun_2w};
-cmd gard1_2w         = {kVTalk_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALtalkgard_2w};
-cmd gard2_2w         = {kVLook_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALlookgard_2w};
-cmd getballoon_2w    = {kVTake_2w,      0,        kDTnull,       0,         0, kDTnull,         kDTnull,           kALballoon_2w};
-cmd getbook_2w       = {kVTake_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALgetbook_2w};
-cmd getdynamite_2w   = {kVTake_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALgetdynamite_2w};
-cmd getletter_2w     = {kVTake_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTsgetlet_2w,     0};
-cmd givebanana_2w    = {kVGive_2w,      kRbanana_2w, kDTnocgen_2w,  0,         0, kDTnull,         kDTnull,           kALbanana_2w};
-cmd givebell_2w      = {kVGive_2w,      kRbell_2w,   kDTnocgen_2w,  DONT_CARE, 0, kDTnull,         kDTnull,           kALgivebel_2w};
-cmd givecatnip_2w    = {kVGive_2w,      kRcatnip_2w, kDTnocgen_2w,  0,         0, kDTnopurps_2w,   kDTscatnip_2w,     0};
-cmd intodumb_2w      = {kVInto_2w,      0,        kDTnull,       0,         0, kDTnull,         kDTnull,           kALdumb_2w};
-cmd knock_2w         = {kVKnock_2w,     0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTsNobody_2w,     0};
-cmd lightdynamite_2w = {kVStrike_2w,    kRmatch_2w,  kDTnomatch_2w, DONT_CARE, 0, kDTnull,         kDTnull,           kALlightdynamite_2w};
-cmd lookcubp_2w      = {kVLook_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALphoto_2w};
-cmd lookgarlic_2w    = {kVLook_2w,      0,        kDTnull,       0,         1, kDTempty_2w,     kDTsFindClove_2w,  kALgetgarlic_2w};
-cmd lookhole_2w      = {kVLook_2w,      0,        kDTnull,       0,         0, kDTsDarkHole_2w, kDTnull,           kALkeyhole_2w};
-cmd lookkennel_2w    = {kVLook_2w,      0,        kDTnull,       0,         0, kDTnull,         kDTnull,           kALlookkennel_2w};
-cmd lookmat_2w       = {kVLook_2w,      0,        kDTnull,       0,         1, kDTempty_2w,     kDTsFindMatch_2w,  kALgetmatch_2w};
-cmd opencubp_2w      = {kVOpen_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALphoto_2w};
-cmd opendoor1_2w     = {kVOpen_2w,      0,        kDTnull,       0,         1, kDTsopen1_2w,    kDTnull,           kALopendoor1_2w};
-cmd opendoor2_2w     = {kVOpen_2w,      0,        kDTnull,       0,         1, kDTsopen1_2w,    kDTnull,           kALopendoor2_2w};
-cmd opendoor3_2w     = {kVOpen_2w,      0,        kDTnull,       0,         1, kDTsopen1_2w,    kDTnull,           kALopendoor3_2w};
-cmd opendum_2w       = {kVOpen_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTsopendum_2w,    0};
-cmd opengarlic_2w    = {kVOpen_2w,      0,        kDTnull,       0,         1, kDTempty_2w,     kDTsFindClove_2w,  kALgetgarlic_2w};
-cmd openkdoor_2w     = {kVOpen_2w,      0,        kDTnull,       0,         0, kDTnull,         kDTwontopen_2w,    0};
-cmd openlamp_2w      = {kVOpen_2w,      kRlamp_2w,   kDTnocgen_2w,  DONT_CARE, 0, kDTnull,         kDTempty_2w,       0};
-cmd openmat_2w       = {kVOpen_2w,      0,        kDTnull,       0,         1, kDTempty_2w,     kDTsFindMatch_2w,  kALgetmatch_2w};
-cmd openpdoor_2w     = {kVOpen_2w,      0,        kDTnull,       0,         0, kDTnull,         kDTspdoor_2w,      0};
-cmd opensafe_2w      = {kVOpen_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALsafe_2w};
-cmd popballoon_2w    = {kVBreak_2w,     0,        kDTnull,       0,         0, kDTnull,         kDTnull,           kALballoon_2w};
-cmd pushblue_2w      = {kVPush_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALworkgates_2w};
-cmd pushbutton_2w    = {kVPush_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTsWhichColor_2w, 0};
-cmd pushgreen_2w     = {kVPush_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALbugzapper_2w};
-cmd pushpaper_2w     = {kVPush_2w,      kRpaper_2w,  kDTnocgen_2w,  0,         1, kDTsnopaper_2w,  kDTspaper_2w,      kALpushpaper_2w};
-cmd pushpencil_2w    = {kVPush_2w,      kRpencil_2w, kDTnocgen_2w,  0,         0, kDTspencil_2w,   kDTnull,           kALpushpencil_2w};
-cmd pushred_2w       = {kVPush_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALshedlight_2w};
-cmd pushyellow_2w    = {kVPush_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALgatelight_2w};
-cmd readalbum_2w     = {kVRead_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTtalbum_2w,      0};
-cmd readletter_2w    = {kVRead_2w,      0,        kDTnull,       3,         3, kDTsnoread_2w,   kDTsread_2w,       kALreadlet_2w};
-cmd readwill_2w      = {kVRead_2w,      kRwill_2w,   kDTnocgen_2w,  1,         1, kDTnull,         kDTnull,           kALwill_2w};
-cmd ringbell_2w      = {kVRing_2w,      kRbell_2w,   kDTnocgen_2w,  DONT_CARE, 0, kDTnull,         kDTnull,           kALbell_2w};
-cmd rubcatnip_2w     = {kVRub_2w,       kRcatnip_2w, kDTnocgen_2w,  0,         0, kDTnopurps_2w,   kDTnull,           kALcatnip_2w};
-cmd rublamp_2w       = {kVRub_2w,       kRlamp_2w,   kDTnocgen_2w,  0,         0, kDTnopurps_2w,   kDTnull,           kALlamp_2w};
-cmd serum_2w         = {kVDrink_2w,     kRserum_2w,  kDTnocgen_2w,  0,         1, kDTsnoserum_2w,  kDTnull,           kALbottle_2w};
-cmd strikematch_2w   = {kVStrike_2w,    kRmatch_2w,  kDTnocgen_2w,  DONT_CARE, 0, kDTnull,         kDTnull,           kALstrikematch_2w};
-cmd takepaper_2w     = {kVTake_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALtakepaper_2w};
-cmd takephone_2w     = {kVTake_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALphone_2w};
-cmd talkharry_2w     = {kVTalk_2w,      0,        kDTnull,       0,         1, kDTsharry_2w,    kDTnull,           kALharry_2w};
-cmd throwstick_2w    = {kVThrowit_2w,   kRstick_2w,  kDTnocgen_2w,  0,         1, kDTnull,         kDTnull,           kALthrowstick_2w};
-cmd unlock_2w        = {kVUnlock_2w,    0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTsUnlocked_2w,   0};
-cmd unlockdum_2w     = {kVUnlock_2w,    0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTsunlockdum_2w,  0};
-cmd usedynamite_2w   = {kVMakeUseOf_2w, kRmatch_2w,  kDTnomatch_2w, DONT_CARE, 0, kDTnull,         kDTnull,           kALlightdynamite_2w};
-cmd userobot_2w      = {kVMakeUseOf_2w, 0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           0};
+#define climbdumb_2w      {kVClimb_2w,     0,        kDTnull,       0,         0, kDTnull,         kDTnull,           kALdumb_2w}
+#define climbrope_2w      {kVClimb_2w,     0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALclimbrope_2w}
+#define climbwell_2w      {kVClimb_2w,     0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALclimbwell_2w}
+#define closedoor1_2w     {kVClose_2w,     0,        kDTnull,       1,         0, kDTsclose_2w,    kDTnull,           0}
+#define closedoor2_2w     {kVClose_2w,     0,        kDTnull,       1,         0, kDTsclose_2w,    kDTnull,           0}
+#define closedoor3_2w     {kVClose_2w,     0,        kDTnull,       1,         0, kDTsclose_2w,    kDTnull,           0}
+#define closesafe_2w      {kVClose_2w,     0,        kDTnull,       1,         0, kDTsclose_2w,    kDTokgen_2w,       0}
+#define dialphone_2w      {kVDial_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALphone_2w}
+#define doorpencil_2w     {kVMakeUseOf_2w, kRpencil_2w, kDTnocgen_2w,  0,         1, kDTspencil_2w,   kDTnull,           kALchkpap1_2w}
+#define dropdynamite_2w   {kVDrop_2w,      kRdyn_2w,    kDTnocgen_2w,  DONT_CARE, 0, kDTnull,         kDTnull,           kALdropdynamite_2w}
+#define eatbanana_2w      {kVEat_2w,       kRbanana_2w, kDTnocgen_2w,  0,         0, kDTnull,         kDTnull,           kALeatbanana_2w}
+#define eatcatnip_2w      {kVEat_2w,       kRcatnip_2w, kDTnocgen_2w,  0,         0, kDTnopurps_2w,   kDTseatnip_2w,     0}
+#define eatgarlic_2w      {kVEat_2w,       kRgarlic_2w, kDTnocgen_2w,  DONT_CARE, 0, kDTnull,         kDTnull,           kALgarlic_2w}
+#define firegun_2w        {kVFire_2w,      kRgun_2w,    kDTnogun_2w,   0,         1, kDTsempty_2w,    kDTnull,           kALgun_2w}
+#define gard1_2w          {kVTalk_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALtalkgard_2w}
+#define gard2_2w          {kVLook_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALlookgard_2w}
+#define getballoon_2w     {kVTake_2w,      0,        kDTnull,       0,         0, kDTnull,         kDTnull,           kALballoon_2w}
+#define getbook_2w        {kVTake_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALgetbook_2w}
+#define getdynamite_2w    {kVTake_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALgetdynamite_2w}
+#define getletter_2w      {kVTake_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTsgetlet_2w,     0}
+#define givebanana_2w     {kVGive_2w,      kRbanana_2w, kDTnocgen_2w,  0,         0, kDTnull,         kDTnull,           kALbanana_2w}
+#define givebell_2w       {kVGive_2w,      kRbell_2w,   kDTnocgen_2w,  DONT_CARE, 0, kDTnull,         kDTnull,           kALgivebel_2w}
+#define givecatnip_2w     {kVGive_2w,      kRcatnip_2w, kDTnocgen_2w,  0,         0, kDTnopurps_2w,   kDTscatnip_2w,     0}
+#define intodumb_2w       {kVInto_2w,      0,        kDTnull,       0,         0, kDTnull,         kDTnull,           kALdumb_2w}
+#define knock_2w          {kVKnock_2w,     0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTsNobody_2w,     0}
+#define lightdynamite_2w  {kVStrike_2w,    kRmatch_2w,  kDTnomatch_2w, DONT_CARE, 0, kDTnull,         kDTnull,           kALlightdynamite_2w}
+#define lookcubp_2w       {kVLook_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALphoto_2w}
+#define lookgarlic_2w     {kVLook_2w,      0,        kDTnull,       0,         1, kDTempty_2w,     kDTsFindClove_2w,  kALgetgarlic_2w}
+#define lookhole_2w       {kVLook_2w,      0,        kDTnull,       0,         0, kDTsDarkHole_2w, kDTnull,           kALkeyhole_2w}
+#define lookkennel_2w     {kVLook_2w,      0,        kDTnull,       0,         0, kDTnull,         kDTnull,           kALlookkennel_2w}
+#define lookmat_2w        {kVLook_2w,      0,        kDTnull,       0,         1, kDTempty_2w,     kDTsFindMatch_2w,  kALgetmatch_2w}
+#define opencubp_2w       {kVOpen_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALphoto_2w}
+#define opendoor1_2w      {kVOpen_2w,      0,        kDTnull,       0,         1, kDTsopen1_2w,    kDTnull,           kALopendoor1_2w}
+#define opendoor2_2w      {kVOpen_2w,      0,        kDTnull,       0,         1, kDTsopen1_2w,    kDTnull,           kALopendoor2_2w}
+#define opendoor3_2w      {kVOpen_2w,      0,        kDTnull,       0,         1, kDTsopen1_2w,    kDTnull,           kALopendoor3_2w}
+#define opendum_2w        {kVOpen_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTsopendum_2w,    0}
+#define opengarlic_2w     {kVOpen_2w,      0,        kDTnull,       0,         1, kDTempty_2w,     kDTsFindClove_2w,  kALgetgarlic_2w}
+#define openkdoor_2w      {kVOpen_2w,      0,        kDTnull,       0,         0, kDTnull,         kDTwontopen_2w,    0}
+#define openlamp_2w       {kVOpen_2w,      kRlamp_2w,   kDTnocgen_2w,  DONT_CARE, 0, kDTnull,         kDTempty_2w,       0}
+#define openmat_2w        {kVOpen_2w,      0,        kDTnull,       0,         1, kDTempty_2w,     kDTsFindMatch_2w,  kALgetmatch_2w}
+#define openpdoor_2w      {kVOpen_2w,      0,        kDTnull,       0,         0, kDTnull,         kDTspdoor_2w,      0}
+#define opensafe_2w       {kVOpen_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALsafe_2w}
+#define popballoon_2w     {kVBreak_2w,     0,        kDTnull,       0,         0, kDTnull,         kDTnull,           kALballoon_2w}
+#define pushblue_2w       {kVPush_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALworkgates_2w}
+#define pushbutton_2w     {kVPush_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTsWhichColor_2w, 0}
+#define pushgreen_2w      {kVPush_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALbugzapper_2w}
+#define pushpaper_2w      {kVPush_2w,      kRpaper_2w,  kDTnocgen_2w,  0,         1, kDTsnopaper_2w,  kDTspaper_2w,      kALpushpaper_2w}
+#define pushpencil_2w     {kVPush_2w,      kRpencil_2w, kDTnocgen_2w,  0,         0, kDTspencil_2w,   kDTnull,           kALpushpencil_2w}
+#define pushred_2w        {kVPush_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALshedlight_2w}
+#define pushyellow_2w     {kVPush_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALgatelight_2w}
+#define readalbum_2w      {kVRead_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTtalbum_2w,      0}
+#define readletter_2w     {kVRead_2w,      0,        kDTnull,       3,         3, kDTsnoread_2w,   kDTsread_2w,       kALreadlet_2w}
+#define readwill_2w       {kVRead_2w,      kRwill_2w,   kDTnocgen_2w,  1,         1, kDTnull,         kDTnull,           kALwill_2w}
+#define ringbell_2w       {kVRing_2w,      kRbell_2w,   kDTnocgen_2w,  DONT_CARE, 0, kDTnull,         kDTnull,           kALbell_2w}
+#define rubcatnip_2w      {kVRub_2w,       kRcatnip_2w, kDTnocgen_2w,  0,         0, kDTnopurps_2w,   kDTnull,           kALcatnip_2w}
+#define rublamp_2w        {kVRub_2w,       kRlamp_2w,   kDTnocgen_2w,  0,         0, kDTnopurps_2w,   kDTnull,           kALlamp_2w}
+#define serum_2w          {kVDrink_2w,     kRserum_2w,  kDTnocgen_2w,  0,         1, kDTsnoserum_2w,  kDTnull,           kALbottle_2w}
+#define strikematch_2w    {kVStrike_2w,    kRmatch_2w,  kDTnocgen_2w,  DONT_CARE, 0, kDTnull,         kDTnull,           kALstrikematch_2w}
+#define takepaper_2w      {kVTake_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALtakepaper_2w}
+#define takephone_2w      {kVTake_2w,      0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALphone_2w}
+#define talkharry_2w      {kVTalk_2w,      0,        kDTnull,       0,         1, kDTsharry_2w,    kDTnull,           kALharry_2w}
+#define throwstick_2w     {kVThrowit_2w,   kRstick_2w,  kDTnocgen_2w,  0,         1, kDTnull,         kDTnull,           kALthrowstick_2w}
+#define unlock_2w         {kVUnlock_2w,    0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTsUnlocked_2w,   0}
+#define unlockdum_2w      {kVUnlock_2w,    0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTsunlockdum_2w,  0}
+#define usedynamite_2w    {kVMakeUseOf_2w, kRmatch_2w,  kDTnomatch_2w, DONT_CARE, 0, kDTnull,         kDTnull,           kALlightdynamite_2w}
+#define userobot_2w       {kVMakeUseOf_2w, 0,        kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           0}
 
 cmd album_2w[]    = {readalbum_2w,   emptyCmd};
 cmd balloon_2w[]  = {popballoon_2w,  getballoon_2w,   emptyCmd};
@@ -4509,59 +4509,59 @@ const cmd *cmdList_2w[] = {
 	will_2w,   yellow_2w
 };
 
-cmd bell_3w         = {kVRing_3w,      kRbell_3w,    kDTnocgen_3w, DONT_CARE, 0, kDTnull,        kDTokbell_3w,    0};
-cmd blow_3w         = {kVBlow_3w,      kRpipe_3w,    kDTnogun_3w,  DONT_CARE, 0, kDTnull,        kDTnull,         kALdart_3w};
-cmd blowdoc_3w      = {kVShoot_3w,     kRpipe_3w,    kDTnogun_3w,  DONT_CARE, 0, kDTnull,        kDTsblowdoc_3w,  0};
-cmd book_3w         = {kVRead_3w,      kRbook_3w,    kDTnocgen_3w, DONT_CARE, 0, kDTnull,        kDTnull,         kALreadbook_3w};
-cmd cage1_3w        = {kVOpen_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALopencage_3w};
-cmd cage2_3w        = {kVClose_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTokgen_3w,     0};
-cmd cage3_3w        = {kVTake_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALtakecage_3w};
-cmd cageuse_3w      = {kVMakeUseOf_3w, 0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALusecage_3w};
-cmd candle1_3w      = {kVStrike_3w,    0,         kDTnull,      0,         1, kDTslit_3w,     kDTokgen_3w,     0};
-cmd candle2_3w      = {kVDouse_3w,     0,         kDTnull,      1,         0, kDTsunlit_3w,   kDTokgen_3w,     0};
-cmd cdoor1_3w       = {kVOpen_3w,      0,         kDTnull,      0,         0, kDTsopen1_3w,   kDTnull,         kALopendoor_3w};
-cmd cdoor2_3w       = {kVClose_3w,     0,         kDTnull,      1,         0, kDTsclose_3w,   kDTokgen_3w,     kALclosedoor_3w};
-cmd cdrinkpool_3w   = {kVMakeUseOf_3w, 0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTspool_3w,     0};
-cmd cdrinkstream_3w = {kVMakeUseOf_3w, 0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTsstream_3w,   0};
-cmd cexit1_3w       = {kVOutof_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTokgen_3w,     kALexit_3w};
-cmd cexit2_3w       = {kVClimb_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTokgen_3w,     kALexit_3w};
-cmd cflask1_3w      = {kVFill_3w,      0,         kDTnull,      0,         1, kDTsfull_3w,    kDTnull,         kALfill_3w};
-cmd cflask2_3w      = {kVPut_3w,       0,         kDTnull,      0,         1, kDTsfull_3w,    kDTnull,         kALfill_3w};
-cmd cflask3_3w      = {kVEmpty_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALempty2_3w};
-cmd cflask4_3w      = {kVDrink_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALdrink_3w};
-cmd cflask5_3w      = {kVGive_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALflask_3w};
-cmd cheese1_3w      = {kVEat_3w,       kRcheese_3w,  kDTnocgen_3w, 0,         0, kDTnull,        kDTnull,         kALeatcheese_3w};
-cmd cheese2_3w      = {kVDrop_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALdropcheese_3w};
-cmd cheese3_3w      = {kVPut_3w,       0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALdropcheese_3w};
-cmd cheese4_3w      = {kVTake_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALtakecheese_3w};
-cmd cmake1_3w       = {kVMake_3w,      0,         kDTnull,      0,         0, kDTsmade_3w,    kDTnull,         kALmakeclay_3w};
-cmd cmake2_3w       = {kVStick_3w,     kRpins_3w,    kDTnopins_3w, DONT_CARE, 0, kDTnull,        kDTnull,         kALstick_3w};
-cmd cplane1_3w      = {kVClimb_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTokgen_3w,     kALplane_3w};
-cmd cplane2_3w      = {kVInto_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTokgen_3w,     kALplane_3w};
-cmd cplane3_3w      = {kVSearch_3w,    0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTokgen_3w,     kALplane_3w};
-cmd crystal_3w      = {kVRub_3w,       kRcrystal_3w, kDTnocgen_3w, DONT_CARE, 0, kDTnull,        kDTnull,         kALcrystal_3w};
-cmd csteps1_3w      = {kVMakeUseOf_3w, 0,         kDTnull,      0,         0, kDTnull,        kDTnull,         kALsteps_3w};
-cmd cstick1_3w      = {kVStick_3w,     0,         kDTnull,      0,         0, kDTnull,        kDTnull,         kALstick_3w};
-cmd cswing1_3w      = {kVSwing_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTswinger_3w,   kALswing_3w};
-cmd ctalknat_3w     = {kVTalk_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALtalknat_3w};
-cmd cube1_3w        = {kVGive_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALgiveb_3w};
-cmd cvine1_3w       = {kVMakeUseOf_3w, 0,         kDTnull,      0,         0, kDTnull,        kDTnull,         kALvine_3w};
-cmd cvine2_3w       = {kVUntie_3w,     0,         kDTnull,      0,         0, kDTnull,        kDTnull,         kALuntie_vine_3w};
-cmd cvine3_3w       = {kVTie_3w,       0,         kDTnull,      0,         0, kDTnull,        kDTnull,         kALvine_3w};
-cmd cwaterfall_3w   = {kVLook_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALlookwfall_3w};
-cmd cwaterpool_3w   = {kVLook_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTswater_3w,    0};
-cmd cwaterstream_3w = {kVLook_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTswater_3w,    0};
-cmd dart_3w         = {kVShoot_3w,     kRpipe_3w,    kDTnogun_3w,  DONT_CARE, 0, kDTnull,        kDTnull,         kALdart_3w};
-cmd elephant_3w     = {kVMakeUseOf_3w, 0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTuelephant_3w, 0};
-cmd ghost1_3w       = {kVMakeUseOf_3w, 0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTughost_3w,    0};
-cmd ghost2_3w       = {kVExorcise_3w,  kRexor_3w,    kDTnocex_3w,  DONT_CARE, 0, kDTnull,        kDTnull,         kALexorcise_3w};
-cmd knock_3w        = {kVKnock_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTsNobody_3w,   0};
-cmd lookrush_3w     = {kVBehind_3w,    0,         kDTnull,      0,         1, kDTsfoundb_3w,  kDTnull,         kALfindbook_3w};
-cmd readit_3w       = {kVRead_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTsread_3w,     0};
-cmd rock1_3w        = {kVBehind_3w,    0,         kDTnull,      0,         1, kDTsfoundc_3w,  kDTsfindc_3w,    kALfindcrystal_3w};
-cmd swingc_3w       = {kVSwing_3w,     0,         kDTnull,      0,         1, kDTsnoswing_3w, kDTswingcave_3w, 0};
-cmd unlock_3w       = {kVUnlock_3w,    0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTsUnlocked_3w, 0};
-cmd usedoc_3w       = {kVMakeUseOf_3w, 0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALtalkdoc_3w};
+#define bell_3w          {kVRing_3w,      kRbell_3w,    kDTnocgen_3w, DONT_CARE, 0, kDTnull,        kDTokbell_3w,    0}
+#define blow_3w          {kVBlow_3w,      kRpipe_3w,    kDTnogun_3w,  DONT_CARE, 0, kDTnull,        kDTnull,         kALdart_3w}
+#define blowdoc_3w       {kVShoot_3w,     kRpipe_3w,    kDTnogun_3w,  DONT_CARE, 0, kDTnull,        kDTsblowdoc_3w,  0}
+#define book_3w          {kVRead_3w,      kRbook_3w,    kDTnocgen_3w, DONT_CARE, 0, kDTnull,        kDTnull,         kALreadbook_3w}
+#define cage1_3w         {kVOpen_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALopencage_3w}
+#define cage2_3w         {kVClose_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTokgen_3w,     0}
+#define cage3_3w         {kVTake_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALtakecage_3w}
+#define cageuse_3w       {kVMakeUseOf_3w, 0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALusecage_3w}
+#define candle1_3w       {kVStrike_3w,    0,         kDTnull,      0,         1, kDTslit_3w,     kDTokgen_3w,     0}
+#define candle2_3w       {kVDouse_3w,     0,         kDTnull,      1,         0, kDTsunlit_3w,   kDTokgen_3w,     0}
+#define cdoor1_3w        {kVOpen_3w,      0,         kDTnull,      0,         0, kDTsopen1_3w,   kDTnull,         kALopendoor_3w}
+#define cdoor2_3w        {kVClose_3w,     0,         kDTnull,      1,         0, kDTsclose_3w,   kDTokgen_3w,     kALclosedoor_3w}
+#define cdrinkpool_3w    {kVMakeUseOf_3w, 0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTspool_3w,     0}
+#define cdrinkstream_3w  {kVMakeUseOf_3w, 0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTsstream_3w,   0}
+#define cexit1_3w        {kVOutof_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTokgen_3w,     kALexit_3w}
+#define cexit2_3w        {kVClimb_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTokgen_3w,     kALexit_3w}
+#define cflask1_3w       {kVFill_3w,      0,         kDTnull,      0,         1, kDTsfull_3w,    kDTnull,         kALfill_3w}
+#define cflask2_3w       {kVPut_3w,       0,         kDTnull,      0,         1, kDTsfull_3w,    kDTnull,         kALfill_3w}
+#define cflask3_3w       {kVEmpty_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALempty2_3w}
+#define cflask4_3w       {kVDrink_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALdrink_3w}
+#define cflask5_3w       {kVGive_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALflask_3w}
+#define cheese1_3w       {kVEat_3w,       kRcheese_3w,  kDTnocgen_3w, 0,         0, kDTnull,        kDTnull,         kALeatcheese_3w}
+#define cheese2_3w       {kVDrop_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALdropcheese_3w}
+#define cheese3_3w       {kVPut_3w,       0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALdropcheese_3w}
+#define cheese4_3w       {kVTake_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALtakecheese_3w}
+#define cmake1_3w        {kVMake_3w,      0,         kDTnull,      0,         0, kDTsmade_3w,    kDTnull,         kALmakeclay_3w}
+#define cmake2_3w        {kVStick_3w,     kRpins_3w,    kDTnopins_3w, DONT_CARE, 0, kDTnull,        kDTnull,         kALstick_3w}
+#define cplane1_3w       {kVClimb_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTokgen_3w,     kALplane_3w}
+#define cplane2_3w       {kVInto_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTokgen_3w,     kALplane_3w}
+#define cplane3_3w       {kVSearch_3w,    0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTokgen_3w,     kALplane_3w}
+#define crystal_3w       {kVRub_3w,       kRcrystal_3w, kDTnocgen_3w, DONT_CARE, 0, kDTnull,        kDTnull,         kALcrystal_3w}
+#define csteps1_3w       {kVMakeUseOf_3w, 0,         kDTnull,      0,         0, kDTnull,        kDTnull,         kALsteps_3w}
+#define cstick1_3w       {kVStick_3w,     0,         kDTnull,      0,         0, kDTnull,        kDTnull,         kALstick_3w}
+#define cswing1_3w       {kVSwing_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTswinger_3w,   kALswing_3w}
+#define ctalknat_3w      {kVTalk_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALtalknat_3w}
+#define cube1_3w         {kVGive_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALgiveb_3w}
+#define cvine1_3w        {kVMakeUseOf_3w, 0,         kDTnull,      0,         0, kDTnull,        kDTnull,         kALvine_3w}
+#define cvine2_3w        {kVUntie_3w,     0,         kDTnull,      0,         0, kDTnull,        kDTnull,         kALuntie_vine_3w}
+#define cvine3_3w        {kVTie_3w,       0,         kDTnull,      0,         0, kDTnull,        kDTnull,         kALvine_3w}
+#define cwaterfall_3w    {kVLook_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALlookwfall_3w}
+#define cwaterpool_3w    {kVLook_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTswater_3w,    0}
+#define cwaterstream_3w  {kVLook_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTswater_3w,    0}
+#define dart_3w          {kVShoot_3w,     kRpipe_3w,    kDTnogun_3w,  DONT_CARE, 0, kDTnull,        kDTnull,         kALdart_3w}
+#define elephant_3w      {kVMakeUseOf_3w, 0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTuelephant_3w, 0}
+#define ghost1_3w        {kVMakeUseOf_3w, 0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTughost_3w,    0}
+#define ghost2_3w        {kVExorcise_3w,  kRexor_3w,    kDTnocex_3w,  DONT_CARE, 0, kDTnull,        kDTnull,         kALexorcise_3w}
+#define knock_3w         {kVKnock_3w,     0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTsNobody_3w,   0}
+#define lookrush_3w      {kVBehind_3w,    0,         kDTnull,      0,         1, kDTsfoundb_3w,  kDTnull,         kALfindbook_3w}
+#define readit_3w        {kVRead_3w,      0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTsread_3w,     0}
+#define rock1_3w         {kVBehind_3w,    0,         kDTnull,      0,         1, kDTsfoundc_3w,  kDTsfindc_3w,    kALfindcrystal_3w}
+#define swingc_3w        {kVSwing_3w,     0,         kDTnull,      0,         1, kDTsnoswing_3w, kDTswingcave_3w, 0}
+#define unlock_3w        {kVUnlock_3w,    0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTsUnlocked_3w, 0}
+#define usedoc_3w        {kVMakeUseOf_3w, 0,         kDTnull,      DONT_CARE, 0, kDTnull,        kDTnull,         kALtalkdoc_3w}
 
 cmd cbell_3w[]     = {bell_3w,         emptyCmd};
 cmd cbook_3w[]     = {book_3w,         emptyCmd};
@@ -4601,58 +4601,58 @@ const cmd *cmdList_3w[] = {
 	cvine_3w,   cwfall_3w,  cwpool_3w,    cwstream_3w
 };
 
-cmd blowdw_1d =       {kVBlow_1d,   0,        0,            0,         0, 0,          kDTokgen_1d,     kALblowdw_1d};
-cmd breakpkin_1d =    {kVBreak_1d,  0,        0,            0,         1, 0,          kDTokgen_1d,     kALpkin_1d};
-cmd brkrope_1d =      {kVBreak_1d,  0,        0,            DONT_CARE, 0, 0,          kDTsrbreak_1d,   0};
-cmd closebolt_1d =    {kVClose_1d,  0,        0,            2,         1, kDTsclose_1d,  kDTokgen_1d,     0};
-cmd closedoor1_1d =   {kVClose_1d,  0,        0,            2,         0, kDTsclose_1d,  0,            kALclosedoor1_1d};
-cmd closedoor2_1d =   {kVClose_1d,  0,        0,            1,         0, kDTsclose_1d,  0,            0};
-cmd closedoor3_1d =   {kVClose_1d,  0,        0,            1,         0, kDTsclose_1d,  0,            0};
-cmd closedoor4_1d =   {kVClose_1d,  0,        0,            1,         0, kDTsclose_1d,  0,            kALclosedoor4_1d};
-cmd closetrap_1d =    {kVClose_1d,  0,        0,            1,         0, kDTsclose_1d,  kDTokgen_1d,     kALclosetrap_1d};
-cmd closewdoors_1d =  {kVClose_1d,  0,        0,            1,         0, kDTsclose_1d,  0,            kALclosewdoors_1d};
-cmd cutrope_1d =      {kVCut_1d,    kRknife_1d,  kDTrnoknife_1d,  0,         1, kDTsnocut_1d,  kDTscut_1d,      kALcutrope_1d};
-cmd dropmask_1d =     {kVDrop_1d,   0,        0,            0,         0, kDTsworn3_1d,  0,            kALdropmask_1d};
-cmd droppkin_1d =     {kVDrop_1d,   kRpkin_1d,   kDTnocgen_1d,    0,         1, 0,          0,            kALpkin_1d};
-cmd eatchop_1d =      {kVEat_1d,    0,        0,            0,         0, 0,          0,            kALeatchop_1d};
-cmd getdw_1d =        {kVTake_1d,   0,        0,            0,         0, 0,          0,            kALcupbdw_1d};
-cmd getinboat_1d =    {kVInto_1d,   0,        0,            DONT_CARE, 0, 0,          0,            kALgetinboat_1d};
-cmd getknife_1d =     {kVTake_1d,   0,        0,            0,         0, 0,          0,            kALcupbpk_1d};
-cmd getoilcan_1d =    {kVTake_1d,   0,        0,            0,         0, 0,          0,            kALshedoil_1d};
-cmd getoutboat_1d =   {kVOutof_1d,  0,        0,            DONT_CARE, 0, 0,          0,            kALgetoutboat_1d};
-cmd givegold_1d =     {kVGive_1d,   0,        0,            0,         0, 0,          0,            kALgold_1d};
-cmd kickpkin_1d =     {kVAttack_1d, 0,        0,            0,         1, 0,          kDTokgen_1d,     kALpkin_1d};
-cmd knock_1d =        {kVKnock_1d,  0,        0,            DONT_CARE, 0, 0,          kDTsknock_1d,    0};
-cmd lockbolt_1d =     {kVLock_1d,   0,        0,            2,         1, kDTsclose_1d,  kDTokgen_1d,     0};
-cmd lockdoor_1d =     {kVLock_1d,   kRkey_1d,    kDTnockey_1d,    2,         0, kDTslock_1d,   kDTokgen_1d,     0};
-cmd lookcupb_1d =     {kVLook_1d,   kRcandle_1d, kDTnoccandle_1d, DONT_CARE, 0, 0,          0,            kALlookcupb_1d};
-cmd lookshed_1d =     {kVLook_1d,   kRcandle_1d, kDTnoccandle_1d, 0,         0, kDTsnosee_1d,  kDTsseeoil_1d,   0};
-cmd movecarp1_1d =    {kVMove_1d,   0,        0,            0,         0, 0,          kDTokgen_1d,     kALmovecarp_1d};
-cmd movecarp2_1d =    {kVLift_1d,   0,        0,            0,         0, 0,          kDTokgen_1d,     kALmovecarp_1d};
-cmd movecarp3_1d =    {kVUnder_1d,  0,        0,            0,         0, 0,          kDTokgen_1d,     kALmovecarp_1d};
-cmd offmask_1d =      {kVOff_1d,    0,        0,            1,         0, kDTsworn2_1d,  kDTokgen_1d,     kALswapmask_1d};
-cmd oilbolt_1d =      {kVOil_1d,    kRoil_1d,    kDTrnooil_1d,    0,         1, kDTsoiled_1d,  kDTokgen_1d,     0};
-cmd omattack_1d =     {kVAttack_1d, 0,        0,            0,         0, 0,          kDTsomattack_1d, 0};
-cmd ombreak_1d =      {kVBreak_1d,  0,        0,            0,         0, 0,          kDTsomattack_1d, 0};
-cmd omtalk_1d =       {kVTalk_1d,   0,        0,            DONT_CARE, 0, 0,          0,            kALoldman_1d};
-cmd openbolt_1d =     {kVOpen_1d,   0,        0,            1,         2, kDTsstuck_1d,  kDTokgen_1d,     0};
-cmd opendoor1_1d =    {kVOpen_1d,   0,        0,            1,         2, kDTsopen_1d,   0,            kALopendoor1_1d};
-cmd opendoor2_1d =    {kVOpen_1d,   0,        0,            0,         1, kDTsopen2_1d,  0,            kALopendoor2_1d};
-cmd opendoor3_1d =    {kVOpen_1d,   0,        0,            0,         1, kDTsopen2_1d,  0,            kALopendoor3_1d};
-cmd opendoor4_1d =    {kVOpen_1d,   0,        0,            0,         0, kDTsopen2_1d,  0,            kALopendoor4_1d};
-cmd openpkin_1d =     {kVOpen_1d,   0,        0,            0,         1, 0,          kDTokgen_1d,     kALpkin_1d};
-cmd opentrap_1d =     {kVOpen_1d,   0,        0,            0,         0, 0,          0,            kALopentrap_1d};
-cmd openwdoors_1d =   {kVOpen_1d,   0,        0,            0,         1, kDTsopen2_1d,  0,            kALopenwdoors_1d};
-cmd plugbung_1d =     {kVPlug_1d,   kRbung_1d,   kDTnocgen_1d,    0,         1, 0,          kDTokgen_1d,     kALplugbung_1d};
-cmd pushboat_1d =     {kVPush_1d,   0,        0,            DONT_CARE, 0, 0,          0,            kALpushboat_1d};
-cmd pushigor_1d =     {kVPush_1d,   0,        0,            0,         0, 0,          0,            kALigor_1d};
-cmd ruboilcan_1d =    {kVRub_1d,    0,        0,            0,         0, 0,          kDTsruboil_1d,   0};
-cmd throwchop_1d =    {kVThrow_1d,  0,        0,            0,         0, 0,          0,            kALthrowchop_1d};
-cmd unlkdoor_1d =     {kVUnlock_1d, kRkey_1d,    kDTnockey_1d,    0,         1, kDTsunlock_1d, kDTokgen_1d,     0};
-cmd unlock_1d =       {kVUnlock_1d, 0,        0,            DONT_CARE, 0, 0,          kDTsunlock_1d,   0};
-cmd unlockbolt_1d =   {kVUnlock_1d, 0,        0,            1,         2, kDTsstuck_1d,  kDTokgen_1d,     0};
-cmd untierope_1d =    {kVUntie_1d,  0,        0,            DONT_CARE, 0, 0,          kDTsuntie_1d,    0};
-cmd wearmask_1d =     {kVWear_1d,   kRmask_1d,   kDTnocgen_1d,    0,         1, kDTsworn1_1d,  kDTokgen_1d,     kALswapmask_1d};
+#define blowdw_1d        {kVBlow_1d,   0,        0,            0,         0, 0,          kDTokgen_1d,     kALblowdw_1d}
+#define breakpkin_1d     {kVBreak_1d,  0,        0,            0,         1, 0,          kDTokgen_1d,     kALpkin_1d}
+#define brkrope_1d       {kVBreak_1d,  0,        0,            DONT_CARE, 0, 0,          kDTsrbreak_1d,   0}
+#define closebolt_1d     {kVClose_1d,  0,        0,            2,         1, kDTsclose_1d,  kDTokgen_1d,     0}
+#define closedoor1_1d    {kVClose_1d,  0,        0,            2,         0, kDTsclose_1d,  0,            kALclosedoor1_1d}
+#define closedoor2_1d    {kVClose_1d,  0,        0,            1,         0, kDTsclose_1d,  0,            0}
+#define closedoor3_1d    {kVClose_1d,  0,        0,            1,         0, kDTsclose_1d,  0,            0}
+#define closedoor4_1d    {kVClose_1d,  0,        0,            1,         0, kDTsclose_1d,  0,            kALclosedoor4_1d}
+#define closetrap_1d     {kVClose_1d,  0,        0,            1,         0, kDTsclose_1d,  kDTokgen_1d,     kALclosetrap_1d}
+#define closewdoors_1d   {kVClose_1d,  0,        0,            1,         0, kDTsclose_1d,  0,            kALclosewdoors_1d}
+#define cutrope_1d       {kVCut_1d,    kRknife_1d,  kDTrnoknife_1d,  0,         1, kDTsnocut_1d,  kDTscut_1d,      kALcutrope_1d}
+#define dropmask_1d      {kVDrop_1d,   0,        0,            0,         0, kDTsworn3_1d,  0,            kALdropmask_1d}
+#define droppkin_1d      {kVDrop_1d,   kRpkin_1d,   kDTnocgen_1d,    0,         1, 0,          0,            kALpkin_1d}
+#define eatchop_1d       {kVEat_1d,    0,        0,            0,         0, 0,          0,            kALeatchop_1d}
+#define getdw_1d         {kVTake_1d,   0,        0,            0,         0, 0,          0,            kALcupbdw_1d}
+#define getinboat_1d     {kVInto_1d,   0,        0,            DONT_CARE, 0, 0,          0,            kALgetinboat_1d}
+#define getknife_1d      {kVTake_1d,   0,        0,            0,         0, 0,          0,            kALcupbpk_1d}
+#define getoilcan_1d     {kVTake_1d,   0,        0,            0,         0, 0,          0,            kALshedoil_1d}
+#define getoutboat_1d    {kVOutof_1d,  0,        0,            DONT_CARE, 0, 0,          0,            kALgetoutboat_1d}
+#define givegold_1d      {kVGive_1d,   0,        0,            0,         0, 0,          0,            kALgold_1d}
+#define kickpkin_1d      {kVAttack_1d, 0,        0,            0,         1, 0,          kDTokgen_1d,     kALpkin_1d}
+#define knock_1d         {kVKnock_1d,  0,        0,            DONT_CARE, 0, 0,          kDTsknock_1d,    0}
+#define lockbolt_1d      {kVLock_1d,   0,        0,            2,         1, kDTsclose_1d,  kDTokgen_1d,     0}
+#define lockdoor_1d      {kVLock_1d,   kRkey_1d,    kDTnockey_1d,    2,         0, kDTslock_1d,   kDTokgen_1d,     0}
+#define lookcupb_1d      {kVLook_1d,   kRcandle_1d, kDTnoccandle_1d, DONT_CARE, 0, 0,          0,            kALlookcupb_1d}
+#define lookshed_1d      {kVLook_1d,   kRcandle_1d, kDTnoccandle_1d, 0,         0, kDTsnosee_1d,  kDTsseeoil_1d,   0}
+#define movecarp1_1d     {kVMove_1d,   0,        0,            0,         0, 0,          kDTokgen_1d,     kALmovecarp_1d}
+#define movecarp2_1d     {kVLift_1d,   0,        0,            0,         0, 0,          kDTokgen_1d,     kALmovecarp_1d}
+#define movecarp3_1d     {kVUnder_1d,  0,        0,            0,         0, 0,          kDTokgen_1d,     kALmovecarp_1d}
+#define offmask_1d       {kVOff_1d,    0,        0,            1,         0, kDTsworn2_1d,  kDTokgen_1d,     kALswapmask_1d}
+#define oilbolt_1d       {kVOil_1d,    kRoil_1d,    kDTrnooil_1d,    0,         1, kDTsoiled_1d,  kDTokgen_1d,     0}
+#define omattack_1d      {kVAttack_1d, 0,        0,            0,         0, 0,          kDTsomattack_1d, 0}
+#define ombreak_1d       {kVBreak_1d,  0,        0,            0,         0, 0,          kDTsomattack_1d, 0}
+#define omtalk_1d        {kVTalk_1d,   0,        0,            DONT_CARE, 0, 0,          0,            kALoldman_1d}
+#define openbolt_1d      {kVOpen_1d,   0,        0,            1,         2, kDTsstuck_1d,  kDTokgen_1d,     0}
+#define opendoor1_1d     {kVOpen_1d,   0,        0,            1,         2, kDTsopen_1d,   0,            kALopendoor1_1d}
+#define opendoor2_1d     {kVOpen_1d,   0,        0,            0,         1, kDTsopen2_1d,  0,            kALopendoor2_1d}
+#define opendoor3_1d     {kVOpen_1d,   0,        0,            0,         1, kDTsopen2_1d,  0,            kALopendoor3_1d}
+#define opendoor4_1d     {kVOpen_1d,   0,        0,            0,         0, kDTsopen2_1d,  0,            kALopendoor4_1d}
+#define openpkin_1d      {kVOpen_1d,   0,        0,            0,         1, 0,          kDTokgen_1d,     kALpkin_1d}
+#define opentrap_1d      {kVOpen_1d,   0,        0,            0,         0, 0,          0,            kALopentrap_1d}
+#define openwdoors_1d    {kVOpen_1d,   0,        0,            0,         1, kDTsopen2_1d,  0,            kALopenwdoors_1d}
+#define plugbung_1d      {kVPlug_1d,   kRbung_1d,   kDTnocgen_1d,    0,         1, 0,          kDTokgen_1d,     kALplugbung_1d}
+#define pushboat_1d      {kVPush_1d,   0,        0,            DONT_CARE, 0, 0,          0,            kALpushboat_1d}
+#define pushigor_1d      {kVPush_1d,   0,        0,            0,         0, 0,          0,            kALigor_1d}
+#define ruboilcan_1d     {kVRub_1d,    0,        0,            0,         0, 0,          kDTsruboil_1d,   0}
+#define throwchop_1d     {kVThrow_1d,  0,        0,            0,         0, 0,          0,            kALthrowchop_1d}
+#define unlkdoor_1d      {kVUnlock_1d, kRkey_1d,    kDTnockey_1d,    0,         1, kDTsunlock_1d, kDTokgen_1d,     0}
+#define unlock_1d        {kVUnlock_1d, 0,        0,            DONT_CARE, 0, 0,          kDTsunlock_1d,   0}
+#define unlockbolt_1d    {kVUnlock_1d, 0,        0,            1,         2, kDTsstuck_1d,  kDTokgen_1d,     0}
+#define untierope_1d     {kVUntie_1d,  0,        0,            DONT_CARE, 0, 0,          kDTsuntie_1d,    0}
+#define wearmask_1d      {kVWear_1d,   kRmask_1d,   kDTnocgen_1d,    0,         1, kDTsworn1_1d,  kDTokgen_1d,     kALswapmask_1d}
 
 cmd boat_1d[] =    {getinboat_1d,  getoutboat_1d,  pushboat_1d,   emptyCmd};
 cmd bolt_1d[] =    {oilbolt_1d,    openbolt_1d,    unlockbolt_1d, closebolt_1d,  lockbolt_1d, emptyCmd};
@@ -4686,62 +4686,62 @@ const cmd *cmdList_1d[] = {
 	ward_1d,   whistle_1d
 };
 
-cmd climbdumb_2d =     {kVClimb_2d,  0,        0,          0,         0, 0,           0,                kALdumb_2d};
-cmd climbrope_2d =     {kVClimb_2d,  0,        0,          DONT_CARE, 0, 0,           0,                kALclimbrope_2d};
-cmd climbwell_2d =     {kVClimb_2d,  0,        0,          DONT_CARE, 0, 0,           0,                kALclimbwell_2d};
-cmd closedoor1_2d =    {kVClose_2d,  0,        0,          1,         0, kDTsclose_2d,   0,                0};
-cmd closedoor2_2d =    {kVClose_2d,  0,        0,          1,         0, kDTsclose_2d,   0,                0};
-cmd closedoor3_2d =    {kVClose_2d,  0,        0,          1,         0, kDTsclose_2d,   0,                0};
-cmd closesafe_2d =     {kVClose_2d,  0,        0,          1,         0, kDTsclose_2d,   kDTokgen_2d,         0};
-cmd dialphone_2d =     {kVDial_2d,   0,        0,          1,         1, kDTsdialed_2d,  0,                kALphone_2d};
-cmd dropdynamite_2d =  {kVDrop_2d,   kRdyn_2d,    kDTnocgen_2d,  DONT_CARE, 0, 0,           0,                kALdropdynamite_2d};
-cmd eatbanana_2d =     {kVEat_2d,    kRbanana_2d, kDTnocgen_2d,  0,         0, 0,           0,                kALeatbanana_2d};
-cmd eatgarlic_2d =     {kVEat_2d,    kRgarlic_2d, kDTnocgen_2d,  DONT_CARE, 0, 0,           0,                kALgarlic_2d};
-cmd firegun_2d =       {kVFire_2d,   kRgun_2d,    kDTnogun_2d,   0,         1, kDTsempty_2d,   0,                kALgun_2d};
-cmd getballoon_2d =    {kVTake_2d,   0,        0,          0,         0, 0,           0,                kALballoon_2d};
-cmd getbook_2d =       {kVTake_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALgetbook_2d};
-cmd getdynamite_2d =   {kVTake_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALgetdynamite_2d};
-cmd getletter_2d =     {kVTake_2d,   0,        0,          DONT_CARE, 0, kDTsgetlet_2d,  0,                0};
-cmd givebanana_2d =    {kVGive_2d,   kRbanana_2d, kDTnocgen_2d,  0,         0, 0,           0,                kALbanana_2d};
-cmd givebell_2d =      {kVGive_2d,   kRbell_2d,   kDTnocgen_2d,  DONT_CARE, 0, 0,           0,                kALgivebel_2d};
-cmd givecatnip_2d =    {kVGive_2d,   kRcatnip_2d, kDTnocgen_2d,  0,         0, kDTnopurps_2d,  kDTscatnip_2d,       0};
-cmd intodumb_2d =      {kVInto_2d,   0,        0,          0,         0, 0,           0,                kALdumb_2d};
-cmd knock_2d =         {kVKnock_2d,  0,        0,          DONT_CARE, 0, 0,           kDTtnoknock_2d,      0};
-cmd lightdynamite_2d = {kVStrike_2d, kRmatch_2d,  kDTnomatch_2d, DONT_CARE, 0, 0,           0,                kALlightdynamite_2d};
-cmd lookcubp_2d =      {kVLook_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALphoto_2d};
-cmd lookgarlic_2d =    {kVLook_2d,   0,        0,          0,         1, kDTempty_2d,    kDTfindclove_2d,     kALgetgarlic_2d};
-cmd lookhole_2d =      {kVLook_2d,   0,        0,          0,         0, kDTdarkhole_2d, 0,                kALkeyhole_2d};
-cmd lookkennel_2d =    {kVLook_2d,   0,        0,          0,         0, 0,           0,                kALlookkennel_2d};
-cmd lookmat_2d =       {kVLook_2d,   0,        0,          0,         1, kDTempty_2d,    kDTfindmatch_2d,     kALgetmatch_2d};
-cmd lookmatch_2d =     {kVLook_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALlookmatch_2d};
-cmd opencubp_2d =      {kVOpen_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALphoto_2d};
-cmd opendoor1_2d =     {kVOpen_2d,   0,        0,          0,         1, kDTsopen1_2d,   0,                kALopendoor1_2d};
-cmd opendoor2_2d =     {kVOpen_2d,   0,        0,          0,         1, kDTsopen1_2d,   0,                kALopendoor2_2d};
-cmd opendoor3_2d =     {kVOpen_2d,   0,        0,          0,         1, kDTsopen1_2d,   0,                kALopendoor3_2d};
-cmd opengarlic_2d =    {kVOpen_2d,   0,        0,          0,         1, kDTempty_2d,    kDTfindclove_2d,     kALgetgarlic_2d};
-cmd openkdoor_2d =     {kVOpen_2d,   0,        0,          0,         0, 0,           kDTwontopen_2d,      0};
-cmd openlamp_2d =      {kVOpen_2d,   kRlamp_2d,   kDTnocgen_2d,  DONT_CARE, 0, 0,           kDTempty_2d,         0};
-cmd openmat_2d =       {kVOpen_2d,   0,        0,          0,         1, kDTempty_2d,    kDTfindmatch_2d,     kALgetmatch_2d};
-cmd openpdoor_2d =     {kVOpen_2d,   0,        0,          0,         0, 0,           kDTspdoor_2d,        0};
-cmd opensafe_2d =      {kVOpen_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALsafe_2d};
-cmd popballoon_2d =    {kVBreak_2d,  0,        0,          0,         0, 0,           0,                kALballoon_2d};
-cmd pushblue_2d =      {kVPush_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALworkgates_2d};
-cmd pushbutton_2d =    {kVPush_2d,   0,        0,          DONT_CARE, 0, 0,           kDTtnopushbutton_2d, 0};
-cmd pushgreen_2d =     {kVPush_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALbugzapper_2d};
-cmd pushpaper_2d =     {kVPush_2d,   kRpaper_2d,  kDTnocgen_2d,  0,         1, 0,           kDTokgen_2d,         kALpushpaper_2d};
-cmd pushpencil_2d =    {kVPush_2d,   kRpencil_2d, kDTnocgen_2d,  0,         0, 0,           0,                kALpushpencil_2d};
-cmd pushred_2d =       {kVPush_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALshedlight_2d};
-cmd pushyellow_2d =    {kVPush_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALgatelight_2d};
-cmd readletter_2d =    {kVRead_2d,   0,        0,          3,         3, kDTsnoread_2d,  kDTsread_2d,         kALreadlet_2d};
-cmd readwill_2d =      {kVRead_2d,   kRwill_2d,   kDTnocgen_2d,  1,         1, 0,           0,                kALwill_2d};
-cmd ringbell_2d =      {kVRing_2d,   kRbell_2d,   kDTnocgen_2d,  DONT_CARE, 0, 0,           0,                kALbell_2d};
-cmd rubcatnip_2d =     {kVRub_2d,    kRcatnip_2d, kDTnocgen_2d,  0,         0, kDTnopurps_2d,  0,                kALcatnip_2d};
-cmd rublamp_2d =       {kVRub_2d,    kRlamp_2d,   kDTnocgen_2d,  0,         0, kDTnopurps_2d,  0,                kALlamp_2d};
-cmd serum_2d =         {kVDrink_2d,  kRserum_2d,  kDTnocgen_2d,  0,         1, kDTsnosee_2d,   0,                kALbottle_2d};
-cmd strikematch_2d =   {kVStrike_2d, kRmatch_2d,  kDTnocgen_2d,  DONT_CARE, 0, 0,           0,                kALstrikematch_2d};
-cmd talkharry_2d =     {kVTalk_2d,   0,        0,          0,         1, kDTsharry_2d,   0,                kALharry_2d};
-cmd throwstick_2d =    {kVThrow_2d,  kRstick_2d,  kDTnocgen_2d,  0,         1, 0,           0,                kALthrowstick_2d};
-cmd unlock_2d =        {kVUnlock_2d, 0,        0,          DONT_CARE, 0, 0,           kDTtnounlock_2d,     0};
+#define climbdumb_2d      {kVClimb_2d,  0,        0,          0,         0, 0,           0,                kALdumb_2d}
+#define climbrope_2d      {kVClimb_2d,  0,        0,          DONT_CARE, 0, 0,           0,                kALclimbrope_2d}
+#define climbwell_2d      {kVClimb_2d,  0,        0,          DONT_CARE, 0, 0,           0,                kALclimbwell_2d}
+#define closedoor1_2d     {kVClose_2d,  0,        0,          1,         0, kDTsclose_2d,   0,                0}
+#define closedoor2_2d     {kVClose_2d,  0,        0,          1,         0, kDTsclose_2d,   0,                0}
+#define closedoor3_2d     {kVClose_2d,  0,        0,          1,         0, kDTsclose_2d,   0,                0}
+#define closesafe_2d      {kVClose_2d,  0,        0,          1,         0, kDTsclose_2d,   kDTokgen_2d,         0}
+#define dialphone_2d      {kVDial_2d,   0,        0,          1,         1, kDTsdialed_2d,  0,                kALphone_2d}
+#define dropdynamite_2d   {kVDrop_2d,   kRdyn_2d,    kDTnocgen_2d,  DONT_CARE, 0, 0,           0,                kALdropdynamite_2d}
+#define eatbanana_2d      {kVEat_2d,    kRbanana_2d, kDTnocgen_2d,  0,         0, 0,           0,                kALeatbanana_2d}
+#define eatgarlic_2d      {kVEat_2d,    kRgarlic_2d, kDTnocgen_2d,  DONT_CARE, 0, 0,           0,                kALgarlic_2d}
+#define firegun_2d        {kVFire_2d,   kRgun_2d,    kDTnogun_2d,   0,         1, kDTsempty_2d,   0,                kALgun_2d}
+#define getballoon_2d     {kVTake_2d,   0,        0,          0,         0, 0,           0,                kALballoon_2d}
+#define getbook_2d        {kVTake_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALgetbook_2d}
+#define getdynamite_2d    {kVTake_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALgetdynamite_2d}
+#define getletter_2d      {kVTake_2d,   0,        0,          DONT_CARE, 0, kDTsgetlet_2d,  0,                0}
+#define givebanana_2d     {kVGive_2d,   kRbanana_2d, kDTnocgen_2d,  0,         0, 0,           0,                kALbanana_2d}
+#define givebell_2d       {kVGive_2d,   kRbell_2d,   kDTnocgen_2d,  DONT_CARE, 0, 0,           0,                kALgivebel_2d}
+#define givecatnip_2d     {kVGive_2d,   kRcatnip_2d, kDTnocgen_2d,  0,         0, kDTnopurps_2d,  kDTscatnip_2d,       0}
+#define intodumb_2d       {kVInto_2d,   0,        0,          0,         0, 0,           0,                kALdumb_2d}
+#define knock_2d          {kVKnock_2d,  0,        0,          DONT_CARE, 0, 0,           kDTtnoknock_2d,      0}
+#define lightdynamite_2d  {kVStrike_2d, kRmatch_2d,  kDTnomatch_2d, DONT_CARE, 0, 0,           0,                kALlightdynamite_2d}
+#define lookcubp_2d       {kVLook_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALphoto_2d}
+#define lookgarlic_2d     {kVLook_2d,   0,        0,          0,         1, kDTempty_2d,    kDTfindclove_2d,     kALgetgarlic_2d}
+#define lookhole_2d       {kVLook_2d,   0,        0,          0,         0, kDTdarkhole_2d, 0,                kALkeyhole_2d}
+#define lookkennel_2d     {kVLook_2d,   0,        0,          0,         0, 0,           0,                kALlookkennel_2d}
+#define lookmat_2d        {kVLook_2d,   0,        0,          0,         1, kDTempty_2d,    kDTfindmatch_2d,     kALgetmatch_2d}
+#define lookmatch_2d      {kVLook_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALlookmatch_2d}
+#define opencubp_2d       {kVOpen_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALphoto_2d}
+#define opendoor1_2d      {kVOpen_2d,   0,        0,          0,         1, kDTsopen1_2d,   0,                kALopendoor1_2d}
+#define opendoor2_2d      {kVOpen_2d,   0,        0,          0,         1, kDTsopen1_2d,   0,                kALopendoor2_2d}
+#define opendoor3_2d      {kVOpen_2d,   0,        0,          0,         1, kDTsopen1_2d,   0,                kALopendoor3_2d}
+#define opengarlic_2d     {kVOpen_2d,   0,        0,          0,         1, kDTempty_2d,    kDTfindclove_2d,     kALgetgarlic_2d}
+#define openkdoor_2d      {kVOpen_2d,   0,        0,          0,         0, 0,           kDTwontopen_2d,      0}
+#define openlamp_2d       {kVOpen_2d,   kRlamp_2d,   kDTnocgen_2d,  DONT_CARE, 0, 0,           kDTempty_2d,         0}
+#define openmat_2d        {kVOpen_2d,   0,        0,          0,         1, kDTempty_2d,    kDTfindmatch_2d,     kALgetmatch_2d}
+#define openpdoor_2d      {kVOpen_2d,   0,        0,          0,         0, 0,           kDTspdoor_2d,        0}
+#define opensafe_2d       {kVOpen_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALsafe_2d}
+#define popballoon_2d     {kVBreak_2d,  0,        0,          0,         0, 0,           0,                kALballoon_2d}
+#define pushblue_2d       {kVPush_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALworkgates_2d}
+#define pushbutton_2d     {kVPush_2d,   0,        0,          DONT_CARE, 0, 0,           kDTtnopushbutton_2d, 0}
+#define pushgreen_2d      {kVPush_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALbugzapper_2d}
+#define pushpaper_2d      {kVPush_2d,   kRpaper_2d,  kDTnocgen_2d,  0,         1, 0,           kDTokgen_2d,         kALpushpaper_2d}
+#define pushpencil_2d     {kVPush_2d,   kRpencil_2d, kDTnocgen_2d,  0,         0, 0,           0,                kALpushpencil_2d}
+#define pushred_2d        {kVPush_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALshedlight_2d}
+#define pushyellow_2d     {kVPush_2d,   0,        0,          DONT_CARE, 0, 0,           0,                kALgatelight_2d}
+#define readletter_2d     {kVRead_2d,   0,        0,          3,         3, kDTsnoread_2d,  kDTsread_2d,         kALreadlet_2d}
+#define readwill_2d       {kVRead_2d,   kRwill_2d,   kDTnocgen_2d,  1,         1, 0,           0,                kALwill_2d}
+#define ringbell_2d       {kVRing_2d,   kRbell_2d,   kDTnocgen_2d,  DONT_CARE, 0, 0,           0,                kALbell_2d}
+#define rubcatnip_2d      {kVRub_2d,    kRcatnip_2d, kDTnocgen_2d,  0,         0, kDTnopurps_2d,  0,                kALcatnip_2d}
+#define rublamp_2d        {kVRub_2d,    kRlamp_2d,   kDTnocgen_2d,  0,         0, kDTnopurps_2d,  0,                kALlamp_2d}
+#define serum_2d          {kVDrink_2d,  kRserum_2d,  kDTnocgen_2d,  0,         1, kDTsnosee_2d,   0,                kALbottle_2d}
+#define strikematch_2d    {kVStrike_2d, kRmatch_2d,  kDTnocgen_2d,  DONT_CARE, 0, 0,           0,                kALstrikematch_2d}
+#define talkharry_2d      {kVTalk_2d,   0,        0,          0,         1, kDTsharry_2d,   0,                kALharry_2d}
+#define throwstick_2d     {kVThrow_2d,  kRstick_2d,  kDTnocgen_2d,  0,         1, 0,           0,                kALthrowstick_2d}
+#define unlock_2d         {kVUnlock_2d, 0,        0,          DONT_CARE, 0, 0,           kDTtnounlock_2d,     0}
 
 cmd balloon_2d[] =  {popballoon_2d,  getballoon_2d,   emptyCmd};
 cmd banana_2d[] =   {givebanana_2d,  eatbanana_2d,    emptyCmd};
@@ -4792,49 +4792,49 @@ const cmd *cmdList_2d[] = {
 	well_2d,     will_2d,    yellow_2d
 };
 
-cmd bell_3d =         {kVRing_3d,     kRbell_3d,    kDTnocgen_3d, DONT_CARE, 0, 0,          kDTokbell_3d,    0};
-cmd blow_3d =         {kVBlow_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALdart_3d};
-cmd book_3d =         {kVRead_3d,     kRbook_3d,    kDTnocgen_3d, DONT_CARE, 0, 0,          0,            kALreadbook_3d};
-cmd cage1_3d =        {kVOpen_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALopencage_3d};
-cmd cage2_3d =        {kVClose_3d,    0,         0,         DONT_CARE, 0, 0,          kDTokgen_3d,     0};
-cmd cage3_3d =        {kVTake_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALtakecage_3d};
-cmd candle1_3d =      {kVDouse_3d,    0,         0,         1,         0, kDTsunlit_3d,  kDTokgen_3d,     0};
-cmd candle2_3d =      {kVStrike_3d,   0,         0,         0,         1, kDTslit_3d,    kDTokgen_3d,     0};
-cmd cdoor1_3d =       {kVOpen_3d,     0,         0,         0,         0, kDTsopen1_3d,  0,            kALopendoor_3d};
-cmd cdoor2_3d =       {kVClose_3d,    0,         0,         1,         0, kDTsclose_3d,  kDTokgen_3d,     kALclosedoor_3d};
-cmd cexit1_3d =       {kVOutof_3d,    0,         0,         DONT_CARE, 0, 0,          kDTokgen_3d,     kALexit_3d};
-cmd cexit2_3d =       {kVClimb_3d,    0,         0,         DONT_CARE, 0, 0,          kDTokgen_3d,     kALexit_3d};
-cmd cflask1_3d =      {kVFill_3d,     0,         0,         0,         1, kDTsfull_3d,   0,            kALfill_3d};
-cmd cflask2_3d =      {kVPut_3d,      0,         0,         0,         1, kDTsfull_3d,   0,            kALfill_3d};
-cmd cflask3_3d =      {kVEmpty_3d,    0,         0,         DONT_CARE, 0, 0,          0,            kALempty_3d};
-cmd cflask4_3d =      {kVDrink_3d,    0,         0,         DONT_CARE, 0, 0,          0,            kALdrink_3d};
-cmd cflask5_3d =      {kVGive_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALflask_3d};
-cmd cheese1_3d =      {kVEat_3d,      kRcheese_3d,  kDTnocgen_3d, 0,         0, 0,          0,            kALeatcheese_3d};
-cmd cheese2_3d =      {kVDrop_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALdropcheese_3d};
-cmd cheese3_3d =      {kVPut_3d,      0,         0,         DONT_CARE, 0, 0,          0,            kALdropcheese_3d};
-cmd cheese4_3d =      {kVTake_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALtakecheese_3d};
-cmd cmake1_3d =       {kVMake_3d,     0,         0,         0,         0, kDTsmade_3d,   0,            kALmakeclay_3d};
-cmd cmake2_3d =       {kVStick_3d,    kRpins_3d,    kDTnopins_3d, DONT_CARE, 0, 0,          0,            kALstick_3d};
-cmd cplane1_3d =      {kVClimb_3d,    0,         0,         DONT_CARE, 0, 0,          kDTokgen_3d,     kALplane_3d};
-cmd cplane2_3d =      {kVInto_3d,     0,         0,         DONT_CARE, 0, 0,          kDTokgen_3d,     kALplane_3d};
-cmd cplane3_3d =      {kVSearch_3d,   0,         0,         DONT_CARE, 0, 0,          kDTokgen_3d,     kALplane_3d};
-cmd crystal_3d =      {kVRub_3d,      kRcrystal_3d, kDTnocgen_3d, DONT_CARE, 0, 0,          0,            kALcrystal_3d};
-cmd cstick1_3d =      {kVStick_3d,    0,         0,         0,         0, 0,          0,            kALstick_3d};
-cmd cswing1_3d =      {kVSwing_3d,    0,         0,         DONT_CARE, 0, 0,          kDTokgen_3d,     kALswing_3d};
-cmd ctalknat_3d =     {kVTalk_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALtalknat_3d};
-cmd cube1_3d =        {kVGive_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALgiveb_3d};
-cmd cvine1_3d =       {kVUntie_3d,    0,         0,         0,         0, 0,          0,            kALuntie_vine_3d};
-cmd cvine2_3d =       {kVTie_3d,      0,         0,         0,         0, 0,          0,            kALvine_3d};
-cmd cwaterfall_3d =   {kVLook_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALlookwfall_3d};
-cmd cwaterpool_3d =   {kVLook_3d,     0,         0,         DONT_CARE, 0, 0,          kDTdull_3d,      0};
-cmd cwaterstream_3d = {kVLook_3d,     0,         0,         DONT_CARE, 0, 0,          kDTdull_3d,      0};
-cmd dart_3d =         {kVShoot_3d,    0,         0,         DONT_CARE, 0, 0,          0,            kALdart_3d};
-cmd ghost_3d =        {kVExorcise_3d, kRexor_3d,    kDTnocex_3d,  DONT_CARE, 0, 0,          0,            kALexorcise_3d};
-cmd knock_3d =        {kVKnock_3d,    0,         0,         DONT_CARE, 0, 0,          kDTsNobody_3d,   0};
-cmd readit_3d =       {kVRead_3d,     0,         0,         DONT_CARE, 0, 0,          kDTsread_3d,     0};
-cmd rock1_3d =        {kVBehind_3d,   0,         0,         0,         1, kDTsfoundc_3d, kDTsfindc_3d,    kALfindcrystal_3d};
-cmd swingc_3d =       {kVSwing_3d,    0,         0,         DONT_CARE, 0, 0,          kDTswingcave_3d, 0};
-cmd unlock_3d =       {kVUnlock_3d,   0,         0,         DONT_CARE, 0, 0,          kDTsUnlocked_3d, 0};
+#define bell_3d          {kVRing_3d,     kRbell_3d,    kDTnocgen_3d, DONT_CARE, 0, 0,          kDTokbell_3d,    0}
+#define blow_3d          {kVBlow_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALdart_3d}
+#define book_3d          {kVRead_3d,     kRbook_3d,    kDTnocgen_3d, DONT_CARE, 0, 0,          0,            kALreadbook_3d}
+#define cage1_3d         {kVOpen_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALopencage_3d}
+#define cage2_3d         {kVClose_3d,    0,         0,         DONT_CARE, 0, 0,          kDTokgen_3d,     0}
+#define cage3_3d         {kVTake_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALtakecage_3d}
+#define candle1_3d       {kVDouse_3d,    0,         0,         1,         0, kDTsunlit_3d,  kDTokgen_3d,     0}
+#define candle2_3d       {kVStrike_3d,   0,         0,         0,         1, kDTslit_3d,    kDTokgen_3d,     0}
+#define cdoor1_3d        {kVOpen_3d,     0,         0,         0,         0, kDTsopen1_3d,  0,            kALopendoor_3d}
+#define cdoor2_3d        {kVClose_3d,    0,         0,         1,         0, kDTsclose_3d,  kDTokgen_3d,     kALclosedoor_3d}
+#define cexit1_3d        {kVOutof_3d,    0,         0,         DONT_CARE, 0, 0,          kDTokgen_3d,     kALexit_3d}
+#define cexit2_3d        {kVClimb_3d,    0,         0,         DONT_CARE, 0, 0,          kDTokgen_3d,     kALexit_3d}
+#define cflask1_3d       {kVFill_3d,     0,         0,         0,         1, kDTsfull_3d,   0,            kALfill_3d}
+#define cflask2_3d       {kVPut_3d,      0,         0,         0,         1, kDTsfull_3d,   0,            kALfill_3d}
+#define cflask3_3d       {kVEmpty_3d,    0,         0,         DONT_CARE, 0, 0,          0,            kALempty_3d}
+#define cflask4_3d       {kVDrink_3d,    0,         0,         DONT_CARE, 0, 0,          0,            kALdrink_3d}
+#define cflask5_3d       {kVGive_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALflask_3d}
+#define cheese1_3d       {kVEat_3d,      kRcheese_3d,  kDTnocgen_3d, 0,         0, 0,          0,            kALeatcheese_3d}
+#define cheese2_3d       {kVDrop_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALdropcheese_3d}
+#define cheese3_3d       {kVPut_3d,      0,         0,         DONT_CARE, 0, 0,          0,            kALdropcheese_3d}
+#define cheese4_3d       {kVTake_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALtakecheese_3d}
+#define cmake1_3d        {kVMake_3d,     0,         0,         0,         0, kDTsmade_3d,   0,            kALmakeclay_3d}
+#define cmake2_3d        {kVStick_3d,    kRpins_3d,    kDTnopins_3d, DONT_CARE, 0, 0,          0,            kALstick_3d}
+#define cplane1_3d       {kVClimb_3d,    0,         0,         DONT_CARE, 0, 0,          kDTokgen_3d,     kALplane_3d}
+#define cplane2_3d       {kVInto_3d,     0,         0,         DONT_CARE, 0, 0,          kDTokgen_3d,     kALplane_3d}
+#define cplane3_3d       {kVSearch_3d,   0,         0,         DONT_CARE, 0, 0,          kDTokgen_3d,     kALplane_3d}
+#define crystal_3d       {kVRub_3d,      kRcrystal_3d, kDTnocgen_3d, DONT_CARE, 0, 0,          0,            kALcrystal_3d}
+#define cstick1_3d       {kVStick_3d,    0,         0,         0,         0, 0,          0,            kALstick_3d}
+#define cswing1_3d       {kVSwing_3d,    0,         0,         DONT_CARE, 0, 0,          kDTokgen_3d,     kALswing_3d}
+#define ctalknat_3d      {kVTalk_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALtalknat_3d}
+#define cube1_3d         {kVGive_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALgiveb_3d}
+#define cvine1_3d        {kVUntie_3d,    0,         0,         0,         0, 0,          0,            kALuntie_vine_3d}
+#define cvine2_3d        {kVTie_3d,      0,         0,         0,         0, 0,          0,            kALvine_3d}
+#define cwaterfall_3d    {kVLook_3d,     0,         0,         DONT_CARE, 0, 0,          0,            kALlookwfall_3d}
+#define cwaterpool_3d    {kVLook_3d,     0,         0,         DONT_CARE, 0, 0,          kDTdull_3d,      0}
+#define cwaterstream_3d  {kVLook_3d,     0,         0,         DONT_CARE, 0, 0,          kDTdull_3d,      0}
+#define dart_3d          {kVShoot_3d,    0,         0,         DONT_CARE, 0, 0,          0,            kALdart_3d}
+#define ghost_3d         {kVExorcise_3d, kRexor_3d,    kDTnocex_3d,  DONT_CARE, 0, 0,          0,            kALexorcise_3d}
+#define knock_3d         {kVKnock_3d,    0,         0,         DONT_CARE, 0, 0,          kDTsNobody_3d,   0}
+#define readit_3d        {kVRead_3d,     0,         0,         DONT_CARE, 0, 0,          kDTsread_3d,     0}
+#define rock1_3d         {kVBehind_3d,   0,         0,         0,         1, kDTsfoundc_3d, kDTsfindc_3d,    kALfindcrystal_3d}
+#define swingc_3d        {kVSwing_3d,    0,         0,         DONT_CARE, 0, 0,          kDTswingcave_3d, 0}
+#define unlock_3d        {kVUnlock_3d,   0,         0,         DONT_CARE, 0, 0,          kDTsUnlocked_3d, 0}
 
 cmd cbell_3d[] =     {bell_3d,         emptyCmd};
 cmd cbook_3d[] =     {book_3d,         emptyCmd};
