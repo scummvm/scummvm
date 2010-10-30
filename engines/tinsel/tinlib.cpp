@@ -4945,9 +4945,6 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 			else {
 				Play(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape, false,
 						pic->event, pic->hPoly, pic->idActor);
-
-				if (coroParam)
-					return 0;
 			}
 			return -4;
 
