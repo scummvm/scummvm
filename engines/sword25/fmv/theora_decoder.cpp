@@ -345,7 +345,7 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 			int maxsamples = (AUDIOFD_FRAGSIZE - _audiobufFill) / 2 / _vorbisInfo.channels;
 			for (i = 0; i < ret && i < maxsamples; i++)
 				for (j = 0; j < _vorbisInfo.channels; j++) {
-					int val = CLIP((int)rint(pcm[j][i] * 32767.f), -32768, 32768);
+					int val = CLIP((int)rint(pcm[j][i] * 32767.f), -32768, 32767);
 					_audiobuf[count++] = val;
 				}
 
@@ -411,11 +411,14 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 	}
 
 	// If playback has begun, top audio buffer off immediately.
+	if (_stateFlag && _audiobufReady) {
 /* FIXME: This is currently crashing
-	if (_stateFlag) {
 		_audStream->queueBuffer((byte *)_audiobuf, AUDIOFD_FRAGSIZE, DisposeAfterUse::NO, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO);
-	}
 */
+
+		_audiobufFill = 0;
+		_audiobufReady = false;
+	}
 
 	// are we at or past time for this video frame?
 	if (_stateFlag && _videobufReady) {
