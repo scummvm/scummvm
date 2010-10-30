@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "md5.h"
 
 #define GET_UINT32(n, b, i)	(n) = READ_LE_UINT32(b + i)
