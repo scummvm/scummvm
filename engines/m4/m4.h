@@ -161,7 +161,6 @@ public:
 
 	const char *getGameFile(int fileType);
 	Common::EventManager *eventMan() { return _eventMan; }
-	OSystem *system() { return _system; }
 
 	const M4GameDescription *_gameDescription;
 
