@@ -267,6 +267,12 @@ int LoLEngine::olol_setItemProperty(EMCState *script) {
 	tmp->nameStringId = stackPos(1);
 	tmp->shpIndex = stackPos(2);
 	tmp->type = stackPos(3);
+
+	// WORKAROUND for unpatched early floppy versions.
+	// The Vaelan's cube should not be able to be equipped in a weapon slot.
+	if (stackPos(0) == 264 && tmp->type == 5)
+		tmp->type = 0;
+
 	tmp->itemScriptFunc = stackPos(4);
 	tmp->might = stackPos(5);
 	tmp->skill = stackPos(6);
