@@ -96,7 +96,7 @@ private:
 	uif_hdr_t *getUIFHeader(uif_t id);
 
 	pbdata_t pbdata;
-	FILE *fpb;
+//	FILE *fpb;
 
 //Strangerke : Not used?
 	void     openPlaybackFile(bool playbackFl, bool recordFl);
