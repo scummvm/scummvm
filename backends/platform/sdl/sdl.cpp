@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #if defined(WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -79,7 +82,7 @@
 #endif
 
 #if defined(MACOSX) || defined(IPHONE)
-#include "CoreFoundation/CoreFoundation.h"
+#include <CoreFoundation/CoreFoundation.h>
 #endif
 
 

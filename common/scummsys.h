@@ -437,5 +437,6 @@
 	typedef uint16 OverlayColor;
 #endif
 
+#include <common/forbidden.h>
 
 #endif

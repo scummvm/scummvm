@@ -36,6 +36,9 @@
 
 #if defined __MINT__
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include <osbind.h>
 #include "sound/mpu401.h"
 #include "common/util.h"

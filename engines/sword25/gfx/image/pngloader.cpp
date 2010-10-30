@@ -32,6 +32,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use png.h
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "sword25/gfx/image/image.h"
 #include "sword25/gfx/image/pngloader.h"
 #include <png.h>

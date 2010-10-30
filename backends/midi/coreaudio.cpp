@@ -24,6 +24,9 @@
 
 #ifdef MACOSX
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 // HACK to disable deprecated warnings under Mac OS X 10.5.
 // Apple depracted the AUGraphNewNode & AUGraphGetNodeInfo APIs
 // in favor of the new AUGraphAddNode & AUGraphNodeInfo APIs.

@@ -32,6 +32,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use png.h
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #define BS_LOG_PREFIX "SCREENSHOT"
 
 #include "common/system.h"

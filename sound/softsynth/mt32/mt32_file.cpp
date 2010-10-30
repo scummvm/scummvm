@@ -19,6 +19,12 @@
  * IN THE SOFTWARE.
  */
 
+
+// FIXME: Disable symbol overrides so that we can use system headers.
+// But we *really* should get rid of this usage of FILE, fopen etc.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+
 #include <stdio.h>
 
 #include "mt32emu.h"
@@ -37,15 +43,15 @@ namespace MT32Emu {
 	}
 
 	void ANSIFile::close() {
-		fclose(fp);
+		fclose((FILE *)fp);
 	}
 
 	size_t ANSIFile::read(void *in, size_t size) {
-		return fread(in, 1, size, fp);
+		return fread(in, 1, size, (FILE *)fp);
 	}
 
 	bool ANSIFile::readBit8u(Bit8u *in) {
-		int c = fgetc(fp);
+		int c = fgetc((FILE *)fp);
 		if (c == EOF)
 			return false;
 		*in = (Bit8u)c;
@@ -69,11 +75,11 @@ namespace MT32Emu {
 	}
 
 	size_t ANSIFile::write(const void *out, size_t size) {
-		return fwrite(out, 1, size, fp);
+		return fwrite(out, 1, size, (FILE *)fp);
 	}
 
 	bool ANSIFile::writeBit8u(Bit8u out) {
-		return fputc(out, fp) != EOF;
+		return fputc(out, (FILE *)fp) != EOF;
 	}
 
 	bool File::writeBit16u(Bit16u out) {
@@ -103,6 +109,6 @@ namespace MT32Emu {
 	}
 
 	bool ANSIFile::isEOF() {
-		return feof(fp) != 0;
+		return feof((FILE *)fp) != 0;
 	}
 }

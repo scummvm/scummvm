@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 // Fix for bug #2895217 "MSVC compilation broken with r47595":
 // We need to keep this on top of the "common/scummsys.h" include,
 // otherwise we will get errors about the windows headers redefining

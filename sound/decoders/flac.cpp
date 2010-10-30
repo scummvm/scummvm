@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides for FILE as that is used in FLAC headers
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
 #include "sound/decoders/flac.h"
 
 #ifdef USE_FLAC
