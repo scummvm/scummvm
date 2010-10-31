@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "osys_main.h"
 
 const OSystem::GraphicsMode* OSystem_IPHONE::getSupportedGraphicsModes() const {
