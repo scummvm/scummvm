@@ -22,6 +22,10 @@
  * $Id$
  */
 
+// Disable symbol overrides so that we can use system headers.
+// FIXME: Necessary for the PS2 port, should get rid of this eventually.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/util.h"

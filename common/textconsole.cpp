@@ -22,13 +22,12 @@
  * $Id$
  */
 
+// Disable symbol overrides so that we can use system headers.
+// FIXME: Necessary for the PS2 port, should get rid of this eventually.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/textconsole.h"
 #include "common/system.h"
-
-#ifdef _WIN32_WCE
-// This is required for the debugger attachment
-extern bool isSmartphone();
-#endif
 
 #ifdef __PLAYSTATION2__
 	// for those replaced fopen/fread/etc functions
