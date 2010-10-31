@@ -155,7 +155,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 
 			// New text objects
 			sprintf(PositionString, "%d %d", aniX + Loffset, aniY + Toffset);
-			_ctx->cpText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), PositionString,
+			_ctx->cpText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
 						0, CPOSX, POSY, GetTagFontHandle(), TXT_CENTRE);
 			if (DispPath) {
 				HPOLYGON hp = InPolygon(aniX + Loffset, aniY + Toffset, PATH);
@@ -167,7 +167,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 						PolyCornerX(hp, 1), PolyCornerY(hp, 1),
 						PolyCornerX(hp, 2), PolyCornerY(hp, 2),
 						PolyCornerX(hp, 3), PolyCornerY(hp, 3));
-				_ctx->cpathText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), PositionString,
+				_ctx->cpathText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
 							0, 4, POSY+ 10, GetTagFontHandle(), 0);
 			}
 
@@ -213,7 +213,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 
 				// create new text object list
 				sprintf(PositionString, "%d %d", aniX, aniY);
-				_ctx->rpText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), PositionString,
+				_ctx->rpText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
 								0, LPOSX, POSY,	GetTagFontHandle(), TXT_CENTRE);
 
 				// update previous position
@@ -232,7 +232,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 			}
 
 			sprintf(PositionString, "String: %d", newestString);
-			_ctx->spText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), PositionString,
+			_ctx->spText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
 						0, SPOSX, POSY+10, GetTalkFontHandle(), TXT_CENTRE);
 
 			// update previous value
@@ -407,7 +407,7 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 
 				// May have buggered cursor
 				EndCursorFollowed();
-				*ppText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), tagBuffer,
+				*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), tagBuffer,
 						0, tagX, tagY, GetTagFontHandle(), TXT_CENTRE, 0);
 				assert(*ppText);
 				MultiSetZPosition(*ppText, Z_TAG_TEXT);
@@ -452,7 +452,7 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 
 				PlayfieldGetPos(FIELD_WORLD, &tagX, &tagY);
 				LoadStringRes(GetActorTag(ano), TextBufferAddr(), TBUFSZ);
-				*ppText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
+				*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
 							0, xtext - tagX, ytext - tagY, GetTagFontHandle(), TXT_CENTRE);
 				assert(*ppText); // Actor tag string produced NULL text
 				MultiSetZPosition(*ppText, Z_TAG_TEXT);
@@ -555,7 +555,7 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 					// May have buggered cursor
 					EndCursorFollowed();
 
-					*ppText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS),
+					*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 							TextBufferAddr(), 0, tagx - Loffset, tagy - Toffset,
 							GetTagFontHandle(), TXT_CENTRE, 0);
 				} else if (TinselV2) {
@@ -565,11 +565,11 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 						StartCursorFollowed();
 
 					GetCursorXYNoWait(&curX, &curY, false);
-					*ppText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
+					*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
 							0, curX, curY, GetTagFontHandle(), TXT_CENTRE, 0);
 				} else {
 					// Handle displaying the tag text on-screen
-					*ppText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
+					*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
 							0, tagx - Loffset, tagy - Toffset,
 							GetTagFontHandle(), TXT_CENTRE);
 					assert(*ppText); // Polygon tag string produced NULL text

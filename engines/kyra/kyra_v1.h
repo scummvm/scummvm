@@ -37,6 +37,7 @@
 #include "sound/mixer.h"
 
 #include "kyra/script.h"
+#include "kyra/item.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -93,7 +94,7 @@ class KyraMetaEngine;
  * is pretty minor priority though, since the benefit would be mostly nicer code). The biggest
  * task left is the kyra.dat handling, which is currently being revised by LordHoto.
  *
- * Supported games:
+ * Games using this engine:
  * - The Legend of Kyrandia (fully supported, except for Macintosh port, which lacks sound)
  * - (The) Hand of Fate (fully supported)
  * - Malcolm's Revenge (fully supported)
@@ -339,7 +340,7 @@ protected:
 	// items
 	int _mouseState;
 
-	virtual void setHandItem(uint16 item) = 0;
+	virtual void setHandItem(Item item) = 0;
 	virtual void removeHandItem() = 0;
 
 	// game flags
@@ -414,8 +415,8 @@ protected:
 
 	void loadGameStateCheck(int slot);
 	virtual Common::Error loadGameState(int slot) = 0;
-	Common::Error saveGameState(int slot, const char *saveName) { return saveGameState(slot, saveName, 0); }
-	virtual Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail) = 0;
+	Common::Error saveGameState(int slot, const char *saveName) { return saveGameStateIntern(slot, saveName, 0); }
+	virtual Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 
 	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header);
 	Common::WriteStream *openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const;

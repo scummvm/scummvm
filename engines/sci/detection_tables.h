@@ -752,10 +752,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-	// Hoyle 1 - English DOS (supplied by eddydrama in bug report #3052366)
+	// Hoyle 1 3.5' - English DOS (supplied by eddydrama in bug report #3052366 and dinnerx in bug report #3090841)
 	{"hoyle1", "", {
 		{"resource.map", 0, "0af9a3dcd72a091960de070432e1f524", 4386},
-		{"resource.001", 0, "e0dd44069a62463fd124974b915f10d", 518127},
+		{"resource.001", 0, "e0dd44069a62a463fd124974b915f10d", 518127},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
@@ -854,14 +854,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-	// Hoyle 4 - English DOS Demo
+	// Hoyle 4 (Hoyle Classic Card Games) - English DOS Demo
 	{"hoyle4", "Demo", {
 		{"resource.map", 0, "60f764020a6b788bbbe415dbc2ccb9f3", 931},
 		{"resource.000", 0, "5fe3670e3ddcd4f85c10013b5453141a", 615522},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
-	// Hoyle 4 - English DOS Demo
+	// Hoyle 4 (Hoyle Classic Card Games) - English DOS Demo
 	// SCI interpreter version 1.001.200 (just a guess)
 	// Does anyone have this version? -clone2727
 	{"hoyle4", "Demo", {
@@ -871,13 +871,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
 	// Hoyle 4 (Hoyle Classic Card Games) - English DOS/Win
-	// SCI1.1
 	// Supplied by abevi in bug report #3039291
 	{"hoyle4", "", {
 		{"resource.map", 0, "2b577c975cc8d8d43f61b6a756129fe3", 4352},
 		{"resource.000", 0, "43e2c15ce436aab611a462ad0603e12d", 2000132},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// Hoyle 4 (Hoyle Classic Card Games) - English Macintosh Floppy
+	// VERSION file reports "2.0"
+	{"hoyle4", "", {
+		{"Data1", 0, "afad082944d36ce4d2a9e646efc49da1", 7731536},
+		{"Data2", 0, "615ed2efe969f845cd8f0686af0b06f2", 1543825},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_NOSPEECH	},
 
 	// Jones in the Fast Lane EGA - English DOS
 	// SCI interpreter version 1.000.172 (not 100% sure FIXME)
@@ -1154,6 +1161,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// King's Quest 5 EGA 1.2M disk version (from LordHoto)
+	// VERSION file reports "0.000.055"
+	{"kq5", "EGA", {
+		{"resource.002", 0, "4d74e8094ff57cea6ee92faf63dbd0af", 1195538},
+		{"resource.003", 0, "3cca5b2dae8afe94532edfdc98d7edbe", 1092132},
+		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 413818},
+		{"resource.001", 0, "c1eef048fa9fe76298c2d4705ef9549f", 1162752},
+		{"resource.map", 0, "53206afb4fd73871a484e83acab80f31", 7608},
+		{"resource.004", 0, "83568edf7fde18b3eed988bc5d22ceb1", 1188053},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// King's Quest 5 EGA (supplied by omer_mor in bug report #3035421)
 	// VERSION file reports "0.000.062"
 	{"kq5", "EGA", {
@@ -1264,6 +1283,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "72a569f46f1abf2d9d2b1526ad3799c3", 12808839},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformFMTowns, 0, GUIO_NONE	},
+
+	// King's Quest 5 - Japanese PC-98 Floppy 0.000.015 (supplied by omer_mor in bug report #3073583)
+	{"kq5", "", {
+		{"resource.map", 0, "3bca188108ec5b6ad91612483a6cbc27", 7875},
+		{"resource.000", 0, "70d6a2ec17fd49a63217992fc4347cd9", 493681},
+		{"resource.001", 0, "a504e91327a4d51ee4818eb72026dbe9", 950364},
+		{"resource.002", 0, "0750a84ece1d89d3a952e2a2b90b525c", 911833},
+		{"resource.003", 0, "6f8d552b60ec82a165619a99e19c509d", 1078032},
+		{"resource.004", 0, "e114ce8f884601c43308fb5cbbea4874", 1174129},
+		{"resource.005", 0, "349ad9438172265d00680075c5a988d0", 1019669},
+		AD_LISTEND},
+		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO_NOSPEECH	},
 
 	// King's Quest 6 - English DOS Non-Interactive Demo
 	// Executable scanning reports "1.001.055", VERSION file reports "1.000.000"
@@ -1448,20 +1479,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 317687},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
-
-	// Laura Bow - German DOS (from Tobis87, also includes english language)
-	// SCI interpreter version 0.000.631 (or 0.000.685?)
-	{"laurabow", "", {
-		{"resource.map", 0, "b1905f6aa68ff65a057b080b1eae954c", 12030},
-		{"resource.001", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 108032},
-		{"resource.002", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 354680},
-		{"resource.003", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 361815},
-		{"resource.004", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 339714},
-		{"resource.005", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 327465},
-		{"resource.006", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 328390},
-		{"resource.007", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 317687},
-		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO_NOSPEECH	},
 
 	// Laura Bow 2 - English DOS Non-Interactive Demo (from FRG)
 	// Executable scanning reports "x.yyy.zzz"
@@ -3309,6 +3326,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_NOSPEECH	},
 
+	// Space Quest 4 - Russian DOS
+	// Executable scanning reports "1.000.753", VERSION file reports "1.994"
+	{"sq4", "", {
+		{"resource.map", 0, "e4f77dd99012d51e16903da07769a7bf", 5928},
+		{"resource.000", 0, "e1f46832cd2458796028e054a0466031", 186750},
+		{"resource.001", 0, "1110371c3bafbbf8968a324097c83fdb", 1283759},
+		{"resource.002", 0, "9c342cd76b421369406d6fafd7b1a285", 1234726},
+		{"resource.003", 0, "e617f09840d9f86181f7602c8bf2e8ad", 1266491},
+		{"resource.004", 0, "2763fe4f0cb74df716ec8b0c464b0988", 1217428},
+		{"resource.005", 0, "d608713197c5ba1cd8c6ed46299c3069", 1057924},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Space Quest 5 - English DOS (from the Space Quest Collection)
 	// Executable scanning reports "1.001.068", VERSION file reports "1.04"
 	{"sq5", "", {
@@ -3351,6 +3381,23 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "5b09168baa2f6e2e22787429b2d72f54", 6492},
 		AD_LISTEND},
 		Common::IT_ITA, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// Space Quest 5 - Spanish DOS Floppy (from mirir, bug report #3090664)
+	{"sq5", "", {
+		{"resource.000", 0, "73748852548faa42927f7537b165582d", 6049994},
+		{"resource.map", 0, "5714a899033bdebf2d61ad333c8c6637", 6492},
+		{"resource.msg", 0, "46deca7ef9cf057f7d442df98c1a2ae2", 134612},
+		AD_LISTEND},
+		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// Space Quest 5 - Russian DOS
+	// Executable scanning reports "1.001.068", VERSION file reports "1.994"
+	{"sq5", "", {
+		{"resource.map", 0, "82e6e9b4270a4007578a119b6a51860c", 6493},
+		{"resource.000", 0, "6f9ed21e1001526b4137f6703ed476af", 6103778},
+		{"resource.msg", 0, "0a8931990cd2eac1691602391c68ab85", 147580},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
 #ifdef ENABLE_SCI32
 	// Space Quest 6 - English DOS/Win3.11 CD (from the Space Quest Collection)
@@ -3499,6 +3546,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("SCI Studio Template 3.0", "ca0dc8d586e0a8670b7621cde090b532", 354, "58a48ee692a86c0575e6bd0b00a92b9a", 113097),
 	FANMADE("SCI Quest", "9067e1f1e54436d2dbfce855524bc84a", 552, "ffa7d355cd9223f245289108a696bcd2", 149634),
 	FANMADE("SCI-Man", "3ab85bd39a86c11f85781764f9db09bb", 468, "bb8f9992f504a242bf0860e3588e150b", 131810),
+	FANMADE("The Black Cauldron", "5e1ff2833c7f33ebcfa456ba836e2067", 2592, "2f8e6264d2db91bb54982ab8aa18b3b4", 1881839),
 	FANMADE("The Farm Nightmare", "fb6cbfddaa7c055e2c3d8cf4c683a7db", 906, "50655e8b8925f717e698e08f006f40be", 338303),
 	FANMADE("The Gem Scenario", "ef5f61f4d2c6d31122d3e2baf89ad976", 642, "2f16be390dd90c3d7ca1c8a594ac0bfa", 244794),
 	FANMADE("The Legend of the Lost Jewel", "ba1bca315e3818c5626eda51bcfbcccf", 636, "9b0736d69924af0cff32a0f78db96855", 300398),

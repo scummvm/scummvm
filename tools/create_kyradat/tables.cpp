@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "tables.h"
 #include "create_kyradat.h"
 
@@ -973,7 +976,7 @@ const ExtractEntrySearchData k1TownsMusicFadeTableProvider[] = {
 
 	EXTRACT_END_ENTRY
 };
-	
+
 const ExtractEntrySearchData k1TownsSFXwdTableProvider[] = {
 	{ UNK_LANG, kPlatformFMTowns, { 0x00012608, 0x006717A1, { { 0x34, 0xDD, 0x2D, 0xA5, 0x14, 0x05, 0xEE, 0x2F, 0x93, 0x7C, 0x78, 0x4D, 0xCA, 0x13, 0xED, 0x93 } } } },
 

@@ -56,9 +56,9 @@ struct SAGAGameDescription {
 
 bool SagaEngine::isBigEndian() const { return isMacResources() && getGameId() == GID_ITE; }
 bool SagaEngine::isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
-const GameResourceDescription *SagaEngine::getResourceDescription() { return _gameDescription->resourceDescription; }
+const GameResourceDescription *SagaEngine::getResourceDescription() const { return _gameDescription->resourceDescription; }
 
-const GameFontDescription *SagaEngine::getFontDescription(int index) {
+const GameFontDescription *SagaEngine::getFontDescription(int index) const {
 	assert(index < _gameDescription->fontsCount);
 	return &_gameDescription->fontDescriptions[index];
 }
@@ -259,7 +259,7 @@ SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int s
 			version = SWAP_BYTES_32(version);
 		}
 
-		debug(2, "Save version: %x", version);
+		debug(2, "Save version: 0x%X", version);
 
 		if (version < 4)
 			warning("This savegame is not endian-safe. There may be problems");

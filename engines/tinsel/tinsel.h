@@ -48,7 +48,7 @@
  *
  * Status of this engine: Complete
  *
- * Supported games:
+ * Games using this engine:
  * - Discworld
  * - Discworld 2: Missing Presumed ...!?
  */
@@ -139,6 +139,7 @@ typedef bool (*KEYFPTR)(const Common::KeyState &);
 #define TinselV1 (TinselVersion == TINSEL_V1)
 #define TinselV2 (TinselVersion == TINSEL_V2)
 #define TinselV1PSX (TinselVersion == TINSEL_V1 && _vm->getPlatform() == Common::kPlatformPSX)
+#define IsDemo (_vm->getFeatures() & GF_DEMO)
 
 // Global reference to the TinselEngine object
 extern TinselEngine *_vm;
@@ -183,6 +184,7 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	uint16 getVersion() const;
+	uint32 getFlags() const;
 	Common::Platform getPlatform() const;
 
 	const char *getSampleIndex(LANGUAGE lang);

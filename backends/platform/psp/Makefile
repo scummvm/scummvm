@@ -126,7 +126,7 @@ endif
 # PSP LIBS
 PSPLIBS =  -lpspprof -lpspvfpu -lpspdebug -lpspgu -lpspge -lpspdisplay -lpspctrl -lpspsdk \
 	-lpsputility -lpspuser -lpsppower -lpsphprm -lpspsdk -lpsprtc -lpspaudio -lpspaudiocodec \
-	-lpspkernel
+	-lpspkernel -lpspnet_inet
 
 
 # Add in PSPSDK includes and libraries.
@@ -148,7 +148,10 @@ OBJS := powerman.o \
 	thread.o \
 	rtc.o \
 	mp3.o \
-	tests.o
+	png_loader.o \
+	image_viewer.o \
+	tests.o \
+	dummy.o
 
 
 BACKEND := psp
@@ -200,4 +203,4 @@ SCEkxploit: $(TARGET).elf $(PSP_EBOOT_SFO)
 	$(PACK_PBP) "%__SCE__$(TARGET)/$(PSP_EBOOT)" $(PSP_EBOOT_SFO) $(PSP_EBOOT_ICON)  \
 		$(PSP_EBOOT_ICON1) $(PSP_EBOOT_PIC0) $(PSP_EBOOT_PIC1)  \
 		$(PSP_EBOOT_SND0) NULL $(PSP_EBOOT_PSAR)
-		
+

@@ -206,7 +206,7 @@ public:
 	virtual ~Resource();
 	bool createContexts();
 	void clearContexts();
-	void loadResource(ResourceContext *context, uint32 resourceId, byte*&resourceBuffer, size_t &resourceSize);
+	void loadResource(ResourceContext *context, uint32 resourceId, ByteArray &resourceBuffer);
 
 	virtual uint32 convertResourceId(uint32 resourceId) = 0;
 	virtual void loadGlobalResources(int chapter, int actorsEntrance) = 0;

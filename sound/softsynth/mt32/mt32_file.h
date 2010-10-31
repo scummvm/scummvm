@@ -49,7 +49,7 @@ public:
 
 class ANSIFile: public File {
 private:
-	FILE *fp;
+	void *fp;
 public:
 	bool open(const char *filename, OpenMode mode);
 	void close();

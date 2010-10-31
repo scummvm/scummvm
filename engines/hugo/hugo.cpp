@@ -24,7 +24,9 @@
  */
 
 #include "common/system.h"
+#include "common/random.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/debug-channels.h"
 
 #include "hugo/hugo.h"
@@ -37,26 +39,34 @@
 #include "hugo/inventory.h"
 #include "hugo/parser.h"
 #include "hugo/route.h"
+#include "hugo/util.h"
 #include "hugo/sound.h"
 #include "hugo/intro.h"
+#include "hugo/object.h"
 
 #include "engines/util.h"
 
 namespace Hugo {
 
-HugoEngine *HugoEngine::s_Engine = NULL;
+HugoEngine *HugoEngine::s_Engine = 0;
 
 overlay_t HugoEngine::_boundary;
 overlay_t HugoEngine::_overlay;
 overlay_t HugoEngine::_ovlBase;
 overlay_t HugoEngine::_objBound;
 
+config_t    _config;                            // User's config
+maze_t      _maze;                              // Default to not in maze
+hugo_boot_t _boot;                              // Boot info structure file
+char        _textBoxBuffer[MAX_BOX];            // Buffer for text box
+command_t   _line;                              // Line of user text input
+
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd), _mouseX(0), _mouseY(0),
 	_textData(0), _stringtData(0), _screenNames(0), _textEngine(0), _textIntro(0), _textMouse(0), _textParser(0), _textSchedule(0), _textUtil(0),
 	_arrayNouns(0), _arrayVerbs(0), _arrayReqs(0), _hotspots(0), _invent(0), _uses(0), _catchallList(0), _backgroundObjects(0),
-	_points(0), _cmdList(0), _screenActs(0), _objects(0), _actListArr(0), _heroImage(0), _defltTunes(0), _palette(0), _introX(0),
-	_introY(0), _maxInvent(0), _numBonuses(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0), _screenStates(0), _numObj(0),
-	_score(0), _maxscore(0)
+	_points(0), _cmdList(0), _screenActs(0), _actListArr(0), _heroImage(0), _defltTunes(0), _palette(0), _introX(0), _introY(0),
+	_maxInvent(0), _numBonuses(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0), _screenStates(0), _numObj(0),
+	_score(0), _maxscore(0), _backgroundObjectsSize(0), _screenActsSize(0), _actListArrSize(0), _usesSize(0)
 
 {
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
@@ -67,61 +77,85 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	DebugMan.addDebugChannel(kDebugFile, "File", "File IO debug level");
 	DebugMan.addDebugChannel(kDebugRoute, "Route", "Route debug level");
 	DebugMan.addDebugChannel(kDebugInventory, "Inventory", "Inventory debug level");
+	DebugMan.addDebugChannel(kDebugObject, "Object", "Object debug level");
+
+	for (int j = 0; j < NUM_FONTS; j++)
+		_arrayFont[j] = 0;
 }
 
 HugoEngine::~HugoEngine() {
-	delete _soundHandler;
-	delete _route;
-	delete _parser;
-	delete _inventoryHandler;
-	delete _mouseHandler;
-	delete _screen;
-	delete _scheduler;
-	delete _fileManager;
-
-	free(_palette);
-	free(_introX);
-	free(_introY);
-
-#if 0
-	freeTexts(_textData);
-	freeTexts(_stringtData);
-	freeTexts(_textEngine);
-	freeTexts(_textIntro);
-	freeTexts(_textMouse);
-	freeTexts(_textParser);
-	freeTexts(_textSchedule);
-	freeTexts(_textUtil);
-#endif
 	free(_textData);
 	free(_stringtData);
+
+	for (int i = 0; _arrayNouns[i]; i++)
+		free(_arrayNouns[i]);
+	free(_arrayNouns);
+
+	for (int i = 0; _arrayVerbs[i]; i++)
+		free(_arrayVerbs[i]);
+	free(_arrayVerbs);
+
 	free(_screenNames);
+	free(_palette);
 	free(_textEngine);
 	free(_textIntro);
+	free(_introX);
+	free(_introY);
 	free(_textMouse);
 	free(_textParser);
 	free(_textSchedule);
 	free(_textUtil);
-
-	warning("Missing: free _arrayNouns");
-	warning("Missing: free _arrayVerbs");
-
 	free(_arrayReqs);
 	free(_hotspots);
 	free(_invent);
+
+	for (int i = 0; i < _usesSize; i++)
+		free(_uses[i].targets);
 	free(_uses);
+
 	free(_catchallList);
 
-	warning("Missing: free _background_objects");
+	for (int i = 0; i < _backgroundObjectsSize; i++)
+		free(_backgroundObjects[i]);
+	free(_backgroundObjects);
 
 	free(_points);
 
-	warning("Missing: free _cmdList");
-	warning("Missing: free _screenActs");
-	warning("Missing: free _objects");
+	for (int i = 0; i < _cmdListSize; i++)
+		free(_cmdList[i]);
+	free(_cmdList);
+
+	for (int i = 0; i < _screenActsSize; i++)
+		free(_screenActs[i]);
+	free(_screenActs);
+
+	_object->freeObjectArr();
+
+	for (int i = 0; i < _actListArrSize; i++)
+		free(_actListArr[i]);
+	free(_actListArr);
 
 	free(_defltTunes);
 	free(_screenStates);
+
+	if (_arrayFont[0])
+		free(_arrayFont[0]);
+
+	if (_arrayFont[1])
+		free(_arrayFont[1]);
+
+	if (_arrayFont[2])
+		free(_arrayFont[2]);
+
+	delete _object;
+	delete _sound;
+	delete _route;
+	delete _parser;
+	delete _inventory;
+	delete _mouse;
+	delete _screen;
+	delete _scheduler;
+	delete _file;
 }
 
 GameType HugoEngine::getGameType() const {
@@ -140,43 +174,59 @@ Common::Error HugoEngine::run() {
 	s_Engine = this;
 	initGraphics(320, 200, false);
 
-	_screen = new Screen(*this);
-	_mouseHandler = new MouseHandler(*this);
-	_inventoryHandler = new InventoryHandler(*this);
-	_parser = new Parser(*this);
-	_route = new Route(*this);
-	_soundHandler = new SoundHandler(*this);
+	_mouse = new MouseHandler(this);
+	_inventory = new InventoryHandler(this);
+	_route = new Route(this);
+	_sound = new SoundHandler(this);
 
 	switch (_gameVariant) {
 	case 0: // H1 Win
-		_fileManager = new FileManager_v3(*this);
-		_scheduler = new Scheduler_v2(*this);
-		_introHandler = new intro_1w(*this);
+		_file = new FileManager_v1w(this);
+		_scheduler = new Scheduler_v1w(this);
+		_intro = new intro_v1w(this);
+		_screen = new Screen_v1w(this);
+		_parser = new Parser_v1w(this);
+		_object = new ObjectHandler_v1w(this);
 		break;
 	case 1:
-		_fileManager = new FileManager_v2(*this);
-		_scheduler = new Scheduler_v2(*this);
-		_introHandler = new intro_2w(*this);
+		_file = new FileManager_v2d(this);
+		_scheduler = new Scheduler_v1w(this);
+		_intro = new intro_v2w(this);
+		_screen = new Screen_v1w(this);
+		_parser = new Parser_v1w(this);
+		_object = new ObjectHandler_v1w(this);
 		break;
 	case 2:
-		_fileManager = new FileManager_v2(*this);
-		_scheduler = new Scheduler_v2(*this);
-		_introHandler = new intro_3w(*this);
+		_file = new FileManager_v2d(this);
+		_scheduler = new Scheduler_v1w(this);
+		_intro = new intro_v3w(this);
+		_screen = new Screen_v1w(this);
+		_parser = new Parser_v1w(this);
+		_object = new ObjectHandler_v1w(this);
 		break;
 	case 3: // H1 DOS
-		_fileManager = new FileManager_v1(*this);
-		_scheduler = new Scheduler_v1(*this);
-		_introHandler = new intro_1d(*this);
+		_file = new FileManager_v1d(this);
+		_scheduler = new Scheduler_v1d(this);
+		_intro = new intro_v1d(this);
+		_screen = new Screen_v1d(this);
+		_parser = new Parser_v1d(this);
+		_object = new ObjectHandler_v1d(this);
 		break;
 	case 4:
-		_fileManager = new FileManager_v2(*this);
-		_scheduler = new Scheduler_v1(*this);
-		_introHandler = new intro_2d(*this);
+		_file = new FileManager_v2d(this);
+		_scheduler = new Scheduler_v2d(this);
+		_intro = new intro_v2d(this);
+		_screen = new Screen_v1d(this);
+		_parser = new Parser_v2d(this);
+		_object = new ObjectHandler_v2d(this);
 		break;
 	case 5:
-		_fileManager = new FileManager_v4(*this);
-		_scheduler = new Scheduler_v2(*this);
-		_introHandler = new intro_3d(*this);
+		_file = new FileManager_v3d(this);
+		_scheduler = new Scheduler_v3d(this);
+		_intro = new intro_v3d(this);
+		_screen = new Screen_v1d(this);
+		_parser = new Parser_v3d(this);
+		_object = new ObjectHandler_v1d(this);
 		break;
 	}
 
@@ -194,27 +244,25 @@ Common::Error HugoEngine::run() {
 	initialize();
 	initConfig(RESET);                              // Reset user's config
 
-	file().restoreGame(-1);
+	_file->restoreGame(-1);
 
 	initMachine();
 
 	// Start the state machine
 	_status.viewState = V_INTROINIT;
 
-	bool doQuitFl = false;
+	_status.doQuitFl = false;
 
-	while (!doQuitFl) {
+	while (!_status.doQuitFl) {
 		g_system->updateScreen();
 
-		// WORKAROUND: Force the mouse cursor to be displayed. This fixes the disappearing mouse cursor issue.
-		g_system->showMouse(true);
 		runMachine();
 		// Handle input
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				parser().keyHandler(event.kbd.keycode, 0);
+				_parser->keyHandler(event.kbd.keycode, 0);
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
@@ -233,7 +281,7 @@ Common::Error HugoEngine::run() {
 				_status.rightButtonFl = false;
 				break;
 			case Common::EVENT_QUIT:
-				doQuitFl = true;
+				_status.doQuitFl = true;
 				break;
 			default:
 				break;
@@ -244,10 +292,13 @@ Common::Error HugoEngine::run() {
 }
 
 void HugoEngine::initMachine() {
-	file().readBackground(_numScreens - 1);         // Splash screen
+	if (_gameVariant == kGameVariantH1Dos)
+		readScreenFiles(0);
+	else
+		_file->readBackground(_numScreens - 1);     // Splash screen
 	readObjectImages();                             // Read all object images
 	if (_platform == Common::kPlatformWindows)
-		readUIFImages();                            // Read all uif images (only in Win versions)
+		_file->readUIFImages();                     // Read all uif images (only in Win versions)
 }
 
 void HugoEngine::runMachine() {
@@ -255,7 +306,6 @@ void HugoEngine::runMachine() {
 	static uint32 lastTime;
 
 	status_t &gameStatus = getGameStatus();
-
 	// Don't process if we're in a textbox
 	if (gameStatus.textBoxFl)
 		return;
@@ -271,43 +321,42 @@ void HugoEngine::runMachine() {
 
 	switch (gameStatus.viewState) {
 	case V_IDLE:                                    // Not processing state machine
-		intro().preNewGame();                           // Any processing before New Game selected
+		_intro->preNewGame();                       // Any processing before New Game selected
 		break;
 	case V_INTROINIT:                               // Initialization before intro begins
-		intro().introInit();
+		_intro->introInit();
+		g_system->showMouse(false);
 		gameStatus.viewState = V_INTRO;
 		break;
 	case V_INTRO:                                   // Do any game-dependant preamble
-		if (intro().introPlay())    {               // Process intro screen
-			scheduler().newScreen(0);               // Initialize first screen
+		if (_intro->introPlay())    {               // Process intro screen
+			_scheduler->newScreen(0);               // Initialize first screen
 			gameStatus.viewState = V_PLAY;
 		}
 		break;
 	case V_PLAY:                                    // Playing game
-		parser().charHandler();                     // Process user cmd input
-		moveObjects();                              // Process object movement
-		scheduler().runScheduler();                 // Process any actions
-		screen().displayList(D_RESTORE);            // Restore previous background
-		updateImages();                             // Draw into _frontBuffer, compile display list
-		mouse().mouseHandler();                     // Mouse activity - adds to display list
-		parser().drawStatusText();
-		screen().displayList(D_DISPLAY);            // Blit the display list to screen
+		g_system->showMouse(true);
+		_parser->charHandler();                     // Process user cmd input
+		_object->moveObjects();                     // Process object movement
+		_scheduler->runScheduler();                 // Process any actions
+		_screen->displayList(D_RESTORE);            // Restore previous background
+		_object->updateImages();                    // Draw into _frontBuffer, compile display list
+		_mouse->mouseHandler();                     // Mouse activity - adds to display list
+		_screen->drawStatusText();
+		_screen->displayList(D_DISPLAY);            // Blit the display list to screen
 		break;
 	case V_INVENT:                                  // Accessing inventory
-		inventory().runInventory();                 // Process Inventory state machine
+		_inventory->runInventory();                 // Process Inventory state machine
 		break;
 	case V_EXIT:                                    // Game over or user exited
 		gameStatus.viewState = V_IDLE;
+		_status.doQuitFl = true;
 		break;
 	}
 }
 
 bool HugoEngine::loadHugoDat() {
 	Common::File in;
-	int numElem, numSubElem, numSubAct;
-	char buf[256];
-	int majVer, minVer;
-
 	in.open("hugo.dat");
 
 	if (!in.isOpen()) {
@@ -318,6 +367,7 @@ bool HugoEngine::loadHugoDat() {
 	}
 
 	// Read header
+	char buf[256];
 	in.read(buf, 4);
 	buf[4] = '\0';
 
@@ -328,8 +378,8 @@ bool HugoEngine::loadHugoDat() {
 		return false;
 	}
 
-	majVer = in.readByte();
-	minVer = in.readByte();
+	int majVer = in.readByte();
+	int minVer = in.readByte();
 
 	if ((majVer != HUGO_DAT_VER_MAJ) || (minVer != HUGO_DAT_VER_MIN)) {
 		snprintf(buf, 256, "File 'hugo.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from the ScummVM website", HUGO_DAT_VER_MAJ, HUGO_DAT_VER_MIN, majVer, minVer);
@@ -360,23 +410,32 @@ bool HugoEngine::loadHugoDat() {
 	// Read palette
 	_paletteSize = in.readUint16BE();
 	_palette = (byte *)malloc(sizeof(byte) * _paletteSize);
-	for (int i = 0; i < _paletteSize; i++) {
+	for (int i = 0; i < _paletteSize; i++)
 		_palette[i] = in.readByte();
-	}
 
 	// Read textEngine
 	_textEngine = loadTexts(in);
 
 	// Read textIntro
-	_textIntro = loadTexts(in);
+	_textIntro = loadTextsVariante(in, 0);
 
 	// Read x_intro and y_intro
-	_introXSize = in.readUint16BE();
-	_introX = (byte *)malloc(sizeof(byte) * _introXSize);
-	_introY = (byte *)malloc(sizeof(byte) * _introXSize);
-	for (int i = 0; i < _introXSize; i++) {
-		_introX[i] = in.readByte();
-		_introY[i] = in.readByte();
+	for (int varnt = 0; varnt < _numVariant; varnt++) {
+		int numRows = in.readUint16BE();
+		if (varnt == _gameVariant) {
+			_introXSize = numRows;
+			_introX = (byte *)malloc(sizeof(byte) * _introXSize);
+			_introY = (byte *)malloc(sizeof(byte) * _introXSize);
+			for (int i = 0; i < _introXSize; i++) {
+				_introX[i] = in.readByte();
+				_introY[i] = in.readByte();
+			}
+		} else {
+			for (int i = 0; i < numRows; i++) {
+				in.readByte();
+				in.readByte();
+			}
+		}
 	}
 
 	// Read textMouse
@@ -425,6 +484,7 @@ bool HugoEngine::loadHugoDat() {
 		}
 	}
 
+	int numElem, numSubElem, numSubAct;
 	//Read _invent
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
@@ -443,6 +503,7 @@ bool HugoEngine::loadHugoDat() {
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
+			_usesSize = numElem;
 			_uses = (uses_t *)malloc(sizeof(uses_t) * numElem);
 			for (int i = 0; i < numElem; i++) {
 				_uses[i].objId = in.readSint16BE();
@@ -496,8 +557,9 @@ bool HugoEngine::loadHugoDat() {
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
-			_backgroundObjects = (background_t **)malloc(sizeof(background_t *) * numElem);
-			for (int i = 0; i < numElem; i++) {
+			_backgroundObjectsSize = numElem;
+			_backgroundObjects = (background_t **)malloc(sizeof(background_t *) * _backgroundObjectsSize);
+			for (int i = 0; i < _backgroundObjectsSize; i++) {
 				numSubElem = in.readUint16BE();
 				_backgroundObjects[i] = (background_t *)malloc(sizeof(background_t) * numSubElem);
 				for (int j = 0; j < numSubElem; j++) {
@@ -513,9 +575,9 @@ bool HugoEngine::loadHugoDat() {
 			for (int i = 0; i < numElem; i++) {
 				numSubElem = in.readUint16BE();
 				for (int j = 0; j < numSubElem; j++) {
-					in.readUint16BE();;
-					in.readUint16BE();;
-					in.readSint16BE();;
+					in.readUint16BE();
+					in.readUint16BE();
+					in.readSint16BE();
 					in.readByte();
 					in.readByte();
 					in.readByte();
@@ -544,8 +606,9 @@ bool HugoEngine::loadHugoDat() {
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
-			_cmdList = (cmd **)malloc(sizeof(cmd *) * numElem);
-			for (int i = 0; i < numElem; i++) {
+			_cmdListSize = numElem;
+			_cmdList = (cmd **)malloc(sizeof(cmd *) * _cmdListSize);
+			for (int i = 0; i < _cmdListSize; i++) {
 				numSubElem = in.readUint16BE();
 				_cmdList[i] = (cmd *)malloc(sizeof(cmd) * numSubElem);
 				for (int j = 0; j < numSubElem; j++) {
@@ -581,12 +644,13 @@ bool HugoEngine::loadHugoDat() {
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
-			_screenActs = (uint16 **)malloc(sizeof(uint16 *) * numElem);
-			for (int i = 0; i < numElem; i++) {
+			_screenActsSize = numElem;
+			_screenActs = (uint16 **)malloc(sizeof(uint16 *) * _screenActsSize);
+			for (int i = 0; i < _screenActsSize; i++) {
 				numSubElem = in.readUint16BE();
-				if (numSubElem == 0)
+				if (numSubElem == 0) {
 					_screenActs[i] = 0;
-				else {
+				} else {
 					_screenActs[i] = (uint16 *)malloc(sizeof(uint16) * numSubElem);
 					for (int j = 0; j < numSubElem; j++)
 						_screenActs[i][j] = in.readUint16BE();
@@ -599,119 +663,21 @@ bool HugoEngine::loadHugoDat() {
 					in.readUint16BE();
 			}
 		}
-
 	}
 
-// TODO: For Hugo3, if not in story mode, set _objects[2].state to 3
-	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numElem = in.readUint16BE();
-		if (varnt == _gameVariant) {
-			_objects = (object_t *)malloc(sizeof(object_t) * numElem);
-			for (int i = 0; i < numElem; i++) {
-				_objects[i].nounIndex = in.readUint16BE();
-				_objects[i].dataIndex = in.readUint16BE();
-				numSubElem = in.readUint16BE();
-				if (numSubElem == 0)
-					_objects[i].stateDataIndex = 0;
-				else
-					_objects[i].stateDataIndex = (uint16 *)malloc(sizeof(uint16) * numSubElem);
-				for (int j = 0; j < numSubElem; j++)
-					_objects[i].stateDataIndex[j] = in.readUint16BE();
-				_objects[i].pathType = (path_t) in.readSint16BE();
-				_objects[i].vxPath = in.readSint16BE();
-				_objects[i].vyPath = in.readSint16BE();
-				_objects[i].actIndex = in.readUint16BE();
-				_objects[i].seqNumb = in.readByte();
-				_objects[i].currImagePtr = 0;
-				if (_objects[i].seqNumb == 0) {
-					_objects[i].seqList[0].imageNbr = 0;
-					_objects[i].seqList[0].seqPtr = 0;
-				}
-				for (int j = 0; j < _objects[i].seqNumb; j++) {
-					_objects[i].seqList[j].imageNbr = in.readUint16BE();
-					_objects[i].seqList[j].seqPtr = 0;
-				}
-				_objects[i].cycling = (cycle_t)in.readByte();
-				_objects[i].cycleNumb = in.readByte();
-				_objects[i].frameInterval = in.readByte();
-				_objects[i].frameTimer = in.readByte();
-				_objects[i].radius = in.readByte();
-				_objects[i].screenIndex = in.readByte();
-				_objects[i].x = in.readSint16BE();
-				_objects[i].y = in.readSint16BE();
-				_objects[i].oldx = in.readSint16BE();
-				_objects[i].oldy = in.readSint16BE();
-				_objects[i].vx = in.readByte();
-				_objects[i].vy = in.readByte();
-				_objects[i].objValue = in.readByte();
-				_objects[i].genericCmd = in.readSint16BE();
-				_objects[i].cmdIndex = in.readUint16BE();
-				_objects[i].carriedFl = (in.readByte() != 0);
-				_objects[i].state = in.readByte();
-				_objects[i].verbOnlyFl = (in.readByte() != 0);
-				_objects[i].priority = in.readByte();
-				_objects[i].viewx = in.readSint16BE();
-				_objects[i].viewy = in.readSint16BE();
-				_objects[i].direction = in.readSint16BE();
-				_objects[i].curSeqNum = in.readByte();
-				_objects[i].curImageNum = in.readByte();
-				_objects[i].oldvx = in.readByte();
-				_objects[i].oldvy = in.readByte();
-			}
-		} else {
-			for (int i = 0; i < numElem; i++) {
-				in.readUint16BE();
-				in.readUint16BE();
-				numSubElem = in.readUint16BE();
-				for (int j = 0; j < numSubElem; j++)
-					in.readUint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readUint16BE();
-				numSubElem = in.readByte();
-				for (int j = 0; j < numSubElem; j++)
-					in.readUint16BE();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readSint16BE();
-				in.readUint16BE();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readUint16BE();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-			}
-		}
-	}
+	_object->loadObjectArr(in);
 //#define HERO 0
-	_hero = &_objects[HERO];                    // This always points to hero
-	_screen_p = &(_objects[HERO].screenIndex);  // Current screen is hero's
-	_heroImage = HERO;                          // Current in use hero image
+	_hero = &_object->_objects[HERO];                        // This always points to hero
+	_screen_p = &(_object->_objects[HERO].screenIndex);      // Current screen is hero's
+	_heroImage = HERO;                              // Current in use hero image
 
 //read _actListArr
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
-			_actListArr = (act **)malloc(sizeof(act *) * numElem);
-			for (int i = 0; i < numElem; i++) {
+			_actListArrSize = numElem;
+			_actListArr = (act **)malloc(sizeof(act *) * _actListArrSize);
+			for (int i = 0; i < _actListArrSize; i++) {
 				numSubElem = in.readUint16BE();
 				_actListArr[i] = (act *) malloc(sizeof(act) * (numSubElem + 1));
 				for (int j = 0; j < numSubElem; j++) {
@@ -1332,6 +1298,34 @@ bool HugoEngine::loadHugoDat() {
 			_alNewscrIndex = numElem;
 	}
 
+	if (_gameVariant > 2) {
+		_arrayFontSize[0] = in.readUint16BE();
+		_arrayFont[0] = (byte *)malloc(sizeof(byte) * _arrayFontSize[0]);
+		for (int j = 0; j < _arrayFontSize[0]; j++)
+			_arrayFont[0][j] = in.readByte();
+
+		_arrayFontSize[1] = in.readUint16BE();
+		_arrayFont[1] = (byte *)malloc(sizeof(byte) * _arrayFontSize[1]);
+		for (int j = 0; j < _arrayFontSize[1]; j++)
+			_arrayFont[1][j] = in.readByte();
+
+		_arrayFontSize[2] = in.readUint16BE();
+		_arrayFont[2] = (byte *)malloc(sizeof(byte) * _arrayFontSize[2]);
+		for (int j = 0; j < _arrayFontSize[2]; j++)
+			_arrayFont[2][j] = in.readByte();
+	} else {
+		numElem = in.readUint16BE();
+		for (int j = 0; j < numElem; j++)
+			in.readByte();
+
+		numElem = in.readUint16BE();
+		for (int j = 0; j < numElem; j++)
+			in.readByte();
+
+		numElem = in.readUint16BE();
+		for (int j = 0; j < numElem; j++)
+			in.readByte();
+	}
 	return true;
 }
 
@@ -1352,6 +1346,7 @@ char **HugoEngine::loadTextsVariante(Common::File &in, uint16 *arraySize) {
 			res = (char **)malloc(sizeof(char *) * numTexts);
 			res[0] = pos;
 			in.read(res[0], entryLen);
+			res[0] += DATAALIGNMENT;
 		} else {
 			in.read(pos, entryLen);
 		}
@@ -1374,25 +1369,23 @@ char **HugoEngine::loadTextsVariante(Common::File &in, uint16 *arraySize) {
 
 uint16 **HugoEngine::loadLongArray(Common::File &in) {
 	uint16 **resArray = 0;
-	uint16 *resRow = 0;
-	uint16 dummy, numRows, numElems;
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numRows = in.readUint16BE();
+		uint16 numRows = in.readUint16BE();
 		if (varnt == _gameVariant) {
 			resArray = (uint16 **)malloc(sizeof(uint16 *) * (numRows + 1));
 			resArray[numRows] = 0;
 		}
 		for (int i = 0; i < numRows; i++) {
-			numElems = in.readUint16BE();
+			uint16 numElems = in.readUint16BE();
 			if (varnt == _gameVariant) {
-				resRow = (uint16 *)malloc(sizeof(uint16) * numElems);
+				uint16 *resRow = (uint16 *)malloc(sizeof(uint16) * numElems);
 				for (int j = 0; j < numElems; j++)
 					resRow[j] = in.readUint16BE();
 				resArray[i] = resRow;
 			} else {
 				for (int j = 0; j < numElems; j++)
-					dummy = in.readUint16BE();
+					in.readUint16BE();
 			}
 		}
 	}
@@ -1400,28 +1393,25 @@ uint16 **HugoEngine::loadLongArray(Common::File &in) {
 }
 
 char ***HugoEngine::loadTextsArray(Common::File &in) {
-	int  numNouns;
-	int  numTexts;
-	int  entryLen;
-	int  len;
 	char ***resArray = 0;
-	char **res = 0;
-	char *pos = 0;
+	uint16 arraySize;
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numNouns = in.readUint16BE();
+		arraySize = in.readUint16BE();
 		if (varnt == _gameVariant) {
-			resArray = (char ** *)malloc(sizeof(char **) * (numNouns + 1));
-			resArray[numNouns] = 0;
+			resArray = (char ***)malloc(sizeof(char **) * (arraySize + 1));
+			resArray[arraySize] = 0;
 		}
-		for (int i = 0; i < numNouns; i++) {
-			numTexts = in.readUint16BE();
-			entryLen = in.readUint16BE();
-			pos = (char *)malloc(entryLen);
+		for (int i = 0; i < arraySize; i++) {
+			int numTexts = in.readUint16BE();
+			int entryLen = in.readUint16BE();
+			char *pos = (char *)malloc(entryLen);
+			char **res = 0;
 			if (varnt == _gameVariant) {
 				res = (char **)malloc(sizeof(char *) * numTexts);
 				res[0] = pos;
 				in.read(res[0], entryLen);
+				res[0] += DATAALIGNMENT;
 			} else {
 				in.read(pos, entryLen);
 			}
@@ -1433,7 +1423,7 @@ char ***HugoEngine::loadTextsArray(Common::File &in) {
 					res[j] = pos;
 
 				pos -= 2;
-				len = READ_BE_UINT16(pos);
+				int len = READ_BE_UINT16(pos);
 				pos += 2 + len;
 			}
 
@@ -1448,12 +1438,8 @@ char ***HugoEngine::loadTextsArray(Common::File &in) {
 char **HugoEngine::loadTexts(Common::File &in) {
 	int numTexts = in.readUint16BE();
 	char **res = (char **)malloc(sizeof(char *) * numTexts);
-	int entryLen;
-	char *pos = 0;
-	int len;
-
-	entryLen = in.readUint16BE();
-	pos = (char *)malloc(entryLen);
+	int entryLen = in.readUint16BE();
+	char *pos = (char *)malloc(entryLen);
 
 	in.read(pos, entryLen);
 
@@ -1462,7 +1448,7 @@ char **HugoEngine::loadTexts(Common::File &in) {
 
 	for (int i = 1; i < numTexts; i++) {
 		pos -= 2;
-		len = READ_BE_UINT16(pos);
+		int len = READ_BE_UINT16(pos);
 		pos += 2 + len;
 		res[i] = pos;
 	}
@@ -1476,6 +1462,394 @@ void HugoEngine::freeTexts(char **ptr) {
 
 	free(*ptr);
 	free(ptr);
+}
+
+// Sets the playlist to be the default tune selection
+void HugoEngine::initPlaylist(bool playlist[MAX_TUNES]) {
+	debugC(1, kDebugEngine, "initPlaylist");
+
+	for (int16 i = 0; i < MAX_TUNES; i++)
+		playlist[i] = false;
+	for (int16 i = 0; _defltTunes[i] != -1; i++)
+		playlist[_defltTunes[i]] = true;
+}
+
+// Initialize the dynamic game status
+void HugoEngine::initStatus() {
+	debugC(1, kDebugEngine, "initStatus");
+	_status.initSaveFl    = true;                   // Force initial save
+	_status.storyModeFl   = false;                  // Not in story mode
+	_status.gameOverFl    = false;                  // Hero not knobbled yet
+	_status.recordFl      = false;                  // Not record mode
+	_status.playbackFl    = false;                  // Not playback mode
+	_status.demoFl        = false;                  // Not demo mode
+	_status.textBoxFl     = false;                  // Not processing a text box
+//	Strangerke - Not used ?
+//	_status.mmtime        = false;                   // Multimedia timer support
+	_status.lookFl        = false;                  // Toolbar "look" button
+	_status.recallFl      = false;                  // Toolbar "recall" button
+	_status.leftButtonFl  = false;                  // Left mouse button pressed
+	_status.rightButtonFl = false;                  // Right mouse button pressed
+	_status.newScreenFl   = false;                  // Screen not just loaded
+	_status.jumpExitFl    = false;                  // Can't jump to a screen exit
+	_status.godModeFl     = false;                  // No special cheats allowed
+	_status.helpFl        = false;                  // Not calling WinHelp()
+	_status.doQuitFl      = false;
+	_status.path[0]       = 0;                      // Path to write files
+	_status.saveSlot      = 0;                      // Slot to save/restore game
+	_status.screenWidth   = 0;                      // Desktop screen width
+
+	// Initialize every start of new game
+	_status.tick            = 0;                    // Tick count
+	_status.saveTick        = 0;                    // Time of last save
+	_status.viewState       = V_IDLE;               // View state
+	_status.inventoryState  = I_OFF;                // Inventory icon bar state
+	_status.inventoryHeight = 0;                    // Inventory icon bar pos
+	_status.inventoryObjId  = -1;                   // Inventory object selected (none)
+	_status.routeIndex      = -1;                   // Hero not following a route
+	_status.go_for          = GO_SPACE;             // Hero walking to space
+	_status.go_id           = -1;                   // Hero not walking to anything
+}
+
+// Initialize default config values.  Must be done before Initialize().
+// Reset needed to save config.cx,cy which get splatted during OnFileNew()
+void HugoEngine::initConfig(inst_t action) {
+	debugC(1, kDebugEngine, "initConfig(%d)", action);
+
+	switch (action) {
+	case INSTALL:
+		_config.musicFl = true;                     // Music state initially on
+		_config.soundFl = true;                     // Sound state initially on
+		_config.turboFl = false;                    // Turbo state initially off
+		_config.backgroundMusicFl = false;          // No music when inactive
+		_config.musicVolume = 85;                   // Music volume %
+		_config.soundVolume = 100;                  // Sound volume %
+		initPlaylist(_config.playlist);             // Initialize default tune playlist
+
+		_file->readBootFile();    // Read startup structure
+		break;
+	case RESET:
+		// Find first tune and play it
+		for (int16 i = 0; i < MAX_TUNES; i++) {
+			if (_config.playlist[i]) {
+				_sound->playMusic(i);
+				break;
+			}
+		}
+
+		_file->initSavedGame();   // Initialize saved game
+		break;
+	case RESTORE:
+		warning("Unhandled action RESTORE");
+		break;
+	}
+}
+
+void HugoEngine::initialize() {
+	debugC(1, kDebugEngine, "initialize");
+
+	_maze.enabledFl = false;
+	_line[0] = '\0';
+
+	_sound->initSound();
+	_scheduler->initEventQueue();                   // Init scheduler stuff
+	_screen->initDisplay();                         // Create Dibs and palette
+	_file->openDatabaseFiles();                     // Open database files
+	calcMaxScore();                                 // Initialise maxscore
+
+	_rnd = new Common::RandomSource();
+	g_eventRec.registerRandomSource(*_rnd, "hugo");
+
+	_rnd->setSeed(42);                              // Kick random number generator
+
+	switch (getGameType()) {
+	case kGameTypeHugo1:
+		_episode = "\"HUGO'S HOUSE OF HORRORS\"";
+		_picDir = "";
+		break;
+	case kGameTypeHugo2:
+		_episode = "\"Hugo's Mystery Adventure\"";
+		_picDir = "hugo2/";
+		break;
+	case kGameTypeHugo3:
+		_episode = "\"Hugo's Amazon Adventure\"";
+		_picDir = "hugo3/";
+		break;
+	default:
+		error("Unknown game");
+	}
+}
+
+// Restore all resources before termination
+void HugoEngine::shutdown() {
+	debugC(1, kDebugEngine, "shutdown");
+
+	_file->closeDatabaseFiles();
+	if (_status.recordFl || _status.playbackFl)
+		_file->closePlaybackFile();
+	_object->freeObjects();
+}
+
+void HugoEngine::readObjectImages() {
+	debugC(1, kDebugEngine, "readObjectImages");
+
+	for (int i = 0; i < _numObj; i++)
+		_file->readImage(i, &_object->_objects[i]);
+}
+
+// Read scenery, overlay files for given screen number
+void HugoEngine::readScreenFiles(int screenNum) {
+	debugC(1, kDebugEngine, "readScreenFiles(%d)", screenNum);
+
+	_file->readBackground(screenNum);               // Scenery file
+	memcpy(_screen->getBackBuffer(), _screen->getFrontBuffer(), sizeof(_screen->getFrontBuffer()));// Make a copy
+	_file->readOverlay(screenNum, _boundary, BOUNDARY); // Boundary file
+	_file->readOverlay(screenNum, _overlay, OVERLAY);   // Overlay file
+	_file->readOverlay(screenNum, _ovlBase, OVLBASE);   // Overlay base file
+}
+
+// Return maximum allowed movement (from zero to vx) such that object does
+// not cross a boundary (either background or another object)
+int HugoEngine::deltaX(int x1, int x2, int vx, int y) {
+// Explanation of algorithm:  The boundaries are drawn as contiguous
+// lines 1 pixel wide.  Since DX,DY are not necessarily 1, we must
+// detect boundary crossing.  If vx positive, examine each pixel from
+// x1 old to x2 new, else x2 old to x1 new, both at the y2 line.
+// If vx zero, no need to check.  If vy non-zero then examine each
+// pixel on the line segment x1 to x2 from y old to y new.
+// Fix from Hugo I v1.5:
+// Note the diff is munged in the return statement to cater for a special
+// cases arising from differences in image widths from one sequence to
+// another.  The problem occurs reversing direction at a wall where the
+// new image intersects before the object can move away.  This is cured
+// by comparing the intersection with half the object width pos. If the
+// intersection is in the other half wrt the intended direction, use the
+// desired vx, else use the computed delta.  i.e. believe the desired vx
+
+	debugC(3, kDebugEngine, "deltaX(%d, %d, %d, %d)", x1, x2, vx, y);
+
+	if (vx == 0)
+		return 0 ;                                  // Object stationary
+
+	y *= XBYTES;                                    // Offset into boundary file
+	if (vx > 0) {
+		// Moving to right
+		for (int i = x1 >> 3; i <= (x2 + vx) >> 3; i++) {// Search by byte
+			int b = Utils::firstBit((byte)(_boundary[y + i] | _objBound[y + i]));
+			if (b < 8) {   // b is index or 8
+				// Compute x of boundary and test if intersection
+				b += i << 3;
+				if ((b >= x1) && (b <= x2 + vx))
+					return (b < x1 + ((x2 - x1) >> 1)) ? vx : b - x2 - 1; // return dx
+			}
+		}
+	} else {
+		// Moving to left
+		for (int i = x2 >> 3; i >= (x1 + vx) >> 3; i--) {// Search by byte
+			int b = Utils::lastBit((byte)(_boundary[y + i] | _objBound[y + i]));
+			if (b < 8) {    // b is index or 8
+				// Compute x of boundary and test if intersection
+				b += i << 3;
+				if ((b >= x1 + vx) && (b <= x2))
+					return (b > x1 + ((x2 - x1) >> 1)) ? vx : b - x1 + 1; // return dx
+			}
+		}
+	}
+	return vx;
+}
+
+// Similar to Delta_x, but for movement in y direction.  Special case of
+// bytes at end of line segment; must only count boundary bits falling on
+// line segment.
+int HugoEngine::deltaY(int x1, int x2, int vy, int y) {
+	debugC(3, kDebugEngine, "deltaY(%d, %d, %d, %d)", x1, x2, vy, y);
+
+	if (vy == 0)
+		return 0;                                   // Object stationary
+
+	int inc = (vy > 0) ? 1 : -1;
+	for (int j = y + inc; j != (y + vy + inc); j += inc) { //Search by byte
+		for (int i = x1 >> 3; i <= x2 >> 3; i++) {
+			int b = _boundary[j * XBYTES + i] | _objBound[j * XBYTES + i];
+			if (b != 0) {                           // Any bit set
+				// Make sure boundary bits fall on line segment
+				if (i == (x2 >> 3))                 // Adjust right end
+					b &= 0xff << ((i << 3) + 7 - x2);
+				else if (i == (x1 >> 3))            // Adjust left end
+					b &= 0xff >> (x1 - (i << 3));
+				if (b)
+					return j - y - inc;
+			}
+		}
+	}
+	return vy;
+}
+
+// Store a horizontal line segment in the object boundary file
+void HugoEngine::storeBoundary(int x1, int x2, int y) {
+	debugC(5, kDebugEngine, "storeBoundary(%d, %d, %d)", x1, x2, y);
+
+	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
+		byte *b = &_objBound[y * XBYTES + i];       // get boundary byte
+		if (i == x2 >> 3)                           // Adjust right end
+			*b |= 0xff << ((i << 3) + 7 - x2);
+		else if (i == x1 >> 3)                      // Adjust left end
+			*b |= 0xff >> (x1 - (i << 3));
+		else
+			*b = 0xff;
+	}
+}
+
+// Clear a horizontal line segment in the object boundary file
+void HugoEngine::clearBoundary(int x1, int x2, int y) {
+	debugC(5, kDebugEngine, "clearBoundary(%d, %d, %d)", x1, x2, y);
+
+	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
+		byte *b = &_objBound[y * XBYTES + i];       // get boundary byte
+		if (i == x2 >> 3)                           // Adjust right end
+			*b &= ~(0xff << ((i << 3) + 7 - x2));
+		else if (i == x1 >> 3)                      // Adjust left end
+			*b &= ~(0xff >> (x1 - (i << 3)));
+		else
+			*b = 0;
+	}
+}
+
+// Maze mode is enabled.  Check to see whether hero has crossed the maze
+// bounding box, if so, go to the next room */
+void HugoEngine::processMaze() {
+	debugC(1, kDebugEngine, "processMaze");
+
+	seq_t *currImage = _hero->currImagePtr;         // Get ptr to current image
+
+	// hero coordinates
+	int x1 = _hero->x + currImage->x1;              // Left edge of object
+	int x2 = _hero->x + currImage->x2;              // Right edge
+	int y1 = _hero->y + currImage->y1;              // Top edge
+	int y2 = _hero->y + currImage->y2;              // Bottom edge
+
+	if (x1 < _maze.x1) {
+		// Exit west
+		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_screen_p - 1;
+		_actListArr[_alNewscrIndex][0].a2.x = _maze.x2 - SHIFT - (x2 - x1);
+		_actListArr[_alNewscrIndex][0].a2.y = _hero->y;
+		_status.routeIndex = -1;
+		_scheduler->insertActionList(_alNewscrIndex);
+	} else if (x2 > _maze.x2) {
+		// Exit east
+		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_screen_p + 1;
+		_actListArr[_alNewscrIndex][0].a2.x = _maze.x1 + SHIFT;
+		_actListArr[_alNewscrIndex][0].a2.y = _hero->y;
+		_status.routeIndex = -1;
+		_scheduler->insertActionList(_alNewscrIndex);
+	} else if (y1 < _maze.y1 - SHIFT) {
+		// Exit north
+		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_screen_p - _maze.size;
+		_actListArr[_alNewscrIndex][0].a2.x = _maze.x3;
+		_actListArr[_alNewscrIndex][0].a2.y = _maze.y2 - SHIFT - (y2 - y1);
+		_status.routeIndex = -1;
+		_scheduler->insertActionList(_alNewscrIndex);
+	} else if (y2 > _maze.y2 - SHIFT / 2) {
+		// Exit south
+		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_screen_p + _maze.size;
+		_actListArr[_alNewscrIndex][0].a2.x = _maze.x4;
+		_actListArr[_alNewscrIndex][0].a2.y = _maze.y1 + SHIFT;
+		_status.routeIndex = -1;
+		_scheduler->insertActionList(_alNewscrIndex);
+	}
+}
+
+// Search background command list for this screen for supplied object.
+// Return first associated verb (not "look") or 0 if none found.
+char *HugoEngine::useBG(char *name) {
+	debugC(1, kDebugEngine, "useBG(%s)", name);
+
+	objectList_t p = _backgroundObjects[*_screen_p];
+	for (int i = 0; *_arrayVerbs[p[i].verbIndex]; i++) {
+		if ((name == _arrayNouns[p[i].nounIndex][0] &&
+		     p[i].verbIndex != _look) &&
+		    ((p[i].roomState == DONT_CARE) || (p[i].roomState == _screenStates[*_screen_p])))
+			return _arrayVerbs[p[i].verbIndex][0];
+	}
+
+	return 0;
+}
+
+// Add action lists for this screen to event queue
+void HugoEngine::screenActions(int screenNum) {
+	debugC(1, kDebugEngine, "screenActions(%d)", screenNum);
+
+	uint16 *screenAct = _screenActs[screenNum];
+	if (screenAct) {
+		for (int i = 0; screenAct[i]; i++)
+			_scheduler->insertActionList(screenAct[i]);
+	}
+}
+
+// Set the new screen number into the hero object and any carried objects
+void HugoEngine::setNewScreen(int screenNum) {
+	debugC(1, kDebugEngine, "setNewScreen(%d)", screenNum);
+
+	*_screen_p = screenNum;                             // HERO object
+	for (int i = HERO + 1; i < _numObj; i++) {          // Any others
+		if (_object->isCarried(i))                      // being carried
+			_object->_objects[i].screenIndex = screenNum;
+	}
+}
+
+// An object has collided with a boundary.  See if any actions are required
+void HugoEngine::boundaryCollision(object_t *obj) {
+	debugC(1, kDebugEngine, "boundaryCollision");
+
+	if (obj == _hero) {
+		// Hotspots only relevant to HERO
+		int x;
+		if (obj->vx > 0)
+			x = obj->x + obj->currImagePtr->x2;
+		else
+			x = obj->x + obj->currImagePtr->x1;
+		int y = obj->y + obj->currImagePtr->y2;
+
+		for (int i = 0; _hotspots[i].screenIndex >= 0; i++) {
+			hotspot_t *hotspot = &_hotspots[i];
+			if (hotspot->screenIndex == obj->screenIndex)
+				if ((x >= hotspot->x1) && (x <= hotspot->x2) && (y >= hotspot->y1) && (y <= hotspot->y2)) {
+					_scheduler->insertActionList(hotspot->actIndex);
+					break;
+				}
+		}
+	} else {
+		// Check whether an object collided with HERO
+		int dx = _hero->x + _hero->currImagePtr->x1 - obj->x - obj->currImagePtr->x1;
+		int dy = _hero->y + _hero->currImagePtr->y2 - obj->y - obj->currImagePtr->y2;
+		// If object's radius is infinity, use a closer value
+		int8 radius = obj->radius;
+		if (radius < 0)
+			radius = DX * 2;
+		if ((abs(dx) <= radius) && (abs(dy) <= radius))
+			_scheduler->insertActionList(obj->actIndex);
+	}
+}
+
+// Add up all the object values and all the bonus points
+void HugoEngine::calcMaxScore() {
+	debugC(1, kDebugEngine, "calcMaxScore");
+
+	for (int i = 0; i < _numObj; i++)
+		_maxscore += _object->_objects[i].objValue;
+
+	for (int i = 0; i < _numBonuses; i++)
+		_maxscore += _points[i].score;
+}
+
+// Exit game, advertise trilogy, show copyright
+void HugoEngine::endGame() {
+	debugC(1, kDebugEngine, "endGame");
+
+	if (!_boot.registered)
+		Utils::Box(BOX_ANY, "%s", _textEngine[kEsAdvertise]);
+	Utils::Box(BOX_ANY, "%s\n%s", _episode, COPYRIGHT);
+	_status.viewState = V_EXIT;
 }
 
 } // End of namespace Hugo

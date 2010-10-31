@@ -207,10 +207,21 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 				//  We need to find correct replacements for each situation manually
 				SciTrackOriginReply originReply;
 				SciWorkaroundSolution solution = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, &originReply);
-				if (solution.type == WORKAROUND_NONE)
+				if (solution.type == WORKAROUND_NONE) {
+#ifdef RELEASE_BUILD
+					// If we are running an official ScummVM release -> fake 0 in unknown cases
+					warning("Uninitialized read for temp %d from method %s::%s (script %d, room %d, localCall %x)", 
+					index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, 
+					g_sci->getEngineState()->currentRoomNumber(), originReply.localCallOffset);
+
+					r[index] = NULL_REG;
+					break;
+#else
 					error("Uninitialized read for temp %d from method %s::%s (script %d, room %d, localCall %x)", 
 					index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, 
 					g_sci->getEngineState()->currentRoomNumber(), originReply.localCallOffset);
+#endif
+				}
 				assert(solution.type == WORKAROUND_FAKE);
 				r[index] = make_reg(0, solution.value);
 				break;
@@ -318,10 +329,10 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 		// HACK: Temporarily switch to a warning in SCI32 games until we can figure out why Torin has
 		// an invalid exported function.
 		if (getSciVersion() >= SCI_VERSION_2)
-			warning("Request for invalid exported function 0x%x of script 0x%x", pubfunct, script);
+			warning("Request for invalid exported function 0x%x of script %d", pubfunct, script);
 		else
 #endif
-			error("Request for invalid exported function 0x%x of script 0x%x", pubfunct, script);
+			error("Request for invalid exported function 0x%x of script %d", pubfunct, script);
 		return NULL;
 	}
 

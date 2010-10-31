@@ -43,7 +43,7 @@ int AgiLoader_v2::loadDir(AgiDir *agid, const char *fname) {
 	uint32 flen;
 	uint i;
 
-	report("Loading directory: %s\n", fname);
+	debug(0, "Loading directory: %s", fname);
 
 	if (!fp.open(fname)) {
 		return errBadFileOpen;
@@ -157,7 +157,7 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 				exit(1);
 			}
 		} else {
-			report("Error: bad signature %04x\n", sig);
+			warning("AgiLoader_v2::loadVolRes: bad signature %04x", sig);
 			// fprintf (stderr, "ACK! BAD RESOURCE!!!\n");
 			return 0;
 		}

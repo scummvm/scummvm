@@ -66,13 +66,7 @@ namespace Tinsel {
 
 #define PREFETCH	(NUM_SLOTS/2)	// For initial test
 
-#ifndef _Windows
-//#define ADVANCE_SOUND		12	// 1 second
-#define ADVANCE_SOUND		18	// 1 1/2 second
-//#define MAX_ADVANCE_SOUND	36	// 3 seconds
-#else
 #define ADVANCE_SOUND		18	// 1 1/2 seconds
-#endif
 #define SUBSEQUENT_SOUND	6	// 1/2 second
 
 
@@ -520,7 +514,7 @@ void BMVPlayer::MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, CO
 	LoadSubString(stringId, 0, TextBufferAddr(), TBUFSZ);
 
 	texts[index].dieFrame = currentFrame + duration;
-	texts[index].pText = ObjectTextOut(coroParam, GetPlayfieldList(FIELD_STATUS),
+	texts[index].pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 						TextBufferAddr(),
 						0,
 						x, y,

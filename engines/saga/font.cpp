@@ -41,11 +41,9 @@ Font::Font(SagaEngine *vm) : _vm(vm) {
 
 	assert(_vm->getFontsCount() > 0);
 
-	_fonts = (FontData **)calloc(_vm->getFontsCount(), sizeof(*_fonts));
-	_loadedFonts = 0;
-
+	_fonts.resize(_vm->getFontsCount());
 	for (i = 0; i < _vm->getFontsCount(); i++) {
-		loadFont(_vm->getFontDescription(i)->fontResourceId);
+		loadFont(&_fonts[i],	_vm->getFontDescription(i)->fontResourceId);
 	}
 
 	_fontMapping = 0;
@@ -53,25 +51,11 @@ Font::Font(SagaEngine *vm) : _vm(vm) {
 
 Font::~Font() {
 	debug(8, "Font::~Font(): Freeing fonts.");
-	int i;
-
-	for (i = 0 ; i < _loadedFonts ; i++) {
-		if (_fonts[i] != NULL) {
-			free(_fonts[i]->normal.font);
-			free(_fonts[i]->outline.font);
-		}
-
-		free(_fonts[i]);
-	}
-
-	free(_fonts);
 }
 
 
-void Font::loadFont(uint32 fontResourceId) {
-	FontData *font;
-	byte *fontResourcePointer;
-	size_t fontResourceLength;
+void Font::loadFont(FontData *font, uint32 fontResourceId) {
+	ByteArray fontResourceData;
 	int numBits;
 	int c;
 	ResourceContext *fontContext;
@@ -84,16 +68,13 @@ void Font::loadFont(uint32 fontResourceId) {
 	}
 
 	// Load font resource
-	_vm->_resource->loadResource(fontContext, fontResourceId, fontResourcePointer, fontResourceLength);
+	_vm->_resource->loadResource(fontContext, fontResourceId, fontResourceData);
 
-	if (fontResourceLength < FONT_DESCSIZE) {
-		error("Font::loadFont() Invalid font length (%i < %i)", (int)fontResourceLength, FONT_DESCSIZE);
+	if (fontResourceData.size() < FONT_DESCSIZE) {
+		error("Font::loadFont() Invalid font length (%i < %i)", (int)fontResourceData.size(), FONT_DESCSIZE);
 	}
 
-	MemoryReadStreamEndian readS(fontResourcePointer, fontResourceLength, fontContext->isBigEndian());
-
-	// Create new font structure
-	font = (FontData *)malloc(sizeof(*font));
+	ByteArrayReadStreamEndian readS(fontResourceData, fontContext->isBigEndian());
 
 	// Read font header
 	font->normal.header.charHeight = readS.readUint16();
@@ -123,20 +104,15 @@ void Font::loadFont(uint32 fontResourceId) {
 	}
 
 	if (readS.pos() != FONT_DESCSIZE) {
-		error("Invalid font resource size.");
+		error("Invalid font resource size");
 	}
 
-	font->normal.font = (byte*)malloc(fontResourceLength - FONT_DESCSIZE);
-	memcpy(font->normal.font, fontResourcePointer + FONT_DESCSIZE, fontResourceLength - FONT_DESCSIZE);
-
-	free(fontResourcePointer);
+	font->normal.font.resize(fontResourceData.size() - FONT_DESCSIZE);
+	memcpy(font->normal.font.getBuffer(), fontResourceData.getBuffer() + FONT_DESCSIZE, fontResourceData.size() - FONT_DESCSIZE);
 
 
 	// Create outline font style
 	createOutline(font);
-
-	// Set font data
-	_fonts[_loadedFonts++] = font;
 }
 
 void Font::createOutline(FontData *font) {
@@ -145,12 +121,12 @@ void Font::createOutline(FontData *font) {
 	int newByteWidth;
 	int newRowLength = 0;
 	int currentByte;
-	unsigned char *basePointer;
-	unsigned char *srcPointer;
-	unsigned char *destPointer1;
-	unsigned char *destPointer2;
-	unsigned char *destPointer3;
-	unsigned char charRep;
+	byte *basePointer;
+	byte *srcPointer;
+	byte *destPointer1;
+	byte *destPointer2;
+	byte *destPointer3;
+	byte charRep;
 
 	// Populate new font style character data
 	for (i = 0; i < FONT_CHARCOUNT; i++) {
@@ -177,20 +153,20 @@ void Font::createOutline(FontData *font) {
 	font->outline.header.rowLength = newRowLength;
 
 	// Allocate new font representation storage
-	font->outline.font = (unsigned char *)calloc(newRowLength, font->outline.header.charHeight);
+	font->outline.font.resize(newRowLength * font->outline.header.charHeight);
 
 
 	// Generate outline font representation
 	for (i = 0; i < FONT_CHARCOUNT; i++) {
 		for (row = 0; row < font->normal.header.charHeight; row++) {
 			for (currentByte = 0; currentByte < font->outline.fontCharEntry[i].byteWidth; currentByte++) {
-				basePointer = font->outline.font + font->outline.fontCharEntry[i].index + currentByte;
+				basePointer = &font->outline.font[font->outline.fontCharEntry[i].index + currentByte];
 				destPointer1 = basePointer + newRowLength * row;
 				destPointer2 = basePointer + newRowLength * (row + 1);
 				destPointer3 = basePointer + newRowLength * (row + 2);
 				if (currentByte > 0) {
 					// Get last two columns from previous byte
-					srcPointer = font->normal.font + font->normal.header.rowLength * row + font->normal.fontCharEntry[i].index + (currentByte - 1);
+					srcPointer = &font->normal.font[font->normal.header.rowLength * row + font->normal.fontCharEntry[i].index + (currentByte - 1)];
 					charRep = *srcPointer;
 					*destPointer1 |= ((charRep << 6) | (charRep << 7));
 					*destPointer2 |= ((charRep << 6) | (charRep << 7));
@@ -198,7 +174,7 @@ void Font::createOutline(FontData *font) {
 				}
 
 				if (currentByte < font->normal.fontCharEntry[i].byteWidth) {
-					srcPointer = font->normal.font + font->normal.header.rowLength * row + font->normal.fontCharEntry[i].index + currentByte;
+					srcPointer = &font->normal.font[font->normal.header.rowLength * row + font->normal.fontCharEntry[i].index + currentByte];
 					charRep = *srcPointer;
 					*destPointer1 |= charRep | (charRep >> 1) | (charRep >> 2);
 					*destPointer2 |= charRep | (charRep >> 1) | (charRep >> 2);
@@ -210,15 +186,15 @@ void Font::createOutline(FontData *font) {
 		// "Hollow out" character to prevent overdraw
 		for (row = 0; row < font->normal.header.charHeight; row++) {
 			for (currentByte = 0; currentByte < font->outline.fontCharEntry[i].byteWidth; currentByte++) {
-				destPointer2 = font->outline.font + font->outline.header.rowLength * (row + 1) + font->outline.fontCharEntry[i].index + currentByte;
+				destPointer2 = &font->outline.font[font->outline.header.rowLength * (row + 1) + font->outline.fontCharEntry[i].index + currentByte];
 				if (currentByte > 0) {
 					// Get last two columns from previous byte
-					srcPointer = font->normal.font + font->normal.header.rowLength * row + font->normal.fontCharEntry[i].index + (currentByte - 1);
+					srcPointer = &font->normal.font[font->normal.header.rowLength * row + font->normal.fontCharEntry[i].index + (currentByte - 1)];
 					*destPointer2 &= ((*srcPointer << 7) ^ 0xFFU);
 				}
 
 				if (currentByte < font->normal.fontCharEntry[i].byteWidth) {
-					srcPointer = font->normal.font + font->normal.header.rowLength * row + font->normal.fontCharEntry[i].index + currentByte;
+					srcPointer = &font->normal.font[font->normal.header.rowLength * row + font->normal.fontCharEntry[i].index + currentByte];
 					*destPointer2 &= ((*srcPointer >> 1) ^ 0xFFU);
 				}
 			}
@@ -289,7 +265,7 @@ void Font::draw(FontId fontId, const char *text, size_t count, const Common::Poi
 
 void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags) {
 	const byte *textPointer;
-	byte *c_dataPointer;
+	const byte *c_dataPointer;
 	int c_code;
 	int charRow = 0;
 	Point textPoint(point);
@@ -384,7 +360,7 @@ void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, co
 				break;
 			}
 
-			c_dataPointer = drawFont.font + charRow * drawFont.header.rowLength + drawFont.fontCharEntry[c_code].index;
+			c_dataPointer = &drawFont.font[charRow * drawFont.header.rowLength + drawFont.fontCharEntry[c_code].index];
 
 			for (c_byte = 0; c_byte < c_byte_len; c_byte++, c_dataPointer++) {
 				// Check each bit, draw pixel if bit is set
@@ -610,7 +586,7 @@ void Font::textDrawRect(FontId fontId, const char *text, const Common::Rect &rec
 			}
 			w_total = 0;
 			len_total = 0;
-			if (wc == 0) {
+			if (wc == 0 && measurePointer) {
 				searchPointer = measurePointer + 1;
 			}
 			wc = 0;

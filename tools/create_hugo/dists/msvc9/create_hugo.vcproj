@@ -194,6 +194,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\staticfont.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\staticintro.h"
 			>
 		</File>

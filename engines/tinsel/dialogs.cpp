@@ -1587,7 +1587,7 @@ static bool InvKeyIn(const Common::KeyState &kbd) {
 				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), iconArray[HL3]);
 				iconArray[HL3] = NULL;
 			}
-			iconArray[HL3] = ObjectTextOut(nullContext,
+			iconArray[HL3] = ObjectTextOut(
 				GetPlayfieldList(FIELD_STATUS), sedit, 0,
 				InvD[ino].inventoryX + cd.box[cd.selBox].xpos + 2,
 				InvD[ino].inventoryY + cd.box[cd.selBox].ypos + TYOFF,
@@ -1595,7 +1595,7 @@ static bool InvKeyIn(const Common::KeyState &kbd) {
 			if (MultiRightmost(iconArray[HL3]) > MAX_NAME_RIGHT) {
 				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), iconArray[HL3]);
 				UpdateString(Common::KeyState(Common::KEYCODE_BACKSPACE));
-				iconArray[HL3] = ObjectTextOut(nullContext,
+				iconArray[HL3] = ObjectTextOut(
 					GetPlayfieldList(FIELD_STATUS), sedit, 0,
 					InvD[ino].inventoryX + cd.box[cd.selBox].xpos + 2,
 					InvD[ino].inventoryY + cd.box[cd.selBox].ypos + TYOFF,
@@ -1669,7 +1669,7 @@ static void Select(int i, bool force) {
 			}
 #endif
 
-			iconArray[HL3] = ObjectTextOut(nullContext,
+			iconArray[HL3] = ObjectTextOut(
 				GetPlayfieldList(FIELD_STATUS), sedit, 0,
 				InvD[ino].inventoryX + cd.box[i].xpos + 2,
 #ifdef JAPAN
@@ -2634,17 +2634,16 @@ static void AddBackground(OBJECT **rect, OBJECT **title, int extraH, int extraV,
 		return;
 
 	// Create text object using title string
-	CoroContext dummyCoro;
 	if (textFrom == FROM_HANDLE) {
 		LoadStringRes(InvD[ino].hInvTitle, TextBufferAddr(), TBUFSZ);
-		*title = ObjectTextOut(dummyCoro, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
+		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
 					InvD[ino].inventoryX + width/2, InvD[ino].inventoryY + M_TOFF,
 					GetTagFontHandle(), TXT_CENTRE);
 		assert(*title); // Inventory title string produced NULL text
 		MultiSetZPosition(*title, Z_INV_HTEXT);
 	} else if (textFrom == FROM_STRING && cd.ixHeading != NO_HEADING) {
 		LoadStringRes(configStrings[cd.ixHeading], TextBufferAddr(), TBUFSZ);
-		*title = ObjectTextOut(dummyCoro, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
+		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
 					InvD[ino].inventoryX + width/2, InvD[ino].inventoryY + M_TOFF,
 					GetTagFontHandle(), TXT_CENTRE);
 		assert(*title); // Inventory title string produced NULL text
@@ -2668,7 +2667,7 @@ static void AddTitle(POBJECT *title, int extraH) {
 	// Create text object using title string
 	if (InvD[ino].hInvTitle != (SCNHANDLE)NO_HEADING) {
 		LoadStringRes(InvD[ino].hInvTitle, TextBufferAddr(), TBUFSZ);
-		*title = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
+		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
 					InvD[ino].inventoryX + (width/2)+NM_BG_POS_X, InvD[ino].inventoryY + NM_TOFF,
 					GetTagFontHandle(), TXT_CENTRE, 0);
 		assert(*title);
@@ -2749,14 +2748,14 @@ static void AddBox(int *pi, const int i) {
 				(!TinselV2 && (cd.box[i].ixText == USE_POINTER))) {
 			if (cd.box[i].boxText != NULL) {
 				if (cd.box[i].boxType == RGROUP) {
-					iconArray[*pi] = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), cd.box[i].boxText, 0,
+					iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), cd.box[i].boxText, 0,
 #ifdef JAPAN
 							x + 2, y+2, GetTagFontHandle(), 0);
 #else
 							x + 2, y + TYOFF, GetTagFontHandle(), 0);
 #endif
 				} else {
-					iconArray[*pi] = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), cd.box[i].boxText, 0,
+					iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), cd.box[i].boxText, 0,
 #ifdef JAPAN
 // Note: it never seems to go here!
 							x + cd.box[i].w/2, y+2, GetTagFontHandle(), TXT_CENTRE);
@@ -2782,10 +2781,10 @@ static void AddBox(int *pi, const int i) {
 			}
 
 			if (TinselV2 && (cd.box[i].boxType == RGROUP))
-				iconArray[*pi] = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
+				iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
 						0, x + 2, y + TYOFF, GetTagFontHandle(), 0, 0);
 			else
-				iconArray[*pi] = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS),
+				iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 					TextBufferAddr(), 0,
 #ifdef JAPAN
 					x + cd.box[i].w/2, y+2, GetTagFontHandle(), TXT_CENTRE);
@@ -2842,7 +2841,7 @@ static void AddBox(int *pi, const int i) {
 			assert(cd.box[i].ixText != USE_POINTER);
 			LoadStringRes(configStrings[cd.box[i].ixText], TextBufferAddr(), TBUFSZ);
 		}
-		iconArray[*pi] = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS),
+		iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 			TextBufferAddr(), 0, x + MDTEXT_XOFF, y + MDTEXT_YOFF, GetTagFontHandle(), TXT_RIGHT);
 		MultiSetZPosition(iconArray[*pi], Z_INV_ITEXT);
 		*pi += 1;
@@ -2869,11 +2868,11 @@ static void AddBox(int *pi, const int i) {
 		}
 
 		if (cd.box[i].boxType == TOGGLE2) {
-			iconArray[*pi] = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS),
+			iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 				TextBufferAddr(), 0, x + cd.box[i].w / 2, y + TOG2_YOFF,
 				GetTagFontHandle(), TXT_CENTRE, 0);
 		} else {
-			iconArray[*pi] = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS),
+			iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 				TextBufferAddr(), 0, x + MDTEXT_XOFF, y + MDTEXT_YOFF,
 				GetTagFontHandle(), TXT_RIGHT, 0);
 		}
@@ -2908,7 +2907,7 @@ static void AddBox(int *pi, const int i) {
 			assert(cd.box[i].ixText != USE_POINTER);
 			LoadStringRes(configStrings[cd.box[i].ixText], TextBufferAddr(), TBUFSZ);
 		}
-		iconArray[*pi] = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS),
+		iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 			TextBufferAddr(), 0, x+MDTEXT_XOFF, y+MDTEXT_YOFF, GetTagFontHandle(), TXT_RIGHT);
 		MultiSetZPosition(iconArray[*pi], Z_INV_ITEXT);
 		*pi += 1;
@@ -2933,7 +2932,7 @@ static void AddBox(int *pi, const int i) {
 			// Stick in the text
 			assert(cd.box[i].textMethod == TM_INDEX);
 			LoadStringRes(SysString(cd.box[i].ixText), TextBufferAddr(), TBUFSZ);
-			iconArray[*pi] = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS),
+			iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 				TextBufferAddr(), 0, x + cd.box[i].w / 2, y + TOG2_YOFF,
 				GetTagFontHandle(), TXT_CENTRE, 0);
 			MultiSetZPosition(iconArray[*pi], Z_INV_ITEXT);
@@ -2945,7 +2944,7 @@ static void AddBox(int *pi, const int i) {
 			break;
 
 		LoadStringRes(LanguageDesc(displayedLanguage), TextBufferAddr(), TBUFSZ);
-		iconArray[*pi] = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
+		iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
 				x + cd.box[i].w / 2, y + ROT_YOFF, GetTagFontHandle(), TXT_CENTRE, 0);
 		MultiSetZPosition(iconArray[*pi], Z_INV_ITEXT);
 		*pi += 1;

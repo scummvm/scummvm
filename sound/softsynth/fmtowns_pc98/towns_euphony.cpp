@@ -36,17 +36,15 @@ TownsEuphonyDriver::TownsEuphonyDriver(Audio::Mixer *mixer) : _activeChannels(0)
 }
 
 TownsEuphonyDriver::~TownsEuphonyDriver() {
+	delete _intf;
 	delete[] _activeChannels;
 	delete[] _sustainChannels;
 	delete[] _assignedChannels;
-
 	delete[] _tEnable;
 	delete[] _tMode;
 	delete[] _tOrdr;
 	delete[] _tLevel;
 	delete[] _tTranspose;
-
-	delete _intf;
 }
 
 bool TownsEuphonyDriver::init() {
@@ -131,7 +129,7 @@ void TownsEuphonyDriver::unloadWaveTable(int id) {
 void TownsEuphonyDriver::reserveSoundEffectChannels(int num) {
 	_intf->callback(33, num);
 	uint32 volMask = 0;
-	
+
 	if (num > 8)
 		return;
 
@@ -139,7 +137,7 @@ void TownsEuphonyDriver::reserveSoundEffectChannels(int num) {
 		volMask |= v;
 		v >>= 1;
 	}
-	
+
 	_intf->setSoundEffectChanMask(volMask);
 }
 
@@ -560,10 +558,10 @@ uint8 TownsEuphonyDriver::appendEvent(uint8 evt, uint8 chan) {
 
 void TownsEuphonyDriver::sendEvent(uint8 mode, uint8 command) {
 	if (mode == 0) {
-		warning("TownsEuphonyDriver: Mode 0 not implemented.");
+		// warning("TownsEuphonyDriver: Mode 0 not implemented");
 
 	} else if (mode == 0x10) {
-		warning("TownsEuphonyDriver: Mode 0x10 not implemented.");
+		warning("TownsEuphonyDriver: Mode 0x10 not implemented");
 
 	} else if (mode == 0xff) {
 		if (command >= 0xf0) {

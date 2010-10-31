@@ -27,18 +27,24 @@
 #ifndef PSP_MEMORY_H
 #define PSP_MEMORY_H
 
-#include "backends/platform/psp/psppixelformat.h"
-#include "common/list.h"
-
-#define UNCACHED(x)		((byte *)(((uint32)(x)) | 0x40000000))	/* make an uncached access */
-#define CACHED(x)		((byte *)(((uint32)(x)) & 0xBFFFFFFF))	/* make an uncached access into a cached one */
-
 #define MIN_AMOUNT_FOR_COMPLEX_COPY  8
 #define MIN_AMOUNT_FOR_MISALIGNED_COPY 8
 
 //#define __PSP_DEBUG_PRINT__
 
-#include "backends/platform/psp/trace.h"
+//#include "backends/platform/psp/trace.h"
+
+// These instructions don't generate automatically but are faster then copying byte by byte
+inline void lwl_copy(byte *dst, const byte *src) {
+	register uint32 data;
+	asm volatile ("lwr %0,0(%1)\n\t"
+		 "lwl %0,3(%1)\n\t"
+		 : "=&r" (data) : "r" (src), "m" (*src));
+
+	asm volatile ("swr %1,0(%2)\n\t"
+		 "swl %1,3(%2)\n\t"
+		 : "=m" (*dst) : "r" (data), "r" (dst));
+}
 
 /**
  *	Class that does memory copying and swapping if needed
@@ -46,42 +52,69 @@
 class PspMemory {
 private:
 	static void testCopy(const byte *debugDst, const byte *debugSrc, uint32 debugBytes);
-	static void testSwap(const uint16 *debugDst, const uint16 *debugSrc, uint32 debugBytes, PSPPixelFormat &format);
 	static void copy(byte *dst, const byte *src, uint32 bytes);
-	static void swap(uint16 *dst16, const uint16 *src16, uint32 bytes, PSPPixelFormat &format);
 	static void copy32Aligned(uint32 *dst32, const uint32 *src32, uint32 bytes);
-	static void swap32Aligned(uint32 *dst32, const uint32 *src32, uint32 bytes, PSPPixelFormat &format);
 	static void copy32Misaligned(uint32 *dst32, const byte *src, uint32 bytes, uint32 alignSrc);
-	static void swap32Misaligned(uint32 *dst32, const uint16 *src16, uint32 bytes, PSPPixelFormat &format);
-	static void copy16(uint16 *dst, const uint16 *src, uint32 bytes);
 
-	// For swapping, we know that we have multiples of 16 bits
-	static void swap16(uint16 *dst16, const uint16 *src16, uint32 bytes, PSPPixelFormat &format) {
-		PSP_DEBUG_PRINT("swap16 called with dst16[%p], src16[%p], bytes[%d]\n", dst16, src16, bytes);
-		uint32 shorts = bytes >> 1;
-
-		while (shorts--) {
-			*dst16++ = format.swapRedBlue16(*src16++);
+	static inline void copy8(byte *dst, const byte *src, int32 bytes) {
+		//PSP_DEBUG_PRINT("copy8 called with dst[%p], src[%p], bytes[%d]\n", dst, src, bytes);
+		uint32 words = bytes >> 2;
+		for (; words; words--) {
+			lwl_copy(dst, src);
+			dst += 4;
+			src += 4;
 		}
-	}
-	
-	static void copy8(byte *dst, const byte *src, uint32 bytes) {
-		PSP_DEBUG_PRINT("copy8 called with dst[%p], src[%p], bytes[%d]\n", dst, src, bytes);
-		while (bytes--) {
+
+		uint32 bytesLeft = bytes & 0x3;
+		for (; bytesLeft; bytesLeft--) {
 			*dst++ = *src++;
 		}
 	}
 
-public:	
+public:
 	// This is the interface to the outside world
-	static void fastCopy(byte *dst, const byte *src, uint32 bytes) {
+	static void *fastCopy(void *dstv, const void *srcv, int32 bytes) {
+		byte *dst = (byte *)dstv;
+		byte *src = (byte *)srcv;
+
 		if (bytes < MIN_AMOUNT_FOR_COMPLEX_COPY) {
 			copy8(dst, src, bytes);
 		} else {	// go to more powerful copy
 			copy(dst, src, bytes);
 		}
-	}
 
+		return dstv;
+	}
+};
+
+inline void *psp_memcpy(void *dst, const void *src, int32 bytes) {
+	return PspMemory::fastCopy(dst, src, bytes);
+}
+
+#endif /* PSP_MEMORY_H */
+
+#if defined(PSP_INCLUDE_SWAP) && !defined(PSP_MEMORY_SWAP_H)
+#define PSP_MEMORY_SWAP_H
+
+//#include "backends/platform/psp/psppixelformat.h"
+
+class PspMemorySwap {
+private:
+	static void testSwap(const uint16 *debugDst, const uint16 *debugSrc, uint32 debugBytes, PSPPixelFormat &format);
+	static void swap(uint16 *dst16, const uint16 *src16, uint32 bytes, PSPPixelFormat &format);
+	static void swap32Aligned(uint32 *dst32, const uint32 *src32, uint32 bytes, PSPPixelFormat &format);
+	static void swap32Misaligned(uint32 *dst32, const uint16 *src16, uint32 bytes, PSPPixelFormat &format);
+	// For swapping, we know that we have multiples of 16 bits
+	static void swap16(uint16 *dst16, const uint16 *src16, uint32 bytes, PSPPixelFormat &format) {
+	PSP_DEBUG_PRINT("swap16 called with dst16[%p], src16[%p], bytes[%d]\n", dst16, src16, bytes);
+	uint32 shorts = bytes >> 1;
+
+	while (shorts--) {
+		*dst16++ = format.swapRedBlue16(*src16++);
+	}
+}
+
+public:
 	static void fastSwap(byte *dst, const byte *src, uint32 bytes, PSPPixelFormat &format) {
 		if (bytes < MIN_AMOUNT_FOR_COMPLEX_COPY * 2) {
 			swap16((uint16 *)dst, (uint16 *)src, bytes, format);
@@ -91,41 +124,6 @@ public:
 	}
 };
 
-/**
- *	Class that allocates memory in the VRAM
- */
-class VramAllocator : public Common::Singleton<VramAllocator> {
-public:
-	VramAllocator() : _bytesAllocated(0) {}
-	void *allocate(int32 size, bool smallAllocation = false);	// smallAllocation e.g. palettes
-	void deallocate(void *pointer);
-
-	static inline bool isAddressInVram(void *address) {
-		if ((uint32)(CACHED(address)) >= VRAM_START_ADDRESS && (uint32)(CACHED(address)) < VRAM_END_ADDRESS)
-			return true;
-		return false;
-	}
+#endif /* PSP_INCLUDE_SWAP */
 
 
-private:
-	/**
-	 *	Used to allocate in VRAM
-	 */
-	struct Allocation {
-		byte *address;
-		uint32 size;
-		void *getEnd() { return address + size; }
-		Allocation(void *Address, uint32 Size) : address((byte *)Address), size(Size) {}
-		Allocation() : address(0), size(0) {}
-	};
-
-	enum {
-		VRAM_START_ADDRESS = 0x04000000,
-		VRAM_END_ADDRESS   = 0x04200000,
-		VRAM_SMALL_ADDRESS = VRAM_END_ADDRESS - (4 * 1024)	// 4K in the end for small allocations
-	};
-	Common::List <Allocation> _allocList;		// List of allocations
-	uint32 _bytesAllocated;
-};
-
-#endif /* PSP_MEMORY_H */

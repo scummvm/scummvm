@@ -28,6 +28,9 @@
  *    both the QuickTime support and (vkeybd http://www.alsa-project.org/~iwai/alsa.html)
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/scummsys.h"
 
 #if defined(USE_SEQ_MIDI)

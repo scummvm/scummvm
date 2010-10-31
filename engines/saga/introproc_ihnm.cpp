@@ -83,19 +83,18 @@ int Scene::IHNMStartProc() {
 	}
 
 	_vm->_music->setVolume(0, 1000);
-	_vm->_anim->freeCutawayList();
+	_vm->_anim->clearCutawayList();
 
 	// Queue first scene
 	firstScene.loadFlag = kLoadBySceneNumber;
 	firstScene.sceneDescriptor = -1;
-	firstScene.sceneDescription = NULL;
 	firstScene.sceneSkipTarget = false;
 	firstScene.sceneProc = NULL;
 	firstScene.transitionType = kTransitionFade;
 	firstScene.actorsEntrance = 0;
 	firstScene.chapter = -1;
 
-	_vm->_scene->queueScene(&firstScene);
+	_vm->_scene->queueScene(firstScene);
 
 	return SUCCESS;
 }
@@ -114,7 +113,7 @@ int Scene::IHNMCreditsProc() {
 	}
 
 	_vm->_music->setVolume(0, 1000);
-	_vm->_anim->freeCutawayList();
+	_vm->_anim->clearCutawayList();
 
 	return SUCCESS;
 }
@@ -122,8 +121,7 @@ int Scene::IHNMCreditsProc() {
 void Scene::IHNMLoadCutaways() {
 	ResourceContext *resourceContext;
 	//ResourceContext *soundContext;
-	byte *resourcePointer;
-	size_t resourceLength;
+	ByteArray resourceData;
 
 	resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (resourceContext == NULL) {
@@ -131,18 +129,16 @@ void Scene::IHNMLoadCutaways() {
 	}
 
 	if (!_vm->isIHNMDemo())
-		_vm->_resource->loadResource(resourceContext, RID_IHNM_INTRO_CUTAWAYS, resourcePointer, resourceLength);
+		_vm->_resource->loadResource(resourceContext, RID_IHNM_INTRO_CUTAWAYS, resourceData);
 	else
-		_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_INTRO_CUTAWAYS, resourcePointer, resourceLength);
+		_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_INTRO_CUTAWAYS, resourceData);
 
-	if (resourceLength == 0) {
+	if (resourceData.empty()) {
 		error("Scene::IHNMStartProc() Can't load cutaway list");
 	}
 
 	// Load the cutaways for the title screens
-	_vm->_anim->loadCutawayList(resourcePointer, resourceLength);
-
-	free(resourcePointer);
+	_vm->_anim->loadCutawayList(resourceData);
 }
 
 bool Scene::checkKey() {

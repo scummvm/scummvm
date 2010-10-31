@@ -194,6 +194,11 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	showActors();
 
 	_egoPositioned = false;
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	towns_resetPalCycleFields();
+#endif
+
 	runEntryScript();
 	if (_game.version >= 1 && _game.version <= 2) {
 		runScript(5, 0, 0, 0);

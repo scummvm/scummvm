@@ -26,6 +26,8 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
+#include "backends/platform/psp/default_display_client.h"
+
 class Cursor : public DefaultDisplayClient {
 private:
 	int	_hotspotX, _hotspotY;

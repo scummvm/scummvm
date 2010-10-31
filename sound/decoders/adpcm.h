@@ -50,14 +50,15 @@ class RewindableAudioStream;
 // Usually, if the audio stream we're trying to play has the FourCC header
 // string intact, it's easy to discern which encoding is used
 enum typesADPCM {
-	kADPCMOki,		// Dialogic/Oki ADPCM (aka VOX)
-	kADPCMMSIma,	// Microsoft IMA ADPCM
-	kADPCMMS,		// Microsoft ADPCM
-	kADPCMTinsel4,	// 4-bit ADPCM used by the Tinsel engine
-	kADPCMTinsel6,	// 6-bit ADPCM used by the Tinsel engine
-	kADPCMTinsel8,	// 8-bit ADPCM used by the Tinsel engine
-	kADPCMIma,		// Standard IMA ADPCM
-	kADPCMApple		// Apple QuickTime IMA ADPCM
+	kADPCMOki,                 // Dialogic/Oki ADPCM (aka VOX)
+	kADPCMMSIma,               // Microsoft IMA ADPCM
+	kADPCMMSImaLastExpress,    // Microsoft IMA ADPCM (with inverted samples)
+	kADPCMMS,                  // Microsoft ADPCM
+	kADPCMTinsel4,             // 4-bit ADPCM used by the Tinsel engine
+	kADPCMTinsel6,             // 6-bit ADPCM used by the Tinsel engine
+	kADPCMTinsel8,             // 8-bit ADPCM used by the Tinsel engine
+	kADPCMIma,                 // Standard IMA ADPCM
+	kADPCMApple                // Apple QuickTime IMA ADPCM
 };
 
 /**

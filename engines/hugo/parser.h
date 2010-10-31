@@ -35,50 +35,92 @@
 namespace Hugo {
 
 enum seqTextParser {
-	kTBExit  = 0, kTBMaze,    kTBNoPoint, kTBNoun,  kTBVerb,
-	kTBEh,        kTBUnusual, kTBHave,    kTBNoUse, kTBDontHave,
-	kTBNeed,      kTBOk,      kCmtAny1,   kCmtAny2, kCmtAny3,
-	kCmtClose,    kTBIntro,   kTBOutro
+	kTBExit  = 0, kTBMaze,    kTBNoPoint, kTBNoun,       kTBVerb,
+	kTBEh,        kTBUnusual, kTBHave,    kTBNoUse,      kTBDontHave,
+	kTBNeed,      kTBOk,      kCmtAny1,   kCmtAny2,      kCmtAny3,
+	kCmtClose,    kTBIntro,   kTBOutro,   kTBUnusual_1d, kCmtAny4,
+	kCmtAny5,     kTBExit_1d, kTBEh_1d,   kTBEh_2d,      kTBNoUse_2d
 };
 
 class Parser {
 public:
-	Parser(HugoEngine &vm);
+	Parser(HugoEngine *vm);
+	virtual ~Parser();
 
 	bool  isWordPresent(char **wordArr);
 
 	void  charHandler();
 	void  command(const char *format, ...);
-	void  drawStatusText();
 	void  keyHandler(uint16 nChar, uint16 nFlags);
-	void  lineHandler();
+	virtual void lineHandler() = 0;
+
+protected:
+	HugoEngine *_vm;
+
+protected:
+	char *findNoun();
+	char *findVerb();
 
 private:
-	HugoEngine &_vm;
-
 	char   _ringBuffer[32];                         // Ring buffer
 	uint16 _putIndex;
 	uint16 _getIndex;                               // Index into ring buffer
 	bool   _checkDoubleF1Fl;                        // Flag used to display user help or instructions
 
-	command_t _statusLine;
-	command_t _scoreLine;
-
-	bool  isBackgroundWord(objectList_t obj, char *line);
-	bool  isCarrying(uint16 wordIndex);
-	bool  isCatchallVerb(objectList_t obj, char *line);
-	bool  isGenericVerb(object_t *obj, char *line, char *comment);
-	bool  isNear(object_t *obj, char *verb, char *comment);
-	bool  isObjectVerb(object_t *obj, char *line, char *comment);
-
-	char *findNoun(char *line);
-	char *findVerb(char *line);
-	char *strlwr(char *buffer);
-
-	void  dropObject(object_t *obj);
 	void  showDosInventory();
-	void  showTakeables();
+};
+
+class Parser_v1w : public Parser {
+public:
+	Parser_v1w(HugoEngine *vm);
+	~Parser_v1w();
+
+	virtual void  lineHandler();
+
+protected:
+	bool  isBackgroundWord(objectList_t obj);
+	bool  isCatchallVerb(objectList_t obj);
+	bool  isGenericVerb(object_t *obj, char *comment);
+	bool  isObjectVerb(object_t *obj, char *comment);
 	void  takeObject(object_t *obj);
+
+private:
+	bool  isNear(object_t *obj, char *verb, char *comment);
+	void  dropObject(object_t *obj);
+};
+
+class Parser_v1d : public Parser {
+public:
+	Parser_v1d(HugoEngine *vm);
+	~Parser_v1d();
+
+	virtual void lineHandler();
+
+protected:
+	bool isNear(char *verb, char *noun, object_t *obj, char *comment);
+	bool isGenericVerb(char *word, object_t *obj);
+	bool isObjectVerb(char *word, object_t *obj);
+	bool isBackgroundWord(char *noun, char *verb, objectList_t obj);
+	bool isCatchallVerb(bool testNounFl, char *noun, char *verb, objectList_t obj);
+	char *findNextNoun(char *noun);
+	void  dropObject(object_t *obj);
+	void  takeObject(object_t *obj);
+};
+
+class Parser_v2d : public Parser_v1d {
+public:
+	Parser_v2d(HugoEngine *vm);
+	~Parser_v2d();
+
+	void lineHandler();
+};
+
+class Parser_v3d : public Parser_v1w {
+public:
+	Parser_v3d(HugoEngine *vm);
+	~Parser_v3d();
+
+	void lineHandler();
 };
 
 } // End of namespace Hugo

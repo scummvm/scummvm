@@ -833,6 +833,8 @@ const Feature s_features[] = {
 	{       "mad",        "USE_MAD", "libmad.lib", true, "libmad (MP3) support" },
 	{    "vorbis",     "USE_VORBIS", "libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib", true, "Ogg Vorbis support" },
 	{      "flac",       "USE_FLAC", "libFLAC_static.lib", true, "FLAC support" },
+	{ "theoradec",  "USE_THEORADEC", "libtheora_static.lib", true, "Theora decoder support" },
+	{       "png",        "USE_PNG", "libpng.lib", true, "PNG support" },
 	{     "mpeg2",      "USE_MPEG2", "libmpeg2.lib", false, "mpeg2 codec for cutscenes" },
 
 	// ScummVM feature flags
@@ -1601,6 +1603,17 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		           "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\">\n"
 		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableSpecificWarnings=\"" << warnings->second << "\" />\n"
 		           "\t\t</Configuration>\n";
+	} else if (name == "sword25") {
+		// Win32
+		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\">\n"
+		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\" />\n";
+		// x64
+		project << "\t\t<Configuration Name=\"Debug|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug64.vsprops\">\n"
+		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\" />\n";
 	} else if (name == "tinsel") {
 		// Win32
 		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\">\n"
@@ -1715,7 +1728,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 	if (isRelease) {
 		properties << "\t\tEnableIntrinsicFunctions=\"true\"\n"
 		              "\t\tWholeProgramOptimization=\"true\"\n"
-		              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
+		              "\t\tPreprocessorDefinitions=\"WIN32;RELEASE_BUILD\"\n"
 		              "\t\tStringPooling=\"true\"\n"
 		              "\t\tBufferSecurityCheck=\"false\"\n"
 		              "\t\tDebugInformationFormat=\"0\"\n"
@@ -2010,7 +2023,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	std::map<std::string, std::string>::iterator warnings = _projectWarnings.find(name);
 
 	// Nothing to add here, move along!
-	if (name != "scummvm" && name != "tinsel" && warnings == _projectWarnings.end())
+	if (name != "scummvm" && name != "sword25" && name != "tinsel" && warnings == _projectWarnings.end())
 		return;
 
 	project << "\t<ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='" << (isRelease ? "Release" : "Debug") << "|" << (isWin32 ? "Win32" : "x64") << "'\">\n"
@@ -2020,6 +2033,9 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	if (name == "scummvm") {
 		project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
 	} else {
+		if (name == "sword25")
+			project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
+
 		if (name == "tinsel" && !isRelease)
 			project << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
 
@@ -2045,7 +2061,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	project << "\t</ItemDefinitionGroup>\n";
 }
 
-void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix, bool isWin32) {	
+void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix, bool isWin32) {
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	              "\t<PropertyGroup>\n"
@@ -2111,7 +2127,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 	if (isRelease) {
 		properties << "\t\t\t<IntrinsicFunctions>true</IntrinsicFunctions>\n"
 		              "\t\t\t<WholeProgramOptimization>true</WholeProgramOptimization>\n"
-		              "\t\t\t<PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
+		              "\t\t\t<PreprocessorDefinitions>WIN32;RELEASE_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 		              "\t\t\t<StringPooling>true</StringPooling>\n"
 		              "\t\t\t<BufferSecurityCheck>false</BufferSecurityCheck>\n"
 		              "\t\t\t<DebugInformationFormat></DebugInformationFormat>\n"

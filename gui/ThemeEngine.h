@@ -238,6 +238,7 @@ public:
 
 	struct Renderer {
 		const char *name;
+		const char *shortname;
 		const char *cfg;
 		GraphicsMode mode;
 	};
@@ -262,17 +263,6 @@ public:
 	void refresh();
 	void enable();
 	void disable();
-
-	struct StoredState {
-		Common::Rect r;
-		Graphics::Surface screen;
-		Graphics::Surface backBuffer;
-
-		StoredState() {}
-	};
-
-	StoredState *storeState(const Common::Rect &r);
-	void restoreState(StoredState *state);
 
 	/**
 	 *	Implementation of the GUI::Theme API. Called when a

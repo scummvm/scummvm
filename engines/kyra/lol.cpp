@@ -1930,11 +1930,11 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait
 	return 1;
 }
 
-void LoLEngine::giveItemToMonster(MonsterInPlay *monster, uint16 item) {
+void LoLEngine::giveItemToMonster(MonsterInPlay *monster, Item item) {
 	uint16 *c = &monster->assignedItems;
 	while (*c)
 		c = &_itemsInPlay[*c].nextAssignedObject;
-	*c = item;
+	*c = (uint16)item;
 	_itemsInPlay[item].nextAssignedObject = 0;
 }
 

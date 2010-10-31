@@ -787,7 +787,7 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 	}
 
 	if (y2 < 0) {
-		if (y2 <= -h )
+		if (y2 <= -h)
 			return;
 		h += y2;
 		y1 -= y2;
@@ -1084,7 +1084,7 @@ void Screen::setTextColor(const uint8 *cmap, int a, int b) {
 
 bool Screen::loadFont(FontId fontId, const char *filename) {
 	if (fontId == FID_SJIS_FNT) {
-		warning("Trying to replace system SJIS font.");
+		warning("Trying to replace system SJIS font");
 		return true;
 	}
 
@@ -3313,7 +3313,7 @@ SJISFont::SJISFont(Screen *s, Graphics::FontSJIS *font, const uint8 invisColor, 
     : _colorMap(0), _font(font), _invisColor(invisColor), _is16Color(is16Color), _screen(s) {
 	assert(_font);
 
-	_font->enableOutline(outlineSize);
+	_font->setDrawingMode(outlineSize ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);
 
 	_sjisWidth = _font->getMaxFontWidth() >> 1;
 	_fontHeight = _font->getFontHeight() >> 1;
@@ -3345,9 +3345,9 @@ void SJISFont::setColorMap(const uint8 *src) {
 
 	if (!_is16Color) {
 		if (_colorMap[0] == _invisColor)
-			_font->enableOutline(false);
+			_font->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
 		else
-			_font->enableOutline(true);
+			_font->setDrawingMode(Graphics::FontSJIS::kOutlineMode);
 	}
 }
 

@@ -141,7 +141,6 @@ private:
 	// Hotspot related functions and variables
 	uint16 _hotspotCount;
 	void loadHotspots(uint16);
-	void checkHotspotChange();
 	void checkInventoryClick();
 	bool _showHotspots;
 	void updateZipMode();
@@ -176,6 +175,7 @@ public:
 	void runHotspotScript(uint16 hotspot, uint16 scriptType);
 	int32 getCurHotspot() const { return _curHotspot; }
 	Common::String getHotspotName(uint16 hotspot);
+	void checkHotspotChange();
 
 	// Variable functions
 	void initVars();

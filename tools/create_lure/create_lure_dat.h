@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef __CREATELURE_DAT__
-#define __CREATELURE_DAT__
+#ifndef CREATE_LURE_DAT_H
+#define CREATE_LURE_DAT_H
 
 #include "common/endian.h"
 #include "common/util.h"

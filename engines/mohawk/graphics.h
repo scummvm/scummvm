@@ -150,6 +150,7 @@ public:
 	void drawPLST(uint16 x);
 	void drawRect(Common::Rect rect, bool active);
 	void drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect dstRect);
+	void drawExtrasImage(uint16 id, Common::Rect dstRect);
 
 	// Water Effect
 	void scheduleWaterEffect(uint16);

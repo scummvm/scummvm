@@ -16,7 +16,10 @@ MODULE_OBJS := powerman.o \
 	thread.o \
 	rtc.o \
 	mp3.o \
-	tests.o
+	png_loader.o \
+	image_viewer.o \
+	tests.o \
+	dummy.o
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))

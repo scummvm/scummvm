@@ -24,11 +24,11 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 #include "common/file.h"
 
 #include "gob/gob.h"
 #include "gob/inter.h"
-#include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
@@ -492,10 +492,10 @@ void Inter_v1::o1_initMult() {
 		_vm->_mult->_animSurf = _vm->_draw->_spritesArray[Draw::kAnimSurface];
 	}
 
-	_vm->_video->drawSprite(*_vm->_draw->_backSurface, *_vm->_mult->_animSurf,
+	_vm->_mult->_animSurf->blit(*_vm->_draw->_backSurface,
 	    _vm->_mult->_animLeft, _vm->_mult->_animTop,
 	    _vm->_mult->_animLeft + _vm->_mult->_animWidth - 1,
-	    _vm->_mult->_animTop + _vm->_mult->_animHeight - 1, 0, 0, 0);
+	    _vm->_mult->_animTop + _vm->_mult->_animHeight - 1, 0, 0);
 
 	debugC(4, kDebugGraphics, "o1_initMult: x = %d, y = %d, w = %d, h = %d",
 		  _vm->_mult->_animLeft, _vm->_mult->_animTop,
@@ -707,8 +707,7 @@ bool Inter_v1::o1_loadCursor(OpFuncParams &params) {
 	if (!resource)
 		return false;
 
-	_vm->_video->fillRect(*_vm->_draw->_cursorSprites,
-			index * _vm->_draw->_cursorWidth, 0,
+	_vm->_draw->_cursorSprites->fillRect(index * _vm->_draw->_cursorWidth, 0,
 			index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
 			_vm->_draw->_cursorHeight - 1, 0);
 
@@ -972,7 +971,7 @@ bool Inter_v1::o1_loadTot(OpFuncParams &params) {
 	if ((_vm->_game->_script->peekByte() & 0x80) != 0) {
 		_vm->_game->_script->skip(1);
 		_vm->_game->_script->evalExpr(0);
-		strncpy0(buf, _vm->_game->_script->getResultStr(), 15);
+		Common::strlcpy(buf, _vm->_game->_script->getResultStr(), 16);
 	} else {
 		size = _vm->_game->_script->readInt8();
 		memcpy(buf, _vm->_game->_script->readString(size), size);
@@ -1075,7 +1074,7 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 			}
 		}
 		if (!allZero) {
-			_vm->_video->clearSurf(*_vm->_draw->_frontSurface);
+			_vm->_draw->_frontSurface->clear();
 			_vm->_draw->_noInvalidated57 = true;
 			_vm->_game->_script->skip(48);
 			return false;
@@ -1189,6 +1188,9 @@ bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	int16 cmd;
 	int16 key;
 	uint32 now;
+
+	_vm->_draw->forceBlit();
+	_vm->_video->retrace();
 
 	cmd = _vm->_game->_script->readInt16();
 	animPalette();
@@ -1510,7 +1512,7 @@ bool Inter_v1::o1_strToLong(OpFuncParams &params) {
 	int32 res;
 
 	strVar = _vm->_game->_script->readVarIndex();
-	strncpy0(str, GET_VARO_STR(strVar), 19);
+	Common::strlcpy(str, GET_VARO_STR(strVar), 20);
 	res = atoi(str);
 
 	destVar = _vm->_game->_script->readVarIndex();
@@ -2560,8 +2562,8 @@ void Inter_v1::animPalette() {
 }
 
 void Inter_v1::manipulateMap(int16 xPos, int16 yPos, int16 item) {
-	for (int y = 0; y < _vm->_map->_mapHeight; y++) {
-		for (int x = 0; x < _vm->_map->_mapWidth; x++) {
+	for (int y = 0; y < _vm->_map->getMapHeight(); y++) {
+		for (int x = 0; x < _vm->_map->getMapWidth(); x++) {
 			if ((_vm->_map->getItem(x, y) & 0xFF) == item)
 				_vm->_map->setItem(x, y, _vm->_map->getItem(x, y) & 0xFF00);
 			else if (((_vm->_map->getItem(x, y) & 0xFF00) >> 8) == item)
@@ -2569,7 +2571,7 @@ void Inter_v1::manipulateMap(int16 xPos, int16 yPos, int16 item) {
 		}
 	}
 
-	if (xPos < _vm->_map->_mapWidth - 1) {
+	if (xPos < _vm->_map->getMapWidth() - 1) {
 		if (yPos > 0) {
 			if (((_vm->_map->getItem(xPos, yPos) & 0xFF00) != 0) ||
 					((_vm->_map->getItem(xPos, yPos - 1) & 0xFF00) != 0) ||
@@ -2658,7 +2660,7 @@ void Inter_v1::manipulateMap(int16 xPos, int16 yPos, int16 item) {
 		return;
 	}
 
-	if ((xPos < _vm->_map->_mapWidth - 2) &&
+	if ((xPos < _vm->_map->getMapWidth() - 2) &&
 			(_vm->_map->getPass(xPos + 2, yPos) == 1)) {
 		_vm->_map->_itemPoses[item].x = xPos + 2;
 		_vm->_map->_itemPoses[item].y = yPos;
@@ -2666,7 +2668,7 @@ void Inter_v1::manipulateMap(int16 xPos, int16 yPos, int16 item) {
 		return;
 	}
 
-	if ((xPos < _vm->_map->_mapWidth - 1) &&
+	if ((xPos < _vm->_map->getMapWidth() - 1) &&
 			(_vm->_map->getPass(xPos + 1, yPos) == 1)) {
 		_vm->_map->_itemPoses[item].x = xPos + 1;
 		_vm->_map->_itemPoses[item].y = yPos;

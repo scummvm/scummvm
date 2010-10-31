@@ -32,6 +32,7 @@
 #include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/display_client.h"
 #include "backends/platform/psp/display_manager.h"
+#define PSP_INCLUDE_SWAP
 #include "backends/platform/psp/memory.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging the stack */
@@ -341,14 +342,13 @@ void Buffer::copyFromRect(const byte *buf, uint32 pitch, int destX, int destY, u
 	if (pitch == realWidthInBytes && pitch == recWidthInBytes) {
 		//memcpy(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth));
 		if (_pixelFormat.swapRB)
-			PspMemory::fastSwap(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth), _pixelFormat);
+			PspMemorySwap::fastSwap(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth), _pixelFormat);
 		else
 			PspMemory::fastCopy(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth));
 	} else {
 		do {
-			//memcpy(dst, buf, recWidthInBytes);
 			if (_pixelFormat.swapRB)
-				PspMemory::fastSwap(dst, buf, recWidthInBytes, _pixelFormat);
+				PspMemorySwap::fastSwap(dst, buf, recWidthInBytes, _pixelFormat);
 			else
 				PspMemory::fastCopy(dst, buf, recWidthInBytes);
 			buf += pitch;
@@ -370,7 +370,7 @@ void Buffer::copyToArray(byte *dst, int pitch) {
 	do {
 		//memcpy(dst, src, sourceWidthInBytes);
 		if (_pixelFormat.swapRB)
-			PspMemory::fastSwap(dst, src, sourceWidthInBytes, _pixelFormat);
+			PspMemorySwap::fastSwap(dst, src, sourceWidthInBytes, _pixelFormat);
 		else
 			PspMemory::fastCopy(dst, src, sourceWidthInBytes);
 		src += realWidthInBytes;
@@ -378,45 +378,45 @@ void Buffer::copyToArray(byte *dst, int pitch) {
 	} while (--h);
 }
 
-/* We can size the buffer either by texture size (multiple of 2^n) or source size. The GU can
-	really handle both, but is supposed to get only 2^n size buffers */
 void Buffer::setSize(uint32 width, uint32 height, HowToSize textureOrSource/*=kSizeByTextureSize*/) {
 	DEBUG_ENTER_FUNC();
-	PSP_DEBUG_PRINT("w[%u], h[%u], %s\n", width, height, textureOrSource ? "size by source" : "size by texture");
-
+	
+	// We can size the buffer either by texture size (multiple of 2^n) or source size.
+	// At higher sizes, increasing the texture size to 2^n is a waste of space. At these sizes kSizeBySourceSize should be used.
+	
 	_sourceSize.width = width;
 	_sourceSize.height = height;
 
-	_textureSize.width = scaleUpToPowerOfTwo(width);
+	_textureSize.width = scaleUpToPowerOfTwo(width);		// can only scale up to 512
 	_textureSize.height = scaleUpToPowerOfTwo(height);
-
+	
 	if (textureOrSource == kSizeByTextureSize) {
 		_width = _textureSize.width;
 		_height = _textureSize.height;
-	} else { /* kSizeBySourceSize */
-		_width = _sourceSize.width;
+	} else { // sizeBySourceSize
+		_width =  _sourceSize.width;
 		_height = _sourceSize.height;
+		
+		// adjust allocated width to be divisible by 32. 
+		// The GU can only handle multiples of 16 bytes. A 4 bit image x 32 will give us 16 bytes
+		// We don't necessarily know the depth of the pixels here. So just make it divisible by 32.
+		uint32 checkDiv = _width & 31;
+		if (checkDiv)
+			_width += 32 - checkDiv;
 	}
+	
+	PSP_DEBUG_PRINT("width[%u], height[%u], texW[%u], texH[%u], sourceW[%d], sourceH[%d] %s\n", _width, _height, _textureSize.width, _textureSize.height, _sourceSize.width, _sourceSize.height, textureOrSource ? "size by source" : "size by texture");
 }
 
-/* Scale a dimension (width/height) up to power of 2 for the texture */
+// Scale a dimension (width/height) up to power of 2 for the texture
+// Will only go up to 512 since that's the maximum PSP texture size
 uint32 Buffer::scaleUpToPowerOfTwo(uint32 size) {
 
-	uint32 textureDimension = 0;
-	if (size <= 16)
-		textureDimension = 16;
-	else if (size <= 32)
-		textureDimension = 32;
-	else if (size <= 64)
-		textureDimension = 64;
-	else if (size <= 128)
-		textureDimension = 128;
-	else if (size <= 256)
-		textureDimension = 256;
-	else
-		textureDimension = 512;
+	uint32 textureDimension = 16;
+	while (size > textureDimension && textureDimension < 512)
+		textureDimension <<= 1;
 
-	PSP_DEBUG_PRINT("power of 2 = %u\n", textureDimension);
+	PSP_DEBUG_PRINT("size[%u]. power of 2[%u]\n", size, textureDimension);
 
 	return textureDimension;
 }
@@ -539,51 +539,41 @@ void GuRenderer::render() {
 	DEBUG_ENTER_FUNC();
 	PSP_DEBUG_PRINT("Buffer[%p] Palette[%p]\n", _buffer->getPixels(), _palette->getRawValues());
 
-	setMaxTextureOffsetByIndex(0, 0);
-
 	guProgramDrawBehavior();
 
 	if (_buffer->hasPalette())
 		guLoadPalette();
 
 	guProgramTextureFormat();
-	guLoadTexture();
 
-	Vertex *vertices = guGetVertices();
-	fillVertices(vertices);
+	// Loop over patches of 512x512 pixel textures and draw them
+	for (uint32 j = 0; j < _buffer->getSourceHeight(); j += 512) {
+		_textureLoadOffset.y = j;
+		
+		for (uint32 i = 0; i < _buffer->getSourceWidth(); i += 512) {
+			_textureLoadOffset.x = i;
+			
+			guLoadTexture();
+			Vertex *vertices = guGetVertices();
+			fillVertices(vertices);
 
-	guDrawVertices(vertices);
-
-	if (_buffer->getSourceWidth() > 512) {
-		setMaxTextureOffsetByIndex(1, 0);
-
-		guLoadTexture();
-
-		vertices = guGetVertices();
-		fillVertices(vertices);
-
-		guDrawVertices(vertices);
+			guDrawVertices(vertices);
+		}
 	}
-}
-
-inline void GuRenderer::setMaxTextureOffsetByIndex(uint32 x, uint32 y) {
-	DEBUG_ENTER_FUNC();
-	const uint32 maxTextureSizeShift = 9; /* corresponds to 512 = max texture size*/
-
-	_maxTextureOffset.x = x << maxTextureSizeShift; /* x times 512 */
-	_maxTextureOffset.y = y << maxTextureSizeShift; /* y times 512 */
 }
 
 inline void GuRenderer::guProgramDrawBehavior() {
 	DEBUG_ENTER_FUNC();
-	PSP_DEBUG_PRINT("blending[%s] colorTest[%s] reverseAlpha[%s] keyColor[%u]\n", _blending ? "on" : "off", _colorTest ? "on" : "off", _alphaReverse ? "on" : "off", _keyColor);
+	PSP_DEBUG_PRINT("blending[%s] colorTest[%s] reverseAlpha[%s] keyColor[%u]\n", 
+		_blending ? "on" : "off", _colorTest ? "on" : "off", 
+		_alphaReverse ? "on" : "off", _keyColor);
 
 	if (_blending) {
 		sceGuEnable(GU_BLEND);
 
-		if (_alphaReverse)	// Reverse the alpha value (0 is 1)
+		if (_alphaReverse)	// Reverse the alpha value (ie. 0 is 1) easier to do in some cases
 			sceGuBlendFunc(GU_ADD, GU_ONE_MINUS_SRC_ALPHA, GU_SRC_ALPHA, 0, 0);
-		else	// Normal alpha values
+		else				// Normal alpha values
 			sceGuBlendFunc(GU_ADD, GU_SRC_ALPHA, GU_ONE_MINUS_SRC_ALPHA, 0, 0);
 
 	} else
@@ -591,7 +581,9 @@ inline void GuRenderer::guProgramDrawBehavior() {
 
 	if (_colorTest) {
 		sceGuEnable(GU_COLOR_TEST);
-		sceGuColorFunc(GU_NOTEQUAL, _keyColor, 0x00ffffff);
+		sceGuColorFunc(GU_NOTEQUAL, 	// show only colors not equal to this color
+					   _keyColor, 
+					   0x00ffffff);		// match everything but alpha
 	} else
 		sceGuDisable(GU_COLOR_TEST);
 }
@@ -612,7 +604,8 @@ inline void GuRenderer::guLoadPalette() {
 	PSP_DEBUG_PRINT("bpp[%d], pixelformat[%d], mask[%x]\n", _buffer->getBitsPerPixel(), _palette->getPixelFormat(), mask);
 
 	sceGuClutMode(convertToGuPixelFormat(_palette->getPixelFormat()), 0, mask, 0);
-	sceGuClutLoad(_palette->getNumOfEntries() >> 3, _palette->getRawValues());
+	sceGuClutLoad(_palette->getNumOfEntries() >> 3, 	// it's in batches of 8 for some reason
+				  _palette->getRawValues());
 }
 
 inline void GuRenderer::guProgramTextureFormat() {
@@ -658,7 +651,17 @@ inline uint32 GuRenderer::convertToGuPixelFormat(PSPPixelFormat::Type format) {
 inline void GuRenderer::guLoadTexture() {
 	DEBUG_ENTER_FUNC();
 
-	sceGuTexImage(0, _buffer->getTextureWidth(), _buffer->getTextureHeight(), _buffer->getWidth(), _buffer->getPixels() + _buffer->_pixelFormat.pixelsToBytes(_maxTextureOffset.x));
+	byte *startPoint = _buffer->getPixels();
+	if (_textureLoadOffset.x)
+		startPoint += _buffer->_pixelFormat.pixelsToBytes(_textureLoadOffset.x);
+	if (_textureLoadOffset.y) 
+		startPoint += _buffer->getWidthInBytes() * _textureLoadOffset.y;
+	
+	sceGuTexImage(0, 
+				_buffer->getTextureWidth(), 	// texture width (must be power of 2)
+				_buffer->getTextureHeight(), 	// texture height (must be power of 2)
+				_buffer->getWidth(),			// width of a line of the image (to get to the next line)
+				startPoint);					// where to start reading
 }
 
 inline Vertex *GuRenderer::guGetVertices() {
@@ -676,40 +679,40 @@ void GuRenderer::fillVertices(Vertex *vertices) {
 	uint32 outputWidth = _displayManager->getOutputWidth();
 	uint32 outputHeight = _displayManager->getOutputHeight();
 
-	float textureStartX, textureStartY, textureEndX, textureEndY;
-
 	// Texture adjustments for eliminating half-pixel artifacts from scaling
 	// Not necessary if we don't scale
-	float textureAdjustment = 0.0f;
+	float textureFix = 0.0f;
 	if (_useGlobalScaler &&
-	        (_displayManager->getScaleX() != 1.0f || _displayManager->getScaleX() != 1.0f))
-		textureAdjustment = 0.5f;
+	        (_displayManager->getScaleX() != 1.0f || _displayManager->getScaleY() != 1.0f))
+			textureFix = 0.5f;
 
-	textureStartX = textureAdjustment + _offsetInBuffer.x; //debug
-	textureStartY = textureAdjustment + _offsetInBuffer.y;
-	// We subtract maxTextureOffset because our shifted texture starts at 512 and will go to 640
-	textureEndX = _offsetInBuffer.x + _drawSize.width - textureAdjustment - _maxTextureOffset.x;
-	textureEndY = _offsetInBuffer.y + _drawSize.height - textureAdjustment;
-
+	// These coordinates describe an area within the texture. ie. we already loaded a square of texture,
+	// now the coordinates within it are 0 to the edge of the area of the texture we want to draw
+	float textureStartX = textureFix + _offsetInBuffer.x;
+	float textureStartY = textureFix + _offsetInBuffer.y;	
+	// even when we draw one of several textures, we use the whole drawsize of the image. The GU 
+	// will draw what it can with the texture it has and scale it properly for us.
+	float textureEndX = -textureFix +  _offsetInBuffer.x + _drawSize.width  - _textureLoadOffset.x;
+	float textureEndY = -textureFix +  _offsetInBuffer.y + _drawSize.height - _textureLoadOffset.y;
 	// For scaling to the final image size, calculate the gaps on both sides
 	uint32 gapX = _useGlobalScaler ? (PSP_SCREEN_WIDTH - outputWidth) >> 1 : 0;
 	uint32 gapY = _useGlobalScaler ? (PSP_SCREEN_HEIGHT - outputHeight) >> 1 : 0;
 
 	// Save scaled offset on screen
-	float scaledOffsetOnScreenX = scaleSourceToOutputX(_offsetOnScreen.x);
-	float scaledOffsetOnScreenY = scaleSourceToOutputY(_offsetOnScreen.y);
+	float scaledOffsetOnScreenX = scaleSourceToOutput(true, _offsetOnScreen.x);
+	float scaledOffsetOnScreenY = scaleSourceToOutput(false, _offsetOnScreen.y);
+
+	float imageStartX = gapX + scaledOffsetOnScreenX + (scaleSourceToOutput(true, stretch(true, _textureLoadOffset.x)));
+	float imageStartY = gapY + scaledOffsetOnScreenY + (scaleSourceToOutput(false, stretch(false, _textureLoadOffset.y)));
+
+	float imageEndX, imageEndY;
 	
-	float imageStartX, imageStartY, imageEndX, imageEndY;
-
-	imageStartX = gapX + scaledOffsetOnScreenX + (scaleSourceToOutputX(_maxTextureOffset.x));
-	imageStartY = gapY + scaledOffsetOnScreenY;
-
 	if (_fullScreen) { // shortcut
-		imageEndX = PSP_SCREEN_WIDTH - gapX + scaledOffsetOnScreenX; 
+		imageEndX = PSP_SCREEN_WIDTH - gapX + scaledOffsetOnScreenX;
 		imageEndY = PSP_SCREEN_HEIGHT - gapY + scaledOffsetOnScreenY; // needed for screen shake
 	} else { /* !fullScreen */
-		imageEndX = imageStartX + scaleSourceToOutputX(_drawSize.width);
-		imageEndY = imageStartY + scaleSourceToOutputY(_drawSize.height);
+		imageEndX = gapX + scaledOffsetOnScreenX + scaleSourceToOutput(true, stretch(true, _drawSize.width));
+		imageEndY = gapY + scaledOffsetOnScreenY + scaleSourceToOutput(false, stretch(false, _drawSize.height));
 	}
 
 	vertices[0].u = textureStartX;
@@ -728,8 +731,8 @@ void GuRenderer::fillVertices(Vertex *vertices) {
 	PSP_DEBUG_PRINT("ImageStart:   X[%f] Y[%f] ImageEnd:   X[%.1f] Y[%.1f]\n", imageStartX, imageStartY, imageEndX, imageEndY);
 }
 
-/* Scale the input X offset to appear in proper position on the screen */
-inline float GuRenderer::scaleSourceToOutputX(float offset) {
+/* Scale the input X/Y offset to appear in proper position on the screen */
+inline float GuRenderer::scaleSourceToOutput(bool x, float offset) {
 	float result;
 
 	if (!_useGlobalScaler)
@@ -737,28 +740,22 @@ inline float GuRenderer::scaleSourceToOutputX(float offset) {
 	else if (!offset)
 		result = 0.0f;
 	else
-		result = offset * _displayManager->getScaleX();
+		result = x ? offset * _displayManager->getScaleX() : offset * _displayManager->getScaleY();
 
 	return result;
 }
 
-/* Scale the input Y offset to appear in proper position on the screen */
-inline float GuRenderer::scaleSourceToOutputY(float offset) {
-	float result;
-
-	if (!_useGlobalScaler)
-		result = offset;
-	else if (!offset)
-		result = 0.0f;
-	else
-		result = offset * _displayManager->getScaleY();
-
-	return result;
+/* Scale the input X/Y offset to appear in proper position on the screen */
+inline float GuRenderer::stretch(bool x, float size) {
+	if (!_stretch)
+		return size;
+	return (x ? size * _stretchX : size * _stretchY);
 }
 
 inline void GuRenderer::guDrawVertices(Vertex *vertices) {
 	DEBUG_ENTER_FUNC();
 
+	// This function shouldn't need changing. The '32' here refers to floating point vertices.
 	sceGuDrawArray(GU_SPRITES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_2D, 2, 0, vertices);
 }
 

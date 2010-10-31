@@ -66,8 +66,8 @@ uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 		return NULL;
 
 	// Calculate needed index numbers, align width and height not next multiple of four
-	imageWidth = imageWidth % 4 ? ((imageWidth / 4) + 1) * 4 : imageWidth;
-	imageHeight = imageHeight % 4 ? ((imageHeight / 4) + 1) * 4 : imageHeight;
+	imageWidth = (imageWidth % 4) ? ((imageWidth / 4) + 1) * 4 : imageWidth;
+	imageHeight = (imageHeight % 4) ? ((imageHeight / 4) + 1) * 4 : imageHeight;
 	destinationBuffer = (uint8*)malloc((imageWidth * imageHeight) / 8);
 	dstIdx = destinationBuffer;
 	remainingBlocks = (imageWidth * imageHeight) / 16;
@@ -297,7 +297,7 @@ static void PsxDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 				} else {
 					for (int xp = boxBounds.left; xp <= boxBounds.right; ++xp) {
 						// Extract pixel value from byte
-						byte pixValue =  (*(p + (xp / 2)) & (xp % 2 ? 0xf0 : 0x0f)) >> (xp % 2 ? 4 : 0);
+						byte pixValue =  (*(p + (xp / 2)) & ((xp % 2) ? 0xf0 : 0x0f)) >> ((xp % 2) ? 4 : 0);
 						if (pixValue || !transparency)
 							*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + (xp - boxBounds.left)) = psxMapperTable[pixValue];
 					}

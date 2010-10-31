@@ -45,84 +45,58 @@
 
 namespace Saga {
 
-HitZone::HitZone(MemoryReadStreamEndian *readStream, int index, int sceneNumber): _index(index) {
-	int i, j;
-	HitZone::ClickArea *clickArea;
-	Point *point;
-
+void HitZone::load(SagaEngine *vm, MemoryReadStreamEndian *readStream, int index, int sceneNumber) {
+	_index = index;
 	_flags = readStream->readByte();
-	_clickAreasCount = readStream->readByte();
+	_clickAreas.resize(readStream->readByte());
 	_rightButtonVerb = readStream->readByte();
 	readStream->readByte(); // pad
 	_nameIndex = readStream->readUint16();
 	_scriptNumber = readStream->readUint16();
 
-	_clickAreas = (HitZone::ClickArea *)malloc(_clickAreasCount * sizeof(*_clickAreas));
+	for (ClickAreas::iterator i = _clickAreas.begin(); i != _clickAreas.end(); ++i) {
+		i->resize(readStream->readUint16LE());
 
-	if (_clickAreas == NULL) {
-		memoryError("HitZone::HitZone");
-	}
+		assert(!i->empty());
 
-	for (i = 0; i < _clickAreasCount; i++) {
-		clickArea = &_clickAreas[i];
-		clickArea->pointsCount = readStream->readUint16LE();
-
-		assert(clickArea->pointsCount);
-
-		clickArea->points = (Point *)malloc(clickArea->pointsCount * sizeof(*(clickArea->points)));
-		if (clickArea->points == NULL) {
-			memoryError("HitZone::HitZone");
-		}
-
-		for (j = 0; j < clickArea->pointsCount; j++) {
-			point = &clickArea->points[j];
-			point->x = readStream->readSint16();
-			point->y = readStream->readSint16();
+		for (ClickArea::iterator j = i->begin(); j != i->end(); ++j) {
+			j->x = readStream->readSint16();
+			j->y = readStream->readSint16();
 
 			// WORKAROUND: bug #1259608: "ITE: Riff ignores command in Ferret merchant center"
 			// Apparently ITE Mac version has bug in game data. Both ObjectMap and ActionMap
 			// for exit area are little taller (y = 123) and thus Riff goes to exit
 			// when clicked on barrel of nails.
-			if (sceneNumber == 18 && index == 0 && i == 0 && j == 0 && point->y == 123)
-				point->y = 129;
+			if (vm->getGameId() == GID_ITE) {
+				if (sceneNumber == 18 && index == 0 && (i == _clickAreas.begin()) && (j == i->begin()) && j->y == 123) {
+					j->y = 129;
+				}
+			}
 		}
 	}
 }
 
-HitZone::~HitZone() {
-	for (int i = 0; i < _clickAreasCount; i++) {
-		free(_clickAreas[i].points);
-	}
-	free(_clickAreas);
-}
-
 bool HitZone::getSpecialPoint(Point &specialPoint) const {
-	int i, pointsCount;
-	HitZone::ClickArea *clickArea;
-	Point *points;
-
-	for (i = 0; i < _clickAreasCount; i++) {
-		clickArea = &_clickAreas[i];
-		pointsCount = clickArea->pointsCount;
-		points = clickArea->points;
-		if (pointsCount == 1) {
-			specialPoint = points[0];
+	for (ClickAreas::const_iterator i = _clickAreas.begin(); i != _clickAreas.end(); ++i) {
+		if (i->size() == 1) {
+			specialPoint = (*i)[0];
 			return true;
 		}
 	}
 	return false;
 }
+
 bool HitZone::hitTest(const Point &testPoint) {
-	int i, pointsCount;
-	HitZone::ClickArea *clickArea;
-	Point *points;
+	const Point *points;
+	uint pointsCount;
 
 	if (_flags & kHitZoneEnabled) {
-		for (i = 0; i < _clickAreasCount; i++) {
-			clickArea = &_clickAreas[i];
-			pointsCount = clickArea->pointsCount;
-			points = clickArea->points;
-
+		for (ClickAreas::const_iterator i = _clickAreas.begin(); i != _clickAreas.end(); ++i) {
+			pointsCount = i->size();
+			if (pointsCount < 2) {
+				continue;
+			}
+			points = &i->front();
 			if (pointsCount == 2) {
 				// Hit-test a box region
 				if ((testPoint.x >= points[0].x) &&
@@ -132,11 +106,9 @@ bool HitZone::hitTest(const Point &testPoint) {
 						return true;
 					}
 			} else {
-				if (pointsCount > 2) {
-					// Hit-test a polygon
-					if (hitTestPoly(points, pointsCount, testPoint)) {
-						return true;
-					}
+				// Hit-test a polygon
+				if (hitTestPoly(points, pointsCount, testPoint)) {
+					return true;
 				}
 			}
 		}
@@ -146,26 +118,25 @@ bool HitZone::hitTest(const Point &testPoint) {
 
 #ifdef SAGA_DEBUG
 void HitZone::draw(SagaEngine *vm, int color) {
-	int i, pointsCount, j;
+	int pointsCount, j;
 	Location location;
-	HitZone::ClickArea *clickArea;
-	Point *points;
+	HitZone::ClickArea tmpPoints;
+	const Point *points;
 	Point specialPoint1;
 	Point specialPoint2;
 
-	for (i = 0; i < _clickAreasCount; i++) {
-		clickArea = &_clickAreas[i];
-		pointsCount = clickArea->pointsCount;
+	for (ClickAreas::const_iterator i = _clickAreas.begin(); i != _clickAreas.end(); ++i) {
+		pointsCount = i->size();
+		points = &i->front();
 		if (vm->_scene->getFlags() & kSceneFlagISO) {
-			points = (Point*)malloc(sizeof(Point) * pointsCount);
+			tmpPoints.resize(pointsCount);
 			for (j = 0; j < pointsCount; j++) {
-				location.u() = clickArea->points[j].x;
-				location.v() = clickArea->points[j].y;
+				location.u() = points[j].x;
+				location.v() = points[j].y;
 				location.z = 0;
-				vm->_isoMap->tileCoordsToScreenPoint(location, points[j]);
+				vm->_isoMap->tileCoordsToScreenPoint(location, tmpPoints[j]);
 			}
-		} else {
-			points = clickArea->points;
+			points = &tmpPoints.front();
 		}
 
 		if (pointsCount == 2) {
@@ -179,10 +150,6 @@ void HitZone::draw(SagaEngine *vm, int color) {
 				vm->_gfx->drawPolyLine(points, pointsCount, color);
 			}
 		}
-		if (vm->_scene->getFlags() & kSceneFlagISO) {
-			free(points);
-		}
-
 	}
 	if (getSpecialPoint(specialPoint1)) {
 		specialPoint2 = specialPoint1;
@@ -196,55 +163,36 @@ void HitZone::draw(SagaEngine *vm, int color) {
 #endif
 
 // Loads an object map resource ( objects ( clickareas ( points ) ) )
-void ObjectMap::load(const byte *resourcePointer, size_t resourceLength) {
-	int i;
+void ObjectMap::load(const ByteArray &resourceData) {
 
-	if (resourceLength == 0) {
+	if (!_hitZoneList.empty()) {
+		error("ObjectMap::load _hitZoneList not empty");
+	}
+
+	if (resourceData.empty()) {
 		return;
 	}
 
-	if (resourceLength < 4) {
+	if (resourceData.size() < 4) {
 		error("ObjectMap::load wrong resourceLength");
 	}
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
+	ByteArrayReadStreamEndian readS(resourceData, _vm->isBigEndian());
 
-	_hitZoneListCount = readS.readSint16();
-	if (_hitZoneListCount < 0) {
-		error("ObjectMap::load _hitZoneListCount < 0");
-	}
+	_hitZoneList.resize(readS.readUint16());
 
-	if (_hitZoneList)
-		error("ObjectMap::load _hitZoneList != NULL");
-
-	_hitZoneList = (HitZone **) malloc(_hitZoneListCount * sizeof(HitZone *));
-	if (_hitZoneList == NULL) {
-		memoryError("ObjectMap::load");
-	}
-
-	for (i = 0; i < _hitZoneListCount; i++) {
-		_hitZoneList[i] = new HitZone(&readS, i, _vm->_scene->currentSceneNumber());
+	int idx = 0;
+	for (HitZoneArray::iterator i = _hitZoneList.begin(); i != _hitZoneList.end(); ++i) {
+		i->load(_vm, &readS, idx++, _vm->_scene->currentSceneNumber());
 	}
 }
 
-void ObjectMap::freeMem() {
-	int i;
-
-	if (_hitZoneList) {
-		for (i = 0; i < _hitZoneListCount; i++) {
-			delete _hitZoneList[i];
-		}
-
-		free(_hitZoneList);
-		_hitZoneList = NULL;
-	}
-	_hitZoneListCount = 0;
+void ObjectMap::clear() {
+	_hitZoneList.clear();
 }
-
 
 #ifdef SAGA_DEBUG
 void ObjectMap::draw(const Point& testPoint, int color, int color2) {
-	int i;
 	int hitZoneIndex;
 	char txtBuf[32];
 	Point pickPoint;
@@ -260,8 +208,8 @@ void ObjectMap::draw(const Point& testPoint, int color, int color2) {
 
 	hitZoneIndex = hitTest(pickPoint);
 
-	for (i = 0; i < _hitZoneListCount; i++) {
-		_hitZoneList[i]->draw(_vm, (hitZoneIndex == i) ? color2 : color);
+	for (HitZoneArray::iterator i = _hitZoneList.begin(); i != _hitZoneList.end(); ++i) {
+		i->draw(_vm, (hitZoneIndex == i->getIndex()) ? color2 : color);
 	}
 
 	if (hitZoneIndex != -1) {
@@ -274,12 +222,11 @@ void ObjectMap::draw(const Point& testPoint, int color, int color2) {
 #endif
 
 int ObjectMap::hitTest(const Point& testPoint) {
-	int i;
 
 	// Loop through all scene objects
-	for (i = 0; i < _hitZoneListCount; i++) {
-		if (_hitZoneList[i]->hitTest(testPoint)) {
-			return i;
+	for (HitZoneArray::iterator i = _hitZoneList.begin(); i != _hitZoneList.end(); ++i) {
+		if (i->hitTest(testPoint)) {
+			return i->getIndex();
 		}
 	}
 
@@ -287,7 +234,7 @@ int ObjectMap::hitTest(const Point& testPoint) {
 }
 
 void ObjectMap::cmdInfo() {
-	_vm->_console->DebugPrintf("%d zone(s) loaded.\n\n", _hitZoneListCount);
+	_vm->_console->DebugPrintf("%d zone(s) loaded.\n\n", _hitZoneList.size());
 }
 
 } // End of namespace Saga

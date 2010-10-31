@@ -213,6 +213,43 @@ const MASTER_LIB_CODES DW1_CODES[] = {
 	HIGHEST_LIBCODE
 };
 
+const MASTER_LIB_CODES DW2DEMO_CODES[] = {
+	ACTORBRIGHTNESS, ACTORDIRECTION, ACTORPALETTE, ACTORPRIORITY, 
+	ACTORREF, ACTORRGB, ACTORSCALE, ACTORXPOS, ACTORYPOS,
+	ADDHIGHLIGHT, ADDINV, ADDINV1, ADDINV2, ADDOPENINV, ADDTOPIC,
+	BACKGROUND, CALLACTOR, CALLGLOBALPROCESS, CALLOBJECT, 
+	CALLPROCESS, CALLSCENE, CALLTAG, CAMERA, CDCHANGESCENE,
+	CDDOCHANGE, CDLOAD, CDPLAY, CLEARHOOKSCENE, CLOSEINVENTORY,
+	CONTROL, CONVERSATION, CURSOR, CURSORXPOS, CURSORYPOS, 
+	DECCONVW, DECCURSOR, DECFLAGS, DECINV1, DECINV2, DECINVW, 
+	DECLEAD, DECSCALE, DECTAGFONT, DECTALKFONT, DELTOPIC,
+	DIMMUSIC, DROP, DROPOUT, EFFECTACTOR, ENABLEMENU, ENDACTOR,
+	ESCAPEOFF, ESCAPEON, EVENT, FACETAG, FADEIN, FADEOUT, FRAMEGRAB, 
+	FREEZECURSOR, GETINVLIMIT, GHOST, GLOBALVAR, HASRESTARTED, 
+	HAVE, HELDOBJECT, HIDEACTOR, HIDEBLOCK, HIDEEFFECT, HIDEPATH, 
+	HIDEREFER, HIDETAG, HOLD, HOOKSCENE, IDLETIME, INSTANTSCROLL,
+	INVENTORY, INVPLAY, INWHICHINV, KILLACTOR, KILLGLOBALPROCESS, 
+	KILLPROCESS, LOCALVAR, MOVECURSOR, MOVETAG, MOVETAGTO, NEWSCENE, 
+	NOBLOCKING, NOPAUSE, NOSCROLL, OFFSET, OTHEROBJECT, PAUSE, PLAY, 
+	PLAYMUSIC, PLAYRTF, PLAYSAMPLE, POINTACTOR, POINTTAG, POSTACTOR, 
+	POSTGLOBALPROCESS, POSTOBJECT, POSTPROCESS, POSTTAG, PRINT,
+	PRINTCURSOR, PRINTOBJ, PRINTTAG, QUITGAME, RANDOM, RESETIDLETIME,
+	RESTARTGAME, RESTORESCENE, RUNMODE, SAVESCENE, SAY, SAYAT, 
+	SCALINGREELS, SCREENXPOS, SCREENYPOS, SCROLL, SCROLLPARAMETERS, 
+	SENDACTOR, SENDGLOBALPROCESS, SENDOBJECT, SENDPROCESS, SENDTAG,
+	SETBRIGHTNESS, SETINVLIMIT, SETINVSIZE, SETLANGUAGE, SETPALETTE, 
+	SETSYSTEMSTRING, SETSYSTEMVAR, SHELL, SHOWACTOR, SHOWBLOCK, 
+	SHOWEFFECT, SHOWPATH, SHOWREFER, SHOWTAG, STAND, STANDTAG,
+	STARTGLOBALPROCESS, STARTPROCESS, STARTTIMER, STOPWALK, SUBTITLES, 
+	SWALK, SYSTEMVAR, TAGTAGXPOS, TAGTAGYPOS, TAGWALKXPOS, TAGWALKYPOS, 
+	TALK, TALKAT, TALKPALETTEINDEX, TALKRGB, TALKVIA, THISOBJECT,
+	THISTAG, TIMER, TOPIC, TOPPLAY, TOPWINDOW, TRANSLUCENTINDEX, 
+	UNDIMMUSIC, UNHOOKSCENE, WAITFRAME, WAITKEY, WAITSCROLL, WAITTIME, 
+	WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY, 
+	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, 
+	HIGHEST_LIBCODE
+};
+
 const MASTER_LIB_CODES DW2_CODES[] = {
 	ACTORBRIGHTNESS, ACTORDIRECTION, ACTORPALETTE, ACTORPRIORITY,
 	ACTORREF, ACTORRGB, ACTORSCALE, ACTORXPOS, ACTORYPOS,
@@ -1912,7 +1949,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	if (TinselV2) {
 		int Loffset, Toffset;
 		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
-		_ctx->pText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS),
+		_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 			TextBufferAddr(), 0, x - Loffset, y - Toffset, GetTagFontHandle(),
 			TXT_CENTRE, 0);
 		assert(_ctx->pText);
@@ -1925,7 +1962,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	} else if (bJapDoPrintText || (!isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
 		int Loffset, Toffset;	// Screen position
 		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
-		_ctx->pText = ObjectTextOut(coroParam, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
+		_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
 					0, x - Loffset, y - Toffset,
 					TinselV2 ? GetTagFontHandle() : GetTalkFontHandle(), TXT_CENTRE);
 		assert(_ctx->pText); // string produced NULL text
@@ -2089,7 +2126,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 			else
 				LoadStringRes(hText, TextBufferAddr(), TBUFSZ);
 
-			_ctx->pText = ObjectTextOut(coroParam, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
+			_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
 						0, _ctx->textx, _ctx->texty, GetTagFontHandle(), TXT_CENTRE);
 			assert(_ctx->pText); // PrintObj() string produced NULL text
 
@@ -2141,7 +2178,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 
 						// Re-display in the same place
 						LoadStringRes(hText, TextBufferAddr(), TBUFSZ);
-						_ctx->pText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS),
+						_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 							TextBufferAddr(), 0, _ctx->textx, _ctx->texty, GetTagFontHandle(),
 							TXT_CENTRE, 0);
 						assert(_ctx->pText);
@@ -2258,7 +2295,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 
 				// Re-display in the same place
 				LoadStringRes(text, TextBufferAddr(), TBUFSZ);
-				pText = ObjectTextOut(coroParam, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
+				pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
 							0, textx, texty, GetTagFontHandle(), TXT_CENTRE);
 				assert(pText); // PrintObj() string produced NULL text
 				MultiSetZPosition(pText, Z_INV_ITEXT);
@@ -3327,7 +3364,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 				_ctx->y -= _ctx->Toffset;
 			}
 
-			_ctx->pText = ObjectTextOut(coroParam, GetPlayfieldList(FIELD_STATUS),
+			_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 					TextBufferAddr(), 0, _ctx->x - _ctx->Loffset, _ctx->y - _ctx->Toffset,
 					GetTalkFontHandle(), TXT_CENTRE);
 			assert(_ctx->pText); // talk() string produced NULL text;
@@ -3376,7 +3413,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			// Kick off the sample now (perhaps with a delay)
 			if (bNoPause)
 				bNoPause = false;
-			else
+			else if (!IsDemo)
 				CORO_SLEEP(SysVar(SV_SPEECHDELAY));
 
 			//SamplePlay(VOICE, hText, _ctx->sub, false, -1, -1, PRIORITY_TALK);
@@ -4208,6 +4245,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	int libCode;
 	if (TinselV0) libCode = DW1DEMO_CODES[operand];
 	else if (!TinselV2) libCode = DW1_CODES[operand];
+	else if (_vm->getFeatures() & GF_DEMO) libCode = DW2DEMO_CODES[operand];
 	else libCode = DW2_CODES[operand];
 
 	debug(7, "CallLibraryRoutine op %d (escOn %d, myEscape %d)", operand, pic->escOn, pic->myEscape);
@@ -4907,9 +4945,6 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 			else {
 				Play(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape, false,
 						pic->event, pic->hPoly, pic->idActor);
-
-				if (coroParam)
-					return 0;
 			}
 			return -4;
 

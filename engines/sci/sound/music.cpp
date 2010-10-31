@@ -66,7 +66,17 @@ void SciMusic::init() {
 
 	// Default to MIDI in SCI2.1+ games, as many don't have AdLib support.
 	Common::Platform platform = g_sci->getPlatform();
-	uint32 dev = MidiDriver::detectDevice((getSciVersion() >= SCI_VERSION_2_1) ? (MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM) : (MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI));
+
+	uint32 deviceFlags = MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI;
+
+	if (getSciVersion() >= SCI_VERSION_2_1)
+		deviceFlags |= MDT_PREFER_GM;
+
+	// Currently our CMS implementation only supports SCI1(.1)
+	if (getSciVersion() >= SCI_VERSION_1_EGA && getSciVersion() <= SCI_VERSION_1_1)
+		deviceFlags |= MDT_CMS;
+
+	uint32 dev = MidiDriver::detectDevice(deviceFlags);
 	_musicType = MidiDriver::getMusicType(dev);
 
 	switch (_musicType) {
@@ -82,6 +92,9 @@ void SciMusic::init() {
 		break;
 	case MT_PCSPK:
 		_pMidiDrv = MidiPlayer_PCSpeaker_create(_soundVersion);
+		break;
+	case MT_CMS:
+		_pMidiDrv = MidiPlayer_CMS_create(_soundVersion);
 		break;
 	default:
 		if (ConfMan.getBool("native_fb01"))
@@ -102,6 +115,7 @@ void SciMusic::init() {
 	// Find out what the first possible channel is (used, when doing channel
 	// remapping).
 	_driverFirstChannel = _pMidiDrv->getFirstChannel();
+	_driverLastChannel = _pMidiDrv->getLastChannel();
 }
 
 void SciMusic::miditimerCallback(void *p) {
@@ -144,8 +158,10 @@ void SciMusic::sendMidiCommandsFromQueue() {
 }
 
 void SciMusic::clearPlayList() {
-	Common::StackLock lock(_mutex);
-
+	// we must NOT lock our mutex here. Playlist is modified inside soundKill() which will lock the mutex
+	//  during deletion. If we lock it here, a deadlock may occur within soundStop() because that one
+	//  calls the mixer, which will also lock the mixer mutex and if the mixer thread is active during
+	//  that time, we will get a deadlock.
 	while (!_playList.empty()) {
 		soundStop(_playList[0]);
 		soundKill(_playList[0]);
@@ -291,6 +307,8 @@ int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
 	}
 	// otherwise look for unused channel
 	for (int channelNr = _driverFirstChannel; channelNr < 15; channelNr++) {
+		if (channelNr == 9) // never map to channel 9 (precussion)
+			continue;
 		if (!_usedChannel[channelNr]) {
 			_usedChannel[channelNr] = caller;
 			return channelNr;
@@ -383,8 +401,14 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			if (pSnd->status == kSoundStopped) {
 				pSnd->pMidiParser->jumpToTick(0);
 			} else {
+				// Disable sound looping before fast forwarding to the last position,
+				// when loading a saved game. Fixes bug #3083151.
+				uint16 prevLoop = pSnd->loop;
+				pSnd->loop = 0;
 				// Fast forward to the last position and perform associated events when loading
 				pSnd->pMidiParser->jumpToTick(pSnd->ticker, true);
+				// Restore looping
+				pSnd->loop = prevLoop;
 			}
 			pSnd->pMidiParser->mainThreadEnd();
 			_mutex.unlock();
@@ -429,6 +453,13 @@ void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 		pSnd->pMidiParser->mainThreadEnd();
 		_mutex.unlock();
 	}
+}
+
+// this is used to set volume of the sample, used for fading only!
+void SciMusic::soundSetSampleVolume(MusicEntry *pSnd, byte volume) {
+	assert(volume <= MUSIC_VOLUME_MAX);
+	assert(pSnd->pStreamAud);
+	_pMixer->setChannelVolume(pSnd->hCurrentAud, volume * 2); // Mixer is 0-255, SCI is 0-127
 }
 
 void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {

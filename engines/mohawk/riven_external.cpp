@@ -277,7 +277,7 @@ void RivenExternal::resetDomeSliders(uint16 bitmapId, uint16 soundId, uint16 sta
 			// If we have at least one found slider, it has now moved
 			// so we should redraw and play a tick sound
 			if (slidersFound) {
-				_vm->_sound->playSound(soundId, false);
+				_vm->_sound->playSound(soundId);
 				drawDomeSliders(bitmapId, startHotspot);
 				_vm->_system->delayMillis(10);
 			}
@@ -350,7 +350,7 @@ void RivenExternal::dragDomeSlider(uint16 bitmapId, uint16 soundId, uint16 reset
 					_sliderState |= 1 << (24 - foundSlider);
 
 					// Now play a click sound and redraw
-					_vm->_sound->playSound(soundId, false);
+					_vm->_sound->playSound(soundId);
 					drawDomeSliders(bitmapId, startHotspot);
 				} else if (foundSlider > 0 && !(_sliderState & (1 << (25 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot - 1].rect.contains(event.mouse)) {
 					// We've moved the slider left one space
@@ -359,7 +359,7 @@ void RivenExternal::dragDomeSlider(uint16 bitmapId, uint16 soundId, uint16 reset
 					_sliderState |= 1 << (24 - foundSlider);
 
 					// Now play a click sound and redraw
-					_vm->_sound->playSound(soundId, false);
+					_vm->_sound->playSound(soundId);
 					drawDomeSliders(bitmapId, startHotspot);
 				} else
 					_vm->_system->updateScreen(); // A normal update for the cursor
@@ -453,9 +453,9 @@ void RivenExternal::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 
 	// Play the page turning sound
 	if (_vm->getFeatures() & GF_DEMO)
-		_vm->_sound->playSound(4, false);
+		_vm->_sound->playSound(4);
 	else
-		_vm->_sound->playSound(3, false);
+		_vm->_sound->playSound(3);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(1);
@@ -473,9 +473,9 @@ void RivenExternal::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
 
 	// Play the page turning sound
 	if (_vm->getFeatures() & GF_DEMO)
-		_vm->_sound->playSound(5, false);
+		_vm->_sound->playSound(5);
 	else
-		_vm->_sound->playSound(4, false);
+		_vm->_sound->playSound(4);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(0);
@@ -541,7 +541,7 @@ void RivenExternal::xacathbookprevpage(uint16 argc, uint16 *argv) {
 	(*page)--;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(5, false);
+	_vm->_sound->playSound(5);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(3);
@@ -558,7 +558,7 @@ void RivenExternal::xacathbooknextpage(uint16 argc, uint16 *argv) {
 	(*page)++;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(6, false);
+	_vm->_sound->playSound(6);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(2);
@@ -577,7 +577,7 @@ void RivenExternal::xatrapbookclose(uint16 argc, uint16 *argv) {
 	*_vm->getVar("atrap") = 0;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(8, false);
+	_vm->_sound->playSound(8);
 
 	_vm->refreshCard();
 }
@@ -587,7 +587,7 @@ void RivenExternal::xatrapbookopen(uint16 argc, uint16 *argv) {
 	*_vm->getVar("atrap") = 1;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(9, false);
+	_vm->_sound->playSound(9);
 
 	_vm->refreshCard();
 }
@@ -698,7 +698,7 @@ void RivenExternal::xblabbookprevpage(uint16 argc, uint16 *argv) {
 	(*page)--;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(22, false);
+	_vm->_sound->playSound(22);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(1);
@@ -715,7 +715,7 @@ void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
 	(*page)++;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(23, false);
+	_vm->_sound->playSound(23);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(0);
@@ -739,54 +739,60 @@ void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
 	uint32 water = *_vm->getVar("bblrwtr");
 	uint32 platform = *_vm->getVar("bblrgrt");
 
+	// Stop any background videos
+	_vm->_video->stopVideos();
+
 	if (argv[0] == 1) {
+		// Water is filling/draining from the boiler
 		if (water == 0) {
-			if (platform == 0)
-				_vm->_video->activateMLST(10, _vm->getCurCard());
-			else
+			if (platform == 1)
 				_vm->_video->activateMLST(12, _vm->getCurCard());
-		} else if (heat == 0) {
-			if (platform == 0)
-				_vm->_video->activateMLST(19, _vm->getCurCard());
 			else
+				_vm->_video->activateMLST(10, _vm->getCurCard());
+		} else if (heat == 1) {
+			if (platform == 1)
 				_vm->_video->activateMLST(22, _vm->getCurCard());
-		} else {
-			if (platform == 0)
-				_vm->_video->activateMLST(13, _vm->getCurCard());
 			else
+				_vm->_video->activateMLST(19, _vm->getCurCard());
+		} else {
+			if (platform == 1)
 				_vm->_video->activateMLST(16, _vm->getCurCard());
+			else
+				_vm->_video->activateMLST(13, _vm->getCurCard());
 		}
 	} else if (argv[0] == 2 && water != 0) {
-		if (heat == 0) {
-			if (platform == 0)
-				_vm->_video->activateMLST(20, _vm->getCurCard());
-			else
+		if (heat == 1) {
+			// Turning on the heat
+			if (platform == 1)
 				_vm->_video->activateMLST(23, _vm->getCurCard());
+			else
+				_vm->_video->activateMLST(20, _vm->getCurCard());
 		} else {
-			if (platform == 0)
+			// Turning off the heat
+			if (platform == 1)
 				_vm->_video->activateMLST(18, _vm->getCurCard());
 			else
 				_vm->_video->activateMLST(15, _vm->getCurCard());
 		}
 	} else if (argv[0] == 3) {
-		if (platform == 0) {
-			if (water == 0) {
-				_vm->_video->activateMLST(11, _vm->getCurCard());
-			} else {
-				if (heat == 0)
-					_vm->_video->activateMLST(17, _vm->getCurCard());
-				else
+		if (platform == 1) {
+			// Lowering the platform
+			if (water == 1) {
+				if (heat == 1)
 					_vm->_video->activateMLST(24, _vm->getCurCard());
-			}
-		} else {
-			if (water == 0) {
-				_vm->_video->activateMLST(9, _vm->getCurCard());
-			} else {
-				if (heat == 0)
-					_vm->_video->activateMLST(14, _vm->getCurCard());
 				else
+					_vm->_video->activateMLST(17, _vm->getCurCard());
+			} else
+				_vm->_video->activateMLST(11, _vm->getCurCard());
+		} else {
+			// Raising the platform
+			if (water == 1) {
+				if (heat == 1)
 					_vm->_video->activateMLST(21, _vm->getCurCard());
-			}
+				else
+					_vm->_video->activateMLST(14, _vm->getCurCard());
+			} else
+				_vm->_video->activateMLST(9, _vm->getCurCard());
 		}
 	}
 
@@ -795,7 +801,8 @@ void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
 	else if (argv[0] == 2)
 		_vm->_sound->playSLST(1, _vm->getCurCard());
 
-	_vm->_video->playMovie(11);
+	_vm->_gfx->changeCursor(kRivenHideCursor);
+	_vm->_video->playMovieBlocking(11);
 }
 
 void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
@@ -804,18 +811,16 @@ void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
 
 	if (heat) {
 		if (platform == 0) {
-			_vm->_video->activateMLST(7, _vm->getCurCard());
-			_vm->_video->playMovie(7);
-		} else {
 			_vm->_video->activateMLST(8, _vm->getCurCard());
 			_vm->_video->playMovie(8);
+		} else {
+			_vm->_video->activateMLST(7, _vm->getCurCard());
+			_vm->_video->playMovie(7);
 		}
 	} else {
-		_vm->_video->stopMovie(7);
-		_vm->_video->stopMovie(8);
+		_vm->_video->disableMovie(7);
+		_vm->_video->disableMovie(8);
 	}
-
-	_vm->refreshCard();
 }
 
 void RivenExternal::xbsettrap(uint16 argc, uint16 *argv) {
@@ -1050,7 +1055,9 @@ void RivenExternal::xgisland1490_domecheck(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xgplateau3160_dopools(uint16 argc, uint16 *argv) {
-	// TODO: "Bubble" map related
+	// Play the deactivation of a pool if one is active and a different one is activated
+	_vm->_gfx->changeCursor(kRivenHideCursor);
+	_vm->_video->playMovieBlocking(*_vm->getVar("glkbtns") * 2);
 }
 
 void RivenExternal::xgwt200_scribetime(uint16 argc, uint16 *argv) {
@@ -1142,7 +1149,7 @@ void RivenExternal::xcheckicons(uint16 argc, uint16 *argv) {
 	if (countDepressedIcons(*iconOrderVar) == 5) {
 		*iconOrderVar = 0;
 		*_vm->getVar("jicons") = 0;
-		_vm->_sound->playSound(46, false);
+		_vm->_sound->playSound(46);
 	}
 }
 
@@ -1562,12 +1569,12 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 					_vm->_gfx->changeCursor(kRivenHideCursor);          // Hide the cursor
 					_vm->_gfx->drawPLST(3);                             // Black out the screen
 					_vm->_gfx->updateScreen();                          // Update the screen
-					_vm->_sound->playSound(0, false);                   // Play the link sound
+					_vm->_sound->playSound(0);                          // Play the link sound
 					_vm->_video->activateMLST(7, _vm->getCurCard());    // Activate Gehn Link Video
 					_vm->_video->playMovieBlocking(1);                  // Play Gehn Link Video
-					*_vm->getVar("agehn") = 4;                // Set Gehn to the trapped state
-					*_vm->getVar("atrapbook") = 1;            // We've got the trap book again
-					_vm->_sound->playSound(0, false);                   // Play the link sound again
+					*_vm->getVar("agehn") = 4;                          // Set Gehn to the trapped state
+					*_vm->getVar("atrapbook") = 1;                      // We've got the trap book again
+					_vm->_sound->playSound(0);                          // Play the link sound again
 					_vm->changeToCard(_vm->matchRMAPToCard(0x2885));    // Link out! (TODO: Shouldn't this card change?)
 					return;
 				}
@@ -1654,7 +1661,7 @@ void RivenExternal::xogehnbookprevpage(uint16 argc, uint16 *argv) {
 	(*page)--;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(12, false);
+	_vm->_sound->playSound(12);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(1);
@@ -1671,7 +1678,7 @@ void RivenExternal::xogehnbooknextpage(uint16 argc, uint16 *argv) {
 	(*page)++;
 
 	// Play the page turning sound
-	_vm->_sound->playSound(13, false);
+	_vm->_sound->playSound(13);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(0);
@@ -1697,7 +1704,7 @@ void RivenExternal::xgwatch(uint16 argc, uint16 *argv) {
 			if (curSound == 5) // Break out after the last sound is done
 				break;
 
-			_vm->_sound->playSound(getComboDigit(*prisonCombo, curSound) + 13, !(_vm->getFeatures() & GF_DVD));
+			_vm->_sound->playSound(getComboDigit(*prisonCombo, curSound) + 13);
 			curSound++;
 			soundTime = _vm->_system->getMillis();
 		}
@@ -1724,7 +1731,7 @@ void RivenExternal::xgwatch(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xpisland990_elevcombo(uint16 argc, uint16 *argv) {
 	// Play button sound based on argv[0]
-	_vm->_sound->playSound(argv[0] + 5, false);
+	_vm->_sound->playSound(argv[0] + 5);
 
 	// It is impossible to get here if Gehn is not trapped. However,
 	// the original also disallows brute forcing the ending if you have
@@ -1845,7 +1852,9 @@ void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 			}
 		} else {
 			// ...the telescope can't move down anymore.
-			// TODO: Play sound
+			// Play the sound of not being able to move
+			_vm->_gfx->changeCursor(kRivenHideCursor);
+			_vm->_sound->playSoundBlocking(13);
 		}
 	} else {
 		// We're not at the bottom, and we can move down again
@@ -1870,7 +1879,9 @@ void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 
 	// Check if we can't move up anymore
 	if (*telescopePos == 5) {
-		// TODO: Play sound
+		// Play the sound of not being able to move
+		_vm->_gfx->changeCursor(kRivenHideCursor);
+		_vm->_sound->playSoundBlocking(13);
 		return;
 	}
 
@@ -1917,28 +1928,209 @@ void RivenExternal::xthideinventory(uint16 argc, uint16 *argv) {
 	_vm->_gfx->hideInventory();
 }
 
+// Marble Puzzle related constants
+static const uint32 kMarbleCount = 6;
+static const int kSmallMarbleWidth = 4;
+static const int kSmallMarbleHeight = 2;
+static const int kLargeMarbleSize = 8;
+static const int kMarbleHotspotSize = 13;
+static const char *s_marbleNames[] = { "tred", "torange", "tyellow", "tgreen", "tblue", "tviolet" };
+
+// Marble Puzzle helper functions
+// The y portion takes the upper 16 bits, while the x portion takes the lower 16 bits
+static void setMarbleX(uint32 *var, byte x) {
+	*var = (*var & 0xff00) | (x + 1);
+}
+
+static void setMarbleY(uint32 *var, byte y) {
+	*var = ((y + 1) << 16) | (*var & 0xff);
+}
+
+static byte getMarbleX(uint32 *var) {
+	return (*var & 0xff) - 1;
+}
+
+static byte getMarbleY(uint32 *var) { // Give that that Y you old hag! </bad Seinfeld reference>
+	return ((*var >> 16) & 0xff) - 1;
+}
+
+static Common::Rect generateMarbleGridRect(uint16 x, uint16 y) {
+	// x/y in terms of 0!
+	static const int marbleGridOffsetX[] = { 134, 202, 270, 338, 406 };
+	static const int marbleGridOffsetY[] = {  24,  92, 159, 227, 295 };
+
+	uint16 offsetX = marbleGridOffsetX[x / 5] + (x % 5) * kMarbleHotspotSize;
+	uint16 offsetY = marbleGridOffsetY[y / 5] + (y % 5) * kMarbleHotspotSize;
+	return Common::Rect(offsetX, offsetY, offsetX + kMarbleHotspotSize, offsetY + kMarbleHotspotSize);
+}
+
 void RivenExternal::xt7500_checkmarbles(uint16 argc, uint16 *argv) {
-	// TODO: Lots of stuff to do here, eventually we have to check each individual
-	// marble position and set apower based on that. The game handles the video playing
-	// so we don't have to. For the purposes of making the game progress further, we'll
-	// just turn the power on for now.
-	*_vm->getVar("apower") = 1;
+	// Set apower if the marbles are in their correct spot. 
+
+	bool valid = true;
+	static const uint32 marbleFinalValues[] = { 1114121, 1441798, 0, 65552, 65558, 262146 };
+
+	for (uint16 i = 0; i < kMarbleCount; i++)
+		if (*_vm->getVar(s_marbleNames[i]) != marbleFinalValues[i]) {
+			valid = false;
+			break;
+		}
+
+	// If we have the correct combo, activate the power and reset the marble positions
+	// Otherwise, make sure the power is off
+	if (valid) {
+		*_vm->getVar("apower") = 1;
+		for (uint16 i = 0; i < kMarbleCount; i++)
+			*_vm->getVar(s_marbleNames[i]) = 0;
+	} else
+		*_vm->getVar("apower") = 0;
 }
 
 void RivenExternal::xt7600_setupmarbles(uint16 argc, uint16 *argv) {
-	// TODO: Marble puzzle related
+	// Draw the small marbles when we're a step away from the waffle
+	uint16 baseBitmapId = (_vm->getFeatures() & GF_DVD) ? 539 : 526;
+	bool waffleDown = *_vm->getVar("twaffle") != 0;
+
+	// Note that each of the small marble images is exactly 4x2
+
+	for (uint16 i = 0; i < kMarbleCount; i++) {
+		uint32 *var = _vm->getVar(s_marbleNames[i]);
+
+		if (*var == 0) {
+			// The marble is still in its initial place
+			// (Note that this is still drawn even if the waffle is down)
+			int marbleX = 376 + i * 2;
+			int marbleY = 253 + i * 4;
+			_vm->_gfx->copyImageToScreen(baseBitmapId + i, marbleX, marbleY, marbleX + kSmallMarbleWidth, marbleY + kSmallMarbleHeight);
+		} else if (waffleDown) {
+			// The marble is on the grid and the waffle is down
+			// (Nothing to draw here)
+		} else {
+			// The marble is on the grid and the waffle is up
+			// TODO: Draw them onto the grid
+		}
+	}
+}
+
+void RivenExternal::setMarbleHotspots() {
+	// Set the hotspots
+	for (uint16 i = 0; i < kMarbleCount; i++) {
+		uint32 *marblePos = _vm->getVar(s_marbleNames[i]);
+
+		if (*marblePos == 0) // In the receptacle
+			_vm->_hotspots[i + 3].rect = _marbleBaseHotspots[i];
+		else                 // On the grid
+			_vm->_hotspots[i + 3].rect = generateMarbleGridRect(getMarbleX(marblePos), getMarbleY(marblePos));
+	}
 }
 
 void RivenExternal::xt7800_setup(uint16 argc, uint16 *argv) {
-	// TODO: Marble puzzle related
+	// First, let's store the base receptacle hotspots for the marbles
+	if (_marbleBaseHotspots.empty())
+		for (uint16 i = 0; i < kMarbleCount; i++)
+			_marbleBaseHotspots.push_back(_vm->_hotspots[i + 3].rect);
+
+	// Move the marble hotspots based on their position variables
+	setMarbleHotspots();
+	*_vm->getVar("themarble") = 0;
+}
+
+void RivenExternal::drawMarbles() {
+	for (uint32 i = 0; i < kMarbleCount; i++) {
+		// Don't draw the marble if we're holding it
+		if (*_vm->getVar("themarble") - 1 == i)
+			continue;
+
+		Common::Rect rect = _vm->_hotspots[i + 3].rect;
+		// Trim the rect down a bit
+		rect.left += 3;
+		rect.top += 3;
+		rect.right -= 2;
+		rect.bottom -= 2;
+		_vm->_gfx->drawExtrasImage(i + 200, rect);
+	}
 }
 
 void RivenExternal::xdrawmarbles(uint16 argc, uint16 *argv) {
-	// TODO: Marble puzzle related
+	// Draw marbles in the closeup
+	drawMarbles();
+
+	// We have to re-enable the updates here
+	// Would be really nice if the scripts did this for us, but alas...
+	_vm->_gfx->_updatesEnabled = true;
 }
 
 void RivenExternal::xtakeit(uint16 argc, uint16 *argv) {
-	// TODO: Marble puzzle related
+	// Pick up and move a marble
+
+	// First, let's figure out what marble we're now holding
+	uint32 *marble = _vm->getVar("themarble");
+	*marble = 0;
+
+	for (uint32 i = 0; i < kMarbleCount; i++)
+		if (_vm->_hotspots[i + 3].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
+			*marble = i + 1;
+			break;
+		}
+
+	// xtakeit() shouldn't be called if we're not on a marble hotspot
+	assert(*marble);
+
+	// Redraw the background
+	_vm->_gfx->drawPLST(1);
+	_vm->_gfx->updateScreen();
+
+	// Loop until the player lets go (or quits)
+	Common::Event event;
+	bool mouseDown = true;
+	while (mouseDown) {
+		while (_vm->_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_LBUTTONUP)
+				mouseDown = false;
+			else if (event.type == Common::EVENT_MOUSEMOVE)
+				_vm->_system->updateScreen();
+			else if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RTL)
+				return;
+		}
+
+		_vm->_system->delayMillis(10); // Take it easy on the CPU
+	}
+
+	// Check if we landed in a valid location and no other marble has that location
+	uint32 *marblePos = _vm->getVar(s_marbleNames[*marble - 1]);
+
+	bool foundMatch = false;
+	for (int y = 0; y < 25 && !foundMatch; y++) {
+		for (int x = 0; x < 25 && !foundMatch; x++) {
+			Common::Rect testHotspot = generateMarbleGridRect(x, y);
+
+			// Let's try to place the marble!
+			if (testHotspot.contains(_vm->_system->getEventManager()->getMousePos())) {
+				// Set this as the position
+				setMarbleX(marblePos, x);
+				setMarbleY(marblePos, y);
+
+				// Let's make sure no other marble is in this spot...
+				for (uint16 i = 0; i < kMarbleCount; i++)
+					if (i != *marble - 1 && *_vm->getVar(s_marbleNames[i]) == *marblePos)
+						*marblePos = 0;
+
+				// We have a match
+				foundMatch = true;
+			}
+		}
+	}
+
+	// If we still don't have a match, reset it to the original location
+	if (!foundMatch)
+		*marblePos = 0;
+
+	// Check the new hotspots and refresh everything
+	*marble = 0;
+	setMarbleHotspots();
+	_vm->_curHotspot = -1;
+	_vm->checkHotspotChange();
+	_vm->_gfx->updateScreen();
 }
 
 void RivenExternal::xtscpbtn(uint16 argc, uint16 *argv) {

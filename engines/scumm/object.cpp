@@ -315,6 +315,10 @@ int ScummEngine::getObjectIndex(int object) const {
 		return -1;
 
 	for (i = (_numLocalObjects-1); i > 0; i--) {
+		if (_game.version == 0 )
+			if( _objs[i].flags != _v0ObjectFlag )
+				continue;
+
 		if (_objs[i].obj_nr == object)
 			return i;
 	}
@@ -526,6 +530,9 @@ int ScummEngine::findObject(int x, int y) {
 #endif
 				if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
 				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y) {
+					// MMC64: Set the object search flag
+					if (_game.version == 0)
+						_v0ObjectFlag = _objs[i].flags;
 					if (_game.version == 0 && _v0ObjectIndex)
 						return i;
 					else
@@ -714,7 +721,7 @@ void ScummEngine_v70he::storeFlObject(int slot) {
 	memcpy(&_storedFlObjects[_numStoredFlObjects], &_objs[slot], sizeof(_objs[slot]));
 	_numStoredFlObjects++;
 	if (_numStoredFlObjects > 100)
-		error("Too many flobjects saved on room transition.");
+		error("Too many flobjects saved on room transition");
 }
 
 void ScummEngine_v70he::restoreFlObjects() {
@@ -993,6 +1000,7 @@ void ScummEngine::resetRoomObject(ObjectData *od, const byte *room, const byte *
 	od->flags = Gdi::dbAllowMaskOr;
 
 	if (_game.version == 8) {
+		assert(imhd);
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
 
 		od->parent = cdhd->v7.parent;
@@ -1008,6 +1016,7 @@ void ScummEngine::resetRoomObject(ObjectData *od, const byte *room, const byte *
 			od->flags = ((((byte)READ_LE_UINT32(&imhd->v8.flags)) & 16) == 0) ? Gdi::dbAllowMaskOr : 0;
 
 	} else if (_game.version == 7) {
+		assert(imhd);
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
 
 		od->parent = cdhd->v7.parent;
@@ -1020,6 +1029,7 @@ void ScummEngine::resetRoomObject(ObjectData *od, const byte *room, const byte *
 		od->actordir = (byte)READ_LE_UINT16(&imhd->v7.actordir);
 
 	} else if (_game.version == 6) {
+		assert(imhd);
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v6.obj_id));
 
 		od->width = READ_LE_UINT16(&cdhd->v6.w);

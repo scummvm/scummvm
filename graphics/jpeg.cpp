@@ -198,7 +198,7 @@ bool JPEG::readJFIF() {
 	byte majorVersion = _str->readByte();
 	byte minorVersion = _str->readByte();
 	if(majorVersion != 1 || minorVersion != 1)
-		warning("JPEG::readJFIF() Non-v1.1 JPEGs may not be handled correctly!");
+		warning("JPEG::readJFIF() Non-v1.1 JPEGs may not be handled correctly");
 	/* byte densityUnits = */ _str->readByte();
 	/* uint16 xDensity = */ _str->readUint16BE();
 	/* uint16 yDensity = */ _str->readUint16BE();

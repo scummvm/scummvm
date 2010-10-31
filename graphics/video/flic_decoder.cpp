@@ -70,7 +70,7 @@ bool FlicDecoder::load(Common::SeekableReadStream *stream) {
 	}
 
 	_fileStream->readUint16LE();	// flags
-	// Note: The normal delay is a 32-bit integer (dword), whereas the overriden delay is a 16-bit integer (word)
+	// Note: The normal delay is a 32-bit integer (dword), whereas the overridden delay is a 16-bit integer (word)
 	// the frame delay is the FLIC "speed", in milliseconds.
 	_frameRate = Common::Rational(1000, _fileStream->readUint32LE());
 
@@ -207,7 +207,7 @@ Surface *FlicDecoder::decodeNextFrame() {
 			// this properly.
 
 			chunkCount = _fileStream->readUint16LE();
-			// Note: The overriden delay is a 16-bit integer (word), whereas the normal delay is a 32-bit integer (dword)
+			// Note: The overridden delay is a 16-bit integer (word), whereas the normal delay is a 32-bit integer (dword)
 			// the frame delay is the FLIC "speed", in milliseconds.
 			uint16 newFrameDelay = _fileStream->readUint16LE();	// "speed", in milliseconds
 			if (newFrameDelay > 0)

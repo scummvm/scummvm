@@ -283,7 +283,7 @@ void Cutaway::limitBob(CutawayObject &object) {
 		}
 
 		BobSlot *bob =
-			_vm->graphics()->bob( _vm->logic()->findBob(object.objectNumber) );
+			_vm->graphics()->bob(_vm->logic()->findBob(object.objectNumber));
 
 		if (!bob) {
 			warning("Failed to find bob");
@@ -667,7 +667,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 
 				// Only flip if we are not moving or it is not a person object
 				if (!(objAnim[i].object > 0 && objAnim[i].object < 4) ||
-						!(objAnim[i].mx || objAnim[i].my) )
+						!(objAnim[i].mx || objAnim[i].my))
 					bob->xflip = objAnim[i].flip;
 
 				// Add frame alteration
@@ -1235,7 +1235,7 @@ void Cutaway::handleText(
 	}
 
 	BobSlot *bob =
-		_vm->graphics()->bob( _vm->logic()->findBob(ABS(object.objectNumber)) );
+		_vm->graphics()->bob(_vm->logic()->findBob(ABS(object.objectNumber)));
 
 	_vm->graphics()->setBobText(bob, sentence, x, object.bobStartY, object.specialMove, flags);
 

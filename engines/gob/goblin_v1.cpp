@@ -154,8 +154,10 @@ void Goblin_v1::initiateMove(Mult::Mult_Object *obj) {
 			_vm->_map->_nearestWayPoint, _vm->_map->_nearestDest) == 0) {
 			_pathExistence = 0;
 		} else {
-			_vm->_map->_destX = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].x;
-			_vm->_map->_destY = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].y;
+			const WayPoint &wayPoint = _vm->_map->getWayPoint(_vm->_map->_nearestWayPoint);
+
+			_vm->_map->_destX = wayPoint.x;
+			_vm->_map->_destY = wayPoint.y;
 		}
 	}
 }
@@ -173,10 +175,10 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 			_pathExistence = 0;
 		}
 
-		nextAct = _vm->_map->getDirection(_vm->_map->_curGoblinX,
+		nextAct = (int16) _vm->_map->getDirection(_vm->_map->_curGoblinX,
 				_vm->_map->_curGoblinY, _vm->_map->_destX, _vm->_map->_destY);
 
-		if (nextAct == 0)
+		if (nextAct == kDirNone)
 			_pathExistence = 0;
 	} else if (_pathExistence == 3) {
 		_vm->_map->_curGoblinX = _gobPositions[_currentGoblin].x;
@@ -199,20 +201,20 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 				if (_vm->_map->_nearestWayPoint > _vm->_map->_nearestDest) {
 					_vm->_map->optimizePoints(0, 0, 0);
 
-					_vm->_map->_destX =
-					    _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].x;
-					_vm->_map->_destY =
-					    _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].y;
+					const WayPoint &wayPoint = _vm->_map->getWayPoint(_vm->_map->_nearestWayPoint);
+
+					_vm->_map->_destX = wayPoint.x;
+					_vm->_map->_destY = wayPoint.y;
 
 					if (_vm->_map->_nearestWayPoint > _vm->_map->_nearestDest)
 						_vm->_map->_nearestWayPoint--;
 				} else if (_vm->_map->_nearestWayPoint < _vm->_map->_nearestDest) {
 					_vm->_map->optimizePoints(0, 0, 0);
 
-					_vm->_map->_destX =
-					    _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].x;
-					_vm->_map->_destY =
-					    _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].y;
+					const WayPoint &wayPoint = _vm->_map->getWayPoint(_vm->_map->_nearestWayPoint);
+
+					_vm->_map->_destX = wayPoint.x;
+					_vm->_map->_destY = wayPoint.y;
 
 					if (_vm->_map->_nearestWayPoint < _vm->_map->_nearestDest)
 						_vm->_map->_nearestWayPoint++;
@@ -220,8 +222,12 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 					if ((_vm->_map->checkDirectPath(0, _vm->_map->_curGoblinX,
 						_vm->_map->_curGoblinY, _gobDestX, _gobDestY) == 3) &&
 							(_vm->_map->getPass(_pressedMapX, _pressedMapY) != 0)) {
-						_vm->_map->_destX = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].x;
-						_vm->_map->_destY = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].y;
+
+						const WayPoint &wayPoint = _vm->_map->getWayPoint(_vm->_map->_nearestWayPoint);
+
+						_vm->_map->_destX = wayPoint.x;
+						_vm->_map->_destY = wayPoint.y;
+
 					} else {
 						_pathExistence = 1;
 						_vm->_map->_destX = _pressedMapX;
@@ -229,7 +235,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 					}
 				}
 			}
-			nextAct = _vm->_map->getDirection(_vm->_map->_curGoblinX,
+			nextAct = (int16) _vm->_map->getDirection(_vm->_map->_curGoblinX,
 					_vm->_map->_curGoblinY, _vm->_map->_destX, _vm->_map->_destY);
 		}
 	}
@@ -238,11 +244,11 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		nextAct = 0x4DC8;
 
 	switch (nextAct) {
-	case Map::kDirW:
+	case kDirW:
 		gobDesc->nextState = rotateState(gobDesc->curLookDir, 0);
 		break;
 
-	case Map::kDirE:
+	case kDirE:
 		gobDesc->nextState = rotateState(gobDesc->curLookDir, 4);
 		break;
 
@@ -254,7 +260,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		gobDesc->nextState = 23;
 		break;
 
-	case Map::kDirN:
+	case kDirN:
 		if ((_vm->_map->getPass(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY - 1) == 6) &&
 		    (_currentGoblin != 1)) {
 			_pathExistence = 0;
@@ -275,7 +281,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		gobDesc->nextState = rotateState(gobDesc->curLookDir, 2);
 		break;
 
-	case Map::kDirS:
+	case kDirS:
 		if ((_vm->_map->getPass(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY + 1) == 6) &&
 		    (_currentGoblin != 1)) {
 			_pathExistence = 0;
@@ -296,7 +302,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		gobDesc->nextState = rotateState(gobDesc->curLookDir, 6);
 		break;
 
-	case Map::kDirSE:
+	case kDirSE:
 		if ((_vm->_map->getPass(_vm->_map->_curGoblinX + 1, _vm->_map->_curGoblinY + 1) == 6) &&
 		    (_currentGoblin != 1)) {
 			_pathExistence = 0;
@@ -310,7 +316,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		gobDesc->nextState = rotateState(gobDesc->curLookDir, 4);
 		break;
 
-	case Map::kDirSW:
+	case kDirSW:
 		if ((_vm->_map->getPass(_vm->_map->_curGoblinX - 1, _vm->_map->_curGoblinY + 1) == 6) &&
 		    (_currentGoblin != 1)) {
 			_pathExistence = 0;
@@ -324,7 +330,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		gobDesc->nextState = rotateState(gobDesc->curLookDir, 0);
 		break;
 
-	case Map::kDirNW:
+	case kDirNW:
 		if ((_vm->_map->getPass(_vm->_map->_curGoblinX - 1, _vm->_map->_curGoblinY - 1) == 6) &&
 		    (_currentGoblin != 1)) {
 			_pathExistence = 0;
@@ -338,7 +344,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		gobDesc->nextState = rotateState(gobDesc->curLookDir, 0);
 		break;
 
-	case Map::kDirNE:
+	case kDirNE:
 		if ((_vm->_map->getPass(_vm->_map->_curGoblinX + 1, _vm->_map->_curGoblinY - 1) == 6) &&
 		    (_currentGoblin != 1)) {
 			_pathExistence = 0;

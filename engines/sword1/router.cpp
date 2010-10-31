@@ -845,7 +845,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 						do {
 							walkAnim[frame].frame += 104;//turning left
 							frame += 1;
-						} while (frame < lastCount );
+						} while (frame < lastCount);
 					}
 					if (((lastDir == 1) || (lastDir == -7)) || ((lastDir == 2) || (lastDir == -6))) {
 						// turn at the end of the current walk
@@ -853,7 +853,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 						do {
 							walkAnim[frame].frame += 200; //was 60 now 116
 							frame += 1;
-						} while (frame < lastCount );
+						} while (frame < lastCount);
 					}
 					lastDir = currentDir;
 				}
@@ -1272,7 +1272,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 							do {
 								walkAnim[frame].frame += 104;//turning left
 								frame += 1;
-							} while (frame < lastCount );
+							} while (frame < lastCount);
 						}
 						if (((lastDir == 1) || (lastDir == -7)) || ((lastDir == 2) || (lastDir == -6))) {
 							// turn at the end of the current walk
@@ -1280,7 +1280,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 							do {
 								walkAnim[frame].frame += 200; //was 60 now 116
 								frame += 1;
-							} while (frame < lastCount );
+							} while (frame < lastCount);
 						}
 					}
 					// all turns checked
@@ -1305,7 +1305,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 			do {
 				walkAnim[frame].frame += 278;//stopping right
 				frame += 1;
-			} while (frame < lastCount );
+			} while (frame < lastCount);
 			walkAnim[stepCount].frame = 308;
 			walkAnim[stepCount].step = 7;
 			walkAnim[stepCount].dir = currentDir;
@@ -1316,7 +1316,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 			do {
 				walkAnim[frame].frame += 279;//stopping right
 				frame += 1;
-			} while (frame < lastCount );
+			} while (frame < lastCount);
 			walkAnim[stepCount].frame = 315;
 			walkAnim[stepCount].step = 7;
 			walkAnim[stepCount].dir = currentDir;
@@ -1332,7 +1332,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 			do {
 				walkAnim[frame].frame += 244;//stopping left
 				frame += 1;
-			} while (frame < lastCount );
+			} while (frame < lastCount);
 			walkAnim[stepCount].frame = 322;
 			walkAnim[stepCount].step = 7;
 			walkAnim[stepCount].dir = currentDir;
@@ -1343,7 +1343,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 			do {
 				walkAnim[frame].frame += 245;//stopping left
 				frame += 1;
-			} while (frame < lastCount );
+			} while (frame < lastCount);
 			walkAnim[stepCount].frame = 329;
 			walkAnim[stepCount].step = 7;
 			walkAnim[stepCount].dir = currentDir;
@@ -2097,9 +2097,9 @@ int whatTarget(int32 startX, int32 startY, int32 destX, int32 destY) {
 	int signY = (deltaY > 0);
 	int	slope;
 
-	if ((ABS(deltaY) * DIAGONALX ) < (ABS(deltaX) * DIAGONALY / 2))
+	if ((ABS(deltaY) * DIAGONALX) < (ABS(deltaX) * DIAGONALY / 2))
 		slope = 0;// its flat
-	else if ((ABS(deltaY) * DIAGONALX / 2) > (ABS(deltaX) * DIAGONALY ) )
+	else if ((ABS(deltaY) * DIAGONALX / 2) > (ABS(deltaX) * DIAGONALY))
 		slope = 2;// its vertical
 	else
 		slope = 1;// its diagonal

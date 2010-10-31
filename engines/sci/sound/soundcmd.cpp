@@ -78,8 +78,13 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 	// a relevant audio resource, play it, otherwise switch to synthesized
 	// effects. If the resource exists, play it using map 65535 (sound
 	// effects map)
+	bool checkAudioResource = getSciVersion() >= SCI_VERSION_1_1;
+	if (g_sci->getGameId() == GID_HOYLE4)
+		checkAudioResource = false; // hoyle 4 has garbled audio resources in place of the sound resources
+	// if we play those, we will only make the user deaf and break speakers. Sierra SCI doesn't play anything
+	// on soundblaster. FIXME: check, why this is
 
-	if (getSciVersion() >= SCI_VERSION_1_1 && _resMan->testResource(ResourceId(kResourceTypeAudio, resourceId))) {
+	if (checkAudioResource && _resMan->testResource(ResourceId(kResourceTypeAudio, resourceId))) {
 		// Found a relevant audio resource, play it
 		int sampleLen;
 		newSound->pStreamAud = _audio->getAudioStream(resourceId, 65535, &sampleLen);
@@ -402,7 +407,7 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		}
 		// We get a flag from MusicEntry::doFade() here to set volume for the stream
 		if (musicSlot->fadeSetVolume) {
-			_music->soundSetVolume(musicSlot, musicSlot->volume);
+			_music->soundSetSampleVolume(musicSlot, musicSlot->volume);
 			musicSlot->fadeSetVolume = false;
 		}
 	} else if (musicSlot->pMidiParser) {

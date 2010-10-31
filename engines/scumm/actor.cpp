@@ -691,6 +691,7 @@ void Actor_v3::walkActor() {
 int Actor::remapDirection(int dir, bool is_walking) {
 	int specdir;
 	byte flags;
+	byte mask;
 	bool flipX;
 	bool flipY;
 
@@ -768,6 +769,14 @@ int Actor::remapDirection(int dir, bool is_walking) {
 			return 0;
 		case 6:
 			return 180;
+		}
+
+		// MM C64 stores flags as a part of the mask
+		if (_vm->_game.version == 0) {
+			mask = _vm->getMaskFromBox(_walkbox);
+			// face the wall if climbing/descending a ladder
+			if ((mask & 0x8C) == 0x84)
+				return 0;
 		}
 	}
 	// OR 1024 in to signal direction interpolation should be done
@@ -1043,8 +1052,16 @@ static int checkXYInBoxBounds(int boxnum, int x, int y, int &destX, int &destY) 
 	// yDist must be divided by 4, as we are using 8x2 pixels
 	// blocks for actor coordinates).
 	int xDist = ABS(x - destX);
-	int yDist = ABS(y - destY) / 4;
+	int yDist;
 	int dist;
+
+	// MM C64: This fixes the trunk bug (#3070065), as well
+	// as the fruit bowl, however im not sure if its 
+	// the proper solution or not.
+	if( g_scumm->_game.version == 0 )
+		yDist = ABS(y - destY);
+	else
+		yDist = ABS(y - destY) / 4;
 
 	if (xDist < yDist)
 		dist = (xDist >> 1) + yDist;
@@ -1073,6 +1090,7 @@ AdjustBoxResult Actor_v2::adjustXYToBeInBox(const int dstX, const int dstY) {
 			abr.x = foundX;
 			abr.y = foundY;
 			abr.box = box;
+
 			break;
 		}
 		if (dist < bestDist) {
@@ -2159,7 +2177,12 @@ void ScummEngine::stopTalk() {
 		((ScummEngine_v7 *)this)->clearSubtitleQueue();
 #endif
 	} else {
-		restoreCharsetBg();
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		if (_game.platform == Common::kPlatformFMTowns)
+			towns_restoreCharsetBg();
+		else
+#endif
+			restoreCharsetBg();
 	}
 }
 
@@ -2254,7 +2277,7 @@ void Actor::setActorCostume(int c) {
 	}
 }
 
-static const char* v0ActorNames[0x19] = {
+static const char* v0ActorNames_English[25] = {
 	"Syd",
 	"Razor",
 	"Dave",
@@ -2270,10 +2293,36 @@ static const char* v0ActorNames[0x19] = {
 	"Purple Tentacle",
 	"Green Tentacle",
 	"Meteor",
+	"",
+	"",
+	"",
 	"Plant",
 	"",
 	"",
 	"",
+	"Sandy"
+};
+
+static const char* v0ActorNames_German[25] = {
+	"Syd",
+	"Razor",
+	"Dave",
+	"Michael",
+	"Bernard",
+	"Wendy",
+	"Jeff",
+	"",
+	"Dr.Fred",
+	"Schwester Edna",
+	"Weird Ed",
+	"Ted",
+	"Lila Tentakel",
+	"Gr<nes Tentakel",
+	"Meteor",
+	"",
+	"",
+	"",
+	"Pflanze",
 	"",
 	"",
 	"",
@@ -2284,8 +2333,15 @@ const byte *Actor::getActorName() {
 	const byte *ptr = NULL;
 
 	if (_vm->_game.version == 0) {
-		if (_number)
-			ptr = (const byte *)v0ActorNames[_number - 1];
+		if (_number) {
+			switch (_vm->_language) {
+			case Common::DE_DEU:
+				ptr = (const byte *)v0ActorNames_German[_number - 1];
+				break;
+			default:
+				ptr = (const byte *)v0ActorNames_English[_number - 1];
+			}
+		}
 	} else {
 		ptr = _vm->getResourceAddress(rtActorName, _number);
 	}
@@ -2555,6 +2611,21 @@ void ScummEngine_v71he::queueAuxEntry(int actorNum, int subIndex) {
 }
 #endif
 
+
+void ActorC64::saveLoadWithSerializer(Serializer *ser) {
+	Actor::saveLoadWithSerializer(ser);
+
+	static const SaveLoadEntry actorEntries[] = {
+		MKLINE(ActorC64, _costCommand, sleByte, VER(84)),
+		MKLINE(ActorC64, _costFrame, sleByte, VER(84)),
+		MKLINE(ActorC64, _miscflags, sleByte, VER(84)),
+		MKLINE(ActorC64, _speaking, sleByte, VER(84)),
+		MKLINE(ActorC64, _speakingPrev, sleByte, VER(84)),
+		MKEND()
+	};
+
+	ser->saveLoadEntries(this, actorEntries);
+}
 
 void Actor::saveLoadWithSerializer(Serializer *ser) {
 	static const SaveLoadEntry actorEntries[] = {

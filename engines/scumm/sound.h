@@ -91,6 +91,7 @@ public:
 
 	bool _soundsPaused;
 	byte _sfxMode;
+	uint _lastSound;
 
 public:
 	Sound(ScummEngine *parent, Audio::Mixer *mixer);

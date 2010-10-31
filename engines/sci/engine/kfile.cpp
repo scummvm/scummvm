@@ -28,6 +28,7 @@
 #include "common/file.h"
 #include "common/str.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 #include "gui/saveload.h"
 
@@ -421,7 +422,7 @@ static void listSavegames(Common::Array<SavegameDesc> &saves) {
 		Common::SeekableReadStream *in;
 		if ((in = saveFileMan->openForLoading(filename))) {
 			SavegameMetadata meta;
-			if (!get_savegame_metadata(in, &meta) || meta.savegame_name.empty()) {
+			if (!get_savegame_metadata(in, &meta) || meta.name.empty()) {
 				// invalid
 				delete in;
 				continue;
@@ -430,17 +431,17 @@ static void listSavegames(Common::Array<SavegameDesc> &saves) {
 
 			SavegameDesc desc;
 			desc.id = strtol(filename.end() - 3, NULL, 10);
-			desc.date = meta.savegame_date;
+			desc.date = meta.saveDate;
 			// We need to fix date in here, because we save DDMMYYYY instead of
 			// YYYYMMDD, so sorting wouldn't work
 			desc.date = ((desc.date & 0xFFFF) << 16) | ((desc.date & 0xFF0000) >> 8) | ((desc.date & 0xFF000000) >> 24);
-			desc.time = meta.savegame_time;
-			desc.version = meta.savegame_version;
+			desc.time = meta.saveTime;
+			desc.version = meta.version;
 
-			if (meta.savegame_name.lastChar() == '\n')
-				meta.savegame_name.deleteLastChar();
+			if (meta.name.lastChar() == '\n')
+				meta.name.deleteLastChar();
 
-			Common::strlcpy(desc.name, meta.savegame_name.c_str(), SCI_MAX_SAVENAME_LENGTH);
+			Common::strlcpy(desc.name, meta.name.c_str(), SCI_MAX_SAVENAME_LENGTH);
 
 			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
 
@@ -495,7 +496,7 @@ reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 
 	// Find saved-game
 	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
-		error("kCheckSaveGame: called with invalid savegameId!");
+		error("kCheckSaveGame: called with invalid savegameId");
 	uint savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
 	int savegameNr = findSavegame(saves, savegameId);
 	if (savegameNr == -1)
@@ -573,10 +574,18 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		g_sci->_soundCmd->pauseAll(true); // pause music
 		const EnginePlugin *plugin = NULL;
 		EngineMan.findGame(g_sci->getGameIdStr(), &plugin);
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save");
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
 		dialog->setSaveMode(true);
 		savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
 		game_description = dialog->getResultString();
+		if (game_description.empty()) {
+			// create our own description for the saved game, the user didnt enter it
+			TimeDate curTime;
+			g_system->getTimeAndDate(curTime);
+			curTime.tm_year += 1900; // fixup year
+			curTime.tm_mon++; // fixup month
+			game_description = Common::String::printf("%02d.%02d.%04d / %02d:%02d:%02d", curTime.tm_mday, curTime.tm_mon, curTime.tm_year, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+		}
 		delete dialog;
 		g_sci->_soundCmd->pauseAll(false); // unpause music ( we can't have it paused during save)
 		if (savegameId < 0)
@@ -636,11 +645,11 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		warning("Error opening savegame \"%s\" for writing", filename.c_str());
 	} else {
 		if (!gamestate_save(s, out, game_description.c_str(), version.c_str())) {
-			warning("Saving the game failed.");
+			warning("Saving the game failed");
 		} else {
 			out->finalize();
 			if (out->err()) {
-				warning("Writing the savegame failed.");
+				warning("Writing the savegame failed");
 			} else {
 				s->r_acc = TRUE_REG; // success
 			}
@@ -665,7 +674,7 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 			g_sci->_soundCmd->pauseAll(true); // pause music
 			const EnginePlugin *plugin = NULL;
 			EngineMan.findGame(g_sci->getGameIdStr(), &plugin);
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore");
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"));
 			dialog->setSaveMode(false);
 			savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
 			delete dialog;

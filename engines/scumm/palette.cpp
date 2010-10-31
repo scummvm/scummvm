@@ -30,6 +30,7 @@
 #include "scumm/scumm_v6.h"
 #include "scumm/scumm_v8.h"
 #include "scumm/util.h"
+#include "scumm/charset.h"
 
 namespace Scumm {
 
@@ -70,7 +71,7 @@ void ScummEngine::resetPalette() {
 		// Use 17 color table for v1 games to allow correct color for inventory and
 		// sentence line. Original games used some kind of dynamic color table
 		// remapping between rooms.
-		0xFF, 0x55, 0xFF
+		0x7F, 0x3B, 0xA6
 	};
 
 	static const byte tableNESPalette[] = {
@@ -139,6 +140,24 @@ void ScummEngine::resetPalette() {
 		0x00, 0x00, 0x00, 	0x00, 0xFF, 0x00
 	};
 
+#ifdef USE_RGB_COLOR
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	static const byte tableTownsV3Palette[] = {
+		0x00, 0x00, 0x00,	0x00, 0x00, 0xA0,	0x00, 0xA0, 0x00,	0x00, 0xA0, 0xA0,
+		0xA0, 0x00, 0x00,	0xA0, 0x00, 0xA0,	0xA0, 0x60, 0x00,	0xA0, 0xA0, 0xA0,
+		0x60, 0x60, 0x60,	0x60, 0x60, 0xE0,	0x00, 0xE0, 0x00,	0x00, 0xE0, 0xE0,
+		0xE0, 0x80, 0x80,	0xE0, 0x00, 0xE0,	0xE0, 0xE0, 0x00,	0xE0, 0xE0, 0xE0
+	};
+
+	static const byte tableTownsLoomPalette[] = {
+		0x00, 0x00, 0x00,	0x00, 0x00, 0xAB,	0x00, 0xAB, 0x00,	0x00, 0xAB, 0xAB,
+		0xAB, 0x00, 0x00,	0x69, 0x29, 0x45,	0x8C, 0x4D, 0x14,	0xAB, 0xAB, 0xAB,
+		0x57, 0x3F, 0x57,	0x57, 0x57, 0xFF,	0x57, 0xFF, 0x57,	0x57, 0xFF, 0xFF,
+		0xFF, 0x57, 0x57,	0xD6, 0x94, 0x40,	0xFF, 0xFF, 0x57,	0xFF, 0xFF, 0xFF
+	};
+#endif
+#endif
+
 	if (_game.version <= 1) {
 		if (_game.platform == Common::kPlatformApple2GS) {
 			// TODO: unique palette?
@@ -198,6 +217,19 @@ void ScummEngine::resetPalette() {
 			// else we initialise and then lock down the first 16 colors.
 			if (_renderMode != Common::kRenderEGA)
 				setPaletteFromTable(tableAmigaMIPalette, sizeof(tableAmigaMIPalette) / 3);
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		} else if (_game.platform == Common::kPlatformFMTowns) {
+			if (_game.id == GID_INDY4 || _game.id == GID_MONKEY2)
+				_townsClearLayerFlag = 0;
+#ifdef USE_RGB_COLOR
+			else if (_game.id == GID_LOOM)
+				towns_setTextPaletteFromPtr(tableTownsLoomPalette); 
+			else if (_game.version == 3)
+				towns_setTextPaletteFromPtr(tableTownsV3Palette);
+#endif
+			
+			_townsScreen->toggleLayers(_townsActiveLayerFlags);
+#endif // DISABLE_TOWNS_DUAL_LAYER_MODE
 		}
 		setDirtyColors(0, 255);
 	}
@@ -465,6 +497,11 @@ void ScummEngine::cyclePalette() {
 	int valueToAdd;
 	int i, j;
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	if (_game.platform == Common::kPlatformFMTowns && !(_townsPaletteFlags & 1))
+		return;
+#endif
+
 	valueToAdd = VAR(VAR_TIMER);
 	if (valueToAdd < VAR(VAR_TIMER_NEXT))
 		valueToAdd = VAR(VAR_TIMER_NEXT);
@@ -506,6 +543,11 @@ void ScummEngine::moveMemInPalRes(int start, int end, byte direction) {
 }
 
 void ScummEngine::palManipulateInit(int resID, int start, int end, int time) {
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	if (_game.platform == Common::kPlatformFMTowns && !(_townsPaletteFlags & 1))
+		return;
+#endif
+
 	byte *string1 = getStringAddress(resID);
 	byte *string2 = getStringAddress(resID + 1);
 	byte *string3 = getStringAddress(resID + 2);
@@ -973,6 +1015,12 @@ void ScummEngine::setCurrentPalette(int palindex) {
 	pals = getPalettePtr(_curPalIndex, _roomResource);
 	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
 		setPCEPaletteFromPtr(pals);
+#ifdef USE_RGB_COLOR
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	} else if (_game.platform == Common::kPlatformFMTowns) {
+		towns_setPaletteFromPtr(pals);
+#endif
+#endif
 	} else {
 		setPaletteFromPtr(pals);
 	}
@@ -1069,10 +1117,23 @@ void ScummEngine::updatePalette() {
 		}
 	}
 
-	_system->setPalette(palette_colors, first, num);
-
 	_palDirtyMax = -1;
 	_palDirtyMin = 256;
+
+#ifdef USE_RGB_COLOR
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	if (_game.platform == Common::kPlatformFMTowns) {
+		p = palette_colors;
+		for (i = first; i < first + num; ++i) {
+			_16BitPalette[i] = get16BitColor(p[0], p[1], p[2]);
+			p += 4;
+		}
+		return;
+	}
+#endif
+#endif
+
+	_system->setPalette(palette_colors, first, num);	
 }
 
 } // End of namespace Scumm

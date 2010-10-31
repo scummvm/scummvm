@@ -350,7 +350,7 @@ void LoLEngine::monsterDropItems(MonsterInPlay *monster) {
 	}
 }
 
-void LoLEngine::removeAssignedObjectFromBlock(LevelBlockProperty *l, int id) {
+void LoLEngine::removeAssignedObjectFromBlock(LevelBlockProperty *l, uint16 id) {
 	uint16 *blockItemIndex = &l->assignedObjects;
 	ItemInPlay *i = 0;
 
@@ -367,7 +367,7 @@ void LoLEngine::removeAssignedObjectFromBlock(LevelBlockProperty *l, int id) {
 	}
 }
 
-void LoLEngine::removeDrawObjectFromBlock(LevelBlockProperty *l, int id) {
+void LoLEngine::removeDrawObjectFromBlock(LevelBlockProperty *l, uint16 id) {
 	uint16 *blockItemIndex = &l->drawObjects;
 	ItemInPlay *i = 0;
 
@@ -384,7 +384,7 @@ void LoLEngine::removeDrawObjectFromBlock(LevelBlockProperty *l, int id) {
 	}
 }
 
-void LoLEngine::assignMonsterToBlock(uint16 *assignedBlockObjects, int id) {
+void LoLEngine::assignMonsterToBlock(uint16 *assignedBlockObjects, uint16 id) {
 	ItemInPlay *t = findObject(id);
 	t->nextAssignedObject = *assignedBlockObjects;
 	*assignedBlockObjects = id;
@@ -901,6 +901,9 @@ void LoLEngine::calcSpriteRelPosition(uint16 x1, uint16 y1, int &x2, int &y2, ui
 }
 
 void LoLEngine::drawDoor(uint8 *shape, uint8 *doorPalette, int index, int unk2, int w, int h, int flags) {
+	if (!shape)
+		return;
+
 	uint8 c = _dscDoor1[(_currentDirection << 5) + unk2];
 	int r = (c / 5) + 5 * _dscDimMap[index];
 	uint16 d = _dscShapeOvlIndex[r];

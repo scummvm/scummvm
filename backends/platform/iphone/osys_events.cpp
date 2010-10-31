@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "gui/message.h"
 #include "common/translation.h"
 
@@ -60,16 +63,31 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 		int y = 0;
 		switch (_screenOrientation) {
 			case kScreenOrientationPortrait:
-				x = (int)(xUnit * _screenWidth);
-				y = (int)(yUnit * _screenHeight);
+				if (_overlayVisible) {
+					x = (int)(xUnit * _overlayWidth);
+					y = (int)(yUnit * _overlayHeight);
+				} else {
+					x = (int)(xUnit * _screenWidth);
+					y = (int)(yUnit * _screenHeight);
+				}
 				break;
 			case kScreenOrientationLandscape:
-				x = (int)(yUnit * _screenWidth);
-				y = (int)((1.0 - xUnit) * _screenHeight);
+				if (_overlayVisible) {
+					x = (int)(yUnit * _overlayWidth);
+					y = (int)((1.0 - xUnit) * _overlayHeight);
+				} else {
+					x = (int)(yUnit * _screenWidth);
+					y = (int)((1.0 - xUnit) * _screenHeight);
+				}
 				break;
 			case kScreenOrientationFlippedLandscape:
-				x = (int)((1.0 - yUnit) * _screenWidth);
-				y = (int)(xUnit * _screenHeight);
+				if (_overlayVisible) {
+					x = (int)((1.0 - yUnit) * _overlayWidth);
+					y = (int)(xUnit * _overlayHeight);
+				} else {
+					x = (int)((1.0 - yUnit) * _screenWidth);
+					y = (int)(xUnit * _screenHeight);
+				}
 				break;
 		}
 
@@ -262,15 +280,18 @@ bool OSystem_IPHONE::handleEvent_mouseDragged(Common::Event &event, int x, int y
 		mouseNewPosX = (int)(_mouseX - deltaX / 0.5f);
 		mouseNewPosY = (int)(_mouseY - deltaY / 0.5f);
 
+		int widthCap = _overlayVisible ? _overlayWidth : _screenWidth;
+		int heightCap = _overlayVisible ? _overlayHeight : _screenHeight;
+
 		if (mouseNewPosX < 0)
 			mouseNewPosX = 0;
-		else if (mouseNewPosX > _screenWidth)
-			mouseNewPosX = _screenWidth;
+		else if (mouseNewPosX > widthCap)
+			mouseNewPosX = widthCap;
 
 		if (mouseNewPosY < 0)
 			mouseNewPosY = 0;
-		else if (mouseNewPosY > _screenHeight)
-			mouseNewPosY = _screenHeight;
+		else if (mouseNewPosY > heightCap)
+			mouseNewPosY = heightCap;
 
 	} else {
 		mouseNewPosX = x;

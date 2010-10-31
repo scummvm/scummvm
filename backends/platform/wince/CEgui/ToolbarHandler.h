@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef CEGUI_TOOLBARHANDLER
-#define CEGUI_TOOLBARHANDLER
+#ifndef CEGUI_TOOLBARHANDLER_H
+#define CEGUI_TOOLBARHANDLER_H
 
 #include "common/scummsys.h"
 #include "common/system.h"

@@ -237,7 +237,7 @@ void OSystem_SDL::detectSupportedFormats() {
 	// available format, it will get one that is "cheap" to
 	// use.
 	const Graphics::PixelFormat RGBList[] = {
-#ifdef ENABLE_32BIT
+#ifdef USE_RGB_COLOR
 		// RGBA8888, ARGB8888, RGB888
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24),
@@ -251,7 +251,7 @@ void OSystem_SDL::detectSupportedFormats() {
 		Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)
 	};
 	const Graphics::PixelFormat BGRList[] = {
-#ifdef ENABLE_32BIT
+#ifdef USE_RGB_COLOR
 		// ABGR8888, BGRA8888, BGR888
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0),
@@ -527,7 +527,7 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 	}
 
 	if (!bestMode) {
-		warning("Unable to enforce the desired aspect ratio!");
+		warning("Unable to enforce the desired aspect ratio");
 		return;
 	}
 	//printf("%d %d\n", bestMode->w, bestMode->h);
@@ -539,7 +539,7 @@ bool OSystem_SDL::loadGFXMode() {
 	assert(_inited);
 	_forceFull = true;
 
-#if !defined(__MAEMO__) && !defined(GP2XWIZ) && !defined(LINUXMOTO) && !defined(DINGUX)
+#if !defined(__MAEMO__) && !defined(DINGUX) && !defined(GPH_DEVICE) && !defined(LINUXMOTO) && !defined(OPENPANDORA)
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
@@ -785,7 +785,7 @@ void OSystem_SDL::internUpdateScreen() {
 #endif
 
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos || 
+	if (_currentShakePos != _newShakePos ||
 		(_mouseNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
 		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor};
 

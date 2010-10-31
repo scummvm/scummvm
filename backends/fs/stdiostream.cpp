@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use FILE, fopen etc.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "backends/fs/stdiostream.h"
 
 StdioStream::StdioStream(void *handle) : _handle(handle) {

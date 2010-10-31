@@ -53,7 +53,6 @@ Init::~Init() {
 }
 
 void Init::cleanup() {
-	_vm->_video->freeDriver();
 	_vm->_global->_primarySurfDesc.reset();
 
 	_vm->_sound->speakerOff();
@@ -64,8 +63,6 @@ void Init::cleanup() {
 void Init::doDemo() {
 	if (_vm->isSCNDemo()) {
 		// This is a non-interactive demo with a SCN script and VMD videos
-
-		_vm->_video->setPrePalette();
 
 		SCNPlayer scnPlayer(_vm);
 

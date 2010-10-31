@@ -61,7 +61,7 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 		// Now read the whole offset mapping table for later usage
 		int32 recordCount = fileStream->readUint32LE();
 		if (!recordCount)
-			error("compressed audio volume doesn't contain any entries!");
+			error("compressed audio volume doesn't contain any entries");
 		int32 *offsetMapping = new int32[(recordCount + 1) * 2];
 		_audioCompressionOffsetMapping = offsetMapping;
 		for (int recordNo = 0; recordNo < recordCount; recordNo++) {
@@ -273,6 +273,13 @@ void ResourceManager::removeAudioResource(ResourceId resId) {
 // w syncAscSize (iff seq has bit 6 set)
 
 int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
+#ifndef ENABLE_SCI32
+	// SCI32 support is not built in. Check if this is a SCI32 game
+	// and if it is abort here.
+	if (_volVersion == kResVersionSci32)
+		return SCI_ERROR_RESMAP_NOT_FOUND;
+#endif
+
 	uint32 offset = 0;
 	Resource *mapRes = findResource(ResourceId(kResourceTypeMap, map->_volumeNumber), false);
 
@@ -664,6 +671,8 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 						channel->data = resource->data + dataOffset;
 						channel->size = READ_LE_UINT16(data + 4);
 						channel->curPos = 0;
+						// FIXME: number contains (low nibble) channel and (high nibble) flags
+						// 0x20 is set on rhythm channels to prevent remapping
 						channel->number = *channel->data;
 						channel->poly = *(channel->data + 1);
 						channel->time = channel->prev = 0;

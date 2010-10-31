@@ -178,6 +178,7 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 	*cloneObj = *parentObj;
 
 	// Mark as clone
+	infoSelector &= ~kInfoFlagClass; // remove class bit
 	writeSelectorValue(s->_segMan, cloneAddr, SELECTOR(_info_), infoSelector | kInfoFlagClone);
 
 	cloneObj->setSpeciesSelector(cloneObj->getPos());

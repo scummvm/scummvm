@@ -53,29 +53,30 @@ protected:
 
 	Common::SeekableReadStream *_inStream;
 	DisposeAfterUse::Flag _disposeAfterUse;
-	
+
 	uint32 _pcmLength;		// how many pcm samples we have for this type of file (x2 this for stereo)
-	
+
 	uint _posInFrame;		// position in frame
 	State _state;			// what state the stream is in
 
 	Timestamp _length;
 	uint32 _sampleRate;
+	bool _stereo;
 
 	mad_timer_t _totalTime;
 	mad_stream _stream;		//
 	mad_header _header;		// This is all we need from libmad
-	
+
 	static bool _decoderInit;	// has the decoder been initialized
 	static bool _decoderFail;	// has the decoder failed to load
-	
+
 	enum {
 		BUFFER_SIZE = 5 * 8192
 	};
 
 	// This buffer contains a slab of input data
 	byte _buf[BUFFER_SIZE + MAD_BUFFER_GUARD];
-	
+
 	void decodeMP3Data();
 	void readMP3DataIntoBuffer();
 
@@ -84,19 +85,19 @@ protected:
 	void findValidHeader();
 	void deinitStream();
 	void updatePcmLength();
-	
+
 	// to init and uninit ME decoder
 	static bool initDecoder();
 	static bool stopDecoder();
-	
+
 	// ME functions for stream
 	bool initStreamME();
 	void releaseStreamME();
-	
+
 public:
 	Mp3PspStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose);
 	~Mp3PspStream();
-	
+
 	// This function avoids having to create streams when it's not possible
 	static inline bool isOkToCreateStream() {
 		if (_decoderFail)			// fatal failure
@@ -104,13 +105,13 @@ public:
 		if (!_decoderInit)			// if we're not initialized
 			if (!initDecoder())		// check if we failed init
 				return false;
-		return true;	
+		return true;
 	}
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool endOfData() const		{ return _state == MP3_STATE_EOS; }
-	bool isStereo() const		{ return MAD_NCHANNELS(&_header) == 2; }
+	bool isStereo() const		{ return _stereo; }
 	int getRate() const			{ return _sampleRate; }
 
 	bool seek(const Timestamp &where);

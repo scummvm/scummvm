@@ -323,7 +323,7 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 
 		if (h != NULL) {
 			DebugPrintf("Frame Number = %d of %d\n", h->frameNumber(), h->numFrames());
-			DebugPrintf("Persistant = %s\n", h->persistant() ? "true" : "false");
+			DebugPrintf("Persistent = %s\n", h->persistant() ? "true" : "false");
 		}
 
 	} else if (strcmp(argv[2], "actions") == 0) {

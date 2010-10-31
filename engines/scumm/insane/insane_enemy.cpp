@@ -1328,7 +1328,7 @@ void Insane::turnEnemy(bool battle) {
 	if (_actor[1].damage < _actor[1].maxdamage) {
 		_actor[1].lost = false;
 	} else {
-		if (!_actor[1].lost && !_actor[1].lost) {
+		if (!_actor[1].lost && !_actor[0].lost) {
 			_actor[1].lost = true;
 			_actor[1].act[2].state = 36;
 			_actor[1].act[1].state = 36;
@@ -2072,7 +2072,7 @@ void Insane::actor12Reaction(int32 buttons) {
 			setEnemyState();
 			_actor[1].act[2].tilt = 0;
 			// for some reason there is no break at this
-			// place, so tilt gets overriden on next line
+			// place, so tilt gets overridden on next line
 		}
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
 		break;

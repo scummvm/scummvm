@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "backends/platform/ps2/fileio.h"
 
 #include <tamtypes.h>

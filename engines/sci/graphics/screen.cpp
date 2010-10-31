@@ -122,9 +122,9 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 
 	// Initialize the actual screen
 
-	if (_resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1) {
-		// For SCI1.1 Mac, we need to expand the screen to accommodate for
-		// the icon bar. Of course, both KQ6 and QFG1 VGA differ in size.
+	if (g_sci->hasMacIconBar()) {
+		// For SCI1.1 Mac games with the custom icon bar, we need to expand the screen
+		// to accommodate for the icon bar. Of course, both KQ6 and QFG1 VGA differ in size.
 		if (g_sci->getGameId() == GID_KQ6)
 			initGraphics(_displayWidth, _displayHeight + 26, _displayWidth > 320);
 		else if (g_sci->getGameId() == GID_QFG1VGA)
@@ -345,11 +345,11 @@ byte GfxScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, byt
 	int offset = y * _width + x;
 	byte match = 0;
 
-	if (screenMask & GFX_SCREEN_MASK_VISUAL && *(_visualScreen + offset) == t_color)
+	if ((screenMask & GFX_SCREEN_MASK_VISUAL) && *(_visualScreen + offset) == t_color)
 		match |= GFX_SCREEN_MASK_VISUAL;
-	if (screenMask & GFX_SCREEN_MASK_PRIORITY && *(_priorityScreen + offset) == t_pri)
+	if ((screenMask & GFX_SCREEN_MASK_PRIORITY) && *(_priorityScreen + offset) == t_pri)
 		match |= GFX_SCREEN_MASK_PRIORITY;
-	if (screenMask & GFX_SCREEN_MASK_CONTROL && *(_controlScreen + offset) == t_con)
+	if ((screenMask & GFX_SCREEN_MASK_CONTROL) && *(_controlScreen + offset) == t_con)
 		match |= GFX_SCREEN_MASK_CONTROL;
 	return match;
 }

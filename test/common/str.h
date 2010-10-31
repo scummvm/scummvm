@@ -310,17 +310,20 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(Common::matchString("monkey.s01",  "monkey.s*1"));
 		TS_ASSERT(!Common::matchString("monkey.s99",  "monkey.s*1"));
 		TS_ASSERT(Common::matchString("monkey.s101", "monkey.s*1"));
+
+		TS_ASSERT(!Common::String("").matchString("*_"));
+		TS_ASSERT(Common::String("a").matchString("a***"));
 	}
 
 	void test_string_printf() {
-		TS_ASSERT( Common::String::printf("") == "" );
-		TS_ASSERT( Common::String::printf("%s", "test") == "test" );
-		TS_ASSERT( Common::String::printf("%s.s%.02d", "monkey", 1) == "monkey.s01" );
-		TS_ASSERT( Common::String::printf("Some %s to make this string longer than the default built-in %s %d", "text", "capacity", 123456) == "Some text to make this string longer than the default built-in capacity 123456" );
+		TS_ASSERT_EQUALS( Common::String::printf(""), "" );
+		TS_ASSERT_EQUALS( Common::String::printf("%s", "test"), "test" );
+		TS_ASSERT_EQUALS( Common::String::printf("%s.s%.02d", "monkey", 1), "monkey.s01" );
+		TS_ASSERT_EQUALS( Common::String::printf("Some %s to make this string longer than the default built-in %s %d", "text", "capacity", 123456), "Some text to make this string longer than the default built-in capacity 123456" );
 
 		Common::String s = Common::String::printf("%s%X", "test", 1234);
-		TS_ASSERT(s == "test4D2");
-		TS_ASSERT(s.size() == 7);
+		TS_ASSERT_EQUALS(s, "test4D2");
+		TS_ASSERT_EQUALS(s.size(), 7U);
 	}
 
 	void test_strlcpy() {

@@ -44,7 +44,7 @@ namespace Common {
  * now fully completable.  All remaining Groovie games use V2 of the engine,
  * which is under slow development.
  *
- * Supported games:
+ * Games using this engine:
  * - The 7th Guest (completable)
  * - The 11th Hour
  * - Clandestiny

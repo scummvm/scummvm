@@ -35,126 +35,95 @@
 namespace Saga {
 
 PalAnim::PalAnim(SagaEngine *vm) : _vm(vm) {
-	_loaded = false;
-	_entryCount = 0;
-	_entries = NULL;
 }
 
-PalAnim::~PalAnim() {
-}
+void PalAnim::loadPalAnim(const ByteArray &resourceData) {
 
-int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
-	void *test_p;
+	clear();
 
-	uint16 i;
-
-	if (_loaded) {
-		freePalAnim();
+	if (resourceData.empty()) {
+		return;
 	}
 
-	if (resdata == NULL) {
-		return FAILURE;
-	}
-
-	MemoryReadStreamEndian readS(resdata, resdata_len, _vm->isBigEndian());
+	ByteArrayReadStreamEndian readS(resourceData, _vm->isBigEndian());
 
 	if (_vm->getGameId() == GID_IHNM) {
-		return SUCCESS;
+		return;
 	}
 
-	_entryCount = readS.readUint16();
+	_entries.resize(readS.readUint16());
 
-	debug(3, "PalAnim::loadPalAnim(): Loading %d PALANIM entries.", _entryCount);
+	debug(3, "PalAnim::loadPalAnim(): Loading %d PALANIM entries.", _entries.size());
 
-	test_p = malloc(_entryCount * sizeof(PalanimEntry));
-	_entries = (PalanimEntry *)test_p;
+	for (Common::Array<PalanimEntry>::iterator i = _entries.begin(); i != _entries.end(); ++i) {
+		
+		i->cycle = 0;
 
-	for (i = 0; i < _entryCount; i++) {
-		int color_count;
-		int pal_count;
-		int p, c;
+		i->colors.resize(readS.readUint16());
+		debug(2, "PalAnim::loadPalAnim(): Loading %d SAGA_COLOR structures.", i->colors.size());
 
-		_entries[i].cycle = 0;
+		i->palIndex.resize(readS.readUint16());
+		debug(2, "PalAnim::loadPalAnim(): Loading %d palette indices.\n", i->palIndex.size());
 
-		color_count = readS.readUint16();
-		pal_count = readS.readUint16();
 
-		_entries[i].pal_count = pal_count;
-		_entries[i].color_count = color_count;
-
-		debug(2, "PalAnim::loadPalAnim(): Entry %d: Loading %d palette indices.\n", i, pal_count);
-
-		test_p = malloc(sizeof(char) * pal_count);
-		_entries[i].pal_index = (byte *)test_p;
-
-		debug(2, "PalAnim::loadPalAnim(): Entry %d: Loading %d SAGA_COLOR structures.", i, color_count);
-
-		test_p = malloc(sizeof(Color) * color_count);
-		_entries[i].colors = (Color *)test_p;
-
-		for (p = 0; p < pal_count; p++) {
-			_entries[i].pal_index[p] = readS.readByte();
+		for (uint j = 0; j < i->palIndex.size(); j++) {
+			i->palIndex[j] = readS.readByte();
 		}
 
-		for (c = 0; c < color_count; c++) {
-			_entries[i].colors[c].red = readS.readByte();
-			_entries[i].colors[c].green = readS.readByte();
-			_entries[i].colors[c].blue = readS.readByte();
+		for (Common::Array<Color>::iterator j = i->colors.begin(); j != i->colors.end(); ++j) {
+			j->red = readS.readByte();
+			j->green = readS.readByte();
+			j->blue = readS.readByte();
 		}
 	}
-
-	_loaded = true;
-	return SUCCESS;
 }
 
-int PalAnim::cycleStart() {
+void PalAnim::cycleStart() {
 	Event event;
 
-	if (!_loaded) {
-		return FAILURE;
+	if (_entries.empty()) {
+		return;
 	}
 
 	event.type = kEvTOneshot;
 	event.code = kPalAnimEvent;
 	event.op = kEventCycleStep;
 	event.time = PALANIM_CYCLETIME;
-	_vm->_events->queue(&event);
-
-	return SUCCESS;
+	_vm->_events->queue(event);
 }
 
-int PalAnim::cycleStep(int vectortime) {
+void PalAnim::cycleStep(int vectortime) {
 	static PalEntry pal[256];
-	uint16 pal_index;
-	uint16 col_index;
+	uint16 palIndex;
+	uint16 colIndex;
 
-	uint16 i, j;
+	uint16 j;
 	uint16 cycle;
-	uint16 cycle_limit;
+	uint16 cycleLimit;
 
 	Event event;
 
-	if (!_loaded) {
-		return FAILURE;
+	if (_entries.empty()) {
+		return;
 	}
 
 	_vm->_gfx->getCurrentPal(pal);
 
-	for (i = 0; i < _entryCount; i++) {
-		cycle = _entries[i].cycle;
-		cycle_limit = _entries[i].color_count;
-		for (j = 0; j < _entries[i].pal_count; j++) {
-			pal_index = (unsigned char)_entries[i].pal_index[j];
-			col_index = (cycle + j) % cycle_limit;
-			pal[pal_index].red = (byte) _entries[i].colors[col_index].red;
-			pal[pal_index].green = (byte) _entries[i].colors[col_index].green;
-			pal[pal_index].blue = (byte) _entries[i].colors[col_index].blue;
+	for (Common::Array<PalanimEntry>::iterator i = _entries.begin(); i != _entries.end(); ++i) {
+		cycle = i->cycle;
+		cycleLimit = i->colors.size();
+		for (j = 0; j < i->palIndex.size(); j++) {
+			palIndex = i->palIndex[j];
+			colIndex = (cycle + j) % cycleLimit;
+			pal[palIndex].red = (byte) i->colors[colIndex].red;
+			pal[palIndex].green = (byte) i->colors[colIndex].green;
+			pal[palIndex].blue = (byte) i->colors[colIndex].blue;
 		}
 
-		_entries[i].cycle++;
+		i->cycle++;
 
-		if (_entries[i].cycle == cycle_limit) {
-			_entries[i].cycle = 0;
+		if (i->cycle == cycleLimit) {
+			i->cycle = 0;
 		}
 	}
 
@@ -167,32 +136,14 @@ int PalAnim::cycleStep(int vectortime) {
 	event.code = kPalAnimEvent;
 	event.op = kEventCycleStep;
 	event.time = vectortime + PALANIM_CYCLETIME;
-	_vm->_events->queue(&event);
+	_vm->_events->queue(event);
 
-	return SUCCESS;
 }
 
-int PalAnim::freePalAnim() {
-	uint16 i;
-
-	if (!_loaded) {
-		return FAILURE;
-	}
-
-	for (i = 0; i < _entryCount; i++) {
-		debug(2, "PalAnim::freePalAnim(): Entry %d: Freeing colors.", i);
-		free(_entries[i].colors);
-		debug(2, "PalAnim::freePalAnim(): Entry %d: Freeing indices.", i);
-		free(_entries[i].pal_index);
-	}
-
-	debug(3, "PalAnim::freePalAnim(): Freeing entries.");
-
-	free(_entries);
-
-	_loaded = false;
-
-	return SUCCESS;
+void PalAnim::clear() {
+	debug(3, "PalAnim::clear()");
+	
+	_entries.clear();
 }
 
 } // End of namespace Saga

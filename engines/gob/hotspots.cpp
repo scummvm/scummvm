@@ -23,9 +23,10 @@
  *
  */
 
+#include "common/str.h"
+
 #include "gob/hotspots.h"
 #include "gob/global.h"
-#include "gob/helper.h"
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/script.h"
@@ -880,10 +881,10 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 
 	while (1) {
 		// If we the edit field has enough space, add a space for the new character
-		strncpy0(tempStr, str, 254);
+		Common::strlcpy(tempStr, str, 255);
 		strcat(tempStr, " ");
 		if ((editSize != 0) && strlen(tempStr) > editSize)
-			strncpy0(tempStr, str, 255);
+			Common::strlcpy(tempStr, str, 256);
 
 		// Clear input area
 		fillRect(xPos, yPos,
@@ -1236,18 +1237,18 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		_vm->_draw->_invalidatedBottoms[0] = 199;
 		_vm->_draw->_invalidatedCount = 1;
 		if (windowNum == 0) {
-			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left + width - 1, top, left + width - 1, top + height - 1, 0);
-			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left, top + height - 1, 0);
-			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left + width - 1, top, 0);
-			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top + height - 1, left + width - 1, top + height - 1, 0);
+			_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left + width - 1, top, left + width - 1, top + height - 1, 0);
+			_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left, top, left, top + height - 1, 0);
+			_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left, top, left + width - 1, top, 0);
+			_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left, top + height - 1, left + width - 1, top + height - 1, 0);
 		} else {
 			if ((_vm->_draw->_fascinWin[windowNum].id != -1) && (_vm->_draw->_fascinWin[windowNum].id == _vm->_draw->_winCount - 1)) {
 				left += _vm->_draw->_fascinWin[windowNum].left;
 				top  += _vm->_draw->_fascinWin[windowNum].top;
-				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left + width - 1, top, left + width - 1, top + height - 1, 0);
-				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left, top + height - 1, 0);
-				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left + width - 1, top, 0);
-				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top + height - 1, left + width - 1, top + height - 1, 0);
+				_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left + width - 1, top, left + width - 1, top + height - 1, 0);
+				_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left, top, left, top + height - 1, 0);
+				_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left, top, left + width - 1, top, 0);
+				_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->drawLine(left, top + height - 1, left + width - 1, top + height - 1, 0);
 				left -= _vm->_draw->_fascinWin[windowNum].left;
 				top  -= _vm->_draw->_fascinWin[windowNum].top;
 			}
@@ -1295,7 +1296,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 	uint32 funcEnter = 0, funcLeave = 0;
 
 	if ((windowNum != 0) && (type != 0) && (type != 2))
-		warning("evaluateNew - type %d, win %d\n",type, windowNum);
+		warning("evaluateNew - type %d, win %d",type, windowNum);
 
 	// Evaluate parameters for the new hotspot
 	switch (type) {
@@ -1392,7 +1393,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		flags  = _vm->_game->_script->readInt16();
 
 		if (flags > 3)
-			warning("evaluateNew: Warning, use of type 2 or 20. flags = %d, should be %d\n", flags, flags&3);
+			warning("evaluateNew: Warning, use of type 2 or 20. flags = %d, should be %d", flags, flags&3);
 
 		funcEnter = 0;
 
@@ -1516,7 +1517,7 @@ void Hotspots::evaluate() {
 	int16 duration           = _vm->_game->_script->peekByte(1);
 
 	byte leaveWindowIndex = 0;
-	if ( _vm->getGameType() == kGameTypeFascination )
+	if (_vm->getGameType() == kGameTypeFascination)
 		leaveWindowIndex = _vm->_game->_script->peekByte(2);
 
 	byte hotspotIndex1       = _vm->_game->_script->peekByte(3);
@@ -1642,7 +1643,7 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 	int16 deltax = 0;
 	int16 deltay = 0;
 
-	if ( _vm->getGameType() == kGameTypeFascination )
+	if (_vm->getGameType() == kGameTypeFascination)
 		cursor = curWindow(deltax, deltay);
 
 	if (cursor == 0) {
@@ -2006,14 +2007,14 @@ void Hotspots::checkStringMatch(const Hotspot &spot, const InputDesc &input,
 	char tempStr[256];
 	char spotStr[256];
 
-	strncpy0(tempStr, GET_VARO_STR(spot.key), 255);
+	Common::strlcpy(tempStr, GET_VARO_STR(spot.key), 256);
 
 	if (spot.getType() < kTypeInput3NoLeave)
 		_vm->_util->cleanupStr(tempStr);
 
 	uint16 pos = 0;
 	do {
-		strncpy0(spotStr, str, 255);
+		Common::strlcpy(spotStr, str, 256);
 
 		pos += strlen(str) + 1;
 		str += strlen(str) + 1;
@@ -2106,7 +2107,7 @@ void Hotspots::fillRect(uint16 x, uint16 y, uint16 width, uint16 height, uint16 
 	_vm->_draw->_spriteBottom = height;
 	_vm->_draw->_backColor    = color;
 
-	_vm->_draw->spriteOperation(DRAW_FILLRECT | 0x10 );
+	_vm->_draw->spriteOperation(DRAW_FILLRECT | 0x10);
 }
 
 void Hotspots::printText(uint16 x, uint16 y, const char *str, uint16 fontIndex, uint16 color) const {
@@ -2140,7 +2141,7 @@ void Hotspots::updateAllTexts(const InputDesc *inputs) const {
 
 		// Get its text
 		char tempStr[256];
-		strncpy0(tempStr, GET_VARO_STR(spot.key), 255);
+		Common::strlcpy(tempStr, GET_VARO_STR(spot.key), 256);
 
 		// Coordinates
 		uint16 x      = spot.left;

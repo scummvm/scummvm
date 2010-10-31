@@ -42,6 +42,20 @@
 
 namespace Graphics {
 
+/*
+static byte char2num(char c) {
+	return (c >= 48 && c <= 57) ? c - 48 : 0;
+}
+
+static byte getStreamNum(uint32 tag) {
+	return char2num((char)(tag >> 24)) * 16 + char2num((char)(tag >> 16));
+}
+*/
+
+static uint16 getStreamType(uint32 tag) {
+	return tag & 0xffff;
+}
+
 AviDecoder::AviDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : _mixer(mixer) {
 	_soundType = soundType;
 
@@ -416,18 +430,6 @@ Audio::QueuingAudioStream *AviDecoder::createAudioStream() {
 		warning ("Unsupported AVI audio format %d", _wvInfo.tag);
 
 	return NULL;
-}
-
-byte AviDecoder::char2num(char c) {
-	return (c >= 48 && c <= 57) ? c - 48 : 0;
-}
-
-byte AviDecoder::getStreamNum(uint32 tag) {
-	return char2num((char)(tag >> 24)) * 16 + char2num((char)(tag >> 16));
-}
-
-uint16 AviDecoder::getStreamType(uint32 tag) {
-	return tag & 0xffff;
 }
 
 } // End of namespace Graphics

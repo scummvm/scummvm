@@ -75,8 +75,6 @@ private:
 	void APU_writeControl(byte value);
 	byte APU_readStatus();
 
-	void do_mix(int16 *buf, uint len);
-
 	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;

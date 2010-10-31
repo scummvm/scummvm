@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef CEGUI_GUIELEMENT
-#define CEGUI_GUIELEMENT
+#ifndef CEGUI_GUIELEMENT_H
+#define CEGUI_GUIELEMENT_H
 
 #include "common/scummsys.h"
 #include "common/system.h"

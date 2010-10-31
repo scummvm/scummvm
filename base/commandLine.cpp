@@ -219,6 +219,14 @@ void registerDefaults() {
 	ConfMan.registerDefault("record_file_name", "record.bin");
 	ConfMan.registerDefault("record_temp_file_name", "record.tmp");
 	ConfMan.registerDefault("record_time_file_name", "record.time");
+
+#if 0
+	// NEW CODE TO HIDE CONSOLE FOR WIN32
+#ifdef WIN32
+	// console hiding for win32
+	ConfMan.registerDefault("show_console", false);
+#endif
+#endif
 }
 
 //
@@ -546,6 +554,15 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 #endif
 
+#if 0
+	// NEW CODE TO HIDE CONSOLE FOR WIN32
+#ifdef WIN32
+			// console hiding for win32
+			DO_LONG_OPTION_BOOL("show-console")
+			END_OPTION
+#endif
+#endif
+
 unknownOption:
 			// If we get till here, the option is unhandled and hence unknown.
 			usage("Unrecognized option '%s'", argv[i]);
@@ -578,6 +595,10 @@ static void listTargets() {
 	using namespace Common;
 	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 	ConfigManager::DomainMap::const_iterator iter;
+
+	Common::Array<Common::String> targets;
+	targets.reserve(domains.size());
+
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::String name(iter->_key);
 		Common::String description(iter->_value.getVal("description"));
@@ -592,9 +613,13 @@ static void listTargets() {
 				description = g.description();
 		}
 
-		printf("%-20s %s\n", name.c_str(), description.c_str());
-
+		targets.push_back(Common::String::printf("%-20s %s", name.c_str(), description.c_str()));
 	}
+
+	Common::sort(targets.begin(), targets.end());
+
+	for (Common::Array<Common::String>::const_iterator i = targets.begin(), end = targets.end(); i != end; ++i)
+		printf("%s\n", i->c_str());
 }
 
 /** List all saves states for the given target. */
@@ -950,9 +975,9 @@ Common::Error processSettings(Common::String &command, Common::StringMap &settin
 		if (dir && *dir && strlen(dir) < MAXPATHLEN) {
 			Common::FSNode saveDir(dir);
 			if (!saveDir.exists()) {
-				warning("Non-existent SCUMMVM_SAVEPATH save path. It will be ignored.");
+				warning("Non-existent SCUMMVM_SAVEPATH save path. It will be ignored");
 			} else if (!saveDir.isWritable()) {
-				warning("Non-writable SCUMMVM_SAVEPATH save path. It will be ignored.");
+				warning("Non-writable SCUMMVM_SAVEPATH save path. It will be ignored");
 			} else {
 				settings["savepath"] = dir;
 			}

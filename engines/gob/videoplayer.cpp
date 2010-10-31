@@ -25,7 +25,6 @@
 
 
 #include "gob/videoplayer.h"
-#include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/dataio.h"
 #include "gob/video.h"
@@ -155,8 +154,8 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 				video->decoder->setXY(0, 0);
 			} else {
 				video->surface = _vm->_draw->_spritesArray[properties.sprite];
-				video->decoder->setSurfaceMemory(video->surface->getVidMem(),
-						video->surface->getWidth(), video->surface->getHeight(), 1);
+				video->decoder->setSurfaceMemory(video->surface->getData(),
+						video->surface->getWidth(), video->surface->getHeight(), video->surface->getBPP());
 
 				if (!ownSurf || (ownSurf && screenSize)) {
 					if ((properties.x >= 0) || (properties.y >= 0))

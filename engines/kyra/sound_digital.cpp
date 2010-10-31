@@ -158,7 +158,6 @@ AUDStream::AUDStream(Common::SeekableReadStream *stream) : _stream(stream), _end
 	_outBufferOffset(0), _outBufferSize(0), _inBuffer(0), _inBufferSize(0) {
 
 	_rate = _stream->readUint16LE();
-	_length = Audio::Timestamp(0, _rate);
 	_totalSize = _stream->readUint32LE();
 
 	// TODO?: add checks
@@ -167,6 +166,9 @@ AUDStream::AUDStream(Common::SeekableReadStream *stream) : _stream(stream), _end
 
 	_streamStart = stream->pos();
 
+	debugC(5, kDebugLevelSound, "AUD Info: rate: %d, totalSize: %d, flags: %d, type: %d, streamStart: %d", _rate, _totalSize, flags, type, _streamStart);
+
+	_length = Audio::Timestamp(0, _rate);
 	for (uint32 i = 0; i < _totalSize;) {
 		uint16 size = _stream->readUint16LE();
 		uint16 outSize = _stream->readUint16LE();
@@ -460,6 +462,7 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 
 	Common::strlcpy(use->filename, filename, sizeof(use->filename));
 	use->priority = priority;
+	debugC(5, kDebugLevelSound, "playSound: \"%s\"", use->filename);
 	Audio::SeekableAudioStream *audioStream = _supportedCodecs[usedCodec].streamFunc(stream, DisposeAfterUse::YES);
 	if (!audioStream) {
 		warning("Couldn't create audio stream for file '%s'", filename);

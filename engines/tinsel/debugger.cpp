@@ -57,7 +57,8 @@ int strToInt(const char *s) {
 
 	// Hexadecimal string
 	uint tmp;
-	sscanf(s, "%xh", &tmp);
+	if (!sscanf(s, "%xh", &tmp))
+		tmp = 0;
 	return (int)tmp;
 }
 

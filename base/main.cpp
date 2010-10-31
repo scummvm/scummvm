@@ -315,7 +315,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Common::StringMap settings;
 	command = Base::parseCommandLine(settings, argc, argv);
 
-	// Load the config file (possibly overriden via command line):
+	// Load the config file (possibly overridden via command line):
 	if (settings.contains("config")) {
 		ConfMan.loadConfigFile(settings["config"]);
 		settings.erase("config");
@@ -325,9 +325,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
-
-	// Enable translation
-	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
 
 	// Load and setup the debuglevel and the debug flags. We do this at the
 	// soonest possible moment to ensure debug output starts early on, if
@@ -440,9 +437,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			PluginManager::instance().loadPlugins();
 #endif
 		} else {
-			// A dialog would be nicer, but we don't have any
-			// screen to draw on yet.
-			warning("%s", _("Could not find any engine capable of running the selected game"));
 			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
 		}
 

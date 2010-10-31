@@ -167,11 +167,6 @@ void ScummEngine_v0::switchActor(int slot) {
 	if (_currentMode == 0 || _currentMode == 1 || _currentMode == 2)
 		return;
 
-	// verbs disabled for the current actor
-	ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "switchActor");
-	if (a->_miscflags & 0x40)
-		return;
-
 	VAR(VAR_EGO) = VAR(97 + slot);
 	resetVerbs();
 	actorFollowCamera(VAR(VAR_EGO));
@@ -323,7 +318,7 @@ void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
 		}
 	}
 
-	if (new_box != _mouseOverBoxV2) {
+	if ((new_box != _mouseOverBoxV2) || (_game.version == 0)) {
 		if (_mouseOverBoxV2 != -1) {
 			rect = _mouseOverBoxesV2[_mouseOverBoxV2].rect;
 
@@ -524,9 +519,8 @@ void ScummEngine_v2::handleMouseOver(bool updateInventory) {
 }
 
 void ScummEngine_v0::handleMouseOver(bool updateInventory) {
-	ScummEngine_v2::handleMouseOver(updateInventory);
-
 	drawSentence();
+	ScummEngine_v2::handleMouseOver(updateInventory);
 }
 
 #ifdef ENABLE_HE
@@ -727,7 +721,7 @@ void ScummEngine_v2::checkExecVerbs() {
 }
 
 void ScummEngine_v0::runObject(int obj, int entry) {
-	int prev = _v0ObjectInInventory;
+	bool prev = _v0ObjectInInventory;
 
 	if (getVerbEntrypoint(obj, entry) == 0) {
 		// If nothing was found, attempt to find the 'WHAT-IS' verb script
@@ -745,28 +739,15 @@ void ScummEngine_v0::runObject(int obj, int entry) {
 		runObjectScript(obj, entry, false, false, NULL);
 	} else if (entry != 13 && entry != 15) {
 		if (_activeVerb != 3) {
-			VAR(9) = entry;
+			VAR(VAR_ACTIVE_VERB) = entry;
 			runScript(3, 0, 0, 0);
 
 		// For some reasons, certain objects don't have a "give" script
-		} else if (VAR(5) > 0 && VAR(5) < 8) {
+		} else if (VAR(VAR_ACTIVE_ACTOR) > 0 && VAR(VAR_ACTIVE_ACTOR) < 8) {
 			if (_activeInventory)
-				setOwnerOf(_activeInventory, VAR(5));
+				setOwnerOf(_activeInventory, VAR(VAR_ACTIVE_ACTOR));
 		}
 	}
-}
-
-void ScummEngine_v2::runObject(int obj, int entry) {
-	if (getVerbEntrypoint(obj, entry) != 0) {
-		runObjectScript(obj, entry, false, false, NULL);
-	} else if (entry != 13 && entry != 15) {
-		VAR(9) = entry;
-		runScript(3, 0, 0, 0);
-	}
-
-	_activeInventory = 0;
-	_activeObject = 0;
-	_activeVerb = 13;
 }
 
 bool ScummEngine_v0::verbMoveToActor(int actor) {
@@ -955,7 +936,7 @@ bool ScummEngine_v0::verbExec() {
 			return true;
 		}
 		_v0ObjectInInventory = true;
-		VAR(5) = _activeActor;
+		VAR(VAR_ACTIVE_ACTOR) = _activeActor;
 		runObject(_activeInventory , 3);
 		_v0ObjectInInventory = false;
 
@@ -991,6 +972,7 @@ bool ScummEngine_v0::verbExec() {
 	// We acted on an inventory item
 	if (_activeInventory && verbExecutes(_activeInventory, true) && _activeVerb != 3) {
 		_v0ObjectInInventory = true;
+		_activeObject = _activeInventory;
 		runObject(_activeInventory, _activeVerb);
 
 		_verbExecuting = false;
@@ -1049,7 +1031,7 @@ bool ScummEngine_v0::verbExec() {
 }
 
 void ScummEngine_v0::checkExecVerbs() {
-	Actor *a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
+	ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "checkExecVerbs");
 	VirtScreen *zone = findVirtScreen(_mouse.y);
 
 	// Is a verb currently executing
@@ -1164,27 +1146,28 @@ void ScummEngine_v0::checkExecVerbs() {
 				obj = 0;
 				objIdx = 0;
 			}
+			
+			if (a->_miscflags & 0x80) {
+				if (_activeVerb != 7 && over != 7) {
+					_activeVerb = 0;
+					over = 0;
+				}
+			}
 
 			// Handle New Kid verb options
 			if (_activeVerb == 7 || over == 7) {
 				// Disable New-Kid (in the secret lab)
 				if (_currentMode == 2 || _currentMode == 0)
 					return;
-				
-				if (!(((ActorC64 *)a)->_miscflags & 0x80)) {
-					if (_activeVerb != 7) {
-						_activeVerb = over;
-						over = 0;
-					}
-				}
 
-				if (over) {
+				if (_activeVerb == 7 && over) {
 					_activeVerb = 13;
 					switchActor(_verbs[over].verbid - 1);
 					return;
 				}
 
 				setNewKidVerbs();
+				_activeVerb = 7;
 
 				return;
 			}
@@ -1200,7 +1183,7 @@ void ScummEngine_v0::checkExecVerbs() {
 
 				if (zone->number == kMainVirtScreen) {
 					// Ignore verbs?
-					if (((ActorC64 *)a)->_miscflags & 0x40) {
+					if (a->_miscflags & 0x40) {
 						resetSentence(false);
 						return;
 					}
@@ -1464,9 +1447,14 @@ void ScummEngine::restoreVerbBG(int verb) {
 	VerbSlot *vs;
 
 	vs = &_verbs[verb];
+	uint8 col = 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		((_game.platform == Common::kPlatformFMTowns) && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4) && (vs->bkcolor == _townsOverrideShadowColor)) ? 0 : 
+#endif
+		vs->bkcolor;
 
 	if (vs->oldRect.left != -1) {
-		restoreBackground(vs->oldRect, vs->bkcolor);
+		restoreBackground(vs->oldRect, col);
 		vs->oldRect.left = -1;
 	}
 }

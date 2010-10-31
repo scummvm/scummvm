@@ -61,9 +61,9 @@ void SoundGenCoCo3::play(int resnum) {
 			uint32 start_time = _vm->_system->getMillis();
 
 			while (_vm->_system->getMillis() < start_time + note.duration) {
-                _vm->_system->updateScreen();
+				_vm->_system->updateScreen();
 
-                _vm->_system->delayMillis(10);
+				_vm->_system->delayMillis(10);
 			}
 		}
 	} while (note.freq != 0xff);

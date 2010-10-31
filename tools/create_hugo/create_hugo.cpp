@@ -25,6 +25,9 @@
  * data file, used by the game engine
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
@@ -49,6 +52,7 @@
 #include "staticparser.h"
 #include "staticschedule.h"
 #include "staticutil.h"
+#include "staticfont.h"
 
 static void writeByte(FILE *fp, uint8 b) {
 	fwrite(&b, 1, 1, fp);
@@ -307,13 +311,48 @@ int main(int argc, char *argv[]) {
 	writeTextArray(outFile, textEngine, NUM_ENGINE_TEXT);
 
 	// Write textIntro
-	writeTextArray(outFile, textIntro, NUM_INTRO_TEXT);
+	writeTextArray(outFile, textIntro_dummy, NUM_INTRO_TEXT_DUMMY);
+	writeTextArray(outFile, textIntro_dummy, NUM_INTRO_TEXT_DUMMY);
+	writeTextArray(outFile, textIntro_v3, NUM_INTRO_TEXT_V3);
+	writeTextArray(outFile, textIntro_dummy, NUM_INTRO_TEXT_DUMMY);
+	writeTextArray(outFile, textIntro_dummy, NUM_INTRO_TEXT_DUMMY);
+	writeTextArray(outFile, textIntro_v3, NUM_INTRO_TEXT_V3);
 
 	// Write x_intro and y_intro
-	writeUint16BE(outFile, NUM_INTRO_TICK);
-	for (i = 0; i < NUM_INTRO_TICK; i++) {
-		writeByte(outFile, x_intro[i]);
-		writeByte(outFile, y_intro[i]);
+	writeUint16BE(outFile, NUM_INTRO_TICK_DUMMY);
+	for (i = 0; i < NUM_INTRO_TICK_DUMMY; i++) {
+		writeByte(outFile, x_intro_dummy[i]);
+		writeByte(outFile, y_intro_dummy[i]);
+	}
+
+	writeUint16BE(outFile, NUM_INTRO_TICK_DUMMY);
+	for (i = 0; i < NUM_INTRO_TICK_DUMMY; i++) {
+		writeByte(outFile, x_intro_dummy[i]);
+		writeByte(outFile, y_intro_dummy[i]);
+	}
+
+	writeUint16BE(outFile, NUM_INTRO_TICK_V3);
+	for (i = 0; i < NUM_INTRO_TICK_V3; i++) {
+		writeByte(outFile, x_intro_v3[i]);
+		writeByte(outFile, y_intro_v3[i]);
+	}
+
+	writeUint16BE(outFile, NUM_INTRO_TICK_V1D);
+	for (i = 0; i < NUM_INTRO_TICK_V1D; i++) {
+		writeByte(outFile, x_intro_v1d[i]);
+		writeByte(outFile, y_intro_v1d[i]);
+	}
+
+	writeUint16BE(outFile, NUM_INTRO_TICK_DUMMY);
+	for (i = 0; i < NUM_INTRO_TICK_DUMMY; i++) {
+		writeByte(outFile, x_intro_dummy[i]);
+		writeByte(outFile, y_intro_dummy[i]);
+	}
+
+	writeUint16BE(outFile, NUM_INTRO_TICK_V3);
+	for (i = 0; i < NUM_INTRO_TICK_V3; i++) {
+		writeByte(outFile, x_intro_v3[i]);
+		writeByte(outFile, y_intro_v3[i]);
 	}
 
 	// Write textMouse
@@ -779,6 +818,29 @@ int main(int argc, char *argv[]) {
 	writeUint16BE(outFile, 0);
 	writeUint16BE(outFile, kALnewscr_2d);
 	writeUint16BE(outFile, 0);
+
+	// The following fonts info have been added to avoid temporarly the .FON
+	// used in the DOS version
+	// font5
+	nbrElem = sizeof(font5) / sizeof(byte);
+	writeUint16BE(outFile, nbrElem);
+
+	for (int j = 0; j < nbrElem; j++)
+		writeByte(outFile, font5[j]);
+
+	// font6
+	nbrElem = sizeof(font6) / sizeof(byte);
+	writeUint16BE(outFile, nbrElem);
+
+	for (int j = 0; j < nbrElem; j++)
+		writeByte(outFile, font6[j]);
+
+	// font8
+	nbrElem = sizeof(font8) / sizeof(byte);
+	writeUint16BE(outFile, nbrElem);
+
+	for (int j = 0; j < nbrElem; j++)
+		writeByte(outFile, font8[j]);
 
 	fclose(outFile);
 	return 0;

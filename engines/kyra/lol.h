@@ -225,7 +225,7 @@ struct FlyingObject {
 	uint8 enable;
 	uint8 objectType;
 	uint16 attackerId;
-	uint16 item;
+	Item item;
 	uint16 x;
 	uint16 y;
 	uint8 flyingHeight;
@@ -1202,19 +1202,19 @@ private:
 	// items
 	void giveCredits(int credits, int redraw);
 	void takeCredits(int credits, int redraw);
-	int makeItem(int itemType, int curFrame, int flags);
-	void placeMoveLevelItem(int itemIndex, int level, int block, int xOffs, int yOffs, int flyingHeight);
-	bool addItemToInventory(int itemIndex);
-	bool testUnkItemFlags(int itemIndex);
-	void deleteItem(int itemIndex);
+	Item makeItem(int itemType, int curFrame, int flags);
+	void placeMoveLevelItem(Item itemIndex, int level, int block, int xOffs, int yOffs, int flyingHeight);
+	bool addItemToInventory(Item itemIndex);
+	bool testUnkItemFlags(Item itemIndex);
+	void deleteItem(Item itemIndex);
 	ItemInPlay *findObject(uint16 index);
-	void runItemScript(int charNum, int item, int flags, int next, int reg4);
-	void setHandItem(uint16 itemIndex);
+	void runItemScript(int charNum, Item item, int flags, int next, int reg4);
+	void setHandItem(Item itemIndex);
 	bool itemEquipped(int charNum, uint16 itemType);
 
-	void setItemPosition(int item, uint16 x, uint16 y, int flyingHeight, int b);
-	void removeLevelItem(int item, int block);
-	bool launchObject(int objectType, int item, int startX, int startY, int flyingHeight, int direction, int, int attackerId, int c);
+	void setItemPosition(Item item, uint16 x, uint16 y, int flyingHeight, int b);
+	void removeLevelItem(Item item, int block);
+	bool launchObject(int objectType, Item item, int startX, int startY, int flyingHeight, int direction, int, int attackerId, int c);
 	void endObjectFlight(FlyingObject *t, int x, int y, int objectOnNextBlock);
 	void processObjectFlight(FlyingObject *t, int x, int y);
 	void updateObjectFlightPosition(FlyingObject *t);
@@ -1231,9 +1231,9 @@ private:
 	ItemInPlay *_itemsInPlay;
 	ItemProperty *_itemProperties;
 
-	int _itemInHand;
-	uint16 _inventory[48];
-	int _inventoryCurItem;
+	Item _itemInHand;
+	Item _inventory[48];
+	Item _inventoryCurItem;
 	int _currentControlMode;
 	int _specialSceneFlag;
 	int _lastCharInventory;
@@ -1269,10 +1269,10 @@ private:
 	int calcMonsterDirection(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void setMonsterDirection(MonsterInPlay *monster, int dir);
 	void monsterDropItems(MonsterInPlay *monster);
-	void removeAssignedObjectFromBlock(LevelBlockProperty *l, int id);
-	void removeDrawObjectFromBlock(LevelBlockProperty *l, int id);
-	void assignMonsterToBlock(uint16 *assignedBlockObjects, int id);
-	void giveItemToMonster(MonsterInPlay *monster, uint16 item);
+	void removeAssignedObjectFromBlock(LevelBlockProperty *l, uint16 id);
+	void removeDrawObjectFromBlock(LevelBlockProperty *l, uint16 id);
+	void assignMonsterToBlock(uint16 *assignedBlockObjects, uint16 id);
+	void giveItemToMonster(MonsterInPlay *monster, Item item);
 	int checkBlockBeforeObjectPlacement(uint16 x, uint16 y, uint16 objectWidth, uint16 testFlag, uint16 wallFlag);
 	int checkBlockForWallsAndSufficientSpace(int block, int x, int y, int objectWidth, int testFlag, int wallFlag);
 	int calcMonsterSkillLevel(int id, int a);
@@ -1488,7 +1488,7 @@ private:
 
 	// save
 	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail);
+	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
 
 	Graphics::Surface *generateSaveThumbnail() const;
 

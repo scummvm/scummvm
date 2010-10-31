@@ -320,8 +320,7 @@ void Mult_v1::playMultInit() {
 				320, 200, 0);
 		_vm->_draw->_spritesArray[Draw::kAnimSurface] = _animSurf;
 
-		_vm->_video->drawSprite(*_vm->_draw->_backSurface,
-			*_animSurf, 0, 0, 319, 199, 0, 0, 0);
+		_animSurf->blit(*_vm->_draw->_backSurface, 0, 0, 319, 199, 0, 0);
 
 		_animDataAllocated = true;
 	} else
@@ -350,8 +349,7 @@ void Mult_v1::drawStatics(bool &stop) {
 
 		_vm->_scenery->_curStatic = _multData->staticIndices[_vm->_scenery->_curStatic];
 		_vm->_scenery->renderStatic(_vm->_scenery->_curStatic, _vm->_scenery->_curStaticLayer);
-		_vm->_video->drawSprite(*_vm->_draw->_backSurface, *_animSurf,
-		    0, 0, 319, 199, 0, 0, 0);
+		_animSurf->blit(*_vm->_draw->_backSurface, 0, 0, 319, 199, 0, 0);
 	}
 }
 

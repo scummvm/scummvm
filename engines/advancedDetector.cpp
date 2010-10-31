@@ -226,7 +226,7 @@ bool cleanupPirated(ADGameDescList &matched) {
 
 		// We ruled out all variants and now have nothing
 		if (matched.empty()) {
-			
+
 			warning("Illegitimate copy of the game detected. We give no support in such cases %d", matched.size());
 
 			return true;
@@ -400,7 +400,7 @@ static void composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, 
 					matched = true;
 					break;
 				}
-					
+
 			if (!matched)
 				continue;
 
@@ -448,7 +448,7 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 
 			if (g->flags & ADGF_MACRESFORK) {
 				Common::MacResManager *macResMan = new Common::MacResManager();
-				
+
 				if (macResMan->open(parent, fname)) {
 					if (!macResMan->getResForkMD5(tmp.md5, params.md5Bytes))
 						tmp.md5[0] = 0;
@@ -472,7 +472,7 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 						tmp.size = -1;
 						tmp.md5[0] = 0;
 					}
-				
+
 					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5);
 					filesSizeMD5[fname] = tmp;
 				}
@@ -622,7 +622,7 @@ static ADGameDescList detectGameFilebased(const FileMap &allFiles, const ADParam
 				matchedDesc = agdesc;
 				maxNumMatchedFiles = numMatchedFiles;
 
-				debug(4, "and overriden");
+				debug(4, "and overridden");
 			}
 		}
 	}

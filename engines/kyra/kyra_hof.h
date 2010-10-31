@@ -443,16 +443,16 @@ protected:
 	bool lineIsPassable(int x, int y);
 
 	// item
-	void setMouseCursor(uint16 item);
+	void setMouseCursor(Item item);
 
 	uint8 _itemHtDat[176];
 
 	int checkItemCollision(int x, int y);
 	void updateWaterFlasks();
 
-	bool dropItem(int unk1, uint16 item, int x, int y, int unk2);
-	bool processItemDrop(uint16 sceneId, uint16 item, int x, int y, int unk1, int unk2);
-	void itemDropDown(int startX, int startY, int dstX, int dstY, int itemSlot, uint16 item);
+	bool dropItem(int unk1, Item item, int x, int y, int unk2);
+	bool processItemDrop(uint16 sceneId, Item item, int x, int y, int unk1, int unk2);
+	void itemDropDown(int startX, int startY, int dstX, int dstY, int itemSlot, Item item);
 	void exchangeMouseItem(int itemPos);
 	bool pickUpItem(int x, int y);
 
@@ -461,18 +461,18 @@ protected:
 	static const byte _itemStringMap[];
 	static const int _itemStringMapSize;
 
-	static const int16 _flaskTable[];
-	bool itemIsFlask(int item);
+	static const Item _flaskTable[];
+	bool itemIsFlask(Item item);
 
 	// inventory
 	static const int _inventoryX[];
 	static const int _inventoryY[];
 	static const uint16 _itemMagicTable[];
 
-	int getInventoryItemSlot(uint16 item);
+	int getInventoryItemSlot(Item item);
 	void removeSlotFromInventory(int slot);
-	bool checkInventoryItemExchange(uint16 item, int slot);
-	void drawInventoryShape(int page, uint16 item, int slot);
+	bool checkInventoryItemExchange(Item item, int slot);
+	void drawInventoryShape(int page, Item item, int slot);
 	void clearInventorySlot(int slot, int page);
 	void redrawInventory(int page);
 	void scrollInventoryWheel();
@@ -561,9 +561,9 @@ protected:
 	void changeFileExtension(char *buffer);
 
 	// - Just used in French version
-	int getItemCommandStringDrop(uint16 item);
-	int getItemCommandStringPickUp(uint16 item);
-	int getItemCommandStringInv(uint16 item);
+	int getItemCommandStringDrop(Item item);
+	int getItemCommandStringPickUp(Item item);
+	int getItemCommandStringInv(Item item);
 	// -
 
 	char _internStringBuf[200];
@@ -915,7 +915,7 @@ protected:
 	int _dbgPass;
 
 	// save/load specific
-	Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail);
+	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
 	Common::Error loadGameState(int slot);
 };
 

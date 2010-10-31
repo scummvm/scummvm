@@ -71,7 +71,7 @@
  * yet been finished. The game is not completable.
  *
  *
- * Supported games:
+ * Games using this engine:
  *
  * Cinematique evo.1
  * - Future Wars

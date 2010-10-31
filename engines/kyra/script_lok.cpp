@@ -37,6 +37,7 @@
 #include "kyra/sound.h"
 
 namespace Kyra {
+
 int KyraEngine_LoK::o1_magicInMouseItem(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_magicInMouseItem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	magicInMouseItem(stackPos(0), stackPos(1), -1);
@@ -203,9 +204,7 @@ int KyraEngine_LoK::o1_getElapsedSeconds(EMCState *script) {
 
 int KyraEngine_LoK::o1_mouseIsPointer(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_mouseIsPointer(%p) ()", (const void *)script);
-	if (_itemInHand == -1)
-		return 1;
-	return 0;
+	return (_itemInHand == kItemNone);
 }
 
 int KyraEngine_LoK::o1_runSceneAnimUntilDone(EMCState *script) {

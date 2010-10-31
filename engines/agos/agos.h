@@ -47,8 +47,13 @@
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Elvira: Mistress of the Dark
+ * - Elvira 2: The Jaws of Cerberus
+ * - The Feeble Files
+ * - Simon the Sorcerer
+ * - Simon the Sorcerer 2
+ * - Simon the Sorcerer Puzzle Pack
  */
 namespace AGOS {
 

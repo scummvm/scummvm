@@ -37,6 +37,15 @@ namespace Common {
 	class SeekableReadStream;
 }
 
+/**
+ * This is the namespace of the Mohawk engine.
+ *
+ * Status of this engine: ???
+ *
+ * Games using this engine:
+ * - Myst
+ * - Riven: The Sequel to Myst
+ */
 namespace Mohawk {
 
 enum MohawkGameType {

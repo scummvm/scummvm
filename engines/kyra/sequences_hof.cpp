@@ -2002,7 +2002,7 @@ void KyraEngine_HoF::seq_processText() {
 					outputStr[linePos] = *srcStr;
 					srcStr++;
 				}
-                outputStr[linePos] = 0;
+				outputStr[linePos] = 0;
 				if (*srcStr == 0x0d)
 					srcStr++;
 
@@ -2130,7 +2130,7 @@ void KyraEngine_HoF::seq_cmpFadeFrame(const char *cmpFile) {
 		_screen->cmpFadeFrameStep(4, 320, 200, 0, 0, 2, 320, 200, 0, 0, 320, 200, 6);
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 		_screen->updateScreen();
-        delayUntil(endtime);
+		delayUntil(endtime);
 	}
 
 	_screen->copyPage(4, 0);

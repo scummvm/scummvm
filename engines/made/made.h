@@ -53,8 +53,11 @@
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Return to Zork
+ * - Leather Goddesses of Phobos 2
+ * - The Manhole
+ * - Rodney's Funscreen
  */
 namespace Made {
 

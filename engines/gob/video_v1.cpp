@@ -34,9 +34,9 @@ Video_v1::Video_v1(GobEngine *vm) : Video(vm) {
 }
 
 char Video_v1::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-	    int16 x, int16 y, int16 transp, SurfaceDesc &destDesc) {
+	    int16 x, int16 y, int16 transp, Surface &destDesc) {
 	byte *memBuffer;
-	byte *srcPtr, *destPtr, *linePtr;
+	byte *srcPtr;
 	byte temp;
 	uint16 sourceLeft;
 	uint16 cmdVar;
@@ -46,7 +46,7 @@ char Video_v1::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	int16 bufPos;
 	int16 strLen;
 
-	_vm->validateVideoMode(destDesc._vidMode);
+	//_vm->validateVideoMode(destDesc._vidMode);
 
 	if (sprBuf[0] != 1)
 		return 0;
@@ -55,9 +55,8 @@ char Video_v1::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		return 0;
 
 	if (sprBuf[2] == 2) {
-		SurfaceDesc sourceDesc(0x13, srcWidth, srcHeight, sprBuf + 3);
-		Video::drawSprite(sourceDesc, destDesc, 0, 0, srcWidth - 1,
-		    srcHeight - 1, x, y, transp);
+		Surface sourceDesc(srcWidth, srcHeight, 1, sprBuf + 3);
+		destDesc.blit(sourceDesc, 0, 0, srcWidth - 1, srcHeight - 1, x, y, (transp == 0) ? -1 : 0);
 		return 1;
 	} else {
 		memBuffer = new byte[4114];
@@ -66,12 +65,12 @@ char Video_v1::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		srcPtr = sprBuf + 3;
 		sourceLeft = READ_LE_UINT16(srcPtr);
 
-		destPtr = destDesc.getVidMem() + destDesc.getWidth() * y + x;
+		Pixel destPtr = destDesc.get(x, y);
 
 		curWidth = 0;
 		curHeight = 0;
 
-		linePtr = destPtr;
+		Pixel linePtr = destPtr;
 		srcPtr += 4;
 
 		for (offset = 0; offset < 4078; offset++)
@@ -88,7 +87,7 @@ char Video_v1::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 			if ((cmdVar & 1) != 0) {
 				temp = *srcPtr++;
 				if ((temp != 0) || (transp == 0))
-					*destPtr = temp;
+					destPtr.set(temp);
 				destPtr++;
 				curWidth++;
 				if (curWidth >= srcWidth) {
@@ -116,7 +115,7 @@ char Video_v1::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 				for (counter2 = 0; counter2 < strLen; counter2++) {
 					temp = memBuffer[(offset + counter2) % 4096];
 					if ((temp != 0) || (transp == 0))
-						*destPtr = temp;
+						destPtr.set(temp);
 					destPtr++;
 
 					curWidth++;

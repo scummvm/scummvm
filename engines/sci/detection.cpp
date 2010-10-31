@@ -516,6 +516,15 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	resMan->init();
 	// TODO: Add error handling.
 
+#ifndef ENABLE_SCI32
+	// Is SCI32 compiled in? If not, and this is a SCI32 game,
+	// stop here
+	if (getSciVersion() >= SCI_VERSION_2) {
+		delete resMan;
+		return (const ADGameDescription *)&s_fallbackDesc;
+	}
+#endif
+
 	ViewType gameViews = resMan->getViewType();
 
 	// Have we identified the game views? If not, stop here
@@ -525,15 +534,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		delete resMan;
 		return 0;
 	}
-
-#ifndef ENABLE_SCI32
-	// Is SCI32 compiled in? If not, and this is a SCI32 game,
-	// stop here
-	if (getSciVersion() >= SCI_VERSION_2) {
-		delete resMan;
-		return (const ADGameDescription *)&s_fallbackDesc;
-	}
-#endif
 
 	// EGA views
 	if (gameViews == kViewEga && s_fallbackDesc.platform != Common::kPlatformAmiga)
@@ -624,7 +624,8 @@ bool SciMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate);
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime);
 }
 
 bool SciEngine::hasFeature(EngineFeature f) const {
@@ -665,7 +666,7 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 					delete in;
 					continue;
 				}
-				saveList.push_back(SaveStateDescriptor(slotNum, meta.savegame_name));
+				saveList.push_back(SaveStateDescriptor(slotNum, meta.name));
 				delete in;
 			}
 		}
@@ -688,7 +689,7 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 			return desc;
 		}
 
-		SaveStateDescriptor desc(slot, meta.savegame_name);
+		SaveStateDescriptor desc(slot, meta.name);
 
 		Graphics::Surface *thumbnail = new Graphics::Surface();
 		assert(thumbnail);
@@ -702,18 +703,18 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 		desc.setDeletableFlag(true);
 		desc.setWriteProtectedFlag(false);
 
-		int day = (meta.savegame_date >> 24) & 0xFF;
-		int month = (meta.savegame_date >> 16) & 0xFF;
-		int year = meta.savegame_date & 0xFFFF;
+		int day = (meta.saveDate >> 24) & 0xFF;
+		int month = (meta.saveDate >> 16) & 0xFF;
+		int year = meta.saveDate & 0xFFFF;
 
 		desc.setSaveDate(year, month, day);
 
-		int hour = (meta.savegame_time >> 16) & 0xFF;
-		int minutes = (meta.savegame_time >> 8) & 0xFF;
+		int hour = (meta.saveTime >> 16) & 0xFF;
+		int minutes = (meta.saveTime >> 8) & 0xFF;
 
 		desc.setSaveTime(hour, minutes);
 
-		// TODO: played time
+		desc.setPlayTime(meta.playTime * 1000);
 
 		delete in;
 
@@ -765,7 +766,7 @@ Common::Error SciEngine::saveGameState(int slot, const char *desc) {
 	} else {
 		out->finalize();
 		if (out->err()) {
-			warning("Writing the savegame failed.");
+			warning("Writing the savegame failed");
 			return Common::kWritingFailed;
 		}
 		delete out;

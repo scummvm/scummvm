@@ -70,7 +70,7 @@
  * functionality has been implemented. No further work has been done on this for some time, so progress
  * on this part of the engine can be considered frozen.
  *
- * Games this engine will support:
+ * Games using this engine:
  * MADS Games: Dragonsphere, Return of the Phantom, Rex Nebular and the Cosmic Gender Bender
  * M4 Games: Orion Burger, The Riddle of Master Lu
  */
@@ -161,7 +161,6 @@ public:
 
 	const char *getGameFile(int fileType);
 	Common::EventManager *eventMan() { return _eventMan; }
-	OSystem *system() { return _system; }
 
 	const M4GameDescription *_gameDescription;
 

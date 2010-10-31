@@ -24,12 +24,12 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 #include "common/file.h"
 #include "graphics/dither.h"
 
 #include "gob/gob.h"
 #include "gob/inter.h"
-#include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/dataio.h"
 #include "gob/game.h"
@@ -65,7 +65,6 @@ void Inter_v6::setupOpcodesFunc() {
 
 	OPCODEFUNC(0x03, o6_loadCursor);
 	OPCODEFUNC(0x09, o6_assign);
-	OPCODEFUNC(0x13, o6_palLoad);
 	OPCODEFUNC(0x19, o6_removeHotspot);
 	OPCODEFUNC(0x33, o6_fillRect);
 }
@@ -105,7 +104,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 	bool close;
 
 	_vm->_game->_script->evalExpr(0);
-	strncpy0(fileName, _vm->_game->_script->getResultStr(), 127);
+	Common::strlcpy(fileName, _vm->_game->_script->getResultStr(), 128);
 
 	VideoPlayer::Properties props;
 
@@ -188,7 +187,7 @@ void Inter_v6::o6_openItk() {
 	char fileName[32];
 
 	_vm->_game->_script->evalExpr(0);
-	strncpy0(fileName, _vm->_game->_script->getResultStr(), 27);
+	Common::strlcpy(fileName, _vm->_game->_script->getResultStr(), 28);
 	if (!strchr(fileName, '.'))
 		strcat(fileName, ".ITK");
 
@@ -239,7 +238,7 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 			props.lastFrame  = i;
 
 			_vm->_vidPlayer->play(vmdSlot, props);
-			_vm->_vidPlayer->copyFrame(vmdSlot, _vm->_draw->_cursorSprites->getVidMem(),
+			_vm->_vidPlayer->copyFrame(vmdSlot, _vm->_draw->_cursorSprites->getData(),
 					0, 0, _vm->_draw->_cursorWidth, _vm->_draw->_cursorWidth,
 					(start + i) * _vm->_draw->_cursorWidth, 0,
 					_vm->_draw->_cursorSprites->getWidth());
@@ -263,8 +262,7 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 	if (!resource)
 		return false;
 
-	_vm->_video->fillRect(*_vm->_draw->_cursorSprites,
-			index * _vm->_draw->_cursorWidth, 0,
+	_vm->_draw->_cursorSprites->fillRect(index * _vm->_draw->_cursorWidth, 0,
 			index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
 			_vm->_draw->_cursorHeight - 1, 0);
 
@@ -354,17 +352,6 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 		}
 	}
 
-	return false;
-}
-
-bool Inter_v6::o6_palLoad(OpFuncParams &params) {
-	o1_palLoad(params);
-
-	if (_gotFirstPalette)
-		_vm->_video->_palLUT->setPalette((const byte *)_vm->_global->_pPaletteDesc->vgaPal,
-				Graphics::PaletteLUT::kPaletteRGB, 6, 0);
-
-	_gotFirstPalette = true;
 	return false;
 }
 

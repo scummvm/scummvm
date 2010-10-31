@@ -587,7 +587,7 @@ File *Tables::initNote(Synth *synth, NoteLookup *noteLookup, float note, float r
 	initSaw(noteLookup, noteLookup->div2);
 
 	//synth->printDebug("Note %f; freq=%f, div=%f", note, freq, rate / freq);
-	file = initWave(synth, noteLookup, (const float)WGAMP, div2, file);
+	file = initWave(synth, noteLookup, WGAMP, div2, file);
 
 	// Create the pitch tables
 	if (noteLookup->wavTable == NULL)

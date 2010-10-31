@@ -38,15 +38,10 @@ namespace Draci {
 
 MusicPlayer::MusicPlayer(MidiDriver *driver, const char *pathMask) : _parser(0), _driver(driver), _pathMask(pathMask), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false), _track(-1) {
 	memset(_channel, 0, sizeof(_channel));
-	memset(_channelVolume, 255, sizeof(_channelVolume));
+	memset(_channelVolume, 127, sizeof(_channelVolume));
 	_masterVolume = 0;
-	this->open();
 	_smfParser = MidiParser::createParser_SMF();
 	_midiMusicData = NULL;
-
-	// TODO: Load cmf.ins with the instrument table.  It seems that an
-	// interface for such an operation is supported for AdLib.  Maybe for
-	// this card, setting instruments is necessary.
 }
 
 MusicPlayer::~MusicPlayer() {
@@ -88,6 +83,15 @@ int MusicPlayer::open() {
 	int ret = _driver->open();
 	if (ret)
 		return ret;
+
+	if (_nativeMT32)
+		_driver->sendMT32Reset();
+	else
+		_driver->sendGMReset();
+
+	// TODO: Load cmf.ins with the instrument table.  It seems that an
+	// interface for such an operation is supported for AdLib.  Maybe for
+	// this card, setting instruments is necessary.
 
 	_driver->setTimerCallback(this, &onTimer);
 	return 0;

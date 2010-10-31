@@ -1077,7 +1077,7 @@ uint16 ScummNESFile::extractResource(Common::WriteStream *output, const Resource
 
 	case NES_PREPLIST:
 		len = res->length;
-                reslen += write_word(output, 0x002A);
+		reslen += write_word(output, 0x002A);
 
 		reslen += write_byte(output, ' ');
 		for (i = 1; i < 8; i++)

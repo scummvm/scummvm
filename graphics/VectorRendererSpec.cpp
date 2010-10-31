@@ -255,7 +255,7 @@ void VectorRendererSpec<PixelType>::
 fillSurface() {
 	byte *ptr = (byte *)_activeSurface->getBasePtr(0, 0);
 
-	int h = _activeSurface->h ;
+	int h = _activeSurface->h;
 	int pitch = _activeSurface->pitch;
 
 	if (Base::_fillMode == kFillBackground) {

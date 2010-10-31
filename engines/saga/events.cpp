@@ -49,13 +49,12 @@ Events::Events(SagaEngine *vm) : _vm(vm) {
 
 Events::~Events() {
 	debug(8, "Shutting down event subsystem...");
-	freeList();
 }
 
 // Function to process event list once per frame.
 // First advances event times, then processes each event with the appropriate
 // handler depending on the type of event.
-int Events::handleEvents(long msec) {
+void Events::handleEvents(long msec) {
 	long delta_time;
 	int result;
 
@@ -64,7 +63,7 @@ int Events::handleEvents(long msec) {
 
 	// Process each event in list
 	for (EventList::iterator eventi = _eventList.begin(); eventi != _eventList.end(); ++eventi) {
-		Event *event_p = &*eventi;
+		Event *event_p = &eventi->front();
 
 		// Call the appropriate event handler for the specific event type
 		switch (event_p->type) {
@@ -95,17 +94,15 @@ int Events::handleEvents(long msec) {
 		// handler
 		if ((result == kEvStDelete) || (result == kEvStInvalidCode)) {
 			// If there is no event chain, delete the base event.
-			if (event_p->chain == NULL) {
+			if (eventi->size() < 2) {
 				eventi = _eventList.reverse_erase(eventi);
 			} else {
 				// If there is an event chain present, move the next event
 				// in the chain up, adjust it by the previous delta time,
 				// and reprocess the event
 				delta_time = event_p->time;
-				Event *from_chain = event_p->chain;
-				memcpy(event_p, from_chain, sizeof(*event_p));
-				free(from_chain);
-
+				eventi->pop_front();
+				event_p = &eventi->front();
 				event_p->time += delta_time;
 				--eventi;
 			}
@@ -113,8 +110,6 @@ int Events::handleEvents(long msec) {
 			break;
 		}
 	}
-
-	return SUCCESS;
 }
 
 int Events::handleContinuous(Event *event) {
@@ -177,9 +172,8 @@ int Events::handleContinuous(Event *event) {
 			// set flag of Dissolve to 1. It is a hack to simulate zero masking.
 			int w, h;
 			byte *maskBuffer;
-			size_t len;
 
-			_vm->_scene->getBGMaskInfo(w, h, maskBuffer, len);
+			_vm->_scene->getBGMaskInfo(w, h, maskBuffer);
 			rect.left = (_vm->getDisplayInfo().width - w) / 2;
 			rect.top = (_vm->getDisplayInfo().height - h) / 2;
 			rect.setWidth(w);
@@ -362,30 +356,25 @@ int Events::handleOneShot(Event *event) {
 		{
 		ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
 
-		byte *resourceData;
-		size_t resourceDataLength;
+		ByteArray resourceData;
 
-		_vm->_resource->loadResource(context, _vm->getResourceDescription()->psychicProfileResourceId, resourceData, resourceDataLength);
+		_vm->_resource->loadResource(context, _vm->getResourceDescription()->psychicProfileResourceId, resourceData);
 
-		byte *buf;
-		size_t buflen;
+		ByteArray image;
 		int width;
 		int height;
 
-		_vm->decodeBGImage(resourceData, resourceDataLength, &buf, &buflen, &width, &height);
+		_vm->decodeBGImage(resourceData, image, &width, &height);
 
-		const PalEntry *palette = (const PalEntry *)_vm->getImagePal(resourceData, resourceDataLength);
+		const PalEntry *palette = (const PalEntry *)_vm->getImagePal(resourceData);
 
 		const Rect profileRect(width, height);
 
-		_vm->_render->getBackGroundSurface()->blit(profileRect, buf);
+		_vm->_render->getBackGroundSurface()->blit(profileRect, image.getBuffer());
 		_vm->_render->addDirtyRect(profileRect);
 		_vm->_frameCount++;
 
 		_vm->_gfx->setPalette(palette);
-
-		free(buf);
-		free(resourceData);
 
 		// Draw the scene. It won't be drawn by Render::drawScene(), as a placard is up
 		_vm->_scene->draw();
@@ -570,122 +559,74 @@ int Events::handleInterval(Event *event) {
 	return kEvStDelete;
 }
 
-// Schedules an event in the event list; returns a pointer to the scheduled
-// event suitable for chaining if desired.
-Event *Events::queue(Event *event) {
-	Event *queuedEvent;
+EventColumns *Events::chain(EventColumns *eventColumns, const Event &event) {
+	
+	if (eventColumns == NULL) {
+		EventColumns tmp;
 
-	_eventList.push_back(*event);
-	queuedEvent = &*--_eventList.end();
-	initializeEvent(queuedEvent);
-
-	return queuedEvent;
-}
-
-// Places a 'add_event' on the end of an event chain given by 'head_event'
-// (head_event may be in any position in the event chain)
-Event *Events::chain(Event *headEvent, Event *addEvent) {
-	if (headEvent == NULL) {
-		return queue(addEvent);
+		_eventList.push_back(tmp);
+		eventColumns = &_eventList.back();
 	}
 
-	Event *walkEvent;
-	for (walkEvent = headEvent; walkEvent->chain != NULL; walkEvent = walkEvent->chain) {
-		continue;
-	}
+	eventColumns->push_back(event);
+	initializeEvent(eventColumns->back());
 
-	walkEvent->chain = (Event *)malloc(sizeof(*walkEvent->chain));
-	*walkEvent->chain = *addEvent;
-	initializeEvent(walkEvent->chain);
-
-	return walkEvent->chain;
+	return eventColumns;
 }
 
-int Events::initializeEvent(Event *event) {
-	event->chain = NULL;
-	switch (event->type) {
+void Events::initializeEvent(Event &event) {
+	switch (event.type) {
 	case kEvTOneshot:
 		break;
 	case kEvTContinuous:
 	case kEvTImmediate:
-		event->time += event->duration;
+		event.time += event.duration;
 		break;
 	case kEvTInterval:
 		break;
-	default:
-		return FAILURE;
 	}
-
-	return SUCCESS;
 }
 
-int Events::clearList(bool playQueuedMusic) {
-	Event *chain_walk;
-	Event *next_chain;
-
+void Events::clearList(bool playQueuedMusic) {
 	// Walk down event list
 	for (EventList::iterator eventi = _eventList.begin(); eventi != _eventList.end(); ++eventi) {
 
 		// Only remove events not marked kEvFNoDestory (engine events)
-		if (!(eventi->code & kEvFNoDestory)) {
+		if (!(eventi->front().code & kEvFNoDestory)) {
 			// Handle queued music change events before deleting them
 			// This can happen in IHNM by music events set by sfQueueMusic()
 			// Fixes bug #2057987 - "IHNM: Music stops in Ellen's chapter"
-			if (playQueuedMusic && ((eventi->code & EVENT_MASK) == kMusicEvent)) {
+			if (playQueuedMusic && ((eventi->front().code & EVENT_MASK) == kMusicEvent)) {
 				_vm->_music->stop();
-				if (eventi->op == kEventPlay)
-					_vm->_music->play(eventi->param, (MusicFlags)eventi->param2);
+				if (eventi->front().op == kEventPlay)
+					_vm->_music->play(eventi->front().param, (MusicFlags)eventi->front().param2);
 			}
 
-			// Remove any events chained off this one
-			for (chain_walk = eventi->chain; chain_walk != NULL; chain_walk = next_chain) {
-				next_chain = chain_walk->chain;
-				free(chain_walk);
-			}
 			eventi = _eventList.reverse_erase(eventi);
 		}
 	}
-
-	return SUCCESS;
 }
 
 // Removes all events from the list (even kEvFNoDestory)
-int Events::freeList() {
-	Event *chain_walk;
-	Event *next_chain;
-
-	// Walk down event list
-	EventList::iterator eventi = _eventList.begin();
-	while (eventi != _eventList.end()) {
-
-		// Remove any events chained off this one */
-		for (chain_walk = eventi->chain; chain_walk != NULL; chain_walk = next_chain) {
-			next_chain = chain_walk->chain;
-			free(chain_walk);
-		}
-		eventi = _eventList.erase(eventi);
-	}
-
-	return SUCCESS;
+void Events::freeList() {
+	_eventList.clear();
 }
 
 // Walks down the event list, updating event times by 'msec'.
-int Events::processEventTime(long msec) {
+void Events::processEventTime(long msec) {
 	uint16 event_count = 0;
 
 	for (EventList::iterator eventi = _eventList.begin(); eventi != _eventList.end(); ++eventi) {
-		eventi->time -= msec;
+		eventi->front().time -= msec;
 		event_count++;
 
-		if (eventi->type == kEvTImmediate)
+		if (eventi->front().type == kEvTImmediate)
 			break;
 
 		if (event_count > EVENT_WARNINGCOUNT) {
 			warning("Event list exceeds %u", EVENT_WARNINGCOUNT);
 		}
 	}
-
-	return SUCCESS;
 }
 
 } // End of namespace Saga

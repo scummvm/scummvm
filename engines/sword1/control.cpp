@@ -1118,8 +1118,7 @@ void Control::saveGameToFile(uint8 slot) {
 	outf->writeUint32BE(saveDate);
 	outf->writeUint16BE(saveTime);
 
-	uint32 currentTime = _system->getMillis() / 1000;
-	outf->writeUint32BE(currentTime - SwordEngine::_systemVars.engineStartTime);
+	outf->writeUint32BE(g_engine->getTotalPlayTime() / 1000);
 
 	_objMan->saveLiveList(liveBuf);
 	for (cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
@@ -1181,10 +1180,9 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	inf->readUint16BE();	// save time
 
 	if (saveVersion < 2) { // Before version 2 we didn't had play time feature
-		SwordEngine::_systemVars.engineStartTime =	_system->getMillis() / 1000; // Start counting
+		g_engine->setTotalPlayTime(0);
 	} else {
-		uint32 currentTime = _system->getMillis() / 1000;
-		SwordEngine::_systemVars.engineStartTime = currentTime - inf->readUint32BE(); // Engine start time
+		g_engine->setTotalPlayTime(inf->readUint32BE() * 1000);
 	}
 
 	_restoreBuf = (uint8*)malloc(

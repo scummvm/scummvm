@@ -122,9 +122,9 @@ int KyraEngine_HoF::buttonInventory(Button *button) {
 
 	int inventorySlot = button->index - 6;
 
-	uint16 item = _mainCharacter.inventory[inventorySlot];
-	if (_itemInHand == -1) {
-		if (item == 0xFFFF)
+	Item item = _mainCharacter.inventory[inventorySlot];
+	if (_itemInHand == kItemNone) {
+		if (item == kItemNone)
 			return 0;
 		_screen->hideMouse();
 		clearInventorySlot(inventorySlot, 0);
@@ -134,9 +134,9 @@ int KyraEngine_HoF::buttonInventory(Button *button) {
 		updateCommandLineEx(item+54, string, 0xD6);
 		_itemInHand = (int16)item;
 		_screen->showMouse();
-		_mainCharacter.inventory[inventorySlot] = 0xFFFF;
+		_mainCharacter.inventory[inventorySlot] = kItemNone;
 	} else {
-		if (_mainCharacter.inventory[inventorySlot] != 0xFFFF) {
+		if (_mainCharacter.inventory[inventorySlot] != kItemNone) {
 			if (checkInventoryItemExchange(_itemInHand, inventorySlot))
 				return 0;
 
@@ -160,7 +160,7 @@ int KyraEngine_HoF::buttonInventory(Button *button) {
 			updateCommandLineEx(_itemInHand+54, string, 0xD6);
 			_screen->showMouse();
 			_mainCharacter.inventory[inventorySlot] = _itemInHand;
-			_itemInHand = -1;
+			_itemInHand = kItemNone;
 		}
 	}
 
@@ -168,15 +168,15 @@ int KyraEngine_HoF::buttonInventory(Button *button) {
 }
 
 int KyraEngine_HoF::scrollInventory(Button *button) {
-	uint16 *src = _mainCharacter.inventory;
-	uint16 *dst = &_mainCharacter.inventory[10];
-	uint16 temp[5];
+	Item *src = _mainCharacter.inventory;
+	Item *dst = &_mainCharacter.inventory[10];
+	Item temp[5];
 
-	memcpy(temp, src, sizeof(uint16)*5);
-	memcpy(src, src+5, sizeof(uint16)*5);
-	memcpy(src+5, dst, sizeof(uint16)*5);
-	memcpy(dst, dst+5, sizeof(uint16)*5);
-	memcpy(dst+5, temp, sizeof(uint16)*5);
+	memcpy(temp, src, sizeof(Item)*5);
+	memcpy(src, src+5, sizeof(Item)*5);
+	memcpy(src+5, dst, sizeof(Item)*5);
+	memcpy(dst, dst+5, sizeof(Item)*5);
+	memcpy(dst+5, temp, sizeof(Item)*5);
 	_screen->hideMouse();
 	_screen->copyRegion(0x46, 0x90, 0x46, 0x90, 0x71, 0x2E, 0, 2);
 	_screen->showMouse();
@@ -185,7 +185,7 @@ int KyraEngine_HoF::scrollInventory(Button *button) {
 	return 0;
 }
 
-int KyraEngine_HoF::getInventoryItemSlot(uint16 item) {
+int KyraEngine_HoF::getInventoryItemSlot(Item item) {
 	for (int i = 0; i < 20; ++i) {
 		if (_mainCharacter.inventory[i] == item)
 			return i;
@@ -195,14 +195,14 @@ int KyraEngine_HoF::getInventoryItemSlot(uint16 item) {
 
 int KyraEngine_HoF::findFreeVisibleInventorySlot() {
 	for (int i = 0; i < 10; ++i) {
-		if (_mainCharacter.inventory[i] == 0xFFFF)
+		if (_mainCharacter.inventory[i] == kItemNone)
 			return i;
 	}
 	return -1;
 }
 
 void KyraEngine_HoF::removeSlotFromInventory(int slot) {
-	_mainCharacter.inventory[slot] = 0xFFFF;
+	_mainCharacter.inventory[slot] = kItemNone;
 	if (slot < 10) {
 		_screen->hideMouse();
 		clearInventorySlot(slot, 0);
@@ -210,21 +210,21 @@ void KyraEngine_HoF::removeSlotFromInventory(int slot) {
 	}
 }
 
-bool KyraEngine_HoF::checkInventoryItemExchange(uint16 handItem, int slot) {
+bool KyraEngine_HoF::checkInventoryItemExchange(Item handItem, int slot) {
 	bool removeItem = false;
-	uint16 newItem = 0xFFFF;
+	Item newItem = kItemNone;
 
-	uint16 invItem = _mainCharacter.inventory[slot];
+	Item invItem = _mainCharacter.inventory[slot];
 
 	for (const uint16 *table = _itemMagicTable; *table != 0xFFFF; table += 4) {
-		if (table[0] != handItem || table[1] != invItem)
+		if (table[0] != handItem || table[1] != (uint16)invItem)
 			continue;
 
 		if (table[3] == 0xFFFF)
 			continue;
 
 		removeItem = (table[3] == 1);
-		newItem = table[2];
+		newItem = (Item)table[2];
 
 		snd_playSoundEffect(0x68);
 		_mainCharacter.inventory[slot] = newItem;
@@ -246,7 +246,7 @@ bool KyraEngine_HoF::checkInventoryItemExchange(uint16 handItem, int slot) {
 	return false;
 }
 
-void KyraEngine_HoF::drawInventoryShape(int page, uint16 item, int slot) {
+void KyraEngine_HoF::drawInventoryShape(int page, Item item, int slot) {
 	_screen->drawShape(page, getShapePtr(item+64), _inventoryX[slot], _inventoryY[slot], 0, 0);
 	_screen->updateScreen();
 }
@@ -260,11 +260,11 @@ void KyraEngine_HoF::redrawInventory(int page) {
 	int pageBackUp = _screen->_curPage;
 	_screen->_curPage = page;
 
-	const uint16 *inventory = _mainCharacter.inventory;
+	const Item *inventory = _mainCharacter.inventory;
 	_screen->hideMouse();
 	for (int i = 0; i < 10; ++i) {
 		clearInventorySlot(i, page);
-		if (inventory[i] != 0xFFFF) {
+		if (inventory[i] != kItemNone) {
 			_screen->drawShape(page, getShapePtr(inventory[i]+64), _inventoryX[i], _inventoryY[i], 0, 0);
 			drawInventoryShape(page, inventory[i], i);
 		}
@@ -734,7 +734,7 @@ int GUI_HoF::optionsButton(Button *button) {
 
 		if (_loadedSave) {
 			if (_restartGame)
-				_vm->_itemInHand = -1;
+				_vm->_itemInHand = kItemNone;
 		} else {
 			restorePage1(_vm->_screenBuffer);
 			restorePalette();
@@ -820,7 +820,7 @@ void GUI_HoF::resetState(int item) {
 	_vm->setNextIdleAnimTimer();
 	_isDeathMenu = false;
 	if (!_loadedSave) {
-		_vm->_itemInHand = -1;
+		_vm->_itemInHand = kItemNone;
 		_vm->setHandItem(item);
 	} else {
 		_vm->setHandItem(_vm->_itemInHand);
@@ -998,7 +998,7 @@ int GUI_HoF::gameOptionsTalkie(Button *caller) {
 
 		Graphics::Surface thumb;
 		createScreenThumbnail(thumb);
-		_vm->saveGameState(999, "Autosave", &thumb);
+		_vm->saveGameStateIntern(999, "Autosave", &thumb);
 		thumb.free();
 
 		_vm->_lastAutosave = _vm->_system->getMillis();

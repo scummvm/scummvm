@@ -51,13 +51,6 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 		error("Sprite::Sprite resource context not found");
 	}
 
-	_decodeBufLen = DECODE_BUF_LEN;
-
-	_decodeBuf = (byte *)malloc(_decodeBufLen);
-	if (_decodeBuf == NULL) {
-		memoryError("Sprite::Sprite");
-	}
-
 	if (_vm->getGameId() == GID_ITE) {
 		loadList(_vm->getResourceDescription()->mainSpritesResourceId, _mainSprites);
 		_arrowSprites = _saveReminderSprites = _inventorySprites = _mainSprites;
@@ -78,67 +71,54 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 
 Sprite::~Sprite() {
 	debug(8, "Shutting down sprite subsystem...");
-	_mainSprites.freeMem();
-	if (_vm->getGameId() == GID_IHNM) {
-		_inventorySprites.freeMem();
-		_arrowSprites.freeMem();
-		_saveReminderSprites.freeMem();
-	}
-	free(_decodeBuf);
 }
 
 void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 	SpriteInfo *spriteInfo;
-	byte *spriteListData = 0;
-	size_t spriteListLength = 0;
+	ByteArray spriteListData;
 	uint16 oldSpriteCount;
 	uint16 newSpriteCount;
 	uint16 spriteCount;
-	int i;
+	uint i;
 	int outputLength, inputLength;
 	uint32 offset;
 	const byte *spritePointer;
 	const byte *spriteDataPointer;
 
-	_vm->_resource->loadResource(_spriteContext, resourceId, spriteListData, spriteListLength);
+	_vm->_resource->loadResource(_spriteContext, resourceId, spriteListData);
 
-	if (spriteListLength == 0) {
+	if (spriteListData.empty()) {
 		return;
 	}
 
-	MemoryReadStreamEndian readS(spriteListData, spriteListLength, _spriteContext->isBigEndian());
+	ByteArrayReadStreamEndian readS(spriteListData, _spriteContext->isBigEndian());
 
 	spriteCount = readS.readUint16();
 
 	debug(9, "Sprites: %d", spriteCount);
 
-	oldSpriteCount = spriteList.spriteCount;
-	newSpriteCount = spriteList.spriteCount + spriteCount;
+	oldSpriteCount = spriteList.size();
+	newSpriteCount = oldSpriteCount + spriteCount;
 
-	spriteList.infoList = (SpriteInfo *)realloc(spriteList.infoList, newSpriteCount * sizeof(*spriteList.infoList));
-	if (spriteList.infoList == NULL) {
-		memoryError("Sprite::loadList");
-	}
-
-	spriteList.spriteCount = newSpriteCount;
+	spriteList.resize(newSpriteCount);
 
 	bool bigHeader = _vm->getGameId() == GID_IHNM || _vm->isMacResources();
 
-	for (i = oldSpriteCount; i < spriteList.spriteCount; i++) {
-		spriteInfo = &spriteList.infoList[i];
+	for (i = oldSpriteCount; i < spriteList.size(); i++) {
+		spriteInfo = &spriteList[i];
 		if (bigHeader)
 			offset = readS.readUint32();
 		else
 			offset = readS.readUint16();
 
-		if (offset >= spriteListLength) {
+		if (offset >= spriteListData.size()) {
 			// ITE Mac demos throw this warning
 			warning("Sprite::loadList offset exceeded");
-			spriteList.spriteCount = i;
+			spriteList.resize(i);
 			return;
 		}
 
-		spritePointer = spriteListData;
+		spritePointer = spriteListData.getBuffer();
 		spritePointer += offset;
 
 		if (bigHeader) {
@@ -163,114 +143,147 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		}
 
 		outputLength = spriteInfo->width * spriteInfo->height;
-		inputLength = spriteListLength - (spriteDataPointer - spriteListData);
-		decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);
-		spriteInfo->decodedBuffer = (byte *) malloc(outputLength);
-		if (spriteInfo->decodedBuffer == NULL) {
-			memoryError("Sprite::loadList");
-		}
-
+		inputLength = spriteListData.size() - (spriteDataPointer - spriteListData.getBuffer());
+		spriteInfo->decodedBuffer.resize(outputLength);
+		if (outputLength > 0) {
+			decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);
+			byte *dst = &spriteInfo->decodedBuffer.front();
 #ifdef ENABLE_IHNM
-		// IHNM sprites are upside-down, for reasons which i can only
-		// assume are perverse. To simplify things, flip them now. Not
-		// at drawing time.
+			// IHNM sprites are upside-down, for reasons which i can only
+			// assume are perverse. To simplify things, flip them now. Not
+			// at drawing time.
 
-		if (_vm->getGameId() == GID_IHNM) {
-			byte *src = _decodeBuf + spriteInfo->width * (spriteInfo->height - 1);
-			byte *dst = spriteInfo->decodedBuffer;
+			if (_vm->getGameId() == GID_IHNM) {
+				byte *src = &_decodeBuf[spriteInfo->width * (spriteInfo->height - 1)];
 
-			for (int j = 0; j < spriteInfo->height; j++) {
-				memcpy(dst, src, spriteInfo->width);
-				src -= spriteInfo->width;
-				dst += spriteInfo->width;
-			}
-		} else
+				for (int j = 0; j < spriteInfo->height; j++) {
+					memcpy(dst, src, spriteInfo->width);
+					src -= spriteInfo->width;
+					dst += spriteInfo->width;
+				}
+			} else
 #endif
-			memcpy(spriteInfo->decodedBuffer, _decodeBuf, outputLength);
+				memcpy(dst, &_decodeBuf.front(), outputLength);
+		}
 	}
-
-	free(spriteListData);
 }
 
-void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, int spriteNumber, int scale, int &width, int &height, int &xAlign, int &yAlign, const byte *&buffer) {
+void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, uint spriteNumber, int scale, int &width, int &height, int &xAlign, int &yAlign, const byte *&buffer) {
 	SpriteInfo *spriteInfo;
 
-	if (spriteList.spriteCount <= spriteNumber) {
+	if (spriteList.size() <= spriteNumber) {
 		// this can occur in IHNM while loading a saved game from chapter 1-5 when being in the end chapter
-		warning("spriteList.spriteCount <= spriteNumber");
+		warning("spriteList.size() <= spriteNumber");
 		return;
 	}
 
-	spriteInfo = &spriteList.infoList[spriteNumber];
+	spriteInfo = &spriteList[spriteNumber];
 
 	if (scale < 256) {
-		xAlign = (spriteInfo->xAlign * scale) >> 8;
-		yAlign = (spriteInfo->yAlign * scale) >> 8;
+		xAlign = (spriteInfo->xAlign * scale) >> 8; //TODO: do we need to take in account sprite x&y aligns ?
+		yAlign = (spriteInfo->yAlign * scale) >> 8; // ????
 		height = (spriteInfo->height * scale + 0x7f) >> 8;
 		width = (spriteInfo->width * scale + 0x7f) >> 8;
-		scaleBuffer(spriteInfo->decodedBuffer, spriteInfo->width, spriteInfo->height, scale);
-		buffer = _decodeBuf;
+		size_t outLength = width * height;
+		if (outLength > 0) {
+			scaleBuffer(&spriteInfo->decodedBuffer.front(), spriteInfo->width, spriteInfo->height, scale, outLength);
+			buffer = &_decodeBuf.front();
+		} else {
+			buffer = NULL;
+		}
 	} else {
 		xAlign = spriteInfo->xAlign;
 		yAlign = spriteInfo->yAlign;
 		height = spriteInfo->height;
 		width = spriteInfo->width;
-		buffer = spriteInfo->decodedBuffer;
+		buffer = spriteInfo->decodedBuffer.getBuffer();
 	}
 }
 
 void Sprite::drawClip(const Point &spritePointer, int width, int height, const byte *spriteBuffer, bool clipToScene) {
-	int clipWidth;
-	int clipHeight;
 	Common::Rect clipRect = clipToScene ? _vm->_scene->getSceneClip() : _vm->getDisplayClip();
 
-	int i, j, jo, io;
+	int xDstOffset, yDstOffset, xSrcOffset, ySrcOffset, xDiff, yDiff, cWidth, cHeight;
 	byte *bufRowPointer;
+	byte *bufPointer;
 	const byte *srcRowPointer;
+	const byte *srcPointer;
 
-	bufRowPointer = _vm->_gfx->getBackBufferPixels() + _vm->_gfx->getBackBufferPitch() * spritePointer.y;
-	srcRowPointer = spriteBuffer;
-
-	clipWidth = CLIP(width, 0, clipRect.right - spritePointer.x);
-	clipHeight = CLIP(height, 0, clipRect.bottom - spritePointer.y);
-
-	jo = 0;
-	io = 0;
-	if (spritePointer.x < clipRect.left) {
-		jo = clipRect.left - spritePointer.x;
-	}
-	if (spritePointer.y < clipRect.top) {
-		io = clipRect.top - spritePointer.y;
-		bufRowPointer += _vm->_gfx->getBackBufferPitch() * io;
-		srcRowPointer += width * io;
+	int backBufferPitch = _vm->_gfx->getBackBufferPitch();
+	
+	//find Rects intersection
+	yDiff = clipRect.top - spritePointer.y;
+	if (yDiff > 0) {
+		ySrcOffset = yDiff;
+		yDstOffset = clipRect.top;
+		cHeight = height - yDiff;
+	} else {
+		ySrcOffset = 0;
+		yDstOffset = spritePointer.y;
+		cHeight = height;
 	}
 
-	for (i = io; i < clipHeight; i++) {
-		for (j = jo; j < clipWidth; j++) {
-			assert(_vm->_gfx->getBackBufferPixels() <= (byte *)(bufRowPointer + j + spritePointer.x));
-			assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayInfo().width *
-				 _vm->getDisplayInfo().height)) > (byte *)(bufRowPointer + j + spritePointer.x));
-			assert((const byte *)spriteBuffer <= (const byte *)(srcRowPointer + j));
-			assert(((const byte *)spriteBuffer + (width * height)) > (const byte *)(srcRowPointer + j));
+	xDiff = clipRect.left - spritePointer.x;
+	if (xDiff > 0) {
+		xSrcOffset = xDiff;
+		xDstOffset = clipRect.left;
+		cWidth = width - xDiff;
+	} else {
+		xSrcOffset = 0;
+		xDstOffset = spritePointer.x;
+		cWidth = width;
+	}
 
-			if (*(srcRowPointer + j) != 0) {
-				*(bufRowPointer + j + spritePointer.x) = *(srcRowPointer + j);
+	yDiff = yDstOffset + cHeight - clipRect.bottom;
+	if (yDiff > 0) {
+		cHeight -= yDiff;
+	}
+
+	xDiff = xDstOffset + cWidth - clipRect.right;
+	if (xDiff > 0) {
+		cWidth -= xDiff;
+	}
+
+	if ((cHeight <= 0) || (cWidth <= 0)) {
+		//no intersection
+		return;
+	}
+	bufRowPointer = _vm->_gfx->getBackBufferPixels() + backBufferPitch * yDstOffset + xDstOffset;
+	srcRowPointer = spriteBuffer + width * ySrcOffset + xSrcOffset;
+	
+	// validate src, dst buffers
+	assert(_vm->_gfx->getBackBufferPixels() <= bufRowPointer);
+	assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayInfo().width * _vm->getDisplayInfo().height)) >= 
+		(byte *)(bufRowPointer + backBufferPitch * (cHeight - 1) + cWidth));
+	assert((const byte *)spriteBuffer <= srcRowPointer);
+	assert(((const byte *)spriteBuffer + (width * height)) >= (const byte *)(srcRowPointer + width * (cHeight - 1) + cWidth));
+
+	const byte *srcPointerFinish2 = srcRowPointer + width * cHeight;
+	for (;;) {
+		srcPointer = srcRowPointer;
+		bufPointer = bufRowPointer;
+		const byte *srcPointerFinish = srcRowPointer + cWidth;
+		for (;;) {
+			if (*srcPointer != 0) {
+				*bufPointer = *srcPointer;
+			}
+			srcPointer++;
+			bufPointer++;
+			if (srcPointer == srcPointerFinish) {
+				break;
 			}
 		}
-		bufRowPointer += _vm->_gfx->getBackBufferPitch();
 		srcRowPointer += width;
+		if (srcRowPointer == srcPointerFinish2) {
+			break;
+		}
+		bufRowPointer += backBufferPitch;
 	}
 
-	int x1 = MAX<int>(spritePointer.x, 0);
-	int y1 = MAX<int>(spritePointer.y, 0);
-	int x2 = MIN<int>(MAX<int>(spritePointer.x + clipWidth, 0), clipRect.right);
-	int y2 = MIN<int>(MAX<int>(spritePointer.y + clipHeight, 0), clipRect.bottom);
-
-	if (x2 > x1 && y2 > y1)
-		_vm->_render->addDirtyRect(Common::Rect(x1, y1, x2, y2));
+	_vm->_render->addDirtyRect(Common::Rect(xDstOffset, yDstOffset, xDstOffset + cWidth, yDstOffset + cHeight));
 }
 
-void Sprite::draw(SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale, bool clipToScene) {
+void Sprite::draw(SpriteList &spriteList, uint spriteNumber, const Point &screenCoord, int scale, bool clipToScene) {
 	const byte *spriteBuffer = NULL;
 	int width  = 0;
 	int height = 0;
@@ -286,7 +299,7 @@ void Sprite::draw(SpriteList &spriteList, int32 spriteNumber, const Point &scree
 	drawClip(spritePointer, width, height, spriteBuffer, clipToScene);
 }
 
-void Sprite::draw(SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale, bool clipToScene) {
+void Sprite::draw(SpriteList &spriteList, uint spriteNumber, const Rect &screenRect, int scale, bool clipToScene) {
 	const byte *spriteBuffer = NULL;
 	int width  = 0;
 	int height = 0;
@@ -310,7 +323,7 @@ void Sprite::draw(SpriteList &spriteList, int32 spriteNumber, const Rect &screen
 	drawClip(spritePointer, width, height, spriteBuffer, clipToScene);
 }
 
-bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, const Point &testPoint) {
+bool Sprite::hitTest(SpriteList &spriteList, uint spriteNumber, const Point &screenCoord, int scale, const Point &testPoint) {
 	const byte *spriteBuffer = NULL;
 	int i, j;
 	const byte *srcRowPointer;
@@ -337,7 +350,7 @@ bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &scre
 	return *srcRowPointer != 0;
 }
 
-void Sprite::drawOccluded(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth) {
+void Sprite::drawOccluded(SpriteList &spriteList, uint spriteNumber, const Point &screenCoord, int scale, int depth) {
 	const byte *spriteBuffer = NULL;
 	int x, y;
 	byte *destRowPointer;
@@ -356,7 +369,6 @@ void Sprite::drawOccluded(SpriteList &spriteList, int spriteNumber, const Point 
 	int maskWidth;
 	int maskHeight;
 	byte *maskBuffer;
-	size_t maskBufferLength;
 	byte *maskRowPointer;
 	int maskZ;
 
@@ -365,7 +377,7 @@ void Sprite::drawOccluded(SpriteList &spriteList, int spriteNumber, const Point 
 		return;
 	}
 
-	_vm->_scene->getBGMaskInfo(maskWidth, maskHeight, maskBuffer, maskBufferLength);
+	_vm->_scene->getBGMaskInfo(maskWidth, maskHeight, maskBuffer);
 
 	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
 
@@ -420,15 +432,11 @@ void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t ou
 	byte *outPointerEnd;
 	int c;
 
-	if (outLength > _decodeBufLen) { // TODO: may we should make dynamic growing?
-		error("Sprite::decodeRLEBuffer outLength > _decodeBufLen");
-	}
+	_decodeBuf.resize(outLength);
+	outPointer = &_decodeBuf.front();
+	outPointerEnd = &_decodeBuf.back();
 
-	outPointer = _decodeBuf;
-	outPointerEnd = _decodeBuf + outLength;
-	outPointerEnd--;
-
-	memset(outPointer, 0, outLength);
+	memset(outPointer, 0, _decodeBuf.size());
 
 	MemoryReadStream readS(inputBuffer, inLength);
 
@@ -458,10 +466,14 @@ void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t ou
 	}
 }
 
-void Sprite::scaleBuffer(const byte *src, int width, int height, int scale) {
+void Sprite::scaleBuffer(const byte *src, int width, int height, int scale, size_t outLength) {
 	byte skip = 256 - scale; // skip factor
 	byte vskip = 0x80, hskip;
-	byte *dst = _decodeBuf;
+
+	_decodeBuf.resize(outLength);
+	byte *dst = &_decodeBuf.front();
+	
+	memset(dst, 0, _decodeBuf.size());
 
 	for (int i = 0; i < height; i++) {
 		vskip += skip;

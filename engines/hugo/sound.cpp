@@ -184,11 +184,11 @@ int MidiPlayer::open() {
 void MidiPlayer::close() {
 	stop();
 	_mutex.lock();
-	_driver->setTimerCallback(NULL, NULL);
+	_driver->setTimerCallback(0, 0);
 	_driver->close();
 	delete _driver;
 	_driver = 0;
-	_parser->setMidiDriver(NULL);
+	_parser->setMidiDriver(0);
 	delete _parser;
 	_mutex.unlock();
 }
@@ -239,7 +239,7 @@ void MidiPlayer::timerCallback(void *p) {
 	player->updateTimer();
 }
 
-SoundHandler::SoundHandler(HugoEngine &vm) : _vm(vm) {
+SoundHandler::SoundHandler(HugoEngine *vm) : _vm(vm) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	MidiDriver *driver = MidiDriver::createMidi(dev);
 
@@ -248,13 +248,13 @@ SoundHandler::SoundHandler(HugoEngine &vm) : _vm(vm) {
 
 void SoundHandler::setMusicVolume() {
 	/* Set the FM music volume from config.mvolume (0..100%) */
-	
+
 	_midiPlayer->setVolume(_config.musicVolume * 255 / 100);
 }
 
 void SoundHandler::stopSound() {
 	/* Stop any sound that might be playing */
-	_vm._mixer->stopAll();
+	_vm->_mixer->stopAll();
 }
 
 void SoundHandler::stopMusic() {
@@ -265,7 +265,7 @@ void SoundHandler::stopMusic() {
 void SoundHandler::toggleMusic() {
 // Turn music on and off
 	_config.musicFl = !_config.musicFl;
-	
+
 	_midiPlayer->pause(_config.musicFl);
 }
 
@@ -285,8 +285,8 @@ void SoundHandler::playMusic(int16 tune) {
 	uint16 size;                                    // Size of sequence data
 
 	if (_config.musicFl) {
-		_vm.getGameStatus().song = tune;
-		seqPtr = _vm.file().getSound(tune, &size);
+		_vm->getGameStatus().song = tune;
+		seqPtr = _vm->_file->getSound(tune, &size);
 		playMIDI(seqPtr, size);
 	}
 }
@@ -302,7 +302,7 @@ void SoundHandler::playSound(int16 sound, stereo_t channel, byte priority) {
 	static byte curPriority = 0;                    // Priority of currently playing sound
 	//
 	/* Sound disabled */
-	if (!_config.soundFl || !_vm._mixer->isReady())
+	if (!_config.soundFl || !_vm->_mixer->isReady())
 		return;
 	//
 	// // See if last wave still playing - if so, check priority
@@ -314,11 +314,11 @@ void SoundHandler::playSound(int16 sound, stereo_t channel, byte priority) {
 	curPriority = priority;
 	//
 	/* Get sound data */
-	if ((sound_p = _vm.file().getSound(sound, &size)) == NULL)
+	if ((sound_p = _vm->_file->getSound(sound, &size)) == 0)
 		return;
 
 	Audio::AudioStream *stream = Audio::makeRawStream(sound_p, size, 11025, Audio::FLAG_UNSIGNED);
-	_vm._mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, stream);
+	_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, stream);
 
 }
 

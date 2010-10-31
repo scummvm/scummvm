@@ -176,8 +176,8 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 		setNextIdleAnimTimer();
 
 		if (_itemInHand < 0) {
-			_itemInHand = -1;
-			_mouseState = -1;
+			_itemInHand = kItemNone;
+			_mouseState = kItemNone;
 			_screen->setMouseCursor(0, 0, _gameShapes[0]);
 		}
 
@@ -287,7 +287,7 @@ void KyraEngine_MR::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 }
 
 void KyraEngine_MR::enterNewSceneUnk2(int unk1) {
-	_unk3 = -1;
+	_savedMouseState = -1;
 	if (_mainCharX == -1 && _mainCharY == -1 && !unk1) {
 		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
 		updateCharacterAnim(0);
@@ -300,7 +300,7 @@ void KyraEngine_MR::enterNewSceneUnk2(int unk1) {
 	}
 
 	_unk4 = 0;
-	_unk3 = -1;
+	_savedMouseState = -1;
 }
 
 void KyraEngine_MR::unloadScene() {
@@ -556,8 +556,8 @@ void KyraEngine_MR::initSceneAnims(int unk1) {
 
 	for (int i = 0; i < 50; ++i) {
 		obj = &_animObjects[i+17];
-		const Item &item = _itemList[i];
-		if (item.id != 0xFFFF && item.sceneId == _mainCharacter.sceneId) {
+		const ItemDefinition &item = _itemList[i];
+		if (item.id != kItemNone && item.sceneId == _mainCharacter.sceneId) {
 			obj->xPos1 = item.x;
 			obj->yPos1 = item.y;
 			animSetupPaletteEntry(obj);
@@ -696,16 +696,16 @@ int KyraEngine_MR::checkSceneChange() {
 	int facing = 0;
 	int process = 0;
 
-	if (_screen->getLayer(charX, charY) == 1 && _unk3 == -7) {
+	if (_screen->getLayer(charX, charY) == 1 && _savedMouseState == -7) {
 		facing = 0;
 		process = 1;
-	} else if (charX >= 316 && _unk3 == -6) {
+	} else if (charX >= 316 && _savedMouseState == -6) {
 		facing = 2;
 		process = 1;
-	} else if (charY >= 186 && _unk3 == -5) {
+	} else if (charY >= 186 && _savedMouseState == -5) {
 		facing = 4;
 		process = 1;
-	} else if (charX <= 4 && _unk3 == -4) {
+	} else if (charX <= 4 && _savedMouseState == -4) {
 		facing = 6;
 		process = 1;
 	}
@@ -742,7 +742,7 @@ int KyraEngine_MR::checkSceneChange() {
 	return 1;
 }
 int KyraEngine_MR::runSceneScript1(int x, int y) {
-	if (y > 187 && _unk3 > -4)
+	if (y > 187 && _savedMouseState > -4)
 		return 0;
 	if (_deathHandler >= 0)
 		return 0;

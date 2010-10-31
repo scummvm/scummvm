@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	bmv.o \
 	cliprect.o \
 	config.o \
+	coroutine.o \
 	cursor.o \
 	debugger.o \
 	detection.o \

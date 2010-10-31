@@ -33,22 +33,6 @@
 #include "common/stream.h"
 #include "common/str.h"
 
-class PspIoBufferedReadStream : public Common::BufferedSeekableReadStream {
-public:
-	PspIoBufferedReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES) : BufferedSeekableReadStream(parentStream, bufSize, disposeParentStream) {}
-protected:	
-	virtual void allocBuf(uint32 bufSize) { _buf = (byte *)memalign(64, bufSize); }	// want 64 byte alignment for cache
-	virtual void deallocBuf() { free(_buf); }	
-};
-
-class PspIoBufferedWriteStream : public Common::BufferedWriteStream {
-public:
-	PspIoBufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES) : BufferedWriteStream(parentStream, bufSize, disposeParentStream) {}
-protected:	
-	virtual void allocBuf(uint32 bufSize) { _buf = (byte *)memalign(64, bufSize); }
-	virtual void deallocBuf() { free(_buf); }
-};
-
 /**
  *  Class to handle special suspend/resume needs of PSP IO Streams
  */
@@ -61,7 +45,7 @@ protected:
 	int _physicalPos;	// physical position in file
 	int _pos;			// position. Sometimes virtual
 	bool _eos;			// EOS flag
-	
+
 	enum {
 		SuspendError = 2,
 		ResumeError = 3
@@ -74,9 +58,9 @@ protected:
 	int _errorPos;
 	SceUID _errorHandle;
 	int _suspendCount;
-	
+
 	bool physicalSeekFromCur(int32 offset);
-	
+
 public:
 
 	/**
@@ -101,7 +85,7 @@ public:
 	virtual int32 size() const;
 	virtual bool seek(int32 offs, int whence = SEEK_SET);
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
-	
+
 	// for suspending
 	int suspend();		/* Suspendable interface (power manager) */
 	int resume();		/* " " */

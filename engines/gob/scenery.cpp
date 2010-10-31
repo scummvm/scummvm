@@ -65,7 +65,7 @@ Scenery::Scenery(GobEngine *vm) : _vm(vm) {
 
 	_pCaptureCounter = 0;
 
-	for (int i = 0; i < 70; i++ ) {
+	for (int i = 0; i < 70; i++) {
 		_staticPictToSprite[i] = 0;
 		_animPictToSprite[i]   = 0;
 	}
@@ -196,7 +196,7 @@ int16 Scenery::loadStatic(char search) {
 			_spriteResId[sprIndex] = sprResId;
 			_vm->_draw->initSpriteSurf(sprIndex, width, height, 2);
 
-			_vm->_video->clearSurf(*_vm->_draw->_spritesArray[sprIndex]);
+			_vm->_draw->_spritesArray[sprIndex]->clear();
 			_vm->_draw->_destSurface  = sprIndex;
 			_vm->_draw->_spriteLeft   = sprResId;
 			_vm->_draw->_transparency = 0;
@@ -526,7 +526,7 @@ int16 Scenery::loadAnim(char search) {
 			_spriteResId[sprIndex] = sprResId;
 			_vm->_draw->initSpriteSurf(sprIndex, width, height, 2);
 
-			_vm->_video->clearSurf(*_vm->_draw->_spritesArray[sprIndex]);
+			_vm->_draw->_spritesArray[sprIndex]->clear();
 			_vm->_draw->_destSurface  = sprIndex;
 			_vm->_draw->_spriteLeft   = sprResId;
 			_vm->_draw->_transparency = 0;
@@ -622,6 +622,16 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 
 		if (frame >= (int32)_vm->_vidPlayer->getFrameCount(obj.videoSlot - 1))
 			frame = _vm->_vidPlayer->getFrameCount(obj.videoSlot - 1) - 1;
+
+		if (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) >= 255) {
+			// Allow for object videos with more than 255 frames, although the
+			// object frame counter is just a byte.
+
+			uint32 curFrame  = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) + 1;
+			uint16 frameWrap = curFrame / 256;
+
+			frame = ((frame + 1) % 256) + frameWrap * 256;
+		}
 
 		if (frame != (int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1)) {
 			// Seek to frame
@@ -723,7 +733,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 				_vm->_draw->_spriteLeft = _vm->_vidPlayer->getWidth(obj.videoSlot - 1)  -
 					(destX + _vm->_draw->_spriteRight);
 
-			_vm->_vidPlayer->copyFrame(obj.videoSlot - 1, _vm->_draw->_backSurface->getVidMem(),
+			_vm->_vidPlayer->copyFrame(obj.videoSlot - 1, _vm->_draw->_backSurface->getData(),
 					_vm->_draw->_spriteLeft,  _vm->_draw->_spriteTop,
 					_vm->_draw->_spriteRight, _vm->_draw->_spriteBottom,
 					_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY,

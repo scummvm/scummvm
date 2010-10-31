@@ -35,6 +35,7 @@ enum kExtractType {
 	kTypeRoomList,
 	kTypeShapeList,
 	kTypeRawData,
+	kTypeForestSeqData,
 	kTypeAmigaSfxTable,
 	kTypeTownsWDSfxTable,
 

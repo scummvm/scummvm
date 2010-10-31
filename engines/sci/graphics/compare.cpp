@@ -237,20 +237,24 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 		Common::Rect celRect;
 
 		GfxView *tmpView = _cache->getView(viewId);
-		if (tmpView->isSci2Hires())
-			_screen->adjustToUpscaledCoordinates(y, x);
+		if (!tmpView->isScaleable())
+			scaleSignal = 0;
 
 		if (scaleSignal & kScaleSignalDoScaling) {
-			int16 scaleX = readSelectorValue(_segMan, object, SELECTOR(scaleX));
-			int16 scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
-			tmpView->getCelScaledRect(loopNo, celNo, x, y, z, scaleX, scaleY, celRect);
+			celRect.left = readSelectorValue(_segMan, object, SELECTOR(nsLeft));
+			celRect.right = readSelectorValue(_segMan, object, SELECTOR(nsRight));
+			celRect.top = readSelectorValue(_segMan, object, SELECTOR(nsTop));
+			celRect.bottom = readSelectorValue(_segMan, object, SELECTOR(nsBottom));
 		} else {
-			tmpView->getCelRect(loopNo, celNo, x, y, z, celRect);
-		}
+			if (tmpView->isSci2Hires())
+				_screen->adjustToUpscaledCoordinates(y, x);
 
-		if (tmpView->isSci2Hires()) {
-			_screen->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
-			_screen->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
+			tmpView->getCelRect(loopNo, celNo, x, y, z, celRect);
+
+			if (tmpView->isSci2Hires()) {
+				_screen->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
+				_screen->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
+			}
 		}
 
 		celRect.bottom = y + 1;

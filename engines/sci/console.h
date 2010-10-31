@@ -70,12 +70,11 @@ private:
 	bool cmdDiskDump(int argc, const char **argv);
 	bool cmdHexDump(int argc, const char **argv);
 	bool cmdResourceId(int argc, const char **argv);
-	bool cmdResourceSize(int argc, const char **argv);
+	bool cmdResourceInfo(int argc, const char **argv);
 	bool cmdResourceTypes(int argc, const char **argv);
 	bool cmdList(int argc, const char **argv);
 	bool cmdHexgrep(int argc, const char **argv);
 	bool cmdVerifyScripts(int argc, const char **argv);
-	bool cmdShowInstruments(int argc, const char **argv);
 	// Game
 	bool cmdSaveGame(int argc, const char **argv);
 	bool cmdRestoreGame(int argc, const char **argv);
@@ -115,6 +114,8 @@ private:
 	bool cmdStopAllSounds(int argc, const char **argv);
 	bool cmdSfx01Header(int argc, const char **argv);
 	bool cmdSfx01Track(int argc, const char **argv);
+	bool cmdShowInstruments(int argc, const char **argv);
+	bool cmdMapInstrument(int argc, const char **argv);
 	// Script
 	bool cmdAddresses(int argc, const char **argv);
 	bool cmdRegisters(int argc, const char **argv);
@@ -128,6 +129,7 @@ private:
 	bool cmdStepCallk(int argc, const char **argv);
 	bool cmdDisassemble(int argc, const char **argv);
 	bool cmdDisassembleAddress(int argc, const char **argv);
+	bool cmdFindKernelFunctionCall(int argc, const char **argv);
 	bool cmdSend(int argc, const char **argv);
 	bool cmdGo(int argc, const char **argv);
 	bool cmdLogKernel(int argc, const char **argv);
@@ -166,7 +168,6 @@ private:
 	bool _mouseVisible;
 	Common::String _videoFile;
 	int _videoFrameDelay;
-	uint32 _enterTime;
 };
 
 } // End of namespace Sci

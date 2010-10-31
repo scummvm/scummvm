@@ -61,8 +61,10 @@ static int strToInt(const char *s) {
 		return atoi(s);
 
 	// Hexadecimal string
-	uint tmp;
-	sscanf(s, "%xh", &tmp);
+	uint tmp = 0;
+	int read = sscanf(s, "%xh", &tmp);
+	if (read < 1)
+		error("strToInt failed on string \"%s\"", s);
 	return (int)tmp;
 }
 
@@ -319,17 +321,25 @@ bool MadsConsole::cmdMessage(int argc, const char **argv) {
 		DebugPrintf("message 'objnum'\n");
 	} else if (!strcmp(argv[1], "list_quotes")) {
 		// Dump the quotes list
+#if 0
+		// FIXME: The following code is not portable and hence has been disabled.
+		// Try replacing FILE by Common::DumpFile.
 		FILE *destFile = fopen("mads_quotes.txt", "wb");
 		for (uint i = 0; i < _vm->globals()->getQuotesSize(); ++i)
 			fprintf(destFile, "%.3d - %s\n", i, _vm->globals()->getQuote(i));
 		fclose(destFile);
+#endif
 
 	} else if (!strcmp(argv[1], "list_vocab")) {
 		// Dump the vocab list
+#if 0
+		// FIXME: The following code is not portable and hence has been disabled.
+		// Try replacing FILE by Common::DumpFile.
 		FILE *destFile = fopen("mads_vocab.txt", "wb");
 		for (uint i = 1; i <= _vm->globals()->getVocabSize(); ++i)
 			fprintf(destFile, "%.3d/%.3x - %s\n", i, i, _vm->globals()->getVocab(i));
 		fclose(destFile);
+#endif
 
 	} else {
 		int messageIdx = strToInt(argv[1]);

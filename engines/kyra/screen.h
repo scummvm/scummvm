@@ -423,6 +423,7 @@ public:
 
 	virtual void setScreenDim(int dim) = 0;
 	virtual const ScreenDim *getScreenDim(int dim) = 0;
+	virtual int screenDimTableCount() const = 0;
 
 	const ScreenDim *_curDim;
 

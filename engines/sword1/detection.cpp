@@ -309,12 +309,9 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 		desc.setSaveTime(hour, minutes);
 
 		if (versionSave > 1) {
-			minutes = playTime / 60;
-			hour = minutes / 60;
-			minutes %= 60;
-			desc.setPlayTime(hour, minutes);
+			desc.setPlayTime(playTime * 1000);
 		} else { //We have no playtime data
-			desc.setPlayTime(0, 0);
+			desc.setPlayTime(0);
 		}
 
 		delete in;

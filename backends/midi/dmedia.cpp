@@ -29,6 +29,9 @@
 
 #if defined(IRIX)
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/scummsys.h"
 #include "common/util.h"
 #include "common/config-manager.h"

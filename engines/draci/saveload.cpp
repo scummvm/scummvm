@@ -103,7 +103,7 @@ Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, 
 	header.saveName = saveName;
 	header.date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	header.time = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
-	header.playtime = vm._system->getMillis() / 1000 - vm._engineStartTime;
+	header.playtime = vm.getTotalPlayTime() / 1000;
 	writeSavegameHeader(f, header);
 
 	if (f->err()) {
@@ -157,7 +157,7 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 
 	vm->_game->inventoryReload();
 
-	vm->_engineStartTime = vm->_system->getMillis() / 1000 - header.playtime;
+	vm->setTotalPlayTime(header.playtime * 1000);
 
 	return Common::kNoError;
 }

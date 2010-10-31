@@ -207,7 +207,7 @@ void Game::init() {
 
 	_currentItem = _itemUnderCursor = NULL;
 	_previousItemPosition = -1;
-  
+
 	_vm->_mouse->setCursorType(kHighlightedCursor);	// anything different from kNormalCursor
 
 	_objUnderCursor = NULL;
@@ -1618,15 +1618,15 @@ int GameObject::addAnim(Animation *anim) {
 }
 
 void GameObject::playAnim(int i) {
-      _anim[i]->play();
-      _playingAnim = i;
+	_anim[i]->play();
+	_playingAnim = i;
 }
 
 void GameObject::stopAnim() {
-      if (_playingAnim >= 0) {
-	      _anim[_playingAnim]->stop();
-	      _playingAnim = -1;
-      }
+	if (_playingAnim >= 0) {
+		_anim[_playingAnim]->stop();
+		_playingAnim = -1;
+	}
 }
 
 void GameObject::deleteAnims() {

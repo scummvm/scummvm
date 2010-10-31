@@ -103,7 +103,7 @@ int exit_callback(void) {
 
 #ifdef ENABLE_PROFILING
 	gprof_cleanup();
-#endif	
+#endif
 
 	sceKernelExitGame();
 	return 0;
@@ -170,12 +170,12 @@ int main(void) {
 #endif
 
 /* unit/speed tests */
-#if defined (PSP_ENABLE_UNIT_TESTS) || defined (PSP_ENABLE_SPEED_TESTS)	
+#if defined (PSP_ENABLE_UNIT_TESTS) || defined (PSP_ENABLE_SPEED_TESTS)
 	PSP_INFO_PRINT("running tests\n");
 	psp_tests();
 	sceKernelSleepThread();	// that's it. That's all we're doing
 #endif
-	
+
 	int res = scummvm_main(argc, argv);
 
 	g_system->quit();	// TODO: Consider removing / replacing this!

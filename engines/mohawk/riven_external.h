@@ -45,6 +45,7 @@ public:
 private:
 	MohawkEngine_Riven *_vm;
 	uint32 _sliderState;
+	Common::Array<Common::Rect> _marbleBaseHotspots;
 
 	typedef void (RivenExternal::*ExternalCmd)(uint16 argc, uint16 *argv);
 
@@ -69,6 +70,8 @@ private:
 	void checkSliderCursorChange(uint16 startHotspot);
 	void dragDomeSlider(uint16 bitmapId, uint16 soundId, uint16 resetSlidersHotspot, uint16 openDomeHotspot, uint16 startHotspot);
 	void drawDomeSliders(uint16 bitmapId, uint16 startHotspot);
+	void drawMarbles();
+	void setMarbleHotspots();
 
 	// -----------------------------------------------------
 	// aspit (Main Menu, Books, Setup) external commands

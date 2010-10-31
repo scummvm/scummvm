@@ -269,31 +269,83 @@ Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *stream) {
 	const byte *srcU = _cur_frame->Ubuf;
 	const byte *srcV = _cur_frame->Vbuf;
 	byte *dest = (byte *)_surface->pixels;
+
+	const byte *srcUP = srcU;
+	const byte *srcVP = srcV;
+	const byte *srcUN = srcU + chromaWidth;
+	const byte *srcVN = srcV + chromaWidth;
+
+	uint32 scaleWidth  = _surface->w / fWidth;
+	uint32 scaleHeight = _surface->h / fHeight;
+
 	for (uint32 y = 0; y < fHeight; y++) {
 		byte *rowDest = dest;
 
-		for (uint32 x = 0; x < fWidth; x++, rowDest += _surface->bytesPerPixel) {
-			const byte cY = srcY[x];
-			const byte cU = srcU[x >> 2];
-			const byte cV = srcV[x >> 2];
+		for (uint32 sH = 0; sH < scaleHeight; sH++) {
+			for (uint32 x = 0; x < fWidth; x++) {
+				uint32 xP = MAX<int32>((x >> 2) - 1, 0);
+				uint32 xN = MIN<int32>((x >> 2) + 1, chromaWidth - 1);
 
-			byte r = 0, g = 0, b = 0;
-			YUV2RGB(cY, cU, cV, r, g, b);
+				byte cY = srcY[x];
+				byte cU = srcU[x >> 2];
+				byte cV = srcV[x >> 2];
 
-			const uint32 color = _pixelFormat.RGBToColor(r, g, b);
+				if        (((x % 4) == 0) && ((y % 4) == 0)) {
+					cU = (((uint32) cU) + ((uint32) srcUP[xP])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcVP[xP])) / 2;
+				} else if (((x % 4) == 3) && ((y % 4) == 0)) {
+					cU = (((uint32) cU) + ((uint32) srcUP[xN])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcVP[xN])) / 2;
+				} else if (((x % 4) == 0) && ((y % 4) == 3)) {
+					cU = (((uint32) cU) + ((uint32) srcUN[xP])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcVN[xP])) / 2;
+				} else if (((x % 4) == 3) && ((y % 4) == 3)) {
+					cU = (((uint32) cU) + ((uint32) srcUN[xN])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcVN[xN])) / 2;
+				} else if ( (x % 4) == 0) {
+					cU = (((uint32) cU) + ((uint32) srcU[xP])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcV[xP])) / 2;
+				} else if ( (x % 4) == 3) {
+					cU = (((uint32) cU) + ((uint32) srcU[xN])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcV[xN])) / 2;
+				} else if ( (y % 4) == 0) {
+					cU = (((uint32) cU) + ((uint32) srcUP[x >> 2])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcVP[x >> 2])) / 2;
+				} else if ( (y % 4) == 3) {
+					cU = (((uint32) cU) + ((uint32) srcUN[x >> 2])) / 2;
+					cV = (((uint32) cV) + ((uint32) srcVN[x >> 2])) / 2;
+				}
 
-			if      (_surface->bytesPerPixel == 1)
-				*((uint8 *)rowDest) = (uint8)color;
-			else if (_surface->bytesPerPixel == 2)
-				*((uint16 *)rowDest) = (uint16)color;
+				byte r = 0, g = 0, b = 0;
+				YUV2RGB(cY, cU, cV, r, g, b);
+
+				const uint32 color = _pixelFormat.RGBToColor(r, g, b);
+
+				for (uint32 sW = 0; sW < scaleWidth; sW++, rowDest += _surface->bytesPerPixel) {
+					if      (_surface->bytesPerPixel == 1)
+						*((uint8 *)rowDest) = (uint8)color;
+					else if (_surface->bytesPerPixel == 2)
+						*((uint16 *)rowDest) = (uint16)color;
+				}
+			}
+
+			dest += _surface->pitch;
 		}
 
-		dest += _surface->pitch;
 		srcY += fWidth;
 
 		if ((y & 3) == 3) {
-			srcU += fWidth >> 2;
-			srcV += fWidth >> 2;
+			srcU += chromaWidth;
+			srcV += chromaWidth;
+
+			if (y > 0) {
+				srcUP += chromaWidth;
+				srcVP += chromaWidth;
+			}
+			if (y < (fHeight - 4U)) {
+				srcUN += chromaWidth;
+				srcVN += chromaWidth;
+			}
 		}
 	}
 

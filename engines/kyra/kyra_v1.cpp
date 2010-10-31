@@ -103,11 +103,14 @@ Common::Error KyraEngine_v1::init() {
 	syncSoundSettings();
 
 	if (!_flags.useDigSound) {
-		// We prefer AdLib over MIDI in Kyra 1, since it offers MT-32 support only, most users don't have a real
-		// MT-32/LAPC1/CM32L/CM64 device and AdLib sounds better than our incomplete MT-32 emulator and also better than
-		// MT-32/GM mapping. For Kyra 2 and LoL which have real GM tracks which sound better than AdLib tracks we prefer GM
-		// since most users have a GM compatible device.
-		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB | ((_flags.gameID == GI_KYRA2 || _flags.gameID == GI_LOL) ? MDT_PREFER_GM : 0));
+		// In Kyra 1 users who have specified a default MT-32 device in the launcher settings
+		// will get MT-32 music, otherwise AdLib. In Kyra 2 and LoL users who have specified a
+		// default GM device in the launcher will get GM music, otherwise AdLib. Users who want
+		// MT-32 music in Kyra2 or LoL have to select this individually (since we assume that
+		// most users rather have a GM device than a MT-32 device).
+		// Users who want PC speaker sound always have to select this individually for all
+		// Kyra games.
+		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB | ((_flags.gameID == GI_KYRA2 || _flags.gameID == GI_LOL) ? MDT_PREFER_GM : MDT_PREFER_MT32));
 
 		if (_flags.platform == Common::kPlatformFMTowns) {
 			if (_flags.gameID == GI_KYRA1)
@@ -179,7 +182,7 @@ Common::Error KyraEngine_v1::init() {
 #ifdef ENABLE_LOL
 			_flags.gameID = GI_LOL;
 #else
-			error("Lands of Lore demo is not supported in this build.");
+			error("Lands of Lore demo is not supported in this build");
 #endif // !ENABLE_LOL
 	}
 
@@ -275,7 +278,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				} else {
 					char savegameName[14];
 					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - Common::KEYCODE_0);
-					saveGameState(saveLoadSlot, savegameName, 0);
+					saveGameStateIntern(saveLoadSlot, savegameName, 0);
 				}
 			} else if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 				if (event.kbd.keycode == Common::KEYCODE_d) {

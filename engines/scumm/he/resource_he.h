@@ -184,7 +184,7 @@ class Win32ResExtractor : public ResExtractor {
 		bool numeric_id;
 		bool is_directory;
 
-		char *get_resource_id_quoted();
+		Common::String getQuotedResourceId() const;
 	} PACKED_STRUCT;
 
 

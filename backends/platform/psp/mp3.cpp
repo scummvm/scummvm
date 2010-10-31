@@ -38,13 +38,13 @@
 #include <pspsysmem.h>
 #include <pspmodulemgr.h>
 #include <psputility_avmodules.h>
-#include <mad.h> 
+#include <mad.h>
 #include "backends/platform/psp/mp3.h"
 
 //#define DISABLE_PSP_MP3		// to make us use the regular MAD decoder instead
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging the stack */
-//#define __PSP_DEBUG_PRINT__ 
+//#define __PSP_DEBUG_PRINT__
 #include "backends/platform/psp/trace.h"
 
 //#define PRINT_BUFFERS	/* to debug MP3 buffers */
@@ -77,7 +77,7 @@ enum {
 
 bool Mp3PspStream::initDecoder() {
 	DEBUG_ENTER_FUNC();
-	
+
 	if (_decoderInit) {
 		PSP_ERROR("Already initialized!");
 		return true;
@@ -97,15 +97,15 @@ bool Mp3PspStream::initDecoder() {
 			PSP_ERROR("failed to load audiocodec.prx. ME cannot start.\n");
 			_decoderFail = true;
 			return false;
-		}	
-    } else {		
+		}
+    } else {
         if (sceUtilityLoadAvModule(PSP_AV_MODULE_AVCODEC) < 0) {
 			PSP_ERROR("failed to load AVCODEC module. ME cannot start.\n");
 			_decoderFail = true;
 			return false;
 		}
 	}
-	
+
 	PSP_DEBUG_PRINT("Using PSP's ME for MP3\n");	// important to know this is happening
 
 	_decoderInit = true;
@@ -114,10 +114,10 @@ bool Mp3PspStream::initDecoder() {
 
 bool Mp3PspStream::stopDecoder() {
 	DEBUG_ENTER_FUNC();
-	
+
 	if (!_decoderInit)
 		return true;
-		
+
 	// Based on PSP firmware version, we need to do different things to do Media Engine processing
     if (sceKernelDevkitVersion() == 0x01050001){  // TODO: how do we unload?
 /*      if (!unloadAudioModule("flash0:/kd/me_for_vsh.prx", PSP_MEMORY_PARTITION_KERNEL) ||
@@ -130,10 +130,10 @@ bool Mp3PspStream::stopDecoder() {
         if (sceUtilityUnloadModule(PSP_MODULE_AV_AVCODEC) < 0) {
 			PSP_ERROR("failed to unload avcodec module\n");
 			return false;
-		}	
+		}
 	}
-		
-	_decoderInit = false;	
+
+	_decoderInit = false;
 	return true;
 }
 
@@ -176,26 +176,27 @@ Mp3PspStream::Mp3PspStream(Common::SeekableReadStream *inStream, DisposeAfterUse
 	_length(0, 1000),
 	_sampleRate(0),
 	_totalTime(mad_timer_zero) {
-	
+
 	DEBUG_ENTER_FUNC();
 
 	assert(_decoderInit);	// must be initialized by now
-	
+
 	// let's leave the buffer guard -- who knows, it may be good?
 	memset(_buf, 0, sizeof(_buf));
 	memset(_codecInBuffer, 0, sizeof(_codecInBuffer));
-	
+
 	initStream();	// init needed stuff for the stream
 
 	findValidHeader();	// get a first header so we can read basic stuff
-	
+
 	_sampleRate = _header.samplerate;	// copy it before it gets destroyed
-		
+	_stereo = (MAD_NCHANNELS(&_header) == 2);
+
 	while (_state != MP3_STATE_EOS)
 		findValidHeader();	// get a first header so we can read basic stuff
-	
+
 	_length = Timestamp(mad_timer_count(_totalTime, MAD_UNITS_MILLISECONDS), getRate());
-	
+
 	deinitStream();
 
 	_state = MP3_STATE_INIT;
@@ -221,7 +222,7 @@ int Mp3PspStream::initStream() {
 
 	// Read the first few sample bytes into the buffer
 	readMP3DataIntoBuffer();
-	
+
 	return true;
 }
 
@@ -229,7 +230,7 @@ bool Mp3PspStream::initStreamME() {
 	// The following will eventually go into the thread
 
 	memset(_codecParams, 0, sizeof(_codecParams));
-	
+
 	// Init the MP3 hardware
 	int ret = 0;
 	ret = sceAudiocodecCheckNeedMem(_codecParams, 0x1002);
@@ -244,22 +245,22 @@ bool Mp3PspStream::initStreamME() {
 		return false;
 	}
 	PSP_DEBUG_PRINT("sceAudioCodecGetEDRAM returned %d\n", ret);
-	
+
 	PSP_DEBUG_PRINT("samplerate[%d]\n", _sampleRate);
 	_codecParams[10] = _sampleRate;
-	
+
 	ret = sceAudiocodecInit(_codecParams, 0x1002);
 	if (ret < 0) {
 		PSP_ERROR("failed to init MP3 ME module. sceAudiocodecInit returned 0x%x.\n", ret);
 		return false;
 	}
-	
+
 	return true;
 }
 
 Mp3PspStream::~Mp3PspStream() {
 	DEBUG_ENTER_FUNC();
-	
+
 	deinitStream();
 	releaseStreamME(); 	// free the memory used for this stream
 
@@ -276,17 +277,17 @@ void Mp3PspStream::deinitStream() {
 	// Deinit MAD
 	mad_header_finish(&_header);
 	mad_stream_finish(&_stream);
-	
+
 	_state = MP3_STATE_EOS;
 }
 
 void Mp3PspStream::releaseStreamME() {
 	sceAudiocodecReleaseEDRAM(_codecParams);
-}	
+}
 
 void Mp3PspStream::decodeMP3Data() {
 	DEBUG_ENTER_FUNC();
-	
+
 	do {
 		if (_state == MP3_STATE_INIT) {
 			initStream();
@@ -295,17 +296,17 @@ void Mp3PspStream::decodeMP3Data() {
 
 		if (_state == MP3_STATE_EOS)
 			return;
-			
+
 		findValidHeader();	// seach for next valid header
 
 		while (_state == MP3_STATE_READY) {	// not a real 'while'. Just for easy flow
 			_stream.error = MAD_ERROR_NONE;
 
 			uint32 frame_size = _stream.next_frame - _stream.this_frame;
-			
-			updatePcmLength(); // Retrieve the number of PCM samples. 
+
+			updatePcmLength(); // Retrieve the number of PCM samples.
 							   // We seem to change this, so it needs to be dynamic
-						
+
 			PSP_DEBUG_PRINT("MP3 frame size[%d]. pcmLength[%d]\n", frame_size, _pcmLength);
 
 			memcpy(_codecInBuffer, _stream.this_frame, frame_size);	// we need it aligned
@@ -315,7 +316,7 @@ void Mp3PspStream::decodeMP3Data() {
 			_codecParams[8] = (unsigned long)_pcmSamples;
 			_codecParams[7] = frame_size;
 			_codecParams[9] = _pcmLength * 2;	// x2 for stereo, though this one's not so important
-			
+
 			// debug
 #ifdef PRINT_BUFFERS
 			PSP_DEBUG_PRINT("mp3 frame:\n");
@@ -415,10 +416,13 @@ bool Mp3PspStream::seek(const Timestamp &where) {
 	mad_timer_t destination;
 	mad_timer_set(&destination, time / 1000, time % 1000, 1000);
 
+	// Important to release and re-init the ME
+	releaseStreamME();
+	initStreamME();
+
 	// Check if we need to rewind
 	if (_state != MP3_STATE_READY || mad_timer_compare(destination, _totalTime) < 0) {
 		initStream();
-		initStreamME();
 	}
 
 	// Skip ahead
@@ -469,37 +473,37 @@ int Mp3PspStream::readBuffer(int16 *buffer, const int numSamples) {
 	DEBUG_ENTER_FUNC();
 
 	int samples = 0;
-#ifdef PRINT_BUFFERS	
+#ifdef PRINT_BUFFERS
 	int16 *debugBuffer = buffer;
-#endif	
-	
+#endif
+
 	// Keep going as long as we have input available
 	while (samples < numSamples && _state != MP3_STATE_EOS) {
 		const int len = MIN(numSamples, samples + (int)(_pcmLength - _posInFrame) * MAD_NCHANNELS(&_header));
-		
+
 		while (samples < len) {
 			*buffer++ = _pcmSamples[_posInFrame << 1];
 			samples++;
 			if (MAD_NCHANNELS(&_header) == 2) {
 				*buffer++ = _pcmSamples[(_posInFrame << 1) + 1];
 				samples++;
-			} 
+			}
 			_posInFrame++;	// always skip an extra sample since ME always outputs stereo
 		}
-		
+
 		if (_posInFrame >= _pcmLength) {
 			// We used up all PCM data in the current frame -- read & decode more
 			decodeMP3Data();
 		}
 	}
-	
+
 #ifdef PRINT_BUFFERS
 		PSP_INFO_PRINT("buffer:\n");
 		for (int i = 0; i<numSamples; i++)
 			PSP_INFO_PRINT("%d ", debugBuffer[i]);
 		PSP_INFO_PRINT("\n\n");
-#endif		
-	
+#endif
+
 	return samples;
 }
 

@@ -16,9 +16,9 @@ def buildPack(packName):
 	if not os.path.isdir(packName):
 		print ("Invalid pack name: " + packName)
 		return
-	
+
 	zf = zipfile.ZipFile(packName + ".zip", 'w')
-	
+
 	zf.compress_type = zipfile.ZIP_DEFLATED
 
 	print ("Building '" + packName + "' pack:")
@@ -28,9 +28,9 @@ def buildPack(packName):
 		if os.path.isfile(filename) and not filename[0] == '.' and filename.endswith(PACK_FILE_EXTENSIONS):
 			zf.write(filename, './' + filename, compress_type=compression)
 			print ("    Adding file: " + filename)
-			
+
 	os.chdir('../')
-	
+
 	zf.close()
 
 def buildAllPacks():
@@ -49,13 +49,13 @@ def printUsage():
 	print ("    Builds the pack called 'packname'.\n")
 
 def main():
-		
+
 	if len(sys.argv) == 2 and sys.argv[1] == "makeall":
 		buildAllPacks()
-		
+
 	elif len(sys.argv) == 3 and sys.argv[1] == "make":
 		buildPack(sys.argv[2])
-		
+
 	else:
 		printUsage()
 

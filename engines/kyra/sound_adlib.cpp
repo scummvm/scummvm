@@ -2304,7 +2304,7 @@ void SoundAdLibPC::haltTrack() {
 	//_vm->_system->delayMillis(3 * 60);
 }
 
-bool SoundAdLibPC::isPlaying() {
+bool SoundAdLibPC::isPlaying() const {
 	return _driver->callback(7, int(0)) != 0;
 }
 

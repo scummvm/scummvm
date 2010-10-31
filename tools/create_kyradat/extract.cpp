@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "extract.h"
 
 #include <algorithm>
@@ -36,6 +39,7 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 bool extractStrings10(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 bool extractRooms(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 bool extractShapes(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractKyraForestSeqData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 bool extractAmigaSfx(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 bool extractWdSfx(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 
@@ -58,6 +62,7 @@ const ExtractType extractTypeTable[] = {
 	{ kTypeRoomList, extractRooms },
 	{ kTypeShapeList, extractShapes },
 	{ kTypeRawData, extractRaw },
+	{ kTypeForestSeqData, extractKyraForestSeqData },
 	{ kTypeAmigaSfxTable, extractAmigaSfx },
 	{ kTypeTownsWDSfxTable, extractWdSfx },
 
@@ -90,6 +95,7 @@ const TypeTable typeTable[] = {
 	{ kTypeRawData, 1 },
 	{ kTypeRoomList, 2 },
 	{ kTypeShapeList, 3 },
+	{ kTypeForestSeqData, 1 },
 	{ kTypeAmigaSfxTable, 4 },
 	{ kTypeTownsWDSfxTable, 1 },
 	{ k2TypeSeqData, 5 },
@@ -374,6 +380,55 @@ bool extractShapes(PAKFile &out, const ExtractInformation *info, const byte *dat
 	memcpy(output, data, size);
 
 	return out.addFile(filename, buffer, size + 1 * 4);
+}
+
+bool extractKyraForestSeqData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
+	if (info->platform != kPlatformPC98)
+		return extractRaw(out, info, data, size, filename, id);
+
+	struct PatchEntry {
+		uint16 pos;
+		uint8 val;
+	};
+
+	// This data has been taken from the FM-Towns version
+	static const PatchEntry patchData[] = {
+		{ 0x0019, 0x06 }, { 0x001A, 0x09 }, { 0x001B, 0x00 }, { 0x002E, 0x06 }, { 0x002F, 0x09 }, { 0x0030, 0x00 },
+		{ 0x003D, 0x06 }, { 0x003E, 0x09 }, { 0x003F, 0x00 }, { 0x004C, 0x06 }, { 0x004D, 0x09 }, { 0x004E, 0x00 },
+		{ 0x005B, 0x06 }, { 0x005C, 0x09 }, { 0x005D, 0x00 }, { 0x0064, 0x06 }, { 0x0065, 0x09 }, { 0x0066, 0x00 },
+		{ 0x0079, 0x06 }, { 0x007A, 0x09 }, { 0x007B, 0x00 }, { 0x0088, 0x06 }, { 0x0089, 0x09 }, { 0x008A, 0x00 },
+		{ 0x0097, 0x06 }, { 0x0098, 0x09 }, { 0x0099, 0x00 }, { 0x00A6, 0x06 }, { 0x00A7, 0x09 }, { 0x00A8, 0x00 },
+		{ 0x00AD, 0x06 }, { 0x00AE, 0x09 }, { 0x00AF, 0x00 }, { 0x00B4, 0x06 }, { 0x00B5, 0x09 }, { 0x00B6, 0x00 },
+		{ 0x00C3, 0x06 }, { 0x00C4, 0x09 }, { 0x00C5, 0x00 }, { 0x00CA, 0x06 }, { 0x00CB, 0x09 }, { 0x00CC, 0x00 },
+		{ 0x00D1, 0x06 }, { 0x00D2, 0x09 }, { 0x00D3, 0x00 }, { 0x00E0, 0x06 }, { 0x00E1, 0x09 }, { 0x00E2, 0x00 },
+		{ 0x00E7, 0x06 }, { 0x00E8, 0x09 }, { 0x00E9, 0x00 }, { 0x00EE, 0x06 }, { 0x00EF, 0x09 }, { 0x00F0, 0x00 },
+		{ 0x00FD, 0x06 }, { 0x00FE, 0x09 }, { 0x00FF, 0x00 }, { 0x010A, 0x06 }, { 0x010B, 0x09 }, { 0x010C, 0x00 },
+		{ 0x011D, 0x06 }, { 0x011E, 0x09 }, { 0x011F, 0x00 }, { 0x012C, 0x06 }, { 0x012D, 0x09 }, { 0x012E, 0x00 },
+		{ 0x013D, 0x06 }, { 0x013E, 0x09 }, { 0x013F, 0x00 }, { 0x0148, 0x06 }, { 0x0149, 0x09 }, { 0x014A, 0x00 },
+		{ 0x0153, 0x06 }, { 0x0154, 0x09 }, { 0x0155, 0x00 }, { 0x015E, 0x06 }, { 0x015F, 0x09 }, { 0x0160, 0x00 },
+		{ 0x0169, 0x06 }, { 0x016A, 0x09 }, { 0x016B, 0x00 }, { 0x016C, 0x06 }, { 0x016D, 0x12 }, { 0x016E, 0x00 },
+		{ 0x017B, 0x06 }, { 0x017C, 0x09 }, { 0x017D, 0x00 }, { 0x0188, 0x06 }, { 0x0189, 0x09 }, { 0x018A, 0x00 },
+		{ 0x0190, 0x13 }, { 0x0000, 0x00 }
+	};
+
+	uint32 outsize = size + (ARRAYSIZE(patchData) - 1);
+	uint8 *buffer = new uint8[outsize];
+	assert(buffer);
+
+	const uint8 *src = data;
+	uint8 *dst = buffer;
+	const PatchEntry *patchPos = patchData;
+	
+	while (dst < (buffer + outsize)) {
+		if ((dst - buffer) == patchPos->pos) {
+			*dst++ = patchPos->val;
+			patchPos++;
+		} else {
+			*dst++ = *src++;
+		}
+	}
+
+	return out.addFile(filename, buffer, outsize);
 }
 
 bool extractAmigaSfx(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {

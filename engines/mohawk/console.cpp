@@ -367,19 +367,13 @@ bool RivenConsole::Cmd_Var(int argc, const char **argv) {
 
 bool RivenConsole::Cmd_PlaySound(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: playSound <value> (<use main sound file, default = true>)\n");
-		DebugPrintf("The main sound file is default, but you can use the word \'false\' to make it use the current stack file.\n");
-
+		DebugPrintf("Usage: playSound <value>\n");
 		return true;
 	}
 
 	_vm->_sound->stopSound();
 	_vm->_sound->stopAllSLST();
-
-	bool mainSoundFile = (argc < 3) || (scumm_stricmp(argv[2], "false") != 0);
-
-	_vm->_sound->playSound((uint16)atoi(argv[1]), mainSoundFile);
-
+	_vm->_sound->playSound((uint16)atoi(argv[1]));
 	return false;
 }
 
@@ -393,13 +387,9 @@ bool RivenConsole::Cmd_PlaySLST(int argc, const char **argv) {
 	_vm->_sound->stopSound();
 	_vm->_sound->stopAllSLST();
 
-	uint16 card = _vm->getCurCard();
-
-	if (argc == 3)
-		card = (uint16)atoi(argv[2]);
+	uint16 card = (argc == 3) ? (uint16)atoi(argv[2]) : _vm->getCurCard();
 
 	_vm->_sound->playSLST((uint16)atoi(argv[1]), card);
-
 	return false;
 }
 
@@ -408,7 +398,6 @@ bool RivenConsole::Cmd_StopSound(int argc, const char **argv) {
 
 	_vm->_sound->stopSound();
 	_vm->_sound->stopAllSLST();
-
 	return true;
 }
 

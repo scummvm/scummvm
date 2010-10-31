@@ -108,10 +108,7 @@ struct Surface : Graphics::Surface {
 		rect.right = w;
 		rect.bottom = h;
 	}
-	void drawFrame(const Common::Point &p1, const Common::Point &p2, int color) {
-		Common::Rect rect(MIN(p1.x, p2.x), MIN(p1.y, p2.y), MAX(p1.x, p2.x) + 1, MAX(p1.y, p2.y) + 1);
-		frameRect(rect, color);
-	}
+
 	void drawRect(const Common::Rect &destRect, int color) {
 		Common::Rect rect(w , h);
 		rect.clip(destRect);
@@ -198,7 +195,7 @@ public:
 	// WARNING: This method does not add a dirty rectangle automatically.
 	// Whenever it gets called, the corresponding caller must take care
 	// to add the corresponding dirty rectangle itself
-	void drawPolyLine(Common::Point *points, int count, int color) {
+	void drawPolyLine(const Common::Point *points, int count, int color) {
 		_backBuffer.drawPolyLine(points, count, color);
 	}
 

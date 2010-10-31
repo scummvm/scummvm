@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
@@ -45,7 +48,7 @@
 #include <map>
 
 enum {
-	kKyraDatVersion = 72
+	kKyraDatVersion = 73
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -53,7 +56,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kIdMap, -1, true },
 
 	// INTRO / OUTRO sequences
-	{ k1ForestSeq, kTypeRawData, false },
+	{ k1ForestSeq, kTypeForestSeqData, false },
 	{ k1KallakWritingSeq, kTypeRawData, false },
 	{ k1KyrandiaLogoSeq, kTypeRawData, false },
 	{ k1KallakMalcolmSeq, kTypeRawData, false },

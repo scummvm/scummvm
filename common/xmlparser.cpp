@@ -229,6 +229,47 @@ bool XMLParser::parseKeyValue(Common::String keyName) {
 	return true;
 }
 
+bool XMLParser::parseIntegerKey(const char *key, int count, ...) {
+	bool result;
+	va_list args;
+	va_start(args, count);
+	result = vparseIntegerKey(key, count, args);
+	va_end(args);
+	return result;
+}
+
+bool XMLParser::parseIntegerKey(const Common::String &key, int count, ...) {
+	bool result;
+	va_list args;
+	va_start(args, count);
+	result = vparseIntegerKey(key.c_str(), count, args);
+	va_end(args);
+	return result;
+}
+
+bool XMLParser::vparseIntegerKey(const char *key, int count, va_list args) {
+	char *parseEnd;
+	int *num_ptr;
+
+	while (count--) {
+		while (isspace(*key))
+			key++;
+
+		num_ptr = va_arg(args, int*);
+		*num_ptr = strtol(key, &parseEnd, 10);
+
+		key = parseEnd;
+
+		while (isspace(*key))
+			key++;
+
+		if (count && *key++ != ',')
+			return false;
+	}
+
+	return (*key == 0);
+}
+
 bool XMLParser::closeKey() {
 	bool ignore = false;
 	bool result = true;
@@ -410,5 +451,61 @@ bool XMLParser::parse() {
 	return true;
 }
 
+bool XMLParser::skipSpaces() {
+	if (!isspace(_char))
+		return false;
+
+	while (_char && isspace(_char))
+		_char = _stream->readByte();
+
+	return true;
 }
 
+bool XMLParser::skipComments() {
+	if (_char == '<') {
+		_char = _stream->readByte();
+
+		if (_char != '!') {
+			_stream->seek(-1, SEEK_CUR);
+			_char = '<';
+			return false;
+		}
+
+		if (_stream->readByte() != '-' || _stream->readByte() != '-')
+			return parserError("Malformed comment syntax.");
+
+		_char = _stream->readByte();
+
+		while (_char) {
+			if (_char == '-') {
+				if (_stream->readByte() == '-') {
+
+					if (_stream->readByte() != '>')
+						return parserError("Malformed comment (double-hyphen inside comment body).");
+
+					_char = _stream->readByte();
+					return true;
+				}
+			}
+
+			_char = _stream->readByte();
+		}
+
+		return parserError("Comment has no closure.");
+	}
+
+	return false;
+}
+
+bool XMLParser::parseToken() {
+	_token.clear();
+
+	while (isValidNameChar(_char)) {
+		_token += _char;
+		_char = _stream->readByte();
+	}
+
+	return isspace(_char) != 0 || _char == '>' || _char == '=' || _char == '/';
+}
+
+} // End of namespace Common

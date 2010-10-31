@@ -508,6 +508,11 @@ void ScummEngine::CHARSET_1() {
 	if (_game.version >= 5)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	if (_keepText && _game.platform == Common::kPlatformFMTowns)
+		memcpy(&_charset->_str, &_curStringRect, sizeof(Common::Rect));
+#endif
+
 	if (_talkDelay)
 		return;
 
@@ -539,7 +544,12 @@ void ScummEngine::CHARSET_1() {
 			_nextTop = _string[0].ypos + _screenTop;
 #endif
 		} else {
-			restoreCharsetBg();
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+			if (_game.platform == Common::kPlatformFMTowns)
+				towns_restoreCharsetBg();
+			else
+#endif
+				restoreCharsetBg();
 		}
 	}
 
@@ -591,7 +601,12 @@ void ScummEngine::CHARSET_1() {
 			} else if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
 				_nextTop += _string[0].height;
 			} else {
+				bool useCJK = _useCJKMode;
+				// SCUMM5 FM-Towns doesn't use the height of the ROM font here.
+				if (_game.platform == Common::kPlatformFMTowns && _game.version == 5)
+					_useCJKMode = false;
 				_nextTop += _charset->getFontHeight();
+				_useCJKMode = useCJK;
 			}
 			if (_game.version > 3) {
 				// FIXME: is this really needed?
@@ -624,9 +639,7 @@ void ScummEngine::CHARSET_1() {
 #endif
 		} else {
 			if (c & 0x80 && _useCJKMode) {
-				if (_language == Common::JA_JPN && !checkSJISCode(c)) {
-					c = 0x20; //not in S-JIS
-				} else {
+				if (checkSJISCode(c)) {
 					byte *buffer = _charsetBuffer + _charsetBufPos;
 					c += *buffer++ * 256; //LE
 					_charsetBufPos = buffer - _charsetBuffer;
@@ -659,6 +672,11 @@ void ScummEngine::CHARSET_1() {
 			_talkDelay += (int)VAR(VAR_CHARINC);
 		}
 	}
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	if (_game.platform == Common::kPlatformFMTowns && (c == 0 || c == 2 || c == 3))
+		memcpy(&_curStringRect, &_charset->_str, sizeof(Common::Rect));
+#endif
 
 #ifdef ENABLE_SCUMM_7_8
 	if (_game.version >= 7 && subtitleLine != subtitleBuffer) {
@@ -978,11 +996,8 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				}
 			}
 			if (c & 0x80 && _useCJKMode) {
-				if (_language == Common::JA_JPN && !checkSJISCode(c)) {
-					c = 0x20; //not in S-JIS
-				} else {
+				if (checkSJISCode(c))
 					c += buf[i++] * 256;
-				}
 			}
 			_charset->printChar(c, true);
 			_charset->_blitAlso = false;
@@ -1006,6 +1021,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	uint num = 0;
 	uint32 val;
 	byte chr;
+	byte lastChr = 0;
 	const byte *src;
 	byte *end;
 	byte transBuf[384];
@@ -1113,11 +1129,12 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 		} else if (_game.id == GID_DIG && (chr == 1 || chr == 2 || chr == 3 || chr == 8)) {
 			// Skip these characters
 		} else {
-			if (!(chr == '@') || (_game.id == GID_CMI && _language == Common::ZH_TWN) ||
-				(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN))
-			{
+			if ((chr != '@') || (_game.id == GID_CMI && _language == Common::ZH_TWN) ||
+				(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) ||
+				(_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN && checkSJISCode(lastChr))) {
 				*dst++ = chr;
 			}
+			lastChr = chr;
 		}
 
 		// Check for a buffer overflow

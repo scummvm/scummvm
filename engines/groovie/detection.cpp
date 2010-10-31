@@ -54,7 +54,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 		{
 			"t7g", "",
 			AD_ENTRY1s("script.grv", "d1b8033b40aa67c076039881eccce90d", 16659),
-			Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS, Common::GUIO_NONE
+			Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM
 		},
 		kGroovieT7G, 0
 	},
@@ -64,7 +65,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 		{
 			"t7g", "",
 			AD_ENTRY1s("T7GMac", "a139540fa2be2247005ccf888b7231e3", 1830783),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, Common::GUIO_NONE
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM
 		},
 		kGroovieT7G, 0
 	},
@@ -78,7 +80,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 				{ "intro.gjd", 0, NULL, 31711554},
 				{ NULL, 0, NULL, 0}
 			},
-			Common::RU_RUS, Common::kPlatformPC, ADGF_NO_FLAGS, Common::GUIO_NONE
+			Common::RU_RUS, Common::kPlatformPC, ADGF_NO_FLAGS,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM
 		},
 		kGroovieT7G, 0
 	},
@@ -89,7 +92,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 		{
 			"11h", "",
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
-			Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS, Common::GUIO_NONE
+			Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM
 		},
 		kGroovieV2, 1
 	},
@@ -99,7 +103,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 		{
 			"11h", "Demo",
 			AD_ENTRY1s("disk.1", "aacb32ce07e0df2894bd83a3dee40c12", 70),
-			Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, Common::GUIO_NOLAUNCHLOAD
+			Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, Common::GUIO_NOLAUNCHLOAD |
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM
 		},
 		kGroovieV2, 1
 	},

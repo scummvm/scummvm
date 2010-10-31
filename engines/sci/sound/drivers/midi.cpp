@@ -32,10 +32,13 @@
 #include "sound/softsynth/emumidi.h"
 
 #include "sci/resource.h"
+#include "sci/sound/drivers/gm_names.h"
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/sound/drivers/map-mt32-to-gm.h"
 
 namespace Sci {
+
+Mt32ToGmMapList *Mt32dynamicMappings = NULL;
 
 class MidiPlayer_Midi : public MidiPlayer {
 public:
@@ -53,9 +56,10 @@ public:
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
 	bool hasRhythmChannel() const { return true; }
-	byte getPlayId();
+	byte getPlayId() const;
 	int getPolyphony() const { return kVoices; }
-	int getFirstChannel();
+	int getFirstChannel() const;
+	int getLastChannel() const;
 	void setVolume(byte volume);
 	int getVolume();
 	void setReverb(byte reverb);
@@ -130,10 +134,21 @@ MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _pla
 	_sysExBuf[1] = 0x10;
 	_sysExBuf[2] = 0x16;
 	_sysExBuf[3] = 0x12;
+
+	Mt32dynamicMappings = new Mt32ToGmMapList();
 }
 
 MidiPlayer_Midi::~MidiPlayer_Midi() {
 	delete _driver;
+
+	const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
+	for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
+		delete[] (*it).name;
+		(*it).name = 0;
+	}
+
+	Mt32dynamicMappings->clear();
+	delete Mt32dynamicMappings;
 }
 
 void MidiPlayer_Midi::noteOn(int channel, int note, int velocity) {
@@ -328,10 +343,17 @@ void MidiPlayer_Midi::send(uint32 b) {
 }
 
 // We return 1 for mt32, because if we remap channels to 0 for mt32, those won't get played at all
-int MidiPlayer_Midi::getFirstChannel() {
+// NOTE: SSCI uses channels 1 through 8 for General MIDI as well, in the drivers I checked
+int MidiPlayer_Midi::getFirstChannel() const {
 	if (_isMt32)
 		return 1;
 	return 0;
+}
+
+int MidiPlayer_Midi::getLastChannel() const {
+	if (_isMt32)
+		return 8;
+	return 15;
 }
 
 void MidiPlayer_Midi::setVolume(byte volume) {
@@ -607,22 +629,40 @@ void MidiPlayer_Midi::readMt32DrvData() {
 byte MidiPlayer_Midi::lookupGmInstrument(const char *iname) {
 	int i = 0;
 
+	if (Mt32dynamicMappings != NULL) {
+		const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
+		for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
+			if (scumm_strnicmp(iname, (*it).name, 10) == 0)
+				return getGmInstrument((*it));
+		}
+	}
+
 	while (Mt32MemoryTimbreMaps[i].name) {
 		if (scumm_strnicmp(iname, Mt32MemoryTimbreMaps[i].name, 10) == 0)
 			return getGmInstrument(Mt32MemoryTimbreMaps[i]);
 		i++;
 	}
+
 	return MIDI_UNMAPPED;
 }
 
 byte MidiPlayer_Midi::lookupGmRhythmKey(const char *iname) {
 	int i = 0;
 
+	if (Mt32dynamicMappings != NULL) {
+		const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
+		for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
+			if (scumm_strnicmp(iname, (*it).name, 10) == 0)
+				return (*it).gmRhythmKey;
+		}
+	}
+
 	while (Mt32MemoryTimbreMaps[i].name) {
 		if (scumm_strnicmp(iname, Mt32MemoryTimbreMaps[i].name, 10) == 0)
 			return Mt32MemoryTimbreMaps[i].gmRhythmKey;
 		i++;
 	}
+
 	return MIDI_UNMAPPED;
 }
 
@@ -902,7 +942,7 @@ void MidiPlayer_Midi::sysEx(const byte *msg, uint16 length) {
 	g_system->updateScreen();
 }
 
-byte MidiPlayer_Midi::getPlayId() {
+byte MidiPlayer_Midi::getPlayId() const {
 	switch (_version) {
 	case SCI_VERSION_0_EARLY:
 	case SCI_VERSION_0_LATE:

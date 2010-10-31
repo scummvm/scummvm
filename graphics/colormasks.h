@@ -168,6 +168,30 @@ struct ColorMasks<1555> {
 };
 
 template<>
+struct ColorMasks<5551> {
+	enum {
+		kBytesPerPixel = 2,
+
+		kAlphaBits  = 1,
+		kRedBits    = 5,
+		kGreenBits  = 5,
+		kBlueBits   = 5,
+
+		kAlphaShift = 0,
+		kRedShift   = kGreenBits+kBlueBits+kAlphaBits,
+		kGreenShift = kBlueBits+kAlphaBits,
+		kBlueShift  = kAlphaBits,
+
+		kAlphaMask = ((1 << kAlphaBits) - 1) << kAlphaShift,
+		kRedMask   = ((1 << kRedBits) - 1) << kRedShift,
+		kGreenMask = ((1 << kGreenBits) - 1) << kGreenShift,
+		kBlueMask  = ((1 << kBlueBits) - 1) << kBlueShift,
+
+		kRedBlueMask = kRedMask | kBlueMask
+	};
+};
+
+template<>
 struct ColorMasks<4444> {
 	enum {
 		kBytesPerPixel = 2,

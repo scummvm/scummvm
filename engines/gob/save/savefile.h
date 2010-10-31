@@ -33,15 +33,16 @@
 namespace Gob {
 
 class GobEngine;
-class SurfaceDesc;
+class Surface;
 
-/** A class wrapping a save part header.
-  *
-  * A save part header consists of 4 fields:
-  * ID      : The 8 character ID \0SCVMGOB
-  * Type    : The 4 character ID for this part's type
-  * Version : This part's version. Each type has its own version counter
-  * Size    : The size of the contents, i.e. excluding this header
+/**
+ * A class wrapping a save part header.
+ *
+ * A save part header consists of 4 fields:
+ * ID      : The 8 character ID \0SCVMGOB
+ * Type    : The 4 character ID for this part's type
+ * Version : This part's version. Each type has its own version counter
+ * Size    : The size of the contents, i.e. excluding this header
 */
 class SaveHeader {
 public:
@@ -162,7 +163,7 @@ public:
 	/** Read a palette into the part. */
 	bool readPalette(const byte *palette);
 	/** Read a sprite into the part. */
-	bool readSprite(const SurfaceDesc &sprite);
+	bool readSprite(const Surface &sprite);
 
 	/** Read size bytes of raw data into the sprite. */
 	bool readSpriteRaw(const byte *data, uint32 size);
@@ -170,7 +171,7 @@ public:
 	/** Write a palette out of the part. */
 	bool writePalette(byte *palette) const;
 	/** Write a sprite out of the part. */
-	bool writeSprite(SurfaceDesc &sprite) const;
+	bool writeSprite(Surface &sprite) const;
 
 private:
 	uint32 _width;
@@ -186,13 +187,13 @@ public:
 	static const uint32 kVersion = 1;
 	static const uint32 kID = MKID_BE('INFO');
 
-	/** The constructor.
-	 *
-	 *  @param descMaxLength The maximal number of bytes that fit into the description.
-	 *  @param gameID An ID for the game (Gob1, Gob2, Gob3, ...).
-	 *  @param gameVersion An ID for game specific versioning
-	 *  @param endian Endianness of the platform the game originally ran on.
-	 *  @param varCount The number of script variables.
+	/**
+	 * The constructor.
+	 * @param descMaxLength The maximal number of bytes that fit into the description.
+	 * @param gameID An ID for the game (Gob1, Gob2, Gob3, ...).
+	 * @param gameVersion An ID for game specific versioning
+	 * @param endian Endianness of the platform the game originally ran on.
+	 * @param varCount The number of script variables.
 	 */
 	SavePartInfo(uint32 descMaxLength, uint32 gameID,
 			uint32 gameVersion, byte endian, uint32 varCount);
@@ -228,10 +229,10 @@ public:
 	static const uint32 kVersion = 1;
 	static const uint32 kID = MKID_BE('CONT');
 
-	/** The constructor.
-	 *
-	 *  @param partCount The number parts this container shall hold.
-	 *  @param slot The save slot this save's for.
+	/**
+	 * The constructor.
+	 * @param partCount The number parts this container shall hold.
+	 * @param slot The save slot this save's for.
 	 */
 	SaveContainer(uint32 partCount, uint32 slot);
 	~SaveContainer();

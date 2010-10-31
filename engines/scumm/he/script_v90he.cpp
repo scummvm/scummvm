@@ -32,7 +32,6 @@
 #include "scumm/he/logic_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
-#include "scumm/he/resource_he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/he/sprite_he.h"
@@ -1948,42 +1947,51 @@ void ScummEngine_v90he::getArrayDim(int array, int *dim2start, int *dim2end, int
 	}
 }
 
+static int sortArrayOffset;
+
 static int compareByteArray(const void *a, const void *b) {
-	int va = *((const uint8 *)a);
-	int vb = *((const uint8 *)a);
+	int va = *((const uint8 *)a + sortArrayOffset);
+	int vb = *((const uint8 *)b + sortArrayOffset);
 	return va - vb;
 }
 
 static int compareByteArrayReverse(const void *a, const void *b) {
-	int va = *((const uint8 *)a);
-	int vb = *((const uint8 *)a);
+	int va = *((const uint8 *)a + sortArrayOffset);
+	int vb = *((const uint8 *)b + sortArrayOffset);
 	return vb - va;
 }
 
 static int compareIntArray(const void *a, const void *b) {
-	int va = (int16)READ_LE_UINT16((const uint8 *)a);
-	int vb = (int16)READ_LE_UINT16((const uint8 *)b);
+	int va = (int16)READ_LE_UINT16((const uint8 *)a + sortArrayOffset * 2);
+	int vb = (int16)READ_LE_UINT16((const uint8 *)b + sortArrayOffset * 2);
 	return va - vb;
 }
 
 static int compareIntArrayReverse(const void *a, const void *b) {
-	int va = (int16)READ_LE_UINT16((const uint8 *)a);
-	int vb = (int16)READ_LE_UINT16((const uint8 *)b);
+	int va = (int16)READ_LE_UINT16((const uint8 *)a + sortArrayOffset * 2);
+	int vb = (int16)READ_LE_UINT16((const uint8 *)b + sortArrayOffset * 2);
 	return vb - va;
 }
 
 static int compareDwordArray(const void *a, const void *b) {
-	int va = (int32)READ_LE_UINT32((const uint8 *)a);
-	int vb = (int32)READ_LE_UINT32((const uint8 *)b);
+	int va = (int32)READ_LE_UINT32((const uint8 *)a + sortArrayOffset * 4);
+	int vb = (int32)READ_LE_UINT32((const uint8 *)b + sortArrayOffset * 4);
 	return va - vb;
 }
 
 static int compareDwordArrayReverse(const void *a, const void *b) {
-	int va = (int32)READ_LE_UINT32((const uint8 *)a);
-	int vb = (int32)READ_LE_UINT32((const uint8 *)b);
+	int va = (int32)READ_LE_UINT32((const uint8 *)a + sortArrayOffset * 4);
+	int vb = (int32)READ_LE_UINT32((const uint8 *)b + sortArrayOffset * 4);
 	return vb - va;
 }
 
+
+/**
+ * Sort a row range in a two-dimensional array by the value in a given column.
+ *
+ * We sort the data in the row range [dim2start..dim2end], according to the value
+ * in column dim1start == dim1end.
+ */
 void ScummEngine_v90he::sortArray(int array, int dim2start, int dim2end, int dim1start, int dim1end, int sortOrder) {
 	debug(9, "sortArray(%d, [%d,%d,%d,%d], %d)", array, dim2start, dim2end, dim1start, dim1end, sortOrder);
 
@@ -1992,11 +2000,21 @@ void ScummEngine_v90he::sortArray(int array, int dim2start, int dim2end, int dim
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	assert(ah);
 
-	const int num = dim2end - dim2start + 1;
-	const int pitch = FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1;
-	const int offset = pitch * (dim2start - FROM_LE_32(ah->dim2start))
-						+ dim1start - FROM_LE_32(ah->dim1start);
+	const int num = dim2end - dim2start + 1;	// number of rows to sort
+	const int pitch = FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1;	// length of a row = number of columns in it
+	const int offset = pitch * (dim2start - FROM_LE_32(ah->dim2start));	// memory offset to the first row to be sorted
+	sortArrayOffset = dim1start - FROM_LE_32(ah->dim1start);	// offset to the column by which we sort
 
+	// Now we just have to invoke qsort on the appropriate row range. We
+	// need to pass sortArrayOffset as an implicit parameter to the
+	// comparison functions, which makes it necessary to use a global
+	// (albeit local to this file) variable.
+	// This could be avoided by using qsort_r or a self-written portable
+	// analog (this function passes an additional, user determined
+	// parameter to the comparison function).
+	// Another idea would be to use Common::sort, but that only is
+	// suitable if you sort objects of fixed size, which must be known
+	// during compilation time; clearly this not the case here.
 	switch (FROM_LE_32(ah->type)) {
 	case kByteArray:
 	case kStringArray:
@@ -2039,7 +2057,6 @@ void ScummEngine_v90he::o90_sortArray() {
 			int dim2end = pop();
 			int dim2start = pop();
 			getArrayDim(array, &dim2start, &dim2end, &dim1start, &dim1end);
-			checkArrayLimits(array, dim2start, dim2end, dim1start, dim1end);
 			sortArray(array, dim2start, dim2end, dim1start, dim1end, sortOrder);
 		}
 		break;

@@ -58,7 +58,7 @@ const byte MidiDriver::_gmToMt32[128] = {
 
 static const uint32 GUIOMapping[] = {
 	MT_PCSPK,		Common::GUIO_MIDIPCSPK,
-	/*MDT_CMS,		Common::GUIO_MIDICMS,*/
+	MT_CMS,			Common::GUIO_MIDICMS,
 	MT_PCJR,		Common::GUIO_MIDIPCJR,
 	MT_ADLIB,		Common::GUIO_MIDIADLIB,
 	MT_C64,		    Common::GUIO_MIDIC64,
@@ -162,7 +162,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	case MT_AMIGA:
 		if (flags & MDT_AMIGA)
 			return hdl;
-		break;        
+		break;
 
 	case MT_APPLEIIGS:
 		if (flags & MDT_APPLEIIGS)
@@ -209,33 +209,38 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 				hdl = getDeviceHandle("auto");
 
 			const MusicType type = getMusicType(hdl);
-			if (type != MT_AUTO && type != MT_INVALID) {
-				if (flags & MDT_PREFER_MT32)
-					// If we have a preferred MT32 device we disable the gm/mt32 mapping (more about this in mididrv.h)
-					_forceTypeMT32 = true;
 
-				return hdl;
-			}
+			// If have a "Don't use GM/MT-32" setting we skip this part and jump
+			// to AdLib, PC Speaker etc. detection right away.
+			if (type != MT_NULL) {
+				if (type != MT_AUTO && type != MT_INVALID) {
+					if (flags & MDT_PREFER_MT32)
+						// If we have a preferred MT32 device we disable the gm/mt32 mapping (more about this in mididrv.h)
+						_forceTypeMT32 = true;
 
-			// If we have no specific device selected (neither in the scummvm nor in the game domain)
-			// and no preferred MT32 or GM device selected we arrive here.
-			// If MT32 is preferred we try for the first available device with music type 'MT_MT32' (usually the mt32 emulator)
-			if (flags & MDT_PREFER_MT32) {
+					return hdl;
+				}
+
+				// If we have no specific device selected (neither in the scummvm nor in the game domain)
+				// and no preferred MT32 or GM device selected we arrive here.
+				// If MT32 is preferred we try for the first available device with music type 'MT_MT32' (usually the mt32 emulator)
+				if (flags & MDT_PREFER_MT32) {
+					for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
+						MusicDevices i = (**m)->getDevices();
+						for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+							if (d->getMusicType() == MT_MT32)
+								return d->getHandle();
+						}
+					}
+				}
+
+				// Now we default to the first available device with music type 'MT_GM'
 				for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
 					MusicDevices i = (**m)->getDevices();
 					for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-						if (d->getMusicType() == MT_MT32)
+						if (d->getMusicType() == MT_GM || d->getMusicType() == MT_GS)
 							return d->getHandle();
 					}
-				}
-			}
-
-			// Now we default to the first available device with music type 'MT_GM'
-			for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
-				MusicDevices i = (**m)->getDevices();
-				for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-					if (d->getMusicType() == MT_GM || d->getMusicType() == MT_GS)
-						return d->getHandle();
 				}
 			}
 		}
@@ -247,10 +252,10 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			tp = MT_PC98;
 		else if (flags & MDT_ADLIB)
 			tp = MT_ADLIB;
-		else if (flags & MDT_PCSPK)
-			tp = MT_PCSPK;
 		else if (flags & MDT_PCJR)
 			tp = MT_PCJR;
+		else if (flags & MDT_PCSPK)
+			tp = MT_PCSPK;
 		else if (flags & MDT_C64)
 			tp = MT_C64;
 		else if (flags & MDT_AMIGA)
@@ -306,3 +311,16 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 
 	return 0;
 }
+
+void MidiDriver::sendMT32Reset() {
+	static const byte resetSysEx[] = { 0x41, 0x10, 0x16, 0x12, 0x7F, 0x00, 0x00, 0x01, 0x00 };
+	sysEx(resetSysEx, sizeof(resetSysEx));
+	g_system->delayMillis(100);
+}
+
+void MidiDriver::sendGMReset() {
+	static const byte resetSysEx[] = { 0x7E, 0x7F, 0x09, 0x01 };
+	sysEx(resetSysEx, sizeof(resetSysEx));
+	g_system->delayMillis(100);
+}
+

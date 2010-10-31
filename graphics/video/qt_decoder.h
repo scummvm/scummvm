@@ -36,6 +36,7 @@
 
 #include "common/scummsys.h"
 #include "common/queue.h"
+#include "common/rational.h"
 
 #include "graphics/video/video_decoder.h"
 #include "graphics/video/codecs/codec.h"
@@ -50,11 +51,6 @@ namespace Common {
 
 namespace Graphics {
 
-enum ScaleMode {
-	kScaleNormal = 1,
-	kScaleHalf = 2,
-	kScaleQuarter = 4
-};
 
 class QuickTimeDecoder : public RewindableVideoDecoder {
 public:
@@ -217,7 +213,8 @@ protected:
 		uint32 nb_frames;
 		uint32 duration;
 		uint32 start_time;
-		ScaleMode scaleMode;
+		Common::Rational scaleFactorX;
+		Common::Rational scaleFactorY;
 	};
 
 	const ParseTable *_parseTable;
@@ -230,7 +227,8 @@ protected:
 	MOVStreamContext *_partial;
 	uint32 _numStreams;
 	int _ni;
-	ScaleMode _scaleMode;
+	Common::Rational _scaleFactorX;
+	Common::Rational _scaleFactorY;
 	MOVStreamContext *_streams[20];
 	byte _palette[256 * 3];
 	bool _dirtyPalette;
@@ -260,7 +258,8 @@ protected:
 
 	Surface *_scaledSurface;
 	Surface *scaleSurface(Surface *frame);
-	ScaleMode getScaleMode() const;
+	Common::Rational getScaleFactorX() const;
+	Common::Rational getScaleFactorY() const;
 
 	void pauseVideoIntern(bool pause);
 

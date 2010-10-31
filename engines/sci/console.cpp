@@ -39,6 +39,7 @@
 #include "sci/sound/midiparser_sci.h"
 #include "sci/sound/music.h"
 #include "sci/sound/drivers/mididriver.h"
+#include "sci/sound/drivers/map-mt32-to-gm.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint.h"
@@ -67,7 +68,7 @@ bool g_debug_track_mouse_clicks = false;
 static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeValue);
 
 Console::Console(SciEngine *engine) : GUI::Debugger(),
-	_engine(engine), _debugState(engine->_debugState), _enterTime(0) {
+	_engine(engine), _debugState(engine->_debugState) {
 
 	// Variables
 	DVar_Register("sleeptime_factor",	&g_debug_sleeptime_factor, DVAR_INT, 0);
@@ -98,12 +99,11 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("diskdump",			WRAP_METHOD(Console, cmdDiskDump));
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
 	DCmd_Register("resource_id",		WRAP_METHOD(Console, cmdResourceId));
-	DCmd_Register("resource_size",		WRAP_METHOD(Console, cmdResourceSize));
+	DCmd_Register("resource_info",		WRAP_METHOD(Console, cmdResourceInfo));
 	DCmd_Register("resource_types",		WRAP_METHOD(Console, cmdResourceTypes));
 	DCmd_Register("list",				WRAP_METHOD(Console, cmdList));
 	DCmd_Register("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
 	DCmd_Register("verify_scripts",		WRAP_METHOD(Console, cmdVerifyScripts));
-	DCmd_Register("show_instruments",	WRAP_METHOD(Console, cmdShowInstruments));
 	// Game
 	DCmd_Register("save_game",			WRAP_METHOD(Console, cmdSaveGame));
 	DCmd_Register("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
@@ -145,6 +145,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("stopallsounds",		WRAP_METHOD(Console, cmdStopAllSounds));
 	DCmd_Register("sfx01_header",		WRAP_METHOD(Console, cmdSfx01Header));
 	DCmd_Register("sfx01_track",		WRAP_METHOD(Console, cmdSfx01Track));
+	DCmd_Register("show_instruments",	WRAP_METHOD(Console, cmdShowInstruments));
+	DCmd_Register("map_instrument",		WRAP_METHOD(Console, cmdMapInstrument));
 	// Script
 	DCmd_Register("addresses",			WRAP_METHOD(Console, cmdAddresses));
 	DCmd_Register("registers",			WRAP_METHOD(Console, cmdRegisters));
@@ -166,6 +168,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("snk",				WRAP_METHOD(Console, cmdStepCallk));	// alias
 	DCmd_Register("disasm",				WRAP_METHOD(Console, cmdDisassemble));
 	DCmd_Register("disasm_addr",		WRAP_METHOD(Console, cmdDisassembleAddress));
+	DCmd_Register("find_callk",			WRAP_METHOD(Console, cmdFindKernelFunctionCall));
 	DCmd_Register("send",				WRAP_METHOD(Console, cmdSend));
 	DCmd_Register("go",					WRAP_METHOD(Console, cmdGo));
 	DCmd_Register("logkernel",          WRAP_METHOD(Console, cmdLogKernel));
@@ -218,15 +221,10 @@ Console::~Console() {
 }
 
 void Console::preEnter() {
-	if (g_sci && g_sci->_soundCmd)
-		g_sci->_soundCmd->pauseAll(true);
-	_enterTime = g_system->getMillis();
+	_engine->pauseEngine(true);
 }
 
 void Console::postEnter() {
-	if (g_sci && g_sci->_soundCmd)
-		g_sci->_soundCmd->pauseAll(false);
-
 	if (!_videoFile.empty()) {
 		_engine->_gfxCursor->kernelHide();
 
@@ -283,8 +281,7 @@ void Console::postEnter() {
 		_videoFrameDelay = 0;
 	}
 
-	// Subtract the time we were running the debugger from the game running time
-	_engine->_gamestate->gameStartTime += g_system->getMillis() - _enterTime;
+	_engine->pauseEngine(false);
 }
 
 bool Console::cmdHelp(int argc, const char **argv) {
@@ -327,12 +324,11 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" diskdump - Dumps the specified resource to disk as a patch file\n");
 	DebugPrintf(" hexdump - Dumps the specified resource to standard output\n");
 	DebugPrintf(" resource_id - Identifies a resource number by splitting it up in resource type and resource number\n");
-	DebugPrintf(" resource_size - Shows the size of a resource\n");
+	DebugPrintf(" resource_info - Shows info about a resource\n");
 	DebugPrintf(" resource_types - Shows the valid resource types\n");
 	DebugPrintf(" list - Lists all the resources of a given type\n");
 	DebugPrintf(" hexgrep - Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers\n");
 	DebugPrintf(" verify_scripts - Performs sanity checks on SCI1.1-SCI2.1 game scripts (e.g. if they're up to 64KB in total)\n");
-	DebugPrintf(" show_instruments - Shows the instruments of a specific song, or all songs\n");
 	DebugPrintf("\n");
 	DebugPrintf("Game:\n");
 	DebugPrintf(" save_game - Saves the current game state to the hard disk\n");
@@ -372,6 +368,8 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" is_sample - Shows information on a given sound resource, if it's a PCM sample\n");
 	DebugPrintf(" sfx01_header - Dumps the header of a SCI01 song\n");
 	DebugPrintf(" sfx01_track - Dumps a track of a SCI01 song\n");
+	DebugPrintf(" show_instruments - Shows the instruments of a specific song, or all songs\n");
+	DebugPrintf(" map_instrument - Dynamically maps an MT-32 instrument to a GM instrument\n");
 	DebugPrintf("\n");
 	DebugPrintf("Script:\n");
 	DebugPrintf(" addresses - Provides information on how to pass addresses\n");
@@ -647,7 +645,7 @@ bool Console::cmdDiskDump(int argc, const char **argv) {
 			outFile->finalize();
 			outFile->close();
 			delete outFile;
-			DebugPrintf("Resource %s.%03d has been dumped to disk\n", argv[1], resNum);
+			DebugPrintf("Resource %s.%03d (located in %s) has been dumped to disk\n", argv[1], resNum, resource->getResourceLocation().c_str());
 		} else {
 			DebugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
 		}
@@ -724,9 +722,9 @@ bool Console::cmdRoomNumber(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdResourceSize(int argc, const char **argv) {
+bool Console::cmdResourceInfo(int argc, const char **argv) {
 	if (argc != 3) {
-		DebugPrintf("Shows the size of a resource\n");
+		DebugPrintf("Shows information about a resource\n");
 		DebugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
 		return true;
 	}
@@ -740,6 +738,7 @@ bool Console::cmdResourceSize(int argc, const char **argv) {
 		Resource *resource = _engine->getResMan()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
 			DebugPrintf("Resource size: %d\n", resource->size);
+			DebugPrintf("Resource location: %s\n", resource->getResourceLocation().c_str());
 		} else {
 			DebugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
 		}
@@ -860,6 +859,14 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 	delete resources;
 
 	return true;
+}
+
+// Same as in sound/drivers/midi.cpp 
+uint8 getGmInstrument(const Mt32ToGmMap &Mt32Ins) {
+	if (Mt32Ins.gmInstr == MIDI_MAPPED_TO_RHYTHM)
+		return Mt32Ins.gmRhythmKey + 0x80;
+	else
+		return Mt32Ins.gmInstr;
 }
 
 bool Console::cmdShowInstruments(int argc, const char **argv) {
@@ -1004,7 +1011,16 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 				DebugPrintf("%d, ", i);
 		}
 		DebugPrintf("\n\n");
+	}
 
+	DebugPrintf("Instruments not mapped in the MT32->GM map: ");
+	for (int i = 0; i < 128; i++) {
+		if (instruments[i] > 0 && getGmInstrument(Mt32MemoryTimbreMaps[i]) == MIDI_UNMAPPED)
+			DebugPrintf("%d, ", i);
+	}
+	DebugPrintf("\n\n");
+
+	if (songNumber == -1) {
 		DebugPrintf("Used instruments in songs:\n");
 		for (int i = 0; i < 128; i++) {
 			if (instruments[i] > 0) {
@@ -1021,6 +1037,43 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 	}
 
 	delete resources;
+	return true;
+}
+
+bool Console::cmdMapInstrument(int argc, const char **argv) {
+	if (argc != 4) {
+		DebugPrintf("Maps an MT-32 custom instrument to a GM instrument on the fly\n\n");
+		DebugPrintf("Usage %s <MT-32 instrument name> <GM instrument> <GM rhythm key>\n", argv[0]);
+		DebugPrintf("Each MT-32 instrument is always 10 characters and is mapped to either a GM instrument, or a GM rhythm key\n");
+		DebugPrintf("A value of 255 (0xff) signifies an unmapped instrument\n");
+		DebugPrintf("Please replace the spaces in the instrument name with underscores (\"_\"). They'll be converted to spaces afterwards\n\n");
+		DebugPrintf("Example: %s test_0__XX 1 255\n", argv[0]);
+		DebugPrintf("The above example will map the MT-32 instrument \"test 0  XX\" to GM instrument 1\n\n");
+	} else {
+		if (Mt32dynamicMappings != NULL) {
+			Mt32ToGmMap newMapping;
+			char *instrumentName = new char[11];
+			Common::strlcpy(instrumentName, argv[1], 11);
+
+			for (uint16 i = 0; i < strlen(instrumentName); i++)
+				if (instrumentName[i] == '_')
+					instrumentName[i] = ' ';
+
+			newMapping.name = instrumentName;
+			newMapping.gmInstr = atoi(argv[2]);
+			newMapping.gmRhythmKey = atoi(argv[3]);
+			Mt32dynamicMappings->push_back(newMapping);
+		}
+	}
+
+	DebugPrintf("Current dynamic mappings:\n");
+	if (Mt32dynamicMappings != NULL) {
+		const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
+		for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
+			DebugPrintf("\"%s\" -> %d / %d\n", (*it).name, (*it).gmInstr, (*it).gmRhythmKey);
+		}
+	}
+
 	return true;
 }
 
@@ -1101,7 +1154,7 @@ bool Console::cmdSaveGame(int argc, const char **argv) {
 	} else {
 		out->finalize();
 		if (out->err()) {
-			warning("Writing the savegame failed.");
+			warning("Writing the savegame failed");
 		}
 		delete out;
 	}
@@ -1133,18 +1186,24 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 }
 
 bool Console::cmdRestartGame(int argc, const char **argv) {
-	_engine->_gamestate->abortScriptProcessing = kAbortRestartGame;;
+	_engine->_gamestate->abortScriptProcessing = kAbortRestartGame;
 
 	return Cmd_Exit(0, 0);
 }
 
 bool Console::cmdClassTable(int argc, const char **argv) {
-	DebugPrintf("Available classes:\n");
+	DebugPrintf("Available classes (parse a parameter to filter the table by a specific class):\n");
+
 	for (uint i = 0; i < _engine->_gamestate->_segMan->classTableSize(); i++) {
-		if (_engine->_gamestate->_segMan->_classTable[i].reg.segment) {
-			DebugPrintf(" Class 0x%x at %04x:%04x (script 0x%x)\n", i,
-					PRINT_REG(_engine->_gamestate->_segMan->_classTable[i].reg),
-					_engine->_gamestate->_segMan->_classTable[i].script);
+		Class temp = _engine->_gamestate->_segMan->_classTable[i];
+		if (temp.reg.segment) {
+			const char *className = _engine->_gamestate->_segMan->getObjectName(temp.reg);
+			if (argc == 1 || (argc == 2 && !strcmp(className, argv[1]))) {
+				DebugPrintf(" Class 0x%x (%s) at %04x:%04x (script %d)\n", i,
+						className,
+						PRINT_REG(temp.reg),
+						temp.script);
+			}
 		}
 	}
 
@@ -1201,7 +1260,6 @@ bool Console::cmdParse(int argc, const char **argv) {
 		return true;
 	}
 
-	ResultWordList words;
 	char *error;
 	char string[1000];
 
@@ -1213,6 +1271,8 @@ bool Console::cmdParse(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Parsing '%s'\n", string);
+
+	ResultWordListList words;
 	bool res = _engine->getVocabulary()->tokenizeString(words, string, &error);
 	if (res && !words.empty()) {
 		int syntax_fail = 0;
@@ -1221,8 +1281,13 @@ bool Console::cmdParse(int argc, const char **argv) {
 
 		DebugPrintf("Parsed to the following blocks:\n");
 
-		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
-			DebugPrintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
+		for (ResultWordListList::const_iterator i = words.begin(); i != words.end(); ++i) {
+			DebugPrintf("   ");
+			for (ResultWordList::const_iterator j = i->begin(); j != i->end(); ++j) {
+				DebugPrintf("%sType[%04x] Group[%04x]", j == i->begin() ? "" : " / ", j->_class, j->_group);
+			}
+			DebugPrintf("\n");
+		}
 
 		if (_engine->getVocabulary()->parseGNF(words, true))
 			syntax_fail = 1; // Building a tree failed
@@ -1249,7 +1314,6 @@ bool Console::cmdSaid(int argc, const char **argv) {
 		return true;
 	}
 
-	ResultWordList words;
 	char *error;
 	char string[1000];
 	byte spec[1000];
@@ -1323,6 +1387,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 	_engine->getVocabulary()->debugDecipherSaidBlock(spec);
 	printf("\n");
 
+	ResultWordListList words;
 	bool res = _engine->getVocabulary()->tokenizeString(words, string, &error);
 	if (res && !words.empty()) {
 		int syntax_fail = 0;
@@ -1331,8 +1396,15 @@ bool Console::cmdSaid(int argc, const char **argv) {
 
 		DebugPrintf("Parsed to the following blocks:\n");
 
-		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
-			DebugPrintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
+		for (ResultWordListList::const_iterator i = words.begin(); i != words.end(); ++i) {
+			DebugPrintf("   ");
+			for (ResultWordList::const_iterator j = i->begin(); j != i->end(); ++j) {
+				DebugPrintf("%sType[%04x] Group[%04x]", j == i->begin() ? "" : " / ", j->_class, j->_group);
+			}
+			DebugPrintf("\n");
+		}
+
+
 
 		if (_engine->getVocabulary()->parseGNF(words, true))
 			syntax_fail = 1; // Building a tree failed
@@ -2621,11 +2693,88 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdFindKernelFunctionCall(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Finds the scripts and methods that call a specific kernel function.\n");
+		DebugPrintf("Usage: %s <kernel function>\n", argv[0]);
+		DebugPrintf("Example: %s Display\n", argv[0]);
+		return true;
+	}
+
+	// Find the number of the kernel function call
+	int kernelFuncNum = _engine->getKernel()->findKernelFuncPos(argv[1]);
+
+	if (kernelFuncNum < 0) {
+		DebugPrintf("Invalid kernel function requested");
+		return true;
+	}
+
+	Common::List<ResourceId> *resources = _engine->getResMan()->listResources(kResourceTypeScript);
+	Common::sort(resources->begin(), resources->end());
+	Common::List<ResourceId>::iterator itr = resources->begin();
+
+	DebugPrintf("%d scripts found, dissassembling...\n", resources->size());
+
+	int scriptSegment;
+	Script *script;
+	SegManager *segMan = _engine->getEngineState()->_segMan;
+
+	while (itr != resources->end()) {
+		// Load script
+		scriptSegment = segMan->instantiateScript(itr->getNumber());
+		script = segMan->getScript(scriptSegment);
+
+		// Iterate through all the script's objects
+		ObjMap::iterator it;
+		const ObjMap::iterator end = script->_objects.end();
+		for (it = script->_objects.begin(); it != end; ++it) {
+			const Object *obj = segMan->getObject(it->_value.getPos());
+			const char *objName = segMan->getObjectName(it->_value.getPos());
+
+			// Now dissassemble each method of the script object
+			for (uint16 i = 0; i < obj->getMethodCount(); i++) {
+				reg_t fptr = obj->getFunction(i);
+				uint16 offset = fptr.offset;
+				int16 opparams[4];
+				byte extOpcode;
+				byte opcode;
+
+				while (true) {
+					offset += readPMachineInstruction(script->getBuf(offset), extOpcode, opparams);
+					opcode = extOpcode >> 1;
+
+					if (opcode == op_callk) {
+						uint16 kFuncNum = opparams[0];
+						uint16 argc2 = opparams[1];
+
+						if (kFuncNum == kernelFuncNum) {
+							DebugPrintf("Called from script %d, object %s, method %s(%d) with %d parameters\n", 
+								itr->getNumber(), objName, 
+								_engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), i, argc2);
+						}
+					}
+
+					// Check for end of function/script
+					if (opcode == op_ret || offset >= script->getBufSize())
+						break;
+				}	// while (true)
+			}	// for (uint16 i = 0; i < obj->getMethodCount(); i++)
+		}	// for (it = script->_objects.begin(); it != end; ++it)
+
+		segMan->uninstantiateScript(itr->getNumber());
+		++itr;
+	}
+
+	delete resources;
+
+	return true;
+}
+
 bool Console::cmdSend(int argc, const char **argv) {
 	if (argc < 3) {
 		DebugPrintf("Sends a message to an object.\n");
 		DebugPrintf("Usage: %s <object> <selector name> <param1> <param2> ... <paramn>\n", argv[0]);
-		DebugPrintf("Example: send ?fooScript cue\n");
+		DebugPrintf("Example: %s ?fooScript cue\n", argv[0]);
 		return true;
 	}
 

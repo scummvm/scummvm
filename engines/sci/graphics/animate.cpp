@@ -141,6 +141,7 @@ void GfxAnimate::makeSortedList(List *list) {
 		AnimateEntry listEntry;
 		const reg_t curObject = curNode->value;
 		listEntry.object = curObject;
+		listEntry.castHandle = NULL_REG;
 
 		// Get data from current object
 		listEntry.givenOrderNo = listNr;
@@ -190,7 +191,35 @@ void GfxAnimate::makeSortedList(List *list) {
 	Common::sort(_list.begin(), _list.end(), sortHelper);
 }
 
-void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
+void GfxAnimate::applyGlobalScaling(AnimateList::iterator entry, GfxView *view) {
+	reg_t curObject = entry->object;
+
+	// Global scaling uses global var 2 and some other stuff to calculate scaleX/scaleY
+	int16 maxScale = readSelectorValue(_s->_segMan, curObject, SELECTOR(maxScale));
+	int16 celHeight = view->getHeight(entry->loopNo, entry->celNo);
+	int16 maxCelHeight = (maxScale * celHeight) >> 7;
+	reg_t globalVar2 = _s->variables[VAR_GLOBAL][2]; // current room object
+	int16 vanishingY = readSelectorValue(_s->_segMan, globalVar2, SELECTOR(vanishingY));
+
+	int16 fixedPortY = _ports->getPort()->rect.bottom - vanishingY;
+	int16 fixedEntryY = entry->y - vanishingY;
+	if (!fixedEntryY)
+		fixedEntryY = 1;
+
+	if ((celHeight == 0) || (fixedPortY == 0))
+		error("global scaling panic");
+
+	entry->scaleY = ( maxCelHeight * fixedEntryY ) / fixedPortY;
+	entry->scaleY = (entry->scaleY * 128) / celHeight;
+
+	entry->scaleX = entry->scaleY;
+
+	// and set objects scale selectors
+	writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX), entry->scaleX);
+	writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), entry->scaleY);
+}
+
+void GfxAnimate::fill(byte &old_picNotValid) {
 	reg_t curObject;
 	uint16 signal;
 	GfxView *view = NULL;
@@ -238,36 +267,14 @@ void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 			// Process global scaling, if needed
 			if (it->scaleSignal & kScaleSignalDoScaling) {
 				if (it->scaleSignal & kScaleSignalGlobalScaling) {
-					// Global scaling uses global var 2 and some other stuff to calculate scaleX/scaleY
-					int16 maxScale = readSelectorValue(_s->_segMan, curObject, SELECTOR(maxScale));
-					int16 celHeight = view->getHeight(it->loopNo, it->celNo);
-					int16 maxCelHeight = (maxScale * celHeight) >> 7;
-					reg_t globalVar2 = _s->variables[VAR_GLOBAL][2]; // current room object
-					int16 vanishingY = readSelectorValue(_s->_segMan, globalVar2, SELECTOR(vanishingY));
-
-					int16 fixedPortY = _ports->getPort()->rect.bottom - vanishingY;
-					int16 fixedEntryY = it->y - vanishingY;
-					if (!fixedEntryY)
-						fixedEntryY = 1;
-
-					if ((celHeight == 0) || (fixedPortY == 0))
-						error("global scaling panic");
-
-					it->scaleY = ( maxCelHeight * fixedEntryY ) / fixedPortY;
-					it->scaleY = (it->scaleY * 128) / celHeight;
-
-					it->scaleX = it->scaleY;
-
-					// and set objects scale selectors
-					writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX), it->scaleX);
-					writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), it->scaleY);
+					applyGlobalScaling(it, view);
 				}
 			}
 		}
 
-		//warning("%s view %d, loop %d, cel %d", _s->_segMan->getObjectName(curObject), it->viewId, it->loopNo, it->celNo);
+		//warning("%s view %d, loop %d, cel %d, signal %x", _s->_segMan->getObjectName(curObject), it->viewId, it->loopNo, it->celNo, it->signal);
 
-		bool setNsRect = maySetNsRect;
+		bool setNsRect = true;
 
 		// Create rect according to coordinates and given cel
 		if (it->scaleSignal & kScaleSignalDoScaling) {
@@ -276,8 +283,20 @@ void GfxAnimate::fill(byte &old_picNotValid, bool maySetNsRect) {
 			if ((signal & kSignalHidden) && !(signal & kSignalAlwaysUpdate))
 				setNsRect = false;
 		} else {
-			view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
+			//  This special handling is not included in the other SCI1.1 interpreters and MUST NOT be
+			//  checked in those cases, otherwise we will break games (e.g. EcoQuest 2, room 200)
+			if ((g_sci->getGameId() == GID_HOYLE4) && (it->scaleSignal & kScaleSignalHoyle4SpecialHandling)) {
+				it->celRect.left = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft));
+				it->celRect.top = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop));
+				it->celRect.right = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsRight));
+				it->celRect.bottom = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsBottom));
+				view->getCelSpecialHoyle4Rect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
+				setNsRect = false;
+			} else {
+				view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
+			}
 		}
+
 		if (setNsRect) {
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), it->celRect.left);
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop), it->celRect.top);
@@ -533,19 +552,6 @@ void GfxAnimate::reAnimate(Common::Rect rect) {
 	}
 }
 
-void GfxAnimate::preprocessAddToPicList() {
-	AnimateList::iterator it;
-	const AnimateList::iterator end = _list.end();
-
-	for (it = _list.begin(); it != end; ++it) {
-		if (it->priority == -1)
-			it->priority = _ports->kernelCoordinateToPriority(it->y);
-
-		// Do not allow priority to get changed by fill()
-		it->signal |= kSignalFixedPriority;
-	}
-}
-
 void GfxAnimate::addToPicDrawCels() {
 	reg_t curObject;
 	GfxView *view = NULL;
@@ -558,8 +564,33 @@ void GfxAnimate::addToPicDrawCels() {
 		// Get the corresponding view
 		view = _cache->getView(it->viewId);
 
+		// kAddToPic does not do loop/cel-number fixups
+
+		if (it->priority == -1)
+			it->priority = _ports->kernelCoordinateToPriority(it->y);
+
+		if (!view->isScaleable()) {
+			// Laura Bow 2 specific - ffs. fill()
+			it->scaleSignal = 0;
+			it->scaleY = it->scaleX = 128;
+		}
+
+		// Create rect according to coordinates and given cel
+		if (it->scaleSignal & kScaleSignalDoScaling) {
+			if (it->scaleSignal & kScaleSignalGlobalScaling) {
+				applyGlobalScaling(it, view);
+			}
+			view->getCelScaledRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->scaleX, it->scaleY, it->celRect);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), it->celRect.left);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop), it->celRect.top);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsRight), it->celRect.right);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsBottom), it->celRect.bottom);
+		} else {
+			view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
+		}
+
 		// draw corresponding cel
-		_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
+		_paint16->drawCel(view, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
 		if ((it->signal & kSignalIgnoreActor) == 0) {
 			it->celRect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(it->priority) - 1, it->celRect.top, it->celRect.bottom - 1);
 			_paint16->fillRect(it->celRect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
@@ -628,7 +659,7 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 	disposeLastCast();
 
 	makeSortedList(list);
-	fill(old_picNotValid, true);
+	fill(old_picNotValid);
 
 	if (old_picNotValid) {
 		// beginUpdate()/endUpdate() were introduced SCI1.
@@ -704,7 +735,6 @@ void GfxAnimate::addToPicSetPicNotValid() {
 
 void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) {
 	List *list;
-	byte tempPicNotValid = 0;
 
 	_ports->setPort((Port *)_ports->_picWind);
 
@@ -713,8 +743,6 @@ void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) 
 		error("kAddToPic called with non-list as parameter");
 
 	makeSortedList(list);
-	preprocessAddToPicList();
-	fill(tempPicNotValid, getSciVersion() >= SCI_VERSION_1_1 ? true : false);
 	addToPicDrawCels();
 
 	addToPicSetPicNotValid();

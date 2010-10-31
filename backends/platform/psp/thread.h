@@ -34,7 +34,7 @@ class PspThreadable {
 protected:
 	int _threadId;
 	virtual void threadFunction() = 0;	// this function will be called when the thread starts
-public:	
+public:
 	PspThreadable() : _threadId(-1) {}					// constructor
 	virtual ~PspThreadable() {}							// destructor
 	static int __threadCallback(SceSize, void *__this);	// used to get called by sceKernelStartThread() Don't override
@@ -43,7 +43,7 @@ public:
 
 // class for thread utils
 class PspThread {
-public:	
+public:
 	// static functions
 	static void delayMillis(uint32 ms);	// delay the current thread
 	static void delayMicros(uint32 us);
@@ -106,7 +106,7 @@ enum StackSizes {
 	STACK_DISPLAY_THREAD = 2 * 1024,
 	STACK_POWER_THREAD = 4 * 1024
 };
-	
+
 #endif /* PSP_THREADS_H */
 
 

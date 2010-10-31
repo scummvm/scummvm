@@ -73,6 +73,8 @@ public:
 	bool loadResource(const byte *data, uint size);
 	virtual uint32 property(int prop, uint32 param);
 
+	bool useRhythmChannel() const { return _rhythmKeyMap != NULL; }
+
 private:
 	enum ChannelID {
 		kLeftChannel = 1,
@@ -171,12 +173,14 @@ public:
 	int open(ResourceManager *resMan);
 	void close();
 
-	byte getPlayId();
+	byte getPlayId() const;
 	int getPolyphony() const { return MidiDriver_AdLib::kVoices; }
 	bool hasRhythmChannel() const { return false; }
 	void setVolume(byte volume) { static_cast<MidiDriver_AdLib *>(_driver)->setVolume(volume); }
 	void playSwitch(bool play) { static_cast<MidiDriver_AdLib *>(_driver)->playSwitch(play); }
 	void loadInstrument(int idx, byte *data);
+
+	int getLastChannel() const { return (static_cast<const MidiDriver_AdLib *>(_driver)->useRhythmChannel() ? 8 : 15); }
 };
 
 static const byte registerOffset[MidiDriver_AdLib::kVoices] = {
@@ -586,7 +590,7 @@ void MidiDriver_AdLib::voiceOn(int voice, int note, int velocity) {
 	}
 
 	// Set patch if different from current patch
-	if ((patch != _voices[voice].patch) && _playSwitch)
+	if (patch != _voices[voice].patch)
 		setPatch(voice, patch);
 
 	_voices[voice].velocity = velocity;
@@ -833,7 +837,7 @@ void MidiPlayer_AdLib::close() {
 	}
 }
 
-byte MidiPlayer_AdLib::getPlayId() {
+byte MidiPlayer_AdLib::getPlayId() const {
 	switch (_version) {
 	case SCI_VERSION_0_EARLY:
 		return 0x01;

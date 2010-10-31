@@ -301,9 +301,11 @@ void Codec47Decoder::makeTables47(int width) {
 	int32 a, c, d;
 	int16 tmp;
 
-	for (int l = 0; l < 512; l += 2) {
+	for (int l = 0; l < ARRAYSIZE(codec47_table); l += 2) {
 		_table[l / 2] = (int16)(codec47_table[l + 1] * width + codec47_table[l]);
 	}
+	// Note: _table[255] is never inited; but since only the first 0xF8
+	// entries of it are used anyway, this doesn't matter.
 
 	a = 0;
 	c = 0;

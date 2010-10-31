@@ -69,7 +69,7 @@ int KyraEngine_v2::o2_trySceneChange(EMCState *script) {
 	if (success) {
 		_emc->init(script, script->dataPtr);
 		_unk4 = 0;
-		_unk3 = -1;
+		_savedMouseState = -1;
 		_unk5 = 1;
 		return 0;
 	} else {

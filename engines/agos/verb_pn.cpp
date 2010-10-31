@@ -185,7 +185,7 @@ void AGOSEngine_PN::hitBox5(HitArea *ha) {
 
 	_mousePrintFG++;
 	_mouseString = (const char *)"take \0";
-	_mouseString1 = getMessage(_objectName1, _dragStore->msg1);
+	_mouseString1 = _dragStore ? getMessage(_objectName1, _dragStore->msg1) : "";
 
 	if (_dragStore->flags & kOBFRoomBox)
 		_mouseString1 = (const char *)"all\r";

@@ -23,6 +23,11 @@
  *
  */
 
+// Disable symbol overrides for FILE and fseek as those are used in the
+// Vorbis headers.
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_fseek
+
 #include "sound/decoders/vorbis.h"
 
 #ifdef USE_VORBIS

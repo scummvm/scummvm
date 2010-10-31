@@ -32,58 +32,76 @@
 
 #ifndef HUGO_DISPLAY_H
 #define HUGO_DISPLAY_H
-namespace Hugo {
 
-enum overlayState_t {UNDEF, FG, BG};                        // Overlay state
-struct rect_t;
+namespace Hugo {
+#define shapeSize 24
+
+enum overlayState_t {UNDEF, FG, BG};                // Overlay state
+struct rect_t {                                     // Rectangle used in Display list
+	int16 x;                                        // Position in dib
+	int16 y;                                        // Position in dib
+	int16 dx;                                       // width
+	int16 dy;                                       // height
+};
 
 class Screen {
 public:
-	Screen(HugoEngine &vm);
+	Screen(HugoEngine *vm);
+	virtual ~Screen();
+
+	virtual void loadFont(int16 fontId) = 0;
 
 	int16    fontHeight();
-	int16    stringLength(char *s);
+	int16    stringLength(const char *s);
 
 	void     displayBackground();
 	void     displayFrame(int sx, int sy, seq_t *seq, bool foreFl);
 	void     displayList(dupdate_t update, ...);
 	void     displayRect(int16 x, int16 y, int16 dx, int16 dy);
+	void     drawRectangle(bool filledFl, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int color);
+	void     drawShape(int x, int y, int color1, int color2);
+	void     drawStatusText();
 	void     initDisplay();
-	void     loadFont(int16 fontId);
+	void     initNewScreenDisplay();
 	void     moveImage(image_pt srcImage, uint16 x1, uint16 y1, uint16 dx, uint16 dy, uint16 width1, image_pt dstImage, uint16 x2, uint16 y2, uint16 width2);
 	void     remapPal(uint16 oldIndex, uint16 newIndex);
 	void     restorePal(Common::SeekableReadStream *f);
 	void     savePal(Common::WriteStream *f);
 	void     setBackgroundColor(long color);
-	void     shadowStr(int16 sx, int16 sy, char *s, byte color);
+	void     shadowStr(int16 sx, int16 sy, const char *s, byte color);
 	void     userHelp();
-	void     writeChar(int16 x, int16 y, char c, byte color);
-	void     writeStr(int16 sx, int16 sy, char *s, byte color);
+	void     writeChr(int sx, int sy, byte color, char *local_fontdata);
+	void     writeStr(int16 sx, int16 sy, const char *s, byte color);
 
 	icondib_t &getIconBuffer() {
 		return _iconBuffer;
 	}
+
 	viewdib_t &getBackBuffer() {
 		return _backBuffer;
 	}
+
 	viewdib_t &getBackBufferBackup() {
 		return _backBufferBackup;
 	}
+
 	viewdib_t &getFrontBuffer() {
 		return _frontBuffer;
 	}
+
 	viewdib_t &getGUIBuffer() {
 		return _GUIBuffer;
 	}
 
-private:
-	HugoEngine &_vm;
+protected:
+	HugoEngine *_vm;
 
 	// Fonts used in dib (non-GDI)
 	byte _fnt;                                      // Current font number
 	byte _fontdata[NUM_FONTS][FONTSIZE];            // Font data
 	byte *_font[NUM_FONTS][FONT_LEN];               // Ptrs to each char
 
+private:
 	viewdib_t _frontBuffer;
 	viewdib_t _backBuffer;
 	viewdib_t _GUIBuffer;                           // User interface images
@@ -94,8 +112,23 @@ private:
 	overlayState_t findOvl(seq_t *seq_p, image_pt dst_p, uint16 y);
 	void merge(rect_t *rectA, rect_t *rectB);
 	int16 mergeLists(rect_t *list, rect_t *blist, int16 len, int16 blen, int16 bmax);
-	void writeChr(int sx, int sy, byte color, char *local_fontdata);
-	int16 center(char *s);
+	int16 center(const char *s);
+};
+
+class Screen_v1d : public Screen {
+public:
+	Screen_v1d(HugoEngine *vm);
+	~Screen_v1d();
+
+	void loadFont(int16 fontId);
+};
+
+class Screen_v1w : public Screen {
+public:
+	Screen_v1w(HugoEngine *vm);
+	~Screen_v1w();
+
+	void loadFont(int16 fontId);
 };
 
 } // End of namespace Hugo

@@ -243,7 +243,7 @@
 	#define SCUMM_NEED_ALIGNMENT
 	#endif
 
-	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library 
+	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
 	// "toupper" when pressing keyboard function keys.
 	#if defined(DINGUX)
 	#undef toupper
@@ -315,12 +315,16 @@
 #elif defined(__PSP__)
 
 	#include <malloc.h>
+	#include "backends/platform/psp/memory.h"
 
 	#define scumm_stricmp strcasecmp
 	#define scumm_strnicmp strncasecmp
 
 	#define	SCUMM_LITTLE_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
+
+	/* to make an efficient, inlined memcpy implementation */
+	#define memcpy(dst, src, size)   psp_memcpy(dst, src, size)
 
 #elif defined(__amigaos4__)
 
@@ -433,5 +437,6 @@
 	typedef uint16 OverlayColor;
 #endif
 
+#include <common/forbidden.h>
 
 #endif

@@ -39,8 +39,11 @@ struct ADGameDescription;
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Newer Sierra adventure games (based on FreeSCI) 
+ *
+ * @todo give a concrete list of supported games. Could also
+ * list future games, with status for each.
  */
 namespace Sci {
 
@@ -228,6 +231,7 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
+	bool hasMacIconBar() const;
 
 	inline ResourceManager *getResMan() const { return _resMan; }
 	inline Kernel *getKernel() const { return _kernel; }
@@ -343,6 +347,8 @@ private:
 	void exitGame();
 
 	void initStackBaseWithSelector(Selector selector);
+
+	bool gameHasFanMadePatch();
 
 	const ADGameDescription *_gameDescription;
 	const SciGameId _gameId;

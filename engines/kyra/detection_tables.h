@@ -1080,6 +1080,22 @@ const KYRAGameDescription adGameDescs[] = {
 			"lol",
 			0,
 			{
+				{ "WESTWOOD.1", 0, "320b2828be595c491903f467094f05eb", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_FLOPPY_CMP_FLAGS
+	},
+
+	{
+		{
+			"lol",
+			0,
+			{
 				{ "WESTWOOD.1", 0, "3c61cb7de5b2ec452f5851f5075207ee", -1 },
 				{ 0, 0, 0, 0 }
 			},
@@ -1115,6 +1131,23 @@ const KYRAGameDescription adGameDescs[] = {
 			{
 				{ "GENERAL.PAK", 0, "0f1fabc1f67b772a30d8e05ece720ac5", -1 },
 				{ "CHAPTER7.PAK", 0, "482308aba1c40ee32449b91b0c63b990", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_FLOPPY_FLAGS
+	},
+
+	{
+		{
+			"lol",
+			"Extracted",
+			{
+				{ "GENERAL.PAK", 0, "d119e3b57f8e5edcbb90980ca6f4215a", -1 },
+				{ "CHAPTER7.PAK", 0, "71a3d3cb1554294646a389e5c345cf28", -1 },
 				{ 0, 0, 0, 0 }
 			},
 			Common::EN_ANY,

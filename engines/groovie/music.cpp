@@ -427,10 +427,14 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 				setTimbreAD(9, _timbres[i]);
 		}
 	} else if ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32")) {
+		_driver->sendMT32Reset();
+
 		// MT-32
 		_musicType = MT_MT32;
 		loadTimbres(gtlName + ".mt");
 	} else {
+		_driver->sendGMReset();
+
 		// GM
 		_musicType = 0;
 	}

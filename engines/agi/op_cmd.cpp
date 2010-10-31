@@ -492,11 +492,12 @@ void AgiEngine::cmd_init_joy(uint8 *p) { // do nothing
 }
 
 void AgiEngine::cmd_script_size(uint8 *p) {
-	report("script.size(%d)\n", p0);
+	debug(0, "script.size(%d)", p0);
 }
 
 void AgiEngine::cmd_cancel_line(uint8 *p) {
 	_game.inputBuffer[0] = 0;
+	_game.cursorPos = 0;
 	writePrompt();
 }
 
@@ -608,7 +609,7 @@ void AgiEngine::cmd_set_simple(uint8 *p) {
 
 void AgiEngine::cmd_pop_script(uint8 *p) {
 	if (getVersion() >= 0x2915) {
-		report("pop.script\n");
+		debug(0, "pop.script");
 	}
 }
 
@@ -620,7 +621,7 @@ void AgiEngine::cmd_hold_key(uint8 *p) {
 
 void AgiEngine::cmd_discard_sound(uint8 *p) {
 	if (getVersion() >= 0x2936) {
-		report("discard.sound\n");
+		debug(0, "discard.sound");
 	}
 }
 
@@ -1100,7 +1101,7 @@ void AgiEngine::cmd_set_game_id(uint8 *p) {
 	else
 		_game.id[0] = 0;
 
-	report("Game ID: \"%s\"\n", _game.id);
+	debug(0, "Game ID: \"%s\"", _game.id);
 }
 
 void AgiEngine::cmd_pause(uint8 *p) {
@@ -1452,7 +1453,7 @@ void AgiEngine::cmd_clear_text_rect(uint8 *p) {
 }
 
 void AgiEngine::cmd_toggle_monitor(uint8 *p) {
-	report("toggle.monitor\n");
+	debug(0, "toggle.monitor");
 }
 
 void AgiEngine::cmd_echo_line(uint8 *p) {
@@ -1509,7 +1510,7 @@ void AgiEngine::cmd_push_script(uint8 *p) {
 		_game.vars[29] = _mouse.y;
 	} else {
 		if (getVersion() >= 0x2915) {
-			report("push.script\n");
+			debug(0, "push.script");
 		}
 	}
 }
@@ -1517,7 +1518,7 @@ void AgiEngine::cmd_push_script(uint8 *p) {
 void AgiEngine::cmd_set_pri_base(uint8 *p) {
 	int i, x, pri;
 
-	report("Priority base set to %d\n", p0);
+	debug(0, "Priority base set to %d", p0);
 
 	// _game.alt_pri = true;
 	x = (_HEIGHT - p0) * _HEIGHT / 10;

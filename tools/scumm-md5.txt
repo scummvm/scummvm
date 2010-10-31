@@ -27,7 +27,7 @@
 #
 # Table of email addresse of contributors: Sometimes we need to add new
 #   information to this table, or need to verify the correctness of an
-#   entry. To do this, it is vital that we (1) record from who a given 
+#   entry. To do this, it is vital that we (1) record from who a given
 #   piece of information comes, and (2) how to reach that person.
 #   Hopefully, this table will help a bit. Please extend it as needed.
 #
@@ -255,8 +255,8 @@ monkey2	Monkey Island 2: LeChuck's Revenge
 	4cb9c3618f71668f8e4346c8f323fa82	10700	en	Mac	-	-	v1.0 11/5/92	Fingolfin
 	e246e02db9630533a40d99c9f54a8e01	-1	en	Mac	-	-	alt?	Lars N&aelig;sbye Christensen
 
-	da09e666fc8f5b78d7b0ac65d1a3b56e	11135	en	FM-TOWNS	-	-	-	dhewg, Andrea Petrucci
-	430bc518017b6fac046f58bab6baad5d	-1	jp	FM-TOWNS	-	-	-	Antti Leimi, Andrea Petrucci
+	da09e666fc8f5b78d7b0ac65d1a3b56e	11135	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
+	430bc518017b6fac046f58bab6baad5d	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Antti Leimi, Andrea Petrucci
 
 	387a544b8b10b26912d8413bab63a853	-1	en	DOS	-	Demo	non-interactive	khalek
 
@@ -281,13 +281,13 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	8e9417564f33790815445b2136efa667	11915	jp	Mac	-	CD	-	Petr Maruska
 	e8d0697906e53fee8b7e9f5652696da8	11915	jp	DOS	-	CD	-	Petr Maruska, tracker #3017219
 
-	c7be10f775404fd9785a8b92a06d240c	12030	en	FM-TOWNS	-	-	-	dhewg, Andrea Petrucci
-	4d34042713958b971cb139fba4658586	-1	jp	FM-TOWNS	-	-	-	Andrea Petrucci
+	c7be10f775404fd9785a8b92a06d240c	12030	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
+	4d34042713958b971cb139fba4658586	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
 
 	035deab53b47bc43abc763560d0f8d4b	-1	en	DOS	Floppy	Demo	-	
 	98744fe66ff730e8c2b3b1f58803ab0b	-1	en	DOS	Floppy	Demo	-	Simon Krumrein, sev
 	99b6f822b0b2612415407865438697d6	-1	en	DOS	-	Demo	non-interactive	
-	28d24a33448fab6795850bc9f159a4a2	11170	jp	FM-TOWNS	-	Demo	non-interactive	khalek, Fingolfin
+	28d24a33448fab6795850bc9f159a4a2	11170	jp	FM-TOWNS	FM-TOWNS	Demo	non-interactive	khalek, Fingolfin
 
 tentacle	Day of the Tentacle
 	acad97ab1c6fc2a5b2d98abf6db4a190	-1	en	All?	Floppy	Floppy	Version A ?	
@@ -392,7 +392,7 @@ football	Backyard Football
 football2002	Backyard Football 2002
 	a095616d2d23ccf43b8e257711202cba	-1	en	All	-	-	-	clone2727
 	d0549508a06bbb9f99ed19c9e97891f3	-1	en	All	-	-	-	Kirben
-	2e85f7aa054930c692a5b1bed1dfc295	-1	en	All	-	Demo	-	khalek
+	2e85f7aa054930c692a5b1bed1dfc295	-1	en	All	-	Patched	-	khalek
 
 soccer	Backyard Soccer
 	701246819d1a70573f41bf33fc19214f	-1	en	All	-	-	-	sev
@@ -745,7 +745,7 @@ puttputt	Putt-Putt Joins the Parade
 	6a30a07f353a75cdc602db27d73e1b42	-1	en	Windows	HE 70	-	-	khalek
 
 	31aa57f460a3d12429f0552a46a90b39	6150	en	DOS	Demo	Demo	-	
-	f40a7f495f59188ca57a9d1d50301bb6	-1	en	Mac	Demo	Demo	-	khalek
+	f40a7f495f59188ca57a9d1d50301bb6	-1	en	Mac	HE 60	Demo	-	khalek
 	37ff1b308999c4cca7319edfcc1280a0	8269	en	Windows	HE 70	Demo	-	khalek
 
 puttzoo	Putt-Putt Saves the Zoo

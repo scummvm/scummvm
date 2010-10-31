@@ -90,7 +90,7 @@ private:
 		uint8 line;
 	};
 
-	TextDimData _textDimData[14];
+	TextDimData *_textDimData;
 };
 
 } // End of namespace Kyra

@@ -360,12 +360,12 @@ int AgiEngine::agiInit() {
 
 	switch (getVersion() >> 12) {
 	case 2:
-		report("Emulating Sierra AGI v%x.%03x\n",
+		debug("Emulating Sierra AGI v%x.%03x\n",
 				(int)(getVersion() >> 12) & 0xF,
 				(int)(getVersion()) & 0xFFF);
 		break;
 	case 3:
-		report("Emulating Sierra AGI v%x.002.%03x\n",
+		debug("Emulating Sierra AGI v%x.002.%03x\n",
 				(int)(getVersion() >> 12) & 0xF,
 				(int)(getVersion()) & 0xFFF);
 		break;
@@ -382,10 +382,10 @@ int AgiEngine::agiInit() {
 		_game.sbuf = _game.sbuf256c;
 
 	if (_game.gameFlags & ID_AMIGA)
-		report("Amiga padded game detected.\n");
+		debug(1, "Amiga padded game detected.");
 
 	if (_game.gameFlags & ID_AGDS)
-		report("AGDS mode enabled.\n");
+		debug(1, "AGDS mode enabled.");
 
 	ec = _loader->init();	// load vol files, etc
 
@@ -577,18 +577,25 @@ void AgiEngine::initialize() {
 		_soundemu = SOUND_EMU_APPLE2GS;
 	} else if (getPlatform() == Common::kPlatformCoCo3) {
 		_soundemu = SOUND_EMU_COCO3;
+	} else if (ConfMan.get("music_driver") == "auto") {
+		// Default sound is the proper PCJr emulation
+		_soundemu = SOUND_EMU_PCJR;
 	} else {
-		switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK|MDT_ADLIB|MDT_PCJR|MDT_MIDI))) {
+		switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK|MDT_AMIGA|MDT_ADLIB|MDT_PCJR|MDT_MIDI))) {
 		case MT_PCSPK:
 			_soundemu = SOUND_EMU_PC;
-			break;
-		case MT_PCJR:
-			_soundemu = SOUND_EMU_PCJR;
 			break;
 		case MT_ADLIB:
 			_soundemu = SOUND_EMU_NONE;
 			break;
+		case MT_PCJR:
+			_soundemu = SOUND_EMU_PCJR;
+			break;
+		case MT_AMIGA:
+			_soundemu = SOUND_EMU_AMIGA;
+			break;
 		default:
+			debug(0, "DEF");
 			_soundemu = SOUND_EMU_MIDI;
 			break;
 		}
@@ -648,7 +655,7 @@ void AgiEngine::initialize() {
 		_game.state = STATE_LOADED;
 		debugC(2, kDebugLevelMain, "game loaded");
 	} else {
-		report("Could not open AGI game");
+		warning("Could not open AGI game");
 	}
 
 	debugC(2, kDebugLevelMain, "Init sound");
@@ -696,7 +703,6 @@ Common::Error AgiBase::init() {
 Common::Error AgiEngine::go() {
 	CursorMan.showMouse(true);
 
-	report(" \nAGI engine %s is ready.\n", gScummVMVersion);
 	if (_game.state < STATE_LOADED) {
 		do {
 			mainCycle();
@@ -709,6 +715,33 @@ Common::Error AgiEngine::go() {
 }
 
 void AgiEngine::parseFeatures() {
+
+	/* FIXME: Seems this method doesn't really do anything. It might
+	   be a leftover that could be removed, except that some of its
+	   intended purpose may still need to be reimplemented.
+	   
+	[0:29] <Fingolfin> can you tell me what the point behind AgiEngine::parseFeatures() is?
+	[0:30] <_sev> when games are created with WAGI studio
+	[0:31] <_sev> it creates .wag site with game-specific features such as full game title, whether to use AGIMOUSE etc
+	[0:32] <Fingolfin> ... and the "features" config key is created by our detector based on the wag file, I guess?
+	[0:33] <_sev> yes
+	[0:33] <Fingolfin> it's just that I cant seem to find a place we do that
+	[0:33] <_sev> it is used for fallback
+	[0:34] <_sev> ah, perhaps it was not updated
+	[0:34] <Fingolfin> I only see us check the value, but never set it
+	[0:34] <Fingolfin> maybe I am grepping wrong, who knows :)
+	[0:44] <Fingolfin> _sev: so, unless I miss something, it seem that function does nothing right now
+	[0:45] <_sev> Fingolfin: it could be unfinished. It was part of GSoC 3 years ago
+	[0:45] <Fingolfin> well
+	[0:45] <_sev> I just don't remember
+	[0:45] <Fingolfin> but don't we just re-parse the wag when the game is loaded anyway?
+	[0:45] <_sev> but it documents the format
+	[0:45] <Fingolfin> the advanced meta engine would re-run the detector, wouldn't it?
+	[0:45] <_sev> yep
+	[0:47] <Fingolfin> so... shouldn't we at least add a comment to the function explaining what it does and that it's unfinished etc.? maybe add a TODO to the wiki?
+	[0:47] <Fingolfin> otherwise it might stay as it is for another 3 years :)
+	*/
+
 	if (!ConfMan.hasKey("features"))
 		return;
 
@@ -740,13 +773,15 @@ void AgiEngine::parseFeatures() {
 	for (int i = 0; i < numFeatures; i++) {
 		for (const Flags *flag = flags; flag->name; flag++) {
 			if (!scumm_stricmp(feature[i], flag->name)) {
-				debug(0, "Added feature: %s", flag->name);
+				debug(2, "Added feature: %s", flag->name);
 
 				setFeature(flag->flag);
 				break;
 			}
 		}
 	}
+
+	free(features);
 }
 
 } // End of namespace Agi

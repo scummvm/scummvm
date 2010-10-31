@@ -30,6 +30,7 @@
 #include "kyra/script.h"
 #include "kyra/screen_lok.h"
 #include "kyra/gui_lok.h"
+#include "kyra/item.h"
 
 namespace Kyra {
 
@@ -46,7 +47,7 @@ struct Character {
 	uint8 height;
 	uint8 facing;
 	uint16 currentAnimFrame;
-	uint8 inventoryItems[10];
+	int8 inventoryItems[10];
 	int16 x1, y1, x2, y2;
 };
 
@@ -62,17 +63,10 @@ struct Room {
 	uint16 eastExit;
 	uint16 southExit;
 	uint16 westExit;
-	uint8 itemsTable[12];
+	int8 itemsTable[12];
 	uint16 itemsXPos[12];
 	uint8 itemsYPos[12];
 	uint8 needInit[12];
-};
-
-struct Item {
-	uint8 unk1;
-	uint8 height;
-	uint8 unk2;
-	uint8 unk3;
 };
 
 struct SeqLoop {
@@ -218,7 +212,7 @@ public:
 protected:
 	int32 _speechPlayTime;
 
-	Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail);
+	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
 	Common::Error loadGameState(int slot);
 protected:
 	// input
@@ -288,11 +282,11 @@ protected:
 	void placeItemInGenericMapScene(int item, int index);
 
 	// -> mouse item
-	void setHandItem(uint16 item);
+	void setHandItem(Item item);
 	void removeHandItem();
-	void setMouseItem(uint16 item);
+	void setMouseItem(Item item);
 
-	int getItemListIndex(uint16 item);
+	int getItemListIndex(Item item);
 
 	// -> graphics effects
 	void wipeDownMouseItem(int xpos, int ypos);
@@ -402,7 +396,7 @@ protected:
 	bool _menuDirectlyToLoad;
 	uint8 *_itemBkgBackUp[2];
 	uint8 *_shapes[373];
-	int8 _itemInHand;
+	Item _itemInHand;
 	bool _changedScene;
 	int _unkScreenVar1, _unkScreenVar2, _unkScreenVar3;
 	int _beadStateVar;
@@ -455,7 +449,7 @@ protected:
 
 	int8 *_sceneAnimTable[50];
 
-	Item _itemTable[145];
+	uint8 _itemHtDat[145];
 	int _lastProcessedItem;
 	int _lastProcessedItemHeight;
 

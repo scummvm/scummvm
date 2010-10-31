@@ -354,6 +354,16 @@ void GfxView::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, C
 	outRect.top = outRect.bottom - celInfo->height;
 }
 
+void GfxView::getCelSpecialHoyle4Rect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect &outRect) const {
+	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
+	int16 adjustY = y - celInfo->height + celInfo->displaceY + 1;
+	int16 adjustX = x - ((celInfo->width - 1) >> 1) + celInfo->displaceX;
+	outRect.top += adjustY;
+	outRect.bottom += adjustY;
+	outRect.left += adjustX;
+	outRect.right += adjustX;
+}
+
 void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect &outRect) const {
 	int16 scaledDisplaceX, scaledDisplaceY;
 	int16 scaledWidth, scaledHeight;
@@ -525,6 +535,10 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 	if (width <= 3)
 		return;
 
+	// We need at least 2 pixel lines
+	if (height < 2)
+		return;
+
 	// If EGA mapping is used for this view, dont do undithering as well
 	if (_EGAmapping)
 		return;
@@ -533,20 +547,28 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 	int16 bitmapMemorial[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
 	byte *curPtr;
 	byte color1, color2;
+	byte nextColor1, nextColor2;
 	int16 y, x;
 
 	memset(&bitmapMemorial, 0, sizeof(bitmapMemorial));
 
 	// Count all seemingly dithered pixel-combinations as soon as at least 4
-	// pixels are adjacent
+	// pixels are adjacent and check pixels in the following line as well to
+	// be the reverse pixel combination
+	int16 checkHeight = height - 1;
 	curPtr = bitmapPtr;
-	for (y = 0; y < height; y++) {
+	byte *nextPtr = curPtr + width;
+	for (y = 0; y < checkHeight; y++) {
 		color1 = curPtr[0]; color2 = (curPtr[1] << 4) | curPtr[2];
+		nextColor1 = nextPtr[0] << 4; nextColor2 = (nextPtr[2] << 4) | nextPtr[1];
 		curPtr += 3;
+		nextPtr += 3;
 		for (x = 3; x < width; x++) {
 			color1 = (color1 << 4) | (color2 >> 4);
 			color2 = (color2 << 4) | *curPtr++;
-			if (color1 == color2)
+			nextColor1 = (nextColor1 >> 4) | (nextColor2 << 4);
+			nextColor2 = (nextColor2 >> 4) | *nextPtr++ << 4;
+			if ((color1 == color2) && (color1 == nextColor1) && (color1 == nextColor2))
 				bitmapMemorial[color1]++;
 		}
 	}
@@ -583,9 +605,10 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 			if (unditherTable[color]) {
 				// Some color with black? Turn colors around, otherwise it won't
 				// be the right color at all.
+				byte unditheredColor = color;
 				if ((color & 0xF0) == 0)
-					color = (color << 4) | (color >> 4);
-				curPtr[0] = color; curPtr[1] = color;
+					unditheredColor = (color << 4) | (color >> 4);
+				curPtr[0] = unditheredColor; curPtr[1] = unditheredColor;
 			}
 			curPtr++;
 		}

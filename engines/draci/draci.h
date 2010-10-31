@@ -37,10 +37,10 @@ class OSystem;
 /**
  * This is the namespace of the Draci engine.
  *
- * Status of this engine: ???
+ * Status of this engine: Complete
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Dragon History
  */
 namespace Draci {
 
@@ -107,7 +107,6 @@ public:
 
 	Common::RandomSource _rnd;
 
-	int32 _engineStartTime;
 	int32 _pauseStartTime;
 };
 

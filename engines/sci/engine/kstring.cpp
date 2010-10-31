@@ -275,7 +275,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 					reg = readSelector(s->_segMan, reg, SELECTOR(data));
 #endif
 
-				Common::String tempsource = (reg == NULL_REG) ? "" : g_sci->getKernel()->lookupText(reg,
+				Common::String tempsource = g_sci->getKernel()->lookupText(reg,
 				                                  arguments[paramindex + 1]);
 				int slen = strlen(tempsource.c_str());
 				int extralen = str_leng - slen;
@@ -486,10 +486,12 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 	}
 #endif
 
-	if ((func != K_MESSAGE_NEXT) && (argc < 2)) {
-		warning("Message: not enough arguments passed to subfunction %d", func);
-		return NULL_REG;
-	}
+//	TODO: Perhaps fix this check, currently doesn't work with PUSH and POP subfunctions
+//	Pepper uses them to to handle the glossary
+//	if ((func != K_MESSAGE_NEXT) && (argc < 2)) {
+//		warning("Message: not enough arguments passed to subfunction %d", func);
+//		return NULL_REG;
+//	}
 
 	MessageTuple tuple;
 
@@ -558,6 +560,12 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 
 		return NULL_REG;
 	}
+	case K_MESSAGE_PUSH:
+		s->_msgState->pushCursorStack();
+		break;
+	case K_MESSAGE_POP:
+		s->_msgState->popCursorStack();
+		break;
 	default:
 		warning("Message: subfunction %i invoked (not implemented)", func);
 	}
@@ -777,6 +785,20 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	return NULL_REG;
+}
+
+/**
+ * Debug function, used in the demo of Shivers. It's marked as a stub
+ * in the original interpreter, but it gets called by the game scripts.
+ */
+reg_t kPrintDebug(EngineState *s, int argc, reg_t *argv) {
+	Common::String debugTemplate = s->_segMan->getString(argv[0]);
+	char debugString[500];
+
+	sprintf(debugString, debugTemplate.c_str(), argv[1].toUint16());
+	debugC(2, "kPrintDebug: \"%s\"\n", debugString);
+
+	return s->r_acc;
 }
 
 #endif

@@ -103,8 +103,6 @@ protected:
 
 	virtual void setBuiltinCursor(int index);
 
-	virtual void runObject(int obj, int entry);
-
 	/* Version 2 script opcodes */
 	void o2_actorFromPos();
 	void o2_actorOps();

@@ -74,8 +74,15 @@ SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, p
 	DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
 	_driver = MidiDriver::createMidi(dev);
 
+	if (ConfMan.getBool("native_mt32") || MidiDriver::getMusicType(dev) == MT_MT32) {
+		_nativeMT32 = true;
+		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+	} else {
+		_nativeMT32 = false;
+	}
+
 	memset(_channel, 0, sizeof(_channel));
-	memset(_channelVolume, 255, sizeof(_channelVolume));
+	memset(_channelVolume, 127, sizeof(_channelVolume));
 	_masterVolume = 0;
 	this->open();
 	_smfParser = MidiParser::createParser_SMF();
@@ -122,10 +129,10 @@ int SoundGenMIDI::open() {
 
 	_driver->setTimerCallback(this, &onTimer);
 
-	// General MIDI System On message
-	// Resets all GM devices to default settings
-	_driver->sysEx((const byte *)"\x7E\x7F\x09\x01", 4);
-	g_system->delayMillis(20);
+	if (_nativeMT32)
+		_driver->sendMT32Reset();
+	else
+		_driver->sendGMReset();
 
 	return 0;
 }
@@ -287,7 +294,7 @@ static uint32 convertSND2MIDI(byte *snddata, byte **data) {
 
 	for (n = 0; n < 3; n++) {
 		uint16 start, end, pos;
-        
+
 		st.write("MTrk", 4);
 		lp = st.pos();
 		st.writeUint32BE(0);        /* chunklength */

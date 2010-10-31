@@ -102,6 +102,75 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
+	{	
+		{
+			"dw",
+			"Floppy",
+			{
+				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
+				{"french.txt", 0, NULL, -1},
+				{"german.txt", 0, NULL, -1},
+				{"italian.txt", 0, NULL, -1},
+				{"spanish.txt", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE,
+			GUIO_NOSPEECH
+		},
+		GID_DW1,
+		0,
+		GF_FLOPPY | GF_USE_4FLAGS | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
+
+	{	
+		{
+			"dw",
+			"Floppy",
+			{
+				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
+				{"french.txt", 0, NULL, -1},
+				{"german.txt", 0, NULL, -1},
+				{"italian.txt", 0, NULL, -1},
+				{"spanish.txt", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE,
+			GUIO_NOSPEECH
+		},
+		GID_DW1,
+		0,
+		GF_FLOPPY | GF_USE_4FLAGS | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
+
+	{	
+		{
+			"dw",
+			"Floppy",
+			{
+				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
+				{"french.txt", 0, NULL, -1},
+				{"german.txt", 0, NULL, -1},
+				{"italian.txt", 0, NULL, -1},
+				{"spanish.txt", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE,
+			GUIO_NOSPEECH
+		},
+		GID_DW1,
+		0,
+		GF_FLOPPY | GF_USE_4FLAGS | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
+
 	{	// Floppy V1 version, with *.gra files
 		{
 			"dw",
@@ -417,6 +486,26 @@ static const TinselGameDescription gameDescriptions[] = {
 		0,
 		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
+	},
+
+	{	// English DW2 demo
+		{
+			"dw2",
+			"Demo",
+			{
+				{"dw2.scn", 0, "853ab998f5136b69bc586991175d6eeb", 4231121},
+				{"english.smp", 0, "b5660a0e031cb4710bcb0ef5629ea61d", 28562357},
+				{NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_DEMO,
+			GUIO_NONE
+		},
+		GID_DW2,
+		0,
+		GF_CD | GF_SCNFILES | GF_DEMO,
+		TINSEL_V2,
 	},
 
 	{	// European/Australian Discworld 2 release

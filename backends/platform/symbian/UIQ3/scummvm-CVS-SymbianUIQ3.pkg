@@ -35,7 +35,7 @@
 :"ScummVM"
 
 ; UID is the app's UID
-#{"ScummVM UIQ3"},(0xA0000657),1,12,0
+#{"ScummVM UIQ3"},(0xA0000657),1,13,0
 
 ; ProductID for UIQ 3.0
 ; Product/platform version UID, Major, Minor, Build, Product ID
@@ -65,6 +65,8 @@
 "..\..\..\..\dists\engine-data\m4.dat"-"c:\shared\scummvm\m4.dat"
 "..\..\..\..\dists\engine-data\teenagent.dat"-"c:\shared\scummvm\teenagent.dat"
 "..\..\..\vkeybd\packs\vkeybd_default.zip"-"c:\shared\scummvm\vkeybd_default.zip"
+"..\..\..\..\gui\themes\translations.dat"-"c:\shared\scummvm\translations.dat"
+
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"c:\shared\scummvm\scummvm.ini",FILENULL
 ""-"c:\shared\scummvm\scummvm.stdout.txt",FILENULL

@@ -966,7 +966,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI1(Common::SeekableReadStream &file) 
 class MidiPlayer_AmigaMac : public MidiPlayer {
 public:
 	MidiPlayer_AmigaMac(SciVersion version) : MidiPlayer(version) { _driver = new MidiDriver_AmigaMac(g_system->getMixer()); }
-	byte getPlayId();
+	byte getPlayId() const;
 	int getPolyphony() const { return MidiDriver_AmigaMac::kVoices; }
 	bool hasRhythmChannel() const { return false; }
 	void setVolume(byte volume) { static_cast<MidiDriver_AmigaMac *>(_driver)->setVolume(volume); }
@@ -978,7 +978,7 @@ MidiPlayer *MidiPlayer_AmigaMac_create(SciVersion version) {
 	return new MidiPlayer_AmigaMac(version);
 }
 
-byte MidiPlayer_AmigaMac::getPlayId() {
+byte MidiPlayer_AmigaMac::getPlayId() const {
 	if (_version > SCI_VERSION_0_LATE)
 		return 0x06;
 

@@ -62,6 +62,7 @@ protected:
 
 	virtual void setupScummVars();
 	virtual void resetScummVars();
+	virtual void scummLoop(int delta);
 	virtual void decodeParseString();
 
 	virtual void processInput();
@@ -136,6 +137,10 @@ protected:
 	void o_endCutscene();
 	void o_beginOverride();
 	void o_setOwnerOf();
+
+	byte VAR_ACTIVE_ACTOR;
+	byte VAR_IS_SOUND_RUNNING;
+	byte VAR_ACTIVE_VERB;
 };
 
 

@@ -57,7 +57,7 @@ public:
 
 	/**
 	 * Read resource from the Mac Binary file
-	 * @param typeID FourCC with type ID
+	 * @param typeID FourCC of the type
 	 * @param resID Resource ID to fetch
 	 * @return Pointer to a SeekableReadStream with loaded resource
 	 */
@@ -65,10 +65,19 @@ public:
 
 	/**
 	 * Read resource from the Mac Binary file
+	 * @note This will take the first resource that matches this name, regardless of type
 	 * @param filename filename of the resource
 	 * @return Pointer to a SeekableReadStream with loaded resource
 	 */
 	Common::SeekableReadStream *getResource(const Common::String &filename);
+
+	/**
+	 * Read resource from the Mac Binary file
+	 * @param typeID FourCC of the type
+	 * @param filename filename of the resource
+	 * @return Pointer to a SeekableReadStream with loaded resource
+	 */
+	Common::SeekableReadStream *getResource(uint32 typeID, const Common::String &filename);
 
 	Common::SeekableReadStream *getDataFork();
 	Common::String getResName(uint32 typeID, uint16 resID);

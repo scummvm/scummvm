@@ -172,7 +172,7 @@ void Puzzle::initPieces() {
 	_vm->_actor->getSpriteParams(puzzle, frameNumber, spriteList);
 
 	for (int i = 0; i < PUZZLE_PIECES; i++) {
-		spI = &(spriteList->infoList[i]);
+		spI = &((*spriteList)[i]);
 		_pieceInfo[i].offX = (byte)(spI->width >> 1);
 		_pieceInfo[i].offY = (byte)(spI->height >> 1);
 
@@ -347,7 +347,7 @@ void Puzzle::dropPiece(Point mousePt) {
 		if (newy < boxy)
 			newy = PUZZLE_Y_OFFSET;
 
-		spI = &(spriteList->infoList[_puzzlePiece]);
+		spI = &((*spriteList)[_puzzlePiece]);
 
 		if (newx + spI->width > boxw)
 			newx = boxw - spI->width ;
@@ -459,9 +459,9 @@ void Puzzle::solicitHint() {
 		_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 50*1000000, this);
 
 		_vm->_interface->converseClear();
-		_vm->_interface->converseAddText(optionsStr[_lang][kROAccept], 0, 1, 0, 0 );
-		_vm->_interface->converseAddText(optionsStr[_lang][kRODecline], 0, 2, 0, 0 );
-		_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0, 0 );
+		_vm->_interface->converseAddText(optionsStr[_lang][kROAccept], 0, 1, 0, 0);
+		_vm->_interface->converseAddText(optionsStr[_lang][kRODecline], 0, 2, 0, 0);
+		_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0, 0);
 		_vm->_interface->converseDisplayText();
 		break;
 

@@ -24,6 +24,9 @@
 
 #if defined(WIN32) && !defined(_WIN32_WCE)
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...
@@ -106,7 +109,7 @@ void MidiDriver_WIN::sysEx(const byte *msg, uint16 length) {
 		return;
 
 	if (WaitForSingleObject (_streamEvent, 2000) == WAIT_TIMEOUT) {
-		warning ("Could not send SysEx - MMSYSTEM is still trying to send data.");
+		warning ("Could not send SysEx - MMSYSTEM is still trying to send data");
 		return;
 	}
 

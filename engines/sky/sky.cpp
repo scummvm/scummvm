@@ -337,7 +337,7 @@ Common::Error SkyEngine::init() {
 	}
 
 	if (!_skyDisk->fileExists(60600 + SkyEngine::_systemVars.language * 8)) {
-		warning("The language you selected does not exist in your BASS version.");
+		warning("The language you selected does not exist in your BASS version");
 		if (_skyDisk->fileExists(60600))
 			SkyEngine::_systemVars.language = SKY_ENGLISH; // default to GB english if it exists..
 		else if (_skyDisk->fileExists(60600 + SKY_USA * 8))

@@ -60,8 +60,11 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(NULL), _voiceContext(NULL)
 	setVoiceBank(0);
 
 	if (_vm->getGameId() == GID_ITE) {
-		_fxTable = ITE_SfxTable;
-		_fxTableLen = ITE_SFXCOUNT;
+		_fxTable.resize(ITE_SFXCOUNT);
+		for (uint i = 0; i < _fxTable.size(); i++) {
+			_fxTable[i].res = ITE_SfxTable[i].res;
+			_fxTable[i].vol = ITE_SfxTable[i].vol;
+		}
 #ifdef ENABLE_IHNM
 	} else if (_vm->getGameId() == GID_IHNM) {
 		ResourceContext *resourceContext;
@@ -71,32 +74,24 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(NULL), _voiceContext(NULL)
 			error("Resource::loadGlobalResources() resource context not found");
 		}
 
-		byte *resourcePointer;
-		size_t resourceLength;
+		ByteArray resourceData;
 
 		if (_vm->isIHNMDemo()) {
-			_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_SFX_LUT,
-									 resourcePointer, resourceLength);
+			_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_SFX_LUT, resourceData);
 		} else {
-			_vm->_resource->loadResource(resourceContext, RID_IHNM_SFX_LUT,
-									 resourcePointer, resourceLength);
+			_vm->_resource->loadResource(resourceContext, RID_IHNM_SFX_LUT, resourceData);
 		}
 
-		if (resourceLength == 0) {
+		if (resourceData.empty()) {
 			error("Sndres::SndRes can't read SfxIDs table");
 		}
 
-		_fxTableIDsLen = resourceLength / 2;
-		_fxTableIDs = (int16 *)malloc(_fxTableIDsLen * sizeof(int16));
+		_fxTableIDs.resize(resourceData.size() / 2);
 
-		MemoryReadStream metaS(resourcePointer, resourceLength);
-		for (int i = 0; i < _fxTableIDsLen; i++)
+		ByteArrayReadStreamEndian metaS(resourceData);
+		for (uint i = 0; i < _fxTableIDs.size(); i++) {
 			_fxTableIDs[i] = metaS.readSint16LE();
-
-		free(resourcePointer);
-
-		_fxTable = 0;
-		_fxTableLen = 0;
+		}
 #endif
 #ifdef ENABLE_SAGA2
 	} else if (_vm->getGameId() == GID_DINO) {
@@ -108,12 +103,6 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(NULL), _voiceContext(NULL)
 }
 
 SndRes::~SndRes() {
-#ifdef ENABLE_IHNM
-	if (_vm->getGameId() == GID_IHNM) {
-		free(_fxTable);
-		free(_fxTableIDs);
-	}
-#endif
 }
 
 void SndRes::setVoiceBank(int serial) {
@@ -225,6 +214,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	}
 
 	Common::SeekableReadStream& readS = *file;
+	bool uncompressedSound = false;
 
 	if (soundResourceLength >= 8) {
 		byte header[8];
@@ -242,7 +232,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			resourceType = kSoundShorten;
 		}
 
-		bool uncompressedSound = false;
 		// If patch data exists for sound resource 4 (used in ITE intro), don't treat this sound as compressed
 		// Patch data for this resource is in file p2_a.iaf or p2_a.voc
 		if (_vm->getGameId() == GID_ITE && resourceId == 4 && context->getResourceData(resourceId)->patchData != NULL)
@@ -277,7 +266,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			buffer.flags &= ~Audio::FLAG_16BITS;
 		} else {
 			// Voice files in newer ITE demo versions are OKI ADPCM (VOX) encoded
-			if (!scumm_stricmp(context->fileName(), "voicesd.rsc"))
+			if (!uncompressedSound && !scumm_stricmp(context->fileName(), "voicesd.rsc"))
 				resourceType = kSoundVOX;
 		}
 	}
@@ -327,21 +316,25 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 #endif
 		} else if (resourceType == kSoundVOC) {
 			data = Audio::loadVOCFromStream(readS, size, rate);
-			result = (data != 0);
+			result = (data != NULL);
 			if (onlyHeader)
 				free(data);
 			buffer.flags |= Audio::FLAG_UNSIGNED;
+			buffer.flags &= ~Audio::FLAG_16BITS;
+			buffer.flags &= ~Audio::FLAG_STEREO;
 		}
 
 		if (result) {
 			buffer.frequency = rate;
 			buffer.size = size;
 
-			if (!onlyHeader && resourceType != kSoundVOC) {
-				buffer.buffer = (byte *)malloc(size);
-				readS.read(buffer.buffer, size);
-			} else if (!onlyHeader && resourceType == kSoundVOC) {
-				buffer.buffer = data;
+			if (!onlyHeader) {
+				if (resourceType == kSoundVOC) {
+					buffer.buffer = data;
+				} else {
+					buffer.buffer = (byte *)malloc(size);
+					readS.read(buffer.buffer, size);
+				}
 			}
 		}
 		break;

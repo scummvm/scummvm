@@ -24,10 +24,10 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 
 #include "gob/gob.h"
 #include "gob/dataio.h"
-#include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/util.h"
 
@@ -393,7 +393,7 @@ int32 DataIO::getChunkSize(const char *chunkName, int32 &packSize) {
 void DataIO::openDataFile(const char *src, bool itk) {
 	char path[128];
 
-	strncpy0(path, src, 127);
+	Common::strlcpy(path, src, 128);
 	if (!strchr(path, '.')) {
 		path[123] = 0;
 		strcat(path, ".stk");
@@ -556,7 +556,7 @@ int32 DataIO::getDataSize(const char *name) {
 	int32 chunkSize;
 	int32 packSize = -1;
 
-	strncpy0(buf, name, 127);
+	Common::strlcpy(buf, name, 128);
 
 	chunkSize = getChunkSize(buf, packSize);
 	if (chunkSize >= 0)

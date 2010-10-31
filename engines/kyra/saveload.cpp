@@ -137,7 +137,7 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 	kReadSaveHeaderError errorCode = KyraEngine_v1::readSaveHeader(in, false, header);
 	if (errorCode != kRSHENoError) {
 		if (errorCode == kRSHEInvalidType)
-			warning("No ScummVM Kyra engine savefile header.");
+			warning("No ScummVM Kyra engine savefile header");
 		else if (errorCode == kRSHEInvalidVersion)
 			warning("Savegame is not the right version (%u, '%s')", header.version, header.oldHeader ? "true" : "false");
 		else if (errorCode == kRSHEIoError)
@@ -250,7 +250,7 @@ bool KyraEngine_v1::saveFileLoadable(int slot) {
 
 void KyraEngine_v1::checkAutosave() {
 	if (shouldPerformAutoSave(_lastAutosave)) {
-		saveGameState(999, "Autosave", 0);
+		saveGameStateIntern(999, "Autosave", 0);
 		_lastAutosave = _system->getMillis();
 	}
 }

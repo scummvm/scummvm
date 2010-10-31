@@ -51,7 +51,7 @@ INCDIR = ../../../
 DEFINES  = -DUSE_VORBIS -DUSE_TREMOR -DUSE_MAD -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__ -D__PS2_DEBUG__ -g -Wall -Wno-multichar
 
 
-INCLUDES  = $(addprefix -I$(PS2_EXTRA),$(PS2_EXTRA_INCS)) 
+INCLUDES  = $(addprefix -I$(PS2_EXTRA),$(PS2_EXTRA_INCS))
 INCLUDES += -I $(PS2GDB)/ee -I $(PS2SDK)/ee/include -I $(PS2SDK)/common/include -I ./common -I . -I $(srcdir) -I $(srcdir)/engines
 
 TARGET = elf/scummvm.elf
@@ -72,16 +72,16 @@ OBJS := backends/platform/ps2/DmaPipe.o \
     backends/platform/ps2/ps2mutex.o \
     backends/platform/ps2/ps2time.o \
 	backends/platform/ps2/ps2debug.o
-    
+
 MODULE_DIRS += .
 
 BACKEND := ps2
 
 include $(srcdir)/Makefile.common
 
-LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T $(PS2SDK)/ee/startup/linkfile 
+LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T $(PS2SDK)/ee/startup/linkfile
 LDFLAGS += -L $(PS2GDB)/lib  -L $(PS2SDK)/ee/lib -L .
-LDFLAGS += $(addprefix -L$(PS2_EXTRA),$(PS2_EXTRA_LIBS)) 
+LDFLAGS += $(addprefix -L$(PS2_EXTRA),$(PS2_EXTRA_LIBS))
 LDFLAGS += -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lps2gdbStub -lps2ip -ldebug -lkernel -lstdc++
 
 all: $(TARGET)

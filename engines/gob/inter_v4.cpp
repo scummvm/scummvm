@@ -24,11 +24,11 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 #include "common/file.h"
 
 #include "gob/gob.h"
 #include "gob/inter.h"
-#include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/draw.h"
 #include "gob/game.h"
@@ -134,8 +134,8 @@ void Inter_v4::o4_initScreen() {
 	_vm->_util->setScrollOffset();
 
 	if (offY > 0) {
-		_vm->_draw->_spritesArray[24] = SurfaceDescPtr(new SurfaceDesc(videoMode, _vm->_width, offY));
-		_vm->_draw->_spritesArray[25] = SurfaceDescPtr(new SurfaceDesc(videoMode, _vm->_width, offY));
+		_vm->_draw->_spritesArray[24] = SurfacePtr(new Surface(_vm->_width, offY, _vm->getPixelFormat().bytesPerPixel));
+		_vm->_draw->_spritesArray[25] = SurfacePtr(new Surface(_vm->_width, offY, _vm->getPixelFormat().bytesPerPixel));
 		_vm->_video->_splitSurf = _vm->_draw->_spritesArray[25];
 	}
 }
@@ -145,7 +145,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 	bool close;
 
 	_vm->_game->_script->evalExpr(0);
-	strncpy0(fileName, _vm->_game->_script->getResultStr(), 127);
+	Common::strlcpy(fileName, _vm->_game->_script->getResultStr(), 128);
 
 	// WORKAROUND: The nut rolling animation in the administration center
 	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".

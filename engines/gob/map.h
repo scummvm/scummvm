@@ -30,54 +30,48 @@
 
 namespace Gob {
 
+enum RelativeDirection {
+	kRelDirNone  = 0 ,
+
+	kRelDirLeft  = (1 << 0),
+	kRelDirUp    = (1 << 1),
+	kRelDirRight = (1 << 2),
+	kRelDirDown  = (1 << 3),
+
+	kRelDirLeftUp    = kRelDirLeft  | kRelDirUp,
+	kRelDirLeftDown  = kRelDirLeft  | kRelDirDown,
+	kRelDirRightUp   = kRelDirRight | kRelDirUp,
+	kRelDirRightDown = kRelDirRight | kRelDirDown
+};
+
 // The same numeric values are also used for the arrow keys.
+enum Direction {
+	kDirNone = 0x0000,
+	kDirNW   = 0x4700,
+	kDirN    = 0x4800,
+	kDirNE   = 0x4900,
+	kDirW    = 0x4B00,
+	kDirE    = 0x4D00,
+	kDirSW   = 0x4F00,
+	kDirS    = 0x5000,
+	kDirSE   = 0x5100
+};
+
+struct WayPoint {
+	int16 x;
+	int16 y;
+	int16 notWalkable;
+};
+
+struct ItemPos {
+	int8 x;
+	int8 y;
+	int8 orient;
+};
+
 
 class Map {
 public:
-	enum {
-		kDirNW = 0x4700,
-		kDirN  = 0x4800,
-		kDirNE = 0x4900,
-		kDirW  = 0x4B00,
-		kDirE  = 0x4D00,
-		kDirSW = 0x4F00,
-		kDirS  = 0x5000,
-		kDirSE = 0x5100
-	};
-
-#include "common/pack-start.h"	// START STRUCT PACKING
-
-	struct Point {
-		int16 x;
-		int16 y;
-		int16 notWalkable;
-	} PACKED_STRUCT;
-
-#define szMap_ItemPos 3
-
-	struct ItemPos {
-		int8 x;
-		int8 y;
-		int8 orient;
-	} PACKED_STRUCT;
-
-#include "common/pack-end.h"	// END STRUCT PACKING
-
-	byte _widthByte;
-	int16 _mapWidth;
-	int16 _mapHeight;
-	int16 _screenWidth;
-	int16 _screenHeight;
-	int16 _tilesWidth;
-	int16 _tilesHeight;
-	int16 _passWidth;
-	bool _bigTiles;
-	bool _mapUnknownBool;
-
-	int8 *_passMap; // [y * _mapWidth + x], getPass(x, y);
-	int16 **_itemsMap;	// [y][x]
-	int16 _wayPointsCount;
-	Point *_wayPoints;
 	int16 _nearestWayPoint;
 	int16 _nearestDest;
 
@@ -89,12 +83,36 @@ public:
 	ItemPos _itemPoses[40];
 	char _sourceFile[15];
 
+	Map(GobEngine *vm);
+	virtual ~Map();
+
+	uint8 getVersion() const;
+
+	int16 getMapWidth() const;
+	int16 getMapHeight() const;
+
+	int16 getScreenWidth() const;
+	int16 getScreenHeight() const;
+
+	int16 getTilesWidth() const;
+	int16 getTilesHeight() const;
+
+	bool hasBigTiles() const;
+
+	int8 getPass(int x, int y, int width = -1) const;
+	void setPass(int x, int y, int8 pass, int width = -1);
+
+	const WayPoint &getWayPoint(int n) const;
+
 	void findNearestWalkable(int16 &gobDestX, int16 &gobDestY,
 		int16 mouseX, int16 mouseY);
 
+	int16 getItem(int x, int y) const;
+	void setItem(int x, int y, int16 item);
 	void placeItem(int16 x, int16 y, int16 id);
 
-	int16 getDirection(int16 x0, int16 y0, int16 x1, int16 y1);
+	Direction getDirection(int16 x0, int16 y0, int16 x1, int16 y1);
+
 	int16 checkDirectPath(Mult::Mult_Object *obj, int16 x0,
 			int16 y0, int16 x1, int16 y1);
 	int16 checkLongPath(int16 x0, int16 y0,
@@ -102,26 +120,44 @@ public:
 
 	void loadMapsInitGobs();
 
-	virtual int16 getItem(int x, int y) = 0;
-	virtual void setItem(int x, int y, int16 item) = 0;
-
-	virtual int8 getPass(int x, int y, int heightOff = -1) = 0;
-	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) = 0;
-
 	virtual void loadMapObjects(const char *avjFile) = 0;
 	virtual void findNearestToGob(Mult::Mult_Object *obj) = 0;
 	virtual void findNearestToDest(Mult::Mult_Object *obj) = 0;
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) = 0;
 
-	Map(GobEngine *vm);
-	virtual ~Map();
-
 protected:
-	bool _loadFromAvo;
-
 	GobEngine *_vm;
 
+	bool _loadFromAvo;
+
+	uint8 _mapVersion;
+
+	int16 _mapWidth;
+	int16 _mapHeight;
+
+	int16 _screenWidth;
+	int16 _screenHeight;
+
+	int16 _tilesWidth;
+	int16 _tilesHeight;
+
+	bool _bigTiles;
+
+	bool _mapUnknownBool;
+
+	int16 _passWidth;
+	int8 *_passMap; // [y * _mapWidth + x], getPass(x, y);
+
+	int16 _wayPointCount;
+	WayPoint *_wayPoints;
+
+	int16 **_itemsMap; // [y][x]
+
 	int16 findNearestWayPoint(int16 x, int16 y);
+
+private:
+	// Move the x and y values according to the direction
+	void moveDirection(Direction dir, int16 &x, int16 &y);
 };
 
 class Map_v1 : public Map {
@@ -130,37 +166,6 @@ public:
 	virtual void findNearestToGob(Mult::Mult_Object *obj);
 	virtual void findNearestToDest(Mult::Mult_Object *obj);
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);
-
-	virtual int16 getItem(int x, int y) {
-		assert(_itemsMap);
-
-		x = CLIP<int>(x, 0, _mapWidth - 1);
-		y = CLIP<int>(y, 0, _mapHeight - 1);
-
-		return _itemsMap[y][x];
-	}
-	virtual void setItem(int x, int y, int16 item) {
-		assert(_itemsMap);
-
-		x = CLIP<int>(x, 0, _mapWidth - 1);
-		y = CLIP<int>(y, 0, _mapHeight - 1);
-
-		_itemsMap[y][x] = item;
-	}
-
-	virtual int8 getPass(int x, int y, int heightOff = -1) {
-		if (!_passMap)
-			return 0;
-
-		return _passMap[y * _mapWidth + x];
-	}
-
-	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) {
-		if (!_passMap)
-			return;
-
-		_passMap[y * _mapWidth + x] = pass;
-	}
 
 	Map_v1(GobEngine *vm);
 	virtual ~Map_v1();
@@ -179,24 +184,6 @@ public:
 	virtual void findNearestToGob(Mult::Mult_Object *obj);
 	virtual void findNearestToDest(Mult::Mult_Object *obj);
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);
-
-	virtual int8 getPass(int x, int y, int heightOff = -1) {
-		if (!_passMap)
-			return 0;
-
-		if (heightOff == -1)
-			heightOff = _passWidth;
-		return _passMap[y * heightOff + x];
-	}
-
-	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) {
-		if (!_passMap)
-			return;
-
-		if (heightOff == -1)
-			heightOff = _passWidth;
-		_passMap[y * heightOff + x] = pass;
-	}
 
 	Map_v2(GobEngine *vm);
 	virtual ~Map_v2();

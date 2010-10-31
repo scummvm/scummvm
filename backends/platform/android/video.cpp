@@ -38,6 +38,9 @@
 
 #include "backends/platform/android/video.h"
 
+// Unfortunately, Android devices are too varied to make broad assumptions :/
+#define TEXSUBIMAGE_IS_EXPENSIVE 0
+
 #undef LOG_TAG
 #define LOG_TAG "ScummVM-video"
 
@@ -158,13 +161,11 @@ void GLESTexture::allocBuffer(GLuint w, GLuint h) {
 	// later (perhaps with multiple TexSubImage2D operations).
 	CHECK_GL_ERROR();
 	glBindTexture(GL_TEXTURE_2D, _texture_name);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	CHECK_GL_ERROR();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	CHECK_GL_ERROR();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	CHECK_GL_ERROR();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	CHECK_GL_ERROR();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	CHECK_GL_ERROR();
 	glTexImage2D(GL_TEXTURE_2D, 0, glFormat(),
@@ -177,6 +178,7 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 							   const void* buf, int pitch) {
 	ENTER("updateBuffer(%u, %u, %u, %u, %p, %d)", x, y, w, h, buf, pitch);
 	glBindTexture(GL_TEXTURE_2D, _texture_name);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	setDirtyRect(Common::Rect(x, y, x+w, y+h));
 
@@ -185,7 +187,25 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 						glFormat(), glType(), buf);
 	} else {
 		// GLES removed the ability to specify pitch, so we
-		// have to do this row by row.
+		// have to do this ourselves.
+		if (h == 0)
+			return;
+
+#if TEXSUBIMAGE_IS_EXPENSIVE
+		byte tmpbuf[w * h * bytesPerPixel()];
+		const byte* src = static_cast<const byte*>(buf);
+		byte* dst = tmpbuf;
+		GLuint count = h;
+		do {
+			memcpy(dst, src, w * bytesPerPixel());
+			dst += w * bytesPerPixel();
+			src += pitch;
+		} while (--count);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
+						glFormat(), glType(), tmpbuf);
+#else
+		// This version avoids the intermediate copy at the expense of
+		// repeat glTexSubImage2D calls.  On some devices this is worse.
 		const byte* src = static_cast<const byte*>(buf);
 		do {
 			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y,
@@ -193,16 +213,15 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 			++y;
 			src += pitch;
 		} while (--h);
+#endif
 	}
 }
 
 void GLESTexture::fillBuffer(byte x) {
-	byte tmpbuf[_surface.h * _surface.w * bytesPerPixel()];
-	memset(tmpbuf, 0, _surface.h * _surface.w * bytesPerPixel());
-	glBindTexture(GL_TEXTURE_2D, _texture_name);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _surface.w, _surface.h,
-					glFormat(), glType(), tmpbuf);
-	setDirty();
+	int rowbytes = _surface.w * bytesPerPixel();
+	byte tmpbuf[_surface.h * rowbytes];
+	memset(tmpbuf, x, _surface.h * rowbytes);
+	updateBuffer(0, 0, _surface.w, _surface.h, tmpbuf, rowbytes);
 }
 
 void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
@@ -215,6 +234,7 @@ void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 		//glTexEnvx(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 		const GLint crop[4] = {0, _surface.h, _surface.w, -_surface.h};
 		glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_CROP_RECT_OES, crop);
+		glColor4ub(0xff, 0xff, 0xff, 0xff);   // Android GLES bug?
 		glDrawTexiOES(x, y, 0, w, h);
 	} else
 #endif

@@ -497,8 +497,6 @@ protected:
 	bool _eos; // end of stream
 	uint32 _bufSize;
 	uint32 _realBufSize;
-	virtual void allocBuf(uint32 bufSize);	// virtual functions to allocate/deallocate the buffer
-	virtual void deallocBuf();
 
 public:
 	BufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
@@ -538,13 +536,11 @@ protected:
 	uint32 _pos;
 	uint32 _bufSize;
 	bool flushBuffer();						// write out the data in the buffer
-	virtual void allocBuf(uint32 bufSize);	// virtual functions to allocate/deallocate the buffer
-	virtual void deallocBuf();	
 
 public:
 	BufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
 	virtual ~BufferedWriteStream();
-	
+
 	virtual uint32 write(const void *dataPtr, uint32 dataSize);
 	virtual bool flush();
 };

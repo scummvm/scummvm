@@ -142,13 +142,14 @@ struct Event {
 	long duration;     // Duration of event
 	long d_reserved;
 
-	Event *chain;    // Event chain (For consecutive events)
 	Event() {
 		memset(this, 0, sizeof(*this));
 	}
 };
 
-typedef Common::List<Event> EventList;
+typedef Common::List<Event> EventColumns;
+
+typedef Common::List<EventColumns> EventList;
 
 #define EVENT_WARNINGCOUNT 1000
 #define EVENT_MASK 0x00FF
@@ -164,19 +165,26 @@ class Events {
  public:
 	Events(SagaEngine *vm);
 	~Events();
-	int handleEvents(long msec);
-	int clearList(bool playQueuedMusic = true);
-	int freeList();
-	Event *queue(Event *event);
-	Event *chain(Event *headEvent, Event *addEvent);
+	void handleEvents(long msec);
+	void clearList(bool playQueuedMusic = true);
+	void freeList();
+
+	// Schedules an event in the event list; returns a pointer to the scheduled
+	// event columns suitable for chaining if desired.
+	EventColumns *queue(const Event &event) {
+		return chain(NULL, event);
+	}
+
+	// Places a 'event' on the end of an event columns given by 'eventColumns'
+	EventColumns *chain(EventColumns *eventColumns, const Event &event);
 
  private:
 	int handleContinuous(Event *event);
 	int handleOneShot(Event *event);
 	int handleInterval(Event *event);
 	int handleImmediate(Event *event);
-	int processEventTime(long msec);
-	int initializeEvent(Event *event);
+	void processEventTime(long msec);
+	void initializeEvent(Event &event);
 
  private:
 	SagaEngine *_vm;

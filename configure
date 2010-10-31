@@ -91,6 +91,7 @@ add_engine groovie2 "Groovie 2 games" no
 add_engine hugo "Hugo Trilogy" no
 add_engine kyra "Legend of Kyrandia" yes "lol"
 add_engine lol "Lands of Lore" no
+add_engine lastexpress "The Last Express" no
 add_engine lure "Lure of the Temptress" yes
 add_engine m4 "M4/MADS" no
 add_engine made "MADE" yes
@@ -105,8 +106,11 @@ add_engine sci32 "SCI32 games" no
 add_engine sky "Beneath a Steel Sky" yes
 add_engine sword1 "Broken Sword" yes
 add_engine sword2 "Broken Sword II" yes
+add_engine sword25 "Broken Sword 2.5" no
 add_engine teenagent "Teen Agent" yes
+add_engine testbed "TestBed: the Testing framework" no
 add_engine tinsel "Tinsel" yes
+add_engine toon "Toonstruck" no
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
 add_engine tucker "Bud Tucker in Double Trouble" yes
 
@@ -121,8 +125,11 @@ _flac=auto
 _mad=auto
 _alsa=auto
 _seq_midi=auto
+_timidity=auto
 _zlib=auto
 _mpeg2=no
+_png=auto
+_theoradec=auto
 _fluidsynth=auto
 _16bit=auto
 _readline=auto
@@ -174,15 +181,15 @@ NASM=""
 # to make it possible to change e.g. the location of the
 # man pages independently of that of the engine data files,
 # which are placed inside $datadir/scummvm
-exec_prefix=NONE
 prefix=NONE
+exec_prefix=NONE
 bindir='${exec_prefix}/bin'
+libdir='${exec_prefix}/lib'
 datarootdir='${prefix}/share'
 datadir='${datarootdir}/scummvm'
-docdir='${datarootdir}/doc/scummvm'
-libdir='${exec_prefix}/lib'
-#localedir='${datarootdir}/locale'
 mandir='${datarootdir}/man'
+docdir='${datarootdir}/doc/scummvm'
+#localedir='${datarootdir}/locale'
 
 # For cross compiling
 _host=""
@@ -194,12 +201,8 @@ _host_alias=""
 _srcdir=`dirname $0`
 _port_mk="ports.mk"
 
-# Determine a tmp file name, using mktemp(1) when available.
-if type mktemp > /dev/null 2>&1 ; then
-	TMPO=`mktemp /tmp/scummvm-conf.XXXXXXXXXX`
-else
-	TMPO=./scummvm-conf
-fi
+# Use temp files in the build directory
+TMPO=./scummvm-conf
 TMPC=${TMPO}.cpp
 TMPLOG=config.log
 
@@ -365,17 +368,11 @@ get_system_exe_extension() {
 	arm-riscos)
 		_exeext=",ff8"
 		;;
-	caanoo-linux)
-		_exeext=".caanoo"
-		;;		
 	dreamcast | ds | gamecube | n64 | ps2 | psp | wii)
 		_exeext=".elf"
 		;;
-	gp2x-linux)
-		_exeext=".gp2x"
-		;;
-	gp2xwiz-linux)
-		_exeext=".wiz"
+	gph-linux)
+		_exeext=".gph"
 		;;
 	mingw* | *os2-emx | wince)
 		_exeext=".exe"
@@ -651,9 +648,9 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (caanoo, dc, gp2x, gp2xwiz, iphone,
-                          linuxmoto, ds, null, ps2, psp, sdl, wii, wince)
-                          [sdl]
+  --backend=BACKEND       backend to build (android, dc, dingux, ds, gp2x, gph,
+                          iphone, linuxmoto, maemo, n64, null, openpandora, ps2,
+                          psp, samsungtv, sdl, symbian, wii, wince) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -672,19 +669,30 @@ Fine tuning of the installation directories:
   --bindir=DIR            user executables [EPREFIX/bin]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --datarootdir=DIR       read-only arch.-independent data root [PREFIX/share]
-  --datadir=DIR           read-only architecture-independent data [DATAROOTDIR/scummvm]
+  --datadir=DIR           read-only architecture-independent data
+                          [DATAROOTDIR/scummvm]
   --mandir=DIR            man documentation [DATAROOTDIR/man]
   --docdir=DIR            documentation root [DATAROOTDIR/doc/scummvm]
 
 Special configuration feature:
   --host=HOST             cross-compile to target HOST (arm-linux, ...)
-                          special targets: dreamcast for Sega Dreamcast
+                          special targets: android for Android
+                                           caanoo for Caanoo
+                                           dingux for Dingux
+                                           dreamcast for Sega Dreamcast
+                                           ds for Nintendo DS
                                            gamecube for Nintendo GameCube
+                                           gp2x for GP2X
+                                           gp2xwiz for GP2X Wiz
                                            iphone for Apple iPhone
                                            linupy for Yopy PDA
-                                           ds for Nintendo DS
+                                           motoezx for MotoEZX
+                                           motomagx for MotoMAGX
+                                           n64 for Nintendo 64
+                                           openpandora for OpenPandora
                                            ps2 for PlayStation 2
                                            psp for PlayStation Portable
+                                           samsungtv for Samsung TV
                                            wii for Nintendo Wii
                                            wince for Windows CE
 
@@ -695,7 +703,8 @@ $engines_help
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
-  --enable-release         enable building in release mode (this activates optimizations)
+  --enable-release         enable building in release mode (this activates
+                           optimizations)
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
@@ -705,7 +714,8 @@ Optional Features:
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-translation    don't build support for translated messages
   --enable-text-console    use text console instead of graphical console
-  --enable-verbose-build   enable regular echoing of commands during build process
+  --enable-verbose-build   enable regular echoing of commands during build
+                           process
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -732,10 +742,18 @@ Optional Libraries:
 
   --disable-indeo3         disable Indeo3 decoder [autodetect]
 
-  --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is installed (optional)
+  --with-png-prefix=DIR    Prefix where libpng is installed (optional)
+  --disable-png            disable PNG decoder [autodetect]
+
+  --with-theoradec-prefix=DIR Prefix where libtheoradec is installed (optional)
+  --disable-theoradec      disable Theora decoder [autodetect]
+
+  --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is
+                           installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
-  --with-sdl-prefix=DIR    Prefix where the sdl-config script is installed (optional)
+  --with-sdl-prefix=DIR    Prefix where the sdl-config script is
+                           installed (optional)
 
   --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
@@ -765,8 +783,10 @@ for ac_option in $@; do
 	--disable-hq-scalers)     _build_hq_scalers=no ;;
 	--enable-alsa)            _alsa=yes       ;;
 	--disable-alsa)           _alsa=no        ;;
-	--enable-seq-midi)        _seq_midi=yes        ;;
-	--disable-seq-midi)       _seq_midi=no         ;;
+	--enable-seq-midi)        _seq_midi=yes   ;;
+	--disable-seq-midi)       _seq_midi=no    ;;
+	--enable-timidity)        _timidity=yes   ;;
+	--disable-timidity)       _timidity=no    ;;
 	--enable-vorbis)          _vorbis=yes     ;;
 	--disable-vorbis)         _vorbis=no      ;;
 	--enable-tremor)          _tremor=yes     ;;
@@ -782,6 +802,10 @@ for ac_option in $@; do
 	--enable-mpeg2)           _mpeg2=yes      ;;
 	--disable-indeo3)         _indeo3=no      ;;
 	--enable-indeo3)          _indeo3=yes     ;;
+	--disable-png)            _png=no         ;;
+	--enable-png)             _png=yes        ;;
+	--disable-theoradec)      _theoradec=no   ;;
+	--enable-theoradec)       _theoradec=yes  ;;
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
@@ -838,6 +862,16 @@ for ac_option in $@; do
 		MAD_CFLAGS="-I$arg/include"
 		MAD_LIBS="-L$arg/lib"
 		;;
+	--with-png-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		PNG_CFLAGS="-I$arg/include"
+		PNG_LIBS="-L$arg/lib"
+		;;
+	--with-theoradec-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		THEORADEC_CFLAGS="-I$arg/include"
+		THEORADEC_LIBS="-L$arg/lib"
+		;;
 	--with-zlib-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		ZLIB_CFLAGS="-I$arg/include"
@@ -883,17 +917,17 @@ for ac_option in $@; do
 	--host=*)
 		_host=`echo $ac_option | cut -d '=' -f 2`
 		;;
-	--exec-prefix=*)
-		exec_prefix=`echo $ac_option | cut -d '=' -f 2`
-		;;
 	--prefix=*)
 		prefix=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--exec-prefix=*)
+		exec_prefix=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--bindir=*)
 		bindir=`echo $ac_option | cut -d '=' -f 2`
 		;;
-	--mandir=*)
-		mandir=`echo $ac_option | cut -d '=' -f 2`
+	--libdir=*)
+		libdir=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--datarootdir=*)
 		datarootdir=`echo $ac_option | cut -d '=' -f 2`
@@ -901,8 +935,11 @@ for ac_option in $@; do
 	--datadir=*)
 		datadir=`echo $ac_option | cut -d '=' -f 2`
 		;;
-	--libdir=*)
-		libdir=`echo $ac_option | cut -d '=' -f 2`
+	--mandir=*)
+		mandir=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--docdir=*)
+		docdir=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--enable-all-engines)
 		engine_enable_all
@@ -937,9 +974,18 @@ arm-riscos)
 	_host_cpu=arm
 	;;
 caanoo)
-	_host_os=caanoo-linux
+	_host_os=gph-linux
 	_host_cpu=arm
 	_host_alias=arm-none-linux-gnueabi
+	if test "$_debug_build" = auto; then
+		# If you want to debug on the Caanoo use '--disable-release --enable-debug'
+		_debug_build=no
+	fi
+
+	if test "$_release_build" = auto; then
+		# Enable release build by default.
+		_release_build=yes
+	fi
 	;;
 dingux)
 	_host_os=linux
@@ -964,14 +1010,32 @@ gamecube)
 	_host_alias=powerpc-gekko
 	;;
 gp2x)
-	_host_os=gp2x-linux
+	_host_os=gph-linux
 	_host_cpu=arm
 	_host_alias=arm-open2x-linux
+	if test "$_debug_build" = auto; then
+		# If you want to debug on the GP2X use '--disable-release --enable-debug'
+		_debug_build=no
+	fi
+
+	if test "$_release_build" = auto; then
+		# Enable release build by default.
+		_release_build=yes
+	fi
 	;;
 gp2xwiz)
-	_host_os=gp2xwiz-linux
+	_host_os=gph-linux
 	_host_cpu=arm
 	_host_alias=arm-open2x-linux
+	if test "$_debug_build" = auto; then
+		# If you want to debug on the GP2XWiz use '--disable-release --enable-debug'
+		_debug_build=no
+	fi
+
+	if test "$_release_build" = auto; then
+		# Enable release build by default.
+		_release_build=yes
+	fi
 	;;
 i586-mingw32msvc)
 	_host_os=mingw32msvc
@@ -996,7 +1060,7 @@ motomagx)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
-n64)	
+n64)
 	_host_os=n64
 	_host_cpu=mips
 	_host_alias=mips64
@@ -1004,6 +1068,20 @@ n64)
 neuros)
 	_host_os=linux
 	_host_cpu=arm
+	;;
+openpandora)
+	_host_os=linux
+	_host_cpu=arm
+	_host_alias=arm-angstrom-linux-gnueabi
+	if test "$_debug_build" = auto; then
+		# If you want to debug on the OP use '--disable-release --enable-debug'
+		_debug_build=no
+	fi
+
+	if test "$_release_build" = auto; then
+		# Enable release build by default.
+		_release_build=yes
+	fi
 	;;
 ppc-amigaos)
 	_host_os=amigaos
@@ -1100,10 +1178,10 @@ HOSTEXEEXT=$_exeext
 # Determine separator used for $PATH
 #
 case $_host_os in
-os2-emx* )
+os2-emx*)
 	SEPARATOR=";"
 	;;
-* )
+*)
 	SEPARATOR=":"
 	;;
 esac
@@ -1186,12 +1264,12 @@ else
 	CXX=
 	for compiler in $compilers; do
 		if test_compiler $compiler; then
-			echo "success testing compiler: $1" >> "$TMPLOG"
+			echo "success testing compiler: $compiler" >> "$TMPLOG"
 			CXX=$compiler
 			echo $CXX
 			break
 		else
-			echo "failure testing compiler: $1" >> "$TMPLOG"
+			echo "failure testing compiler: $compiler" >> "$TMPLOG"
 		fi
 	done
 fi
@@ -1487,6 +1565,7 @@ case $_host_os in
 		DEFINES="$DEFINES -D__N64__ -DLIMIT_FPS -DNONSTANDARD_PORT"
 		DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_COMMAND_LINE"
 		DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU"
+		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		;;
 	os2-emx*)
 		_unix=yes	# FIXME??? Why??
@@ -1565,7 +1644,15 @@ if test -n "$_host"; then
 			_need_memalign=yes
 			;;
 		caanoo)
-			DEFINES="$DEFINES -DGP2XWIZ -DCAANOO -DNDEBUG"
+			# This uses the GPH backend.
+			DEFINES="$DEFINES -DGPH_DEVICE"
+			DEFINES="$DEFINES -DCAANOO -DREDUCE_MEMORY_USAGE"
+			if test "$_debug_build" = yes; then
+				DEFINES="$DEFINES -DGPH_DEBUG"
+			else
+				# Use -O3 on the Caanoo for non-debug builds.
+				CXXFLAGS="$CXXFLAGS -O3"
+			fi
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 			ASFLAGS="$ASFLAGS"
 			_unix=yes
@@ -1575,19 +1662,19 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
-			_backend="gp2xwiz"
+			_backend="gph"
 			_build_hq_scalers=no
 			_mt32emu=no
 			_vkeybd=yes
 			_seq_midi=no
-			_port_mk="backends/platform/gp2xwiz/caanoo/caanoo-bundle.mk"
-			;;			
+			_port_mk="backends/platform/gph/caanoo-bundle.mk"
+			;;
 		*darwin*)
 			_ranlib=$_host-ranlib
 			_strip=$_host-strip
 			;;
 		dingux)
-			DEFINES="$DEFINES -DUNIX -DDINGUX -DDISABLE_DOSBOX_OPL"
+			DEFINES="$DEFINES -DUNIX -DDINGUX -DDISABLE_DOSBOX_OPL -DREDUCE_MEMORY_USAGE"
 			ASFLAGS="$ASFLAGS"
 			CXXFLAGS="$CXXFLAGS -msoft-float -mips32"
 			_need_memalign=yes
@@ -1600,6 +1687,7 @@ if test -n "$_host"; then
 			_vorbis=no
 			# Force disable seq on dingux, no way to use it and it would get enabled by default with configure
 			_seq_midi=no
+			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		dreamcast)
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
@@ -1647,7 +1735,12 @@ if test -n "$_host"; then
 			add_line_to_config_h "#define USE_WII_DI"
 			;;
 		gp2x)
-			DEFINES="$DEFINES -DGP2X -DNDEBUG"
+			# This uses the GPH backend.
+			DEFINES="$DEFINES -DGPH_DEVICE"	
+			DEFINES="$DEFINES -DGP2X -DREDUCE_MEMORY_USAGE"
+			if test "$_debug_build" = yes; then
+				DEFINES="$DEFINES -DGPH_DEBUG"
+			fi
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			LDFLAGS="$LDFLAGS -static"
@@ -1666,7 +1759,12 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/gp2x/gp2x-bundle.mk"
 			;;
 		gp2xwiz)
-			DEFINES="$DEFINES -DGP2XWIZ -DNDEBUG"
+			# This uses the GPH backend.
+			DEFINES="$DEFINES -DGPH_DEVICE"
+			DEFINES="$DEFINES -DGP2XWIZ -DREDUCE_MEMORY_USAGE"
+			if test "$_debug_build" = yes; then
+				DEFINES="$DEFINES -DGPH_DEBUG"
+			fi
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_unix=yes
@@ -1676,12 +1774,12 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
-			_backend="gp2xwiz"
+			_backend="gph"
 			_build_hq_scalers=no
 			_mt32emu=no
 			_vkeybd=yes
 			_seq_midi=no
-			_port_mk="backends/platform/gp2xwiz/gp2xwiz-bundle.mk"
+			_port_mk="backends/platform/gph/gp2xwiz-bundle.mk"
 			;;
 		iphone)
 			DEFINES="$DEFINES -DIPHONE"
@@ -1709,6 +1807,8 @@ if test -n "$_host"; then
 			_ranlib=$_host-ranlib
 			;;
 		mips-sgi*)
+			LDFLAGS="$LDFLAGS -static-libgcc"
+			LIBS="$LIBS -laudio"
 			_endian=big
 			_need_memalign=yes
 			;;
@@ -1767,6 +1867,7 @@ if test -n "$_host"; then
 			_mad=yes
 			_tremor=yes
 			_zlib=yes
+			_port_mk="backends/platform/n64/n64.mk"
 			;;
 		neuros)
 			DEFINES="$DEFINES -DNEUROS"
@@ -1775,6 +1876,30 @@ if test -n "$_host"; then
 			_backend='null'
 			_build_hq_scalers=no
 			_mt32emu=no
+			;;
+		openpandora)
+			DEFINES="$DEFINES -DOPENPANDORA -DREDUCE_MEMORY_USAGE"
+			if test "$_release_build" = no; then
+				DEFINES="$DEFINES -DOP_DEBUG"
+			else
+				# Use -O3 on the OpenPandora for non-debug builds.
+				CXXFLAGS="$CXXFLAGS -O3"
+			fi
+			CXXFLAGS="$CXXFLAGS -march=armv7-a -mtune=cortex-a8 -mfpu=neon"
+			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
+			_unix=yes
+			_need_memalign=yes
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_backend="openpandora"
+			_build_hq_scalers=yes
+			_mt32emu=no
+			_vkeybd=no
+			_seq_midi=no
+			_port_mk="backends/platform/openpandora/op-bundle.mk"
 			;;
 		ppc-amigaos)
 			_endian=big
@@ -1918,7 +2043,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	dreamcast | dingux | samsungtv | sdl | wii | psp)
+	dingux | dreamcast | gph | openpandora | psp | samsungtv | sdl | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -2038,6 +2163,24 @@ _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/wii/plugin.ld
 '
 		;;
+	gph*)
+_def_plugin='
+#define PLUGIN_PREFIX	""
+#define PLUGIN_SUFFIX	".plugin"
+'
+_mak_plugins='
+DYNAMIC_MODULES := 1
+PLUGIN_PREFIX :=
+PLUGIN_SUFFIX := .plugin
+PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
+CXXFLAGS        += -DDYNAMIC_MODULES
+CXXFLAGS        += -fpic
+PLUGIN_LDFLAGS  += -shared
+PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
+POST_OBJS_FLAGS := -Wl,-no-whole-archive
+LIBS            += -ldl
+'
+		;;
 	linux*|android)
 _def_plugin='
 #define PLUGIN_PREFIX	"lib"
@@ -2085,7 +2228,7 @@ PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backend
 		DEFINES="$DEFINES -DMIPS_TARGET -DELF_LOADER_CXA_ATEXIT"
 _mak_plugins='
 LDFLAGS				+= -Wl,-T$(srcdir)/backends/platform/psp/main_prog.ld
-PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lc -Wl,--wrap,memcpy
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lc
 '
 		;;
 	*)
@@ -2275,6 +2418,62 @@ define_in_config_h_if_yes "$_alsa" 'USE_ALSA'
 echo "$_alsa"
 
 #
+# Check for PNG
+#
+echocheck "PNG >= 1.2.8"
+if test "$_png" = auto ; then
+	_png=no
+	cat > $TMPC << EOF
+#include <png.h>
+int main(void) {
+#if PNG_LIBPNG_VER >= 10208
+#else
+  syntax error
+#endif
+  return 0;
+}
+EOF
+	cc_check $PNG_CFLAGS $PNG_LIBS -lpng && _png=yes
+fi
+if test "$_png" = yes ; then
+	LIBS="$LIBS $PNG_LIBS -lpng"
+	INCLUDES="$INCLUDES $PNG_CFLAGS"
+fi
+define_in_config_if_yes "$_png" 'USE_PNG'
+echo "$_png"
+
+if test `get_engine_build sword25` = yes && test ! "$_png" = yes ; then
+	echo "...disabling Broken Sword 2.5 engine. PNG is required"
+	engine_disable sword25
+fi
+
+#
+# Check for Theora Decoder
+#
+echocheck "libtheoradec >= 1.0"
+if test "$_vorbis" = no ; then
+	echo "skipping. no vorbis"
+	_theoradec=notsupported
+fi
+if test "$_theoradec" = auto ; then
+	_theoradec=no
+	cat > $TMPC << EOF
+#include <theora/theoradec.h>
+#include <vorbis/codec.h>
+int main(void) { th_ycbcr_buffer yuv; th_decode_ycbcr_out(NULL, yuv);  }
+EOF
+	cc_check $THEORADEC_CFLAGS $THEORADEC_LIBS -ltheoradec && _theoradec=yes
+fi
+if test "$_theoradec" = yes ; then
+	LIBS="$LIBS $THEORADEC_LIBS -ltheoradec"
+	INCLUDES="$INCLUDES $THEORADEC_CFLAGS"
+fi
+define_in_config_if_yes "$_theoradec" 'USE_THEORADEC'
+if test ! "$_theoradec" = notsupported ; then
+	echo "$_theoradec"
+fi
+
+#
 # Check for SEQ MIDI
 #
 echocheck "SEQ MIDI"
@@ -2286,6 +2485,19 @@ if test "$_seq_midi" = auto ; then
 fi
 define_in_config_h_if_yes "$_seq_midi" 'USE_SEQ_MIDI'
 echo "$_seq_midi"
+
+#
+# Check for TiMidity(++)
+#
+echocheck "TiMidity"
+if test "$_timidity" = auto ; then
+	# TODO: Is there a good possibility of auto detecting whether we
+	# should include TiMidity support? It can only be used on Unix
+	# currently so we use that as "detection" for now.
+	_timidity="$_unix"
+fi
+define_in_config_h_if_yes "$_timidity" 'USE_TIMIDITY'
+echo "$_timidity"
 
 #
 # Check for ZLib
@@ -2452,14 +2664,14 @@ if test "$_have_x86" = yes ; then
 			_nasm=no
 		else
 			case $_host_os in
-				os2-emx*)
-					NASMFLAGS="$NASMFLAGS -f aout"
+				darwin*)
+					NASMFLAGS="$NASMFLAGS -f macho"
 				;;
 				mingw*)
 					NASMFLAGS="$NASMFLAGS -f win32"
 				;;
-				darwin*)
-					NASMFLAGS="$NASMFLAGS -f macho"
+				os2-emx*)
+					NASMFLAGS="$NASMFLAGS -f aout"
 				;;
 				*)
 					NASMFLAGS="$NASMFLAGS -f elf"
@@ -2513,8 +2725,16 @@ test "x$prefix" = xNONE && prefix=/usr/local
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
 DEFINES="$DEFINES -DDATA_PATH=\\\"$datadir\\\""
-DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir/scummvm\\\""
 
+case $_backend in
+	openpandora)
+		# Add ../plugins as a path so plugins can be found when running from a .PND.
+		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"../plugins\\\""
+		;;
+	*)
+		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir/scummvm\\\""
+		;;
+esac
 
 #
 # Set variables for profiling.
@@ -2603,13 +2823,6 @@ case $_backend in
 		add_line_to_config_mk 'PLUGIN_LDFLAGS += -Lbuild.tmp -lscummvm'
 		add_line_to_config_mk 'PLUGIN_EXTRA_DEPS += build.tmp/libscummvm.so'
 		;;
-	caanoo)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		LDFLAGS="$LDFLAGS"
-		CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
-		;;		
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
 		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
@@ -2633,15 +2846,13 @@ case $_backend in
 		find_sdlconfig
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		LDFLAGS="$LDFLAGS -static"
-		CXXFLAGS="$CXXFLAGS -march=armv4t"
+		LDFLAGS="$LDFLAGS"
 		;;
-	gp2xwiz)
+	gph)
 		find_sdlconfig
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		LDFLAGS="$LDFLAGS"
-		CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 		;;
 	iphone)
 		OBJCFLAGS="$OBJCFLAGS --std=c99"
@@ -2663,6 +2874,12 @@ case $_backend in
 	null)
 		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
 		;;
+	openpandora)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		LDFLAGS="$LDFLAGS"
+		;;
 	ps2)
 		# TODO ps2
 		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
@@ -2674,9 +2891,8 @@ case $_backend in
 		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
 		;;
 	psp)
-		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
+		DEFINES="$DEFINES -D__PSP__ -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
 		LIBS="$LIBS -lpng -Wl,-Map,mapfile.txt"
-		LDFLAGS="$LDFLAGS -Wl,--wrap,memcpy"
 		;;
 	samsungtv)
 		find_sdlconfig
@@ -2722,7 +2938,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		amigaos* | android | ds | dreamcast | gamecube | mingw* | n64 | psp | wii | wince )
+		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | wii | wince )
 			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 			;;
 		*)
@@ -2886,11 +3102,11 @@ NASMFLAGS := $NASMFLAGS
 prefix = $prefix
 exec_prefix = $exec_prefix
 bindir = $bindir
+libdir = $libdir
 datarootdir = $datarootdir
 datadir = $datadir
-docdir = $docdir
-libdir = $libdir
 mandir = $mandir
+docdir = $docdir
 
 $_config_mk_data
 

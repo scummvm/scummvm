@@ -78,6 +78,7 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer)
 	_curSoundPos(0),
 	_currentCDSound(0),
 	_currentMusic(0),
+	_lastSound(0),
 	_soundsPaused(false),
 	_sfxMode(0) {
 
@@ -95,6 +96,7 @@ Sound::~Sound() {
 void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {
 	if (_vm->VAR_LAST_SOUND != 0xFF)
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
+	_lastSound = sound;
 
 	// HE music resources are in separate file
 	if (sound <= _vm->_numSounds)
@@ -243,7 +245,7 @@ void Sound::playSound(int soundID) {
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
-	else if (READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
+	else if (_vm->_game.platform != Common::kPlatformFMTowns && READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
 		debugC(DEBUG_SOUND, "Using SBL sound effect");
 
 		// SBL resources essentially contain VOC sound data.
@@ -312,7 +314,7 @@ void Sound::playSound(int soundID) {
 		sound = (byte *)malloc(size);
 		memcpy(sound, ptr + 6, size);
 		stream = Audio::makeRawStream(sound, size, rate, Audio::FLAG_UNSIGNED);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);			
 	}
 	else if (_vm->_game.platform != Common::kPlatformFMTowns && READ_BE_UINT32(ptr) == MKID_BE('SOUN')) {
 		if (_vm->_game.version != 3)
@@ -789,6 +791,7 @@ void Sound::stopAllSounds() {
 	}
 
 	// Clear the (secondary) sound queue
+	_lastSound = 0;
 	_soundQue2Pos = 0;
 	memset(_soundQue2, 0, sizeof(_soundQue2));
 

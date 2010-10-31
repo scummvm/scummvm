@@ -541,6 +541,9 @@ void Converse::loadConversation(const char *convName) {
 					if (debugFlag) printf("Reply data offset: %i\n", data);
 				}
 
+				if (!curEntry)
+					error("Converse::loadConversation(): curEntry is NULL while adding a reply");
+
 				curEntry->entries.push_back(replyEntry);
 				setEntryInfo(replyEntry->offset, replyEntry->entryType,
 							 curNode, _convNodes[curNode]->entries.size() - 1);
@@ -572,6 +575,8 @@ void Converse::loadConversation(const char *convName) {
 				} else if (replyEntry != NULL && replyEntry->entryType == kWeightedReply) {
 					parentEntry = replyEntry->entries[currentWeightedEntry];
 					currentWeightedEntry++;
+				} else {
+					error("Converse::loadConversation(): Unexpected reply entry while processing TEXT/MESG chunk");
 				}
 
 				size = convS->readUint32LE();

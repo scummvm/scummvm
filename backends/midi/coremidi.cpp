@@ -24,6 +24,9 @@
 
 #ifdef MACOSX
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/config-manager.h"
 #include "common/util.h"
 #include "sound/musicplugin.h"

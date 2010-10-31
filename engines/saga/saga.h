@@ -49,7 +49,7 @@ struct ADGameFileDescription;
  * SAGA2 status: in early stages of development, no recent activity. Contact sev
  *  if you want to work on it, since we have some original source codes.
  *
- * Supported games:
+ * Games using this engine:
  *
  * SAGA:
  * - Inherit the Earth
@@ -86,7 +86,7 @@ class ResourceContext;
 using Common::MemoryReadStream;
 using Common::MemoryReadStreamEndian;
 
-//#define SAGA_DEBUG 1		// define for test functions
+// #define SAGA_DEBUG 1		// define for test functions
 #define SAGA_IMAGE_DATA_OFFSET 776
 #define SAGA_IMAGE_HEADER_LEN  8
 
@@ -155,40 +155,40 @@ enum GameFeatures {
 };
 
 enum VerbTypeIds {
-        kVerbITENone = 0,
-        kVerbITEPickUp = 1,
-        kVerbITELookAt = 2,
-        kVerbITEWalkTo = 3,
-        kVerbITETalkTo = 4,
-        kVerbITEOpen = 5,
-        kVerbITEClose = 6,
-        kVerbITEGive = 7,
-        kVerbITEUse = 8,
-        kVerbITEOptions = 9,
-        kVerbITEEnter = 10,
-        kVerbITELeave = 11,
-        kVerbITEBegin = 12,
-        kVerbITEWalkOnly = 13,
-        kVerbITELookOnly = 14,
+	kVerbITENone = 0,
+	kVerbITEPickUp = 1,
+	kVerbITELookAt = 2,
+	kVerbITEWalkTo = 3,
+	kVerbITETalkTo = 4,
+	kVerbITEOpen = 5,
+	kVerbITEClose = 6,
+	kVerbITEGive = 7,
+	kVerbITEUse = 8,
+	kVerbITEOptions = 9,
+	kVerbITEEnter = 10,
+	kVerbITELeave = 11,
+	kVerbITEBegin = 12,
+	kVerbITEWalkOnly = 13,
+	kVerbITELookOnly = 14,
 
 
-        kVerbIHNMNone = 0,
-        kVerbIHNMWalk = 1,
-        kVerbIHNMLookAt = 2,
-        kVerbIHNMTake = 3,
-        kVerbIHNMUse = 4,
-        kVerbIHNMTalkTo = 5,
-        kVerbIHNMSwallow = 6,
-        kVerbIHNMGive = 7,
-        kVerbIHNMPush = 8,
-        kVerbIHNMOptions = 9,
-        kVerbIHNMEnter = 10,
-        kVerbIHNMLeave = 11,
-        kVerbIHNMBegin = 12,
-        kVerbIHNMWalkOnly = 13,
-        kVerbIHNMLookOnly = 14,
+	kVerbIHNMNone = 0,
+	kVerbIHNMWalk = 1,
+	kVerbIHNMLookAt = 2,
+	kVerbIHNMTake = 3,
+	kVerbIHNMUse = 4,
+	kVerbIHNMTalkTo = 5,
+	kVerbIHNMSwallow = 6,
+	kVerbIHNMGive = 7,
+	kVerbIHNMPush = 8,
+	kVerbIHNMOptions = 9,
+	kVerbIHNMEnter = 10,
+	kVerbIHNMLeave = 11,
+	kVerbIHNMBegin = 12,
+	kVerbIHNMWalkOnly = 13,
+	kVerbIHNMLookOnly = 14,
 
-        kVerbTypeIdsMax = kVerbITELookOnly + 1
+	kVerbTypeIdsMax = kVerbITELookOnly + 1
 };
 
 enum PanelButtonType {
@@ -381,30 +381,21 @@ struct ImageHeader {
 };
 
 struct StringsTable {
-	byte *stringsPointer;
-	int stringsCount;
-	const char **strings;
+	Common::Array<char> buffer;
+	Common::Array<char *> strings;
 
-	const char *getString(int index) const {
-		if ((stringsCount <= index) || (index < 0)) {
+	const char *getString(uint index) const {
+		if (strings.size() <= index) {
 			// This occurs at the end of Ted's chapter, right after the ending cutscene
-			warning("StringsTable::getString wrong index 0x%X (%d)", index, stringsCount);
+			warning("StringsTable::getString wrong index 0x%X (%d)", index, strings.size());
 			return "";
 		}
 		return strings[index];
 	}
 
-	void freeMem() {
-		free(strings);
-		free(stringsPointer);
-		memset(this, 0, sizeof(*this));
-	}
-
-	StringsTable() {
-		memset(this, 0, sizeof(*this));
-	}
-	~StringsTable() {
-		freeMem();
+	void clear() {
+		strings.clear();
+		buffer.clear();
 	}
 };
 
@@ -467,6 +458,34 @@ inline uint16 objectIndexToId(int type, int index) {
 	return (type << OBJECT_TYPE_SHIFT) | (OBJECT_TYPE_MASK & index);
 }
 
+class ByteArray : public Common::Array<byte> {
+public:
+	/**
+	 * Return a pointer to the start of the buffer underlying this byte array,
+	 * or NULL if the buffer is empty.
+	 */
+	byte *getBuffer() {
+		return empty() ? NULL : &front();
+	}
+
+	const byte *getBuffer() const {
+		return empty() ? NULL : &front();
+	}
+
+	void assign(const ByteArray &src) {
+		resize(src.size());
+		if (!empty()) {
+			memcpy(&front(), &src.front(), size());
+		}
+	}
+};
+
+class ByteArrayReadStreamEndian : public MemoryReadStreamEndian {
+public:
+	ByteArrayReadStreamEndian(const ByteArray & byteArray, bool bigEndian = false) : MemoryReadStreamEndian(byteArray.getBuffer(), byteArray.size(), bigEndian) {
+	}
+};
+
 class SagaEngine : public Engine {
 	friend class Scene;
 
@@ -484,15 +503,14 @@ public:
 
 	void save(const char *fileName, const char *saveName);
 	void load(const char *fileName);
-	uint32 getCurrentLoadVersion() {
+	uint32 getCurrentLoadVersion() const {
 		return _saveHeader.version;
 	}
 	void fillSaveList();
 	char *calcSaveFileName(uint slotNumber);
 
 	SaveFileData *getSaveFile(uint idx);
-	uint getSaveSlotNumber(uint idx);
-	uint getNewSaveSlotNumber();
+	uint getNewSaveSlotNumber() const;
 	bool locateSaveFile(char *saveName, uint &titleNumber);
 	bool isSaveListFull() const {
 		return _saveFilesCount == MAX_SAVES;
@@ -501,7 +519,7 @@ public:
 		return isSaveListFull() ? _saveFilesCount : _saveFilesCount + 1;
 	}
 
-	bool isIHNMDemo() { return _isIHNMDemo; }
+	bool isIHNMDemo() const { return _isIHNMDemo; }
 
 	int16 _framesEsc;
 
@@ -546,23 +564,28 @@ public:
 	Common::RandomSource _rnd;
 
 private:
-	int decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);
-	int flipImage(byte *img_buf, int columns, int scanlines);
-	int unbankBGImage(byte *dest_buf, const byte *src_buf, int columns, int scanlines);
+	bool decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, ByteArray &outbuf);
+	void flipImage(byte *imageBuffer, int columns, int scanlines);
+	void unbankBGImage(byte *dest_buf, const byte *src_buf, int columns, int scanlines);
 	uint32 _previousTicks;
 
 public:
-	int decodeBGImage(const byte *image_data, size_t image_size,
-			  byte **output_buf, size_t *output_buf_len, int *w, int *h, bool flip = false);
-	const byte *getImagePal(const byte *image_data, size_t image_size);
-	void loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength);
+	bool decodeBGImage(const ByteArray &imageData, ByteArray &outputBuffer, int *w, int *h, bool flip = false);
+	const byte *getImagePal(const ByteArray &imageData) {
+		if (imageData.size() <= SAGA_IMAGE_HEADER_LEN) {
+			return NULL;
+		}
 
-	const char *getObjectName(uint16 objectId);
+		return &imageData.front() + SAGA_IMAGE_HEADER_LEN;
+	}
+	void loadStrings(StringsTable &stringsTable, const ByteArray &stringsData);
+
+	const char *getObjectName(uint16 objectId) const;
 public:
 	int processInput();
 	Point mousePos() const;
 
-	int getMouseClickCount() {
+	int getMouseClickCount() const {
 		return _mouseClickCount;
 	}
 
@@ -586,7 +609,7 @@ public:
 		return _leftMouseButtonPressed || _rightMouseButtonPressed;
 	}
 
-	inline int ticksToMSec(int tick) {
+	inline int ticksToMSec(int tick) const {
 		if (getGameId() == GID_ITE)
 			return tick * 1000 / kScriptTimeTicksPerSecond;
 		else
@@ -617,9 +640,9 @@ public:
 	bool isBigEndian() const;
 	bool isMacResources() const;
 	bool isSaga2() const { return getGameId() == GID_DINO || getGameId() == GID_FTA2; }
-	const GameResourceDescription *getResourceDescription();
+	const GameResourceDescription *getResourceDescription() const;
 
-	const GameFontDescription *getFontDescription(int index);
+	const GameFontDescription *getFontDescription(int index) const;
 	int getFontsCount() const;
 
 	int getGameId() const;
@@ -648,7 +671,7 @@ private:
 public:
 	ColorId KnownColor2ColorId(KnownColor knownColor);
 	void setTalkspeed(int talkspeed);
-	int getTalkspeed();
+	int getTalkspeed() const;
 };
 
 } // End of namespace Saga

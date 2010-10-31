@@ -1,11 +1,75 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.svn.sourceforge.net/viewvc/scummvm/?view=log
+1.3.0 (????-??-??)
+ New Games:
+   - Added support for Backyard Baseball.
+   - Added support for Backyard Baseball 2001.
 
-1.2.0 (????-??-??)
+ Drascula:
+   - Added German and French subtitles in the Von Braun cutscene (#3069981:
+     no subtitles in scene with "von Braun").
+   - Improved French translation of the game.
+
+ SCI:
+   - Improved support for non-English versions of games.
+
+ SCUMM:
+   - Improved support for FM-TOWNS versions of games.
+
+1.2.1 (2010-??-??)
+ Groovie:
+   - Fixed a regression that made the Russian version of T7G crash.
+
+1.2.0 (2010-10-15)
+ New Games:
+   - Added support for Fascination.
+
+ New Games (Sierra SCI0 - SCI1.1):
+   - Added support for Castle of Dr. Brain (EGA and VGA).
+   - Added support for Codename: ICEMAN.
+   - Added support for Conquests of Camelot.
+   - Added support for Conquests of the Longbow (EGA and VGA).
+   - Added support for EcoQuest: The Search for Cetus.
+   - Added support for EcoQuest 2: Lost Secret of the Rainforest.
+   - Added support for Freddy Pharkas: Frontier Pharmacist.
+   - Added support for Hoyle's Book of Games 1.
+   - Added support for Hoyle's Book of Games 2.
+   - Added support for Hoyle's Book of Games 3 (EGA and VGA).
+   - Added support for Hoyle Classic Card Games.
+   - Added support for Jones in the Fast Lane.
+   - Added support for King's Quest I (SCI remake).
+   - Added support for King's Quest IV (SCI version).
+   - Added support for King's Quest V (EGA and VGA).
+   - Added support for King's Quest VI (low and hi res).
+   - Added support for Laura Bow: The Colonel's Bequest.
+   - Added support for Laura Bow 2: The Dagger of Amon Ra.
+   - Added support for Leisure Suit Larry 1 (SCI remake) (EGA and VGA).
+   - Added support for Leisure Suit Larry 2.
+   - Added support for Leisure Suit Larry 3.
+   - Added support for Leisure Suit Larry 5 (EGA and VGA).
+   - Added support for Leisure Suit Larry 6 (low res).
+   - Added support for Mixed-up Fairy Tales.
+   - Added support for Mixed-up Mother Goose.
+   - Added support for Pepper's Adventures in Time.
+   - Added support for Police Quest I (SCI remake).
+   - Added support for Police Quest II.
+   - Added support for Police Quest III (EGA and VGA).
+   - Added support for Quest for Glory I/Hero's Quest.
+   - Added support for Quest for Glory I VGA remake.
+   - Added support for Quest for Glory II.
+   - Added support for Quest for Glory III.
+   - Added support for Slater & Charlie go camping.
+   - Added support for Space Quest I (SCI remake) (EGA and VGA).
+   - Added support for Space Quest III.
+   - Added support for Space Quest IV (EGA and VGA).
+   - Added support for Space Quest V.
+   - Added support for The Island of Dr. Brain.
+
  New Ports:
    - Added Android port.
    - Added Dingux port.
    - Added Caanoo port (based on the GP2XWiz port).
+   - Added OpenPandora port.
 
  General:
    - Removed the outdated PalmOS port.
@@ -23,6 +87,11 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support of MIDI devices.
    - Added support for accurate Tandy sound emulation. Switched to it as default.
 
+ Broken Sword 2:
+   - Fixed missing speech in some cutscenes.
+   - Fixed a memory leak that would eventually cause the game to hang.
+     (#2976008 - BS2: Game lockup in British Museum)
+
  Drascula:
    - Fixed number of GFX glitches.
    - Made many cutscenes smoother.
@@ -36,6 +105,12 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed some minor graphical glitches.
    - Implemented formerly missing recreation of some in game items.
    - Added support for playing Kyrandia 3 with the original CD file layout.
+
+ LURE:
+   - Fixed bug where Goewin could get stuck in the Weregate.
+   - Fixed issue with Ratpouch repeatedly moving between two rooms.
+   - Fix for Goewin losing her schedule after Were-cave.
+   - Fix for player getting stuck in sewer exit room.
 
  Parallaction:
    - Made part one of The Big Red Adventure completable.
@@ -58,15 +133,16 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  GameCube port:
    - Added support for DVDs with the ISO9660 file system.
-   
- GP2X port:
-   - Added support for dynamic engine plugins.
 
-1.1.2 (????-??-??)
-  Broken Sword 2
-   - Fixed missing speech in some cutscenes.
-   - Fixed a memory leak that would eventually cause the game to hang.
-     (#2976008 - BS2: Game lockup in British Museum)
+ GP2X port:
+   - Added support for dynamic engine plugins (experimental).
+   - Reworked control system and better touchscreen support.
+
+ GP2XWiz/Caanoo port:
+   - Improved downscale code to minimise 'tearing' corruption.
+   - Reworked control system and better touchscreen support.
+   - Renamed backend from GP2XWIZ to GPH to better reflect
+     the supported devices.
 
 1.1.1 (2010-05-02)
  New Ports:
@@ -87,7 +163,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed several memory leaks.
    - Corrected problems in the handling of followers when blocked from performing
      actions by closed doors between rooms.
-   - Solved issues with Goewin not always correctly following the player out of the caves
+   - Solved issues with Goewin not always correctly following the player out of the caves.
 
  Tinsel:
    - Fix video playback regression in Discworld 2.
@@ -141,7 +217,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      The Secret of Monkey Island. (GSoC Task)
    - Fixed some other bugs related to game versions for the Amiga.
    - Added support for original save/load dialog in MM NES.
-   - Added support for savepoint passcodes for Sega CD MI1 via debugger command 'passcode'
+   - Added support for savepoint passcodes for Sega CD MI1 via debugger command 'passcode'.
    - Added support for Kanji rendering in Japanese version of Monkey Island Sega CD.
 
 1.0.0 (2009-11-15)

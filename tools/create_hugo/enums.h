@@ -741,7 +741,7 @@ enum seqActList_3d {
 };
 
 // Enumerate picture files.  All screens must have an entry here, in order
-enum screeenid_1w {
+enum screenid_1w {
 	HOUSE_1w,   HALL_1w,    BED1_1w,     DININGRM_1w, BATHROOM_1w, KITCHEN_1w,
 	GARDEN_1w,  STORERM_1w, BASEMENT_1w, BATCAVE_1w,  MUMMYRM_1w,  LAKEROOM_1w,
 	DEADEND_1w, JAIL_1w,    THE_END_1w,  LAB_1w,      FINTRO_1w,   NUM_PICS_1w
@@ -785,7 +785,13 @@ enum screenid_3w {
 };
 
 // Hugo 1 DOS doesn't use a DAT file : the screen files are not packed together
-enum screenid_1d {NUM_PICS_1d};
+//enum screenid_1d {NUM_PICS_1d};
+enum screenid_1d {
+	HOUSE_1d,   HALL_1d,    BED1_1d,     DININGRM_1d, BATHROOM_1d, KITCHEN_1d,
+	GARDEN_1d,  STORERM_1d, BASEMENT_1d, BATCAVE_1d,  MUMMYRM_1d,  LAKEROOM_1d,
+	DEADEND_1d, JAIL_1d,    THE_END_1d,  LAB_1d,      FINTRO_1d,   NUM_PICS_1d
+};
+
 
 enum screenid_2d {
 	/* 0*/ HOUSE_2d,       HALL_2d,      BED1_2d,     BED2_2d,     KEYHOLE_FILE_2d,
@@ -1006,6 +1012,7 @@ enum string_t_3w {
 };
 
 enum string_t_1d {
+	kSTdummy_1d,
 //***************************************************************************
 // Hugo 1 Dos - Not stored in a dat file!!!
 //***************************************************************************

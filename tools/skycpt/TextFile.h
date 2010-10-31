@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef __TextFile__
-#define __TextFile__
+#ifndef SKYCPT_TEXTFILE_H
+#define SKYCPT_TEXTFILE_H
 
 #include "stdafx.h"
 #include <stdio.h>

@@ -36,12 +36,12 @@ namespace Hugo {
 
 class MouseHandler {
 public:
-	MouseHandler(HugoEngine &vm);
+	MouseHandler(HugoEngine *vm);
 
 	void mouseHandler();
 
 private:
-	HugoEngine &_vm;
+	HugoEngine *_vm;
 
 	void  cursorText(char *buffer, int16 cx, int16 cy, uif_t fontId, int16 color);
 	int16 findExit(int16 cx, int16 cy);

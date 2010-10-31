@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef SDLSYMBIANH
-#define SDLSYMBIANH
+#ifndef SDLSYMBIAN_H
+#define SDLSYMBIAN_H
 
 #include "backends/platform/sdl/sdl.h"
 
@@ -61,6 +61,8 @@ public:
 
 	// Returns reference to File session
 	RFs& FsSession();
+
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 protected:
 	//
 	// The mixer callback function.

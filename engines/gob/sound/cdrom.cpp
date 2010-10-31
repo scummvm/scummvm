@@ -24,12 +24,12 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 #include "common/util.h"
 #include "sound/audiocd.h"
 
 #include "gob/gob.h"
 #include "gob/sound/cdrom.h"
-#include "gob/helper.h"
 #include "gob/dataio.h"
 
 namespace Gob {
@@ -92,7 +92,7 @@ void CDROM::startTrack(const char *trackName) {
 		return;
 	}
 
-	strncpy0(_curTrack, trackName, 15);
+	Common::strlcpy(_curTrack, trackName, 16);
 
 	stopPlaying();
 	_curTrackBuffer = matchPtr;

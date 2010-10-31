@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 // Fix for bug #2895217 "MSVC compilation broken with r47595":
 // We need to keep this on top of the "common/scummsys.h" include,
 // otherwise we will get errors about the windows headers redefining
@@ -38,7 +40,7 @@
 
 // Several SDL based ports use a custom main, and hence do not want to compile
 // of this file. The following "#if" ensures that.
-#if !defined(__MAEMO__) && !defined(_WIN32_WCE) && !defined(GP2XWIZ)&& !defined(LINUXMOTO) && !defined(__SYMBIAN32__) && !defined(DINGUX)
+#if !defined(__MAEMO__) && !defined(__SYMBIAN32__) && !defined(_WIN32_WCE) && !defined(DINGUX) && !defined(GPH_DEVICE) && !defined(LINUXMOTO) && !defined(OPENPANDORA)
 
 
 #include "backends/platform/sdl/sdl.h"

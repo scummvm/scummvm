@@ -66,6 +66,9 @@ protected:
 	Graphics::Surface _framebuffer;
 	byte *_offscreen;
 	OverlayColor  *_overlayBuffer;
+	uint16 _overlayHeight;
+	uint16 _overlayWidth;
+
 	uint16 *_fullscreen;
 
 	uint16  _palette[256];
@@ -144,7 +147,7 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
-	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<565>(); }
+	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<5551>(); }
 
 	virtual bool showMouse(bool visible);
 

@@ -24,12 +24,12 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 
 #include "gui/message.h"
 
 #include "gob/gob.h"
 #include "gob/inter.h"
-#include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
@@ -415,9 +415,9 @@ void Inter_Playtoons::oPlaytoons_copyFile() {
 	char fileName2[128];
 
 	_vm->_game->_script->evalExpr(0);
-	strncpy0(fileName1, _vm->_game->_script->getResultStr(), 127);
+	Common::strlcpy(fileName1, _vm->_game->_script->getResultStr(), 128);
 	_vm->_game->_script->evalExpr(0);
-	strncpy0(fileName2, _vm->_game->_script->getResultStr(), 127);
+	Common::strlcpy(fileName2, _vm->_game->_script->getResultStr(), 128);
 
 	warning("Playtoons Stub: copy file from \"%s\" to \"%s\"", fileName1, fileName2);
 }
@@ -427,7 +427,7 @@ void Inter_Playtoons::oPlaytoons_openItk() {
 	char *backSlash;
 
 	_vm->_game->_script->evalExpr(0);
-	strncpy0(fileName, _vm->_game->_script->getResultStr(), 124);
+	Common::strlcpy(fileName, _vm->_game->_script->getResultStr(), 124);
 
 	if (!strchr(fileName, '.'))
 		strcat(fileName, ".ITK");

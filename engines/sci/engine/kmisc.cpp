@@ -180,15 +180,16 @@ enum {
 
 reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 	TimeDate loc_time;
-	uint32 elapsedTime;
+	uint32 elapsedTime = g_engine->getTotalPlayTime();
 	int retval = 0; // Avoid spurious warning
 
 	g_system->getTimeAndDate(loc_time);
-	elapsedTime = g_system->getMillis() - s->gameStartTime;
 
 	int mode = (argc > 0) ? argv[0].toUint16() : 0;
 
-	if (getSciVersion() <= SCI_VERSION_0_LATE && mode > 1)
+	// Modes 2 and 3 are supported since 0.629.
+	// This condition doesn't check that exactly, but close enough.
+	if (getSciVersion() == SCI_VERSION_0_EARLY && mode > 1)
 		error("kGetTime called in SCI0 with mode %d (expected 0 or 1)", mode);
 
 	switch (mode) {
@@ -229,14 +230,18 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case K_MEMORY_ALLOCATE_CRITICAL: {
 		int byteCount = argv[1].toUint16();
-		// WORKAROUND: pq3 (multilingual) when plotting crimes - allocates the
-		//  returned bytes from kStrLen on "W" and "E" and wants to put a
-		//  string in there, which doesn't fit of course. That's why we allocate
-		//  one byte more all the time inside that room
-		if (g_sci->getGameId() == GID_PQ3) {
-			if (s->currentRoomNumber() == 202)
-				byteCount++;
-		}
+		// WORKAROUND:
+		//  - pq3 (multilingual) room 202
+		//     when plotting crimes, allocates the returned bytes from kStrLen
+		//     on "W" and "E" and wants to put a string in there, which doesn't
+		//     fit of course.
+		//  - lsl5 (multilingual) room 280
+		//     allocates memory according to a previous kStrLen for the name of
+		//     the airport ladies (bug #3093818), which isn't enough
+
+		// We always allocate 1 byte more, because of this
+		byteCount++;
+
 		if (!s->_segMan->allocDynmem(byteCount, "kMemory() critical", &s->r_acc)) {
 			error("Critical heap allocation failed");
 		}
@@ -386,6 +391,18 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 
 	return NULL_REG;
 }
+
+#ifdef ENABLE_SCI32
+reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
+	kStub(s, argc, argv);
+
+	// TODO: This seems to be loading and calling Windows DLLs. We'll probably
+	// need to either ignore calls made here, or wire each call for each game
+	// that requests it by hand
+
+	error("kWinDLL called");
+}
+#endif
 
 reg_t kEmpty(EngineState *s, int argc, reg_t *argv) {
 	// Placeholder for empty kernel functions which are still called from the

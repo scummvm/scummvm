@@ -169,6 +169,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				// key pressed. A better fix would be for engines to stop
 				// making invalid assumptions about ascii values.
 				event.kbd.ascii = Common::KEYCODE_BACKSPACE;
+				_currentKeyDown.ascii = Common::KEYCODE_BACKSPACE;
 			}
 			break;
 

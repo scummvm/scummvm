@@ -30,6 +30,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "gp2x-common.h"
 
 #include "gp2x-hw.h"
@@ -197,3 +200,28 @@ void gp2x_video_wait_vsync(void)
 
 } /* namespace GP2X_HW */
 
+namespace GPH {
+
+enum {
+	/* Touchscreen TapMode */
+	TAPMODE_LEFT		= 0,
+	TAPMODE_RIGHT		= 1,
+	TAPMODE_HOVER		= 2
+};
+
+int tapmodeLevel = TAPMODE_LEFT;
+
+void ToggleTapMode() {
+	if (tapmodeLevel == TAPMODE_LEFT) {
+		tapmodeLevel = TAPMODE_RIGHT;
+	} else if (tapmodeLevel == TAPMODE_RIGHT) {
+		tapmodeLevel = TAPMODE_HOVER;
+	} else if (tapmodeLevel == TAPMODE_HOVER) {
+		tapmodeLevel = TAPMODE_LEFT;
+	} else {
+		tapmodeLevel = TAPMODE_LEFT;
+    }
+}
+
+
+} /* namespace GPH */

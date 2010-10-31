@@ -33,15 +33,14 @@ namespace Saga {
 
 class HitZone {
 private:
-	struct ClickArea {
-		int pointsCount;
-		Point *points;
-	};
-
+	typedef Common::Array<Point> ClickArea;
+	typedef Common::Array<ClickArea> ClickAreas;
 public:
-	HitZone(MemoryReadStreamEndian *readStream, int index, int sceneNumber);
-	~HitZone();
+	void load(SagaEngine *vm, MemoryReadStreamEndian *readStream, int index, int sceneNumber);
 
+	int getIndex() const {
+		return _index;
+	}
 	int getNameIndex() const {
 		return _nameIndex;
 	}
@@ -76,40 +75,38 @@ public:
 		return objectIndexToId(kGameObjectStepZone, _index);
 	}
 	bool getSpecialPoint(Point &specialPoint) const;
+#ifdef SAGA_DEBUG
 	void draw(SagaEngine *vm, int color);	// for debugging
+#endif
 	bool hitTest(const Point &testPoint);
 
 private:
 	int _flags;				// Saga::HitZoneFlags
-	int _clickAreasCount;
 	int _rightButtonVerb;
 	int _nameIndex;
 	int _scriptNumber;
 	int _index;
 
-	ClickArea *_clickAreas;
+	ClickAreas _clickAreas;
 };
 
+typedef Common::Array<HitZone> HitZoneArray;
 
 class ObjectMap {
 public:
 	ObjectMap(SagaEngine *vm) : _vm(vm) {
-		_hitZoneList = NULL;
-		_hitZoneListCount = 0;
-
 	}
-	~ObjectMap() {
-		freeMem();
-	}
-	void load(const byte *resourcePointer, size_t resourceLength);
-	void freeMem();
+	void load(const ByteArray &resourceData);
+	void clear();
+#ifdef SAGA_DEBUG
 	void draw(const Point& testPoint, int color, int color2);	// for debugging
+#endif
 	int hitTest(const Point& testPoint);
 	HitZone *getHitZone(int16 index) {
-		if ((index < 0) || (index >= _hitZoneListCount)) {
+		if (uint(index) >= _hitZoneList.size()) {
 			return NULL;
 		}
-		return _hitZoneList[index];
+		return &_hitZoneList[index];
 	}
 
 	void cmdInfo();
@@ -117,8 +114,7 @@ public:
 private:
 	SagaEngine *_vm;
 
-	int _hitZoneListCount;
-	HitZone **_hitZoneList;
+	HitZoneArray _hitZoneList;
 };
 
 } // End of namespace Saga

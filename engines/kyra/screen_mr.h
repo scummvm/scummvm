@@ -39,6 +39,7 @@ public:
 
 	void setScreenDim(int dim);
 	const ScreenDim *getScreenDim(int dim);
+	int screenDimTableCount() const { return _screenDimTableCount; }
 
 	int getLayer(int x, int y);
 

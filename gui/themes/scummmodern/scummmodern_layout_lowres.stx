@@ -483,7 +483,7 @@
 	</dialog>
 
 	<dialog name = 'GameOptions' overlays = 'screen' inset = '16' shading = 'dim'>
-		<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '16'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
 				<space/>

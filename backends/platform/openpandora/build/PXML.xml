@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PXML xmlns="http://openpandora.org/namespaces/PXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="PXML_schema.xsd">
+
+  <application id="scummvm.djwillis.0001" appdata="scummvm">
+
+    <title lang="en_US">ScummVM</title>
+
+    <exec command="./runscummvm.sh"/>
+    <icon src="icon/scummvm.png"/>
+
+    <previewpics>
+      <pic src="icon/preview-pic.png"/>
+    </previewpics>
+
+    <info name="ScummVM Documentation" type="text/html" src="docs/index.html"/>
+
+    <description lang="en_US">Point & click game interpreter.</description>
+
+    <author name="DJWillis" website="http://www.scummvm.org/"/>
+
+    <version major="1" minor="1" release="1" build="1"/><!--This programs version-->
+    <osversion major="1" minor="0" release="0" build="0"/><!--The minimum OS version required-->
+
+    <categories>
+      <category name="Game"><!--category like "Games", "Graphics", "Internet" etc-->
+	<subcategory name="Adventure Games"/><!--subcategory, like "Board Games", "Strategy", "First Person Shooters"-->
+      </category>
+    </categories>
+
+    <clockspeed frequency="500"/><!--Frequency in Hz-->
+
+  </application>
+
+</PXML>

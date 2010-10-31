@@ -166,7 +166,7 @@ bool DLObject::loadSegment(Elf32_Phdr *phdr) {
 		warning("elfloader: Out of memory.");
 		return false;
 	}
-
+	
 	debug(2, "elfloader: Allocated segment @ %p", _segment);
 
 	// Get offset to load segment into

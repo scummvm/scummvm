@@ -173,21 +173,17 @@ void Gfx::initPalette() {
 		error("Resource::loadGlobalResources() resource context not found");
 	}
 
-	byte *resourcePointer;
-	size_t resourceLength;
+	ByteArray resourceData;
 
-	_vm->_resource->loadResource(resourceContext, RID_IHNM_DEFAULT_PALETTE,
-								 resourcePointer, resourceLength);
+	_vm->_resource->loadResource(resourceContext, RID_IHNM_DEFAULT_PALETTE, resourceData);
 
-	MemoryReadStream metaS(resourcePointer, resourceLength);
+	ByteArrayReadStreamEndian metaS(resourceData);
 
 	for (int i = 0; i < 256; i++) {
 		_globalPalette[i].red = metaS.readByte();
 		_globalPalette[i].green = metaS.readByte();
 		_globalPalette[i].blue = metaS.readByte();
 	}
-
-	free(resourcePointer);
 
 	setPalette(_globalPalette, true);
 }
@@ -504,22 +500,19 @@ void Gfx::setCursor(CursorType cursorType) {
 			break;
 		}
 
-		byte *resource;
-		size_t resourceLength;
-		byte *image;
-		size_t imageLength;
+		ByteArray resourceData;
+		ByteArray image;
 		int width, height;
 
 		if (resourceId != (uint32)-1) {
 			ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
 
-			_vm->_resource->loadResource(context, resourceId, resource, resourceLength);
+			_vm->_resource->loadResource(context, resourceId, resourceData);
 
-			_vm->decodeBGImage(resource, resourceLength, &image, &imageLength, &width, &height);
+			_vm->decodeBGImage(resourceData, image, &width, &height);
 		} else {
-			resource = NULL;
 			width = height = 31;
-			image = (byte *)calloc(width, height);
+			image.resize(width * height);
 
 			for (int i = 0; i < 14; i++) {
 				image[15 * 31 + i] = 1;
@@ -530,10 +523,7 @@ void Gfx::setCursor(CursorType cursorType) {
 		}
 
 		// Note: Hard-coded hotspot
-		CursorMan.replaceCursor(image, width, height, 15, 15, 0);
-
-		free(image);
-		free(resource);
+		CursorMan.replaceCursor(image.getBuffer(), width, height, 15, 15, 0);
 	}
 }
 
@@ -564,8 +554,9 @@ bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_po
 
 // This method adds a dirty rectangle automatically
 void Gfx::drawFrame(const Common::Point &p1, const Common::Point &p2, int color) {
-	_backBuffer.drawFrame(p1, p2, color);
-	_vm->_render->addDirtyRect(Common::Rect(p1.x, p1.y, p2.x + 1, p2.y + 1));
+	Common::Rect rect(MIN(p1.x, p2.x), MIN(p1.y, p2.y), MAX(p1.x, p2.x) + 1, MAX(p1.y, p2.y) + 1);
+	_backBuffer.frameRect(rect, color);
+	_vm->_render->addDirtyRect(rect);
 }
 
 // This method adds a dirty rectangle automatically

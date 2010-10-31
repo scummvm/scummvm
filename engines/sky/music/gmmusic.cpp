@@ -44,6 +44,7 @@ GmMusic::GmMusic(MidiDriver *pMidiDrv, Disk *pDisk) : MusicBase(pDisk) {
 		error("Can't open midi device. Errorcode: %d", midiRes);
 	_timerCount = 0;
 	_midiDrv->setTimerCallback(this, passTimerFunc);
+	_midiDrv->sendGMReset();
 }
 
 GmMusic::~GmMusic() {

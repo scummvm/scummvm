@@ -43,8 +43,7 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 	size_t i;
 	bool result;
 	byte tableInfo[RSC_TABLEINFO_SIZE];
-	byte *tableBuffer;
-	size_t tableSize;
+	ByteArray tableBuffer;
 	uint32 count;
 	uint32 resourceTableOffset;
 	ResourceData *resourceData;
@@ -70,17 +69,15 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 	}
 
 	// Load resource table
-	tableSize = RSC_TABLEENTRY_SIZE * count;
-
-	tableBuffer = (byte *)malloc(tableSize);
+	tableBuffer.resize(RSC_TABLEENTRY_SIZE * count);
 
 	_file.seek(resourceTableOffset + contextOffset, SEEK_SET);
 
-	result = (_file.read(tableBuffer, tableSize) == tableSize);
+	result = (_file.read(tableBuffer.getBuffer(), tableBuffer.size()) == tableBuffer.size());
 	if (result) {
 		_table.resize(count);
 
-		MemoryReadStreamEndian readS1(tableBuffer, tableSize, _isBigEndian);
+		MemoryReadStreamEndian readS1(tableBuffer.getBuffer(), tableBuffer.size(), _isBigEndian);
 
 		for (i = 0; i < count; i++) {
 			resourceData = &_table[i];
@@ -94,7 +91,6 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 		}
 	}
 
-	free(tableBuffer);
 	return result;
 }
 
@@ -107,8 +103,6 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 	uint32 subjectResourceId;
 	uint32 patchResourceId;
 	ResourceData *subjectResourceData;
-	byte *tableBuffer;
-	size_t tableSize;
 	bool isMacBinary;
 
 	if (_fileName == NULL) { // IHNM special case
@@ -145,10 +139,12 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 		if (subjectContext == NULL) {
 			error("ResourceContext::load() Subject context not found");
 		}
-		resource->loadResource(this, _table.size() - 1, tableBuffer, tableSize);
+		ByteArray tableBuffer;
 
-		MemoryReadStreamEndian readS2(tableBuffer, tableSize, _isBigEndian);
-		for (i = 0; i < tableSize / 8; i++) {
+		resource->loadResource(this, _table.size() - 1, tableBuffer);
+
+		ByteArrayReadStreamEndian readS2(tableBuffer, _isBigEndian);
+		for (i = 0; i < tableBuffer.size() / 8; i++) {
 			subjectResourceId = readS2.readUint32();
 			patchResourceId = readS2.readUint32();
 			subjectResourceData = subjectContext->getResourceData(subjectResourceId);
@@ -157,7 +153,6 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 			subjectResourceData->offset = resourceData->offset;
 			subjectResourceData->size = resourceData->size;
 		}
-		free(tableBuffer);
 	}
 
 	//process external patch files
@@ -165,18 +160,21 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 		if ((patchDescription->fileType & _fileType) != 0) {
 			if (patchDescription->resourceId < _table.size()) {
 				resourceData = &_table[patchDescription->resourceId];
-				resourceData->patchData = new PatchData(patchDescription->fileName);
-				if (resourceData->patchData->_patchFile->open(patchDescription->fileName)) {
-					resourceData->offset = 0;
-					resourceData->size = resourceData->patchData->_patchFile->size();
-					// ITE uses several patch files which are loaded and then not needed
-					// anymore (as they're in memory), so close them here. IHNM uses only
-					// 1 patch file, which is reused, so don't close it
-					if (vm->getGameId() == GID_ITE)
-						resourceData->patchData->_patchFile->close();
-				} else {
-					delete resourceData->patchData;
-					resourceData->patchData = NULL;
+				// Check if we've already found a patch for this resource. One is enough.
+				if (!resourceData->patchData) {
+					resourceData->patchData = new PatchData(patchDescription->fileName);
+					if (resourceData->patchData->_patchFile->open(patchDescription->fileName)) {
+						resourceData->offset = 0;
+						resourceData->size = resourceData->patchData->_patchFile->size();
+						// ITE uses several patch files which are loaded and then not needed
+						// anymore (as they're in memory), so close them here. IHNM uses only
+						// 1 patch file, which is reused, so don't close it
+						if (vm->getGameId() == GID_ITE)
+							resourceData->patchData->_patchFile->close();
+					} else {
+						delete resourceData->patchData;
+						resourceData->patchData = NULL;
+					}
 				}
 			}
 		}
@@ -222,7 +220,7 @@ bool Resource::createContexts() {
 
 
 	// If the Wyrmkeep credits file is found, set the Wyrmkeep version flag to true
-	if (Common::File::exists("graphics/credit3n.dlt")) {
+	if (Common::File::exists("credit3n.dlt")) {
 		_vm->_gf_wyrmkeep = true;
 	}
 
@@ -367,25 +365,25 @@ void Resource::clearContexts() {
 	}
 }
 
-void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&resourceBuffer, size_t &resourceSize) {
+void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArray &resourceBuffer) {
 	Common::File *file;
 	uint32 resourceOffset;
 	ResourceData *resourceData;
 
-	debug(8, "loadResource %d", resourceId);
 
 	resourceData = context->getResourceData(resourceId);
 
 	file = context->getFile(resourceData);
 
 	resourceOffset = resourceData->offset;
-	resourceSize = resourceData->size;
 
-	resourceBuffer = (byte*)malloc(resourceSize);
+	debug(8, "loadResource %d 0x%X:0x%X", resourceId, resourceOffset, uint(resourceData->size));
+	resourceBuffer.resize(resourceData->size);
+
 
 	file->seek((long)resourceOffset, SEEK_SET);
 
-	if (file->read(resourceBuffer, resourceSize) != resourceSize) {
+	if (file->read(resourceBuffer.getBuffer(), resourceBuffer.size()) != resourceBuffer.size()) {
 		error("Resource::loadResource() failed to read");
 	}
 

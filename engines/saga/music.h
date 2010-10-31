@@ -57,7 +57,7 @@ public:
 	void setGM(bool isGM) { _isGM = isGM; }
 
 	//MidiDriver interface implementation
-	int open() { return _driver->open(); }
+	int open();
 	void close() { _driver->close(); }
 	void send(uint32 b);
 
@@ -106,8 +106,7 @@ public:
 	void setVolume(int volume, int time = 1);
 	int getVolume() { return _currentVolume; }
 
-	int32 *_songTable;
-	int _songTableLen;
+	Common::Array<int32> _songTable;
 
 private:
 	SagaEngine *_vm;
@@ -126,11 +125,12 @@ private:
 	ResourceContext *_digitalMusicContext;
 	MidiParser *_parser;
 
-	byte *_midiMusicData;
 
 	static void musicVolumeGaugeCallback(void *refCon);
 	static void onTimer(void *refCon);
 	void musicVolumeGauge();
+	ByteArray *_currentMusicBuffer;
+	ByteArray _musicBuffer[2];
 };
 
 } // End of namespace Saga

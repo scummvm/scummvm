@@ -81,6 +81,13 @@ int LoLEngine::processPrologue() {
 		}
 
 		switch (selection) {
+		case -1:
+			// This is sent on RTL for example, if we would not have any
+			// special case for this the default path would call quitGame
+			// and thus make the next game launched from the launcher
+			// quit instantly.
+			break;
+
 		case 0:		// New game
 			processSelection = 0;
 			break;
@@ -397,7 +404,8 @@ void LoLEngine::kingSelectionIntro() {
 			_screen->fprintStringIntro("%s", 8, y + i * 10, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(57 + i));
 	}
 
-	_sound->voicePlay("KING01", &_speechHandle);
+	if (_flags.isTalkie)
+		_sound->voicePlay("KING01", &_speechHandle);
 
 	int index = 4;
 	while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && !skipFlag()) {
@@ -441,7 +449,8 @@ void LoLEngine::kingSelectionReminder() {
 		_screen->fprintStringIntro("%s", 8, y + 10, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(63));
 	}
 
-	_sound->voicePlay("KING02", &_speechHandle);
+	if (_flags.isTalkie)
+		_sound->voicePlay("KING02", &_speechHandle);
 
 	int index = 0;
 	while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && index < 15) {
@@ -468,7 +477,8 @@ void LoLEngine::kingSelectionReminder() {
 }
 
 void LoLEngine::kingSelectionOutro() {
-	_sound->voicePlay("KING03", &_speechHandle);
+	if (_flags.isTalkie)
+		_sound->voicePlay("KING03", &_speechHandle);
 
 	int index = 0;
 	while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && !shouldQuit() && !skipFlag()) {
@@ -627,7 +637,8 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 		if (speechEnabled() && !_sound->isVoicePresent(file))
 			break;
 
-		_sound->voicePlay(file, &_speechHandle);
+		if (_flags.isTalkie)
+			_sound->voicePlay(file, &_speechHandle);
 
 		int i = 0;
 		while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && _charSelectionInfoResult == -1 && !shouldQuit()) {
@@ -1424,7 +1435,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 				if (monsterAnimFrame >= 8)
 					_screen->drawShape(page, doorShape, doorX, doorY, doorSD, (doorSD == 22) ? 0 : 1);
 
-				_screen->drawShape(page, monsterShape, monsterX, monsterY, 0, 0x104 | ((!isRightMonster | (monsterAnimFrame < 20)) ? 0 : 1), _outroShapeTable, 1, _outroMonsterScaleTableX[monsterAnimFrame], _outroMonsterScaleTableY[monsterAnimFrame]);
+				_screen->drawShape(page, monsterShape, monsterX, monsterY, 0, 0x104 | ((!isRightMonster || monsterAnimFrame < 20) ? 0 : 1), _outroShapeTable, 1, _outroMonsterScaleTableX[monsterAnimFrame], _outroMonsterScaleTableY[monsterAnimFrame]);
 
 				if (monsterAnimFrame < 8)
 					_screen->drawShape(page, doorShape, doorX, doorY, doorSD, (doorSD == 22) ? 0 : 1);

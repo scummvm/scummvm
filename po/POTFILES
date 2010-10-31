@@ -5,6 +5,7 @@ gui/browser.cpp
 gui/chooser.cpp
 gui/error.cpp
 gui/GuiManager.cpp
+gui/KeysDialog.h
 gui/KeysDialog.cpp
 gui/launcher.cpp
 gui/massadd.cpp
@@ -20,7 +21,13 @@ common/util.cpp
 
 engines/dialogs.cpp
 engines/scumm/dialogs.cpp
+engines/scumm/scumm.cpp
 engines/mohawk/dialogs.cpp
+engines/mohawk/myst.cpp
+engines/mohawk/riven.cpp
+engines/cruise/menu.cpp
+engines/sci/engine/kfile.cpp
+engines/agos/saveload.cpp
 
 sound/fmopl.cpp
 sound/musicplugin.cpp

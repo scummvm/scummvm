@@ -38,10 +38,10 @@
 namespace Hugo {
 
 class MidiPlayer;
-	
+
 class SoundHandler {
 public:
-	SoundHandler(HugoEngine &vm);
+	SoundHandler(HugoEngine *vm);
 
 	void toggleMusic();
 	void toggleSound();
@@ -51,7 +51,7 @@ public:
 	void initSound();
 
 private:
-	HugoEngine &_vm;
+	HugoEngine *_vm;
 	Audio::SoundHandle _soundHandle;
 	MidiPlayer *_midiPlayer;
 

@@ -302,6 +302,8 @@ void Mickey::getMouseMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow, i
 		if (y != IDI_MSA_ROW_MENU_1) return;
 		sel = sel1;
 		break;
+	default:
+		return;
 	}
 
 	for (iWord = 0; iWord < menu.row[iRow].count; iWord++) {
@@ -1234,7 +1236,7 @@ int Mickey::getPlanet() {
 	if (!_game.nButtons)
 		return -1;
 
-	for (int iPlanet = 0; iPlanet < IDI_MSA_MAX_DAT; iPlanet++) {
+	for (int iPlanet = 0; iPlanet < IDI_MSA_MAX_DAT - 1; iPlanet++) {
 		if (!strcmp(IDS_MSA_ADDR_PLANET[iPlanet], _game.szAddr)) {
 			return iPlanet;
 		}
@@ -1313,7 +1315,7 @@ void Mickey::flipSwitch() {
 			_game.iPlanetXtal[0] = IDI_MSA_PLANET_EARTH;
 			_game.iPlanetXtal[8] = IDI_MSA_PLANET_URANUS;
 
-			for (int i = 1; i < 9; i++) {
+			for (int i = 1; i < IDI_MSA_MAX_PLANET; i++) {
 				if (i < 8) {
 					do {
 						// Earth (planet 0) and Uranus (planet 8) are excluded

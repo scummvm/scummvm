@@ -52,7 +52,7 @@ void writeUint16BE(FILE *fp, uint16 value) {
 	writeByte(fp, (uint8)(value & 0xFF));
 }
 
-int stringSize(const char* string) {
+int stringSize(const char *string) {
 	// Each string is preceded by its size coded on 2 bytes
 	if (string == NULL)
 		return 2;
@@ -63,7 +63,7 @@ int stringSize(const char* string) {
 	// return 2 + len + pad;
 }
 
-void writeString(FILE *fp, const char* string) {
+void writeString(FILE *fp, const char *string) {
 	// Each string is preceded by its size coded on 2 bytes
 	if (string == NULL) {
 		writeUint16BE(fp, 0);
@@ -86,12 +86,12 @@ int main(int argc, char *argv[]) {
 	PoMessageList messageIds;
 	PoMessageEntryList **translations = new PoMessageEntryList*[argc - 1];
 	int numLangs = 0;
-	for (int i = 1 ; i < argc ; ++i) {
+	for (int i = 1; i < argc; ++i) {
 		translations[numLangs] = parsePoFile(argv[i], messageIds);
 		if (translations[numLangs] != NULL)
 			++numLangs;
 	}
-	
+
 	FILE *outFile;
 	int i, lang;
 	int len;
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
 
 	// Write number of translations
 	writeUint16BE(outFile, numLangs);
-	
+
 	// Write the length of each data block here.
 	// We could write it at the start of each block but that would mean that
 	// to go to block 4 we would have to go at the start of each preceding block,
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
 	//   3. First translation
 	//   4. Second translation
 	//   ...
-	
+
 	// Write length for translation description
 	len = 0;
 	for (lang = 0; lang < numLangs; lang++) {
@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
 		len += stringSize(translations[lang]->languageName());
 	}
 	writeUint16BE(outFile, len);
-	
+
 	// Write size for the original language (english) block
 	// It starts with the number of strings coded on 2 bytes followed by each
 	// string (two bytes for the number of chars and the string itself).
@@ -158,13 +158,13 @@ int main(int argc, char *argv[]) {
 		writeString(outFile, translations[lang]->language());
 		writeString(outFile, translations[lang]->languageName());
 	}
-	
+
 	// Write original messages
 	writeUint16BE(outFile, messageIds.size());
 	for (i = 0; i < messageIds.size(); ++i) {
 		writeString(outFile, messageIds[i]);
 	}
-	
+
 	// Write translations
 	for (lang = 0; lang < numLangs; lang++) {
 		writeUint16BE(outFile, translations[lang]->size());
@@ -177,11 +177,11 @@ int main(int argc, char *argv[]) {
 	}
 
 	fclose(outFile);
-	
+
 	// Clean the memory
 	for (i = 0; i < numLangs; ++i)
 		delete translations[i];
-	delete [] translations;
+	delete[] translations;
 
 	return 0;
 }

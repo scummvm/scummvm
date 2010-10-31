@@ -208,7 +208,7 @@ bool MIPSDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment)
 				*target = relocation;
 
 				if (debugRelocs[6]++ < DEBUG_NUM)
-					debug("8, elfloader: R_MIPS_32: i=%d, a=%x, origTarget=%x, target=%x",
+					debug(8, "elfloader: R_MIPS_32: i=%d, a=%x, origTarget=%x, target=%x",
 							i, a, origTarget, *target);
 			}
 

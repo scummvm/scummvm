@@ -410,7 +410,7 @@ int KyraEngine_HoF::o2_countItemsInScene(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_countItemsInScene(%p) (%d)", (const void *)script, stackPos(0));
 	int count = 0;
 	for (int i = 0; i < 30; ++i) {
-		if (_itemList[i].sceneId == stackPos(0) && _itemList[i].id != 0xFFFF)
+		if (_itemList[i].sceneId == stackPos(0) && _itemList[i].id != kItemNone)
 			++count;
 	}
 	return count;
@@ -1039,7 +1039,7 @@ int KyraEngine_HoF::o2_setColorCodeValue(EMCState *script) {
 
 int KyraEngine_HoF::o2_countItemInstances(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_countItemInstances(%p) (%d)", (const void *)script, stackPos(0));
-	uint16 item = stackPos(0);
+	Item item = stackPos(0);
 
 	int count = 0;
 	for (int i = 0; i < 20; ++i) {
@@ -1047,7 +1047,7 @@ int KyraEngine_HoF::o2_countItemInstances(EMCState *script) {
 			++count;
 	}
 
-	if (_itemInHand == int16(item))
+	if (_itemInHand == item)
 		++count;
 
 	for (int i = 0; i < 30; ++i) {
@@ -1075,7 +1075,7 @@ int KyraEngine_HoF::o2_removeItemFromScene(EMCState *script) {
 	const uint16 item = stackPos(1);
 	for (int i = 0; i < 30; ++i) {
 		if (_itemList[i].sceneId == scene && _itemList[i].id == item)
-			_itemList[i].id = 0xFFFF;
+			_itemList[i].id = kItemNone;
 	}
 	return 0;
 }

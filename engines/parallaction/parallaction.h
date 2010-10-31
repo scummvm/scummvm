@@ -48,8 +48,9 @@
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Nippon Safes Inc. (complete)
+ * - The Big Red Adventure (work in progress)
  */
 namespace Parallaction {
 

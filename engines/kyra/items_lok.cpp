@@ -74,29 +74,31 @@ void KyraEngine_LoK::clearNoDropRects() {
 byte KyraEngine_LoK::findFreeItemInScene(int scene) {
 	assert(scene < _roomTableSize);
 	Room *room = &_roomTable[scene];
+
 	for (int i = 0; i < 12; ++i) {
-		if (room->itemsTable[i] == 0xFF)
+		if (room->itemsTable[i] == kItemNone)
 			return i;
 	}
+
 	return 0xFF;
 }
 
 byte KyraEngine_LoK::findItemAtPos(int x, int y) {
 	assert(_currentCharacter->sceneId < _roomTableSize);
-	const uint8 *itemsTable = _roomTable[_currentCharacter->sceneId].itemsTable;
+	const int8 *itemsTable = _roomTable[_currentCharacter->sceneId].itemsTable;
 	const uint16 *xposOffset = _roomTable[_currentCharacter->sceneId].itemsXPos;
 	const uint8 *yposOffset = _roomTable[_currentCharacter->sceneId].itemsYPos;
 
 	int highestYPos = -1;
-	byte returnValue = 0xFF;
+	Item returnValue = kItemNone;
 
 	for (int i = 0; i < 12; ++i) {
-		if (*itemsTable != 0xFF) {
+		if (*itemsTable != kItemNone) {
 			int xpos = *xposOffset - 11;
 			int xpos2 = *xposOffset + 10;
 			if (x > xpos && x < xpos2) {
-				assert(*itemsTable < ARRAYSIZE(_itemTable));
-				int itemHeight = _itemTable[*itemsTable].height;
+				assert(*itemsTable >= 0);
+				int itemHeight = _itemHtDat[*itemsTable];
 				int ypos = *yposOffset + 3;
 				int ypos2 = ypos - itemHeight - 3;
 
@@ -108,6 +110,7 @@ byte KyraEngine_LoK::findItemAtPos(int x, int y) {
 				}
 			}
 		}
+
 		++xposOffset;
 		++yposOffset;
 		++itemsTable;
@@ -170,7 +173,7 @@ void KyraEngine_LoK::placeItemInGenericMapScene(int item, int index) {
 	}
 }
 
-void KyraEngine_LoK::setHandItem(uint16 item) {
+void KyraEngine_LoK::setHandItem(Item item) {
 	_screen->hideMouse();
 	setMouseItem(item);
 	_itemInHand = item;
@@ -180,20 +183,21 @@ void KyraEngine_LoK::setHandItem(uint16 item) {
 void KyraEngine_LoK::removeHandItem() {
 	_screen->hideMouse();
 	_screen->setMouseCursor(1, 1, _shapes[0]);
-	_itemInHand = -1;
+	_itemInHand = kItemNone;
 	_screen->showMouse();
 }
 
-void KyraEngine_LoK::setMouseItem(uint16 item) {
-	if (item == 0xFFFF)
+void KyraEngine_LoK::setMouseItem(Item item) {
+	if (item == kItemNone)
 		_screen->setMouseCursor(1, 1, _shapes[6]);
 	else
 		_screen->setMouseCursor(8, 15, _shapes[216+item]);
 }
 
 void KyraEngine_LoK::wipeDownMouseItem(int xpos, int ypos) {
-	if (_itemInHand == -1)
+	if (_itemInHand == kItemNone)
 		return;
+
 	xpos -= 8;
 	ypos -= 15;
 	_screen->hideMouse();
@@ -261,7 +265,7 @@ int KyraEngine_LoK::countItemsInScene(uint16 sceneId) {
 	int items = 0;
 
 	for (int i = 0; i < 12; ++i) {
-		if (currentRoom->itemsTable[i] != 0xFF)
+		if (currentRoom->itemsTable[i] != kItemNone)
 			++items;
 	}
 
@@ -284,7 +288,7 @@ int KyraEngine_LoK::processItemDrop(uint16 sceneId, uint8 item, int x, int y, in
 
 	if (unk1 != 3) {
 		for (int i = 0; i < 12; ++i) {
-			if (currentRoom->itemsTable[i] == 0xFF) {
+			if (currentRoom->itemsTable[i] == kItemNone) {
 				freeItem = i;
 				break;
 			}
@@ -301,13 +305,14 @@ int KyraEngine_LoK::processItemDrop(uint16 sceneId, uint8 item, int x, int y, in
 		return 1;
 	}
 
-	int itemHeight = _itemTable[item].height;
+	int itemHeight = _itemHtDat[item];
 	_lastProcessedItemHeight = itemHeight;
 
-	if (x == -1 && x == -1) {
+	if (x == -1)
 		x = _rnd.getRandomNumberRng(16, 304);
+
+	if (y == -1)
 		y = _rnd.getRandomNumberRng(_northExitHeight & 0xFF, 135);
-	}
 
 	int xpos = x;
 	int ypos = y;
@@ -618,7 +623,7 @@ void KyraEngine_LoK::itemSpecialFX1(int x, int y, int item) {
 void KyraEngine_LoK::itemSpecialFX2(int x, int y, int item) {
 	x -= 8;
 	y -= 15;
-	int yAdd = (int8)(((16 - _itemTable[item].height) >> 1) & 0xFF);
+	int yAdd = (int8)(((16 - _itemHtDat[item]) >> 1) & 0xFF);
 	backUpItemRect0(x, y);
 	if (item >= 80 && item <= 89)
 		snd_playSoundEffect(55);
@@ -646,7 +651,8 @@ void KyraEngine_LoK::magicOutMouseItem(int animIndex, int itemPos) {
 	int videoPageBackUp = _screen->_curPage;
 	_screen->_curPage = 0;
 	int x = 0, y = 0;
-	if (itemPos == -1) {
+
+	if (itemPos == kItemNone) {
 		Common::Point mouse = getMousePos();
 		x = mouse.x - 12;
 		y = mouse.y - 18;
@@ -655,7 +661,7 @@ void KyraEngine_LoK::magicOutMouseItem(int animIndex, int itemPos) {
 		y = _itemPosY[itemPos] - 3;
 	}
 
-	if (_itemInHand == -1 && itemPos == -1)
+	if (_itemInHand == kItemNone && itemPos == -1)
 		return;
 
 	int tableIndex = 0, loopStart = 0, maxLoops = 0;
@@ -712,15 +718,17 @@ void KyraEngine_LoK::magicOutMouseItem(int animIndex, int itemPos) {
 		delayUntil(nextTime);
 	}
 	restoreItemRect1(x, y);
+
 	if (itemPos == -1) {
 		_screen->setMouseCursor(1, 1, _shapes[0]);
-		_itemInHand = -1;
+		_itemInHand = kItemNone;
 	} else {
-		_characterList[0].inventoryItems[itemPos] = 0xFF;
+		_characterList[0].inventoryItems[itemPos] = kItemNone;
 		_screen->hideMouse();
 		_screen->fillRect(_itemPosX[itemPos], _itemPosY[itemPos], _itemPosX[itemPos] + 15, _itemPosY[itemPos] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12, 0);
 		_screen->showMouse();
 	}
+
 	_screen->showMouse();
 	_screen->_curPage = videoPageBackUp;
 }
@@ -883,7 +891,8 @@ void KyraEngine_LoK::redrawInventory(int page) {
 	_screen->hideMouse();
 	for (int i = 0; i < 10; ++i) {
 		_screen->fillRect(_itemPosX[i], _itemPosY[i], _itemPosX[i] + 15, _itemPosY[i] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12, page);
-		if (_currentCharacter->inventoryItems[i] != 0xFF) {
+
+		if (_currentCharacter->inventoryItems[i] != kItemNone) {
 			uint8 item = _currentCharacter->inventoryItems[i];
 			_screen->drawShape(page, _shapes[216+item], _itemPosX[i], _itemPosY[i], 0, 0);
 		}
@@ -913,12 +922,12 @@ void KyraEngine_LoK::restoreItemRect1(int xpos, int ypos) {
 	_screen->copyBlockToPage(_screen->_curPage, xpos, ypos, 4<<3, 32, _itemBkgBackUp[1]);
 }
 
-int KyraEngine_LoK::getItemListIndex(uint16 item) {
+int KyraEngine_LoK::getItemListIndex(Item item) {
 	if (_flags.platform != Common::kPlatformAmiga)
 		return item;
 
 	// "Unknown item" is at 81.
-	if (item == 0xFFFF || item == 0xFF)
+	if (item == kItemNone)
 		return 81;
 	// The first item names are mapped directly
 	else if (item <= 28)

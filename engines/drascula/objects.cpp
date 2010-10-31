@@ -221,16 +221,17 @@ void DrasculaEngine::addObject(int obj) {
  * If no inventory slot is under the mouse cursor, return 0.
  */
 int DrasculaEngine::whichObject() {
-	int n = 0;
+	int n;
 
 	for (n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
 		if (mouseX > _itemLocations[n].x && mouseY > _itemLocations[n].y &&
 			mouseX < _itemLocations[n].x + OBJWIDTH &&
-			mouseY < _itemLocations[n].y + OBJHEIGHT)
-			break;
+			mouseY < _itemLocations[n].y + OBJHEIGHT) {
+			return n;
+		}
 	}
 
-	return n;
+	return 0;
 }
 
 void DrasculaEngine::updateVisible() {

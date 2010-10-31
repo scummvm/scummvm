@@ -155,15 +155,6 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 				names[i] = sci1Selectors[i - count];
 		}
 
-		for (const SelectorRemap *selectorRemap = sciSelectorRemap; selectorRemap->slot; ++selectorRemap) {
-			if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
-				const uint32 slot = selectorRemap->slot;
-				if (slot >= names.size())
-					names.resize(slot + 1);
-				names[slot] = selectorRemap->name;
-			}
-		}
-
 		// Now, we need to find out selectors which keep changing place...
 		// We do that by dissecting game objects, and looking for selectors at
 		// specified locations.
@@ -184,8 +175,8 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 				// The init selector is always the first function
 				int initSelectorPos = actorClass->getFuncSelector(0);
 
-				if (names.size() < (uint32)initSelectorPos + 1)
-					names.resize((uint32)initSelectorPos + 1);
+				if (names.size() < (uint32)initSelectorPos + 2)
+					names.resize((uint32)initSelectorPos + 2);
 
 				names[initSelectorPos] = "init";
 				// dispose comes right after init
@@ -253,11 +244,12 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 			names[275] = "syncCue";
 		} else if (g_sci->getGameId() == GID_PEPPER) {
 			// Same as above for the non-interactive demo of Pepper
-			if (names.size() < 265)
-				names.resize(265);
+			if (names.size() < 539)
+				names.resize(539);
 
 			names[263] = "syncTime";
 			names[264] = "syncCue";
+			names[538] = "startText";
 		} else if (g_sci->getGameId() == GID_LAURABOW2) {
 			// The floppy of version needs the changeState selector set to match up with the
 			// CD version's workarounds.
@@ -265,6 +257,11 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 				names.resize(251);
 
 			names[144] = "changeState";
+		} else if (g_sci->getGameId() == GID_CNICK_KQ) {
+			if (names.size() < 447)
+				names.resize(447);
+
+			names[446] = "say";
 		}
 
 #ifdef ENABLE_SCI32
@@ -273,6 +270,15 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 		for (int i = 0; i < count; i++)
 			names[i] = sci2Selectors[i];
 #endif
+	}
+
+	for (const SelectorRemap *selectorRemap = sciSelectorRemap; selectorRemap->slot; ++selectorRemap) {
+		if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
+			const uint32 slot = selectorRemap->slot;
+			if (slot >= names.size())
+				names.resize(slot + 1);
+			names[slot] = selectorRemap->name;
+		}
 	}
 
 	return names;

@@ -26,6 +26,9 @@
 #ifndef SCUMM_GFX_H
 #define SCUMM_GFX_H
 
+#include "common/system.h"
+#include "common/list.h"
+
 #include "graphics/surface.h"
 
 namespace Scumm {
@@ -420,6 +423,66 @@ public:
 	Gdi16Bit(ScummEngine *vm);
 };
 #endif
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+// Helper class for FM-Towns output (required for specific hardware effects like
+// switching graphics layers on and off).
+class TownsScreen {
+public:
+	TownsScreen(OSystem *system, int width, int height, int bpp);
+	~TownsScreen();
+
+	void setupLayer(int layer, int width, int height, int numCol, void *srcPal = 0);
+	void clearLayer(int layer);
+	void fillLayerRect(int layer, int x, int y, int w, int h, int col);
+	//void copyRectToLayer(int layer, int x, int y, int w, int h, const uint8 *src);
+	
+	uint8 *getLayerPixels(int layer, int x, int y);
+	int getLayerPitch(int layer);
+	int getLayerHeight(int layer);
+	int getLayerBpp(int layer);
+	int getLayerScaleW(int layer);
+	int getLayerScaleH(int layer);
+	
+	void addDirtyRect(int x, int y, int w, int h);
+	void toggleLayers(int flag);
+	void update();
+
+private:
+	void updateOutputBuffer();
+	void outputToScreen();
+	uint16 calc16BitColor(const uint8 *palEntry);
+
+	struct TownsScreenLayer {
+		uint8 *pixels;
+		uint8 *palette;
+		int pitch;
+		int height;
+		int bpp;
+		int numCol;
+		uint8 scaleW;
+		uint8 scaleH;
+		bool onBottom;
+		bool enabled;
+		bool ready;
+
+		uint16 *bltInternX;
+		uint8 **bltInternY;
+		uint16 *bltTmpPal;
+	} _layers[2];
+	
+	uint8 *_outBuffer;
+
+	int _height;
+	int _width;
+	int _pitch;
+	int _bpp;
+	
+	int _numDirtyRects;
+	Common::List<Common::Rect> _dirtyRects;	
+	OSystem *_system;
+};
+#endif // DISABLE_TOWNS_DUAL_LAYER_MODE
 
 } // End of namespace Scumm
 

@@ -92,7 +92,7 @@ const char *getSciVersionDesc(SciVersion version) {
 
 #undef SCI_REQUIRE_RESOURCE_FILES
 
-//#define SCI_VERBOSE_resMan 1
+//#define SCI_VERBOSE_RESMAN 1
 
 static const char *sci_error_types[] = {
 	"No error",
@@ -142,7 +142,6 @@ static const ResourceType s_resTypeMapSci0[] = {
 	kResourceTypeTranslation                                                              // 0x14
 };
 
-#ifdef ENABLE_SCI32
 // TODO: 12 should be "Wave", but SCI seems to just store it in Audio resources
 static const ResourceType s_resTypeMapSci21[] = {
 	kResourceTypeView, kResourceTypePic, kResourceTypeScript, kResourceTypeText,          // 0x00-0x03
@@ -152,7 +151,6 @@ static const ResourceType s_resTypeMapSci21[] = {
 	kResourceTypeMap, kResourceTypeHeap, kResourceTypeChunk, kResourceTypeAudio36,        // 0x10-0x13
 	kResourceTypeSync36, kResourceTypeTranslation, kResourceTypeRobot, kResourceTypeVMD   // 0x14-0x17
 };
-#endif
 
 ResourceType ResourceManager::convertResType(byte type) {
 	type &= 0x7f;
@@ -163,7 +161,6 @@ ResourceType ResourceManager::convertResType(byte type) {
 			return s_resTypeMapSci0[type];
 	} else {
 		// SCI2.1+
-#ifdef ENABLE_SCI32
 		if (type < ARRAYSIZE(s_resTypeMapSci21)) {
 			// LSL6 hires doesn't have the chunk resource type, to match
 			// the resource types of the lowres version, thus we use the
@@ -173,9 +170,6 @@ ResourceType ResourceManager::convertResType(byte type) {
 			else
 				return s_resTypeMapSci21[type];
 		}
-#else
-		error("SCI32 support not compiled in");
-#endif
 	}
 
 	return kResourceTypeInvalid;
@@ -490,8 +484,9 @@ void ResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 
 	int error = res->decompress(resMan->getVolVersion(), fileStream);
 	if (error) {
-		warning("Error %d occurred while reading %s from resource file: %s",
-				error, res->_id.toString().c_str(), sci_error_types[error]);
+		warning("Error %d occurred while reading %s from resource file %s: %s",
+				error, res->_id.toString().c_str(), res->getResourceLocation().c_str(),
+				sci_error_types[error]);
 		res->unalloc();
 	}
 
@@ -852,7 +847,16 @@ void ResourceManager::init() {
 		debugC(1, kDebugLevelResMan, "resMan: Detected Amiga graphic resources");
 		break;
 	default:
+#ifdef ENABLE_SCI32
 		error("resMan: Couldn't determine view type");
+#else
+		if (getSciVersion() >= SCI_VERSION_2) {
+			// SCI support isn't built in, thus the view type won't be determined for
+			// SCI2+ games. This will be handled further up, so throw no error here
+		} else {
+			error("resMan: Couldn't determine view type");
+		}
+#endif
 	}
 
 #ifdef ENABLE_SCI32
@@ -904,7 +908,7 @@ void ResourceManager::addToLRU(Resource *res) {
 	}
 	_LRU.push_front(res);
 	_memoryLRU += res->size;
-#if SCI_VERBOSE_resMan
+#if SCI_VERBOSE_RESMAN
 	debug("Adding %s.%03d (%d bytes) to lru control: %d bytes total",
 	      getResourceTypeName(res->type), res->number, res->size,
 	      mgr->_memoryLRU);
@@ -935,7 +939,7 @@ void ResourceManager::freeOldResources() {
 		Resource *goner = *_LRU.reverse_begin();
 		removeFromLRU(goner);
 		goner->unalloc();
-#ifdef SCI_VERBOSE_resMan
+#ifdef SCI_VERBOSE_RESMAN
 		printf("resMan-debug: LRU: Freeing %s.%03d (%d bytes)\n", getResourceTypeName(goner->type), goner->number, goner->size);
 #endif
 	}
@@ -1945,7 +1949,18 @@ void ResourceManager::detectSciVersion() {
 	s_sciVersion = SCI_VERSION_0_EARLY;
 	bool oldDecompressors = true;
 
-	ResourceCompression viewCompression = getViewCompression();
+	ResourceCompression viewCompression;
+#ifdef ENABLE_SCI32	
+	viewCompression = getViewCompression();
+#else
+	if (_volVersion == kResVersionSci32) {
+		// SCI32 support isn't built in, thus view detection will fail
+		viewCompression = kCompUnknown;
+	} else {
+		viewCompression = getViewCompression();
+	}
+#endif
+
 	if (viewCompression != kCompLZW) {
 		// If it's a different compression type from kCompLZW, the game is probably
 		// SCI_VERSION_1_EGA or later. If the views are uncompressed, it is
@@ -1966,8 +1981,18 @@ void ResourceManager::detectSciVersion() {
 		// SCI1.1 VGA views
 		_viewType = kViewVga11;
 	} else {
+#ifdef ENABLE_SCI32
 		// Otherwise we detect it from a view
 		_viewType = detectViewType();
+#else
+		if (_volVersion == kResVersionSci32 && viewCompression == kCompUnknown) {
+			// A SCI32 game, but SCI32 support is disabled. Force the view type
+			// to kViewVga11, as we can't read from the game's resource files
+			_viewType = kViewVga11;
+		} else {
+			_viewType = detectViewType();
+		}
+#endif
 	}
 	
 	if (_volVersion == kResVersionSci11Mac) {
@@ -2351,6 +2376,10 @@ Common::String ResourceManager::findSierraGameId() {
 	sierraId += (const char *)seeker;
 
 	return sierraId;
+}
+
+const Common::String &Resource::getResourceLocation() const {
+	return _source->getLocationName();
 }
 
 } // End of namespace Sci

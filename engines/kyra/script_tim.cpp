@@ -259,7 +259,7 @@ int TIMInterpreter::exec(TIM *tim, bool loop) {
 				if (cur.ip) {
 					cur.ip += cur.ip[0];
 					cur.lastTime = cur.nextTime;
-					cur.nextTime += (cur.ip[1] ) * _vm->tickLength();
+					cur.nextTime += cur.ip[1] * _vm->tickLength();
 				}
 			}
 		}
@@ -946,7 +946,7 @@ int TIMInterpreter_LoL::initAnimStruct(int index, const char *filename, int x, i
 		}
 	}
 
-	if (wsaFlags & 7)
+	if (wsa && (wsaFlags & 7))
 		wsa->displayFrame(0, 0, x, y, 0, 0, 0);
 
 	if (wsaFlags & 3) {

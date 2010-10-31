@@ -6,28 +6,28 @@ been warned :-).
 
 agi-palex.py (buddha)
 ------------
-  Tool for extracting palettes from Amiga AGI games' executables.
+    Tool for extracting palettes from Amiga AGI games' executables.
 
 
 construct-pred-dict.pl, extract-words-tok.pl (sev)
 --------------------------------------------
-   Tools related to predictive input for AGI engine.
+    Tools related to predictive input for AGI engine.
 
 
 convbdf
 -------
-   Tool which converts BDF fonts (BDF = Bitmap Distribution Format) to
-   C++ source. That source, after being slightly tweaked, can be used to
-   replace or add fonts for the ScummVM GUI.
+    Tool which converts BDF fonts (BDF = Bitmap Distribution Format) to
+    C++ source. That source, after being slightly tweaked, can be used to
+    replace or add fonts for the ScummVM GUI.
 
-   There is also a ttf2bdf tool which allows you to convert TrueType
-   fonts to BDF.
+    There is also a ttf2bdf tool which allows you to convert TrueType
+    fonts to BDF.
 
-   Hint from SumthinWicked: If you use ttf2bdf, it'll convert all glyphs
-   to bitmaps, but ScummVM only needs some of them. So you may want to
-   do your conversion like this:
-     ttf2bdf -p SIZE -l "32_160" -o FONT.bdf FONT.ttf
-   where SIZE is replaced by the desired font height.
+    Hint from SumthinWicked: If you use ttf2bdf, it'll convert all glyphs
+    to bitmaps, but ScummVM only needs some of them. So you may want to
+    do your conversion like this:
+      ttf2bdf -p SIZE -l "32_160" -o FONT.bdf FONT.ttf
+    where SIZE is replaced by the desired font height.
 
 
 create_drascula (sev)
@@ -39,10 +39,12 @@ create_drascula (sev)
     (mostly the dialog subtitles) in English, Spanish, German, French
     and Italian. This tool is used to create the drascula.dat file.
 
+
 create_hugo (Strangerke)
 -----------
-	Creates hugo.dat file which contains all kinds of static data contained
+    Creates hugo.dat file which contains all kinds of static data contained
     in original game executable.
+
 
 create_kyradat (LordHoto, athrxx)
 --------------
@@ -70,6 +72,13 @@ create_msvc (LordHoto, Littleboy (contributor))
     for further help.
 
 
+create_toon (Strangerke)
+-----------
+    This tool creates toon.dat, which contains all the game's texts 
+    hardcoded in original game executable. This includes English, French,
+    German, Russian and Spanish texts. 
+
+
 create_translations (criezy)
 -------------------
     Creates the translations.dat file from po files given as arguments.
@@ -78,10 +87,10 @@ create_translations (criezy)
 
 credits.pl
 ----------
-   This perl script contains credits to the many people who helped with
-   ScummVM, and it is used to create the credits lists that occur in
-   various places, including the AUTHORS file, the about dialog, and our
-   web site.
+    This perl script contains credits to the many people who helped with
+    ScummVM, and it is used to create the credits lists that occur in
+    various places, including the AUTHORS file, the about dialog, and our
+    web site.
 
 
 dist-scummvm.sh
@@ -110,9 +119,9 @@ dist-scummvm.sh
 
 make-scumm-fontdata (eriktorbjorn)
 -------------------
-   Tool that generates compressed font data used in SCUMM: To get rid of
-   a few kilobytes of hard-coded font data, we only store how the
-   French, German, Italian and Spanish fonts differ from the English one.
+    Tool that generates compressed font data used in SCUMM: To get rid of
+    a few kilobytes of hard-coded font data, we only store how the
+    French, German, Italian and Spanish fonts differ from the English one.
 
 
 md5table
@@ -123,9 +132,9 @@ md5table
 
 qtable (cyx)
 -------
-   This tool generates the "queen.tbl" file.
+    This tool generates the "queen.tbl" file.
 
 
 skycpt (lavosspawn)
 -------
-   This tool generates the "SKY.CPT" file.
+    This tool generates the "SKY.CPT" file.

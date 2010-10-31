@@ -35,7 +35,6 @@
 #include "scumm/debugger.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/object.h"
-#include "scumm/player_v2.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 
@@ -87,7 +86,7 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	if (_vm->_game.id == GID_LOOM)
 		DCmd_Register("drafts",  WRAP_METHOD(ScummDebugger, Cmd_PrintDraft));
 
-	if (_vm->_game.id == GID_MONKEY && Common::kPlatformSegaCD)
+	if (_vm->_game.id == GID_MONKEY && _vm->_game.platform == Common::kPlatformSegaCD)
 		DCmd_Register("passcode",  WRAP_METHOD(ScummDebugger, Cmd_Passcode));
 
 	DCmd_Register("loadgame",  WRAP_METHOD(ScummDebugger, Cmd_LoadGame));
@@ -529,7 +528,7 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 	} else {
 		DebugPrintf("Usage: debug [+CHANNEL|-CHANNEL]\n");
 		DebugPrintf("Enables or disables the given debug channel.\n");
-		DebugPrintf("When used without parameters, lists all avaiable debug channels and their status.\n");
+		DebugPrintf("When used without parameters, lists all available debug channels and their status.\n");
 	}
 
 	return true;

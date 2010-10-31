@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "pak.h"
 
 bool PAKFile::loadFile(const char *file, const bool isAmiga) {

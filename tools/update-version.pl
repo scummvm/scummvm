@@ -49,7 +49,8 @@ my %subs = (
 	VER_MINOR	=>	$VER_MINOR,
 	VER_PATCH	=>	$VER_PATCH,
 	VER_EXTRA	=>	$VER_EXTRA,
-	VERSION		=>	$VERSION
+	VERSION		=>	$VERSION,
+	SVN_REVISION=>	"",
 	);
 
 foreach my $file (@subs_files) {

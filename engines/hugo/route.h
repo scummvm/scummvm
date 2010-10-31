@@ -53,7 +53,7 @@ struct segment_t {                                  // Search segment
 
 class Route {
 public:
-	Route(HugoEngine &vm);
+	Route(HugoEngine *vm);
 
 	void processRoute();
 	bool startRoute(go_t go_for, short id, short cx, short cy);
@@ -61,7 +61,7 @@ public:
 	void setWalk(uint16 direction);
 
 private:
-	HugoEngine &_vm;
+	HugoEngine *_vm;
 
 	byte _boundaryMap[YPIX][XPIX];                  // Boundary byte map
 	segment_t _segment[kMaxSeg];                    // List of points in fill-path

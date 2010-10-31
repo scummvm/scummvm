@@ -213,6 +213,12 @@ const char *TranslationManager::getCurrentCharset() {
 	return _currentCharset.c_str();
 }
 
+const char *TranslationManager::getCurrentLanguage() {
+	if (_currentLang == -1)
+		return "C";
+	return _langs[_currentLang].c_str();
+}
+
 String TranslationManager::getTranslation(const String &message) {
 	return getTranslation(message.c_str());
 }
@@ -264,18 +270,18 @@ bool TranslationManager::openTranslationsFile(File& inFile) {
 	// First try to open it directly (i.e. using the SearchMan).
 	if (inFile.open("translations.dat"))
 		return true;
-	
+
 	// Then look in the Themepath if we can find the file.
 	if (ConfMan.hasKey("themepath"))
 		return openTranslationsFile(FSNode(ConfMan.get("themepath")), inFile);
-	
+
 	return false;
 }
 
 bool TranslationManager::openTranslationsFile(const FSNode &node, File& inFile, int depth) {
 	if (!node.exists() || !node.isReadable() || !node.isDirectory())
 		return false;
-	
+
 	// Check if we can find the file in this directory
 	// Since File::open(FSNode) makes all the needed tests, it is not really
 	// necessary to make them here. But it avoid printing warnings.
@@ -284,21 +290,21 @@ bool TranslationManager::openTranslationsFile(const FSNode &node, File& inFile, 
 		if (inFile.open(fileNode))
 			return true;
 	}
-	
+
 	// Check if we exceeded the given recursion depth
 	if (depth - 1 == -1)
-		return false;	
-	
+		return false;
+
 	// Otherwise look for it in sub-directories
 	FSList fileList;
 	if (!node.getChildren(fileList, FSNode::kListDirectoriesOnly))
 		return false;
-	
+
 	for (FSList::iterator i = fileList.begin(); i != fileList.end(); ++i) {
 		if (openTranslationsFile(*i, inFile, depth == -1 ? - 1 : depth - 1))
 			return true;
 	}
-	
+
 	// Not found in this directory or its sub-directories
 	return false;
 }
@@ -318,7 +324,7 @@ void TranslationManager::loadTranslationsInfoDat() {
 
 	// Get number of translations
 	int nbTranslations = in.readUint16BE();
-	
+
 	// Skip all the block sizes
 	for (int i = 0; i < nbTranslations + 2; ++i)
 		in.readUint16BE();
@@ -467,12 +473,15 @@ String TranslationManager::getTranslation(const String &message, const String &)
 const TLangArray TranslationManager::getSupportedLanguageNames() const {
 	return TLangArray();
 }
-	
+
 const char *TranslationManager::getCurrentCharset() {
 	return "ASCII";
+}
+
+const char *TranslationManager::getCurrentLanguage() {
+	return "C";
 }
 
 #endif // USE_TRANSLATION
 
 } // End of namespace Common
-

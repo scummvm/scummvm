@@ -114,7 +114,7 @@ void AgiEngine::selectItems(int n) {
 	int fsel = 0;
 	bool exit_select = false;
 
-	while (!exit_select) {
+	while (!exit_select && !(shouldQuit() || _restartGame)) {
 		if (n > 0)
 			printItem(fsel, STATUS_BG, STATUS_FG);
 

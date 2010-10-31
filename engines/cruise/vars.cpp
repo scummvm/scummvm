@@ -51,8 +51,8 @@ int32 volumeDataLoaded = 0;
 
 int16 numOfDisks;
 
-char lastOverlay[15];
-char nextOverlay[15];
+char lastOverlay[38];
+char nextOverlay[38];
 
 int16 currentActiveMenu;
 int16 autoMsg;

@@ -24,11 +24,11 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 #include "graphics/cursorman.h"
 
 #include "gob/gob.h"
 #include "gob/draw.h"
-#include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/game.h"
@@ -119,13 +119,13 @@ void Draw_v1::animateCursor(int16 cursor) {
 			newY -= hotspotY = (uint16) VAR(_cursorIndex + _cursorHotspotYVar);
 		}
 
-		_vm->_video->clearSurf(*_scummvmCursor);
-		_vm->_video->drawSprite(*_cursorSprites, *_scummvmCursor,
+		_scummvmCursor->clear();
+		_scummvmCursor->blit(*_cursorSprites,
 				cursorIndex * _cursorWidth, 0,
 				(cursorIndex + 1) * _cursorWidth - 1,
-				_cursorHeight - 1, 0, 0, 0);
-		CursorMan.replaceCursor(_scummvmCursor->getVidMem(),
-				_cursorWidth, _cursorHeight, hotspotX, hotspotY, 0);
+				_cursorHeight - 1, 0, 0);
+		CursorMan.replaceCursor(_scummvmCursor->getData(),
+				_cursorWidth, _cursorHeight, hotspotX, hotspotY, 0, 1, &_vm->getPixelFormat());
 
 		if (_frontSurface != _backSurface) {
 			_showCursor = 3;
@@ -258,7 +258,7 @@ void Draw_v1::printTotText(int16 id) {
 			} else if (cmd == 1) {
 				val = READ_LE_UINT16(ptrEnd + 18) * 4;
 
-				strncpy0(buf, GET_VARO_STR(val), 19);
+				Common::strlcpy(buf, GET_VARO_STR(val), 20);
 			} else {
 				val = READ_LE_UINT16(ptrEnd + 18) * 4;
 
@@ -346,27 +346,24 @@ void Draw_v1::spriteOperation(int16 operation) {
 	Font *font = 0;
 	switch (operation) {
 	case DRAW_BLITSURF:
-		_vm->_video->drawSprite(*_spritesArray[_sourceSurface],
-		    *_spritesArray[_destSurface],
+		_spritesArray[_destSurface]->blit(*_spritesArray[_sourceSurface],
 		    _spriteLeft, _spriteTop,
 		    _spriteLeft + _spriteRight - 1,
 		    _spriteTop + _spriteBottom - 1,
-		    _destSpriteX, _destSpriteY, _transparency);
+		    _destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 		break;
 
 	case DRAW_PUTPIXEL:
-		_vm->_video->putPixel(_destSpriteX, _destSpriteY,
-		    _frontColor, *_spritesArray[_destSurface]);
+		_spritesArray[_destSurface]->putPixel(_destSpriteX, _destSpriteY, _frontColor);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _destSpriteX, _destSpriteY);
 		break;
 
 	case DRAW_FILLRECT:
-		_vm->_video->fillRect(*_spritesArray[_destSurface],
-		    _destSpriteX, _destSpriteY,
+		_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
 		    _destSpriteX + _spriteRight - 1,
 		    _destSpriteY + _spriteBottom - 1, _backColor);
 
@@ -375,8 +372,7 @@ void Draw_v1::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_DRAWLINE:
-		_vm->_video->drawLine(*_spritesArray[_destSurface],
-		    _destSpriteX, _destSpriteY,
+		_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
 		    _spriteRight, _spriteBottom, _frontColor);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
@@ -417,31 +413,24 @@ void Draw_v1::spriteOperation(int16 operation) {
 				_destSpriteY + font->getCharHeight() - 1);
 
 		for (int i = 0; i < len; i++) {
-			_vm->_video->drawLetter(_textToPrint[i],
-			    _destSpriteX, _destSpriteY,
-			    *font, _transparency,
-			    _frontColor, _backColor,
-			    *_spritesArray[_destSurface]);
+			font->drawLetter(*_spritesArray[_destSurface], _textToPrint[i],
+					_destSpriteX, _destSpriteY, _frontColor, _backColor, _transparency);
 
 			_destSpriteX += font->getCharWidth();
 		}
 		break;
 
 	case DRAW_DRAWBAR:
-		_vm->_video->drawLine(*_spritesArray[_destSurface],
-		    _destSpriteX, _spriteBottom,
+		_spritesArray[_destSurface]->drawLine(_destSpriteX, _spriteBottom,
 		    _spriteRight, _spriteBottom, _frontColor);
 
-		_vm->_video->drawLine(*_spritesArray[_destSurface],
-		    _destSpriteX, _destSpriteY,
+		_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
 		    _destSpriteX, _spriteBottom, _frontColor);
 
-		_vm->_video->drawLine(*_spritesArray[_destSurface],
-		    _spriteRight, _destSpriteY,
+		_spritesArray[_destSurface]->drawLine(_spriteRight, _destSpriteY,
 		    _spriteRight, _spriteBottom, _frontColor);
 
-		_vm->_video->drawLine(*_spritesArray[_destSurface],
-		    _destSpriteX, _destSpriteY,
+		_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
 		    _spriteRight, _destSpriteY, _frontColor);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
@@ -449,8 +438,7 @@ void Draw_v1::spriteOperation(int16 operation) {
 
 	case DRAW_CLEARRECT:
 		if (_backColor < 16) {
-			_vm->_video->fillRect(*_spritesArray[_destSurface],
-			    _destSpriteX, _destSpriteY,
+			_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
 			    _spriteRight, _spriteBottom,
 			    _backColor);
 		}
@@ -458,8 +446,7 @@ void Draw_v1::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_FILLRECTABS:
-		_vm->_video->fillRect(*_spritesArray[_destSurface],
-		    _destSpriteX, _destSpriteY,
+		_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
 		    _spriteRight, _spriteBottom, _backColor);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
@@ -476,11 +463,8 @@ void Draw_v1::spriteOperation(int16 operation) {
 			dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 					_destSpriteX + font->getCharWidth()  - 1,
 					_destSpriteY + font->getCharHeight() - 1);
-			_vm->_video->drawLetter(_letterToPrint,
-			    _destSpriteX, _destSpriteY,
-			    *font, _transparency,
-			    _frontColor, _backColor,
-			    *_spritesArray[_destSurface]);
+			font->drawLetter(*_spritesArray[_destSurface], _letterToPrint,
+					_destSpriteX, _destSpriteY, _frontColor, _backColor, _transparency);
 			break;
 		}
 
@@ -498,11 +482,10 @@ void Draw_v1::spriteOperation(int16 operation) {
 				_destSpriteX + _fontToSprite[_fontIndex].width,
 				_destSpriteY + _fontToSprite[_fontIndex].height);
 
-		_vm->_video->drawSprite(*_spritesArray[(int16)_fontToSprite[_fontIndex].sprite],
-		    *_spritesArray[_destSurface], x, y,
+		_spritesArray[_destSurface]->blit(*_spritesArray[(int16)_fontToSprite[_fontIndex].sprite], x, y,
 		    x + _fontToSprite[_fontIndex].width,
 		    y + _fontToSprite[_fontIndex].height,
-		    _destSpriteX, _destSpriteY, _transparency);
+		    _destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
 
 		break;
 	}

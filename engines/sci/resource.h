@@ -219,6 +219,8 @@ public:
 	 */
 	void writeToStream(Common::WriteStream *stream) const;
 
+	const Common::String &getResourceLocation() const;
+
 	// FIXME: This audio specific method is a hack. After all, why should a
 	// Resource have audio specific methods? But for now we keep this, as it
 	// eases transition.

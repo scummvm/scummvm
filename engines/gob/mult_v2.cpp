@@ -272,9 +272,9 @@ void Mult_v2::loadImds(Common::SeekableReadStream &data) {
 	memcpy(_multData->imdFiles,
 			_vm->_game->_script->getData() + _vm->_game->_script->pos(), size * 14);
 
-	// WORKAROUND: The Windows version of Lost in Time has VMD not IMD files,
-	//             but they are still referenced as IMD.
-	if ((_vm->getGameType() == kGameTypeLostInTime) &&
+	// WORKAROUND: The Windows versions of Lost in Time and Gob3 have VMD not
+	//             IMD files, but they are still referenced as IMD.
+	if (((_vm->getGameType() == kGameTypeLostInTime) || (_vm->getGameType() == kGameTypeGob3)) &&
 	    (_vm->getPlatform() == Common::kPlatformWindows)) {
 
 		for (int i = 0; i < size; i++) {
@@ -582,9 +582,8 @@ void Mult_v2::playMultInit() {
 		_vm->_draw->initSpriteSurf(Draw::kAnimSurface, width, height, 0);
 		_animSurf = _vm->_draw->_spritesArray[Draw::kAnimSurface];
 
-		_vm->_video->drawSprite(*_vm->_draw->_spritesArray[Draw::kBackSurface],
-				*_vm->_draw->_spritesArray[Draw::kAnimSurface], 0, 0,
-				_vm->_video->_surfWidth, _vm->_video->_surfHeight, 0, 0, 0);
+		_vm->_draw->_spritesArray[Draw::kAnimSurface]->blit(*_vm->_draw->_spritesArray[Draw::kBackSurface],
+				0, 0, _vm->_video->_surfWidth, _vm->_video->_surfHeight, 0, 0);
 
 		for (_counter = 0; _counter < _objCount; _counter++)
 			_multData->palAnimIndices[_counter] = _counter;
@@ -639,9 +638,8 @@ void Mult_v2::drawStatics(bool &stop) {
 			_vm->_scenery->_curStatic = -1;
 		}
 
-		_vm->_video->drawSprite(*_vm->_draw->_spritesArray[Draw::kBackSurface],
-				*_vm->_draw->_spritesArray[Draw::kAnimSurface], 0, 0,
-				_vm->_video->_surfWidth, _vm->_video->_surfHeight, 0, 0, 0);
+		_vm->_draw->_spritesArray[Draw::kAnimSurface]->blit(*_vm->_draw->_spritesArray[Draw::kBackSurface],
+				0, 0, _vm->_video->_surfWidth, _vm->_video->_surfHeight, 0, 0);
 	}
 }
 

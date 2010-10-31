@@ -305,7 +305,7 @@ public:
 	void classChanged(int cls, bool value);
 
 	// Used by the save/load system:
-	void saveLoadWithSerializer(Serializer *ser);
+	virtual void saveLoadWithSerializer(Serializer *ser);
 
 protected:
 	bool isInClass(int cls);
@@ -381,14 +381,16 @@ protected:
 
 class ActorC64 : public Actor_v2 {
 public:
-	// FIXME: These vars are never saved, which might lead to broken save states.
-	byte _miscflags;
-	byte _speaking, _speakingPrev;
 	byte _costCommand, _costFrame;
+	byte _miscflags; // 0x1: strong, 0x8: Ed's enemy, 0x40: stop moving, 0x80: hide(dead/radiation suit)
+	byte _speaking, _speakingPrev;
 
 public:
 	ActorC64(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {
-		 _speaking = _speakingPrev = _costCommand = _costFrame = 0;
+		 _costCommand = 0;
+		 _costFrame = 0;
+		 _speaking = 0;
+		 _speakingPrev = 0;
 	}
 	virtual void initActor(int mode) {
 		Actor_v2::initActor(mode);
@@ -396,6 +398,9 @@ public:
 			_miscflags = 0;
 		}
 	}
+
+	// Used by the save/load system:
+	virtual void saveLoadWithSerializer(Serializer *ser);
 
 protected:
 

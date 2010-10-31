@@ -118,6 +118,7 @@ public:
 	ChooseLanguageInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("chooselanguage", helper), _vm(vm) {
 		_allowChoice = false;
 		_nextState = "selectgame";
+		_label = 0;
 
 		_dosLanguageSelectBlocks[0] = Common::Rect(  80, 110, 128, 180 );	// Italian
 		_dosLanguageSelectBlocks[1] = Common::Rect( 129,  85, 177, 155 );	// French
@@ -147,7 +148,6 @@ public:
 			_blocks = _dosLanguageSelectBlocks;
 		}
 
-		_label = 0;
 		_language = -1;
 		_allowChoice = true;
 	}
@@ -586,7 +586,7 @@ public:
 		if (_points[2] >= _points[0] && _points[2] >= _points[1]) {
 			character = CHAR_DOUGH;
 		} else {
-			error("If you read this, either your CPU or transivity is broken (we believe the former).");
+			error("If you read this, either your CPU or transivity is broken (we believe the former)");
 		}
 
 		_vm->cleanupGame();

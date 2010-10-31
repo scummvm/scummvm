@@ -24,10 +24,10 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 
 #include "gob/gob.h"
 #include "gob/variables.h"
-#include "gob/helper.h"
 
 namespace Gob {
 
@@ -112,7 +112,7 @@ uint32 Variables::readOff32(uint32 offset) const {
 }
 
 void Variables::readOffString(uint32 offset, char *value, uint32 length) {
-	strncpy0(value, (const char *)(_vars + offset), length - 1);
+	Common::strlcpy(value, (const char *)(_vars + offset), length);
 }
 
 const uint8 *Variables::getAddressVar8(uint32 var) const {

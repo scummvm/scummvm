@@ -36,8 +36,8 @@
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Broken Sword: The Shadow of the Templars
  */
 namespace Sword1 {
 
@@ -74,7 +74,6 @@ struct SystemVars {
 	uint8	showText;
 	uint8	language;
 	bool    isDemo;
-	uint32	engineStartTime;    // Used for playtime
 	Common::Platform platform;
 };
 

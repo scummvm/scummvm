@@ -293,65 +293,22 @@ protected:
 
 	/**
 	 * Prints an error message when parsing fails and stops the parser.
-	 * Parser error always returns "false" so we can pass the return value directly
-	 * and break down the parsing.
+	 * Parser error always returns "false" so we can pass the return value
+	 * directly and break down the parsing.
 	 */
 	bool parserError(const char *errorString, ...) GCC_PRINTF(2, 3);
 
 	/**
-	 * Skips spaces/whitelines etc. Returns true if any spaces were skipped.
+	 * Skips spaces/whitelines etc.
+	 * @return true if any spaces were skipped.
 	 */
-	bool skipSpaces() {
-		if (!isspace(_char))
-			return false;
-
-		while (_char && isspace(_char))
-			_char = _stream->readByte();
-
-		return true;
-	}
+	bool skipSpaces();
 
 	/**
 	 * Skips comment blocks and comment lines.
-	 * Returns true if any comments were skipped.
-	 * Overload this if you want to disable comments on your XML syntax
-	 * or to change the commenting syntax.
+	 * @return true if any comments were skipped.
 	 */
-	virtual bool skipComments() {
-		if (_char == '<') {
-			_char = _stream->readByte();
-
-			if (_char != '!') {
-				_stream->seek(-1, SEEK_CUR);
-				_char = '<';
-				return false;
-			}
-
-			if (_stream->readByte() != '-' || _stream->readByte() != '-')
-				return parserError("Malformed comment syntax.");
-
-			_char = _stream->readByte();
-
-			while (_char) {
-				if (_char == '-') {
-					if (_stream->readByte() == '-') {
-
-						if (_stream->readByte() != '>')
-							return parserError("Malformed comment (double-hyphen inside comment body).");
-
-						_char = _stream->readByte();
-						return true;
-					}
-				}
-
-				_char = _stream->readByte();
-			}
-
-			return parserError("Comment has no closure.");
-		}
-
-		return false;
-	}
+	bool skipComments();
 
 	/**
 	 * Check if a given character can be part of a KEY or VALUE name.
@@ -364,18 +321,8 @@ protected:
 
 	/**
 	 * Parses a the first textual token found.
-	 * There's no reason to overload this.
 	 */
-	bool parseToken() {
-		_token.clear();
-
-		while (isValidNameChar(_char)) {
-			_token += _char;
-			_char = _stream->readByte();
-		}
-
-		return isspace(_char) != 0 || _char == '>' || _char == '=' || _char == '/';
-	}
+	bool parseToken();
 
 	/**
 	 * Parses the values inside an integer key.
@@ -395,32 +342,9 @@ protected:
 	 *            by reference.
 	 * @returns True if the parsing succeeded.
 	 */
-	bool parseIntegerKey(const char *key, int count, ...) {
-		char *parseEnd;
-		int *num_ptr;
-
-		va_list args;
-		va_start(args, count);
-
-		while (count--) {
-			while (isspace(*key))
-				key++;
-
-			num_ptr = va_arg(args, int*);
-			*num_ptr = strtol(key, &parseEnd, 10);
-
-			key = parseEnd;
-
-			while (isspace(*key))
-				key++;
-
-			if (count && *key++ != ',')
-				return false;
-		}
-
-		va_end(args);
-		return (*key == 0);
-	}
+	bool parseIntegerKey(const char *key, int count, ...);
+	bool parseIntegerKey(const Common::String &keyStr, int count, ...);
+	bool vparseIntegerKey(const char *key, int count, va_list args);
 
 	bool parseXMLHeader(ParserNode *node);
 
@@ -446,6 +370,6 @@ private:
 	Common::Stack<ParserNode*> _activeKey; /** Node stack of the parsed keys */
 };
 
-}
+} // End of namespace Common
 
 #endif

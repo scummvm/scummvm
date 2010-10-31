@@ -248,7 +248,7 @@ class BalloonManager_ns : public BalloonManager {
 	Parallaction_ns *_vm;
 	static int16 _dialogueBalloonX[5];
 
-	byte _textColors[2];
+	byte _textColors[3];
 
 	struct Balloon {
 		Common::Rect outerBox;
@@ -530,7 +530,7 @@ public:
 class BalloonManager_br : public BalloonManager {
 
 	Parallaction_br *_vm;
-	byte _textColors[2];
+	byte _textColors[3];
 
 	struct Balloon {
 		Common::Rect box;

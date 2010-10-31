@@ -130,7 +130,7 @@ void KyraEngine_MR::showMessageFromCCode(int string, uint8 c0, int) {
 	showMessage((const char *)getTableEntry(_cCodeFile, string), c0, 0xF0);
 }
 
-void KyraEngine_MR::updateItemCommand(int item, int str, uint8 c0) {
+void KyraEngine_MR::updateItemCommand(Item item, int str, uint8 c0) {
 	char buffer[100];
 	char *src = (char *)getTableEntry(_itemFile, item);
 
@@ -449,7 +449,7 @@ void KyraEngine_MR::redrawInventory(int page) {
 
 	for (int i = 0; i < 10; ++i) {
 		clearInventorySlot(i, page);
-		if (_mainCharacter.inventory[i] != 0xFFFF) {
+		if (_mainCharacter.inventory[i] != kItemNone) {
 			_screen->drawShape(page, getShapePtr(_mainCharacter.inventory[i]+248), _inventoryX[i], _inventoryY[i] + yOffset, 0, 0);
 			drawInventorySlot(page, _mainCharacter.inventory[i], i);
 		}
@@ -472,7 +472,7 @@ void KyraEngine_MR::clearInventorySlot(int slot, int page) {
 	_screen->drawShape(page, getShapePtr(slot+422), _inventoryX[slot], _inventoryY[slot] + yOffset, 0, 0);
 }
 
-void KyraEngine_MR::drawInventorySlot(int page, int item, int slot) {
+void KyraEngine_MR::drawInventorySlot(int page, Item item, int slot) {
 	int yOffset = 0;
 	if (page == 30) {
 		page = 2;
@@ -488,9 +488,9 @@ int KyraEngine_MR::buttonInventory(Button *button) {
 		return 0;
 
 	const int slot = button->index - 5;
-	const int16 slotItem = (int16)_mainCharacter.inventory[slot];
-	if (_itemInHand == -1) {
-		if (slotItem == -1)
+	const Item slotItem = _mainCharacter.inventory[slot];
+	if (_itemInHand == kItemNone) {
+		if (slotItem == kItemNone)
 			return 0;
 
 		_screen->hideMouse();
@@ -499,7 +499,7 @@ int KyraEngine_MR::buttonInventory(Button *button) {
 		setMouseCursor(slotItem);
 		updateItemCommand(slotItem, (_lang == 1) ? getItemCommandStringPickUp(slotItem) : 0, 0xFF);
 		_itemInHand = slotItem;
-		_mainCharacter.inventory[slot] = 0xFFFF;
+		_mainCharacter.inventory[slot] = kItemNone;
 		_screen->showMouse();
 	} else if (_itemInHand == 27) {
 		if (_chatText)
@@ -528,7 +528,7 @@ int KyraEngine_MR::buttonInventory(Button *button) {
 			updateItemCommand(_itemInHand, (_lang == 1) ? getItemCommandStringInv(_itemInHand) : 2, 0xFF);
 			_screen->showMouse();
 			_mainCharacter.inventory[slot] = _itemInHand;
-			_itemInHand = -1;
+			_itemInHand = kItemNone;
 		}
 	}
 
@@ -635,7 +635,7 @@ int KyraEngine_MR::buttonJesterStaff(Button *button) {
 		updateItemCommand(27, 2, 0xFF);
 		setGameFlag(0x97);
 		_screen->showMouse();
-	} else if (_itemInHand == -1) {
+	} else if (_itemInHand == kItemNone) {
 		if (queryGameFlag(0x97)) {
 			_screen->hideMouse();
 			snd_playSoundEffect(0x0B, 0xC8);
@@ -1141,7 +1141,7 @@ void GUI_MR::resetState(int item) {
 	_vm->setNextIdleAnimTimer();
 	_isDeathMenu = false;
 	if (!_loadedSave) {
-		_vm->_itemInHand = -1;
+		_vm->_itemInHand = kItemNone;
 		_vm->setHandItem(item);
 	} else {
 		_vm->setHandItem(_vm->_itemInHand);
@@ -1239,7 +1239,7 @@ int GUI_MR::optionsButton(Button *button) {
 
 		if (_loadedSave) {
 			if (_restartGame)
-				_vm->_itemInHand = -1;
+				_vm->_itemInHand = kItemNone;
 		} else {
 			restorePage1(_vm->_screenBuffer);
 		}
@@ -1380,7 +1380,7 @@ int GUI_MR::gameOptions(Button *caller) {
 
 		Graphics::Surface thumb;
 		createScreenThumbnail(thumb);
-		_vm->saveGameState(999, "Autosave", &thumb);
+		_vm->saveGameStateIntern(999, "Autosave", &thumb);
 		thumb.free();
 
 		_vm->_lastAutosave = _vm->_system->getMillis();

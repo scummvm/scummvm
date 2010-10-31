@@ -201,7 +201,7 @@ void Parallaction::allocateLocationSlot(const char *name) {
 	}
 
 	if (_di == 120)
-		error("No more location slots available. Please report this immediately to ScummVM team.");
+		error("No more location slots available. Please report this immediately to ScummVM team");
 
 	if (_currentLocationIndex  == -1) {
 		strcpy(_locationNames[_numLocations], name);

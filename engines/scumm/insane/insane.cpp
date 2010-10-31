@@ -944,7 +944,7 @@ bool Insane::actor1StateFlags(int state) {
 	bool retvalue = 0;
 	unsigned int i;
 
-	for (i = 0; i < sizeof(spans); i++) {
+	for (i = 0; i < ARRAYSIZE(spans); i++) {
 		retvalue = !retvalue;
 		if (spans[i] <= state)
 			break;
@@ -1099,7 +1099,7 @@ bool Insane::actor0StateFlags1(int state) {
 	bool retvalue = 1;
 	unsigned int i;
 
-	for (i = 0; i < sizeof(spans); i++) {
+	for (i = 0; i < ARRAYSIZE(spans); i++) {
 		retvalue = !retvalue;
 		if (spans[i] >= state)
 			break;
@@ -1119,7 +1119,7 @@ bool Insane::actor0StateFlags2(int state) {
 	bool retvalue = 1;
 	unsigned int i;
 
-	for (i = 0; i < sizeof(spans); i++) {
+	for (i = 0; i < ARRAYSIZE(spans); i++) {
 		retvalue = !retvalue;
 		if (spans[i] >= state)
 			break;

@@ -242,13 +242,17 @@ void sort(T first, T last) {
  */
 template<class T>
 T gcd(T a, T b) {
-	if (a <= 0) a = -a;
-	if (b <= 0) b = -b;
+	if (a <= 0)
+		a = -a;
+	if (b <= 0)
+		b = -b;
+
 	while (a > 0) {
 		T tmp = a;
 		a = b % a;
 		b = tmp;
 	}
+
 	return b;
 }
 

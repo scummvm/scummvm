@@ -44,7 +44,8 @@ void Map_v1::init() {
 	if (_passMap || _itemsMap)
 		return;
 
-	_mapWidth = 26;
+	_passWidth = 26;
+	_mapWidth  = 26;
 	_mapHeight = 28;
 
 	_passMap = new int8[_mapHeight * _mapWidth];
@@ -56,9 +57,9 @@ void Map_v1::init() {
 		memset(_itemsMap[i], 0, _mapWidth * sizeof(int16));
 	}
 
-	_wayPointsCount = 40;
-	_wayPoints = new Point[40];
-	memset(_wayPoints, 0, sizeof(Point));
+	_wayPointCount = 40;
+	_wayPoints = new WayPoint[40];
+	memset(_wayPoints, 0, sizeof(WayPoint));
 }
 
 void Map_v1::loadMapObjects(const char *avjFile) {
@@ -97,7 +98,12 @@ void Map_v1::loadMapObjects(const char *avjFile) {
 			_wayPoints[i].x = mapData.readUint16LE();
 			_wayPoints[i].y = mapData.readUint16LE();
 		}
-		mapData.read(_itemPoses, szMap_ItemPos * 20);
+
+		for (int i = 0; i < 20; i++) {
+			_itemPoses[i].x      = mapData.readByte();
+			_itemPoses[i].y      = mapData.readByte();
+			_itemPoses[i].orient = mapData.readByte();
+		}
 	}
 
 	mapData.skip(32 + 76 + 4 + 20);

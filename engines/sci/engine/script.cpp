@@ -558,6 +558,13 @@ void Script::initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 	relocate(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(_heapStart)));
 }
 
+void Script::initialiseObjects(SegManager *segMan, SegmentId segmentId) {
+	if (getSciVersion() >= SCI_VERSION_1_1)
+		initialiseObjectsSci11(segMan, segmentId);
+	else
+		initialiseObjectsSci0(segMan, segmentId);
+}
+
 reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 	addr.offset = 0;
 	return addr;

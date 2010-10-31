@@ -125,6 +125,9 @@ SoundGenPCJr::SoundGenPCJr(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, p
 
 	_dissolveMethod = 3;
 
+	memset(_channel, 0, sizeof(_channel));
+	memset(_tchannel, 0, sizeof(_tchannel));
+
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
@@ -158,7 +161,7 @@ void SoundGenPCJr::play(int resnum) {
 void SoundGenPCJr::stop(void) {
 	int i;
 
-	for (i = 0; i < CHAN_MAX ; i++) {
+	for (i = 0; i < CHAN_MAX; i++) {
 		_channel[i].avail = 0;
 		_tchannel[i].avail = 0;
 	}

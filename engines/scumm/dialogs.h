@@ -118,6 +118,9 @@ class ConfirmDialog : public InfoDialog {
 public:
 	ConfirmDialog(ScummEngine *scumm, int res);
 	virtual void handleKeyDown(Common::KeyState state);
+
+protected:
+	char _yesKey, _noKey;
 };
 
 /**

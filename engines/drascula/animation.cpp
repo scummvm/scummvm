@@ -761,17 +761,10 @@ void DrasculaEngine::animation_16_2() {
 
 	clearRoom();
 
-	// FIXME: Track 31 is missing from the soundtrack available
-	// from ScummVM's downloads page, so for now we're using the
-	// Spanish track 29
-#if 1
-	playMusic(30);
-#else
 	if (_lang == kSpanish)
 		playMusic(30);
 	else
 		playMusic(32);
-#endif
 
 	if (getScan() != 0)
 		goto asco;

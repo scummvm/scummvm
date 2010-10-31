@@ -88,6 +88,14 @@ const Common::String &Kernel::getKernelName(uint number) const {
 	return _kernelNames[number];
 }
 
+int Kernel::findKernelFuncPos(Common::String kernelFuncName) {
+	for (uint32 i = 0; i < _kernelNames.size(); i++)
+		if (_kernelNames[i] == kernelFuncName)
+			return i;
+
+	return -1;
+}
+
 int Kernel::findSelector(const char *selectorName) const {
 	for (uint pos = 0; pos < _selectorNames.size(); ++pos) {
 		if (_selectorNames[pos] == selectorName)

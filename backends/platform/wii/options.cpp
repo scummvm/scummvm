@@ -183,7 +183,7 @@ void WiiOptionsDialog::handleTickle() {
 			break;
 
 		default:
-			label = String::printf(_("Network not initialsed (%d)"), status);
+			label = String::printf(_("Network not initialised (%d)"), status);
 			break;
 		}
 

@@ -475,7 +475,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 	bool filesExist = true;
 	char inName[32];
 	for (int i = 0; i < 7; i++) {
-		sprintf(inName, "reset.%03d", gameVers[i]);
+		sprintf(inName, "RESET.%03d", gameVers[i]);
 		FILE *test = fopen(inName, "rb");
 		if (test)
 			fclose(test);
@@ -505,8 +505,9 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 		fwrite(&tmp, 2, 1, debOutf);
 		printf("reset destination: %ld\n", ftell(debOutf));
 		for (int cnt = 0; cnt < 6; cnt++) {
+			printf("Processing diff v0.0%03d\n", gameVers[cnt]);
 			uint16 diffPos = 0;
-			sprintf(inName, "reset.%03d", gameVers[cnt]);
+			sprintf(inName, "RESET.%03d", gameVers[cnt]);
 			FILE *resDiff = fopen(inName, "rb");
 			fseek(resDiff, 0, SEEK_END);
 			assert(ftell(resDiff) == (resSize * 2));

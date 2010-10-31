@@ -24,10 +24,10 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 
 #include "gob/gob.h"
 #include "gob/game.h"
-#include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/dataio.h"
 #include "gob/variables.h"
@@ -214,7 +214,7 @@ void Game::prepareStart() {
 	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 
 	_vm->_draw->initScreen();
-	_vm->_video->fillRect(*_vm->_draw->_frontSurface, 0, 0,
+	_vm->_draw->_frontSurface->fillRect(0, 0,
 	_vm->_video->_surfWidth - 1, _vm->_video->_surfHeight - 1, 1);
 
 	_vm->_util->setMousePos(152, 92);
@@ -247,7 +247,7 @@ void Game::playTot(int16 skipPlay) {
 	int16 *oldCaptureCounter;
 	int16 *oldBreakFrom;
 	int16 *oldNestLevel;
-	int16 _captureCounter;
+	int16 captureCounter = 0;
 	int16 breakFrom;
 	int16 nestLevel;
 
@@ -259,7 +259,7 @@ void Game::playTot(int16 skipPlay) {
 
 	_vm->_inter->_nestLevel = &nestLevel;
 	_vm->_inter->_breakFromLevel = &breakFrom;
-	_vm->_scenery->_pCaptureCounter = &_captureCounter;
+	_vm->_scenery->_pCaptureCounter = &captureCounter;
 	strcpy(savedTotName, _curTotFile);
 
 	if (skipPlay <= 0) {
@@ -319,10 +319,12 @@ void Game::playTot(int16 skipPlay) {
 
 			_vm->_inter->renewTimeInVars();
 
-			WRITE_VAR(13, _vm->_global->_useMouse);
-			WRITE_VAR(14, _vm->_global->_soundFlags);
-			WRITE_VAR(15, _vm->_global->_fakeVideoMode);
-			WRITE_VAR(16, _vm->_global->_language);
+			if (_vm->_inter->_variables) {
+				WRITE_VAR(13, _vm->_global->_useMouse);
+				WRITE_VAR(14, _vm->_global->_soundFlags);
+				WRITE_VAR(15, _vm->_global->_fakeVideoMode);
+				WRITE_VAR(16, _vm->_global->_language);
+			}
 
 			_vm->_inter->callSub(2);
 
@@ -357,7 +359,8 @@ void Game::playTot(int16 skipPlay) {
 			if (_totToLoad[0] == 0)
 				break;
 
-			strcpy(_curTotFile, _totToLoad);
+			Common::strlcpy(_curTotFile, _totToLoad, 14);
+
 		}
 	} else {
 		_vm->_inter->initControlVars(0);
@@ -370,7 +373,7 @@ void Game::playTot(int16 skipPlay) {
 			_vm->_inter->_terminate = 2;
 	}
 
-	strcpy(_curTotFile, savedTotName);
+	Common::strlcpy(_curTotFile, savedTotName, 14);
 
 	_vm->_inter->_nestLevel = oldNestLevel;
 	_vm->_inter->_breakFromLevel = oldBreakFrom;
@@ -575,7 +578,7 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 	if (flags & 1)
 		_vm->_inter->_variables = 0;
 
-	strncpy0(_curTotFile, newTotFile, 9);
+	Common::strlcpy(_curTotFile, newTotFile, 10);
 	strcat(_curTotFile, ".TOT");
 
 	if (_vm->_inter->_terminate != 0) {

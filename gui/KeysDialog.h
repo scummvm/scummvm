@@ -30,12 +30,13 @@
 #include "gui/dialog.h"
 #include "gui/ListWidget.h"
 #include "common/str.h"
+#include "common/translation.h"
 
 namespace GUI {
 
 class KeysDialog : public GUI::Dialog {
 public:
-	KeysDialog(const Common::String &title = "Choose an action to map");
+	KeysDialog(const Common::String &title = _("Choose an action to map"));
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleKeyUp(Common::KeyState state);

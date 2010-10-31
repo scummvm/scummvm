@@ -110,6 +110,7 @@ bool MacResManager::open(Common::String filename) {
 		_baseFileName = filename;
 		return true;
 	}
+
 	delete macResForkRawStream;
 #endif
 
@@ -169,6 +170,7 @@ bool MacResManager::open(Common::FSNode path, Common::String filename) {
 		_baseFileName = filename;
 		return true;
 	}
+
 	delete macResForkRawStream;
 #endif
 
@@ -449,6 +451,28 @@ Common::SeekableReadStream *MacResManager::getResource(uint32 typeID, uint16 res
 
 Common::SeekableReadStream *MacResManager::getResource(const Common::String &filename) {
 	for (uint32 i = 0; i < _resMap.numTypes; i++) {
+		for (uint32 j = 0; j < _resTypes[i].items; j++) {
+			if (_resLists[i][j].nameOffset != -1 && filename.equalsIgnoreCase(_resLists[i][j].name)) {
+				_stream->seek(_dataOffset + _resLists[i][j].dataOffset);
+				uint32 len = _stream->readUint32BE();
+
+				// Ignore resources with 0 length
+				if (!len)
+					return 0;
+
+				return _stream->readStream(len);
+			}
+		}
+	}
+
+	return 0;
+}
+
+Common::SeekableReadStream *MacResManager::getResource(uint32 typeID, const Common::String &filename) {
+	for (uint32 i = 0; i < _resMap.numTypes; i++) {
+		if (_resTypes[i].id != typeID)
+			continue;
+
 		for (uint32 j = 0; j < _resTypes[i].items; j++) {
 			if (_resLists[i][j].nameOffset != -1 && filename.equalsIgnoreCase(_resLists[i][j].name)) {
 				_stream->seek(_dataOffset + _resLists[i][j].dataOffset);

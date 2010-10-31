@@ -36,12 +36,24 @@
 #include "common/rect.h"
 #include "common/str.h"
 #include "graphics/surface.h"
+#include "graphics/sjis.h"
 
 #include "scumm/gfx.h"
 #include "scumm/detection.h"
 #include "scumm/script.h"
 
 #include "sound/mididrv.h"
+
+#ifdef __DS__
+/* This disables the dual layer mode which is used in FM-Towns versions
+ * of SCUMM games and which emulates the behaviour of the original code.
+ * The only purpose is code size reduction for certain backends.
+ * SCUMM 3 (FM-Towns) games will run in normal (DOS VGA) mode, which should
+ * work just fine in most situations. Some glitches might occur. SCUMM 5 games
+ * will not work without dual layer (and 16 bit color) support.
+ */
+#define DISABLE_TOWNS_DUAL_LAYER_MODE
+#endif
 
 namespace GUI {
 	class Dialog;
@@ -55,10 +67,14 @@ namespace Common {
 /**
  * This is the namespace of the SCUMM engine.
  *
- * Status of this engine: ???
+ * Status of this engine:
+ * Complete support for all SCUMM based LucasArts adventures.
+ * Complete support for many Humongous Entertainment games,
+ * but for some of the newer ones, this is still work in progress.
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Classic 2D LucasArts adventures
+ * - numerous Humongous Entertainment games
  */
 namespace Scumm {
 
@@ -237,6 +253,7 @@ enum ScummGameId {
 	GID_FUNSHOP,	// Used for all three funshops
 	GID_FOOTBALL,
 	GID_SOCCER,
+	GID_BASEBALL2001,
 	GID_BASKETBALL,
 	GID_MOONBASE,
 	GID_HECUP		// CUP demos
@@ -576,6 +593,7 @@ protected:
 
 	bool _v0ObjectIndex;			// V0 Use object index, instead of object number
 	bool _v0ObjectInInventory;		// V0 Use object number from inventory
+	byte _v0ObjectFlag;
 
 	/* Global resource tables */
 	int _numVariables, _numBitVariables, _numLocalObjects;
@@ -643,7 +661,7 @@ protected:
 	byte _saveLoadFlag, _saveLoadSlot;
 	uint32 _lastSaveTime;
 	bool _saveTemporaryState;
-	char _saveLoadFileName[32];
+	Common::String _saveLoadFileName;
 	char _saveLoadName[32];
 
 	bool saveState(Common::OutSaveFile *out, bool writeHeader = true);
@@ -681,9 +699,6 @@ public:
 protected:
 	void saveInfos(Common::WriteStream* file);
 	static bool loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff);
-
-	int32 _engineStartTime;
-	int32 _pauseStartTime;
 
 protected:
 	/* Script VM - should be in Script class */
@@ -737,9 +752,10 @@ protected:
 	void stopObjectScript(int script);
 
 	void getScriptBaseAddress();
-	void getScriptEntryPoint();
+	void resetScriptPointer();
 	int getVerbEntrypoint(int obj, int entry);
 
+	void refreshScriptPointer();
 	byte fetchScriptByte();
 	virtual uint fetchScriptWord();
 	virtual int fetchScriptWordSigned();
@@ -759,7 +775,7 @@ protected:
 	void endOverride();
 
 	void copyScriptString(byte *dst);
-	int resStrLen(const byte *src) const;
+	int resStrLen(const byte *src);
 	void doSentence(int c, int b, int a);
 
 	/* Should be in Resource class */
@@ -972,6 +988,7 @@ public:
 
 	Common::RenderMode _renderMode;
 	uint8 _bytesPerPixel;
+	uint8 _bytesPerPixelOutput;
 
 protected:
 	ColorCycle _colorCycle[16];	// Palette cycles
@@ -1044,6 +1061,7 @@ protected:
 	void setRoomPalette(int pal, int room);
 	void setPCEPaletteFromPtr(const byte *ptr);
 	virtual void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
+
 	virtual void setPalColor(int index, int r, int g, int b);
 	void setDirtyColors(int min, int max);
 	const byte *findPalInPals(const byte *pal, int index);
@@ -1077,7 +1095,7 @@ protected:
 	// Screen rendering
 	byte *_compositeBuf;
 	byte *_herculesBuf;
-	byte *_fmtownsBuf;
+	
 	virtual void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
@@ -1221,7 +1239,7 @@ protected:
 	void restoreCharsetBg();
 	void clearCharsetMask();
 	void clearTextSurface();
-
+	
 	virtual void initCharset(int charset);
 
 	virtual void printString(int m, const byte *msg);
@@ -1397,6 +1415,40 @@ public:
 
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS;
+
+	// FM-Towns specific
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+public:
+	bool towns_isRectInStringBox(int x1, int y1, int x2, int y2);
+	byte _townsPaletteFlags;
+	byte _townsCharsetColorMap[16];
+	Graphics::FontSJIS *_cjkFont;
+	uint16 _cjkChar;
+
+protected:
+	void towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, int srcX, int srcY, int w, int h);
+#ifdef USE_RGB_COLOR
+	void towns_setPaletteFromPtr(const byte *ptr, int numcolor = -1);
+	void towns_setTextPaletteFromPtr(const byte *ptr);
+#endif
+	void towns_setupPalCycleField(int x1, int y1, int x2, int y2);
+	void towns_processPalCycleField();
+	void towns_resetPalCycleFields();
+	void towns_restoreCharsetBg();
+
+	Common::Rect _cyclRects[16];
+	int _numCyclRects;
+	
+	Common::Rect _curStringRect;
+
+	byte _townsOverrideShadowColor;	
+	byte _textPalette[48];
+	byte _townsClearLayerFlag;
+	byte _townsActiveLayerFlags;
+	static const uint8 _townsLayer2Mask[];
+
+	TownsScreen *_townsScreen;
+#endif // DISABLE_TOWNS_DUAL_LAYER_MODE
 };
 
 } // End of namespace Scumm

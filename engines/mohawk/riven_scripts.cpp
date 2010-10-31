@@ -346,9 +346,14 @@ void RivenScript::playScriptSLST(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->_activatedSLST = true;
 }
 
-// Command 4: play local tWAV resource (twav_id, volume, u1)
+// Command 4: play local tWAV resource (twav_id, volume, block)
 void RivenScript::playSound(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_sound->playSound(argv[0], false);
+	byte volume = Sound::convertRivenVolume(argv[1]);
+
+	if (argv[2] == 1)
+		_vm->_sound->playSoundBlocking(argv[0], volume);
+	else
+		_vm->_sound->playSound(argv[0], volume);
 }
 
 // Command 7: set variable value (variable, value)
@@ -572,7 +577,8 @@ void RivenScript::activateFLST(uint16 op, uint16 argc, uint16 *argv) {
 	for (uint16 i = 0; i < recordCount; i++) {
 		uint16 index = flst->readUint16BE();
 		uint16 sfxeID = flst->readUint16BE();
-		if(flst->readUint16BE() != 0)
+
+		if (flst->readUint16BE() != 0)
 			warning("FLST u0 non-zero");
 
 		if (index == argv[0]) {

@@ -121,6 +121,10 @@ void Util::processInput(bool scroll) {
 					_fastMode ^= 2;
 				else if (event.kbd.keycode == Common::KEYCODE_p)
 					_vm->pauseGame();
+				else if (event.kbd.keycode == Common::KEYCODE_d) {
+					_vm->getDebugger()->attach();
+					_vm->getDebugger()->onFrame();
+				}
 				break;
 			}
 			addKeyToBuffer(event.kbd);
@@ -146,7 +150,7 @@ void Util::processInput(bool scroll) {
 		// WORKAROUND:
 		// Force a check of the mouse in order to fix the sofa bug. This apply only for Gob3, and only
 		// in the impacted TOT file so that the second screen animation is not broken.
-		if ((_vm->getGameType() == kGameTypeGob3) && !strncmp(_vm->_game->_curTotFile, "EMAP1008.TOT", 12))
+		if ((_vm->getGameType() == kGameTypeGob3) && !scumm_stricmp(_vm->_game->_curTotFile, "EMAP1008.TOT"))
 			_vm->_game->evaluateScroll();
 	}
 }
@@ -316,8 +320,11 @@ void Util::clearPalette() {
 	_vm->validateVideoMode(_vm->_global->_videoMode);
 
 	if (_vm->_global->_setAllPalette) {
-		memset(colors, 0, 1024);
-		g_system->setPalette(colors, 0, 256);
+		if (_vm->getPixelFormat().bytesPerPixel == 1) {
+			memset(colors, 0, 1024);
+			g_system->setPalette(colors, 0, 256);
+		}
+
 		return;
 	}
 

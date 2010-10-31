@@ -52,8 +52,12 @@ namespace Common { class RandomSource; }
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Early Sierra adventure games
+ * - many fan made games
+ * - Mickey's Space Adventure (Pre-AGI)
+ * - Winnie the Pooh in the Hundred Acre Wood (Pre-AGI)
+ * - Troll's Tale (Pre-AGI)
  */
 namespace Agi {
 
@@ -231,8 +235,6 @@ enum AgiMouseButton {
 	kAgiMouseButtonRight, // Right mouse button
 	kAgiMouseButtonMiddle // Middle mouse button
 };
-
-#define report printf
 
 enum GameId {
 	GID_AGI = 1
@@ -556,8 +558,8 @@ struct AgiGame {
 	int lineUserInput;	/**< line to put user input on */
 	int lineMinPrint;		/**< num lines to print on */
 	int cursorPos;			/**< column where the input cursor is */
-	uint8 inputBuffer[40]; /**< buffer for user input */
-	uint8 echoBuffer[40];	/**< buffer for echo.line */
+	byte inputBuffer[40]; /**< buffer for user input */
+	byte echoBuffer[40];	/**< buffer for echo.line */
 	int keypress;
 
 	InputMode inputMode;			/**< keyboard input mode */

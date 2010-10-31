@@ -41,95 +41,108 @@
 namespace Hugo {
 
 int Utils::firstBit(byte data) {
-	/* Returns index (0 to 7) of first 1 in supplied byte, or 8 if not found */
-	int i;
-
+// Returns index (0 to 7) of first 1 in supplied byte, or 8 if not found
 	if (!data)
-		return(8);
+		return 8;
 
+	int i;
 	for (i = 0; i < 8; i++) {
 		if ((data << i) & 0x80)
 			break;
 	}
 
-	return(i);
+	return i;
 }
 
 int Utils::lastBit(byte data) {
-	/* Returns index (0 to 7) of last 1 in supplied byte, or 8 if not found */
-	int i;
+// Returns index (0 to 7) of last 1 in supplied byte, or 8 if not found
 	if (!data)
-		return(8);
+		return 8;
 
+	int i;
 	for (i = 7; i >= 0; i--) {
 		if ((data << i) & 0x80)
 			break;
 	}
 
-	return(i);
+	return i;
 }
 
 void Utils::reverseByte(byte *data) {
-	/* Reverse the bit order in supplied byte */
+// Reverse the bit order in supplied byte
 	byte maskIn = 0x80;
 	byte maskOut = 0x01;
 	byte result = 0;
 
-	for (byte i = 0; i < 8; i++, maskIn >>= 1, maskOut <<= 1)
+	for (byte i = 0; i < 8; i++, maskIn >>= 1, maskOut <<= 1) {
 		if (*data & maskIn)
 			result |= maskOut;
+	}
 
 	*data = result;
 }
 
 char *Utils::Box(box_t dismiss, const char *s, ...) {
 	static char buffer[MAX_STRLEN + 1];             // Format text into this
-	va_list marker;
 
-	if (!s) return(NULL);                           // NULL strings catered for
+	if (!s)
+		return 0;                                   // NULL strings catered for
 
 	if (s[0] == '\0')
-		return(NULL);
+		return 0;
 
 	if (strlen(s) > MAX_STRLEN - 100) {             // Test length
-		Warn(false, "String too big:\n%s", s);
-		return(NULL);
+		Warn("String too big:\n%s", s);
+		return 0;
 	}
 
+	va_list marker;
 	va_start(marker, s);
 	vsprintf(buffer, s, marker);                    // Format string into buffer
 	va_end(marker);
 
-	//Warn(false, "BOX: %s", buffer);
-	int boxTime = strlen(buffer) * 30;
-	GUI::TimedMessageDialog dialog(buffer, MAX(1500, boxTime));
-	dialog.runModal();
+	if (buffer[0] == '\0')
+		return 0;
 
+	switch(dismiss) {
+	case BOX_ANY:
+	case BOX_OK: {
+		GUI::MessageDialog dialog(buffer, "OK");
+		dialog.runModal();
+		break;
+		}
+	case BOX_YESNO: {
+		GUI::MessageDialog dialog(buffer, "YES", "NO");
+		if (dialog.runModal() == GUI::kMessageOK)
+			return buffer;
+		return 0;
+		break;
+		}
+	case BOX_PROMPT:
+		warning("Box: unhandled BOX_PROMPT");
+		int boxTime = strlen(buffer) * 30;
+		GUI::TimedMessageDialog dialog(buffer, MAX(1500, boxTime));
+		dialog.runModal();
 	// TODO: Some boxes (i.e. the combination code for the shed), needs to return an input.
+	}
+
 	return buffer;
 }
 
-void Utils::Warn(bool technote, const char *format, ...) {
-	/* Warning handler.  Print supplied message and continue */
-	/* Arguments are same as printf */
-	/* technote TRUE if we are to refer user to technote file */
+void Utils::Warn(const char *format, ...) {
+// Warning handler.  Print supplied message and continue
+// Arguments are same as printf
 	char buffer[WARNLEN];
 	va_list marker;
-
 	va_start(marker, format);
 	vsnprintf(buffer, WARNLEN, format, marker);
 	va_end(marker);
-////    if (technote)
-////        strcat      (buffer, sTech);
-	//MessageBeep(MB_ICONEXCLAMATION);
-	//MessageBox(hwnd, buffer, "HugoWin Warning", MB_OK | MB_ICONEXCLAMATION);
 	warning("Hugo warning: %s", buffer);
 }
 
 void Utils::Error(int error_type, const char *format, ...) {
-	/* Fatal error handler.  Reset environment, print error and exit */
-	/* Arguments are same as printf */
-	va_list marker;
+// Fatal error handler.  Reset environment, print error and exit
+// Arguments are same as printf
 	char buffer[ERRLEN + 1];
 	bool fatal = true;                              // Fatal error, else continue
 
@@ -158,6 +171,7 @@ void Utils::Error(int error_type, const char *format, ...) {
 	if (fatal)
 		HugoEngine::get().shutdown();                                   // Restore any devices before exit
 
+	va_list marker;
 	va_start(marker, format);
 	vsnprintf(&buffer[strlen(buffer)], ERRLEN - strlen(buffer), format, marker);
 	va_end(marker);
@@ -174,5 +188,18 @@ void Utils::gameOverMsg(void) {
 	//MessageBox(hwnd, gameoverstring, "Be more careful next time!", MB_OK | MB_ICONINFORMATION);
 	warning("STUB: Gameover_msg(): %s", HugoEngine::get()._textUtil[kGameOver]);
 }
+
+char *Utils::strlwr(char *buffer) {
+	char *result = buffer;
+
+	while (*buffer != '\0') {
+		if (isupper(*buffer))
+			*buffer = tolower(*buffer);
+		buffer++;
+	}
+
+	return result;
+}
+
 
 } // End of namespace Hugo

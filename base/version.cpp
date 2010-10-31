@@ -92,6 +92,10 @@ const char *gScummVMFeatures = ""
 	"SEQ "
 #endif
 
+#ifdef USE_TIMIDITY
+	"TiMidity "
+#endif
+
 #ifdef USE_RGB_COLOR
 	"RGB "
 #endif
@@ -106,6 +110,10 @@ const char *gScummVMFeatures = ""
 
 #ifdef USE_FLUIDSYNTH
 	"FluidSynth "
+#endif
+
+#ifdef USE_THEORADEC
+	"Theora "
 #endif
 	;
 

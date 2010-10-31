@@ -144,7 +144,7 @@ Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 
 Graphics::DrawStep *ThemeParser::newDrawStep() {
 	assert(_defaultStepGlobal);
-	Graphics::DrawStep *step = 0 ; //new DrawStep;
+	Graphics::DrawStep *step = 0; //new DrawStep;
 
 	if (_defaultStepLocal) {
 		step = new Graphics::DrawStep(*_defaultStepLocal);
@@ -195,7 +195,7 @@ bool ThemeParser::parserCallback_text_color(ParserNode *node) {
 
 	if (_palette.contains(node->values["color"]))
 		getPaletteColor(node->values["color"], red, green, blue);
-	else if (!parseIntegerKey(node->values["color"].c_str(), 3, &red, &green, &blue))
+	else if (!parseIntegerKey(node->values["color"], 3, &red, &green, &blue))
 		return parserError("Error parsing color value for text color definition.");
 
 	if (!_theme->addTextColor(colorId, red, green, blue))
@@ -216,10 +216,10 @@ bool ThemeParser::parserCallback_cursor(ParserNode *node) {
 
 	int spotx, spoty, scale;
 
-	if (!parseIntegerKey(node->values["hotspot"].c_str(), 2, &spotx, &spoty))
+	if (!parseIntegerKey(node->values["hotspot"], 2, &spotx, &spoty))
 		return parserError("Error parsing cursor Hot Spot coordinates.");
 
-	if (!parseIntegerKey(node->values["scale"].c_str(), 1, &scale))
+	if (!parseIntegerKey(node->values["scale"], 1, &scale))
 		return parserError("Error parsing cursor scale.");
 
 	if (!_theme->createCursor(node->values["file"], spotx, spoty, scale))
@@ -286,7 +286,7 @@ bool ThemeParser::parserCallback_color(ParserNode *node) {
 
 	int red, green, blue;
 
-	if (parseIntegerKey(node->values["rgb"].c_str(), 3, &red, &green, &blue) == false ||
+	if (parseIntegerKey(node->values["rgb"], 3, &red, &green, &blue) == false ||
 		red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255)
 		return parserError("Error parsing RGB values for palette color '%s'", name.c_str());\
 
@@ -387,7 +387,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
  */
 #define __PARSER_ASSIGN_INT(struct_name, key_name, force) \
 	if (stepNode->values.contains(key_name)) { \
-		if (!parseIntegerKey(stepNode->values[key_name].c_str(), 1, &x)) \
+		if (!parseIntegerKey(stepNode->values[key_name], 1, &x)) \
 			return parserError("Error parsing key value for '%s'.", key_name); \
 		\
 		drawstep->struct_name = x; \
@@ -411,7 +411,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			red = _palette[val].r; \
 			green = _palette[val].g; \
 			blue = _palette[val].b; \
-		} else if (parseIntegerKey(val.c_str(), 3, &red, &green, &blue) == false || \
+		} else if (parseIntegerKey(val, 3, &red, &green, &blue) == false || \
 			red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255) \
 			return parserError("Error parsing color struct '%s'", val.c_str());\
 		\
@@ -481,7 +481,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			drawstep->autoWidth = false;
 
 			val = stepNode->values["width"];
-			if (parseIntegerKey(val.c_str(), 1, &x))
+			if (parseIntegerKey(val, 1, &x))
 				drawstep->w = x;
 			else if (val == "height")
 				drawstep->w = -1;
@@ -490,7 +490,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			if (stepNode->values.contains("xpos")) {
 				val = stepNode->values["xpos"];
 
-				if (parseIntegerKey(val.c_str(), 1, &x))
+				if (parseIntegerKey(val, 1, &x))
 					drawstep->x = x;
 				else if (val == "center")
 					drawstep->xAlign = Graphics::DrawStep::kVectorAlignCenter;
@@ -509,7 +509,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			drawstep->autoHeight = false;
 
 			val = stepNode->values["height"];
-			if (parseIntegerKey(val.c_str(), 1, &x))
+			if (parseIntegerKey(val, 1, &x))
 				drawstep->h = x;
 			else if (val == "width")
 				drawstep->h = -1;
@@ -518,7 +518,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			if (stepNode->values.contains("ypos")) {
 				val = stepNode->values["ypos"];
 
-				if (parseIntegerKey(val.c_str(), 1, &x))
+				if (parseIntegerKey(val, 1, &x))
 					drawstep->y = x;
 				else if (val == "center")
 					drawstep->yAlign = Graphics::DrawStep::kVectorAlignCenter;
@@ -569,7 +569,7 @@ bool ThemeParser::parserCallback_def(ParserNode *node) {
 	if (_theme->getEvaluator()->hasVar(node->values["value"]) == true)
 		value = _theme->getEvaluator()->getVar(node->values["value"]);
 
-	else if (!parseIntegerKey(node->values["value"].c_str(), 1, &value))
+	else if (!parseIntegerKey(node->values["value"], 1, &value))
 		return parserError("Invalid definition for '%s'.", var.c_str());
 
 	_theme->getEvaluator()->setVar(var, value);
@@ -608,7 +608,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 			if (_theme->getEvaluator()->hasVar(node->values["width"]) == true)
 				width = _theme->getEvaluator()->getVar(node->values["width"]);
 
-			else if (!parseIntegerKey(node->values["width"].c_str(), 1, &width))
+			else if (!parseIntegerKey(node->values["width"], 1, &width))
 				return parserError("Corrupted width value in key for %s", var.c_str());
 		}
 
@@ -616,7 +616,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 			if (_theme->getEvaluator()->hasVar(node->values["height"]) == true)
 				height = _theme->getEvaluator()->getVar(node->values["height"]);
 
-			else if (!parseIntegerKey(node->values["height"].c_str(), 1, &height))
+			else if (!parseIntegerKey(node->values["height"], 1, &height))
 				return parserError("Corrupted height value in key for %s", var.c_str());
 		}
 
@@ -651,7 +651,7 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 	}
 
 	if (node->values.contains("inset")) {
-		if (!parseIntegerKey(node->values["inset"].c_str(), 1, &inset))
+		if (!parseIntegerKey(node->values["inset"], 1, &inset))
 			return false;
 	}
 
@@ -682,7 +682,7 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 	int spacing = -1;
 
 	if (node->values.contains("spacing")) {
-		if (!parseIntegerKey(node->values["spacing"].c_str(), 1, &spacing))
+		if (!parseIntegerKey(node->values["spacing"], 1, &spacing))
 			return false;
 	}
 
@@ -697,7 +697,7 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 	if (node->values.contains("padding")) {
 		int paddingL, paddingR, paddingT, paddingB;
 
-		if (!parseIntegerKey(node->values["padding"].c_str(), 4, &paddingL, &paddingR, &paddingT, &paddingB))
+		if (!parseIntegerKey(node->values["padding"], 4, &paddingL, &paddingR, &paddingT, &paddingB))
 			return false;
 
 		_theme->getEvaluator()->addPadding(paddingL, paddingR, paddingT, paddingB);
@@ -713,7 +713,7 @@ bool ThemeParser::parserCallback_space(ParserNode *node) {
 		if (_theme->getEvaluator()->hasVar(node->values["size"]))
 			size = _theme->getEvaluator()->getVar(node->values["size"]);
 
-		else if (!parseIntegerKey(node->values["size"].c_str(), 1, &size))
+		else if (!parseIntegerKey(node->values["size"], 1, &size))
 			return parserError("Invalid value for Spacing size.");
 	}
 
@@ -734,7 +734,7 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 	if (node->values.contains("size")) {
 		int width, height;
 
-		if (!parseIntegerKey(node->values["size"].c_str(), 2, &width, &height)) {
+		if (!parseIntegerKey(node->values["size"], 2, &width, &height)) {
 			Common::StringTokenizer tokenizer(node->values["size"], " ,");
 			Common::String wtoken, htoken;
 			char *parseEnd;
@@ -779,7 +779,7 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 	if (node->values.contains("pos")) {
 		int x, y;
 
-		if (!parseIntegerKey(node->values["pos"].c_str(), 2, &x, &y)) {
+		if (!parseIntegerKey(node->values["pos"], 2, &x, &y)) {
 			Common::StringTokenizer tokenizer(node->values["pos"], " ,");
 			Common::String xpos, ypos;
 			char *parseEnd;
@@ -835,7 +835,7 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 	if (node->values.contains("padding")) {
 		int paddingL, paddingR, paddingT, paddingB;
 
-		if (!parseIntegerKey(node->values["padding"].c_str(), 4, &paddingL, &paddingR, &paddingT, &paddingB))
+		if (!parseIntegerKey(node->values["padding"], 4, &paddingL, &paddingR, &paddingT, &paddingB))
 			return false;
 
 		_theme->getEvaluator()->setVar(var + "Padding.Left", paddingL);

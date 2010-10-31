@@ -358,6 +358,7 @@ static bool calcClipRects(int dst_w, int dst_h, int src_x, int src_y, int src_w,
 
 void Wiz::writeColor(uint8 *dstPtr, int dstType, uint16 color) {
 	switch (dstType) {
+	case kDstCursor:
 	case kDstScreen:
 		WRITE_UINT16(dstPtr, color);
 		break;
@@ -1519,7 +1520,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		cw = width;
 		ch = height;
 		dstPitch = cw * _vm->_bytesPerPixel;
-		dstType = kDstMemory;
+		dstType = (_cursorImage) ? kDstCursor : kDstMemory;
 	} else {
 		if (dstResNum) {
 			uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
@@ -2088,7 +2089,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 
 	if (_vm->_fullRedraw && dstResNum == 0) {
 		if (sourceImage != 0 || (params->processFlags & (kWPFScaled | kWPFRotate)))
-			error("Can't do this command in the enter script.");
+			error("Can't do this command in the enter script");
 
 		assert(_imagesNum < ARRAYSIZE(_images));
 		WizImage *pwi = &_images[_imagesNum];

@@ -824,13 +824,14 @@ void KyraEngine_LoK::initSceneScreen(int brandonAlive) {
 		_emc->run(&_scriptClick);
 
 	setTextFadeTimerCountdown(-1);
+
 	if (_currentCharacter->sceneId == 210) {
-		if (_itemInHand != -1)
+		if (_itemInHand != kItemNone)
 			magicOutMouseItem(2, -1);
 
 		_screen->hideMouse();
 		for (int i = 0; i < 10; ++i) {
-			if (_currentCharacter->inventoryItems[i] != 0xFF)
+			if (_currentCharacter->inventoryItems[i] != kItemNone)
 				magicOutMouseItem(2, i);
 		}
 		_screen->showMouse();

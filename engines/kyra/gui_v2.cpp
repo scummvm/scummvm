@@ -625,7 +625,7 @@ int GUI_v2::saveMenu(Button *caller) {
 	Graphics::Surface thumb;
 	createScreenThumbnail(thumb);
 	Util::convertDOSToISO(_saveDescription);
-	_vm->saveGameState(_saveSlot, _saveDescription, &thumb);
+	_vm->saveGameStateIntern(_saveSlot, _saveDescription, &thumb);
 	thumb.free();
 
 	_displayMenu = false;

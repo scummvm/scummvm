@@ -397,6 +397,7 @@ int MadsSpriteSlots::addSprites(const char *resName, bool suppressErrors, int fl
 	// Append on a '.SS' suffix if the resource doesn't already have an extension
 	char buffer[100];
 	strncpy(buffer, resName, 95);
+	buffer[95] = '\0';
 	if (!strchr(buffer, '.'))
 		strcat(buffer, ".SS");
 

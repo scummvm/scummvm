@@ -69,7 +69,7 @@ SeekableAudioStream *makeMacSndStream(Common::SeekableReadStream *stream,
 	// We really should never get this as long as we have sampled data only
 	if (stream->readUint16BE() != 1) {
 		warning("makeMacSndStream(): Unsupported command count");
-		return 0; 
+		return 0;
 	}
 
 	uint16 command = stream->readUint16BE();

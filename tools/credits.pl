@@ -542,6 +542,14 @@ begin_credits("Credits");
 		  add_person("Jonathan Gray", "khalek", "(retired)");
 	  end_section();
 
+	  begin_section("Broken Sword 2.5");
+		  add_person("Eugene Sandulenko", "sev", "");
+		  add_person("Filippos Karapetis", "[md5]", "");
+		  add_person("Max Horn", "Fingolfin", "");
+		  add_person("Paul Gilbert", "dreammaster", "");
+		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+	  end_section();
+
 	  begin_section("Cinematique evo 1");
 		  add_person("Vincent Hamm", "yaz0r", "(retired)");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
@@ -584,6 +592,12 @@ begin_credits("Credits");
 		  add_person("Jordi Vilalta Prat", "jvprat", "");
 	  end_section();
 
+	  begin_section("Hugo");
+		  add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+		  add_person("Oystein Eftevaag", "vinterstum", "");
+		  add_person("Eugene Sandulenko", "sev", "");
+	  end_section();
+
 	  begin_section("Kyra");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "VQA Player");
 		  add_person("Oystein Eftevaag", "vinterstum", "");
@@ -591,6 +605,12 @@ begin_credits("Credits");
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Johannes Schickel", "LordHoto", "");
 	  end_section();
+
+	begin_section("Last Express");
+			add_person("Matthew Hoops", "clone2727", "");
+			add_person("Jordi Vilalta Prat", "jvprat", "");
+			add_person("Julien Templier", "littleboy", "");			
+	end_section();
 
 	  begin_section("Lure");
 		  add_person("Paul Gilbert", "dreammaster", "");
@@ -602,7 +622,7 @@ begin_credits("Credits");
 		  add_person("Benjamin Haisch", "john_doe", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
 	  end_section();
-	  
+
 	  begin_section("MADE");
 		  add_person("Benjamin Haisch", "john_doe", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
@@ -614,7 +634,7 @@ begin_credits("Credits");
 		  add_person("Eugene Sandulenko", "sev", "");
 		  add_person("David Turner", "digitall", "");
 	  end_section();
-	  
+
 	  begin_section("Parallaction");
 		  add_person("", "peres", "");
 	  end_section();
@@ -654,6 +674,10 @@ begin_credits("Credits");
 		  add_person("Joost Peters", "joostp", "");
 	  end_section();
 
+	  begin_section("Toon");
+	  	add_person("Sylvain Dupont", "SylvainTV", "");
+	  end_section();
+
 	  begin_section("Touch&eacute;");
 		  add_person("Gregory Montoir", "cyx", "");
 	  end_section();
@@ -674,7 +698,7 @@ begin_credits("Credits");
 		  add_person("Marcus Comstedt", "", "");
 	  end_section();
 
-	  begin_section("GP2X");
+	  begin_section("GPH Devices (GP2X, GP2XWiz &amp; Caanoo)");
 		  add_person("John Willis", "DJWillis", "");
 	  end_section();
 
@@ -698,6 +722,10 @@ begin_credits("Credits");
 		  add_person("Neil Millstone", "agent-q", "");
 	  end_section();
 
+	  begin_section("OpenPandora");
+		  add_person("John Willis", "DJWillis", "");
+	  end_section();
+	  
 	  begin_section("PocketPC / WinCE");
 		add_person("Nicolas Bacca", "arisme", "(retired)");
 		add_person("Kostas Nakos", "Jubanka", "");
@@ -851,7 +879,7 @@ begin_credits("Credits");
 		  add_person("Johannes Schickel", "LordHoto", "");
 	  end_section();
 	end_section();
-	
+
 	begin_section("Translations");
 		begin_persons();
 			add_person("Thierry Crozat", "criezy", "Translation Lead");
@@ -982,6 +1010,7 @@ begin_credits("Credits");
 	  add_person("Curt Coder", "", "For the original TrollVM (preAGI) code");
 	  add_person("Patrick Combet", "Dorian Gray", "For the original Gobliiins ADL player");
 	  add_person("Ivan Dubrov", "", "For contributing the initial version of the Gobliiins engine");
+	  add_person("Henrik Engqvist", "qvist", "For generously providing hosting for our buildbot, SVN repository, planet and doxygen sites as well as tons of HD space");
 	  add_person("DOSBox Team", "", "For their awesome OPL2 and OPL3 emulator");
 	  add_person("Till Kresslein", "Krest", "For design of modern ScummVM GUI");
 	  add_person("", "Jezar", "For his freeverb filter implementation");
@@ -1022,6 +1051,19 @@ begin_credits("Credits");
   add_paragraph(
   "John Young, Colin Smythe and especially Terry Pratchett himself for ".
   "sharing the source code of Discworld I &amp; II with us.");
+
+  add_paragraph(
+  "Emilio de Paz Arag&oacute;n from Alcachofa Soft for sharing the source code ".
+  "of Drascula: The Vampire Strikes Back with us and his generosity with ".
+  "freewaring the game.");
+
+  add_paragraph(
+  "David P. Gray from Gray Design Associate for sharing the source code ".
+  "of the Hugo trilogy.");
+
+  add_paragraph(
+  "Broken Sword 2.5 team for providing sources of their engine and their great ".
+  "support.");
 
   end_section();
 

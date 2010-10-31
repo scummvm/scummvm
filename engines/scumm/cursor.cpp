@@ -554,11 +554,16 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 	uint16 color;
 	const uint16 *src = _cursorImages[_currentCursor];
 
-	if (_bytesPerPixel == 2) {
+	if (_bytesPerPixelOutput == 2) {
 		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
 			byte r, g, b;
 			colorPCEToRGB(default_pce_cursor_colors[idx], &r, &g, &b);
 			color = get16BitColor(r, g, b);
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		} else if (_game.platform == Common::kPlatformFMTowns) {
+			byte *palEntry = &_textPalette[default_cursor_colors[idx] * 3];
+			color = get16BitColor(palEntry[0], palEntry[1], palEntry[2]);
+#endif
 		} else {
 			color = _16BitPalette[default_cursor_colors[idx]];
 		}
@@ -570,18 +575,28 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 		memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 	}
 
-	_cursor.hotspotX = _cursorHotspots[2 * _currentCursor];
-	_cursor.hotspotY = _cursorHotspots[2 * _currentCursor + 1];
-	_cursor.width = 16;
-	_cursor.height = 16;
+	_cursor.hotspotX = _cursorHotspots[2 * _currentCursor] * _textSurfaceMultiplier;
+	_cursor.hotspotY = _cursorHotspots[2 * _currentCursor + 1] * _textSurfaceMultiplier;
+	_cursor.width = 16 * _textSurfaceMultiplier;
+	_cursor.height = 16 * _textSurfaceMultiplier;
+
+	int scl = _bytesPerPixelOutput * _textSurfaceMultiplier;
 
 	for (i = 0; i < 16; i++) {
 		for (j = 0; j < 16; j++) {
 			if (src[i] & (1 << j)) {
-				if (_bytesPerPixel == 2)
-					WRITE_UINT16(_grabbedCursor + 32 * i + (15 - j) * 2, color);
-				else
-					_grabbedCursor[16 * i + 15 - j] = color;
+				byte *dst1 = _grabbedCursor + 16 * scl * i * _textSurfaceMultiplier + (15 - j) * scl;
+				byte *dst2 = (_textSurfaceMultiplier == 2) ? dst1 + 16 * scl : dst1;
+				if (_bytesPerPixelOutput == 2) {
+					for (int b = 0; b < scl; b += 2) {
+						*((uint16*)dst1) = *((uint16*)dst2) = color;
+						dst1 += 2;
+						dst2 += 2;
+					}
+				} else {
+					for (int b = 0; b < scl; b++)
+						*dst1++ = *dst2++ = color;
+				}
 			}
 		}
 	}

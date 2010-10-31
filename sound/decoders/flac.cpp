@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides for FILE as that is used in FLAC headers
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
 #include "sound/decoders/flac.h"
 
 #ifdef USE_FLAC
@@ -140,7 +143,7 @@ public:
 	bool seek(const Timestamp &where);
 	Timestamp getLength() const { return _length; }
 
-	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC ; }
+	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC; }
 protected:
 	uint getChannels() const { return MIN<uint>(_streaminfo.channels, MAX_OUTPUT_CHANNELS); }
 
@@ -303,7 +306,7 @@ int FLACStream::readBuffer(int16 *buffer, const int numSamples) {
 	const uint numChannels = getChannels();
 
 	if (numChannels == 0) {
-		warning("FLACStream: Stream not sucessfully initialised, cant playback");
+		warning("FLACStream: Stream not successfully initialised, cant playback");
 		return -1; // streaminfo wasnt read!
 	}
 
@@ -553,7 +556,7 @@ void FLACStream::convertBuffersGeneric(SampleType* bufDestination, const FLAC__i
 
 		for (; numSamples > 0; numSamples -= numChannels) {
 			for (uint i = 0; i < numChannels; ++i)
-				*bufDestination++ = static_cast<SampleType>(*(inChannels[i]++) >> kPower) ;
+				*bufDestination++ = static_cast<SampleType>(*(inChannels[i]++) >> kPower);
 		}
 	} else {
 		for (; numSamples > 0; numSamples -= numChannels) {

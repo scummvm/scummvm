@@ -378,10 +378,10 @@ bool ScummEngine::loadState(int slot, bool compat) {
 			return false;
 		}
 
-		_engineStartTime = _system->getMillis() / 1000 - infos.playtime;
+		setTotalPlayTime(infos.playtime * 1000);
 	} else {
 		// start time counting
-		_engineStartTime = _system->getMillis() / 1000;
+		setTotalPlayTime();
 	}
 
 	// Due to a bug in scummvm up to and including 0.3.0, save games could be saved
@@ -797,7 +797,7 @@ void ScummEngine::saveInfos(Common::WriteStream* file) {
 
 	// still save old format for older versions
 	section.timeTValue = 0;
-	section.playtime = _system->getMillis() / 1000 - _engineStartTime;
+	section.playtime = getTotalPlayTime() / 1000;
 
 	TimeDate curTime;
 	_system->getTimeAndDate(curTime);
@@ -1294,9 +1294,38 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	// Save/load palette data
 	//
-	if (_16BitPalette) {
+	if (_16BitPalette && !(_game.platform == Common::kPlatformFMTowns && s->isLoading() && s->getVersion() < VER(82))) {
 		s->saveLoadArrayOf(_16BitPalette, 512, sizeof(_16BitPalette[0]), sleUint16);
 	}
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	// FM-Towns specific (extra palette data, color cycle data, etc.)
+	if (s->getVersion() >= VER(82)) {
+		const SaveLoadEntry townsFields[] = {
+			MKLINE(Common::Rect, left, sleInt16, VER(82)),
+			MKLINE(Common::Rect, top, sleInt16, VER(82)),
+			MKLINE(Common::Rect, right, sleInt16, VER(82)),
+			MKLINE(Common::Rect, bottom, sleInt16, VER(82)),
+			MKEND()
+		};
+
+		const SaveLoadEntry townsExtraEntries[] = {
+			MKLINE(ScummEngine, _townsOverrideShadowColor, sleUint8, VER(82)),
+			MKLINE(ScummEngine, _numCyclRects, sleUint8, VER(82)),
+			MKLINE(ScummEngine, _townsPaletteFlags, sleUint8, VER(82)),
+			MKLINE(ScummEngine, _townsClearLayerFlag, sleUint8, VER(82)),
+			MKLINE(ScummEngine, _townsActiveLayerFlags, sleUint8, VER(82)),
+			MKEND()
+		};
+
+		s->saveLoadArrayOf(_textPalette, 48, sizeof(_textPalette[0]), sleUint8);		
+		s->saveLoadArrayOf(_cyclRects, 10, sizeof(_cyclRects[0]), townsFields);
+		s->saveLoadArrayOf(&_curStringRect, 1, sizeof(_curStringRect), townsFields);
+		s->saveLoadArrayOf(_townsCharsetColorMap, 16, sizeof(_townsCharsetColorMap[0]), sleUint8);		
+		s->saveLoadEntries(this, townsExtraEntries);
+	}
+#endif
+
 	if (_shadowPaletteSize) {
 		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
 		// _roomPalette didn't show up until V21 save games
@@ -1459,6 +1488,17 @@ void ScummEngine_v5::saveOrLoad(Serializer *s) {
 
 	// This is probably only needed for Loom.
 	s->saveLoadEntries(this, cursorEntries);
+
+	// Reset cursors for old FM-Towns savegames saved with 256 color setting.
+	// Otherwise the cursor will be messed up when displayed in the new hi color setting.
+	if (_game.platform == Common::kPlatformFMTowns && _bytesPerPixelOutput == 2 && s->isLoading() && s->getVersion() < VER(82)) {
+		if (_game.id == GID_LOOM) {
+			redefineBuiltinCursorFromChar(1, 1);
+			redefineBuiltinCursorHotspot(1, 0, 0);
+		} else {
+			resetCursors();
+		}
+	}
 }
 
 #ifdef ENABLE_SCUMM_7_8

@@ -42,8 +42,8 @@
  *
  * Status of this engine: ???
  *
- * Supported games:
- * - ???
+ * Games using this engine:
+ * - Touche: The Adventures of the Fifth Musketeer
  */
 namespace Touche {
 

@@ -875,7 +875,7 @@ CharacterScheduleEntry::CharacterScheduleEntry(CharacterScheduleEntry *src) {
 	_parent = src->_parent;
 	_action = src->_action;
 	_numParams = src->_numParams;
-	Common::copy(src->_params, src->_params + MAX_TELL_COMMANDS * 3 * sizeof(uint16), _params);
+	Common::copy(src->_params, src->_params + MAX_TELL_COMMANDS * 3, _params);
 }
 
 uint16 CharacterScheduleEntry::param(int index) {

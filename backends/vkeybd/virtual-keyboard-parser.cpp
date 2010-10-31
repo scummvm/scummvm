@@ -270,7 +270,7 @@ bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
 
 	int r, g, b;
 	if (node->values.contains("transparent_color")) {
-		if (!parseIntegerKey(node->values["transparent_color"].c_str(), 3, &r, &g, &b))
+		if (!parseIntegerKey(node->values["transparent_color"], 3, &r, &g, &b))
 			return parserError("Could not parse color value");
 	} else {
 		// default to purple
@@ -281,7 +281,7 @@ bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
 	_mode->transparentColor = format.RGBToColor(r, g, b);
 
 	if (node->values.contains("display_font_color")) {
-		if (!parseIntegerKey(node->values["display_font_color"].c_str(), 3, &r, &g, &b))
+		if (!parseIntegerKey(node->values["display_font_color"], 3, &r, &g, &b))
 			return parserError("Could not parse color value");
 	} else {
 		r = g = b = 0; // default to black
@@ -336,7 +336,7 @@ byte VirtualKeyboardParser::parseFlags(const String& flags) {
 
 bool VirtualKeyboardParser::parseRect(Rect &rect, const String& coords) {
 	int x1, y1, x2, y2;
-	if (!parseIntegerKey(coords.c_str(), 4, &x1, &y1, &x2, &y2))
+	if (!parseIntegerKey(coords, 4, &x1, &y1, &x2, &y2))
 		return parserError("Invalid coords for rect area");
 	rect.left = x1;
 	rect.top = y1;

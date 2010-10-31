@@ -134,10 +134,14 @@ MidiOutput::MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool de
 	static const byte sysEx2[] = { 3, 4, 3, 4, 3, 4, 3, 4, 4 };
 	static const byte sysEx3[] = { 0, 3, 2 };
 
-	sendSysEx(0x7F, 0x00, 0x00, sysEx1, 1);
-	sendSysEx(0x10, 0x00, 0x0D, sysEx1, 9);
-	sendSysEx(0x10, 0x00, 0x04, sysEx2, 9);
-	sendSysEx(0x10, 0x00, 0x01, sysEx3, 3);
+	if (_isMT32) {
+		sendSysEx(0x7F, 0x00, 0x00, sysEx1, 1);
+		sendSysEx(0x10, 0x00, 0x0D, sysEx1, 9);
+		sendSysEx(0x10, 0x00, 0x04, sysEx2, 9);
+		sendSysEx(0x10, 0x00, 0x01, sysEx3, 3);
+	} else {
+		_output->sendGMReset();
+	}
 
 	memset(_channels, 0, sizeof(_channels));
 	for (int i = 0; i < 16; ++i) {
@@ -679,7 +683,7 @@ void SoundMidiPC::haltTrack() {
 	_output->deinitSource(0);
 }
 
-bool SoundMidiPC::isPlaying() {
+bool SoundMidiPC::isPlaying() const {
 	Common::StackLock lock(_mutex);
 
 	return _music->isPlaying();

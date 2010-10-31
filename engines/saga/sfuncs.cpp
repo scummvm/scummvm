@@ -327,7 +327,7 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 	event.param4 = theObject;	// Object
 	event.param5 = withObject;	// With Object
 	event.param6 = objectId;
-	_vm->_events->queue(&event);
+	_vm->_events->queue(event);
 }
 
 // Script function #8 (0x08) nonblocking
@@ -782,11 +782,11 @@ void Script::sfSimulSpeech(SCRIPTFUNC_PARAMS) {
 	for (i = 0; i < actorsCount; i++)
 		actorsIds[i] = thread->pop();
 
-	if (thread->_voiceLUT->voices) {
+	if (!thread->_voiceLUT->empty()) {
 		if (_vm->getGameId() == GID_IHNM && stringId >= 338) {
 			sampleResourceId = -1;
 		} else {
-			sampleResourceId = thread->_voiceLUT->voices[stringId];
+			sampleResourceId = (*thread->_voiceLUT)[stringId];
 			if (sampleResourceId <= 0 || sampleResourceId > 4000)
 				sampleResourceId = -1;
 		}
@@ -953,7 +953,7 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	int frameOffset = thread->pop();
 	ActorFrameRange *frameRange;
 
-	debug(1, "sfPlaceActor(id = 0x%x, x=%d, y=%d, dir=%d, frameType=%d, frameOffset=%d)", actorId, actor->_location.x,
+	debug(1, "sfPlaceActor(id = 0x%X, x=%d, y=%d, dir=%d, frameType=%d, frameOffset=%d)", actorId, actor->_location.x,
 		  actor->_location.y, actor->_facingDirection, frameType, frameOffset);
 
 	if (frameType >= 0) {
@@ -1042,8 +1042,8 @@ void Script::sfSimulSpeech2(SCRIPTFUNC_PARAMS) {
 	for (i = 0; i < actorsCount; i++)
 		actorsIds[i] = thread->pop();
 
-	if (thread->_voiceLUT->voices) {
-		sampleResourceId = thread->_voiceLUT->voices[stringId];
+	if (!thread->_voiceLUT->empty()) {
+		sampleResourceId = (*thread->_voiceLUT)[stringId];
 		if (sampleResourceId <= 0 || sampleResourceId > 4000)
 			sampleResourceId = -1;
 	}
@@ -1060,7 +1060,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	static PalEntry cur_pal[PAL_ENTRIES];
 	PalEntry *pal;
 	Event event;
-	Event *q_event;
+	EventColumns *eventColumns;
 
 	thread->wait(kWaitTypePlacard);
 
@@ -1070,7 +1070,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.type = kEvTOneshot;
 	event.code = kCursorEvent;
 	event.op = kEventHide;
-	q_event = _vm->_events->queue(&event);
+	eventColumns = _vm->_events->queue(event);
 
 	_vm->_interface->setFadeMode(kFadeOut);
 
@@ -1082,7 +1082,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
 	event.data = cur_pal;
-	q_event = _vm->_events->chain(q_event, &event);
+	_vm->_events->chain(eventColumns, event);
 
 	// set fade mode
 	event.type = kEvTImmediate;
@@ -1091,12 +1091,12 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.param = kNoFade;
 	event.time = 0;
 	event.duration = 0;
-	q_event = _vm->_events->chain(q_event, &event);
+	_vm->_events->chain(eventColumns, event);
 
 	event.type = kEvTOneshot;
 	event.code = kInterfaceEvent;
 	event.op = kEventClearStatus;
-	q_event = _vm->_events->chain(q_event, &event);
+	_vm->_events->chain(eventColumns, event);
 
 	event.type = kEvTOneshot;
 	event.code = kGraphicsEvent;
@@ -1106,7 +1106,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.param3 = _vm->_scene->getHeight();
 	event.param4 = 0;
 	event.param5 = _vm->getDisplayInfo().width;
-	q_event = _vm->_events->chain(q_event, &event);
+	_vm->_events->chain(eventColumns, event);
 
 	// Put the text in the center of the viewport, assuming it will fit on
 	// one line. If we cannot make that assumption we'll need to extend
@@ -1130,7 +1130,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.code = kTextEvent;
 	event.op = kEventDisplay;
 	event.data = _placardTextEntry;
-	q_event = _vm->_events->chain(q_event, &event);
+	_vm->_events->chain(eventColumns, event);
 
 	_vm->_scene->getBGPal(pal);
 	event.type = kEvTImmediate;
@@ -1139,13 +1139,13 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
 	event.data = pal;
-	q_event = _vm->_events->chain(q_event, &event);
+	_vm->_events->chain(eventColumns, event);
 
 	event.type = kEvTOneshot;
 	event.code = kScriptEvent;
 	event.op = kEventThreadWake;
 	event.param = kWaitTypePlacard;
-	q_event = _vm->_events->chain(q_event, &event);
+	_vm->_events->chain(eventColumns, event);
 
 }
 
@@ -1349,8 +1349,8 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 			return;
 		}
 
-		if (param1 >= _vm->_music->_songTableLen) {
-			warning("sfPlayMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTableLen - 1);
+		if (uint(param1) >= _vm->_music->_songTable.size()) {
+			warning("sfPlayMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTable.size() - 1);
 		} else {
 			_vm->_music->setVolume(_vm->_musicVolume, 1);
 			_vm->_music->play(_vm->_music->_songTable[param1], param2 ? MUSIC_LOOP : MUSIC_NORMAL);
@@ -1440,7 +1440,7 @@ void Script::sfPlaySound(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 	int res;
 
-	if (param >= 0 && param < _vm->_sndRes->_fxTableLen) {
+	if (uint(param) < _vm->_sndRes->_fxTable.size()) {
 		res = _vm->_sndRes->_fxTable[param].res;
 		if (_vm->getGameId() == GID_ITE && !(_vm->getFeatures() & GF_ITE_FLOPPY))
 			res -= 14;
@@ -1455,7 +1455,7 @@ void Script::sfPlayLoopedSound(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 	int res;
 
-	if (param >= 0 && param < _vm->_sndRes->_fxTableLen) {
+	if (uint(param) < _vm->_sndRes->_fxTable.size()) {
 		res = _vm->_sndRes->_fxTable[param].res;
 		if (_vm->getGameId() == GID_ITE && !(_vm->getFeatures() & GF_ITE_FLOPPY))
 			res -= 14;
@@ -1527,7 +1527,7 @@ void Script::finishDialog(int strID, int replyID, int flags, int bitOffset) {
 			const char *str = _conversingThread->_strings->getString(strID);
 			if (*str != '[') {
 				int sampleResourceId = -1;
-				sampleResourceId = _conversingThread->_voiceLUT->voices[strID];
+				sampleResourceId = (*_conversingThread->_voiceLUT)[strID];
 				if (sampleResourceId < 0 || sampleResourceId > 4000)
 					sampleResourceId = -1;
 

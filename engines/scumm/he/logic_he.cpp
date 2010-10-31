@@ -232,7 +232,7 @@ int32 LogicHErace::op_1101(int32 *args) {
 	int32 retval;
 	float temp;
 
-    temp = args[0] / _userData[532];
+	temp = args[0] / _userData[532];
 	if (_userData[519] != temp) {
 		_userData[519] = temp;
 		op_sub3(temp);
@@ -952,6 +952,30 @@ int LogicHEsoccer::op_1021(int32 *args) {
 	// TODO: Used during a match (ball movement?)
 
 	return 1;
+}
+
+/***********************
+ * Backyard Baseball 2001
+ *
+ */
+
+int LogicHEbaseball2001::versionID() {
+	return 1;
+}
+
+int32 LogicHEbaseball2001::dispatch(int op, int numArgs, int32 *args) {
+	int res = 0;
+
+	switch (op) {
+	case 3001:
+		// Check network status
+		break;
+
+	default:
+		LogicHE::dispatch(op, numArgs, args);
+	}
+
+	return res;
 }
 
 /***********************

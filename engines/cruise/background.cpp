@@ -216,8 +216,7 @@ int loadBackground(const char *name, int idx) {
 		if (strlen(name) >= sizeof(backgroundTable[idx].name)) 
 			warning("background name length exceeded allowable maximum");
 
-		strncpy(backgroundTable[idx].name, name, sizeof(backgroundTable[idx].name));
-		backgroundTable[idx].name[sizeof(backgroundTable[idx].name) - 1] = 0;
+		Common::strlcpy(backgroundTable[idx].name, name, sizeof(backgroundTable[idx].name));
 	}
 
 	return (0);

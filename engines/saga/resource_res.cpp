@@ -48,13 +48,13 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	if (chapter < 0)
 		chapter = !_vm->isIHNMDemo() ? 8 : 7;
 
-	_vm->_script->_globalVoiceLUT.freeMem();
+	_vm->_script->_globalVoiceLUT.clear();
 
 	// TODO: close chapter context, or rather reassign it in our case
 
 	ResourceContext *resourceContext;
 	ResourceContext *soundContext;
-	int i;
+	uint i;
 
 	resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (resourceContext == NULL) {
@@ -66,41 +66,38 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 		error("Resource::loadGlobalResources() sound context not found");
 	}
 
-	byte *resourcePointer;
-	size_t resourceLength;
+	ByteArray resourceData;
 
 	if (!_vm->isIHNMDemo()) {
-		_vm->_resource->loadResource(resourceContext, metaResourceTable[chapter],
-									 resourcePointer, resourceLength);
+		_vm->_resource->loadResource(resourceContext, metaResourceTable[chapter], resourceData);
 	} else {
-		_vm->_resource->loadResource(resourceContext, metaResourceTableDemo[chapter],
-									 resourcePointer, resourceLength);
+		_vm->_resource->loadResource(resourceContext, metaResourceTableDemo[chapter], resourceData);
 	}
 
-	if (resourceLength == 0) {
+	if (resourceData.empty()) {
 		error("Resource::loadGlobalResources wrong metaResource");
 	}
 
-	MemoryReadStream metaS(resourcePointer, resourceLength);
+	{
+		ByteArrayReadStreamEndian metaS(resourceData);
 
-	_metaResource.sceneIndex = metaS.readSint16LE();
-	_metaResource.objectCount = metaS.readSint16LE();
-	_metaResource.objectsStringsResourceID = metaS.readSint32LE();
-	_metaResource.inventorySpritesID = metaS.readSint32LE();
-	_metaResource.mainSpritesID = metaS.readSint32LE();
-	_metaResource.objectsResourceID = metaS.readSint32LE();
-	_metaResource.actorCount = metaS.readSint16LE();
-	_metaResource.actorsStringsResourceID = metaS.readSint32LE();
-	_metaResource.actorsResourceID = metaS.readSint32LE();
-	_metaResource.protagFaceSpritesID = metaS.readSint32LE();
-	_metaResource.field_22 = metaS.readSint32LE();
-	_metaResource.field_26 = metaS.readSint16LE();
-	_metaResource.protagStatesCount = metaS.readSint16LE();
-	_metaResource.protagStatesResourceID = metaS.readSint32LE();
-	_metaResource.cutawayListResourceID = metaS.readSint32LE();
-	_metaResource.songTableID = metaS.readSint32LE();
-
-	free(resourcePointer);
+		_metaResource.sceneIndex = metaS.readSint16LE();
+		_metaResource.objectCount = metaS.readSint16LE();
+		_metaResource.objectsStringsResourceID = metaS.readSint32LE();
+		_metaResource.inventorySpritesID = metaS.readSint32LE();
+		_metaResource.mainSpritesID = metaS.readSint32LE();
+		_metaResource.objectsResourceID = metaS.readSint32LE();
+		_metaResource.actorCount = metaS.readSint16LE();
+		_metaResource.actorsStringsResourceID = metaS.readSint32LE();
+		_metaResource.actorsResourceID = metaS.readSint32LE();
+		_metaResource.protagFaceSpritesID = metaS.readSint32LE();
+		_metaResource.field_22 = metaS.readSint32LE();
+		_metaResource.field_26 = metaS.readSint16LE();
+		_metaResource.protagStatesCount = metaS.readSint16LE();
+		_metaResource.protagStatesResourceID = metaS.readSint32LE();
+		_metaResource.cutawayListResourceID = metaS.readSint32LE();
+		_metaResource.songTableID = metaS.readSint32LE();
+	}
 
 	_vm->_actor->loadActorList(actorsEntrance, _metaResource.actorCount,
 						  _metaResource.actorsResourceID, _metaResource.protagStatesCount,
@@ -108,90 +105,83 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	_vm->_actor->_protagonist->_sceneNumber = _metaResource.sceneIndex;
 
-	_vm->_actor->_objectsStrings.freeMem();
+	_vm->_actor->_objectsStrings.clear();
 
-	_vm->_resource->loadResource(resourceContext, _metaResource.objectsStringsResourceID, resourcePointer, resourceLength);
-	_vm->loadStrings(_vm->_actor->_objectsStrings, resourcePointer, resourceLength);
-	free(resourcePointer);
+	_vm->_resource->loadResource(resourceContext, _metaResource.objectsStringsResourceID, resourceData);
+	_vm->loadStrings(_vm->_actor->_objectsStrings, resourceData);
 
-	if (chapter >= _vm->_sndRes->_fxTableIDsLen) {
+	if (uint(chapter) >= _vm->_sndRes->_fxTableIDs.size()) {
 		error("Chapter ID exceeds fxTableIDs length");
 	}
 
 	debug(0, "Going to read %d of %d", chapter, _vm->_sndRes->_fxTableIDs[chapter]);
 	_vm->_resource->loadResource(soundContext, _vm->_sndRes->_fxTableIDs[chapter],
-								 resourcePointer, resourceLength);
+								 resourceData);
 
-	if (resourceLength == 0) {
+	if (resourceData.empty()) {
 		error("Resource::loadGlobalResources Can't load sound effects for current track");
 	}
 
-	free(_vm->_sndRes->_fxTable);
+	_vm->_sndRes->_fxTable.resize(resourceData.size() / 4);
 
-	_vm->_sndRes->_fxTableLen = resourceLength / 4;
-	_vm->_sndRes->_fxTable = (FxTable *)malloc(sizeof(FxTable) * _vm->_sndRes->_fxTableLen);
+	{
+		ByteArrayReadStreamEndian fxS(resourceData);
 
-	MemoryReadStream fxS(resourcePointer, resourceLength);
-
-	for (i = 0; i < _vm->_sndRes->_fxTableLen; i++) {
-		_vm->_sndRes->_fxTable[i].res = fxS.readSint16LE();
-		_vm->_sndRes->_fxTable[i].vol = fxS.readSint16LE();
+		for (i = 0; i < _vm->_sndRes->_fxTable.size(); i++) {
+			_vm->_sndRes->_fxTable[i].res = fxS.readSint16LE();
+			_vm->_sndRes->_fxTable[i].vol = fxS.readSint16LE();
+		}
 	}
-	free(resourcePointer);
 
-	_vm->_interface->_defPortraits.freeMem();
+	_vm->_interface->_defPortraits.clear();
 	_vm->_sprite->loadList(_metaResource.protagFaceSpritesID, _vm->_interface->_defPortraits);
 
-	_vm->_actor->_actorsStrings.freeMem();
+	_vm->_actor->_actorsStrings.clear();
 
-	_vm->_resource->loadResource(resourceContext, _metaResource.actorsStringsResourceID, resourcePointer, resourceLength);
-	_vm->loadStrings(_vm->_actor->_actorsStrings, resourcePointer, resourceLength);
-	free(resourcePointer);
+	_vm->_resource->loadResource(resourceContext, _metaResource.actorsStringsResourceID, resourceData);
+	_vm->loadStrings(_vm->_actor->_actorsStrings, resourceData);
 
-	_vm->_sprite->_inventorySprites.freeMem();
+	_vm->_sprite->_inventorySprites.clear();
 	_vm->_sprite->loadList(_metaResource.inventorySpritesID, _vm->_sprite->_inventorySprites);
 
-	_vm->_sprite->_mainSprites.freeMem();
+	_vm->_sprite->_mainSprites.clear();
 	_vm->_sprite->loadList(_metaResource.mainSpritesID, _vm->_sprite->_mainSprites);
 
 	_vm->_actor->loadObjList(_metaResource.objectCount, _metaResource.objectsResourceID);
 
-	_vm->_resource->loadResource(resourceContext, _metaResource.cutawayListResourceID, resourcePointer, resourceLength);
+	_vm->_resource->loadResource(resourceContext, _metaResource.cutawayListResourceID, resourceData);
 
-	if (resourceLength == 0) {
+	if (resourceData.empty()) {
 		error("Resource::loadGlobalResources Can't load cutaway list");
 	}
 
-	_vm->_anim->loadCutawayList(resourcePointer, resourceLength);
+	_vm->_anim->loadCutawayList(resourceData);
 
 	if (_metaResource.songTableID > 0) {
-		_vm->_resource->loadResource(resourceContext, _metaResource.songTableID, resourcePointer, resourceLength);
+		_vm->_resource->loadResource(resourceContext, _metaResource.songTableID, resourceData);
 
 		if (chapter == 6) {
-			int32 id = READ_LE_UINT32(&resourcePointer[actorsEntrance * 4]);
-			free(resourcePointer);
-			_vm->_resource->loadResource(resourceContext, id, resourcePointer, resourceLength);
+			if (resourceData.size() < (uint(actorsEntrance) * 4 + 4)) {
+				error("Resource::loadGlobalResources chapter 6 has wrong resource");
+			}
+			int32 id = READ_LE_UINT32(&resourceData[actorsEntrance * 4]);
+			_vm->_resource->loadResource(resourceContext, id, resourceData);
 		}
 
-		if (resourceLength == 0) {
+		if (resourceData.empty()) {
 			error("Resource::loadGlobalResources Can't load songs list for current track");
 		}
 
-		free(_vm->_music->_songTable);
+		_vm->_music->_songTable.resize(resourceData.size() / 4);
 
-		_vm->_music->_songTableLen = resourceLength / 4;
-		_vm->_music->_songTable = (int32 *)malloc(sizeof(int32) * _vm->_music->_songTableLen);
+		ByteArrayReadStreamEndian songS(resourceData);
 
-		MemoryReadStream songS(resourcePointer, resourceLength);
-
-		for (i = 0; i < _vm->_music->_songTableLen; i++)
+		for (i = 0; i < _vm->_music->_songTable.size(); i++)
 			_vm->_music->_songTable[i] = songS.readSint32LE();
-		free(resourcePointer);
 	} else {
 		// The IHNM demo has a fixed music track and doesn't load a song table
 		_vm->_music->setVolume(_vm->_musicVolume, 1);
 		_vm->_music->play(3, MUSIC_LOOP);
-		free(resourcePointer);
 	}
 
 	int voiceLUTResourceID = 0;
@@ -207,9 +197,8 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	}
 
 	if (voiceLUTResourceID) {
-		_vm->_resource->loadResource(resourceContext, voiceLUTResourceID, resourcePointer, resourceLength);
-		_vm->_script->loadVoiceLUT(_vm->_script->_globalVoiceLUT, resourcePointer, resourceLength);
-		free(resourcePointer);
+		_vm->_resource->loadResource(resourceContext, voiceLUTResourceID, resourceData);
+		_vm->_script->loadVoiceLUT(_vm->_script->_globalVoiceLUT, resourceData);
 	}
 
 	_vm->_spiritualBarometer = 0;

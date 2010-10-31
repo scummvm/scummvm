@@ -107,7 +107,7 @@ int JustifyText(char *szStr, int xPos, const FONT *pFont, int mode) {
  * @param mode			Mode flags for the string
  * @param sleepTime		Sleep time between each character (if non-zero)
  */
-OBJECT *ObjectTextOut(CORO_PARAM, OBJECT *pList, char *szStr, int colour,
+OBJECT *ObjectTextOut(OBJECT *pList, char *szStr, int colour,
 					  int xPos, int yPos, SCNHANDLE hFont, int mode, int sleepTime) {
 	int xJustify;	// x position of text after justification
 	int yOffset;	// offset to next line of text
