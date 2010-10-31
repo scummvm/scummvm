@@ -29,11 +29,11 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
-#include "SDL.h"
-
-#include "SDL_ImageResource.h"
+struct SDL_Surface;
 
 namespace CEGUI {
+
+	class SDL_ImageResource;
 
 	class GUIElement {
 	public:

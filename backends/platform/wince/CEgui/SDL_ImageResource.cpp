@@ -23,6 +23,10 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "SDL.h"
 #include "SDL_ImageResource.h"
 
 namespace CEGUI {

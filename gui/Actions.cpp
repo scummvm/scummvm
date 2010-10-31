@@ -25,12 +25,12 @@
 
 #include "gui/Actions.h"
 #include "gui/message.h"
-#include "scumm/scumm.h"
 #include "common/config-manager.h"
 
 #ifdef _WIN32_WCE
 	#include "backends/platform/wince/CEActionsPocket.h"
 	#include "backends/platform/wince/CEActionsSmartphone.h"
+	#include "backends/platform/wince/CEDevice.h"
 #elif defined(__SYMBIAN32__)
 	#include "backends/platform/symbian/src/SymbianActions.h"
 #endif

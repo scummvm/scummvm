@@ -23,10 +23,14 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "backends/platform/wince/wince-sdl.h"
+
 #include "CEActionsSmartphone.h"
 #include "EventsBuffer.h"
 #include "gui/message.h"
-#include "scumm/scumm.h"
 #include "common/config-manager.h"
 #include "gui/KeysDialog.h"
 

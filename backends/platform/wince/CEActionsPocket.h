@@ -28,7 +28,7 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "wince-sdl.h"
+#include "common/str.h"
 #include "gui/Key.h"
 #include "gui/Actions.h"
 
@@ -58,11 +58,13 @@ enum pocketActionType {
 	POCKET_ACTION_LAST
 };
 
+class OSystem_WINCE3;
+
 class CEActionsPocket : public GUI::Actions {
 	public:
 		// Actions
 		bool perform(GUI::ActionType action, bool pushed = true);
-		String actionName(GUI::ActionType action);
+		Common::String actionName(GUI::ActionType action);
 		int size();
 
 		static void init();
@@ -70,7 +72,7 @@ class CEActionsPocket : public GUI::Actions {
 		void initInstanceGame();
 
 		// Action domain
-		String domain();
+		Common::String domain();
 		int version();
 
 		// Utility

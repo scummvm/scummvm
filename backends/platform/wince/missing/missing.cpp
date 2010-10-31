@@ -29,6 +29,8 @@
  * by Vasyl Tsvirkunov
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include <windows.h>
 #include <tchar.h>

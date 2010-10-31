@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "backends/platform/wince/wince-sdl.h"
 
 #include "common/config-manager.h"
@@ -970,8 +973,9 @@ bool OSystem_WINCE3::getFeatureState(Feature f) {
 		return false;
 	case kFeatureVirtualKeyboard:
 		return (_panelStateForced);
+	default:
+		return OSystem_SDL::getFeatureState(f);
 	}
-	return OSystem_SDL::getFeatureState(f);
 }
 
 void OSystem_WINCE3::check_mappings() {
@@ -2053,7 +2057,7 @@ void OSystem_WINCE3::undrawMouse() {
 	if (SDL_LockSurface(_overlayVisible ? _overlayscreen : _screen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
-	int x, y;
+	int y;
 	if (!_overlayVisible) {
 		byte *dst, *bak = _mouseBackupOld;
 
@@ -2242,14 +2246,15 @@ static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode, bool unfilter) {
 
 	if (unfilter) {
 		switch (key) {
-			case SDLK_ESCAPE:
-				return SDLK_BACKSPACE;
-			case SDLK_F8:
-				return SDLK_ASTERISK;
-			case SDLK_F9:
-				return SDLK_HASH;
+		case SDLK_ESCAPE:
+			return SDLK_BACKSPACE;
+		case SDLK_F8:
+			return SDLK_ASTERISK;
+		case SDLK_F9:
+			return SDLK_HASH;
+		default:
+			return key;
 		}
-		return key;
 	}
 
 	if (key >= SDLK_KP0 && key <= SDLK_KP9) {
@@ -2265,7 +2270,6 @@ static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode, bool unfilter) {
 bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 	SDL_Event ev;
 	ev.type = SDL_NOEVENT;
-	byte b = 0;
 	DWORD currentTime;
 	bool keyEvent = false;
 	int deltaX, deltaY;

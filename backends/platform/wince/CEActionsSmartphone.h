@@ -28,7 +28,7 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "wince-sdl.h"
+#include "common/str.h"
 #include "gui/Key.h"
 #include "gui/Actions.h"
 
@@ -58,14 +58,14 @@ class CEActionsSmartphone : public GUI::Actions {
 	public:
 		// Actions
 		bool perform(GUI::ActionType action, bool pushed = true);
-		String actionName(GUI::ActionType action);
+		Common::String actionName(GUI::ActionType action);
 		int size();
 		static void init();
 		void initInstanceMain(OSystem *mainSystem);
 		void initInstanceGame();
 
 		// Action domain
-		String domain();
+		Common::String domain();
 		int version();
 
 		~CEActionsSmartphone();

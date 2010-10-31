@@ -29,7 +29,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
-#include "SDL.h"
+struct SDL_Surface;
 
 namespace CEGUI {
 	class SDL_ImageResource {

@@ -24,6 +24,7 @@
  */
 
 #include "ItemSwitch.h"
+#include "SDL_ImageResource.h"
 
 namespace CEGUI {
 

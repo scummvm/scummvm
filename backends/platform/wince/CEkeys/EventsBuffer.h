@@ -30,8 +30,6 @@
 #include "common/system.h"
 #include "common/list.h"
 
-#include <SDL.h>
-
 #include "gui/Key.h"
 
 namespace CEKEYS {

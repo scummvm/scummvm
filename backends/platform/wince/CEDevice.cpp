@@ -23,11 +23,14 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "CEDevice.h"
 
 #include <SDL.h>
 
-#include "wince-sdl.h"
+#include "backends/platform/wince/wince-sdl.h"
 
 static void (WINAPI* _SHIdleTimerReset)(void) = NULL;
 static HANDLE (WINAPI* _SetPowerRequirement)(PVOID,int,ULONG,PVOID,ULONG) = NULL;

@@ -23,8 +23,10 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "wince-sdl.h"
+#include "backends/platform/wince/wince-sdl.h"
 
 #include "CELauncherDialog.h"
 

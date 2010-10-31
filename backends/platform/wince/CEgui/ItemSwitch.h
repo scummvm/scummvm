@@ -35,6 +35,7 @@
 using GUI::Key;
 
 namespace CEGUI {
+	class SDL_ImageResource;
 
 	class ItemSwitch : public PanelItem {
 	public:
