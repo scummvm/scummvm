@@ -40,17 +40,7 @@ namespace Tinsel {
 
 enum {
 	SG_DESC_LEN	= 40,	// Max. saved game description length
-	MAX_SAVED_FILES	= 100,
-
-	// FIXME: Save file names in ScummVM can be longer than 8.3, overflowing the
-	// name field in savedFiles. Raising it to 256 as a preliminary fix.
-	FNAMELEN	= 256 // 8.3
-};
-
-struct SFILES {
-	char	name[FNAMELEN];
-	char	desc[SG_DESC_LEN + 2];
-	TimeDate dateTime;
+	MAX_SAVED_FILES	= 100
 };
 
 struct SAVED_DATA {
