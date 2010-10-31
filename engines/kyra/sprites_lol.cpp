@@ -901,6 +901,9 @@ void LoLEngine::calcSpriteRelPosition(uint16 x1, uint16 y1, int &x2, int &y2, ui
 }
 
 void LoLEngine::drawDoor(uint8 *shape, uint8 *doorPalette, int index, int unk2, int w, int h, int flags) {
+	if (!shape)
+		return;
+
 	uint8 c = _dscDoor1[(_currentDirection << 5) + unk2];
 	int r = (c / 5) + 5 * _dscDimMap[index];
 	uint16 d = _dscShapeOvlIndex[r];
