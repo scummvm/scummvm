@@ -1583,10 +1583,12 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	return 0;
 }
 
-struct {
+struct MacResTag {
 	uint32 tag;
 	ResourceType type;
-} static const macResTagMap[] = {
+};
+
+static const MacResTag macResTagMap[] = {
 	{ MKID_BE('V56 '), kResourceTypeView },
 	{ MKID_BE('P56 '), kResourceTypePic },
 	{ MKID_BE('SCR '), kResourceTypeScript },
