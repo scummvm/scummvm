@@ -125,8 +125,8 @@ Common::Error ToltecsEngine::run() {
 
 	_mouseX = 0;
 	_mouseY = 0;
-	_mouseCounter = 0;
-	_mouseButtonPressedFlag = false;
+	_mouseDblClickTicks = 60;
+	_mouseWaitForRelease = false;
 	_mouseButton = 0;
 	_mouseDisabled = 0;
 	_leftButtonDown = false;
@@ -152,7 +152,9 @@ Common::Error ToltecsEngine::run() {
 
 	syncSoundSettings();
 
-//#define TEST_MENU
+	setupSysStrings();
+
+#define TEST_MENU
 #ifdef TEST_MENU
 	_screen->registerFont(0, 0x0D);
 	_screen->registerFont(1, 0x0E);
@@ -197,6 +199,17 @@ Common::Error ToltecsEngine::run() {
 	delete _sound;
 
 	return Common::kNoError;
+}
+
+void ToltecsEngine::setupSysStrings() {
+	Resource *sysStringsResource = _res->load(15);
+	const char *sysStrings = (const char*)sysStringsResource->data;
+	for (int i = 0; i < kSysStrCount; i++) {
+		debug(1, "sysStrings[%d] = [%s]", i, sysStrings);
+		_sysStrings[i] = sysStrings;
+		sysStrings += strlen(sysStrings) + 1;
+	}
+	// TODO: Set yes/no chars
 }
 
 void ToltecsEngine::loadScene(uint resIndex) {
@@ -323,10 +336,10 @@ void ToltecsEngine::updateInput() {
 		}
 	}
 
-	if (_mouseDisabled == 0) {
+	if (!_mouseDisabled) {
 
-		if (_mouseCounter > 0)
-			_mouseCounter--;
+		if (_mouseDblClickTicks > 0)
+			_mouseDblClickTicks--;
 
 		byte mouseButtons = 0;
 		if (_leftButtonDown)
@@ -335,17 +348,18 @@ void ToltecsEngine::updateInput() {
 			mouseButtons |= 2;
 
 		if (mouseButtons != 0) {
-			if (!_mouseButtonPressedFlag) {
+			if (!_mouseWaitForRelease) {
 				_mouseButton = mouseButtons;
-				if (_mouseCounter != 0)
-					_mouseButton |= 0x80;
-				_mouseCounter = 30; // maybe TODO
-				_mouseButtonPressedFlag = true;
+				if (_mouseDblClickTicks > 0)
+					_mouseButton = 0x80;
+				//if (_mouseButton == 0x80) debug("DBL!");
+				_mouseDblClickTicks = 30; // maybe TODO
+				_mouseWaitForRelease = true;
 			} else {
 				_mouseButton = 0;
 			}
 		} else {
-			_mouseButtonPressedFlag = false;
+			_mouseWaitForRelease = false;
 			_mouseButton = 0;
 		}
 
@@ -429,7 +443,7 @@ void ToltecsEngine::updateCamera() {
 		_screen->finishTalkTextItems();
 	}
 
-	debug(0, "ToltecsEngine::updateCamera() _cameraX = %d; _cameraY = %d", _cameraX, _cameraY);
+	//debug(0, "ToltecsEngine::updateCamera() _cameraX = %d; _cameraY = %d", _cameraX, _cameraY);
 
 }
 

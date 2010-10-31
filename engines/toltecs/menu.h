@@ -132,6 +132,7 @@ protected:
 	bool _editingDescription;
 	ItemID _editingDescriptionID;
 	Item *_editingDescriptionItem;
+	bool _needRedraw;
 
 	Common::Array<Item> _items;
 	Common::Array<SavegameItem> _savegames;
@@ -139,7 +140,7 @@ protected:
 	bool _cfgText, _cfgVoices;
 	int _cfgMasterVolume, _cfgVoicesVolume, _cfgMusicVolume, _cfgSoundFXVolume,	_cfgBackgroundVolume;
 
-	void addClickTextItem(ItemID id, int x, int y, int w, uint fontNum, const byte *caption, byte defaultColor, byte activeColor);
+	void addClickTextItem(ItemID id, int x, int y, int w, uint fontNum, const char *caption, byte defaultColor, byte activeColor);
 
 	void drawItem(ItemID itemID, bool active);
 	void handleMouseMove(int x, int y);
@@ -148,7 +149,7 @@ protected:
 	
 	ItemID findItemAt(int x, int y);
 	Item *getItem(ItemID id);
-	void setItemCaption(Item *item, const byte *caption);
+	void setItemCaption(Item *item, const char *caption);
 
 	void initMenu(MenuID menuID);
 	
@@ -158,7 +159,7 @@ protected:
 
 	void restoreRect(int x, int y, int w, int h);
 	void shadeRect(int x, int y, int w, int h, byte color1, byte color2);
-	void drawString(int16 x, int16 y, int w, uint fontNum, byte color, byte *text);
+	void drawString(int16 x, int16 y, int w, uint fontNum, byte color, const char *text);
 
 	void initSavegames();
 	void setSavegameCaptions();

@@ -60,6 +60,34 @@ class Sound;
 
 // TODO/FIXME: The includes of the Toltecs engine need serious clean-up
 
+enum SysString {
+	kStrLoadingPleaseWait,
+	kStrWhatCanIDoForYou,
+	kStrLoad,
+	kStrSave,
+	kStrTextOn,
+	kStrTextOff,
+	kStrVoicesOn,
+	kStrVoicesOff,
+	kStrVolume,
+	kStrPlay,
+	kStrQuit,
+	kStrLoadGame,
+	kStrSaveGame,
+	kStrAdjustVolume,
+	kStrMaster,
+	kStrVoices,
+	kStrMusic,
+	kStrSoundFx,
+	kStrBackground,
+	kStrCancel,
+	kStrDone,
+	kStrAreYouSure,
+	kStrYes,
+	kStrNo,
+	kSysStrCount
+};
+
 class ToltecsEngine : public ::Engine {
 	Common::KeyState _keyPressed;
 
@@ -79,6 +107,8 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	const Common::String& getTargetName() const { return _targetName; }
+
+	void setupSysStrings();
 
 	void loadScene(uint resIndex);
 
@@ -115,6 +145,8 @@ public:
 	SegmentMap *_segmap;
 	Sound *_sound;
 
+	Common::String _sysStrings[kSysStrCount];
+
 	uint _sceneResIndex;
 	int16 _sceneWidth, _sceneHeight;
 	
@@ -133,11 +165,13 @@ public:
 
 	Common::KeyState _keyState;
 	int16 _mouseX, _mouseY;
-	int16 _mouseCounter;
-	bool _mouseButtonPressedFlag;
+	int16 _mouseDblClickTicks;
+	bool _mouseWaitForRelease;
 	byte _mouseButton;
 	int16 _mouseDisabled;
 	bool _leftButtonDown, _rightButtonDown;
+
+	const char *getSysString(int index) const { return _sysStrings[index].c_str(); }
 
 	/* Save/load */
 
