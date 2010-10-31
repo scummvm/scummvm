@@ -26,15 +26,29 @@
 #ifndef COMMON_FORBIDDEN_H
 #define COMMON_FORBIDDEN_H
 
-
-//
-// Backend files may #define FORBIDDEN_SYMBOL_ALLOW_ALL if they
-// have to access functions like fopen, fread etc.
-// Regular code, esp. code in engines/, should never do that.
-//
+/**
+ * @file
+ * This header file is meant to help ensure that engines and
+ * infrastructure code do not make use of certain "forbidden" APIs, such
+ * as fopen(), setjmp(), etc.
+ * This is achieved by re-#defining various symbols to a "garbage"
+ * string which then trigers a compiler error.
+ *
+ * Backend files may #define FORBIDDEN_SYMBOL_ALLOW_ALL if they
+ * have to access functions like fopen, fread etc.
+ * Regular code, esp. code in engines/, should never do that.
+ */
 
 #ifndef FORBIDDEN_SYMBOL_ALLOW_ALL
 
+/**
+ * The garbage string to use as replacement for forbidden symbols.
+ *
+ * The reason for this particular string is the following:
+ * By including a space and "!" we try to ensure a compiler error.
+ * By using the words "forbidden symbol" we try to make it a bit
+ * clearer what is causing the error.
+ */
 #define FORBIDDEN_SYMBOL_REPLACEMENT	FORBIDDEN SYMBOL!
 
 
