@@ -49,6 +49,7 @@ MenuSystem::MenuSystem(PictureEngine *vm) : _vm(vm) {
 	_newMenuID = kMenuIdLoad;
 	_currItemID = kItemIdNone;
 	_editingDescription = false;
+	_needRedraw = false;
 	_cfgText = true;
 	_cfgVoices = true;
 	_cfgMasterVolume = 10;
@@ -67,6 +68,7 @@ int MenuSystem::run() {
 	_background->create(640, 400, 1);
 
 	_top = 30 - _vm->_guiHeight / 2;
+	_needRedraw = false;
 
 	memset(_vm->_screen->_frontScreen, 250, 640 * 400);
 
@@ -75,14 +77,17 @@ int MenuSystem::run() {
 	_vm->_palette->buildColorTransTable(0, 16, 7);
 
 	shadeRect(60, 39, 520, 246, 30, 94);
-	
+
+	_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
+
 	while (1) {
 		update();
 		_vm->updateScreen();
 	}
 	
 	delete _background;
-	
+
+	return 0;	
 }
 
 void MenuSystem::update() {
@@ -95,8 +100,11 @@ void MenuSystem::update() {
 
 	handleEvents();
 
-	_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen,
-		640, 0, 0, 640, 400);
+	if (_needRedraw) {
+		_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen + 39 * 640 + 60, 640, 60, 39, 520, 247);
+		debug("redraw");
+		_needRedraw = false;
+	}
 
 	_vm->_system->delayMillis(5);
 
@@ -127,7 +135,7 @@ void MenuSystem::handleEvents() {
 
 }
 
-void MenuSystem::addClickTextItem(ItemID id, int x, int y, int w, uint fontNum, const byte *caption, byte defaultColor, byte activeColor) {
+void MenuSystem::addClickTextItem(ItemID id, int x, int y, int w, uint fontNum, const char *caption, byte defaultColor, byte activeColor) {
 	Item item;
 	item.id = id;
 	item.defaultColor = defaultColor;
@@ -144,7 +152,7 @@ void MenuSystem::drawItem(ItemID itemID, bool active) {
 	Item *item = getItem(itemID);
 	if (item) {
 		byte color = active ? item->activeColor : item->defaultColor;
-		drawString(item->rect.left, item->y, 0, item->fontNum, color, (byte*)item->caption.c_str());
+		drawString(item->rect.left, item->y, 0, item->fontNum, color, item->caption.c_str());
 	}
 }
 
@@ -172,13 +180,13 @@ void MenuSystem::handleKeyDown(const Common::KeyState& kbd) {
 			_editingDescriptionItem->caption += kbd.ascii;
 			restoreRect(_editingDescriptionItem->rect.left, _editingDescriptionItem->rect.top,
 				_editingDescriptionItem->rect.width() + 1, _editingDescriptionItem->rect.height() - 2);
-			setItemCaption(_editingDescriptionItem, (const byte*)_editingDescriptionItem->caption.c_str());
+			setItemCaption(_editingDescriptionItem, _editingDescriptionItem->caption.c_str());
 			drawItem(_editingDescriptionID, true);
 		} else if (kbd.keycode == Common::KEYCODE_BACKSPACE) {
 			_editingDescriptionItem->caption.deleteLastChar();
 			restoreRect(_editingDescriptionItem->rect.left, _editingDescriptionItem->rect.top,
 				_editingDescriptionItem->rect.width() + 1, _editingDescriptionItem->rect.height() - 2);
-			setItemCaption(_editingDescriptionItem, (const byte*)_editingDescriptionItem->caption.c_str());
+			setItemCaption(_editingDescriptionItem, _editingDescriptionItem->caption.c_str());
 			drawItem(_editingDescriptionID, true);
 		} else if (kbd.keycode == Common::KEYCODE_RETURN) {
 			_editingDescription = false;
@@ -203,15 +211,15 @@ MenuSystem::Item *MenuSystem::getItem(ItemID id) {
 	return NULL;
 }
 
-void MenuSystem::setItemCaption(Item *item, const byte *caption) {
+void MenuSystem::setItemCaption(Item *item, const char *caption) {
 	Font font(_vm->_res->load(_vm->_screen->getFontResIndex(item->fontNum))->data);
-	int width = font.getTextWidth((byte*)caption);
+	int width = font.getTextWidth((const byte*)caption);
 	int height = font.getHeight();
 	item->rect = Common::Rect(item->x, item->y - height, item->x + width, item->y);
 	if (item->w) {
 		item->rect.translate(item->w - width / 2, 0);
 	}
-	item->caption = (const char*)caption;
+	item->caption = caption;
 }
 
 void MenuSystem::initMenu(MenuID menuID) {
@@ -222,65 +230,65 @@ void MenuSystem::initMenu(MenuID menuID) {
 
 	switch (menuID) {
 	case kMenuIdMain:
-		drawString(0, 74, 320, 1, 229, (byte*)"What can I do for you?");
-		addClickTextItem(kItemIdLoad, 0, 115, 320, 0, (const byte*)"LOAD", 229, 255);
-		addClickTextItem(kItemIdSave, 0, 135, 320, 0, (const byte*)"SAVE", 229, 255);
-		addClickTextItem(kItemIdToggleText, 0, 165, 320, 0, (const byte*)"TEXT ON", 229, 255);
-		addClickTextItem(kItemIdToggleVoices, 0, 185, 320, 0, (const byte*)"VOICES ON", 229, 255);
-		addClickTextItem(kItemIdVolumesMenu, 0, 215, 320, 0, (const byte*)"VOLUME", 229, 255);
-		addClickTextItem(kItemIdPlay, 0, 245, 320, 0, (const byte*)"PLAY", 229, 255);
-		addClickTextItem(kItemIdQuit, 0, 275, 320, 0, (const byte*)"QUIT GAME", 229, 255);
+		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrWhatCanIDoForYou));
+		addClickTextItem(kItemIdLoad, 0, 115, 320, 0, _vm->getSysString(kStrLoad), 229, 255);
+		addClickTextItem(kItemIdSave, 0, 135, 320, 0, _vm->getSysString(kStrSave), 229, 255);
+		addClickTextItem(kItemIdToggleText, 0, 165, 320, 0, _vm->getSysString(kStrTextOn), 229, 255);
+		addClickTextItem(kItemIdToggleVoices, 0, 185, 320, 0, _vm->getSysString(kStrVoicesOn), 229, 255);
+		addClickTextItem(kItemIdVolumesMenu, 0, 215, 320, 0, _vm->getSysString(kStrVolume), 229, 255);
+		addClickTextItem(kItemIdPlay, 0, 245, 320, 0, _vm->getSysString(kStrPlay), 229, 255);
+		addClickTextItem(kItemIdQuit, 0, 275, 320, 0, _vm->getSysString(kStrQuit), 229, 255);
 		break;
 	case kMenuIdLoad:
-		drawString(0, 74, 320, 1, 229, (byte*)"Load game");
-		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, (const byte*)"^", 255, 253);
-		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, (const byte*)"\\", 255, 253);
-		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, (const byte*)"CANCEL", 255, 253);
-		addClickTextItem(kItemIdSavegame1, 0, 115 + 20 * 0, 300, 0, (const byte*)"SAVEGAME 1", 231, 234);
-		addClickTextItem(kItemIdSavegame2, 0, 115 + 20 * 1, 300, 0, (const byte*)"SAVEGAME 2", 231, 234);
-		addClickTextItem(kItemIdSavegame3, 0, 115 + 20 * 2, 300, 0, (const byte*)"SAVEGAME 3", 231, 234);
-		addClickTextItem(kItemIdSavegame4, 0, 115 + 20 * 3, 300, 0, (const byte*)"SAVEGAME 4", 231, 234);
-		addClickTextItem(kItemIdSavegame5, 0, 115 + 20 * 4, 300, 0, (const byte*)"SAVEGAME 5", 231, 234);
-		addClickTextItem(kItemIdSavegame6, 0, 115 + 20 * 5, 300, 0, (const byte*)"SAVEGAME 6", 231, 234);
-		addClickTextItem(kItemIdSavegame7, 0, 115 + 20 * 6, 300, 0, (const byte*)"SAVEGAME 7", 231, 234);
+		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrLoadGame));
+		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, "^", 255, 253);
+		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 255, 253);
+		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 255, 253);
+		addClickTextItem(kItemIdSavegame1, 0, 115 + 20 * 0, 300, 0, "SAVEGAME 1", 231, 234);
+		addClickTextItem(kItemIdSavegame2, 0, 115 + 20 * 1, 300, 0, "SAVEGAME 2", 231, 234);
+		addClickTextItem(kItemIdSavegame3, 0, 115 + 20 * 2, 300, 0, "SAVEGAME 3", 231, 234);
+		addClickTextItem(kItemIdSavegame4, 0, 115 + 20 * 3, 300, 0, "SAVEGAME 4", 231, 234);
+		addClickTextItem(kItemIdSavegame5, 0, 115 + 20 * 4, 300, 0, "SAVEGAME 5", 231, 234);
+		addClickTextItem(kItemIdSavegame6, 0, 115 + 20 * 5, 300, 0, "SAVEGAME 6", 231, 234);
+		addClickTextItem(kItemIdSavegame7, 0, 115 + 20 * 6, 300, 0, "SAVEGAME 7", 231, 234);
 		initSavegames();
 		setSavegameCaptions();
 		break;
 	case kMenuIdSave:
-		drawString(0, 74, 320, 1, 229, (byte*)"Save game");
-		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, (const byte*)"^", 255, 253);
-		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, (const byte*)"\\", 255, 253);
-		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, (const byte*)"CANCEL", 255, 253);
-		addClickTextItem(kItemIdSavegame1, 0, 115 + 20 * 0, 300, 0, (const byte*)"SAVEGAME 1", 231, 234);
-		addClickTextItem(kItemIdSavegame2, 0, 115 + 20 * 1, 300, 0, (const byte*)"SAVEGAME 2", 231, 234);
-		addClickTextItem(kItemIdSavegame3, 0, 115 + 20 * 2, 300, 0, (const byte*)"SAVEGAME 3", 231, 234);
-		addClickTextItem(kItemIdSavegame4, 0, 115 + 20 * 3, 300, 0, (const byte*)"SAVEGAME 4", 231, 234);
-		addClickTextItem(kItemIdSavegame5, 0, 115 + 20 * 4, 300, 0, (const byte*)"SAVEGAME 5", 231, 234);
-		addClickTextItem(kItemIdSavegame6, 0, 115 + 20 * 5, 300, 0, (const byte*)"SAVEGAME 6", 231, 234);
-		addClickTextItem(kItemIdSavegame7, 0, 115 + 20 * 6, 300, 0, (const byte*)"SAVEGAME 7", 231, 234);
+		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrSaveGame));
+		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, "^", 255, 253);
+		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 255, 253);
+		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 255, 253);
+		addClickTextItem(kItemIdSavegame1, 0, 115 + 20 * 0, 300, 0, "SAVEGAME 1", 231, 234);
+		addClickTextItem(kItemIdSavegame2, 0, 115 + 20 * 1, 300, 0, "SAVEGAME 2", 231, 234);
+		addClickTextItem(kItemIdSavegame3, 0, 115 + 20 * 2, 300, 0, "SAVEGAME 3", 231, 234);
+		addClickTextItem(kItemIdSavegame4, 0, 115 + 20 * 3, 300, 0, "SAVEGAME 4", 231, 234);
+		addClickTextItem(kItemIdSavegame5, 0, 115 + 20 * 4, 300, 0, "SAVEGAME 5", 231, 234);
+		addClickTextItem(kItemIdSavegame6, 0, 115 + 20 * 5, 300, 0, "SAVEGAME 6", 231, 234);
+		addClickTextItem(kItemIdSavegame7, 0, 115 + 20 * 6, 300, 0, "SAVEGAME 7", 231, 234);
 		initSavegames();
 		_savegames.push_back(SavegameItem("", Common::String::printf("GAME %03d", _savegames.size() + 1)));
 		setSavegameCaptions();
 		break;
 	case kMenuIdVolumes:
-		drawString(0, 74, 320, 1, 229, (byte*)"Adjust volume");
-		drawString(0, 130, 200, 0, 246, (byte*)"Master");
-		drawString(0, 155, 200, 0, 244, (byte*)"Voices");
-		drawString(0, 180, 200, 0, 244, (byte*)"Music");
-		drawString(0, 205, 200, 0, 244, (byte*)"Sound FX");
-		drawString(0, 230, 200, 0, 244, (byte*)"Background");
-		addClickTextItem(kItemIdDone, 0, 275, 200, 0, (const byte*)"DONE", 229, 253);
-		addClickTextItem(kItemIdCancel, 0, 275, 440, 0, (const byte*)"CANCEL", 229, 253);
-		addClickTextItem(kItemIdMasterDown, 0, 130 + 25 * 0, 348, 1, (const byte*)"[", 229, 253);
-		addClickTextItem(kItemIdVoicesDown, 0, 130 + 25 * 1, 348, 1, (const byte*)"[", 229, 253);
-		addClickTextItem(kItemIdMusicDown, 0, 130 + 25 * 2, 348, 1, (const byte*)"[", 229, 253);
-		addClickTextItem(kItemIdSoundFXDown, 0, 130 + 25 * 3, 348, 1, (const byte*)"[", 229, 253);
-		addClickTextItem(kItemIdBackgroundDown, 0, 130 + 25 * 4, 348, 1, (const byte*)"[", 229, 253);
-		addClickTextItem(kItemIdMasterUp, 0, 130 + 25 * 0, 372, 1, (const byte*)"]", 229, 253);
-		addClickTextItem(kItemIdVoicesUp, 0, 130 + 25 * 1, 372, 1, (const byte*)"]", 229, 253);
-		addClickTextItem(kItemIdMusicUp, 0, 130 + 25 * 2, 372, 1, (const byte*)"]", 229, 253);
-		addClickTextItem(kItemIdSoundFXUp, 0, 130 + 25 * 3, 372, 1, (const byte*)"]", 229, 253);
-		addClickTextItem(kItemIdBackgroundUp, 0, 130 + 25 * 4, 372, 1, (const byte*)"]", 229, 253);
+		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrAdjustVolume));
+		drawString(0, 130, 200, 0, 246, _vm->getSysString(kStrMaster));
+		drawString(0, 155, 200, 0, 244, _vm->getSysString(kStrVoices));
+		drawString(0, 180, 200, 0, 244, _vm->getSysString(kStrMusic));
+		drawString(0, 205, 200, 0, 244, _vm->getSysString(kStrSoundFx));
+		drawString(0, 230, 200, 0, 244, _vm->getSysString(kStrBackground));
+		addClickTextItem(kItemIdDone, 0, 275, 200, 0, _vm->getSysString(kStrDone), 229, 253);
+		addClickTextItem(kItemIdCancel, 0, 275, 440, 0, _vm->getSysString(kStrCancel), 229, 253);
+		addClickTextItem(kItemIdMasterDown, 0, 130 + 25 * 0, 348, 1, "[", 229, 253);
+		addClickTextItem(kItemIdVoicesDown, 0, 130 + 25 * 1, 348, 1, "[", 229, 253);
+		addClickTextItem(kItemIdMusicDown, 0, 130 + 25 * 2, 348, 1, "[", 229, 253);
+		addClickTextItem(kItemIdSoundFXDown, 0, 130 + 25 * 3, 348, 1, "[", 229, 253);
+		addClickTextItem(kItemIdBackgroundDown, 0, 130 + 25 * 4, 348, 1, "[", 229, 253);
+		addClickTextItem(kItemIdMasterUp, 0, 130 + 25 * 0, 372, 1, "]", 229, 253);
+		addClickTextItem(kItemIdVoicesUp, 0, 130 + 25 * 1, 372, 1, "]", 229, 253);
+		addClickTextItem(kItemIdMusicUp, 0, 130 + 25 * 2, 372, 1, "]", 229, 253);
+		addClickTextItem(kItemIdSoundFXUp, 0, 130 + 25 * 3, 372, 1, "]", 229, 253);
+		addClickTextItem(kItemIdBackgroundUp, 0, 130 + 25 * 4, 372, 1, "]", 229, 253);
 		drawVolumeBar(kItemIdMaster);
 		drawVolumeBar(kItemIdVoices);
 		drawVolumeBar(kItemIdMusic);
@@ -422,13 +430,14 @@ void MenuSystem::shadeRect(int x, int y, int w, int h, byte color1, byte color2)
 	}
 }
 
-void MenuSystem::drawString(int16 x, int16 y, int w, uint fontNum, byte color, byte *text) {
+void MenuSystem::drawString(int16 x, int16 y, int w, uint fontNum, byte color, const char *text) {
 	fontNum = _vm->_screen->getFontResIndex(fontNum);
 	Font font(_vm->_res->load(fontNum)->data);
 	if (w) {
-		x = x + w - font.getTextWidth(text) / 2;
+		x = x + w - font.getTextWidth((const byte*)text) / 2;
 	}
-	_vm->_screen->drawString(x, y - font.getHeight(), color, fontNum, text, -1, NULL, true);
+	_vm->_screen->drawString(x, y - font.getHeight(), color, fontNum, (const byte*)text, -1, NULL, true);
+	_needRedraw = true;
 }
 
 void MenuSystem::initSavegames() {
@@ -476,13 +485,13 @@ void MenuSystem::initSavegames() {
 
 void MenuSystem::setSavegameCaptions() {
 	uint index = _savegameListTopIndex;
-	setItemCaption(getItem(kItemIdSavegame1), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
-	setItemCaption(getItem(kItemIdSavegame2), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
-	setItemCaption(getItem(kItemIdSavegame3), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
-	setItemCaption(getItem(kItemIdSavegame4), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
-	setItemCaption(getItem(kItemIdSavegame5), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
-	setItemCaption(getItem(kItemIdSavegame6), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
-	setItemCaption(getItem(kItemIdSavegame7), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
+	setItemCaption(getItem(kItemIdSavegame1), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
+	setItemCaption(getItem(kItemIdSavegame2), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
+	setItemCaption(getItem(kItemIdSavegame3), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
+	setItemCaption(getItem(kItemIdSavegame4), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
+	setItemCaption(getItem(kItemIdSavegame5), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
+	setItemCaption(getItem(kItemIdSavegame6), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
+	setItemCaption(getItem(kItemIdSavegame7), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
 }
 
 void MenuSystem::scrollSavegames(int delta) {
@@ -542,8 +551,8 @@ void MenuSystem::setCfgText(bool value, bool active) {
 	if (_cfgText != value) {
 		Item *item = getItem(kItemIdToggleText);
 		_cfgText = value;
-  		restoreRect(item->rect.left, item->rect.top, item->rect.width() + 1, item->rect.height() - 2);
-		setItemCaption(item, _cfgText ? (const byte*)"TEXT ON" : (const byte*)"TEXT OFF");
+		restoreRect(item->rect.left, item->rect.top, item->rect.width() + 1, item->rect.height() - 2);
+		setItemCaption(item, _vm->getSysString(_cfgText ? kStrTextOn : kStrTextOff));
 		drawItem(kItemIdToggleText, true);
 	}
 }
@@ -553,7 +562,7 @@ void MenuSystem::setCfgVoices(bool value, bool active) {
 		Item *item = getItem(kItemIdToggleVoices);
 		_cfgVoices = value;
 		restoreRect(item->rect.left, item->rect.top, item->rect.width() + 1, item->rect.height() - 2);
-		setItemCaption(item, _cfgVoices ? (const byte*)"VOICES ON" : (const byte*)"VOICES OFF");
+		setItemCaption(item, _vm->getSysString(_cfgVoices ? kStrVoicesOn : kStrVoicesOff));
 		drawItem(kItemIdToggleVoices, true);
 	}
 }
@@ -594,7 +603,7 @@ void MenuSystem::drawVolumeBar(ItemID itemID) {
 		text[i] = '|';
 	text[volume] = 0;
 	
-	drawString(0, y, w, 0, 246, (byte*)text);
+	drawString(0, y, w, 0, 246, text);
 	
 }
 

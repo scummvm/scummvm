@@ -100,7 +100,7 @@ public:
 	byte *getCharData(byte ch) const {
 		return _fontData + 0x298 + READ_LE_UINT16(&_fontData[0xE0 + (ch - 0x21) * 2]);
 	}
-	int16 getTextWidth(byte *text) {
+	int16 getTextWidth(const byte *text) {
 		int16 width = 0;
 		while (*text && *text < 0xF0) {
 			byte ch = *text++;
@@ -203,7 +203,7 @@ public:
 	int16 wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wrapState);
 	void drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex, GuiTextWrapState &wrapState);
 
-	int16 drawString(int16 x, int16 y, byte color, uint fontResIndex, byte *text, int len = -1, int16 *ywobble = NULL, bool outline = false);
+	int16 drawString(int16 x, int16 y, byte color, uint fontResIndex, const byte *text, int len = -1, int16 *ywobble = NULL, bool outline = false);
 	void drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, byte color, bool outline);
 
 	void drawSurface(int16 x, int16 y, Graphics::Surface *surface);

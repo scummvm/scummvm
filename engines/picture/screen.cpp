@@ -142,7 +142,7 @@ void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
 	
 	byte *dest = _frontScreen + x + (y + _vm->_cameraHeight) * 640;
 
-	debug(0, "Screen::drawGuiImage() x = %d; y = %d; w = %d; h = %d; resIndex = %d", x, y, width, height, resIndex);
+	//debug(0, "Screen::drawGuiImage() x = %d; y = %d; w = %d; h = %d; resIndex = %d", x, y, width, height, resIndex);
 	
 	while (workHeight > 0) {
 		int count = 1;
@@ -204,7 +204,7 @@ void Screen::addStaticSprite(byte *spriteItem) {
 	drawRequest.flags = READ_LE_UINT16(spriteItem + 8);
 	drawRequest.scaling = 0;
 
-	debug(0, "Screen::addStaticSprite() x = %d; y = %d; baseColor = %d; resIndex = %d; flags = %04X", drawRequest.x, drawRequest.y, drawRequest.baseColor, drawRequest.resIndex, drawRequest.flags);
+	//debug(0, "Screen::addStaticSprite() x = %d; y = %d; baseColor = %d; resIndex = %d; flags = %04X", drawRequest.x, drawRequest.y, drawRequest.baseColor, drawRequest.resIndex, drawRequest.flags);
 
 	addDrawRequest(drawRequest);
 
@@ -212,7 +212,7 @@ void Screen::addStaticSprite(byte *spriteItem) {
 
 void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, int16 *spriteArray, bool loop, int mode) {
 
-	debug(0, "Screen::addAnimatedSprite(%d, %d, %d)", x, y, fragmentId);
+	//debug(0, "Screen::addAnimatedSprite(%d, %d, %d)", x, y, fragmentId);
 
 	DrawRequest drawRequest;
 	memset(&drawRequest, 0, sizeof(drawRequest));
@@ -229,7 +229,7 @@ void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, i
 
 	int16 count = spriteArray[0];
 
-	debug(0, "count = %d", count);
+	//debug(0, "count = %d", count);
 
 	for (int16 index = 1; index <= count; index++) {
 
@@ -583,14 +583,14 @@ void Screen::drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uin
 
 }
 
-int16 Screen::drawString(int16 x, int16 y, byte color, uint fontResIndex, byte *text, int len, int16 *ywobble, bool outline) {
+int16 Screen::drawString(int16 x, int16 y, byte color, uint fontResIndex, const byte *text, int len, int16 *ywobble, bool outline) {
 
-	debug(0, "Screen::drawString(%d, %d, %d, %d)", x, y, color, fontResIndex);
+	//debug(0, "Screen::drawString(%d, %d, %d, %d)", x, y, color, fontResIndex);
 
 	Font font(_vm->_res->load(fontResIndex)->data);
 
 	if (len == -1)
-		len = strlen((char*)text);
+		len = strlen((const char*)text);
 
 	int16 yadd = 0;
 	if (ywobble)
