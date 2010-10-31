@@ -808,38 +808,7 @@ void ScriptInterpreter::sfSetGameVar() {
 }
 
 void ScriptInterpreter::sfUpdateScreen() {
-
-	_vm->_sound->updateSpeech();
-
-	_vm->_screen->updateShakeScreen();
-
-	// TODO: Set quit flag
-	if (_vm->shouldQuit())
-		return;
-
-	if (!_vm->_movieSceneFlag)
-		_vm->updateInput();
-	else
-		_vm->_mouseButton = 0;
-
-	// TODO? Check keyb
-
-	_vm->_counter01--;
-	if (_vm->_counter01 <= 0) {
-		_vm->_counter01 = MIN(_vm->_counter02, 30);
-		_vm->_counter02 = 0;
-		_vm->updateScreen();
-		_vm->_flag01 = 1;
-		_vm->_system->delayMillis(5);
-		_vm->_counter02 = 1; // ?
-	} else {
-		_vm->_screen->clearSprites();
-		_vm->_flag01 = 0;
-		//_vm->_system->updateScreen();
-	}
-
-	// TODO
-
+	_vm->updateScreen();
 }
 
 void ScriptInterpreter::sfGetRandomNumber() {
