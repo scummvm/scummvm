@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/scummsys.h"
 #include "common/stream.h"
 #include "backends/platform/psp/psppixelformat.h"

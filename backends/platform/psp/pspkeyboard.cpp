@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 //#define PSP_KB_SHELL	/* Need a hack to properly load the keyboard from the PSP shell */
 
 #ifdef PSP_KB_SHELL
