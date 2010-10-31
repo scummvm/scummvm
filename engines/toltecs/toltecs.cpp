@@ -154,7 +154,7 @@ Common::Error ToltecsEngine::run() {
 
 	setupSysStrings();
 
-#define TEST_MENU
+//#define TEST_MENU
 #ifdef TEST_MENU
 	_screen->registerFont(0, 0x0D);
 	_screen->registerFont(1, 0x0E);
@@ -253,6 +253,45 @@ void ToltecsEngine::loadScene(uint resIndex) {
 }
 
 void ToltecsEngine::updateScreen() {
+
+	_sound->updateSpeech();
+
+	_screen->updateShakeScreen();
+
+	// TODO: Set quit flag
+	if (shouldQuit())
+		return;
+
+	if (!_movieSceneFlag)
+		updateInput();
+	else
+		_mouseButton = 0;
+
+	// TODO? Check keyb
+
+	_counter01--;
+	if (_counter01 <= 0) {
+		_counter01 = MIN(_counter02, 30);
+		_counter02 = 0;
+		drawScreen();
+		_flag01 = 1;
+		_counter02 = 1;
+	} else {
+		_screen->clearSprites();
+		_flag01 = 0;
+	}
+
+	static uint32 prevUpdateTime = 0;
+	uint32 currUpdateTime;
+	do {
+		currUpdateTime = _system->getMillis();
+		_counter02 = (currUpdateTime - prevUpdateTime) / 13;
+	} while (_counter02 == 0);
+	prevUpdateTime = currUpdateTime;
+
+}
+
+void ToltecsEngine::drawScreen() {
 
 	// FIXME: Quick hack, sometimes cameraY was negative (the code in updateCamera was at fault)
 	if (_cameraY < 0) _cameraY = 0;

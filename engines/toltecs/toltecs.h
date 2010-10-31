@@ -113,6 +113,7 @@ public:
 	void loadScene(uint resIndex);
 
 	void updateScreen();
+	void drawScreen();
 	void updateInput();
 
 	void setGuiHeight(int16 guiHeight);
