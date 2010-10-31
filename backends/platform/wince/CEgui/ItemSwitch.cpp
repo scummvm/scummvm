@@ -28,68 +28,69 @@
 
 namespace CEGUI {
 
-	void ItemSwitch::init(WORD referenceTrue, WORD referenceFalse) {
-		_backgroundTrue = _background;
-		_backgroundFalse = new SDL_ImageResource();
-		if (!_backgroundFalse->load(referenceFalse)) {
-			delete _backgroundFalse;
-			delete _background;
-			_background = NULL;
-			_backgroundFalse = NULL;
-		}
-	}
-
-	ItemSwitch::ItemSwitch(WORD referenceTrue, WORD referenceFalse, bool *item) :
-	PanelItem(referenceTrue) {
-		init(referenceTrue, referenceFalse);
-		_item = item;
-		_itemmax = -1;
-		if (!*_item)
-			_background = _backgroundFalse;
-	}
-
-	ItemSwitch::ItemSwitch(WORD referenceTrue, WORD referenceFalse, int *item, int max) :
-	PanelItem(referenceTrue) {
-		 init(referenceTrue, referenceFalse);
-		_itemmultiple = item;
-		_itemmax = max;
-		if (!*item)
-			_background = _backgroundFalse;
-	}
-
-	ItemSwitch::~ItemSwitch() {
+void ItemSwitch::init(WORD referenceTrue, WORD referenceFalse) {
+	_backgroundTrue = _background;
+	_backgroundFalse = new SDL_ImageResource();
+	if (!_backgroundFalse->load(referenceFalse)) {
 		delete _backgroundFalse;
-	}
-
-	bool ItemSwitch::action(int x, int y, bool pushed) {
-
-		if (checkInside(x, y) && _visible && pushed) {
-			if (_itemmax <= 0) {
-				*_item = !*_item;
-				if (*_item)
-					_background = _backgroundTrue;
-				else
-					_background = _backgroundFalse;
-
-				if (_panel)
-					_panel->forceRedraw();
-
-				return true;
-			} else {
-				*_itemmultiple = *_itemmultiple + 1;
-				if (*_itemmultiple > _itemmax)
-					*_itemmultiple = 0;
-				if (*_itemmultiple)
-					_background = _backgroundTrue;
-				else
-					_background = _backgroundFalse;
-
-				if (_panel)
-					_panel->forceRedraw();
-
-				return true;
-			}
-		} else
-			return false;
+		delete _background;
+		_background = NULL;
+		_backgroundFalse = NULL;
 	}
 }
+
+ItemSwitch::ItemSwitch(WORD referenceTrue, WORD referenceFalse, bool *item) :
+PanelItem(referenceTrue) {
+	init(referenceTrue, referenceFalse);
+	_item = item;
+	_itemmax = -1;
+	if (!*_item)
+		_background = _backgroundFalse;
+}
+
+ItemSwitch::ItemSwitch(WORD referenceTrue, WORD referenceFalse, int *item, int max) :
+PanelItem(referenceTrue) {
+	 init(referenceTrue, referenceFalse);
+	_itemmultiple = item;
+	_itemmax = max;
+	if (!*item)
+		_background = _backgroundFalse;
+}
+
+ItemSwitch::~ItemSwitch() {
+	delete _backgroundFalse;
+}
+
+bool ItemSwitch::action(int x, int y, bool pushed) {
+
+	if (checkInside(x, y) && _visible && pushed) {
+		if (_itemmax <= 0) {
+			*_item = !*_item;
+			if (*_item)
+				_background = _backgroundTrue;
+			else
+				_background = _backgroundFalse;
+
+			if (_panel)
+				_panel->forceRedraw();
+
+			return true;
+		} else {
+			*_itemmultiple = *_itemmultiple + 1;
+			if (*_itemmultiple > _itemmax)
+				*_itemmultiple = 0;
+			if (*_itemmultiple)
+				_background = _backgroundTrue;
+			else
+				_background = _backgroundFalse;
+
+			if (_panel)
+				_panel->forceRedraw();
+
+			return true;
+		}
+	} else
+		return false;
+}
+
+} // End of namespace CEGUI

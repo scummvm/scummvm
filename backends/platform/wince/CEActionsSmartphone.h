@@ -55,24 +55,24 @@ enum smartphoneActionType {
 
 
 class CEActionsSmartphone : public GUI::Actions {
-	public:
-		// Actions
-		bool perform(GUI::ActionType action, bool pushed = true);
-		Common::String actionName(GUI::ActionType action);
-		int size();
-		static void init();
-		void initInstanceMain(OSystem *mainSystem);
-		void initInstanceGame();
+public:
+	// Actions
+	bool perform(GUI::ActionType action, bool pushed = true);
+	Common::String actionName(GUI::ActionType action);
+	int size();
+	static void init();
+	void initInstanceMain(OSystem *mainSystem);
+	void initInstanceGame();
 
-		// Action domain
-		Common::String domain();
-		int version();
+	// Action domain
+	Common::String domain();
+	int version();
 
-		~CEActionsSmartphone();
-	private:
-		CEActionsSmartphone();
-		bool _right_click_needed;
-		OSystem_WINCE3 *_CESystem;
-	};
+	~CEActionsSmartphone();
+private:
+	CEActionsSmartphone();
+	bool _right_click_needed;
+	OSystem_WINCE3 *_CESystem;
+};
 
 #endif

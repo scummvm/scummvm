@@ -39,29 +39,30 @@ using Common::HashMap;
 
 namespace CEGUI {
 
-	class ToolbarHandler {
-	public:
-		ToolbarHandler();
-		bool add(const String &name, const Toolbar &toolbar);
-		bool setActive(const String &name);
-		bool action(int x, int y, bool pushed);
-		void setVisible(bool visible);
-		bool visible();
-		String activeName();
-		void forceRedraw();
-		void setOffset(int offset);
-		int getOffset();
-		bool draw(SDL_Surface *surface, SDL_Rect *rect);
-		bool drawn();
-		Toolbar *active();
-		virtual ~ToolbarHandler();
-	private:
+class ToolbarHandler {
+public:
+	ToolbarHandler();
+	bool add(const String &name, const Toolbar &toolbar);
+	bool setActive(const String &name);
+	bool action(int x, int y, bool pushed);
+	void setVisible(bool visible);
+	bool visible();
+	String activeName();
+	void forceRedraw();
+	void setOffset(int offset);
+	int getOffset();
+	bool draw(SDL_Surface *surface, SDL_Rect *rect);
+	bool drawn();
+	Toolbar *active();
+	virtual ~ToolbarHandler();
+private:
 
-		HashMap<String, Toolbar*, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _toolbarMap;
-		String _current;
-		Toolbar *_active;
-		int _offset;
-	};
-}
+	HashMap<String, Toolbar*, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _toolbarMap;
+	String _current;
+	Toolbar *_active;
+	int _offset;
+};
+
+} // End of namespace CEGUI
 
 #endif

@@ -22,6 +22,7 @@
  * $Id$
  *
  */
+
 #include "graphics/scaler/intern.h"
 #include "CEScaler.h"
 

@@ -27,59 +27,58 @@
 
 namespace CEGUI {
 
-	Panel::Panel(int interleave_first, int interleave) : Toolbar()
-	{
-		_interleave = interleave;
-		_currentItem = interleave_first;
-	}
-
-
-	bool Panel::add(const String &name, const PanelItem *item) {
-		_itemsMap[name] = (PanelItem*)item;
-		_itemsMap[name]->move(_currentItem, _y + 10);
-		_itemsMap[name]->setPanel(this);
-		_currentItem += _interleave;
-
-		return true;
-	}
-
-	bool Panel::draw(SDL_Surface *surface) {
-		ItemMap::const_iterator iterator;
-		if (!_drawn && _visible) {
-			GUIElement::draw(surface);
-			for (iterator = _itemsMap.begin(); iterator != _itemsMap.end(); ++iterator) {
-				((GUIElement*)(iterator->_value))->draw(surface);
-			}
-			return true;
-		}
-		else
-			return false;
-	}
-
-	void Panel::forceRedraw() {
-		ItemMap::const_iterator iterator;
-		GUIElement::forceRedraw();
-		for (iterator = _itemsMap.begin(); iterator != _itemsMap.end(); ++iterator)
-			((GUIElement*)(iterator->_value))->forceRedraw();
-	}
-
-	bool Panel::action(int x, int y, bool pushed) {
-		ItemMap::const_iterator iterator;
-		bool result = false;
-		if (!_visible || !checkInside(x, y))
-			return false;
-
-		for (iterator = _itemsMap.begin(); !result && iterator != _itemsMap.end(); ++iterator)
-			result = ((GUIElement*)(iterator->_value))->action(x, y, pushed);
-		return result;
-	}
-
-	void Panel::clear() {
-		_itemsMap.clear();
-	}
-
-	Panel::~Panel() {
-		_itemsMap.clear();
-	}
+Panel::Panel(int interleave_first, int interleave) : Toolbar() {
+	_interleave = interleave;
+	_currentItem = interleave_first;
 }
 
+
+bool Panel::add(const String &name, const PanelItem *item) {
+	_itemsMap[name] = (PanelItem*)item;
+	_itemsMap[name]->move(_currentItem, _y + 10);
+	_itemsMap[name]->setPanel(this);
+	_currentItem += _interleave;
+
+	return true;
+}
+
+bool Panel::draw(SDL_Surface *surface) {
+	ItemMap::const_iterator iterator;
+	if (!_drawn && _visible) {
+		GUIElement::draw(surface);
+		for (iterator = _itemsMap.begin(); iterator != _itemsMap.end(); ++iterator) {
+			((GUIElement*)(iterator->_value))->draw(surface);
+		}
+		return true;
+	}
+	else
+		return false;
+}
+
+void Panel::forceRedraw() {
+	ItemMap::const_iterator iterator;
+	GUIElement::forceRedraw();
+	for (iterator = _itemsMap.begin(); iterator != _itemsMap.end(); ++iterator)
+		((GUIElement*)(iterator->_value))->forceRedraw();
+}
+
+bool Panel::action(int x, int y, bool pushed) {
+	ItemMap::const_iterator iterator;
+	bool result = false;
+	if (!_visible || !checkInside(x, y))
+		return false;
+
+	for (iterator = _itemsMap.begin(); !result && iterator != _itemsMap.end(); ++iterator)
+		result = ((GUIElement*)(iterator->_value))->action(x, y, pushed);
+	return result;
+}
+
+void Panel::clear() {
+	_itemsMap.clear();
+}
+
+Panel::~Panel() {
+	_itemsMap.clear();
+}
+
+} // End of namespace CEGUI

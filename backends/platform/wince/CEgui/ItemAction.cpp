@@ -27,25 +27,25 @@
 
 namespace CEGUI {
 
-	ItemAction::ItemAction(WORD reference, GUI::ActionType action) :
-	PanelItem(reference) {
-		_action = action;
-		if (!GUI::Actions::Instance()->isEnabled(_action))
-			_visible = false;
-	}
-
-
-	ItemAction::~ItemAction() {
-	}
-
-	bool ItemAction::action(int x, int y, bool pushed) {
-
-		if (checkInside(x, y) && _visible && pushed) {
-			GUI::Actions::Instance()->perform(_action, true);
-			GUI::Actions::Instance()->perform(_action, false);
-			return true;
-		}
-		else
-			return false;
-	}
+ItemAction::ItemAction(WORD reference, GUI::ActionType action) :
+PanelItem(reference) {
+	_action = action;
+	if (!GUI::Actions::Instance()->isEnabled(_action))
+		_visible = false;
 }
+
+
+ItemAction::~ItemAction() {
+}
+
+bool ItemAction::action(int x, int y, bool pushed) {
+
+	if (checkInside(x, y) && _visible && pushed) {
+		GUI::Actions::Instance()->perform(_action, true);
+		GUI::Actions::Instance()->perform(_action, false);
+		return true;
+	} else
+		return false;
+}
+
+} // End of namespace CEGUI

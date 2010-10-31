@@ -32,17 +32,19 @@
 struct SDL_Surface;
 
 namespace CEGUI {
-	class SDL_ImageResource {
-	public:
-		SDL_ImageResource();
-		SDL_Surface* load(WORD resourceID);
-		SDL_Surface* get();
-		int height();
-		int width();
-		virtual ~SDL_ImageResource();
-	private:
-		SDL_Surface *_surface;
-	};
-}
+
+class SDL_ImageResource {
+public:
+	SDL_ImageResource();
+	SDL_Surface* load(WORD resourceID);
+	SDL_Surface* get();
+	int height();
+	int width();
+	virtual ~SDL_ImageResource();
+private:
+	SDL_Surface *_surface;
+};
+
+} // End of namespace CEGUI
 
 #endif

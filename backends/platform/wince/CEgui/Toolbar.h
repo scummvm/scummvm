@@ -30,18 +30,17 @@
 
 #include "GUIElement.h"
 
-
-
 namespace CEGUI {
 
-	class Toolbar : public GUIElement {
-	public:
-		virtual ~Toolbar();
-		virtual bool action(int x, int y, bool pushed) = 0;
-	protected:
-		Toolbar();
+class Toolbar : public GUIElement {
+public:
+	virtual ~Toolbar();
+	virtual bool action(int x, int y, bool pushed) = 0;
+protected:
+	Toolbar();
 
-	};
-}
+};
+
+} // End of namespace CEGUI
 
 #endif

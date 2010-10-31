@@ -40,23 +40,24 @@ using Common::HashMap;
 
 namespace CEGUI {
 
-	class Panel : public Toolbar {
-	public:
-		Panel(int interleave_first, int interleave);
-		virtual bool draw(SDL_Surface *surface);
-		virtual ~Panel();
-		bool add(const String &name, const PanelItem *item);
-		void clear();
-		virtual void forceRedraw();
-		virtual bool action(int x, int y, bool pushed);
-	private:
+class Panel : public Toolbar {
+public:
+	Panel(int interleave_first, int interleave);
+	virtual bool draw(SDL_Surface *surface);
+	virtual ~Panel();
+	bool add(const String &name, const PanelItem *item);
+	void clear();
+	virtual void forceRedraw();
+	virtual bool action(int x, int y, bool pushed);
+private:
 
-		typedef HashMap<String, PanelItem*, Common::IgnoreCase_Hash , Common::IgnoreCase_EqualTo> ItemMap;
+	typedef HashMap<String, PanelItem*, Common::IgnoreCase_Hash , Common::IgnoreCase_EqualTo> ItemMap;
 
-		ItemMap _itemsMap;
-		int _interleave;
-		int _currentItem;
-	};
-}
+	ItemMap _itemsMap;
+	int _interleave;
+	int _currentItem;
+};
+
+} // End of namespace CEGUI
 
 #endif

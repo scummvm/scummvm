@@ -31,20 +31,20 @@
 #include "common/str.h"
 
 class CEDevice {
-	public:
-		static void init();
-		static void end();
-		static void wakeUp();
-		static bool hasPocketPCResolution();
-		static bool hasSquareQVGAResolution();
-		static bool hasDesktopResolution();
-		static bool hasWideResolution();
-		static bool hasSmartphoneResolution();
-		static bool isSmartphone();
+public:
+	static void init();
+	static void end();
+	static void wakeUp();
+	static bool hasPocketPCResolution();
+	static bool hasSquareQVGAResolution();
+	static bool hasDesktopResolution();
+	static bool hasWideResolution();
+	static bool hasSmartphoneResolution();
+	static bool isSmartphone();
 
-	private:
-		static DWORD reg_access(TCHAR *key, TCHAR *val, DWORD data);
-		static void backlight_xchg();
+private:
+	static DWORD reg_access(TCHAR *key, TCHAR *val, DWORD data);
+	static void backlight_xchg();
 };
 
 #endif

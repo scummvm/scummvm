@@ -85,8 +85,7 @@ int CEActionsPocket::version() {
 }
 
 CEActionsPocket::CEActionsPocket(const Common::String &gameid) :
-GUI::Actions()
-{
+GUI::Actions() {
 	int i;
 
 	_right_click_needed = false;
