@@ -53,7 +53,7 @@ public:
 	// Functions used for game state loading
 	void clearPlayList();
 	void syncPlayList(Common::Serializer &s);
-	void reconstructPlayList(int savegame_version);
+	void reconstructPlayList();
 
 	// Functions used for the ScummVM menus
 	void setMasterVolume(int vol);

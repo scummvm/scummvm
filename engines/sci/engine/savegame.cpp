@@ -530,7 +530,7 @@ void SoundCommandParser::syncPlayList(Common::Serializer &s) {
 	_music->saveLoadWithSerializer(s);
 }
 
-void SoundCommandParser::reconstructPlayList(int version) {
+void SoundCommandParser::reconstructPlayList() {
 	Common::StackLock lock(_music->_mutex);
 
 	const MusicList::iterator end = _music->getPlayListEnd();
@@ -777,7 +777,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->reset();
 
-	g_sci->_soundCmd->reconstructPlayList(meta.version);
+	g_sci->_soundCmd->reconstructPlayList();
 
 	// Message state:
 	delete s->_msgState;
