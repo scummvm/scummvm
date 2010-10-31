@@ -1035,11 +1035,11 @@ void Inter_v2::o2_openItk() {
 	if (!strchr(fileName, '.'))
 		strcat(fileName, ".ITK");
 
-	_vm->_dataIO->openDataFile(fileName, true);
+	_vm->_dataIO->openArchive(fileName, false);
 }
 
 void Inter_v2::o2_closeItk() {
-	_vm->_dataIO->closeDataFile(true);
+	_vm->_dataIO->closeArchive(false);
 }
 
 void Inter_v2::o2_setImdFrontSurf() {
@@ -1292,7 +1292,6 @@ bool Inter_v2::o2_getFreeMem(OpFuncParams &params) {
 }
 
 bool Inter_v2::o2_checkData(OpFuncParams &params) {
-	int16 handle;
 	int16 varOff;
 	int32 size;
 	SaveLoad::SaveMode mode;
@@ -1301,7 +1300,6 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 	varOff = _vm->_game->_script->readVarIndex();
 
 	size = -1;
-	handle = 1;
 
 	char *file = _vm->_game->_script->getResultStr();
 
@@ -1313,9 +1311,8 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 	mode = _vm->_saveLoad->getSaveMode(file);
 	if (mode == SaveLoad::kSaveModeNone) {
 
-		if (_vm->_dataIO->existData(file))
-			size = _vm->_dataIO->getDataSize(file);
-		else
+		size = _vm->_dataIO->fileSize(file);
+		if (size == -1)
 			warning("File \"%s\" not found", file);
 
 	} else if (mode == SaveLoad::kSaveModeSave)
@@ -1323,13 +1320,10 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 	else if (mode == SaveLoad::kSaveModeExists)
 		size = 23;
 
-	if (size == -1)
-		handle = -1;
-
 	debugC(2, kDebugFileIO, "Requested size of file \"%s\": %d",
 			file, size);
 
-	WRITE_VAR_OFFSET(varOff, handle);
+	WRITE_VAR_OFFSET(varOff, (size == -1) ? -1 : 50);
 	WRITE_VAR(16, (uint32) size);
 
 	return false;
@@ -1340,7 +1334,6 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	int32 size;
 	int32 offset;
 	int16 dataVar;
-	int16 handle;
 	byte *buf;
 	SaveLoad::SaveMode mode;
 
@@ -1391,12 +1384,9 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	}
 
 	WRITE_VAR(1, 1);
-	handle = _vm->_dataIO->openData(file);
-
-	if (handle < 0)
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(file);
+	if (!file)
 		return false;
-
-	DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
 
 	_vm->_draw->animateCursor(4);
 	if (offset < 0)
@@ -1512,16 +1502,13 @@ void Inter_v2::o2_handleGoblins(OpGobParams &params) {
 }
 
 int16 Inter_v2::loadSound(int16 search) {
-	byte *dataPtr;
 	int16 id;
 	int16 slot;
 	uint16 slotIdMask;
-	uint32 dataSize;
 	SoundType type;
 
 	type = SOUND_SND;
 	slotIdMask = 0;
-	dataSize = 0;
 
 	if (!search) {
 		slot = _vm->_game->_script->readValExpr();
@@ -1567,8 +1554,8 @@ int16 Inter_v2::loadSound(int16 search) {
 		else
 			strcat(sndfile, ".SND");
 
-		dataPtr  = _vm->_dataIO->getData(sndfile);
-		dataSize = _vm->_dataIO->getDataSize(sndfile);
+		int32 dataSize;
+		byte *dataPtr = _vm->_dataIO->getFile(sndfile, dataSize);
 		if (!dataPtr)
 			return 0;
 

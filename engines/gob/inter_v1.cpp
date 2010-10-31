@@ -1630,18 +1630,17 @@ bool Inter_v1::o1_getFreeMem(OpFuncParams &params) {
 }
 
 bool Inter_v1::o1_checkData(OpFuncParams &params) {
-	int16 handle;
 	int16 varOff;
 
 	_vm->_game->_script->evalExpr(0);
 	varOff = _vm->_game->_script->readVarIndex();
-	handle = _vm->_dataIO->openData(_vm->_game->_script->getResultStr());
 
-	WRITE_VAR_OFFSET(varOff, handle);
-	if (handle >= 0)
-		_vm->_dataIO->closeData(handle);
-	else
+	if (!_vm->_dataIO->hasFile(_vm->_game->_script->getResultStr())) {
 		warning("File \"%s\" not found", _vm->_game->_script->getResultStr());
+		WRITE_VAR_OFFSET(varOff, -1);
+	} else
+		WRITE_VAR_OFFSET(varOff, 50); // "handle" between 50 and 128 = in archive
+
 	return false;
 }
 
@@ -1767,7 +1766,6 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 	int16 size;
 	int16 dataVar;
 	int16 offset;
-	int16 handle;
 
 	_vm->_game->_script->evalExpr(0);
 	dataVar = _vm->_game->_script->readVarIndex();
@@ -1776,26 +1774,26 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 	retSize = 0;
 
 	WRITE_VAR(1, 1);
-	handle = _vm->_dataIO->openData(_vm->_game->_script->getResultStr());
-	if (handle >= 0) {
-		DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
 
-		_vm->_draw->animateCursor(4);
-		if (offset < 0)
-			stream->seek(offset + 1, SEEK_END);
-		else
-			stream->seek(offset);
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(_vm->_game->_script->getResultStr());
+	if (!stream)
+		return false;
 
-		if (((dataVar >> 2) == 59) && (size == 4))
-			WRITE_VAR(59, stream->readUint32LE());
-		else
-			retSize = stream->read((byte *)_variables->getAddressOff8(dataVar), size);
+	_vm->_draw->animateCursor(4);
+	if (offset < 0)
+		stream->seek(offset + 1, SEEK_END);
+	else
+		stream->seek(offset);
 
-		if (retSize == size)
-			WRITE_VAR(1, 0);
+	if (((dataVar >> 2) == 59) && (size == 4))
+		WRITE_VAR(59, stream->readUint32LE());
+	else
+		retSize = stream->read((byte *)_variables->getAddressOff8(dataVar), size);
 
-		delete stream;
-	}
+	if (retSize == size)
+		WRITE_VAR(1, 0);
+
+	delete stream;
 
 	return false;
 }
@@ -1824,9 +1822,9 @@ bool Inter_v1::o1_manageDataFile(OpFuncParams &params) {
 	_vm->_game->_script->evalExpr(0);
 
 	if (_vm->_game->_script->getResultStr()[0] != 0)
-		_vm->_dataIO->openDataFile(_vm->_game->_script->getResultStr());
+		_vm->_dataIO->openArchive(_vm->_game->_script->getResultStr(), true);
 	else
-		_vm->_dataIO->closeDataFile();
+		_vm->_dataIO->closeArchive(true);
 	return false;
 }
 

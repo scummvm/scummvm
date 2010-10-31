@@ -75,13 +75,13 @@ void Map_v1::loadMapObjects(const char *avjFile) {
 	strcpy(avoName, _sourceFile);
 	strcat(avoName, ".avo");
 
-	if (_vm->_dataIO->existData(avoName)) {
-		_loadFromAvo = true;
-		dataBuf = _vm->_dataIO->getData(avoName);
-	} else {
+	int32 size;
+	dataBuf = _vm->_dataIO->getFile(avoName, size);
+	if (!dataBuf) {
+		dataBuf = _vm->_dataIO->getFile(avjFile, size);
 		_loadFromAvo = false;
-		dataBuf = _vm->_dataIO->getData(avjFile);
-	}
+	} else
+		_loadFromAvo = true;
 
 	Common::MemoryReadStream mapData(dataBuf, 4294967295U);
 
@@ -165,7 +165,7 @@ void Map_v1::loadSounds(Common::SeekableReadStream &data) {
 	_vm->_sound->sampleLoad(&_vm->_goblin->_soundData[14], SOUND_SND, "diamant1.snd");
 
 	for (int i = 0; i < count; i++) {
-		if (!_vm->_dataIO->existData(sndNames[i]))
+		if (!_vm->_dataIO->hasFile(sndNames[i]))
 			continue;
 
 		_vm->_sound->sampleLoad(&_vm->_goblin->_soundData[i], SOUND_SND, sndNames[i]);

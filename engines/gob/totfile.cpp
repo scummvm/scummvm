@@ -45,11 +45,11 @@ TOTFile::~TOTFile() {
 
 bool TOTFile::load(const Common::String &fileName) {
 	// Trying to open normally
-	_stream = _vm->_dataIO->getDataStream(fileName.c_str());
+	_stream = _vm->_dataIO->getFile(fileName);
 
 	if (!_stream)
 		// Trying to open from video
-		_stream = _vm->_vidPlayer->getEmbeddedFile(fileName.c_str());
+		_stream = _vm->_vidPlayer->getEmbeddedFile(fileName);
 
 	if (!_stream)
 		return false;

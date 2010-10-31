@@ -24,7 +24,8 @@
  */
 
 #include "common/endian.h"
-#include "common/str.h"
+#include "common/types.h"
+#include "common/stream.h"
 
 #include "gob/gob.h"
 #include "gob/dataio.h"
@@ -33,198 +34,91 @@
 
 namespace Gob {
 
-DataStream::DataStream(DataIO &io, int16 handle, uint32 dSize, bool dispose) {
-	_io = &io;
-
-	_handle  = handle;
-	_size    = dSize;
-	_dispose = dispose;
-
-	_data   = 0;
-	_stream = 0;
+DataIO::File::File() : size(0), offset(0), packed(false), archive(0) {
 }
 
-DataStream::DataStream(byte *buf, uint32 dSize, bool dispose) {
-	_data    = buf;
-	_size    = dSize;
-	_stream  = new Common::MemoryReadStream(_data, _size);
-	_dispose = dispose;
-
-	_io     =  0;
-	_handle = -1;
+DataIO::File::File(const Common::String &n, uint32 s, uint32 o, bool p, Archive &a) :
+	name(n), size(s), offset(o), packed(p), archive(&a) {
 }
 
-DataStream::~DataStream() {
-	delete _stream;
 
-	if (_dispose) {
-		delete[] _data;
-		if ((_handle >= 0) && _io)
-			_io->closeData(_handle);
-	}
-}
-
-int32 DataStream::pos() const {
-	if (_stream)
-		return _stream->pos();
-
-	int32 resPos = _io->getChunkPos(_handle);
-	if (resPos != -1)
-		return resPos;
-
-	return _io->file_getHandle(_handle)->pos();
-}
-
-int32 DataStream::size() const {
-	if (_stream)
-		return _stream->size();
-
-	return _size;
-}
-
-bool DataStream::seek(int32 offset, int whence) {
-	if (_stream)
-		return _stream->seek(offset, whence);
-	else if (!_io->isDataFileChunk(_handle))
-		return _io->file_getHandle(_handle)->seek(offset, whence);
-	else {
-		_io->seekChunk(_handle, offset, whence);
-		return true;
-	}
-}
-
-bool DataStream::eos() const {
-	if (_stream)
-		return _stream->eos();
-
-	return pos() >= size(); // FIXME (eos definition change)
-}
-
-uint32 DataStream::read(void *dataPtr, uint32 dataSize) {
-	if (_stream)
-		return _stream->read(dataPtr, dataSize);
-
-	if (!_io->isDataFileChunk(_handle))
-		return _io->file_getHandle(_handle)->read((byte *)dataPtr, dataSize);
-
-	byte *data = (byte *)dataPtr;
-	uint32 haveRead = 0;
-	while (dataSize > 0x3FFF) {
-		_io->readChunk(_handle, (byte *)data, 0x3FFF);
-		dataSize -= 0x3FFF;
-		data     += 0x3FFF;
-		haveRead += 0x3FFF;
-	}
-	_io->readChunk(_handle, (byte *)data, dataSize);
-
-	return haveRead + dataSize;
-}
-
-DataIO::DataIO(GobEngine *vm) : _vm(vm) {
-	for (int i = 0; i < MAX_DATA_FILES; i++) {
-		_dataFiles[i]       =  0;
-		_numDataChunks[i]   =  0;
-		_dataFileHandles[i] = -1;
-	}
+DataIO::DataIO() {
+	// Reserve memory for the standard max amount of archives
+	_archives.reserve(kMaxArchives);
+	for (int i = 0; i < kMaxArchives; i++)
+		_archives.push_back(0);
 }
 
 DataIO::~DataIO() {
-	for (int i = 0; i < MAX_DATA_FILES; i++) {
-		if (_dataFiles[i])
-			file_getHandle(_dataFileHandles[i])->close();
-		delete[] _dataFiles[i];
+	// Close all archives
+	for (Common::Array<Archive *>::iterator it = _archives.begin(); it != _archives.end(); ++it) {
+		if (!*it)
+			continue;
+
+		closeArchive(**it);
+		delete *it;
 	}
 }
 
-bool DataIO::isDataFileChunk(int16 handle) const {
-	return (handle >= 50) && (handle < 128);
+byte *DataIO::unpack(const byte *src, uint32 srcSize, int32 &size) {
+	size = READ_LE_UINT32(src);
+
+	byte *data = new byte[size];
+
+	Common::MemoryReadStream srcStream(src + 4, srcSize - 4);
+	unpack(srcStream, data, size);
+	return data;
 }
 
-bool DataIO::isPacked(int16 handle) const {
-	if (!isDataFileChunk(handle))
-		return false;
+Common::SeekableReadStream *DataIO::unpack(Common::SeekableReadStream &src) {
+	uint32 size = src.readUint32LE();
 
-	return _chunk[getIndex(handle)]->packed != 0;
+	byte *data = (byte *) malloc(size);
+
+	unpack(src, data, size);
+	return new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
 }
 
-int DataIO::getFile(int16 handle) const {
-	if (!isDataFileChunk(handle))
-		return -1;
-
-	return (handle - 50) / 10;
-}
-
-int DataIO::getSlot(int16 handle) const {
-	if (!isDataFileChunk(handle))
-		return -1;
-
-	return (handle - 50) % 10;
-}
-
-int DataIO::getIndex(int16 handle) const {
-	if (!isDataFileChunk(handle))
-		return -1;
-
-	return getIndex(getFile(handle), getSlot(handle));
-}
-
-int DataIO::getIndex(int file, int slot) const {
-	return file * MAX_SLOT_COUNT + slot;
-}
-
-int16 DataIO::getHandle(int file, int slot) const {
-	return file * 10 + slot + 50;
-}
-
-int32 DataIO::unpackData(byte *src, byte *dest) {
-	uint32 realSize;
-	uint32 counter;
-	uint16 cmd;
-	byte *tmpBuf;
-	int16 off;
-	byte len;
-	uint16 tmpIndex;
-
-	tmpBuf = new byte[4114];
+void DataIO::unpack(Common::SeekableReadStream &src, byte *dest, uint32 size) {
+	byte *tmpBuf = new byte[4114];
 	assert(tmpBuf);
 
-	counter = realSize = READ_LE_UINT32(src);
+	uint32 counter = size;
 
 	for (int i = 0; i < 4078; i++)
 		tmpBuf[i] = 0x20;
-	tmpIndex = 4078;
+	uint16 tmpIndex = 4078;
 
-	src += 4;
-
-	cmd = 0;
+	uint16 cmd = 0;
 	while (1) {
 		cmd >>= 1;
-		if ((cmd & 0x0100) == 0) {
-			cmd = *src | 0xFF00;
-			src++;
-		}
+		if ((cmd & 0x0100) == 0)
+			cmd = src.readByte() | 0xFF00;
+
 		if ((cmd & 1) != 0) { /* copy */
-			*dest++ = *src;
-			tmpBuf[tmpIndex] = *src;
-			src++;
+			byte tmp = src.readByte();
+
+			*dest++ = tmp;
+			tmpBuf[tmpIndex] = tmp;
+
 			tmpIndex++;
 			tmpIndex %= 4096;
 			counter--;
 			if (counter == 0)
 				break;
 		} else { /* copy string */
+			byte tmp1 = src.readByte();
+			byte tmp2 = src.readByte();
 
-			off = *src++;
-			off |= (*src & 0xF0) << 4;
-			len = (*src & 0x0F) + 3;
-			src++;
+			int16 off = tmp1 | ((tmp2 & 0xF0) << 4);
+			byte  len =         (tmp2 & 0x0F) + 3;
 
 			for (int i = 0; i < len; i++) {
 				*dest++ = tmpBuf[(off + i) % 4096];
 				counter--;
 				if (counter == 0) {
 					delete[] tmpBuf;
-					return realSize;
+					return;
 				}
 				tmpBuf[tmpIndex] = tmpBuf[(off + i) % 4096];
 				tmpIndex++;
@@ -233,390 +127,251 @@ int32 DataIO::unpackData(byte *src, byte *dest) {
 
 		}
 	}
+
 	delete[] tmpBuf;
-	return realSize;
 }
 
-Common::File *DataIO::file_getHandle(int16 handle) {
-	return &_filesHandles[handle];
-}
-
-const Common::File *DataIO::file_getHandle(int16 handle) const {
-	return &_filesHandles[handle];
-}
-
-int16 DataIO::file_open(const char *path) {
-	int16 i;
-
-	for (i = 0; i < MAX_FILES; i++) {
-		if (!file_getHandle(i)->isOpen())
+bool DataIO::openArchive(Common::String name, bool base) {
+	// Look for a free archive slot
+	Archive **archive = 0;
+	int i = 0;
+	for (Common::Array<Archive *>::iterator it = _archives.begin(); it != _archives.end(); ++it, i++) {
+		if (!*it) {
+			archive = &*it;
 			break;
-	}
-	if (i == MAX_FILES)
-		return -1;
-
-	if (file_getHandle(i)->open(path))
-		return i;
-
-	return -1;
-}
-
-int16 DataIO::getChunk(const char *chunkName) {
-	for (int16 file = 0; file < MAX_DATA_FILES; file++) {
-		if (_dataFiles[file] == 0)
-			return -1;
-
-		int16 slot;
-		for (slot = 0; slot < MAX_SLOT_COUNT; slot++)
-			if (_chunkPos[file * MAX_SLOT_COUNT + slot] == -1)
-				break;
-
-		if (slot == MAX_SLOT_COUNT) {
-			warning("Chunk slots full");
-			return -1;
-		}
-
-		ChunkDesc *dataDesc = _dataFiles[file];
-		for (uint16 chunk = 0; chunk < _numDataChunks[file]; chunk++, dataDesc++) {
-			if (scumm_stricmp(chunkName, dataDesc->chunkName) != 0)
-				continue;
-
-			int index = getIndex(file, slot);
-
-			_isCurrentSlot[index] = false;
-			_chunk        [index] = dataDesc;
-			_chunkPos     [index] = 0;
-
-			return getHandle(file, slot);
-		}
-	}
-	return -1;
-}
-
-char DataIO::freeChunk(int16 handle) {
-	if (isDataFileChunk(handle)) {
-		_chunkPos[getIndex(handle)] = -1;
-		return 0;
-	}
-	return 1;
-}
-
-int32 DataIO::readChunk(int16 handle, byte *buf, uint16 size) {
-	if (!isDataFileChunk(handle))
-		return -2;
-
-	int file  = getFile(handle);
-	int slot  = getSlot(handle);
-	int index = getIndex(file, slot);
-
-	_chunkPos[index] = CLIP<int32>(_chunkPos[index], 0, _chunk[index]->size);
-
-	if (!_isCurrentSlot[index]) {
-		for (int16 i = 0; i < MAX_SLOT_COUNT; i++)
-			_isCurrentSlot[file * MAX_SLOT_COUNT + i] = false;
-
-		int32 offset = _chunk[index]->offset + _chunkPos[index];
-
-		debugC(7, kDebugFileIO, "seek: %d, %d", _chunk[index]->offset, _chunkPos[index]);
-
-		file_getHandle(_dataFileHandles[file])->seek(offset, SEEK_SET);
-	}
-
-	_isCurrentSlot[index] = true;
-	if ((_chunkPos[index] + size) > (int32) (_chunk[index]->size))
-		size = _chunk[index]->size - _chunkPos[index];
-
-	file_getHandle(_dataFileHandles[file])->read(buf, size);
-	_chunkPos[index] += size;
-	return size;
-}
-
-int16 DataIO::seekChunk(int16 handle, int32 pos, int16 from) {
-	if (!isDataFileChunk(handle))
-		return -1;
-
-	int file  = getFile(handle);
-	int slot  = getSlot(handle);
-	int index = getIndex(file, slot);
-
-	_isCurrentSlot[index] = false;
-	if (from == SEEK_SET)
-		_chunkPos[index] = pos;
-	else if (from == SEEK_CUR)
-		_chunkPos[index] += pos;
-	else if (from == SEEK_END)
-		_chunkPos[index] = _chunk[index]->size - pos;
-
-	return _chunkPos[index];
-}
-
-uint32 DataIO::getChunkPos(int16 handle) const {
-	if (!isDataFileChunk(handle))
-		return 0xFFFFFFFF;
-
-	int file = getFile(handle);
-	int slot = getSlot(handle);
-
-	return _chunkPos[file * MAX_SLOT_COUNT + slot];
-}
-
-int32 DataIO::getChunkSize(const char *chunkName, int32 &packSize) {
-	packSize = -1;
-
-	for (int file = 0; file < MAX_DATA_FILES; file++) {
-		if (_dataFiles[file] == 0)
-			return -1;
-
-		ChunkDesc *dataDesc = _dataFiles[file];
-		for (uint16 chunk = 0; chunk < _numDataChunks[file]; chunk++, dataDesc++) {
-			if (scumm_stricmp(chunkName, dataDesc->chunkName) != 0)
-				continue;
-
-			if (dataDesc->packed == 0)
-				return dataDesc->size;
-
-			for (int16 slot = 0; slot < MAX_SLOT_COUNT; slot++)
-				_isCurrentSlot[slot] = false;
-
-			int32 realSize;
-
-			file_getHandle(_dataFileHandles[file])->seek(dataDesc->offset, SEEK_SET);
-			realSize = file_getHandle(_dataFileHandles[file])->readUint32LE();
-			packSize = dataDesc->size;
-
-			return realSize;
-		}
-	}
-	return -1;
-}
-
-void DataIO::openDataFile(const char *src, bool itk) {
-	char path[128];
-
-	Common::strlcpy(path, src, 128);
-	if (!strchr(path, '.')) {
-		path[123] = 0;
-		strcat(path, ".stk");
-	}
-
-	int16 file;
-	for (file = 0; file < MAX_DATA_FILES; file++)
-		if (_dataFiles[file] == 0)
-			break;
-
-	if (file == MAX_DATA_FILES)
-		error("DataIO::openDataFile(): Data file slots are full");
-
-	_dataFileHandles[file] = file_open(path);
-
-	if (_dataFileHandles[file] == -1)
-		error("DataIO::openDataFile(): Can't open data file \"%s\"", path);
-
-	_dataFileItk  [file] = itk;
-	_numDataChunks[file] = file_getHandle(_dataFileHandles[file])->readUint16LE();
-
-	debugC(7, kDebugFileIO, "DataChunks: %d [for %s]", _numDataChunks[file], path);
-
-	ChunkDesc *dataDesc = new ChunkDesc[_numDataChunks[file]];
-	_dataFiles[file] = dataDesc;
-
-	for (int i = 0; i < _numDataChunks[file]; i++) {
-		file_getHandle(_dataFileHandles[file])->read(dataDesc[i].chunkName, 13);
-		dataDesc[i].size   = file_getHandle(_dataFileHandles[file])->readUint32LE();
-		dataDesc[i].offset = file_getHandle(_dataFileHandles[file])->readUint32LE();
-		dataDesc[i].packed = file_getHandle(_dataFileHandles[file])->readByte();
-
-		// Replacing cyrillic characters
-		Util::replaceChar(dataDesc[i].chunkName, (char) 0x85, 'E');
-		Util::replaceChar(dataDesc[i].chunkName, (char) 0x8A, 'K');
-		Util::replaceChar(dataDesc[i].chunkName, (char) 0x8E, 'O');
-		Util::replaceChar(dataDesc[i].chunkName, (char) 0x91, 'C');
-		Util::replaceChar(dataDesc[i].chunkName, (char) 0x92, 'T');
-
-		// Geisha use 0ot files, which are compressed TOT files without the packed byte set.
-		char *fakeTotPtr = strstr(dataDesc[i].chunkName, "0OT");
-		if (fakeTotPtr != 0) {
-			strncpy(fakeTotPtr, "TOT", 3);
-			dataDesc[i].packed = 1;
 		}
 	}
 
-	for (int i = 0; i < _numDataChunks[file]; i++)
-		debugC(7, kDebugFileIO, "%d: %s %d", i, dataDesc[i].chunkName, dataDesc[i].size);
+	if (!archive) {
+		// No free slot, create a new one
 
-	for (int i = 0; i < MAX_SLOT_COUNT; i++)
-		_chunkPos[file * MAX_SLOT_COUNT + i] = -1;
-}
+		warning("DataIO::openArchive(): Need to increase archive count to %d", _archives.size() + 1);
+		_archives.push_back(0);
 
-void DataIO::closeDataFile(bool itk) {
-	for (int file = MAX_DATA_FILES - 1; file >= 0; file--) {
-		if (_dataFiles[file] && (_dataFileItk[file] == itk)) {
-			delete[] _dataFiles[file];
-			_dataFiles[file] = 0;
-			file_getHandle(_dataFileHandles[file])->close();
-			return;
-		}
+		Common::Array<Archive *>::iterator it = _archives.end();
+		archive = &*(--it);
 	}
-}
 
-byte *DataIO::getUnpackedData(const char *name) {
-	int32 realSize;
-	int32 packSize = -1;
+	// Add extension if necessary
+	if (!name.contains('.'))
+		name += ".stk";
 
-	realSize = getChunkSize(name, packSize);
-
-	if ((packSize == -1) || (realSize == -1))
-		return 0;
-
-	int16 chunk = getChunk(name);
-	if (chunk == -1)
-		return 0;
-
-	byte *unpackBuf = new byte[realSize];
-	assert(unpackBuf);
-
-	byte *packBuf = new byte[packSize];
-	assert(packBuf);
-
-	int32 sizeLeft = packSize;
-	byte *ptr = packBuf;
-	while (sizeLeft > 0x4000) {
-		readChunk(chunk, ptr, 0x4000);
-		sizeLeft -= 0x4000;
-		ptr      += 0x4000;
-	}
-	readChunk(chunk, ptr, sizeLeft);
-	freeChunk(chunk);
-	unpackData(packBuf, unpackBuf);
-
-	delete[] packBuf;
-	return unpackBuf;
-}
-
-void DataIO::closeData(int16 handle) {
-	if (freeChunk(handle) != 0)
-		file_getHandle(handle)->close();
-}
-
-int16 DataIO::openData(const char *path) {
-	int16 handle = getChunk(path);
-	if (handle >= 0)
-		return handle;
-
-	return file_open(path);
-}
-
-bool DataIO::existData(const char *path) {
-	if (!path || (path[0] == '\0'))
+	// Try to open
+	*archive = openArchive(name);
+	if (!*archive)
 		return false;
 
-	int16 handle = openData(path);
-	if (handle < 0)
-		return false;
-
-	closeData(handle);
+	(*archive)->base = base;
 	return true;
 }
 
-DataStream *DataIO::openAsStream(int16 handle, bool dispose) {
-	uint32 curPos = getPos(handle);
-	seekData(handle, 0, SEEK_END);
-	uint32 size = getPos(handle);
-	seekData(handle, curPos, SEEK_SET);
-
-	return new DataStream(*this, handle, size, dispose);
-}
-
-uint32 DataIO::getPos(int16 handle) {
-	uint32 resPos = getChunkPos(handle);
-	if (resPos != 0xFFFFFFFF)
-		return resPos;
-
-	return file_getHandle(handle)->pos();
-}
-
-void DataIO::seekData(int16 handle, int32 pos, int16 from) {
-	int32 resPos = seekChunk(handle, pos, from);
-	if (resPos != -1)
-		return;
-
-	file_getHandle(handle)->seek(pos, from);
-}
-
-int32 DataIO::readData(int16 handle, byte *buf, uint16 size) {
-	int16 res = readChunk(handle, buf, size);
-	if (res >= 0)
-		return res;
-
-	return file_getHandle(handle)->read(buf, size);
-}
-
-int32 DataIO::getDataSize(const char *name) {
-	char buf[128];
-	int32 chunkSize;
-	int32 packSize = -1;
-
-	Common::strlcpy(buf, name, 128);
-
-	chunkSize = getChunkSize(buf, packSize);
-	if (chunkSize >= 0)
-		return chunkSize;
-
-	Common::File file;
-	if (!file.open(buf))
-		error("DataIO::getDataSize(): Can't find data \"%s\"", name);
-
-	chunkSize = file.size();
-	file.close();
-
-	return chunkSize;
-}
-
-byte *DataIO::getData(const char *path) {
-	byte *data = getUnpackedData(path);
-	if (data)
-		return data;
-
-	int32 size = getDataSize(path);
-
-	data = new byte[size];
-	assert(data);
-
-	int16 handle = openData(path);
-
-	byte *ptr = data;
-	while (size > 0x4000) {
-		readData(handle, ptr, 0x4000);
-		size -= 0x4000;
-		ptr  += 0x4000;
+DataIO::Archive *DataIO::openArchive(const Common::String &name) {
+	Archive *archive = new Archive;
+	if (!archive->file.open(name)) {
+		delete archive;
+		return 0;
 	}
-	readData(handle, ptr, size);
-	closeData(handle);
-	return data;
+
+	archive->name = name;
+
+	uint16 fileCount = archive->file.readUint16LE();
+	for (uint16 i = 0; i < fileCount; i++) {
+		File file;
+
+		char fileName[14];
+
+		archive->file.read(fileName, 13);
+		fileName[13] = '\0';
+
+		file.size   = archive->file.readUint32LE();
+		file.offset = archive->file.readUint32LE();
+		file.packed = archive->file.readByte() != 0;
+
+		// Replacing cyrillic characters
+		Util::replaceChar(fileName, (char) 0x85, 'E');
+		Util::replaceChar(fileName, (char) 0x8A, 'K');
+		Util::replaceChar(fileName, (char) 0x8E, 'O');
+		Util::replaceChar(fileName, (char) 0x91, 'C');
+		Util::replaceChar(fileName, (char) 0x92, 'T');
+
+		file.name = fileName;
+
+		// Geisha use 0ot files, which are compressed TOT files without the packed byte set.
+		if (file.name.hasSuffix(".0OT")) {
+			file.name.setChar(file.name.size() - 3, 'T');
+			file.packed = true;
+		}
+
+		file.archive = archive;
+		archive->files.setVal(file.name, file);
+	}
+
+	return archive;
 }
 
-DataStream *DataIO::getDataStream(const char *path) {
-	if (!existData(path))
-	return 0;
+bool DataIO::closeArchive(bool base) {
+	// Look for a matching archive and close it
+	for (int archive = _archives.size() - 1; archive >= 0; archive--) {
+		if (_archives[archive] && (_archives[archive]->base == base)) {
+			closeArchive(*_archives[archive]);
+			delete _archives[archive];
+			_archives[archive] = 0;
 
-	int16 handle = openData(path);
-	if (handle < 0)
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool DataIO::closeArchive(Archive &archive) {
+	archive.file.close();
+
+	return true;
+}
+
+bool DataIO::hasFile(const Common::String &name){
+	// Look up the files in the opened archives
+	if (findFile(name))
+		return true;
+
+	// Else, look if a plain file that matches exists
+	return Common::File::exists(name);
+}
+
+int32 DataIO::fileSize(const Common::String &name) {
+	// Try to find the file in the archives
+	File *file = findFile(name);
+	if (file) {
+		if (!file->packed)
+			return file->size;
+
+		// Sanity checks
+		assert(file->size >= 4);
+		assert(file->archive);
+		assert(file->archive->file.isOpen());
+
+		// Read the full, unpacked size
+		file->archive->file.seek(file->offset);
+		return file->archive->file.readUint32LE();
+	}
+
+	// Else, try to find a matching plain file
+	Common::File f;
+	if (!f.open(name))
+		return -1;
+
+	return f.size();
+}
+
+Common::SeekableReadStream *DataIO::getFile(const Common::String &name) {
+	// Try to open the file in the archives
+	File *file = findFile(name);
+	if (file) {
+		Common::SeekableReadStream *data = getFile(*file);
+		if (data)
+			return data;
+	}
+
+	// Else, try to open a matching plain file
+	Common::File f;
+	if (!f.open(name))
 		return 0;
 
-	if (isDataFileChunk(handle) && isPacked(handle)) {
-		// It's a packed chunk in the data files, packed,
-		// so we have to read it in completely and unpack it
+	return f.readStream(f.size());
+}
 
-		closeData(handle);
+byte *DataIO::getFile(const Common::String &name, int32 &size) {
+	// Try to open the file in the archives
+	File *file = findFile(name);
+	if (file) {
+		byte *data = getFile(*file, size);
+		if (data)
+			return data;
+	}
 
-		uint32 size = getDataSize(path);
-		byte  *data = getData(path);
+	// Else, try to open a matching plain file
+	Common::File f;
+	if (!f.open(name))
+		return 0;
 
-		return new DataStream(data, size);
+	size = f.size();
 
-	} else
-		// Otherwise, we can just return a stream
-		return openAsStream(handle, true);
+	byte *data = new byte[size];
+	if (f.read(data, size) != ((uint32) size)) {
+		delete[] data;
+		return 0;
+	}
+
+	return 0;
+}
+
+DataIO::File *DataIO::findFile(const Common::String &name) {
+	for (int i = _archives.size() - 1; i >= 0; i--) {
+		Archive *archive = _archives[i];
+		if (!archive)
+			// Empty slot
+			continue;
+
+		// Look up the file in the file map
+		FileMap::iterator file = archive->files.find(name);
+		if (file != archive->files.end())
+			return &file->_value;
+	}
+
+	return 0;
+}
+
+Common::SeekableReadStream *DataIO::getFile(File &file) {
+	if (!file.archive)
+		return 0;
+
+	if (!file.archive->file.isOpen())
+		return 0;
+
+	if (!file.archive->file.seek(file.offset))
+		return 0;
+
+	Common::SeekableReadStream *rawData = file.archive->file.readStream(file.size);
+	if (!rawData)
+		return 0;
+
+	if (!file.packed)
+		return rawData;
+
+	Common::SeekableReadStream *unpackedData = unpack(*rawData);
+
+	delete rawData;
+
+	return unpackedData;
+}
+
+byte *DataIO::getFile(File &file, int32 &size) {
+	if (!file.archive)
+		return 0;
+
+	if (!file.archive->file.isOpen())
+		return 0;
+
+	if (!file.archive->file.seek(file.offset))
+		return 0;
+
+	size = file.size;
+
+	byte *rawData = new byte[file.size];
+	if (file.archive->file.read(rawData, file.size) != file.size) {
+		delete[] rawData;
+		return 0;
+	}
+
+	if (!file.packed)
+		return rawData;
+
+	byte *unpackedData = unpack(rawData, file.size, size);
+
+	delete[] rawData;
+
+	return unpackedData;
 }
 
 } // End of namespace Gob

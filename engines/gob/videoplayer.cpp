@@ -686,7 +686,7 @@ Common::String VideoPlayer::findFile(const Common::String &file, Properties &pro
 			if ((properties.type == kVideoTypeTry) || (properties.type == ((Type) i))) {
 				fileName = base + "." + _extensions[i];
 
-				if (_vm->_dataIO->existData(fileName.c_str())) {
+				if (_vm->_dataIO->hasFile(fileName)) {
 					properties.type = (Type) i;
 					break;
 				}
@@ -707,7 +707,7 @@ Graphics::CoktelDecoder *VideoPlayer::openVideo(const Common::String &file, Prop
 	if (fileName.empty())
 		return 0;
 
-	Common::SeekableReadStream *stream = _vm->_dataIO->getDataStream(fileName.c_str());
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(fileName);
 	if (!stream)
 		return 0;
 

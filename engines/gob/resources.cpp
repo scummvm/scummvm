@@ -293,7 +293,7 @@ bool Resources::loadTOTResourceTable() {
 bool Resources::loadEXTResourceTable() {
 	_extResourceTable = new EXTResourceTable;
 
-	DataStream *stream = _vm->_dataIO->getDataStream(_extFile.c_str());
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(_extFile);
 	if (!stream)
 		return false;
 
@@ -396,7 +396,7 @@ bool Resources::loadIMFile() {
 
 	imFile += num;
 
-	DataStream *stream = _vm->_dataIO->getDataStream(imFile.c_str());
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(imFile);
 	if (!stream)
 		return true;
 
@@ -431,7 +431,7 @@ bool Resources::loadEXFile() {
 	_exFile = "commun.ex";
 	_exFile += totProps.exFileNumber + '0';
 
-	if (!_vm->_dataIO->existData(_exFile.c_str())) {
+	if (!_vm->_dataIO->hasFile(_exFile)) {
 		_exFile.clear();
 		return true;
 	}
@@ -473,7 +473,7 @@ Common::String Resources::getLocTextFile(const Common::String &fileBase,
 		break;
 	}
 
-	if (!_vm->_dataIO->existData(locTextFile.c_str()))
+	if (!_vm->_dataIO->hasFile(locTextFile))
 		locTextFile.clear();
 
 	return locTextFile;
@@ -525,8 +525,7 @@ byte *Resources::loadTOTLocTexts(const Common::String &fileBase, int32 &size) {
 	if (locTextFile.empty())
 		return 0;
 
-	size = _vm->_dataIO->getDataSize(locTextFile.c_str());
-	return _vm->_dataIO->getData(locTextFile.c_str());
+	return _vm->_dataIO->getFile(locTextFile, size);
 }
 
 Resource *Resources::getResource(uint16 id, int16 *width, int16 *height) const {
@@ -682,10 +681,10 @@ Resource *Resources::getEXTResource(uint16 id) const {
 	if (extItem.packed) {
 		byte *packedData = data;
 
-		size = READ_LE_UINT32(packedData);
-		data = new byte[size];
+		int32 unpackSize;
+		data = _vm->_dataIO->unpack(packedData, size, unpackSize);
 
-		_vm->_dataIO->unpackData(packedData, data);
+		size = unpackSize;
 
 		delete[] packedData;
 	}
@@ -724,7 +723,7 @@ byte *Resources::getIMData(TOTResourceItem &totItem) const {
 }
 
 byte *Resources::getEXTData(EXTResourceItem &extItem, uint32 size) const {
-	DataStream *stream = _vm->_dataIO->getDataStream(_extFile.c_str());
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(_extFile);
 	if (!stream)
 		return 0;
 
@@ -745,7 +744,7 @@ byte *Resources::getEXTData(EXTResourceItem &extItem, uint32 size) const {
 }
 
 byte *Resources::getEXData(EXTResourceItem &extItem, uint32 size) const {
-	DataStream *stream = _vm->_dataIO->getDataStream(_exFile.c_str());
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(_exFile);
 	if (!stream)
 		return 0;
 

@@ -331,9 +331,9 @@ void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height,
 }
 
 void Video::drawPackedSprite(const char *path, Surface &dest, int width) {
-	byte *data;
+	int32 size;
+	byte *data = _vm->_dataIO->getFile(path, size);
 
-	data = _vm->_dataIO->getData(path);
 	drawPackedSprite(data, width, dest.getHeight(), 0, 0, 0, dest);
 	delete[] data;
 }

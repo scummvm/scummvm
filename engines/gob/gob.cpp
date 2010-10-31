@@ -370,7 +370,7 @@ bool GobEngine::initGameParts() {
 
 	_global    = new Global(this);
 	_util      = new Util(this);
-	_dataIO    = new DataIO(this);
+	_dataIO    = new DataIO();
 	_palAnim   = new PalAnim(this);
 	_vidPlayer = new VideoPlayer(this);
 	_sound     = new Sound(this);

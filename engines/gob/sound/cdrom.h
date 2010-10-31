@@ -28,14 +28,12 @@
 
 namespace Gob {
 
-class DataStream;
-
 class CDROM {
 public:
 	CDROM();
 	~CDROM();
 
-	void readLIC(DataStream &stream);
+	void readLIC(Common::SeekableReadStream &stream);
 	void freeLICBuffer();
 
 	void startTrack(const char *trackName);

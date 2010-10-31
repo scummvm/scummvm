@@ -175,10 +175,12 @@ void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 	static const char *sndFiles[] = {"1INTROIV.snd", "2INTROIV.snd"};
 	static const char *palFiles[] = {"2ou2.clt", "2ou3.clt", "2ou4.clt", "2ou5.clt"};
 
+	int32 size;
+
 	for (int i = 0; i < 2; i++)
 		_vm->_sound->sampleLoad(&samples[i], SOUND_SND, sndFiles[i]);
 	for (int i = 0; i < 4; i++)
-		palettes[i] = _vm->_dataIO->getData(palFiles[i]);
+		palettes[i] = _vm->_dataIO->getFile(palFiles[i], size);
 	palBak = _vm->_global->_pPaletteDesc->vgaPal;
 
 	_vm->_sound->blasterPlayComposition(comp, 0, samples, 2);

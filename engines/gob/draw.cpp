@@ -639,10 +639,11 @@ void Draw::wobble(Surface &surfDesc) {
 }
 
 Font *Draw::loadFont(const char *path) const {
-	if (!_vm->_dataIO->existData(path))
+	if (!_vm->_dataIO->hasFile(path))
 		return 0;
 
-	byte *data = _vm->_dataIO->getData(path);
+	int32 size;
+	byte *data = _vm->_dataIO->getFile(path, size);
 
 	return new Font(data);
 }

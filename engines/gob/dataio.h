@@ -27,113 +27,74 @@
 #define GOB_DATAIO_H
 
 #include "common/endian.h"
+#include "common/str.h"
+#include "common/hashmap.h"
+#include "common/array.h"
 #include "common/file.h"
+
+namespace Common {
+	class SeekableReadStream;
+}
 
 namespace Gob {
 
-#define MAX_FILES      30
-#define MAX_DATA_FILES  8
-#define MAX_SLOT_COUNT  8
-
-class DataIO;
-
-class DataStream : public Common::SeekableReadStream {
-public:
-	DataStream(DataIO &io, int16 handle, uint32 dSize, bool dispose = false);
-	DataStream(byte *buf, uint32 dSize, bool dispose = true);
-	virtual ~DataStream();
-
-	virtual int32 pos() const;
-	virtual int32 size() const;
-
-	virtual bool seek(int32 offset, int whence = SEEK_SET);
-
-	virtual bool eos() const;
-
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
-
-private:
-	DataIO *_io;
-	int16   _handle;
-	uint32  _size;
-	byte   *_data;
-	bool    _dispose;
-	Common::MemoryReadStream *_stream;
-};
-
 class DataIO {
 public:
-	struct ChunkDesc {
-		char   chunkName[13];
-		uint32 size;
-		uint32 offset;
-		byte   packed;
-		ChunkDesc() : size(0), offset(0), packed(0) { chunkName[0] = 0; }
-	};
-
-	int32 unpackData(byte *src, byte *dest);
-
-	void openDataFile(const char *src, bool itk = 0);
-	void closeDataFile(bool itk = 0);
-
-	byte *getUnpackedData(const char *name);
-
-	void  closeData(int16 handle);
-	int16 openData(const char *path);
-	bool  existData(const char *path);
-
-	DataStream *openAsStream(int16 handle, bool dispose = false);
-
-	int32 getDataSize(const char *name);
-	byte *getData(const char *path);
-	DataStream *getDataStream(const char *path);
-
-	DataIO(class GobEngine *vm);
+	DataIO();
 	~DataIO();
 
-protected:
-	Common::File _filesHandles[MAX_FILES];
+	bool openArchive(Common::String name, bool base);
+	bool closeArchive(bool base);
 
-	ChunkDesc *_dataFiles      [MAX_DATA_FILES];
-	uint16     _numDataChunks  [MAX_DATA_FILES];
-	int16      _dataFileHandles[MAX_DATA_FILES];
-	bool       _dataFileItk    [MAX_DATA_FILES];
+	bool hasFile(const Common::String &name);
 
-	ChunkDesc *_chunk        [MAX_SLOT_COUNT * MAX_DATA_FILES];
-	int32      _chunkPos     [MAX_SLOT_COUNT * MAX_DATA_FILES];
-	bool       _isCurrentSlot[MAX_SLOT_COUNT * MAX_DATA_FILES];
+	int32 fileSize(const Common::String &name);
 
-	class GobEngine *_vm;
+	Common::SeekableReadStream *getFile(const Common::String &name);
+	byte *getFile(const Common::String &name, int32 &size);
 
-	bool isDataFileChunk(int16 handle) const;
-	bool isPacked       (int16 handle) const;
+	static byte *unpack(const byte *src, uint32 srcSize, int32 &size);
+	static Common::SeekableReadStream *unpack(Common::SeekableReadStream &src);
 
-	int getFile (int16 handle) const;
-	int getSlot (int16 handle) const;
-	int getIndex(int16 handle) const;
+private:
+	static const int kMaxArchives = 8;
 
-	int   getIndex (int file, int slot) const;
-	int16 getHandle(int file, int slot) const;
+	struct Archive;
 
-	int16 file_open(const char *path);
-	Common::File *file_getHandle(int16 handle);
-	const Common::File *file_getHandle(int16 handle) const;
+	struct File {
+		Common::String name;
+		uint32 size;
+		uint32 offset;
+		bool   packed;
 
-	int16 getChunk(const char *chunkName);
-	char  freeChunk(int16 handle);
-	int32 readChunk(int16 handle, byte *buf, uint16 size);
-	int16 seekChunk(int16 handle, int32 pos, int16 from);
+		Archive *archive;
 
-	uint32 getChunkPos(int16 handle) const;
+		File();
+		File(const Common::String &n, uint32 s, uint32 o, bool p, Archive &a);
+	};
 
-	int32 getChunkSize(const char *chunkName, int32 &packSize);
+	typedef Common::HashMap<Common::String, File, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 
-	uint32 getPos(int16 handle);
-	void   seekData(int16 handle, int32 pos, int16 from);
+	struct Archive {
+		Common::String name;
+		Common::File   file;
 
-	int32 readData(int16 handle, byte *buf, uint16 size);
+		FileMap files;
 
-	friend class DataStream;
+		bool base;
+	};
+
+	Common::Array<Archive *> _archives;
+
+	Archive *openArchive(const Common::String &name);
+	bool closeArchive(Archive &archive);
+
+	File *findFile(const Common::String &name);
+
+	Common::SeekableReadStream *getFile(File &file);
+	byte *getFile(File &file, int32 &size);
+
+	static void unpack(Common::SeekableReadStream &src, byte *dest, uint32 size);
 };
 
 } // End of namespace Gob

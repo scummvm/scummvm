@@ -150,7 +150,7 @@ private:
 	byte *_totPtr;
 	uint32 _totSize;
 
-	int16 _lomHandle;
+	Common::SeekableReadStream *_lom;
 
 	TOTFile::Properties _totProperties;
 

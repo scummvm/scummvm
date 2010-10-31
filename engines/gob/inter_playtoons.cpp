@@ -246,10 +246,10 @@ bool Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 
 	mode = _vm->_saveLoad->getSaveMode(file);
 	if (mode == SaveLoad::kSaveModeNone) {
-		if (_vm->_dataIO->existData(file))
-			size = _vm->_dataIO->getDataSize(file);
-		else
+		size = _vm->_dataIO->fileSize(file);
+		if (size == -1)
 			warning("File \"%s\" not found", file);
+
 	} else if (mode == SaveLoad::kSaveModeSave)
 		size = _vm->_saveLoad->getSize(file);
 	else if (mode == SaveLoad::kSaveModeExists)
@@ -272,7 +272,6 @@ bool Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 	int32 size;
 	int32 offset;
 	uint16 dataVar;
-	int16 handle;
 	byte *buf;
 	SaveLoad::SaveMode mode;
 
@@ -329,12 +328,9 @@ bool Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 	}
 
 	WRITE_VAR(1, 1);
-	handle = _vm->_dataIO->openData(file);
-
-	if (handle < 0)
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(file);
+	if (!stream)
 		return false;
-
-	DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
 
 	_vm->_draw->animateCursor(4);
 	if (offset < 0)
@@ -435,9 +431,9 @@ void Inter_Playtoons::oPlaytoons_openItk() {
 	// Workaround for Bambou : In the script, the path is hardcoded (!!)
 	if ((backSlash = strrchr(fileName, '\\'))) {
 		debugC(2, kDebugFileIO, "Opening ITK file \"%s\" instead of \"%s\"", backSlash + 1, fileName);
-		_vm->_dataIO->openDataFile(backSlash + 1, true);
+		_vm->_dataIO->openArchive(backSlash + 1, false);
 	} else
-		_vm->_dataIO->openDataFile(fileName, true);
+		_vm->_dataIO->openArchive(fileName, false);
 	// All the other checks are meant to verify (if not found at the first try)
 	// if the file is present on the CD or not. As everything is supposed to
 	// be copied, those checks are skipped

@@ -114,19 +114,13 @@ bool Sound::sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName,
 
 	debugC(2, kDebugSound, "Loading sample \"%s\"", fileName);
 
-	if (!_vm->_dataIO->existData(fileName)) {
+	int32 size;
+	byte *data = _vm->_dataIO->getFile(fileName, size);
+	if (!data) {
 		warning("Can't open sample file \"%s\"", fileName);
 		return false;
 	}
 
-	byte *data;
-	uint32 size;
-
-	data = (byte *)_vm->_dataIO->getData(fileName);
-	if (!data)
-		return false;
-
-	size = _vm->_dataIO->getDataSize(fileName);
 	return sndDesc->load(type, data, size);
 }
 
@@ -279,12 +273,11 @@ bool Sound::adlibLoadMDY(const char *fileName) {
 
 	debugC(1, kDebugSound, "AdLib: Loading MDY data (\"%s\")", fileName);
 
-	if (!_vm->_dataIO->existData(fileName)) {
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(fileName);
+	if (!stream) {
 		warning("Can't open MDY file \"%s\"", fileName);
 		return false;
 	}
-
-	DataStream *stream = _vm->_dataIO->getDataStream(fileName);
 
 	bool loaded = _mdyPlayer->loadMDY(*stream);
 
@@ -300,14 +293,13 @@ bool Sound::adlibLoadTBR(const char *fileName) {
 	if (!_mdyPlayer)
 		_mdyPlayer = new MDYPlayer(*_vm->_mixer);
 
-	if (!_vm->_dataIO->existData(fileName)) {
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(fileName);
+	if (!stream) {
 		warning("Can't open TBR file \"%s\"", fileName);
 		return false;
 	}
 
 	debugC(1, kDebugSound, "AdLib: Loading MDY instruments (\"%s\")", fileName);
-
-	DataStream *stream = _vm->_dataIO->getDataStream(fileName);
 
 	bool loaded = _mdyPlayer->loadTBR(*stream);
 
@@ -522,12 +514,9 @@ void Sound::cdLoadLIC(const char *fname) {
 
 	debugC(1, kDebugSound, "CDROM: Loading LIC \"%s\"", fname);
 
-	if (!_vm->_dataIO->existData(fname))
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(fname);
+	if (!stream)
 		return;
-
-	_vm->_dataIO->getUnpackedData(fname);
-
-	DataStream *stream = _vm->_dataIO->getDataStream(fname);
 
 	_cdrom->readLIC(*stream);
 

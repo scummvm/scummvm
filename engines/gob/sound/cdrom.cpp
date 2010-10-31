@@ -49,7 +49,7 @@ CDROM::~CDROM() {
 	stop();
 }
 
-void CDROM::readLIC(DataStream &stream) {
+void CDROM::readLIC(Common::SeekableReadStream &stream) {
 	uint16 version, startChunk, pos;
 
 	freeLICBuffer();
