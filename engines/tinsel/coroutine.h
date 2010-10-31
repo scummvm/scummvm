@@ -129,10 +129,14 @@ public:
  *   _ctx->var = 0;
  *
  * @see CORO_END_CONTEXT
+ *
+ * @note We declare a variable 'DUMMY' to allow the user to specify an 'empty'
+ * context, and so compilers won't complain about ";" following the macro.
  */
 #define CORO_BEGIN_CONTEXT  \
 	struct CoroContextTag : CoroBaseContext { \
 		CoroContextTag() : CoroBaseContext(SCUMMVM_CURRENT_FUNCTION) {} \
+		int DUMMY
 
 /**
  * End the declaration of a coroutine context.
