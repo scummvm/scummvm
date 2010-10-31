@@ -1637,7 +1637,7 @@ bool Inter_v1::o1_checkData(OpFuncParams &params) {
 
 	if (!_vm->_dataIO->hasFile(_vm->_game->_script->getResultStr())) {
 		warning("File \"%s\" not found", _vm->_game->_script->getResultStr());
-		WRITE_VAR_OFFSET(varOff, -1);
+		WRITE_VAR_OFFSET(varOff, (uint32) -1);
 	} else
 		WRITE_VAR_OFFSET(varOff, 50); // "handle" between 50 and 128 = in archive
 
