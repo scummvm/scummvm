@@ -406,6 +406,12 @@ const SciWorkaroundEntry kStrCat_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
+const SciWorkaroundEntry kStrLen_workarounds[] = {
+	{ GID_QFG2,          210,     2,  0,                   "", "export 21",   0xdeb,    0, { WORKAROUND_FAKE,      0 } }, // When saying something incorrect at the WIT, an integer is passed instead of a reference - bug #3100292
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kUnLoad_workarounds[] = {
 	{ GID_CAMELOT,       921,   921,  1,             "Script", "changeState",  0x36,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: While showing Camelot (and other places), the reference is invalid - bug #3035000
 	{ GID_CAMELOT,       921,   921,  1,             "Script", "init",         0x36,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: When being attacked by the boar (and other places), the reference is invalid - bug #3035000
