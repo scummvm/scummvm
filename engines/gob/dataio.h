@@ -38,10 +38,18 @@ namespace Common {
 
 namespace Gob {
 
+struct ArchiveInfo {
+	Common::String name;
+	bool base;
+	uint32 fileCount;
+};
+
 class DataIO {
 public:
 	DataIO();
 	~DataIO();
+
+	void getArchiveInfo(Common::Array<ArchiveInfo> &info) const;
 
 	bool openArchive(Common::String name, bool base);
 	bool closeArchive(bool base);

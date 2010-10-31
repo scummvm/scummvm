@@ -60,6 +60,19 @@ DataIO::~DataIO() {
 	}
 }
 
+void DataIO::getArchiveInfo(Common::Array<ArchiveInfo> &info) const {
+	info.resize(_archives.size());
+
+	for (uint i = 0; i < _archives.size(); i++) {
+		if (!_archives[i])
+			continue;
+
+		info[i].name      = _archives[i]->name;
+		info[i].base      = _archives[i]->base;
+		info[i].fileCount = _archives[i]->files.size();
+	}
+}
+
 byte *DataIO::unpack(const byte *src, uint32 srcSize, int32 &size) {
 	size = READ_LE_UINT32(src);
 
