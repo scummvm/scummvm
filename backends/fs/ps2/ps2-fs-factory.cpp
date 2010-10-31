@@ -23,6 +23,10 @@
  */
 
 #if defined(__PLAYSTATION2__)
+
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "backends/fs/ps2/ps2-fs-factory.h"
 #include "backends/fs/ps2/ps2-fs.cpp"
 
