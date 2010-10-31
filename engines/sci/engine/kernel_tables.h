@@ -437,7 +437,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(StrCmp),            SIG_EVERYWHERE,           "rr(i)",                 NULL,            NULL },
 	{ MAP_CALL(StrCpy),            SIG_EVERYWHERE,           "r[r0](i)",              NULL,            NULL },
 	{ MAP_CALL(StrEnd),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(StrLen),            SIG_EVERYWHERE,           "[r0]",                  NULL,            NULL },
+	{ MAP_CALL(StrLen),            SIG_EVERYWHERE,           "[r0]",                  NULL,            kStrLen_workarounds },
 	{ MAP_CALL(StrSplit),          SIG_EVERYWHERE,           "rr[r0]",                NULL,            NULL },
 	{ MAP_CALL(TextColors),        SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
 	{ MAP_CALL(TextFonts),         SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
