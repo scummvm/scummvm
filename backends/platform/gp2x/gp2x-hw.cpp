@@ -51,6 +51,10 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+extern "C" {
+static unsigned long gp2x_dev[8]={0,0,0,0,0,0,0,0};//, gp2x_ticks_per_second;
+}
+
 namespace GP2X_HW {
 
 enum {

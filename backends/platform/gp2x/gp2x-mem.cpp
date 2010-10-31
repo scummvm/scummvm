@@ -42,8 +42,11 @@
 
 #include "backends/platform/gp2x/gp2x-mem.h"
 
-void SetClock (unsigned c)
-{
+extern "C" {
+static volatile unsigned short *gp2x_memregs;
+}
+
+void SetClock (unsigned c) {
 	unsigned v;
 	unsigned mdiv,pdiv=3,scale=0;
 
@@ -57,8 +60,7 @@ void SetClock (unsigned c)
     gp2x_memregs[0x910>>1] = v;
 }
 
-void patchMMU (void)
-{
+void patchMMU (void) {
 	//volatile unsigned int *secbuf = (unsigned int *)malloc (204800);
 
 	printf ("Reconfiguring cached memory regions...\n");
@@ -71,19 +73,15 @@ void patchMMU (void)
 
 	int mmufd = open("/dev/mmuhack", O_RDWR);
 
-	if(mmufd < 0)
-	{
+	if(mmufd < 0) {
 		printf ("Upper memory uncached (attempt failed, access to upper memory will be slower)...\n");
-	}
-	else
-	{
+	} else {
 		printf ("Upper memory cached...\n");
 		close(mmufd);
 	}
 }
 
-void unpatchMMU (void)
-{
+void unpatchMMU (void) {
 	printf ("Restoreing cached memory regions...\n");
 	system("/sbin/rmmod mmuhack");
 }
