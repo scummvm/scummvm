@@ -68,7 +68,7 @@ bool g_debug_track_mouse_clicks = false;
 static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeValue);
 
 Console::Console(SciEngine *engine) : GUI::Debugger(),
-	_engine(engine), _debugState(engine->_debugState), _enterTime(0) {
+	_engine(engine), _debugState(engine->_debugState) {
 
 	// Variables
 	DVar_Register("sleeptime_factor",	&g_debug_sleeptime_factor, DVAR_INT, 0);
@@ -222,7 +222,6 @@ Console::~Console() {
 
 void Console::preEnter() {
 	_engine->pauseEngine(true);
-	_enterTime = g_system->getMillis();
 }
 
 void Console::postEnter() {
@@ -283,8 +282,6 @@ void Console::postEnter() {
 	}
 
 	_engine->pauseEngine(false);
-	// Subtract the time we were running the debugger from the game running time
-	_engine->_gamestate->gameStartTime += g_system->getMillis() - _enterTime;
 }
 
 bool Console::cmdHelp(int argc, const char **argv) {

@@ -180,11 +180,10 @@ enum {
 
 reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 	TimeDate loc_time;
-	uint32 elapsedTime;
+	uint32 elapsedTime = g_engine->getTotalPlayTime();
 	int retval = 0; // Avoid spurious warning
 
 	g_system->getTimeAndDate(loc_time);
-	elapsedTime = g_system->getMillis() - s->gameStartTime;
 
 	int mode = (argc > 0) ? argv[0].toUint16() : 0;
 

@@ -44,6 +44,8 @@
 
 namespace Sci {
 
+// TODO/FIXME: This is all guesswork
+
 GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette *palette, GfxPaint32 *paint32)
 	: _segMan(segMan), _resMan(resMan), _cache(cache), _screen(screen), _palette(palette), _paint32(paint32) {
 
@@ -249,7 +251,7 @@ int16 GfxFrameout::kernelGetHighPlanePri() {
 	return readSelectorValue(g_sci->getEngineState()->_segMan, _planes.back().object, SELECTOR(priority));
 }
 
-// No idea yet how to implement this
+// TODO: No idea yet how to implement this
 void GfxFrameout::kernelAddPicAt(reg_t planeObj, int16 forWidth, GuiResourceId pictureId) {
 	addPlanePicture(planeObj, pictureId, forWidth);
 }

@@ -178,24 +178,34 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 	// TODO: It would be a good idea to store a magic number & a header size here,
 	// so that we can implement backward compatibility if the savegame format changes.
 
-	s.syncString(obj.savegame_name);
+	s.syncString(obj.name);
 	s.syncVersion(CURRENT_SAVEGAME_VERSION);
-	obj.savegame_version = s.getVersion();
-	s.syncString(obj.game_version);
-	s.syncAsSint32LE(obj.savegame_date);
-	s.syncAsSint32LE(obj.savegame_time);
+	obj.version = s.getVersion();
+	s.syncString(obj.gameVersion);
+	s.syncAsSint32LE(obj.saveDate);
+	s.syncAsSint32LE(obj.saveTime);
 	if (s.getVersion() < 22) {
-		obj.game_object_offset = 0;
-		obj.script0_size = 0;
+		obj.gameObjectOffset = 0;
+		obj.script0Size = 0;
 	} else {
-		s.syncAsUint16LE(obj.game_object_offset);
-		s.syncAsUint16LE(obj.script0_size);
+		s.syncAsUint16LE(obj.gameObjectOffset);
+		s.syncAsUint16LE(obj.script0Size);
+	}
+
+	// Playtime
+	obj.playTime = 0;
+	if (s.isLoading()) {
+		if (s.getVersion() >= 26)
+			s.syncAsUint32LE(obj.playTime);
+	} else {
+		obj.playTime = g_engine->getTotalPlayTime() / 1000;
+		s.syncAsUint32LE(obj.playTime);
 	}
 }
 
 void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	Common::String tmp;
-	s.syncString(tmp, VER(14), VER(23));			// OBSOLETE: Used to be game_version
+	s.syncString(tmp, VER(14), VER(23));			// OBSOLETE: Used to be gameVersion
 
 	if (getSciVersion() <= SCI_VERSION_1_1) {
 		// Save/Load picPort as well for SCI0-SCI1.1. Necessary for Castle of Dr. Brain,
@@ -520,7 +530,7 @@ void SoundCommandParser::syncPlayList(Common::Serializer &s) {
 	_music->saveLoadWithSerializer(s);
 }
 
-void SoundCommandParser::reconstructPlayList(int savegame_version) {
+void SoundCommandParser::reconstructPlayList(int version) {
 	Common::StackLock lock(_music->_mutex);
 
 	const MusicList::iterator end = _music->getPlayListEnd();
@@ -681,15 +691,15 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savenam
 	g_system->getTimeAndDate(curTime);
 
 	SavegameMetadata meta;
-	meta.savegame_version = CURRENT_SAVEGAME_VERSION;
-	meta.savegame_name = savename;
-	meta.game_version = version;
-	meta.savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
-	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
+	meta.version = CURRENT_SAVEGAME_VERSION;
+	meta.name = savename;
+	meta.gameVersion = version;
+	meta.saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	meta.saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
 
 	Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
-	meta.script0_size = script0->size;
-	meta.game_object_offset = g_sci->getGameObject().offset;
+	meta.script0Size = script0->size;
+	meta.gameObjectOffset = g_sci->getGameObject().offset;
 
 	// Checking here again
 	if (s->executionStackBase) {
@@ -718,13 +728,13 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		return;
 	}
 
-	if ((meta.savegame_version < MINIMUM_SAVEGAME_VERSION) ||
-	    (meta.savegame_version > CURRENT_SAVEGAME_VERSION)) {
+	if ((meta.version < MINIMUM_SAVEGAME_VERSION) ||
+	    (meta.version > CURRENT_SAVEGAME_VERSION)) {
 		/*
-		if (meta.savegame_version < MINIMUM_SAVEGAME_VERSION)
+		if (meta.version < MINIMUM_SAVEGAME_VERSION)
 			warning("Old savegame version detected, unable to load it");
 		else
-			warning("Savegame version is %d, maximum supported is %0d", meta.savegame_version, CURRENT_SAVEGAME_VERSION);
+			warning("Savegame version is %d, maximum supported is %0d", meta.version, CURRENT_SAVEGAME_VERSION);
 		*/
 
 		showScummVMDialog("The format of this saved game is obsolete, unable to load it");
@@ -733,9 +743,9 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		return;
 	}
 
-	if (meta.game_object_offset > 0 && meta.script0_size > 0) {
+	if (meta.gameObjectOffset > 0 && meta.script0Size > 0) {
 		Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
-		if (script0->size != meta.script0_size || g_sci->getGameObject().offset != meta.game_object_offset) {
+		if (script0->size != meta.script0Size || g_sci->getGameObject().offset != meta.gameObjectOffset) {
 			//warning("This saved game was created with a different version of the game, unable to load it");
 
 			showScummVMDialog("This saved game was created with a different version of the game, unable to load it");
@@ -761,13 +771,13 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// Time state:
 	s->lastWaitTime = g_system->getMillis();
-	s->gameStartTime = g_system->getMillis();
 	s->_screenUpdateTime = g_system->getMillis();
+	g_engine->setTotalPlayTime(meta.playTime * 1000);
 
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->reset();
 
-	g_sci->_soundCmd->reconstructPlayList(meta.savegame_version);
+	g_sci->_soundCmd->reconstructPlayList(meta.version);
 
 	// Message state:
 	delete s->_msgState;
@@ -789,12 +799,12 @@ bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata 
 	if (stream->eos())
 		return false;
 
-	if ((meta->savegame_version < MINIMUM_SAVEGAME_VERSION) ||
-	    (meta->savegame_version > CURRENT_SAVEGAME_VERSION)) {
-		if (meta->savegame_version < MINIMUM_SAVEGAME_VERSION)
+	if ((meta->version < MINIMUM_SAVEGAME_VERSION) ||
+	    (meta->version > CURRENT_SAVEGAME_VERSION)) {
+		if (meta->version < MINIMUM_SAVEGAME_VERSION)
 			warning("Old savegame version detected- can't load");
 		else
-			warning("Savegame version is %d- maximum supported is %0d", meta->savegame_version, CURRENT_SAVEGAME_VERSION);
+			warning("Savegame version is %d- maximum supported is %0d", meta->version, CURRENT_SAVEGAME_VERSION);
 
 		return false;
 	}

@@ -554,7 +554,7 @@ bool SciEngine::initGame() {
 		_vocabulary->reset();
 	}
 
-	_gamestate->gameStartTime = _gamestate->lastWaitTime = _gamestate->_screenUpdateTime = g_system->getMillis();
+	_gamestate->lastWaitTime = _gamestate->_screenUpdateTime = g_system->getMillis();
 
 	// Load game language into printLang property of game object
 	setSciLanguage();
@@ -650,6 +650,8 @@ void SciEngine::initStackBaseWithSelector(Selector selector) {
 }
 
 void SciEngine::runGame() {
+	setTotalPlayTime(0);
+
 	initStackBaseWithSelector(SELECTOR(play)); // Call the play selector
 
 	// Attach the debug console on game startup, if requested

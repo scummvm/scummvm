@@ -422,7 +422,7 @@ static void listSavegames(Common::Array<SavegameDesc> &saves) {
 		Common::SeekableReadStream *in;
 		if ((in = saveFileMan->openForLoading(filename))) {
 			SavegameMetadata meta;
-			if (!get_savegame_metadata(in, &meta) || meta.savegame_name.empty()) {
+			if (!get_savegame_metadata(in, &meta) || meta.name.empty()) {
 				// invalid
 				delete in;
 				continue;
@@ -431,17 +431,17 @@ static void listSavegames(Common::Array<SavegameDesc> &saves) {
 
 			SavegameDesc desc;
 			desc.id = strtol(filename.end() - 3, NULL, 10);
-			desc.date = meta.savegame_date;
+			desc.date = meta.saveDate;
 			// We need to fix date in here, because we save DDMMYYYY instead of
 			// YYYYMMDD, so sorting wouldn't work
 			desc.date = ((desc.date & 0xFFFF) << 16) | ((desc.date & 0xFF0000) >> 8) | ((desc.date & 0xFF000000) >> 24);
-			desc.time = meta.savegame_time;
-			desc.version = meta.savegame_version;
+			desc.time = meta.saveTime;
+			desc.version = meta.version;
 
-			if (meta.savegame_name.lastChar() == '\n')
-				meta.savegame_name.deleteLastChar();
+			if (meta.name.lastChar() == '\n')
+				meta.name.deleteLastChar();
 
-			Common::strlcpy(desc.name, meta.savegame_name.c_str(), SCI_MAX_SAVENAME_LENGTH);
+			Common::strlcpy(desc.name, meta.name.c_str(), SCI_MAX_SAVENAME_LENGTH);
 
 			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
 
