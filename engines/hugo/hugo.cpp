@@ -287,6 +287,7 @@ Common::Error HugoEngine::run() {
 				break;
 			}
 		}
+		_status.doQuitFl = shouldQuit();            // update game quit flag
 	}
 	return Common::kNoError;
 }
@@ -1237,13 +1238,13 @@ bool HugoEngine::loadHugoDat() {
 	}
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		if (varnt == _gameVariant) {
-			_tunesNbr     = in.readByte();
-			_soundSilence = in.readByte();
-			_soundTest    = in.readByte();
+			_tunesNbr     = in.readSByte();
+			_soundSilence = in.readSByte();
+			_soundTest    = in.readSByte();
 		} else {
-			in.readByte();
-			in.readByte();
-			in.readByte();
+			in.readSByte();
+			in.readSByte();
+			in.readSByte();
 		}
 	}
 
@@ -1585,8 +1586,6 @@ void HugoEngine::shutdown() {
 	debugC(1, kDebugEngine, "shutdown");
 
 	_file->closeDatabaseFiles();
-	if (_status.recordFl || _status.playbackFl)
-		_file->closePlaybackFile();
 	_object->freeObjects();
 }
 

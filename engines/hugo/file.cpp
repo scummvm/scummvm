@@ -470,24 +470,6 @@ void FileManager::initSavedGame() {
 		Utils::Error(WRITE_ERR, "%s", _vm->_initFilename.c_str());
 }
 
-void FileManager::openPlaybackFile(bool playbackFl, bool recordFl) {
-	debugC(1, kDebugFile, "openPlaybackFile(%d, %d)", (playbackFl) ? 1 : 0, (recordFl) ? 1 : 0);
-
-/*
-	if (playbackFl) {
-		if (!(fpb = fopen(PBFILE, "r+b")))
-			Utils::Error(FILE_ERR, "%s", PBFILE);
-	} else if (recordFl) {
-		fpb = fopen(PBFILE, "wb");
-	}
-*/
-	pbdata.time = 0;                                // Say no key available
-}
-
-void FileManager::closePlaybackFile() {
-//	fclose(fpb);
-}
-
 void FileManager::printBootText() {
 // Read the encrypted text from the boot file and print it
 	debugC(1, kDebugFile, "printBootText");

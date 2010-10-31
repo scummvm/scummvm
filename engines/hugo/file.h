@@ -47,12 +47,6 @@ struct PCC_header_t {                               // Structure of PCX file hea
 	byte   fill2[60];
 };                                                  // Header of a PCC file
 
-// Record and playback handling stuff:
-struct pbdata_t {
-//	int    key;                                     // Character
-	uint32 time;                                    // Time at which character was pressed
-};
-
 namespace Hugo {
 
 class FileManager {
@@ -64,7 +58,6 @@ public:
 	bool     fileExists(char *filename);
 	sound_pt getSound(short sound, uint16 *size);
 
-	void     closePlaybackFile();
 	void     initSavedGame();
 	void     instructions();
 	void     readBootFile();
@@ -95,14 +88,8 @@ private:
 	byte *convertPCC(byte *p, uint16 y, uint16 bpl, image_pt data_p);
 	uif_hdr_t *getUIFHeader(uif_t id);
 
-	pbdata_t pbdata;
-//	FILE *fpb;
-
 //Strangerke : Not used?
-	void     openPlaybackFile(bool playbackFl, bool recordFl);
 	void     printBootText();
-//	bool     pkkey();
-//	char     pbget();
 };
 
 class FileManager_v1d : public FileManager {

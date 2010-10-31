@@ -114,9 +114,9 @@ public:
 	byte   _gameVariant;
 	byte   _maxInvent;
 	byte   _numBonuses;
-	byte   _soundSilence;
-	byte   _soundTest;
-	byte   _tunesNbr;
+	int8   _soundSilence;
+	int8   _soundTest;
+	int8   _tunesNbr;
 	uint16 _numScreens;
 
 	object_t *_hero;
