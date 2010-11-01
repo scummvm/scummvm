@@ -760,6 +760,7 @@ void GlobalProcesses(uint32 numProcess, byte *pProcess) {
  */
 void FreeGlobalProcesses() {
 	delete[] pGlobalProcess;
+	pGlobalProcess = 0;
 	numGlobalProcess = 0;
 }
 

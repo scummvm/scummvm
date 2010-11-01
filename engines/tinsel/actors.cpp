@@ -199,6 +199,10 @@ void RegisterActors(int num) {
 void FreeActors() {
 	free(actorInfo);
 	actorInfo = NULL;
+	if (TinselV2) {
+		free(zFactors);
+		zFactors = NULL;
+	}
 }
 
 /**
@@ -625,7 +629,7 @@ int NextTaggedActor() {
 	PMOVER	pActor;
 	bool	hid;
 
-	do {
+	while (ti < NumActors); {
 		if (actorInfo[ti].tagged) {
 			pActor = GetMover(ti+1);
 			if (pActor)
@@ -637,6 +641,7 @@ int NextTaggedActor() {
 				return ++ti;
 			}
 		}
+		++ti;
 	} while (++ti < NumActors);
 
 	return 0;
