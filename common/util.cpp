@@ -38,20 +38,20 @@ void hexdump(const byte *data, int len, int bytesPerLine, int startOffset) {
 	byte c;
 	int offset = startOffset;
 	while (len >= bytesPerLine) {
-		printf("%06x: ", offset);
+		debugN("%06x: ", offset);
 		for (i = 0; i < bytesPerLine; i++) {
-			printf("%02x ", data[i]);
+			debugN("%02x ", data[i]);
 			if (i % 4 == 3)
-				printf(" ");
+				debugN(" ");
 		}
-		printf(" |");
+		debugN(" |");
 		for (i = 0; i < bytesPerLine; i++) {
 			c = data[i];
 			if (c < 32 || c >= 127)
 				c = '.';
-			printf("%c", c);
+			debugN("%c", c);
 		}
-		printf("|\n");
+		debugN("|\n");
 		data += bytesPerLine;
 		len -= bytesPerLine;
 		offset += bytesPerLine;
@@ -60,25 +60,25 @@ void hexdump(const byte *data, int len, int bytesPerLine, int startOffset) {
 	if (len <= 0)
 		return;
 
-	printf("%06x: ", offset);
+	debugN("%06x: ", offset);
 	for (i = 0; i < bytesPerLine; i++) {
 		if (i < len)
-			printf("%02x ", data[i]);
+			debugN("%02x ", data[i]);
 		else
-			printf("   ");
+			debugN("   ");
 		if (i % 4 == 3)
-			printf(" ");
+			debugN(" ");
 	}
-	printf(" |");
+	debugN(" |");
 	for (i = 0; i < len; i++) {
 		c = data[i];
 		if (c < 32 || c >= 127)
 			c = '.';
-		printf("%c", c);
+		debugN("%c", c);
 	}
 	for (; i < bytesPerLine; i++)
-		printf(" ");
-	printf("|\n");
+		debugN(" ");
+	debugN("|\n");
 }
 
 
