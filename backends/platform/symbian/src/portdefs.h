@@ -45,6 +45,13 @@
 // and we _really_ don't wanna link with any other windows LIBC library!
 #if defined(__GCC32__)
 
+	FIXME: If the following macros are ever used, then this will lead
+	to serious errors, e.g. an almost guaranteed buffer overflow
+	in Common::String::format(). Do *NOT* re-#define vsnprintf to
+	vsprintf, it will lead to disaster!
+	This shouldn't be necessary anyway, since we have
+	backends/platform/symbian/src/vsnprintf.h
+
 	#define snprintf(buf,len,args...)	sprintf(buf,args)
 	#define vsnprintf(buf,len,format,valist)	vsprintf(buf,format,valist)
 
