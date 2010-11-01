@@ -266,7 +266,7 @@ void Map_v2::optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) {
 
 	} else {
 
-		for (int i = obj->nearestWayPoint; i >= obj->nearestDest; i++) {
+		for (int i = obj->nearestWayPoint; i >= obj->nearestDest; i--) {
 			if (_wayPoints[i].notWalkable == 1)
 				break;
 
