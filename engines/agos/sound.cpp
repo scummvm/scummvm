@@ -38,23 +38,21 @@
 #include "sound/decoders/vorbis.h"
 #include "sound/decoders/wave.h"
 
-using Common::File;
-
 namespace AGOS {
 
 #define SOUND_BIG_ENDIAN true
 
 class BaseSound : Common::NonCopyable {
 protected:
-	File *_file;
+	Common::File *_file;
 	uint32 *_offsets;
 	Audio::Mixer *_mixer;
 	bool _freeOffsets;
 	DisposeAfterUse::Flag _disposeFile;
 
 public:
-	BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigEndian, DisposeAfterUse::Flag disposeFileAfterUse = DisposeAfterUse::YES);
-	BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, DisposeAfterUse::Flag disposeFileAfterUse = DisposeAfterUse::YES);
+	BaseSound(Audio::Mixer *mixer, Common::File *file, uint32 base, bool bigEndian, DisposeAfterUse::Flag disposeFileAfterUse = DisposeAfterUse::YES);
+	BaseSound(Audio::Mixer *mixer, Common::File *file, uint32 *offsets, DisposeAfterUse::Flag disposeFileAfterUse = DisposeAfterUse::YES);
 	virtual ~BaseSound();
 
 	void playSound(uint sound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0) {
@@ -64,7 +62,7 @@ public:
 	virtual Audio::AudioStream *makeAudioStream(uint sound) = 0;
 };
 
-BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigEndian, DisposeAfterUse::Flag disposeFileAfterUse)
+BaseSound::BaseSound(Audio::Mixer *mixer, Common::File *file, uint32 base, bool bigEndian, DisposeAfterUse::Flag disposeFileAfterUse)
 	: _mixer(mixer), _file(file), _disposeFile(disposeFileAfterUse) {
 
 	uint res = 0;
@@ -98,7 +96,7 @@ BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigEndia
 	_offsets[res] = _file->size();
 }
 
-BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, DisposeAfterUse::Flag disposeFileAfterUse)
+BaseSound::BaseSound(Audio::Mixer *mixer, Common::File *file, uint32 *offsets, DisposeAfterUse::Flag disposeFileAfterUse)
 	: _mixer(mixer), _file(file), _disposeFile(disposeFileAfterUse) {
 
 	_offsets = offsets;
@@ -225,9 +223,9 @@ static void convertPan(int &pan) {
 
 class WavSound : public BaseSound {
 public:
-	WavSound(Audio::Mixer *mixer, File *file, uint32 base = 0, DisposeAfterUse::Flag disposeFileAfterUse = DisposeAfterUse::YES)
+	WavSound(Audio::Mixer *mixer, Common::File *file, uint32 base = 0, DisposeAfterUse::Flag disposeFileAfterUse = DisposeAfterUse::YES)
 		: BaseSound(mixer, file, base, false, disposeFileAfterUse) {}
-	WavSound(Audio::Mixer *mixer, File *file, uint32 *offsets) : BaseSound(mixer, file, offsets) {}
+	WavSound(Audio::Mixer *mixer, Common::File *file, uint32 *offsets) : BaseSound(mixer, file, offsets) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
 };
@@ -251,7 +249,7 @@ void WavSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 class VocSound : public BaseSound {
 	const byte _flags;
 public:
-	VocSound(Audio::Mixer *mixer, File *file, bool isUnsigned, uint32 base = 0, bool bigEndian = false, DisposeAfterUse::Flag disposeFileAfterUse = DisposeAfterUse::YES)
+	VocSound(Audio::Mixer *mixer, Common::File *file, bool isUnsigned, uint32 base = 0, bool bigEndian = false, DisposeAfterUse::Flag disposeFileAfterUse = DisposeAfterUse::YES)
 		: BaseSound(mixer, file, base, bigEndian, disposeFileAfterUse), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
@@ -275,7 +273,7 @@ void VocSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 class RawSound : public BaseSound {
 	const byte _flags;
 public:
-	RawSound(Audio::Mixer *mixer, File *file, bool isUnsigned)
+	RawSound(Audio::Mixer *mixer, Common::File *file, bool isUnsigned)
 		: BaseSound(mixer, file, 0, SOUND_BIG_ENDIAN), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
@@ -305,7 +303,7 @@ void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 
 class CompressedSound : public BaseSound {
 public:
-	CompressedSound(Audio::Mixer *mixer, File *file, uint32 base) : BaseSound(mixer, file, base, false) {}
+	CompressedSound(Audio::Mixer *mixer, Common::File *file, uint32 base) : BaseSound(mixer, file, base, false) {}
 
 	Common::MemoryReadStream *loadStream(uint sound) const {
 		if (_offsets == NULL)
@@ -334,7 +332,7 @@ public:
 #ifdef USE_MAD
 class MP3Sound : public CompressedSound {
 public:
-	MP3Sound(Audio::Mixer *mixer, File *file, uint32 base = 0) : CompressedSound(mixer, file, base) {}
+	MP3Sound(Audio::Mixer *mixer, Common::File *file, uint32 base = 0) : CompressedSound(mixer, file, base) {}
 	Audio::AudioStream *makeAudioStream(uint sound) {
 		Common::MemoryReadStream *tmp = loadStream(sound);
 		if (!tmp)
@@ -350,7 +348,7 @@ public:
 #ifdef USE_VORBIS
 class VorbisSound : public CompressedSound {
 public:
-	VorbisSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : CompressedSound(mixer, file, base) {}
+	VorbisSound(Audio::Mixer *mixer, Common::File *file, uint32 base = 0) : CompressedSound(mixer, file, base) {}
 	Audio::AudioStream *makeAudioStream(uint sound) {
 		Common::MemoryReadStream *tmp = loadStream(sound);
 		if (!tmp)
@@ -366,7 +364,7 @@ public:
 #ifdef USE_FLAC
 class FLACSound : public CompressedSound {
 public:
-	FLACSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : CompressedSound(mixer, file, base) {}
+	FLACSound(Audio::Mixer *mixer, Common::File *file, uint32 base = 0) : CompressedSound(mixer, file, base) {}
 	Audio::AudioStream *makeAudioStream(uint sound) {
 		Common::MemoryReadStream *tmp = loadStream(sound);
 		if (!tmp)
@@ -379,7 +377,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-static CompressedSound *makeCompressedSound(Audio::Mixer *mixer, File *file, const Common::String &basename) {
+static CompressedSound *makeCompressedSound(Audio::Mixer *mixer, Common::File *file, const Common::String &basename) {
 #ifdef USE_FLAC
 	file->open(basename + ".fla");
 	if (file->isOpen()) {
@@ -451,7 +449,7 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 
 
 	char filename[16];
-	File *file = new File();
+	Common::File *file = new Common::File();
 
 	if (!_hasVoiceFile) {
 		_voice = makeCompressedSound(_mixer, file, gss->speech_filename);
@@ -506,7 +504,7 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 
 void Sound::loadSfxFile(const GameSpecificSettings *gss) {
 	char filename[16];
-	File *file = new File();
+	Common::File *file = new Common::File();
 
 	if (!_hasEffectsFile) {
 		_effects = makeCompressedSound(_mixer, file, gss->effects_filename);
@@ -540,7 +538,7 @@ void Sound::readSfxFile(const Common::String &filename) {
 
 	_mixer->stopHandle(_effectsHandle);
 
-	File *file = new File();
+	Common::File *file = new Common::File();
 	file->open(filename);
 
 	if (file->isOpen() == false) {
@@ -557,7 +555,7 @@ void Sound::readSfxFile(const Common::String &filename) {
 }
 
 // This method is only used by Simon2
-void Sound::loadSfxTable(File *gameFile, uint32 base) {
+void Sound::loadSfxTable(Common::File *gameFile, uint32 base) {
 	stopAll();
 
 	delete _effects;
@@ -572,7 +570,7 @@ void Sound::loadSfxTable(File *gameFile, uint32 base) {
 void Sound::readVoiceFile(const Common::String &filename) {
 	_mixer->stopHandle(_voiceHandle);
 
-	File *file = new File();
+	Common::File *file = new Common::File();
 	file->open(filename);
 
 	if (file->isOpen() == false)
@@ -592,7 +590,7 @@ void Sound::playVoice(uint sound) {
 			char filename[16];
 			_lastVoiceFile = _filenums[sound];
 			sprintf(filename, "voices%d.dat", _filenums[sound]);
-			File *file = new File();
+			Common::File *file = new Common::File();
 			file->open(filename);
 			if (file->isOpen() == false)
 				error("playVoice: Can't load voice file %s", filename);
@@ -801,7 +799,7 @@ void Sound::switchVoiceFile(const GameSpecificSettings *gss, uint disc) {
 	_lastVoiceFile = disc;
 
 	char filename[16];
-	File *file = new File();
+	Common::File *file = new Common::File();
 
 	if (!_hasVoiceFile) {
 		sprintf(filename, "%s%d", gss->speech_filename, disc);

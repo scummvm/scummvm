@@ -28,8 +28,6 @@
 #include "common/endian.h"
 #include "common/md5.h"
 
-using Common::File;
-
 namespace Scumm {
 
 #pragma mark -

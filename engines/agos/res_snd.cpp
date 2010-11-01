@@ -35,8 +35,6 @@
 #include "sound/mididrv.h"
 #include "sound/mods/protracker.h"
 
-using Common::File;
-
 namespace AGOS {
 
 void AGOSEngine_Simon1::playSpeech(uint16 speech_id, uint16 vgaSpriteId) {
@@ -175,7 +173,7 @@ static const ModuleOffs amigaWaxworksOffs[20] = {
 
 void AGOSEngine::playModule(uint16 music) {
 	char filename[15];
-	File f;
+	Common::File f;
 	uint32 offs = 0;
 
 	if (getPlatform() == Common::kPlatformAmiga && getGameType() == GType_WW) {
@@ -262,7 +260,7 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 		// TODO: Add support for Desktop Tracker format in Acorn disk version
 	} else {
 		char filename[15];
-		File f;
+		Common::File f;
 		sprintf(filename, "MOD%d.MUS", music);
 		f.open(filename);
 		if (f.isOpen() == false)
@@ -291,7 +289,7 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 		_midi.setLoop(true); // Must do this BEFORE loading music.
 
 		char filename[15];
-		File f;
+		Common::File f;
 		sprintf(filename, "MOD%d.MUS", music);
 		f.open(filename);
 		if (f.isOpen() == false)
@@ -316,7 +314,7 @@ void AGOSEngine::playSting(uint16 soundId) {
 
 	char filename[15];
 
-	File mus_file;
+	Common::File mus_file;
 	uint16 mus_offset;
 
 	sprintf(filename, "STINGS%i.MUS", _soundFileId);
@@ -347,7 +345,7 @@ static const byte elvira1_soundTable[100] = {
 };
 
 bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
-	File in;
+	Common::File in;
 	char filename[15];
 	byte *dst;
 	uint32 srcSize, dstSize;
@@ -452,7 +450,7 @@ static const char *dimpSoundList[32] = {
 
 
 void AGOSEngine::loadSoundFile(const char* filename) {
-	File in;
+	Common::File in;
 
 	in.open(filename);
 	if (in.isOpen() == false)
@@ -471,7 +469,7 @@ void AGOSEngine::loadSound(uint16 sound, int16 pan, int16 vol, uint16 type) {
 	byte *dst;
 
 	if (getGameId() == GID_DIMP) {
-		File in;
+		Common::File in;
 		char filename[15];
 
 		assert(sound >= 1 && sound <= 32);

@@ -35,8 +35,6 @@
 
 #include "common/zlib.h"
 
-using Common::File;
-
 namespace AGOS {
 
 #ifdef ENABLE_AGOS2
@@ -67,7 +65,7 @@ uint32 AGOSEngine::readUint32Wrapper(const void *src) {
 
 void AGOSEngine::decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize) {
 #ifdef USE_ZLIB
-		File in;
+		Common::File in;
 		in.open(srcName);
 		if (in.isOpen() == false)
 			error("decompressData: Can't load %s", srcName);
@@ -548,7 +546,7 @@ uint fileReadItemID(Common::SeekableReadStream *in) {
 }
 
 void AGOSEngine::openGameFile() {
-	_gameFile = new File();
+	_gameFile = new Common::File();
 	_gameFile->open(getFileName(GAME_GMEFILE));
 
 	if (!_gameFile->isOpen())
@@ -783,7 +781,7 @@ void AGOSEngine::loadVGABeardFile(uint16 id) {
 	uint32 offs, size;
 
 	if (getFeatures() & GF_OLD_BUNDLE) {
-		File in;
+		Common::File in;
 		char filename[15];
 		if (id == 23)
 			id = 112;
@@ -824,7 +822,7 @@ void AGOSEngine::loadVGABeardFile(uint16 id) {
 }
 
 void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
-	File in;
+	Common::File in;
 	char filename[15];
 	byte *dst;
 	uint32 file, offs, srcSize, dstSize;

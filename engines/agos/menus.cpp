@@ -33,8 +33,6 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
-using Common::File;
-
 namespace AGOS {
 
 void AGOSEngine::loadMenuFile() {

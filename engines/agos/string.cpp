@@ -30,8 +30,6 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
-using Common::File;
-
 namespace AGOS {
 
 void AGOSEngine::uncompressText(byte *ptr) {
@@ -265,7 +263,7 @@ uint AGOSEngine::loadTextFile(const char *filename, byte *dst) {
 }
 
 uint AGOSEngine::loadTextFile_simon1(const char *filename, byte *dst) {
-	File fo;
+	Common::File fo;
 	fo.open(filename);
 	uint32 size;
 

@@ -30,24 +30,22 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
-using Common::File;
-
 namespace AGOS {
 
 uint16 AGOSEngine::getBackExit(int n) {
 	switch (n) {
-		case 0:
-			return 2;
-		case 1:
-			return 3;
-		case 2:
-			return 0;
-		case 3:
-			return 1;
-		case 4:
-			return 5;
-		case 5:
-			return 4;
+	case 0:
+		return 2;
+	case 1:
+		return 3;
+	case 2:
+		return 0;
+	case 3:
+		return 1;
+	case 4:
+		return 5;
+	case 5:
+		return 4;
 	}
 
 	return 0;
@@ -205,13 +203,13 @@ void AGOSEngine_Elvira2::moveDirn(Item *i, uint x) {
 		if (n == 1) {
 			sr = (SubSuperRoom *)findChildOfType(p, kSuperRoomType);
 			switch (x) {
-				case 0: a = -(sr->roomX); break;
-				case 1: a = 1; break;
-				case 2: a = sr->roomX; break;
-				case 3: a = 0xFFFF; break;
-				case 4: a = -(sr->roomX * sr->roomY); break;
-				case 5: a = (sr->roomX * sr->roomY); break;
-				default: return;
+			case 0: a = -(sr->roomX); break;
+			case 1: a = 1; break;
+			case 2: a = sr->roomX; break;
+			case 3: a = 0xFFFF; break;
+			case 4: a = -(sr->roomX * sr->roomY); break;
+			case 5: a = (sr->roomX * sr->roomY); break;
+			default: return;
 			}
 			_superRoomNumber += a;
 		}
@@ -366,7 +364,7 @@ bool AGOSEngine::loadRoomItems(uint16 room) {
 	byte *p;
 	uint i, minNum, maxNum;
 	char filename[30];
-	File in;
+	Common::File in;
 	Item *item, *itemTmp;
 
 	if (_roomsList == NULL)

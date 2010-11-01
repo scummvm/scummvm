@@ -27,8 +27,6 @@
 
 #include "scumm/scumm.h"
 
-using Common::File;
-
 namespace Scumm {
 
 #pragma mark -

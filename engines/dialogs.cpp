@@ -49,9 +49,6 @@
 #include "gui/KeysDialog.h"
 #endif
 
-using GUI::CommandSender;
-using GUI::StaticTextWidget;
-
 class ConfigDialog : public GUI::OptionsDialog {
 protected:
 #ifdef SMALL_SCREEN_DEVICE
@@ -76,15 +73,15 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageLogoSmall));
 	} else {
-		StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+		GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
 		title->setAlign(Graphics::kTextAlignCenter);
 	}
 #else
-	StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+	GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
 	title->setAlign(Graphics::kTextAlignCenter);
 #endif
 
-	StaticTextWidget *version = new StaticTextWidget(this, "GlobalMenu.Version", gScummVMVersionDate);
+	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", gScummVMVersionDate);
 	version->setAlign(Graphics::kTextAlignCenter);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", _("~R~esume"), 0, kPlayCmd, 'P');
@@ -130,7 +127,7 @@ MainMenuDialog::~MainMenuDialog() {
 	delete _saveDialog;
 }
 
-void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kPlayCmd:
 		close();
@@ -187,16 +184,16 @@ void MainMenuDialog::reflowLayout() {
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageLogoSmall));
 
-		GUI::StaticTextWidget *title = (StaticTextWidget *)findWidget("GlobalMenu.Title");
+		GUI::StaticTextWidget *title = (GUI::StaticTextWidget *)findWidget("GlobalMenu.Title");
 		if (title) {
 			removeWidget(title);
 			title->setNext(0);
 			delete title;
 		}
 	} else {
-		GUI::StaticTextWidget *title = (StaticTextWidget *)findWidget("GlobalMenu.Title");
+		GUI::StaticTextWidget *title = (GUI::StaticTextWidget *)findWidget("GlobalMenu.Title");
 		if (!title) {
-			title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+			title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
 			title->setAlign(Graphics::kTextAlignCenter);
 		}
 
@@ -321,7 +318,7 @@ ConfigDialog::~ConfigDialog() {
 #endif
 }
 
-void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kKeysCmd:
 

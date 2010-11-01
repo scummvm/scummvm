@@ -43,8 +43,6 @@
 #include "sound/mods/protracker.h"
 #include "sound/audiocd.h"
 
-using Common::File;
-
 namespace AGOS {
 
 static const GameSpecificSettings simon1_settings = {
