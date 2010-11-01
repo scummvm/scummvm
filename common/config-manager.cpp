@@ -508,9 +508,7 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 }
 
 void ConfigManager::setInt(const String &key, int value, const String &domName) {
-	char tmp[128];
-	snprintf(tmp, sizeof(tmp), "%i", value);
-	set(key, String(tmp), domName);
+	set(key, String::format("%i", value), domName);
 }
 
 void ConfigManager::setBool(const String &key, bool value, const String &domName) {
@@ -530,9 +528,7 @@ void ConfigManager::registerDefault(const String &key, const char *value) {
 }
 
 void ConfigManager::registerDefault(const String &key, int value) {
-	char tmp[128];
-	snprintf(tmp, sizeof(tmp), "%i", value);
-	registerDefault(key, tmp);
+	registerDefault(key, String::format("%i", value));
 }
 
 void ConfigManager::registerDefault(const String &key, bool value) {
