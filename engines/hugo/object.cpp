@@ -42,6 +42,7 @@
 #include "hugo/route.h"
 #include "hugo/util.h"
 #include "hugo/parser.h"
+#include "hugo/schedule.h"
 
 namespace Hugo {
 

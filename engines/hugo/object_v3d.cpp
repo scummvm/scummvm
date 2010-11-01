@@ -42,6 +42,7 @@
 #include "hugo/route.h"
 #include "hugo/util.h"
 #include "hugo/parser.h"
+#include "hugo/schedule.h"
 
 namespace Hugo {
 
@@ -228,7 +229,7 @@ void ObjectHandler_v3d::moveObjects() {
 
 	// If maze mode is enabled, do special maze processing
 	if (_maze.enabledFl)
-		_vm->processMaze();
+		_vm->_scheduler->processMaze();
 }
 
 void ObjectHandler_v3d::swapImages(int objNumb1, int objNumb2) {

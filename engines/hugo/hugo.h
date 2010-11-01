@@ -153,14 +153,11 @@ public:
 	uint16    _cmdListSize;
 	uint16    **_screenActs;
 	uint16    _screenActsSize;
-	act       **_actListArr;
-	uint16    _actListArrSize;
 	int16     *_defltTunes;
 	uint16    _look;
 	uint16    _take;
 	uint16    _drop;
 	uint16    _numObj;
-	uint16    _alNewscrIndex;
 
 	Common::RandomSource *_rnd;
 
@@ -200,7 +197,6 @@ public:
 	void clearBoundary(int x1, int x2, int y);
 	void endGame();
 	void initStatus();
-	void processMaze();
 	void readObjectImages();
 	void readScreenFiles(int screen);
 	void screenActions(int screen);

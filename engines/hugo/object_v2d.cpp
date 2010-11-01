@@ -346,7 +346,7 @@ void ObjectHandler_v2d::moveObjects() {
 
 	// If maze mode is enabled, do special maze processing
 	if (_maze.enabledFl)
-		_vm->processMaze();
+		_vm->_scheduler->processMaze();
 }
 
 } // End of namespace Hugo

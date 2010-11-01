@@ -33,6 +33,8 @@
 #ifndef HUGO_SCHEDULE_H
 #define HUGO_SCHEDULE_H
 
+#include "common/file.h"
+
 namespace Hugo {
 
 #define SIGN(X)       ((X < 0) ? -1 : 1)
@@ -56,15 +58,24 @@ public:
 	virtual void runScheduler() = 0;
 	virtual void saveEvents(Common::WriteStream *f) = 0;
 
+	void   decodeString(char *line);
+	void   freeActListArr();
 	void   initEventQueue();
 	void   insertActionList(uint16 actIndex);
-	void   decodeString(char *line);
+	void   loadActListArr(Common::File &in);
+	void   loadAlNewscrIndex(Common::File &in);
+	void   newScreen(int screenIndex);
+	void   processBonus(int bonusIndex);
+	void   processMaze();
+	void   restoreScreen(int screenIndex);
+	void   waitForRefresh(void);
+
 	uint32 getWinTicks();
 	uint32 getDosTicks(bool updateFl);
-	void   waitForRefresh(void);
-	void   processBonus(int bonusIndex);
-	void   newScreen(int screenIndex);
-	void   restoreScreen(int screenIndex);
+
+	act    **_actListArr;
+	uint16   _actListArrSize;
+	uint16   _alNewscrIndex;
 
 protected:
 	HugoEngine *_vm;
@@ -77,7 +88,7 @@ protected:
 	event_t *_freeEvent;                                // Free list of event structures
 	event_t *_headEvent;                                // Head of list (earliest time)
 	event_t *_tailEvent;                                // Tail of list (latest time)
-	event_t _events[kMaxEvents];                        // Statically declare event structures
+	event_t  _events[kMaxEvents];                       // Statically declare event structures
 
 	virtual const char *getCypher() = 0;
 	virtual void delQueue(event_t *curEvent) = 0;

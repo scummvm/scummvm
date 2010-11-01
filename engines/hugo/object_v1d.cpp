@@ -335,7 +335,7 @@ void ObjectHandler_v1d::moveObjects() {
 
 	// If maze mode is enabled, do special maze processing
 	if (_maze.enabledFl)
-		_vm->processMaze();
+		_vm->_scheduler->processMaze();
 }
 
 void ObjectHandler_v1d::swapImages(int objNumb1, int objNumb2) {
