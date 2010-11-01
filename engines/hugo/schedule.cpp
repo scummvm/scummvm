@@ -811,17 +811,10 @@ void Scheduler::freeActListArr() {
 
 // Maze mode is enabled.  Check to see whether hero has crossed the maze
 // bounding box, if so, go to the next room */
-void Scheduler::processMaze() {
+void Scheduler::processMaze(int x1, int x2, int y1, int y2) {
 	debugC(1, kDebugSchedule, "processMaze");
 
 	status_t &gameStatus = _vm->getGameStatus();
-	seq_t *currImage = _vm->_hero->currImagePtr;    // Get ptr to current image
-
-	// hero coordinates
-	int x1 = _vm->_hero->x + currImage->x1;         // Left edge of object
-	int x2 = _vm->_hero->x + currImage->x2;         // Right edge
-	int y1 = _vm->_hero->y + currImage->y1;         // Top edge
-	int y2 = _vm->_hero->y + currImage->y2;         // Bottom edge
 
 	if (x1 < _maze.x1) {
 		// Exit west

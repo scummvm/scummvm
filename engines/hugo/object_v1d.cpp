@@ -334,8 +334,16 @@ void ObjectHandler_v1d::moveObjects() {
 	}
 
 	// If maze mode is enabled, do special maze processing
-	if (_maze.enabledFl)
-		_vm->_scheduler->processMaze();
+	if (_maze.enabledFl) {
+		seq_t *currImage = _vm->_hero->currImagePtr;    // Get ptr to current image
+		// hero coordinates
+		int x1 = _vm->_hero->x + currImage->x1;         // Left edge of object
+		int x2 = _vm->_hero->x + currImage->x2;         // Right edge
+		int y1 = _vm->_hero->y + currImage->y1;         // Top edge
+		int y2 = _vm->_hero->y + currImage->y2;         // Bottom edge
+
+		_vm->_scheduler->processMaze(x1, x2, y1, y2);
+	}
 }
 
 void ObjectHandler_v1d::swapImages(int objNumb1, int objNumb2) {

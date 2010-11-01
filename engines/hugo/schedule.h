@@ -53,7 +53,6 @@ public:
 	Scheduler(HugoEngine *vm);
 	virtual ~Scheduler();
 
-	virtual void insertAction(act *action) = 0;
 	virtual void restoreEvents(Common::SeekableReadStream *f) = 0;
 	virtual void runScheduler() = 0;
 	virtual void saveEvents(Common::WriteStream *f) = 0;
@@ -66,16 +65,9 @@ public:
 	void   loadAlNewscrIndex(Common::File &in);
 	void   newScreen(int screenIndex);
 	void   processBonus(int bonusIndex);
-	void   processMaze();
+	void   processMaze(int x1, int x2, int y1, int y2);
 	void   restoreScreen(int screenIndex);
 	void   waitForRefresh(void);
-
-	uint32 getWinTicks();
-	uint32 getDosTicks(bool updateFl);
-
-	act    **_actListArr;
-	uint16   _actListArrSize;
-	uint16   _alNewscrIndex;
 
 protected:
 	HugoEngine *_vm;
@@ -85,16 +77,26 @@ protected:
 		kSsBadSaveGame  = 1
 	};
 
+	uint16   _actListArrSize;
+	uint16   _alNewscrIndex;
+
 	event_t *_freeEvent;                                // Free list of event structures
 	event_t *_headEvent;                                // Head of list (earliest time)
 	event_t *_tailEvent;                                // Tail of list (latest time)
 	event_t  _events[kMaxEvents];                       // Statically declare event structures
 
+	act    **_actListArr;
+
 	virtual const char *getCypher() = 0;
-	virtual void delQueue(event_t *curEvent) = 0;
 	virtual event_t *doAction(event_t *curEvent) = 0;
+	virtual void delQueue(event_t *curEvent) = 0;
+	virtual void insertAction(act *action) = 0;
 
 	event_t *getQueue();
+
+	uint32 getDosTicks(bool updateFl);
+	uint32 getWinTicks();
+
 };
 
 class Scheduler_v1d : public Scheduler {

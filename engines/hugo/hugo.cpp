@@ -637,8 +637,8 @@ bool HugoEngine::loadHugoDat() {
 		}
 	}
 
-// TODO: For Hugo2 and Hugo3, if not in story mode, increment _screenActs[0][0] (ex: kALcrashStory + 1 == kALcrashNoStory)
 	// Read _screenActs
+	// TODO: For Hugo2 and Hugo3, if not in story mode, increment _screenActs[0][0] (ex: kALcrashStory + 1 == kALcrashNoStory)
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
@@ -664,14 +664,13 @@ bool HugoEngine::loadHugoDat() {
 	}
 
 	_object->loadObjectArr(in);
-//#define HERO 0
-	_hero = &_object->_objects[HERO];                        // This always points to hero
-	_screen_p = &(_object->_objects[HERO].screenIndex);      // Current screen is hero's
+
+	_hero = &_object->_objects[HERO];               // This always points to hero
+	_screen_p = &(_object->_objects[HERO].screenIndex); // Current screen is hero's
 	_heroImage = HERO;                              // Current in use hero image
 
 	_scheduler->loadActListArr(in);
 	
-//read _actListArr
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		if (varnt == _gameVariant) {
 			_tunesNbr     = in.readSByte();
