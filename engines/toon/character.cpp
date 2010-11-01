@@ -443,11 +443,11 @@ void Character::update(int32 timeIncrement) {
 	
 #if 0
 	if (_id == 0)
-		printf(" drew animation name %s / flag %d / frame %d \n", _specialAnim->_name, _animFlags, nextFrame);
+		debug(" drew animation name %s / flag %d / frame %d", _specialAnim->_name, _animFlags, nextFrame);
 	if (_id == 1)
-		debugC(0, 0xfff, " flux animation flag %d / frame %d", _animFlags, nextFrame);
+		debug(" flux animation flag %d / frame %d", _animFlags, nextFrame);
 	if (_id == 7)
-		debugC(0, 0xfff, " footman animation flag %d / frame %d", _animFlags, nextFrame);
+		debug(" footman animation flag %d / frame %d", _animFlags, nextFrame);
 #endif
 
 	_time = nextTime;

@@ -382,7 +382,7 @@ void OpenMidiFiles() {
 
 		assert(curTrack < ARRAYSIZE(midiOffsets));
 		midiOffsets[curTrack] = curOffset + (4 * curTrack);
-		//printf("%d: %d\n", curTrack, midiOffsets[curTrack]);
+		//debug("%d: %d", curTrack, midiOffsets[curTrack]);
 
 		songLength = midiStream.readUint32LE();
 		curOffset += songLength;

@@ -318,10 +318,8 @@ reg_t DataStack::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 
 Common::Array<reg_t> DataStack::listAllOutgoingReferences(reg_t object) const {
 	Common::Array<reg_t> tmp;
-	fprintf(stderr, "Emitting %d stack entries\n", _capacity);
 	for (int i = 0; i < _capacity; i++)
 		tmp.push_back(_entries[i]);
-	fprintf(stderr, "DONE");
 
 	return tmp;
 }

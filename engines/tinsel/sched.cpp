@@ -132,7 +132,7 @@ void Scheduler::reset() {
  * Shows the maximum number of process used at once.
  */
 void Scheduler::printStats() {
-	printf("%i process of %i used.\n", maxProcs, NUM_PROCESS);
+	debug("%i process of %i used", maxProcs, NUM_PROCESS);
 }
 #endif
 

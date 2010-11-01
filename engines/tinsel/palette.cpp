@@ -198,8 +198,8 @@ void ResetPalAllocator() {
  * Shows the maximum number of palettes used at once.
  */
 void PaletteStats() {
-	printf("%i palettes of %i used.\n", maxPals, NUM_PALETTES);
-	printf("%i DAC queue entries of %i used.\n", maxDACQ, VDACQLENGTH);
+	debug("%i palettes of %i used", maxPals, NUM_PALETTES);
+	debug("%i DAC queue entries of %i used", maxDACQ, VDACQLENGTH);
 }
 #endif
 

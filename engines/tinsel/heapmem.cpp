@@ -94,7 +94,7 @@ static void MemoryStats() {
 		}
 	}
 
-	printf("%d nodes used, %d alloced, %d locked; %d bytes locked, %d used\n",
+	debug("%d nodes used, %d alloced, %d locked; %d bytes locked, %d used",
 			usedNodes, allocedNodes, lockedNodes, lockedSize, totalSize);
 }
 #endif

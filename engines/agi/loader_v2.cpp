@@ -158,7 +158,6 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 			}
 		} else {
 			warning("AgiLoader_v2::loadVolRes: bad signature %04x", sig);
-			// fprintf (stderr, "ACK! BAD RESOURCE!!!\n");
 			return 0;
 		}
 		fp.close();

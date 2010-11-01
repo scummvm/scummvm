@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "lure/luredefs.h"

@@ -94,7 +94,7 @@ void KillAllObjects() {
  */
 
 void ObjectStats() {
-	printf("%i objects of %i used.\n", maxObj, NUM_OBJECTS);
+	debug("%i objects of %i used", maxObj, NUM_OBJECTS);
 }
 #endif
 

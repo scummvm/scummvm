@@ -47,7 +47,7 @@ static void changeCoroStats(const char *func, int change) {
 }
 
 static void displayCoroStats() {
-	printf("%d active coros\n", s_coroCount);
+	debug("%d active coros", s_coroCount);
 
 	// Loop over s_coroFuncs and print info about active coros
 	if (!s_coroFuncs)
@@ -55,7 +55,7 @@ static void displayCoroStats() {
 	for (CoroHashMap::const_iterator it = s_coroFuncs->begin();
 		it != s_coroFuncs->end(); ++it) {
 		if (it->_value != 0)
-			printf("  %3d x %s\n", it->_value, it->_key.c_str());
+			debug("  %3d x %s", it->_value, it->_key.c_str());
 	}
 }
 
@@ -75,7 +75,7 @@ CoroBaseContext::~CoroBaseContext() {
 #if COROUTINE_DEBUG
 	s_coroCount--;
 	changeCoroStats(_funcName, -1);
-	printf("Deleting coro in %s at %p (subctx %p)\n  ",
+	debug("Deleting coro in %s at %p (subctx %p)",
 		_funcName, (void *)this, (void *)_subctx);
 	displayCoroStats();
 #endif
