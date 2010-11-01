@@ -761,7 +761,7 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 	if (argc < 4) {
 		DebugPrintf("Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers.\n");
 		DebugPrintf("Usage: %s <resource type> <resource number> <search string>\n", argv[0]);
-		DebugPrintf("<resource number> can be a specific resource number, or \"all\" for all of the resources of the specified type\n", argv[0]);
+		DebugPrintf("<resource number> can be a specific resource number, or \"all\" for all of the resources of the specified type\n");
 		DebugPrintf("EXAMPLES:\n  hexgrep script all e8 03 c8 00\n  hexgrep pic 042 fe");
 		cmdResourceTypes(argc, argv);
 		return true;

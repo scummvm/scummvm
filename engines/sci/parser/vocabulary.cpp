@@ -673,9 +673,15 @@ void Vocabulary::printParserNodes(int num) {
 		con->DebugPrintf(" Node %03x: ", i);
 		if (_parserNodes[i].type == kParseTreeLeafNode)
 			con->DebugPrintf("Leaf: %04x\n", _parserNodes[i].value);
-		else
-			con->DebugPrintf("Branch: ->%04x, ->%04x\n", _parserNodes[i].left,
-			          _parserNodes[i].right);
+		else {
+			// FIXME: Do we really want to print the *addresses*
+			// of the left & right child?
+			// Note that one or both may be zero pointers, so we can't just
+			// print their values.
+			con->DebugPrintf("Branch: ->%p, ->%p\n",
+					(const void *)_parserNodes[i].left,
+					(const void *)_parserNodes[i].right);
+		}
 	}
 }
 

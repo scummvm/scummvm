@@ -343,7 +343,7 @@ bool Debugger::cmdShowFrame(int argc, const char **argv) {
 
 				AnimFrame *frame = sequence.getFrame((uint16)getNumber(argv[2]));
 				if (!frame) {
-					DebugPrintf("Invalid frame index: %i\n", filename.c_str());
+					DebugPrintf("Invalid frame index '%s'\n", argv[2]);
 					resetCommand();
 					return true;
 				}
@@ -1012,7 +1012,7 @@ bool Debugger::cmdShow(int argc, const char **argv) {
 #define OUTPUT_DUMP(name, text) \
 	DebugPrintf(#name "\n"); \
 	DebugPrintf("--------------------------------------------------------------------\n\n"); \
-	DebugPrintf(text); \
+	DebugPrintf("%s", text); \
 	DebugPrintf("\n");
 
 	if (argc == 2) {
@@ -1071,7 +1071,7 @@ bool Debugger::cmdEntity(int argc, const char **argv) {
 
 		DebugPrintf("Entity %s\n", ENTITY_NAME(index));
 		DebugPrintf("--------------------------------------------------------------------\n\n");
-		DebugPrintf(getEntities()->getData(index)->toString().c_str());
+		DebugPrintf("%s", getEntities()->getData(index)->toString().c_str());
 
 		// The Player entity does not have any callback data
 		if (index != kEntityPlayer) {

@@ -123,7 +123,7 @@ bool Console::cmdPlaySound(int argc, const char **argv) {
 bool Console::cmdPlayDSRSound(int argc, const char **argv) {
 	if (argc != 2 && argc != 3) {
 		DebugPrintf("Usage: %s <sound index> <DSR file>\n", argv[0]);
-		DebugPrintf("The DSR file parameter is optional, and specifies which DSR to load\n", argv[0]);
+		DebugPrintf("The DSR file parameter is optional, and specifies which DSR to load\n");
 	} else {
 		if (argc == 3)
 			_vm->_sound->loadDSRFile(argv[2]);

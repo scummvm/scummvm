@@ -117,7 +117,7 @@ bool Console::cmd_music(int argc, const char **argv) {
 
 	int param = strToInt(argv[1]);
 	if (param == 0) {
-		DebugPrintf("Track number/offset can't be 0!\n", argv[0]);
+		DebugPrintf("Track number/offset can't be 0!\n");
 	} else if (param > 0) {
 		// Track provided
 		PlayMidiSequence(GetTrackOffset(param - 1), false);

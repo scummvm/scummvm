@@ -331,7 +331,7 @@ bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
 		return false;
 	}
 
-	DebugPrintf("Syntax: %d <scenenum> <direction>\n", argv[0]);
+	DebugPrintf("Syntax: %s <scenenum> <direction>\n", argv[0]);
 	return true;
 }
 

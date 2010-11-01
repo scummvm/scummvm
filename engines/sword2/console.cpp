@@ -237,13 +237,15 @@ bool Debugger::Cmd_Mem(int argc, const char **argv) {
 			break;
 		}
 
-		DebugPrintf("%9ld %-3d %-4d %-20s %s\n", blocks[i]->size, blocks[i]->id, blocks[i]->uid, type, _vm->_resman->fetchName(blocks[i]->ptr));
+		DebugPrintf("%9d %-3d %-4d %-20s %s\n",
+				blocks[i]->size, blocks[i]->id, blocks[i]->uid,
+				type, _vm->_resman->fetchName(blocks[i]->ptr));
 	}
 
 	free(blocks);
 
 	DebugPrintf("---------------------------------------------------------------------------\n");
-	DebugPrintf("%9ld\n", _vm->_memory->getTotAlloc());
+	DebugPrintf("%9d\n", _vm->_memory->getTotAlloc());
 
 	return true;
 }
