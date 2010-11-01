@@ -629,7 +629,7 @@ int NextTaggedActor() {
 	PMOVER	pActor;
 	bool	hid;
 
-	while (ti < NumActors); {
+	while (ti < NumActors) {
 		if (actorInfo[ti].tagged) {
 			pActor = GetMover(ti+1);
 			if (pActor)
@@ -642,7 +642,7 @@ int NextTaggedActor() {
 			}
 		}
 		++ti;
-	} while (++ti < NumActors);
+	}
 
 	return 0;
 }
