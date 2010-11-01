@@ -168,18 +168,16 @@ extern "C" int SimpleRate_readFudge(Audio::AudioStream &input,
                                     int16 *a, int b)
 {
 #ifdef DEBUG_RATECONV
-  fprintf(stderr, "Reading ptr=%x n%d\n", a, b);
-  fflush(stderr);
+	debug("Reading ptr=%x n%d", a, b);
 #endif
-  return input.readBuffer(a, b);
+	return input.readBuffer(a, b);
 }
 
 template<bool stereo, bool reverseStereo>
 int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 
 #ifdef DEBUG_RATECONV
-fprintf(stderr, "Simple st=%d rev=%d\n", stereo, reverseStereo);
-fflush(stderr);
+	debug("Simple st=%d rev=%d", stereo, reverseStereo);
 #endif
 	st_sample_t *ostart = obuf;
 
@@ -318,8 +316,7 @@ template<bool stereo, bool reverseStereo>
 int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 
 #ifdef DEBUG_RATECONV
-fprintf(stderr, "Linear st=%d rev=%d\n", stereo, reverseStereo);
-fflush(stderr);
+	debug("Linear st=%d rev=%d", stereo, reverseStereo);
 #endif
 	st_sample_t *ostart = obuf;
 
@@ -393,8 +390,7 @@ public:
 		assert(input.isStereo() == stereo);
 
 #ifdef DEBUG_RATECONV
-fprintf(stderr, "Copy st=%d rev=%d\n", stereo, reverseStereo);
-fflush(stderr);
+		debug("Copy st=%d rev=%d", stereo, reverseStereo);
 #endif
 		st_size_t len;
                 st_sample_t *ostart = obuf;
