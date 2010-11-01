@@ -64,7 +64,7 @@ struct Port {
 	}
 };
 
-struct Window : public Port {
+struct Window : public Port, public Common::Serializable {
 	Common::Rect dims; // client area of window
 	Common::Rect restoreRect; // total area of window including borders
 	uint16 wndStyle;
@@ -78,6 +78,40 @@ struct Window : public Port {
 		wndStyle(0), saveScreenMask(0),
 		hSaved1(NULL_REG), hSaved2(NULL_REG),
 		bDrawn(false) {
+	}
+
+	void syncRect(Common::Serializer &ser, Common::Rect targetRect) {
+		ser.syncAsSint16LE(targetRect.top);
+		ser.syncAsSint16LE(targetRect.left);
+		ser.syncAsSint16LE(targetRect.bottom);
+		ser.syncAsSint16LE(targetRect.right);
+	}
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) {
+		ser.syncAsUint16LE(id);
+		ser.syncAsSint16LE(top);
+		ser.syncAsSint16LE(left);
+		syncRect(ser, rect);
+		ser.syncAsSint16LE(curTop);
+		ser.syncAsSint16LE(curLeft);
+		ser.syncAsSint16LE(fontHeight);
+		ser.syncAsSint32LE(fontId);
+		ser.syncAsByte(greyedOutput);
+		ser.syncAsSint16LE(penClr);
+		ser.syncAsSint16LE(backClr);
+		ser.syncAsSint16LE(penMode);
+		ser.syncAsUint16LE(counterTillFree);
+		syncRect(ser, dims);
+		syncRect(ser, restoreRect);
+		ser.syncAsUint16LE(wndStyle);
+		ser.syncAsUint16LE(saveScreenMask);
+		if (ser.isLoading()) {
+			// The hunk table isn't saved, so we just set both pointers to NULL
+			hSaved1 = NULL_REG;
+			hSaved2 = NULL_REG;
+		}
+		ser.syncString(title);
+		ser.syncAsByte(bDrawn);
 	}
 };
 

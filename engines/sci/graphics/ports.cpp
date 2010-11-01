@@ -38,15 +38,6 @@
 
 namespace Sci {
 
-// window styles
-enum {
-	SCI_WINDOWMGR_STYLE_TRANSPARENT = (1 << 0),
-	SCI_WINDOWMGR_STYLE_NOFRAME     = (1 << 1),
-	SCI_WINDOWMGR_STYLE_TITLE       = (1 << 2),
-	SCI_WINDOWMGR_STYLE_TOPMOST     = (1 << 3),
-	SCI_WINDOWMGR_STYLE_USER        = (1 << 7)
-};
-
 GfxPorts::GfxPorts(SegManager *segMan, GfxScreen *screen)
 	: _segMan(segMan), _screen(screen) {
 }

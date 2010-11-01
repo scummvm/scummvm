@@ -26,6 +26,7 @@
 #ifndef SCI_GRAPHICS_PORTS_H
 #define SCI_GRAPHICS_PORTS_H
 
+#include "common/serializer.h"
 #include "common/list.h"
 #include "common/array.h"
 
@@ -39,11 +40,20 @@ class GfxText16;
 #define PORTS_FIRSTWINDOWID 2
 #define PORTS_FIRSTSCRIPTWINDOWID 3
 
+// window styles
+enum {
+	SCI_WINDOWMGR_STYLE_TRANSPARENT = (1 << 0),
+	SCI_WINDOWMGR_STYLE_NOFRAME     = (1 << 1),
+	SCI_WINDOWMGR_STYLE_TITLE       = (1 << 2),
+	SCI_WINDOWMGR_STYLE_TOPMOST     = (1 << 3),
+	SCI_WINDOWMGR_STYLE_USER        = (1 << 7)
+};
+
 /**
  * Ports class, includes all port managment for SCI0->SCI1.1 games. Ports are some sort of windows in SCI
  *  this class also handles adjusting coordinates to a specific port
  */
-class GfxPorts {
+class GfxPorts : public Common::Serializable {
 public:
 	GfxPorts(SegManager *segMan, GfxScreen *screen);
 	~GfxPorts();
@@ -102,6 +112,8 @@ public:
 	Common::Rect _menuRect;
 	Common::Rect _menuLine;
 	Port *_curPort;
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 private:
 	typedef Common::List<Port *> PortList;

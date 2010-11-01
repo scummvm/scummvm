@@ -40,6 +40,7 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/vm_types.h"
 #include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
+#include "sci/graphics/helpers.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/ports.h"
 #include "sci/sound/audio.h"
@@ -175,9 +176,6 @@ void syncWithSerializer(Common::Serializer &s, Class &obj) {
 }
 
 static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) {
-	// TODO: It would be a good idea to store a magic number & a header size here,
-	// so that we can implement backward compatibility if the savegame format changes.
-
 	s.syncString(obj.name);
 	s.syncVersion(CURRENT_SAVEGAME_VERSION);
 	obj.version = s.getVersion();
@@ -605,6 +603,61 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 	}
 }
 
+void GfxPorts::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.isLoading())
+		reset();	// remove all script generated windows
+
+	if (s.getVersion() >= 27) {
+		uint windowCount = 0;
+		uint id = PORTS_FIRSTSCRIPTWINDOWID;
+		if (s.isSaving()) {
+			while (id < _windowsById.size()) {
+				if (_windowsById[id])
+					windowCount++;
+				id++;
+			}
+		}
+		// Save/Restore window count
+		s.syncAsUint32LE(windowCount);
+
+		if (s.isSaving()) {
+			id = PORTS_FIRSTSCRIPTWINDOWID;
+			while (id < _windowsById.size()) {
+				if (_windowsById[id]) {
+					Window *window = (Window *)_windowsById[id];
+					window->saveLoadWithSerializer(s);
+				}
+				id++;
+			}
+		} else {
+			id = PORTS_FIRSTSCRIPTWINDOWID;
+			while (windowCount) {
+				Window *window = new Window(0);
+				window->saveLoadWithSerializer(s);
+
+				// add enough entries inside _windowsById as needed
+				while (id <= window->id) {
+					_windowsById.push_back(0);
+					id++;
+				}
+				_windowsById[window->id] = window;
+				// _windowList may not be 100% correct using that way of restoring
+				//  saving/restoring ports won't work perfectly anyway, because the contents
+				//  of the window can only get repainted by the scripts and they dont do that
+				//  so we will get empty, transparent windows instead. So perfect window order
+				//  shouldn't really matter
+				if (window->wndStyle & SCI_WINDOWMGR_STYLE_TOPMOST)
+					_windowList.push_front(window);
+				else
+					_windowList.push_back(window);
+
+				windowCount--;
+				id++;
+			}
+		}
+	}
+}
+
 void SegManager::reconstructStack(EngineState *s) {
 	DataStack *stack = (DataStack *)(_heap[findSegmentByType(SEG_TYPE_STACK)]);
 	s->stack_base = stack->_entries;
@@ -711,6 +764,8 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savenam
 	sync_SavegameMetadata(ser, meta);
 	Graphics::saveThumbnail(*fh);
 	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
+	if (g_sci->_gfxPorts)
+		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
 
 	return true;
 }
@@ -761,6 +816,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->reset(true);
 	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?
 
+
 	// Now copy all current state information
 
 	s->_segMan->reconstructStack(s);
@@ -775,8 +831,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	g_engine->setTotalPlayTime(meta.playTime * 1000);
 
 	if (g_sci->_gfxPorts)
-		g_sci->_gfxPorts->reset();
-
+		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
 	g_sci->_soundCmd->reconstructPlayList();
 
 	// Message state:
