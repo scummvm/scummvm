@@ -836,7 +836,7 @@ void Scheduler::freeActListArr() {
 
 /**
 * Maze mode is enabled.  Check to see whether hero has crossed the maze
-* bounding box, if so, go to the next room */
+* bounding box, if so, go to the next room
 */
 void Scheduler::processMaze(int x1, int x2, int y1, int y2) {
 	debugC(1, kDebugSchedule, "processMaze");
