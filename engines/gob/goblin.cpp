@@ -1816,7 +1816,7 @@ void Goblin::move(int16 destX, int16 destY, int16 objIndex) {
 
 	byte passType = _vm->_map->getPass(obj->gobDestX, obj->gobDestY);
 
-	// Prevent continous walking on wide stairs
+	// Prevent continuous walking on wide stairs
 	if (passType == 11) {
 		if (_vm->_map->getScreenWidth() == 640) {
 			obj->gobDestY++;
