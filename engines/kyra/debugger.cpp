@@ -53,6 +53,16 @@ Debugger::Debugger(KyraEngine_v1 *vm)
 	DCmd_Register("settimercountdown",	WRAP_METHOD(Debugger, cmd_setTimerCountdown));
 }
 
+void Debugger::preEnter() {
+	_vm->pauseEngine(true);
+	::GUI::Debugger::preEnter();
+}
+
+void Debugger::postEnter() {
+	::GUI::Debugger::postEnter();
+	_vm->pauseEngine(false);
+}
+
 bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
 	if (argc > 1) {
 		if (scumm_stricmp(argv[1], "enable") == 0)
@@ -199,14 +209,6 @@ Debugger_LoK::Debugger_LoK(KyraEngine_LoK *vm)
 	DCmd_Register("scenes",				WRAP_METHOD(Debugger_LoK, cmd_listScenes));
 	DCmd_Register("give",				WRAP_METHOD(Debugger_LoK, cmd_giveItem));
 	DCmd_Register("birthstones",		WRAP_METHOD(Debugger_LoK, cmd_listBirthstones));
-}
-
-void Debugger_LoK::preEnter() {
-	//_vm->midi.pause(1);
-}
-
-void Debugger_LoK::postEnter() {
-	//_vm->midi.pause(0);
 }
 
 bool Debugger_LoK::cmd_enterRoom(int argc, const char **argv) {

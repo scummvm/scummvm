@@ -41,6 +41,9 @@ public:
 	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 protected:
+	virtual void preEnter();
+	virtual void postEnter();
+
 	KyraEngine_v1 *_vm;
 
 	bool cmd_setScreenDebug(int argc, const char **argv);
@@ -61,9 +64,6 @@ public:
 
 protected:
 	KyraEngine_LoK *_vm;
-
-	virtual void preEnter();
-	virtual void postEnter();
 
 	bool cmd_enterRoom(int argc, const char **argv);
 	bool cmd_listScenes(int argc, const char **argv);
