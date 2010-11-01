@@ -26,18 +26,6 @@
 #define COMMON_DEBUG_H
 
 #include "common/scummsys.h"
-#include "common/textconsole.h"
-
-namespace Common {
-
-/**
- * Set the output formatter used by debug() and related functions.
- */
-void setDebugOutputFormatter(OutputFormatter f);
-
-
-}	// End of namespace Common
-
 
 #ifdef DISABLE_TEXT_CONSOLE
 

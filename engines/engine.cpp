@@ -99,7 +99,6 @@ Engine::Engine(OSystem *syst)
 		_mainMenuDialog(NULL) {
 
 	g_engine = this;
-	Common::setDebugOutputFormatter(defaultOutputFormatter);
 	Common::setErrorOutputFormatter(defaultOutputFormatter);
 	Common::setErrorHandler(defaultErrorHandler);
 

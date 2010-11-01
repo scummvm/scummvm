@@ -123,31 +123,15 @@ bool DebugManager::isDebugChannelEnabled(uint32 channel) {
 		return (gDebugChannelsEnabled & channel) != 0;
 }
 
-
-
-static OutputFormatter s_debugOutputFormatter = 0;
-
-void setDebugOutputFormatter(OutputFormatter f) {
-	s_debugOutputFormatter = f;
-}
-
 }	// End of namespace Common
 
 
 #ifndef DISABLE_TEXT_CONSOLE
 
 static void debugHelper(const char *s, va_list va, bool caret = true) {
-	char in_buf[STRINGBUFLEN];
 	char buf[STRINGBUFLEN];
-	vsnprintf(in_buf, STRINGBUFLEN, s, va);
 
-	// Next, give the active engine (if any) a chance to augment the message,
-	// but only if not used from debugN.
-	if (caret && Common::s_debugOutputFormatter) {
-		(*Common::s_debugOutputFormatter)(buf, in_buf, STRINGBUFLEN);
-	} else {
-		strncpy(buf, in_buf, STRINGBUFLEN);
-	}
+	vsnprintf(buf, STRINGBUFLEN, s, va);
 	buf[STRINGBUFLEN-1] = '\0';
 
 	if (caret) {
