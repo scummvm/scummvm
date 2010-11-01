@@ -1577,7 +1577,7 @@ case $_host_os in
 		;;
 	psp)
 		CXXFLAGS="$CXXFLAGS -O3 -I$PSPSDK/include -D_PSP_FW_VERSION=150"
-		CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit"
+		CXXFLAGS="$CXXFLAGS"
 		;;
 	solaris*)
 		DEFINES="$DEFINES -DSOLARIS -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -2225,10 +2225,10 @@ PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backend
 		;;
 	psp)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DMIPS_TARGET -DELF_LOADER_CXA_ATEXIT"
+		DEFINES="$DEFINES -DMIPS_TARGET"
 _mak_plugins='
 LDFLAGS				+= -Wl,-T$(srcdir)/backends/platform/psp/main_prog.ld
-PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lc
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
 '
 		;;
 	*)
