@@ -646,10 +646,14 @@ void GfxPorts::saveLoadWithSerializer(Common::Serializer &s) {
 				//  of the window can only get repainted by the scripts and they dont do that
 				//  so we will get empty, transparent windows instead. So perfect window order
 				//  shouldn't really matter
-				if (window->wndStyle & SCI_WINDOWMGR_STYLE_TOPMOST)
-					_windowList.push_front(window);
-				else
-					_windowList.push_back(window);
+				if (window->counterTillFree) {
+					_freeCounter++;
+				} else {
+					if (window->wndStyle & SCI_WINDOWMGR_STYLE_TOPMOST)
+						_windowList.push_front(window);
+					else
+						_windowList.push_back(window);
+				}
 
 				windowCount--;
 			}
