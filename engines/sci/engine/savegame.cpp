@@ -652,7 +652,6 @@ void GfxPorts::saveLoadWithSerializer(Common::Serializer &s) {
 					_windowList.push_back(window);
 
 				windowCount--;
-				id++;
 			}
 		}
 	}
