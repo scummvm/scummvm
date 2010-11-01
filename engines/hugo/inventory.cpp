@@ -49,11 +49,13 @@ namespace Hugo {
 InventoryHandler::InventoryHandler(HugoEngine *vm) : _vm(vm) {
 }
 
-// Construct the inventory scrollbar in dib_i
-// imageTotNumb is total number of inventory icons
-// displayNumb is number requested for display
-// scrollFl is TRUE if scroll arrows required
-// firstObjId is index of first (scrolled) inventory object to display
+/**
+* Construct the inventory scrollbar in dib_i
+* imageTotNumb is total number of inventory icons
+* displayNumb is number requested for display
+* scrollFl is TRUE if scroll arrows required
+* firstObjId is index of first (scrolled) inventory object to display
+*/
 void InventoryHandler::constructInventory(int16 imageTotNumb, int displayNumb, bool scrollFl, int16 firstObjId) {
 	debugC(1, kDebugInventory, "constructInventory(%d, %d, %d, %d)", imageTotNumb, displayNumb, (scrollFl) ? 0 : 1, firstObjId);
 
@@ -81,7 +83,7 @@ void InventoryHandler::constructInventory(int16 imageTotNumb, int displayNumb, b
 
 				// Compute dest coordinates in dib_i
 				int16 ix = ((scrollFl) ? displayed + 1 : displayed) * INV_DX;
-				displayed++;        // Count number displayed
+				displayed++;                        // Count number displayed
 
 				// Copy the icon
 				_vm->_screen->moveImage(_vm->_screen->getGUIBuffer(), ux, uy, INV_DX, INV_DY, XPIX, _vm->_screen->getIconBuffer(), ix, 0, XPIX);
@@ -91,8 +93,10 @@ void InventoryHandler::constructInventory(int16 imageTotNumb, int displayNumb, b
 	}
 }
 
-// Process required action for inventory
-// Returns objId under cursor (or -1) for INV_GET
+/**
+* Process required action for inventory
+* Returns objId under cursor (or -1) for INV_GET
+*/
 int16 InventoryHandler::processInventory(invact_t action, ...) {
 	debugC(1, kDebugInventory, "processInventory(invact_t action, ...)");
 
@@ -110,7 +114,7 @@ int16 InventoryHandler::processInventory(invact_t action, ...) {
 	bool scrollFl = displayNumb > MAX_DISP;
 	va_list marker;                                 // Args used for D_ADD operation
 	int16 cursorx, cursory;                         // Current cursor position
-	int16 objId = -1;								// Return objid under cursor
+	int16 objId = -1;                               // Return objid under cursor
 
 	switch (action) {
 	case INV_INIT:                                  // Initialize inventory display
@@ -159,15 +163,17 @@ int16 InventoryHandler::processInventory(invact_t action, ...) {
 		}
 		break;
 	}
-	return objId;               // For the INV_GET action
+	return objId;                                   // For the INV_GET action
 }
 
+/**
+* Process inventory state machine
+*/
 void InventoryHandler::runInventory() {
 	status_t &gameStatus = _vm->getGameStatus();
 
 	debugC(1, kDebugInventory, "runInventory");
 
-// Process inventory state machine
 	switch (gameStatus.inventoryState) {
 	case I_OFF:                                     // Icon bar off screen
 		break;
@@ -195,9 +201,9 @@ void InventoryHandler::runInventory() {
 		// and get any icon/text out of _frontBuffer
 		if (gameStatus.inventoryHeight == 0) {
 			processInventory(INV_INIT);             // Initialize dib_i
-			_vm->_screen->displayList(D_RESTORE);    // Restore _frontBuffer
-			_vm->_object->updateImages();            // Rebuild _frontBuffer without icons/text
-			_vm->_screen->displayList(D_DISPLAY);    // Blit display list to screen
+			_vm->_screen->displayList(D_RESTORE);   // Restore _frontBuffer
+			_vm->_object->updateImages();           // Rebuild _frontBuffer without icons/text
+			_vm->_screen->displayList(D_DISPLAY);   // Blit display list to screen
 		}
 
 		gameStatus.inventoryHeight += STEP_DY;      // Move the icon bar down
@@ -221,10 +227,10 @@ void InventoryHandler::runInventory() {
 		}
 		break;
 	case I_ACTIVE:                                  // Inventory active
-		_vm->_parser->charHandler();                 // Still allow commands
-		_vm->_screen->displayList(D_RESTORE);        // Restore previous background
-		_vm->_mouse->mouseHandler();                 // Mouse activity - adds to display list
-		_vm->_screen->displayList(D_DISPLAY);        // Blit the display list to screen
+		_vm->_parser->charHandler();                // Still allow commands
+		_vm->_screen->displayList(D_RESTORE);       // Restore previous background
+		_vm->_mouse->mouseHandler();                // Mouse activity - adds to display list
+		_vm->_screen->displayList(D_DISPLAY);       // Blit the display list to screen
 		break;
 	}
 }

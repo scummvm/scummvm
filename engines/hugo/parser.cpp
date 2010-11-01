@@ -106,7 +106,6 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 	default:                                        // Any other key
 		if (!gameStatus.storyModeFl) {              // Keyboard disabled
 			// Add printable keys to ring buffer
-
 			uint16 bnext = _putIndex + 1;
 			if (bnext >= sizeof(_ringBuffer))
 				bnext = 0;
@@ -121,8 +120,10 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 		_checkDoubleF1Fl = false;
 }
 
-// Add any new chars to line buffer and display them.
-// If CR pressed, pass line to LineHandler()
+/**
+* Add any new chars to line buffer and display them.
+* If CR pressed, pass line to LineHandler()
+*/
 void Parser::charHandler() {
 	debugC(4, kDebugParser, "charHandler");
 
@@ -187,8 +188,10 @@ void Parser::charHandler() {
 	}
 }
 
-// Perform an immediate command.  Takes parameters a la sprintf
-// Assumes final string will not overrun line[] length
+/**
+* Perform an immediate command.  Takes parameters a la sprintf
+* Assumes final string will not overrun line[] length
+*/
 void Parser::command(const char *format, ...) {
 	debugC(1, kDebugParser, "Command(%s, ...)", format);
 
@@ -200,7 +203,9 @@ void Parser::command(const char *format, ...) {
 	lineHandler();
 }
 
-// Locate any member of object name list appearing in command line
+/**
+* Locate any member of object name list appearing in command line
+*/
 bool Parser::isWordPresent(char **wordArr) {
 	debugC(1, kDebugParser, "isWordPresent(%s)", wordArr[0]);
 
@@ -213,7 +218,9 @@ bool Parser::isWordPresent(char **wordArr) {
 	return false;
 }
 
-// Locate word in list of nouns and return ptr to first string in noun list
+/**
+* Locate word in list of nouns and return ptr to first string in noun list
+*/
 char *Parser::findNoun() {
 	debugC(1, kDebugParser, "findNoun()");
 
@@ -226,7 +233,9 @@ char *Parser::findNoun() {
 	return 0;
 }
 
-// Locate word in list of verbs and return ptr to first string in verb list
+/**
+* Locate word in list of verbs and return ptr to first string in verb list
+*/
 char *Parser::findVerb() {
 	debugC(1, kDebugParser, "findVerb()");
 
@@ -239,13 +248,15 @@ char *Parser::findVerb() {
 	return 0;
 }
 
-// Show user all objects being carried in a variable width 2 column format
+/**
+* Show user all objects being carried in a variable width 2 column format
+*/
 void Parser::showDosInventory() {
 	debugC(1, kDebugParser, "showDosInventory()");
 	static const char *blanks = "                                        ";
 	uint16 index = 0, len1 = 0, len2 = 0;
 
-	for (int i = 0; i < _vm->_numObj; i++) {         // Find widths of 2 columns
+	for (int i = 0; i < _vm->_numObj; i++) {        // Find widths of 2 columns
 		if (_vm->_object->isCarried(i)) {
 			uint16 len = strlen(_vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][1]);
 			if (index++ & 1)                        // Right hand column
@@ -263,7 +274,7 @@ void Parser::showDosInventory() {
 	strncat(buffer, blanks, (len1 + len2 - strlen(_vm->_textParser[kTBIntro])) / 2);
 	strcat(strcat(buffer, _vm->_textParser[kTBIntro]), "\n");
 	index = 0;
-	for (int i = 0; i < _vm->_numObj; i++) {         // Assign strings
+	for (int i = 0; i < _vm->_numObj; i++) {        // Assign strings
 		if (_vm->_object->isCarried(i)) {
 			if (index++ & 1)
 				strcat(strcat(buffer, _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][1]), "\n");

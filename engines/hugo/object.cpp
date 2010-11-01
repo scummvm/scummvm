@@ -52,8 +52,10 @@ ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm) {
 ObjectHandler::~ObjectHandler() {
 }
 
+/**
+* Save sequence number and image number in given object
+*/
 void ObjectHandler::saveSeq(object_t *obj) {
-// Save sequence number and image number in given object
 	debugC(1, kDebugObject, "saveSeq");
 
 	bool found = false;
@@ -71,8 +73,10 @@ void ObjectHandler::saveSeq(object_t *obj) {
 	}
 }
 
+/**
+* Set up cur_seq_p from stored sequence and image number in object
+*/
 void ObjectHandler::restoreSeq(object_t *obj) {
-// Set up cur_seq_p from stored sequence and image number in object
 	debugC(1, kDebugObject, "restoreSeq");
 
 	seq_t *q = obj->seqList[obj->curSeqNum].seqPtr;
@@ -81,8 +85,10 @@ void ObjectHandler::restoreSeq(object_t *obj) {
 	obj->currImagePtr = q;
 }
 
-// If status.objid = -1, pick up objid, else use status.objid on objid,
-// if objid can't be picked up, use it directly
+/**
+* If status.objid = -1, pick up objid, else use status.objid on objid,
+* if objid can't be picked up, use it directly
+*/
 void ObjectHandler::useObject(int16 objId) {
 	debugC(1, kDebugObject, "useObject(%d)", objId);
 
@@ -140,8 +146,10 @@ void ObjectHandler::useObject(int16 objId) {
 	_vm->_parser->lineHandler();                         // and process command
 }
 
-// Return object index of the topmost object under the cursor, or -1 if none
-// Objects are filtered if not "useful"
+/**
+* Return object index of the topmost object under the cursor, or -1 if none
+* Objects are filtered if not "useful"
+*/
 int16 ObjectHandler::findObject(uint16 x, uint16 y) {
 	debugC(3, kDebugObject, "findObject(%d, %d)", x, y);
 
@@ -181,8 +189,10 @@ int16 ObjectHandler::findObject(uint16 x, uint16 y) {
 	return objIndex;
 }
 
-// Issue "Look at <object>" command
-// Note special case of swapped hero image
+/**
+* Issue "Look at <object>" command
+* Note special case of swapped hero image
+*/
 void ObjectHandler::lookObject(object_t *obj) {
 	debugC(1, kDebugObject, "lookObject");
 
@@ -193,7 +203,9 @@ void ObjectHandler::lookObject(object_t *obj) {
 	_vm->_parser->command("%s %s", _vm->_arrayVerbs[_vm->_look][0], _vm->_arrayNouns[obj->nounIndex][0]);
 }
 
-// Free all object images
+/**
+* Free all object images
+*/
 void ObjectHandler::freeObjects() {
 	debugC(1, kDebugObject, "freeObjects");
 
@@ -217,14 +229,14 @@ void ObjectHandler::freeObjects() {
 	}
 }
 
-// Compare function for the quicksort.  The sort is to order the objects in
-// increasing vertical position, using y+y2 as the baseline
-// Returns -1 if ay2 < by2 else 1 if ay2 > by2 else 0
+/**
+* Compare function for the quicksort.  The sort is to order the objects in
+* increasing vertical position, using y+y2 as the baseline
+* Returns -1 if ay2 < by2 else 1 if ay2 > by2 else 0
+*/
 int ObjectHandler::y2comp(const void *a, const void *b) {
 	debugC(6, kDebugObject, "y2comp");
 
-//	const object_t *p1 = &s_Engine->_objects[*(const byte *)a];
-//	const object_t *p2 = &s_Engine->_objects[*(const byte *)b];
 	const object_t *p1 = &HugoEngine::get()._object->_objects[*(const byte *)a];
 	const object_t *p2 = &HugoEngine::get()._object->_objects[*(const byte *)b];
 
@@ -250,7 +262,9 @@ int ObjectHandler::y2comp(const void *a, const void *b) {
 	return ay2 - by2;
 }
 
-// Return TRUE if object being carried by hero
+/**
+* Return TRUE if object being carried by hero
+*/
 bool ObjectHandler::isCarrying(uint16 wordIndex) {
 	debugC(1, kDebugObject, "isCarrying(%d)", wordIndex);
 
@@ -261,7 +275,9 @@ bool ObjectHandler::isCarrying(uint16 wordIndex) {
 	return false;
 }
 
-// Describe any takeable objects visible in this screen
+/**
+* Describe any takeable objects visible in this screen
+*/
 void ObjectHandler::showTakeables() {
 	debugC(1, kDebugObject, "showTakeables");
 
@@ -275,7 +291,9 @@ void ObjectHandler::showTakeables() {
 	}
 }
 
-// Find a clear space around supplied object that hero can walk to
+/**
+* Find a clear space around supplied object that hero can walk to
+*/
 bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 	debugC(1, kDebugObject, "findObjectSpace(obj, %d, %d)", *destx, *desty);
 
@@ -318,10 +336,16 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 	return foundFl;
 }
 
+/**
+* Free ObjectArr (before exiting)
+*/
 void ObjectHandler::freeObjectArr() {
 	free(_objects);
 }
 
+/**
+* Load ObjectArr from Hugo.dat
+*/
 void ObjectHandler::loadObjectArr(Common::File &in) {
 	debugC(6, kDebugObject, "loadObject(&in)");
 

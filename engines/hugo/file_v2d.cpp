@@ -46,6 +46,9 @@ FileManager_v2d::FileManager_v2d(HugoEngine *vm) : FileManager(vm) {
 FileManager_v2d::~FileManager_v2d() {
 }
 
+/**
+* Open "database" file (packed files)
+*/
 void FileManager_v2d::openDatabaseFiles() {
 	debugC(1, kDebugFile, "openDatabaseFiles");
 
@@ -57,6 +60,9 @@ void FileManager_v2d::openDatabaseFiles() {
 		Utils::Error(FILE_ERR, "%s", OBJECTS_FILE);
 }
 
+/**
+* Close "Database" files
+*/
 void FileManager_v2d::closeDatabaseFiles() {
 	debugC(1, kDebugFile, "closeDatabaseFiles");
 
@@ -65,8 +71,10 @@ void FileManager_v2d::closeDatabaseFiles() {
 	_objectsArchive.close();
 }
 
+/**
+* Read a PCX image into dib_a
+*/
 void FileManager_v2d::readBackground(int screenIndex) {
-// Read a PCX image into dib_a
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
 	_sceneryArchive1.seek((uint32) screenIndex * sizeof(sceneBlock_t), SEEK_SET);
@@ -88,8 +96,10 @@ void FileManager_v2d::readBackground(int screenIndex) {
 	readPCX(_sceneryArchive1, &dummySeq, _vm->_screen->getFrontBuffer(), true, _vm->_screenNames[screenIndex]);
 }
 
+/**
+* Open and read in an overlay file, close file
+*/
 void FileManager_v2d::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
-// Open and read in an overlay file, close file
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
 	image_pt tmpImage = image;                  // temp ptr to overlay file
@@ -147,8 +157,10 @@ void FileManager_v2d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 	} while (k < OVL_SIZE);
 }
 
+/**
+* Fetch string from file, decode and return ptr to string in memory
+*/
 char *FileManager_v2d::fetchString(int index) {
-// Fetch string from file, decode and return ptr to string in memory
 	debugC(1, kDebugFile, "fetchString(%d)", index);
 
 	// Get offset to string[index] (and next for length calculation)

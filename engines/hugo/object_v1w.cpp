@@ -52,10 +52,12 @@ ObjectHandler_v1w::ObjectHandler_v1w(HugoEngine *vm) : ObjectHandler(vm) {
 ObjectHandler_v1w::~ObjectHandler_v1w() {
 }
 
-// Draw all objects on screen as follows:
-// 1. Sort 'FLOATING' objects in order of y2 (base of object)
-// 2. Display new object frames/positions in dib
-// Finally, cycle any animating objects to next frame
+/**
+* Draw all objects on screen as follows:
+* 1. Sort 'FLOATING' objects in order of y2 (base of object)
+* 2. Display new object frames/positions in dib
+* Finally, cycle any animating objects to next frame
+*/
 void ObjectHandler_v1w::updateImages() {
 	debugC(5, kDebugObject, "updateImages");
 
@@ -167,8 +169,10 @@ void ObjectHandler_v1w::updateImages() {
 	}
 }
 
-// Update all object positions.  Process object 'local' events
-// including boundary events and collisions
+/**
+* Update all object positions.  Process object 'local' events
+* including boundary events and collisions
+*/
 void ObjectHandler_v1w::moveObjects() {
 	debugC(4, kDebugObject, "moveObjects");
 
@@ -354,10 +358,12 @@ void ObjectHandler_v1w::moveObjects() {
 	}
 }
 
+/**
+* Swap all the images of one object with another.  Set hero_image (we make
+* the assumption for now that the first obj is always the HERO) to the object
+* number of the swapped image
+*/
 void ObjectHandler_v1w::swapImages(int objNumb1, int objNumb2) {
-// Swap all the images of one object with another.  Set hero_image (we make
-// the assumption for now that the first obj is always the HERO) to the object
-// number of the swapped image
 	debugC(1, kDebugObject, "swapImages(%d, %d)", objNumb1, objNumb2);
 
 	saveSeq(&_objects[objNumb1]);

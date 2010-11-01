@@ -47,7 +47,9 @@ Screen_v1w::Screen_v1w(HugoEngine *vm) : Screen(vm) {
 Screen_v1w::~Screen_v1w() {
 }
 
-// Load font file, construct font ptrs and reverse data bytes
+/**
+* Load font file, construct font ptrs and reverse data bytes
+*/
 void Screen_v1w::loadFont(int16 fontId) {
 	debugC(2, kDebugDisplay, "loadFont(%d)", fontId);
 

@@ -49,8 +49,10 @@ intro_v3w::~intro_v3w() {
 void intro_v3w::preNewGame() {
 }
 
+/**
+* Hugo 3 - show map and set up for introPlay()
+*/
 void intro_v3w::introInit() {
-// Hugo 3 - show map and set up for introPlay()
 //#if STORY
 	_vm->_file->readBackground(22); // display screen MAP_3w
 	_vm->_screen->displayBackground();
@@ -59,11 +61,13 @@ void intro_v3w::introInit() {
 //#endif
 }
 
+/**
+* Hugo 3 - Preamble screen before going into game.  Draws path of Hugo's plane.
+* Called every tick.  Returns TRUE when complete
+*/
 bool intro_v3w::introPlay() {
 	byte introSize = _vm->getIntroSize();
 
-// Hugo 3 - Preamble screen before going into game.  Draws path of Hugo's plane.
-// Called every tick.  Returns TRUE when complete
 //TODO : Add proper check of story mode
 //#if STORY
 	if (introTicks < introSize) {

@@ -53,13 +53,15 @@ Scheduler_v2d::Scheduler_v2d(HugoEngine *vm) : Scheduler_v1d(vm) {
 Scheduler_v2d::~Scheduler_v2d() {
 }
 
-// Delete an event structure (i.e. return it to the free list)
-// Historical note:  Originally event p was assumed to be at head of queue
-// (i.e. earliest) since all events were deleted in order when proceeding to
-// a new screen.  To delete an event from the middle of the queue, the action
-// was overwritten to be ANULL.  With the advent of GLOBAL events, delQueue
-// was modified to allow deletes anywhere in the list, and the DEL_EVENT
-// action was modified to perform the actual delete.
+/**
+* Delete an event structure (i.e. return it to the free list)
+* Historical note:  Originally event p was assumed to be at head of queue
+* (i.e. earliest) since all events were deleted in order when proceeding to
+* a new screen.  To delete an event from the middle of the queue, the action
+* was overwritten to be ANULL.  With the advent of GLOBAL events, delQueue
+* was modified to allow deletes anywhere in the list, and the DEL_EVENT
+* action was modified to perform the actual delete.
+*/
 void Scheduler_v2d::delQueue(event_t *curEvent) {
 	debugC(4, kDebugSchedule, "delQueue()");
 
@@ -84,8 +86,10 @@ void Scheduler_v2d::delQueue(event_t *curEvent) {
 	_freeEvent = curEvent;
 }
 
-// Insert the action pointed to by p into the timer event queue
-// The queue goes from head (earliest) to tail (latest) timewise
+/**
+* Insert the action pointed to by p into the timer event queue
+* The queue goes from head (earliest) to tail (latest) timewise
+*/
 void Scheduler_v2d::insertAction(act *action) {
 	debugC(1, kDebugSchedule, "insertAction() - Action type A%d", action->a0.actType);
 
@@ -134,9 +138,11 @@ void Scheduler_v2d::insertAction(act *action) {
 	}
 }
 
-// This function performs the action in the event structure pointed to by p
-// It dequeues the event and returns it to the free list.  It returns a ptr
-// to the next action in the list, except special case of NEW_SCREEN
+/**
+* This function performs the action in the event structure pointed to by p
+* It dequeues the event and returns it to the free list.  It returns a ptr
+* to the next action in the list, except special case of NEW_SCREEN
+*/
 event_t *Scheduler_v2d::doAction(event_t *curEvent) {
 	debugC(1, kDebugSchedule, "doAction - Event action type : %d", curEvent->action->a0.actType);
 

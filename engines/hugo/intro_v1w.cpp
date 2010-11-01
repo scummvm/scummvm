@@ -45,8 +45,10 @@ intro_v1w::intro_v1w(HugoEngine *vm) : IntroHandler(vm) {
 intro_v1w::~intro_v1w() {
 }
 
+/**
+* Auto-start a new game
+*/
 void intro_v1w::preNewGame() {
-	// Auto-start a new game
 	_vm->_file->restoreGame(-1);
 	_vm->getGameStatus().viewState = V_INTROINIT;
 }

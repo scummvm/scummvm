@@ -40,8 +40,10 @@
 
 namespace Hugo {
 
+/**
+* Returns index (0 to 7) of first 1 in supplied byte, or 8 if not found
+*/
 int Utils::firstBit(byte data) {
-// Returns index (0 to 7) of first 1 in supplied byte, or 8 if not found
 	if (!data)
 		return 8;
 
@@ -54,8 +56,10 @@ int Utils::firstBit(byte data) {
 	return i;
 }
 
+/**
+* Returns index (0 to 7) of last 1 in supplied byte, or 8 if not found
+*/
 int Utils::lastBit(byte data) {
-// Returns index (0 to 7) of last 1 in supplied byte, or 8 if not found
 	if (!data)
 		return 8;
 
@@ -68,8 +72,10 @@ int Utils::lastBit(byte data) {
 	return i;
 }
 
+/**
+* Reverse the bit order in supplied byte
+*/
 void Utils::reverseByte(byte *data) {
-// Reverse the bit order in supplied byte
 	byte maskIn = 0x80;
 	byte maskOut = 0x01;
 	byte result = 0;
@@ -129,9 +135,11 @@ char *Utils::Box(box_t dismiss, const char *s, ...) {
 	return buffer;
 }
 
+/**
+* Warning handler.  Print supplied message and continue
+* Arguments are same as printf
+*/
 void Utils::Warn(const char *format, ...) {
-// Warning handler.  Print supplied message and continue
-// Arguments are same as printf
 	char buffer[WARNLEN];
 	va_list marker;
 	va_start(marker, format);
@@ -140,9 +148,11 @@ void Utils::Warn(const char *format, ...) {
 	warning("Hugo warning: %s", buffer);
 }
 
+/**
+* Fatal error handler.  Reset environment, print error and exit
+* Arguments are same as printf
+*/
 void Utils::Error(int error_type, const char *format, ...) {
-// Fatal error handler.  Reset environment, print error and exit
-// Arguments are same as printf
 	char buffer[ERRLEN + 1];
 	bool fatal = true;                              // Fatal error, else continue
 
@@ -183,8 +193,10 @@ void Utils::Error(int error_type, const char *format, ...) {
 		exit(1);
 }
 
+/**
+* Print options for user when dead
+*/
 void Utils::gameOverMsg(void) {
-	// Print options for user when dead
 	//MessageBox(hwnd, gameoverstring, "Be more careful next time!", MB_OK | MB_ICONINFORMATION);
 	warning("STUB: Gameover_msg(): %s", HugoEngine::get()._textUtil[kGameOver]);
 }
@@ -200,6 +212,5 @@ char *Utils::strlwr(char *buffer) {
 
 	return result;
 }
-
 
 } // End of namespace Hugo

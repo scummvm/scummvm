@@ -49,8 +49,10 @@ Parser_v1d::Parser_v1d(HugoEngine *vm) : Parser(vm) {
 Parser_v1d::~Parser_v1d() {
 }
 
-// Locate word in list of nouns and return ptr to string in noun list
-// If n is NULL, start at beginning of list, else with n
+/**
+* Locate word in list of nouns and return ptr to string in noun list
+* If n is NULL, start at beginning of list, else with n
+*/
 char *Parser_v1d::findNextNoun(char *noun) {
 	debugC(1, kDebugParser, "findNextNoun(%s)", noun);
 
@@ -70,10 +72,12 @@ char *Parser_v1d::findNextNoun(char *noun) {
 	return 0;
 }
 
-// Test whether hero is close to object.  Return TRUE or FALSE
-// If no noun specified, check context flag in object before other tests.
-// If object not near, return suitable string; may be similar object closer
-// If radius is -1, treat radius as infinity
+/**
+* Test whether hero is close to object.  Return TRUE or FALSE
+* If no noun specified, check context flag in object before other tests.
+* If object not near, return suitable string; may be similar object closer
+* If radius is -1, treat radius as infinity
+*/
 bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) {
 	debugC(1, kDebugParser, "isNear(%s, %s, obj, %s)", verb, noun, comment);
 
@@ -131,9 +135,11 @@ bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) {
 	return true;
 }
 
-// Test whether supplied verb is one of the common variety for this object
-// say_ok needed for special case of take/drop which may be handled not only
-// here but also in a cmd_list with a donestr string simultaneously
+/**
+* Test whether supplied verb is one of the common variety for this object
+* say_ok needed for special case of take/drop which may be handled not only
+* here but also in a cmd_list with a donestr string simultaneously
+*/
 bool Parser_v1d::isGenericVerb(char *word, object_t *obj) {
 	debugC(1, kDebugParser, "isGenericVerb(%s, object_t *obj)", word);
 
@@ -169,10 +175,12 @@ bool Parser_v1d::isGenericVerb(char *word, object_t *obj) {
 	return true;
 }
 
-// Test whether supplied verb is included in the list of allowed verbs for
-// this object.  If it is, then perform the tests on it from the cmd list
-// and if it passes, perform the actions in the action list.  If the verb
-// is catered for, return TRUE
+/**
+* Test whether supplied verb is included in the list of allowed verbs for
+* this object.  If it is, then perform the tests on it from the cmd list
+* and if it passes, perform the actions in the action list.  If the verb
+* is catered for, return TRUE
+*/
 bool Parser_v1d::isObjectVerb(char *word, object_t *obj) {
 	debugC(1, kDebugParser, "isObjectVerb(%s, object_t *obj)", word);
 
@@ -219,8 +227,10 @@ bool Parser_v1d::isObjectVerb(char *word, object_t *obj) {
 	return true;
 }
 
-// Print text for possible background object.  Return TRUE if match found
-// Only match if both verb and noun found.  Test_ca will match verb-only
+/**
+* Print text for possible background object.  Return TRUE if match found
+* Only match if both verb and noun found.  Test_ca will match verb-only
+*/
 bool Parser_v1d::isBackgroundWord(char *noun, char *verb, objectList_t obj) {
 	debugC(1, kDebugParser, "isBackgroundWord(%s, %s, object_list_t obj)", noun, verb);
 
@@ -236,7 +246,9 @@ bool Parser_v1d::isBackgroundWord(char *noun, char *verb, objectList_t obj) {
 	return false;
 }
 
-// Do all things necessary to carry an object
+/**
+* Do all things necessary to carry an object
+*/
 void Parser_v1d::takeObject(object_t *obj) {
 	debugC(1, kDebugParser, "takeObject(object_t *obj)");
 
@@ -249,7 +261,9 @@ void Parser_v1d::takeObject(object_t *obj) {
 	Utils::Box(BOX_ANY, TAKE_TEXT, _vm->_arrayNouns[obj->nounIndex][TAKE_NAME]);
 }
 
-// Do all necessary things to drop an object
+/**
+* Do all necessary things to drop an object
+*/
 void Parser_v1d::dropObject(object_t *obj) {
 	debugC(1, kDebugParser, "dropObject(object_t *obj)");
 
@@ -263,8 +277,10 @@ void Parser_v1d::dropObject(object_t *obj) {
 	Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBOk]);
 }
 
-// Print text for possible background object.  Return TRUE if match found
-// If test_noun TRUE, must have a noun given
+/**
+* Print text for possible background object.  Return TRUE if match found
+* If test_noun TRUE, must have a noun given
+*/
 bool Parser_v1d::isCatchallVerb(bool testNounFl, char *noun, char *verb, objectList_t obj) {
 	debugC(1, kDebugParser, "isCatchallVerb(%d, %s, %s, object_list_t obj)", (testNounFl) ? 1 : 0, noun, verb);
 
@@ -280,7 +296,9 @@ bool Parser_v1d::isCatchallVerb(bool testNounFl, char *noun, char *verb, objectL
 	return false;
 }
 
-// Parse the user's line of text input.  Generate events as necessary
+/**
+* Parse the user's line of text input.  Generate events as necessary
+*/
 void Parser_v1d::lineHandler() {
 	debugC(1, kDebugParser, "lineHandler()");
 
@@ -349,7 +367,7 @@ void Parser_v1d::lineHandler() {
 		Utils::Box(BOX_ANY, "%s", farComment);
 	else if (!isCatchallVerb(true, noun, verb, _vm->_catchallList) &&
 		     !isCatchallVerb(false, noun, verb, _vm->_backgroundObjects[*_vm->_screen_p])  &&
-			 !isCatchallVerb(false, noun, verb, _vm->_catchallList))
+		     !isCatchallVerb(false, noun, verb, _vm->_catchallList))
 		Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBEh_1d]);
 }
 

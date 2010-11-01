@@ -123,28 +123,42 @@ enum TEXTCOLORS {
 
 enum uif_t {U_FONT5, U_FONT6, U_FONT8, UIF_IMAGES, NUM_UIF_ITEMS};
 
-// Enumerate overlay file types
+/**
+* Enumerate overlay file types
+*/
 enum ovl_t {BOUNDARY, OVERLAY, OVLBASE};
 
-// Enumerate error types
+/**
+* Enumerate error types
+*/
 enum {
 	GEN_ERR,   FILE_ERR, WRITE_ERR, PCCH_ERR, HEAP_ERR, EVNT_ERR,  SOUND_ERR
 	//MOUSE_ERR, VID_ERR,  FONT_ERR,  ARG_ERR,  CHK_ERR,  TIMER_ERR, VBX_ERR
 };
 
-// Enumerate ways of cycling a sequence of frames
+/**
+* Enumerate ways of cycling a sequence of frames
+*/
 enum cycle_t {INVISIBLE, ALMOST_INVISIBLE, NOT_CYCLING, CYCLE_FORWARD, CYCLE_BACKWARD};
 
-// Enumerate sequence index matching direction of travel
+/**
+* Enumerate sequence index matching direction of travel
+*/
 enum {RIGHT, LEFT, DOWN, _UP};
 
-// Channel requirement during sound effect
+/**
+* Channel requirement during sound effect
+*/
 enum stereo_t {BOTH_CHANNELS, RIGHT_CHANNEL, LEFT_CHANNEL};
 
-// Priority for sound effect
+/**
+* Priority for sound effect
+*/
 enum priority_t {LOW_PRI, MED_PRI, HIGH_PRI};
 
-// Enumerate the different path types for an object
+/**
+* Enumerate the different path types for an object
+*/
 enum path_t {
 	USER,                                           // User has control of object via cursor keys
 	AUTO,                                           // Computer has control, controlled by action lists
@@ -155,42 +169,62 @@ enum path_t {
 	WANDER2                                         // Same as WANDER, except keeps cycling when stationary
 };
 
-// Enumerate whether object is foreground, background or 'floating'
-// If floating, HERO can collide with it and fore/back ground is determined
-// by relative y-coord of object base.  This is the general case.
-// If fore or background, no collisions can take place and object is either
-// behind or in front of all others, although can still be hidden by the
-// the overlay plane.  OVEROVL means the object is FLOATING (to other
-// objects) but is never hidden by the overlay plane
+/**
+* Enumerate whether object is foreground, background or 'floating'
+* If floating, HERO can collide with it and fore/back ground is determined
+* by relative y-coord of object base.  This is the general case.
+* If fore or background, no collisions can take place and object is either
+* behind or in front of all others, although can still be hidden by the
+* the overlay plane.  OVEROVL means the object is FLOATING (to other
+* objects) but is never hidden by the overlay plane
+*/
 enum {FOREGROUND, BACKGROUND, FLOATING, OVEROVL};
 
-// Game view state machine
+/**
+* Game view state machine
+*/
 enum vstate_t {V_IDLE, V_INTROINIT, V_INTRO, V_PLAY, V_INVENT, V_EXIT};
 
 enum font_t {LARGE_ROMAN, MED_ROMAN, NUM_GDI_FONTS, INIT_FONTS, DEL_FONTS};
 
-// Ways to dismiss a text/prompt box
+/**
+* Ways to dismiss a text/prompt box
+*/
 enum box_t {BOX_ANY, BOX_OK, BOX_PROMPT, BOX_YESNO};
 
-// Standard viewport sizes
+/**
+* Standard viewport sizes
+*/
 enum wsize_t {SIZE_DEF, SIZE_1, SIZE_2, SIZE_3};
 
-// Display list functions
+/**
+* Display list functions
+*/
 enum dupdate_t {D_INIT, D_ADD, D_DISPLAY, D_RESTORE};
 
-// General device installation commands
+/**
+* General device installation commands
+*/
 enum inst_t {INSTALL, RESTORE, RESET};
 
-// Inventory icon bar states
+/**
+* Inventory icon bar states
+*/
 enum istate_t {I_OFF, I_UP, I_DOWN, I_ACTIVE};
 
-// Actions for Process_inventory()
+/**
+* Actions for Process_inventory()
+*/
 enum invact_t {INV_INIT, INV_LEFT, INV_RIGHT, INV_GET};
 
-// Purpose of an automatic route
+/**
+* Purpose of an automatic route
+*/
 enum go_t {GO_SPACE, GO_EXIT, GO_LOOK, GO_GET};
 
-// Following defines the action types and action list
+/**
+* Following defines the action types and action list
+*/
 enum action_t {                                     // Parameters:
 	ANULL              = 0xff,                      // Special NOP used to 'delete' events in DEL_EVENTS
 	ASCHEDULE          = 0,                         //  0 - Ptr to action list to be rescheduled
@@ -259,17 +293,23 @@ struct uif_hdr_t {                                  // UIF font/image look up
 	uint32  offset;                                 // Offset of item in file
 };
 
-// Game specific type definitions
+/**
+* Game specific type definitions
+*/
 typedef byte *image_pt;                             // ptr to an object image (sprite)
 typedef byte *sound_pt;                             // ptr to sound (or music) data
 
-// Following are points for achieving certain actions.
+/**
+* Following are points for achieving certain actions.
+*/
 struct point_t {
 	byte score;                                     // The value of the point
 	bool scoredFl;                                  // Whether scored yet
 };
 
-// Structure for initializing maze processing
+/**
+* Structure for initializing maze processing
+*/
 struct maze_t {
 	bool enabledFl;                                 // TRUE when maze processing enabled
 	byte size;                                      // Size of (square) maze matrix
@@ -684,7 +724,9 @@ union act {
 	act49    a49;
 };
 
-// The following determines how a verb is acted on, for an object
+/**
+* The following determines how a verb is acted on, for an object
+*/
 struct cmd {
 	uint16 verbIndex;                               // the verb
 	uint16 reqIndex;                                // ptr to list of required objects
@@ -696,8 +738,10 @@ struct cmd {
 	uint16 actIndex;                                // Ptr to action list if verb done
 };
 
-// The following is a linked list of images in an animation sequence
-// The image data is in 8-bit DIB format, i.e. 1 byte = 1 pixel
+/**
+* The following is a linked list of images in an animation sequence
+* The image data is in 8-bit DIB format, i.e. 1 byte = 1 pixel
+*/
 struct seq_t {                                      // Linked list of images
 	byte   *imagePtr;                               // ptr to image
 	uint16  bytesPerLine8;                          // bytes per line (8bits)
@@ -706,13 +750,17 @@ struct seq_t {                                      // Linked list of images
 	seq_t  *nextSeqPtr;                             // ptr to next record
 };
 
-// The following is an array of structures of above sequences
+/**
+* The following is an array of structures of above sequences
+*/
 struct seqList_t {
 	uint16 imageNbr;                                // Number of images in sequence
 	seq_t *seqPtr;                                  // Ptr to sequence structure
 };
 
-// Following is definition of object attributes
+/**
+* Following is definition of object attributes
+*/
 struct object_t {
 	uint16     nounIndex;                           // String identifying object
 	uint16     dataIndex;                           // String describing the object
@@ -747,10 +795,12 @@ struct object_t {
 	int8       oldvy;                               // Previous vy
 };
 
-// Following is structure of verbs and nouns for 'background' objects
-//   These are objects that appear in the various screens, but nothing
-//   interesting ever happens with them.  Rather than just be dumb and say
-//   "don't understand" we produce an interesting msg to keep user sane.
+/**
+* Following is structure of verbs and nouns for 'background' objects
+*   These are objects that appear in the various screens, but nothing
+*   interesting ever happens with them.  Rather than just be dumb and say
+*   "don't understand" we produce an interesting msg to keep user sane.
+*/
 struct background_t {
 	uint16 verbIndex;
 	uint16 nounIndex;
@@ -769,7 +819,9 @@ typedef byte icondib_t[XPIX *INV_DY];               // Icon bar dib
 typedef char command_t[MAX_CHARS + 8];              // Command line (+spare for prompt,cursor)
 typedef char fpath_t[MAX_FPATH];                    // File path
 
-// Structure to define an EXIT or other collision-activated hotspot
+/**
+* Structure to define an EXIT or other collision-activated hotspot
+*/
 struct hotspot_t {
 	int        screenIndex;                         // Screen in which hotspot appears
 	int        x1, y1, x2, y2;                      // Bounding box of hotspot
@@ -842,7 +894,9 @@ extern hugo_boot_t _boot;                           // Boot info structure
 extern char        _textBoxBuffer[];                // Useful box text buffer
 extern command_t   _line;                           // Line of user text input
 
-// Structure of scenery file lookup entry
+/**
+* Structure of scenery file lookup entry
+*/
 struct sceneBlock_t {
 	uint32 scene_off;
 	uint32 scene_len;
@@ -854,7 +908,9 @@ struct sceneBlock_t {
 	uint32 ob_len;
 };
 
-// Structure of object file lookup entry
+/**
+* Structure of object file lookup entry
+*/
 struct objBlock_t {
 	uint32 objOffset;
 	uint32 objLength;

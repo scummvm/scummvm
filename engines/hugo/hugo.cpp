@@ -299,8 +299,10 @@ void HugoEngine::initMachine() {
 		_file->readUIFImages();                     // Read all uif images (only in Win versions)
 }
 
+/**
+* Hugo game state machine - called during onIdle
+*/
 void HugoEngine::runMachine() {
-// Hugo game state machine - called during onIdle
 	static uint32 lastTime;
 
 	status_t &gameStatus = getGameStatus();
@@ -353,6 +355,9 @@ void HugoEngine::runMachine() {
 	}
 }
 
+/**
+* Loads Hugo.dat file, which contains all the hardcoded data in the original executables
+*/
 bool HugoEngine::loadHugoDat() {
 	Common::File in;
 	in.open("hugo.dat");
@@ -670,7 +675,7 @@ bool HugoEngine::loadHugoDat() {
 	_heroImage = HERO;                              // Current in use hero image
 
 	_scheduler->loadActListArr(in);
-	
+
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		if (varnt == _gameVariant) {
 			_tunesNbr     = in.readSByte();
@@ -895,7 +900,9 @@ void HugoEngine::freeTexts(char **ptr) {
 	free(ptr);
 }
 
-// Sets the playlist to be the default tune selection
+/**
+* Sets the playlist to be the default tune selection
+*/
 void HugoEngine::initPlaylist(bool playlist[MAX_TUNES]) {
 	debugC(1, kDebugEngine, "initPlaylist");
 
@@ -905,7 +912,9 @@ void HugoEngine::initPlaylist(bool playlist[MAX_TUNES]) {
 		playlist[_defltTunes[i]] = true;
 }
 
-// Initialize the dynamic game status
+/**
+* Initialize the dynamic game status
+*/
 void HugoEngine::initStatus() {
 	debugC(1, kDebugEngine, "initStatus");
 	_status.initSaveFl    = true;                   // Force initial save
@@ -942,8 +951,10 @@ void HugoEngine::initStatus() {
 	_status.go_id           = -1;                   // Hero not walking to anything
 }
 
-// Initialize default config values.  Must be done before Initialize().
-// Reset needed to save config.cx,cy which get splatted during OnFileNew()
+/**
+* Initialize default config values.  Must be done before Initialize().
+* Reset needed to save config.cx,cy which get splatted during OnFileNew()
+*/
 void HugoEngine::initConfig(inst_t action) {
 	debugC(1, kDebugEngine, "initConfig(%d)", action);
 
@@ -1011,7 +1022,9 @@ void HugoEngine::initialize() {
 	}
 }
 
-// Restore all resources before termination
+/**
+* Restore all resources before termination
+*/
 void HugoEngine::shutdown() {
 	debugC(1, kDebugEngine, "shutdown");
 
@@ -1026,7 +1039,9 @@ void HugoEngine::readObjectImages() {
 		_file->readImage(i, &_object->_objects[i]);
 }
 
-// Read scenery, overlay files for given screen number
+/**
+* Read scenery, overlay files for given screen number
+*/
 void HugoEngine::readScreenFiles(int screenNum) {
 	debugC(1, kDebugEngine, "readScreenFiles(%d)", screenNum);
 
@@ -1037,8 +1052,10 @@ void HugoEngine::readScreenFiles(int screenNum) {
 	_file->readOverlay(screenNum, _ovlBase, OVLBASE);   // Overlay base file
 }
 
-// Return maximum allowed movement (from zero to vx) such that object does
-// not cross a boundary (either background or another object)
+/**
+* Return maximum allowed movement (from zero to vx) such that object does
+* not cross a boundary (either background or another object)
+*/
 int HugoEngine::deltaX(int x1, int x2, int vx, int y) {
 // Explanation of algorithm:  The boundaries are drawn as contiguous
 // lines 1 pixel wide.  Since DX,DY are not necessarily 1, we must
@@ -1087,9 +1104,11 @@ int HugoEngine::deltaX(int x1, int x2, int vx, int y) {
 	return vx;
 }
 
-// Similar to Delta_x, but for movement in y direction.  Special case of
-// bytes at end of line segment; must only count boundary bits falling on
-// line segment.
+/**
+* Similar to Delta_x, but for movement in y direction.  Special case of
+* bytes at end of line segment; must only count boundary bits falling on
+* line segment.
+*/
 int HugoEngine::deltaY(int x1, int x2, int vy, int y) {
 	debugC(3, kDebugEngine, "deltaY(%d, %d, %d, %d)", x1, x2, vy, y);
 
@@ -1114,7 +1133,9 @@ int HugoEngine::deltaY(int x1, int x2, int vy, int y) {
 	return vy;
 }
 
-// Store a horizontal line segment in the object boundary file
+/**
+* Store a horizontal line segment in the object boundary file
+*/
 void HugoEngine::storeBoundary(int x1, int x2, int y) {
 	debugC(5, kDebugEngine, "storeBoundary(%d, %d, %d)", x1, x2, y);
 
@@ -1129,7 +1150,9 @@ void HugoEngine::storeBoundary(int x1, int x2, int y) {
 	}
 }
 
-// Clear a horizontal line segment in the object boundary file
+/**
+* Clear a horizontal line segment in the object boundary file
+*/
 void HugoEngine::clearBoundary(int x1, int x2, int y) {
 	debugC(5, kDebugEngine, "clearBoundary(%d, %d, %d)", x1, x2, y);
 
@@ -1144,8 +1167,10 @@ void HugoEngine::clearBoundary(int x1, int x2, int y) {
 	}
 }
 
-// Search background command list for this screen for supplied object.
-// Return first associated verb (not "look") or 0 if none found.
+/**
+* Search background command list for this screen for supplied object.
+* Return first associated verb (not "look") or 0 if none found.
+*/
 char *HugoEngine::useBG(char *name) {
 	debugC(1, kDebugEngine, "useBG(%s)", name);
 
@@ -1160,7 +1185,9 @@ char *HugoEngine::useBG(char *name) {
 	return 0;
 }
 
-// Add action lists for this screen to event queue
+/**
+* Add action lists for this screen to event queue
+*/
 void HugoEngine::screenActions(int screenNum) {
 	debugC(1, kDebugEngine, "screenActions(%d)", screenNum);
 
@@ -1171,18 +1198,22 @@ void HugoEngine::screenActions(int screenNum) {
 	}
 }
 
-// Set the new screen number into the hero object and any carried objects
+/**
+* Set the new screen number into the hero object and any carried objects
+*/
 void HugoEngine::setNewScreen(int screenNum) {
 	debugC(1, kDebugEngine, "setNewScreen(%d)", screenNum);
 
-	*_screen_p = screenNum;                             // HERO object
-	for (int i = HERO + 1; i < _numObj; i++) {          // Any others
-		if (_object->isCarried(i))                      // being carried
+	*_screen_p = screenNum;                         // HERO object
+	for (int i = HERO + 1; i < _numObj; i++) {      // Any others
+		if (_object->isCarried(i))                  // being carried
 			_object->_objects[i].screenIndex = screenNum;
 	}
 }
 
-// An object has collided with a boundary.  See if any actions are required
+/**
+* An object has collided with a boundary. See if any actions are required
+*/
 void HugoEngine::boundaryCollision(object_t *obj) {
 	debugC(1, kDebugEngine, "boundaryCollision");
 
@@ -1216,7 +1247,9 @@ void HugoEngine::boundaryCollision(object_t *obj) {
 	}
 }
 
-// Add up all the object values and all the bonus points
+/**
+* Add up all the object values and all the bonus points
+*/
 void HugoEngine::calcMaxScore() {
 	debugC(1, kDebugEngine, "calcMaxScore");
 
@@ -1227,7 +1260,9 @@ void HugoEngine::calcMaxScore() {
 		_maxscore += _points[i].score;
 }
 
-// Exit game, advertise trilogy, show copyright
+/**
+* Exit game, advertise trilogy, show copyright
+*/
 void HugoEngine::endGame() {
 	debugC(1, kDebugEngine, "endGame");
 

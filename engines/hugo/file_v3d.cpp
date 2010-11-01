@@ -45,8 +45,10 @@ FileManager_v3d::FileManager_v3d(HugoEngine *vm) : FileManager_v2d(vm) {
 FileManager_v3d::~FileManager_v3d() {
 }
 
+/**
+* Read a PCX image into dib_a
+*/
 void FileManager_v3d::readBackground(int screenIndex) {
-// Read a PCX image into dib_a
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
 	_sceneryArchive1.seek((uint32) screenIndex * sizeof(sceneBlock_t), SEEK_SET);
@@ -73,6 +75,9 @@ void FileManager_v3d::readBackground(int screenIndex) {
 	}
 }
 
+/**
+* Open "database" file (packed files)
+*/
 void FileManager_v3d::openDatabaseFiles() {
 	debugC(1, kDebugFile, "openDatabaseFiles");
 
@@ -86,6 +91,9 @@ void FileManager_v3d::openDatabaseFiles() {
 		Utils::Error(FILE_ERR, "%s", OBJECTS_FILE);
 }
 
+/**
+* Close "Database" files
+*/
 void FileManager_v3d::closeDatabaseFiles() {
 	debugC(1, kDebugFile, "closeDatabaseFiles");
 
@@ -95,8 +103,10 @@ void FileManager_v3d::closeDatabaseFiles() {
 	_objectsArchive.close();
 }
 
+/**
+* Open and read in an overlay file, close file
+*/
 void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
-// Open and read in an overlay file, close file
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
 	image_pt     tmpImage = image;                  // temp ptr to overlay file

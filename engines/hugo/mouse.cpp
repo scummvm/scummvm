@@ -63,7 +63,9 @@ enum seqTextMouse {
 MouseHandler::MouseHandler(HugoEngine *vm) : _vm(vm) {
 }
 
-// Shadow-blit supplied string into dib_a at cx,cy and add to display list
+/**
+* Shadow-blit supplied string into dib_a at cx,cy and add to display list
+*/
 void MouseHandler::cursorText(char *buffer, int16 cx, int16 cy, uif_t fontId, int16 color) {
 	debugC(1, kDebugMouse, "cursorText(%s, %d, %d, %d, %d)", buffer, cx, cy, fontId, color);
 
@@ -80,8 +82,10 @@ void MouseHandler::cursorText(char *buffer, int16 cx, int16 cy, uif_t fontId, in
 	_vm->_screen->displayList(D_ADD, sx, sy, sdx, sdy);
 }
 
-// Find the exit hotspot containing cx, cy.
-// Return hotspot index or -1 if not found.
+/**
+* Find the exit hotspot containing cx, cy.
+* Return hotspot index or -1 if not found.
+*/
 int16 MouseHandler::findExit(int16 cx, int16 cy) {
 	debugC(2, kDebugMouse, "findExit(%d, %d)", cx, cy);
 
@@ -95,7 +99,9 @@ int16 MouseHandler::findExit(int16 cx, int16 cy) {
 	return -1;
 }
 
-// Process a mouse right click at coord cx, cy over object objid
+/**
+* Process a mouse right click at coord cx, cy over object objid
+*/
 void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 	debugC(1, kDebugMouse, "Process_rclick(%d, %d, %d)", objId, cx, cy);
 
@@ -138,12 +144,13 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 	}
 }
 
-// Process a left mouse click over:
-// 1.  An icon - show description
-// 2.  An object - walk to and show description
-// 3.  An icon scroll arrow - scroll the iconbar
-// 4.  Nothing - attempt to walk there
-// 5.  Exit - walk to exit hotspot
+/** Process a left mouse click over:
+* 1.  An icon - show description
+* 2.  An object - walk to and show description
+* 3.  An icon scroll arrow - scroll the iconbar
+* 4.  Nothing - attempt to walk there
+* 5.  Exit - walk to exit hotspot
+*/
 void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 	debugC(1, kDebugMouse, "Process_lclick(%d, %d, %d)", objId, cx, cy);
 
@@ -223,7 +230,9 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 	}
 }
 
-// Process mouse activity
+/**
+* Process mouse activity
+*/
 void MouseHandler::mouseHandler() {
 	debugC(2, kDebugMouse, "mouseHandler");
 

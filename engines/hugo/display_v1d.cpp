@@ -46,9 +46,11 @@ Screen_v1d::Screen_v1d(HugoEngine *vm) : Screen(vm) {
 Screen_v1d::~Screen_v1d() {
 }
 
-// Load font file, construct font ptrs and reverse data bytes
-// TODO: This uses hardcoded fonts in hugo.dat, it should be replaced
-//       by a proper implementation of .FON files
+/**
+* Load font file, construct font ptrs and reverse data bytes
+* TODO: This uses hardcoded fonts in hugo.dat, it should be replaced
+*       by a proper implementation of .FON files
+*/
 void Screen_v1d::loadFont(int16 fontId) {
 	debugC(2, kDebugDisplay, "loadFont(%d)", fontId);
 

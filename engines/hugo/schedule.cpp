@@ -48,7 +48,9 @@ Scheduler::Scheduler(HugoEngine *vm) : _vm(vm) {
 Scheduler::~Scheduler() {
 }
 
-// Initialise the timer event queue
+/**
+* Initialise the timer event queue
+*/
 void Scheduler::initEventQueue() {
 	debugC(1, kDebugSchedule, "initEventQueue");
 
@@ -66,7 +68,9 @@ void Scheduler::initEventQueue() {
 	_freeEvent = _events;                           // Free list is full
 }
 
-// Return a ptr to an event structure from the free list
+/**
+* Return a ptr to an event structure from the free list
+*/
 event_t *Scheduler::getQueue() {
 	debugC(4, kDebugSchedule, "getQueue");
 
@@ -78,7 +82,9 @@ event_t *Scheduler::getQueue() {
 	return resEvent;
 }
 
-// Call Insert_action for each action in the list supplied
+/**
+* Call Insert_action for each action in the list supplied
+*/
 void Scheduler::insertActionList(uint16 actIndex) {
 	debugC(1, kDebugSchedule, "insertActionList(%d)", actIndex);
 
@@ -88,7 +94,9 @@ void Scheduler::insertActionList(uint16 actIndex) {
 	}
 }
 
-// Decode a string
+/**
+* Decode a string
+*/
 void Scheduler::decodeString(char *line) {
 	debugC(1, kDebugSchedule, "decodeString(%s)", line);
 
@@ -99,17 +107,21 @@ void Scheduler::decodeString(char *line) {
 	debugC(1, kDebugSchedule, "result : %s", line);
 }
 
-// Return system time in ticks.  A tick is 1/TICKS_PER_SEC mS
+/**
+* Return system time in ticks.  A tick is 1/TICKS_PER_SEC mS
+*/
 uint32 Scheduler::getWinTicks() {
 	debugC(3, kDebugSchedule, "getTicks");
 
 	return _vm->getGameStatus().tick;
 }
 
-// Return system time in ticks.  A tick is 1/TICKS_PER_SEC mS
-// If update FALSE, simply return last known time
-// Note that this is real time unless a processing cycle takes longer than
-// a real tick, in which case the system tick is simply incremented
+/**
+* Return system time in ticks.  A tick is 1/TICKS_PER_SEC mS
+* If update FALSE, simply return last known time
+* Note that this is real time unless a processing cycle takes longer than
+* a real tick, in which case the system tick is simply incremented
+*/
 uint32 Scheduler::getDosTicks(bool updateFl) {
 	debugC(5, kDebugSchedule, "getTicks");
 
@@ -133,7 +145,9 @@ uint32 Scheduler::getDosTicks(bool updateFl) {
 	return(tick);
 }
 
-// Add indecated bonus to score if not added already
+/**
+* Add indecated bonus to score if not added already
+*/
 void Scheduler::processBonus(int bonusIndex) {
 	debugC(1, kDebugSchedule, "processBonus(%d)", bonusIndex);
 
@@ -143,12 +157,14 @@ void Scheduler::processBonus(int bonusIndex) {
 	}
 }
 
-// Transition to a new screen as follows:
-//	1. Clear out all non-global events from event list.
-//	2. Set the new screen (in the hero object and any carried objects)
-//	3. Read in the screen files for the new screen
-//	4. Schedule action list for new screen
-//	5. Initialise prompt line and status line
+/**
+* Transition to a new screen as follows:
+* 1. Clear out all non-global events from event list.
+* 2. Set the new screen (in the hero object and any carried objects)
+* 3. Read in the screen files for the new screen
+* 4. Schedule action list for new screen
+* 5. Initialise prompt line and status line
+*/
 void Scheduler::newScreen(int screenIndex) {
 	debugC(1, kDebugSchedule, "newScreen(%d)", screenIndex);
 
@@ -185,10 +201,12 @@ void Scheduler::newScreen(int screenIndex) {
 	_vm->_screen->initNewScreenDisplay();
 }
 
-// Transition to a new screen as follows:
-//	1. Set the new screen (in the hero object and any carried objects)
-//	2. Read in the screen files for the new screen
-//	3. Initialise prompt line and status line
+/**
+* Transition to a new screen as follows:
+* 1. Set the new screen (in the hero object and any carried objects)
+* 2. Read in the screen files for the new screen
+* 3. Initialise prompt line and status line
+*/
 void Scheduler::restoreScreen(int screenIndex) {
 	debugC(1, kDebugSchedule, "restoreScreen(%d)", screenIndex);
 
@@ -202,10 +220,12 @@ void Scheduler::restoreScreen(int screenIndex) {
 	_vm->_screen->initNewScreenDisplay();
 }
 
-// Wait (if necessary) for next synchronizing tick
-// Slow machines won't make it by the end of tick, so will just plod on
-// at their own speed, not waiting here, but free running.
-// Note: DOS Versions only
+/**
+* Wait (if necessary) for next synchronizing tick
+* Slow machines won't make it by the end of tick, so will just plod on
+* at their own speed, not waiting here, but free running.
+* Note: DOS Versions only
+*/
 void Scheduler::waitForRefresh(void) {
 	debugC(1, kDebugSchedule, "waitForRefresh()");
 
@@ -220,7 +240,9 @@ void Scheduler::waitForRefresh(void) {
 	timeout = ++t;
 }
 
-	//Read kALnewscr used by maze (Hugo 2)
+/**
+* Read kALnewscr used by maze (Hugo 2)
+*/
 void Scheduler::loadAlNewscrIndex(Common::File &in) {
 	debugC(6, kDebugSchedule, "loadAlNewscrIndex(&in)");
 
@@ -232,6 +254,9 @@ void Scheduler::loadAlNewscrIndex(Common::File &in) {
 	}
 }
 
+/**
+* Load actListArr from Hugo.dat
+*/
 void Scheduler::loadActListArr(Common::File &in) {
 	debugC(6, kDebugSchedule, "loadActListArr(&in)");
 
@@ -809,8 +834,10 @@ void Scheduler::freeActListArr() {
 	free(_actListArr);
 }
 
-// Maze mode is enabled.  Check to see whether hero has crossed the maze
-// bounding box, if so, go to the next room */
+/**
+* Maze mode is enabled.  Check to see whether hero has crossed the maze
+* bounding box, if so, go to the next room */
+*/
 void Scheduler::processMaze(int x1, int x2, int y1, int y2) {
 	debugC(1, kDebugSchedule, "processMaze");
 

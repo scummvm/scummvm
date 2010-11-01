@@ -48,9 +48,11 @@ FileManager::FileManager(HugoEngine *vm) : _vm(vm) {
 FileManager::~FileManager() {
 }
 
+/**
+* Convert 4 planes (RGBI) data to 8-bit DIB format
+* Return original plane data ptr
+*/
 byte *FileManager::convertPCC(byte *p, uint16 y, uint16 bpl, image_pt dataPtr) {
-// Convert 4 planes (RGBI) data to 8-bit DIB format
-// Return original plane data ptr
 	debugC(2, kDebugFile, "convertPCC(byte *p, %d, %d, image_pt data_p)", y, bpl);
 
 	dataPtr += y * bpl * 8;                         // Point to correct DIB line
@@ -65,10 +67,12 @@ byte *FileManager::convertPCC(byte *p, uint16 y, uint16 bpl, image_pt dataPtr) {
 	return p;
 }
 
+/**
+* Read a pcx file of length len.  Use supplied seq_p and image_p or
+* allocate space if NULL.  Name used for errors.  Returns address of seq_p
+* Set first TRUE to initialize b_index (i.e. not reading a sequential image in file).
+*/
 seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool firstFl, const char *name) {
-// Read a pcx file of length len.  Use supplied seq_p and image_p or
-// allocate space if NULL.  Name used for errors.  Returns address of seq_p
-// Set first TRUE to initialize b_index (i.e. not reading a sequential image in file).
 	debugC(1, kDebugFile, "readPCX(..., %s)", name);
 
 	// Read in the PCC header and check consistency
@@ -137,8 +141,10 @@ seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool
 	return seqPtr;
 }
 
+/**
+* Read object file of PCC images into object supplied
+*/
 void FileManager::readImage(int objNum, object_t *objPtr) {
-// Read object file of PCC images into object supplied
 	debugC(1, kDebugFile, "readImage(%d, object_t *objPtr)", objNum);
 
 	if (!objPtr->seqNumb)                           // This object has no images
@@ -227,9 +233,11 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 		_objectsArchive.close();
 }
 
+/**
+* Read sound (or music) file data.  Call with SILENCE to free-up
+* any allocated memory.  Also returns size of data
+*/
 sound_pt FileManager::getSound(int16 sound, uint16 *size) {
-// Read sound (or music) file data.  Call with SILENCE to free-up
-// any allocated memory.  Also returns size of data
 	debugC(1, kDebugFile, "getSound(%d, %d)", sound, *size);
 
 	// No more to do if SILENCE (called for cleanup purposes)
@@ -274,8 +282,10 @@ sound_pt FileManager::getSound(int16 sound, uint16 *size) {
 	return soundPtr;
 }
 
+/**
+* Return whether file exists or not
+*/
 bool FileManager::fileExists(char *filename) {
-// Return whether file exists or not
 	Common::File f;
 	if (f.open(filename)) {
 		f.close();
@@ -284,8 +294,10 @@ bool FileManager::fileExists(char *filename) {
 	return false;
 }
 
+/**
+* Save game to supplied slot (-1 is INITFILE)
+*/
 void FileManager::saveGame(int16 slot, const char *descrip) {
-// Save game to supplied slot (-1 is INITFILE)
 	debugC(1, kDebugFile, "saveGame(%d, %s)", slot, descrip);
 
 	// Get full path of saved game file - note test for INITFILE
@@ -353,8 +365,10 @@ void FileManager::saveGame(int16 slot, const char *descrip) {
 	delete out;
 }
 
+/**
+* Restore game from supplied slot number (-1 is INITFILE)
+*/
 void FileManager::restoreGame(int16 slot) {
-// Restore game from supplied slot number (-1 is INITFILE)
 	debugC(1, kDebugFile, "restoreGame(%d)", slot);
 
 	// Initialize new-game status
@@ -437,13 +451,15 @@ void FileManager::restoreGame(int16 slot) {
 	delete in;
 }
 
+/**
+* Initialize the size of a saved game (from the fixed initial game).
+* If status.initsave is TRUE, or the initial saved game is not found,
+* force a save to create one.  Normally the game will be shipped with
+* the initial game file but useful to force a write during development
+* when the size is changeable.
+* The net result is a valid INITFILE, with status.savesize initialized.
+*/
 void FileManager::initSavedGame() {
-// Initialize the size of a saved game (from the fixed initial game).
-// If status.initsave is TRUE, or the initial saved game is not found,
-// force a save to create one.  Normally the game will be shipped with
-// the initial game file but useful to force a write during development
-// when the size is changeable.
-// The net result is a valid INITFILE, with status.savesize initialized.
 	debugC(1, kDebugFile, "initSavedGame");
 
 	// Force save of initial game
@@ -470,8 +486,10 @@ void FileManager::initSavedGame() {
 		Utils::Error(WRITE_ERR, "%s", _vm->_initFilename.c_str());
 }
 
+/**
+* Read the encrypted text from the boot file and print it
+*/
 void FileManager::printBootText() {
-// Read the encrypted text from the boot file and print it
 	debugC(1, kDebugFile, "printBootText");
 
 	Common::File ofp;
@@ -508,9 +526,11 @@ void FileManager::printBootText() {
 	ofp.close();
 }
 
+/**
+* Reads boot file for program environment.  Fatal error if not there or
+* file checksum is bad.  De-crypts structure while checking checksum
+*/
 void FileManager::readBootFile() {
-// Reads boot file for program environment.  Fatal error if not there or
-// file checksum is bad.  De-crypts structure while checking checksum
 	debugC(1, kDebugFile, "readBootFile");
 
 	Common::File ofp;
@@ -546,8 +566,10 @@ void FileManager::readBootFile() {
 		Utils::Error(GEN_ERR, "%s", "Program startup file invalid");
 }
 
+/**
+* Returns address of uif_hdr[id], reading it in if first call
+*/
 uif_hdr_t *FileManager::getUIFHeader(uif_t id) {
-// Returns address of uif_hdr[id], reading it in if first call
 	debugC(1, kDebugFile, "getUIFHeader(%d)", id);
 
 	static bool firstFl = true;
@@ -574,8 +596,10 @@ uif_hdr_t *FileManager::getUIFHeader(uif_t id) {
 	return &UIFHeader[id];
 }
 
+/**
+* Read uif item into supplied buffer.
+*/
 void FileManager::readUIFItem(int16 id, byte *buf) {
-// Read uif item into supplied buffer.
 	debugC(1, kDebugFile, "readUIFItem(%d, ...)", id);
 
 	// Open uif file to read data
@@ -602,10 +626,11 @@ void FileManager::readUIFItem(int16 id, byte *buf) {
 	ip.close();
 }
 
+/**
+* Simple instructions given when F1 pressed twice in a row
+* Only in DOS versions
+*/
 void FileManager::instructions() {
-// Simple instructions given when F1 pressed twice in a row
-// Only in DOS versions
-
 	Common::File f;
 	if (!f.open(HELPFILE)) {
 		warning("help.dat not found");
@@ -629,7 +654,9 @@ void FileManager::instructions() {
 	f.close();
 }
 
-// Read the uif image file (inventory icons)
+/**
+* Read the uif image file (inventory icons)
+*/
 void FileManager::readUIFImages() {
 	debugC(1, kDebugFile, "readUIFImages");
 

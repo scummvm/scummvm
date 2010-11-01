@@ -75,11 +75,13 @@ void intro_v3d::introInit() {
 	introTicks = 0;
 }
 
+/**
+* Hugo 3 - Preamble screen before going into game.  Draws path of Hugo's plane.
+* Called every tick.  Returns TRUE when complete
+*/
 bool intro_v3d::introPlay() {
 	byte introSize = _vm->getIntroSize();
 
-// Hugo 3 - Preamble screen before going into game.  Draws path of Hugo's plane.
-// Called every tick.  Returns TRUE when complete
 //TODO : Add proper check of story mode
 //#if STORY
 	if (introTicks < introSize) {

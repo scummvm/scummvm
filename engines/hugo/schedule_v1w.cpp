@@ -53,10 +53,12 @@ Scheduler_v1w::Scheduler_v1w(HugoEngine *vm) : Scheduler_v3d(vm) {
 Scheduler_v1w::~Scheduler_v1w() {
 }
 
+/**
+* This function performs the action in the event structure pointed to by p
+* It dequeues the event and returns it to the free list.  It returns a ptr
+* to the next action in the list, except special case of NEW_SCREEN
+*/
 event_t *Scheduler_v1w::doAction(event_t *curEvent) {
-// This function performs the action in the event structure pointed to by p
-// It dequeues the event and returns it to the free list.  It returns a ptr
-// to the next action in the list, except special case of NEW_SCREEN
 	debugC(1, kDebugSchedule, "doAction - Event action type : %d", curEvent->action->a0.actType);
 
 	status_t &gameStatus = _vm->getGameStatus();
@@ -351,10 +353,12 @@ event_t *Scheduler_v1w::doAction(event_t *curEvent) {
 	}
 }
 
-// Write the event queue to the file with handle f
-// Note that we convert all the event structure ptrs to indexes
-// using -1 for NULL.  We can't convert the action ptrs to indexes
-// so we save address of first dummy action ptr to compare on restore.
+/**
+* Write the event queue to the file with handle f
+* Note that we convert all the event structure ptrs to indexes
+* using -1 for NULL.  We can't convert the action ptrs to indexes
+* so we save address of first dummy action ptr to compare on restore.
+*/
 void Scheduler_v1w::saveEvents(Common::WriteStream *f) {
 	debugC(1, kDebugSchedule, "saveEvents()");
 
@@ -380,7 +384,9 @@ void Scheduler_v1w::saveEvents(Common::WriteStream *f) {
 	f->write(saveEventArr, sizeof(saveEventArr));
 }
 
-// Restore the event list from file with handle f
+/**
+* Restore the event list from file with handle f
+*/
 void Scheduler_v1w::restoreEvents(Common::SeekableReadStream *f) {
 	debugC(1, kDebugSchedule, "restoreEvents");
 
@@ -417,6 +423,10 @@ void Scheduler_v1w::restoreEvents(Common::SeekableReadStream *f) {
 	}
 }
 
+/**
+* Insert the action pointed to by p into the timer event queue
+* The queue goes from head (earliest) to tail (latest) timewise
+*/
 void Scheduler_v1w::insertAction(act *action) {
 	debugC(1, kDebugSchedule, "insertAction() - Action type A%d", action->a0.actType);
 
@@ -465,9 +475,11 @@ void Scheduler_v1w::insertAction(act *action) {
 	}
 }
 
-// This is the scheduler which runs every tick.  It examines the event queue
-// for any events whose time has come.  It dequeues these events and performs
-// the action associated with the event, returning it to the free queue
+/**
+* This is the scheduler which runs every tick.  It examines the event queue
+* for any events whose time has come.  It dequeues these events and performs
+* the action associated with the event, returning it to the free queue
+*/
 void Scheduler_v1w::runScheduler() {
 	debugC(6, kDebugSchedule, "runScheduler");
 

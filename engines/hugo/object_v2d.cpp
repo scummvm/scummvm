@@ -52,10 +52,12 @@ ObjectHandler_v2d::ObjectHandler_v2d(HugoEngine *vm) : ObjectHandler_v1d(vm) {
 ObjectHandler_v2d::~ObjectHandler_v2d() {
 }
 
-// Draw all objects on screen as follows:
-// 1. Sort 'FLOATING' objects in order of y2 (base of object)
-// 2. Display new object frames/positions in dib
-// Finally, cycle any animating objects to next frame
+/** 
+* Draw all objects on screen as follows:
+* 1. Sort 'FLOATING' objects in order of y2 (base of object)
+* 2. Display new object frames/positions in dib
+* Finally, cycle any animating objects to next frame
+*/
 void ObjectHandler_v2d::updateImages() {
 	debugC(5, kDebugObject, "updateImages");
 
@@ -169,8 +171,10 @@ void ObjectHandler_v2d::updateImages() {
 	}
 }
 
-// Update all object positions.  Process object 'local' events
-// including boundary events and collisions
+/**
+* Update all object positions.  Process object 'local' events
+* including boundary events and collisions
+*/
 void ObjectHandler_v2d::moveObjects() {
 	debugC(4, kDebugObject, "moveObjects");
 

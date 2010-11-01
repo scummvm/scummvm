@@ -57,9 +57,11 @@ const char *Scheduler_v3d::getCypher() {
 	return "Copyright 1992, Gray Design Associates";
 }
 
-// This function performs the action in the event structure pointed to by p
-// It dequeues the event and returns it to the free list.  It returns a ptr
-// to the next action in the list, except special case of NEW_SCREEN
+/**
+* This function performs the action in the event structure pointed to by p
+* It dequeues the event and returns it to the free list.  It returns a ptr
+* to the next action in the list, except special case of NEW_SCREEN
+*/
 event_t *Scheduler_v3d::doAction(event_t *curEvent) {
 	debugC(1, kDebugSchedule, "doAction - Event action type : %d", curEvent->action->a0.actType);
 

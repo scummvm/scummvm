@@ -43,8 +43,10 @@ FileManager_v1w::FileManager_v1w(HugoEngine *vm) : FileManager_v2d(vm) {
 FileManager_v1w::~FileManager_v1w() {
 }
 
+/**
+* Open and read in an overlay file, close file
+*/
 void FileManager_v1w::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
-// Open and read in an overlay file, close file
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
 	image_pt tmpImage = image;                      // temp ptr to overlay file

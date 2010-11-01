@@ -52,8 +52,10 @@ void FileManager_v1d::closeDatabaseFiles() {
 	debugC(1, kDebugFile, "closeDatabaseFiles");
 }
 
+/**
+* Open and read in an overlay file, close file
+*/
 void FileManager_v1d::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
-// Open and read in an overlay file, close file
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
 	const char *ovl_ext[] = {".b", ".o", ".ob"};
@@ -76,8 +78,10 @@ void FileManager_v1d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 	_sceneryArchive1.close();
 }
 
+/**
+* Read a PCX image into dib_a
+*/
 void FileManager_v1d::readBackground(int screenIndex) {
-// Read a PCX image into dib_a
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
 	char *buf = (char *) malloc(2048 + 1);          // Buffer for file access

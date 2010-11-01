@@ -49,7 +49,9 @@ Parser_v3d::Parser_v3d(HugoEngine *vm) : Parser_v1w(vm) {
 Parser_v3d::~Parser_v3d() {
 }
 
-// Parse the user's line of text input.  Generate events as necessary
+/**
+* Parse the user's line of text input.  Generate events as necessary
+*/
 void Parser_v3d::lineHandler() {
 	debugC(1, kDebugParser, "lineHandler()");
 
