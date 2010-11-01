@@ -161,7 +161,7 @@ void MemoryPool::freeUnusedPages() {
 		}
 	}
 
-//	printf("freed %d pages out of %d\n", (int)freedPagesCount, (int)_pages.size());
+//	debug("freed %d pages out of %d", (int)freedPagesCount, (int)_pages.size());
 
 	// Remove all now unused pages
 	size_t newSize = 0;

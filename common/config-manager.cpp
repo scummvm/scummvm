@@ -69,7 +69,7 @@ void ConfigManager::loadDefaultConfigFile() {
 
 	} else {
 		// No config file -> create new one!
-		printf("Default configuration file missing, creating a new one\n");
+		debug("Default configuration file missing, creating a new one");
 
 		flushToDisk();
 	}
@@ -81,9 +81,9 @@ void ConfigManager::loadConfigFile(const String &filename) {
 	FSNode node(filename);
 	File cfg_file;
 	if (!cfg_file.open(node)) {
-		printf("Creating configuration file: %s\n", filename.c_str());
+		debug("Creating configuration file: %s\n", filename.c_str());
 	} else {
-		printf("Using configuration file: %s\n", _filename.c_str());
+		debug("Using configuration file: %s\n", _filename.c_str());
 		loadFromStream(cfg_file);
 	}
 }
