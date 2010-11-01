@@ -35,7 +35,7 @@
  * code produces (many collisions indicate either a bad hash function, or a
  * hash table that is too small).
  */
-#define DEBUG_HASH_COLLISIONS
+//#define DEBUG_HASH_COLLISIONS
 
 /**
  * @def USE_HASHMAP_MEMORY_POOL
