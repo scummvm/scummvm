@@ -870,7 +870,7 @@ void PrisonerEngine::getInteractMessage(Common::String &pakName, int16 pakSlot, 
 	} else if (_inventoryItemIndex2 == -6) {
 		outIdentifier = identifier + "ACT";
 	} else {
-		outIdentifier = Common::String::printf("%sO%02d", identifier.c_str(), _inventoryItemCursor);
+		outIdentifier = Common::String::format("%sO%02d", identifier.c_str(), _inventoryItemCursor);
 		if (textResource->getIndex(outIdentifier) < 0)
 			outIdentifier = identifier + "OBJ";
 	}
@@ -900,7 +900,7 @@ void PrisonerEngine::getInteractMessage(Common::String &pakName, int16 pakSlot, 
 			defaultIndex = _rnd->getRandomNumber(maxCount);
 		}
 
-		outIdentifier = Common::String::printf("%s%02d", identifierPrefix.c_str(), defaultIndex);
+		outIdentifier = Common::String::format("%s%02d", identifierPrefix.c_str(), defaultIndex);
 
 	}
 

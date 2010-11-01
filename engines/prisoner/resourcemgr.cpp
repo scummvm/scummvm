@@ -185,7 +185,7 @@ int16 ResourceManager::add(Common::String &pakName, int16 pakSlot, int16 type) {
 
 void ResourceManager::dump(Common::String &pakName, int16 pakSlot, int16 type) {
 	Common::DumpFile fd;
-	Common::String filename = Common::String::printf("%s%d.0", pakName.c_str(), pakSlot);
+	Common::String filename = Common::String::format("%s%d.0", pakName.c_str(), pakSlot);
 	byte *data;
 	uint32 dataSize;
 	data = _loader->load(pakName, pakSlot, type, dataSize);

@@ -41,8 +41,8 @@ int16 PrisonerEngine::registerInventoryItem(Common::String &pakName, int16 pakSl
 
 void PrisonerEngine::loadInventoryItemText(int16 inventoryItemIndex) {
 	InventoryItem *inventoryItem = &_inventoryItems[inventoryItemIndex];
-	Common::String textPakName = Common::String::printf("%c_M%02d", _languageChar, _currModuleIndex);
-	Common::String identifier = Common::String::printf("%02d", inventoryItemIndex);
+	Common::String textPakName = Common::String::format("%c_M%02d", _languageChar, _currModuleIndex);
+	Common::String identifier = Common::String::format("%02d", inventoryItemIndex);
 	int16 inventoryItemNamesSlot = loadTextResource(textPakName, 0);
 	TextResource *inventoryItemNames = _res->get<TextResource>(inventoryItemNamesSlot);
 	inventoryItem->name = inventoryItemNames->getText(identifier)->getChunkLineString(0, 0);
@@ -255,8 +255,8 @@ void PrisonerEngine::handleInventoryInput() {
 			inpSetWaitRelease(true);
 		} else if (buttonState & kRightButton) {
 			if (_inventoryItemCursor == -1) {
-				Common::String textPakName = Common::String::printf("%c_M%02d", _languageChar, _currModuleIndex);
-				Common::String identifier = Common::String::printf("LOOK%02d", _selectedInventoryItemIndex);
+				Common::String textPakName = Common::String::format("%c_M%02d", _languageChar, _currModuleIndex);
+				Common::String identifier = Common::String::format("LOOK%02d", _selectedInventoryItemIndex);
 				int16 textResourceSlot = loadTextResource(textPakName, 0);
 
 				_inventoryActive = true;

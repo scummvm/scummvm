@@ -128,7 +128,7 @@ void PrisonerEngine::enterScene(int16 moduleIndex, int16 sceneIndex) {
 
 	//if (moduleIndex == 2 && sceneIndex == 33) gDebugLevel = 8; else gDebugLevel = 0;
 
-	Common::String modulePakName = Common::String::printf("SM%02d", moduleIndex);
+	Common::String modulePakName = Common::String::format("SM%02d", moduleIndex);
 
 	_lockUserInputRefCounter = 0;
 	_cameraFollowsActorIndex = -1;
