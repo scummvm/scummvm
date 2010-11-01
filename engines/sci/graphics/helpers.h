@@ -80,7 +80,7 @@ struct Window : public Port, public Common::Serializable {
 		bDrawn(false) {
 	}
 
-	void syncRect(Common::Serializer &ser, Common::Rect targetRect) {
+	void syncRect(Common::Serializer &ser, Common::Rect &targetRect) {
 		ser.syncAsSint16LE(targetRect.top);
 		ser.syncAsSint16LE(targetRect.left);
 		ser.syncAsSint16LE(targetRect.bottom);
