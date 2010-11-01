@@ -440,9 +440,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	}
 	PluginManager::instance().unloadPlugins();
 	PluginManager::destroy();
+	GUI::GuiManager::destroy();
 	Common::ConfigManager::destroy();
 	Common::SearchManager::destroy();
-	GUI::GuiManager::destroy();
+	Common::TranslationManager::destroy();
 
 	return 0;
 }
