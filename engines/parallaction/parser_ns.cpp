@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "parallaction/parallaction.h"
 #include "parallaction/parser.h"
 #include "parallaction/sound.h"
@@ -1284,7 +1283,7 @@ DECLARE_ZONE_PARSER(commands)  {
 DECLARE_ZONE_PARSER(label)  {
 	debugC(7, kDebugParser, "ZONE_PARSER(label) ");
 
-//			printf("label: %s", _tokens[1]);
+//			debug("label: %s", _tokens[1]);
 	ctxt.z->_label = _vm->_gfx->renderFloatingLabel(_vm->_labelFont, _tokens[1]);
 	ctxt.z->_flags &= ~kFlagsNoName;
 }

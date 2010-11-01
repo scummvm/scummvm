@@ -766,7 +766,6 @@ void ScummEngine_v8::o8_actorOps() {
 
 	if (subOp == 0x7A) {
 		_curActor = pop();
-		//printf("Setting current actor to %d\n", _curActor);
 		return;
 	}
 
@@ -937,7 +936,6 @@ void ScummEngine_v8::o8_verbOps() {
 		_curVerb = pop();
 		_curVerbSlot = getVerbSlot(_curVerb, 0);
 		assertRange(0, _curVerbSlot, _numVerbs - 1, "new verb slot");
-		//printf("Setting current actor to %d\n", _curActor);
 		return;
 	}
 

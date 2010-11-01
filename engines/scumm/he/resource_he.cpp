@@ -358,7 +358,7 @@ byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 		WinResource *fwr;
 
 		RETURN_IF_BAD_POINTER(NULL, icondir->entries[c]);
-		/*printf("%d. bytes_in_res=%d width=%d height=%d planes=%d bit_count=%d\n", c,
+		/*debug("%d. bytes_in_res=%d width=%d height=%d planes=%d bit_count=%d", c,
 			FROM_LE_32(icondir->entries[c].bytes_in_res),
 			(is_icon ? icondir->entries[c].res_info.icon.width : FROM_LE_16(icondir->entries[c].res_info.cursor.width)),
 			(is_icon ? icondir->entries[c].res_info.icon.height : FROM_LE_16(icondir->entries[c].res_info.cursor.height)),

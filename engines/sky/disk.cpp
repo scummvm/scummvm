@@ -59,7 +59,7 @@ Disk::Disk() {
 	if (!_dataDiskHandle->isOpen())
 		error("Error opening %s", dataFilename);
 
-	printf("Found BASS version v0.0%d (%d dnr entries)\n", determineGameVersion(), _dinnerTableEntries);
+	debug("Found BASS version v0.0%d (%d dnr entries)", determineGameVersion(), _dinnerTableEntries);
 
 	memset(_buildList, 0, 60 * 2);
 	memset(_loadedFilesList, 0, 60 * 4);

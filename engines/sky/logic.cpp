@@ -2510,7 +2510,7 @@ bool Logic::fnUnPauseFx(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnPrintf(uint32 a, uint32 b, uint32 c) {
-	printf("fnPrintf: %d\n", a);
+	debug("fnPrintf(%d, %d, %d)", a, b, c);
 	return true;
 }
 

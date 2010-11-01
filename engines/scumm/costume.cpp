@@ -648,7 +648,7 @@ void ClassicCostumeRenderer::procPCEngine(Codec1 &v1) {
 				}
 			}
 			if (index != 128) {
-				printf("%d\n", index);
+				warning("ClassicCostumeRenderer::procPCEngine: index %d != 128\n", index);
 			}
 
 			for (int row = 0; row < 16; ++row) {

@@ -546,7 +546,7 @@ void AgiEngine::loadDict() {
 #endif
 
 	uint32 time3 = _system->getMillis();
-	printf("Time to parse pred.dic: %d, total: %d\n", time3-time2, time3-time1);
+	debug("Time to parse pred.dic: %d, total: %d", time3-time2, time3-time1);
 }
 
 bool AgiEngine::matchWord() {

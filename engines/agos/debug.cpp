@@ -76,30 +76,30 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 
 	while (*st != '|')
 		st++;
-	printf("%s ", st + 1);
+	debugN("%s ", st + 1);
 
 	for (;;) {
 		switch (*s++) {
 		case 'x':
-			printf("\n");
+			debugN("\n");
 			return NULL;
 		case '|':
-			printf("\n");
+			debugN("\n");
 			return p;
 		case 'B':{
 				byte b = *p++;
 				if (b == 255)
-					printf("[%d] ", *p++);
+					debugN("[%d] ", *p++);
 				else
-					printf("%d ", b);
+					debugN("%d ", b);
 				break;
 			}
 		case 'V':{
 				byte b = *p++;
 				if (b == 255)
-					printf("[[%d]] ", *p++);
+					debugN("[[%d]] ", *p++);
 				else
-					printf("[%d] ", b);
+					debugN("[%d] ", b);
 				break;
 			}
 
@@ -108,15 +108,15 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 				p += 2;
 				if (getGameType() == GType_PP) {
 					if (n >= 60000 && n < 62048)
-						printf("[%d] ", n - 60000);
+						debugN("[%d] ", n - 60000);
 					else
-						printf("%d ", n);
+						debugN("%d ", n);
 
 				} else {
 					if (n >= 30000 && n < 30512)
-						printf("[%d] ", n - 30000);
+						debugN("[%d] ", n - 30000);
 					else
-						printf("%d ", n);
+						debugN("%d ", n);
 				}
 				break;
 			}
@@ -124,7 +124,7 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 		case 'w':{
 				int n = (int16)READ_BE_UINT16(p);
 				p += 2;
-				printf("%d ", n);
+				debugN("%d ", n);
 				break;
 			}
 
@@ -132,22 +132,22 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 				int n = (int16)READ_BE_UINT16(p);
 				p += 2;
 				if (n == -1)
-					printf("SUBJECT_ITEM ");
+					debugN("SUBJECT_ITEM ");
 				else if (n == -3)
-					printf("OBJECT_ITEM ");
+					debugN("OBJECT_ITEM ");
 				else if (n == -5)
-					printf("ME_ITEM ");
+					debugN("ME_ITEM ");
 				else if (n == -7)
-					printf("ACTOR_ITEM ");
+					debugN("ACTOR_ITEM ");
 				else if (n == -9)
-					printf("ITEM_A_PARENT ");
+					debugN("ITEM_A_PARENT ");
 				else
-					printf("<%d> ", n);
+					debugN("<%d> ", n);
 				break;
 			}
 
 		case 'J':{
-				printf("-> ");
+				debugN("-> ");
 			}
 			break;
 
@@ -155,9 +155,9 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 				uint n = READ_BE_UINT16(p);
 				p += 2;
 				if (n != 0xFFFF)
-					printf("\"%s\"(%d) ", getStringPtrByID(n), n);
+					debugN("\"%s\"(%d) ", getStringPtrByID(n), n);
 				else
-					printf("NULL_STRING ");
+					debugN("NULL_STRING ");
 			}
 			break;
 		}
@@ -167,11 +167,11 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 void AGOSEngine::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
 	const byte *p;
 
-	printf("; ****\n");
+	debugN("; ****\n");
 
 	p = (byte *)sl + SUBROUTINE_LINE_SMALL_SIZE;
 	if (sub->id == 0) {
-		printf("; verb=%d, noun1=%d, noun2=%d\n", sl->verb, sl->noun1, sl->noun2);
+		debugN("; verb=%d, noun1=%d, noun2=%d\n", sl->verb, sl->noun1, sl->noun2);
 		p = (byte *)sl + SUBROUTINE_LINE_BIG_SIZE;
 	}
 
@@ -185,12 +185,12 @@ void AGOSEngine::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
 void AGOSEngine::dumpSubroutine(Subroutine *sub) {
 	SubroutineLine *sl;
 
-	printf("\n******************************************\n;Subroutine, ID=%d:\nSUB_%d:\n", sub->id, sub->id);
+	debugN("\n******************************************\n;Subroutine, ID=%d:\nSUB_%d:\n", sub->id, sub->id);
 	sl = (SubroutineLine *)((byte *)sub + sub->first);
 	for (; (byte *)sl != (byte *)sub; sl = (SubroutineLine *)((byte *)sub + sl->next)) {
 		dumpSubroutineLine(sl, sub);
 	}
-	printf("\nEND ******************************************\n");
+	debugN("\nEND ******************************************\n");
 }
 
 void AGOSEngine::dumpSubroutines() {
@@ -245,35 +245,35 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool singeOpcode) {
 
 		while (*strn != '|')
 			strn++;
-		printf("%.2d: %s ", opcode, strn + 1);
+		debugN("%.2d: %s ", opcode, strn + 1);
 
 		int end = (getGameType() == GType_FF || getGameType() == GType_PP) ? 9999 : 999;
 		for (; *str != '|'; str++) {
 			switch (*str) {
 			case 'x':
-				printf("\n");
+				debugN("\n");
 				return;
 			case 'b':
-				printf("%d ", *src++);
+				debugN("%d ", *src++);
 				break;
 			case 'd':
-				printf("%d ", (int16)readUint16Wrapper(src));
+				debugN("%d ", (int16)readUint16Wrapper(src));
 				src += 2;
 				break;
 			case 'v':
-				printf("[%d] ", readUint16Wrapper(src));
+				debugN("[%d] ", readUint16Wrapper(src));
 				src += 2;
 				break;
 			case 'i':
-				printf("%d ", (int16)readUint16Wrapper(src));
+				debugN("%d ", (int16)readUint16Wrapper(src));
 				src += 2;
 				break;
 			case 'j':
-				printf("-> ");
+				debugN("-> ");
 				break;
 			case 'q':
 				while (readUint16Wrapper(src) != end) {
-					printf("(%d,%d) ", readUint16Wrapper(src),
+					debugN("(%d,%d) ", readUint16Wrapper(src),
 									readUint16Wrapper(src + 2));
 					src += 4;
 				}
@@ -284,7 +284,7 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool singeOpcode) {
 			}
 		}
 
-		printf("\n");
+		debugN("\n");
 	} while (!singeOpcode);
 }
 
@@ -293,10 +293,10 @@ void AGOSEngine::dumpVgaScript(const byte *ptr, uint16 res, uint16 id) {
 }
 
 void AGOSEngine::dumpVgaScriptAlways(const byte *ptr, uint16 res, uint16 id) {
-	printf("; address=%x, vgafile=%d  vgasprite=%d\n",
+	debugN("; address=%x, vgafile=%d  vgasprite=%d\n",
 					(unsigned int)(ptr - _vgaBufferPointers[res].vgaFile1), res, id);
 	dumpVideoScript(ptr, false);
-	printf("; end\n");
+	debugN("; end\n");
 }
 
 void AGOSEngine::dumpAllVgaImageFiles() {

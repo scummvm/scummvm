@@ -74,8 +74,7 @@ int AgiEngine::decodeObjects(uint8 *mem, uint32 flen) {
 		if ((uint) offset < flen) {
 			(_objects + i)->name = (char *)strdup((const char *)mem + offset);
 		} else {
-			printf("ERROR: object %i name beyond object filesize! "
-					"(%04x > %04x)\n", i, offset, flen);
+			warning("object %i name beyond object filesize (%04x > %04x)", i, offset, flen);
 			(_objects + i)->name = strdup("");
 		}
 	}

@@ -570,7 +570,7 @@ restart:
 				_codePtr += 8;
 
 			if (_dumpOpcodes)
-				printf("; %d\n", sub->id);
+				debug("; %d", sub->id);
 			result = runScript();
 			if (result != 0) {
 				break;

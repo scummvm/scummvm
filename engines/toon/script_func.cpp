@@ -1072,25 +1072,25 @@ int32 ScriptFunc::sys_Cmd_Play_Sfx(EMCState *state) {
 }
 
 int32 ScriptFunc::sys_Cmd_Set_Ambient_Sfx(EMCState *state) {
-	//printf("Ambient Sfx : %d %d %d %d\n", stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	//debug("Ambient Sfx : %d %d %d %d", stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	_vm->getAudioManager()->startAmbientSFX(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	return 0;
 }
 
 int32 ScriptFunc::sys_Cmd_Kill_Ambient_Sfx(EMCState *state) {
-	//printf("Kill Sfx : %d \n", stackPos(0));
+	//debug("Kill Sfx : %d", stackPos(0));
 	_vm->getAudioManager()->killAmbientSFX(stackPos(0));
 	return 0;
 }
 
 int32 ScriptFunc::sys_Cmd_Set_Ambient_Sfx_Plus(EMCState *state) {
-	//printf("Ambient Sfx Plus: %d %d %d %d %d %d %d %d\n", stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	//debug("Ambient Sfx Plus: %d %d %d %d %d %d %d %d", stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
 	_vm->getAudioManager()->startAmbientSFX(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	return 0;
 }
 
 int32 ScriptFunc::sys_Cmd_Set_Ambient_Volume(EMCState *state) {
-	//printf("Ambient Volume : %d %d \n", stackPos(0), stackPos(1));
+	//debug("Ambient Volume : %d %d", stackPos(0), stackPos(1));
 	_vm->getAudioManager()->setAmbientSFXVolume(stackPos(0), stackPos(1));
 	return 0;
 }

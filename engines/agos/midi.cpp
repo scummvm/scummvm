@@ -226,7 +226,7 @@ void MidiPlayer::startTrack(int track) {
 		parser->setMidiDriver(this);
 		parser->setTimerRate(_driver->getBaseTempo());
 		if (!parser->loadMusic(_music.songs[track], _music.song_sizes[track])) {
-			printf ("Error reading track!\n");
+			warning("Error reading track %d", track);
 			delete parser;
 			parser = 0;
 		}
@@ -455,7 +455,7 @@ void MidiPlayer::loadSMF(Common::File *in, int song, bool sfx) {
 	parser->setMidiDriver(this);
 	parser->setTimerRate(timerRate);
 	if (!parser->loadMusic(p->data, size)) {
-		printf("Error reading track!\n");
+		warning("Error reading track");
 		delete parser;
 		parser = 0;
 	}
@@ -484,7 +484,7 @@ void MidiPlayer::loadMultipleSMF(Common::File *in, bool sfx) {
 
 	p->num_songs = in->readByte();
 	if (p->num_songs > 16) {
-		printf ("playMultipleSMF: %d is too many songs to keep track of!\n", (int)p->num_songs);
+		warning("playMultipleSMF: %d is too many songs to keep track of", (int)p->num_songs);
 		return;
 	}
 
@@ -496,7 +496,7 @@ void MidiPlayer::loadMultipleSMF(Common::File *in, bool sfx) {
 		// Make sure there's a MThd
 		in->read(buf, 4);
 		if (memcmp(buf, "MThd", 4)) {
-			printf("Expected MThd but found '%c%c%c%c' instead!\n", buf[0], buf[1], buf[2], buf[3]);
+			warning("Expected MThd but found '%c%c%c%c' instead", buf[0], buf[1], buf[2], buf[3]);
 			return;
 		}
 		in->seek(in->readUint32BE(), SEEK_CUR);

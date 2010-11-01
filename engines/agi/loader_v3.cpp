@@ -121,7 +121,7 @@ int AgiLoader_v3::init() {
 	}
 
 	if (!fp.open(path)) {
-		printf("Failed to open \"%s\"\n", path.c_str());
+		warning("Failed to open '%s'", path.c_str());
 		return errBadFileOpen;
 	}
 	// build offset table for v3 directory format

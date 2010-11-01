@@ -921,32 +921,32 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, Common::Point
 static void printMatrix(byte *boxm, int num) {
 	int i;
 	for (i = 0; i < num; i++) {
-		printf("%d: ", i);
+		debugN("%d: ", i);
 		while (*boxm != 0xFF) {
-			printf("%d, ", *boxm);
+			debug("%d, ", *boxm);
 			boxm++;
 		}
 		boxm++;
-		printf("\n");
+		debug("\n");
 	}
 }
 
 static void printMatrix2(byte *matrix, int num) {
 	int i, j;
-	printf("    ");
+	debug("    ");
 	for (i = 0; i < num; i++)
-		printf("%2d ", i);
-	printf("\n");
+		debug("%2d ", i);
+	debug("\n");
 	for (i = 0; i < num; i++) {
-		printf("%2d: ", i);
+		debug("%2d: ", i);
 		for (j = 0; j < num; j++) {
 			int val = matrix[i * num + j];
 			if (val == Actor::kInvalidBox)
-				printf(" ? ");
+				debug(" ? ");
 			else
-				printf("%2d ", val);
+				debug("%2d ", val);
 		}
-		printf("\n");
+		debug("\n");
 	}
 }
 #endif
@@ -1053,9 +1053,9 @@ void ScummEngine::createBoxMatrix() {
 
 
 #if BOX_DEBUG
-	printf("Itinerary matrix:\n");
+	debug("Itinerary matrix:\n");
 	printMatrix2(itineraryMatrix, num);
-	printf("compressed matrix:\n");
+	debug("compressed matrix:\n");
 	printMatrix(getBoxMatrixBaseAddr(), num);
 #endif
 

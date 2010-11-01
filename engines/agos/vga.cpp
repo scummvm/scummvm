@@ -155,7 +155,7 @@ void AGOSEngine::runVgaScript() {
 
 		if (_dumpVgaOpcodes) {
 			if (_vcPtr != (const byte *)&_vcGetOutOfCode) {
-				printf("%.5d %.5X: %5d %4d ", _vgaTickCounter, (unsigned int)(_vcPtr - _curVgaFile1), _vgaCurSpriteId, _vgaCurZoneNum);
+				debugN("%.5d %.5X: %5d %4d ", _vgaTickCounter, (unsigned int)(_vcPtr - _curVgaFile1), _vgaCurSpriteId, _vgaCurZoneNum);
 				dumpVideoScript(_vcPtr, true);
 			}
 		}
@@ -383,7 +383,7 @@ void AGOSEngine::vcSkipNextInstruction() {
 	}
 
 	if (_dumpVgaOpcodes)
-		printf("; skipped\n");
+		debugN("; skipped\n");
 }
 
 // VGA Script commands

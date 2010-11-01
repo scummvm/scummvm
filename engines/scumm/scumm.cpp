@@ -485,7 +485,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	if (ConfMan.getBool("demo_mode"))
 		_game.features |= GF_DEMO;
 	if (ConfMan.hasKey("nosubtitles")) {
-		printf("Configuration key 'nosubtitles' is deprecated. Use 'subtitles' instead\n");
+		// We replaced nosubtitles *ages* ago. Just convert it silently
+		debug("Configuration key 'nosubtitles' is deprecated. Converting to 'subtitles'");
 		if (!ConfMan.hasKey("subtitles"))
 			ConfMan.setBool("subtitles", !ConfMan.getBool("nosubtitles"));
 	}

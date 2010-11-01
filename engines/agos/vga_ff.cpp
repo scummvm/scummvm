@@ -405,9 +405,9 @@ void AGOSEngine_PuzzlePack::vc63_fastFadeIn() {
 	if (getBitFlag(100)) {
 		startOverlayAnims();
 	} else if (getBitFlag(103)) {
-		printf("NameAndTime\n");
+		debug("vc63_fastFadeIn: NameAndTime");
 	} else if (getBitFlag(104)) {
-		printf("HiScoreTable\n");
+		debug("vc63_fastFadeIn: HiScoreTable");
 	}
 }
 
