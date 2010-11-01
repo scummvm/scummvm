@@ -76,7 +76,6 @@ public:
 
 	bool load(const char *name);
 	void play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadIn, uint32 leadOut);
-	void pauseMovie(bool pause);
 
 protected:
 	Sword2Engine *_vm;

@@ -171,6 +171,9 @@ void Screen::setPalette(int16 startEntry, int16 noEntries, byte *colourTable, ui
 }
 
 void Screen::dimPalette(bool dim) {
+	if (getFadeStatus() != RDFADE_NONE)
+		return;
+
 	if (dim != _dimPalette) {
 		_dimPalette = dim;
 		setSystemPalette(_palette, 0, 256);

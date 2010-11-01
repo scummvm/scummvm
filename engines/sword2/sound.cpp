@@ -393,18 +393,6 @@ int32 Sound::stopFx(int32 i) {
 	return RD_OK;
 }
 
-void Sound::pauseAllSound() {
-	pauseMusic();
-	pauseSpeech();
-	pauseFx();
-}
-
-void Sound::unpauseAllSound() {
-	unpauseMusic();
-	unpauseSpeech();
-	unpauseFx();
-}
-
 void Sound::printFxQueue() {
 	int freeSlots = 0;
 

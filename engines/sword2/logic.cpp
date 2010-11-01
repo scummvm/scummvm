@@ -278,16 +278,6 @@ void Logic::resetKillList() {
 }
 
 /**
- * Pause or unpause the currently playing cutscene movie, if any.
- * @param pause		true if pausing, false if unpausing
- */
-
-void Logic::pauseMovie(bool pause) {
-	if (_moviePlayer)
-		_moviePlayer->pauseMovie(pause);
-}
-
-/**
  * Read current location number from script vars
  */
 

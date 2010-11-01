@@ -398,10 +398,4 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, Audio::Mixer *s
 	return NULL;
 }
 
-void MoviePlayer::pauseMovie(bool pause) {
-	if (_bgSoundHandle) {
-		_snd->pauseHandle(*_bgSoundHandle, pause);
-	}
-}
-
 } // End of namespace Sword2

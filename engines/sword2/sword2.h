@@ -155,8 +155,6 @@ public:
 	Sword2Engine(OSystem *syst);
 	~Sword2Engine();
 
-	void pauseEngine(bool pause);
-
 	int getFramesPerSecond();
 
 	void registerDefaultSettings();
@@ -236,8 +234,6 @@ public:
 	uint32 restoreFromBuffer(byte *buffer, uint32 size);
 	char *getSaveFileName(uint16 slotNo);
 	uint32 findBufferSize();
-
-	bool _gamePaused;
 
 	void startGame();
 	void gameCycle();

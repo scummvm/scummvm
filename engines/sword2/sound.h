@@ -262,9 +262,6 @@ public:
 	void pauseMusic();
 	void unpauseMusic();
 
-	void pauseAllSound();
-	void unpauseAllSound();
-
 	void playMovieSound(int32 res, int type);
 	void stopMovieSounds();
 

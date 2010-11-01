@@ -317,8 +317,6 @@ public:
 	void logicOne(uint32 new_script);
 	void resetKillList();
 
-	void pauseMovie(bool pause);
-
 	// Read location number from script vars
 	uint32 getLocationNum();
 };
