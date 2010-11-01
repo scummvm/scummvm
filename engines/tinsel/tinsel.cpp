@@ -80,6 +80,7 @@ namespace Tinsel {
 // In BG.CPP
 extern void SetDoFadeIn(bool tf);
 extern void DropBackground();
+extern BACKGND *pCurBgnd;
 
 // In CURSOR.CPP
 extern void CursorProcess(CORO_PARAM, const void *);
@@ -1032,6 +1033,9 @@ Common::Error TinselEngine::run() {
 
 	// Write configuration
 	_vm->_config->writeToDisk();
+
+	EndScene();
+	pCurBgnd = NULL;
 
 	return Common::kNoError;
 }
