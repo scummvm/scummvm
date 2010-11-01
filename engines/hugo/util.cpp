@@ -41,8 +41,8 @@
 namespace Hugo {
 
 /**
-* Returns index (0 to 7) of first 1 in supplied byte, or 8 if not found
-*/
+ * Returns index (0 to 7) of first 1 in supplied byte, or 8 if not found
+ */
 int Utils::firstBit(byte data) {
 	if (!data)
 		return 8;
@@ -57,8 +57,8 @@ int Utils::firstBit(byte data) {
 }
 
 /**
-* Returns index (0 to 7) of last 1 in supplied byte, or 8 if not found
-*/
+ * Returns index (0 to 7) of last 1 in supplied byte, or 8 if not found
+ */
 int Utils::lastBit(byte data) {
 	if (!data)
 		return 8;
@@ -73,8 +73,8 @@ int Utils::lastBit(byte data) {
 }
 
 /**
-* Reverse the bit order in supplied byte
-*/
+ * Reverse the bit order in supplied byte
+ */
 void Utils::reverseByte(byte *data) {
 	byte maskIn = 0x80;
 	byte maskOut = 0x01;
@@ -98,7 +98,7 @@ char *Utils::Box(box_t dismiss, const char *s, ...) {
 		return 0;
 
 	if (strlen(s) > MAX_STRLEN - 100) {             // Test length
-		Warn("String too big:\n%s", s);
+		warning("String too big: '%s'", s);
 		return 0;
 	}
 
@@ -136,22 +136,9 @@ char *Utils::Box(box_t dismiss, const char *s, ...) {
 }
 
 /**
-* Warning handler.  Print supplied message and continue
-* Arguments are same as printf
-*/
-void Utils::Warn(const char *format, ...) {
-	char buffer[WARNLEN];
-	va_list marker;
-	va_start(marker, format);
-	vsnprintf(buffer, WARNLEN, format, marker);
-	va_end(marker);
-	warning("Hugo warning: %s", buffer);
-}
-
-/**
-* Fatal error handler.  Reset environment, print error and exit
-* Arguments are same as printf
-*/
+ * Fatal error handler.  Reset environment, print error and exit
+ * Arguments are same as printf
+ */
 void Utils::Error(int error_type, const char *format, ...) {
 	char buffer[ERRLEN + 1];
 	bool fatal = true;                              // Fatal error, else continue
@@ -194,8 +181,8 @@ void Utils::Error(int error_type, const char *format, ...) {
 }
 
 /**
-* Print options for user when dead
-*/
+ * Print options for user when dead
+ */
 void Utils::gameOverMsg(void) {
 	//MessageBox(hwnd, gameoverstring, "Be more careful next time!", MB_OK | MB_ICONINFORMATION);
 	warning("STUB: Gameover_msg(): %s", HugoEngine::get()._textUtil[kGameOver]);

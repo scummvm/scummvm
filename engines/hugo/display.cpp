@@ -273,7 +273,7 @@ void Screen::displayList(dupdate_t update, ...) {
 		break;
 	case D_ADD:                                     // Add a rectangle to list
 		if (addIndex >= DMAX) {
-			Utils::Warn("%s", "Display list exceeded");
+			warning("Display list exceeded");
 			return;
 		}
 		va_start(marker, update);                   // Initialize variable arguments

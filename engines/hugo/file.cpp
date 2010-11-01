@@ -268,7 +268,7 @@ sound_pt FileManager::getSound(int16 sound, uint16 *size) {
 	// Allocate memory for sound or music, if possible
 	sound_pt soundPtr = (byte *)malloc(s_hdr[sound].size); // Ptr to sound data
 	if (soundPtr == 0) {
-		Utils::Warn("%s", "Low on memory");
+		warning("Low on memory");
 		return 0;
 	}
 
