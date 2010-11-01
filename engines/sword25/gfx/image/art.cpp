@@ -34,38 +34,11 @@
 
 /* Various utility functions RLL finds useful. */
 
+#include "common/textconsole.h"
+
 #include "sword25/gfx/image/art.h"
 
 namespace Sword25 {
-
-/**
- * art_die: Print the error message to stderr and exit with a return code of 1.
- * @fmt: The printf-style format for the error message.
- *
- * Used for dealing with severe errors.
- **/
-void art_die(const char *fmt, ...) {
-	va_list ap;
-
-	va_start(ap, fmt);
-	vfprintf(stderr, fmt, ap);
-	va_end(ap);
-	exit(1);
-}
-
-/**
- * art_warn: Print the warning message to stderr.
- * @fmt: The printf-style format for the warning message.
- *
- * Used for generating warnings.
- **/
-void art_warn(const char *fmt, ...) {
-	va_list ap;
-
-	va_start(ap, fmt);
-	vfprintf(stderr, fmt, ap);
-	va_end(ap);
-}
 
 /**
  * art_svp_free: Free an #ArtSVP structure.
@@ -1172,7 +1145,7 @@ static int art_svp_writer_rewind_add_segment(ArtSvpWriter *self, int wind_left,
 		right_filled = (wind_right > 0);
 		break;
 	default:
-		art_die("Unknown wind rule %d\n", swr->rule);
+		error("Unknown wind rule %d", swr->rule);
 	}
 	if (left_filled == right_filled) {
 		/* discard segment now */
@@ -1386,7 +1359,7 @@ static void art_svp_intersect_add_horiz(ArtIntersectCtx *ctx, ArtActiveSeg *seg)
 	ArtActiveSeg *place_right = NULL;
 
 	if (seg->flags & ART_ACTIVE_FLAGS_IN_HORIZ) {
-		art_warn("*** attempt to put segment in horiz list twice\n");
+		warning("attempt to put segment in horiz list twice");
 		return;
 	}
 	seg->flags |= ART_ACTIVE_FLAGS_IN_HORIZ;
@@ -1563,7 +1536,7 @@ static ArtActiveSeg *art_svp_intersect_add_point(ArtIntersectCtx *ctx, double x,
 				break;
 			new_x = x_test;
 			if (new_x < x_test) {
-				art_warn("art_svp_intersect_add_point: non-ascending x\n");
+				warning("art_svp_intersect_add_point: non-ascending x");
 			}
 			x_test = new_x;
 		}
