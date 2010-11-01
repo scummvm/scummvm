@@ -79,7 +79,7 @@ SceneHotspot *SceneHotspot::load(Common::SeekableReadStream *stream) {
 Common::String SceneHotspot::toString() const {
 	Common::String output = "";
 
-	output += Common::String::printf("    hotspot: scene=%d location=%02d action=%d param1=%02d param2=%02d param3=%02d cursor=%02d rect=(%d, %d)x(%d, %d)",
+	output += Common::String::format("    hotspot: scene=%d location=%02d action=%d param1=%02d param2=%02d param3=%02d cursor=%02d rect=(%d, %d)x(%d, %d)",
 	                                   scene, location, action, param1, param2, param3, cursor, rect.left, rect.top, rect.right, rect.bottom);
 
 	return output;
@@ -209,9 +209,9 @@ Common::Rect Scene::draw(Graphics::Surface *surface) {
 Common::String Scene::toString() {
 	Common::String output = "";
 
-	output += Common::String::printf("Scene:  name=%s, sig=%02d, entityPosition=%d, location=%d\n", _name, _sig, entityPosition, location);
-	output += Common::String::printf("        car=%02d, position=%02d, type=%02d, param1=%02d\n", car, position, type, param1);
-	output += Common::String::printf("        param2=%02d, param3=%02d, hotspot=%d\n", param2, param3, _hotspot);
+	output += Common::String::format("Scene:  name=%s, sig=%02d, entityPosition=%d, location=%d\n", _name, _sig, entityPosition, location);
+	output += Common::String::format("        car=%02d, position=%02d, type=%02d, param1=%02d\n", car, position, type, param1);
+	output += Common::String::format("        param2=%02d, param3=%02d, hotspot=%d\n", param2, param3, _hotspot);
 
 	// Hotspots
 	if (_hotspots.size() != 0) {

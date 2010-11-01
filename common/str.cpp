@@ -430,7 +430,7 @@ uint String::hash() const {
 }
 
 // static
-String String::printf(const char *fmt, ...) {
+String String::format(const char *fmt, ...) {
 	String output;
 	assert(output.isStorageIntern());
 

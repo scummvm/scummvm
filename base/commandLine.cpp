@@ -613,7 +613,7 @@ static void listTargets() {
 				description = g.description();
 		}
 
-		targets.push_back(Common::String::printf("%-20s %s", name.c_str(), description.c_str()));
+		targets.push_back(Common::String::format("%-20s %s", name.c_str(), description.c_str()));
 	}
 
 	Common::sort(targets.begin(), targets.end());

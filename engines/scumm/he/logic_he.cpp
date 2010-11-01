@@ -77,11 +77,11 @@ int32 LogicHE::dispatch(int op, int numArgs, int32 *args) {
 #if 1
 	Common::String str;
 
-	str = Common::String::printf("LogicHE::dispatch(%d, %d, [", op, numArgs);
+	str = Common::String::format("LogicHE::dispatch(%d, %d, [", op, numArgs);
 	if (numArgs > 0)
-		str += Common::String::printf("%d", args[0]);
+		str += Common::String::format("%d", args[0]);
 	for (int i = 1; i < numArgs; i++) {
-		str += Common::String::printf(", %d", args[i]);
+		str += Common::String::format(", %d", args[i]);
 	}
 	str += "])";
 

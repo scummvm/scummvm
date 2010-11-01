@@ -144,13 +144,13 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 	const char *names[4] = {"global", "local", "temp", "param"};
 
 	if (index < 0 || index >= max) {
-		Common::String txt = Common::String::printf(
+		Common::String txt = Common::String::format(
 							"[VM] Attempt to use invalid %s variable %04x ",
 							names[type], index);
 		if (max == 0)
 			txt += "(variable type invalid)";
 		else
-			txt += Common::String::printf("(out of range [%d..%d])", 0, max - 1);
+			txt += Common::String::format("(out of range [%d..%d])", 0, max - 1);
 
 		if (type == VAR_PARAM || type == VAR_TEMP) {
 			int total_offset = r - stack_base;

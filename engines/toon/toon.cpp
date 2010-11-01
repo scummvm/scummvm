@@ -948,7 +948,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 
 
 	// load package
-	strcpy(temp, createRoomFilename(Common::String::printf("%s.pak", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
+	strcpy(temp, createRoomFilename(Common::String::format("%s.pak", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
 	resources()->openPackage(temp, true);
 
 	strcpy(temp, state()->_locations[SceneId]._name);
@@ -993,7 +993,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 
 	strcpy(temp, state()->_locations[SceneId]._name);
 	strcat(temp, ".svi");
-	strcpy(temp2, createRoomFilename(Common::String::printf("%s.svl", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
+	strcpy(temp2, createRoomFilename(Common::String::format("%s.svl", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
 	_audioManager->loadAudioPack(1, temp, temp2);
 	strcpy(temp, state()->_locations[SceneId]._name);
 	strcpy(temp2, state()->_locations[SceneId]._name);
@@ -1580,7 +1580,7 @@ void ToonEngine::exitScene() {
 	_currentTextLineCharacterId = 0;
 
 	char temp[256];
-	strcpy(temp, createRoomFilename(Common::String::printf("%s.pak", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
+	strcpy(temp, createRoomFilename(Common::String::format("%s.pak", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
 	resources()->closePackage(temp);
 
 
@@ -2808,7 +2808,7 @@ bool ToonEngine::canLoadGameStateCurrently() {
 }
 
 Common::String ToonEngine::getSavegameName(int nr) {
-	return _targetName + Common::String::printf(".%03d", nr);
+	return _targetName + Common::String::format(".%03d", nr);
 }
 
 bool ToonEngine::saveGame(int32 slot, Common::String saveGameDesc) {
@@ -2828,7 +2828,7 @@ bool ToonEngine::saveGame(int32 slot, Common::String saveGameDesc) {
 		if (!saveGameDesc.empty()) {
 			savegameDescription = saveGameDesc;
 		} else {
-			savegameDescription = Common::String::printf("Quick save #%d", slot);
+			savegameDescription = Common::String::format("Quick save #%d", slot);
 		}
 	}
 
@@ -4329,7 +4329,7 @@ int32 ToonEngine::pauseSceneAnimationScript(int32 animScriptId, int32 tickToWait
 }
 
 Common::String ToonEngine::createRoomFilename(Common::String name) {
-	Common::String file = Common::String::printf("ACT%d/%s/%s", _gameState->_currentChapter, _gameState->_locations[_gameState->_currentScene]._name, name.c_str());
+	Common::String file = Common::String::format("ACT%d/%s/%s", _gameState->_currentChapter, _gameState->_locations[_gameState->_currentScene]._name, name.c_str());
 	return file;
 }
 

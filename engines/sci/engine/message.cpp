@@ -218,7 +218,7 @@ int MessageState::nextMessage(reg_t buf) {
 			return record.talker;
 		} else {
 			MessageTuple &t = _cursorStack.top();
-			outputString(buf, Common::String::printf("Msg %d: %d %d %d %d not found", _cursorStack.getModule(), t.noun, t.verb, t.cond, t.seq));
+			outputString(buf, Common::String::format("Msg %d: %d %d %d %d not found", _cursorStack.getModule(), t.noun, t.verb, t.cond, t.seq));
 			return 0;
 		}
 	} else {

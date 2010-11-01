@@ -779,7 +779,7 @@ void ChunkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 }
 
 void ResourceManager::addResourcesFromChunk(uint16 id) {
-	addSource(new ChunkResourceSource(Common::String::printf("Chunk %d", id), id));
+	addSource(new ChunkResourceSource(Common::String::format("Chunk %d", id), id));
 	scanNewSources();
 }
 

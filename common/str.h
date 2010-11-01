@@ -218,7 +218,7 @@ public:
 	/**
 	 * Printf-like function. Returns a formatted String.
 	 */
-	static Common::String printf(const char *fmt, ...) GCC_PRINTF(1,2);
+	static Common::String format(const char *fmt, ...) GCC_PRINTF(1,2);
 
 public:
 	typedef char *        iterator;

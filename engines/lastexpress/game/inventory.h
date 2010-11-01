@@ -76,7 +76,7 @@ public:
 		}
 
 		Common::String toString() {
-			return Common::String::printf("{ %d - %d - %d - %d - %d - %d - %d }", cursor, scene, field_2, isSelectable, isPresent, manualSelect, location);
+			return Common::String::format("{ %d - %d - %d - %d - %d - %d - %d }", cursor, scene, field_2, isSelectable, isPresent, manualSelect, location);
 		}
 
 		void saveLoadWithSerializer(Common::Serializer &s) {

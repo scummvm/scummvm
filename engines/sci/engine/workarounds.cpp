@@ -463,7 +463,7 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 			curMethodName = g_sci->getKernel()->getSelectorName(lastCall->debugSelector);
 		} else if (lastCall->debugExportId != -1) {
 			curObjectName = "";
-			curMethodName = curMethodName.printf("export %d", lastCall->debugExportId);
+			curMethodName = Common::String::format("export %d", lastCall->debugExportId);
 		}
 	}
 

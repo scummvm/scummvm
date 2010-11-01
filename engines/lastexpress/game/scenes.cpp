@@ -78,7 +78,7 @@ void SceneManager::loadSceneDataFile(ArchiveIndex archive) {
 	case kArchiveCd1:
 	case kArchiveCd2:
 	case kArchiveCd3:
-		if (!_sceneLoader->load(getArchive(Common::String::printf("CD%iTRAIN.DAT", archive))))
+		if (!_sceneLoader->load(getArchive(Common::String::format("CD%iTRAIN.DAT", archive))))
 			error("SceneManager::loadSceneDataFile: cannot load data file CD%iTRAIN.DAT", archive);
 		break;
 
@@ -586,7 +586,7 @@ void SceneManager::updateDoorsAndClock() {
 
 			// Load door sequence
 			Scene *scene = getScenes()->get(getState()->scene);
-			Common::String name = Common::String::printf("633X%c-%02d.seq", (index - firstIndex) + 65, scene->position);
+			Common::String name = Common::String::format("633X%c-%02d.seq", (index - firstIndex) + 65, scene->position);
 			Sequence *sequence = loadSequence1(name, 255);
 
 			// If the sequence doesn't exists, skip

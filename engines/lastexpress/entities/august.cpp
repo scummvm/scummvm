@@ -455,11 +455,11 @@ IMPLEMENT_FUNCTION_I(20, August, function20, bool)
 		}
 
 		if (params->param1) {
-			strcpy((char *)&parameters->seq2, Common::String::printf("%s%s", (char *)&parameters->seq1, "Gc").c_str());
+			strcpy((char *)&parameters->seq2, Common::String::format("%s%s", (char *)&parameters->seq1, "Gc").c_str());
 
 			getObjects()->update(kObjectCompartment3, kEntityPlayer, kObjectLocation1, kCursorKeepValue, kCursorKeepValue);
 		} else {
-			strcpy((char *)&parameters->seq2, Common::String::printf("%s%s", (char *)&parameters->seq1, "Ec").c_str());
+			strcpy((char *)&parameters->seq2, Common::String::format("%s%s", (char *)&parameters->seq1, "Ec").c_str());
 		}
 
 		setCallback(1);
@@ -474,7 +474,7 @@ IMPLEMENT_FUNCTION_I(20, August, function20, bool)
 		case 1: {
 			getData()->location = kLocationOutsideCompartment;
 
-			Common::String sequence2 = Common::String::printf("%s%s", (char *)&parameters->seq2, "Pc");
+			Common::String sequence2 = Common::String::format("%s%s", (char *)&parameters->seq2, "Pc");
 			strcpy((char *)&parameters->seq2, (char *)&parameters->seq1);
 
 			getEntities()->drawSequenceLeft(kEntityAugust, sequence2.c_str());
@@ -493,7 +493,7 @@ IMPLEMENT_FUNCTION_I(20, August, function20, bool)
 		case 2:
 		case 3:
 			getSavePoints()->push(kEntityAugust, kEntityMertens, kAction269436673);
-			strcpy((char *)&parameters->seq2, Common::String::printf("%s%s", (char *)&parameters->seq1, "Qc").c_str());
+			strcpy((char *)&parameters->seq2, Common::String::format("%s%s", (char *)&parameters->seq1, "Qc").c_str());
 
 			getEntities()->drawSequenceLeft(kEntityAugust, (char *)&parameters->seq2);
 			break;

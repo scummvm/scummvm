@@ -700,9 +700,9 @@ int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 
 	{
 		Common::String string = "doCommand - ";
-		string += Common::String::printf("%d (%d/%d)", a[0], (int)param, (int)cmd);
+		string += Common::String::format("%d (%d/%d)", a[0], (int)param, (int)cmd);
 		for (i = 1; i < numargs; ++i)
-			string += Common::String::printf(", %d", a[i]);
+			string += Common::String::format(", %d", a[i]);
 		debugC(DEBUG_IMUSE, "%s", string.c_str());
 	}
 

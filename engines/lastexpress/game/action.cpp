@@ -454,7 +454,7 @@ IMPLEMENT_ACTION(savePoint)
 IMPLEMENT_ACTION(playSound)
 
 	// Check that the file is not already buffered
-	if (hotspot.param2 || !getSound()->isBuffered(Common::String::printf("LIB%03d", hotspot.param1), true))
+	if (hotspot.param2 || !getSound()->isBuffered(Common::String::format("LIB%03d", hotspot.param1), true))
 		getSound()->playSoundEvent(kEntityPlayer, hotspot.param1, hotspot.param2);
 
 	return kSceneInvalid;
@@ -464,7 +464,7 @@ IMPLEMENT_ACTION(playSound)
 // Action 4
 IMPLEMENT_ACTION(playMusic)
 	// Check that the file is not already buffered
-	Common::String filename = Common::String::printf("MUS%03d", hotspot.param1);
+	Common::String filename = Common::String::format("MUS%03d", hotspot.param1);
 
 	if (!getSound()->isBuffered(filename) && (hotspot.param1 != 50 || getProgress().chapter == kChapter5))
 		getSound()->playSound(kEntityPlayer, filename, SoundManager::kFlagDefault, hotspot.param2);
@@ -1182,7 +1182,7 @@ IMPLEMENT_ACTION(29)
 	getProgress().field_C = 1;
 	getSound()->playSoundEvent(kEntityPlayer, hotspot.param1, hotspot.param2);
 
-	Common::String filename = Common::String::printf("MUS%03d", hotspot.param3);
+	Common::String filename = Common::String::format("MUS%03d", hotspot.param3);
 	if (!getSound()->isBuffered(filename))
 		getSound()->playSound(kEntityPlayer, filename, SoundManager::kFlagDefault);
 
@@ -1407,7 +1407,7 @@ IMPLEMENT_ACTION(playMusicChapter)
 	}
 
 	if (id) {
-		Common::String filename = Common::String::printf("MUS%03d", id);
+		Common::String filename = Common::String::format("MUS%03d", id);
 
 		if (!getSound()->isBuffered(filename))
 			getSound()->playSound(kEntityPlayer, filename, SoundManager::kFlagDefault);
@@ -1439,7 +1439,7 @@ IMPLEMENT_ACTION(playMusicChapterSetupTrain)
 		break;
 	}
 
-	Common::String filename = Common::String::printf("MUS%03d", hotspot.param1);
+	Common::String filename = Common::String::format("MUS%03d", hotspot.param1);
 
 	if (!getSound()->isBuffered(filename) && hotspot.param3 & id) {
 		getSound()->playSound(kEntityPlayer, filename, SoundManager::kFlagDefault);

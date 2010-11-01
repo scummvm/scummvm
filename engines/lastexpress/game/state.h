@@ -466,7 +466,7 @@ public:
 			for (uint i = 0; i < 128; i++) {
 				Common::String name = "";
 				uint val = getValueName(i, &name);
-				ret += Common::String::printf("(%03d) %s = %d\n", i, name.c_str(), val);
+				ret += Common::String::format("(%03d) %s = %d\n", i, name.c_str(), val);
 			}
 
 			return ret;
@@ -527,9 +527,9 @@ public:
 			uint8 minutes = 0;
 			getHourMinutes(time, &hours, &minutes);
 
-			ret += Common::String::printf("Time: %d (%d:%d)   - Time delta: %d    - Ticks: %d\n", time, hours, minutes, timeDelta, timeTicks);
-			ret += Common::String::printf("Brightness: %d    - Volume: %d    - UseBackup: %d\n", brightness, volume, sceneUseBackup);
-			ret += Common::String::printf("Scene: %d    - Scene backup: %d    - Scene backup 2: %d\n", scene, sceneBackup, sceneBackup2);
+			ret += Common::String::format("Time: %d (%d:%d)   - Time delta: %d    - Ticks: %d\n", time, hours, minutes, timeDelta, timeTicks);
+			ret += Common::String::format("Brightness: %d    - Volume: %d    - UseBackup: %d\n", brightness, volume, sceneUseBackup);
+			ret += Common::String::format("Scene: %d    - Scene backup: %d    - Scene backup 2: %d\n", scene, sceneBackup, sceneBackup2);
 
 			return ret;
 		}
@@ -598,11 +598,11 @@ public:
 		Common::String toString() {
 			Common::String ret = "";
 
-			ret += Common::String::printf("Unknown: 0:%02d  -  3:%02d  -  4:%02d  -  5:%02d\n", flag_0, flag_3, flag_4, flag_5);
-			ret += Common::String::printf("FrameInterval: %02d  -  ShouldRedraw:%02d  -  ShouldDrawEggOrHourGlass:%02d\n", frameInterval, shouldRedraw, shouldDrawEggOrHourGlass);
-			ret += Common::String::printf("IsGameRunning: %02d\n", isGameRunning);
-			ret += Common::String::printf("Mouse: RightClick:%02d  - LeftClick:%02d\n", mouseRightClick, mouseLeftClick);
-			ret += Common::String::printf("Entities: 0:%02d  -  1:%02d\n", flag_entities_0, flag_entities_1);
+			ret += Common::String::format("Unknown: 0:%02d  -  3:%02d  -  4:%02d  -  5:%02d\n", flag_0, flag_3, flag_4, flag_5);
+			ret += Common::String::format("FrameInterval: %02d  -  ShouldRedraw:%02d  -  ShouldDrawEggOrHourGlass:%02d\n", frameInterval, shouldRedraw, shouldDrawEggOrHourGlass);
+			ret += Common::String::format("IsGameRunning: %02d\n", isGameRunning);
+			ret += Common::String::format("Mouse: RightClick:%02d  - LeftClick:%02d\n", mouseRightClick, mouseLeftClick);
+			ret += Common::String::format("Entities: 0:%02d  -  1:%02d\n", flag_entities_0, flag_entities_1);
 
 			return ret;
 		}

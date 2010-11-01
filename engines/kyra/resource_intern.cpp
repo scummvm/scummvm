@@ -102,7 +102,7 @@ int TlkArchive::listMembers(Common::ArchiveMemberList &list) {
 	uint count = 0;
 
 	for (; count < _entryCount; ++count) {
-		const Common::String name = Common::String::printf("%08u.AUD", _fileEntries[count * 2 + 0]);
+		const Common::String name = Common::String::format("%08u.AUD", _fileEntries[count * 2 + 0]);
 		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, this)));
 	}
 

@@ -316,12 +316,12 @@ class StringTestSuite : public CxxTest::TestSuite
 	}
 
 	void test_string_printf() {
-		TS_ASSERT_EQUALS( Common::String::printf(""), "" );
-		TS_ASSERT_EQUALS( Common::String::printf("%s", "test"), "test" );
-		TS_ASSERT_EQUALS( Common::String::printf("%s.s%.02d", "monkey", 1), "monkey.s01" );
-		TS_ASSERT_EQUALS( Common::String::printf("Some %s to make this string longer than the default built-in %s %d", "text", "capacity", 123456), "Some text to make this string longer than the default built-in capacity 123456" );
+		TS_ASSERT_EQUALS( Common::String::format(""), "" );
+		TS_ASSERT_EQUALS( Common::String::format("%s", "test"), "test" );
+		TS_ASSERT_EQUALS( Common::String::format("%s.s%.02d", "monkey", 1), "monkey.s01" );
+		TS_ASSERT_EQUALS( Common::String::format("Some %s to make this string longer than the default built-in %s %d", "text", "capacity", 123456), "Some text to make this string longer than the default built-in capacity 123456" );
 
-		Common::String s = Common::String::printf("%s%X", "test", 1234);
+		Common::String s = Common::String::format("%s%X", "test", 1234);
 		TS_ASSERT_EQUALS(s, "test4D2");
 		TS_ASSERT_EQUALS(s.size(), 7U);
 	}

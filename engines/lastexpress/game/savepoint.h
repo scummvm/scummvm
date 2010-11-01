@@ -73,7 +73,7 @@ struct SavePoint {
 	}
 
 	Common::String toString() {
-		return Common::String::printf("{ %s - %d - %s - %s }", ENTITY_NAME(entity1), action, ENTITY_NAME(entity2), param.charValue);
+		return Common::String::format("{ %s - %d - %s - %s }", ENTITY_NAME(entity1), action, ENTITY_NAME(entity2), param.charValue);
 	}
 };
 
@@ -97,7 +97,7 @@ public:
 		}
 
 		Common::String toString() {
-			return Common::String::printf(" { %s - %d - %s - %d }", ENTITY_NAME(entity1), action, ENTITY_NAME(entity2), param);
+			return Common::String::format(" { %s - %d - %s - %d }", ENTITY_NAME(entity1), action, ENTITY_NAME(entity2), param);
 		}
 	};
 

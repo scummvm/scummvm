@@ -98,7 +98,7 @@ void AudioManager::playMusic(Common::String dir, Common::String music) {
 	debugC(1, kDebugAudio, "playMusic(%s, %s)", dir.c_str(), music.c_str());
 
 	// two musics can be played at same time
-	Common::String path = Common::String::printf("act%d/%s/%s.mus", _vm->state()->_currentChapter, dir.c_str(), music.c_str());
+	Common::String path = Common::String::format("act%d/%s/%s.mus", _vm->state()->_currentChapter, dir.c_str(), music.c_str());
 
 	if (_currentMusicName == music)
 		return;

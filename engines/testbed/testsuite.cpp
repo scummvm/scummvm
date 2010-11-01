@@ -233,7 +233,7 @@ uint Testsuite::parseEvents() {
 }
 
 void Testsuite::updateStats(const char *prefix, const char *info, uint testNum, uint numTests, Common::Point pt) {
-	Common::String text = Common::String::printf(" Running %s: %s (%d of %d) ", prefix, info, testNum, numTests);
+	Common::String text = Common::String::format(" Running %s: %s (%d of %d) ", prefix, info, testNum, numTests);
 	writeOnScreen(text, pt);
 	uint barColor = kColorSpecial;
 	// below the text a rectangle denoting the progress in the testsuite can be drawn.

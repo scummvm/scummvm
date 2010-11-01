@@ -743,7 +743,7 @@ bool SciEngine::hasMacIconBar() const {
 }
 
 Common::String SciEngine::getSavegameName(int nr) const {
-	return _targetName + Common::String::printf(".%03d", nr);
+	return _targetName + Common::String::format(".%03d", nr);
 }
 
 Common::String SciEngine::getSavegamePattern() const {

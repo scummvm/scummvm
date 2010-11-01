@@ -424,12 +424,12 @@ reg_t kStub(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	Common::String warningMsg = "Dummy function k" + kernel->getKernelName(kernelCallNr) +
-								Common::String::printf("[%x]", kernelCallNr) +
+								Common::String::format("[%x]", kernelCallNr) +
 								" invoked. Params: " +
-								Common::String::printf("%d", argc) + " (";
+								Common::String::format("%d", argc) + " (";
 
 	for (int i = 0; i < argc; i++) {
-		warningMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
+		warningMsg +=  Common::String::format("%04x:%04x", PRINT_REG(argv[i]));
 		warningMsg += (i == argc - 1 ? ")" : ", ");
 	}
 

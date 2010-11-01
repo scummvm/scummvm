@@ -209,7 +209,7 @@ bool StaticResource::tryKyraDatLoad() {
 		return false;
 
 	// load the ID map for our game
-	const Common::String filenamePattern = Common::String::printf("0%01X%01X%01X000%01X", game, platform, special, lang);
+	const Common::String filenamePattern = Common::String::format("0%01X%01X%01X000%01X", game, platform, special, lang);
 	Common::SeekableReadStream *idMap = _vm->resource()->createReadStream(filenamePattern);
 	if (!idMap)
 		return false;
@@ -328,7 +328,7 @@ bool StaticResource::prefetchId(int id) {
 	ResData data;
 	data.id = id;
 	data.type = dDesc->_value.type;
-	Common::SeekableReadStream *fileStream = _vm->resource()->createReadStream(Common::String::printf("%08X", dDesc->_value.filename));
+	Common::SeekableReadStream *fileStream = _vm->resource()->createReadStream(Common::String::format("%08X", dDesc->_value.filename));
 	if (!fileStream)
 		return false;
 

@@ -79,7 +79,7 @@ public:
 		}
 
 		Common::String toString() {
-			return Common::String::printf("IIII: %d %d %d %d %d %d %d %d\n", param1, param2, param3, param4, param5, param6, param7, param8);
+			return Common::String::format("IIII: %d %d %d %d %d %d %d %d\n", param1, param2, param3, param4, param5, param6, param7, param8);
 		}
 
 		void update(uint32 index) {
@@ -128,7 +128,7 @@ public:
 		}
 
 		Common::String toString() {
-			return Common::String::printf("SIII: %s %d %d %d %d %d\n", seq, param4, param5, param6, param7, param8);
+			return Common::String::format("SIII: %s %d %d %d %d %d\n", seq, param4, param5, param6, param7, param8);
 		}
 
 		void update(uint32 index) {
@@ -168,7 +168,7 @@ public:
 		}
 
 		Common::String toString() {
-			return Common::String::printf("SIIS: %s %d %d %s\n", seq1, param4, param5, seq2);
+			return Common::String::format("SIIS: %s %d %d %s\n", seq1, param4, param5, seq2);
 		}
 
 		void update(uint32 index) {
@@ -203,7 +203,7 @@ public:
 		}
 
 		Common::String toString() {
-			return Common::String::printf("ISSI: %d %s %s %d\n", param1, seq1, seq2, param8);
+			return Common::String::format("ISSI: %d %s %s %d\n", param1, seq1, seq2, param8);
 		}
 
 		void update(uint32 index) {
@@ -242,7 +242,7 @@ public:
 		}
 
 		Common::String toString() {
-			return Common::String::printf("ISII: %d %s %d %d %d %d\n", param1, seq, param5, param6, param7, param8);
+			return Common::String::format("ISII: %d %s %d %d %d %d\n", param1, seq, param5, param6, param7, param8);
 		}
 
 		void update(uint32 index) {
@@ -282,7 +282,7 @@ public:
 		}
 
 		Common::String toString() {
-			return Common::String::printf("SSII: %s %s %d %d\n", seq1, seq2, param7, param8);
+			return Common::String::format("SSII: %s %s %d %d\n", seq1, seq2, param7, param8);
 		}
 
 		void update(uint32 index) {
@@ -315,7 +315,7 @@ public:
 		}
 
 		Common::String toString() {
-			return Common::String::printf("SSS: %s %s %s\n", seq1, seq2, seq3);
+			return Common::String::format("SSS: %s %s %s\n", seq1, seq2, seq3);
 		}
 
 		void update(uint32) {
@@ -343,7 +343,7 @@ public:
 		}
 
 		Common::String toString() {
-			return Common::String::printf("IISS: %d %d %s %s\n", param1, param2, seq1, seq2);
+			return Common::String::format("IISS: %d %d %s %s\n", param1, param2, seq1, seq2);
 		}
 
 		void update(uint32 index) {
@@ -382,7 +382,7 @@ public:
 		}
 
 		Common::String toString() {
-			return Common::String::printf("IISI: %d %d %s %d %d %d\n", param1, param2, seq, param6, param7, param8);
+			return Common::String::format("IISI: %d %d %s %d %d %d\n", param1, param2, seq, param6, param7, param8);
 		}
 
 		void update(uint32 index) {
@@ -426,7 +426,7 @@ public:
 		}
 
 		Common::String toString() {
-			return Common::String::printf("IIIS: %d %d %d %s %d %d\n", param1, param2, param3, seq, param7, param8);
+			return Common::String::format("IIIS: %d %d %d %s %d %d\n", param1, param2, param3, seq, param7, param8);
 		}
 
 		void update(uint32 index) {
@@ -579,20 +579,20 @@ public:
 		Common::String toString() {
 			Common::String str = "";
 
-			str += Common::String::printf("Entity position: %d    - Location: %d       - Car: %d\n", entityPosition, location, car);
-			str += Common::String::printf("Entity: %d             - Item: %d          - Direction: %d\n", entity, inventoryItem, direction);
-			str += Common::String::printf("Clothes: %d            - Position: %d      - Direction switch: %d\n", clothes, position, directionSwitch);
+			str += Common::String::format("Entity position: %d    - Location: %d       - Car: %d\n", entityPosition, location, car);
+			str += Common::String::format("Entity: %d             - Item: %d          - Direction: %d\n", entity, inventoryItem, direction);
+			str += Common::String::format("Clothes: %d            - Position: %d      - Direction switch: %d\n", clothes, position, directionSwitch);
 			str += "\n";
-			str += Common::String::printf("field_497: %02d        - field_49B: %i     - field_4A1: %i\n", field_497, field_49B, field_4A1);
-			str += Common::String::printf("field_4A9: %02d        - field_4AA: %i     - Car 2: %d\n", field_4A9, field_4AA, car2);
+			str += Common::String::format("field_497: %02d        - field_49B: %i     - field_4A1: %i\n", field_497, field_49B, field_4A1);
+			str += Common::String::format("field_4A9: %02d        - field_4AA: %i     - Car 2: %d\n", field_4A9, field_4AA, car2);
 			str += "\n";
 			str += "Sequence: " + sequenceName + "                 - Sequence 2: " + sequenceName2 + "\n";
 			str += "Sequence prefix: " + sequenceNamePrefix + "    - Sequence copy: " + sequenceNameCopy + "\n";
-			str += Common::String::printf("Current frame: %i    - Current frame 2: %i       - Process entity: %d\n", currentFrame, currentFrame2, doProcessEntity);
+			str += Common::String::format("Current frame: %i    - Current frame 2: %i       - Process entity: %d\n", currentFrame, currentFrame2, doProcessEntity);
 			str += "\n";
-			str += Common::String::printf("Current call: %d\n", currentCall);
-			str += Common::String::printf("Functions: %d %d %d %d %d %d %d %d\n", callbacks[0], callbacks[1], callbacks[2], callbacks[3], callbacks[4], callbacks[5], callbacks[6], callbacks[7]);
-			str += Common::String::printf("Callbacks: %d %d %d %d %d %d %d %d\n", callbacks[8], callbacks[9], callbacks[10], callbacks[11], callbacks[12], callbacks[13], callbacks[14], callbacks[15]);
+			str += Common::String::format("Current call: %d\n", currentCall);
+			str += Common::String::format("Functions: %d %d %d %d %d %d %d %d\n", callbacks[0], callbacks[1], callbacks[2], callbacks[3], callbacks[4], callbacks[5], callbacks[6], callbacks[7]);
+			str += Common::String::format("Callbacks: %d %d %d %d %d %d %d %d\n", callbacks[8], callbacks[9], callbacks[10], callbacks[11], callbacks[12], callbacks[13], callbacks[14], callbacks[15]);
 
 			return str;
 		}

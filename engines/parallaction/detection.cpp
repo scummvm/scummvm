@@ -325,7 +325,7 @@ int ParallactionMetaEngine::getMaximumSaveSlot() const { return 99; }
 
 void ParallactionMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = ConfMan.getDomain(target)->getVal("gameid");
-	filename += Common::String::printf(".0%02d", slot);
+	filename += Common::String::format(".0%02d", slot);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }

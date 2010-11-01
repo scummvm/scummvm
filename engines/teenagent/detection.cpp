@@ -137,7 +137,7 @@ public:
 //	}
 
 	static Common::String generateGameStateFileName(const char *target, int slot) {
-		return Common::String::printf("%s.%02d", target, slot);
+		return Common::String::format("%s.%02d", target, slot);
 	}
 
 	virtual SaveStateList listSaves(const char *target) const {

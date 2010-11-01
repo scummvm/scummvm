@@ -584,7 +584,7 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 			g_system->getTimeAndDate(curTime);
 			curTime.tm_year += 1900; // fixup year
 			curTime.tm_mon++; // fixup month
-			game_description = Common::String::printf("%02d.%02d.%04d / %02d:%02d:%02d", curTime.tm_mday, curTime.tm_mon, curTime.tm_year, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+			game_description = Common::String::format("%02d.%02d.%04d / %02d:%02d:%02d", curTime.tm_mday, curTime.tm_mon, curTime.tm_year, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
 		}
 		delete dialog;
 		g_sci->_soundCmd->pauseAll(false); // unpause music ( we can't have it paused during save)

@@ -294,7 +294,7 @@ void FileManager::saveGame(int16 slot, const char *descrip) {
 	if (slot == -1)
 		path = _vm->_initFilename;
 	else
-		path = Common::String::printf(_vm->_saveFilename.c_str(), slot);
+		path = Common::String::format(_vm->_saveFilename.c_str(), slot);
 
 	Common::WriteStream *out = _vm->getSaveFileManager()->openForSaving(path);
 	if (!out) {
@@ -366,7 +366,7 @@ void FileManager::restoreGame(int16 slot) {
 	if (slot == -1)
 		path = _vm->_initFilename;
 	else
-		path = Common::String::printf(_vm->_saveFilename.c_str(), slot);
+		path = Common::String::format(_vm->_saveFilename.c_str(), slot);
 
 	Common::SeekableReadStream *in = _vm->getSaveFileManager()->openForLoading(path);
 	if (!in)

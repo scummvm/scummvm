@@ -197,9 +197,9 @@ void TeenAgentEngine::deinit() {
 Common::Error TeenAgentEngine::loadGameState(int slot) {
 	debug(0, "loading from slot %d", slot);
 	Common::ScopedPtr<Common::InSaveFile> 
-		in(_saveFileMan->openForLoading(Common::String::printf("teenagent.%02d", slot)));
+		in(_saveFileMan->openForLoading(Common::String::format("teenagent.%02d", slot)));
 	if (!in)
-		in.reset(_saveFileMan->openForLoading(Common::String::printf("teenagent.%d", slot)));
+		in.reset(_saveFileMan->openForLoading(Common::String::format("teenagent.%d", slot)));
 
 	if (!in)
 		return Common::kReadPermissionDenied;
@@ -232,7 +232,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 
 Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 	debug(0, "saving to slot %d", slot);
-	Common::ScopedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(Common::String::printf("teenagent.%02d", slot)));
+	Common::ScopedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(Common::String::format("teenagent.%02d", slot)));
 	if (!out)
 		return Common::kWritingFailed;
 

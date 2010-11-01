@@ -769,7 +769,7 @@ TestExitStatus GFXtests::scaledCursors() {
 		// Switch Graphics mode
 		// FIXME: Crashes with "3x" mode now.:
 		
-		info = Common::String::printf("Testing : Scaled cursors with GFX Mode %s\n", gfxMode->name);
+		info = Common::String::format("Testing : Scaled cursors with GFX Mode %s\n", gfxMode->name);
 		if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 			Testsuite::logPrintf("\tInfo! Skipping sub-test : Scaled Cursors :: GFX Mode %s\n", gfxMode->name);
 			gfxMode++;
@@ -1104,7 +1104,7 @@ TestExitStatus GFXtests::pixelFormats() {
 
 		Common::Point pt(0, 170);
 		Common::String msg;
-		msg = Common::String::printf("Testing Pixel Formats, %d of %d", numFormatsTested, pfList.size());
+		msg = Common::String::format("Testing Pixel Formats, %d of %d", numFormatsTested, pfList.size());
 		Testsuite::writeOnScreen(msg, pt, true);
 
 		// CopyRectToScreen could have been used, but that may involve writing code which

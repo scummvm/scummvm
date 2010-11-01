@@ -35,7 +35,7 @@
 namespace LastExpress {
 
 Common::String Objects::Object::toString() {
-	return Common::String::printf("{ %s - %d - %d - %d - %d }", ENTITY_NAME(entity), location, cursor, cursor2, location2);
+	return Common::String::format("{ %s - %d - %d - %d - %d }", ENTITY_NAME(entity), location, cursor, cursor2, location2);
 }
 
 Objects::Objects(LastExpressEngine *engine) : _engine(engine) {}
@@ -101,7 +101,7 @@ Common::String Objects::toString() {
 	Common::String ret = "";
 
 	for (int i = 0; i < ARRAYSIZE(_objects); i++)
-		ret += Common::String::printf("%d : %s\n", i, _objects[i].toString().c_str());
+		ret += Common::String::format("%d : %s\n", i, _objects[i].toString().c_str());
 
 	return ret;
 }

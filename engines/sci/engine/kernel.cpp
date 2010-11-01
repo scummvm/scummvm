@@ -66,12 +66,12 @@ const Common::String &Kernel::getSelectorName(uint selector) {
 		//  We need this for proper workaround tables
 		// TODO: maybe check, if there is a fixed selector-table and error() out in that case
 		for (uint loopSelector = _selectorNames.size(); loopSelector <= selector; ++loopSelector)
-			_selectorNames.push_back(Common::String::printf("<noname%d>", loopSelector));
+			_selectorNames.push_back(Common::String::format("<noname%d>", loopSelector));
 	}
 
 	// Ensure that the selector has a name
 	if (_selectorNames[selector].empty())
-		_selectorNames[selector] = Common::String::printf("<noname%d>", selector);
+		_selectorNames[selector] = Common::String::format("<noname%d>", selector);
 
 	return _selectorNames[selector];
 }

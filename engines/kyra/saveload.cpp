@@ -230,7 +230,7 @@ const char *KyraEngine_v1::getSavegameFilename(int num) {
 
 Common::String KyraEngine_v1::getSavegameFilename(const Common::String &target, int num) {
 	assert(num >= 0 && num <= 999);
-	return target + Common::String::printf(".%03d", num);
+	return target + Common::String::format(".%03d", num);
 }
 
 bool KyraEngine_v1::saveFileLoadable(int slot) {

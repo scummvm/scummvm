@@ -1532,7 +1532,7 @@ void Entities::getSequenceName(EntityIndex index, EntityDirection direction, Com
 
 		case 1:
 			if (data->entityPosition < kPosition_2587)
-				sequence1 = Common::String::printf("%02d%01d-01u.seq", index, data->clothes);
+				sequence1 = Common::String::format("%02d%01d-01u.seq", index, data->clothes);
 			break;
 
 		case 2:
@@ -1554,22 +1554,22 @@ void Entities::getSequenceName(EntityIndex index, EntityDirection direction, Com
 				break;
 
 			if (data->entityPosition >= kPosition_8513) {
-				sequence1 = Common::String::printf("%02d%01d-%02deu.seq", index, data->clothes, position);
+				sequence1 = Common::String::format("%02d%01d-%02deu.seq", index, data->clothes, position);
 			} else {
-				sequence1 = Common::String::printf("%02d%01d-03u.seq", index, data->clothes);
-				sequence2 = Common::String::printf("%02d%01d-%02deu.seq", index, data->clothes, position);
+				sequence1 = Common::String::format("%02d%01d-03u.seq", index, data->clothes);
+				sequence2 = Common::String::format("%02d%01d-%02deu.seq", index, data->clothes, position);
 				data->field_4A9 = true;
 			}
 			break;
 
 		case 18:
 			if (data->entityPosition < kPosition_9270)
-				sequence1 = Common::String::printf("%02d%01d-18u.seq", index, data->clothes);
+				sequence1 = Common::String::format("%02d%01d-18u.seq", index, data->clothes);
 			break;
 
 		case 22:
 			if (getData(kEntityPlayer)->entityPosition > data->entityPosition)
-				sequence1 = Common::String::printf("%02d%01d-22u.seq", index, data->clothes);
+				sequence1 = Common::String::format("%02d%01d-22u.seq", index, data->clothes);
 			break;
 
 		case 23:
@@ -1592,18 +1592,18 @@ void Entities::getSequenceName(EntityIndex index, EntityDirection direction, Com
 				break;
 
 			if (data->entityPosition >= kPosition_2087) {
-				sequence1 = Common::String::printf("%02d%01d-38u.seq", index, data->clothes);
+				sequence1 = Common::String::format("%02d%01d-38u.seq", index, data->clothes);
 				data->field_4A9 = true;
 			} else {
-				sequence1 = Common::String::printf("%02d%01d-%02deu.seq", index, data->clothes, position);
-				sequence2 = Common::String::printf("%02d%01d-38u.seq", index, data->clothes);
+				sequence1 = Common::String::format("%02d%01d-%02deu.seq", index, data->clothes, position);
+				sequence2 = Common::String::format("%02d%01d-38u.seq", index, data->clothes);
 				data->field_4AA = true;
 			}
 			break;
 
 		case 40:
 			if (getData(kEntityPlayer)->entityPosition > data->entityPosition)
-				sequence1 = Common::String::printf("%02d%01d-40u.seq", index, data->clothes);
+				sequence1 = Common::String::format("%02d%01d-40u.seq", index, data->clothes);
 			break;
 		}
 		break;
@@ -1615,7 +1615,7 @@ void Entities::getSequenceName(EntityIndex index, EntityDirection direction, Com
 
 		case 1:
 			if (getData(kEntityPlayer)->entityPosition < data->entityPosition)
-				sequence1 = Common::String::printf("%02d%01d-01d.seq", index, data->clothes);
+				sequence1 = Common::String::format("%02d%01d-01d.seq", index, data->clothes);
 			break;
 
 		case 2:
@@ -1637,23 +1637,23 @@ void Entities::getSequenceName(EntityIndex index, EntityDirection direction, Com
 				break;
 
 			if (data->entityPosition <= kPosition_8513) {
-				sequence1 = Common::String::printf("%02d%01d-03d.seq", index, data->clothes);
+				sequence1 = Common::String::format("%02d%01d-03d.seq", index, data->clothes);
 				data->field_4A9 = true;
 			} else {
-				sequence1 = Common::String::printf("%02d%01d-%02ded.seq", index, data->clothes, position);
-				sequence2 = Common::String::printf("%02d%01d-03d.seq", index, data->clothes);
+				sequence1 = Common::String::format("%02d%01d-%02ded.seq", index, data->clothes, position);
+				sequence2 = Common::String::format("%02d%01d-03d.seq", index, data->clothes);
 				data->field_4AA = true;
 			}
 			break;
 
 		case 18:
 			if (getData(kEntityPlayer)->entityPosition < data->entityPosition)
-				sequence1 = Common::String::printf("%02d%01d-18d.seq", index, data->clothes);
+				sequence1 = Common::String::format("%02d%01d-18d.seq", index, data->clothes);
 			break;
 
 		case 22:
 			if (data->entityPosition > kPosition_850)
-				sequence1 = Common::String::printf("%02d%01d-22d.seq", index, data->clothes);
+				sequence1 = Common::String::format("%02d%01d-22d.seq", index, data->clothes);
 			break;
 
 		case 23:
@@ -1676,17 +1676,17 @@ void Entities::getSequenceName(EntityIndex index, EntityDirection direction, Com
 				break;
 
 			if (data->entityPosition <= kPosition_2087) {
-				sequence1 = Common::String::printf("%02d%01d-%02ded.seq", index, data->clothes, position);
+				sequence1 = Common::String::format("%02d%01d-%02ded.seq", index, data->clothes, position);
 			} else {
-				sequence1 = Common::String::printf("%02d%01d-38d.seq", index, data->clothes);
-				sequence2 = Common::String::printf("%02d%01d-%02ded.seq", index, data->clothes, position);
+				sequence1 = Common::String::format("%02d%01d-38d.seq", index, data->clothes);
+				sequence2 = Common::String::format("%02d%01d-%02ded.seq", index, data->clothes, position);
 				data->field_4A9 = true;
 			}
 			break;
 
 		case 40:
 			if (getData(kEntityPlayer)->entityPosition > kPosition_8013)
-				sequence1 = Common::String::printf("%02d%01d-40d.seq", index, data->clothes);
+				sequence1 = Common::String::format("%02d%01d-40d.seq", index, data->clothes);
 			break;
 		}
 		break;
@@ -1694,7 +1694,7 @@ void Entities::getSequenceName(EntityIndex index, EntityDirection direction, Com
 	// First part of sequence is already set
 	case kDirectionLeft:
 	case kDirectionRight:
-		sequence1 = Common::String::printf("%s%02d.seq", data->sequenceNamePrefix.c_str(), position);
+		sequence1 = Common::String::format("%s%02d.seq", data->sequenceNamePrefix.c_str(), position);
 		break;
 	}
 }
