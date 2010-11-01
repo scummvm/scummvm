@@ -202,11 +202,6 @@ public:
 
 	int32 _gameCycle;
 
-#ifdef SWORD2_DEBUG
-	bool _renderSkip;
-	bool _stepOneCycle;
-#endif
-
 #if RIGHT_CLICK_CLEARS_LUGGAGE
 	bool heldIsInInventory();
 #endif

@@ -290,11 +290,6 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 
 	_wantSfxDebug = false;
 
-#ifdef SWORD2_DEBUG
-	_stepOneCycle = false;
-	_renderSkip = false;
-#endif
-
 	_gameCycle = 0;
 	_gameSpeed = 1;
 
@@ -479,13 +474,6 @@ Common::Error Sword2Engine::run() {
 	while (1) {
 		_debugger->onFrame();
 
-#ifdef SWORD2_DEBUG
-		if (_stepOneCycle) {
-			pauseEngine(true);
-			_stepOneCycle = false;
-		}
-#endif
-
 		// Handle GMM Loading
 		if (_gmmLoadSlot != -1) {
 
@@ -519,12 +507,7 @@ Common::Error Sword2Engine::run() {
 						pauseEngine(false);
 					} else {
 						pauseEngine(true);
-#ifdef SWORD2_DEBUG
-						if (!_stepOneCycle)
-							_screen->dimPalette(true);
-#else
 						_screen->dimPalette(true);
-#endif
 					}
 					break;
 #if 0
@@ -537,17 +520,6 @@ Common::Error Sword2Engine::run() {
 						_logic->fnPlayCredits(NULL);
 						screenInfo->new_palette = 99;
 					}
-					break;
-#endif
-#ifdef SWORD2_DEBUG
-				case Common::KEYCODE_SPACE:
-					if (_gamePaused) {
-						_stepOneCycle = true;
-						pauseEngine(false);
-					}
-					break;
-				case Common::KEYCODE_s:
-					_renderSkip = !_renderSkip;
 					break;
 #endif
 				default:
@@ -572,15 +544,7 @@ Common::Error Sword2Engine::run() {
 		// creates the debug text blocks
 		_debugger->buildDebugText();
 
-#ifdef SWORD2_DEBUG
-		// if not in console & '_renderSkip' is set, only render
-		// display once every 4 game-cycles
-
-		if (!_renderSkip || (_gameCycle % 4) == 0)
-			_screen->buildDisplay();
-#else
 		_screen->buildDisplay();
-#endif
 	}
 
 	return Common::kNoError;

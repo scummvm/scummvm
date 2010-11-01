@@ -120,15 +120,6 @@ void Debugger::buildDebugText() {
 		makeDebugTextBlock(buf, 0, 105);
 	}
 
-#ifdef SWORD2_DEBUG
-	// speed-up indicator
-
-	if (_vm->_renderSkip) {		// see sword2.cpp
-		sprintf(buf, "SKIPPING FRAMES FOR SPEED-UP!");
-		makeDebugTextBlock(buf, 0, 120);
-	}
-#endif
-
 	// debug info at top of screen - enabled/disabled as one complete unit
 
 	if (_displayTime) {
