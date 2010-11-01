@@ -43,6 +43,7 @@ void setDebugOutputFormatter(OutputFormatter f);
 
 inline void debug(const char *s, ...) {}
 inline void debug(int level, const char *s, ...) {}
+inline void debugN(const char *s, ...) {}
 inline void debugN(int level, const char *s, ...) {}
 inline void debugC(int level, uint32 engineChannel, const char *s, ...) {}
 inline void debugC(uint32 engineChannel, const char *s, ...) {}
@@ -66,6 +67,12 @@ void debug(const char *s, ...) GCC_PRINTF(1, 2);
  * Automatically appends a newline.
  */
 void debug(int level, const char *s, ...) GCC_PRINTF(2, 3);
+
+/**
+ * Print a debug message to the text console (stdout).
+ * Does not append a newline.
+ */
+void debugN(const char *s, ...) GCC_PRINTF(1, 2);
 
 /**
  * Print a debug message to the text console (stdout), but only if

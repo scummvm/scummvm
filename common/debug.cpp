@@ -190,6 +190,14 @@ void debug(int level, const char *s, ...) {
 
 }
 
+void debugN(const char *s, ...) {
+	va_list va;
+
+	va_start(va, s);
+	debugHelper(s, va, false);
+	va_end(va);
+}
+
 void debugN(int level, const char *s, ...) {
 	va_list va;
 
