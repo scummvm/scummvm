@@ -487,7 +487,7 @@ void ConsoleDialog::defaultKeyDownHandler(Common::KeyState &state) {
 		for (int i = _promptEndPos - 1; i >= _currentPos; i--)
 			buffer(i + 1) = buffer(i);
 		_promptEndPos++;
-		putchar((byte)state.ascii);
+		printChar((byte)state.ascii);
 		scrollToCurrent();
 	}
 }
@@ -498,7 +498,7 @@ void ConsoleDialog::insertIntoPrompt(const char* str) {
 		buffer(i + l) = buffer(i);
 	for (unsigned int j = 0; j < l; ++j) {
 		_promptEndPos++;
-		putcharIntern(str[j]);
+		printCharIntern(str[j]);
 	}
 }
 
@@ -620,7 +620,7 @@ void ConsoleDialog::historyScroll(int direction) {
 	else
 		idx = _historyIndex;
 	for (int i = 0; i < kLineBufferSize && _history[idx][i] != '\0'; i++)
-		putcharIntern(_history[idx][i]);
+		printCharIntern(_history[idx][i]);
 	_promptEndPos = _currentPos;
 
 	// Ensure once more the caret is visible (in case of very long history entries)
@@ -659,38 +659,33 @@ void ConsoleDialog::updateScrollBuffer() {
 	_scrollBar->recalc();
 }
 
-int ConsoleDialog::printf(const char *format, ...) {
+int ConsoleDialog::printFormat(int dummy, const char *format, ...) {
 	va_list	argptr;
 
 	va_start(argptr, format);
-	int count = this->vprintf(format, argptr);
+	int count = this->vprintFormat(dummy, format, argptr);
 	va_end (argptr);
 	return count;
 }
 
-int ConsoleDialog::vprintf(const char *format, va_list argptr) {
+int ConsoleDialog::vprintFormat(int dummy, const char *format, va_list argptr) {
 	char	buf[2048];
 
-#if defined(WIN32)
-	int count = _vsnprintf(buf, sizeof(buf), format, argptr);
-#elif defined(__SYMBIAN32__)
-	int count = vsprintf(buf, format, argptr);
-#else
 	int count = vsnprintf(buf, sizeof(buf), format, argptr);
-#endif
+	buf[sizeof(buf)-1] = 0;	// ensure termination
 	print(buf);
 	return count;
 }
 
-void ConsoleDialog::putchar(int c) {
+void ConsoleDialog::printChar(int c) {
 	if (_caretVisible)
 		drawCaret(true);
 
-	putcharIntern(c);
+	printCharIntern(c);
 	drawLine(pos2line(_currentPos));
 }
 
-void ConsoleDialog::putcharIntern(int c) {
+void ConsoleDialog::printCharIntern(int c) {
 	if (c == '\n')
 		nextLine();
 	else {
@@ -708,7 +703,7 @@ void ConsoleDialog::print(const char *str) {
 		drawCaret(true);
 
 	while (*str)
-		putcharIntern(*str++);
+		printCharIntern(*str++);
 
 	draw();
 }

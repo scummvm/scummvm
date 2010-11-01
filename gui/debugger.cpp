@@ -78,7 +78,7 @@ int Debugger::DebugPrintf(const char *format, ...) {
 	va_start(argptr, format);
 	int count;
 #ifndef USE_TEXT_CONSOLE
-	count = _debuggerDialog->vprintf(format, argptr);
+	count = _debuggerDialog->vprintFormat(1, format, argptr);
 #else
 	count = ::vprintf(format, argptr);
 #endif
