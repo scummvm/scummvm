@@ -133,7 +133,14 @@ bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
 bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {
 	return
 #if 0
-		// FIXME: tinsel does not exit cleanly yet
+		// FIXME: It is possible to return to the launcher from tinsel.
+		// But then any attempt to re-enter the engine will lead to
+		// a crash or at least seriously broken behavior.
+		//
+		// This is because the Tinsel engine makes use of tons of
+		// global variables (static and non-static) which are never
+		// explicitly re-initialized when the engine is started
+		// for a second time.
 		(f == kSupportsRTL) ||
 #endif
 		(f == kSupportsLoadingDuringRuntime);
