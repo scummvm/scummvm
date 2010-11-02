@@ -266,20 +266,23 @@ void MadsM4Engine::loadMenu(MenuType menuType, bool loadSaveFromHotkey, bool cal
 	_viewManager->moveToFront(view);
 }
 
+#define DUMP_BUFFER_SIZE 1024
+
 void MadsM4Engine::dumpFile(const char* filename, bool uncompress) {
-#if 0
-	// FIXME: The following code is not portable and hence has been disabled.
-	// Try replacing FILE by Common::DumpFile.
+	Common::DumpFile f;
+	byte buffer[DUMP_BUFFER_SIZE];
 	Common::SeekableReadStream *fileS = res()->get(filename);
-	byte buffer[256];
-	FILE *destFile = fopen(filename, "wb");
+	
+	if (!f.open(filename))
+		error("Could not open '%s' for writing", filename);
+
 	int bytesRead = 0;
-	printf("Dumping %s, size: %i\n", filename, fileS->size());
+	warning("Dumping %s, size: %i\n", filename, fileS->size());
 
 	if (!uncompress) {
 		while (!fileS->eos()) {
-			bytesRead = fileS->read(buffer, 256);
-			fwrite(buffer, bytesRead, 1, destFile);
+			bytesRead = fileS->read(buffer, DUMP_BUFFER_SIZE);
+			f.write(buffer, bytesRead);
 		}
 	} else {
 		MadsPack packData(fileS);
@@ -288,17 +291,16 @@ void MadsM4Engine::dumpFile(const char* filename, bool uncompress) {
 			sourceUnc = packData.getItemStream(i);
 			printf("Dumping compressed chunk %i of %i, size is %i\n", i + 1, packData.getCount(), sourceUnc->size());
 			while (!sourceUnc->eos()) {
-				bytesRead = sourceUnc->read(buffer, 256);
-				fwrite(buffer, bytesRead, 1, destFile);
+				bytesRead = sourceUnc->read(buffer, DUMP_BUFFER_SIZE);
+				f.write(buffer, bytesRead);
 			}
 			delete sourceUnc;
 		}
 	}
 
-	fclose(destFile);
+	f.close();
 	res()->toss(filename);
 	res()->purge();
-#endif
 }
 
 /*--------------------------------------------------------------------------*/
