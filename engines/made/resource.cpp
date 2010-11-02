@@ -295,7 +295,6 @@ void MenuResource::load(byte *source, int size) {
 		_strings.push_back(string);
 		debug(2, "%02d: %s\n", i, string);
 	}
-	fflush(stdout);
 	delete sourceS;
 }
 
