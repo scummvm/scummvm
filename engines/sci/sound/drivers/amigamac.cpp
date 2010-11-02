@@ -288,7 +288,7 @@ void MidiDriver_AmigaMac::playInstrument(int16 *dest, Voice *channel, int count)
 void MidiDriver_AmigaMac::changeInstrument(int channel, int instrument) {
 #ifdef DEBUG
 	if (_bank.instruments[instrument][0])
-		printf("[sfx:seq:amiga] Setting channel %i to \"%s\" (%i)\n", channel, _bank.instruments[instrument]->name, instrument);
+		debugN("[sfx:seq:amiga] Setting channel %i to \"%s\" (%i)\n", channel, _bank.instruments[instrument]->name, instrument);
 	else
 		warning("[sfx:seq:amiga] instrument %i does not exist (channel %i)", instrument, channel);
 #endif
@@ -488,13 +488,13 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 	instrument->name[29] = 0;
 
 #ifdef DEBUG
-	printf("[sfx:seq:amiga] Reading instrument %i: \"%s\" (%i bytes)\n",
+	debugN("[sfx:seq:amiga] Reading instrument %i: \"%s\" (%i bytes)\n",
 	          *id, instrument->name, size);
-	printf("                Mode: %02x\n", instrument->mode);
-	printf("                Looping: %s\n", instrument->mode & kModeLoop ? "on" : "off");
-	printf("                Pitch changes: %s\n", instrument->mode & kModePitch ? "on" : "off");
-	printf("                Segment sizes: %i %i %i\n", seg_size[0], seg_size[1], seg_size[2]);
-	printf("                Segment offsets: 0 %i %i\n", loop_offset, read_int32(header + 43));
+	debugN("                Mode: %02x\n", instrument->mode);
+	debugN("                Looping: %s\n", instrument->mode & kModeLoop ? "on" : "off");
+	debugN("                Pitch changes: %s\n", instrument->mode & kModePitch ? "on" : "off");
+	debugN("                Segment sizes: %i %i %i\n", seg_size[0], seg_size[1], seg_size[2]);
+	debugN("                Segment offsets: 0 %i %i\n", loop_offset, read_int32(header + 43));
 #endif
 
 	instrument->samples = (int8 *) malloc(size + 1);
@@ -745,7 +745,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0(Common::File &file) {
 	strncpy(_bank.name, (char *) header + 8, 29);
 	_bank.name[29] = 0;
 #ifdef DEBUG
-	printf("[sfx:seq:amiga] Reading %i instruments from bank \"%s\"\n", _bank.size, _bank.name);
+	debugN("[sfx:seq:amiga] Reading %i instruments from bank \"%s\"\n", _bank.size, _bank.name);
 #endif
 
 	for (uint i = 0; i < _bank.size; i++) {
@@ -784,7 +784,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0Mac(Common::SeekableReadStream &fil
 	strncpy(_bank.name, (char *) header + 8, 29);
 	_bank.name[29] = 0;
 #ifdef DEBUG
-	printf("[sfx:seq:amiga] Reading %i instruments from bank \"%s\"\n", _bank.size, _bank.name);
+	debugN("[sfx:seq:amiga] Reading %i instruments from bank \"%s\"\n", _bank.size, _bank.name);
 #endif
 
 	Common::Array<uint32> instrumentOffsets;

@@ -40,10 +40,10 @@ namespace Sci {
 // The defines below can be used to construct static selector tables for games which don't have
 // a vocab.997 resource, by dumping the selector table from other similar versions or games
 #define FIND_SELECTOR(_slc_) _selectorCache._slc_ = findSelector(#_slc_); \
-	printf("\t{ \"%s\", %d },\n", #_slc_, _selectorCache._slc_)
+	debugN("\t{ \"%s\", %d },\n", #_slc_, _selectorCache._slc_)
 
 #define FIND_SELECTOR2(_slc_, _slcstr_) _selectorCache._slc_ = findSelector(_slcstr_); \
-	printf("\t{ \"%s\", %d },\n", _slcstr_, _selectorCache._slc_)
+	debugN("\t{ \"%s\", %d },\n", _slcstr_, _selectorCache._slc_)
 
 #endif
 

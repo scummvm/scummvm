@@ -93,49 +93,49 @@ static void vocab_print_rule(ParseRule *rule) {
 		return;
 	}
 
-	printf("[%03x] -> ", rule->_id);
+	debugN("[%03x] -> ", rule->_id);
 
 	if (rule->_data.empty())
-		printf("e");
+		debugN("e");
 
 	for (uint i = 0; i < rule->_data.size(); i++) {
 		uint token = rule->_data[i];
 
 		if (token == TOKEN_OPAREN) {
 			if (i == rule->_firstSpecial)
-				printf("_");
+				debugN("_");
 
-			printf("(");
+			debugN("(");
 			wspace = 0;
 		} else if (token == TOKEN_CPAREN) {
 			if (i == rule->_firstSpecial)
-				printf("_");
+				debugN("_");
 
-			printf(")");
+			debugN(")");
 			wspace = 0;
 		} else {
 			if (wspace)
-				printf(" ");
+				debugN(" ");
 
 			if (i == rule->_firstSpecial)
-				printf("_");
+				debugN("_");
 			if (token & TOKEN_TERMINAL_CLASS)
-				printf("C(%04x)", token & 0xffff);
+				debugN("C(%04x)", token & 0xffff);
 			else if (token & TOKEN_TERMINAL_GROUP)
-				printf("G(%04x)", token & 0xffff);
+				debugN("G(%04x)", token & 0xffff);
 			else if (token & TOKEN_STUFFING_LEAF)
-				printf("%03x", token & 0xffff);
+				debugN("%03x", token & 0xffff);
 			else if (token & TOKEN_STUFFING_WORD)
-				printf("{%03x}", token & 0xffff);
+				debugN("{%03x}", token & 0xffff);
 			else
-				printf("[%03x]", token); /* non-terminal */
+				debugN("[%03x]", token); /* non-terminal */
 			wspace = 1;
 		}
 
 		if (i == rule->_firstSpecial)
-			printf("_");
+			debugN("_");
 	}
-	printf(" [%d specials]", rule->_numSpecials);
+	debugN(" [%d specials]", rule->_numSpecials);
 }
 
 static ParseRule *_vdup(ParseRule *a) {
@@ -321,13 +321,13 @@ void ParseRuleList::print() const {
 	const ParseRuleList *list = this;
 	int pos = 0;
 	while (list) {
-		printf("R%03d: ", pos);
+		debugN("R%03d: ", pos);
 		vocab_print_rule(list->rule);
-		printf("\n");
+		debugN("\n");
 		list = list->next;
 		pos++;
 	}
-	printf("%d rules total.\n", pos);
+	debugN("%d rules total.\n", pos);
 }
 
 static ParseRuleList *_vocab_split_rule_list(ParseRuleList *list) {
@@ -524,9 +524,9 @@ static int _vbpt_write_subexpression(ParseTreeNode *nodes, int *pos, ParseRule *
 			else
 				writepos = _vbpt_append_word(nodes, pos, writepos, token & 0xffff);
 		} else {
-			printf("\nError in parser (grammar.cpp, _vbpt_write_subexpression()): Rule data broken in rule ");
+			warning("\nError in parser (grammar.cpp, _vbpt_write_subexpression()): Rule data broken in rule ");
 			vocab_print_rule(rule);
-			printf(", at token position %d\n", *pos);
+			debugN(", at token position %d\n", *pos);
 			return rulepos;
 		}
 	}

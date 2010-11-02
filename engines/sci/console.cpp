@@ -1383,9 +1383,9 @@ bool Console::cmdSaid(int argc, const char **argv) {
 	}
 	spec[len++] = 0xFF;
 
-	printf("Matching '%s' against:", string);
+	debugN("Matching '%s' against:", string);
 	_engine->getVocabulary()->debugDecipherSaidBlock(spec);
-	printf("\n");
+	debugN("\n");
 
 	ResultWordListList words;
 	bool res = _engine->getVocabulary()->tokenizeString(words, string, &error);
@@ -3154,24 +3154,24 @@ static void midi_hexdump(byte *data, int size, int notational_offset) {
 		int blanks = 0;
 
 		offset += offset_mod;
-		printf("  [%04x] %d\t",
+		debugN("  [%04x] %d\t",
 		        old_offset + notational_offset, time);
 
 		cmd = data[offset];
 		if (!(cmd & 0x80)) {
 			cmd = prev;
 			if (prev < 0x80) {
-				printf("Track broken at %x after"
+				debugN("Track broken at %x after"
 				        " offset mod of %d\n",
 				        offset + notational_offset, offset_mod);
 				Common::hexdump(data, size, 16, notational_offset);
 				return;
 			}
-			printf("(rs %02x) ", cmd);
+			debugN("(rs %02x) ", cmd);
 			blanks += 8;
 		} else {
 			++offset;
-			printf("%02x ", cmd);
+			debugN("%02x ", cmd);
 			blanks += 3;
 		}
 		prev = cmd;
@@ -3183,37 +3183,37 @@ static void midi_hexdump(byte *data, int size, int notational_offset) {
 		for (i = 0; i < pleft; i++) {
 			if (i == 0)
 				firstarg = data[offset];
-			printf("%02x ", data[offset++]);
+			debugN("%02x ", data[offset++]);
 			blanks += 3;
 		}
 
 		while (blanks < 16) {
 			blanks += 4;
-			printf("    ");
+			debugN("    ");
 		}
 
 		while (blanks < 20) {
 			++blanks;
-			printf(" ");
+			debugN(" ");
 		}
 
 		if (cmd == SCI_MIDI_EOT)
-			printf(";; EOT");
+			debugN(";; EOT");
 		else if (cmd == SCI_MIDI_SET_SIGNAL) {
 			if (firstarg == SCI_MIDI_SET_SIGNAL_LOOP)
-				printf(";; LOOP point");
+				debugN(";; LOOP point");
 			else
-				printf(";; CUE (%d)", firstarg);
+				debugN(";; CUE (%d)", firstarg);
 		} else if (SCI_MIDI_CONTROLLER(cmd)) {
 			if (firstarg == SCI_MIDI_CUMULATIVE_CUE)
-				printf(";; CUE (cumulative)");
+				debugN(";; CUE (cumulative)");
 			else if (firstarg == SCI_MIDI_RESET_ON_SUSPEND)
-				printf(";; RESET-ON-SUSPEND flag");
+				debugN(";; RESET-ON-SUSPEND flag");
 		}
-		printf("\n");
+		debugN("\n");
 
 		if (old_offset >= offset) {
-			printf("-- Not moving forward anymore,"
+			debugN("-- Not moving forward anymore,"
 			        " aborting (%x/%x)\n", offset, old_offset);
 			return;
 		}
@@ -3692,22 +3692,22 @@ void Console::hexDumpReg(const reg_t *data, int len, int regsPerLine, int startO
 	byte c;
 	int offset = startOffset;
 	while (len >= regsPerLine) {
-		printf("%06x: ", offset);
+		debugN("%06x: ", offset);
 		for (i = 0; i < regsPerLine; i++) {
-			printf("%04x:%04x  ", PRINT_REG(data[i]));
+			debugN("%04x:%04x  ", PRINT_REG(data[i]));
 		}
-		printf(" |");
+		debugN(" |");
 		for (i = 0; i < regsPerLine; i++) {
 			c = data[i].toUint16() & 0xff;
 			if (c < 32 || c >= 127)
 				c = '.';
-			printf("%c", c);
+			debugN("%c", c);
 			c = data[i].toUint16() >> 8;
 			if (c < 32 || c >= 127)
 				c = '.';
-			printf("%c", c);
+			debugN("%c", c);
 		}
-		printf("|\n");
+		debugN("|\n");
 		data += regsPerLine;
 		len -= regsPerLine;
 		offset += regsPerLine * (isArray ? 1 : 2);
@@ -3716,27 +3716,27 @@ void Console::hexDumpReg(const reg_t *data, int len, int regsPerLine, int startO
 	if (len <= 0)
 		return;
 
-	printf("%06x: ", offset);
+	debugN("%06x: ", offset);
 	for (i = 0; i < regsPerLine; i++) {
 		if (i < len)
-			printf("%04x:%04x  ", PRINT_REG(data[i]));
+			debugN("%04x:%04x  ", PRINT_REG(data[i]));
 		else
-			printf("           ");
+			debugN("           ");
 	}
-	printf(" |");
+	debugN(" |");
 	for (i = 0; i < len; i++) {
 		c = data[i].toUint16() & 0xff;
 		if (c < 32 || c >= 127)
 			c = '.';
-		printf("%c", c);
+		debugN("%c", c);
 		c = data[i].toUint16() >> 8;
 		if (c < 32 || c >= 127)
 			c = '.';
-		printf("%c", c);
+		debugN("%c", c);
 	}
 	for (; i < regsPerLine; i++)
-		printf("  ");
-	printf("|\n");
+		debugN("  ");
+	debugN("|\n");
 }
 
 } // End of namespace Sci

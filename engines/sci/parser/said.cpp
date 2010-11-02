@@ -39,7 +39,7 @@ namespace Sci {
 
 
 #ifdef SCI_DEBUG_PARSE_TREE_AUGMENTATION
-#define scidprintf printf
+#define scidprintf debugN
 #else
 void print_nothing(...) { }
 #define scidprintf print_nothing

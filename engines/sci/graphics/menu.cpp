@@ -296,7 +296,7 @@ void GfxMenu::kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeI
 		itemEntry->keyPress = tolower(value.offset);
 		itemEntry->keyModifier = 0;
 		// TODO: Find out how modifier is handled
-		printf("setAttr keypress %X %X\n", value.segment, value.offset);
+		debug("setAttr keypress %X %X", value.segment, value.offset);
 		break;
 	case SCI_MENU_ATTRIBUTE_TAG:
 		itemEntry->tag = value.offset;

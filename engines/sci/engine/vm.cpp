@@ -423,7 +423,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		}
 
 #ifdef VM_DEBUG_SEND
-		printf("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj), 
+		debugN("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj), 
 			s->_segMan->getObjectName(send_obj), selector, 
 			g_sci->getKernel()->getSelectorName(selector).c_str());
 #endif // VM_DEBUG_SEND
@@ -438,9 +438,9 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 #ifdef VM_DEBUG_SEND
 			if (argc)
-				printf("Varselector: Write %04x:%04x\n", PRINT_REG(argp[1]));
+				debugN("Varselector: Write %04x:%04x\n", PRINT_REG(argp[1]));
 			else
-				printf("Varselector: Read\n");
+				debugN("Varselector: Read\n");
 #endif // VM_DEBUG_SEND
 
 			// argc == 0: read selector
@@ -496,39 +496,39 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 #ifndef VM_DEBUG_SEND
 			if (activeBreakpointTypes & BREAK_SELECTOREXEC) {
 				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector)) {
-					printf("[execute selector]");
+					debugN("[execute selector]");
 
 					int displaySize = 0;
 					for (int argNr = 1; argNr <= argc; argNr++) {
 						if (argNr == 1)
-							printf(" - ");
+							debugN(" - ");
 						reg_t curParam = argp[argNr];
 						if (curParam.segment) {
-							printf("[%04x:%04x] ", PRINT_REG(curParam));
+							debugN("[%04x:%04x] ", PRINT_REG(curParam));
 							displaySize += 12;
 						} else {
-							printf("[%04x] ", curParam.offset);
+							debugN("[%04x] ", curParam.offset);
 							displaySize += 7;
 						}
 						if (displaySize > 50) {
 							if (argNr < argc)
-								printf("...");
+								debugN("...");
 							break;
 						}
 					}
-					printf("\n");
+					debugN("\n");
 				}
 			}
 #else // VM_DEBUG_SEND
 			if (activeBreakpointTypes & BREAK_SELECTOREXEC)
 				g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector);
-			printf("Funcselector(");
+			debugN("Funcselector(");
 			for (int i = 0; i < argc; i++) {
-				printf("%04x:%04x", PRINT_REG(argp[i+1]));
+				debugN("%04x:%04x", PRINT_REG(argp[i+1]));
 				if (i + 1 < argc)
-					printf(", ");
+					debugN(", ");
 			}
-			printf(") at %04x:%04x\n", PRINT_REG(funcp));
+			debugN(") at %04x:%04x\n", PRINT_REG(funcp));
 #endif // VM_DEBUG_SEND
 
 			{
@@ -583,7 +583,7 @@ static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t
 	// Returns new TOS element for the execution stack
 	// _localsSegment may be -1 if derived from the called object
 
-	//printf("Exec stack: [%d/%d], origin %d, at %p\n", s->execution_stack_pos, s->_executionStack.size(), origin, s->execution_stack);
+	//debug("Exec stack: [%d/%d], origin %d, at %p", s->execution_stack_pos, s->_executionStack.size(), origin, s->execution_stack);
 
 	ExecStack xstack;
 
@@ -655,46 +655,46 @@ static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int argc,
 static void	logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
 	Kernel *kernel = g_sci->getKernel();
 	if (!kernelSubCall) {
-		printf("k%s: ", kernelCall->name);
+		debugN("k%s: ", kernelCall->name);
 	} else {
 		int callNameLen = strlen(kernelCall->name);
 		if (strncmp(kernelCall->name, kernelSubCall->name, callNameLen) == 0) {
 			const char *subCallName = kernelSubCall->name + callNameLen;
-			printf("k%s(%s): ", kernelCall->name, subCallName);
+			debugN("k%s(%s): ", kernelCall->name, subCallName);
 		} else {
-			printf("k%s(%s): ", kernelCall->name, kernelSubCall->name);
+			debugN("k%s(%s): ", kernelCall->name, kernelSubCall->name);
 		}
 	}
 	for (int parmNr = 0; parmNr < argc; parmNr++) {
 		if (parmNr)
-			printf(", ");
+			debugN(", ");
 		uint16 regType = kernel->findRegType(argv[parmNr]);
 		if (regType & SIG_TYPE_NULL)
-			printf("0");
+			debugN("0");
 		else if (regType & SIG_TYPE_UNINITIALIZED)
-			printf("UNINIT");
+			debugN("UNINIT");
 		else if (regType & SIG_IS_INVALID)
-			printf("INVALID");
+			debugN("INVALID");
 		else if (regType & SIG_TYPE_INTEGER)
-			printf("%d", argv[parmNr].offset);
+			debugN("%d", argv[parmNr].offset);
 		else {
-			printf("%04x:%04x", PRINT_REG(argv[parmNr]));
+			debugN("%04x:%04x", PRINT_REG(argv[parmNr]));
 			switch (regType) {
 			case SIG_TYPE_OBJECT:
-				printf(" (%s)", s->_segMan->getObjectName(argv[parmNr]));
+				debugN(" (%s)", s->_segMan->getObjectName(argv[parmNr]));
 				break;
 			case SIG_TYPE_REFERENCE:
 				if (kernelCall->function == kSaid) {
 					SegmentRef saidSpec = s->_segMan->dereference(argv[parmNr]);
 					if (saidSpec.isRaw) {
-						printf(" ('");
+						debugN(" ('");
 						g_sci->getVocabulary()->debugDecipherSaidBlock(saidSpec.raw);
-						printf("')");
+						debugN("')");
 					} else {
-						printf(" (non-raw said-spec)");
+						debugN(" (non-raw said-spec)");
 					}
 				} else {
-					printf(" ('%s')", s->_segMan->getString(argv[parmNr]).c_str());
+					debugN(" ('%s')", s->_segMan->getString(argv[parmNr]).c_str());
 				}
 			default:
 				break;
@@ -702,9 +702,9 @@ static void	logKernelCall(const KernelFunction *kernelCall, const KernelSubFunct
 		}
 	}
 	if (result.segment)
-		printf(" = %04x:%04x\n", PRINT_REG(result));
+		debugN(" = %04x:%04x\n", PRINT_REG(result));
 	else
-		printf(" = %d\n", result.offset);
+		debugN(" = %d\n", result.offset);
 }
 
 static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
@@ -749,7 +749,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		if (kernelCall.debugLogging)
 			logKernelCall(&kernelCall, NULL, s, argc, argv, s->r_acc);
 		if (kernelCall.debugBreakpoint) {
-			printf("Break on k%s\n", kernelCall.name);
+			debugN("Break on k%s\n", kernelCall.name);
 			g_sci->_debugState.debugging = true;
 			g_sci->_debugState.breakpointWasHit = true;
 		}
@@ -804,7 +804,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		if (kernelSubCall.debugLogging)
 			logKernelCall(&kernelCall, &kernelSubCall, s, argc, argv, s->r_acc);
 		if (kernelSubCall.debugBreakpoint) {
-			printf("Break on k%s\n", kernelSubCall.name);
+			debugN("Break on k%s\n", kernelSubCall.name);
 			g_sci->_debugState.debugging = true;
 			g_sci->_debugState.breakpointWasHit = true;
 		}
@@ -830,7 +830,7 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 	memset(opparams, 0, sizeof(opparams));
 
 	for (int i = 0; g_opcode_formats[opcode][i]; ++i) {
-		//printf("Opcode: 0x%x, Opnumber: 0x%x, temp: %d\n", opcode, opcode, temp);
+		//debugN("Opcode: 0x%x, Opnumber: 0x%x, temp: %d\n", opcode, opcode, temp);
 		assert(i < 3);
 		switch (g_opcode_formats[opcode][i]) {
 

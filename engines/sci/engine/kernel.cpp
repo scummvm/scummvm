@@ -138,7 +138,7 @@ void Kernel::loadSelectorNames() {
 
 		Common::String tmp((const char *)r->data + offset + 2, len);
 		_selectorNames.push_back(tmp);
-		//printf("%s\n", tmp.c_str());	// debug
+		//debug("%s", tmp.c_str());
 
 		// Early SCI versions used the LSB in the selector ID as a read/write
 		// toggle. To compensate for that, we add every selector name twice.
@@ -430,8 +430,8 @@ static void kernelSignatureDebugType(const uint16 type) {
 	while (list->typeCheck) {
 		if (type & list->typeCheck) {
 			if (!firstPrint)
-				printf(", ");
-			printf("%s", list->text);
+				debugN(", ");
+			debugN("%s", list->text);
 			firstPrint = false;
 		}
 		list++;
@@ -442,38 +442,38 @@ static void kernelSignatureDebugType(const uint16 type) {
 void Kernel::signatureDebug(const uint16 *sig, int argc, const reg_t *argv) {
 	int argnr = 0;
 	while (*sig || argc) {
-		printf("parameter %d: ", argnr++);
+		debugN("parameter %d: ", argnr++);
 		if (argc) {
 			reg_t parameter = *argv;
-			printf("%04x:%04x (", PRINT_REG(parameter));
+			debugN("%04x:%04x (", PRINT_REG(parameter));
 			int regType = findRegType(parameter);
 			if (regType)
 				kernelSignatureDebugType(regType);
 			else
-				printf("unknown type of %04x:%04x", PRINT_REG(parameter));
-			printf(")");
+				debugN("unknown type of %04x:%04x", PRINT_REG(parameter));
+			debugN(")");
 			argv++;
 			argc--;
 		} else {
-			printf("not passed");
+			debugN("not passed");
 		}
 		if (*sig) {
 			const uint16 signature = *sig;
 			if ((signature & SIG_MAYBE_ANY) == SIG_MAYBE_ANY) {
-				printf(", may be any");
+				debugN(", may be any");
 			} else {
-				printf(", should be ");
+				debugN(", should be ");
 				kernelSignatureDebugType(signature);
 			}
 			if (signature & SIG_IS_OPTIONAL)
-				printf(" (optional)");
+				debugN(" (optional)");
 			if (signature & SIG_NEEDS_MORE)
-				printf(" (needs more)");
+				debugN(" (needs more)");
 			if (signature & SIG_MORE_MAY_FOLLOW)
-				printf(" (more may follow)");
+				debugN(" (more may follow)");
 			sig++;
 		}
-		printf("\n");
+		debugN("\n");
 	}
 }
 

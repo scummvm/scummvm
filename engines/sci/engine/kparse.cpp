@@ -62,7 +62,7 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 	}
 
 #ifdef DEBUG_PARSER
-		printf("Said block: ");
+		debugN("Said block: ");
 		g_sci->getVocabulary()->debugDecipherSaidBlock(said_block);
 #endif
 
@@ -74,7 +74,7 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 	if (new_lastmatch  != SAID_NO_MATCH) { /* Build and possibly display a parse tree */
 
 #ifdef DEBUG_PARSER
-		printf("kSaid: Match.\n");
+		debugN("kSaid: Match.\n");
 #endif
 
 		s->r_acc = make_reg(0, 1);

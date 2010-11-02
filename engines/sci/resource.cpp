@@ -940,7 +940,7 @@ void ResourceManager::freeOldResources() {
 		removeFromLRU(goner);
 		goner->unalloc();
 #ifdef SCI_VERBOSE_RESMAN
-		printf("resMan-debug: LRU: Freeing %s.%03d (%d bytes)\n", getResourceTypeName(goner->type), goner->number, goner->size);
+		debug("resMan-debug: LRU: Freeing %s.%03d (%d bytes)", getResourceTypeName(goner->type), goner->number, goner->size);
 #endif
 	}
 }

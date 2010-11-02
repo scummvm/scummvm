@@ -243,7 +243,7 @@ public:
 	ParseRuleList *buildGNF(bool verbose = false);
 
 	/**
-	 * Deciphers a said block and dumps its content via printf.
+	 * Deciphers a said block and dumps its content via debugN.
 	 * For debugging only.
 	 * @param pos	pointer to the data to dump
 	 */

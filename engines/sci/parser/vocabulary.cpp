@@ -458,44 +458,44 @@ void Vocabulary::debugDecipherSaidBlock(const byte *addr) {
 		nextItem = *addr++;
 		if (nextItem != 0xff) {
 			if ((!first) && (nextItem != 0xf0))
-				printf(" ");
+				debugN(" ");
 			first = false;
 
 			if (nextItem < 0xf0) {
 				nextItem = nextItem << 8 | *addr++;
-				printf("%s{%03x}", getAnyWordFromGroup(nextItem), nextItem);
+				debugN("%s{%03x}", getAnyWordFromGroup(nextItem), nextItem);
 
 				nextItem = 0; // Make sure that group 0xff doesn't abort
 			} else switch (nextItem) {
 				case 0xf0:
-					printf(",");
+					debugN(",");
 					break;
 				case 0xf1:
-					printf("&");
+					debugN("&");
 					break;
 				case 0xf2:
-					printf("/");
+					debugN("/");
 					break;
 				case 0xf3:
-					printf("(");
+					debugN("(");
 					break;
 				case 0xf4:
-					printf(")");
+					debugN(")");
 					break;
 				case 0xf5:
-					printf("[");
+					debugN("[");
 					break;
 				case 0xf6:
-					printf("]");
+					debugN("]");
 					break;
 				case 0xf7:
-					printf("#");
+					debugN("#");
 					break;
 				case 0xf8:
-					printf("<");
+					debugN("<");
 					break;
 				case 0xf9:
-					printf(">");
+					debugN(">");
 					break;
 				case 0xff:
 					break;
@@ -611,48 +611,48 @@ void _vocab_recursive_ptree_dump(ParseTreeNode *tree, int blanks) {
 	int i;
 
 	if (tree->type == kParseTreeLeafNode) {
-		printf("vocab_dump_parse_tree: Error: consp is nil\n");
+		debugN("vocab_dump_parse_tree: Error: consp is nil\n");
 		return;
 	}
 
 	if (lbranch) {
 		if (lbranch->type == kParseTreeBranchNode) {
-			printf("\n");
+			debugN("\n");
 			for (i = 0; i < blanks; i++)
-				printf("    ");
-			printf("(");
+				debugN("    ");
+			debugN("(");
 			_vocab_recursive_ptree_dump(lbranch, blanks + 1);
-			printf(")\n");
+			debugN(")\n");
 			for (i = 0; i < blanks; i++)
-				printf("    ");
+				debugN("    ");
 		} else
-			printf("%x", lbranch->value);
-		printf(" ");
-	}/* else printf ("nil");*/
+			debugN("%x", lbranch->value);
+		debugN(" ");
+	}/* else debugN ("nil");*/
 
 	if (rbranch) {
 		if (rbranch->type == kParseTreeBranchNode)
 			_vocab_recursive_ptree_dump(rbranch, blanks);
 		else {
-			printf("%x", rbranch->value);
+			debugN("%x", rbranch->value);
 			while (rbranch->right) {
 				rbranch = rbranch->right;
-				printf("/%x", rbranch->value);
+				debugN("/%x", rbranch->value);
 			}
 		}
-	}/* else printf("nil");*/
+	}/* else debugN("nil");*/
 }
 
 void vocab_dump_parse_tree(const char *tree_name, ParseTreeNode *nodes) {
-	printf("(setq %s \n'(", tree_name);
+	debugN("(setq %s \n'(", tree_name);
 	_vocab_recursive_ptree_dump(nodes, 1);
-	printf("))\n");
+	debugN("))\n");
 }
 
 void Vocabulary::dumpParseTree() {
-	printf("(setq parse-tree \n'(");
+	debugN("(setq parse-tree \n'(");
 	_vocab_recursive_ptree_dump(_parserNodes, 1);
-	printf("))\n");
+	debugN("))\n");
 }
 
 void Vocabulary::synonymizeTokens(ResultWordListList &words) {
