@@ -119,6 +119,7 @@ public:
 	Scheduler_v2d(HugoEngine *vm);
 	virtual ~Scheduler_v2d();
 
+	virtual const char getCypher();
 	virtual void insertAction(act *action);
 protected:
 	virtual void delQueue(event_t *curEvent);

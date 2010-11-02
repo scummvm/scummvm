@@ -53,6 +53,10 @@ Scheduler_v2d::Scheduler_v2d(HugoEngine *vm) : Scheduler_v1d(vm) {
 Scheduler_v2d::~Scheduler_v2d() {
 }
 
+const char *Scheduler_v2d::getCypher() {
+	return "Copyright 1991, Gray Design Associates";
+}
+
 /**
 * Delete an event structure (i.e. return it to the free list)
 * Historical note:  Originally event p was assumed to be at head of queue
