@@ -82,7 +82,7 @@ void Font::setFontM4(const char *filename) {
 	Common::SeekableReadStream *fontFile = _vm->res()->openFile(filename);
 
 	if (fontFile->readUint32LE() != MKID_BE('FONT')) {
-		printf("Font::Font: FONT tag expected\n");
+		debug(kDebugGraphics, "Font::Font: FONT tag expected\n");
 		return;
 	}
 
@@ -90,10 +90,10 @@ void Font::setFontM4(const char *filename) {
 	_maxWidth = fontFile->readByte();
 	uint32 fontSize = fontFile->readUint32LE();
 
-	//printf("Font::Font: _maxWidth = %d, _maxHeight = %d, fontSize = %d\n", _maxWidth, _maxHeight, fontSize);
+	//debug(kDebugGraphics, "Font::Font: _maxWidth = %d, _maxHeight = %d, fontSize = %d\n", _maxWidth, _maxHeight, fontSize);
 
 	if (fontFile->readUint32LE() != MKID_BE('WIDT')) {
-		printf("Font::Font: WIDT tag expected\n");
+		debug(kDebugGraphics, "Font::Font: WIDT tag expected\n");
 		return;
 	}
 
@@ -101,7 +101,7 @@ void Font::setFontM4(const char *filename) {
 	fontFile->read(_charWidths, 256);
 
 	if (fontFile->readUint32LE() != MKID_BE('OFFS')) {
-		printf("Font::Font: OFFS tag expected\n");
+		debug(kDebugGraphics, "Font::Font: OFFS tag expected\n");
 		return;
 	}
 
@@ -111,7 +111,7 @@ void Font::setFontM4(const char *filename) {
 		_charOffs[i] = fontFile->readUint16LE();
 
 	if (fontFile->readUint32LE() != MKID_BE('PIXS')) {
-		printf("Font::Font: PIXS tag expected\n");
+		debug(kDebugGraphics, "Font::Font: PIXS tag expected\n");
 		return;
 	}
 

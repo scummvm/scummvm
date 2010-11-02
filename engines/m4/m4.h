@@ -116,7 +116,9 @@ enum {
 enum {
 	kDebugScript = 1 << 0,
 	kDebugConversations = 1 << 1,
-	kDebugGraphics = 1 << 2
+	kDebugGraphics = 1 << 2,
+	kDebugSound = 1 << 3,
+	kDebugCore = 1 << 4
 };
 
 #define MESSAGE_BASIC 1

@@ -546,7 +546,7 @@ int DragonMainMenuView::getHighlightedItem(int x, int y) {
 		M4Sprite *spr = _menuItem->getFrame(0);
 
 		if ((x >= pt.x - 25) && (y >= pt.y - spr->height()) && (x < (pt.x - 25 + spr->width())) && (y < (pt.y)))  {
-			printf("x = %d, y = %d, index = %d\n", x, y, index);
+			debug(kDebugGraphics, "x = %d, y = %d, index = %d\n", x, y, index);
 			return index;
 		}
 	}

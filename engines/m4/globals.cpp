@@ -75,7 +75,7 @@ bool Kernel::sendTrigger(int32 triggerNum) {
 
 bool Kernel::handleTrigger(int32 triggerNum) {
 
-	printf("betweenRooms = %d; triggerNum = %08X\n", betweenRooms, (uint)triggerNum);
+	debug(kDebugScript, "betweenRooms = %d; triggerNum = %08X\n", betweenRooms, (uint)triggerNum);
 
 	if (betweenRooms)
 		return true;
@@ -89,10 +89,10 @@ bool Kernel::handleTrigger(int32 triggerNum) {
 
 	int room = (triggerNum >> 16) & 0xFFF;
 
-	printf("room = %d; currentRoom = %d\n", room, currentRoom); fflush(stdout);
+	debug(kDebugScript, "room = %d; currentRoom = %d\n", room, currentRoom); fflush(stdout);
 
 	if (room != currentRoom) {
-		printf("Kernel::handleTrigger() Trigger from another room\n");
+		debug(kDebugScript, "Kernel::handleTrigger() Trigger from another room\n");
 		return false;
 	}
 
@@ -123,7 +123,7 @@ bool Kernel::handleTrigger(int32 triggerNum) {
 		break;
 
 	case KT_DAEMON:
-		printf("KT_DAEMON\n");
+		debug(kDebugScript, "KT_DAEMON\n");
 		fflush(stdout);
 		triggerMode = KT_DAEMON;
 		daemonTriggerAvailable = false;
@@ -140,7 +140,7 @@ bool Kernel::handleTrigger(int32 triggerNum) {
 		break;
 
 	default:
-		printf("Kernel::handleTrigger() Unknown trigger mode %d\n", mode);
+		debug(kDebugScript, "Kernel::handleTrigger() Unknown trigger mode %d\n", mode);
 
 	}
 
@@ -181,7 +181,7 @@ void Kernel::globalDaemon() {
 	if (_globalDaemonFn)
 		_vm->_script->runFunction(_globalDaemonFn);
 	else {
-		printf("Kernel::globalDaemon() _globalDaemonFn is NULL\n");
+		debug(kDebugScript, "Kernel::globalDaemon() _globalDaemonFn is NULL\n");
 	}
 }
 
@@ -189,7 +189,7 @@ void Kernel::globalParser() {
 	if (_globalParserFn)
 		_vm->_script->runFunction(_globalParserFn);
 	else {
-		printf("Kernel::globalParser() _globalParserFn is NULL\n");
+		debug(kDebugScript, "Kernel::globalParser() _globalParserFn is NULL\n");
 	}
 }
 
@@ -197,7 +197,7 @@ void Kernel::sectionInit() {
 	if (_sectionInitFn)
 		_vm->_script->runFunction(_sectionInitFn);
 	else {
-		printf("Kernel::sectionInit() _sectionInitFn is NULL\n");
+		debug(kDebugScript, "Kernel::sectionInit() _sectionInitFn is NULL\n");
 	}
 }
 
@@ -205,7 +205,7 @@ void Kernel::sectionDaemon() {
 	if (_sectionDaemonFn)
 		_vm->_script->runFunction(_sectionDaemonFn);
 	else {
-		printf("Kernel::sectionDaemon() _sectionDaemonFn is NULL\n");
+		debug(kDebugScript, "Kernel::sectionDaemon() _sectionDaemonFn is NULL\n");
 	}
 }
 
@@ -213,7 +213,7 @@ void Kernel::sectionParser() {
 	if (_sectionParserFn)
 		_vm->_script->runFunction(_sectionParserFn);
 	else {
-		printf("Kernel::sectionParser() _sectionParserFn is NULL\n");
+		debug(kDebugScript, "Kernel::sectionParser() _sectionParserFn is NULL\n");
 	}
 }
 
@@ -221,7 +221,7 @@ void Kernel::roomInit() {
 	if (_roomInitFn)
 		_vm->_script->runFunction(_roomInitFn);
 	else {
-		printf("Kernel::roomInit() _roomInitFn is NULL\n");
+		debug(kDebugScript, "Kernel::roomInit() _roomInitFn is NULL\n");
 	}
 }
 
@@ -229,7 +229,7 @@ void Kernel::roomDaemon() {
 	if (_roomDaemonFn)
 		_vm->_script->runFunction(_roomDaemonFn);
 	else {
-		printf("Kernel::roomDaemon() _roomDaemonFn is NULL\n");
+		debug(kDebugScript, "Kernel::roomDaemon() _roomDaemonFn is NULL\n");
 	}
 }
 
@@ -237,7 +237,7 @@ void Kernel::roomPreParser() {
 	if (_roomPreParserFn)
 		_vm->_script->runFunction(_roomPreParserFn);
 	else {
-		printf("Kernel::roomPreParser() _roomPreParserFn is NULL\n");
+		debug(kDebugScript, "Kernel::roomPreParser() _roomPreParserFn is NULL\n");
 	}
 }
 
@@ -245,7 +245,7 @@ void Kernel::roomParser() {
 	if (_roomParserFn)
 		_vm->_script->runFunction(_roomParserFn);
 	else {
-		printf("Kernel::roomParser() _roomParserFn is NULL\n");
+		debug(kDebugScript, "Kernel::roomParser() _roomParserFn is NULL\n");
 	}
 }
 
@@ -351,7 +351,7 @@ void MadsGlobals::loadMadsMessagesInfo() {
 	Common::SeekableReadStream *messageS = _vm->res()->get("messages.dat");
 
 	int16 count = messageS->readUint16LE();
-	//printf("%i messages\n", count);
+	//debug(kDebugScript, "%i messages\n", count);
 
 	for (int i = 0; i < count; i++) {
 		MessageItem curMessage;
@@ -365,7 +365,7 @@ void MadsGlobals::loadMadsMessagesInfo() {
 		if (i == count - 1)
 			curMessage.compSize = messageS->size() - curMessage.offset;
 
-		//printf("id: %i, offset: %i, uncomp size: %i\n", curMessage->id, curMessage->offset, curMessage->uncompSize);
+		//debug(kDebugScript, "id: %i, offset: %i, uncomp size: %i\n", curMessage->id, curMessage->offset, curMessage->uncompSize);
 		_madsMessages.push_back(curMessage);
 	}
 

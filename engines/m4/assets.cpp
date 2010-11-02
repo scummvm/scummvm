@@ -147,9 +147,9 @@ void SpriteAsset::loadM4SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream
 
 	uint32 header = _stream->readUint32LE();
 	if (header == HEAD_M4SS) {
-		printf("LE-encoded sprite\n");
+		debugC(kDebugGraphics, "LE-encoded sprite\n");
 	} else {
-		printf("BE-encoded sprite\n");
+		debugC(kDebugGraphics, "BE-encoded sprite\n");
 		isBigEndian = true;
 	}
 
@@ -163,7 +163,7 @@ void SpriteAsset::loadM4SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream
 	_stream->skip(6 * 4);
 	_frameCount = (!isBigEndian) ? _stream->readUint32LE() : _stream->readUint32BE();
 
-	printf("SpriteAsset::SpriteAsset() srcSize = %d; frameRate = %04X; pixelSpeed = %04X; maxWidth = %d; maxHeight = %d; frameCount = %d\n", _srcSize, _frameRate, _pixelSpeed, _maxWidth, _maxHeight, _frameCount);
+	debugC(kDebugGraphics, "SpriteAsset::SpriteAsset() srcSize = %d; frameRate = %04X; pixelSpeed = %04X; maxWidth = %d; maxHeight = %d; frameCount = %d\n", _srcSize, _frameRate, _pixelSpeed, _maxWidth, _maxHeight, _frameCount);
 
 	for (int curFrame = 0; curFrame < _frameCount; curFrame++) {
 		frameOffset = (!isBigEndian) ? _stream->readUint32LE() : _stream->readUint32BE();
@@ -345,7 +345,7 @@ int32 SpriteAsset::parseSprite(bool isBigEndian) {
 	if (chunkType == CELS___SS) {
 		chunkSize = (!isBigEndian) ? _stream->readUint32LE() : _stream->readUint32BE();
 	} else {
-		warning("SpriteAsset::parseSprite() Expected chunk type %08X, got %08X", CELS___SS, chunkType);
+		debugC(kDebugGraphics, "SpriteAsset::parseSprite() Expected chunk type %08X, got %08X", CELS___SS, chunkType);
 	}
 
 	return chunkSize;
@@ -362,14 +362,14 @@ void SpriteAsset::loadFrameHeader(SpriteAssetFrame &frameHeader, bool isBigEndia
 	frameHeader.comp = (!isBigEndian) ? _stream->readUint32LE() : _stream->readUint32BE();
 	frameHeader.frame = NULL;
 	_stream->seek(8 * 4, SEEK_CUR);
-	//printf("SpriteAsset::loadFrameHeader() stream = %d; x = %d; y = %d; w = %d; h = %d; comp = %d\n", frameHeader.stream, frameHeader.x, frameHeader.y, frameHeader.w, frameHeader.h, frameHeader.comp);
+	//debugC(kDebugGraphics, "SpriteAsset::loadFrameHeader() stream = %d; x = %d; y = %d; w = %d; h = %d; comp = %d\n", frameHeader.stream, frameHeader.x, frameHeader.y, frameHeader.w, frameHeader.h, frameHeader.comp);
 }
 
 M4Sprite *SpriteAsset::getFrame(int frameIndex) {
 	if ((uint)frameIndex < _frames.size()) {
 		return _frames[frameIndex].frame;
 	} else {
-		warning("SpriteAsset::getFrame: Invalid frame %d, out of %d", frameIndex, _frames.size());
+		debugC(kDebugGraphics, "SpriteAsset::getFrame: Invalid frame %d, out of %d", frameIndex, _frames.size());
 		return _frames[_frames.size() - 1].frame;
 	}
 }
@@ -486,7 +486,7 @@ bool AssetManager::clearAssets(AssetType assetType, int32 minHash, int32 maxHash
 
 bool AssetManager::loadAsset(const char *assetName, RGB8 *palette) {
 
-	printf("AssetManager::loadAsset() %s\n", assetName);
+	debugC(kDebugGraphics, "AssetManager::loadAsset() %s\n", assetName);
 
 	// TODO, better use MemoryReadStreamEndian?
 	//convertAssetToLE(assetData, assetSize);
@@ -500,34 +500,34 @@ bool AssetManager::loadAsset(const char *assetName, RGB8 *palette) {
 		chunkSize = assetS->readUint32LE() - 12; // sub 12 for the chunk header
 		chunkHash = assetS->readUint32LE();
 
-		printf("hash = %d\n", chunkHash);
+		debugC(kDebugGraphics, "hash = %d\n", chunkHash);
 
 		// Until loading code is complete, so that chunks not fully read are skipped correctly
 		uint32 nextOfs = assetS->pos() + chunkSize;
 
 		switch (chunkType) {
 		case CHUNK_MACH:
-			printf("MACH\n");
+			debugC(kDebugGraphics, "MACH\n");
 			clearAssets(kAssetTypeMACH, chunkHash, chunkHash);
 			_MACH[chunkHash] = new MachineAsset(_vm, assetS, chunkSize, assetName);
 			break;
 		case CHUNK_SEQU:
-			printf("SEQU\n");
+			debugC(kDebugGraphics, "SEQU\n");
 			clearAssets(kAssetTypeSEQU, chunkHash, chunkHash);
 			_SEQU[chunkHash] = new SequenceAsset(_vm, assetS, chunkSize, assetName);
 			break;
 		case CHUNK_DATA:
-			printf("DATA\n");
+			debugC(kDebugGraphics, "DATA\n");
 			clearAssets(kAssetTypeDATA, chunkHash, chunkHash);
 			_DATA[chunkHash] = new DataAsset(_vm, assetS, chunkSize, assetName);
 			break;
 		case CHUNK_CELS:
-			printf("CELS\n");
+			debugC(kDebugGraphics, "CELS\n");
 			clearAssets(kAssetTypeCELS, chunkHash, chunkHash);
 			_CELS[chunkHash] = new SpriteAsset(_vm, assetS, chunkSize, assetName);
 			break;
 		default:
-			printf("AssetManager::loadAsset() Unknown chunk type %08X\n", chunkType);
+			debug(kDebugGraphics, "AssetManager::loadAsset() Unknown chunk type %08X\n", chunkType);
 		}
 
 		// Until loading code is complete (see above)
@@ -568,7 +568,7 @@ int32 AssetManager::addSpriteAsset(const char *assetName, int32 hash, RGB8 *pale
 
 	if (!alreadyLoaded) {
 
-		printf("AssetManager::addSpriteAsset() asset %s not loaded, loading into %d\n", assetName, hash);
+		debugC(kDebugGraphics, "AssetManager::addSpriteAsset() asset %s not loaded, loading into %d\n", assetName, hash);
 
 		clearAssets(kAssetTypeCELS, hash, hash);
 
@@ -578,7 +578,7 @@ int32 AssetManager::addSpriteAsset(const char *assetName, int32 hash, RGB8 *pale
 
 	} else {
 
-		printf("AssetManager::addSpriteAsset()  asset %s already loaded in %d\n", assetName, hash);
+		debugC(kDebugGraphics, "AssetManager::addSpriteAsset()  asset %s already loaded in %d\n", assetName, hash);
 
 		/* TODO/FIXME
 		if (_CELS[hash].palOffset >= 0 && palette)

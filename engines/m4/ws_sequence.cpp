@@ -201,7 +201,7 @@ void Sequence::resume() {
 
 void Sequence::issueEndOfSequenceRequest(int32 codeOffset, int32 count) {
 
-	//printf("Sequence::issueEndOfSequenceRequest(%04X, %04X)\n", codeOffset, count); fflush(stdout);
+	//debug(kDebugScript, "Sequence::issueEndOfSequenceRequest(%04X, %04X)\n", codeOffset, count); fflush(stdout);
 	//g_system->delayMillis(5000);
 
 	_endOfSequenceRequest.codeOffset = codeOffset;
@@ -216,7 +216,7 @@ bool Sequence::runProgram() {
 
 	bool done = true;
 
-	//printf("_ws->getGlobal(kGlobTime) = %ld, _switchTime = %d\n", _ws->getGlobal(kGlobTime), _switchTime);
+	//debug(kDebugScript, "_ws->getGlobal(kGlobTime) = %ld, _switchTime = %d\n", _ws->getGlobal(kGlobTime), _switchTime);
 
 	if (_switchTime >= 0 && _ws->getGlobal(kGlobTime) >= _switchTime)
 		done = false;
@@ -246,7 +246,7 @@ bool Sequence::changeProgram(int32 sequenceHash) {
 	SequenceAsset *sequenceAsset = _ws->assets()->getSequence(sequenceHash);
 
 	if (sequenceAsset->localVarCount() > _localVarCount) {
-		//printf("Sequence::changeProgram(%d) sequenceAsset->localVarCount() > _localVarCount\n", sequenceHash);
+		//debug(kDebugScript, "Sequence::changeProgram(%d) sequenceAsset->localVarCount() > _localVarCount\n", sequenceHash);
 		return false;
 	}
 
@@ -301,14 +301,14 @@ void Sequence::draw(M4Surface *surface, const Common::Rect &clipRect, Common::Re
 }
 
 bool Sequence::s1_end(Instruction &instruction) {
-	//printf("Sequence::s1_end()\n");
+	//debug(kDebugScript, "Sequence::s1_end()\n");
 
 	_terminated = true;
 	return false;
 }
 
 bool Sequence::s1_clearVars(Instruction &instruction) {
-	//printf("Sequence::s1_clearVars()\n");
+	//debug(kDebugScript, "Sequence::s1_clearVars()\n");
 
 	clearVars();
 	_vars[kSeqVarMachineID] = _machine->getId();
@@ -316,14 +316,14 @@ bool Sequence::s1_clearVars(Instruction &instruction) {
 }
 
 bool Sequence::s1_set(Instruction &instruction) {
-	//printf("Sequence::s1_set()\n");
+	//debug(kDebugScript, "Sequence::s1_set()\n");
 
 	*instruction.argp[0] = instruction.getValue();
 	return true;
 }
 
 bool Sequence::s1_compare(Instruction &instruction) {
-	//printf("Sequence::s1_compare()\n");
+	//debug(kDebugScript, "Sequence::s1_compare()\n");
 
 	long value = instruction.getValue();
 	if (instruction.argv[0] < value)
@@ -336,28 +336,28 @@ bool Sequence::s1_compare(Instruction &instruction) {
 }
 
 bool Sequence::s1_add(Instruction &instruction) {
-	//printf("Sequence::s1_add()\n");
+	//debug(kDebugScript, "Sequence::s1_add()\n");
 
 	*instruction.argp[0] += instruction.getValue();
 	return true;
 }
 
 bool Sequence::s1_sub(Instruction &instruction) {
-	//printf("Sequence::s1_sub()\n");
+	//debug(kDebugScript, "Sequence::s1_sub()\n");
 
 	*instruction.argp[0] -= instruction.getValue();
 	return true;
 }
 
 bool Sequence::s1_mul(Instruction &instruction) {
-	//printf("Sequence::s1_mul()\n");
+	//debug(kDebugScript, "Sequence::s1_mul()\n");
 
 	*instruction.argp[0] = FixedMul(instruction.argv[0], instruction.getValue());
 	return true;
 }
 
 bool Sequence::s1_div(Instruction &instruction) {
-	//printf("Sequence::s1_div()\n");
+	//debug(kDebugScript, "Sequence::s1_div()\n");
 
 	// TODO: Catch divisor = 0 in FixedDiv
 	*instruction.argp[0] = FixedDiv(instruction.argv[0], instruction.getValue());
@@ -365,7 +365,7 @@ bool Sequence::s1_div(Instruction &instruction) {
 }
 
 bool Sequence::s1_and(Instruction &instruction) {
-	//printf("Sequence::s1_and()\n");
+	//debug(kDebugScript, "Sequence::s1_and()\n");
 
 	*instruction.argp[0] = instruction.argv[0] & instruction.getValue();
 	if (*instruction.argp[0])
@@ -376,7 +376,7 @@ bool Sequence::s1_and(Instruction &instruction) {
 }
 
 bool Sequence::s1_or(Instruction &instruction) {
-	//printf("Sequence::s1_or()\n");
+	//debug(kDebugScript, "Sequence::s1_or()\n");
 
 	*instruction.argp[0] = instruction.argv[0] | instruction.getValue();
 	if (*instruction.argp[0])
@@ -387,7 +387,7 @@ bool Sequence::s1_or(Instruction &instruction) {
 }
 
 bool Sequence::s1_not(Instruction &instruction) {
-	//printf("Sequence::s1_not()\n");
+	//debug(kDebugScript, "Sequence::s1_not()\n");
 
 	if (instruction.argv[0] == 0) {
 		*instruction.argp[0] = 0x10000;
@@ -400,7 +400,7 @@ bool Sequence::s1_not(Instruction &instruction) {
 }
 
 bool Sequence::s1_sin(Instruction &instruction) {
-	//printf("Sequence::s1_sin()\n");
+	//debug(kDebugScript, "Sequence::s1_sin()\n");
 
 	int32 tempAngle = *instruction.argp[1] >> 16;
 	if (tempAngle < 0)
@@ -417,7 +417,7 @@ bool Sequence::s1_sin(Instruction &instruction) {
 }
 
 bool Sequence::s1_cos(Instruction &instruction) {
-	//printf("Sequence::s1_cos()\n");
+	//debug(kDebugScript, "Sequence::s1_cos()\n");
 
 	int32 tempAngle = *instruction.argp[1] >> 16;
 	if (tempAngle < 0)
@@ -434,42 +434,42 @@ bool Sequence::s1_cos(Instruction &instruction) {
 }
 
 bool Sequence::s1_abs(Instruction &instruction) {
-	//printf("Sequence::s1_abs()\n");
+	//debug(kDebugScript, "Sequence::s1_abs()\n");
 
 	*instruction.argp[0] = ABS(instruction.argv[1]);
 	return true;
 }
 
 bool Sequence::s1_min(Instruction &instruction) {
-	//printf("Sequence::s1_min()\n");
+	//debug(kDebugScript, "Sequence::s1_min()\n");
 
 	*instruction.argp[0] = MIN(instruction.argv[1], instruction.argv[2]);
 	return true;
 }
 
 bool Sequence::s1_max(Instruction &instruction) {
-	//printf("Sequence::s1_max()\n");
+	//debug(kDebugScript, "Sequence::s1_max()\n");
 
 	*instruction.argp[0] = MAX(instruction.argv[1], instruction.argv[2]);
 	return true;
 }
 
 bool Sequence::s1_mod(Instruction &instruction) {
-	//printf("Sequence::s1_mod()\n");
+	//debug(kDebugScript, "Sequence::s1_mod()\n");
 
 	*instruction.argp[0] = instruction.argv[0] % instruction.getValue();
 	return true;
 }
 
 bool Sequence::s1_floor(Instruction &instruction) {
-	//printf("Sequence::s1_floor()\n");
+	//debug(kDebugScript, "Sequence::s1_floor()\n");
 
 	*instruction.argp[0] = instruction.getValue() & 0xffff0000;
 	return true;
 }
 
 bool Sequence::s1_round(Instruction &instruction) {
-	//printf("Sequence::s1_round()\n");
+	//debug(kDebugScript, "Sequence::s1_round()\n");
 
 	if ((*instruction.argp[1] & 0xffff) >= 0x8000)
 		*instruction.argp[0] = (*instruction.argp[1] + 0x10000) & 0xffff0000;
@@ -479,7 +479,7 @@ bool Sequence::s1_round(Instruction &instruction) {
 }
 
 bool Sequence::s1_ceil(Instruction &instruction) {
-	//printf("Sequence::s1_ceil()\n");
+	//debug(kDebugScript, "Sequence::s1_ceil()\n");
 
 	if ((*instruction.argp[1] & 0xffff) >= 0)
 		*instruction.argp[0] = (*instruction.argp[1] + 0x10000) & 0xffff0000;
@@ -489,19 +489,19 @@ bool Sequence::s1_ceil(Instruction &instruction) {
 }
 
 bool Sequence::s1_point(Instruction &instruction) {
-	printf("Sequence::s1_point()\n");
+	debug(kDebugScript, "Sequence::s1_point()\n");
 	// TODO
 	return true;
 }
 
 bool Sequence::s1_dist2d(Instruction &instruction) {
-	printf("Sequence::s1_dist2d()\n");
+	debug(kDebugScript, "Sequence::s1_dist2d()\n");
 	// TODO
 	return true;
 }
 
 bool Sequence::s1_crunch(Instruction &instruction) {
-	//printf("Sequence::s1_crunch()\n");
+	//debug(kDebugScript, "Sequence::s1_crunch()\n");
 
 	long deltaTime;
 
@@ -515,12 +515,12 @@ bool Sequence::s1_crunch(Instruction &instruction) {
 
 	_startTime = _ws->getGlobal(kGlobTime);
 
-	//printf("deltaTime = %ld\n", deltaTime >> 16); fflush(stdout);
+	//debug(kDebugScript, "deltaTime = %ld\n", deltaTime >> 16); fflush(stdout);
 	//g_system->delayMillis(5000);
 
 	if (deltaTime >= 0) {
 		_switchTime = _ws->getGlobal(kGlobTime) + (deltaTime >> 16);
-		//printf("_ws->getGlobal(kGlobTime) = %ld\n", _ws->getGlobal(kGlobTime)); fflush(stdout);
+		//debug(kDebugScript, "_ws->getGlobal(kGlobTime) = %ld\n", _ws->getGlobal(kGlobTime)); fflush(stdout);
 		//g_system->delayMillis(5000);
 	} else {
 		_switchTime = -1;
@@ -532,7 +532,7 @@ bool Sequence::s1_crunch(Instruction &instruction) {
 }
 
 bool Sequence::s1_branch(Instruction &instruction) {
-	//printf("Sequence::s1_branch()\n");
+	//debug(kDebugScript, "Sequence::s1_branch()\n");
 
 	uint32 ofs = instruction.argv[1] >> 16;
 	switch (instruction.argv[0] >> 16) {
@@ -569,7 +569,7 @@ bool Sequence::s1_branch(Instruction &instruction) {
 }
 
 bool Sequence::s1_setFrame(Instruction &instruction) {
-	//printf("Sequence::s1_setFrame()\n");
+	//debug(kDebugScript, "Sequence::s1_setFrame()\n");
 
 	int32 frameIndex;
 	if (instruction.argc == 3) {
@@ -580,8 +580,8 @@ bool Sequence::s1_setFrame(Instruction &instruction) {
 		frameIndex = (instruction.argv[0] & 0xFF0000) >> 16;
 	}
 
-	//printf("Sequence::s1_setFrame() spriteHash = %d\n", (uint32)instruction.argv[0] >> 24);
-	//printf("Sequence::s1_setFrame() frameIndex = %d\n", frameIndex);
+	//debug(kDebugScript, "Sequence::s1_setFrame() spriteHash = %d\n", (uint32)instruction.argv[0] >> 24);
+	//debug(kDebugScript, "Sequence::s1_setFrame() frameIndex = %d\n", frameIndex);
 
 	SpriteAsset *spriteAsset = _ws->assets()->getSprite((uint32)instruction.argv[0] >> 24);
 	_curFrame = spriteAsset->getFrame(frameIndex);
@@ -590,25 +590,25 @@ bool Sequence::s1_setFrame(Instruction &instruction) {
 }
 
 bool Sequence::s1_sendMessage(Instruction &instruction) {
-	printf("Sequence::s1_sendMessage()\n");
+	debug(kDebugScript, "Sequence::s1_sendMessage()\n");
 	// TODO
 	return true;
 }
 
 bool Sequence::s1_push(Instruction &instruction) {
-	printf("Sequence::s1_push()\n");
+	debug(kDebugScript, "Sequence::s1_push()\n");
 	// TODO
 	return true;
 }
 
 bool Sequence::s1_pop(Instruction &instruction) {
-	printf("Sequence::s1_pop()\n");
+	debug(kDebugScript, "Sequence::s1_pop()\n");
 	// TODO
 	return true;
 }
 
 bool Sequence::s1_jumpSub(Instruction &instruction) {
-	//printf("Sequence::s1_jumpSub()\n");
+	//debug(kDebugScript, "Sequence::s1_jumpSub()\n");
 
 	_returnHashes[_returnStackIndex] = _sequenceHash;
 	_returnOffsets[_returnStackIndex] = _code->pos();
@@ -628,7 +628,7 @@ bool Sequence::s1_jumpSub(Instruction &instruction) {
 }
 
 bool Sequence::s1_return(Instruction &instruction) {
-	//printf("Sequence::s1_return()\n");
+	//debug(kDebugScript, "Sequence::s1_return()\n");
 
 	if (_returnStackIndex <= 0)
 		return s1_end(instruction);
@@ -652,7 +652,7 @@ bool Sequence::s1_return(Instruction &instruction) {
 }
 
 bool Sequence::s1_getFrameCount(Instruction &instruction) {
-	//printf("Sequence::s1_getFrameCount()\n");
+	//debug(kDebugScript, "Sequence::s1_getFrameCount()\n");
 
 	SpriteAsset *spriteAsset = _ws->assets()->getSprite(instruction.argv[1] >> 24);
 	*instruction.argp[0] = spriteAsset->getCount() << 16;
@@ -660,7 +660,7 @@ bool Sequence::s1_getFrameCount(Instruction &instruction) {
 }
 
 bool Sequence::s1_getFrameRate(Instruction &instruction) {
-	//printf("Sequence::s1_getFrameRate()\n");
+	//debug(kDebugScript, "Sequence::s1_getFrameRate()\n");
 
 	SpriteAsset *spriteAsset = _ws->assets()->getSprite(instruction.argv[1] >> 24);
 	*instruction.argp[0] = spriteAsset->getFrameRate();
@@ -668,37 +668,37 @@ bool Sequence::s1_getFrameRate(Instruction &instruction) {
 }
 
 bool Sequence::s1_getCelsPixSpeed(Instruction &instruction) {
-	printf("Sequence::s1_getCelsPixSpeed()\n");
+	debug(kDebugScript, "Sequence::s1_getCelsPixSpeed()\n");
 	// TODO
 	return true;
 }
 
 bool Sequence::s1_setIndex(Instruction &instruction) {
-	printf("Sequence::s1_setIndex()\n");
+	debug(kDebugScript, "Sequence::s1_setIndex()\n");
 	// TODO
 	return true;
 }
 
 bool Sequence::s1_setLayer(Instruction &instruction) {
-	printf("Sequence::s1_setLayer()\n");
+	debug(kDebugScript, "Sequence::s1_setLayer()\n");
 	//TODO
 	return true;
 }
 
 bool Sequence::s1_setDepth(Instruction &instruction) {
-	printf("Sequence::s1_setDepth()\n");
+	debug(kDebugScript, "Sequence::s1_setDepth()\n");
 	//TODO
 	return true;
 }
 
 bool Sequence::s1_setData(Instruction &instruction) {
-	printf("Sequence::s1_setData()\n");
+	debug(kDebugScript, "Sequence::s1_setData()\n");
 	//TODO
 	return true;
 }
 
 bool Sequence::s1_openStream(Instruction &instruction) {
-	//printf("Sequence::s1_openStream()\n");
+	//debug(kDebugScript, "Sequence::s1_openStream()\n");
 
 	_stream = _vm->res()->openFile(_machine->name().c_str());
 	streamOpen();
@@ -706,14 +706,14 @@ bool Sequence::s1_openStream(Instruction &instruction) {
 }
 
 bool Sequence::s1_streamNextFrame(Instruction &instruction) {
-	//printf("Sequence::s1_streamNextFrame()\n");
+	//debug(kDebugScript, "Sequence::s1_streamNextFrame()\n");
 
 	streamNextFrame();
 	return true;
 }
 
 bool Sequence::s1_closeStream(Instruction &instruction) {
-	printf("Sequence::s1_closeStream()\n");
+	debug(kDebugScript, "Sequence::s1_closeStream()\n");
 	//TODO
 	return true;
 }
@@ -726,7 +726,7 @@ bool Sequence::streamOpen() {
 	_vars[kSeqVarSpriteFrameCount] = _streamSpriteAsset->getCount() << 16;
 	_vars[kSeqVarSpriteFrameRate] = _streamSpriteAsset->getFrameRate() << 16;
 
-	//printf("Sequence::streamOpen() frames = %d; max = %d x %d\n", _streamSpriteAsset->getCount(), _streamSpriteAsset->getMaxFrameWidth(), _streamSpriteAsset->getMaxFrameHeight());
+	//debug(kDebugScript, "Sequence::streamOpen() frames = %d; max = %d x %d\n", _streamSpriteAsset->getCount(), _streamSpriteAsset->getMaxFrameWidth(), _streamSpriteAsset->getMaxFrameHeight());
 	//fflush(stdout);
 
 	_curFrame = new M4Sprite(_vm, _streamSpriteAsset->getMaxFrameWidth(), _streamSpriteAsset->getMaxFrameHeight());

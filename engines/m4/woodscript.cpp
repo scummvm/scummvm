@@ -46,7 +46,7 @@ Bytecode::~Bytecode() {
 
 int Bytecode::loadInstruction(Instruction &instruction) {
 
-	//printf("Bytecode::loadInstruction() ip = %08X\n", _code->pos());
+	//debug(kDebugScript, "Bytecode::loadInstruction() ip = %08X\n", _code->pos());
 
 	int32 format, data;
 	uint32 code, code2;
@@ -90,7 +90,7 @@ int Bytecode::loadInstruction(Instruction &instruction) {
 
 void Bytecode::jumpAbsolute(int32 ofs) {
 	_code->seek(ofs * 4);
-	//printf("Bytecode::jumpAbsolute() ofs = %08X\n", _code->pos());
+	//debug(kDebugScript, "Bytecode::jumpAbsolute() ofs = %08X\n", _code->pos());
 }
 
 void Bytecode::jumpRelative(int32 ofs) {
@@ -200,7 +200,7 @@ void WoodScript::runTimerSequenceRequests() {
 Machine *WoodScript::createMachine(int32 machineHash, Sequence *parentSeq,
 	int32 dataHash, int32 dataRowIndex, int callbackHandler, const char *machineName) {
 
-	//printf("WoodScript::createMachine(%d)\n", machineHash); fflush(stdout);
+	//debug(kDebugScript, "WoodScript::createMachine(%d)\n", machineHash); fflush(stdout);
 
 	Machine *machine = new Machine(this, machineHash, parentSeq, dataHash, dataRowIndex, callbackHandler, machineName, _machineId);
 	_machineId++;
@@ -228,7 +228,7 @@ Machine *WoodScript::playSeries(const char *seriesName, long layer, uint32 flags
 	int32 frameRate, int32 loopCount, int32 s, int32 x, int32 y,
 	int32 firstFrame, int32 lastFrame) {
 
-	//printf("WoodScript::playSeries(%s)\n", seriesName);
+	//debug(kDebugScript, "WoodScript::playSeries(%s)\n", seriesName);
 
 	RGB8 *palette = NULL;
 	if (flags & SERIES_LOAD_PALETTE)
@@ -282,7 +282,7 @@ Machine *WoodScript::showSeries(const char *seriesName, long layer, uint32 flags
 }
 
 Machine *WoodScript::streamSeries(const char *seriesName, int32 frameRate, long layer, int32 triggerNum) {
-	//printf("WoodScript::streamSeries(%s)\n", seriesName);
+	//debug(kDebugScript, "WoodScript::streamSeries(%s)\n", seriesName);
 	_globals[kGlobTemp1] = frameRate << 16;
 	/* FIXME: Single frames from a stream series will be decompressed on-the-fly, contrary to
 			  "normal" sprite series, to save some memory, and since no random access to single

@@ -235,7 +235,7 @@ bool Mouse::init(const char *seriesName, RGB8 *palette) {
 	cursorPalette = _cursorSprites->getPalette();
 	_vm->_palette->setPalette(cursorPalette, 0, colorCount);
 
-	//printf("Cursor count: %d\n", _cursorSprites->getCount());
+	//debug(kDebugCore, "Cursor count: %d\n", _cursorSprites->getCount());
 
 	_vm->res()->toss(seriesName);
 

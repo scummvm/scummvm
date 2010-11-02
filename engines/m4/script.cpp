@@ -121,7 +121,7 @@ SeriesStreamBreakList::~SeriesStreamBreakList() {
 
 void SeriesStreamBreakList::load(Common::File *fd) {
 	uint32 count = fd->readUint32LE();
-	printf("SeriesStreamBreakList::load() count = %d\n", count);
+	debug(kDebugScript, "SeriesStreamBreakList::load() count = %d\n", count);
 	for (uint32 i = 0; i < count; i++) {
 		SeriesStreamBreakItem *item = new SeriesStreamBreakItem();
 		item->frameNum = fd->readUint32LE();
@@ -135,7 +135,7 @@ void SeriesStreamBreakList::load(Common::File *fd) {
 		item->value = fd->readUint32LE();
 		_items.push_back(item);
 
-		printf("%02d: frameNum = %d; digiName = %s; digiChannel = %d; digiVolume = %d; trigger = %d; flags = %d; variable = %d; value = %d\n",
+		debug(kDebugScript, "%02d: frameNum = %d; digiName = %s; digiChannel = %d; digiVolume = %d; trigger = %d; flags = %d; variable = %d; value = %d\n",
 			i, item->frameNum, item->digiName,	item->digiChannel, item->digiVolume, item->trigger, item->flags, item->variable.value, item->value);
 
 	}
@@ -146,7 +146,7 @@ SaidArray::~SaidArray() {
 
 void SaidArray::load(Common::File *fd) {
 	uint32 count = fd->readUint32LE();
-	printf("SaidArray::load() count = %d\n", count);
+	debug(kDebugScript, "SaidArray::load() count = %d\n", count);
 	for (uint32 i = 0; i < count; i++) {
 		SaidArrayItem *item = new SaidArrayItem();
 		item->itemName = _inter->loadGlobalString(fd);
@@ -155,7 +155,7 @@ void SaidArray::load(Common::File *fd) {
 		item->digiNameGear = _inter->loadGlobalString(fd);
 		_items.push_back(item);
 
-		printf("itemName = %s; digiNameLook = %s; digiNameTake = %s; digiNameGear = %s\n",
+		debug(kDebugScript, "itemName = %s; digiNameLook = %s; digiNameTake = %s; digiNameGear = %s\n",
 			item->itemName, item->digiNameLook, item->digiNameTake, item->digiNameGear);
 
 	}
@@ -166,7 +166,7 @@ ParserArray::~ParserArray() {
 
 void ParserArray::load(Common::File *fd) {
 	uint32 count = fd->readUint32LE();
-	printf("ParserArray::load() count = %d\n", count);
+	debug(kDebugScript, "ParserArray::load() count = %d\n", count);
 	for (uint32 i = 0; i < count; i++) {
 		ParserArrayItem *item = new ParserArrayItem();
 		item->w0 = _inter->loadGlobalString(fd);
@@ -180,7 +180,7 @@ void ParserArray::load(Common::File *fd) {
 		item->value = fd->readUint32LE();
 		_items.push_back(item);
 
-		printf("w0 = %s; w1 = %s; trigger = %d; testVariable = %d; testValue = %d; variable = %d; value = %d\n",
+		debug(kDebugScript, "w0 = %s; w1 = %s; trigger = %d; testVariable = %d; testValue = %d; variable = %d; value = %d\n",
 			item->w0, item->w1, item->trigger, item->testVariable.value, item->testValue, item->variable.value, item->value);
 
 	}
@@ -194,9 +194,9 @@ ScriptFunction::~ScriptFunction() {
 }
 
 void ScriptFunction::load(Common::File *fd) {
-	printf("ScriptFunction::load()\n");
+	debug(kDebugScript, "ScriptFunction::load()\n");
 	uint32 size = fd->readUint32LE();
-	printf("ScriptFunction::load() size = %d\n", size);
+	debug(kDebugScript, "ScriptFunction::load() size = %d\n", size);
 	_code = fd->readStream(size);
 }
 
@@ -243,16 +243,16 @@ void ScriptInterpreter::open(const char *filename) {
 	}
 
 	int functionCount = _scriptFile->readUint32LE();
-	printf("functionCount = %d\n", functionCount);
+	debug(kDebugScript, "functionCount = %d\n", functionCount);
 	for (int i = 0; i < functionCount; i++) {
 		uint32 offset = _scriptFile->readUint32LE();
-		printf("func(%d) offset = %08X\n", i, offset);
+		debug(kDebugScript, "func(%d) offset = %08X\n", i, offset);
 		uint32 len = _scriptFile->readUint32LE();
 		if (len > 0) {
 			char *funcName = new char[len + 1];
 			_scriptFile->read(funcName, len);
 			funcName[len] = '\0';
-			printf("func(%d) name = %s\n", i, funcName);
+			debug(kDebugScript, "func(%d) name = %s\n", i, funcName);
 			_functionNames[Common::String(funcName)] = _functions.size();
 			// DEBUG
 			_scriptFunctionNames.push_back(Common::String(funcName));
@@ -262,16 +262,16 @@ void ScriptInterpreter::open(const char *filename) {
 	}
 
 	int dataCount = _scriptFile->readUint32LE();
-	printf("dataCount = %d\n", dataCount);
+	debug(kDebugScript, "dataCount = %d\n", dataCount);
 	for (int i = 0; i < dataCount; i++) {
 		uint32 offset = _scriptFile->readUint32LE();
 		ScriptDataType type = (ScriptDataType)_scriptFile->readUint32LE();
-		printf("data(%d) offset = %08X; type = %d\n", i, offset, type);
+		debug(kDebugScript, "data(%d) offset = %08X; type = %d\n", i, offset, type);
 		_data.push_back(new ScriptDataEntry(offset, type));
 	}
 
 	_globalVarCount = _scriptFile->readUint32LE();
-	printf("_globalVarCount = %d\n", _globalVarCount);
+	debug(kDebugScript, "_globalVarCount = %d\n", _globalVarCount);
 
 	uint32 stringOfs = _scriptFile->readUint32LE();
 	_scriptFile->seek(stringOfs);
@@ -324,11 +324,11 @@ ScriptFunction *ScriptInterpreter::loadFunction(uint32 index) {
 ScriptFunction *ScriptInterpreter::loadFunction(const Common::String &name) {
 	FunctionNameMap::iterator iter = _functionNames.find(name);
 	if (iter == _functionNames.end()) {
-		printf("ScriptInterpreter::loadFunction() Function '%s' not found!\n", name.c_str());
+		debug(kDebugScript, "ScriptInterpreter::loadFunction() Function '%s' not found!\n", name.c_str());
 		return NULL;
 	}
 	uint32 funcIndex = (*iter)._value;
-	printf("ScriptInterpreter::loadFunction() index('%s') = %d\n", name.c_str(), funcIndex);
+	debug(kDebugScript, "ScriptInterpreter::loadFunction() index('%s') = %d\n", name.c_str(), funcIndex);
 	return loadFunction(funcIndex);
 }
 
@@ -376,24 +376,24 @@ void ScriptInterpreter::pop(ScriptValue &value) {
 }
 
 void ScriptInterpreter::dumpStack() {
-	printf("ScriptInterpreter::dumpStack()\n");
+	debug(kDebugScript, "ScriptInterpreter::dumpStack()\n");
 	for (int i = 0; i < _stackPtr; i++) {
-		printf("%03d. type = %02d; value = %d\n", i, _stack[i].type, _stack[i].value);
+		debug(kDebugScript, "%03d. type = %02d; value = %d\n", i, _stack[i].type, _stack[i].value);
 	}
 }
 
 void ScriptInterpreter::dumpRegisters() {
-	printf("ScriptInterpreter::dumpRegisters()\n");
+	debug(kDebugScript, "ScriptInterpreter::dumpRegisters()\n");
 	for (int i = 0; i < ARRAYSIZE(_registers); i++) {
-		printf("%03d. type = %02d; value = %d\n", i, _registers[i].type, _registers[i].value);
+		debug(kDebugScript, "%03d. type = %02d; value = %d\n", i, _registers[i].type, _registers[i].value);
 	}
 }
 
 void ScriptInterpreter::dumpGlobalVars() {
-	printf("ScriptInterpreter::dumpGlobalVars()\n");
+	debug(kDebugScript, "ScriptInterpreter::dumpGlobalVars()\n");
 	for (int i = 0; i < ARRAYSIZE(_globalVars); i++) {
 		if (_globalVars[i].type != -1)
-			printf("%03d. type = %02d; value = %d\n", i, _globalVars[i].type, _globalVars[i].value);
+			debug(kDebugScript, "%03d. type = %02d; value = %d\n", i, _globalVars[i].type, _globalVars[i].value);
 	}
 }
 
@@ -405,7 +405,7 @@ int ScriptInterpreter::toInteger(const ScriptValue &value) {
 		return value.value;
 
 	default:
-		printf("ScriptInterpreter::toInteger() Invalid type %d!\n", value.type);
+		debug(kDebugScript, "ScriptInterpreter::toInteger() Invalid type %d!\n", value.type);
 		return 0;
 
 	}
@@ -423,7 +423,7 @@ const char *ScriptInterpreter::toString(const ScriptValue &value) {
 		return _constStrings[value.value];
 
 	default:
-		printf("ScriptInterpreter::toString() Invalid type %d!\n", value.type);
+		debug(kDebugScript, "ScriptInterpreter::toString() Invalid type %d!\n", value.type);
 		return NULL;
 
 	}
@@ -462,7 +462,7 @@ void ScriptInterpreter::loadValue(ScriptValue &value) {
 		break;
 
 	default:
-		printf("ScriptInterpreter::loadValue() Invalid value type %d!\n", value.type);
+		debug(kDebugScript, "ScriptInterpreter::loadValue() Invalid value type %d!\n", value.type);
 
 	}
 
@@ -471,7 +471,7 @@ void ScriptInterpreter::loadValue(ScriptValue &value) {
 void ScriptInterpreter::copyValue(ScriptValue &destValue, ScriptValue &sourceValue) {
 
 	if (sourceValue.type == -1) {
-		printf("ScriptInterpreter::copyValue() Trying to read uninitialized value!\n");
+		debug(kDebugScript, "ScriptInterpreter::copyValue() Trying to read uninitialized value!\n");
 	}
 
 	switch (destValue.type) {
@@ -489,7 +489,7 @@ void ScriptInterpreter::copyValue(ScriptValue &destValue, ScriptValue &sourceVal
 		if (sourceValue.type == kInteger) {
 			_logicGlobals[destValue.value] = sourceValue.value;
 		} else {
-			printf("ScriptInterpreter::copyValue() Invalid source value type %d!\n", sourceValue.type);
+			debug(kDebugScript, "ScriptInterpreter::copyValue() Invalid source value type %d!\n", sourceValue.type);
 		}
 		break;
 
@@ -498,7 +498,7 @@ void ScriptInterpreter::copyValue(ScriptValue &destValue, ScriptValue &sourceVal
 		break;
 
 	default:
-		printf("ScriptInterpreter::copyValue() Invalid dest value type %d!\n", destValue.type);
+		debug(kDebugScript, "ScriptInterpreter::copyValue() Invalid dest value type %d!\n", destValue.type);
 
 	}
 
@@ -533,7 +533,7 @@ void ScriptInterpreter::derefValue(ScriptValue &value) {
 		break;
 
 	default:
-		printf("ScriptInterpreter::derefValue() Invalid value type %d!\n", value.type);
+		debug(kDebugScript, "ScriptInterpreter::derefValue() Invalid value type %d!\n", value.type);
 
 	}
 
@@ -541,21 +541,21 @@ void ScriptInterpreter::derefValue(ScriptValue &value) {
 
 void ScriptInterpreter::callKernelFunction(uint32 index) {
 
-	printf("ScriptInterpreter::callKernelFunction() index = %d\n", index);
+	debug(kDebugScript, "ScriptInterpreter::callKernelFunction() index = %d\n", index);
 
 	if (index > _kernelFunctionsMax) {
-		printf("ScriptInterpreter::callKernelFunction() Invalid kernel functionindex (%d)\n", index);
+		debug(kDebugScript, "ScriptInterpreter::callKernelFunction() Invalid kernel functionindex (%d)\n", index);
 		return;
 	}
 
-	printf("ScriptInterpreter::callKernelFunction() name = %s\n", _kernelFunctions[index].desc);
+	debug(kDebugScript, "ScriptInterpreter::callKernelFunction() name = %s\n", _kernelFunctions[index].desc);
 
 	int args = (this->*(_kernelFunctions[index].proc))();
 	// Now remove values from the stack if the function used any
 	if (args > 4)
 		_stackPtr -= args - 4;
 
-	printf("-------------\n");
+	debug(kDebugScript, "-------------\n");
 
 }
 
@@ -569,30 +569,30 @@ ScriptValue ScriptInterpreter::getArg(uint32 index) {
 }
 
 void ScriptInterpreter::dumpArgs(uint32 count) {
-	printf("ScriptInterpreter::dumpArgs() ");
+	debug(kDebugScript, "ScriptInterpreter::dumpArgs() ");
 	for (uint32 i = 0; i < count; i++) {
 		ScriptValue argValue = getArg(i);
 		if (argValue.type == kConstString) {
-			printf("'%s'", toString(argValue));
+			debug(kDebugScript, "'%s'", toString(argValue));
 		} else {
-			printf("%d", argValue.value);
+			debug(kDebugScript, "%d", argValue.value);
 		}
 		if (i + 1 < count)
-			printf(", ");
+			debug(kDebugScript, ", ");
 	}
-	printf("\n");
+	debug(kDebugScript, "\n");
 }
 
 void ScriptInterpreter::callFunction(uint32 index) {
 	// NOTE: This is a temporary hack for script functions not yet in the m4.dat
 	if (index == 0xFFFFFFFF)
 		return;
-	printf("ScriptInterpreter::callFunction() index = %d [%s]\n", index, _scriptFunctionNames[index].c_str());
+	debug(kDebugScript, "ScriptInterpreter::callFunction() index = %d [%s]\n", index, _scriptFunctionNames[index].c_str());
 	fflush(stdout);
 	ScriptFunction *subFunction = loadFunction(index);
 	if (!subFunction) {
 		// This *should* never happen since the linker checks this
-		printf("ScriptInterpreter::callFunction() Function %d could not be loaded!\n", index);
+		debug(kDebugScript, "ScriptInterpreter::callFunction() Function %d could not be loaded!\n", index);
 		return;
 	}
 	runFunction(subFunction);
@@ -600,7 +600,7 @@ void ScriptInterpreter::callFunction(uint32 index) {
 
 bool ScriptInterpreter::execOpcode(byte opcode) {
 
-	printf("opcode = %d (%s)\n", opcode, opcodeNames[opcode]);
+	debug(kDebugScript, "opcode = %d (%s)\n", opcode, opcodeNames[opcode]);
 
 	ScriptValue value1, value2, value3;
 	uint32 temp;
@@ -649,14 +649,14 @@ bool ScriptInterpreter::execOpcode(byte opcode) {
 
 	case opJmp:
 		temp = _runningFunction->readUint32();
-		printf("-> ofs = %08X\n", temp);
+		debug(kDebugScript, "-> ofs = %08X\n", temp);
 		_runningFunction->jumpAbsolute(temp);
 		return true;
 
 	case opJl:
 		temp = _runningFunction->readUint32();
 		if (_cmpFlags < 0) {
-			printf("-> ofs = %08X\n", temp);
+			debug(kDebugScript, "-> ofs = %08X\n", temp);
 			_runningFunction->jumpAbsolute(temp);
 		}
 		return true;
@@ -664,7 +664,7 @@ bool ScriptInterpreter::execOpcode(byte opcode) {
 	case opJle:
 		temp = _runningFunction->readUint32();
 		if (_cmpFlags <= 0) {
-			printf("-> ofs = %08X\n", temp);
+			debug(kDebugScript, "-> ofs = %08X\n", temp);
 			_runningFunction->jumpAbsolute(temp);
 		}
 		return true;
@@ -672,7 +672,7 @@ bool ScriptInterpreter::execOpcode(byte opcode) {
 	case opJg:
 		temp = _runningFunction->readUint32();
 		if (_cmpFlags > 0) {
-			printf("-> ofs = %08X\n", temp);
+			debug(kDebugScript, "-> ofs = %08X\n", temp);
 			_runningFunction->jumpAbsolute(temp);
 		}
 		return true;
@@ -680,7 +680,7 @@ bool ScriptInterpreter::execOpcode(byte opcode) {
 	case opJge:
 		temp = _runningFunction->readUint32();
 		if (_cmpFlags >= 0) {
-			printf("-> ofs = %08X\n", temp);
+			debug(kDebugScript, "-> ofs = %08X\n", temp);
 			_runningFunction->jumpAbsolute(temp);
 		}
 		return true;
@@ -688,7 +688,7 @@ bool ScriptInterpreter::execOpcode(byte opcode) {
 	case opJz:
 		temp = _runningFunction->readUint32();
 		if (_cmpFlags == 0) {
-			printf("-> ofs = %08X\n", temp);
+			debug(kDebugScript, "-> ofs = %08X\n", temp);
 			_runningFunction->jumpAbsolute(temp);
 		}
 		return true;
@@ -696,17 +696,17 @@ bool ScriptInterpreter::execOpcode(byte opcode) {
 	case opJnz:
 		temp = _runningFunction->readUint32();
 		if (_cmpFlags != 0) {
-			printf("-> ofs = %08X\n", temp);
+			debug(kDebugScript, "-> ofs = %08X\n", temp);
 			_runningFunction->jumpAbsolute(temp);
 		}
 		return true;
 
 	case opJmpByTable:
 		temp = _runningFunction->readUint32();
-		printf("-> index = %d\n", _registers[0].value);
+		debug(kDebugScript, "-> index = %d\n", _registers[0].value);
 		_runningFunction->jumpRelative(_registers[0].value * 4);
 		temp = _runningFunction->readUint32();
-		printf("-> ofs = %08X\n", temp);
+		debug(kDebugScript, "-> ofs = %08X\n", temp);
 		_runningFunction->jumpAbsolute(temp);
 		return true;
 
@@ -718,8 +718,8 @@ bool ScriptInterpreter::execOpcode(byte opcode) {
 		if (value1.type != kInteger || value2.type != kInteger)
 			warning("ScriptInterpreter::execOpcode() Trying to compare non-integer values (%d, %d, line %d)", value1.type, value2.type, _lineNum);
 		_cmpFlags = value1.value - value2.value;
-		printf("-> cmp %d, %d\n", value1.value, value2.value);
-		printf("-> _cmpFlags  = %d\n", _cmpFlags);
+		debug(kDebugScript, "-> cmp %d, %d\n", value1.value, value2.value);
+		debug(kDebugScript, "-> _cmpFlags  = %d\n", _cmpFlags);
 		return true;
 
 	case opCall:
@@ -773,7 +773,7 @@ bool ScriptInterpreter::execOpcode(byte opcode) {
 		return true;
 
 	default:
-		printf("Invalid opcode %d!\n", opcode);
+		debug(kDebugScript, "Invalid opcode %d!\n", opcode);
 		return false;
 
 	}
@@ -922,14 +922,14 @@ int ScriptInterpreter::o1_wilburFinishedTalking() {
 int ScriptInterpreter::o1_preloadSound() {
 	const char *name = STRING(0);
 	int room = INTEGER(1);
-	printf("name = %s; room = %d\n", name, room);
+	debug(kDebugScript, "name = %s; room = %d\n", name, room);
 	return 2;
 }
 
 int ScriptInterpreter::o1_unloadSound() {
 	const char *name = STRING(0);
 	int room = INTEGER(1);
-	printf("name = %s; room = %d\n", name, room);
+	debug(kDebugScript, "name = %s; room = %d\n", name, room);
 	return 2;
 }
 
@@ -939,7 +939,7 @@ int ScriptInterpreter::o1_playSound() {
 	int volume = INTEGER(2);
 	int trigger = INTEGER(3);
 	int room = INTEGER(4);
-	printf("name = %s; channel = %d; volume = %d; trigger = %d; room = %d\n",
+	debug(kDebugScript, "name = %s; channel = %d; volume = %d; trigger = %d; room = %d\n",
 		name, channel, volume, trigger, room);
 
 	Common::String soundName = Common::String(name) + ".raw";
@@ -957,7 +957,7 @@ int ScriptInterpreter::o1_playLoopingSound() {
 	int volume = INTEGER(2);
 	int trigger = INTEGER(3);
 	int room = INTEGER(4);
-	printf("name = %s; channel = %d; volume = %d; trigger = %d; room = %d\n",
+	debug(kDebugScript, "name = %s; channel = %d; volume = %d; trigger = %d; room = %d\n",
 		name, channel, volume, trigger, room);
 
 	// HACK until fixed
@@ -968,14 +968,14 @@ int ScriptInterpreter::o1_playLoopingSound() {
 
 int ScriptInterpreter::o1_stopSound() {
 	int channel = INTEGER(0);
-	printf("channel = %d\n", channel);
+	debug(kDebugScript, "channel = %d\n", channel);
 	return 1;
 }
 
 int ScriptInterpreter::o1_fadeSetStart() {
 	// skip arg 0: palette ptr
 	int percent = INTEGER(1);
-	printf("percent = %d\n", percent);
+	debug(kDebugScript, "percent = %d\n", percent);
 	return 2;
 }
 
@@ -986,7 +986,7 @@ int ScriptInterpreter::o1_fadeInit() {
 	int percent = INTEGER(3);
 	int ticks = INTEGER(4);
 	int trigger = INTEGER(5);
-	printf("first = %d; last = %d; percent = %d; ticks = %d; trigger = %d\n",
+	debug(kDebugScript, "first = %d; last = %d; percent = %d; ticks = %d; trigger = %d\n",
 		first, last, percent, ticks, trigger);
 
 	// HACK until palette fading is implemented
@@ -1005,7 +1005,7 @@ int ScriptInterpreter::o1_initPaletteCycle() {
 	int delay = INTEGER(2);
 	int ticks = INTEGER(3);
 	int trigger = INTEGER(4);
-	printf("first = %d; last = %d; delay = %d; ticks = %d; trigger = %d\n",
+	debug(kDebugScript, "first = %d; last = %d; delay = %d; ticks = %d; trigger = %d\n",
 		first, last, delay, ticks, trigger);
 
 	// HACK until palette cycling is implemented
@@ -1022,11 +1022,11 @@ int ScriptInterpreter::o1_hasPlayerSaid() {
 	const char *words[3];
 	for (int i = 0; i < 3; i++)
 		words[i] = STRING(i);
-	printf("'%s', '%s', '%s'\n", words[0], words[1], words[2]);
+	debug(kDebugScript, "'%s', '%s', '%s'\n", words[0], words[1], words[2]);
 
 	int result = _vm->_player->said(words[0], words[1], words[2]);
 
-	printf("   -> '%d'\n", result);
+	debug(kDebugScript, "   -> '%d'\n", result);
 	fflush(stdout);
 
 	RETURN(result);
@@ -1038,11 +1038,11 @@ int ScriptInterpreter::o1_hasPlayerSaidAny() {
 	for (int i = 0; i < 10; i++)
 		words[i] = STRING(i);
 
-	printf("'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'\n",
+	debug(kDebugScript, "'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'\n",
 		words[0], words[1], words[2], words[3], words[4], words[5], words[6], words[7], words[8], words[9]);
 
 	int result = _vm->_player->saidAny(words[0], words[1], words[2], words[3], words[4], words[5], words[6], words[7], words[8], words[9]);
-	printf("   -> '%d'\n", result);
+	debug(kDebugScript, "   -> '%d'\n", result);
 	fflush(stdout);
 
 	RETURN(result);
@@ -1059,13 +1059,13 @@ int ScriptInterpreter::o1_playerHotspotWalkOverride() {
 	int y1 = INTEGER(1);
 	int x2 = INTEGER(2);
 	int y2 = INTEGER(3);
-	printf("(%d, %d); (%d, %d)\n", x1, y1, x2, y2);
+	debug(kDebugScript, "(%d, %d); (%d, %d)\n", x1, y1, x2, y2);
 	return 4;
 }
 
 int ScriptInterpreter::o1_playerHasItem() {
 	const char *name = STRING(0);
-	printf("item = '%s'\n", name);
+	debug(kDebugScript, "item = '%s'\n", name);
 	// TODO
 	RETURN(0);
 	return 1;
@@ -1075,14 +1075,14 @@ int ScriptInterpreter::o1_setWalkerLocation() {
 	// skip arg 0: walker
 	int x = INTEGER(1);
 	int y = INTEGER(2);
-	printf("x = %d; y = %d\n", x, y);
+	debug(kDebugScript, "x = %d; y = %d\n", x, y);
 	return 3;
 }
 
 int ScriptInterpreter::o1_setWalkerFacing() {
 	// skip arg 0: walker
 	int facing = INTEGER(1);
-	printf("facing = %d\n", facing);
+	debug(kDebugScript, "facing = %d\n", facing);
 	return 2;
 }
 
@@ -1090,7 +1090,7 @@ int ScriptInterpreter::o1_setHotspot() {
 	// skip arg 0: hotspot list
 	const char *name = STRING(1);
 	int value = INTEGER(2);
-	printf("name = '%s' -> %d\n", name, value);
+	debug(kDebugScript, "name = '%s' -> %d\n", name, value);
 
 	_vm->_scene->getSceneResources().hotspots->setActive(name, (value != 0));
 
@@ -1121,7 +1121,7 @@ int ScriptInterpreter::o1_playSeries() {
 	int firstFrame = INTEGER(9);
 	int lastFrame = INTEGER(10);
 
-	printf("name = %s; layer = %04X; flags = %08X; trigger = %d; frameRate = %d; loopCount = %d; scale = %d; x = %d; y = %d: firstFrame = %d; lastFrame = %d\n",
+	debug(kDebugScript, "name = %s; layer = %04X; flags = %08X; trigger = %d; frameRate = %d; loopCount = %d; scale = %d; x = %d; y = %d: firstFrame = %d; lastFrame = %d\n",
 		name, layer, flags, trigger, frameRate, loopCount, scale, x, y, firstFrame, lastFrame);
 		fflush(stdout);
 
@@ -1142,7 +1142,7 @@ int ScriptInterpreter::o1_showSeries() {
 	int x = INTEGER(7);
 	int y = INTEGER(8);
 
-	printf("name = %s; layer = %04X; flags = %08X; trigger = %d; duration = %d; frameIndex = %d; scale = %d; x = %d; y = %d\n",
+	debug(kDebugScript, "name = %s; layer = %04X; flags = %08X; trigger = %d; duration = %d; frameIndex = %d; scale = %d; x = %d; y = %d\n",
 		name, layer, flags, trigger, duration, frameIndex, scale, x, y);
 		fflush(stdout);
 
@@ -1157,7 +1157,7 @@ int ScriptInterpreter::o1_loadSeries() {
 	int hash = INTEGER(1);
 	// skip arg 3: palette ptr
 
-	printf("name = %s; hash = %d\n", name, hash);
+	debug(kDebugScript, "name = %s; hash = %d\n", name, hash);
 	fflush(stdout);
 
 	int result = _vm->_ws->loadSeries(name, hash, NULL);
@@ -1189,7 +1189,7 @@ int ScriptInterpreter::o1_globalTriggerProc() {
 	int value1 = INTEGER(0);
 	int value2 = INTEGER(1);
 	int value3 = INTEGER(2);
-	printf("%d; %d; %d\n", value1, value2, value3);
+	debug(kDebugScript, "%d; %d; %d\n", value1, value2, value3);
 	return 3;
 }
 
@@ -1197,13 +1197,13 @@ int ScriptInterpreter::o1_triggerTimerProc() {
 	int value1 = INTEGER(0);
 	int value2 = INTEGER(1);
 	int value3 = INTEGER(2);
-	printf("%d; %d; %d\n", value1, value2, value3);
+	debug(kDebugScript, "%d; %d; %d\n", value1, value2, value3);
 	return 3;
 }
 
 int ScriptInterpreter::o1_dispatchTrigger() {
 	int trigger = INTEGER(0);
-	printf("trigger = %d\n", trigger);
+	debug(kDebugScript, "trigger = %d\n", trigger);
 
 	_vm->_kernel->sendTrigger(trigger);
 	//g_system->delayMillis(5000);
@@ -1229,7 +1229,7 @@ int ScriptInterpreter::o1_wilburSaid() {
 		SaidArrayItem *item = saidArray[i];
 
 		if (_vm->_player->said("LOOK AT", item->itemName) && item->digiNameLook) {
-			printf("  -> LOOK AT: '%s'\n", item->digiNameLook);
+			debug(kDebugScript, "  -> LOOK AT: '%s'\n", item->digiNameLook);
 			Common::String soundName = Common::String(item->digiNameLook) + ".raw";
 			_vm->_sound->playVoice(soundName.c_str(), 100);
 			result = 1;
@@ -1237,7 +1237,7 @@ int ScriptInterpreter::o1_wilburSaid() {
 		}
 
 		if (_vm->_player->said("TAKE", item->itemName) && item->digiNameTake) {
-			printf("  -> TAKE: '%s'\n", item->digiNameTake);
+			debug(kDebugScript, "  -> TAKE: '%s'\n", item->digiNameTake);
 			Common::String soundName = Common::String(item->digiNameTake) + ".raw";
 			_vm->_sound->playVoice(soundName.c_str(), 100);
 			result = 1;
@@ -1245,7 +1245,7 @@ int ScriptInterpreter::o1_wilburSaid() {
 		}
 
 		if (_vm->_player->said("GEAR", item->itemName) && item->digiNameGear) {
-			printf("  -> GEAR: '%s'\n", item->digiNameGear);
+			debug(kDebugScript, "  -> GEAR: '%s'\n", item->digiNameGear);
 			Common::String soundName = Common::String(item->digiNameGear) + ".raw";
 			_vm->_sound->playVoice(soundName.c_str(), 100);
 			result = 1;
@@ -1253,11 +1253,11 @@ int ScriptInterpreter::o1_wilburSaid() {
 		}
 
 		/*
-		printf("##### itemName = '%s'; digiNameLook = %s; digiNameTake = %s; digiNameGear = %s\n",
+		debug(kDebugScript, "##### itemName = '%s'; digiNameLook = %s; digiNameTake = %s; digiNameGear = %s\n",
 			item->itemName, item->digiNameLook, item->digiNameTake, item->digiNameGear);
 		*/
 	}
-	printf("   -> '%d'\n", result);
+	debug(kDebugScript, "   -> '%d'\n", result);
 	fflush(stdout);
 
 	RETURN(result);
@@ -1278,7 +1278,7 @@ int ScriptInterpreter::o1_wilburSpeech() {
 	int volume = INTEGER(4);
 	int slot = INTEGER(5);
 
-	printf("%s; %d; %d; %d; %d; %d\n", name, trigger, room, flag, volume, slot);
+	debug(kDebugScript, "%s; %d; %d; %d; %d; %d\n", name, trigger, room, flag, volume, slot);
 	fflush(stdout);
 	//g_system->delayMillis(5000);
 
@@ -1297,14 +1297,14 @@ int ScriptInterpreter::o1_wilburSpeech() {
 
 void ScriptInterpreter::getKernelVar(int index, ScriptValue &value) {
 
-	printf("ScriptInterpreter::getKernelVar() index = %d\n", index);
+	debug(kDebugScript, "ScriptInterpreter::getKernelVar() index = %d\n", index);
 
 	if (index > _kernelVarsMax) {
-		printf("ScriptInterpreter::getKernelVar() Invalid kernel var index %d!\n", index);
+		debug(kDebugScript, "ScriptInterpreter::getKernelVar() Invalid kernel var index %d!\n", index);
 		return;
 	}
 
-	printf("ScriptInterpreter::getKernelVar() name = %s\n", _kernelVars[index].desc);
+	debug(kDebugScript, "ScriptInterpreter::getKernelVar() name = %s\n", _kernelVars[index].desc);
 
 	ScriptKernelVariable var = _kernelVars[index].var;
 
@@ -1342,7 +1342,7 @@ void ScriptInterpreter::getKernelVar(int index, ScriptValue &value) {
 		break;
 
 	default:
-		printf("ScriptInterpreter::getKernelVar() Invalid kernel var %d!\n", var);
+		debug(kDebugScript, "ScriptInterpreter::getKernelVar() Invalid kernel var %d!\n", var);
 		//g_system->delayMillis(2000);
 
 	}
@@ -1351,14 +1351,14 @@ void ScriptInterpreter::getKernelVar(int index, ScriptValue &value) {
 
 void ScriptInterpreter::setKernelVar(int index, const ScriptValue &value) {
 
-	printf("ScriptInterpreter::setKernelVar() index = %d\n", index);
+	debug(kDebugScript, "ScriptInterpreter::setKernelVar() index = %d\n", index);
 
 	if (index > _kernelVarsMax) {
-		printf("ScriptInterpreter::setKernelVar() Invalid kernel var index %d!\n", index);
+		debug(kDebugScript, "ScriptInterpreter::setKernelVar() Invalid kernel var index %d!\n", index);
 		return;
 	}
 
-	printf("ScriptInterpreter::setKernelVar() name = %s\n", _kernelVars[index].desc);
+	debug(kDebugScript, "ScriptInterpreter::setKernelVar() name = %s\n", _kernelVars[index].desc);
 
 	ScriptKernelVariable var = _kernelVars[index].var;
 
@@ -1366,31 +1366,31 @@ void ScriptInterpreter::setKernelVar(int index, const ScriptValue &value) {
 
 	case kKernelTrigger:
 		_vm->_kernel->trigger = toInteger(value);
-		printf("kKernelTrigger -> %d\n", toInteger(value));
+		debug(kDebugScript, "kKernelTrigger -> %d\n", toInteger(value));
 		break;
 
 	case kKernelTriggerMode:
 		_vm->_kernel->triggerMode = (KernelTriggerType)toInteger(value);
-		printf("kKernelTrigger -> %d\n", toInteger(value));
+		debug(kDebugScript, "kKernelTrigger -> %d\n", toInteger(value));
 		break;
 
 	case kKernelContinueHandlingTrigger:
 		_vm->_kernel->daemonTriggerAvailable = (toInteger(value) != 0);
-		printf("kKernelContinueHandlingTrigger -> %d\n", toInteger(value));
+		debug(kDebugScript, "kKernelContinueHandlingTrigger -> %d\n", toInteger(value));
 		break;
 
 	case kGameNewRoom:
 		_vm->_kernel->newRoom = toInteger(value);
-		printf("kGameNewRoom -> %d\n", toInteger(value));
+		debug(kDebugScript, "kGameNewRoom -> %d\n", toInteger(value));
 		break;
 
 	case kPlayerCommandReady:
 		// TODO
-		printf("kPlayerCommandReady -> %d\n", toInteger(value));
+		debug(kDebugScript, "kPlayerCommandReady -> %d\n", toInteger(value));
 		break;
 
 	default:
-		printf("ScriptInterpreter::setKernelVar() Invalid kernel var %d!\n", var);
+		debug(kDebugScript, "ScriptInterpreter::setKernelVar() Invalid kernel var %d!\n", var);
 		//g_system->delayMillis(2000);
 
 	}

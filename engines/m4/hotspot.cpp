@@ -227,7 +227,7 @@ void HotSpotList::loadHotSpots(Common::SeekableReadStream* hotspotStream, int ho
 			// This looks to be some sort of bitmask. Perhaps it signifies
 			// the valid verbs for this hotspot
 			index = hotspotStream->readUint16LE();		// unknown
-			//printf("%i ", index);
+			//debug(kDebugCore, "%i ", index);
 		}
 
 		if (_vm->isM4())

@@ -147,7 +147,7 @@ void Machine::enterState() {
 
 int32 Machine::execInstruction() {
 
-	//printf("Machine::execInstruction()\n"); fflush(stdout);
+	//debug(kDebugScript, "Machine::execInstruction()\n"); fflush(stdout);
 
 	bool done = false;
 	Instruction instruction;
@@ -199,7 +199,7 @@ void Machine::execBlock(int32 offset, int32 count) {
 
 	int32 instruction = -1;
 
-	//printf("---------------------------------------\n"); fflush(stdout);
+	//debug(kDebugScript, "---------------------------------------\n"); fflush(stdout);
 
 	while (instruction && instruction != 4 && _id == oldId && _recursionLevel == oldRecursionLevel &&
 		_code->pos() >= (uint32)startOffset && _code->pos() < (uint32)endOffset) {
@@ -208,7 +208,7 @@ void Machine::execBlock(int32 offset, int32 count) {
 		//g_system->delayMillis(500);
 	}
 
-	//printf("---------------------------------------\n"); fflush(stdout);
+	//debug(kDebugScript, "---------------------------------------\n"); fflush(stdout);
 
 	if (instruction == 3) {
 		execInstruction();
@@ -221,7 +221,7 @@ void Machine::execBlock(int32 offset, int32 count) {
 }
 
 bool Machine::m1_gotoState(Instruction &instruction) {
-	//printf("Machine::m1_gotoState() state = %d\n", (int32)instruction.argv[0] >> 16);
+	//debug(kDebugScript, "Machine::m1_gotoState() state = %d\n", (int32)instruction.argv[0] >> 16);
 
 	_currentState = (int32)instruction.argv[0] >> 16;
 	_recursionLevel = 0;
@@ -229,14 +229,14 @@ bool Machine::m1_gotoState(Instruction &instruction) {
 }
 
 bool Machine::m1_jump(Instruction &instruction) {
-	//printf("Machine::m1_jump() ofs = %08X\n", (int32)instruction.argv[0] >> 16);
+	//debug(kDebugScript, "Machine::m1_jump() ofs = %08X\n", (int32)instruction.argv[0] >> 16);
 
 	_code->jumpRelative((int32)instruction.argv[0] >> 16);
 	return true;
 }
 
 bool Machine::m1_terminate(Instruction &instruction) {
-	//printf("Machine::m1_terminate()\n"); fflush(stdout);
+	//debug(kDebugScript, "Machine::m1_terminate()\n"); fflush(stdout);
 
 	_currentState = -1;
 	_recursionLevel = 0;
@@ -244,15 +244,15 @@ bool Machine::m1_terminate(Instruction &instruction) {
 }
 
 bool Machine::m1_startSequence(Instruction &instruction) {
-	//printf("Machine::m1_startSequence() sequence hash = %d\n", (uint32)instruction.argv[0] >> 16); fflush(stdout);
+	//debug(kDebugScript, "Machine::m1_startSequence() sequence hash = %d\n", (uint32)instruction.argv[0] >> 16); fflush(stdout);
 
 	int32 sequenceHash = instruction.argv[0] >> 16;
 	if (_sequence == NULL) {
-		//printf("Machine::m1_startSequence() creating new sequence\n");
+		//debug(kDebugScript, "Machine::m1_startSequence() creating new sequence\n");
 		_sequence = _ws->createSequence(this, sequenceHash);
 		_code->setSequence(_sequence);
 	} else {
-		//printf("Machine::m1_startSequence() using existing sequence\n");
+		//debug(kDebugScript, "Machine::m1_startSequence() using existing sequence\n");
 		_sequence->changeProgram(sequenceHash);
 		//_code->setSequence(_sequence);
 	}
@@ -260,28 +260,28 @@ bool Machine::m1_startSequence(Instruction &instruction) {
 }
 
 bool Machine::m1_pauseSequence(Instruction &instruction) {
-	//printf("Machine::m1_pauseSequence()\n"); fflush(stdout);
+	//debug(kDebugScript, "Machine::m1_pauseSequence()\n"); fflush(stdout);
 
 	_sequence->pause();
 	return true;
 }
 
 bool Machine::m1_resumeSequence(Instruction &instruction) {
-	//printf("Machine::m1_resumeSequence()\n"); fflush(stdout);
+	//debug(kDebugScript, "Machine::m1_resumeSequence()\n"); fflush(stdout);
 
 	_sequence->resume();
 	return true;
 }
 
 bool Machine::m1_storeValue(Instruction &instruction) {
-	//printf("Machine::m1_storeValue() %p = %d (%08X)\n", (void*)instruction.argp[0], (uint32)instruction.argv[1], (uint32)instruction.argv[1]);
+	//debug(kDebugScript, "Machine::m1_storeValue() %p = %d (%08X)\n", (void*)instruction.argp[0], (uint32)instruction.argv[1], (uint32)instruction.argv[1]);
 
 	*instruction.argp[0] = instruction.getValue();
 	return true;
 }
 
 bool Machine::m1_sendMessage(Instruction &instruction) {
-	//printf("Machine::m1_sendMessage() %p = %d (%08X)\n", (void*)instruction.argp[0], (uint32)instruction.argv[1], (uint32)instruction.argv[1]);
+	//debug(kDebugScript, "Machine::m1_sendMessage() %p = %d (%08X)\n", (void*)instruction.argp[0], (uint32)instruction.argv[1], (uint32)instruction.argv[1]);
 
 #if 0
 //TODO
@@ -300,7 +300,7 @@ bool Machine::m1_sendMessage(Instruction &instruction) {
 }
 
 bool Machine::m1_broadcastMessage(Instruction &instruction) {
-	//printf("Machine::m1_broadcastMessage() %p = %d (%08X)\n", (void*)instruction.argp[0], (uint32)instruction.argv[1], (uint32)instruction.argv[1]);
+	//debug(kDebugScript, "Machine::m1_broadcastMessage() %p = %d (%08X)\n", (void*)instruction.argp[0], (uint32)instruction.argv[1], (uint32)instruction.argv[1]);
 
 #if 0
 //TODO
@@ -317,7 +317,7 @@ bool Machine::m1_broadcastMessage(Instruction &instruction) {
 }
 
 bool Machine::m1_replyMessage(Instruction &instruction) {
-	//printf("Machine::m1_replyMessage() messageHash = %d; messageValue = %d\n", (uint32)instruction.argv[0], (uint32)instruction.argv[1]);
+	//debug(kDebugScript, "Machine::m1_replyMessage() messageHash = %d; messageValue = %d\n", (uint32)instruction.argv[0], (uint32)instruction.argv[1]);
 #if 0
 	if (myArg2) {
 		msgValue = *myArg2;
@@ -331,28 +331,28 @@ bool Machine::m1_replyMessage(Instruction &instruction) {
 }
 
 bool Machine::m1_sendSystemMessage(Instruction &instruction) {
-	//printf("Machine::m1_sendSystemMessage() messageValue = %d\n", (uint32)instruction.argv[0]);
+	//debug(kDebugScript, "Machine::m1_sendSystemMessage() messageValue = %d\n", (uint32)instruction.argv[0]);
 #if 0
 #endif
 	return true;
 }
 
 bool Machine::m1_createMachine(Instruction &instruction) {
-	//printf("Machine::m1_createMachine()\n");
+	//debug(kDebugScript, "Machine::m1_createMachine()\n");
 #if 0
 #endif
 	return true;
 }
 
 bool Machine::m1_createMachineEx(Instruction &instruction) {
-	//printf("Machine::m1_createMachineEx()\n");
+	//debug(kDebugScript, "Machine::m1_createMachineEx()\n");
 #if 0
 #endif
 	return true;
 }
 
 bool Machine::m1_clearVars(Instruction &instruction) {
-	//printf("Machine::m1_clearVars()\n"); fflush(stdout);
+	//debug(kDebugScript, "Machine::m1_clearVars()\n"); fflush(stdout);
 
 	_sequence->clearVars();
 	return true;
@@ -360,7 +360,7 @@ bool Machine::m1_clearVars(Instruction &instruction) {
 
 
 void Machine::m1_onEndSequence(Instruction &instruction) {
-	//printf("Machine::m1_onEndSequence() count = %08X\n", (uint32)instruction.argv[0] >> 16); fflush(stdout);
+	//debug(kDebugScript, "Machine::m1_onEndSequence() count = %08X\n", (uint32)instruction.argv[0] >> 16); fflush(stdout);
 
 	int32 count = instruction.argv[0] >> 16;
 	_sequence->issueEndOfSequenceRequest(_code->pos(), count);
@@ -368,7 +368,7 @@ void Machine::m1_onEndSequence(Instruction &instruction) {
 }
 
 void Machine::m1_onMessage(Instruction &instruction) {
-	//printf("Machine::m1_onEndSequence() count = %08X\n", (uint32)instruction.argv[0] >> 16); fflush(stdout);
+	//debug(kDebugScript, "Machine::m1_onEndSequence() count = %08X\n", (uint32)instruction.argv[0] >> 16); fflush(stdout);
 
 	// TODO: Add message to list
 
@@ -378,42 +378,42 @@ void Machine::m1_onMessage(Instruction &instruction) {
 }
 
 void Machine::m1_switchLt(Instruction &instruction) {
-	//printf("Machine::m1_switchLt() %d < %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16); fflush(stdout);
+	//debug(kDebugScript, "Machine::m1_switchLt() %d < %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16); fflush(stdout);
 
 	if (instruction.argv[1] >= instruction.argv[2])
 		_code->jumpRelative(instruction.argv[0] >> 16);
 }
 
 void Machine::m1_switchLe(Instruction &instruction) {
-	//printf("Machine::m1_switchLe() %d <= %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16); fflush(stdout);
+	//debug(kDebugScript, "Machine::m1_switchLe() %d <= %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16); fflush(stdout);
 
 	if (instruction.argv[1] > instruction.argv[2])
 		_code->jumpRelative(instruction.argv[0] >> 16);
 }
 
 void Machine::m1_switchEq(Instruction &instruction) {
-	//printf("Machine::m1_switchEq() %d == %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16); fflush(stdout);
+	//debug(kDebugScript, "Machine::m1_switchEq() %d == %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16); fflush(stdout);
 
 	if (instruction.argv[1] != instruction.argv[2])
 		_code->jumpRelative(instruction.argv[0] >> 16);
 }
 
 void Machine::m1_switchNe(Instruction &instruction) {
-	//printf("Machine::m1_switchNe() %d != %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16); fflush(stdout);
+	//debug(kDebugScript, "Machine::m1_switchNe() %d != %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16); fflush(stdout);
 
 	if (instruction.argv[1] == instruction.argv[2])
 		_code->jumpRelative(instruction.argv[0] >> 16);
 }
 
 void Machine::m1_switchGe(Instruction &instruction) {
-	//printf("Machine::m1_switchGe() %d >= %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16); fflush(stdout);
+	//debug(kDebugScript, "Machine::m1_switchGe() %d >= %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16); fflush(stdout);
 
 	if (instruction.argv[1] < instruction.argv[2])
 		_code->jumpRelative(instruction.argv[0] >> 16);
 }
 
 void Machine::m1_switchGt(Instruction &instruction) {
-	//printf("Machine::m1_switchGt() %d > %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16); fflush(stdout);
+	//debug(kDebugScript, "Machine::m1_switchGt() %d > %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16); fflush(stdout);
 
 	if (instruction.argv[1] <= instruction.argv[2])
 		_code->jumpRelative(instruction.argv[0] >> 16);

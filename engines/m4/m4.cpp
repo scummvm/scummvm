@@ -121,6 +121,7 @@ MadsM4Engine::MadsM4Engine(OSystem *syst, const M4GameDescription *gameDesc) :
 	DebugMan.addDebugChannel(kDebugScript, "script", "Script debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics debug level");
 	DebugMan.addDebugChannel(kDebugConversations, "conversations", "Conversations debugging");
+	DebugMan.addDebugChannel(kDebugSound, "sound", "Sounds debug level");
 
 	_resourceManager = NULL;
 	_globals = NULL;
@@ -289,7 +290,7 @@ void MadsM4Engine::dumpFile(const char* filename, bool uncompress) {
 		Common::MemoryReadStream *sourceUnc;
 		for (int i = 0; i < packData.getCount(); i++) {
 			sourceUnc = packData.getItemStream(i);
-			printf("Dumping compressed chunk %i of %i, size is %i\n", i + 1, packData.getCount(), sourceUnc->size());
+			debug(kDebugCore, "Dumping compressed chunk %i of %i, size is %i\n", i + 1, packData.getCount(), sourceUnc->size());
 			while (!sourceUnc->eos()) {
 				bytesRead = sourceUnc->read(buffer, DUMP_BUFFER_SIZE);
 				f.write(buffer, bytesRead);
@@ -344,7 +345,7 @@ Common::Error M4Engine::run() {
 	for (int i = 1; i < 58; i++) {
 		_vm->_kernel->trigger = i;
 		_script->runFunction(func);
-		printf("=================================\n");
+		debug(kDebugCore, "=================================\n");
 		fflush(stdout);
 	}
 #endif
@@ -541,7 +542,7 @@ Common::Error MadsEngine::run() {
 
 	// Test code to dump all messages to the console
 	//for (int i = 0; i < _globals->getMessagesSize(); i++)
-	//printf("%s\n----------\n", _globals->loadMessage(i));
+	//debug(kDebugCore, "%s\n----------\n", _globals->loadMessage(i));
 
 	if (getGameType() == GType_RexNebular) {
 		MadsGameLogic::initialiseGlobals();

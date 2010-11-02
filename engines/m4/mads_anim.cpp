@@ -721,21 +721,21 @@ void AnimviewView::processCommand() {
 
 	case 'O':
 		param = param + 2;
-		//printf("O:%i ", atoi(param));
+		//warning(kDebugGraphics, "O:%i ", atoi(param));
 		_transition = atoi(param);
 		break;
 
 	case 'R':
 		param = param + 2;
-		//printf("R:%s ", param);
+		//warning(kDebugGraphics, "R:%s ", param);
 		break;
 
 	case 'W':
-		//printf("W ");
+		//warning(kDebugGraphics, "W ");
 		break;
 
 	case 'X':
-		//printf("X ");
+		//warning(kDebugGraphics, "X ");
 		break;
 
 	default:
