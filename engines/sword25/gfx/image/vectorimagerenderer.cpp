@@ -329,17 +329,17 @@ void drawBez(ArtBpath *bez1, ArtBpath *bez2, art_u8 *buffer, int width, int heig
 #if 0
 	const char *codes[] = {"ART_MOVETO", "ART_MOVETO_OPEN", "ART_CURVETO", "ART_LINETO", "ART_END"};
 	for (int i = 0;; i++) {
-		printf("    bez[%d].code = %s;\n", i, codes[bez[i].code]);
+		debugN("    bez[%d].code = %s;\n", i, codes[bez[i].code]);
 		if (bez[i].code == ART_END)
 			break;
 		if (bez[i].code == ART_CURVETO) {
-			printf("    bez[%d].x1 = %f; bez[%d].y1 = %f;\n", i, bez[i].x1, i, bez[i].y1);
-			printf("    bez[%d].x2 = %f; bez[%d].y2 = %f;\n", i, bez[i].x2, i, bez[i].y2);
+			debugN("    bez[%d].x1 = %f; bez[%d].y1 = %f;\n", i, bez[i].x1, i, bez[i].y1);
+			debugN("    bez[%d].x2 = %f; bez[%d].y2 = %f;\n", i, bez[i].x2, i, bez[i].y2);
 		}
-		printf("    bez[%d].x3 = %f; bez[%d].y3 = %f;\n", i, bez[i].x3, i, bez[i].y3);
+		debugN("    bez[%d].x3 = %f; bez[%d].y3 = %f;\n", i, bez[i].x3, i, bez[i].y3);
 	}
 
-	printf("    drawBez(bez, buffer, 1.0, 1.0, %f, 0x%08x);\n", penWidth, color);
+	debugN("    drawBez(bez, buffer, 1.0, 1.0, %f, 0x%08x);\n", penWidth, color);
 #endif
 
 	// HACK: Some frames have green bounding boxes drawn.
