@@ -470,8 +470,8 @@ void Converse::loadConversation(const char *convName) {
 				if (debugFlag) debug(kDebugConversations, "Unknown (attributes perhaps?): %i\n", data);
 				data = convS->readUint32LE();
 				if (debugFlag) debug(kDebugConversations, "Entry flags: ");
-				if (debugFlag) if (data & kEntryInitial) printf ("Initial ");
-				if (debugFlag) if (data & kEntryPersists) printf ("Persists ");
+				if (debugFlag) if (data & kEntryInitial) debug(kDebugConversations, "Initial ");
+				if (debugFlag) if (data & kEntryPersists) debug(kDebugConversations, "Persists ");
 				if (debugFlag) debug(kDebugConversations, "\n");
 				curEntry->flags = data;
 				curEntry->visible = (curEntry->flags & kEntryInitial) ? true : false;
@@ -1094,7 +1094,7 @@ void Converse::readConvEntryActions(Common::SubReadStream *convS, ConvEntry *cur
 			//debug(kDebugConversations, "Var %i = %i\n", var, val);
 			break;
 		default:
-			printf ("Unknown chunk type! (%i)\n", chunk);
+			debug(kDebugConversations, "Unknown chunk type! (%i)\n", chunk);
 			break;
 		}
 	}
