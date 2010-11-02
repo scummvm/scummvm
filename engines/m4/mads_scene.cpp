@@ -62,7 +62,6 @@ void SceneNode::load(Common::SeekableReadStream *stream) {
 MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResources), MadsView(this) {
 	_vm = vm;
 	_activeAnimation = NULL;
-	_animActive = false;
 
 	MadsView::_bgSurface = Scene::_backgroundSurface;
 	MadsView::_depthSurface = Scene::_walkSurface;
@@ -217,7 +216,6 @@ void MadsScene::leaveScene() {
 	if (_activeAnimation) {
 		delete _activeAnimation;
 		_activeAnimation = NULL;
-		_animActive = false;
 	}
 
 	Scene::leaveScene();
@@ -386,7 +384,6 @@ void MadsScene::updateState() {
 		if (((MadsAnimation *) _activeAnimation)->freeFlag() || freeFlag) {
 			delete _activeAnimation;
 			_activeAnimation = NULL;
-			_animActive = false;
 		}
 	}
 
@@ -458,7 +455,6 @@ void MadsScene::freeAnimation() {
 
 	delete _activeAnimation;
 	_activeAnimation = NULL;
-	_animActive = false;
 }
 
 
@@ -578,7 +574,6 @@ void MadsScene::loadAnimation(const Common::String &animName, int abortTimers) {
 	MadsAnimation *anim = new MadsAnimation(_vm, this);
 	anim->load(animName.c_str(), abortTimers);
 	_activeAnimation = anim;
-	_animActive = true;
 }
 
 bool MadsScene::getDepthHighBit(const Common::Point &pt) {
@@ -1243,5 +1238,17 @@ void MadsInterfaceView::leaveScene() {
 	View *view = _madsVm->_viewManager->getView(VIEWID_SCENE);
 	_madsVm->_viewManager->deleteView(view);
 }
+
+//--------------------------------------------------------------------------
+
+int getActiveAnimationBool() { 
+	return (_madsVm->scene()->activeAnimation()) ? 1 : 0; 
+}
+
+int getAnimationCurrentFrame() {
+	Animation *anim = _madsVm->scene()->activeAnimation();
+	return anim ? anim->getCurrentFrame() : 0;
+}
+
 
 } // End of namespace M4

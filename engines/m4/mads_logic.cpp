@@ -182,7 +182,9 @@ void MadsSceneLogic::initialiseDataMap() {
 	MAP_DATA(&_madsVm->_player._playerPos.y);
 	MAP_DATA(&_madsVm->_player._direction);
 	MAP_DATA(&_madsVm->_player._visible);
-	MAP_DATA(&_madsVm->scene()->_animActive);
+	MAP_DATA(&getActiveAnimationBool);
+	MAP_DATA(&getAnimationCurrentFrame);
+
 }
 
 DataMap &MadsSceneLogic::dataMap() {

@@ -108,7 +108,6 @@ public:
 	Common::Point _destPos;
 	int _destFacing;
 	Common::Point _customDest;
-	bool _animActive;
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene();
@@ -191,6 +190,9 @@ public:
 	void onRefresh(RectList *rects, M4Surface *destSurface);
 	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 };
+
+extern int getActiveAnimationBool();
+extern int getAnimationCurrentFrame();
 
 } // End of namespace M4
 
