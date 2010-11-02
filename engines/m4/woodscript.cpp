@@ -200,7 +200,7 @@ void WoodScript::runTimerSequenceRequests() {
 Machine *WoodScript::createMachine(int32 machineHash, Sequence *parentSeq,
 	int32 dataHash, int32 dataRowIndex, int callbackHandler, const char *machineName) {
 
-	//debug(kDebugScript, "WoodScript::createMachine(%d)\n", machineHash); fflush(stdout);
+	//debug(kDebugScript, "WoodScript::createMachine(%d)\n", machineHash);
 
 	Machine *machine = new Machine(this, machineHash, parentSeq, dataHash, dataRowIndex, callbackHandler, machineName, _machineId);
 	_machineId++;

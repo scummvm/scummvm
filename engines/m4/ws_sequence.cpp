@@ -201,7 +201,7 @@ void Sequence::resume() {
 
 void Sequence::issueEndOfSequenceRequest(int32 codeOffset, int32 count) {
 
-	//debug(kDebugScript, "Sequence::issueEndOfSequenceRequest(%04X, %04X)\n", codeOffset, count); fflush(stdout);
+	//debug(kDebugScript, "Sequence::issueEndOfSequenceRequest(%04X, %04X)\n", codeOffset, count);
 	//g_system->delayMillis(5000);
 
 	_endOfSequenceRequest.codeOffset = codeOffset;
@@ -228,7 +228,9 @@ bool Sequence::runProgram() {
 		_code->loadInstruction(instruction);
 		if (sequenceCommandsTable[instruction.instr] != 0)
 			done = !(this->*sequenceCommandsTable[instruction.instr])(instruction);
-		else { fflush(stdout); /*g_system->delayMillis(1000);*/ }
+		else {
+			//g_system->delayMillis(1000);
+		}
 	}
 
 	return _terminated;
@@ -515,12 +517,12 @@ bool Sequence::s1_crunch(Instruction &instruction) {
 
 	_startTime = _ws->getGlobal(kGlobTime);
 
-	//debug(kDebugScript, "deltaTime = %ld\n", deltaTime >> 16); fflush(stdout);
+	//debug(kDebugScript, "deltaTime = %ld\n", deltaTime >> 16);
 	//g_system->delayMillis(5000);
 
 	if (deltaTime >= 0) {
 		_switchTime = _ws->getGlobal(kGlobTime) + (deltaTime >> 16);
-		//debug(kDebugScript, "_ws->getGlobal(kGlobTime) = %ld\n", _ws->getGlobal(kGlobTime)); fflush(stdout);
+		//debug(kDebugScript, "_ws->getGlobal(kGlobTime) = %ld\n", _ws->getGlobal(kGlobTime));
 		//g_system->delayMillis(5000);
 	} else {
 		_switchTime = -1;
@@ -727,7 +729,6 @@ bool Sequence::streamOpen() {
 	_vars[kSeqVarSpriteFrameRate] = _streamSpriteAsset->getFrameRate() << 16;
 
 	//debug(kDebugScript, "Sequence::streamOpen() frames = %d; max = %d x %d\n", _streamSpriteAsset->getCount(), _streamSpriteAsset->getMaxFrameWidth(), _streamSpriteAsset->getMaxFrameHeight());
-	//fflush(stdout);
 
 	_curFrame = new M4Sprite(_vm, _streamSpriteAsset->getMaxFrameWidth(), _streamSpriteAsset->getMaxFrameHeight());
 	streamNextFrame();

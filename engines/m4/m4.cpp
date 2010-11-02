@@ -346,7 +346,6 @@ Common::Error M4Engine::run() {
 		_vm->_kernel->trigger = i;
 		_script->runFunction(func);
 		debug(kDebugCore, "=================================\n");
-		fflush(stdout);
 	}
 #endif
 

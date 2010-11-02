@@ -214,7 +214,7 @@ void M4Surface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &c
 
 	/*
 	debug(kDebugGraphics, "M4Surface::drawSprite() info.width = %d; info.scaleX = %d; info.height = %d; info.scaleY = %d; scaledWidth = %d; scaledHeight = %d\n",
-		info.width, info.scaleX, info.height, info.scaleY, scaledWidth, scaledHeight); fflush(stdout);
+		info.width, info.scaleX, info.height, info.scaleY, scaledWidth, scaledHeight);
 	*/
 
 	int clipX = 0, clipY = 0;
@@ -233,7 +233,7 @@ void M4Surface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &c
 		scaledHeight = y + scaledHeight;
 	}
 
-	//debug(kDebugGraphics, "M4Surface::drawSprite() width = %d; height = %d; scaledWidth = %d; scaledHeight = %d\n", info.width, info.height, scaledWidth, scaledHeight); fflush(stdout);
+	//debug(kDebugGraphics, "M4Surface::drawSprite() width = %d; height = %d; scaledWidth = %d; scaledHeight = %d\n", info.width, info.height, scaledWidth, scaledHeight);
 
 	// Check if sprite is inside the screen. If it's not, there's no need to draw it
 	if (scaledWidth + x <= 0 || scaledHeight + y <= 0)	// check left and top (in case x,y are negative)

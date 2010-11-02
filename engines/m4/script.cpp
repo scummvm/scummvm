@@ -354,7 +354,6 @@ int ScriptInterpreter::runFunction(ScriptFunction *scriptFunction) {
 	while (!done) {
 		byte opcode = _runningFunction->readByte();
 		done = !execOpcode(opcode);
-		fflush(stdout);
 	}
 
 	_localStackPtr = oldLocalStackPtr;
@@ -588,7 +587,6 @@ void ScriptInterpreter::callFunction(uint32 index) {
 	if (index == 0xFFFFFFFF)
 		return;
 	debug(kDebugScript, "ScriptInterpreter::callFunction() index = %d [%s]\n", index, _scriptFunctionNames[index].c_str());
-	fflush(stdout);
 	ScriptFunction *subFunction = loadFunction(index);
 	if (!subFunction) {
 		// This *should* never happen since the linker checks this
@@ -1027,7 +1025,6 @@ int ScriptInterpreter::o1_hasPlayerSaid() {
 	int result = _vm->_player->said(words[0], words[1], words[2]);
 
 	debug(kDebugScript, "   -> '%d'\n", result);
-	fflush(stdout);
 
 	RETURN(result);
 	return 3;
@@ -1043,7 +1040,6 @@ int ScriptInterpreter::o1_hasPlayerSaidAny() {
 
 	int result = _vm->_player->saidAny(words[0], words[1], words[2], words[3], words[4], words[5], words[6], words[7], words[8], words[9]);
 	debug(kDebugScript, "   -> '%d'\n", result);
-	fflush(stdout);
 
 	RETURN(result);
 	return 10;
@@ -1123,7 +1119,6 @@ int ScriptInterpreter::o1_playSeries() {
 
 	debug(kDebugScript, "name = %s; layer = %04X; flags = %08X; trigger = %d; frameRate = %d; loopCount = %d; scale = %d; x = %d; y = %d: firstFrame = %d; lastFrame = %d\n",
 		name, layer, flags, trigger, frameRate, loopCount, scale, x, y, firstFrame, lastFrame);
-		fflush(stdout);
 
 	// TODO: Return the machine to the script
 	_vm->_ws->playSeries(name, layer, flags, trigger, frameRate, loopCount, scale, x, y, firstFrame, lastFrame);
@@ -1144,7 +1139,6 @@ int ScriptInterpreter::o1_showSeries() {
 
 	debug(kDebugScript, "name = %s; layer = %04X; flags = %08X; trigger = %d; duration = %d; frameIndex = %d; scale = %d; x = %d; y = %d\n",
 		name, layer, flags, trigger, duration, frameIndex, scale, x, y);
-		fflush(stdout);
 
 	// TODO: Return the machine to the script
 	_vm->_ws->showSeries(name, layer, flags, trigger, duration, frameIndex, scale, x, y);
@@ -1158,7 +1152,6 @@ int ScriptInterpreter::o1_loadSeries() {
 	// skip arg 3: palette ptr
 
 	debug(kDebugScript, "name = %s; hash = %d\n", name, hash);
-	fflush(stdout);
 
 	int result = _vm->_ws->loadSeries(name, hash, NULL);
 
@@ -1258,7 +1251,6 @@ int ScriptInterpreter::o1_wilburSaid() {
 		*/
 	}
 	debug(kDebugScript, "   -> '%d'\n", result);
-	fflush(stdout);
 
 	RETURN(result);
 	return 1;
@@ -1279,7 +1271,6 @@ int ScriptInterpreter::o1_wilburSpeech() {
 	int slot = INTEGER(5);
 
 	debug(kDebugScript, "%s; %d; %d; %d; %d; %d\n", name, trigger, room, flag, volume, slot);
-	fflush(stdout);
 	//g_system->delayMillis(5000);
 
 	KernelTriggerType oldTriggerMode = _vm->_kernel->triggerMode;

@@ -89,7 +89,7 @@ bool Kernel::handleTrigger(int32 triggerNum) {
 
 	int room = (triggerNum >> 16) & 0xFFF;
 
-	debug(kDebugScript, "room = %d; currentRoom = %d\n", room, currentRoom); fflush(stdout);
+	debug(kDebugScript, "room = %d; currentRoom = %d\n", room, currentRoom);
 
 	if (room != currentRoom) {
 		debug(kDebugScript, "Kernel::handleTrigger() Trigger from another room\n");
@@ -124,7 +124,6 @@ bool Kernel::handleTrigger(int32 triggerNum) {
 
 	case KT_DAEMON:
 		debug(kDebugScript, "KT_DAEMON\n");
-		fflush(stdout);
 		triggerMode = KT_DAEMON;
 		daemonTriggerAvailable = false;
 		roomDaemon();
