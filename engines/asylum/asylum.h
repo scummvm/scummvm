@@ -26,21 +26,35 @@
 #ifndef ASYLUM_ENGINE_H
 #define ASYLUM_ENGINE_H
 
-#include "common/random.h"
+#include "asylum/console.h"
 
+#include "common/random.h"
+#include "common/scummsys.h"
+#include "common/system.h"
+
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
-#include "asylum/staticres.h"
-#include "asylum/console.h"
-#include "asylum/views/scene.h"
-#include "asylum/views/menu.h"
-#include "asylum/system/screen.h"
-#include "asylum/system/sound.h"
-#include "asylum/system/video.h"
-//#include "asylum/blowuppuzzle.h"
-//#include "asylum/encounters.h"
-#include "asylum/system/text.h"
-
+/**
+ * This is the namespace of the Asylum engine.
+ *
+ * Status of this engine:
+ *  - Code for scrolling and showing up objects and actors (properly clipped) is present
+ *  - A preliminary script interpreter is implemented, and game scripts are read and partially parsed,
+ *    actors are now drawn in the scene, and there is some interaction with the environment (e.g. "examine" actions).
+ *  - Movie code is almost complete
+ *  - Scene information is partially read, and the scene hotspots are created correctly.
+ *  - Mouse cursor is initialized and animated properly
+ *  - Game texts and game fonts are read correctly
+ *  - Preliminary code for walking around with the mouse.
+ *  - Some of the menu screens are working (like, for example, the credits screen)
+ *
+ * Maintainers:
+ *  alexbevi, alexandrefontoura, bluegr
+ *
+ * Supported games:
+ *  - Sanitarium
+ */
 namespace Asylum {
 
 // XXX
@@ -65,56 +79,30 @@ namespace Asylum {
 #define LOBYTE(word) ((word >> 24) & 0xFF)
 #endif
 
-class Console;
-class Scene;
+class Encounter;
 class MainMenu;
 class Scene;
 class Screen;
 class Sound;
+class Text;
 class Video;
-class Encounter;
-
-enum kDebugLevels {
-	kDebugLevelMain      = 1 << 0,
-	kDebugLevelResources = 1 << 1,
-	kDebugLevelSprites   = 1 << 2,
-	kDebugLevelInput     = 1 << 3,
-	kDebugLevelMenu      = 1 << 4,
-	kDebugLevelScripts   = 1 << 5,
-	kDebugLevelSound     = 1 << 6,
-	kDebugLevelSavegame  = 1 << 7,
-	kDebugLevelScene     = 1 << 8,
-	kDebugLevelBarriers  = 1 << 9
-};
 
 class AsylumEngine: public Engine {
-public:
+protected:
+	// Engine APIs
+	virtual Common::Error run();
+	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size);
+	virtual bool hasFeature(EngineFeature f) const;
+	virtual GUI::Debugger *getDebugger() { return _console; }
 
-	AsylumEngine(OSystem *system, Common::Language language);
+public:
+	AsylumEngine(OSystem *system, const ADGameDescription *gd);
 	virtual ~AsylumEngine();
 
-	/** .text:0040F430
-	 * Initalize the game environment
-	 */
-	Common::Error init();
-
-	/** .text:0041A500
-	 * Start the game environment
-	 */
-	Common::Error go();
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
-
-	/** .text:00415830
+	/**
 	 * Start a new the game
 	 */
 	void startGame();
-
-	void setGameFlag(int flag);
-	void clearGameFlag(int flag);
-	void toggleGameFlag(int flag);
-	bool isGameFlagSet(int flag);
-	bool isGameFlagNotSet(int flag);
 
 	/**
 	 * Wrapper function to the OSystem getMillis() method
@@ -128,39 +116,52 @@ public:
 	 */
 	uint32 tempTick07;
 
-	Video* video() { return _video;	}
-	Sound* sound() { return _sound; }
+	// Game
+	Video* video()   { return _video;	}
+	Sound* sound()   { return _sound; }
 	Screen* screen() { return _screen; }
-	Scene* scene() { return _scene;}
-	Text* text() { return _text; }
+	Scene* scene()   { return _scene;}
+	Text* text()     { return _text; }
 
-	Common::RandomSource _rnd;
+	// Flags
+	void setGameFlag(int flag);
+	void clearGameFlag(int flag);
+	void toggleGameFlag(int flag);
+	bool isGameFlagSet(int flag);
+	bool isGameFlagNotSet(int flag);
+
+	// Misc
+	uint getRandom(uint max) { return _rnd.getRandomNumber(max); }
+	uint getRandomBit()      { return _rnd.getRandomBit(); }
 
 private:
-	void checkForEvent(bool doUpdate);
+	const ADGameDescription *_gameDescription;
+
+	// Misc
+	Console              *_console;
+	Common::RandomSource  _rnd;
+
+	// Game
+	//Encounter *_encounter;
+	MainMenu  *_mainMenu;
+	Scene     *_scene;
+	Screen    *_screen;
+	Sound     *_sound;
+	Text      *_text;
+	Video     *_video;
+
+	bool _introPlaying;
+	int _gameFlags[1512];
+
+	void handleEvents(bool doUpdate);
 	void waitForTimer(int msec_delay);
 	void updateMouseCursor();
 	void processDelayedEvents();
 
-	/** .text:0041B630
-	 * Start a new the game
+	/**
+	 * Play the intro
 	 */
 	void playIntro();
-
-	Common::Language _language;
-
-	bool _introPlaying;
-
-	Console   *_console;
-	Scene     *_scene;
-	MainMenu  *_mainMenu;
-	Screen    *_screen;
-	Sound     *_sound;
-	Video     *_video;
-	Text      *_text;
-	//Encounter *_encounter;
-
-	int _gameFlags[1512];
 
 	friend class Console;
 };

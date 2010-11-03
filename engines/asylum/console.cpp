@@ -23,10 +23,15 @@
  *
  */
 
-// Console module
+#include "asylum/console.h"
+
+#include "asylum/resources/actionarea.h"
+
+#include "asylum/views/scene.h"
 
 #include "asylum/asylum.h"
-#include "asylum/console.h"
+
+#include "common/debug-channels.h"
 
 namespace Asylum {
 
@@ -34,7 +39,7 @@ extern int32 g_debugPolygons;
 extern int32 g_debugBarriers;
 extern int32 g_debugScrolling;
 
-Console::Console(AsylumEngine *vm) : GUI::Debugger() {
+Console::Console(AsylumEngine *vm) {
 	_vm = vm;
 
 	DCmd_Register("video",			WRAP_METHOD(Console, cmdPlayVideo));
@@ -50,6 +55,7 @@ Console::Console(AsylumEngine *vm) : GUI::Debugger() {
 }
 
 Console::~Console() {
+	DebugMan.clearAllDebugChannels();
 }
 
 bool Console::cmdDumpActionArea(int32 argc, const char **argv) {

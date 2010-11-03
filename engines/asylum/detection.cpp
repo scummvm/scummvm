@@ -152,9 +152,13 @@ bool Asylum::AsylumEngine::hasFeature(EngineFeature f) const {
 	    (f == kSupportsSubtitleOptions);
 }
 
+void Asylum::AsylumEngine::errorString(const char *buf_input, char *buf_output, int buf_output_size) {
+	snprintf(buf_output, (uint)buf_output_size, "%s", buf_input);
+}
+
 bool AsylumMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
-		*engine = new Asylum::AsylumEngine(syst, desc->language);
+		*engine = new Asylum::AsylumEngine(syst, desc);
 	}
 	return desc != 0;
 }

@@ -39,6 +39,10 @@
 
 namespace Asylum {
 
+struct GraphicFrame;
+class GraphicResource;
+class ResourcePack;
+
 struct VideoSubtitle {
 	int frameStart;
 	int frameEnd;
@@ -58,12 +62,12 @@ public:
 	virtual ~Video();
 
 	bool playVideo(int32 videoNumber, VideoSubtitles subtitles);
-	
+
 private:
 	void performPostProcessing(byte *screen);
 	void loadSubtitles(int32 videoNumber);
 	void processVideoEvents();
-	
+
 	bool _skipVideo;
 	VideoText *_text;
 	Graphics::SmackerDecoder *_smkDecoder;
