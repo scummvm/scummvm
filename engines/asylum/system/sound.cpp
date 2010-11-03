@@ -72,7 +72,7 @@ void convertVolume(int32 &vol) {
 
 // from engines/agos/sound.cpp
 void convertPan(int32 &pan) {
-	// DirectSound was orginally used, which specifies volume
+	// DirectSound was originally used, which specifies volume
 	// and panning differently than ScummVM does, using a logarithmic scale
 	// rather than a linear one.
 	//
@@ -92,6 +92,10 @@ void convertPan(int32 &pan) {
 	} else {
 		pan = 0;
 	}
+}
+
+void Sound::setVolume(int32 resId, double volume) {
+	error("[Sound::setVolume] not implemented");
 }
 
 int32 Sound::getBufferPosition(int32 resId) {
@@ -149,7 +153,7 @@ bool Sound::isPlaying(int32 resId) {
 	return false;
 }
 
-void Sound::playSound(ResourcePack *pack, int32 resId, int32 volume, bool looping, int32 panning, bool overwrite) {
+void Sound::playSound(ResourcePack *pack, ResourceId resId, int32 volume, bool looping, int32 panning, bool overwrite) {
 	ResourceEntry *resource = pack->getResource(resId);
 	if (_mixer->isSoundHandleActive(_soundHandle)) {
 		if (overwrite) {
@@ -184,7 +188,7 @@ void Sound::playSound(ResourcePack *pack, int32 resId, bool looping, int32 volum
 
 }
 
-void Sound::playSound(int32 resId, bool looping, int32 volume, int32 panning, bool fromBuffer) {
+void Sound::playSound(ResourceId resId, bool looping, int32 volume, int32 panning, bool fromBuffer) {
 	if (fromBuffer) {
 		playSound(_soundPack, resId, looping, volume, panning);
 	} else {
@@ -236,6 +240,7 @@ void Sound::playMusic(int32 resId) {
 	stopMusic();
 
 	// TODO Play music :P
+	error("[Sound::playMusic] not implemented");
 }
 
 void Sound::playMusic(ResourcePack *pack, int32 resId) {

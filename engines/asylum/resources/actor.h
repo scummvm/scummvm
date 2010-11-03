@@ -29,6 +29,7 @@
 #include "asylum/system/graphics.h"
 
 #include "asylum/respack.h"
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -75,6 +76,13 @@ enum ActorType {
 enum ActorFlags {
 	kVisible     = 0x01,
 	kHidden      = 0xFFFFFFFE
+};
+
+enum DirectionFrom {
+	kDirectionFromBarrier = 0,
+	kDirectionFromPolygons = 1,
+	kDirectionFromActor = 2,
+	kDirectionFromParameters = 3
 };
 
 // TODO investigate other actor resources (from other
@@ -171,7 +179,7 @@ enum ActorResources {
 
 class Actor {
 public:
-	Actor();
+	Actor(Scene *scene);
 	virtual ~Actor();
 
 	/**
@@ -201,18 +209,11 @@ public:
 	 */
 	void updateDirection();
 	void setDirection(ActorDirection direction);
+	void setDirectionFrom(uint32 parameter, DirectionFrom from);
 
 	void updateStatus(ActorStatus status);
 
 	bool defaultDirectionLoaded(int grResTableIdx);
-
-	// FIXME
-	// I don't really like how this is used in the scene constructor
-	void setResourcePack(ResourcePack *res) { _resPack = res; }
-
-	// FIXME Hack to get a reference to the parent scene
-	// into the actor instance
-	void setScene(Scene *scene) { _scene = scene; }
 
 	// OLD METHODS
 	// TODO ALL of these need to be depreciated in favour
@@ -268,12 +269,12 @@ public:
 	int32  field_8D0[20];
 	int32  actionIdx2;
 	int32  field_924;
-	int32  tickValue1;
+	int32  tickValue;
 	int32  field_92C;
 	int32  flags2;
 	int32  field_934;
 	int32  field_938;
-	int32  soundResId; // field_93C
+	ResourceId  soundResId; // field_93C
 	int32  numberValue01;
 	int32  field_944;
 	int32  field_948;
@@ -306,7 +307,6 @@ private:
 
 	ActionArea      *_currentWalkArea;
 	GraphicResource *_graphic;
-	ResourcePack    *_resPack;
 
 	// Our current index
 	ActorIndex _index;

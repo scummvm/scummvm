@@ -26,8 +26,6 @@
 #ifndef ASYLUM_SCENE_H
 #define ASYLUM_SCENE_H
 
-#include "common/events.h"
-
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
 #include "asylum/system/graphics.h"
@@ -37,6 +35,9 @@
 #include "asylum/system/text.h"
 #include "asylum/system/cursor.h"
 #include "asylum/system/speech.h"
+
+#include "common/events.h"
+#include "common/rational.h"
 
 #define SCENE_FILE_MASK "scn.%03d"
 #define MUSIC_FILE_MASK "mus.%03d"
@@ -126,9 +127,11 @@ public:
 	/**
 	 * Return the index of the current player actor
 	 */
-	ActorIndex getActorIndex() { return _playerActorIdx; }
+	ActorIndex getPlayerActorIndex() { return _playerActorIdx; }
 
-	void setActorIndex(ActorIndex index) { _playerActorIdx = index; }
+	void setPlayerActorIndex(ActorIndex index) { _playerActorIdx = index; }
+
+	void changePlayerActorIndex(ActorIndex index);
 
 	/**
 	 * Get a reference to an actor object from the
@@ -143,17 +146,6 @@ public:
 	 */
 	bool defaultActorDirectionLoaded(int actorIndex, int grResTableIdx);
 
-	/** .text:00414C30
-	 * Check if a sound resource is playing for the barrier,
-	 * or actor that is specified, and if so, stop playing the
-	 * sample.
-	 *
-	 * NOTE this method was originally called from within
-	 * Barrier::updateSoundItems(), but that would require
-	 * the barrier class to have some knowledge about actors,
-	 * which seems a bit wonky.
-	 */
-	void stopSound(int32 barrierIndex, int32 actorIndex);
 	/** .text:004094c0
 	 * Determine the amount to increase the supplied sound
 	 * sample's volume based on the actor's position
@@ -168,6 +160,8 @@ public:
 	void setGlobalY(uint32 val) { _globalY = val; }
 
 	ActorDirection getGlobalDirection() { return _globalDirection; }
+
+	bool updateSceneCoordinates(int32 targetX, int32 targetY, int32 val, bool checkSceneCoords = false, int32 *param = NULL);
 
 protected:
 	/** .text:0040EA50
@@ -235,6 +229,10 @@ private:
 
 	uint32 _globalX;
 	uint32 _globalY;
+	int32 _sceneOffset;
+	int32 _sceneXLeft;
+	int32 _sceneYTop;
+	Common::Rational _sceneOffsetAdd;
 
 	void update();
 	void startMusic();

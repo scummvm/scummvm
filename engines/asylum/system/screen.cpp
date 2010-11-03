@@ -111,6 +111,10 @@ void Screen::setPalette(byte *rgbPalette) {
 	_vm->_system->setPalette(palette, 0, 256);
 }
 
+void Screen::setGammaLevel(ResourcePack *resPack, int32 entry, int32 val) {
+	error("[Screen::setGammaLevel] not implemented");
+}
+
 void Screen::drawWideScreen(int16 barSize) {
 	if (barSize > 0) {
 
@@ -123,6 +127,10 @@ void Screen::drawWideScreen(int16 barSize) {
 
 void Screen::clearScreen() {
 	_vm->_system->fillScreen(0);
+}
+
+void Screen::palFade(uint32 red, int32 milliseconds, int32 param) {
+	error("[Screen::palFade] not implemented");
 }
 
 void Screen::addGraphicToQueue(int32 resId, int32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority) {
@@ -139,7 +147,7 @@ void Screen::addGraphicToQueue(int32 resId, int32 frameIdx, int32 x, int32 y, in
 }
 
 void Screen::addCrossFadeGraphicToQueue(int32 resId, int32 frameIdx, int32 x, int32 y, int32 redId2, int32 x2, int32 y2, int32 flags, int32 priority) {
-
+	error("[Screen::addCrossFadeGraphicToQueue] not implemented");
 }
 
 void Screen::addGraphicToQueue(GraphicQueueItem item) {

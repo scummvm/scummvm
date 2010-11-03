@@ -39,6 +39,9 @@ struct GraphicFrame {
 	int16 x;
 	int16 y;
 	Graphics::Surface surface;
+
+	uint16 getWidth() { return surface.w; }
+	uint16 getHeight() { return surface.h; }
 };
 
 // Graphic resources can be sprites or images, with multiple frames

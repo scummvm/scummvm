@@ -35,7 +35,7 @@
 
 namespace Asylum {
 
-Actor::Actor() : _currentWalkArea(NULL), _graphic(NULL), _resPack(NULL) {
+Actor::Actor(Scene *scene) : _scene(scene), _currentWalkArea(NULL), _graphic(NULL) {
 	currentAction    = 0;
 
 	// TODO initialize other class variables
@@ -73,8 +73,6 @@ void Actor::setRawResources(uint8 *data) {
 }
 
 void Actor::setAction(int32 action) {
-	assert(_resPack);
-
 	if (action == currentAction)
 		return;
 
@@ -83,7 +81,7 @@ void Actor::setAction(int32 action) {
 	delete _graphic;
 	int32 act = (action < 100) ? action : action - 100;
 
-	_graphic = new GraphicResource(_resPack, _resources[act]);
+	_graphic = new GraphicResource(_scene->getResourcePack(), _resources[act]);
 
 	// Flip horizontally if necessary
 	if (currentAction > 100) {
@@ -244,14 +242,14 @@ void Actor::walkTo(int32 curX, int32 curY) {
 
 	// Check what valid walk region(s) is/are currently available
 	for (int32 a = 0; a < ws->numActions; a++) {
-		if (ws->actions[a].actionType == 0) {
-			area = &ws->actions[a];
+		if (ws->actions[a]->actionType == 0) {
+			area = ws->actions[a];
 			PolyDefinitions poly = _scene->polygons()->entries[area->polyIdx];
 			if (poly.contains(x, y)) {
 				availableAreas[areaPtr] = a;
 				areaPtr++;
 
-				setWalkArea(&ws->actions[a]);
+				setWalkArea(ws->actions[a]);
 
 				if (areaPtr > 5)
 					error("More than 5 overlapping walk regions found. Increase buffer");
@@ -263,7 +261,7 @@ void Actor::walkTo(int32 curX, int32 curY) {
 	// Check that we can walk in the current direction within any of the available
 	// walkable regions
 	for (int32 i = 0; i < areaPtr; i++) {
-		area = &ws->actions[availableAreas[i]];
+		area = ws->actions[availableAreas[i]];
 		PolyDefinitions *region = &_scene->polygons()->entries[area->polyIdx];
 		if (region->contains(newX, newY)) {
 			x = newX;
@@ -306,7 +304,7 @@ void Actor::faceTarget(int32 targetId, int32 targetType) {
 				return;
 			}
 
-			int32 polyIdx = _scene->worldstats()->actions[actionIdx].polyIdx;
+			int32 polyIdx = _scene->worldstats()->actions[actionIdx]->polyIdx;
 			PolyDefinitions *poly = &_scene->polygons()->entries[polyIdx];
 
 			newX2 = poly->boundingRect.left + (poly->boundingRect.right - poly->boundingRect.left) / 2;
@@ -327,7 +325,7 @@ void Actor::faceTarget(int32 targetId, int32 targetType) {
 		}
 
 		Barrier *barrier = _scene->worldstats()->getBarrierByIndex(barrierIdx);
-		GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
+		GraphicResource *gra = new GraphicResource(_scene->getResourcePack(), barrier->resId);
 
 		// FIXME
 		// The original actually grabs the current frame of the target
@@ -492,7 +490,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			actor->y1 = y2 + y1 - actor->y2;
 			actor->direction = 4;
 
-			_scene->setActorIndex(0);
+			_scene->setPlayerActorIndex(0);
 
 			// Hide this actor and the show the other one
 			setVisible(false);
@@ -534,8 +532,8 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			if (_index > 12)
 				graphicResourceId = grResTable[direction + 30];
 
-			if (_scene->getActorIndex() == _index) {
-				resource->load(_resPack, graphicResourceId);
+			if (_scene->getPlayerActorIndex() == _index) {
+				resource->load(_scene->getResourcePack(), graphicResourceId);
 				frameNum = resource->getFrameCount() - 1;
 			}
 
@@ -544,7 +542,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 
 			// Reload the graphic resource if the resource ID has changed
 			if (resource->getEntryNum() != graphicResourceId)
-				resource->load(_resPack, graphicResourceId);
+				resource->load(_scene->getResourcePack(), graphicResourceId);
 
 			frameCount = resource->getFrameCount();
 		}
@@ -557,11 +555,15 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 void Actor::updateGraphicData(uint32 offset) {
 	graphicResourceId = grResTable[(direction > 4 ? 8 - direction : direction) + offset];
 
-	GraphicResource *resource = new GraphicResource(_resPack, graphicResourceId);
+	GraphicResource *resource = new GraphicResource(_scene->getResourcePack(), graphicResourceId);
 	frameCount = resource->getFrameCount();
 	delete resource;
 
 	frameNum = 0;
+}
+
+void Actor::setDirectionFrom(uint32 parameter, DirectionFrom from) {
+	error("[Actor::setDirectionFrom] not implemented");
 }
 
 void Actor::setDirection(int actorDirection) {
@@ -575,15 +577,16 @@ void Actor::setDirection(int actorDirection) {
 		case 0x0E: {
 			grResId = grResTable[direction + 5];
 			// FIXME this seems kind of wasteful just to grab a frame count
-			GraphicResource *gra = new GraphicResource(_resPack, grResId);
+			GraphicResource *gra = new GraphicResource(_scene->getResourcePack(), grResId);
 			grResId = grResId;
 			frameCount = gra->getFrameCount();
 			delete gra;
-				   }
-				   break;
+		}
+		break;
+
 		case 0x12:
 			if (_scene->worldstats()->numChapter == 2) {
-				if (_scene->getActorIndex() == 11) {
+				if (_scene->getPlayerActorIndex() == 11) {
 					// NOTE this is supposed to explicitely point to the actor 11 reference,
 					// (_ws->actors[11])
 					// but I'm assuming if control drops through to here, getActor() would
@@ -618,85 +621,118 @@ void Actor::update() {
 		case 0x10:
 			if (_scene->worldstats()->numChapter == 2) {
 				// TODO: updateCharacterSub14()
+				error("[Actor::update] not implemented");
 			} else if (_scene->worldstats()->numChapter == 1) {
-				if (_scene->getActorIndex() == _index) {
+				if (_scene->getPlayerActorIndex() == _index) {
 					// TODO: updateActorSub21();
+					error("[Actor::update] not implemented");
 				}
 			}
 			break;
+
 		case 0x11:
 			if (_scene->worldstats()->numChapter == 2) {
 				// TODO: put code here
+				error("[Actor::update] not implemented");
 			} else if (_scene->worldstats()->numChapter == 11) {
-				if (_scene->getActorIndex() == _index) {
+				if (_scene->getPlayerActorIndex() == _index) {
 					// TODO: put code here
+					error("[Actor::update] not implemented");
 				}
 			}
 			break;
+
 		case 0xF:
 			if (_scene->worldstats()->numChapter == 2) {
 				// TODO: put code here
+				error("[Actor::update] not implemented");
 			} else if (_scene->worldstats()->numChapter == 11) {
 				// TODO: put code here
+				error("[Actor::update] not implemented");
 			}
 			break;
+
 		case 0x12:
 			if (_scene->worldstats()->numChapter == 2) {
 				// TODO: put code here
+				error("[Actor::update] not implemented");
 			}
 			break;
-		case 0x5: {
+
+		case 0x5:
 			frameNum = (frameNum + 1) % frameCount;
 
-			if (_scene->vm()->getTick() - tickValue1 > 300) {
+			if (_scene->vm()->getTick() - tickValue > 300) {
 				if (_scene->vm()->getRandom(100) < 50) {
 					// TODO: check sound playing
+					error("[Actor::update] not implemented");
 				}
-				tickValue1 = _scene->vm()->getTick();
+				tickValue = _scene->vm()->getTick();
 			}
-				  }
-				  break;
+			break;
+
 		case 0xC:
 			if (_scene->worldstats()->numChapter == 2) {
 				// TODO: put code here
+				error("[Actor::update] not implemented");
 			} else if (_scene->worldstats()->numChapter == 11) {
 				// TODO: put code here
+				error("[Actor::update] not implemented");
 			}
+			//FIXME Missing break?
 		case 0x1:
 			// TODO: do actor direction
+			error("[Actor::update] not implemented");
 			break;
+
 		case 0x2:
 		case 0xD:
 			// TODO: do actor direction
+			error("[Actor::update] not implemented");
 			break;
+
 		case 0x3:
 		case 0x13:
 			// TODO: updateCharacterSub05();
+			error("[Actor::update] not implemented");
 			break;
+
 		case 0x7:
 			// TODO: something
+			error("[Actor::update] not implemented");
 			break;
+
 		case 0x4:
 			if (field_944 != 5) {
 				updateActorSub01();
 			}
 			break;
+
 		case 0xE:
 			// TODO: updateCharacterSub02(1, actorIdx);
+			error("[Actor::update] not implemented");
 			break;
+
 		case 0x15:
 			// TODO: updateCharacterSub06(1, actorIdx);
+			error("[Actor::update] not implemented");
 			break;
+
 		case 0x9:
 			// TODO: updateCharacterSub03(1, actorIdx);
+			error("[Actor::update] not implemented");
 			break;
+
 		case 0x6:
 		case 0xA:
 			frameNum = (frameNum + 1) % frameCount;
 			break;
+
 		case 0x8:
 			// TODO: actor sound
+			error("[Actor::update] not implemented");
 			break;
+
 		default:
 			break;
 		}
@@ -706,7 +742,7 @@ void Actor::update() {
 void Actor::updateActorSub01() {
 	// TODO make sure this is right
 	frameNum = (frameNum + 1) % frameCount;
-	if (_scene->vm()->getTick() - tickValue1 > 300) {
+	if (_scene->vm()->getTick() - tickValue > 300) {
 		// TODO
 		// Check if the actor's name is "Crow"?
 		if (_scene->vm()->getRandom(100) < 50) {
@@ -735,7 +771,7 @@ void Actor::updateActorSub01() {
 				}
 			}
 		}
-		tickValue1 = _scene->vm()->getTick();
+		tickValue = _scene->vm()->getTick();
 	}
 	// else
 	// TODO now there's something to do with the

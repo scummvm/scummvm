@@ -42,7 +42,7 @@ public:
 	int32 field_40;
 	int32 field_44;
 	int32 flags;
-	int32 actionListIdx1;
+	int32 scriptIndex;
 	int32 actionListIdx2;
 	int32 actionType; // aka flags2: 0-none, 1-findwhat, 2-talk, 3-findwhat??, 4-grab
 	int32 flagNums[10];

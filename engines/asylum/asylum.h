@@ -86,7 +86,9 @@ namespace Asylum {
 // Flags
 enum FlagType {
 	kFlagType1 = 0,
-	kFlagType2
+	kFlagType2,
+	kFlagTypeSkipDraw,
+	kFlagTypeSceneRectChanged
 };
 
 class Encounter;
@@ -166,7 +168,7 @@ private:
 
 	bool _introPlaying;
 	int _gameFlags[1512];
-	bool _flags[2];
+	bool _flags[4];
 
 	void handleEvents(bool doUpdate);
 	void waitForTimer(int msec_delay);

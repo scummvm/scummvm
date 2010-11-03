@@ -64,7 +64,7 @@ bool Console::cmdDumpActionArea(int32 argc, const char **argv) {
 		// TODO Get an action area by index/id
 	} else {
 		for (int32 i = 0; i < _vm->scene()->worldstats()->numActions; i++) {
-			ActionArea *a = &_vm->scene()->worldstats()->actions[i];
+			ActionArea *a = _vm->scene()->worldstats()->actions[i];
 			printActionAreaStats(a);
 		}
 	}
@@ -83,7 +83,7 @@ void Console::printActionAreaStats(ActionArea *a) {
 	            a->field_40,
 	            a->field_44,
 	            a->flags,
-	            a->actionListIdx1,
+	            a->scriptIndex,
 	            a->actionListIdx2,
 	            a->actionType,
 	            //a->flagNums[10],
