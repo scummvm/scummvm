@@ -65,10 +65,7 @@ public:
 	int32          getPriority() { return _priority; }
 	ResourceId     getResourceId() { return _resourceId; }
 
-	int32          getField74() { return _field_74; }
-	int32          getField78() { return _field_78; }
-	int32          getField7C() { return _field_7C; }
-	int32          getField80() { return _field_80; }
+	Common::Rect  *getRect()     { return &_rect; }
 	int32          getField67C() { return _field_67C; }
 	int32          getField688() { return _field_688; }
 
@@ -177,10 +174,7 @@ private:
 	// flags
 	int32		   _field_3C;
 	uint8		   _name[52];
-	int32		   _field_74; // XXX looks like fields
-	int32		   _field_78; // 74 => 80 have something
-	int32		   _field_7C; // to do with calculating
-	int32		   _field_80; // actor intersection
+	Common::Rect   _rect;
 	int32		   _polygonIndex;
 	// actionType
 	GameFlag	   _gameFlags[10];

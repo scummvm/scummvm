@@ -312,11 +312,16 @@ private:
 	int drawScene();
 
 	void buildUpdateList();
-	void drawUpdateList();
+	void processUpdateList();
 	static bool updateListCompare(const UpdateItem &item1, const UpdateItem &item2);
 
 	void checkVisibleActorsPriority();
 	void adjustActorPriority(ActorIndex index);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helpers
+	//////////////////////////////////////////////////////////////////////////
+	bool pointIntersectsRect(Common::Point point, Common::Rect rect);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Scene debugging

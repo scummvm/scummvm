@@ -121,7 +121,7 @@ typedef int ActorDirection;
 
 enum ActorFlags {
 	kActorFlagVisible = 1,
-	kActorFlag2       = 2
+	kActorFlagMasked  = 2
 };
 
 enum DirectionFrom {
@@ -233,6 +233,7 @@ enum BarrierFlag {
 	kBarrierFlag8         = 0x8,
 	kBarrierFlag20        = 0x20,
 	kBarrierFlag40        = 0x40,
+	kBarrierFlag80        = 0x80,
 	kBarrierFlagC000      = 0xC000,
 	kBarrierFlag10000     = 0x10000,
 	kBarrierFlag10E38     = 0x10E38,
@@ -268,8 +269,8 @@ enum BarrierFlag {
 //////////////////////////////////////////////////////////////////////////
 // Sub-integer partial access macros
 //////////////////////////////////////////////////////////////////////////
-#define LO_BYTE(d)   (*((char*)&(d)))
-#define HI_BYTE(d)   (*((char*)&(d)+1))
+#define LOBYTE(d)   (*((char*)&(d)))
+#define BYTE1(d)   (*((char*)&(d)+1)) // Same as HIBYTE()
 
 
 

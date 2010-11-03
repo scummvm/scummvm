@@ -181,7 +181,7 @@ void Actor::draw() {
 	if (_frameIndex >= _frameCount)
 		frameIndex = 2 * _frameCount - _frameIndex - 1;
 
-	if (HI_BYTE(flags) & kActorFlag2) {
+	if (LOBYTE(flags) & kActorFlagMasked) {
 		Barrier *barrier = getWorld()->barriers[_barrierIndex];
 		getScene()->adjustCoordinates(barrier->x, barrier->y, &point);
 
@@ -189,7 +189,7 @@ void Actor::draw() {
 		//getScreen()->addGraphicToQueue(_resourceId, frameIndex, point.x, point.y, barrier->_resourceId, point.x, point.y, getGraphicsFlags(), _priority);
 
 		// Update flags
-		flags &= ~kActorFlag2;
+		flags &= ~kActorFlagMasked;
 	} else {
 		getScreen()->addGraphicToQueue(_resourceId, frameIndex, point.x, point.y, getGraphicsFlags(), _field_96C, _priority);
 	}

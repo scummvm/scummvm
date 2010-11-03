@@ -58,7 +58,7 @@ public:
 
 
 	void setActionIndex2(int32 index) { _actionIdx2 = index; }
-	void setBarrierIndex(int32 index) { _field_3C = index; }
+	void setBarrierIndex(int32 index) { _barrierIndex = index; }
 	void setDirection(ActorDirection direction) { _direction = direction; }
 	void setFrameCount(int32 count) { _frameCount = count; }
 	void setFrameIndex(int32 number) { _frameIndex = number; }
@@ -79,14 +79,19 @@ public:
 	ActorDirection getDirection() { return _direction; }
 	uint32         getFrameCount() { return _frameCount; }
 	uint32         getFrameIndex() { return _frameIndex; }
+	char          *getName() { return (char *)&_name; }
+	int32          getNumberValue01() { return _numberValue01; }
 	int32          getReaction(uint32 index) { return _reaction[index]; }
 	ResourceId     getResourceId() { return _resourceId; }
 	ResourceId     getResourcesId(uint32 index) { return _graphicResourceIds[index]; }
 	ActorStatus    getStatus()    { return _status; }
 
 	int32          getField638() { return _field_638; }
+	int32          getField934() { return _field_934; }
 	int32          getField944() { return _field_944; }
 	int32          getField96C() { return _field_96C; }
+	int32          getField974() { return _field_974; }
+	int32          getField980() { return _field_980; }
 	int32          getPriority() { return _priority; }
 
 	/////////////////////////////////////////////////////////////////////////
@@ -351,7 +356,7 @@ private:
 	/**
 	 * Gets the graphics flags for queuing the actor graphics
 	 *
-	 * @return The graphics flags. 
+	 * @return The graphics flags.
 	 */
 	int32 getGraphicsFlags();
 
