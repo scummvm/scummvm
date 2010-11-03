@@ -112,9 +112,8 @@ Common::Error AsylumEngine::run() {
     Config.read();
 	// TODO: init unknown game stuffs (.text:0040F430)
 
-#ifndef SKIP_INTRO
-    _video->playVideo(0, Config.showMovieSubtitles);
-#endif
+	if (Config.showIntro)
+		_video->playVideo(0, Config.showMovieSubtitles);
 
 	// Set up main menu
 	_mainMenu = new MainMenu(this);
@@ -153,9 +152,9 @@ void AsylumEngine::startGame() {
 
 	_scene = new Scene(5, this);
 
-#ifndef SKIP_INTRO
-	playIntro();
-#endif
+	if (Config.showIntro)
+		playIntro();
+
 	_scene->initialize();
 
 	// FIXME This is just here for testing purposes. It is also defined
@@ -182,8 +181,8 @@ void AsylumEngine::playIntro() {
 
 	_video->playVideo(1, Config.showMovieSubtitles);
 
-	if (_scene->worldstats()->musicCurrentResourceId != kResourceMusic_FFFFFD66)
-		_sound->playMusic(_scene->getResourcePack(), _scene->worldstats()->musicCurrentResourceId);
+	/*if (_scene->worldstats()->musicCurrentResourceId != kResourceMusic_FFFFFD66)
+		_sound->playMusic(_scene->getResourcePack(), _scene->worldstats()->musicCurrentResourceId);*/
 
 	_screen->clearScreen();
 
@@ -297,7 +296,7 @@ void AsylumEngine::processDelayedEvents() {
 	if (videoIdx >= 0) {
 		_sound->stopMusic();
 		_sound->stopAllSounds();
-		_video->playVideo(videoIdx, kSubtitlesOn);
+		_video->playVideo(videoIdx, true);
 		_scene->actions()->setDelayedVideoIndex(-1);
 
 		if (_mainMenu->isActive())

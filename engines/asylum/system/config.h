@@ -33,8 +33,6 @@
 
 namespace Asylum {
 
-enum VideoSubtitles;
-
 /**
  * The ConfigurationManager is where the common configuration options used
  * by the engine are bound.
@@ -44,36 +42,53 @@ enum VideoSubtitles;
 class ConfigurationManager: public Common::Singleton<ConfigurationManager> {
 public:
 
+	//////////////////////////////////////////////////////////////////////////
+	// Normal configuration
+	//////////////////////////////////////////////////////////////////////////
+
+	// Default options
+	int  musicVolume;
+	int  sfxVolume;
+	int  voiceVolume;
+	bool showMovieSubtitles;
+
+	// Engine options
+	bool showEncounterSubtitles;
+	int  gammaLevel;
+	int  ambientVolume;
+	int  movieVolume;
+	bool musicStatus; // On or Off
+	bool reverseStereo;
+	int  performance;    ///< performance only affects sound: perf > 0 ? 22050hz/16bit : 11025hz/8bit
+	int  versionKey;
+	int  quickSaveKey;
+	int  quickLoadKey;
+	int  switchToSaraKey;
+	int  switchToGrimwallKey;
+	int  switchToOlmecKey;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Misc configuration options (not shown in GUI)
+	//////////////////////////////////////////////////////////////////////////
+
+	// This will play the scene title loading up progress before the scene is entered.
+	// This is just a convenience, as there's no need for the type of pre-loading that
+	// was performed in the original
+	bool showSceneLoading;
+
+	// This option will prevent the intro movies from being played whenever the engine is started
+	bool showIntro;
+
+	//////////////////////////////////////////////////////////////////////////
+	// TO REMOVE ??
+	//////////////////////////////////////////////////////////////////////////
 	// XXX Throwing some globals in here until
 	// I know how to better handle them
 	int  word_446EE4;
 
-    VideoSubtitles showMovieSubtitles;
 	Common::Array<int>  movieSubtitles;
-	bool showEncounterSubtitles;
 	Common::Array<int>  encounterSubtitles; // FIXME: take this out
-    int  musicVolume;
-	int  ambientVolume;
-	int  sfxVolume;
-	int  voiceVolume;
-	int  movieVolume;
-	bool musicStatus; // On or Off
-	bool reverseStereo;
-	int  gammaLevel;
-
-	/**
-	 * XXX The game's performance settings seem to only affect
-	 * the sound quality.
-	 *
-	 * (performance > 0) ? 22050hz/16bit : 11025hz/8bit
-	 */
-	int performance;
-	int versionKey;
-	int quickSaveKey;
-	int quickLoadKey;
-	int switchToSaraKey;
-	int switchToGrimwallKey;
-	int switchToOlmecKey;
+	//////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Load configuration file
@@ -91,10 +106,10 @@ private:
 	ConfigurationManager();
 	virtual ~ConfigurationManager();
 
-}; // end of class ConfigurationManager
+};
 
 #define Config (::Asylum::ConfigurationManager::instance())
 
 } // end of namespace Asylum
 
-#endif
+#endif // ASYLUM_CONFIGURATIONMANAGER_H

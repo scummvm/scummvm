@@ -49,11 +49,6 @@ struct VideoSubtitle {
 	int textRes;
 };
 
-enum VideoSubtitles {
-	kSubtitlesOff = 0,
-	kSubtitlesOn = 1
-};
-
 class VideoText;
 
 class Video {
@@ -61,7 +56,7 @@ public:
 	Video(Audio::Mixer *mixer);
 	virtual ~Video();
 
-	bool playVideo(int32 videoNumber, VideoSubtitles subtitles);
+	bool playVideo(int32 videoNumber, bool showSubtitles);
 
 private:
 	void performPostProcessing(byte *screen);

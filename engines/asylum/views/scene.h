@@ -67,6 +67,8 @@ public:
 	SceneTitle(Scene *scene);
 	~SceneTitle();
 
+	void load();
+
 	void update(int32 tick);
 	bool loadingComplete() { return _done; }
 

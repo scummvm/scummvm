@@ -108,6 +108,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 
 	// TODO: init action list
 
+	_title = new SceneTitle(this);
 	_titleLoaded = false;
 }
 
@@ -208,12 +209,7 @@ Scene::~Scene() {
 	delete _resPack;
 	//delete _blowUp;
 
-	// TODO we can probably dispose of the title resource once the
-	// _titleLoaded flag has been set, as opposed to in the
-	// scene destructor
-#ifdef SHOW_SCENE_LOADING
 	delete _title;
-#endif
 }
 
 Actor* Scene::getActor(int index) {
@@ -221,13 +217,11 @@ Actor* Scene::getActor(int index) {
 }
 
 void Scene::enterScene() {
-#ifdef SHOW_SCENE_LOADING
-	if (!_titleLoaded) {
-		_title = new SceneTitle(this);
+	if (Config.showSceneLoading && !_titleLoaded) {
+		_title->load();
 		// disable input polling
 		//_actions->_allowInput = false;
 	} else {
-#endif
 		_vm->screen()->setPalette(_resPack, _ws->currentPaletteId);
 		_background = _bgResource->getFrame(0);
 		_vm->screen()->copyToBackBuffer(
@@ -245,9 +239,8 @@ void Scene::enterScene() {
 		startMusic();
 
 		_walking  = false;
-#ifdef SHOW_SCENE_LOADING
 	}
-#endif
+
 	_isActive = true;
 }
 
@@ -317,16 +310,17 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 // -------------------------------------------
 
 void Scene::update() {
-#ifdef SHOW_SCENE_LOADING
-	if (!_titleLoaded) {
-		_title->update(_vm->getTick());
-		if (_title->loadingComplete()) {
-			_titleLoaded = true;
-			enterScene();
+	if (Config.showSceneLoading) {
+		if (!_titleLoaded) {
+			_title->update(_vm->getTick());
+			if (_title->loadingComplete()) {
+				_titleLoaded = true;
+				enterScene();
+			}
+			return;
 		}
-		return;
 	}
-#endif
+
 	if (updateScene())
 		return;
 
@@ -347,7 +341,7 @@ void Scene::update() {
 }
 
 int Scene::updateScene() {
-#ifdef SHOW_SCENE_TIMES
+#ifdef DEBUG_SCENE_TIMES
 #define MESURE_TICKS(func) { \
 	int32 startTick =_vm->getTick(); \
 	func(); \
@@ -1326,6 +1320,16 @@ void Scene::resetActor0() {
 // SceneTitle
 //////////////////////////////////////////////////////////////////////////
 SceneTitle::SceneTitle(Scene *scene): _scene(scene) {
+	_bg = NULL;
+	_progress = NULL;
+}
+
+SceneTitle::~SceneTitle() {
+	delete _bg;
+	delete _progress;
+}
+
+void SceneTitle::load() {
 	_start = _scene->vm()->getTick();
 
 	_bg = new GraphicResource(_scene->_resPack, _scene->_ws->sceneTitleGraphicResourceId);
@@ -1341,12 +1345,7 @@ SceneTitle::SceneTitle(Scene *scene): _scene(scene) {
 	delete pack;
 
 	_done = false;
-    _showMouseState = g_system->showMouse(false);
-}
-
-SceneTitle::~SceneTitle() {
-	delete _bg;
-	delete _progress;
+	_showMouseState = g_system->showMouse(false);
 }
 
 void SceneTitle::update(int32 tick) {
