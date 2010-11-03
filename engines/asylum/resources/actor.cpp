@@ -259,7 +259,7 @@ void Actor::update() {
 
 						Sound *sound  = _vm->sound();
 						if (sound->isCacheOk())
-							sound->playMusic(getScene()->getResourcePack(), kResourceMusic_80020001);
+							sound->playMusic(getScene()->getResourcePack(), (int)kResourceMusic_80020001);
 
 						getWorld()->musicCurrentResourceId = 1;
 

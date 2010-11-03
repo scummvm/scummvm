@@ -89,7 +89,7 @@ public:
 	void playSound(ResourcePack *pack, ResourceId resourceId, int32 volume, bool looping = false, int32 panning = 0, bool overwrite = false);
 	void playSound(ResourcePack *pack, ResourceId resourceId, bool looping, int32 volume, int32 panning);
 	void playSound(ResourceEntry *resource, bool looping, int32 volume, int32 panning);
-	void playSound(ResourceId resourceId, bool looping, int32 volume, int32 panning, bool fromBuffer = false);
+	void playSound(ResourceId resourceId, bool looping = false, int32 volume = Config.sfxVolume, int32 panning = 0, bool fromBuffer = false);
 
 	void stopSound(ResourceId resourceId);
 	void stopSound();
