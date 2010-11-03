@@ -449,150 +449,119 @@ void Actor::updateDirection() {
 }
 
 void Actor::updateStatus(ActorStatus actorStatus) {
-	GraphicResource *gra;
-
 	switch (actorStatus) {
-	case kActorStatus16:
-		frameNum = 0;
-		if (direction > 4)
-			direction = 8 - direction;
-		grResId = grResTable[15];
-		gra = new GraphicResource(_resPack, grResId);
-		frameCount = gra->getFrameCount();
-		delete gra;
+	default:
 		break;
-	case kActorStatus18:
-		if (_scene->worldstats()->numChapter > 2) {
-			frameNum = 0;
-			if (_index > 12)
-				grResId = grResTable[30];
-			if (_scene->getActorIndex() == _index) {
-				gra = new GraphicResource(_resPack, grResId);
-				frameNum = gra->getFrameCount() - 1;
-				delete gra;
-			}
 
-			if (_index == 11) {
-				// TODO check a global variable (that likely
-				// relates to direction) to see if it's > 4,
-				// and if so, subtract it from 8. Then use this
-				// to set actor[11].grResId
-			}
-
-			// FIXME I know this seems wasteful, but it's how the
-			// original worked. I guess this is to set the framecount
-			// regardless of the actorIndex value, though it assumes
-			// the actor's grResId has been set.
-			gra = new GraphicResource(_resPack, grResId);
-			frameCount = gra->getFrameCount();
-			delete gra;
-		}
-		break;
-	case kActorStatus15:
-		// TODO Refactor, because this is identical to case 16,
-		// other than a different grResTable index
-		frameNum = 0;
-		if (direction > 4)
-			direction = 8 - direction;
-		grResId = grResTable[10];
-		gra = new GraphicResource(_resPack, grResId);
-		frameCount = gra->getFrameCount();
-		delete gra;
-		break;
-	case kActorStatus9:
-		// TODO Check if there is an encounter currently
-		// active (via the global at .data:00543504)
-		// FIXME skipping for now
-		if (0) {
-			if (_scene->vm()->getRandomBit() == 1 && defaultDirectionLoaded(15)) {
-				frameNum = 0;
-				if (direction > 4)
-					direction = 8 - direction;
-				grResId = grResTable[15];
-				gra = new GraphicResource(_resPack, grResId);
-				frameCount = gra->getFrameCount();
-				delete gra;
-			} else {
-				frameNum = 0;
-				if (direction > 4)
-					direction = 8 - direction;
-				grResId = grResTable[10];
-				gra = new GraphicResource(_resPack, grResId);
-				frameCount = gra->getFrameCount();
-				delete gra;
-			}
-		}
-		break;
-	case kActorStatusEnabled:
-	case kActorStatus6:
-	case kActorStatus14:
-		frameNum = 0;
-		if (direction > 4)
-			direction = 8 - direction;
-		grResId = grResTable[15];
-		gra = new GraphicResource(_resPack, grResId);
-		frameCount = gra->getFrameCount();
-		delete gra;
-		break;
 	case kActorStatus1:
 	case kActorStatus12:
+		error("[Actor::updateStatus] not implemented for statuses 1 & 12");
 		// TODO check if sceneNumber == 2 && actorIndex == _playerActorInde
 		// && field_40 equals/doesn't equal a bunch of values,
 		// then set direction like other cases
 		break;
+
 	case kActorStatus2:
 	case kActorStatus13:
-		frameNum = 0;
-		if (direction > 4)
-			direction = 8 - direction;
-		grResId = grResTable[direction];
-		gra = new GraphicResource(_resPack, grResId);
-		frameCount = gra->getFrameCount();
-		delete gra;
+		updateGraphicData(0);
 		break;
-	case kActorStatusDisabled:
-		frameNum = 0;
-		if (direction > 4)
-			direction = 8 - direction;
-		grResId = grResTable[direction];
-		gra = new GraphicResource(_resPack, grResId);
-		frameCount = gra->getFrameCount();
-		delete gra;
-		// TODO set word_446EE4 to -1. This global seems to
-		// be used with screen blitting
-		break;
+
 	case kActorStatus3:
 	case kActorStatus19:
-		// TODO check if the actor's name is equal to
-		// "Big Crow"???
+		if (!strcmp(name, "Big Crow"))
+			status = kActorStatusEnabled;
 		break;
+
+	case kActorStatusEnabled:
+	case kActorStatus6:
+	case kActorStatus14:
+		updateGraphicData(5);
+		break;
+
+	case kActorStatusDisabled:
+		updateGraphicData(15);
+		grResId = grResTable[(direction > 4 ? 8 - direction : direction) + 15];
+
+		// TODO set word_446EE4 to -1. This global seems to be used with screen blitting
+		break;
+
 	case kActorStatus7:
 		if (_scene->worldstats()->numChapter == 2 && _index == 10 && _scene->vm()->isGameFlagSet(279)) {
-			Actor *act0 = _scene->getActor(0);
-			act0->x1 = x2 + x1 - act0->x2;
-			act0->y1 = y2 + y1 - act0->y2;
-			act0->direction = 4;
+			Actor *actor = _scene->getActor(0);
+			actor->x1 = x2 + x1 - actor->x2;
+			actor->y1 = y2 + y1 - actor->y2;
+			actor->direction = 4;
+
 			_scene->setActorIndex(0);
-			// TODO disableCharacterVisible(actorIndex)
-			// TODO enableActorVisible(0)
+
+			// Hide this actor and the show the other one
+			visible(false);
+			actor->visible(true);
+
 			_scene->vm()->clearGameFlag(279);
-			// TODO some cursor update
+
+			_scene->getCursor()->show();
 		}
 		break;
+
 	case kActorStatus8:
 	case kActorStatus10:
 	case kActorStatus17:
-		frameNum = 0;
-		if (direction > 4)
-			direction = 8 - direction;
-		grResId = grResTable[20];
-		gra = new GraphicResource(_resPack, grResId);
-		frameCount = gra->getFrameCount();
-		delete gra;
+		updateGraphicData(20);
+		break;
+
+	case kActorStatus9:
+		error("[Actor::updateStatus] Encounter check missing for status 9");
+		//if (_scene->vm()->encounter()->getFlag(kFlagEncounter3)
+		//	return;
+
+		if (_scene->vm()->getRandomBit() == 1 && defaultDirectionLoaded(15))
+			updateGraphicData(15);
+		else
+			updateGraphicData(10);
+		break;
+
+	case kActorStatus15:
+	case kActorStatus16:
+		updateGraphicData(actorStatus == kActorStatus15 ? 10 : 15);
+		break;
+
+	case kActorStatus18:
+		if (_scene->worldstats()->numChapter == 2) {
+			GraphicResource *gra = new GraphicResource();
+			frameNum = 0;
+
+			if (_index > 12)
+				grResId = grResTable[direction + 30];
+
+			if (_scene->getActorIndex() == _index) {
+				gra->load(_resPack, grResId);
+				frameNum = gra->getFrameCount() - 1;
+			}
+
+			if (_index == 11)
+				grResId = grResTable[_scene->getGlobalDirection() > 4 ? 8 - _scene->getGlobalDirection() : _scene->getGlobalDirection()];
+
+			// Reload the graphic resource if the resource ID has changed
+			if (gra->getEntryNum() != grResId)
+				gra->load(_resPack, grResId);
+
+			frameCount = gra->getFrameCount();
+		}
 		break;
 	}
 
 	status = actorStatus;
+}
+
+void Actor::updateGraphicData(uint32 offset) {
+	grResId = grResTable[(direction > 4 ? 8 - direction : direction) + offset];
+
+	GraphicResource *gra = new GraphicResource(_resPack, grResId);
+	frameCount = gra->getFrameCount();
+	delete gra;
+
+	frameNum = 0;
 }
 
 void Actor::setDirection(int actorDirection) {
@@ -709,7 +678,7 @@ void Actor::update() {
 			break;
 		case 0x4:
 			if (field_944 != 5) {
-				//updateActorSub01(actor);
+				updateActorSub01();
 			}
 			break;
 		case 0xE:
@@ -732,6 +701,49 @@ void Actor::update() {
 			break;
 		}
 	}
+}
+
+void Actor::updateActorSub01() {
+	// TODO make sure this is right
+	frameNum = (frameNum + 1) % frameCount;
+	if (_scene->vm()->getTick() - tickValue1 > 300) {
+		// TODO
+		// Check if the actor's name is "Crow"?
+		if (_scene->vm()->getRandom(100) < 50) {
+			// TODO
+			// Check if soundResId04 is assigned, and if so,
+			// if it's playing
+			// If true, check characterSub407260(10)
+			// and if that's true, do characterDirection(9)
+		}
+	}
+
+	// if act == getActor()
+	if (_scene->vm()->tempTick07) {
+		if (_scene->vm()->getTick() - _scene->vm()->tempTick07 > 500) {
+			if (_scene->vm()->isGameFlagNotSet(183)) { // processing action list
+				if (visible()) {
+					// if some_encounter_flag
+					// if !soundResId04
+					if (_scene->vm()->getRandom(100) < 50) {
+						if (_scene->getSceneIndex() == 13) {
+							; // sub414810(507)
+						} else {
+							; // sub4146d0(4)
+						}
+					}
+				}
+			}
+		}
+		tickValue1 = _scene->vm()->getTick();
+	}
+	// else
+	// TODO now there's something to do with the
+	// character's name and "Big Crow", or "Crow".
+	// Quite a bit of work to do yet, but it only seems to
+	// take effect when the character index doesn't equal
+	// the currentPlayerIndex (so I'm guessing this is a
+	// one off situation).
 }
 
 
