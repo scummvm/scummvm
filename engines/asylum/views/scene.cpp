@@ -351,43 +351,23 @@ void Scene::update() {
 }
 
 int Scene::updateScene() {
-	int32 startTick   = 0;
+#ifdef SHOW_SCENE_TIMES
+#define MESURE_TICKS(func) { \
+	int32 startTick =_vm->getTick(); \
+	func(); \
+	debugC(kDebugLevelScene, #func " Time: %d", _vm->getTick() - startTick); \
+}
+#else
+#define MESURE_TICKS(func) func();
+#endif
 
-	// Mouse
-	startTick = _vm->getTick();
-	updateMouse();
-	//debugC(kDebugLevelScene, "UpdateMouse Time: %d", _vm->getTick() - startTick);
-
-	// Actors
-	startTick = _vm->getTick();
-	for (int32 a = 0; a < _ws->numActors; a++)
-		getActor(a)->update();
-	//debugC(kDebugLevelScene, "UpdateActors Time: %d", _vm->getTick() - startTick);
-
-	// Barriers
-	startTick = _vm->getTick();
-	updateBarriers();
-	//debugC(kDebugLevelScene, "UpdateBarriers Time: %d", _vm->getTick() - startTick);
-
-	// Ambient Sounds
-	startTick = _vm->getTick();
-	updateAmbientSounds();
-	//debugC(kDebugLevelScene, "UpdateAmbientSounds Time: %d", _vm->getTick() - startTick);
-
-	// Music
-	startTick = _vm->getTick();
-	updateMusic();
-	//debugC(kDebugLevelScene, "UpdateMusic Time: %d", _vm->getTick() - startTick);
-
-	// Adjust Screen
-	startTick = _vm->getTick();
-
-	if (g_debugScrolling) { // DEBUG ScreenScrolling
-		debugScreenScrolling(_bgResource->getFrame(0));
-	} else {
-		updateAdjustScreen();
-	}
-	//debugC(kDebugLevelScene, "AdjustScreenStart Time: %d", _vm->getTick() - startTick);
+	// Update each part of the scene
+	MESURE_TICKS(updateMouse);
+	MESURE_TICKS(updateActors);
+	MESURE_TICKS(updateBarriers);
+	MESURE_TICKS(updateAmbientSounds);
+	MESURE_TICKS(updateMusic);
+	MESURE_TICKS(updateScreen);
 
 	// Update Debug
 	if (g_debugPolygons)
@@ -797,6 +777,12 @@ void Scene::stopSound(int32 barrierIndex, int32 actorIndex) {
 		_vm->sound()->stopSound(sndResId);
 	}
 }
+
+void Scene::updateActors() {
+	for (int32 a = 0; a < _ws->numActors; a++)
+		getActor(a)->update();
+}
+
 void Scene::updateBarriers() {
 	//Screen *screen = _vm->screen();
 
@@ -1050,6 +1036,14 @@ int32 Scene::calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act) {
 }
 
 void Scene::updateMusic() {
+}
+
+void Scene::updateScreen() {
+	if (g_debugScrolling) { // DEBUG ScreenScrolling
+		debugScreenScrolling(_bgResource->getFrame(0));
+	} else {
+		updateAdjustScreen();
+	}
 }
 
 void Scene::updateAdjustScreen() {

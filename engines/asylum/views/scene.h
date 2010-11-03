@@ -254,6 +254,8 @@ private:
 	 */
 	void handleMouseUpdate(int direction, Common::Rect rect);
 
+	void updateActors();
+
 	/** .text:0040CBD0
 	 * TODO add description
 	 */
@@ -270,6 +272,9 @@ private:
 	 * TODO add description
 	 */
 	void updateAdjustScreen();
+
+	void updateScreen();
+
 	int drawScene();
 	/** .text:0040A3C0
 	 * TODO add description
