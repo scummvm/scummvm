@@ -61,6 +61,8 @@ struct SoundChannel {
 	Audio::SoundHandle handle;
 };
 
+const int kMaxChannels = 4;
+
 class Sound {
 public:
 	Sound(ToltecsEngine *vm);
@@ -75,7 +77,7 @@ public:
 protected:
 	ToltecsEngine *_vm;
 
-	SoundChannel channels[4];
+	SoundChannel channels[kMaxChannels];
 
 	void internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 panning);
 

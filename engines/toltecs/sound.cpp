@@ -47,7 +47,7 @@
 namespace Toltecs {
 
 Sound::Sound(ToltecsEngine *vm) : _vm(vm) {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < kMaxChannels; i++) {
 		channels[i].type = kChannelTypeEmpty;
 		channels[i].resIndex = -1;
 	}
@@ -114,13 +114,13 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 		// Stop all sounds
 		_vm->_mixer->stopAll();
 		_vm->_screen->keepTalkTextItemsAlive();
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < kMaxChannels; i++) {
 			channels[i].type = kChannelTypeEmpty;
 			channels[i].resIndex = -1;
 		}
 	} else if (type == -2) {
 		// Stop sounds with specified resIndex
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < kMaxChannels; i++) {
 			if (channels[i].resIndex == resIndex) {
 				_vm->_mixer->stopHandle(channels[i].handle);
 				channels[i].type = kChannelTypeEmpty;
@@ -136,7 +136,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 	
 		// Play new sound in empty channel
 		int freeChannel = -1;
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < kMaxChannels; i++) {
 			if (channels[i].type == kChannelTypeEmpty || !_vm->_mixer->isSoundHandleActive(channels[i].handle)) {
 				freeChannel = i;
 				break;
@@ -171,7 +171,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 }
 
 void Sound::updateSpeech() {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < kMaxChannels; i++) {
 		if (channels[i].type == kChannelTypeSpeech && _vm->_mixer->isSoundHandleActive(channels[i].handle)) {
 			_vm->_screen->keepTalkTextItemsAlive();
 			break;
@@ -180,7 +180,7 @@ void Sound::updateSpeech() {
 }
 
 void Sound::stopSpeech() {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < kMaxChannels; i++) {
 		if (channels[i].type == kChannelTypeSpeech) {
 			_vm->_mixer->stopHandle(channels[i].handle);
 			_vm->_screen->keepTalkTextItemsAlive();
