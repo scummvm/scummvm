@@ -104,7 +104,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 	_ws->field_120 = -1;
 
 	for (int32 a = 0; a < _ws->numActors; a++)
-		_ws->actors[a]->setTickValue(_vm->getTick());
+		_ws->actors[a]->setLastScreenUpdate(_vm->getTick());
 
 	// TODO: init action list
 
@@ -118,7 +118,7 @@ void Scene::initialize() {
 	_playerActorIdx = 0;
 
 	if (_ws->numBarriers > 0) {
-		int32 priority = 0x0FFB;
+		int32 priority = 4091;
 		for (int32 b = 0; b < _ws->numBarriers; b++) {
 			Barrier *barrier  = _ws->barriers[b];
 			barrier->setPriority(priority);
@@ -174,11 +174,11 @@ void Scene::initialize() {
 
 	startMusic();
 
-	_vm->globalTickValue = 1;
+	_vm->screenUpdatesCount = 1;
 
 	// TODO sceneRectChangedFlag = 1;
 
-	actor->setTickValue(_vm->getTick());
+	actor->setLastScreenUpdate(_vm->getTick());
 	// XXX This initialization was already done earlier,
 	// so I'm not sure why we need to do it again. Investigate.
 	actor->updateDirection();
@@ -1424,6 +1424,10 @@ void Scene::makeGreyPalette() {
 
 void Scene::resetActor0() {
 	error("[Scene::resetActor0] not implemented!");
+}
+
+void Scene::callSpecFunction(Barrier* barrier, ActorIndex index) {
+	error("[Scene::callSpecFunction] not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -53,7 +53,6 @@ public:
 
 	void setFrameIndex(int32 index) { _frameIndex = index; }
 	void setPriority(int32 priority) { _priority = priority; }
-	void setResourceId(ResourceId id) { _resourceId = id; }
 
 	void setField67C(int32 val) { _field_67C = val; }
 
@@ -101,13 +100,6 @@ public:
 	 */
 	bool isOnScreen();
 
-	/**
-	 * Query if this barrier is visible.
-	 *
-	 * @return true if visible, false if not.
-	 */
-	bool isVisible();
-
 	/////////////////////////////////////////////////////////////////////////
 	// Drawing & update
 	//////////////////////////////////////////////////////////////////////////
@@ -134,24 +126,16 @@ public:
 	////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Check if any items in the barrier sound array are playing,
-	 * and based on their flag values, stop them accordingly
-	 */
-	void updateSoundItems();
-
-	/**
-	 * Stop the barrier related sounds
-	 */
-	void stopSound();
-
-	/**
 	 * Stop all barrier sounds (called from scripts)
 	 */
 	void stopAllSounds();
 
+	/**
+	 * Checks the barrier flags
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
 	bool checkFlags();
-
-	int32 getRandomId(); // TODO Give this a better name?
 
 private:
 	AsylumEngine *_vm;
@@ -190,9 +174,39 @@ private:
 	int32		   _soundX;
 	int32		   _soundY;
 	int32		   _field_688;
-	int32		   _field_68C[5];
+	int32		   _randomResourceIds[5];
 	ResourceId     _soundResourceId;
 	int32		   _field_6A4;
+
+	/**
+	 * Query if this barrier is visible.
+	 *
+	 * @return true if visible, false if not.
+	 */
+	bool isVisible();
+
+	/**
+	 * Play barrier sounds
+	 */
+	void playSounds();
+
+	/**
+	 * Check if any items in the barrier sound array are playing,
+	 * and based on their flag values, stop them accordingly
+	 */
+	void updateSoundItems();
+
+	/**
+	 * Stop the barrier related sounds
+	 */
+	void stopSound();
+
+	/**
+	 * Gets a random resource identifier for this barrier (using the list in _randomResourceIds)
+	 *
+	 * @return The random resource identifier.
+	 */
+	int32 getRandomResourceId();
 
 }; // end of class Barrier
 

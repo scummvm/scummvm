@@ -442,7 +442,7 @@ IMPLEMENT_OPCODE(ShowActor) {
 
 	actor->setVisible(true);
 	actor->updateDirection();
-	actor->setTickValue(_scene->vm()->getTick());
+	actor->setLastScreenUpdate(_scene->vm()->getTick());
 }
 
 //////////////////////////////////////////////////////////////////////////

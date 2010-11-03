@@ -117,7 +117,7 @@ void Actor::load(Common::SeekableReadStream *stream) {
 
 	_actionIdx2 = stream->readSint32LE();
 	_field_924  = stream->readSint32LE();
-	_tickValue = stream->readSint32LE();
+	_lastScreenUpdate = stream->readSint32LE();
 	_field_92C  = stream->readSint32LE();
 	actionType     = stream->readSint32LE();
 	_field_934  = stream->readSint32LE();
@@ -255,7 +255,7 @@ void Actor::update() {
 						_vm->setGameFlag(kGameFlag368);
 
 						player->setFrameIndex(0);
-						getScene()->getActor(0)->setTickValue(_vm->getTick());
+						getScene()->getActor(0)->setLastScreenUpdate(_vm->getTick());
 
 						Sound *sound  = _vm->sound();
 						if (sound->isCacheOk())
@@ -340,14 +340,14 @@ void Actor::update() {
 	case kActorStatusDisabled:
 		_frameIndex = (_frameIndex + 1) % _frameCount;
 
-		if (_vm->globalTickValue - _tickValue > 300) {
+		if (_vm->screenUpdatesCount - _lastScreenUpdate > 300) {
 			if (_vm->getRandom(100) < 50) {
 				if (!getSound()->soundResourceId || !getSound()->isPlaying(getSound()->soundResourceId)) {
 					if (isDefaultDirection(10))
 						updateStatus(kActorStatus9);
 				}
 			}
-			_tickValue = _vm->globalTickValue;
+			_lastScreenUpdate = _vm->screenUpdatesCount;
 		}
 		break;
 
@@ -771,20 +771,20 @@ void Actor::updateStatusEnabled() {
 	_frameIndex = (_frameIndex + 1) % _frameCount;
 
 	// Actor: Crow
-	if (_vm->globalTickValue - _tickValue > 300) {
+	if (_vm->screenUpdatesCount - _lastScreenUpdate > 300) {
 		if (strcmp(_name, "Crow")) {
 			if (_vm->getRandom(100) < 50
 			 && (!getSound()->soundResourceId || !getSound()->isPlaying(getSound()->soundResourceId))
 			 && isDefaultDirection(10))
 				updateStatus(kActorStatus9);
 
-			_tickValue = _vm->globalTickValue;
+			_lastScreenUpdate = _vm->screenUpdatesCount;
 		}
 	}
 
 	// Actor: Player
 	if (_index == getScene()->getPlayerActorIndex()) {
-		if (_vm->globalTickValue_2 && (_vm->globalTickValue - _vm->globalTickValue_2) > 500) {
+		if (_vm->globalTickValue_2 && (_vm->screenUpdatesCount - _vm->globalTickValue_2) > 500) {
 
 			if (_vm->isGameFlagNotSet(kGameFlagScriptProcessing)
 			 && isVisible()
@@ -797,8 +797,8 @@ void Actor::updateStatusEnabled() {
 						getScene()->playSpeech(4);
 				}
 			}
-			_tickValue = _vm->globalTickValue;
-			_vm->globalTickValue_2 = _vm->globalTickValue;
+			_lastScreenUpdate = _vm->screenUpdatesCount;
+			_vm->globalTickValue_2 = _vm->screenUpdatesCount;
 		}
 
 		return;

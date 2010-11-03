@@ -230,7 +230,9 @@ enum BarrierFlag {
 	kBarrierFlagEnabled   = 0x1,
 	kBarrierFlag2         = 0x2,
 	kBarrierFlag4         = 0x4,
+	kBarrierFlag6         = 0x6,
 	kBarrierFlag8         = 0x8,
+	kBarrierFlag10        = 0x10,
 	kBarrierFlag20        = 0x20,
 	kBarrierFlag40        = 0x40,
 	kBarrierFlag80        = 0x80,
@@ -265,12 +267,11 @@ enum BarrierFlag {
 #define getScreen() _vm->screen()
 #define getWorld()  _vm->scene()->worldstats()
 
-
 //////////////////////////////////////////////////////////////////////////
 // Sub-integer partial access macros
 //////////////////////////////////////////////////////////////////////////
 #define LOBYTE(d)   (*((char*)&(d)))
-#define BYTE1(d)   (*((char*)&(d)+1)) // Same as HIBYTE()
+#define BYTE1(d)    (*((char*)&(d)+1))   // Same as HIBYTE()
 
 
 

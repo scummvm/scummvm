@@ -155,10 +155,10 @@ public:
 
 
 	// Shared global Data
-	uint32 getGlobalX() const   { return _globalX; }
-	void setGlobalX(uint32 val) { _globalX = val; }
-	uint32 getGlobalY() const   { return _globalY; }
-	void setGlobalY(uint32 val) { _globalY = val; }
+	int32 getGlobalX() const   { return _globalX; }
+	void setGlobalX(int32 val) { _globalX = val; }
+	int32 getGlobalY() const   { return _globalY; }
+	void setGlobalY(int32 val) { _globalY = val; }
 
 	ActorDirection getGlobalDirection() { return _globalDirection; }
 
@@ -185,6 +185,7 @@ public:
 	// Shared methods
 	void resetActor0();
 
+	void callSpecFunction(Barrier* barrier, ActorIndex index);
 
 		/** .text:00408980
 	 * Determine if the supplied point intersects
@@ -252,8 +253,8 @@ private:
 	GraphicResource *_bgResource;
 	GraphicFrame    *_background;
 
-	uint32 _globalX;
-	uint32 _globalY;
+	int32 _globalX;
+	int32 _globalY;
 	int32 _sceneOffset;
 	int32 _sceneXLeft;
 	int32 _sceneYTop;
