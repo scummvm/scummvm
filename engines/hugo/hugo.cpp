@@ -284,7 +284,7 @@ Common::Error HugoEngine::run() {
 				break;
 			}
 		}
-		_status.doQuitFl = shouldQuit();            // update game quit flag
+		_status.doQuitFl |= shouldQuit();           // update game quit flag
 	}
 	return Common::kNoError;
 }
