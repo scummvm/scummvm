@@ -486,7 +486,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 		break;
 
 	case kActorStatus7:
-		if (_scene->worldstats()->numChapter == 2 && _index == 10 && _scene->vm()->isGameFlagSet(279)) {
+		if (_scene->worldstats()->numChapter == 2 && _index == 10 && _scene->vm()->isGameFlagSet(kGameFlag279)) {
 			Actor *actor = _scene->getActor(0);
 			actor->x1 = x2 + x1 - actor->x2;
 			actor->y1 = y2 + y1 - actor->y2;
@@ -498,7 +498,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			visible(false);
 			actor->visible(true);
 
-			_scene->vm()->clearGameFlag(279);
+			_scene->vm()->clearGameFlag(kGameFlag279);
 
 			_scene->getCursor()->show();
 		}
@@ -721,7 +721,7 @@ void Actor::updateActorSub01() {
 	// if act == getActor()
 	if (_scene->vm()->tempTick07) {
 		if (_scene->vm()->getTick() - _scene->vm()->tempTick07 > 500) {
-			if (_scene->vm()->isGameFlagNotSet(183)) { // processing action list
+			if (_scene->vm()->isGameFlagNotSet(kGameFlagScriptProcessing)) { // processing action list
 				if (visible()) {
 					// if some_encounter_flag
 					// if !soundResId04

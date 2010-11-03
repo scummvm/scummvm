@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_BLOWUPPUZZLE_H_
-#define ASYLUM_BLOWUPPUZZLE_H_
+#ifndef ASYLUM_BLOWUPPUZZLE_H
+#define ASYLUM_BLOWUPPUZZLE_H
 
 #include "common/events.h"
 #include "common/rect.h"

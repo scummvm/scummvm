@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_SCENE_H_
-#define ASYLUM_SCENE_H_
+#ifndef ASYLUM_SCENE_H
+#define ASYLUM_SCENE_H
 
 #include "common/events.h"
 

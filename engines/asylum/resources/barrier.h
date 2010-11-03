@@ -23,10 +23,12 @@
  *
  */
 
-#ifndef ASYLUM_BARRIER_H_
-#define ASYLUM_BARRIER_H_
+#ifndef ASYLUM_BARRIER_H
+#define ASYLUM_BARRIER_H
 
 #include "asylum/system/sound.h"
+
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -70,7 +72,7 @@ public:
 	int32		   field_80; // actor intersection
 	int32		   polyIdx;
 	int32		   flags2;
-	int32		   gameFlags[10];
+	GameFlag	   gameFlags[10];
 	int32		   field_B4;
 	int32		   tickCount;
 	int32		   tickCount2;

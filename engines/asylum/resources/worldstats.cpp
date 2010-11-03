@@ -83,7 +83,7 @@ bool WorldStats::isBarrierVisible(int32 idx) {
 	if ((b->flags & 0xFF) & 1) {
 		for (int32 f = 0; f < 10; f++) {
 			bool   isSet = false;
-			int32 flag  = b->gameFlags[f];
+			GameFlag flag  = b->gameFlags[f];
 
 			if (flag <= 0)
 				isSet = _scene->vm()->isGameFlagNotSet(flag); // -flag
@@ -207,7 +207,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		ambientSounds[s].field_14 = stream->readSint32LE();
 
 		for (int32 i = 0; i < 6; i++)
-			ambientSounds[s].flagNum[i] = stream->readSint32LE();
+			ambientSounds[s].flagNum[i] = (GameFlag)stream->readSint32LE();
 
 		ambientSounds[s].x = stream->readSint32LE();
 		ambientSounds[s].y = stream->readSint32LE();
@@ -253,7 +253,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		barrier.flags2	 = stream->readSint32LE();
 
 		for (i = 0; i < 10; i++)
-			barrier.gameFlags[i] = stream->readSint32LE();
+			barrier.gameFlags[i] = (GameFlag)stream->readSint32LE();
 
 		barrier.field_B4	  = stream->readSint32LE();
 		barrier.tickCount	  = stream->readSint32LE();

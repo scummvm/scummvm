@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_GRAPHICS_H_
-#define ASYLUM_GRAPHICS_H_
+#ifndef ASYLUM_GRAPHICS_H
+#define ASYLUM_GRAPHICS_H
 
 #include "common/array.h"
 #include "graphics/surface.h"

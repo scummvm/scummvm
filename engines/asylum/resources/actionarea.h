@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_ACTIONAREA_H_
-#define ASYLUM_ACTIONAREA_H_
+#ifndef ASYLUM_ACTIONAREA_H
+#define ASYLUM_ACTIONAREA_H
 
 #include "common/array.h"
 
@@ -60,4 +60,4 @@ public:
 
 } // end of namespace Asylum
 
-#endif /* ASYLUM_ACTIONAREA_H_ */
+#endif /* ASYLUM_ACTIONAREA_H */

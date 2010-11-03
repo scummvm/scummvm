@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_CURSOR_H_
-#define ASYLUM_CURSOR_H_
+#ifndef ASYLUM_CURSOR_H
+#define ASYLUM_CURSOR_H
 
 #include "asylum/system/graphics.h"
 

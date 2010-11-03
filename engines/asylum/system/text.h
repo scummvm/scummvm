@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_TEXT_H_
-#define ASYLUM_TEXT_H_
+#ifndef ASYLUM_TEXT_H
+#define ASYLUM_TEXT_H
 
 #include "asylum/system/screen.h"
 #include "asylum/respack.h"

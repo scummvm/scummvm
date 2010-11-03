@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_SPEECH_H_
-#define ASYLUM_SPEECH_H_
+#ifndef ASYLUM_SPEECH_H
+#define ASYLUM_SPEECH_H
 
 #include "asylum/respack.h"
 #include "asylum/views/scene.h"
