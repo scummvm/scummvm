@@ -125,10 +125,9 @@ public:
 
 	/**
 	 * This is the global tick counter.
-	 *
-	 * TODO rename?
 	 */
-	uint32 tempTick07;
+	uint32 globalTickValue;
+	uint32 globalTickValue_2;
 
 	// Game
 	Encounter *encounter() { return _encounter; }

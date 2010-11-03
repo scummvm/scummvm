@@ -72,6 +72,8 @@ public:
 	int32 getDelayedSceneIndex() const { return _delayedSceneIndex; }
 	void setDelayedSceneIndex(int32 val) { _delayedSceneIndex = val; }
 
+	bool isProcessingSkipped() { return _skipProcessing; }
+
 private:
 	enum BarrierEnableType {
 		kBarrierEnableType0,

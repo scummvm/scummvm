@@ -173,7 +173,7 @@ void Scene::initialize() {
 
 	startMusic();
 
-	_vm->tempTick07 = 1;
+	_vm->globalTickValue = 1;
 
 	// TODO sceneRectChangedFlag = 1;
 
