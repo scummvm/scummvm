@@ -131,13 +131,13 @@ public:
 	uint32 tempTick07;
 
 	// Game
-	Encounter *encouter() { return _encounter; }
-	MainMenu  *menu()     { return _mainMenu; }
-	Scene     *scene()    { return _scene; }
-	Screen    *screen()   { return _screen; }
-	Sound     *sound()    { return _sound; }
-	Text      *text()     { return _text; }
-	Video     *video()    { return _video; }
+	Encounter *encounter() { return _encounter; }
+	MainMenu  *menu()      { return _mainMenu; }
+	Scene     *scene()     { return _scene; }
+	Screen    *screen()    { return _screen; }
+	Sound     *sound()     { return _sound; }
+	Text      *text()      { return _text; }
+	Video     *video()     { return _video; }
 
 	// Flags
 	void setGameFlag(GameFlag flag);

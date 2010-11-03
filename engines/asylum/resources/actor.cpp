@@ -24,6 +24,7 @@
  */
 
 #include "asylum/resources/actor.h"
+#include "asylum/resources/encounters.h"
 #include "asylum/resources/worldstats.h"
 
 #include "asylum/system/screen.h"
@@ -35,18 +36,125 @@
 
 namespace Asylum {
 
-Actor::Actor(Scene *scene, ActorIndex index) : _scene(scene), _index(index), _currentWalkArea(NULL), _graphic(NULL) {
-	currentAction    = 0;
+Actor::Actor(Scene *scene, ActorIndex index) : _scene(scene), _index(index) {
 
-	// TODO initialize other class variables
+	// Update private variables
+	_actorUpdateCounter = 0;
+	_enableFromStatus7 = false;
 }
 
 Actor::~Actor() {
-	delete _graphic;
 
-	// free _resources?
+
+	// Zero passed pointers
+	_scene = NULL;
 }
 
+/////////////////////////////////////////////////////////////////////////
+// Loading
+//////////////////////////////////////////////////////////////////////////
+void Actor::load(Common::SeekableReadStream *stream) {
+	if (!stream)
+		error("[Actor::load] invalid stream");
+
+	x                 = stream->readSint32LE();
+	y                 = stream->readSint32LE();
+	_resourceId       = stream->readSint32LE();
+	_field_C          = stream->readSint32LE();
+	_frameNumber      = stream->readSint32LE();
+	_frameCount       = stream->readSint32LE();
+	x1                = stream->readSint32LE();
+	y1                = stream->readSint32LE();
+	x2                = stream->readSint32LE();
+	y2                = stream->readSint32LE();
+
+	_boundingRect.left   = stream->readSint32LE() & 0xFFFF;
+	_boundingRect.top    = stream->readSint32LE() & 0xFFFF;
+	_boundingRect.right  = stream->readSint32LE() & 0xFFFF;
+	_boundingRect.bottom = stream->readSint32LE() & 0xFFFF;
+
+	_direction  = stream->readSint32LE();
+	_field_3C   = stream->readSint32LE();
+	_status     = (ActorStatus)stream->readSint32LE();
+	_field_44   = stream->readSint32LE();
+	_priority   = stream->readSint32LE();
+	flags       = stream->readSint32LE();
+	_field_50   = stream->readSint32LE();
+	_field_54   = stream->readSint32LE();
+	_field_58   = stream->readSint32LE();
+	_field_5C   = stream->readSint32LE();
+	_field_60   = stream->readSint32LE();
+	_actionIdx3 = stream->readSint32LE();
+
+	// TODO skip field_68 till field_617
+	stream->skip(0x5B0);
+
+	for (int32 i = 0; i < 8; i++)
+		_reaction[i] = stream->readSint32LE();
+
+	_field_638     = stream->readSint32LE();
+	_walkingSound1 = stream->readSint32LE();
+	_walkingSound2 = stream->readSint32LE();
+	_walkingSound3 = stream->readSint32LE();
+	_walkingSound4 = stream->readSint32LE();
+	_field_64C     = stream->readSint32LE();
+	_field_650     = stream->readSint32LE();
+
+	for (int32 i = 0; i < 55; i++)
+		_graphicResourceIds[i] = stream->readSint32LE();
+
+	stream->read(_name, sizeof(_name));
+
+	for (int32 i = 0; i < 20; i++)
+		_field_830[i] = stream->readSint32LE();
+
+	for (int32 i = 0; i < 20; i++)
+		_field_880[i] = stream->readSint32LE();
+
+	for (int32 i = 0; i < 20; i++)
+		_field_8D0[i] = stream->readSint32LE();
+
+	_actionIdx2 = stream->readSint32LE();
+	_field_924  = stream->readSint32LE();
+	_tickValue = stream->readSint32LE();
+	_field_92C  = stream->readSint32LE();
+	actionType     = stream->readSint32LE();
+	_field_934  = stream->readSint32LE();
+	_field_938  = stream->readSint32LE();
+	_soundResourceId = stream->readSint32LE();
+	_numberValue01 = stream->readSint32LE();
+	_field_944  = stream->readSint32LE();
+	_field_948  = stream->readSint32LE();
+	_field_94C  = stream->readSint32LE();
+	_numberFlag01 = stream->readSint32LE();
+	_numberStringWidth  = stream->readSint32LE();
+	_numberStringX  = stream->readSint32LE();
+	_numberStringY  = stream->readSint32LE();
+	stream->read(_numberString01, sizeof(_numberString01));
+	_field_964  = stream->readSint32LE();
+	_field_968  = stream->readSint32LE();
+	_field_96C  = stream->readSint32LE();
+	_field_970  = stream->readSint32LE();
+	_field_974  = stream->readSint32LE();
+	_field_978  = stream->readSint32LE();
+	_actionIdx1 = stream->readSint32LE();
+	_field_980  = stream->readSint32LE();
+	_field_984  = stream->readSint32LE();
+	_field_988  = stream->readSint32LE();
+	_field_98C  = stream->readSint32LE();
+	_field_990  = stream->readSint32LE();
+	_field_994  = stream->readSint32LE();
+	_field_998  = stream->readSint32LE();
+	_field_99C  = stream->readSint32LE();
+	_field_9A0  = stream->readSint32LE();
+
+	// TODO skip field_980 till field_9A0
+	stream->skip(0x24);
+}
+
+/////////////////////////////////////////////////////////////////////////
+// Visibility
+//////////////////////////////////////////////////////////////////////////
 void Actor::setVisible(bool value) {
 	if (value)
 		flags |= kActorFlagVisible;
@@ -56,12 +164,522 @@ void Actor::setVisible(bool value) {
 	stopSound();
 }
 
-/*
-void Actor::setDirection(int32 dir) {
-	direction = dir;
-	setActionByIndex(dir);
+/////////////////////////////////////////////////////////////////////////
+// Update & status
+//////////////////////////////////////////////////////////////////////////
+
+
+void Actor::update() {
+	if (!isVisible())
+		return;
+
+	switch (_status) {
+	default:
+		break;
+
+	case kActorStatus16:
+		if (_scene->worldstats()->numChapter == 2) {
+			updateStatus16_Chapter2();
+		} else if (_scene->worldstats()->numChapter == 11 && _index == _scene->getPlayerActorIndex()) {
+			updateStatus16_Chapter11();
+		}
+		break;
+
+	case kActorStatus17:
+		if (_scene->worldstats()->numChapter == 2) {
+			if (_index > 12) {
+				if (_frameNumber <= _frameCount - 1) {
+					++_frameNumber;
+				} else {
+					setVisible(false);
+					_scene->getActor(_index + 9)->setVisible(false);
+				}
+			}
+
+			if (_index == 11) {
+				if (_frameNumber <= _frameCount - 1) {
+					// Looks like a simple check using the counter, since it doesn't seem to be used anywhere else
+					if (_actorUpdateCounter <= 0) {
+						++_actorUpdateCounter;
+					} else {
+						_actorUpdateCounter = 0;
+						++_frameNumber;
+					}
+				} else {
+					if (_scene->vm()->isGameFlagSet(kGameFlag556)) {
+						Sound *sound  = _scene->vm()->sound();
+						Actor *player = _scene->getActor();
+
+						sound->playSpeech(kResourceSpeech_453);
+						setVisible(false);
+
+						player->updateStatus(kActorStatus3);
+						player->setResourceId(player->getResourcesId(35));
+						player->setDirection(4);
+						GraphicResource *resource = new GraphicResource(_scene->getResourcePack(), player->getResourceId());
+						player->setFrameCount(resource->getFrameCount());
+						delete resource;
+
+						_scene->getCursor()->hide();
+						_scene->getActor(0)->updateFromDirection(4);
+
+						// Queue script
+						_scene->actions()->queueScript(_scene->worldstats()->getActionAreaById(2696)->scriptIndex, _scene->getPlayerActorIndex());
+
+						_scene->vm()->setGameFlag(kGameFlag279);
+						_scene->vm()->setGameFlag(kGameFlag368);
+
+						player->setFrameNumber(0);
+						_scene->getActor(0)->setTickValue(_scene->vm()->getTick());
+
+						if (sound->isCacheOk())
+							sound->playMusic(_scene->getResourcePack(), kResourceMusic_80020001);
+
+						_scene->worldstats()->musicCurrentResourceId = 1;
+
+						if (sound->isPlaying(_scene->worldstats()->soundResourceIds[7]))
+							sound->stopSound(_scene->worldstats()->soundResourceIds[7]);
+
+						if (sound->isPlaying(_scene->worldstats()->soundResourceIds[6]))
+							sound->stopSound(_scene->worldstats()->soundResourceIds[6]);
+
+						if (sound->isPlaying(_scene->worldstats()->soundResourceIds[5]))
+							sound->stopSound(_scene->worldstats()->soundResourceIds[5]);
+
+						_scene->vm()->setGameFlag(kGameFlag1131);
+					} else {
+						updateGraphicData(25);
+						_scene->vm()->setGameFlag(kGameFlag556);
+					}
+				}
+			}
+
+			if (_index == _scene->getPlayerActorIndex()) {
+				if (_frameNumber <= _frameCount - 1) {
+					++_frameNumber;
+				} else {
+					_scene->vm()->clearGameFlag(kGameFlag239);
+					_scene->getActor(10)->updateStatus(kActorStatus14);
+					setVisible(false);
+					_scene->vm()->setGameFlag(kGameFlag238);
+
+					// Queue script
+					_scene->actions()->queueScript(_scene->worldstats()->getActionAreaById(1000)->scriptIndex, _scene->getPlayerActorIndex());
+				}
+			}
+
+		} else if (_scene->worldstats()->numChapter == 11) {
+			if (_index == _scene->getPlayerActorIndex()) {
+				if (_frameNumber <= _frameCount - 1)
+					++_frameNumber;
+				else
+					_scene->resetActor0();
+			}
+
+			if (_index >= 10)
+				updateStatus17_Chapter2();
+		}
+		break;
+
+	case kActorStatus15:
+		if (_scene->worldstats()->numChapter == 2) {
+			if (_index > 12)
+				updateStatus15_Chapter2();
+
+			if (_index == _scene->getPlayerActorIndex())
+				updateStatus15_Chapter2_Player();
+
+			if (_index == 11)
+				updateStatus15_Chapter2_Actor11();
+
+		} else if (_scene->worldstats()->numChapter == 11) {
+			if (_index >= 10 && _index < 16)
+				updateStatus15_Chapter11();
+
+			if (_index == _scene->getPlayerActorIndex())
+				updateStatus15_Chapter11_Player();
+		}
+		break;
+
+	case kActorStatus18:
+		if (_scene->worldstats()->numChapter == 2) {
+			if (_index > 12)
+				updateStatus18_Chapter2();
+
+			if (_index == 11)
+				updateStatus18_Chapter2_Actor11();
+		}
+		break;
+
+	case kActorStatusDisabled:
+		_frameNumber = (_frameNumber + 1) % _frameCount;
+
+		if (_scene->vm()->getTick() - _tickValue > 300) {
+			if (_scene->vm()->getRandom(100) < 50) {
+				if (!_scene->vm()->sound()->soundResourceId || !_scene->vm()->sound()->isPlaying(_scene->vm()->sound()->soundResourceId)) {
+					if (isDefaultDirection(10))
+						updateStatus(kActorStatus9);
+				}
+			}
+			_tickValue = _scene->vm()->getTick();
+		}
+		break;
+
+	case kActorStatus12:
+		if (_scene->worldstats()->numChapter == 2) {
+			if (_index > 12)
+				updateStatus12_Chapter2();
+
+			if (_index == 11)
+				updateStatus12_Chapter2_Actor11();
+
+			return;
+		} else if (_scene->worldstats()->numChapter == 11) {
+			switch (_index)	{
+			default:
+				break;
+
+			case 1:
+				updateStatus12_Chapter11_Actor1();
+				return;
+
+			case 10:
+			case 11:
+			case 12:
+			case 13:
+			case 14:
+			case 15:
+				updateStatus12_Chapter11();
+				return;
+
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+				return;
+			}
+		}
+		// Fallback to next case
+
+	case kActorStatus1:
+		error("[Actor::update] kActorStatus1 / kActorStatus12 case not implemented");
+		break;
+
+	case kActorStatus2:
+	case kActorStatus13:
+		// TODO: do actor direction
+		error("[Actor::update] kActorStatus2 / kActorStatus13 case not implemented");
+		break;
+
+	case kActorStatus3:
+	case kActorStatus19:
+		updateStatus3_19();
+		break;
+
+	case kActorStatus7:
+		if (_enableFromStatus7) {
+			_enableFromStatus7 = false;
+			updateStatus(kActorStatusEnabled);
+		}
+		break;
+
+	case kActorStatusEnabled:
+		if (_field_944 != 5)
+			updateStatusEnabled();
+		break;
+
+	case kActorStatus14:
+		void updateStatus14();
+		break;
+
+	case kActorStatus21:
+		void updateStatus21();
+		break;
+
+	case kActorStatus9:
+		void updateStatus9();
+		break;
+
+	case kActorStatus6:
+	case kActorStatus10:
+		_frameNumber = (_frameNumber + 1) % _frameCount;
+		break;
+
+	case kActorStatus8:
+		if (_scene->vm()->encounter()->getFlag(kEncounterFlag2)
+		 || !_soundResourceId
+		 || _scene->vm()->sound()->isPlaying(_soundResourceId)) {
+			_frameNumber = (_frameNumber + 1) % _frameCount;
+		} else {
+			updateStatus(kActorStatusEnabled);
+			_soundResourceId = kResourceNone;
+		}
+		break;
+	}
+
+	if (_soundResourceId && _scene->vm()->sound()->isPlaying(_soundResourceId))
+		setVolume();
+
+	if (_index != _scene->getPlayerActorIndex() && _scene->worldstats()->numChapter != 9)
+		error("[Actor::update] call to actor sound functions missing!");
+
+	updateDirection();
+
+	if (_field_944 != 5)
+		updateFinish();
 }
-*/
+
+
+void Actor::updateStatus(ActorStatus actorStatus) {
+	switch (actorStatus) {
+	default:
+		break;
+
+	case kActorStatus1:
+	case kActorStatus12:
+		if ((_scene->worldstats()->numChapter == 2
+		 && _index == _scene->getPlayerActorIndex() && (_status == kActorStatus18 || _status == kActorStatus16 || kActorStatus17))
+		 || (_status != kActorStatusEnabled && _status != kActorStatus9 && _status != kActorStatus14 && _status != kActorStatus15 && _status != kActorStatus18))
+			return;
+
+		updateGraphicData(0);
+
+		// Force status in some cases
+		if (_status == kActorStatus14 || _status == kActorStatus15 || _status == kActorStatus18) {
+			_status = kActorStatus12;
+			return;
+		}
+		break;
+
+	case kActorStatus2:
+	case kActorStatus13:
+		updateGraphicData(0);
+		break;
+
+	case kActorStatus3:
+	case kActorStatus19:
+		if (!strcmp(_name, "Big Crow"))
+			_status = kActorStatusEnabled;
+		break;
+
+	case kActorStatusEnabled:
+	case kActorStatus6:
+	case kActorStatus14:
+		updateGraphicData(5);
+		break;
+
+	case kActorStatusDisabled:
+		updateGraphicData(15);
+		_resourceId = _graphicResourceIds[(_direction > 4 ? 8 - _direction : _direction) + 15];
+
+		// TODO set word_446EE4 to -1. This global seems to be used with screen blitting
+		break;
+
+	case kActorStatus7:
+		if (_scene->worldstats()->numChapter == 2 && _index == 10 && _scene->vm()->isGameFlagSet(kGameFlag279)) {
+			Actor *actor = _scene->getActor(0);
+			actor->x1 = x2 + x1 - actor->x2;
+			actor->y1 = y2 + y1 - actor->y2;
+			actor->setDirection(4);
+
+			_scene->setPlayerActorIndex(0);
+
+			// Hide this actor and the show the other one
+			setVisible(false);
+			actor->setVisible(true);
+
+			_scene->vm()->clearGameFlag(kGameFlag279);
+
+			_scene->getCursor()->show();
+		}
+		break;
+
+	case kActorStatus8:
+	case kActorStatus10:
+	case kActorStatus17:
+		updateGraphicData(20);
+		break;
+
+	case kActorStatus9:
+		if (_scene->vm()->encounter()->getFlag(kEncounterFlag2))
+			return;
+
+		if (_scene->vm()->getRandomBit() == 1 && isDefaultDirection(15))
+			updateGraphicData(15);
+		else
+			updateGraphicData(10);
+		break;
+
+	case kActorStatus15:
+	case kActorStatus16:
+		updateGraphicData(actorStatus == kActorStatus15 ? 10 : 15);
+		break;
+
+	case kActorStatus18:
+		if (_scene->worldstats()->numChapter == 2) {
+			GraphicResource *resource = new GraphicResource();
+			_frameNumber = 0;
+
+			if (_index > 12)
+				_resourceId = _graphicResourceIds[_direction + 30];
+
+			if (_scene->getPlayerActorIndex() == _index) {
+				resource->load(_scene->getResourcePack(), _resourceId);
+				_frameNumber = resource->getFrameCount() - 1;
+			}
+
+			if (_index == 11)
+				_resourceId = _graphicResourceIds[_scene->getGlobalDirection() > 4 ? 8 - _scene->getGlobalDirection() : _scene->getGlobalDirection()];
+
+			// Reload the graphic resource if the resource ID has changed
+			if (resource->getResourceId() != _resourceId)
+				resource->load(_scene->getResourcePack(), _resourceId);
+
+			_frameCount = resource->getFrameCount();
+		}
+		break;
+	}
+
+	_status = actorStatus;
+}
+
+/////////////////////////////////////////////////////////////////////////
+// Direction & position
+//////////////////////////////////////////////////////////////////////////
+
+void Actor::updateDirection() {
+	if(_field_970) {
+		// TODO
+		// This update is only ever done if action script 0x5D is called, and
+		// the resulting switch sets field_970. Investigate 401A30 for further
+		// details
+		error("[Actor::updateDirection] logic not implemented");
+	}
+}
+
+void Actor::updateFromDirection(ActorDirection actorDirection) {
+	_direction = actorDirection;
+
+	if (_field_944 == 5)
+		return;
+
+	switch (_status) {
+	default:
+		break;
+
+	case kActorStatusDisabled:
+	case kActorStatusEnabled:
+	case kActorStatus14: {
+		_resourceId = _graphicResourceIds[(actorDirection > 4 ? 8 - actorDirection : actorDirection) + 5];
+
+		// FIXME this seems kind of wasteful just to grab a frame count
+		GraphicResource *gra = new GraphicResource(_scene->getResourcePack(), _resourceId);
+		_frameCount = gra->getFrameCount();
+		delete gra;
+		}
+		break;
+
+	case kActorStatus18:
+		if (_scene->worldstats()->numChapter == 2) {
+			if (_index == 11) { // we are actor 11
+				if (actorDirection > 4)
+					_resourceId = _graphicResourceIds[8 - actorDirection];
+				else
+					_resourceId = _graphicResourceIds[actorDirection];
+			}
+		}
+		break;
+
+	case kActorStatus1:
+	case kActorStatus2:
+	case kActorStatus12:
+		_resourceId = _graphicResourceIds[(actorDirection > 4 ? 8 - actorDirection : actorDirection)];
+		break;
+
+	case kActorStatus8:
+		_resourceId = _graphicResourceIds[(actorDirection > 4 ? 8 - actorDirection : actorDirection) + 20];
+		break;
+	}
+}
+
+void Actor::faceTarget(int32 targetId, DirectionFrom from) {
+	debugC(kDebugLevelActor, "[Actor::faceTarget] Facing target %d using direction from %d", targetId, from);
+
+	int32 newX, newY;
+
+	switch (from) {
+	default:
+		error("[Actor::faceTarget] Invalid direction input: %d (should be 0-3)", from);
+		return;
+
+	case kDirectionFromBarrier: {
+		int32 barrierIndex = _scene->worldstats()->getBarrierIndexById(targetId);
+		if (barrierIndex == -1) {
+			warning("[Actor::faceTarget] No Barrier found for id %d", targetId);
+			return;
+		}
+
+		Barrier *barrier = _scene->worldstats()->getBarrierByIndex(barrierIndex);
+
+		GraphicResource *resource = new GraphicResource(_scene->getResourcePack(), barrier->resourceId);
+		GraphicFrame *frame = resource->getFrame(barrier->frameIdx);
+
+		newX = (frame->surface.w >> 1) + barrier->x;
+		newY = (frame->surface.h >> 1) + barrier->y;
+
+		delete resource;
+		}
+		break;
+
+	case kDirectionFromPolygons: {
+		int32 actionIndex = _scene->worldstats()->getActionAreaIndexById(targetId);
+		if (actionIndex == -1) {
+			warning("[Actor::faceTarget] No ActionArea found for id %d", targetId);
+			return;
+		}
+
+		PolyDefinitions *polygon = &_scene->polygons()->entries[_scene->worldstats()->actions[actionIndex]->polyIdx];
+
+		newX = polygon->boundingRect.left + (polygon->boundingRect.right  - polygon->boundingRect.left) / 2;
+		newY = polygon->boundingRect.top  + (polygon->boundingRect.bottom - polygon->boundingRect.top)  / 2;
+		}
+		break;
+
+	case kDirectionFromActor:
+		newX = x2 + x1;
+		newY = y2 + y1;
+		break;
+
+	case kDirectionFromParameters:
+		newX = newY = targetId;
+		break;
+	}
+
+	updateFromDirection(getDirection(x2 + x1, y2 + y1, newX, newY));
+}
+
+void Actor::setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame) {
+	x1 = newX - x2;
+	y1 = newY - y2;
+
+	if (_direction != 8)
+		updateFromDirection(newDirection);
+
+	if (frame > 0)
+		_frameNumber = frame;
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+// Misc
+//////////////////////////////////////////////////////////////////////////
+void Actor::stopSound() {
+	if (_soundResourceId && _scene->vm()->sound()->isPlaying(_soundResourceId))
+		_scene->vm()->sound()->stopSound(_soundResourceId);
+}
 
 void Actor::setRawResources(uint8 *data) {
 	byte *dataPtr = data;
@@ -71,286 +689,191 @@ void Actor::setRawResources(uint8 *data) {
 		dataPtr += 4;
 	}
 }
-//
-//void Actor::setAction(int32 action) {
-//	if (action == currentAction)
-//		return;
-//
-//	currentAction = action;
-//
-//	delete _graphic;
-//	int32 act = (action < 100) ? action : action - 100;
-//
-//	_graphic = new GraphicResource(_scene->getResourcePack(), _resources[act]);
-//
-//	// Flip horizontally if necessary
-//	if (currentAction > 100) {
-//		for (uint32 i = 0; i < _graphic->getFrameCount(); i++) {
-//			GraphicFrame *frame = _graphic->getFrame(i);
-//			byte *buffer = (byte *)frame->surface.pixels;
-//
-//			for (int32 tmpY = 0; tmpY < frame->surface.h; tmpY++) {
-//				int32 w = frame->surface.w / 2;
-//				for (int32 tmpX = 0; tmpX < w; tmpX++) {
-//					SWAP(buffer[tmpY * frame->surface.pitch + tmpX],
-//					     buffer[tmpY * frame->surface.pitch + frame->surface.w - 1 - tmpX]);
-//				}
-//			}
-//		}
-//	}
-//
-//	frameNum = 0;
-//}
-//
-//void Actor::setActionByIndex(int32 index) {
-//	setAction(_resources[index] & 0xFFFF);
-//}
 
-GraphicFrame *Actor::getFrame() {
-	assert(_graphic);
+//////////////////////////////////////////////////////////////////////////
+// Unknown methods
+//////////////////////////////////////////////////////////////////////////
 
-	GraphicFrame *frame = _graphic->getFrame(frameNum);
+bool Actor::process(int32 x, int32 y) {
+	error("[Actor::process] not implemented!");
+}
 
-	if (frameNum < _graphic->getFrameCount() - 1) {
-		frameNum++;
-	} else {
-		frameNum = 0;
+void Actor::processStatus(int32 x, int32 y, bool doSpeech) {
+	if (process(x, y)) {
+		if (_status <= kActorStatus11)
+			updateStatus(kActorStatus2);
+		else
+			updateStatus(kActorStatus13);
+	} else if (doSpeech) {
+		_scene->playSpeech(1);
+	}
+}
+
+void Actor::process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 param8, int32 param9) {
+	error("[Actor::process_401830] not implemented!");
+}
+
+bool Actor::process_408B20(Common::Point *point, ActorDirection direction, int count, bool hasDelta) {
+	error("[Actor::process_408B20] not implemented!");
+}
+
+void Actor::process_41BC00(int32 reactionIndex, int32 numberValue01Add) {
+	error("[Actor::process_41BC00] not implemented!");
+}
+
+void Actor::process_41BCC0(int32 reactionIndex, int32 numberValue01Substract) {
+	error("[Actor::process_41BC00] not implemented!");
+}
+
+bool Actor::process_41BDB0(int32 reactionIndex, bool testNumberValue01) {
+	error("[Actor::process_41BC00] not implemented!");
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+// Update methods
+//////////////////////////////////////////////////////////////////////////
+
+void Actor::updateStatus3_19() {
+	error("[Actor::updateStatus3_19] not implemented!");
+}
+
+void Actor::updateStatusEnabled() {
+	// TODO make sure this is right
+	_frameNumber = (_frameNumber + 1) % _frameCount;
+	if (_scene->vm()->getTick() - _tickValue > 300) {
+		// TODO
+		// Check if the actor's name is "Crow"?
+		if (_scene->vm()->getRandom(100) < 50) {
+			// TODO
+			// Check if soundResourceId04 is assigned, and if so,
+			// if it's playing
+			// If true, check characterSub407260(10)
+			// and if that's true, do characterDirection(9)
+		}
 	}
 
-	// HACK: frame 1 of the "walk west" animation is misplaced
-	if ((currentAction == kWalkW || currentAction == kWalkE) && frameNum == 1)
-		frameNum++;
-
-	return frame;
-}
-//
-//void Actor::drawActorAt(int32 curX, int32 curY) {
-//	GraphicFrame *frame = getFrame();
-//
-//	WorldStats *ws = _scene->worldstats();
-//
-//	_scene->vm()->screen()->copyRectToScreenWithTransparency(
-//	    ((byte *)frame->surface.pixels),
-//	    frame->surface.w,
-//	    curX - ws->targetX,
-//	    curY - ws->targetY,
-//	    frame->surface.w,
-//	    frame->surface.h);
-//	x = curX;
-//	y = curY;
-//}
-//
-//void Actor::drawActor() {
-//	GraphicFrame *frame = getFrame();
-//	WorldStats *ws = _scene->worldstats();
-//
-//	_scene->vm()->screen()->copyToBackBufferWithTransparency(
-//	    ((byte *)frame->surface.pixels),
-//	    frame->surface.w,
-//	    x - ws->targetX,
-//	    y - frame->surface.h - ws->targetY,
-//	    frame->surface.w,
-//	    frame->surface.h);
-//}
-//
-//void Actor::setWalkArea(ActionArea *target) {
-//	if (_currentWalkArea != target) {
-//		// FIXME
-//		//_scene->actions()->setScriptByIndex(target->actionListIdx1);
-//		_currentWalkArea = target;
-//		debugC(kDebugLevelScripts, "%s", target->name);
-//	}
-//}
-//
-//void Actor::walkTo(int32 curX, int32 curY) {
-//	int32 newAction = currentAction;
-//	WorldStats *ws = _scene->worldstats();
-//
-//	// step is the increment by which to move the
-//	// actor in a given direction
-//	int32 step = 2;
-//
-//	int32 newX = x;
-//	int32 newY = y;
-//	bool   done = false;
-//
-//	// Walking left...
-//	if (curX < x) {
-//		newAction = kWalkW;
-//		newX -= step;
-//		if (ABS((int32)curY - (int32)y) <= 30)
-//			done = true;
-//	}
-//
-//	// Walking right...
-//	if (curX > x) {
-//		newAction = kWalkE;
-//		newX += step;
-//		if (ABS((int32)curY - (int32)y) <= 30)
-//			done = true;
-//	}
-//
-//	// Walking up...
-//	if (curY < y && !done) {
-//		if (newAction != currentAction && newAction == kWalkW && x - curX > 30)
-//			newAction = kWalkNW;	// up left
-//		else if (newAction != currentAction && newAction == kWalkE && curX - x > 30)
-//			newAction = kWalkNE;	// up right
-//		else
-//			newAction = kWalkN;
-//
-//		newY -= step;
-//	}
-//
-//	// Walking down...
-//	if (curY > y && !done) {
-//		if (newAction != currentAction && newAction == kWalkW && x - curX > 30)
-//			newAction = kWalkSW;	// down left
-//		else if (newAction != currentAction && newAction == kWalkE && curX - x > 30)
-//			newAction = kWalkSE;	// down right
-//		else
-//			newAction = kWalkS;
-//
-//		newY += step;
-//	}
-//
-//	// DEBUGGING
-//	// Show registration point32 from which we're calculating the
-//	// actor's barrier hit-test
-//	Graphics::Surface surface;
-//	surface.create(5, 5, 1);
-//	Common::Rect rect;
-//
-//	rect.top    = newY;
-//	rect.left   = newX;
-//	rect.right  = newX;
-//	rect.bottom = newY + 4;
-//	surface.frameRect(rect, 0x33);
-//
-//	_scene->vm()->screen()->copyRectToScreen((byte*)surface.pixels, 5, newX - ws->targetX, newY - ws->targetY, 5, 5);
-//
-//	surface.free();
-//
-//	// TODO Basic pathfinding implementation is done. Now it needs to be refined to
-//	// actuallcurY make it playable. The logic is currently VERY rigid, so you have to have
-//	// the actor at the PERFECT spot to be able to intersect a walk region and move to
-//	// the next one.
-//
-//	int32 availableAreas[5];
-//	int32 areaPtr = 0;
-//	ActionArea *area;
-//
-//	// Check what valid walk region(s) is/are currently available
-//	for (int32 a = 0; a < ws->numActions; a++) {
-//		if (ws->actions[a]->actionType == 0) {
-//			area = ws->actions[a];
-//			PolyDefinitions poly = _scene->polygons()->entries[area->polyIdx];
-//			if (poly.contains(x, y)) {
-//				availableAreas[areaPtr] = a;
-//				areaPtr++;
-//
-//				setWalkArea(ws->actions[a]);
-//
-//				if (areaPtr > 5)
-//					error("More than 5 overlapping walk regions found. Increase buffer");
-//
-//			}
-//		}
-//	}
-//
-//	// Check that we can walk in the current direction within any of the available
-//	// walkable regions
-//	for (int32 i = 0; i < areaPtr; i++) {
-//		area = ws->actions[availableAreas[i]];
-//		PolyDefinitions *region = &_scene->polygons()->entries[area->polyIdx];
-//		if (region->contains(newX, newY)) {
-//			x = newX;
-//			y = newY;
-//			break;
-//		}
-//	}
-//
-//	setAction(newAction);
-//	drawActor();
-//}
-
-void Actor::stopSound() {
-	if (soundResourceId && _scene->vm()->sound()->isPlaying(soundResourceId))
-		_scene->vm()->sound()->stopSound(soundResourceId);
-}
-
-void Actor::setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame) {
-	x1 = newX - x2;
-	y1 = newY - y2;
-
-	if (direction != 8) {
-		// TODO implement the propert character_setDirection() functionality
-		setDirection(newDirection);
-	}
-	if (frame > 0)
-		frameNum = frame;
-}
-
-void Actor::faceTarget(int32 targetId, DirectionFrom targetType) {
-	int32 newX2, newY2;
-
-	printf("faceTarget: id %d type %d\n", targetId, targetType);
-
-	if (targetType) {
-		if (targetType == 1) {
-			int32 actionIdx = _scene->worldstats()->getActionAreaIndexById(targetId);
-			if (actionIdx == -1) {
-				warning("No ActionArea found for id %d", targetId);
-				return;
-			}
-
-			int32 polyIdx = _scene->worldstats()->actions[actionIdx]->polyIdx;
-			PolyDefinitions *poly = &_scene->polygons()->entries[polyIdx];
-
-			newX2 = poly->boundingRect.left + (poly->boundingRect.right - poly->boundingRect.left) / 2;
-			newY2 = poly->boundingRect.top + (poly->boundingRect.bottom - poly->boundingRect.top) / 2;
-		} else {
-			if (targetType == 2) {
-				newX2 = x2 + x1;
-				newY2 = y2 + y1;
-			} else {
-				newX2 = newY2 = targetId;
+	// if act == getActor()
+	if (_scene->vm()->tempTick07) {
+		if (_scene->vm()->getTick() - _scene->vm()->tempTick07 > 500) {
+			if (_scene->vm()->isGameFlagNotSet(kGameFlagScriptProcessing)) { // processing action list
+				if (isVisible()) {
+					// if some_encounter_flag
+					// if !soundResourceId04
+					if (_scene->vm()->getRandom(100) < 50) {
+						if (_scene->getSceneIndex() == 13) {
+							; // sub414810(507)
+						} else {
+							; // sub4146d0(4)
+						}
+					}
+				}
 			}
 		}
-	} else {
-		int32 barrierIdx = _scene->worldstats()->getBarrierIndexById(targetId);
-		if (barrierIdx == -1) {
-			warning("No Barrier found for id %d", targetId);
-			return;
-		}
-
-		Barrier *barrier = _scene->worldstats()->getBarrierByIndex(barrierIdx);
-		GraphicResource *gra = new GraphicResource(_scene->getResourcePack(), barrier->resourceId);
-
-		// FIXME
-		// The original actually grabs the current frame of the target
-		// barrier. I'm wondering if that's unnecessary since I'm assuming
-		// the dimensions of each frame should be the same.
-		// Investigate, though I don't think it'll be necessary since
-		// what we're trying to accomplish is a character rotation calclulation,
-		// and a size difference of a few pixels "shouldn't" affect this
-		// too much
-		GraphicFrame *fra = gra->getFrame(0);
-		delete gra;
-
-		newX2 = (fra->surface.w >> 1) + barrier->x; // TODO (x/y + 1704 * barrier) (not sure what this is pointing to)
-		newY2 = (fra->surface.h >> 1) + barrier->y; // Check .text:004088A2 for more details
+		_tickValue = _scene->vm()->getTick();
 	}
-
-	int32 newAngle = getAngle(x2 + x1, y2 + y1, newX2, newY2);
-
-	printf("Angle calculated as %d\n", newAngle);
-
-	// TODO set player direction
-	//setDirection(newAngle);
+	// else
+	// TODO now there's something to do with the
+	// character's name and "Big Crow", or "Crow".
+	// Quite a bit of work to do yet, but it only seems to
+	// take effect when the character index doesn't equal
+	// the currentPlayerIndex (so I'm guessing this is a
+	// one off situation).
 }
 
-int32 Actor::getAngle(int32 ax1, int32 ay1, int32 ax2, int32 ay2) {
+void Actor::updateStatus9() {
+	error("[Actor::updateStatus9] not implemented!");
+}
+
+void Actor::updateStatus12_Chapter2() {
+	error("[Actor::updateStatus12_Chapter2] not implemented!");
+}
+
+void Actor::updateStatus12_Chapter2_Actor11() {
+	error("[Actor::updateStatus12_Chapter2_Actor11] not implemented!");
+}
+
+void Actor::updateStatus12_Chapter11_Actor1() {
+	error("[Actor::updateStatus12_Chapter11_Actor1] not implemented!");
+}
+
+void Actor::updateStatus12_Chapter11() {
+	error("[Actor::updateStatus12_Chapter11] not implemented!");
+}
+
+void Actor::updateStatus14() {
+	error("[Actor::updateStatus14] not implemented!");
+}
+
+void Actor::updateStatus15_Chapter2() {
+	error("[Actor::updateStatus15_Chapter2] not implemented!");
+}
+
+void Actor::updateStatus15_Chapter2_Player() {
+	error("[Actor::updateStatus15_Chapter2_Player] not implemented!");
+}
+
+void Actor::updateStatus15_Chapter2_Actor11() {
+	error("[Actor::updateStatus15_Chapter2_Actor11] not implemented!");
+}
+
+void Actor::updateStatus15_Chapter11() {
+	error("[Actor::updateStatus15_Chapter11] not implemented!");
+}
+
+void Actor::updateStatus15_Chapter11_Player() {
+	error("[Actor::updateStatus15_Chapter11_Player] not implemented!");
+}
+
+void Actor::updateStatus16_Chapter2() {
+	error("[Actor::updateStatus16_Chapter2] not implemented!");
+}
+
+void Actor::updateStatus16_Chapter11() {
+	error("[Actor::updateStatus16_Chapter11] not implemented!");
+}
+
+void Actor::updateStatus17_Chapter2() {
+	error("[Actor::updateStatus17_Chapter2] not implemented!");
+}
+
+void Actor::updateStatus18_Chapter2() {
+	error("[Actor::updateStatus18_Chapter2] not implemented!");
+}
+
+void Actor::updateStatus18_Chapter2_Actor11() {
+	error("[Actor::updateStatus18_Chapter2_Actor11] not implemented!");
+}
+
+void Actor::updateStatus21() {
+	error("[Actor::updateStatus21] not implemented!");
+}
+
+void Actor::updateFinish() {
+	error("[Actor::updateFinish] not implemented!");
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Misc
+//////////////////////////////////////////////////////////////////////////
+void Actor::setVolume() {
+	if (!_soundResourceId || !_scene->vm()->sound()->isPlaying(_soundResourceId))
+		return;
+
+	// Compute volume
+	int32 volume = Config.voiceVolume + _scene->vm()->sound()->calculateVolume(x2 + x1, y2 + y1, _field_968, 0);
+	if (volume < -10000)
+		volume = -10000;
+
+	_scene->vm()->sound()->setVolume(_soundResourceId, volume);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Helper methods
+//////////////////////////////////////////////////////////////////////////
+
+ActorDirection Actor::getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2) {
 	int32 v5 = (ax2 << 16) - (ax1 << 16);
 	int32 v6 = 0;
 	int32 v4 = (ay1 << 16) - (ay2 << 16);
@@ -407,7 +930,6 @@ int32 Actor::getAngle(int32 ax1, int32 ay1, int32 ax2, int32 ay2) {
 							if (v8 < 247 || v8 >= 292) {
 								if (v8 < 202 || v8 >= 247) {
 									error("getAngle returned a bad angle: %d.", v8);
-									result = ax1;
 								} else {
 									result = 3;
 								}
@@ -436,390 +958,18 @@ int32 Actor::getAngle(int32 ax1, int32 ay1, int32 ax2, int32 ay2) {
 	return result;
 }
 
-void Actor::updateDirection() {
-	if(field_970) {
-		// TODO
-		// This update is only ever done if action script 0x5D is called, and
-		// the resulting switch sets field_970. Investigate 401A30 for further
-		// details
-		error("[Actor::updateDirection] logic not implemented");
-	}
-}
-
-void Actor::updateStatus(ActorStatus actorStatus) {
-	switch (actorStatus) {
-	default:
-		break;
-
-	case kActorStatus1:
-	case kActorStatus12:
-		error("[Actor::updateStatus] not implemented for statuses 1 & 12");
-		// TODO check if sceneNumber == 2 && actorIndex == _playerActorInde
-		// && field_40 equals/doesn't equal a bunch of values,
-		// then set direction like other cases
-		break;
-
-	case kActorStatus2:
-	case kActorStatus13:
-		updateGraphicData(0);
-		break;
-
-	case kActorStatus3:
-	case kActorStatus19:
-		if (!strcmp(name, "Big Crow"))
-			status = kActorStatusEnabled;
-		break;
-
-	case kActorStatusEnabled:
-	case kActorStatus6:
-	case kActorStatus14:
-		updateGraphicData(5);
-		break;
-
-	case kActorStatusDisabled:
-		updateGraphicData(15);
-		graphicResourceId = graphicResourceIds[(direction > 4 ? 8 - direction : direction) + 15];
-
-		// TODO set word_446EE4 to -1. This global seems to be used with screen blitting
-		break;
-
-	case kActorStatus7:
-		if (_scene->worldstats()->numChapter == 2 && _index == 10 && _scene->vm()->isGameFlagSet(kGameFlag279)) {
-			Actor *actor = _scene->getActor(0);
-			actor->x1 = x2 + x1 - actor->x2;
-			actor->y1 = y2 + y1 - actor->y2;
-			actor->direction = 4;
-
-			_scene->setPlayerActorIndex(0);
-
-			// Hide this actor and the show the other one
-			setVisible(false);
-			actor->setVisible(true);
-
-			_scene->vm()->clearGameFlag(kGameFlag279);
-
-			_scene->getCursor()->show();
-		}
-		break;
-
-	case kActorStatus8:
-	case kActorStatus10:
-	case kActorStatus17:
-		updateGraphicData(20);
-		break;
-
-	case kActorStatus9:
-		error("[Actor::updateStatus] Encounter check missing for status 9");
-		//if (_scene->vm()->encounter()->getFlag(kFlagEncounter3)
-		//	return;
-
-		if (_scene->vm()->getRandomBit() == 1 && defaultDirectionLoaded(15))
-			updateGraphicData(15);
-		else
-			updateGraphicData(10);
-		break;
-
-	case kActorStatus15:
-	case kActorStatus16:
-		updateGraphicData(actorStatus == kActorStatus15 ? 10 : 15);
-		break;
-
-	case kActorStatus18:
-		if (_scene->worldstats()->numChapter == 2) {
-			GraphicResource *resource = new GraphicResource();
-			frameNum = 0;
-
-			if (_index > 12)
-				graphicResourceId = graphicResourceIds[direction + 30];
-
-			if (_scene->getPlayerActorIndex() == _index) {
-				resource->load(_scene->getResourcePack(), graphicResourceId);
-				frameNum = resource->getFrameCount() - 1;
-			}
-
-			if (_index == 11)
-				graphicResourceId = graphicResourceIds[_scene->getGlobalDirection() > 4 ? 8 - _scene->getGlobalDirection() : _scene->getGlobalDirection()];
-
-			// Reload the graphic resource if the resource ID has changed
-			if (resource->getResourceId() != graphicResourceId)
-				resource->load(_scene->getResourcePack(), graphicResourceId);
-
-			frameCount = resource->getFrameCount();
-		}
-		break;
-	}
-
-	status = actorStatus;
-}
-
 void Actor::updateGraphicData(uint32 offset) {
-	graphicResourceId = graphicResourceIds[(direction > 4 ? 8 - direction : direction) + offset];
+	_resourceId = _graphicResourceIds[(_direction > 4 ? 8 - _direction : _direction) + offset];
 
-	GraphicResource *resource = new GraphicResource(_scene->getResourcePack(), graphicResourceId);
-	frameCount = resource->getFrameCount();
+	GraphicResource *resource = new GraphicResource(_scene->getResourcePack(), _resourceId);
+	_frameCount = resource->getFrameCount();
 	delete resource;
 
-	frameNum = 0;
+	_frameNumber = 0;
 }
 
-void Actor::setDirection(int actorDirection) {
-	direction = (actorDirection > 4) ? 8 - actorDirection : actorDirection;
-	ResourceId resourceId;
-
-	if (field_944 != 5) {
-		switch (status) {
-		case 0x04:
-		case 0x05:
-		case 0x0E: {
-			resourceId = graphicResourceIds[direction + 5];
-			// FIXME this seems kind of wasteful just to grab a frame count
-			GraphicResource *gra = new GraphicResource(_scene->getResourcePack(), resourceId);
-			resourceId = resourceId;
-			frameCount = gra->getFrameCount();
-			delete gra;
-		}
-		break;
-
-		case 0x12:
-			if (_scene->worldstats()->numChapter == 2) {
-				if (_scene->getPlayerActorIndex() == 11) {
-					// NOTE this is supposed to explicitely point to the actor 11 reference,
-					// (_ws->actors[11])
-					// but I'm assuming if control drops through to here, getActor() would
-					// pull the right object because the _playerActorIndex should == 11
-					if (direction > 4)
-						resourceId = graphicResourceIds[8 - direction];
-					else
-						resourceId = graphicResourceIds[direction];
-				}
-			}
-			break;
-		case 0x01:
-		case 0x02:
-		case 0x0C:
-			resourceId = graphicResourceIds[direction];
-			break;
-		case 0x08:
-			resourceId = graphicResourceIds[direction + 20];
-			break;
-		default:
-			warning ("[setActorDirection] default case hit with status of %d", status);
-		}
-	}
-}
-
-void Actor::update() {
-	if (isVisible()) {
-		// printf("Actor updateType = 0x%02X\n", actor->updateType);
-
-		switch (status) {
-
-		case 0x10:
-			if (_scene->worldstats()->numChapter == 2) {
-				// TODO: updateCharacterSub14()
-				error("[Actor::update] not implemented");
-			} else if (_scene->worldstats()->numChapter == 1) {
-				if (_scene->getPlayerActorIndex() == _index) {
-					// TODO: updateActorSub21();
-					error("[Actor::update] not implemented");
-				}
-			}
-			break;
-
-		case 0x11:
-			if (_scene->worldstats()->numChapter == 2) {
-				// TODO: put code here
-				error("[Actor::update] not implemented");
-			} else if (_scene->worldstats()->numChapter == 11) {
-				if (_scene->getPlayerActorIndex() == _index) {
-					// TODO: put code here
-					error("[Actor::update] not implemented");
-				}
-			}
-			break;
-
-		case 0xF:
-			if (_scene->worldstats()->numChapter == 2) {
-				// TODO: put code here
-				error("[Actor::update] not implemented");
-			} else if (_scene->worldstats()->numChapter == 11) {
-				// TODO: put code here
-				error("[Actor::update] not implemented");
-			}
-			break;
-
-		case 0x12:
-			if (_scene->worldstats()->numChapter == 2) {
-				// TODO: put code here
-				error("[Actor::update] not implemented");
-			}
-			break;
-
-		case 0x5:
-			frameNum = (frameNum + 1) % frameCount;
-
-			if (_scene->vm()->getTick() - tickValue > 300) {
-				if (_scene->vm()->getRandom(100) < 50) {
-					// TODO: check sound playing
-					error("[Actor::update] not implemented");
-				}
-				tickValue = _scene->vm()->getTick();
-			}
-			break;
-
-		case 0xC:
-			if (_scene->worldstats()->numChapter == 2) {
-				// TODO: put code here
-				error("[Actor::update] not implemented");
-			} else if (_scene->worldstats()->numChapter == 11) {
-				// TODO: put code here
-				error("[Actor::update] not implemented");
-			}
-			//FIXME Missing break?
-		case 0x1:
-			// TODO: do actor direction
-			error("[Actor::update] not implemented");
-			break;
-
-		case 0x2:
-		case 0xD:
-			// TODO: do actor direction
-			error("[Actor::update] not implemented");
-			break;
-
-		case 0x3:
-		case 0x13:
-			// TODO: updateCharacterSub05();
-			error("[Actor::update] not implemented");
-			break;
-
-		case 0x7:
-			// TODO: something
-			error("[Actor::update] not implemented");
-			break;
-
-		case 0x4:
-			if (field_944 != 5) {
-				updateActorSub01();
-			}
-			break;
-
-		case 0xE:
-			// TODO: updateCharacterSub02(1, actorIdx);
-			error("[Actor::update] not implemented");
-			break;
-
-		case 0x15:
-			// TODO: updateCharacterSub06(1, actorIdx);
-			error("[Actor::update] not implemented");
-			break;
-
-		case 0x9:
-			// TODO: updateCharacterSub03(1, actorIdx);
-			error("[Actor::update] not implemented");
-			break;
-
-		case 0x6:
-		case 0xA:
-			frameNum = (frameNum + 1) % frameCount;
-			break;
-
-		case 0x8:
-			// TODO: actor sound
-			error("[Actor::update] not implemented");
-			break;
-
-		default:
-			break;
-		}
-	}
-}
-
-void Actor::updateActorSub01() {
-	// TODO make sure this is right
-	frameNum = (frameNum + 1) % frameCount;
-	if (_scene->vm()->getTick() - tickValue > 300) {
-		// TODO
-		// Check if the actor's name is "Crow"?
-		if (_scene->vm()->getRandom(100) < 50) {
-			// TODO
-			// Check if soundResourceId04 is assigned, and if so,
-			// if it's playing
-			// If true, check characterSub407260(10)
-			// and if that's true, do characterDirection(9)
-		}
-	}
-
-	// if act == getActor()
-	if (_scene->vm()->tempTick07) {
-		if (_scene->vm()->getTick() - _scene->vm()->tempTick07 > 500) {
-			if (_scene->vm()->isGameFlagNotSet(kGameFlagScriptProcessing)) { // processing action list
-				if (isVisible()) {
-					// if some_encounter_flag
-					// if !soundResourceId04
-					if (_scene->vm()->getRandom(100) < 50) {
-						if (_scene->getSceneIndex() == 13) {
-							; // sub414810(507)
-						} else {
-							; // sub4146d0(4)
-						}
-					}
-				}
-			}
-		}
-		tickValue = _scene->vm()->getTick();
-	}
-	// else
-	// TODO now there's something to do with the
-	// character's name and "Big Crow", or "Crow".
-	// Quite a bit of work to do yet, but it only seems to
-	// take effect when the character index doesn't equal
-	// the currentPlayerIndex (so I'm guessing this is a
-	// one off situation).
-}
-
-
-bool Actor::defaultDirectionLoaded(int grResTableIdx) {
-	return graphicResourceIds[grResTableIdx] != graphicResourceIds[5];
-}
-
-bool Actor::process(int32 x, int32 y) {
-	error("[Actor::process] not implemented!");
-}
-
-void Actor::processStatus(int32 x, int32 y, bool doSpeech) {
-	if (process(x, y)) {
-		if (status < kActorStatus11)
-			updateStatus(kActorStatus2);
-		else
-			updateStatus(kActorStatus13);
-	} else if (doSpeech) {
-		_scene->playSpeech(1);
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Unknown methods
-//////////////////////////////////////////////////////////////////////////
-
-void Actor::process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 param8, int32 param9) {
-	error("[Actor::process_401830] not implemented!");
-}
-
-bool Actor::process_408B20(Common::Point *point, ActorDirection direction, int count, bool hasDelta) {
-	error("[Actor::process_408B20] not implemented!");
-}
-
-void Actor::process_41BC00(int32 reactionIndex, int32 numberValue01Add) {
-	error("[Actor::process_41BC00] not implemented!");
-}
-
-void Actor::process_41BCC0(int32 reactionIndex, int32 numberValue01Substract) {
-	error("[Actor::process_41BC00] not implemented!");
-}
-
-bool Actor::process_41BDB0(int32 reactionIndex, bool testNumberValue01) {
-	error("[Actor::process_41BC00] not implemented!");
+bool Actor::isDefaultDirection(int index) {
+	return _graphicResourceIds[index] != _graphicResourceIds[5];
 }
 
 } // end of namespace Asylum

@@ -104,6 +104,8 @@ public:
 	void setVolume(ResourceId resourceId, double volume);
 	int32 getAdjustedVolume(int32 volume);
 
+	int32 calculateVolume(int32 x, int32 y, int32 a5, int32 a6);
+
 	/**
 	 * Check if the buffered sound sample that matches the provided id currently
 	 * has an active handle.
