@@ -225,6 +225,7 @@ enum ActorResources {
 
 //////////////////////////////////////////////////////////////////////////
 // Helpers
+//////////////////////////////////////////////////////////////////////////
 #define CLEAR_ARRAY(type, name) { \
 	for (Common::Array<type *>::iterator it = name.begin(); it != name.end(); it++) {\
 		delete *it; \
@@ -232,6 +233,21 @@ enum ActorResources {
 	} \
 	name.clear(); \
 }
+
+//////////////////////////////////////////////////////////////////////////
+// Macros
+//////////////////////////////////////////////////////////////////////////
+
+// Misc
+#define rnd(val) _vm->getRandom(val)
+
+// Engine subclasses
+#define getSound() _vm->sound()
+#define getScene() _vm->scene()
+#define getWorld() _vm->scene()->worldstats()
+
+
+
 
 } // End of namespace Asylum
 
