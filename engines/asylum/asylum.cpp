@@ -350,4 +350,11 @@ bool AsylumEngine::isGameFlagNotSet(int flag) {
 	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 == 0;
 }
 
+void AsylumEngine::setFlag(FlagType flag, bool isSet) {
+	if (flag > ARRAYSIZE(_flags))
+		error("[AsylumEngine::setFlag] Invalid flag type (was: %d, max: %d", flag, ARRAYSIZE(_flags));
+
+	_flags[flag] = isSet;
+}
+
 } // namespace Asylum
