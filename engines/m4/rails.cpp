@@ -233,7 +233,7 @@ void Rails::createEdge(int32 node1, int32 node2) {
 
 	valid = isLineWalkable(_nodes[node1]->x, _nodes[node1]->y,
 		_nodes[node2]->x, _nodes[node2]->y);
-	debug(kDebugCore, "test code says: %d\n", valid);
+	debugCN(kDebugCore, "test code says: %d\n", valid);
 
 	// Check if the line passes through a forbidden rectangle
 	if (valid) {
@@ -255,7 +255,7 @@ void Rails::createEdge(int32 node1, int32 node2) {
 		_edges.insert_at(index, (int16*)(distance >> 16));
 	}
 
-	debug(kDebugCore, "node1 = %d, node2 = %d, valid = %d\n", node1, node2, valid);
+	debugCN(kDebugCore, "node1 = %d, node2 = %d, valid = %d\n", node1, node2, valid);
 
 }
 

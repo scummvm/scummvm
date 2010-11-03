@@ -61,7 +61,7 @@ void M4Scene::loadSceneSprites(int sceneNumber) {
 	_sceneSprites = new SpriteAsset(_vm, sceneS, sceneS->size(), filename);
 	_vm->res()->toss(filename);
 
-	debug(kDebugGraphics, "Scene has %d sprites, each one having %d colors\n", _sceneSprites->getCount(), _sceneSprites->getColorCount());
+	debugCN(kDebugGraphics, "Scene has %d sprites, each one having %d colors\n", _sceneSprites->getCount(), _sceneSprites->getColorCount());
 }
 
 void M4Scene::loadSceneResources(int sceneNumber) {
@@ -136,7 +136,7 @@ void M4Scene::loadSceneSpriteCodes(int sceneNumber) {
 //			RGB8* spritePalette = _sceneSpriteCodes->getPalette();
 		//_vm->_palette->setPalette(spritePalette, 0, colorCount);
 
-		debug(kDebugGraphics, "Scene has %d sprite codes, each one having %d colors\n", _sceneSpriteCodes->getCount(), colorCount);
+		debugCN(kDebugGraphics, "Scene has %d sprite codes, each one having %d colors\n", _sceneSpriteCodes->getCount(), colorCount);
 
 		// Note that toss() deletes the MemoryReadStream
 		_vm->res()->toss(filename);
@@ -252,7 +252,7 @@ void M4Scene::leftClick(int x, int y) {
 			*/
 
 			// Player said.... (for scene scripts)
-			debug(kDebugGraphics, "Player said: %s %s\n", currentHotSpot->getVerb(), currentHotSpot->getVocab());
+			debugCN(kDebugGraphics, "Player said: %s %s\n", currentHotSpot->getVerb(), currentHotSpot->getVocab());
 
 			// FIXME: This should be moved somewhere else, and is incomplete
 			if (_m4Vm->scene()->getInterface()->_inventory.getSelectedIndex() == -1) {
@@ -268,7 +268,7 @@ void M4Scene::leftClick(int x, int y) {
 			strcpy(_vm->_player->object, "");
 			_vm->_player->commandReady = true;
 
-			debug(kDebugGraphics, "## Player said: %s %s\n", _vm->_player->verb, _vm->_player->noun);
+			debugCN(kDebugGraphics, "## Player said: %s %s\n", _vm->_player->verb, _vm->_player->noun);
 
 		}
 	}

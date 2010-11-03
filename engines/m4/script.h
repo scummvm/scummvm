@@ -305,7 +305,7 @@ public:
 	// Is this ok?
 	template<class T>
 	const T& toData(const ScriptValue &value) {
-		debug(kDebugScript, "ScriptInterpreter::toData() index = %d; type = %d; max = %d\n", value.value, _data[value.value]->type, _data.size());
+		debugCN(kDebugScript, "ScriptInterpreter::toData() index = %d; type = %d; max = %d\n", value.value, _data[value.value]->type, _data.size());
 		assert((uint32)value.value < _data.size());
 		T *result = 0;
 		_dataCache->load(_scriptFile, _data[value.value]->offset, result);

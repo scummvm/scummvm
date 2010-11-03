@@ -527,7 +527,7 @@ bool AssetManager::loadAsset(const char *assetName, RGB8 *palette) {
 			_CELS[chunkHash] = new SpriteAsset(_vm, assetS, chunkSize, assetName);
 			break;
 		default:
-			debug(kDebugGraphics, "AssetManager::loadAsset() Unknown chunk type %08X\n", chunkType);
+			debugC(kDebugGraphics, "AssetManager::loadAsset() Unknown chunk type %08X\n", chunkType);
 		}
 
 		// Until loading code is complete (see above)

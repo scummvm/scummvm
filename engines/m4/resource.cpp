@@ -43,12 +43,12 @@ FileSystem::FileSystem(const char *hashFilename) {
 	hashFile.open(hashFilename);
 
 	if (!hashFile.isOpen()) {
-		debug(kDebugCore, "FileSystem::FileSystem: error opening hash %s\n", hashFilename);
+		debugCN(kDebugCore, "FileSystem::FileSystem: error opening hash %s\n", hashFilename);
 	}
 
 	hashSize = hashFile.readUint32LE();
 
-	//debug(kDebugCore, "FileSystem::FileSystem: hashSize = %d\n", hashSize);
+	//debugCN(kDebugCore, "FileSystem::FileSystem: hashSize = %d\n", hashSize);
 
 	/* load file records and add them to the hash list */
 	for (uint i = 0; i < hashSize; i++) {
@@ -63,12 +63,12 @@ FileSystem::FileSystem(const char *hashFilename) {
 
 		if (entry.filename[0]) {
 			/*
-			debug(kDebugCore, "  filename: %s\n", entry.filename);
-			debug(kDebugCore, "  hagfile: %d\n", entry.hagfile);
-			debug(kDebugCore, "  disks: %d\n", entry.disks);
-			debug(kDebugCore, "  offset: %08X\n", entry.offset);
-			debug(kDebugCore, "  size: %d\n", entry.size);
-			debug(kDebugCore, "  next: %08X\n", entry.next);
+			debugCN(kDebugCore, "  filename: %s\n", entry.filename);
+			debugCN(kDebugCore, "  hagfile: %d\n", entry.hagfile);
+			debugCN(kDebugCore, "  disks: %d\n", entry.disks);
+			debugCN(kDebugCore, "  offset: %08X\n", entry.offset);
+			debugCN(kDebugCore, "  size: %d\n", entry.size);
+			debugCN(kDebugCore, "  next: %08X\n", entry.next);
 			*/
 			_fileEntries[entry.filename] = entry;
 		}
@@ -90,7 +90,7 @@ FileSystem::FileSystem(const char *hashFilename) {
 		_hagEntries[entry.fileIndex].hagFile->open(_hagEntries[entry.fileIndex].filename);
 
 		if (!_hagEntries[entry.fileIndex].hagFile->isOpen()) {
-			debug(kDebugCore, "FileSystem::FileSystem: error opening hag %s\n", _hagEntries[entry.fileIndex].filename);
+			debugCN(kDebugCore, "FileSystem::FileSystem: error opening hag %s\n", _hagEntries[entry.fileIndex].filename);
 		}
 
 	}
@@ -113,7 +113,7 @@ Common::SeekableReadStream *FileSystem::loadFile(const char *resourceName, bool 
 	Common::SeekableReadStream *result = NULL;
 
 	if (hfe) {
-		//debug(kDebugCore, "FileSystem::loadFile() success opening %s\n", filename);
+		//debugCN(kDebugCore, "FileSystem::loadFile() success opening %s\n", filename);
 		HashHagEntry *hagEntry = &_hagEntries[hfe->hagfile];
 
 		if (preloadFlag) {
@@ -128,7 +128,7 @@ Common::SeekableReadStream *FileSystem::loadFile(const char *resourceName, bool 
 				hfe->offset + hfe->size);
 
 	} else {
-		debug(kDebugCore, "FileSystem::loadFile() error opening %s\n", resourceName);
+		debugCN(kDebugCore, "FileSystem::loadFile() error opening %s\n", resourceName);
 	}
 
 	return result;
@@ -207,7 +207,7 @@ void ResourceManager::toss(const char *resourceName) {
 
 		if (!strcmp(r->name, resourceName)) {
 			r->flags |= kResourcePurge;
-			//debug(kDebugCore, "M4ResourceManager::toss: mark resource %s to be purged\n", resourceName);
+			//debugCN(kDebugCore, "M4ResourceManager::toss: mark resource %s to be purged\n", resourceName);
 		}
 	}
 }
@@ -510,7 +510,7 @@ M4ResourceManager::~M4ResourceManager() {
 }
 
 Common::SeekableReadStream *M4ResourceManager::loadResource(const char *resourceName, bool preloadFlag) {
-	//debug(kDebugCore, "M4ResourceManager::loadResource() loading resource %s\n", resourceName);
+	//debugCN(kDebugCore, "M4ResourceManager::loadResource() loading resource %s\n", resourceName);
 	Common::SeekableReadStream* result = NULL;
 	if (_hfs) {
 		// actually load the resource

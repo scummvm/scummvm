@@ -147,7 +147,7 @@ void Machine::enterState() {
 
 int32 Machine::execInstruction() {
 
-	//debug(kDebugScript, "Machine::execInstruction()\n");
+	//debugCN(kDebugScript, "Machine::execInstruction()\n");
 
 	bool done = false;
 	Instruction instruction;
@@ -203,7 +203,7 @@ void Machine::execBlock(int32 offset, int32 count) {
 
 	int32 instruction = -1;
 
-	//debug(kDebugScript, "---------------------------------------\n");
+	//debugCN(kDebugScript, "---------------------------------------\n");
 
 	while (instruction && instruction != 4 && _id == oldId && _recursionLevel == oldRecursionLevel &&
 		_code->pos() >= (uint32)startOffset && _code->pos() < (uint32)endOffset) {
@@ -212,7 +212,7 @@ void Machine::execBlock(int32 offset, int32 count) {
 		//g_system->delayMillis(500);
 	}
 
-	//debug(kDebugScript, "---------------------------------------\n");
+	//debugCN(kDebugScript, "---------------------------------------\n");
 
 	if (instruction == 3) {
 		execInstruction();
@@ -225,7 +225,7 @@ void Machine::execBlock(int32 offset, int32 count) {
 }
 
 bool Machine::m1_gotoState(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_gotoState() state = %d\n", (int32)instruction.argv[0] >> 16);
+	//debugCN(kDebugScript, "Machine::m1_gotoState() state = %d\n", (int32)instruction.argv[0] >> 16);
 
 	_currentState = (int32)instruction.argv[0] >> 16;
 	_recursionLevel = 0;
@@ -233,14 +233,14 @@ bool Machine::m1_gotoState(Instruction &instruction) {
 }
 
 bool Machine::m1_jump(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_jump() ofs = %08X\n", (int32)instruction.argv[0] >> 16);
+	//debugCN(kDebugScript, "Machine::m1_jump() ofs = %08X\n", (int32)instruction.argv[0] >> 16);
 
 	_code->jumpRelative((int32)instruction.argv[0] >> 16);
 	return true;
 }
 
 bool Machine::m1_terminate(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_terminate()\n");
+	//debugCN(kDebugScript, "Machine::m1_terminate()\n");
 
 	_currentState = -1;
 	_recursionLevel = 0;
@@ -248,15 +248,15 @@ bool Machine::m1_terminate(Instruction &instruction) {
 }
 
 bool Machine::m1_startSequence(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_startSequence() sequence hash = %d\n", (uint32)instruction.argv[0] >> 16);
+	//debugCN(kDebugScript, "Machine::m1_startSequence() sequence hash = %d\n", (uint32)instruction.argv[0] >> 16);
 
 	int32 sequenceHash = instruction.argv[0] >> 16;
 	if (_sequence == NULL) {
-		//debug(kDebugScript, "Machine::m1_startSequence() creating new sequence\n");
+		//debugCN(kDebugScript, "Machine::m1_startSequence() creating new sequence\n");
 		_sequence = _ws->createSequence(this, sequenceHash);
 		_code->setSequence(_sequence);
 	} else {
-		//debug(kDebugScript, "Machine::m1_startSequence() using existing sequence\n");
+		//debugCN(kDebugScript, "Machine::m1_startSequence() using existing sequence\n");
 		_sequence->changeProgram(sequenceHash);
 		//_code->setSequence(_sequence);
 	}
@@ -264,28 +264,28 @@ bool Machine::m1_startSequence(Instruction &instruction) {
 }
 
 bool Machine::m1_pauseSequence(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_pauseSequence()\n");
+	//debugCN(kDebugScript, "Machine::m1_pauseSequence()\n");
 
 	_sequence->pause();
 	return true;
 }
 
 bool Machine::m1_resumeSequence(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_resumeSequence()\n");
+	//debugCN(kDebugScript, "Machine::m1_resumeSequence()\n");
 
 	_sequence->resume();
 	return true;
 }
 
 bool Machine::m1_storeValue(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_storeValue() %p = %d (%08X)\n", (void*)instruction.argp[0], (uint32)instruction.argv[1], (uint32)instruction.argv[1]);
+	//debugCN(kDebugScript, "Machine::m1_storeValue() %p = %d (%08X)\n", (void*)instruction.argp[0], (uint32)instruction.argv[1], (uint32)instruction.argv[1]);
 
 	*instruction.argp[0] = instruction.getValue();
 	return true;
 }
 
 bool Machine::m1_sendMessage(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_sendMessage() %p = %d (%08X)\n", (void*)instruction.argp[0], (uint32)instruction.argv[1], (uint32)instruction.argv[1]);
+	//debugCN(kDebugScript, "Machine::m1_sendMessage() %p = %d (%08X)\n", (void*)instruction.argp[0], (uint32)instruction.argv[1], (uint32)instruction.argv[1]);
 
 #if 0
 //TODO
@@ -304,7 +304,7 @@ bool Machine::m1_sendMessage(Instruction &instruction) {
 }
 
 bool Machine::m1_broadcastMessage(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_broadcastMessage() %p = %d (%08X)\n", (void*)instruction.argp[0], (uint32)instruction.argv[1], (uint32)instruction.argv[1]);
+	//debugCN(kDebugScript, "Machine::m1_broadcastMessage() %p = %d (%08X)\n", (void*)instruction.argp[0], (uint32)instruction.argv[1], (uint32)instruction.argv[1]);
 
 #if 0
 //TODO
@@ -321,7 +321,7 @@ bool Machine::m1_broadcastMessage(Instruction &instruction) {
 }
 
 bool Machine::m1_replyMessage(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_replyMessage() messageHash = %d; messageValue = %d\n", (uint32)instruction.argv[0], (uint32)instruction.argv[1]);
+	//debugCN(kDebugScript, "Machine::m1_replyMessage() messageHash = %d; messageValue = %d\n", (uint32)instruction.argv[0], (uint32)instruction.argv[1]);
 #if 0
 	if (myArg2) {
 		msgValue = *myArg2;
@@ -335,28 +335,28 @@ bool Machine::m1_replyMessage(Instruction &instruction) {
 }
 
 bool Machine::m1_sendSystemMessage(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_sendSystemMessage() messageValue = %d\n", (uint32)instruction.argv[0]);
+	//debugCN(kDebugScript, "Machine::m1_sendSystemMessage() messageValue = %d\n", (uint32)instruction.argv[0]);
 #if 0
 #endif
 	return true;
 }
 
 bool Machine::m1_createMachine(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_createMachine()\n");
+	//debugCN(kDebugScript, "Machine::m1_createMachine()\n");
 #if 0
 #endif
 	return true;
 }
 
 bool Machine::m1_createMachineEx(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_createMachineEx()\n");
+	//debugCN(kDebugScript, "Machine::m1_createMachineEx()\n");
 #if 0
 #endif
 	return true;
 }
 
 bool Machine::m1_clearVars(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_clearVars()\n");
+	//debugCN(kDebugScript, "Machine::m1_clearVars()\n");
 
 	_sequence->clearVars();
 	return true;
@@ -364,7 +364,7 @@ bool Machine::m1_clearVars(Instruction &instruction) {
 
 
 void Machine::m1_onEndSequence(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_onEndSequence() count = %08X\n", (uint32)instruction.argv[0] >> 16);
+	//debugCN(kDebugScript, "Machine::m1_onEndSequence() count = %08X\n", (uint32)instruction.argv[0] >> 16);
 
 	int32 count = instruction.argv[0] >> 16;
 	_sequence->issueEndOfSequenceRequest(_code->pos(), count);
@@ -372,7 +372,7 @@ void Machine::m1_onEndSequence(Instruction &instruction) {
 }
 
 void Machine::m1_onMessage(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_onEndSequence() count = %08X\n", (uint32)instruction.argv[0] >> 16);
+	//debugCN(kDebugScript, "Machine::m1_onEndSequence() count = %08X\n", (uint32)instruction.argv[0] >> 16);
 
 	// TODO: Add message to list
 
@@ -382,42 +382,42 @@ void Machine::m1_onMessage(Instruction &instruction) {
 }
 
 void Machine::m1_switchLt(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_switchLt() %d < %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16);
+	//debugCN(kDebugScript, "Machine::m1_switchLt() %d < %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16);
 
 	if (instruction.argv[1] >= instruction.argv[2])
 		_code->jumpRelative(instruction.argv[0] >> 16);
 }
 
 void Machine::m1_switchLe(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_switchLe() %d <= %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16);
+	//debugCN(kDebugScript, "Machine::m1_switchLe() %d <= %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16);
 
 	if (instruction.argv[1] > instruction.argv[2])
 		_code->jumpRelative(instruction.argv[0] >> 16);
 }
 
 void Machine::m1_switchEq(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_switchEq() %d == %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16);
+	//debugCN(kDebugScript, "Machine::m1_switchEq() %d == %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16);
 
 	if (instruction.argv[1] != instruction.argv[2])
 		_code->jumpRelative(instruction.argv[0] >> 16);
 }
 
 void Machine::m1_switchNe(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_switchNe() %d != %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16);
+	//debugCN(kDebugScript, "Machine::m1_switchNe() %d != %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16);
 
 	if (instruction.argv[1] == instruction.argv[2])
 		_code->jumpRelative(instruction.argv[0] >> 16);
 }
 
 void Machine::m1_switchGe(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_switchGe() %d >= %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16);
+	//debugCN(kDebugScript, "Machine::m1_switchGe() %d >= %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16);
 
 	if (instruction.argv[1] < instruction.argv[2])
 		_code->jumpRelative(instruction.argv[0] >> 16);
 }
 
 void Machine::m1_switchGt(Instruction &instruction) {
-	//debug(kDebugScript, "Machine::m1_switchGt() %d > %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16);
+	//debugCN(kDebugScript, "Machine::m1_switchGt() %d > %d -> %08X\n", (uint32)instruction.argv[1], (uint32)instruction.argv[2], (uint32)instruction.argv[0] >> 16);
 
 	if (instruction.argv[1] <= instruction.argv[2])
 		_code->jumpRelative(instruction.argv[0] >> 16);

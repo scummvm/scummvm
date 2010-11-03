@@ -213,7 +213,7 @@ void M4Surface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &c
 	int scaledHeight = scaleValue(info.height, info.scaleY, errY);
 
 	/*
-	debug(kDebugGraphics, "M4Surface::drawSprite() info.width = %d; info.scaleX = %d; info.height = %d; info.scaleY = %d; scaledWidth = %d; scaledHeight = %d\n",
+	debugCN(kDebugGraphics, "M4Surface::drawSprite() info.width = %d; info.scaleX = %d; info.height = %d; info.scaleY = %d; scaledWidth = %d; scaledHeight = %d\n",
 		info.width, info.scaleX, info.height, info.scaleY, scaledWidth, scaledHeight);
 	*/
 
@@ -233,7 +233,7 @@ void M4Surface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &c
 		scaledHeight = y + scaledHeight;
 	}
 
-	//debug(kDebugGraphics, "M4Surface::drawSprite() width = %d; height = %d; scaledWidth = %d; scaledHeight = %d\n", info.width, info.height, scaledWidth, scaledHeight);
+	//debugCN(kDebugGraphics, "M4Surface::drawSprite() width = %d; height = %d; scaledWidth = %d; scaledHeight = %d\n", info.width, info.height, scaledWidth, scaledHeight);
 
 	// Check if sprite is inside the screen. If it's not, there's no need to draw it
 	if (scaledWidth + x <= 0 || scaledHeight + y <= 0)	// check left and top (in case x,y are negative)
@@ -703,7 +703,7 @@ void M4Surface::madsLoadBackground(int roomNumber, RGBList **palData) {
 		else
 			compressedTileDataSize = tileDataUncomp->readUint32LE() - tileOfs;
 
-		//debug(kDebugGraphics, "Tile: %i, compressed size: %i\n", i, compressedTileDataSize);
+		//debugCN(kDebugGraphics, "Tile: %i, compressed size: %i\n", i, compressedTileDataSize);
 
 		newTile->clear();
 
@@ -787,7 +787,7 @@ void M4Surface::m4LoadBackground(Common::SeekableReadStream *source) {
 	uint8 blackIndex = 0;
 
 	// Debug
-	//debug(kDebugGraphics, "loadBackground(): %dx%d picture (%d bytes) - %dx%d tiles of size %dx%d\n",
+	//debugCN(kDebugGraphics, "loadBackground(): %dx%d picture (%d bytes) - %dx%d tiles of size %dx%d\n",
 	//	   widthVal, heightVal, size, tilesX, tilesY, tileWidth, tileHeight);
 
 	// BGR data, which is converted to RGB8
@@ -807,7 +807,7 @@ void M4Surface::m4LoadBackground(Common::SeekableReadStream *source) {
 	// note that the height of the scene in game scenes is smaller than 480, as the bottom part of the
 	// screen is the inventory
 	assert(width() == (int)widthVal);
-	//debug(kDebugGraphics, "width(): %d, widthVal: %d, height(): %d, heightVal: %d\n", width(), widthVal, height(), heightVal);
+	//debugCN(kDebugGraphics, "width(): %d, widthVal: %d, height(): %d, heightVal: %d\n", width(), widthVal, height(), heightVal);
 
 	tileBuffer->create(tileWidth, tileHeight, 1);
 
