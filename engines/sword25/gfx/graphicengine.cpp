@@ -309,7 +309,8 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 		// Datei laden
 		byte *pFileData;
 		uint fileSize;
-		if (!(pFileData = static_cast<byte *>(pPackage->getFile(filename, &fileSize)))) {
+		pFileData = pPackage->getFile(filename, &fileSize);
+		if (!pFileData) {
 			BS_LOG_ERRORLN("File \"%s\" could not be loaded.", filename.c_str());
 			return 0;
 		}

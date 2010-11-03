@@ -244,10 +244,12 @@ bool TheoraDecoder::load(Common::SeekableReadStream *stream) {
 				if (_theoraComment.user_comments[i]) {
 					int len = _theoraComment.comment_lengths[i];
 					char *value = (char *)malloc(len + 1);
-					memcpy(value, _theoraComment.user_comments[i], len);
-					value[len] = '\0';
-					debug(1, "\t%s", value);
-					free(value);
+					if (value) {
+						memcpy(value, _theoraComment.user_comments[i], len);
+						value[len] = '\0';
+						debug(1, "\t%s", value);
+						free(value);
+					}
 				}
 			}
 		}

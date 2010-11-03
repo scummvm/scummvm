@@ -64,7 +64,8 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 	// Datei laden
 	byte *pFileData;
 	uint fileSize;
-	if (!(pFileData = (byte *)pPackage->getFile(filename, &fileSize))) {
+	pFileData = pPackage->getFile(filename, &fileSize);
+	if (!pFileData) {
 		BS_LOG_ERRORLN("File \"%s\" could not be loaded.", filename.c_str());
 		return;
 	}
