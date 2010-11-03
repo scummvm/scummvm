@@ -54,6 +54,10 @@ DEPFILES =
 # the build date in gScummVMBuildDate is correct.
 base/version.o: $(filter-out base/libbase.a,$(OBJS))
 
+ifdef USE_ELF_LOADER
+backends/plugins/elf/version.o: $(filter-out base/libbase.a,$(filter-out backends/libbackends.a,$(OBJS)))
+endif
+
 # Replace regular output with quiet messages
 ifneq ($(findstring $(MAKEFLAGS),s),s)
 ifneq ($(VERBOSE_BUILD),1)

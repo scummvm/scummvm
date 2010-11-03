@@ -144,6 +144,7 @@ _indeo3=auto
 _enable_prof=no
 _unix=no
 _global_constructors=no
+_elf_loader=no
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -1502,7 +1503,13 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -isystem $DEVKITPRO/libnds/include -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
 		CXXFLAGS="$CXXFLAGS -mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer -mthumb-interwork"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fno-strict-aliasing"
-		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections"
+		CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit"
+		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt"
+		if test "$_dynamic_modules" = no ; then
+  			LDFLAGS="$LDFLAGS -Wl,--gc-sections"
+ 		else
+		        LDFLAGS="$LDFLAGS -Wl,--retain-symbols-file,ds.syms"
+		fi
 		LDFLAGS="$LDFLAGS -L$DEVKITPRO/libnds/lib"
 		LIBS="$LIBS -lnds9"
 		;;
@@ -1514,9 +1521,14 @@ case $_host_os in
 	gamecube)
 		CXXFLAGS="$CXXFLAGS -Os -mogc -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
+		CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit"
 		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
 		# libogc is required to link the cc tests (includes _start())
 		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube -logc"
+		if test "$_dynamic_modules" = "yes" ; then
+			# retarded toolchain patch forces --gc-sections, overwrite it
+			LDFLAGS="$LDFLAGS -Wl,--no-gc-sections"
+		fi
 		;;
 	haiku*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1575,9 +1587,14 @@ case $_host_os in
 	wii)
 		CXXFLAGS="$CXXFLAGS -Os -mrvl -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
+		CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit"
 		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
 		# libogc is required to link the cc tests (includes _start())
 		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii -logc"
+		if test "$_dynamic_modules" = "yes" ; then
+			# retarded toolchain patch forces --gc-sections, overwrite it
+			LDFLAGS="$LDFLAGS -Wl,--no-gc-sections"
+		fi
 		;;
 	wince)
 		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale"
@@ -2114,6 +2131,13 @@ PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
 		;;
+	ds)
+		_elf_loader=yes
+		DEFINES="$DEFINES -DARM_TARGET -DELF_LOADER_CXA_ATEXIT -DONE_PLUGIN_AT_A_TIME"
+_mak_plugins='
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mno-fpu
+'
+		;;
 	freebsd*)
 _def_plugin='
 #define PLUGIN_PREFIX	"lib"
@@ -2129,6 +2153,13 @@ CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
+'
+		;;
+	gamecube | wii)
+		_elf_loader=yes
+		DEFINES="$DEFINES -DPPC_TARGET -DELF_LOADER_CXA_ATEXIT -DONE_PLUGIN_AT_A_TIME"
+_mak_plugins='
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/wii/plugin.ld
 '
 		;;
 	gph*)
@@ -2183,21 +2214,20 @@ PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
 '
 		;;
-	psp)
-_def_plugin='
-#define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".plg"
-'
+	ps2)
+		_elf_loader=yes
+		DEFINES="$DEFINES -DMIPS_TARGET"
 _mak_plugins='
-DYNAMIC_MODULES		:= 1
-PLUGIN_PREFIX		:=
-PLUGIN_SUFFIX		:= .plg
-PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-CXXFLAGS		+= -DDYNAMIC_MODULES
-LDFLAGS			+= -Wl,-T$(srcdir)/backends/platform/psp/main_prog.ld
-PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/psp/plugin.syms,-T$(srcdir)/backends/platform/psp/plugin.ld -lstdc++ -lc -lm
-PRE_OBJS_FLAGS		:= -Wl,--whole-archive
-POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+LDFLAGS				+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T$(srcdir)/backends/plugins/ps2/main_prog.ld
+PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/plugin.ld -lstdc++ -lc
+'
+		;;
+	psp)
+		_elf_loader=yes
+		DEFINES="$DEFINES -DMIPS_TARGET"
+_mak_plugins='
+LDFLAGS				+= -Wl,-T$(srcdir)/backends/platform/psp/main_prog.ld
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
 '
 		;;
 	*)
@@ -2209,6 +2239,27 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 	echo "$_dynamic_modules"
 fi
 
+#
+# Check whether integrated ELF loader support is requested
+#
+define_in_config_if_yes "$_elf_loader" 'USE_ELF_LOADER'
+
+if test "$_elf_loader" = yes; then
+	CXXFLAGS="$CXXFLAGS -DDYNAMIC_MODULES"
+	_def_plugin='
+#define PLUGIN_PREFIX	""
+#define PLUGIN_SUFFIX	".plg"
+'
+	_mak_plugins='
+DYNAMIC_MODULES		:= 1
+PLUGIN_PREFIX		:=
+PLUGIN_SUFFIX		:= .plg
+PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
+PLUGIN_LDFLAGS		= -nostartfiles backends/plugins/elf/version.o -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+'"$_mak_plugins"
+fi
 
 #
 # Check whether integrated MT-32 emulator support is requested
@@ -2832,12 +2883,14 @@ case $_backend in
 		# TODO ps2
 		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
 		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
-		LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
+		if test "$_dynamic_modules" = no ; then
+  			LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
+ 		fi
 		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib -L$PS2SDK/ports/lib"
 		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
 		;;
 	psp)
-		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
+		DEFINES="$DEFINES -D__PSP__ -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
 		LIBS="$LIBS -lpng -Wl,-Map,mapfile.txt"
 		;;
 	samsungtv)

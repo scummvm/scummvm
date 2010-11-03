@@ -231,6 +231,7 @@ private:
 	friend class Common::Singleton<SingletonBaseType>;
 
 public:
+	GameDescriptor findGameOnePlugAtATime(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;
 	GameDescriptor findGame(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;
 	GameList detectGames(const Common::FSList &fslist) const;
 	const EnginePlugin::List &getPlugins() const;

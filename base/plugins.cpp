@@ -305,6 +305,7 @@ DECLARE_SINGLETON(PluginManager)
 PluginManager::PluginManager() {
 	// Always add the static plugin provider.
 	addPluginProvider(new StaticPluginProvider());
+	_skipStaticPlugs = false;
 }
 
 PluginManager::~PluginManager() {
@@ -323,6 +324,60 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 	_providers.push_back(pp);
 }
 
+void PluginManager::loadFirstPlugin() { //TODO: rename? It's not quite clear that this loads all non-engine plugins and first engine plugin.
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL);
+	_allPlugs.clear();
+	for (ProviderList::iterator pp = _providers.begin();
+	                            pp != _providers.end();
+	                            ++pp) {
+		if ((_skipStaticPlugs && (*pp)->isFilePluginProvider()) || !_skipStaticPlugs) {
+			PluginList pl((*pp)->getPlugins());
+			for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
+				_allPlugs.push_back(*p);
+			}
+		}
+	}
+
+	_nonEnginePlugs = 0;
+	_skipStaticPlugs = true; //Only need to load static plugins once.
+
+	_currentPlugin = _allPlugs.begin();
+
+	if (_allPlugs.empty()) {
+		return; //return here if somehow there are no plugins to load.
+	}
+
+	//this loop is for loading all non-engine plugins and the first engine plugin.
+	for (; _currentPlugin != _allPlugs.end(); ++_currentPlugin) {
+		if (!tryLoadPlugin(*_currentPlugin))
+			continue;
+
+		// TODO: This assumes all non-engine plugins will precede the first engine plugin!
+		if ((*_currentPlugin)->getType() == PLUGIN_TYPE_ENGINE)
+			break;
+
+		_nonEnginePlugs++;
+	}
+
+	return;
+}
+
+bool PluginManager::loadNextPlugin() {
+	if (_nonEnginePlugs == _allPlugs.size())
+		return false; //There are no Engine Plugins in this case.
+
+	// To ensure only one engine plugin is loaded at a time, we unload all engine plugins before trying to load a new one.
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL);
+
+	++_currentPlugin;
+	for (; _currentPlugin != _allPlugs.end(); ++_currentPlugin)
+		if (tryLoadPlugin(*_currentPlugin))
+			return true;
+
+	loadFirstPlugin();
+	return false;
+}
+
 void PluginManager::loadPlugins() {
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
@@ -330,7 +385,6 @@ void PluginManager::loadPlugins() {
 		PluginList pl((*pp)->getPlugins());
 		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManager::tryLoadPlugin), this));
 	}
-
 }
 
 void PluginManager::unloadPlugins() {
@@ -361,7 +415,6 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 		// The plugin is valid, see if it provides the same module as an
 		// already loaded one and should replace it.
 		bool found = false;
-
 		PluginList::iterator pl = _plugins[plugin->getType()].begin();
 		while (!found && pl != _plugins[plugin->getType()].end()) {
 			if (!strcmp(plugin->getName(), (*pl)->getName())) {
@@ -387,12 +440,23 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 	}
 }
 
-
 // Engine plugins
 
 #include "engines/metaengine.h"
 
 DECLARE_SINGLETON(EngineManager)
+
+GameDescriptor EngineManager::findGameOnePlugAtATime(const Common::String &gameName, const EnginePlugin **plugin) const {
+	GameDescriptor result;
+	//PluginManager::instance().loadFirstPlugin();
+	do {
+		result = findGame(gameName, plugin); 
+		if (!result.gameid().empty()) {
+			break;
+		}
+	} while (PluginManager::instance().loadNextPlugin());
+	return result;
+}
 
 GameDescriptor EngineManager::findGame(const Common::String &gameName, const EnginePlugin **plugin) const {
 	// Find the GameDescriptor for this target
@@ -402,30 +466,35 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Eng
 	if (plugin)
 		*plugin = 0;
 
-	EnginePlugin::List::const_iterator iter = plugins.begin();
-	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		result = (**iter)->findGame(gameName.c_str());
-		if (!result.gameid().empty()) {
-			if (plugin)
-				*plugin = *iter;
-			break;
+	EnginePlugin::List::const_iterator iter;
+	
+		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+			result = (**iter)->findGame(gameName.c_str());
+			if (!result.gameid().empty()) {
+				if (plugin)
+					*plugin = *iter;
+				return result;
+			}
 		}
-	}
 	return result;
 }
 
 GameList EngineManager::detectGames(const Common::FSList &fslist) const {
 	GameList candidates;
-
-	const EnginePlugin::List &plugins = getPlugins();
-
-	// Iterate over all known games and for each check if it might be
-	// the game in the presented directory.
+	EnginePlugin::List plugins;
 	EnginePlugin::List::const_iterator iter;
-	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		candidates.push_back((**iter)->detectGames(fslist));
-	}
-
+#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
+	do {
+#endif
+		plugins = getPlugins();
+		// Iterate over all known games and for each check if it might be
+		// the game in the presented directory.
+		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+			candidates.push_back((**iter)->detectGames(fslist));
+		}
+#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
+	} while (PluginManager::instance().loadNextPlugin());
+#endif
 	return candidates;
 }
 

@@ -105,6 +105,7 @@
 #endif
 #include "engine.h"
 
+#include "backends/plugins/ds/ds-provider.h"
 #include "backends/fs/ds/ds-fs.h"
 #include "base/version.h"
 #include "common/util.h"
@@ -3213,6 +3214,9 @@ int main(void) {
 	const char *argv[] = {"/scummvmds"};
 #endif
 
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new DSPluginProvider());
+#endif
 
 	while (1) {
 		scummvm_main(ARRAYSIZE(argv), (char **) &argv);

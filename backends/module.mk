@@ -22,6 +22,14 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	midi/dmedia.o \
 	midi/windows.o \
+	plugins/elf/elf-loader.o \
+	plugins/elf/mips-loader.o \
+	plugins/elf/shorts-segment-manager.o \
+	plugins/elf/ppc-loader.o \
+	plugins/elf/arm-loader.o \
+	plugins/elf/elf-provider.o \
+	plugins/elf/version.o \
+	plugins/dc/dc-provider.o \
 	plugins/posix/posix-provider.o \
 	plugins/sdl/sdl-provider.o \
 	plugins/win32/win32-provider.o \
@@ -43,7 +51,8 @@ endif
 ifeq ($(BACKEND),ds)
 MODULE_OBJS += \
 	fs/ds/ds-fs-factory.o \
-	fs/ds/ds-fs.o
+	fs/ds/ds-fs.o \
+	plugins/ds/ds-provider.o
 endif
 
 ifeq ($(BACKEND),n64)
@@ -54,7 +63,8 @@ endif
 
 ifeq ($(BACKEND),ps2)
 MODULE_OBJS += \
-	fs/ps2/ps2-fs-factory.o
+	fs/ps2/ps2-fs-factory.o \
+	plugins/ps2/ps2-provider.o
 endif
 
 ifeq ($(BACKEND),psp)
@@ -68,7 +78,8 @@ endif
 
 ifeq ($(BACKEND),wii)
 MODULE_OBJS += \
-	fs/wii/wii-fs-factory.o
+	fs/wii/wii-fs-factory.o \
+	plugins/wii/wii-provider.o
 endif
 
 # Include common rules

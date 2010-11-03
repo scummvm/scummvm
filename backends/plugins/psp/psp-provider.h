@@ -18,26 +18,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
+ * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/branches/gsoc2010-plugins/backends/plugins/ds/ds-provider.h $
+ * $Id: ds-provider.h 52112 2010-08-16 08:41:04Z toneman1138 $
  *
  */
+
+#if defined(DYNAMIC_MODULES) && defined(__PSP__)
 
 #ifndef BACKENDS_PLUGINS_PSP_PSP_PROVIDER_H
 #define BACKENDS_PLUGINS_PSP_PSP_PROVIDER_H
 
-#include "base/plugins.h"
+#include "backends/plugins/elf/elf-provider.h"
 
-#if defined(DYNAMIC_MODULES) && defined(__PSP__)
-
-class PSPPluginProvider : public FilePluginProvider {
-protected:
-	Plugin* createPlugin(const Common::FSNode &node) const;
-
-	bool isPluginFilename(const Common::FSNode &node) const;
-
+class PSPPluginProvider : public ELFPluginProvider {
+public:
+	Plugin *createPlugin(const Common::FSNode &node) const;
 };
+
+#endif // BACKENDS_PLUGINS_PSP_PROVIDER_H
 
 #endif // defined(DYNAMIC_MODULES) && defined(__PSP__)
 
-#endif /* BACKENDS_PLUGINS_PSP_PSP_PROVIDER_H */

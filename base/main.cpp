@@ -105,7 +105,12 @@ static const EnginePlugin *detectPlugin() {
 	// Query the plugins and find one that will handle the specified gameid
 	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
 	printf("%s", "  Looking for a plugin supporting this gameid... ");
-	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
+
+#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
+	GameDescriptor game = EngineMan.findGameOnePlugAtATime(gameid, &plugin);
+#else
+ 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
+#endif
 
 	if (plugin == 0) {
 		printf("failed\n");
@@ -336,8 +341,13 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		settings.erase("debugflags");
 	}
 
-	// Load the plugins.
-	PluginManager::instance().loadPlugins();
+#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
+	// Only load non-engine plugins and first engine plugin initially in this case.
+	PluginManager::instance().loadFirstPlugin();
+#else
+ 	// Load the plugins.
+ 	PluginManager::instance().loadPlugins();
+#endif
 
 	// If we received an invalid music parameter via command line we check this here.
 	// We can't check this before loading the music plugins.
@@ -420,7 +430,12 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			ConfMan.setActiveDomain("");
 
 			// PluginManager::instance().unloadPlugins();
+
+#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
+			PluginManager::instance().loadFirstPlugin();
+#else
 			PluginManager::instance().loadPlugins();
+#endif
 		} else {
 			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
 		}

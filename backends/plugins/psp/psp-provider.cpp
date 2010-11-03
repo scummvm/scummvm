@@ -25,86 +25,51 @@
 
 #if defined(DYNAMIC_MODULES) && defined(__PSP__)
 
+#include <psputils.h>
+#include <psputilsforkernel.h>
+
 #include "backends/plugins/psp/psp-provider.h"
-#include "backends/plugins/dynamic-plugin.h"
-#include "common/fs.h"
+#include "backends/plugins/elf/mips-loader.h"
 
-#include "backends/platform/psp/psploader.h"
-
-#include "backends/platform/psp/trace.h"
-
-
-class PSPPlugin : public DynamicPlugin {
-protected:
-	void *_dlHandle;
-	Common::String _filename;
-
-	virtual VoidFunc findSymbol(const char *symbol) {
-		void *func = dlsym(_dlHandle, symbol);
-		if (!func)
-			warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerror());
-
-		// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
-		// standard and POSIX: ISO C++ disallows casting between function pointers
-		// and data pointers, but dlsym always returns a void pointer. For details,
-		// see e.g. <http://www.trilithium.com/johan/2004/12/problem-with-dlsym/>.
-		assert(sizeof(VoidFunc) == sizeof(func));
-		VoidFunc tmp;
-		memcpy(&tmp, &func, sizeof(VoidFunc));
-		return tmp;
-	}
-
+class PSPDLObject : public MIPSDLObject {
 public:
-	PSPPlugin(const Common::String &filename)
-		: _dlHandle(0), _filename(filename) {}
-
-	~PSPPlugin() {
-		if (_dlHandle) unloadPlugin();
+	PSPDLObject() :
+		MIPSDLObject() {
 	}
 
-	bool loadPlugin() {
-		assert(!_dlHandle);
-		_dlHandle = dlopen(_filename.c_str(), RTLD_LAZY);
-
-		if (!_dlHandle) {
-			warning("Failed loading plugin '%s' (%s)", _filename.c_str(), dlerror());
-			return false;
-		}
-
-		bool ret = DynamicPlugin::loadPlugin();
-
-		if (ret)
-			dlforgetsyms(_dlHandle);
-
-		return ret;
+	virtual ~PSPDLObject() {
+		unload();
 	}
 
-	void unloadPlugin() {
-		DynamicPlugin::unloadPlugin();
-		if (_dlHandle) {
-			if (dlclose(_dlHandle) != 0)
-				warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerror());
-			_dlHandle = 0;
-		}
+protected:
+	virtual void *allocSegment(size_t boundary, size_t size) const {
+		return memalign(boundary, size);
+	}
+
+	virtual void freeSegment(void *segment) const {
+		free(segment);
+	}
+
+	virtual void flushDataCache(void *ptr, uint32 len) const {
+		sceKernelDcacheWritebackRange(ptr, len);
+		sceKernelIcacheInvalidateRange(ptr, len);
 	}
 };
 
+class PSPPlugin : public ELFPlugin {
+public:
+	PSPPlugin(const Common::String &filename) :
+		ELFPlugin(filename) {
+	}
 
-Plugin* PSPPluginProvider::createPlugin(const Common::FSNode &node) const {
+	virtual DLObject *makeDLObject() {
+		return new PSPDLObject();
+	}
+};
+
+Plugin *PSPPluginProvider::createPlugin(const Common::FSNode &node) const {
 	return new PSPPlugin(node.getPath());
 }
 
-bool PSPPluginProvider::isPluginFilename(const Common::FSNode &node) const {
-	// Check the plugin suffix
-	Common::String filename = node.getName();
-	PSP_DEBUG_PRINT("Testing name %s", filename.c_str());
-	if (!filename.hasSuffix(".PLG") && !filename.hasSuffix(".plg")) {
-		PSP_DEBUG_PRINT(" fail.\n");
-		return false;
-	}
-
-	PSP_DEBUG_PRINT(" success!\n");
-	return true;
-}
-
 #endif // defined(DYNAMIC_MODULES) && defined(__PSP__)
+

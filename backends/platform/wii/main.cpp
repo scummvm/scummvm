@@ -25,6 +25,7 @@
 #include <unistd.h>
 
 #include "osystem.h"
+#include "backends/plugins/wii/wii-provider.h"
 
 #include <ogc/machine/processor.h>
 #include <fat.h>
@@ -209,6 +210,10 @@ int main(int argc, char *argv[]) {
 
 	g_system = new OSystem_Wii();
 	assert(g_system);
+
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new WiiPluginProvider());
+#endif
 
 	res = scummvm_main(argc, argv);
 	g_system->quit();
