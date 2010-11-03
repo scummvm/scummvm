@@ -34,14 +34,14 @@
 namespace Asylum {
 
 class ActionArea;
+class AsylumEngine;
 struct GraphicFrame;
 class GraphicResource;
-class Scene;
 class Screen;
 
 class Actor {
 public:
-	Actor(Scene *scene, ActorIndex index);
+	Actor(AsylumEngine *engine, ActorIndex index);
 	virtual ~Actor();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -193,7 +193,8 @@ public:
 	bool process_41BDB0(int32 reactionIndex, bool testNumberValue01);
 
 private:
-	Scene *_scene;
+	AsylumEngine *_vm;
+
 	// Our current index
 	ActorIndex _index;
 

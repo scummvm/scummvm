@@ -301,7 +301,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	stream->seek(0xA6D7A);
 
 	for (ActorIndex index = 0; index < numActors; index++) {
-		Actor *actor = new Actor(_scene, index);
+		Actor *actor = new Actor(_scene->vm(), index);
 		actor->load(stream);
 
 		actors.push_back(actor);
