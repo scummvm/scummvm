@@ -293,12 +293,12 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 
 void AsylumEngine::processDelayedEvents() {
 	// check for a delayed video
-	int videoIdx = _scene->actions()->delayedVideoIndex;
+	int videoIdx = _scene->actions()->getDelayedVideoIndex();
 	if (videoIdx >= 0) {
 		_sound->stopMusic();
 		_sound->stopAllSounds();
 		_video->playVideo(videoIdx, kSubtitlesOn);
-		_scene->actions()->delayedVideoIndex = -1;
+		_scene->actions()->setDelayedVideoIndex(-1);
 
 
 		if (_mainMenu->isActive())
@@ -308,7 +308,7 @@ void AsylumEngine::processDelayedEvents() {
 	}
 
 	// check for a delayed scene change
-	int sceneIdx = _scene->actions()->delayedSceneIndex;
+	int sceneIdx = _scene->actions()->getDelayedSceneIndex();
 	// XXX Flag 183 indicates whether the actionlist is currently
 	// processing
 	if (sceneIdx >= 0 && isGameFlagNotSet(183)) {
@@ -321,7 +321,7 @@ void AsylumEngine::processDelayedEvents() {
 		_scene = new Scene(sceneIdx, this);
 		_scene->enterScene();
 
-		_scene->actions()->delayedSceneIndex = -1;
+		_scene->actions()->setDelayedSceneIndex(-1);
 	}
 }
 
