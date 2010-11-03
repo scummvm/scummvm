@@ -57,6 +57,11 @@
  */
 namespace Asylum {
 
+enum FlagType {
+	kFlagType1 = 0,
+	kFlagType2
+};
+
 // XXX
 // If defined, this will play the scene title loading up
 // progress before the scene is entered. This is
@@ -134,6 +139,10 @@ public:
 	uint getRandom(uint max) { return _rnd.getRandomNumber(max); }
 	uint getRandomBit()      { return _rnd.getRandomBit(); }
 
+	// Flags
+	void setFlag(FlagType flag)   { setFlag(flag, true); }
+	void clearFlag(FlagType flag) { setFlag(flag, false); }
+
 private:
 	const ADGameDescription *_gameDescription;
 
@@ -152,6 +161,7 @@ private:
 
 	bool _introPlaying;
 	int _gameFlags[1512];
+	bool _flags[2];
 
 	void handleEvents(bool doUpdate);
 	void waitForTimer(int msec_delay);
@@ -162,6 +172,8 @@ private:
 	 * Play the intro
 	 */
 	void playIntro();
+
+	void setFlag(FlagType flag, bool isSet);
 
 	friend class Console;
 };

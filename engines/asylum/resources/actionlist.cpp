@@ -943,57 +943,48 @@ IMPLEMENT_OPCODE(_unk40_SOUND) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x41
 IMPLEMENT_OPCODE(PlaySpeech) {
-	//TODO - Add support for other param options
-	int32 sndIdx = cmd->param1;
+	if (cmd->param1 < 0)
+		return;
 
-	if ((int)sndIdx >= 0) {
-        if (cmd->param4 != 2) {
-            int32 resIdx = _scene->speech()->play(sndIdx);
-            cmd->param5 = resIdx;
+	if (cmd->param4 != 2) {
+		cmd->param5 = _scene->speech()->play(cmd->param1);
 
-            if (cmd->param2) {
-                _scene->vm()->setGameFlag(183);
-                cmd->param4 = 2;
-                if (cmd->param6) {
-                    // TODO: set flag 01
-                }
-                _lineIncrement = 1;
-            }
+		if (cmd->param2) {
+			_scene->vm()->setGameFlag(183);
+			cmd->param4 = 2;
+			if (cmd->param6) {
+				_scene->vm()->setFlag(kFlagType1);
+				_scene->vm()->setFlag(kFlagType2);
+			}
+			_lineIncrement = 1;
+		}
 
-            if (cmd->param3) {
-                if (!cmd->param6) {
-                    _scene->vm()->setGameFlag(219);
-                }
-            }
-        }
+		if (cmd->param3 && !cmd->param6)
+			_scene->vm()->setGameFlag(219);
+	}
 
-        if (_scene->vm()->sound()->isPlaying(cmd->param5)) {
-            _lineIncrement = 1;
-        }
+	if (_scene->vm()->sound()->isPlaying(cmd->param5)) {
+		_lineIncrement = 1;
+	}
 
-        _scene->vm()->clearGameFlag(183);
-        cmd->param4 = 0;
+	_scene->vm()->clearGameFlag(183);
+	cmd->param4 = 0;
 
-        if (cmd->param3) {
-            if (cmd->param6) {
-                // TODO: clear flag 01
-            }
-            _scene->vm()->clearGameFlag(219);
-        }
+	if (cmd->param3) {
+		if (cmd->param6) {
+			_scene->vm()->clearFlag(kFlagType1);
+			_scene->vm()->clearFlag(kFlagType2);
+		} else {
+			_scene->vm()->clearGameFlag(219);
+		}
+	}
 
-        if (!cmd->param6) {
-            cmd->param6 = 1;
-        }
-
-        // TODO: clear flag 01
-	} else
-		debugC(kDebugLevelScripts,
-		       "Requested invalid sound ID:0x%02X in Scene %d Line %d.",
-		       cmd->param1,
-		       _scene->getSceneIndex(),
-		       _currentLine);
-
-	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	if (!cmd->param6) {
+		cmd->param6 = 1;
+	} else {
+		_scene->vm()->clearFlag(kFlagType1);
+		_scene->vm()->clearFlag(kFlagType2);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
