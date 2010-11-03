@@ -71,40 +71,40 @@ void Actor::setRawResources(uint8 *data) {
 		dataPtr += 4;
 	}
 }
-
-void Actor::setAction(int32 action) {
-	if (action == currentAction)
-		return;
-
-	currentAction = action;
-
-	delete _graphic;
-	int32 act = (action < 100) ? action : action - 100;
-
-	_graphic = new GraphicResource(_scene->getResourcePack(), _resources[act]);
-
-	// Flip horizontally if necessary
-	if (currentAction > 100) {
-		for (uint32 i = 0; i < _graphic->getFrameCount(); i++) {
-			GraphicFrame *frame = _graphic->getFrame(i);
-			byte *buffer = (byte *)frame->surface.pixels;
-
-			for (int32 tmpY = 0; tmpY < frame->surface.h; tmpY++) {
-				int32 w = frame->surface.w / 2;
-				for (int32 tmpX = 0; tmpX < w; tmpX++) {
-					SWAP(buffer[tmpY * frame->surface.pitch + tmpX],
-					     buffer[tmpY * frame->surface.pitch + frame->surface.w - 1 - tmpX]);
-				}
-			}
-		}
-	}
-
-	frameNum = 0;
-}
-
-void Actor::setActionByIndex(int32 index) {
-	setAction(_resources[index] & 0xFFFF);
-}
+//
+//void Actor::setAction(int32 action) {
+//	if (action == currentAction)
+//		return;
+//
+//	currentAction = action;
+//
+//	delete _graphic;
+//	int32 act = (action < 100) ? action : action - 100;
+//
+//	_graphic = new GraphicResource(_scene->getResourcePack(), _resources[act]);
+//
+//	// Flip horizontally if necessary
+//	if (currentAction > 100) {
+//		for (uint32 i = 0; i < _graphic->getFrameCount(); i++) {
+//			GraphicFrame *frame = _graphic->getFrame(i);
+//			byte *buffer = (byte *)frame->surface.pixels;
+//
+//			for (int32 tmpY = 0; tmpY < frame->surface.h; tmpY++) {
+//				int32 w = frame->surface.w / 2;
+//				for (int32 tmpX = 0; tmpX < w; tmpX++) {
+//					SWAP(buffer[tmpY * frame->surface.pitch + tmpX],
+//					     buffer[tmpY * frame->surface.pitch + frame->surface.w - 1 - tmpX]);
+//				}
+//			}
+//		}
+//	}
+//
+//	frameNum = 0;
+//}
+//
+//void Actor::setActionByIndex(int32 index) {
+//	setAction(_resources[index] & 0xFFFF);
+//}
 
 GraphicFrame *Actor::getFrame() {
 	assert(_graphic);
@@ -123,156 +123,156 @@ GraphicFrame *Actor::getFrame() {
 
 	return frame;
 }
-
-void Actor::drawActorAt(int32 curX, int32 curY) {
-	GraphicFrame *frame = getFrame();
-
-	WorldStats *ws = _scene->worldstats();
-
-	_scene->vm()->screen()->copyRectToScreenWithTransparency(
-	    ((byte *)frame->surface.pixels),
-	    frame->surface.w,
-	    curX - ws->targetX,
-	    curY - ws->targetY,
-	    frame->surface.w,
-	    frame->surface.h);
-	x = curX;
-	y = curY;
-}
-
-void Actor::drawActor() {
-	GraphicFrame *frame = getFrame();
-	WorldStats *ws = _scene->worldstats();
-
-	_scene->vm()->screen()->copyToBackBufferWithTransparency(
-	    ((byte *)frame->surface.pixels),
-	    frame->surface.w,
-	    x - ws->targetX,
-	    y - frame->surface.h - ws->targetY,
-	    frame->surface.w,
-	    frame->surface.h);
-}
-
-void Actor::setWalkArea(ActionArea *target) {
-	if (_currentWalkArea != target) {
-		// FIXME
-		//_scene->actions()->setScriptByIndex(target->actionListIdx1);
-		_currentWalkArea = target;
-		debugC(kDebugLevelScripts, "%s", target->name);
-	}
-}
-
-void Actor::walkTo(int32 curX, int32 curY) {
-	int32 newAction = currentAction;
-	WorldStats *ws = _scene->worldstats();
-
-	// step is the increment by which to move the
-	// actor in a given direction
-	int32 step = 2;
-
-	int32 newX = x;
-	int32 newY = y;
-	bool   done = false;
-
-	// Walking left...
-	if (curX < x) {
-		newAction = kWalkW;
-		newX -= step;
-		if (ABS((int32)curY - (int32)y) <= 30)
-			done = true;
-	}
-
-	// Walking right...
-	if (curX > x) {
-		newAction = kWalkE;
-		newX += step;
-		if (ABS((int32)curY - (int32)y) <= 30)
-			done = true;
-	}
-
-	// Walking up...
-	if (curY < y && !done) {
-		if (newAction != currentAction && newAction == kWalkW && x - curX > 30)
-			newAction = kWalkNW;	// up left
-		else if (newAction != currentAction && newAction == kWalkE && curX - x > 30)
-			newAction = kWalkNE;	// up right
-		else
-			newAction = kWalkN;
-
-		newY -= step;
-	}
-
-	// Walking down...
-	if (curY > y && !done) {
-		if (newAction != currentAction && newAction == kWalkW && x - curX > 30)
-			newAction = kWalkSW;	// down left
-		else if (newAction != currentAction && newAction == kWalkE && curX - x > 30)
-			newAction = kWalkSE;	// down right
-		else
-			newAction = kWalkS;
-
-		newY += step;
-	}
-
-	// DEBUGGING
-	// Show registration point32 from which we're calculating the
-	// actor's barrier hit-test
-	Graphics::Surface surface;
-	surface.create(5, 5, 1);
-	Common::Rect rect;
-
-	rect.top    = newY;
-	rect.left   = newX;
-	rect.right  = newX;
-	rect.bottom = newY + 4;
-	surface.frameRect(rect, 0x33);
-
-	_scene->vm()->screen()->copyRectToScreen((byte*)surface.pixels, 5, newX - ws->targetX, newY - ws->targetY, 5, 5);
-
-	surface.free();
-
-	// TODO Basic pathfinding implementation is done. Now it needs to be refined to
-	// actuallcurY make it playable. The logic is currently VERY rigid, so you have to have
-	// the actor at the PERFECT spot to be able to intersect a walk region and move to
-	// the next one.
-
-	int32 availableAreas[5];
-	int32 areaPtr = 0;
-	ActionArea *area;
-
-	// Check what valid walk region(s) is/are currently available
-	for (int32 a = 0; a < ws->numActions; a++) {
-		if (ws->actions[a]->actionType == 0) {
-			area = ws->actions[a];
-			PolyDefinitions poly = _scene->polygons()->entries[area->polyIdx];
-			if (poly.contains(x, y)) {
-				availableAreas[areaPtr] = a;
-				areaPtr++;
-
-				setWalkArea(ws->actions[a]);
-
-				if (areaPtr > 5)
-					error("More than 5 overlapping walk regions found. Increase buffer");
-
-			}
-		}
-	}
-
-	// Check that we can walk in the current direction within any of the available
-	// walkable regions
-	for (int32 i = 0; i < areaPtr; i++) {
-		area = ws->actions[availableAreas[i]];
-		PolyDefinitions *region = &_scene->polygons()->entries[area->polyIdx];
-		if (region->contains(newX, newY)) {
-			x = newX;
-			y = newY;
-			break;
-		}
-	}
-
-	setAction(newAction);
-	drawActor();
-}
+//
+//void Actor::drawActorAt(int32 curX, int32 curY) {
+//	GraphicFrame *frame = getFrame();
+//
+//	WorldStats *ws = _scene->worldstats();
+//
+//	_scene->vm()->screen()->copyRectToScreenWithTransparency(
+//	    ((byte *)frame->surface.pixels),
+//	    frame->surface.w,
+//	    curX - ws->targetX,
+//	    curY - ws->targetY,
+//	    frame->surface.w,
+//	    frame->surface.h);
+//	x = curX;
+//	y = curY;
+//}
+//
+//void Actor::drawActor() {
+//	GraphicFrame *frame = getFrame();
+//	WorldStats *ws = _scene->worldstats();
+//
+//	_scene->vm()->screen()->copyToBackBufferWithTransparency(
+//	    ((byte *)frame->surface.pixels),
+//	    frame->surface.w,
+//	    x - ws->targetX,
+//	    y - frame->surface.h - ws->targetY,
+//	    frame->surface.w,
+//	    frame->surface.h);
+//}
+//
+//void Actor::setWalkArea(ActionArea *target) {
+//	if (_currentWalkArea != target) {
+//		// FIXME
+//		//_scene->actions()->setScriptByIndex(target->actionListIdx1);
+//		_currentWalkArea = target;
+//		debugC(kDebugLevelScripts, "%s", target->name);
+//	}
+//}
+//
+//void Actor::walkTo(int32 curX, int32 curY) {
+//	int32 newAction = currentAction;
+//	WorldStats *ws = _scene->worldstats();
+//
+//	// step is the increment by which to move the
+//	// actor in a given direction
+//	int32 step = 2;
+//
+//	int32 newX = x;
+//	int32 newY = y;
+//	bool   done = false;
+//
+//	// Walking left...
+//	if (curX < x) {
+//		newAction = kWalkW;
+//		newX -= step;
+//		if (ABS((int32)curY - (int32)y) <= 30)
+//			done = true;
+//	}
+//
+//	// Walking right...
+//	if (curX > x) {
+//		newAction = kWalkE;
+//		newX += step;
+//		if (ABS((int32)curY - (int32)y) <= 30)
+//			done = true;
+//	}
+//
+//	// Walking up...
+//	if (curY < y && !done) {
+//		if (newAction != currentAction && newAction == kWalkW && x - curX > 30)
+//			newAction = kWalkNW;	// up left
+//		else if (newAction != currentAction && newAction == kWalkE && curX - x > 30)
+//			newAction = kWalkNE;	// up right
+//		else
+//			newAction = kWalkN;
+//
+//		newY -= step;
+//	}
+//
+//	// Walking down...
+//	if (curY > y && !done) {
+//		if (newAction != currentAction && newAction == kWalkW && x - curX > 30)
+//			newAction = kWalkSW;	// down left
+//		else if (newAction != currentAction && newAction == kWalkE && curX - x > 30)
+//			newAction = kWalkSE;	// down right
+//		else
+//			newAction = kWalkS;
+//
+//		newY += step;
+//	}
+//
+//	// DEBUGGING
+//	// Show registration point32 from which we're calculating the
+//	// actor's barrier hit-test
+//	Graphics::Surface surface;
+//	surface.create(5, 5, 1);
+//	Common::Rect rect;
+//
+//	rect.top    = newY;
+//	rect.left   = newX;
+//	rect.right  = newX;
+//	rect.bottom = newY + 4;
+//	surface.frameRect(rect, 0x33);
+//
+//	_scene->vm()->screen()->copyRectToScreen((byte*)surface.pixels, 5, newX - ws->targetX, newY - ws->targetY, 5, 5);
+//
+//	surface.free();
+//
+//	// TODO Basic pathfinding implementation is done. Now it needs to be refined to
+//	// actuallcurY make it playable. The logic is currently VERY rigid, so you have to have
+//	// the actor at the PERFECT spot to be able to intersect a walk region and move to
+//	// the next one.
+//
+//	int32 availableAreas[5];
+//	int32 areaPtr = 0;
+//	ActionArea *area;
+//
+//	// Check what valid walk region(s) is/are currently available
+//	for (int32 a = 0; a < ws->numActions; a++) {
+//		if (ws->actions[a]->actionType == 0) {
+//			area = ws->actions[a];
+//			PolyDefinitions poly = _scene->polygons()->entries[area->polyIdx];
+//			if (poly.contains(x, y)) {
+//				availableAreas[areaPtr] = a;
+//				areaPtr++;
+//
+//				setWalkArea(ws->actions[a]);
+//
+//				if (areaPtr > 5)
+//					error("More than 5 overlapping walk regions found. Increase buffer");
+//
+//			}
+//		}
+//	}
+//
+//	// Check that we can walk in the current direction within any of the available
+//	// walkable regions
+//	for (int32 i = 0; i < areaPtr; i++) {
+//		area = ws->actions[availableAreas[i]];
+//		PolyDefinitions *region = &_scene->polygons()->entries[area->polyIdx];
+//		if (region->contains(newX, newY)) {
+//			x = newX;
+//			y = newY;
+//			break;
+//		}
+//	}
+//
+//	setAction(newAction);
+//	drawActor();
+//}
 
 void Actor::stopSound() {
 	if (soundResourceId && _scene->vm()->sound()->isPlaying(soundResourceId))
@@ -285,7 +285,7 @@ void Actor::setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame)
 
 	if (direction != 8) {
 		// TODO implement the propert character_setDirection() functionality
-		setAction(newDirection);
+		setDirection(newDirection);
 	}
 	if (frame > 0)
 		frameNum = frame;

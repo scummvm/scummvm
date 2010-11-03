@@ -232,12 +232,12 @@ public:
 	// OLD METHODS
 	// TODO ALL of these need to be depreciated in favour
 	// of the proper functions from the original
-	void setWalkArea(ActionArea *target);
-	void setAction(int32 action);
-	void setActionByIndex(int32 index);
-	void drawActorAt(int32 curX, int32 curY);
-	void drawActor();
-	void walkTo(int32 curX, int32 curY);
+	//void setWalkArea(ActionArea *target);
+	//void setAction(int32 action);
+	//void setActionByIndex(int32 index);
+	//void drawActorAt(int32 curX, int32 curY);
+	//void drawActor();
+	//void walkTo(int32 curX, int32 curY);
 	//////////////////////////////////////////////////////////////////////////
 
 
