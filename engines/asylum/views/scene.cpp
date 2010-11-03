@@ -104,7 +104,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 	_ws->field_120 = -1;
 
 	for (int32 a = 0; a < _ws->numActors; a++)
-		_ws->actors[a]->tickValue = _vm->getTick();
+		_ws->actors[a]->setTickValue(_vm->getTick());
 
 	// TODO: init action list
 
@@ -133,13 +133,14 @@ void Scene::initialize() {
 	_ws->motionStatus = 1;
 
 	Actor *actor = getActor();
-	actor->boundingRect.bottom = actor->y2;
-	actor->boundingRect.right  = actor->x2 * 2;
+	Common::Rect *boundinRect = actor->getBoundingRect();
+	boundinRect->bottom = actor->y2;
+	boundinRect->right  = actor->x2 * 2;
 
 	_ws->boundingRect = Common::Rect(195,
 			115,
-			445 - actor->boundingRect.right,
-			345 - actor->boundingRect.bottom);
+			445 - boundinRect->right,
+			345 - boundinRect->bottom);
 
 	actor->flags |= 1;
 	actor->updateStatus(kActorStatusEnabled);
@@ -148,12 +149,12 @@ void Scene::initialize() {
 		for (int32 a = 1; a < _ws->numActors; a++) {
 			Actor *act = _ws->actors[a];
 			act->flags |= 1;
-			act->direction = 1;
+			act->setDirection(1);
 			getActor(a)->updateStatus(kActorStatusEnabled);
 			act->x1 -= act->x2;
 			act->y1 -= act->y2;
-			act->boundingRect.bottom = act->y2;
-			act->boundingRect.right  = 2 * act->x2;
+			boundinRect->bottom = act->y2;
+			boundinRect->right  = 2 * act->x2;
 		}
 	}
 
@@ -176,7 +177,7 @@ void Scene::initialize() {
 
 	// TODO sceneRectChangedFlag = 1;
 
-	actor->tickValue= _vm->getTick();
+	actor->setTickValue(_vm->getTick());
 	// XXX This initialization was already done earlier,
 	// so I'm not sure why we need to do it again. Investigate.
 	actor->updateDirection();
@@ -406,11 +407,11 @@ void Scene::updateMouse() {
 	if (_cursor->position().x < actorPos.left) {
 		if (_cursor->position().y >= actorPos.top) {
 			if (_cursor->position().y > actorPos.bottom) {
-				if (act->direction == 2) {
+				if (act->getDirection() == 2) {
 					if (_cursor->position().y - actorPos.bottom > 10)
 						dir = 3;
 				} else {
-					if (act->direction == 4) {
+					if (act->getDirection() == 4) {
 						if (actorPos.left - _cursor->position().x > 10)
 							dir = 3;
 					} else {
@@ -418,11 +419,11 @@ void Scene::updateMouse() {
 					}
 				}
 			} else {
-				if (act->direction == 1) {
+				if (act->getDirection() == 1) {
 					if (_cursor->position().y - actorPos.top > 10)
 						dir = 2;
 				} else {
-					if (act->direction == 3) {
+					if (act->getDirection() == 3) {
 						if (actorPos.bottom - _cursor->position().y > 10)
 							dir = 2;
 					} else {
@@ -431,8 +432,8 @@ void Scene::updateMouse() {
 				}
 			}
 		} else {
-			if (act->direction) {
-				if (act->direction == 2) {
+			if (act->getDirection()) {
+				if (act->getDirection() == 2) {
 					if (actorPos.top - _cursor->position().y > 10)
 						dir = 1;
 				} else {
@@ -449,11 +450,11 @@ void Scene::updateMouse() {
 	if (!done && _cursor->position().x <= actorPos.right) {
 		if (_cursor->position().y >= actorPos.top) {
 			if (_cursor->position().y > actorPos.bottom) {
-				if (act->direction == 3) {
+				if (act->getDirection() == 3) {
 					if (_cursor->position().x - actorPos.left > 10)
 						dir = 4;
 				} else {
-					if (act->direction == 5) {
+					if (act->getDirection() == 5) {
 						if (actorPos.right - _cursor->position().x > 10)
 							dir = 4;
 					} else {
@@ -462,11 +463,11 @@ void Scene::updateMouse() {
 				}
 			}
 		} else {
-			if (act->direction == 1) {
+			if (act->getDirection() == 1) {
 				if (_cursor->position().x - actorPos.left > 10)
 					dir = 0;
 			} else {
-				if (act->direction == 7) {
+				if (act->getDirection() == 7) {
 					if (actorPos.right - _cursor->position().x > 10)
 						dir = 0;
 				} else {
@@ -478,8 +479,8 @@ void Scene::updateMouse() {
 	}
 
 	if (!done && _cursor->position().y < actorPos.top) {
-		if (act->direction) {
-			if (act->direction == 6) {
+		if (act->getDirection()) {
+			if (act->getDirection() == 6) {
 				if (actorPos.top - _cursor->position().y > 10)
 					dir = 7;
 			} else {
@@ -493,11 +494,11 @@ void Scene::updateMouse() {
 	}
 
 	if (!done && _cursor->position().y <= actorPos.bottom) {
-		if (act->direction == 5) {
+		if (act->getDirection() == 5) {
 			if (actorPos.bottom - _cursor->position().y > 10)
 				dir = 6;
 		} else {
-			if (act->direction == 7) {
+			if (act->getDirection() == 7) {
 				if (_cursor->position().y - actorPos.top > 10)
 					dir = 6;
 			} else {
@@ -507,20 +508,20 @@ void Scene::updateMouse() {
 		done = true;
 	}
 
-	if (!done && act->direction == 4) {
+	if (!done && act->getDirection() == 4) {
 		if (_cursor->position().x - actorPos.right <= 10)
 			done = true;
 		if (!done)
 			dir = 5;
 	}
 
-	if (!done && (act->direction != 6 || _cursor->position().y - actorPos.bottom > 10))
+	if (!done && (act->getDirection() != 6 || _cursor->position().y - actorPos.bottom > 10))
 		dir = 5;
 
 	handleMouseUpdate(dir, actorPos);
 
 	if (dir >= 0) {
-		if (act->status == 1 || act->status == 12)
+		if (act->getStatus() == 1 || act->getStatus() == 12)
 			act->setDirection(dir);
 	}
 }
@@ -540,7 +541,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 	// whether the event manager is handling a right mouse down
 	// event
 	if (_cursor->field_11 & 2) {
-		if (act->status == 1 || act->status == 12) {
+		if (act->getStatus() == 1 || act->getStatus() == 12) {
 			if (direction >= 0) {
 				newGraphicResourceId = _ws->curScrollUp + direction;
 				_cursor->set(newGraphicResourceId, 0, 2);
@@ -548,11 +549,11 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 		}
 	}
 
-	if (act->status == 6 || act->status == 10) {
+	if (act->getStatus() == 6 || act->getStatus() == 10) {
 		newGraphicResourceId = _ws->curHand;
 		_cursor->set(newGraphicResourceId, 0, 2);
 	} else {
-		if (act->field_638) {
+		if (act->getField638()) {
 			if (_cursor->position().x >= rect.left && _cursor->position().x <= rlimit &&
 				_cursor->position().y >= rect.top  && _cursor->position().y <= rect.bottom &&
 				hitTestActor(_cursor->position())) {
@@ -585,7 +586,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 		if (_cursor->position().x >= rect.left && _cursor->position().x <= rlimit &&
 			_cursor->position().y >= rect.top  && _cursor->position().y <= rect.bottom &&
 			hitTestActor(_cursor->position())) {
-			if (act->reaction[0]) {
+			if (act->getReaction(0)) {
 				_cursor->set(_ws->curGrabPointer, 0, 2);
 				return;
 			}
@@ -608,7 +609,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 				targetUpdateType = _ws->barriers[targetIdx]->actionType;
 				break;
 			case kHitActor:
-				targetUpdateType = getActor(targetIdx)->status;
+				targetUpdateType = getActor(targetIdx)->getStatus();
 				break;
 			default:
 				// TODO LOBYTE(hitType)
@@ -726,16 +727,16 @@ bool Scene::hitTestActor(const Common::Point pt) {
 	getActorPosition(act, &actPos);
 
 	int32 hitFrame;
-	if (act->frameNum >= act->frameCount)
-		hitFrame = 2 * act->frameNum - act->frameCount - 1;
+	if (act->getFrameNum() >= act->getFrameCount())
+		hitFrame = 2 * act->getFrameNum() - act->getFrameCount() - 1;
 	else
-		hitFrame = act->frameNum;
+		hitFrame = act->getFrameNum();
 
-	return hitTestPixel(act->graphicResourceId,
+	return hitTestPixel(act->getResourceId(),
 		hitFrame,
 		pt.x - act->x - actPos.x,
 		pt.y - act->y - actPos.y,
-		(act->direction >= 0));
+		(act->getDirection() >= 0));
 }
 
 bool Scene::hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped) {
@@ -1197,16 +1198,16 @@ void Scene::drawActorsAndBarriers() {
 			act->priority = abs(act->priority);
 			continue;
 		*/
-		act->priority = 3;
-		if (act->field_944 == 1 || act->field_944 == 4)
-			act->priority = 1;
+		act->setPriority(3);
+		if (act->getField944() == 1 || act->getField944() == 4)
+			act->setPriority(1);
 		else {
-			act->field_938 = 1;
-			act->field_934 = 0;
+			act->setField938(1);
+			act->setField934(0);
 			pt.x = act->x1 + act->x2;
 			pt.y = act->y1 + act->y2;
 
-			actorRegPt = act->boundingRect.bottom + act->boundingRect.right + 4;
+			actorRegPt = act->getBoundingRect()->bottom + act->getBoundingRect()->right + 4;
 
 			// TODO special case for scene 11
 			// Not sure if we're checking the scene index
@@ -1222,7 +1223,7 @@ void Scene::drawActorsAndBarriers() {
 			// XXX from .text:0040a4d1
 			for (int32 barIdx = 0; barIdx < _ws->numBarriers; barIdx++) {
 				Barrier *bar    = _ws->barriers[barIdx];
-				bool actInBar   = bar->boundingRect.contains(act->boundingRect);
+				bool actInBar   = bar->boundingRect.contains(*act->getBoundingRect());
 				bool intersects = false;
 
 				// TODO verify that my funky LOBYTE macro actually
@@ -1276,7 +1277,7 @@ void Scene::drawActorsAndBarriers() {
 							// a point calculation, but the result doesn't appear to
 							// ever be used, and the object passed in as a parameter
 							// isn't updated
-							act->field_3C = barIdx;
+							act->setBarrierIndex(barIdx);
 							act->flags |= 2;
 						}
 					}
@@ -1285,9 +1286,9 @@ void Scene::drawActorsAndBarriers() {
 						// XXX assuming the following:
 						// "if ( *(int *)((char *)&scene.characters[0].priority + v18) < *(v12_barrierPtr + 35) )"
 						// is the same as what I'm comparing :P
-						if (act->priority < bar->priority) {
-							act->field_934 = 1;
-							act->priority = bar->priority + 3;
+						if (act->getPriority() < bar->priority) {
+							act->setField934(1);
+							act->setPriority(bar->priority + 3);
 							// TODO there's a block of code here that seems
 							// to loop through the CharacterUpdateItems and do some
 							// priority adjustment. Since I'm not using CharacterUpdateItems as of yet,
@@ -1297,9 +1298,9 @@ void Scene::drawActorsAndBarriers() {
 							// (b) sceneNumber != 2 && actor->field_944 != 1
 						}
 					} else {
-						if (act->priority > bar->priority || act->priority == 1) {
-							act->field_934 = 1;
-							act->priority = bar->priority - 1;
+						if (act->getPriority() > bar->priority || act->getPriority() == 1) {
+							act->setField934(1);
+							act->setPriority(bar->priority - 1);
 							// TODO another character update loop
 							// This time it looks like there's another
 							// intersection test, and more updates
@@ -1330,9 +1331,9 @@ int Scene::queueActorUpdates() {
 				//pt.x += actor->x;
 				//pt.y += actor->y;
 
-				int32 frameNum = actor->frameNum;
-				if (actor->frameNum >= actor->frameCount) {
-					frameNum = 2 * actor->frameCount - actor->frameNum - 1;
+				int32 frameNum = actor->getFrameNum();
+				if (actor->getFrameNum() >= actor->getFrameCount()) {
+					frameNum = 2 * actor->getFrameCount() - actor->getFrameNum() - 1;
 				}
 
 				if ((actor->flags & 0xFF) & 2) {
@@ -1342,7 +1343,7 @@ int Scene::queueActorUpdates() {
 
 				} else {
 					// TODO: get flag value from character_DeadSarah_sub_40A140
-					_vm->screen()->addGraphicToQueue(actor->graphicResourceId, frameNum, pt.x, pt.y, ((actor->direction < 5) - 1) & 2, actor->field_96C, actor->priority);
+					_vm->screen()->addGraphicToQueue(actor->getResourceId(), frameNum, pt.x, pt.y, ((actor->getDirection() < 5) - 1) & 2, actor->getField96C(), actor->getPriority());
 				}
 			}
 		}
@@ -1499,10 +1500,10 @@ void Scene::debugShowActors() {
 		Actor *a = _ws->actors[p];
 
 		if (a->flags & 2) {
-			surface.create(a->boundingRect.right - a->boundingRect.left + 1,
-			               a->boundingRect.bottom - a->boundingRect.top + 1,
+			surface.create(a->getBoundingRect()->right - a->getBoundingRect()->left + 1,
+			               a->getBoundingRect()->bottom - a->getBoundingRect()->top + 1,
 			               1);
-			surface.frameRect(a->boundingRect, 0x22);
+			surface.frameRect(*a->getBoundingRect(), 0x22);
 			copyToBackBufferClipped(&surface, a->x, a->y);
 		}
 
@@ -1532,6 +1533,10 @@ void  Scene::updatePalette(int32 param) {
 
 void Scene::makeGreyPalette() {
 	error("[Scene::makeGreyPalette] not implemented!");
+}
+
+void Scene::resetActor0() {
+	error("[Scene::resetActor0] not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////

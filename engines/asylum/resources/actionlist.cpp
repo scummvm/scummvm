@@ -442,7 +442,7 @@ IMPLEMENT_OPCODE(ShowActor) {
 
 	actor->setVisible(true);
 	actor->updateDirection();
-	actor->tickValue = _scene->vm()->getTick();
+	actor->setTickValue(_scene->vm()->getTick());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -472,7 +472,7 @@ IMPLEMENT_OPCODE(DisableActor) {
 IMPLEMENT_OPCODE(EnableActor) {
 	Actor *actor = _scene->getActor(cmd->param1);
 
-	if (actor->status == kActorStatusDisabled)
+	if (actor->getStatus() == kActorStatusDisabled)
 		actor->updateStatus(kActorStatusEnabled);
 }
 
@@ -535,13 +535,13 @@ IMPLEMENT_OPCODE(JumpActorSpeech) {
 IMPLEMENT_OPCODE(JumpAndSetDirection) {
 	Actor *actor = _scene->getActor(cmd->param1);
 
-	if (actor->status != kActorStatus2 && actor->status != kActorStatus13) {
+	if (actor->getStatus() != kActorStatus2 && actor->getStatus() != kActorStatus13) {
 		if (cmd->param5 != 2) {
 
 			if (cmd->param2 == -1 || cmd->param3 == -1) {
-				actor->setDirection(cmd->param4);
+				actor->updateFromDirection(cmd->param4);
 			} else if ((actor->x1 + actor->x2) == cmd->param2 && (actor->y1 + actor->y2) == cmd->param3) {
-				actor->setDirection(cmd->param4);
+				actor->updateFromDirection(cmd->param4);
 			} else {
 				actor->processStatus(cmd->param2, cmd->param3, cmd->param4);
 
@@ -555,7 +555,7 @@ IMPLEMENT_OPCODE(JumpAndSetDirection) {
 			_lineIncrement = 0;
 
 			if ((actor->x1 + actor->x2) == cmd->param2 && (actor->y1 + actor->y2) == cmd->param3)
-				actor->setDirection(cmd->param4);
+				actor->updateFromDirection(cmd->param4);
 		}
 	} else {
 		if (cmd->param5 == 2)
@@ -697,7 +697,7 @@ IMPLEMENT_OPCODE(_unk24) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x25
 IMPLEMENT_OPCODE(RunEncounter) {
-	Encounter *encounter = _scene->vm()->encouter();
+	Encounter *encounter = _scene->vm()->encounter();
 
 	encounter->setFlag(kEncounterFlag5, cmd->param5);
 
@@ -737,7 +737,7 @@ IMPLEMENT_OPCODE(ClearAction16) {
 IMPLEMENT_OPCODE(SetActorField638) {
 	Actor *actor = _scene->getActor(cmd->param1);
 
-	actor->field_638 = cmd->param2;
+	actor->setField638(cmd->param2);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -745,7 +745,7 @@ IMPLEMENT_OPCODE(SetActorField638) {
 IMPLEMENT_OPCODE(JumpIfActorField638) {
 	Actor *actor = _scene->getActor(cmd->param1);
 
-	if (actor->field_638)
+	if (actor->getField638())
 		_currentLine = cmd->param3;
 }
 
@@ -771,16 +771,16 @@ IMPLEMENT_OPCODE(ChangeScene) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2C
 IMPLEMENT_OPCODE(_unk2C_ActorSub) {
-	Actor *player = _scene->getActor(kActorPlayer);
+	Actor *player = _scene->getActor();
 	Actor *actor = _scene->getActor(_currentQueueEntry.actorIndex);
 	Common::Point playerPoint(player->x1 + player->x2, player->y1 + player->y2);
-	ActorDirection direction = (cmd->param2 == 8) ? player->direction : cmd->param2;
+	ActorDirection direction = (cmd->param2 == 8) ? player->getDirection() : cmd->param2;
 
 	if (cmd->param2 == 8)
-		cmd->param2 = player->direction;
+		cmd->param2 = player->getDirection();
 
 	if (cmd->param3 == 2) {
-		switch (actor->status) {
+		switch (actor->getStatus()) {
 		default:
 			_lineIncrement = 1;
 			return;
@@ -802,28 +802,30 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub) {
 		if (cmd->param1 == 2) {
 			Common::Point point(playerPoint);
 
-			if (player->process_408B20(&point, (player->direction + 4) % 8, 3, false)) {
+			int32 index = (player->getDirection() + 4) % 8;
 
-				point.x += 3 * deltaPointsArray[(player->direction + 4) % 8].x;
-				point.x += 3 * deltaPointsArray[(player->direction + 4) % 8].y;
+			if (player->process_408B20(&point, index, 3, false)) {
 
-				player->setPosition(point.x, point.y, actor->direction, 0);
+				point.x += 3 * deltaPointsArray[index].x;
+				point.x += 3 * deltaPointsArray[index].y;
+
+				player->setPosition(point.x, point.y, actor->getDirection(), 0);
 			}
 		}
 
-	} else if (cmd->param1 != 2 || player->process_408B20(&playerPoint, (player->direction + 4) % 8, 3, false)) {
+	} else if (cmd->param1 != 2 || player->process_408B20(&playerPoint, (player->getDirection() + 4) % 8, 3, false)) {
 		ResourceId id = 0;
 		if (direction >= 5)
-			id = actor->graphicResourceIds[5 * cmd->param1 - direction + 38];
+			id = actor->getResourcesId(5 * cmd->param1 - direction + 38);
 		else
-			id = actor->graphicResourceIds[5 * cmd->param1 + direction + 30];
+			id = actor->getResourcesId(5 * cmd->param1 + direction + 30);
 
 		GraphicResource *res = new GraphicResource(_scene->getResourcePack(), id);
-		actor->graphicResourceId = id;
-		actor->frameCount = res->getFrameCount();
-		actor->frameNum = 0;
-		actor->direction = direction;
-		actor->updateStatus(actor->status <= kActorStatus11 ? kActorStatus3 : kActorStatus19);
+		actor->setResourceId(id);
+		actor->setFrameCount(res->getFrameCount());
+		actor->setFrameNumber(0);
+		actor->setDirection(direction);
+		actor->updateStatus(actor->getStatus() <= kActorStatus11 ? kActorStatus3 : kActorStatus19);
 		delete res;
 
 		cmd->param3 = 2;
@@ -852,7 +854,7 @@ IMPLEMENT_OPCODE(PlayMovie) {
 	}
 
 	bool check = false;
-	ActionArea *area = _scene->worldstats()->actions[_scene->getActor()->actionIdx3];
+	ActionArea *area = _scene->worldstats()->actions[_scene->getActor()->getActionIndex3()];
 	if (area->paletteValue) {
 		_scene->vm()->screen()->setPalette(_scene->getResourcePack(), area->paletteValue);
 		_scene->vm()->screen()->setGammaLevel(_scene->getResourcePack(), area->paletteValue, 0);
@@ -1399,10 +1401,10 @@ IMPLEMENT_OPCODE(ChangeActorStatus) {
 	Actor *actor = _scene->getActor(cmd->param1);
 
 	if (cmd->param2) {
-		if (actor->status < kActorStatus11)
-			actor->status = kActorStatus14;
+		if (actor->getStatus() < kActorStatus11)
+			actor->setStatus(kActorStatus14);
 	} else {
-		actor->status = kActorStatusEnabled;
+		actor->setStatus(kActorStatusEnabled);
 	}
 }
 
@@ -1477,7 +1479,7 @@ IMPLEMENT_OPCODE(JumpBarrierFrame) {
 // Opcode 0x52
 IMPLEMENT_OPCODE(DeleteGraphics) {
 	for (uint i = 0; i < 55; i++)
-		_scene->vm()->screen()->deleteGraphicFromQueue(_scene->getActor(cmd->param1)->graphicResourceIds[cmd->param1]);
+		_scene->vm()->screen()->deleteGraphicFromQueue(_scene->getActor(cmd->param1)->getResourcesId(cmd->param1));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1485,7 +1487,7 @@ IMPLEMENT_OPCODE(DeleteGraphics) {
 IMPLEMENT_OPCODE(SetActorField944) {
 	Actor *actor = _scene->getActor(cmd->param1);
 
-	actor->field_944 = cmd->param2;
+	actor->setField944(cmd->param2);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1534,7 +1536,7 @@ IMPLEMENT_OPCODE(_unk55) {
 IMPLEMENT_OPCODE(_unk56) {
 	Actor *actor = _scene->getActor(cmd->param2 == 2 ? -1 : cmd->param1);
 
-	if (actor->status == kActorStatus2 || actor->status == kActorStatus13) {
+	if (actor->getStatus() == kActorStatus2 || actor->getStatus() == kActorStatus13) {
 		if (cmd->param2 == 2)
 			_lineIncrement = 1;
 
@@ -1546,8 +1548,8 @@ IMPLEMENT_OPCODE(_unk56) {
 		_lineIncrement = 0;
 
 		if ((actor->x1 + actor->x2 == cmd->param6) && (actor->y1 + actor->y2 == cmd->param7)) {
-			_scene->getActor(kActorPlayer)->faceTarget(cmd->param1, kDirectionFromActor);
-			actor->setDirection((actor->direction + 4) & 7);
+			_scene->getActor()->faceTarget(cmd->param1, kDirectionFromActor);
+			actor->updateFromDirection((actor->getDirection() + 4) & 7);
 		} else {
 			_currentLine = cmd->param3;
 		}
@@ -1556,7 +1558,7 @@ IMPLEMENT_OPCODE(_unk56) {
 		int32 y = 0; // FIXME: is is set somewhere else?
 
 		if (_scene->processActor(&x, &cmd->param4) == 1) {
-			_scene->getActor(kActorPlayer)->processStatus(x, y, cmd->param4);
+			_scene->getActor()->processStatus(x, y, cmd->param4);
 			cmd->param6 = x;
 			cmd->param7 = y;
 
@@ -1612,7 +1614,7 @@ IMPLEMENT_OPCODE(_unk59) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5A
 IMPLEMENT_OPCODE(_unk5A) {
-	_scene->getActor(cmd->param1)->actionIdx2 = cmd->param2;
+	_scene->getActor(cmd->param1)->setActionIndex2(cmd->param2);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1627,7 +1629,7 @@ IMPLEMENT_OPCODE(_unk5B) {
 			if (barrier->field_67C)
 				barrier->field_67C += 3;
 		} else {
-			_scene->getActor(cmd->param3)->field_96C = cmd->param2;
+			_scene->getActor(cmd->param3)->setField96C(cmd->param2);
 		}
 	}
 }
@@ -1652,7 +1654,7 @@ IMPLEMENT_OPCODE(ClearActorFields) {
 	Actor *actor = _scene->getActor(cmd->param1);
 
 	// Clear fields starting from field_970
-	memset(&actor->field_970, 0, 52);
+	actor->clearFields();
 }
 
 //////////////////////////////////////////////////////////////////////////

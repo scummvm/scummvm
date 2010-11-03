@@ -26,314 +26,315 @@
 #ifndef ASYLUM_ACTOR_H
 #define ASYLUM_ACTOR_H
 
-#include "asylum/system/graphics.h"
-
 #include "asylum/respack.h"
 #include "asylum/shared.h"
 
+#include "common/rect.h"
+
 namespace Asylum {
 
+class ActionArea;
+struct GraphicFrame;
+class GraphicResource;
 class Scene;
 class Screen;
-class ActionArea;
-
-typedef int ActorIndex;
-
-enum ActorIndexes {
-	kActorPlayer = -1
-};
-
-enum ActorStatus {
-	kActorStatus1 = 1,
-	kActorStatus2,
-	kActorStatus3,
-	kActorStatusEnabled,
-	kActorStatusDisabled,
-	kActorStatus6,
-	kActorStatus7,
-	kActorStatus8,
-	kActorStatus9,
-	kActorStatus10,
-	kActorStatus11,
-	kActorStatus12,
-	kActorStatus13,
-	kActorStatus14,
-	kActorStatus15,
-	kActorStatus16,
-	kActorStatus17,
-	kActorStatus18,
-	kActorStatus19,
-	kActorStatus20,
-	kActorStatus21
-};
-
-typedef int ActorDirection;
-
-// TODO: check if the names match the actor type
-enum ActorType {
-	kMax     = 0,
-	kSarah   = 1,
-    kCyclops = 2,
-    kAztec   = 3
-};
-
-enum ActorFlags {
-	kActorFlagVisible = 1
-};
-
-enum DirectionFrom {
-	kDirectionFromBarrier = 0,
-	kDirectionFromPolygons = 1,
-	kDirectionFromActor = 2,
-	kDirectionFromParameters = 3
-};
-
-// TODO investigate other actor resources (from other
-// scenes) to see if the unused blocks in the actor
-// definition are in fact used elsewhere
-enum ActorResources {
-	kSound1 = 0,
-	kSound2 = 1,
-	kSound3 = 2,
-	kSound4 = 3,
-	//kUnused = 4,	// 0
-	kFlags  = 5,
-
-	kWalkN  = 6,
-	kWalkNW = 7,
-	kWalkW  = 8,
-	kWalkSW = 9,
-	kWalkS  = 10,
-
-	kFaceN  = 11,
-	kFaceNW = 12,
-	kFaceW  = 13,
-	kFaceSW = 14,
-	kFaceS  = 15,
-
-	kFaceAndShakeN  = 16,
-	kFaceAndShakeNW = 17,
-	kFaceAndShakeW  = 18,
-	kFaceAndShakeSW = 19,
-	kFaceAndShakeS  = 20,
-
-	kStretchN  = 21,
-	kStretchNW = 22,
-	kStretchW  = 23,
-	kStretchSW = 24,
-	kStretchS  = 25,
-
-	kFidgetN  = 26,
-	kFidgetNW = 27,
-	kFidgetW  = 28,
-	kFidgetSW = 29,
-	kFidgetS  = 30,
-
-	// These are 0
-	/*
-	kUnknown1 = 31,
-	kUnknown2 = 32,
-	kUnknown3 = 33,
-	kUnknown4 = 34,
-	kUnknown5 = 35,
-	*/
-
-	kPickupN  = 36,
-	kPickupNW = 37,
-	kPickupW  = 38,
-	kPickupSW = 39,
-	kPickupS  = 40,
-
-	kOperateN  = 41,
-	kOperateNW = 42,
-	kOperateW  = 43,
-	kOperateSW = 44,
-	kOperateS  = 45,
-
-	kOperate2N  = 46,
-	kOperate2NW = 47,
-	kOperate2W  = 48,
-	kOperate2SW = 49,
-	kOperate2S  = 50,
-
-	// These are 0
-	/*
-	kUnknown6  = 51,
-	kUnknown7  = 52,
-	kUnknown8  = 53,
-	kUnknown9  = 54,
-	kUnknown10 = 55,
-	kUnknown11 = 56,
-	kUnknown12 = 57,
-	kUnknown13 = 58,
-	kUnknown14 = 59
-	*/
-
-	// Horizontally flipped animations (100 + regular anim Id)
-	kWalkNE = 107,
-	kWalkE  = 108,
-	kWalkSE = 109,
-
-	kFaceNE = 112,
-	kFaceE  = 113,
-	kFaceSE = 114
-	// TODO: finish these
-};
 
 class Actor {
 public:
 	Actor(Scene *scene, ActorIndex index);
 	virtual ~Actor();
 
+	//////////////////////////////////////////////////////////////////////////
+	// Public variables & accessors
+	//////////////////////////////////////////////////////////////////////////
+	int32  x;
+	int32  y;
+	int32  x1;
+	int32  y1;
+	int32  x2;
+	int32  y2;
+	int32 flags;
+	int32 actionType; // ActionType enum value
+
+
+	void setActionIndex2(int32 index) { _actionIdx2 = index; }
+	void setBarrierIndex(int32 index) { _field_3C = index; }
+	void setDirection(ActorDirection direction) { _direction = direction; }
+	void setFrameCount(int32 count) { _frameCount = count; }
+	void setFrameNumber(int32 number) { _frameNumber = number; }
+	void setPriority(int32 priority) { _priority = priority; }
+	void setResourceId(ResourceId id) { _resourceId = id; }
+	void setStatus(ActorStatus status) { _status = status; }
+	void setTickValue(int32 tick) { _tickValue = tick; }
+
+	void setField638(int32 val) { _field_638 = val; }
+	void setField934(int32 val) { _field_934 = val; }
+	void setField938(int32 val) { _field_938 = val; }
+	void setField944(int32 val) { _field_944 = val; }
+	void setField96C(int32 val) { _field_96C = val; }
+
+	int32          getActionIndex3() { return _actionIdx3; }
+	Common::Rect  *getBoundingRect() { return &_boundingRect; }
+	ActorDirection getDirection() { return _direction; }
+	int32          getFrameCount() { return _frameCount; }
+	int32          getFrameNum() { return _frameNumber; }
+	int32          getReaction(uint32 index) { return _reaction[index]; }
+	ResourceId     getResourceId() { return _resourceId; }
+	ResourceId     getResourcesId(uint32 index) { return _graphicResourceIds[index]; }
+	ActorStatus    getStatus()    { return _status; }
+
+	int32          getField638() { return _field_638; }
+	int32          getField944() { return _field_944; }
+	int32          getField96C() { return _field_96C; }
+	int32          getPriority() { return _priority; }
+
+	/////////////////////////////////////////////////////////////////////////
+	// Data
+	/////////////////////////////////////////////////////////////////////////
+	void load(Common::SeekableReadStream *stream);
+
+	/////////////////////////////////////////////////////////////////////////
+	// Visibility
+	/////////////////////////////////////////////////////////////////////////
+
 	/**
-	 * Initialize the 500 byte resource index from the scene
+	 * Query if this actor is visible.
+	 *
+	 * @return true if visible, false if not.
+	 */
+	bool isVisible() { return flags & kActorFlagVisible; }
+
+	/**
+	 * Sets actor visibility
+	 *
+	 * @param value true to set to visible, false to set to hidden.
+	 */
+	void setVisible(bool value);
+
+	/////////////////////////////////////////////////////////////////////////
+	// Update & status
+	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Updates the actor.
+	 */
+	void update();
+
+	/**
+	 * Updates the actor status.
+	 *
+	 * @param status The status.
+	 */
+	void updateStatus(ActorStatus status);
+
+	/////////////////////////////////////////////////////////////////////////
+	// Direction & position
+	/////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Updates the actor direction.
+	 */
+	void updateDirection();
+
+	/**
+	 * Updates resource Id using the actor direction.
+	 *
+	 * @param direction The direction.
+	 */
+	void updateFromDirection(ActorDirection direction);
+
+	/**
+	 * Face a target from a certain direction
+	 *
+	 * @param target Identifier for the target.
+	 * @param from   direction to face from.
+	 */
+	void faceTarget(int32 target, DirectionFrom from);
+
+	/**
+	 * Initialize the x1/y1 values of the actor, update the active animation frame and, if the current direction isn't 8, update the actor's direction.
+	 *
+	 * @param newX 		   The new x coordinate.
+	 * @param newY 		   The new y coordinate.
+	 * @param newDirection The new direction.
+	 * @param frame 	   The frame.
+	 */
+	void setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame);
+
+	/////////////////////////////////////////////////////////////////////////
+	// Misc
+	/////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Stop the actor related sounds
+	 */
+	void stopSound();
+
+	/**
+	 * Clears actor data fields (TODO what are those fields?)
+	 */
+	void clearFields() { memset(&_field_970, 0, 52); }
+
+	/**
+	 * TEMPORARY: Initialize the 500 byte resource index from the scene
 	 * file (at offset 0xA73B6).
 	 *
 	 * TODO remove this or add it in the right place
 	 */
 	void setRawResources(uint8* data);
 
-	// Visibility
-	bool isVisible() { return flags & kActorFlagVisible; }
-	void setVisible(bool value);
-
-	/** .text:0040A260
-	 * Initialize the x1/y1 values of the actor, update the active animation frame
-	 * and, if the current direction isn't 8, update the actor's direction
-	 */
-	void setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame);
-
-	void faceTarget(int32 targetId, DirectionFrom targetType);
-
-	void update();
-
-	/** .text:00401320
-	 * TODO
-	 */
-	void updateDirection();
-	void setDirection(ActorDirection direction);
-
-	void updateStatus(ActorStatus status);
-
-	bool defaultDirectionLoaded(int grResTableIdx);
-
-	void stopSound();
+	// Unknown methods
 	bool process(int32 x, int32 y);
 	void processStatus(int32 x, int32 y, bool doSpeech);
-
-	// Unknown methods
 	void process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 param8, int32 param9);
 	bool process_408B20(Common::Point *point, ActorDirection direction, int count, bool hasDelta);
 	void process_41BC00(int32 reactionIndex, int32 numberValue01Add);
 	void process_41BCC0(int32 reactionIndex, int32 numberValue01Substract);
 	bool process_41BDB0(int32 reactionIndex, bool testNumberValue01);
 
-	//////////////////////////////////////////////////////////////////////////
-	// OLD METHODS
-	// TODO ALL of these need to be depreciated in favour
-	// of the proper functions from the original
-	//void setWalkArea(ActionArea *target);
-	//void setAction(int32 action);
-	//void setActionByIndex(int32 index);
-	//void drawActorAt(int32 curX, int32 curY);
-	//void drawActor();
-	//void walkTo(int32 curX, int32 curY);
-	//////////////////////////////////////////////////////////////////////////
-
-
-
-	int32 currentAction; // TODO depreciate
-
-	int32  x;
-	int32  y;
-	ResourceId graphicResourceId;
-	int32  field_C; // BarrierIndex? Mask index?
-	uint32 frameNum;
-	uint32 frameCount;
-	int32  x1;
-	int32  y1;
-	int32  x2;
-	int32  y2;
-	Common::Rect boundingRect;
-	ActorDirection direction;
-	int32  field_3C;
-	ActorStatus status;
-	int32  field_44;
-	int32  priority;
-	int32  flags;
-	int32  field_50;
-	int32  field_54;
-	int32  field_58;
-	int32  field_5C;
-	int32  field_60;
-	int32  actionIdx3;
-	// TODO field_68 till field_617
-	int32  reaction[8];
-	int32  field_638;
-	int32  walkingSound1;
-	int32  walkingSound2;
-	int32  walkingSound3;
-	int32  walkingSound4;
-	int32  field_64C;
-	int32  field_650;
-	ResourceId  graphicResourceIds[55];
-	char   name[256];
-	int32  field_830[20];
-	int32  field_880[20];
-	int32  field_8D0[20];
-	int32  actionIdx2;
-	int32  field_924;
-	int32  tickValue;
-	int32  field_92C;
-	int32  actionType;
-	int32  field_934;
-	int32  field_938;
-	ResourceId  soundResourceId; // field_93C
-	int32  numberValue01;
-	int32  field_944;
-	int32  field_948;
-	int32  field_94C;
-	int32  numberFlag01;
-	int32  numberStringWidth;
-	int32  numberStringX;
-	int32  numberStringY;
-	char   numberString01[8];
-	int32  field_964;
-	int32  field_968;
-	int32  field_96C;
-	int32  field_970;
-	int32  field_974;
-	int32  field_978;
-	int32  actionIdx1;
-	int32  field_980;
-	int32  field_984;
-	int32  field_988;
-	int32  field_98C;
-	int32  field_990;
-	int32  field_994;
-	int32  field_998;
-	int32  field_99C;
-	int32  field_9A0;
-
 private:
 	Scene *_scene;
-	int32 _resources[61];
-
-	ActionArea      *_currentWalkArea;
-	GraphicResource *_graphic;
-
 	// Our current index
 	ActorIndex _index;
 
-	GraphicFrame *getFrame();
-	int32 getAngle(int32 ax1, int32 ay1, int32 ax2, int32 ay2);
+	// Temporary raw resources
+	int32 _resources[61];
 
+	//////////////////////////////////////////////////////////////////////////
+	// Data
+
+	ResourceId _resourceId;
+	int32  _field_C; // BarrierIndex? Mask index?
+	uint32 _frameNumber;
+	uint32 _frameCount;
+	// x1, y1, x2, y2
+	Common::Rect _boundingRect;
+	ActorDirection _direction;
+	int32  _field_3C;
+	ActorStatus _status;
+	int32  _field_44;
+	int32  _priority;
+	//flags
+	int32  _field_50;
+	int32  _field_54;
+	int32  _field_58;
+	int32  _field_5C;
+	int32  _field_60;
+	int32  _actionIdx3;
+	// TODO field_68 till field_617
+	int32  _reaction[8];
+	int32  _field_638;
+	int32  _walkingSound1;
+	int32  _walkingSound2;
+	int32  _walkingSound3;
+	int32  _walkingSound4;
+	int32  _field_64C;
+	int32  _field_650;
+	ResourceId  _graphicResourceIds[55];
+	char   _name[256];
+	int32  _field_830[20];
+	int32  _field_880[20];
+	int32  _field_8D0[20];
+	int32  _actionIdx2;
+	int32  _field_924;
+	int32 _tickValue;
+	int32  _field_92C;
+	//actionType
+	int32  _field_934;
+	int32  _field_938;
+	ResourceId _soundResourceId; // field_93C
+	int32  _numberValue01;
+	int32  _field_944;
+	int32  _field_948;
+	int32  _field_94C;
+	int32  _numberFlag01;
+	int32  _numberStringWidth;
+	int32  _numberStringX;
+	int32  _numberStringY;
+	char   _numberString01[8];
+	int32  _field_964;
+	int32  _field_968;
+	int32  _field_96C;
+	int32  _field_970;
+	int32  _field_974;
+	int32  _field_978;
+	int32  _actionIdx1;
+	int32  _field_980;
+	int32  _field_984;
+	int32  _field_988;
+	int32  _field_98C;
+	int32  _field_990;
+	int32  _field_994;
+	int32  _field_998;
+	int32  _field_99C;
+	int32  _field_9A0;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Update methods
+	//////////////////////////////////////////////////////////////////////////
+	int32 _actorUpdateCounter;
+	bool  _enableFromStatus7;
+
+	void updateStatus3_19();
+	void updateStatusEnabled();
+	void updateStatus9();
+	void updateStatus12_Chapter2();
+	void updateStatus12_Chapter2_Actor11();
+	void updateStatus12_Chapter11_Actor1();
+	void updateStatus12_Chapter11();
+	void updateStatus14();
+	void updateStatus15_Chapter2();
+	void updateStatus15_Chapter2_Player();
+	void updateStatus15_Chapter2_Actor11();
+	void updateStatus15_Chapter11();
+	void updateStatus15_Chapter11_Player();
+	void updateStatus16_Chapter2();
+	void updateStatus16_Chapter11();
+	void updateStatus17_Chapter2();
+	void updateStatus18_Chapter2();
+	void updateStatus18_Chapter2_Actor11();
+	void updateStatus21();
+
+	void updateFinish();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Misc
+	//////////////////////////////////////////////////////////////////////////
+	void setVolume();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helper methods
+	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Gets a direction using the angle between the two points
+	 *
+	 * @param ax1 The first ax.
+	 * @param ay1 The first ay.
+	 * @param ax2 The second ax.
+	 * @param ay2 The second ay.
+	 *
+	 * @return The angle.
+	 */
+	ActorDirection getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2);
+
+	/**
+	 * Updates the actor graphic information
+	 *
+	 * @param offset The offset used to get the id from the _graphicResourceIds table
+	 */
 	void updateGraphicData(uint32 offset);
 
 	/**
-	 * TODO give more meaningful name
+	 * Query if the passed direction is default direction.
+	 *
+	 * @param index Zero-based index of the graphic resource.
+	 *
+	 * @return true if default direction, false if not.
 	 */
-	void updateActorSub01();
+	bool isDefaultDirection(int index);
+
+
 
 }; // end of class MainActor
 

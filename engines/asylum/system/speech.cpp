@@ -44,7 +44,7 @@ int32 Speech::play(ResourceId speechResourceId) {
 	int32 soundResourceId = 0;
 
 	switch (_scene->worldstats()->actorType) {
-	case kMax: {
+	case kActorMax: {
 		int32 soundResourceId2 = speechResourceId;
 		int32 textResourceId = speechResourceId;
 
@@ -59,17 +59,17 @@ int32 Speech::play(ResourceId speechResourceId) {
 	}
 		break;
 	// TODO: check if actor type is right for the following cases
-	case kSarah: {
+	case kActorSarah: {
 		soundResourceId = speechResourceId - 0x7FFBF879;
 		setPlayerSpeech(soundResourceId, speechResourceId - 0x7FFFFDB6);
 	}
 		break;
-	case kCyclops: {
+	case kActorCyclops: {
 		soundResourceId = speechResourceId - 0x7FFBF7DC;
 		setPlayerSpeech(soundResourceId, speechResourceId - 0x7FFFFD19);
 	}
 		break;
-	case kAztec: {
+	case kActorAztec: {
 		soundResourceId = speechResourceId - 0x7FFBF746;
 		setPlayerSpeech(soundResourceId, speechResourceId - 0x7FFFFC83);
 	}

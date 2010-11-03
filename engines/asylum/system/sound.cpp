@@ -102,6 +102,10 @@ int32 Sound::getAdjustedVolume(int32 volume) {
 	error("[Sound::getAdjustedVolume] not implemented");
 }
 
+int32 Sound::calculateVolume(int32 x, int32 y, int32 a5, int32 a6) {
+	error("[Sound::calculateVolume] not implemented");
+}
+
 int32 Sound::getBufferPosition(ResourceId resourceId) {
 	int32 pos = -1;
 

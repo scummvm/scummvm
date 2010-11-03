@@ -179,6 +179,9 @@ public:
 	bool mattePlaySound;
 	bool matteInitialized;
 
+	// Shared methods
+	void resetActor0();
+
 protected:
 	/** .text:0040EA50
 	 * Run various hit tests and return the index,
