@@ -47,6 +47,10 @@ typedef struct PolyDefinitions {
 	 */
 	bool contains(int16 x, int16 y);
 
+	bool contains(Common::Point point) {
+		return contains(point.x, point.y);
+	}
+
 } PolyDefinitions;
 
 class Polygons {

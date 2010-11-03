@@ -704,7 +704,7 @@ int32 Scene::hitTestScene(const Common::Point pt, HitType &type) {
 	int32 result = findActionArea(Common::Point(top, left));
 
 	if (result != -1) {
-		if (LO_BYTE(_ws->actions[result]->actionType) & 8) {
+		if (LOBYTE(_ws->actions[result]->actionType) & 8) {
 			type = kHitActionArea;
 			return result;
 		}
@@ -805,7 +805,7 @@ void Scene::updateAmbientSounds() {
 						; // TODO setSoundVolume(snd->resourceId, 0);
 				}
 			} else {
-				int loflag = LO_BYTE(snd->flags);
+				int loflag = BYTE1(snd->flags);
 				if (snd->field_0) {
 					; // TODO calculate panning at point
 				} else {
@@ -1031,7 +1031,7 @@ int Scene::drawScene() {
 
 		// Draw actors on the update list
 		buildUpdateList();
-		drawUpdateList();
+		processUpdateList();
 
 		if (_ws->numChapter == 11)
 			checkVisibleActorsPriority();
@@ -1086,139 +1086,180 @@ void Scene::buildUpdateList() {
 	Common::sort(_updateList.begin(), _updateList.end(), &Scene::updateListCompare);
 }
 
-void Scene::drawUpdateList() {
-	// TODO this is supposed to be looping through
-	// a collection of CharacterUpdateItems. Since
-	// we're only on scene 1 atm, and there is only one
-	// character, this will have to do :P
-	for (int32 i = 0; i < _ws->numActors; i++) {
-		int actorRegPt = 0;
-		Actor *act = _ws->actors[i];
-		Common::Point pt;
+void Scene::processUpdateList() {
+	for (uint32 i = 0; i < _updateList.size(); i++) {
+		Actor *actor = getActor(_updateList[i].index);
+		int32 priority = _updateList[i].priority;
+		Common::Point point;
 
-		// XXX Since we're not using CharacterUpdateItems,
-		// the actor priority is never going to be changed.
-		// Need to investigate if this is an issue
-		/*
-		if (act->priority < 0)
-			act->priority = abs(act->priority);
+		// Check priority
+		if (priority < 0) {
+			actor->setPriority(abs(priority));
 			continue;
-		*/
-		act->setPriority(3);
-		if (act->getField944() == 1 || act->getField944() == 4)
-			act->setPriority(1);
-		else {
-			act->setField938(1);
-			act->setField934(0);
-			pt.x = act->x1 + act->x2;
-			pt.y = act->y1 + act->y2;
+		}
 
-			actorRegPt = act->getBoundingRect()->bottom + act->getBoundingRect()->right + 4;
+		actor->setPriority(3);
 
-			// TODO special case for scene 11
-			// Not sure if we're checking the scene index
-			// or the scene number though :P
-			/*
-			if (_sceneIdx == 11) {
-				// FIXME this probably won't work
-				if (act != this->getActor())
-					actorRegPt += 20;
-			}
-			*/
+		if (actor->getField944() == 1 || actor->getField944() == 4) {
+			actor->setPriority(1);
+		} else {
+			actor->setField938(1);
+			actor->setField934(0);
+			point.x = actor->x1 + actor->x2;
+			point.y = actor->y1 + actor->y2;
 
-			// XXX from .text:0040a4d1
-			for (int32 barIdx = 0; barIdx < _ws->numBarriers; barIdx++) {
-				Barrier *bar    = _ws->barriers[barIdx];
-				bool actInBar   = bar->getBoundingRect()->contains(*act->getBoundingRect());
-				bool intersects = false;
+			int32 bottomRight = actor->getBoundingRect()->bottom + actor->y1 + 4;
 
-				// TODO verify that my funky LOBYTE macro actually
-				// works the way I assume it should :P
-				if (!actInBar) {
-					if (LO_BYTE(bar->flags) & 0x20)
-						if (!(LO_BYTE(bar->flags) & 0x80))
-							// XXX not sure if this will work, as it's
-							// supposed to set 0x40 to the lobyte...
-							bar->flags |= 0x40;
+			if (_ws->numChapter == 11 && _updateList[i].index != getPlayerActorIndex())
+				bottomRight += 20;
+
+			// Our actor rect
+			Common::Rect actorRect(actor->x1, actor->y1, actor->x1 + actor->getBoundingRect()->right, bottomRight);
+
+			// Process barriers
+			for (int32 j = 0; j < _ws->numBarriers; j++) {
+				Barrier *barrier = _ws->barriers[i];
+
+				// Skip hidden barriers
+				if (!barrier->isOnScreen())
+					continue;
+
+				// Rect for the barrier
+				Common::Rect barrierRect(barrier->x, barrier->y, barrier->x + barrier->getBoundingRect()->right, barrier->y + barrier->getBoundingRect()->bottom);
+
+				// Check that the rects are contained
+				if (!barrierRect.contains(actorRect)) {
+					if (BYTE1(barrier->flags) & kBarrierFlag20)
+						if (!(BYTE1(barrier->flags) & kBarrierFlag80))
+							barrier->flags = BYTE1(barrier->flags) | kBarrierFlag40;
 					continue;
 				}
 
-				if (bar->flags & 2) {
-					// TODO refactor
-					if (bar->getField74() || bar->getField78() ||
-						bar->getField7C() || bar->getField80())
-						intersects = (pt.y > bar->getField78() + (bar->getField80() - bar->getField78()) * (pt.x - bar->getField74()) / (bar->getField7C() - bar->getField74())) == 0;
-					else
-						intersects = true;
+				// Check if it intersects with either the barrier rect or the related polygon
+				bool intersects = false;
+				if (barrier->flags & kBarrierFlag2) {
+					intersects = pointIntersectsRect(point, *barrier->getRect());
 				} else {
-					if (bar->flags & 0x40) {
-						PolyDefinitions *poly = &_polygons->entries[bar->getPolygonIndex()];
-						if (pt.x > 0 && pt.y > 0 && poly->numPoints > 0)
-							intersects = poly->contains(pt.x, pt.y);
+					if (barrier->flags & kBarrierFlag40) {
+						PolyDefinitions *poly = &_polygons->entries[barrier->getPolygonIndex()];
+						if (point.x > 0 && point.y > 0 && poly->numPoints > 0)
+							intersects = poly->contains(point);
 						else
-							;//warning ("[drawActorsAndBarriers] trying to find intersection of uninitialized point");
+							warning ("[drawActorsAndBarriers] trying to find intersection of uninitialized point");
 					}
-					// XXX the original has an else case here that
-					// assigns intersects the value of the
-					// flags & 2 check, which doesn't make any sense since
-					// that path would never have been taken if code
-					// execution had made it's way here.
 				}
-				if (LO_BYTE(bar->flags) & 0x80 || intersects) {
-					if (LO_BYTE(bar->flags) & 0x20)
-						// XXX not sure if this will work, as it's
-						// supposed to set this value on the lobyte...
-						bar->flags &= 0xBF | 0x80;
-					else
-						// XXX another lobyte assignment...
-						bar->flags |= 0x40;
-						// TODO label jump up a few lines here. Investigate...
+
+				// Adjust barrier flags
+				if (BYTE1(barrier->flags) & kBarrierFlag80 || intersects) {
+					if (BYTE1(barrier->flags) & kBarrierFlag20)
+						barrier->flags = BYTE1(barrier->flags) & 0xBF | kBarrierFlag80;
+				} else {
+					if (BYTE1(barrier->flags) & kBarrierFlag20) {
+						barrier->flags = BYTE1(barrier->flags) | kBarrierFlag40;
+					}
 				}
-				if (bar->flags & 4) {
-					if (intersects) {
-						if(act->flags & 2)
-							;//warning ("[drawActorsAndBarriers] Assigning mask to masked character [%s]", bar->name);
-						else {
-							// TODO there's a call to sub_40ac10 that does
-							// a point calculation, but the result doesn't appear to
-							// ever be used, and the object passed in as a parameter
-							// isn't updated
-							act->setBarrierIndex(barIdx);
-							act->flags |= 2;
-						}
+
+				if (barrier->flags & kBarrierFlag4) {
+					if (intersects && LOBYTE(actor->flags) & kActorFlagMasked) {
+						error("[Scene::processUpdateList] Assigning mask to masked character [%s]", actor->getName());
+					} else {
+						adjustCoordinates(barrier->x, barrier->y, &point);
+						actor->setBarrierIndex(j);
+						actor->flags |= kActorFlagMasked;
 					}
 				} else {
 					if (intersects) {
-						// XXX assuming the following:
-						// "if ( *(int *)((char *)&scene.characters[0].priority + v18) < *(v12_barrierPtr + 35) )"
-						// is the same as what I'm comparing :P
-						if (act->getPriority() < bar->getPriority()) {
-							act->setField934(1);
-							act->setPriority(bar->getPriority() + 3);
-							// TODO there's a block of code here that seems
-							// to loop through the CharacterUpdateItems and do some
-							// priority adjustment. Since I'm not using CharacterUpdateItems as of yet,
-							// I'm not sure what to do here
-							// The loop seems to occur if:
-							// (a) there are still character items to process
-							// (b) sceneNumber != 2 && actor->field_944 != 1
+						if (actor->getPriority() < barrier->getPriority()) {
+							actor->setField934(1);
+							actor->setPriority(barrier->getPriority() + 3);
+
+							if (_updateList[i].index > _updateList[0].index) {
+								error("[Scene::processUpdateList] list update not implemented!");
+							}
 						}
 					} else {
-						if (act->getPriority() > bar->getPriority() || act->getPriority() == 1) {
-							act->setField934(1);
-							act->setPriority(bar->getPriority() - 1);
-							// TODO another character update loop
-							// This time it looks like there's another
-							// intersection test, and more updates
-							// to field_934 and field_944, then
-							// priority updates
+						if (actor->getPriority() > barrier->getPriority() || actor->getPriority() == 1) {
+							actor->setField934(1);
+							actor->setPriority(barrier->getPriority() - 1);
+
+							if (_updateList[i].index > _updateList[0].index) {
+								error("[Scene::processUpdateList] list update not implemented!");
+							}
 						}
 					}
 				}
-			} // end for (barriers)
-		}
-	} // end for (actors)
+			} // end processing barriers
 
+			// Update all other actors
+			for (uint32 k = 0; k < _updateList.size(); k++) {
+				Actor *actor2 = getActor(_updateList[k].index);
+
+				if (actor2->isVisible() && actor2->getField944() != 1 && actor2->getField944() != 4 && _updateList[k].index != _updateList[i].index) {
+
+					Common::Rect actor2Rect(actor2->x1, actor2->y1, actor2->x1 + actor2->getBoundingRect()->right, actor2->y1 + actor2->getBoundingRect()->bottom);
+
+					if (actor2Rect.contains(actorRect)) {
+
+						// Inferior
+						if ((actor2->y1 + actor2->y2) > (actor->y1 + actor->y2)) {
+							if (actor->getPriority() <= actor2->getPriority()) {
+								if (actor->getField934() || actor2->getNumberValue01()) {
+									if (!actor2->getNumberValue01())
+										actor2->setPriority(actor->getPriority() - 1);
+								} else {
+									actor->setPriority(actor2->getPriority() + 1);
+								}
+							}
+						}
+
+						// Superior
+						if ((actor2->y1 + actor2->y2) < (actor->y1 + actor->y2)) {
+							if (actor->getPriority() >= actor2->getPriority()) {
+								if (actor->getField934() || actor2->getNumberValue01()) {
+									if (!actor2->getNumberValue01())
+										actor2->setPriority(actor->getPriority() + 1);
+								} else {
+									actor->setPriority(actor2->getPriority() - 1);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (actor->getField974())
+				getActor(actor->getField980())->setPriority(-actor->getPriority());
+		}
+	} // end processing actors
+
+
+	// Go through the list from the end
+	if (_updateList.size() > 1) {
+		for (int i = _ws->actors.size() - 1; i >= 0; --i) {
+			Actor *actor = _ws->actors[i];
+
+			// Skip hidden actors
+			if (!actor->isVisible())
+				continue;
+
+			if (actor->getField944() != 1 && actor->getField944() != 4) {
+				error("[Scene::processUpdateList] list update not implemented!");
+			}
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Helpers
+//////////////////////////////////////////////////////////////////////////
+bool Scene::pointIntersectsRect(Common::Point point, Common::Rect rect) {
+	if (rect.top || rect.left || rect.bottom || rect.right) {
+		Common::Rational res((rect.bottom - rect.top) * (point.x - rect.left), rect.right - rect.left);
+
+		return (bool)(point.y > rect.top ? 1 + res.toInt() : res.toInt());
+	}
+
+	return true;
 }
 
 void Scene::getActorPosition(Actor *actor, Common::Point *pt) {

@@ -62,10 +62,10 @@ void Barrier::load(Common::SeekableReadStream *stream) {
 
 	stream->read(_name, sizeof(_name));
 
-	_field_74     = stream->readSint32LE();
-	_field_78     = stream->readSint32LE();
-	_field_7C     = stream->readSint32LE();
-	_field_80     = stream->readSint32LE();
+	_rect.left    = stream->readSint32LE();
+	_rect.top     = stream->readSint32LE();
+	_rect.right   = stream->readSint32LE();
+	_rect.bottom  = stream->readSint32LE();
 	_polygonIndex = stream->readSint32LE();
 	actionType    = stream->readSint32LE();
 
@@ -161,10 +161,10 @@ bool Barrier::isVisible() {
 // Update
 //////////////////////////////////////////////////////////////////////////
 void Barrier::draw() {
-	if (LO_BYTE(flags) & kBarrierFlag4)
+	if (LOBYTE(flags) & kBarrierFlag4)
 		return;
 
-	if (HI_BYTE(flags) & kBarrierFlag40)
+	if (BYTE1(flags) & kBarrierFlag40)
 		return;
 
 	if (!isOnScreen())

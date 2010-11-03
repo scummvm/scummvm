@@ -915,7 +915,7 @@ IMPLEMENT_OPCODE(ResumeProcessing) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x31
 IMPLEMENT_OPCODE(ResetSceneRect) {
-	_scene->worldstats()->sceneRectIdx = LO_BYTE(cmd->param1);
+	_scene->worldstats()->sceneRectIdx = LOBYTE(cmd->param1);
 	_scene->vm()->screen()->paletteFade(0, 25, 10);
 	_scene->vm()->setFlag(kFlagTypeSceneRectChanged);
 
