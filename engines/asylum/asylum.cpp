@@ -185,8 +185,8 @@ void AsylumEngine::playIntro() {
 
 	_video->playVideo(1, Config.showMovieSubtitles);
 
-	if (_scene->worldstats()->musicCurrentResId != -666)
-		_sound->playMusic(_scene->worldstats()->musicCurrentResId);
+	if (_scene->worldstats()->musicCurrentResourceId != -666)
+		_sound->playMusic(_scene->worldstats()->musicCurrentResourceId);
 
 	_screen->clearScreen();
 
@@ -224,7 +224,7 @@ void AsylumEngine::handleEvents(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 			// the alarm by flipping the switch. The sound class needs to be extended
 			// to be able to handle multiple handles.
 			// The currently active sound resources can probably also be buffered into
-			// the scene's soundResId[] array (seems that's the way the original worked,
+			// the scene's soundResourceId[] array (seems that's the way the original worked,
 			// especially when you examine isSoundinList() or isSoundPlaying())
 
 			_scene->enterScene();

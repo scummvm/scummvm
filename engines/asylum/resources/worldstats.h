@@ -93,17 +93,17 @@ public:
 	uint8 field_11D[3];
 	int32 field_120;
 	int32 actionListIdx;	 // actionList start index
-	int32 grResId[100];
-	int32 sceneTitleGrResId;
-	int32 sceneTitlePalResId;
+	ResourceId graphicResourceIds[100];
+	ResourceId sceneTitleGraphicResourceId;
+	ResourceId sceneTitlePaletteResourceId;
 	int32 actorType;
-	ResourceId soundResId[50];
+	ResourceId soundResourceIds[50];
 	AmbientSoundItem ambientSounds[15];
 	int32 numAmbientSound;
 	int32 musicStatus;
-	ResourceId musicCurrentResId;
+	ResourceId musicCurrentResourceId;
 	int32 musicFlag;
-	ResourceId musicResId;
+	ResourceId musicResourceId;
 	int32 musicStatusExt;
 
 	// FIXME: Investigate if we need to actually reserve maxsize for this arrays.

@@ -74,8 +74,8 @@ bool Console::cmdDumpActionArea(int32 argc, const char **argv) {
 
 void Console::printActionAreaStats(ActionArea *a) {
 	DebugPrintf("id[%d] name[%s] field01[%d] field02[%d] field40[%d] field44[%d] flags[%d] \n"
-	            "actionListIdx1[%d] actionListIdx2[%d] actionType[%d] field_7C[%d] polyIdx[%d]\n"
-	            "field_84[%d] field_88[%d] soundResId[%d] field_90[%d] palette[%d] volume[%d]\n\n",
+	            "scriptIndex[%d] actionListIdx2[%d] actionType[%d] field_7C[%d] polyIdx[%d]\n"
+	            "field_84[%d] field_88[%d] soundResourceId[%d] field_90[%d] paletteValue[%d] volume[%d]\n\n",
 	            a->id,
 	            a->name,
 	            a->field01,
@@ -91,7 +91,7 @@ void Console::printActionAreaStats(ActionArea *a) {
 	            a->polyIdx,
 	            a->field_84,
 	            a->field_88,
-	            a->soundResId,
+	            a->soundResourceId,
 	            a->field_90,
 	            a->paletteValue,
 	            //a->array[5],

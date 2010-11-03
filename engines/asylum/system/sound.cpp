@@ -94,15 +94,15 @@ void convertPan(int32 &pan) {
 	}
 }
 
-void Sound::setVolume(int32 resId, double volume) {
+void Sound::setVolume(ResourceId resourceId, double volume) {
 	error("[Sound::setVolume] not implemented");
 }
 
-int32 Sound::getBufferPosition(int32 resId) {
+int32 Sound::getBufferPosition(ResourceId resourceId) {
 	int32 pos = -1;
 
 	for (uint32 i = 0; i < _soundBuffer.size(); i++) {
-		if (resId == _soundBuffer[i].resId) {
+		if (resourceId == _soundBuffer[i].resourceId) {
 			pos = i;
 			break;
 		}
@@ -111,12 +111,12 @@ int32 Sound::getBufferPosition(int32 resId) {
 	return pos;
 }
 
-bool Sound::addToSoundBuffer(int32 resId) {
-	int32 exists = getBufferPosition(resId);
+bool Sound::addToSoundBuffer(ResourceId resourceId) {
+	int32 exists = getBufferPosition(resourceId);
 
 	if (exists < 0) {
 		SoundBufferItem sound;
-		sound.resId = resId;
+		sound.resourceId = resourceId;
         sound.handle = _soundHandle;
 		_soundBuffer.push_back(sound);
 	}
@@ -124,8 +124,8 @@ bool Sound::addToSoundBuffer(int32 resId) {
 	return (exists < 0) ? true : false;
 }
 
-void Sound::removeFromSoundBuffer(int32 resId) {
-    int32 pos = getBufferPosition(resId);
+void Sound::removeFromSoundBuffer(ResourceId resourceId) {
+    int32 pos = getBufferPosition(resourceId);
 
 	if (pos >= 0) {
 		_soundBuffer.remove_at(pos);
@@ -136,25 +136,25 @@ void Sound::clearSoundBuffer() {
 	_soundBuffer.clear();
 }
 
-bool Sound::isPlaying(int32 resId) {
-	int32 pos = getBufferPosition(resId);
+bool Sound::isPlaying(ResourceId resourceId) {
+	int32 pos = getBufferPosition(resourceId);
 
 	if (pos < 0) {
-		//warning("isPlaying: resId %d not currently bufferred", resId);
+		//warning("isPlaying: resource %d not currently buffered", resourceId);
 	} else {
 		SoundBufferItem snd = _soundBuffer[pos];
 		if (_mixer->isSoundHandleActive(snd.handle)) {
 			return true;
         } else {
-            removeFromSoundBuffer(resId);
+            removeFromSoundBuffer(resourceId);
         }
 	}
 
 	return false;
 }
 
-void Sound::playSound(ResourcePack *pack, ResourceId resId, int32 volume, bool looping, int32 panning, bool overwrite) {
-	ResourceEntry *resource = pack->getResource(resId);
+void Sound::playSound(ResourcePack *pack, ResourceId resourceId, int32 volume, bool looping, int32 panning, bool overwrite) {
+	ResourceEntry *resource = pack->getResource(resourceId);
 	if (_mixer->isSoundHandleActive(_soundHandle)) {
 		if (overwrite) {
 			_mixer->stopHandle(_soundHandle);
@@ -170,34 +170,34 @@ void Sound::playSound(ResourceEntry *resource, bool looping, int32 volume, int32
 	playSoundData(Audio::Mixer::kSFXSoundType, &_soundHandle, resource->data, resource->size, looping, volume, panning);
 }
 
-void Sound::playSound(ResourcePack *pack, int32 resId, bool looping, int32 volume, int32 panning) {
-	int32 pos = getBufferPosition(resId);
+void Sound::playSound(ResourcePack *pack, ResourceId resourceId, bool looping, int32 volume, int32 panning) {
+	int32 pos = getBufferPosition(resourceId);
 
 	if (pos < 0) {
-		warning("playSound: resId %d not currently bufferred", resId);
+		warning("playSound: resource %d not currently bufferred", resourceId);
 	} else {
 		SoundBufferItem snd = _soundBuffer[pos];
 		if (_mixer->isSoundHandleActive(snd.handle)) {
-			debugC(kDebugLevelSound, "playSound: handle for resId %d already active", resId);
+			debugC(kDebugLevelSound, "playSound: handle for resource %d already active", resourceId);
 		} else {
-			ResourceEntry *ent = _soundPack->getResource(resId);
+			ResourceEntry *ent = _soundPack->getResource(resourceId);
 			playSoundData(Audio::Mixer::kSFXSoundType, &snd.handle, ent->data, ent->size, looping, volume, panning);
-            addToSoundBuffer(resId);
+            addToSoundBuffer(resourceId);
 		}
 	}
 
 }
 
-void Sound::playSound(ResourceId resId, bool looping, int32 volume, int32 panning, bool fromBuffer) {
+void Sound::playSound(ResourceId resourceId, bool looping, int32 volume, int32 panning, bool fromBuffer) {
 	if (fromBuffer) {
-		playSound(_soundPack, resId, looping, volume, panning);
+		playSound(_soundPack, resourceId, looping, volume, panning);
 	} else {
 		if (_mixer->isSoundHandleActive(_soundHandle)) {
 			debugC(kDebugLevelSound, "playSound: temporary sound handle is active");
 		} else {
-			ResourceEntry *ent = _soundPack->getResource(resId);
+			ResourceEntry *ent = _soundPack->getResource(resourceId);
 			playSound(ent, looping, volume, panning);
-            addToSoundBuffer(resId);
+            addToSoundBuffer(resourceId);
 		}
 	}
 }
@@ -207,11 +207,11 @@ void Sound::stopSound() {
 		_mixer->stopHandle(_soundHandle);
 }
 
-void Sound::stopSound(int32 resId) {
-	int32 pos = getBufferPosition(resId);
+void Sound::stopSound(ResourceId resourceId) {
+	int32 pos = getBufferPosition(resourceId);
 
 	if (pos < 0) {
-		warning("stopSound: resId %d not currently bufferred", resId);
+		warning("stopSound: resource %d not currently bufferred", resourceId);
 	} else {
 		_mixer->stopHandle(_soundBuffer[pos].handle);
 	}
@@ -229,24 +229,24 @@ void Sound::stopAllSounds(bool stopSpeechAndMusic) {
 		_mixer->stopHandle(_soundBuffer[i].handle);
 }
 
-void Sound::playSpeech(int32 resId) {
-	ResourceEntry *ent = _speechPack->getResource(resId);
+void Sound::playSpeech(ResourceId resourceId) {
+	ResourceEntry *ent = _speechPack->getResource(resourceId);
 
 	_mixer->stopHandle(_speechHandle);
 	playSoundData(Audio::Mixer::kSpeechSoundType, &_speechHandle, ent->data, ent->size, false, 0, 0);
 }
 
-void Sound::playMusic(int32 resId) {
+void Sound::playMusic(ResourceId resourceId) {
 	stopMusic();
 
 	// TODO Play music :P
 	error("[Sound::playMusic] not implemented");
 }
 
-void Sound::playMusic(ResourcePack *pack, int32 resId) {
+void Sound::playMusic(ResourcePack *pack, ResourceId resourceId) {
 	stopMusic();
 
-	ResourceEntry *resource = pack->getResource(resId);
+	ResourceEntry *resource = pack->getResource(resourceId);
 	playSoundData(Audio::Mixer::kMusicSoundType, &_musicHandle, resource->data, resource->size, true, Config.musicVolume, 0);
 }
 

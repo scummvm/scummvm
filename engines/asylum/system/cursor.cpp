@@ -61,7 +61,7 @@ void Cursor::load(int32 index) {
 }
 */
 
-void Cursor::create(Cursor *&cursor, ResourcePack *pack, int32 id) {
+void Cursor::create(Cursor *&cursor, ResourcePack *pack, ResourceId id) {
 	// If the current cursor resource is already assigned
 	// to the id value we're sending, just return
 	// TODO this simplifies a lot of additional validation calls
@@ -69,7 +69,7 @@ void Cursor::create(Cursor *&cursor, ResourcePack *pack, int32 id) {
 	// where we WANT to reset the curor to the id supplied, even
 	// if it's the same as what's assigned ... investigate
 	if (cursor) {
-		if (cursor->grResId != id)
+		if (cursor->graphicResourceId != id)
 			delete cursor;
 		else
 			return;
@@ -86,11 +86,11 @@ void Cursor::show() {
 	CursorMan.showMouse(true);
 }
 
-void Cursor::set(uint32 resId, int32 cntr, int32 flgs, int32 frames) {
+void Cursor::set(ResourceId resourceId, int32 cntr, int32 flgs, int32 frames) {
 	if (_cursorRes)
 		delete _cursorRes;
 
-	_cursorRes = new GraphicResource(_pack, resId);
+	_cursorRes = new GraphicResource(_pack, resourceId);
 
 	if (frames >= 0)
 		frameCount = frames;

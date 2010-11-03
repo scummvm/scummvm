@@ -559,7 +559,7 @@ void MainMenu::updateSubMenuQuitGame() {
 
 void MainMenu::updateSubMenuShowCredits() {
 	int32 posY	 = _creditsTextScroll;
-	int32 resId	 = 0;
+	ResourceId resourceId	 = 0;
 	int32 step	 = 0;
 	int32 minBound = 0;
 	int32 maxBound = 0;
@@ -594,11 +594,11 @@ void MainMenu::updateSubMenuShowCredits() {
 				}
 
 			_vm->text()->setTextPos(320, step + posY);
-			_vm->text()->drawResText(resId - 2147482201);
+			_vm->text()->drawResText(resourceId - 2147482201);
 			posY = _creditsTextScroll;
 		}
 		step += 24;
-		++resId;
+		++resourceId;
 	} while (step < 0x21F0);
 
 	_creditsTextScroll -= 2;

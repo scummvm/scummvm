@@ -23,9 +23,9 @@
  *
  */
 
-#include "common/file.h"
+#include "asylum/resources/encounters.h"
 
-#include "asylum/encounters.h"
+#include "common/file.h"
 
 namespace Asylum {
 
@@ -53,7 +53,7 @@ Encounter::Encounter(Scene *scene) {
 
 		item.keywordIndex = file.readSint32LE();
 		item.field2       = file.readSint32LE();
-		item.scriptResId  = file.readSint32LE();
+		item.scriptResourceId  = file.readSint32LE();
 		for (uint8 j = 0; j < 50; j++) {
 			item.array[j] = file.readSint32LE();
 		}

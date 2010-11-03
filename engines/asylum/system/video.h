@@ -84,8 +84,8 @@ public:
 	VideoText();
 	~VideoText();
 
-	void loadFont(ResourcePack *resPack, int32 resId);
-	void drawMovieSubtitle(byte *screenBuffer, int32 resId);
+	void loadFont(ResourcePack *resPack, ResourceId resourceId);
+	void drawMovieSubtitle(byte *screenBuffer, ResourceId resourceId);
 
 private:
 	int32 getTextWidth(const char *text);

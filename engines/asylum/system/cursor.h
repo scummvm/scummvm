@@ -28,6 +28,8 @@
 
 #include "asylum/system/graphics.h"
 
+#include "asylum/shared.h"
+
 namespace Asylum {
 
 /**
@@ -45,7 +47,7 @@ public:
 	 * Generate a new cursor instance from the resource id
 	 * within the resource pack provided.
 	 */
-	static void create(Cursor *&cursor, ResourcePack *pack, int32 id);
+	static void create(Cursor *&cursor, ResourcePack *pack, ResourceId id);
 
 	/**
 	 * Show the current cursor
@@ -63,7 +65,7 @@ public:
 	 * frame count should be derived from the graphic resource as opposed to being
 	 * explicitely set.
 	 */
-	void set(uint32 resId, int32 cntr, int32 flgs, int32 frames = -1);
+	void set(ResourceId resourceId, int32 cntr, int32 flgs, int32 frames = -1);
 	/**
 	 * Set the x/y coordinates of the cursor
 	 */
@@ -99,7 +101,7 @@ public:
 	// may as well be class members in order to simplify the logic a bit
 
 	// typedef struct CursorInfo {
-	int32 grResId;
+	ResourceId graphicResourceId;
 	int32 currentFrame; // assuming field_4c is the current frame pointer
 	                    // since it's generally initialized to zero
 	int32 frameCount;

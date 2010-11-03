@@ -190,8 +190,8 @@ void Scene::initialize() {
 void Scene::startMusic() {
 	// TODO musicCacheOk check as part of if
 	int musicId = 0;
-	if (_ws->musicCurrentResId != -666 && _ws->numChapter != 1)
-		musicId = _ws->musicResId - 0x7FFE0000;
+	if (_ws->musicCurrentResourceId != -666 && _ws->numChapter != 1)
+		musicId = _ws->musicResourceId - 0x7FFE0000;
 	_vm->sound()->playMusic(_musPack, musicId);
 
 }
@@ -334,12 +334,12 @@ void Scene::update() {
 
 	//TODO: other process stuffs from sub 0040AE30
 
-	if (_speech->_soundResIdx != 0) {
-		if (_vm->sound()->isPlaying(_speech->_soundResIdx)) {
+	if (_speech->_soundResourceId != 0) {
+		if (_vm->sound()->isPlaying(_speech->_soundResourceId)) {
 			_speech->prepareSpeech();
 		} else {
-			_speech->_textResIdx = 0;
-			_speech->_soundResIdx = 0;
+			_speech->_textResourceId = 0;
+			_speech->_soundResourceId = 0;
 			_vm->clearGameFlag(kGameFlag219);
 		}
 }
@@ -527,11 +527,11 @@ void Scene::updateMouse() {
 
 void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 	int16 rlimit = rect.right - 10;
-	int32 newGrResId;
+	ResourceId newGraphicResourceId;
 	HitType type = kHitNone;
 
 	// TODO if encounter_flag03
-	if (0 && _cursor->grResId != _ws->curTalkNPC)
+	if (0 && _cursor->graphicResourceId != _ws->curTalkNPC)
 		_cursor->set(_ws->curTalkNPC, 0, 2);
 
 	Actor *act = getActor(); // get the player actor reference
@@ -542,15 +542,15 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 	if (_cursor->field_11 & 2) {
 		if (act->status == 1 || act->status == 12) {
 			if (direction >= 0) {
-				newGrResId = _ws->curScrollUp + direction;
-				_cursor->set(newGrResId, 0, 2);
+				newGraphicResourceId = _ws->curScrollUp + direction;
+				_cursor->set(newGraphicResourceId, 0, 2);
 			}
 		}
 	}
 
 	if (act->status == 6 || act->status == 10) {
-		newGrResId = _ws->curHand;
-		_cursor->set(newGrResId, 0, 2);
+		newGraphicResourceId = _ws->curHand;
+		_cursor->set(newGraphicResourceId, 0, 2);
 	} else {
 		if (act->field_638) {
 			if (_cursor->position().x >= rect.left && _cursor->position().x <= rlimit &&
@@ -566,11 +566,11 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 			} else {
 				// TODO pass a reference to hitType so it can be populated by
 				// hitTestScene
-				newGrResId = hitTestScene(_cursor->position(), type);
-				if (newGrResId != -1) {
+				newGraphicResourceId = hitTestScene(_cursor->position(), type);
+				if (newGraphicResourceId != -1) {
 					warning ("Can't set mouse cursor, field_D6AC8 not handled ... yet");
 					// TODO
-					// check if _ws->field_D6AC8[act->field_638] != newGrResId
+					// check if _ws->field_D6AC8[act->field_638] != newGraphicResourceId
 					// if false, set mouse cursor
 				} else {
 					// TODO _ws->field_D6B08 stuff, then set cursor
@@ -649,7 +649,7 @@ int32 Scene::hitTestBarrier(const Common::Point pt) {
 		Barrier *b = _ws->barriers[i];
 		if (_ws->isBarrierOnScreen(i))
 			if (b->polyIdx)
-				if (hitTestPixel(b->resId, b->frameIdx, pt.x, pt.y, b->flags & 0x1000)) {
+				if (hitTestPixel(b->resourceId, b->frameIdx, pt.x, pt.y, b->flags & 0x1000)) {
 					targetIdx = i;
 					break;
 				}
@@ -738,8 +738,8 @@ bool Scene::hitTestActor(const Common::Point pt) {
 		(act->direction >= 0));
 }
 
-bool Scene::hitTestPixel(int32 grResId, int32 frame, int16 x, int16 y, bool flipped) {
-	GraphicResource *gra = new GraphicResource(_resPack, grResId);
+bool Scene::hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped) {
+	GraphicResource *gra = new GraphicResource(_resPack, resourceId);
 	GraphicFrame    *fra = gra->getFrame(frame);
 
 	// TODO this gets a bit funky with the "flipped" calculations for x intersection
@@ -795,8 +795,8 @@ void Scene::updateBarriers() {
 										// TODO: fix this, and find a better way to get frame count
 										// Sometimes we get wrong random resource id
 
-										barrier->resId = barrier->getRandomId();
-										GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
+										barrier->resourceId = barrier->getRandomId();
+										GraphicResource *gra = new GraphicResource(_resPack, barrier->resourceId);
 										barrier->frameCount  = gra->getFrameCount();
 										delete gra;
 									}
@@ -926,7 +926,7 @@ void Scene::updateAmbientSounds() {
 			}
 		}
 		if (processSound) {
-			if (_vm->sound()->isPlaying(snd->resId)) {
+			if (_vm->sound()->isPlaying(snd->resourceId)) {
 				if (snd->field_0) {
 					// TODO optimize
 					// This adjustment only uses the actor at
@@ -936,9 +936,9 @@ void Scene::updateAmbientSounds() {
 					if (volume <= 0) {
 						if (volume < -10000)
 							volume = -10000;
-						// TODO setSoundVolume(snd->resId, volume);
+						// TODO setSoundVolume(snd->resourceId, volume);
 					} else
-						; // TODO setSoundVolume(snd->resId, 0);
+						; // TODO setSoundVolume(snd->resourceId, 0);
 				}
 			} else {
 				int loflag = LOBYTE(snd->flags);
@@ -957,7 +957,7 @@ void Scene::updateAmbientSounds() {
 					int tmpVol = volume;
 					if (vm()->getRandom(10000) < 10) {
 						if (snd->field_0) {
-							_vm->sound()->playSound(snd->resId, false, volume, panning, false);
+							_vm->sound()->playSound(snd->resourceId, false, volume, panning, false);
 						} else {
 							// FIXME will this even work?
 							tmpVol += (vm()->getRandom(500)) * (((vm()->getRandom(100) >= 50) - 1) & 2) - 1;
@@ -968,7 +968,7 @@ void Scene::updateAmbientSounds() {
 							else
 								if (tmpVol <= -10000)
 									tmpVol = -10000;
-							_vm->sound()->playSound(snd->resId, 0, tmpVol, vm()->getRandom(20001) - 10000);
+							_vm->sound()->playSound(snd->resourceId, 0, tmpVol, vm()->getRandom(20001) - 10000);
 						}
 					}
 				} else {
@@ -978,8 +978,8 @@ void Scene::updateAmbientSounds() {
 				}
 			}
 		} else {
-			if (_vm->sound()->isPlaying(snd->resId))
-				_vm->sound()->stopSound(snd->resId);
+			if (_vm->sound()->isPlaying(snd->resourceId))
+				_vm->sound()->stopSound(snd->resourceId);
 		}
 	}
 }
@@ -1363,11 +1363,11 @@ int Scene::queueBarrierUpdates() {
 					//TODO: need to do something here yet
 
 					if (barrier->field_67C <= 0 || barrier->field_67C >= 4) { // TODO: still missing a condition for game quality config
-						_vm->screen()->addGraphicToQueue(barrier->resId, barrier->frameIdx, barrier->x, barrier->y, (barrier->flags >> 11) & 2, barrier->field_67C - 3, barrier->priority);
+						_vm->screen()->addGraphicToQueue(barrier->resourceId, barrier->frameIdx, barrier->x, barrier->y, (barrier->flags >> 11) & 2, barrier->field_67C - 3, barrier->priority);
 					} else {
 						// TODO: Do Cross Fade
-						// parameters: barrier->resId, barrier->frameIdx, barrier->x, barrier->y, _ws->backgroundImage, _ws->xLeft, _ws->yTop, 0, 0, barrier->field_67C - 1
-						_vm->screen()->addGraphicToQueue(barrier->resId, barrier->frameIdx, barrier->x, barrier->y, 0, 0, 0);
+						// parameters: barrier->resourceId, barrier->frameIdx, barrier->x, barrier->y, _ws->backgroundImage, _ws->xLeft, _ws->yTop, 0, 0, barrier->field_67C - 1
+						_vm->screen()->addGraphicToQueue(barrier->resourceId, barrier->frameIdx, barrier->x, barrier->y, 0, 0, 0);
 					}
 				}
 			}
@@ -1513,8 +1513,8 @@ void Scene::debugShowActors() {
 SceneTitle::SceneTitle(Scene *scene): _scene(scene) {
 	_start = _scene->vm()->getTick();
 
-	_bg = new GraphicResource(_scene->_resPack, _scene->_ws->sceneTitleGrResId);
-	_scene->vm()->screen()->setPalette(_scene->_resPack, _scene->_ws->sceneTitlePalResId);
+	_bg = new GraphicResource(_scene->_resPack, _scene->_ws->sceneTitleGraphicResourceId);
+	_scene->vm()->screen()->setPalette(_scene->_resPack, _scene->_ws->sceneTitlePaletteResourceId);
 
 	ResourcePack *pack = new ResourcePack(0x12);
 	_progress = new GraphicResource(pack, 0x80120011);
@@ -1555,9 +1555,9 @@ void SceneTitle::update(int32 tick) {
 		bgFrame->surface.w,
 		0, 0, 640, 480);
 
-	int32 resId = _scene->getSceneIndex() - 4 + 1811;
-	int32 resWidth = _scene->vm()->text()->getResTextWidth(resId);
-	_scene->vm()->text()->drawResTextCentered(320 - resWidth * 24, 30, resWidth, resId);
+	ResourceId resourceId = _scene->getSceneIndex() - 4 + 1811;
+	int32 resWidth = _scene->vm()->text()->getResTextWidth(resourceId);
+	_scene->vm()->text()->drawResTextCentered(320 - resWidth * 24, 30, resWidth, resourceId);
 
 	GraphicFrame *frame = _progress->getFrame(_spinnerFrame);
 

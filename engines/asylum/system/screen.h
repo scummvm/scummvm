@@ -36,7 +36,7 @@
 namespace Asylum {
 
 typedef struct GraphicQueueItem {
-	int32 resId;
+	ResourceId resourceId;
 	int32 frameIdx;
 	int32 x;
 	int32 y;
@@ -57,25 +57,25 @@ public:
 	void copyRectToScreen(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
 	void copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
 	void setPalette(byte *rgbPalette);
-	void setPalette(ResourcePack *resPack, int32 entry) {
-		setPalette(resPack->getResource(entry)->data + 32);
+	void setPalette(ResourcePack *resPack, ResourceId id) {
+		setPalette(resPack->getResource(id)->data + 32);
 	}
 
-	void setGammaLevel(ResourcePack *resPack, int32 entry, int32 val);
+	void setGammaLevel(ResourcePack *resPack, ResourceId id, int32 val);
 
 	void drawWideScreen(int16 barSize);
 	void clearScreen();
 
 	void palFade(uint32 red, int32 milliseconds, int32 param);
 
-	void addGraphicToQueue(int32 resId, int32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority);
-	void addCrossFadeGraphicToQueue(int32 resId, int32 frameIdx, int32 x, int32 y, int32 redId2, int32 x2, int32 y2, int32 flags, int32 priority);
+	void addGraphicToQueue(ResourceId resourceId, int32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority);
+	void addCrossFadeGraphicToQueue(ResourceId resourceId, int32 frameIdx, int32 x, int32 y, int32 redId2, int32 x2, int32 y2, int32 flags, int32 priority);
 	void addGraphicToQueue(GraphicQueueItem item);
 	void drawGraphicsInQueue();
 	void clearGraphicsInQueue();
 	void graphicsSelectionSort();
 	void swapGraphicItem(int32 item1, int32 item2);
-	void deleteGraphicFromQueue(int32 resId);
+	void deleteGraphicFromQueue(ResourceId resourceId);
 
 private:
 	Graphics::Surface _backBuffer;
