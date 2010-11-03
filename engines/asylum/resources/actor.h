@@ -62,11 +62,11 @@ public:
 	void setDirection(ActorDirection direction) { _direction = direction; }
 	void setFrameCount(int32 count) { _frameCount = count; }
 	void setFrameIndex(int32 number) { _frameIndex = number; }
+	void setLastScreenUpdate(int32 tick) { _lastScreenUpdate = tick; }
 	void setNumberFlag01(int32 number) { _numberFlag01 = number; }
 	void setPriority(int32 priority) { _priority = priority; }
 	void setResourceId(ResourceId id) { _resourceId = id; }
 	void setStatus(ActorStatus status) { _status = status; }
-	void setLastScreenUpdate(int32 tick) { _lastScreenUpdate = tick; }
 
 	void setField638(int32 val) { _field_638 = val; }
 	void setField934(int32 val) { _field_934 = val; }
@@ -84,6 +84,7 @@ public:
 	int32          getReaction(uint32 index) { return _reaction[index]; }
 	ResourceId     getResourceId() { return _resourceId; }
 	ResourceId     getResourcesId(uint32 index) { return _graphicResourceIds[index]; }
+	ResourceId     getSoundResourceId() { return _soundResourceId; }
 	ActorStatus    getStatus()    { return _status; }
 
 	int32          getField638() { return _field_638; }

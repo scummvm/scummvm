@@ -26,6 +26,7 @@
 #include "asylum/views/scene.h"
 
 #include "asylum/resources/actor.h"
+#include "asylum/resources/encounters.h"
 
 #include "asylum/system/config.h"
 
@@ -1059,13 +1060,7 @@ bool Scene::updateListCompare(const UpdateItem &item1, const UpdateItem &item2) 
 	return item1.priority - item2.priority;
 }
 
-void Scene::checkVisibleActorsPriority() {
-	error("[Scene::checkVisibleActorsPriority] not implemented");
-}
 
-void Scene::adjustActorPriority(ActorIndex index) {
-	error("[Scene::adjustActorPriority] not implemented");
-}
 
 void Scene::buildUpdateList() {
 	_updateList.clear();
@@ -1249,6 +1244,52 @@ void Scene::processUpdateList() {
 	}
 }
 
+void Scene::checkVisibleActorsPriority() {
+	error("[Scene::checkVisibleActorsPriority] not implemented");
+}
+
+void Scene::adjustActorPriority(ActorIndex index) {
+	error("[Scene::adjustActorPriority] not implemented");
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Spec functions
+//////////////////////////////////////////////////////////////////////////
+void Scene::specChapter1(Barrier *barrier, ActorIndex actorIndex) {
+	if (actorIndex == -1 && barrier == NULL)
+		error("[Scene::specChapter1] Both arguments cannot be empty!");
+
+	ResourceId id = (actorIndex == -1) ? barrier->getSoundResourceId() : getActor(actorIndex)->getSoundResourceId();
+
+	if (!_vm->encounter()->getFlag(kEncounterFlag2)) {
+		if (!id || !getSound()->isPlaying(id))
+			if (Config.performance > 2)
+				error("[Scene::specChapter1] Sound function not implemented!");
+	}
+
+	if (actorIndex == -1) {
+		switch (barrier->getId()) {
+		default:
+			break;
+
+		case 101:
+			if (barrier->getFrameIndex() == 2)
+				barrier->getFrameSoundItem(0)->resourceId = _ws->graphicResourceIds[rnd(2) ? 37 : 38];
+			break;
+
+		case 112:
+			if (barrier->getFrameIndex() == 5)
+				getSpeech()->play(81);
+			break;
+
+		case 434:
+			if (barrier->getFrameIndex() == 23)
+				getSpeech()->play(82);
+			break;
+		}
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
@@ -1427,7 +1468,30 @@ void Scene::resetActor0() {
 }
 
 void Scene::callSpecFunction(Barrier* barrier, ActorIndex index) {
-	error("[Scene::callSpecFunction] not implemented!");
+	// The original uses a function array, we just use switch for now there is only 11 entries
+	switch (_ws->numChapter) {
+	default:
+		error("[Scene::callSpecFunction] Invalid chapter");
+
+	case 0:
+		// Nothing to do here
+		break;
+
+	case 1:
+		break;
+
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+		error("[Scene::callSpecFunction] No implemented!");
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

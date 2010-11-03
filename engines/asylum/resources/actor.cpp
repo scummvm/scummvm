@@ -941,7 +941,7 @@ void Actor::setVolume() {
 		return;
 
 	// Compute volume
-	int32 volume = Config.voiceVolume + getSound()->calculateVolume(x2 + x1, y2 + y1, _field_968, 0);
+	int32 volume = Config.voiceVolume + getSound()->calculateVolumeAdjustement(x2 + x1, y2 + y1, _field_968, 0);
 	if (volume < -10000)
 		volume = -10000;
 

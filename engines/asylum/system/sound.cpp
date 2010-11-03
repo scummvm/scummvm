@@ -102,8 +102,16 @@ int32 Sound::getAdjustedVolume(int32 volume) {
 	error("[Sound::getAdjustedVolume] not implemented");
 }
 
-int32 Sound::calculateVolume(int32 x, int32 y, int32 a5, int32 a6) {
+int32 Sound::calculateVolumeAdjustement(int32 x, int32 y, int32 a5, int32 a6) {
 	error("[Sound::calculateVolume] not implemented");
+}
+
+void Sound::setPanning(ResourceId resourceId, int32 panning) {
+	error("[Sound::setPanning] not implemented");
+}
+
+int32 Sound::calculatePanningAtPoint(int32 x, int32 y) {
+	error("[Sound::calculatePanningAtPoint] not implemented");
 }
 
 int32 Sound::getBufferPosition(ResourceId resourceId) {

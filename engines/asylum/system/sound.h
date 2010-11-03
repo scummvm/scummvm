@@ -90,6 +90,7 @@ public:
 	void playSound(ResourcePack *pack, ResourceId resourceId, bool looping, int32 volume, int32 panning);
 	void playSound(ResourceEntry *resource, bool looping, int32 volume, int32 panning);
 	void playSound(ResourceId resourceId, bool looping, int32 volume, int32 panning, bool fromBuffer = false);
+
 	void stopSound(ResourceId resourceId);
 	void stopSound();
 	void stopAllSounds(bool stopSpeechAndMusic = false);
@@ -104,7 +105,14 @@ public:
 	void setVolume(ResourceId resourceId, double volume);
 	int32 getAdjustedVolume(int32 volume);
 
-	int32 calculateVolume(int32 x, int32 y, int32 a5, int32 a6);
+	void setPanning(ResourceId resourceId, int32 panning);
+	int32 calculatePanningAtPoint(int32 x, int32 y);
+
+	/**
+	 * Determine the amount to increase the supplied sound
+	 * sample's volume based on the position
+	 */
+	int32 calculateVolumeAdjustement(int32 x, int32 y, int32 a5, int32 a6);
 
 	/**
 	 * Check if the buffered sound sample that matches the provided id currently

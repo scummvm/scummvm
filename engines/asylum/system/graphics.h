@@ -70,11 +70,13 @@ public:
 	GraphicFrame *getFrame(uint32 frame);
 	ResourceId    getResourceId() { return _resourceId; }
 	int32         getFlags()      { return _flags; }
+	int32         getFlags2()     { return _flags2; }
 	uint32        getFrameCount() { return _frames.size(); }
 
 private:
 	Common::Array <GraphicFrame> _frames;
 	int32 _flags;
+	int32 _flags2;
 	ResourceId _resourceId;
 
 	void init(byte *data, int32 size);

@@ -265,6 +265,7 @@ enum BarrierFlag {
 #define getSound()  _vm->sound()
 #define getScene()  _vm->scene()
 #define getScreen() _vm->screen()
+#define getSpeech() _vm->scene()->speech()
 #define getWorld()  _vm->scene()->worldstats()
 
 //////////////////////////////////////////////////////////////////////////
