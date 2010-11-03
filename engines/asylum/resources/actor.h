@@ -202,8 +202,8 @@ public:
 	void setRawResources(uint8* data);
 
 	// Unknown methods
-	bool process(int32 x, int32 y);
-	void processStatus(int32 x, int32 y, bool doSpeech);
+	bool process(int32 actorX, int32 actorY);
+	void processStatus(int32 actorX, int32 actorY, bool doSpeech);
 	void process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 param8, int32 param9);
 	bool process_408B20(Common::Point *point, ActorDirection direction, int count, bool hasDelta);
 	void process_41BC00(int32 reactionIndex, int32 numberValue01Add);
