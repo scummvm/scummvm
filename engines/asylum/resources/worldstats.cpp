@@ -302,7 +302,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 		actor.x          = stream->readSint32LE();
 		actor.y          = stream->readSint32LE();
-		actor.grResId    = stream->readSint32LE();
+		actor.graphicResourceId    = stream->readSint32LE();
 		actor.field_C    = stream->readSint32LE();
 		actor.frameNum   = stream->readSint32LE();
 		actor.frameCount = stream->readSint32LE();

@@ -186,34 +186,24 @@ bool ActionList::process() {
 
 	_scene->vm()->setGameFlag(kGameFlagScriptProcessing);
 
-	if (_currentScript)
+	if (_currentScript) {
 		while (!_done && !_waitCycle) {
 			_lineIncrement = 0; //Reset line increment value
 
-			ScriptEntry *currentCommand = &_currentScript->commands[_currentLine];
+			ScriptEntry *cmd = &_currentScript->commands[_currentLine];
 
-			int32 opcode = currentCommand->opcode;
+			int32 opcode = cmd->opcode;
 
-			debugC(kDebugLevelScripts,
-			   "[0x%02X] %s(%d, %d, %d, %d, %d, %d, %d, %d, %d)",
-			   opcode,
-			   _actions[opcode]->name,
-			   currentCommand->param1,
-			   currentCommand->param2,
-			   currentCommand->param3,
-			   currentCommand->param4,
-			   currentCommand->param5,
-			   currentCommand->param6,
-			   currentCommand->param7,
-			   currentCommand->param8,
-			   currentCommand->param9);
+			debugC(kDebugLevelScripts, "[0x%02X] %s(%d, %d, %d, %d, %d, %d, %d, %d, %d)",
+			       opcode, _actions[opcode]->name,
+			       cmd->param1, cmd->param2, cmd->param3, cmd->param4, cmd->param5,
+			       cmd->param6, cmd->param7, cmd->param8, cmd->param9);
 
 			// Execute opcode
-			(*_actions[opcode]->func)(currentCommand);
+			(*_actions[opcode]->func)(cmd);
 
 			if (!_lineIncrement)
 				_currentLine ++;
-
 		}
 
 		if (_done) {
@@ -224,6 +214,7 @@ bool ActionList::process() {
 				_currentScript = &_entries[_currentQueueEntry.actionListIndex];
 			} else {
 				_currentScript = 0;
+			}
 		}
 	}
 
@@ -333,8 +324,7 @@ IMPLEMENT_OPCODE(ShowCursor) {
 	_scene->getCursor()->show();
 	_allowInput = true;
 
-	// TODO clear_flag_01()
-	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	_scene->vm()->clearFlag(kFlagType1);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -456,18 +446,18 @@ IMPLEMENT_OPCODE(MoveScenePosition) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x09
 IMPLEMENT_OPCODE(HideActor) {
-	Actor *actor = (cmd->param1 == -1) ? _scene->getActor() : &_scene->worldstats()->actors[cmd->param1];
+	Actor *actor = _scene->getActor(cmd->param1);
 
-	actor->visible(false);
+	actor->setVisible(false);
 	actor->updateDirection();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0A
 IMPLEMENT_OPCODE(ShowActor) {
-	GET_ACTOR();
+	Actor *actor = _scene->getActor(cmd->param1);
 
-	actor->visible(true);
+	actor->setVisible(true);
 	actor->updateDirection();
 	actor->tickValue1 = _scene->vm()->getTick();
 }
@@ -489,7 +479,7 @@ IMPLEMENT_OPCODE(SetSceneMotionStatus) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0D
 IMPLEMENT_OPCODE(DisableActor) {
-	GET_ACTOR();
+	Actor *actor = _scene->getActor(cmd->param1);
 
 	actor->updateStatus(kActorStatusDisabled);
 }
@@ -497,7 +487,7 @@ IMPLEMENT_OPCODE(DisableActor) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0E
 IMPLEMENT_OPCODE(EnableActor) {
-	GET_ACTOR();
+	Actor *actor = _scene->getActor(cmd->param1);
 
 	if (actor->status == kActorStatusDisabled)
 		actor->updateStatus(kActorStatusEnabled);
@@ -546,12 +536,12 @@ IMPLEMENT_OPCODE(EnableBarriers) {
 // Opcode 0x11
 IMPLEMENT_OPCODE(DestroyBarrier) {
 	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
-
 	if (!barrier)
-		error("ActionList::kDestroyBarrier: Requested invalid object ID:0x%02X in Scene %d Line %d.", cmd->param1, _scene->getSceneIndex(),_currentLine);
+		error("[ActionList::kDestroyBarrier] Requested invalid object ID:0x%02X in Scene %d Line %d.", cmd->param1, _scene->getSceneIndex(),_currentLine);
 
-	barrier->flags &= 0xFFFFFFFE;
+	barrier->destroy();
 	barrier->flags |= 0x20000;
+
 	_scene->vm()->screen()->deleteGraphicFromQueue(barrier->resId);
 }
 
@@ -735,10 +725,9 @@ IMPLEMENT_OPCODE(JumpIfActorField638) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2B
 IMPLEMENT_OPCODE(ChangeScene) {
+	debug(kDebugLevelScripts, "Queueing Scene Change to scene %d...", _delayedSceneIndex);
+
 	_delayedSceneIndex = cmd->param1 + 4;
-	debug(kDebugLevelScripts,
-	      "Queueing Scene Change to scene %d...",
-	      _delayedSceneIndex);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1181,7 +1170,7 @@ IMPLEMENT_OPCODE(_unk59) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5A
 IMPLEMENT_OPCODE(_unk5A) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	_scene->getActor(cmd->param1)->actionIdx2 = cmd->param2;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1206,6 +1195,7 @@ IMPLEMENT_OPCODE(_unk5D) {
 // Opcode 0x5E
 IMPLEMENT_OPCODE(ClearActorField970) {
 	Actor *act = _scene->getActor(cmd->param1);
+
 	act->field_970 = 0;
 }
 

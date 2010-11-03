@@ -36,6 +36,10 @@ Barrier::~Barrier() {
 	// TODO Auto-generated destructor stub
 }
 
+void Barrier::destroy() {
+	flags &= 0xFFFFFFFE;
+}
+
 int32 Barrier::getRandomId() {
 	int32 numRes = 0;
 	int32 rndResId[5];

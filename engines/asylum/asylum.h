@@ -127,11 +127,11 @@ public:
 	uint32 tempTick07;
 
 	// Game
-	Video* video()   { return _video;	}
-	Sound* sound()   { return _sound; }
-	Screen* screen() { return _screen; }
-	Scene* scene()   { return _scene;}
-	Text* text()     { return _text; }
+	Video*  video()   { return _video;	}
+	Sound*  sound()   { return _sound; }
+	Screen* screen()  { return _screen; }
+	Scene*  scene()   { return _scene; }
+	Text*   text()    { return _text; }
 
 	// Flags
 	void setGameFlag(GameFlag flag);
