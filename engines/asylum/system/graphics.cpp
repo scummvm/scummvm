@@ -55,8 +55,8 @@ void GraphicResource::clear() {
 }
 
 GraphicFrame *GraphicResource::getFrame(uint32 frame) {
-	if (frame > _frames.size())
-		error("[GraphicResource::getFrame] Invalid frame index (was: %d, max:%d)", frame, _frames.size());
+	if (frame >= _frames.size())
+		error("[GraphicResource::getFrame] Invalid frame index (was: %d, max:%d)", frame, _frames.size() - 1);
 
 	return &_frames[frame];
 }
@@ -70,8 +70,9 @@ void GraphicResource::init(byte *data, int32 size) {
 
 	dataPtr += 4; // tag value
 
-	_flags = (int32)READ_LE_UINT32(dataPtr);
+	_flags  = (int32)READ_LE_UINT32(dataPtr);
 	dataPtr += 4;
+	//_flags2 = (int32)READ_LE_UINT32(dataPtr);
 
 	contentOffset = (int32)READ_LE_UINT32(dataPtr);
 	dataPtr += 4;

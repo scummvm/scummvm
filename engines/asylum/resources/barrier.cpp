@@ -338,7 +338,58 @@ void Barrier::setNextFrame(int32 targetFlags) {
 // Misc
 /////////////////////////////////////////////////////////////////////////
 void Barrier::playSounds() {
-	error("[Barrier::playSounds] not implemented!");
+	int32 soundX = 0;
+	int32 soundY = 0;
+
+	if (_soundX || _soundY) {
+		soundX = _soundX;
+		soundY = _soundY;
+	} else {
+		GraphicResource *resource = new GraphicResource(getScene()->getResourcePack(), _resourceId);
+
+		if (LOBYTE(flags) & kBarrierFlag4) {
+			soundX = x + (resource->getFlags() >> 1);
+			soundY = y + (resource->getFlags2() >> 1);
+		} else {
+			// TODO _frameIndex here seems to be == _frameCount so something wrong somewhere!
+			/*GraphicFrame *frame = resource->getFrame(_frameIndex);
+
+			soundX = x + (frame->getWidth() >> 1);
+			soundY = x + (frame->getHeight() >> 1);*/
+		}
+
+		delete resource;
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_soundItems); i++) {
+		SoundItem *item = &_soundItems[i];
+
+		if (item->resourceId == kResourceNone)
+			continue;
+
+		if (item->field_4 && !getSound()->isPlaying(item->resourceId)) {
+			int32 volume = Config.sfxVolume + getSound()->calculateVolumeAdjustement(soundX, soundY, item->field_8, item->field_C);
+
+			if (volume > -5000)
+				getSound()->playSound(item->resourceId, true, volume, getSound()->calculatePanningAtPoint(soundX, soundY));
+		}
+
+		if (getSound()->isPlaying(item->resourceId)) {
+			int32 volume = Config.sfxVolume + getSound()->calculateVolumeAdjustement(soundX, soundY, item->field_8, item->field_C);
+
+			if (volume > -5000) {
+				if (volume > 0)
+					volume = 0;
+
+				getSound()->setPanning(item->resourceId, getSound()->calculatePanningAtPoint(soundX, soundY));
+				getSound()->setVolume(item->resourceId, volume);
+			} else {
+				getSound()->stopSound(item->resourceId);
+			}
+		}
+	}
+
+	//warning("[Barrier::playSounds] not implemented!");
 }
 
 void Barrier::updateSoundItems() {
