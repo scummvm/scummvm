@@ -291,7 +291,7 @@ void Actor::setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame)
 		frameNum = frame;
 }
 
-void Actor::faceTarget(int32 targetId, int32 targetType) {
+void Actor::faceTarget(int32 targetId, DirectionFrom targetType) {
 	int32 newX2, newY2;
 
 	printf("faceTarget: id %d type %d\n", targetId, targetType);
@@ -562,10 +562,6 @@ void Actor::updateGraphicData(uint32 offset) {
 	frameNum = 0;
 }
 
-void Actor::setDirectionFrom(uint32 parameter, DirectionFrom from) {
-	error("[Actor::setDirectionFrom] not implemented");
-}
-
 void Actor::setDirection(int actorDirection) {
 	direction = (actorDirection > 4) ? 8 - actorDirection : actorDirection;
 	ResourceId resourceId;
@@ -798,12 +794,32 @@ void Actor::processStatus(int32 x, int32 y, bool doSpeech) {
 		else
 			updateStatus(kActorStatus13);
 	} else if (doSpeech) {
-		speech(1);
+		_scene->playSpeech(1);
 	}
 }
 
-void Actor::speech(int32 a1) {
-	error("[Actor::speech] not implemented!");
+//////////////////////////////////////////////////////////////////////////
+// Unknown methods
+//////////////////////////////////////////////////////////////////////////
+
+void Actor::process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 param8, int32 param9) {
+	error("[Actor::process_401830] not implemented!");
+}
+
+bool Actor::process_408B20(Common::Point *point, ActorDirection direction, int count, bool hasDelta) {
+	error("[Actor::process_408B20] not implemented!");
+}
+
+void Actor::process_41BC00(int32 reactionIndex, int32 numberValue01Add) {
+	error("[Actor::process_41BC00] not implemented!");
+}
+
+void Actor::process_41BCC0(int32 reactionIndex, int32 numberValue01Substract) {
+	error("[Actor::process_41BC00] not implemented!");
+}
+
+bool Actor::process_41BDB0(int32 reactionIndex, bool testNumberValue01) {
+	error("[Actor::process_41BC00] not implemented!");
 }
 
 } // end of namespace Asylum

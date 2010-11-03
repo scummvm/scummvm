@@ -25,6 +25,8 @@
 
 #include "asylum/asylum.h"
 
+#include "asylum/resources/encounters.h"
+
 #include "asylum/system/config.h"
 #include "asylum/system/screen.h"
 #include "asylum/system/sound.h"
@@ -71,7 +73,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 
 AsylumEngine::~AsylumEngine() {
 	delete _console;
-	//delete _encounter;
+	delete _encounter;
 	delete _mainMenu;
 	delete _scene;
 	delete _screen;
@@ -95,15 +97,10 @@ Common::Error AsylumEngine::run() {
 	_sound     = new Sound(_mixer);
 	_video     = new Video(_mixer);
 	_text      = new Text(_screen);
-	_mainMenu  = 0;
-	_scene     = 0;
-	//_encounter = 0;
+	_scene     = NULL;
+	_encounter = NULL;
 
 	_introPlaying = false;
-
-	// TODO
-	//g_object_x = -1;
-	//g_object_y = -1;
 
 	memset(_gameFlags, 0, 1512);
 
@@ -168,7 +165,7 @@ void AsylumEngine::startGame() {
 	//_scene->setBlowUpPuzzle(new BlowUpPuzzleVCR(_scene));
 
 	// XXX Testing
-	//_encounter = new Encounter(_scene);
+	_encounter = new Encounter(_scene);
 
 	// Enter first scene
 	if(!_introPlaying)
@@ -185,8 +182,8 @@ void AsylumEngine::playIntro() {
 
 	_video->playVideo(1, Config.showMovieSubtitles);
 
-	if (_scene->worldstats()->musicCurrentResourceId != -666)
-		_sound->playMusic(_scene->worldstats()->musicCurrentResourceId);
+	if (_scene->worldstats()->musicCurrentResourceId != kResourceMusic_FFFFFD66)
+		_sound->playMusic(_scene->getResourcePack(), _scene->worldstats()->musicCurrentResourceId);
 
 	_screen->clearScreen();
 
@@ -195,7 +192,7 @@ void AsylumEngine::playIntro() {
 
 	// Play the intro sound sample (the screen is blacked out, you hear
 	// an alarm sounding and men talking about.
-	_sound->playSound(0x80120007, false, Config.sfxVolume, 0);
+	_sound->playSound(kResourceSoundIntro, false, Config.sfxVolume, 0);
 }
 
 void AsylumEngine::handleEvents(bool doUpdate) { // k_sub_40AE30 (0040AE30)
@@ -325,6 +322,17 @@ void AsylumEngine::processDelayedEvents() {
 
 		_scene->actions()->setDelayedSceneIndex(-1);
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Message handlers
+//////////////////////////////////////////////////////////////////////////
+void AsylumEngine::switchMessageHandler(MessageHandler *handler) {
+	error("[AsylumEngine::switchMessageHandler] not implemented");
+}
+
+AsylumEngine::MessageHandler *AsylumEngine::getMessageHandler(uint32 index) {
+	error("[AsylumEngine::getMessageHandler] not implemented");
 }
 
 //////////////////////////////////////////////////////////////////////////

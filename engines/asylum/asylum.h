@@ -108,6 +108,8 @@ protected:
 	virtual GUI::Debugger *getDebugger() { return _console; }
 
 public:
+	typedef Common::Functor1<Common::Event &, void> MessageHandler;
+
 	AsylumEngine(OSystem *system, const ADGameDescription *gd);
 	virtual ~AsylumEngine();
 
@@ -129,11 +131,13 @@ public:
 	uint32 tempTick07;
 
 	// Game
-	Video*  video()   { return _video;	}
-	Sound*  sound()   { return _sound; }
-	Screen* screen()  { return _screen; }
-	Scene*  scene()   { return _scene; }
-	Text*   text()    { return _text; }
+	Encounter *encouter() { return _encounter; }
+	MainMenu  *menu()     { return _mainMenu; }
+	Scene     *scene()    { return _scene; }
+	Screen    *screen()   { return _screen; }
+	Sound     *sound()    { return _sound; }
+	Text      *text()     { return _text; }
+	Video     *video()    { return _video; }
 
 	// Flags
 	void setGameFlag(GameFlag flag);
@@ -150,6 +154,10 @@ public:
 	void setFlag(FlagType flag)   { setFlag(flag, true); }
 	void clearFlag(FlagType flag) { setFlag(flag, false); }
 
+	// Message handler
+	void switchMessageHandler(MessageHandler *handler);
+	MessageHandler *getMessageHandler(uint32 index);
+
 private:
 	const ADGameDescription *_gameDescription;
 
@@ -158,7 +166,7 @@ private:
 	Common::RandomSource  _rnd;
 
 	// Game
-	//Encounter *_encounter;
+	Encounter *_encounter;
 	MainMenu  *_mainMenu;
 	Scene     *_scene;
 	Screen    *_screen;

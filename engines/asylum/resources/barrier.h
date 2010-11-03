@@ -40,7 +40,8 @@ enum BarrierFlag {
 	kBarrierFlagC000      = 0xC000,
 	kBarrierFlag10000     = 0x10000,
 	kBarrierFlag10E38     = 0x10E38,
-	kBarrierFlag20000     = 0x20000
+	kBarrierFlag20000     = 0x20000,
+	kBarrierFlag40000     = 0x40000
 };
 
 class Scene;

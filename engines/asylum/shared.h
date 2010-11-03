@@ -42,8 +42,13 @@ enum GameFlag {
 typedef int ResourceId;
 
 enum ResourceIdEnum {
-	kResourceSound_80120001 = 0x80120001,
-	kResourceSound_80120006 = 0x80120006
+	kResourceSpeech_8000050A = 0x8000050A,
+	kResourceMusic_80020000  = 0x80020000,
+	kResourceSound_80030203  = 0x80030203,
+	kResourceSound_80120001  = 0x80120001,
+	kResourceSound_80120006  = 0x80120006,
+	kResourceSoundIntro      = 0x80120007,
+	kResourceMusic_FFFFFD66  = 0xFFFFFD66
 };
 
 enum ActionType {
@@ -51,7 +56,9 @@ enum ActionType {
 	kActionTypeFind = 1,
 	kActionTypeTalk = 2,
 	kActionType3 = 3,
-	kActionTypeGrab = 4
+	kActionTypeGrab = 4,
+	kActionType8 = 8,
+	kActionType16 = 16
 };
 
 //////////////////////////////////////////////////////////////////////////

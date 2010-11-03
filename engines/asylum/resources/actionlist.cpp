@@ -25,7 +25,14 @@
 
 #include "asylum/resources/actionlist.h"
 
+#include "asylum/resources/encounters.h"
+
 #include "asylum/system/config.h"
+
+#include "asylum/views/menu.h"
+#include "asylum/views/scene.h"
+
+#include "asylum/staticres.h"
 
 #include "common/rational.h"
 
@@ -51,16 +58,16 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene) : _scen
 	ADD_OPCODE(EnableBarriers);
 	ADD_OPCODE(Return);
 	ADD_OPCODE(DestroyBarrier);
-	ADD_OPCODE(_unk12_JMP_WALK_ACTOR);
-	ADD_OPCODE(_unk13_JMP_WALK_ACTOR);
+	ADD_OPCODE(JumpActorSpeech);
+	ADD_OPCODE(JumpAndSetDirection);
 	ADD_OPCODE(JumpIfActorCoordinates);
-	ADD_OPCODE(_unk15);
+	ADD_OPCODE(Nop);
 	ADD_OPCODE(ResetAnimation);
 	ADD_OPCODE(SetBarrierDestroyed);
-	ADD_OPCODE(_unk18_PLAY_SND);
+	ADD_OPCODE(JumpIfSoundPlayingAndPlaySound);
 	ADD_OPCODE(JumpIfActionFind);
 	ADD_OPCODE(SetActionFind);
-	ADD_OPCODE(clearActionFind);
+	ADD_OPCODE(ClearActionFind);
 	ADD_OPCODE(JumpIfActionGrab);
 	ADD_OPCODE(SetActionGrab);
 	ADD_OPCODE(ClearActionGrab);
@@ -71,9 +78,9 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene) : _scen
 	ADD_OPCODE(_unk23);
 	ADD_OPCODE(_unk24);
 	ADD_OPCODE(RunEncounter);
-	ADD_OPCODE(JumpIfFlag2Bit4);
-	ADD_OPCODE(SetFlag2Bit4);
-	ADD_OPCODE(ClearFlag2Bit4);
+	ADD_OPCODE(JumpIfAction16);
+	ADD_OPCODE(SetAction16);
+	ADD_OPCODE(ClearAction16);
 	ADD_OPCODE(SetActorField638);
 	ADD_OPCODE(JumpIfActorField638);
 	ADD_OPCODE(ChangeScene);
@@ -89,17 +96,17 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene) : _scen
 	ADD_OPCODE(SetVolume);
 	ADD_OPCODE(Jump);
 	ADD_OPCODE(RunBlowUpPuzzle);
-	ADD_OPCODE(JumpIfFlag2Bit3);
-	ADD_OPCODE(SetFlag2Bit3);
-	ADD_OPCODE(ClearFlag2Bit3);
+	ADD_OPCODE(JumpIfAction8);
+	ADD_OPCODE(SetAction8);
+	ADD_OPCODE(ClearAction8);
 	ADD_OPCODE(_unk3B_PALETTE_MOD);
 	ADD_OPCODE(IncrementParam2);
 	ADD_OPCODE(WaitUntilFramePlayed);
 	ADD_OPCODE(UpdateWideScreen);
 	ADD_OPCODE(JumpIfActor);
-	ADD_OPCODE(_unk40_SOUND);
+	ADD_OPCODE(PlaySpeechScene);
 	ADD_OPCODE(PlaySpeech);
-	ADD_OPCODE(_unk42);
+	ADD_OPCODE(PlaySpeechScene2);
 	ADD_OPCODE(MoveScenePositionFromActor);
 	ADD_OPCODE(PaletteFade);
 	ADD_OPCODE(StartPaletteFadeThread);
@@ -111,7 +118,7 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene) : _scen
 	ADD_OPCODE(ChangePlayerActorIndex);
 	ADD_OPCODE(ChangeActorStatus);
 	ADD_OPCODE(StopSound);
-	ADD_OPCODE(_unk4E_RANDOM_COMMAND);
+	ADD_OPCODE(JumpRandom);
 	ADD_OPCODE(ClearScreen);
 	ADD_OPCODE(Quit);
 	ADD_OPCODE(JumpBarrierFrame);
@@ -127,11 +134,11 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene) : _scen
 	ADD_OPCODE(_unk5B);
 	ADD_OPCODE(QueueScript);
 	ADD_OPCODE(_unk5D);
-	ADD_OPCODE(ClearActorField970);
+	ADD_OPCODE(ClearActorFields);
 	ADD_OPCODE(SetBarrierLastFrameIdx);
 	ADD_OPCODE(_unk60_SET_OR_CLR_ACTIONAREA_FLAG);
 	ADD_OPCODE(_unk61);
-	ADD_OPCODE(_unk62_SHOW_OPTIONS_SCREEN);
+	ADD_OPCODE(ShowOptionsScreen);
 	ADD_OPCODE(_unk63);
 
 	// Reset script queue
@@ -270,7 +277,6 @@ void ActionList::load(Common::SeekableReadStream *stream) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // Opcode Functions
 //////////////////////////////////////////////////////////////////////////
@@ -319,13 +325,7 @@ IMPLEMENT_OPCODE(JumpIfGameFlag) {
 	if (!doJump)
 		return;
 
-	int32 nextOpcode = _currentScript->commands[_currentLine].opcode;
-	if (nextOpcode != 0x10 && nextOpcode != 0) {
-		error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
-		return;
-	}
-
-	_currentLine = cmd->param3;
+	setNextLine(cmd->param3);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -518,8 +518,8 @@ IMPLEMENT_OPCODE(DestroyBarrier) {
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x12
-IMPLEMENT_OPCODE(_unk12_JMP_WALK_ACTOR) {
-	Actor *actor = _scene->getActor();
+IMPLEMENT_OPCODE(JumpActorSpeech) {
+	Actor *actor = _scene->getActor(cmd->param1);
 
 	if (actor->process(cmd->param2, cmd->param3))
 		return;
@@ -527,13 +527,13 @@ IMPLEMENT_OPCODE(_unk12_JMP_WALK_ACTOR) {
 	_currentLine = cmd->param4;
 
 	if (cmd->param5)
-		actor->speech(1);
+		_scene->playSpeech(1);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x13
-IMPLEMENT_OPCODE(_unk13_JMP_WALK_ACTOR) {
-	Actor *actor = _scene->getActor();
+IMPLEMENT_OPCODE(JumpAndSetDirection) {
+	Actor *actor = _scene->getActor(cmd->param1);
 
 	if (actor->status != kActorStatus2 && actor->status != kActorStatus13) {
 		if (cmd->param5 != 2) {
@@ -566,7 +566,7 @@ IMPLEMENT_OPCODE(_unk13_JMP_WALK_ACTOR) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x14
 IMPLEMENT_OPCODE(JumpIfActorCoordinates) {
-	Actor *actor = _scene->getActor();
+	Actor *actor = _scene->getActor(cmd->param1);
 
 	if ((actor->x1 + actor->x2) != cmd->param2 || (actor->y1 + actor->y2) != cmd->param3)
 		_lineIncrement = cmd->param4;
@@ -574,8 +574,8 @@ IMPLEMENT_OPCODE(JumpIfActorCoordinates) {
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x15
-IMPLEMENT_OPCODE(_unk15) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(Nop) {
+	// Nothing to do
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -599,8 +599,21 @@ IMPLEMENT_OPCODE(SetBarrierDestroyed) {
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x18
-IMPLEMENT_OPCODE(_unk18_PLAY_SND) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(JumpIfSoundPlayingAndPlaySound) {
+	if (cmd->param2 == 2) {
+		if (_scene->vm()->sound()->isPlaying(cmd->param1))
+			_lineIncrement = 1;
+		else
+			cmd->param2 = 1;
+	} else if (!_scene->vm()->sound()->isPlaying(cmd->param1)) {
+		int32 vol = _scene->vm()->sound()->getAdjustedVolume(abs(Config.sfxVolume));
+		_scene->vm()->sound()->playSound(cmd->param1, cmd->param4, -((abs(cmd->param3) + vol) * (abs(cmd->param3) + vol)), 0);
+
+		if (cmd->param2 == 1) {
+			cmd->param2 = 2;
+			_lineIncrement= 1;
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -617,7 +630,7 @@ IMPLEMENT_OPCODE(SetActionFind) {
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x1B
-IMPLEMENT_OPCODE(clearActionFind) {
+IMPLEMENT_OPCODE(ClearActionFind) {
 	clearActionFlag(cmd, kActionTypeFind);
 }
 
@@ -660,89 +673,231 @@ IMPLEMENT_OPCODE(ClearActionTalk) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x22
 IMPLEMENT_OPCODE(_unk22) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	Actor *actor = _scene->getActor(cmd->param3 ? cmd->param3 : _currentQueueEntry.actorIndex);
+
+	actor->process_41BC00(cmd->param1, cmd->param2);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x23
 IMPLEMENT_OPCODE(_unk23) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	Actor *actor = _scene->getActor(cmd->param3 ? cmd->param3 : _currentQueueEntry.actorIndex);
+
+	actor->process_41BCC0(cmd->param1, cmd->param2);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x24
 IMPLEMENT_OPCODE(_unk24) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	Actor *actor = _scene->getActor(cmd->param4 ? cmd->param4 : _currentQueueEntry.actorIndex);
+
+	actor->process_41BDB0(cmd->param1, cmd->param3);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x25
 IMPLEMENT_OPCODE(RunEncounter) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	Encounter *encounter = _scene->vm()->encouter();
+
+	encounter->setFlag(kEncounterFlag5, cmd->param5);
+
+	if (cmd->param6) {
+		if (encounter->getFlag(kEncounterFlag2))
+			_lineIncrement = 1;
+		else
+			cmd->param6 = 0;
+	} else {
+		encounter->run(cmd->param1, cmd->param2, cmd->param3, cmd->param4);
+
+		cmd->param6 = 2;
+		_lineIncrement = 1;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x26
-IMPLEMENT_OPCODE(JumpIfFlag2Bit4) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(JumpIfAction16) {
+	jumpIfActionFlag(cmd, kActionType16);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x27
-IMPLEMENT_OPCODE(SetFlag2Bit4) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(SetAction16) {
+	setActionFlag(cmd, kActionType16);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x28
-IMPLEMENT_OPCODE(ClearFlag2Bit4) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(ClearAction16) {
+	clearActionFlag(cmd, kActionType16);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x29
 IMPLEMENT_OPCODE(SetActorField638) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	Actor *actor = _scene->getActor(cmd->param1);
+
+	actor->field_638 = cmd->param2;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2A
 IMPLEMENT_OPCODE(JumpIfActorField638) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	Actor *actor = _scene->getActor(cmd->param1);
+
+	if (actor->field_638)
+		_currentLine = cmd->param3;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2B
 IMPLEMENT_OPCODE(ChangeScene) {
-	debug(kDebugLevelScripts, "Queueing Scene Change to scene %d...", _delayedSceneIndex);
+	_scene->getActor(0)->updateStatus(kActorStatusDisabled);
+	resetQueue();
 
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	// Fade screen to black
+	_scene->vm()->screen()->paletteFade(0, 75, 8);
+	_scene->vm()->screen()->clearScreen();
 
+	// Stop all sounds & music
+	_scene->vm()->sound()->stopAllSounds(true);
+
+	// Change the scene number
 	_delayedSceneIndex = cmd->param1 + 4;
+
+	_exit = true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2C
 IMPLEMENT_OPCODE(_unk2C_ActorSub) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	Actor *player = _scene->getActor(kActorPlayer);
+	Actor *actor = _scene->getActor(_currentQueueEntry.actorIndex);
+	Common::Point playerPoint(player->x1 + player->x2, player->y1 + player->y2);
+	ActorDirection direction = (cmd->param2 == 8) ? player->direction : cmd->param2;
+
+	if (cmd->param2 == 8)
+		cmd->param2 = player->direction;
+
+	if (cmd->param3 == 2) {
+		switch (actor->status) {
+		default:
+			_lineIncrement = 1;
+			return;
+
+		case kActorStatus7:
+			actor->updateStatus(kActorStatusEnabled);
+			break;
+
+		case kActorStatus16:
+			// We want to continue processing and not go into the default case
+			break;
+
+		case kActorStatus20:
+			actor->updateStatus(kActorStatus14);
+		}
+
+		cmd->param3 = 0;
+
+		if (cmd->param1 == 2) {
+			Common::Point point(playerPoint);
+
+			if (player->process_408B20(&point, (player->direction + 4) % 8, 3, false)) {
+
+				point.x += 3 * deltaPointsArray[(player->direction + 4) % 8].x;
+				point.x += 3 * deltaPointsArray[(player->direction + 4) % 8].y;
+
+				player->setPosition(point.x, point.y, actor->direction, 0);
+			}
+		}
+
+	} else if (cmd->param1 != 2 || player->process_408B20(&playerPoint, (player->direction + 4) % 8, 3, false)) {
+		ResourceId id = 0;
+		if (direction >= 5)
+			id = actor->graphicResourceIds[5 * cmd->param1 - direction + 38];
+		else
+			id = actor->graphicResourceIds[5 * cmd->param1 + direction + 30];
+
+		GraphicResource *res = new GraphicResource(_scene->getResourcePack(), id);
+		actor->graphicResourceId = id;
+		actor->frameCount = res->getFrameCount();
+		actor->frameNum = 0;
+		actor->direction = direction;
+		actor->updateStatus(actor->status <= kActorStatus11 ? kActorStatus3 : kActorStatus19);
+		delete res;
+
+		cmd->param3 = 2;
+		_lineIncrement = 1;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2D
 IMPLEMENT_OPCODE(PlayMovie) {
-	// TODO: add missing code here
-	_delayedVideoIndex = cmd->param1;
+	if (_scene->matteBarHeight < 170) {
+		_lineIncrement = 1;
 
-	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+		if (!_scene->matteBarHeight) {
+			_scene->getCursor()->hide();
+			_scene->makeGreyPalette();
+			_scene->matteVar1 = 1;
+			_scene->matteBarHeight = 1;
+			_scene->matteVar2 = 0;
+			_scene->mattePlaySound = (cmd->param3 == 0);
+			_scene->matteInitialized = (cmd->param2 == 0);
+			_delayedVideoIndex = cmd->param1;
+		}
+
+		return;
+	}
+
+	bool check = false;
+	ActionArea *area = _scene->worldstats()->actions[_scene->getActor()->actionIdx3];
+	if (area->paletteValue) {
+		_scene->vm()->screen()->setPalette(_scene->getResourcePack(), area->paletteValue);
+		_scene->vm()->screen()->setGammaLevel(_scene->getResourcePack(), area->paletteValue, 0);
+	} else {
+		_scene->vm()->screen()->setPalette(_scene->getResourcePack(), _scene->worldstats()->currentPaletteId);
+		_scene->vm()->screen()->setGammaLevel(_scene->getResourcePack(), _scene->worldstats()->currentPaletteId, 0);
+	}
+
+	_scene->matteBarHeight = 0;
+	_lineIncrement = 0;
+
+	if (!_scene->mattePlaySound && _currentScript->commands[0].numLines != 0) {
+		bool found = true;
+		int index = 0;
+
+
+		while (_currentScript->commands[index].opcode != 0x2B) { // ChangeScene
+			++index;
+
+			if (index >= _currentScript->commands[0].numLines) {
+				found = false;
+				break;
+			}
+		}
+
+		if (found)
+			check = true;
+	}
+
+	if (!check && _scene->matteVar2 == 0 && _scene->worldstats()->musicCurrentResourceId != kResourceMusic_FFFFFD66)
+		if (_scene->vm()->sound()->isCacheOk())
+			_scene->vm()->sound()->playMusic(_scene->getResourcePack(), _scene->worldstats()->musicCurrentResourceId + kResourceMusic_80020000);
+
+	_scene->getCursor()->show();
+	_scene->matteVar2 = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2E
 IMPLEMENT_OPCODE(StopAllBarriersSounds) {
-	// TODO: do this for all barriers that have sfx playing
-	_scene->vm()->sound()->stopAllSounds();
+	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
 
-	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	for (int i = 0; i < ARRAYSIZE(barrier->soundItems); i++)
+		if (barrier->soundItems[i].resourceId)
+			_scene->vm()->sound()->stopSound(barrier->soundItems[i].resourceId);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -761,7 +916,7 @@ IMPLEMENT_OPCODE(ResumeProcessing) {
 // Opcode 0x31
 IMPLEMENT_OPCODE(ResetSceneRect) {
 	_scene->worldstats()->sceneRectIdx = LOBYTE(cmd->param1);
-	_scene->vm()->screen()->palFade(0, 25, 10);
+	_scene->vm()->screen()->paletteFade(0, 25, 10);
 	_scene->vm()->setFlag(kFlagTypeSceneRectChanged);
 
 	_scene->worldstats()->xLeft = _scene->worldstats()->sceneRects[_scene->worldstats()->sceneRectIdx].left;
@@ -771,13 +926,13 @@ IMPLEMENT_OPCODE(ResetSceneRect) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x32
 IMPLEMENT_OPCODE(ChangeMusicById) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	_scene->vm()->sound()->changeMusic(_scene->getResourcePack(), cmd->param1, cmd->param2 ? 2 : 1);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x33
 IMPLEMENT_OPCODE(StopMusic) {
-	_scene->vm()->sound()->stopMusic();
+	_scene->vm()->sound()->changeMusic(_scene->getResourcePack(), kResourceMusic_FFFFFD66, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -819,9 +974,10 @@ IMPLEMENT_OPCODE(Jump) {
 // Opcode 0x37
 IMPLEMENT_OPCODE(RunBlowUpPuzzle) {
 	_scene->vm()->screen()->clearScreen();
-	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
-	//_scene->vm()->screen()->clearDrawStruct(4096, 2049, &drawStruct);
-	//_scene->vm()->switchMessageHandler(_scene->vm()->getMessageHandler(cmd->param1));
+	_scene->vm()->screen()->clearGraphicsInQueue();
+
+	_scene->vm()->switchMessageHandler(_scene->vm()->getMessageHandler(cmd->param1));
+
 	_currentLine++;
 
 	_exit = true;
@@ -829,26 +985,47 @@ IMPLEMENT_OPCODE(RunBlowUpPuzzle) {
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x38
-IMPLEMENT_OPCODE(JumpIfFlag2Bit3) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(JumpIfAction8) {
+	jumpIfActionFlag(cmd, kActionType8);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x39
-IMPLEMENT_OPCODE(SetFlag2Bit3) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(SetAction8) {
+	setActionFlag(cmd, kActionType8);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3A
-IMPLEMENT_OPCODE(ClearFlag2Bit3) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(ClearAction8) {
+	clearActionFlag(cmd, kActionType8);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3B
 IMPLEMENT_OPCODE(_unk3B_PALETTE_MOD) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	if (!cmd->param2) {
+		_scene->makeGreyPalette();
+		cmd->param2 = 1;
+	}
+
+	if (cmd->param1 >= 22) {
+		_scene->vm()->screen()->clearScreen();
+
+		cmd->param1 = 0;
+		cmd->param2 = 0;
+		_currentLine++;
+
+		_scene->vm()->screen()->clearGraphicsInQueue();
+
+		_exit = true;
+		return;
+	}
+
+	_scene->updatePalette(cmd->param1);
+
+	_lineIncrement = 1;
+	++cmd->param1;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -858,7 +1035,7 @@ IMPLEMENT_OPCODE(IncrementParam2) {
 		if (cmd->param2 >= cmd->param1) {
 			cmd->param2 = 0;
 		} else {
-			cmd->param2++;
+			++cmd->param2;
 			_lineIncrement = 1;
 		}
 	}
@@ -869,11 +1046,8 @@ IMPLEMENT_OPCODE(IncrementParam2) {
 IMPLEMENT_OPCODE(WaitUntilFramePlayed) {
 	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
 
-	if (!barrier)
-		error("ActionList::WaitUntilFramePlayed: Requested invalid object ID:0x%02X in Scene %d Line %d.", cmd->param1, _scene->getSceneIndex(),_currentLine);
-
 	uint32 frameNum = cmd->param2;
-	if (cmd->param2 == -1)
+	if (frameNum == -1)
 		frameNum = barrier->frameCount - 1;
 
 	if (barrier->frameIdx != frameNum) {
@@ -890,9 +1064,14 @@ IMPLEMENT_OPCODE(UpdateWideScreen) {
 
 	if (barSize >= 22) {
 		cmd->param1 = 0;
+		_lineIncrement = 0;
+
+		_scene->matteBarHeight = 0;
 	} else {
 		_scene->vm()->screen()->drawWideScreen(4 * barSize);
-		cmd->param1++;
+
+		_lineIncrement = 1;
+		++cmd->param1;
 	}
 }
 
@@ -908,8 +1087,54 @@ IMPLEMENT_OPCODE(JumpIfActor) {
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x40
-IMPLEMENT_OPCODE(_unk40_SOUND) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(PlaySpeechScene) {
+	if (cmd->param1 < 0 || cmd->param1 >= 5)
+		return;
+
+	if (cmd->param4 != 2) {
+		cmd->param5 = _scene->playSpeech(cmd->param1);
+
+		if (cmd->param2) {
+			_scene->vm()->setGameFlag(kGameFlagScriptProcessing);
+			cmd->param4 = 2;
+			if (cmd->param6) {
+				_scene->vm()->setFlag(kFlagType1);
+				_scene->vm()->setFlag(kFlagType2);
+			}
+			_lineIncrement = 1;
+		}
+
+		if (cmd->param3 && !cmd->param6)
+			_scene->vm()->setGameFlag(kGameFlag219);
+
+		return;
+	}
+
+	if (_scene->vm()->sound()->isPlaying((ResourceId)cmd->param5)) {
+		_lineIncrement = 1;
+		return;
+	}
+
+	_scene->vm()->clearGameFlag(kGameFlagScriptProcessing);
+	cmd->param4 = 0;
+
+	if (cmd->param3) {
+		if (cmd->param6) {
+			_scene->vm()->clearFlag(kFlagType1);
+			_scene->vm()->clearFlag(kFlagType2);
+
+			return;
+		} else {
+			_scene->vm()->clearGameFlag(kGameFlag219);
+		}
+	}
+
+	if (!cmd->param6) {
+		cmd->param6 = 1;
+	} else {
+		_scene->vm()->clearFlag(kFlagType1);
+		_scene->vm()->clearFlag(kFlagType2);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -933,10 +1158,14 @@ IMPLEMENT_OPCODE(PlaySpeech) {
 
 		if (cmd->param3 && !cmd->param6)
 			_scene->vm()->setGameFlag(kGameFlag219);
+
+		return;
 	}
 
-	if (_scene->vm()->sound()->isPlaying((ResourceId)cmd->param5))
+	if (_scene->vm()->sound()->isPlaying((ResourceId)cmd->param5)) {
 		_lineIncrement = 1;
+		return;
+	}
 
 	_scene->vm()->clearGameFlag(kGameFlagScriptProcessing);
 	cmd->param4 = 0;
@@ -945,6 +1174,8 @@ IMPLEMENT_OPCODE(PlaySpeech) {
 		if (cmd->param6) {
 			_scene->vm()->clearFlag(kFlagType1);
 			_scene->vm()->clearFlag(kFlagType2);
+
+			return;
 		} else {
 			_scene->vm()->clearGameFlag(kGameFlag219);
 		}
@@ -960,14 +1191,59 @@ IMPLEMENT_OPCODE(PlaySpeech) {
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x42
-IMPLEMENT_OPCODE(_unk42) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(PlaySpeechScene2) {
+	if (cmd->param1 < 0 || cmd->param1 >= 20 || cmd->param2 < 0)
+		return;
+
+	if (cmd->param5 == 2) {
+		if (_scene->vm()->sound()->isPlaying(cmd->param6)) {
+			_lineIncrement = 1;
+			return;
+		}
+
+		_scene->vm()->clearGameFlag(kGameFlagScriptProcessing);
+
+		cmd->param5 = 0;
+
+		if (!cmd->param4) {
+			if (!cmd->param7) {
+				cmd->param7 = 1;
+				return;
+			}
+		} if (!cmd->param7) {
+			_scene->vm()->clearGameFlag(kGameFlag219);
+			cmd->param7 = 1;
+			return;
+		}
+
+		_scene->vm()->clearFlag(kFlagType1);
+		_scene->vm()->clearFlag(kFlagType2);
+		return;
+	}
+
+	cmd->param6 = _scene->playSpeech(cmd->param1, cmd->param2);
+
+	if (cmd->param3) {
+		_scene->vm()->setGameFlag(kGameFlagScriptProcessing);
+
+		cmd->param5 = 2;
+
+		if (cmd->param7) {
+			_scene->vm()->clearFlag(kFlagType1);
+			_scene->vm()->clearFlag(kFlagType2);
+		}
+
+		_lineIncrement = 1;
+	}
+
+	if (cmd->param4 && !cmd->param7)
+		_scene->vm()->setGameFlag(kGameFlag219);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x43
 IMPLEMENT_OPCODE(MoveScenePositionFromActor) {
-	Actor *actor = _scene->getActor();
+	Actor *actor = _scene->getActor(cmd->param1);
 
 	if (!cmd->param3) {
 		_scene->worldstats()->motionStatus = 5;
@@ -1000,49 +1276,115 @@ IMPLEMENT_OPCODE(MoveScenePositionFromActor) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x44
 IMPLEMENT_OPCODE(PaletteFade) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	_scene->vm()->screen()->paletteFade(0, cmd->param1, cmd->param2);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x45
 IMPLEMENT_OPCODE(StartPaletteFadeThread) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	_scene->vm()->screen()->startPaletteFade(_scene->worldstats()->currentPaletteId, cmd->param1, cmd->param2);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x46
 IMPLEMENT_OPCODE(_unk46) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	if (cmd->param6) {
+		if (_scene->vm()->sound()->isPlaying(_scene->vm()->sound()->soundResourceId)) {
+			_lineIncrement = 1;
+		} else {
+			cmd->param6 = 0;
+			if (cmd->param5) {
+				_scene->getActor(cmd->param5)->updateStatus(kActorStatusEnabled);
+			} else if (cmd->param4 != cmd->param3 && cmd->param4) {
+				_scene->worldstats()->getBarrierById(cmd->param3)->destroy();
+				_scene->worldstats()->getBarrierById(cmd->param4)->setNextFrame(_scene->worldstats()->getBarrierById(cmd->param4)->flags);
+			}
+
+			_scene->vm()->clearGameFlag(kGameFlagScriptProcessing);
+
+			_scene->vm()->sound()->soundResourceId = 0;
+			_scene->vm()->sound()->speechTextResourceId = 0;
+		}
+	} else {
+		_scene->vm()->setGameFlag(kGameFlagScriptProcessing);
+		_scene->vm()->sound()->setSpeech(cmd->param1 + kResourceSound_80030203, cmd->param1 + kResourceSpeech_8000050A);
+
+		if (cmd->param2) {
+			_scene->getActor(cmd->param5)->updateStatus(kActorStatus8);
+			cmd->param6 = 1;
+			_lineIncrement = 1;
+		} else {
+			if (cmd->param4 != cmd->param3) {
+				if (cmd->param4)
+					_scene->worldstats()->getBarrierById(cmd->param4)->destroy();
+
+				if (cmd->param3)
+					_scene->worldstats()->getBarrierById(cmd->param3)->setNextFrame(_scene->worldstats()->getBarrierById(cmd->param4)->flags);
+			}
+
+			cmd->param6 = 1;
+			_lineIncrement = 1;
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x47
 IMPLEMENT_OPCODE(ActorFaceObject) {
-	// XXX
-	// Dropping param1, since it's the character index
-	// Investigate further if/when we have a scene with
-	// multiple characters in the actor[] array
-	_scene->getActor()->faceTarget(cmd->param2, cmd->param3);
-
-	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	_scene->getActor(cmd->param1)->faceTarget(cmd->param2, (DirectionFrom)cmd->param3);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x48
 IMPLEMENT_OPCODE(_unk48_MATTE_01) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	_scene->matteVar1 = 0;
+	_scene->matteInitialized = true;
+
+	if (_scene->matteBarHeight >= 170) {
+		_scene->matteBarHeight = 0;
+		_lineIncrement = 0;
+		_scene->getCursor()->show();
+	} else {
+		_lineIncrement = 1;
+
+		if (!_scene->matteBarHeight) {
+			_scene->getCursor()->hide();
+			_scene->matteBarHeight = 1;
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x49
 IMPLEMENT_OPCODE(_unk49_MATTE_90) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	_scene->matteVar1 = 0;
+	_scene->matteInitialized = true;
+	_scene->mattePlaySound = true;
+
+	if (_scene->matteBarHeight >= 170) {
+		_scene->matteBarHeight = 0;
+		_lineIncrement = 0;
+		_scene->getCursor()->show();
+	} else {
+		_lineIncrement = 1;
+
+		if (!_scene->matteBarHeight) {
+			_scene->getCursor()->hide();
+			_scene->matteBarHeight = 90;
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4A
 IMPLEMENT_OPCODE(JumpIfSoundPlaying) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	if (cmd->param3 == 1) {
+		if (_scene->vm()->sound()->isPlaying(cmd->param1)) {
+			_currentLine = cmd->param2;
+		}
+	} else if (!_scene->vm()->sound()->isPlaying(cmd->param1)) {
+		_currentLine = cmd->param2;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1067,14 +1409,17 @@ IMPLEMENT_OPCODE(ChangeActorStatus) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4D
 IMPLEMENT_OPCODE(StopSound) {
-	if (_scene->vm()->sound()->isPlaying((ResourceId)cmd->param1))
-		_scene->vm()->sound()->stopSound((ResourceId)cmd->param1);
+	if (_scene->vm()->sound()->isPlaying(cmd->param1))
+		_scene->vm()->sound()->stopSound(cmd->param1);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4E
-IMPLEMENT_OPCODE(_unk4E_RANDOM_COMMAND) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(JumpRandom) {
+	if (_scene->vm()->getRandom(cmd->param1) < (uint32)cmd->param2)
+		return;
+
+	setNextLine(cmd->param3);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1091,37 +1436,41 @@ IMPLEMENT_OPCODE(ClearScreen) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x50
 IMPLEMENT_OPCODE(Quit) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	_scene->vm()->screen()->clearScreen();
+	_scene->vm()->quitGame();
+
+	// We need to exit the interpreter loop so we get back to the event loop and get the quit message
+	_exit = true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x51
 IMPLEMENT_OPCODE(JumpBarrierFrame) {
 	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
-	int idx = (int)barrier->frameIdx;
 
 	if (cmd->param2 == -1)
 		cmd->param2 = barrier->frameCount - 1;
 
-	if (cmd->param3 && cmd->param2 == idx) {
-		//break;
-	} else if (cmd->param4 && cmd->param2 < idx) {
-		//break;
-	} else if (cmd->param5 && cmd->param2 > idx) {
-		//break;
-	} else if (cmd->param6 && cmd->param2 <= idx) {
-		//break;
-	} else if (cmd->param7 && cmd->param2 >= idx) {
-		//break;
-	} else if (cmd->param8 && cmd->param2 != idx) {
-		//break;
+	if (cmd->param3)
+		if(barrier->frameIdx == (uint32)cmd->param2) {
+			return;
+	} else if (cmd->param4)
+		if (barrier->frameIdx < (uint32)cmd->param2) {
+			return;
+	} else if (cmd->param5)
+		if (barrier->frameIdx > (uint32)cmd->param2) {
+			return;
+	} else if (cmd->param6)
+		if (barrier->frameIdx <= (uint32)cmd->param2) {
+			return;
+	} else if (cmd->param7)
+		if (barrier->frameIdx >= (uint32)cmd->param2) {
+			return;
+	} else if (!cmd->param8 || barrier->frameIdx != (uint32)cmd->param2) {
+		return;
 	}
 
-	ScriptEntry *nextCmd = &_currentScript->commands[cmd->param9];
-
-	// 0x10 == kReturn
-	if (nextCmd->opcode != 0x10 && nextCmd->opcode)
-		_done = true;
+	setNextLine(cmd->param9);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1151,32 +1500,33 @@ IMPLEMENT_OPCODE(_unk54_SET_ACTIONLIST_6EC) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x55
 IMPLEMENT_OPCODE(_unk55) {
-	// TODO
-	/*
-	if (!cmd->param2) {
-		if (cmd->param3 && _currentScript->field_1BB0 < cmd->param1)
-			//break;
-		else if (cmd->param4 && _currentScript->field_1BB0 > cmd->param1)
-			//break;
-		else if (cmd->param5 && _currentScript->field_1BB0 <= cmd->param1)
-			//break;
-		else if (cmd->param6 && _currentScript->field_1BB0 >= cmd->param1)
-			//break;
-		else if (cmd->param7 && _currentScript->field_1BB0 != cmd->param1)
-			//break;
-	} else if(_currentScript->field_1BB0 == cmd->param1) {
-		//break;
+
+	if (cmd->param2) {
+		if (_currentScript->field_1BB0 == cmd->param1)
+			return;
+	} else {
+
+		if (cmd->param3) {
+			if (_currentScript->field_1BB0 < cmd->param1)
+				return;
+		} else if (cmd->param4) {
+			if (_currentScript->field_1BB0 > cmd->param1)
+				return;
+		} else if (!cmd->param5) {
+			if (cmd->param6) {
+				if (_currentScript->field_1BB0 >= cmd->param1)
+					return;
+			} else {
+				if (!cmd->param7 || _currentScript->field_1BB0 != cmd->param1)
+					return;
+			}
+		} else {
+			if (_currentScript->field_1BB0 <= cmd->param1)
+				return;
+		}
 	}
-	*/
 
-	ScriptEntry *nextCmd = &_currentScript->commands[cmd->param8];
-
-	if (nextCmd->opcode != 0x10 && nextCmd->opcode)
-		_done = true;
-	else
-		_lineIncrement = cmd->param8;
-
-	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	setNextLine(cmd->param8);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1196,24 +1546,37 @@ IMPLEMENT_OPCODE(_unk56) {
 		_lineIncrement = 0;
 
 		if ((actor->x1 + actor->x2 == cmd->param6) && (actor->y1 + actor->y2 == cmd->param7)) {
-			actor->setDirectionFrom(cmd->param1, kDirectionFromActor);
-			_scene->getActor(cmd->param1)->setDirection((actor->direction + 4) & 7);
+			_scene->getActor(kActorPlayer)->faceTarget(cmd->param1, kDirectionFromActor);
+			actor->setDirection((actor->direction + 4) & 7);
 		} else {
 			_currentLine = cmd->param3;
 		}
 	} else {
-		error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+		int32 x = 0;
+		int32 y = 0; // FIXME: is is set somewhere else?
+
+		if (_scene->processActor(&x, &cmd->param4) == 1) {
+			_scene->getActor(kActorPlayer)->processStatus(x, y, cmd->param4);
+			cmd->param6 = x;
+			cmd->param7 = y;
+
+			if (cmd->param2 == 1) {
+				cmd->param2 = 2;
+				_lineIncrement = 1;
+			}
+		} else {
+			if (cmd->param4)
+				_scene->playSpeech(1);
+
+			_currentLine = cmd->param3;
+		}
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x57
 IMPLEMENT_OPCODE(SetResourcePalette) {
-	if (cmd->param1 < 0)
-		error("Invalid resource id in opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
-
 	_scene->worldstats()->currentPaletteId = _scene->worldstats()->graphicResourceIds[cmd->param1];
-
 	_scene->vm()->screen()->setPalette(_scene->getResourcePack(), _scene->worldstats()->currentPaletteId);
 	_scene->vm()->screen()->setGammaLevel(_scene->getResourcePack(), _scene->worldstats()->currentPaletteId, 0);
 }
@@ -1234,7 +1597,16 @@ IMPLEMENT_OPCODE(SetBarrierFrameIdxFlaged) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x59
 IMPLEMENT_OPCODE(_unk59) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
+
+	if (cmd->param2) {
+		barrier->flags |= kBarrierFlag40000;
+	} else {
+		barrier->flags &= ~kBarrierFlag10E38;
+	}
+
+	if (cmd->param3 && (barrier->flags & kBarrierFlag10E38))
+		_lineIncrement = 1;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1246,7 +1618,18 @@ IMPLEMENT_OPCODE(_unk5A) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5B
 IMPLEMENT_OPCODE(_unk5B) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	if (cmd->param2 >= 0 && cmd->param2 <= 3) {
+		if (cmd->param1) {
+			Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
+
+			barrier->field_67C = cmd->param2;
+
+			if (barrier->field_67C)
+				barrier->field_67C += 3;
+		} else {
+			_scene->getActor(cmd->param3)->field_96C = cmd->param2;
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1258,16 +1641,18 @@ IMPLEMENT_OPCODE(QueueScript) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5D
 IMPLEMENT_OPCODE(_unk5D) {
+	Actor *actor = _scene->getActor(cmd->param1);
 
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	actor->process_401830(cmd->param2, cmd->param3, cmd->param4, cmd->param5, cmd->param6, cmd->param7, cmd->param8, cmd->param9);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5E
-IMPLEMENT_OPCODE(ClearActorField970) {
-	Actor *act = _scene->getActor(cmd->param1);
+IMPLEMENT_OPCODE(ClearActorFields) {
+	Actor *actor = _scene->getActor(cmd->param1);
 
-	act->field_970 = 0;
+	// Clear fields starting from field_970
+	memset(&actor->field_970, 0, 52);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1286,7 +1671,12 @@ IMPLEMENT_OPCODE(SetBarrierLastFrameIdx) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x60
 IMPLEMENT_OPCODE(_unk60_SET_OR_CLR_ACTIONAREA_FLAG) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	ActionArea *area = _scene->worldstats()->getActionAreaById(cmd->param1);
+
+	if (cmd->param2)
+		area->flags |= 1;
+	else
+		area->flags &= ~1;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1295,29 +1685,37 @@ IMPLEMENT_OPCODE(_unk61) {
 	if (cmd->param2) {
 		if (_scene->worldstats()->field_E860C == -1) {
 			_lineIncrement = 0;
-			cmd->param2   = 0;
+			cmd->param2 = 0;
 		} else {
 			_lineIncrement = 1;
 		}
 	} else {
-		// TODO: do something for scene number 9
+		_scene->updatePlayerChapter9(cmd->param1);
 		cmd->param2 = 1;
 		_lineIncrement = 1;
 	}
-
-	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x62
-IMPLEMENT_OPCODE(_unk62_SHOW_OPTIONS_SCREEN) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(ShowOptionsScreen) {
+	_scene->vm()->menu()->showOptions();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x63
 IMPLEMENT_OPCODE(_unk63) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	if (cmd->param1) {
+		_scene->vm()->setFlag(kFlagType1);
+		_scene->vm()->setFlag(kFlagType2);
+	}
+
+	if (_scene->vm()->sound()->isPlaying(_scene->vm()->sound()->soundResourceId)) {
+		_lineIncrement = 1;
+		return;
+	} else if (!cmd->param1) {
+		cmd->param1 = 1;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1380,11 +1778,16 @@ void ActionList::jumpIfActionFlag(ScriptEntry *cmd, ActionType flag) {
 	if (!done)
 		return;
 
-	int32 opcode = _currentScript->commands[cmd->param2].opcode;
+	setNextLine(cmd->param2);
+}
+
+void ActionList::setNextLine(int32 line) {
+	int32 opcode = _currentScript->commands[line].opcode;
 	if (opcode == 0x10 || opcode == 0) { // Return
-		_currentLine = cmd->param2;
+		_currentLine = line;
 	} else {
 		_done = true;
 	}
 }
+
 } // end of namespace Asylum

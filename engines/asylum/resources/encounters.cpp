@@ -67,6 +67,23 @@ Encounter::Encounter(Scene *scene) {
 	_scene = scene;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Flags
+
+int32 Encounter::getFlag(EncounterFlag flag) {
+	if (flag > ARRAYSIZE(_flags))
+		error("[Encounter::getFlag] Invalid flag index!");
+
+	return _flags[flag];
+}
+
+void Encounter::setFlag(EncounterFlag flag, int32 val) {
+	if (flag > ARRAYSIZE(_flags))
+		error("[Encounter::getFlag] Invalid flag index!");
+
+	_flags[flag] = val;
+}
+
 void Encounter::run(int32 encounterIdx, int32 barrierId1, int32 barrierId2, int32 characterIdx) {
 	// Line: 12/15 :: 0x25 (1, 1584, 1584, 0, 0, 0, 0, 0, 0) // First Encounter
 

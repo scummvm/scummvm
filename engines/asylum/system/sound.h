@@ -26,6 +26,8 @@
 #ifndef ASYLUM_SOUND_H
 #define ASYLUM_SOUND_H
 
+#include "asylum/system/config.h"
+
 #include "asylum/respack.h"
 #include "asylum/shared.h"
 
@@ -93,12 +95,14 @@ public:
 	void stopAllSounds(bool stopSpeechAndMusic = false);
 
 	void playSpeech(ResourceId resourceId);
+	void setSpeech(ResourceId sound, ResourceId speechText);
 
-	void playMusic(ResourcePack *pack, ResourceId resourceId);
-	void playMusic(ResourceId resourceId);
+	void playMusic(ResourcePack *pack, ResourceId resourceId, int32 volume = Config.musicVolume);
+	void changeMusic(ResourcePack *pack, ResourceId resourceId, int32 musicStatusExt);
 	void stopMusic();
 
 	void setVolume(ResourceId resourceId, double volume);
+	int32 getAdjustedVolume(int32 volume);
 
 	/**
 	 * Check if the buffered sound sample that matches the provided id currently
@@ -117,6 +121,13 @@ public:
 	 * in a blowuppuzzle
 	 */
 	bool isPlaying() { return _mixer->isSoundHandleActive(_soundHandle); }
+
+	// TODO Make sure this is needed
+	bool isCacheOk() { error("[Sound::isCacheOk] not implemented!"); }
+
+	// Global resources ids
+	ResourceId soundResourceId;
+	ResourceId speechTextResourceId;
 
 private:
 	Audio::Mixer       *_mixer;

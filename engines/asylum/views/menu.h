@@ -53,6 +53,8 @@ public:
 	void openMenu();
 	void closeMenu();
 
+	void showOptions();
+
 private:
 	AsylumEngine *_vm;
 
