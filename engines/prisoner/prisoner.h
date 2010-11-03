@@ -592,6 +592,8 @@ public:
 	Common::String _autoSavePakName, _autoSaveIdentifier;
 	int16 _autoSavePakSlot;
 
+	int16 _globalTextResourceCacheSlot;
+
 	/* Screensaver */
 	bool _screensaverRunning;
 	bool _screensaverAborted;
@@ -799,12 +801,12 @@ public:
 	int16 getModuleScriptVar(int16 varIndex);
 	void setModuleScriptVar(int16 varIndex, int16 value);
 	int16 getSysVar(int16 varIndex);
-	bool isScreenTextShowing() const { return _screenTextShowing; }
 
 	void playIntroVideos();
 	void death();
 	bool waitForInput();
 
+	const Common::String getGlobalText(Common::String &identifier);
 	void mainLoop();
 
 	/* Frame time */
@@ -1041,6 +1043,7 @@ public:
 	int16 addCenteredScreenText(int16 resourceCacheSlot, Common::String &identifier);
 	void updateScreenTexts();
 	void advanceScreenTexts();
+	bool isScreenTextShowing() const { return _screenTextShowing; }
 
 	/* Talkie */
 	void startTalkieSpeech(int16 pakSlot, uint32 &finishedTime, int16 resourceCacheSlot);
@@ -1074,7 +1077,9 @@ public:
 	void playMux(Common::String filename);
 	bool handleMuxInput();
 	void playMuxSoon(Common::String &filename, bool clearScreenAfter, bool clearScreenBefore);
+
 	void requestAutoSave(Common::String &pakName, int16 pakSlot, Common::String &identifier);
+	void performAutoSave();
 
 	void getInteractMessage(Common::String &pakName, int16 pakSlot, Common::String &identifier,
 		int16 &outResourceCacheSlot, Common::String &outIdentifier);

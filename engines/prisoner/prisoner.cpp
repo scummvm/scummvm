@@ -87,12 +87,6 @@ PrisonerEngine::PrisonerEngine(OSystem *syst, const PrisonerGameDescription *gam
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "prisoner");
 
-	/*
-	int cd_num = ConfMan.getInt("cdrom");
-	if (cd_num >= 0)
-		_system->openCD(cd_num);
-	*/
-
 }
 
 PrisonerEngine::~PrisonerEngine() {
@@ -302,11 +296,13 @@ Common::Error PrisonerEngine::run() {
 	{
 		// TODO: Move to init function
 		// TODO: Load pakName/slot from exe etc.
-		Common::String pakName = "S_PANEL";
+		Common::String pakName;
+		pakName = "F_ICETXT";
+		_globalTextResourceCacheSlot = loadTextResource(pakName, 0);
+		pakName = "S_PANEL";
 		_inventoryBoxResourceCacheSlot = _res->load<AnimationResource>(pakName, 12, 11);
 	}
 
-	// Check here for save_slot
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
 		if (saveSlot >= 0 && saveSlot <= 99) {
@@ -322,6 +318,8 @@ Common::Error PrisonerEngine::run() {
 
 	{
 		// TODO: Move to shutdown function
+		_res->unload(_globalTextResourceCacheSlot);
+		_globalTextResourceCacheSlot = -1;
 		_res->unload(_inventoryBoxResourceCacheSlot);
 		_inventoryBoxResourceCacheSlot = -1;
 	}
@@ -337,6 +335,11 @@ Common::Error PrisonerEngine::run() {
 
 	debug("Exit ok");
 	return Common::kNoError;
+}
+
+const Common::String PrisonerEngine::getGlobalText(Common::String &identifier) {
+	TextResource *textResource = _res->get<TextResource>(_globalTextResourceCacheSlot);
+	return textResource->getText(identifier)->getChunkLineString(0, 0);
 }
 
 void PrisonerEngine::mainLoop() {
@@ -371,6 +374,12 @@ void PrisonerEngine::mainLoop() {
 			handleInput(_cameraX + _mouseX, _cameraY + _mouseY);
 		}
 
+		if (_autoSaveRequested) {
+			_autoSaveRequested = false;
+			performAutoSave();
+		}
+
+		// TODO: updateDirtyRects();
 		checkForSceneChange();
 		updateMouseCursor();
 		updateMouseCursorAnimation();
@@ -398,8 +407,6 @@ void PrisonerEngine::mainLoop() {
 		_screen->update();
 		_system->delayMillis(10);
 	}
-
-
 
 }
 
@@ -857,6 +864,26 @@ void PrisonerEngine::requestAutoSave(Common::String &pakName, int16 pakSlot, Com
 	_autoSavePakName = pakName;
 	_autoSavePakSlot = pakSlot;
 	_autoSaveIdentifier = identifier;
+}
+
+void PrisonerEngine::performAutoSave() {
+
+	int16 textResourceCacheSlot = loadTextResource(_autoSavePakName, _autoSavePakSlot);
+	TextResource *textResource = _res->get<TextResource>(textResourceCacheSlot);
+	const Common::String savegameDescription = textResource->getText(_autoSaveIdentifier)->getChunkLineString(0, 0);
+	Common::String waitMessageIdentifier = "S_SCE";
+	const Common::String waitMessage = getGlobalText(waitMessageIdentifier);
+
+	debug("AUTOSAVE: [%s] (%s)", savegameDescription.c_str(), waitMessage.c_str());
+
+	setFontColors(_textFont, _zoneFontColor.outlineColor, _zoneFontColor.inkColor);
+	_screen->fillRect(0, 398, 639, 479, 0);
+	drawTextEx(0, 639, 398, 479, waitMessage);
+	addDirtyRect(0, 398, 540, 82, 1);
+	_screen->update();
+
+	saveGameState(100, savegameDescription.c_str());
+
 }
 
 void PrisonerEngine::getInteractMessage(Common::String &pakName, int16 pakSlot, Common::String &identifier,
