@@ -105,7 +105,7 @@ public:
 	/**
 	 * This is the global tick counter.
 	 */
-	uint32 globalTickValue;
+	uint32 screenUpdatesCount;
 	uint32 globalTickValue_2;
 
 	// Game

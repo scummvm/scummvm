@@ -102,7 +102,7 @@ void Barrier::load(Common::SeekableReadStream *stream) {
 	_field_688 = stream->readSint32LE();
 
 	for (int i = 0; i < 5; i++)
-		_field_68C[i] = stream->readSint32LE();
+		_randomResourceIds[i] = stream->readSint32LE();
 
 	_soundResourceId = stream->readSint32LE();
 	_field_6A4       = stream->readSint32LE();
@@ -183,130 +183,146 @@ void Barrier::draw() {
 	}
 }
 
-
-
 void Barrier::update() {
-	bool canPlaySound = false;
-	if (_field_3C == 4) {
-		if (isVisible()) {
-			int32 flag = flags;
-			if (flag & 0x20) {
-				if (_vm->getTick() - _tickCount >= 0x3E8 / _field_B4) {
-					_frameIndex =((_frameIndex + 1) % _frameCount);
-					_tickCount = _vm->getTick();
-					canPlaySound       = true;
-				}
-			} else if (flag & 0x10) {
-				uint32 frameIdx  = _frameIndex;
-				int equalZero = frameIdx == 0;
-				if (!frameIdx) {
-					if (_vm->getTick() - _tickCount >= 1000 * _tickCount2) {
-						if (_vm->getRandom(_field_C0) == 1) {
-							if (_field_68C[0]) {
-								// TODO: fix this, and find a better way to get frame count
-								// Sometimes we get wrong random resource id
+	bool doPlaySounds = false;
 
-								_resourceId = getRandomId();
-								GraphicResource *gra = new GraphicResource(getScene()->getResourcePack(), _resourceId);
-								_frameCount  = gra->getFrameCount();
-								delete gra;
-							}
-							_frameIndex++;
-						}
-						_tickCount = _vm->getTick();
-						canPlaySound       = true;
-					}
-					frameIdx  = _frameIndex;
-					equalZero = frameIdx == 0;
-				}
+	if (_field_3C != 4)
+		return;
 
-				if (!equalZero) {
-					if (_vm->getTick() - _tickCount >= 0x3E8 / _field_B4) {
-						_frameIndex  = (_frameIndex + 1) % _frameCount;
-						_tickCount = _vm->getTick();
-						canPlaySound = true;
+	if (!isVisible()) {
+		updateSoundItems();
+		return;
+	}
+
+	// Examine flags
+	if (flags & kBarrierFlag20) {
+		if (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt()) {
+			_frameIndex =((_frameIndex + 1) % _frameCount);
+			_tickCount = _vm->getTick();
+			doPlaySounds = true;
+		}
+	} else if (flags & kBarrierFlag10) {
+
+		bool isFirstFrame = (_frameIndex == 0);
+
+		if (!_frameIndex) {
+			if (_vm->getTick() - _tickCount >= 1000 * _tickCount2) {
+				if (_vm->getRandom(_field_C0) == 1) {
+					if (_randomResourceIds[0]) {
+						_resourceId = getRandomResourceId();
+						GraphicResource *gra = new GraphicResource(getScene()->getResourcePack(), _resourceId);
+						_frameCount  = gra->getFrameCount();
+						delete gra;
 					}
+					_frameIndex++;
 				}
-			} else if (flag & 8) {
-				if (_vm->getTick() - _tickCount >= 0x3E8 / _field_B4) {
-					uint32 frameIdx = _frameIndex + 1;
-					if (frameIdx < _frameCount - 1) {
-						if (_field_688 == 1) {
-							// TODO: get global x, y positions
-						}
-					} else {
-						flags &= ~kBarrierFlag8;
-						if (_field_688 == 1) {
-							// TODO: reset global x, y positions
-						}
-					}
-					_frameIndex = frameIdx;
-				}
-			} else if ((flag & 0xFF) & 8) { // check this
-				if (_vm->getTick() - _tickCount >= 1000 * _tickCount2) {
-					if (_vm->getRandom(_field_C0) == 1) { // TODO: THIS ISNT WORKING
-						_frameIndex  = (_frameIndex + 1) % _frameCount;
-						_tickCount = _vm->getTick();
-						canPlaySound = true;
-					}
-				}
-			} else if (!((flag & 0xFFFF) & 6)) {
-				if (_vm->getTick() - _tickCount >= 0x3E8 / _field_B4 && (flag & 0x10000)) {
-					uint32 frameIdx = _frameIndex - 1;
-					if (frameIdx <= 0) {
-						flags &= ~kBarrierFlag10000;
-						if (_field_688 == 1) {
-							// TODO: reset global x, y positions
-						}
-						_tickCount = _vm->getTick();
-						canPlaySound = true;
-					}
-					if (_field_688 == 1) {
-						// TODO: get global x, y positions
-					}
-					_frameIndex = frameIdx;
-				} else if (_vm->getTick() - _tickCount >= 0x3E8 / _field_B4) {
-					if ((flag & 0xFF) & 2) {
-						if (_frameIndex == _frameCount - 1) {
-							_frameIndex--;
-							flags = ((flag & 0xFF) & 0xFD) | 4;
-						} else {
-							_frameIndex++;
-						}
-					} else if ((flag & 0xFF) & 4) {
-						if (_frameIndex) {
-							_frameIndex--;
-						} else {
-							_frameIndex++;
-							flags = ((flag & 0xFF) & 0xFB) | 2;
-						}
-					}
-				}
+				_tickCount = _vm->getTick();
+				doPlaySounds = true;
 			}
 
-			flag = flags;
-			flag &= 0x40000;
-			if (flag != 0) {
-				if (_frameIndex == _frameCount - 1) {
-					if (_field_B4 <= 15) {
-						_field_B4 -= 2;
-						if (_field_B4 < 0)
-							_field_B4 = 0;
-					} else {
-						_field_B4 = 15;
-					}
-					if (!_field_B4)
-						flags &= 0xFFFEF1C7;
-				}
-			}
+			isFirstFrame = (_frameIndex == 0);
 		}
 
-		if (canPlaySound) {
-			updateSoundItems();
-			stopSound();
+		if (!isFirstFrame) {
+			if (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt()) {
+				_frameIndex =((_frameIndex + 1) % _frameCount);
+				_tickCount = _vm->getTick();
+				doPlaySounds = true;
+			}
+		}
+	} else if (BYTE1(flags) & kBarrierFlag8) {
+		if (_vm->getTick() - _tickCount >= 1000 * _tickCount2) {
+			if (_vm->getRandom(_field_C0) == 1)
+				_frameIndex =((_frameIndex + 1) % _frameCount);
+
+			_tickCount = _vm->getTick();
+			doPlaySounds = true;
+		}
+	} else if (flags & kBarrierFlag8) {
+
+		if (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt()) {
+
+			++_frameIndex;
+
+			if (_frameIndex < _frameCount - 1) {
+				if (_field_688 == 1) {
+					GraphicResource *gra = new GraphicResource(getScene()->getResourcePack(), _resourceId);
+					GraphicFrame *frame = gra->getFrame(_frameIndex);
+					getScene()->setGlobalX(x + frame->x + (frame->getWidth() >> 1));
+					getScene()->setGlobalY(y + frame->y + (frame->getHeight() >> 1));
+					delete gra;
+				}
+			} else {
+				flags &= ~kBarrierFlag8;
+				if (_field_688 == 1) {
+					getScene()->setGlobalX(-1);
+					getScene()->setGlobalY(-1);
+				}
+			}
+			_tickCount = _vm->getTick();
+			doPlaySounds = true;
+		}
+	} else if (!(BYTE1(flags) & kBarrierFlag6)) {
+
+		if ((flags & kBarrierFlag10000) && (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt())) {
+
+			++_frameIndex;
+
+			if (_frameIndex <= 0) {
+				flags &= ~kBarrierFlag10000;
+				if (_field_688 == 1) {
+					getScene()->setGlobalX(-1);
+					getScene()->setGlobalY(-1);
+				}
+			} else if (_field_688 == 1) {
+				GraphicResource *gra = new GraphicResource(getScene()->getResourcePack(), _resourceId);
+				GraphicFrame *frame = gra->getFrame(_frameIndex);
+				getScene()->setGlobalX(x + frame->x + (frame->getWidth() >> 1));
+				getScene()->setGlobalY(y + frame->y + (frame->getHeight() >> 1));
+				delete gra;
+			}
+
+			_tickCount = _vm->getTick();
+			doPlaySounds = true;
+		}
+	} else if (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt()) {
+		if (BYTE1(flags) & kBarrierFlag2) {
+			if (_frameIndex == _frameCount - 1) {
+				_frameIndex--;
+				flags = BYTE1(flags) & 0xFD | kBarrierFlag4;
+			} else {
+				_frameIndex++;
+			}
+		} else if (BYTE1(flags) & kBarrierFlag4) {
+			if (_frameIndex) {
+				_frameIndex--;
+			} else {
+				_frameIndex++;
+				flags = BYTE1(flags) & 0xFB | kBarrierFlag2;
+			}
 		}
 	}
-	// TODO: get sound functions according with scene
+
+	if (flags & kBarrierFlag40000) {
+		if (_frameIndex == _frameCount - 1) {
+			if (_field_B4 <= 15) {
+				_field_B4 -= 2;
+
+				if (_field_B4 < 0)
+					_field_B4 = 0;
+			} else {
+				_field_B4 = 15;
+			}
+
+			if (!_field_B4)
+				flags &= ~kBarrierFlag10E38;
+		}
+	}
+
+	if (doPlaySounds)
+		playSounds();
+
+	getScene()->callSpecFunction(this, -1);
 }
 
 void Barrier::setNextFrame(int32 targetFlags) {
@@ -321,6 +337,10 @@ void Barrier::setNextFrame(int32 targetFlags) {
 /////////////////////////////////////////////////////////////////////////
 // Misc
 /////////////////////////////////////////////////////////////////////////
+void Barrier::playSounds() {
+	error("[Barrier::playSounds] not implemented!");
+}
+
 void Barrier::updateSoundItems() {
 	for (int32 i = 0; i < ARRAYSIZE(_soundItems); i++) {
 
@@ -351,21 +371,23 @@ void Barrier::stopAllSounds() {
 		}
 }
 
-int32 Barrier::getRandomId() {
-	int32 numRes = 0;
-	ResourceId randomResourceIds[5];
-	memset(&randomResourceIds, 0, sizeof(randomResourceIds));
+int32 Barrier::getRandomResourceId() {
+	// Initialize random resource id array
+	ResourceId shuffle[5];
+	memset(&shuffle, 0, sizeof(shuffle));
+	int32 count = 0;
+
 	for (int32 i = 0; i < 5; i++) {
-		if (_field_68C[i]) {
-			randomResourceIds[numRes] = _field_68C[i];
-			numRes++;
+		if (_randomResourceIds[i]) {
+			shuffle[count] = _randomResourceIds[i];
+			count++;
 		}
 	}
 
-	if (numRes > 0)
-		return randomResourceIds[rand() % numRes];
+	if (count == 0)
+		error("[Barrier::getRandomId] Could not get a random resource Id");
 
-	return _resourceId;
+	return shuffle[_vm->getRandom(count)];
 }
 
 bool Barrier::checkFlags() {

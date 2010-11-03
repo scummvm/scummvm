@@ -66,7 +66,7 @@ public:
 	void setPriority(int32 priority) { _priority = priority; }
 	void setResourceId(ResourceId id) { _resourceId = id; }
 	void setStatus(ActorStatus status) { _status = status; }
-	void setTickValue(int32 tick) { _tickValue = tick; }
+	void setLastScreenUpdate(int32 tick) { _lastScreenUpdate = tick; }
 
 	void setField638(int32 val) { _field_638 = val; }
 	void setField934(int32 val) { _field_934 = val; }
@@ -256,7 +256,7 @@ private:
 	int32  _field_8D0[20];
 	int32  _actionIdx2;
 	int32  _field_924;
-	int32 _tickValue;
+	int32 _lastScreenUpdate;
 	int32  _field_92C;
 	//actionType
 	int32  _field_934;
