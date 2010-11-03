@@ -121,7 +121,7 @@ void Scene::initialize() {
 		for (int32 b = 0; b < _ws->numBarriers; b++) {
 			Barrier *barrier  = _ws->barriers[b];
 			barrier->priority = priority;
-			barrier->flags &= 0xFFFF3FFF;
+			barrier->flags &= ~kBarrierFlagC000;
 			priority -= 4;
 		}
 	}
@@ -605,7 +605,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 				targetUpdateType = _ws->actions[targetIdx]->actionType;
 				break;
 			case kHitBarrier:
-				targetUpdateType = _ws->barriers[targetIdx]->flags2;
+				targetUpdateType = _ws->barriers[targetIdx]->actionType;
 				break;
 			case kHitActor:
 				targetUpdateType = getActor(targetIdx)->status;
@@ -824,7 +824,7 @@ void Scene::updateBarriers() {
 									// TODO: get global x, y positions
 								}
 							} else {
-								barrier->flags &= 0xFFFFFFF7;
+								barrier->flags &= ~kBarrierFlag8;
 								if (barrier->field_688 == 1) {
 									// TODO: reset global x, y positions
 								}
@@ -843,7 +843,7 @@ void Scene::updateBarriers() {
 						if (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4 && (flag & 0x10000)) {
 							uint32 frameIdx = barrier->frameIdx - 1;
 							if (frameIdx <= 0) {
-								barrier->flags &= 0xFFFEFFFF;
+								barrier->flags &= ~kBarrierFlag10000;
 								if (barrier->field_688 == 1) {
 									// TODO: reset global x, y positions
 								}

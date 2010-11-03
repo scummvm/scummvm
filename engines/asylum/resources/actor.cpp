@@ -35,7 +35,7 @@
 
 namespace Asylum {
 
-Actor::Actor(Scene *scene) : _scene(scene), _currentWalkArea(NULL), _graphic(NULL) {
+Actor::Actor(Scene *scene, ActorIndex index) : _scene(scene), _index(index), _currentWalkArea(NULL), _graphic(NULL) {
 	currentAction    = 0;
 
 	// TODO initialize other class variables
@@ -49,9 +49,9 @@ Actor::~Actor() {
 
 void Actor::setVisible(bool value) {
 	if (value)
-		flags |= kVisible;
+		flags |= kActorFlagVisible;
 	else
-		flags &= kHidden;
+		flags &= ~kActorFlagVisible;
 
 	stopSound();
 }
@@ -785,6 +785,25 @@ void Actor::updateActorSub01() {
 
 bool Actor::defaultDirectionLoaded(int grResTableIdx) {
 	return graphicResourceIds[grResTableIdx] != graphicResourceIds[5];
+}
+
+bool Actor::process(int32 x, int32 y) {
+	error("[Actor::process] not implemented!");
+}
+
+void Actor::processStatus(int32 x, int32 y, bool doSpeech) {
+	if (process(x, y)) {
+		if (status < kActorStatus11)
+			updateStatus(kActorStatus2);
+		else
+			updateStatus(kActorStatus13);
+	} else if (doSpeech) {
+		speech(1);
+	}
+}
+
+void Actor::speech(int32 a1) {
+	error("[Actor::speech] not implemented!");
 }
 
 } // end of namespace Asylum
