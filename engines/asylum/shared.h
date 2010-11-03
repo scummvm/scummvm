@@ -31,7 +31,6 @@ namespace Asylum {
 //////////////////////////////////////////////////////////////////////////
 // Global
 //////////////////////////////////////////////////////////////////////////
-
 enum GameFlag {
 	kGameFlag4 = 4,
 	kGameFlag12 = 12,
@@ -224,6 +223,21 @@ enum ActorResources {
 };
 
 //////////////////////////////////////////////////////////////////////////
+// Barrier
+//////////////////////////////////////////////////////////////////////////
+enum BarrierFlag {
+	kBarrierFlagDestroyed = -2,
+	kBarrierFlag4         = 0x4,
+	kBarrierFlag8         = 0x8,
+	kBarrierFlag20        = 0x20,
+	kBarrierFlagC000      = 0xC000,
+	kBarrierFlag10000     = 0x10000,
+	kBarrierFlag10E38     = 0x10E38,
+	kBarrierFlag20000     = 0x20000,
+	kBarrierFlag40000     = 0x40000
+};
+
+//////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
 #define CLEAR_ARRAY(type, name) { \
@@ -242,9 +256,10 @@ enum ActorResources {
 #define rnd(val) _vm->getRandom(val)
 
 // Engine subclasses
-#define getSound() _vm->sound()
-#define getScene() _vm->scene()
-#define getWorld() _vm->scene()->worldstats()
+#define getSound()  _vm->sound()
+#define getScene()  _vm->scene()
+#define getScreen() _vm->screen()
+#define getWorld()  _vm->scene()->worldstats()
 
 
 

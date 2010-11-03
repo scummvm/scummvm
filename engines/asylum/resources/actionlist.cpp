@@ -372,13 +372,13 @@ IMPLEMENT_OPCODE(PlayAnimation) {
 
 	barrier->setNextFrame(barrier->flags);
 
-	if (barrier->field_688 == 1) {
+	if (barrier->getField688() == 1) {
 		if (barrier->flags & kBarrierFlag4) {
 			_scene->setGlobalX(barrier->x);
 			_scene->setGlobalY(barrier->y);
 		} else {
-			GraphicResource *res = new GraphicResource(_scene->getResourcePack(), barrier->resourceId);
-			GraphicFrame *frame = res->getFrame(barrier->frameIdx);
+			GraphicResource *res = new GraphicResource(_scene->getResourcePack(), barrier->getResourceId());
+			GraphicFrame *frame = res->getFrame(barrier->getFrameIndex());
 
 			_scene->setGlobalX(frame->x + (frame->getWidth() >> 1) + barrier->x);
 			_scene->setGlobalY(frame->y + (frame->getHeight() >> 1) + barrier->y);
@@ -486,15 +486,15 @@ IMPLEMENT_OPCODE(EnableBarriers) {
 
 	if (_currentScript->counter >= (3 * cmd->param2 - 1)) {
 		_currentScript->counter = 0;
-		barrier->field_67C  = 0;
+		barrier->setField67C(0);
 		enableBarrier(cmd, kBarrierEnableType2);
 	} else {
 		++_currentScript->counter;
 		if (cmd->param3) {
-			barrier->field_67C = 3 - _currentScript->counter / cmd->param2;
+			barrier->setField67C(3 - _currentScript->counter / cmd->param2);
 			enableBarrier(cmd, kBarrierEnableType1);
 		} else {
-			barrier->field_67C = _currentScript->counter / cmd->param2 + 1;
+			barrier->setField67C(_currentScript->counter / cmd->param2 + 1);
 			enableBarrier(cmd, kBarrierEnableType0);
 		}
 
@@ -584,9 +584,9 @@ IMPLEMENT_OPCODE(ResetAnimation) {
 	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
 
 	if (barrier->flags & kBarrierFlag10000)
-		barrier->frameIdx = barrier->frameCount - 1;
+		barrier->setFrameIndex(barrier->getFrameCount() - 1);
 	else
-		barrier->frameIdx = 0;
+		barrier->setFrameIndex(0);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -897,9 +897,7 @@ IMPLEMENT_OPCODE(PlayMovie) {
 IMPLEMENT_OPCODE(StopAllBarriersSounds) {
 	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
 
-	for (int i = 0; i < ARRAYSIZE(barrier->soundItems); i++)
-		if (barrier->soundItems[i].resourceId)
-			_scene->vm()->sound()->stopSound(barrier->soundItems[i].resourceId);
+	barrier->stopAllSounds();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1050,9 +1048,9 @@ IMPLEMENT_OPCODE(WaitUntilFramePlayed) {
 
 	uint32 frameNum = cmd->param2;
 	if (frameNum == -1)
-		frameNum = barrier->frameCount - 1;
+		frameNum = barrier->getFrameCount() - 1;
 
-	if (barrier->frameIdx != frameNum) {
+	if (barrier->getFrameIndex() != frameNum) {
 		_lineIncrement = 1;
 		_waitCycle     = true;
 	}
@@ -1451,24 +1449,24 @@ IMPLEMENT_OPCODE(JumpBarrierFrame) {
 	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
 
 	if (cmd->param2 == -1)
-		cmd->param2 = barrier->frameCount - 1;
+		cmd->param2 = barrier->getFrameCount() - 1;
 
 	if (cmd->param3)
-		if(barrier->frameIdx == (uint32)cmd->param2) {
+		if(barrier->getFrameIndex() == (uint32)cmd->param2) {
 			return;
 	} else if (cmd->param4)
-		if (barrier->frameIdx < (uint32)cmd->param2) {
+		if (barrier->getFrameIndex() < (uint32)cmd->param2) {
 			return;
 	} else if (cmd->param5)
-		if (barrier->frameIdx > (uint32)cmd->param2) {
+		if (barrier->getFrameIndex() > (uint32)cmd->param2) {
 			return;
 	} else if (cmd->param6)
-		if (barrier->frameIdx <= (uint32)cmd->param2) {
+		if (barrier->getFrameIndex() <= (uint32)cmd->param2) {
 			return;
 	} else if (cmd->param7)
-		if (barrier->frameIdx >= (uint32)cmd->param2) {
+		if (barrier->getFrameIndex() >= (uint32)cmd->param2) {
 			return;
-	} else if (!cmd->param8 || barrier->frameIdx != (uint32)cmd->param2) {
+	} else if (!cmd->param8 || barrier->getFrameIndex() != (uint32)cmd->param2) {
 		return;
 	}
 
@@ -1593,7 +1591,7 @@ IMPLEMENT_OPCODE(SetBarrierFrameIdxFlaged) {
 	else
 		barrier->flags &= kBarrierFlagDestroyed;
 
-	barrier->frameIdx = cmd->param2;
+	barrier->setFrameIndex(cmd->param2);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1624,10 +1622,10 @@ IMPLEMENT_OPCODE(_unk5B) {
 		if (cmd->param1) {
 			Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
 
-			barrier->field_67C = cmd->param2;
+			barrier->setField67C(cmd->param2);
 
-			if (barrier->field_67C)
-				barrier->field_67C += 3;
+			if (barrier->getField67C())
+				barrier->setField67C(barrier->getField67C() + 3);
 		} else {
 			_scene->getActor(cmd->param3)->setField96C(cmd->param2);
 		}
@@ -1662,7 +1660,7 @@ IMPLEMENT_OPCODE(ClearActorFields) {
 IMPLEMENT_OPCODE(SetBarrierLastFrameIdx) {
 	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
 
-	if (barrier->frameIdx == barrier->frameCount - 1) {
+	if (barrier->getFrameIndex() == barrier->getFrameCount() - 1) {
 		_lineIncrement = 0;
 		barrier->flags &= ~kBarrierFlag10E38;
 	} else {

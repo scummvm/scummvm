@@ -120,7 +120,7 @@ void Scene::initialize() {
 		int32 priority = 0x0FFB;
 		for (int32 b = 0; b < _ws->numBarriers; b++) {
 			Barrier *barrier  = _ws->barriers[b];
-			barrier->priority = priority;
+			barrier->setPriority(priority);
 			barrier->flags &= ~kBarrierFlagC000;
 			priority -= 4;
 		}
@@ -225,7 +225,7 @@ void Scene::enterScene() {
 	if (!_titleLoaded) {
 		_title = new SceneTitle(this);
 		// disable input polling
-		_actions->_allowInput = false;
+		//_actions->_allowInput = false;
 	} else {
 #endif
 		_vm->screen()->setPalette(_resPack, _ws->currentPaletteId);
@@ -647,10 +647,10 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 int32 Scene::hitTestBarrier(const Common::Point pt) {
 	int32 targetIdx = -1;
 	for (int32 i = 0; i < _ws->numBarriers; i++) {
-		Barrier *b = _ws->barriers[i];
-		if (_ws->isBarrierOnScreen(i))
-			if (b->polyIdx)
-				if (hitTestPixel(b->resourceId, b->frameIdx, pt.x, pt.y, b->flags & 0x1000)) {
+		Barrier *barrier = _ws->barriers[i];
+		if (barrier->isOnScreen())
+			if (barrier->getPolygonIndex())
+				if (hitTestPixel(barrier->getResourceId(), barrier->getFrameIndex(), pt.x, pt.y, barrier->flags & 0x1000)) {
 					targetIdx = i;
 					break;
 				}
@@ -762,144 +762,13 @@ void Scene::changePlayerActorIndex(ActorIndex index) {
 }
 
 void Scene::updateActors() {
-	for (int32 a = 0; a < _ws->numActors; a++)
-		getActor(a)->update();
+	for (uint32 i = 0; i < _ws->actors.size(); i++)
+		_ws->actors[i]->update();
 }
 
 void Scene::updateBarriers() {
-	//Screen *screen = _vm->screen();
-
-	int32 barriersCount  = (int32)_ws->barriers.size();
-	//int  startTickCount = 0;
-	bool canPlaySound   = false;
-
-	if (barriersCount > 0) {
-		for (int32 b = 0; b < barriersCount; b++) {
-			Barrier *barrier = _ws->barriers[b];
-
-			if (barrier->field_3C == 4) {
-				if (_ws->isBarrierVisible(b)) {
-					int32 flag = barrier->flags;
-					if (flag & 0x20) {
-						if (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
-							barrier->frameIdx  = (barrier->frameIdx + 1) % barrier->frameCount;
-							barrier->tickCount = _vm->getTick();
-							canPlaySound       = true;
-						}
-					} else if (flag & 0x10) {
-						uint32 frameIdx  = barrier->frameIdx;
-						int equalZero = frameIdx == 0;
-						if (!frameIdx) {
-							if (_vm->getTick() - barrier->tickCount >= 1000 * barrier->tickCount2) {
-								if (vm()->getRandom(barrier->field_C0) == 1) {
-									if (barrier->field_68C[0]) {
-										// TODO: fix this, and find a better way to get frame count
-										// Sometimes we get wrong random resource id
-
-										barrier->resourceId = barrier->getRandomId();
-										GraphicResource *gra = new GraphicResource(_resPack, barrier->resourceId);
-										barrier->frameCount  = gra->getFrameCount();
-										delete gra;
-									}
-									barrier->frameIdx++;
-								}
-								barrier->tickCount = _vm->getTick();
-								canPlaySound       = true;
-							}
-							frameIdx  = barrier->frameIdx;
-							equalZero = frameIdx == 0;
-						}
-
-						if (!equalZero) {
-							if (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
-								barrier->frameIdx  = (barrier->frameIdx + 1) % barrier->frameCount;
-								barrier->tickCount = _vm->getTick();
-								canPlaySound = true;
-							}
-						}
-					} else if (flag & 8) {
-						if (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
-							uint32 frameIdx = barrier->frameIdx + 1;
-							if (frameIdx < barrier->frameCount - 1) {
-								if (barrier->field_688 == 1) {
-									// TODO: get global x, y positions
-								}
-							} else {
-								barrier->flags &= ~kBarrierFlag8;
-								if (barrier->field_688 == 1) {
-									// TODO: reset global x, y positions
-								}
-							}
-							barrier->frameIdx = frameIdx;
-						}
-					} else if ((flag & 0xFF) & 8) { // check this
-						if (_vm->getTick() - barrier->tickCount >= 1000 * barrier->tickCount2) {
-							if (vm()->getRandom(barrier->field_C0) == 1) { // TODO: THIS ISNT WORKING
-								barrier->frameIdx  = (barrier->frameIdx + 1) % barrier->frameCount;
-								barrier->tickCount = _vm->getTick();
-								canPlaySound = true;
-							}
-						}
-					} else if (!((flag & 0xFFFF) & 6)) {
-						if (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4 && (flag & 0x10000)) {
-							uint32 frameIdx = barrier->frameIdx - 1;
-							if (frameIdx <= 0) {
-								barrier->flags &= ~kBarrierFlag10000;
-								if (barrier->field_688 == 1) {
-									// TODO: reset global x, y positions
-								}
-								barrier->tickCount = _vm->getTick();
-								canPlaySound = true;
-							}
-							if (barrier->field_688 == 1) {
-								// TODO: get global x, y positions
-							}
-							barrier->frameIdx = frameIdx;
-						} else if (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
-							if ((flag & 0xFF) & 2) {
-								if (barrier->frameIdx == barrier->frameCount - 1) {
-									barrier->frameIdx--;
-									barrier->flags = ((flag & 0xFF) & 0xFD) | 4;
-								} else {
-									barrier->frameIdx++;
-								}
-							} else if ((flag & 0xFF) & 4) {
-								if (barrier->frameIdx) {
-									barrier->frameIdx--;
-								} else {
-									barrier->frameIdx++;
-									barrier->flags = ((flag & 0xFF) & 0xFB) | 2;
-								}
-							}
-						}
-					}
-
-					flag = barrier->flags;
-					flag &= 0x40000;
-					if (flag != 0) {
-						if (barrier->frameIdx == barrier->frameCount - 1) {
-							if (barrier->field_B4 <= 15) {
-								barrier->field_B4 -= 2;
-								if (barrier->field_B4 < 0)
-									barrier->field_B4 = 0;
-							} else {
-								barrier->field_B4 = 15;
-							}
-							if (!barrier->field_B4)
-								barrier->flags &= 0xFFFEF1C7;
-						}
-					}
-				}
-
-				if (canPlaySound) {
-					barrier->updateSoundItems(_vm->sound());
-					barrier->stopSound();
-				}
-
-				// TODO: get sound functions according with scene
-			}
-		}
-	}
+	for (uint32 i = 0; i < _ws->barriers.size(); i++)
+		_ws->barriers[i]->update();
 }
 
 void Scene::updateAmbientSounds() {
@@ -1222,93 +1091,7 @@ void Scene::drawActorsAndBarriers() {
 
 			// XXX from .text:0040a4d1
 			for (int32 barIdx = 0; barIdx < _ws->numBarriers; barIdx++) {
-				Barrier *bar    = _ws->barriers[barIdx];
-				bool actInBar   = bar->boundingRect.contains(*act->getBoundingRect());
-				bool intersects = false;
-
-				// TODO verify that my funky LOBYTE macro actually
-				// works the way I assume it should :P
-				if (!actInBar) {
-					if (LOBYTE(bar->flags) & 0x20)
-						if (!(LOBYTE(bar->flags) & 0x80))
-							// XXX not sure if this will work, as it's
-							// supposed to set 0x40 to the lobyte...
-							bar->flags |= 0x40;
-					continue;
-				}
-
-				if (bar->flags & 2) {
-					// TODO refactor
-					if (bar->field_74 || bar->field_78 ||
-						bar->field_7C || bar->field_80)
-						intersects = (pt.y > bar->field_78 + (bar->field_80 - bar->field_78) * (pt.x - bar->field_74) / (bar->field_7C - bar->field_74)) == 0;
-					else
-						intersects = true;
-				} else {
-					if (bar->flags & 0x40) {
-						PolyDefinitions *poly = &_polygons->entries[bar->polyIdx];
-						if (pt.x > 0 && pt.y > 0 && poly->numPoints > 0)
-							intersects = poly->contains(pt.x, pt.y);
-						else
-							;//warning ("[drawActorsAndBarriers] trying to find intersection of uninitialized point");
-					}
-					// XXX the original has an else case here that
-					// assigns intersects the value of the
-					// flags & 2 check, which doesn't make any sense since
-					// that path would never have been taken if code
-					// execution had made it's way here.
-				}
-				if (LOBYTE(bar->flags) & 0x80 || intersects) {
-					if (LOBYTE(bar->flags) & 0x20)
-						// XXX not sure if this will work, as it's
-						// supposed to set this value on the lobyte...
-						bar->flags &= 0xBF | 0x80;
-					else
-						// XXX another lobyte assignment...
-						bar->flags |= 0x40;
-						// TODO label jump up a few lines here. Investigate...
-				}
-				if (bar->flags & 4) {
-					if (intersects) {
-						if(act->flags & 2)
-							;//warning ("[drawActorsAndBarriers] Assigning mask to masked character [%s]", bar->name);
-						else {
-							// TODO there's a call to sub_40ac10 that does
-							// a point calculation, but the result doesn't appear to
-							// ever be used, and the object passed in as a parameter
-							// isn't updated
-							act->setBarrierIndex(barIdx);
-							act->flags |= 2;
-						}
-					}
-				} else {
-					if (intersects) {
-						// XXX assuming the following:
-						// "if ( *(int *)((char *)&scene.characters[0].priority + v18) < *(v12_barrierPtr + 35) )"
-						// is the same as what I'm comparing :P
-						if (act->getPriority() < bar->priority) {
-							act->setField934(1);
-							act->setPriority(bar->priority + 3);
-							// TODO there's a block of code here that seems
-							// to loop through the CharacterUpdateItems and do some
-							// priority adjustment. Since I'm not using CharacterUpdateItems as of yet,
-							// I'm not sure what to do here
-							// The loop seems to occur if:
-							// (a) there are still character items to process
-							// (b) sceneNumber != 2 && actor->field_944 != 1
-						}
-					} else {
-						if (act->getPriority() > bar->priority || act->getPriority() == 1) {
-							act->setField934(1);
-							act->setPriority(bar->priority - 1);
-							// TODO another character update loop
-							// This time it looks like there's another
-							// intersection test, and more updates
-							// to field_934 and field_944, then
-							// priority updates
-						}
-					}
-				}
+				_ws->barriers[barIdx]->draw(act, pt);
 			} // end for (barriers)
 		}
 	} // end for (actors)
@@ -1360,15 +1143,15 @@ int Scene::queueBarrierUpdates() {
 			Barrier *barrier = _ws->barriers[b];
 
 			if (!(barrier->flags & 4) && !((barrier->flags & 0xFF) & 0x40)) {
-				if (_ws->isBarrierOnScreen(b)) {
+				if (barrier->isOnScreen()) {
 					//TODO: need to do something here yet
 
-					if (barrier->field_67C <= 0 || barrier->field_67C >= 4) { // TODO: still missing a condition for game quality config
-						_vm->screen()->addGraphicToQueue(barrier->resourceId, barrier->frameIdx, barrier->x, barrier->y, (barrier->flags >> 11) & 2, barrier->field_67C - 3, barrier->priority);
+					if (barrier->getField67C() <= 0 || barrier->getField67C() >= 4) { // TODO: still missing a condition for game quality config
+						_vm->screen()->addGraphicToQueue(barrier->getResourceId(), barrier->getFrameIndex(), barrier->x, barrier->y, (barrier->flags >> 11) & 2, barrier->getField67C() - 3, barrier->getPriority());
 					} else {
 						// TODO: Do Cross Fade
 						// parameters: barrier->resourceId, barrier->frameIdx, barrier->x, barrier->y, _ws->backgroundImage, _ws->xLeft, _ws->yTop, 0, 0, barrier->field_67C - 1
-						_vm->screen()->addGraphicToQueue(barrier->resourceId, barrier->frameIdx, barrier->x, barrier->y, 0, 0, 0);
+						_vm->screen()->addGraphicToQueue(barrier->getResourceId(), barrier->getFrameIndex(), barrier->x, barrier->y, 0, 0, 0);
 					}
 				}
 			}
@@ -1479,14 +1262,14 @@ void Scene::debugShowPolygons() {
 void Scene::debugShowBarriers() {
 	for (int32 p = 0; p < _ws->numBarriers; p++) {
 		Graphics::Surface surface;
-		Barrier *b = _ws->barriers[p];
+		Barrier *barrier = _ws->barriers[p];
 
-		if (b->flags & 0x20) {
-			surface.create(b->boundingRect.right - b->boundingRect.left + 1,
-			               b->boundingRect.bottom - b->boundingRect.top + 1,
+		if (barrier->flags & 0x20) {
+			surface.create(barrier->getBoundingRect()->right - barrier->getBoundingRect()->left + 1,
+			               barrier->getBoundingRect()->bottom - barrier->getBoundingRect()->top + 1,
 			               1);
-			surface.frameRect(b->boundingRect, 0x22);
-			copyToBackBufferClipped(&surface, b->x, b->y);
+			surface.frameRect(*barrier->getBoundingRect(), 0x22);
+			copyToBackBufferClipped(&surface, barrier->x, barrier->y);
 		}
 
 		surface.free();

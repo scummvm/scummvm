@@ -26,90 +26,177 @@
 #ifndef ASYLUM_BARRIER_H
 #define ASYLUM_BARRIER_H
 
+#include "asylum/shared.h"
+
 #include "asylum/system/sound.h"
 
-#include "asylum/shared.h"
+#include "common/rect.h"
+#include "common/stream.h"
 
 namespace Asylum {
 
-enum BarrierFlag {
-	kBarrierFlagDestroyed = -2,
-	kBarrierFlag4         = 0x4,
-	kBarrierFlag8         = 0x8,
-	kBarrierFlag20        = 0x20,
-	kBarrierFlagC000      = 0xC000,
-	kBarrierFlag10000     = 0x10000,
-	kBarrierFlag10E38     = 0x10E38,
-	kBarrierFlag20000     = 0x20000,
-	kBarrierFlag40000     = 0x40000
-};
-
-class Scene;
+class Actor;
+class AsylumEngine;
 
 class Barrier {
 public:
-	Barrier(Scene *scene);
+	Barrier(AsylumEngine *engine);
 	virtual ~Barrier();
 
+	//////////////////////////////////////////////////////////////////////////
+	// Public variables & accessors
+	//////////////////////////////////////////////////////////////////////////
+	int32 x;
+	int32 y;
+	int32 flags;
+	int32 actionType;
+
+	void setFrameIndex(int32 index) { _frameIndex = index; }
+	void setPriority(int32 priority) { _priority = priority; }
+	void setResourceId(ResourceId id) { _resourceId = id; }
+
+	void setField67C(int32 val) { _field_67C = val; }
+
+	Common::Rect  *getBoundingRect() { return &_boundingRect; }
+	uint32         getFrameIndex() { return _frameIndex; }
+	uint32         getFrameCount() { return _frameCount; }
+	int32          getId() { return _id; }
+	int32          getPolygonIndex() { return _polygonIndex; }
+	int32          getPriority() { return _priority; }
+	ResourceId     getResourceId() { return _resourceId; }
+
+	int32          getField67C() { return _field_67C; }
+	int32          getField688() { return _field_688; }
+
+	/////////////////////////////////////////////////////////////////////////
+	// Loading & destroying
+	/////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Loads the barrier data
+	 *
+	 * @param stream If non-null, the Common::SeekableReadStream to load from
+	 */
+	void load(Common::SeekableReadStream *stream);
+
+	/**
+	 * Sets the barrier destroyed flag
+	 */
 	void destroy();
+
+	/**
+	 * Sets the barrier destroyed flag and remove this barrier from the graphics queue
+	 */
 	void destroyAndRemoveFromQueue();
 
-	bool   visible();
-	int32 getRandomId(); // TODO Give this a better name?
-	bool   onscreen();
+	/////////////////////////////////////////////////////////////////////////
+	// Visibility
+	//////////////////////////////////////////////////////////////////////////
 
-	// TODO document this function
-	int  checkFlags();
-	// TODO document this function
+	/**
+	 * Query if this barrier is on screen.
+	 *
+	 * @return true if on screen, false if not.
+	 */
+	bool isOnScreen();
+
+	/**
+	 * Query if this barrier is visible.
+	 *
+	 * @return true if visible, false if not.
+	 */
+	bool isVisible();
+
+	/////////////////////////////////////////////////////////////////////////
+	// Drawing & update
+	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Draws the barrier
+	 */
+	void draw(Actor *actor, Common::Point &pt);
+
+	/**
+	 * Updates the barrier.
+	 */
+	void update();
+
+	/**
+	 * Sets the next frame.
+	 *
+	 * @param flags The flags.
+	 */
 	void setNextFrame(int flags);
 
-	/** .text:0040D0E0
+	/////////////////////////////////////////////////////////////////////////
+	// Misc
+	////////////////////////////////////////////////////////////////////////
+
+	/**
 	 * Check if any items in the barrier sound array are playing,
 	 * and based on their flag values, stop them accordingly
 	 */
 	void updateSoundItems(Sound *snd);
 
+	/**
+	 * Stop the barrier related sounds
+	 */
 	void stopSound();
 
-	int32		   id;
-	ResourceId     resourceId;
-	int32		   x;
-	int32		   y;
-	Common::Rect   boundingRect;
-	int32		   field_20;
-	uint32		   frameIdx;
-	uint32		   frameCount;
-	int32		   field_2C;
-	int32		   field_30;
-	int32		   field_34;
-	int32		   flags;
-	int32		   field_3C;
-	uint8		   name[52];
-	int32		   field_74; // XXX looks like fields
-	int32		   field_78; // 74 => 80 have something
-	int32		   field_7C; // to do with calculating
-	int32		   field_80; // actor intersection
-	int32		   polyIdx;
-	int32		   actionType;
-	GameFlag	   gameFlags[10];
-	int32		   field_B4;
-	int32		   tickCount;
-	int32		   tickCount2;
-	int32		   field_C0;
-	int32		   priority;
-	int32		   actionListIdx;
-	SoundItem	   soundItems[16];
-	FrameSoundItem frameSoundItems[50];
-	int32		   field_67C;
-	int32		   soundX;
-	int32		   soundY;
-	int32		   field_688;
-	int32		   field_68C[5];
-	ResourceId     soundResourceId;
-	int32		   field_6A4;
+	/**
+	 * Stop all barrier sounds.
+	 */
+	void stopAllSounds();
+
+	bool checkFlags();
+
+	bool checkGameFlags();
+
+	int32 getRandomId(); // TODO Give this a better name?
 
 private:
-	Scene *_scene;
+	AsylumEngine *_vm;
+
+	int32 _index;   ///< our index
+
+	//////////////////////////////////////////////////////////////////////////
+	// Data
+	//////////////////////////////////////////////////////////////////////////
+	int32		   _id;
+	ResourceId     _resourceId;
+	// x, y
+	Common::Rect   _boundingRect;
+	int32		   _field_20;
+	uint32		   _frameIndex;
+	uint32		   _frameCount;
+	int32		   _field_2C;
+	int32		   _field_30;
+	int32		   _field_34;
+	// flags
+	int32		   _field_3C;
+	uint8		   _name[52];
+	int32		   _field_74; // XXX looks like fields
+	int32		   _field_78; // 74 => 80 have something
+	int32		   _field_7C; // to do with calculating
+	int32		   _field_80; // actor intersection
+	int32		   _polygonIndex;
+	// actionType
+	GameFlag	   _gameFlags[10];
+	int32		   _field_B4;
+	int32		   _tickCount;
+	int32		   _tickCount2;
+	int32		   _field_C0;
+	int32		   _priority;
+	int32		   _actionListIdx;
+	SoundItem	   _soundItems[16];
+	FrameSoundItem _frameSoundItems[50];
+	int32		   _field_67C;
+	int32		   _soundX;
+	int32		   _soundY;
+	int32		   _field_688;
+	int32		   _field_68C[5];
+	ResourceId     _soundResourceId;
+	int32		   _field_6A4;
 
 }; // end of class Barrier
 
